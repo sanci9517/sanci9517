@@ -206,7 +206,7 @@
     .stream-container {
       position: relative;
       width: 100%;
-      padding-top: 56.25%; /* 16:9 Aspect Ratio */
+      padding-top: 56.25%;
       background: #000;
       border-radius: 14px;
       overflow: hidden;
@@ -218,7 +218,7 @@
       top: 0; left: 0; width: 100%; height: 100%; border: none;
     }
 
-    /* SCHEDULE */
+    /* SCHEDULE & COMMUNITY CARDS */
     .sched-item {
       background: var(--card-bg);
       backdrop-filter: blur(16px);
@@ -250,11 +250,12 @@
   <div class="bg-glow-1"></div>
   <div class="bg-glow-2"></div>
 
+  <!-- TOP BAR -->
   <div class="top-bar">
     <div class="theme-switcher">
-      <div class="dot purple" onclick="setTheme('purple')"></div>
-      <div class="dot green" onclick="setTheme('green')"></div>
-      <div class="dot blue" onclick="setTheme('blue')"></div>
+      <div class="dot purple" onclick="setTheme('purple')" title="Cyber Purple"></div>
+      <div class="dot green" onclick="setTheme('green')" title="Neon Matrix"></div>
+      <div class="dot blue" onclick="setTheme('blue')" title="Ice Blue"></div>
     </div>
     <div class="live-badge">
       <div class="live-dot"></div>
@@ -264,11 +265,13 @@
 
   <div class="main-container">
     <header>
-      <img src="https://via.placeholder.com/130/120c1c/c77dff?text=Sanci" class="avatar">
+      <!-- Ide majd a saját profilképed URL-jét vagy fájlját teheted be -->
+      <img src="https://api.dicebear.com/7.x/bottts/svg?seed=sanci9517" class="avatar" alt="SANCI9517">
       <h1>SANCI9517</h1>
       <p style="color: var(--text-sub); font-weight: 600; letter-spacing: 2px;">GAMER & CONTENT CREATOR</p>
     </header>
 
+    <!-- FÜLEK -->
     <div class="tabs">
       <button class="tab-btn active" onclick="openTab('links', this)"><i class="fa-solid fa-house"></i> Links</button>
       <button class="tab-btn" onclick="openTab('stream', this)"><i class="fa-solid fa-tv"></i> Live Stream</button>
@@ -279,9 +282,9 @@
     <!-- 1. LINKS -->
     <div id="links" class="tab-content active">
       <div class="grid-2">
-        <a href="https://twitch.tv" target="_blank" class="card"><i class="fa-brands fa-twitch"></i> Twitch Csatorna</a>
+        <a href="https://twitch.tv/sanci9517" target="_blank" class="card"><i class="fa-brands fa-twitch"></i> Twitch Csatorna</a>
         <a href="https://youtube.com" target="_blank" class="card"><i class="fa-brands fa-youtube"></i> YouTube Videók</a>
-        <a href="https://discord.com" target="_blank" class="card"><i class="fa-brands fa-discord"></i> Discord Közösség</a>
+        <a href="https://discord.gg" target="_blank" class="card"><i class="fa-brands fa-discord"></i> Discord Közösség</a>
         <a href="https://tiktok.com" target="_blank" class="card"><i class="fa-brands fa-tiktok"></i> TikTok Clips</a>
         <a href="https://instagram.com" target="_blank" class="card"><i class="fa-brands fa-instagram"></i> Instagram</a>
         <a href="#" class="card"><i class="fa-solid fa-heart"></i> Donate / Támogatás</a>
@@ -290,9 +293,7 @@
 
     <!-- 2. BEÁGYAZOTT MŰKÖDŐ TWITCH STREAM PLAYER -->
     <div id="stream" class="tab-content">
-      <div class="stream-container" id="twitch-embed">
-        <!-- A Twitch lejátszó ide töltődik be dinamikusan JS-ből -->
-      </div>
+      <div class="stream-container" id="twitch-embed"></div>
     </div>
 
     <!-- 3. SCHEDULE -->
@@ -336,7 +337,7 @@
     function openTab(tabName, btnElement) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-      document.getElementById(tabName).classList.add('active');
+      document.getElementById(tabName].classList.add('active');
       btnElement.classList.add('active');
     }
 
@@ -348,12 +349,12 @@
       }
     }
 
-    // TWITCH PLAYER DYNAMICAL LOAD
+    // TWITCH EMBED BEÁLLÍTÁS A GITHUB PAGES-HEZ
     new Twitch.Embed("twitch-embed", {
       width: "100%",
       height: "100%",
-      channel: "shroud", // ITT ÍRD ÁT A SAJÁT TWITCH NEVEDRE! (pl. "sanci9517")
-      parent: ["localhost"] // ÉLESBEN ITT A DOMAIN NEVED LEGYEN! (pl. "sanci9517.hu")
+      channel: "sanci9517", // Ha tesztelni akarod élő streammel, ide átírhatsz más csatornát is (pl. "shroud")
+      parent: ["sanci9517.github.io"] // ÍGY MŰKÖDIK MAJD A GITHUB PAGES-EN!
     });
   </script>
 </body>
