@@ -265,7 +265,6 @@
 
   <div class="main-container">
     <header>
-      <!-- Ide majd a saját profilképed URL-jét vagy fájlját teheted be -->
       <img src="https://api.dicebear.com/7.x/bottts/svg?seed=sanci9517" class="avatar" alt="SANCI9517">
       <h1>SANCI9517</h1>
       <p style="color: var(--text-sub); font-weight: 600; letter-spacing: 2px;">GAMER & CONTENT CREATOR</p>
@@ -282,7 +281,7 @@
     <!-- 1. LINKS -->
     <div id="links" class="tab-content active">
       <div class="grid-2">
-        <a href="https://twitch.tv/sanci9517" target="_blank" class="card"><i class="fa-brands fa-twitch"></i> Twitch Csatorna</a>
+        <a href="https://www.twitch.tv/sanci9517" target="_blank" class="card"><i class="fa-brands fa-twitch"></i> Twitch Csatorna</a>
         <a href="https://youtube.com" target="_blank" class="card"><i class="fa-brands fa-youtube"></i> YouTube Videók</a>
         <a href="https://discord.gg" target="_blank" class="card"><i class="fa-brands fa-discord"></i> Discord Közösség</a>
         <a href="https://tiktok.com" target="_blank" class="card"><i class="fa-brands fa-tiktok"></i> TikTok Clips</a>
@@ -337,7 +336,7 @@
     function openTab(tabName, btnElement) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-      document.getElementById(tabName].classList.add('active');
+      document.getElementById(tabName).classList.add('active');
       btnElement.classList.add('active');
     }
 
@@ -349,12 +348,12 @@
       }
     }
 
-    // TWITCH EMBED BEÁLLÍTÁS A GITHUB PAGES-HEZ
+    // SAJÁT TWITCH CSATORNA (SANCI9517) BEÁLLÍTÁSA
     new Twitch.Embed("twitch-embed", {
       width: "100%",
       height: "100%",
-      channel: "sanci9517", // Ha tesztelni akarod élő streammel, ide átírhatsz más csatornát is (pl. "shroud")
-      parent: ["sanci9517.github.io"] // ÍGY MŰKÖDIK MAJD A GITHUB PAGES-EN!
+      channel: "sanci9517",
+      parent: ["sanci9517.github.io"]
     });
   </script>
 </body>
