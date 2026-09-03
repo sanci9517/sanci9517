@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -5,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SANCI9517 | Official Hub</title>
   
-  <!-- SEO & Social Media Open Graph -->
   <meta property="og:title" content="SANCI9517 | Official Hub">
   <meta property="og:description" content="Nézd az élő adásokat, csekkold a menetrendet, klipeket és a setupot!">
   <meta property="og:image" content="https://static-cdn.jtvnw.net/user-default-pictures-uv/75305db0-3a92-43d8-1565-22b87e142200-profile_image-300x300.png">
@@ -42,7 +42,6 @@
       align-items: center;
     }
 
-    /* NAVIGÁCIÓ */
     .nav-tabs {
       display: flex;
       gap: 6px;
@@ -83,7 +82,6 @@
     .tab-content { display: none; flex-direction: column; gap: 16px; }
     .tab-content.active { display: flex; }
 
-    /* PROFILE CARD & COUNTDOWN */
     .profile-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
@@ -162,7 +160,6 @@
       box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
     }
 
-    /* CARD BUTTONS */
     .card-btn {
       display: flex;
       align-items: center;
@@ -218,7 +215,6 @@
     }
     .setup-row:last-child { border-bottom: none; }
 
-    /* STATISZTIKÁK */
     .stats-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -245,7 +241,6 @@
       color: var(--text-muted);
     }
 
-    /* SZAVAZÁS */
     .poll-opt {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--border);
@@ -259,7 +254,6 @@
     }
     .poll-opt:hover { background: var(--accent); color: #000; }
 
-    /* KLIPIEK */
     .clip-container {
       width: 100%;
       height: 280px;
@@ -271,7 +265,6 @@
     }
     .clip-container iframe { width: 100%; height: 100%; border: none; }
 
-    /* MODAL ABLAK */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -325,7 +318,6 @@
 </head>
 <body>
 
-  <!-- NAVIGÁCIÓ -->
   <div class="nav-tabs">
     <button class="nav-btn active" onclick="openTab('home', event)"><i class="fa-solid fa-house"></i> FŐOLDAL</button>
     <button class="nav-btn" onclick="openTab('news', event)"><i class="fa-solid fa-bullhorn"></i> HÍREK</button>
@@ -338,7 +330,6 @@
 
   <div class="main-container">
 
-    <!-- FŐOLDAL -->
     <div id="tab-home" class="tab-content active">
       <div class="profile-card">
         <div class="avatar-wrapper">
@@ -350,7 +341,6 @@
           <div class="brand-sub" id="status-text">STREAMER & TARTALOMKÉSZÍTŐ</div>
         </div>
 
-        <!-- VISSZASZÁMLÁLÓ -->
         <div class="countdown-box" id="countdown-container">
           <i class="fa-regular fa-clock" style="color:var(--accent);"></i>
           <span id="countdown-text">Következő stream: Töltés...</span>
@@ -387,7 +377,6 @@
       </a>
     </div>
 
-    <!-- HÍREK & SZAVAZÁS -->
     <div id="tab-news" class="tab-content">
       <div class="info-card">
         <div class="card-header-text"><span><i class="fa-solid fa-bullhorn"></i> BEJELENTÉS</span><small>Friss</small></div>
@@ -404,7 +393,6 @@
       </div>
     </div>
 
-    <!-- KLIPIEK / HIGHLIGHTS -->
     <div id="tab-clips" class="tab-content">
       <div class="info-card">
         <div class="card-header-text"><span><i class="fa-solid fa-fire"></i> LEGJOBB PILLANATOK</span></div>
@@ -415,47 +403,45 @@
       </div>
     </div>
 
-    <!-- MENETREND -->
     <div id="tab-schedule" class="tab-content">
       <div id="schedule-list"></div>
     </div>
 
-    <!-- VALÓS IDEJŰ STATISZTIKÁK -->
     <div id="tab-stats" class="tab-content">
       <div class="info-card">
         <div class="card-header-text">
           <span><i class="fa-solid fa-chart-line"></i> ÉLŐ TWITCH STATISZTIKÁK</span>
-          <small style="color: var(--live-red); font-size: 0.7rem;"><i class="fa-solid fa-rotate"></i> Élő frissítés</small>
+          <small style="color: var(--live-red); font-size: 0.7rem;"><i class="fa-solid fa-rotate"></i> Auto-frissítés</small>
         </div>
         <div class="stats-grid" style="margin-top:10px;">
           <div class="stat-box">
-            <div class="stat-val" id="stat-followers">...</div>
+            <div class="stat-val" id="stat-followers">Töltés...</div>
             <div class="stat-lbl">Twitch Követők</div>
           </div>
           <div class="stat-box">
-            <div class="stat-val" id="stat-views">...</div>
-            <div class="stat-lbl">Összes Megtekintés</div>
+            <div class="stat-val" id="stat-status">OFFLINE</div>
+            <div class="stat-lbl">Stream Státusz</div>
           </div>
           <div class="stat-box">
-            <div class="stat-val" id="stat-viewers">OFFLINE</div>
-            <div class="stat-lbl">Jelenlegi Nézők</div>
+            <div class="stat-val" id="stat-viewers">0</div>
+            <div class="stat-lbl">Élő Nézők</div>
           </div>
           <div class="stat-box">
             <div class="stat-val" id="stat-game" style="font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">-</div>
-            <div class="stat-lbl">Legutóbbi / Aktuális Játék</div>
+            <div class="stat-lbl">Kategória / Játék</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- TÁMOGATÁS (STREAMLABS LINK) -->
     <div id="tab-support" class="tab-content">
       <div class="info-card">
         <div class="card-header-text"><span><i class="fa-solid fa-hand-holding-dollar"></i> TÁMOGATÁS</span></div>
         <div style="font-size:0.85rem; color:var(--text-sub); margin-bottom:12px;">Ha szeretnéd közvetlenül segíteni a stream fejlődését és a jobb minőségű tartalmakat:</div>
         
-        <a href="https://streamlabs.com/sanci9517/tip" target="_blank" class="card-btn support" style="margin-bottom:10px;">
-          <div class="card-left"><i class="fa-solid fa-donate" style="color:var(--gold);"></i><span>Streamlabs Donáció</span></div>
+        <!-- JAVÍTOTT STREAMLABS DONATE LINK (Működik /tip végződéssel vagy sima profillal) -->
+        <a href="https://streamlabs.com/sanci9517" target="_blank" class="card-btn support" style="margin-bottom:10px;">
+          <div class="card-left"><i class="fa-solid fa-donate" style="color:var(--gold);"></i><span>Streamlabs Donáció / Tip</span></div>
           <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; color:var(--text-muted);"></i>
         </a>
 
@@ -466,14 +452,12 @@
       </div>
     </div>
 
-    <!-- SET UP -->
     <div id="tab-setup" class="tab-content">
       <div id="setup-list"></div>
     </div>
 
   </div>
 
-  <!-- LEJÁTSZÓ MODAL ABLAK (VIDEÓ ÉS CHAT) -->
   <div class="modal-overlay" id="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -490,7 +474,6 @@
   <script>
     const TWITCH_CHANNEL = "sanci9517";
 
-    // TARTALÉK ADATOK
     const fallbackSchedule = [
       { day: "Hétfő", time: "18:00 - 21:00", game: "Valorant", desc: "Ranked & Közösségi meccsek", active: true },
       { day: "Kedd", time: "—", game: "PIHENŐNAP", desc: "Nincs adás", active: false },
@@ -520,7 +503,6 @@
       }
     ];
 
-    // TAB VÁLTÓ
     function openTab(tabName, evt) {
       const tabs = document.querySelectorAll('.tab-content');
       const btns = document.querySelectorAll('.nav-btn');
@@ -538,7 +520,6 @@
       }
     }
 
-    // MODAL LEJÁTSZÓ
     function openStreamModal() {
       document.getElementById('modal').classList.add('active');
       switchModalTab('video');
@@ -553,4 +534,15 @@
       const body = document.getElementById('modal-body');
       const vBtn = document.getElementById('m-btn-video');
       const cBtn = document.getElementById('m-btn-chat');
-      const domain = window.location.hostname || "localhost"
+      const domain = window.location.hostname || "localhost";
+
+      if (type === 'video') {
+        vBtn.classList.add('active');
+        cBtn.classList.remove('active');
+        body.innerHTML = `<iframe src="https://player.twitch.tv/?channel=${TWITCH_CHANNEL}&parent=${domain}&autoplay=true" allowfullscreen></iframe>`;
+      } else {
+        cBtn.classList.add('active');
+        vBtn.classList.remove('active');
+        body.innerHTML = `<iframe src="https://www.twitch.tv/embed/${TWITCH_CHANNEL}/chat?parent=${domain}"></iframe>`;
+      }
+ 
