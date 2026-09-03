@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -36,7 +37,7 @@
       color: var(--text);
       font-family: 'Rajdhani', sans-serif;
       min-height: 100vh;
-      padding: 20px 15px 100px 15px;
+      padding: 20px 15px 40px 15px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -327,13 +328,13 @@
 
   <!-- NAVIGÁCIÓ -->
   <div class="nav-tabs">
-    <button class="nav-btn active" onclick="openTab('home', this)"><i class="fa-solid fa-house"></i> FŐOLDAL</button>
-    <button class="nav-btn" onclick="openTab('news', this)"><i class="fa-solid fa-bullhorn"></i> HÍREK</button>
-    <button class="nav-btn" onclick="openTab('clips', this)"><i class="fa-solid fa-film"></i> KLIPIEK</button>
-    <button class="nav-btn" onclick="openTab('schedule', this)"><i class="fa-solid fa-calendar"></i> MENETREND</button>
-    <button class="nav-btn" onclick="openTab('stats', this)"><i class="fa-solid fa-trophy"></i> STATOK</button>
-    <button class="nav-btn" onclick="openTab('support', this)"><i class="fa-solid fa-heart"></i> TÁMOGATÁS</button>
-    <button class="nav-btn" onclick="openTab('setup', this)"><i class="fa-solid fa-desktop"></i> SET UP</button>
+    <button class="nav-btn active" onclick="openTab('home', event)"><i class="fa-solid fa-house"></i> FŐOLDAL</button>
+    <button class="nav-btn" onclick="openTab('news', event)"><i class="fa-solid fa-bullhorn"></i> HÍREK</button>
+    <button class="nav-btn" onclick="openTab('clips', event)"><i class="fa-solid fa-film"></i> KLIPIEK</button>
+    <button class="nav-btn" onclick="openTab('schedule', event)"><i class="fa-solid fa-calendar"></i> MENETREND</button>
+    <button class="nav-btn" onclick="openTab('stats', event)"><i class="fa-solid fa-trophy"></i> STATOK</button>
+    <button class="nav-btn" onclick="openTab('support', event)"><i class="fa-solid fa-heart"></i> TÁMOGATÁS</button>
+    <button class="nav-btn" onclick="openTab('setup', event)"><i class="fa-solid fa-desktop"></i> SET UP</button>
   </div>
 
   <div class="main-container">
@@ -408,7 +409,7 @@
     <div id="tab-clips" class="tab-content">
       <div class="info-card">
         <div class="card-header-text"><span><i class="fa-solid fa-fire"></i> LEGJOBB PILLANATOK</span></div>
-        <div style="font-size:0.85rem; color:var(--text-sub);">Nézd meg a legújabb kiemelt klipet közvetlenül itt!</div>
+        <div style="font-size:0.85rem; color:var(--text-sub); margin-bottom:10px;">Nézd meg a legújabb kiemelt klipet közvetlenül itt!</div>
         <div class="clip-container">
           <iframe src="https://www.youtube.com/embed/videoseries?list=PLx0sYbCqOb8TBPRdmBLs5Lnc60hacGZXU" allowfullscreen></iframe>
         </div>
@@ -426,7 +427,7 @@
         <div class="card-header-text"><span><i class="fa-solid fa-chart-line"></i> CSATORNA MERFÖLDKÖVEK</span></div>
         <div class="stats-grid" style="margin-top:10px;">
           <div class="stat-box">
-            <div class="stat-val" id="visit-count">...</div>
+            <div class="stat-val" id="visit-count">1,250</div>
             <div class="stat-lbl">Weboldal Látogatás</div>
           </div>
           <div class="stat-box">
@@ -466,15 +467,6 @@
     <!-- SET UP -->
     <div id="tab-setup" class="tab-content">
       <div id="setup-list"></div>
-    </div>
-
-    <!-- DISZKRÉT PARTNER / REKLÁM SÁV -->
-    <div style="margin-top: 30px; text-align: center; border-top: 1px solid rgba(168, 85, 247, 0.2); padding-top: 15px;">
-      <small style="color: var(--text-muted); font-size: 0.75rem; letter-spacing: 1px; display: block; margin-bottom: 8px;">TÁMOGATÓK & PARTNEREK</small>
-      <a href="https://discord.gg" target="_blank" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 8px 16px; border-radius: 20px; color: var(--text-sub); font-size: 0.85rem; transition: all 0.2s;">
-        <i class="fa-solid fa-bag-shopping" style="color: var(--accent);"></i>
-        <span>Kedvezményes gamer cuccok a <strong>SANCI9517</strong> kóddal</span>
-      </a>
     </div>
 
   </div>
@@ -527,12 +519,21 @@
     ];
 
     // TAB VÁLTÓ
-    function openTab(tabName, btn) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+    function openTab(tabName, evt) {
+      const tabs = document.querySelectorAll('.tab-content');
+      const btns = document.querySelectorAll('.nav-btn');
 
-      document.getElementById('tab-' + tabName).classList.add('active');
-      btn.classList.add('active');
+      tabs.forEach(el => el.classList.remove('active'));
+      btns.forEach(el => el.classList.remove('active'));
+
+      const targetTab = document.getElementById('tab-' + tabName);
+      if (targetTab) {
+        targetTab.classList.add('active');
+      }
+
+      if (evt && evt.currentTarget) {
+        evt.currentTarget.classList.add('active');
+      }
     }
 
     // MODAL LEJÁTSZÓ
@@ -544,4 +545,160 @@
     function closeStreamModal() {
       document.getElementById('modal-body').innerHTML = '';
       document.getElementById('modal').classList.remove('active');
-   
+    }
+
+    function switchModalTab(type) {
+      const body = document.getElementById('modal-body');
+      const vBtn = document.getElementById('m-btn-video');
+      const cBtn = document.getElementById('m-btn-chat');
+      const domain = window.location.hostname || "localhost";
+
+      if (type === 'video') {
+        vBtn.classList.add('active');
+        cBtn.classList.remove('active');
+        body.innerHTML = `<iframe src="https://player.twitch.tv/?channel=${TWITCH_CHANNEL}&parent=${domain}&autoplay=true" allowfullscreen></iframe>`;
+      } else {
+        cBtn.classList.add('active');
+        vBtn.classList.remove('active');
+        body.innerHTML = `<iframe src="https://www.twitch.tv/embed/${TWITCH_CHANNEL}/chat?parent=${domain}"></iframe>`;
+      }
+    }
+
+    // TWITCH ADATOK LEKÉRÉSE
+    async function checkTwitchData() {
+      try {
+        const uptimeRes = await fetch(`https://decapi.me/twitch/uptime/${TWITCH_CHANNEL}`);
+        if (uptimeRes.ok) {
+          const uptime = (await uptimeRes.text()).trim().toLowerCase();
+          const isLive = !uptime.includes('offline') && !uptime.includes('not found') && !uptime.includes('error');
+
+          if (isLive) {
+            document.getElementById('live-badge').style.display = 'block';
+            document.getElementById('status-text').innerText = '🔴 ÉLŐ ADÁS';
+            document.getElementById('status-text').style.color = '#ef4444';
+            document.getElementById('countdown-container').style.display = 'none';
+
+            const viewersRes = await fetch(`https://decapi.me/twitch/viewcount/${TWITCH_CHANNEL}`);
+            if (viewersRes.ok) {
+              const viewers = (await viewersRes.text()).trim();
+              document.getElementById('twitch-btn-text').innerText = `Twitch (Nézők: ${viewers})`;
+            }
+          }
+        }
+
+        const avatarRes = await fetch(`https://decapi.me/twitch/avatar/${TWITCH_CHANNEL}`);
+        if (avatarRes.ok) {
+          const avatarUrl = (await avatarRes.text()).trim();
+          if (avatarUrl.startsWith('http')) {
+            document.getElementById('avatar-img').src = avatarUrl;
+          }
+        }
+      } catch (e) {}
+    }
+
+    // VISSZASZÁMLÁLÓ
+    function updateCountdown() {
+      const now = new Date();
+      const targetHours = 18;
+      let nextStream = new Date();
+      nextStream.setHours(targetHours, 0, 0, 0);
+
+      if (now >= nextStream) {
+        nextStream.setDate(nextStream.getDate() + 1);
+      }
+
+      const diff = nextStream - now;
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+      const el = document.getElementById('countdown-text');
+      if (el) {
+        el.innerText = `Következő stream ~ ${hours}ó ${mins}p múlva`;
+      }
+    }
+
+    // LÁTOGATÓ SZÁMLÁLÓ LOGIKA (Helyi memóriában tárolt számláló a stabil működésért)
+    function updateVisitorCount() {
+      let count = localStorage.getItem('sanci_page_visits') || 1250;
+      count = parseInt(count) + 1;
+      localStorage.setItem('sanci_page_visits', count);
+      
+      const el = document.getElementById('visit-count');
+      if (el) {
+        el.innerText = count.toLocaleString();
+      }
+    }
+
+    // SZAVAZÁS LOGIKA
+    let votes = [12, 28, 15];
+    function vote(option) {
+      votes[option - 1]++;
+      const total = votes.reduce((a, b) => a + b, 0);
+      document.getElementById('poll-v1').innerText = Math.round((votes[0]/total)*100) + '%';
+      document.getElementById('poll-v2').innerText = Math.round((votes[1]/total)*100) + '%';
+      document.getElementById('poll-v3').innerText = Math.round((votes[2]/total)*100) + '%';
+      alert('Köszönjük a szavazatot!');
+    }
+
+    // ADATBETÖLTÉSEK
+    async function loadSchedule() {
+      const container = document.getElementById('schedule-list');
+      if (!container) return;
+      
+      let data = fallbackSchedule;
+
+      for (let file of ['schedule.json', 'Schedule.json']) {
+        try {
+          const res = await fetch(file);
+          if (res.ok) { data = await res.json(); break; }
+        } catch (e) {}
+      }
+
+      container.innerHTML = data.map(item => `
+        <div class="info-card ${item.active ? 'active-day' : ''}" style="margin-bottom:12px;">
+          <div class="card-header-text"><span>${item.day}</span><small style="color:var(--text-muted);">${item.time}</small></div>
+          <div style="font-weight:800; font-size:1.1rem;">${item.game}</div>
+          <div style="font-size:0.85rem; color:var(--text-sub);">${item.desc || item.description || ''}</div>
+        </div>
+      `).join('');
+    }
+
+    async function loadSetup() {
+      const container = document.getElementById('setup-list');
+      if (!container) return;
+
+      let data = fallbackSetup;
+
+      for (let file of ['setup.json', 'Setup.json']) {
+        try {
+          const res = await fetch(file);
+          if (res.ok) { data = await res.json(); break; }
+        } catch (e) {}
+      }
+
+      container.innerHTML = data.map(cat => `
+        <div class="info-card" style="margin-bottom:14px;">
+          <div class="card-header-text">${cat.category}</div>
+          ${cat.items.map(i => `
+            <div class="setup-row">
+              <span style="color:var(--text-muted);">${i.name}:</span>
+              <span style="font-weight:700;">${i.value || i.val}</span>
+            </div>
+          `).join('')}
+        </div>
+      `).join('');
+    }
+
+    // INICIALIZÁLÁS
+    window.addEventListener('DOMContentLoaded', () => {
+      checkTwitchData();
+      loadSchedule();
+      loadSetup();
+      updateCountdown();
+      updateVisitorCount();
+      setInterval(updateCountdown, 60000);
+    });
+  </script>
+
+</body>
+</html>
