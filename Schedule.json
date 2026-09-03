@@ -1,0 +1,51 @@
+[
+  {
+    "day": "Hétfő",
+    "time": "18:00 - 21:00",
+    "game": "Valorant",
+    "description": "Ranked grind & Közösségi meccsek",
+    "active": true
+  },
+  {
+    "day": "Kedd",
+    "time": "—",
+    "game": "PIHENŐNAP",
+    "description": "Nincs adás",
+    "active": false
+  },
+  {
+    "day": "Szerda",
+    "time": "18:00 - 21:00",
+    "game": "GTA V Roleplay",
+    "description": "Karakter sztori folytatása",
+    "active": true
+  },
+  {
+    "day": "Csütörtök",
+    "time": "—",
+    "game": "PIHENŐNAP",
+    "description": "Nincs adás",
+    "active": false
+  },
+  {
+    "day": "Péntek",
+    "time": "19:00 - Későig",
+    "game": "Variety Friday / Horror",
+    "description": "Közös nézői játékok & Horror éjszaka",
+    "active": true
+  },
+  {
+    "day": "Szombat",
+    "time": "17:00 - 22:00",
+    "game": "Counter-Strike 2",
+    "description": "Faceit lobby a nézőkkel",
+    "active": true
+  },
+  {
+    "day": "Vasárnap",
+    "time": "—",
+    "game": "PIHENŐNAP",
+    "description": "Feltöltődés a következő hétre",
+    "active": false
+  }
+]
