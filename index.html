@@ -140,35 +140,107 @@
     .card-left { display: flex; align-items: center; gap: 16px; }
     .card-left i { font-size: 1.5rem; color: var(--accent-purple); width: 25px; text-align: center; }
 
-    /* --- 2.4 DESKTOP (WEB) LAYOUT (KÉTOSZLOPOS NÉZET) --- */
+   /* ============================================================
+       [SECTION 2.4: DESKTOP (WEB) LAYOUT - PRÉMIUM GAMER DASHBOARD]
+       ============================================================ */
     @media (min-width: 900px) {
-      body { padding: 50px 20px; }
+      body {
+        padding: 60px 40px;
+        /* Cyberpunk rács háttér animált neon effekttel */
+        background-image: 
+          linear-gradient(to right, rgba(168, 85, 247, 0.05) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(168, 85, 247, 0.05) 1px, transparent 1px),
+          radial-gradient(circle at 10% 20%, rgba(168, 85, 247, 0.25) 0%, transparent 40%),
+          radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.2) 0%, transparent 40%);
+        background-size: 40px 40px, 40px 40px, 100% 100%, 100% 100%;
+      }
       
       .main-container {
         width: 100%;
-        max-width: 1100px;
+        max-width: 1200px;
         display: grid;
-        grid-template-columns: 320px 1fr;
-        gap: 30px;
+        grid-template-columns: 360px 1fr; /* Bal: Statikus Profil Kártya, Jobb: Linkek */
+        gap: 40px;
         align-items: start;
       }
 
+      /* PRÉMIUM BAL OLDALI PROFIL PANEL */
       header {
         flex-direction: column;
         text-align: center;
-        padding: 35px 20px;
+        padding: 40px 25px;
         position: sticky;
-        top: 30px;
+        top: 40px;
+        background: rgba(18, 10, 32, 0.85) !important;
+        border: 2px solid var(--border-purple) !important;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 20px var(--border-purple) !important;
+        border-radius: 24px;
       }
 
-      .brand { flex-direction: column; gap: 15px; }
-      .avatar { width: 110px; height: 110px; border-width: 3px; }
-      .theme-switcher { margin-top: 20px; }
+      .brand { 
+        flex-direction: column; 
+        gap: 20px; 
+      }
 
+      .avatar { 
+        width: 130px; 
+        height: 130px; 
+        border-width: 3px; 
+        box-shadow: 0 0 25px var(--accent-purple);
+      }
+
+      .brand-text h1 {
+        font-size: 1.8rem;
+        letter-spacing: 2px;
+      }
+
+      .brand-text p {
+        font-size: 0.95rem;
+        letter-spacing: 1px;
+      }
+
+      .theme-switcher { 
+        margin-top: 25px; 
+        padding: 10px 16px;
+      }
+
+      /* KÖZÖSSÉGI LINKEK GRID (2 OSZLOP) */
       .links-wrapper {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
+        gap: 20px;
+      }
+
+      .section-title {
+        font-size: 0.95rem;
+        letter-spacing: 3px;
+        margin-bottom: 10px;
+      }
+
+      .card-btn {
+        padding: 22px 28px;
+        border-radius: 18px;
+        font-size: 1.15rem;
+        border: 1px solid var(--border-purple) !important;
+        background: rgba(18, 10, 32, 0.7) !important;
+      }
+
+      /* KÁRTYA HOVER EFFEKT WEBEN */
+      .card-btn:hover { 
+        border-color: var(--glow-purple) !important; 
+        transform: translateY(-5px) scale(1.02) !important; 
+        box-shadow: 0 10px 30px rgba(168, 85, 247, 0.3) !important;
+        background: rgba(26, 14, 46, 0.9) !important;
+      }
+
+      /* WEBES LEBEGŐ ÉLŐ ADÁS PANEL A SAROKBAN */
+      .floating-live-btn {
+        bottom: 35px;
+        right: 35px;
+        padding: 16px 28px;
+        font-size: 0.95rem;
+        border-radius: 40px;
+        box-shadow: 0 10px 35px rgba(239, 68, 68, 0.6);
       }
     }
 
