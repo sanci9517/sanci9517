@@ -3,482 +3,1164 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>SANCI9517 | Official Hub</title>
-  
+
+  <meta name="description"
+        content="SANCI9517 hivatalos oldal – élő adások, menetrend, klipek, közösség és setup.">
+
   <meta property="og:title" content="SANCI9517 | Official Hub">
-  <meta property="og:description" content="Nézd az élő adásokat, csekkold a menetrendet, klipeket és a setupot!">
-  <meta property="og:image" content="https://static-cdn.jtvnw.net/jtv_user_pictures/4d8f1618-2e0a-4286-90e8-0a0e5b7fb602-profile_image-300x300.png">
+  <meta property="og:description"
+        content="Nézd az élő adásokat, csekkold a menetrendet, klipeket és a setupot!">
   <meta property="og:type" content="website">
 
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- GOOGLE FONTS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Rajdhani:wght@600;700&display=swap"
+        rel="stylesheet">
+
+  <!-- FONT AWESOME -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
   <style>
+
+    /* =========================================
+       ALAP
+    ========================================= */
+
     :root {
       --bg-dark: #07040d;
       --card-bg: #120a22;
       --card-bg-2: #1a0f30;
+
       --accent: #a855f7;
+      --accent-dark: #7e22ce;
+
       --border: rgba(168, 85, 247, 0.35);
+
       --text: #ffffff;
       --text-sub: #c084fc;
       --text-muted: #94a3b8;
+
       --live-red: #ef4444;
       --gold: #eab308;
+
+      --twitch: #9146ff;
+      --youtube: #ff0000;
+      --tiktok: #00f2fe;
+      --discord: #5865f2;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
 
     body {
       background-color: var(--bg-dark);
-      background-image: radial-gradient(circle at 50% 0%, rgba(168, 85, 247, 0.25) 0%, transparent 70%);
+
+      background-image:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(168, 85, 247, 0.28) 0%,
+          transparent 65%
+        );
+
       color: var(--text);
+
       font-family: 'Rajdhani', sans-serif;
+
       min-height: 100vh;
-      padding: 20px 15px 40px 15px;
+
+      padding: 20px 15px 40px;
+
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
-    /* NAVIGÁCIÓ */
+    button,
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button {
+      font-family: inherit;
+    }
+
+
+    /* =========================================
+       NAVIGÁCIÓ
+    ========================================= */
+
     .nav-tabs {
       display: flex;
+
       gap: 6px;
+
       margin-bottom: 20px;
+
       width: 100%;
       max-width: 650px;
+
       overflow-x: auto;
-      padding-bottom: 5px;
+
+      padding-bottom: 6px;
+
+      scrollbar-width: thin;
+      scrollbar-color: var(--accent) transparent;
     }
 
     .nav-btn {
       flex: 1;
+
+      min-width: 105px;
+
       white-space: nowrap;
+
       background: var(--card-bg);
+
       border: 1px solid var(--border);
+
       color: var(--text);
+
       padding: 10px 8px;
+
       border-radius: 12px;
+
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.7rem;
+
+      font-size: 0.68rem;
+
       font-weight: 700;
+
       cursor: pointer;
+
       display: flex;
       align-items: center;
       justify-content: center;
+
       gap: 6px;
-      transition: all 0.2s ease;
+
+      transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    .nav-btn:hover {
+      transform: translateY(-2px);
+
+      background: var(--card-bg-2);
+
+      box-shadow:
+        0 0 12px rgba(168, 85, 247, 0.25);
     }
 
     .nav-btn.active {
       background: var(--accent);
+
       color: #000;
+
       border-color: #fff;
-      box-shadow: 0 0 15px var(--accent);
+
+      box-shadow:
+        0 0 15px rgba(168, 85, 247, 0.75);
     }
 
-    .main-container { width: 100%; max-width: 600px; }
-    .tab-content { display: none; flex-direction: column; gap: 16px; }
-    .tab-content.active { display: flex; }
 
-    /* PROFILE CARD */
+    /* =========================================
+       MAIN
+    ========================================= */
+
+    .main-container {
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .tab-content {
+      display: none;
+
+      flex-direction: column;
+
+      gap: 16px;
+
+      animation: fadeIn 0.25s ease;
+    }
+
+    .tab-content.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(5px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+
+    /* =========================================
+       PROFILE
+    ========================================= */
+
     .profile-card {
       background: var(--card-bg);
+
       border: 1px solid var(--border);
+
       border-radius: 20px;
-      padding: 20px;
+
+      padding: 22px;
+
       text-align: center;
+
       display: flex;
       flex-direction: column;
       align-items: center;
+
       gap: 10px;
+
       position: relative;
+
+      overflow: hidden;
     }
 
-    .avatar-wrapper { position: relative; }
+    .profile-card::before {
+      content: "";
+
+      position: absolute;
+
+      top: -100px;
+      left: 50%;
+
+      width: 220px;
+      height: 220px;
+
+      transform: translateX(-50%);
+
+      background: rgba(168, 85, 247, 0.18);
+
+      filter: blur(50px);
+
+      pointer-events: none;
+    }
+
+    .avatar-wrapper {
+      position: relative;
+
+      z-index: 1;
+    }
+
     .avatar {
-      width: 90px;
-      height: 90px;
+      width: 95px;
+      height: 95px;
+
       border-radius: 50%;
+
       border: 3px solid var(--accent);
+
       object-fit: cover;
-      background-color: #120a22;
+
+      background: var(--card-bg-2);
+
+      box-shadow:
+        0 0 20px rgba(168, 85, 247, 0.45);
     }
 
     .live-badge {
       display: none;
+
       position: absolute;
-      bottom: -5px;
+
+      bottom: -6px;
       left: 50%;
+
       transform: translateX(-50%);
+
       background: var(--live-red);
+
       color: white;
+
       font-family: 'Orbitron', sans-serif;
+
       font-size: 0.65rem;
+
       font-weight: 800;
-      padding: 2px 8px;
+
+      padding: 3px 9px;
+
       border-radius: 10px;
+
       border: 2px solid var(--card-bg);
+
       animation: pulse 1.5s infinite;
     }
 
     @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-      70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+
+      0% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+      }
+
+      70% {
+        box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+      }
     }
 
-    .brand-title { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; }
-    .brand-sub { color: var(--text-sub); font-size: 0.85rem; font-weight: 700; }
+    .brand-title {
+      font-family: 'Orbitron', sans-serif;
+
+      font-size: 1.6rem;
+
+      font-weight: 800;
+    }
+
+    .brand-sub {
+      color: var(--text-sub);
+
+      font-size: 0.85rem;
+
+      font-weight: 700;
+    }
+
+
+    /* =========================================
+       COUNTDOWN
+    ========================================= */
 
     .countdown-box {
       background: rgba(168, 85, 247, 0.1);
+
       border: 1px dashed var(--accent);
+
       border-radius: 10px;
-      padding: 8px 14px;
+
+      padding: 9px 14px;
+
       font-size: 0.85rem;
+
       color: #fff;
+
       display: flex;
+
       align-items: center;
+
       gap: 8px;
+
+      margin-top: 4px;
     }
+
+
+    /* =========================================
+       STREAM GOMB
+    ========================================= */
 
     .stream-play-btn {
       width: 100%;
-      background: linear-gradient(135deg, var(--accent), #7e22ce);
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--accent),
+          var(--accent-dark)
+        );
+
       color: white;
+
       border: 1px solid #fff;
+
       padding: 14px;
+
       border-radius: 14px;
+
       font-family: 'Orbitron', sans-serif;
+
       font-size: 0.9rem;
+
       font-weight: 800;
+
       cursor: pointer;
+
       display: flex;
+
       align-items: center;
+
       justify-content: center;
+
       gap: 10px;
-      box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+
+      box-shadow:
+        0 0 15px rgba(168, 85, 247, 0.3);
+
+      transition: 0.2s ease;
     }
+
+    .stream-play-btn:hover {
+      transform: translateY(-2px);
+
+      box-shadow:
+        0 0 25px rgba(168, 85, 247, 0.6);
+    }
+
+    .stream-play-btn:active {
+      transform: scale(0.98);
+    }
+
+
+    /* =========================================
+       LINK GOMBOK
+    ========================================= */
 
     .card-btn {
       display: flex;
+
       align-items: center;
+
       justify-content: space-between;
+
       text-decoration: none;
+
       color: #fff;
+
       font-weight: 700;
+
       font-size: 1rem;
+
       padding: 14px 18px;
+
       border-radius: 14px;
+
       background: var(--card-bg-2);
+
       border: 1px solid var(--border);
-      transition: all 0.2s ease;
+
+      transition: 0.2s ease;
     }
 
-    .card-btn.twitch { border-left: 5px solid #9146FF; }
-    .card-btn.youtube { border-left: 5px solid #FF0000; }
-    .card-btn.tiktok  { border-left: 5px solid #00F2FE; }
-    .card-btn.x-twitter { border-left: 5px solid #FFFFFF; }
-    .card-btn.discord { border-left: 5px solid #5865F2; }
-    .card-btn.support { border-left: 5px solid #eab308; }
+    .card-btn:hover {
+      transform: translateY(-2px);
 
-    .card-left { display: flex; align-items: center; gap: 12px; }
-    .card-left i { font-size: 1.2rem; width: 24px; text-align: center; }
+      background: #21133c;
+
+      box-shadow:
+        0 5px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-btn.twitch {
+      border-left: 5px solid var(--twitch);
+    }
+
+    .card-btn.youtube {
+      border-left: 5px solid var(--youtube);
+    }
+
+    .card-btn.tiktok {
+      border-left: 5px solid var(--tiktok);
+    }
+
+    .card-btn.x-twitter {
+      border-left: 5px solid white;
+    }
+
+    .card-btn.discord {
+      border-left: 5px solid var(--discord);
+    }
+
+    .card-btn.support {
+      border-left: 5px solid var(--gold);
+    }
+
+    .card-left {
+      display: flex;
+
+      align-items: center;
+
+      gap: 12px;
+    }
+
+    .card-left i {
+      font-size: 1.2rem;
+
+      width: 24px;
+
+      text-align: center;
+    }
+
+
+    /* =========================================
+       INFO CARD
+    ========================================= */
 
     .info-card {
       background: var(--card-bg-2);
+
       border: 1px solid var(--border);
+
       border-radius: 14px;
+
       padding: 16px;
     }
 
     .info-card.active-day {
       border: 2px solid var(--accent);
-      box-shadow: 0 0 12px rgba(168, 85, 247, 0.2);
+
+      box-shadow:
+        0 0 12px rgba(168, 85, 247, 0.2);
     }
 
     .card-header-text {
       font-family: 'Orbitron', sans-serif;
+
       color: var(--accent);
+
       font-size: 1rem;
-      margin-bottom: 6px;
+
+      margin-bottom: 8px;
+
       display: flex;
+
       justify-content: space-between;
+
+      align-items: center;
     }
+
+    .card-header-text small {
+      color: var(--text-muted);
+
+      font-family: 'Rajdhani', sans-serif;
+
+      font-size: 0.8rem;
+    }
+
+
+    /* =========================================
+       SETUP
+    ========================================= */
 
     .setup-row {
       display: flex;
+
       justify-content: space-between;
-      padding: 6px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+      gap: 15px;
+
+      padding: 7px 0;
+
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+
       font-size: 0.9rem;
     }
-    .setup-row:last-child { border-bottom: none; }
+
+    .setup-row:last-child {
+      border-bottom: none;
+    }
+
+    .setup-row span:last-child {
+      text-align: right;
+    }
+
+
+    /* =========================================
+       STATOK
+    ========================================= */
 
     .stats-grid {
       display: grid;
+
       grid-template-columns: 1fr 1fr;
+
       gap: 10px;
     }
 
     .stat-box {
       background: var(--card-bg);
+
       border: 1px solid var(--border);
+
       border-radius: 12px;
+
       padding: 12px;
+
       text-align: center;
     }
 
     .stat-val {
       font-family: 'Orbitron', sans-serif;
+
       font-size: 1.1rem;
+
       color: var(--accent);
+
       font-weight: 800;
+
+      min-height: 22px;
     }
 
     .stat-lbl {
       font-size: 0.75rem;
+
       color: var(--text-muted);
+
+      margin-top: 3px;
     }
 
+
+    /* =========================================
+       SZAVAZÁS
+    ========================================= */
+
     .poll-opt {
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255,255,255,0.05);
+
       border: 1px solid var(--border);
+
       padding: 12px 16px;
+
       border-radius: 10px;
+
       margin-top: 10px;
+
       cursor: pointer;
+
       display: flex;
+
       justify-content: space-between;
+
       font-weight: 700;
-      transition: all 0.2s ease;
+
+      transition: 0.2s ease;
     }
-    .poll-opt:hover { 
-      background: var(--accent); 
-      color: #000; 
+
+    .poll-opt:hover {
+      background: var(--accent);
+
+      color: #000;
+
       transform: translateY(-2px);
     }
 
+    .poll-opt.voted {
+      background: rgba(168,85,247,0.25);
+
+      border-color: var(--accent);
+
+      cursor: default;
+    }
+
+
+    /* =========================================
+       KLIP
+    ========================================= */
+
     .clip-container {
       width: 100%;
+
       height: 280px;
+
       border-radius: 12px;
+
       overflow: hidden;
+
       border: 1px solid var(--border);
+
       background: #000;
+
       margin-top: 10px;
     }
-    .clip-container iframe { width: 100%; height: 100%; border: none; }
+
+    .clip-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+
+    /* =========================================
+       MODAL
+    ========================================= */
 
     .modal-overlay {
       position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.9);
+
+      inset: 0;
+
+      width: 100%;
+      height: 100%;
+
+      background: rgba(0,0,0,0.9);
+
       backdrop-filter: blur(8px);
+
       display: none;
+
       justify-content: center;
+
       align-items: center;
+
       z-index: 9999;
+
       padding: 15px;
     }
-    .modal-overlay.active { display: flex; }
+
+    .modal-overlay.active {
+      display: flex;
+    }
 
     .modal-content {
       background: #0a0518;
+
       border: 1px solid var(--border);
+
       border-radius: 16px;
+
       width: 100%;
-      max-width: 800px;
+
+      max-width: 850px;
+
       overflow: hidden;
+
+      box-shadow:
+        0 0 40px rgba(168,85,247,0.3);
     }
 
     .modal-header {
       padding: 10px 16px;
+
       background: var(--card-bg);
+
       display: flex;
+
       justify-content: space-between;
+
       align-items: center;
+
       border-bottom: 1px solid var(--border);
     }
 
-    .modal-tabs { display: flex; gap: 8px; }
+    .modal-tabs {
+      display: flex;
 
-    .m-tab-btn {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border);
-      color: white;
-      padding: 6px 14px;
-      border-radius: 8px;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.75rem;
-      font-weight: 700;
-      cursor: pointer;
+      gap: 8px;
     }
 
-    .m-tab-btn.active { background: var(--accent); color: #000; border-color: #fff; }
-    .close-btn { background: transparent; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
-    .modal-body { width: 100%; height: 55vh; max-height: 480px; background: #000; }
-    .modal-body iframe { width: 100%; height: 100%; border: none; }
+    .m-tab-btn {
+      background: rgba(255,255,255,0.05);
+
+      border: 1px solid var(--border);
+
+      color: white;
+
+      padding: 7px 14px;
+
+      border-radius: 8px;
+
+      font-family: 'Orbitron', sans-serif;
+
+      font-size: 0.72rem;
+
+      font-weight: 700;
+
+      cursor: pointer;
+
+      transition: 0.2s ease;
+    }
+
+    .m-tab-btn.active {
+      background: var(--accent);
+
+      color: #000;
+
+      border-color: #fff;
+    }
+
+    .close-btn {
+      background: transparent;
+
+      border: none;
+
+      color: white;
+
+      font-size: 1.6rem;
+
+      cursor: pointer;
+
+      padding: 2px 6px;
+    }
+
+    .close-btn:hover {
+      color: var(--accent);
+    }
+
+    .modal-body {
+      width: 100%;
+
+      height: 55vh;
+
+      max-height: 500px;
+
+      min-height: 300px;
+
+      background: #000;
+    }
+
+    .modal-body iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .modal-message {
+      height: 100%;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      text-align: center;
+
+      padding: 30px;
+
+      color: var(--text-muted);
+
+      font-size: 1rem;
+    }
+
+
+    /* =========================================
+       MOBIL
+    ========================================= */
+
+    @media (max-width: 600px) {
+
+      body {
+        padding: 12px 10px 30px;
+      }
+
+      .nav-tabs {
+        margin-bottom: 14px;
+      }
+
+      .nav-btn {
+        min-width: 95px;
+
+        font-size: 0.62rem;
+
+        padding: 9px 6px;
+      }
+
+      .profile-card {
+        padding: 18px;
+      }
+
+      .avatar {
+        width: 85px;
+        height: 85px;
+      }
+
+      .brand-title {
+        font-size: 1.35rem;
+      }
+
+      .setup-row {
+        flex-direction: column;
+
+        gap: 2px;
+      }
+
+      .setup-row span:last-child {
+        text-align: left;
+      }
+
+      .clip-container {
+        height: 220px;
+      }
+
+      .modal-header {
+        padding: 8px 10px;
+      }
+
+      .m-tab-btn {
+        padding: 6px 9px;
+
+        font-size: 0.62rem;
+      }
+    }
+
   </style>
 </head>
+
+
 <body>
 
+
+  <!-- =========================================
+       NAVIGÁCIÓ
+  ========================================= -->
+
   <div class="nav-tabs">
-    <button class="nav-btn active" onclick="switchTab('home', this)"><i class="fa-solid fa-house"></i> FŐOLDAL</button>
-    <button class="nav-btn" onclick="switchTab('news', this)"><i class="fa-solid fa-bullhorn"></i> HÍREK</button>
-    <button class="nav-btn" onclick="switchTab('poll', this)"><i class="fa-solid fa-check-to-slot"></i> SZAVAZÁS</button>
-    <button class="nav-btn" onclick="switchTab('clips', this)"><i class="fa-solid fa-film"></i> KLIPIEK</button>
-    <button class="nav-btn" onclick="switchTab('schedule', this)"><i class="fa-solid fa-calendar"></i> MENETREND</button>
-    <button class="nav-btn" onclick="switchTab('stats', this)"><i class="fa-solid fa-trophy"></i> STATOK</button>
-    <button class="nav-btn" onclick="switchTab('support', this)"><i class="fa-solid fa-heart"></i> TÁMOGATÁS</button>
-    <button class="nav-btn" onclick="switchTab('setup', this)"><i class="fa-solid fa-desktop"></i> SET UP</button>
+
+    <button class="nav-btn active"
+            onclick="switchTab('home', this)">
+      <i class="fa-solid fa-house"></i>
+      FŐOLDAL
+    </button>
+
+    <button class="nav-btn"
+            onclick="switchTab('news', this)">
+      <i class="fa-solid fa-bullhorn"></i>
+      HÍREK
+    </button>
+
+    <button class="nav-btn"
+            onclick="switchTab('poll', this)">
+      <i class="fa-solid fa-check-to-slot"></i>
+      SZAVAZÁS
+    </button>
+
+    <button class="nav-btn"
+            onclick="switchTab('clips', this)">
+      <i class="fa-solid fa-film"></i>
+      KLIPPEK
+    </button>
+
+    <button class="nav-btn"
+            onclick="switchTab('schedule', this)">
+      <i class="fa-solid fa-calendar"></i>
+      MENETREND
+    </button>
+
+    <button class="nav-btn"
+            onclick="switchTab('stats', this)">
+      <i class="fa-solid fa-trophy"></i>
+      STATOK
+    </button>
+
+    <button class="nav-btn"
+            onclick="switchTab('support', this)">
+      <i class="fa-solid fa-heart"></i>
+      TÁMOGATÁS
+    </button>
+
+    <button class="nav-btn"
+            onclick="switchTab('setup', this)">
+      <i class="fa-solid fa-desktop"></i>
+      SETUP
+    </button>
+
   </div>
+
+
+  <!-- =========================================
+       MAIN
+  ========================================= -->
 
   <div class="main-container">
 
-    <div id="tab-home" class="tab-content active">
+
+    <!-- =====================================
+         FŐOLDAL
+    ===================================== -->
+
+    <div id="tab-home"
+         class="tab-content active">
+
       <div class="profile-card">
+
         <div class="avatar-wrapper">
-          <img id="avatar-img" src="https://static-cdn.jtvnw.net/user-default-pictures-uv/75305db0-3a92-43d8-1565-22b87e142200-profile_image-300x300.png" class="avatar" alt="SANCI9517">
-          <div id="live-badge" class="live-badge">LIVE</div>
-        </div>
-        <div>
-          <div class="brand-title">SANCI9517</div>
-          <div class="brand-sub" id="status-text">STREAMER & TARTALOMKÉSZÍTŐ</div>
+
+          <img
+            id="avatar-img"
+            src="https://static-cdn.jtvnw.net/user-default-pictures-uv/75305db0-3a92-43d8-1565-22b87e142200-profile_image-300x300.png"
+            class="avatar"
+            alt="SANCI9517">
+
+          <div id="live-badge"
+               class="live-badge">
+            LIVE
+          </div>
+
         </div>
 
-        <div class="countdown-box" id="countdown-container">
-          <i class="fa-regular fa-clock" style="color:var(--accent);"></i>
-          <span id="countdown-text">Következő stream ~ ma 18:00-kor</span>
+        <div>
+
+          <div class="brand-title">
+            SANCI9517
+          </div>
+
+          <div class="brand-sub"
+               id="status-text">
+            STREAMER & TARTALOMKÉSZÍTŐ
+          </div>
+
         </div>
+
+        <div class="countdown-box">
+
+          <i class="fa-regular fa-clock"
+             style="color:var(--accent);">
+          </i>
+
+          <span id="countdown-text">
+            Következő stream keresése...
+          </span>
+
+        </div>
+
       </div>
 
-      <button class="stream-play-btn" onclick="openStreamModal()">
-        <i class="fa-solid fa-play"></i> ÉLŐ ADÁS MEGTEKINTÉSE
+
+      <button class="stream-play-btn"
+              onclick="openStreamModal()">
+
+        <i class="fa-solid fa-play"></i>
+
+        ÉLŐ ADÁS MEGTEKINTÉSE
+
       </button>
 
-      <a href="https://m.twitch.tv/sanci9517" target="_blank" class="card-btn twitch">
-        <div class="card-left"><i class="fa-brands fa-twitch" style="color:#a970ff;"></i><span id="twitch-btn-text">Twitch Csatorna</span></div>
-        <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; color:var(--text-muted);"></i>
-      </a>
 
-      <a href="https://youtube.com/@sanci9517vod?si=0OFY7fLlho9VGUqW" target="_blank" class="card-btn youtube">
-        <div class="card-left"><i class="fa-brands fa-youtube" style="color:#ff4d4d;"></i><span>YouTube VODs</span></div>
-        <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; color:var(--text-muted);"></i>
-      </a>
+      <!-- TWITCH -->
 
-      <a href="https://www.tiktok.com/@sanci9517twitch" target="_blank" class="card-btn tiktok">
-        <div class="card-left"><i class="fa-brands fa-tiktok" style="color:#00f2fe;"></i><span>TikTok</span></div>
-        <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; color:var(--text-muted);"></i>
-      </a>
+      <a href="https://m.twitch.tv/sanci9517"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="card-btn twitch">
 
-      <a href="https://x.com/Sanci9517" target="_blank" class="card-btn x-twitter">
-        <div class="card-left"><i class="fa-brands fa-x-twitter" style="color:#fff;"></i><span>X / Twitter</span></div>
-        <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; color:var(--text-muted);"></i>
-      </a>
+        <div class="card-left">
 
-      <a href="https://discord.gg" target="_blank" class="card-btn discord">
-        <div class="card-left"><i class="fa-brands fa-discord" style="color:#5865f2;"></i><span>Discord Szerver</span></div>
-        <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; color:var(--text-muted);"></i>
-      </a>
-    </div>
+          <i class="fa-brands fa-twitch"
+             style="color:#a970ff;">
+          </i>
 
-    <div id="tab-news" class="tab-content">
-      <div class="info-card">
-        <div class="card-header-text"><span><i class="fa-solid fa-bullhorn"></i> BEJELENTÉS</span><small>Friss</small></div>
-        <div style="font-weight:700; margin-bottom:4px;">Új menetrend és közösségi napok!</div>
-        <div style="font-size:0.85rem; color:var(--text-sub);">Ettől a héttől kezdve a pénteki adásokban veletek játszunk! Csatlakozzatok a Discordhoz a lobby szobákért.</div>
-      </div>
-    </div>
+          <span>
+            Twitch Csatorna
+          </span>
 
-    <div id="tab-poll" class="tab-content">
-      <div class="info-card">
-        <div class="card-header-text"><span><i class="fa-solid fa-poll"></i> KÖZÖSSÉGI SZAVAZÁS</span></div>
-        <div style="font-weight:700; font-size:1.1rem; margin-bottom: 6px;">Mit játszunk a következő streamen?</div>
-        <div style="font-size:0.85rem; color:var(--text-sub); margin-bottom:12px;">Válaszd ki a kedvenc játékodat:</div>
-        
-        <div class="poll-opt" onclick="addVote(0)"><span>A) Fortnite</span><span id="poll-v1">0%</span></div>
-        <div class="poll-opt" onclick="addVote(1)"><span>B) Játék 2</span><span id="poll-v2">0%</span></div>
-        <div class="poll-opt" onclick="addVote(2)"><span>C) Játék 3</span><span id="poll-v3">0%</span></div>
-      </div>
-    </div>
-
-    <div id="tab-clips" class="tab-content">
-      <div class="info-card">
-        <div class="card-header-text"><span><i class="fa-solid fa-fire"></i> LEGJOBB PILLANATOK</span></div>
-        <div style="font-size:0.85rem; color:var(--text-sub); margin-bottom:10px;">Nézd meg a legújabb kiemelt klipet közvetlenül itt!</div>
-        <div class="clip-container">
-          <iframe src="https://www.youtube.com/embed/videoseries?list=PLx0sYbCqOb8TBPRdmBLs5Lnc60hacGZXU" allowfullscreen></iframe>
         </div>
-      </div>
-    </div>
 
-    <div id="tab-schedule" class="tab-content">
-      <div class="info-card active-day" style="margin-bottom:12px;">
-        <div class="card-header-text"><span>Hétfő</span><small style="color:var(--text-muted);">18:00 - 21:00</small></div>
-        <div style="font-weight:800; font-size:1.1rem;">Fortnite</div>
-        <div style="font-size:0.85rem; color:var(--text-sub);">Ranked & Közösségi meccsek</div>
-      </div>
-      <div class="info-card" style="margin-bottom:12px;">
-        <div class="card-header-text"><span>Kedd</span><small style="color:var(--text-muted);">—</small></div>
-        <div style="font-weight:800; font-size:1.1rem;">PIHENŐNAP</div>
-        <div style="font-size:0.85rem; color:var(--text-sub);">Nincs adás</div>
-      </div>
-      <div class="info-card active-day" style="margin-bottom:12px;">
-        <div class="card-header-text"><span>Szerda</span><small style="color:var(--text-muted);">18:00 - 21:00</small></div>
-        <div style="font-weight:800; font-size:1.1rem;">GTA V Roleplay</div>
-        <div style="font-size:0.85rem; color:var(--text-sub);">Karakter sztori</div>
-      </div>
-      <div class="info-card" style="margin-bottom:12px;">
-        <div class="card-header-text"><span>Csütörtök</span><small style="color:var(--text-muted);">—</small></div>
-        <div style="font-weight:800; font-size:1.1rem;">PIHENŐNAP</div>
-        <div style="font-size:0.85rem; color:var(--text-sub);">Nincs adás</div>
-      </div>
-      <div class="info-card active-day" style="margin-bottom:12px;">
-        <div class="card-header-text"><span>Péntek</span><small style="color:var(--text-muted);">19:00 - Későig</small></div>
-        <div style="font-weight:800; font-size:1.1rem;">Variety Friday</div>
-        <div style="font-size:0.85rem; color:var(--text-sub);">Közös játékok</div>
-      </div>
-    </div>
+        <i class="fa-solid fa-arrow-up-right-from-square"
+           style="font-size:0.8rem;color:var(--text-muted);">
+        </i>
 
-    <div id="tab-stats" class="tab-content">
-      <div class="info-card">
-        <div class="card-header-text">
-          <span><i class="fa-solid fa-chart-line"></i> TWITCH STATISZTIKÁK</span>
+      </a>
+
+
+      <!-- YOUTUBE -->
+
+      <a href="https://youtube.com/@sanci9517vod?si=0OFY7fLlho9VGUqW"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="card-btn youtube">
+
+        <div class="card-left">
+
+          <i class="fa-brands fa-youtube"
+             style="color:#ff4d4d;">
+          </i>
+
+          <span>
+            YouTube VODs
+          </span>
+
         </div>
-        <div class="stats-grid" style="margin-top:10px;">
-          <div class="stat-box">
-            <div class="stat-val" id="stat-followers">Offline</div>
-            <div class="stat-lbl">Twitch Követők</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-val" id="stat-status">OFFLINE</div>
-            <div class="stat-lbl">Stream Státusz</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-val" id="stat-viewers">0</div>
-            <div class="stat-lbl">Élő Nézők</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-val" id="stat-game" style="font-size: 0.85rem;">-</div>
-            <div class="stat-lbl">Kategória / Játék</div>
-          </div>
+
+        <i class="fa-solid fa-arrow-up-right-from-square"
+           style="font-size:0.8rem;color:var(--text-muted);">
+        </i>
+
+      </a>
+
+
+      <!-- TIKTOK -->
+
+      <a href="https://www.tiktok.com/@sanci9517twitch"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="card-btn tiktok">
+
+        <div class="card-left">
+
+          <i class="fa-brands fa-tiktok"
+             style="color:#00f2fe;">
+          </i>
+
+          <span>
+            TikTok
+          </span>
+
         </div>
-      </div>
-    </div>
 
-    <div id="tab-support" class="tab-content">
-      <div class="info-card">
-        <div class="card-header-text"><span><i class="fa-solid fa-hand-holding-dollar"></i> TÁMOGATÁS</span></div>
-        <div style="font-size:0.85rem; color:var(--text-sub); margin-bottom:12px;">Ha szeretnéd közvetlenül segíteni a stream fejlődését:</div>
-        
-        <a href="https://streamlabs.com/sanci9517/tip" target="_blank" class="card-btn support" style="margin-bottom:10px;">
-          <div class="card-left"><i class="fa-solid fa-donate" style="color:var(--gold);"></i><span>Streamlabs Donáció / Tip</span></div>
-          <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; color:var(--text-muted);"></i>
-        </a>
+        <i class="fa-solid fa-arrow-up-right-from-square"
+           style="font-size:0.8rem;color:var(--text-muted);">
+        </i>
 
-        <a href="
-      
- 
+      </a>
+
+
+      <!-- X -->
+
+      <a href="https://x.com/Sanci9517"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="card-btn x-twitter">
+
+        <div class="card-left">
+
+          <i class="fa-brands fa-x-twitter"
+             style="color:#fff;">
+          </i>
+
+          <span>
+            X / Twitter
+          </span>
+
+        </div>
+
+        <i class="fa-solid fa-arrow-up-right-from-square"
+           style="font-size:0.8rem;color:var(--text-muted);">
+        </i>
+
+      </a>
+
+
+      <!-- DISCORD -->
+
+      <a href="https://discord.gg"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="card-btn discord">
+
+        <div class="card-left">
+
+          <i class="fa-brands fa-discord"
+             style="color:#5865f2;">
+          </i>
+
+          <span>
+            Discord Szerver
+          </span>
+
+        </div>
+
+        <i class="fa-solid fa-arrow-up-right-from-square"
+           style="font-size:0.8rem;colo
