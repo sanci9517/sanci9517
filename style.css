@@ -1,62 +1,67 @@
-/* =========================================================
-   SANCI9517 WEBSITE
-   KÖZÖS STÍLUS - MINDEN OLDAL EZT HASZNÁLJA
-   ========================================================= */
+/* =====================================================
+   SANCI9517 - GAMING WEBSITE
+   ===================================================== */
+
+
+/* =====================================================
+   ALAPOK
+   ===================================================== */
 
 :root {
-    --bg: #07060c;
-    --bg2: #0d0a16;
-    --card: #12101c;
-    --card2: #181421;
+    --bg: #08070d;
+    --bg-light: #100d18;
+    --card: #14101f;
+    --card-hover: #1b1528;
 
-    --purple: #9147ff;
-    --purple2: #b77aff;
+    --purple: #8b5cf6;
+    --purple2: #a78bfa;
+    --purple-dark: #6d28d9;
 
-    --white: #ffffff;
-    --text: #e9e5ef;
-    --muted: #9c96a8;
+    --text: #f5f3ff;
+    --muted: #aaa4b8;
 
-    --border: rgba(255,255,255,.09);
+    --border: rgba(167, 139, 250, 0.16);
+
+    --shadow:
+        0 15px 45px rgba(0, 0, 0, 0.45);
 
     --radius: 18px;
-    --max: 1180px;
 }
 
+
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
+
 
 html {
     scroll-behavior: smooth;
 }
 
+
 body {
-    min-height: 100vh;
+    background:
+        radial-gradient(
+            circle at top,
+            rgba(124, 58, 237, 0.12),
+            transparent 35%
+        ),
+        var(--bg);
+
+    color: var(--text);
 
     font-family:
         Arial,
         Helvetica,
         sans-serif;
 
-    color: var(--text);
-
-    background:
-        radial-gradient(
-            circle at 15% 0%,
-            rgba(145,71,255,.20),
-            transparent 32%
-        ),
-        radial-gradient(
-            circle at 90% 15%,
-            rgba(145,71,255,.12),
-            transparent 30%
-        ),
-        var(--bg);
-
     line-height: 1.6;
+
+    min-height: 100vh;
 }
+
 
 a {
     color: inherit;
@@ -64,16 +69,30 @@ a {
 }
 
 
-/* =========================================================
-   NAVIGATION
-   ========================================================= */
+img {
+    max-width: 100%;
+    display: block;
+}
+
+
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+
+/* =====================================================
+   NAVIGÁCIÓ
+   ===================================================== */
 
 header {
     position: sticky;
     top: 0;
     z-index: 1000;
 
-    background: rgba(7,6,12,.90);
+    background:
+        rgba(8, 7, 13, 0.88);
 
     backdrop-filter: blur(18px);
 
@@ -81,658 +100,1026 @@ header {
         1px solid var(--border);
 }
 
-.nav {
-    max-width: var(--max);
-    min-height: 72px;
 
-    margin: auto;
-    padding: 12px 20px;
+.nav {
+    max-width: 1250px;
+
+    margin: 0 auto;
+
+    padding:
+        16px 24px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
 
-    gap: 20px;
+    gap: 30px;
 }
 
+
 .logo {
-    font-size: 22px;
+    font-size: 24px;
+
     font-weight: 900;
+
     letter-spacing: 1px;
+
+    white-space: nowrap;
+
+    transition:
+        transform 0.25s ease;
 }
+
+
+.logo:hover {
+    transform: scale(1.05);
+}
+
 
 .logo span {
     color: var(--purple2);
 }
 
+
 .nav-links {
     display: flex;
-    flex-wrap: wrap;
+
+    align-items: center;
+
     justify-content: flex-end;
 
-    gap: 5px;
+    gap: 6px;
+
+    flex-wrap: wrap;
 }
 
+
 .nav-links a {
-    padding: 9px 12px;
+    padding:
+        9px 12px;
 
     color: var(--muted);
 
-    border-radius: 10px;
+    font-size: 14px;
 
-    font-size: 13px;
     font-weight: 700;
 
-    transition: .2s;
+    border-radius: 10px;
+
+    transition:
+        color 0.25s ease,
+        background 0.25s ease,
+        transform 0.25s ease;
 }
 
-.nav-links a:hover,
+
+.nav-links a:hover {
+    color: white;
+
+    background:
+        rgba(139, 92, 246, 0.12);
+
+    transform: translateY(-1px);
+}
+
+
 .nav-links a.active {
     color: white;
 
     background:
-        rgba(145,71,255,.14);
+        linear-gradient(
+            135deg,
+            rgba(139, 92, 246, 0.28),
+            rgba(109, 40, 217, 0.16)
+        );
+
+    box-shadow:
+        inset 0 0 0 1px
+        rgba(167, 139, 250, 0.12);
 }
 
 
-/* =========================================================
-   MAIN
-   ========================================================= */
+
+/* =====================================================
+   FŐ TARTALOM
+   ===================================================== */
 
 main {
-    max-width: var(--max);
+    width: 100%;
 
-    margin: auto;
+    max-width: 1250px;
+
+    margin: 0 auto;
 
     padding:
-        50px 20px
-        100px;
+        70px 24px 100px;
 }
+
+
+section {
+    width: 100%;
+}
+
+
+
+/* =====================================================
+   OLDAL FEJLÉC
+   ===================================================== */
 
 .page-header {
-    margin-bottom: 35px;
+    text-align: center;
+
+    max-width: 850px;
+
+    margin:
+        0 auto 55px;
 }
+
 
 .page-header small {
-    color: var(--purple2);
+    display: block;
 
-    font-weight: 800;
-    letter-spacing: 2px;
-}
-
-.page-header h1 {
-    margin-top: 6px;
-
-    color: white;
-
-    font-size: clamp(38px,6vw,64px);
-
-    line-height: 1;
-}
-
-.page-header p {
-    max-width: 650px;
-
-    margin-top: 15px;
-
-    color: var(--muted);
-}
-
-
-/* =========================================================
-   HERO
-   ========================================================= */
-
-.hero {
-    min-height: 620px;
-
-    display: grid;
-
-    grid-template-columns:
-        1fr 330px;
-
-    align-items: center;
-
-    gap: 60px;
-}
-
-.badge {
-    display: inline-block;
-
-    padding: 7px 13px;
-
-    margin-bottom: 20px;
-
-    border:
-        1px solid
-        rgba(145,71,255,.35);
-
-    border-radius: 999px;
-
-    background:
-        rgba(145,71,255,.10);
+    margin-bottom: 10px;
 
     color: var(--purple2);
 
     font-size: 12px;
+
+    font-weight: 800;
+
+    letter-spacing: 3px;
+}
+
+
+.page-header h1 {
+    font-size:
+        clamp(42px, 7vw, 76px);
+
+    line-height: 1;
+
+    margin-bottom: 20px;
+
+    font-weight: 900;
+
+    letter-spacing: -2px;
+}
+
+
+.page-header h2 {
+    font-size:
+        clamp(28px, 4vw, 42px);
+
+    margin-bottom: 12px;
+}
+
+
+.page-header p {
+    color: var(--muted);
+
+    font-size: 17px;
+}
+
+
+
+/* =====================================================
+   HERO
+   ===================================================== */
+
+.hero {
+    min-height: 580px;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(280px, 430px)
+        1fr;
+
+    align-items: center;
+
+    gap: 80px;
+}
+
+
+.hero h1 {
+    font-size:
+        clamp(55px, 9vw, 100px);
+
+    line-height: 0.95;
+
+    letter-spacing: -5px;
+
+    margin:
+        10px 0 20px;
+
     font-weight: 900;
 }
 
-.hero h1 {
-    color: white;
-
-    font-size:
-        clamp(55px,9vw,100px);
-
-    line-height: .9;
-
-    letter-spacing: -5px;
-}
 
 .hero h1 span {
     color: var(--purple2);
 }
 
-.hero p {
-    max-width: 650px;
 
-    margin-top: 25px;
+.hero > div:last-child > p {
+    max-width: 650px;
 
     color: var(--muted);
 
     font-size: 18px;
-}
 
-.hero-buttons {
-    display: flex;
-    flex-wrap: wrap;
-
-    gap: 12px;
-
-    margin-top: 30px;
+    margin-bottom: 12px;
 }
 
 
-/* =========================================================
-   BUTTONS
-   ========================================================= */
 
-.btn {
-    display: inline-flex;
-
-    align-items: center;
-    justify-content: center;
-
-    min-height: 46px;
-
-    padding:
-        0 20px;
-
-    border:
-        1px solid var(--border);
-
-    border-radius: 12px;
-
-    font-size: 14px;
-    font-weight: 800;
-
-    transition: .2s;
-}
-
-.btn:hover {
-    transform:
-        translateY(-2px);
-}
-
-.btn-primary {
-    color: white;
-
-    background:
-        var(--purple);
-
-    border-color:
-        var(--purple);
-}
-
-.btn-primary:hover {
-    background:
-        var(--purple2);
-}
-
-.btn-secondary {
-    background:
-        rgba(255,255,255,.05);
-}
-
-
-/* =========================================================
-   PROFILE
-   ========================================================= */
+/* =====================================================
+   PROFILKÉP
+   ===================================================== */
 
 .profile {
+    position: relative;
+
     display: flex;
+
     justify-content: center;
+
+    align-items: center;
 }
 
+
+.profile::before {
+    content: "";
+
+    position: absolute;
+
+    width: 100%;
+
+    max-width: 390px;
+
+    aspect-ratio: 1;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(139, 92, 246, 0.35),
+            transparent 68%
+        );
+
+    filter: blur(20px);
+
+    animation:
+        pulse 4s ease-in-out infinite;
+}
+
+
 .profile img {
-    width: 280px;
-    height: 280px;
+    position: relative;
+
+    width: 320px;
+
+    height: 320px;
 
     object-fit: cover;
 
     border-radius: 50%;
 
     border:
-        5px solid
-        rgba(145,71,255,.55);
+        3px solid
+        rgba(167, 139, 250, 0.7);
 
     box-shadow:
+        0 0 0 10px
+        rgba(139, 92, 246, 0.05),
+
         0 0 70px
-        rgba(145,71,255,.28);
+        rgba(124, 58, 237, 0.4);
+
+    transition:
+        transform 0.4s ease,
+        box-shadow 0.4s ease;
 }
 
 
-/* =========================================================
-   CARDS
-   ========================================================= */
+.profile img:hover {
+    transform:
+        scale(1.04)
+        rotate(1deg);
+
+    box-shadow:
+        0 0 0 12px
+        rgba(139, 92, 246, 0.08),
+
+        0 0 100px
+        rgba(124, 58, 237, 0.55);
+}
+
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(0.95);
+
+        opacity: 0.65;
+    }
+
+    50% {
+        transform: scale(1.05);
+
+        opacity: 1;
+    }
+}
+
+
+
+/* =====================================================
+   GOMBOK
+   ===================================================== */
+
+.btn {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    padding:
+        13px 22px;
+
+    margin:
+        5px 7px 5px 0;
+
+    border-radius: 12px;
+
+    font-weight: 800;
+
+    font-size: 14px;
+
+    border: 1px solid transparent;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease;
+}
+
+
+.btn:hover {
+    transform:
+        translateY(-3px);
+}
+
+
+.btn-primary {
+    background:
+        linear-gradient(
+            135deg,
+            var(--purple),
+            var(--purple-dark)
+        );
+
+    color: white;
+
+    box-shadow:
+        0 10px 30px
+        rgba(109, 40, 217, 0.25);
+}
+
+
+.btn-primary:hover {
+    box-shadow:
+        0 15px 40px
+        rgba(109, 40, 217, 0.4);
+}
+
+
+.btn-secondary {
+    background:
+        rgba(255, 255, 255, 0.04);
+
+    border-color:
+        var(--border);
+
+    color: white;
+}
+
+
+.btn-secondary:hover {
+    background:
+        rgba(139, 92, 246, 0.12);
+}
+
+
+
+/* =====================================================
+   GRID
+   ===================================================== */
 
 .grid {
     display: grid;
 
     grid-template-columns:
-        repeat(3,1fr);
+        repeat(3, minmax(0, 1fr));
 
-    gap: 18px;
+    gap: 22px;
 }
 
+
+
+/* =====================================================
+   KÁRTYÁK
+   ===================================================== */
+
 .card {
-    padding: 25px;
+    position: relative;
+
+    padding: 28px;
 
     background:
         linear-gradient(
             145deg,
-            rgba(255,255,255,.055),
-            rgba(255,255,255,.025)
+            rgba(20, 16, 31, 0.95),
+            rgba(13, 10, 20, 0.95)
         );
 
     border:
         1px solid var(--border);
 
-    border-radius:
-        var(--radius);
+    border-radius: var(--radius);
 
-    transition: .25s;
+    box-shadow: var(--shadow);
+
+    overflow: hidden;
+
+    transition:
+        transform 0.3s ease,
+        border-color 0.3s ease,
+        background 0.3s ease;
 }
+
+
+.card::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            var(--purple),
+            transparent
+        );
+
+    opacity: 0.5;
+}
+
 
 .card:hover {
     transform:
-        translateY(-4px);
+        translateY(-7px);
 
     border-color:
-        rgba(145,71,255,.30);
+        rgba(167, 139, 250, 0.38);
+
+    background:
+        var(--card-hover);
 }
+
 
 .card h2,
 .card h3 {
-    color: white;
-
-    margin-bottom: 8px;
+    margin-bottom: 12px;
 }
+
 
 .card p {
     color: var(--muted);
 }
 
 
-/* =========================================================
+
+/* =====================================================
    SCHEDULE
-   ========================================================= */
+   ===================================================== */
 
 .schedule {
     display: grid;
 
-    gap: 12px;
-}
-
-.schedule-row {
-    display: grid;
-
     grid-template-columns:
-        140px 1fr 130px;
+        repeat(4, minmax(0, 1fr));
 
-    align-items: center;
-
-    padding: 18px 20px;
-
-    background:
-        rgba(255,255,255,.045);
-
-    border:
-        1px solid var(--border);
-
-    border-radius: 14px;
+    gap: 18px;
 }
 
-.schedule-day {
-    color: white;
-    font-weight: 900;
+
+.schedule .card {
+    text-align: center;
 }
 
-.schedule-game {
+
+.schedule h3 {
     color: var(--purple2);
-    font-weight: 800;
-}
 
-.schedule-time {
-    color: var(--muted);
-    text-align: right;
+    margin-bottom: 8px;
 }
 
 
-/* =========================================================
-   STATS
-   ========================================================= */
+
+/* =====================================================
+   STATISZTIKÁK
+   ===================================================== */
 
 .stats {
     display: grid;
 
     grid-template-columns:
-        repeat(3,1fr);
+        repeat(4, minmax(0, 1fr));
+
+    gap: 20px;
+}
+
+
+.stats .card {
+    text-align: center;
+}
+
+
+.stat-number {
+    font-size:
+        clamp(32px, 5vw, 55px);
+
+    line-height: 1;
+
+    font-weight: 900;
+
+    color: var(--purple2);
+
+    margin-bottom: 10px;
+}
+
+
+.stat-label {
+    color: var(--muted);
+
+    font-weight: 700;
+}
+
+
+
+/* =====================================================
+   SOCIAL
+   ===================================================== */
+
+.social-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
 
     gap: 18px;
 }
 
-.stat {
-    padding: 30px;
 
-    text-align: center;
+.social {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 22px 25px;
 
     background:
-        rgba(255,255,255,.045);
+        rgba(20, 16, 31, 0.9);
 
     border:
         1px solid var(--border);
 
-    border-radius:
-        var(--radius);
+    border-radius: 15px;
+
+    transition:
+        transform 0.25s ease,
+        background 0.25s ease,
+        border-color 0.25s ease;
 }
 
-.stat-value {
-    color: var(--purple2);
 
-    font-size: 38px;
+.social:hover {
+    transform:
+        translateY(-4px);
 
-    font-weight: 900;
+    background:
+        rgba(139, 92, 246, 0.10);
+
+    border-color:
+        rgba(167, 139, 250, 0.35);
 }
 
-.stat-label {
+
+.social strong {
+    font-size: 17px;
+}
+
+
+.social span {
     color: var(--muted);
 
     font-size: 14px;
 }
 
 
-/* =========================================================
-   SOCIALS
-   ========================================================= */
 
-.social-grid {
-    display: grid;
-
-    grid-template-columns:
-        repeat(4,1fr);
-
-    gap: 15px;
-}
-
-.social {
-    padding: 22px;
-
-    text-align: center;
-
-    background:
-        rgba(255,255,255,.045);
-
-    border:
-        1px solid var(--border);
-
-    border-radius: 14px;
-
-    font-weight: 800;
-
-    transition: .2s;
-}
-
-.social:hover {
-    transform:
-        translateY(-3px);
-
-    background:
-        rgba(145,71,255,.12);
-
-    border-color:
-        rgba(145,71,255,.35);
-}
-
-
-/* =========================================================
-   POLL
-   ========================================================= */
+/* =====================================================
+   SZAVAZÁS
+   ===================================================== */
 
 .poll {
-    display: grid;
+    max-width: 750px;
 
-    gap: 12px;
+    margin: 0 auto;
 }
+
 
 .poll-button {
     width: 100%;
 
-    padding: 18px;
+    display: block;
 
-    color: white;
+    padding: 17px 20px;
+
+    margin-bottom: 12px;
 
     background:
-        rgba(255,255,255,.045);
+        rgba(255, 255, 255, 0.04);
 
     border:
         1px solid var(--border);
 
     border-radius: 13px;
 
-    cursor: pointer;
+    color: white;
 
     text-align: left;
 
-    font-size: 15px;
-    font-weight: 800;
+    font-size: 16px;
 
-    transition: .2s;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.25s ease,
+        border-color 0.25s ease,
+        transform 0.25s ease;
 }
+
 
 .poll-button:hover {
     background:
-        rgba(145,71,255,.12);
+        rgba(139, 92, 246, 0.12);
 
     border-color:
-        var(--purple);
+        rgba(167, 139, 250, 0.35);
+
+    transform:
+        translateX(4px);
 }
+
 
 .result {
     margin-top: 25px;
 }
 
+
 .result-row {
-    margin-bottom: 18px;
+    margin-bottom: 20px;
 }
+
 
 .result-top {
     display: flex;
 
     justify-content: space-between;
 
-    margin-bottom: 6px;
+    margin-bottom: 7px;
 
-    font-weight: 800;
+    font-size: 14px;
+
+    font-weight: 700;
 }
+
 
 .bar {
-    height: 9px;
-
-    overflow: hidden;
-
-    border-radius: 20px;
+    height: 10px;
 
     background:
-        rgba(255,255,255,.07);
+        rgba(255, 255, 255, 0.07);
+
+    border-radius: 999px;
+
+    overflow: hidden;
 }
+
 
 .bar-fill {
     height: 100%;
 
-    border-radius: inherit;
-
     background:
         linear-gradient(
             90deg,
-            var(--purple),
+            var(--purple-dark),
             var(--purple2)
         );
+
+    border-radius: inherit;
+
+    transition:
+        width 0.6s ease;
 }
 
 
-/* =========================================================
-   SUPPORT
-   ========================================================= */
+
+/* =====================================================
+   TÁMOGATÁS
+   ===================================================== */
 
 .support-box {
-    padding: 50px 30px;
+    position: relative;
+
+    padding: 40px;
 
     text-align: center;
 
     background:
         radial-gradient(
-            circle at center,
-            rgba(145,71,255,.18),
-            rgba(255,255,255,.025)
-        );
+            circle at top,
+            rgba(139, 92, 246, 0.15),
+            transparent 60%
+        ),
+
+        var(--card);
 
     border:
-        1px solid
-        rgba(145,71,255,.25);
+        1px solid var(--border);
 
-    border-radius:
-        24px;
+    border-radius: 22px;
+
+    box-shadow: var(--shadow);
+
+    overflow: hidden;
 }
 
-.support-box p {
-    max-width: 650px;
+
+.support-box h2 {
+    font-size:
+        clamp(28px, 4vw, 42px);
 
     margin:
-        12px auto 25px;
-
-    color: var(--muted);
+        10px 0 15px;
 }
 
 
-/* =========================================================
+.support-box p {
+    max-width: 700px;
+
+    margin:
+        0 auto;
+
+    color: var(--muted);
+
+    font-size: 16px;
+}
+
+
+
+/* =====================================================
    FOOTER
-   ========================================================= */
+   ===================================================== */
 
 footer {
-    padding: 30px 20px;
+    padding:
+        30px 20px;
+
+    text-align: center;
+
+    color: var(--muted);
+
+    font-size: 13px;
 
     border-top:
         1px solid var(--border);
 
-    color: var(--muted);
-
-    text-align: center;
-
-    font-size: 13px;
+    background:
+        rgba(0, 0, 0, 0.2);
 }
 
 
-/* =========================================================
-   MOBIL
-   ========================================================= */
 
-@media(max-width:850px) {
+/* =====================================================
+   MOBIL
+   ===================================================== */
+
+@media (max-width: 1000px) {
 
     .nav {
+        align-items: flex-start;
+
         flex-direction: column;
+
+        gap: 15px;
     }
 
+
     .nav-links {
-        justify-content: center;
+        width: 100%;
+
+        justify-content: flex-start;
     }
+
 
     .hero {
         grid-template-columns: 1fr;
 
         text-align: center;
+
+        gap: 50px;
     }
 
-    .hero p {
+
+    .hero > div:last-child > p {
         margin-left: auto;
         margin-right: auto;
     }
 
-    .hero-buttons {
-        justify-content: center;
-    }
-
-    .profile {
-        order: -1;
-    }
-
-    .profile img {
-        width: 210px;
-        height: 210px;
-    }
 
     .grid {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
     }
+
+
+    .schedule {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
 
     .stats {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
     }
 
-    .social-grid {
-        grid-template-columns: 1fr 1fr;
+}
+
+
+
+@media (max-width: 650px) {
+
+    main {
+        padding:
+            45px 16px 70px;
     }
 
-    .schedule-row {
-        grid-template-columns: 1fr;
+
+    .nav {
+        padding:
+            13px 16px;
+    }
+
+
+    .logo {
+        font-size: 21px;
+    }
+
+
+    .nav-links {
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+        width: 100%;
 
         gap: 5px;
     }
 
-    .schedule-time {
-        text-align: left;
-    }
-}
-
-
-@media(max-width:500px) {
-
-    main {
-        padding-left: 14px;
-        padding-right: 14px;
-    }
 
     .nav-links a {
-        padding: 7px 8px;
+        text-align: center;
 
-        font-size: 11px;
+        padding:
+            9px 5px;
+
+        font-size: 12px;
     }
 
-    .social-grid {
+
+    .hero {
+        min-height: auto;
+
+        padding-top: 20px;
+    }
+
+
+    .hero h1 {
+        font-size:
+            clamp(48px, 16vw, 75px);
+
+        letter-spacing: -3px;
+    }
+
+
+    .profile img {
+        width: 240px;
+
+        height: 240px;
+    }
+
+
+    .page-header {
+        margin-bottom: 40px;
+    }
+
+
+    .page-header h1 {
+        letter-spacing: -1px;
+    }
+
+
+    .grid,
+    .social-grid,
+    .schedule,
+    .stats {
         grid-template-columns: 1fr;
     }
 
-    .hero h1 {
-        letter-spacing: -3px;
+
+    .card {
+        padding: 23px;
     }
-  }
+
+
+    .support-box {
+        padding: 30px 20px;
+    }
+
+
+    .social {
+        flex-direction: column;
+
+        text-align: center;
+    }
+
+
+    .btn {
+        width: 100%;
+
+        margin-right: 0;
+
+        margin-bottom: 10px;
+    }
+
+}
+
+
+
+/* =====================================================
+   KIS MOBILOK
+   ===================================================== */
+
+@media (max-width: 400px) {
+
+    .nav-links {
+        grid-template-columns: 1fr;
+    }
+
+
+    .profile img {
+        width: 210px;
+
+        height: 210px;
+    }
+
+
+    .hero h1 {
+        font-size: 48px;
+    }
+
+                 }
