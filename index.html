@@ -1,154 +1,96 @@
 <!DOCTYPE html>
 <html lang="hu">
-
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <title>SANCI9517 | Official Gaming Hub</title>
 
-    <title>SANCI9517 | Gaming</title>
+    <meta name="description" content="SANCI9517 hivatalos gaming oldala – Twitch, Fortnite, Clips, Hírek, Menetrend, Stats és Discord.">
 
     <link rel="stylesheet" href="style.css">
-
 </head>
-
 
 <body>
 
+<header class="site-header">
+    <div class="container nav">
 
-<!-- =====================================================
-     NAVIGÁCIÓ
-     ===================================================== -->
+        <a href="index.html" class="logo">SANCI9517</a>
 
-<header>
+        <button
+            class="menu-toggle"
+            id="menuToggle"
+            aria-label="Menü megnyitása"
+            aria-expanded="false">
+            ☰
+        </button>
 
-    <nav class="nav">
+        <nav class="nav-links" id="navLinks">
 
-        <a href="index.html" class="logo">
-            SANCI<span>9517</span>
-        </a>
+            <a href="index.html" class="active">Főoldal</a>
 
+            <a href="hirek.html">Hírek</a>
 
-        <div class="nav-links">
+            <a href="szavazas.html">Szavazás</a>
 
-            <a href="index.html" class="active">
-                Főoldal
-            </a>
+            <a href="clips.html">Clips</a>
 
-            <a href="hirek.html">
-                Hírek
-            </a>
+            <a href="menetrend.html">Menetrend</a>
 
-            <a href="szavazas.html">
-                Szavazás
-            </a>
+            <a href="stats.html">Stats</a>
 
-            <a href="clips.html">
-                Clips
-            </a>
+            <a href="tamogatas.html">Támogatás</a>
 
-            <a href="menetrend.html">
-                Menetrend
-            </a>
+            <a href="setup.html">Setup</a>
 
-            <a href="stats.html">
-                Stats
-            </a>
-
-            <a href="tamogatas.html">
-                Támogatás
-            </a>
-
-            <a href="setup.html">
-                Setup
-            </a>
-
-            <a
-                href="https://discord.gg/BEERR7AZH"
-                target="_blank"
-                rel="noopener"
-            >
+            <a href="https://discord.gg/BEERR7AZH"
+               target="_blank"
+               rel="noopener noreferrer">
                 Discord
             </a>
 
-        </div>
+        </nav>
 
-    </nav>
-
+    </div>
 </header>
 
 
-
-<!-- =====================================================
-     HERO
-     ===================================================== -->
-
 <main>
 
+    <!-- HERO -->
 
-    <section class="hero">
+    <section class="hero container">
 
+        <div class="hero-text">
 
-        <!-- PROFILKÉP -->
-
-        <div class="profile">
-
-            <img
-                src="images/profile.jpg"
-                alt="SANCI9517 Twitch profilkép"
-            >
-
-        </div>
-
-
-
-        <!-- BEMUTATKOZÁS -->
-
-        <div>
-
-            <small>
-                WELCOME TO
-            </small>
+            <span class="hero-badge">🎮 OFFICIAL GAMING HUB</span>
 
             <h1>
-                SANCI<span>9517</span>
+                SZIA, ÉN VAGYOK
+                <span>SANCI9517</span>
             </h1>
 
             <p>
-                Gaming • Streaming • Community
+                Fortnite, gaming, streamek és a legjobb pillanatok
+                egy helyen.
             </p>
 
-            <p>
-                Üdv a SANCI9517 hivatalos gaming oldalán!
-                Itt megtalálod a streameket, klipeket,
-                híreket, menetrendet és a közösséget.
-            </p>
-
-
-            <!-- GOMBOK -->
-
-            <div style="margin-top:25px;">
+            <div class="hero-buttons">
 
                 <a
                     href="https://www.twitch.tv/sanci9517"
                     target="_blank"
-                    rel="noopener"
-                    class="btn btn-primary"
-                >
-                    ▶ Twitch
+                    rel="noopener noreferrer"
+                    class="btn btn-primary">
+                    🔴 Twitch
                 </a>
-
 
                 <a
                     href="https://discord.gg/BEERR7AZH"
                     target="_blank"
-                    rel="noopener"
-                    class="btn btn-secondary"
-                >
+                    rel="noopener noreferrer"
+                    class="btn btn-secondary">
                     💬 Discord
                 </a>
 
@@ -157,307 +99,140 @@
         </div>
 
 
+        <div class="profile">
+
+            <img
+                src="images/profile.jpg"
+                alt="SANCI9517 Twitch profilkép">
+
+        </div>
+
     </section>
 
 
+    <!-- QUICK MENU -->
 
-    <!-- =================================================
-         KÖZÖSSÉGI LINKek
-         ================================================= -->
-
-    <section style="margin-top:50px;">
+    <section class="container">
 
         <div class="page-header">
 
-            <small>
-                JOIN THE COMMUNITY
-            </small>
+            <span>FELFEDEZÉS</span>
 
-            <h2>
-                🌐 Kövess mindenhol
-            </h2>
+            <h2>Oldalak</h2>
 
             <p>
-                Csatlakozz a SANCI9517 közösséghez
-                és ne maradj le az új tartalmakról.
+                Nézd meg a legfrissebb híreket, klipeket,
+                statisztikákat és a következő streameket.
             </p>
-
-        </div>
-
-
-        <div class="social-grid">
-
-
-            <!-- TWITCH -->
-
-            <a
-                href="https://www.twitch.tv/sanci9517"
-                target="_blank"
-                rel="noopener"
-                class="social"
-            >
-
-                <strong>
-                    🎥 Twitch
-                </strong>
-
-                <span>
-                    SANCI9517
-                </span>
-
-            </a>
-
-
-
-            <!-- DISCORD -->
-
-            <a
-                href="https://discord.gg/BEERR7AZH"
-                target="_blank"
-                rel="noopener"
-                class="social"
-            >
-
-                <strong>
-                    💬 Discord
-                </strong>
-
-                <span>
-                    Csatlakozz a szerverhez
-                </span>
-
-            </a>
-
-
-
-            <!-- TIKTOK -->
-
-            <a
-                href="https://www.tiktok.com/@sanci9517twitch"
-                target="_blank"
-                rel="noopener"
-                class="social"
-            >
-
-                <strong>
-                    🎵 TikTok
-                </strong>
-
-                <span>
-                    @sanci9517twitch
-                </span>
-
-            </a>
-
-
-
-            <!-- YOUTUBE -->
-
-            <a
-                href="https://youtube.com/@sanci9517vod"
-                target="_blank"
-                rel="noopener"
-                class="social"
-            >
-
-                <strong>
-                    ▶ YouTube
-                </strong>
-
-                <span>
-                    SANCI9517 VOD
-                </span>
-
-            </a>
-
-
-
-            <!-- X -->
-
-            <a
-                href="https://x.com/Sanci9517"
-                target="_blank"
-                rel="noopener"
-                class="social"
-            >
-
-                <strong>
-                    𝕏 X
-                </strong>
-
-                <span>
-                    @Sanci9517
-                </span>
-
-            </a>
-
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =================================================
-         GYORS MENÜ
-         ================================================= -->
-
-    <section style="margin-top:50px;">
-
-        <div class="page-header">
-
-            <small>
-                SANCI9517
-            </small>
-
-            <h2>
-                ⚡ Gyors elérés
-            </h2>
 
         </div>
 
 
         <div class="grid">
 
+            <a href="hirek.html" class="card">
 
-            <a
-                href="hirek.html"
-                class="card"
-            >
+                <div class="card-icon">📰</div>
 
-                <h3>
-                    📰 Hírek
-                </h3>
+                <h3>Hírek</h3>
 
                 <p>
-                    Legfrissebb hírek és bejelentések.
+                    Friss hírek, bejelentések és újdonságok.
                 </p>
 
             </a>
 
 
+            <a href="szavazas.html" class="card">
 
-            <a
-                href="szavazas.html"
-                class="card"
-            >
+                <div class="card-icon">🗳️</div>
 
-                <h3>
-                    🗳️ Szavazás
-                </h3>
+                <h3>Szavazás</h3>
 
                 <p>
-                    Szavazz arról, mit szeretnél látni
-                    a következő streamben.
+                    Te döntöd el, mivel legyen a következő stream.
                 </p>
 
             </a>
 
 
+            <a href="clips.html" class="card">
 
-            <a
-                href="clips.html"
-                class="card"
-            >
+                <div class="card-icon">🎬</div>
 
-                <h3>
-                    🎬 Clips
-                </h3>
+                <h3>Clips</h3>
 
                 <p>
-                    Nézd meg a legjobb Twitch pillanatokat.
+                    A legjobb és legviccesebb stream pillanatok.
                 </p>
 
             </a>
 
 
+            <a href="menetrend.html" class="card">
 
-            <a
-                href="menetrend.html"
-                class="card"
-            >
+                <div class="card-icon">📅</div>
 
-                <h3>
-                    📅 Menetrend
-                </h3>
+                <h3>Menetrend</h3>
 
                 <p>
-                    Következő stream időpontok.
+                    Nézd meg, mikor várható a következő stream.
                 </p>
 
             </a>
 
 
+            <a href="stats.html" class="card">
 
-            <a
-                href="stats.html"
-                class="card"
-            >
+                <div class="card-icon">📊</div>
 
-                <h3>
-                    📊 Stats
-                </h3>
+                <h3>Stats</h3>
 
                 <p>
-                    Streamer statisztikák és mérföldkövek.
+                    Követők, nézők és streaming statisztikák.
                 </p>
 
             </a>
 
 
+            <a href="setup.html" class="card">
 
-            <a
-                href="setup.html"
-                class="card"
-            >
+                <div class="card-icon">💻</div>
 
-                <h3>
-                    🖥️ Setup
-                </h3>
+                <h3>Setup</h3>
 
                 <p>
-                    Gaming és streaming felszerelés.
+                    A gépem és a streaming setupom.
                 </p>
 
             </a>
-
 
         </div>
 
     </section>
 
 
+    <!-- DISCORD -->
 
-    <!-- =================================================
-         DISCORD KIEMELÉS
-         ================================================= -->
-
-    <section style="margin-top:50px;">
+    <section class="container">
 
         <div class="support-box">
 
-            <small style="color:var(--purple2);">
-                COMMUNITY
-            </small>
+            <span class="hero-badge">💬 COMMUNITY</span>
 
-            <h2>
-                💬 Csatlakozz a Discordhoz!
-            </h2>
+            <h2>Csatlakozz a Discordhoz!</h2>
 
             <p>
-                Beszélgess a közösséggel, értesülj az új
-                streamekről és legyél részese a SANCI9517
-                közösségnek.
+                Beszélgessünk, kövesd a híreket,
+                értesülj a streamekről és csatlakozz
+                a SANCI9517 közösséghez.
             </p>
-
-            <br>
 
             <a
                 href="https://discord.gg/BEERR7AZH"
                 target="_blank"
-                rel="noopener"
-                class="btn btn-primary"
-            >
+                rel="noopener noreferrer"
+                class="btn btn-primary">
                 💬 Discord szerver
             </a>
 
@@ -466,21 +241,159 @@
     </section>
 
 
+    <!-- SOCIAL -->
+
+    <section class="container">
+
+        <div class="page-header">
+
+            <span>KÖVESS</span>
+
+            <h2>SANCI9517 online</h2>
+
+        </div>
+
+
+        <div class="social-grid">
+
+            <a
+                href="https://www.twitch.tv/sanci9517"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social">
+                <strong>Twitch</strong>
+                <span>@sanci9517</span>
+            </a>
+
+
+            <a
+                href="https://discord.gg/BEERR7AZH"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social">
+                <strong>Discord</strong>
+                <span>Csatlakozz</span>
+            </a>
+
+
+            <a
+                href="https://www.tiktok.com/@sanci9517twitch"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social">
+                <strong>TikTok</strong>
+                <span>@sanci9517twitch</span>
+            </a>
+
+
+            <a
+                href="https://youtube.com/@sanci9517vod"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social">
+                <strong>YouTube</strong>
+                <span>@sanci9517vod</span>
+            </a>
+
+
+            <a
+                href="https://x.com/Sanci9517"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social">
+                <strong>X</strong>
+                <span>@Sanci9517</span>
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- TWITCH CTA -->
+
+    <section class="container">
+
+        <div class="support-box">
+
+            <h2>🔴 Élőben a Twitchen</h2>
+
+            <p>
+                Ha élőben szeretnél nézni, csatlakozz
+                a Twitch csatornához!
+            </p>
+
+            <a
+                href="https://www.twitch.tv/sanci9517"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-primary">
+                Nézd a Twitch csatornát
+            </a>
+
+        </div>
+
+    </section>
+
 </main>
 
 
-
-<!-- =====================================================
-     FOOTER
-     ===================================================== -->
+<!-- FOOTER -->
 
 <footer>
 
-    © 2026 SANCI9517 · Official Gaming Hub
+    <div class="container">
+
+        <p>
+            © 2026 SANCI9517 · Official Gaming Hub
+        </p>
+
+    </div>
 
 </footer>
 
 
-</body>
+<!-- MOBILE MENU -->
 
+<script>
+
+    const menuToggle = document.getElementById("menuToggle");
+    const navLinks = document.getElementById("navLinks");
+
+    menuToggle.addEventListener("click", function () {
+
+        const isOpen = navLinks.classList.toggle("open");
+
+        menuToggle.textContent = isOpen ? "✕" : "☰";
+
+        menuToggle.setAttribute(
+            "aria-expanded",
+            isOpen ? "true" : "false"
+        );
+
+    });
+
+
+    /* Menü bezárása linkre kattintás után */
+
+    navLinks.querySelectorAll("a").forEach(function (link) {
+
+        link.addEventListener("click", function () {
+
+            navLinks.classList.remove("open");
+
+            menuToggle.textContent = "☰";
+
+            menuToggle.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+
+        });
+
+    });
+
+</script>
+
+</body>
 </html>
