@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SANCI9517 | Official Streamer Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --bg-dark: #030206;
+      --accent-purple: #9d4edd;
+      --glow-purple: #c77dff;
+      --card-bg: rgba(18, 10, 30, 0.75);
+      --card-border: rgba(157, 78, 221, 0.35);
+      --card-hover-border: rgba(199, 125, 255, 0.8);
+      --text-bright: #ffffff;
+      --text-sub: #c3b8db;
+    }
+
+    [data-theme="green"] {
+      --accent-purple: #00f5d4;
+      --glow-purple: #57cc99;
+      --card-bg: rgba(5, 25, 20, 0.8);
+      --card-border: rgba(0, 245, 212, 0.35);
+      --card-hover-border: rgba(87, 204, 153, 0.9);
+    }
+
+    [data-theme="blue"] {
+      --accent-purple: #00b4d8;
+      --glow-purple: #90e0ef;
+      --card-bg: rgba(8, 20, 35, 0.8);
+      --card-border: rgba(0, 180, 216, 0.35);
+      --card-hover-border: rgba(144, 224, 239, 0.9);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-bright);
+      font-family: 'Rajdhani', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 15px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* BACKGROUND GLOW ORBS */
+    .bg-glow-1, .bg-glow-2 {
+      position: fixed;
+      width: 450px;
+      height: 450px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--accent-purple) 0%, transparent 70%);
+      opacity: 0.22;
+      filter: blur(90px);
+      z-index: -1;
+      animation: floatGlow 12s infinite alternate ease-in-out;
+    }
+
+    .bg-glow-1 { top: -100px; left: -100px; }
+    .bg-glow-2 { bottom: -100px; right: -100px; animation-delay: -6s; }
+
+    @keyframes floatGlow {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(80px, 60px) scale(1.2); }
+    }
+
+    /* TOP BAR */
+    .top-bar {
+      position: fixed;
+      top: 15px;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 25px;
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    .top-bar * { pointer-events: auto; }
+
+    .theme-switcher {
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      padding: 6px 14px;
+      border-radius: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.8);
+    }
+    .dot.purple { background: #9d4edd; }
+    .dot.green { background: #00f5d4; }
+    .dot.blue { background: #00b4d8; }
+
+    .live-badge {
+      background: rgba(255, 0, 85, 0.2);
+      border: 1px solid #ff0055;
+      backdrop-filter: blur(12px);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 0 15px rgba(255, 0, 85, 0.4);
+    }
+    .live-dot { width: 8px; height: 8px; background: #ff0055; border-radius: 50%; animation: blink 1s infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* CONTAINER */
+    .main-container { width: 100%; max-width: 900px; margin-top: 40px; }
+
+    header { text-align: center; margin-bottom: 30px; }
+    .avatar {
+      width: 130px; height: 130px; border-radius: 50%;
+      border: 3px solid var(--accent-purple);
+      box-shadow: 0 0 30px var(--accent-purple);
+      object-fit: cover;
+    }
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 3rem;
+      letter-spacing: 4px;
+      margin-top: 12px;
+      text-shadow: 0 0 20px var(--accent-purple);
+    }
+
+    /* TABS */
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--card-border);
+      color: var(--text-sub);
+      padding: 12px 22px;
+      border-radius: 10px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tab-btn.active, .tab-btn:hover {
+      background: var(--accent-purple);
+      color: #000;
+      font-weight: 800;
+      border-color: var(--glow-purple);
+      box-shadow: 0 0 20px var(--accent-purple);
+    }
+
+    /* TAB CONTENT */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* CARDS */
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
+    
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      padding: 20px; 
+      border-radius: 14px;
+      text-decoration: none; 
+      color: white;
+      display: flex; 
+      align-items: center; 
+      gap: 15px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .card:hover { 
+      transform: translateY(-5px) scale(1.02); 
+      border-color: var(--card-hover-border); 
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7), 0 0 15px var(--accent-purple); 
+    }
+    .card i { font-size: 1.6rem; color: var(--accent-purple); }
+
+    /* TWITCH EMBED WRAPPER (RESPONSIVE 16:9) */
+    .stream-container {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%; /* 16:9 Aspect Ratio */
+      background: #000;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+      box-shadow: 0 10px 35px rgba(0,0,0,0.8);
+    }
+    .stream-container iframe {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%; border: none;
+    }
+
+    /* SCHEDULE */
+    .sched-item {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      padding: 18px 22px; 
+      border-radius: 12px; 
+      margin-bottom: 12px;
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    }
+    .badge {
+      background: var(--accent-purple); 
+      color: #000;
+      padding: 5px 12px; 
+      border-radius: 6px; 
+      font-weight: 800; 
+      font-family: 'Orbitron';
+      font-size: 0.85rem;
+    }
+
+    footer { text-align: center; margin-top: 50px; color: var(--text-sub); font-size: 0.85rem; }
+    footer a { color: var(--accent-purple); text-decoration: none; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+
+  <div class="top-bar">
+    <div class="theme-switcher">
+      <div class="dot purple" onclick="setTheme('purple')"></div>
+      <div class="dot green" onclick="setTheme('green')"></div>
+      <div class="dot blue" onclick="setTheme('blue')"></div>
+    </div>
+    <div class="live-badge">
+      <div class="live-dot"></div>
+      <span>LIVE NOW</span>
+    </div>
+  </div>
+
+  <div class="main-container">
+    <header>
+      <img src="https://via.placeholder.com/130/120c1c/c77dff?text=Sanci" class="avatar">
+      <h1>SANCI9517</h1>
+      <p style="color: var(--text-sub); font-weight: 600; letter-spacing: 2px;">GAMER & CONTENT CREATOR</p>
+    </header>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="openTab('links', this)"><i class="fa-solid fa-house"></i> Links</button>
+      <button class="tab-btn" onclick="openTab('stream', this)"><i class="fa-solid fa-tv"></i> Live Stream</button>
+      <button class="tab-btn" onclick="openTab('schedule', this)"><i class="fa-solid fa-calendar"></i> Schedule</button>
+      <button class="tab-btn" onclick="openTab('setup', this)"><i class="fa-solid fa-desktop"></i> Setup</button>
+    </div>
+
+    <!-- 1. LINKS -->
+    <div id="links" class="tab-content active">
+      <div class="grid-2">
+        <a href="https://twitch.tv" target="_blank" class="card"><i class="fa-brands fa-twitch"></i> Twitch Csatorna</a>
+        <a href="https://youtube.com" target="_blank" class="card"><i class="fa-brands fa-youtube"></i> YouTube Videók</a>
+        <a href="https://discord.com" target="_blank" class="card"><i class="fa-brands fa-discord"></i> Discord Közösség</a>
+        <a href="https://tiktok.com" target="_blank" class="card"><i class="fa-brands fa-tiktok"></i> TikTok Clips</a>
+        <a href="https://instagram.com" target="_blank" class="card"><i class="fa-brands fa-instagram"></i> Instagram</a>
+        <a href="#" class="card"><i class="fa-solid fa-heart"></i> Donate / Támogatás</a>
+      </div>
+    </div>
+
+    <!-- 2. BEÁGYAZOTT MŰKÖDŐ TWITCH STREAM PLAYER -->
+    <div id="stream" class="tab-content">
+      <div class="stream-container" id="twitch-embed">
+        <!-- A Twitch lejátszó ide töltődik be dinamikusan JS-ből -->
+      </div>
+    </div>
+
+    <!-- 3. SCHEDULE -->
+    <div id="schedule" class="tab-content">
+      <div class="sched-item">
+        <span class="badge">HÉTFŐ</span>
+        <strong style="font-size: 1.1rem;">GTA V Roleplay</strong>
+        <span style="color: var(--text-sub);">18:00 - 22:00</span>
+      </div>
+      <div class="sched-item">
+        <span class="badge">SZERDA</span>
+        <strong style="font-size: 1.1rem;">Valorant Ranked</strong>
+        <span style="color: var(--text-sub);">19:00 - 22:30</span>
+      </div>
+      <div class="sched-item">
+        <span class="badge">PÉNTEK</span>
+        <strong style="font-size: 1.1rem;">Nézői Játékok & Co-op</strong>
+        <span style="color: var(--text-sub);">20:00 - Későig</span>
+      </div>
+    </div>
+
+    <!-- 4. SETUP -->
+    <div id="setup" class="tab-content">
+      <div class="grid-2">
+        <div class="card" style="cursor:default;"><i class="fa-solid fa-microchip"></i> RTX 4070 Ti + Ryzen 7</div>
+        <div class="card" style="cursor:default;"><i class="fa-solid fa-microphone"></i> Shure SM7B Mikrofon</div>
+        <div class="card" style="cursor:default;"><i class="fa-solid fa-headphones"></i> Beyerdynamic DT 990</div>
+        <div class="card" style="cursor:default;"><i class="fa-solid fa-display"></i> 240Hz Gaming Monitor</div>
+      </div>
+    </div>
+
+    <footer>
+      <p>Business Contact: <a href="mailto:sanci9517@business.hu">sanci9517@business.hu</a></p>
+      <p style="margin-top: 8px; opacity: 0.5;">Web Design & Code by Sanci9517</p>
+    </footer>
+  </div>
+
+  <!-- TWITCH EMBED JAVASCRIPT SDK -->
+  <script src="https://embed.twitch.tv/embed/v1.js"></script>
+  <script>
+    function openTab(tabName, btnElement) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabName).classList.add('active');
+      btnElement.classList.add('active');
+    }
+
+    function setTheme(themeName) {
+      if(themeName === 'purple') {
+        document.documentElement.removeAttribute('data-theme');
+      } else {
+        document.documentElement.setAttribute('data-theme', themeName);
+      }
+    }
+
+    // TWITCH PLAYER DYNAMICAL LOAD
+    new Twitch.Embed("twitch-embed", {
+      width: "100%",
+      height: "100%",
+      channel: "shroud", // ITT ÍRD ÁT A SAJÁT TWITCH NEVEDRE! (pl. "sanci9517")
+      parent: ["localhost"] // ÉLESBEN ITT A DOMAIN NEVED LEGYEN! (pl. "sanci9517.hu")
+    });
+  </script>
+</body>
+</html>
