@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -236,7 +235,7 @@
 
     .stat-val {
       font-family: 'Orbitron', sans-serif;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       color: var(--accent);
       font-weight: 800;
     }
@@ -421,39 +420,42 @@
       <div id="schedule-list"></div>
     </div>
 
-    <!-- STATISZTIKÁK & LÁTOGATÓ SZÁMLÁLÓ -->
+    <!-- VALÓS IDEJŰ STATISZTIKÁK -->
     <div id="tab-stats" class="tab-content">
       <div class="info-card">
-        <div class="card-header-text"><span><i class="fa-solid fa-chart-line"></i> CSATORNA MERFÖLDKÖVEK</span></div>
+        <div class="card-header-text">
+          <span><i class="fa-solid fa-chart-line"></i> ÉLŐ TWITCH STATISZTIKÁK</span>
+          <small style="color: var(--live-red); font-size: 0.7rem;"><i class="fa-solid fa-rotate"></i> Élő frissítés</small>
+        </div>
         <div class="stats-grid" style="margin-top:10px;">
           <div class="stat-box">
-            <div class="stat-val" id="visit-count">1,250</div>
-            <div class="stat-lbl">Weboldal Látogatás</div>
+            <div class="stat-val" id="stat-followers">...</div>
+            <div class="stat-lbl">Twitch Követők</div>
           </div>
           <div class="stat-box">
-            <div class="stat-val">1,000</div>
-            <div class="stat-lbl">Követő Cél</div>
+            <div class="stat-val" id="stat-views">...</div>
+            <div class="stat-lbl">Összes Megtekintés</div>
           </div>
           <div class="stat-box">
-            <div class="stat-val">50+</div>
-            <div class="stat-lbl">Átlag Néző</div>
+            <div class="stat-val" id="stat-viewers">OFFLINE</div>
+            <div class="stat-lbl">Jelenlegi Nézők</div>
           </div>
           <div class="stat-box">
-            <div class="stat-val">100%</div>
-            <div class="stat-lbl">Jó Hangulat</div>
+            <div class="stat-val" id="stat-game" style="font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">-</div>
+            <div class="stat-lbl">Legutóbbi / Aktuális Játék</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- TÁMOGATÁS -->
+    <!-- TÁMOGATÁS (STREAMLABS LINK) -->
     <div id="tab-support" class="tab-content">
       <div class="info-card">
         <div class="card-header-text"><span><i class="fa-solid fa-hand-holding-dollar"></i> TÁMOGATÁS</span></div>
         <div style="font-size:0.85rem; color:var(--text-sub); margin-bottom:12px;">Ha szeretnéd közvetlenül segíteni a stream fejlődését és a jobb minőségű tartalmakat:</div>
         
-        <a href="https://streamelements.com" target="_blank" class="card-btn support" style="margin-bottom:10px;">
-          <div class="card-left"><i class="fa-solid fa-donate" style="color:var(--gold);"></i><span>Donation / Támogatás</span></div>
+        <a href="https://streamlabs.com/sanci9517/tip" target="_blank" class="card-btn support" style="margin-bottom:10px;">
+          <div class="card-left"><i class="fa-solid fa-donate" style="color:var(--gold);"></i><span>Streamlabs Donáció</span></div>
           <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; color:var(--text-muted);"></i>
         </a>
 
@@ -551,154 +553,4 @@
       const body = document.getElementById('modal-body');
       const vBtn = document.getElementById('m-btn-video');
       const cBtn = document.getElementById('m-btn-chat');
-      const domain = window.location.hostname || "localhost";
-
-      if (type === 'video') {
-        vBtn.classList.add('active');
-        cBtn.classList.remove('active');
-        body.innerHTML = `<iframe src="https://player.twitch.tv/?channel=${TWITCH_CHANNEL}&parent=${domain}&autoplay=true" allowfullscreen></iframe>`;
-      } else {
-        cBtn.classList.add('active');
-        vBtn.classList.remove('active');
-        body.innerHTML = `<iframe src="https://www.twitch.tv/embed/${TWITCH_CHANNEL}/chat?parent=${domain}"></iframe>`;
-      }
-    }
-
-    // TWITCH ADATOK LEKÉRÉSE
-    async function checkTwitchData() {
-      try {
-        const uptimeRes = await fetch(`https://decapi.me/twitch/uptime/${TWITCH_CHANNEL}`);
-        if (uptimeRes.ok) {
-          const uptime = (await uptimeRes.text()).trim().toLowerCase();
-          const isLive = !uptime.includes('offline') && !uptime.includes('not found') && !uptime.includes('error');
-
-          if (isLive) {
-            document.getElementById('live-badge').style.display = 'block';
-            document.getElementById('status-text').innerText = '🔴 ÉLŐ ADÁS';
-            document.getElementById('status-text').style.color = '#ef4444';
-            document.getElementById('countdown-container').style.display = 'none';
-
-            const viewersRes = await fetch(`https://decapi.me/twitch/viewcount/${TWITCH_CHANNEL}`);
-            if (viewersRes.ok) {
-              const viewers = (await viewersRes.text()).trim();
-              document.getElementById('twitch-btn-text').innerText = `Twitch (Nézők: ${viewers})`;
-            }
-          }
-        }
-
-        const avatarRes = await fetch(`https://decapi.me/twitch/avatar/${TWITCH_CHANNEL}`);
-        if (avatarRes.ok) {
-          const avatarUrl = (await avatarRes.text()).trim();
-          if (avatarUrl.startsWith('http')) {
-            document.getElementById('avatar-img').src = avatarUrl;
-          }
-        }
-      } catch (e) {}
-    }
-
-    // VISSZASZÁMLÁLÓ
-    function updateCountdown() {
-      const now = new Date();
-      const targetHours = 18;
-      let nextStream = new Date();
-      nextStream.setHours(targetHours, 0, 0, 0);
-
-      if (now >= nextStream) {
-        nextStream.setDate(nextStream.getDate() + 1);
-      }
-
-      const diff = nextStream - now;
-      const hours = Math.floor(diff / (1000 * 60 * 60));
-      const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-
-      const el = document.getElementById('countdown-text');
-      if (el) {
-        el.innerText = `Következő stream ~ ${hours}ó ${mins}p múlva`;
-      }
-    }
-
-    // LÁTOGATÓ SZÁMLÁLÓ LOGIKA (Helyi memóriában tárolt számláló a stabil működésért)
-    function updateVisitorCount() {
-      let count = localStorage.getItem('sanci_page_visits') || 1250;
-      count = parseInt(count) + 1;
-      localStorage.setItem('sanci_page_visits', count);
-      
-      const el = document.getElementById('visit-count');
-      if (el) {
-        el.innerText = count.toLocaleString();
-      }
-    }
-
-    // SZAVAZÁS LOGIKA
-    let votes = [12, 28, 15];
-    function vote(option) {
-      votes[option - 1]++;
-      const total = votes.reduce((a, b) => a + b, 0);
-      document.getElementById('poll-v1').innerText = Math.round((votes[0]/total)*100) + '%';
-      document.getElementById('poll-v2').innerText = Math.round((votes[1]/total)*100) + '%';
-      document.getElementById('poll-v3').innerText = Math.round((votes[2]/total)*100) + '%';
-      alert('Köszönjük a szavazatot!');
-    }
-
-    // ADATBETÖLTÉSEK
-    async function loadSchedule() {
-      const container = document.getElementById('schedule-list');
-      if (!container) return;
-      
-      let data = fallbackSchedule;
-
-      for (let file of ['schedule.json', 'Schedule.json']) {
-        try {
-          const res = await fetch(file);
-          if (res.ok) { data = await res.json(); break; }
-        } catch (e) {}
-      }
-
-      container.innerHTML = data.map(item => `
-        <div class="info-card ${item.active ? 'active-day' : ''}" style="margin-bottom:12px;">
-          <div class="card-header-text"><span>${item.day}</span><small style="color:var(--text-muted);">${item.time}</small></div>
-          <div style="font-weight:800; font-size:1.1rem;">${item.game}</div>
-          <div style="font-size:0.85rem; color:var(--text-sub);">${item.desc || item.description || ''}</div>
-        </div>
-      `).join('');
-    }
-
-    async function loadSetup() {
-      const container = document.getElementById('setup-list');
-      if (!container) return;
-
-      let data = fallbackSetup;
-
-      for (let file of ['setup.json', 'Setup.json']) {
-        try {
-          const res = await fetch(file);
-          if (res.ok) { data = await res.json(); break; }
-        } catch (e) {}
-      }
-
-      container.innerHTML = data.map(cat => `
-        <div class="info-card" style="margin-bottom:14px;">
-          <div class="card-header-text">${cat.category}</div>
-          ${cat.items.map(i => `
-            <div class="setup-row">
-              <span style="color:var(--text-muted);">${i.name}:</span>
-              <span style="font-weight:700;">${i.value || i.val}</span>
-            </div>
-          `).join('')}
-        </div>
-      `).join('');
-    }
-
-    // INICIALIZÁLÁS
-    window.addEventListener('DOMContentLoaded', () => {
-      checkTwitchData();
-      loadSchedule();
-      loadSetup();
-      updateCountdown();
-      updateVisitorCount();
-      setInterval(updateCountdown, 60000);
-    });
-  </script>
-
-</body>
-</html>
+      const domain = window.location.hostname || "localhost"
