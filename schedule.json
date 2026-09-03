@@ -2,8 +2,8 @@
   {
     "day": "Hétfő",
     "time": "18:00 - 21:00",
-    "game": "Valorant",
-    "description": "Ranked grind & Közösségi meccsek",
+    "game": "",
+    "description": "",
     "active": true
   },
   {
@@ -16,8 +16,8 @@
   {
     "day": "Szerda",
     "time": "18:00 - 21:00",
-    "game": "GTA V Roleplay",
-    "description": "Karakter sztori folytatása",
+    "game": "",
+    "description": "",
     "active": true
   },
   {
@@ -30,15 +30,15 @@
   {
     "day": "Péntek",
     "time": "19:00 - Későig",
-    "game": "Variety Friday / Horror",
-    "description": "Közös nézői játékok & Horror éjszaka",
+    "game": "",
+    "description": "",
     "active": true
   },
   {
     "day": "Szombat",
     "time": "17:00 - 22:00",
-    "game": "Counter-Strike 2",
-    "description": "Faceit lobby a nézőkkel",
+    "game": "",
+    "description": "",
     "active": true
   },
   {
