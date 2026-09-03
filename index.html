@@ -6,13 +6,10 @@
 
 <title>SANCI9517 | Official Hub</title>
 
-<meta name="description" content="SANCI9517 hivatalos gaming hub – Twitch, TikTok, YouTube, Discord és közösség.">
-
 <style>
+
 * {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
 }
 
 html {
@@ -20,31 +17,29 @@ html {
 }
 
 body {
+    margin: 0;
     font-family: Arial, Helvetica, sans-serif;
+    color: white;
     background:
-        radial-gradient(circle at top, #35106b 0%, #160a2b 35%, #090612 75%);
-    color: #fff;
+        radial-gradient(circle at top, #35106b 0%, #160a2b 40%, #08050f 100%);
     min-height: 100vh;
 }
 
-/* =========================
-   HEADER
-========================= */
+/* HEADER */
 
 header {
-    width: 100%;
-    padding: 22px 20px;
-    border-bottom: 1px solid rgba(255,255,255,.1);
-    background: rgba(8,5,18,.8);
-    backdrop-filter: blur(12px);
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: 1000;
+    background: rgba(8,5,15,.94);
+    border-bottom: 1px solid rgba(255,255,255,.1);
+    backdrop-filter: blur(15px);
 }
 
-.header-inner {
-    max-width: 1100px;
+.header {
+    max-width: 1150px;
     margin: auto;
+    padding: 18px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -52,262 +47,114 @@ header {
 }
 
 .logo {
-    font-size: 25px;
+    font-size: 24px;
     font-weight: 900;
     letter-spacing: 2px;
-    color: #b86cff;
+    color: #a855f7;
+    white-space: nowrap;
 }
 
 .logo span {
-    color: #fff;
+    color: white;
 }
 
 nav {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 8px;
+    gap: 7px;
 }
 
 nav button {
     border: 0;
+    color: #aaa;
     background: transparent;
-    color: #bbb;
-    padding: 10px 14px;
-    border-radius: 10px;
+    padding: 10px 13px;
+    border-radius: 9px;
     cursor: pointer;
-    font-weight: 700;
+    font-weight: bold;
     transition: .2s;
 }
 
 nav button:hover,
 nav button.active {
-    background: #8d36ff;
-    color: #fff;
+    color: white;
+    background: #8b35e8;
 }
 
-/* =========================
-   MAIN
-========================= */
+/* MAIN */
 
 main {
     max-width: 1100px;
     margin: auto;
-    padding: 45px 20px 80px;
+    padding: 40px 20px 70px;
 }
 
-.tab {
+.page {
     display: none;
-    animation: fadeIn .25s ease;
 }
 
-.tab.active {
+.page.active {
     display: block;
+    animation: appear .25s ease;
 }
 
-@keyframes fadeIn {
+@keyframes appear {
     from {
         opacity: 0;
         transform: translateY(8px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
     }
 }
 
-/* =========================
-   PROFILE
-========================= */
+/* PROFILE */
 
 .profile {
     text-align: center;
-    padding: 35px 20px;
+    padding: 30px 10px;
 }
 
-.avatar-wrapper {
-    width: 150px;
-    height: 150px;
-    margin: 0 auto 20px;
-    position: relative;
-}
-
-.avatar,
-.avatar-fallback {
-    width: 150px;
-    height: 150px;
+.avatar {
+    width: 155px;
+    height: 155px;
     border-radius: 50%;
     object-fit: cover;
-    border: 4px solid #a94cff;
-    box-shadow:
-        0 0 25px rgba(169,76,255,.65),
-        0 0 60px rgba(169,76,255,.2);
-}
-
-.avatar-fallback {
-    display: none;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg,#8d36ff,#3c0d72);
-    font-size: 55px;
-    font-weight: 900;
+    border: 4px solid #a855f7;
+    box-shadow: 0 0 35px rgba(168,85,247,.6);
 }
 
 .profile h1 {
-    font-size: clamp(35px, 7vw, 70px);
-    font-weight: 900;
+    font-size: clamp(40px,8vw,75px);
+    margin: 20px 0 5px;
     letter-spacing: 3px;
 }
 
 .profile h1 span {
-    color: #a94cff;
+    color: #a855f7;
 }
 
 .profile p {
-    color: #bbb;
-    margin-top: 10px;
+    color: #aaa;
     font-size: 17px;
 }
 
-/* =========================
-   LIVE CARD
-========================= */
-
-.live-card {
-    margin: 30px auto;
-    max-width: 750px;
-    background: rgba(255,255,255,.06);
-    border: 1px solid rgba(255,255,255,.12);
-    border-radius: 22px;
-    padding: 28px;
-    text-align: center;
-    box-shadow: 0 20px 60px rgba(0,0,0,.3);
-}
-
-.live-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    color: #ff4d6d;
-    font-weight: 800;
-    margin-bottom: 12px;
-}
-
-.live-dot {
-    width: 10px;
-    height: 10px;
-    background: #ff3158;
-    border-radius: 50%;
-    animation: pulse 1.2s infinite;
-}
-
-@keyframes pulse {
-    50% {
-        opacity: .3;
-        transform: scale(.7);
-    }
-}
-
-.live-card h2 {
-    margin-bottom: 10px;
-}
-
-.live-card p {
-    color: #aaa;
-    margin-bottom: 22px;
-}
-
-/* =========================
-   BUTTONS
-========================= */
-
-.btn {
-    display: inline-block;
-    border: 0;
-    text-decoration: none;
-    color: white;
-    background: linear-gradient(135deg,#a94cff,#6d19d9);
-    padding: 14px 24px;
-    border-radius: 12px;
-    font-weight: 800;
-    cursor: pointer;
-    transition: .2s;
-    box-shadow: 0 8px 25px rgba(141,54,255,.3);
-}
-
-.btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 30px rgba(141,54,255,.45);
-}
-
-.btn.secondary {
-    background: rgba(255,255,255,.08);
-    box-shadow: none;
-}
-
-.btn.secondary:hover {
-    background: rgba(255,255,255,.14);
-}
-
-/* =========================
-   LINK CARDS
-========================= */
-
-.links {
-    display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(230px,1fr));
-    gap: 15px;
-    margin-top: 25px;
-}
-
-.link-card {
-    text-decoration: none;
-    color: white;
-    padding: 22px;
-    border-radius: 17px;
-    background: rgba(255,255,255,.055);
-    border: 1px solid rgba(255,255,255,.1);
-    transition: .2s;
-}
-
-.link-card:hover {
-    transform: translateY(-4px);
-    border-color: #a94cff;
-    background: rgba(169,76,255,.12);
-}
-
-.link-card strong {
-    display: block;
-    font-size: 18px;
-    margin-bottom: 6px;
-}
-
-.link-card span {
-    color: #999;
-    font-size: 14px;
-}
-
-/* =========================
-   CARDS
-========================= */
-
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
-    gap: 18px;
-    margin-top: 25px;
-}
+/* CARD */
 
 .card {
-    padding: 25px;
     background: rgba(255,255,255,.055);
     border: 1px solid rgba(255,255,255,.1);
-    border-radius: 18px;
+    border-radius: 20px;
+    padding: 28px;
+    margin-bottom: 20px;
 }
 
 .card h2 {
-    margin-bottom: 15px;
-    color: #c084ff;
+    color: #c084fc;
+    margin-top: 0;
 }
 
 .card p {
@@ -315,536 +162,584 @@ main {
     line-height: 1.6;
 }
 
-/* =========================
-   SCHEDULE
-========================= */
+/* LIVE */
+
+.live {
+    text-align: center;
+    max-width: 750px;
+    margin: 25px auto;
+}
+
+.live-status {
+    color: #ff496b;
+    font-weight: 900;
+    margin-bottom: 10px;
+}
+
+.live-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: #ff496b;
+    border-radius: 50%;
+    margin-right: 7px;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    50% {
+        opacity: .25;
+    }
+}
+
+/* BUTTON */
+
+.btn {
+    display: inline-block;
+    padding: 14px 24px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: white;
+    background: linear-gradient(135deg,#a855f7,#6d28d9);
+    font-weight: 800;
+    border: 0;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(168,85,247,.4);
+}
+
+/* LINKS */
+
+.links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+    gap: 15px;
+}
+
+.link {
+    display: block;
+    text-decoration: none;
+    color: white;
+    padding: 22px;
+    border-radius: 17px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.1);
+    transition: .2s;
+}
+
+.link:hover {
+    transform: translateY(-4px);
+    border-color: #a855f7;
+    background: rgba(168,85,247,.12);
+}
+
+.link strong {
+    display: block;
+    font-size: 18px;
+    margin-bottom: 7px;
+}
+
+.link small {
+    color: #999;
+}
+
+/* SCHEDULE */
 
 .schedule {
     display: grid;
     gap: 12px;
-    margin-top: 25px;
 }
 
 .day {
+    padding: 18px;
+    border-radius: 13px;
+    background: rgba(255,255,255,.05);
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    gap: 20px;
-    padding: 18px 20px;
-    border-radius: 14px;
-    background: rgba(255,255,255,.055);
-    border: 1px solid rgba(255,255,255,.08);
+    gap: 15px;
 }
 
-.day-name {
-    font-weight: 800;
-}
-
-.game {
-    color: #b86cff;
-    font-weight: 700;
-    text-align: right;
-}
-
-/* =========================
-   POLL
-========================= */
-
-.poll-option {
-    width: 100%;
-    margin-top: 10px;
-    padding: 14px;
-    border: 1px solid rgba(255,255,255,.1);
-    border-radius: 12px;
-    background: rgba(255,255,255,.05);
+.day strong {
     color: white;
-    cursor: pointer;
-    text-align: left;
-    transition: .2s;
 }
 
-.poll-option:hover {
-    background: rgba(169,76,255,.18);
-    border-color: #a94cff;
+.day span {
+    color: #c084fc;
+    font-weight: bold;
 }
 
-.vote-result {
-    margin-top: 15px;
-    color: #aaa;
-    min-height: 25px;
-}
-
-/* =========================
-   STATS
-========================= */
+/* STATS */
 
 .stats {
     display: grid;
     grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
     gap: 15px;
-    margin-top: 25px;
 }
 
 .stat {
     text-align: center;
     padding: 25px;
-    border-radius: 18px;
-    background: rgba(255,255,255,.055);
-    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 17px;
+    background: rgba(255,255,255,.05);
 }
 
 .stat strong {
     display: block;
-    font-size: 34px;
-    color: #b86cff;
+    font-size: 35px;
+    color: #a855f7;
 }
 
 .stat span {
     color: #999;
 }
 
-/* =========================
-   COUNTDOWN
-========================= */
+/* POLL */
 
-.countdown {
-    margin-top: 25px;
-    text-align: center;
-    padding: 25px;
+.poll button {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    padding: 15px;
+    text-align: left;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,.1);
     background: rgba(255,255,255,.05);
-    border-radius: 18px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
 }
 
-.countdown h2 {
-    margin-bottom: 12px;
+.poll button:hover {
+    background: rgba(168,85,247,.2);
+    border-color: #a855f7;
+}
+
+#voteMessage {
+    margin-top: 15px;
+    color: #c084fc;
+    font-weight: bold;
+}
+
+/* COUNTDOWN */
+
+.countdown {
+    text-align: center;
+    margin-top: 25px;
 }
 
 #timer {
-    font-size: 32px;
+    font-size: 30px;
     font-weight: 900;
-    color: #c084ff;
+    color: #c084fc;
 }
 
-/* =========================
-   FOOTER
-========================= */
+/* FOOTER */
 
 footer {
     text-align: center;
-    padding: 30px 20px;
     color: #777;
+    padding: 30px;
     border-top: 1px solid rgba(255,255,255,.08);
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
+/* MOBILE */
 
-@media (max-width: 700px) {
+@media(max-width:700px) {
 
-    .header-inner {
+    .header {
         flex-direction: column;
-    }
-
-    nav {
-        width: 100%;
     }
 
     nav button {
         font-size: 12px;
-        padding: 8px 10px;
-    }
-
-    main {
-        padding-top: 25px;
+        padding: 8px 9px;
     }
 
     .day {
         flex-direction: column;
-        align-items: flex-start;
     }
 
-    .game {
-        text-align: left;
+    .profile h1 {
+        font-size: 43px;
     }
+
 }
+
 </style>
 </head>
 
 <body>
 
 <header>
-    <div class="header-inner">
 
-        <div class="logo">
-            SANCI<span>9517</span>
-        </div>
+<div class="header">
 
-        <nav>
-            <button class="active" data-tab="home">Főoldal</button>
-            <button data-tab="news">Hírek</button>
-            <button data-tab="poll">Szavazás</button>
-            <button data-tab="clips">Clips</button>
-            <button data-tab="schedule">Menetrend</button>
-            <button data-tab="stats">Stats</button>
-            <button data-tab="support">Támogatás</button>
-            <button data-tab="setup">Setup</button>
-        </nav>
+<div class="logo">
+SANCI<span>9517</span>
+</div>
 
-    </div>
+<nav>
+
+<button class="active" data-page="home">Főoldal</button>
+<button data-page="news">Hírek</button>
+<button data-page="poll">Szavazás</button>
+<button data-page="clips">Clips</button>
+<button data-page="schedule">Menetrend</button>
+<button data-page="stats">Stats</button>
+<button data-page="support">Támogatás</button>
+<button data-page="setup">Setup</button>
+
+</nav>
+
+</div>
+
 </header>
 
 
 <main>
 
-<!-- ================= HOME ================= -->
 
-<section id="home" class="tab active">
+<!-- HOME -->
 
-    <div class="profile">
+<section id="home" class="page active">
 
-        <div class="avatar-wrapper">
+<div class="profile">
 
-            <img
-                id="avatar"
-                class="avatar"
-                src="https://static-cdn.jtvnw.net/jtv_user_pictures/4d8f1618-2e0a-4286-90e8-0a0e5b7fb602-profile_image-300x300.png"
-                alt="SANCI9517 profilkép"
-                onerror="this.style.display='none';document.getElementById('avatarFallback').style.display='flex';"
-            >
+<img
+    src="profile.jpg"
+    class="avatar"
+    alt="SANCI9517 profilkép"
+>
 
-            <div id="avatarFallback" class="avatar-fallback">
-                S
-            </div>
+<h1>SANCI<span>9517</span></h1>
 
-        </div>
+<p>
+🎮 Fortnite • Hearthstone • GTA V RP • Variety
+</p>
 
-        <h1>SANCI<span>9517</span></h1>
-
-        <p>🎮 Fortnite • Hearthstone • GTA V RP • Variety</p>
-
-    </div>
+</div>
 
 
-    <div class="live-card">
+<div class="card live">
 
-        <div class="live-status">
-            <span class="live-dot"></span>
-            STREAM
-        </div>
+<div class="live-status">
+<span class="live-dot"></span>
+STREAM
+</div>
 
-        <h2>Csatlakozz a streamhez!</h2>
+<h2>Csatlakozz a streamhez!</h2>
 
-        <p>
-            Kövess Twitch-en, hogy ne maradj le az élő adásokról.
-        </p>
+<p>
+Nézd az élő adásokat és csatlakozz a közösséghez.
+</p>
 
-        <a
-            class="btn"
-            href="https://www.twitch.tv/sanci9517"
-            target="_blank"
-            rel="noopener noreferrer">
-            ▶ Twitch megnyitása
-        </a>
+<a
+href="https://www.twitch.tv/sanci9517"
+target="_blank"
+class="btn">
+▶ Twitch megnyitása
+</a>
 
-    </div>
-
-
-    <div class="links">
-
-        <a class="link-card"
-           href="https://www.twitch.tv/sanci9517"
-           target="_blank"
-           rel="noopener noreferrer">
-            <strong>🟣 Twitch</strong>
-            <span>Élő adások és chat</span>
-        </a>
-
-        <a class="link-card"
-           href="https://youtube.com/@sanci9517vod"
-           target="_blank"
-           rel="noopener noreferrer">
-            <strong>🔴 YouTube</strong>
-            <span>VOD-ok és videók</span>
-        </a>
-
-        <a class="link-card"
-           href="https://www.tiktok.com/@sanci9517twitch"
-           target="_blank"
-           rel="noopener noreferrer">
-            <strong>🎵 TikTok</strong>
-            <span>Short videók és streamek</span>
-        </a>
-
-        <a class="link-card"
-           href="https://x.com/Sanci9517"
-           target="_blank"
-           rel="noopener noreferrer">
-            <strong>𝕏 X</strong>
-            <span>Hírek és frissítések</span>
-        </a>
-
-    </div>
+</div>
 
 
-    <div class="countdown">
+<div class="links">
 
-        <h2>Következő stream</h2>
+<a
+class="link"
+href="https://www.twitch.tv/sanci9517"
+target="_blank">
 
-        <div id="timer">
-            Betöltés...
-        </div>
+<strong>🟣 Twitch</strong>
+<small>Élő adások és chat</small>
 
-    </div>
-
-</section>
+</a>
 
 
-<!-- ================= NEWS ================= -->
+<a
+class="link"
+href="https://youtube.com/@sanci9517vod"
+target="_blank">
 
-<section id="news" class="tab">
+<strong>🔴 YouTube</strong>
+<small>VOD-ok és videók</small>
 
-    <div class="card">
+</a>
 
-        <h2>📰 Legfrissebb hírek</h2>
 
-        <p>
-            Üdv a SANCI9517 hivatalos oldalán!
-        </p>
+<a
+class="link"
+href="https://www.tiktok.com/@sanci9517twitch"
+target="_blank">
 
-        <br>
+<strong>🎵 TikTok</strong>
+<small>Short videók és streamek</small>
 
-        <p>
-            Itt találod a legfrissebb stream információkat,
-            videókat, közösségi linkeket és a heti menetrendet.
-        </p>
+</a>
 
-    </div>
+
+<a
+class="link"
+href="https://x.com/Sanci9517"
+target="_blank">
+
+<strong>𝕏 X</strong>
+<small>Hírek és frissítések</small>
+
+</a>
+
+</div>
+
+
+<div class="card countdown">
+
+<h2>Következő stream</h2>
+
+<div id="timer">
+Betöltés...
+</div>
+
+</div>
 
 </section>
 
 
-<!-- ================= POLL ================= -->
+<!-- NEWS -->
 
-<section id="poll" class="tab">
+<section id="news" class="page">
 
-    <div class="card">
+<div class="card">
 
-        <h2>🗳️ Mit streameljek?</h2>
+<h2>📰 Hírek</h2>
 
-        <p>
-            Szavazz, melyik játék legyen a következő streamen!
-        </p>
+<p>
+Üdv a SANCI9517 hivatalos oldalán!
+</p>
 
-        <button class="poll-option" data-answer="Fortnite">
-            🎯 Fortnite
-        </button>
+<p>
+Itt találod majd a legfrissebb stream híreket,
+újdonságokat és bejelentéseket.
+</p>
 
-        <button class="poll-option" data-answer="Hearthstone">
-            🃏 Hearthstone
-        </button>
-
-        <button class="poll-option" data-answer="GTA V RP">
-            🚗 GTA V RP
-        </button>
-
-        <button class="poll-option" data-answer="Variety">
-            🎮 Variety
-        </button>
-
-        <div id="voteResult" class="vote-result"></div>
-
-    </div>
+</div>
 
 </section>
 
 
-<!-- ================= CLIPS ================= -->
+<!-- POLL -->
 
-<section id="clips" class="tab">
+<section id="poll" class="page">
 
-    <div class="card">
+<div class="card poll">
 
-        <h2>🎬 Clips</h2>
+<h2>🗳️ Mit streameljek?</h2>
 
-        <p>
-            A legjobb pillanatokért látogass el a YouTube csatornára.
-        </p>
+<p>
+Szavazz a következő játékra!
+</p>
 
-        <br>
+<button data-vote="Fortnite">
+🎯 Fortnite
+</button>
 
-        <a
-            class="btn"
-            href="https://youtube.com/@sanci9517vod"
-            target="_blank"
-            rel="noopener noreferrer">
-            ▶ YouTube megnyitása
-        </a>
+<button data-vote="Hearthstone">
+🃏 Hearthstone
+</button>
 
-    </div>
+<button data-vote="GTA V RP">
+🚗 GTA V RP
+</button>
 
-</section>
+<button data-vote="Variety">
+🎮 Variety
+</button>
 
+<div id="voteMessage"></div>
 
-<!-- ================= SCHEDULE ================= -->
-
-<section id="schedule" class="tab">
-
-    <div class="card">
-
-        <h2>📅 Heti menetrend</h2>
-
-        <div class="schedule">
-
-            <div class="day">
-                <span class="day-name">Hétfő</span>
-                <span class="game">Fortnite • 18:00–21:00</span>
-            </div>
-
-            <div class="day">
-                <span class="day-name">Kedd</span>
-                <span class="game">Szabadnap</span>
-            </div>
-
-            <div class="day">
-                <span class="day-name">Szerda</span>
-                <span class="game">GTA V RP • 18:00–21:00</span>
-            </div>
-
-            <div class="day">
-                <span class="day-name">Csütörtök</span>
-                <span class="game">Szabadnap</span>
-            </div>
-
-            <div class="day">
-                <span class="day-name">Péntek</span>
-                <span class="game">Variety Friday • 19:00–late</span>
-            </div>
-
-        </div>
-
-    </div>
+</div>
 
 </section>
 
 
-<!-- ================= STATS ================= -->
+<!-- CLIPS -->
 
-<section id="stats" class="tab">
+<section id="clips" class="page">
 
-    <div class="card">
+<div class="card">
 
-        <h2>📊 SANCI9517 Stats</h2>
+<h2>🎬 Clips</h2>
 
-        <div class="stats">
+<p>
+A legjobb pillanatokat a YouTube csatornán találod.
+</p>
 
-            <div class="stat">
-                <strong>9517</strong>
-                <span>Creator</span>
-            </div>
+<a
+href="https://youtube.com/@sanci9517vod"
+target="_blank"
+class="btn">
 
-            <div class="stat">
-                <strong>3+</strong>
-                <span>Fő játék</span>
-            </div>
+▶ YouTube megnyitása
 
-            <div class="stat">
-                <strong>4</strong>
-                <span>Platform</span>
-            </div>
+</a>
 
-            <div class="stat">
-                <strong>∞</strong>
-                <span>Gaming</span>
-            </div>
-
-        </div>
-
-    </div>
+</div>
 
 </section>
 
 
-<!-- ================= SUPPORT ================= -->
+<!-- SCHEDULE -->
 
-<section id="support" class="tab">
+<section id="schedule" class="page">
 
-    <div class="card">
+<div class="card">
 
-        <h2>💜 Támogatás</h2>
+<h2>📅 Heti menetrend</h2>
 
-        <p>
-            Ha szeretnéd támogatni a csatornát, az alábbi lehetőségeket használhatod.
-        </p>
+<div class="schedule">
 
-        <br>
+<div class="day">
+<strong>Hétfő</strong>
+<span>Fortnite • 18:00–21:00</span>
+</div>
 
-        <a
-            class="btn"
-            href="https://streamlabs.com/sanci9517/tip"
-            target="_blank"
-            rel="noopener noreferrer">
-            💜 Streamlabs támogatás
-        </a>
+<div class="day">
+<strong>Kedd</strong>
+<span>Szabadnap</span>
+</div>
 
-        <br><br>
+<div class="day">
+<strong>Szerda</strong>
+<span>GTA V RP • 18:00–21:00</span>
+</div>
 
-        <a
-            class="btn secondary"
-            href="https://www.twitch.tv/sanci9517"
-            target="_blank"
-            rel="noopener noreferrer">
-            🟣 Twitch
-        </a>
+<div class="day">
+<strong>Csütörtök</strong>
+<span>Szabadnap</span>
+</div>
 
-    </div>
+<div class="day">
+<strong>Péntek</strong>
+<span>Variety Friday • 19:00–late</span>
+</div>
+
+</div>
+
+</div>
 
 </section>
 
 
-<!-- ================= SETUP ================= -->
+<!-- STATS -->
 
-<section id="setup" class="tab">
+<section id="stats" class="page">
 
-    <div class="card">
+<div class="card">
 
-        <h2>🖥️ Setup</h2>
+<h2>📊 SANCI9517 Stats</h2>
 
-        <div class="grid">
+<div class="stats">
 
-            <div class="card">
-                <h2>CPU</h2>
-                <p>Gaming PC</p>
-            </div>
+<div class="stat">
+<strong>9517</strong>
+<span>Creator</span>
+</div>
 
-            <div class="card">
-                <h2>GPU</h2>
-                <p>NVIDIA GeForce RTX</p>
-            </div>
+<div class="stat">
+<strong>3+</strong>
+<span>Fő játék</span>
+</div>
 
-            <div class="card">
-                <h2>RAM</h2>
-                <p>32 GB DDR5</p>
-            </div>
+<div class="stat">
+<strong>4</strong>
+<span>Platform</span>
+</div>
 
-            <div class="card">
-                <h2>Monitor</h2>
-                <p>Gaming monitor</p>
-            </div>
+<div class="stat">
+<strong>∞</strong>
+<span>Gaming</span>
+</div>
 
-            <div class="card">
-                <h2>Mouse</h2>
-                <p>Gaming mouse</p>
-            </div>
+</div>
 
-            <div class="card">
-                <h2>Microphone</h2>
-                <p>Streaming microphone</p>
-            </div>
+</div>
 
-        </div>
+</section>
 
-    </div>
+
+<!-- SUPPORT -->
+
+<section id="support" class="page">
+
+<div class="card">
+
+<h2>💜 Támogatás</h2>
+
+<p>
+Ha szeretnéd támogatni a SANCI9517 csatornát,
+az alábbi linken megteheted.
+</p>
+
+<a
+href="https://streamlabs.com/sanci9517/tip"
+target="_blank"
+class="btn">
+
+💜 Streamlabs támogatás
+
+</a>
+
+</div>
+
+</section>
+
+
+<!-- SETUP -->
+
+<section id="setup" class="page">
+
+<div class="card">
+
+<h2>🖥️ Setup</h2>
+
+<div class="stats">
+
+<div class="stat">
+<strong>CPU</strong>
+<span>Gaming PC</span>
+</div>
+
+<div class="stat">
+<strong>GPU</strong>
+<span>NVIDIA GeForce RTX</span>
+</div>
+
+<div class="stat">
+<strong>RAM</strong>
+<span>32 GB DDR5</span>
+</div>
+
+<div class="stat">
+<strong>Monitor</strong>
+<span>Gaming Monitor</span>
+</div>
+
+<div class="stat">
+<strong>Mouse</strong>
+<span>Gaming Mouse</span>
+</div>
+
+<div class="stat">
+<strong>Mic</strong>
+<span>Streaming Microphone</span>
+</div>
+
+</div>
+
+</div>
 
 </section>
 
@@ -852,39 +747,41 @@ footer {
 
 
 <footer>
-    © 2026 SANCI9517 • All rights reserved.
+
+© 2026 SANCI9517 • All rights reserved.
+
 </footer>
 
 
 <script>
 
 /* =========================
-   TAB SYSTEM
+   MENÜ
 ========================= */
 
-const navButtons = document.querySelectorAll("nav button");
-const tabs = document.querySelectorAll(".tab");
+const buttons = document.querySelectorAll("nav button");
+const pages = document.querySelectorAll(".page");
 
-navButtons.forEach(button => {
+buttons.forEach(button => {
 
-    button.addEventListener("click", () => {
+    button.addEventListener("click", function() {
 
-        const target = button.dataset.tab;
+        const pageName = this.getAttribute("data-page");
 
-        navButtons.forEach(btn => {
+        buttons.forEach(btn => {
             btn.classList.remove("active");
         });
 
-        tabs.forEach(tab => {
-            tab.classList.remove("active");
+        pages.forEach(page => {
+            page.classList.remove("active");
         });
 
-        button.classList.add("active");
+        this.classList.add("active");
 
-        const targetTab = document.getElementById(target);
+        const selectedPage = document.getElementById(pageName);
 
-        if (targetTab) {
-            targetTab.classList.add("active");
+        if (selectedPage) {
+            selectedPage.classList.add("active");
         }
 
         window.scrollTo({
@@ -898,27 +795,20 @@ navButtons.forEach(button => {
 
 
 /* =========================
-   POLL
+   SZAVAZÁS
 ========================= */
 
-const pollButtons = document.querySelectorAll(".poll-option");
-const voteResult = document.getElementById("voteResult");
+const voteButtons = document.querySelectorAll("[data-vote]");
+const voteMessage = document.getElementById("voteMessage");
 
-pollButtons.forEach(button => {
+voteButtons.forEach(button => {
 
-    button.addEventListener("click", () => {
+    button.addEventListener("click", function() {
 
-        const answer = button.dataset.answer;
+        const vote = this.getAttribute("data-vote");
 
-        voteResult.textContent =
-            "Köszönöm a szavazatot! 🎉 A választásod: " + answer;
-
-        pollButtons.forEach(btn => {
-            btn.disabled = true;
-            btn.style.opacity = "0.5";
-        });
-
-        button.style.opacity = "1";
+        voteMessage.textContent =
+            "✅ Köszönöm! Erre szavaztál: " + vote;
 
     });
 
@@ -929,74 +819,53 @@ pollButtons.forEach(button => {
    COUNTDOWN
 ========================= */
 
-/*
-    Következő stream:
-    Péntek 19:00
-
-    A rendszer automatikusan megkeresi
-    a következő pénteket.
-*/
-
 function getNextFriday() {
 
     const now = new Date();
 
-    const result = new Date(now);
+    let target = new Date(now);
 
-    const day = now.getDay();
+    let days = (5 - now.getDay() + 7) % 7;
 
-    let daysUntilFriday = (5 - day + 7) % 7;
+    target.setDate(now.getDate() + days);
 
-    if (daysUntilFriday === 0) {
+    target.setHours(19, 0, 0, 0);
 
-        if (
-            now.getHours() > 19 ||
-            (now.getHours() === 19 && now.getMinutes() >= 0)
-        ) {
-            daysUntilFriday = 7;
-        }
-
+    if (target <= now) {
+        target.setDate(target.getDate() + 7);
     }
 
-    result.setDate(now.getDate() + daysUntilFriday);
-    result.setHours(19, 0, 0, 0);
-
-    return result;
+    return target;
 }
 
 
-function updateCountdown() {
+function updateTimer() {
 
     const timer = document.getElementById("timer");
 
-    const target = getNextFriday();
-
     const now = new Date();
+    const target = getNextFriday();
 
     const difference = target - now;
 
     if (difference <= 0) {
 
-        timer.textContent = "ÉLŐ HAMAROSAN!";
+        timer.textContent = "HAMAROSAN ÉLŐ!";
 
         return;
     }
 
-    const days = Math.floor(
-        difference / (1000 * 60 * 60 * 24)
-    );
+    const days =
+        Math.floor(difference / 86400000);
 
-    const hours = Math.floor(
-        (difference / (1000 * 60 * 60)) % 24
-    );
+    const hours =
+        Math.floor((difference / 3600000) % 24);
 
-    const minutes = Math.floor(
-        (difference / (1000 * 60)) % 60
-    );
+    const minutes =
+        Math.floor((difference / 60000) % 60);
 
-    const seconds = Math.floor(
-        (difference / 1000) % 60
-    );
+    const seconds =
+        Math.floor((difference / 1000) % 60);
 
     timer.textContent =
         days + " nap " +
@@ -1007,11 +876,11 @@ function updateCountdown() {
 }
 
 
-updateCountdown();
+updateTimer();
 
-setInterval(updateCountdown, 1000);
+setInterval(updateTimer, 1000);
 
 </script>
 
 </body>
-              </html>
+    </html>
