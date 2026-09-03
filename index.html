@@ -3,38 +3,305 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Teszt Oldal</title>
+  <title>SANCI9517 | Official Hub</title>
+  
+  <!-- BETŰTÍPUSOK ÉS IKONOK -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
   <style>
-    body { background: #111; color: #fff; font-family: sans-serif; text-align: center; padding: 20px; }
-    button { padding: 15px 25px; margin: 10px; font-size: 18px; cursor: pointer; background: #a855f7; color: white; border: none; border-radius: 8px; }
-    .box { display: none; padding: 20px; background: #222; margin-top: 20px; border-radius: 8px; }
-    .box.active { display: block; }
+    :root {
+      --bg-dark: #07040d;
+      --card-bg: #120a22;
+      --card-bg-2: #1a0f30;
+      --accent: #a855f7;
+      --border: rgba(168, 85, 247, 0.35);
+      --text: #ffffff;
+      --text-sub: #c084fc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: radial-gradient(circle at 50% 0%, rgba(168, 85, 247, 0.25) 0%, transparent 70%);
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      min-height: 100vh;
+      padding: 20px 15px 80px 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* NAVIGÁCIÓS FÜLEK */
+    .nav-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+      width: 100%;
+      max-width: 600px;
+      justify-content: center;
+    }
+
+    .nav-btn {
+      flex: 1;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 10px;
+      border-radius: 12px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn.active {
+      background: var(--accent);
+      color: #000;
+      border-color: #fff;
+      box-shadow: 0 0 15px var(--accent);
+    }
+
+    /* TARTALOM DOBOZOK */
+    .main-container { width: 100%; max-width: 600px; }
+    .tab-content { display: none; flex-direction: column; gap: 16px; }
+    .tab-content.active { display: flex; }
+
+    /* PROFIL PANEL */
+    .profile-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      border: 3px solid var(--accent);
+      object-fit: cover;
+    }
+
+    .brand-title { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; }
+    .brand-sub { color: var(--text-sub); font-size: 0.85rem; font-weight: 700; }
+
+    /* KÖZÖSSÉGI GOMBOK */
+    .card-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 16px 20px;
+      border-radius: 14px;
+      background: var(--card-bg-2);
+      border: 1px solid var(--border);
+      transition: transform 0.2s ease;
+    }
+
+    .card-btn:active { transform: scale(0.98); }
+
+    .card-btn.twitch { border-left: 5px solid #9146FF; }
+    .card-btn.youtube { border-left: 5px solid #FF0000; }
+    .card-btn.tiktok  { border-left: 5px solid #00F2FE; }
+    .card-btn.x-twitter { border-left: 5px solid #FFFFFF; }
+    .card-btn.discord { border-left: 5px solid #5865F2; }
+
+    .card-left { display: flex; align-items: center; gap: 12px; }
+    .card-left i { font-size: 1.3rem; width: 24px; text-align: center; }
+
+    /* MENETREND ÉS SETUP KÁRTYÁK */
+    .info-card {
+      background: var(--card-bg-2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .info-card.active-day {
+      border: 2px solid var(--accent);
+      box-shadow: 0 0 12px rgba(168, 85, 247, 0.2);
+    }
+
+    .card-header-text {
+      font-family: 'Orbitron', sans-serif;
+      color: var(--accent);
+      font-size: 1rem;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .setup-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.9rem;
+    }
+    .setup-row:last-child { border-bottom: none; }
   </style>
 </head>
 <body>
 
-  <h1>SANCI9517 TEST</h1>
-  
-  <button onclick="showSection('home')">Főoldal</button>
-  <button onclick="showSection('setup')">Setup</button>
-
-  <div id="home" class="box active">
-    <h2>FŐOLDAL TARTALMA</h2>
-    <p><a href="https://m.twitch.tv/sanci9517" style="color:#a855f7;">Kattints ide a Twitch-ért</a></p>
+  <!-- NAVIGÁCIÓS FÜLEK -->
+  <div class="nav-tabs">
+    <button class="nav-btn active" onclick="openTab('home', this)">
+      <i class="fa-solid fa-house"></i> FŐOLDAL
+    </button>
+    <button class="nav-btn" onclick="openTab('schedule', this)">
+      <i class="fa-solid fa-calendar"></i> MENETREND
+    </button>
+    <button class="nav-btn" onclick="openTab('setup', this)">
+      <i class="fa-solid fa-desktop"></i> SET UP
+    </button>
   </div>
 
-  <div id="setup" class="box">
-    <h2>SETUP TARTALMA</h2>
-    <p>PC: RTX 4070 Ti, Ryzen 7800X3D</p>
+  <div class="main-container">
+
+    <!-- FŐOLDAL -->
+    <div id="tab-home" class="tab-content active">
+      <div class="profile-card">
+        <img src="https://static-cdn.jtvnw.net/user-default-pictures-uv/75305db0-3a92-43d8-1565-22b87e142200-profile_image-300x300.png" class="avatar" alt="SANCI9517">
+        <div>
+          <div class="brand-title">SANCI9517</div>
+          <div class="brand-sub">STREAMER & TARTALOMKÉSZÍTŐ</div>
+        </div>
+      </div>
+
+      <a href="https://m.twitch.tv/sanci9517" target="_blank" class="card-btn twitch">
+        <div class="card-left"><i class="fa-brands fa-twitch" style="color:#a970ff;"></i><span>Twitch Csatorna</span></div>
+        <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; color:var(--text-muted);"></i>
+      </a>
+
+      <a href="https://youtube.com/@sanci9517vod?si=0OFY7fLlho9VGUqW" target="_blank" class="card-btn youtube">
+        <div class="card-left"><i class="fa-brands fa-youtube" style="color:#ff4d4d;"></i><span>YouTube VODs</span></div>
+        <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; color:var(--text-muted);"></i>
+      </a>
+
+      <a href="https://www.tiktok.com/@sanci9517twitch" target="_blank" class="card-btn tiktok">
+        <div class="card-left"><i class="fa-brands fa-tiktok" style="color:#00f2fe;"></i><span>TikTok</span></div>
+        <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; color:var(--text-muted);"></i>
+      </a>
+
+      <a href="https://x.com/Sanci9517" target="_blank" class="card-btn x-twitter">
+        <div class="card-left"><i class="fa-brands fa-x-twitter" style="color:#fff;"></i><span>X / Twitter</span></div>
+        <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; color:var(--text-muted);"></i>
+      </a>
+
+      <a href="https://discord.gg" target="_blank" class="card-btn discord">
+        <div class="card-left"><i class="fa-brands fa-discord" style="color:#5865f2;"></i><span>Discord Szerver</span></div>
+        <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; color:var(--text-muted);"></i>
+      </a>
+    </div>
+
+    <!-- MENETREND -->
+    <div id="tab-schedule" class="tab-content">
+      <div id="schedule-list"></div>
+    </div>
+
+    <!-- SET UP -->
+    <div id="tab-setup" class="tab-content">
+      <div id="setup-list"></div>
+    </div>
+
   </div>
 
   <script>
-    function showSection(id) {
-      document.querySelectorAll('.box').forEach(el => el.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
+    // MENETREND ADATOK
+    const defaultSchedule = [
+      { day: "Hétfő", time: "18:00 - 21:00", game: "Valorant", desc: "Ranked & Közösségi meccsek", active: true },
+      { day: "Kedd", time: "—", game: "PIHENŐNAP", desc: "Nincs adás", active: false },
+      { day: "Szerda", time: "18:00 - 21:00", game: "GTA V Roleplay", desc: "Karakter sztori", active: true },
+      { day: "Csütörtök", time: "—", game: "PIHENŐNAP", desc: "Nincs adás", active: false },
+      { day: "Péntek", time: "19:00 - Későig", game: "Variety Friday", desc: "Közös játékok", active: true },
+      { day: "Szombat", time: "17:00 - 22:00", game: "Counter-Strike 2", desc: "Faceit lobby", active: true },
+      { day: "Vasárnap", time: "—", game: "PIHENŐNAP", desc: "Feltöltődés", active: false }
+    ];
+
+    // SETUP ADATOK
+    const defaultSetup = [
+      {
+        category: "PC Konfiguráció",
+        items: [
+          { name: "Processzor", val: "AMD Ryzen 7 7800X3D" },
+          { name: "Videókártya", val: "NVIDIA RTX 4070 Ti Super" },
+          { name: "Memória", val: "32GB DDR5 6000MHz" }
+        ]
+      },
+      {
+        category: "Perifériák",
+        items: [
+          { name: "Monitor", val: "27\" 240Hz Gaming" },
+          { name: "Egér", val: "Logitech G Pro X Superlight" },
+          { name: "Mikrofon", val: "Shure SM7B" }
+        ]
+      }
+    ];
+
+    // FÜLVÁLTÓ FUNKCIÓ
+    function openTab(tabName, btn) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+
+      document.getElementById('tab-' + tabName).classList.add('active');
+      btn.classList.add('active');
     }
+
+    // MENETREND RENDERELÉSE
+    function initSchedule() {
+      const container = document.getElementById('schedule-list');
+      container.innerHTML = defaultSchedule.map(item => `
+        <div class="info-card ${item.active ? 'active-day' : ''}" style="margin-bottom:12px;">
+          <div class="card-header-text">
+            <span>${item.day}</span>
+            <small style="color:var(--text-muted);">${item.time}</small>
+          </div>
+          <div style="font-weight:800; font-size:1.1rem;">${item.game}</div>
+          <div style="font-size:0.85rem; color:var(--text-sub);">${item.desc}</div>
+        </div>
+      `).join('');
+    }
+
+    // SETUP RENDERELÉSE
+    function initSetup() {
+      const container = document.getElementById('setup-list');
+      container.innerHTML = defaultSetup.map(cat => `
+        <div class="info-card" style="margin-bottom:14px;">
+          <div class="card-header-text">${cat.category}</div>
+          ${cat.items.map(i => `
+            <div class="setup-row">
+              <span style="color:var(--text-muted);">${i.name}:</span>
+              <span style="font-weight:700;">${i.val}</span>
+            </div>
+          `).join('')}
+        </div>
+      `).join('');
+    }
+
+    // INDÍTÁS BETÖLTÉSKOR
+    window.onload = () => {
+      initSchedule();
+      initSetup();
+    };
   </script>
 
 </body>
-</html>
-
+  </html>
+  
