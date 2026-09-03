@@ -140,354 +140,180 @@
     .card-left { display: flex; align-items: center; gap: 16px; }
     .card-left i { font-size: 1.5rem; color: var(--accent-purple); width: 25px; text-align: center; }
 
-   /* ============================================================
-/* ============================================================
-       [SECTION 2.4: DESKTOP (WEB) LAYOUT - NEXT-GEN STREAMER HUB]
+  /* ============================================================
+       [SECTION 2.4: DESKTOP (WEB) BENTO GRID DASHBOARD]
        ============================================================ */
     @media (min-width: 900px) {
       body {
-        padding: 40px 30px;
-        background: #040208;
-        /* Többrétegű animált mesh fényfoltok */
+        padding: 50px 20px;
+        background-color: #06040a;
         background-image: 
-          radial-gradient(at 0% 0%, rgba(168, 85, 247, 0.22) 0px, transparent 50%),
-          radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.18) 0px, transparent 50%),
-          radial-gradient(at 50% 100%, rgba(236, 72, 153, 0.15) 0px, transparent 50%);
+          radial-gradient(circle at 20% 20%, rgba(168, 85, 247, 0.15) 0%, transparent 40%),
+          radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.12) 0%, transparent 40%);
         background-attachment: fixed;
       }
-      
+
+      /* STRUKTURÁLT BENTO GRID (KÖZÉPRE ZÁRT, MATEMATIKAI ARÁNYOK) */
       .main-container {
         width: 100%;
-        max-width: 1280px;
+        max-width: 1100px;
         display: grid;
-        grid-template-columns: 380px 1fr;
-        gap: 35px;
-        align-items: start;
+        grid-template-columns: 320px 1fr 1fr;
+        grid-template-rows: auto auto auto;
+        gap: 20px;
+        align-items: stretch;
       }
 
-      /* ULTIMATE STREAMER CARD (BAL OLDAL) */
+      /* BAL OLDAL: PROFIL PANEL (3 SOR MAGAS) */
       header {
+        grid-column: 1 / 2;
+        grid-row: 1 / 4;
+        display: flex;
         flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
         text-align: center;
-        padding: 45px 30px;
-        position: sticky;
-        top: 30px;
-        background: linear-gradient(145deg, rgba(20, 11, 38, 0.9), rgba(8, 4, 18, 0.95)) !important;
-        border: 1px solid rgba(168, 85, 247, 0.4) !important;
-        border-radius: 28px;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255,255,255,0.1) !important;
+        padding: 40px 24px;
+        background: rgba(18, 10, 32, 0.85) !important;
+        border: 1px solid rgba(168, 85, 247, 0.3) !important;
+        border-radius: 24px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5) !important;
       }
 
-      .avatar-wrapper {
-        position: relative;
-        display: inline-block;
-        margin-bottom: 15px;
+      .brand {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
       }
 
-      .avatar { 
-        width: 130px; 
-        height: 130px; 
-        border-radius: 50%;
-        border: 3px solid var(--accent-purple); 
-        box-shadow: 0 0 30px var(--accent-purple);
-      }
-
-      .live-tag {
-        position: absolute;
-        bottom: 5px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #ef4444;
-        color: white;
-        font-family: 'Orbitron', sans-serif;
-        font-size: 0.65rem;
-        font-weight: 900;
-        padding: 3px 10px;
-        border-radius: 20px;
-        border: 2px solid #06040a;
-        box-shadow: 0 0 10px #ef4444;
-        letter-spacing: 1px;
+      .avatar {
+        width: 120px;
+        height: 120px;
+        border: 3px solid var(--accent-purple);
+        box-shadow: 0 0 25px rgba(168, 85, 247, 0.4);
       }
 
       .brand-text h1 {
-        font-size: 2rem;
+        font-size: 1.8rem;
         letter-spacing: 2px;
-        text-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
       }
 
-      /* STATISZTIKAI COUNTEREK */
-      .stats-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        width: 100%;
-        margin-top: 25px;
-        padding-top: 20px;
-        border-top: 1px solid rgba(255,255,255,0.08);
-      }
-
-      .stat-box {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        padding: 12px 10px;
-        border-radius: 14px;
-      }
-
-      .stat-num {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 1.1rem;
-        font-weight: 800;
-        color: #fff;
-      }
-
-      .stat-label {
-        font-size: 0.75rem;
+      .brand-text p {
+        font-size: 0.85rem;
         color: var(--text-sub);
-        text-transform: uppercase;
+        font-weight: 700;
         letter-spacing: 1px;
       }
 
-      /* LINK CSOPORT (JOBB OLDAL) */
-      .links-wrapper {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 18px;
+      .stats-badge {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 15px;
+        border-radius: 16px;
+        margin-top: 20px;
       }
 
-      /* FEATURED BANNER (A JOBB OLDAL TETEJÉN) */
-      .hero-banner {
-        grid-column: 1 / -1;
-        background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(59, 130, 246, 0.15));
+      /* TARTALOM REGGELIZŐ BLOKKOK (JOBB OLDAL BENTO MATRIX) */
+      .links-wrapper {
+        display: contents; /* A gombok közvetlenül beleilleszkednek a fő gridbe */
+      }
+
+      .section-title {
+        grid-column: 2 / 4;
+        font-size: 0.85rem;
+        letter-spacing: 3px;
+        color: var(--text-sub);
+        margin: 0;
+        align-self: end;
+      }
+
+      /* KIEMELT STREAM BANNER (DUPLA SZÉLES CSEMPEMÁTRIXBAN) */
+      .hero-card {
+        grid-column: 2 / 4;
+        background: linear-gradient(135deg, rgba(168, 85, 247, 0.25), rgba(18, 10, 32, 0.9));
         border: 1px solid var(--accent-purple);
         border-radius: 20px;
-        padding: 25px;
+        padding: 28px 32px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-        margin-bottom: 10px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
       }
 
-      .hero-text h2 {
+      .hero-card h2 {
         font-family: 'Orbitron', sans-serif;
-        font-size: 1.2rem;
-        color: #fff;
+        font-size: 1.3rem;
+        margin-bottom: 6px;
       }
 
-      .hero-text p {
+      .hero-card p {
         color: var(--text-sub);
         font-size: 0.9rem;
       }
 
-      .hero-btn {
+      .play-btn {
         background: var(--accent-purple);
         color: #000;
         font-family: 'Orbitron', sans-serif;
         font-weight: 900;
-        padding: 12px 22px;
+        font-size: 0.85rem;
+        padding: 14px 24px;
         border-radius: 12px;
-        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
         box-shadow: 0 0 20px var(--accent-purple);
       }
 
-      .hero-btn:hover {
+      .play-btn:hover {
         transform: scale(1.05);
         background: #fff;
       }
 
+      /* NORMÁL BENTO CSEMPÉK */
       .card-btn {
-        padding: 22px;
-        border-radius: 16px;
-        background: rgba(14, 8, 28, 0.8) !important;
-        border: 1px solid rgba(168, 85, 247, 0.2) !important;
+        height: 100%;
+        min-height: 80px;
+        border-radius: 18px;
+        padding: 20px 24px;
+        background: rgba(18, 10, 32, 0.75) !important;
+        border: 1px solid rgba(168, 85, 247, 0.25) !important;
       }
 
       .card-btn:hover {
         border-color: var(--glow-purple) !important;
-        background: linear-gradient(135deg, rgba(30, 16, 58, 0.9), rgba(14, 8, 28, 0.95)) !important;
+        background: rgba(30, 16, 58, 0.85) !important;
         transform: translateY(-4px) !important;
-        box-shadow: 0 12px 30px rgba(168, 85, 247, 0.25) !important;
+        box-shadow: 0 10px 25px rgba(168, 85, 247, 0.25) !important;
       }
 
-      .floating-live-btn {
-        bottom: 35px;
-        right: 35px;
+      /* KÜLÖNLEGES SZÉLES CSEMPE A DISCORDNAK OBLIGÁT HIDEG SZÍNNEL */
+      .card-btn.wide {
+        grid-column: 2 / 4;
       }
     }
-    /* --- 2.5 MOBIL LAYOUT (EGYOSZLOPOS NÉZET) --- */
-    @media (max-width: 899px) {
-      .main-container {
-        width: 100%;
-        max-width: 550px;
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-      }
-
-      .links-wrapper {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .floating-live-btn {
-        bottom: 15px !important;
-        right: 15px !important;
-        padding: 10px 18px !important;
-        font-size: 0.75rem !important;
-      }
-    }
-
-    /* --- 2.6 LEBEGŐ "ÉLŐ ADÁS" GOMB A SAROKBAN --- */
-    .floating-live-btn {
-      position: fixed;
-      bottom: 25px;
-      right: 25px;
-      background: linear-gradient(135deg, #ef4444, var(--accent-purple));
-      border: 2px solid #ffffff;
-      color: white;
-      padding: 14px 24px;
-      border-radius: 50px;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 900;
-      letter-spacing: 1px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-      box-shadow: 0 8px 30px rgba(239, 68, 68, 0.5);
-      z-index: 999;
-      animation: pulse-glow 2s infinite;
-    }
-    .floating-live-btn:hover { transform: scale(1.05); }
-
-    .pulse-dot {
-      width: 10px;
-      height: 10px;
-      background-color: #ffffff;
-      border-radius: 50%;
-      animation: blink 1s infinite;
-    }
-
-    @keyframes blink { 50% { opacity: 0.2; } }
-    @keyframes pulse-glow {
-      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-      70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-    }
-
-    /* --- 2.7 LEUGRÓ ABLAK (STREAM & CHAT MODAL) --- */
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.88);
-      backdrop-filter: blur(12px);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10000;
-      padding: 15px;
-    }
-    .modal-overlay.active { display: flex; }
-
-    .modal-content {
-      background: #090514;
-      border: 2px solid var(--border-purple);
-      border-radius: 20px;
-      width: 100%;
-      max-width: 850px;
-      overflow: hidden;
-      box-shadow: 0 0 50px rgba(168, 85, 247, 0.3);
-    }
-
-    .modal-header {
-      background: var(--card-bg);
-      padding: 12px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid var(--border-purple);
-    }
-
-    .modal-tabs { display: flex; gap: 10px; }
-    .m-tab-btn {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--border-purple);
-      color: white;
-      padding: 8px 18px;
-      border-radius: 10px;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.8rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .m-tab-btn.active { 
-      background: var(--accent-purple); 
-      color: #000; 
-      border-color: var(--glow-purple);
-      box-shadow: 0 0 15px var(--accent-purple);
-    }
-
-    .close-btn {
-      background: transparent;
-      border: none;
-      color: white;
-      font-size: 1.8rem;
-      cursor: pointer;
-      line-height: 1;
-    }
-    .close-btn:hover { color: var(--accent-purple); }
-
-    .modal-body {
-      position: relative;
-      width: 100%;
-      height: 65vh;
-      max-height: 520px;
-      background: #000;
-    }
-
-    .modal-body iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-  </style>
-</head>
-<body>
-
-  <!-- ==========================================
-   <!-- ==========================================
-     [SECTION 3: HTML SZERKEZET & TARTALOM]
+ <!-- ==========================================
+     [SECTION 3: STRUKTURÁLT BENTO DASHBOARD]
      ========================================== -->
   <div class="main-container">
 
-    <!-- FEJLÉC / PROFIL PANEL (BAL OLDAL WEBEN) -->
+    <!-- BAL OLDAL: STABIL PROFIL BLOKK -->
     <header>
       <div class="brand">
-        <div class="avatar-wrapper">
-          <img src="https://api.dicebear.com/7.x/bottts/svg?seed=sanci9517" class="avatar" alt="SANCI9517">
-          <div class="live-tag">LIVE</div>
-        </div>
+        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=sanci9517" class="avatar" alt="SANCI9517">
         <div class="brand-text">
           <h1>SANCI9517</h1>
-          <p>PRO STREAMER & CONTENT CREATOR</p>
+          <p>OFFICIAL STREAMER HUB</p>
         </div>
       </div>
 
-      <!-- WEBES EXTRÁK: STATISZTIKA (WEBEN JELENIK MEG) -->
-      <div class="stats-grid">
-        <div class="stat-box">
-          <div class="stat-num">10K+</div>
-          <div class="stat-label">Followers</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-num">1080p</div>
-          <div class="stat-label">60 FPS</div>
-        </div>
+      <div class="stats-badge">
+        <div style="font-family:'Orbitron'; font-size:1.1rem; font-weight:800; color:#fff;">1080p 60FPS</div>
+        <div style="font-size:0.75rem; color:var(--text-sub); margin-top:3px;">HIGH QUALITY STREAM</div>
       </div>
 
       <div class="theme-switcher">
@@ -497,45 +323,42 @@
       </div>
     </header>
 
-    <!-- TARTALOM ÉS LINKEK (JOBB OLDAL WEBEN) -->
-    <div class="links-wrapper">
-
-      <!-- PROFI HERO BANNER (CSAK DESKTOPON JELENIK MEG JÓL) -->
-      <div class="hero-banner">
-        <div class="hero-text">
-          <h2>NÉZD AZ ÉLŐ ADÁST!</h2>
-          <p>Minden nap pörgős gameplay és jó hangulat.</p>
-        </div>
-        <a href="javascript:void(0)" onclick="openStreamModal()" class="hero-btn"><i class="fa-solid fa-play"></i> ADÁS INDÍTÁSA</a>
+    <!-- JOBB OLDAL: KIEGYENSÚLYOZOTT BENTO MÁTRIX -->
+    <div class="hero-card">
+      <div>
+        <h2>NÉZD AZ ÉLŐ ADÁST!</h2>
+        <p>Kattints a gombra és csatlakozz a streamhez.</p>
       </div>
+      <button class="play-btn" onclick="openStreamModal()">
+        <i class="fa-solid fa-play"></i> STREAM INDÍTÁSA
+      </button>
+    </div>
 
-      <div class="section-title">🌐 HIVATALOS CSATORNÁK</div>
-
+    <div class="links-wrapper">
       <a href="https://www.twitch.tv/sanci9517" target="_blank" class="card-btn">
-        <div class="card-left"><i class="fa-brands fa-twitch"></i><span>Twitch Csatorna</span></div>
+        <div class="card-left"><i class="fa-brands fa-twitch"></i><span>Twitch</span></div>
         <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
       </a>
 
       <a href="https://youtube.com" target="_blank" class="card-btn">
-        <div class="card-left"><i class="fa-brands fa-youtube"></i><span>YouTube Csatorna</span></div>
+        <div class="card-left"><i class="fa-brands fa-youtube"></i><span>YouTube</span></div>
         <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
       </a>
 
-      <a href="https://discord.gg" target="_blank" class="card-btn">
-        <div class="card-left"><i class="fa-brands fa-discord"></i><span>Discord Szerver</span></div>
+      <a href="https://discord.gg" target="_blank" class="card-btn wide">
+        <div class="card-left"><i class="fa-brands fa-discord"></i><span>Discord Közösségi Szerver</span></div>
         <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
       </a>
 
       <a href="https://tiktok.com" target="_blank" class="card-btn">
-        <div class="card-left"><i class="fa-brands fa-tiktok"></i><span>TikTok Videók</span></div>
+        <div class="card-left"><i class="fa-brands fa-tiktok"></i><span>TikTok</span></div>
         <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
       </a>
 
       <a href="https://instagram.com" target="_blank" class="card-btn">
-        <div class="card-left"><i class="fa-brands fa-instagram"></i><span>Instagram Page</span></div>
+        <div class="card-left"><i class="fa-brands fa-instagram"></i><span>Instagram</span></div>
         <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
       </a>
-
     </div>
 
   </div>
