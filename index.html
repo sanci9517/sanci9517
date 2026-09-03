@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SANCI9517 | Official Streamer Hub</title>
 
-  <!-- BETŰTÍPUSOK ÉS IKONOK -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
@@ -468,7 +467,6 @@
 </head>
 <body>
 
-  <!-- NAVIGÁCIÓS FÜLEK -->
   <div class="nav-tabs">
     <button class="nav-btn active" id="btn-home">
       <i class="fa-solid fa-house"></i> FŐOLDAL
@@ -483,11 +481,10 @@
 
   <div class="main-container">
 
-    <!-- PROFIL PANEL -->
     <header>
       <div class="brand">
         <div class="avatar-container">
-          <img id="twitch-avatar" src="https://static-cdn.jtvnw.net/jtv_user_pictures/a2f7c02b-a7e8-4674-8846-993d3ef4236e-profile_image-300x300.png" class="avatar" alt="SANCI9517" onerror="this.src='https://static-cdn.jtvnw.net/user-default-pictures-uv/75305db0-3a92-43d8-1565-22b87e142200-profile_image-300x300.png'">
+          <img id="twitch-avatar" src="https://static-cdn.jtvnw.net/user-default-pictures-uv/75305db0-3a92-43d8-1565-22b87e142200-profile_image-300x300.png" class="avatar" alt="SANCI9517">
           <div id="live-status-badge" class="live-badge-inline offline">OFFLINE</div>
         </div>
         <div class="brand-text">
@@ -518,7 +515,6 @@
       </div>
     </header>
 
-    <!-- FŐOLDAL FÜL -->
     <div id="tab-home" class="tab-content active">
       <div class="hero-card">
         <div>
@@ -558,7 +554,6 @@
       </div>
     </div>
 
-    <!-- MENETREND FÜL -->
     <div id="tab-schedule" class="tab-content">
       <h2 style="font-family:'Orbitron'; color:#fff; font-size:1.3rem;">
         <i class="fa-solid fa-calendar-days" style="color:var(--accent-purple);"></i> HETI STREAM MENETREND
@@ -566,7 +561,6 @@
       <div class="schedule-grid" id="schedule-container"></div>
     </div>
 
-    <!-- SET UP FÜL -->
     <div id="tab-setup" class="tab-content">
       <h2 style="font-family:'Orbitron'; color:#fff; font-size:1.3rem;">
         <i class="fa-solid fa-desktop" style="color:var(--accent-purple);"></i> STREAMER SET UP & GÉP
@@ -576,13 +570,11 @@
 
   </div>
 
-  <!-- LEBEGŐ ÉLŐ ADÁS GOMB -->
   <button class="floating-live-btn" onclick="openStreamModal()">
     <i class="fa-solid fa-tv"></i>
     <span>ÉLŐ ADÁS</span>
   </button>
 
-  <!-- MODAL / ABBLAK -->
   <div class="modal-overlay" id="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -602,7 +594,6 @@
 
   <script>
     const TWITCH_CHANNEL = "sanci9517";
-    const currentDomain = window.location.hostname || "localhost";
 
     const fallbackSchedule = [
       { "day": "Hétfő", "time": "18:00 - 21:00", "game": "Valorant", "description": "Ranked grind & Közösségi meccsek", "active": true },
@@ -635,5 +626,14 @@
       }
     ];
 
+    // BIZTONSÁGOS DOMAIN LEKÉRÉS GITHUB PAGES-HEZ
+    function getParentDomain() {
+      return window.location.hostname || "localhost";
+    }
+
     function switchTab(tabName, btnElement) {
-      d
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+
+      const targetTab = document.getElementById(`tab-${tabName}`);
+      if (targetTab) targ
