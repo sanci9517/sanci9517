@@ -4,16 +4,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SANCI9517 | Official Streamer Hub</title>
+  
+  <!-- ==========================================
+     [SECTION 1: BETŰTÍPUSOK ÉS IKONOK]
+     ========================================== -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+  <!-- ==========================================
+     [SECTION 2: CSS STÍLUSOK (DIZÁJN)]
+     ========================================== -->
   <style>
+    /* --- 2.1 STÍLUS VÁLTOZÓK & ALAPBEÁLLÍTÁSOK --- */
     :root {
-      --bg-dark: #090514;
-      --card-bg: rgba(22, 12, 38, 0.9);
+      --bg-dark: #06040a;
+      --card-bg: rgba(18, 10, 32, 0.75);
       --accent-purple: #a855f7;
       --glow-purple: #c084fc;
-      --border-purple: rgba(168, 85, 247, 0.4);
+      --border-purple: rgba(168, 85, 247, 0.3);
       --text-main: #ffffff;
       --text-sub: #a78bfa;
     }
@@ -21,16 +29,16 @@
     [data-theme="green"] {
       --accent-purple: #10b981;
       --glow-purple: #34d399;
-      --border-purple: rgba(16, 185, 129, 0.4);
-      --card-bg: rgba(6, 30, 22, 0.9);
+      --border-purple: rgba(16, 185, 129, 0.3);
+      --card-bg: rgba(6, 30, 22, 0.75);
       --text-sub: #6ee7b7;
     }
 
     [data-theme="blue"] {
       --accent-purple: #3b82f6;
       --glow-purple: #60a5fa;
-      --border-purple: rgba(59, 130, 246, 0.4);
-      --card-bg: rgba(10, 22, 40, 0.9);
+      --border-purple: rgba(59, 130, 246, 0.3);
+      --card-bg: rgba(10, 22, 40, 0.75);
       --text-sub: #93c5fd;
     }
 
@@ -39,44 +47,47 @@
     body {
       background-color: var(--bg-dark);
       background-image: 
-        radial-gradient(circle at 10% 20%, rgba(168, 85, 247, 0.15) 0%, transparent 40%),
-        radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.1) 0%, transparent 40%);
+        radial-gradient(circle at 15% 15%, rgba(168, 85, 247, 0.18) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(59, 130, 246, 0.15) 0%, transparent 40%);
+      background-attachment: fixed;
       color: var(--text-main);
       font-family: 'Rajdhani', sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 30px 15px 100px 15px;
+      padding: 20px 15px 80px 15px;
     }
 
-    /* FEJLÉC ÉS PROFIL */
+    /* --- 2.2 GLASSMORPHISM & ELEMEK KINÉZETE --- */
+    header, .card-btn {
+      background: var(--card-bg) !important;
+      border: 1px solid var(--border-purple) !important;
+      backdrop-filter: blur(16px) saturate(180%) !important;
+      -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37) !important;
+    }
+
     header {
-      width: 100%;
-      max-width: 550px;
+      border-radius: 20px;
+      padding: 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 25px;
-      background: var(--card-bg);
-      border: 1px solid var(--border-purple);
-      padding: 15px 20px;
-      border-radius: 20px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      width: 100%;
     }
 
     .brand { display: flex; align-items: center; gap: 15px; }
     .avatar { 
-      width: 55px; 
-      height: 55px; 
+      width: 60px; 
+      height: 60px; 
       border-radius: 50%; 
       border: 2px solid var(--accent-purple); 
       box-shadow: 0 0 15px var(--accent-purple); 
     }
     .brand-text h1 { 
       font-family: 'Orbitron', sans-serif; 
-      font-size: 1.3rem; 
+      font-size: 1.4rem; 
       letter-spacing: 1.5px; 
       background: linear-gradient(to right, #fff, var(--text-sub));
       -webkit-background-clip: text;
@@ -84,7 +95,6 @@
     }
     .brand-text p { font-size: 0.85rem; color: var(--text-sub); font-weight: 600; }
 
-    /* TÉMAVÁLTÓ */
     .theme-switcher { 
       display: flex; 
       gap: 10px; 
@@ -99,23 +109,19 @@
     .dot.green { background: #10b981; box-shadow: 0 0 8px #10b981; }
     .dot.blue { background: #3b82f6; box-shadow: 0 0 8px #3b82f6; }
 
-    /* LINK CONTAINER */
-    .main-container { width: 100%; max-width: 550px; display: flex; flex-direction: column; gap: 14px; }
-
+    /* --- 2.3 LINK GOMBOK --- */
     .section-title {
       font-family: 'Orbitron', sans-serif;
       font-size: 0.8rem;
       color: var(--text-sub);
       letter-spacing: 2px;
       margin-top: 10px;
-      margin-left: 5px;
+      margin-bottom: 5px;
       text-transform: uppercase;
+      grid-column: 1 / -1;
     }
 
-    /* KÁRTYA LINK GOMBOK */
     .card-btn {
-      background: var(--card-bg);
-      border: 1px solid var(--border-purple);
       border-radius: 14px;
       padding: 18px 22px;
       display: flex;
@@ -125,18 +131,72 @@
       color: white;
       font-weight: 700;
       font-size: 1.1rem;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
     }
     .card-btn:hover { 
-      border-color: var(--glow-purple); 
-      transform: translateY(-2px); 
-      box-shadow: 0 6px 25px rgba(168, 85, 247, 0.25);
+      border-color: var(--glow-purple) !important; 
+      transform: translateY(-3px) scale(1.01) !important; 
+      box-shadow: 0 0 20px var(--border-purple) !important;
     }
     .card-left { display: flex; align-items: center; gap: 16px; }
     .card-left i { font-size: 1.5rem; color: var(--accent-purple); width: 25px; text-align: center; }
 
-    /* 🔴 JOBB ALSÓ SAROKBAN LEBEGŐ "ÉLŐ ADÁS" GOMB */
+    /* --- 2.4 DESKTOP (WEB) LAYOUT (KÉTOSZLOPOS NÉZET) --- */
+    @media (min-width: 900px) {
+      body { padding: 50px 20px; }
+      
+      .main-container {
+        width: 100%;
+        max-width: 1100px;
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 30px;
+        align-items: start;
+      }
+
+      header {
+        flex-direction: column;
+        text-align: center;
+        padding: 35px 20px;
+        position: sticky;
+        top: 30px;
+      }
+
+      .brand { flex-direction: column; gap: 15px; }
+      .avatar { width: 110px; height: 110px; border-width: 3px; }
+      .theme-switcher { margin-top: 20px; }
+
+      .links-wrapper {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+      }
+    }
+
+    /* --- 2.5 MOBIL LAYOUT (EGYOSZLOPOS NÉZET) --- */
+    @media (max-width: 899px) {
+      .main-container {
+        width: 100%;
+        max-width: 550px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .links-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .floating-live-btn {
+        bottom: 15px !important;
+        right: 15px !important;
+        padding: 10px 18px !important;
+        font-size: 0.75rem !important;
+      }
+    }
+
+    /* --- 2.6 LEBEGŐ "ÉLŐ ADÁS" GOMB A SAROKBAN --- */
     .floating-live-btn {
       position: fixed;
       bottom: 25px;
@@ -175,7 +235,7 @@
       100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
     }
 
-    /* LEUGRÓ ABLAK (MODAL) */
+    /* --- 2.7 LEUGRÓ ABLAK (STREAM & CHAT MODAL) --- */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -257,60 +317,67 @@
 </head>
 <body>
 
-  <!-- FEJLÉC ÉS PROFIL -->
-  <header>
-    <div class="brand">
-      <img src="https://api.dicebear.com/7.x/bottts/svg?seed=sanci9517" class="avatar" alt="SANCI9517">
-      <div class="brand-text">
-        <h1>SANCI9517</h1>
-        <p>Official Streamer Hub</p>
-      </div>
-    </div>
-    <div class="theme-switcher">
-      <div class="dot purple" onclick="setTheme('purple')"></div>
-      <div class="dot green" onclick="setTheme('green')"></div>
-      <div class="dot blue" onclick="setTheme('blue')"></div>
-    </div>
-  </header>
-
-  <!-- CSATORNA LINKI -->
+  <!-- ==========================================
+     [SECTION 3: HTML SZERKEZET & TARTALOM]
+     ========================================== -->
   <div class="main-container">
-    <div class="section-title">🌐 CSATORNÁK & KÖZÖSSÉG</div>
 
-    <a href="https://www.twitch.tv/sanci9517" target="_blank" class="card-btn">
-      <div class="card-left"><i class="fa-brands fa-twitch"></i><span>Twitch Csatorna</span></div>
-      <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
-    </a>
+    <!-- FEJLÉC / PROFIL BLOKK -->
+    <header>
+      <div class="brand">
+        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=sanci9517" class="avatar" alt="SANCI9517">
+        <div class="brand-text">
+          <h1>SANCI9517</h1>
+          <p>Official Streamer Hub</p>
+        </div>
+      </div>
+      <div class="theme-switcher">
+        <div class="dot purple" onclick="setTheme('purple')"></div>
+        <div class="dot green" onclick="setTheme('green')"></div>
+        <div class="dot blue" onclick="setTheme('blue')"></div>
+      </div>
+    </header>
 
-    <a href="https://youtube.com" target="_blank" class="card-btn">
-      <div class="card-left"><i class="fa-brands fa-youtube"></i><span>YouTube Csatorna</span></div>
-      <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
-    </a>
+    <!-- KÖZÖSSÉGI LINK CSOPORT (WEB: 2 OSZLOP, MOBIL: 1 OSZLOP) -->
+    <div class="links-wrapper">
+      <div class="section-title">🌐 CSATORNÁK & KÖZÖSSÉG</div>
 
-    <a href="https://discord.gg" target="_blank" class="card-btn">
-      <div class="card-left"><i class="fa-brands fa-discord"></i><span>Discord Szerver</span></div>
-      <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
-    </a>
+      <a href="https://www.twitch.tv/sanci9517" target="_blank" class="card-btn">
+        <div class="card-left"><i class="fa-brands fa-twitch"></i><span>Twitch Csatorna</span></div>
+        <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
+      </a>
 
-    <a href="https://tiktok.com" target="_blank" class="card-btn">
-      <div class="card-left"><i class="fa-brands fa-tiktok"></i><span>TikTok Videók</span></div>
-      <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
-    </a>
+      <a href="https://youtube.com" target="_blank" class="card-btn">
+        <div class="card-left"><i class="fa-brands fa-youtube"></i><span>YouTube Csatorna</span></div>
+        <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
+      </a>
 
-    <a href="https://instagram.com" target="_blank" class="card-btn">
-      <div class="card-left"><i class="fa-brands fa-instagram"></i><span>Instagram</span></div>
-      <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
-    </a>
+      <a href="https://discord.gg" target="_blank" class="card-btn">
+        <div class="card-left"><i class="fa-brands fa-discord"></i><span>Discord Szerver</span></div>
+        <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
+      </a>
+
+      <a href="https://tiktok.com" target="_blank" class="card-btn">
+        <div class="card-left"><i class="fa-brands fa-tiktok"></i><span>TikTok Videók</span></div>
+        <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
+      </a>
+
+      <a href="https://instagram.com" target="_blank" class="card-btn">
+        <div class="card-left"><i class="fa-brands fa-instagram"></i><span>Instagram</span></div>
+        <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
+      </a>
+    </div>
+
   </div>
 
-  <!-- 🔴 LEBEGŐ ÉLŐ ADÁS GOMB A SAROKBAN -->
+  <!-- LEBEGŐ ÉLŐ ADÁS GOMB -->
   <button class="floating-live-btn" onclick="openStreamModal()">
     <div class="pulse-dot"></div>
     <i class="fa-solid fa-tv"></i>
     <span>ÉLŐ ADÁS</span>
   </button>
 
-  <!-- LEUGRÓ ABLAK (STREAM ÉS CHAT FÜLEKKEL) -->
+  <!-- FELUGRÓ LEJÁTSZÓ/CHAT ABLAK -->
   <div class="modal-overlay" id="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -328,13 +395,27 @@
     </div>
   </div>
 
+  <!-- ==========================================
+     [SECTION 4: JAVASCRIPT PROGRAMKÓD (LOGIKA)]
+     ========================================== -->
   <script>
-    // Automatikusan kezeli a domént a Twitch beágyazás biztonsági előírásaihoz
+    // Automatikusan kezeli a domént a Twitch biztonsági előírásaihoz
     const currentDomain = window.location.hostname || "sanci9517.github.io";
 
     function openStreamModal() {
       document.getElementById('modal').classList.add('active');
       showModalTab('video');
+      document.addEventListener('keydown', handleEscKey);
+    }
+
+    function closeStreamModal() {
+      document.getElementById('modal').classList.remove('active');
+      document.getElementById('modal-body').innerHTML = ''; // Bezáráskor leállítja a lejátszást
+      document.removeEventListener('keydown', handleEscKey);
+    }
+
+    function handleEscKey(e) {
+      if (e.key === "Escape") closeStreamModal();
     }
 
     function showModalTab(tabType) {
@@ -351,11 +432,6 @@
         videoBtn.classList.remove('active');
         body.innerHTML = `<iframe src="https://www.twitch.tv/embed/sanci9517/chat?parent=${currentDomain}"></iframe>`;
       }
-    }
-
-    function closeStreamModal() {
-      document.getElementById('modal').classList.remove('active');
-      document.getElementById('modal-body').innerHTML = ''; // Bezáráskor leállítja a lejátszást
     }
 
     function setTheme(theme) {
