@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -42,12 +41,13 @@
       align-items: center;
     }
 
+    /* NAVIGÁCIÓ */
     .nav-tabs {
       display: flex;
       gap: 6px;
       margin-bottom: 20px;
       width: 100%;
-      max-width: 600px;
+      max-width: 650px;
       overflow-x: auto;
       padding-bottom: 5px;
     }
@@ -82,6 +82,7 @@
     .tab-content { display: none; flex-direction: column; gap: 16px; }
     .tab-content.active { display: flex; }
 
+    /* PROFILE CARD */
     .profile-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
@@ -160,6 +161,7 @@
       box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
     }
 
+    /* CARD BUTTONS */
     .card-btn {
       display: flex;
       align-items: center;
@@ -215,6 +217,7 @@
     }
     .setup-row:last-child { border-bottom: none; }
 
+    /* STATISZTIKÁK */
     .stats-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -241,19 +244,26 @@
       color: var(--text-muted);
     }
 
+    /* SZAVAZÁS STÍLUS */
     .poll-opt {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--border);
-      padding: 10px;
-      border-radius: 8px;
-      margin-top: 8px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-top: 10px;
       cursor: pointer;
       display: flex;
       justify-content: space-between;
       font-weight: 700;
+      transition: all 0.2s ease;
     }
-    .poll-opt:hover { background: var(--accent); color: #000; }
+    .poll-opt:hover { 
+      background: var(--accent); 
+      color: #000; 
+      transform: translateY(-2px);
+    }
 
+    /* KLIPIEK */
     .clip-container {
       width: 100%;
       height: 280px;
@@ -265,6 +275,7 @@
     }
     .clip-container iframe { width: 100%; height: 100%; border: none; }
 
+    /* MODAL ABLAK */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -318,9 +329,11 @@
 </head>
 <body>
 
+  <!-- NAVIGÁCIÓ (KÜLÖN SZAVAZÁS LAPFÜLLEL) -->
   <div class="nav-tabs">
     <button class="nav-btn active" onclick="openTab('home', event)"><i class="fa-solid fa-house"></i> FŐOLDAL</button>
     <button class="nav-btn" onclick="openTab('news', event)"><i class="fa-solid fa-bullhorn"></i> HÍREK</button>
+    <button class="nav-btn" onclick="openTab('poll', event)"><i class="fa-solid fa-check-to-slot"></i> SZAVAZÁS</button>
     <button class="nav-btn" onclick="openTab('clips', event)"><i class="fa-solid fa-film"></i> KLIPIEK</button>
     <button class="nav-btn" onclick="openTab('schedule', event)"><i class="fa-solid fa-calendar"></i> MENETREND</button>
     <button class="nav-btn" onclick="openTab('stats', event)"><i class="fa-solid fa-trophy"></i> STATOK</button>
@@ -330,6 +343,7 @@
 
   <div class="main-container">
 
+    <!-- FŐOLDAL -->
     <div id="tab-home" class="tab-content active">
       <div class="profile-card">
         <div class="avatar-wrapper">
@@ -377,22 +391,29 @@
       </a>
     </div>
 
+    <!-- HÍREK -->
     <div id="tab-news" class="tab-content">
       <div class="info-card">
         <div class="card-header-text"><span><i class="fa-solid fa-bullhorn"></i> BEJELENTÉS</span><small>Friss</small></div>
         <div style="font-weight:700; margin-bottom:4px;">Új menetrend és közösségi napok!</div>
         <div style="font-size:0.85rem; color:var(--text-sub);">Ettől a héttől kezdve a pénteki adásokban veletek játszunk! Csatlakozzatok a Discordhoz a lobby szobákért.</div>
       </div>
+    </div>
 
+    <!-- KÜLÖN SZAVAZÁS OLDAL -->
+    <div id="tab-poll" class="tab-content">
       <div class="info-card">
         <div class="card-header-text"><span><i class="fa-solid fa-poll"></i> KÖZÖSSÉGI SZAVAZÁS</span></div>
-        <div style="font-weight:700;" id="poll-title">Mit játszunk a hétvégi maratonon?</div>
-        <div class="poll-opt" onclick="vote(1)"><span>A) Valorant Ranked</span><span id="poll-v1">0%</span></div>
-        <div class="poll-opt" onclick="vote(2)"><span>B) GTA V RP</span><span id="poll-v2">0%</span></div>
-        <div class="poll-opt" onclick="vote(3)"><span>C) CS2 Faceit</span><span id="poll-v3">0%</span></div>
+        <div style="font-weight:700; font-size:1.1rem; margin-bottom: 6px;" id="poll-title">Mit játszunk a következő streamen?</div>
+        <div style="font-size:0.85rem; color:var(--text-sub); margin-bottom:12px;">Válaszd ki a kedvenc játékodat, amivel szívesen látnál élőben:</div>
+        
+        <div class="poll-opt" onclick="vote(1)"><span>A) Fortnite</span><span id="poll-v1">0%</span></div>
+        <div class="poll-opt" onclick="vote(2)"><span>B) Játék 2</span><span id="poll-v2">0%</span></div>
+        <div class="poll-opt" onclick="vote(3)"><span>C) Játék 3</span><span id="poll-v3">0%</span></div>
       </div>
     </div>
 
+    <!-- KLIPIEK -->
     <div id="tab-clips" class="tab-content">
       <div class="info-card">
         <div class="card-header-text"><span><i class="fa-solid fa-fire"></i> LEGJOBB PILLANATOK</span></div>
@@ -403,10 +424,12 @@
       </div>
     </div>
 
+    <!-- MENETREND -->
     <div id="tab-schedule" class="tab-content">
       <div id="schedule-list"></div>
     </div>
 
+    <!-- STATISZTIKÁK -->
     <div id="tab-stats" class="tab-content">
       <div class="info-card">
         <div class="card-header-text">
@@ -434,12 +457,13 @@
       </div>
     </div>
 
+    <!-- TÁMOGATÁS (A MEGADOTT DONATE LINKKEL) -->
     <div id="tab-support" class="tab-content">
       <div class="info-card">
         <div class="card-header-text"><span><i class="fa-solid fa-hand-holding-dollar"></i> TÁMOGATÁS</span></div>
         <div style="font-size:0.85rem; color:var(--text-sub); margin-bottom:12px;">Ha szeretnéd közvetlenül segíteni a stream fejlődését és a jobb minőségű tartalmakat:</div>
         
-        <!-- JAVÍTOTT STREAMLABS DONATE LINK (Működik /tip végződéssel vagy sima profillal) -->
+        <!-- MEGADOTT KÍVÁNT STREAMLABS TIP LINK -->
         <a href="https://streamlabs.com/sanci9517/tip" target="_blank" class="card-btn support" style="margin-bottom:10px;">
           <div class="card-left"><i class="fa-solid fa-donate" style="color:var(--gold);"></i><span>Streamlabs Donáció / Tip</span></div>
           <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; color:var(--text-muted);"></i>
@@ -452,12 +476,14 @@
       </div>
     </div>
 
+    <!-- SET UP -->
     <div id="tab-setup" class="tab-content">
       <div id="setup-list"></div>
     </div>
 
   </div>
 
+  <!-- LEJÁTSZÓ MODAL ABLAK -->
   <div class="modal-overlay" id="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -475,7 +501,7 @@
     const TWITCH_CHANNEL = "sanci9517";
 
     const fallbackSchedule = [
-      { day: "Hétfő", time: "18:00 - 21:00", game: "Valorant", desc: "Ranked & Közösségi meccsek", active: true },
+      { day: "Hétfő", time: "18:00 - 21:00", game: "Fortnite", desc: "Ranked & Közösségi meccsek", active: true },
       { day: "Kedd", time: "—", game: "PIHENŐNAP", desc: "Nincs adás", active: false },
       { day: "Szerda", time: "18:00 - 21:00", game: "GTA V Roleplay", desc: "Karakter sztori", active: true },
       { day: "Csütörtök", time: "—", game: "PIHENŐNAP", desc: "Nincs adás", active: false },
@@ -526,23 +552,5 @@
     }
 
     function closeStreamModal() {
-      document.getElementById('modal-body').innerHTML = '';
-      document.getElementById('modal').classList.remove('active');
-    }
-
-    function switchModalTab(type) {
-      const body = document.getElementById('modal-body');
-      const vBtn = document.getElementById('m-btn-video');
-      const cBtn = document.getElementById('m-btn-chat');
-      const domain = window.location.hostname || "localhost";
-
-      if (type === 'video') {
-        vBtn.classList.add('active');
-        cBtn.classList.remove('active');
-        body.innerHTML = `<iframe src="https://player.twitch.tv/?channel=${TWITCH_CHANNEL}&parent=${domain}&autoplay=true" allowfullscreen></iframe>`;
-      } else {
-        cBtn.classList.add('active');
-        vBtn.classList.remove('active');
-        body.innerHTML = `<iframe src="https://www.twitch.tv/embed/${TWITCH_CHANNEL}/chat?parent=${domain}"></iframe>`;
-      }
+      document.getEle
  
