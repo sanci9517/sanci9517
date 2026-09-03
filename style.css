@@ -1,7 +1,3 @@
-/* ========================================
-   SANCI9517 - OFFICIAL GAMING HUB
-======================================== */
-
 :root {
     --bg: #080812;
     --card: #151526;
@@ -26,16 +22,8 @@ html {
 body {
     min-height: 100vh;
     background:
-        radial-gradient(
-            circle at 10% 10%,
-            rgba(139, 92, 246, 0.18),
-            transparent 35%
-        ),
-        radial-gradient(
-            circle at 90% 20%,
-            rgba(124, 58, 237, 0.14),
-            transparent 35%
-        ),
+        radial-gradient(circle at 10% 10%, rgba(139, 92, 246, 0.18), transparent 35%),
+        radial-gradient(circle at 90% 20%, rgba(124, 58, 237, 0.14), transparent 35%),
         var(--bg);
     color: var(--text);
     font-family: Arial, Helvetica, sans-serif;
@@ -51,20 +39,13 @@ button {
     font-family: inherit;
 }
 
-
-/* ========================================
-   CONTAINER
-======================================== */
-
 .container {
     width: min(1150px, calc(100% - 40px));
     margin: 0 auto;
 }
 
 
-/* ========================================
-   HEADER
-======================================== */
+/* HEADER */
 
 .site-header {
     position: sticky;
@@ -72,7 +53,6 @@ button {
     z-index: 1000;
 
     background: rgba(8, 8, 18, 0.96);
-
     backdrop-filter: blur(15px);
 
     border-bottom: 1px solid var(--border);
@@ -99,9 +79,7 @@ button {
 }
 
 
-/* ========================================
-   NAVIGATION
-======================================== */
+/* NAV */
 
 .nav-links {
     display: flex;
@@ -125,21 +103,17 @@ button {
 }
 
 .nav-links a:hover {
-    color: #ffffff;
-
+    color: #fff;
     background: rgba(139, 92, 246, 0.15);
 }
 
 .nav-links a.active {
-    color: #ffffff;
-
+    color: #fff;
     background: rgba(139, 92, 246, 0.25);
 }
 
 
-/* ========================================
-   HAMBURGER
-======================================== */
+/* HAMBURGER */
 
 .menu-toggle {
     display: none;
@@ -157,7 +131,7 @@ button {
 
     background: rgba(139, 92, 246, 0.10);
 
-    color: #ffffff;
+    color: #fff;
 
     font-size: 27px;
 
@@ -165,9 +139,7 @@ button {
 }
 
 
-/* ========================================
-   HERO
-======================================== */
+/* HERO */
 
 .hero {
     min-height: 570px;
@@ -192,7 +164,6 @@ button {
     display: inline-block;
 
     margin-bottom: 18px;
-
     padding: 7px 13px;
 
     border: 1px solid var(--border);
@@ -214,13 +185,11 @@ button {
     font-size: clamp(42px, 6vw, 76px);
 
     line-height: 1.05;
-
     font-weight: 900;
 }
 
 .hero h1 span {
     display: block;
-
     color: var(--purple-light);
 
     text-shadow:
@@ -238,16 +207,13 @@ button {
 }
 
 
-/* ========================================
-   PROFILE
-======================================== */
+/* PROFILE */
 
 .profile {
     width: 320px;
     height: 320px;
 
     margin: auto;
-
     padding: 6px;
 
     border-radius: 50%;
@@ -278,9 +244,7 @@ button {
 }
 
 
-/* ========================================
-   BUTTONS
-======================================== */
+/* BUTTONS */
 
 .hero-buttons {
     display: flex;
@@ -307,8 +271,7 @@ button {
 
 .btn-primary {
     background: var(--purple);
-
-    color: #ffffff;
+    color: #fff;
 
     box-shadow:
         0 8px 25px rgba(139, 92, 246, 0.25);
@@ -316,7 +279,6 @@ button {
 
 .btn-primary:hover {
     background: var(--purple-light);
-
     transform: translateY(-2px);
 }
 
@@ -325,7 +287,7 @@ button {
 
     border: 1px solid var(--border);
 
-    color: #ffffff;
+    color: #fff;
 }
 
 .btn-secondary:hover {
@@ -337,9 +299,7 @@ button {
 }
 
 
-/* ========================================
-   PAGE HEADER
-======================================== */
+/* PAGE HEADER */
 
 .page-header {
     margin-top: 70px;
@@ -360,7 +320,6 @@ button {
     margin-top: 6px;
 
     font-size: 38px;
-
     line-height: 1.15;
 }
 
@@ -373,15 +332,12 @@ button {
 }
 
 
-/* ========================================
-   GENERAL GRID
-======================================== */
+/* GENERAL GRID */
 
 .grid {
     display: grid;
 
-    grid-template-columns:
-        repeat(3, 1fr);
+    grid-template-columns: repeat(3, 1fr);
 
     gap: 18px;
 
@@ -389,9 +345,7 @@ button {
 }
 
 
-/* ========================================
-   CARDS
-======================================== */
+/* CARDS */
 
 .card {
     display: block;
@@ -402,4 +356,653 @@ button {
         linear-gradient(
             145deg,
             rgba(139, 92, 246, 0.08),
-            rgba(255, 255, 255, 
+            rgba(255, 255, 255, 0.02)
+        );
+
+    border: 1px solid var(--border);
+
+    border-radius: 18px;
+
+    transition: 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+
+    background: var(--card-hover);
+
+    border-color: rgba(139, 92, 246, 0.55);
+}
+
+.card-icon {
+    margin-bottom: 12px;
+    font-size: 32px;
+}
+
+.card h3 {
+    margin-bottom: 7px;
+    font-size: 21px;
+}
+
+.card p {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+
+/* SOCIAL */
+
+.social-grid {
+    display: grid;
+
+    grid-template-columns: repeat(5, 1fr);
+
+    gap: 12px;
+
+    margin-bottom: 70px;
+}
+
+.social {
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+
+    padding: 18px;
+
+    background: var(--card);
+
+    border: 1px solid var(--border);
+
+    border-radius: 15px;
+
+    transition: 0.25s ease;
+}
+
+.social:hover {
+    transform: translateY(-4px);
+
+    border-color: var(--purple);
+
+    background: var(--card-hover);
+}
+
+.social strong {
+    font-size: 15px;
+}
+
+.social span {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+
+/* SUPPORT */
+
+.support-box {
+    margin-top: 50px;
+    margin-bottom: 70px;
+
+    padding: 45px;
+
+    text-align: center;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(139, 92, 246, 0.16),
+            transparent 65%
+        ),
+        var(--card);
+
+    border: 1px solid var(--border);
+
+    border-radius: 22px;
+}
+
+.support-box h2 {
+    margin-bottom: 12px;
+    font-size: 32px;
+}
+
+.support-box p {
+    max-width: 700px;
+
+    margin: 0 auto 25px;
+
+    color: var(--muted);
+}
+
+
+/* ========================================
+   SZAVAZÁS
+======================================== */
+
+.poll-box {
+    width: 100%;
+    max-width: 850px;
+
+    margin: 0 auto 70px;
+
+    padding: 35px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(139, 92, 246, 0.10),
+            rgba(255, 255, 255, 0.025)
+        );
+
+    border: 1px solid var(--border);
+
+    border-radius: 22px;
+}
+
+.poll-title {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.poll-title h2 {
+    margin: 5px 0 8px;
+    font-size: 32px;
+}
+
+.poll-title p {
+    color: var(--muted);
+}
+
+
+/* JÁTÉK GOMBOK */
+
+.poll-options {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 15px;
+
+    margin-bottom: 25px;
+}
+
+.poll-option {
+    width: 100%;
+    min-width: 0;
+
+    min-height: 100px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 18px;
+
+    border: 1px solid var(--border);
+    border-radius: 15px;
+
+    background: rgba(255, 255, 255, 0.04);
+
+    color: #fff;
+
+    cursor: pointer;
+
+    text-align: left;
+
+    transition: 0.25s ease;
+}
+
+.poll-option:hover {
+    background: rgba(139, 92, 246, 0.18);
+
+    border-color: var(--purple);
+
+    transform: translateY(-3px);
+}
+
+.poll-option:disabled {
+    cursor: not-allowed;
+}
+
+.poll-option.disabled {
+    opacity: 0.55;
+    transform: none;
+}
+
+.poll-option-icon {
+    width: 45px;
+    height: 45px;
+
+    flex: 0 0 45px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-right: 12px;
+
+    border-radius: 12px;
+
+    background: rgba(139, 92, 246, 0.15);
+
+    font-size: 23px;
+}
+
+.poll-option-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.poll-option-content strong {
+    display: block;
+
+    color: #fff;
+
+    font-size: 16px;
+}
+
+.poll-option-content span {
+    display: block;
+
+    color: var(--muted);
+
+    font-size: 11px;
+}
+
+.poll-option-arrow {
+    flex: 0 0 auto;
+
+    color: var(--purple-light);
+
+    font-size: 20px;
+}
+
+
+/* ÜZENET */
+
+.poll-message {
+    min-height: 24px;
+
+    margin: 25px 0;
+
+    text-align: center;
+
+    color: var(--purple-light);
+
+    font-weight: 700;
+}
+
+
+/* EREDMÉNYEK */
+
+.poll-results {
+    margin-top: 30px;
+    padding-top: 30px;
+
+    border-top: 1px solid var(--border);
+}
+
+.poll-results-header {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 25px;
+}
+
+.poll-results-header h2 {
+    font-size: 22px;
+}
+
+.poll-results-header span {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.poll-result {
+    width: 100%;
+    margin-bottom: 22px;
+}
+
+.poll-result:last-child {
+    margin-bottom: 0;
+}
+
+.poll-result-top {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 7px;
+}
+
+.poll-result-top strong {
+    color: #fff;
+    font-size: 14px;
+}
+
+.poll-result-top span {
+    color: var(--purple-light);
+
+    font-size: 14px;
+    font-weight: 900;
+}
+
+.poll-bar {
+    width: 100%;
+    height: 10px;
+
+    overflow: hidden;
+
+    border-radius: 999px;
+
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.poll-bar-fill {
+    width: 0;
+    height: 100%;
+
+    border-radius: 999px;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--purple),
+            var(--purple-light)
+        );
+
+    transition: width 0.5s ease;
+}
+
+.poll-result small {
+    display: block;
+
+    margin-top: 5px;
+
+    color: var(--muted);
+
+    font-size: 11px;
+}
+
+
+/* FOOTER */
+
+footer {
+    margin-top: 80px;
+
+    padding: 30px 0;
+
+    border-top: 1px solid var(--border);
+
+    text-align: center;
+
+    color: var(--muted);
+
+    font-size: 13px;
+}
+
+
+/* ========================================
+   TABLET
+======================================== */
+
+@media (max-width: 1000px) {
+
+    .hero {
+        grid-template-columns: 1fr 280px;
+        gap: 40px;
+    }
+
+    .profile {
+        width: 270px;
+        height: 270px;
+    }
+
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .social-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .nav-links a {
+        padding: 8px;
+        font-size: 12px;
+    }
+}
+
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 650px) {
+
+    .container {
+        width: calc(100% - 28px);
+    }
+
+
+    /* HEADER */
+
+    .nav {
+        min-height: 68px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .logo {
+        font-size: 21px;
+    }
+
+
+    /* HAMBURGER */
+
+    .menu-toggle {
+        display: flex;
+        margin-left: auto;
+    }
+
+
+    /* MENU */
+
+    .nav-links {
+        display: none;
+
+        width: 100%;
+
+        flex-direction: column;
+
+        gap: 5px;
+
+        margin-top: 5px;
+
+        padding: 10px;
+
+        background: #151526;
+
+        border: 1px solid var(--purple);
+
+        border-radius: 15px;
+
+        box-shadow:
+            0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .nav-links.open {
+        display: flex;
+    }
+
+    .nav-links a {
+        width: 100%;
+
+        padding: 13px;
+
+        text-align: center;
+
+        color: #fff;
+
+        background:
+            rgba(139, 92, 246, 0.08);
+
+        border-radius: 9px;
+
+        font-size: 15px;
+    }
+
+
+    /* HERO */
+
+    .hero {
+        min-height: auto;
+
+        display: flex;
+
+        flex-direction: column-reverse;
+
+        gap: 35px;
+
+        padding-top: 45px;
+        padding-bottom: 45px;
+
+        text-align: center;
+    }
+
+    .hero h1 {
+        font-size: 43px;
+    }
+
+    .hero p {
+        font-size: 16px;
+    }
+
+    .hero-buttons {
+        justify-content: center;
+    }
+
+    .profile {
+        width: 230px;
+        height: 230px;
+    }
+
+
+    /* PAGE */
+
+    .page-header {
+        margin-top: 45px;
+    }
+
+    .page-header h1,
+    .page-header h2 {
+        font-size: 31px;
+    }
+
+
+    /* GRID */
+
+    .grid {
+        grid-template-columns: 1fr;
+        margin-bottom: 45px;
+    }
+
+
+    /* SOCIAL */
+
+    .social-grid {
+        grid-template-columns: repeat(2, 1fr);
+        margin-bottom: 45px;
+    }
+
+
+    /* SUPPORT */
+
+    .support-box {
+        padding: 30px 20px;
+
+        margin-top: 35px;
+        margin-bottom: 45px;
+    }
+
+    .support-box h2 {
+        font-size: 27px;
+    }
+
+
+    /* SZAVAZÁS */
+
+    .poll-box {
+        padding: 22px 16px;
+        margin-bottom: 45px;
+    }
+
+    .poll-title h2 {
+        font-size: 27px;
+    }
+
+    .poll-options {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .poll-option {
+        min-height: 80px;
+        padding: 14px;
+    }
+
+    .poll-results-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+
+/* ========================================
+   SMALL PHONES
+======================================== */
+
+@media (max-width: 400px) {
+
+    .hero h1 {
+        font-size: 37px;
+    }
+
+    .profile {
+        width: 200px;
+        height: 200px;
+    }
+
+    .social-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .btn {
+        width: 100%;
+    }
+
+    .poll-box {
+        padding: 18px 12px;
+    }
+
+    .poll-option {
+        padding: 13px;
+    }
+
+    .poll-option-icon {
+        width: 40px;
+        height: 40px;
+        flex-basis: 40px;
+    }
+
+    .poll-title h2 {
+        font-size: 24px;
+    }
+   }
