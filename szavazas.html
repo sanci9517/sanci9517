@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>SANCI9517 | Szavazás</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     NAVIGÁCIÓ
+     ===================================================== -->
+
+<header>
+
+    <nav class="nav">
+
+        <a href="index.html" class="logo">
+            SANCI<span>9517</span>
+        </a>
+
+
+        <div class="nav-links">
+
+            <a href="index.html">
+                Főoldal
+            </a>
+
+            <a href="hirek.html">
+                Hírek
+            </a>
+
+            <a href="szavazas.html" class="active">
+                Szavazás
+            </a>
+
+            <a href="clips.html">
+                Clips
+            </a>
+
+            <a href="menetrend.html">
+                Menetrend
+            </a>
+
+            <a href="stats.html">
+                Stats
+            </a>
+
+            <a href="tamogatas.html">
+                Támogatás
+            </a>
+
+            <a href="setup.html">
+                Setup
+            </a>
+
+        </div>
+
+    </nav>
+
+</header>
+
+
+
+<!-- =====================================================
+     OLDAL
+     ===================================================== -->
+
+<main>
+
+
+    <div class="page-header">
+
+        <small>COMMUNITY</small>
+
+        <h1>Szavazás</h1>
+
+        <p>
+            Te döntöd el, mi legyen a következő streamen.
+            Válaszd ki a kedvenc játékodat!
+        </p>
+
+    </div>
+
+
+
+    <!-- =================================================
+         SZAVAZÓKÁRTYA
+         ================================================= -->
+
+    <div class="card">
+
+        <h2>
+            🎮 Mit streameljek?
+        </h2>
+
+        <p style="margin-bottom: 25px;">
+            Kattints arra a játékra, amelyiket legszívesebben
+            látnád a következő adásban.
+        </p>
+
+
+        <div class="poll">
+
+
+            <!-- FORTNITE -->
+
+            <button
+                class="poll-button"
+                onclick="vote('Fortnite')"
+            >
+                🎯 Fortnite
+            </button>
+
+
+            <!-- GAME 2 -->
+
+            <button
+                class="poll-button"
+                onclick="vote('Game 2')"
+            >
+                🎮 Game 2
+            </button>
+
+
+            <!-- GAME 3 -->
+
+            <button
+                class="poll-button"
+                onclick="vote('Game 3')"
+            >
+                🎮 Game 3
+            </button>
+
+
+        </div>
+
+
+
+        <!-- EREDMÉNY -->
+
+        <div
+            id="results"
+            class="result"
+        ></div>
+
+
+        <p
+            id="voteMessage"
+            style="
+                margin-top:20px;
+                color:var(--muted);
+                font-size:13px;
+            "
+        ></p>
+
+
+    </div>
+
+
+
+    <!-- =================================================
+         INFORMÁCIÓ
+         ================================================= -->
+
+    <section style="margin-top:50px;">
+
+        <div class="grid">
+
+
+            <div class="card">
+
+                <h3>🎯 Te döntesz</h3>
+
+                <p>
+                    A szavazással közvetlenül befolyásolhatod,
+                    milyen tartalom készüljön.
+                </p>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>📊 Eredmények</h3>
+
+                <p>
+                    A szavazatok százalékos formában jelennek meg.
+                </p>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>💜 Közösség</h3>
+
+                <p>
+                    Minél többen szavaznak, annál pontosabb képet
+                    kapunk arról, mit szeretnétek nézni.
+                </p>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+
+<!-- =====================================================
+     FOOTER
+     ===================================================== -->
+
+<footer>
+
+    © 2026 SANCI9517 · Official Gaming Hub
+
+</footer>
+
+
+
+<!-- =====================================================
+     SZAVAZÁS JAVASCRIPT
+     
+     FONTOS:
+     GitHub Pages önmagában nem tud közös adatbázist.
+     
+     Ez a verzió az adott böngészőben tárolja
+     a szavazatokat.
+     ===================================================== -->
+
+<script>
+
+
+/* =====================================================
+   BEÁLLÍTÁSOK
+   ===================================================== */
+
+const STORAGE_KEY =
+    "sanci9517_poll_v2";
+
+
+const games = [
+    "Fortnite",
+    "Game 2",
+    "Game 3"
+];
+
+
+
+/* =====================================================
+   SZAVAZATOK BETÖLTÉSE
+   ===================================================== */
+
+function getVotes() {
+
+    const saved =
+        localStorage.getItem(STORAGE_KEY);
+
+
+    if (saved) {
+
+        try {
+
+            const data =
+                JSON.parse(saved);
+
+
+            return {
+
+                "Fortnite":
+                    Number(data.Fortnite) || 0,
+
+                "Game 2":
+                    Number(data["Game 2"]) || 0,
+
+                "Game 3":
+                    Number(data["Game 3"]) || 0
+
+            };
+
+        }
+
+        catch (error) {
+
+            console.log(
+                "A szavazási adatok nem olvashatók."
+            );
+
+        }
+
+    }
+
+
+    return {
+
+        "Fortnite": 0,
+        "Game 2": 0,
+        "Game 3": 0
+
+    };
+
+}
+
+
+
+/* =====================================================
+   SZAVAZÁS
+   ===================================================== */
+
+function vote(game) {
+
+
+    if (!games.includes(game)) {
+        return;
+    }
+
+
+    /*
+       Ellenőrizzük, hogy az adott böngészőből
+       már történt-e szavazás.
+    */
+
+    const alreadyVoted =
+        localStorage.getItem(
+            "sanci9517_voted"
+        );
+
+
+    if (alreadyVoted) {
+
+        document.getElementById(
+            "voteMessage"
+        ).textContent =
+            "Már szavaztál. Köszönöm! 💜";
+
+        return;
+
+    }
+
+
+    const votes =
+        getVotes();
+
+
+    votes[game]++;
+
+
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(votes)
+    );
+
+
+    localStorage.setItem(
+        "sanci9517_voted",
+        "true"
+    );
+
+
+    document.getElementById(
+        "voteMessage"
+    ).textContent =
+        "Köszönöm a szavazatodat! 💜";
+
+
+    showResults();
+
+}
+
+
+
+/* =====================================================
+   EREDMÉNYEK
+   ===================================================== */
+
+function showResults() {
+
+
+    const votes =
+        getVotes();
+
+
+    const total =
+        votes.Fortnite +
+        votes["Game 2"] +
+        votes["Game 3"];
+
+
+    let html = "";
+
+
+    games.forEach(function(game) {
+
+
+        let percentage = 0;
+
+
+        if (total > 0) {
+
+            percentage =
+                Math.round(
+                    (votes[game] / total) * 100
+                );
+
+        }
+
+
+        html += `
+
+            <div class="result-row">
+
+                <div class="result-top">
+
+                    <span>
+                        ${game}
+                    </span>
+
+                    <span>
+                        ${percentage}%
+                    </span>
+
+                </div>
+
+
+                <div class="bar">
+
+                    <div
+                        class="bar-fill"
+                        style="width:${percentage}%"
+                    ></div>
+
+                </div>
+
+            </div>
+
+        `;
+
+    });
+
+
+    document.getElementById(
+        "results"
+    ).innerHTML = html;
+
+}
+
+
+
+/* =====================================================
+   OLDAL BETÖLTÉSE
+   ===================================================== */
+
+showResults();
+
+
+</script>
+
+
+</body>
+
+  </html>
