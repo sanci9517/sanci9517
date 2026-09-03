@@ -103,6 +103,7 @@
       border-radius: 50%;
       border: 3px solid var(--accent);
       object-fit: cover;
+      background-color: #120a22;
     }
 
     .live-badge {
@@ -161,7 +162,6 @@
       box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
     }
 
-    /* CARD BUTTONS */
     .card-btn {
       display: flex;
       align-items: center;
@@ -217,7 +217,6 @@
     }
     .setup-row:last-child { border-bottom: none; }
 
-    /* STATISZTIKÁK */
     .stats-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -244,7 +243,6 @@
       color: var(--text-muted);
     }
 
-    /* SZAVAZÁS STÍLUS */
     .poll-opt {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--border);
@@ -263,7 +261,6 @@
       transform: translateY(-2px);
     }
 
-    /* KLIPIEK */
     .clip-container {
       width: 100%;
       height: 280px;
@@ -275,7 +272,6 @@
     }
     .clip-container iframe { width: 100%; height: 100%; border: none; }
 
-    /* MODAL ABLAK */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -329,16 +325,16 @@
 </head>
 <body>
 
-  <!-- NAVIGÁCIÓ (KÜLÖN SZAVAZÁS LAPFÜLLEL) -->
+  <!-- NAVIGÁCIÓ -->
   <div class="nav-tabs">
-    <button class="nav-btn active" onclick="openTab('home', event)"><i class="fa-solid fa-house"></i> FŐOLDAL</button>
-    <button class="nav-btn" onclick="openTab('news', event)"><i class="fa-solid fa-bullhorn"></i> HÍREK</button>
-    <button class="nav-btn" onclick="openTab('poll', event)"><i class="fa-solid fa-check-to-slot"></i> SZAVAZÁS</button>
-    <button class="nav-btn" onclick="openTab('clips', event)"><i class="fa-solid fa-film"></i> KLIPIEK</button>
-    <button class="nav-btn" onclick="openTab('schedule', event)"><i class="fa-solid fa-calendar"></i> MENETREND</button>
-    <button class="nav-btn" onclick="openTab('stats', event)"><i class="fa-solid fa-trophy"></i> STATOK</button>
-    <button class="nav-btn" onclick="openTab('support', event)"><i class="fa-solid fa-heart"></i> TÁMOGATÁS</button>
-    <button class="nav-btn" onclick="openTab('setup', event)"><i class="fa-solid fa-desktop"></i> SET UP</button>
+    <button class="nav-btn active" onclick="openTab('home', this)"><i class="fa-solid fa-house"></i> FŐOLDAL</button>
+    <button class="nav-btn" onclick="openTab('news', this)"><i class="fa-solid fa-bullhorn"></i> HÍREK</button>
+    <button class="nav-btn" onclick="openTab('poll', this)"><i class="fa-solid fa-check-to-slot"></i> SZAVAZÁS</button>
+    <button class="nav-btn" onclick="openTab('clips', this)"><i class="fa-solid fa-film"></i> KLIPIEK</button>
+    <button class="nav-btn" onclick="openTab('schedule', this)"><i class="fa-solid fa-calendar"></i> MENETREND</button>
+    <button class="nav-btn" onclick="openTab('stats', this)"><i class="fa-solid fa-trophy"></i> STATOK</button>
+    <button class="nav-btn" onclick="openTab('support', this)"><i class="fa-solid fa-heart"></i> TÁMOGATÁS</button>
+    <button class="nav-btn" onclick="openTab('setup', this)"><i class="fa-solid fa-desktop"></i> SET UP</button>
   </div>
 
   <div class="main-container">
@@ -347,7 +343,7 @@
     <div id="tab-home" class="tab-content active">
       <div class="profile-card">
         <div class="avatar-wrapper">
-          <img id="avatar-img" src="https://static-cdn.jtvnw.net/user-default-pictures-uv/75305db0-3a92-43d8-1565-22b87e142200-profile_image-300x300.png" class="avatar" alt="SANCI9517">
+          <img id="avatar-img" src="https://static-cdn.jtvnw.net/user-default-pictures-uv/75305db0-3a92-43d8-1565-22b87e142200-profile_image-300x300.png" class="avatar" alt="SANCI9517" onerror="this.src='https://static-cdn.jtvnw.net/user-default-pictures-uv/75305db0-3a92-43d8-1565-22b87e142200-profile_image-300x300.png';">
           <div id="live-badge" class="live-badge">LIVE</div>
         </div>
         <div>
@@ -400,11 +396,11 @@
       </div>
     </div>
 
-    <!-- KÜLÖN SZAVAZÁS OLDAL -->
+    <!-- SZAVAZÁS -->
     <div id="tab-poll" class="tab-content">
       <div class="info-card">
         <div class="card-header-text"><span><i class="fa-solid fa-poll"></i> KÖZÖSSÉGI SZAVAZÁS</span></div>
-        <div style="font-weight:700; font-size:1.1rem; margin-bottom: 6px;" id="poll-title">Mit játszunk a következő streamen?</div>
+        <div style="font-weight:700; font-size:1.1rem; margin-bottom: 6px;">Mit játszunk a következő streamen?</div>
         <div style="font-size:0.85rem; color:var(--text-sub); margin-bottom:12px;">Válaszd ki a kedvenc játékodat, amivel szívesen látnál élőben:</div>
         
         <div class="poll-opt" onclick="vote(1)"><span>A) Fortnite</span><span id="poll-v1">0%</span></div>
@@ -438,7 +434,7 @@
         </div>
         <div class="stats-grid" style="margin-top:10px;">
           <div class="stat-box">
-            <div class="stat-val" id="stat-followers">Töltés...</div>
+            <div class="stat-val" id="stat-followers">-</div>
             <div class="stat-lbl">Twitch Követők</div>
           </div>
           <div class="stat-box">
@@ -457,13 +453,12 @@
       </div>
     </div>
 
-    <!-- TÁMOGATÁS (A MEGADOTT DONATE LINKKEL) -->
+    <!-- TÁMOGATÁS -->
     <div id="tab-support" class="tab-content">
       <div class="info-card">
         <div class="card-header-text"><span><i class="fa-solid fa-hand-holding-dollar"></i> TÁMOGATÁS</span></div>
         <div style="font-size:0.85rem; color:var(--text-sub); margin-bottom:12px;">Ha szeretnéd közvetlenül segíteni a stream fejlődését és a jobb minőségű tartalmakat:</div>
         
-        <!-- MEGADOTT KÍVÁNT STREAMLABS TIP LINK -->
         <a href="https://streamlabs.com/sanci9517/tip" target="_blank" class="card-btn support" style="margin-bottom:10px;">
           <div class="card-left"><i class="fa-solid fa-donate" style="color:var(--gold);"></i><span>Streamlabs Donáció / Tip</span></div>
           <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; color:var(--text-muted);"></i>
@@ -483,7 +478,7 @@
 
   </div>
 
-  <!-- LEJÁTSZÓ MODAL ABLAK -->
+  <!-- MODAL ABLAK -->
   <div class="modal-overlay" id="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -529,7 +524,8 @@
       }
     ];
 
-    function openTab(tabName, evt) {
+    // TAB VÁLTÓ
+    function openTab(tabName, btnElement) {
       const tabs = document.querySelectorAll('.tab-content');
       const btns = document.querySelectorAll('.nav-btn');
 
@@ -541,16 +537,18 @@
         targetTab.classList.add('active');
       }
 
-      if (evt && evt.currentTarget) {
-        evt.currentTarget.classList.add('active');
+      if (btnElement) {
+        btnElement.classList.add('active');
       }
     }
 
+    // MODAL FUNKCIÓK
     function openStreamModal() {
       document.getElementById('modal').classList.add('active');
       switchModalTab('video');
     }
 
     function closeStreamModal() {
-      document.getEle
+      document.getElementById('modal-body').innerHTML = '';
+      document.getElementById('modal'
  
