@@ -25,10 +25,6 @@
 <body>
 
 
-<!-- ========================================
-     HEADER
-======================================== -->
-
 <header class="site-header">
 
     <div class="container nav">
@@ -121,14 +117,9 @@
 </header>
 
 
-<!-- ========================================
-     MAIN
-======================================== -->
 
 <main>
 
-
-    <!-- CÍM -->
 
     <section class="container">
 
@@ -162,8 +153,6 @@
 
 
 
-    <!-- SZAVAZÁS -->
-
     <section class="container">
 
 
@@ -174,31 +163,23 @@
 
 
                 <span class="hero-badge">
-
                     🎮 KÖVETKEZŐ STREAM
-
                 </span>
 
 
                 <h2>
-
                     Melyik játék legyen?
-
                 </h2>
 
 
                 <p>
-
                     Válaszd ki az egyik játékot.
-
                 </p>
 
 
             </div>
 
 
-
-            <!-- JÁTÉKOK -->
 
             <div class="poll-options">
 
@@ -305,17 +286,12 @@
 
 
 
-            <!-- ÜZENET -->
-
             <div
                 id="pollMessage"
                 class="poll-message">
-
             </div>
 
 
-
-            <!-- EREDMÉNYEK -->
 
             <div class="poll-results">
 
@@ -333,8 +309,6 @@
                 </div>
 
 
-
-                <!-- FORTNITE -->
 
                 <div class="poll-result">
 
@@ -369,8 +343,6 @@
 
 
 
-                <!-- GAME 2 -->
-
                 <div class="poll-result">
 
                     <div class="poll-result-top">
@@ -403,8 +375,6 @@
                 </div>
 
 
-
-                <!-- GAME 3 -->
 
                 <div class="poll-result">
 
@@ -445,8 +415,6 @@
     </section>
 
 
-
-    <!-- DISCORD -->
 
     <section class="container">
 
@@ -493,18 +461,12 @@
 
 
 
-<!-- ========================================
-     FOOTER
-======================================== -->
-
 <footer>
 
     <div class="container">
 
         <p>
-
             © 2026 SANCI9517 · Official Gaming Hub
-
         </p>
 
     </div>
@@ -512,10 +474,6 @@
 </footer>
 
 
-
-<!-- ========================================
-     JAVASCRIPT
-======================================== -->
 
 <script>
 
@@ -535,17 +493,17 @@ menuToggle.addEventListener(
     "click",
     function () {
 
-        const open =
+        const isOpen =
             navLinks.classList.toggle("open");
 
 
         menuToggle.textContent =
-            open ? "✕" : "☰";
+            isOpen ? "✕" : "☰";
 
 
         menuToggle.setAttribute(
             "aria-expanded",
-            open ? "true" : "false"
+            isOpen ? "true" : "false"
         );
 
     }
@@ -599,16 +557,27 @@ const defaultVotes = {
 
 
 
-let votes =
-    JSON.parse(
-        localStorage.getItem(STORAGE_KEY)
-    ) || {
-        ...defaultVotes
-    };
+let savedVotes =
+    localStorage.getItem(STORAGE_KEY);
 
 
+let votes;
 
-/* Hibás adatok javítása */
+
+try {
+
+    votes =
+        savedVotes
+            ? JSON.parse(savedVotes)
+            : { ...defaultVotes };
+
+} catch {
+
+    votes = { ...defaultVotes };
+
+}
+
+
 
 votes.Fortnite =
     Number(votes.Fortnite) || 0;
@@ -634,59 +603,37 @@ function updateResults() {
         votes["Game 3"];
 
 
-
-    const games = [
+    const data = [
 
         {
             name: "Fortnite",
-
-            percent:
-                "percentFortnite",
-
-            bar:
-                "barFortnite",
-
-            count:
-                "votesFortnite"
+            percent: "percentFortnite",
+            bar: "barFortnite",
+            count: "votesFortnite"
         },
-
 
         {
             name: "Game 2",
-
-            percent:
-                "percentGame2",
-
-            bar:
-                "barGame2",
-
-            count:
-                "votesGame2"
+            percent: "percentGame2",
+            bar: "barGame2",
+            count: "votesGame2"
         },
-
 
         {
             name: "Game 3",
-
-            percent:
-                "percentGame3",
-
-            bar:
-                "barGame3",
-
-            count:
-                "votesGame3"
+            percent: "percentGame3",
+            bar: "barGame3",
+            count: "votesGame3"
         }
 
     ];
 
 
-
-    games.forEach(function (game) {
+    data.forEach(function (item) {
 
 
         const count =
-            votes[game.name];
+            votes[item.name];
 
 
         let percentage = 0;
@@ -696,37 +643,30 @@ function updateResults() {
 
             percentage =
                 Math.round(
-                    (count / total) * 100
+                    count / total * 100
                 );
 
         }
 
 
-
         document.getElementById(
-            game.percent
+            item.percent
         ).textContent =
             percentage + "%";
 
 
-
         document.getElementById(
-            game.bar
+            item.bar
         ).style.width =
             percentage + "%";
 
 
-
         document.getElementById(
-            game.count
+            item.count
         ).textContent =
-
             count === 1
-
                 ? "1 szavazat"
-
                 : count + " szavazat";
-
 
     });
 
@@ -735,40 +675,45 @@ function updateResults() {
 
 
 /* ========================================
-   MÁR SZAVAZOTT
+   ELLENŐRIZZÜK, SZAVAZOTT-E
 ======================================== */
 
-if (
-    localStorage.getItem(VOTED_KEY)
-    ===
-    "true"
-) {
+function checkVoted() {
 
 
-    document.getElementById(
-        "pollMessage"
-    ).textContent =
-        "✅ Erről az eszközről már szavaztál.";
+    if (
+        localStorage.getItem(VOTED_KEY)
+        ===
+        "true"
+    ) {
 
 
-    document
-        .querySelectorAll(".poll-option")
-        .forEach(function (button) {
+        document.getElementById(
+            "pollMessage"
+        ).textContent =
+            "✅ Erről az eszközről már szavaztál.";
 
-            button.disabled = true;
 
-            button.classList.add(
-                "disabled"
-            );
+        document
+            .querySelectorAll(".poll-option")
+            .forEach(function (button) {
 
-        });
+                button.disabled = true;
+
+                button.classList.add(
+                    "disabled"
+                );
+
+            });
+
+    }
 
 }
 
 
 
 /* ========================================
-   SZAVAZÁS GOMBOK
+   SZAVAZÁS
 ======================================== */
 
 document
@@ -782,9 +727,7 @@ document
 
 
                 if (
-                    localStorage.getItem(
-                        VOTED_KEY
-                    )
+                    localStorage.getItem(VOTED_KEY)
                     ===
                     "true"
                 ) {
@@ -799,10 +742,8 @@ document
                 }
 
 
-
                 const game =
                     button.dataset.game;
-
 
 
                 if (
@@ -816,9 +757,7 @@ document
                 }
 
 
-
                 votes[game]++;
-
 
 
                 localStorage.setItem(
@@ -827,12 +766,10 @@ document
                 );
 
 
-
                 localStorage.setItem(
                     VOTED_KEY,
                     "true"
                 );
-
 
 
                 document.getElementById(
@@ -841,11 +778,8 @@ document
                     "✅ Köszönöm a szavazatodat!";
 
 
-
                 document
-                    .querySelectorAll(
-                        ".poll-option"
-                    )
+                    .querySelectorAll(".poll-option")
                     .forEach(function (item) {
 
                         item.disabled = true;
@@ -857,7 +791,6 @@ document
                     });
 
 
-
                 updateResults();
 
             }
@@ -867,9 +800,11 @@ document
 
 
 
-/* Első betöltés */
+/* INDÍTÁS */
 
 updateResults();
+
+checkVoted();
 
 
 </script>
