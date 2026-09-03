@@ -5,15 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SANCI9517 | Official Streamer Hub</title>
 
-  <!-- ==========================================
-     [SECTION 1: BETŰTÍPUSOK ÉS IKONOK (FA 6.5.1)]
-     ========================================== -->
+  <!-- BETŰTÍPUSOK ÉS IKONOK -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-  <!-- ==========================================
-     [SECTION 2: CSS STÍLUSOK]
-     ========================================== -->
   <style>
     :root {
       --bg-dark: #07040d;
@@ -110,7 +105,7 @@
       box-shadow: 0 0 15px var(--accent-purple);
     }
 
-    /* WEBES (DESKTOP) LAYOUT */
+    /* DESKTOP LAYOUT */
     @media (min-width: 900px) {
       body { padding: 40px 20px 120px 20px; }
 
@@ -142,9 +137,7 @@
         gap: 20px;
       }
 
-      .tab-content.active {
-        display: flex;
-      }
+      .tab-content.active { display: flex; }
 
       .hero-card {
         background: linear-gradient(135deg, var(--card-bg-secondary), var(--card-bg-accent));
@@ -314,7 +307,7 @@
     .x-twitter i { color: #ffffff; }
     .discord i { color: #5865f2; }
 
-    /* LÁTVÁNYOS MENETREND STÍLUS */
+    /* MENETREND STÍLUS */
     .schedule-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
@@ -328,8 +321,6 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
-      position: relative;
-      overflow: hidden;
     }
 
     .schedule-card.active-day {
@@ -347,22 +338,9 @@
       align-items: center;
     }
 
-    .schedule-time {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      font-weight: 700;
-    }
-
-    .schedule-game {
-      font-size: 1.1rem;
-      font-weight: 800;
-      color: #fff;
-    }
-
-    .schedule-desc {
-      font-size: 0.85rem;
-      color: var(--text-sub);
-    }
+    .schedule-time { font-size: 0.85rem; color: var(--text-muted); font-weight: 700; }
+    .schedule-game { font-size: 1.1rem; font-weight: 800; color: #fff; }
+    .schedule-desc { font-size: 0.85rem; color: var(--text-sub); }
 
     /* SETUP STÍLUS */
     .setup-grid {
@@ -490,26 +468,26 @@
 </head>
 <body>
 
-  <!-- FŐ NAVIGÁCIÓS FÜLEK -->
+  <!-- NAVIGÁCIÓS FÜLEK -->
   <div class="nav-tabs">
-    <button class="nav-btn active" onclick="switchTab('home')">
+    <button class="nav-btn active" onclick="switchTab('home', this)">
       <i class="fa-solid fa-house"></i> FŐOLDAL
     </button>
-    <button class="nav-btn" onclick="switchTab('schedule')">
+    <button class="nav-btn" onclick="switchTab('schedule', this)">
       <i class="fa-solid fa-calendar-days"></i> MENETREND
     </button>
-    <button class="nav-btn" onclick="switchTab('setup')">
+    <button class="nav-btn" onclick="switchTab('setup', this)">
       <i class="fa-solid fa-desktop"></i> SET UP
     </button>
   </div>
 
   <div class="main-container">
 
-    <!-- BAL PROFIL PANEL (MINDIG LÁTHATÓ) -->
+    <!-- PROFIL PANEL -->
     <header>
       <div class="brand">
         <div class="avatar-container">
-          <img id="twitch-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=sanci9517" class="avatar" alt="SANCI9517">
+          <img id="twitch-avatar" src="https://static-cdn.jtvnw.net/user-default-pictures-uv/75305db0-3a92-43d8-1565-22b87e142200-profile_image-300x300.png" class="avatar" alt="SANCI9517">
           <div id="live-status-badge" class="live-badge-inline offline">OFFLINE</div>
         </div>
         <div class="brand-text">
@@ -540,7 +518,7 @@
       </div>
     </header>
 
-    <!-- 1. FÜL: FŐOLDAL -->
+    <!-- FŐOLDAL FÜL -->
     <div id="tab-home" class="tab-content active">
       <div class="hero-card">
         <div>
@@ -580,35 +558,31 @@
       </div>
     </div>
 
-    <!-- 2. FÜL: MENETREND -->
+    <!-- MENETREND FÜL -->
     <div id="tab-schedule" class="tab-content">
       <h2 style="font-family:'Orbitron'; color:#fff; font-size:1.3rem;">
         <i class="fa-solid fa-calendar-days" style="color:var(--accent-purple);"></i> HETI STREAM MENETREND
       </h2>
-      <div class="schedule-grid" id="schedule-container">
-        <!-- Automatikusan töltődik be a schedule.json fájlból -->
-      </div>
+      <div class="schedule-grid" id="schedule-container"></div>
     </div>
 
-    <!-- 3. FÜL: SET UP -->
+    <!-- SET UP FÜL -->
     <div id="tab-setup" class="tab-content">
       <h2 style="font-family:'Orbitron'; color:#fff; font-size:1.3rem;">
         <i class="fa-solid fa-desktop" style="color:var(--accent-purple);"></i> STREAMER SET UP & GÉP
       </h2>
-      <div class="setup-grid" id="setup-container">
-        <!-- Automatikusan töltődik be a setup.json fájlból -->
-      </div>
+      <div class="setup-grid" id="setup-container"></div>
     </div>
 
   </div>
 
-  <!-- LEBEGŐ GOMB -->
+  <!-- LEBEGŐ ÉLŐ ADÁS GOMB -->
   <button class="floating-live-btn" onclick="openStreamModal()">
     <i class="fa-solid fa-tv"></i>
     <span>ÉLŐ ADÁS</span>
   </button>
 
-  <!-- MODAL -->
+  <!-- MODAL / ABBLAK -->
   <div class="modal-overlay" id="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -626,34 +600,41 @@
     </div>
   </div>
 
-  <!-- ==========================================
-     [SECTION 4: JAVASCRIPT]
-     ========================================== -->
   <script>
     const TWITCH_CHANNEL = "sanci9517";
     const currentDomain = window.location.hostname || "localhost";
 
-    // FÜLEK KÖZÖTTI VÁLTÁS
-    function switchTab(tabName) {
-      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+    // ALAPÉRTELMEZETT TARTALMAK HIBÁS CIKLUS KISZŰRÉSÉRE
+    const fallbackSchedule = [
+      { "day": "Hétfő", "time": "18:00 - 21:00", "game": "Valorant", "description": "Ranked grind & Közösségi meccsek", "active": true },
+      { "day": "Kedd", "time": "—", "game": "PIHENŐNAP", "description": "Nincs adás", "active": false },
+      { "day": "Szerda", "time": "18:00 - 21:00", "game": "GTA V Roleplay", "description": "Karakter sztori folytatása", "active": true },
+      { "day": "Csütörtök", "time": "—", "game": "PIHENŐNAP", "description": "Nincs adás", "active": false },
+      { "day": "Péntek", "time": "19:00 - Későig", "game": "Variety Friday / Horror", "description": "Közös nézői játékok & Horror", "active": true },
+      { "day": "Szombat", "time": "17:00 - 22:00", "game": "Counter-Strike 2", "description": "Faceit lobby a nézőkkel", "active": true },
+      { "day": "Vasárnap", "time": "—", "game": "PIHENŐNAP", "description": "Feltöltődés", "active": false }
+    ];
 
-      document.getElementById(`tab-${tabName}`).classList.add('active');
-      event.currentTarget.classList.add('active');
-    }
+    const fallbackSetup = [
+      {
+        "category": "PC Konfiguráció",
+        "icon": "fa-microchip",
+        "items": [
+          { "name": "Processzor", "value": "AMD Ryzen 7 7800X3D" },
+          { "name": "Videókártya", "value": "NVIDIA RTX 4070 Ti Super" },
+          { "name": "Memória", "value": "32GB DDR5 6000MHz" }
+        ]
+      },
+      {
+        "category": "Perifériák",
+        "icon": "fa-headset",
+        "items": [
+          { "name": "Monitor", "value": "27\" 240Hz Gaming" },
+          { "name": "Egér", "value": "Logitech G Pro X Superlight" },
+          { "name": "Mikrofon", "value": "Shure SM7B" }
+        ]
+      }
+    ];
 
-    // MENETREND BETÖLTÉSE JSON FÁJLBÓL
-    async function loadSchedule() {
-      try {
-        const response = await fetch('schedule.json');
-        const scheduleData = await response.json();
-        const container = document.getElementById('schedule-container');
-        container.innerHTML = '';
-
-        scheduleData.forEach(item => {
-          const card = document.createElement('div');
-          card.className = `schedule-card ${item.active ? 'active-day' : ''}`;
-          card.innerHTML = `
-            <div class="schedule-day">
-              <span>${item.day}</span>
-              ${item.active ? '<i class="fa-solid fa-circle-play" style="color:var(--accent-purple);"></i
+    // FÜLEK VÁLTÁSA
+    function swi
