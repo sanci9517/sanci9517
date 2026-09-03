@@ -6,10 +6,10 @@
   <title>SANCI9517 | Official Streamer Hub</title>
 
   <!-- ==========================================
-     [SECTION 1: BETŰTÍPUSOK ÉS IKONOK]
+     [SECTION 1: BETŰTÍPUSOK ÉS IKONOK (FA 6.5.1)]
      ========================================== -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
   <!-- ==========================================
      [SECTION 2: CSS STÍLUSOK]
@@ -71,15 +71,48 @@
       padding: 20px 15px 100px 15px;
     }
 
-    header, .hero-card, .card-btn {
+    header, .hero-card, .card-btn, .schedule-card, .setup-card {
       border-radius: 20px;
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
     }
 
+    /* NAVIGÁCIÓS FÜLEK */
+    .nav-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 1150px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      background: var(--card-bg-primary);
+      border: 1px solid var(--border-purple);
+      color: var(--text-main);
+      padding: 12px 24px;
+      border-radius: 14px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-btn.active, .nav-btn:hover {
+      background: var(--accent-purple);
+      color: #000;
+      border-color: #fff;
+      box-shadow: 0 0 15px var(--accent-purple);
+    }
+
     /* WEBES (DESKTOP) LAYOUT */
     @media (min-width: 900px) {
-      body { padding: 50px 20px 120px 20px; }
+      body { padding: 40px 20px 120px 20px; }
 
       .main-container {
         width: 100%;
@@ -91,7 +124,7 @@
 
       header {
         grid-column: 1 / 2;
-        grid-row: 1 / 4;
+        grid-row: 1 / 5;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -102,8 +135,18 @@
         border: 2px solid var(--border-purple);
       }
 
-      .hero-card {
+      .tab-content {
         grid-column: 2 / 4;
+        display: none;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .tab-content.active {
+        display: flex;
+      }
+
+      .hero-card {
         background: linear-gradient(135deg, var(--card-bg-secondary), var(--card-bg-accent));
         border: 2px solid var(--accent-purple);
         padding: 28px 32px;
@@ -113,11 +156,12 @@
       }
 
       .links-wrapper {
-        grid-column: 2 / 4;
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 16px;
       }
+
+      .card-btn.wide { grid-column: 1 / -1; }
     }
 
     /* MOBIL LAYOUT */
@@ -140,6 +184,14 @@
         text-align: center;
       }
 
+      .tab-content {
+        display: none;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .tab-content.active { display: flex; }
+
       .hero-card {
         background: linear-gradient(135deg, var(--card-bg-secondary), var(--card-bg-accent));
         border: 1px solid var(--accent-purple);
@@ -157,7 +209,7 @@
       }
     }
 
-    /* PROFIL */
+    /* PROFIL PANEL */
     .brand {
       display: flex;
       flex-direction: column;
@@ -224,10 +276,9 @@
     .stat-label { color: var(--text-muted); font-weight: 600; }
     .stat-value { font-family: 'Orbitron'; font-weight: 800; color: #fff; }
 
-    /* KÖZÖSSÉGI LINK GOMBOK */
+    /* LINK GOMBOK */
     .card-btn {
       position: relative;
-      z-index: 5;
       display: flex !important;
       align-items: center;
       justify-content: space-between;
@@ -246,6 +297,7 @@
     .card-btn.youtube { border-left: 6px solid #FF0000; }
     .card-btn.tiktok  { border-left: 6px solid #00F2FE; }
     .card-btn.x-twitter { border-left: 6px solid #FFFFFF; }
+    .card-btn.discord { border-left: 6px solid #5865F2; }
 
     .card-btn:hover {
       transform: translateY(-3px);
@@ -260,6 +312,92 @@
     .youtube i { color: #ff4d4d; }
     .tiktok i  { color: #00f2fe; }
     .x-twitter i { color: #ffffff; }
+    .discord i { color: #5865f2; }
+
+    /* LÁTVÁNYOS MENETREND STÍLUS */
+    .schedule-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 14px;
+    }
+
+    .schedule-card {
+      background: var(--card-bg-secondary);
+      border: 1px solid var(--border-purple);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .schedule-card.active-day {
+      border: 2px solid var(--accent-purple);
+      background: linear-gradient(135deg, var(--card-bg-secondary), var(--card-bg-accent));
+      box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
+    }
+
+    .schedule-day {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.1rem;
+      color: var(--accent-purple);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .schedule-time {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .schedule-game {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .schedule-desc {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+    }
+
+    /* SETUP STÍLUS */
+    .setup-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+    }
+
+    .setup-card {
+      background: var(--card-bg-secondary);
+      border: 1px solid var(--border-purple);
+      padding: 20px;
+    }
+
+    .setup-card h3 {
+      font-family: 'Orbitron', sans-serif;
+      color: var(--accent-purple);
+      font-size: 1rem;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .setup-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.9rem;
+    }
+
+    .setup-item:last-child { border-bottom: none; }
+    .setup-key { color: var(--text-muted); }
+    .setup-val { color: #fff; font-weight: 700; }
 
     .theme-switcher {
       display: flex;
@@ -275,7 +413,7 @@
     .dot.green  { background: #10b981; }
     .dot.blue   { background: #3b82f6; }
 
-    /* LEBEGŐ "ÉLŐ ADÁS" GOMB */
+    /* LEBEGŐ GOMB ÉS MODAL */
     .floating-live-btn {
       position: fixed;
       bottom: 25px;
@@ -295,7 +433,6 @@
       z-index: 999;
     }
 
-    /* STREAM & CHAT MODAL */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -346,32 +483,29 @@
       border-color: #fff;
     }
 
-    .close-btn {
-      background: transparent;
-      border: none;
-      color: white;
-      font-size: 1.8rem;
-      cursor: pointer;
-    }
-
-    .modal-body {
-      width: 100%;
-      height: 65vh;
-      max-height: 540px;
-      background: #000;
-    }
-
+    .close-btn { background: transparent; border: none; color: white; font-size: 1.8rem; cursor: pointer; }
+    .modal-body { width: 100%; height: 65vh; max-height: 540px; background: #000; }
     .modal-body iframe { width: 100%; height: 100%; border: none; }
   </style>
 </head>
 <body>
 
-  <!-- ==========================================
-     [SECTION 3: HTML TARTALOM]
-     ========================================== -->
+  <!-- FŐ NAVIGÁCIÓS FÜLEK -->
+  <div class="nav-tabs">
+    <button class="nav-btn active" onclick="switchTab('home')">
+      <i class="fa-solid fa-house"></i> FŐOLDAL
+    </button>
+    <button class="nav-btn" onclick="switchTab('schedule')">
+      <i class="fa-solid fa-calendar-days"></i> MENETREND
+    </button>
+    <button class="nav-btn" onclick="switchTab('setup')">
+      <i class="fa-solid fa-desktop"></i> SET UP
+    </button>
+  </div>
+
   <div class="main-container">
 
-    <!-- BAL PROFIL PANEL -->
+    <!-- BAL PROFIL PANEL (MINDIG LÁTHATÓ) -->
     <header>
       <div class="brand">
         <div class="avatar-container">
@@ -384,7 +518,6 @@
         </div>
       </div>
 
-      <!-- ADATOK -->
       <div class="stats-box">
         <div class="stat-item">
           <span class="stat-label"><i class="fa-solid fa-users"></i> Követők:</span>
@@ -407,60 +540,64 @@
       </div>
     </header>
 
-    <!-- BENTO BANNER -->
-    <div class="hero-card">
-      <div>
-        <h2 id="stream-title" style="font-family:'Orbitron'; font-size:1.2rem; color:#fff; margin-bottom:6px;">
-          NÉZD AZ ÉLŐ ADÁST!
-        </h2>
-        <p id="stream-subtitle" style="color:var(--text-sub); font-size:0.9rem;">
-          Csatlakozz a streamhez közvetlenül itt vagy nyisd meg a csatornát!
-        </p>
+    <!-- 1. FÜL: FŐOLDAL -->
+    <div id="tab-home" class="tab-content active">
+      <div class="hero-card">
+        <div>
+          <h2 id="stream-title" style="font-family:'Orbitron'; font-size:1.2rem; color:#fff; margin-bottom:6px;">
+            NÉZD AZ ÉLŐ ADÁST!
+          </h2>
+          <p id="stream-subtitle" style="color:var(--text-sub); font-size:0.9rem;">
+            Csatlakozz a streamhez közvetlenül itt vagy nyisd meg a csatornát!
+          </p>
+        </div>
+        <button class="m-tab-btn active" onclick="openStreamModal()" style="padding:14px 24px; font-size:0.9rem; cursor:pointer;">
+          <i class="fa-solid fa-play"></i> STREAM LEJÁTSZÁSA
+        </button>
       </div>
-      <button class="m-tab-btn active" onclick="openStreamModal()" style="padding:14px 24px; font-size:0.9rem; cursor:pointer;">
-        <i class="fa-solid fa-play"></i> STREAM LEJÁTSZÁSA
-      </button>
+
+      <div class="links-wrapper">
+        <a href="https://m.twitch.tv/sanci9517" target="_blank" class="card-btn twitch">
+          <div class="card-left"><i class="fa-brands fa-twitch"></i><span>Twitch Csatorna</span></div>
+          <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
+        </a>
+        <a href="https://youtube.com/@sanci9517vod?si=0OFY7fLlho9VGUqW" target="_blank" class="card-btn youtube">
+          <div class="card-left"><i class="fa-brands fa-youtube"></i><span>YouTube VODs</span></div>
+          <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
+        </a>
+        <a href="https://www.tiktok.com/@sanci9517twitch" target="_blank" class="card-btn tiktok">
+          <div class="card-left"><i class="fa-brands fa-tiktok"></i><span>TikTok</span></div>
+          <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
+        </a>
+        <a href="https://x.com/Sanci9517" target="_blank" class="card-btn x-twitter">
+          <div class="card-left"><i class="fa-brands fa-x-twitter"></i><span>X / Twitter</span></div>
+          <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
+        </a>
+        <a href="https://discord.gg" target="_blank" class="card-btn discord wide">
+          <div class="card-left"><i class="fa-brands fa-discord"></i><span>Discord Szerver</span></div>
+          <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
+        </a>
+      </div>
     </div>
 
-    <!-- PONTOS KÖZÖSSÉGI LINKEK -->
-    <div class="links-wrapper">
-      
-      <!-- TWITCH LINK -->
-      <a href="https://m.twitch.tv/sanci9517" target="_blank" rel="noopener noreferrer" class="card-btn twitch">
-        <div class="card-left">
-          <i class="fa-brands fa-twitch"></i>
-          <span>Twitch Csatorna</span>
-        </div>
-        <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
-      </a>
+    <!-- 2. FÜL: MENETREND -->
+    <div id="tab-schedule" class="tab-content">
+      <h2 style="font-family:'Orbitron'; color:#fff; font-size:1.3rem;">
+        <i class="fa-solid fa-calendar-days" style="color:var(--accent-purple);"></i> HETI STREAM MENETREND
+      </h2>
+      <div class="schedule-grid" id="schedule-container">
+        <!-- Automatikusan töltődik be a schedule.json fájlból -->
+      </div>
+    </div>
 
-      <!-- YOUTUBE LINK -->
-      <a href="https://youtube.com/@sanci9517vod?si=0OFY7fLlho9VGUqW" target="_blank" rel="noopener noreferrer" class="card-btn youtube">
-        <div class="card-left">
-          <i class="fa-brands fa-youtube"></i>
-          <span>YouTube VODs</span>
-        </div>
-        <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
-      </a>
-
-      <!-- TIKTOK LINK -->
-      <a href="https://www.tiktok.com/@sanci9517twitch" target="_blank" rel="noopener noreferrer" class="card-btn tiktok">
-        <div class="card-left">
-          <i class="fa-brands fa-tiktok"></i>
-          <span>TikTok</span>
-        </div>
-        <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
-      </a>
-
-      <!-- X / TWITTER LINK -->
-      <a href="https://x.com/Sanci9517" target="_blank" rel="noopener noreferrer" class="card-btn x-twitter">
-        <div class="card-left">
-          <i class="fa-brands fa-x-twitter"></i>
-          <span>X / Twitter</span>
-        </div>
-        <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
-      </a>
-
+    <!-- 3. FÜL: SET UP -->
+    <div id="tab-setup" class="tab-content">
+      <h2 style="font-family:'Orbitron'; color:#fff; font-size:1.3rem;">
+        <i class="fa-solid fa-desktop" style="color:var(--accent-purple);"></i> STREAMER SET UP & GÉP
+      </h2>
+      <div class="setup-grid" id="setup-container">
+        <!-- Automatikusan töltődik be a setup.json fájlból -->
+      </div>
     </div>
 
   </div>
@@ -496,87 +633,27 @@
     const TWITCH_CHANNEL = "sanci9517";
     const currentDomain = window.location.hostname || "localhost";
 
-    async function fetchTwitchData() {
+    // FÜLEK KÖZÖTTI VÁLTÁS
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+
+      document.getElementById(`tab-${tabName}`).classList.add('active');
+      event.currentTarget.classList.add('active');
+    }
+
+    // MENETREND BETÖLTÉSE JSON FÁJLBÓL
+    async function loadSchedule() {
       try {
-        const response = await fetch(`https://decapi.me/twitch/uptime/${TWITCH_CHANNEL}`);
-        const uptimeText = await response.text();
+        const response = await fetch('schedule.json');
+        const scheduleData = await response.json();
+        const container = document.getElementById('schedule-container');
+        container.innerHTML = '';
 
-        const isLive = !uptimeText.includes("offline") && !uptimeText.includes("error");
-        
-        const badge = document.getElementById('live-status-badge');
-        const viewersElem = document.getElementById('twitch-viewers');
-        const titleElem = document.getElementById('stream-title');
-
-        if (isLive) {
-          badge.innerText = "LIVE";
-          badge.className = "live-badge-inline online";
-          
-          const viewReq = await fetch(`https://decapi.me/twitch/viewcount/${TWITCH_CHANNEL}`);
-          const gameReq = await fetch(`https://decapi.me/twitch/game/${TWITCH_CHANNEL}`);
-          const titleReq = await fetch(`https://decapi.me/twitch/title/${TWITCH_CHANNEL}`);
-
-          viewersElem.innerText = await viewReq.text();
-          document.getElementById('twitch-game').innerText = await gameReq.text();
-          titleElem.innerText = await titleReq.text() || "MOST ÉLŐBEN!";
-        } else {
-          badge.innerText = "OFFLINE";
-          badge.className = "live-badge-inline offline";
-          viewersElem.innerText = "0";
-          document.getElementById('twitch-game').innerText = "Offline";
-          titleElem.innerText = "A CSATORNA JELENLEG OFFLINE";
-        }
-
-        const followReq = await fetch(`https://decapi.me/twitch/followcount/${TWITCH_CHANNEL}`);
-        const followCount = await followReq.text();
-        if(!followCount.includes("error")) {
-          document.getElementById('twitch-followers').innerText = followCount;
-        }
-
-        const avatarReq = await fetch(`https://decapi.me/twitch/avatar/${TWITCH_CHANNEL}`);
-        const avatarUrl = await avatarReq.text();
-        if(avatarUrl.startsWith("http")) {
-          document.getElementById('twitch-avatar').src = avatarUrl;
-        }
-
-      } catch (err) {
-        console.warn("API Hiba:", err);
-      }
-    }
-
-    function openStreamModal() {
-      document.getElementById('modal').classList.add('active');
-      showModalTab('video');
-    }
-
-    function closeStreamModal() {
-      document.getElementById('modal').classList.remove('active');
-      document.getElementById('modal-body').innerHTML = '';
-    }
-
-    function showModalTab(tabType) {
-      const body = document.getElementById('modal-body');
-      const videoBtn = document.getElementById('tab-video-btn');
-      const chatBtn = document.getElementById('tab-chat-btn');
-
-      if (tabType === 'video') {
-        videoBtn.classList.add('active');
-        chatBtn.classList.remove('active');
-        body.innerHTML = `<iframe src="https://player.twitch.tv/?channel=${TWITCH_CHANNEL}&parent=${currentDomain}&autoplay=true" allowfullscreen></iframe>`;
-      } else {
-        chatBtn.classList.add('active');
-        videoBtn.classList.remove('active');
-        body.innerHTML = `<iframe src="https://www.twitch.tv/embed/${TWITCH_CHANNEL}/chat?parent=${currentDomain}"></iframe>`;
-      }
-    }
-
-    function setTheme(theme) {
-      if (theme === 'purple') document.documentElement.removeAttribute('data-theme');
-      else document.documentElement.setAttribute('data-theme', theme);
-    }
-
-    fetchTwitchData();
-    setInterval(fetchTwitchData, 60000);
-  </script>
-</body>
-        </html>
-  
+        scheduleData.forEach(item => {
+          const card = document.createElement('div');
+          card.className = `schedule-card ${item.active ? 'active-day' : ''}`;
+          card.innerHTML = `
+            <div class="schedule-day">
+              <span>${item.day}</span>
+              ${item.active ? '<i class="fa-solid fa-circle-play" style="color:var(--accent-purple);"></i
