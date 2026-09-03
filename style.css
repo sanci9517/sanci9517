@@ -1123,3 +1123,50 @@ footer {
     }
 
                  }
+/* =========================
+   MOBILE HAMBURGER MENU
+========================= */
+
+.menu-toggle {
+    display: none;
+    background: transparent;
+    border: 0;
+    color: #ffffff;
+    font-size: 30px;
+    cursor: pointer;
+    padding: 5px 10px;
+}
+
+@media (max-width: 650px) {
+
+    .nav {
+        position: relative;
+        flex-wrap: wrap;
+    }
+
+    .menu-toggle {
+        display: block;
+        margin-left: auto;
+    }
+
+    .nav-links {
+        display: none;
+        width: 100%;
+        grid-template-columns: 1fr;
+        margin-top: 15px;
+        padding: 10px;
+        border-radius: 15px;
+        background: rgba(15, 15, 30, 0.98);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+
+    .nav-links.open {
+        display: grid;
+    }
+
+    .nav-links a {
+        width: 100%;
+        text-align: center;
+        padding: 12px;
+    }
+}
