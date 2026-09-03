@@ -34,93 +34,136 @@
       --text-sub: #93c5fd;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; transition: all 0.2s ease; }
+    * { box-sizing: border-box; margin: 0; padding: 0; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
 
     body {
       background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(168, 85, 247, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.1) 0%, transparent 40%);
       color: var(--text-main);
       font-family: 'Rajdhani', sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 20px 15px 80px 15px;
+      padding: 30px 15px 100px 15px;
     }
 
+    /* FEJLÉC ÉS PROFIL */
     header {
       width: 100%;
-      max-width: 600px;
+      max-width: 550px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 25px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-purple);
+      padding: 15px 20px;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
 
-    .brand { display: flex; align-items: center; gap: 12px; }
-    .avatar { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--accent-purple); box-shadow: 0 0 10px var(--accent-purple); }
-    h1 { font-family: 'Orbitron', sans-serif; font-size: 1.4rem; letter-spacing: 1px; }
+    .brand { display: flex; align-items: center; gap: 15px; }
+    .avatar { 
+      width: 55px; 
+      height: 55px; 
+      border-radius: 50%; 
+      border: 2px solid var(--accent-purple); 
+      box-shadow: 0 0 15px var(--accent-purple); 
+    }
+    .brand-text h1 { 
+      font-family: 'Orbitron', sans-serif; 
+      font-size: 1.3rem; 
+      letter-spacing: 1.5px; 
+      background: linear-gradient(to right, #fff, var(--text-sub));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .brand-text p { font-size: 0.85rem; color: var(--text-sub); font-weight: 600; }
 
-    .theme-switcher { display: flex; gap: 8px; background: var(--card-bg); border: 1px solid var(--border-purple); padding: 6px 12px; border-radius: 20px; }
+    /* TÉMAVÁLTÓ */
+    .theme-switcher { 
+      display: flex; 
+      gap: 10px; 
+      background: rgba(0,0,0,0.4); 
+      border: 1px solid var(--border-purple); 
+      padding: 8px 12px; 
+      border-radius: 20px; 
+    }
     .dot { width: 14px; height: 14px; border-radius: 50%; cursor: pointer; }
-    .dot.purple { background: #a855f7; } .dot.green { background: #10b981; } .dot.blue { background: #3b82f6; }
+    .dot:hover { transform: scale(1.2); }
+    .dot.purple { background: #a855f7; box-shadow: 0 0 8px #a855f7; }
+    .dot.green { background: #10b981; box-shadow: 0 0 8px #10b981; }
+    .dot.blue { background: #3b82f6; box-shadow: 0 0 8px #3b82f6; }
 
-    .main-container { width: 100%; max-width: 600px; display: flex; flex-direction: column; gap: 14px; }
+    /* LINK CONTAINER */
+    .main-container { width: 100%; max-width: 550px; display: flex; flex-direction: column; gap: 14px; }
 
     .section-title {
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       color: var(--text-sub);
-      letter-spacing: 1.5px;
+      letter-spacing: 2px;
       margin-top: 10px;
-      margin-bottom: 2px;
+      margin-left: 5px;
+      text-transform: uppercase;
     }
 
-    /* NORMÁL LINK GOMBOK A FŐOLDALON */
+    /* KÁRTYA LINK GOMBOK */
     .card-btn {
       background: var(--card-bg);
       border: 1px solid var(--border-purple);
-      border-radius: 12px;
-      padding: 16px 20px;
+      border-radius: 14px;
+      padding: 18px 22px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       text-decoration: none;
       color: white;
       font-weight: 700;
-      font-size: 1.05rem;
+      font-size: 1.1rem;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
     }
-    .card-btn:hover { border-color: var(--glow-purple); transform: translateX(3px); }
-    .card-left { display: flex; align-items: center; gap: 15px; }
-    .card-left i { font-size: 1.4rem; color: var(--accent-purple); width: 25px; text-align: center; }
+    .card-btn:hover { 
+      border-color: var(--glow-purple); 
+      transform: translateY(-2px); 
+      box-shadow: 0 6px 25px rgba(168, 85, 247, 0.25);
+    }
+    .card-left { display: flex; align-items: center; gap: 16px; }
+    .card-left i { font-size: 1.5rem; color: var(--accent-purple); width: 25px; text-align: center; }
 
-    /* 🔴 SAROKBA ABLAKOZOTT LEBEGŐ "ÉLŐ ADÁS" GOMB */
+    /* 🔴 JOBB ALSÓ SAROKBAN LEBEGŐ "ÉLŐ ADÁS" GOMB */
     .floating-live-btn {
       position: fixed;
-      bottom: 20px;
-      right: 20px;
+      bottom: 25px;
+      right: 25px;
       background: linear-gradient(135deg, #ef4444, var(--accent-purple));
       border: 2px solid #ffffff;
       color: white;
-      padding: 12px 20px;
-      border-radius: 30px;
+      padding: 14px 24px;
+      border-radius: 50px;
       font-family: 'Orbitron', sans-serif;
       font-size: 0.85rem;
-      font-weight: 800;
+      font-weight: 900;
+      letter-spacing: 1px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       cursor: pointer;
-      box-shadow: 0 4px 20px rgba(239, 68, 68, 0.6);
+      box-shadow: 0 8px 30px rgba(239, 68, 68, 0.5);
       z-index: 999;
       animation: pulse-glow 2s infinite;
     }
-
-    .floating-live-btn i { font-size: 1.1rem; }
+    .floating-live-btn:hover { transform: scale(1.05); }
 
     .pulse-dot {
-      width: 8px;
-      height: 8px;
-      background-color: #fff;
+      width: 10px;
+      height: 10px;
+      background-color: #ffffff;
       border-radius: 50%;
       animation: blink 1s infinite;
     }
@@ -128,16 +171,16 @@
     @keyframes blink { 50% { opacity: 0.2; } }
     @keyframes pulse-glow {
       0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-      70% { box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
+      70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
       100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
     }
 
-    /* MODAL (LEUGRÓ ABLAK) */
+    /* LEUGRÓ ABLAK (MODAL) */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.85);
-      backdrop-filter: blur(8px);
+      background: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(12px);
       display: none;
       justify-content: center;
       align-items: center;
@@ -147,49 +190,62 @@
     .modal-overlay.active { display: flex; }
 
     .modal-content {
-      background: #000;
+      background: #090514;
       border: 2px solid var(--border-purple);
-      border-radius: 16px;
+      border-radius: 20px;
       width: 100%;
-      max-width: 800px;
+      max-width: 850px;
       overflow: hidden;
+      box-shadow: 0 0 50px rgba(168, 85, 247, 0.3);
     }
 
     .modal-header {
       background: var(--card-bg);
-      padding: 10px 15px;
+      padding: 12px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid var(--border-purple);
     }
 
-    .modal-tabs { display: flex; gap: 8px; }
+    .modal-tabs { display: flex; gap: 10px; }
     .m-tab-btn {
-      background: rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
       border: 1px solid var(--border-purple);
       color: white;
-      padding: 6px 14px;
-      border-radius: 8px;
+      padding: 8px 18px;
+      border-radius: 10px;
       font-family: 'Orbitron', sans-serif;
       font-size: 0.8rem;
+      font-weight: 700;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-    .m-tab-btn.active { background: var(--accent-purple); color: #000; font-weight: 800; }
+    .m-tab-btn.active { 
+      background: var(--accent-purple); 
+      color: #000; 
+      border-color: var(--glow-purple);
+      box-shadow: 0 0 15px var(--accent-purple);
+    }
 
     .close-btn {
       background: transparent;
       border: none;
       color: white;
-      font-size: 1.6rem;
+      font-size: 1.8rem;
       cursor: pointer;
+      line-height: 1;
     }
+    .close-btn:hover { color: var(--accent-purple); }
 
     .modal-body {
       position: relative;
       width: 100%;
       height: 65vh;
-      max-height: 500px;
+      max-height: 520px;
+      background: #000;
     }
 
     .modal-body iframe {
@@ -201,11 +257,13 @@
 </head>
 <body>
 
+  <!-- FEJLÉC ÉS PROFIL -->
   <header>
     <div class="brand">
       <img src="https://api.dicebear.com/7.x/bottts/svg?seed=sanci9517" class="avatar" alt="SANCI9517">
-      <div>
+      <div class="brand-text">
         <h1>SANCI9517</h1>
+        <p>Official Streamer Hub</p>
       </div>
     </div>
     <div class="theme-switcher">
@@ -215,62 +273,65 @@
     </div>
   </header>
 
+  <!-- CSATORNA LINKI -->
   <div class="main-container">
-    
-    <!-- 🌐 KÖZÖSSÉGI CSATORNÁK -->
-    <div class="section-title">🌐 ELÉRHETŐSÉGEK</div>
+    <div class="section-title">🌐 CSATORNÁK & KÖZÖSSÉG</div>
 
     <a href="https://www.twitch.tv/sanci9517" target="_blank" class="card-btn">
       <div class="card-left"><i class="fa-brands fa-twitch"></i><span>Twitch Csatorna</span></div>
-      <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; color:var(--text-sub);"></i>
+      <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
     </a>
 
     <a href="https://youtube.com" target="_blank" class="card-btn">
-      <div class="card-left"><i class="fa-brands fa-youtube"></i><span>YouTube Videók</span></div>
-      <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; color:var(--text-sub);"></i>
+      <div class="card-left"><i class="fa-brands fa-youtube"></i><span>YouTube Csatorna</span></div>
+      <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
     </a>
 
     <a href="https://discord.gg" target="_blank" class="card-btn">
       <div class="card-left"><i class="fa-brands fa-discord"></i><span>Discord Szerver</span></div>
-      <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; color:var(--text-sub);"></i>
+      <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
     </a>
 
     <a href="https://tiktok.com" target="_blank" class="card-btn">
-      <div class="card-left"><i class="fa-brands fa-tiktok"></i><span>TikTok Clips</span></div>
-      <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; color:var(--text-sub);"></i>
+      <div class="card-left"><i class="fa-brands fa-tiktok"></i><span>TikTok Videók</span></div>
+      <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
     </a>
 
     <a href="https://instagram.com" target="_blank" class="card-btn">
       <div class="card-left"><i class="fa-brands fa-instagram"></i><span>Instagram</span></div>
-      <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; color:var(--text-sub);"></i>
+      <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
     </a>
-
   </div>
 
-  <!-- 🔴 LEBEGŐ ÉLŐ ADÁS GOMB A JOBB ALSÓ SAROKBAN -->
+  <!-- 🔴 LEBEGŐ ÉLŐ ADÁS GOMB A SAROKBAN -->
   <button class="floating-live-btn" onclick="openStreamModal()">
     <div class="pulse-dot"></div>
     <i class="fa-solid fa-tv"></i>
     <span>ÉLŐ ADÁS</span>
   </button>
 
-  <!-- LEUGRÓ ABLAK (MODAL) A STREAMNEK ÉS A CHATNEK -->
+  <!-- LEUGRÓ ABLAK (STREAM ÉS CHAT FÜLEKKEL) -->
   <div class="modal-overlay" id="modal">
     <div class="modal-content">
       <div class="modal-header">
         <div class="modal-tabs">
-          <button class="m-tab-btn active" id="tab-video-btn" onclick="showModalTab('video')"><i class="fa-solid fa-play"></i> STREAM</button>
-          <button class="m-tab-btn" id="tab-chat-btn" onclick="showModalTab('chat')"><i class="fa-solid fa-comments"></i> CHAT</button>
+          <button class="m-tab-btn active" id="tab-video-btn" onclick="showModalTab('video')">
+            <i class="fa-solid fa-play"></i> STREAM
+          </button>
+          <button class="m-tab-btn" id="tab-chat-btn" onclick="showModalTab('chat')">
+            <i class="fa-solid fa-comments"></i> CHAT
+          </button>
         </div>
         <button class="close-btn" onclick="closeStreamModal()">&times;</button>
       </div>
-      <div class="modal-body" id="modal-body">
-        <!-- Az iframe dinamikusan töltődik be -->
-      </div>
+      <div class="modal-body" id="modal-body"></div>
     </div>
   </div>
 
   <script>
+    // Automatikusan kezeli a domént a Twitch beágyazás biztonsági előírásaihoz
+    const currentDomain = window.location.hostname || "sanci9517.github.io";
+
     function openStreamModal() {
       document.getElementById('modal').classList.add('active');
       showModalTab('video');
@@ -284,17 +345,17 @@
       if(tabType === 'video') {
         videoBtn.classList.add('active');
         chatBtn.classList.remove('active');
-        body.innerHTML = `<iframe src="https://player.twitch.tv/?channel=sanci9517&parent=sanci9517.github.io&autoplay=true" allowfullscreen></iframe>`;
+        body.innerHTML = `<iframe src="https://player.twitch.tv/?channel=sanci9517&parent=${currentDomain}&autoplay=true" allowfullscreen></iframe>`;
       } else {
         chatBtn.classList.add('active');
         videoBtn.classList.remove('active');
-        body.innerHTML = `<iframe src="https://www.twitch.tv/embed/sanci9517/chat?parent=sanci9517.github.io"></iframe>`;
+        body.innerHTML = `<iframe src="https://www.twitch.tv/embed/sanci9517/chat?parent=${currentDomain}"></iframe>`;
       }
     }
 
     function closeStreamModal() {
       document.getElementById('modal').classList.remove('active');
-      document.getElementById('modal-body').innerHTML = '';
+      document.getElementById('modal-body').innerHTML = ''; // Bezáráskor leállítja a lejátszást
     }
 
     function setTheme(theme) {
