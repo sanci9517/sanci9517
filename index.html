@@ -121,7 +121,6 @@
     .brand-title { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; }
     .brand-sub { color: var(--text-sub); font-size: 0.85rem; font-weight: 700; }
 
-    /* STREAM LEJÁTSZÓ GOMB */
     .stream-play-btn {
       width: 100%;
       background: linear-gradient(135deg, var(--accent), #7e22ce);
@@ -194,7 +193,7 @@
     }
     .setup-row:last-child { border-bottom: none; }
 
-    /* MODAL (ABLAKelem élő adáshoz) */
+    /* MODAL ABLAK (STREAM & CHAT) */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -218,7 +217,7 @@
     }
 
     .modal-header {
-      padding: 12px 16px;
+      padding: 10px 16px;
       background: var(--card-bg);
       display: flex;
       justify-content: space-between;
@@ -226,8 +225,31 @@
       border-bottom: 1px solid var(--border);
     }
 
+    .modal-tabs {
+      display: flex;
+      gap: 8px;
+    }
+
+    .m-tab-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: white;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .m-tab-btn.active {
+      background: var(--accent);
+      color: #000;
+      border-color: #fff;
+    }
+
     .close-btn { background: transparent; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
-    .modal-body { width: 100%; height: 50vh; max-height: 450px; background: #000; }
+    .modal-body { width: 100%; height: 55vh; max-height: 480px; background: #000; }
     .modal-body iframe { width: 100%; height: 100%; border: none; }
   </style>
 </head>
@@ -260,7 +282,6 @@
         </div>
       </div>
 
-      <!-- ÉLŐ STREAM MEGTEKINTÉSE GOMB -->
       <button class="stream-play-btn" onclick="openStreamModal()">
         <i class="fa-solid fa-play"></i> ÉLŐ ADÁS MEGTEKINTÉSE
       </button>
@@ -303,11 +324,18 @@
 
   </div>
 
-  <!-- LEJÁTSZÓ MODAL ABLAK -->
+  <!-- LEJÁTSZÓ MODAL ABLAK (VIDEÓ ÉS CHAT TABS) -->
   <div class="modal-overlay" id="modal">
     <div class="modal-content">
       <div class="modal-header">
-        <span style="font-family:'Orbitron'; font-size:0.9rem;"><i class="fa-brands fa-twitch" style="color:#a970ff;"></i> SANCI9517 Stream</span>
+        <div class="modal-tabs">
+          <button class="m-tab-btn active" id="m-btn-video" onclick="switchModalTab('video')">
+            <i class="fa-solid fa-play"></i> STREAM
+          </button>
+          <button class="m-tab-btn" id="m-btn-chat" onclick="switchModalTab('chat')">
+            <i class="fa-solid fa-comments"></i> CHAT
+          </button>
+        </div>
         <button class="close-btn" onclick="closeStreamModal()">&times;</button>
       </div>
       <div class="modal-body" id="modal-body"></div>
@@ -316,6 +344,36 @@
 
   <script>
     const TWITCH_CHANNEL = "sanci9517";
+
+    // TARTALÉK ADATOK (Ha a JSON fájlok betöltése elakadna)
+    const fallbackSchedule = [
+      { day: "Hétfő", time: "18:00 - 21:00", game: "Valorant", desc: "Ranked & Közösségi meccsek", active: true },
+      { day: "Kedd", time: "—", game: "PIHENŐNAP", desc: "Nincs adás", active: false },
+      { day: "Szerda", time: "18:00 - 21:00", game: "GTA V Roleplay", desc: "Karakter sztori", active: true },
+      { day: "Csütörtök", time: "—", game: "PIHENŐNAP", desc: "Nincs adás", active: false },
+      { day: "Péntek", time: "19:00 - Későig", game: "Variety Friday", desc: "Közös játékok", active: true },
+      { day: "Szombat", time: "17:00 - 22:00", game: "Counter-Strike 2", desc: "Faceit lobby", active: true },
+      { day: "Vasárnap", time: "—", game: "PIHENŐNAP", desc: "Feltöltődés", active: false }
+    ];
+
+    const fallbackSetup = [
+      {
+        category: "PC Konfiguráció",
+        items: [
+          { name: "Processzor", val: "AMD Ryzen 7 7800X3D" },
+          { name: "Videókártya", val: "NVIDIA RTX 4070 Ti Super" },
+          { name: "Memória", val: "32GB DDR5 6000MHz" }
+        ]
+      },
+      {
+        category: "Perifériák",
+        items: [
+          { name: "Monitor", val: "27\" 240Hz Gaming" },
+          { name: "Egér", val: "Logitech G Pro X Superlight" },
+          { name: "Mikrofon", val: "Shure SM7B" }
+        ]
+      }
+    ];
 
     // TAB VÁLTÓ
     function openTab(tabName, btn) {
@@ -326,20 +384,32 @@
       btn.classList.add('active');
     }
 
-    // STREAM MODAL LEJÁTSZÓ
+    // STREAM MODAL LEJÁTSZÓ ÉS CHAT VÁLTÓ
     function openStreamModal() {
-      const modal = document.getElementById('modal');
-      const body = document.getElementById('modal-body');
-      const domain = window.location.hostname || "localhost";
-      
-      body.innerHTML = `<iframe src="https://player.twitch.tv/?channel=${TWITCH_CHANNEL}&parent=${domain}&autoplay=true" allowfullscreen></iframe>`;
-      modal.classList.add('active');
+      document.getElementById('modal').classList.add('active');
+      switchModalTab('video');
     }
 
     function closeStreamModal() {
-      const modal = document.getElementById('modal');
       document.getElementById('modal-body').innerHTML = '';
-      modal.classList.remove('active');
+      document.getElementById('modal').classList.remove('active');
+    }
+
+    function switchModalTab(type) {
+      const body = document.getElementById('modal-body');
+      const vBtn = document.getElementById('m-btn-video');
+      const cBtn = document.getElementById('m-btn-chat');
+      const domain = window.location.hostname || "localhost";
+
+      if (type === 'video') {
+        vBtn.classList.add('active');
+        cBtn.classList.remove('active');
+        body.innerHTML = `<iframe src="https://player.twitch.tv/?channel=${TWITCH_CHANNEL}&parent=${domain}&autoplay=true" allowfullscreen></iframe>`;
+      } else {
+        cBtn.classList.add('active');
+        vBtn.classList.remove('active');
+        body.innerHTML = `<iframe src="https://www.twitch.tv/embed/${TWITCH_CHANNEL}/chat?parent=${domain}"></iframe>`;
+      }
     }
 
     // TWITCH ADATOK LEKÉRÉSE BIZTONSÁGOSAN
@@ -371,55 +441,65 @@
           }
         }
       } catch (e) {
-        console.log('Twitch adatok lekérése nem sikerült:', e);
+        console.log('Twitch API nem érhető el:', e);
       }
     }
 
-    // MENETREND BETÖLTÉSE JSON-BÓL
+    // MENETREND BETÖLTÉSE (Fájlból vagy fallbackből)
     async function loadSchedule() {
       const container = document.getElementById('schedule-list');
-      try {
-        const res = await fetch('schedule.json');
-        if (!res.ok) throw new Error();
-        const data = await res.json();
-        
-        container.innerHTML = data.map(item => `
-          <div class="info-card ${item.active ? 'active-day' : ''}" style="margin-bottom:12px;">
-            <div class="card-header-text">
-              <span>${item.day}</span>
-              <small style="color:var(--text-muted);">${item.time}</small>
-            </div>
-            <div style="font-weight:800; font-size:1.1rem;">${item.game}</div>
-            <div style="font-size:0.85rem; color:var(--text-sub);">${item.desc || item.description || ''}</div>
-          </div>
-        `).join('');
-      } catch (e) {
-        container.innerHTML = '<div class="info-card">Nem sikerült betölteni a schedule.json fájlt.</div>';
+      let data = fallbackSchedule;
+
+      const files = ['schedule.json', 'Schedule.json'];
+      for (let file of files) {
+        try {
+          const res = await fetch(file);
+          if (res.ok) {
+            data = await res.json();
+            break;
+          }
+        } catch (e) {}
       }
+
+      container.innerHTML = data.map(item => `
+        <div class="info-card ${item.active ? 'active-day' : ''}" style="margin-bottom:12px;">
+          <div class="card-header-text">
+            <span>${item.day}</span>
+            <small style="color:var(--text-muted);">${item.time}</small>
+          </div>
+          <div style="font-weight:800; font-size:1.1rem;">${item.game}</div>
+          <div style="font-size:0.85rem; color:var(--text-sub);">${item.desc || item.description || ''}</div>
+        </div>
+      `).join('');
     }
 
-    // SETUP BETÖLTÉSE JSON-BÓL
+    // SETUP BETÖLTÉSE (Fájlból vagy fallbackből)
     async function loadSetup() {
       const container = document.getElementById('setup-list');
-      try {
-        const res = await fetch('setup.json');
-        if (!res.ok) throw new Error();
-        const data = await res.json();
+      let data = fallbackSetup;
 
-        container.innerHTML = data.map(cat => `
-          <div class="info-card" style="margin-bottom:14px;">
-            <div class="card-header-text">${cat.category}</div>
-            ${cat.items.map(i => `
-              <div class="setup-row">
-                <span style="color:var(--text-muted);">${i.name}:</span>
-                <span style="font-weight:700;">${i.value || i.val}</span>
-              </div>
-            `).join('')}
-          </div>
-        `).join('');
-      } catch (e) {
-        container.innerHTML = '<div class="info-card">Nem sikerült betölteni a setup.json fájlt.</div>';
+      const files = ['setup.json', 'Setup.json'];
+      for (let file of files) {
+        try {
+          const res = await fetch(file);
+          if (res.ok) {
+            data = await res.json();
+            break;
+          }
+        } catch (e) {}
       }
+
+      container.innerHTML = data.map(cat => `
+        <div class="info-card" style="margin-bottom:14px;">
+          <div class="card-header-text">${cat.category}</div>
+          ${cat.items.map(i => `
+            <div class="setup-row">
+              <span style="color:var(--text-muted);">${i.name}:</span>
+              <span style="font-weight:700;">${i.value || i.val}</span>
+            </div>
+          `).join('')}
+        </div>
+      `).join('');
     }
 
     // INICIALIZÁLÁS
@@ -431,5 +511,4 @@
   </script>
 
 </body>
-        </html>
-        
+</html>
