@@ -77,7 +77,7 @@
       padding: 20px 15px 100px 15px;
     }
 
-    /* --- 2.2 KÁRTYÁK & KÖNYVTAGOK TISZTA ELKÜLÖNÍTÉSE --- */
+    /* --- 2.2 KÁRTYÁK LEBEGŐ EFFEKTJEI --- */
     header, .hero-card, .card-btn, .stat-box {
       border-radius: 20px;
       backdrop-filter: blur(16px);
@@ -176,7 +176,7 @@
       }
     }
 
-    /* --- 2.5 KÁRTYA ELEMEK ÉS SZÍNEK (KÉRÉS SZERINT DIVERZ SZÍNEK) --- */
+    /* --- 2.5 KÁRTYA ELEMEK ÉS PROFIL STÍLUS --- */
     .brand {
       display: flex;
       flex-direction: column;
@@ -262,7 +262,7 @@
     .stat-label { color: var(--text-muted); font-weight: 600; }
     .stat-value { font-family: 'Orbitron'; font-weight: 800; color: #fff; }
 
-    /* VÁLTOZATOS CSATORNA GOMBOK (SZÍN-ELKÜLÖNÍTÉSEL) */
+    /* CSATORNA GOMBOK EGYEDI MÁRKASZÍNEKKEL */
     .card-btn {
       display: flex;
       align-items: center;
@@ -276,12 +276,10 @@
       border: 1px solid var(--border-purple) !important;
     }
 
-    /* EGYES CSATORNÁK EGYEDI KONTRASTOS KIEMELÉSE */
     .card-btn.twitch { border-left: 5px solid #9146FF !important; }
     .card-btn.youtube { border-left: 5px solid #FF0000 !important; }
-    .card-btn.discord { border-left: 5px solid #5865F2 !important; }
     .card-btn.tiktok  { border-left: 5px solid #00F2FE !important; }
-    .card-btn.instagram { border-left: 5px solid #E1306C !important; }
+    .card-btn.x-twitter { border-left: 5px solid #FFFFFF !important; }
 
     .card-btn:hover {
       transform: translateY(-4px) scale(1.01) !important;
@@ -294,9 +292,8 @@
 
     .twitch i { color: #a970ff; }
     .youtube i { color: #ff4d4d; }
-    .discord i { color: #7289da; }
     .tiktok i  { color: #00f2fe; }
-    .instagram i { color: #f77737; }
+    .x-twitter i { color: #ffffff; }
 
     .theme-switcher {
       display: flex;
@@ -313,7 +310,7 @@
     .dot.green  { background: #10b981; box-shadow: 0 0 10px #10b981; }
     .dot.blue   { background: #3b82f6; box-shadow: 0 0 10px #3b82f6; }
 
-    /* --- 2.6 RE-INTEGRÁLT EREDETI LEBEGŐ "ÉLŐ ADÁS" GOMB --- */
+    /* --- 2.6 LEBEGŐ "ÉLŐ ADÁS" GOMB --- */
     .floating-live-btn {
       position: fixed;
       bottom: 25px;
@@ -446,7 +443,7 @@
         </div>
         <div class="brand-text">
           <h1 id="twitch-display-name">SANCI9517</h1>
-          <p>TWITCH STREAMER HUB</p>
+          <p>STREAMER & TARTALOMKÉSZÍTŐ</p>
         </div>
       </div>
 
@@ -473,14 +470,14 @@
       </div>
     </header>
 
-    <!-- KIEGYENSÚLYOZOTT BENTO HERO + CSATORNÁK -->
+    <!-- BENTO HERO BANNER -->
     <div class="hero-card">
       <div>
         <h2 id="stream-title" style="font-family:'Orbitron'; font-size:1.2rem; color:#fff; margin-bottom:6px;">
           NÉZD AZ ÉLŐ ADÁST!
         </h2>
         <p id="stream-subtitle" style="color:var(--text-sub); font-size:0.9rem;">
-          Csatlakozz a közösséghez és közvetlenül a linken keresztül!
+          Csatlakozz a streamhez közvetlenül itt vagy látogass el a csatornára!
         </p>
       </div>
       <button class="m-tab-btn active" onclick="openStreamModal()" style="padding:14px 24px; font-size:0.9rem; cursor:pointer;">
@@ -488,36 +485,38 @@
       </button>
     </div>
 
+    <!-- PONTOS KÖZÖSSÉGI LINKEK -->
     <div class="links-wrapper">
-      <a href="https://www.twitch.tv/sanci9517" target="_blank" class="card-btn twitch">
+      
+      <!-- TWITCH -->
+      <a href="https://www.twitch.tv/sanci9517" target="_blank" rel="noopener noreferrer" class="card-btn twitch wide">
         <div class="card-left"><i class="fa-brands fa-twitch"></i><span>Twitch Csatorna</span></div>
         <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
       </a>
 
-      <a href="https://youtube.com" target="_blank" class="card-btn youtube">
-        <div class="card-left"><i class="fa-brands fa-youtube"></i><span>YouTube Csatorna</span></div>
+      <!-- YOUTUBE VODS -->
+      <a href="https://youtube.com/@sanci9517vod?si=0OFY7fLlho9VGUqW" target="_blank" rel="noopener noreferrer" class="card-btn youtube">
+        <div class="card-left"><i class="fa-brands fa-youtube"></i><span>YouTube VODs</span></div>
         <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
       </a>
 
-      <a href="https://discord.gg" target="_blank" class="card-btn discord wide">
-        <div class="card-left"><i class="fa-brands fa-discord"></i><span>Discord Szerver</span></div>
+      <!-- TIKTOK -->
+      <a href="https://www.tiktok.com/@sanci9517twitch" target="_blank" rel="noopener noreferrer" class="card-btn tiktok">
+        <div class="card-left"><i class="fa-brands fa-tiktok"></i><span>TikTok</span></div>
         <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
       </a>
 
-      <a href="https://tiktok.com" target="_blank" class="card-btn tiktok">
-        <div class="card-left"><i class="fa-brands fa-tiktok"></i><span>TikTok Clips</span></div>
+      <!-- X / TWITTER -->
+      <a href="https://x.com/Sanci9517" target="_blank" rel="noopener noreferrer" class="card-btn x-twitter wide">
+        <div class="card-left"><i class="fa-brands fa-x-twitter"></i><span>X / Twitter</span></div>
         <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
       </a>
 
-      <a href="https://instagram.com" target="_blank" class="card-btn instagram">
-        <div class="card-left"><i class="fa-brands fa-instagram"></i><span>Instagram</span></div>
-        <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
-      </a>
     </div>
 
   </div>
 
-  <!-- LEBEGŐ ÉLŐ ADÁS GOMB A JOBB ALSÓ SAROKBAN -->
+  <!-- LEBEGŐ ÉLŐ ADÁS GOMB -->
   <button class="floating-live-btn" onclick="openStreamModal()">
     <div class="pulse-dot"></div>
     <i class="fa-solid fa-tv"></i>
@@ -543,16 +542,15 @@
   </div>
 
   <!-- ==========================================
-     [SECTION 4: JAVASCRIPT PROGRAMKÓD (TWITCH API + MODAL)]
+     [SECTION 4: JAVASCRIPT (TWITCH API & MODAL)]
      ========================================== -->
   <script>
     const TWITCH_CHANNEL = "sanci9517";
-    const currentDomain = window.location.hostname || "sanci9517.github.io";
+    const currentDomain = window.location.hostname || "localhost";
 
-    // --- 4.1 TWITCH ADATOK DINAMIKUS LEKÉRDEZÉSE & FRISSÍTÉSE ---
+    // --- 4.1 TWITCH ADATOK LEKÉRDEZÉSE ---
     async function fetchTwitchData() {
       try {
-        // Nyilvános fallback API lekérés a Twitch státusz ellenőrzésére
         const response = await fetch(`https://decapi.me/twitch/uptime/${TWITCH_CHANNEL}`);
         const uptimeText = await response.text();
 
@@ -567,7 +565,6 @@
           badge.innerText = "LIVE";
           badge.className = "live-badge-inline online";
           
-          // Nézőszám és játék lekérése
           const viewReq = await fetch(`https://decapi.me/twitch/viewcount/${TWITCH_CHANNEL}`);
           const gameReq = await fetch(`https://decapi.me/twitch/game/${TWITCH_CHANNEL}`);
           const titleReq = await fetch(`https://decapi.me/twitch/title/${TWITCH_CHANNEL}`);
@@ -587,14 +584,12 @@
           subtitleElem.innerText = "Kövess be Twitch-en, hogy ne maradj le a következő adásról!";
         }
 
-        // Követők számának lekérése
         const followReq = await fetch(`https://decapi.me/twitch/followcount/${TWITCH_CHANNEL}`);
         const followCount = await followReq.text();
         if(!followCount.includes("error")) {
           document.getElementById('twitch-followers').innerText = followCount;
         }
 
-        // Profilkép lekérdezése
         const avatarReq = await fetch(`https://decapi.me/twitch/avatar/${TWITCH_CHANNEL}`);
         const avatarUrl = await avatarReq.text();
         if(avatarUrl.startsWith("http")) {
@@ -602,7 +597,7 @@
         }
 
       } catch (err) {
-        console.warn("Twitch API frissítési hiba, tartalék adatok használata:", err);
+        console.warn("Twitch API lekérdezési hiba:", err);
       }
     }
 
@@ -626,27 +621,4 @@
     function showModalTab(tabType) {
       const body = document.getElementById('modal-body');
       const videoBtn = document.getElementById('tab-video-btn');
-      const chatBtn = document.getElementById('tab-chat-btn');
-
-      if (tabType === 'video') {
-        videoBtn.classList.add('active');
-        chatBtn.classList.remove('active');
-        body.innerHTML = `<iframe src="https://player.twitch.tv/?channel=${TWITCH_CHANNEL}&parent=${currentDomain}&autoplay=true" allowfullscreen></iframe>`;
-      } else {
-        chatBtn.classList.add('active');
-        videoBtn.classList.remove('active');
-        body.innerHTML = `<iframe src="https://www.twitch.tv/embed/${TWITCH_CHANNEL}/chat?parent=${currentDomain}"></iframe>`;
-      }
-    }
-
-    function setTheme(theme) {
-      if (theme === 'purple') document.documentElement.removeAttribute('data-theme');
-      else document.documentElement.setAttribute('data-theme', theme);
-    }
-
-    // Indításkor adatok betöltése, majd frissítés 60 másodpercenként
-    fetchTwitchData();
-    setInterval(fetchTwitchData, 60000);
-  </script>
-</body>
-</html>
+      const chatBtn = docum
