@@ -1,39 +1,37 @@
 <!DOCTYPE html>
 <html lang="hu">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>SANCI9517 | Szavazás</title>
 
+    <meta name="description"
+          content="SANCI9517 szavazás – döntsd el, mi legyen a következő streamen.">
+
     <link rel="stylesheet" href="style.css">
-
 </head>
-
 
 <body>
 
+<header class="site-header">
 
-<!-- =====================================================
-     NAVIGÁCIÓ
-     ===================================================== -->
-
-<header>
-
-    <nav class="nav">
+    <div class="container nav">
 
         <a href="index.html" class="logo">
-            SANCI<span>9517</span>
+            SANCI9517
         </a>
 
+        <button
+            class="menu-toggle"
+            id="menuToggle"
+            type="button"
+            aria-label="Menü"
+            aria-expanded="false">
+            ☰
+        </button>
 
-        <div class="nav-links">
+        <nav class="nav-links" id="navLinks">
 
             <a href="index.html">
                 Főoldal
@@ -67,414 +65,171 @@
                 Setup
             </a>
 
-        </div>
+            <a
+                href="https://discord.gg/BEERR7AZH"
+                target="_blank"
+                rel="noopener noreferrer">
+                Discord
+            </a>
 
-    </nav>
+        </nav>
+
+    </div>
 
 </header>
 
 
-
-<!-- =====================================================
-     OLDAL
-     ===================================================== -->
-
 <main>
 
+    <!-- CÍM -->
 
-    <div class="page-header">
+    <section class="container">
 
-        <small>COMMUNITY</small>
+        <div class="page-header">
 
-        <h1>Szavazás</h1>
+            <span>SANCI9517 COMMUNITY</span>
 
-        <p>
-            Te döntöd el, mi legyen a következő streamen.
-            Válaszd ki a kedvenc játékodat!
-        </p>
+            <h1>
+                🗳️ Szavazás
+            </h1>
 
-    </div>
-
-
-
-    <!-- =================================================
-         SZAVAZÓKÁRTYA
-         ================================================= -->
-
-    <div class="card">
-
-        <h2>
-            🎮 Mit streameljek?
-        </h2>
-
-        <p style="margin-bottom: 25px;">
-            Kattints arra a játékra, amelyiket legszívesebben
-            látnád a következő adásban.
-        </p>
-
-
-        <div class="poll">
-
-
-            <!-- FORTNITE -->
-
-            <button
-                class="poll-button"
-                onclick="vote('Fortnite')"
-            >
-                🎯 Fortnite
-            </button>
-
-
-            <!-- GAME 2 -->
-
-            <button
-                class="poll-button"
-                onclick="vote('Game 2')"
-            >
-                🎮 Game 2
-            </button>
-
-
-            <!-- GAME 3 -->
-
-            <button
-                class="poll-button"
-                onclick="vote('Game 3')"
-            >
-                🎮 Game 3
-            </button>
-
-
-        </div>
-
-
-
-        <!-- EREDMÉNY -->
-
-        <div
-            id="results"
-            class="result"
-        ></div>
-
-
-        <p
-            id="voteMessage"
-            style="
-                margin-top:20px;
-                color:var(--muted);
-                font-size:13px;
-            "
-        ></p>
-
-
-    </div>
-
-
-
-    <!-- =================================================
-         INFORMÁCIÓ
-         ================================================= -->
-
-    <section style="margin-top:50px;">
-
-        <div class="grid">
-
-
-            <div class="card">
-
-                <h3>🎯 Te döntesz</h3>
-
-                <p>
-                    A szavazással közvetlenül befolyásolhatod,
-                    milyen tartalom készüljön.
-                </p>
-
-            </div>
-
-
-            <div class="card">
-
-                <h3>📊 Eredmények</h3>
-
-                <p>
-                    A szavazatok százalékos formában jelennek meg.
-                </p>
-
-            </div>
-
-
-            <div class="card">
-
-                <h3>💜 Közösség</h3>
-
-                <p>
-                    Minél többen szavaznak, annál pontosabb képet
-                    kapunk arról, mit szeretnétek nézni.
-                </p>
-
-            </div>
-
+            <p>
+                Te döntöd el, melyik játék legyen a következő streamen!
+                Válaszd ki a kedvencedet és add le a szavazatodat.
+            </p>
 
         </div>
 
     </section>
 
 
-</main>
+    <!-- SZAVAZÁS -->
 
+    <section class="container">
 
+        <div class="poll-box">
 
-<!-- =====================================================
-     FOOTER
-     ===================================================== -->
+            <div class="poll-title">
 
-<footer>
+                <span class="hero-badge">
+                    🎮 KÖVETKEZŐ STREAM
+                </span>
 
-    © 2026 SANCI9517 · Official Gaming Hub
+                <h2>
+                    Melyik játék legyen?
+                </h2>
 
-</footer>
-
-
-
-<!-- =====================================================
-     SZAVAZÁS JAVASCRIPT
-     
-     FONTOS:
-     GitHub Pages önmagában nem tud közös adatbázist.
-     
-     Ez a verzió az adott böngészőben tárolja
-     a szavazatokat.
-     ===================================================== -->
-
-<script>
-
-
-/* =====================================================
-   BEÁLLÍTÁSOK
-   ===================================================== */
-
-const STORAGE_KEY =
-    "sanci9517_poll_v2";
-
-
-const games = [
-    "Fortnite",
-    "Game 2",
-    "Game 3"
-];
-
-
-
-/* =====================================================
-   SZAVAZATOK BETÖLTÉSE
-   ===================================================== */
-
-function getVotes() {
-
-    const saved =
-        localStorage.getItem(STORAGE_KEY);
-
-
-    if (saved) {
-
-        try {
-
-            const data =
-                JSON.parse(saved);
-
-
-            return {
-
-                "Fortnite":
-                    Number(data.Fortnite) || 0,
-
-                "Game 2":
-                    Number(data["Game 2"]) || 0,
-
-                "Game 3":
-                    Number(data["Game 3"]) || 0
-
-            };
-
-        }
-
-        catch (error) {
-
-            console.log(
-                "A szavazási adatok nem olvashatók."
-            );
-
-        }
-
-    }
-
-
-    return {
-
-        "Fortnite": 0,
-        "Game 2": 0,
-        "Game 3": 0
-
-    };
-
-}
-
-
-
-/* =====================================================
-   SZAVAZÁS
-   ===================================================== */
-
-function vote(game) {
-
-
-    if (!games.includes(game)) {
-        return;
-    }
-
-
-    /*
-       Ellenőrizzük, hogy az adott böngészőből
-       már történt-e szavazás.
-    */
-
-    const alreadyVoted =
-        localStorage.getItem(
-            "sanci9517_voted"
-        );
-
-
-    if (alreadyVoted) {
-
-        document.getElementById(
-            "voteMessage"
-        ).textContent =
-            "Már szavaztál. Köszönöm! 💜";
-
-        return;
-
-    }
-
-
-    const votes =
-        getVotes();
-
-
-    votes[game]++;
-
-
-    localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(votes)
-    );
-
-
-    localStorage.setItem(
-        "sanci9517_voted",
-        "true"
-    );
-
-
-    document.getElementById(
-        "voteMessage"
-    ).textContent =
-        "Köszönöm a szavazatodat! 💜";
-
-
-    showResults();
-
-}
-
-
-
-/* =====================================================
-   EREDMÉNYEK
-   ===================================================== */
-
-function showResults() {
-
-
-    const votes =
-        getVotes();
-
-
-    const total =
-        votes.Fortnite +
-        votes["Game 2"] +
-        votes["Game 3"];
-
-
-    let html = "";
-
-
-    games.forEach(function(game) {
-
-
-        let percentage = 0;
-
-
-        if (total > 0) {
-
-            percentage =
-                Math.round(
-                    (votes[game] / total) * 100
-                );
-
-        }
-
-
-        html += `
-
-            <div class="result-row">
-
-                <div class="result-top">
-
-                    <span>
-                        ${game}
-                    </span>
-
-                    <span>
-                        ${percentage}%
-                    </span>
-
-                </div>
-
-
-                <div class="bar">
-
-                    <div
-                        class="bar-fill"
-                        style="width:${percentage}%"
-                    ></div>
-
-                </div>
+                <p>
+                    Egy böngészőből egyszer tudsz szavazni.
+                </p>
 
             </div>
 
-        `;
 
-    });
-
-
-    document.getElementById(
-        "results"
-    ).innerHTML = html;
-
-}
+            <div class="poll-options">
 
 
+                <!-- FORTNITE -->
 
-/* =====================================================
-   OLDAL BETÖLTÉSE
-   ===================================================== */
+                <button
+                    class="poll-option"
+                    data-game="Fortnite"
+                    type="button">
 
-showResults();
+                    <div class="poll-option-icon">
+                        🎯
+                    </div>
+
+                    <div class="poll-option-content">
+
+                        <strong>
+                            Fortnite
+                        </strong>
+
+                        <span>
+                            Battle Royale / Gaming
+                        </span>
+
+                    </div>
+
+                    <div class="poll-option-arrow">
+                        →
+                    </div>
+
+                </button>
 
 
-</script>
+                <!-- GAME 2 -->
+
+                <button
+                    class="poll-option"
+                    data-game="Game 2"
+                    type="button">
+
+                    <div class="poll-option-icon">
+                        🎮
+                    </div>
+
+                    <div class="poll-option-content">
+
+                        <strong>
+                            Game 2
+                        </strong>
+
+                        <span>
+                            Másik játék
+                        </span>
+
+                    </div>
+
+                    <div class="poll-option-arrow">
+                        →
+                    </div>
+
+                </button>
 
 
-</body>
+                <!-- GAME 3 -->
 
-  </html>
+                <button
+                    class="poll-option"
+                    data-game="Game 3"
+                    type="button">
+
+                    <div class="poll-option-icon">
+                        🕹️
+                    </div>
+
+                    <div class="poll-option-content">
+
+                        <strong>
+                            Game 3
+                        </strong>
+
+                        <span>
+                            Másik játék
+                        </span>
+
+                    </div>
+
+                    <div class="poll-option-arrow">
+                        →
+                    </div>
+
+                </button>
+
+
+            </div>
+
+
+            <!-- ÜZENET -->
+
+            <div
+                id="pollMessage"
+                class="poll-message">
+            </div>
+
+
+            <!-- EREDMÉNYEK -->
+
+            <div class="
