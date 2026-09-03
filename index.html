@@ -7,7 +7,7 @@
   
   <meta property="og:title" content="SANCI9517 | Official Hub">
   <meta property="og:description" content="Nézd az élő adásokat, csekkold a menetrendet, klipeket és a setupot!">
-  <meta property="og:image" content="https://static-cdn.jtvnw.net/user-default-pictures-uv/75305db0-3a92-43d8-1565-22b87e142200-profile_image-300x300.png">
+  <meta property="og:image" content="https://static-cdn.jtvnw.net/jtv_user_pictures/4d8f1618-2e0a-4286-90e8-0a0e5b7fb602-profile_image-300x300.png">
   <meta property="og:type" content="website">
 
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
@@ -325,25 +325,23 @@
 </head>
 <body>
 
-  <!-- NAVIGÁCIÓ -->
   <div class="nav-tabs">
-    <button class="nav-btn active" onclick="openTab('home', this)"><i class="fa-solid fa-house"></i> FŐOLDAL</button>
-    <button class="nav-btn" onclick="openTab('news', this)"><i class="fa-solid fa-bullhorn"></i> HÍREK</button>
-    <button class="nav-btn" onclick="openTab('poll', this)"><i class="fa-solid fa-check-to-slot"></i> SZAVAZÁS</button>
-    <button class="nav-btn" onclick="openTab('clips', this)"><i class="fa-solid fa-film"></i> KLIPIEK</button>
-    <button class="nav-btn" onclick="openTab('schedule', this)"><i class="fa-solid fa-calendar"></i> MENETREND</button>
-    <button class="nav-btn" onclick="openTab('stats', this)"><i class="fa-solid fa-trophy"></i> STATOK</button>
-    <button class="nav-btn" onclick="openTab('support', this)"><i class="fa-solid fa-heart"></i> TÁMOGATÁS</button>
-    <button class="nav-btn" onclick="openTab('setup', this)"><i class="fa-solid fa-desktop"></i> SET UP</button>
+    <button class="nav-btn active" onclick="switchTab('home', this)"><i class="fa-solid fa-house"></i> FŐOLDAL</button>
+    <button class="nav-btn" onclick="switchTab('news', this)"><i class="fa-solid fa-bullhorn"></i> HÍREK</button>
+    <button class="nav-btn" onclick="switchTab('poll', this)"><i class="fa-solid fa-check-to-slot"></i> SZAVAZÁS</button>
+    <button class="nav-btn" onclick="switchTab('clips', this)"><i class="fa-solid fa-film"></i> KLIPIEK</button>
+    <button class="nav-btn" onclick="switchTab('schedule', this)"><i class="fa-solid fa-calendar"></i> MENETREND</button>
+    <button class="nav-btn" onclick="switchTab('stats', this)"><i class="fa-solid fa-trophy"></i> STATOK</button>
+    <button class="nav-btn" onclick="switchTab('support', this)"><i class="fa-solid fa-heart"></i> TÁMOGATÁS</button>
+    <button class="nav-btn" onclick="switchTab('setup', this)"><i class="fa-solid fa-desktop"></i> SET UP</button>
   </div>
 
   <div class="main-container">
 
-    <!-- FŐOLDAL -->
     <div id="tab-home" class="tab-content active">
       <div class="profile-card">
         <div class="avatar-wrapper">
-          <img id="avatar-img" src="https://static-cdn.jtvnw.net/user-default-pictures-uv/75305db0-3a92-43d8-1565-22b87e142200-profile_image-300x300.png" class="avatar" alt="SANCI9517" onerror="this.src='https://static-cdn.jtvnw.net/user-default-pictures-uv/75305db0-3a92-43d8-1565-22b87e142200-profile_image-300x300.png';">
+          <img id="avatar-img" src="https://static-cdn.jtvnw.net/user-default-pictures-uv/75305db0-3a92-43d8-1565-22b87e142200-profile_image-300x300.png" class="avatar" alt="SANCI9517">
           <div id="live-badge" class="live-badge">LIVE</div>
         </div>
         <div>
@@ -353,7 +351,7 @@
 
         <div class="countdown-box" id="countdown-container">
           <i class="fa-regular fa-clock" style="color:var(--accent);"></i>
-          <span id="countdown-text">Következő stream: Töltés...</span>
+          <span id="countdown-text">Következő stream ~ ma 18:00-kor</span>
         </div>
       </div>
 
@@ -387,7 +385,6 @@
       </a>
     </div>
 
-    <!-- HÍREK -->
     <div id="tab-news" class="tab-content">
       <div class="info-card">
         <div class="card-header-text"><span><i class="fa-solid fa-bullhorn"></i> BEJELENTÉS</span><small>Friss</small></div>
@@ -396,20 +393,18 @@
       </div>
     </div>
 
-    <!-- SZAVAZÁS -->
     <div id="tab-poll" class="tab-content">
       <div class="info-card">
         <div class="card-header-text"><span><i class="fa-solid fa-poll"></i> KÖZÖSSÉGI SZAVAZÁS</span></div>
         <div style="font-weight:700; font-size:1.1rem; margin-bottom: 6px;">Mit játszunk a következő streamen?</div>
-        <div style="font-size:0.85rem; color:var(--text-sub); margin-bottom:12px;">Válaszd ki a kedvenc játékodat, amivel szívesen látnál élőben:</div>
+        <div style="font-size:0.85rem; color:var(--text-sub); margin-bottom:12px;">Válaszd ki a kedvenc játékodat:</div>
         
-        <div class="poll-opt" onclick="vote(1)"><span>A) Fortnite</span><span id="poll-v1">0%</span></div>
-        <div class="poll-opt" onclick="vote(2)"><span>B) Játék 2</span><span id="poll-v2">0%</span></div>
-        <div class="poll-opt" onclick="vote(3)"><span>C) Játék 3</span><span id="poll-v3">0%</span></div>
+        <div class="poll-opt" onclick="addVote(0)"><span>A) Fortnite</span><span id="poll-v1">0%</span></div>
+        <div class="poll-opt" onclick="addVote(1)"><span>B) Játék 2</span><span id="poll-v2">0%</span></div>
+        <div class="poll-opt" onclick="addVote(2)"><span>C) Játék 3</span><span id="poll-v3">0%</span></div>
       </div>
     </div>
 
-    <!-- KLIPIEK -->
     <div id="tab-clips" class="tab-content">
       <div class="info-card">
         <div class="card-header-text"><span><i class="fa-solid fa-fire"></i> LEGJOBB PILLANATOK</span></div>
@@ -420,21 +415,42 @@
       </div>
     </div>
 
-    <!-- MENETREND -->
     <div id="tab-schedule" class="tab-content">
-      <div id="schedule-list"></div>
+      <div class="info-card active-day" style="margin-bottom:12px;">
+        <div class="card-header-text"><span>Hétfő</span><small style="color:var(--text-muted);">18:00 - 21:00</small></div>
+        <div style="font-weight:800; font-size:1.1rem;">Fortnite</div>
+        <div style="font-size:0.85rem; color:var(--text-sub);">Ranked & Közösségi meccsek</div>
+      </div>
+      <div class="info-card" style="margin-bottom:12px;">
+        <div class="card-header-text"><span>Kedd</span><small style="color:var(--text-muted);">—</small></div>
+        <div style="font-weight:800; font-size:1.1rem;">PIHENŐNAP</div>
+        <div style="font-size:0.85rem; color:var(--text-sub);">Nincs adás</div>
+      </div>
+      <div class="info-card active-day" style="margin-bottom:12px;">
+        <div class="card-header-text"><span>Szerda</span><small style="color:var(--text-muted);">18:00 - 21:00</small></div>
+        <div style="font-weight:800; font-size:1.1rem;">GTA V Roleplay</div>
+        <div style="font-size:0.85rem; color:var(--text-sub);">Karakter sztori</div>
+      </div>
+      <div class="info-card" style="margin-bottom:12px;">
+        <div class="card-header-text"><span>Csütörtök</span><small style="color:var(--text-muted);">—</small></div>
+        <div style="font-weight:800; font-size:1.1rem;">PIHENŐNAP</div>
+        <div style="font-size:0.85rem; color:var(--text-sub);">Nincs adás</div>
+      </div>
+      <div class="info-card active-day" style="margin-bottom:12px;">
+        <div class="card-header-text"><span>Péntek</span><small style="color:var(--text-muted);">19:00 - Későig</small></div>
+        <div style="font-weight:800; font-size:1.1rem;">Variety Friday</div>
+        <div style="font-size:0.85rem; color:var(--text-sub);">Közös játékok</div>
+      </div>
     </div>
 
-    <!-- STATISZTIKÁK -->
     <div id="tab-stats" class="tab-content">
       <div class="info-card">
         <div class="card-header-text">
-          <span><i class="fa-solid fa-chart-line"></i> ÉLŐ TWITCH STATISZTIKÁK</span>
-          <small style="color: var(--live-red); font-size: 0.7rem;"><i class="fa-solid fa-rotate"></i> Auto-frissítés</small>
+          <span><i class="fa-solid fa-chart-line"></i> TWITCH STATISZTIKÁK</span>
         </div>
         <div class="stats-grid" style="margin-top:10px;">
           <div class="stat-box">
-            <div class="stat-val" id="stat-followers">-</div>
+            <div class="stat-val" id="stat-followers">Offline</div>
             <div class="stat-lbl">Twitch Követők</div>
           </div>
           <div class="stat-box">
@@ -446,109 +462,23 @@
             <div class="stat-lbl">Élő Nézők</div>
           </div>
           <div class="stat-box">
-            <div class="stat-val" id="stat-game" style="font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">-</div>
+            <div class="stat-val" id="stat-game" style="font-size: 0.85rem;">-</div>
             <div class="stat-lbl">Kategória / Játék</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- TÁMOGATÁS -->
     <div id="tab-support" class="tab-content">
       <div class="info-card">
         <div class="card-header-text"><span><i class="fa-solid fa-hand-holding-dollar"></i> TÁMOGATÁS</span></div>
-        <div style="font-size:0.85rem; color:var(--text-sub); margin-bottom:12px;">Ha szeretnéd közvetlenül segíteni a stream fejlődését és a jobb minőségű tartalmakat:</div>
+        <div style="font-size:0.85rem; color:var(--text-sub); margin-bottom:12px;">Ha szeretnéd közvetlenül segíteni a stream fejlődését:</div>
         
         <a href="https://streamlabs.com/sanci9517/tip" target="_blank" class="card-btn support" style="margin-bottom:10px;">
           <div class="card-left"><i class="fa-solid fa-donate" style="color:var(--gold);"></i><span>Streamlabs Donáció / Tip</span></div>
           <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; color:var(--text-muted);"></i>
         </a>
 
-        <a href="https://www.twitch.tv/subs/sanci9517" target="_blank" class="card-btn twitch">
-          <div class="card-left"><i class="fa-solid fa-star" style="color:#9146FF;"></i><span>Twitch Feliratkozás (Sub)</span></div>
-          <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; color:var(--text-muted);"></i>
-        </a>
-      </div>
-    </div>
-
-    <!-- SET UP -->
-    <div id="tab-setup" class="tab-content">
-      <div id="setup-list"></div>
-    </div>
-
-  </div>
-
-  <!-- MODAL ABLAK -->
-  <div class="modal-overlay" id="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div class="modal-tabs">
-          <button class="m-tab-btn active" id="m-btn-video" onclick="switchModalTab('video')"><i class="fa-solid fa-play"></i> STREAM</button>
-          <button class="m-tab-btn" id="m-btn-chat" onclick="switchModalTab('chat')"><i class="fa-solid fa-comments"></i> CHAT</button>
-        </div>
-        <button class="close-btn" onclick="closeStreamModal()">&times;</button>
-      </div>
-      <div class="modal-body" id="modal-body"></div>
-    </div>
-  </div>
-
-  <script>
-    const TWITCH_CHANNEL = "sanci9517";
-
-    const fallbackSchedule = [
-      { day: "Hétfő", time: "18:00 - 21:00", game: "Fortnite", desc: "Ranked & Közösségi meccsek", active: true },
-      { day: "Kedd", time: "—", game: "PIHENŐNAP", desc: "Nincs adás", active: false },
-      { day: "Szerda", time: "18:00 - 21:00", game: "GTA V Roleplay", desc: "Karakter sztori", active: true },
-      { day: "Csütörtök", time: "—", game: "PIHENŐNAP", desc: "Nincs adás", active: false },
-      { day: "Péntek", time: "19:00 - Későig", game: "Variety Friday", desc: "Közös játékok", active: true },
-      { day: "Szombat", time: "17:00 - 22:00", game: "Counter-Strike 2", desc: "Faceit lobby", active: true },
-      { day: "Vasárnap", time: "—", game: "PIHENŐNAP", desc: "Feltöltődés", active: false }
-    ];
-
-    const fallbackSetup = [
-      {
-        category: "PC Konfiguráció",
-        items: [
-          { name: "Processzor", val: "AMD Ryzen 7 7800X3D" },
-          { name: "Videókártya", val: "NVIDIA RTX 4070 Ti Super" },
-          { name: "Memória", val: "32GB DDR5 6000MHz" }
-        ]
-      },
-      {
-        category: "Perifériák",
-        items: [
-          { name: "Monitor", val: "27\" 240Hz Gaming" },
-          { name: "Egér", val: "Logitech G Pro X Superlight" },
-          { name: "Mikrofon", val: "Shure SM7B" }
-        ]
-      }
-    ];
-
-    // TAB VÁLTÓ
-    function openTab(tabName, btnElement) {
-      const tabs = document.querySelectorAll('.tab-content');
-      const btns = document.querySelectorAll('.nav-btn');
-
-      tabs.forEach(el => el.classList.remove('active'));
-      btns.forEach(el => el.classList.remove('active'));
-
-      const targetTab = document.getElementById('tab-' + tabName);
-      if (targetTab) {
-        targetTab.classList.add('active');
-      }
-
-      if (btnElement) {
-        btnElement.classList.add('active');
-      }
-    }
-
-    // MODAL FUNKCIÓK
-    function openStreamModal() {
-      document.getElementById('modal').classList.add('active');
-      switchModalTab('video');
-    }
-
-    function closeStreamModal() {
-      document.getElementById('modal-body').innerHTML = '';
-      document.getElementById('modal'
+        <a href="
+      
  
