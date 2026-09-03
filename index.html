@@ -2,894 +2,1025 @@
 <html lang="hu">
 <head>
 
-    <!-- =========================================================
-         SANCI9517 — OFFICIAL STREAMER HUB
-         GitHub Pages ready
-         ========================================================= -->
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>SANCI9517 | Official Gaming Hub</title>
-
-    <meta
-        name="description"
-        content="SANCI9517 hivatalos gaming oldala — Fortnite, Twitch, YouTube, TikTok és közösség."
-    >
-
-    <style>
-
-        /* =========================================================
-           01. ALAPOK / RESET
-           ========================================================= */
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        :root {
-            --bg-main: #07060b;
-            --bg-card: rgba(255,255,255,0.055);
-            --bg-card-hover: rgba(255,255,255,0.09);
-
-            --purple: #9b5cff;
-            --purple-dark: #6f32d9;
-            --purple-light: #c49aff;
-
-            --white: #ffffff;
-            --text: #e9e7ef;
-            --muted: #8d8998;
-
-            --border: rgba(255,255,255,0.10);
-
-            --radius: 18px;
-            --max-width: 1180px;
-        }
+<!-- =========================================================
+     SANCI9517 — OFFICIAL GAMING HUB
+     GitHub Pages verzió
+     ========================================================= -->
 
-        html {
-            scroll-behavior: smooth;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        body {
-            min-height: 100vh;
-            background:
-                radial-gradient(
-                    circle at 50% -10%,
-                    rgba(126,54,255,0.35),
-                    transparent 38%
-                ),
-                radial-gradient(
-                    circle at 100% 40%,
-                    rgba(85,25,160,0.15),
-                    transparent 35%
-                ),
-                var(--bg-main);
+<title>SANCI9517 | Official Gaming Hub</title>
 
-            color: var(--white);
+<meta
+    name="description"
+    content="SANCI9517 hivatalos gaming oldala."
+>
 
-            font-family:
-                Inter,
-                Arial,
-                Helvetica,
-                sans-serif;
-        }
 
-        a {
-            color: inherit;
-        }
+<style>
 
-        button {
-            font-family: inherit;
-        }
+/* =========================================================
+   01. ALAP / SZÍNEK
+   ========================================================= */
 
+:root {
 
-        /* =========================================================
-           02. HEADER / NAVIGÁCIÓ
-           ========================================================= */
+    --bg: #07060b;
+    --bg-soft: #0d0b13;
 
-        .site-header {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+    --card: rgba(255,255,255,0.055);
+    --card-hover: rgba(255,255,255,0.085);
 
-            background: rgba(7,6,11,0.82);
-            backdrop-filter: blur(18px);
+    --purple: #9b5cff;
+    --purple-dark: #6d32d9;
+    --purple-light: #c6a1ff;
 
-            border-bottom: 1px solid var(--border);
-        }
+    --white: #ffffff;
+    --text: #e9e6ef;
+    --muted: #8e8998;
 
-        .header-inner {
-            max-width: var(--max-width);
-            margin: auto;
+    --border: rgba(255,255,255,0.10);
 
-            min-height: 74px;
+    --radius: 18px;
+    --max-width: 1180px;
+}
 
-            padding: 0 22px;
 
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-            gap: 30px;
-        }
 
-        .brand {
-            font-size: 21px;
-            font-weight: 900;
-            letter-spacing: 2px;
+html {
+    scroll-behavior: smooth;
+}
 
-            white-space: nowrap;
-        }
 
-        .brand span {
-            color: var(--purple);
-        }
+body {
 
-        .main-nav {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+    min-height: 100vh;
 
-            gap: 5px;
-            flex-wrap: wrap;
-        }
+    color: var(--text);
 
-        .nav-button {
-            border: 0;
-            background: transparent;
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
 
-            color: var(--muted);
+    background:
 
-            padding: 9px 13px;
+        radial-gradient(
+            circle at 50% -10%,
+            rgba(142,65,255,0.30),
+            transparent 40%
+        ),
 
-            border-radius: 9px;
+        radial-gradient(
+            circle at 100% 50%,
+            rgba(90,30,170,0.13),
+            transparent 35%
+        ),
 
-            cursor: pointer;
+        var(--bg);
+}
 
-            font-size: 13px;
-            font-weight: 700;
 
-            transition:
-                color .2s ease,
-                background .2s ease,
-                transform .2s ease;
-        }
+button {
+    font-family: inherit;
+}
 
-        .nav-button:hover {
-            color: var(--white);
-            background: rgba(255,255,255,0.06);
-        }
 
-        .nav-button.active {
-            color: var(--white);
-            background: var(--purple);
-            box-shadow: 0 7px 25px rgba(155,92,255,0.28);
-        }
+/* =========================================================
+   02. HEADER
+   ========================================================= */
 
+.site-header {
 
-        /* =========================================================
-           03. OLDAL / SZEKCIÓK
-           ========================================================= */
+    position: sticky;
 
-        .container {
-            width: 100%;
-            max-width: var(--max-width);
+    top: 0;
 
-            margin: auto;
+    z-index: 1000;
 
-            padding:
-                55px 22px
-                90px;
-        }
+    background:
+        rgba(7,6,11,0.86);
 
-        .page {
-            display: none;
+    backdrop-filter: blur(18px);
 
-            animation:
-                pageIn .3s ease;
-        }
+    border-bottom:
+        1px solid var(--border);
+}
 
-        .page.active {
-            display: block;
-        }
 
-        @keyframes pageIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
+.header-inner {
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+    max-width: var(--max-width);
 
+    min-height: 74px;
 
-        /* =========================================================
-           04. HERO / PROFIL
-           ========================================================= */
+    margin: auto;
 
-        .hero {
-            position: relative;
+    padding: 0 22px;
 
-            max-width: 900px;
+    display: flex;
 
-            margin:
-                10px auto
-                50px;
+    align-items: center;
 
-            text-align: center;
-        }
+    justify-content: space-between;
 
-        .hero::before {
-            content: "";
+    gap: 25px;
+}
 
-            position: absolute;
 
-            width: 300px;
-            height: 300px;
+.logo {
 
-            left: 50%;
-            top: 20px;
+    font-size: 21px;
 
-            transform: translateX(-50%);
+    font-weight: 900;
 
-            background: rgba(142,65,255,0.18);
+    letter-spacing: 2px;
 
-            filter: blur(90px);
+    color: var(--purple);
 
-            pointer-events: none;
-        }
+    white-space: nowrap;
+}
 
-        .avatar-wrap {
-            position: relative;
 
-            width: 142px;
-            height: 142px;
+.logo span {
+    color: white;
+}
 
-            margin: 0 auto 25px;
 
-            z-index: 1;
-        }
+.nav {
 
-        .avatar {
-            width: 142px;
-            height: 142px;
+    display: flex;
 
-            object-fit: cover;
+    align-items: center;
 
-            border-radius: 50%;
+    justify-content: center;
 
-            border: 3px solid var(--purple);
+    gap: 5px;
 
-            box-shadow:
-                0 0 0 7px rgba(155,92,255,0.08),
-                0 0 55px rgba(155,92,255,0.35);
-        }
+    flex-wrap: wrap;
+}
 
-        .online-dot {
-            position: absolute;
 
-            right: 8px;
-            bottom: 8px;
+.nav button {
 
-            width: 19px;
-            height: 19px;
+    border: 0;
 
-            border-radius: 50%;
+    background: transparent;
 
-            background: #27e26b;
+    color: var(--muted);
 
-            border: 4px solid var(--bg-main);
-        }
+    padding: 9px 13px;
 
-        .hero h1 {
-            position: relative;
-            z-index: 1;
+    border-radius: 9px;
 
-            font-size:
-                clamp(45px, 8vw, 82px);
+    cursor: pointer;
 
-            line-height: .95;
+    font-size: 13px;
 
-            letter-spacing: -3px;
+    font-weight: 700;
 
-            font-weight: 950;
-        }
+    transition: .2s;
+}
 
-        .hero h1 span {
-            color: var(--purple);
-        }
 
-        .hero-subtitle {
-            position: relative;
-            z-index: 1;
+.nav button:hover {
 
-            margin-top: 18px;
+    color: white;
 
-            color: var(--muted);
+    background:
+        rgba(255,255,255,0.06);
+}
 
-            font-size: 16px;
-        }
 
-        .hero-tags {
-            display: flex;
+.nav button.active {
 
-            justify-content: center;
-            flex-wrap: wrap;
+    color: white;
 
-            gap: 8px;
+    background: var(--purple);
 
-            margin-top: 23px;
-        }
+    box-shadow:
+        0 8px 25px
+        rgba(155,92,255,0.30);
+}
 
-        .tag {
-            padding: 8px 13px;
 
-            border-radius: 100px;
+/* =========================================================
+   03. OLDAL
+   ========================================================= */
 
-            background: rgba(255,255,255,0.055);
+.container {
 
-            border: 1px solid var(--border);
+    width: 100%;
 
-            color: #b9b4c4;
+    max-width: var(--max-width);
 
-            font-size: 12px;
-            font-weight: 700;
-        }
+    margin: auto;
 
+    padding:
+        55px 22px
+        90px;
+}
 
-        /* =========================================================
-           05. CTA / STREAM KÁRTYA
-           ========================================================= */
 
-        .stream-card {
-            position: relative;
+.page {
+    display: none;
 
-            max-width: 850px;
+    animation:
+        fadeIn .25s ease;
+}
 
-            margin: 0 auto 28px;
 
-            padding: 32px;
+.page.active {
+    display: block;
+}
 
-            border-radius: 24px;
 
-            background:
-                linear-gradient(
-                    135deg,
-                    rgba(155,92,255,0.16),
-                    rgba(255,255,255,0.035)
-                );
+@keyframes fadeIn {
 
-            border: 1px solid rgba(155,92,255,0.25);
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
 
-            overflow: hidden;
-        }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 
-        .stream-card::after {
-            content: "";
+}
 
-            position: absolute;
 
-            width: 180px;
-            height: 180px;
+/* =========================================================
+   04. HERO
+   ========================================================= */
 
-            right: -70px;
-            top: -70px;
+.hero {
 
-            background: rgba(155,92,255,0.16);
+    max-width: 900px;
 
-            filter: blur(45px);
-        }
+    margin:
+        10px auto
+        50px;
 
-        .stream-content {
-            position: relative;
-            z-index: 2;
+    text-align: center;
+}
 
-            text-align: center;
-        }
 
-        .live-label {
-            display: inline-flex;
+.avatar-wrapper {
 
-            align-items: center;
-            gap: 7px;
+    position: relative;
 
-            margin-bottom: 13px;
+    width: 145px;
+    height: 145px;
 
-            color: #ff5d78;
+    margin:
+        0 auto
+        25px;
+}
 
-            font-size: 12px;
-            font-weight: 900;
 
-            letter-spacing: 1px;
-        }
+.avatar {
 
-        .live-dot {
-            width: 8px;
-            height: 8px;
+    width: 145px;
+    height: 145px;
 
-            border-radius: 50%;
+    object-fit: cover;
 
-            background: #ff4164;
+    border-radius: 50%;
 
-            animation: pulse 1.2s infinite;
-        }
+    border:
+        3px solid var(--purple);
 
-        @keyframes pulse {
-            50% {
-                opacity: .35;
-                transform: scale(.7);
-            }
-        }
+    box-shadow:
 
-        .stream-card h2 {
-            font-size: 27px;
-            margin-bottom: 10px;
-        }
+        0 0 0 7px
+        rgba(155,92,255,0.08),
 
-        .stream-card p {
-            color: var(--muted);
+        0 0 55px
+        rgba(155,92,255,0.35);
+}
 
-            margin-bottom: 23px;
-        }
 
-        .primary-button {
-            display: inline-flex;
+.avatar-fallback {
 
-            align-items: center;
-            justify-content: center;
+    width: 145px;
+    height: 145px;
 
-            min-height: 48px;
+    display: none;
 
-            padding: 0 22px;
+    align-items: center;
+    justify-content: center;
 
-            border: 0;
-            border-radius: 11px;
+    border-radius: 50%;
 
-            background:
-                linear-gradient(
-                    135deg,
-                    #a765ff,
-                    #7130d8
-                );
+    background:
+        linear-gradient(
+            135deg,
+            var(--purple),
+            var(--purple-dark)
+        );
 
-            color: white;
+    border:
+        3px solid var(--purple);
 
-            text-decoration: none;
+    font-size: 55px;
 
-            font-size: 14px;
-            font-weight: 800;
+    font-weight: 900;
+}
 
-            cursor: pointer;
 
-            box-shadow:
-                0 10px 35px
-                rgba(123,47,220,0.28);
+.hero h1 {
 
-            transition:
-                transform .2s ease,
-                box-shadow .2s ease;
-        }
+    font-size:
+        clamp(45px, 8vw, 82px);
 
-        .primary-button:hover {
-            transform: translateY(-2px);
+    line-height: .95;
 
-            box-shadow:
-                0 15px 40px
-                rgba(123,47,220,0.42);
-        }
+    letter-spacing: -3px;
 
+    font-weight: 950;
+}
 
-        /* =========================================================
-           06. SOCIAL LINK KÁRTYÁK
-           ========================================================= */
 
-        .social-grid {
-            display: grid;
+.hero h1 span {
+    color: var(--purple);
+}
 
-            grid-template-columns:
-                repeat(4, 1fr);
 
-            gap: 12px;
+.hero-subtitle {
 
-            margin-bottom: 28px;
-        }
+    margin-top: 17px;
 
-        .social-card {
-            display: block;
+    color: var(--muted);
 
-            padding: 20px;
+    font-size: 16px;
+}
 
-            text-decoration: none;
 
-            background: var(--bg-card);
+.tags {
 
-            border: 1px solid var(--border);
+    display: flex;
 
-            border-radius: var(--radius);
+    justify-content: center;
 
-            transition:
-                transform .2s ease,
-                border-color .2s ease,
-                background .2s ease;
-        }
+    flex-wrap: wrap;
 
-        .social-card:hover {
-            transform: translateY(-4px);
+    gap: 8px;
 
-            border-color:
-                rgba(155,92,255,0.55);
+    margin-top: 22px;
+}
 
-            background: var(--bg-card-hover);
-        }
 
-        .social-icon {
-            font-size: 22px;
+.tag {
 
-            margin-bottom: 13px;
-        }
+    padding: 8px 13px;
 
-        .social-card strong {
-            display: block;
+    border-radius: 100px;
 
-            font-size: 15px;
+    background:
+        rgba(255,255,255,0.05);
 
-            margin-bottom: 5px;
-        }
+    border:
+        1px solid var(--border);
 
-        .social-card small {
-            color: var(--muted);
+    color: #bdb8c7;
 
-            font-size: 12px;
-        }
+    font-size: 12px;
 
+    font-weight: 700;
+}
 
-        /* =========================================================
-           07. ÁLTALÁNOS KÁRTYA
-           ========================================================= */
 
-        .section-card {
-            padding: 28px;
+/* =========================================================
+   05. STREAM CTA
+   ========================================================= */
 
-            background: var(--bg-card);
+.stream-card {
 
-            border: 1px solid var(--border);
+    max-width: 850px;
 
-            border-radius: var(--radius);
-        }
+    margin:
+        0 auto
+        28px;
 
-        .section-title {
-            margin-bottom: 8px;
+    padding: 34px;
 
-            font-size: 25px;
-        }
+    text-align: center;
 
-        .section-description {
-            color: var(--muted);
+    border-radius: 24px;
 
-            line-height: 1.6;
+    background:
 
-            margin-bottom: 24px;
-        }
+        linear-gradient(
+            135deg,
+            rgba(155,92,255,0.16),
+            rgba(255,255,255,0.035)
+        );
 
+    border:
+        1px solid
+        rgba(155,92,255,0.25);
+}
 
-        /* =========================================================
-           08. SZAVAZÁS
-           
-           🔧 A JÁTÉKOKAT A JAVASCRIPT CONFIG RÉSZÉBEN
-              KELL MÓDOSÍTANI.
-           ========================================================= */
 
-        .poll-list {
-            display: grid;
+.live-label {
 
-            gap: 13px;
-        }
+    display: inline-flex;
 
-        .poll-item {
-            position: relative;
+    align-items: center;
 
-            overflow: hidden;
+    gap: 7px;
 
-            padding: 18px;
+    margin-bottom: 13px;
 
-            border-radius: 14px;
+    color: #ff5b76;
 
-            background: rgba(255,255,255,0.035);
+    font-size: 12px;
 
-            border: 1px solid var(--border);
+    font-weight: 900;
 
-            cursor: pointer;
+    letter-spacing: 1px;
+}
 
-            transition:
-                border-color .2s ease,
-                transform .2s ease;
-        }
 
-        .poll-item:hover {
-            transform: translateY(-2px);
+.live-dot {
 
-            border-color:
-                rgba(155,92,255,0.5);
-        }
+    width: 8px;
+    height: 8px;
 
-        .poll-progress {
-            position: absolute;
+    border-radius: 50%;
 
-            left: 0;
-            top: 0;
-            bottom: 0;
+    background: #ff4164;
 
-            width: 0%;
+    animation:
+        pulse 1.2s infinite;
+}
 
-            background:
-                linear-gradient(
-                    90deg,
-                    rgba(155,92,255,0.18),
-                    rgba(155,92,255,0.04)
-                );
 
-            transition: width .5s ease;
-        }
+@keyframes pulse {
 
-        .poll-content {
-            position: relative;
-            z-index: 2;
+    50% {
+        opacity: .3;
+        transform: scale(.7);
+    }
 
-            display: flex;
+}
 
-            align-items: center;
-            justify-content: space-between;
 
-            gap: 15px;
-        }
+.stream-card h2 {
 
-        .poll-name {
-            font-weight: 800;
-        }
+    font-size: 27px;
 
-        .poll-percent {
-            color: var(--purple-light);
+    margin-bottom: 10px;
+}
 
-            font-weight: 900;
-        }
 
-        .vote-button {
-            margin-top: 20px;
-        }
+.stream-card p {
 
-        .vote-message {
-            min-height: 20px;
+    color: var(--muted);
 
-            margin-top: 15px;
+    margin-bottom: 23px;
+}
 
-            color: var(--purple-light);
 
-            font-size: 13px;
-            font-weight: 700;
-        }
+.primary-button {
 
+    display: inline-flex;
 
-        /* =========================================================
-           09. MENETREND
-           
-           🔧 A MENETRENDET A JAVASCRIPT CONFIG RÉSZÉBEN
-              KELL MÓDOSÍTANI.
-           ========================================================= */
+    align-items: center;
+    justify-content: center;
 
-        .schedule-list {
-            display: grid;
+    min-height: 48px;
 
-            gap: 10px;
-        }
+    padding:
+        0 22px;
 
-        .schedule-row {
-            display: grid;
+    border: 0;
 
-            grid-template-columns:
-                110px 1fr 120px;
+    border-radius: 11px;
 
-            align-items: center;
+    background:
+        linear-gradient(
+            135deg,
+            #a765ff,
+            #7130d8
+        );
 
-            gap: 20px;
+    color: white;
 
-            padding: 18px;
+    text-decoration: none;
 
-            border-radius: 14px;
+    font-size: 14px;
 
-            background: rgba(255,255,255,0.035);
+    font-weight: 800;
 
-            border: 1px solid var(--border);
-        }
+    cursor: pointer;
 
-        .schedule-day {
-            font-weight: 900;
-        }
+    transition: .2s;
+}
 
-        .schedule-game {
-            color: #d9d4e1;
 
-            font-weight: 700;
-        }
+.primary-button:hover {
 
-        .schedule-time {
-            text-align: right;
+    transform:
+        translateY(-2px);
 
-            color: var(--purple-light);
+    box-shadow:
+        0 14px 35px
+        rgba(123,47,220,0.35);
+}
 
-            font-size: 13px;
-            font-weight: 800;
-        }
 
+/* =========================================================
+   06. SOCIAL
+   ========================================================= */
 
-        /* =========================================================
-           10. STATS
-           ========================================================= */
+.social-grid {
 
-        .stats-grid {
-            display: grid;
+    display: grid;
 
-            grid-template-columns:
-                repeat(4, 1fr);
+    grid-template-columns:
+        repeat(4,1fr);
 
-            gap: 12px;
-        }
+    gap: 12px;
+}
 
-        .stat-card {
-            padding: 25px;
 
-            text-align: center;
+.social-card {
 
-            background: var(--bg-card);
+    display: block;
 
-            border: 1px solid var(--border);
+    padding: 20px;
 
-            border-radius: var(--radius);
-        }
+    text-decoration: none;
 
-        .stat-number {
-            display: block;
+    background: var(--card);
 
-            color: var(--purple-light);
+    border:
+        1px solid var(--border);
 
-            font-size: 34px;
-            font-weight: 950;
+    border-radius: var(--radius);
 
-            margin-bottom: 6px;
-        }
+    transition: .2s;
+}
 
-        .stat-label {
-            color: var(--muted);
 
-            font-size: 12px;
-            font-weight: 700;
-        }
+.social-card:hover {
 
+    transform:
+        translateY(-4px);
 
-        /* =========================================================
-           11. CLIPS
-           
-           A Twitch klipek automatikus betöltéséhez Twitch API
-           szükséges. Ez a rész elő van készítve.
-           ========================================================= */
+    background:
+        var(--card-hover);
 
-        .clips-info {
-            text-align: center;
+    border-color:
+        rgba(155,92,255,.5);
+}
 
-            padding: 45px 20px;
-        }
 
-        .clips-icon {
-            font-size: 50px;
+.social-icon {
 
-            margin-bottom: 15px;
-        }
+    font-size: 22px;
 
-        .clips-info p {
-            max-width: 550px;
+    margin-bottom: 12px;
+}
 
-            margin: 0 auto 25px;
 
-            color: var(--muted);
+.social-card strong {
 
-            line-height: 1.6;
-        }
+    display: block;
 
+    margin-bottom: 5px;
 
-        /* =========================================================
-           12. FOOTER
-           ========================================================= */
+    font-size: 15px;
+}
 
-        footer {
-            padding: 35px 20px;
 
-            text-align: center;
+.social-card small {
 
-            border-top: 1px solid var(--border);
+    color: var(--muted);
 
-            color: var(--muted);
+    font-size: 12px;
+}
 
-            font-size: 12px;
-        }
 
+/* =========================================================
+   07. KÁRTYA
+   ========================================================= */
 
-        /* =========================================================
-           13. MOBIL
-           ========================================================= */
+.section-card {
 
-        @media (max-width: 900px) {
+    padding: 30px;
 
-            .header-inner {
-                flex-direction: column;
+    background: var(--card);
 
-                padding-top: 15px;
-                padding-bottom: 15px;
-            }
+    border:
+        1px solid var(--border);
 
-            .social-grid {
-                grid-template-columns:
-                    repeat(2, 1fr);
-            }
+    border-radius: var(--radius);
+}
 
-            .stats-grid {
-                grid-template-columns:
-                    repeat(2, 1fr);
-            }
 
-        }
+.section-title {
 
-        @media (max-width: 600px) {
+    margin-bottom: 8px;
 
-            .container {
-                padding:
-                    35px 15px
-                    60px;
-            }
+    font-size: 26px;
+}
 
-            .main-nav {
-                width: 100%;
-            }
 
-            .nav-button {
-                padding: 8px 9px;
+.section-description {
 
-                font-size: 11px;
-            }
+    margin-bottom: 25px;
 
-            .hero h1 {
-                letter-spacing: -2px;
-            }
+    color: var(--muted);
 
-            .stream-card {
-                padding: 25px 18px;
-            }
+    line-height: 1.6;
+}
 
-            .social-grid {
-                grid-template-columns: 1fr;
-            }
 
-            .stats-grid {
-                grid-template-columns: 1fr 1fr;
-            }
+/* =========================================================
+   08. SZAVAZÁS
+   ========================================================= */
 
-            .schedule-row {
-                grid-template-columns:
-                    1fr;
+.poll-list {
 
-                gap: 6px;
-            }
+    display: grid;
 
-            .schedule-time {
-                text-align: left;
-            }
+    gap: 13px;
+}
 
-        }
 
-    </style>
+.poll-item {
+
+    position: relative;
+
+    overflow: hidden;
+
+    padding: 18px;
+
+    border-radius: 14px;
+
+    background:
+        rgba(255,255,255,0.035);
+
+    border:
+        1px solid var(--border);
+
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+
+.poll-item:hover {
+
+    transform:
+        translateY(-2px);
+
+    border-color:
+        rgba(155,92,255,.5);
+}
+
+
+.poll-progress {
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+    bottom: 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(155,92,255,.22),
+            rgba(155,92,255,.04)
+        );
+
+    transition:
+        width .5s ease;
+}
+
+
+.poll-content {
+
+    position: relative;
+
+    z-index: 2;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+}
+
+
+.poll-name {
+    font-weight: 800;
+}
+
+
+.poll-percent {
+
+    color: var(--purple-light);
+
+    font-weight: 900;
+}
+
+
+.vote-message {
+
+    min-height: 20px;
+
+    margin-top: 16px;
+
+    color: var(--purple-light);
+
+    font-size: 13px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   09. MENETREND
+   ========================================================= */
+
+.schedule-list {
+
+    display: grid;
+
+    gap: 10px;
+}
+
+
+.schedule-row {
+
+    display: grid;
+
+    grid-template-columns:
+        110px 1fr 130px;
+
+    align-items: center;
+
+    gap: 20px;
+
+    padding: 18px;
+
+    border-radius: 14px;
+
+    background:
+        rgba(255,255,255,0.035);
+
+    border:
+        1px solid var(--border);
+}
+
+
+.schedule-day {
+    font-weight: 900;
+}
+
+
+.schedule-game {
+    color: #ddd8e4;
+
+    font-weight: 700;
+}
+
+
+.schedule-time {
+
+    text-align: right;
+
+    color: var(--purple-light);
+
+    font-size: 13px;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   10. STATS
+
+   FONTOS:
+
+   Itt NINCS kitalált statisztika.
+
+   Csak olyan adatot jelenítünk meg,
+   amit TE megadsz a CONFIG részben.
+   ========================================================= */
+
+.stats-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap: 13px;
+}
+
+
+.stat-card {
+
+    padding: 25px;
+
+    text-align: center;
+
+    background:
+        rgba(255,255,255,0.035);
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 16px;
+}
+
+
+.stat-number {
+
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: var(--purple-light);
+
+    font-size: 30px;
+
+    font-weight: 950;
+}
+
+
+.stat-label {
+
+    color: var(--muted);
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   11. CLIPS
+   ========================================================= */
+
+.clips-box {
+
+    text-align: center;
+
+    padding:
+        50px 20px;
+}
+
+
+.clips-icon {
+
+    font-size: 48px;
+
+    margin-bottom: 15px;
+}
+
+
+.clips-box p {
+
+    max-width: 550px;
+
+    margin:
+        0 auto
+        25px;
+
+    color: var(--muted);
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   12. FOOTER
+   ========================================================= */
+
+footer {
+
+    padding: 35px 20px;
+
+    text-align: center;
+
+    color: var(--muted);
+
+    font-size: 12px;
+
+    border-top:
+        1px solid var(--border);
+}
+
+
+/* =========================================================
+   13. MOBIL
+   ========================================================= */
+
+@media(max-width:900px) {
+
+    .header-inner {
+
+        flex-direction: column;
+
+        padding-top: 15px;
+        padding-bottom: 15px;
+    }
+
+
+    .social-grid {
+
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+
+    .stats-grid {
+
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+}
+
+
+@media(max-width:600px) {
+
+    .container {
+
+        padding:
+            35px 15px
+            60px;
+    }
+
+
+    .nav {
+
+        width: 100%;
+    }
+
+
+    .nav button {
+
+        padding:
+            8px 9px;
+
+        font-size: 11px;
+    }
+
+
+    .hero h1 {
+
+        font-size: 45px;
+    }
+
+
+    .social-grid {
+
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .stats-grid {
+
+        grid-template-columns:
+            1fr 1fr;
+    }
+
+
+    .schedule-row {
+
+        grid-template-columns:
+            1fr;
+
+        gap: 6px;
+    }
+
+
+    .schedule-time {
+
+        text-align: left;
+    }
+
+}
+
+</style>
 
 </head>
 
@@ -905,41 +1036,51 @@
 
     <div class="header-inner">
 
-        <div class="brand">
+        <div class="logo">
             SANCI<span>9517</span>
         </div>
 
-        <nav class="main-nav">
 
-            <button class="nav-button active" data-page="home">
+        <nav class="nav">
+
+            <button
+                class="active"
+                data-page="home">
                 Főoldal
             </button>
 
-            <button class="nav-button" data-page="news">
+            <button
+                data-page="news">
                 Hírek
             </button>
 
-            <button class="nav-button" data-page="poll">
+            <button
+                data-page="poll">
                 Szavazás
             </button>
 
-            <button class="nav-button" data-page="clips">
+            <button
+                data-page="clips">
                 Clips
             </button>
 
-            <button class="nav-button" data-page="schedule">
+            <button
+                data-page="schedule">
                 Menetrend
             </button>
 
-            <button class="nav-button" data-page="stats">
+            <button
+                data-page="stats">
                 Stats
             </button>
 
-            <button class="nav-button" data-page="support">
+            <button
+                data-page="support">
                 Támogatás
             </button>
 
-            <button class="nav-button" data-page="setup">
+            <button
+                data-page="setup">
                 Setup
             </button>
 
@@ -954,817 +1095,366 @@
 <main class="container">
 
 
-    <!-- =========================================================
-         HOME
-         ========================================================= -->
+<!-- =========================================================
+     HOME
+     ========================================================= -->
 
-    <section id="home" class="page active">
-
-
-        <div class="hero">
-
-            <div class="avatar-wrap">
-
-                <img
-                    class="avatar"
-                    src="profile.jpg"
-                    alt="SANCI9517 profilkép"
-                    onerror="
-                        this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27142%27 height=%27142%27 viewBox=%270 0 142 142%27%3E%3Crect width=%27142%27 height=%27142%27 rx=%2771%27 fill=%27%236f32d9%27/%3E%3Ctext x=%2750%25%27 y=%2758%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-size=%2755%27 font-family=%27Arial%27 font-weight=%27900%27 fill=%27white%27%3ES%3C/text%3E%3C/svg%3E';
-                    "
-                >
-
-                <span class="online-dot"></span>
-
-            </div>
+<section
+    id="home"
+    class="page active">
 
 
-            <h1>
-                SANCI<span>9517</span>
-            </h1>
+    <div class="hero">
 
+        <div class="avatar-wrapper">
 
-            <p class="hero-subtitle">
-                Streamer • Gamer • Community
-            </p>
-
-
-            <div class="hero-tags">
-
-                <span class="tag">🎯 Fortnite</span>
-                <span class="tag">🃏 Hearthstone</span>
-                <span class="tag">🚗 GTA V RP</span>
-                <span class="tag">🎮 Variety</span>
-
-            </div>
-
-        </div>
-
-
-
-        <!-- STREAM CTA -->
-
-        <div class="stream-card">
-
-            <div class="stream-content">
-
-                <div class="live-label">
-                    <span class="live-dot"></span>
-                    LIVE / STREAM
-                </div>
-
-                <h2>
-                    Találkozunk a streamen.
-                </h2>
-
-                <p>
-                    Kövess Twitch-en és csatlakozz a SANCI9517 közösségéhez.
-                </p>
-
-                <a
-                    class="primary-button"
-                    href="https://www.twitch.tv/sanci9517"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    ▶ Twitch megnyitása
-                </a>
-
-            </div>
-
-        </div>
-
-
-
-        <!-- SOCIALS -->
-
-        <div class="social-grid">
-
-            <a
-                class="social-card"
-                href="https://www.twitch.tv/sanci9517"
-                target="_blank"
-                rel="noopener noreferrer"
+            <img
+                id="avatar"
+                class="avatar"
+                src="profile.jpg"
+                alt="SANCI9517 profilkép"
             >
-                <div class="social-icon">🟣</div>
-                <strong>Twitch</strong>
-                <small>Élő adások</small>
-            </a>
-
-
-            <a
-                class="social-card"
-                href="https://youtube.com/@sanci9517vod"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                <div class="social-icon">🔴</div>
-                <strong>YouTube</strong>
-                <small>VOD & videók</small>
-            </a>
-
-
-            <a
-                class="social-card"
-                href="https://www.tiktok.com/@sanci9517twitch"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                <div class="social-icon">🎵</div>
-                <strong>TikTok</strong>
-                <small>Shorts & tartalmak</small>
-            </a>
-
-
-            <a
-                class="social-card"
-                href="https://x.com/Sanci9517"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                <div class="social-icon">𝕏</div>
-                <strong>X</strong>
-                <small>Frissítések</small>
-            </a>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =========================================================
-         HÍREK
-         ========================================================= -->
-
-    <section id="news" class="page">
-
-        <div class="section-card">
-
-            <h2 class="section-title">
-                📰 Hírek
-            </h2>
-
-            <p class="section-description">
-                A SANCI9517 legfrissebb hírei, bejelentései
-                és új tartalmai egy helyen.
-            </p>
-
-            <div class="schedule-list">
-
-                <div class="schedule-row">
-                    <strong>ÚJ</strong>
-                    <span class="schedule-game">
-                        Új stream menetrend hamarosan.
-                    </span>
-                    <span class="schedule-time">
-                        2026
-                    </span>
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =========================================================
-         SZAVAZÁS
-         ========================================================= -->
-
-    <section id="poll" class="page">
-
-        <div class="section-card">
-
-            <h2 class="section-title">
-                🗳️ Következő stream
-            </h2>
-
-            <p class="section-description">
-                Melyik játékot szeretnéd látni a következő streamen?
-                Szavazz és nézd meg az aktuális százalékokat.
-            </p>
-
-
-            <div id="pollList" class="poll-list">
-                <!-- JAVASCRIPT TÖLTI FEL -->
-            </div>
-
 
             <div
-                id="voteMessage"
-                class="vote-message"
-            ></div>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =========================================================
-         CLIPS
-         ========================================================= -->
-
-    <section id="clips" class="page">
-
-        <div class="section-card clips-info">
-
-            <div class="clips-icon">
-                🎬
-            </div>
-
-            <h2 class="section-title">
-                Twitch Clips
-            </h2>
-
-            <p>
-                Itt jelennek majd meg a SANCI9517 Twitch csatorna
-                legjobb klipjei.
-            </p>
-
-            <a
-                class="primary-button"
-                href="https://www.twitch.tv/sanci9517/clips"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                🎬 Összes Twitch Clips
-            </a>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =========================================================
-         MENETREND
-         ========================================================= -->
-
-    <section id="schedule" class="page">
-
-        <div class="section-card">
-
-            <h2 class="section-title">
-                📅 Heti menetrend
-            </h2>
-
-            <p class="section-description">
-                A heti stream időpontok.
-            </p>
-
-
-            <div
-                id="scheduleList"
-                class="schedule-list"
-            >
-                <!-- JAVASCRIPT TÖLTI FEL -->
+                id="avatarFallback"
+                class="avatar-fallback">
+                S
             </div>
 
         </div>
 
-    </section>
+
+        <h1>
+            SANCI<span>9517</span>
+        </h1>
+
+
+        <p class="hero-subtitle">
+            Streamer • Gamer • Community
+        </p>
+
+
+        <div class="tags">
+
+            <span class="tag">
+                🎯 Fortnite
+            </span>
+
+            <span class="tag">
+                🃏 Hearthstone
+            </span>
+
+            <span class="tag">
+                🎮 Variety
+            </span>
+
+        </div>
+
+    </div>
 
 
 
-    <!-- =========================================================
-         STATS
-         ========================================================= -->
+    <!-- STREAM CTA -->
 
-    <section id="stats" class="page">
+    <div class="stream-card">
 
-        <div class="section-card">
+        <div class="live-label">
 
-            <h2 class="section-title">
-                📊 SANCI9517
-            </h2>
+            <span class="live-dot"></span>
 
-            <p class="section-description">
-                A csatorna főbb adatai.
-            </p>
+            LIVE / STREAM
+
+        </div>
 
 
-            <div class="stats-grid">
+        <h2>
+            Találkozunk a streamen.
+        </h2>
 
-                <div class="stat-card">
-                    <span class="stat-number">9517</span>
-                    <span class="stat-label">Creator</span>
-                </div>
 
-                <div class="stat-card">
-                    <span class="stat-number">4</span>
-                    <span class="stat-label">Platform</span>
-                </div>
+        <p>
+            Kövess Twitch-en és csatlakozz
+            a SANCI9517 közösségéhez.
+        </p>
 
-                <div class="stat-card">
-                    <span class="stat-number">3+</span>
-                    <span class="stat-label">Játék</span>
-                </div>
 
-                <div class="stat-card">
-                    <span class="stat-number">∞</span>
-                    <span class="stat-label">Gaming</span>
-                </div>
+        <a
+            class="primary-button"
+            href="https://www.twitch.tv/sanci9517"
+            target="_blank"
+            rel="noopener noreferrer">
 
+            ▶ Twitch megnyitása
+
+        </a>
+
+    </div>
+
+
+
+    <!-- SOCIAL LINKS -->
+
+    <div class="social-grid">
+
+
+        <a
+            class="social-card"
+            href="https://www.twitch.tv/sanci9517"
+            target="_blank"
+            rel="noopener noreferrer">
+
+            <div class="social-icon">
+                🟣
             </div>
 
-        </div>
+            <strong>
+                Twitch
+            </strong>
 
-    </section>
+            <small>
+                Élő adások
+            </small>
 
-
-
-    <!-- =========================================================
-         TÁMOGATÁS
-         ========================================================= -->
-
-    <section id="support" class="page">
-
-        <div class="section-card">
-
-            <h2 class="section-title">
-                💜 Támogatás
-            </h2>
-
-            <p class="section-description">
-                Ha támogatni szeretnéd a csatornát,
-                itt megteheted.
-            </p>
-
-            <a
-                class="primary-button"
-                href="https://streamlabs.com/sanci9517/tip"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                💜 Streamlabs támogatás
-            </a>
-
-        </div>
-
-    </section>
+        </a>
 
 
 
-    <!-- =========================================================
-         SETUP
-         ========================================================= -->
+        <a
+            class="social-card"
+            href="https://youtube.com/@sanci9517vod"
+            target="_blank"
+            rel="noopener noreferrer">
 
-    <section id="setup" class="page">
-
-        <div class="section-card">
-
-            <h2 class="section-title">
-                🖥️ Setup
-            </h2>
-
-            <p class="section-description">
-                A SANCI9517 streaming setupja.
-            </p>
-
-
-            <div class="stats-grid">
-
-                <div class="stat-card">
-                    <span class="stat-number">CPU</span>
-                    <span class="stat-label">Gaming CPU</span>
-                </div>
-
-                <div class="stat-card">
-                    <span class="stat-number">GPU</span>
-                    <span class="stat-label">NVIDIA GeForce RTX</span>
-                </div>
-
-                <div class="stat-card">
-                    <span class="stat-number">RAM</span>
-                    <span class="stat-label">32 GB DDR5</span>
-                </div>
-
-                <div class="stat-card">
-                    <span class="stat-number">MON</span>
-                    <span class="stat-label">Gaming Monitor</span>
-                </div>
-
+            <div class="social-icon">
+                🔴
             </div>
 
-        </div>
+            <strong>
+                YouTube
+            </strong>
 
-    </section>
+            <small>
+                VOD & videók
+            </small>
 
-</main>
+        </a>
+
+
+
+        <a
+            class="social-card"
+            href="https://www.tiktok.com/@sanci9517twitch"
+            target="_blank"
+            rel="noopener noreferrer">
+
+            <div class="social-icon">
+                🎵
+            </div>
+
+            <strong>
+                TikTok
+            </strong>
+
+            <small>
+                Short videók
+            </small>
+
+        </a>
+
+
+
+        <a
+            class="social-card"
+            href="https://x.com/Sanci9517"
+            target="_blank"
+            rel="noopener noreferrer">
+
+            <div class="social-icon">
+                𝕏
+            </div>
+
+            <strong>
+                X
+            </strong>
+
+            <small>
+                Frissítések
+            </small>
+
+        </a>
+
+    </div>
+
+</section>
 
 
 
 <!-- =========================================================
-     FOOTER
+     HÍREK
      ========================================================= -->
 
-<footer>
+<section
+    id="news"
+    class="page">
 
-    © 2026 SANCI9517
-    <br>
-    Official Gaming Hub
+    <div class="section-card">
 
-</footer>
+        <h2 class="section-title">
+            📰 Hírek
+        </h2>
 
+        <p class="section-description">
+            A SANCI9517 legfrissebb hírei,
+            bejelentései és új tartalmai.
+        </p>
 
+    </div>
 
-<script>
+</section>
 
 
-/* =============================================================
-   ⚙️⚙️⚙️ SANCI9517 — FŐ BEÁLLÍTÁSOK ⚙️⚙️⚙️
 
-   FONTOS:
+<!-- =========================================================
+     SZAVAZÁS
+     ========================================================= -->
 
-   Ha később módosítani szeretnéd az oldalt,
-   ELSŐSORBAN ITT KERESS!
+<section
+    id="poll"
+    class="page">
 
-   Nem kell az egész HTML-ben keresgélned.
-   ============================================================= */
+    <div class="section-card">
 
+        <h2 class="section-title">
+            🗳️ Következő stream
+        </h2>
 
-const CONFIG = {
 
+        <p class="section-description">
+            Melyik játékot szeretnéd látni
+            a következő streamen?
+        </p>
 
-    /* =========================================================
-       01. TWITCH
-       ========================================================= */
 
-    twitchUsername: "sanci9517",
+        <div
+            id="pollList"
+            class="poll-list">
+        </div>
 
 
+        <div
+            id="voteMessage"
+            class="vote-message">
+        </div>
 
-    /* =========================================================
-       02. SZAVAZÁS
+    </div>
 
-       🔧 ITT MÓDOSÍTHATOD A JÁTÉKOK NEVÉT.
+</section>
 
-       Példa:
 
-       "Fortnite"
-       "Minecraft"
-       "CS2"
 
-       Ha új játékot akarsz:
-       tegyél hozzá egy új sort.
+<!-- =========================================================
+     CLIPS
+     ========================================================= -->
 
-       FONTOS:
-       legalább 2 játék legyen.
-       ========================================================= */
+<section
+    id="clips"
+    class="page">
 
-    pollGames: [
+    <div class="section-card clips-box">
 
-        "Fortnite",
+        <div class="clips-icon">
+            🎬
+        </div>
 
-        "Game 2",
 
-        "Game 3"
+        <h2 class="section-title">
+            Twitch Clips
+        </h2>
 
-    ],
 
+        <p>
+            A SANCI9517 Twitch csatorna
+            legjobb pillanatai.
+        </p>
 
 
-    /* =========================================================
-       03. MENETREND
+        <a
+            class="primary-button"
+            href="https://www.twitch.tv/sanci9517/clips"
+            target="_blank"
+            rel="noopener noreferrer">
 
-       🔧 ITT TUDOD ÁTÍRNI A HETI MENETRENDET.
+            🎬 Twitch Clips megnyitása
 
-       day   = nap
-       game  = játék
-       time  = időpont
+        </a>
 
-       Példa:
+    </div>
 
-       {
-           day: "Hétfő",
-           game: "Fortnite",
-           time: "18:00–21:00"
-       }
+</section>
 
-       Ha nincs stream:
-       game: "Szabadnap"
-       ========================================================= */
 
-    schedule: [
 
-        {
-            day: "Hétfő",
-            game: "Fortnite",
-            time: "18:00–21:00"
-        },
+<!-- =========================================================
+     MENETREND
+     ========================================================= -->
 
-        {
-            day: "Kedd",
-            game: "Szabadnap",
-            time: "—"
-        },
+<section
+    id="schedule"
+    class="page">
 
-        {
-            day: "Szerda",
-            game: "GTA V RP",
-            time: "18:00–21:00"
-        },
+    <div class="section-card">
 
-        {
-            day: "Csütörtök",
-            game: "Szabadnap",
-            time: "—"
-        },
+        <h2 class="section-title">
+            📅 Heti menetrend
+        </h2>
 
-        {
-            day: "Péntek",
-            game: "Variety Friday",
-            time: "19:00–late"
-        }
 
-    ]
+        <p class="section-description">
+            Következő tervezett stream időpontok.
+        </p>
 
-};
 
+        <div
+            id="scheduleList"
+            class="schedule-list">
+        </div>
 
+    </div>
 
-/* =============================================================
-   04. OLDALVÁLTÁS
-   ============================================================= */
+</section>
 
-const navButtons =
-    document.querySelectorAll(".nav-button");
 
-const pages =
-    document.querySelectorAll(".page");
 
+<!-- =========================================================
+     STATS
+     ========================================================= -->
 
-navButtons.forEach(button => {
+<section
+    id="stats"
+    class="page">
 
-    button.addEventListener("click", () => {
+    <div class="section-card">
 
-        const target =
-            button.dataset.page;
+        <h2 class="section-title">
+            📊 Stats
+        </h2>
 
 
-        /* Minden gomb inaktív */
+        <p class="section-description">
+            A csatorna aktuális statisztikái.
+        </p>
 
-        navButtons.forEach(item => {
-            item.classList.remove("active");
-        });
 
+        <div
+            id="statsList"
+            class="stats-grid">
+        </div>
 
-        /* Minden oldal elrejtése */
+    </div>
 
-        pages.forEach(page => {
-            page.classList.remove("active");
-        });
+</section>
 
 
-        /* Kiválasztott gomb */
 
-        button.classList.add("active");
-
-
-        /* Kiválasztott oldal */
-
-        const targetPage =
-            document.getElementById(target);
-
-
-        if (targetPage) {
-            targetPage.classList.add("active");
-        }
-
-
-        /* Oldal tetejére ugrás */
-
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
-
-    });
-
-});
-
-
-
-/* =============================================================
-   05. SZAVAZÁS — ADATOK
-   ============================================================= */
-
-const POLL_STORAGE_KEY =
-    "sanci9517_poll_votes_v1";
-
-
-let pollData =
-    JSON.parse(
-        localStorage.getItem(POLL_STORAGE_KEY)
-    );
-
-
-/* Ha nincs korábbi szavazás */
-
-if (!pollData) {
-
-    pollData = {};
-
-    CONFIG.pollGames.forEach(game => {
-        pollData[game] = 0;
-    });
-
-}
-
-
-
-/* Ha új játékot tettél a CONFIG-ba */
-
-CONFIG.pollGames.forEach(game => {
-
-    if (
-        typeof pollData[game] !== "number"
-    ) {
-        pollData[game] = 0;
-    }
-
-});
-
-
-
-/* =============================================================
-   06. SZAVAZÁS MEGJELENÍTÉSE
-   ============================================================= */
-
-function renderPoll() {
-
-    const pollList =
-        document.getElementById("pollList");
-
-
-    pollList.innerHTML = "";
-
-
-    let totalVotes = 0;
-
-
-    Object.values(pollData).forEach(value => {
-        totalVotes += value;
-    });
-
-
-
-    CONFIG.pollGames.forEach(game => {
-
-        const votes =
-            pollData[game] || 0;
-
-
-        let percentage = 0;
-
-
-        if (totalVotes > 0) {
-
-            percentage =
-                Math.round(
-                    (votes / totalVotes) * 100
-                );
-
-        }
-
-
-        const item =
-            document.createElement("div");
-
-
-        item.className =
-            "poll-item";
-
-
-        item.innerHTML = `
-
-            <div
-                class="poll-progress"
-                style="width:${percentage}%"
-            ></div>
-
-            <div class="poll-content">
-
-                <span class="poll-name">
-                    ${game}
-                </span>
-
-                <span class="poll-percent">
-                    ${percentage}%
-                </span>
-
-            </div>
-
-        `;
-
-
-        item.addEventListener(
-            "click",
-            () => voteFor(game)
-        );
-
-
-        pollList.appendChild(item);
-
-    });
-
-}
-
-
-
-/* =============================================================
-   07. SZAVAZÁS — SZAVAZAT
-   ============================================================= */
-
-function voteFor(game) {
-
-    pollData[game] =
-        (pollData[game] || 0) + 1;
-
-
-    localStorage.setItem(
-        POLL_STORAGE_KEY,
-        JSON.stringify(pollData)
-    );
-
-
-    document.getElementById(
-        "voteMessage"
-    ).textContent =
-        "✓ Köszönöm a szavazatot!";
-
-
-    renderPoll();
-
-}
-
-
-
-/* =============================================================
-   08. MENETREND MEGJELENÍTÉSE
-   ============================================================= */
-
-function renderSchedule() {
-
-    const list =
-        document.getElementById(
-            "scheduleList"
-        );
-
-
-    list.innerHTML = "";
-
-
-    CONFIG.schedule.forEach(item => {
-
-        const row =
-            document.createElement("div");
-
-
-        row.className =
-            "schedule-row";
-
-
-        row.innerHTML = `
-
-            <strong class="schedule-day">
-                ${item.day}
-            </strong>
-
-            <span class="schedule-game">
-                ${item.game}
-            </span>
-
-            <span class="schedule-time">
-                ${item.time}
-            </span>
-
-        `;
-
-
-        list.appendChild(row);
-
-    });
-
-}
-
-
-
-/* =============================================================
-   09. INDÍTÁS
-   ============================================================= */
-
-renderPoll();
-
-renderSchedule();
-
-
-</script>
-
-
-</body>
-</html>
+<!-- =========================================================
+     TÁMOG
