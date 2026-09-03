@@ -12,10 +12,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <!-- ==========================================
-     [SECTION 2: CSS STÍLUSOK (DIZÁJN ÉS SZÍNEK)]
+     [SECTION 2: CSS STÍLUSOK]
      ========================================== -->
   <style>
-    /* --- 2.1 ALAP SZÍNVÁLTOZÓK & HÁTTÉR --- */
     :root {
       --bg-dark: #07040d;
       --card-bg-primary: #120a22;
@@ -26,10 +25,8 @@
       --accent-pink: #ec4899;
       --accent-blue: #3b82f6;
       --accent-red: #ef4444;
-      --accent-green: #10b981;
 
       --border-purple: rgba(168, 85, 247, 0.35);
-      --border-pink: rgba(236, 72, 153, 0.35);
 
       --text-main: #ffffff;
       --text-sub: #c084fc;
@@ -38,7 +35,6 @@
 
     [data-theme="green"] {
       --accent-purple: #10b981;
-      --accent-pink: #06b6d4;
       --border-purple: rgba(16, 185, 129, 0.4);
       --card-bg-primary: #061e16;
       --card-bg-secondary: #0b2d22;
@@ -47,7 +43,6 @@
 
     [data-theme="blue"] {
       --accent-purple: #3b82f6;
-      --accent-pink: #6366f1;
       --border-purple: rgba(59, 130, 246, 0.4);
       --card-bg-primary: #0a1628;
       --card-bg-secondary: #11223f;
@@ -58,15 +53,14 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
     }
 
     body {
       background-color: var(--bg-dark);
       background-image: 
         radial-gradient(circle at 15% 15%, rgba(168, 85, 247, 0.2) 0%, transparent 45%),
-        radial-gradient(circle at 85% 85%, rgba(59, 130, 246, 0.18) 0%, transparent 45%),
-        radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.12) 0%, transparent 60%);
+        radial-gradient(circle at 85% 85%, rgba(59, 130, 246, 0.18) 0%, transparent 45%);
       background-attachment: fixed;
       color: var(--text-main);
       font-family: 'Rajdhani', sans-serif;
@@ -77,18 +71,15 @@
       padding: 20px 15px 100px 15px;
     }
 
-    /* --- 2.2 KÁRTYÁK LEBEGŐ EFFEKTJEI --- */
-    header, .hero-card, .card-btn, .stat-box {
+    header, .hero-card, .card-btn {
       border-radius: 20px;
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
     }
 
-    /* --- 2.3 WEBES (DESKTOP) BENTO GRID LAYOUT --- */
+    /* WEBES (DESKTOP) LAYOUT */
     @media (min-width: 900px) {
-      body {
-        padding: 50px 20px 120px 20px;
-      }
+      body { padding: 50px 20px 120px 20px; }
 
       .main-container {
         width: 100%;
@@ -96,49 +87,40 @@
         display: grid;
         grid-template-columns: 340px 1fr 1fr;
         gap: 22px;
-        align-items: stretch;
       }
 
       header {
         grid-column: 1 / 2;
-        grid-row: 1 / 5;
+        grid-row: 1 / 4;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         align-items: center;
         text-align: center;
         padding: 40px 24px;
-        background: linear-gradient(180deg, var(--card-bg-primary), #0c0617) !important;
-        border: 2px solid var(--border-purple) !important;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6) !important;
+        background: linear-gradient(180deg, var(--card-bg-primary), #0c0617);
+        border: 2px solid var(--border-purple);
       }
 
       .hero-card {
         grid-column: 2 / 4;
-        background: linear-gradient(135deg, var(--card-bg-secondary), var(--card-bg-accent)) !important;
-        border: 2px solid var(--accent-purple) !important;
+        background: linear-gradient(135deg, var(--card-bg-secondary), var(--card-bg-accent));
+        border: 2px solid var(--accent-purple);
         padding: 28px 32px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        box-shadow: 0 10px 30px rgba(168, 85, 247, 0.2) !important;
       }
 
       .links-wrapper {
-        display: contents;
-      }
-
-      .card-btn {
-        min-height: 85px;
-        padding: 20px 24px;
-      }
-
-      .card-btn.wide {
         grid-column: 2 / 4;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
       }
     }
 
-    /* --- 2.4 MOBIL LAYOUT (EGYOSZLOPOS) --- */
+    /* MOBIL LAYOUT */
     @media (max-width: 899px) {
       .main-container {
         width: 100%;
@@ -162,7 +144,6 @@
         background: linear-gradient(135deg, var(--card-bg-secondary), var(--card-bg-accent));
         border: 1px solid var(--accent-purple);
         padding: 20px;
-        border-radius: 18px;
         display: flex;
         flex-direction: column;
         gap: 15px;
@@ -176,7 +157,7 @@
       }
     }
 
-    /* --- 2.5 KÁRTYA ELEMEK ÉS PROFIL STÍLUS --- */
+    /* PROFIL */
     .brand {
       display: flex;
       flex-direction: column;
@@ -184,16 +165,13 @@
       gap: 16px;
     }
 
-    .avatar-container {
-      position: relative;
-    }
+    .avatar-container { position: relative; }
 
     .avatar {
       width: 110px;
       height: 110px;
       border-radius: 50%;
       border: 3px solid var(--accent-purple);
-      box-shadow: 0 0 25px var(--accent-purple);
       object-fit: cover;
     }
 
@@ -207,40 +185,24 @@
       font-weight: 900;
       padding: 3px 10px;
       border-radius: 12px;
-      letter-spacing: 1px;
       text-transform: uppercase;
-      white-space: nowrap;
     }
 
-    .live-badge-inline.online {
-      background: var(--accent-red);
-      color: #fff;
-      box-shadow: 0 0 12px var(--accent-red);
-      animation: blink-red 1.5s infinite;
-    }
-
-    .live-badge-inline.offline {
-      background: #334155;
-      color: #94a3b8;
-    }
+    .live-badge-inline.online { background: var(--accent-red); color: #fff; }
+    .live-badge-inline.offline { background: #334155; color: #94a3b8; }
 
     .brand-text h1 {
       font-family: 'Orbitron', sans-serif;
       font-size: 1.7rem;
-      letter-spacing: 2px;
-      background: linear-gradient(to right, #ffffff, var(--text-sub));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: #ffffff;
     }
 
     .brand-text p {
       font-size: 0.85rem;
       color: var(--text-sub);
       font-weight: 700;
-      letter-spacing: 1px;
     }
 
-    /* TWITCH DINAMIKUS ADAT BLOKK */
     .stats-box {
       width: 100%;
       background: rgba(0, 0, 0, 0.4);
@@ -262,32 +224,36 @@
     .stat-label { color: var(--text-muted); font-weight: 600; }
     .stat-value { font-family: 'Orbitron'; font-weight: 800; color: #fff; }
 
-    /* CSATORNA GOMBOK EGYEDI MÁRKASZÍNEKKEL */
+    /* KÖZÖSSÉGI LINK GOMBOK */
     .card-btn {
-      display: flex;
+      position: relative;
+      z-index: 5;
+      display: flex !important;
       align-items: center;
       justify-content: space-between;
-      text-decoration: none;
-      color: white;
+      text-decoration: none !important;
+      color: #ffffff !important;
       font-weight: 700;
       font-size: 1.1rem;
+      padding: 20px 24px;
       border-radius: 16px;
-      background: var(--card-bg-secondary) !important;
-      border: 1px solid var(--border-purple) !important;
+      background: var(--card-bg-secondary);
+      border: 1px solid var(--border-purple);
+      cursor: pointer;
     }
 
-    .card-btn.twitch { border-left: 5px solid #9146FF !important; }
-    .card-btn.youtube { border-left: 5px solid #FF0000 !important; }
-    .card-btn.tiktok  { border-left: 5px solid #00F2FE !important; }
-    .card-btn.x-twitter { border-left: 5px solid #FFFFFF !important; }
+    .card-btn.twitch { border-left: 6px solid #9146FF; }
+    .card-btn.youtube { border-left: 6px solid #FF0000; }
+    .card-btn.tiktok  { border-left: 6px solid #00F2FE; }
+    .card-btn.x-twitter { border-left: 6px solid #FFFFFF; }
 
     .card-btn:hover {
-      transform: translateY(-4px) scale(1.01) !important;
-      box-shadow: 0 10px 25px rgba(168, 85, 247, 0.3) !important;
-      background: var(--card-bg-accent) !important;
+      transform: translateY(-3px);
+      background: var(--card-bg-accent);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
     }
 
-    .card-left { display: flex; align-items: center; gap: 16px; }
+    .card-left { display: flex; align-items: center; gap: 16px; pointer-events: none; }
     .card-left i { font-size: 1.5rem; width: 30px; text-align: center; }
 
     .twitch i { color: #a970ff; }
@@ -305,12 +271,11 @@
     }
 
     .dot { width: 14px; height: 14px; border-radius: 50%; cursor: pointer; }
-    .dot:hover { transform: scale(1.25); }
-    .dot.purple { background: #a855f7; box-shadow: 0 0 10px #a855f7; }
-    .dot.green  { background: #10b981; box-shadow: 0 0 10px #10b981; }
-    .dot.blue   { background: #3b82f6; box-shadow: 0 0 10px #3b82f6; }
+    .dot.purple { background: #a855f7; }
+    .dot.green  { background: #10b981; }
+    .dot.blue   { background: #3b82f6; }
 
-    /* --- 2.6 LEBEGŐ "ÉLŐ ADÁS" GOMB --- */
+    /* LEBEGŐ "ÉLŐ ADÁS" GOMB */
     .floating-live-btn {
       position: fixed;
       bottom: 25px;
@@ -323,35 +288,14 @@
       font-family: 'Orbitron', sans-serif;
       font-size: 0.85rem;
       font-weight: 900;
-      letter-spacing: 1px;
       display: flex;
       align-items: center;
       gap: 12px;
       cursor: pointer;
-      box-shadow: 0 8px 30px rgba(239, 68, 68, 0.6);
       z-index: 999;
-      animation: pulse-glow 2s infinite;
     }
 
-    .floating-live-btn:hover { transform: scale(1.08); }
-
-    .pulse-dot {
-      width: 10px;
-      height: 10px;
-      background-color: #ffffff;
-      border-radius: 50%;
-      animation: blink 1s infinite;
-    }
-
-    @keyframes blink { 50% { opacity: 0.2; } }
-    @keyframes blink-red { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-    @keyframes pulse-glow {
-      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-      70% { box-shadow: 0 0 0 18px rgba(239, 68, 68, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-    }
-
-    /* --- 2.7 STREAM & CHAT MODAL --- */
+    /* STREAM & CHAT MODAL */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -372,7 +316,6 @@
       width: 100%;
       max-width: 900px;
       overflow: hidden;
-      box-shadow: 0 0 50px rgba(168, 85, 247, 0.4);
     }
 
     .modal-header {
@@ -395,16 +338,12 @@
       font-size: 0.8rem;
       font-weight: 700;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
     }
 
     .m-tab-btn.active {
       background: var(--accent-purple);
       color: #000;
       border-color: #fff;
-      box-shadow: 0 0 15px var(--accent-purple);
     }
 
     .close-btn {
@@ -414,10 +353,8 @@
       font-size: 1.8rem;
       cursor: pointer;
     }
-    .close-btn:hover { color: var(--accent-red); }
 
     .modal-body {
-      position: relative;
       width: 100%;
       height: 65vh;
       max-height: 540px;
@@ -430,11 +367,11 @@
 <body>
 
   <!-- ==========================================
-     [SECTION 3: HTML SZERKEZET & TARTALOM]
+     [SECTION 3: HTML TARTALOM]
      ========================================== -->
   <div class="main-container">
 
-    <!-- FEJLÉC / BAL PROFIL PANEL (TWITCH ADATOKKAL) -->
+    <!-- BAL PROFIL PANEL -->
     <header>
       <div class="brand">
         <div class="avatar-container">
@@ -447,7 +384,7 @@
         </div>
       </div>
 
-      <!-- FRISSÜLŐ TWITCH ADATOK -->
+      <!-- ADATOK -->
       <div class="stats-box">
         <div class="stat-item">
           <span class="stat-label"><i class="fa-solid fa-users"></i> Követők:</span>
@@ -470,45 +407,57 @@
       </div>
     </header>
 
-    <!-- BENTO HERO BANNER -->
+    <!-- BENTO BANNER -->
     <div class="hero-card">
       <div>
         <h2 id="stream-title" style="font-family:'Orbitron'; font-size:1.2rem; color:#fff; margin-bottom:6px;">
           NÉZD AZ ÉLŐ ADÁST!
         </h2>
         <p id="stream-subtitle" style="color:var(--text-sub); font-size:0.9rem;">
-          Csatlakozz a streamhez közvetlenül itt vagy látogass el a csatornára!
+          Csatlakozz a streamhez közvetlenül itt vagy nyisd meg a csatornát!
         </p>
       </div>
       <button class="m-tab-btn active" onclick="openStreamModal()" style="padding:14px 24px; font-size:0.9rem; cursor:pointer;">
-        <i class="fa-solid fa-play"></i> ADÁS NYITÁSA
+        <i class="fa-solid fa-play"></i> STREAM LEJÁTSZÁSA
       </button>
     </div>
 
     <!-- PONTOS KÖZÖSSÉGI LINKEK -->
     <div class="links-wrapper">
       
-      <!-- TWITCH -->
-      <a href="https://www.twitch.tv/sanci9517" target="_blank" rel="noopener noreferrer" class="card-btn twitch wide">
-        <div class="card-left"><i class="fa-brands fa-twitch"></i><span>Twitch Csatorna</span></div>
+      <!-- TWITCH LINK -->
+      <a href="https://m.twitch.tv/sanci9517" target="_blank" rel="noopener noreferrer" class="card-btn twitch">
+        <div class="card-left">
+          <i class="fa-brands fa-twitch"></i>
+          <span>Twitch Csatorna</span>
+        </div>
         <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
       </a>
 
-      <!-- YOUTUBE VODS -->
+      <!-- YOUTUBE LINK -->
       <a href="https://youtube.com/@sanci9517vod?si=0OFY7fLlho9VGUqW" target="_blank" rel="noopener noreferrer" class="card-btn youtube">
-        <div class="card-left"><i class="fa-brands fa-youtube"></i><span>YouTube VODs</span></div>
+        <div class="card-left">
+          <i class="fa-brands fa-youtube"></i>
+          <span>YouTube VODs</span>
+        </div>
         <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
       </a>
 
-      <!-- TIKTOK -->
+      <!-- TIKTOK LINK -->
       <a href="https://www.tiktok.com/@sanci9517twitch" target="_blank" rel="noopener noreferrer" class="card-btn tiktok">
-        <div class="card-left"><i class="fa-brands fa-tiktok"></i><span>TikTok</span></div>
+        <div class="card-left">
+          <i class="fa-brands fa-tiktok"></i>
+          <span>TikTok</span>
+        </div>
         <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
       </a>
 
-      <!-- X / TWITTER -->
-      <a href="https://x.com/Sanci9517" target="_blank" rel="noopener noreferrer" class="card-btn x-twitter wide">
-        <div class="card-left"><i class="fa-brands fa-x-twitter"></i><span>X / Twitter</span></div>
+      <!-- X / TWITTER LINK -->
+      <a href="https://x.com/Sanci9517" target="_blank" rel="noopener noreferrer" class="card-btn x-twitter">
+        <div class="card-left">
+          <i class="fa-brands fa-x-twitter"></i>
+          <span>X / Twitter</span>
+        </div>
         <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.85rem; color:var(--text-sub);"></i>
       </a>
 
@@ -516,14 +465,13 @@
 
   </div>
 
-  <!-- LEBEGŐ ÉLŐ ADÁS GOMB -->
+  <!-- LEBEGŐ GOMB -->
   <button class="floating-live-btn" onclick="openStreamModal()">
-    <div class="pulse-dot"></div>
     <i class="fa-solid fa-tv"></i>
     <span>ÉLŐ ADÁS</span>
   </button>
 
-  <!-- FELUGRÓ STREAM & CHAT MODAL -->
+  <!-- MODAL -->
   <div class="modal-overlay" id="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -542,13 +490,12 @@
   </div>
 
   <!-- ==========================================
-     [SECTION 4: JAVASCRIPT (TWITCH API & MODAL)]
+     [SECTION 4: JAVASCRIPT]
      ========================================== -->
   <script>
     const TWITCH_CHANNEL = "sanci9517";
     const currentDomain = window.location.hostname || "localhost";
 
-    // --- 4.1 TWITCH ADATOK LEKÉRDEZÉSE ---
     async function fetchTwitchData() {
       try {
         const response = await fetch(`https://decapi.me/twitch/uptime/${TWITCH_CHANNEL}`);
@@ -559,7 +506,6 @@
         const badge = document.getElementById('live-status-badge');
         const viewersElem = document.getElementById('twitch-viewers');
         const titleElem = document.getElementById('stream-title');
-        const subtitleElem = document.getElementById('stream-subtitle');
 
         if (isLive) {
           badge.innerText = "LIVE";
@@ -571,17 +517,13 @@
 
           viewersElem.innerText = await viewReq.text();
           document.getElementById('twitch-game').innerText = await gameReq.text();
-          
-          const currentTitle = await titleReq.text();
-          titleElem.innerText = currentTitle || "MOST ÉLŐBEN!";
-          subtitleElem.innerText = `Kattints és csatlakozz az élő adáshoz!`;
+          titleElem.innerText = await titleReq.text() || "MOST ÉLŐBEN!";
         } else {
           badge.innerText = "OFFLINE";
           badge.className = "live-badge-inline offline";
           viewersElem.innerText = "0";
           document.getElementById('twitch-game').innerText = "Offline";
           titleElem.innerText = "A CSATORNA JELENLEG OFFLINE";
-          subtitleElem.innerText = "Kövess be Twitch-en, hogy ne maradj le a következő adásról!";
         }
 
         const followReq = await fetch(`https://decapi.me/twitch/followcount/${TWITCH_CHANNEL}`);
@@ -597,28 +539,44 @@
         }
 
       } catch (err) {
-        console.warn("Twitch API lekérdezési hiba:", err);
+        console.warn("API Hiba:", err);
       }
     }
 
-    // --- 4.2 MODAL KEZELÉS ---
     function openStreamModal() {
       document.getElementById('modal').classList.add('active');
       showModalTab('video');
-      document.addEventListener('keydown', handleEscKey);
     }
 
     function closeStreamModal() {
       document.getElementById('modal').classList.remove('active');
       document.getElementById('modal-body').innerHTML = '';
-      document.removeEventListener('keydown', handleEscKey);
-    }
-
-    function handleEscKey(e) {
-      if (e.key === "Escape") closeStreamModal();
     }
 
     function showModalTab(tabType) {
       const body = document.getElementById('modal-body');
       const videoBtn = document.getElementById('tab-video-btn');
-      const chatBtn = docum
+      const chatBtn = document.getElementById('tab-chat-btn');
+
+      if (tabType === 'video') {
+        videoBtn.classList.add('active');
+        chatBtn.classList.remove('active');
+        body.innerHTML = `<iframe src="https://player.twitch.tv/?channel=${TWITCH_CHANNEL}&parent=${currentDomain}&autoplay=true" allowfullscreen></iframe>`;
+      } else {
+        chatBtn.classList.add('active');
+        videoBtn.classList.remove('active');
+        body.innerHTML = `<iframe src="https://www.twitch.tv/embed/${TWITCH_CHANNEL}/chat?parent=${currentDomain}"></iframe>`;
+      }
+    }
+
+    function setTheme(theme) {
+      if (theme === 'purple') document.documentElement.removeAttribute('data-theme');
+      else document.documentElement.setAttribute('data-theme', theme);
+    }
+
+    fetchTwitchData();
+    setInterval(fetchTwitchData, 60000);
+  </script>
+</body>
+        </html>
+  
