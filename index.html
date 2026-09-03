@@ -75,27 +75,24 @@
       margin-bottom: 2px;
     }
 
-    /* KIEMELT ADÁSBELŐ ÉS CHAT GOMBOK */
-    .featured-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .feat-btn {
-      background: linear-gradient(135deg, var(--card-bg), rgba(0,0,0,0.6));
-      border: 2px solid var(--accent-purple);
-      border-radius: 14px;
-      padding: 16px 12px;
-      text-align: center;
+    /* EGYETLEN KIEMELT STREAM GOMB */
+    .stream-main-btn {
+      background: linear-gradient(135deg, var(--accent-purple), rgba(15, 5, 30, 0.95));
+      border: 2px solid var(--glow-purple);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       cursor: pointer;
       color: white;
-      text-decoration: none;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.35);
     }
-    .feat-btn:hover, .feat-btn:active { transform: translateY(-3px); border-color: var(--glow-purple); }
-    .feat-btn i { font-size: 1.8rem; color: var(--accent-purple); margin-bottom: 8px; display: block; }
-    .feat-btn span { font-family: 'Orbitron', sans-serif; font-size: 0.9rem; font-weight: 800; display: block; }
+    .stream-main-btn:hover, .stream-main-btn:active { transform: scale(1.02); }
+    .stream-btn-left { display: flex; align-items: center; gap: 15px; }
+    .stream-btn-left i { font-size: 2rem; color: #fff; }
+    .stream-btn-text h3 { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; }
+    .stream-btn-text p { font-size: 0.85rem; color: var(--text-sub); }
 
     /* NORMÁL LINK GOMBOK */
     .card-btn {
@@ -115,7 +112,7 @@
     .card-left { display: flex; align-items: center; gap: 15px; }
     .card-left i { font-size: 1.4rem; color: var(--accent-purple); width: 25px; text-align: center; }
 
-    /* MODAL (LEUGRÓ ABLAK A STREAMNEK ÉS CHATNEK) */
+    /* MODAL (LEUGRÓ ABLAK) */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -136,31 +133,43 @@
       width: 100%;
       max-width: 800px;
       overflow: hidden;
-      position: relative;
     }
 
     .modal-header {
       background: var(--card-bg);
-      padding: 12px 20px;
+      padding: 10px 15px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid var(--border-purple);
-      font-family: 'Orbitron', sans-serif;
     }
+
+    /* MODAL FÜLEK (STREAM ÉS CHAT VÁLTÁSA) */
+    .modal-tabs { display: flex; gap: 8px; }
+    .m-tab-btn {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--border-purple);
+      color: white;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+    .m-tab-btn.active { background: var(--accent-purple); color: #000; font-weight: 800; }
 
     .close-btn {
       background: transparent;
       border: none;
       color: white;
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       cursor: pointer;
     }
 
     .modal-body {
       position: relative;
       width: 100%;
-      height: 70vh;
+      height: 65vh;
       max-height: 500px;
     }
 
@@ -169,105 +178,3 @@
       height: 100%;
       border: none;
     }
-  </style>
-</head>
-<body>
-
-  <header>
-    <div class="brand">
-      <img src="https://api.dicebear.com/7.x/bottts/svg?seed=sanci9517" class="avatar" alt="SANCI9517">
-      <div>
-        <h1>SANCI9517</h1>
-      </div>
-    </div>
-    <div class="theme-switcher">
-      <div class="dot purple" onclick="setTheme('purple')"></div>
-      <div class="dot green" onclick="setTheme('green')"></div>
-      <div class="dot blue" onclick="setTheme('blue')"></div>
-    </div>
-  </header>
-
-  <div class="main-container">
-    
-    <!-- 🔴 ÉLŐ ADÁS ÉS CHAT KÜLÖN GOMBJAIRÓL -->
-    <div class="section-title">🔴 TWITCH ÉLŐ ADÁS</div>
-    <div class="featured-grid">
-      <div class="feat-btn" onclick="openModal('stream')">
-        <i class="fa-solid fa-play"></i>
-        <span>ÉLŐ STREAM</span>
-      </div>
-      <div class="feat-btn" onclick="openModal('chat')">
-        <i class="fa-solid fa-comments"></i>
-        <span>LIVE CHAT</span>
-      </div>
-    </div>
-
-    <!-- 🔗 KÖZÖSSÉGI CSATORNÁK -->
-    <div class="section-title">🌐 KÖZÖSSÉGI MÉDIA</div>
-
-    <a href="https://www.twitch.tv/sanci9517" target="_blank" class="card-btn">
-      <div class="card-left"><i class="fa-brands fa-twitch"></i><span>Twitch Csatorna</span></div>
-      <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; color:var(--text-sub);"></i>
-    </a>
-
-    <a href="https://youtube.com" target="_blank" class="card-btn">
-      <div class="card-left"><i class="fa-brands fa-youtube"></i><span>YouTube Videók</span></div>
-      <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; color:var(--text-sub);"></i>
-    </a>
-
-    <a href="https://discord.gg" target="_blank" class="card-btn">
-      <div class="card-left"><i class="fa-brands fa-discord"></i><span>Discord Szerver</span></div>
-      <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; color:var(--text-sub);"></i>
-    </a>
-
-    <a href="https://tiktok.com" target="_blank" class="card-btn">
-      <div class="card-left"><i class="fa-brands fa-tiktok"></i><span>TikTok Clips</span></div>
-      <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; color:var(--text-sub);"></i>
-    </a>
-
-  </div>
-
-  <!-- LEUGRÓ ABLAK (MODAL) A STREAMNEK ÉS A CHATNEK -->
-  <div class="modal-overlay" id="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <span id="modal-title">Twitch Stream</span>
-        <button class="close-btn" onclick="closeModal()">&times;</button>
-      </div>
-      <div class="modal-body" id="modal-body">
-        <!-- Az iframe dinamikusan töltődik be ide kattintáskor -->
-      </div>
-    </div>
-  </div>
-
-  <script>
-    function openModal(type) {
-      const modal = document.getElementById('modal');
-      const title = document.getElementById('modal-title');
-      const body = document.getElementById('modal-body');
-
-      if(type === 'stream') {
-        title.innerText = '🎬 SANCI9517 Live Stream';
-        body.innerHTML = `<iframe src="https://player.twitch.tv/?channel=sanci9517&parent=sanci9517.github.io&autoplay=true" allowfullscreen></iframe>`;
-      } else if(type === 'chat') {
-        title.innerText = '💬 SANCI9517 Live Chat';
-        body.innerHTML = `<iframe src="https://www.twitch.tv/embed/sanci9517/chat?parent=sanci9517.github.io"></iframe>`;
-      }
-
-      modal.classList.add('active');
-    }
-
-    function closeModal() {
-      const modal = document.getElementById('modal');
-      const body = document.getElementById('modal-body');
-      modal.classList.remove('active');
-      body.innerHTML = ''; // Bezáráskor töröljük a videót/chatet, hogy ne menjen a háttérben
-    }
-
-    function setTheme(theme) {
-      if(theme === 'purple') document.documentElement.removeAttribute('data-theme');
-      else document.documentElement.setAttribute('data-theme', theme);
-    }
-  </script>
-</body>
-</html>
