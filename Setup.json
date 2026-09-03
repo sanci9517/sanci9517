@@ -1,0 +1,31 @@
+[
+  {
+    "category": "PC Konfiguráció",
+    "icon": "fa-microchip",
+    "items": [
+      { "name": "Processzor", "value": "AMD Ryzen 7 7800X3D" },
+      { "name": "Videókártya", "value": "NVIDIA RTX 4070 Ti Super" },
+      { "name": "Memória", "value": "32GB DDR5 6000MHz" },
+      { "name": "Háttértár", "value": "2TB NVMe M.2 SSD" }
+    ]
+  },
+  {
+    "category": "Perifériák & Kiegészítők",
+    "icon": "fa-headset",
+    "items": [
+      { "name": "Monitor", "value": "27\" 240Hz Gaming Monitor" },
+      { "name": "Egér", "value": "Logitech G Pro X Superlight" },
+      { "name": "Billentyűzet", "value": "Custom Mechanical Keyboard" },
+      { "name": "Fehallgató", "value": "Beyerdynamic DT 990 Pro" }
+    ]
+  },
+  {
+    "category": "Streaming Eszközök",
+    "icon": "fa-video",
+    "items": [
+      { "name": "Mikrofon", "value": "Shure SM7B + GoXLR" },
+      { "name": "Kamera", "value": "Sony Alpha A6000" },
+      { "name": "Világítás", "value": "Elgato Key Light Air" }
+    ]
+  }
+]
