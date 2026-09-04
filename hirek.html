@@ -1,257 +1,71 @@
 <!DOCTYPE html>
 <html lang="hu">
-
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>SANCI9517 | Hírek</title>
-
-    <!-- KÖZÖS STÍLUS -->
-    <link rel="stylesheet" href="style.css">
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SANCI9517 | Hírek</title>
+<link rel="stylesheet" href="style.css">
 </head>
-
-
 <body>
-
-
-<!-- =====================================================
-     NAVIGÁCIÓ
-     ===================================================== -->
-
-<header>
-
-    <nav class="nav">
-
-
-        <!-- LOGÓ -->
-
-        <a href="index.html" class="logo">
-            SANCI<span>9517</span>
-        </a>
-
-
-        <!-- MENÜ -->
-
-        <div class="nav-links">
-
-            <a href="index.html">
-                Főoldal
-            </a>
-
-            <a href="hirek.html" class="active">
-                Hírek
-            </a>
-
-            <a href="szavazas.html">
-                Szavazás
-            </a>
-
-            <a href="clips.html">
-                Clips
-            </a>
-
-            <a href="menetrend.html">
-                Menetrend
-            </a>
-
-            <a href="stats.html">
-                Stats
-            </a>
-
-            <a href="tamogatas.html">
-                Támogatás
-            </a>
-
-            <a href="setup.html">
-                Setup
-            </a>
-
-        </div>
-
-    </nav>
-
+<header class="site-header">
+<div class="container nav">
+<a href="index.html" class="logo">SANCI9517</a>
+<button class="menu-toggle" id="menuToggle" type="button" aria-label="Menü" aria-expanded="false">☰</button>
+<nav class="nav-links" id="navLinks">
+<a href="index.html">Főoldal</a>
+<a href="hirek.html" class="active">Hírek</a>
+<a href="szavazas.html">Szavazás</a>
+<a href="clips.html">Clips</a>
+<a href="menetrend.html">Menetrend</a>
+<a href="stats.html">Stats</a>
+<a href="tamogatas.html">Támogatás</a>
+<a href="setup.html">Setup</a>
+<a href="https://discord.gg/BEERR7AZH" target="_blank" rel="noopener noreferrer">Discord</a>
+</nav>
+</div>
 </header>
-
-
-
-<!-- =====================================================
-     OLDAL
-     ===================================================== -->
-
 <main>
-
-
-    <!-- OLDAL FEJLÉC -->
-
-    <div class="page-header">
-
-        <small>NEWS</small>
-
-        <h1>Hírek</h1>
-
-        <p>
-            Itt találod a SANCI9517 csatornával kapcsolatos
-            legfrissebb híreket és bejelentéseket.
-        </p>
-
-    </div>
-
-
-
-    <!-- =================================================
-         HÍREK
-         ================================================= -->
-
-    <div class="grid">
-
-
-        <!-- =============================================
-             HÍR 1
-             
-             EZT A KÁRTYÁT MÁSOLD, HA ÚJ HÍRT AKARSZ.
-             ============================================= -->
-
-        <article class="card">
-
-            <small style="color: var(--purple2);">
-                FRISS
-            </small>
-
-            <h2>
-                🎮 Új stream érkezik
-            </h2>
-
-            <p>
-                Nézd meg a Menetrend oldalt, hogy mikor
-                találkozhatunk a következő streamen.
-            </p>
-
-        </article>
-
-
-
-        <!-- =============================================
-             HÍR 2
-             ============================================= -->
-
-        <article class="card">
-
-            <small style="color: var(--purple2);">
-                KÖZÖSSÉG
-            </small>
-
-            <h2>
-                🗳️ Új szavazás
-            </h2>
-
-            <p>
-                Szavazz, hogy melyik játék legyen a következő
-                stream egyik fő tartalma.
-            </p>
-
-            <br>
-
-            <a
-                href="szavazas.html"
-                class="btn btn-primary"
-            >
-                Szavazás →
-            </a>
-
-        </article>
-
-
-
-        <!-- =============================================
-             HÍR 3
-             ============================================= -->
-
-        <article class="card">
-
-            <small style="color: var(--purple2);">
-                HIGHLIGHTS
-            </small>
-
-            <h2>
-                🎬 Új klipek
-            </h2>
-
-            <p>
-                A legjobb Twitch pillanatokat a Clips oldalon
-                találod.
-            </p>
-
-            <br>
-
-            <a
-                href="clips.html"
-                class="btn btn-secondary"
-            >
-                Clips megnyitása →
-            </a>
-
-        </article>
-
-
-    </div>
-
-
-
-    <!-- =================================================
-         KIEMELT INFORMÁCIÓ
-         ================================================= -->
-
-    <section style="margin-top: 60px;">
-
-        <div class="support-box">
-
-            <small style="color: var(--purple2);">
-                SANCI9517
-            </small>
-
-            <h2>
-                Maradj képben
-            </h2>
-
-            <p>
-                A weboldalon folyamatosan frissíthetők a hírek,
-                a menetrend és a közösségi tartalmak.
-            </p>
-
-            <a
-                href="menetrend.html"
-                class="btn btn-primary"
-            >
-                Heti menetrend →
-            </a>
-
-        </div>
-
-    </section>
-
-
+<div class="page-header">
+<small>NEWS</small>
+<h1>Hírek</h1>
+<p>Itt találod a SANCI9517 csatornával kapcsolatos legfrissebb híreket és bejelentéseket.</p>
+</div>
+<div class="grid">
+<article class="card">
+<small style="color: var(--purple2);">FRISS</small>
+<h2>🎮 Új stream érkezik</h2>
+<p>Nézd meg a Menetrend oldalt, hogy mikor találkozhatunk a következő streamen.</p>
+</article>
+<article class="card">
+<small style="color: var(--purple2);">KÖZÖSSÉG</small>
+<h2>🗳️ Új szavazás</h2>
+<p>Szavazz, hogy melyik játék legyen a következő stream egyik fő tartalma.</p>
+<br>
+<a href="szavazas.html" class="btn btn-primary">Szavazás →</a>
+</article>
+<article class="card">
+<small style="color: var(--purple2);">HIGHLIGHTS</small>
+<h2>🎬 Új klipek</h2>
+<p>A legjobb Twitch pillanatokat a Clips oldalon találod.</p>
+<br>
+<a href="clips.html" class="btn btn-secondary">Clips megnyitása →</a>
+</article>
+</div>
+<section style="margin-top: 60px;">
+<div class="support-box">
+<small style="color: var(--purple2);">SANCI9517</small>
+<h2>Maradj képben</h2>
+<p>A weboldalon folyamatosan frissíthetők a hírek, a menetrend és a közösségi tartalmak.</p>
+<a href="menetrend.html" class="btn btn-primary">Heti menetrend →</a>
+</div>
+</section>
 </main>
-
-
-
-<!-- =====================================================
-     FOOTER
-     ===================================================== -->
-
-<footer>
-
-    © 2026 SANCI9517 · Official Gaming Hub
-
-</footer>
-
-
+<footer>© 2026 SANCI9517 · Official Gaming Hub</footer>
+<script>
+const menuToggle=document.getElementById("menuToggle");
+const navLinks=document.getElementById("navLinks");
+menuToggle.addEventListener("click",function(){const isOpen=navLinks.classList.toggle("open");menuToggle.textContent=isOpen?"✕":"☰";menuToggle.setAttribute("aria-expanded",isOpen?"true":"false");});
+navLinks.querySelectorAll("a").forEach(function(link){link.addEventListener("click",function(){navLinks.classList.remove("open");menuToggle.textContent="☰";menuToggle.setAttribute("aria-expanded","false");});});
+</script>
 </body>
-
 </html>
