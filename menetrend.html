@@ -5,15 +5,38 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SANCI9517 | Menetrend</title>
 <link rel="stylesheet" href="style.css">
+<style>
+.next-stream{position:relative;overflow:hidden;border:1px solid rgba(167,139,250,.5);box-shadow:0 0 0 1px rgba(139,92,246,.12),0 0 28px rgba(139,92,246,.28),0 0 65px rgba(139,92,246,.12);animation:purpleGlow 2.4s ease-in-out infinite}
+.next-stream:before{content:"";position:absolute;inset:-2px;border-radius:inherit;background:linear-gradient(120deg,transparent 20%,rgba(255,255,255,.7) 35%,rgba(167,139,250,.9) 45%,transparent 60%);background-size:220% 100%;animation:shine 3s linear infinite;opacity:.55;pointer-events:none}
+.next-stream>*{position:relative;z-index:1}
+.next-stream-badge{display:inline-flex;align-items:center;gap:7px;color:#d8c7ff;font-size:10px;font-weight:900;letter-spacing:2px}
+.next-stream-badge:before{content:"✦";font-size:14px;color:#c4a7ff;text-shadow:0 0 12px #a78bfa}
+.countdown{font-size:clamp(34px,6vw,54px);font-weight:900;letter-spacing:-1.5px;line-height:1.05;margin:12px 0 8px;font-variant-numeric:tabular-nums;text-shadow:0 0 22px rgba(167,139,250,.35)}
+.next-info{color:var(--muted);font-size:13px;line-height:1.6}
+@keyframes purpleGlow{0%,100%{box-shadow:0 0 0 1px rgba(139,92,246,.12),0 0 24px rgba(139,92,246,.22),0 0 55px rgba(139,92,246,.08)}50%{box-shadow:0 0 0 1px rgba(167,139,250,.25),0 0 34px rgba(139,92,246,.38),0 0 75px rgba(139,92,246,.16)}}
+@keyframes shine{0%{background-position:220% 0}100%{background-position:-220% 0}}
+@media(max-width:600px){.countdown{font-size:36px}.next-stream{padding:24px}}
+</style>
 </head>
 <body>
 <header class="site-header"><nav class="nav container"><a href="index.html" class="logo">SANCI<span>9517</span></a><button class="menu-toggle" id="menuToggle" type="button" aria-label="Menü" aria-expanded="false">☰</button><div class="nav-links" id="navLinks"><a href="index.html">Főoldal</a><a href="hirek.html">Hírek</a><a href="szavazas.html">Szavazás</a><a href="clips.html">Clips</a><a href="menetrend.html" class="active">Menetrend</a><a href="stats.html">Stats</a><a href="tamogatas.html">Támogatás</a><a href="setup.html">Setup</a><a href="https://discord.gg/BEERR7AZH" target="_blank" rel="noopener">Discord</a></div></nav></header>
-<main><div class="page-header"><small>STREAM SCHEDULE</small><h1>Menetrend</h1><p>Itt találod a következő streamek időpontjait.</p></div>
-<div class="card"><small style="color:var(--purple2);">KÖVETKEZŐ STREAM</small><h2>🎮 Következő élő adás</h2><p>A következő stream időpontját itt fogom megadni.</p><br><a href="https://www.twitch.tv/sanci9517" target="_blank" rel="noopener" class="btn btn-primary">▶ Twitch csatorna</a></div>
-<section style="margin-top:40px;"><h2>📅 Heti menetrend</h2><div class="schedule"><div class="card"><h3>Hétfő</h3><p>18:00 - 21:00<br><small>FORTNITE</small></p></div><div class="card"><h3>Kedd</h3><p>Pihenőnap</p></div><div class="card"><h3>Szerda</h3><p>18:00 - 21:00<br><small>FORTNITE</small></p></div><div class="card"><h3>Csütörtök</h3><p>Pihenőnap</p></div><div class="card"><h3>Péntek</h3><p>19:00 - Későig<br><small>FORTNITE</small></p></div><div class="card"><h3>Szombat</h3><p>17:00 - 22:00<br><small>FORTNITE</small></p></div><div class="card"><h3>Vasárnap</h3><p>Pihenőnap</p></div></div></section>
-<section style="margin-top:50px;"><div class="support-box"><small style="color:var(--purple2);">ÉRTESÍTÉS</small><h2>Ne maradj le az élő adásról!</h2><p>Kövesd a csatornát Twitch-en, hogy értesítést kapj az új élő adásokról.</p><a href="https://www.twitch.tv/sanci9517" target="_blank" rel="noopener" class="btn btn-primary">▶ Követés Twitch-en</a></div></section></main>
+<main>
+<div class="page-header"><small>STREAM SCHEDULE</small><h1>Menetrend</h1><p>Itt találod a következő streamek időpontjait.</p></div>
+<div class="card next-stream" id="nextStream"><span class="next-stream-badge">KÖVETKEZŐ STREAM</span><h2 id="nextTitle">Következő élő adás</h2><div class="countdown" id="countdown">Betöltés…</div><div class="next-info" id="nextInfo">A következő stream keresése…</div><br><a href="https://www.twitch.tv/sanci9517" target="_blank" rel="noopener" class="btn btn-primary">▶ Twitch csatorna</a></div>
+<section style="margin-top:40px;"><h2>📅 Heti menetrend</h2><div class="schedule" id="schedule"><div class="card"><p>Menetrend betöltése…</p></div></div></section>
+<section style="margin-top:50px;"><div class="support-box"><small style="color:var(--purple2);">ÉRTESÍTÉS</small><h2>Ne maradj le az élő adásról!</h2><p>Kövesd a csatornát Twitch-en, hogy értesítést kapj az új élő adásokról.</p><a href="https://www.twitch.tv/sanci9517" target="_blank" rel="noopener" class="btn btn-primary">▶ Követés Twitch-en</a></div></section>
+</main>
 <footer>© 2026 SANCI9517 · Official Gaming Hub</footer>
 <script>
 const menuToggle=document.getElementById("menuToggle"),navLinks=document.getElementById("navLinks");menuToggle.addEventListener("click",()=>{const open=navLinks.classList.toggle("open");menuToggle.textContent=open?"✕":"☰";menuToggle.setAttribute("aria-expanded",open?"true":"false")});navLinks.querySelectorAll("a").forEach(link=>link.addEventListener("click",()=>{navLinks.classList.remove("open");menuToggle.textContent="☰";menuToggle.setAttribute("aria-expanded","false")}));
+const dayNames=["Hétfő","Kedd","Szerda","Csütörtök","Péntek","Szombat","Vasárnap"];
+let scheduleData=[];
+function dayIndex(d){return (d.getDay()+6)%7}
+function parseStart(t){const m=(t||"").match(/(\d{1,2}):(\d{2})/);return m?{h:+m[1],m:+m[2]}:null}
+function nextStream(){const now=new Date();let best=null;for(let add=0;add<8;add++){const idx=(dayIndex(now)+add)%7;const item=scheduleData[idx];if(!item||!item.active)continue;const tm=parseStart(item.time);if(!tm)continue;const d=new Date(now);d.setDate(now.getDate()+add);d.setHours(tm.h,tm.m,0,0);if(d>now&&(!best||d<best.date))best={item,date:d,idx};}return best}
+function formatCountdown(ms){let s=Math.max(0,Math.floor(ms/1000));const d=Math.floor(s/86400);s%=86400;const h=Math.floor(s/3600);s%=3600;const m=Math.floor(s/60);s%=60;const pad=n=>String(n).padStart(2,"0");return d?`${d} nap ${pad(h)}:${pad(m)}:${pad(s)}`:`${pad(h)}:${pad(m)}:${pad(s)}`}
+function renderSchedule(next){const el=document.getElementById("schedule");el.innerHTML=scheduleData.map((x,i)=>{const rest=!x.active;const isNext=next&&next.idx===i;const game=(x.game||"").trim();return `<div class="card${isNext?" next-stream":""}" style="margin-bottom:14px"><h3>${dayNames[i]}${isNext?" ✦":""}</h3><p>${x.active?x.time:"Pihenőnap"}<br><small>${rest?"PIHENŐNAP":(game||"STREAM")}</small></p></div>`}).join("")}
+function update(){const n=nextStream();const c=document.getElementById("countdown");if(!n){c.textContent="Nincs következő stream";return}c.textContent=formatCountdown(n.date-new Date());document.getElementById("nextTitle").textContent=`${n.item.game||"Élő adás"}`;document.getElementById("nextInfo").textContent=`${dayNames[n.idx]} · ${n.item.time}`;renderSchedule(n)}
+fetch("schedule.json?"+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(data=>{scheduleData=data;update();setInterval(update,1000)}).catch(()=>{document.getElementById("countdown").textContent="Nem sikerült betölteni";document.getElementById("nextInfo").textContent="A menetrend átmenetileg nem elérhető."});
 </script>
 </body></html>
