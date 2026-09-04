@@ -1,15 +1,160 @@
 <!DOCTYPE html>
 <html lang="hu">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SANCI9517 | Stats</title><link rel="stylesheet" href="style.css"></head>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SANCI9517 | Stats</title>
+<link rel="stylesheet" href="style.css">
+</head>
 <body>
-<header class="site-header"><nav class="nav container"><a href="index.html" class="logo">SANCI<span>9517</span></a><button class="menu-toggle" id="menuToggle" type="button" aria-label="Menü" aria-expanded="false">☰</button><div class="nav-links" id="navLinks"><a href="index.html">Főoldal</a><a href="hirek.html">Hírek</a><a href="szavazas.html">Szavazás</a><a href="clips.html">Clips</a><a href="menetrend.html">Menetrend</a><a href="stats.html" class="active">Stats</a><a href="tamogatas.html">Támogatás</a><a href="setup.html">Setup</a><a href="https://discord.gg/BEERR7AZH" target="_blank" rel="noopener">Discord</a></div></nav></header>
-<main><div class="page-header"><small>STREAMER STATISTICS</small><h1>Stats</h1><p>SANCI9517 stream statisztikák és közösségi mérföldkövek.</p></div>
-<section><div class="stats"><div class="card"><div class="stat-number">0</div><div class="stat-label">Követők</div></div><div class="card"><div class="stat-number">0</div><div class="stat-label">Átlag néző</div></div><div class="card"><div class="stat-number">0</div><div class="stat-label">Összes stream</div></div><div class="card"><div class="stat-number">0</div><div class="stat-label">Összes óra</div></div></div></section>
-<section style="margin-top:50px;"><div class="page-header" style="text-align:left;"><small>MILESTONES</small><h2>🎯 Mérföldkövek</h2></div><div class="grid"><div class="card"><h3>🟣 1 000 követő</h3><p>Első nagy közösségi mérföldkő.</p></div><div class="card"><h3>🟣 5 000 követő</h3><p>Következő nagy cél.</p></div><div class="card"><h3>🟣 10 000 követő</h3><p>A következő szint.</p></div></div></section>
-<section style="margin-top:50px;"><div class="page-header" style="text-align:left;"><small>COMMUNITY</small><h2>📊 Platformok</h2></div><div class="social-grid"><a href="https://www.twitch.tv/sanci9517" target="_blank" rel="noopener" class="social"><strong>Twitch</strong><span>SANCI9517</span></a><a href="https://www.tiktok.com/@sanci9517twitch" target="_blank" rel="noopener" class="social"><strong>TikTok</strong><span>@sanci9517twitch</span></a><a href="https://youtube.com/@sanci9517vod" target="_blank" rel="noopener" class="social"><strong>YouTube</strong><span>SANCI9517 VOD</span></a><a href="https://x.com/Sanci9517" target="_blank" rel="noopener" class="social"><strong>X</strong><span>@Sanci9517</span></a></div></section>
-<section style="margin-top:50px;"><div class="support-box"><small style="color:var(--purple2);">STATISTICS</small><h2>A számok folyamatosan változnak</h2><p>Az oldalon jelenleg kézzel megadott statisztikák szerepelnek. Később ezeket automatikus Twitch adatokkal is össze lehet kötni.</p></div></section></main>
-<footer>© 2026 SANCI9517 · Official Gaming Hub</footer>
+<header class="site-header">
+  <nav class="nav container">
+    <a href="index.html" class="logo">SANCI<span>9517</span></a>
+    <button class="menu-toggle" id="menuToggle" type="button" aria-label="Menü" aria-expanded="false">☰</button>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html">Főoldal</a><a href="hirek.html">Hírek</a><a href="szavazas.html">Szavazás</a><a href="clips.html">Clips</a><a href="menetrend.html">Menetrend</a><a href="stats.html" class="active">Stats</a><a href="tamogatas.html">Támogatás</a><a href="setup.html">Setup</a><a href="https://discord.gg/BEERR7AZH" target="_blank" rel="noopener">Discord</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <div class="page-header">
+    <small>LIVE STREAM STATISTICS</small>
+    <h1>Stats</h1>
+    <p>Valós, automatikusan frissülő Twitch adatok a SANCI9517 csatornáról.</p>
+  </div>
+
+  <section>
+    <div class="stats">
+      <div class="card">
+        <div class="stat-number" id="followers">—</div>
+        <div class="stat-label">Twitch követők</div>
+      </div>
+      <div class="card">
+        <div class="stat-number" id="views">—</div>
+        <div class="stat-label">Összes csatornamegtekintés</div>
+      </div>
+      <div class="card">
+        <div class="stat-number" id="viewers">—</div>
+        <div class="stat-label">Jelenlegi nézők</div>
+      </div>
+      <div class="card">
+        <div class="stat-number" id="status">—</div>
+        <div class="stat-label">Live állapot</div>
+      </div>
+    </div>
+  </section>
+
+  <section style="margin-top:10px;">
+    <div class="grid">
+      <div class="card">
+        <small>AKTUÁLIS STREAM</small>
+        <h2 id="game">Betöltés…</h2>
+        <p id="title">A Twitch adatok lekérése folyamatban.</p>
+      </div>
+      <div class="card">
+        <small>FRISSÍTÉS</small>
+        <h2 id="updated">—</h2>
+        <p>Az adatok automatikusan újraellenőrződnek, amíg az oldal nyitva van.</p>
+      </div>
+      <div class="card">
+        <small>FORRÁS</small>
+        <h2>Twitch</h2>
+        <p>A követő-, megtekintési- és live adatok automatikusan érkeznek a csatornához kapcsolódó Twitch adatokból.</p>
+      </div>
+    </div>
+  </section>
+
+  <section style="margin-top:50px;">
+    <div class="page-header" style="text-align:left;">
+      <small>MILESTONES</small>
+      <h2>🎯 Mérföldkövek</h2>
+    </div>
+    <div class="grid">
+      <div class="card"><h3>🟣 1 000 követő</h3><p>Első nagy közösségi mérföldkő.</p></div>
+      <div class="card"><h3>🟣 5 000 követő</h3><p>Következő nagy cél.</p></div>
+      <div class="card"><h3>🟣 10 000 követő</h3><p>A következő szint.</p></div>
+    </div>
+  </section>
+
+  <section style="margin-top:50px;">
+    <div class="page-header" style="text-align:left;">
+      <small>COMMUNITY</small>
+      <h2>📊 Platformok</h2>
+    </div>
+    <div class="social-grid">
+      <a href="https://www.twitch.tv/sanci9517" target="_blank" rel="noopener" class="social"><strong>Twitch</strong><span>SANCI9517</span></a>
+      <a href="https://www.tiktok.com/@sanci9517twitch" target="_blank" rel="noopener" class="social"><strong>TikTok</strong><span>@sanci9517twitch</span></a>
+      <a href="https://youtube.com/@sanci9517vod" target="_blank" rel="noopener" class="social"><strong>YouTube</strong><span>SANCI9517 VOD</span></a>
+      <a href="https://x.com/Sanci9517" target="_blank" rel="noopener" class="social"><strong>X</strong><span>@Sanci9517</span></a>
+    </div>
+  </section>
+
+  <section style="margin-top:50px;">
+    <div class="support-box">
+      <small style="color:var(--purple-light);">STATISTICS</small>
+      <h2>Valós adatok, automatikus frissítéssel</h2>
+      <p>A Stats oldal nem használ többé kézzel beírt 0 értékeket. A Twitch adatok néhány percenként frissülnek a szolgáltatás gyorsítótárazása miatt.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  © 2026 SANCI9517 · Official Gaming Hub
+</footer>
+
 <script>
-const menuToggle=document.getElementById("menuToggle"),navLinks=document.getElementById("navLinks");menuToggle.addEventListener("click",()=>{const open=navLinks.classList.toggle("open");menuToggle.textContent=open?"✕":"☰";menuToggle.setAttribute("aria-expanded",open?"true":"false")});navLinks.querySelectorAll("a").forEach(link=>link.addEventListener("click",()=>{navLinks.classList.remove("open");menuToggle.textContent="☰";menuToggle.setAttribute("aria-expanded","false")}));
+const menuToggle=document.getElementById("menuToggle"),navLinks=document.getElementById("navLinks");
+menuToggle.addEventListener("click",()=>{const open=navLinks.classList.toggle("open");menuToggle.textContent=open?"✕":"☰";menuToggle.setAttribute("aria-expanded",open?"true":"false")});
+navLinks.querySelectorAll("a").forEach(link=>link.addEventListener("click",()=>{navLinks.classList.remove("open");menuToggle.textContent="☰";menuToggle.setAttribute("aria-expanded","false")}));
+
+const API="https://decapi.me/twitch";
+const CHANNEL="sanci9517";
+
+async function getText(endpoint){
+  const response=await fetch(`${API}/${endpoint}/${CHANNEL}`,{cache:"no-store"});
+  if(!response.ok) throw new Error("API hiba");
+  return (await response.text()).trim();
+}
+
+function formatNumber(value){
+  const n=Number(String(value).replace(/[^0-9]/g,""));
+  return Number.isFinite(n) ? n.toLocaleString("hu-HU") : "—";
+}
+
+async function loadStats(){
+  try{
+    const [followers,views,viewers,status,game,title]=await Promise.all([
+      getText("followcount"),
+      getText("total_views"),
+      getText("viewercount"),
+      getText("status"),
+      getText("game"),
+      getText("title")
+    ]);
+
+    document.getElementById("followers").textContent=formatNumber(followers);
+    document.getElementById("views").textContent=formatNumber(views);
+    document.getElementById("viewers").textContent=status.toLowerCase().includes("offline")?"0":formatNumber(viewers);
+
+    const live=status.toLowerCase().includes("offline")===false;
+    document.getElementById("status").textContent=live?"🟢 LIVE":"🔴 OFFLINE";
+    document.getElementById("status").style.fontSize="24px";
+    document.getElementById("game").textContent=live && game && !game.toLowerCase().includes("offline")?game:"Nincs aktív stream";
+    document.getElementById("title").textContent=live && title && !title.toLowerCase().includes("offline")?title:"Jelenleg nincs élő adás.";
+    document.getElementById("updated").textContent=new Date().toLocaleTimeString("hu-HU",{hour:"2-digit",minute:"2-digit"});
+  }catch(error){
+    document.getElementById("followers").textContent="—";
+    document.getElementById("views").textContent="—";
+    document.getElementById("viewers").textContent="—";
+    document.getElementById("status").textContent="⚠ HIBA";
+    document.getElementById("game").textContent="Adatkapcsolati hiba";
+    document.getElementById("title").textContent="A Twitch adatok most nem érhetők el. Az oldal automatikusan újrapróbálja.";
+  }
+}
+
+loadStats();
+setInterval(loadStats,60000);
 </script>
-</body></html>
+</body>
+</html>
