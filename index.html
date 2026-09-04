@@ -6,22 +6,22 @@
 <meta name="theme-color" content="#07070a">
 <title>SANCI9517 | Official</title>
 <meta name="description" content="SANCI9517 hivatalos oldala – streamek, klipek és közösség.">
-<link rel="stylesheet" href="style.css?v=20260904e">
+<link rel="stylesheet" href="style.css?v=20260904">
 <style>
-/* LIVE – az oldal eredeti stílusában. Csak a gomb színe változik offline/live állapot szerint. */
+/* LIVE – az oldal eredeti stílusában. A gomb prémium lila marad. */
 .live-panel{position:relative;overflow:hidden;border:1px solid var(--border)!important;background:#111116!important;box-shadow:0 18px 50px rgba(0,0,0,.24)!important;transition:.2s}
 .live-panel.live{border-color:var(--border)!important;background:#111116!important;box-shadow:0 18px 50px rgba(0,0,0,.24)!important}
 .live-panel:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--purple)!important;box-shadow:none!important}
 .live-panel.live:before{background:var(--purple)!important;box-shadow:none!important}
-.live-button{min-height:42px!important;padding:0 17px!important;border:1px solid rgba(239,68,68,.58)!important;border-radius:8px!important;background:rgba(239,68,68,.12)!important;color:#ff9292!important;box-shadow:none!important;font-size:12px!important;font-weight:900!important;transition:.2s!important;white-space:nowrap}
-.live-panel.live .live-button{border-color:rgba(34,197,94,.58)!important;background:rgba(34,197,94,.12)!important;color:#78e99a!important}
-.live-button:hover{transform:translateY(-2px);color:#fff!important;background:rgba(239,68,68,.2)!important;border-color:#ef4444!important}
-.live-panel.live .live-button:hover{background:rgba(34,197,94,.2)!important;border-color:#22c55e!important}
+.live-button{min-height:42px!important;padding:0 17px!important;border:1px solid rgba(167,139,250,.58)!important;border-radius:8px!important;background:linear-gradient(135deg,var(--purple),#6d28d9)!important;color:#fff!important;box-shadow:0 8px 22px rgba(109,40,217,.24)!important;font-size:12px!important;font-weight:900!important;transition:.2s!important;white-space:nowrap}
+.live-panel.live .live-button{border-color:rgba(167,139,250,.58)!important;background:linear-gradient(135deg,var(--purple),#6d28d9)!important;color:#fff!important}
+.live-button:hover,.live-panel.live .live-button:hover{transform:translateY(-2px);color:#fff!important;background:linear-gradient(135deg,#9b6cff,#7c3aed)!important;border-color:#b89cff!important;box-shadow:0 12px 28px rgba(109,40,217,.34)!important}
 .live-dot{background:#777!important;box-shadow:0 0 0 5px rgba(119,119,119,.08)!important}
 .live-panel.live .live-dot{background:#777!important;box-shadow:0 0 0 5px rgba(119,119,119,.08)!important}
 .live-status strong{font-size:13px!important}
-/* TikTok és X pontosan ugyanazt a sötét kártyahátteret kapja, mint a többi közösségi elem. Az ikonokhoz nem nyúlunk. */
+/* TikTok és X ugyanazt a hátteret és keretet használja, mint minden más közösségi kártya. */
 .community-row a:nth-child(3),.community-row a:nth-child(5){background:#111116!important;border:0!important}
+.community-row{background:#2b2732!important;border-color:#2b2732!important}
 /* Fő CTA marad a prémium lila stílusban. */
 .premium-primary{background:linear-gradient(135deg,var(--purple),#6d28d9)!important;color:#fff!important;border:1px solid rgba(167,139,250,.45)!important;box-shadow:0 12px 30px rgba(109,40,217,.28)!important}
 .premium-primary span{background:#fff!important;box-shadow:0 0 10px rgba(255,255,255,.45)!important}
