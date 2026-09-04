@@ -7,6 +7,18 @@
 <title>SANCI9517 | Official</title>
 <meta name="description" content="SANCI9517 hivatalos oldala – streamek, klipek és közösség.">
 <link rel="stylesheet" href="style.css">
+<style>
+/* Homepage refinement: small social icons only, no large social cards */
+.premium-portrait .portrait-caption{display:none}
+.premium-portrait{height:470px}
+.community-row a{flex-direction:row;align-items:center;justify-content:flex-start;gap:11px}
+.community-row a img{width:18px;height:18px;flex:0 0 18px;object-fit:contain;opacity:.86}
+.community-row a div{min-width:0}
+.community-row strong{display:block}
+.community-row span{display:block}
+@media(max-width:1000px){.premium-portrait{height:390px}}
+@media(max-width:650px){.premium-portrait{height:300px}.community-row a{gap:9px}.community-row a img{width:16px;height:16px;flex-basis:16px}}
+</style>
 </head>
 <body class="home-page">
 <header class="site-header">
