@@ -1,0 +1,3 @@
+const SANCI_TWITCH_API='https://sanci9517-twitch-api.sandor-bogadi95.workers.dev/twitch/stats';
+window.SanciTwitch={data:null,async load(){try{const r=await fetch(SANCI_TWITCH_API,{cache:'no-store'});if(!r.ok)throw new Error('API '+r.status);this.data=await r.json();document.dispatchEvent(new CustomEvent('sanci:twitch',{detail:this.data}));return this.data}catch(e){console.error('SANCI Twitch API',e);document.dispatchEvent(new CustomEvent('sanci:twitch-error',{detail:e}));return null}},start(){this.load();return setInterval(()=>this.load(),60000)}};
+SanciTwitch.start();
