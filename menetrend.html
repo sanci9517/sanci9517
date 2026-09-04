@@ -6,16 +6,14 @@
 <title>SANCI9517 | Menetrend</title>
 <link rel="stylesheet" href="style.css">
 <style>
-.next-stream{position:relative;overflow:hidden;border:1px solid rgba(167,139,250,.5);box-shadow:0 0 0 1px rgba(139,92,246,.12),0 0 28px rgba(139,92,246,.25),0 0 60px rgba(139,92,246,.10)}
-.next-stream:before{content:"";position:absolute;inset:-2px;border-radius:inherit;background:linear-gradient(120deg,transparent 20%,rgba(255,255,255,.62) 35%,rgba(167,139,250,.78) 45%,transparent 60%);background-size:220% 100%;animation:shine 8s ease-in-out infinite;opacity:.48;pointer-events:none}
+.next-stream{position:relative;overflow:hidden;border:1px solid rgba(167,139,250,.52);background:linear-gradient(135deg,rgba(139,92,246,.10),rgba(167,139,250,.045) 45%,rgba(139,92,246,.08));box-shadow:0 0 0 1px rgba(139,92,246,.12),0 0 28px rgba(139,92,246,.20),inset 0 0 28px rgba(139,92,246,.035)}
+.next-stream:before{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(circle at 85% 15%,rgba(190,160,255,.12),transparent 32%),radial-gradient(circle at 15% 85%,rgba(139,92,246,.10),transparent 30%);pointer-events:none}
 .next-stream>*{position:relative;z-index:1}
 .next-stream-badge{display:inline-flex;align-items:center;gap:7px;color:#d8c7ff;font-size:10px;font-weight:900;letter-spacing:2px}
-.next-stream-badge:before{content:"✦";font-size:14px;color:#c4a7ff;text-shadow:0 0 12px #a78bfa}
-.countdown{font-size:clamp(34px,6vw,54px);font-weight:900;letter-spacing:-1.5px;line-height:1.05;margin:12px 0 8px;font-variant-numeric:tabular-nums;text-shadow:0 0 22px rgba(167,139,250,.35)}
+.next-stream-badge:before{content:"✦";font-size:14px;color:#c4a7ff;text-shadow:0 0 10px rgba(167,139,250,.65)}
+.countdown{font-size:clamp(34px,6vw,54px);font-weight:900;letter-spacing:-1.5px;line-height:1.05;margin:12px 0 8px;font-variant-numeric:tabular-nums;text-shadow:0 0 18px rgba(167,139,250,.25)}
 .next-info{color:var(--muted);font-size:13px;line-height:1.6}
-@keyframes shine{0%,20%{background-position:220% 0}50%,70%{background-position:-220% 0}100%{background-position:220% 0}}
 @media(max-width:600px){.countdown{font-size:36px}.next-stream{padding:24px}}
-@media(prefers-reduced-motion:reduce){.next-stream:before{animation:none}}
 </style>
 </head>
 <body>
