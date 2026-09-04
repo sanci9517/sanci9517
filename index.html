@@ -3,60 +3,83 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#08080d">
 <title>SANCI9517 | Official Gaming Hub</title>
-<meta name="description" content="SANCI9517 hivatalos gaming oldala – Twitch, Clips, Hírek, Menetrend, Stats, Discord és közösségi oldalak.">
+<meta name="description" content="SANCI9517 hivatalos oldala – streamek, klipek, közösség és közösségi oldalak.">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header class="site-header">
-<div class="container nav">
-<a href="index.html" class="logo">SANCI<span>9517</span></a>
-<button class="menu-toggle" id="menuToggle" type="button" aria-label="Menü" aria-expanded="false">☰</button>
-<nav class="nav-links" id="navLinks">
-<a href="index.html" class="active">Főoldal</a><a href="hirek.html">Hírek</a><a href="szavazas.html">Szavazás</a><a href="clips.html">Clips</a><a href="menetrend.html">Menetrend</a><a href="stats.html">Stats</a><a href="tamogatas.html">Támogatás</a><a href="setup.html">Setup</a><a href="https://discord.gg/BEERR7AZH" target="_blank" rel="noopener noreferrer">Discord</a>
-</nav>
-</div>
+  <div class="container nav">
+    <a href="index.html" class="logo">SANCI<span>9517</span></a>
+    <button class="menu-toggle" id="menuToggle" type="button" aria-label="Menü" aria-expanded="false">☰</button>
+    <nav class="nav-links" id="navLinks" aria-label="Fő navigáció">
+      <a href="index.html" class="active">Főoldal</a>
+      <a href="hirek.html">Hírek</a>
+      <a href="szavazas.html">Szavazás</a>
+      <a href="clips.html">Clips</a>
+      <a href="menetrend.html">Menetrend</a>
+      <a href="stats.html">Stats</a>
+      <a href="tamogatas.html">Támogatás</a>
+      <a href="setup.html">Setup</a>
+      <a href="https://discord.gg/BEERR7AZH" target="_blank" rel="noopener noreferrer">Discord</a>
+    </nav>
+  </div>
 </header>
+
 <main>
 <section class="hero container">
-<div class="hero-text">
-<span class="hero-badge">🎮 OFFICIAL GAMING HUB</span>
-<h1>SZIA, ÉN VAGYOK <span>SANCI9517</span></h1>
-<p>Gaming, streamek és a legjobb pillanatok — egy letisztult helyen a közösségemnek.</p>
-<div class="hero-buttons"><a href="https://www.twitch.tv/sanci9517" target="_blank" rel="noopener noreferrer" class="btn btn-primary">🔴 Nézz élőben</a><a href="clips.html" class="btn btn-secondary">🎬 Legjobb klipek</a></div>
-</div>
-<div class="profile"><img src="Images/profile.jpg" alt="SANCI9517 Twitch profilkép"></div>
+  <div class="hero-copy">
+    <div class="status-line"><span class="status-dot"></span> SANCI9517 · GAMING & COMMUNITY</div>
+    <h1>SZIA, ÉN VAGYOK<br><span>SANCI9517</span></h1>
+    <p class="hero-lead">Streamek, gaming és közösség. Minden fontos tartalom egyetlen letisztult helyen.</p>
+    <div class="hero-buttons">
+      <a href="https://www.twitch.tv/sanci9517" target="_blank" rel="noopener noreferrer" class="btn btn-primary"><span class="btn-dot"></span> Nézz élőben</a>
+      <a href="clips.html" class="btn btn-secondary">Legjobb klipek <span>→</span></a>
+    </div>
+    <div class="hero-socials" aria-label="Közösségi oldalak">
+      <a href="https://www.twitch.tv/sanci9517" target="_blank" rel="noopener noreferrer" aria-label="Twitch"><img src="https://cdn.simpleicons.org/twitch/ffffff" alt=""></a>
+      <a href="https://discord.gg/BEERR7AZH" target="_blank" rel="noopener noreferrer" aria-label="Discord"><img src="https://cdn.simpleicons.org/discord/ffffff" alt=""></a>
+      <a href="https://www.tiktok.com/@sanci9517twitch" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><img src="https://cdn.simpleicons.org/tiktok/ffffff" alt=""></a>
+      <a href="https://youtube.com/@sanci9517vod" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><img src="https://cdn.simpleicons.org/youtube/ffffff" alt=""></a>
+      <a href="https://x.com/Sanci9517" target="_blank" rel="noopener noreferrer" aria-label="X"><img src="https://cdn.simpleicons.org/x/ffffff" alt=""></a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="profile-ring"><div class="profile"><img src="Images/profile.jpg" alt="SANCI9517 profilkép"></div></div>
+    <div class="profile-label"><strong>SANCI9517</strong><span>Official Creator</span></div>
+  </div>
 </section>
-<section class="container">
-<div class="page-header"><span>FELFEDEZÉS</span><h2>Minden fontos egy helyen</h2><p>Hírek, klipek, menetrend, statisztikák és a közösség.</p></div>
-<div class="grid">
-<a href="hirek.html" class="card"><div class="card-icon">📰</div><h3>Hírek</h3><p>Bejelentések és újdonságok.</p></a>
-<a href="szavazas.html" class="card"><div class="card-icon">🗳️</div><h3>Szavazás</h3><p>Te is beleszólhatsz a következő tartalomba.</p></a>
-<a href="clips.html" class="card"><div class="card-icon">🎬</div><h3>Clips</h3><p>A legjobb stream pillanatok.</p></a>
-<a href="menetrend.html" class="card"><div class="card-icon">📅</div><h3>Menetrend</h3><p>Mikor találkozunk legközelebb?</p></a>
-<a href="stats.html" class="card"><div class="card-icon">📊</div><h3>Stats</h3><p>Közösségi és stream statisztikák.</p></a>
-<a href="setup.html" class="card"><div class="card-icon">💻</div><h3>Setup</h3><p>A gaming és streaming rendszerem.</p></a>
-</div>
+
+<section class="container quick-section">
+  <div class="section-heading"><div><span>FELFEDEZÉS</span><h2>Válassz egy irányt</h2></div><p>Amit keresel, innen egy kattintás.</p></div>
+  <div class="quick-grid">
+    <a href="clips.html" class="quick-card quick-feature"><span class="quick-number">01</span><div><strong>Clips</strong><p>A legjobb stream pillanatok.</p></div><b>↗</b></a>
+    <a href="menetrend.html" class="quick-card"><span class="quick-number">02</span><div><strong>Menetrend</strong><p>Mikor találkozunk?</p></div><b>↗</b></a>
+    <a href="hirek.html" class="quick-card"><span class="quick-number">03</span><div><strong>Hírek</strong><p>Újdonságok és bejelentések.</p></div><b>↗</b></a>
+    <a href="szavazas.html" class="quick-card"><span class="quick-number">04</span><div><strong>Szavazás</strong><p>Szólj bele a tartalomba.</p></div><b>↗</b></a>
+  </div>
 </section>
-<section class="container">
-<div class="page-header"><span>KÖVESS</span><h2>SANCI9517 online</h2><p>A valódi csatornáim egy helyen.</p></div>
-<div class="social-grid">
-<a href="https://www.twitch.tv/sanci9517" target="_blank" rel="noopener noreferrer" class="social"><div class="social-icon"><img src="https://cdn.simpleicons.org/twitch/ffffff" alt="Twitch"></div><strong>Twitch</strong><span>@sanci9517</span></a>
-<a href="https://discord.gg/BEERR7AZH" target="_blank" rel="noopener noreferrer" class="social"><div class="social-icon"><img src="https://cdn.simpleicons.org/discord/ffffff" alt="Discord"></div><strong>Discord</strong><span>Közösségi szerver</span></a>
-<a href="https://www.tiktok.com/@sanci9517twitch" target="_blank" rel="noopener noreferrer" class="social"><div class="social-icon"><img src="https://cdn.simpleicons.org/tiktok/ffffff" alt="TikTok"></div><strong>TikTok</strong><span>@sanci9517twitch</span></a>
-<a href="https://youtube.com/@sanci9517vod" target="_blank" rel="noopener noreferrer" class="social"><div class="social-icon"><img src="https://cdn.simpleicons.org/youtube/ffffff" alt="YouTube"></div><strong>YouTube</strong><span>@sanci9517vod</span></a>
-<a href="https://x.com/Sanci9517" target="_blank" rel="noopener noreferrer" class="social"><div class="social-icon"><img src="https://cdn.simpleicons.org/x/ffffff" alt="X"></div><strong>X</strong><span>@Sanci9517</span></a>
-</div>
+
+<section class="container social-section">
+  <div class="section-heading"><div><span>KÖZÖSSÉG</span><h2>Találkozzunk online</h2></div><p>Az összes hivatalos csatorna.</p></div>
+  <div class="social-grid">
+    <a href="https://www.twitch.tv/sanci9517" target="_blank" rel="noopener noreferrer" class="social"><div class="social-icon"><img src="https://cdn.simpleicons.org/twitch/ffffff" alt="Twitch"></div><strong>Twitch</strong><span>@sanci9517</span></a>
+    <a href="https://discord.gg/BEERR7AZH" target="_blank" rel="noopener noreferrer" class="social"><div class="social-icon"><img src="https://cdn.simpleicons.org/discord/ffffff" alt="Discord"></div><strong>Discord</strong><span>Közösségi szerver</span></a>
+    <a href="https://www.tiktok.com/@sanci9517twitch" target="_blank" rel="noopener noreferrer" class="social"><div class="social-icon"><img src="https://cdn.simpleicons.org/tiktok/ffffff" alt="TikTok"></div><strong>TikTok</strong><span>@sanci9517twitch</span></a>
+    <a href="https://youtube.com/@sanci9517vod" target="_blank" rel="noopener noreferrer" class="social"><div class="social-icon"><img src="https://cdn.simpleicons.org/youtube/ffffff" alt="YouTube"></div><strong>YouTube</strong><span>@sanci9517vod</span></a>
+    <a href="https://x.com/Sanci9517" target="_blank" rel="noopener noreferrer" class="social"><div class="social-icon"><img src="https://cdn.simpleicons.org/x/ffffff" alt="X"></div><strong>X</strong><span>@Sanci9517</span></a>
+  </div>
 </section>
-<section class="container">
-<div class="support-box"><span class="hero-badge">💜 SANCI9517 COMMUNITY</span><h2>Legyél a közösség része</h2><p>Kövess Twitch-en, csatlakozz Discordhoz, és ne maradj le az új streamekről és tartalmakról.</p><div class="hero-buttons" style="justify-content:center"><a href="https://discord.gg/BEERR7AZH" target="_blank" rel="noopener noreferrer" class="btn btn-primary">💬 Discord</a><a href="tamogatas.html" class="btn btn-secondary">💜 Támogatás</a></div></div>
-</section>
+
+<section class="container"><div class="community-cta"><div><span>CSATLAKOZZ</span><h2>Ne csak nézd. Légy a közösség része.</h2><p>Csatlakozz Discordhoz, és maradj képben az új streamekkel és tartalmakkal.</p></div><a href="https://discord.gg/BEERR7AZH" target="_blank" rel="noopener noreferrer" class="btn btn-primary"><img src="https://cdn.simpleicons.org/discord/ffffff" alt=""> Discord</a></div></section>
 </main>
-<footer><div class="container"><p>© 2026 SANCI9517 · Official Gaming Hub</p></div></footer>
+
+<footer><div class="container"><span>SANCI9517</span><p>© 2026 Official Gaming Hub</p></div></footer>
 <script>
-const menuToggle=document.getElementById("menuToggle"),navLinks=document.getElementById("navLinks");
-menuToggle.addEventListener("click",()=>{const open=navLinks.classList.toggle("open");menuToggle.textContent=open?"✕":"☰";menuToggle.setAttribute("aria-expanded",open?"true":"false")});
-navLinks.querySelectorAll("a").forEach(link=>link.addEventListener("click",()=>{navLinks.classList.remove("open");menuToggle.textContent="☰";menuToggle.setAttribute("aria-expanded","false")}));
+const menuToggle=document.getElementById('menuToggle'),navLinks=document.getElementById('navLinks');
+menuToggle.addEventListener('click',()=>{const open=navLinks.classList.toggle('open');menuToggle.textContent=open?'✕':'☰';menuToggle.setAttribute('aria-expanded',open?'true':'false')});
+navLinks.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>{navLinks.classList.remove('open');menuToggle.textContent='☰';menuToggle.setAttribute('aria-expanded','false')}));
 </script>
 </body>
 </html>
