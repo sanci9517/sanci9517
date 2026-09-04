@@ -1,32 +1,9 @@
 <!DOCTYPE html>
 <html lang="hu">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SANCI9517 | Clips</title>
-<link rel="stylesheet" href="style.css">
-</head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SANCI9517 | Clips</title><link rel="stylesheet" href="style.css"></head>
 <body>
-<header class="site-header">
-<nav class="nav container">
-<a href="index.html" class="logo">SANCI<span>9517</span></a>
-<button class="menu-toggle" id="menuToggle" type="button" aria-label="Menü" aria-expanded="false">☰</button>
-<div class="nav-links" id="navLinks">
-<a href="index.html">Főoldal</a><a href="hirek.html">Hírek</a><a href="szavazas.html">Szavazás</a><a href="clips.html" class="active">Clips</a><a href="menetrend.html">Menetrend</a><a href="stats.html">Stats</a><a href="tamogatas.html">Támogatás</a><a href="setup.html">Setup</a><a href="https://discord.gg/BEERR7AZH" target="_blank" rel="noopener">Discord</a>
-</div>
-</nav>
-</header>
-<main>
-<div class="page-header"><small>HIGHLIGHTS</small><h1>Clips</h1><p>A legjobb pillanatok a SANCI9517 streamekből. Nézd meg a Twitch csatornán készült klipeket!</p></div>
-<div class="card"><h2>🎬 SANCI9517 Twitch Clips</h2><p>Itt találod a legjobb, közösség által készített Twitch klipeket.</p><br><a href="https://www.twitch.tv/sanci9517/clips" target="_blank" rel="noopener" class="btn btn-primary">▶ Twitch Clips megnyitása</a></div>
-<section style="margin-top:50px;"><div class="grid"><div class="card"><h3>🔥 Legjobb pillanatok</h3><p>A legviccesebb, legizgalmasabb és legjobb stream pillanatok egy helyen.</p></div><div class="card"><h3>🎮 Gaming</h3><p>Nézd vissza azokat a pillanatokat, amelyeket a közösség érdemesnek tartott klippelni.</p></div><div class="card"><h3>💜 Közösség</h3><p>Te is készíthetsz Twitch klipet egy jó pillanatról a stream alatt.</p></div></div></section>
-<section><div class="support-box"><small style="color:var(--purple2);">TWITCH</small><h2>Nem akarsz lemaradni?</h2><p>Kövess Twitch-en, és értesítést kapsz, amikor élő adás indul.</p><a href="https://www.twitch.tv/sanci9517" target="_blank" rel="noopener" class="btn btn-primary">▶ Twitch csatorna</a></div></section>
-</main>
+<header class="site-header"><nav class="nav container"><a href="index.html" class="logo">SANCI<span>9517</span></a><button class="menu-toggle" id="menuToggle" type="button" aria-label="Menü" aria-expanded="false">☰</button><div class="nav-links" id="navLinks"><a href="index.html">Főoldal</a><a href="hirek.html">Hírek</a><a href="szavazas.html">Szavazás</a><a href="clips.html" class="active">Clips</a><a href="menetrend.html">Menetrend</a><a href="twitch.html">Élő</a><a href="stats.html">Stats</a><a href="tamogatas.html">Támogatás</a><a href="setup.html">Setup</a><a href="https://discord.gg/BEERR7AZH" target="_blank" rel="noopener">Discord</a></div></nav></header>
+<main><div class="page-header"><small>HIGHLIGHTS</small><h1>Clips</h1><p>A legjobb pillanatok a SANCI9517 streamekből. Nézd meg a Twitch csatornán készült klipeket!</p></div><div class="card"><h2>🎬 SANCI9517 Twitch Clips</h2><p>Itt találod a legjobb, közösség által készített Twitch klipeket.</p><br><a href="https://www.twitch.tv/sanci9517/clips" target="_blank" rel="noopener" class="btn btn-primary">▶ Twitch Clips megnyitása</a></div><section style="margin-top:50px;"><div class="grid"><div class="card"><h3>🔥 Legjobb pillanatok</h3><p>A legviccesebb, legizgalmasabb és legjobb stream pillanatok egy helyen.</p></div><div class="card"><h3>🎮 Gaming</h3><p>Nézd vissza azokat a pillanatokat, amelyeket a közösség érdemesnek tartott klippelni.</p></div><div class="card"><h3>💜 Közösség</h3><p>Te is készíthetsz Twitch klipet egy jó pillanatról a stream alatt.</p></div></div></section><section><div class="support-box"><small style="color:var(--purple2);">TWITCH</small><h2>Nem akarsz lemaradni?</h2><p>Kövess Twitch-en, és értesítést kapsz, amikor élő adás indul.</p><a href="https://www.twitch.tv/sanci9517" target="_blank" rel="noopener" class="btn btn-primary">▶ Twitch csatorna</a></div></section></main>
 <footer>© 2026 SANCI9517 · Official Gaming Hub</footer>
-<script>
-const menuToggle=document.getElementById("menuToggle");const navLinks=document.getElementById("navLinks");
-menuToggle.addEventListener("click",()=>{const open=navLinks.classList.toggle("open");menuToggle.textContent=open?"✕":"☰";menuToggle.setAttribute("aria-expanded",open?"true":"false");});
-navLinks.querySelectorAll("a").forEach(link=>link.addEventListener("click",()=>{navLinks.classList.remove("open");menuToggle.textContent="☰";menuToggle.setAttribute("aria-expanded","false");}));
-</script>
-</body>
-</html>
+<script>const menuToggle=document.getElementById('menuToggle'),navLinks=document.getElementById('navLinks');menuToggle.addEventListener('click',()=>{const open=navLinks.classList.toggle('open');menuToggle.textContent=open?'✕':'☰';menuToggle.setAttribute('aria-expanded',open?'true':'false')});navLinks.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>{navLinks.classList.remove('open');menuToggle.textContent='☰';menuToggle.setAttribute('aria-expanded','false')}));</script><script src="twitch-status.js"></script>
+</body></html>
