@@ -40,5 +40,6 @@ function renderStats(){const follower=document.querySelector('[data-stat="follow
 async function loadStats(){try{const response=await fetch(API_URL,{cache:'no-store'});if(!response.ok)throw new Error('API '+response.status);const data=await response.json();statsState.followers=data.followers??null;statsState.views=data.views??null;statsState.live=Boolean(data.live);statsState.viewers=Number(data.viewers||0);statsState.game=data.game||'';statsState.title=data.title||'';statsState.started_at=data.started_at||null;renderStats()}catch(error){connection.classList.remove('live');connection.innerHTML='<i></i> TWITCH API · HIBA';document.querySelector('[data-stat="statusDetail"]').textContent='Az API jelenleg nem érhető el';console.error(error)}}
 loadStats();setInterval(loadStats,60000);
 </script>
+<script src="twitch-status.js?v=20260904"></script>
 </body>
 </html>
