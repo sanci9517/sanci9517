@@ -1,0 +1,15 @@
+{
+  "name": "SANCI9517",
+  "short_name": "SANCI9517",
+  "start_url": "app.html",
+  "display": "standalone",
+  "background_color": "#07070a",
+  "theme_color": "#07070a",
+  "description": "SANCI9517 hivatalos mobilfelülete.",
+  "icons": [{
+    "src": "app-icon.svg",
+    "sizes": "any",
+    "type": "image/svg+xml",
+    "purpose": "any maskable"
+  }]
+}
