@@ -29,10 +29,10 @@
   },
   {
     "day": "Péntek",
-    "time": "19:00 - Későig",
+    "time": "",
     "game": "",
     "description": "",
-    "active": true
+    "active": false
   },
   {
     "day": "Szombat",
