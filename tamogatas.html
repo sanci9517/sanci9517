@@ -3,52 +3,65 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="A SANCI9517 közösségének fejlődése, a közös célok és a csatorna támogatási lehetőségei.">
+<meta name="description" content="A SANCI9517 közösségének fejlődése és támogatási lehetőségei.">
 <title>Támogatás | SANCI9517</title>
 <link rel="stylesheet" href="style.css?v=20260904">
 <style>
-/* SUPPORT PAGE — community first / development second / support third */
-.support-hero{margin-bottom:42px!important}
-.support-hero p{max-width:760px!important;font-size:17px!important}
-.support-community{grid-template-columns:1.15fr .85fr!important;margin-bottom:58px!important}
-.support-story,.support-community-card{min-height:245px!important;padding:30px!important;display:flex!important;flex-direction:column!important;justify-content:center!important}
-.support-story h2,.support-community-card h2{font-size:25px!important;margin:8px 0 10px!important}
-.support-story p,.support-community-card p{max-width:620px!important;margin:0!important}
-.support-community-card{background:linear-gradient(145deg,rgba(139,92,246,.13),rgba(255,255,255,.018))!important}
-.support-community-card .btn{margin-top:20px!important;align-self:center!important;min-width:170px!important}
-.support-title{margin:0 0 22px!important;text-align:center!important}
-.support-title h2{font-size:30px!important}
-.support-title p{max-width:720px!important;margin:9px auto 0!important}
-.support-steps{grid-template-columns:repeat(4,minmax(0,1fr))!important;margin-bottom:58px!important}
-.support-step{min-height:205px!important;padding:25px!important;text-align:center!important;display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important}
-.support-step .step-number{font-size:13px!important;font-weight:900!important;letter-spacing:2px!important;color:var(--purple2)!important}
-.support-step h3{font-size:20px!important;margin:10px 0 8px!important}
-.support-step p{margin:0!important;max-width:220px!important}
-.support-goal{margin-bottom:58px!important;padding:32px!important;text-align:center!important;background:linear-gradient(145deg,rgba(139,92,246,.12),rgba(255,255,255,.018))!important}
-.support-goal h2{font-size:27px!important;margin:8px 0 9px!important}
-.support-goal p{max-width:760px!important;margin:0 auto!important}
-.support-goal .goal-line{display:flex!important;justify-content:center!important;gap:10px!important;flex-wrap:wrap!important;margin-top:20px!important}
-.support-goal .goal-pill{padding:9px 15px!important;border:1px solid var(--border)!important;border-radius:999px!important;background:rgba(255,255,255,.025)!important;font-size:13px!important;font-weight:800!important}
-.support-method-title{margin-bottom:22px!important}
-.support-methods{grid-template-columns:repeat(2,minmax(0,1fr))!important;margin-bottom:42px!important}
-.support-method{position:relative!important;min-height:220px!important;padding:30px!important;overflow:hidden!important;text-decoration:none!important;display:flex!important;flex-direction:column!important;justify-content:center!important;text-align:center!important}
-.support-method:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 90% 10%,rgba(139,92,246,.13),transparent 40%);pointer-events:none}
-.support-method>*{position:relative;z-index:1}
-.support-method h2{font-size:25px!important;margin:8px 0 9px!important}
-.support-method p{max-width:500px!important;margin:0 auto 20px!important}
-.support-method .btn{min-width:175px!important;align-self:center!important}
-.support-note{width:100%!important;min-height:135px!important;margin:0 auto 42px!important;padding:28px 34px!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important}
-.support-note h2{font-size:23px!important;margin:7px 0!important}
-.support-note p{max-width:760px!important;margin:0 auto!important}
+/* SUPPORT PAGE — clean, community-first, equal card system */
+.support-page{padding-bottom:10px}
+.support-hero{margin-bottom:38px!important;text-align:center!important}
+.support-hero h1{max-width:900px!important;margin-left:auto!important;margin-right:auto!important}
+.support-hero p{max-width:690px!important;margin:12px auto 0!important;font-size:16px!important}
+
+.support-section-title{margin:0 0 20px!important;text-align:center!important}
+.support-section-title h2{margin:5px 0 0!important;font-size:29px!important}
+.support-section-title p{max-width:650px!important;margin:8px auto 0!important}
+
+/* All main cards use the same geometry */
+.support-grid{display:grid!important;gap:22px!important;width:100%!important;margin:0 0 54px!important}
+.support-grid > .card{box-sizing:border-box!important;margin:0!important;width:100%!important}
+
+.support-community-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.support-community-card{min-height:215px!important;padding:30px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;text-align:center!important}
+.support-community-card h3{font-size:24px!important;margin:7px 0 9px!important}
+.support-community-card p{max-width:500px!important;margin:0 auto!important}
+.support-community-card.accent{background:linear-gradient(145deg,rgba(139,92,246,.14),rgba(255,255,255,.018))!important}
+.support-community-card .btn{margin-top:18px!important;min-width:175px!important}
+
+.support-path-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+.support-path-card{min-height:185px!important;padding:25px 20px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;text-align:center!important}
+.support-path-card .num{font-size:12px!important;font-weight:900!important;letter-spacing:2px!important;color:var(--purple2)!important}
+.support-path-card h3{font-size:19px!important;margin:8px 0 7px!important}
+.support-path-card p{max-width:210px!important;margin:0!important;font-size:14px!important;line-height:1.55!important}
+
+.support-vision{margin:0 0 54px!important;padding:32px 28px!important;text-align:center!important;background:linear-gradient(145deg,rgba(139,92,246,.11),rgba(255,255,255,.018))!important}
+.support-vision h2{font-size:27px!important;margin:6px 0 8px!important}
+.support-vision p{max-width:680px!important;margin:0 auto!important}
+
+.support-methods-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.support-method-card{min-height:230px!important;padding:30px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;text-align:center!important;text-decoration:none!important;position:relative!important;overflow:hidden!important}
+.support-method-card:before{content:"";position:absolute!important;inset:0!important;background:radial-gradient(circle at 50% 0,rgba(139,92,246,.14),transparent 48%)!important;pointer-events:none!important}
+.support-method-card > *{position:relative!important;z-index:1!important}
+.support-method-card h3{font-size:24px!important;margin:7px 0 8px!important}
+.support-method-card p{max-width:460px!important;margin:0 auto 19px!important;font-size:14px!important}
+.support-method-card .btn{min-width:180px!important}
+
+.support-bottom{width:100%!important;box-sizing:border-box!important;min-height:125px!important;margin:0 0 38px!important;padding:27px 25px!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important}
+.support-bottom h2{font-size:22px!important;margin:6px 0!important}
+.support-bottom p{max-width:700px!important;margin:0 auto!important;font-size:14px!important}
+
 @media(max-width:1000px){
- .support-community,.support-steps{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .support-path-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 }
 @media(max-width:700px){
- .support-community,.support-steps,.support-methods{grid-template-columns:1fr!important}
- .support-story,.support-community-card{min-height:205px!important;padding:24px 20px!important}
- .support-step{min-height:175px!important}
- .support-goal{padding:25px 18px!important}
- .support-note{padding:24px 18px!important;min-height:145px!important}
+ .support-grid,.support-community-grid,.support-methods-grid{grid-template-columns:1fr!important}
+ .support-path-grid{grid-template-columns:1fr!important}
+ .support-hero{margin-bottom:30px!important}
+ .support-community-card{min-height:195px!important;padding:23px 18px!important}
+ .support-path-card{min-height:160px!important;padding:22px 18px!important}
+ .support-vision{padding:25px 18px!important;margin-bottom:42px!important}
+ .support-method-card{min-height:205px!important;padding:25px 18px!important}
+ .support-bottom{min-height:135px!important;padding:23px 18px!important}
 }
 </style>
 </head>
@@ -63,75 +76,71 @@
   </div>
 </header>
 
-<main>
+<main class="support-page">
   <section class="page-header support-hero">
-    <span>KÖZÖSSÉG • FEJLŐDÉS • TÁMOGATÁS</span>
+    <span>KÖZÖSSÉG • FEJLŐDÉS</span>
     <h1>Építsük fel együtt a SANCI9517-et</h1>
-    <p>A cél nem egyszerűen egy újabb stream. Egy olyan gaming közösséget szeretnék felépíteni, ahová jó visszatérni, miközben lépésről lépésre fejlődik a technika, a tartalom és maga az adás is.</p>
+    <p>A cél egy erős gaming közösség és egy folyamatosan fejlődő, egyre profibb stream.</p>
   </section>
 
-  <section class="grid support-community">
-    <div class="card support-story">
-      <small>AMI ÖSSZEKÖT</small>
-      <h2>Nem csak nézők. Közösség.</h2>
-      <p>A SANCI9517 fejlődésének alapja az, hogy együtt építjük. A Twitch-adások, a Discord, a klipek, a beszélgetések és a közös pillanatok mind ugyanahhoz a közösséghez tartoznak.</p>
-    </div>
+  <section class="support-grid support-community-grid">
     <div class="card support-community-card">
-      <small>KAPCSOLÓDJ BE</small>
-      <h2>Csatlakozz a közösséghez</h2>
-      <p>A követés és a támogatás mellett a legfontosabb, hogy itt legyél, beszélgess és vegyél részt abban, ami készül.</p>
+      <small>KÖZÖSSÉG</small>
+      <h3>Nem csak nézők.</h3>
+      <p>A Twitch, Discord és a közös játékok egyetlen közösséggé állnak össze.</p>
+    </div>
+    <div class="card support-community-card accent">
+      <small>CSATLAKOZZ</small>
+      <h3>Legyél a részese.</h3>
+      <p>Nézd az adást, beszélgess, játssz velünk és építsük tovább együtt.</p>
       <a class="btn btn-primary" href="discord.html">Discord közösség</a>
     </div>
   </section>
 
-  <section class="page-header support-title">
-    <span>AZ ÚT</span>
-    <h2>Lépésről lépésre egyre magasabb szintre</h2>
-    <p>Nincs egyik napról a másikra profi csatorna. A cél egy folyamatos fejlődés, ahol minden következő szint az előzőre épül.</p>
+  <section class="page-header support-section-title">
+    <span>FEJLŐDÉSI ÚT</span>
+    <h2>Lépésről lépésre</h2>
   </section>
 
-  <section class="grid support-steps">
-    <div class="card support-step"><span class="step-number">01</span><h3>Közösség</h3><p>Egy aktív közösség kialakítása, amely nem csak nézi, hanem alakítja is az adásokat.</p></div>
-    <div class="card support-step"><span class="step-number">02</span><h3>Technika</h3><p>Folyamatosan jobb hang, kép, teljesítmény és stabilabb streaming környezet.</p></div>
-    <div class="card support-step"><span class="step-number">03</span><h3>Tartalom</h3><p>Jobb klipek, videók, rövid tartalmak és több lehetőség a kreatív ötletekre.</p></div>
-    <div class="card support-step"><span class="step-number">04</span><h3>Profi szint</h3><p>Egy egységes, komoly és felismerhető SANCI9517 brand felépítése.</p></div>
+  <section class="support-grid support-path-grid">
+    <div class="card support-path-card"><span class="num">01</span><h3>Közösség</h3><p>Aktív és összetartó közösség.</p></div>
+    <div class="card support-path-card"><span class="num">02</span><h3>Technika</h3><p>Jobb hang, kép és stabilabb adás.</p></div>
+    <div class="card support-path-card"><span class="num">03</span><h3>Tartalom</h3><p>Jobb klipek, videók és ötletek.</p></div>
+    <div class="card support-path-card"><span class="num">04</span><h3>Profi szint</h3><p>Egységes, komoly SANCI9517 brand.</p></div>
   </section>
 
-  <section class="card support-goal">
+  <section class="card support-vision">
     <small>HOSSZÚ TÁVÚ CÉL</small>
-    <h2>Egyre jobb adás, egyre erősebb közösség</h2>
-    <p>A fejlesztések mindig valós szükségletből indulnak. Amikor eljön egy konkrét technikai vagy tartalmi fejlesztés ideje, itt átláthatóan meg lehet majd mutatni, mi következik és miért.</p>
-    <div class="goal-line">
-      <span class="goal-pill">Közösség</span><span class="goal-pill">Technika</span><span class="goal-pill">Tartalom</span><span class="goal-pill">Profi streaming</span>
-    </div>
+    <h2>Egyre jobb adás. Egyre erősebb közösség.</h2>
+    <p>A technikai fejlesztések mindig a következő valódi lépést szolgálják.</p>
   </section>
 
-  <section class="page-header support-title support-method-title">
-    <span>HA SZERETNÉL SEGÍTENI</span>
-    <h2>Te is hozzátehetsz a következő lépéshez</h2>
-    <p>A támogatás teljesen önkéntes. Nincs elvárás — minden egyes támogatás a közösség és a csatorna fejlődését segítheti.</p>
+  <section class="page-header support-section-title">
+    <span>TÁMOGATÁS</span>
+    <h2>Ha szeretnél hozzájárulni</h2>
+    <p>A támogatás önkéntes. Minden segítség a közösség és a csatorna fejlődését támogatja.</p>
   </section>
 
-  <section class="grid support-methods">
-    <a class="card support-method" href="https://www.twitch.tv/sanci9517/subscribe" target="_blank" rel="noopener noreferrer">
+  <section class="support-grid support-methods-grid">
+    <a class="card support-method-card" href="https://www.twitch.tv/sanci9517/subscribe" target="_blank" rel="noopener noreferrer">
       <small>TWITCH</small>
-      <h2>Twitch-előfizetés</h2>
-      <p>Ha rendszeresen szeretnéd támogatni a csatornát, az előfizetés közvetlenül a Twitch-közösséghez kapcsolódik.</p>
-      <span class="btn btn-primary">Twitch-előfizetés</span>
+      <h3>Twitch-előfizetés</h3>
+      <p>Rendszeres támogatás közvetlenül a Twitch-közösségen keresztül.</p>
+      <span class="btn btn-primary">Előfizetés</span>
     </a>
-    <a class="card support-method" href="https://streamlabs.com/sanci9517/tip" target="_blank" rel="noopener noreferrer">
+    <a class="card support-method-card" href="https://streamlabs.com/sanci9517/tip" target="_blank" rel="noopener noreferrer">
       <small>STREAMLABS</small>
-      <h2>Közvetlen támogatás</h2>
-      <p>Egyszeri támogatás, ha szeretnél hozzájárulni a SANCI9517 következő fejlesztéseihez.</p>
+      <h3>Közvetlen támogatás</h3>
+      <p>Egyszeri támogatás a SANCI9517 fejlődéséhez.</p>
       <span class="btn btn-primary">Támogatás</span>
     </a>
   </section>
 
-  <section class="support-box support-note">
+  <section class="support-box support-bottom">
     <div>
-      <small style="color:var(--purple2);font-weight:900;letter-spacing:2px">A LEGFONTOSABB</small>
-      <h2>Nem kell támogatnod ahhoz, hogy a közösség része legyél.</h2>
-      <p>A követés, a nézés, a chat, a Discord, a megosztás és az, hogy visszajössz a következő adásra, ugyanúgy számít. <strong>Köszönöm, hogy velünk építed.</strong></p>
+      <small style="color:var(--purple2);font-weight:900;letter-spacing:2px">KÖZÖSSÉG</small>
+      <h2>A támogatás nem feltétele a közösségnek.</h2>
+      <p>A követés, a nézés, a chat, a Discord és a megosztás ugyanúgy számít.</p>
     </div>
   </section>
 </main>
