@@ -1,0 +1,94 @@
+:root{--site-width:1120px;--site-gutter:44px;--site-gap:20px}
+
+/* SANCI9517 — unified layout system */
+html,body{overflow-x:hidden}
+.container,.page-header,.grid,.schedule,.stats,.support-box,.dashboard,.news-wrap,.clips-wrap,.games-wrap{width:min(var(--site-width),calc(100% - var(--site-gutter)))!important;margin-left:auto!important;margin-right:auto!important}
+
+/* One desktop navigation system on every page */
+@media(min-width:761px){
+  .site-header{overflow:visible!important}
+  .site-header .nav{position:relative!important;min-height:72px!important}
+  .menu-toggle{display:flex!important;width:46px!important;height:46px!important;border-radius:50%!important;flex:0 0 46px!important;font-size:22px!important;line-height:1!important;order:3!important;box-shadow:0 8px 25px rgba(0,0,0,.3)!important}
+  .menu-toggle:hover{background:#241c32!important;border-color:var(--purple)!important}
+  .nav-links{display:none!important;position:absolute!important;z-index:1100!important;top:calc(100% + 10px)!important;right:0!important;left:auto!important;width:300px!important;max-width:calc(100vw - 40px)!important;flex-direction:column!important;align-items:stretch!important;gap:4px!important;padding:10px!important;background:rgba(10,9,13,.99)!important;border:1px solid rgba(167,139,250,.3)!important;border-radius:16px!important;box-shadow:0 25px 65px rgba(0,0,0,.65)!important}
+  .nav-links.open{display:flex!important}
+  .nav-links a{display:flex!important;align-items:center!important;min-height:43px!important;padding:10px 13px!important;border-radius:9px!important;font-size:12px!important}
+  .nav-links a.active{background:#241c32!important;color:#fff!important}
+}
+
+/* Consistent inner-page rhythm */
+main:not(.home-page){padding-bottom:54px!important}
+.page-header{margin-top:46px!important;margin-bottom:28px!important;padding:30px 34px!important}
+.page-header h1{font-size:36px!important}
+
+/* Equal card grids */
+.grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:20px!important}
+.grid>.card,.schedule>.card,.stats>.card{min-width:0!important}
+.card{min-width:0!important}
+
+/* News */
+.news-grid{display:grid!important;grid-template-columns:1.35fr 1fr!important;gap:20px!important}
+.news-list{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:20px!important;margin-top:20px!important}
+.news-card{min-width:0!important;min-height:210px!important;display:flex!important;flex-direction:column!important}
+.news-card .news-actions{margin-top:auto!important;padding-top:18px!important}
+
+/* Clips */
+.clip-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:20px!important}
+.clip-card{min-width:0!important;height:100%!important}
+.clip-thumb{height:165px!important}
+.clip-body{min-height:145px!important;display:flex!important;flex-direction:column!important}
+
+/* Schedule */
+.next-stream{width:min(var(--site-width),calc(100% - var(--site-gutter)))!important;margin-left:auto!important;margin-right:auto!important}
+.schedule{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:20px!important}
+.schedule>.card{min-height:150px!important;display:flex!important;flex-direction:column!important;justify-content:center!important}
+
+/* Games */
+.game-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:20px!important}
+.game-card{min-height:280px!important;display:flex!important;flex-direction:column!important}
+.game-card .game-actions{margin-top:auto!important;padding-top:18px!important}
+.game-feature{min-height:245px!important}
+
+/* Stats */
+.metric-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:20px!important}
+.metric{height:160px!important;min-height:160px!important;display:flex!important;flex-direction:column!important;justify-content:center!important}
+.milestones{gap:14px!important}
+.milestone{min-width:0!important}
+
+/* Support */
+.support-community-grid,.support-methods-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.support-path-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+
+/* Generic consistency for action rows */
+.news-actions,.game-actions,.premium-actions{align-items:center!important}
+.btn{white-space:nowrap!important}
+
+/* Footer */
+footer{margin-top:auto!important}
+
+@media(max-width:1000px) and (min-width:761px){
+  :root{--site-gutter:34px}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .news-list{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .clip-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .schedule{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .support-path-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+
+@media(max-width:760px){
+  :root{--site-gutter:28px}
+  .container,.page-header,.grid,.schedule,.stats,.support-box,.dashboard,.news-wrap,.clips-wrap,.games-wrap{width:calc(100% - var(--site-gutter))!important}
+  main:not(.home-page){padding-bottom:32px!important}
+  .page-header{margin-top:30px!important;margin-bottom:22px!important;padding:25px 22px!important}
+  .page-header h1{font-size:31px!important}
+  .grid,.news-grid,.news-list,.clip-grid,.game-grid,.metric-grid,.schedule,.support-community-grid,.support-path-grid,.support-methods-grid{grid-template-columns:1fr!important}
+  .news-card,.game-card{min-height:0!important}
+  .clip-thumb{height:155px!important}
+  .schedule>.card{min-height:125px!important}
+  .metric{height:auto!important;min-height:125px!important}
+}
+
+@media(max-width:600px){
+  :root{--site-gutter:28px}
+  .page-header{padding:24px 20px!important}
+}
