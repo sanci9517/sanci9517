@@ -3,9 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="A SANCI9517 csatorna támogatási lehetőségei.">
+<meta name="description" content="A SANCI9517 csatorna támogatási lehetőségei és technikai fejlesztési irányai.">
 <title>Támogatás | SANCI9517</title>
 <link rel="stylesheet" href="style.css?v=20260904">
+<style>
+/* SUPPORT PAGE — intentional exception: conversion-focused, but same global design system */
+.support-intro{margin-bottom:22px!important}
+.support-intro p{max-width:680px!important}
+.support-methods{grid-template-columns:repeat(2,minmax(0,1fr))!important;margin-bottom:56px!important}
+.support-method{position:relative!important;min-height:285px!important;padding:34px!important;overflow:hidden!important;text-decoration:none!important}
+.support-method:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 90% 10%,rgba(139,92,246,.16),transparent 38%);pointer-events:none}
+.support-method>*{position:relative;z-index:1}
+.support-method h2{font-size:27px!important;margin:9px 0 10px!important}
+.support-method p{max-width:470px!important;min-height:72px;margin-bottom:22px!important}
+.support-method .btn{min-width:170px}
+.support-section{margin:0 0 20px!important;text-align:center!important}
+.support-section h2{font-size:30px!important}
+.support-section p{max-width:700px!important;margin:9px auto 0!important}
+.support-info{grid-template-columns:repeat(3,minmax(0,1fr))!important;margin-bottom:58px!important}
+.support-info .card{min-height:185px!important}
+.support-tech{margin-bottom:22px!important}
+.support-tech-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;margin-bottom:38px!important}
+.support-tech-card{min-height:215px!important}
+.support-tech-card h2{font-size:21px!important}
+.support-final{width:100%!important;min-height:155px!important;margin:0 auto 42px!important;padding:30px 34px!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;background:linear-gradient(145deg,rgba(139,92,246,.10),rgba(255,255,255,.018))!important}
+.support-final h2{font-size:24px!important;margin-bottom:7px!important}
+.support-final p{max-width:700px!important;margin:0 auto!important}
+@media(max-width:900px){
+ .support-methods,.support-info,.support-tech-grid{grid-template-columns:1fr!important}
+ .support-method{min-height:230px!important;padding:25px 20px!important}
+ .support-method p{min-height:0}
+ .support-info .card,.support-tech-card{min-height:175px!important}
+ .support-final{min-height:145px!important;padding:25px 18px!important}
+}
+</style>
 </head>
 <body>
 <header class="site-header">
@@ -13,96 +44,67 @@
     <a href="index.html" class="logo">SANCI<span>9517</span></a>
     <button class="menu-toggle" id="menuToggle" type="button" aria-label="Menü" aria-expanded="false">☰</button>
     <nav class="nav-links" id="navLinks">
-      <a href="index.html">Főoldal</a>
-      <a href="hirek.html">Hírek</a>
-      <a href="szavazas.html">Szavazás</a>
-      <a href="clips.html">Clips</a>
-      <a href="menetrend.html">Menetrend</a>
-      <a href="twitch.html">Élő</a>
-      <a href="stats.html">Stats</a>
-      <a href="games.html">Játékok</a>
-      <a href="milestones.html">Mérföldkövek</a>
-      <a href="tamogatas.html" class="active">Támogatás</a>
-      <a href="setup.html">Setup</a>
-      <a href="partners.html">Partnerség</a>
-      <a href="discord.html">Közösség</a>
-      <a href="kapcsolat.html">Kapcsolat</a>
+      <a href="index.html">Főoldal</a><a href="hirek.html">Hírek</a><a href="szavazas.html">Szavazás</a><a href="clips.html">Clips</a><a href="menetrend.html">Menetrend</a><a href="twitch.html">Élő</a><a href="stats.html">Stats</a><a href="games.html">Játékok</a><a href="milestones.html">Mérföldkövek</a><a href="tamogatas.html" class="active">Támogatás</a><a href="setup.html">Setup</a><a href="partners.html">Partnerség</a><a href="discord.html">Közösség</a><a href="kapcsolat.html">Kapcsolat</a>
     </nav>
   </div>
 </header>
 
 <main>
-  <section class="page-header">
+  <section class="page-header support-intro">
     <span>TÁMOGATÁS</span>
-    <h1>Támogatás</h1>
-    <p>Ha szeretnéd támogatni a SANCI9517 csatornát, itt megtalálod a lehetőségeket.</p>
+    <h1>A csatorna mögötti fejlesztés</h1>
+    <p>A támogatás nem csak egy gomb. A célja, hogy hosszú távon jobb technikai háttér, jobb adásminőség és több lehetőség legyen a SANCI9517 tartalmaiban.</p>
   </section>
 
-  <section class="grid">
-    <a class="card" href="https://www.twitch.tv/sanci9517/subscribe" target="_blank" rel="noopener noreferrer">
+  <section class="grid support-methods">
+    <a class="card support-method" href="https://www.twitch.tv/sanci9517/subscribe" target="_blank" rel="noopener noreferrer">
       <small>TWITCH</small>
       <h2>Twitch-előfizetés</h2>
-      <p>Az előfizetéssel közvetlenül támogatod a csatornát, és hozzáférhetsz a Twitch által biztosított előfizetői előnyökhöz.</p>
-      <span class="btn btn-primary">Előfizetés</span>
+      <p>Rendszeres támogatási forma, amely közvetlenül kapcsolódik a Twitch-csatornához és az ottani közösséghez.</p>
+      <span class="btn btn-primary">Twitch-előfizetés</span>
     </a>
-
-    <a class="card" href="https://streamlabs.com/sanci9517/tip" target="_blank" rel="noopener noreferrer">
+    <a class="card support-method" href="https://streamlabs.com/sanci9517/tip" target="_blank" rel="noopener noreferrer">
       <small>STREAMLABS</small>
       <h2>Közvetlen támogatás</h2>
-      <p>Egyszeri támogatással hozzájárulhatsz a csatorna működéséhez és fejlesztéséhez.</p>
+      <p>Egyszeri támogatási lehetőség azoknak, akik közvetlenül szeretnének hozzájárulni a csatorna működéséhez és fejlesztéséhez.</p>
       <span class="btn btn-primary">Támogatás</span>
     </a>
   </section>
 
-  <section class="page-header section-header">
-    <span>AMI SOKAT SEGÍT</span>
-    <h2>Nem csak pénzzel támogathatsz</h2>
-    <p>A közösség aktivitása ugyanúgy fontos része a csatorna fejlődésének.</p>
+  <section class="page-header support-section">
+    <span>MIÉRT SZÁMÍT?</span>
+    <h2>A támogatás helye a projektben</h2>
+    <p>Nem szeretnénk mesterséges célösszegeket vagy kitalált mérföldköveket feltüntetni. A fejlesztések valós szükségletek alapján készülnek.</p>
   </section>
 
-  <section class="grid">
-    <div class="card">
-      <small>TWITCH</small>
-      <h2>Követés</h2>
-      <p>Kövess Twitchen, hogy értesítést kapj az új élő adásokról.</p>
-    </div>
-    <div class="card">
-      <small>LIVE</small>
-      <h2>Megtekintés</h2>
-      <p>Nézd az adásokat, írj a chatbe és legyél része a közösségnek.</p>
-    </div>
-    <div class="card">
-      <small>KÖZÖSSÉG</small>
-      <h2>Megosztás</h2>
-      <p>Oszd meg a tartalmakat azokkal, akiket érdekelhetnek a streamek.</p>
-    </div>
+  <section class="grid support-info">
+    <div class="card"><small>01</small><h2>Adásminőség</h2><p>Stabilabb és jobb minőségű streaming környezet kialakítása.</p></div>
+    <div class="card"><small>02</small><h2>Technikai háttér</h2><p>Streaminghez szükséges hardverek, perifériák és egyéb eszközök fokozatos fejlesztése.</p></div>
+    <div class="card"><small>03</small><h2>Tartalom</h2><p>Több lehetőség a játékok, klipek és közösségi tartalmak készítésére.</p></div>
   </section>
 
-  <section class="grid">
-    <div class="card">
-      <small>FEJLESZTÉS</small>
-      <h2>Tartalom</h2>
-      <p>A támogatások és a közösség segítsége a jövőbeli tartalmak és adások fejlesztését segítheti.</p>
-    </div>
-    <div class="card">
-      <small>SETUP</small>
-      <h2>Technika</h2>
-      <p>Hozzájárulhat a streaminghez használt hardverek és technikai eszközök fejlesztéséhez.</p>
-    </div>
-    <div class="card">
-      <small>KÖZÖSSÉG</small>
-      <h2>Köszönöm</h2>
-      <p>Minden követés, megtekintés, megosztás és támogatás számít.</p>
+  <section class="page-header support-section support-tech">
+    <span>HOSSZÚ TÁVÚ IRÁNY</span>
+    <h2>Technikai fejlesztési alap</h2>
+    <p>Ez az oldal később egy valódi fejlesztési központként is működhet: amikor lesz konkrét következő fejlesztés, annak célja, állapota és eredménye itt átláthatóan megjeleníthető.</p>
+  </section>
+
+  <section class="grid support-tech-grid">
+    <div class="card support-tech-card"><small>STREAMING</small><h2>Teljesítmény</h2><p>A játék és a stream együttes stabilitásának javítása, hogy kevesebb kompromisszum kelljen az adás közben.</p></div>
+    <div class="card support-tech-card"><small>AUDIO / VIDEO</small><h2>Minőség</h2><p>Mikrofon, kamera, világítás és egyéb tartalomkészítő eszközök fejlesztése, amikor indokolt.</p></div>
+    <div class="card support-tech-card"><small>WORKFLOW</small><h2>Hatékonyság</h2><p>Olyan technikai megoldások kialakítása, amelyek egyszerűbbé és gyorsabbá teszik a streamelést és a tartalomkészítést.</p></div>
+  </section>
+
+  <section class="support-box support-final">
+    <div>
+      <small style="color:var(--purple2);font-weight:900;letter-spacing:2px">KÖZÖSSÉG</small>
+      <h2>A támogatás önkéntes</h2>
+      <p>A követés, a megtekintés, a chatben való részvétel és a megosztás ugyanúgy értékes támogatás. Köszönöm, hogy itt vagy.</p>
     </div>
   </section>
 </main>
 
-<footer>
-  <div class="container">
-    <span>SANCI9517</span>
-    <p>© 2026 Official Gaming Hub</p>
-  </div>
-</footer>
+<footer><div class="container"><span>SANCI9517</span><p>© 2026 Official Gaming Hub</p></div></footer>
 
 <script>
 const b=document.getElementById('menuToggle'),n=document.getElementById('navLinks');
