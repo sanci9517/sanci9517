@@ -114,4 +114,38 @@
     set('.support-section-title:nth-of-type(2) p','A támogatás önkéntes. Minden segítség a csatorna és a közösség fejlődését szolgálja.');
     meta('A SANCI9517 közösségének fejlődése és önkéntes támogatási lehetőségei.');
   }
+
+  // Site-wide visitor counter: every page contributes to one shared counter.
+  const counterNs='sanci9517.github.io';
+  const counterKey='site';
+  const counterUrl='https://counterapi.com/api/'+encodeURIComponent(counterNs)+'/view/'+encodeURIComponent(counterKey);
+  const loadVisitorCounter=()=>{
+    if(!document.body)return;
+    const img=document.createElement('img');
+    img.src=counterUrl+'?invisible=true&noLink=true&noCss=true&cb='+(Date.now());
+    img.alt='';
+    img.width=1;img.height=1;
+    img.style.cssText='position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;left:-9999px';
+    img.setAttribute('aria-hidden','true');
+    document.body.appendChild(img);
+  };
+  loadVisitorCounter();
+
+  if(page==='index.html'){
+    const mount=()=>{
+      if(document.getElementById('sanciVisitorCard'))return;
+      const target=document.querySelector('.home-live')||document.querySelector('.premium-links')||document.querySelector('main');
+      if(!target)return;
+      const card=document.createElement('div');
+      card.id='sanciVisitorCard';
+      card.className='sanci-visitor-card';
+      card.innerHTML='<div class="sanci-visitor-icon">◉</div><div><span>LÁTOGATÓK</span><strong id="sanciVisitorCount">—</strong><small>összes oldalmegtekintés</small></div>';
+      target.parentNode.insertBefore(card,target.nextSibling);
+      const style=document.createElement('style');
+      style.textContent='.sanci-visitor-card{width:min(1240px,calc(100% - 80px));margin:20px auto 0;box-sizing:border-box;display:flex;align-items:center;gap:16px;padding:18px 22px;border:1px solid rgba(167,139,250,.18);border-radius:16px;background:linear-gradient(135deg,rgba(17,17,22,.96),rgba(13,10,19,.96));box-shadow:0 16px 45px rgba(0,0,0,.24)}.sanci-visitor-icon{width:42px;height:42px;display:grid;place-items:center;border-radius:50%;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.28);color:#a78bfa;font-size:18px}.sanci-visitor-card span{display:block;color:#9b95a5;font-size:9px;font-weight:900;letter-spacing:1.8px}.sanci-visitor-card strong{display:block;margin-top:3px;color:#fff;font-size:25px;line-height:1.1}.sanci-visitor-card small{display:block;margin-top:3px;color:#77717f;font-size:10px}@media(max-width:760px){.sanci-visitor-card{width:calc(100% - 28px);padding:16px 18px;margin-top:14px}.sanci-visitor-card strong{font-size:22px}}@media(max-width:430px){.sanci-visitor-card{width:calc(100% - 20px)}}';
+      document.head.appendChild(style);
+      fetch(counterUrl+'?noLink=true&noCss=true&cb='+(Date.now()),{cache:'no-store'}).then(r=>r.json()).then(data=>{const el=document.getElementById('sanciVisitorCount');if(el&&data&&typeof data.value!=='undefined')el.textContent=Number(data.value).toLocaleString('hu-HU')}).catch(()=>{});
+    };
+    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount);else setTimeout(mount,0);
+  }
 })();
