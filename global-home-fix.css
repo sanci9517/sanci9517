@@ -1,0 +1,2 @@
+/* Homepage keeps its intentionally full-width hero. */
+body.home-page main{width:auto!important;max-width:none!important;margin:0!important;padding-left:0!important;padding-right:0!important}
