@@ -1,0 +1,297 @@
+/* SANCI9517 — unified creator design system
+   Loaded after the page styles so every page shares the same visual rhythm.
+   No content, links, amounts or page-specific data are changed here. */
+
+:root{
+  --ui-max:1240px;
+  --ui-gap:18px;
+  --ui-radius:18px;
+  --ui-box-bg:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.015));
+  --ui-box-border:rgba(255,255,255,.10);
+  --ui-box-shadow:0 18px 55px rgba(0,0,0,.28);
+}
+
+/* Shared page frame */
+main:not(.home-page){
+  width:min(var(--ui-max),calc(100% - 44px));
+  margin:0 auto;
+}
+main:not(.home-page) .page-header{
+  width:100%!important;
+  margin:48px 0 30px!important;
+  padding:34px 36px!important;
+  text-align:center!important;
+  border:1px solid var(--ui-box-border)!important;
+  border-radius:var(--ui-radius)!important;
+  background:linear-gradient(145deg,rgba(139,92,246,.075),rgba(255,255,255,.018))!important;
+  box-shadow:var(--ui-box-shadow)!important;
+}
+main:not(.home-page) .page-header:before{display:none!important}
+main:not(.home-page) .page-header h1,
+main:not(.home-page) .page-header h2{margin:6px 0 0!important}
+main:not(.home-page) .page-header p{max-width:760px!important;margin:10px auto 0!important}
+
+/* Standard grids */
+main:not(.home-page) .grid,
+main:not(.home-page) .schedule,
+main:not(.home-page) .stats{
+  width:100%!important;
+  margin:0 0 34px!important;
+  gap:var(--ui-gap)!important;
+  align-items:stretch!important;
+}
+
+main:not(.home-page) .grid>.card,
+main:not(.home-page) .schedule>.card,
+main:not(.home-page) .stats>.card,
+main:not(.home-page) .grid>.support-box{
+  width:auto!important;
+  max-width:none!important;
+  min-height:205px!important;
+  height:auto!important;
+  margin:0!important;
+  padding:26px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  border:1px solid var(--ui-box-border)!important;
+  border-radius:var(--ui-radius)!important;
+  background:var(--ui-box-bg)!important;
+  box-shadow:var(--ui-box-shadow)!important;
+}
+
+main:not(.home-page) .grid>.card h2,
+main:not(.home-page) .grid>.card h3,
+main:not(.home-page) .schedule>.card h2,
+main:not(.home-page) .schedule>.card h3,
+main:not(.home-page) .stats>.card h2,
+main:not(.home-page) .stats>.card h3,
+main:not(.home-page) .grid>.support-box h2{
+  margin-left:auto!important;
+  margin-right:auto!important;
+  text-align:center!important;
+}
+main:not(.home-page) .grid>.card p,
+main:not(.home-page) .schedule>.card p,
+main:not(.home-page) .stats>.card p,
+main:not(.home-page) .grid>.support-box p{
+  max-width:620px!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+  text-align:center!important;
+}
+main:not(.home-page) .grid>.card .btn,
+main:not(.home-page) .schedule>.card .btn,
+main:not(.home-page) .stats>.card .btn,
+main:not(.home-page) .grid>.support-box .btn{
+  align-self:center!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
+
+/* Standalone content boxes */
+main:not(.home-page) .support-box,
+main:not(.home-page) .poll-box,
+main:not(.home-page) .clip-hero,
+main:not(.home-page) .tip,
+main:not(.home-page) .latest-card,
+main:not(.home-page) .about-block,
+main:not(.home-page) .partnership,
+main:not(.home-page) .footer-cta-box,
+main:not(.home-page) .offline-box{
+  border-radius:var(--ui-radius)!important;
+}
+
+main:not(.home-page) .support-box{
+  text-align:center!important;
+}
+main:not(.home-page) .support-box p{margin-left:auto!important;margin-right:auto!important}
+main:not(.home-page) .support-box .btn{margin-left:auto!important;margin-right:auto!important}
+
+/* Cards with custom page classes */
+main:not(.home-page) .clip-hero{
+  text-align:center!important;
+  padding:30px!important;
+  background:linear-gradient(145deg,rgba(139,92,246,.10),rgba(255,255,255,.018))!important;
+}
+main:not(.home-page) .clip-hero p{max-width:720px;margin:0 auto 20px!important}
+main:not(.home-page) .clip-hero .btn{margin-left:auto!important;margin-right:auto!important}
+main:not(.home-page) .clip-grid{align-items:stretch!important}
+main:not(.home-page) .clip-card{height:100%!important;min-height:320px!important;display:flex!important;flex-direction:column!important;text-align:center!important}
+main:not(.home-page) .clip-thumb{height:165px!important;flex:0 0 165px!important}
+main:not(.home-page) .clip-body{flex:1!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;padding:22px!important}
+main:not(.home-page) .clip-body p{max-width:280px!important}
+
+main:not(.home-page) .latest-card,
+main:not(.home-page) .latest-card.small{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  min-height:250px!important;
+}
+main:not(.home-page) .latest-card p{margin-left:auto!important;margin-right:auto!important}
+main:not(.home-page) .latest-link{margin-left:auto!important;margin-right:auto!important}
+
+main:not(.home-page) .game-item{
+  min-height:180px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  gap:10px!important;
+  border-radius:var(--ui-radius)!important;
+}
+main:not(.home-page) .game-item p{max-width:300px!important}
+
+main:not(.home-page) .about-block{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  min-height:230px!important;
+}
+main:not(.home-page) .about-copy p{margin-left:auto!important;margin-right:auto!important}
+main:not(.home-page) .partnership{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  min-height:180px!important;
+}
+main:not(.home-page) .partnership>a{margin-top:14px!important}
+main:not(.home-page) .footer-cta-box{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  min-height:190px!important;
+}
+
+/* Poll: same visual language, but keep option controls functional */
+main:not(.home-page) .poll-title{text-align:center!important}
+main:not(.home-page) .poll-options{align-items:stretch!important}
+main:not(.home-page) .poll-option{
+  min-height:110px!important;
+  justify-content:center!important;
+  text-align:center!important;
+}
+main:not(.home-page) .poll-option-content{text-align:center!important}
+main:not(.home-page) .poll-option-icon{margin-right:10px!important}
+
+/* Twitch stats boxes */
+main:not(.home-page) .live-details{align-items:stretch!important}
+main:not(.home-page) .live-stat{
+  min-height:125px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  border-radius:var(--ui-radius)!important;
+}
+
+/* Homepage content cards use the same box rhythm without destroying its hero */
+.home-page .latest-card,
+.home-page .latest-card.small,
+.home-page .game-item,
+.home-page .about-block,
+.home-page .partnership,
+.home-page .footer-cta-box{
+  border-radius:var(--ui-radius)!important;
+}
+.home-page .latest-card,
+.home-page .latest-card.small{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+}
+.home-page .latest-card p{margin-left:auto!important;margin-right:auto!important}
+.home-page .latest-link{margin-left:auto!important;margin-right:auto!important}
+.home-page .game-item{
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+}
+.home-page .game-item p{margin-left:auto!important;margin-right:auto!important}
+.home-page .about-block{
+  align-items:center!important;
+  text-align:center!important;
+}
+.home-page .about-copy p{margin-left:auto!important;margin-right:auto!important}
+.home-page .partnership{
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+}
+.home-page .footer-cta-box{
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+}
+
+/* Desktop: fixed, repeatable card rhythm */
+@media(min-width:901px){
+  main:not(.home-page) .grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  main:not(.home-page) .schedule,
+  main:not(.home-page) .stats{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  main:not(.home-page) .grid>.card,
+  main:not(.home-page) .schedule>.card,
+  main:not(.home-page) .stats>.card,
+  main:not(.home-page) .grid>.support-box{min-height:210px!important}
+  main:not(.home-page) .clip-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:18px!important}
+  main:not(.home-page) .games-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:18px!important}
+}
+
+@media(min-width:901px) and (max-width:1199px){
+  main:not(.home-page) .grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  main:not(.home-page) .schedule,
+  main:not(.home-page) .stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  main:not(.home-page) .games-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+
+/* Mobile: same design system, compact rather than a different design */
+@media(max-width:900px){
+  main:not(.home-page){width:100%;padding-left:14px;padding-right:14px}
+  main:not(.home-page) .page-header{margin:28px 0 22px!important;padding:25px 20px!important}
+  main:not(.home-page) .grid,
+  main:not(.home-page) .schedule,
+  main:not(.home-page) .stats{grid-template-columns:1fr!important;gap:14px!important;margin-bottom:28px!important}
+  main:not(.home-page) .grid>.card,
+  main:not(.home-page) .schedule>.card,
+  main:not(.home-page) .stats>.card,
+  main:not(.home-page) .grid>.support-box{min-height:175px!important;padding:23px 18px!important}
+  main:not(.home-page) .clip-grid{grid-template-columns:1fr!important;gap:14px!important}
+  main:not(.home-page) .clip-card{min-height:285px!important}
+  main:not(.home-page) .clip-thumb{height:145px!important;flex-basis:145px!important}
+  main:not(.home-page) .games-grid{grid-template-columns:1fr!important;gap:14px!important}
+  main:not(.home-page) .game-item{min-height:170px!important}
+  main:not(.home-page) .about-block{min-height:210px!important;padding:24px!important}
+  main:not(.home-page) .partnership{min-height:170px!important;padding:23px!important}
+  main:not(.home-page) .footer-cta-box{min-height:175px!important;padding:24px!important}
+  main:not(.home-page) .latest-card,
+  main:not(.home-page) .latest-card.small{min-height:215px!important}
+}
+
+@media(max-width:600px){
+  main:not(.home-page){padding-left:7px;padding-right:7px}
+  main:not(.home-page) .page-header{margin-top:22px!important;padding:22px 16px!important}
+  main:not(.home-page) .grid>.card,
+  main:not(.home-page) .schedule>.card,
+  main:not(.home-page) .stats>.card,
+  main:not(.home-page) .grid>.support-box{min-height:165px!important;padding:20px 15px!important}
+  main:not(.home-page) .page-header h1{font-size:32px!important}
+  main:not(.home-page) .page-header p{font-size:13px!important}
+  main:not(.home-page) .clip-hero{padding:22px!important}
+  main:not(.home-page) .clip-card{min-height:270px!important}
+  main:not(.home-page) .poll-option{min-height:92px!important}
+}
