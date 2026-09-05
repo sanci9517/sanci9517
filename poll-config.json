@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "active": true,
+  "id": "poll-001",
+  "question": "Melyik játék legyen a következő streamen?",
+  "options": [
+    {"id":"fortnite","label":"Fortnite","description":"Battle Royale","icon":"🎯"},
+    {"id":"hearthstone","label":"Hearthstone","description":"Stratégiai kártyajáték","icon":"🃏"},
+    {"id":"egyeb","label":"Egyéb","description":"Más játék","icon":"🎮"}
+  ]
+}
