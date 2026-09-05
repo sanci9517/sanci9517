@@ -1,86 +1,56 @@
 <!DOCTYPE html><html lang="hu"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="A SANCI9517 csatorna támogatási lehetőségei Twitch-előfizetéssel és közvetlen támogatással."><title>SANCI9517 | Támogatás</title><link rel="stylesheet" href="style.css?v=20260904"><style>
-/* Támogatás oldal – csak asztali nézet. A mobil nézetet nem módosítja. */
+/* SANCI9517 SUPPORT — desktop redesign only. Mobile styles remain untouched. */
 @media (min-width:901px){
-  .support-page{max-width:1180px;margin:0 auto;padding:0 0 90px}
-  .support-page .page-header{max-width:860px;margin:0 auto;padding:72px 0 46px;text-align:center}
-  .support-page .page-header small{display:inline-block;margin-bottom:12px;letter-spacing:2.5px;font-size:10px;font-weight:900;color:var(--purple2)}
-  .support-page .page-header h1{margin:0;font-size:58px;letter-spacing:-2.5px;line-height:1.02}
-  .support-page .page-header p{max-width:650px;margin:18px auto 0;color:#aaa5b4;font-size:15px;line-height:1.7}
+  body:has(.support-page){background:radial-gradient(circle at 50% 8%,rgba(139,92,246,.09),transparent 34%),#050507}
+  .support-page{max-width:1180px!important;margin:0 auto!important;padding:0 0 100px!important}
+  .support-page .page-header{max-width:920px!important;margin:0 auto!important;padding:82px 0 52px!important;text-align:center!important;background:transparent!important;border:0!important}
+  .support-page .page-header small{display:inline-block!important;margin-bottom:14px!important;color:var(--purple2)!important;font-size:10px!important;font-weight:900!important;letter-spacing:3px!important}
+  .support-page .page-header h1{margin:0!important;font-size:64px!important;line-height:1!important;letter-spacing:-3px!important}
+  .support-page .page-header p{max-width:610px!important;margin:22px auto 0!important;color:#aaa5b4!important;font-size:16px!important;line-height:1.8!important}
 
-  .support-hero{position:relative;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(300px,.75fr);gap:0;overflow:hidden;min-height:300px;margin:0 0 34px;border:1px solid rgba(167,139,250,.18);border-radius:18px;background:linear-gradient(120deg,#0d0c12,#111018 58%,#171025);box-shadow:0 28px 70px rgba(0,0,0,.28)}
-  .support-hero:after{content:"";position:absolute;width:360px;height:360px;right:-120px;top:-130px;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,.23),transparent 68%);pointer-events:none}
-  .support-hero-copy{position:relative;z-index:1;padding:48px 52px 44px}
-  .support-hero-copy small{color:var(--purple2);font-size:10px;font-weight:900;letter-spacing:2px}
-  .support-hero-copy h2{margin:12px 0 14px;font-size:35px;letter-spacing:-1.3px;line-height:1.1}
-  .support-hero-copy p{max-width:650px;margin:0;color:#b4afbd;line-height:1.7;font-size:14px}
-  .support-hero-actions{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}
-  .support-hero-actions .btn{min-width:190px;text-align:center}
-  .support-hero-note{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;padding:38px;border-left:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.018)}
-  .support-hero-note-inner{width:100%;padding:26px;border:1px solid rgba(255,255,255,.09);border-radius:14px;background:rgba(0,0,0,.15)}
-  .support-hero-note strong{display:block;font-size:18px;margin-bottom:8px}
-  .support-hero-note p{margin:0;color:#9e99a8;font-size:13px;line-height:1.65}
+  .support-page>section:first-of-type{margin:0!important;padding:0!important}
+  .support-page>section:first-of-type>.grid{display:grid!important;grid-template-columns:1.25fr 1fr!important;gap:16px!important;margin:0!important}
+  .support-page>section:first-of-type .support-box{position:relative!important;min-height:310px!important;margin:0!important;padding:38px!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:flex-end!important;overflow:hidden!important;border:1px solid rgba(167,139,250,.24)!important;border-radius:22px!important;background:linear-gradient(145deg,rgba(139,92,246,.16),rgba(17,17,22,.96) 62%)!important;box-shadow:0 28px 70px rgba(0,0,0,.34)!important}
+  .support-page>section:first-of-type .support-box:before{content:"";position:absolute!important;width:280px!important;height:280px!important;right:-100px!important;top:-120px!important;border-radius:50%!important;background:radial-gradient(circle,rgba(167,139,250,.25),transparent 68%)!important;pointer-events:none!important}
+  .support-page>section:first-of-type .support-box:first-child{background:linear-gradient(135deg,rgba(139,92,246,.25),rgba(18,17,24,.98) 70%)!important}
+  .support-page>section:first-of-type .support-box:first-child:after{content:"01";position:absolute!important;right:30px!important;top:24px!important;font-size:12px!important;font-weight:900!important;letter-spacing:2px!important;color:rgba(255,255,255,.22)!important}
+  .support-page>section:first-of-type .support-box:nth-child(2):after{content:"02";position:absolute!important;right:30px!important;top:24px!important;font-size:12px!important;font-weight:900!important;letter-spacing:2px!important;color:rgba(255,255,255,.22)!important}
+  .support-page .support-box small{position:relative!important;z-index:1!important;letter-spacing:2.2px!important;font-weight:900!important;font-size:10px!important}
+  .support-page .support-box h2{position:relative!important;z-index:1!important;margin:10px 0 10px!important;font-size:28px!important;letter-spacing:-.8px!important}
+  .support-page .support-box p{position:relative!important;z-index:1!important;max-width:570px!important;margin:0!important;color:#aaa5b4!important;line-height:1.7!important;font-size:14px!important}
+  .support-page .support-box br{display:none!important}
+  .support-page .support-box .btn{position:relative!important;z-index:2!important;margin-top:24px!important;min-width:190px!important;justify-content:center!important}
 
-  .support-section{margin-top:42px}
-  .support-section-heading{display:flex;align-items:end;justify-content:space-between;gap:30px;margin-bottom:18px}
-  .support-section-heading small{display:block;color:var(--purple2);font-size:9px;font-weight:900;letter-spacing:2px;margin-bottom:7px}
-  .support-section-heading h2{margin:0;font-size:28px;letter-spacing:-.7px}
-  .support-section-heading p{max-width:500px;margin:0;color:#8f8a98;font-size:12px;line-height:1.6;text-align:right}
+  .support-page>section:nth-of-type(2){margin-top:18px!important;padding:34px 38px!important;border:1px solid rgba(255,255,255,.08)!important;border-radius:22px!important;background:rgba(12,12,16,.82)!important}
+  .support-page>section:nth-of-type(2)>.card{padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
+  .support-page>section:nth-of-type(2)>.card>small{color:var(--purple2)!important;letter-spacing:2.5px!important;font-size:10px!important;font-weight:900!important}
+  .support-page>section:nth-of-type(2)>.card>h2{margin:9px 0 8px!important;font-size:30px!important;letter-spacing:-1px!important}
+  .support-page>section:nth-of-type(2)>.card>p{max-width:690px!important;color:#9994a3!important;line-height:1.7!important}
+  .support-page>section:nth-of-type(2)>.card>br{display:none!important}
+  .support-page>section:nth-of-type(2) .grid{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:10px!important;margin-top:25px!important}
+  .support-page>section:nth-of-type(2) .grid>div{min-height:150px!important;padding:23px!important;border:1px solid rgba(255,255,255,.07)!important;border-radius:15px!important;background:rgba(255,255,255,.025)!important}
+  .support-page>section:nth-of-type(2) .grid h3{margin:0 0 10px!important;font-size:16px!important}
+  .support-page>section:nth-of-type(2) .grid p{margin:0!important;color:#8f8a99!important;font-size:13px!important;line-height:1.65!important}
 
-  .support-options{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-  .support-option{position:relative;min-height:235px;padding:30px;border:1px solid rgba(255,255,255,.1);border-radius:15px;background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.012));transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
-  .support-option:hover{transform:translateY(-3px);border-color:rgba(167,139,250,.35);box-shadow:0 18px 45px rgba(0,0,0,.22)}
-  .support-option-tag{display:inline-flex;align-items:center;min-height:24px;padding:0 9px;border:1px solid rgba(167,139,250,.2);border-radius:999px;color:var(--purple2);font-size:9px;font-weight:900;letter-spacing:1.4px}
-  .support-option h3{margin:17px 0 9px;font-size:22px}
-  .support-option p{max-width:480px;margin:0;color:#9d98a7;font-size:13px;line-height:1.65}
-  .support-option .btn{position:absolute;left:30px;bottom:28px}
+  .support-page>section:nth-of-type(3){margin-top:58px!important}
+  .support-page>section:nth-of-type(3)>.page-header{max-width:none!important;margin:0 0 20px!important;padding:0!important;text-align:left!important}
+  .support-page>section:nth-of-type(3)>.page-header small{margin:0 0 9px!important}
+  .support-page>section:nth-of-type(3)>.page-header h2{margin:0!important;font-size:34px!important;letter-spacing:-1px!important}
+  .support-page>section:nth-of-type(3)>.grid{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:12px!important;margin:0!important}
+  .support-page>section:nth-of-type(3) .card{position:relative!important;min-height:190px!important;margin:0!important;padding:28px!important;border:1px solid rgba(255,255,255,.08)!important;border-radius:18px!important;background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.015))!important;overflow:hidden!important}
+  .support-page>section:nth-of-type(3) .card:before{content:"";position:absolute!important;left:0!important;top:0!important;width:3px!important;height:100%!important;background:linear-gradient(180deg,var(--purple),transparent)!important}
+  .support-page>section:nth-of-type(3) .card h3{margin:0 0 12px!important;font-size:18px!important}
+  .support-page>section:nth-of-type(3) .card p{margin:0!important;color:#9994a3!important;line-height:1.7!important;font-size:13px!important}
 
-  .support-use{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-  .support-use-card{min-height:165px;padding:25px;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:#0d0c11}
-  .support-use-card span{display:flex;width:34px;height:34px;align-items:center;justify-content:center;margin-bottom:18px;border:1px solid rgba(167,139,250,.22);border-radius:9px;color:var(--purple2);font-size:13px;font-weight:900}
-  .support-use-card h3{margin:0 0 8px;font-size:16px}
-  .support-use-card p{margin:0;color:#8f8a98;font-size:12px;line-height:1.6}
+  .support-page>section:nth-of-type(4){margin-top:62px!important;padding:0!important}
+  .support-page>section:nth-of-type(4)>.support-box{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:40px!important;margin:0!important;padding:30px 34px!important;min-height:0!important;border:1px solid rgba(255,255,255,.09)!important;border-radius:18px!important;background:#0d0c11!important}
+  .support-page>section:nth-of-type(4)>.support-box h2{margin:6px 0!important;font-size:22px!important}
+  .support-page>section:nth-of-type(4)>.support-box p{max-width:690px!important}
+  .support-page>section:nth-of-type(4)>.support-box .btn{margin:0!important;flex:0 0 auto!important}
 
-  .support-benefits{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-  .support-benefit{padding:24px;border-top:1px solid rgba(167,139,250,.22);background:rgba(255,255,255,.018)}
-  .support-benefit h3{margin:0 0 8px;font-size:15px}
-  .support-benefit p{margin:0;color:#8f8a98;font-size:12px;line-height:1.6}
-
-  .support-community{display:grid;grid-template-columns:1fr auto;align-items:center;gap:30px;padding:30px 34px;border:1px solid rgba(255,255,255,.09);border-radius:15px;background:#0d0c11}
-  .support-community h2{margin:0 0 8px;font-size:22px}
-  .support-community p{margin:0;color:#96919f;font-size:12px;line-height:1.6}
-  .support-community .btn{white-space:nowrap}
-
-  .support-thanks{text-align:center;padding:38px 20px 0}
-  .support-thanks h2{margin:0 0 9px;font-size:24px}
-  .support-thanks p{margin:0;color:#888391;font-size:12px}
+  .support-page>section:nth-of-type(5){margin-top:18px!important}
+  .support-page>section:nth-of-type(5)>.card{padding:27px 32px!important;text-align:center!important;border:1px solid rgba(255,255,255,.07)!important;border-radius:18px!important;background:rgba(255,255,255,.018)!important}
+  .support-page>section:nth-of-type(5)>.card h2{margin:0 0 7px!important;font-size:20px!important}
+  .support-page>section:nth-of-type(5)>.card p{margin:0!important;color:#888390!important;font-size:13px!important}
 }
-</style></head><body><header class="site-header"><nav class="nav container"><a href="index.html" class="logo">SANCI<span>9517</span></a><button class="menu-toggle" id="menuToggle" type="button" aria-label="Menü" aria-expanded="false">☰</button><div class="nav-links" id="navLinks"><a href="index.html">Főoldal</a><a href="hirek.html">Hírek</a><a href="szavazas.html">Szavazás</a><a href="clips.html">Clips</a><a href="menetrend.html">Menetrend</a><a href="twitch.html">Élő</a><a href="stats.html">Stats</a><a href="games.html">Játékok</a><a href="milestones.html">Mérföldkövek</a><a href="tamogatas.html" class="active">Támogatás</a><a href="setup.html">Setup</a><a href="partners.html">Partnerség</a><a href="discord.html">Közösség</a><a href="kapcsolat.html">Kapcsolat</a></div></nav></header>
-<main class="support-page">
-  <div class="page-header"><small>TÁMOGATÁS</small><h1>Támogatás</h1><p>Ha szeretnéd támogatni a SANCI9517 csatornát, több lehetőség közül választhatsz.</p></div>
-
-  <section class="support-hero">
-    <div class="support-hero-copy"><small>A KÖVETKEZŐ FEJLESZTÉSHEZ</small><h2>Segíts jobbá tenni a streamet.</h2><p>A támogatások a csatorna és a streaming setup fejlesztését segítik. Nem írok ki kitalált célösszeget vagy hamis százalékot – amikor konkrét fejlesztési cél van, azt itt lehet majd egyértelműen megmutatni.</p><div class="support-hero-actions"><a href="https://streamlabs.com/sanci9517/tip" target="_blank" rel="noopener" class="btn btn-primary">Közvetlen támogatás</a><a href="https://www.twitch.tv/sanci9517/subscribe" target="_blank" rel="noopener" class="btn btn-secondary">Twitch-előfizetés</a></div></div>
-    <div class="support-hero-note"><div class="support-hero-note-inner"><strong>Hova kerül a támogatás?</strong><p>Elsősorban a tartalomkészítéshez, az élő adásokhoz és a setup fokozatos fejlesztéséhez járul hozzá.</p></div></div>
-  </section>
-
-  <section class="support-section"><div class="support-section-heading"><div><small>TÁMOGATÁSI LEHETŐSÉGEK</small><h2>Válaszd ki, hogyan segítenél</h2></div><p>Mindkét lehetőség közvetlenül a SANCI9517 csatorna támogatását szolgálja.</p></div><div class="support-options">
-    <div class="support-option"><span class="support-option-tag">TWITCH</span><h3>Twitch-előfizetés</h3><p>Az előfizetéssel közvetlenül támogatod a csatornát, miközben a Twitch által biztosított előfizetői előnyöket is használhatod.</p><a href="https://www.twitch.tv/sanci9517/subscribe" target="_blank" rel="noopener" class="btn btn-primary">Twitch-előfizetés</a></div>
-    <div class="support-option"><span class="support-option-tag">STREAMLABS</span><h3>Közvetlen támogatás</h3><p>Egyszeri támogatással közvetlenül hozzájárulhatsz a csatorna fejlesztéséhez és a streaming setup fokozatos javításához.</p><a href="https://streamlabs.com/sanci9517/tip" target="_blank" rel="noopener" class="btn btn-primary">Támogatás Streamlabsen</a></div>
-  </div></section>
-
-  <section class="support-section"><div class="support-section-heading"><div><small>A TÁMOGATÁS FELHASZNÁLÁSA</small><h2>Amire a támogatás mehet</h2></div><p>Konkrét összegek nélkül, átláthatóan megmutatva, milyen területeken lehet szükség fejlesztésre.</p></div><div class="support-use">
-    <div class="support-use-card"><span>01</span><h3>Setup</h3><p>Hardverek, perifériák és streaming eszközök fejlesztése.</p></div>
-    <div class="support-use-card"><span>02</span><h3>Élő adás</h3><p>Az adások technikai minőségének és a streamélménynek a javítása.</p></div>
-    <div class="support-use-card"><span>03</span><h3>Tartalom</h3><p>Játékok, tartalmak és a csatorna működéséhez szükséges fejlesztések.</p></div>
-  </div></section>
-
-  <section class="support-section"><div class="support-section-heading"><div><small>TWITCH</small><h2>Az előfizetés előnyei</h2></div></div><div class="support-benefits">
-    <div class="support-benefit"><h3>Közvetlen támogatás</h3><p>Hozzájárulás a SANCI9517 hosszú távú fejlődéséhez.</p></div>
-    <div class="support-benefit"><h3>Közösség</h3><p>Kapcsolódj a SANCI9517 közösségéhez és kövesd az új tartalmakat.</p></div>
-    <div class="support-benefit"><h3>Előfizetői előnyök</h3><p>Használd azokat az előnyöket, amelyeket a Twitch az előfizetők számára biztosít.</p></div>
-  </div></section>
-
-  <section class="support-section"><div class="support-community"><div><h2>Más módon is támogathatod</h2><p>A követés, az élő adások megtekintése és a tartalmak megosztása is értékes segítség.</p></div><a href="https://www.twitch.tv/sanci9517" target="_blank" rel="noopener" class="btn btn-secondary">SANCI9517 a Twitchen</a></div></section>
-  <section class="support-thanks"><h2>Köszönöm, hogy támogatod a SANCI9517 közösséget.</h2><p>Minden megtekintés, követés, megosztás és támogatás számít.</p></section>
-</main>
-<footer>© 2026 SANCI9517 · Official Gaming Hub</footer><script>const menuToggle=document.getElementById('menuToggle'),navLinks=document.getElementById('navLinks');menuToggle.addEventListener('click',()=>{const open=navLinks.classList.toggle('open');menuToggle.textContent=open?'✕':'☰';menuToggle.setAttribute('aria-expanded',open?'true':'false')});navLinks.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>{navLinks.classList.remove('open');menuToggle.textContent='☰';menuToggle.setAttribute('aria-expanded','false')}));</script><script src="twitch-status.js?v=20260904"></script></body></html>
+</style></head><body><header class="site-header"><nav class="nav container"><a href="index.html" class="logo">SANCI<span>9517</span></a><button class="menu-toggle" id="menuToggle" type="button" aria-label="Menü" aria-expanded="false">☰</button><div class="nav-links" id="navLinks"><a href="index.html">Főoldal</a><a href="hirek.html">Hírek</a><a href="szavazas.html">Szavazás</a><a href="clips.html">Clips</a><a href="menetrend.html">Menetrend</a><a href="twitch.html">Élő</a><a href="stats.html">Stats</a><a href="games.html">Játékok</a><a href="milestones.html">Mérföldkövek</a><a href="tamogatas.html" class="active">Támogatás</a><a href="setup.html">Setup</a><a href="partners.html">Partnerség</a><a href="discord.html">Közösség</a><a href="kapcsolat.html">Kapcsolat</a></div></nav></header><main class="support-page"><div class="page-header"><small>TÁMOGATÁS</small><h1>Támogatás</h1><p>Ha szeretnéd támogatni a SANCI9517 csatornát, több lehetőség közül választhatsz.</p></div><section><div class="grid"><div class="support-box"><small style="color:var(--purple2);">TWITCH</small><h2>Twitch-előfizetés</h2><p>Az előfizetéssel közvetlenül támogatod a csatornát és a jövőbeli tartalmakat.</p><br><a href="https://www.twitch.tv/sanci9517/subscribe" target="_blank" rel="noopener" class="btn btn-primary">Twitch-előfizetés</a></div><div class="support-box"><small style="color:var(--purple2);">STREAMLABS</small><h2>Közvetlen támogatás</h2><p>Egyszeri támogatással hozzájárulhatsz a csatorna fejlesztéséhez.</p><br><a href="https://streamlabs.com/sanci9517/tip" target="_blank" rel="noopener" class="btn btn-primary">Támogatás Streamlabsen</a></div></div></section><section style="margin-top:50px;"><div class="card"><small style="color:var(--purple2);">TWITCH</small><h2>Az előfizetés előnyei</h2><p>Az előfizetés közvetlenül támogatja a csatornát, és a Twitch által biztosított előfizetői előnyöket is tartalmazhat.</p><br><div class="grid"><div><h3>Közvetlen támogatás</h3><p>Hozzájárulás a SANCI9517 hosszú távú fejlődéséhez.</p></div><div><h3>Közösség</h3><p>Kapcsolódj a SANCI9517 közösségéhez.</p></div><div><h3>Előfizetői előnyök</h3><p>Használd azokat az előnyöket, amelyeket a Twitch az előfizetők számára biztosít.</p></div></div></div></section><section style="margin-top:50px;"><div class="page-header" style="text-align:left;"><small>A TÁMOGATÁS FELHASZNÁLÁSA</small><h2>Fejlesztési területek</h2></div><div class="grid"><div class="card"><h3>Gaming</h3><p>Játékok, tartalmak és fejlesztések a csatorna számára.</p></div><div class="card"><h3>Élő adás</h3><p>Az adások minőségének javítása és technikai fejlesztések.</p></div><div class="card"><h3>Setup</h3><p>Hardverek, perifériák és streaming eszközök fejlesztése.</p></div></div></section><section style="margin-top:50px;"><div class="support-box"><small style="color:var(--purple2);">KÖZÖSSÉG</small><h2>Más módon is támogathatod a csatornát</h2><p>A Twitch-követés, az élő adások megtekintése és a tartalmak megosztása ugyanúgy értékes támogatás.</p><br><a href="https://www.twitch.tv/sanci9517" target="_blank" rel="noopener" class="btn btn-secondary">SANCI9517 a Twitchen</a></div></section><section style="margin-top:50px;"><div class="card"><h2>Köszönjük, hogy itt vagy</h2><p>Minden megtekintés, követés, megosztás és támogatás hozzájárul a SANCI9517 közösségének fejlődéséhez.</p></div></section></main><footer>© 2026 SANCI9517 · Official Gaming Hub</footer><script>const menuToggle=document.getElementById('menuToggle'),navLinks=document.getElementById('navLinks');menuToggle.addEventListener('click',()=>{const open=navLinks.classList.toggle('open');menuToggle.textContent=open?'✕':'☰';menuToggle.setAttribute('aria-expanded',open?'true':'false')});navLinks.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>{navLinks.classList.remove('open');menuToggle.textContent='☰';menuToggle.setAttribute('aria-expanded','false')}));</script><script src="twitch-status.js?v=20260904"></script></body></html>
