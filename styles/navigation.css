@@ -156,7 +156,7 @@
   font-size: var(--text-xs);
 }
 
-body:has(.menu-open) { overflow: hidden; }
+html.menu-open body { overflow: hidden; }
 
 @media (max-width: 760px) {
   .menu-trigger { min-height: 40px; padding-inline: 12px; }
