@@ -1,10 +1,12 @@
 import { site } from '../data/site.js';
 import { renderHome } from '../pages/home.js';
+import { renderAdmin } from '../admin/index.js';
 import { registerRoute, resolveRoute, initRouter } from './router.js';
 import { initNavigation } from '../components/navigation.js';
 import { showError } from './ui.js';
 
 registerRoute('/', renderHome);
+registerRoute('/admin', renderAdmin);
 
 function renderCurrentRoute() {
   const app = document.querySelector('#app');
