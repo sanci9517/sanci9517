@@ -50,6 +50,16 @@
 .home-panel-main p { margin: 0; color: var(--muted); line-height: 1.65; }
 .home-panel-bottom { padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted-2); font-size: var(--text-sm); }
 
+@media (min-width: 901px) {
+  .home-hero { grid-template-columns: minmax(0, 1.25fr) minmax(320px, .75fr); gap: clamp(48px, 7vw, 104px); padding-block: 80px; }
+  .home-copy { max-width: 760px; }
+  .home-title { max-width: 760px; font-size: clamp(58px, 6.4vw, 82px); }
+  .home-lead { max-width: 540px; }
+  .home-panel { min-height: 350px; max-width: 430px; justify-self: end; padding: 26px; }
+  .home-panel-main { padding-block: 38px; }
+  .home-panel-main h2 { font-size: clamp(28px, 3.2vw, 40px); }
+}
+
 @media (max-width: 900px) {
   .home-hero { grid-template-columns: 1fr; min-height: auto; padding-block: 64px; }
   .home-panel { min-height: 320px; }
