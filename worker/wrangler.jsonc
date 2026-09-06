@@ -3,11 +3,5 @@
   "name": "sanci9517-api",
   "main": "src/index.js",
   "compatibility_date": "2026-09-06",
-  "workers_dev": true,
-  "secrets": {
-    "required": [
-      "TWITCH_CLIENT_ID",
-      "TWITCH_CLIENT_SECRET"
-    ]
-  }
+  "workers_dev": true
 }
