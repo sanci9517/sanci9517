@@ -32,8 +32,15 @@ export function initRouter(onRouteChange) {
 }
 
 export function sitePath(path = '/') {
-  const route = normalizeRoutePath(path);
-  return route === '/' ? `${config.basePath}/` : `${config.basePath}${route}`;
+  const clean = normalizePath(path);
+  const base = normalizePath(config.basePath);
+
+  if (clean === base || clean.startsWith(`${base}/`)) {
+    return clean === base ? `${base}/` : clean;
+  }
+
+  const route = normalizeRoutePath(clean);
+  return route === '/' ? `${base}/` : `${base}${route}`;
 }
 
 function getRoutePath(path) {
