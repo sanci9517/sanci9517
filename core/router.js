@@ -1,17 +1,19 @@
+import { config } from './config.js';
+
 const routes = new Map();
 
 export function registerRoute(path, render) {
   if (!path.startsWith('/')) throw new Error(`Invalid route: ${path}`);
   if (typeof render !== 'function') throw new TypeError(`Invalid renderer for: ${path}`);
-  routes.set(normalizePath(path), render);
+  routes.set(normalizeRoutePath(path), render);
 }
 
 export function resolveRoute(path = window.location.pathname) {
-  return routes.get(normalizePath(path)) || null;
+  return routes.get(getRoutePath(path)) || null;
 }
 
 export function navigate(path) {
-  const target = normalizePath(path);
+  const target = sitePath(path);
   if (window.location.pathname !== target) {
     window.history.pushState({}, '', target);
   }
@@ -29,7 +31,25 @@ export function initRouter(onRouteChange) {
   });
 }
 
-function normalizePath(path) {
+export function sitePath(path = '/') {
+  const route = normalizeRoutePath(path);
+  return route === '/' ? `${config.basePath}/` : `${config.basePath}${route}`;
+}
+
+function getRoutePath(path) {
+  const clean = normalizePath(path);
+  const base = normalizePath(config.basePath);
+
+  if (clean === base) return '/';
+  if (clean.startsWith(`${base}/`)) return normalizeRoutePath(clean.slice(base.length));
+  return normalizeRoutePath(clean);
+}
+
+function normalizeRoutePath(path) {
   const clean = String(path || '/').split('?')[0].split('#')[0];
   return clean.replace(/\/+$/, '') || '/';
+}
+
+function normalizePath(path) {
+  return normalizeRoutePath(path);
 }
