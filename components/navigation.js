@@ -1,7 +1,8 @@
-import { siteUrl } from '../core/config.js';
+import { siteUrl, config } from '../core/config.js';
 import { navigation } from '../data/navigation.js';
 
 export function Navigation(site) {
+  const currentPath = getCurrentRoutePath();
   const items = navigation.map((item) => {
     if (item.type === 'external') {
       return `
@@ -12,10 +13,11 @@ export function Navigation(site) {
       `;
     }
 
+    const active = normalizePath(item.path) === currentPath;
     return `
-      <a class="menu-link" href="${siteUrl(item.path)}" data-route>
+      <a class="menu-link${active ? ' menu-link-active' : ''}" href="${siteUrl(item.path)}" data-route${active ? ' aria-current="page"' : ''}>
         <span>${item.label}</span>
-        <span class="menu-arrow" aria-hidden="true">→</span>
+        <span class="menu-arrow" aria-hidden="true">${active ? '●' : '→'}</span>
       </a>
     `;
   }).join('');
@@ -32,7 +34,7 @@ export function Navigation(site) {
       <aside class="site-menu" id="site-menu" aria-label="Oldal menü" aria-hidden="true">
         <div class="site-menu-header">
           <div>
-            <span class="site-menu-kicker">Sanci</span>
+            <span class="site-menu-kicker">Navigáció</span>
             <h2>Menü</h2>
           </div>
           <button class="menu-close" type="button" aria-label="Menü bezárása" data-menu-close>×</button>
@@ -41,8 +43,6 @@ export function Navigation(site) {
         <nav class="menu-list" aria-label="Oldal navigáció">
           ${items}
         </nav>
-
-        <div class="site-menu-footer">Sanci9517 · streamer</div>
       </aside>
     </div>
   `;
@@ -55,7 +55,7 @@ export function initNavigation() {
   document.addEventListener('click', (event) => {
     const trigger = event.target.closest('.menu-trigger');
     if (trigger) {
-      setMenuState(true);
+      setMenuState(!document.documentElement.classList.contains('menu-open'));
       return;
     }
 
@@ -82,4 +82,17 @@ function setMenuState(open) {
   document.querySelectorAll('.site-menu').forEach((menu) => {
     menu.setAttribute('aria-hidden', String(!open));
   });
+}
+
+function getCurrentRoutePath() {
+  const pathname = normalizePath(window.location.pathname);
+  const base = normalizePath(config.basePath);
+  if (pathname === base) return '/';
+  if (pathname.startsWith(`${base}/`)) return normalizePath(pathname.slice(base.length));
+  return pathname;
+}
+
+function normalizePath(path) {
+  const clean = String(path || '/').split('?')[0].split('#')[0];
+  return clean.replace(/\/+$/, '') || '/';
 }
