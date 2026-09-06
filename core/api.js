@@ -1,3 +1,5 @@
+import { apiUrl } from './config.js';
+
 const DEFAULT_TIMEOUT = 10000;
 
 export async function apiFetch(path, options = {}) {
@@ -6,7 +8,7 @@ export async function apiFetch(path, options = {}) {
   const timer = setTimeout(() => controller.abort(), timeout);
 
   try {
-    const response = await fetch(path, {
+    const response = await fetch(apiUrl(path), {
       ...requestOptions,
       headers: {
         accept: 'application/json',
