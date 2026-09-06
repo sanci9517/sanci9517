@@ -30,13 +30,48 @@
 
 .admin-header h1,
 .admin-login-card h1,
-.admin-card h2 { margin: 8px 0 10px; letter-spacing: -.04em; }
+.admin-card h2,
+.admin-module-card h2 { margin: 8px 0 10px; letter-spacing: -.04em; }
 .admin-header h1 { font-size: clamp(36px, 5vw, 56px); }
 .admin-header p,
 .admin-login-card > p,
-.admin-card p { margin: 0; color: var(--muted); line-height: var(--leading-relaxed); }
+.admin-card p,
+.admin-module-card p { margin: 0; color: var(--muted); line-height: var(--leading-relaxed); }
 
 .admin-content { padding-bottom: 64px; }
+
+.admin-module-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.admin-module-card {
+  position: relative;
+  min-height: 190px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  transition: border-color var(--motion-fast), transform var(--motion-fast), background var(--motion-fast);
+}
+
+.admin-module-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(145, 71, 255, .34);
+  background: var(--surface-2);
+}
+
+.admin-module-card:nth-child(5) { grid-column: 1 / -1; }
+.admin-module-icon { font-size: 26px; color: var(--accent-hover); }
+.admin-module-card h2 { font-size: 25px; }
+.admin-module-arrow { align-self: flex-end; color: var(--muted-2); font-size: 20px; }
+
 .admin-card,
 .admin-login-card {
   background: var(--surface);
@@ -65,9 +100,15 @@
 .admin-login-card input:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
 .admin-login-note { margin-top: 18px !important; font-size: var(--text-xs); }
 
+@media (max-width: 760px) {
+  .admin-module-grid { grid-template-columns: 1fr; }
+  .admin-module-card:nth-child(5) { grid-column: auto; }
+}
+
 @media (max-width: 640px) {
   .admin-header { width: min(100% - 28px, var(--max-width)); padding-block: 32px 24px; flex-direction: column; }
   .admin-content { width: min(100% - 28px, var(--max-width)); }
+  .admin-module-card { min-height: 170px; padding: 24px; }
   .admin-card,
   .admin-login-card { padding: 24px; }
 }
