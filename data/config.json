@@ -1,0 +1,10 @@
+{
+  "brand":"Sanci9517",
+  "live":{"online":false,"game":"Fortnite"},
+  "social":{"twitch":"Sanci9517","youtube":"","tiktok":"Sanci9517","discord":""},
+  "schedule":[
+    {"day":"Péntek","time":"19:00","game":"Fortnite","note":"Community stream"},
+    {"day":"Szombat","time":"19:00","game":"Hearthstone","note":"Ranked / Battlegrounds"},
+    {"day":"Vasárnap","time":"18:00","game":"Fortnite","note":"Heti záró stream"}
+  ]
+}
