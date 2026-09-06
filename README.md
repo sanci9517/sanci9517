@@ -1,13 +1,33 @@
-# Sanci9517 Stream Hub
+# Sanci9517
 
-A projekt teljesen újraépítve, régi forráskód nélkül.
+Újraépített streamer webplatform.
 
-## Részek
-- reszponzív publikus stream oldal
-- központi JSON konfiguráció
-- Twitch / játék / menetrend / clips / Discord oldalak
-- új AI Admin vezérlőközpont alap
-- Cloudflare Worker biztonságos API-alap
+## PHASE 01 — Foundation
 
-## Következő élesítés
-A Workerhez Cloudflare API hitelesítés és a szükséges titkok beállítása kell. A Cloudflare hivatalos CI/CD folyamata GitHub Actionsből Wranglerrel támogatott; a tokeneket GitHub Secretsben kell tartani, nem a repositoryban.
+A projekt moduláris alapokra épül. A publikus weboldal, komponensek, oldalak, sémák, stílusok és a későbbi API külön rétegekben vannak.
+
+### Alapstruktúra
+
+- `core/` — alkalmazásmag és routing
+- `components/` — újrahasznosítható UI komponensek
+- `pages/` — oldalak
+- `schemas/` — adat- és oldalstruktúrák
+- `data/` — központi tartalom és beállítások
+- `styles/` — design system és reszponzív stílusok
+- `worker/` — későbbi API/Twitch backend alap
+- `.github/workflows/` — automatizált Worker deploy
+
+## Fejlesztési sorrend
+
+1. Foundation
+2. Design System
+3. Core
+4. Homepage
+5. Twitch
+6. Admin
+7. Database
+8. További oldalak és CMS
+9. AI
+10. PWA / mobilalkalmazás
+
+A régi oldalstruktúra és régi frontend fájlok törölve lettek. Az új rendszerből indulunk tovább.
