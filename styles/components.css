@@ -1,1 +1,38 @@
-/* Shared component overrides live here. Page-specific styling belongs in page modules. */
+.state {
+  min-height: 60vh;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 12px;
+  padding: 48px 20px;
+  text-align: center;
+}
+
+.state h1,
+.state p {
+  margin: 0;
+}
+
+.state p {
+  max-width: 520px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+[aria-busy='true'] {
+  cursor: progress;
+}
+
+[aria-busy='true']::before {
+  content: attr(data-loading-message);
+  position: fixed;
+  inset: auto 20px 20px auto;
+  z-index: 1000;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 13px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, .25);
+}
