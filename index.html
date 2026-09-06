@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0b0d12">
+  <title>Sanci9517 — Stream Hub</title>
+  <link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html"><span class="brand-mark">S</span><span>Sanci<span>9517</span></span></a>
+    <button class="nav-toggle" aria-label="Menü">☰</button>
+    <nav class="nav">
+      <a class="active" href="index.html">Főoldal</a><a href="twitch.html">Twitch</a><a href="games.html">Játékok</a><a href="schedule.html">Menetrend</a><a href="clips.html">Clips</a><a href="discord.html">Discord</a>
+    </nav>
+    <a class="admin-link" href="admin.html">Admin</a>
+  </header>
+  <main>
+    <section class="hero">
+      <div class="hero-copy"><div class="eyebrow">Sanci9517 · STREAM HUB</div><h1>Játék. Stream.<br><span>Közösség.</span></h1><p>Egy helyen a streamjeim, statisztikáim, játékok és a közösség.</p><div class="actions"><a class="btn primary" href="twitch.html">Twitch megnyitása</a><a class="btn ghost" href="discord.html">Csatlakozz Discordon</a></div></div>
+      <div class="live-card"><div class="live-dot"></div><span>STREAM STATUS</span><strong id="live-status">OFFLINE</strong><small id="live-game">Következő adás hamarosan</small></div>
+    </section>
+    <section class="section"><div class="section-head"><div><div class="eyebrow">KÖVETKEZŐ</div><h2>Stream menetrend</h2></div><a href="schedule.html">Teljes menetrend →</a></div><div id="schedule-grid" class="cards"></div></section>
+    <section class="section"><div class="section-head"><div><div class="eyebrow">FÓKUSZ</div><h2>Játékok</h2></div></div><div class="game-grid"><article class="game-card fortnite"><b>FORTNITE</b><span>Battle Royale · Live</span></article><article class="game-card hearthstone"><b>HEARTHSTONE</b><span>Ranked · Battlegrounds</span></article></div></section>
+  </main>
+  <footer>© <span id="year"></span> Sanci9517 · Stream Hub</footer>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
