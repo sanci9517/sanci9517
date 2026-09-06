@@ -11,6 +11,7 @@ const requiredFiles = [
   'core/ui.js',
   'data/site.js',
   'data/navigation.js',
+  'data/pages.js',
   'pages/home.js',
   'components/header.js',
   'components/navigation.js',
@@ -21,12 +22,18 @@ const requiredFiles = [
   'styles/navigation.css',
   'schemas/site.schema.json',
   'schemas/page.schema.json',
+  'schemas/menu.schema.json',
   'worker/src/index.js',
   'worker/wrangler.jsonc',
 ];
 
 const jsFiles = requiredFiles.filter((file) => file.endsWith('.js'));
-const jsonFiles = ['schemas/site.schema.json', 'schemas/page.schema.json', 'worker/wrangler.jsonc'];
+const jsonFiles = [
+  'schemas/site.schema.json',
+  'schemas/page.schema.json',
+  'schemas/menu.schema.json',
+  'worker/wrangler.jsonc',
+];
 
 const missing = requiredFiles.filter((file) => !existsSync(file));
 if (missing.length) {
