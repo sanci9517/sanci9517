@@ -1,4 +1,5 @@
 import { config } from './config.js';
+import { getPageByPath } from '../data/pages.js';
 
 const routes = new Map();
 
@@ -10,6 +11,10 @@ export function registerRoute(path, render) {
 
 export function resolveRoute(path = window.location.pathname) {
   return routes.get(getRoutePath(path)) || null;
+}
+
+export function resolvePage(path = window.location.pathname) {
+  return getPageByPath(getRoutePath(path));
 }
 
 export function navigate(path) {
