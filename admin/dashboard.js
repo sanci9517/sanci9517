@@ -1,5 +1,13 @@
 import { logoutAdmin } from './auth.js';
 
+const adminModules = [
+  { title: 'Weboldal', description: 'Oldalak, menü és megjelenés kezelése.', icon: '⌂' },
+  { title: 'Twitch', description: 'Csatorna, élő adás és Twitch-beállítások.', icon: '◈' },
+  { title: 'Tartalom', description: 'Szövegek, oldaltartalmak és frissítések.', icon: '✎' },
+  { title: 'Média', description: 'Képek, videók és feltöltött anyagok kezelése.', icon: '▣' },
+  { title: 'Beállítások', description: 'Rendszer- és weboldalbeállítások.', icon: '⚙' },
+];
+
 export function renderAdminDashboard(root) {
   root.innerHTML = `
     <div class="admin-page">
@@ -13,10 +21,17 @@ export function renderAdminDashboard(root) {
       </header>
 
       <main class="admin-content">
-        <section class="admin-card">
-          <span class="admin-card-label">Rendszer</span>
-          <h2>Admin alapok elkészültek</h2>
-          <p>A későbbi modulok innen lesznek elérhetők: weboldal, Twitch, tartalom, média és beállítások.</p>
+        <section class="admin-module-grid" aria-label="Admin modulok">
+          ${adminModules.map((module) => `
+            <article class="admin-module-card">
+              <div class="admin-module-icon" aria-hidden="true">${module.icon}</div>
+              <div>
+                <h2>${module.title}</h2>
+                <p>${module.description}</p>
+              </div>
+              <span class="admin-module-arrow" aria-hidden="true">→</span>
+            </article>
+          `).join('')}
         </section>
       </main>
     </div>
