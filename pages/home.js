@@ -1,4 +1,5 @@
 import { Header } from '../components/header.js';
+import { loadTwitchStatus } from '../twitch/status.js';
 
 export function renderHome(root, site) {
   root.innerHTML = `
@@ -15,20 +16,60 @@ export function renderHome(root, site) {
             </div>
           </div>
 
-          <aside class="home-panel" aria-label="Stream állapot">
+          <aside class="home-panel" aria-label="Stream állapot" data-twitch-panel>
             <div class="home-panel-top">
               <span class="home-panel-label">Sanci9517 Live rendszer</span>
-              <span class="badge home-live-badge"><span class="status-dot"></span>Előkészítve</span>
+              <span class="badge home-live-badge"><span class="status-dot"></span><span data-twitch-state>Betöltés…</span></span>
             </div>
             <div class="home-panel-main">
-              <h2>A következő szint itt kezdődik.</h2>
-              <p>A Twitch kapcsolat, élő állapot, statisztikák és további funkciók modulárisan érkeznek a következő fejlesztési fázisokban.</p>
+              <h2 data-twitch-title>Twitch állapot ellenőrzése</h2>
+              <p data-twitch-details>A rendszer lekéri a Sanci9517 csatorna aktuális állapotát.</p>
             </div>
-            <div class="home-panel-bottom">Twitch integráció · következő fázis</div>
+            <div class="home-panel-bottom" data-twitch-meta>Twitch integráció · élő állapot</div>
           </aside>
         </section>
       </main>
       <footer class="site-footer">© ${new Date().getFullYear()} ${site.brand}</footer>
     </div>
   `;
+
+  updateTwitchPanel(root);
+}
+
+async function updateTwitchPanel(root) {
+  const state = root.querySelector('[data-twitch-state]');
+  const title = root.querySelector('[data-twitch-title]');
+  const details = root.querySelector('[data-twitch-details]');
+  const meta = root.querySelector('[data-twitch-meta]');
+
+  try {
+    const result = await loadTwitchStatus();
+    const stream = result?.stream;
+
+    if (!stream) {
+      state.textContent = 'Offline';
+      title.textContent = 'Jelenleg nincs élő adás.';
+      details.textContent = 'A következő élő adáskor ez a panel automatikusan frissíthető.';
+      meta.textContent = 'Twitch · offline';
+      return;
+    }
+
+    state.textContent = 'LIVE';
+    title.textContent = stream.title || 'Sanci9517 élő adása';
+    details.textContent = `${stream.gameName || 'Játék'} · ${stream.viewerCount.toLocaleString('hu-HU')} néző`;
+    meta.textContent = `Twitch · élő · ${formatStartedAt(stream.startedAt)}`;
+  } catch (error) {
+    console.error('[Sanci9517] Twitch status error:', error);
+    state.textContent = 'Nem elérhető';
+    title.textContent = 'Twitch kapcsolat ellenőrzése szükséges.';
+    details.textContent = 'Az oldal többi része ettől függetlenül működik.';
+    meta.textContent = 'Twitch · kapcsolat hiba';
+  }
+}
+
+function formatStartedAt(value) {
+  if (!value) return 'időpont nélkül';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return 'időpont nélkül';
+  return date.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
 }
