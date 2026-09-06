@@ -1,16 +1,16 @@
-## Hi there 👋
+# SANCI9517 2.0
 
-<!--
-**sanci9517/sanci9517** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+Új, egységes GitHub Pages gaming oldal.
 
-Here are some ideas to get you started:
+- mobil + desktop egységes rendszer
+- központi lenyíló menü asztali és mobil nézetben
+- Admin csak a menüben
+- Twitch státusz / néző / követő / játék
+- Twitch player és chat
+- clips API
+- menetrend API + helyi fallback
+- szavazás a `/poll/current` végponton
+- védett Admin Center
+- SANCI AI felület a működő `/ai/chat` végponthoz
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+A Twitch/AI backend külön Cloudflare Worker; a frontend nem tartalmaz titkos kulcsokat.
