@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sanci9517/menu.schema.json",
+  "title": "Sanci9517 Navigation Item",
+  "type": "object",
+  "required": ["label", "type"],
+  "properties": {
+    "label": {
+      "type": "string",
+      "minLength": 1
+    },
+    "path": {
+      "type": "string",
+      "pattern": "^/"
+    },
+    "urlKey": {
+      "type": "string",
+      "minLength": 1
+    },
+    "type": {
+      "type": "string",
+      "enum": ["route", "external"]
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "order": {
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "type": { "const": "route" } }
+      },
+      "then": {
+        "required": ["path"]
+      }
+    },
+    {
+      "if": {
+        "properties": { "type": { "const": "external" } }
+      },
+      "then": {
+        "required": ["urlKey"]
+      }
+    }
+  ],
+  "additionalProperties": false
+}
