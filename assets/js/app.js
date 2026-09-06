@@ -1,0 +1,5 @@
+const CONFIG_URL='data/config.json';
+async function loadConfig(){try{return await fetch(CONFIG_URL).then(r=>r.json())}catch(e){return {schedule:[]}}}
+function initNav(){const b=document.querySelector('.nav-toggle'),n=document.querySelector('.nav');if(b)b.onclick=()=>n.classList.toggle('open')}
+async function render(){initNav();const c=await loadConfig();const y=document.querySelector('#year');if(y)y.textContent=new Date().getFullYear();const status=document.querySelector('#live-status');if(status){status.textContent=c.live&&c.live.online?'LIVE':'OFFLINE';document.querySelector('#live-game').textContent=(c.live&&c.live.game)||'Következő adás hamarosan'}const grid=document.querySelector('#schedule-grid');if(grid)grid.innerHTML=(c.schedule||[]).slice(0,3).map(x=>'<article class="card"><b>'+x.day+'</b><span>'+x.time+' · '+x.game+'</span><small>'+((x.note)||'')+'</small></article>').join('')}
+render();
