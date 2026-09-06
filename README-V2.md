@@ -1,2 +1,3 @@
 # SANCI9517 V2
-Clean rebuild foundation. The public frontend uses `site-v2.css` and `site-v2.js`. Admin is exposed only through the dropdown menu.
+
+Clean rebuild of the public SANCI9517 website. One responsive design system is shared across the public pages; the menu button is used on desktop and mobile, and Admin is available only inside that dropdown.
