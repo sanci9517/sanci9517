@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sanci9517/page.schema.json",
+  "title": "Sanci9517 Page",
+  "type": "object",
+  "required": ["slug", "title", "sections"],
+  "properties": {
+    "slug": { "type": "string", "pattern": "^/" },
+    "title": { "type": "string", "minLength": 1 },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type"],
+        "properties": {
+          "type": { "type": "string" },
+          "enabled": { "type": "boolean", "default": true },
+          "data": { "type": "object" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
