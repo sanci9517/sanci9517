@@ -1,6 +1,7 @@
 import { site } from '../data/site.js';
 import { renderHome } from '../pages/home.js';
 import { registerRoute, resolveRoute, initRouter } from './router.js';
+import { initNavigation } from '../components/navigation.js';
 import { showError } from './ui.js';
 
 registerRoute('/', renderHome);
@@ -25,6 +26,7 @@ function renderCurrentRoute() {
 
 function boot() {
   initRouter(renderCurrentRoute);
+  initNavigation();
   renderCurrentRoute();
 }
 
