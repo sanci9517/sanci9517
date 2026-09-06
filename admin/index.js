@@ -1,4 +1,4 @@
-import { isAdminAuthenticated } from './auth.js';
+import { isAdminAuthenticated, loginAdmin } from './auth.js';
 import { renderAdminDashboard } from './dashboard.js';
 
 export function renderAdmin(root) {
@@ -16,7 +16,7 @@ function renderAdminLogin(root) {
       <main class="admin-login-card">
         <span class="admin-kicker">Admin</span>
         <h1>Belépés</h1>
-        <p>Az admin felület alapja elkészült. A valódi szerveroldali hitelesítés a következő biztonsági lépésben készül el.</p>
+        <p>Az admin felület jelenleg fejlesztési módban működik.</p>
         <form data-admin-login>
           <label>
             Felhasználónév
@@ -27,17 +27,30 @@ function renderAdminLogin(root) {
             <input name="password" type="password" autocomplete="current-password" required>
           </label>
           <button class="button button-primary" type="submit">Belépés</button>
+          <p class="admin-login-error" data-admin-login-error hidden></p>
         </form>
-        <p class="admin-login-note">Ideiglenes fejlesztési belépés: bármilyen kitöltött adatok elfogadottak.</p>
       </main>
     </div>
   `;
 
-  root.querySelector('[data-admin-login]')?.addEventListener('submit', async (event) => {
+  const form = root.querySelector('[data-admin-login]');
+  const error = root.querySelector('[data-admin-login-error]');
+
+  form?.addEventListener('submit', (event) => {
     event.preventDefault();
-    const { loginAdmin } = await import('./auth.js');
-    const form = new FormData(event.currentTarget);
-    loginAdmin(form.get('username'), form.get('password'));
+
+    const formData = new FormData(form);
+    const username = String(formData.get('username') || '').trim();
+    const password = String(formData.get('password') || '');
+
+    if (!loginAdmin(username, password)) {
+      if (error) {
+        error.textContent = 'Add meg a felhasználónevet és a jelszót.';
+        error.hidden = false;
+      }
+      return;
+    }
+
     renderAdmin(root);
   });
 }
