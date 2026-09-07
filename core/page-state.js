@@ -4,8 +4,12 @@ import { storage } from './storage.js';
 const PAGES_KEY = 'page-settings';
 
 export function getPages() {
-  const saved = storage.get(PAGES_KEY, []);
-  return Array.isArray(saved) ? saved : [];
+  const saved = storage.get(PAGES_KEY, null);
+  if (Array.isArray(saved)) return ensureExistingPages(saved);
+
+  return pages
+    .filter((page) => page.status === 'active')
+    .map((page) => ({ ...page, content: page.content || '' }));
 }
 
 export function getPageById(id) {
@@ -27,6 +31,9 @@ export function syncPagesFromNavigation(items) {
   const byPath = new Map(current.map((page) => [normalizePath(page.path), page]));
   const next = [];
 
+  const home = byPath.get('/') || pages.find((page) => page.path === '/' && page.status === 'active');
+  if (home) next.push({ ...home, content: home.content || '' });
+
   for (const item of items) {
     if (item?.type !== 'route' || item?.path === '/') continue;
     const path = normalizePath(item.path);
@@ -44,6 +51,14 @@ export function syncPagesFromNavigation(items) {
   }
 
   return savePages(next);
+}
+
+function ensureExistingPages(saved) {
+  const hasHome = saved.some((page) => normalizePath(page?.path) === '/');
+  if (hasHome) return saved;
+
+  const home = pages.find((page) => page.path === '/' && page.status === 'active');
+  return home ? [{ ...home, content: '' }, ...saved] : saved;
 }
 
 function createPageId(path) {
