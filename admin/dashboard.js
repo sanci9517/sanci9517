@@ -2,15 +2,11 @@ import { logoutAdmin } from './auth.js';
 import { getAdminAudit, getAdminSettings, saveAdminSettings } from './backend.js';
 import { renderWebsiteAdmin } from './website/index.js';
 import { CONTROL_CENTER_MODULES } from './modules/registry.js';
-import { loadIntegrationStatus, loadSystemHealth, loadTwitchOverview } from './modules/platform.js';
+import { loadIntegrationStatus, loadSystemHealth, loadTwitchClips, loadTwitchOverview, loadTwitchVideos } from './modules/platform.js';
 import { runControlCenterTests } from './modules/tests.js';
 import './website/layout-enhancer.js';
 
-export function renderAdminDashboard(root) {
-  renderShell(root);
-  bindShell(root);
-  loadOverview(root);
-}
+export function renderAdminDashboard(root) { renderShell(root); bindShell(root); loadOverview(root); }
 
 function renderShell(root) {
   const groups = [['core', 'Központ'], ['brand', 'Brand'], ['platform', 'Platformok'], ['insights', 'Adatok'], ['system', 'Rendszer'], ['future', 'Jövő']];
@@ -28,9 +24,9 @@ async function loadOverview(root) {
   if (system) system.textContent = systemResult.status === 'fulfilled' ? 'ONLINE' : 'HIBA';
   if (systemDetail && systemResult.status === 'fulfilled') systemDetail.textContent = 'Worker / D1 elérhető';
   const twitch = root.querySelector('[data-overview-twitch]'); const twitchDetail = root.querySelector('[data-overview-twitch-detail]');
-  if (twitchResult.status === 'fulfilled') { const data = twitchResult.value || {}; twitch.textContent = data.live ? '🔴 LIVE' : '⚫ OFFLINE'; twitchDetail.textContent = data.live ? `${data.currentViewers || 0} néző · ${data.game || 'Ismeretlen játék'}` : 'Csatorna elérhető'; } else if (twitch) twitch.textContent = 'HIBA';
+  if (twitchResult.status === 'fulfilled') { const data = twitchResult.value || {}; if (twitch) twitch.textContent = data.live ? '🔴 LIVE' : '⚫ OFFLINE'; if (twitchDetail) twitchDetail.textContent = data.live ? `${data.currentViewers || 0} néző · ${data.game || 'Ismeretlen játék'}` : 'Csatorna elérhető'; } else if (twitch) twitch.textContent = 'HIBA';
   const integrations = root.querySelector('[data-overview-integrations]'); const integrationDetail = root.querySelector('[data-overview-integrations-detail]');
-  if (integrationsResult.status === 'fulfilled') { const data = integrationsResult.value?.integrations || integrationsResult.value || {}; const configured = ['twitch', 'youtube', 'tiktok'].filter(id => data[id]?.configured).length; integrations.textContent = `${configured}/3 aktív`; integrationDetail.textContent = ['twitch', 'youtube', 'tiktok'].map(id => `${id}: ${data[id]?.configured ? '✓' : '—'}`).join(' · '); } else if (integrations) integrations.textContent = 'HIBA';
+  if (integrationsResult.status === 'fulfilled') { const data = integrationsResult.value?.integrations || integrationsResult.value || {}; const configured = ['twitch', 'youtube', 'tiktok'].filter(id => data[id]?.configured).length; if (integrations) integrations.textContent = `${configured}/3 aktív`; if (integrationDetail) integrationDetail.textContent = ['twitch', 'youtube', 'tiktok'].map(id => `${id}: ${data[id]?.configured ? '✓' : '—'}`).join(' · '); } else if (integrations) integrations.textContent = 'HIBA';
 }
 
 async function openModule(root, id) {
@@ -47,8 +43,13 @@ async function openModule(root, id) {
 function renderModuleFrame(root, kicker, title, description, body) { root.innerHTML = `<div class="admin-page"><header class="admin-header"><div><span class="admin-kicker">${kicker}</span><h1>${title}</h1><p>${description}</p></div><button class="button button-secondary" type="button" data-module-back>Vissza</button></header><main class="admin-content">${body}</main></div>`; root.querySelector('[data-module-back]')?.addEventListener('click', () => renderAdminDashboard(root)); }
 
 async function renderTwitch(root) {
-  renderModuleFrame(root, 'Twitch', 'Twitch Control Center', 'A Twitch integráció központja. A moduláris bővítéshez előkészítve.', '<section class="admin-card admin-editor-card"><span class="admin-card-label">Élő adatok</span><h2>Csatorna és stream</h2><div class="admin-field-list" data-twitch-fields><p class="admin-help">Betöltés…</p></div></section><section class="admin-card admin-editor-card"><span class="admin-card-label">Következő modulok</span><h2>Teljes Twitch hozzáférés</h2><div class="admin-module-list"><div>VOD és klipek</div><div>Followers / Subscribers / Bits</div><div>Channel Points / Polls / Predictions</div><div>Chat / Moderation / Raids</div><div>Schedule / Markers / Analytics</div><div>EventSub / OAuth</div></div></section>');
-  try { const data = await loadTwitchOverview(); root.querySelector('[data-twitch-fields]').innerHTML = [['Állapot', data.live ? '🔴 LIVE' : '⚫ OFFLINE'], ['Csatorna', data.channel || 'sanci9517'], ['Nézők', data.currentViewers ?? 0], ['Játék', data.game || '—'], ['Cím', data.title || '—'], ['Nyelv', data.language || '—']].map(([label, value]) => `<div class="admin-field-row"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join(''); } catch (error) { root.querySelector('[data-twitch-fields]').innerHTML = `<p class="admin-help">Twitch hiba: ${escapeHtml(error.message)}</p>`; }
+  renderModuleFrame(root, 'Twitch', 'Twitch Control Center', 'Live, csatorna, statisztikák, VOD-ok és klipek egy külön modulban.', `<section class="admin-card admin-editor-card"><span class="admin-card-label">Élő adatok</span><h2>Csatorna és stream</h2><div class="admin-field-list" data-twitch-fields><p class="admin-help">Betöltés…</p></div></section><section class="admin-card admin-editor-card"><div class="admin-card-heading"><div><span class="admin-card-label">VOD</span><h2>Legutóbbi videók</h2></div><button class="button button-secondary" type="button" data-twitch-videos-refresh>Frissítés</button></div><div class="admin-media-list" data-twitch-videos><p class="admin-help">Betöltés…</p></div></section><section class="admin-card admin-editor-card"><div class="admin-card-heading"><div><span class="admin-card-label">Clips</span><h2>Legutóbbi klipek</h2></div><button class="button button-secondary" type="button" data-twitch-clips-refresh>Frissítés</button></div><div class="admin-media-list" data-twitch-clips><p class="admin-help">Betöltés…</p></div></section><section class="admin-card admin-editor-card"><span class="admin-card-label">Következő modulok</span><h2>Teljes Twitch hozzáférés</h2><div class="admin-module-list"><div>Followers / Subscribers / Bits</div><div>Channel Points / Polls / Predictions</div><div>Chat / Moderation / Raids</div><div>Schedule / Markers / Analytics</div><div>OAuth / User Access Token</div><div>EventSub / valós idejű események</div></div></section>`);
+  const fields = root.querySelector('[data-twitch-fields]');
+  try { const data = await loadTwitchOverview(); fields.innerHTML = [['Állapot', data.live ? '🔴 LIVE' : '⚫ OFFLINE'], ['Csatorna', data.channel || 'sanci9517'], ['Nézők', data.currentViewers ?? 0], ['Játék', data.game || '—'], ['Cím', data.title || '—'], ['Nyelv', data.language || '—']].map(([label, value]) => `<div class="admin-field-row"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join(''); } catch (error) { fields.innerHTML = `<p class="admin-help">Twitch hiba: ${escapeHtml(error.message)}</p>`; }
+  const videos = root.querySelector('[data-twitch-videos]'); const clips = root.querySelector('[data-twitch-clips]');
+  const renderVideos = async () => { videos.innerHTML = '<p class="admin-help">VOD-ok betöltése…</p>'; try { const data = await loadTwitchVideos(); videos.innerHTML = data.videos?.length ? data.videos.map(video => `<article class="admin-media-row"><div><strong>${escapeHtml(video.title)}</strong><small>${escapeHtml(video.type)} · ${escapeHtml(video.duration)} · ${video.viewCount} megtekintés</small></div><a href="${escapeHtml(video.url)}" target="_blank" rel="noopener">Megnyitás →</a></article>`).join('') : '<p class="admin-help">Nincs elérhető VOD.</p>'; } catch (error) { videos.innerHTML = `<p class="admin-help">VOD hiba: ${escapeHtml(error.message)}</p>`; } };
+  const renderClips = async () => { clips.innerHTML = '<p class="admin-help">Klipek betöltése…</p>'; try { const data = await loadTwitchClips(); clips.innerHTML = data.clips?.length ? data.clips.map(clip => `<article class="admin-media-row"><div><strong>${escapeHtml(clip.title)}</strong><small>${escapeHtml(clip.creatorName)} · ${clip.viewCount} megtekintés · ${escapeHtml(clip.duration)} mp</small></div><a href="${escapeHtml(clip.url)}" target="_blank" rel="noopener">Megnyitás →</a></article>`).join('') : '<p class="admin-help">Nincs elérhető klip.</p>'; } catch (error) { clips.innerHTML = `<p class="admin-help">Klip hiba: ${escapeHtml(error.message)}</p>`; } };
+  root.querySelector('[data-twitch-videos-refresh]')?.addEventListener('click', renderVideos); root.querySelector('[data-twitch-clips-refresh]')?.addEventListener('click', renderClips); await Promise.all([renderVideos(), renderClips()]);
 }
 
 async function renderSystem(root) {
