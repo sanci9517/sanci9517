@@ -71,15 +71,20 @@ export function renderWebsiteAdmin(root) {
 
 function bindPageEditor(root) {
   const form = root.querySelector('[data-page-form]');
-  if (!form || form.dataset.bound === 'true') return;
-  form.dataset.bound = 'true';
+  if (!form) return;
 
-  form.querySelector('[data-page-select]')?.addEventListener('change', (event) => {
-    const page = getPageById(event.target.value);
-    form.innerHTML = renderPageForm(page, getPages());
-    bindPageEditor(root);
-  });
+  const select = form.querySelector('[data-page-select]');
+  if (select && select.dataset.bound !== 'true') {
+    select.dataset.bound = 'true';
+    select.addEventListener('change', (event) => {
+      const page = getPageById(event.target.value);
+      form.innerHTML = renderPageForm(page, getPages());
+      bindPageEditor(root);
+    });
+  }
 
+  if (form.dataset.submitBound === 'true') return;
+  form.dataset.submitBound = 'true';
   form.addEventListener('submit', (event) => {
     event.preventDefault();
     const data = new FormData(form);
