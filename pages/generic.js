@@ -4,6 +4,7 @@ import { loadTwitchStatus } from '../twitch/status.js';
 const ELEMENT_TYPES = new Set(['text', 'game', 'twitch', 'image', 'link', 'stats']);
 const ELEMENT_ALIGNS = new Set(['left', 'center', 'right']);
 const ELEMENT_WIDTHS = new Set(['full', 'half', 'third', 'quarter', 'auto']);
+const BLOCK_WIDTHS = new Set(['full', 'half', 'third', 'quarter', 'auto']);
 
 export function renderGenericPage(root, site, page) {
   const title = page?.title || 'Új oldal';
@@ -36,11 +37,13 @@ function renderBlocks(blocks) {
 
 function renderBlock(block) {
   const title = escapeHtml(block?.title || 'Box');
+  const width = BLOCK_WIDTHS.has(block?.width) ? block.width : 'full';
+  const layoutClass = `page-block-width-${width}`;
   const elements = Array.isArray(block?.elements) && block.elements.length
     ? block.elements
     : [{ type: block?.type || 'text', title: block?.title || '', content: block?.content || '' }];
 
-  return `<article class="card page-block composite-block">
+  return `<article class="card page-block composite-block ${layoutClass}">
     <div class="card-label">${title}</div>
     <div class="composite-elements">${elements.map(renderElement).join('')}</div>
   </article>`;
