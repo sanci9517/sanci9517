@@ -52,11 +52,11 @@ function parseCookies(request) {
 }
 
 function createAdminCookie(token) {
-  return `${ADMIN_COOKIE_NAME}=${encodeURIComponent(token)}; Max-Age=${ADMIN_TOKEN_TTL_SECONDS}; Path=/; HttpOnly; Secure; SameSite=Strict`;
+  return `${ADMIN_COOKIE_NAME}=${encodeURIComponent(token)}; Max-Age=${ADMIN_TOKEN_TTL_SECONDS}; Path=/; HttpOnly; Secure; SameSite=None`;
 }
 
 export function clearAdminCookie() {
-  return `${ADMIN_COOKIE_NAME}=; Max-Age=0; Path=/; HttpOnly; Secure; SameSite=Strict`;
+  return `${ADMIN_COOKIE_NAME}=; Max-Age=0; Path=/; HttpOnly; Secure; SameSite=None`;
 }
 
 export async function loginAdminRequest(request, env) {
