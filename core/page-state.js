@@ -4,7 +4,7 @@ import { storage } from './storage.js';
 const PAGES_KEY = 'page-settings';
 const BLOCK_TYPES = new Set(['text', 'game', 'twitch', 'image', 'link', 'stats']);
 const ELEMENT_ALIGNS = new Set(['left', 'center', 'right']);
-const ELEMENT_WIDTHS = new Set(['full', 'half']);
+const ELEMENT_WIDTHS = new Set(['full', 'half', 'third', 'quarter', 'auto']);
 
 export function getPages() {
   const saved = storage.get(PAGES_KEY, null);
