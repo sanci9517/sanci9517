@@ -1,4 +1,6 @@
 import { checkAdminSession, loginAdmin } from './auth.js';
+import { getAdminSettings } from './backend.js';
+import { hydrateAdminStorage } from '../core/storage.js';
 import { renderAdminDashboard } from './dashboard.js';
 
 const ADMIN_STYLESHEET_ID = 'sanci-admin-styles';
@@ -6,10 +8,17 @@ const ADMIN_STYLESHEET_ID = 'sanci-admin-styles';
 export function renderAdmin(root) {
   ensureAdminStyles();
   renderAdminLoading(root);
-  checkAdminSession().then((session) => {
+  checkAdminSession().then(async (session) => {
     if (!session.authenticated) {
       renderAdminLogin(root);
       return;
+    }
+    document.body.dataset.adminAuthenticated = 'true';
+    try {
+      const remote = await getAdminSettings();
+      hydrateAdminStorage(remote.settings || {});
+    } catch (error) {
+      console.warn('[Sanci9517] Admin state hydration failed:', error);
     }
     renderAdminDashboard(root);
   });
@@ -37,6 +46,7 @@ function renderAdminLoading(root) {
 }
 
 function renderAdminLogin(root) {
+  document.body.dataset.adminAuthenticated = 'false';
   root.innerHTML = `
     <div class="admin-page admin-login-page">
       <main class="admin-login-card">
@@ -69,6 +79,13 @@ function renderAdminLogin(root) {
       if (error) { error.textContent = result.error; error.hidden = false; }
       if (button) button.disabled = false;
       return;
+    }
+    document.body.dataset.adminAuthenticated = 'true';
+    try {
+      const remote = await getAdminSettings();
+      hydrateAdminStorage(remote.settings || {});
+    } catch (hydrationError) {
+      console.warn('[Sanci9517] Admin state hydration failed after login:', hydrationError);
     }
     renderAdminDashboard(root);
   });
