@@ -1,24 +1,45 @@
 import { navigation } from '../data/navigation.js';
 import { storage } from './storage.js';
 
-const NAVIGATION_KEY = 'navigation-settings';
+// v2 intentionally starts clean so the old broken editor state cannot leak into the new editor.
+const NAVIGATION_KEY = 'navigation-settings-v2';
 
 export function getNavigation() {
   const saved = storage.get(NAVIGATION_KEY, null);
   if (!Array.isArray(saved) || !saved.length) return navigation;
 
-  // Recover from the earlier editor state where every saved item could become Twitch.
-  const hasMeaningfulItem = saved.some((item) => {
-    const label = String(item?.label || '').trim().toLowerCase();
-    const url = String(item?.url || '').trim().toLowerCase();
-    return label !== 'twitch' || (url && !url.includes('twitch.tv'));
-  });
-
-  if (!hasMeaningfulItem && saved.length > 1) return navigation;
-  return saved;
+  return saved
+    .map((item, index) => normalizeItem(item, index))
+    .filter(Boolean)
+    .sort((a, b) => a.order - b.order);
 }
 
 export function saveNavigation(items) {
   if (!Array.isArray(items)) return false;
-  return storage.set(NAVIGATION_KEY, items);
+  return storage.set(
+    NAVIGATION_KEY,
+    items.map((item, index) => normalizeItem(item, index)).filter(Boolean)
+  );
+}
+
+function normalizeItem(item, index) {
+  if (!item || typeof item !== 'object') return null;
+
+  const type = item.type === 'external' ? 'external' : 'route';
+  const label = String(item.label || '').trim() || `Menüpont ${index + 1}`;
+  const normalized = {
+    label,
+    type,
+    enabled: item.enabled !== false,
+    order: Number.isInteger(item.order) ? item.order : index,
+  };
+
+  if (type === 'external') {
+    normalized.url = String(item.url || '').trim();
+    normalized.urlKey = String(item.urlKey || '').trim();
+  } else {
+    normalized.path = String(item.path || '/').trim() || '/';
+  }
+
+  return normalized;
 }
