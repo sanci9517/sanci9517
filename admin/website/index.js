@@ -78,6 +78,14 @@ function bindEditor(root) {
     if (row.dataset.bound === 'true') return;
     row.dataset.bound = 'true';
     row.querySelector('[data-type]')?.addEventListener('change', (event) => updateTypeFields(row, event.target.value));
+    row.querySelector('[data-label]')?.addEventListener('input', (event) => {
+      const path = row.querySelector('[name="path"]');
+      if (!path || path.dataset.edited === 'true') return;
+      path.value = createPath(event.target.value);
+    });
+    row.querySelector('[name="path"]')?.addEventListener('input', (event) => {
+      event.target.dataset.edited = 'true';
+    });
     row.querySelector('[data-up]')?.addEventListener('click', () => moveItem(row, -1, root));
     row.querySelector('[data-down]')?.addEventListener('click', () => moveItem(row, 1, root));
     row.querySelector('[data-delete]')?.addEventListener('click', () => { row.remove(); updateCount(root); });
@@ -112,7 +120,7 @@ function saveNavigationFromForm(event) {
       item.url = row.querySelector('[name="url"]')?.value.trim() || '';
       item.urlKey = row.querySelector('[name="urlKey"]')?.value.trim() || '';
     } else {
-      item.path = row.querySelector('[name="path"]')?.value.trim() || '/';
+      item.path = normalizeRoutePath(row.querySelector('[name="path"]')?.value || row.querySelector('[name="label"]')?.value || '/');
     }
     return item;
   });
@@ -147,12 +155,12 @@ function renderItem(item, index) {
     <article class="admin-nav-item" data-nav-item>
       <div class="admin-nav-item-top">
         <strong class="admin-nav-number">${index + 1}.</strong>
-        <label class="admin-form-field admin-nav-label"><span>Megnevezés</span><input name="label" value="${escapeHtml(item.label || '')}" maxlength="60"></label>
+        <label class="admin-form-field admin-nav-label"><span>Megnevezés</span><input name="label" data-label value="${escapeHtml(item.label || '')}" maxlength="60"></label>
         <label class="admin-form-field admin-nav-type"><span>Típus</span><select name="type" data-type><option value="route" ${!external ? 'selected' : ''}>Oldal</option><option value="external" ${external ? 'selected' : ''}>Külső link</option></select></label>
         <label class="admin-switch"><input name="enabled" type="checkbox" ${item.enabled !== false ? 'checked' : ''}><span>Aktív</span></label>
       </div>
       <div class="admin-nav-fields">
-        <label class="admin-form-field" data-route-fields><span>Útvonal</span><input name="path" value="${escapeHtml(item.path || '/')}" placeholder="/bemutatkozas"></label>
+        <label class="admin-form-field" data-route-fields><span>Útvonal</span><input name="path" value="${escapeHtml(item.path || createPath(item.label || 'uj-oldal'))}" placeholder="/bemutatkozas"></label>
         <label class="admin-form-field" data-external-fields><span>Link / URL</span><input name="url" value="${escapeHtml(url)}" placeholder="https://pelda.hu"></label>
         <label class="admin-form-field" data-external-fields><span>URL kulcs</span><input name="urlKey" value="${escapeHtml(urlKey)}" placeholder="pl. twitch"></label>
       </div>
@@ -163,6 +171,24 @@ function renderItem(item, index) {
       </div>
     </article>
   `;
+}
+
+function createPath(label) {
+  const slug = String(label || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/đ/g, 'd')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return `/${slug || 'uj-oldal'}`;
+}
+
+function normalizeRoutePath(path) {
+  const value = String(path || '').trim();
+  if (!value) return '/';
+  const route = value.startsWith('/') ? value : `/${value}`;
+  return route.replace(/\/{2,}/g, '/').replace(/\/$/, '') || '/';
 }
 
 function escapeHtml(value) {
