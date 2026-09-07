@@ -1,72 +1,73 @@
 import { logoutAdmin } from './auth.js';
 import { getAdminAudit, getAdminSettings, saveAdminSettings } from './backend.js';
 import { renderWebsiteAdmin } from './website/index.js';
+import { CONTROL_CENTER_MODULES } from './modules/registry.js';
+import { loadIntegrationStatus, loadSystemHealth, loadTwitchOverview } from './modules/platform.js';
+import { runControlCenterTests } from './modules/tests.js';
 import './website/layout-enhancer.js';
 
-const adminModules = [
-  { id: 'website', title: 'Weboldal', description: 'Oldalak, menü és megjelenés kezelése.', icon: '⌂' },
-  { title: 'Twitch', description: 'Csatorna, élő adás és Twitch-beállítások.', icon: '◈' },
-  { title: 'Tartalom', description: 'Szövegek, oldaltartalmak és frissítések.', icon: '✎' },
-  { title: 'Média', description: 'Képek, videók és feltöltött anyagok kezelése.', icon: '▣' },
-  { id: 'settings', title: 'Beállítások', description: 'Rendszer- és weboldalbeállítások.', icon: '⚙' },
-];
-
 export function renderAdminDashboard(root) {
-  root.innerHTML = `
-    <div class="admin-page">
-      <header class="admin-header">
-        <div><span class="admin-kicker">Admin</span><h1>Vezérlőpult</h1><p>A weboldal kezelési felülete.</p></div>
-        <button class="button button-secondary" type="button" data-admin-logout>Kijelentkezés</button>
-      </header>
-      <main class="admin-content">
-        <section class="admin-module-grid" aria-label="Admin modulok">
-          ${adminModules.map((module) => `<button class="admin-module-card" type="button" ${module.id ? `data-admin-module="${module.id}"` : 'disabled'}><div class="admin-module-icon" aria-hidden="true">${module.icon}</div><div><h2>${module.title}</h2><p>${module.description}</p></div><span class="admin-module-arrow" aria-hidden="true">${module.id ? '→' : '•'}</span></button>`).join('')}
-        </section>
-      </main>
-    </div>`;
-
-  root.querySelector('[data-admin-module="website"]')?.addEventListener('click', () => renderWebsiteAdmin(root));
-  root.querySelector('[data-admin-module="settings"]')?.addEventListener('click', () => renderAdminSettings(root));
-  root.querySelector('[data-admin-logout]')?.addEventListener('click', async () => {
-    const button = root.querySelector('[data-admin-logout]');
-    if (button) button.disabled = true;
-    await logoutAdmin();
-    window.location.href = './';
-  });
+  renderShell(root);
+  bindShell(root);
+  loadOverview(root);
 }
+
+function renderShell(root) {
+  const groups = [['core', 'Központ'], ['brand', 'Brand'], ['platform', 'Platformok'], ['insights', 'Adatok'], ['system', 'Rendszer'], ['future', 'Jövő']];
+  root.innerHTML = `<div class="admin-page control-center-page"><header class="admin-header"><div><span class="admin-kicker">Sanci9517 Control Center</span><h1>Vezérlőpult</h1><p>A teljes Sanci9517 brand, stream és platformrendszer központi kezelése.</p></div><button class="button button-secondary" type="button" data-admin-logout>Kijelentkezés</button></header><main class="admin-content"><section class="admin-overview-strip"><div class="admin-card admin-status-card"><span class="admin-card-label">Rendszer</span><strong data-overview-system>Betöltés…</strong><small data-overview-system-detail>Worker / D1 / KV</small></div><div class="admin-card admin-status-card"><span class="admin-card-label">Twitch</span><strong data-overview-twitch>Betöltés…</strong><small data-overview-twitch-detail>Live és csatorna</small></div><div class="admin-card admin-status-card"><span class="admin-card-label">Integrációk</span><strong data-overview-integrations>Betöltés…</strong><small data-overview-integrations-detail>Twitch / YouTube / TikTok</small></div><div class="admin-card admin-status-card"><span class="admin-card-label">Admin</span><strong>Védett</strong><small>Csak tulajdonosi hozzáférés</small></div></section>${groups.map(([group, title]) => `<section class="admin-control-group"><div class="admin-section-heading"><span class="admin-kicker">${title}</span></div><div class="admin-module-grid">${CONTROL_CENTER_MODULES.filter(module => module.group === group).map(module => `<button class="admin-module-card" type="button" data-admin-module="${module.id}"><div class="admin-module-icon" aria-hidden="true">${module.icon}</div><div><h2>${module.title}</h2><p>${module.description}</p></div><span class="admin-module-arrow" aria-hidden="true">→</span></button>`).join('')}</div></section>`).join('')}</main></div>`;
+}
+
+function bindShell(root) {
+  root.querySelector('[data-admin-logout]')?.addEventListener('click', async () => { const button = root.querySelector('[data-admin-logout]'); if (button) button.disabled = true; await logoutAdmin(); window.location.href = './'; });
+  root.querySelectorAll('[data-admin-module]').forEach(button => button.addEventListener('click', () => openModule(root, button.dataset.adminModule)));
+}
+
+async function loadOverview(root) {
+  const [integrationsResult, twitchResult, systemResult] = await Promise.allSettled([loadIntegrationStatus(), loadTwitchOverview(), loadSystemHealth()]);
+  const system = root.querySelector('[data-overview-system]'); const systemDetail = root.querySelector('[data-overview-system-detail]');
+  if (system) system.textContent = systemResult.status === 'fulfilled' ? 'ONLINE' : 'HIBA';
+  if (systemDetail && systemResult.status === 'fulfilled') systemDetail.textContent = 'Worker / D1 elérhető';
+  const twitch = root.querySelector('[data-overview-twitch]'); const twitchDetail = root.querySelector('[data-overview-twitch-detail]');
+  if (twitchResult.status === 'fulfilled') { const data = twitchResult.value || {}; twitch.textContent = data.live ? '🔴 LIVE' : '⚫ OFFLINE'; twitchDetail.textContent = data.live ? `${data.currentViewers || 0} néző · ${data.game || 'Ismeretlen játék'}` : 'Csatorna elérhető'; } else if (twitch) twitch.textContent = 'HIBA';
+  const integrations = root.querySelector('[data-overview-integrations]'); const integrationDetail = root.querySelector('[data-overview-integrations-detail]');
+  if (integrationsResult.status === 'fulfilled') { const data = integrationsResult.value?.integrations || integrationsResult.value || {}; const configured = ['twitch', 'youtube', 'tiktok'].filter(id => data[id]?.configured).length; integrations.textContent = `${configured}/3 aktív`; integrationDetail.textContent = ['twitch', 'youtube', 'tiktok'].map(id => `${id}: ${data[id]?.configured ? '✓' : '—'}`).join(' · '); } else if (integrations) integrations.textContent = 'HIBA';
+}
+
+async function openModule(root, id) {
+  if (id === 'website') return renderWebsiteAdmin(root);
+  if (id === 'overview') return renderAdminDashboard(root);
+  if (id === 'settings') return renderAdminSettings(root);
+  if (id === 'tests') return renderTestCenter(root);
+  if (id === 'twitch') return renderTwitch(root);
+  if (id === 'system') return renderSystem(root);
+  if (id === 'security') return renderSecurity(root);
+  return renderPlannedModule(root, id);
+}
+
+function renderModuleFrame(root, kicker, title, description, body) { root.innerHTML = `<div class="admin-page"><header class="admin-header"><div><span class="admin-kicker">${kicker}</span><h1>${title}</h1><p>${description}</p></div><button class="button button-secondary" type="button" data-module-back>Vissza</button></header><main class="admin-content">${body}</main></div>`; root.querySelector('[data-module-back]')?.addEventListener('click', () => renderAdminDashboard(root)); }
+
+async function renderTwitch(root) {
+  renderModuleFrame(root, 'Twitch', 'Twitch Control Center', 'A Twitch integráció központja. A moduláris bővítéshez előkészítve.', '<section class="admin-card admin-editor-card"><span class="admin-card-label">Élő adatok</span><h2>Csatorna és stream</h2><div class="admin-field-list" data-twitch-fields><p class="admin-help">Betöltés…</p></div></section><section class="admin-card admin-editor-card"><span class="admin-card-label">Következő modulok</span><h2>Teljes Twitch hozzáférés</h2><div class="admin-module-list"><div>VOD és klipek</div><div>Followers / Subscribers / Bits</div><div>Channel Points / Polls / Predictions</div><div>Chat / Moderation / Raids</div><div>Schedule / Markers / Analytics</div><div>EventSub / OAuth</div></div></section>');
+  try { const data = await loadTwitchOverview(); root.querySelector('[data-twitch-fields]').innerHTML = [['Állapot', data.live ? '🔴 LIVE' : '⚫ OFFLINE'], ['Csatorna', data.channel || 'sanci9517'], ['Nézők', data.currentViewers ?? 0], ['Játék', data.game || '—'], ['Cím', data.title || '—'], ['Nyelv', data.language || '—']].map(([label, value]) => `<div class="admin-field-row"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join(''); } catch (error) { root.querySelector('[data-twitch-fields]').innerHTML = `<p class="admin-help">Twitch hiba: ${escapeHtml(error.message)}</p>`; }
+}
+
+async function renderSystem(root) {
+  renderModuleFrame(root, 'Rendszer', 'System Center', 'Cloudflare Worker, D1, KV és integrációs állapot.', '<section class="admin-card admin-editor-card"><span class="admin-card-label">Health</span><h2>Rendszerállapot</h2><div class="admin-field-list" data-system-fields><p class="admin-help">Betöltés…</p></div></section>');
+  try { const data = await loadSystemHealth(); root.querySelector('[data-system-fields]').innerHTML = [['Worker', data.health?.ok === false ? 'HIBA' : 'ONLINE'], ['Storage', data.storage?.ok === false ? 'HIBA' : 'ONLINE'], ['D1', data.storage?.d1 ? 'OK' : '—'], ['KV', data.storage?.kv ? 'OK' : '—']].map(([label, value]) => `<div class="admin-field-row"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join(''); } catch (error) { root.querySelector('[data-system-fields]').innerHTML = `<p class="admin-help">Rendszer hiba: ${escapeHtml(error.message)}</p>`; }
+}
+
+async function renderTestCenter(root) {
+  renderModuleFrame(root, 'Test Center', 'Teljes rendszer teszt', 'Egy helyről ellenőrizhető a Worker, storage és platform API-k elérése.', '<section class="admin-card admin-editor-card"><div class="admin-card-heading"><div><span class="admin-card-label">Diagnosztika</span><h2>Integrációs tesztek</h2></div><button class="button button-primary" type="button" data-run-tests>▶ Teszt indítása</button></div><div class="admin-field-list" data-test-results><p class="admin-help">Indítsd el a tesztet.</p></div></section>');
+  root.querySelector('[data-run-tests]')?.addEventListener('click', async event => { const button = event.currentTarget; button.disabled = true; const results = await runControlCenterTests(); root.querySelector('[data-test-results]').innerHTML = results.map(result => `<div class="admin-field-row"><span>${escapeHtml(result.name)}<small>${escapeHtml(result.endpoint)}</small></span><strong class="${result.ok ? 'test-ok' : 'test-error'}">${result.ok ? `✓ OK · ${result.ms} ms` : `✕ ${escapeHtml(result.error)}`}</strong></div>`).join(''); button.disabled = false; });
+}
+
+function renderSecurity(root) { renderModuleFrame(root, 'Biztonság', 'Security Center', 'Az admin felület és a későbbi integrációs hozzáférések biztonsági központja.', '<section class="admin-card admin-editor-card"><span class="admin-card-label">Védelem</span><h2>Jelenlegi állapot</h2><div class="admin-field-list"><div class="admin-field-row"><span>Admin hitelesítés</span><strong>✓ Szerveroldali</strong></div><div class="admin-field-row"><span>Admin cookie</span><strong>✓ HttpOnly / Secure</strong></div><div class="admin-field-row"><span>API titkok</span><strong>✓ Cloudflare Worker secrets</strong></div><div class="admin-field-row"><span>Audit napló</span><strong>✓ Aktív</strong></div></div></section>'); }
+function renderPlannedModule(root, id) { const module = CONTROL_CENTER_MODULES.find(item => item.id === id); renderModuleFrame(root, module?.title || 'Modul', module?.title || 'Modul', module?.description || '', '<section class="admin-card"><span class="admin-card-label">Előkészítve</span><h2>Modul alap</h2><p>Ez a rész külön modulban készül tovább, a meglévő rendszer működésének megőrzésével.</p></section>'); }
 
 async function renderAdminSettings(root) {
   root.innerHTML = `<div class="admin-page"><header class="admin-header"><div><span class="admin-kicker">Beállítások</span><h1>Rendszerbeállítások</h1><p>A módosítások közvetlenül a védett admin backendben kerülnek mentésre.</p></div><button class="button button-secondary" type="button" data-settings-back>Vissza</button></header><main class="admin-content"><section class="admin-card admin-editor-card"><span class="admin-card-label">Backend</span><h2>Állapot</h2><p class="admin-help" data-settings-state>Beállítások betöltése…</p><form data-settings-form hidden><label class="admin-form-field"><span>Weboldal neve</span><input name="brand" maxlength="80"></label><label class="admin-form-field"><span>Leírás</span><textarea name="description" rows="3" maxlength="240"></textarea></label><button class="button button-primary" type="submit">Mentés a szerverre</button><span class="admin-form-status" data-settings-status></span></form></section><section class="admin-card admin-editor-card"><span class="admin-card-label">Audit</span><h2>Admin műveletek</h2><div class="admin-audit-list" data-audit-list>Betöltés…</div></section></main></div>`;
-
   root.querySelector('[data-settings-back]')?.addEventListener('click', () => renderAdminDashboard(root));
-  try {
-    const [settingsData, auditData] = await Promise.all([getAdminSettings(), getAdminAudit()]);
-    const settings = settingsData.settings || {};
-    const form = root.querySelector('[data-settings-form]');
-    if (form) {
-      form.querySelector('[name="brand"]').value = String(settings.brand || '');
-      form.querySelector('[name="description"]').value = String(settings.description || '');
-      form.hidden = false;
-      form.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const data = new FormData(form);
-        const status = root.querySelector('[data-settings-status]');
-        try {
-          await saveAdminSettings({ brand: String(data.get('brand') || '').trim(), description: String(data.get('description') || '').trim() });
-          if (status) status.textContent = 'Szerverre mentve ✓';
-        } catch (error) { if (status) status.textContent = error.message; }
-      });
-    }
-    const state = root.querySelector('[data-settings-state]');
-    if (state) state.textContent = 'Kapcsolat rendben – D1 backend aktív.';
-    const audit = root.querySelector('[data-audit-list]');
-    if (audit) audit.innerHTML = (auditData.audit || []).length ? auditData.audit.map(row => `<article><strong>${escapeHtml(row.action)}</strong><span>${escapeHtml(row.created_at)}</span><small>${escapeHtml(row.details || '')}</small></article>`).join('') : '<p class="admin-help">Még nincs naplózott admin művelet.</p>';
-  } catch (error) {
-    const state = root.querySelector('[data-settings-state]');
-    if (state) state.textContent = `Backend hiba: ${error.message}`;
-  }
+  try { const [settingsData, auditData] = await Promise.all([getAdminSettings(), getAdminAudit()]); const settings = settingsData.settings || {}; const form = root.querySelector('[data-settings-form]'); form.querySelector('[name="brand"]').value = String(settings.brand || ''); form.querySelector('[name="description"]').value = String(settings.description || ''); form.hidden = false; form.addEventListener('submit', async event => { event.preventDefault(); const data = new FormData(form); const status = root.querySelector('[data-settings-status]'); try { await saveAdminSettings({ brand: String(data.get('brand') || '').trim(), description: String(data.get('description') || '').trim() }); if (status) status.textContent = 'Szerverre mentve ✓'; } catch (error) { if (status) status.textContent = error.message; } }); root.querySelector('[data-settings-state]').textContent = 'Kapcsolat rendben – D1 backend aktív.'; root.querySelector('[data-audit-list]').innerHTML = (auditData.audit || []).length ? auditData.audit.map(row => `<article><strong>${escapeHtml(row.action)}</strong><span>${escapeHtml(row.created_at)}</span><small>${escapeHtml(row.details || '')}</small></article>`).join('') : '<p class="admin-help">Még nincs naplózott admin művelet.</p>'; } catch (error) { root.querySelector('[data-settings-state]').textContent = `Backend hiba: ${error.message}`; }
 }
 
-function escapeHtml(value) {
-  return String(value ?? '').replace(/[&<>'"]/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[character]));
-}
+function escapeHtml(value) { return String(value ?? '').replace(/[&<>'"]/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[character])); }
