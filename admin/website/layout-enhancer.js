@@ -8,6 +8,9 @@ const ALIGNS = [
 const WIDTHS = [
   ['full', 'Teljes szélesség'],
   ['half', 'Fél szélesség'],
+  ['third', 'Harmad szélesség'],
+  ['quarter', 'Negyed szélesség'],
+  ['auto', 'Automatikus'],
 ];
 
 function enhance(root = document) {
