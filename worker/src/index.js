@@ -1,6 +1,7 @@
 import { clearAdminCookie, isAdminRequestAuthenticated, loginAdminRequest } from './auth.js';
 import { getAdminAudit, getAdminSettings, isAllowedAdminOrigin, updateAdminSettings } from './admin.js';
 import { getTwitchChannel, getTwitchChannelFollowers, getTwitchData, getTwitchStreamStatus, isTwitchConfigured } from '../../integrations/twitch/client.js';
+import { getTwitchStatistics } from '../../integrations/twitch/statistics.js';
 
 const DEFAULT_ADMIN_ORIGIN = 'https://sanci9517.github.io';
 const YOUTUBE_API = 'https://www.googleapis.com/youtube/v3';
@@ -127,6 +128,7 @@ export default {
       const channel = await getTwitchChannel(env, BROADCASTER_LOGIN);
       return getTwitchChannelFollowers(env, channel.channel?.id);
     }, request, env);
+    if (request.method === 'GET' && url.pathname === '/twitch/statistics') return twitchRoute(() => getTwitchStatistics({ getStreamStatus: getTwitchStreamStatus, getChannel: getTwitchChannel, env, login: BROADCASTER_LOGIN }), request, env);
     if (request.method === 'GET' && url.pathname === '/twitch/data') return twitchRoute(() => getTwitchData(env, BROADCASTER_LOGIN), request, env);
     if (request.method === 'GET' && url.pathname === '/youtube/channel') {
       try { return json({ ok: true, ...(await getYouTubeChannel(env)) }, 200, {}, request, env); }
