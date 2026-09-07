@@ -1,13 +1,27 @@
 import { isAdminAuthenticated, loginAdmin } from './auth.js';
 import { renderAdminDashboard } from './dashboard.js';
 
+const ADMIN_STYLESHEET_ID = 'sanci-admin-styles';
+
 export function renderAdmin(root) {
+  ensureAdminStyles();
+
   if (!isAdminAuthenticated()) {
     renderAdminLogin(root);
     return;
   }
 
   renderAdminDashboard(root);
+}
+
+function ensureAdminStyles() {
+  if (document.getElementById(ADMIN_STYLESHEET_ID)) return;
+
+  const stylesheet = document.createElement('link');
+  stylesheet.id = ADMIN_STYLESHEET_ID;
+  stylesheet.rel = 'stylesheet';
+  stylesheet.href = 'styles/admin.css';
+  document.head.appendChild(stylesheet);
 }
 
 function renderAdminLogin(root) {
