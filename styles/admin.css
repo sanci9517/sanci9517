@@ -31,67 +31,25 @@
 .admin-header h1,
 .admin-login-card h1,
 .admin-card h2,
-.admin-module-card h2 {
-  margin: 8px 0 10px;
-  letter-spacing: -.04em;
-}
-
+.admin-module-card h2 { margin: 8px 0 10px; letter-spacing: -.04em; }
 .admin-header h1 { font-size: clamp(36px, 5vw, 56px); }
-
 .admin-header p,
 .admin-login-card > p,
 .admin-card p,
-.admin-module-card p {
-  margin: 0;
-  color: var(--muted);
-  line-height: var(--leading-relaxed);
-}
-
+.admin-module-card p { margin: 0; color: var(--muted); line-height: var(--leading-relaxed); }
 .admin-content { padding-bottom: 64px; }
 
-.admin-module-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
-}
-
+.admin-module-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
 .admin-module-card {
-  position: relative;
-  width: 100%;
-  min-height: 190px;
-  padding: 28px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 24px;
-  appearance: none;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  background: var(--surface);
-  color: var(--text);
-  text-align: left;
-  font: inherit;
-  cursor: pointer;
-  box-shadow: var(--shadow-md);
-  transition: border-color var(--motion-fast), transform var(--motion-fast), background var(--motion-fast);
+  position: relative; width: 100%; min-height: 190px; padding: 28px;
+  display: flex; flex-direction: column; justify-content: space-between; gap: 24px;
+  appearance: none; border: 1px solid var(--line); border-radius: var(--radius-lg);
+  background: var(--surface); color: var(--text); text-align: left; font: inherit; cursor: pointer;
+  box-shadow: var(--shadow-md); transition: border-color var(--motion-fast), transform var(--motion-fast), background var(--motion-fast);
 }
-
-.admin-module-card:hover:not(:disabled) {
-  transform: translateY(-2px);
-  border-color: rgba(145, 71, 255, .34);
-  background: var(--surface-2);
-}
-
-.admin-module-card:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-}
-
-.admin-module-card:disabled {
-  opacity: .58;
-  cursor: default;
-}
-
+.admin-module-card:hover:not(:disabled) { transform: translateY(-2px); border-color: rgba(145,71,255,.34); background: var(--surface-2); }
+.admin-module-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.admin-module-card:disabled { opacity: .58; cursor: default; }
 .admin-module-card:nth-child(5) { grid-column: 1 / -1; }
 .admin-module-icon { font-size: 26px; color: var(--accent-hover); }
 .admin-module-card h2 { font-size: 25px; }
@@ -99,74 +57,55 @@
 
 .admin-card,
 .admin-login-card {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-md);
 }
-
-.admin-card {
-  width: 100%;
-  max-width: none;
-  padding: 32px;
-}
-
+.admin-card { width: 100%; max-width: none; padding: 32px; }
 .admin-card + .admin-card { margin-top: 18px; }
 .admin-card h2 { font-size: 28px; }
 
+.admin-editor-layout { display: grid; gap: 18px; }
+.admin-card-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
 .admin-field-list,
-.admin-menu-preview {
-  display: grid;
-  gap: 10px;
-  margin-top: 24px;
-}
-
+.admin-menu-preview { display: grid; gap: 10px; margin-top: 24px; }
 .admin-field-row {
-  min-height: 58px;
-  padding: 14px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  background: var(--surface-2);
+  min-height: 58px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  border-bottom: 1px solid var(--line); background: transparent;
 }
+.admin-field-row:first-child { border-top: 1px solid var(--line); }
+.admin-field-row > span { color: var(--muted); font-size: var(--text-sm); }
+.admin-field-row > strong { color: var(--text); font-size: var(--text-sm); text-align: right; overflow-wrap: anywhere; }
 
-.admin-field-row > span {
-  color: var(--muted);
-  font-size: var(--text-sm);
+.admin-nav-editor { margin-top: 24px; display: grid; gap: 10px; }
+.admin-nav-item {
+  padding: 18px; border: 1px solid var(--line); border-radius: var(--radius-md);
+  background: linear-gradient(135deg, rgba(255,255,255,.018), transparent 70%);
 }
-
-.admin-field-row > strong {
-  color: var(--text);
-  font-size: var(--text-sm);
-  text-align: right;
-  overflow-wrap: anywhere;
+.admin-nav-item:hover { border-color: rgba(145,71,255,.28); }
+.admin-nav-item-top { display: grid; grid-template-columns: auto minmax(180px, 1fr) 150px auto; align-items: end; gap: 14px; }
+.admin-nav-item-top > strong { padding-bottom: 11px; color: var(--accent-hover); font-size: var(--text-sm); }
+.admin-nav-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; }
+.admin-form-field { display: grid; gap: 7px; min-width: 0; color: var(--muted); font-size: var(--text-xs); font-weight: var(--weight-medium); }
+.admin-form-field input,
+.admin-form-field select,
+.admin-form-field textarea {
+  width: 100%; min-height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: var(--radius-sm);
+  background: var(--surface-2); color: var(--text); font: inherit;
 }
-
-.admin-field-row-column {
-  align-items: flex-start;
-  flex-direction: column;
-}
-
-.admin-field-row-column > strong { text-align: left; }
-.admin-info-card { border-color: rgba(145, 71, 255, .22); }
+.admin-form-field input:focus,
+.admin-form-field select:focus,
+.admin-form-field textarea:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+.admin-switch { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--text-soft); font-size: var(--text-xs); white-space: nowrap; cursor: pointer; }
+.admin-switch input { accent-color: var(--accent); width: 18px; height: 18px; }
+.admin-nav-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
+.admin-nav-actions .button { min-height: 36px; padding-inline: 12px; }
+.admin-form-meta { display: flex; justify-content: space-between; gap: 16px; margin: 18px 0; color: var(--muted); font-size: var(--text-xs); }
+.admin-help { margin-top: 14px !important; }
 
 .admin-login-page { display: grid; place-items: center; padding: 24px; }
 .admin-login-card { width: min(100%, 460px); padding: 32px; }
 .admin-login-card form { display: grid; gap: 18px; margin-top: 28px; }
 .admin-login-card label { display: grid; gap: 8px; color: var(--text-soft); font-size: var(--text-sm); font-weight: var(--weight-medium); }
-.admin-login-card input {
-  width: 100%;
-  min-height: 46px;
-  padding: 0 14px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  background: var(--surface-2);
-  color: var(--text);
-  font: inherit;
-}
+.admin-login-card input { width: 100%; min-height: 46px; padding: 0 14px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface-2); color: var(--text); font: inherit; }
 .admin-login-card input:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
 .admin-login-note { margin-top: 18px !important; font-size: var(--text-xs); }
 
@@ -175,6 +114,11 @@
   .admin-module-card:nth-child(5) { grid-column: auto; }
   .admin-field-row { align-items: flex-start; flex-direction: column; }
   .admin-field-row > strong { text-align: left; }
+  .admin-nav-item-top { grid-template-columns: auto 1fr; align-items: end; }
+  .admin-nav-label { grid-column: 2; }
+  .admin-nav-type { grid-column: 1 / -1; }
+  .admin-switch { grid-column: 1 / -1; }
+  .admin-nav-fields { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 640px) {
@@ -182,5 +126,15 @@
   .admin-content { width: min(100% - 28px, var(--max-width)); }
   .admin-module-card { min-height: 170px; padding: 24px; }
   .admin-card,
-  .admin-login-card { padding: 24px; }
+  .admin-login-card { padding: 20px; }
+  .admin-card-heading { align-items: stretch; flex-direction: column; }
+  .admin-card-heading .button { width: 100%; }
+  .admin-nav-item { padding: 14px; }
+  .admin-nav-item-top { grid-template-columns: 1fr; }
+  .admin-nav-label,
+  .admin-nav-type,
+  .admin-switch { grid-column: auto; }
+  .admin-nav-actions { justify-content: stretch; }
+  .admin-nav-actions .button { flex: 1; }
+  .admin-form-meta { align-items: flex-start; flex-direction: column; }
 }
