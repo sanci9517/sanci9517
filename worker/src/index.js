@@ -35,6 +35,7 @@ async function adminLogin(request, env) {
   const result = await loginAdminRequest(request, env);
   const headers = result.noStore ? { 'cache-control': 'no-store' } : {};
   if (result.setCookie) headers['set-cookie'] = result.setCookie;
+  if (result.retryAfter) headers['retry-after'] = String(result.retryAfter);
   return json({ ok: result.ok, username: result.username || null, error: result.error || null }, result.status, headers, request, env);
 }
 
@@ -112,7 +113,7 @@ export default {
         return json({ ok: false, storage: { d1: false, kv: false }, error: 'Storage health check failed.' }, 503, {}, request, env);
       }
     }
-    if (request.method === 'GET' && url.pathname === '/health') return json({ ok: true, service: 'sanci9517-api', version: 'admin-backend-1', environment: env.ENVIRONMENT || 'production', integrations: getIntegrationStatus(env), timestamp: new Date().toISOString() }, 200, {}, request, env);
+    if (request.method === 'GET' && url.pathname === '/health') return json({ ok: true, service: 'sanci9517-api', version: 'admin-backend-2', environment: env.ENVIRONMENT || 'production', integrations: getIntegrationStatus(env), timestamp: new Date().toISOString() }, 200, {}, request, env);
     if (request.method === 'GET' && url.pathname === '/integrations/status') return json({ ok: true, integrations: getIntegrationStatus(env) }, 200, {}, request, env);
     if (request.method === 'GET' && url.pathname === '/twitch/status') { try { return json({ ok: true, ...(await getStreamStatus(env)) }, 200, {}, request, env); } catch (error) { console.error('[Sanci9517] Twitch status error:', error); return json({ ok: false, error: 'Twitch status is temporarily unavailable.' }, 503, {}, request, env); } }
     if (request.method === 'GET' && url.pathname === '/youtube/channel') { try { return json({ ok: true, ...(await getYouTubeChannel(env)) }, 200, {}, request, env); } catch (error) { console.error('[Sanci9517] YouTube channel error:', error); return json({ ok: false, error: 'YouTube channel is temporarily unavailable.' }, 503, {}, request, env); } }
