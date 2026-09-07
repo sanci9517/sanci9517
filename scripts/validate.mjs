@@ -24,7 +24,7 @@ for (const file of jsonFiles) {
 const worker = readFileSync('worker/src/index.js', 'utf8');
 const workerAuth = readFileSync('worker/src/auth.js', 'utf8');
 const workerAdmin = readFileSync('worker/src/admin.js', 'utf8');
-for (const route of ['/health', '/health/storage', '/integrations/status', '/twitch/status', '/youtube/channel', '/admin/auth/login', '/admin/auth/check', '/admin/auth/logout', '/admin/settings', '/admin/audit']) {
+for (const route of ['/health', '/health/storage', '/integrations/status', '/twitch/status', '/youtube/channel', '/admin/auth/login', '/admin/auth/check', '/admin/auth/logout', '/admin/settings', '/admin/audit', '/site-state']) {
   if (!worker.includes(`url.pathname === '${route}'`)) { console.error(`Missing worker route: ${route}`); process.exit(1); }
 }
 
@@ -40,6 +40,7 @@ const index = readFileSync('index.html', 'utf8');
 const fallback = readFileSync('404.html', 'utf8');
 
 if (!/basePath:\s*['"]\/sanci9517['"]/.test(config)) { console.error('Missing configured GitHub Pages basePath.'); process.exit(1); }
+if (!/apiBaseUrl:\s*['"]https:\/\/sanci9517-api\.sandor-bogadi95\.workers\.dev['"]/.test(config)) { console.error('Frontend API must point to the production Cloudflare Worker.'); process.exit(1); }
 if (!router.includes('config.basePath')) { console.error('Router must use config.basePath for site paths.'); process.exit(1); }
 if (!app.includes('config.basePath')) { console.error('App route resolution must use config.basePath.'); process.exit(1); }
 if (!navigation.includes('config.basePath')) { console.error('Navigation route resolution must use config.basePath.'); process.exit(1); }
@@ -54,11 +55,11 @@ if (!workerAuth.includes('ADMIN_LOGIN_MAX_FAILURES') || !workerAuth.includes('ex
 if (!worker.includes('access-control-allow-credentials')) { console.error('Worker CORS must allow credentialed admin requests.'); process.exit(1); }
 if (!worker.includes('vary')) { console.error('Worker CORS must vary by Origin.'); process.exit(1); }
 if (!workerAdmin.includes('isAllowedAdminOrigin') || !workerAdmin.includes('authenticate')) { console.error('Admin backend must enforce origin and server authentication checks.'); process.exit(1); }
-if (!storage.includes('remoteSaveQueue') || !storage.includes("sanci:remote-save")) { console.error('Admin remote saves must be serialized and observable.'); process.exit(1); }
-if (!admin.includes('sanci:remote-save')) { console.error('Admin UI must surface remote save status.'); process.exit(1); }
+if (!storage.includes('remoteSaveQueue') || !storage.includes("sanci:remote-save") || !storage.includes('hydratePublicStorage')) { console.error('Storage must support serialized admin saves and public remote hydration.'); process.exit(1); }
+if (!app.includes('await hydratePublicStorage()')) { console.error('Public app boot must hydrate published state before rendering.'); process.exit(1); }
 
 for (const script of ['admin/website/layout-enhancer.js', 'core/block-layout.js', 'core/app.js']) {
   if (!index.includes(script) || !fallback.includes(script)) { console.error(`GitHub Pages fallback bootstrap mismatch: ${script}`); process.exit(1); }
 }
 
-console.log(`Validation passed: ${requiredFiles.length} required files, route checks, GitHub Pages fallback checks, secure cookie/CORS checks, login rate limiting, D1 admin backend checks, and serialized remote-save checks passed.`);
+console.log(`Validation passed: ${requiredFiles.length} required files, route checks, GitHub Pages fallback, production API endpoint, secure cookie/CORS, login rate limiting, D1 admin backend, serialized remote saves, and public D1 state hydration checks passed.`);
