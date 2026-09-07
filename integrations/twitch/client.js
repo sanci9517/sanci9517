@@ -101,10 +101,22 @@ export async function getTwitchChannel(env, login = DEFAULT_BROADCASTER_LOGIN) {
   };
 }
 
+export async function getTwitchChannelFollowers(env, userId) {
+  if (!userId) return { followers: 0, checkedAt: new Date().toISOString() };
+  const data = await twitchGet(`/channels/followers?broadcaster_id=${encodeURIComponent(userId)}`, env);
+  return {
+    followers: Number(data.total || 0),
+    checkedAt: new Date().toISOString(),
+  };
+}
+
 export async function getTwitchData(env, login = DEFAULT_BROADCASTER_LOGIN) {
   const [status, channel] = await Promise.all([
     getTwitchStreamStatus(env, login),
     getTwitchChannel(env, login),
   ]);
-  return { ...status, ...channel };
+  const followers = channel.channel?.id
+    ? await getTwitchChannelFollowers(env, channel.channel.id)
+    : { followers: 0, checkedAt: new Date().toISOString() };
+  return { ...status, ...channel, ...followers };
 }
