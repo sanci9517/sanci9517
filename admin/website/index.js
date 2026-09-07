@@ -1,6 +1,7 @@
 import { site } from '../../data/site.js';
 import { navigation } from '../../data/navigation.js';
 import { siteUrl } from '../../core/config.js';
+import { navigate } from '../../core/router.js';
 
 export function renderWebsiteAdmin(root) {
   root.innerHTML = `
@@ -9,7 +10,7 @@ export function renderWebsiteAdmin(root) {
         <div>
           <span class="admin-kicker">Weboldal</span>
           <h1>Weboldal kezelése</h1>
-          <p>A főoldal és a navigáció jelenlegi beállításai.</p>
+          <p>A weboldal jelenlegi felépítése és beállításai.</p>
         </div>
         <button class="button button-secondary" type="button" data-admin-back>Vissza</button>
       </header>
@@ -48,15 +49,15 @@ export function renderWebsiteAdmin(root) {
         </section>
 
         <section class="admin-card admin-info-card">
-          <span class="admin-card-label">Következő lépés</span>
-          <h2>Grafikus szerkesztés</h2>
-          <p>A következő körben ezekből valódi szerkeszthető mezőket készítünk, mentéssel együtt. Most még nem módosítjuk az adatokat.</p>
+          <span class="admin-card-label">Szerkesztési mód</span>
+          <h2>Grafikus vezérlés előkészítve</h2>
+          <p>Itt fogjuk később szerkeszteni a weboldal nevét, leírását, menüjét és megjelenését. A mentés és a valódi módosítás a következő lépésben kerül be.</p>
         </section>
       </main>
     </div>
   `;
 
   root.querySelector('[data-admin-back]')?.addEventListener('click', () => {
-    window.history.back();
+    navigate('/admin');
   });
 }
