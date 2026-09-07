@@ -7,6 +7,7 @@ import { showError } from './ui.js';
 import { getSite } from './site-state.js';
 import { getNavigation } from './navigation-state.js';
 import { getPageByPath } from './page-state.js';
+import { config } from './config.js';
 
 registerRoute('/', renderHome);
 registerRoute('/admin', renderAdmin);
@@ -46,7 +47,7 @@ function renderCurrentRoute() {
 
 function getCurrentRoutePath() {
   const pathname = normalizePath(window.location.pathname);
-  const base = normalizePath('/sanci9517');
+  const base = normalizePath(config.basePath);
   if (pathname === base) return '/';
   if (pathname.startsWith(`${base}/`)) return normalizePath(pathname.slice(base.length));
   return pathname;
