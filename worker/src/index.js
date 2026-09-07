@@ -1,4 +1,4 @@
-import { isAdminRequestAuthenticated, loginAdminRequest } from './auth.js';
+import { clearAdminCookie, isAdminRequestAuthenticated, loginAdminRequest } from './auth.js';
 
 const CORS_HEADERS = {
   'access-control-allow-origin': '*',
@@ -23,7 +23,8 @@ function json(data, status = 200, extraHeaders = {}) {
 async function adminLogin(request, env) {
   const result = await loginAdminRequest(request, env);
   const headers = result.noStore ? { 'cache-control': 'no-store' } : {};
-  return json(result, result.status, headers);
+  if (result.setCookie) headers['set-cookie'] = result.setCookie;
+  return json({ ok: result.ok, username: result.username || null, error: result.error || null }, result.status, headers);
 }
 
 async function getAppAccessToken(env) {
@@ -65,11 +66,12 @@ export default {
     const url = new URL(request.url);
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS_HEADERS });
     if (request.method === 'POST' && url.pathname === '/admin/auth/login') return adminLogin(request, env);
+    if (request.method === 'POST' && url.pathname === '/admin/auth/logout') return json({ ok: true }, 200, { 'cache-control': 'no-store', 'set-cookie': clearAdminCookie() });
     if (request.method === 'GET' && url.pathname === '/admin/auth/check') {
       const authenticated = await isAdminRequestAuthenticated(request, env);
       return json({ ok: authenticated, authenticated }, authenticated ? 200 : 401, { 'cache-control': 'no-store' });
     }
-    if (request.method === 'GET' && url.pathname === '/health') return json({ ok: true, service: 'sanci9517-api', version: 'admin-auth-2', environment: env.ENVIRONMENT || 'production', integrations: getIntegrationStatus(env), timestamp: new Date().toISOString() });
+    if (request.method === 'GET' && url.pathname === '/health') return json({ ok: true, service: 'sanci9517-api', version: 'admin-auth-3', environment: env.ENVIRONMENT || 'production', integrations: getIntegrationStatus(env), timestamp: new Date().toISOString() });
     if (request.method === 'GET' && url.pathname === '/integrations/status') return json({ ok: true, integrations: getIntegrationStatus(env) });
     if (request.method === 'GET' && url.pathname === '/twitch/status') { try { return json({ ok: true, ...(await getStreamStatus(env)) }); } catch (error) { console.error('[Sanci9517] Twitch status error:', error); return json({ ok: false, error: 'Twitch status is temporarily unavailable.' }, 503); } }
     if (request.method === 'GET' && url.pathname === '/youtube/channel') { try { return json({ ok: true, ...(await getYouTubeChannel(env)) }); } catch (error) { console.error('[Sanci9517] YouTube channel error:', error); return json({ ok: false, error: 'YouTube channel is temporarily unavailable.' }, 503); } }
