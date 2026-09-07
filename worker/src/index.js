@@ -1,14 +1,11 @@
 import { clearAdminCookie, isAdminRequestAuthenticated, loginAdminRequest } from './auth.js';
 import { getAdminAudit, getAdminSettings, isAllowedAdminOrigin, updateAdminSettings } from './admin.js';
+import { getTwitchStreamStatus, isTwitchConfigured } from '../../integrations/twitch/client.js';
 
 const DEFAULT_ADMIN_ORIGIN = 'https://sanci9517.github.io';
-const TWITCH_API = 'https://api.twitch.tv/helix';
-const TWITCH_TOKEN_URL = 'https://id.twitch.tv/oauth2/token';
 const YOUTUBE_API = 'https://www.googleapis.com/youtube/v3';
 const BROADCASTER_LOGIN = 'sanci9517';
 const PUBLIC_SETTING_KEYS = ['site-settings', 'navigation-settings-v2', 'page-settings'];
-
-let cachedToken = null;
 
 function corsHeaders(request, env) {
   const origin = request.headers.get('origin');
@@ -50,26 +47,6 @@ async function getPublicSiteState(env) {
   return { settings, updatedAt: result.results?.[0]?.updated_at || null };
 }
 
-async function getAppAccessToken(env) {
-  if (!env.TWITCH_CLIENT_ID || !env.TWITCH_CLIENT_SECRET) throw new Error('Twitch API credentials are not configured.');
-  if (cachedToken && cachedToken.expiresAt > Date.now() + 60_000) return cachedToken.value;
-  const body = new URLSearchParams({ client_id: env.TWITCH_CLIENT_ID, client_secret: env.TWITCH_CLIENT_SECRET, grant_type: 'client_credentials' });
-  const response = await fetch(TWITCH_TOKEN_URL, { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' }, body });
-  if (!response.ok) throw new Error(`Twitch token request failed: ${response.status}`);
-  const data = await response.json();
-  cachedToken = { value: data.access_token, expiresAt: Date.now() + Number(data.expires_in || 0) * 1000 };
-  return cachedToken.value;
-}
-
-async function getStreamStatus(env) {
-  const token = await getAppAccessToken(env);
-  const response = await fetch(`${TWITCH_API}/streams?user_login=${encodeURIComponent(BROADCASTER_LOGIN)}`, { headers: { 'client-id': env.TWITCH_CLIENT_ID, authorization: `Bearer ${token}` } });
-  if (!response.ok) throw new Error(`Twitch streams request failed: ${response.status}`);
-  const data = await response.json();
-  const stream = data.data?.[0] || null;
-  return { live: Boolean(stream), channel: BROADCASTER_LOGIN, stream: stream ? { id: stream.id, userId: stream.user_id, userLogin: stream.user_login, userName: stream.user_name, gameId: stream.game_id, gameName: stream.game_name, title: stream.title, viewerCount: Number(stream.viewer_count || 0), startedAt: stream.started_at, language: stream.language, thumbnailUrl: stream.thumbnail_url } : null, checkedAt: new Date().toISOString() };
-}
-
 async function getYouTubeChannel(env) {
   if (!env.YOUTUBE_API_KEY || !env.YOUTUBE_CHANNEL_ID) return { configured: false, channel: null, checkedAt: new Date().toISOString() };
   const params = new URLSearchParams({ part: 'snippet,statistics,contentDetails', id: env.YOUTUBE_CHANNEL_ID, key: env.YOUTUBE_API_KEY });
@@ -82,7 +59,7 @@ async function getYouTubeChannel(env) {
 
 function getIntegrationStatus(env) {
   return {
-    twitch: { configured: Boolean(env.TWITCH_CLIENT_ID && env.TWITCH_CLIENT_SECRET), available: true, channel: BROADCASTER_LOGIN, capabilities: ['live', 'channel', 'stream', 'statistics'] },
+    twitch: { configured: isTwitchConfigured(env), available: true, channel: BROADCASTER_LOGIN, capabilities: ['live', 'channel', 'stream', 'statistics'] },
     youtube: { configured: Boolean(env.YOUTUBE_API_KEY && env.YOUTUBE_CHANNEL_ID), available: true, channelId: env.YOUTUBE_CHANNEL_ID || null, capabilities: ['channel', 'videos', 'shorts', 'statistics', 'live'] },
     tiktok: { configured: Boolean(env.TIKTOK_CLIENT_KEY && env.TIKTOK_CLIENT_SECRET), available: true, capabilities: ['profile', 'videos', 'live', 'statistics'] },
     admin: { configured: Boolean(env.ADMIN_USERNAME && env.ADMIN_PASSWORD && env.ADMIN_AUTH_SECRET), available: true },
@@ -135,7 +112,7 @@ export default {
     }
     if (request.method === 'GET' && url.pathname === '/health') return json({ ok: true, service: 'sanci9517-api', version: 'integration-foundation-1', environment: env.ENVIRONMENT || 'production', integrations: getIntegrationStatus(env), timestamp: new Date().toISOString() }, 200, {}, request, env);
     if (request.method === 'GET' && url.pathname === '/integrations/status') return json({ ok: true, integrations: getIntegrationStatus(env) }, 200, {}, request, env);
-    if (request.method === 'GET' && url.pathname === '/twitch/status') { try { return json({ ok: true, ...(await getStreamStatus(env)) }, 200, {}, request, env); } catch (error) { console.error('[Sanci9517] Twitch status error:', error); return json({ ok: false, error: 'Twitch status is temporarily unavailable.' }, 503, {}, request, env); } }
+    if (request.method === 'GET' && url.pathname === '/twitch/status') { try { return json({ ok: true, ...(await getTwitchStreamStatus(env, BROADCASTER_LOGIN)) }, 200, {}, request, env); } catch (error) { console.error('[Sanci9517] Twitch status error:', error); return json({ ok: false, error: 'Twitch status is temporarily unavailable.' }, 503, {}, request, env); } }
     if (request.method === 'GET' && url.pathname === '/youtube/channel') { try { return json({ ok: true, ...(await getYouTubeChannel(env)) }, 200, {}, request, env); } catch (error) { console.error('[Sanci9517] YouTube channel error:', error); return json({ ok: false, error: 'YouTube channel is temporarily unavailable.' }, 503, {}, request, env); } }
     return json({ ok: false, error: 'Not found', path: url.pathname }, 404, {}, request, env);
   },
