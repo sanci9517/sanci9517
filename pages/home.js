@@ -1,7 +1,12 @@
 import { Header } from '../components/header.js';
 import { loadTwitchStatus } from '../twitch/status.js';
+import { getPageByPath } from '../core/page-state.js';
 
 export function renderHome(root, site) {
+  const page = getPageByPath('/');
+  const title = page?.title || 'A streamem. Egy helyen.';
+  const content = page?.content || site.description;
+
   root.innerHTML = `
     <div class="home-page">
       ${Header(site)}
@@ -9,10 +14,10 @@ export function renderHome(root, site) {
         <section class="home-hero section" aria-labelledby="home-title">
           <div class="home-copy">
             <span class="eyebrow">SANCi9517 · STREAMER</span>
-            <h1 id="home-title" class="home-title">A streamem.<br><span>Egy helyen.</span></h1>
-            <p class="home-lead">${site.description}</p>
+            <h1 id="home-title" class="home-title">${escapeHtml(title)}</h1>
+            <p class="home-lead">${escapeHtml(content)}</p>
             <div class="actions home-actions">
-              <a class="button button-primary" href="${site.links.twitch}" target="_blank" rel="noopener noreferrer">Twitch megnyitása</a>
+              <a class="button button-primary" href="${escapeHtml(site.links.twitch)}" target="_blank" rel="noopener noreferrer">Twitch megnyitása</a>
             </div>
           </div>
 
@@ -29,7 +34,7 @@ export function renderHome(root, site) {
           </aside>
         </section>
       </main>
-      <footer class="site-footer">© ${new Date().getFullYear()} ${site.brand}</footer>
+      <footer class="site-footer">© ${new Date().getFullYear()} ${escapeHtml(site.brand)}</footer>
     </div>
   `;
 
@@ -72,4 +77,13 @@ function formatStartedAt(value) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return 'időpont nélkül';
   return date.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
 }
