@@ -38,8 +38,8 @@ function bindPageEditor(root) {
   if (!form) return;
   const select = form.querySelector('[data-page-select]');
   if (select && select.dataset.bound !== 'true') { select.dataset.bound = 'true'; select.addEventListener('change', (event) => { const page = getPageById(event.target.value); form.innerHTML = renderPageForm(page, getPages()); bindPageEditor(root); }); }
-  form.querySelector('[data-add-block]')?.addEventListener('click', () => { const list = form.querySelector('[data-block-list]'); if (!list) return; list.insertAdjacentHTML('beforeend', renderBlockForm({ id: createBlockId(), title: 'Új box', content: '' }, list.children.length)); bindBlockEditor(form); });
-  bindBlockEditor(form);
+  form.querySelector('[data-add-block]')?.addEventListener('click', () => { const list = form.querySelector('[data-block-list]'); if (!list) return; list.insertAdjacentHTML('beforeend', renderBlockForm({ id: createBlockId(), title: 'Új box', content: '' }, list.children.length)); bindBlockControls(form); });
+  bindBlockControls(form);
   if (form.dataset.submitBound === 'true') return;
   form.dataset.submitBound = 'true';
   form.addEventListener('submit', (event) => {
@@ -54,41 +54,39 @@ function bindPageEditor(root) {
 function renderPageForm(page, pages) {
   if (!page) return '<p class="admin-help">Még nincs létrehozott oldal. Hozz létre egy „Oldal” típusú menüpontot, majd mentsd el.</p>';
   const blocks = Array.isArray(page.blocks) ? page.blocks : [];
-  return `<label class="admin-form-field"><span>Oldal</span><select name="id" data-page-select>${pages.map((item) => `<option value="${escapeHtml(item.id)}" ${item.id === page.id ? 'selected' : ''}>${escapeHtml(item.title)}</option>`).join('')}</select></label><label class="admin-form-field"><span>Oldal címe</span><input name="title" value="${escapeHtml(page.title || '')}" maxlength="100" required></label><label class="admin-form-field"><span>Oldal szövege</span><textarea name="content" rows="6" maxlength="5000" placeholder="Ide írd az oldal fő szövegét...">${escapeHtml(page.content || '')}</textarea></label><div class="admin-block-editor"><div class="admin-card-heading"><div><span class="admin-card-label">Tartalmi boxok</span><h3>Boxok az oldalon</h3></div><button class="button button-secondary" type="button" data-add-block>+ Box hozzáadása</button></div><p class="admin-help">A boxokat külön szerkesztheted, törölheted és a ↑ Fel / ↓ Le gombokkal rendezheted. A mentés után ugyanebben a sorrendben jelennek meg az oldalon.</p><div class="admin-block-list" data-block-list>${blocks.map(renderBlockForm).join('')}</div></div><div class="admin-form-meta"><span>Elérés: <strong>${escapeHtml(page.path || '/')}</strong></span><span data-page-save-status></span></div><button class="button button-primary" type="submit">Oldal mentése</button>`;
+  return `<label class="admin-form-field"><span>Oldal</span><select name="id" data-page-select>${pages.map((item) => `<option value="${escapeHtml(item.id)}" ${item.id === page.id ? 'selected' : ''}>${escapeHtml(item.title)}</option>`).join('')}</select></label><label class="admin-form-field"><span>Oldal címe</span><input name="title" value="${escapeHtml(page.title || '')}" maxlength="100" required></label><label class="admin-form-field"><span>Oldal szövege</span><textarea name="content" rows="6" maxlength="5000" placeholder="Ide írd az oldal fő szövegét...">${escapeHtml(page.content || '')}</textarea></label><div class="admin-block-editor"><div class="admin-card-heading"><div><span class="admin-card-label">Tartalmi boxok</span><h3>Boxok az oldalon</h3></div><button class="button button-secondary" type="button" data-add-block>+ Box hozzáadása</button></div><p class="admin-help">A boxokat a Fel és Le gombokkal tudod sorrendbe tenni.</p><div class="admin-block-list" data-block-list>${blocks.map(renderBlockForm).join('')}</div></div><div class="admin-form-meta"><span>Elérés: <strong>${escapeHtml(page.path || '/')}</strong></span><span data-page-save-status></span></div><button class="button button-primary" type="submit">Oldal mentése</button>`;
 }
 
 function renderBlockForm(block, index) {
-  return `<article class="admin-block-item" data-block="${escapeHtml(block.id)}"><div class="admin-block-item-top"><strong>Box ${index + 1}.</strong><div class="admin-block-item-actions"><button class="button button-secondary" type="button" data-block-up aria-label="Box feljebb">↑ Fel</button><button class="button button-secondary" type="button" data-block-down aria-label="Box lejjebb">↓ Le</button><button class="button button-secondary" type="button" data-delete-block>Box törlése</button></div></div><label class="admin-form-field"><span>Box címe</span><input name="block-title" value="${escapeHtml(block.title || '')}" maxlength="100" placeholder="Pl. Legutóbbi adás"></label><label class="admin-form-field"><span>Box szövege</span><textarea name="block-content" rows="5" maxlength="2000" placeholder="A box tartalma...">${escapeHtml(block.content || '')}</textarea></label></article>`;
+  return `<article class="admin-block-item" data-block="${escapeHtml(block.id)}"><div class="admin-block-item-top"><strong class="admin-block-number">Box ${index + 1}</strong><div class="admin-block-actions"><button class="button button-secondary" type="button" data-block-up>↑ Fel</button><button class="button button-secondary" type="button" data-block-down>↓ Le</button><button class="button button-secondary" type="button" data-delete-block>Box törlése</button></div></div><label class="admin-form-field"><span>Box címe</span><input name="block-title" value="${escapeHtml(block.title || '')}" maxlength="100" placeholder="Pl. Legutóbbi adás"></label><label class="admin-form-field"><span>Box szövege</span><textarea name="block-content" rows="5" maxlength="2000" placeholder="A box tartalma...">${escapeHtml(block.content || '')}</textarea></label></article>`;
 }
 
-function bindBlockEditor(form) {
-  form.querySelectorAll('[data-block]').forEach((row) => {
-    if (row.dataset.bound === 'true') return;
-    row.dataset.bound = 'true';
-    row.querySelector('[data-block-up]')?.addEventListener('click', () => moveBlock(row, -1, form));
-    row.querySelector('[data-block-down]')?.addEventListener('click', () => moveBlock(row, 1, form));
-    row.querySelector('[data-delete-block]')?.addEventListener('click', () => { row.remove(); refreshBlockNumbers(form); });
+function bindBlockControls(form) {
+  form.querySelectorAll('[data-delete-block], [data-block-up], [data-block-down]').forEach((button) => {
+    if (button.dataset.bound === 'true') return;
+    button.dataset.bound = 'true';
+    button.addEventListener('click', () => {
+      const block = button.closest('[data-block]');
+      if (!block) return;
+      if (button.hasAttribute('data-delete-block')) {
+        block.remove();
+      } else {
+        const list = form.querySelector('[data-block-list]');
+        if (!list) return;
+        const blocks = [...list.querySelectorAll('[data-block]')];
+        const index = blocks.indexOf(block);
+        const target = button.hasAttribute('data-block-up') ? blocks[index - 1] : blocks[index + 1];
+        if (target) button.hasAttribute('data-block-up') ? target.before(block) : target.after(block);
+      }
+      updateBlockNumbers(form);
+    });
   });
-  refreshBlockNumbers(form);
 }
 
-function moveBlock(row, direction, form) {
-  const list = form.querySelector('[data-block-list]');
-  if (!list) return;
-  const rows = [...list.querySelectorAll('[data-block]')];
-  const index = rows.indexOf(row);
-  const target = rows[index + direction];
-  if (!target) return;
-  direction < 0 ? target.before(row) : target.after(row);
-  refreshBlockNumbers(form);
-}
-
-function refreshBlockNumbers(form) {
-  form.querySelectorAll('[data-block]').forEach((row, index) => {
-    const number = row.querySelector('.admin-block-number');
-    const fallback = row.querySelector('.admin-block-item-top strong');
-    if (number) number.textContent = `Box ${index + 1}.`;
-    else if (fallback) fallback.textContent = `Box ${index + 1}.`;
+function updateBlockNumbers(form) {
+  form.querySelectorAll('[data-block]').forEach((block, index) => {
+    const number = block.querySelector('.admin-block-number');
+    if (number) number.textContent = `Box ${index + 1}`;
   });
 }
 
