@@ -47,15 +47,13 @@
 
 /* Desktop box layout. Mobile remains the existing single-column flow. */
 @media (min-width: 761px) {
-  .page-blocks { grid-template-columns: repeat(12, minmax(0, 1fr)); align-items: stretch; }
+  .page-blocks { grid-template-columns: repeat(12, minmax(0, 1fr)); align-items: start; }
   .page-block.page-block-width-full { grid-column: span 12; }
   .page-block.page-block-width-half { grid-column: span 6; }
   .page-block.page-block-width-third { grid-column: span 4; }
   .page-block.page-block-width-quarter { grid-column: span 3; }
   .page-block.page-block-width-auto { grid-column: span 6; }
 
-  /* Keep cards in the same desktop row visually balanced. */
-  .page-block { height: 100%; display: flex; flex-direction: column; }
   .composite-elements { grid-template-columns: repeat(12, minmax(0, 1fr)); align-items: start; }
   .composite-element + .composite-element { padding-top: 0; border-top: 0; }
   .composite-element.composite-width-full { grid-column: span 12; }
