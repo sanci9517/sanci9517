@@ -1,10 +1,13 @@
 import { navigate } from '../../core/router.js';
 import { getSite, saveSiteSettings } from '../../core/site-state.js';
 import { getNavigation, saveNavigation } from '../../core/navigation-state.js';
+import { getPages, getPageById, savePages } from '../../core/page-state.js';
 
 export function renderWebsiteAdmin(root) {
   const currentSite = getSite();
   const items = normalizeItems(getNavigation());
+  const pages = getPages();
+  const selectedPage = pages[0] || null;
 
   root.innerHTML = `
     <div class="admin-page">
@@ -12,7 +15,7 @@ export function renderWebsiteAdmin(root) {
         <div>
           <span class="admin-kicker">Weboldal</span>
           <h1>Weboldal kezelése</h1>
-          <p>Alapadatok és menüpontok kezelése.</p>
+          <p>Alapadatok, oldalak és menüpontok kezelése.</p>
         </div>
         <button class="button button-secondary" type="button" data-admin-back>Vissza</button>
       </header>
@@ -26,6 +29,15 @@ export function renderWebsiteAdmin(root) {
             <button class="button button-primary" type="submit">Weboldal adatai mentése</button><span class="admin-form-status" data-site-save-status></span>
           </form>
         </section>
+
+        <section class="admin-card admin-editor-card">
+          <span class="admin-card-label">Oldalak</span><h2>Oldal tartalmának szerkesztése</h2>
+          <p class="admin-help">Válassz egy oldalt, majd módosítsd a címét és a szövegét.</p>
+          <form class="admin-page-form" data-page-form>
+            ${renderPageForm(selectedPage, pages)}
+          </form>
+        </section>
+
         <section class="admin-card admin-editor-card">
           <div class="admin-card-heading"><div><span class="admin-card-label">Navigáció</span><h2>Menüpontok</h2></div><button class="button button-secondary" type="button" data-add-item>+ Új menüpont</button></div>
           <p class="admin-help">Állítsd be a menüpont nevét, típusát, helyét és láthatóságát.</p>
@@ -44,6 +56,9 @@ export function renderWebsiteAdmin(root) {
     const saved = saveSiteSettings({ brand: String(data.get('brand') || '').trim(), description: String(data.get('description') || '').trim() });
     if (status) status.textContent = saved ? 'Mentve ✓' : 'Mentés sikertelen';
   });
+
+  bindPageEditor(root);
+
   root.querySelector('[data-add-item]')?.addEventListener('click', () => {
     const editor = root.querySelector('[data-nav-editor]');
     if (!editor) return;
@@ -52,6 +67,54 @@ export function renderWebsiteAdmin(root) {
     bindEditor(root); updateCount(root);
   });
   bindEditor(root);
+}
+
+function bindPageEditor(root) {
+  const form = root.querySelector('[data-page-form]');
+  if (!form || form.dataset.bound === 'true') return;
+  form.dataset.bound = 'true';
+
+  form.querySelector('[data-page-select]')?.addEventListener('change', (event) => {
+    const page = getPageById(event.target.value);
+    form.innerHTML = renderPageForm(page, getPages());
+    bindPageEditor(root);
+  });
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const data = new FormData(form);
+    const id = String(data.get('id') || '');
+    const currentPages = getPages();
+    const index = currentPages.findIndex((page) => page.id === id);
+    if (index < 0) return;
+
+    currentPages[index] = {
+      ...currentPages[index],
+      title: String(data.get('title') || '').trim() || currentPages[index].title,
+      content: String(data.get('content') || '').trim(),
+    };
+
+    const status = form.querySelector('[data-page-save-status]');
+    if (savePages(currentPages)) {
+      if (status) status.textContent = 'Mentve ✓';
+    } else if (status) {
+      status.textContent = 'Mentés sikertelen';
+    }
+  });
+}
+
+function renderPageForm(page, pages) {
+  if (!page) return '<p class="admin-help">Nincs szerkeszthető oldal.</p>';
+
+  return `
+    <label class="admin-form-field"><span>Oldal</span>
+      <select name="id" data-page-select>${pages.map((item) => `<option value="${escapeHtml(item.id)}" ${item.id === page.id ? 'selected' : ''}>${escapeHtml(item.title)}</option>`).join('')}</select>
+    </label>
+    <label class="admin-form-field"><span>Oldal címe</span><input name="title" value="${escapeHtml(page.title || '')}" maxlength="100" required></label>
+    <label class="admin-form-field"><span>Oldal szövege</span><textarea name="content" rows="8" maxlength="5000" placeholder="Ide írd az oldal szövegét...">${escapeHtml(page.content || '')}</textarea></label>
+    <div class="admin-form-meta"><span>Elérés: <strong>${escapeHtml(page.path || '/')}</strong></span><span data-page-save-status></span></div>
+    <button class="button button-primary" type="submit">Oldal mentése</button>
+  `;
 }
 
 function bindEditor(root) {
