@@ -39,11 +39,9 @@ export function renderWebsiteAdmin(root) {
             <button class="button button-secondary" type="button" data-add-item>+ Új menüpont</button>
           </div>
           <p class="admin-help">Állítsd be a menüpont nevét, típusát, helyét és láthatóságát.</p>
-
           <div class="admin-nav-editor" data-nav-editor>
-            ${items.map((item, index) => renderItem(item, index, currentSite)).join('')}
+            ${items.map((item, index) => renderItem(item, index)).join('')}
           </div>
-
           <div class="admin-form-meta">
             <span>Menüpontok: <strong data-item-count>${items.length}</strong></span>
             <span data-nav-save-status></span>
@@ -55,16 +53,11 @@ export function renderWebsiteAdmin(root) {
   `;
 
   root.querySelector('[data-admin-back]')?.addEventListener('click', () => navigate('/admin'));
-
   root.querySelector('[data-site-form]')?.addEventListener('submit', (event) => {
     event.preventDefault();
-    const form = event.currentTarget;
-    const data = new FormData(form);
+    const data = new FormData(event.currentTarget);
     const status = root.querySelector('[data-site-save-status]');
-    const saved = saveSiteSettings({
-      brand: String(data.get('brand') || '').trim(),
-      description: String(data.get('description') || '').trim(),
-    });
+    const saved = saveSiteSettings({ brand: String(data.get('brand') || '').trim(), description: String(data.get('description') || '').trim() });
     if (status) status.textContent = saved ? 'Mentve ✓' : 'Mentés sikertelen';
   });
 
@@ -72,7 +65,7 @@ export function renderWebsiteAdmin(root) {
     const editor = root.querySelector('[data-nav-editor]');
     if (!editor) return;
     const index = editor.querySelectorAll('[data-nav-item]').length;
-    editor.insertAdjacentHTML('beforeend', renderItem({ label: 'Új menüpont', path: '/uj-oldal', type: 'route', enabled: true }, index, currentSite));
+    editor.insertAdjacentHTML('beforeend', renderItem({ label: 'Új menüpont', path: '/uj-oldal', type: 'route', enabled: true }, index));
     bindEditor(root);
     updateCount(root);
   });
@@ -84,22 +77,12 @@ function bindEditor(root) {
   root.querySelectorAll('[data-nav-item]').forEach((row) => {
     if (row.dataset.bound === 'true') return;
     row.dataset.bound = 'true';
-
-    row.querySelector('[data-type]')?.addEventListener('change', (event) => {
-      const external = event.target.value === 'external';
-      const route = row.querySelector('[data-route-fields]');
-      if (route) route.hidden = external;
-      row.querySelectorAll('[data-external-fields]').forEach((field) => { field.hidden = !external; });
-    });
-
+    row.querySelector('[data-type]')?.addEventListener('change', (event) => updateTypeFields(row, event.target.value));
     row.querySelector('[data-up]')?.addEventListener('click', () => moveItem(row, -1, root));
     row.querySelector('[data-down]')?.addEventListener('click', () => moveItem(row, 1, root));
-    row.querySelector('[data-delete]')?.addEventListener('click', () => {
-      row.remove();
-      updateCount(root);
-    });
+    row.querySelector('[data-delete]')?.addEventListener('click', () => { row.remove(); updateCount(root); });
+    updateTypeFields(row, row.querySelector('[data-type]')?.value || 'route');
   });
-
   const saveButton = root.querySelector('[data-save-navigation]');
   if (saveButton?.dataset.bound !== 'true') {
     saveButton.dataset.bound = 'true';
@@ -107,11 +90,18 @@ function bindEditor(root) {
   }
 }
 
+function updateTypeFields(row, type) {
+  const external = type === 'external';
+  const route = row.querySelector('[data-route-fields]');
+  if (route) route.hidden = external;
+  row.querySelectorAll('[data-external-fields]').forEach((field) => { field.hidden = !external; });
+}
+
 function saveNavigationFromForm(event) {
   const root = event.currentTarget.closest('.admin-page');
   const rows = [...root.querySelectorAll('[data-nav-item]')];
   const items = rows.map((row, index) => {
-    const type = row.querySelector('[data-type]')?.value || 'route';
+    const type = row.querySelector('[data-type]')?.value === 'external' ? 'external' : 'route';
     const item = {
       label: row.querySelector('[name="label"]')?.value.trim() || `Menüpont ${index + 1}`,
       type,
@@ -126,13 +116,9 @@ function saveNavigationFromForm(event) {
     }
     return item;
   });
-
   const status = root.querySelector('[data-nav-save-status]');
-  if (saveNavigation(items)) {
-    status.textContent = 'Mentve ✓';
-  } else {
-    status.textContent = 'Mentés sikertelen';
-  }
+  if (saveNavigation(items)) status.textContent = 'Mentve ✓';
+  else status.textContent = 'Mentés sikertelen';
 }
 
 function moveItem(row, direction, root) {
@@ -141,6 +127,7 @@ function moveItem(row, direction, root) {
   const target = rows[index + direction];
   if (!target) return;
   direction < 0 ? target.before(row) : target.after(row);
+  [...root.querySelectorAll('[data-nav-item]')].forEach((item, itemIndex) => { const number = item.querySelector('.admin-nav-number'); if (number) number.textContent = `${itemIndex + 1}.`; });
 }
 
 function updateCount(root) {
@@ -149,26 +136,25 @@ function updateCount(root) {
 }
 
 function normalizeItems(items) {
-  return [...items]
-    .map((item, index) => ({ ...item, enabled: item.enabled !== false, order: item.order ?? index }))
-    .sort((a, b) => a.order - b.order);
+  return [...items].map((item, index) => ({ ...item, enabled: item.enabled !== false, order: item.order ?? index })).sort((a, b) => a.order - b.order);
 }
 
-function renderItem(item, index, site) {
+function renderItem(item, index) {
   const external = item.type === 'external';
-  const externalUrl = item.url || (item.urlKey ? site.links?.[item.urlKey] || '' : '');
+  const url = external ? String(item.url || '') : '';
+  const urlKey = external ? String(item.urlKey || '') : '';
   return `
     <article class="admin-nav-item" data-nav-item>
       <div class="admin-nav-item-top">
-        <strong>${index + 1}.</strong>
-        <label class="admin-form-field admin-nav-label"><span>Megnevezés</span><input name="label" value="${escapeHtml(item.label)}" maxlength="60"></label>
+        <strong class="admin-nav-number">${index + 1}.</strong>
+        <label class="admin-form-field admin-nav-label"><span>Megnevezés</span><input name="label" value="${escapeHtml(item.label || '')}" maxlength="60"></label>
         <label class="admin-form-field admin-nav-type"><span>Típus</span><select name="type" data-type><option value="route" ${!external ? 'selected' : ''}>Oldal</option><option value="external" ${external ? 'selected' : ''}>Külső link</option></select></label>
         <label class="admin-switch"><input name="enabled" type="checkbox" ${item.enabled !== false ? 'checked' : ''}><span>Aktív</span></label>
       </div>
       <div class="admin-nav-fields">
-        <label class="admin-form-field" data-route-fields ${external ? 'hidden' : ''}><span>Útvonal</span><input name="path" value="${escapeHtml(item.path || '/')}" placeholder="/bemutatkozas"></label>
-        <label class="admin-form-field" data-external-fields ${!external ? 'hidden' : ''}><span>Link / URL</span><input name="url" value="${escapeHtml(externalUrl)}" placeholder="https://www.twitch.tv/sanci9517"></label>
-        <label class="admin-form-field" data-external-fields ${!external ? 'hidden' : ''}><span>URL kulcs</span><input name="urlKey" value="${escapeHtml(item.urlKey || '')}" placeholder="twitch"></label>
+        <label class="admin-form-field" data-route-fields><span>Útvonal</span><input name="path" value="${escapeHtml(item.path || '/')}" placeholder="/bemutatkozas"></label>
+        <label class="admin-form-field" data-external-fields><span>Link / URL</span><input name="url" value="${escapeHtml(url)}" placeholder="https://pelda.hu"></label>
+        <label class="admin-form-field" data-external-fields><span>URL kulcs</span><input name="urlKey" value="${escapeHtml(urlKey)}" placeholder="pl. twitch"></label>
       </div>
       <div class="admin-nav-actions">
         <button class="button button-secondary" type="button" data-up>↑ Fel</button>
