@@ -2,6 +2,8 @@ import { Header } from '../components/header.js';
 import { loadTwitchStatus } from '../twitch/status.js';
 import { getPageByPath } from '../core/page-state.js';
 
+const ELEMENT_TYPES = new Set(['text', 'game', 'twitch', 'image', 'link', 'stats']);
+
 export function renderHome(root, site) {
   const page = getPageByPath('/');
   const title = page?.title || 'A streamem. Egy helyen.';
@@ -35,19 +37,50 @@ export function renderHome(root, site) {
 
 function renderBlocks(blocks) {
   if (!blocks.length) return '';
-  return `<section class="page-blocks" aria-label="Főoldal boxai">${blocks.map((block) => `<article class="card page-block"><div class="card-label">${escapeHtml(block.title || 'Box')}</div><div class="card-content">${formatContent(block.content || '')}</div></article>`).join('')}</section>`;
+  return `<section class="page-blocks" aria-label="Főoldal boxai">${blocks.map(renderBlock).join('')}</section>`;
 }
 
-function formatContent(value) { return escapeHtml(value).split(/\n{2,}/).map((paragraph) => `<p>${paragraph.replace(/\n/g, '<br>')}</p>`).join(''); }
+function renderBlock(block) {
+  const title = escapeHtml(block?.title || 'Box');
+  const elements = Array.isArray(block?.elements) && block.elements.length
+    ? block.elements
+    : [{ type: block?.type || 'text', title: block?.title || '', content: block?.content || '' }];
+  return `<article class="card page-block composite-block"><div class="card-label">${title}</div><div class="composite-elements">${elements.map(renderElement).join('')}</div></article>`;
+}
+
+function renderElement(element) {
+  const type = ELEMENT_TYPES.has(element?.type) ? element.type : 'text';
+  const title = String(element?.title || '').trim();
+  const content = String(element?.content || '').trim();
+  if (type === 'game') return `<div class="composite-element composite-element-game"><span class="composite-element-icon">🎮</span><div><strong>${escapeHtml(title || 'Játék')}</strong><p>${escapeHtml(content || 'Nincs megadva')}</p></div></div>`;
+  if (type === 'twitch') return `<div class="composite-element composite-element-twitch" data-twitch-element><span class="composite-element-icon">●</span><div><strong>${escapeHtml(title || 'Twitch')}</strong><p data-twitch-element-content>Állapot betöltése…</p></div></div>`;
+  if (type === 'image') return `<div class="composite-element composite-element-image">${isImageUrl(content) ? `<img src="${escapeHtml(content)}" alt="${escapeHtml(title || 'Kép')}" loading="lazy">` : `<div class="block-placeholder">Érvényes kép URL nincs megadva.</div>`}</div>`;
+  if (type === 'link') return `<div class="composite-element composite-element-link">${isHttpUrl(content) ? `<a class="button button-primary" href="${escapeHtml(content)}" target="_blank" rel="noopener noreferrer">${escapeHtml(title || 'Megnyitás')} ↗</a>` : `<div class="block-placeholder">Érvényes URL nincs megadva.</div>`}</div>`;
+  if (type === 'stats') return `<div class="composite-element composite-element-stats"><span class="block-stat-value">${escapeHtml(content || '0')}</span><span class="block-stat-label">${escapeHtml(title || 'Statisztika')}</span></div>`;
+  return `<div class="composite-element composite-element-text">${title ? `<strong>${escapeHtml(title)}</strong>` : ''}${formatContent(content)}</div>`;
+}
 
 async function updateTwitchPanel(root) {
   const state = root.querySelector('[data-twitch-state]'); const title = root.querySelector('[data-twitch-title]'); const details = root.querySelector('[data-twitch-details]'); const meta = root.querySelector('[data-twitch-meta]');
   try {
     const result = await loadTwitchStatus(); const stream = result?.stream;
-    if (!stream) { state.textContent = 'Offline'; title.textContent = 'Jelenleg nincs élő adás.'; details.textContent = 'A következő élő adáskor ez a panel automatikusan frissíthető.'; meta.textContent = 'Twitch · offline'; return; }
-    state.textContent = 'LIVE'; title.textContent = stream.title || 'Sanci9517 élő adása'; details.textContent = `${stream.gameName || 'Játék'} · ${stream.viewerCount.toLocaleString('hu-HU')} néző`; meta.textContent = `Twitch · élő · ${formatStartedAt(stream.startedAt)}`;
+    if (!stream) { state.textContent = 'Offline'; title.textContent = 'Jelenleg nincs élő adás.'; details.textContent = 'A következő élő adáskor ez a panel automatikusan frissíthető.'; meta.textContent = 'Twitch · offline'; }
+    else { state.textContent = 'LIVE'; title.textContent = stream.title || 'Sanci9517 élő adása'; details.textContent = `${stream.gameName || 'Játék'} · ${stream.viewerCount.toLocaleString('hu-HU')} néző`; meta.textContent = `Twitch · élő · ${formatStartedAt(stream.startedAt)}`; }
   } catch (error) { console.error('[Sanci9517] Twitch status error:', error); state.textContent = 'Nem elérhető'; title.textContent = 'Twitch kapcsolat ellenőrzése szükséges.'; details.textContent = 'Az oldal többi része ettől függetlenül működik.'; meta.textContent = 'Twitch · kapcsolat hiba'; }
+  updateTwitchElements(root);
 }
 
+async function updateTwitchElements(root) {
+  const elements = root.querySelectorAll('[data-twitch-element]');
+  if (!elements.length) return;
+  try {
+    const result = await loadTwitchStatus(); const stream = result?.stream;
+    elements.forEach((element) => { const target = element.querySelector('[data-twitch-element-content]'); if (target) target.textContent = stream ? `🔴 LIVE · ${stream.gameName || 'Játék'} · ${Number(stream.viewerCount || 0).toLocaleString('hu-HU')} néző` : '⚫ Jelenleg offline'; });
+  } catch { elements.forEach((element) => { const target = element.querySelector('[data-twitch-element-content]'); if (target) target.textContent = 'Twitch állapot jelenleg nem érhető el.'; }); }
+}
+
+function isHttpUrl(value) { return /^https?:\/\//i.test(value); }
+function isImageUrl(value) { return isHttpUrl(value) && /\.(?:png|jpe?g|gif|webp|svg)(?:[?#].*)?$/i.test(value); }
+function formatContent(value) { return escapeHtml(value).split(/\n{2,}/).map((paragraph) => `<p>${paragraph.replace(/\n/g, '<br>')}</p>`).join(''); }
 function formatStartedAt(value) { if (!value) return 'időpont nélkül'; const date = new Date(value); if (Number.isNaN(date.getTime())) return 'időpont nélkül'; return date.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' }); }
 function escapeHtml(value) { return String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;'); }
