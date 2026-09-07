@@ -50,6 +50,7 @@ if (!dashboard.includes('await logoutAdmin()')) { console.error('Admin logout mu
 if (!worker.includes("import { clearAdminCookie, isAdminRequestAuthenticated, loginAdminRequest } from './auth.js'")) { console.error('Worker must use the isolated admin authentication module.'); process.exit(1); }
 if (!workerAuth.includes("crypto.subtle.verify('HMAC'") || !workerAuth.includes('HttpOnly') || !workerAuth.includes('SameSite=None')) { console.error('Cross-origin admin authentication must use verified signed tokens in secure HttpOnly cookies.'); process.exit(1); }
 if (!workerAuth.includes("const ADMIN_COOKIE_NAME = '__Host-sanci_admin'")) { console.error('Admin cookie must use a host-prefixed secure cookie name.'); process.exit(1); }
+if (!workerAuth.includes('ADMIN_LOGIN_MAX_FAILURES') || !workerAuth.includes('expirationTtl')) { console.error('Admin login must use KV-backed brute-force rate limiting.'); process.exit(1); }
 if (!worker.includes('access-control-allow-credentials')) { console.error('Worker CORS must allow credentialed admin requests.'); process.exit(1); }
 if (!worker.includes('vary')) { console.error('Worker CORS must vary by Origin.'); process.exit(1); }
 if (!workerAdmin.includes('isAllowedAdminOrigin') || !workerAdmin.includes('authenticate')) { console.error('Admin backend must enforce origin and server authentication checks.'); process.exit(1); }
@@ -60,4 +61,4 @@ for (const script of ['admin/website/layout-enhancer.js', 'core/block-layout.js'
   if (!index.includes(script) || !fallback.includes(script)) { console.error(`GitHub Pages fallback bootstrap mismatch: ${script}`); process.exit(1); }
 }
 
-console.log(`Validation passed: ${requiredFiles.length} required files, route checks, GitHub Pages fallback checks, secure cookie/CORS checks, D1 admin backend checks, and serialized remote-save checks passed.`);
+console.log(`Validation passed: ${requiredFiles.length} required files, route checks, GitHub Pages fallback checks, secure cookie/CORS checks, login rate limiting, D1 admin backend checks, and serialized remote-save checks passed.`);
