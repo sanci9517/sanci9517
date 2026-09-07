@@ -2,6 +2,7 @@ import { apiUrl } from './config.js';
 
 const PREFIX = 'sanci9517:';
 const REMOTE_KEYS = new Set(['site-settings', 'navigation-settings-v2', 'page-settings']);
+let remoteSaveQueue = Promise.resolve();
 
 export const storage = {
   get(key, fallback = null) {
@@ -33,15 +34,33 @@ export const storage = {
   },
 };
 
+function emitRemoteSaveStatus(detail) {
+  if (typeof window === 'undefined') return;
+  window.dispatchEvent(new CustomEvent('sanci:remote-save', { detail }));
+}
+
 function queueRemoteAdminSave(key, value) {
   if (typeof window === 'undefined' || !document.body?.dataset?.adminAuthenticated) return;
-  fetch(apiUrl('/admin/settings'), {
-    method: 'PUT',
-    credentials: 'include',
-    cache: 'no-store',
-    headers: { 'content-type': 'application/json', accept: 'application/json' },
-    body: JSON.stringify({ settings: { [key]: value } }),
+
+  remoteSaveQueue = remoteSaveQueue.then(async () => {
+    emitRemoteSaveStatus({ key, status: 'saving' });
+    try {
+      const response = await fetch(apiUrl('/admin/settings'), {
+        method: 'PUT',
+        credentials: 'include',
+        cache: 'no-store',
+        headers: { 'content-type': 'application/json', accept: 'application/json' },
+        body: JSON.stringify({ settings: { [key]: value } }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || data.ok === false) throw new Error(data.error || `Szervermentési hiba (${response.status}).`);
+      emitRemoteSaveStatus({ key, status: 'saved' });
+    } catch (error) {
+      emitRemoteSaveStatus({ key, status: 'error', error: error instanceof Error ? error.message : 'Ismeretlen szervermentési hiba.' });
+    }
   }).catch(() => {});
+
+  return remoteSaveQueue;
 }
 
 export function hydrateAdminStorage(settings) {
