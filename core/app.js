@@ -1,4 +1,4 @@
-import { site } from '../data/site.js';
+import { getSite } from '../data/site.js';
 import { renderHome } from '../pages/home.js';
 import { renderAdmin } from '../admin/index.js';
 import { registerRoute, resolveRoute, initRouter } from './router.js';
@@ -19,7 +19,7 @@ function renderCurrentRoute() {
   }
 
   try {
-    renderer(app, site);
+    renderer(app, getSite());
   } catch (error) {
     console.error('[Sanci9517] Render error:', error);
     showError(app, 'Az oldal betöltése sikertelen.');
