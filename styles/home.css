@@ -51,7 +51,7 @@
 .home-panel-bottom { padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted-2); font-size: var(--text-sm); }
 
 @media (min-width: 901px) {
-  .home-hero { grid-template-columns: minmax(0, 1.25fr) minmax(320px, .75fr); gap: clamp(48px, 7vw, 104px); padding-block: 80px; }
+  .home-hero { grid-template-columns: minmax(0, 1.25fr) minmax(320px, .75fr); gap: clamp(48px, 7vw, 104px); padding-block: 80px; min-height: auto; align-items: start; }
   .home-copy { max-width: 760px; }
   .home-title { max-width: 760px; font-size: clamp(58px, 6.4vw, 82px); }
   .home-lead { max-width: 540px; }
