@@ -6,6 +6,7 @@ import { initNavigation } from '../components/navigation.js';
 import { showError } from './ui.js';
 import { getSite } from './site-state.js';
 import { getNavigation } from './navigation-state.js';
+import { getPageByPath } from './page-state.js';
 
 registerRoute('/', renderHome);
 registerRoute('/admin', renderAdmin);
@@ -29,9 +30,14 @@ function renderCurrentRoute() {
 
   const path = getCurrentRoutePath();
   const item = getNavigation().find((entry) => entry.type === 'route' && normalizePath(entry.path) === path && entry.enabled !== false);
+  const page = getPageByPath(path);
 
-  if (item) {
-    renderGenericPage(app, site, { title: item.label, path });
+  if (item || page) {
+    renderGenericPage(app, site, {
+      ...(page || {}),
+      title: page?.title || item?.label || 'Új oldal',
+      path,
+    });
     return;
   }
 
