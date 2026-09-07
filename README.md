@@ -36,4 +36,4 @@
 
 ## Állapot
 
-A Foundation réteg és a GitHub Pages útvonalkezelés validált. A további fejlesztés lépésenként történik, minden módosítás után teszteléssel.
+A Foundation réteg és a GitHub Pages útvonalkezelés validált. A Cloudflare Worker jelenlegi kódja a `main` ágon van, a D1/KV infrastruktúra konfigurációja rögzített, és a további fejlesztés lépésenként történik, minden módosítás után teszteléssel.
