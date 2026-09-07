@@ -19,8 +19,32 @@ for (const file of jsonFiles) {
   try { JSON.parse(readFileSync(file, 'utf8').replace(/^\/\/.*$/gm, '')); }
   catch (error) { console.error(`Invalid JSON: ${file}`); console.error(error.message); process.exit(1); }
 }
+
 const worker = readFileSync('worker/src/index.js', 'utf8');
 for (const route of ['/health', '/integrations/status', '/twitch/status', '/youtube/channel']) {
   if (!worker.includes(`url.pathname === '${route}'`)) { console.error(`Missing worker route: ${route}`); process.exit(1); }
 }
-console.log(`Validation passed: ${requiredFiles.length} required files checked.`);
+
+const config = readFileSync('core/config.js', 'utf8');
+const router = readFileSync('core/router.js', 'utf8');
+const app = readFileSync('core/app.js', 'utf8');
+const navigation = readFileSync('components/navigation.js', 'utf8');
+
+if (!/basePath:\s*['"]\/sanci9517['"]/.test(config)) {
+  console.error('Missing configured GitHub Pages basePath.');
+  process.exit(1);
+}
+if (!router.includes('config.basePath')) {
+  console.error('Router must use config.basePath for site paths.');
+  process.exit(1);
+}
+if (!app.includes('config.basePath')) {
+  console.error('App route resolution must use config.basePath.');
+  process.exit(1);
+}
+if (!navigation.includes('config.basePath')) {
+  console.error('Navigation route resolution must use config.basePath.');
+  process.exit(1);
+}
+
+console.log(`Validation passed: ${requiredFiles.length} required files and public route base-path checks passed.`);
