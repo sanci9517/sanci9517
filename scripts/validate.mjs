@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 
 const requiredFiles = [
-  'index.html', 'core/app.js', 'core/router.js', 'core/api.js', 'core/config.js', 'core/storage.js', 'core/ui.js',
+  'index.html', '404.html', 'core/app.js', 'core/router.js', 'core/api.js', 'core/config.js', 'core/storage.js', 'core/ui.js',
   'core/site-state.js', 'core/page-state.js', 'core/navigation-state.js', 'data/site.js', 'data/navigation.js', 'data/pages.js',
   'pages/home.js', 'pages/generic.js', 'components/header.js', 'components/navigation.js', 'components/card.js',
   'admin/index.js', 'admin/dashboard.js', 'admin/auth.js', 'admin/website/index.js',
@@ -29,6 +29,8 @@ const config = readFileSync('core/config.js', 'utf8');
 const router = readFileSync('core/router.js', 'utf8');
 const app = readFileSync('core/app.js', 'utf8');
 const navigation = readFileSync('components/navigation.js', 'utf8');
+const index = readFileSync('index.html', 'utf8');
+const fallback = readFileSync('404.html', 'utf8');
 
 if (!/basePath:\s*['"]\/sanci9517['"]/.test(config)) {
   console.error('Missing configured GitHub Pages basePath.');
@@ -47,4 +49,11 @@ if (!navigation.includes('config.basePath')) {
   process.exit(1);
 }
 
-console.log(`Validation passed: ${requiredFiles.length} required files and public route base-path checks passed.`);
+for (const script of ['admin/website/layout-enhancer.js', 'core/block-layout.js', 'core/app.js']) {
+  if (!index.includes(script) || !fallback.includes(script)) {
+    console.error(`GitHub Pages fallback bootstrap mismatch: ${script}`);
+    process.exit(1);
+  }
+}
+
+console.log(`Validation passed: ${requiredFiles.length} required files, public route checks, and fallback bootstrap checks passed.`);
