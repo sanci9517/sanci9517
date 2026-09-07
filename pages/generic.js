@@ -2,6 +2,8 @@ import { Header } from '../components/header.js';
 import { loadTwitchStatus } from '../twitch/status.js';
 
 const ELEMENT_TYPES = new Set(['text', 'game', 'twitch', 'image', 'link', 'stats']);
+const ELEMENT_ALIGNS = new Set(['left', 'center', 'right']);
+const ELEMENT_WIDTHS = new Set(['full', 'half']);
 
 export function renderGenericPage(root, site, page) {
   const title = page?.title || 'Új oldal';
@@ -46,19 +48,22 @@ function renderBlock(block) {
 
 function renderElement(element) {
   const type = ELEMENT_TYPES.has(element?.type) ? element.type : 'text';
+  const align = ELEMENT_ALIGNS.has(element?.align) ? element.align : 'left';
+  const width = ELEMENT_WIDTHS.has(element?.width) ? element.width : 'full';
+  const layoutClass = `composite-align-${align} composite-width-${width}`;
   const title = String(element?.title || '').trim();
   const content = String(element?.content || '').trim();
 
-  if (type === 'game') return `<div class="composite-element composite-element-game"><span class="composite-element-icon">🎮</span><div><strong>${escapeHtml(title || 'Játék')}</strong><p>${escapeHtml(content || 'Nincs megadva')}</p></div></div>`;
-  if (type === 'twitch') return `<div class="composite-element composite-element-twitch" data-twitch-element><span class="composite-element-icon">●</span><div><strong>${escapeHtml(title || 'Twitch')}</strong><p data-twitch-element-content>Állapot betöltése…</p></div></div>`;
-  if (type === 'image') return `<div class="composite-element composite-element-image">${isImageUrl(content) ? `<img src="${escapeHtml(content)}" alt="${escapeHtml(title || 'Kép')}" loading="lazy">` : `<div class="block-placeholder">Érvényes kép URL nincs megadva.</div>`}</div>`;
+  if (type === 'game') return `<div class="composite-element composite-element-game ${layoutClass}"><span class="composite-element-icon">🎮</span><div><strong>${escapeHtml(title || 'Játék')}</strong><p>${escapeHtml(content || 'Nincs megadva')}</p></div></div>`;
+  if (type === 'twitch') return `<div class="composite-element composite-element-twitch ${layoutClass}" data-twitch-element><span class="composite-element-icon">●</span><div><strong>${escapeHtml(title || 'Twitch')}</strong><p data-twitch-element-content>Állapot betöltése…</p></div></div>`;
+  if (type === 'image') return `<div class="composite-element composite-element-image ${layoutClass}">${isImageUrl(content) ? `<img src="${escapeHtml(content)}" alt="${escapeHtml(title || 'Kép')}" loading="lazy">` : `<div class="block-placeholder">Érvényes kép URL nincs megadva.</div>`}</div>`;
   if (type === 'link') {
     const label = title || 'Megnyitás';
-    return `<div class="composite-element composite-element-link">${isHttpUrl(content) ? `<a class="button button-primary" href="${escapeHtml(content)}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)} ↗</a>` : `<div class="block-placeholder">Érvényes URL nincs megadva.</div>`}</div>`;
+    return `<div class="composite-element composite-element-link ${layoutClass}">${isHttpUrl(content) ? `<a class="button button-primary" href="${escapeHtml(content)}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)} ↗</a>` : `<div class="block-placeholder">Érvényes URL nincs megadva.</div>`}</div>`;
   }
-  if (type === 'stats') return `<div class="composite-element composite-element-stats"><span class="block-stat-value">${escapeHtml(content || '0')}</span><span class="block-stat-label">${escapeHtml(title || 'Statisztika')}</span></div>`;
+  if (type === 'stats') return `<div class="composite-element composite-element-stats ${layoutClass}"><span class="block-stat-value">${escapeHtml(content || '0')}</span><span class="block-stat-label">${escapeHtml(title || 'Statisztika')}</span></div>`;
 
-  return `<div class="composite-element composite-element-text">${title ? `<strong>${escapeHtml(title)}</strong>` : ''}${formatContent(content)}</div>`;
+  return `<div class="composite-element composite-element-text ${layoutClass}">${title ? `<strong>${escapeHtml(title)}</strong>` : ''}${formatContent(content)}</div>`;
 }
 
 async function updateTwitchElements(root) {
