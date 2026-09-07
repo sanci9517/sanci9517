@@ -43,8 +43,10 @@ export function renderAdminDashboard(root) {
     renderWebsiteAdmin(root);
   });
 
-  root.querySelector('[data-admin-logout]')?.addEventListener('click', () => {
-    logoutAdmin();
+  root.querySelector('[data-admin-logout]')?.addEventListener('click', async () => {
+    const button = root.querySelector('[data-admin-logout]');
+    if (button) button.disabled = true;
+    await logoutAdmin();
     window.location.href = './';
   });
 }
