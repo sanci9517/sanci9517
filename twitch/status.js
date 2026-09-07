@@ -12,6 +12,10 @@ export async function loadTwitchFollowers() {
   return api.get('/twitch/followers');
 }
 
+export async function loadTwitchStatistics() {
+  return api.get('/twitch/statistics');
+}
+
 export async function loadTwitchData() {
   return api.get('/twitch/data');
 }
