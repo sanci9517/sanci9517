@@ -102,6 +102,14 @@ button { color: inherit; }
   font-size: 13px;
 }
 
+/* Shared desktop page flow. Mobile remains unchanged. */
+@media (min-width: 761px) {
+  .hero {
+    min-height: auto;
+    align-items: start;
+  }
+}
+
 @media (max-width: 760px) {
   :root { --page-gutter: 16px; --header-height: 68px; }
   .site-header { min-height: var(--header-height); }
