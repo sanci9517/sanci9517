@@ -1,6 +1,6 @@
 import { clearAdminCookie, isAdminRequestAuthenticated, loginAdminRequest } from './auth.js';
 import { getAdminAudit, getAdminSettings, isAllowedAdminOrigin, updateAdminSettings } from './admin.js';
-import { getTwitchStreamStatus, isTwitchConfigured } from '../../integrations/twitch/client.js';
+import { getTwitchChannel, getTwitchChannelFollowers, getTwitchData, getTwitchStreamStatus, isTwitchConfigured } from '../../integrations/twitch/client.js';
 
 const DEFAULT_ADMIN_ORIGIN = 'https://sanci9517.github.io';
 const YOUTUBE_API = 'https://www.googleapis.com/youtube/v3';
@@ -72,6 +72,15 @@ async function getStorageHealth(env) {
   return { d1: d1Result?.ok === 1, kv: true };
 }
 
+async function twitchRoute(handler, request, env) {
+  try {
+    return json({ ok: true, ...(await handler()) }, 200, { 'cache-control': 'public, max-age=15, stale-while-revalidate=45' }, request, env);
+  } catch (error) {
+    console.error('[Sanci9517] Twitch route error:', error);
+    return json({ ok: false, error: 'Twitch data is temporarily unavailable.' }, 503, { 'cache-control': 'no-store' }, request, env);
+  }
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -110,10 +119,19 @@ export default {
         return json({ ok: false, storage: { d1: false, kv: false }, error: 'Storage health check failed.' }, 503, {}, request, env);
       }
     }
-    if (request.method === 'GET' && url.pathname === '/health') return json({ ok: true, service: 'sanci9517-api', version: 'integration-foundation-1', environment: env.ENVIRONMENT || 'production', integrations: getIntegrationStatus(env), timestamp: new Date().toISOString() }, 200, {}, request, env);
+    if (request.method === 'GET' && url.pathname === '/health') return json({ ok: true, service: 'sanci9517-api', version: 'twitch-channel-data-1', environment: env.ENVIRONMENT || 'production', integrations: getIntegrationStatus(env), timestamp: new Date().toISOString() }, 200, {}, request, env);
     if (request.method === 'GET' && url.pathname === '/integrations/status') return json({ ok: true, integrations: getIntegrationStatus(env) }, 200, {}, request, env);
-    if (request.method === 'GET' && url.pathname === '/twitch/status') { try { return json({ ok: true, ...(await getTwitchStreamStatus(env, BROADCASTER_LOGIN)) }, 200, {}, request, env); } catch (error) { console.error('[Sanci9517] Twitch status error:', error); return json({ ok: false, error: 'Twitch status is temporarily unavailable.' }, 503, {}, request, env); } }
-    if (request.method === 'GET' && url.pathname === '/youtube/channel') { try { return json({ ok: true, ...(await getYouTubeChannel(env)) }, 200, {}, request, env); } catch (error) { console.error('[Sanci9517] YouTube channel error:', error); return json({ ok: false, error: 'YouTube channel is temporarily unavailable.' }, 503, {}, request, env); } }
+    if (request.method === 'GET' && url.pathname === '/twitch/status') return twitchRoute(() => getTwitchStreamStatus(env, BROADCASTER_LOGIN), request, env);
+    if (request.method === 'GET' && url.pathname === '/twitch/channel') return twitchRoute(() => getTwitchChannel(env, BROADCASTER_LOGIN), request, env);
+    if (request.method === 'GET' && url.pathname === '/twitch/followers') return twitchRoute(async () => {
+      const channel = await getTwitchChannel(env, BROADCASTER_LOGIN);
+      return getTwitchChannelFollowers(env, channel.channel?.id);
+    }, request, env);
+    if (request.method === 'GET' && url.pathname === '/twitch/data') return twitchRoute(() => getTwitchData(env, BROADCASTER_LOGIN), request, env);
+    if (request.method === 'GET' && url.pathname === '/youtube/channel') {
+      try { return json({ ok: true, ...(await getYouTubeChannel(env)) }, 200, {}, request, env); }
+      catch (error) { console.error('[Sanci9517] YouTube channel error:', error); return json({ ok: false, error: 'YouTube channel is temporarily unavailable.' }, 503, {}, request, env); }
+    }
     return json({ ok: false, error: 'Not found', path: url.pathname }, 404, {}, request, env);
   },
 };
