@@ -1,5 +1,6 @@
 import { logoutAdmin } from './auth.js';
 import { renderWebsiteAdmin } from './website/index.js';
+import './website/layout-enhancer.js';
 
 const adminModules = [
   { id: 'website', title: 'Weboldal', description: 'Oldalak, menü és megjelenés kezelése.', icon: '⌂' },
