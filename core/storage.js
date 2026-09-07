@@ -63,10 +63,27 @@ function queueRemoteAdminSave(key, value) {
   return remoteSaveQueue;
 }
 
-export function hydrateAdminStorage(settings) {
-  if (!settings || typeof settings !== 'object') return;
+function writeRemoteSettings(settings) {
   for (const key of REMOTE_KEYS) {
     if (!Object.prototype.hasOwnProperty.call(settings, key)) continue;
     try { localStorage.setItem(PREFIX + key, JSON.stringify(settings[key])); } catch {}
+  }
+}
+
+export function hydrateAdminStorage(settings) {
+  if (!settings || typeof settings !== 'object') return;
+  writeRemoteSettings(settings);
+}
+
+export async function hydratePublicStorage() {
+  try {
+    const response = await fetch(apiUrl('/site-state'), { method: 'GET', cache: 'no-store', headers: { accept: 'application/json' } });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || data.ok === false) throw new Error(data.error || `Site state request failed: ${response.status}`);
+    writeRemoteSettings(data.settings || {});
+    return true;
+  } catch (error) {
+    console.warn('[Sanci9517] Public site state hydration failed; using local/default state:', error);
+    return false;
   }
 }
