@@ -5,8 +5,10 @@ export async function runControlCenterTests() {
     ['Worker API', '/health'],
     ['Storage', '/health/storage'],
     ['Integrációk', '/integrations/status'],
-    ['Twitch', '/twitch/status'],
+    ['Twitch live', '/twitch/status'],
     ['Twitch statisztika', '/twitch/statistics'],
+    ['Twitch VOD', '/twitch/videos?first=5'],
+    ['Twitch klipek', '/twitch/clips?first=5'],
     ['YouTube', '/youtube/channel'],
   ];
 
