@@ -1,3 +1,5 @@
+import { isAdminRequestAuthenticated, loginAdminRequest } from './auth.js';
+
 const CORS_HEADERS = {
   'access-control-allow-origin': '*',
   'access-control-allow-methods': 'GET, POST, OPTIONS',
@@ -8,7 +10,6 @@ const TWITCH_API = 'https://api.twitch.tv/helix';
 const TWITCH_TOKEN_URL = 'https://id.twitch.tv/oauth2/token';
 const YOUTUBE_API = 'https://www.googleapis.com/youtube/v3';
 const BROADCASTER_LOGIN = 'sanci9517';
-const ADMIN_TOKEN_TTL_SECONDS = 8 * 60 * 60;
 
 let cachedToken = null;
 
@@ -19,65 +20,10 @@ function json(data, status = 200, extraHeaders = {}) {
   });
 }
 
-function base64UrlEncode(value) {
-  const bytes = value instanceof Uint8Array ? value : new TextEncoder().encode(value);
-  let binary = '';
-  for (const byte of bytes) binary += String.fromCharCode(byte);
-  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
-}
-
-function base64UrlDecode(value) {
-  const normalized = value.replace(/-/g, '+').replace(/_/g, '/');
-  const padded = normalized + '='.repeat((4 - normalized.length % 4) % 4);
-  const binary = atob(padded);
-  return Uint8Array.from(binary, (char) => char.charCodeAt(0));
-}
-
-async function signAdminToken(payload, secret) {
-  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
-  const encodedPayload = base64UrlEncode(JSON.stringify(payload));
-  const signature = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(encodedPayload));
-  return `${encodedPayload}.${base64UrlEncode(new Uint8Array(signature))}`;
-}
-
-async function verifyAdminToken(token, secret) {
-  if (!token || !secret) return false;
-  const parts = token.split('.');
-  if (parts.length !== 2) return false;
-  const [encodedPayload, encodedSignature] = parts;
-  try {
-    const payload = JSON.parse(new TextDecoder().decode(base64UrlDecode(encodedPayload)));
-    if (payload.sub !== 'admin' || payload.exp <= Math.floor(Date.now() / 1000)) return false;
-    const expected = await signAdminToken(payload, secret);
-    return crypto.subtle.timingSafeEqual
-      ? crypto.subtle.timingSafeEqual(base64UrlDecode(encodedSignature), base64UrlDecode(expected.split('.')[1]))
-      : encodedSignature === expected.split('.')[1];
-  } catch {
-    return false;
-  }
-}
-
 async function adminLogin(request, env) {
-  if (!env.ADMIN_USERNAME || !env.ADMIN_PASSWORD || !env.ADMIN_AUTH_SECRET) {
-    return json({ ok: false, error: 'Admin authentication is not configured.' }, 503);
-  }
-  let body;
-  try { body = await request.json(); } catch { return json({ ok: false, error: 'Invalid request.' }, 400); }
-  const username = String(body?.username || '').trim();
-  const password = String(body?.password || '');
-  if (!username || !password) return json({ ok: false, error: 'Missing credentials.' }, 400);
-  if (username !== env.ADMIN_USERNAME || password !== env.ADMIN_PASSWORD) {
-    return json({ ok: false, error: 'Invalid credentials.' }, 401, { 'cache-control': 'no-store' });
-  }
-  const now = Math.floor(Date.now() / 1000);
-  const token = await signAdminToken({ sub: 'admin', iat: now, exp: now + ADMIN_TOKEN_TTL_SECONDS }, env.ADMIN_AUTH_SECRET);
-  return json({ ok: true, token, username }, 200, { 'cache-control': 'no-store' });
-}
-
-async function requireAdmin(request, env) {
-  const header = request.headers.get('authorization') || '';
-  const token = header.startsWith('Bearer ') ? header.slice(7).trim() : '';
-  return verifyAdminToken(token, env.ADMIN_AUTH_SECRET);
+  const result = await loginAdminRequest(request, env);
+  const headers = result.noStore ? { 'cache-control': 'no-store' } : {};
+  return json(result, result.status, headers);
 }
 
 async function getAppAccessToken(env) {
@@ -120,10 +66,10 @@ export default {
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS_HEADERS });
     if (request.method === 'POST' && url.pathname === '/admin/auth/login') return adminLogin(request, env);
     if (request.method === 'GET' && url.pathname === '/admin/auth/check') {
-      const authenticated = await requireAdmin(request, env);
+      const authenticated = await isAdminRequestAuthenticated(request, env);
       return json({ ok: authenticated, authenticated }, authenticated ? 200 : 401, { 'cache-control': 'no-store' });
     }
-    if (request.method === 'GET' && url.pathname === '/health') return json({ ok: true, service: 'sanci9517-api', version: 'admin-auth-1', environment: env.ENVIRONMENT || 'production', integrations: getIntegrationStatus(env), timestamp: new Date().toISOString() });
+    if (request.method === 'GET' && url.pathname === '/health') return json({ ok: true, service: 'sanci9517-api', version: 'admin-auth-2', environment: env.ENVIRONMENT || 'production', integrations: getIntegrationStatus(env), timestamp: new Date().toISOString() });
     if (request.method === 'GET' && url.pathname === '/integrations/status') return json({ ok: true, integrations: getIntegrationStatus(env) });
     if (request.method === 'GET' && url.pathname === '/twitch/status') { try { return json({ ok: true, ...(await getStreamStatus(env)) }); } catch (error) { console.error('[Sanci9517] Twitch status error:', error); return json({ ok: false, error: 'Twitch status is temporarily unavailable.' }, 503); } }
     if (request.method === 'GET' && url.pathname === '/youtube/channel') { try { return json({ ok: true, ...(await getYouTubeChannel(env)) }); } catch (error) { console.error('[Sanci9517] YouTube channel error:', error); return json({ ok: false, error: 'YouTube channel is temporarily unavailable.' }, 503); } }
