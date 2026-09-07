@@ -53,16 +53,41 @@ function ensureExistingPages(saved) {
 }
 
 function normalizePage(page) {
-  return { ...page, content: page?.content || '', blocks: Array.isArray(page?.blocks) ? page.blocks.map(normalizeBlock) : [] };
+  return {
+    ...page,
+    content: page?.content || '',
+    blocks: Array.isArray(page?.blocks) ? page.blocks.map(normalizeBlock) : [],
+  };
 }
 
 function normalizeBlock(block) {
   const type = BLOCK_TYPES.has(block?.type) ? block.type : 'text';
+  const legacyElement = {
+    id: createElementId(),
+    type,
+    title: String(block?.title || ''),
+    content: String(block?.content || ''),
+  };
+  const elements = Array.isArray(block?.elements) && block.elements.length
+    ? block.elements.map(normalizeElement)
+    : [legacyElement];
+
   return {
     id: String(block?.id || createBlockId()),
     type,
     title: String(block?.title || ''),
     content: String(block?.content || ''),
+    elements,
+  };
+}
+
+function normalizeElement(element) {
+  const type = BLOCK_TYPES.has(element?.type) ? element.type : 'text';
+  return {
+    id: String(element?.id || createElementId()),
+    type,
+    title: String(element?.title || ''),
+    content: String(element?.content || ''),
   };
 }
 
@@ -72,6 +97,10 @@ function createPageId(path) {
 
 function createBlockId() {
   return `block-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function createElementId() {
+  return `element-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
 function normalizePath(path) {
