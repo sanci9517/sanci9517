@@ -1,26 +1,29 @@
 import { siteUrl, config } from '../core/config.js';
-import { navigation } from '../data/navigation.js';
+import { getNavigation } from '../core/navigation-state.js';
 
 export function Navigation(site) {
   const currentPath = getCurrentRoutePath();
-  const items = navigation.map((item) => {
-    if (item.type === 'external') {
+  const items = getNavigation()
+    .filter((item) => item.enabled !== false)
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    .map((item) => {
+      if (item.type === 'external') {
+        return `
+          <a class="menu-link menu-link-external" href="${escapeAttribute(site.links[item.urlKey] || item.url || '#')}" target="_blank" rel="noopener noreferrer">
+            <span>${escapeHtml(item.label)}</span>
+            <span aria-hidden="true">↗</span>
+          </a>
+        `;
+      }
+
+      const active = normalizePath(item.path) === currentPath;
       return `
-        <a class="menu-link menu-link-external" href="${site.links[item.urlKey]}" target="_blank" rel="noopener noreferrer">
-          <span>${item.label}</span>
-          <span aria-hidden="true">↗</span>
+        <a class="menu-link${active ? ' menu-link-active' : ''}" href="${siteUrl(item.path)}" data-route${active ? ' aria-current="page"' : ''}>
+          <span>${escapeHtml(item.label)}</span>
+          <span class="menu-arrow" aria-hidden="true">${active ? '●' : '→'}</span>
         </a>
       `;
-    }
-
-    const active = normalizePath(item.path) === currentPath;
-    return `
-      <a class="menu-link${active ? ' menu-link-active' : ''}" href="${siteUrl(item.path)}" data-route${active ? ' aria-current="page"' : ''}>
-        <span>${item.label}</span>
-        <span class="menu-arrow" aria-hidden="true">${active ? '●' : '→'}</span>
-      </a>
-    `;
-  }).join('');
+    }).join('');
 
   return `
     <div class="navigation">
@@ -95,4 +98,17 @@ function getCurrentRoutePath() {
 function normalizePath(path) {
   const clean = String(path || '/').split('?')[0].split('#')[0];
   return clean.replace(/\/+$/, '') || '/';
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+function escapeAttribute(value) {
+  return escapeHtml(value);
 }
