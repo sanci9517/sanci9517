@@ -4,19 +4,8 @@ import { storage } from './storage.js';
 const PAGES_KEY = 'page-settings';
 
 export function getPages() {
-  const saved = storage.get(PAGES_KEY, null);
-  if (!Array.isArray(saved)) return pages;
-
-  const savedById = new Map(saved.map((page) => [page.id, page]));
-  const merged = pages.map((page) => ({
-    ...page,
-    ...(savedById.get(page.id) || {}),
-  }));
-
-  const builtInIds = new Set(pages.map((page) => page.id));
-  const customPages = saved.filter((page) => page?.id && !builtInIds.has(page.id));
-
-  return [...merged, ...customPages];
+  const saved = storage.get(PAGES_KEY, []);
+  return Array.isArray(saved) ? saved : [];
 }
 
 export function getPageById(id) {
@@ -31,6 +20,34 @@ export function getPageByPath(path) {
 export function savePages(nextPages) {
   if (!Array.isArray(nextPages)) return false;
   return storage.set(PAGES_KEY, nextPages);
+}
+
+export function syncPagesFromNavigation(items) {
+  const current = getPages();
+  const byPath = new Map(current.map((page) => [normalizePath(page.path), page]));
+  const next = [];
+
+  for (const item of items) {
+    if (item?.type !== 'route' || item?.path === '/') continue;
+    const path = normalizePath(item.path);
+    if (!path || path === '/') continue;
+
+    const existing = byPath.get(path);
+    next.push(existing || {
+      id: createPageId(path),
+      path,
+      title: String(item.label || 'Új oldal').trim() || 'Új oldal',
+      status: 'active',
+      menu: true,
+      content: '',
+    });
+  }
+
+  return savePages(next);
+}
+
+function createPageId(path) {
+  return `page-${normalizePath(path).slice(1).replace(/[^a-z0-9]+/gi, '-').replace(/^-+|-+$/g, '') || 'new'}`;
 }
 
 function normalizePath(path) {
