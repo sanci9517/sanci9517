@@ -1,7 +1,7 @@
 export const config = Object.freeze({
   appName: 'Sanci9517',
   basePath: '/sanci9517',
-  apiBaseUrl: '',
+  apiBaseUrl: 'https://sanci9517-api.sandor-bogadi95.workers.dev',
   environment: 'production',
 });
 
