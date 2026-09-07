@@ -8,8 +8,9 @@ export function Navigation(site) {
     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
     .map((item) => {
       if (item.type === 'external') {
+        const href = item.url || (item.urlKey ? site.links?.[item.urlKey] : '') || '#';
         return `
-          <a class="menu-link menu-link-external" href="${escapeAttribute(site.links[item.urlKey] || item.url || '#')}" target="_blank" rel="noopener noreferrer">
+          <a class="menu-link menu-link-external" href="${escapeAttribute(href)}" target="_blank" rel="noopener noreferrer">
             <span>${escapeHtml(item.label)}</span>
             <span aria-hidden="true">↗</span>
           </a>
