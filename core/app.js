@@ -7,6 +7,7 @@ import { showError } from './ui.js';
 import { getSite } from './site-state.js';
 import { getNavigation } from './navigation-state.js';
 import { getPageByPath } from './page-state.js';
+import { hydratePublicStorage } from './storage.js';
 import { config } from './config.js';
 
 registerRoute('/', renderHome);
@@ -58,7 +59,8 @@ function normalizePath(path) {
   return clean.replace(/\/+$/, '') || '/';
 }
 
-function boot() {
+async function boot() {
+  await hydratePublicStorage();
   initRouter(renderCurrentRoute);
   initNavigation();
   renderCurrentRoute();
