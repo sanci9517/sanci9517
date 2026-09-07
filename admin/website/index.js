@@ -1,15 +1,12 @@
-import { site } from '../../data/site.js';
 import { navigation } from '../../data/navigation.js';
-import { storage } from '../../core/storage.js';
 import { navigate } from '../../core/router.js';
-
-const SETTINGS_KEY = 'admin-website-settings';
+import { getSite, saveSiteSettings } from '../../core/site-state.js';
 
 export function renderWebsiteAdmin(root) {
-  const saved = storage.get(SETTINGS_KEY, {});
+  const currentSite = getSite();
   const values = {
-    brand: saved.brand ?? site.brand,
-    description: saved.description ?? site.description,
+    brand: currentSite.brand,
+    description: currentSite.description,
   };
 
   root.innerHTML = `
@@ -37,7 +34,7 @@ export function renderWebsiteAdmin(root) {
               <textarea name="description" rows="4" maxlength="240" required>${escapeHtml(values.description)}</textarea>
             </label>
             <div class="admin-form-meta">
-              <span>Nyelv: <strong>${escapeHtml(site.language)}</strong></span>
+              <span>Nyelv: <strong>${escapeHtml(currentSite.language)}</strong></span>
               <span data-save-status></span>
             </div>
             <button class="button button-primary" type="submit">Mentés</button>
@@ -71,9 +68,10 @@ export function renderWebsiteAdmin(root) {
       description: String(formData.get('description') || '').trim(),
     };
     if (!next.brand || !next.description) return;
-    storage.set(SETTINGS_KEY, next);
+
+    const saved = saveSiteSettings(next);
     const status = root.querySelector('[data-save-status]');
-    if (status) status.textContent = 'Mentve ✓';
+    if (status) status.textContent = saved ? 'Mentve ✓' : 'Mentés sikertelen';
   });
 }
 
