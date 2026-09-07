@@ -1,9 +1,9 @@
-import { getSite } from '../data/site.js';
 import { renderHome } from '../pages/home.js';
 import { renderAdmin } from '../admin/index.js';
 import { registerRoute, resolveRoute, initRouter } from './router.js';
 import { initNavigation } from '../components/navigation.js';
 import { showError } from './ui.js';
+import { getSite } from './site-state.js';
 
 registerRoute('/', renderHome);
 registerRoute('/admin', renderAdmin);
