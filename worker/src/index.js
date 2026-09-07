@@ -6,6 +6,7 @@ const CORS_HEADERS = {
 
 const TWITCH_API = 'https://api.twitch.tv/helix';
 const TWITCH_TOKEN_URL = 'https://id.twitch.tv/oauth2/token';
+const YOUTUBE_API = 'https://www.googleapis.com/youtube/v3';
 const BROADCASTER_LOGIN = 'sanci9517';
 
 let cachedToken = null;
@@ -95,6 +96,62 @@ async function getStreamStatus(env) {
   };
 }
 
+async function getYouTubeChannel(env) {
+  if (!env.YOUTUBE_API_KEY || !env.YOUTUBE_CHANNEL_ID) {
+    return {
+      configured: false,
+      channel: null,
+      checkedAt: new Date().toISOString(),
+    };
+  }
+
+  const params = new URLSearchParams({
+    part: 'snippet,statistics,contentDetails',
+    id: env.YOUTUBE_CHANNEL_ID,
+    key: env.YOUTUBE_API_KEY,
+  });
+
+  const response = await fetch(`${YOUTUBE_API}/channels?${params}`);
+  if (!response.ok) {
+    throw new Error(`YouTube channels request failed: ${response.status}`);
+  }
+
+  const data = await response.json();
+  const channel = data.items?.[0] || null;
+
+  return {
+    configured: true,
+    channel: channel
+      ? {
+          id: channel.id,
+          title: channel.snippet?.title || '',
+          description: channel.snippet?.description || '',
+          customUrl: channel.snippet?.customUrl || '',
+          publishedAt: channel.snippet?.publishedAt || null,
+          thumbnails: channel.snippet?.thumbnails || {},
+          subscriberCount: Number(channel.statistics?.subscriberCount || 0),
+          videoCount: Number(channel.statistics?.videoCount || 0),
+          viewCount: Number(channel.statistics?.viewCount || 0),
+          uploadsPlaylistId: channel.contentDetails?.relatedPlaylists?.uploads || null,
+        }
+      : null,
+    checkedAt: new Date().toISOString(),
+  };
+}
+
+function getIntegrationStatus(env) {
+  return {
+    twitch: {
+      configured: Boolean(env.TWITCH_CLIENT_ID && env.TWITCH_CLIENT_SECRET),
+      channel: BROADCASTER_LOGIN,
+  },
+    youtube: {
+      configured: Boolean(env.YOUTUBE_API_KEY && env.YOUTUBE_CHANNEL_ID),
+      channelId: env.YOUTUBE_CHANNEL_ID || null,
+    },
+  };
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -107,10 +164,15 @@ export default {
       return json({
         ok: true,
         service: 'sanci9517-api',
-        version: 'twitch-1',
+        version: 'integrations-1',
         environment: env.ENVIRONMENT || 'production',
+        integrations: getIntegrationStatus(env),
         timestamp: new Date().toISOString(),
       });
+    }
+
+    if (request.method === 'GET' && url.pathname === '/integrations/status') {
+      return json({ ok: true, integrations: getIntegrationStatus(env) });
     }
 
     if (request.method === 'GET' && url.pathname === '/twitch/status') {
@@ -121,6 +183,18 @@ export default {
         return json({
           ok: false,
           error: 'Twitch status is temporarily unavailable.',
+        }, 503);
+      }
+    }
+
+    if (request.method === 'GET' && url.pathname === '/youtube/channel') {
+      try {
+        return json({ ok: true, ...(await getYouTubeChannel(env)) });
+      } catch (error) {
+        console.error('[Sanci9517] YouTube channel error:', error);
+        return json({
+          ok: false,
+          error: 'YouTube channel is temporarily unavailable.',
         }, 503);
       }
     }
