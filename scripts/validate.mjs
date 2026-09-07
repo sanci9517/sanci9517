@@ -5,10 +5,11 @@ const requiredFiles = [
   'index.html', '404.html', 'core/app.js', 'core/router.js', 'core/api.js', 'core/config.js', 'core/storage.js', 'core/ui.js',
   'core/site-state.js', 'core/page-state.js', 'core/navigation-state.js', 'data/site.js', 'data/navigation.js', 'data/pages.js',
   'pages/home.js', 'pages/generic.js', 'components/header.js', 'components/navigation.js', 'components/card.js',
-  'admin/index.js', 'admin/dashboard.js', 'admin/auth.js', 'admin/website/index.js',
+  'admin/index.js', 'admin/dashboard.js', 'admin/auth.js', 'admin/backend.js', 'admin/website/index.js',
   'integrations/tiktok/client.js', 'styles/tokens.css', 'styles/base.css', 'styles/components.css', 'styles/navigation.css',
   'styles/admin.css', 'schemas/site.schema.json', 'schemas/page.schema.json', 'schemas/menu.schema.json',
-  'worker/src/index.js', 'worker/src/auth.js', 'worker/wrangler.jsonc', 'twitch/status.js', 'youtube/status.js',
+  'worker/src/index.js', 'worker/src/auth.js', 'worker/src/admin.js', 'worker/migrations/0001_initial.sql', 'worker/wrangler.jsonc',
+  'twitch/status.js', 'youtube/status.js',
 ];
 const jsFiles = requiredFiles.filter((file) => file.endsWith('.js'));
 const jsonFiles = ['schemas/site.schema.json', 'schemas/page.schema.json', 'schemas/menu.schema.json', 'worker/wrangler.jsonc'];
@@ -22,7 +23,8 @@ for (const file of jsonFiles) {
 
 const worker = readFileSync('worker/src/index.js', 'utf8');
 const workerAuth = readFileSync('worker/src/auth.js', 'utf8');
-for (const route of ['/health', '/integrations/status', '/twitch/status', '/youtube/channel', '/admin/auth/login', '/admin/auth/check', '/admin/auth/logout']) {
+const workerAdmin = readFileSync('worker/src/admin.js', 'utf8');
+for (const route of ['/health', '/health/storage', '/integrations/status', '/twitch/status', '/youtube/channel', '/admin/auth/login', '/admin/auth/check', '/admin/auth/logout', '/admin/settings', '/admin/audit']) {
   if (!worker.includes(`url.pathname === '${route}'`)) { console.error(`Missing worker route: ${route}`); process.exit(1); }
 }
 
@@ -33,6 +35,7 @@ const navigation = readFileSync('components/navigation.js', 'utf8');
 const auth = readFileSync('admin/auth.js', 'utf8');
 const admin = readFileSync('admin/index.js', 'utf8');
 const dashboard = readFileSync('admin/dashboard.js', 'utf8');
+const storage = readFileSync('core/storage.js', 'utf8');
 const index = readFileSync('index.html', 'utf8');
 const fallback = readFileSync('404.html', 'utf8');
 
@@ -45,14 +48,16 @@ if (!auth.includes("credentials: 'include'") || !auth.includes("/admin/auth/logi
 if (!admin.includes('checkAdminSession().then')) { console.error('Admin entry must check the server session before rendering the dashboard.'); process.exit(1); }
 if (!dashboard.includes('await logoutAdmin()')) { console.error('Admin logout must invalidate the server session.'); process.exit(1); }
 if (!worker.includes("import { clearAdminCookie, isAdminRequestAuthenticated, loginAdminRequest } from './auth.js'")) { console.error('Worker must use the isolated admin authentication module.'); process.exit(1); }
-if (!workerAuth.includes("crypto.subtle.verify('HMAC'") || !workerAuth.includes('HttpOnly') || !workerAuth.includes('SameSite=Strict')) { console.error('Admin authentication must use verified signed tokens in secure HttpOnly cookies.'); process.exit(1); }
+if (!workerAuth.includes("crypto.subtle.verify('HMAC'") || !workerAuth.includes('HttpOnly') || !workerAuth.includes('SameSite=None')) { console.error('Cross-origin admin authentication must use verified signed tokens in secure HttpOnly cookies.'); process.exit(1); }
 if (!workerAuth.includes("const ADMIN_COOKIE_NAME = '__Host-sanci_admin'")) { console.error('Admin cookie must use a host-prefixed secure cookie name.'); process.exit(1); }
-if (!worker.includes("url.pathname === '/admin/auth/logout'")) { console.error('Admin logout route is missing.'); process.exit(1); }
-if (!worker.includes("version: 'admin-auth-3'")) { console.error('Worker auth version marker is missing.'); process.exit(1); }
-if (!worker.includes('ADMIN_USERNAME') || !worker.includes('ADMIN_PASSWORD')) { console.error('Worker admin credentials configuration is incomplete.'); process.exit(1); }
+if (!worker.includes('access-control-allow-credentials')) { console.error('Worker CORS must allow credentialed admin requests.'); process.exit(1); }
+if (!worker.includes('vary')) { console.error('Worker CORS must vary by Origin.'); process.exit(1); }
+if (!workerAdmin.includes('isAllowedAdminOrigin') || !workerAdmin.includes('authenticate')) { console.error('Admin backend must enforce origin and server authentication checks.'); process.exit(1); }
+if (!storage.includes('remoteSaveQueue') || !storage.includes("sanci:remote-save")) { console.error('Admin remote saves must be serialized and observable.'); process.exit(1); }
+if (!admin.includes('sanci:remote-save')) { console.error('Admin UI must surface remote save status.'); process.exit(1); }
 
 for (const script of ['admin/website/layout-enhancer.js', 'core/block-layout.js', 'core/app.js']) {
   if (!index.includes(script) || !fallback.includes(script)) { console.error(`GitHub Pages fallback bootstrap mismatch: ${script}`); process.exit(1); }
 }
 
-console.log(`Validation passed: ${requiredFiles.length} required files, public route checks, fallback bootstrap checks, and HttpOnly server-session admin auth checks passed.`);
+console.log(`Validation passed: ${requiredFiles.length} required files, route checks, GitHub Pages fallback checks, secure cookie/CORS checks, D1 admin backend checks, and serialized remote-save checks passed.`);
