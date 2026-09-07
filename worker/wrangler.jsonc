@@ -6,15 +6,6 @@
   "compatibility_date": "2026-09-06",
   "workers_dev": true,
   "keep_vars": true,
-  "secrets": {
-    "required": [
-      "ADMIN_USERNAME",
-      "ADMIN_PASSWORD",
-      "ADMIN_AUTH_SECRET",
-      "TWITCH_CLIENT_ID",
-      "TWITCH_CLIENT_SECRET"
-    ]
-  },
   "d1_databases": [
     {
       "binding": "DB",
