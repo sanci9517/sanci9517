@@ -6,6 +6,7 @@ const TWITCH_API = 'https://api.twitch.tv/helix';
 const TWITCH_TOKEN_URL = 'https://id.twitch.tv/oauth2/token';
 const YOUTUBE_API = 'https://www.googleapis.com/youtube/v3';
 const BROADCASTER_LOGIN = 'sanci9517';
+const PUBLIC_SETTING_KEYS = ['site-settings', 'navigation-settings-v2', 'page-settings'];
 
 let cachedToken = null;
 
@@ -37,6 +38,16 @@ async function adminLogin(request, env) {
   if (result.setCookie) headers['set-cookie'] = result.setCookie;
   if (result.retryAfter) headers['retry-after'] = String(result.retryAfter);
   return json({ ok: result.ok, username: result.username || null, error: result.error || null }, result.status, headers, request, env);
+}
+
+async function getPublicSiteState(env) {
+  const placeholders = PUBLIC_SETTING_KEYS.map(() => '?').join(',');
+  const result = await env.DB.prepare(`SELECT key, value, updated_at FROM app_settings WHERE key IN (${placeholders}) ORDER BY key`).bind(...PUBLIC_SETTING_KEYS).all();
+  const settings = {};
+  for (const row of result.results || []) {
+    try { settings[row.key] = JSON.parse(row.value); } catch { settings[row.key] = row.value; }
+  }
+  return { settings, updatedAt: result.results?.[0]?.updated_at || null };
 }
 
 async function getAppAccessToken(env) {
@@ -104,6 +115,10 @@ export default {
       const result = await getAdminAudit(request, env, isAdminRequestAuthenticated);
       return json(result, result.status, { 'cache-control': 'no-store' }, request, env);
     }
+    if (request.method === 'GET' && url.pathname === '/site-state') {
+      try { return json({ ok: true, ...(await getPublicSiteState(env)) }, 200, { 'cache-control': 'public, max-age=30, stale-while-revalidate=120' }, request, env); }
+      catch (error) { console.error('[Sanci9517] Public site state error:', error); return json({ ok: false, error: 'Site state is temporarily unavailable.' }, 503, {}, request, env); }
+    }
     if (request.method === 'GET' && url.pathname === '/health/storage') {
       try {
         const storage = await getStorageHealth(env);
@@ -113,7 +128,7 @@ export default {
         return json({ ok: false, storage: { d1: false, kv: false }, error: 'Storage health check failed.' }, 503, {}, request, env);
       }
     }
-    if (request.method === 'GET' && url.pathname === '/health') return json({ ok: true, service: 'sanci9517-api', version: 'admin-backend-2', environment: env.ENVIRONMENT || 'production', integrations: getIntegrationStatus(env), timestamp: new Date().toISOString() }, 200, {}, request, env);
+    if (request.method === 'GET' && url.pathname === '/health') return json({ ok: true, service: 'sanci9517-api', version: 'admin-backend-3', environment: env.ENVIRONMENT || 'production', integrations: getIntegrationStatus(env), timestamp: new Date().toISOString() }, 200, {}, request, env);
     if (request.method === 'GET' && url.pathname === '/integrations/status') return json({ ok: true, integrations: getIntegrationStatus(env) }, 200, {}, request, env);
     if (request.method === 'GET' && url.pathname === '/twitch/status') { try { return json({ ok: true, ...(await getStreamStatus(env)) }, 200, {}, request, env); } catch (error) { console.error('[Sanci9517] Twitch status error:', error); return json({ ok: false, error: 'Twitch status is temporarily unavailable.' }, 503, {}, request, env); } }
     if (request.method === 'GET' && url.pathname === '/youtube/channel') { try { return json({ ok: true, ...(await getYouTubeChannel(env)) }, 200, {}, request, env); } catch (error) { console.error('[Sanci9517] YouTube channel error:', error); return json({ ok: false, error: 'YouTube channel is temporarily unavailable.' }, 503, {}, request, env); } }
