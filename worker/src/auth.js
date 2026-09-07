@@ -1,4 +1,6 @@
 const ADMIN_TOKEN_TTL_SECONDS = 8 * 60 * 60;
+const ADMIN_LOGIN_WINDOW_SECONDS = 10 * 60;
+const ADMIN_LOGIN_MAX_FAILURES = 5;
 const ADMIN_COOKIE_NAME = '__Host-sanci_admin';
 
 function base64UrlEncode(value) {
@@ -51,6 +53,31 @@ function parseCookies(request) {
   return cookies;
 }
 
+async function loginRateLimitKey(request, username, secret) {
+  const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`${secret}:${ip}:${username.toLowerCase()}`));
+  return `admin-login:${base64UrlEncode(new Uint8Array(digest))}`;
+}
+
+async function checkLoginRateLimit(request, username, env) {
+  if (!env.CACHE) return { allowed: true };
+  const key = await loginRateLimitKey(request, username, env.ADMIN_AUTH_SECRET);
+  const raw = await env.CACHE.get(key);
+  const failures = Number(raw || 0);
+  if (failures >= ADMIN_LOGIN_MAX_FAILURES) return { allowed: false, retryAfter: ADMIN_LOGIN_WINDOW_SECONDS };
+  return { allowed: true, key, failures };
+}
+
+async function recordLoginFailure(rateLimit, env) {
+  if (!env.CACHE || !rateLimit?.key) return;
+  await env.CACHE.put(rateLimit.key, String(Number(rateLimit.failures || 0) + 1), { expirationTtl: ADMIN_LOGIN_WINDOW_SECONDS });
+}
+
+async function clearLoginFailures(rateLimit, env) {
+  if (!env.CACHE || !rateLimit?.key) return;
+  await env.CACHE.delete(rateLimit.key);
+}
+
 function createAdminCookie(token) {
   return `${ADMIN_COOKIE_NAME}=${encodeURIComponent(token)}; Max-Age=${ADMIN_TOKEN_TTL_SECONDS}; Path=/; HttpOnly; Secure; SameSite=None`;
 }
@@ -66,7 +93,16 @@ export async function loginAdminRequest(request, env) {
   const username = String(body?.username || '').trim();
   const password = String(body?.password || '');
   if (!username || !password) return { ok: false, status: 400, error: 'Missing credentials.' };
-  if (username !== env.ADMIN_USERNAME || password !== env.ADMIN_PASSWORD) return { ok: false, status: 401, error: 'Invalid credentials.', noStore: true };
+
+  const rateLimit = await checkLoginRateLimit(request, username, env);
+  if (!rateLimit.allowed) return { ok: false, status: 429, error: 'Too many failed login attempts. Try again later.', noStore: true, retryAfter: rateLimit.retryAfter };
+
+  if (username !== env.ADMIN_USERNAME || password !== env.ADMIN_PASSWORD) {
+    await recordLoginFailure(rateLimit, env);
+    return { ok: false, status: 401, error: 'Invalid credentials.', noStore: true };
+  }
+
+  await clearLoginFailures(rateLimit, env);
   const now = Math.floor(Date.now() / 1000);
   const token = await signAdminToken({ sub: 'admin', iat: now, exp: now + ADMIN_TOKEN_TTL_SECONDS }, env.ADMIN_AUTH_SECRET);
   return { ok: true, status: 200, username, noStore: true, setCookie: createAdminCookie(token) };
