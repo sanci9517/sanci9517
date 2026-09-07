@@ -4,9 +4,11 @@ import { hydrateAdminStorage } from '../core/storage.js';
 import { renderAdminDashboard } from './dashboard.js';
 
 const ADMIN_STYLESHEET_ID = 'sanci-admin-styles';
+const ADMIN_SYNC_STATUS_ID = 'sanci-admin-sync-status';
 
 export function renderAdmin(root) {
   ensureAdminStyles();
+  ensureAdminSyncStatus();
   renderAdminLoading(root);
   checkAdminSession().then(async (session) => {
     if (!session.authenticated) {
@@ -33,6 +35,34 @@ function ensureAdminStyles() {
   document.head.appendChild(stylesheet);
 }
 
+function ensureAdminSyncStatus() {
+  let status = document.getElementById(ADMIN_SYNC_STATUS_ID);
+  if (status) return status;
+  status = document.createElement('div');
+  status.id = ADMIN_SYNC_STATUS_ID;
+  status.className = 'admin-sync-status';
+  status.hidden = true;
+  status.setAttribute('role', 'status');
+  status.setAttribute('aria-live', 'polite');
+  document.body.appendChild(status);
+  window.addEventListener('sanci:remote-save', (event) => {
+    const detail = event.detail || {};
+    if (detail.status === 'saving') {
+      status.hidden = false;
+      status.dataset.state = 'saving';
+      status.textContent = 'Mentés a szerverre…';
+      return;
+    }
+    status.hidden = false;
+    status.dataset.state = detail.status;
+    status.textContent = detail.status === 'saved'
+      ? 'Szerverre mentve ✓'
+      : `Szervermentés sikertelen: ${detail.error || 'ismeretlen hiba'}`;
+    if (detail.status === 'saved') window.setTimeout(() => { status.hidden = true; }, 2200);
+  });
+  return status;
+}
+
 function renderAdminLoading(root) {
   root.innerHTML = `
     <div class="admin-page admin-login-page">
@@ -47,6 +77,8 @@ function renderAdminLoading(root) {
 
 function renderAdminLogin(root) {
   document.body.dataset.adminAuthenticated = 'false';
+  const syncStatus = document.getElementById(ADMIN_SYNC_STATUS_ID);
+  if (syncStatus) syncStatus.hidden = true;
   root.innerHTML = `
     <div class="admin-page admin-login-page">
       <main class="admin-login-card">
