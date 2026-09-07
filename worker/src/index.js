@@ -61,6 +61,12 @@ function getIntegrationStatus(env) {
   return { twitch: { configured: Boolean(env.TWITCH_CLIENT_ID && env.TWITCH_CLIENT_SECRET), channel: BROADCASTER_LOGIN }, youtube: { configured: Boolean(env.YOUTUBE_API_KEY && env.YOUTUBE_CHANNEL_ID), channelId: env.YOUTUBE_CHANNEL_ID || null }, admin: { configured: Boolean(env.ADMIN_USERNAME && env.ADMIN_PASSWORD && env.ADMIN_AUTH_SECRET) } };
 }
 
+async function getStorageHealth(env) {
+  const d1Result = await env.DB.prepare('SELECT 1 AS ok').first();
+  await env.CACHE.get('__sanci_health_probe__');
+  return { d1: d1Result?.ok === 1, kv: true };
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -70,6 +76,15 @@ export default {
     if (request.method === 'GET' && url.pathname === '/admin/auth/check') {
       const authenticated = await isAdminRequestAuthenticated(request, env);
       return json({ ok: authenticated, authenticated }, authenticated ? 200 : 401, { 'cache-control': 'no-store' });
+    }
+    if (request.method === 'GET' && url.pathname === '/health/storage') {
+      try {
+        const storage = await getStorageHealth(env);
+        return json({ ok: storage.d1 && storage.kv, storage, checkedAt: new Date().toISOString() });
+      } catch (error) {
+        console.error('[Sanci9517] Storage health error:', error);
+        return json({ ok: false, storage: { d1: false, kv: false }, error: 'Storage health check failed.' }, 503);
+      }
     }
     if (request.method === 'GET' && url.pathname === '/health') return json({ ok: true, service: 'sanci9517-api', version: 'admin-auth-3', environment: env.ENVIRONMENT || 'production', integrations: getIntegrationStatus(env), timestamp: new Date().toISOString() });
     if (request.method === 'GET' && url.pathname === '/integrations/status') return json({ ok: true, integrations: getIntegrationStatus(env) });
