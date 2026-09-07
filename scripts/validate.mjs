@@ -22,7 +22,7 @@ for (const file of jsonFiles) {
 
 const worker = readFileSync('worker/src/index.js', 'utf8');
 const workerAuth = readFileSync('worker/src/auth.js', 'utf8');
-for (const route of ['/health', '/integrations/status', '/twitch/status', '/youtube/channel', '/admin/auth/login', '/admin/auth/check']) {
+for (const route of ['/health', '/integrations/status', '/twitch/status', '/youtube/channel', '/admin/auth/login', '/admin/auth/check', '/admin/auth/logout']) {
   if (!worker.includes(`url.pathname === '${route}'`)) { console.error(`Missing worker route: ${route}`); process.exit(1); }
 }
 
@@ -32,6 +32,7 @@ const app = readFileSync('core/app.js', 'utf8');
 const navigation = readFileSync('components/navigation.js', 'utf8');
 const auth = readFileSync('admin/auth.js', 'utf8');
 const admin = readFileSync('admin/index.js', 'utf8');
+const dashboard = readFileSync('admin/dashboard.js', 'utf8');
 const index = readFileSync('index.html', 'utf8');
 const fallback = readFileSync('404.html', 'utf8');
 
@@ -39,16 +40,19 @@ if (!/basePath:\s*['"]\/sanci9517['"]/.test(config)) { console.error('Missing co
 if (!router.includes('config.basePath')) { console.error('Router must use config.basePath for site paths.'); process.exit(1); }
 if (!app.includes('config.basePath')) { console.error('App route resolution must use config.basePath.'); process.exit(1); }
 if (!navigation.includes('config.basePath')) { console.error('Navigation route resolution must use config.basePath.'); process.exit(1); }
-if (auth.includes("sessionStorage.setItem(ADMIN_SESSION_KEY, 'authenticated')") || auth.includes('Temporary foundation')) { console.error('Insecure client-only admin authentication is still present.'); process.exit(1); }
-if (!auth.includes("/admin/auth/login") || !auth.includes('Bearer')) { console.error('Admin client must use server-backed authentication.'); process.exit(1); }
-if (!admin.includes('await loginAdmin(')) { console.error('Admin login UI must await server authentication.'); process.exit(1); }
-if (!worker.includes("import { isAdminRequestAuthenticated, loginAdminRequest } from './auth.js'")) { console.error('Worker must use the isolated admin authentication module.'); process.exit(1); }
-if (!workerAuth.includes("crypto.subtle.verify('HMAC'")) { console.error('Admin token verification must use Web Crypto signature verification.'); process.exit(1); }
-if (!workerAuth.includes('ADMIN_AUTH_SECRET') && !worker.includes('ADMIN_AUTH_SECRET')) { console.error('Worker admin authentication configuration is incomplete.'); process.exit(1); }
+if (auth.includes('sessionStorage') || auth.includes('localStorage') || auth.includes('ADMIN_TOKEN_KEY') || auth.includes('Bearer')) { console.error('Admin token must not be stored or sent from client-side JavaScript.'); process.exit(1); }
+if (!auth.includes("credentials: 'include'") || !auth.includes("/admin/auth/login") || !auth.includes("/admin/auth/check") || !auth.includes("/admin/auth/logout")) { console.error('Admin client must use cookie-backed server sessions.'); process.exit(1); }
+if (!admin.includes('checkAdminSession().then')) { console.error('Admin entry must check the server session before rendering the dashboard.'); process.exit(1); }
+if (!dashboard.includes('await logoutAdmin()')) { console.error('Admin logout must invalidate the server session.'); process.exit(1); }
+if (!worker.includes("import { clearAdminCookie, isAdminRequestAuthenticated, loginAdminRequest } from './auth.js'")) { console.error('Worker must use the isolated admin authentication module.'); process.exit(1); }
+if (!workerAuth.includes("crypto.subtle.verify('HMAC'") || !workerAuth.includes('HttpOnly') || !workerAuth.includes('SameSite=Strict')) { console.error('Admin authentication must use verified signed tokens in secure HttpOnly cookies.'); process.exit(1); }
+if (!workerAuth.includes("const ADMIN_COOKIE_NAME = '__Host-sanci_admin'")) { console.error('Admin cookie must use a host-prefixed secure cookie name.'); process.exit(1); }
+if (!worker.includes("url.pathname === '/admin/auth/logout'")) { console.error('Admin logout route is missing.'); process.exit(1); }
+if (!worker.includes("version: 'admin-auth-3'")) { console.error('Worker auth version marker is missing.'); process.exit(1); }
 if (!worker.includes('ADMIN_USERNAME') || !worker.includes('ADMIN_PASSWORD')) { console.error('Worker admin credentials configuration is incomplete.'); process.exit(1); }
 
 for (const script of ['admin/website/layout-enhancer.js', 'core/block-layout.js', 'core/app.js']) {
   if (!index.includes(script) || !fallback.includes(script)) { console.error(`GitHub Pages fallback bootstrap mismatch: ${script}`); process.exit(1); }
 }
 
-console.log(`Validation passed: ${requiredFiles.length} required files, public route checks, fallback bootstrap checks, and isolated server-backed admin auth checks passed.`);
+console.log(`Validation passed: ${requiredFiles.length} required files, public route checks, fallback bootstrap checks, and HttpOnly server-session admin auth checks passed.`);
