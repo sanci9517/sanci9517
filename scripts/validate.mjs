@@ -34,6 +34,8 @@ const requiredFiles = [
   'schemas/menu.schema.json',
   'worker/src/index.js',
   'worker/wrangler.jsonc',
+  'twitch/status.js',
+  'youtube/status.js',
 ];
 
 const jsFiles = requiredFiles.filter((file) => file.endsWith('.js'));
@@ -61,6 +63,14 @@ for (const file of jsonFiles) {
   } catch (error) {
     console.error(`Invalid JSON: ${file}`);
     console.error(error.message);
+    process.exit(1);
+  }
+}
+
+const worker = readFileSync('worker/src/index.js', 'utf8');
+for (const route of ['/health', '/integrations/status', '/twitch/status', '/youtube/channel']) {
+  if (!worker.includes(`url.pathname === '${route}'`)) {
+    console.error(`Missing worker route: ${route}`);
     process.exit(1);
   }
 }
