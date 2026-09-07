@@ -4,7 +4,7 @@ import { getPageByPath } from '../core/page-state.js';
 
 const ELEMENT_TYPES = new Set(['text', 'game', 'twitch', 'image', 'link', 'stats']);
 const ELEMENT_ALIGNS = new Set(['left', 'center', 'right']);
-const ELEMENT_WIDTHS = new Set(['full', 'half']);
+const ELEMENT_WIDTHS = new Set(['full', 'half', 'third', 'quarter', 'auto']);
 
 export function renderHome(root, site) {
   const page = getPageByPath('/');
