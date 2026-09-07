@@ -11,60 +11,25 @@ export function renderWebsiteAdmin(root) {
 
   root.innerHTML = `
     <div class="admin-page">
-      <header class="admin-header">
-        <div>
-          <span class="admin-kicker">Weboldal</span>
-          <h1>Weboldal kezelése</h1>
-          <p>Alapadatok, oldalak és menüpontok kezelése.</p>
-        </div>
-        <button class="button button-secondary" type="button" data-admin-back>Vissza</button>
-      </header>
+      <header class="admin-header"><div><span class="admin-kicker">Weboldal</span><h1>Weboldal kezelése</h1><p>Alapadatok, oldalak és menüpontok kezelése.</p></div><button class="button button-secondary" type="button" data-admin-back>Vissza</button></header>
       <main class="admin-content admin-editor-layout">
-        <section class="admin-card admin-editor-card">
-          <span class="admin-card-label">Alapadatok</span><h2>Weboldal adatai</h2>
-          <p class="admin-help">Ezek az adatok jelennek meg a weboldal központi részein.</p>
-          <form class="admin-site-form" data-site-form>
-            <label class="admin-form-field"><span>Weboldal neve</span><input name="brand" value="${escapeHtml(currentSite.brand)}" maxlength="80" required></label>
-            <label class="admin-form-field"><span>Leírás</span><textarea name="description" rows="3" maxlength="240">${escapeHtml(currentSite.description)}</textarea></label>
-            <button class="button button-primary" type="submit">Weboldal adatai mentése</button><span class="admin-form-status" data-site-save-status></span>
-          </form>
+        <section class="admin-card admin-editor-card"><span class="admin-card-label">Alapadatok</span><h2>Weboldal adatai</h2><p class="admin-help">Ezek az adatok jelennek meg a weboldal központi részein.</p>
+          <form class="admin-site-form" data-site-form><label class="admin-form-field"><span>Weboldal neve</span><input name="brand" value="${escapeHtml(currentSite.brand)}" maxlength="80" required></label><label class="admin-form-field"><span>Leírás</span><textarea name="description" rows="3" maxlength="240">${escapeHtml(currentSite.description)}</textarea></label><button class="button button-primary" type="submit">Weboldal adatai mentése</button><span class="admin-form-status" data-site-save-status></span></form>
         </section>
 
-        <section class="admin-card admin-editor-card">
-          <span class="admin-card-label">Oldalak</span><h2>Oldal tartalmának szerkesztése</h2>
-          <p class="admin-help">Itt csak az általad létrehozott oldalak jelennek meg.</p>
-          <form class="admin-page-form" data-page-form>
-            ${renderPageForm(selectedPage, pages)}
-          </form>
+        <section class="admin-card admin-editor-card"><span class="admin-card-label">Oldalak</span><h2>Oldal tartalmának szerkesztése</h2><p class="admin-help">Itt az általad létrehozott oldalak és azok tartalmi boxai szerkeszthetők.</p>
+          <form class="admin-page-form" data-page-form>${renderPageForm(selectedPage, pages)}</form>
         </section>
 
-        <section class="admin-card admin-editor-card">
-          <div class="admin-card-heading"><div><span class="admin-card-label">Navigáció</span><h2>Menüpontok</h2></div><button class="button button-secondary" type="button" data-add-item>+ Új menüpont</button></div>
-          <p class="admin-help">Állítsd be a menüpont nevét, típusát, helyét és láthatóságát.</p>
-          <div class="admin-nav-editor" data-nav-editor>${items.map((item, index) => renderItem(item, index)).join('')}</div>
-          <div class="admin-form-meta"><span>Menüpontok: <strong data-item-count>${items.length}</strong></span><span data-nav-save-status></span></div>
-          <button class="button button-primary" type="button" data-save-navigation>Menüpontok mentése</button>
-        </section>
+        <section class="admin-card admin-editor-card"><div class="admin-card-heading"><div><span class="admin-card-label">Navigáció</span><h2>Menüpontok</h2></div><button class="button button-secondary" type="button" data-add-item>+ Új menüpont</button></div><p class="admin-help">Állítsd be a menüpont nevét, típusát, helyét és láthatóságát.</p><div class="admin-nav-editor" data-nav-editor>${items.map((item, index) => renderItem(item, index)).join('')}</div><div class="admin-form-meta"><span>Menüpontok: <strong data-item-count>${items.length}</strong></span><span data-nav-save-status></span></div><button class="button button-primary" type="button" data-save-navigation>Menüpontok mentése</button></section>
       </main>
     </div>`;
 
   root.querySelector('[data-admin-back]')?.addEventListener('click', () => navigate('/admin'));
-  root.querySelector('[data-site-form]')?.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const status = root.querySelector('[data-site-save-status]');
-    const saved = saveSiteSettings({ brand: String(data.get('brand') || '').trim(), description: String(data.get('description') || '').trim() });
-    if (status) status.textContent = saved ? 'Mentve ✓' : 'Mentés sikertelen';
-  });
+  root.querySelector('[data-site-form]')?.addEventListener('submit', (event) => { event.preventDefault(); const data = new FormData(event.currentTarget); const status = root.querySelector('[data-site-save-status]'); const saved = saveSiteSettings({ brand: String(data.get('brand') || '').trim(), description: String(data.get('description') || '').trim() }); if (status) status.textContent = saved ? 'Mentve ✓' : 'Mentés sikertelen'; });
 
   bindPageEditor(root);
-  root.querySelector('[data-add-item]')?.addEventListener('click', () => {
-    const editor = root.querySelector('[data-nav-editor]');
-    if (!editor) return;
-    const index = editor.querySelectorAll('[data-nav-item]').length;
-    editor.insertAdjacentHTML('beforeend', renderItem({ label: 'Új menüpont', path: '/uj-oldal', type: 'route', enabled: true }, index));
-    bindEditor(root); updateCount(root);
-  });
+  root.querySelector('[data-add-item]')?.addEventListener('click', () => { const editor = root.querySelector('[data-nav-editor]'); if (!editor) return; const index = editor.querySelectorAll('[data-nav-item]').length; editor.insertAdjacentHTML('beforeend', renderItem({ label: 'Új menüpont', path: '/uj-oldal', type: 'route', enabled: true }, index)); bindEditor(root); updateCount(root); });
   bindEditor(root);
 }
 
@@ -72,80 +37,47 @@ function bindPageEditor(root) {
   const form = root.querySelector('[data-page-form]');
   if (!form) return;
   const select = form.querySelector('[data-page-select]');
-  if (select && select.dataset.bound !== 'true') {
-    select.dataset.bound = 'true';
-    select.addEventListener('change', (event) => {
-      const page = getPageById(event.target.value);
-      form.innerHTML = renderPageForm(page, getPages());
-      bindPageEditor(root);
-    });
-  }
+  if (select && select.dataset.bound !== 'true') { select.dataset.bound = 'true'; select.addEventListener('change', (event) => { const page = getPageById(event.target.value); form.innerHTML = renderPageForm(page, getPages()); bindPageEditor(root); }); }
+  form.querySelector('[data-add-block]')?.addEventListener('click', () => { const list = form.querySelector('[data-block-list]'); if (!list) return; list.insertAdjacentHTML('beforeend', renderBlockForm({ id: createBlockId(), title: 'Új box', content: '' }, list.children.length)); bindBlockDeleteButtons(form); });
+  bindBlockDeleteButtons(form);
   if (form.dataset.submitBound === 'true') return;
   form.dataset.submitBound = 'true';
   form.addEventListener('submit', (event) => {
     event.preventDefault();
-    const data = new FormData(form);
-    const id = String(data.get('id') || '');
-    const currentPages = getPages();
-    const index = currentPages.findIndex((page) => page.id === id);
-    if (index < 0) return;
-    currentPages[index] = { ...currentPages[index], title: String(data.get('title') || '').trim() || currentPages[index].title, content: String(data.get('content') || '').trim() };
-    const status = form.querySelector('[data-page-save-status]');
-    if (savePages(currentPages)) {
-      if (status) status.textContent = 'Mentve ✓';
-    } else if (status) status.textContent = 'Mentés sikertelen';
+    const data = new FormData(form); const id = String(data.get('id') || ''); const currentPages = getPages(); const index = currentPages.findIndex((page) => page.id === id); if (index < 0) return;
+    const blocks = [...form.querySelectorAll('[data-block]')].map((box) => ({ id: box.dataset.block, title: box.querySelector('[name="block-title"]')?.value.trim() || 'Box', content: box.querySelector('[name="block-content"]')?.value.trim() || '' }));
+    currentPages[index] = { ...currentPages[index], title: String(data.get('title') || '').trim() || currentPages[index].title, content: String(data.get('content') || '').trim(), blocks };
+    const status = form.querySelector('[data-page-save-status]'); if (savePages(currentPages)) { if (status) status.textContent = 'Mentve ✓'; } else if (status) status.textContent = 'Mentés sikertelen';
   });
 }
 
 function renderPageForm(page, pages) {
   if (!page) return '<p class="admin-help">Még nincs létrehozott oldal. Hozz létre egy „Oldal” típusú menüpontot, majd mentsd el.</p>';
-  return `
-    <label class="admin-form-field"><span>Oldal</span><select name="id" data-page-select>${pages.map((item) => `<option value="${escapeHtml(item.id)}" ${item.id === page.id ? 'selected' : ''}>${escapeHtml(item.title)}</option>`).join('')}</select></label>
-    <label class="admin-form-field"><span>Oldal címe</span><input name="title" value="${escapeHtml(page.title || '')}" maxlength="100" required></label>
-    <label class="admin-form-field"><span>Oldal szövege</span><textarea name="content" rows="8" maxlength="5000" placeholder="Ide írd az oldal szövegét...">${escapeHtml(page.content || '')}</textarea></label>
-    <div class="admin-form-meta"><span>Elérés: <strong>${escapeHtml(page.path || '/')}</strong></span><span data-page-save-status></span></div>
-    <button class="button button-primary" type="submit">Oldal mentése</button>`;
+  const blocks = Array.isArray(page.blocks) ? page.blocks : [];
+  return `<label class="admin-form-field"><span>Oldal</span><select name="id" data-page-select>${pages.map((item) => `<option value="${escapeHtml(item.id)}" ${item.id === page.id ? 'selected' : ''}>${escapeHtml(item.title)}</option>`).join('')}</select></label><label class="admin-form-field"><span>Oldal címe</span><input name="title" value="${escapeHtml(page.title || '')}" maxlength="100" required></label><label class="admin-form-field"><span>Oldal szövege</span><textarea name="content" rows="6" maxlength="5000" placeholder="Ide írd az oldal fő szövegét...">${escapeHtml(page.content || '')}</textarea></label><div class="admin-block-editor"><div class="admin-card-heading"><div><span class="admin-card-label">Tartalmi boxok</span><h3>Boxok az oldalon</h3></div><button class="button button-secondary" type="button" data-add-block>+ Box hozzáadása</button></div><p class="admin-help">Minden box külön címet és szöveget kap. A mentés után megjelennek a valódi oldalon.</p><div class="admin-block-list" data-block-list>${blocks.map(renderBlockForm).join('')}</div></div><div class="admin-form-meta"><span>Elérés: <strong>${escapeHtml(page.path || '/')}</strong></span><span data-page-save-status></span></div><button class="button button-primary" type="submit">Oldal mentése</button>`;
 }
+
+function renderBlockForm(block, index) {
+  return `<article class="admin-block-item" data-block="${escapeHtml(block.id)}"><div class="admin-block-item-top"><strong>Box ${index + 1}</strong><button class="button button-secondary" type="button" data-delete-block>Box törlése</button></div><label class="admin-form-field"><span>Box címe</span><input name="block-title" value="${escapeHtml(block.title || '')}" maxlength="100" placeholder="Pl. Legutóbbi adás"></label><label class="admin-form-field"><span>Box szövege</span><textarea name="block-content" rows="5" maxlength="2000" placeholder="A box tartalma...">${escapeHtml(block.content || '')}</textarea></label></article>`;
+}
+
+function bindBlockDeleteButtons(form) { form.querySelectorAll('[data-delete-block]').forEach((button) => { if (button.dataset.bound === 'true') return; button.dataset.bound = 'true'; button.addEventListener('click', () => button.closest('[data-block]')?.remove()); }); }
+
+function createBlockId() { return `block-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`; }
 
 function bindEditor(root) {
   root.querySelectorAll('[data-nav-item]').forEach((row) => {
-    if (row.dataset.bound === 'true') return;
-    row.dataset.bound = 'true';
+    if (row.dataset.bound === 'true') return; row.dataset.bound = 'true';
     row.querySelector('[data-type]')?.addEventListener('change', (event) => updateTypeFields(row, event.target.value));
     row.querySelector('[name="label"]')?.addEventListener('input', (event) => { const path = row.querySelector('[name="path"]'); if (row.querySelector('[data-type]')?.value !== 'external' && path && !path.dataset.userEdited) path.value = `/${createSlug(event.target.value)}`; });
     row.querySelector('[name="path"]')?.addEventListener('input', (event) => { event.target.dataset.userEdited = 'true'; });
-    row.querySelector('[data-up]')?.addEventListener('click', () => moveItem(row, -1, root));
-    row.querySelector('[data-down]')?.addEventListener('click', () => moveItem(row, 1, root));
-    row.querySelector('[data-delete]')?.addEventListener('click', () => { row.remove(); updateCount(root); });
-    updateTypeFields(row, row.querySelector('[data-type]')?.value || 'route');
+    row.querySelector('[data-up]')?.addEventListener('click', () => moveItem(row, -1, root)); row.querySelector('[data-down]')?.addEventListener('click', () => moveItem(row, 1, root)); row.querySelector('[data-delete]')?.addEventListener('click', () => { row.remove(); updateCount(root); }); updateTypeFields(row, row.querySelector('[data-type]')?.value || 'route');
   });
-  const saveButton = root.querySelector('[data-save-navigation]');
-  if (saveButton?.dataset.bound !== 'true') { saveButton.dataset.bound = 'true'; saveButton.addEventListener('click', saveNavigationFromForm); }
+  const saveButton = root.querySelector('[data-save-navigation]'); if (saveButton?.dataset.bound !== 'true') { saveButton.dataset.bound = 'true'; saveButton.addEventListener('click', saveNavigationFromForm); }
 }
 
-function updateTypeFields(row, type) {
-  const external = type === 'external';
-  const route = row.querySelector('[data-route-fields]');
-  if (route) route.hidden = external;
-  row.querySelectorAll('[data-external-fields]').forEach((field) => { field.hidden = !external; });
-  if (!external) { const path = row.querySelector('[name="path"]'); const label = row.querySelector('[name="label"]'); if (path && label && (!path.value.trim() || path.value === '/uj-oldal')) path.value = `/${createSlug(label.value)}`; }
-}
-
-function saveNavigationFromForm(event) {
-  const root = event.currentTarget.closest('.admin-page');
-  const items = [...root.querySelectorAll('[data-nav-item]')].map((row, index) => {
-    const type = row.querySelector('[data-type]')?.value === 'external' ? 'external' : 'route';
-    const item = { label: row.querySelector('[name="label"]')?.value.trim() || `Menüpont ${index + 1}`, type, enabled: row.querySelector('[name="enabled"]')?.checked ?? true, order: index };
-    if (type === 'external') { item.url = row.querySelector('[name="url"]')?.value.trim() || ''; item.urlKey = row.querySelector('[name="urlKey"]')?.value.trim() || ''; }
-    else item.path = row.querySelector('[name="path"]')?.value.trim() || `/${createSlug(item.label)}` || '/';
-    return item;
-  });
-  const status = root.querySelector('[data-nav-save-status]');
-  if (!saveNavigation(items)) { if (status) status.textContent = 'Mentés sikertelen'; return; }
-  syncPagesFromNavigation(items);
-  if (status) status.textContent = 'Mentve ✓';
-}
-
+function updateTypeFields(row, type) { const external = type === 'external'; const route = row.querySelector('[data-route-fields]'); if (route) route.hidden = external; row.querySelectorAll('[data-external-fields]').forEach((field) => { field.hidden = !external; }); if (!external) { const path = row.querySelector('[name="path"]'); const label = row.querySelector('[name="label"]'); if (path && label && (!path.value.trim() || path.value === '/uj-oldal') ) path.value = `/${createSlug(label.value)}`; } }
+function saveNavigationFromForm(event) { const root = event.currentTarget.closest('.admin-page'); const items = [...root.querySelectorAll('[data-nav-item]')].map((row, index) => { const type = row.querySelector('[data-type]')?.value === 'external' ? 'external' : 'route'; const item = { label: row.querySelector('[name="label"]')?.value.trim() || `Menüpont ${index + 1}`, type, enabled: row.querySelector('[name="enabled"]')?.checked ?? true, order: index }; if (type === 'external') { item.url = row.querySelector('[name="url"]')?.value.trim() || ''; item.urlKey = row.querySelector('[name="urlKey"]')?.value.trim() || ''; } else item.path = row.querySelector('[name="path"]')?.value.trim() || `/${createSlug(item.label)}` || '/'; return item; }); const status = root.querySelector('[data-nav-save-status]'); if (!saveNavigation(items)) { if (status) status.textContent = 'Mentés sikertelen'; return; } syncPagesFromNavigation(items); if (status) status.textContent = 'Mentve ✓'; }
 function moveItem(row, direction, root) { const rows = [...root.querySelectorAll('[data-nav-item]')], index = rows.indexOf(row), target = rows[index + direction]; if (!target) return; direction < 0 ? target.before(row) : target.after(row); [...root.querySelectorAll('[data-nav-item]')].forEach((item, i) => { const n = item.querySelector('.admin-nav-number'); if (n) n.textContent = `${i + 1}.`; }); }
 function updateCount(root) { const count = root.querySelector('[data-item-count]'); if (count) count.textContent = root.querySelectorAll('[data-nav-item]').length; }
 function normalizeItems(items) { return [...items].map((item, index) => ({ ...item, enabled: item.enabled !== false, order: item.order ?? index })).sort((a, b) => a.order - b.order); }
