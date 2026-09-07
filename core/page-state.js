@@ -2,6 +2,7 @@ import { pages } from '../data/pages.js';
 import { storage } from './storage.js';
 
 const PAGES_KEY = 'page-settings';
+const BLOCK_TYPES = new Set(['text', 'game', 'twitch', 'image', 'link', 'stats']);
 
 export function getPages() {
   const saved = storage.get(PAGES_KEY, null);
@@ -56,7 +57,13 @@ function normalizePage(page) {
 }
 
 function normalizeBlock(block) {
-  return { id: String(block?.id || createBlockId()), title: String(block?.title || ''), content: String(block?.content || '') };
+  const type = BLOCK_TYPES.has(block?.type) ? block.type : 'text';
+  return {
+    id: String(block?.id || createBlockId()),
+    type,
+    title: String(block?.title || ''),
+    content: String(block?.content || ''),
+  };
 }
 
 function createPageId(path) {
