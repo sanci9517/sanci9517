@@ -1,15 +1,18 @@
-import { isAdminAuthenticated, loginAdmin } from './auth.js';
+import { checkAdminSession, loginAdmin } from './auth.js';
 import { renderAdminDashboard } from './dashboard.js';
 
 const ADMIN_STYLESHEET_ID = 'sanci-admin-styles';
 
 export function renderAdmin(root) {
   ensureAdminStyles();
-  if (!isAdminAuthenticated()) {
-    renderAdminLogin(root);
-    return;
-  }
-  renderAdminDashboard(root);
+  renderAdminLoading(root);
+  checkAdminSession().then((session) => {
+    if (!session.authenticated) {
+      renderAdminLogin(root);
+      return;
+    }
+    renderAdminDashboard(root);
+  });
 }
 
 function ensureAdminStyles() {
@@ -19,6 +22,18 @@ function ensureAdminStyles() {
   stylesheet.rel = 'stylesheet';
   stylesheet.href = 'styles/admin.css';
   document.head.appendChild(stylesheet);
+}
+
+function renderAdminLoading(root) {
+  root.innerHTML = `
+    <div class="admin-page admin-login-page">
+      <main class="admin-login-card">
+        <span class="admin-kicker">Admin</span>
+        <h1>Hitelesítés</h1>
+        <p>A szerver ellenőrzi az admin munkamenetet…</p>
+      </main>
+    </div>
+  `;
 }
 
 function renderAdminLogin(root) {
@@ -55,6 +70,6 @@ function renderAdminLogin(root) {
       if (button) button.disabled = false;
       return;
     }
-    renderAdmin(root);
+    renderAdminDashboard(root);
   });
 }
