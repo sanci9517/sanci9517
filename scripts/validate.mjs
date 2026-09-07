@@ -8,7 +8,7 @@ const requiredFiles = [
   'admin/index.js', 'admin/dashboard.js', 'admin/auth.js', 'admin/website/index.js',
   'integrations/tiktok/client.js', 'styles/tokens.css', 'styles/base.css', 'styles/components.css', 'styles/navigation.css',
   'styles/admin.css', 'schemas/site.schema.json', 'schemas/page.schema.json', 'schemas/menu.schema.json',
-  'worker/src/index.js', 'worker/wrangler.jsonc', 'twitch/status.js', 'youtube/status.js',
+  'worker/src/index.js', 'worker/src/auth.js', 'worker/wrangler.jsonc', 'twitch/status.js', 'youtube/status.js',
 ];
 const jsFiles = requiredFiles.filter((file) => file.endsWith('.js'));
 const jsonFiles = ['schemas/site.schema.json', 'schemas/page.schema.json', 'schemas/menu.schema.json', 'worker/wrangler.jsonc'];
@@ -21,6 +21,7 @@ for (const file of jsonFiles) {
 }
 
 const worker = readFileSync('worker/src/index.js', 'utf8');
+const workerAuth = readFileSync('worker/src/auth.js', 'utf8');
 for (const route of ['/health', '/integrations/status', '/twitch/status', '/youtube/channel', '/admin/auth/login', '/admin/auth/check']) {
   if (!worker.includes(`url.pathname === '${route}'`)) { console.error(`Missing worker route: ${route}`); process.exit(1); }
 }
@@ -41,10 +42,13 @@ if (!navigation.includes('config.basePath')) { console.error('Navigation route r
 if (auth.includes("sessionStorage.setItem(ADMIN_SESSION_KEY, 'authenticated')") || auth.includes('Temporary foundation')) { console.error('Insecure client-only admin authentication is still present.'); process.exit(1); }
 if (!auth.includes("/admin/auth/login") || !auth.includes('Bearer')) { console.error('Admin client must use server-backed authentication.'); process.exit(1); }
 if (!admin.includes('await loginAdmin(')) { console.error('Admin login UI must await server authentication.'); process.exit(1); }
-if (!worker.includes('ADMIN_AUTH_SECRET') || !worker.includes('ADMIN_USERNAME') || !worker.includes('ADMIN_PASSWORD')) { console.error('Worker admin authentication configuration is incomplete.'); process.exit(1); }
+if (!worker.includes("import { isAdminRequestAuthenticated, loginAdminRequest } from './auth.js'")) { console.error('Worker must use the isolated admin authentication module.'); process.exit(1); }
+if (!workerAuth.includes("crypto.subtle.verify('HMAC'")) { console.error('Admin token verification must use Web Crypto signature verification.'); process.exit(1); }
+if (!workerAuth.includes('ADMIN_AUTH_SECRET') && !worker.includes('ADMIN_AUTH_SECRET')) { console.error('Worker admin authentication configuration is incomplete.'); process.exit(1); }
+if (!worker.includes('ADMIN_USERNAME') || !worker.includes('ADMIN_PASSWORD')) { console.error('Worker admin credentials configuration is incomplete.'); process.exit(1); }
 
 for (const script of ['admin/website/layout-enhancer.js', 'core/block-layout.js', 'core/app.js']) {
   if (!index.includes(script) || !fallback.includes(script)) { console.error(`GitHub Pages fallback bootstrap mismatch: ${script}`); process.exit(1); }
 }
 
-console.log(`Validation passed: ${requiredFiles.length} required files, public route checks, fallback bootstrap checks, and server-backed admin auth checks passed.`);
+console.log(`Validation passed: ${requiredFiles.length} required files, public route checks, fallback bootstrap checks, and isolated server-backed admin auth checks passed.`);
