@@ -6,13 +6,14 @@ const requiredFiles = [
   'core/site-state.js', 'core/page-state.js', 'core/navigation-state.js', 'data/site.js', 'data/navigation.js', 'data/pages.js',
   'pages/home.js', 'pages/generic.js', 'components/header.js', 'components/navigation.js', 'components/card.js',
   'admin/index.js', 'admin/dashboard.js', 'admin/auth.js', 'admin/backend.js', 'admin/website/index.js',
-  'integrations/tiktok/client.js', 'styles/tokens.css', 'styles/base.css', 'styles/components.css', 'styles/navigation.css',
+  'integrations/index.js', 'integrations/registry.js', 'integrations/tiktok/client.js', 'schemas/integration-state.schema.json',
+  'styles/tokens.css', 'styles/base.css', 'styles/components.css', 'styles/navigation.css',
   'styles/admin.css', 'schemas/site.schema.json', 'schemas/page.schema.json', 'schemas/menu.schema.json',
   'worker/src/index.js', 'worker/src/auth.js', 'worker/src/admin.js', 'worker/migrations/0001_initial.sql', 'worker/wrangler.jsonc',
   'twitch/status.js', 'youtube/status.js',
 ];
 const jsFiles = requiredFiles.filter((file) => file.endsWith('.js'));
-const jsonFiles = ['schemas/site.schema.json', 'schemas/page.schema.json', 'schemas/menu.schema.json', 'worker/wrangler.jsonc'];
+const jsonFiles = ['schemas/site.schema.json', 'schemas/page.schema.json', 'schemas/menu.schema.json', 'schemas/integration-state.schema.json', 'worker/wrangler.jsonc'];
 const missing = requiredFiles.filter((file) => !existsSync(file));
 if (missing.length) { console.error(`Missing required files:\n${missing.map((file) => `- ${file}`).join('\n')}`); process.exit(1); }
 for (const file of jsFiles) execFileSync(process.execPath, ['--check', file], { stdio: 'inherit' });
@@ -24,8 +25,13 @@ for (const file of jsonFiles) {
 const worker = readFileSync('worker/src/index.js', 'utf8');
 const workerAuth = readFileSync('worker/src/auth.js', 'utf8');
 const workerAdmin = readFileSync('worker/src/admin.js', 'utf8');
+const registry = readFileSync('integrations/registry.js', 'utf8');
 for (const route of ['/health', '/health/storage', '/integrations/status', '/twitch/status', '/youtube/channel', '/admin/auth/login', '/admin/auth/check', '/admin/auth/logout', '/admin/settings', '/admin/audit', '/site-state']) {
   if (!worker.includes(`url.pathname === '${route}'`)) { console.error(`Missing worker route: ${route}`); process.exit(1); }
+}
+for (const platform of ['twitch', 'youtube', 'tiktok']) {
+  if (!registry.includes(`${platform}: Object.freeze`)) { console.error(`Missing integration registry platform: ${platform}`); process.exit(1); }
+  if (!worker.includes(`${platform}: {`)) { console.error(`Missing worker integration platform: ${platform}`); process.exit(1); }
 }
 
 const config = readFileSync('core/config.js', 'utf8');
@@ -62,4 +68,4 @@ for (const script of ['admin/website/layout-enhancer.js', 'core/block-layout.js'
   if (!index.includes(script) || !fallback.includes(script)) { console.error(`GitHub Pages fallback bootstrap mismatch: ${script}`); process.exit(1); }
 }
 
-console.log(`Validation passed: ${requiredFiles.length} required files, route checks, GitHub Pages fallback, production API endpoint, secure cookie/CORS, login rate limiting, D1 admin backend, serialized remote saves, and public D1 state hydration checks passed.`);
+console.log(`Validation passed: ${requiredFiles.length} required files, route checks, integration registry/schema, GitHub Pages fallback, production API endpoint, secure cookie/CORS, login rate limiting, D1 admin backend, serialized remote saves, and public D1 state hydration checks passed.`);
