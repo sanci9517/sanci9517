@@ -1,3 +1,4 @@
+// Cloudflare Worker deployment configuration for Sanci9517 V2.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "sanci9517-api",
