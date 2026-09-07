@@ -5,6 +5,7 @@ const PAGES_KEY = 'page-settings';
 const BLOCK_TYPES = new Set(['text', 'game', 'twitch', 'image', 'link', 'stats']);
 const ELEMENT_ALIGNS = new Set(['left', 'center', 'right']);
 const ELEMENT_WIDTHS = new Set(['full', 'half', 'third', 'quarter', 'auto']);
+const BLOCK_WIDTHS = new Set(['full', 'half', 'third', 'quarter', 'auto']);
 
 export function getPages() {
   const saved = storage.get(PAGES_KEY, null);
@@ -46,7 +47,15 @@ function normalizeBlock(block) {
   const type = BLOCK_TYPES.has(block?.type) ? block.type : 'text';
   const legacyElement = { id: createElementId(), type, title: String(block?.title || ''), content: String(block?.content || ''), align: 'left', width: 'full' };
   const elements = Array.isArray(block?.elements) && block.elements.length ? block.elements.map(normalizeElement) : [legacyElement];
-  return { id: String(block?.id || createBlockId()), type, title: String(block?.title || ''), content: String(block?.content || ''), elements };
+  return {
+    ...block,
+    id: String(block?.id || createBlockId()),
+    type,
+    title: String(block?.title || ''),
+    content: String(block?.content || ''),
+    width: BLOCK_WIDTHS.has(block?.width) ? block.width : 'full',
+    elements,
+  };
 }
 
 function normalizeElement(element) {
