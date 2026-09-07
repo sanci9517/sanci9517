@@ -1,7 +1,7 @@
 import { navigate } from '../../core/router.js';
 import { getSite, saveSiteSettings } from '../../core/site-state.js';
 import { getNavigation, saveNavigation } from '../../core/navigation-state.js';
-import { getPages, getPageById, savePages } from '../../core/page-state.js';
+import { getPages, getPageById, savePages, syncPagesFromNavigation } from '../../core/page-state.js';
 
 export function renderWebsiteAdmin(root) {
   const currentSite = getSite();
@@ -32,7 +32,7 @@ export function renderWebsiteAdmin(root) {
 
         <section class="admin-card admin-editor-card">
           <span class="admin-card-label">Oldalak</span><h2>Oldal tartalmának szerkesztése</h2>
-          <p class="admin-help">Válassz egy oldalt, majd módosítsd a címét és a szövegét.</p>
+          <p class="admin-help">Itt csak az általad létrehozott oldalak jelennek meg.</p>
           <form class="admin-page-form" data-page-form>
             ${renderPageForm(selectedPage, pages)}
           </form>
@@ -58,7 +58,6 @@ export function renderWebsiteAdmin(root) {
   });
 
   bindPageEditor(root);
-
   root.querySelector('[data-add-item]')?.addEventListener('click', () => {
     const editor = root.querySelector('[data-nav-editor]');
     if (!editor) return;
@@ -72,7 +71,6 @@ export function renderWebsiteAdmin(root) {
 function bindPageEditor(root) {
   const form = root.querySelector('[data-page-form]');
   if (!form) return;
-
   const select = form.querySelector('[data-page-select]');
   if (select && select.dataset.bound !== 'true') {
     select.dataset.bound = 'true';
@@ -82,7 +80,6 @@ function bindPageEditor(root) {
       bindPageEditor(root);
     });
   }
-
   if (form.dataset.submitBound === 'true') return;
   form.dataset.submitBound = 'true';
   form.addEventListener('submit', (event) => {
@@ -92,34 +89,22 @@ function bindPageEditor(root) {
     const currentPages = getPages();
     const index = currentPages.findIndex((page) => page.id === id);
     if (index < 0) return;
-
-    currentPages[index] = {
-      ...currentPages[index],
-      title: String(data.get('title') || '').trim() || currentPages[index].title,
-      content: String(data.get('content') || '').trim(),
-    };
-
+    currentPages[index] = { ...currentPages[index], title: String(data.get('title') || '').trim() || currentPages[index].title, content: String(data.get('content') || '').trim() };
     const status = form.querySelector('[data-page-save-status]');
     if (savePages(currentPages)) {
       if (status) status.textContent = 'Mentve ✓';
-    } else if (status) {
-      status.textContent = 'Mentés sikertelen';
-    }
+    } else if (status) status.textContent = 'Mentés sikertelen';
   });
 }
 
 function renderPageForm(page, pages) {
-  if (!page) return '<p class="admin-help">Nincs szerkeszthető oldal.</p>';
-
+  if (!page) return '<p class="admin-help">Még nincs létrehozott oldal. Hozz létre egy „Oldal” típusú menüpontot, majd mentsd el.</p>';
   return `
-    <label class="admin-form-field"><span>Oldal</span>
-      <select name="id" data-page-select>${pages.map((item) => `<option value="${escapeHtml(item.id)}" ${item.id === page.id ? 'selected' : ''}>${escapeHtml(item.title)}</option>`).join('')}</select>
-    </label>
+    <label class="admin-form-field"><span>Oldal</span><select name="id" data-page-select>${pages.map((item) => `<option value="${escapeHtml(item.id)}" ${item.id === page.id ? 'selected' : ''}>${escapeHtml(item.title)}</option>`).join('')}</select></label>
     <label class="admin-form-field"><span>Oldal címe</span><input name="title" value="${escapeHtml(page.title || '')}" maxlength="100" required></label>
     <label class="admin-form-field"><span>Oldal szövege</span><textarea name="content" rows="8" maxlength="5000" placeholder="Ide írd az oldal szövegét...">${escapeHtml(page.content || '')}</textarea></label>
     <div class="admin-form-meta"><span>Elérés: <strong>${escapeHtml(page.path || '/')}</strong></span><span data-page-save-status></span></div>
-    <button class="button button-primary" type="submit">Oldal mentése</button>
-  `;
+    <button class="button button-primary" type="submit">Oldal mentése</button>`;
 }
 
 function bindEditor(root) {
@@ -127,10 +112,7 @@ function bindEditor(root) {
     if (row.dataset.bound === 'true') return;
     row.dataset.bound = 'true';
     row.querySelector('[data-type]')?.addEventListener('change', (event) => updateTypeFields(row, event.target.value));
-    row.querySelector('[name="label"]')?.addEventListener('input', (event) => {
-      const path = row.querySelector('[name="path"]');
-      if (row.querySelector('[data-type]')?.value !== 'external' && path && !path.dataset.userEdited) path.value = `/${createSlug(event.target.value)}`;
-    });
+    row.querySelector('[name="label"]')?.addEventListener('input', (event) => { const path = row.querySelector('[name="path"]'); if (row.querySelector('[data-type]')?.value !== 'external' && path && !path.dataset.userEdited) path.value = `/${createSlug(event.target.value)}`; });
     row.querySelector('[name="path"]')?.addEventListener('input', (event) => { event.target.dataset.userEdited = 'true'; });
     row.querySelector('[data-up]')?.addEventListener('click', () => moveItem(row, -1, root));
     row.querySelector('[data-down]')?.addEventListener('click', () => moveItem(row, 1, root));
@@ -146,10 +128,7 @@ function updateTypeFields(row, type) {
   const route = row.querySelector('[data-route-fields]');
   if (route) route.hidden = external;
   row.querySelectorAll('[data-external-fields]').forEach((field) => { field.hidden = !external; });
-  if (!external) {
-    const path = row.querySelector('[name="path"]'); const label = row.querySelector('[name="label"]');
-    if (path && label && (!path.value.trim() || path.value === '/uj-oldal')) path.value = `/${createSlug(label.value)}`;
-  }
+  if (!external) { const path = row.querySelector('[name="path"]'); const label = row.querySelector('[name="label"]'); if (path && label && (!path.value.trim() || path.value === '/uj-oldal')) path.value = `/${createSlug(label.value)}`; }
 }
 
 function saveNavigationFromForm(event) {
@@ -162,38 +141,14 @@ function saveNavigationFromForm(event) {
     return item;
   });
   const status = root.querySelector('[data-nav-save-status]');
-  if (saveNavigation(items)) status.textContent = 'Mentve ✓'; else status.textContent = 'Mentés sikertelen';
+  if (!saveNavigation(items)) { if (status) status.textContent = 'Mentés sikertelen'; return; }
+  syncPagesFromNavigation(items);
+  if (status) status.textContent = 'Mentve ✓';
 }
 
-function moveItem(row, direction, root) {
-  const rows = [...root.querySelectorAll('[data-nav-item]')], index = rows.indexOf(row), target = rows[index + direction];
-  if (!target) return;
-  direction < 0 ? target.before(row) : target.after(row);
-  [...root.querySelectorAll('[data-nav-item]')].forEach((item, i) => { const n = item.querySelector('.admin-nav-number'); if (n) n.textContent = `${i + 1}.`; });
-}
+function moveItem(row, direction, root) { const rows = [...root.querySelectorAll('[data-nav-item]')], index = rows.indexOf(row), target = rows[index + direction]; if (!target) return; direction < 0 ? target.before(row) : target.after(row); [...root.querySelectorAll('[data-nav-item]')].forEach((item, i) => { const n = item.querySelector('.admin-nav-number'); if (n) n.textContent = `${i + 1}.`; }); }
 function updateCount(root) { const count = root.querySelector('[data-item-count]'); if (count) count.textContent = root.querySelectorAll('[data-nav-item]').length; }
 function normalizeItems(items) { return [...items].map((item, index) => ({ ...item, enabled: item.enabled !== false, order: item.order ?? index })).sort((a, b) => a.order - b.order); }
-
-function renderItem(item, index) {
-  const external = item.type === 'external';
-  const url = external ? String(item.url || '') : '', urlKey = external ? String(item.urlKey || '') : '';
-  const path = external ? '' : String(item.path || `/${createSlug(item.label)}`);
-  return `<article class="admin-nav-item" data-nav-item>
-    <div class="admin-nav-item-top"><strong class="admin-nav-number">${index + 1}.</strong>
-      <label class="admin-form-field admin-nav-label"><span>Megnevezés</span><input name="label" value="${escapeHtml(item.label || '')}" maxlength="60"></label>
-      <label class="admin-form-field admin-nav-type"><span>Típus</span><select name="type" data-type><option value="route" ${!external ? 'selected' : ''}>Oldal</option><option value="external" ${external ? 'selected' : ''}>Külső link</option></select></label>
-      <label class="admin-switch"><input name="enabled" type="checkbox" ${item.enabled !== false ? 'checked' : ''}><span>Aktív</span></label>
-    </div>
-    <div class="admin-nav-fields">
-      <label class="admin-form-field" data-route-fields ${external ? 'hidden' : ''}><span>Elérés</span><input name="path" value="${escapeHtml(path)}" placeholder="/bemutatkozas"></label>
-      <label class="admin-form-field" data-external-fields ${!external ? 'hidden' : ''}><span>Link / URL</span><input name="url" value="${escapeHtml(url)}" placeholder="https://pelda.hu"></label>
-      <label class="admin-form-field" data-external-fields ${!external ? 'hidden' : ''}><span>URL kulcs</span><input name="urlKey" value="${escapeHtml(urlKey)}" placeholder="pl. twitch"></label>
-    </div>
-    <div class="admin-nav-actions"><button class="button button-secondary" type="button" data-up>↑ Fel</button><button class="button button-secondary" type="button" data-down>↓ Le</button><button class="button button-secondary" type="button" data-delete>Törlés</button></div>
-  </article>`;
-}
-
-function createSlug(value) {
-  return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-}
+function renderItem(item, index) { const external = item.type === 'external'; const url = external ? String(item.url || '') : '', urlKey = external ? String(item.urlKey || '') : ''; const path = external ? '' : String(item.path || `/${createSlug(item.label)}`); return `<article class="admin-nav-item" data-nav-item><div class="admin-nav-item-top"><strong class="admin-nav-number">${index + 1}.</strong><label class="admin-form-field admin-nav-label"><span>Megnevezés</span><input name="label" value="${escapeHtml(item.label || '')}" maxlength="60"></label><label class="admin-form-field admin-nav-type"><span>Típus</span><select name="type" data-type><option value="route" ${!external ? 'selected' : ''}>Oldal</option><option value="external" ${external ? 'selected' : ''}>Külső link</option></select></label><label class="admin-switch"><input name="enabled" type="checkbox" ${item.enabled !== false ? 'checked' : ''}><span>Aktív</span></label></div><div class="admin-nav-fields"><label class="admin-form-field" data-route-fields ${external ? 'hidden' : ''}><span>Elérés</span><input name="path" value="${escapeHtml(path)}" placeholder="/bemutatkozas"></label><label class="admin-form-field" data-external-fields ${!external ? 'hidden' : ''}><span>Link / URL</span><input name="url" value="${escapeHtml(url)}" placeholder="https://pelda.hu"></label><label class="admin-form-field" data-external-fields ${!external ? 'hidden' : ''}><span>URL kulcs</span><input name="urlKey" value="${escapeHtml(urlKey)}" placeholder="pl. twitch"></label></div><div class="admin-nav-actions"><button class="button button-secondary" type="button" data-up>↑ Fel</button><button class="button button-secondary" type="button" data-down>↓ Le</button><button class="button button-secondary" type="button" data-delete>Törlés</button></div></article>`; }
+function createSlug(value) { return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
 function escapeHtml(value) { return String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;'); }
