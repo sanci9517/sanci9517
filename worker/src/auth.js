@@ -39,8 +39,16 @@ async function verifyAdminToken(token, secret) {
 }
 
 function parseCookies(request) {
+  const cookies = {};
   const header = request.headers.get('cookie') || '';
-  return Object.fromEntries(header.split(';').map((part) => part.trim().split('=').map(decodeURIComponent)).filter(([key, value]) => key && value));
+  for (const part of header.split(';')) {
+    const separator = part.indexOf('=');
+    if (separator < 1) continue;
+    const key = part.slice(0, separator).trim();
+    const rawValue = part.slice(separator + 1).trim();
+    try { cookies[key] = decodeURIComponent(rawValue); } catch { /* Ignore malformed cookies. */ }
+  }
+  return cookies;
 }
 
 function createAdminCookie(token) {
@@ -61,11 +69,10 @@ export async function loginAdminRequest(request, env) {
   if (username !== env.ADMIN_USERNAME || password !== env.ADMIN_PASSWORD) return { ok: false, status: 401, error: 'Invalid credentials.', noStore: true };
   const now = Math.floor(Date.now() / 1000);
   const token = await signAdminToken({ sub: 'admin', iat: now, exp: now + ADMIN_TOKEN_TTL_SECONDS }, env.ADMIN_AUTH_SECRET);
-  return { ok: true, status: 200, username, token, noStore: true, setCookie: createAdminCookie(token) };
+  return { ok: true, status: 200, username, noStore: true, setCookie: createAdminCookie(token) };
 }
 
 export async function isAdminRequestAuthenticated(request, env) {
-  const cookies = parseCookies(request);
-  const token = cookies[ADMIN_COOKIE_NAME] || '';
+  const token = parseCookies(request)[ADMIN_COOKIE_NAME] || '';
   return verifyAdminToken(token, env.ADMIN_AUTH_SECRET);
 }
