@@ -70,6 +70,22 @@
 .composite-element-text p:first-child { margin-top: 0; }
 .block-placeholder { padding: 18px; border: 1px dashed var(--line-strong); border-radius: var(--radius-md); color: var(--muted); font-size: var(--text-sm); }
 
+/* Layout controls affect the public desktop layout. Mobile keeps the existing single-column flow. */
+@media (min-width: 761px) {
+  .composite-elements { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+  .composite-element.composite-width-full { grid-column: 1 / -1; }
+  .composite-element.composite-width-half { grid-column: span 1; }
+  .composite-element.composite-align-left { justify-self: start; text-align: left; }
+  .composite-element.composite-align-center { justify-self: center; text-align: center; }
+  .composite-element.composite-align-right { justify-self: end; text-align: right; }
+  .composite-element.composite-align-center.composite-element-game,
+  .composite-element.composite-align-center.composite-element-twitch { justify-content: center; }
+  .composite-element.composite-align-right.composite-element-game,
+  .composite-element.composite-align-right.composite-element-twitch { justify-content: flex-end; }
+  .composite-element.composite-align-center.composite-element-link { justify-content: center; }
+  .composite-element.composite-align-right.composite-element-link { justify-content: flex-end; }
+}
+
 .button {
   min-height: 46px;
   padding: 0 20px;
