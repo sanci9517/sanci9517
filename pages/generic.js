@@ -3,7 +3,7 @@ import { loadTwitchStatus } from '../twitch/status.js';
 
 const ELEMENT_TYPES = new Set(['text', 'game', 'twitch', 'image', 'link', 'stats']);
 const ELEMENT_ALIGNS = new Set(['left', 'center', 'right']);
-const ELEMENT_WIDTHS = new Set(['full', 'half']);
+const ELEMENT_WIDTHS = new Set(['full', 'half', 'third', 'quarter', 'auto']);
 
 export function renderGenericPage(root, site, page) {
   const title = page?.title || 'Új oldal';
