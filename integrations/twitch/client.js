@@ -115,8 +115,5 @@ export async function getTwitchData(env, login = DEFAULT_BROADCASTER_LOGIN) {
     getTwitchStreamStatus(env, login),
     getTwitchChannel(env, login),
   ]);
-  const followers = channel.channel?.id
-    ? await getTwitchChannelFollowers(env, channel.channel.id)
-    : { followers: 0, checkedAt: new Date().toISOString() };
-  return { ...status, ...channel, ...followers };
+  return { ...status, ...channel };
 }
