@@ -1,3 +1,5 @@
+import { apiUrl } from './config.js';
+
 const PREFIX = 'sanci9517:';
 const REMOTE_KEYS = new Set(['site-settings', 'navigation-settings-v2', 'page-settings']);
 
@@ -32,15 +34,13 @@ export const storage = {
 };
 
 function queueRemoteAdminSave(key, value) {
-  if (typeof window === 'undefined' || !document?.body?.dataset?.adminAuthenticated) return;
-  const settings = { [key]: value };
-  const apiBase = window.SANCI_API_BASE || '';
-  fetch(`${apiBase}/admin/settings`, {
+  if (typeof window === 'undefined' || !document.body?.dataset?.adminAuthenticated) return;
+  fetch(apiUrl('/admin/settings'), {
     method: 'PUT',
     credentials: 'include',
     cache: 'no-store',
     headers: { 'content-type': 'application/json', accept: 'application/json' },
-    body: JSON.stringify({ settings }),
+    body: JSON.stringify({ settings: { [key]: value } }),
   }).catch(() => {});
 }
 
