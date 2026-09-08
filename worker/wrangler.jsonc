@@ -1,4 +1,5 @@
 // Cloudflare Worker deployment configuration for Sanci9517 V2.
+// Keep the production Worker name and persistent storage bindings stable.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "sanci9517-api",
