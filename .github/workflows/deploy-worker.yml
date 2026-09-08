@@ -41,15 +41,6 @@ jobs:
           command: whoami
           wranglerVersion: '4.33.0'
 
-      - name: Verify Cloudflare admin secret bindings
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: worker
-          command: secret list
-          wranglerVersion: '4.33.0'
-
       - name: Apply D1 migrations
         uses: cloudflare/wrangler-action@v3
         with:
@@ -59,22 +50,13 @@ jobs:
           command: d1 migrations apply DB --remote
           wranglerVersion: '4.33.0'
 
-      - name: Deploy Worker
+      - name: Deploy Worker and validate required secrets
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: worker
           command: deploy
-          wranglerVersion: '4.33.0'
-
-      - name: Verify deployed Worker configuration
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: worker
-          command: secret list
           wranglerVersion: '4.33.0'
 
       - name: Smoke test production Worker
