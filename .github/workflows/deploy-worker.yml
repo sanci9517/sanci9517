@@ -17,6 +17,9 @@ concurrency:
   group: deploy-cloudflare-worker
   cancel-in-progress: true
 
+env:
+  WORKER_URL: https://sanci9517-api.sandor-bogadi95.workers.dev
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -42,3 +45,15 @@ jobs:
           workingDirectory: worker
           command: deploy
           wranglerVersion: '4.33.0'
+
+      - name: Smoke test production Worker
+        shell: bash
+        run: |
+          set -euo pipefail
+          response="$(curl --fail --silent --show-error --max-time 20 \
+            -H 'Origin: https://sanci9517.github.io' \
+            "$WORKER_URL/health")"
+          echo "$response"
+          grep -q '"ok":true' <<<"$response"
+          grep -q '"workerName":"sanci9517-api"' <<<"$response"
+          grep -q '"service":"sanci9517-api"' <<<"$response"
