@@ -119,6 +119,17 @@ button { color: inherit; }
   .hero p { font-size: var(--text-md); }
 }
 
+/* Same mobile presentation when an Android browser is explicitly using Desktop site. */
+html.mobile-device {
+  --page-gutter: 16px;
+  --header-height: 68px;
+}
+html.mobile-device .site-header { min-height: var(--header-height); }
+html.mobile-device .brand-mark { width: 36px; height: 36px; flex-basis: 36px; }
+html.mobile-device .hero { min-height: auto; grid-template-columns: 1fr; gap: 28px; padding-block: 72px 56px; }
+html.mobile-device .hero h1 { font-size: clamp(50px, 16vw, 68px); }
+html.mobile-device .hero p { font-size: var(--text-md); }
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
