@@ -7,6 +7,9 @@
   "compatibility_date": "2026-09-06",
   "workers_dev": true,
   "keep_vars": true,
+  "vars": {
+    "ADMIN_USERNAME": "sanci9517"
+  },
   "d1_databases": [
     {
       "binding": "DB",
