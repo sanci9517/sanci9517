@@ -23,6 +23,7 @@ concurrency:
 env:
   WORKER_URL: https://sanci9517-api.sandor-bogadi95.workers.dev
   PUBLIC_ORIGIN: https://sanci9517.github.io
+  WRANGLER_VERSION: '4.129.1'
 
 jobs:
   deploy:
@@ -39,7 +40,7 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: worker
           command: whoami
-          wranglerVersion: '4.33.0'
+          wranglerVersion: ${{ env.WRANGLER_VERSION }}
 
       - name: Apply D1 migrations
         uses: cloudflare/wrangler-action@v3
@@ -48,7 +49,7 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: worker
           command: d1 migrations apply DB --remote
-          wranglerVersion: '4.33.0'
+          wranglerVersion: ${{ env.WRANGLER_VERSION }}
 
       - name: Deploy Worker and validate required secrets
         uses: cloudflare/wrangler-action@v3
@@ -57,7 +58,7 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: worker
           command: deploy
-          wranglerVersion: '4.33.0'
+          wranglerVersion: ${{ env.WRANGLER_VERSION }}
 
       - name: Smoke test production Worker
         shell: bash
