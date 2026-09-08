@@ -23,6 +23,7 @@ concurrency:
 env:
   WORKER_URL: https://sanci9517-api.sandor-bogadi95.workers.dev
   PUBLIC_ORIGIN: https://sanci9517.github.io
+  D1_DATABASE_NAME: sanci9517-db
   WRANGLER_VERSION: '4.129.1'
 
 jobs:
@@ -42,13 +43,22 @@ jobs:
           command: whoami
           wranglerVersion: ${{ env.WRANGLER_VERSION }}
 
+      - name: Validate Worker bundle
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: worker
+          command: deploy --dry-run
+          wranglerVersion: ${{ env.WRANGLER_VERSION }}
+
       - name: Apply D1 migrations
         uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: worker
-          command: d1 migrations apply DB --remote
+          command: d1 migrations apply ${{ env.D1_DATABASE_NAME }} --remote
           wranglerVersion: ${{ env.WRANGLER_VERSION }}
 
       - name: Deploy Worker
