@@ -5,5 +5,13 @@
   "compatibility_date": "2026-09-08",
   "assets": {
     "directory": "./public"
-  }
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "sanci9517-db",
+      "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
+      "migrations_dir": "migrations"
+    }
+  ]
 }
