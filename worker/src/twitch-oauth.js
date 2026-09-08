@@ -44,31 +44,19 @@ function redirectUri(env) {
 }
 
 function adminOrigin(env) {
-  return env.PUBLIC_ORIGIN || 'https://sanci9517.github.io';
+  return String(env.PUBLIC_ORIGIN || 'https://sanci9517.github.io').replace(/\/$/, '');
 }
 
 function configured(env) {
-  return Boolean(env.TWITCH_CLIENT_ID && env.TWITCH_CLIENT_SECRET && env.TWITCH_TOKEN_ENCRYPTION_KEY);
-}
-
-async function requireAdmin(request, env, isAdminRequestAuthenticated) {
-  return isAdminRequestAuthenticated(request, env);
+  return Boolean(env.TWITCH_CLIENT_ID && env.TWITCH_CLIENT_SECRET && env.TWITCH_TOKEN_ENCRYPTION_KEY && env.DB && env.CACHE);
 }
 
 export async function twitchOAuthStart(request, env, json, isAdminRequestAuthenticated) {
-  if (!(await requireAdmin(request, env, isAdminRequestAuthenticated))) return json({ ok: false, error: 'Unauthorized.' }, 401, { 'cache-control': 'no-store' }, request, env);
+  if (!(await isAdminRequestAuthenticated(request, env))) return json({ ok: false, error: 'Unauthorized.' }, 401, { 'cache-control': 'no-store' }, request, env);
   if (!configured(env)) return json({ ok: false, error: 'Twitch OAuth is not configured.' }, 503, { 'cache-control': 'no-store' }, request, env);
-  const stateBytes = crypto.getRandomValues(new Uint8Array(32));
-  const state = base64UrlEncode(stateBytes);
+  const state = base64UrlEncode(crypto.getRandomValues(new Uint8Array(32)));
   await env.CACHE.put(`twitch-oauth-state:${state}`, JSON.stringify({ createdAt: Date.now() }), { expirationTtl: STATE_TTL_SECONDS });
-  const params = new URLSearchParams({
-    client_id: env.TWITCH_CLIENT_ID,
-    redirect_uri: redirectUri(env),
-    response_type: 'code',
-    scope: REQUIRED_SCOPES.join(' '),
-    state,
-    force_verify: 'true',
-  });
+  const params = new URLSearchParams({ client_id: env.TWITCH_CLIENT_ID, redirect_uri: redirectUri(env), response_type: 'code', scope: REQUIRED_SCOPES.join(' '), state, force_verify: 'true' });
   return json({ ok: true, authorizationUrl: `${TWITCH_AUTHORIZE_URL}?${params.toString()}` }, 200, { 'cache-control': 'no-store' }, request, env);
 }
 
@@ -81,7 +69,7 @@ export async function twitchOAuthCallback(request, env) {
   await env.CACHE.delete(stateKey);
   if (!storedState) return new Response('Twitch OAuth state expired or invalid.', { status: 400 });
   const error = url.searchParams.get('error');
-  if (error) return Response.redirect(`${adminOrigin(env)}/admin/?twitch=error&reason=${encodeURIComponent(error)}`, 302);
+  if (error) return Response.redirect(`${adminOrigin(env)}/sanci9517/admin.html?twitch=error&reason=${encodeURIComponent(error)}`, 302);
   const code = url.searchParams.get('code') || '';
   if (!code || !configured(env)) return new Response('Twitch OAuth configuration is incomplete.', { status: 503 });
 
@@ -101,11 +89,11 @@ export async function twitchOAuthCallback(request, env) {
   const refreshTokenCiphertext = await encryptValue(token.refresh_token, env.TWITCH_TOKEN_ENCRYPTION_KEY);
   const expiresAt = new Date(Date.now() + Number(token.expires_in || 0) * 1000).toISOString();
   await env.DB.prepare(`INSERT INTO twitch_oauth_tokens (id, twitch_user_id, twitch_login, twitch_display_name, access_token_ciphertext, refresh_token_ciphertext, scopes_json, expires_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP) ON CONFLICT(id) DO UPDATE SET twitch_user_id=excluded.twitch_user_id, twitch_login=excluded.twitch_login, twitch_display_name=excluded.twitch_display_name, access_token_ciphertext=excluded.access_token_ciphertext, refresh_token_ciphertext=excluded.refresh_token_ciphertext, scopes_json=excluded.scopes_json, expires_at=excluded.expires_at, updated_at=CURRENT_TIMESTAMP`).bind(TOKEN_ROW_ID, identity.user_id, identity.login, identity.login, accessTokenCiphertext, refreshTokenCiphertext, JSON.stringify(scopes), expiresAt).run();
-  return Response.redirect(`${adminOrigin(env)}/admin/?twitch=connected`, 302);
+  return Response.redirect(`${adminOrigin(env)}/sanci9517/admin.html?twitch=connected`, 302);
 }
 
 export async function twitchOAuthStatus(request, env, json, isAdminRequestAuthenticated) {
-  if (!(await requireAdmin(request, env, isAdminRequestAuthenticated))) return json({ ok: false, error: 'Unauthorized.' }, 401, { 'cache-control': 'no-store' }, request, env);
+  if (!(await isAdminRequestAuthenticated(request, env))) return json({ ok: false, error: 'Unauthorized.' }, 401, { 'cache-control': 'no-store' }, request, env);
   const row = await env.DB.prepare('SELECT twitch_user_id, twitch_login, twitch_display_name, scopes_json, expires_at, updated_at FROM twitch_oauth_tokens WHERE id = ?').bind(TOKEN_ROW_ID).first();
   return json({ ok: true, configured: configured(env), connected: Boolean(row), account: row ? { userId: row.twitch_user_id, login: row.twitch_login, displayName: row.twitch_display_name, scopes: JSON.parse(row.scopes_json || '[]'), expiresAt: row.expires_at, updatedAt: row.updated_at } : null }, 200, { 'cache-control': 'no-store' }, request, env);
 }
