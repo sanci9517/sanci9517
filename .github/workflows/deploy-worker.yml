@@ -7,6 +7,9 @@ on:
       - main
     paths:
       - 'worker/**'
+      - 'integrations/**'
+      - 'core/config.js'
+      - 'admin/auth.js'
       - '.github/workflows/deploy-worker.yml'
   workflow_dispatch:
 
@@ -115,3 +118,27 @@ jobs:
           grep -qi '^access-control-allow-origin: https://sanci9517.github.io' <<<"$cors_headers"
           grep -qi '^access-control-allow-credentials: true' <<<"$cors_headers"
           grep -qi '^access-control-allow-headers: content-type, authorization' <<<"$cors_headers"
+
+          login_response="$(curl --silent --show-error --max-time 20 \
+            -H "Origin: $PUBLIC_ORIGIN" \
+            -H 'Content-Type: application/json' \
+            -X POST "$WORKER_URL/admin/auth/login" \
+            --data-raw "$(printf '{\"username\":\"%s\",\"password\":\"%s\"}' "$ADMIN_USERNAME" "$ADMIN_PASSWORD")")"
+
+          login_ok="$(printf '%s' "$login_response" | python3 -c 'import json,sys; print(str(json.load(sys.stdin).get("ok", False)).lower())')"
+          test "$login_ok" = "true"
+
+          admin_token="$(printf '%s' "$login_response" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("token", ""))')"
+          test -n "$admin_token"
+
+          check_response="$(curl --silent --show-error --max-time 20 \
+            -H "Origin: $PUBLIC_ORIGIN" \
+            -H "Authorization: Bearer $admin_token" \
+            "$WORKER_URL/admin/auth/check")"
+          check_ok="$(printf '%s' "$check_response" | python3 -c 'import json,sys; print(str(json.load(sys.stdin).get("authenticated", False)).lower())')"
+          test "$check_ok" = "true"
+
+          echo 'Authenticated admin smoke test passed.'
+        env:
+          ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
