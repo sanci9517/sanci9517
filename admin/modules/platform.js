@@ -21,6 +21,20 @@ export async function loadTwitchClips({ first = 20, startedAt = '', endedAt = ''
   return adminApi.get(`/twitch/clips?${query}`);
 }
 
+export async function loadYouTubeChannel() {
+  return adminApi.get('/youtube/channel');
+}
+
+export async function loadYouTubeVideos({ first = 20, pageToken = '' } = {}) {
+  const query = new URLSearchParams({ first: String(first) });
+  if (pageToken) query.set('page_token', pageToken);
+  return adminApi.get(`/youtube/videos?${query}`);
+}
+
+export async function loadYouTubeLive() {
+  return adminApi.get('/youtube/live');
+}
+
 export async function loadSystemHealth() {
   const [health, storage] = await Promise.all([
     adminApi.get('/health'),
