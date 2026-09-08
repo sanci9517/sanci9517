@@ -1,14 +1,23 @@
 // Mobile fallback for Android browsers that have "Desktop site" enabled.
-// Normal responsive CSS remains the source of truth; this only mirrors the
-// existing mobile breakpoint when the physical device is clearly touch/mobile.
+// The existing mobile CSS remains the source of truth; this only activates
+// its equivalent fallback when the browser reports a desktop-style viewport.
 export function initDeviceClass() {
   const root = document.documentElement;
   const update = () => {
     const ua = navigator.userAgent || '';
-    const touch = navigator.maxTouchPoints > 0;
-    const mobileUa = /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
+    const platform = navigator.userAgentData?.platform || navigator.platform || '';
+    const touch = Number(navigator.maxTouchPoints || 0) > 0;
+    const android = /Android/i.test(ua) || /Android/i.test(platform);
+    const iphoneOrIpad = /iPhone|iPad|iPod/i.test(ua);
     const smallScreen = Math.min(window.screen?.width || 9999, window.screen?.height || 9999) <= 760;
-    root.classList.toggle('mobile-device', touch && (mobileUa || smallScreen));
+    const mobileDevice = touch && (android || iphoneOrIpad || smallScreen);
+
+    root.classList.toggle('mobile-device', mobileDevice);
+
+    if (mobileDevice) {
+      const viewport = document.querySelector('meta[name="viewport"]');
+      if (viewport) viewport.setAttribute('content', 'width=device-width, initial-scale=1, viewport-fit=cover');
+    }
   };
 
   update();
