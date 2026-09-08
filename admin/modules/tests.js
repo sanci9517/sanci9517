@@ -1,4 +1,4 @@
-import { api } from '../../core/api.js';
+import { adminApi } from './api.js';
 
 export async function runControlCenterTests() {
   const checks = [
@@ -15,7 +15,7 @@ export async function runControlCenterTests() {
   return Promise.all(checks.map(async ([name, endpoint]) => {
     const started = performance.now();
     try {
-      const data = await api.get(endpoint);
+      const data = await adminApi.get(endpoint);
       return { name, endpoint, ok: true, ms: Math.round(performance.now() - started), data };
     } catch (error) {
       return { name, endpoint, ok: false, ms: Math.round(performance.now() - started), error: error.message };
