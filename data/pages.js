@@ -55,13 +55,6 @@ export const pages = Object.freeze([
     status: 'planned',
     menu: false,
   },
-  {
-    id: 'admin',
-    path: '/admin',
-    title: 'Admin',
-    status: 'planned',
-    menu: false,
-  },
 ]);
 
 export function getPageById(id) {
