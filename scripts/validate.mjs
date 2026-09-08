@@ -33,7 +33,7 @@ const pageState = readFileSync('core/page-state.js', 'utf8');
 const navigationState = readFileSync('core/navigation-state.js', 'utf8');
 const pageData = readFileSync('data/pages.js', 'utf8');
 const navigationData = readFileSync('data/navigation.js', 'utf8');
-for (const route of ['/health', '/health/storage', '/integrations/status', '/twitch/status', '/youtube/channel', '/admin/auth/login', '/admin/auth/check', '/admin/auth/logout', '/admin/settings', '/admin/audit', '/site-state']) {
+for (const route of ['/health', '/health/storage', '/integrations/status', '/twitch/status', '/twitch/channel', '/twitch/statistics', '/twitch/videos', '/twitch/clips', '/twitch/data', '/youtube/channel', '/admin/auth/login', '/admin/auth/check', '/admin/auth/logout', '/admin/settings', '/admin/audit', '/site-state']) {
   if (!worker.includes(`url.pathname === '${route}'`)) { console.error(`Missing worker route: ${route}`); process.exit(1); }
 }
 for (const platform of ['twitch', 'youtube', 'tiktok']) {
@@ -49,17 +49,25 @@ const auth = readFileSync('admin/auth.js', 'utf8');
 const admin = readFileSync('admin/index.js', 'utf8');
 const entry = readFileSync('admin/entry.js', 'utf8');
 const dashboard = readFileSync('admin/dashboard.js', 'utf8');
+const adminWebsite = readFileSync('admin/website/index.js', 'utf8');
 const storage = readFileSync('core/storage.js', 'utf8');
 const index = readFileSync('index.html', 'utf8');
 const fallback = readFileSync('404.html', 'utf8');
 const adminPage = readFileSync('admin.html', 'utf8');
+const baseCss = readFileSync('styles/base.css', 'utf8');
+const componentCss = readFileSync('styles/components.css', 'utf8');
+const navigationCss = readFileSync('styles/navigation.css', 'utf8');
+const wrangler = readFileSync('worker/wrangler.jsonc', 'utf8');
 
 if (!/basePath:\s*['"]\/sanci9517['"]/.test(config)) { console.error('Missing configured GitHub Pages basePath.'); process.exit(1); }
 if (!/apiBaseUrl:\s*['"]https:\/\/sanci9517-api\.sandor-bogadi95\.workers\.dev['"]/.test(config)) { console.error('Frontend API must point to the production Cloudflare Worker.'); process.exit(1); }
+if (!/name:\s*['"]sanci9517-api['"]/.test(wrangler)) { console.error('Cloudflare Worker name mismatch.'); process.exit(1); }
+if (!wrangler.includes('5a4a5e96-fdad-421a-a33c-143daaf33e98') || !wrangler.includes('9f0f691c10a34b8381f3ff07a032fc4a')) { console.error('Cloudflare D1/KV bindings mismatch.'); process.exit(1); }
 if (!router.includes('config.basePath')) { console.error('Router must use config.basePath for site paths.'); process.exit(1); }
 if (!app.includes('config.basePath')) { console.error('App route resolution must use config.basePath.'); process.exit(1); }
 if (!navigation.includes('config.basePath')) { console.error('Navigation route resolution must use config.basePath.'); process.exit(1); }
 if (app.includes("../admin/index.js") || app.includes("registerRoute('/admin'")) { console.error('Public runtime must never import or register the private admin runtime.'); process.exit(1); }
+if (adminWebsite.includes("from '../../core/router.js'") || adminWebsite.includes("navigate('/admin'")) { console.error('Private Control Center must not depend on public SPA routing.'); process.exit(1); }
 if (auth.includes('sessionStorage') || auth.includes('localStorage') || auth.includes('ADMIN_TOKEN_KEY') || auth.includes('Bearer')) { console.error('Admin token must not be stored or sent from client-side JavaScript.'); process.exit(1); }
 if (!auth.includes("credentials: 'include'") || !auth.includes("/admin/auth/login") || !auth.includes("/admin/auth/check") || !auth.includes("/admin/auth/logout")) { console.error('Admin client must use cookie-backed server sessions.'); process.exit(1); }
 if (!admin.includes('checkAdminSession().then')) { console.error('Admin entry must check the server session before rendering the dashboard.'); process.exit(1); }
@@ -78,9 +86,11 @@ if (!app.includes('await hydratePublicStorage()')) { console.error('Public app b
 if (index.includes('admin/website/layout-enhancer.js') || fallback.includes('admin/website/layout-enhancer.js')) { console.error('Admin-only layout enhancer must never be loaded by public pages.'); process.exit(1); }
 if (pageData.includes("path: '/admin'") || navigationData.includes("path: '/admin'") || pageState.includes("RESERVED_PUBLIC_PATHS") === false || navigationState.includes("RESERVED_PUBLIC_PATHS") === false) { console.error('Private admin path must not exist in the public page/navigation model.'); process.exit(1); }
 if (pageState.includes("RESERVED_PUBLIC_PATHS.has(path)") === false || navigationState.includes("RESERVED_PUBLIC_PATHS.has(normalized.path)") === false) { console.error('Public state normalization must reject private admin paths.'); process.exit(1); }
+if (!baseCss.includes('@media (max-width: 760px)') || !componentCss.includes('@media (max-width: 760px)') || !navigationCss.includes('@media (max-width: 760px)')) { console.error('Responsive public layout is missing the protected mobile breakpoint.'); process.exit(1); }
+if (!baseCss.includes('@media (min-width: 761px)') || !componentCss.includes('@media (min-width: 761px)')) { console.error('Desktop-only layout rules are missing.'); process.exit(1); }
 
 for (const script of ['core/block-layout.js', 'core/app.js']) {
   if (!index.includes(script) || !fallback.includes(script)) { console.error(`GitHub Pages public bootstrap mismatch: ${script}`); process.exit(1); }
 }
 
-console.log(`Validation passed: ${requiredFiles.length} required files, obsolete-file checks, route checks, integration registry/schema, isolated admin entry, public/admin runtime separation, private-route isolation, GitHub Pages bootstrap, production API endpoint, secure cookie/CORS, login rate limiting, D1 admin backend, serialized remote saves, and public D1 state hydration checks passed.`);
+console.log(`Validation passed: ${requiredFiles.length} required files, obsolete-file checks, route checks, integration registry/schema, isolated admin entry, public/admin runtime separation, private-route isolation, responsive desktop/mobile breakpoints, GitHub Pages bootstrap, production API endpoint, Cloudflare Worker/D1/KV bindings, secure cookie/CORS, login rate limiting, D1 admin backend, serialized remote saves, and public D1 state hydration checks passed.`);
