@@ -2,10 +2,10 @@ import { existsSync, readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 
 const requiredFiles = [
-  'index.html', '404.html', 'core/app.js', 'core/router.js', 'core/api.js', 'core/config.js', 'core/storage.js', 'core/ui.js',
+  'index.html', '404.html', 'admin.html', 'core/app.js', 'core/router.js', 'core/api.js', 'core/config.js', 'core/storage.js', 'core/ui.js',
   'core/site-state.js', 'core/page-state.js', 'core/navigation-state.js', 'data/site.js', 'data/navigation.js', 'data/pages.js',
   'pages/home.js', 'pages/generic.js', 'components/header.js', 'components/navigation.js', 'components/card.js',
-  'admin/index.js', 'admin/dashboard.js', 'admin/auth.js', 'admin/backend.js', 'admin/website/index.js',
+  'admin/entry.js', 'admin/index.js', 'admin/dashboard.js', 'admin/auth.js', 'admin/backend.js', 'admin/website/index.js',
   'integrations/index.js', 'integrations/registry.js', 'integrations/tiktok/client.js', 'schemas/integration-state.schema.json',
   'styles/tokens.css', 'styles/base.css', 'styles/components.css', 'styles/navigation.css',
   'styles/admin.css', 'schemas/site.schema.json', 'schemas/page.schema.json', 'schemas/menu.schema.json',
@@ -40,10 +40,12 @@ const app = readFileSync('core/app.js', 'utf8');
 const navigation = readFileSync('components/navigation.js', 'utf8');
 const auth = readFileSync('admin/auth.js', 'utf8');
 const admin = readFileSync('admin/index.js', 'utf8');
+const entry = readFileSync('admin/entry.js', 'utf8');
 const dashboard = readFileSync('admin/dashboard.js', 'utf8');
 const storage = readFileSync('core/storage.js', 'utf8');
 const index = readFileSync('index.html', 'utf8');
 const fallback = readFileSync('404.html', 'utf8');
+const adminPage = readFileSync('admin.html', 'utf8');
 
 if (!/basePath:\s*['"]\/sanci9517['"]/.test(config)) { console.error('Missing configured GitHub Pages basePath.'); process.exit(1); }
 if (!/apiBaseUrl:\s*['"]https:\/\/sanci9517-api\.sandor-bogadi95\.workers\.dev['"]/.test(config)) { console.error('Frontend API must point to the production Cloudflare Worker.'); process.exit(1); }
@@ -53,6 +55,8 @@ if (!navigation.includes('config.basePath')) { console.error('Navigation route r
 if (auth.includes('sessionStorage') || auth.includes('localStorage') || auth.includes('ADMIN_TOKEN_KEY') || auth.includes('Bearer')) { console.error('Admin token must not be stored or sent from client-side JavaScript.'); process.exit(1); }
 if (!auth.includes("credentials: 'include'") || !auth.includes("/admin/auth/login") || !auth.includes("/admin/auth/check") || !auth.includes("/admin/auth/logout")) { console.error('Admin client must use cookie-backed server sessions.'); process.exit(1); }
 if (!admin.includes('checkAdminSession().then')) { console.error('Admin entry must check the server session before rendering the dashboard.'); process.exit(1); }
+if (!entry.includes("renderAdmin(root)")) { console.error('Admin page must use the isolated admin entry module.'); process.exit(1); }
+if (!adminPage.includes('admin/entry.js')) { console.error('admin.html must load the isolated admin entry module.'); process.exit(1); }
 if (!dashboard.includes('await logoutAdmin()')) { console.error('Admin logout must invalidate the server session.'); process.exit(1); }
 if (!worker.includes("import { clearAdminCookie, isAdminRequestAuthenticated, loginAdminRequest } from './auth.js'")) { console.error('Worker must use the isolated admin authentication module.'); process.exit(1); }
 if (!workerAuth.includes("crypto.subtle.verify('HMAC'") || !workerAuth.includes('HttpOnly') || !workerAuth.includes('SameSite=None')) { console.error('Cross-origin admin authentication must use verified signed tokens in secure HttpOnly cookies.'); process.exit(1); }
@@ -63,9 +67,10 @@ if (!worker.includes('vary')) { console.error('Worker CORS must vary by Origin.'
 if (!workerAdmin.includes('isAllowedAdminOrigin') || !workerAdmin.includes('authenticate')) { console.error('Admin backend must enforce origin and server authentication checks.'); process.exit(1); }
 if (!storage.includes('remoteSaveQueue') || !storage.includes("sanci:remote-save") || !storage.includes('hydratePublicStorage')) { console.error('Storage must support serialized admin saves and public remote hydration.'); process.exit(1); }
 if (!app.includes('await hydratePublicStorage()')) { console.error('Public app boot must hydrate published state before rendering.'); process.exit(1); }
+if (index.includes('admin/website/layout-enhancer.js') || fallback.includes('admin/website/layout-enhancer.js')) { console.error('Admin-only layout enhancer must never be loaded by public pages.'); process.exit(1); }
 
-for (const script of ['admin/website/layout-enhancer.js', 'core/block-layout.js', 'core/app.js']) {
-  if (!index.includes(script) || !fallback.includes(script)) { console.error(`GitHub Pages fallback bootstrap mismatch: ${script}`); process.exit(1); }
+for (const script of ['core/block-layout.js', 'core/app.js']) {
+  if (!index.includes(script) || !fallback.includes(script)) { console.error(`GitHub Pages public bootstrap mismatch: ${script}`); process.exit(1); }
 }
 
-console.log(`Validation passed: ${requiredFiles.length} required files, route checks, integration registry/schema, GitHub Pages fallback, production API endpoint, secure cookie/CORS, login rate limiting, D1 admin backend, serialized remote saves, and public D1 state hydration checks passed.`);
+console.log(`Validation passed: ${requiredFiles.length} required files, route checks, integration registry/schema, isolated admin entry, GitHub Pages public bootstrap, production API endpoint, secure cookie/CORS, login rate limiting, D1 admin backend, serialized remote saves, and public D1 state hydration checks passed.`);
