@@ -5,7 +5,7 @@ const requiredFiles = [
   'index.html', '404.html', 'admin.html', 'core/app.js', 'core/device.js', 'core/router.js', 'core/api.js', 'core/config.js', 'core/storage.js', 'core/ui.js',
   'core/site-state.js', 'core/page-state.js', 'core/navigation-state.js', 'data/site.js', 'data/navigation.js', 'data/pages.js',
   'pages/home.js', 'pages/generic.js', 'components/header.js', 'components/navigation.js', 'components/card.js',
-  'admin/entry.js', 'admin/index.js', 'admin/dashboard.js', 'admin/auth.js', 'admin/backend.js', 'admin/backend-auth.js', 'admin/sync.js', 'admin/website/index.js',
+  'admin/entry.js', 'admin/index.js', 'admin/dashboard.js', 'admin/auth.js', 'admin/backend-auth.js', 'admin/sync.js', 'admin/website/index.js',
   'admin/modules/api.js', 'admin/modules/platform.js', 'admin/modules/registry.js', 'admin/modules/tests.js',
   'integrations/index.js', 'integrations/registry.js', 'integrations/tiktok/client.js', 'schemas/integration-state.schema.json',
   'styles/tokens.css', 'styles/base.css', 'styles/components.css', 'styles/navigation.css',
