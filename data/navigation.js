@@ -5,6 +5,36 @@ export const navigation = Object.freeze([
     type: 'route',
   },
   {
+    label: 'Adások',
+    path: '/adasok',
+    type: 'route',
+  },
+  {
+    label: 'Klipek',
+    path: '/klipek',
+    type: 'route',
+  },
+  {
+    label: 'Bemutatkozás',
+    path: '/bemutatkozas',
+    type: 'route',
+  },
+  {
+    label: 'Statisztikák',
+    path: '/statisztikak',
+    type: 'route',
+  },
+  {
+    label: 'Menetrend',
+    path: '/menetrend',
+    type: 'route',
+  },
+  {
+    label: 'Discord',
+    path: '/discord',
+    type: 'route',
+  },
+  {
     label: 'Twitch',
     urlKey: 'twitch',
     type: 'external',
