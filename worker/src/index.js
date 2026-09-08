@@ -7,7 +7,7 @@ const DEFAULT_ADMIN_ORIGIN = 'https://sanci9517.github.io';
 const YOUTUBE_API = 'https://www.googleapis.com/youtube/v3';
 const BROADCASTER_LOGIN = 'sanci9517';
 const PUBLIC_SETTING_KEYS = ['site-settings', 'navigation-settings-v2', 'page-settings'];
-const WORKER_VERSION = 'admin-auth-cors-6';
+const WORKER_VERSION = 'admin-auth-bearer-1';
 
 function corsHeaders(request, env) {
   const origin = request.headers.get('origin');
@@ -33,7 +33,7 @@ async function adminLogin(request, env) {
   const headers = result.noStore ? { 'cache-control': 'no-store' } : {};
   if (result.setCookie) headers['set-cookie'] = result.setCookie;
   if (result.retryAfter) headers['retry-after'] = String(result.retryAfter);
-  return json({ ok: result.ok, username: result.username || null, error: result.error || null }, result.status, headers, request, env);
+  return json({ ok: result.ok, username: result.username || null, token: result.token || null, error: result.error || null }, result.status, headers, request, env);
 }
 
 async function getPublicSiteState(env) {
