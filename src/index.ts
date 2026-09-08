@@ -1,9 +1,6 @@
 import { healthRoute } from "./routes/health";
 import { notFound } from "./core/router";
-
-export interface Env {
-  [key: string]: unknown;
-}
+import type { Env } from "./types/env";
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
