@@ -2,10 +2,9 @@ import { site } from '../data/site.js';
 import { storage } from './storage.js';
 
 const SITE_SETTINGS_KEY = 'site-settings';
-const LEGACY_SETTINGS_KEY = 'admin-website-settings';
 
 export function getSite() {
-  const saved = readSavedSettings();
+  const saved = storage.get(SITE_SETTINGS_KEY, {}) || {};
 
   return {
     ...site,
@@ -30,11 +29,4 @@ export function saveSiteSettings(settings) {
   };
 
   return storage.set(SITE_SETTINGS_KEY, next);
-}
-
-function readSavedSettings() {
-  return storage.get(
-    SITE_SETTINGS_KEY,
-    storage.get(LEGACY_SETTINGS_KEY, {})
-  ) || {};
 }
