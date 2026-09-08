@@ -3,6 +3,7 @@ import { storage } from './storage.js';
 
 // v2 intentionally starts clean so the old broken editor state cannot leak into the new editor.
 const NAVIGATION_KEY = 'navigation-settings-v2';
+const RESERVED_PUBLIC_PATHS = new Set(['/admin']);
 
 export function getNavigation() {
   const saved = storage.get(NAVIGATION_KEY, null);
@@ -39,6 +40,7 @@ function normalizeItem(item, index) {
     normalized.urlKey = String(item.urlKey || '').trim();
   } else {
     normalized.path = String(item.path || '/').trim() || '/';
+    if (RESERVED_PUBLIC_PATHS.has(normalized.path)) return null;
   }
 
   return normalized;
