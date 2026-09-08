@@ -53,6 +53,12 @@ function parseCookies(request) {
   return cookies;
 }
 
+function getBearerToken(request) {
+  const header = request.headers.get('authorization') || '';
+  const match = header.match(/^Bearer\s+(.+)$/i);
+  return match ? match[1].trim() : '';
+}
+
 async function loginRateLimitKey(request, username, secret) {
   const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`${secret}:${ip}:${username.toLowerCase()}`));
@@ -105,10 +111,12 @@ export async function loginAdminRequest(request, env) {
   await clearLoginFailures(rateLimit, env);
   const now = Math.floor(Date.now() / 1000);
   const token = await signAdminToken({ sub: 'admin', iat: now, exp: now + ADMIN_TOKEN_TTL_SECONDS }, env.ADMIN_AUTH_SECRET);
-  return { ok: true, status: 200, username, noStore: true, setCookie: createAdminCookie(token) };
+  return { ok: true, status: 200, username, token, noStore: true, setCookie: createAdminCookie(token) };
 }
 
 export async function isAdminRequestAuthenticated(request, env) {
-  const token = parseCookies(request)[ADMIN_COOKIE_NAME] || '';
-  return verifyAdminToken(token, env.ADMIN_AUTH_SECRET);
+  const bearerToken = getBearerToken(request);
+  if (bearerToken && await verifyAdminToken(bearerToken, env.ADMIN_AUTH_SECRET)) return true;
+  const cookieToken = parseCookies(request)[ADMIN_COOKIE_NAME] || '';
+  return verifyAdminToken(cookieToken, env.ADMIN_AUTH_SECRET);
 }
