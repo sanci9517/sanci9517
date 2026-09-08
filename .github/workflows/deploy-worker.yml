@@ -43,6 +43,15 @@ jobs:
           command: whoami
           wranglerVersion: ${{ env.WRANGLER_VERSION }}
 
+      - name: Verify required Worker secrets exist
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: worker
+          command: secret list
+          wranglerVersion: ${{ env.WRANGLER_VERSION }}
+
       - name: Validate Worker bundle
         uses: cloudflare/wrangler-action@v4
         with:
