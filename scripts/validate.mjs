@@ -10,9 +10,9 @@ const requiredFiles = [
   'integrations/index.js', 'integrations/registry.js', 'integrations/tiktok/client.js', 'schemas/integration-state.schema.json',
   'styles/tokens.css', 'styles/base.css', 'styles/components.css', 'styles/navigation.css',
   'styles/admin.css', 'schemas/site.schema.json', 'schemas/page.schema.json', 'schemas/menu.schema.json',
-  'worker/src/index.js', 'worker/src/http.js', 'worker/src/auth.js', 'worker/src/admin.js',
+  'worker/src/index.js', 'worker/src/http.js', 'worker/src/auth.js', 'worker/src/admin.js', 'worker/src/twitch-oauth.js',
   'worker/src/routes/index.js', 'worker/src/routes/auth.js', 'worker/src/routes/admin.js', 'worker/src/routes/health.js', 'worker/src/routes/public.js', 'worker/src/routes/twitch.js', 'worker/src/routes/youtube.js',
-  'worker/migrations/0001_initial.sql', 'worker/wrangler.jsonc', 'twitch/status.js', 'youtube/status.js',
+  'worker/migrations/0001_initial.sql', 'worker/migrations/0002_twitch_oauth.sql', 'worker/wrangler.jsonc', 'twitch/status.js', 'youtube/status.js',
 ];
 const obsoleteFiles = ['admin/website/layout-enhancer.js'];
 const jsFiles = requiredFiles.filter((file) => file.endsWith('.js'));
@@ -29,6 +29,7 @@ for (const file of jsonFiles) {
 
 const worker = readFileSync('worker/src/index.js', 'utf8');
 const routes = readFileSync('worker/src/routes/index.js', 'utf8');
+const twitchOAuth = readFileSync('worker/src/twitch-oauth.js', 'utf8');
 const routeAuth = readFileSync('worker/src/routes/auth.js', 'utf8');
 const workerAuth = readFileSync('worker/src/auth.js', 'utf8');
 const workerAdmin = readFileSync('worker/src/admin.js', 'utf8');
@@ -61,7 +62,7 @@ const componentCss = readFileSync('styles/components.css', 'utf8');
 const navigationCss = readFileSync('styles/navigation.css', 'utf8');
 const wrangler = readFileSync('worker/wrangler.jsonc', 'utf8');
 
-for (const route of ['/health', '/health/storage', '/integrations/status', '/twitch/status', '/twitch/channel', '/twitch/statistics', '/twitch/videos', '/twitch/clips', '/twitch/data', '/youtube/channel', '/youtube/videos', '/youtube/live', '/admin/auth/login', '/admin/auth/check', '/admin/auth/logout', '/admin/settings', '/admin/audit', '/site-state']) {
+for (const route of ['/health', '/health/storage', '/integrations/status', '/twitch/oauth/start', '/twitch/oauth/callback', '/twitch/oauth/status', '/twitch/status', '/twitch/channel', '/twitch/statistics', '/twitch/videos', '/twitch/clips', '/twitch/data', '/youtube/channel', '/youtube/videos', '/youtube/live', '/admin/auth/login', '/admin/auth/check', '/admin/auth/logout', '/admin/settings', '/admin/audit', '/site-state']) {
   if (!routes.includes(`url.pathname === '${route}'`)) { console.error(`Missing worker route: ${route}`); process.exit(1); }
 }
 for (const platformName of ['twitch', 'youtube', 'tiktok']) {
@@ -71,6 +72,10 @@ if (!worker.includes("from './routes/index.js'") || !worker.includes('createRout
 for (const moduleName of ['./auth.js', './admin.js', './health.js', './public.js', './twitch.js', './youtube.js']) {
   if (!routes.includes(`from '${moduleName}'`)) { console.error(`Worker route dispatcher must use isolated module: ${moduleName}`); process.exit(1); }
 }
+if (!routes.includes("from '../twitch-oauth.js'") || !twitchOAuth.includes('crypto.subtle.encrypt') || !twitchOAuth.includes('crypto.subtle.decrypt')) { console.error('Twitch OAuth must use an isolated encrypted-token module.'); process.exit(1); }
+if (!twitchOAuth.includes('state') || !twitchOAuth.includes('STATE_TTL_SECONDS') || !twitchOAuth.includes('twitch-oauth-state:')) { console.error('Twitch OAuth must use expiring CSRF state.'); process.exit(1); }
+if (!twitchOAuth.includes('channel:manage:broadcast') || !twitchOAuth.includes('/oauth2/validate')) { console.error('Twitch OAuth must request the minimum initial channel-management scope and validate the token.'); process.exit(1); }
+if (!twitchOAuth.includes('TWITCH_TOKEN_ENCRYPTION_KEY')) { console.error('Twitch OAuth must require a dedicated token encryption secret.'); process.exit(1); }
 if (!routeAuth.includes('token: result.token')) { console.error('Worker login route must return the short-lived session bearer.'); process.exit(1); }
 if (!routes.includes('handleAdminLogin') || !routes.includes('handleAdminLogout') || !routes.includes('handleAdminAuthCheck')) { console.error('Worker route dispatcher must expose isolated admin auth handlers.'); process.exit(1); }
 
@@ -117,4 +122,4 @@ if (!index.includes('html.mobile-device .page-blocks') || !index.includes('html.
 for (const script of ['core/block-layout.js', 'core/app.js']) {
   if (!index.includes(script) || !fallback.includes(script)) { console.error(`GitHub Pages public bootstrap mismatch: ${script}`); process.exit(1); }
 }
-console.log(`Validation passed: ${requiredFiles.length} required files, modular Worker route boundary, isolated public storage, isolated admin API/auth/sync boundaries, integration registry/schema, YouTube content/live endpoints, private-route isolation, mobile-device desktop-site fallback, responsive desktop/mobile breakpoints, GitHub Pages bootstrap, production API endpoint, Cloudflare Worker/D1/KV bindings, secure admin authentication, CORS, login rate limiting, D1 admin backend, and public state hydration checks passed.`);
+console.log(`Validation passed: ${requiredFiles.length} required files, modular Worker route boundary, isolated Twitch OAuth/encrypted token storage, expiring OAuth state, isolated public storage, isolated admin API/auth/sync boundaries, integration registry/schema, YouTube content/live endpoints, private-route isolation, mobile-device desktop-site fallback, responsive desktop/mobile breakpoints, GitHub Pages bootstrap, production API endpoint, Cloudflare Worker/D1/KV bindings, secure admin authentication, CORS, login rate limiting, D1 admin backend, and public state hydration checks passed.`);
