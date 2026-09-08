@@ -7,7 +7,7 @@ const DEFAULT_ADMIN_ORIGIN = 'https://sanci9517.github.io';
 const YOUTUBE_API = 'https://www.googleapis.com/youtube/v3';
 const BROADCASTER_LOGIN = 'sanci9517';
 const PUBLIC_SETTING_KEYS = ['site-settings', 'navigation-settings-v2', 'page-settings'];
-const WORKER_VERSION = 'admin-auth-bearer-1';
+const WORKER_VERSION = 'admin-auth-bearer-2';
 
 function corsHeaders(request, env) {
   const origin = request.headers.get('origin');
