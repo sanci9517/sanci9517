@@ -1,6 +1,5 @@
 import { renderHome } from '../pages/home.js';
 import { renderGenericPage } from '../pages/generic.js';
-import { renderAdmin } from '../admin/index.js';
 import { registerRoute, resolveRoute, initRouter } from './router.js';
 import { initNavigation } from '../components/navigation.js';
 import { showError } from './ui.js';
@@ -10,8 +9,8 @@ import { getPageByPath } from './page-state.js';
 import { hydratePublicStorage } from './storage.js';
 import { config } from './config.js';
 
+// Public runtime only. The private Control Center has its own admin.html entry point.
 registerRoute('/', renderHome);
-registerRoute('/admin', renderAdmin);
 
 function renderCurrentRoute() {
   const app = document.querySelector('#app');
