@@ -2,8 +2,10 @@ import { handleAdminAuthCheck, handleAdminLogin, handleAdminLogout } from './aut
 import { handleAdminAudit, handleAdminSettings } from './admin.js';
 import { getPublicSiteState } from './public.js';
 import { getClips, getVideos, twitchRoute } from './twitch.js';
+import { twitchOAuthCallback, twitchOAuthStart, twitchOAuthStatus } from '../twitch-oauth.js';
 import { getYouTubeChannel, getYouTubeLive, getYouTubeVideos } from './youtube.js';
 import { getStorageHealth, healthResponse } from './health.js';
+import { isAdminRequestAuthenticated } from '../auth.js';
 
 const BROADCASTER_LOGIN = 'sanci9517';
 
@@ -54,6 +56,9 @@ export function createRouteDispatcher({ json, corsHeaders, isTwitchConfigured, t
     if (request.method === 'GET' && url.pathname === '/health') return json(healthResponse(env, { isTwitchConfigured, broadcasterLogin: BROADCASTER_LOGIN }), 200, {}, request, env);
     if (request.method === 'GET' && url.pathname === '/integrations/status') return json({ ok: true, integrations: healthResponse(env, { isTwitchConfigured, broadcasterLogin: BROADCASTER_LOGIN }).integrations }, 200, {}, request, env);
 
+    if (request.method === 'GET' && url.pathname === '/twitch/oauth/start') return twitchOAuthStart(request, env, json, isAdminRequestAuthenticated);
+    if (request.method === 'GET' && url.pathname === '/twitch/oauth/callback') return twitchOAuthCallback(request, env);
+    if (request.method === 'GET' && url.pathname === '/twitch/oauth/status') return twitchOAuthStatus(request, env, json, isAdminRequestAuthenticated);
     if (request.method === 'GET' && url.pathname === '/twitch/status') return twitchRoute(() => twitch.getTwitchStreamStatus(env, BROADCASTER_LOGIN), request, env, json);
     if (request.method === 'GET' && url.pathname === '/twitch/channel') return twitchRoute(() => twitch.getTwitchChannel(env, BROADCASTER_LOGIN), request, env, json);
     if (request.method === 'GET' && url.pathname === '/twitch/statistics') return twitchRoute(() => twitch.getTwitchStatistics({ getStreamStatus: twitch.getTwitchStreamStatus, getChannel: twitch.getTwitchChannel, env, login: BROADCASTER_LOGIN }), request, env, json);
