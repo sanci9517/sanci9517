@@ -18,15 +18,8 @@ export function resolvePage(path = window.location.pathname) {
 }
 
 export function navigate(path) {
-  if (typeof window.__SANCI_ADMIN_NAVIGATE__ === 'function') {
-    window.__SANCI_ADMIN_NAVIGATE__(path);
-    return;
-  }
-
   const target = sitePath(path);
-  if (window.location.pathname !== target) {
-    window.history.pushState({}, '', target);
-  }
+  if (window.location.pathname !== target) window.history.pushState({}, '', target);
   window.dispatchEvent(new PopStateEvent('popstate'));
 }
 
@@ -44,11 +37,7 @@ export function initRouter(onRouteChange) {
 export function sitePath(path = '/') {
   const clean = normalizePath(path);
   const base = normalizePath(config.basePath);
-
-  if (clean === base || clean.startsWith(`${base}/`)) {
-    return clean === base ? `${base}/` : clean;
-  }
-
+  if (clean === base || clean.startsWith(`${base}/`)) return clean === base ? `${base}/` : clean;
   const route = normalizeRoutePath(clean);
   return route === '/' ? `${base}/` : `${base}${route}`;
 }
@@ -56,7 +45,6 @@ export function sitePath(path = '/') {
 function getRoutePath(path) {
   const clean = normalizePath(path);
   const base = normalizePath(config.basePath);
-
   if (clean === base) return '/';
   if (clean.startsWith(`${base}/`)) return normalizeRoutePath(clean.slice(base.length));
   return normalizeRoutePath(clean);
