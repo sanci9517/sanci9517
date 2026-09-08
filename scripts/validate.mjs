@@ -61,7 +61,7 @@ const wrangler = readFileSync('worker/wrangler.jsonc', 'utf8');
 
 if (!/basePath:\s*['"]\/sanci9517['"]/.test(config)) { console.error('Missing configured GitHub Pages basePath.'); process.exit(1); }
 if (!/apiBaseUrl:\s*['"]https:\/\/sanci9517-api\.sandor-bogadi95\.workers\.dev['"]/.test(config)) { console.error('Frontend API must point to the production Cloudflare Worker.'); process.exit(1); }
-if (!/name:\s*['"]sanci9517-api['"]/.test(wrangler)) { console.error('Cloudflare Worker name mismatch.'); process.exit(1); }
+if (!/["']name["']\s*:\s*["']sanci9517-api["']/.test(wrangler)) { console.error('Cloudflare Worker name mismatch.'); process.exit(1); }
 if (!wrangler.includes('5a4a5e96-fdad-421a-a33c-143daaf33e98') || !wrangler.includes('9f0f691c10a34b8381f3ff07a032fc4a')) { console.error('Cloudflare D1/KV bindings mismatch.'); process.exit(1); }
 if (!router.includes('config.basePath')) { console.error('Router must use config.basePath for site paths.'); process.exit(1); }
 if (!app.includes('config.basePath')) { console.error('App route resolution must use config.basePath.'); process.exit(1); }
