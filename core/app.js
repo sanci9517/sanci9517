@@ -8,6 +8,7 @@ import { getNavigation } from './navigation-state.js';
 import { getPageByPath } from './page-state.js';
 import { hydratePublicStorage } from './storage.js';
 import { config } from './config.js';
+import { initDeviceClass } from './device.js';
 
 // Public runtime only. The private Control Center has its own admin.html entry point.
 registerRoute('/', renderHome);
@@ -59,6 +60,7 @@ function normalizePath(path) {
 }
 
 async function boot() {
+  initDeviceClass();
   await hydratePublicStorage();
   initRouter(renderCurrentRoute);
   initNavigation();
