@@ -1,11 +1,7 @@
 import { json } from "../core/router";
-import type { Env } from "../index";
+import type { Env } from "../types/env";
 
 export async function dbHealthRoute(env: Env): Promise<Response> {
-  if (!env.DB) {
-    return json({ ok: false, service: "d1", error: "DB_BINDING_MISSING" }, 500);
-  }
-
   try {
     const result = await env.DB.prepare("SELECT 1 AS connected").first<{ connected: number }>();
 
