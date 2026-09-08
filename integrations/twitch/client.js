@@ -50,12 +50,6 @@ export async function getTwitchChannel(env, login = DEFAULT_BROADCASTER_LOGIN) {
   return { channel: user ? { id: user.id, login: user.login, displayName: user.display_name, description: user.description || '', profileImageUrl: user.profile_image_url || '', offlineImageUrl: user.offline_image_url || '', broadcasterType: user.broadcaster_type || '', createdAt: user.created_at || null } : null, checkedAt: new Date().toISOString() };
 }
 
-export async function getTwitchChannelFollowers(env, userId) {
-  if (!userId) return { followers: 0, checkedAt: new Date().toISOString() };
-  const data = await twitchGet(`/channels/followers?broadcaster_id=${encodeURIComponent(userId)}`, env);
-  return { followers: Number(data.total || 0), checkedAt: new Date().toISOString() };
-}
-
 export async function getTwitchVideos(env, userId, { first = 20, after = '' } = {}) {
   if (!userId) return { videos: [], pagination: {}, checkedAt: new Date().toISOString() };
   const params = new URLSearchParams({ user_id: userId, first: String(Math.min(Math.max(Number(first) || 20, 1), 100)) });
