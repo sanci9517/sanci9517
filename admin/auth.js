@@ -85,17 +85,32 @@ export async function loginAdmin(username, password) {
       body: JSON.stringify({ username: validUsername, password: validPassword }),
     });
     const data = await response.json().catch(() => ({}));
-    if (!response.ok || !data.ok || !data.token) {
+
+    if (!response.ok || !data.ok) {
       adminSession = { checked: true, authenticated: false, username: '' };
-      return { ok: false, error: data.error || 'Sikertelen adminisztrációs belépés.' };
+      const status = response.status ? ` (${response.status})` : '';
+      return { ok: false, error: data.error || `Sikertelen adminisztrációs belépés${status}.` };
     }
-    setAdminToken(data.token);
+
+    // The current Worker returns a bearer token. Keep the cookie fallback too,
+    // so a successful older Worker deployment can still authenticate via cookie.
+    if (data.token) setAdminToken(data.token);
     installAdminFetchInterceptor();
+
+    if (!data.token) {
+      const verified = await checkAdminSession();
+      if (!verified.authenticated) {
+        adminSession = { checked: true, authenticated: false, username: '' };
+        return { ok: false, error: 'A szerver elfogadta a belépést, de a munkamenet nem igazolható. Frissítsd az admin oldalt és próbáld újra.' };
+      }
+    }
+
     adminSession = { checked: true, authenticated: true, username: data.username || validUsername };
     return { ok: true, username: adminSession.username };
-  } catch {
+  } catch (error) {
+    console.error('[Sanci9517] Admin login error:', error);
     adminSession = { checked: true, authenticated: false, username: '' };
-    return { ok: false, error: 'Az admin hitelesítési szolgáltatás nem érhető el.' };
+    return { ok: false, error: 'Az admin hitelesítési szolgáltatás nem érhető el. Ellenőrizd a hálózati kapcsolatot.' };
   }
 }
 
