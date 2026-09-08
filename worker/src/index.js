@@ -11,9 +11,14 @@ const PUBLIC_SETTING_KEYS = ['site-settings', 'navigation-settings-v2', 'page-se
 function corsHeaders(request, env) {
   const origin = request.headers.get('origin');
   const allowedOrigin = String(env.ADMIN_ORIGIN || DEFAULT_ADMIN_ORIGIN).replace(/\/$/, '');
-  const headers = { 'access-control-allow-methods': 'GET, POST, PUT, OPTIONS', 'access-control-allow-headers': 'content-type, authorization', 'access-control-allow-credentials': 'true', vary: 'Origin' };
-  if (origin && origin === allowedOrigin) headers['access-control-allow-origin'] = origin;
-  else if (!origin) headers['access-control-allow-origin'] = allowedOrigin;
+  const headers = {
+    'access-control-allow-methods': 'GET, POST, PUT, OPTIONS',
+    'access-control-allow-headers': 'content-type, authorization',
+    'access-control-allow-credentials': 'true',
+    'access-control-max-age': '600',
+    vary: 'Origin',
+  };
+  if (!origin || origin === allowedOrigin) headers['access-control-allow-origin'] = origin || allowedOrigin;
   return headers;
 }
 
@@ -80,7 +85,7 @@ export default {
     if (url.pathname === '/admin/audit' && request.method === 'GET') { const result = await getAdminAudit(request, env, isAdminRequestAuthenticated); return json(result, result.status, { 'cache-control': 'no-store' }, request, env); }
     if (request.method === 'GET' && url.pathname === '/site-state') { try { return json({ ok: true, ...(await getPublicSiteState(env)) }, 200, { 'cache-control': 'public, max-age=30, stale-while-revalidate=120' }, request, env); } catch (error) { console.error('[Sanci9517] Public site state error:', error); return json({ ok: false, error: 'Site state is temporarily unavailable.' }, 503, {}, request, env); } }
     if (request.method === 'GET' && url.pathname === '/health/storage') { try { const storage = await getStorageHealth(env); return json({ ok: storage.d1 && storage.kv, storage, checkedAt: new Date().toISOString() }, 200, {}, request, env); } catch (error) { console.error('[Sanci9517] Storage health error:', error); return json({ ok: false, storage: { d1: false, kv: false }, error: 'Storage health check failed.' }, 503, {}, request, env); } }
-    if (request.method === 'GET' && url.pathname === '/health') return json({ ok: true, service: 'sanci9517-api', version: 'twitch-channel-data-2', environment: env.ENVIRONMENT || 'production', integrations: getIntegrationStatus(env), timestamp: new Date().toISOString() }, 200, {}, request, env);
+    if (request.method === 'GET' && url.pathname === '/health') return json({ ok: true, service: 'sanci9517-api', version: 'admin-auth-cors-3', environment: env.ENVIRONMENT || 'production', integrations: getIntegrationStatus(env), timestamp: new Date().toISOString() }, 200, {}, request, env);
     if (request.method === 'GET' && url.pathname === '/integrations/status') return json({ ok: true, integrations: getIntegrationStatus(env) }, 200, {}, request, env);
     if (request.method === 'GET' && url.pathname === '/twitch/status') return twitchRoute(() => getTwitchStreamStatus(env, BROADCASTER_LOGIN), request, env);
     if (request.method === 'GET' && url.pathname === '/twitch/channel') return twitchRoute(() => getTwitchChannel(env, BROADCASTER_LOGIN), request, env);
