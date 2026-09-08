@@ -9,7 +9,9 @@ export async function runControlCenterTests() {
     ['Twitch statisztika', '/twitch/statistics'],
     ['Twitch VOD', '/twitch/videos?first=5'],
     ['Twitch klipek', '/twitch/clips?first=5'],
-    ['YouTube', '/youtube/channel'],
+    ['YouTube csatorna', '/youtube/channel'],
+    ['YouTube videók', '/youtube/videos?first=5'],
+    ['YouTube live', '/youtube/live'],
   ];
 
   return Promise.all(checks.map(async ([name, endpoint]) => {
