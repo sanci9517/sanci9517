@@ -1,7 +1,3 @@
-import { storage } from '../core/storage.js';
-
-const SITE_SETTINGS_KEY = 'site-settings';
-
 export const site = Object.freeze({
   brand: 'Sanci9517',
   language: 'hu',
@@ -10,13 +6,3 @@ export const site = Object.freeze({
     twitch: 'https://www.twitch.tv/sanci9517',
   },
 });
-
-export function getSite() {
-  const saved = storage.get(SITE_SETTINGS_KEY, {});
-  return {
-    ...site,
-    brand: saved.brand || site.brand,
-    description: saved.description || site.description,
-    links: { ...site.links, ...(saved.links || {}) },
-  };
-}
