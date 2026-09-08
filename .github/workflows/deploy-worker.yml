@@ -32,6 +32,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
+      - name: Inspect Cloudflare admin secret names
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: worker
+          command: secret list
+          wranglerVersion: '4.33.0'
+
       - name: Apply D1 migrations
         uses: cloudflare/wrangler-action@v3
         with:
@@ -67,12 +76,23 @@ jobs:
                 -H "Origin: $PUBLIC_ORIGIN" \
                 "$WORKER_URL$path" || true)"
 
-              if [[ "$status" =~ ^2[0-9][0-9]$ ]]; then
+              if python3 - "$output" <<'PY'
+import json, sys
+try:
+    with open(sys.argv[1], encoding='utf-8-sig') as f:
+        data = json.load(f)
+    if isinstance(data, dict) and data.get('ok') is True:
+        raise SystemExit(0)
+except Exception:
+    pass
+raise SystemExit(1)
+PY
+              then
                 cat "$output"
                 return 0
               fi
 
-              echo "Worker $path returned HTTP $status (attempt $attempt/10); waiting for propagation..."
+              echo "Worker $path returned HTTP $status or invalid JSON (attempt $attempt/10); waiting..."
               cat "$output" || true
               sleep 3
             done
@@ -87,17 +107,18 @@ jobs:
           grep -q '"workerName":"sanci9517-api"' <<<"$health"
           grep -q '"service":"sanci9517-api"' <<<"$health"
 
-          admin_configured="$(printf '%s' "$health" | python3 -c 'import json,sys; print(str(json.load(sys.stdin).get("integrations", {}).get("admin", {}).get("configured", False)).lower())')"
-          if [[ "$admin_configured" != "true" ]]; then
-            echo 'Production admin authentication is not configured.'
-            echo 'Expected Cloudflare Worker values: ADMIN_USERNAME, ADMIN_PASSWORD, ADMIN_AUTH_SECRET.'
-            exit 1
-          fi
-          echo 'Production admin configuration detected.'
+          python3 - /tmp/health.json <<'PY'
+import json, sys
+with open(sys.argv[1], encoding='utf-8-sig') as f:
+    data = json.load(f)
+admin = data.get('integrations', {}).get('admin', {})
+print('ADMIN configured:', bool(admin.get('configured', False)))
+if not admin.get('configured', False):
+    raise SystemExit('Production admin authentication is not configured.')
+PY
 
           storage="$(request_json /health/storage /tmp/storage.json)"
           echo "$storage"
-          grep -q '"ok":true' <<<"$storage"
           grep -q '"d1":true' <<<"$storage"
           grep -q '"kv":true' <<<"$storage"
 
@@ -127,5 +148,5 @@ jobs:
           grep -qi '^access-control-allow-credentials: true' <<<"$cors_headers"
           grep -qi '^access-control-allow-headers: content-type, authorization' <<<"$cors_headers"
 
-          echo 'Unauthenticated auth and CORS smoke tests passed.'
-          echo 'Authenticated login is verified separately from the admin UI because the credentials remain exclusively in Cloudflare Worker secrets.'
+          echo 'Production Worker smoke tests passed.'
+          echo 'Authenticated login remains verified from the admin UI because credentials remain exclusively in Cloudflare.'
