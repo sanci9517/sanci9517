@@ -9,11 +9,6 @@ export const navigation = Object.freeze([
     urlKey: 'twitch',
     type: 'external',
   },
-  {
-    label: 'Admin',
-    path: '/admin',
-    type: 'route',
-  },
 ]);
 
 export function getNavigationRoute(path) {
