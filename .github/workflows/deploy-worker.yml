@@ -32,6 +32,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
+      - name: Verify Cloudflare target
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: worker
+          command: whoami
+          wranglerVersion: '4.33.0'
+
       - name: Verify Cloudflare admin secret bindings
         uses: cloudflare/wrangler-action@v3
         with:
@@ -57,6 +66,15 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: worker
           command: deploy
+          wranglerVersion: '4.33.0'
+
+      - name: Verify deployed Worker configuration
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: worker
+          command: secret list
           wranglerVersion: '4.33.0'
 
       - name: Smoke test production Worker
