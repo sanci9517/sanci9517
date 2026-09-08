@@ -1,4 +1,5 @@
 name: Deploy Cloudflare Worker
+run-name: Deploy Sanci9517 API (${{ github.sha }})
 
 on:
   push:
