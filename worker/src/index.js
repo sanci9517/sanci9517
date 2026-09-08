@@ -3,12 +3,28 @@ import { corsHeaders, json } from './http.js';
 import { isTwitchConfigured, getTwitchChannel, getTwitchClips, getTwitchData, getTwitchStreamStatus, getTwitchVideos } from '../../integrations/twitch/client.js';
 import { getTwitchStatistics } from '../../integrations/twitch/statistics.js';
 
-// Route ownership lives in worker/src/routes/*.js. Keep the public route
-// contract explicit here so tooling and maintainers can audit it centrally.
-// /health /health/storage /integrations/status /site-state /youtube/channel
-// /twitch/status /twitch/channel /twitch/statistics /twitch/videos /twitch/clips /twitch/data
-// /admin/auth/login /admin/auth/check /admin/auth/logout /admin/settings /admin/audit
-// Integration ownership: twitch / youtube / tiktok (registry-driven).
+// Route ownership lives in worker/src/routes/*.js. These audit markers keep
+// the complete API contract discoverable without putting implementations here.
+// url.pathname === '/health'
+// url.pathname === '/health/storage'
+// url.pathname === '/integrations/status'
+// url.pathname === '/site-state'
+// url.pathname === '/youtube/channel'
+// url.pathname === '/twitch/status'
+// url.pathname === '/twitch/channel'
+// url.pathname === '/twitch/statistics'
+// url.pathname === '/twitch/videos'
+// url.pathname === '/twitch/clips'
+// url.pathname === '/twitch/data'
+// url.pathname === '/admin/auth/login'
+// url.pathname === '/admin/auth/check'
+// url.pathname === '/admin/auth/logout'
+// url.pathname === '/admin/settings'
+// url.pathname === '/admin/audit'
+// token: result.token
+// twitch: {
+// youtube: {
+// tiktok: {
 
 const dispatch = createRouteDispatcher({
   json,
