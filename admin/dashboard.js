@@ -1,5 +1,5 @@
 import { logoutAdmin } from './auth.js';
-import { getAdminAudit, getAdminSettings, saveAdminSettings } from './backend.js';
+import { getAdminAudit, getAdminSettings, saveAdminSettings } from './backend-auth.js';
 import { renderWebsiteAdmin } from './website/index.js';
 import { CONTROL_CENTER_MODULES } from './modules/registry.js';
 import { loadIntegrationStatus, loadSystemHealth, loadTwitchClips, loadTwitchOverview, loadTwitchVideos } from './modules/platform.js';
