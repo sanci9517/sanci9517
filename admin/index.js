@@ -1,5 +1,5 @@
 import { checkAdminSession, loginAdmin } from './auth.js';
-import { getAdminSettings } from './backend.js';
+import { getAdminSettings } from './backend-auth.js';
 import { hydrateAdminStorage } from '../core/storage.js';
 import { renderAdminDashboard } from './dashboard.js';
 
