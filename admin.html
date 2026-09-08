@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080a10">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="description" content="Sanci9517 privát Control Center">
+  <title>Sanci9517 – Admin</title>
+  <link rel="stylesheet" href="styles/tokens.css">
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/components.css">
+  <link rel="stylesheet" href="styles/admin.css">
+</head>
+<body>
+  <div id="app"></div>
+  <script type="module">
+    import { renderAdmin } from './admin/index.js';
+    const root = document.querySelector('#app');
+    if (root) renderAdmin(root);
+  </script>
+</body>
+</html>
