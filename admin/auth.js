@@ -2,6 +2,7 @@ import { apiUrl } from '../core/config.js';
 
 const ADMIN_TOKEN_KEY = 'sanci9517:admin-session-token';
 let adminSession = { checked: false, authenticated: false, username: '' };
+let fetchInterceptorInstalled = false;
 
 function getAdminToken() {
   try { return sessionStorage.getItem(ADMIN_TOKEN_KEY) || ''; } catch { return ''; }
@@ -19,6 +20,21 @@ function authHeaders(extra = {}) {
   return token ? { ...extra, authorization: `Bearer ${token}` } : extra;
 }
 
+function installAdminFetchInterceptor() {
+  if (fetchInterceptorInstalled || typeof window === 'undefined') return;
+  const originalFetch = window.fetch.bind(window);
+  const apiPrefix = apiUrl('/');
+  window.fetch = (input, init = {}) => {
+    const token = getAdminToken();
+    const url = typeof input === 'string' ? input : input?.url || '';
+    if (!token || !url.startsWith(apiPrefix)) return originalFetch(input, init);
+    const headers = new Headers(init.headers || (input instanceof Request ? input.headers : undefined));
+    headers.set('Authorization', `Bearer ${token}`);
+    return originalFetch(input, { ...init, headers });
+  };
+  fetchInterceptorInstalled = true;
+}
+
 export function isAdminAuthenticated() {
   return adminSession.authenticated;
 }
@@ -33,6 +49,7 @@ export function getAdminAuthorizationHeader() {
 }
 
 export async function checkAdminSession() {
+  installAdminFetchInterceptor();
   try {
     const response = await fetch(apiUrl('/admin/auth/check'), {
       method: 'GET',
@@ -73,6 +90,7 @@ export async function loginAdmin(username, password) {
       return { ok: false, error: data.error || 'Sikertelen adminisztrációs belépés.' };
     }
     setAdminToken(data.token);
+    installAdminFetchInterceptor();
     adminSession = { checked: true, authenticated: true, username: data.username || validUsername };
     return { ok: true, username: adminSession.username };
   } catch {
