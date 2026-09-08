@@ -1,8 +1,7 @@
 import { apiUrl } from './config.js';
 
 const PREFIX = 'sanci9517:';
-const REMOTE_KEYS = new Set(['site-settings', 'navigation-settings-v2', 'page-settings']);
-let remoteSaveQueue = Promise.resolve();
+const PUBLIC_REMOTE_KEYS = new Set(['site-settings', 'navigation-settings-v2', 'page-settings']);
 
 export const storage = {
   get(key, fallback = null) {
@@ -17,7 +16,9 @@ export const storage = {
   set(key, value) {
     try {
       localStorage.setItem(PREFIX + key, JSON.stringify(value));
-      if (REMOTE_KEYS.has(key)) queueRemoteAdminSave(key, value);
+      if (PUBLIC_REMOTE_KEYS.has(key) && typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('sanci:storage-changed', { detail: { key, value } }));
+      }
       return true;
     } catch {
       return false;
@@ -34,37 +35,8 @@ export const storage = {
   },
 };
 
-function emitRemoteSaveStatus(detail) {
-  if (typeof window === 'undefined') return;
-  window.dispatchEvent(new CustomEvent('sanci:remote-save', { detail }));
-}
-
-function queueRemoteAdminSave(key, value) {
-  if (typeof window === 'undefined' || !document.body?.dataset?.adminAuthenticated) return;
-
-  remoteSaveQueue = remoteSaveQueue.then(async () => {
-    emitRemoteSaveStatus({ key, status: 'saving' });
-    try {
-      const response = await fetch(apiUrl('/admin/settings'), {
-        method: 'PUT',
-        credentials: 'include',
-        cache: 'no-store',
-        headers: { 'content-type': 'application/json', accept: 'application/json' },
-        body: JSON.stringify({ settings: { [key]: value } }),
-      });
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok || data.ok === false) throw new Error(data.error || `Szervermentési hiba (${response.status}).`);
-      emitRemoteSaveStatus({ key, status: 'saved' });
-    } catch (error) {
-      emitRemoteSaveStatus({ key, status: 'error', error: error instanceof Error ? error.message : 'Ismeretlen szervermentési hiba.' });
-    }
-  }).catch(() => {});
-
-  return remoteSaveQueue;
-}
-
 function writeRemoteSettings(settings) {
-  for (const key of REMOTE_KEYS) {
+  for (const key of PUBLIC_REMOTE_KEYS) {
     if (!Object.prototype.hasOwnProperty.call(settings, key)) continue;
     try { localStorage.setItem(PREFIX + key, JSON.stringify(settings[key])); } catch {}
   }
