@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 
 const requiredFiles = [
-  'index.html', '404.html', 'admin.html', 'core/app.js', 'core/router.js', 'core/api.js', 'core/config.js', 'core/storage.js', 'core/ui.js',
+  'index.html', '404.html', 'admin.html', 'core/app.js', 'core/device.js', 'core/router.js', 'core/api.js', 'core/config.js', 'core/storage.js', 'core/ui.js',
   'core/site-state.js', 'core/page-state.js', 'core/navigation-state.js', 'data/site.js', 'data/navigation.js', 'data/pages.js',
   'pages/home.js', 'pages/generic.js', 'components/header.js', 'components/navigation.js', 'components/card.js',
   'admin/entry.js', 'admin/index.js', 'admin/dashboard.js', 'admin/auth.js', 'admin/backend.js', 'admin/website/index.js',
@@ -44,6 +44,7 @@ for (const platform of ['twitch', 'youtube', 'tiktok']) {
 const config = readFileSync('core/config.js', 'utf8');
 const router = readFileSync('core/router.js', 'utf8');
 const app = readFileSync('core/app.js', 'utf8');
+const device = readFileSync('core/device.js', 'utf8');
 const navigation = readFileSync('components/navigation.js', 'utf8');
 const auth = readFileSync('admin/auth.js', 'utf8');
 const admin = readFileSync('admin/index.js', 'utf8');
@@ -66,6 +67,9 @@ if (!wrangler.includes('5a4a5e96-fdad-421a-a33c-143daaf33e98') || !wrangler.incl
 if (!router.includes('config.basePath')) { console.error('Router must use config.basePath for site paths.'); process.exit(1); }
 if (!app.includes('config.basePath')) { console.error('App route resolution must use config.basePath.'); process.exit(1); }
 if (!navigation.includes('config.basePath')) { console.error('Navigation route resolution must use config.basePath.'); process.exit(1); }
+if (!app.includes("from './device.js'") || !app.includes('initDeviceClass()')) { console.error('Public app must initialize the mobile-device fallback.'); process.exit(1); }
+if (!device.includes('maxTouchPoints') || !device.includes('mobile-device')) { console.error('Mobile-device fallback detection is incomplete.'); process.exit(1); }
+if (!navigation.includes('admin.html') || !navigation.includes('Admin belépés')) { console.error('Public menu must expose the protected Admin entry point.'); process.exit(1); }
 if (app.includes("../admin/index.js") || app.includes("registerRoute('/admin'")) { console.error('Public runtime must never import or register the private admin runtime.'); process.exit(1); }
 if (adminWebsite.includes("from '../../core/router.js'") || adminWebsite.includes("navigate('/admin'")) { console.error('Private Control Center must not depend on public SPA routing.'); process.exit(1); }
 if (auth.includes('sessionStorage') || auth.includes('localStorage') || auth.includes('ADMIN_TOKEN_KEY') || auth.includes('Bearer')) { console.error('Admin token must not be stored or sent from client-side JavaScript.'); process.exit(1); }
@@ -88,9 +92,10 @@ if (pageData.includes("path: '/admin'") || navigationData.includes("path: '/admi
 if (pageState.includes("RESERVED_PUBLIC_PATHS.has(path)") === false || navigationState.includes("RESERVED_PUBLIC_PATHS.has(normalized.path)") === false) { console.error('Public state normalization must reject private admin paths.'); process.exit(1); }
 if (!baseCss.includes('@media (max-width: 760px)') || !componentCss.includes('@media (max-width: 760px)') || !navigationCss.includes('@media (max-width: 760px)')) { console.error('Responsive public layout is missing the protected mobile breakpoint.'); process.exit(1); }
 if (!baseCss.includes('@media (min-width: 761px)') || !componentCss.includes('@media (min-width: 761px)')) { console.error('Desktop-only layout rules are missing.'); process.exit(1); }
+if (!index.includes('html.mobile-device .page-blocks') || !index.includes('html.mobile-device .home-hero')) { console.error('Public HTML is missing the desktop-site mobile fallback styles.'); process.exit(1); }
 
 for (const script of ['core/block-layout.js', 'core/app.js']) {
   if (!index.includes(script) || !fallback.includes(script)) { console.error(`GitHub Pages public bootstrap mismatch: ${script}`); process.exit(1); }
 }
 
-console.log(`Validation passed: ${requiredFiles.length} required files, obsolete-file checks, route checks, integration registry/schema, isolated admin entry, public/admin runtime separation, private-route isolation, responsive desktop/mobile breakpoints, GitHub Pages bootstrap, production API endpoint, Cloudflare Worker/D1/KV bindings, secure cookie/CORS, login rate limiting, D1 admin backend, serialized remote saves, and public D1 state hydration checks passed.`);
+console.log(`Validation passed: ${requiredFiles.length} required files, obsolete-file checks, route checks, integration registry/schema, isolated admin entry, public/admin runtime separation, private-route isolation, mobile-device desktop-site fallback, responsive desktop/mobile breakpoints, GitHub Pages bootstrap, production API endpoint, Cloudflare Worker/D1/KV bindings, secure cookie/CORS, login rate limiting, D1 admin backend, serialized remote saves, and public D1 state hydration checks passed.`);
