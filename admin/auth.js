@@ -1,6 +1,7 @@
 import { apiUrl } from '../core/config.js';
 
 const ADMIN_TOKEN_KEY = 'sanci9517:admin-session-token';
+const AUTH_TIMEOUT_MS = 12000;
 let adminSession = { checked: false, authenticated: false, username: '' };
 let fetchInterceptorInstalled = false;
 
@@ -35,6 +36,12 @@ function installAdminFetchInterceptor() {
   fetchInterceptorInstalled = true;
 }
 
+function createAuthTimeout() {
+  const controller = new AbortController();
+  const timer = window.setTimeout(() => controller.abort(), AUTH_TIMEOUT_MS);
+  return { controller, clear: () => window.clearTimeout(timer) };
+}
+
 export function isAdminAuthenticated() {
   return adminSession.authenticated;
 }
@@ -50,12 +57,14 @@ export function getAdminAuthorizationHeader() {
 
 export async function checkAdminSession() {
   installAdminFetchInterceptor();
+  const timeout = createAuthTimeout();
   try {
     const response = await fetch(apiUrl('/admin/auth/check'), {
       method: 'GET',
       credentials: 'include',
       cache: 'no-store',
       headers: authHeaders({ accept: 'application/json' }),
+      signal: timeout.controller.signal,
     });
     const data = await response.json().catch(() => ({}));
     if (!response.ok || !data.authenticated) setAdminToken('');
@@ -66,8 +75,11 @@ export async function checkAdminSession() {
     };
     return adminSession;
   } catch {
+    setAdminToken('');
     adminSession = { checked: true, authenticated: false, username: '' };
     return adminSession;
+  } finally {
+    timeout.clear();
   }
 }
 
@@ -76,6 +88,7 @@ export async function loginAdmin(username, password) {
   const validPassword = String(password || '');
   if (!validUsername || !validPassword) return { ok: false, error: 'Hiányzó belépési adatok.' };
 
+  const timeout = createAuthTimeout();
   try {
     const response = await fetch(apiUrl('/admin/auth/login'), {
       method: 'POST',
@@ -83,6 +96,7 @@ export async function loginAdmin(username, password) {
       cache: 'no-store',
       headers: { 'content-type': 'application/json', accept: 'application/json' },
       body: JSON.stringify({ username: validUsername, password: validPassword }),
+      signal: timeout.controller.signal,
     });
     const data = await response.json().catch(() => ({}));
 
@@ -110,7 +124,10 @@ export async function loginAdmin(username, password) {
   } catch (error) {
     console.error('[Sanci9517] Admin login error:', error);
     adminSession = { checked: true, authenticated: false, username: '' };
+    if (error?.name === 'AbortError') return { ok: false, error: 'Az admin szerver nem válaszolt 12 másodpercen belül.' };
     return { ok: false, error: 'Az admin hitelesítési szolgáltatás nem érhető el. Ellenőrizd a hálózati kapcsolatot.' };
+  } finally {
+    timeout.clear();
   }
 }
 
