@@ -1,6 +1,7 @@
 import { checkAdminSession, loginAdmin } from './auth.js';
 import { getAdminSettings } from './backend-auth.js';
 import { hydrateAdminStorage } from '../core/storage.js';
+import { initAdminSync } from './sync.js';
 import { renderAdminDashboard } from './dashboard.js';
 
 const ADMIN_STYLESHEET_ID = 'sanci-admin-styles';
@@ -15,15 +16,20 @@ export function renderAdmin(root) {
       renderAdminLogin(root);
       return;
     }
-    document.body.dataset.adminAuthenticated = 'true';
-    try {
-      const remote = await getAdminSettings();
-      hydrateAdminStorage(remote.settings || {});
-    } catch (error) {
-      console.warn('[Sanci9517] Admin state hydration failed:', error);
-    }
-    renderAdminDashboard(root);
+    await activateAdmin(root);
   });
+}
+
+async function activateAdmin(root) {
+  document.body.dataset.adminAuthenticated = 'true';
+  initAdminSync();
+  try {
+    const remote = await getAdminSettings();
+    hydrateAdminStorage(remote.settings || {});
+  } catch (error) {
+    console.warn('[Sanci9517] Admin state hydration failed:', error);
+  }
+  renderAdminDashboard(root);
 }
 
 function ensureAdminStyles() {
@@ -112,13 +118,6 @@ function renderAdminLogin(root) {
       if (button) button.disabled = false;
       return;
     }
-    document.body.dataset.adminAuthenticated = 'true';
-    try {
-      const remote = await getAdminSettings();
-      hydrateAdminStorage(remote.settings || {});
-    } catch (hydrationError) {
-      console.warn('[Sanci9517] Admin state hydration failed after login:', hydrationError);
-    }
-    renderAdminDashboard(root);
+    await activateAdmin(root);
   });
 }
