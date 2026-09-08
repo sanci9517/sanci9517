@@ -12,10 +12,13 @@ const requiredFiles = [
   'worker/src/index.js', 'worker/src/auth.js', 'worker/src/admin.js', 'worker/migrations/0001_initial.sql', 'worker/wrangler.jsonc',
   'twitch/status.js', 'youtube/status.js',
 ];
+const obsoleteFiles = ['admin/website/layout-enhancer.js'];
 const jsFiles = requiredFiles.filter((file) => file.endsWith('.js'));
 const jsonFiles = ['schemas/site.schema.json', 'schemas/page.schema.json', 'schemas/menu.schema.json', 'schemas/integration-state.schema.json', 'worker/wrangler.jsonc'];
 const missing = requiredFiles.filter((file) => !existsSync(file));
 if (missing.length) { console.error(`Missing required files:\n${missing.map((file) => `- ${file}`).join('\n')}`); process.exit(1); }
+const stale = obsoleteFiles.filter((file) => existsSync(file));
+if (stale.length) { console.error(`Obsolete files must be removed:\n${stale.map((file) => `- ${file}`).join('\n')}`); process.exit(1); }
 for (const file of jsFiles) execFileSync(process.execPath, ['--check', file], { stdio: 'inherit' });
 for (const file of jsonFiles) {
   try { JSON.parse(readFileSync(file, 'utf8').replace(/^\/\/.*$/gm, '')); }
@@ -26,6 +29,10 @@ const worker = readFileSync('worker/src/index.js', 'utf8');
 const workerAuth = readFileSync('worker/src/auth.js', 'utf8');
 const workerAdmin = readFileSync('worker/src/admin.js', 'utf8');
 const registry = readFileSync('integrations/registry.js', 'utf8');
+const pageState = readFileSync('core/page-state.js', 'utf8');
+const navigationState = readFileSync('core/navigation-state.js', 'utf8');
+const pageData = readFileSync('data/pages.js', 'utf8');
+const navigationData = readFileSync('data/navigation.js', 'utf8');
 for (const route of ['/health', '/health/storage', '/integrations/status', '/twitch/status', '/youtube/channel', '/admin/auth/login', '/admin/auth/check', '/admin/auth/logout', '/admin/settings', '/admin/audit', '/site-state']) {
   if (!worker.includes(`url.pathname === '${route}'`)) { console.error(`Missing worker route: ${route}`); process.exit(1); }
 }
@@ -69,9 +76,11 @@ if (!workerAdmin.includes('isAllowedAdminOrigin') || !workerAdmin.includes('auth
 if (!storage.includes('remoteSaveQueue') || !storage.includes("sanci:remote-save") || !storage.includes('hydratePublicStorage')) { console.error('Storage must support serialized admin saves and public remote hydration.'); process.exit(1); }
 if (!app.includes('await hydratePublicStorage()')) { console.error('Public app boot must hydrate published state before rendering.'); process.exit(1); }
 if (index.includes('admin/website/layout-enhancer.js') || fallback.includes('admin/website/layout-enhancer.js')) { console.error('Admin-only layout enhancer must never be loaded by public pages.'); process.exit(1); }
+if (pageData.includes("path: '/admin'") || navigationData.includes("path: '/admin'") || pageState.includes("RESERVED_PUBLIC_PATHS") === false || navigationState.includes("RESERVED_PUBLIC_PATHS") === false) { console.error('Private admin path must not exist in the public page/navigation model.'); process.exit(1); }
+if (pageState.includes("RESERVED_PUBLIC_PATHS.has(path)") === false || navigationState.includes("RESERVED_PUBLIC_PATHS.has(normalized.path)") === false) { console.error('Public state normalization must reject private admin paths.'); process.exit(1); }
 
 for (const script of ['core/block-layout.js', 'core/app.js']) {
   if (!index.includes(script) || !fallback.includes(script)) { console.error(`GitHub Pages public bootstrap mismatch: ${script}`); process.exit(1); }
 }
 
-console.log(`Validation passed: ${requiredFiles.length} required files, route checks, integration registry/schema, isolated admin entry, public/admin runtime separation, GitHub Pages bootstrap, production API endpoint, secure cookie/CORS, login rate limiting, D1 admin backend, serialized remote saves, and public D1 state hydration checks passed.`);
+console.log(`Validation passed: ${requiredFiles.length} required files, obsolete-file checks, route checks, integration registry/schema, isolated admin entry, public/admin runtime separation, private-route isolation, GitHub Pages bootstrap, production API endpoint, secure cookie/CORS, login rate limiting, D1 admin backend, serialized remote saves, and public D1 state hydration checks passed.`);
