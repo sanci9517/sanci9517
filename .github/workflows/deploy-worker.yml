@@ -89,8 +89,9 @@ jobs:
             -X OPTIONS \
             -H "Origin: $PUBLIC_ORIGIN" \
             -H 'Access-Control-Request-Method: POST' \
-            -H 'Access-Control-Request-Headers: content-type' \
+            -H 'Access-Control-Request-Headers: content-type, authorization' \
             "$WORKER_URL/admin/auth/login")"
           echo "$cors_headers"
           grep -qi '^access-control-allow-origin: https://sanci9517.github.io' <<<"$cors_headers"
           grep -qi '^access-control-allow-credentials: true' <<<"$cors_headers"
+          grep -qi '^access-control-allow-headers: content-type, authorization' <<<"$cors_headers"
