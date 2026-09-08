@@ -47,6 +47,13 @@ export function Navigation(site) {
         <nav class="menu-list" aria-label="Oldal navigáció">
           ${items}
         </nav>
+
+        <div class="menu-admin">
+          <a class="menu-link menu-link-admin" href="${escapeAttribute(`${config.basePath}/admin.html`)}">
+            <span>Admin belépés</span>
+            <span class="menu-arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
       </aside>
     </div>
   `;
