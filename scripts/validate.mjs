@@ -60,7 +60,7 @@ const componentCss = readFileSync('styles/components.css', 'utf8');
 const navigationCss = readFileSync('styles/navigation.css', 'utf8');
 const wrangler = readFileSync('worker/wrangler.jsonc', 'utf8');
 
-for (const route of ['/health', '/health/storage', '/integrations/status', '/twitch/status', '/twitch/channel', '/twitch/statistics', '/twitch/videos', '/twitch/clips', '/twitch/data', '/youtube/channel', '/admin/auth/login', '/admin/auth/check', '/admin/auth/logout', '/admin/settings', '/admin/audit', '/site-state']) {
+for (const route of ['/health', '/health/storage', '/integrations/status', '/twitch/status', '/twitch/channel', '/twitch/statistics', '/twitch/videos', '/twitch/clips', '/twitch/data', '/youtube/channel', '/youtube/videos', '/youtube/live', '/admin/auth/login', '/admin/auth/check', '/admin/auth/logout', '/admin/settings', '/admin/audit', '/site-state']) {
   if (!routes.includes(`url.pathname === '${route}'`)) { console.error(`Missing worker route: ${route}`); process.exit(1); }
 }
 for (const platformName of ['twitch', 'youtube', 'tiktok']) {
@@ -70,7 +70,8 @@ if (!worker.includes("from './routes/index.js'") || !worker.includes('createRout
 for (const moduleName of ['./auth.js', './admin.js', './health.js', './public.js', './twitch.js', './youtube.js']) {
   if (!routes.includes(`from '${moduleName}'`)) { console.error(`Worker route dispatcher must use isolated module: ${moduleName}`); process.exit(1); }
 }
-if (!routes.includes('token: result.token')) { console.error('Worker login route must return the short-lived session bearer.'); process.exit(1); }
+if (!workerAuth.includes('token: result.token')) { console.error('Worker login route must return the short-lived session bearer.'); process.exit(1); }
+if (!routes.includes('handleAdminLogin') || !routes.includes('handleAdminLogout') || !routes.includes('handleAdminAuthCheck')) { console.error('Worker route dispatcher must expose isolated admin auth handlers.'); process.exit(1); }
 
 if (!/basePath:\s*['"]\/sanci9517['"]/.test(config)) { console.error('Missing configured GitHub Pages basePath.'); process.exit(1); }
 if (!/apiBaseUrl:\s*['"]https:\/\/sanci9517-api\.sandor-bogadi95\.workers\.dev['"]/.test(config)) { console.error('Frontend API must point to the production Cloudflare Worker.'); process.exit(1); }
@@ -89,6 +90,8 @@ if (!auth.includes('fetchInterceptorInstalled') || !auth.includes('installAdminF
 if (!adminBackendAuth.includes('getAdminAuthorizationHeader') || !adminBackendAuth.includes('authorization')) { console.error('Bearer-aware admin backend client is missing.'); process.exit(1); }
 if (!adminApi.includes('getAdminAuthorizationHeader') || !adminApi.includes('adminApiFetch')) { console.error('Admin modules must use the isolated authenticated API client.'); process.exit(1); }
 if (!platform.includes("from './api.js'") || !tests.includes("from './api.js'")) { console.error('Admin platform and Test Center must use the isolated API boundary.'); process.exit(1); }
+if (!platform.includes('/youtube/videos') || !platform.includes('/youtube/live')) { console.error('Admin platform module must expose the modular YouTube content endpoints.'); process.exit(1); }
+if (!tests.includes('/youtube/videos') || !tests.includes('/youtube/live')) { console.error('Test Center must verify the modular YouTube content endpoints.'); process.exit(1); }
 if (!adminSync.includes('sanci:storage-changed') || !adminSync.includes('/admin/settings') || !adminSync.includes('getAdminAuthorizationHeader')) { console.error('Admin remote synchronization must live inside the admin boundary.'); process.exit(1); }
 if (!admin.includes("from './sync.js'") || !admin.includes('initAdminSync()')) { console.error('Admin entry must initialize the isolated synchronization module.'); process.exit(1); }
 if (!entry.includes('renderAdmin(root)')) { console.error('Admin page must use the isolated admin entry module.'); process.exit(1); }
@@ -113,4 +116,4 @@ if (!index.includes('html.mobile-device .page-blocks') || !index.includes('html.
 for (const script of ['core/block-layout.js', 'core/app.js']) {
   if (!index.includes(script) || !fallback.includes(script)) { console.error(`GitHub Pages public bootstrap mismatch: ${script}`); process.exit(1); }
 }
-console.log(`Validation passed: ${requiredFiles.length} required files, modular Worker route boundary, isolated public storage, isolated admin API/auth/sync boundaries, integration registry/schema, private-route isolation, mobile-device desktop-site fallback, responsive desktop/mobile breakpoints, GitHub Pages bootstrap, production API endpoint, Cloudflare Worker/D1/KV bindings, secure admin authentication, CORS, login rate limiting, D1 admin backend, and public state hydration checks passed.`);
+console.log(`Validation passed: ${requiredFiles.length} required files, modular Worker route boundary, isolated public storage, isolated admin API/auth/sync boundaries, integration registry/schema, YouTube content/live endpoints, private-route isolation, mobile-device desktop-site fallback, responsive desktop/mobile breakpoints, GitHub Pages bootstrap, production API endpoint, Cloudflare Worker/D1/KV bindings, secure admin authentication, CORS, login rate limiting, D1 admin backend, and public state hydration checks passed.`);
