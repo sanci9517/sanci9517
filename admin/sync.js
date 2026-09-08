@@ -1,5 +1,4 @@
-import { apiUrl } from '../core/config.js';
-import { getAdminAuthorizationHeader } from './auth.js';
+import { adminApi } from './modules/api.js';
 
 const REMOTE_KEYS = new Set(['site-settings', 'navigation-settings-v2', 'page-settings']);
 let initialized = false;
@@ -20,22 +19,7 @@ function queueSave(key, value) {
   saveQueue = saveQueue.then(async () => {
     emitStatus({ key, status: 'saving' });
     try {
-      const authorization = getAdminAuthorizationHeader();
-      const response = await fetch(apiUrl('/admin/settings'), {
-        method: 'PUT',
-        credentials: 'include',
-        cache: 'no-store',
-        headers: {
-          'content-type': 'application/json',
-          accept: 'application/json',
-          ...(authorization ? { authorization } : {}),
-        },
-        body: JSON.stringify({ settings: { [key]: value } }),
-      });
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok || data.ok === false) {
-        throw new Error(data.error || `Szervermentési hiba (${response.status}).`);
-      }
+      await adminApi.put('/admin/settings', { settings: { [key]: value } });
       emitStatus({ key, status: 'saved' });
     } catch (error) {
       emitStatus({
