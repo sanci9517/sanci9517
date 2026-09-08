@@ -18,6 +18,11 @@ export function resolvePage(path = window.location.pathname) {
 }
 
 export function navigate(path) {
+  if (typeof window.__SANCI_ADMIN_NAVIGATE__ === 'function') {
+    window.__SANCI_ADMIN_NAVIGATE__(path);
+    return;
+  }
+
   const target = sitePath(path);
   if (window.location.pathname !== target) {
     window.history.pushState({}, '', target);
