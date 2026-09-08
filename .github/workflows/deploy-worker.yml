@@ -32,7 +32,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Inspect Cloudflare admin secret names
+      - name: Inspect Cloudflare admin secrets
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -76,23 +76,12 @@ jobs:
                 -H "Origin: $PUBLIC_ORIGIN" \
                 "$WORKER_URL$path" || true)"
 
-              if python3 - "$output" <<'PY'
-import json, sys
-try:
-    with open(sys.argv[1], encoding='utf-8-sig') as f:
-        data = json.load(f)
-    if isinstance(data, dict) and data.get('ok') is True:
-        raise SystemExit(0)
-except Exception:
-    pass
-raise SystemExit(1)
-PY
-              then
+              if python3 -c "import json; d=json.load(open('$output', encoding='utf-8-sig')); raise SystemExit(0 if d.get('ok') is True else 1)" 2>/dev/null; then
                 cat "$output"
                 return 0
               fi
 
-              echo "Worker $path returned HTTP $status or invalid JSON (attempt $attempt/10); waiting..."
+              echo "Worker $path returned HTTP $status or invalid/unhealthy JSON (attempt $attempt/10); waiting..."
               cat "$output" || true
               sleep 3
             done
@@ -103,32 +92,16 @@ PY
 
           health="$(request_json /health /tmp/health.json)"
           echo "$health"
-          grep -q '"ok":true' <<<"$health"
-          grep -q '"workerName":"sanci9517-api"' <<<"$health"
-          grep -q '"service":"sanci9517-api"' <<<"$health"
-
-          python3 - /tmp/health.json <<'PY'
-import json, sys
-with open(sys.argv[1], encoding='utf-8-sig') as f:
-    data = json.load(f)
-admin = data.get('integrations', {}).get('admin', {})
-print('ADMIN configured:', bool(admin.get('configured', False)))
-if not admin.get('configured', False):
-    raise SystemExit('Production admin authentication is not configured.')
-PY
+          python3 -c "import json; d=json.load(open('/tmp/health.json', encoding='utf-8-sig')); assert d.get('service')=='sanci9517-api'; assert d.get('workerName')=='sanci9517-api'; assert d.get('integrations',{}).get('admin',{}).get('configured') is True"
+          echo 'Production admin configuration detected.'
 
           storage="$(request_json /health/storage /tmp/storage.json)"
           echo "$storage"
-          grep -q '"d1":true' <<<"$storage"
-          grep -q '"kv":true' <<<"$storage"
+          python3 -c "import json; d=json.load(open('/tmp/storage.json', encoding='utf-8-sig')); assert d.get('storage',{}).get('d1') is True; assert d.get('storage',{}).get('kv') is True"
 
           integrations="$(request_json /integrations/status /tmp/integrations.json)"
           echo "$integrations"
-          grep -q '"ok":true' <<<"$integrations"
-          grep -q '"twitch"' <<<"$integrations"
-          grep -q '"youtube"' <<<"$integrations"
-          grep -q '"tiktok"' <<<"$integrations"
-          grep -q '"admin"' <<<"$integrations"
+          python3 -c "import json; d=json.load(open('/tmp/integrations.json', encoding='utf-8-sig')); assert d.get('ok') is True; assert all(k in d.get('integrations',{}) for k in ('twitch','youtube','tiktok','admin'))"
 
           auth_status="$(curl --silent --show-error --max-time 20 -o /tmp/auth.json -w '%{http_code}' \
             -H "Origin: $PUBLIC_ORIGIN" \
@@ -149,4 +122,4 @@ PY
           grep -qi '^access-control-allow-headers: content-type, authorization' <<<"$cors_headers"
 
           echo 'Production Worker smoke tests passed.'
-          echo 'Authenticated login remains verified from the admin UI because credentials remain exclusively in Cloudflare.'
+          echo 'Authenticated login is verified from the admin UI because credentials remain exclusively in Cloudflare.'
