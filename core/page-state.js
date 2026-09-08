@@ -2,6 +2,7 @@ import { pages } from '../data/pages.js';
 import { storage } from './storage.js';
 
 const PAGES_KEY = 'page-settings';
+const RESERVED_PUBLIC_PATHS = new Set(['/admin']);
 const BLOCK_TYPES = new Set(['text', 'game', 'twitch', 'image', 'link', 'stats']);
 const ELEMENT_ALIGNS = new Set(['left', 'center', 'right']);
 const ELEMENT_WIDTHS = new Set(['full', 'half', 'third', 'quarter', 'auto']);
@@ -32,7 +33,7 @@ export function syncPagesFromNavigation(items) {
   for (const item of Array.isArray(items) ? items : []) {
     if (item?.type !== 'route') continue;
     const path = normalizePath(item.path);
-    if (!path) continue;
+    if (!path || RESERVED_PUBLIC_PATHS.has(path)) continue;
 
     const existing = byPath.get(path);
     if (existing) continue;
@@ -55,6 +56,7 @@ export function syncPagesFromNavigation(items) {
 export function createPage(page = {}) {
   const current = getPages();
   const path = normalizePath(page.path || '/uj-oldal');
+  if (RESERVED_PUBLIC_PATHS.has(path)) return null;
   if (current.some((item) => normalizePath(item.path) === path)) return getPageByPath(path);
   const created = normalizePage({
     id: createUniquePageId(path, current),
@@ -101,7 +103,7 @@ function normalizePages(list) {
   for (const rawPage of list) {
     const page = normalizePage(rawPage);
     const path = normalizePath(page.path);
-    if (seenPaths.has(path)) continue;
+    if (RESERVED_PUBLIC_PATHS.has(path) || seenPaths.has(path)) continue;
 
     let id = String(page.id || createPageId(path));
     if (seenIds.has(id)) id = createUniquePageId(path, result);
