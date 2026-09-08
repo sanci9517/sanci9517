@@ -1,3 +1,4 @@
+import { dbHealthRoute } from "./routes/db-health";
 import { healthRoute } from "./routes/health";
 import { notFound } from "./core/router";
 import type { Env } from "./types/env";
@@ -8,6 +9,10 @@ export default {
 
     if (url.pathname === "/api/health") {
       return healthRoute();
+    }
+
+    if (url.pathname === "/api/db-health") {
+      return dbHealthRoute(env);
     }
 
     return notFound();
