@@ -19,6 +19,7 @@ function queueSave(key, value) {
   saveQueue = saveQueue.then(async () => {
     emitStatus({ key, status: 'saving' });
     try {
+      // Authentication is centralized in admin/modules/api.js; it supplies getAdminAuthorizationHeader().
       await adminApi.put('/admin/settings', { settings: { [key]: value } });
       emitStatus({ key, status: 'saved' });
     } catch (error) {
