@@ -3,7 +3,7 @@ const PLATFORM_DEFINITIONS = Object.freeze({
     id: 'twitch',
     name: 'Twitch',
     statusEndpoint: '/twitch/status',
-    capabilities: Object.freeze(['live', 'channel', 'stream', 'statistics']),
+    capabilities: Object.freeze(['live', 'channel', 'stream', 'statistics', 'videos', 'clips']),
   }),
   youtube: Object.freeze({
     id: 'youtube',
