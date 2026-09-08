@@ -5,11 +5,32 @@ export async function getStorageHealth(env) {
 }
 
 export function getIntegrationStatus(env, { isTwitchConfigured, broadcasterLogin }) {
+  const youtubeConfigured = Boolean(env.YOUTUBE_API_KEY && env.YOUTUBE_CHANNEL_ID);
+  const tiktokConfigured = Boolean(env.TIKTOK_CLIENT_KEY && env.TIKTOK_CLIENT_SECRET);
+
   return {
-    twitch: { configured: isTwitchConfigured(env), available: true, channel: broadcasterLogin, capabilities: ['live', 'channel', 'stream', 'statistics', 'videos', 'clips'] },
-    youtube: { configured: Boolean(env.YOUTUBE_API_KEY && env.YOUTUBE_CHANNEL_ID), available: true, channelId: env.YOUTUBE_CHANNEL_ID || null, capabilities: ['channel', 'videos', 'shorts', 'statistics', 'live'] },
-    tiktok: { configured: Boolean(env.TIKTOK_CLIENT_KEY && env.TIKTOK_CLIENT_SECRET), available: true, capabilities: ['profile', 'videos', 'live', 'statistics'] },
-    admin: { configured: Boolean(env.ADMIN_USERNAME && env.ADMIN_PASSWORD && env.ADMIN_AUTH_SECRET), available: true },
+    twitch: {
+      configured: isTwitchConfigured(env),
+      available: true,
+      channel: broadcasterLogin,
+      capabilities: ['live', 'channel', 'stream', 'statistics', 'videos', 'clips'],
+    },
+    youtube: {
+      configured: youtubeConfigured,
+      available: youtubeConfigured,
+      channelId: env.YOUTUBE_CHANNEL_ID || null,
+      capabilities: ['channel', 'videos', 'shorts', 'statistics', 'live'],
+    },
+    tiktok: {
+      configured: tiktokConfigured,
+      available: false,
+      capabilities: ['profile', 'videos', 'live', 'statistics'],
+      reason: tiktokConfigured ? 'API routes are not enabled yet.' : 'TikTok credentials are not configured.',
+    },
+    admin: {
+      configured: Boolean(env.ADMIN_USERNAME && env.ADMIN_PASSWORD && env.ADMIN_AUTH_SECRET),
+      available: true,
+    },
   };
 }
 
