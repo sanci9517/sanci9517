@@ -1,25 +1,51 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "sanci9517/page.schema.json",
-  "title": "Sanci9517 Page",
+  "title": "Sanci9517 Public Page",
   "type": "object",
-  "required": ["slug", "title", "sections"],
+  "required": ["id", "path", "title"],
   "properties": {
-    "slug": { "type": "string", "pattern": "^/" },
+    "id": { "type": "string", "minLength": 1 },
+    "path": { "type": "string", "pattern": "^/" },
     "title": { "type": "string", "minLength": 1 },
-    "sections": {
+    "status": { "type": "string", "enum": ["active", "planned", "draft", "archived"] },
+    "menu": { "type": "boolean" },
+    "content": { "type": "string" },
+    "blocks": {
       "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["type"],
-        "properties": {
-          "type": { "type": "string" },
-          "enabled": { "type": "boolean", "default": true },
-          "data": { "type": "object" }
-        },
-        "additionalProperties": false
-      }
+      "items": { "$ref": "#/$defs/block" }
     }
   },
-  "additionalProperties": false
+  "additionalProperties": true,
+  "$defs": {
+    "element": {
+      "type": "object",
+      "required": ["id", "type"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "type": { "type": "string", "enum": ["text", "game", "twitch", "image", "link", "stats"] },
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "align": { "type": "string", "enum": ["left", "center", "right"] },
+        "width": { "type": "string", "enum": ["full", "half", "third", "quarter", "auto"] }
+      },
+      "additionalProperties": true
+    },
+    "block": {
+      "type": "object",
+      "required": ["id", "type"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "type": { "type": "string", "enum": ["text", "game", "twitch", "image", "link", "stats"] },
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "width": { "type": "string", "enum": ["full", "half", "third", "quarter", "auto"] },
+        "elements": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/element" }
+        }
+      },
+      "additionalProperties": true
+    }
+  }
 }
