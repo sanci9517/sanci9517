@@ -29,6 +29,7 @@ for (const file of jsonFiles) {
 
 const worker = readFileSync('worker/src/index.js', 'utf8');
 const routes = readFileSync('worker/src/routes/index.js', 'utf8');
+const routeAuth = readFileSync('worker/src/routes/auth.js', 'utf8');
 const workerAuth = readFileSync('worker/src/auth.js', 'utf8');
 const workerAdmin = readFileSync('worker/src/admin.js', 'utf8');
 const registry = readFileSync('integrations/registry.js', 'utf8');
@@ -70,7 +71,7 @@ if (!worker.includes("from './routes/index.js'") || !worker.includes('createRout
 for (const moduleName of ['./auth.js', './admin.js', './health.js', './public.js', './twitch.js', './youtube.js']) {
   if (!routes.includes(`from '${moduleName}'`)) { console.error(`Worker route dispatcher must use isolated module: ${moduleName}`); process.exit(1); }
 }
-if (!workerAuth.includes('token: result.token')) { console.error('Worker login route must return the short-lived session bearer.'); process.exit(1); }
+if (!routeAuth.includes('token: result.token')) { console.error('Worker login route must return the short-lived session bearer.'); process.exit(1); }
 if (!routes.includes('handleAdminLogin') || !routes.includes('handleAdminLogout') || !routes.includes('handleAdminAuthCheck')) { console.error('Worker route dispatcher must expose isolated admin auth handlers.'); process.exit(1); }
 
 if (!/basePath:\s*['"]\/sanci9517['"]/.test(config)) { console.error('Missing configured GitHub Pages basePath.'); process.exit(1); }
