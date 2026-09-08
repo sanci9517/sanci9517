@@ -5,7 +5,8 @@ const requiredFiles = [
   'index.html', '404.html', 'admin.html', 'core/app.js', 'core/device.js', 'core/router.js', 'core/api.js', 'core/config.js', 'core/storage.js', 'core/ui.js',
   'core/site-state.js', 'core/page-state.js', 'core/navigation-state.js', 'data/site.js', 'data/navigation.js', 'data/pages.js',
   'pages/home.js', 'pages/generic.js', 'components/header.js', 'components/navigation.js', 'components/card.js',
-  'admin/entry.js', 'admin/index.js', 'admin/dashboard.js', 'admin/auth.js', 'admin/backend.js', 'admin/backend-auth.js', 'admin/website/index.js',
+  'admin/entry.js', 'admin/index.js', 'admin/dashboard.js', 'admin/auth.js', 'admin/backend.js', 'admin/backend-auth.js', 'admin/sync.js', 'admin/website/index.js',
+  'admin/modules/api.js', 'admin/modules/platform.js', 'admin/modules/registry.js', 'admin/modules/tests.js',
   'integrations/index.js', 'integrations/registry.js', 'integrations/tiktok/client.js', 'schemas/integration-state.schema.json',
   'styles/tokens.css', 'styles/base.css', 'styles/components.css', 'styles/navigation.css',
   'styles/admin.css', 'schemas/site.schema.json', 'schemas/page.schema.json', 'schemas/menu.schema.json',
@@ -33,14 +34,6 @@ const pageState = readFileSync('core/page-state.js', 'utf8');
 const navigationState = readFileSync('core/navigation-state.js', 'utf8');
 const pageData = readFileSync('data/pages.js', 'utf8');
 const navigationData = readFileSync('data/navigation.js', 'utf8');
-for (const route of ['/health', '/health/storage', '/integrations/status', '/twitch/status', '/twitch/channel', '/twitch/statistics', '/twitch/videos', '/twitch/clips', '/twitch/data', '/youtube/channel', '/admin/auth/login', '/admin/auth/check', '/admin/auth/logout', '/admin/settings', '/admin/audit', '/site-state']) {
-  if (!worker.includes(`url.pathname === '${route}'`)) { console.error(`Missing worker route: ${route}`); process.exit(1); }
-}
-for (const platform of ['twitch', 'youtube', 'tiktok']) {
-  if (!registry.includes(`${platform}: Object.freeze`)) { console.error(`Missing integration registry platform: ${platform}`); process.exit(1); }
-  if (!worker.includes(`${platform}: {`)) { console.error(`Missing worker integration platform: ${platform}`); process.exit(1); }
-}
-
 const config = readFileSync('core/config.js', 'utf8');
 const router = readFileSync('core/router.js', 'utf8');
 const app = readFileSync('core/app.js', 'utf8');
@@ -52,6 +45,10 @@ const admin = readFileSync('admin/index.js', 'utf8');
 const entry = readFileSync('admin/entry.js', 'utf8');
 const dashboard = readFileSync('admin/dashboard.js', 'utf8');
 const adminWebsite = readFileSync('admin/website/index.js', 'utf8');
+const adminApi = readFileSync('admin/modules/api.js', 'utf8');
+const adminSync = readFileSync('admin/sync.js', 'utf8');
+const platform = readFileSync('admin/modules/platform.js', 'utf8');
+const tests = readFileSync('admin/modules/tests.js', 'utf8');
 const storage = readFileSync('core/storage.js', 'utf8');
 const index = readFileSync('index.html', 'utf8');
 const fallback = readFileSync('404.html', 'utf8');
@@ -60,6 +57,14 @@ const baseCss = readFileSync('styles/base.css', 'utf8');
 const componentCss = readFileSync('styles/components.css', 'utf8');
 const navigationCss = readFileSync('styles/navigation.css', 'utf8');
 const wrangler = readFileSync('worker/wrangler.jsonc', 'utf8');
+
+for (const route of ['/health', '/health/storage', '/integrations/status', '/twitch/status', '/twitch/channel', '/twitch/statistics', '/twitch/videos', '/twitch/clips', '/twitch/data', '/youtube/channel', '/admin/auth/login', '/admin/auth/check', '/admin/auth/logout', '/admin/settings', '/admin/audit', '/site-state']) {
+  if (!worker.includes(`url.pathname === '${route}'`)) { console.error(`Missing worker route: ${route}`); process.exit(1); }
+}
+for (const platformName of ['twitch', 'youtube', 'tiktok']) {
+  if (!registry.includes(`${platformName}: Object.freeze`)) { console.error(`Missing integration registry platform: ${platformName}`); process.exit(1); }
+  if (!worker.includes(`${platformName}: {`)) { console.error(`Missing worker integration platform: ${platformName}`); process.exit(1); }
+}
 
 if (!/basePath:\s*['"]\/sanci9517['"]/.test(config)) { console.error('Missing configured GitHub Pages basePath.'); process.exit(1); }
 if (!/apiBaseUrl:\s*['"]https:\/\/sanci9517-api\.sandor-bogadi95\.workers\.dev['"]/.test(config)) { console.error('Frontend API must point to the production Cloudflare Worker.'); process.exit(1); }
@@ -76,8 +81,10 @@ if (adminWebsite.includes("from '../../core/router.js'") || adminWebsite.include
 if (!auth.includes('sessionStorage') || !auth.includes('ADMIN_TOKEN_KEY') || !auth.includes('Bearer')) { console.error('Admin session bearer transport is missing.'); process.exit(1); }
 if (!auth.includes('fetchInterceptorInstalled') || !auth.includes('installAdminFetchInterceptor')) { console.error('Admin API authentication interceptor is missing.'); process.exit(1); }
 if (!adminBackendAuth.includes('getAdminAuthorizationHeader') || !adminBackendAuth.includes('authorization')) { console.error('Bearer-aware admin backend client is missing.'); process.exit(1); }
-if (!auth.includes("/admin/auth/login") || !auth.includes("/admin/auth/check") || !auth.includes("/admin/auth/logout")) { console.error('Admin client must use server authentication endpoints.'); process.exit(1); }
-if (!admin.includes('checkAdminSession().then')) { console.error('Admin entry must check the server session before rendering the dashboard.'); process.exit(1); }
+if (!adminApi.includes('getAdminAuthorizationHeader') || !adminApi.includes('adminApiFetch')) { console.error('Admin modules must use the isolated authenticated API client.'); process.exit(1); }
+if (!platform.includes("from './api.js'") || !tests.includes("from './api.js'")) { console.error('Admin platform and Test Center must use the isolated API boundary.'); process.exit(1); }
+if (!adminSync.includes('sanci:storage-changed') || !adminSync.includes('/admin/settings') || !adminSync.includes('getAdminAuthorizationHeader')) { console.error('Admin remote synchronization must live inside the admin boundary.'); process.exit(1); }
+if (!admin.includes("from './sync.js'") || !admin.includes('initAdminSync()')) { console.error('Admin entry must initialize the isolated synchronization module.'); process.exit(1); }
 if (!entry.includes("renderAdmin(root)")) { console.error('Admin page must use the isolated admin entry module.'); process.exit(1); }
 if (!adminPage.includes('admin/entry.js')) { console.error('admin.html must load the isolated admin entry module.'); process.exit(1); }
 if (!dashboard.includes('await logoutAdmin()')) { console.error('Admin logout must invalidate the server session.'); process.exit(1); }
@@ -90,11 +97,12 @@ if (!workerAuth.includes('ADMIN_LOGIN_MAX_FAILURES') || !workerAuth.includes('ex
 if (!worker.includes('access-control-allow-credentials')) { console.error('Worker CORS must allow credentialed admin requests.'); process.exit(1); }
 if (!worker.includes('vary')) { console.error('Worker CORS must vary by Origin.'); process.exit(1); }
 if (!workerAdmin.includes('isAllowedAdminOrigin') || !workerAdmin.includes('authenticate')) { console.error('Admin backend must enforce origin and server authentication checks.'); process.exit(1); }
-if (!storage.includes('remoteSaveQueue') || !storage.includes("sanci:remote-save") || !storage.includes('hydratePublicStorage')) { console.error('Storage must support serialized admin saves and public remote hydration.'); process.exit(1); }
+if (!storage.includes('sanci:storage-changed') || storage.includes('remoteSaveQueue') || storage.includes('/admin/settings')) { console.error('Core storage must not contain admin remote-save logic.'); process.exit(1); }
+if (!storage.includes('hydratePublicStorage')) { console.error('Core storage must retain public state hydration.'); process.exit(1); }
 if (!app.includes('await hydratePublicStorage()')) { console.error('Public app boot must hydrate published state before rendering.'); process.exit(1); }
 if (index.includes('admin/website/layout-enhancer.js') || fallback.includes('admin/website/layout-enhancer.js')) { console.error('Admin-only layout enhancer must never be loaded by public pages.'); process.exit(1); }
-if (pageData.includes("path: '/admin'") || navigationData.includes("path: '/admin'") || pageState.includes("RESERVED_PUBLIC_PATHS") === false || navigationState.includes("RESERVED_PUBLIC_PATHS") === false) { console.error('Private admin path must not exist in the public page/navigation model.'); process.exit(1); }
-if (pageState.includes("RESERVED_PUBLIC_PATHS.has(path)") === false || navigationState.includes("RESERVED_PUBLIC_PATHS.has(normalized.path)") === false) { console.error('Public state normalization must reject private admin paths.'); process.exit(1); }
+if (pageData.includes("path: '/admin'") || navigationData.includes("path: '/admin'") || !pageState.includes('RESERVED_PUBLIC_PATHS') || !navigationState.includes('RESERVED_PUBLIC_PATHS')) { console.error('Private admin path must not exist in the public page/navigation model.'); process.exit(1); }
+if (!pageState.includes('RESERVED_PUBLIC_PATHS.has(path)') || !navigationState.includes('RESERVED_PUBLIC_PATHS.has(normalized.path)')) { console.error('Public state normalization must reject private admin paths.'); process.exit(1); }
 if (!baseCss.includes('@media (max-width: 760px)') || !componentCss.includes('@media (max-width: 760px)') || !navigationCss.includes('@media (max-width: 760px)')) { console.error('Responsive public layout is missing the protected mobile breakpoint.'); process.exit(1); }
 if (!baseCss.includes('@media (min-width: 761px)') || !componentCss.includes('@media (min-width: 761px)')) { console.error('Desktop-only layout rules are missing.'); process.exit(1); }
 if (!index.includes('html.mobile-device .page-blocks') || !index.includes('html.mobile-device .home-hero')) { console.error('Public HTML is missing the desktop-site mobile fallback styles.'); process.exit(1); }
@@ -103,4 +111,4 @@ for (const script of ['core/block-layout.js', 'core/app.js']) {
   if (!index.includes(script) || !fallback.includes(script)) { console.error(`GitHub Pages public bootstrap mismatch: ${script}`); process.exit(1); }
 }
 
-console.log(`Validation passed: ${requiredFiles.length} required files, obsolete-file checks, route checks, integration registry/schema, isolated admin entry, public/admin runtime separation, private-route isolation, mobile-device desktop-site fallback, responsive desktop/mobile breakpoints, GitHub Pages bootstrap, production API endpoint, Cloudflare Worker/D1/KV bindings, secure admin bearer/cookie authentication, CORS, login rate limiting, D1 admin backend, serialized remote saves, and public D1 state hydration checks passed.`);
+console.log(`Validation passed: ${requiredFiles.length} required files, isolated public storage, isolated admin API/auth/sync boundaries, route checks, integration registry/schema, private-route isolation, mobile-device desktop-site fallback, responsive desktop/mobile breakpoints, GitHub Pages bootstrap, production API endpoint, Cloudflare Worker/D1/KV bindings, secure admin authentication, CORS, login rate limiting, D1 admin backend, and public state hydration checks passed.`);
