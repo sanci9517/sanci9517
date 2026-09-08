@@ -87,6 +87,13 @@ jobs:
           grep -q '"workerName":"sanci9517-api"' <<<"$health"
           grep -q '"service":"sanci9517-api"' <<<"$health"
 
+          admin_configured="$(printf '%s' "$health" | python3 -c 'import json,sys; print(str(json.load(sys.stdin).get("integrations", {}).get("admin", {}).get("configured", False)).lower())')"
+          if [[ "$admin_configured" != "true" ]]; then
+            echo 'Production admin authentication is not configured.'
+            echo 'Expected Cloudflare Worker secrets: ADMIN_USERNAME, ADMIN_PASSWORD, ADMIN_AUTH_SECRET.'
+            exit 1
+          fi
+
           storage="$(request_json /health/storage /tmp/storage.json)"
           echo "$storage"
           grep -q '"ok":true' <<<"$storage"
@@ -118,6 +125,12 @@ jobs:
           grep -qi '^access-control-allow-origin: https://sanci9517.github.io' <<<"$cors_headers"
           grep -qi '^access-control-allow-credentials: true' <<<"$cors_headers"
           grep -qi '^access-control-allow-headers: content-type, authorization' <<<"$cors_headers"
+
+          if [[ -z "${ADMIN_USERNAME:-}" || -z "${ADMIN_PASSWORD:-}" ]]; then
+            echo 'GitHub Actions admin smoke-test credentials are not configured.'
+            echo 'Set repository secrets ADMIN_USERNAME and ADMIN_PASSWORD without sharing their values in chat.'
+            exit 1
+          fi
 
           login_response="$(curl --silent --show-error --max-time 20 \
             -H "Origin: $PUBLIC_ORIGIN" \
