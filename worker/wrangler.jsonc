@@ -10,6 +10,12 @@
   "vars": {
     "ADMIN_USERNAME": "sanci9517"
   },
+  "secrets": {
+    "required": [
+      "ADMIN_PASSWORD",
+      "ADMIN_AUTH_SECRET"
+    ]
+  },
   "d1_databases": [
     {
       "binding": "DB",
