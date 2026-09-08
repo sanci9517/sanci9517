@@ -1,13 +1,13 @@
 import { clearAdminCookie, isAdminRequestAuthenticated, loginAdminRequest } from './auth.js';
 import { getAdminAudit, getAdminSettings, isAllowedAdminOrigin, updateAdminSettings } from './admin.js';
-import { getTwitchChannel, getTwitchChannelFollowers, getTwitchClips, getTwitchData, getTwitchStreamStatus, getTwitchVideos, isTwitchConfigured } from '../../integrations/twitch/client.js';
+import { getTwitchChannel, getTwitchClips, getTwitchData, getTwitchStreamStatus, getTwitchVideos, isTwitchConfigured } from '../../integrations/twitch/client.js';
 import { getTwitchStatistics } from '../../integrations/twitch/statistics.js';
 
 const DEFAULT_ADMIN_ORIGIN = 'https://sanci9517.github.io';
 const YOUTUBE_API = 'https://www.googleapis.com/youtube/v3';
 const BROADCASTER_LOGIN = 'sanci9517';
 const PUBLIC_SETTING_KEYS = ['site-settings', 'navigation-settings-v2', 'page-settings'];
-const WORKER_VERSION = 'admin-auth-cors-5';
+const WORKER_VERSION = 'admin-auth-cors-6';
 
 function corsHeaders(request, env) {
   const origin = request.headers.get('origin');
@@ -90,7 +90,6 @@ export default {
     if (request.method === 'GET' && url.pathname === '/integrations/status') return json({ ok: true, integrations: getIntegrationStatus(env) }, 200, {}, request, env);
     if (request.method === 'GET' && url.pathname === '/twitch/status') return twitchRoute(() => getTwitchStreamStatus(env, BROADCASTER_LOGIN), request, env);
     if (request.method === 'GET' && url.pathname === '/twitch/channel') return twitchRoute(() => getTwitchChannel(env, BROADCASTER_LOGIN), request, env);
-    if (request.method === 'GET' && url.pathname === '/twitch/followers') return twitchRoute(async () => { const channel = await getTwitchChannel(env, BROADCASTER_LOGIN); return getTwitchChannelFollowers(env, channel.channel?.id); }, request, env);
     if (request.method === 'GET' && url.pathname === '/twitch/statistics') return twitchRoute(() => getTwitchStatistics({ getStreamStatus: getTwitchStreamStatus, getChannel: getTwitchChannel, env, login: BROADCASTER_LOGIN }), request, env);
     if (request.method === 'GET' && url.pathname === '/twitch/videos') return twitchRoute(async () => { const channel = await getTwitchChannel(env, BROADCASTER_LOGIN); return getTwitchVideos(env, channel.channel?.id, { first: url.searchParams.get('first') || 20, after: url.searchParams.get('after') || '' }); }, request, env);
     if (request.method === 'GET' && url.pathname === '/twitch/clips') return twitchRoute(async () => { const channel = await getTwitchChannel(env, BROADCASTER_LOGIN); return getTwitchClips(env, channel.channel?.id, { first: url.searchParams.get('first') || 20, startedAt: url.searchParams.get('started_at') || '', endedAt: url.searchParams.get('ended_at') || '' }); }, request, env);
