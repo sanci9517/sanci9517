@@ -19,6 +19,7 @@ concurrency:
 
 env:
   WORKER_URL: https://sanci9517-api.sandor-bogadi95.workers.dev
+  PUBLIC_ORIGIN: https://sanci9517.github.io
 
 jobs:
   deploy:
@@ -50,10 +51,46 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          response="$(curl --fail --silent --show-error --max-time 20 \
-            -H 'Origin: https://sanci9517.github.io' \
+
+          health="$(curl --fail --silent --show-error --max-time 20 \
+            -H "Origin: $PUBLIC_ORIGIN" \
             "$WORKER_URL/health")"
-          echo "$response"
-          grep -q '"ok":true' <<<"$response"
-          grep -q '"workerName":"sanci9517-api"' <<<"$response"
-          grep -q '"service":"sanci9517-api"' <<<"$response"
+          echo "$health"
+          grep -q '"ok":true' <<<"$health"
+          grep -q '"workerName":"sanci9517-api"' <<<"$health"
+          grep -q '"service":"sanci9517-api"' <<<"$health"
+
+          storage="$(curl --fail --silent --show-error --max-time 20 \
+            -H "Origin: $PUBLIC_ORIGIN" \
+            "$WORKER_URL/health/storage")"
+          echo "$storage"
+          grep -q '"ok":true' <<<"$storage"
+          grep -q '"d1":true' <<<"$storage"
+          grep -q '"kv":true' <<<"$storage"
+
+          integrations="$(curl --fail --silent --show-error --max-time 20 \
+            -H "Origin: $PUBLIC_ORIGIN" \
+            "$WORKER_URL/integrations/status")"
+          echo "$integrations"
+          grep -q '"ok":true' <<<"$integrations"
+          grep -q '"twitch"' <<<"$integrations"
+          grep -q '"youtube"' <<<"$integrations"
+          grep -q '"tiktok"' <<<"$integrations"
+          grep -q '"admin"' <<<"$integrations"
+
+          auth_status="$(curl --silent --show-error --max-time 20 -o /tmp/auth.json -w '%{http_code}' \
+            -H "Origin: $PUBLIC_ORIGIN" \
+            "$WORKER_URL/admin/auth/check")"
+          cat /tmp/auth.json
+          test "$auth_status" = "401"
+          grep -q '"authenticated":false' /tmp/auth.json
+
+          cors_headers="$(curl --silent --show-error --max-time 20 -D - -o /dev/null \
+            -X OPTIONS \
+            -H "Origin: $PUBLIC_ORIGIN" \
+            -H 'Access-Control-Request-Method: POST' \
+            -H 'Access-Control-Request-Headers: content-type' \
+            "$WORKER_URL/admin/auth/login")"
+          echo "$cors_headers"
+          grep -qi '^access-control-allow-origin: https://sanci9517.github.io' <<<"$cors_headers"
+          grep -qi '^access-control-allow-credentials: true' <<<"$cors_headers"
