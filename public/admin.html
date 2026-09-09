@@ -11,8 +11,12 @@
       main { width: min(1100px, calc(100% - 32px)); margin: 32px auto; }
       .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
       .card { padding: 20px; border: 1px solid #292933; border-radius: 16px; background: #14141b; }
+      .settings { margin-top: 24px; }
+      label { display: block; margin: 14px 0 7px; font-weight: 700; }
+      input { box-sizing: border-box; width: 100%; padding: 12px; border: 1px solid #353541; border-radius: 9px; background: #0f0f15; color: #f5f5f7; font: inherit; }
       .muted { color: #a9a9b3; }
-      button { padding: 10px 14px; border: 0; border-radius: 9px; font: inherit; font-weight: 700; cursor: pointer; }
+      button { margin-top: 16px; padding: 10px 14px; border: 0; border-radius: 9px; font: inherit; font-weight: 700; cursor: pointer; }
+      #save-status { margin-left: 10px; }
       @media (max-width: 600px) { main { margin: 20px auto; } }
     </style>
   </head>
@@ -25,31 +29,83 @@
         <section class="card"><h2>Tartalom</h2><p class="muted">Oldalak és webhelytartalom kezelése.</p></section>
         <section class="card"><h2>Adásrend</h2><p class="muted">Stream időpontok kezelése.</p></section>
         <section class="card"><h2>Social</h2><p class="muted">Twitch, TikTok, YouTube és Discord.</p></section>
-        <section class="card"><h2>Beállítások</h2><p class="muted">A webhely központi beállításai.</p></section>
       </div>
+      <section class="card settings">
+        <h2>Beállítások</h2>
+        <p class="muted">A webhely alapadatai. A mentés közvetlenül a D1 adatbázisba történik.</p>
+        <label for="site-name">Webhely neve</label>
+        <input id="site-name" maxlength="120" autocomplete="off">
+        <label for="tagline">Rövid leírás</label>
+        <input id="tagline" maxlength="240" autocomplete="off">
+        <button id="save" type="button">Mentés</button>
+        <span id="save-status" class="muted"></span>
+      </section>
       <button id="logout" type="button">Kijelentkezés</button>
     </main>
     <script>
       const welcome = document.getElementById("welcome");
       const logout = document.getElementById("logout");
+      const siteName = document.getElementById("site-name");
+      const tagline = document.getElementById("tagline");
+      const save = document.getElementById("save");
+      const saveStatus = document.getElementById("save-status");
+
       async function loadSession() {
         try {
           const response = await fetch("/api/auth/session", { credentials: "same-origin", cache: "no-store" });
           const data = await response.json();
           if (!response.ok || !data.ok || !data.data?.authenticated) {
             window.location.replace("/admin/login");
-            return;
+            return false;
           }
           welcome.textContent = `Bejelentkezve: ${data.data.user.displayName} (${data.data.user.role})`;
+          return true;
         } catch {
           window.location.replace("/admin/login");
+          return false;
         }
       }
+
+      async function loadSettings() {
+        const response = await fetch("/api/admin/settings", { credentials: "same-origin", cache: "no-store" });
+        const data = await response.json();
+        if (!response.ok || !data.ok) throw new Error(data.error?.message || "Betöltési hiba");
+        siteName.value = data.data.siteName || "";
+        tagline.value = data.data.tagline || "";
+      }
+
+      save.addEventListener("click", async () => {
+        save.disabled = true;
+        saveStatus.textContent = "Mentés...";
+        try {
+          const response = await fetch("/api/admin/settings", {
+            method: "PUT",
+            credentials: "same-origin",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ siteName: siteName.value, tagline: tagline.value })
+          });
+          const data = await response.json();
+          if (!response.ok || !data.ok) throw new Error(data.error?.message || "Mentési hiba");
+          siteName.value = data.data.siteName;
+          tagline.value = data.data.tagline;
+          saveStatus.textContent = "Mentve ✓";
+        } catch (error) {
+          saveStatus.textContent = error instanceof Error ? error.message : "Mentési hiba";
+        } finally {
+          save.disabled = false;
+        }
+      });
+
       logout.addEventListener("click", async () => {
         await fetch("/api/auth/logout", { method: "POST", credentials: "same-origin" });
         window.location.replace("/admin/login");
       });
-      loadSession();
+
+      (async () => {
+        if (await loadSession()) {
+          try { await loadSettings(); } catch (error) { saveStatus.textContent = error instanceof Error ? error.message : "Betöltési hiba"; }
+        }
+      })();
     </script>
   </body>
 </html>
