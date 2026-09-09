@@ -4,6 +4,7 @@ import { authLoginRoute } from "./routes/auth/login";
 import { authLogoutRoute } from "./routes/auth/logout";
 import { authSessionRoute } from "./routes/auth/session";
 import { adminSettingsRoute } from "./routes/admin/settings";
+import { publicSiteSettingsRoute } from "./routes/public/site-settings";
 import { getAuthenticatedUser } from "./core/auth/require-auth";
 import { healthRoute } from "./routes/health";
 import type { Env } from "./types/env";
@@ -19,6 +20,7 @@ export default {
     if (url.pathname === "/api/auth/logout") return authLogoutRoute(request, env);
     if (url.pathname === "/api/auth/session") return authSessionRoute(request, env);
     if (url.pathname === "/api/admin/settings") return adminSettingsRoute(request, env);
+    if (url.pathname === "/api/public/site-settings") return publicSiteSettingsRoute(env);
 
     if (url.pathname === "/admin/login" || url.pathname === "/admin-login.html") {
       return env.ASSETS.fetch(assetRequest("/admin-login.html", request));
