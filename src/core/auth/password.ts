@@ -1,26 +1,16 @@
-const encoder = new TextEncoder();
+import { scrypt } from "node:crypto";
+
+const SCRYPT_KEY_LENGTH = 32;
+const SCRYPT_OPTIONS = {
+  N: 16_384,
+  r: 8,
+  p: 1,
+  maxmem: 32 * 1024 * 1024
+};
 
 export async function hashPassword(password: string, salt: Uint8Array): Promise<string> {
-  const material = await crypto.subtle.importKey(
-    "raw",
-    toArrayBuffer(encoder.encode(password)),
-    "PBKDF2",
-    false,
-    ["deriveBits"]
-  );
-
-  const bits = await crypto.subtle.deriveBits(
-    {
-      name: "PBKDF2",
-      salt: toArrayBuffer(salt),
-      iterations: 210_000,
-      hash: "SHA-256"
-    },
-    material,
-    256
-  );
-
-  return bytesToBase64(new Uint8Array(bits));
+  const derivedKey = await derivePassword(password, salt);
+  return bytesToBase64(derivedKey);
 }
 
 export async function verifyPassword(
@@ -42,10 +32,16 @@ export function bytesToBase64(bytes: Uint8Array): string {
   return btoa(binary);
 }
 
-function toArrayBuffer(bytes: Uint8Array): ArrayBuffer {
-  const buffer = new ArrayBuffer(bytes.byteLength);
-  new Uint8Array(buffer).set(bytes);
-  return buffer;
+function derivePassword(password: string, salt: Uint8Array): Promise<Uint8Array> {
+  return new Promise((resolve, reject) => {
+    scrypt(password, salt, SCRYPT_KEY_LENGTH, SCRYPT_OPTIONS, (error, derivedKey) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+      resolve(new Uint8Array(derivedKey));
+    });
+  });
 }
 
 function timingSafeEqual(a: string, b: string): boolean {
