@@ -1,6 +1,7 @@
-import { dbHealthRoute } from "./routes/db-health";
-import { healthRoute } from "./routes/health";
 import { notFound } from "./core/router";
+import { dbHealthRoute } from "./routes/db-health";
+import { authSessionRoute } from "./routes/auth/session";
+import { healthRoute } from "./routes/health";
 import type { Env } from "./types/env";
 
 export default {
@@ -13,6 +14,10 @@ export default {
 
     if (url.pathname === "/api/db-health") {
       return dbHealthRoute(env);
+    }
+
+    if (url.pathname === "/api/auth/session") {
+      return authSessionRoute(request, env);
     }
 
     return notFound();
