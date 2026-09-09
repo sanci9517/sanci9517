@@ -1,9 +1,12 @@
 const encoder = new TextEncoder();
 
 export async function hashPassword(password: string, salt: Uint8Array): Promise<string> {
+  const passwordBytes = encoder.encode(password);
+  const saltBytes = new Uint8Array(salt);
+
   const material = await crypto.subtle.importKey(
     "raw",
-    encoder.encode(password),
+    passwordBytes.buffer,
     "PBKDF2",
     false,
     ["deriveBits"]
@@ -12,7 +15,7 @@ export async function hashPassword(password: string, salt: Uint8Array): Promise<
   const bits = await crypto.subtle.deriveBits(
     {
       name: "PBKDF2",
-      salt: new Uint8Array(salt),
+      salt: saltBytes.buffer,
       iterations: 210_000,
       hash: "SHA-256"
     },
