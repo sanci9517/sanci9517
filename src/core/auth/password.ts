@@ -1,12 +1,9 @@
 const encoder = new TextEncoder();
 
 export async function hashPassword(password: string, salt: Uint8Array): Promise<string> {
-  const passwordBytes = encoder.encode(password);
-  const saltBytes = new Uint8Array(salt);
-
   const material = await crypto.subtle.importKey(
     "raw",
-    passwordBytes.buffer,
+    toArrayBuffer(encoder.encode(password)),
     "PBKDF2",
     false,
     ["deriveBits"]
@@ -15,7 +12,7 @@ export async function hashPassword(password: string, salt: Uint8Array): Promise<
   const bits = await crypto.subtle.deriveBits(
     {
       name: "PBKDF2",
-      salt: saltBytes.buffer,
+      salt: toArrayBuffer(salt),
       iterations: 210_000,
       hash: "SHA-256"
     },
@@ -43,6 +40,12 @@ export function bytesToBase64(bytes: Uint8Array): string {
   let binary = "";
   for (const byte of bytes) binary += String.fromCharCode(byte);
   return btoa(binary);
+}
+
+function toArrayBuffer(bytes: Uint8Array): ArrayBuffer {
+  const buffer = new ArrayBuffer(bytes.byteLength);
+  new Uint8Array(buffer).set(bytes);
+  return buffer;
 }
 
 function timingSafeEqual(a: string, b: string): boolean {
