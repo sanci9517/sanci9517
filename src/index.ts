@@ -30,6 +30,6 @@ export default {
       return authSessionRoute(request, env);
     }
 
-    return notFound();
+    return env.ASSETS.fetch(request);
   }
 };
