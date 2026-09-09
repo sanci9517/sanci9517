@@ -1,5 +1,6 @@
 import { notFound } from "./core/router";
 import { dbHealthRoute } from "./routes/db-health";
+import { authBootstrapRoute } from "./routes/auth/bootstrap";
 import { authLoginRoute } from "./routes/auth/login";
 import { authSessionRoute } from "./routes/auth/session";
 import { healthRoute } from "./routes/health";
@@ -15,6 +16,10 @@ export default {
 
     if (url.pathname === "/api/db-health") {
       return dbHealthRoute(env);
+    }
+
+    if (url.pathname === "/api/auth/bootstrap") {
+      return authBootstrapRoute(request, env);
     }
 
     if (url.pathname === "/api/auth/login") {
