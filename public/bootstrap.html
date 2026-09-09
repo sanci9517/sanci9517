@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="hu">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sanci9517 — Admin bootstrap</title>
+    <style>
+      body { font-family: system-ui, sans-serif; max-width: 520px; margin: 40px auto; padding: 20px; }
+      label { display: block; margin: 14px 0 6px; font-weight: 600; }
+      input { box-sizing: border-box; width: 100%; padding: 12px; font-size: 16px; }
+      button { margin-top: 20px; width: 100%; padding: 12px; font-size: 16px; cursor: pointer; }
+      #result { margin-top: 18px; white-space: pre-wrap; }
+    </style>
+  </head>
+  <body>
+    <h1>Admin első beállítás</h1>
+    <p>Ez az egyszeri admin-felhasználó létrehozására szolgál. A bootstrap token és a jelszó nem kerül a GitHubra.</p>
+
+    <form id="bootstrap-form">
+      <label for="token">Bootstrap token</label>
+      <input id="token" type="password" autocomplete="off" required>
+
+      <label for="email">E-mail</label>
+      <input id="email" type="email" autocomplete="email" required>
+
+      <label for="displayName">Megjelenési név</label>
+      <input id="displayName" type="text" maxlength="100" autocomplete="name" required>
+
+      <label for="password">Admin jelszó (minimum 12 karakter)</label>
+      <input id="password" type="password" minlength="12" autocomplete="new-password" required>
+
+      <button type="submit">Admin létrehozása</button>
+    </form>
+
+    <div id="result" role="status"></div>
+
+    <script>
+      const form = document.getElementById("bootstrap-form");
+      const result = document.getElementById("result");
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        result.textContent = "Feldolgozás...";
+
+        const token = document.getElementById("token").value;
+        const email = document.getElementById("email").value;
+        const displayName = document.getElementById("displayName").value;
+        const password = document.getElementById("password").value;
+
+        try {
+          const response = await fetch("/api/auth/bootstrap", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Admin-Bootstrap-Token": token
+            },
+            body: JSON.stringify({ email, displayName, password })
+          });
+
+          const data = await response.json();
+          result.textContent = JSON.stringify(data, null, 2);
+
+          if (data.ok) {
+            form.reset();
+            result.textContent += "\n\nSikeres létrehozás. A bootstrap oldal használatát most befejezzük.";
+          }
+        } catch (error) {
+          result.textContent = "Hiba a kérés közben. Ellenőrizd a Worker elérhetőségét.";
+        }
+      });
+    </script>
+  </body>
+</html>
