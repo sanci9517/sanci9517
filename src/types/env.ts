@@ -5,6 +5,7 @@ export interface Env {
   CACHE: KVNamespace;
 
   SESSION_SECRET: string;
+  ADMIN_BOOTSTRAP_TOKEN: string;
   TWITCH_CLIENT_ID?: string;
   TWITCH_CLIENT_SECRET?: string;
   YOUTUBE_CLIENT_ID?: string;
