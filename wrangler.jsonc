@@ -8,7 +8,8 @@
     "head_sampling_rate": 1
   },
   "assets": {
-    "directory": "./public"
+    "directory": "./public",
+    "binding": "ASSETS"
   },
   "d1_databases": [
     {
