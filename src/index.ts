@@ -19,7 +19,7 @@ export default {
     if (url.pathname === "/api/auth/session") return authSessionRoute(request, env);
 
     if (url.pathname === "/admin/login" || url.pathname === "/admin-login.html") {
-      return env.ASSETS.fetch(new Request(new URL("/admin-login.html", request.url).toString(), request));
+      return env.ASSETS.fetch(assetRequest("/admin-login.html", request));
     }
 
     if (url.pathname === "/admin" || url.pathname === "/admin.html") {
@@ -27,9 +27,17 @@ export default {
       if (!user) {
         return Response.redirect(new URL("/admin/login", request.url).toString(), 302);
       }
-      return env.ASSETS.fetch(new Request(new URL("/admin.html", request.url).toString(), request));
+      return env.ASSETS.fetch(assetRequest("/admin.html", request));
     }
 
     return env.ASSETS.fetch(request);
   }
 };
+
+function assetRequest(pathname: string, request: Request): Request {
+  const url = new URL(pathname, request.url);
+  return new Request(url.toString(), {
+    method: "GET",
+    headers: request.headers
+  });
+}
