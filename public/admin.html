@@ -44,9 +44,10 @@
       .danger { background:#5b1e24 !important; color:#fff !important; }
       .placeholder { min-height:190px; display:grid; place-items:center; text-align:center; border:1px dashed #353541; border-radius:14px; background:rgba(15,15,21,.55); }
       .placeholder p { max-width:520px; margin:0; line-height:1.6; }
-      .logout-row { display:flex; justify-content:flex-end; margin-top:18px; }
+      .admin-actions { display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap; margin-top:18px; }
+      .admin-actions button { margin-top:0; }
       @media (max-width:800px) { .menu { grid-template-columns:repeat(2,minmax(0,1fr)); } .admin-head { display:block; } .admin-head p { margin-top:10px; } }
-      @media (max-width:600px) { main { width:min(100% - 20px,1100px); margin:20px auto 35px; } header { padding:18px 16px; } .menu { grid-template-columns:1fr 1fr; gap:9px; } .menu-button { min-height:92px; padding:14px; } .panel { padding:18px; border-radius:15px; } .panel-head { display:block; } .schedule-item { grid-template-columns:1fr; } .logout-row { justify-content:stretch; } .logout-row button { width:100%; } }
+      @media (max-width:600px) { main { width:min(100% - 20px,1100px); margin:20px auto 35px; } header { padding:18px 16px; } .menu { grid-template-columns:1fr 1fr; gap:9px; } .menu-button { min-height:92px; padding:14px; } .panel { padding:18px; border-radius:15px; } .panel-head { display:block; } .schedule-item { grid-template-columns:1fr; } .admin-actions { justify-content:stretch; } .admin-actions button { width:100%; } }
     </style>
   </head>
   <body>
@@ -116,11 +117,12 @@
         <div class="placeholder"><p class="muted">Ez a modul még nincs bekötve. Később önállóan kapcsolódik majd a megfelelő API-khoz és adatokhoz.</p></div>
       </section>
 
-      <div class="logout-row"><button id="logout" class="action secondary" type="button">Kijelentkezés</button></div>
+      <div class="admin-actions"><button id="public-site" class="action" type="button">← Publikus oldal</button><button id="logout" class="action secondary" type="button">Kijelentkezés</button></div>
     </main>
     <script>
       const welcome=document.getElementById("welcome");
       const logout=document.getElementById("logout");
+      const publicSite=document.getElementById("public-site");
       const siteName=document.getElementById("site-name");
       const tagline=document.getElementById("tagline");
       const save=document.getElementById("save");
@@ -137,6 +139,20 @@
       const scheduleCancel=document.getElementById("schedule-cancel");
       const scheduleStatus=document.getElementById("schedule-status");
       const scheduleList=document.getElementById("schedule-list");
+      let leavingAdmin=false;
+
+      async function logoutAndGo(target){
+        if(leavingAdmin)return;
+        leavingAdmin=true;
+        try{await fetch("/api/auth/logout",{method:"POST",credentials:"same-origin",keepalive:true});}catch{}
+        window.location.replace(target);
+      }
+      publicSite.addEventListener("click",()=>logoutAndGo("/"));
+      logout.addEventListener("click",()=>logoutAndGo("/admin/login"));
+      window.addEventListener("pagehide",()=>{
+        if(leavingAdmin)return;
+        try{navigator.sendBeacon("/api/auth/logout","");}catch{}
+      });
 
       function showPanel(target){
         document.querySelectorAll("[data-admin-panel]").forEach(panel=>panel.classList.toggle("active",panel.dataset.adminPanel===target));
@@ -163,7 +179,6 @@
       scheduleSave.addEventListener("click",async()=>{scheduleSave.disabled=true;scheduleStatus.textContent="Mentés...";const body={id:scheduleId.value||undefined,title:scheduleTitle.value,platform:schedulePlatform.value,startsAt:scheduleStart.value,endsAt:scheduleEnd.value,status:scheduleState.value,url:scheduleUrl.value,notes:scheduleNotes.value};try{const response=await fetch("/api/admin/schedule",{method:scheduleId.value?"PUT":"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});const data=await response.json();if(!response.ok||!data.ok)throw new Error(data.error?.message||"Mentési hiba");scheduleStatus.textContent="Mentve ✓";resetSchedule();await loadSchedule();}catch(error){scheduleStatus.textContent=error instanceof Error?error.message:"Mentési hiba";}finally{scheduleSave.disabled=false;}});
       async function deleteSchedule(id){if(!confirm("Biztosan törlöd ezt az adást?"))return;try{const response=await fetch("/api/admin/schedule",{method:"DELETE",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({id})});const data=await response.json();if(!response.ok||!data.ok)throw new Error(data.error?.message||"Törlési hiba");scheduleStatus.textContent="Törölve ✓";await loadSchedule();}catch(error){scheduleStatus.textContent=error instanceof Error?error.message:"Törlési hiba";}}
       save.addEventListener("click",async()=>{save.disabled=true;saveStatus.textContent="Mentés...";try{const response=await fetch("/api/admin/settings",{method:"PUT",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({siteName:siteName.value,tagline:tagline.value})});const data=await response.json();if(!response.ok||!data.ok)throw new Error(data.error?.message||"Mentési hiba");siteName.value=data.data.siteName;tagline.value=data.data.tagline;saveStatus.textContent="Mentve ✓";}catch(error){saveStatus.textContent=error instanceof Error?error.message:"Mentési hiba";}finally{save.disabled=false;}});
-      logout.addEventListener("click",async()=>{await fetch("/api/auth/logout",{method:"POST",credentials:"same-origin"});window.location.replace("/admin/login");});
       (async()=>{if(await loadSession()){try{await loadSettings();await loadSchedule();}catch(error){scheduleStatus.textContent=error instanceof Error?error.message:"Betöltési hiba";}}})();
     </script>
   </body>
