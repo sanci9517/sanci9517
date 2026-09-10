@@ -1,185 +1,72 @@
 <!doctype html>
 <html lang="hu">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="noindex,nofollow">
-    <title>Sanci9517 — Admin</title>
-    <style>
-      :root { --bg:#0b0b10; --panel:#14141b; --panel-2:#0f0f15; --line:#292933; --line-hot:#45455a; --text:#f5f5f7; --muted:#a9a9b3; --accent:#7c8cff; }
-      * { box-sizing:border-box; }
-      body { margin:0; min-height:100vh; font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:var(--bg); color:var(--text); }
-      header { padding:22px 24px; border-bottom:1px solid var(--line); background:var(--panel); position:sticky; top:0; z-index:10; }
-      header strong { letter-spacing:-.02em; }
-      main { width:min(1100px,calc(100% - 32px)); margin:32px auto 50px; }
-      .admin-head { display:flex; justify-content:space-between; align-items:flex-end; gap:24px; margin-bottom:28px; }
-      h1,h2,h3,p { margin-top:0; }
-      h1 { margin-bottom:8px; font-size:clamp(34px,5vw,54px); letter-spacing:-.055em; }
-      .muted { color:var(--muted); }
-      .admin-head p { margin-bottom:0; }
-      .menu { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:24px; }
-      .menu-button { min-height:104px; padding:18px; border:1px solid var(--line); border-radius:16px; background:var(--panel); color:var(--text); text-align:left; cursor:pointer; transition:border-color .18s,background .18s,transform .18s; }
-      .menu-button:hover { border-color:var(--line-hot); background:#181820; transform:translateY(-1px); }
-      .menu-button.active { border-color:rgba(124,140,255,.55); background:linear-gradient(135deg,rgba(124,140,255,.13),var(--panel)); }
-      .menu-button:disabled { opacity:.42; cursor:not-allowed; transform:none; }
-      .menu-icon { display:block; font-size:20px; margin-bottom:10px; }
-      .menu-title { display:block; font-weight:850; font-size:15px; }
-      .menu-desc { display:block; margin-top:5px; color:#858594; font-size:11px; line-height:1.4; }
-      .panel { display:none; padding:24px; border:1px solid var(--line); border-radius:18px; background:var(--panel); }
-      .panel.active { display:block; }
-      .panel-head { display:flex; justify-content:space-between; align-items:flex-start; gap:18px; margin-bottom:22px; }
-      .panel-head h2 { margin-bottom:6px; font-size:25px; letter-spacing:-.035em; }
-      .panel-head p { margin-bottom:0; }
-      label { display:block; margin:14px 0 7px; font-weight:700; }
-      input,select,textarea { box-sizing:border-box; width:100%; padding:12px; border:1px solid #353541; border-radius:9px; background:var(--panel-2); color:var(--text); font:inherit; }
-      textarea { min-height:80px; resize:vertical; }
-      button.action { margin-top:16px; padding:10px 14px; border:0; border-radius:9px; background:var(--text); color:#101016; font:inherit; font-weight:750; cursor:pointer; }
-      button.secondary { background:#292933; color:#fff; }
-      #save-status,#schedule-status { margin-left:10px; }
-      .schedule-list { display:grid; gap:10px; margin-top:20px; }
-      .schedule-item { display:grid; grid-template-columns:1fr auto; gap:14px; align-items:center; padding:14px; border:1px solid var(--line); border-radius:12px; background:var(--panel-2); }
-      .schedule-item strong { display:block; }
-      .schedule-meta { color:var(--muted); font-size:.9rem; margin-top:4px; }
-      .actions { display:flex; gap:8px; flex-wrap:wrap; }
-      .danger { background:#5b1e24 !important; color:#fff !important; }
-      .placeholder { min-height:190px; display:grid; place-items:center; text-align:center; border:1px dashed #353541; border-radius:14px; background:rgba(15,15,21,.55); }
-      .placeholder p { max-width:520px; margin:0; line-height:1.6; }
-      .admin-actions { display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap; margin-top:18px; }
-      .admin-actions button { margin-top:0; }
-      @media (max-width:800px) { .menu { grid-template-columns:repeat(2,minmax(0,1fr)); } .admin-head { display:block; } .admin-head p { margin-top:10px; } }
-      @media (max-width:600px) { main { width:min(100% - 20px,1100px); margin:20px auto 35px; } header { padding:18px 16px; } .menu { grid-template-columns:1fr 1fr; gap:9px; } .menu-button { min-height:92px; padding:14px; } .panel { padding:18px; border-radius:15px; } .panel-head { display:block; } .schedule-item { grid-template-columns:1fr; } .admin-actions { justify-content:stretch; } .admin-actions button { width:100%; } }
-    </style>
-  </head>
-  <body>
-    <header><strong>Sanci9517 Admin</strong></header>
-    <main>
-      <div class="admin-head">
-        <div>
-          <h1>Vezérlőpult</h1>
-          <p id="welcome" class="muted">Session ellenőrzése...</p>
-        </div>
-        <div class="muted">Moduláris adminisztráció</div>
-      </div>
-
-      <nav class="menu" aria-label="Admin menü">
-        <button class="menu-button active" type="button" data-admin-target="dashboard"><span class="menu-icon">⌂</span><span class="menu-title">Áttekintés</span><span class="menu-desc">Admin kezdőlap</span></button>
-        <button class="menu-button" type="button" data-admin-target="schedule"><span class="menu-icon">📅</span><span class="menu-title">Adásrend</span><span class="menu-desc">Stream időpontok kezelése</span></button>
-        <button class="menu-button" type="button" data-admin-target="settings"><span class="menu-icon">⚙</span><span class="menu-title">Beállítások</span><span class="menu-desc">A webhely alapadatai</span></button>
-        <button class="menu-button" type="button" data-admin-target="content"><span class="menu-icon">✦</span><span class="menu-title">Tartalom</span><span class="menu-desc">Oldalak és tartalmak</span></button>
-        <button class="menu-button" type="button" data-admin-target="social"><span class="menu-icon">◎</span><span class="menu-title">Social</span><span class="menu-desc">Twitch, YouTube, TikTok, Discord</span></button>
-        <button class="menu-button" type="button" disabled><span class="menu-icon">▣</span><span class="menu-title">Média</span><span class="menu-desc">Későbbi modul</span></button>
-        <button class="menu-button" type="button" disabled><span class="menu-icon">⌁</span><span class="menu-title">Statisztika</span><span class="menu-desc">Későbbi modul</span></button>
-        <button class="menu-button" type="button" disabled><span class="menu-icon">AI</span><span class="menu-title">AI vezérlés</span><span class="menu-desc">Későbbi modul</span></button>
-      </nav>
-
-      <section class="panel active" data-admin-panel="dashboard">
-        <div class="panel-head"><div><h2>Admin kezdőlap</h2><p class="muted">Innen éred el az egyes adminisztrációs modulokat. Az egyes funkciók külön kezelhetők.</p></div></div>
-        <div class="placeholder"><p class="muted">Válassz egy modult a fenti menüből. A működő funkciók külön panelen nyílnak meg, így később új modulok hozzáadhatók a meglévő rendszer átírása nélkül.</p></div>
-      </section>
-
-      <section class="panel" data-admin-panel="settings">
-        <div class="panel-head"><div><h2>Beállítások</h2><p class="muted">A webhely alapadatai. A mentés közvetlenül a D1 adatbázisba történik.</p></div></div>
-        <label for="site-name">Webhely neve</label>
-        <input id="site-name" maxlength="120" autocomplete="off">
-        <label for="tagline">Rövid leírás</label>
-        <input id="tagline" maxlength="240" autocomplete="off">
-        <button id="save" class="action" type="button">Mentés</button><span id="save-status" class="muted"></span>
-      </section>
-
-      <section class="panel" data-admin-panel="schedule">
-        <div class="panel-head"><div><h2>📅 Adásrend</h2><p class="muted">Az itt létrehozott adások D1-be kerülnek, és a publikus Adásrend oldal automatikusan megjeleníti őket.</p></div></div>
-        <input id="schedule-id" type="hidden">
-        <label for="schedule-title">Adás címe / játék</label>
-        <input id="schedule-title" maxlength="160" placeholder="Fortnite">
-        <label for="schedule-platform">Platform</label>
-        <select id="schedule-platform"><option value="Twitch">Twitch</option><option value="YouTube">YouTube</option><option value="TikTok">TikTok</option><option value="Egyéb">Egyéb</option></select>
-        <label for="schedule-start">Kezdés</label>
-        <input id="schedule-start" type="datetime-local">
-        <label for="schedule-end">Befejezés (opcionális)</label>
-        <input id="schedule-end" type="datetime-local">
-        <label for="schedule-status-select">Állapot</label>
-        <select id="schedule-status-select"><option value="scheduled">Tervezett</option><option value="live">🔴 Élő</option><option value="completed">Befejezett</option><option value="cancelled">Törölt</option></select>
-        <label for="schedule-url">Link (opcionális)</label>
-        <input id="schedule-url" maxlength="500" placeholder="https://...">
-        <label for="schedule-notes">Megjegyzés</label>
-        <textarea id="schedule-notes" maxlength="500" placeholder="Pl. Hearthstone ranked"></textarea>
-        <div class="actions"><button id="schedule-save" class="action" type="button">Adás mentése</button><button id="schedule-cancel" class="action secondary" type="button" hidden>Mégse</button><span id="schedule-status" class="muted"></span></div>
-        <div id="schedule-list" class="schedule-list"><p class="muted">Adásrend betöltése...</p></div>
-      </section>
-
-      <section class="panel" data-admin-panel="content">
-        <div class="panel-head"><div><h2>Tartalom</h2><p class="muted">Az oldalak és tartalmak kezelése külön modulban fog készülni.</p></div></div>
-        <div class="placeholder"><p class="muted">Ez a modul még nincs bekötve. A menüpont már elő van készítve, a funkciót külön fogjuk felépíteni.</p></div>
-      </section>
-
-      <section class="panel" data-admin-panel="social">
-        <div class="panel-head"><div><h2>Social</h2><p class="muted">Twitch, YouTube, TikTok és Discord kapcsolatok kezelése külön modulban.</p></div></div>
-        <div class="placeholder"><p class="muted">Ez a modul még nincs bekötve. Később önállóan kapcsolódik majd a megfelelő API-khoz és adatokhoz.</p></div>
-      </section>
-
-      <div class="admin-actions"><button id="public-site" class="action" type="button">← Publikus oldal</button><button id="logout" class="action secondary" type="button">Kijelentkezés</button></div>
-    </main>
-    <script>
-      const welcome=document.getElementById("welcome");
-      const logout=document.getElementById("logout");
-      const publicSite=document.getElementById("public-site");
-      const siteName=document.getElementById("site-name");
-      const tagline=document.getElementById("tagline");
-      const save=document.getElementById("save");
-      const saveStatus=document.getElementById("save-status");
-      const scheduleId=document.getElementById("schedule-id");
-      const scheduleTitle=document.getElementById("schedule-title");
-      const schedulePlatform=document.getElementById("schedule-platform");
-      const scheduleStart=document.getElementById("schedule-start");
-      const scheduleEnd=document.getElementById("schedule-end");
-      const scheduleState=document.getElementById("schedule-status-select");
-      const scheduleUrl=document.getElementById("schedule-url");
-      const scheduleNotes=document.getElementById("schedule-notes");
-      const scheduleSave=document.getElementById("schedule-save");
-      const scheduleCancel=document.getElementById("schedule-cancel");
-      const scheduleStatus=document.getElementById("schedule-status");
-      const scheduleList=document.getElementById("schedule-list");
-      let leavingAdmin=false;
-
-      async function logoutAndGo(target){
-        if(leavingAdmin)return;
-        leavingAdmin=true;
-        try{await fetch("/api/auth/logout",{method:"POST",credentials:"same-origin",keepalive:true});}catch{}
-        window.location.replace(target);
-      }
-      publicSite.addEventListener("click",()=>logoutAndGo("/"));
-      logout.addEventListener("click",()=>logoutAndGo("/admin/login"));
-      window.addEventListener("pagehide",()=>{
-        if(leavingAdmin)return;
-        try{navigator.sendBeacon("/api/auth/logout","");}catch{}
-      });
-
-      function showPanel(target){
-        document.querySelectorAll("[data-admin-panel]").forEach(panel=>panel.classList.toggle("active",panel.dataset.adminPanel===target));
-        document.querySelectorAll("[data-admin-target]").forEach(button=>button.classList.toggle("active",button.dataset.adminTarget===target));
-        if(history.replaceState) history.replaceState(null,"",target==="dashboard"?"/admin.html":`/admin.html#${target}`);
-      }
-      document.querySelectorAll("[data-admin-target]").forEach(button=>button.addEventListener("click",()=>showPanel(button.dataset.adminTarget)));
-      const initialPanel=location.hash.replace("#","");
-      if(initialPanel&&document.querySelector(`[data-admin-panel="${initialPanel}"]`)) showPanel(initialPanel);
-
-      async function loadSession(){
-        try{const response=await fetch("/api/auth/session",{credentials:"same-origin",cache:"no-store"});const data=await response.json();if(!response.ok||!data.ok||!data.data?.authenticated){window.location.replace("/admin/login");return false;}welcome.textContent=`Bejelentkezve: ${data.data.user.displayName} (${data.data.user.role})`;return true;}catch{window.location.replace("/admin/login");return false;}
-      }
-      async function loadSettings(){
-        const response=await fetch("/api/admin/settings",{credentials:"same-origin",cache:"no-store"});const data=await response.json();if(!response.ok||!data.ok)throw new Error(data.error?.message||"Betöltési hiba");siteName.value=data.data.siteName||"";tagline.value=data.data.tagline||"";
-      }
-      async function loadSchedule(){
-        scheduleList.innerHTML='<p class="muted">Adásrend betöltése...</p>';const response=await fetch("/api/admin/schedule",{credentials:"same-origin",cache:"no-store"});const data=await response.json();if(!response.ok||!data.ok)throw new Error(data.error?.message||"Adásrend betöltési hiba");if(!data.data.length){scheduleList.innerHTML='<p class="muted">Még nincs felvitt adás.</p>';return;}scheduleList.innerHTML=data.data.map(item=>{const start=new Date(item.startsAt).toLocaleString("hu-HU",{dateStyle:"medium",timeStyle:"short"});const end=item.endsAt?` → ${new Date(item.endsAt).toLocaleTimeString("hu-HU",{hour:"2-digit",minute:"2-digit"})}`:"";return `<div class="schedule-item"><div><strong>${escapeHtml(item.title)}</strong><div class="schedule-meta">${escapeHtml(item.platform)} • ${start}${end} • ${escapeHtml(item.status)}</div></div><div class="actions"><button type="button" class="action secondary" data-edit="${item.id}">Szerkesztés</button><button type="button" class="action danger" data-delete="${item.id}">Törlés</button></div></div>`;}).join("");scheduleList.querySelectorAll("[data-edit]").forEach(button=>button.addEventListener("click",()=>editSchedule(data.data.find(item=>item.id===button.dataset.edit))));scheduleList.querySelectorAll("[data-delete]").forEach(button=>button.addEventListener("click",()=>deleteSchedule(button.dataset.delete)));
-      }
-      function escapeHtml(value){return String(value).replace(/[&<>\"]/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[char]));}
-      function editSchedule(item){if(!item)return;scheduleId.value=item.id;scheduleTitle.value=item.title;schedulePlatform.value=item.platform;scheduleStart.value=item.startsAt.slice(0,16);scheduleEnd.value=item.endsAt?item.endsAt.slice(0,16):"";scheduleState.value=item.status;scheduleUrl.value=item.url||"";scheduleNotes.value=item.notes||"";scheduleSave.textContent="Adás frissítése";scheduleCancel.hidden=false;window.scrollTo({top:document.querySelector('[data-admin-panel="schedule"]').offsetTop-20,behavior:"smooth"});}
-      function resetSchedule(){scheduleId.value="";scheduleTitle.value="";scheduleStart.value="";scheduleEnd.value="";scheduleUrl.value="";scheduleNotes.value="";scheduleState.value="scheduled";scheduleSave.textContent="Adás mentése";scheduleCancel.hidden=true;}
-      scheduleCancel.addEventListener("click",resetSchedule);
-      scheduleSave.addEventListener("click",async()=>{scheduleSave.disabled=true;scheduleStatus.textContent="Mentés...";const body={id:scheduleId.value||undefined,title:scheduleTitle.value,platform:schedulePlatform.value,startsAt:scheduleStart.value,endsAt:scheduleEnd.value,status:scheduleState.value,url:scheduleUrl.value,notes:scheduleNotes.value};try{const response=await fetch("/api/admin/schedule",{method:scheduleId.value?"PUT":"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});const data=await response.json();if(!response.ok||!data.ok)throw new Error(data.error?.message||"Mentési hiba");scheduleStatus.textContent="Mentve ✓";resetSchedule();await loadSchedule();}catch(error){scheduleStatus.textContent=error instanceof Error?error.message:"Mentési hiba";}finally{scheduleSave.disabled=false;}});
-      async function deleteSchedule(id){if(!confirm("Biztosan törlöd ezt az adást?"))return;try{const response=await fetch("/api/admin/schedule",{method:"DELETE",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({id})});const data=await response.json();if(!response.ok||!data.ok)throw new Error(data.error?.message||"Törlési hiba");scheduleStatus.textContent="Törölve ✓";await loadSchedule();}catch(error){scheduleStatus.textContent=error instanceof Error?error.message:"Törlési hiba";}}
-      save.addEventListener("click",async()=>{save.disabled=true;saveStatus.textContent="Mentés...";try{const response=await fetch("/api/admin/settings",{method:"PUT",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({siteName:siteName.value,tagline:tagline.value})});const data=await response.json();if(!response.ok||!data.ok)throw new Error(data.error?.message||"Mentési hiba");siteName.value=data.data.siteName;tagline.value=data.data.tagline;saveStatus.textContent="Mentve ✓";}catch(error){saveStatus.textContent=error instanceof Error?error.message:"Mentési hiba";}finally{save.disabled=false;}});
-      (async()=>{if(await loadSession()){try{await loadSettings();await loadSchedule();}catch(error){scheduleStatus.textContent=error instanceof Error?error.message:"Betöltési hiba";}}})();
-    </script>
-  </body>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Sanci9517 — Admin</title>
+<style>
+:root{--bg:#0b0b10;--panel:#14141b;--panel2:#0f0f15;--line:#292933;--hot:#45455a;--text:#f5f5f7;--muted:#a9a9b3;--accent:#7c8cff;--danger:#5b1e24;--ok:#244f38}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+header{padding:22px 24px;border-bottom:1px solid var(--line);background:var(--panel);position:sticky;top:0;z-index:10}header strong{letter-spacing:-.02em}
+main{width:min(1180px,calc(100% - 32px));margin:32px auto 50px}.admin-head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:28px}h1,h2,h3,p{margin-top:0}h1{margin-bottom:8px;font-size:clamp(34px,5vw,54px);letter-spacing:-.055em}.muted{color:var(--muted)}.admin-head p{margin-bottom:0}
+.menu{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:24px}.menu-button{min-height:104px;padding:18px;border:1px solid var(--line);border-radius:16px;background:var(--panel);color:var(--text);text-align:left;cursor:pointer;transition:.18s}.menu-button:hover{border-color:var(--hot);background:#181820;transform:translateY(-1px)}.menu-button.active{border-color:rgba(124,140,255,.55);background:linear-gradient(135deg,rgba(124,140,255,.13),var(--panel))}.menu-button:disabled{opacity:.42;cursor:not-allowed;transform:none}.menu-icon{display:block;font-size:20px;margin-bottom:10px}.menu-title{display:block;font-weight:850;font-size:15px}.menu-desc{display:block;margin-top:5px;color:#858594;font-size:11px;line-height:1.4}
+.panel{display:none;padding:24px;border:1px solid var(--line);border-radius:18px;background:var(--panel)}.panel.active{display:block}.panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:22px}.panel-head h2{margin-bottom:6px;font-size:25px;letter-spacing:-.035em}.panel-head p{margin-bottom:0}label{display:block;margin:14px 0 7px;font-weight:700}input,select,textarea{width:100%;padding:12px;border:1px solid #353541;border-radius:9px;background:var(--panel2);color:var(--text);font:inherit}textarea{min-height:120px;resize:vertical}button.action{margin-top:16px;padding:10px 14px;border:0;border-radius:9px;background:var(--text);color:#101016;font:inherit;font-weight:750;cursor:pointer}button.secondary{background:#292933;color:#fff}.danger{background:var(--danger)!important;color:#fff!important}.placeholder{min-height:190px;display:grid;place-items:center;text-align:center;border:1px dashed #353541;border-radius:14px;background:rgba(15,15,21,.55)}.placeholder p{max-width:520px;margin:0;line-height:1.6}.admin-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:18px}.admin-actions button{margin-top:0}
+.schedule-list,.content-list{display:grid;gap:10px;margin-top:20px}.schedule-item,.content-item{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--panel2)}.schedule-item strong,.content-item strong{display:block}.schedule-meta,.content-meta{color:var(--muted);font-size:.9rem;margin-top:4px}.actions{display:flex;gap:8px;flex-wrap:wrap}.actions button{margin-top:0}.content-editor{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}.content-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,1.2fr);gap:22px}.check{display:flex;align-items:center;gap:9px;margin-top:14px}.check input{width:auto}.status{margin-left:10px;color:var(--muted)}.badge{display:inline-block;padding:3px 8px;border:1px solid var(--line);border-radius:999px;font-size:11px;margin-left:7px}
+@media(max-width:900px){.menu{grid-template-columns:repeat(2,minmax(0,1fr))}.content-grid{grid-template-columns:1fr}.admin-head{display:block}.admin-head p{margin-top:10px}}
+@media(max-width:600px){main{width:min(100% - 20px,1180px);margin:20px auto 35px}header{padding:18px 16px}.menu{gap:9px}.menu-button{min-height:92px;padding:14px}.panel{padding:18px;border-radius:15px}.panel-head{display:block}.schedule-item,.content-item{grid-template-columns:1fr}.admin-actions{justify-content:stretch}.admin-actions button{width:100%}.content-grid{gap:14px}}
+</style>
+</head>
+<body>
+<header><strong>Sanci9517 Admin</strong></header>
+<main>
+<div class="admin-head"><div><h1>Vezérlőpult</h1><p id="welcome" class="muted">Session ellenőrzése...</p></div><div class="muted">Moduláris adminisztráció</div></div>
+<nav class="menu" aria-label="Admin menü">
+<button class="menu-button active" type="button" data-admin-target="dashboard"><span class="menu-icon">⌂</span><span class="menu-title">Áttekintés</span><span class="menu-desc">Admin kezdőlap</span></button>
+<button class="menu-button" type="button" data-admin-target="schedule"><span class="menu-icon">📅</span><span class="menu-title">Adásrend</span><span class="menu-desc">Stream időpontok kezelése</span></button>
+<button class="menu-button" type="button" data-admin-target="settings"><span class="menu-icon">⚙</span><span class="menu-title">Beállítások</span><span class="menu-desc">A webhely alapadatai</span></button>
+<button class="menu-button" type="button" data-admin-target="content"><span class="menu-icon">✦</span><span class="menu-title">Tartalom</span><span class="menu-desc">Oldalak és tartalmak</span></button>
+<button class="menu-button" type="button" data-admin-target="social"><span class="menu-icon">◎</span><span class="menu-title">Social</span><span class="menu-desc">Twitch, YouTube, TikTok, Discord</span></button>
+<button class="menu-button" type="button" disabled><span class="menu-icon">▣</span><span class="menu-title">Média</span><span class="menu-desc">Későbbi modul</span></button>
+<button class="menu-button" type="button" disabled><span class="menu-icon">⌁</span><span class="menu-title">Statisztika</span><span class="menu-desc">Későbbi modul</span></button>
+<button class="menu-button" type="button" disabled><span class="menu-icon">AI</span><span class="menu-title">AI vezérlés</span><span class="menu-desc">Későbbi modul</span></button>
+</nav>
+<section class="panel active" data-admin-panel="dashboard"><div class="panel-head"><div><h2>Admin kezdőlap</h2><p class="muted">Innen éred el az egyes adminisztrációs modulokat. A működő funkciók külön panelen kezelhetők.</p></div></div><div class="placeholder"><p class="muted">Válassz egy modult a fenti menüből. Az új modulok külön kapcsolódnak a backendhez.</p></div></section>
+<section class="panel" data-admin-panel="settings"><div class="panel-head"><div><h2>Beállítások</h2><p class="muted">A webhely alapadatai. A mentés közvetlenül a D1 adatbázisba történik.</p></div></div><label for="site-name">Webhely neve</label><input id="site-name" maxlength="120" autocomplete="off"><label for="tagline">Rövid leírás</label><input id="tagline" maxlength="240" autocomplete="off"><button id="save" class="action" type="button">Mentés</button><span id="save-status" class="status"></span></section>
+<section class="panel" data-admin-panel="schedule"><div class="panel-head"><div><h2>📅 Adásrend</h2><p class="muted">Az adások D1-be kerülnek, és a publikus Adásrend oldal használja őket.</p></div></div><input id="schedule-id" type="hidden"><label for="schedule-title">Adás címe / játék</label><input id="schedule-title" maxlength="160" placeholder="Fortnite"><label for="schedule-platform">Platform</label><select id="schedule-platform"><option value="Twitch">Twitch</option><option value="YouTube">YouTube</option><option value="TikTok">TikTok</option><option value="Egyéb">Egyéb</option></select><label for="schedule-start">Kezdés</label><input id="schedule-start" type="datetime-local"><label for="schedule-end">Befejezés (opcionális)</label><input id="schedule-end" type="datetime-local"><label for="schedule-status-select">Állapot</label><select id="schedule-status-select"><option value="scheduled">Tervezett</option><option value="live">🔴 Élő</option><option value="completed">Befejezett</option><option value="cancelled">Törölt</option></select><label for="schedule-url">Link (opcionális)</label><input id="schedule-url" maxlength="500" placeholder="https://..."><label for="schedule-notes">Megjegyzés</label><textarea id="schedule-notes" maxlength="500" placeholder="Pl. Hearthstone ranked"></textarea><div class="actions"><button id="schedule-save" class="action" type="button">Adás mentése</button><button id="schedule-cancel" class="action secondary" type="button" hidden>Mégse</button><span id="schedule-status" class="status"></span></div><div id="schedule-list" class="schedule-list"><p class="muted">Adásrend betöltése...</p></div></section>
+<section class="panel" data-admin-panel="content"><div class="panel-head"><div><h2>✦ Tartalom</h2><p class="muted">Oldalak létrehozása, szerkesztése, publikálása és törlése. Az adatok a D1 pages táblájába kerülnek.</p></div><button id="content-new" class="action" type="button">+ Új oldal</button></div><div id="content-list" class="content-list"><p class="muted">Tartalom betöltése...</p></div><div id="content-editor" class="content-editor" hidden><div class="content-grid"><div><input id="content-id" type="hidden"><label for="content-title">Cím</label><input id="content-title" maxlength="160" placeholder="Oldal címe"><label for="content-slug">Slug</label><input id="content-slug" maxlength="80" placeholder="pl. bemutatkozas"><label for="content-description">Leírás</label><textarea id="content-description" maxlength="500" placeholder="Rövid leírás"></textarea><label class="check"><input id="content-published" type="checkbox" checked> Publikált oldal</label></div><div><label for="content-json">Tartalom (JSON)</label><textarea id="content-json" style="min-height:330px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace" spellcheck="false">{}</textarea><p class="muted" style="font-size:12px;margin-top:7px">Érvényes JSON objektumot adj meg. Ez az API jelenlegi rugalmas tartalomformátuma.</p></div></div><div class="actions"><button id="content-save" class="action" type="button">Mentés</button><button id="content-cancel" class="action secondary" type="button">Mégse</button><span id="content-status" class="status"></span></div></div></section>
+<section class="panel" data-admin-panel="social"><div class="panel-head"><div><h2>Social</h2><p class="muted">Twitch, YouTube, TikTok és Discord kapcsolatok kezelése külön modulban.</p></div></div><div class="placeholder"><p class="muted">A Social modul külön backend/API rétegként következik.</p></div></section>
+<div class="admin-actions"><button id="public-site" class="action" type="button">← Publikus oldal</button><button id="logout" class="action secondary" type="button">Kijelentkezés</button></div>
+</main>
+<script>
+const $=id=>document.getElementById(id);const welcome=$("welcome"),logout=$("logout"),publicSite=$("public-site");let leavingAdmin=false;
+async function logoutAndGo(target){if(leavingAdmin)return;leavingAdmin=true;try{await fetch("/api/auth/logout",{method:"POST",credentials:"same-origin",keepalive:true})}catch{}window.location.replace(target)}
+publicSite.addEventListener("click",()=>logoutAndGo("/"));logout.addEventListener("click",()=>logoutAndGo("/admin/login"));window.addEventListener("pagehide",()=>{if(leavingAdmin)return;try{navigator.sendBeacon("/api/auth/logout","")}catch{}});
+function showPanel(target){document.querySelectorAll("[data-admin-panel]").forEach(p=>p.classList.toggle("active",p.dataset.adminPanel===target));document.querySelectorAll("[data-admin-target]").forEach(b=>b.classList.toggle("active",b.dataset.adminTarget===target));if(history.replaceState)history.replaceState(null,"",target==="dashboard"?"/admin.html":`/admin.html#${target}`);if(target==="schedule")loadSchedule();if(target==="settings")loadSettings();if(target==="content")loadContent()}
+document.querySelectorAll("[data-admin-target]").forEach(b=>b.addEventListener("click",()=>showPanel(b.dataset.adminTarget)));const initial=location.hash.slice(1);if(initial&&document.querySelector(`[data-admin-panel="${initial}"]`))showPanel(initial);
+async function api(url,options={}){const response=await fetch(url,{credentials:"same-origin",cache:"no-store",...options});let data=null;try{data=await response.json()}catch{}if(!response.ok||!data?.ok)throw new Error(data?.error?.message||data?.error?.code||`HTTP ${response.status}`);return data.data}
+async function loadSession(){try{const data=await api("/api/auth/session");if(!data?.authenticated){window.location.replace("/admin/login");return false}welcome.textContent=`Bejelentkezve: ${data.user.displayName} (${data.user.role})`;return true}catch{window.location.replace("/admin/login");return false}}
+async function loadSettings(){try{const data=await api("/api/admin/settings");$("site-name").value=data?.siteName??"";$("tagline").value=data?.tagline??""}catch(e){$("save-status").textContent=`Hiba: ${e.message}`}}
+$("save").addEventListener("click",async()=>{const s=$("save-status");s.textContent="Mentés...";try{await api("/api/admin/settings",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({siteName:$("site-name").value.trim(),tagline:$("tagline").value.trim()})});s.textContent="Mentve ✓"}catch(e){s.textContent=`Hiba: ${e.message}`} });
+const sid=$("schedule-id"),stitle=$("schedule-title"),splatform=$("schedule-platform"),sstart=$("schedule-start"),send=$("schedule-end"),sstate=$("schedule-status-select"),surl=$("schedule-url"),snotes=$("schedule-notes"),slist=$("schedule-list"),ssave=$("schedule-save"),scancel=$("schedule-cancel"),sstatus=$("schedule-status");
+function resetSchedule(){sid.value="";stitle.value="";splatform.value="Twitch";sstart.value="";send.value="";sstate.value="scheduled";surl.value="";snotes.value="";scancel.hidden=true;ssave.textContent="Adás mentése"}
+function scheduleValue(v){if(!v)return"";const d=new Date(v);if(Number.isNaN(d.getTime()))return"";const p=n=>String(n).padStart(2,"0");return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`}
+function renderSchedule(items){if(!items.length){slist.innerHTML='<p class="muted">Nincs még adás az adatbázisban.</p>';return}slist.innerHTML=items.map(x=>`<article class="schedule-item"><div><strong>${esc(x.title)}</strong><div class="schedule-meta">${esc(x.platform)} · ${esc(x.startsAt||"")} ${x.endsAt?`→ ${esc(x.endsAt)}`:""} · ${esc(x.status)}</div>${x.notes?`<div class="schedule-meta">${esc(x.notes)}</div>`:""}</div><div class="actions"><button class="action secondary" data-edit-schedule="${esc(x.id)}" type="button">Szerkesztés</button><button class="action danger" data-delete-schedule="${esc(x.id)}" type="button">Törlés</button></div></article>`).join("");slist.querySelectorAll("[data-edit-schedule]").forEach(b=>b.addEventListener("click",()=>editSchedule(items.find(x=>x.id===b.dataset.editSchedule))));slist.querySelectorAll("[data-delete-schedule]").forEach(b=>b.addEventListener("click",()=>deleteSchedule(b.dataset.deleteSchedule)))}
+async function loadSchedule(){try{renderSchedule(await api("/api/admin/schedule")||[])}catch(e){slist.innerHTML=`<p class="muted">Hiba: ${esc(e.message)}</p>`}}
+function editSchedule(x){if(!x)return;sid.value=x.id;stitle.value=x.title||"";splatform.value=x.platform||"Twitch";sstart.value=scheduleValue(x.startsAt);send.value=scheduleValue(x.endsAt);sstate.value=x.status||"scheduled";surl.value=x.url||"";snotes.value=x.notes||"";scancel.hidden=false;ssave.textContent="Adás módosítása";window.scrollTo({top:0,behavior:"smooth"})}
+async function deleteSchedule(id){if(!confirm("Biztosan törlöd ezt az adást?"))return;sstatus.textContent="Törlés...";try{await api("/api/admin/schedule",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({id})});sstatus.textContent="Törölve ✓";await loadSchedule()}catch(e){sstatus.textContent=`Hiba: ${e.message}`}}
+ssave.addEventListener("click",async()=>{sstatus.textContent="Mentés...";const body={title:stitle.value.trim(),platform:splatform.value,startsAt:sstart.value,endsAt:send.value||null,status:sstate.value,url:surl.value.trim()||null,notes:snotes.value.trim()};try{if(sid.value)body.id=sid.value;await api("/api/admin/schedule",{method:sid.value?"PUT":"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});sstatus.textContent="Mentve ✓";resetSchedule();await loadSchedule()}catch(e){sstatus.textContent=`Hiba: ${e.message}`}});scancel.addEventListener("click",()=>{resetSchedule();sstatus.textContent="Szerkesztés megszakítva"});
+const clist=$("content-list"),ceditor=$("content-editor"),cid=$("content-id"),ctitle=$("content-title"),cslug=$("content-slug"),cdesc=$("content-description"),cpub=$("content-published"),cjson=$("content-json"),cstatus=$("content-status");let contentItems=[];
+function esc(v){return String(v??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[c]))}
+function renderContent(items){contentItems=items||[];if(!contentItems.length){clist.innerHTML='<p class="muted">Nincs még oldal. Az „Új oldal” gombbal létrehozhatod az elsőt.</p>';return}clist.innerHTML=contentItems.map(x=>`<article class="content-item"><div><strong>${esc(x.title)} ${x.isPublished?'<span class="badge">Publikált</span>':'<span class="badge">Piszkozat</span>'}</strong><div class="content-meta">/${esc(x.slug)} · módosítva: ${esc(x.updatedAt||"")}</div>${x.description?`<div class="content-meta">${esc(x.description)}</div>`:""}</div><div class="actions"><button class="action secondary" data-edit-content="${esc(x.id)}" type="button">Szerkesztés</button><button class="action danger" data-delete-content="${esc(x.id)}" type="button">Törlés</button></div></article>`).join("");clist.querySelectorAll("[data-edit-content]").forEach(b=>b.addEventListener("click",()=>editContent(contentItems.find(x=>x.id===b.dataset.editContent))));clist.querySelectorAll("[data-delete-content]").forEach(b=>b.addEventListener("click",()=>deleteContent(b.dataset.deleteContent)))}
+async function loadContent(){clist.innerHTML='<p class="muted">Tartalom betöltése...</p>';try{renderContent(await api("/api/admin/pages")||[])}catch(e){clist.innerHTML=`<p class="muted">Hiba: ${esc(e.message)}</p>`}}
+function openNewContent(){cid.value="";ctitle.value="";cslug.value="";cdesc.value="";cpub.checked=true;cjson.value="{}";cstatus.textContent="";ceditor.hidden=false;ctitle.focus()}
+function editContent(x){if(!x)return;cid.value=x.id;ctitle.value=x.title||"";cslug.value=x.slug||"";cdesc.value=x.description||"";cpub.checked=Boolean(x.isPublished);cjson.value=JSON.stringify(x.content??{},null,2);cstatus.textContent="";ceditor.hidden=false;ctitle.focus()}
+function closeContent(){ceditor.hidden=true}
+async function deleteContent(id){if(!confirm("Biztosan törlöd ezt az oldalt?"))return;cstatus.textContent="Törlés...";try{await api("/api/admin/pages",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({id})});cstatus.textContent="Törölve ✓";await loadContent()}catch(e){cstatus.textContent=`Hiba: ${e.message}`}}
+$("content-new").addEventListener("click",openNewContent);$("content-cancel").addEventListener("click",closeContent);
+$("content-save").addEventListener("click",async()=>{cstatus.textContent="Mentés...";let parsed;try{parsed=JSON.parse(cjson.value||"{}")}catch{cstatus.textContent="Hiba: a tartalom nem érvényes JSON.";return}if(parsed===null||Array.isArray(parsed)||typeof parsed!=="object"){cstatus.textContent="Hiba: a tartalomnak JSON objektumnak kell lennie.";return}const body={title:ctitle.value.trim(),slug:cslug.value.trim(),description:cdesc.value.trim(),content:parsed,isPublished:cpub.checked};try{if(cid.value)body.id=cid.value;await api("/api/admin/pages",{method:cid.value?"PUT":"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});cstatus.textContent="Mentve ✓";closeContent();await loadContent()}catch(e){cstatus.textContent=`Hiba: ${e.message}`}});
+loadSession();
+</script>
+</body>
 </html>
