@@ -94,7 +94,7 @@ export async function adminPagesRoute(request: Request, env: Env): Promise<Respo
       throw e;
     }
     await audit(env, user.id, "page.create", id, { slug, title });
-    return ok({ id, slug, title, description, content, isPublished }, 201);
+    return ok({ id, slug, title, description, content, isPublished });
   }
 
   if (request.method === "PUT") {
