@@ -1,1 +1,136 @@
-<!doctype html><html lang="hu"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Sanci9517 — aktuális és következő élő adások."><title>Sanci9517 — Adásrend</title><link rel="stylesheet" href="/assets/site.css"><style>.schedule-list{display:grid;gap:12px;max-width:980px;margin:0 auto}.schedule-row{display:grid;grid-template-columns:116px minmax(0,1fr);min-height:132px;border:1px solid var(--line);border-radius:var(--radius-lg);background:rgba(9,16,29,.72);overflow:hidden;transition:.2s}.schedule-row:hover{border-color:var(--line-hot);transform:translateY(-1px);box-shadow:0 14px 34px rgba(0,0,0,.16)}.schedule-day{display:flex;flex-direction:column;justify-content:center;align-items:center;padding:18px 12px;border-right:1px solid var(--line);background:rgba(255,255,255,.025);text-align:center}.schedule-weekday{font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:#9eb5ff}.schedule-daynum{margin-top:5px;font-size:38px;line-height:1;font-weight:950;letter-spacing:-.06em}.schedule-month{margin-top:6px;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.1em;font-weight:800}.schedule-content{padding:20px 24px;display:flex;flex-direction:column;justify-content:center;min-width:0}.schedule-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.schedule-date{font-size:13px;color:var(--muted);font-weight:750}.schedule-time{font-size:25px;line-height:1;font-weight:950;letter-spacing:-.035em}.schedule-status{margin-left:auto;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#aeb8c8}.schedule-status.live{color:#ff7f94}.schedule-game{margin-top:12px;font-size:25px;line-height:1.1;font-weight:950;letter-spacing:-.035em;color:var(--text)}.schedule-title{margin-top:5px;color:var(--muted);font-size:14px;line-height:1.45}.schedule-meta{margin-top:8px;font-size:12px;color:#9aa7ba}.schedule-action{margin-top:11px}.schedule-action .btn{min-height:34px;padding:0 12px;font-size:11px}.schedule-empty{padding:54px 24px;text-align:center;border:1px dashed rgba(255,255,255,.15);border-radius:var(--radius-lg);color:var(--muted)}.schedule-empty .card-icon{margin:0 auto 16px}.schedule-empty h3{color:var(--text);font-size:22px}@media(max-width:520px){.schedule-row{grid-template-columns:82px minmax(0,1fr);min-height:126px}.schedule-day{padding:16px 8px}.schedule-weekday{font-size:10px}.schedule-daynum{font-size:31px}.schedule-month{font-size:9px}.schedule-content{padding:17px 16px}.schedule-time{font-size:21px}.schedule-date{font-size:11px}.schedule-game{font-size:21px;margin-top:10px}.schedule-title{font-size:13px}.schedule-status{margin-left:0}}}</style></head><body><header class="site-header"><div class="wrap nav"><a class="brand" href="/"><span class="brand-mark">S</span><span data-site-name>Sanci9517</span></a><div class="nav-actions"><button class="menu-button" data-menu-button type="button" aria-label="Menü" aria-expanded="false">☰</button></div></div><nav class="menu-panel" data-menu-panel aria-label="Fő navigáció"><div class="menu-grid"><a class="menu-link" href="/twitch.html">🎮 Élő adás<small>Twitch</small></a><a class="menu-link active" href="/schedule.html">📅 Adásrend<small>Időpontok</small></a><a class="menu-link" href="/youtube.html">▶ YouTube<small>Videók</small></a><a class="menu-link" href="/tiktok.html">♪ TikTok<small>Rövid klipek</small></a><a class="menu-link" href="/vod.html">🎬 VOD<small>Legjobb pillanatok</small></a><a class="menu-link" href="/community.html">👥 Közösség<small>Discord</small></a><a class="menu-link" href="/about.html">◉ Rólam<small>Sanci9517</small></a><a class="menu-link" href="/contact.html">✉ Kapcsolat<small>Elérhetőség</small></a></div></nav></header><main class="page"><div class="wrap"><div class="page-hero"><div class="eyebrow">Sanci9517 • Adásrend</div><h1>Mikor találkozunk?</h1><p class="lead">Az aktuális adásidőpontok egyszerűen, egy pillantással átnézhetően.</p></div><div id="schedule-list" class="schedule-list"><div class="schedule-empty"><div class="card-icon">📅</div><h3>Adásrend betöltése...</h3><p>Az időpontokat betöltjük.</p></div></div></div></main><footer class="footer"><div class="wrap footer-row"><span>© <span data-year></span> <span data-site-name>Sanci9517</span></span><span class="kicker">Streamer • Gaming • Közösség</span></div></footer><script src="/assets/site.js"></script><script>function escapeHtml(value){return String(value).replace(/[&<>\"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[char]))}function dateParts(date){return {day:date.toLocaleDateString('hu-HU',{day:'2-digit'}),month:date.toLocaleDateString('hu-HU',{month:'long'}),weekday:date.toLocaleDateString('hu-HU',{weekday:'long'}),full:date.toLocaleDateString('hu-HU',{year:'numeric',month:'long',day:'numeric'})}}function formatTime(date){return date.toLocaleTimeString('hu-HU',{hour:'2-digit',minute:'2-digit'})}function formatRange(start,end){if(!end)return formatTime(start);const same=start.toLocaleDateString('hu-HU')===end.toLocaleDateString('hu-HU');return same?formatTime(start)+' – '+formatTime(end):formatTime(start)+' – '+end.toLocaleDateString('hu-HU',{month:'short',day:'numeric'})+', '+formatTime(end)}function statusData(status){if(status==='live')return {label:'🔴 Élő',cls:'live'};if(status==='completed')return {label:'Befejezve',cls:''};return {label:'Hamarosan',cls:''}}async function loadPublicSchedule(){const list=document.getElementById('schedule-list');try{const response=await fetch('/api/public/schedule',{headers:{Accept:'application/json'},cache:'no-store'});const data=await response.json();if(!response.ok||!data.ok)throw new Error('schedule');const items=(Array.isArray(data.data)?data.data:[]).map(item=>({...item,start:new Date(item.startsAt),end:item.endsAt?new Date(item.endsAt):null})).filter(item=>!Number.isNaN(item.start.getTime())).sort((a,b)=>a.start-b.start);if(!items.length){list.innerHTML='<div class="schedule-empty"><div class="card-icon">📅</div><h3>Még nincs meghirdetett adás</h3><p>Az új időpontok hamarosan megjelennek.</p></div>';return}list.innerHTML=items.map(item=>{const d=dateParts(item.start);const s=statusData(item.status);const title=item.notes||'';const action=item.url?'<div class="schedule-action"><a class="btn" href="'+encodeURI(item.url)+'" target="_blank" rel="noopener noreferrer">Megnyitás ↗</a></div>':'';return '<article class="schedule-row"><div class="schedule-day"><div class="schedule-weekday">'+escapeHtml(d.weekday)+'</div><div class="schedule-daynum">'+escapeHtml(d.day)+'</div><div class="schedule-month">'+escapeHtml(d.month)+'</div></div><div class="schedule-content"><div class="schedule-top"><span class="schedule-date">'+escapeHtml(d.full)+'</span><strong class="schedule-time">'+escapeHtml(formatRange(item.start,item.end))+'</strong><span class="schedule-status '+s.cls+'">'+s.label+'</span></div><div class="schedule-game">'+escapeHtml(item.title)+'</div>'+(title?'<div class="schedule-title">'+escapeHtml(title)+'</div>':'')+'<div class="schedule-meta">'+escapeHtml(item.platform)+'</div>'+action+'</div></article>'}).join('')}catch{list.innerHTML='<div class="schedule-empty"><div class="card-icon">📅</div><h3>Az adásrend most nem érhető el</h3><p>Kérlek, próbáld meg később.</p></div>'}}loadPublicSchedule();</script></body></html>
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Sanci9517 — aktuális és következő élő adások.">
+  <title>Sanci9517 — Adásrend</title>
+  <link rel="stylesheet" href="/assets/site.css">
+  <style>
+    .schedule-list{display:grid;gap:10px;max-width:980px;margin:0 auto}
+    .schedule-row{position:relative;display:grid;grid-template-columns:116px minmax(0,1fr);min-height:112px;border:1px solid var(--line);border-radius:18px;background:rgba(9,16,29,.72);overflow:hidden;transition:transform .2s,border-color .2s,box-shadow .2s}
+    .schedule-row:hover{border-color:var(--line-hot);transform:translateY(-1px);box-shadow:0 14px 34px rgba(0,0,0,.16)}
+    .schedule-row.next{border-color:rgba(138,112,255,.72);box-shadow:0 0 0 1px rgba(138,112,255,.12),0 0 28px rgba(138,112,255,.09)}
+    .schedule-row.next:before{content:"";position:absolute;inset:-1px;border-radius:19px;padding:1px;background:linear-gradient(110deg,transparent 15%,rgba(138,112,255,.95) 45%,rgba(191,155,255,.9) 55%,transparent 85%);background-size:240% 100%;animation:scheduleShimmer 4s linear infinite;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;pointer-events:none}
+    @keyframes scheduleShimmer{0%{background-position:160% 0}100%{background-position:-80% 0}}
+    .schedule-day{display:flex;flex-direction:column;justify-content:center;align-items:center;padding:15px 10px;border-right:1px solid var(--line);background:rgba(255,255,255,.025);text-align:center}
+    .schedule-row.next .schedule-day{background:rgba(138,112,255,.07)}
+    .schedule-weekday{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:#aab8ff}
+    .schedule-daynum{margin-top:4px;font-size:32px;line-height:1;font-weight:950;letter-spacing:-.06em}
+    .schedule-month{margin-top:5px;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800}
+    .schedule-content{padding:16px 22px;display:flex;flex-direction:column;justify-content:center;min-width:0}
+    .schedule-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    .schedule-date{font-size:12px;color:var(--muted);font-weight:750}
+    .schedule-time{font-size:20px;line-height:1;font-weight:950;letter-spacing:-.035em}
+    .schedule-game{margin-top:8px;font-size:25px;line-height:1.08;font-weight:950;letter-spacing:-.04em;color:var(--text)}
+    .schedule-title{margin-top:4px;color:var(--muted);font-size:13px;line-height:1.4}
+    .schedule-meta{margin-top:6px;font-size:11px;color:#8996aa}
+    .schedule-status{margin-left:auto;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#aeb8c8}
+    .schedule-status.live{color:#ff7f94}
+    .schedule-status.next-label{color:#b69cff}
+    .schedule-countdown{margin-left:auto;color:#b9a8ff;font-size:11px;font-weight:850;letter-spacing:.02em;white-space:nowrap}
+    .schedule-bottom{max-width:980px;margin:20px auto 0;display:flex;justify-content:flex-end}
+    .schedule-bottom .btn{min-height:40px;padding:0 16px;font-size:12px}
+    @media(max-width:520px){
+      .schedule-list{gap:8px}
+      .schedule-row{grid-template-columns:76px minmax(0,1fr);min-height:104px;border-radius:15px}
+      .schedule-row.next:before{border-radius:16px}
+      .schedule-day{padding:13px 6px}
+      .schedule-weekday{font-size:9px}
+      .schedule-daynum{font-size:27px}
+      .schedule-month{font-size:8px}
+      .schedule-content{padding:13px 13px}
+      .schedule-top{gap:7px}
+      .schedule-date{font-size:10px}
+      .schedule-time{font-size:17px}
+      .schedule-game{font-size:20px;margin-top:7px}
+      .schedule-title{font-size:12px}
+      .schedule-meta{font-size:10px}
+      .schedule-status{margin-left:0}
+      .schedule-countdown{margin-left:0;width:100%;font-size:10px}
+      .schedule-bottom{justify-content:stretch;margin-top:16px}
+      .schedule-bottom .btn{width:100%}
+    }
+    @media(prefers-reduced-motion:reduce){.schedule-row.next:before{animation:none}}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="/"><span class="brand-mark">S</span><span data-site-name>Sanci9517</span></a>
+      <div class="nav-actions"><button class="menu-button" data-menu-button type="button" aria-label="Menü" aria-expanded="false">☰</button></div>
+    </div>
+    <nav class="menu-panel" data-menu-panel aria-label="Fő navigáció">
+      <div class="menu-grid">
+        <a class="menu-link" href="/twitch.html">🎮 Élő adás<small>Twitch</small></a>
+        <a class="menu-link active" href="/schedule.html">📅 Adásrend<small>Időpontok</small></a>
+        <a class="menu-link" href="/youtube.html">▶ YouTube<small>Videók</small></a>
+        <a class="menu-link" href="/tiktok.html">♪ TikTok<small>Rövid klipek</small></a>
+        <a class="menu-link" href="/vod.html">🎬 VOD<small>Legjobb pillanatok</small></a>
+        <a class="menu-link" href="/community.html">👥 Közösség<small>Discord</small></a>
+        <a class="menu-link" href="/about.html">◉ Rólam<small>Sanci9517</small></a>
+        <a class="menu-link" href="/contact.html">✉ Kapcsolat<small>Elérhetőség</small></a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="page">
+    <div class="wrap">
+      <div class="page-hero">
+        <div class="eyebrow">Sanci9517 • Adásrend</div>
+        <h1>MENETREND</h1>
+      </div>
+
+      <div id="schedule-list" class="schedule-list">
+        <div class="schedule-empty"><div class="card-icon">📅</div><h3>Adásrend betöltése...</h3><p>Az időpontokat betöltjük.</p></div>
+      </div>
+
+      <div class="schedule-bottom">
+        <a class="btn" href="https://www.twitch.tv/sanci9517" target="_blank" rel="noopener noreferrer">Twitch megnyitása ↗</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-row"><span>© <span data-year></span> <span data-site-name>Sanci9517</span></span><span class="kicker">Streamer • Gaming • Közösség</span></div>
+  </footer>
+
+  <script src="/assets/site.js"></script>
+  <script>
+    function escapeHtml(value){return String(value).replace(/[&<>\"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[char]))}
+    function dateParts(date){return{day:date.toLocaleDateString('hu-HU',{day:'2-digit'}),month:date.toLocaleDateString('hu-HU',{month:'long'}),weekday:date.toLocaleDateString('hu-HU',{weekday:'long'}),full:date.toLocaleDateString('hu-HU',{year:'numeric',month:'long',day:'numeric'})}}
+    function formatTime(date){return date.toLocaleTimeString('hu-HU',{hour:'2-digit',minute:'2-digit'})}
+    function formatRange(start,end){if(!end)return formatTime(start);const same=start.toLocaleDateString('hu-HU')===end.toLocaleDateString('hu-HU');return same?formatTime(start)+' – '+formatTime(end):formatTime(start)+' – '+end.toLocaleDateString('hu-HU',{month:'short',day:'numeric'})+', '+formatTime(end)}
+    function statusData(status){if(status==='live')return{label:'🔴 Élő',cls:'live'};if(status==='completed')return{label:'Befejezve',cls:''};return{label:'Hamarosan',cls:''}}
+    function countdownText(start){const diff=start.getTime()-Date.now();if(diff<=0)return'';const total=Math.floor(diff/1000),days=Math.floor(total/86400),hours=Math.floor(total%86400/3600),minutes=Math.floor(total%3600/60),seconds=total%60;if(days>0)return'Kezdés: '+days+' nap '+String(hours).padStart(2,'0')+':'+String(minutes).padStart(2,'0');return'Kezdés: '+String(hours).padStart(2,'0')+':'+String(minutes).padStart(2,'0')+':'+String(seconds).padStart(2,'0')}
+
+    let scheduleItems=[];
+    function renderSchedule(){
+      const list=document.getElementById('schedule-list');
+      if(!scheduleItems.length){list.innerHTML='<div class="schedule-empty"><div class="card-icon">📅</div><h3>Még nincs meghirdetett adás</h3><p>Az új időpontok hamarosan megjelennek.</p></div>';return}
+      const now=Date.now();
+      const nextIndex=scheduleItems.findIndex(item=>item.start.getTime()>now&&item.status!=='completed');
+      list.innerHTML=scheduleItems.map((item,index)=>{
+        const d=dateParts(item.start),s=statusData(item.status),isNext=index===nextIndex;
+        const title=item.notes||'';
+        const status=isNext?'<span class="schedule-status next-label">Következő</span>':('<span class="schedule-status '+s.cls+'">'+s.label+'</span>');
+        const countdown=isNext?'<span class="schedule-countdown" data-countdown="'+item.start.getTime()+'">'+countdownText(item.start)+'</span>':'';
+        return '<article class="schedule-row'+(isNext?' next':'')+'"><div class="schedule-day"><div class="schedule-weekday">'+escapeHtml(d.weekday)+'</div><div class="schedule-daynum">'+escapeHtml(d.day)+'</div><div class="schedule-month">'+escapeHtml(d.month)+'</div></div><div class="schedule-content"><div class="schedule-top"><span class="schedule-date">'+escapeHtml(d.full)+'</span><strong class="schedule-time">'+escapeHtml(formatRange(item.start,item.end))+'</strong>'+status+countdown+'</div><div class="schedule-game">'+escapeHtml(item.title)+'</div>'+(title?'<div class="schedule-title">'+escapeHtml(title)+'</div>':'')+'<div class="schedule-meta">'+escapeHtml(item.platform||'')+'</div></div></article>'
+      }).join('');
+    }
+    function updateCountdowns(){document.querySelectorAll('[data-countdown]').forEach(el=>{const text=countdownText(new Date(Number(el.dataset.countdown)));el.textContent=text;if(!text){renderSchedule()}})}
+    async function loadPublicSchedule(){
+      const list=document.getElementById('schedule-list');
+      try{
+        const response=await fetch('/api/public/schedule',{headers:{Accept:'application/json'},cache:'no-store'});
+        const data=await response.json();
+        if(!response.ok||!data.ok)throw new Error('schedule');
+        scheduleItems=(Array.isArray(data.data)?data.data:[]).map(item=>({...item,start:new Date(item.startsAt),end:item.endsAt?new Date(item.endsAt):null})).filter(item=>!Number.isNaN(item.start.getTime())).sort((a,b)=>a.start-b.start);
+        renderSchedule();
+        setInterval(updateCountdowns,1000);
+      }catch{list.innerHTML='<div class="schedule-empty"><div class="card-icon">📅</div><h3>Az adásrend most nem érhető el</h3><p>Kérlek, próbáld meg később.</p></div>'}
+    }
+    loadPublicSchedule();
+  </script>
+</body>
+</html>
