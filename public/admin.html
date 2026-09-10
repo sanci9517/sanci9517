@@ -11,13 +11,21 @@
       main { width: min(1100px, calc(100% - 32px)); margin: 32px auto; }
       .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
       .card { padding: 20px; border: 1px solid #292933; border-radius: 16px; background: #14141b; }
-      .settings { margin-top: 24px; }
+      .settings, .schedule { margin-top: 24px; }
       label { display: block; margin: 14px 0 7px; font-weight: 700; }
-      input { box-sizing: border-box; width: 100%; padding: 12px; border: 1px solid #353541; border-radius: 9px; background: #0f0f15; color: #f5f5f7; font: inherit; }
+      input, select, textarea { box-sizing: border-box; width: 100%; padding: 12px; border: 1px solid #353541; border-radius: 9px; background: #0f0f15; color: #f5f5f7; font: inherit; }
+      textarea { min-height: 80px; resize: vertical; }
       .muted { color: #a9a9b3; }
       button { margin-top: 16px; padding: 10px 14px; border: 0; border-radius: 9px; font: inherit; font-weight: 700; cursor: pointer; }
-      #save-status { margin-left: 10px; }
-      @media (max-width: 600px) { main { margin: 20px auto; } }
+      button.secondary { background: #292933; color: #fff; }
+      #save-status, #schedule-status { margin-left: 10px; }
+      .schedule-list { display: grid; gap: 10px; margin-top: 20px; }
+      .schedule-item { display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: center; padding: 14px; border: 1px solid #292933; border-radius: 12px; background: #0f0f15; }
+      .schedule-item strong { display: block; }
+      .schedule-meta { color: #a9a9b3; font-size: .9rem; margin-top: 4px; }
+      .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+      .danger { background: #5b1e24; color: #fff; }
+      @media (max-width: 600px) { main { margin: 20px auto; } .schedule-item { grid-template-columns: 1fr; } }
     </style>
   </head>
   <body>
@@ -30,6 +38,7 @@
         <section class="card"><h2>Adásrend</h2><p class="muted">Stream időpontok kezelése.</p></section>
         <section class="card"><h2>Social</h2><p class="muted">Twitch, TikTok, YouTube és Discord.</p></section>
       </div>
+
       <section class="card settings">
         <h2>Beállítások</h2>
         <p class="muted">A webhely alapadatai. A mentés közvetlenül a D1 adatbázisba történik.</p>
@@ -40,6 +49,33 @@
         <button id="save" type="button">Mentés</button>
         <span id="save-status" class="muted"></span>
       </section>
+
+      <section class="card schedule">
+        <h2>📅 Adásrend</h2>
+        <p class="muted">Az itt létrehozott adások D1-be kerülnek, és a publikus Adásrend oldal automatikusan megjeleníti őket.</p>
+        <input id="schedule-id" type="hidden">
+        <label for="schedule-title">Adás címe / játék</label>
+        <input id="schedule-title" maxlength="160" placeholder="Fortnite">
+        <label for="schedule-platform">Platform</label>
+        <select id="schedule-platform"><option value="Twitch">Twitch</option><option value="YouTube">YouTube</option><option value="TikTok">TikTok</option><option value="Egyéb">Egyéb</option></select>
+        <label for="schedule-start">Kezdés</label>
+        <input id="schedule-start" type="datetime-local">
+        <label for="schedule-end">Befejezés (opcionális)</label>
+        <input id="schedule-end" type="datetime-local">
+        <label for="schedule-status-select">Állapot</label>
+        <select id="schedule-status-select"><option value="scheduled">Tervezett</option><option value="live">🔴 Élő</option><option value="completed">Befejezett</option><option value="cancelled">Törölt</option></select>
+        <label for="schedule-url">Link (opcionális)</label>
+        <input id="schedule-url" maxlength="500" placeholder="https://...">
+        <label for="schedule-notes">Megjegyzés</label>
+        <textarea id="schedule-notes" maxlength="500" placeholder="Pl. Hearthstone ranked"></textarea>
+        <div class="actions">
+          <button id="schedule-save" type="button">Adás mentése</button>
+          <button id="schedule-cancel" class="secondary" type="button" hidden>Mégse</button>
+          <span id="schedule-status" class="muted"></span>
+        </div>
+        <div id="schedule-list" class="schedule-list"><p class="muted">Adásrend betöltése...</p></div>
+      </section>
+
       <button id="logout" type="button">Kijelentkezés</button>
     </main>
     <script>
@@ -49,21 +85,27 @@
       const tagline = document.getElementById("tagline");
       const save = document.getElementById("save");
       const saveStatus = document.getElementById("save-status");
+      const scheduleId = document.getElementById("schedule-id");
+      const scheduleTitle = document.getElementById("schedule-title");
+      const schedulePlatform = document.getElementById("schedule-platform");
+      const scheduleStart = document.getElementById("schedule-start");
+      const scheduleEnd = document.getElementById("schedule-end");
+      const scheduleState = document.getElementById("schedule-status-select");
+      const scheduleUrl = document.getElementById("schedule-url");
+      const scheduleNotes = document.getElementById("schedule-notes");
+      const scheduleSave = document.getElementById("schedule-save");
+      const scheduleCancel = document.getElementById("schedule-cancel");
+      const scheduleStatus = document.getElementById("schedule-status");
+      const scheduleList = document.getElementById("schedule-list");
 
       async function loadSession() {
         try {
           const response = await fetch("/api/auth/session", { credentials: "same-origin", cache: "no-store" });
           const data = await response.json();
-          if (!response.ok || !data.ok || !data.data?.authenticated) {
-            window.location.replace("/admin/login");
-            return false;
-          }
+          if (!response.ok || !data.ok || !data.data?.authenticated) { window.location.replace("/admin/login"); return false; }
           welcome.textContent = `Bejelentkezve: ${data.data.user.displayName} (${data.data.user.role})`;
           return true;
-        } catch {
-          window.location.replace("/admin/login");
-          return false;
-        }
+        } catch { window.location.replace("/admin/login"); return false; }
       }
 
       async function loadSettings() {
@@ -74,38 +116,66 @@
         tagline.value = data.data.tagline || "";
       }
 
-      save.addEventListener("click", async () => {
-        save.disabled = true;
-        saveStatus.textContent = "Mentés...";
+      async function loadSchedule() {
+        scheduleList.innerHTML = '<p class="muted">Adásrend betöltése...</p>';
+        const response = await fetch("/api/admin/schedule", { credentials: "same-origin", cache: "no-store" });
+        const data = await response.json();
+        if (!response.ok || !data.ok) throw new Error(data.error?.message || "Adásrend betöltési hiba");
+        if (!data.data.length) { scheduleList.innerHTML = '<p class="muted">Még nincs felvitt adás.</p>'; return; }
+        scheduleList.innerHTML = data.data.map(item => {
+          const start = new Date(item.startsAt).toLocaleString("hu-HU", { dateStyle: "medium", timeStyle: "short" });
+          const end = item.endsAt ? ` → ${new Date(item.endsAt).toLocaleTimeString("hu-HU", { hour: "2-digit", minute: "2-digit" })}` : "";
+          return `<div class="schedule-item"><div><strong>${escapeHtml(item.title)}</strong><div class="schedule-meta">${escapeHtml(item.platform)} • ${start}${end} • ${escapeHtml(item.status)}</div></div><div class="actions"><button type="button" class="secondary" data-edit="${item.id}">Szerkesztés</button><button type="button" class="danger" data-delete="${item.id}">Törlés</button></div></div>`;
+        }).join("");
+        scheduleList.querySelectorAll("[data-edit]").forEach(button => button.addEventListener("click", () => editSchedule(data.data.find(item => item.id === button.dataset.edit))));
+        scheduleList.querySelectorAll("[data-delete]").forEach(button => button.addEventListener("click", () => deleteSchedule(button.dataset.delete)));
+      }
+
+      function escapeHtml(value) { return String(value).replace(/[&<>\"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[char])); }
+      function editSchedule(item) {
+        if (!item) return;
+        scheduleId.value = item.id; scheduleTitle.value = item.title; schedulePlatform.value = item.platform;
+        scheduleStart.value = item.startsAt.slice(0, 16); scheduleEnd.value = item.endsAt ? item.endsAt.slice(0, 16) : "";
+        scheduleState.value = item.status; scheduleUrl.value = item.url || ""; scheduleNotes.value = item.notes || "";
+        scheduleSave.textContent = "Adás frissítése"; scheduleCancel.hidden = false; window.scrollTo({ top: document.querySelector(".schedule").offsetTop - 20, behavior: "smooth" });
+      }
+      function resetSchedule() { scheduleId.value = ""; scheduleTitle.value = ""; scheduleStart.value = ""; scheduleEnd.value = ""; scheduleUrl.value = ""; scheduleNotes.value = ""; scheduleState.value = "scheduled"; scheduleSave.textContent = "Adás mentése"; scheduleCancel.hidden = true; }
+      scheduleCancel.addEventListener("click", resetSchedule);
+
+      scheduleSave.addEventListener("click", async () => {
+        scheduleSave.disabled = true; scheduleStatus.textContent = "Mentés...";
+        const body = { id: scheduleId.value || undefined, title: scheduleTitle.value, platform: schedulePlatform.value, startsAt: scheduleStart.value, endsAt: scheduleEnd.value, status: scheduleState.value, url: scheduleUrl.value, notes: scheduleNotes.value };
         try {
-          const response = await fetch("/api/admin/settings", {
-            method: "PUT",
-            credentials: "same-origin",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ siteName: siteName.value, tagline: tagline.value })
-          });
+          const response = await fetch("/api/admin/schedule", { method: scheduleId.value ? "PUT" : "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
           const data = await response.json();
           if (!response.ok || !data.ok) throw new Error(data.error?.message || "Mentési hiba");
-          siteName.value = data.data.siteName;
-          tagline.value = data.data.tagline;
-          saveStatus.textContent = "Mentve ✓";
-        } catch (error) {
-          saveStatus.textContent = error instanceof Error ? error.message : "Mentési hiba";
-        } finally {
-          save.disabled = false;
-        }
+          scheduleStatus.textContent = "Mentve ✓"; resetSchedule(); await loadSchedule();
+        } catch (error) { scheduleStatus.textContent = error instanceof Error ? error.message : "Mentési hiba"; }
+        finally { scheduleSave.disabled = false; }
       });
 
-      logout.addEventListener("click", async () => {
-        await fetch("/api/auth/logout", { method: "POST", credentials: "same-origin" });
-        window.location.replace("/admin/login");
+      async function deleteSchedule(id) {
+        if (!confirm("Biztosan törlöd ezt az adást?")) return;
+        try {
+          const response = await fetch("/api/admin/schedule", { method: "DELETE", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
+          const data = await response.json(); if (!response.ok || !data.ok) throw new Error(data.error?.message || "Törlési hiba");
+          scheduleStatus.textContent = "Törölve ✓"; await loadSchedule();
+        } catch (error) { scheduleStatus.textContent = error instanceof Error ? error.message : "Törlési hiba"; }
+      }
+
+      save.addEventListener("click", async () => {
+        save.disabled = true; saveStatus.textContent = "Mentés...";
+        try {
+          const response = await fetch("/api/admin/settings", { method: "PUT", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ siteName: siteName.value, tagline: tagline.value }) });
+          const data = await response.json(); if (!response.ok || !data.ok) throw new Error(data.error?.message || "Mentési hiba");
+          siteName.value = data.data.siteName; tagline.value = data.data.tagline; saveStatus.textContent = "Mentve ✓";
+        } catch (error) { saveStatus.textContent = error instanceof Error ? error.message : "Mentési hiba"; }
+        finally { save.disabled = false; }
       });
 
-      (async () => {
-        if (await loadSession()) {
-          try { await loadSettings(); } catch (error) { saveStatus.textContent = error instanceof Error ? error.message : "Betöltési hiba"; }
-        }
-      })();
+      logout.addEventListener("click", async () => { await fetch("/api/auth/logout", { method: "POST", credentials: "same-origin" }); window.location.replace("/admin/login"); });
+
+      (async () => { if (await loadSession()) { try { await loadSettings(); await loadSchedule(); } catch (error) { scheduleStatus.textContent = error instanceof Error ? error.message : "Betöltési hiba"; } } })();
     </script>
   </body>
 </html>
