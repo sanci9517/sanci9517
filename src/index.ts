@@ -34,6 +34,11 @@ export default {
       return env.ASSETS.fetch(assetRequest("/admin.html", request));
     }
 
+    // Keep the two common homepage entry points on exactly the same asset.
+    if (url.pathname === "/" || url.pathname === "/index.html") {
+      return env.ASSETS.fetch(assetRequest("/index.html", request));
+    }
+
     return env.ASSETS.fetch(request);
   }
 };
