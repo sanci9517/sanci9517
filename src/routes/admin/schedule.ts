@@ -14,7 +14,20 @@ function normalize(body: ScheduleBody) {
   const status = typeof body.status === "string" ? body.status.trim() : "scheduled";
   const url = typeof body.url === "string" && body.url.trim() ? body.url.trim() : null;
   const notes = typeof body.notes === "string" ? body.notes.trim() : "";
+
   if (!title || title.length > 160 || !platform || platform.length > 40 || !startsAt || startsAt.length > 40 || !STATUSES.has(status) || (url && url.length > 500) || notes.length > 500) return null;
+
+  const startMs = Date.parse(startsAt);
+  const endMs = endsAt ? Date.parse(endsAt) : null;
+  if (!Number.isFinite(startMs)) return null;
+  if (endMs !== null && !Number.isFinite(endMs)) return null;
+  if (endMs !== null && endMs <= startMs) return null;
+
+  // A live stream cannot be scheduled in the future, and a completed stream cannot start in the future.
+  const now = Date.now();
+  if (status === "live" && startMs > now) return null;
+  if (status === "completed" && startMs > now) return null;
+
   return { title, platform, startsAt, endsAt, status, url, notes };
 }
 function mapRow(row: ScheduleRow) { return { id: row.id, title: row.title, platform: row.platform, startsAt: row.starts_at, endsAt: row.ends_at, status: row.status, url: row.url, notes: row.notes }; }
