@@ -7,51 +7,58 @@
   <title>Sanci9517 — Adásrend</title>
   <link rel="stylesheet" href="/assets/site.css">
   <style>
-    .schedule-list{display:grid;gap:10px;max-width:980px;margin:0 auto}
-    .schedule-row{position:relative;display:grid;grid-template-columns:116px minmax(0,1fr);min-height:112px;border:1px solid var(--line);border-radius:18px;background:rgba(9,16,29,.72);overflow:hidden;transition:transform .2s,border-color .2s,box-shadow .2s}
-    .schedule-row:hover{border-color:var(--line-hot);transform:translateY(-1px);box-shadow:0 14px 34px rgba(0,0,0,.16)}
-    .schedule-row.next{border-color:rgba(138,112,255,.72);box-shadow:0 0 0 1px rgba(138,112,255,.12),0 0 28px rgba(138,112,255,.09)}
-    .schedule-row.next:before{content:"";position:absolute;inset:-1px;border-radius:19px;padding:1px;background:linear-gradient(110deg,transparent 15%,rgba(138,112,255,.95) 45%,rgba(191,155,255,.9) 55%,transparent 85%);background-size:240% 100%;animation:scheduleShimmer 4s linear infinite;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;pointer-events:none}
-    @keyframes scheduleShimmer{0%{background-position:160% 0}100%{background-position:-80% 0}}
-    .schedule-day{display:flex;flex-direction:column;justify-content:center;align-items:center;padding:15px 10px;border-right:1px solid var(--line);background:rgba(255,255,255,.025);text-align:center}
-    .schedule-row.next .schedule-day{background:rgba(138,112,255,.07)}
-    .schedule-weekday{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:#aab8ff}
-    .schedule-daynum{margin-top:4px;font-size:32px;line-height:1;font-weight:950;letter-spacing:-.06em}
-    .schedule-month{margin-top:5px;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800}
-    .schedule-content{padding:16px 22px;display:flex;flex-direction:column;justify-content:center;min-width:0}
-    .schedule-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-    .schedule-date{font-size:12px;color:var(--muted);font-weight:750}
-    .schedule-time{font-size:20px;line-height:1;font-weight:950;letter-spacing:-.035em}
-    .schedule-game{margin-top:8px;font-size:25px;line-height:1.08;font-weight:950;letter-spacing:-.04em;color:var(--text)}
-    .schedule-title{margin-top:4px;color:var(--muted);font-size:13px;line-height:1.4}
-    .schedule-meta{margin-top:6px;font-size:11px;color:#8996aa}
-    .schedule-status{margin-left:auto;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#aeb8c8}
+    /* Schedule: clean, compact, consistent with the public design system. */
+    .schedule-list{display:grid;gap:12px;max-width:980px;margin:0 auto}
+    .schedule-row{position:relative;display:grid;grid-template-columns:128px minmax(0,1fr);min-height:116px;border:1px solid var(--line);border-radius:16px;background:rgba(9,16,29,.72);overflow:hidden;transition:border-color .2s,transform .2s,box-shadow .2s}
+    .schedule-row:hover{border-color:var(--line-hot);transform:translateY(-1px);box-shadow:0 12px 28px rgba(0,0,0,.14)}
+    .schedule-row.next{border-color:rgba(138,112,255,.55);box-shadow:0 0 0 1px rgba(138,112,255,.07)}
+    .schedule-day{display:flex;flex-direction:column;justify-content:center;align-items:center;padding:16px 12px;border-right:1px solid var(--line);background:rgba(255,255,255,.025);text-align:center}
+    .schedule-row.next .schedule-day{background:rgba(138,112,255,.045)}
+    .schedule-weekday{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.12em;color:#aab8ff}
+    .schedule-daynum{margin-top:5px;font-size:36px;line-height:.95;font-weight:950;letter-spacing:-.06em}
+    .schedule-month{margin-top:7px;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.12em;font-weight:800}
+    .schedule-content{padding:17px 24px;display:flex;flex-direction:column;justify-content:center;min-width:0}
+    .schedule-top{display:flex;align-items:center;gap:10px;min-width:0}
+    .schedule-date{font-size:12px;color:var(--muted);font-weight:750;white-space:nowrap}
+    .schedule-time{font-size:19px;line-height:1;font-weight:950;letter-spacing:-.035em;white-space:nowrap}
+    .schedule-status{margin-left:auto;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#8996aa;white-space:nowrap}
     .schedule-status.live{color:#ff7f94}
     .schedule-status.next-label{color:#b69cff}
-    .schedule-countdown{margin-left:auto;color:#b9a8ff;font-size:11px;font-weight:850;letter-spacing:.02em;white-space:nowrap}
+    .schedule-countdown{margin-left:4px;color:#b9a8ff;font-size:10px;font-weight:850;white-space:nowrap}
+    .schedule-game{margin-top:9px;font-size:25px;line-height:1.05;font-weight:950;letter-spacing:-.04em;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .schedule-title{margin-top:5px;color:var(--muted);font-size:13px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .schedule-meta{margin-top:7px;font-size:10px;color:#8996aa;text-transform:uppercase;letter-spacing:.06em;font-weight:800}
     .schedule-bottom{max-width:980px;margin:20px auto 0;display:flex;justify-content:flex-end}
     .schedule-bottom .btn{min-height:40px;padding:0 16px;font-size:12px}
+    @media(max-width:700px){
+      .schedule-row{grid-template-columns:96px minmax(0,1fr);min-height:108px}
+      .schedule-content{padding:15px 17px}
+      .schedule-top{gap:8px;flex-wrap:wrap}
+      .schedule-date{font-size:11px}
+      .schedule-time{font-size:18px}
+      .schedule-game{font-size:22px}
+      .schedule-title{font-size:12px}
+      .schedule-status{margin-left:0}
+      .schedule-countdown{margin-left:0;width:100%}
+    }
     @media(max-width:520px){
       .schedule-list{gap:8px}
       .schedule-row{grid-template-columns:76px minmax(0,1fr);min-height:104px;border-radius:15px}
-      .schedule-row.next:before{border-radius:16px}
       .schedule-day{padding:13px 6px}
       .schedule-weekday{font-size:9px}
       .schedule-daynum{font-size:27px}
-      .schedule-month{font-size:8px}
-      .schedule-content{padding:13px 13px}
+      .schedule-month{font-size:8px;margin-top:5px}
+      .schedule-content{padding:13px}
       .schedule-top{gap:7px}
       .schedule-date{font-size:10px}
       .schedule-time{font-size:17px}
       .schedule-game{font-size:20px;margin-top:7px}
       .schedule-title{font-size:12px}
       .schedule-meta{font-size:10px}
-      .schedule-status{margin-left:0}
-      .schedule-countdown{margin-left:0;width:100%;font-size:10px}
       .schedule-bottom{justify-content:stretch;margin-top:16px}
       .schedule-bottom .btn{width:100%}
     }
-    @media(prefers-reduced-motion:reduce){.schedule-row.next:before{animation:none}}
+    @media(prefers-reduced-motion:reduce){.schedule-row{transition:none}}
   </style>
 </head>
 <body>
