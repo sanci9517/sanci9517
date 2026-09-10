@@ -61,6 +61,21 @@ export async function adminPagesRoute(request: Request, env: Env): Promise<Respo
     return ok(rows.results.map(serialize));
   }
 
+  // DELETE only needs the page id. Do not run create/update field validation here.
+  if (request.method === "DELETE") {
+    let body: PageBody;
+    try { body = await request.json() as PageBody; }
+    catch { return error("INVALID_JSON", 400); }
+
+    const id = typeof body.id === "string" ? body.id : "";
+    if (!id) return error("INVALID_PAGE_ID", 400);
+
+    const result = await env.DB.prepare("DELETE FROM pages WHERE id = ?").bind(id).run();
+    if (!result.meta.changes) return error("PAGE_NOT_FOUND", 404);
+    await audit(env, user.id, "page.delete", id, {});
+    return ok({ id, deleted: true });
+  }
+
   let body: PageBody;
   try { body = await request.json() as PageBody; }
   catch { return error("INVALID_JSON", 400); }
@@ -114,15 +129,6 @@ export async function adminPagesRoute(request: Request, env: Env): Promise<Respo
     }
     await audit(env, user.id, "page.update", id, { slug, title, isPublished });
     return ok({ id, slug, title, description, content, isPublished });
-  }
-
-  if (request.method === "DELETE") {
-    const id = typeof body.id === "string" ? body.id : "";
-    if (!id) return error("INVALID_PAGE_ID", 400);
-    const result = await env.DB.prepare("DELETE FROM pages WHERE id = ?").bind(id).run();
-    if (!result.meta.changes) return error("PAGE_NOT_FOUND", 404);
-    await audit(env, user.id, "page.delete", id, {});
-    return ok({ id, deleted: true });
   }
 
   return error("METHOD_NOT_ALLOWED", 405);
