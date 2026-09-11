@@ -8,6 +8,7 @@ import { adminScheduleRoute } from "./routes/admin/schedule";
 import { adminPagesRoute } from "./routes/admin/pages";
 import { publicSiteSettingsRoute } from "./routes/public/site-settings";
 import { publicScheduleRoute } from "./routes/public/schedule";
+import { publicPagesRoute } from "./routes/public/pages";
 import { getAuthenticatedUser } from "./core/auth/require-auth";
 import { healthRoute } from "./routes/health";
 import type { Env } from "./types/env";
@@ -27,6 +28,7 @@ export default {
     if (url.pathname === "/api/admin/pages") return adminPagesRoute(request, env);
     if (url.pathname === "/api/public/site-settings") return publicSiteSettingsRoute(env);
     if (url.pathname === "/api/public/schedule") return publicScheduleRoute(env);
+    if (url.pathname === "/api/public/pages") return publicPagesRoute(request, env);
 
     if (url.pathname === "/admin/login" || url.pathname === "/admin-login.html") {
       return env.ASSETS.fetch(assetRequest("/admin-login.html", request));
@@ -38,6 +40,10 @@ export default {
         return Response.redirect(new URL("/admin/login", request.url).toString(), 302);
       }
       return env.ASSETS.fetch(assetRequest("/admin.html", request));
+    }
+
+    if (url.pathname.startsWith("/p/") && url.pathname.length > 3) {
+      return env.ASSETS.fetch(assetRequest("/page.html", request));
     }
 
     // Keep the two common homepage entry points on exactly the same asset.
