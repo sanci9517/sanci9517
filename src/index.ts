@@ -7,9 +7,11 @@ import { authSessionRoute } from "./routes/auth/session";
 import { adminSettingsRoute } from "./routes/admin/settings";
 import { adminScheduleRoute } from "./routes/admin/schedule";
 import { adminPagesRoute } from "./routes/admin/pages";
+import { adminSystemPagesRoute } from "./routes/admin/system-pages";
 import { publicSiteSettingsRoute } from "./routes/public/site-settings";
 import { publicScheduleRoute } from "./routes/public/schedule";
 import { publicPagesRoute } from "./routes/public/pages";
+import { publicSystemPagesRoute } from "./routes/public/system-pages";
 import { getAuthenticatedUser } from "./core/auth/require-auth";
 import type { Env } from "./types/env";
 
@@ -25,9 +27,11 @@ export default {
     if (url.pathname === "/api/admin/settings") return adminSettingsRoute(request, env);
     if (url.pathname === "/api/admin/schedule") return adminScheduleRoute(request, env);
     if (url.pathname === "/api/admin/pages") return adminPagesRoute(request, env);
+    if (url.pathname === "/api/admin/system-pages") return adminSystemPagesRoute(request, env);
     if (url.pathname === "/api/public/site-settings") return publicSiteSettingsRoute(env);
     if (url.pathname === "/api/public/schedule") return publicScheduleRoute(env);
     if (url.pathname === "/api/public/pages") return publicPagesRoute(request, env);
+    if (url.pathname === "/api/public/system-pages") return publicSystemPagesRoute(request, env);
     if (url.pathname === "/admin/login" || url.pathname === "/admin-login.html") return env.ASSETS.fetch(assetRequest("/admin-login.html", request));
     if (url.pathname === "/admin" || url.pathname === "/admin.html") { const user = await getAuthenticatedUser(request, env); if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302); return env.ASSETS.fetch(assetRequest("/admin.html", request)); }
     if (url.pathname === "/admin-editor.html") { const user = await getAuthenticatedUser(request, env); if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302); return env.ASSETS.fetch(assetRequest("/admin-editor.html", request)); }
