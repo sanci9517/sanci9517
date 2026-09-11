@@ -36,8 +36,9 @@ export default {
     if (url.pathname === "/admin" || url.pathname === "/admin.html") { const user = await getAuthenticatedUser(request, env); if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302); return env.ASSETS.fetch(assetRequest("/admin.html", request)); }
     if (url.pathname === "/admin-editor.html") { const user = await getAuthenticatedUser(request, env); if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302); return env.ASSETS.fetch(assetRequest("/admin-editor.html", request)); }
     if (url.pathname.startsWith("/p/") && url.pathname.length > 3) return env.ASSETS.fetch(assetRequest("/visual-page.html", request));
-    if (url.pathname === "/" || url.pathname === "/index.html") return env.ASSETS.fetch(assetRequest("/index.html", request));
-    return env.ASSETS.fetch(request);
+    const asset = url.pathname === "/" || url.pathname === "/index.html" ? await env.ASSETS.fetch(assetRequest("/index.html", request)) : await env.ASSETS.fetch(request);
+    return injectSystemRuntime(asset);
   }
 };
 function assetRequest(pathname: string, request: Request): Request { const url = new URL(pathname, request.url); return new Request(url.toString(), { method: "GET", headers: request.headers }); }
+async function injectSystemRuntime(response: Response): Promise<Response> { const type=response.headers.get("content-type")||""; if(!type.includes("text/html"))return response; const html=await response.text(); if(html.includes('/assets/system-page-runtime.js'))return new Response(html,{status:response.status,headers:response.headers}); const out=html.replace('</body>','<script src="/assets/system-page-runtime.js"></script></body>'); const headers=new Headers(response.headers); headers.delete('content-length'); return new Response(out,{status:response.status,statusText:response.statusText,headers}); }
