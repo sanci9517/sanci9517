@@ -36,6 +36,7 @@ export default {
     if (url.pathname === "/admin" || url.pathname === "/admin.html") { const user = await getAuthenticatedUser(request, env); if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302); return env.ASSETS.fetch(assetRequest("/admin.html", request)); }
     if (url.pathname === "/admin-editor.html") { const user = await getAuthenticatedUser(request, env); if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302); return env.ASSETS.fetch(assetRequest("/admin-editor.html", request)); }
     if (url.pathname === "/admin-editor-v2.html") { const user = await getAuthenticatedUser(request, env); if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302); return env.ASSETS.fetch(assetRequest("/admin-editor-v2.html", request)); }
+    if (url.pathname === "/admin-editor-v2-phase2.html") { const user = await getAuthenticatedUser(request, env); if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302); return env.ASSETS.fetch(assetRequest("/admin-editor-v2-phase2.html", request)); }
     if (url.pathname.startsWith("/p/") && url.pathname.length > 3) return env.ASSETS.fetch(assetRequest("/visual-page.html", request));
     const asset = url.pathname === "/" || url.pathname === "/index.html" ? await env.ASSETS.fetch(assetRequest("/index.html", request)) : await env.ASSETS.fetch(request);
     return injectSystemRuntime(asset);
