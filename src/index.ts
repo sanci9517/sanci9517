@@ -1,4 +1,5 @@
 import { dbHealthRoute } from "./routes/db-health";
+import { healthRoute } from "./routes/health";
 import { authBootstrapRoute } from "./routes/auth/bootstrap";
 import { authLoginRoute } from "./routes/auth/login";
 import { authLogoutRoute } from "./routes/auth/logout";
