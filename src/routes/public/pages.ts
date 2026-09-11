@@ -10,11 +10,42 @@ type PageRow = {
   updated_at: string;
 };
 
+function mapPage(row: PageRow) {
+  let content: Record<string, unknown> = {};
+  try {
+    const parsed = JSON.parse(row.content_json);
+    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+      content = parsed as Record<string, unknown>;
+    }
+  } catch {
+    content = {};
+  }
+
+  return {
+    id: row.id,
+    slug: row.slug,
+    title: row.title,
+    description: row.description,
+    content,
+    updatedAt: row.updated_at
+  };
+}
+
 export async function publicPagesRoute(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url);
   const slug = url.searchParams.get("slug")?.trim().toLowerCase() || "";
 
-  if (!slug) return error("MISSING_SLUG", 400);
+  if (!slug) {
+    const result = await env.DB.prepare(
+      `SELECT id,slug,title,description,content_json,updated_at
+       FROM pages
+       WHERE is_published = 1
+       ORDER BY updated_at DESC, title ASC
+       LIMIT 100`
+    ).all<PageRow>();
+
+    return ok(result.results.map(mapPage));
+  }
 
   const row = await env.DB.prepare(
     `SELECT id,slug,title,description,content_json,updated_at
@@ -27,33 +58,5 @@ export async function publicPagesRoute(request: Request, env: Env): Promise<Resp
 
   if (!row) return error("PAGE_NOT_FOUND", 404);
 
-  let content: Record<string, unknown> = {};
-  try {
-    const parsed = JSON.parse(row.content_json);
-    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
-      content = parsed as Record<string, unknown>;
-    }
-  } catch {
-    content = {};
-  }
-
-  return new Response(
-    JSON.stringify({
-      ok: true,
-      data: {
-        id: row.id,
-        slug: row.slug,
-        title: row.title,
-        description: row.description,
-        content,
-        updatedAt: row.updated_at
-      }
-    }),
-    {
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-        "Cache-Control": "no-store"
-      }
-    }
-  );
+  return ok(mapPage(row));
 }
