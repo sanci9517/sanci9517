@@ -8,6 +8,7 @@ import { adminSettingsRoute } from "./routes/admin/settings";
 import { adminScheduleRoute } from "./routes/admin/schedule";
 import { adminPagesRoute } from "./routes/admin/pages";
 import { adminSystemPagesRoute } from "./routes/admin/system-pages";
+import { adminEditorRoute } from "./routes/admin/editor";
 import { publicSiteSettingsRoute } from "./routes/public/site-settings";
 import { publicScheduleRoute } from "./routes/public/schedule";
 import { publicPagesRoute } from "./routes/public/pages";
@@ -28,6 +29,7 @@ export default {
     if (url.pathname === "/api/admin/schedule") return adminScheduleRoute(request, env);
     if (url.pathname === "/api/admin/pages") return adminPagesRoute(request, env);
     if (url.pathname === "/api/admin/system-pages") return adminSystemPagesRoute(request, env);
+    if (url.pathname === "/api/admin/editor") return adminEditorRoute(request, env);
     if (url.pathname === "/api/public/site-settings") return publicSiteSettingsRoute(env);
     if (url.pathname === "/api/public/schedule") return publicScheduleRoute(env);
     if (url.pathname === "/api/public/pages") return publicPagesRoute(request, env);
