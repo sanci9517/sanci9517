@@ -18,6 +18,7 @@
     'layout.padding':[['Nincs','0'],['Kicsi','8'],['Normál','12'],['Közepes','16'],['Nagy','24'],['Extra nagy','32']],
     'style.fontSize':[['Kicsi','14'],['Normál','16'],['Közepes','20'],['Címsor','32'],['Nagy címsor','48'],['Óriás','64']],
     'style.fontWeight':[['Normál','400'],['Közepesen vastag','500'],['Félkövér','600'],['Erős','700'],['Extra erős','800']],
+    'style.border':[['Nincs','none'],['Finom','1px solid rgba(255,255,255,.12)'],['Normál','1px solid rgba(255,255,255,.22)'],['Erős','2px solid rgba(255,255,255,.35)'],['Világos','1px solid #ffffff'],['Sötét','1px solid #111827']],
     'style.radius':[['Nincs','0'],['Enyhe','6'],['Normál','10'],['Kerek','16'],['Erősen kerek','24']],
     'style.opacity':[['100%','1'],['90%','0.9'],['80%','0.8'],['60%','0.6'],['50%','0.5']],
     'responsive.tablet.width':[['Mobilhoz közeli','768'],['Tablet','900'],['Széles tablet','1024']],
