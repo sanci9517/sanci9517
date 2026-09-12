@@ -345,4 +345,12 @@ Minden lépésnél:
 
 A régi projektből nem másoljuk vissza a régi hibás architektúrát. Az új V2 tiszta alapra épül, de a korábbi működési tapasztalatokat megtartjuk.
 
-A jelenlegi `v2/foundation` branch erre a blueprintre épül. A következő kódolási lépés a server-side foundation és a D1/auth szerkezet előkészítése, nem a végleges látványdesign.
+A jelenlegi `v2/foundation` branch erre a blueprintre épül.
+
+## 18. Élő részletes fejlesztési terv
+
+A részletes, kipipálható és folyamatosan frissítendő ellenőrzőlista külön dokumentumban van:
+
+`docs/DEVELOPMENT-PLAN.md`
+
+Ezt használjuk a napi fejlesztés során. Ha új igény merül fel, előbb ide kerül be, és csak utána kezdjük a megvalósítást. A terv célja, hogy később bármikor vissza lehessen térni, ellenőrizni lehessen az állapotot, és új funkciókat lehessen hozzáadni anélkül, hogy az architektúrát újra kelljen tervezni.
