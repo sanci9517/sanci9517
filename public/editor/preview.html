@@ -1,95 +1,12 @@
-<!doctype html>
-<html lang="hu">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Sanci9517 — Előnézet</title>
-<link rel="stylesheet" href="/assets/site.css">
-<style>
-.preview-page{min-height:calc(100vh - 140px)}
-.preview-shell{max-width:1100px;margin:0 auto;padding:34px 20px 70px}
-.preview-hero{padding:18px 0 30px}
-.preview-eyebrow{color:#8f9cff;font-size:10px;font-weight:900;letter-spacing:.13em;text-transform:uppercase}
-.preview-title{margin:10px 0 12px;color:#fff;font-size:clamp(42px,7vw,72px);line-height:1;letter-spacing:-.065em}
-.preview-description{max-width:760px;color:var(--muted);font-size:16px;line-height:1.7}
-.preview-canvas{position:relative;min-height:680px}
-.preview-node{box-sizing:border-box}
-.preview-node-text{color:#d0d7e4;line-height:1.7;white-space:pre-wrap}
-.preview-node-heading{color:#fff;line-height:1.05}
-.preview-node-button{display:inline-flex;align-items:center;justify-content:center;padding:12px 17px;border-radius:10px;background:#f5f5f7;color:#101016;text-decoration:none;font-weight:850}
-.preview-node-image{display:block;max-width:100%;object-fit:cover;border-radius:16px}
-.preview-node-section,.preview-node-card{border:1px solid rgba(255,255,255,.12);border-radius:22px;background:linear-gradient(135deg,rgba(14,22,38,.92),rgba(8,14,25,.88));box-shadow:0 18px 50px rgba(0,0,0,.18)}
-.preview-node-card{border-radius:16px}
-.preview-node-divider{border:0;border-top:1px solid rgba(255,255,255,.16)}
-.preview-empty,.preview-error{text-align:center;padding:70px 20px;color:var(--muted)}
-.preview-back{display:inline-flex;margin-top:30px;color:#aeb8c8;text-decoration:none;font-size:13px}
-@media(max-width:700px){.preview-shell{padding:24px 16px 50px}.preview-canvas{min-height:520px}}
-</style>
-</head>
-<body>
-<header class="site-header">
-  <div class="wrap nav">
-    <a class="brand" href="/"><span class="brand-mark">S</span><span data-site-name>Sanci9517</span></a>
-    <div class="nav-actions"><button class="menu-button" data-menu-button type="button" aria-label="Menü" aria-expanded="false">☰</button></div>
-  </div>
-  <nav class="menu-panel" data-menu-panel>
-    <div class="menu-grid">
-      <a class="menu-link" href="/twitch.html">🎮 Élő adás<small>Twitch</small></a>
-      <a class="menu-link" href="/schedule.html">📅 Adásrend<small>Időpontok</small></a>
-      <a class="menu-link" href="/youtube.html">▶ YouTube<small>Videók</small></a>
-      <a class="menu-link" href="/tiktok.html">♪ TikTok<small>Rövid klipek</small></a>
-      <a class="menu-link" href="/community.html">👥 Közösség<small>Discord</small></a>
-      <a class="menu-link" href="/about.html">◉ Rólam<small>Sanci9517</small></a>
-      <a class="menu-link" href="/contact.html">✉ Kapcsolat<small>Elérhetőség</small></a>
-    </div>
-  </nav>
-</header>
-
-<main class="page preview-page">
-  <div class="preview-shell">
-    <section class="preview-hero">
-      <div class="preview-eyebrow">Sanci9517 • Előnézet</div>
-      <h1 id="page-title" class="preview-title">Betöltés...</h1>
-      <p id="page-description" class="preview-description"></p>
-    </section>
-    <section id="page" class="preview-canvas"><div class="preview-empty">Betöltés…</div></section>
-    <a class="preview-back" href="/admin-editor-v2.html">← Vissza a szerkesztőbe</a>
-  </div>
-</main>
-
-<footer class="footer"><div class="wrap footer-row"><span>© <span data-year></span> <span data-site-name>Sanci9517</span></span></div></footer>
-
-<script src="/assets/site.js"></script>
-<script>
-const esc=v=>String(v??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const safeUrl=v=>{try{const u=new URL(String(v||''),location.origin);return ['http:','https:'].includes(u.protocol)?u.href:''}catch{return''}};
-const num=(v,f,min=0)=>Math.max(min,Number.isFinite(Number(v))?Number(v):f);
-const styleFor=n=>{const l=n.layout||{},s=n.style||{};return `width:${num(l.width,300,20)}px;min-height:${num(l.height,80,20)}px;padding:${num(l.padding,0)}px;color:${esc(s.color||'')};background:${esc(s.background||'transparent')};font-size:${num(s.fontSize,16,8)}px;font-weight:${num(s.fontWeight,400)};line-height:${num(s.lineHeight,1.4,0.8)};text-align:${esc(s.textAlign||'left')};border:${esc(s.border||'none')};border-radius:${num(s.radius,0)}px;opacity:${Math.min(1,Math.max(0,Number(s.opacity)??1))};box-sizing:border-box;position:absolute;left:${num(l.x,0)}px;top:${num(l.y,0)}px;`};
-function node(n){if(!n||n.visible===false)return'';const l=n.layout||{},a=n.attributes||{},text=esc(n.content?.text??n.name??''),st=styleFor(n),children=(n.children||[]).map(node).join('');let inner='';let cls='preview-node';
- switch(n.type){
-  case'heading': inner=text;cls+=' preview-node-heading';return `<h2 class="${cls}" style="${st}">${inner}</h2>`;
-  case'text':case'paragraph':case'richtext': inner=text;cls+=' preview-node-text';return `<div class="${cls}" style="${st}">${inner}</div>`;
-  case'button':case'submit':{const u=safeUrl(a.href);return u?`<a class="preview-node preview-node-button" style="${st}" href="${esc(u)}" target="${esc(a.target||'_self')}">${text}</a>`:`<div class="preview-node preview-node-button" style="${st}">${text}</div>`}
-  case'image':{const u=safeUrl(a.src);return u?`<img class="preview-node preview-node-image" style="${st}" src="${esc(u)}" alt="${esc(a.alt||'')}">`:`<div class="preview-node preview-node-card" style="${st}">Kép</div>`}
-  case'divider':return `<hr class="preview-node preview-node-divider" style="${st}">`;
-  case'spacer':return `<div class="preview-node" style="height:${num(l.height,40,0)}px;left:${num(l.x,0)}px;top:${num(l.y,0)}px;width:${num(l.width,300,20)}px;position:absolute"></div>`;
-  case'section':cls+=' preview-node-section';break;
-  case'card':cls+=' preview-node-card';break;
- }
- return `<section class="${cls}" style="${st}">${children||`<b>${text}</b>`}</section>`;
-}
-async function load(){
- const id=new URLSearchParams(location.search).get('pageId');
- const root=document.getElementById('page'),title=document.getElementById('page-title'),desc=document.getElementById('page-description');
- if(!id){root.innerHTML='<div class="preview-error"><h2>Hiányzó oldal</h2><p>Nincs kiválasztott oldal.</p></div>';return}
- try{
-  const r=await fetch('/api/admin/editor?pageId='+encodeURIComponent(id),{credentials:'include',cache:'no-store'});
-  const j=await r.json();if(!r.ok||!j.ok)throw new Error(j.error?.message||'Előnézet nem tölthető be');
-  const p=j.data.page,d=p.document||{};document.title=(p.title||'Sanci9517')+' — Előnézet';title.textContent=p.title||'Sanci9517';desc.textContent=p.description||'';
-  const nodes=d.root?.children||[];root.style.minHeight=Math.max(680,...nodes.map(n=>(Number(n.layout?.y)||0)+(Number(n.layout?.height)||80)+80))+'px';root.innerHTML=nodes.length?nodes.map(node).join(''):'<div class="preview-empty">Az oldalnak még nincs tartalma.</div>';
- }catch(e){root.innerHTML='<div class="preview-error"><h2>Előnézet hiba</h2><p>'+esc(e.message)+'</p></div>'}
-}
-load();
-</script>
-</body>
-</html>
+<!doctype html><html lang="hu"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sanci9517 — Előnézet</title><link rel="stylesheet" href="/assets/site.css"><style>
+.preview-page{min-height:calc(100vh - 140px)}.preview-shell{max-width:1100px;margin:0 auto;padding:26px 20px 70px}.preview-toolbar{display:flex;gap:8px;align-items:center;margin-bottom:18px}.preview-device{border:1px solid rgba(255,255,255,.12);background:#0a101b;border-radius:18px;padding:12px;overflow:auto}.preview-device.mobile{max-width:390px;margin:0 auto}.preview-device.pc{max-width:none}.preview-device-label{font-size:12px;color:#9aa6b8;margin-left:auto}.preview-canvas{position:relative;min-height:680px;background:transparent;overflow:hidden}.preview-device.mobile .preview-canvas{width:100%;min-height:680px}.preview-device.mobile .preview-node{max-width:calc(100% - 24px);box-sizing:border-box}.preview-hero{padding:18px 0 22px}.preview-eyebrow{color:#8f9cff;font-size:10px;font-weight:900;letter-spacing:.13em;text-transform:uppercase}.preview-title{margin:10px 0 12px;color:#fff;font-size:clamp(42px,7vw,72px);line-height:1;letter-spacing:-.065em}.preview-description{max-width:760px;color:var(--muted);font-size:16px;line-height:1.7}.preview-node-text{color:#d0d7e4;line-height:1.7;white-space:pre-wrap}.preview-node-heading{color:#fff;line-height:1.05}.preview-node-button{display:inline-flex;align-items:center;justify-content:center;padding:12px 17px;border-radius:10px;background:#f5f5f7;color:#101016;text-decoration:none;font-weight:850}.preview-node-image{display:block;max-width:100%;object-fit:cover;border-radius:16px}.preview-node-section,.preview-node-card{border:1px solid rgba(255,255,255,.12);border-radius:22px;background:linear-gradient(135deg,rgba(14,22,38,.92),rgba(8,14,25,.88));box-shadow:0 18px 50px rgba(0,0,0,.18)}.preview-node-card{border-radius:16px}.preview-node-divider{border:0;border-top:1px solid rgba(255,255,255,.16)}.preview-empty,.preview-error{text-align:center;padding:70px 20px;color:var(--muted)}.preview-back{display:inline-flex;margin-top:30px;color:#aeb8c8;text-decoration:none;font-size:13px}.preview-btn{border:1px solid rgba(255,255,255,.14);background:#121b2a;color:#fff;border-radius:10px;padding:9px 14px;cursor:pointer}.preview-btn.active{background:#fff;color:#111}@media(max-width:700px){.preview-shell{padding:18px 12px 50px}}
+</style></head><body>
+<header class="site-header"><div class="wrap nav"><a class="brand" href="/"><span class="brand-mark">S</span><span data-site-name>Sanci9517</span></a><div class="nav-actions"><button class="menu-button" data-menu-button type="button" aria-label="Menü" aria-expanded="false">☰</button></div></div><nav class="menu-panel" data-menu-panel><div class="menu-grid"><a class="menu-link" href="/twitch.html">🎮 Élő adás<small>Twitch</small></a><a class="menu-link" href="/schedule.html">📅 Adásrend<small>Időpontok</small></a><a class="menu-link" href="/youtube.html">▶ YouTube<small>Videók</small></a><a class="menu-link" href="/tiktok.html">♪ TikTok<small>Rövid klipek</small></a><a class="menu-link" href="/community.html">👥 Közösség<small>Discord</small></a><a class="menu-link" href="/about.html">◉ Rólam<small>Sanci9517</small></a><a class="menu-link" href="/contact.html">✉ Kapcsolat<small>Elérhetőség</small></a></div></nav></header>
+<main class="page preview-page"><div class="preview-shell"><div class="preview-toolbar"><button class="preview-btn active" id="pcBtn">PC nézet</button><button class="preview-btn" id="mobileBtn">Mobil nézet</button><span class="preview-device-label" id="deviceLabel">PC · 1080 px</span></div><section class="preview-hero"><div class="preview-eyebrow">Sanci9517 • Előnézet</div><h1 id="page-title" class="preview-title">Betöltés...</h1><p id="page-description" class="preview-description"></p></section><div id="device" class="preview-device pc"><section id="page" class="preview-canvas"><div class="preview-empty">Betöltés…</div></section></div><a class="preview-back" href="/admin-editor-v2.html">← Vissza a szerkesztőbe</a></div></main><footer class="footer"><div class="wrap footer-row"><span>© <span data-year></span> <span data-site-name>Sanci9517</span></span></div></footer>
+<script src="/assets/site.js"></script><script>
+const esc=v=>String(v??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));const safeUrl=v=>{try{const u=new URL(String(v||''),location.origin);return['http:','https:'].includes(u.protocol)?u.href:''}catch{return''}};const num=(v,f,min=0)=>Math.max(min,Number.isFinite(Number(v))?Number(v):f);let mode='pc';
+const styleFor=n=>{const l=n.layout||{},s=n.style||{};return`width:${num(l.width,300,20)}px;min-height:${num(l.height,80,20)}px;padding:${num(l.padding,0)}px;color:${esc(s.color||'')};background:${esc(s.background||'transparent')};font-size:${num(s.fontSize,16,8)}px;font-weight:${num(s.fontWeight,400)};line-height:${num(s.lineHeight,1.4,.8)};text-align:${esc(s.textAlign||'left')};border:${esc(s.border||'none')};border-radius:${num(s.radius,0)}px;opacity:${Math.min(1,Math.max(0,Number(s.opacity)??1))};box-sizing:border-box;position:absolute;left:${num(l.x,0)}px;top:${num(l.y,0)}px;`};
+function node(n){if(!n||n.visible===false)return'';const l=n.layout||{},a=n.attributes||{},text=esc(n.content?.text??n.name??''),st=styleFor(n),children=(n.children||[]).map(node).join('');let cls='preview-node';switch(n.type){case'heading':return`<h2 class="${cls} preview-node-heading" style="${st}">${text}</h2>`;case'text':case'paragraph':case'richtext':return`<div class="${cls} preview-node-text" style="${st}">${text}</div>`;case'button':case'submit':{const u=safeUrl(a.href);return u?`<a class="${cls} preview-node-button" style="${st}" href="${esc(u)}" target="${esc(a.target||'_self')}">${text}</a>`:`<div class="${cls} preview-node-button" style="${st}">${text}</div>`}case'image':{const u=safeUrl(a.src);return u?`<img class="${cls} preview-node-image" style="${st}" src="${esc(u)}" alt="${esc(a.alt||'')}">`:`<div class="${cls} preview-node-card" style="${st}">Kép</div>`}case'divider':return`<hr class="${cls} preview-node-divider" style="${st}">`;case'spacer':return`<div class="${cls}" style="height:${num(l.height,40,0)}px;left:${num(l.x,0)}px;top:${num(l.y,0)}px;width:${num(l.width,300,20)}px;position:absolute"></div>`;case'section':cls+=' preview-node-section';break;case'card':cls+=' preview-node-card';break}return`<section class="${cls}" style="${st}">${children||`<b>${text}</b>`}</section>`}
+function setMode(m){mode=m;const d=document.getElementById('device');d.className='preview-device '+m;document.getElementById('pcBtn').classList.toggle('active',m==='pc');document.getElementById('mobileBtn').classList.toggle('active',m==='mobile');document.getElementById('deviceLabel').textContent=m==='pc'?'PC · 1080 px':'Mobil · 390 px'}document.getElementById('pcBtn').onclick=()=>setMode('pc');document.getElementById('mobileBtn').onclick=()=>setMode('mobile');
+async function load(){const id=new URLSearchParams(location.search).get('pageId'),root=document.getElementById('page'),title=document.getElementById('page-title'),desc=document.getElementById('page-description');if(!id){root.innerHTML='<div class="preview-error"><h2>Hiányzó oldal</h2><p>Nincs kiválasztott oldal.</p></div>';return}try{const r=await fetch('/api/admin/editor?pageId='+encodeURIComponent(id),{credentials:'include',cache:'no-store'}),j=await r.json();if(!r.ok||!j.ok)throw new Error(j.error?.message||'Előnézet nem tölthető be');const p=j.data.page,d=p.document||{};document.title=(p.title||'Sanci9517')+' — Előnézet';title.textContent=p.title||'Sanci9517';desc.textContent=p.description||'';const nodes=d.root?.children||[];root.style.minHeight=Math.max(680,...nodes.map(n=>(Number(n.layout?.y)||0)+(Number(n.layout?.height)||80)+80))+'px';root.innerHTML=nodes.length?nodes.map(node).join(''):'<div class="preview-empty">Az oldalnak még nincs tartalma.</div>'}catch(e){root.innerHTML='<div class="preview-error"><h2>Előnézet hiba</h2><p>'+esc(e.message)+'</p></div>'}}load();
+</script></body></html>
