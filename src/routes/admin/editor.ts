@@ -28,11 +28,12 @@ export async function adminEditorRoute(request: Request, env: Env): Promise<Resp
     const json=JSON.stringify(document); if(json.length>180000) return error("DOCUMENT_TOO_LARGE",400);
     const latest=await env.DB.prepare("SELECT COALESCE(MAX(version),0) AS version FROM editor_revisions WHERE page_id=?").bind(id).first<{version:number}>();
     const version=Number(latest?.version||0)+1, revId=crypto.randomUUID();
+    const publish=body.publish===true;
     await env.DB.batch([
-      env.DB.prepare("UPDATE pages SET content_json=?, updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(json,id),
-      env.DB.prepare("INSERT INTO editor_revisions (id,page_id,version,document_json,created_by,note) VALUES (?,?,?,?,?,?)").bind(revId,id,version,json,user.id,typeof body.note==="string"?body.note.slice(0,200):"Editor save")
+      env.DB.prepare("UPDATE pages SET content_json=?, is_published=CASE WHEN ?=1 THEN 1 ELSE is_published END, updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(json,publish?1:0,id),
+      env.DB.prepare("INSERT INTO editor_revisions (id,page_id,version,document_json,created_by,note) VALUES (?,?,?,?,?,?)").bind(revId,id,version,json,user.id,typeof body.note==="string"?body.note.slice(0,200):publish?"Publikálás":"Editor mentés")
     ]);
-    return ok({pageId:id,version,revisionId:revId,savedAt:new Date().toISOString()});
+    return ok({pageId:id,version,revisionId:revId,published:publish,savedAt:new Date().toISOString()});
   }
 
   if(request.method==="PUT"){
