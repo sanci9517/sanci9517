@@ -5,19 +5,20 @@
   function exposeEditorApi(){try{window.SanciEditor={state,allNodes,find,commit,render,show,setPath,getPath}}catch{}}
   async function createPage(){const title=prompt('Új oldal neve:','Új oldal');if(!title)return;const slugBase=title.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'')||'uj-oldal';const slug=slugBase+'-'+Date.now().toString(36).slice(-5);const response=await nativeFetch('/api/admin/pages',{method:'POST',headers:{'content-type':'application/json'},credentials:'include',body:JSON.stringify({title:title.trim(),slug,description:'',content:{},isPublished:true})});const payload=await response.json().catch(()=>({}));if(!response.ok||!payload.ok)throw new Error(payload.error?.message||'Az oldal létrehozása sikertelen');if(typeof loadPages==='function')await loadPages();show('Új oldal létrehozva')}
   function installPanelUi(){if(document.getElementById('sanci-panel-style'))return;const style=document.createElement('style');style.id='sanci-panel-style';style.textContent=`
-    .workspace{grid-template-columns:330px minmax(0,1fr) 325px!important;min-width:0!important}
-    .workspace.panel-left-closed{grid-template-columns:0 minmax(0,1fr) 325px!important}
-    .workspace.panel-right-closed{grid-template-columns:330px minmax(0,1fr) 0!important}
-    .workspace.panel-left-closed.panel-right-closed{grid-template-columns:0 minmax(0,1fr) 0!important}
-    .workspace.panel-left-closed>.left,.workspace.panel-right-closed>.right{display:none!important}
-    .canvas-area{min-width:0!important;overflow:hidden!important}
-    .canvas-wrap{justify-content:flex-start!important;padding-left:max(20px,calc((100% - 1120px)/2))!important;padding-right:20px!important;overflow:auto!important}
-    .canvas-stage{margin-left:0!important;margin-right:0!important}
+    .workspace{position:relative!important;display:block!important;min-width:0!important;overflow:hidden!important}
+    .canvas-area{position:absolute!important;inset:0!important;min-width:0!important;overflow:hidden!important}
+    .canvas-wrap{justify-content:center!important;align-items:flex-start!important;padding:20px 48px 40px!important;overflow:auto!important}
+    .canvas-stage{margin:0 auto!important;flex:none!important}
     .canvas{left:0!important}
-    .editor-panel-toggle{position:absolute;top:58px;width:32px;height:38px;border:1px solid #39465a;border-radius:8px;background:#101720;color:#e7edf6;z-index:80;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 24px #0008}
-    .editor-panel-toggle.left{left:5px}.editor-panel-toggle.right{right:5px}
+    .workspace>.panel{position:absolute!important;top:0!important;bottom:0!important;width:330px!important;z-index:70!important;transition:transform .18s ease,opacity .18s ease!important;box-shadow:0 12px 35px rgba(0,0,0,.28)!important}
+    .workspace>.panel.left{left:0!important}
+    .workspace>.panel.right{right:0!important;width:325px!important}
+    .workspace.panel-left-closed>.panel.left{transform:translateX(-105%)!important;opacity:0!important;pointer-events:none!important}
+    .workspace.panel-right-closed>.panel.right{transform:translateX(105%)!important;opacity:0!important;pointer-events:none!important}
+    .editor-panel-toggle{position:absolute;top:74px;width:34px;height:40px;border:1px solid #39465a;border-radius:8px;background:#101720;color:#e7edf6;z-index:90;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 24px #0008;font-size:20px}
+    .editor-panel-toggle.left{left:6px}.editor-panel-toggle.right{right:6px}
     .editor-panel-toggle:hover{border-color:#6ea8fe;background:#172231}
-    .panel-collapse{display:flex;align-items:center;justify-content:space-between;padding:0 10px 0 14px}
+    .panel-collapse{display:flex!important;align-items:center;justify-content:space-between;padding:0 10px 0 14px}
     .panel-close{border:0;background:transparent;color:#aeb9c9;cursor:pointer;font-size:18px;line-height:1;padding:4px 7px}
     .panel-close:hover{color:#eef2f7}
     .group-properties{border:1px solid #344155;border-radius:10px;background:#0e1219;padding:10px;margin-bottom:10px}
