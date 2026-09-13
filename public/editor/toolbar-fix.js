@@ -1,8 +1,31 @@
 (() => {
+  const nativeFetch = window.fetch.bind(window);
+
+  window.fetch = async (...args) => {
+    const response = await nativeFetch(...args);
+    try {
+      const request = args[0];
+      const url = typeof request === 'string' ? request : request?.url || '';
+      const method = typeof request === 'string' ? (args[1]?.method || 'GET') : (request?.method || 'GET');
+      if (method.toUpperCase() === 'GET' && url.includes('/api/admin/pages')) {
+        const data = await response.clone().json();
+        if (!Array.isArray(data?.pages) && Array.isArray(data?.data)) {
+          return new Response(JSON.stringify({ pages: data.data }), {
+            status: response.status,
+            statusText: response.statusText,
+            headers: { 'content-type': 'application/json' }
+          });
+        }
+      }
+    } catch {}
+    return response;
+  };
+
   function bind(id, fn) {
     const el = document.getElementById(id);
     if (el) el.onclick = fn;
   }
+
   function start() {
     if (typeof loadPages === 'function') loadPages().catch(e => {
       if (typeof setStatus === 'function') setStatus('Hiba');
@@ -19,6 +42,7 @@
     bind('publishBtn', () => typeof save === 'function' && save());
     bind('fullscreenBtn', () => document.documentElement.requestFullscreen?.());
   }
+
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
   else start();
 })();
