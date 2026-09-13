@@ -52,14 +52,14 @@
 
 ### 3.1 Elemkezelés
 
-- [ ] Elem duplikálása
-- [ ] Több elem kijelölése
-- [ ] Csoportosítás / csoport feloldása
+- [x] Elem duplikálása
+- [x] Több elem kijelölése
+- [x] Csoportosítás / csoport feloldása
 - [ ] Lock / unlock
 - [ ] Hide / show
 - [ ] Layer sorrend: előre / hátra / legelőre / leghátra
-- [ ] Drag & drop pozicionálás
-- [ ] Snap / segédvonalak
+- [x] Drag & drop pozicionálás
+- [x] Snap / segédvonalak
 - [ ] Igazítás: bal / közép / jobb / felső / közép / alsó
 - [ ] Egyenletes elosztás
 - [ ] Másolás / beillesztés
@@ -201,7 +201,7 @@
 
 - [x] Új oldal létrehozása
 - [x] Oldal tartalmának mentése
-- [ ] Oldal átnevezése
+- [x] Oldal átnevezése
 - [ ] Slug szerkesztése biztonságosan
 - [ ] Oldal másolása / klónozása
 - [ ] Oldal törlése
@@ -268,21 +268,27 @@
 ## 9. Szerkesztő UX
 
 - [ ] Bal oldali elemkönyvtár
-- [ ] Középső canvas
-- [ ] Jobb oldali inspector
-- [ ] Reszponzív canvas zoom
-- [ ] Zoom in/out
-- [ ] 100% / fit-to-screen
-- [ ] Rács kapcsoló
-- [ ] Segédvonalak
+- [x] Középső canvas
+- [x] Jobb oldali inspector
+- [x] Reszponzív canvas zoom
+- [x] Zoom in/out
+- [x] 100% / fit-to-screen
+- [x] Rács kapcsoló
+- [x] Segédvonalak
 - [ ] Keyboard shortcuts
 - [ ] Kontextusmenü
 - [ ] Breadcrumb / szülő elem navigáció
 - [ ] Keresés az elemek között
-- [ ] Layer tree
+- [x] Layer tree
 - [ ] Elem név átírása
 - [ ] Elem státuszok és hibajelzések
 - [ ] Accessibility ellenőrző jelzések
+- [x] Bal/jobb panel összecsukása és visszanyitása
+- [x] Egy elem inspector és csoport inspector elkülönítése
+- [x] Csoport tulajdonságainak egységes alkalmazása a csoport tagjaira
+- [x] Vizuális színválasztó a csoport tulajdonságainál
+- [x] Középső canvas terület középre igazítása
+- [x] Panelvezérlők nem takarják a panel szövegét
 
 ## 10. Tartalmi / üzleti modulok
 
@@ -484,4 +490,4 @@ Ha új igény merül fel:
 - `[ ]` Nincs kész.
 - `[!]` Ismert probléma / blokkoló.
 
-**Utolsó frissítés:** 2026-09-12
+**Utolsó frissítés:** 2026-09-13
