@@ -22,3 +22,19 @@
   - `public/editor/page-rename.js`
   - `public/admin-editor-v2.html`
 - Tesztállapot: **MŰKÖDIK**.
+
+## 2026-09-13 — Csoportosítás, csoport feloldása és csoporttulajdonságok ellenőrizve
+
+- Aktív ág: `v2/foundation`
+- A több elem kijelölése után a csoportosítás és a csoport feloldása felhasználói teszten sikeres.
+- A csoporttulajdonságok külön inspectorban jelennek meg, amikor valódi csoport van kijelölve.
+- A csoporttulajdonságok az egy elem inspector logikájához igazodnak, és a módosítások egységesen alkalmazhatók a csoport tagjaira.
+- A csoport színéhez és hátteréhez vizuális színválasztó került be.
+- A bal/jobb panelek összecsukása és visszanyitása működik, a vezérlők nem takarják a panel szövegét.
+- A középső fehér canvas terület középre igazított elrendezést kapott.
+- A felhasználói ellenőrzés eredménye: **MŰKÖDIK**.
+- Érintett fő modulok:
+  - `public/editor/group-properties.js`
+  - `public/editor/toolbar-fix.js`
+  - `public/editor/app.js`
+- Következő lépés: csak a terv szerinti következő funkció tesztelése, új párhuzamos funkcióteszt nélkül.
