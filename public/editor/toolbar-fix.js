@@ -56,13 +56,54 @@
     show('Új oldal létrehozva');
   }
 
-  function centerCanvas() {
-    if (!document.getElementById('sanci-editor-center-style')) {
-      const style = document.createElement('style');
-      style.id = 'sanci-editor-center-style';
-      style.textContent = '.canvas-wrap{justify-content:center!important}.canvas-stage{margin-left:0!important;margin-right:0!important}.canvas{left:0!important}';
-      document.head.appendChild(style);
-    }
+  function injectLayout() {
+    if (document.getElementById('sanci-editor-layout-style')) return;
+    const style = document.createElement('style');
+    style.id = 'sanci-editor-layout-style';
+    style.textContent = `
+      .workspace{grid-template-columns:330px minmax(460px,1fr) 325px!important;position:relative}
+      .canvas-wrap{justify-content:flex-start!important;padding-left:30px;padding-right:30px}
+      .canvas-stage{margin-left:max(0px,calc((100% - 1120px)/2))!important;margin-right:0!important}
+      .editor-panel-toggle{position:absolute;top:58px;width:34px;height:34px;border:1px solid #39465a;border-radius:9px;background:#101720;color:#e7edf6;z-index:80;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 24px #0008}
+      .editor-panel-toggle.left{left:8px}.editor-panel-toggle.right{right:8px}
+      .editor-panel-toggle:hover{border-color:#6ea8fe;background:#172231}
+      .workspace.panel-left-closed{grid-template-columns:0 minmax(460px,1fr) 325px!important}
+      .workspace.panel-right-closed{grid-template-columns:330px minmax(460px,1fr) 0!important}
+      .workspace.panel-left-closed.panel-right-closed{grid-template-columns:0 minmax(460px,1fr) 0!important}
+      .workspace.panel-left-closed>.left,.workspace.panel-right-closed>.right{display:none!important}
+      .panel-collapse{display:flex;align-items:center;justify-content:space-between;padding:0 10px 0 14px}
+      .panel-collapse button{border:0;background:transparent;color:#aeb9c9;cursor:pointer;font-size:18px;line-height:1}
+      .group-properties{border:1px solid #344155;border-radius:10px;background:#0e1219;padding:10px;margin-bottom:10px}
+      .group-properties .group-title{font-weight:800;font-size:13px;margin-bottom:4px}
+      .group-properties .group-subtitle{font-size:10px;color:#8d98aa;margin-bottom:10px;line-height:1.4}
+      .group-properties .mixed{color:#8d98aa;font-size:10px;margin-top:4px}
+      .group-properties .field{margin-bottom:9px}
+      .group-properties input,.group-properties select{width:100%;background:#0c1016;border:1px solid #293140;color:#eef2f7;border-radius:7px;padding:8px}
+      .group-properties .gp-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+      .group-properties .gp-row{display:flex;align-items:center;gap:7px;margin:7px 0;font-size:11px;color:#cbd4e0}
+    `;
+    document.head.appendChild(style);
+  }
+
+  function injectPanelButtons() {
+    if (document.getElementById('toggleLeftPanel')) return;
+    const ws = document.querySelector('.workspace');
+    if (!ws) return;
+    const left = document.createElement('button');
+    left.id = 'toggleLeftPanel'; left.className = 'editor-panel-toggle left'; left.type='button'; left.title='Elemek panel nyitása/zárása'; left.textContent='‹';
+    const right = document.createElement('button');
+    right.id = 'toggleRightPanel'; right.className = 'editor-panel-toggle right'; right.type='button'; right.title='Tulajdonságok panel nyitása/zárása'; right.textContent='›';
+    ws.append(left,right);
+    const leftPanel=ws.querySelector('.left'), rightPanel=ws.querySelector('.right');
+    const lh=leftPanel?.querySelector('.panel-head'), rh=rightPanel?.querySelector('.panel-head');
+    if(lh&&!lh.querySelector('.panel-close')){const b=document.createElement('button');b.className='panel-close';b.type='button';b.textContent='‹';b.title='Bezárás';b.onclick=()=>ws.classList.add('panel-left-closed');lh.classList.add('panel-collapse');lh.appendChild(b)}
+    if(rh&&!rh.querySelector('.panel-close')){const b=document.createElement('button');b.className='panel-close';b.type='button';b.textContent='›';b.title='Bezárás';b.onclick=()=>ws.classList.add('panel-right-closed');rh.classList.add('panel-collapse');rh.appendChild(b)}
+    left.onclick=()=>{ws.classList.toggle('panel-left-closed');left.textContent=ws.classList.contains('panel-left-closed')?'›':'‹'};
+    right.onclick=()=>{ws.classList.toggle('panel-right-closed');right.textContent=ws.classList.contains('panel-right-closed')?'‹':'›'};
+  }
+
+  function exposeEditorApi(){
+    window.SanciEditor = { state, allNodes, find, commit, render, show, setPath, getPath };
   }
 
   function loadGroupProperties() {
@@ -74,8 +115,9 @@
   }
 
   function start() {
-    centerCanvas();
-    loadGroupProperties();
+    injectLayout();
+    injectPanelButtons();
+    exposeEditorApi();
     if (typeof loadPages === 'function') loadPages().catch(e => {
       if (typeof setStatus === 'function') setStatus('Hiba');
       if (typeof show === 'function') show(e.message || 'Oldalak betöltési hiba');
@@ -91,6 +133,7 @@
     bind('saveBtn', () => typeof save === 'function' && save());
     bind('publishBtn', () => typeof save === 'function' && save());
     bind('fullscreenBtn', () => document.documentElement.requestFullscreen?.());
+    loadGroupProperties();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
