@@ -7,18 +7,27 @@
     const c=canvas();if(!c)return;
     c.querySelectorAll('.node[data-id]').forEach(el=>el.classList.toggle('multi-selected',selected.has(el.dataset.id)));
     const label=stateLabel();
-    if(label&&selected.size>1)label.textContent=`Kijelölés: ${selected.size} elem`;
+    if(label)label.textContent=selected.size>1?`Kijelölés: ${selected.size} elem`:selected.size===1?'Kijelölés: 1 elem':'Kijelölés: —';
   };
+  document.addEventListener('pointerdown',e=>{
+    const node=nodeFromEvent(e);if(!node)return;
+    if(e.ctrlKey||e.metaKey||e.shiftKey){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+    }
+  },true);
   document.addEventListener('click',e=>{
     const node=nodeFromEvent(e);if(!node)return;
+    const id=node.dataset.id;
     if(!(e.ctrlKey||e.metaKey||e.shiftKey)){
       selected.clear();
+      selected.add(id);
+      paint();
       return;
     }
     e.preventDefault();e.stopImmediatePropagation();
-    const id=node.dataset.id;
     if(selected.has(id))selected.delete(id);else selected.add(id);
-    if(selected.size===0){selected.add(id)}
+    if(selected.size===0)selected.add(id);
     paint();
   },true);
   const style=document.createElement('style');
