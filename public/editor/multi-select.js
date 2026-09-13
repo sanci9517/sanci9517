@@ -2,10 +2,11 @@
   const selected=new Set();
   const canvas=()=>document.getElementById('canvas');
   const label=()=>document.getElementById('selectionState');
-  const getNode=e=>{
+  const nodeFromEvent=e=>{
     const t=e.target;
-    return t&&typeof t.closest==='function'?t.closest('#canvas .node[data-id]'):null;
+    return t&&t.closest?t.closest('#canvas .node[data-id]'):null;
   };
+  const hasModifier=e=>e.ctrlKey||e.metaKey;
   const paint=()=>{
     const c=canvas();
     if(!c)return;
@@ -13,48 +14,51 @@
       el.classList.toggle('multi-selected',selected.has(el.dataset.id));
     });
     const l=label();
-    if(l)l.textContent=selected.size>0?`Kijelölés: ${selected.size} elem`:'Kijelölés: —';
+    if(l)l.textContent=selected.size?`Kijelölés: ${selected.size} elem`:'Kijelölés: —';
   };
-  const clear=()=>{
-    if(!selected.size){paint();return;}
-    selected.clear();
-    paint();
-  };
-  const hasModifier=e=>e.ctrlKey||e.metaKey;
+  const clear=()=>{selected.clear();paint();};
 
-  // Modifier selection is handled before the editor's own pointerdown handler.
   document.addEventListener('pointerdown',e=>{
-    const node=getNode(e);
+    const node=nodeFromEvent(e);
+
     if(!node){
-      if(!hasModifier(e)&&!e.shiftKey)clear();
+      if(!hasModifier(e))clear();
       return;
     }
-    if(!hasModifier(e)&&!e.shiftKey)return;
 
+    if(!hasModifier(e))return;
+
+    // Ctrl/Cmd selection belongs entirely to this module.
+    // Stop the editor's native single-selection pointer handler.
     e.preventDefault();
     e.stopImmediatePropagation();
+
     const id=node.dataset.id;
-    if(selected.has(id))selected.delete(id);else selected.add(id);
+    if(selected.has(id))selected.delete(id);
+    else selected.add(id);
     paint();
   },true);
 
-  // A normal click starts a fresh selection. A blank click clears everything.
   document.addEventListener('click',e=>{
-    const node=getNode(e);
-    if(node){
-      if(hasModifier(e)||e.shiftKey){
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        paint();
-        return;
-      }
-      clear();
+    const node=nodeFromEvent(e);
+
+    if(node&&hasModifier(e)){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      paint();
       return;
     }
-    if(!hasModifier(e)&&!e.shiftKey)clear();
+
+    if(!node&&!hasModifier(e))clear();
   },true);
 
-  // Prevent the editor's single-selection class from making an old multi-selection look active.
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'&&selected.size){
+      e.preventDefault();
+      clear();
+    }
+  });
+
   const style=document.createElement('style');
   style.textContent=`
     #canvas .node.multi-selected{
@@ -71,4 +75,13 @@
     }
   `;
   document.head.appendChild(style);
+
+  const observer=new MutationObserver(()=>paint());
+  const start=()=>{
+    const c=canvas();
+    if(c)observer.observe(c,{childList:true,subtree:true});
+    paint();
+  };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
+  else start();
 })();
