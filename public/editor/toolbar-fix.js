@@ -2,12 +2,25 @@
   const nativeFetch = window.fetch.bind(window);
 
   window.fetch = async (...args) => {
+    const request = args[0];
+    const options = args[1] || {};
+    const url = typeof request === 'string' ? request : request?.url || '';
+    const method = String(typeof request === 'string' ? (options.method || 'GET') : (request?.method || 'GET')).toUpperCase();
+
+    if (method === 'PUT' && url.includes('/api/admin/pages') && typeof options.body === 'string') {
+      try {
+        const body = JSON.parse(options.body);
+        if (typeof body.content === 'string') {
+          body.content = JSON.parse(body.content);
+          options.body = JSON.stringify(body);
+          args[1] = options;
+        }
+      } catch {}
+    }
+
     const response = await nativeFetch(...args);
     try {
-      const request = args[0];
-      const url = typeof request === 'string' ? request : request?.url || '';
-      const method = typeof request === 'string' ? (args[1]?.method || 'GET') : (request?.method || 'GET');
-      if (method.toUpperCase() === 'GET' && url.includes('/api/admin/pages')) {
+      if (method === 'GET' && url.includes('/api/admin/pages')) {
         const data = await response.clone().json();
         if (!Array.isArray(data?.pages) && Array.isArray(data?.data)) {
           return new Response(JSON.stringify({ pages: data.data }), {
@@ -26,11 +39,29 @@
     if (el) el.onclick = fn;
   }
 
+  async function createPage() {
+    const title = prompt('Új oldal neve:', 'Új oldal');
+    if (!title) return;
+    const slugBase = title.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'uj-oldal';
+    const slug = slugBase + '-' + Date.now().toString(36).slice(-5);
+    const response = await nativeFetch('/api/admin/pages', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ title: title.trim(), slug, description: '', content: {}, isPublished: true })
+    });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok || !payload.ok) throw new Error(payload.error?.message || 'Az oldal létrehozása sikertelen');
+    if (typeof loadPages === 'function') await loadPages();
+    show('Új oldal létrehozva');
+  }
+
   function start() {
     if (typeof loadPages === 'function') loadPages().catch(e => {
       if (typeof setStatus === 'function') setStatus('Hiba');
       if (typeof show === 'function') show(e.message || 'Oldalak betöltési hiba');
     });
+    bind('newPage', () => createPage().catch(e => show(e.message || 'Hiba')));
     bind('undo', () => typeof undo === 'function' && undo());
     bind('redo', () => typeof redo === 'function' && redo());
     bind('groupBtn', () => typeof groupSelected === 'function' && groupSelected());
