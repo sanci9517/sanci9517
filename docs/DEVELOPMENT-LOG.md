@@ -1,9 +1,17 @@
 # Sanci9517 V2 — Fejlesztési napló
 
-## 2026-09-13 — Oldal átnevezése előkészítve
+## 2026-09-13 — Több elem kijelölése ellenőrizve
 
 - Aktív ág: `v2/foundation`
-- Következő kötelező teszt: **Oldal átnevezése**.
+- A Visual Editor többes kijelölése a core editor selection modellbe került.
+- Ctrl/Cmd + kattintással több elem kijelölhető.
+- A felhasználói ellenőrzés eredménye: **MŰKÖDIK**.
+- A régi, különálló `multi-select.js` overlay eltávolításra került, hogy ne ütközzön a core kijelöléssel.
+- A következő fejlesztési lépés előtt nem végzünk más funkciótesztet.
+
+## 2026-09-13 — Oldal átnevezése
+
+- Aktív ág: `v2/foundation`
 - Az editorban új `Átnevezés` művelet került be.
 - A művelet a szerveroldali `/api/admin/pages` `PUT` végpontot használja, ezért az oldal neve D1-ben kerül módosításra.
 - Az oldal slugja nem változik.
@@ -13,8 +21,4 @@
 - Érintett fájlok:
   - `public/editor/page-rename.js`
   - `public/admin-editor-v2.html`
-- Commitok:
-  - `17c16e03889fc912a5a9ac93b2ecdf69029e77fd` — rename action
-  - `fada027a93f9eeec2a6a544e1dca75c0053fe298` — editor script bekötése
-- Tesztállapot: **[ ] felhasználói ellenőrzésre vár**.
-- Továbbhaladás csak akkor, ha a felhasználó az átnevezést működőnek és D1-ben megmaradónak ellenőrizte.
+- Tesztállapot: **MŰKÖDIK**.
