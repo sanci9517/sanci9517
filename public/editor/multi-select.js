@@ -11,23 +11,23 @@
   };
   document.addEventListener('pointerdown',e=>{
     const node=nodeFromEvent(e);if(!node)return;
-    if(e.ctrlKey||e.metaKey||e.shiftKey){
-      e.preventDefault();
-      e.stopImmediatePropagation();
-    }
+    if(!(e.ctrlKey||e.metaKey||e.shiftKey))return;
+    const id=node.dataset.id;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    if(selected.has(id))selected.delete(id);else selected.add(id);
+    if(selected.size===0)selected.add(id);
+    paint();
   },true);
   document.addEventListener('click',e=>{
     const node=nodeFromEvent(e);if(!node)return;
-    const id=node.dataset.id;
-    if(!(e.ctrlKey||e.metaKey||e.shiftKey)){
-      selected.clear();
-      selected.add(id);
-      paint();
+    if(e.ctrlKey||e.metaKey||e.shiftKey){
+      e.preventDefault();
+      e.stopImmediatePropagation();
       return;
     }
-    e.preventDefault();e.stopImmediatePropagation();
-    if(selected.has(id))selected.delete(id);else selected.add(id);
-    if(selected.size===0)selected.add(id);
+    selected.clear();
+    selected.add(node.dataset.id);
     paint();
   },true);
   const style=document.createElement('style');
