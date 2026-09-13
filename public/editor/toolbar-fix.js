@@ -56,7 +56,26 @@
     show('Új oldal létrehozva');
   }
 
+  function centerCanvas() {
+    if (!document.getElementById('sanci-editor-center-style')) {
+      const style = document.createElement('style');
+      style.id = 'sanci-editor-center-style';
+      style.textContent = '.canvas-wrap{justify-content:center!important}.canvas-stage{margin-left:0!important;margin-right:0!important}.canvas{left:0!important}';
+      document.head.appendChild(style);
+    }
+  }
+
+  function loadGroupProperties() {
+    if (document.querySelector('script[data-group-properties]')) return;
+    const s = document.createElement('script');
+    s.src = '/editor/group-properties.js';
+    s.dataset.groupProperties = '1';
+    document.body.appendChild(s);
+  }
+
   function start() {
+    centerCanvas();
+    loadGroupProperties();
     if (typeof loadPages === 'function') loadPages().catch(e => {
       if (typeof setStatus === 'function') setStatus('Hiba');
       if (typeof show === 'function') show(e.message || 'Oldalak betöltési hiba');
