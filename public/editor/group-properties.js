@@ -1,6 +1,6 @@
 (()=>{
 const meta=()=>{state.doc.metadata=state.doc.metadata||{};state.doc.metadata.groups=state.doc.metadata.groups||{};return state.doc.metadata.groups};
-const getGroup=()=>{if(!state.selected?.length)return null;const ns=state.selected.map(find).filter(Boolean),gs=[...new Set(ns.map(n=>n.groupId).filter(Boolean))];if(gs.length!==1)return null;const all=allNodes().filter(n=>n.groupId===gs[0]);return all.length===ns.length?{id:gs[0],all}:null};
+const getGroup=()=>{if(!state.selected?.length)return null;const ns=state.selected.map(find).filter(Boolean),gs=[...new Set(ns.map(n=>n.groupId).filter(Boolean))];if(gs.length!==1)return null;const all=allNodes().filter(n=>n.groupId===gs[0]);if(!all.length)return null;return {id:gs[0],all};};
 const box=()=>{const g=getGroup();if(!g)return null;let x=Infinity,y=Infinity,r=-Infinity,b=-Infinity;g.all.forEach(n=>{const l=n.layout||{};x=Math.min(x,Number(l.x)||0);y=Math.min(y,Number(l.y)||0);r=Math.max(r,(Number(l.x)||0)+(Number(l.width)||0));b=Math.max(b,(Number(l.y)||0)+(Number(l.height)||0));});const m=meta();m[g.id]=m[g.id]||{name:'Csoport'};return {...g,x,y,width:r-x,height:b-y,meta:m[g.id]};};
 const f=(label,key,v,type='text')=>`<div class="field"><label>${label}</label><input data-gkey="${key}" type="${type}" value="${String(v??'').replaceAll('"','&quot;')}"></div>`;
 let rendering=false;
