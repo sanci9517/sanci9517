@@ -1,92 +1,27 @@
 (()=>{
-  const inspector=()=>document.getElementById('inspector');
-  let scrollTop=0;
-  const remember=()=>{const b=inspector();if(b)scrollTop=b.scrollTop};
-  const restore=()=>{requestAnimationFrame(()=>{const b=inspector();if(!b)return;b.querySelectorAll('.inspect-section').forEach(d=>{if(!d.dataset.userCollapsed)d.open=true})})};
-  const valueFor=el=>el.type==='checkbox'?el.checked:el.type==='number'?Number(el.value):el.value;
-  const originalSetField=window.setField;
-  const applyField=(el,value=valueFor(el))=>{
-    if(typeof originalSetField!=='function')return;
-    const oldInspector=window.renderInspector;
-    try{window.renderInspector=()=>{};originalSetField(el.dataset.key,value)}finally{window.renderInspector=oldInspector}
-    restore();
-  };
-  const presetMap={
-    'layout.position':[['Abszolút','absolute'],['Relatív','relative'],['Normál','static']],
-    'layout.display':[['Blokk','block'],['Flex','flex'],['Rács','grid'],['Inline blokk','inline-block']],
-    'layout.gap':[['Nincs','0'],['Kicsi','8'],['Normál','12'],['Közepes','16'],['Nagy','24'],['Extra nagy','32']],
-    'layout.padding':[['Nincs','0'],['Kicsi','8'],['Normál','12'],['Közepes','16'],['Nagy','24'],['Extra nagy','32']],
-    'style.fontSize':[['Kicsi','14'],['Normál','16'],['Közepes','20'],['Címsor','32'],['Nagy címsor','48'],['Óriás','64']],
-    'style.fontWeight':[['Normál','400'],['Közepesen vastag','500'],['Félkövér','600'],['Erős','700'],['Extra erős','800']],
-    'style.border':[['Nincs','none'],['Finom','1px solid rgba(255,255,255,.12)'],['Normál','1px solid rgba(255,255,255,.22)'],['Erős','2px solid rgba(255,255,255,.35)'],['Világos','1px solid #ffffff'],['Sötét','1px solid #111827']],
-    'style.radius':[['Nincs','0'],['Enyhe','6'],['Normál','10'],['Kerek','16'],['Erősen kerek','24']],
-    'style.opacity':[['100%','1'],['90%','0.9'],['80%','0.8'],['60%','0.6'],['50%','0.5']],
-    'responsive.tablet.width':[['Mobilhoz közeli','768'],['Tablet','900'],['Széles tablet','1024']],
-    'responsive.mobile.width':[['Keskeny','360'],['Normál','390'],['Nagy mobil','430']]
-  };
-  const addPreset=input=>{
-    if(!input?.dataset?.key||input.dataset.key.startsWith('style.color')||input.dataset.key==='style.background')return;
-    const opts=presetMap[input.dataset.key];if(!opts||input.parentElement.querySelector(':scope > .editor-preset'))return;
-    const sel=document.createElement('select');sel.className='editor-preset';sel.title='Előkészített érték';
-    sel.innerHTML='<option value="">Preset…</option>'+opts.map(([label,val])=>`<option value="${val}">${label}</option>`).join('');
-    sel.addEventListener('change',()=>{if(!sel.value)return;input.value=sel.value;applyField(input);sel.value=''});
-    input.parentElement.appendChild(sel);
-  };
-  const addPickers=()=>{
-    const b=inspector();if(!b)return;
-    b.querySelectorAll('input[data-key="style.color"],input[data-key="style.background"]').forEach(text=>{
-      if(text.nextElementSibling?.matches('input.editor-color-picker'))return;
-      const picker=document.createElement('input');picker.type='color';picker.className='editor-color-picker';picker.value=/^#[0-9a-f]{6}$/i.test(text.value)?text.value:'#000000';picker.title='Szín kiválasztása';
-      picker.addEventListener('change',()=>{text.value=picker.value;applyField(text)});text.insertAdjacentElement('afterend',picker);
-    });
-    b.querySelectorAll('[data-key]').forEach(addPreset);
-  };
-  document.addEventListener('click',e=>{const b=inspector();if(!b||!b.contains(e.target))return;remember();restore()},true);
-  document.addEventListener('change',e=>{
-    const b=inspector();if(!b||!b.contains(e.target))return;
-    if(e.target.matches('[data-key]')){e.stopImmediatePropagation();remember();applyField(e.target);return}
-    remember();restore();
-  },true);
-  const mo=new MutationObserver(()=>{addPickers();restore()});
-  window.addEventListener('DOMContentLoaded',()=>{const b=inspector();if(b)mo.observe(b,{childList:true,subtree:true});addPickers()});
-  addPickers();
-
-  const bindElementSearch=()=>{
-    const input=document.getElementById('search');
-    if(!input||input.dataset.searchFixReady)return;
-    input.dataset.searchFixReady='1';
-    const run=()=>{if(typeof window.populate==='function')window.populate(input.value||'')};
-    input.addEventListener('input',run);
-    input.addEventListener('search',run);
-    run();
-  };
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindElementSearch,{once:true});
-  else bindElementSearch();
-  new MutationObserver(bindElementSearch).observe(document.body,{childList:true,subtree:true});
-
   const normalizeSearch=v=>String(v??'').toLocaleLowerCase('hu-HU').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
-  const searchAliases={
-    text:['szoveg','text'],heading:['cimsor','cimsor h1','heading'],paragraph:['bekezdes','paragraph'],richtext:['formazott szoveg','rich text','richtext'],link:['hivatkozas','link'],button:['gomb','button'],image:['kep','image'],video:['video'],audio:['hang','audio'],icon:['ikon','icon'],svg:['svg'],divider:['elvalaszto','divider'],spacer:['terkoz','spacer'],badge:['cimke','badge'],avatar:['profilkep','avatar'],card:['kartya','card'],
-    section:['szakasz','section'],container:['kontener','container'],row:['sor','row'],columns:['oszlopok','columns'],grid:['racs','grid'],stack:['egymasra rendezés','egymasra rendezés','stack'],flex:['rugalmas elrendezes','flex'],group:['csoport','group'],
-    list:['lista','list'],table:['tablazat','table'],tabs:['fulek','tabs'],accordion:['lenyithato blokk','accordion'],dropdown:['lenyilo menu','dropdown'],breadcrumb:['morzsamenu','breadcrumb'],pagination:['lapozas','pagination'],search:['kereso','search'],countdown:['visszaszamlalo','countdown'],progress:['folyamatjelzo','progress'],notification:['ertesites','notification'],cookie:['cookie sav','cookie'],modal:['felugro ablak','modal','popup'],
-    navbar:['navigacios sav','navbar'],menu:['menu'],footer:['lablec','footer'],sidebar:['oldalsav','sidebar'],backtotop:['vissza a tetejere','backtotop'],
-    form:['urlap','form'],input:['szovegmezo','input'],textarea:['tobbsoros szovegmezo','textarea'],checkbox:['jelolonegyzet','checkbox'],radio:['valasztogomb','radio'],select:['legordulo valaszto','select'],slider:['csuszka','slider'],file:['fajlfeltoltes','file'],submit:['kuldes gomb','submit'],
-    gallery:['galeria','gallery'],carousel:['kepvalto','carousel'],embed:['beagyazas','embed'],iframe:['iframe'],map:['terkep','map'],code:['html kod','code'],socialembed:['kozossegi beagyazas','socialembed'],
-    live:['twitch elo allapot','twitch live','live'],twitch:['twitch lejatszo','twitch player','twitch'],youtube:['youtube'],tiktok:['tiktok'],discord:['discord'],schedule:['menetrend','schedule'],streamcount:['stream statisztika','stream count','streamcount'],followers:['kovetok szama','kovetok','followers'],subs:['feliratkozok','subs','subscribers'],vod:['vod'],support:['tamogatas','support'],community:['kozosseg','community'],gamecard:['jatekkartya','game card','gamecard'],gamelist:['jateklista','game list','gamelist'],calendar:['stream naptar','stream calendar','calendar'],
-    component:['komponens','component'],repeater:['ismetlodő lista','ismetlodo lista','repeater'],query:['lekérdezés','lekerdezes','query loop','query'],custom:['egyedi html','custom html','custom'],customcss:['egyedi css','custom css','customcss'],script:['egyedi javascript','custom js','script'],popup:['felugro ablak','popup'],condition:['felteteles elem','condition']
-  };
-  const originalPopulate=window.populate;
-  if(typeof originalPopulate==='function'){
+  const oldPopulate=window.populate;
+  if(typeof oldPopulate==='function'){
     window.populate=(filter='')=>{
       const q=normalizeSearch(filter);
-      if(!q){originalPopulate('');return}
-      const matched=[];
-      Object.keys(searchAliases).forEach(type=>{
-        if(searchAliases[type].some(alias=>normalizeSearch(alias).includes(q)||q.includes(normalizeSearch(alias))))matched.push(type);
+      oldPopulate('');
+      const buttons=[...document.querySelectorAll('.element[data-add]')];
+      let count=0;
+      buttons.forEach(btn=>{
+        const type=normalizeSearch(btn.dataset.add||'');
+        const span=normalizeSearch(btn.querySelector('span')?.textContent||'');
+        const title=normalizeSearch(btn.title||'');
+        const match=!q||`${type} ${span} ${title}`.includes(q);
+        btn.hidden=!match;
+        if(match)count++;
       });
-      if(!matched.length){originalPopulate(q);return}
-      const originalQuery=matched.join(' ');
-      originalPopulate(originalQuery);
+      const empty=document.getElementById('searchEmpty');
+      if(empty)empty.hidden=count!==0||!q;
+      document.querySelectorAll('#basic,#layout,#content,#navigation,#forms,#media,#sanci,#advanced').forEach(box=>{
+        const details=box.closest('details');
+        const visible=[...box.querySelectorAll('.element[data-add]')].some(btn=>!btn.hidden);
+        if(details){details.hidden=Boolean(q&&!visible);if(q&&visible)details.open=true;}
+      });
     };
   }
 })();
