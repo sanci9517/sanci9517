@@ -61,15 +61,12 @@ export async function adminPagesRoute(request: Request, env: Env): Promise<Respo
     return ok(rows.results.map(serialize));
   }
 
-  // DELETE only needs the page id. Do not run create/update field validation here.
   if (request.method === "DELETE") {
     let body: PageBody;
     try { body = await request.json() as PageBody; }
     catch { return error("INVALID_JSON", 400); }
-
     const id = typeof body.id === "string" ? body.id : "";
     if (!id) return error("INVALID_PAGE_ID", 400);
-
     const result = await env.DB.prepare("DELETE FROM pages WHERE id = ?").bind(id).run();
     if (!result.meta.changes) return error("PAGE_NOT_FOUND", 404);
     await audit(env, user.id, "page.delete", id, {});
@@ -79,6 +76,25 @@ export async function adminPagesRoute(request: Request, env: Env): Promise<Respo
   let body: PageBody;
   try { body = await request.json() as PageBody; }
   catch { return error("INVALID_JSON", 400); }
+
+  // Rename is intentionally title-only so an existing page slug never blocks a rename.
+  if (request.method === "PATCH") {
+    const id = typeof body.id === "string" ? body.id : "";
+    const title = typeof body.title === "string" ? body.title.trim() : "";
+    if (!id) return error("INVALID_PAGE_ID", 400);
+    if (!title || title.length > 160) return error("INVALID_PAGE_TITLE", 400);
+    const existing = await env.DB.prepare(
+      `SELECT id, slug, title, description, content_json, is_published, created_at, updated_at
+       FROM pages WHERE id = ? LIMIT 1`
+    ).bind(id).first<PageRow>();
+    if (!existing) return error("PAGE_NOT_FOUND", 404);
+    await env.DB.prepare(
+      `UPDATE pages SET title = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`
+    ).bind(title, id).run();
+    await audit(env, user.id, "page.rename", id, { oldTitle: existing.title, title });
+    const updated = { ...existing, title };
+    return ok(serialize(updated));
+  }
 
   const title = typeof body.title === "string" ? body.title.trim() : "";
   const slug = typeof body.slug === "string" ? body.slug.trim().toLowerCase() : "";
