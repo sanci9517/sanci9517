@@ -2,7 +2,7 @@
   const inspector=()=>document.getElementById('inspector');
   let scrollTop=0;
   const remember=()=>{const b=inspector();if(b)scrollTop=b.scrollTop};
-  const restore=()=>{requestAnimationFrame(()=>{const b=inspector();if(!b)return;b.scrollTop=scrollTop;b.querySelectorAll('.inspect-section').forEach(d=>{if(!d.dataset.userCollapsed)d.open=true})})};
+  const restore=()=>{requestAnimationFrame(()=>{const b=inspector();if(!b)return;b.querySelectorAll('.inspect-section').forEach(d=>{if(!d.dataset.userCollapsed)d.open=true})})};
   const valueFor=el=>el.type==='checkbox'?el.checked:el.type==='number'?Number(el.value):el.value;
   const originalSetField=window.setField;
   const applyField=(el,value=valueFor(el))=>{
@@ -50,4 +50,17 @@
   const mo=new MutationObserver(()=>{addPickers();restore()});
   window.addEventListener('DOMContentLoaded',()=>{const b=inspector();if(b)mo.observe(b,{childList:true,subtree:true});addPickers()});
   addPickers();
+
+  const bindElementSearch=()=>{
+    const input=document.getElementById('search');
+    if(!input||input.dataset.searchFixReady)return;
+    input.dataset.searchFixReady='1';
+    const run=()=>{if(typeof window.populate==='function')window.populate(input.value||'')};
+    input.addEventListener('input',run);
+    input.addEventListener('search',run);
+    run();
+  };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindElementSearch,{once:true});
+  else bindElementSearch();
+  new MutationObserver(bindElementSearch).observe(document.body,{childList:true,subtree:true});
 })();
