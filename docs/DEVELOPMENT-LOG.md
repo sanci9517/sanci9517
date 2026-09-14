@@ -38,3 +38,13 @@
   - `public/editor/toolbar-fix.js`
   - `public/editor/app.js`
 - Következő lépés: csak a terv szerinti következő funkció tesztelése, új párhuzamos funkcióteszt nélkül.
+
+## 2026-09-14 — Lock / Unlock ellenőrizve
+
+- Aktív ág: `v2/foundation`
+- Az elem zárolása és feloldása felhasználói teszten sikeres.
+- Zárolt elem nem mozgatható és nem méretezhető.
+- Feloldás után az elem ismét szerkeszthető.
+- Csoportos elemkezelésnél a zárolás csoportszinten is kezelhető.
+- A felhasználói ellenőrzés eredménye: **MŰKÖDIK**.
+- Következő lépés: **Hide / Show**.
