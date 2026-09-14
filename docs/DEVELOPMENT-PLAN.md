@@ -1,31 +1,50 @@
 # Sanci9517 V2 — Élő fejlesztési terv
 
-> Ez az egyetlen aktuális ellenőrző lista. A tervet minden sikeres felhasználói teszt után frissítjük.
+> Ez a dokumentum a projekt egyetlen aktuális fejlesztési és tesztelési igazságforrása.
 >
-> **Munkaszabály:** egyszerre egy teszt. Csak felhasználó által megerősített siker után kerül `[x]` állapotba és lépünk tovább. Hiba esetén `[~]`, javítás és újrateszt következik.
+> **Munkaszabály:** egyszerre egy konkrét teszt. Csak a felhasználó által megerősített siker kerül `[x]` állapotba. Hiba esetén `[~]`, javítás, majd ugyanannak a tesztnek az újratesztelése következik. A tervet minden sikeres teszt után azonnal frissítjük.
 
-## 0. Projektállapot
+## 0. Projekt és architektúra alapállapot
 
 - [x] GitHub repository: `sanci9517/sanci9517`
 - [x] Aktív branch: `v2/foundation`
 - [x] Cloudflare Worker: `sanci9517-streamer-brand`
-- [x] D1 alap létrehozva
+- [x] D1 adatbázis létrehozva
 - [x] GitHub → Cloudflare build/deploy kapcsolat működik
 - [x] Moduláris fájlstruktúra alapja megvan
 - [x] Szerveroldali tartalomlánc / D1 irány kijelölve
+- [x] GitHub a forráskód, migrációk és konfiguráció forrása
+- [x] Worker a web/API belépési pont
+- [x] D1 strukturált tartalom és beállítások tárolója
+- [ ] R2 média tároló teljes bekötése
+- [ ] KV cache használata, ahol indokolt
+- [ ] Cloudflare Secrets véglegesítése minden érzékeny kulcshoz
+- [x] Frontend nem kap közvetlen D1/R2/KV hozzáférést
+- [ ] Admin műveletek teljes API-alapú védelme
 
-## 1. Fejlesztési és tesztelési szabályok
+## 1. Kötelező fejlesztési és tesztelési folyamat
 
 - [x] Lépésenkénti fejlesztés
 - [x] Minden változás után ellenőrzés
 - [x] Sikertelen tesztnél nincs továbblépés
 - [x] Érdemi változtatás után Git commit
 - [x] Érintett változás után Cloudflare deploy ellenőrzés
-- [ ] Végleges automatikus unit/integration/smoke tesztcsomag
+- [x] Minden sikeres felhasználói teszt után tervfrissítés
+- [x] A terv nem jelöl késznek olyan pontot, amit a felhasználó nem ellenőrzött
+- [ ] Végleges automatikus unit tesztcsomag
+- [ ] Végleges integration tesztcsomag
+- [ ] Végleges smoke tesztcsomag
 - [ ] Külön hiba- és regressziónapló
-- [x] Minden sikeres teszt után ez a terv frissül
+- [ ] Végső teljes regressziós teszt
 
-## 2. Visual Editor — már elkészült és felhasználó által ellenőrzött
+### Tesztállapotok
+
+- `[x]` Kész és felhasználó által ellenőrizve
+- `[~]` Részben kész / hibás / újrateszt szükséges
+- `[ ]` Még nincs kész vagy nincs ellenőrizve
+- `[!]` Ismert blokkoló probléma
+
+## 2. Visual Editor — elkészült és felhasználó által ellenőrzött
 
 - [x] Editor megnyitása
 - [x] Elem kiválasztása
@@ -43,6 +62,7 @@
 - [x] Snap / segédvonalak
 - [x] Átfedő elemek kezelése
 - [x] Réteg sorrend / előre-hátra kezelés
+- [x] Lock / unlock tesztelve
 - [x] Mentés D1-be
 - [x] Mentett állapot visszaolvasása
 - [x] Teljes böngészőfrissítés után állapot megmarad
@@ -71,7 +91,6 @@
 
 ### 3.1 Alap elemkezelés
 
-- [ ] Lock / unlock
 - [ ] Hide / show
 - [ ] Igazítás: bal / közép / jobb / felső / közép / alsó
 - [ ] Egyenletes elosztás
@@ -95,8 +114,8 @@
 - [ ] Position
 - [ ] Z-index külön inspector-beállításként
 - [ ] Overflow
-- [ ] Flex row / column beállítások
-- [ ] Grid beállítások
+- [ ] Flex row / column
+- [ ] Grid
 - [ ] Container max-width
 - [ ] Egységes spacing rendszer
 - [ ] Design token alapú spacing
@@ -120,12 +139,12 @@
 - [ ] Központi színpaletta
 - [ ] Központi tipográfiai skála
 
-## 4. Szöveg
+## 4. Szövegkezelés
 
-- [x] Alap H1 szövegszerkesztés
-- [x] Alap bekezdésszerkesztés
-- [ ] H1–H6 elemválasztás teljes körűen
-- [ ] Link
+- [x] Alap H1 szerkesztés
+- [x] Alap bekezdés szerkesztés
+- [ ] H1–H6 teljes körű támogatás
+- [ ] Link beszúrás/szerkesztés
 - [ ] Lista / számozott lista
 - [ ] Idézet
 - [ ] Félkövér / dőlt / aláhúzás
@@ -134,22 +153,22 @@
 - [ ] Betűvastagság
 - [ ] Sorköz
 - [ ] Betűköz
-- [ ] Szöveg igazítása
+- [ ] Szövegigazítás
 - [ ] Szövegszín
-- [ ] Háttérszín
+- [ ] Szöveg háttérszín
 - [ ] Link állapotok
 
-## 5. Képek és média
+## 5. Képek és média az editorban
 
 - [ ] Kép beszúrása
 - [ ] Kép feltöltése R2-be
 - [ ] Kép cseréje
-- [ ] Kép kivágása / object-fit
+- [ ] Crop / object-fit
 - [ ] Kép pozicionálása
 - [ ] Alt szöveg
 - [ ] Kép linkelése
 - [ ] Videó elem
-- [ ] Videó-bélyegkép
+- [ ] Videó bélyegkép
 - [ ] Audio elem
 - [ ] Média könyvtár
 - [ ] Média törlése / archiválása
@@ -178,8 +197,8 @@
 - [ ] Oldalszintű felülírás szükség esetén
 - [ ] Normál / hover / aktív / tiltott állapot
 - [ ] Ikon + szöveg / csak ikon / csak szöveg
-- [ ] AI által engedélyezett módosítás később
 - [ ] Jelenlegi kiválasztott ikonok referencia szerinti pontos visszaállítása
+- [ ] AI által engedélyezett button-módosítás később
 
 ## 7. Alakzatok és konténerek
 
@@ -214,6 +233,7 @@
 - [ ] Responsive image sizing
 - [ ] Orientation kezelés
 - [ ] Tablet Preview
+- [ ] Desktop/mobile regresszióteszt minden reszponzív módosítás után
 
 ## 9. Oldalkezelés
 
@@ -231,7 +251,9 @@
 - [ ] Navigációs sorrend
 - [ ] 404 oldal
 
-## 10. Mentés, verziózás, szerkesztési biztonság
+> **Megjegyzés:** az oldal törlése jelenleg nincs kész. Nem tekintjük elkészültnek addig, amíg külön funkcióként nincs megvalósítva és tesztelve.
+
+## 10. Mentés, verziózás és szerkesztési biztonság
 
 - [x] Mentés D1-be
 - [x] Mentett állapot visszatöltése
@@ -251,6 +273,9 @@
 - [ ] Audit log
 - [ ] Dupla mentés kezelése
 - [ ] Hálózati megszakadás kezelése
+- [ ] Backup készítés
+- [ ] Backup visszaállítás
+- [ ] Biztonságos mentési pontok / restore pontok
 
 ## 11. Preview / Publish
 
@@ -267,6 +292,7 @@
 - [ ] Unpublish
 - [ ] Republish
 - [ ] Cache invalidation publish után
+- [ ] Publish utáni publikus oldal ellenőrzése
 
 ## 12. Komponens- és sablonrendszer
 
@@ -328,6 +354,7 @@
 - [ ] Követő / feliratkozó statisztikák
 - [ ] Élő adás állapot
 - [ ] Következő adás visszaszámláló
+- [ ] Dinamikus adatok automatikus frissítése
 
 ## 15. Integrációk
 
@@ -341,6 +368,8 @@
 - [ ] Hibás integráció izolálása
 - [ ] API rate limit kezelés
 - [ ] Normalizált belső adatmodell
+- [ ] Integrációs adatok szerveroldali tárolása
+- [ ] Titkok és tokenek GitHubból kizárva
 
 ## 16. Média / R2
 
@@ -396,6 +425,8 @@
 - [ ] Audit log
 - [ ] Secret-ek csak Cloudflare Secretben
 - [ ] D1/R2/KV közvetlen frontend hozzáférés tiltva
+- [ ] Session lejárat kezelése
+- [ ] Jogosulatlan kérés megfelelő hibakezelése
 
 ## 20. AI-ready architektúra
 
@@ -453,6 +484,9 @@
 - [ ] Mobil regressziómentesség desktop módosítások után
 - [ ] Jó külföldi streamer UX minták felhasználása klónozás nélkül
 - [ ] Publikus oldalon ne maradjon fejlesztői/technikai szöveg
+- [ ] Publikus szövegek magyarul
+- [ ] Homepage alapstruktúrája egyelőre változatlan marad
+- [ ] Részletes tartalom külön oldalakon
 
 ## 23. Hibakezelés és edge case-ek
 
@@ -471,6 +505,9 @@
 - [ ] Stale revision / versenyhelyzet
 - [ ] Nagy dokumentum kezelése
 - [ ] Ismeretlen/örökölt elem biztonságos kezelése
+- [ ] Hibás médiafájl
+- [ ] Túl nagy médiafájl
+- [ ] Hibás külső link / API válasz
 
 ## 24. Végső integrációs teszt
 
@@ -488,30 +525,37 @@
 - [ ] SEO
 - [ ] Analytics
 - [ ] Security
+- [ ] Backup / restore
 - [ ] Mobil + desktop regresszióteszt
+- [ ] Cloudflare production smoke test
 
-## 25. Új ötlet / új igény szabálya
+## 25. Új igény / új funkció szabálya
 
-1. Először bekerül ebbe a tervbe.
-2. Meghatározzuk a modult.
-3. Meghatározzuk, hogy D1/R2/KV/API/frontend közül hol az igazságforrás.
-4. Ellenőrizzük, hogy nem okoz-e későbbi újratervezést.
-5. Csak ezután kezdődik a kódolás.
-6. Egyszerre egy tesztet végzünk.
-7. Siker esetén `[x]`, hibánál `[~]` és javítás/újrateszt.
+1. Az új igény először bekerül ebbe a tervbe.
+2. Meghatározzuk a modult és a függőségeket.
+3. Meghatározzuk az igazságforrást: D1 / R2 / KV / API / frontend.
+4. Ellenőrizzük a szerveroldali és biztonsági hatást.
+5. Ellenőrizzük, hogy okoz-e későbbi újratervezést.
+6. Csak ezután kezdődik a kódolás.
+7. A funkció elkészülte után külön teszt következik.
+8. Siker esetén `[x]`, hiba esetén `[~]`, javítás és ugyanazon teszt újrafuttatása.
+9. Sikeres teszt után azonnal frissítjük ezt a tervet.
 
-## 26. Állapotjelölések
+## 26. Jelenlegi tényleges tesztállapot
 
-- `[x]` Kész és a felhasználó által ellenőrizve.
-- `[~]` Részben kész / további ellenőrzés kell.
-- `[ ]` Nincs kész.
-- `[!]` Ismert probléma / blokkoló.
+### Felhasználó által ellenőrzött Visual Editor funkciók
 
-### Legutóbbi ellenőrzött állapot — 2026-09-14
+- [x] X / Y pozíció
+- [x] Elemátfedés
+- [x] Réteg sorrend / előre-hátra gomb
+- [x] Lock / unlock
 
-- [x] X/Y pozíció tesztelve
-- [x] Elemátfedés tesztelve
-- [x] Réteg sorrend / előre-hátra gomb tesztelve
-- [ ] Következő teszt: Lock / unlock
+### Következő egyetlen teszt
 
-**Utolsó frissítés:** 2026-09-14
+- [ ] **Hide / show**
+
+**Tesztmenet:** válassz ki egy elemet → Hide → ellenőrizd, hogy eltűnik és nem jelenik meg a publikált/preview renderben ott, ahol rejtettnek kell lennie → Show → ellenőrizd, hogy újra látható.
+
+> Más tesztet addig nem indítunk, amíg ezt a tesztet a felhasználó nem minősíti sikeresnek vagy hibásnak.
+
+**Utolsó tervfrissítés:** 2026-09-14
