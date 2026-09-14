@@ -54,27 +54,11 @@
     button.disabled = true;
     status('Átnevezés…');
     try {
-      const listRes = await fetch('/api/admin/pages', { credentials: 'include' });
-      if (!listRes.ok) throw Error('Az oldalak betöltése sikertelen');
-      const list = await listRes.json();
-      if (!list.ok) throw Error(list.error?.message || 'Oldalak betöltése sikertelen');
-
-      const pages = Array.isArray(list.data) ? list.data : [];
-      const page = pages.find(item => item.id === id);
-      if (!page) throw Error('Az oldal nem található');
-
       const res = await fetch('/api/admin/pages', {
-        method: 'PUT',
+        method: 'PATCH',
         credentials: 'include',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          id: page.id,
-          slug: page.slug,
-          title: nextTitle,
-          description: page.description || '',
-          content: page.content || {},
-          isPublished: Boolean(page.isPublished)
-        })
+        body: JSON.stringify({ id, title: nextTitle })
       });
       const result = await res.json();
       if (!res.ok || !result.ok) throw Error(result.error?.message || 'Átnevezési hiba');
