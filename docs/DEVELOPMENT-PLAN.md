@@ -130,17 +130,17 @@ Egy funkció csak akkor `[x]`, ha:
 - [x] Átfedés kezelése
 - [x] Réteg sorrend / előre-hátra
 - [x] Lock/unlock
-- [ ] Hide/show
-- [ ] Elem átnevezése
+- [x] Hide/show
+- [x] Elem átnevezése
 - [ ] Elem státuszjelzése
-- [ ] Ismeretlen/legacy elem biztonságos megjelenítése
-- [ ] Elem keresése
-- [ ] Elem gyors duplikálása
+- [x] Ismeretlen/legacy elem biztonságos megjelenítése
+- [x] Elem keresése
+- [x] Elem gyors duplikálása
 - [ ] Másolás/beillesztés
 - [ ] Stílus másolása/beillesztése
 - [ ] Tömeges törlés megerősítése
-- [ ] Undo
-- [ ] Redo
+- [x] Undo
+- [x] Redo
 - [ ] History
 
 ## 3.2 Layout / CSS-szerű vezérlés
@@ -496,15 +496,15 @@ Egy funkció csak akkor `[x]`, ha:
 - [x] Mentett állapot visszaolvasása
 - [x] Refresh utáni perzisztencia
 - [ ] Autosave
-- [ ] Dirty state
-- [ ] Nem mentett változás jelzése
+- [x] Dirty state
+- [x] Nem mentett változás jelzése
 - [ ] Mentési hiba UI
 - [ ] Szerver-visszaigazolás
 - [ ] Revision ID
 - [ ] Optimistic/pessimistic save stratégia
 - [ ] Ütközésvédelem
-- [ ] Undo
-- [ ] Redo
+- [x] Undo
+- [x] Redo
 - [ ] Change history
 - [ ] Before/after diff
 - [ ] Restore
@@ -563,8 +563,8 @@ Egy funkció csak akkor `[x]`, ha:
 - [ ] Kontextusmenü
 - [ ] Breadcrumb
 - [ ] Parent navigation
-- [ ] Element search
-- [ ] Element rename
+- [x] Element search
+- [x] Element rename
 - [ ] Status/error indicators
 - [ ] Accessibility warnings
 - [ ] Command palette
@@ -581,7 +581,7 @@ Egy funkció csak akkor `[x]`, ha:
 - [ ] Empty-state segítség
 - [ ] Onboarding
 - [ ] Editor autosave indicator
-- [ ] Save status indicator
+- [x] Save status indicator
 - [ ] Error recovery UI
 
 ---
@@ -1289,14 +1289,40 @@ Minden új ötlet ugyanazon a folyamaton megy végig:
 
 ### Biztosan felhasználó által ellenőrzött Visual Editor funkciók
 
-- [x] X/Y pozíció
-- [x] Elemátfedés
-- [x] Réteg sorrend / előre-hátra
+- [x] Elem kiválasztása és szerkesztése
+- [x] X/Y pozíció és méretezés
+- [x] Többes kijelölés
+- [x] Elem törlése
+- [x] Duplikálás / gyors duplikálás
+- [x] Csoportosítás / csoport feloldása
+- [x] Réteg sorrend
 - [x] Lock / Unlock
+- [x] Hide / Show
+- [x] Elem átnevezése
+- [x] Ismeretlen/legacy elem biztonságos megjelenítése
+- [x] Elem keresése
+- [x] Undo / Redo
+- [x] Mentés → frissítés → perzisztencia
+- [x] Mentetlen módosítás védelme
+- [x] Mentés után átnevezés és perzisztencia
+- [x] Oldalváltás utáni állapotmegőrzés
+- [x] Új oldal létrehozása és mentése
+- [x] Oldallista frissítés
+- [x] Oldalnév + tartalom együttes megőrzése
+- [x] Preview és szerkesztett állapot ellenőrzése
+- [x] Regressziós ellenőrzés
+
+### Nem tekintjük késznek, mert nincs külön megvalósított funkció
+
+- [ ] Elem státuszjelzése mint külön funkció
+- [ ] Másolás/beillesztés
+- [ ] Stílus másolása/beillesztése
+- [ ] Tömeges törlés megerősítése
+- [ ] History panel
 
 ### Következő egyetlen teszt
 
-- [ ] **Hide / Show**
+- [ ] **Min/max width**
 
 ### Fontos szabály
 
