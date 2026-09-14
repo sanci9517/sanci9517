@@ -63,4 +63,30 @@
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindElementSearch,{once:true});
   else bindElementSearch();
   new MutationObserver(bindElementSearch).observe(document.body,{childList:true,subtree:true});
+
+  const normalizeSearch=v=>String(v??'').toLocaleLowerCase('hu-HU').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+  const searchAliases={
+    text:['szoveg','text'],heading:['cimsor','cimsor h1','heading'],paragraph:['bekezdes','paragraph'],richtext:['formazott szoveg','rich text','richtext'],link:['hivatkozas','link'],button:['gomb','button'],image:['kep','image'],video:['video'],audio:['hang','audio'],icon:['ikon','icon'],svg:['svg'],divider:['elvalaszto','divider'],spacer:['terkoz','spacer'],badge:['cimke','badge'],avatar:['profilkep','avatar'],card:['kartya','card'],
+    section:['szakasz','section'],container:['kontener','container'],row:['sor','row'],columns:['oszlopok','columns'],grid:['racs','grid'],stack:['egymasra rendezés','egymasra rendezés','stack'],flex:['rugalmas elrendezes','flex'],group:['csoport','group'],
+    list:['lista','list'],table:['tablazat','table'],tabs:['fulek','tabs'],accordion:['lenyithato blokk','accordion'],dropdown:['lenyilo menu','dropdown'],breadcrumb:['morzsamenu','breadcrumb'],pagination:['lapozas','pagination'],search:['kereso','search'],countdown:['visszaszamlalo','countdown'],progress:['folyamatjelzo','progress'],notification:['ertesites','notification'],cookie:['cookie sav','cookie'],modal:['felugro ablak','modal','popup'],
+    navbar:['navigacios sav','navbar'],menu:['menu'],footer:['lablec','footer'],sidebar:['oldalsav','sidebar'],backtotop:['vissza a tetejere','backtotop'],
+    form:['urlap','form'],input:['szovegmezo','input'],textarea:['tobbsoros szovegmezo','textarea'],checkbox:['jelolonegyzet','checkbox'],radio:['valasztogomb','radio'],select:['legordulo valaszto','select'],slider:['csuszka','slider'],file:['fajlfeltoltes','file'],submit:['kuldes gomb','submit'],
+    gallery:['galeria','gallery'],carousel:['kepvalto','carousel'],embed:['beagyazas','embed'],iframe:['iframe'],map:['terkep','map'],code:['html kod','code'],socialembed:['kozossegi beagyazas','socialembed'],
+    live:['twitch elo allapot','twitch live','live'],twitch:['twitch lejatszo','twitch player','twitch'],youtube:['youtube'],tiktok:['tiktok'],discord:['discord'],schedule:['menetrend','schedule'],streamcount:['stream statisztika','stream count','streamcount'],followers:['kovetok szama','kovetok','followers'],subs:['feliratkozok','subs','subscribers'],vod:['vod'],support:['tamogatas','support'],community:['kozosseg','community'],gamecard:['jatekkartya','game card','gamecard'],gamelist:['jateklista','game list','gamelist'],calendar:['stream naptar','stream calendar','calendar'],
+    component:['komponens','component'],repeater:['ismetlodő lista','ismetlodo lista','repeater'],query:['lekérdezés','lekerdezes','query loop','query'],custom:['egyedi html','custom html','custom'],customcss:['egyedi css','custom css','customcss'],script:['egyedi javascript','custom js','script'],popup:['felugro ablak','popup'],condition:['felteteles elem','condition']
+  };
+  const originalPopulate=window.populate;
+  if(typeof originalPopulate==='function'){
+    window.populate=(filter='')=>{
+      const q=normalizeSearch(filter);
+      if(!q){originalPopulate('');return}
+      const matched=[];
+      Object.keys(searchAliases).forEach(type=>{
+        if(searchAliases[type].some(alias=>normalizeSearch(alias).includes(q)||q.includes(normalizeSearch(alias))))matched.push(type);
+      });
+      if(!matched.length){originalPopulate(q);return}
+      const originalQuery=matched.join(' ');
+      originalPopulate(originalQuery);
+    };
+  }
 })();
