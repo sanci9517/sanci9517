@@ -55,9 +55,12 @@
     status('Átnevezés…');
     try {
       const listRes = await fetch('/api/admin/pages', { credentials: 'include' });
+      if (!listRes.ok) throw Error('Az oldalak betöltése sikertelen');
       const list = await listRes.json();
       if (!list.ok) throw Error(list.error?.message || 'Oldalak betöltése sikertelen');
-      const page = (Array.isArray(list.data) ? list.data : []).find(item => item.id === id);
+
+      const pages = Array.isArray(list.data) ? list.data : [];
+      const page = pages.find(item => item.id === id);
       if (!page) throw Error('Az oldal nem található');
 
       const res = await fetch('/api/admin/pages', {
@@ -74,7 +77,7 @@
         })
       });
       const result = await res.json();
-      if (!result.ok) throw Error(result.error?.message || 'Átnevezési hiba');
+      if (!res.ok || !result.ok) throw Error(result.error?.message || 'Átnevezési hiba');
 
       toast('Az oldal neve elmentve D1-be');
       status('Átnevezve');
