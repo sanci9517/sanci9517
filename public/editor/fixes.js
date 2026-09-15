@@ -6,9 +6,8 @@
   const valueFor=el=>el.type==='checkbox'?el.checked:el.type==='number'?Number(el.value):el.value;
   const originalSetField=window.setField;
   const arrangeGroupedGap=()=>{
-    if(!window.state||!window.find||!window.groupMembers)return;
-    const id=window.state.selected?.[0],n=id&&window.find(id);if(!n?.groupId)return;
-    const members=window.groupMembers(n.groupId).slice().sort((a,b)=>(Number(a.layout?.x)||0)-(Number(b.layout?.x)||0));
+    const id=state.selected?.[0],n=id&&find(id);if(!n?.groupId)return;
+    const members=groupMembers(n.groupId).slice().sort((a,b)=>(Number(a.layout?.x)||0)-(Number(b.layout?.x)||0));
     if(members.length<2)return;
     const gap=Math.max(0,Number(n.layout?.gap)||0);
     const start=Math.min(...members.map(m=>Number(m.layout?.x)||0));
@@ -21,7 +20,7 @@
     try{window.renderInspector=()=>{};originalSetField(el.dataset.key,value)}finally{window.renderInspector=oldInspector}
     if(el.dataset.key==='layout.gap'){
       arrangeGroupedGap();
-      if(typeof window.render==='function')window.render();
+      render();
     }
     restore();
   };
