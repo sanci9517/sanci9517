@@ -2,7 +2,7 @@
   const inspector=()=>document.getElementById('inspector');
   let scrollTop=0;
   const remember=()=>{const b=inspector();if(b)scrollTop=b.scrollTop};
-  const restore=()=>{requestAnimationFrame(()=>{const b=inspector();if(!b)return;b.querySelectorAll('.inspect-section').forEach(d=>{if(!d.dataset.userCollapsed)d.open=true});b.scrollTop=scrollTop})};
+  const restore=()=>{requestAnimationFrame(()=>{const b=inspector();if(!b)return;b.scrollTop=scrollTop})};
   const valueFor=el=>el.type==='checkbox'?el.checked:el.type==='number'?Number(el.value):el.value;
   const originalSetField=window.setField;
   const parentOf=id=>{let found=null;const visit=nodes=>(nodes||[]).some(n=>{if((n.children||[]).some(ch=>ch.id===id)){found=n;return true}return visit(n.children)});visit(state.doc?.root?.children);return found};
@@ -76,7 +76,6 @@
     b.querySelectorAll('[data-key]').forEach(addPreset);
     syncGapField();
   };
-  document.addEventListener('click',e=>{const b=inspector();if(!b||!b.contains(e.target))return;remember();restore()},true);
   document.addEventListener('change',e=>{
     const b=inspector();if(!b||!b.contains(e.target))return;
     if(e.target.matches('[data-key]')){e.stopImmediatePropagation();remember();applyField(e.target);return}
