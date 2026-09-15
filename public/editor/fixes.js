@@ -5,21 +5,27 @@
   const restore=()=>{requestAnimationFrame(()=>{const b=inspector();if(!b)return;b.querySelectorAll('.inspect-section').forEach(d=>{if(!d.dataset.userCollapsed)d.open=true});b.scrollTop=scrollTop})};
   const valueFor=el=>el.type==='checkbox'?el.checked:el.type==='number'?Number(el.value):el.value;
   const originalSetField=window.setField;
-  const arrangeGroupedGap=()=>{
-    const id=state.selected?.[0],n=id&&find(id);if(!n?.groupId)return;
-    const members=groupMembers(n.groupId).slice().sort((a,b)=>(Number(a.layout?.x)||0)-(Number(b.layout?.x)||0));
-    if(members.length<2)return;
+  const parentOf=id=>{let found=null;const visit=nodes=>(nodes||[]).some(n=>{if((n.children||[]).some(ch=>ch.id===id)){found=n;return true}return visit(n.children)});visit(state.doc?.root?.children);return found};
+  const arrangeSiblingGap=()=>{
+    const id=state.selected?.length===1?state.selected[0]:null,n=id&&find(id);if(!n)return;
+    const parent=parentOf(id),siblings=parent?.children||state.doc?.root?.children||[];
+    if(siblings.length<2)return;
     const gap=Math.max(0,Number(n.layout?.gap)||0);
-    const start=Math.min(...members.map(m=>Number(m.layout?.x)||0));
-    let x=start;
-    members.forEach(m=>{m.layout=m.layout||{};m.layout.gap=gap;m.layout.x=Math.round(x);x+=Math.max(20,Number(m.layout.width)||200)+gap});
+    const ordered=siblings.slice().sort((a,b)=>(Number(a.layout?.x)||0)-(Number(b.layout?.x)||0));
+    let x=Number(ordered[0].layout?.x)||0;
+    ordered.forEach((m,i)=>{
+      m.layout=m.layout||{};
+      if(i===0){x=Number(m.layout.x)||0;return}
+      x+=Math.max(20,Number(ordered[i-1].layout?.width)||200)+gap;
+      m.layout.x=Math.round(x);
+    });
   };
   const applyField=(el,value=valueFor(el))=>{
     if(typeof originalSetField!=='function')return;
     const oldInspector=window.renderInspector;
     try{window.renderInspector=()=>{};originalSetField(el.dataset.key,value)}finally{window.renderInspector=oldInspector}
     if(el.dataset.key==='layout.gap'){
-      arrangeGroupedGap();
+      arrangeSiblingGap();
       render();
     }
     restore();
