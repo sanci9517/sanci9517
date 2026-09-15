@@ -6,28 +6,43 @@
   const valueFor=el=>el.type==='checkbox'?el.checked:el.type==='number'?Number(el.value):el.value;
   const originalSetField=window.setField;
   const parentOf=id=>{let found=null;const visit=nodes=>(nodes||[]).some(n=>{if((n.children||[]).some(ch=>ch.id===id)){found=n;return true}return visit(n.children)});visit(state.doc?.root?.children);return found};
-  const arrangeSiblingGap=()=>{
-    const id=state.selected?.length===1?state.selected[0]:null,n=id&&find(id);if(!n)return;
-    const parent=parentOf(id),siblings=parent?.children||state.doc?.root?.children||[];
-    if(siblings.length<2)return;
-    const gap=Math.max(0,Number(n.layout?.gap)||0);
-    const ordered=siblings.slice().sort((a,b)=>(Number(a.layout?.x)||0)-(Number(b.layout?.x)||0));
-    let x=Number(ordered[0].layout?.x)||0;
-    ordered.forEach((m,i)=>{
-      m.layout=m.layout||{};
-      if(i===0){x=Number(m.layout.x)||0;return}
-      x+=Math.max(20,Number(ordered[i-1].layout?.width)||200)+gap;
-      m.layout.x=Math.round(x);
-    });
+  const isLayoutContainer=n=>{
+    if(!n)return false;
+    const display=n.layout?.display;
+    return display==='flex'||display==='grid';
+  };
+  const selectedNode=()=>state.selected?.length===1?find(state.selected[0]):null;
+  const gapOwner=()=>{
+    const n=selectedNode();
+    if(!n)return null;
+    if(isLayoutContainer(n))return n;
+    const parent=parentOf(n.id);
+    return isLayoutContainer(parent)?parent:null;
+  };
+  const syncGapField=()=>{
+    const input=inspector()?.querySelector('input[data-key="layout.gap"]');
+    const owner=gapOwner();
+    if(input&&owner)input.value=String(Number(owner.layout?.gap)||0);
+  };
+  const applyGap=el=>{
+    const owner=gapOwner();
+    if(!owner)return false;
+    owner.layout=owner.layout||{};
+    owner.layout.gap=Math.max(0,Number(valueFor(el))||0);
+    render();
+    return true;
   };
   const applyField=(el,value=valueFor(el))=>{
     if(typeof originalSetField!=='function')return;
-    const oldInspector=window.renderInspector;
-    try{window.renderInspector=()=>{};originalSetField(el.dataset.key,value)}finally{window.renderInspector=oldInspector}
-    if(el.dataset.key==='layout.gap'){
-      arrangeSiblingGap();
-      render();
+    const key=el.dataset.key;
+    if(key==='layout.gap'){
+      if(applyGap(el)){restore();return;}
+      show('A Gap csak Flex vagy Grid szülőn működik.');
+      restore();
+      return;
     }
+    const oldInspector=window.renderInspector;
+    try{window.renderInspector=()=>{};originalSetField(key,value)}finally{window.renderInspector=oldInspector}
     restore();
   };
   const presetMap={
@@ -59,6 +74,7 @@
       picker.addEventListener('change',()=>{text.value=picker.value;applyField(text)});text.insertAdjacentElement('afterend',picker);
     });
     b.querySelectorAll('[data-key]').forEach(addPreset);
+    syncGapField();
   };
   document.addEventListener('click',e=>{const b=inspector();if(!b||!b.contains(e.target))return;remember();restore()},true);
   document.addEventListener('change',e=>{
