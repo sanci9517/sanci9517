@@ -1,34 +1,35 @@
 (()=>{
-  const key=d=>d.querySelector('summary')?.textContent.trim()||'';
-  const states=new Map();
-  let applying=false;
   const inspector=()=>document.getElementById('inspector');
+  const key=d=>d.dataset.inspectorKey||d.querySelector('summary')?.textContent.trim()||'';
+  const states=new Map();
+  let restoring=false;
+  let observer=null;
   const remember=()=>{
     const box=inspector();
     if(!box)return;
     box.querySelectorAll(':scope > details.inspect-section').forEach(d=>states.set(key(d),d.open));
   };
-  const compact=()=>{
+  const restore=()=>{
     const box=inspector();
-    if(!box||applying)return;
-    applying=true;
+    if(!box||restoring)return;
+    restoring=true;
     box.querySelectorAll(':scope > details.inspect-section').forEach(d=>{
       const k=key(d);
-      d.open=states.has(k)?states.get(k):false;
+      if(states.has(k))d.open=states.get(k);
     });
-    applying=false;
+    restoring=false;
   };
   document.addEventListener('toggle',e=>{
     const d=e.target;
-    if(!(d instanceof HTMLDetailsElement)||!d.classList.contains('inspect-section')||applying)return;
+    if(!(d instanceof HTMLDetailsElement)||!d.classList.contains('inspect-section')||restoring)return;
     states.set(key(d),d.open);
   },true);
-  const mo=new MutationObserver(()=>requestAnimationFrame(compact));
   const boot=()=>{
     const box=inspector();
     if(!box)return;
-    mo.observe(box,{childList:true,subtree:true});
-    compact();
+    remember();
+    observer=new MutationObserver(()=>requestAnimationFrame(restore));
+    observer.observe(box,{childList:true,subtree:true});
   };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
