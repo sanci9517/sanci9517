@@ -2,13 +2,27 @@
   const inspector=()=>document.getElementById('inspector');
   let scrollTop=0;
   const remember=()=>{const b=inspector();if(b)scrollTop=b.scrollTop};
-  const restore=()=>{requestAnimationFrame(()=>{const b=inspector();if(!b)return;b.querySelectorAll('.inspect-section').forEach(d=>{if(!d.dataset.userCollapsed)d.open=true})})};
+  const restore=()=>{requestAnimationFrame(()=>{const b=inspector();if(!b)return;b.querySelectorAll('.inspect-section').forEach(d=>{if(!d.dataset.userCollapsed)d.open=true});b.scrollTop=scrollTop})};
   const valueFor=el=>el.type==='checkbox'?el.checked:el.type==='number'?Number(el.value):el.value;
   const originalSetField=window.setField;
+  const arrangeGroupedGap=()=>{
+    if(!window.state||!window.find||!window.groupMembers)return;
+    const id=window.state.selected?.[0],n=id&&window.find(id);if(!n?.groupId)return;
+    const members=window.groupMembers(n.groupId).slice().sort((a,b)=>(Number(a.layout?.x)||0)-(Number(b.layout?.x)||0));
+    if(members.length<2)return;
+    const gap=Math.max(0,Number(n.layout?.gap)||0);
+    const start=Math.min(...members.map(m=>Number(m.layout?.x)||0));
+    let x=start;
+    members.forEach(m=>{m.layout=m.layout||{};m.layout.gap=gap;m.layout.x=Math.round(x);x+=Math.max(20,Number(m.layout.width)||200)+gap});
+  };
   const applyField=(el,value=valueFor(el))=>{
     if(typeof originalSetField!=='function')return;
     const oldInspector=window.renderInspector;
     try{window.renderInspector=()=>{};originalSetField(el.dataset.key,value)}finally{window.renderInspector=oldInspector}
+    if(el.dataset.key==='layout.gap'){
+      arrangeGroupedGap();
+      if(typeof window.render==='function')window.render();
+    }
     restore();
   };
   const presetMap={
