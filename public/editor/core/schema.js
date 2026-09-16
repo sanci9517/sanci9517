@@ -1,62 +1,13 @@
 /* Sanci9517 Visual Editor — canonical document schema. */
 (function(){
-  const VERSION = 1;
-  const TYPES = new Set([
-    'root','section','container','row','columns','grid','stack','flex','group',
-    'text','heading','paragraph','richtext','link','button','image','video','audio',
-    'icon','svg','divider','spacer','badge','avatar','card','list','table','tabs',
-    'accordion','dropdown','breadcrumb','pagination','search','countdown','progress',
-    'notification','cookie','modal','navbar','menu','footer','sidebar','backtotop',
-    'form','input','textarea','checkbox','radio','select','slider','file','submit',
-    'gallery','carousel','embed','iframe','map','code','socialembed','live','twitch',
-    'youtube','tiktok','discord','schedule','streamcount','followers','subs','vod',
-    'support','community','gamecard','gamelist','calendar','component','repeater',
-    'query','custom','customcss','script','popup','condition'
-  ]);
-  const uid = (prefix='node') => `${prefix}-${crypto.randomUUID()}`;
-  const clone = value => value == null ? value : JSON.parse(JSON.stringify(value));
-  function emptyNode(type='container', extra={}) {
-    return {
-      id: extra.id || uid(type), type, name: extra.name || type,
-      parentId: extra.parentId || null, children: Array.isArray(extra.children) ? extra.children : [],
-      content: extra.content || {}, layout: extra.layout || {}, style: extra.style || {},
-      responsive: extra.responsive || {desktop:{},tablet:{},mobile:{}},
-      interaction: extra.interaction || {}, visibility: extra.visibility !== false,
-      locked: extra.locked === true, metadata: extra.metadata || {},
-      dataBindings: extra.dataBindings || {}, capabilities: extra.capabilities || {}
-    };
-  }
-  function emptyDocument(page={}) {
-    const rootId = uid('root');
-    return {
-      schemaVersion: VERSION,
-      type: 'sanci-document',
-      page: {
-        id: page.id || uid('page'), name: page.name || page.title || 'Új oldal',
-        slug: page.slug || 'uj-oldal', metadata: page.metadata || {},
-        settings: page.settings || {}, responsive: page.responsive || {desktop:{},tablet:{},mobile:{}},
-        root: {id:rootId,type:'root',name:'Oldal',parentId:null,children:[]}
-      }
-    };
-  }
-  function walk(node, fn){ if(!node) return; fn(node); (node.children||[]).forEach(child=>walk(child,fn)); }
-  function index(document){ const map=new Map(); walk(document?.page?.root,n=>map.set(n.id,n)); return map; }
-  function validate(document){
-    const errors=[]; const warnings=[];
-    if(!document || document.type!=='sanci-document') errors.push('Érvénytelen dokumentumtípus.');
-    if(!document?.page?.id) errors.push('Hiányzó page ID.');
-    if(!document?.page?.root?.id) errors.push('Hiányzó root ID.');
-    const seen=new Set(); const parents=new Map();
-    walk(document?.page?.root,n=>{
-      if(seen.has(n.id)) errors.push(`Duplikált ID: ${n.id}`); else seen.add(n.id);
-      if(!TYPES.has(n.type)) warnings.push(`Ismeretlen elem típus: ${n.type}`);
-      (n.children||[]).forEach(child=>{
-        if(parents.has(child.id)) errors.push(`Egy elemnek több parentje van: ${child.id}`);
-        parents.set(child.id,n.id);
-        if(child.parentId!==n.id) errors.push(`Hibás parentId: ${child.id}`);
-      });
-    });
-    return {valid:errors.length===0,errors,warnings};
-  }
-  window.SanciEditorSchema={VERSION,TYPES,uid,clone,emptyNode,emptyDocument,index,validate};
+  const VERSION=1;
+  const TYPES=new Set(['root','section','container','row','columns','grid','stack','flex','group','text','heading','paragraph','richtext','link','button','image','video','audio','icon','svg','divider','spacer','badge','avatar','card','list','table','tabs','accordion','dropdown','breadcrumb','pagination','search','countdown','progress','notification','cookie','modal','navbar','menu','footer','sidebar','backtotop','form','input','textarea','checkbox','radio','select','slider','file','submit','gallery','carousel','embed','iframe','map','code','socialembed','live','twitch','youtube','tiktok','discord','schedule','streamcount','followers','subs','vod','support','community','gamecard','gamelist','calendar','component','repeater','query','custom','customcss','script','popup','condition']);
+  const uid=(prefix='node')=>`${prefix}-${crypto.randomUUID()}`;
+  const clone=value=>value==null?value:JSON.parse(JSON.stringify(value));
+  function emptyNode(type='container',extra={}){return {id:extra.id||uid(type),type,name:extra.name||type,parentId:extra.parentId||null,children:Array.isArray(extra.children)?extra.children:[],content:extra.content||{},layout:extra.layout||{},style:extra.style||{},responsive:extra.responsive||{desktop:{},tablet:{},mobile:{}},interaction:extra.interaction||{},visibility:extra.visibility!==false,locked:extra.locked===true,metadata:extra.metadata||{},dataBindings:extra.dataBindings||{},capabilities:extra.capabilities||{}};}
+  function emptyDocument(page={}){const rootId=uid('root');return {schemaVersion:VERSION,type:'sanci-document',page:{id:page.id||uid('page'),name:page.name||page.title||'Új oldal',slug:page.slug||'uj-oldal',metadata:page.metadata||{},settings:page.settings||{},responsive:page.responsive||{desktop:{},tablet:{},mobile:{}},root:{id:rootId,type:'root',name:'Oldal',parentId:null,children:[]}}};}
+  function walk(node,fn){if(!node)return;fn(node);(node.children||[]).forEach(child=>walk(child,fn));}
+  function index(document){const map=new Map();walk(document?.page?.root,n=>map.set(n.id,n));return map;}
+  function validate(document){const errors=[],warnings=[];if(!document||document.type!=='sanci-document')errors.push('Érvénytelen dokumentumtípus.');if(!document?.page?.id)errors.push('Hiányzó page ID.');if(!document?.page?.root?.id)errors.push('Hiányzó root ID.');const seen=new Set(),parents=new Map();walk(document?.page?.root,n=>{if(seen.has(n.id))errors.push(`Duplikált ID: ${n.id}`);else seen.add(n.id);if(!TYPES.has(n.type))warnings.push(`Ismeretlen elem típus: ${n.type}`);(n.children||[]).forEach(child=>{if(parents.has(child.id))errors.push(`Egy elemnek több parentje van: ${child.id}`);parents.set(child.id,n.id);if(child.parentId!==n.id)errors.push(`Hibás parentId: ${child.id}`);});});return {valid:errors.length===0,errors,warnings};}
+  window.SanciEditorSchema={VERSION,TYPES,uid,clone,emptyNode,emptyDocument,walk,index,validate};
 })();
