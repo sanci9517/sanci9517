@@ -1,6 +1,6 @@
 # Sanci9517 — MASTER FEJLESZTÉSI ÉS TESZTELÉSI TERV
 
-**Verzió:** MASTER-1.0  
+**Verzió:** MASTER-1.1  
 **Dátum:** 2026-09-16  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -46,6 +46,34 @@ A rendszer ne csak „most működjön”, hanem a következő fejlesztéseket i
 10. későbbi AI-kompatibilitását;
 11. visszaállíthatóságát;
 12. regressziós hatását.
+
+## 00.4 Editor benchmark / funkciógyűjtési szabály
+
+A Visual Editor végleges specifikációját nem egyetlen meglévő editor alapján készítjük. Nyílt forrású és dokumentált page-builder/editor rendszerekből csak a hasznos, bizonyítható mintákat vesszük át.
+
+Referenciaelemzések:
+- **GrapesJS:** moduláris editor, UndoManager, komponens/page modell, CSS/trait/property rendszerek, storage és editor modulok;
+- **Craft.js:** node-alapú hierarchy, selection, actions/query, history, undo/redo és throttling;
+- **Puck:** komponenskonfiguráció, field-alapú inspector, drag/drop, permissions, history és editor UI minták.
+
+Ezekből nem kódot másolunk. A projekt saját Page Modeljébe, jogosultsági modelljébe, D1/R2 architektúrájába és későbbi SANCI AI action-rendszerébe illesztjük a szükséges funkciókat.
+
+**Kötelező:** minden új editorfunkció előtt ellenőrizni kell, hogy a funkció valamelyik ilyen kategóriába tartozik-e: hierarchy, selection, property editing, history, persistence, responsive, reusable components, design system, interaction, accessibility, collaboration/conflict handling, recovery, testing vagy AI-action compatibility.
+
+## 00.5 Implementációs komment-szabály
+
+Komplex üzleti vagy adatkezelési logikánál rövid, célmagyarázó kódkomment engedélyezett és kívánatos. Különösen:
+- Page Model invariánsok;
+- history transaction/grouping;
+- publish atomicitás;
+- responsive inheritance;
+- permission/authorization döntések;
+- R2 object-key szabályok;
+- AI action safety;
+- migration compatibility;
+- recovery/conflict kezelés.
+
+A komment **miértet** magyarázzon, ne a triviális **mitet**. A publikus UI-ba technikai komment vagy fejlesztői szöveg nem kerülhet.
 
 ---
 
@@ -150,7 +178,10 @@ Minden szerkeszthető objektumnak stabil ID kell:
 - action ID;
 - version ID;
 - media ID;
-- audit event ID.
+- audit event ID;
+- asset reference ID;
+- template ID;
+- design token ID.
 
 ID nem változhat pusztán áthelyezés vagy átnevezés miatt.
 
@@ -161,6 +192,50 @@ Minden kritikus módosításnak legyen:
 - validálható formája;
 - lehetőség szerint rollback útja.
 
+## 02/E Editor adatmodell szabály
+
+A Visual Editor nem HTML-szöveget szerkesztő rendszer. A szerkesztési igazságforrás strukturált Page Model.
+
+Minimum logikai rétegek:
+`Site → Page → Root → Node tree → Component/Element → Props/Style/Responsive → Bindings/Interactions`
+
+A renderer ebből állítja elő a publikus HTML-t. A publikus HTML visszaimportálása nem lehet a működés feltétele.
+
+## 02/F State rétegek
+
+Külön kell kezelni:
+- persisted server state;
+- published state;
+- editor working state;
+- local recovery state;
+- UI-only state;
+- history state;
+- preview state;
+- external integration cache.
+
+Ezek nem keveredhetnek össze.
+
+## 02/G Concurrency / conflict szabály
+
+Ha ugyanazt a draftot két editor-tab vagy két kliens módosítja:
+- verzió/ETag vagy equivalent revision check szükséges;
+- ütközés nem írhatja felül csendben a másik változást;
+- a felhasználó kapjon egyértelmű konfliktusjelzést;
+- legyen reload/merge/overwrite lehetőség megfelelő jogosultsággal;
+- a konfliktus auditálható legyen.
+
+## 02/H Recovery szabály
+
+A szerkesztőnek számolnia kell:
+- böngésző bezárásával;
+- tab összeomlásával;
+- hálózati hibával;
+- deploy közbeni újratöltéssel;
+- save timeouttal;
+- részleges API hibával.
+
+A lokális recovery nem válthatja ki a D1 mentést, csak biztonsági mentési réteg lehet.
+
 ---
 
 # 03 — FEJLESZTÉSI KAPUK
@@ -169,7 +244,7 @@ Minden kritikus módosításnak legyen:
 Canonical routing + Worker + D1 + archive + admin alapok.
 
 ## G1 — Editor Core
-Betöltés + kijelölés + szerkesztés + mentés + reload.
+Betöltés + kijelölés + szerkesztés + mentés + reload + recovery.
 
 ## G2 — Hierarchy/Layout
 Valódi parent-child + layers + layout engine.
@@ -266,6 +341,18 @@ Módosítás előtt fel kell térképezni:
 - [ ] save error state
 - [ ] retry
 - [ ] offline/kapcsolati hiba kezelése
+- [ ] draft/workspace azonosítás
+- [ ] working state és persisted state szétválasztása
+- [ ] dirty state pontos követése
+- [ ] unsaved changes jelzés
+- [ ] navigáció előtti unsaved-change védelem
+- [ ] tab/browser close recovery
+- [ ] local recovery snapshot
+- [ ] recovery visszaállítás
+- [ ] recovery törlés sikeres mentés után
+- [ ] editor újranyitás ugyanarra az oldalra
+- [ ] több editor-tab felismerése
+- [ ] revision/conflict ellenőrzés
 
 ## 1/B Alapelemek
 - [ ] root
@@ -273,11 +360,21 @@ Módosítás előtt fel kell térképezni:
 - [ ] section
 - [ ] heading
 - [ ] paragraph/text
+- [ ] rich text
 - [ ] button
+- [ ] link
 - [ ] image
+- [ ] video/embed
+- [ ] icon
 - [ ] divider
 - [ ] spacer
-- [ ] későbbi custom component slot
+- [ ] list
+- [ ] quote
+- [ ] badge/tag
+- [ ] columns
+- [ ] form field
+- [ ] form/container slot
+- [ ] custom component slot
 
 Minden elem:
 - stabil ID;
@@ -286,41 +383,91 @@ Minden elem:
 - order;
 - props;
 - style;
+- responsive overrides;
 - visibility;
 - locked állapot;
-- metadata.
+- metadata;
+- accessibility metadata;
+- data bindings;
+- interaction bindings;
+- schema version.
 
-## 1/C Selection
+## 1/C Selection és manipulation
 - [ ] click select
 - [ ] újrakijelölés
 - [ ] canvas → tree sync
 - [ ] tree → canvas sync
 - [ ] multi-select
+- [ ] shift/ctrl selection
 - [ ] group
 - [ ] ungroup
 - [ ] lock
 - [ ] hide
 - [ ] rename
+- [ ] drag selection
+- [ ] resize handles
+- [ ] keyboard move
+- [ ] duplicate with offset
+- [ ] copy
+- [ ] cut
+- [ ] paste
+- [ ] paste into selected parent
+- [ ] paste style only
+- [ ] paste structure
+- [ ] context menu
+- [ ] breadcrumb selection
+- [ ] parent selection
+- [ ] focus selected
+- [ ] escape to parent/clear selection
 
-## 1/D CRUD
+## 1/D CRUD és tree műveletek
 - [ ] create
 - [ ] duplicate
 - [ ] delete
+- [ ] delete confirmation ahol veszélyes
 - [ ] reorder
 - [ ] parenthez adás
 - [ ] parentből kivétel
 - [ ] másik parentbe helyezés
+- [ ] drag/drop insertion
+- [ ] drop zone preview
+- [ ] invalid drop tiltás
+- [ ] nesting rule ellenőrzés
+- [ ] bulk delete
+- [ ] bulk duplicate
+- [ ] bulk move
+- [ ] tree search
+- [ ] collapse/expand tree
+- [ ] expand to selected
 
 ## 1/E Inspector
 - [ ] content
+- [ ] rich text
 - [ ] typography
 - [ ] layout
 - [ ] spacing
 - [ ] appearance
+- [ ] border
+- [ ] radius
+- [ ] shadow
+- [ ] background
+- [ ] image/media
 - [ ] responsive
 - [ ] interaction
+- [ ] link/navigation
 - [ ] accessibility
+- [ ] data binding
+- [ ] visibility
+- [ ] states/pseudo-states ahol releváns
 - [ ] advanced
+- [ ] property search
+- [ ] property reset
+- [ ] inherited value jelzése
+- [ ] overridden value jelzése
+- [ ] invalid value jelzése
+- [ ] unit választás
+- [ ] color picker
+- [ ] token választás
 
 ## 1/F History
 - [ ] undo
@@ -329,17 +476,35 @@ Minden elem:
 - [ ] history panel
 - [ ] entry preview
 - [ ] restore history entry
+- [ ] history grouping
+- [ ] drag/resize history throttling
+- [ ] typing history throttling
+- [ ] ignored/internal action
+- [ ] history limit
+- [ ] history persistence policy
 - [ ] history ne sértse a szerver állapotát
+- [ ] undo után új változás branch history kezelése
 
 ## 1/G Save contract
 - [ ] dirty state
-- [ ] save
+- [ ] manual save
+- [ ] optional autosave
+- [ ] autosave debounce
+- [ ] save queue
+- [ ] duplicate save protection
 - [ ] D1 update
+- [ ] optimistic/pessimistic stratégia dokumentálva
 - [ ] save success
 - [ ] save failure
+- [ ] timeout
+- [ ] retry
 - [ ] reload
 - [ ] adat megmarad
 - [ ] renderer ugyanazt az állapotot látja
+- [ ] revision frissül
+- [ ] conflict felismerés
+- [ ] recovery snapshot frissül
+- [ ] mentett állapot és publish állapot különválik
 
 ## 1/H Kötelező Core tesztkapu
 1. editor megnyílik;
@@ -361,7 +526,17 @@ Minden elem:
 17. public renderer helyes;
 18. D1-ben ténylegesen megjelent;
 19. hibás input nem töri el;
-20. mobil/desktop nem romlik.
+20. mobil/desktop nem romlik;
+21. undo működik;
+22. redo működik;
+23. copy/paste működik;
+24. reparent működik;
+25. save hiba után adatvesztés nélkül retry lehetséges;
+26. recovery működik;
+27. konfliktus nem ír felül csendben;
+28. jogosulatlan mutation elutasítva;
+29. accessibility alapmezők nem hagyhatók hibásan;
+30. editor újranyitása ugyanazt a strukturált állapotot adja vissza.
 
 ---
 
@@ -382,6 +557,12 @@ Minden elem:
 - [ ] hierarchy preview
 - [ ] hierarchy publish
 - [ ] hierarchy undo/redo
+- [ ] tree search
+- [ ] collapse/expand
+- [ ] multi-level drag/drop
+- [ ] allowed-child rules
+- [ ] slot/capacity rules
+- [ ] locked subtree szabály
 
 ## 2/B Sizing
 - [ ] fixed
@@ -393,6 +574,9 @@ Minden elem:
 - [ ] aspect ratio
 - [ ] fluid
 - [ ] clamp
+- [ ] viewport units
+- [ ] percentage
+- [ ] intrinsic sizing
 - [ ] konfliktuskezelés
 
 ## 2/C Spacing
@@ -403,12 +587,16 @@ Minden elem:
 - [ ] shorthand
 - [ ] responsive spacing
 - [ ] spacing tokens
+- [ ] linked/unlinked sides
+- [ ] visual box-model editor
 
 ## 2/D Display
 - [ ] block
 - [ ] inline-block
+- [ ] inline
 - [ ] flex
 - [ ] grid
+- [ ] none
 - [ ] display validation
 - [ ] visibility/display különválasztás
 
@@ -444,6 +632,8 @@ Minden elem:
 - [ ] alignment
 - [ ] responsive
 - [ ] persistence
+- [ ] row/column gap
+- [ ] explicit/implicit grid validation
 
 ## 2/G Position
 - [ ] static
@@ -456,6 +646,7 @@ Minden elem:
 - [ ] z-index
 - [ ] stacking context
 - [ ] conflict handling
+- [ ] containing-block validation
 
 ## 2/H Overflow
 - [ ] visible
@@ -464,6 +655,34 @@ Minden elem:
 - [ ] scroll
 - [ ] x/y
 - [ ] clip
+- [ ] overflow-wrap
+- [ ] text overflow
+
+## 2/I Design system / CSS abstraction
+- [ ] CSS variable/token model
+- [ ] color tokens
+- [ ] typography tokens
+- [ ] spacing tokens
+- [ ] radius tokens
+- [ ] shadow tokens
+- [ ] breakpoint tokens
+- [ ] reusable style presets
+- [ ] class/style strategy dokumentálása
+- [ ] token override
+- [ ] token usage search
+- [ ] unused token detection későbbi pont
+
+## 2/J Component states és variants
+- [ ] default
+- [ ] hover
+- [ ] focus
+- [ ] active
+- [ ] disabled
+- [ ] selected/current
+- [ ] component variants
+- [ ] variant props
+- [ ] state validation
+- [ ] responsive + state kombináció kezelése
 
 ---
 
@@ -472,7 +691,7 @@ Minden elem:
 ## 3/A Canvas
 - [ ] center
 - [ ] zoom in/out
-- [ ] 100%
+- [ ] 25/50/75/100/150/200% preset
 - [ ] fit screen
 - [ ] grid
 - [ ] guides
@@ -485,6 +704,13 @@ Minden elem:
 - [ ] full-page mode
 - [ ] focus selected
 - [ ] preview overlay
+- [ ] canvas background
+- [ ] selection outline
+- [ ] hover outline
+- [ ] parent outline
+- [ ] spacing/margin visualizer
+- [ ] breakpoint indicator
+- [ ] scroll position preservation
 
 ## 3/B Alignment
 - [ ] left/center/right
@@ -498,6 +724,9 @@ Minden elem:
 - [ ] align canvas
 - [ ] distance indicators
 - [ ] equal spacing indicators
+- [ ] smart guides
+- [ ] snap to siblings
+- [ ] snap to container
 
 ## 3/C Editor panels
 - [ ] layer panel
@@ -509,6 +738,36 @@ Minden elem:
 - [ ] command palette
 - [ ] quick actions
 - [ ] property search
+- [ ] component library/panel
+- [ ] assets panel
+- [ ] page panel
+- [ ] history panel
+- [ ] preview/publish controls
+- [ ] unsaved indicator
+- [ ] save status
+- [ ] notifications/toasts
+- [ ] modal system
+
+## 3/D Component insertion UX
+- [ ] drag component from library
+- [ ] click-to-add
+- [ ] insert before/after
+- [ ] insert into container
+- [ ] favorite components
+- [ ] recently used
+- [ ] search components
+- [ ] categories
+- [ ] component documentation/help text
+- [ ] component compatibility warning
+
+## 3/E Clipboard és import
+- [ ] internal clipboard
+- [ ] cross-page copy/paste
+- [ ] duplicate IDs regenerálása
+- [ ] external structured paste policy
+- [ ] sanitization
+- [ ] paste preview
+- [ ] unsupported element fallback
 
 ---
 
@@ -519,6 +778,9 @@ Minden elem:
 - [ ] tablet
 - [ ] mobile
 - [ ] custom viewport preview
+- [ ] orientation
+- [ ] viewport presets
+- [ ] min/max viewport validation
 
 ## 4/B Responsive properties
 - [ ] width
@@ -528,10 +790,15 @@ Minden elem:
 - [ ] gap
 - [ ] font size
 - [ ] line height
+- [ ] letter spacing
 - [ ] display
 - [ ] position
 - [ ] alignment
 - [ ] visibility
+- [ ] order
+- [ ] grid/flex overrides
+- [ ] image sizing/crop
+- [ ] max-width/container rules
 
 ## 4/C Inheritance
 - [ ] desktop default
@@ -540,14 +807,19 @@ Minden elem:
 - [ ] reset override
 - [ ] inherited value display
 - [ ] breakpoint validation
+- [ ] explicit vs inherited distinction
+- [ ] cascade conflict detection
+- [ ] override cleanup
 
 ## 4/D Responsive gate
 Ugyanaz az oldal ellenőrizve:
 - editor desktop;
+- editor tablet;
 - editor mobile;
 - public desktop;
+- public tablet;
 - public mobile;
-- reload mindkettőn;
+- reload mindegyiken;
 - preview;
 - publish;
 - nincs layout regression.
@@ -564,9 +836,14 @@ Ugyanaz az oldal ellenőrizve:
 - [ ] content schema
 - [ ] metadata
 - [ ] version
+- [ ] revision
 - [ ] updated timestamp
 - [ ] published timestamp
 - [ ] schema version
+- [ ] author/owner
+- [ ] template ID ahol releváns
+- [ ] SEO data
+- [ ] access/visibility policy
 
 ## 5/B Element schema
 - [ ] element ID
@@ -579,6 +856,10 @@ Ugyanaz az oldal ellenőrizve:
 - [ ] visibility
 - [ ] lock
 - [ ] data bindings
+- [ ] interaction bindings
+- [ ] component/variant reference
+- [ ] accessibility metadata
+- [ ] schema version
 
 ## 5/C Validation
 - [ ] schema validation
@@ -589,20 +870,32 @@ Ugyanaz az oldal ellenőrizve:
 - [ ] invalid nesting
 - [ ] unknown element handling
 - [ ] migration compatibility
+- [ ] circular reference detection
+- [ ] orphan node detection
+- [ ] duplicate ID detection
+- [ ] invalid style validation
+- [ ] invalid binding validation
+- [ ] permission validation
 
 ## 5/D Draft/Preview/Publish
 - [ ] draft state
 - [ ] save draft
 - [ ] preview draft
+- [ ] isolated preview URL/token
 - [ ] published snapshot
 - [ ] publish
 - [ ] unpublish
 - [ ] preview nem ír publicot
 - [ ] publish atomic
 - [ ] publish audit
+- [ ] publish validation gate
+- [ ] publish failure rollback
+- [ ] cache invalidation
+- [ ] stale public snapshot detection
 
 ## 5/E Versioning
 - [ ] version number
+- [ ] revision number
 - [ ] created by
 - [ ] timestamp
 - [ ] change summary
@@ -610,13 +903,37 @@ Ugyanaz az oldal ellenőrizve:
 - [ ] restore
 - [ ] rollback
 - [ ] rollback audit
+- [ ] version compare
+- [ ] version preview
+- [ ] version retention policy
+
+## 5/F Autosave és recovery
+- [ ] autosave policy
+- [ ] debounce
+- [ ] save queue
+- [ ] retry queue
+- [ ] local recovery
+- [ ] crash recovery
+- [ ] conflict detection
+- [ ] conflict resolution
+- [ ] recovery cleanup
+
+## 5/G Templates és reusable sections
+- [ ] page template
+- [ ] section template
+- [ ] component template
+- [ ] template clone
+- [ ] detach from template
+- [ ] template update policy
+- [ ] instance override
+- [ ] template versioning
 
 ---
 
 # 10 — PHASE 6 / VALÓDI SANCI OLDALAK
 
 Minden oldal ugyanazon kapun megy:
-`Create → Edit → Save → D1 → Reload → Preview → Publish → Public → Mobile → Desktop`.
+`Create → Edit → Save → D1 → Reload → Preview → Publish → Public → Mobile → Tablet → Desktop → Regression`.
 
 ## 6/A Home
 - [ ] alap home működés megőrzése
@@ -698,6 +1015,16 @@ Minden oldal ugyanazon kapun megy:
 - [ ] MediaGallery
 - [ ] Section
 - [ ] Container
+- [ ] Hero
+- [ ] ProfileCard
+- [ ] GameCard
+- [ ] LinkCard
+- [ ] SponsorCard
+- [ ] PressKitBlock
+- [ ] FAQ
+- [ ] ContactForm
+- [ ] SocialFeed
+- [ ] FeaturedContent
 
 Minden komponenshez kell:
 - schema;
@@ -708,7 +1035,10 @@ Minden komponenshez kell:
 - accessibility;
 - validation;
 - stabil ID;
-- dokumentáció.
+- dokumentáció;
+- empty/loading/error state;
+- analytics hooks ahol releváns;
+- AI action compatibility ahol releváns.
 
 ---
 
@@ -724,11 +1054,16 @@ Minden komponenshez kell:
 - [ ] design tokens
 - [ ] typography tokens
 - [ ] spacing tokens
+- [ ] color tokens
+- [ ] radius/shadow tokens
 - [ ] breakpoints
 - [ ] reusable sections
 - [ ] templates
 - [ ] template cloning
 - [ ] global settings
+- [ ] global components
+- [ ] global styles
+- [ ] token usage audit
 
 ---
 
@@ -741,6 +1076,11 @@ Minden komponenshez kell:
 - [ ] size validation
 - [ ] upload endpoint
 - [ ] secure access
+- [ ] signed/private access ahol kell
+- [ ] upload cancellation
+- [ ] upload progress
+- [ ] retry
+- [ ] resumable strategy ahol indokolt
 
 ## 9/B Media DB
 - [ ] media ID
@@ -751,19 +1091,29 @@ Minden komponenshez kell:
 - [ ] dimensions
 - [ ] duration
 - [ ] alt text
+- [ ] focal point/crop metadata
 - [ ] created_at
+- [ ] updated_at
 - [ ] references
+- [ ] checksum
+- [ ] variants
 
 ## 9/C Media UI
 - [ ] library
 - [ ] search
 - [ ] filter
+- [ ] sort
 - [ ] upload
 - [ ] picker
 - [ ] replace
+- [ ] crop
+- [ ] focal point
+- [ ] alt text
 - [ ] delete confirmation
 - [ ] orphan detection
 - [ ] cleanup
+- [ ] bulk operations
+- [ ] usage view
 
 ---
 
@@ -778,6 +1128,10 @@ Minden komponenshez kell:
 - [ ] platform
 - [ ] status
 - [ ] next event calculation
+- [ ] cancellation
+- [ ] reschedule
+- [ ] special event
+- [ ] past-event archive
 
 ## 10/B Schedule frontend
 - [ ] calendar/list
@@ -785,6 +1139,9 @@ Minden komponenshez kell:
 - [ ] countdown
 - [ ] live status
 - [ ] mobile layout
+- [ ] timezone-aware display
+- [ ] past streams
+- [ ] filters
 
 ## 10/C Social data model
 - [ ] provider
@@ -794,6 +1151,8 @@ Minden komponenshez kell:
 - [ ] cached stats
 - [ ] last sync
 - [ ] error state
+- [ ] sync status
+- [ ] manual refresh
 
 ## 10/D VOD
 - [ ] import
@@ -802,6 +1161,9 @@ Minden komponenshez kell:
 - [ ] thumbnail
 - [ ] category
 - [ ] published state
+- [ ] tags
+- [ ] featured state
+- [ ] external URL validation
 
 ---
 
@@ -818,6 +1180,9 @@ Minden integráció külön service modul, saját hibakezeléssel és rate-limit
 - [ ] event handling
 - [ ] permission handling
 - [ ] cache
+- [ ] reconnect
+- [ ] rate-limit handling
+- [ ] integration health
 
 ## 11/B YouTube
 - [ ] OAuth/API credential kezelés
@@ -827,6 +1192,7 @@ Minden integráció külön service modul, saját hibakezeléssel és rate-limit
 - [ ] Shorts
 - [ ] sync
 - [ ] cache
+- [ ] error recovery
 
 ## 11/C TikTok
 - [ ] aktuális hivatalos API-k felmérése
@@ -857,6 +1223,8 @@ Minden integráció külön service modul, saját hibakezeléssel és rate-limit
 - [ ] structured data
 - [ ] 404
 - [ ] redirect policy
+- [ ] noindex draft/preview
+- [ ] social preview validation
 
 ## 12/B Analytics
 - [ ] page view
@@ -867,6 +1235,8 @@ Minden integráció külön service modul, saját hibakezeléssel és rate-limit
 - [ ] support click
 - [ ] anonymized event model
 - [ ] admin dashboard
+- [ ] event deduplication
+- [ ] retention policy
 
 ## 12/C Accessibility
 - [ ] semantic HTML
@@ -877,6 +1247,9 @@ Minden integráció külön service modul, saját hibakezeléssel és rate-limit
 - [ ] contrast
 - [ ] reduced motion
 - [ ] screen reader basic flow
+- [ ] heading hierarchy
+- [ ] form error accessibility
+- [ ] editor accessibility alapok
 
 ---
 
@@ -890,6 +1263,9 @@ Minden integráció külön service modul, saját hibakezeléssel és rate-limit
 - [ ] schedule backup
 - [ ] settings backup
 - [ ] checksum/integrity
+- [ ] backup metadata
+- [ ] backup retention
+- [ ] restore test
 
 ## 13/B Restore
 - [ ] restore preview
@@ -899,6 +1275,8 @@ Minden integráció külön service modul, saját hibakezeléssel és rate-limit
 - [ ] validation before restore
 - [ ] confirmation
 - [ ] rollback on failed restore
+- [ ] dependency validation
+- [ ] media reference validation
 
 ## 13/C Audit
 - [ ] login events
@@ -911,6 +1289,10 @@ Minden integráció külön service modul, saját hibakezeléssel és rate-limit
 - [ ] integration changes
 - [ ] security events
 - [ ] AI events later
+- [ ] actor
+- [ ] target
+- [ ] before/after reference
+- [ ] request/correlation ID
 
 ## 13/D Import/export
 - [ ] page export
@@ -921,6 +1303,7 @@ Minden integráció külön service modul, saját hibakezeléssel és rate-limit
 - [ ] dry-run import
 - [ ] conflict handling
 - [ ] import audit
+- [ ] schema migration during import
 
 ---
 
@@ -943,6 +1326,10 @@ Minden integráció külön service modul, saját hibakezeléssel és rate-limit
 - [ ] error information minimization
 - [ ] security audit
 - [ ] security regression tests
+- [ ] upload security
+- [ ] path/object-key traversal prevention
+- [ ] preview token security
+- [ ] audit integrity
 
 ---
 
@@ -960,6 +1347,10 @@ Minden integráció külön service modul, saját hibakezeléssel és rate-limit
 - [ ] audit events
 - [ ] quick actions
 - [ ] global settings
+- [ ] editor recovery alerts
+- [ ] conflicts
+- [ ] failed publishes
+- [ ] system health
 
 ---
 
@@ -981,6 +1372,11 @@ AI nem kap közvetlen, kontrollálatlan adatbázis-hozzáférést.
 - [ ] suggest content
 - [ ] generate metadata
 - [ ] analyze page
+- [ ] fix validation issue
+- [ ] explain layout issue
+- [ ] propose responsive fix
+- [ ] prepare draft only
+- [ ] compare versions
 
 ## 16/C Safety
 - [ ] allowlist
@@ -991,6 +1387,20 @@ AI nem kap közvetlen, kontrollálatlan adatbázis-hozzáférést.
 - [ ] audit
 - [ ] rollback
 - [ ] destructive action protection
+- [ ] rate limiting
+- [ ] action idempotency
+- [ ] maximum mutation scope
+- [ ] no direct arbitrary SQL
+- [ ] no direct arbitrary file write
+
+## 16/D AI/editor bridge
+- [ ] every editor mutation has structured action equivalent
+- [ ] action validation uses same schema as UI
+- [ ] AI can read Page Model through controlled query layer
+- [ ] AI can propose, but not silently publish
+- [ ] human approval for consequential changes
+- [ ] action result visible to user
+- [ ] failed action leaves state valid
 
 ---
 
@@ -1004,6 +1414,8 @@ AI nem kap közvetlen, kontrollálatlan adatbázis-hozzáférést.
 - [ ] chat context
 - [ ] game context
 - [ ] event timeline
+- [ ] active game/session identity
+- [ ] streamer context
 
 ## 17/B Élő figyelés
 - [ ] csend detektálás
@@ -1013,6 +1425,8 @@ AI nem kap közvetlen, kontrollálatlan adatbázis-hozzáférést.
 - [ ] stream technikai hibák
 - [ ] audio problémák
 - [ ] scene/OBS problémák
+- [ ] connection health
+- [ ] dropped frames jelzés ahol elérhető
 
 ## 17/C Segítség
 - [ ] „nem beszélsz” jelzés
@@ -1022,6 +1436,9 @@ AI nem kap közvetlen, kontrollálatlan adatbázis-hozzáférést.
 - [ ] technikai ellenőrzés
 - [ ] beállítási segítség
 - [ ] tesztelési segítség
+- [ ] kontextusfüggő prioritás
+- [ ] ne legyen túl sok zavaró értesítés
+- [ ] mute/snooze/cooldown
 
 ## 17/D Stream elemzés
 - [ ] beszédarány
@@ -1031,6 +1448,9 @@ AI nem kap közvetlen, kontrollálatlan adatbázis-hozzáférést.
 - [ ] kiemelkedő pillanatok
 - [ ] session summary
 - [ ] hosszú távú trendek
+- [ ] segmentek
+- [ ] game/context váltások
+- [ ] user feedback korreláció
 
 ## 17/E Streamer memory
 - [ ] streamer profil
@@ -1041,6 +1461,8 @@ AI nem kap közvetlen, kontrollálatlan adatbázis-hozzáférést.
 - [ ] célok
 - [ ] értékelési ciklus
 - [ ] memória törlés/korrekció
+- [ ] confidence/source metadata
+- [ ] lejárat/érvényesség ahol szükséges
 
 ## 17/F Clip/Short pipeline
 - [ ] manuális „jó jelenet” trigger
@@ -1054,6 +1476,9 @@ AI nem kap közvetlen, kontrollálatlan adatbázis-hozzáférést.
 - [ ] export
 - [ ] mentés
 - [ ] későbbi publikálás
+- [ ] source media reference
+- [ ] clip status lifecycle
+- [ ] retry/failure state
 
 ---
 
@@ -1068,6 +1493,9 @@ AI nem kap közvetlen, kontrollálatlan adatbázis-hozzáférést.
 - [ ] experiment history
 - [ ] trend analysis
 - [ ] streamer-specific recommendations
+- [ ] confidence tracking
+- [ ] feedback provenance
+- [ ] rollback of learned preference
 
 Az AI nem „öntanuló fekete doboz”: minden releváns változás mérhető, visszakereshető és korlátozható legyen.
 
@@ -1081,6 +1509,9 @@ Az AI nem „öntanuló fekete doboz”: minden releváns változás mérhető, 
 - [ ] validation
 - [ ] service logic
 - [ ] auth
+- [ ] Page Model transformations
+- [ ] history grouping
+- [ ] responsive inheritance
 
 ## 19/B Integration
 - [ ] Worker → D1
@@ -1089,18 +1520,26 @@ Az AI nem „öntanuló fekete doboz”: minden releváns változás mérhető, 
 - [ ] renderer → API/data
 - [ ] R2 → media
 - [ ] integrations
+- [ ] publish transaction
+- [ ] audit transaction
+- [ ] recovery
+- [ ] conflict handling
 
 ## 19/C E2E
 - [ ] login
 - [ ] page edit
 - [ ] save
+- [ ] autosave
 - [ ] reload
+- [ ] recovery
 - [ ] preview
 - [ ] publish
 - [ ] public
 - [ ] rollback
 - [ ] media
 - [ ] schedule
+- [ ] responsive
+- [ ] unauthorized mutation
 
 ## 19/D Regression
 Minden nagyobb változás után:
@@ -1112,6 +1551,9 @@ Minden nagyobb változás után:
 - [ ] D1
 - [ ] responsive
 - [ ] auth
+- [ ] media
+- [ ] publish
+- [ ] integrations
 
 ## 19/E Performance
 - [ ] public load
@@ -1120,6 +1562,25 @@ Minden nagyobb változás után:
 - [ ] D1 query performance
 - [ ] asset loading
 - [ ] mobile performance
+- [ ] large page/editor performance
+- [ ] history performance
+- [ ] autosave performance
+- [ ] memory leak check
+
+## 19/F Editor-specific regression matrix
+- [ ] 1 node
+- [ ] 10 nodes
+- [ ] 100 nodes
+- [ ] deep nesting
+- [ ] large text
+- [ ] many images
+- [ ] many responsive overrides
+- [ ] repeated undo/redo
+- [ ] rapid typing
+- [ ] rapid drag/drop
+- [ ] network interruption
+- [ ] duplicate tabs
+- [ ] invalid imported schema
 
 ---
 
@@ -1136,6 +1597,9 @@ Minden nagyobb változás után:
 - [ ] incident procedure
 - [ ] release notes
 - [ ] architecture changelog
+- [ ] feature flag strategy ahol szükséges
+- [ ] migration rollback strategy
+- [ ] production smoke test
 
 ---
 
@@ -1155,14 +1619,16 @@ Egy funkció csak akkor kész, ha:
 10. publish működik, ha releváns;
 11. public renderer helyes;
 12. mobil működik;
-13. desktop működik;
-14. hibás input kezelve van;
-15. audit/rollback megoldott, ha kritikus;
-16. nincs ismert regresszió;
-17. GitHub commit megtörtént;
-18. Cloudflare deploy sikeres;
-19. felhasználói teszt sikeres;
-20. MASTER pont `[x]`-re frissítve.
+13. tablet működik, ha releváns;
+14. desktop működik;
+15. hibás input kezelve van;
+16. audit/rollback megoldott, ha kritikus;
+17. recovery megoldott, ha adatvesztés kockázata van;
+18. nincs ismert regresszió;
+19. GitHub commit megtörtént;
+20. Cloudflare deploy sikeres;
+21. felhasználói teszt sikeres;
+22. MASTER pont `[x]`-re frissítve.
 
 ---
 
@@ -1178,7 +1644,13 @@ Egy funkció csak akkor kész, ha:
 - secretet GitHubba tenni;
 - adatmodellt újratervezni egyetlen UI-probléma miatt;
 - régi kódot törölni archive nélkül, ha még referenciaértékű;
-- `[x]` státuszt feltételezés alapján beállítani.
+- `[x]` státuszt feltételezés alapján beállítani;
+- HTML-t tekinteni az editor elsődleges adatmodelljének;
+- publish nélkül public tartalmat kézzel módosítani;
+- historyt és persisted state-et összekeverni;
+- autosave hibát sikeres mentésként kezelni;
+- konfliktust csendben felülírni;
+- AI-t megkerülő, nem auditált mutation endpointet létrehozni.
 
 ---
 
@@ -1195,61 +1667,73 @@ Egy funkció csak akkor kész, ha:
 - [x] legacy public HTML-ek archive után eltávolítva
 - [x] Worker működik
 - [x] oldalak megnyílnak — felhasználói visszaigazolás
+- [x] A/1 foundation smoke test felhasználói visszaigazolása
 
 ## Nyitott
-- [ ] A/1 teljes foundation smoke test dokumentált lezárása
 - [ ] A/2 teljes editor audit
 - [ ] 1/A editor lifecycle
 - [ ] 1/B alapelemek
-- [ ] 1/C hierarchy
-- [ ] 1/D inspector
-- [ ] 1/E save contract
+- [ ] 1/C selection/manipulation
+- [ ] 1/D CRUD/tree
+- [ ] 1/E inspector
+- [ ] 1/F history
+- [ ] 1/G save contract
 - [ ] 1/H Core tesztkapu
-- [ ] további phase-ek a fenti sorrendben
+- [ ] 2–20 további phase-ek a fenti sorrendben
 
 ---
 
 # 28 — AKTUÁLIS KÖVETKEZŐ LÉPÉS
 
-## **A/1 — FOUNDATION VÉGLEGES SMOKE TEST**
+## **A/2 — TELJES VISUAL EDITOR AUDIT**
 
-Ezt kell most végigellenőrizni. Nem módosítunk Visual Editor kódot addig, amíg A/1 nincs kész.
+Az A/1 lezárása után most nem új funkciót találunk ki vaktában, hanem a jelenlegi kódot vetjük össze a MASTER-1.1 végleges követelményeivel.
 
-### A/1.1
-`/` működik.
+### A/2.1
+Worker entry, router és response layer.
 
-### A/1.2
-`/p/home` működik.
+### A/2.2
+Canonical page renderer és Page API.
 
-### A/1.3
-Egy további canonical `/p/<slug>` működik.
+### A/2.3
+D1 schema, migrations és Page Model.
 
-### A/1.4
-Legacy URL-ek canonical URL-re redirectelnek.
+### A/2.4
+Admin login/session/RBAC alapok.
 
-### A/1.5
-Worker/API health működik.
+### A/2.5
+Visual Editor shell és editor state.
 
-### A/1.6
-D1 pages állapot ellenőrizve.
+### A/2.6
+Canvas, selection, layer tree, inspector.
 
-### A/1.7
-Admin login/session működik.
+### A/2.7
+CRUD, hierarchy, history és save.
 
-### A/1.8
-GitHub branch és HEAD ellenőrizve.
+### A/2.8
+Preview, publish és public renderer kapcsolat.
 
-### A/1.9
-Aktív `public/` nem tartalmazza a régi publikus HTML-eket.
+### A/2.9
+Assets/media kapcsolat.
 
-### A/1.10
-Archive branch létezik és megőrzi a régi állapotot.
+### A/2.10
+Recovery, autosave, conflict és error handling jelenlegi állapota.
 
-**A/1 csak akkor `[x]`, ha mind a 10 pontot a felhasználó visszaigazolta.**
+### A/2.11
+A jelenlegi kód összevetése a benchmarkként vizsgált editor-mintákkal.
 
-## Következő: **A/2 — teljes Visual Editor audit**
+### A/2.12
+Fájl- és adatfolyam-térkép.
 
-A/2-ben először csak feltérképezünk és ellenőrzünk. Utána kezdjük az 1/A pontot.
+**A/2 kimenete kötelezően:**
+- `kész`;
+- `részleges`;
+- `hibás`;
+- `hiányzik`;
+- `újratesztelendő`;
+- `MASTER-bővítést igényel`.
+
+A/2 lezárása nélkül **nem kezdünk vakon 1/A fejlesztést**.
 
 ---
 
@@ -1261,12 +1745,18 @@ A projektben a következő formát használjuk:
 - `A/2` = editor audit
 - `1/A` = editor lifecycle
 - `1/B` = alapelemek
-- `1/C` = hierarchy
-- `1/E` = save contract
+- `1/C` = selection/manipulation
+- `1/E` = inspector
+- `1/F` = history
+- `1/G` = save contract
 - `1/H-13` = Core tesztkapu 13. pont
+- `2/A` = hierarchy
 - `2/F` = Grid
+- `2/I` = design system
+- `3/A` = canvas
 - `4/C` = responsive inheritance
 - `5/D` = Draft/Preview/Publish
+- `5/F` = autosave/recovery
 - `6/C` = Schedule oldal
 - `9/A` = R2 storage
 - `11/A` = Twitch integráció
@@ -1286,14 +1776,16 @@ A terv módosítható, ha:
 - új szükséges funkció merül fel;
 - technikai korlát miatt más sorrend kell;
 - biztonsági vagy adatmodell-követelmény változik;
-- a felhasználó új végcélt határoz meg.
+- a felhasználó új végcélt határoz meg;
+- a benchmark/audit olyan szükséges editorfunkciót tár fel, amely nélkül a célrendszer hiányos lenne.
 
 Módosításkor:
 1. új pontot adunk hozzá vagy meglévő pontot módosítunk;
 2. megőrizzük a korábbi döntés okát;
 3. megvizsgáljuk a függőségeket;
 4. ellenőrizzük, hogy nem sérül-e a későbbi AI/Editor/Publishing architektúra;
-5. commitoljuk a tervet;
-6. a régi terv nem válik csendben érvénytelenné.
+5. ha külső editorból veszünk mintát, dokumentáljuk a forrást és az adaptáció okát;
+6. commitoljuk a tervet;
+7. a régi terv nem válik csendben érvénytelenné.
 
 **A terv nem díszdokumentum: minden fejlesztésnek vissza kell mutatnia egy MASTER pontra.**
