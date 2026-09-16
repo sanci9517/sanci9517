@@ -1,10 +1,10 @@
 /* Sanci9517 Visual Editor v2 — isolated editor state. */
 
-import { cloneDocument, createDocument, getPage, validateDocument } from './schema.js';
+import { cloneDocument, createDocument, getPage } from './schema.js';
+import { assertValidEditorDocument } from './validation.js';
 
 export function createEditorState(document = createDocument()) {
-  const errors = validateDocument(document);
-  if (errors.length) throw new Error(`Invalid editor document: ${errors.join('; ')}`);
+  assertValidEditorDocument(document);
 
   return {
     document: cloneDocument(document),
