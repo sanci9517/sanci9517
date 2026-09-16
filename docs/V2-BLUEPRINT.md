@@ -354,3 +354,21 @@ A részletes, kipipálható és folyamatosan frissítendő ellenőrzőlista kül
 `docs/DEVELOPMENT-PLAN.md`
 
 Ezt használjuk a napi fejlesztés során. Ha új igény merül fel, előbb ide kerül be, és csak utána kezdjük a megvalósítást. A terv célja, hogy később bármikor vissza lehessen térni, ellenőrizni lehessen az állapotot, és új funkciókat lehessen hozzáadni anélkül, hogy az architektúrát újra kelljen tervezni.
+
+## 19. Tervmódosítás — egységes Sanci Brand Editor
+
+A projekt végleges tartalmi és szerkesztési modellje:
+
+**egy Sanci Brand + egy Page Model + egy Editor + egy Renderer + egy szerveroldali tartalomlánc.**
+
+- A korábbi editorokkal létrehozott tesztoldalak nem képezik a végleges tartalom alapját; azonosítás után törölhetők.
+- A valódi Sanci Brand oldalak (Főoldal, Twitch, YouTube, TikTok, Menetrend, VOD, Közösség, Rólam, Kapcsolat, Támogatás és további valódi oldalak) nem veszhetnek el.
+- Ezeket fokozatosan az új Page Modelre migráljuk.
+- Az új Editor által létrehozott oldalak lesznek a referencia-implementációk.
+- A publikus renderer nem különbözteti meg a korábban legacy és az újonnan létrehozott oldalakat: végül minden oldal ugyanazt a Page Modelt használja.
+- A régi Editorból csak a valóban hasznos funkciókat tartjuk meg; a régi hibás architektúrát nem visszük tovább.
+- A legacy HTML csak átmeneti fallback lehet, nem a végleges szerkesztési modell.
+- Minden valódi oldal migrációja külön tesztkapun megy át: Editor → Save → D1 → Reload → Preview → Publish → Public.
+- A régi tesztoldalak takarítása csak a valódi oldalak biztonságos migrációja és az új Editor stabilizálása után történik.
+
+Részletes módosítás: `docs/PLAN-AMENDMENT-EDITOR-UNIFICATION.md`.
