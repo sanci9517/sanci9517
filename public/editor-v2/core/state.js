@@ -3,6 +3,8 @@
 import { cloneDocument, createDocument, getPage } from './schema.js';
 import { assertValidEditorDocument } from './validation.js';
 
+export const HISTORY_LIMIT = 100;
+
 export function createEditorState(document = createDocument()) {
   assertValidEditorDocument(document);
 
@@ -10,7 +12,12 @@ export function createEditorState(document = createDocument()) {
     document: cloneDocument(document),
     selection: { ids: [], primaryId: null },
     viewport: { device: 'desktop', zoom: 1 },
-    history: { past: [], future: [], limit: 100 },
+    history: {
+      past: [],
+      future: [],
+      limit: HISTORY_LIMIT,
+      transaction: null
+    },
     persistence: {
       dirty: false,
       saving: false,
@@ -40,7 +47,7 @@ export function selectedNodes(state) {
 
 export function setSelection(state, ids, primaryId = ids.at(-1) ?? null) {
   const page = activePage(state);
-  const valid = [...new Set(ids)].filter((id) => Boolean(page?.nodes?.[id]));
+  const valid = [...new Set(Array.isArray(ids) ? ids : [])].filter((id) => Boolean(page?.nodes?.[id]));
   state.selection = {
     ids: valid,
     primaryId: valid.includes(primaryId) ? primaryId : (valid.at(-1) ?? null)
@@ -49,4 +56,11 @@ export function setSelection(state, ids, primaryId = ids.at(-1) ?? null) {
 
 export function clearSelection(state) {
   state.selection = { ids: [], primaryId: null };
+}
+
+export function markSaved(state, revision = state.document.revision ?? 0) {
+  state.persistence.dirty = false;
+  state.persistence.saving = false;
+  state.persistence.error = null;
+  state.persistence.lastSavedRevision = revision;
 }
