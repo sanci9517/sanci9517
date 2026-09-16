@@ -22,24 +22,90 @@ type PageBody = {
   isPublished?: unknown;
 };
 
-function serialize(row: PageRow) {
-  let content: unknown = {};
-  try { content = JSON.parse(row.content_json); } catch {}
+function parse(value: string): unknown { try { return JSON.parse(value); } catch { return {}; } }
+
+function canonicalDocument(id: string, title: string, slug: string, html: string) {
+  const pageId = id;
+  const rootId = `root-${id}`;
+  const nodeId = `legacy-${id}`;
+  return {
+    schemaVersion: 2,
+    type: "sanci-document",
+    pages: [{
+      id: pageId,
+      name: title,
+      slug,
+      metadata: { source: "legacy-html", migrationStatus: "imported" },
+      settings: {},
+      responsive: { desktop: {}, tablet: {}, mobile: {} },
+      root: {
+        id: rootId,
+        type: "root",
+        name: "Oldal",
+        parentId: null,
+        children: [{
+          id: nodeId,
+          type: "custom",
+          name: "Importált oldal tartalma",
+          parentId: rootId,
+          children: [],
+          content: { html },
+          layout: { position: "absolute", x: 0, y: 0, width: 1120, height: 1600 },
+          style: {},
+          responsive: { desktop: {}, tablet: {}, mobile: {} },
+          interaction: {},
+          visibility: true,
+          locked: false,
+          metadata: { source: "legacy-html" },
+          dataBindings: {},
+          capabilities: { editHtml: true }
+        }]
+      }
+    }],
+    activePageId: pageId
+  };
+}
+
+async function legacyEditorDocument(request: Request, env: Env, row: PageRow) {
+  const content = parse(row.content_json) as Record<string, unknown>;
+  if (!content || typeof content !== "object") return null;
+  if (content.type === "sanci-document" && Array.isArray(content.pages)) return content;
+  const source = typeof content.legacySource === "string" ? content.legacySource : "";
+  if (!source) return null;
+
+  try {
+    const response = await env.ASSETS.fetch(assetRequest(source, request));
+    if (!response.ok) return null;
+    let html = await response.text();
+    const mainMatch = html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i);
+    html = mainMatch?.[1] || html.match(/<body\b[^>]*>([\s\S]*?)<\/body>/i)?.[1] || html;
+    html = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "");
+    html = html.replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, "");
+    html = html.trim();
+    if (!html) return null;
+    return canonicalDocument(row.id, row.title, row.slug, html);
+  } catch {
+    return null;
+  }
+}
+
+async function serialize(request: Request, env: Env, row: PageRow) {
+  const content = parse(row.content_json);
+  const editorDocument = await legacyEditorDocument(request, env, row);
   return {
     id: row.id,
     slug: row.slug,
     title: row.title,
     description: row.description,
     content,
+    editorDocument,
     isPublished: Boolean(row.is_published),
     createdAt: row.created_at,
     updatedAt: row.updated_at
   };
 }
 
-function validSlug(value: string): boolean {
-  return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value);
-}
+function validSlug(value: string): boolean { return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value); }
 
 async function audit(env: Env, userId: string, action: string, id: string, metadata: unknown) {
   await env.DB.prepare(
@@ -58,7 +124,8 @@ export async function adminPagesRoute(request: Request, env: Env): Promise<Respo
       `SELECT id, slug, title, description, content_json, is_published, created_at, updated_at
        FROM pages ORDER BY updated_at DESC, title ASC`
     ).all<PageRow>();
-    return ok(rows.results.map(serialize));
+    const result = await Promise.all(rows.results.map(row => serialize(request, env, row)));
+    return ok(result);
   }
 
   if (request.method === "DELETE") {
@@ -77,7 +144,6 @@ export async function adminPagesRoute(request: Request, env: Env): Promise<Respo
   try { body = await request.json() as PageBody; }
   catch { return error("INVALID_JSON", 400); }
 
-  // Rename is intentionally title-only so an existing page slug never blocks a rename.
   if (request.method === "PATCH") {
     const id = typeof body.id === "string" ? body.id : "";
     const title = typeof body.title === "string" ? body.title.trim() : "";
@@ -88,12 +154,10 @@ export async function adminPagesRoute(request: Request, env: Env): Promise<Respo
        FROM pages WHERE id = ? LIMIT 1`
     ).bind(id).first<PageRow>();
     if (!existing) return error("PAGE_NOT_FOUND", 404);
-    await env.DB.prepare(
-      `UPDATE pages SET title = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`
-    ).bind(title, id).run();
+    await env.DB.prepare(`UPDATE pages SET title = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`).bind(title, id).run();
     await audit(env, user.id, "page.rename", id, { oldTitle: existing.title, title });
     const updated = { ...existing, title };
-    return ok(serialize(updated));
+    return ok(await serialize(request, env, updated));
   }
 
   const title = typeof body.title === "string" ? body.title.trim() : "";
@@ -102,9 +166,7 @@ export async function adminPagesRoute(request: Request, env: Env): Promise<Respo
   const content = body.content === undefined ? {} : body.content;
   const isPublished = body.isPublished === undefined ? true : Boolean(body.isPublished);
 
-  if (!title || title.length > 160 || !validSlug(slug) || slug.length > 80 || description.length > 500) {
-    return error("INVALID_PAGE", 400);
-  }
+  if (!title || title.length > 160 || !validSlug(slug) || slug.length > 80 || description.length > 500) return error("INVALID_PAGE", 400);
 
   let contentJson: string;
   try {
@@ -120,8 +182,7 @@ export async function adminPagesRoute(request: Request, env: Env): Promise<Respo
          VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`
       ).bind(id, slug, title, description, contentJson, isPublished ? 1 : 0).run();
     } catch (e) {
-      const message = String(e);
-      if (message.toLowerCase().includes("unique")) return error("SLUG_EXISTS", 409, "Slug already exists");
+      if (String(e).toLowerCase().includes("unique")) return error("SLUG_EXISTS", 409, "Slug already exists");
       throw e;
     }
     await audit(env, user.id, "page.create", id, { slug, title });
@@ -139,8 +200,7 @@ export async function adminPagesRoute(request: Request, env: Env): Promise<Respo
          WHERE id = ?`
       ).bind(slug, title, description, contentJson, isPublished ? 1 : 0, id).run();
     } catch (e) {
-      const message = String(e);
-      if (message.toLowerCase().includes("unique")) return error("SLUG_EXISTS", 409, "Slug already exists");
+      if (String(e).toLowerCase().includes("unique")) return error("SLUG_EXISTS", 409, "Slug already exists");
       throw e;
     }
     await audit(env, user.id, "page.update", id, { slug, title, isPublished });
@@ -148,4 +208,9 @@ export async function adminPagesRoute(request: Request, env: Env): Promise<Respo
   }
 
   return error("METHOD_NOT_ALLOWED", 405);
+}
+
+function assetRequest(pathname: string, request: Request): Request {
+  const url = new URL(pathname, request.url);
+  return new Request(url.toString(), { method: "GET", headers: request.headers });
 }
