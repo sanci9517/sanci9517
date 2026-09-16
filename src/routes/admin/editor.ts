@@ -28,7 +28,9 @@ export async function adminEditorRoute(request:Request,env:Env):Promise<Response
   const page=await env.DB.prepare("SELECT id,slug,title,description,content_json,is_published,updated_at FROM pages WHERE id=? LIMIT 1").bind(pageId).first<PageRow>();if(!page)return error("PAGE_NOT_FOUND",404);
   const revisions=await env.DB.prepare("SELECT id,version,note,created_by,created_at,document_json FROM editor_revisions WHERE page_id=? ORDER BY version DESC LIMIT 30").bind(pageId).all();
   const latest=revisions.results[0] as any;
-  return ok({page:{id:page.id,slug:page.slug,title:page.title,description:page.description,isPublished:Boolean(page.is_published),updatedAt:page.updated_at,document:parse(page.content_json)},revisions:revisions.results.map((r:any)=>({id:r.id,version:r.version,note:r.note,created_by:r.created_by,created_at:r.created_at})),draft:latest?.document_json?parse(latest.document_json):null});
+  const pageDocument=parse(page.content_json);
+  const draft=latest?.document_json?parse(latest.document_json):null;
+  return ok({page:{id:page.id,slug:page.slug,title:page.title,description:page.description,isPublished:Boolean(page.is_published),updatedAt:page.updated_at,document:draft||pageDocument},revisions:revisions.results.map((r:any)=>({id:r.id,version:r.version,note:r.note,created_by:r.created_by,created_at:r.created_at})),draft});
  }
  if(request.method==="POST"){
   let body:any;try{body=await request.json()}catch{return error("INVALID_JSON",400)}
