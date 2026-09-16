@@ -6,13 +6,8 @@
  * audit compatibility in one place.
  */
 
-import {
-  canContain,
-  cloneDocument,
-  createNode,
-  getNode,
-  validateDocument
-} from './schema.js';
+import { canContain, cloneDocument, createNode, getNode } from './schema.js';
+import { assertValidEditorDocument } from './validation.js';
 import { activePage, clearSelection, setSelection } from './state.js';
 
 function requirePage(state) {
@@ -34,12 +29,7 @@ function snapshot(state) {
 }
 
 function record(state, before, action) {
-  state.history.past.push({
-    action,
-    before,
-    after: cloneDocument(state.document),
-    timestamp: Date.now()
-  });
+  state.history.past.push({ action, before, after: cloneDocument(state.document), timestamp: Date.now() });
   if (state.history.past.length > state.history.limit) state.history.past.shift();
   state.history.future = [];
   state.persistence.dirty = true;
@@ -48,18 +38,26 @@ function record(state, before, action) {
 
 function commit(state, action, mutate) {
   const before = snapshot(state);
-  mutate(state);
-  const errors = validateDocument(state.document);
-  if (errors.length) {
+  try {
+    mutate(state);
+    assertValidEditorDocument(state.document);
+    record(state, before, action);
+    return state;
+  } catch (error) {
     state.document = before;
-    throw new Error(`Command rejected: ${errors.join('; ')}`);
+    throw error;
   }
-  record(state, before, action);
-  return state;
+}
+
+function collectDescendants(page, nodeId, result = new Set()) {
+  if (result.has(nodeId)) return result;
+  result.add(nodeId);
+  for (const childId of page.nodes[nodeId]?.children ?? []) collectDescendants(page, childId, result);
+  return result;
 }
 
 export const commands = Object.freeze({
-  'selection.set': (state, { ids, primaryId }) => {
+  'selection.set': (state, { ids, primaryId } = {}) => {
     setSelection(state, ids ?? [], primaryId ?? ids?.at(-1) ?? null);
     return state;
   },
@@ -76,7 +74,6 @@ export const commands = Object.freeze({
       const page = requirePage(draft);
       const parent = getNode(page, parentId ?? page.rootId);
       if (!parent || !canContain(parent, type)) throw new Error('Invalid parent for element');
-
       const node = createNode(type, { props, name: name ?? type, parentId: parent.id });
       page.nodes[node.id] = node;
       parent.children.push(node.id);
@@ -110,20 +107,9 @@ export const commands = Object.freeze({
       const page = requirePage(draft);
       const { node } = requireNode(draft, nodeId);
       if (node.id === page.rootId) throw new Error('Root cannot be deleted');
-
-      const descendants = new Set();
-      const visit = (id) => {
-        descendants.add(id);
-        for (const childId of page.nodes[id]?.children ?? []) visit(childId);
-      };
-      visit(nodeId);
-
-      if (node.parentId) {
-        const parent = page.nodes[node.parentId];
-        parent.children = parent.children.filter((id) => id !== nodeId);
-      }
+      const descendants = collectDescendants(page, nodeId);
+      if (node.parentId) page.nodes[node.parentId].children = page.nodes[node.parentId].children.filter((id) => id !== nodeId);
       for (const id of descendants) delete page.nodes[id];
-
       draft.selection.ids = draft.selection.ids.filter((id) => !descendants.has(id));
       if (descendants.has(draft.selection.primaryId)) draft.selection.primaryId = draft.selection.ids.at(-1) ?? null;
     }
@@ -138,20 +124,14 @@ export const commands = Object.freeze({
       const newParent = getNode(page, parentId);
       if (!newParent || !canContain(newParent, node.type)) throw new Error('Invalid reparent target');
       if (node.id === page.rootId) throw new Error('Root cannot be reparented');
-
       let cursor = newParent;
       while (cursor) {
         if (cursor.id === node.id) throw new Error('Cannot reparent a node into its own descendant');
         cursor = cursor.parentId ? page.nodes[cursor.parentId] : null;
       }
-
-      const oldParent = node.parentId ? page.nodes[node.parentId] : null;
-      if (oldParent) oldParent.children = oldParent.children.filter((id) => id !== nodeId);
-
+      if (node.parentId) page.nodes[node.parentId].children = page.nodes[node.parentId].children.filter((id) => id !== nodeId);
       node.parentId = newParent.id;
-      const safeIndex = Number.isInteger(index)
-        ? Math.max(0, Math.min(index, newParent.children.length))
-        : newParent.children.length;
+      const safeIndex = Number.isInteger(index) ? Math.max(0, Math.min(index, newParent.children.length)) : newParent.children.length;
       newParent.children.splice(safeIndex, 0, nodeId);
     }
   ),
@@ -179,10 +159,10 @@ export function execute(state, action) {
   if (!action || typeof action.type !== 'string') throw new Error('Invalid command');
   const handler = commands[action.type];
   if (!handler) throw new Error(`Unknown command: ${action.type}`);
-
   state.runtime.activeCommand = action.type;
   try {
     const result = handler(state, action.payload ?? {});
+    assertValidEditorDocument(state.document);
     state.runtime.activeCommand = null;
     return result;
   } catch (error) {
