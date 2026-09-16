@@ -159,7 +159,7 @@ export const commands = Object.freeze({
   'history.undo': (state) => {
     const entry = state.history.past.pop();
     if (!entry) return state;
-    state.history.future.push({ ...entry, before: entry.after, after: entry.before });
+    state.history.future.push(entry);
     state.document = cloneDocument(entry.before);
     state.persistence.dirty = true;
     return state;
@@ -168,7 +168,7 @@ export const commands = Object.freeze({
   'history.redo': (state) => {
     const entry = state.history.future.pop();
     if (!entry) return state;
-    state.history.past.push({ ...entry, before: entry.after, after: entry.before });
+    state.history.past.push(entry);
     state.document = cloneDocument(entry.after);
     state.persistence.dirty = true;
     return state;
