@@ -16,6 +16,17 @@ import { publicSystemPagesRoute } from "./routes/public/system-pages";
 import { getAuthenticatedUser } from "./core/auth/require-auth";
 import type { Env } from "./types/env";
 
+const LEGACY_REDIRECTS: Record<string, string> = {
+  "/about.html": "/p/about",
+  "/community.html": "/p/community",
+  "/contact.html": "/p/contact",
+  "/schedule.html": "/p/schedule",
+  "/tiktok.html": "/p/tiktok",
+  "/twitch.html": "/p/twitch",
+  "/vod.html": "/p/vod",
+  "/youtube.html": "/p/youtube",
+};
+
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
@@ -36,10 +47,21 @@ export default {
     if (pathname === "/api/public/pages") return publicPagesRoute(request, env);
     if (pathname === "/api/public/system-pages") return publicSystemPagesRoute(request, env);
     if (pathname === "/admin/login" || pathname === "/admin-login.html") return env.ASSETS.fetch(assetRequest("/admin-login.html", request));
-    if (pathname === "/admin" || pathname === "/admin.html") { const user = await getAuthenticatedUser(request, env); if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302); return env.ASSETS.fetch(assetRequest("/admin.html", request)); }
-    if (pathname === "/admin/editor") { const user = await getAuthenticatedUser(request, env); if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302); return env.ASSETS.fetch(assetRequest("/admin-editor-v2.html", request)); }
+    if (pathname === "/admin" || pathname === "/admin.html") {
+      const user = await getAuthenticatedUser(request, env);
+      if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302);
+      return env.ASSETS.fetch(assetRequest("/admin.html", request));
+    }
+    if (pathname === "/admin/editor") {
+      const user = await getAuthenticatedUser(request, env);
+      if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302);
+      return env.ASSETS.fetch(assetRequest("/admin-editor-v2.html", request));
+    }
+    const legacyTarget = LEGACY_REDIRECTS[pathname];
+    if (legacyTarget) return Response.redirect(new URL(legacyTarget, request.url).toString(), 301);
+    if (pathname === "/" || pathname === "/index.html") return env.ASSETS.fetch(assetRequest("/visual-page.html", request));
     if (pathname.startsWith("/p/") && pathname.length > 3) return env.ASSETS.fetch(assetRequest("/visual-page.html", request));
-    const asset = pathname === "/" || pathname === "/index.html" ? await env.ASSETS.fetch(assetRequest("/index.html", request)) : await env.ASSETS.fetch(request);
+    const asset = await env.ASSETS.fetch(request);
     return injectSystemRuntime(asset);
   }
 };
