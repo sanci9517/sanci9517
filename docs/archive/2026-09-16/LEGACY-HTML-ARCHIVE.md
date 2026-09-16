@@ -24,4 +24,4 @@ Date: `2026-09-16`
 
 ## Important
 
-Historical SQL migrations are not treated as active legacy code and must remain in `migrations/` because D1 migration history depends on them. Cloudflare documents that migrations are versioned SQL files tracked by D1. citeturn0search0
+Historical SQL migrations are not treated as active legacy code and must remain in `migrations/` because D1 migration history depends on them.
