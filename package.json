@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "wrangler dev",
     "typecheck": "tsc --noEmit",
+    "test:editor": "node --test public/editor-v2/tests/core.test.js",
     "db:migrations:apply": "wrangler d1 migrations apply DB --remote",
     "deploy": "npm run db:migrations:apply && wrangler deploy"
   },
