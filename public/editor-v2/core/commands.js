@@ -1,9 +1,8 @@
 /*
- * Sanci9517 Visual Editor v2 — command engine.
+ * Sanci9517 Visual Editor v2 — canonical command engine.
  *
  * UI, future AI and integrations must use these structured mutations instead
- * of changing the Page Model directly. This keeps validation, history and
- * audit compatibility in one place.
+ * of changing the Page Model directly. Validation and history stay centralized.
  */
 
 import { canContain, cloneDocument, createNode, getNode } from './schema.js';
@@ -16,11 +15,11 @@ function requirePage(state) {
   return page;
 }
 
-function requireNode(state, nodeId) {
+function requireNode(state, nodeId, { allowLocked = false } = {}) {
   const page = requirePage(state);
   const node = getNode(page, nodeId);
   if (!node) throw new Error(`Node not found: ${nodeId}`);
-  if (node.locked) throw new Error(`Node is locked: ${nodeId}`);
+  if (!allowLocked && node.locked) throw new Error(`Node is locked: ${nodeId}`);
   return { page, node };
 }
 
@@ -29,11 +28,21 @@ function snapshot(state) {
 }
 
 function record(state, before, action) {
-  state.history.past.push({ action, before, after: cloneDocument(state.document), timestamp: Date.now() });
+  if (state.history.transaction) {
+    state.history.transaction.actions.push(action);
+    return;
+  }
+
+  state.history.past.push({
+    action,
+    before,
+    after: cloneDocument(state.document),
+    timestamp: Date.now()
+  });
   if (state.history.past.length > state.history.limit) state.history.past.shift();
   state.history.future = [];
   state.persistence.dirty = true;
-  state.runtime.lastError = null;
+  state.persistence.error = null;
 }
 
 function commit(state, action, mutate) {
@@ -56,9 +65,29 @@ function collectDescendants(page, nodeId, result = new Set()) {
   return result;
 }
 
+function removeFromParent(page, nodeId) {
+  const node = page.nodes[nodeId];
+  if (node?.parentId && page.nodes[node.parentId]) {
+    page.nodes[node.parentId].children = page.nodes[node.parentId].children.filter((id) => id !== nodeId);
+  }
+}
+
+function insertChild(parent, nodeId, index) {
+  const safeIndex = Number.isInteger(index)
+    ? Math.max(0, Math.min(index, parent.children.length))
+    : parent.children.length;
+  parent.children.splice(safeIndex, 0, nodeId);
+}
+
+function bumpRevision(document) {
+  document.revision = (document.revision ?? 0) + 1;
+  const page = document.pages?.[document.activePageId];
+  if (page) page.revision = (page.revision ?? 0) + 1;
+}
+
 export const commands = Object.freeze({
-  'selection.set': (state, { ids, primaryId } = {}) => {
-    setSelection(state, ids ?? [], primaryId ?? ids?.at(-1) ?? null);
+  'selection.set': (state, { ids = [], primaryId } = {}) => {
+    setSelection(state, ids, primaryId ?? ids.at(-1) ?? null);
     return state;
   },
 
@@ -67,27 +96,38 @@ export const commands = Object.freeze({
     return state;
   },
 
-  'element.add': (state, { type, parentId, props = {}, name } = {}) => commit(
+  'element.add': (state, { type, parentId, props = {}, style = {}, name } = {}) => commit(
     state,
     { type: 'element.add', payload: { type, parentId } },
     (draft) => {
+      if (!type) throw new Error('Element type is required');
       const page = requirePage(draft);
       const parent = getNode(page, parentId ?? page.rootId);
       if (!parent || !canContain(parent, type)) throw new Error('Invalid parent for element');
-      const node = createNode(type, { props, name: name ?? type, parentId: parent.id });
+      const node = createNode(type, {
+        props: structuredClone(props),
+        style: structuredClone(style),
+        name: name ?? type,
+        parentId: parent.id
+      });
       page.nodes[node.id] = node;
       parent.children.push(node.id);
       setSelection(draft, [node.id], node.id);
+      bumpRevision(draft.document);
     }
   ),
 
   'element.update': (state, { nodeId, patch = {} } = {}) => commit(
     state,
-    { type: 'element.update', payload: { nodeId, patch } },
+    { type: 'element.update', payload: { nodeId, patch: structuredClone(patch) } },
     (draft) => {
       const { node } = requireNode(draft, nodeId);
-      Object.assign(node, patch);
-      node.id = nodeId;
+      const safePatch = { ...patch };
+      delete safePatch.id;
+      delete safePatch.parentId;
+      delete safePatch.children;
+      Object.assign(node, structuredClone(safePatch));
+      bumpRevision(draft.document);
     }
   ),
 
@@ -96,7 +136,77 @@ export const commands = Object.freeze({
     { type: 'element.content.set', payload: { nodeId } },
     (draft) => {
       const { node } = requireNode(draft, nodeId);
-      node.props = { ...node.props, content };
+      node.props = { ...node.props, content: String(content) };
+      bumpRevision(draft.document);
+    }
+  ),
+
+  'style.set': (state, { nodeId, patch = {} } = {}) => commit(
+    state,
+    { type: 'style.set', payload: { nodeId, patch: structuredClone(patch) } },
+    (draft) => {
+      const { node } = requireNode(draft, nodeId);
+      node.style = { ...node.style, ...structuredClone(patch) };
+      bumpRevision(draft.document);
+    }
+  ),
+
+  'responsive.set': (state, { nodeId, device = 'desktop', patch = {} } = {}) => commit(
+    state,
+    { type: 'responsive.set', payload: { nodeId, device, patch: structuredClone(patch) } },
+    (draft) => {
+      const { node } = requireNode(draft, nodeId);
+      if (!['desktop', 'tablet', 'mobile'].includes(device)) throw new Error(`Invalid responsive device: ${device}`);
+      node.responsive[device] = { ...(node.responsive[device] ?? {}), ...structuredClone(patch) };
+      bumpRevision(draft.document);
+    }
+  ),
+
+  'element.visibility.set': (state, { nodeId, device = 'desktop', visible = true } = {}) => commit(
+    state,
+    { type: 'element.visibility.set', payload: { nodeId, device, visible } },
+    (draft) => {
+      const { node } = requireNode(draft, nodeId);
+      if (!['desktop', 'tablet', 'mobile'].includes(device)) throw new Error(`Invalid responsive device: ${device}`);
+      node.visibility[device] = Boolean(visible);
+      bumpRevision(draft.document);
+    }
+  ),
+
+  'element.lock.set': (state, { nodeId, locked = true } = {}) => commit(
+    state,
+    { type: 'element.lock.set', payload: { nodeId, locked } },
+    (draft) => {
+      const { node } = requireNode(draft, nodeId, { allowLocked: true });
+      node.locked = Boolean(locked);
+      bumpRevision(draft.document);
+    }
+  ),
+
+  'element.duplicate': (state, { nodeId, parentId, index } = {}) => commit(
+    state,
+    { type: 'element.duplicate', payload: { nodeId, parentId, index } },
+    (draft) => {
+      const page = requirePage(draft);
+      const { node } = requireNode(draft, nodeId);
+      const sourceIds = [...collectDescendants(page, nodeId)];
+      const idMap = new Map(sourceIds.map((id) => [id, createNode('custom').id]));
+      const newRootId = idMap.get(nodeId);
+      const targetParent = getNode(page, parentId ?? node.parentId ?? page.rootId);
+      if (!targetParent || !canContain(targetParent, node.type)) throw new Error('Invalid duplicate target');
+
+      for (const sourceId of sourceIds) {
+        const source = page.nodes[sourceId];
+        const copy = structuredClone(source);
+        copy.id = idMap.get(sourceId);
+        copy.parentId = sourceId === nodeId ? targetParent.id : idMap.get(source.parentId);
+        copy.children = source.children.map((childId) => idMap.get(childId));
+        copy.name = `${source.name} másolat`;
+        page.nodes[copy.id] = copy;
+      }
+      insertChild(targetParent, newRootId, index);
+      setSelection(draft, [newRootId], newRootId);
+      bumpRevision(draft.document);
     }
   ),
 
@@ -108,10 +218,11 @@ export const commands = Object.freeze({
       const { node } = requireNode(draft, nodeId);
       if (node.id === page.rootId) throw new Error('Root cannot be deleted');
       const descendants = collectDescendants(page, nodeId);
-      if (node.parentId) page.nodes[node.parentId].children = page.nodes[node.parentId].children.filter((id) => id !== nodeId);
+      removeFromParent(page, nodeId);
       for (const id of descendants) delete page.nodes[id];
       draft.selection.ids = draft.selection.ids.filter((id) => !descendants.has(id));
       if (descendants.has(draft.selection.primaryId)) draft.selection.primaryId = draft.selection.ids.at(-1) ?? null;
+      bumpRevision(draft.document);
     }
   ),
 
@@ -129,10 +240,25 @@ export const commands = Object.freeze({
         if (cursor.id === node.id) throw new Error('Cannot reparent a node into its own descendant');
         cursor = cursor.parentId ? page.nodes[cursor.parentId] : null;
       }
-      if (node.parentId) page.nodes[node.parentId].children = page.nodes[node.parentId].children.filter((id) => id !== nodeId);
+      removeFromParent(page, nodeId);
       node.parentId = newParent.id;
-      const safeIndex = Number.isInteger(index) ? Math.max(0, Math.min(index, newParent.children.length)) : newParent.children.length;
-      newParent.children.splice(safeIndex, 0, nodeId);
+      insertChild(newParent, nodeId, index);
+      bumpRevision(draft.document);
+    }
+  ),
+
+  'hierarchy.reorder': (state, { nodeId, index } = {}) => commit(
+    state,
+    { type: 'hierarchy.reorder', payload: { nodeId, index } },
+    (draft) => {
+      const page = requirePage(draft);
+      const { node } = requireNode(draft, nodeId);
+      if (!node.parentId) throw new Error('Node has no reorderable parent');
+      const parent = getNode(page, node.parentId);
+      if (!parent) throw new Error('Parent not found');
+      removeFromParent(page, nodeId);
+      insertChild(parent, nodeId, index);
+      bumpRevision(draft.document);
     }
   ),
 
@@ -155,6 +281,43 @@ export const commands = Object.freeze({
   }
 });
 
+export function beginTransaction(state, label = 'Transaction') {
+  if (state.history.transaction) throw new Error('A history transaction is already active');
+  state.history.transaction = {
+    label,
+    before: snapshot(state),
+    actions: [],
+    startedAt: Date.now()
+  };
+  return state;
+}
+
+export function commitTransaction(state) {
+  const transaction = state.history.transaction;
+  if (!transaction) throw new Error('No active history transaction');
+  state.history.transaction = null;
+  if (!transaction.actions.length) return state;
+
+  state.history.past.push({
+    action: { type: 'transaction', label: transaction.label, actions: transaction.actions },
+    before: transaction.before,
+    after: cloneDocument(state.document),
+    timestamp: Date.now()
+  });
+  if (state.history.past.length > state.history.limit) state.history.past.shift();
+  state.history.future = [];
+  state.persistence.dirty = true;
+  return state;
+}
+
+export function rollbackTransaction(state) {
+  const transaction = state.history.transaction;
+  if (!transaction) throw new Error('No active history transaction');
+  state.history.transaction = null;
+  state.document = cloneDocument(transaction.before);
+  return state;
+}
+
 export function execute(state, action) {
   if (!action || typeof action.type !== 'string') throw new Error('Invalid command');
   const handler = commands[action.type];
@@ -168,6 +331,20 @@ export function execute(state, action) {
   } catch (error) {
     state.runtime.activeCommand = null;
     state.runtime.lastError = error instanceof Error ? error.message : String(error);
+    throw error;
+  }
+}
+
+export function executeBatch(state, actions, { label = 'Batch', atomic = true } = {}) {
+  if (!Array.isArray(actions)) throw new Error('actions must be an array');
+  beginTransaction(state, label);
+  try {
+    for (const action of actions) execute(state, action);
+    commitTransaction(state);
+    return state;
+  } catch (error) {
+    if (atomic) rollbackTransaction(state);
+    else state.history.transaction = null;
     throw error;
   }
 }
