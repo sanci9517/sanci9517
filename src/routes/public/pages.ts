@@ -1,5 +1,4 @@
 import { error, ok } from "../../core/response";
-import { getAuthenticatedUser, hasRole } from "../../core/auth/require-auth";
 import type { Env } from "../../types/env";
 
 type PageRow = {
@@ -7,27 +6,27 @@ type PageRow = {
   slug: string;
   title: string;
   description: string;
+  published_content_json: string | null;
   content_json: string;
   updated_at: string;
 };
 
-function mapPage(row: PageRow) {
-  let content: Record<string, unknown> = {};
+function parse(value: string | null | undefined): Record<string, unknown> {
   try {
-    const parsed = JSON.parse(row.content_json);
-    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
-      content = parsed as Record<string, unknown>;
-    }
+    const parsed = JSON.parse(value || "{}");
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed as Record<string, unknown> : {};
   } catch {
-    content = {};
+    return {};
   }
+}
 
+function mapPage(row: PageRow) {
   return {
     id: row.id,
     slug: row.slug,
     title: row.title,
     description: row.description,
-    content,
+    content: parse(row.published_content_json),
     updatedAt: row.updated_at
   };
 }
@@ -38,30 +37,23 @@ export async function publicPagesRoute(request: Request, env: Env): Promise<Resp
   const preview = url.searchParams.get("preview") === "1";
 
   if (preview) {
+    const { getAuthenticatedUser, hasRole } = await import("../../core/auth/require-auth");
     const user = await getAuthenticatedUser(request, env);
     if (!user) return error("UNAUTHORIZED", 401, "Authentication required");
     if (!hasRole(user, "editor")) return error("FORBIDDEN", 403, "Editor role required");
   }
 
-  if (!slug) {
-    const result = await env.DB.prepare(
-      preview
-        ? `SELECT id,slug,title,description,content_json,updated_at FROM pages ORDER BY updated_at DESC, title ASC LIMIT 100`
-        : `SELECT id,slug,title,description,content_json,updated_at FROM pages WHERE is_published = 1 ORDER BY updated_at DESC, title ASC LIMIT 100`
-    ).all<PageRow>();
+  const select = `SELECT id,slug,title,description,published_content_json,content_json,updated_at FROM pages`;
+  const result = !slug
+    ? await env.DB.prepare(`${select} ${preview ? "" : "WHERE is_published=1"} ORDER BY updated_at DESC,title ASC LIMIT 100`).all<PageRow>()
+    : await env.DB.prepare(`${select} WHERE slug=?1 ${preview ? "" : "AND is_published=1"} LIMIT 1`).bind(slug).first<PageRow>();
 
-    return ok(result.results.map(mapPage));
+  if (!slug) return ok(result.results.map(mapPage));
+  if (!result) return error("PAGE_NOT_FOUND", 404);
+
+  if (preview) {
+    return ok({ ...mapPage(result), content: parse(result.content_json) });
   }
 
-  const row = await env.DB.prepare(
-    preview
-      ? `SELECT id,slug,title,description,content_json,updated_at FROM pages WHERE slug = ?1 LIMIT 1`
-      : `SELECT id,slug,title,description,content_json,updated_at FROM pages WHERE slug = ?1 AND is_published = 1 LIMIT 1`
-  )
-    .bind(slug)
-    .first<PageRow>();
-
-  if (!row) return error("PAGE_NOT_FOUND", 404);
-
-  return ok(mapPage(row));
+  return ok(mapPage(result));
 }
