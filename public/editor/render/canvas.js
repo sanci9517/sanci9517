@@ -1,5 +1,6 @@
 /* Sanci9517 Visual Editor — structured state canvas renderer. */
 (function(){
+  const Schema=window.SanciEditorSchema;
   const labels={section:'Szakasz',container:'Konténer',text:'Szöveg',heading:'Címsor',paragraph:'Bekezdés',button:'Gomb',image:'Kép',card:'Kártya',group:'Csoport'};
   function px(v){return typeof v==='number'?v+'px':v==null?'':String(v)}
   function renderNode(node,selected){
@@ -14,6 +15,6 @@
     if(!node.locked){const handle=document.createElement('i');handle.className='resize';handle.dataset.resize=node.id;el.appendChild(handle)}
     return el;
   }
-  function render(state,root){if(!root)return;const selected=new Set(state.selection||[]);root.replaceChildren();const pageRoot=state.document?.page?.root;if(pageRoot)(pageRoot.children||[]).forEach(n=>root.appendChild(renderNode(n,selected)))}
+  function render(state,root){if(!root)return;const selected=new Set(state.selection||[]);root.replaceChildren();const pageRoot=Schema.activePage(state.document)?.root;if(pageRoot)(pageRoot.children||[]).forEach(n=>root.appendChild(renderNode(n,selected)))}
   window.SanciEditorCanvas={render,renderNode};
 })();
