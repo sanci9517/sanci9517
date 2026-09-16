@@ -15,6 +15,6 @@
   function cloneState(state){ return S.clone(state); }
   function nodeMap(state){ return S.index(state.document); }
   function getNode(state,id){ return nodeMap(state).get(id)||null; }
-  function allNodes(state){ const out=[]; S.walk(state.document?.page?.root,n=>out.push(n)); return out; }
+  function allNodes(state){ const out=[]; S.walk(S.activePage(state.document)?.root,n=>out.push(n)); return out; }
   window.SanciEditorState={createState,cloneState,nodeMap,getNode,allNodes};
 })();
