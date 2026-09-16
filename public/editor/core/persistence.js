@@ -10,66 +10,16 @@ function setState(text){const el=$('saveState');if(el)el.textContent=text}
 async function readJson(res){let data={};try{data=await res.json()}catch{}if(!res.ok||data.ok===false)throw new Error(data?.error?.message||data?.error||`Szerverhiba (${res.status})`);return data.data??data}
 async function request(method,pageId,payload){if(!pageId)throw new Error('Nincs oldalazonosító.');return readJson(await fetch('/api/admin/editor?pageId='+encodeURIComponent(pageId),{method,headers:{'Content-Type':'application/json'},credentials:'same-origin',cache:'no-store',body:payload?JSON.stringify(payload):undefined}))}
 async function pagesRequest(method,payload){return readJson(await fetch('/api/admin/pages'+(method==='GET'?'?meta=1':''),{method,headers:{'Content-Type':'application/json'},credentials:'same-origin',cache:'no-store',body:payload?JSON.stringify(payload):undefined}))}
-function normalizeServerDocument(item){
- const d=item?.page?.document;
- if(d?.type==='sanci-document'&&Array.isArray(d.pages)&&d.pages.length===1)return Schema.normalizeDocument(d);
- return Schema.emptyDocument({id:item?.page?.id,name:item?.page?.title,slug:item?.page?.slug});
-}
-async function loadCatalog(){
- const pages=await pagesRequest('GET');
- if(!Array.isArray(pages))throw new Error('A szerver nem adott vissza oldal-listát.');
- pageCatalog=pages;
- window.SanciEditorPageCatalog=pageCatalog;
- return pages;
-}
-async function loadPage(pageId){
- if(!pageId)throw new Error('Nincs oldalazonosító.');
- setState('● Oldal betöltése D1-ből…');
- const result=await request('GET',pageId);
- const document=normalizeServerDocument(result);
- const validation=Schema.validate(document);
- if(!validation.valid)throw new Error(validation.errors.join(' '));
- E.load(document);E.getState().dirty=false;window.SanciEditorUI?.render();
- setState(`✓ ${result?.page?.title||'Oldal'} betöltve D1-ből`);
- return result;
-}
-async function load(preferredId){
- try{
-  setState('● Oldalak betöltése D1-ből…');
-  const pages=await loadCatalog();
-  if(!pages.length){setState('✓ Nincs szerveroldali oldal');return;}
-  const current=activePage();
-  const id=preferredId||current?.id||pages[0].id;
-  const target=pages.find(p=>p.id===id)||pages[0];
-  await loadPage(target.id);
- }catch(err){setState('⚠ Oldalak nem érhetők el');console.warn('Sanci9517 persistence load:',err.message);toast(err.message||'Oldalak betöltése sikertelen')}
-}
-async function save(publish){
- if(busy)return;busy=true;setState(publish?'● Publikálás…':'● Mentés…');
- try{
-  const document=E.getState().document,page=activePage();
-  if(!page)throw new Error('Nincs aktív oldal.');
-  const validation=Schema.validate(document);
-  if(!validation.valid)throw new Error(validation.errors.join(' '));
-  if(document.pages.length!==1||document.activePageId!==page.id)throw new Error('Csak a megnyitott oldal menthető.');
-  const result=await request('POST',page.id,{pageId:page.id,document:Schema.clone(document),note:publish?'Publikálás':'Editor mentés',publish});
-  await pagesRequest('PATCH',{id:page.id,title:page.name||'Új oldal'}).catch(()=>null);
-  E.getState().dirty=false;
-  await loadCatalog().catch(()=>{});
-  window.SanciEditorPageCatalog=pageCatalog;
-  setState(`✓ Szerverre mentve · v${result.version}`);toast(publish?'Publikálva és D1-be mentve':'D1-be mentve');return result;
- }catch(err){setState('⚠ Mentés sikertelen');toast(err.message||'Szerveroldali mentés sikertelen');throw err}finally{busy=false}
-}
+function normalizeServerDocument(item){const d=item?.page?.document;if(d?.type==='sanci-document'&&Array.isArray(d.pages)&&d.pages.length===1)return Schema.normalizeDocument(d);return Schema.emptyDocument({id:item?.page?.id,name:item?.page?.title,slug:item?.page?.slug})}
+function syncPageSelector(){const select=$('pageSelect');if(!select)return;const current=activePage()?.id||'';select.replaceChildren();pageCatalog.forEach(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.title||p.slug||'Oldal';select.appendChild(o)});select.value=current}
+async function loadCatalog(){const pages=await pagesRequest('GET');if(!Array.isArray(pages))throw new Error('A szerver nem adott vissza oldal-listát.');pageCatalog=pages;window.SanciEditorPageCatalog=pageCatalog;syncPageSelector();return pages}
+async function loadPage(pageId){if(!pageId)throw new Error('Nincs oldalazonosító.');setState('● Oldal betöltése D1-ből…');const result=await request('GET',pageId);const document=normalizeServerDocument(result);const validation=Schema.validate(document);if(!validation.valid)throw new Error(validation.errors.join(' '));E.load(document);E.getState().dirty=false;window.SanciEditorUI?.render();syncPageSelector();setState(`✓ ${result?.page?.title||'Oldal'} betöltve D1-ből`);return result}
+async function load(preferredId){try{setState('● Oldalak betöltése D1-ből…');const pages=await loadCatalog();if(!pages.length){setState('✓ Nincs szerveroldali oldal');return}const current=activePage();const id=preferredId||current?.id||pages[0].id;const target=pages.find(p=>p.id===id)||pages[0];await loadPage(target.id)}catch(err){setState('⚠ Oldalak nem érhetők el');console.warn('Sanci9517 persistence load:',err.message);toast(err.message||'Oldalak betöltése sikertelen')}}
+async function save(publish){if(busy)return;busy=true;setState(publish?'● Publikálás…':'● Mentés…');try{const document=E.getState().document,page=activePage();if(!page)throw new Error('Nincs aktív oldal.');const validation=Schema.validate(document);if(!validation.valid)throw new Error(validation.errors.join(' '));if(document.pages.length!==1||document.activePageId!==page.id)throw new Error('Csak a megnyitott oldal menthető.');const result=await request('POST',page.id,{pageId:page.id,document:Schema.clone(document),note:publish?'Publikálás':'Editor mentés',publish});await pagesRequest('PATCH',{id:page.id,title:page.name||'Új oldal'}).catch(()=>null);E.getState().dirty=false;await loadCatalog().catch(()=>{});window.SanciEditorPageCatalog=pageCatalog;setState(`✓ Szerverre mentve · v${result.version}`);toast(publish?'Publikálva és D1-be mentve':'D1-be mentve');return result}catch(err){setState('⚠ Mentés sikertelen');toast(err.message||'Szerveroldali mentés sikertelen');throw err}finally{busy=false}}
 async function renamePage(pageId,title){const result=await pagesRequest('PATCH',{id:pageId,title});await loadCatalog();return result}
 async function deletePage(pageId){const result=await pagesRequest('DELETE',{id:pageId});await loadCatalog();return result}
 async function refresh(){return load(activePage()?.id)}
-async function selectPage(pageId){
- if(!pageId)return;
- const current=activePage();
- if(current?.id===pageId)return;
- if(E.getState().dirty&&!confirm('Nem mentett módosítások vannak. Oldalváltáskor elvesznek. Folytatod?'))return;
- await loadPage(pageId);
-}
-document.addEventListener('DOMContentLoaded',()=>{const saveButton=$('saveBtn'),publishButton=$('publishBtn');saveButton?.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();save(false).catch(()=>{})},true);publishButton?.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();save(true).catch(()=>{})},true);setTimeout(()=>load(),0)});
+async function selectPage(pageId){if(!pageId)return;const current=activePage();if(current?.id===pageId)return;if(E.getState().dirty&&!confirm('Nem mentett módosítások vannak. Oldalváltáskor elvesznek. Folytatod?')){syncPageSelector();return}await loadPage(pageId)}
+document.addEventListener('DOMContentLoaded',()=>{const saveButton=$('saveBtn'),publishButton=$('publishBtn');saveButton?.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();save(false).catch(()=>{})},true);publishButton?.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();save(true).catch(()=>{})},true);$('pageSelect')?.addEventListener('change',e=>{e.preventDefault();e.stopImmediatePropagation();selectPage(e.target.value).catch(err=>toast(err.message||'Oldal betöltése sikertelen'))},true);setTimeout(()=>load(),0)});
 window.SanciEditorPersistence={save,load,loadPage,selectPage,refresh,renamePage,deletePage,getPageCatalog:()=>pageCatalog};
 })();
