@@ -5,10 +5,10 @@
   const state=State.createState();
   const listeners=new Set();
   function emit(){listeners.forEach(fn=>{try{fn(state)}catch(e){console.error(e)}});}
-  function dispatch(action){const result=Commands.execute(state,action);if(result.ok)emit();return result;}
-  function load(document){const check=S.validate(document);if(!check.valid)throw new Error(check.errors.join(' '));state.document=S.clone(document);state.selection=[];state.history.past=[];state.history.future=[];state.dirty=false;emit();return state;}
-  function subscribe(fn){listeners.add(fn);return()=>listeners.delete(fn);}
-  function getState(){return state;}
-  function can(action){return window.SanciEditorValidation.can(state,action);}
-  window.SanciEditor={schemaVersion:S.VERSION,apiVersion:1,state,getState,dispatch,load,subscribe,can,commands:Commands};
+  function dispatch(action){const result=Commands.execute(state,action);if(result.ok){state.dirty=!['selection.set','selection.clear','page.select'].includes(action?.type);emit()}return result;}
+  function load(document){const normalized=S.normalizeDocument(document),check=S.validate(normalized);if(!check.valid)throw new Error(check.errors.join(' '));state.document=S.clone(normalized);state.selection=[];state.history.past=[];state.history.future=[];state.dirty=false;emit();return state;}
+  function subscribe(fn){listeners.add(fn);return()=>listeners.delete(fn)}
+  function getState(){return state}
+  function can(action){return window.SanciEditorValidation.can(state,action)}
+  window.SanciEditor={schemaVersion:S.VERSION,apiVersion:2,state,getState,dispatch,load,subscribe,can,commands:Commands};
 })();
