@@ -25,7 +25,7 @@ function pageModel(value: string | null | undefined, pageId: string): Record<str
   const document = parse(value);
   if (document.type === "sanci-document" && Array.isArray(document.pages)) {
     const page = document.pages.find((p: any) => p?.id === pageId) || document.pages[0];
-    if (page && typeof page === "object") return { ...(page as Record<string, unknown>), type: "sanci-page" };
+    if (page && typeof page === "object") return { ...(page as Record<string, unknown>), type: "sanci-document" };
   }
   return document;
 }
