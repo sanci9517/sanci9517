@@ -307,6 +307,7 @@ export function commitTransaction(state) {
   if (state.history.past.length > state.history.limit) state.history.past.shift();
   state.history.future = [];
   state.persistence.dirty = true;
+  state.persistence.error = null;
   return state;
 }
 
@@ -341,8 +342,24 @@ export function executeBatch(state, actions, { label = 'Batch', atomic = true } 
   const historyStart = state.history.past.length;
   try {
     for (const action of actions) execute(state, action);
-    if (state.history.past.length !== historyStart) state.history.past.length = historyStart;
-    commitTransaction(state);
+
+    const transaction = state.history.transaction;
+    state.history.transaction = null;
+    state.history.past.length = historyStart;
+
+    if (transaction?.actions.length) {
+      state.history.past.push({
+        action: { type: 'transaction', label: transaction.label, actions: transaction.actions },
+        before: transaction.before,
+        after: cloneDocument(state.document),
+        timestamp: Date.now()
+      });
+      if (state.history.past.length > state.history.limit) state.history.past.shift();
+      state.history.future = [];
+      state.persistence.dirty = true;
+      state.persistence.error = null;
+    }
+
     return state;
   } catch (error) {
     if (atomic) rollbackTransaction(state);
