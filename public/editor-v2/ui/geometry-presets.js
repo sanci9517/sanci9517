@@ -6,17 +6,18 @@
 const PRESETS = Object.freeze({
   width: [
     ['Auto', 'auto'],
-    ['Fill', '100%'],
+    ['25%', '25%'],
+    ['50%', '50%'],
+    ['75%', '75%'],
+    ['100%', '100%'],
     ['Fit', 'fit-content']
   ],
   height: [
     ['Auto', 'auto'],
+    ['100', '100px'],
+    ['200', '200px'],
+    ['300', '300px'],
     ['Fit', 'fit-content']
-  ],
-  position: [
-    ['Static', 'static'],
-    ['Relative', 'relative'],
-    ['Absolute', 'absolute']
   ]
 });
 
@@ -27,8 +28,10 @@ function installStyle() {
   const style = document.createElement('style');
   style.id = STYLE_ID;
   style.textContent = `
-    .geometry-presets{display:flex;flex-wrap:wrap;gap:6px;margin:-2px 0 9px}
-    .geometry-presets button{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.045);color:inherit;border-radius:6px;padding:5px 8px;font:inherit;font-size:11px;cursor:pointer}
+    .geometry-presets-wrap{margin:2px 0 10px;padding:8px 0 2px;border-top:1px solid rgba(255,255,255,.08)}
+    .geometry-presets-label{display:block;margin:0 0 6px;color:rgba(255,255,255,.55);font-size:10px;text-transform:uppercase;letter-spacing:.06em}
+    .geometry-presets{display:flex;flex-wrap:wrap;gap:5px}
+    .geometry-presets button{min-width:38px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.045);color:inherit;border-radius:6px;padding:5px 8px;font:inherit;font-size:11px;cursor:pointer}
     .geometry-presets button:hover{background:rgba(255,255,255,.09)}
     .geometry-presets button.active{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.12)}
   `;
@@ -43,16 +46,23 @@ function findField(group, labelText) {
 
 function addPresets(group, labelText, values, input) {
   const field = findField(group, labelText);
-  if (!field || field.previousElementSibling?.classList.contains('geometry-presets')) return;
+  if (!field || !input || field.previousElementSibling?.classList.contains('geometry-presets-wrap')) return;
+
+  const wrap = document.createElement('div');
+  wrap.className = 'geometry-presets-wrap';
+
+  const label = document.createElement('span');
+  label.className = 'geometry-presets-label';
+  label.textContent = `${labelText} gyorsbeállítások`;
 
   const presets = document.createElement('div');
   presets.className = 'geometry-presets';
   presets.setAttribute('aria-label', `${labelText} gyorsbeállítások`);
 
-  for (const [label, value] of values) {
+  for (const [labelTextValue, value] of values) {
     const button = document.createElement('button');
     button.type = 'button';
-    button.textContent = label;
+    button.textContent = labelTextValue;
     button.dataset.value = value;
     button.onclick = () => {
       input.value = value;
@@ -61,7 +71,8 @@ function addPresets(group, labelText, values, input) {
     presets.append(button);
   }
 
-  field.before(presets);
+  wrap.append(label, presets);
+  field.before(wrap);
 }
 
 function enhance() {
@@ -75,7 +86,6 @@ function enhance() {
 
   addPresets(group, 'Szélesség', PRESETS.width, findField(group, 'Szélesség')?.querySelector('input'));
   addPresets(group, 'Magasság', PRESETS.height, findField(group, 'Magasság')?.querySelector('input'));
-  addPresets(group, 'Pozícionálás', PRESETS.position, findField(group, 'Pozícionálás')?.querySelector('input'));
 }
 
 const observer = new MutationObserver(enhance);
