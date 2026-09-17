@@ -44,7 +44,7 @@ test('reparent moves the node and preserves hierarchy invariants', () => {
   const state = createEditorState();
   execute(state, { type: 'element.add', payload: { type: NODE_TYPES.SECTION } });
   const first = state.selection.primaryId;
-  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.CONTAINER } });
+  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.CONTAINER, parentId: activePage(state).rootId } });
   const second = state.selection.primaryId;
   execute(state, { type: 'hierarchy.reparent', payload: { nodeId: second, parentId: first } });
   const page = activePage(state);
@@ -56,9 +56,10 @@ test('reparent moves the node and preserves hierarchy invariants', () => {
 
 test('reorder changes sibling order without changing parent', () => {
   const state = createEditorState();
-  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.SECTION } });
+  const rootId = activePage(state).rootId;
+  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.SECTION, parentId: rootId } });
   const first = state.selection.primaryId;
-  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.SECTION } });
+  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.SECTION, parentId: rootId } });
   const second = state.selection.primaryId;
   execute(state, { type: 'hierarchy.reorder', payload: { nodeId: first, index: 1 } });
   assert.deepEqual(activePage(state).nodes[activePage(state).rootId].children, [second, first]);
@@ -70,9 +71,8 @@ test('duplicate copies an entire subtree with new ids', () => {
   const state = createEditorState();
   execute(state, { type: 'element.add', payload: { type: NODE_TYPES.SECTION } });
   const section = state.selection.primaryId;
-  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.TEXT } });
+  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.TEXT, parentId: section } });
   const text = state.selection.primaryId;
-  execute(state, { type: 'hierarchy.reparent', payload: { nodeId: text, parentId: section } });
   execute(state, { type: 'element.duplicate', payload: { nodeId: section } });
 
   const page = activePage(state);
@@ -125,12 +125,13 @@ test('undo and redo restore exact document snapshots', () => {
 
 test('batch commands are grouped into one undo entry', () => {
   const state = createEditorState();
+  const rootId = activePage(state).rootId;
   executeBatch(state, [
-    { type: 'element.add', payload: { type: NODE_TYPES.SECTION } },
-    { type: 'element.add', payload: { type: NODE_TYPES.TEXT } }
+    { type: 'element.add', payload: { type: NODE_TYPES.SECTION, parentId: rootId } },
+    { type: 'element.add', payload: { type: NODE_TYPES.TEXT, parentId: rootId } }
   ], { label: 'Create section and text' });
   assert.equal(state.history.past.length, 1);
-  assert.equal(activePage(state).nodes[activePage(state).rootId].children.length, 1);
+  assert.equal(activePage(state).nodes[activePage(state).rootId].children.length, 2);
   execute(state, { type: 'history.undo' });
   assert.equal(Object.keys(activePage(state).nodes).length, 1);
   execute(state, { type: 'history.redo' });
