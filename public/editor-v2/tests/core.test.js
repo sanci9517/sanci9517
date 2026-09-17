@@ -5,11 +5,34 @@ import { createDocument, NODE_TYPES } from '../core/schema.js';
 import { assertValidEditorDocument } from '../core/validation.js';
 import { createEditorState, activePage } from '../core/state.js';
 import { beginTransaction, commitTransaction, execute, executeBatch, rollbackTransaction } from '../core/commands.js';
+import { getProperty, listProperties, listPropertyGroups } from '../core/property-registry.js';
+import { hasResponsiveOverride, resolveResponsiveValue, setResponsiveValue } from '../core/responsive.js';
 
 test('new document is structurally valid', () => {
   const document = createDocument();
   assertValidEditorDocument(document);
   assert.equal(document.pages[document.activePageId].nodes[document.pages[document.activePageId].rootId].children.length, 0);
+});
+
+test('property registry exposes extensible inspector groups and properties', () => {
+  assert.ok(listPropertyGroups().some((group) => group.id === 'typography'));
+  assert.ok(listPropertyGroups().some((group) => group.id === 'responsive'));
+  assert.equal(getProperty('size.width').responsive, true);
+  assert.equal(getProperty('content.text').command, 'element.update');
+  assert.ok(listProperties({ group: 'size' }).some((property) => property.id === 'size.width'));
+});
+
+test('responsive values inherit from wider viewports and can be overridden/reset', () => {
+  let responsive = setResponsiveValue({}, 'width', 'desktop', '1200px');
+  responsive = setResponsiveValue(responsive, 'width', 'tablet', '90%');
+  assert.deepEqual(resolveResponsiveValue(responsive, 'width', 'desktop'), { value: '1200px', source: 'desktop', inherited: false });
+  assert.deepEqual(resolveResponsiveValue(responsive, 'width', 'tablet'), { value: '90%', source: 'tablet', inherited: false });
+  assert.deepEqual(resolveResponsiveValue(responsive, 'width', 'mobile'), { value: '90%', source: 'tablet', inherited: true });
+  assert.equal(hasResponsiveOverride(responsive, 'width', 'mobile'), false);
+  responsive = setResponsiveValue(responsive, 'width', 'mobile', '100%');
+  assert.deepEqual(resolveResponsiveValue(responsive, 'width', 'mobile'), { value: '100%', source: 'mobile', inherited: false });
+  responsive = setResponsiveValue(responsive, 'width', 'mobile', undefined);
+  assert.deepEqual(resolveResponsiveValue(responsive, 'width', 'mobile'), { value: '90%', source: 'tablet', inherited: true });
 });
 
 test('element add creates a real parent-child relationship', () => {
