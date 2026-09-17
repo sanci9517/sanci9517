@@ -176,7 +176,7 @@ export const commands = Object.freeze({
 
   'element.lock.set': (state, { nodeId, locked = true } = {}) => commit(
     state,
-    { type: 'element.lock.set', payload: { nodeId, locked },
+    { type: 'element.lock.set', payload: { nodeId, locked } },
     (draft) => {
       const { node } = requireNode(draft, nodeId, { allowLocked: true });
       node.locked = Boolean(locked);
@@ -354,8 +354,6 @@ export function executeBatch(state, actions, { label = 'Batch', atomic = true } 
   try {
     for (const action of actions) {
       execute(state, action);
-      // A batch owns exactly one history slot. If a future command ever
-      // bypasses the transaction recorder, remove that leaked entry now.
       if (state.history.past.length > historyStart) {
         state.history.past.splice(historyStart);
       }
