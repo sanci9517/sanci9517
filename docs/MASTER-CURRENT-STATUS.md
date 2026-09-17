@@ -1,6 +1,6 @@
 # Sanci9517 — MASTER CURRENT STATUS
 
-**Dátum:** 2026-09-16  
+**Dátum:** 2026-09-17  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Kapcsolódó fő terv:** `docs/MASTER-DEVELOPMENT-PLAN.md`
@@ -8,31 +8,34 @@
 ## AKTUÁLIS FOLYTATÁSI PONT
 
 ### Phase 1 — Visual Editor Core
-**Aktuális rész:** E2 — State + Command Engine
-**Állapot:** `[~]` implementáció elkészült, teljes tesztelés még nincs elfogadva.
+**Lezárt rész:** E2 — State + Command Engine  
+**Állapot:** `[x]` implementáció és teljes Core tesztkapu ellenőrizve, felhasználó által visszaigazolva.
 
-### Következő kötelező művelet
-A gépnél a projekt helyi példányában kell futtatni:
+### E2 végleges ellenőrzés
 
-```bash
-npm run test:editor
-```
+GitHub Actions futás: **Editor Core Test #6**  
+Commit: `542911face773a5ebcec0e0fe81ec54ef5399bd1`  
+Eredmény:
+- 12 teszt;
+- 12 pass;
+- 0 fail;
+- 0 skipped;
+- 0 cancelled;
+- batch history grouping PASS;
+- hierarchy/reparent/reorder PASS;
+- duplicate subtree PASS;
+- lock/validation PASS;
+- undo/redo PASS;
+- transaction commit/rollback PASS;
+- unknown command corruption protection PASS.
 
-**Fontos:** E2 nem jelölhető `[x]`-re addig, amíg a teszt tényleges eredménye nincs ellenőrizve, és a felhasználó nem igazolja vissza az eredményt.
+A felhasználó az eredményt külön visszaigazolta: **„E2 kész”**.
 
-## E2 ELLENŐRZÉSI SZABÁLY
+E2 ezért lezárható és `[x]` státuszú.
 
-1. Helyi projekt megnyitása.
-2. Branch ellenőrzése: `v2/foundation`.
-3. `npm run test:editor` futtatása.
-4. A tényleges kimenet rögzítése.
-5. Hiba esetén nem lépünk tovább; javítás → újrateszt.
-6. Siker esetén a kapcsolódó editor fájlokat és commitot is ellenőrizzük.
-7. Ezután következhet csak az E3 / következő Core lépés.
+## E2 CÉLTERÜLETEK — LEZÁRVA
 
-## E2 CÉLTERÜLETEK
-
-Az új editor egyetlen Page Model → State → Command architektúrát használ. A vizsgálandó műveletek közé tartozik többek között:
+Az új editor egyetlen Page Model → State → Command architektúrát használ. Az E2 ellenőrzése lefedte többek között:
 - selection;
 - element add/update/content;
 - style/layout/responsive módosítás;
@@ -41,9 +44,15 @@ Az új editor egyetlen Page Model → State → Command architektúrát használ
 - hierarchy reparent/reorder;
 - undo/redo;
 - tranzakció/rollback;
-- validáció és hibás hierarchy megakadályozása.
+- validáció és hibás hierarchy megakadályozása;
+- batch command history grouping;
+- ismeretlen command hibabiztos kezelése.
 
-A tényleges támogatott parancsokat és a tesztek számát mindig a GitHubon lévő aktuális fájlokból kell ellenőrizni; korábbi beszélgetésből nem szabad feltételezni.
+## KÖVETKEZŐ PONT
+
+E2 lezárása után a következő fejlesztési pontot a `docs/MASTER-DEVELOPMENT-PLAN.md` alapján kell kiválasztani. Nem kezdünk párhuzamos editor-architektúrát, és nem térünk vissza a régi Visual Editorhez.
+
+A következő munkamenetben először a következő MASTER pont aktuális kódállapotát auditáljuk, majd csak a legkisebb szükséges módosítást végezzük el.
 
 ## KORÁBBI DÖNTÉSEK
 
@@ -55,18 +64,18 @@ A tényleges támogatott parancsokat és a tesztek számát mindig a GitHubon l�
 - A parent/child hierarchy valódi adatmodell legyen.
 - Minden jelentős pontnál: implementáció → tényleges teszt → felhasználói visszaigazolás → csak ezután tovább.
 
-## TESZTELÉSI GATE
+## TESZTELÉSI GATE — E2
 
-`[ ]` E2 tényleges teszt lefutott  
-`[ ]` E2 eredmény ellenőrizve  
-`[ ]` E2 felhasználó által visszaigazolva  
-`[ ]` E2 `[x]` státuszra emelve  
-`[ ]` következő pont megkezdhető
+`[x]` E2 tényleges teszt lefutott  
+`[x]` E2 eredmény ellenőrizve  
+`[x]` E2 felhasználó által visszaigazolva  
+`[x]` E2 `[x]` státuszra emelve  
+`[x]` következő pont megkezdhető
 
 ## FOLYTATÁSI MONDAT
 
 A következő beszélgetésben elég ezt mondani:
 
-**„Folytassuk a Sanci9517 MASTER tervet a `docs/MASTER-CURRENT-STATUS.md` szerinti E2 teszteléssel. Gépnél vagyok.”**
+**„Folytassuk a Sanci9517 MASTER tervet az E2 lezárása utáni következő ponttal. Gépnél vagyok.”**
 
 Innen kell folytatni, nem újratervezni a projektet.
