@@ -102,7 +102,8 @@ export const commands = Object.freeze({
     (draft) => {
       if (!type) throw new Error('Element type is required');
       const page = requirePage(draft);
-      const parent = getNode(page, parentId ?? page.rootId);
+      const selectedParent = draft.selection.primaryId ? getNode(page, draft.selection.primaryId) : null;
+      const parent = getNode(page, parentId ?? selectedParent?.id ?? page.rootId);
       if (!parent || !canContain(parent, type)) throw new Error('Invalid parent for element');
       const node = createNode(type, {
         props: structuredClone(props),
@@ -175,7 +176,7 @@ export const commands = Object.freeze({
 
   'element.lock.set': (state, { nodeId, locked = true } = {}) => commit(
     state,
-    { type: 'element.lock.set', payload: { nodeId, locked } },
+    { type: 'element.lock.set', payload: { nodeId, locked },
     (draft) => {
       const { node } = requireNode(draft, nodeId, { allowLocked: true });
       node.locked = Boolean(locked);
@@ -338,16 +339,32 @@ export function execute(state, action) {
 
 export function executeBatch(state, actions, { label = 'Batch', atomic = true } = {}) {
   if (!Array.isArray(actions)) throw new Error('actions must be an array');
-  beginTransaction(state, label);
+  if (state.history.transaction) throw new Error('A history transaction is already active');
+
+  const before = snapshot(state);
   const historyStart = state.history.past.length;
+  const transaction = {
+    label,
+    before,
+    actions: [],
+    startedAt: Date.now()
+  };
+  state.history.transaction = transaction;
+
   try {
-    for (const action of actions) execute(state, action);
+    for (const action of actions) {
+      execute(state, action);
+      // A batch owns exactly one history slot. If a future command ever
+      // bypasses the transaction recorder, remove that leaked entry now.
+      if (state.history.past.length > historyStart) {
+        state.history.past.splice(historyStart);
+      }
+    }
 
-    const transaction = state.history.transaction;
     state.history.transaction = null;
-    state.history.past.length = historyStart;
+    state.history.past.splice(historyStart);
 
-    if (transaction?.actions.length) {
+    if (transaction.actions.length) {
       state.history.past.push({
         action: { type: 'transaction', label: transaction.label, actions: transaction.actions },
         before: transaction.before,
@@ -362,8 +379,13 @@ export function executeBatch(state, actions, { label = 'Batch', atomic = true } 
 
     return state;
   } catch (error) {
-    if (atomic) rollbackTransaction(state);
-    else state.history.transaction = null;
+    state.history.transaction = null;
+    if (atomic) {
+      state.document = cloneDocument(before);
+      state.history.past.splice(historyStart);
+      state.history.future = [];
+      state.persistence.dirty = true;
+    }
     throw error;
   }
 }
