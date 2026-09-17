@@ -338,8 +338,10 @@ export function execute(state, action) {
 export function executeBatch(state, actions, { label = 'Batch', atomic = true } = {}) {
   if (!Array.isArray(actions)) throw new Error('actions must be an array');
   beginTransaction(state, label);
+  const historyStart = state.history.past.length;
   try {
     for (const action of actions) execute(state, action);
+    if (state.history.past.length !== historyStart) state.history.past.length = historyStart;
     commitTransaction(state);
     return state;
   } catch (error) {
