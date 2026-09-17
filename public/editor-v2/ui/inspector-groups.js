@@ -1,10 +1,12 @@
 /* Sanci9517 Editor v2 — collapsible Inspector groups.
  * UI-only behavior: no Page Model or mutation state is introduced here.
  * All Inspector sections start collapsed so the panel stays compact as it grows.
+ * Open/closed state survives Inspector re-renders caused by editing.
  */
 
 const STYLE_ID = 'sanci-inspector-groups-style';
 const processed = new WeakSet();
+const openGroups = new Map();
 
 function installStyle() {
   if (document.getElementById(STYLE_ID)) return;
@@ -22,23 +24,31 @@ function installStyle() {
   document.head.append(style);
 }
 
+function groupKey(group, title) {
+  return title.querySelector('strong')?.textContent?.trim() || '';
+}
+
 function enhanceGroup(group) {
   if (!group || processed.has(group)) return;
   const title = group.querySelector(':scope > .inspector-group-title');
   if (!title) return;
   processed.add(group);
 
+  const key = groupKey(group, title);
   const content = document.createElement('div');
   content.className = 'inspector-group-content';
   [...group.children].filter((child) => child !== title).forEach((child) => content.append(child));
   group.append(content);
-  group.classList.remove('is-open');
 
+  const initiallyOpen = openGroups.get(key) === true;
+  group.classList.toggle('is-open', initiallyOpen);
   title.setAttribute('role', 'button');
   title.setAttribute('tabindex', '0');
-  title.setAttribute('aria-expanded', 'false');
+  title.setAttribute('aria-expanded', String(initiallyOpen));
+
   const toggle = () => {
     const open = group.classList.toggle('is-open');
+    openGroups.set(key, open);
     title.setAttribute('aria-expanded', String(open));
   };
   title.addEventListener('click', toggle);
