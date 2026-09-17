@@ -41,6 +41,8 @@ const properties = [
   { id: 'layout.display', group: 'layout', label: 'Megjelenítés', type: 'select', options: ['block', 'flex', 'grid', 'inline', 'none'], responsive: true, command: 'style.set' },
   { id: 'layout.overflow', group: 'layout', label: 'Túlcsordulás', type: 'select', options: ['visible', 'hidden', 'auto', 'scroll'], responsive: true, command: 'style.set' },
   { id: 'position.position', group: 'position', label: 'Pozícionálás', type: 'select', options: ['static', 'relative', 'absolute', 'fixed', 'sticky'], responsive: true, command: 'style.set' },
+  { id: 'position.x', group: 'position', label: 'X pozíció', type: 'dimension', units: ['px', '%', 'vw', 'rem'], responsive: true, command: 'style.set' },
+  { id: 'position.y', group: 'position', label: 'Y pozíció', type: 'dimension', units: ['px', '%', 'vh', 'rem'], responsive: true, command: 'style.set' },
   { id: 'position.zIndex', group: 'position', label: 'Z-index', type: 'number', responsive: true, command: 'style.set' },
   { id: 'typography.fontFamily', group: 'typography', label: 'Betűtípus', type: 'font', responsive: true, command: 'style.set' },
   { id: 'typography.fontSize', group: 'typography', label: 'Betűméret', type: 'dimension', units: ['px', 'rem', 'em', 'vw'], responsive: true, command: 'style.set' },
