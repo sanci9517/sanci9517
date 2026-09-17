@@ -7,36 +7,76 @@
   <link rel="stylesheet" href="/editor-v2/editor.css">
 </head>
 <body>
-  <div id="app" class="editor-app">
-    <header class="topbar">
-      <div class="brand">Sanci9517 <span>Visual Editor v2</span></div>
-      <div class="page-tools"><select id="pageSelect" aria-label="Aktív oldal"></select><button id="newPage">+ Új oldal</button></div>
-      <div class="actions"><span id="saveStatus">Betöltés…</span><button id="preview">Előnézet</button><button id="save">Mentés</button><button id="publish">Publikálás</button></div>
-    </header>
-    <main class="workspace">
-      <aside class="panel elements">
-        <div class="panel-title">Elemek</div>
-        <input id="elementSearch" placeholder="Elem keresése…" autocomplete="off">
-        <div id="elementList"></div>
-      </aside>
-      <section class="center">
-        <div class="toolbar">
-          <button id="undo">↶</button><button id="redo">↷</button>
-          <span class="separator"></span>
-          <button data-device="desktop">PC</button><button data-device="tablet">Tablet</button><button data-device="mobile">Mobil</button>
-          <span class="separator"></span>
-          <button id="zoomOut">−</button><span id="zoom">100%</span><button id="zoomIn">+</button>
-          <button id="layers">Rétegek</button>
-        </div>
-        <div id="canvas" class="canvas" tabindex="0" aria-label="Szerkesztő vászon"></div>
+<div id="app" class="editor-app">
+  <header class="topbar">
+    <div class="brand"><strong>SANCI9517</strong><span>Visual Editor</span></div>
+    <div class="page-area">
+      <button class="icon-btn panel-toggle" data-panel="left" title="Bal oldali panelek">☰</button>
+      <select id="pageSelect" aria-label="Aktív oldal"></select>
+      <button id="newPage" class="subtle-btn">+ Új oldal</button>
+    </div>
+    <div class="top-actions">
+      <span id="saveStatus" class="save-state">Betöltés…</span>
+      <button id="undo" class="icon-btn" title="Visszavonás">↶</button>
+      <button id="redo" class="icon-btn" title="Újra">↷</button>
+      <button id="preview" class="subtle-btn">Előnézet</button>
+      <button id="save" class="primary-btn">Mentés</button>
+      <button id="publish" class="publish-btn">Publikálás</button>
+      <button id="editorMenu" class="icon-btn" title="Editor menü">⋮</button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <aside id="leftDock" class="dock left-dock">
+      <div class="dock-tabs">
+        <button class="dock-tab active" data-tab="elements">Elemek</button>
+        <button class="dock-tab" data-tab="layers">Rétegek</button>
+      </div>
+      <section class="dock-content" data-content="elements">
+        <div class="dock-heading"><span>Elemek</span><button class="collapse-btn" data-collapse="left">‹</button></div>
+        <input id="elementSearch" class="search" placeholder="Elem keresése…" autocomplete="off">
+        <div id="elementList" class="element-list"></div>
       </section>
-      <aside class="panel inspector">
-        <div class="panel-title">Tulajdonságok</div>
-        <div id="inspectorBody" class="muted">Válassz ki egy elemet.</div>
-      </aside>
-    </main>
-    <footer class="statusbar"><span id="selection">Kijelölés: —</span><span id="revision">Revision: 0</span><span id="engine">Structured document · editor-v2 core</span></footer>
-  </div>
-  <script type="module" src="/editor-v2/app.js"></script>
+      <section class="dock-content hidden" data-content="layers">
+        <div class="dock-heading"><span>Layers / Navigator</span></div>
+        <div id="layersTree" class="layers-tree"></div>
+      </section>
+    </aside>
+
+    <section class="canvas-area">
+      <div class="canvas-toolbar">
+        <div class="toolbar-group">
+          <button class="tool-btn active" data-device="desktop">Desktop</button>
+          <button class="tool-btn" data-device="tablet">Tablet</button>
+          <button class="tool-btn" data-device="mobile">Mobil</button>
+        </div>
+        <div class="toolbar-group center-tools">
+          <button id="fitCanvas" class="tool-btn">Fit</button>
+          <button id="zoomOut" class="tool-btn">−</button>
+          <span id="zoom" class="zoom-label">100%</span>
+          <button id="zoomIn" class="tool-btn">+</button>
+        </div>
+        <div class="toolbar-group"><span id="canvasMode" class="toolbar-info">Desktop · 100%</span></div>
+      </div>
+      <div id="canvas" class="canvas" tabindex="0" aria-label="Szerkesztő vászon">
+        <div class="canvas-empty" id="canvasEmpty"><strong>Vizuális vászon</strong><span>Az oldal szerkezete a Core Page Modelből töltődik be.</span></div>
+      </div>
+    </section>
+
+    <aside id="rightDock" class="dock right-dock">
+      <section class="dock-content">
+        <div class="dock-heading"><span>Inspector</span><button class="collapse-btn" data-collapse="right">›</button></div>
+        <div id="inspectorBody" class="inspector-body"><div class="empty-state">Válassz ki egy elemet a vásznon vagy a réteglistában.</div></div>
+      </section>
+    </aside>
+  </main>
+
+  <footer class="statusbar">
+    <span id="selection">Kijelölés: —</span>
+    <span id="revision">Revision: 0</span>
+    <span id="engine">Structured Page Model · Editor Core v2</span>
+  </footer>
+</div>
+<script type="module" src="/editor-v2/app.js"></script>
 </body>
 </html>
