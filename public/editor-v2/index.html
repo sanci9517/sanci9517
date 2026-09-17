@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Sanci9517 Visual Editor v2</title>
+  <link rel="stylesheet" href="/editor-v2/editor.css">
+</head>
+<body>
+  <div id="app" class="editor-app">
+    <header class="topbar">
+      <div class="brand">Sanci9517 <span>Visual Editor v2</span></div>
+      <div class="page-tools"><select id="pageSelect" aria-label="Aktív oldal"></select><button id="newPage">+ Új oldal</button></div>
+      <div class="actions"><span id="saveStatus">Betöltés…</span><button id="preview">Előnézet</button><button id="save">Mentés</button><button id="publish">Publikálás</button></div>
+    </header>
+    <main class="workspace">
+      <aside class="panel elements">
+        <div class="panel-title">Elemek</div>
+        <input id="elementSearch" placeholder="Elem keresése…" autocomplete="off">
+        <div id="elementList"></div>
+      </aside>
+      <section class="center">
+        <div class="toolbar">
+          <button id="undo">↶</button><button id="redo">↷</button>
+          <span class="separator"></span>
+          <button data-device="desktop">PC</button><button data-device="tablet">Tablet</button><button data-device="mobile">Mobil</button>
+          <span class="separator"></span>
+          <button id="zoomOut">−</button><span id="zoom">100%</span><button id="zoomIn">+</button>
+          <button id="layers">Rétegek</button>
+        </div>
+        <div id="canvas" class="canvas" tabindex="0" aria-label="Szerkesztő vászon"></div>
+      </section>
+      <aside class="panel inspector">
+        <div class="panel-title">Tulajdonságok</div>
+        <div id="inspectorBody" class="muted">Válassz ki egy elemet.</div>
+      </aside>
+    </main>
+    <footer class="statusbar"><span id="selection">Kijelölés: —</span><span id="revision">Revision: 0</span><span id="engine">Structured document · editor-v2 core</span></footer>
+  </div>
+  <script type="module" src="/editor-v2/app.js"></script>
+</body>
+</html>
