@@ -11,7 +11,7 @@
   <header class="topbar">
     <div class="brand"><strong>SANCI9517</strong><span>Visual Editor</span></div>
     <div class="page-area">
-      <button class="icon-btn panel-toggle" data-panel="left" title="Bal oldali panelek">☰</button>
+      <button class="icon-btn panel-toggle" title="Bal oldali panelek">☰</button>
       <select id="pageSelect" aria-label="Aktív oldal"></select>
       <button id="newPage" class="subtle-btn">+ Új oldal</button>
     </div>
@@ -25,58 +25,21 @@
       <button id="editorMenu" class="icon-btn" title="Editor menü">⋮</button>
     </div>
   </header>
-
   <main class="workspace">
     <aside id="leftDock" class="dock left-dock">
-      <div class="dock-tabs">
-        <button class="dock-tab active" data-tab="elements">Elemek</button>
-        <button class="dock-tab" data-tab="layers">Rétegek</button>
-      </div>
-      <section class="dock-content" data-content="elements">
-        <div class="dock-heading"><span>Elemek</span><button class="collapse-btn" data-collapse="left">‹</button></div>
-        <input id="elementSearch" class="search" placeholder="Elem keresése…" autocomplete="off">
-        <div id="elementList" class="element-list"></div>
-      </section>
-      <section class="dock-content hidden" data-content="layers">
-        <div class="dock-heading"><span>Layers / Navigator</span></div>
-        <div id="layersTree" class="layers-tree"></div>
-      </section>
+      <div class="dock-tabs"><button class="dock-tab active" data-tab="elements">Elemek</button><button class="dock-tab" data-tab="layers">Rétegek</button></div>
+      <section class="dock-content" data-content="elements"><div class="dock-heading"><span>Elemek</span><button class="collapse-btn" data-collapse="left">‹</button></div><input id="elementSearch" class="search" placeholder="Elem keresése…" autocomplete="off"><div id="elementList" class="element-list"></div></section>
+      <section class="dock-content hidden" data-content="layers"><div class="dock-heading"><span>Layers / Navigator</span></div><div id="layersTree" class="layers-tree"><div class="empty-state">A teljes hierarchia az E5 Layers pontban épül ki.</div></div></section>
     </aside>
-
     <section class="canvas-area">
-      <div class="canvas-toolbar">
-        <div class="toolbar-group">
-          <button class="tool-btn active" data-device="desktop">Desktop</button>
-          <button class="tool-btn" data-device="tablet">Tablet</button>
-          <button class="tool-btn" data-device="mobile">Mobil</button>
-        </div>
-        <div class="toolbar-group center-tools">
-          <button id="fitCanvas" class="tool-btn">Fit</button>
-          <button id="zoomOut" class="tool-btn">−</button>
-          <span id="zoom" class="zoom-label">100%</span>
-          <button id="zoomIn" class="tool-btn">+</button>
-        </div>
-        <div class="toolbar-group"><span id="canvasMode" class="toolbar-info">Desktop · 100%</span></div>
-      </div>
-      <div id="canvas" class="canvas" tabindex="0" aria-label="Szerkesztő vászon">
-        <div class="canvas-empty" id="canvasEmpty"><strong>Vizuális vászon</strong><span>Az oldal szerkezete a Core Page Modelből töltődik be.</span></div>
-      </div>
+      <div class="canvas-toolbar"><div class="toolbar-group"><button class="tool-btn active" data-device="desktop">Desktop</button><button class="tool-btn" data-device="tablet">Tablet</button><button class="tool-btn" data-device="mobile">Mobil</button></div><div class="toolbar-group center-tools"><button id="fitCanvas" class="tool-btn">Fit</button><button id="zoomOut" class="tool-btn">−</button><span id="zoom" class="zoom-label">100%</span><button id="zoomIn" class="tool-btn">+</button></div><div class="toolbar-group"><span id="canvasMode" class="toolbar-info">Desktop · 100%</span></div></div>
+      <div id="canvas" class="canvas" tabindex="0" aria-label="Szerkesztő vászon"><div class="canvas-empty" id="canvasEmpty"><strong>Vizuális vászon</strong><span>Az oldal szerkezete a Core Page Modelből töltődik be.</span></div></div>
     </section>
-
-    <aside id="rightDock" class="dock right-dock">
-      <section class="dock-content">
-        <div class="dock-heading"><span>Inspector</span><button class="collapse-btn" data-collapse="right">›</button></div>
-        <div id="inspectorBody" class="inspector-body"><div class="empty-state">Válassz ki egy elemet a vásznon vagy a réteglistában.</div></div>
-      </section>
-    </aside>
+    <aside id="rightDock" class="dock right-dock"><section class="dock-content"><div class="dock-heading"><span>Inspector</span><button class="collapse-btn" data-collapse="right">›</button></div><div id="inspectorBody" class="inspector-body"><div class="empty-state">Válassz ki egy elemet a vásznon vagy a réteglistában.</div></div></section></aside>
   </main>
-
-  <footer class="statusbar">
-    <span id="selection">Kijelölés: —</span>
-    <span id="revision">Revision: 0</span>
-    <span id="engine">Structured Page Model · Editor Core v2</span>
-  </footer>
+  <footer class="statusbar"><span id="selection">Kijelölés: —</span><span id="revision">Revision: 0</span><span id="engine">Structured Page Model · Editor Core v2</span></footer>
 </div>
 <script type="module" src="/editor-v2/app.js"></script>
+<script type="module" src="/editor-v2/ui/shell.js"></script>
 </body>
 </html>
