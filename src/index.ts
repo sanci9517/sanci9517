@@ -55,7 +55,7 @@ export default {
     if (pathname === "/admin/editor") {
       const user = await getAuthenticatedUser(request, env);
       if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302);
-      return env.ASSETS.fetch(assetRequest("/admin-editor-v2.html", request));
+      return env.ASSETS.fetch(assetRequest("/editor-v2/index.html", request));
     }
     const legacyTarget = LEGACY_REDIRECTS[pathname];
     if (legacyTarget) return Response.redirect(new URL(legacyTarget, request.url).toString(), 301);
