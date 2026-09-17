@@ -11,6 +11,7 @@ const selectionLabel = document.querySelector('#selection');
 const revisionLabel = document.querySelector('#revision');
 const saveStatus = document.querySelector('#saveStatus');
 const zoomLabel = document.querySelector('#zoom');
+const canvasMode = document.querySelector('#canvasMode');
 
 const palette = [
   ['Alap', [['Section',NODE_TYPES.SECTION],['Container',NODE_TYPES.CONTAINER],['Stack',NODE_TYPES.STACK],['Group',NODE_TYPES.GROUP],['Cím',NODE_TYPES.HEADING],['Szöveg',NODE_TYPES.TEXT],['Gomb',NODE_TYPES.BUTTON],['Link',NODE_TYPES.LINK]]],
@@ -19,27 +20,59 @@ const palette = [
   ['Sanci9517', [['Twitch',NODE_TYPES.TWITCH],['YouTube',NODE_TYPES.YOUTUBE],['TikTok',NODE_TYPES.TIKTOK],['Discord',NODE_TYPES.DISCORD],['Adásrend',NODE_TYPES.SCHEDULE],['VOD',NODE_TYPES.VOD],['Támogatás',NODE_TYPES.SUPPORT],['Közösség',NODE_TYPES.COMMUNITY],['Élő állapot',NODE_TYPES.LIVE],['Visszaszámláló',NODE_TYPES.COUNTDOWN]]]
 ];
 
+const DEVICE_SIZES = { desktop: 1440, tablet: 768, mobile: 390 };
 async function api(url, options={}) { const response=await fetch(url,{credentials:'same-origin',headers:{'Content-Type':'application/json',...(options.headers||{})},...options}); const data=await response.json().catch(()=>({})); if(!response.ok) throw new Error(data?.error?.message||data?.message||`API hiba (${response.status})`); return data; }
 function setStatus(text){saveStatus.textContent=text}
-function renderPalette(filter=''){const root=document.querySelector('#elementList');root.replaceChildren();for(const [group,items] of palette){const matches=items.filter(([name])=>name.toLowerCase().includes(filter.toLowerCase()));if(!matches.length)continue;const section=document.createElement('section');section.className='element-group';const title=document.createElement('h3');title.textContent=group;section.append(title);for(const [name,type] of matches){const button=document.createElement('button');button.className='element';button.textContent=name;button.onclick=()=>addElement(type,name);section.append(button)}root.append(section)}}
+function device(){return state?.viewport?.device||'desktop'}
+function renderPalette(filter=''){
+  const root=document.querySelector('#elementList');
+  root.replaceChildren();
+  for(const [group,items] of palette){
+    const matches=items.filter(([name])=>name.toLowerCase().includes(filter.toLowerCase()));
+    if(!matches.length)continue;
+    const section=document.createElement('section');section.className='element-group';
+    const title=document.createElement('h3');title.textContent=group;title.setAttribute('role','button');title.tabIndex=0;
+    const body=document.createElement('div');
+    for(const [name,type] of matches){const button=document.createElement('button');button.className='element';button.textContent=name;button.onclick=()=>addElement(type,name);body.append(button)}
+    title.onclick=()=>section.classList.toggle('collapsed');title.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();section.classList.toggle('collapsed')}};
+    section.append(title,body);root.append(section)
+  }
+}
 function addElement(type,name){const page=activePage(state);const parentId=state.selection.primaryId||page.rootId;execute(state,{type:'element.add',payload:{type,name,parentId,props:{text:name}}});render()}
 function renderNode(page,nodeId){const node=getNode(page,nodeId);if(!node)return null;const el=document.createElement('div');el.className=`node ${node.type}${state.selection.ids.includes(node.id)?' selected':''}`;el.dataset.nodeId=node.id;const label=document.createElement('div');label.className='node-label';label.textContent=`${node.name} · ${node.type}`;el.append(label);const content=document.createElement('div');content.className='node-content';if([NODE_TYPES.HEADING,NODE_TYPES.TEXT,NODE_TYPES.BUTTON,NODE_TYPES.LINK].includes(node.type))content.textContent=node.props.text||node.name;else content.textContent=node.children.length?'':node.name;el.append(content);for(const childId of node.children){const child=renderNode(page,childId);if(child)el.append(child)}el.onclick=e=>{e.stopPropagation();setSelection(state,[node.id]);render()};return el}
-function renderCanvas(){const page=activePage(state);canvas.replaceChildren();const pageCanvas=document.createElement('div');pageCanvas.className='page-canvas';pageCanvas.style.transform=`scale(${zoom})`;pageCanvas.style.transformOrigin='top center';pageCanvas.append(renderNode(page,page.rootId));canvas.append(pageCanvas);canvas.onclick=()=>{clearSelection(state);render()}}
+function renderCanvas(){
+  const page=activePage(state);canvas.replaceChildren();
+  const pageCanvas=document.createElement('div');pageCanvas.className='page-canvas';
+  const width=DEVICE_SIZES[device()];pageCanvas.style.width=`${width}px`;pageCanvas.style.transform=`scale(${zoom})`;pageCanvas.style.transformOrigin='top center';
+  pageCanvas.append(renderNode(page,page.rootId));canvas.append(pageCanvas);
+  if(canvasMode)canvasMode.textContent=`${device()[0].toUpperCase()+device().slice(1)} · ${width}px`;
+  canvas.onclick=()=>{clearSelection(state);render()}
+}
 function renderInspector(){const nodes=selectedNodes(state);inspector.replaceChildren();if(!nodes.length){inspector.textContent='Válassz ki egy elemet.';return}const node=nodes[0];const title=document.createElement('div');title.className='field';title.textContent=`${node.name} · ${node.type}`;inspector.append(title);for(const [labelText,key,value] of [['Név','name',node.name],['Szöveg','text',node.props.text||'']]){const field=document.createElement('div');field.className='field';const label=document.createElement('label');label.textContent=labelText;const input=document.createElement('input');input.value=value;input.onchange=()=>{if(key==='name')execute(state,{type:'element.update',payload:{id:node.id,changes:{name:input.value}}});else execute(state,{type:'content.set',payload:{id:node.id,content:{text:input.value}}});render()};field.append(label,input);inspector.append(field)}}
 function render(){if(!state)return;renderCanvas();renderInspector();selectionLabel.textContent=`Kijelölés: ${state.selection.primaryId||'—'}`;revisionLabel.textContent=`Revision: ${activePage(state).revision}`;setStatus(state.persistence.dirty?'Nem mentett módosítás':'Mentve');zoomLabel.textContent=`${Math.round(zoom*100)}%`}
-function populatePages(){const select=document.querySelector('#pageSelect');select.replaceChildren();for(const page of pages){const option=document.createElement('option');option.value=page.id;option.textContent=page.title;option.selected=page.id===activePage(state).id;select.append(option)}}
+function populatePages(){
+  const select=document.querySelector('#pageSelect');select.replaceChildren();
+  const list=document.querySelector('#pageList');if(list)list.replaceChildren();
+  for(const page of pages){
+    const option=document.createElement('option');option.value=page.id;option.textContent=page.title||page.name||page.slug;option.selected=page.id===activePage(state).id;select.append(option);
+    if(list){const row=document.createElement('div');row.className=`page-row${page.id===activePage(state).id?' active':''}`;row.dataset.pageId=page.id;row.innerHTML=`<span class="page-icon">▧</span><span>${page.title||page.name||page.slug}</span><span class="page-meta">${page.is_published?'LIVE':'DRAFT'}</span>`;row.onclick=()=>loadPage(page.id);list.append(row)}
+  }
+}
 async function loadPage(pageId){setStatus('Betöltés…');const data=await api(`/api/admin/editor?pageId=${encodeURIComponent(pageId)}`);state=createEditorState(data.page.document);markSaved(state);populatePages();render()}
+async function createNewPage(){const title=prompt('Új oldal neve','Új oldal');if(!title)return;const slug=prompt('Slug',title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''));if(!slug)return;try{const page=createPage({name:title,slug});const document=createDocument(page);await api('/api/admin/pages',{method:'POST',body:JSON.stringify({id:page.id,title,slug,description:'',document})});const refreshed=await api('/api/admin/pages');pages=refreshed.data||refreshed.pages||refreshed;await loadPage(page.id)}catch(error){alert(error.message)}}
 async function boot(){try{const data=await api('/api/admin/pages');pages=data.data||data.pages||data;if(!Array.isArray(pages)||!pages.length)throw new Error('Nincs szerkeszthető oldal.');await loadPage(pages[0].id)}catch(error){setStatus('Hiba');inspector.textContent=error.message;console.error(error)}}
 
 document.querySelector('#elementSearch').oninput=e=>renderPalette(e.target.value);
 document.querySelector('#undo').onclick=()=>{if(state){execute(state,{type:'history.undo'});render()}};
 document.querySelector('#redo').onclick=()=>{if(state){execute(state,{type:'history.redo'});render()}};
-document.querySelector('#zoomIn').onclick=()=>{zoom=Math.min(1.5,zoom+.1);render()};document.querySelector('#zoomOut').onclick=()=>{zoom=Math.max(.5,zoom-.1);render()};
-for(const button of document.querySelectorAll('[data-device]'))button.onclick=()=>{if(state){state.viewport.device=button.dataset.device;render()}};
+document.querySelector('#zoomIn').onclick=()=>{zoom=Math.min(1.5,zoom+.1);render()};
+document.querySelector('#zoomOut').onclick=()=>{zoom=Math.max(.5,zoom-.1);render()};
+document.querySelector('#fitCanvas').onclick=()=>{const available=canvas.clientWidth-100;zoom=Math.max(.5,Math.min(1.5,available/DEVICE_SIZES[device()]));render()};
+for(const button of document.querySelectorAll('[data-device]'))button.onclick=()=>{if(state){state.viewport.device=button.dataset.device;document.querySelectorAll('[data-device]').forEach(b=>b.classList.toggle('active',b.dataset.device===button.dataset.device));render()}};
 document.querySelector('#pageSelect').onchange=async e=>{try{await loadPage(e.target.value)}catch(error){setStatus('Hiba');alert(error.message)}};
 document.querySelector('#save').onclick=async()=>{if(!state)return;try{setStatus('Mentés…');const page=activePage(state);await api(`/api/admin/editor?pageId=${encodeURIComponent(page.id)}`,{method:'POST',body:JSON.stringify({pageId:page.id,document:state.document,note:'Editor v2 mentés'})});markSaved(state);render()}catch(error){setStatus('Mentési hiba');alert(error.message)}};
 document.querySelector('#publish').onclick=async()=>{if(!state)return;try{setStatus('Publikálás…');const page=activePage(state);await api(`/api/admin/editor?pageId=${encodeURIComponent(page.id)}`,{method:'POST',body:JSON.stringify({pageId:page.id,document:state.document,publish:true,note:'Editor v2 publikálás'})});markSaved(state);render()}catch(error){setStatus('Publikálási hiba');alert(error.message)}};
 document.querySelector('#preview').onclick=()=>{if(state)window.open(`/p/${activePage(state).slug}`,'_blank','noopener')};
-document.querySelector('#newPage').onclick=async()=>{const title=prompt('Új oldal neve','Új oldal');if(!title)return;const slug=prompt('Slug',title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''));if(!slug)return;try{const page=createPage({name:title,slug});const document=createDocument(page);await api('/api/admin/pages',{method:'POST',body:JSON.stringify({id:page.id,title,slug,description:'',document})});const refreshed=await api('/api/admin/pages');pages=refreshed.data||refreshed.pages||refreshed;await loadPage(page.id)}catch(error){alert(error.message)}};
-
+document.querySelector('#newPage').onclick=createNewPage;
+document.querySelector('#newPagePanel').onclick=createNewPage;
 renderPalette();boot();
