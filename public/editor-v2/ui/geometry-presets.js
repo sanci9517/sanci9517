@@ -14,9 +14,9 @@ const PRESETS = Object.freeze({
   ],
   height: [
     ['Auto', 'auto'],
-    ['100', '100px'],
-    ['200', '200px'],
-    ['300', '300px'],
+    ['100', '100'],
+    ['200', '200'],
+    ['300', '300'],
     ['Fit', 'fit-content']
   ]
 });
@@ -30,10 +30,10 @@ function installStyle() {
   style.textContent = `
     .geometry-presets-wrap{margin:2px 0 10px;padding:8px 0 2px;border-top:1px solid rgba(255,255,255,.08)}
     .geometry-presets-label{display:block;margin:0 0 6px;color:rgba(255,255,255,.55);font-size:10px;text-transform:uppercase;letter-spacing:.06em}
-    .geometry-presets{display:flex;flex-wrap:wrap;gap:5px}
-    .geometry-presets button{min-width:38px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.045);color:inherit;border-radius:6px;padding:5px 8px;font:inherit;font-size:11px;cursor:pointer}
-    .geometry-presets button:hover{background:rgba(255,255,255,.09)}
-    .geometry-presets button.active{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.12)}
+    .geometry-presets{display:grid;grid-template-columns:repeat(auto-fit,minmax(48px,1fr));gap:5px}
+    .geometry-presets button{min-height:29px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.035);color:rgba(255,255,255,.82);border-radius:6px;padding:4px 7px;font:inherit;font-size:11px;cursor:pointer;transition:background .12s,border-color .12s,transform .12s}
+    .geometry-presets button:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18)}
+    .geometry-presets button:active{transform:translateY(1px)}
   `;
   document.head.append(style);
 }
@@ -63,6 +63,7 @@ function addPresets(group, labelText, values, input) {
     const button = document.createElement('button');
     button.type = 'button';
     button.textContent = labelTextValue;
+    button.title = `${labelText}: ${labelTextValue}`;
     button.dataset.value = value;
     button.onclick = () => {
       input.value = value;
