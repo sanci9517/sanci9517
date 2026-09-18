@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.6  
+**Verzió:** MASTER-2.7  
 **Dátum:** 2026-09-18  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -198,7 +198,6 @@ Külön:
 - history;
 - preview;
 - integration cache.
-
 ## 02/F Konfliktus/recovery
 - revision/ETag/equivalent check;
 - több tab érzékelés;
@@ -397,8 +396,7 @@ A 7.1 pont nem az aktuális folytatási pont. Az itt maradt feladatok későbbi 
 - [ ] egységes dark Sanci design — későbbi
 
 ## 7.2 Toolbar
-- [ ] page name
-- [ ] save status
+- [ ] page name- [ ] save status
 - [ ] undo/redo
 - [ ] preview
 - [ ] publish preparation
@@ -597,8 +595,7 @@ Követelmények:
 4. Kijelölés megszűnik vagy értelmes szomszédos kijelölés marad.
 5. Layers/Navigator frissül.
 6. Undo visszahozza.
-7. Redo újra törli.
-8. Root törlése védett.
+7. Redo újra törli.8. Root törlése védett.
 9. Locked elem törlése védett.
 10. User confirmation.
 
@@ -798,7 +795,6 @@ Templates:
 - [ ] reusable page templates
 
 ---
-
 # 14 — CLIPBOARD / IMPORT / EXPORT / KEYBOARD
 
 - [ ] copy
@@ -997,8 +993,7 @@ Régi tesztoldalak csak a valódi oldalak biztonságos migrációja után:
 - [ ] viewer statistics
 - [ ] followers/subscribers where available
 - [ ] VOD
-- [ ] clips
-- [ ] events/webhooks where applicable
+- [ ] clips- [ ] events/webhooks where applicable
 
 ## YouTube
 - [ ] channel
@@ -1197,8 +1192,7 @@ Secrets remain Cloudflare Secrets; external APIs are normalized behind services.
 - [ ] large-tree editor performance
 - [ ] history memory limits
 - [ ] autosave efficiency
-- [ ] API latency monitoring
-- [ ] production smoke test
+- [ ] API latency monitoring- [ ] production smoke test
 - [ ] visual regression baseline
 
 ---
@@ -1398,7 +1392,6 @@ A user által jelzett hiba alapján az előző változat **nem tekinthető teszt
 A felhasználó újabb betöltési hibát jelzett: `app.js?v=20260918-8:10:1702`.
 
 A teljes aktuális `app.js` 10. sorát újraellenőrizve a hiba oka az `ELEMENT_DESCRIPTIONS` objektumban maradt, szóközt tartalmazó, idézőjel nélküli kulcsok voltak, többek között `Élő állapot`, `Stream számláló`, `Játékkártya`, `Játéklista`, `Egyedi elem` és hasonló kulcsok. Ezek JavaScript objektumkulcsként így syntax error-t okoztak.
-
 Javítás:
 - minden érintett, szóközt tartalmazó kulcs érvényes string kulccsá alakítva;
 - működési logika nem változott;
@@ -1597,7 +1590,6 @@ Kapcsolódó utolsó teszt/cleanup commitok:
 **Státusz:** `[x]`.
 
 **Következő egyetlen aktív pont:** 10.1.2.2 — Rich Text strukturált Command + Validation runtime/integrációs teszt. A diagnostics pont lezárva; UI-t továbbra sem építünk a Rich Text tesztkapu lezárása előtt.
-
 ### Egyetlen aktuális teszt — Elements syntax fix + Diagnostics első runtime kapu
 1. teljesen töltsd újra az Editor v2 oldalt;
 2. ellenőrizd, hogy nincs `app.js:10:1702` syntax error és az editor betölt;
@@ -1797,8 +1789,7 @@ Javító commitok:
 
 Javítás:
 - `public/editor-v2/app.js`: a Rich Text node most a canonical `props.richText` strukturált dokumentumból renderel.
-- támogatott alap render: paragraph, heading, quote, code, bulleted-list, numbered-list, valamint bold/italic inline megjelenítés.
-- a Rich Text Inspector továbbra is `richtext.content.set` commandot használ.
+- támogatott alap render: paragraph, heading, quote, code, bulleted-list, numbered-list, valamint bold/italic inline megjelenítés.- a Rich Text Inspector továbbra is `richtext.content.set` commandot használ.
 - a canonical Page Model nem változott; nincs második renderer/state/command rendszer.
 
 Javító commitok:
@@ -1823,7 +1814,25 @@ A korábbi silent render hibát ezzel lezártuk: a Command → Page Model → Ca
 
 **MASTER állapotfrissítés:** a Rich Text egyszerű tartalom-módosítási runtime teszt lezárva PASS állapotban.
 
-**EGYETLEN AKTUÁLIS FOLYTATÁSI PONT:** 10.1.2.2 — Rich Text strukturált/érvénytelen tartalom runtime teszt; elsőként egy valid strukturált tartalom beállítása és megjelenésének ellenőrzése.
+**Új runtime teszt — valid strukturált Rich Text (paragraph blokkok): PASS**
+
+A felhasználó a Rich Text multiline Inspector mezőjében három külön sort adott meg:
+- `Sanci9517`
+- `Rich Text teszt`
+- `Ez egy harmadik sor.`
+
+Ellenőrzött:
+1. mindhárom sor külön sorban megjelenik;
+2. a Canvas mindhárom sort megjeleníti;
+3. a tartalom az Inspectorban megmarad;
+4. Diagnostics állapot: `✓ 0 hiba`;
+5. a három sor a canonical Rich Text modellen belül külön paragraph blokkokként kezelhető.
+
+**Felhasználói visszaigazolás:** „Működik”.
+
+Ez a teszt lezárta a valid, többblokkos/paragraph-alapú Rich Text megjelenítés alap runtime kapuját. A Rich Text formázott elemei (heading, bold, italic, underline, strike, inline code, link, listák, blockquote, code block) külön tesztelendők.
+
+**EGYETLEN AKTUÁLIS FOLYTATÁSI PONT:** 10.1.2.2 — Rich Text formázott/strukturált modell runtime teszt; következőként a canonical heading + bold/italic inline tartalom Canvas-megjelenítését ellenőrizzük. Undo/Redo, save/reload és responsive regresszió továbbra sem tesztelendő.
 
 **Frissen feltárt editor library/add problémagyanú:** a jelenlegi `renderPalette()` mindig a kijelölt node-ot használja új elem szülőjeként. Leaf elem kijelölésekor ezért az új elem hozzáadása `Invalid parent for element` hibával leállhat. Emellett az Elements listában vannak olyan bejegyzések, amelyekhez jelenleg nincs `NODE_TYPES` érték (ezek `undefined` típussal nem adhatók hozzá). Ezt a hibát a Rich Text runtime teszt előtt külön javítási lépésként kell kezelni, mert közvetlenül érinti az Elements panel alapműködését.
 
