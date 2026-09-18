@@ -76,7 +76,19 @@ export const NODE_TYPES = Object.freeze({
   GAME_CARD: 'gamecard',
   GAME_LIST: 'gamelist',
   COMPONENT: 'component',
-  CUSTOM: 'custom'
+  CUSTOM: 'custom',
+  BADGE: 'badge',
+  QUOTE: 'quote',
+  PANEL: 'panel',
+  OVERLAY: 'overlay',
+  ABSOLUTE: 'absolute',
+  STICKY: 'sticky',
+  TOOLTIP: 'tooltip',
+  SHORTS: 'shorts',
+  SPONSOR: 'sponsor',
+  BUSINESS: 'business',
+  ABOUT: 'about',
+  SANCI_BUTTON: 'sanci-button'
 });
 
 const LEAF_TYPES = new Set([
