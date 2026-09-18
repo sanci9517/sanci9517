@@ -1460,15 +1460,42 @@ Javító commitok:
 Statikus visszaolvasás: PASS.
 Felhasználói/runtime teszt még hátra.
 
-### EGYETLEN AKTÍV TESZT — Rich Text hozzáadás
-1. teljesen frissítsd az Editort;
-2. Elemek → Szöveg kategória;
-3. kattints a **Rich Text** elemgombra;
-4. az elemnek létre kell jönnie és ki kell jelölődnie;
-5. ne legyen `SANCI-...` hiba;
-6. utána csak jelezd: **„Rich Text hozzáadható”** vagy írd le a megjelenő hibát.
+### 9.1.0 — Elements palette „elem hozzáadása” — LEZÁRVA
+**Felhasználói teszt:** PASS — a felhasználó visszajelzése: **„Működik”**.
 
-Más tesztre addig nem lépünk tovább.
+Ellenőrzött:
+- Elements kategóriák megjelenése;
+- kategóriák csukott alapállapota;
+- elemek hozzáadása;
+- Rich Text hozzáadása;
+- Rich Text automatikus canonical üres dokumentuma;
+- elem kijelölése hozzáadás után.
+
+A Rich Text hozzáadási hibát a `element.add` Command javításával oldottuk meg: Rich Text node létrehozásakor automatikusan létrejön a `createEmptyRichText()` dokumentum.
+
+Kapcsolódó javító commitok:
+- commands: `23faaf85a32cc8add77f4fc1158202c862850656`
+- cache/index: `a54aa07a29e4b7f7c6e880db04428a4bc8422aa1`
+
+**Státusz:** `[x]`.
+
+### KÖVETKEZŐ EGYETLEN AKTÍV PONT — 10.1.2.2 Rich Text strukturált Command + Validation runtime teszt
+Most már visszatérünk a Rich Text rendszer integrációs tesztjéhez. UI-t még nem építünk.
+
+Tesztelendő sorrend:
+1. létrehozott Rich Text node canonical modellje;
+2. strukturált Rich Text tartalom beállítása;
+3. valid modell elfogadása;
+4. invalid modell elutasítása;
+5. rollback;
+6. Undo;
+7. Redo;
+8. mentés/reload;
+9. Canvas render;
+10. user confirmation.
+
+**Más fejlesztési pontra addig nem lépünk tovább, amíg ez a tesztkapu nincs lezárva.**
+
 
 ### 9.1.1 — Editor Diagnostics / automatikus hibakereső — IMPLEMENTÁLVA, RUNTIME TESZT HÁTRA
 A felhasználó kérésére elkészült az Editor v2 első automatikus hibakereső rendszere.
