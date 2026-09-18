@@ -1332,42 +1332,45 @@ Minden jelentős editor/platform bővítés előtt ellenőrizni kell:
 
 **Új beszélgetésben ez az egyetlen folytatási pont.** A 7.1, 7.2, 7.3 és minden más fejezet `[ ]` pontja jelenleg várólistán van; azokból nem szabad folytatni, amíg a 10.0.2 teljes tesztkapuja nincs lezárva.
 
-### 2026-09-18 — mobil Editor Shell újratervezés — v3 irány
-A felhasználói teszt szerint az új shell funkcionálisan jó irány, de a v2 alsó lebegő sávja kitakarta a Canvas egy részét és a mobilon fontos műveletek/nézetek nem voltak jól elérhetők. Ezért a v2 vizuális kialakítását nem finomítjuk tovább; újraosztottuk a mobil kezelőszerveket lebegő, kontextusos vezérlőkké.
+### 2026-09-18 — mobil Editor Shell újratervezés — v4 irány
+A v3 felhasználói teszt újabb konkrét UX-hibát azonosított: a lebegő nézet- és zoomvezérlők továbbra is rátakartak a Canvas tartalmára, különösen az oldal nevére; a Publikálás mobilon nem volt látható. A teljes mobil shellt ezért nem további lebegő rétegekkel foltozzuk, hanem a kezelőszervek normál elrendezésbe kerülnek.
 
-Elv:
-- a Canvas a lehető legtöbb helyet kapja;
-- a nézetválasztó (Desktop / Tablet / Mobil) külön felső lebegő sáv;
-- Zoom / Fit külön jobb felső lebegő vezérlő;
-- Mentés és Előnézet visszakerül a felső mobil sávba jól látható ikonként;
-- Publikálás a felső sávból marad elérhető a helytakarékosság miatt;
-- a korábbi alsó quick-action bar megszűnik;
-- drawer/overlay logika változatlan;
-- desktop shell továbbra sem változik.
+Új elv:
+- a Canvas fölötti vezérlők nem takarhatják a szerkesztett oldalt;
+- az oldal neve és a felső azonosító mindig szabadon látható marad;
+- a mobil fejléc két soros: 1. sor márka + oldalválasztó, 2. sor minden fő művelet;
+- a Mentés, Előnézet, Publikálás és Inspector mobilon is közvetlenül elérhető;
+- Desktop / Tablet / Mobil nézetválasztó normál toolbar-rész, nem lebeg a Canvas fölött;
+- Zoom / Fit normál toolbar-rész, nem lebeg a Canvas fölött;
+- a lebegő drawer/overlay csak a bal oldali panelhez és Inspectorhoz marad;
+- a Canvas kapja a fennmaradó helyet, és minden vezérlő a saját helyén marad;
+- desktop shell logikája nem változik.
 
 Módosított fájlok:
-- `public/editor-v2/index.html`
 - `public/editor-v2/mobile-editor.css`
+- `public/editor-v2/index.html`
 
 GitHub commitok:
-- `cd24df657f8c1bf4dd64e1ccbb44442049cc20b3`
-- `ec12309ad38b80772584f3cefcec92d0434abb32`
+- `36a3ba7f30b8350578f10cf5b090786723391680`
+- `569348781423169c18cb52c1121f0d5a21fbbdbc`
 
-**A kód jelenleg újratesztelés alatt áll.**
+**A v4 kód elkészült, de felhasználói újrateszt még nincs.**
 
-### AKTUÁLIS EGYETLEN FOLYTATÁSI LÉPÉS — Mobile Shell v3 felhasználói teszt
+### AKTUÁLIS EGYETLEN FOLYTATÁSI LÉPÉS — Mobile Shell v4 felhasználói teszt
 Telefonon frissítés után:
-1. Felső sávban látszódjon: ☰, oldalválasztó, ↶, ↷, Előnézet, Mentés, Inspector.
-2. A Desktop / Tablet / Mobil nézetválasztó lebegő sávban legyen a Canvas felső részén, és ne takarja ki használhatatlanul a vásznat.
-3. A Zoom / Fit vezérlő külön lebegő vezérlő legyen jobb oldalon, és a Canvas/oldal tartalma maradjon használható.
-4. Próbáld ki a − / + zoomot és a Fit-et.
-5. Próbáld ki mindhárom nézetet: Desktop / Tablet / Mobil.
-6. Ellenőrizd, hogy a Mentés és Előnézet valóban látható és megnyomható.
-7. A ☰ bal drawer továbbra is működjön.
-8. ◧ Inspector továbbra is működjön.
-9. Háttér-kattintás / Escape zárja az overlayt.
-10. Undo / Redo működjön.
-11. Desktop nézetben ellenőrizd, hogy nem történt regresszió.
+1. Első sorban jól látszódjon a ☰, SANCI9517 és az oldal neve/oldalválasztó; semmi ne takarja az oldal azonosítását.
+2. Második sorban közvetlenül látszódjon és megnyomható legyen: ↶ Undo, ↷ Redo, Előnézet, Mentés, Publikálás, Inspector.
+3. A Canvas fölötti toolbarban látszódjon a Desktop / Tablet / Mobil nézetválasztó.
+4. A Canvas toolbar második sorában látszódjon és működjön a Fit / − / zoom / +.
+5. A nézet- és zoomvezérlők egyike se takarja a szerkesztett oldal tartalmát vagy az oldal nevét.
+6. Próbáld ki a − / + zoomot és a Fit-et.
+7. Próbáld ki mindhárom nézetet: Desktop / Tablet / Mobil.
+8. Ellenőrizd külön a Mentés, Előnézet és Publikálás gombot.
+9. A ☰ bal drawer továbbra is működjön.
+10. ◧ Inspector továbbra is működjön.
+11. Háttér-kattintás / Escape zárja az overlayt.
+12. Undo / Redo működjön.
+13. Desktop nézetben ellenőrizd, hogy nem történt regresszió.
 
 **Ha bármi takar, nem látszik vagy nehezen kezelhető: nem lépünk tovább; újabb mobil shell módosítás következik.**
 **Ha minden PASS:** jöhet a Mobile Shell v3 részletes vizuális finomhangolása, majd a 10.0.2 edge-case tesztkapu lezárása.
