@@ -1419,6 +1419,23 @@ A következő lépés előtt a böngészős betöltés és az Elements panel run
 8. jelezd, hogy működik-e. **Más tesztre addig nem lépünk tovább.**
 
 
+### 9.1.0 — Elements palette: üres lista javítása
+A felhasználó jelezte, hogy az editor már betölt, de az Elemek listában nem jelentek meg elemek.
+
+Újraellenőrzés alapján a palette renderelését robusztusabbá tettem:
+- a meglévő `groups` típusértéket közvetlenül használja, nem csak a név alapján történő visszakeresést;
+- hiányzó típus esetén továbbra is használható a `typeForElement()` fallback;
+- az `#elementList` hiányát külön `SANCI-UI-E002` hibakóddal jelzi;
+- ha egyetlen érvényes elem sem kerül a listába, `SANCI-UI-E003` diagnosztikai hibát ad;
+- az elemek kategóriánként továbbra is csukva indulnak;
+- az i súgó és az elem hozzáadása logikája változatlan.
+
+Javító commit:
+- app: `b02e05a5309cb4f7d1321f9655bfe1e8ba27f30a`
+- content SHA: `570d586fd4d17f2d059749757f87737df6502689`
+
+A következő egyetlen aktív pont továbbra is a runtime ellenőrzés.
+
 ### 9.1.1 — Editor Diagnostics / automatikus hibakereső — IMPLEMENTÁLVA, RUNTIME TESZT HÁTRA
 A felhasználó kérésére elkészült az Editor v2 első automatikus hibakereső rendszere.
 
