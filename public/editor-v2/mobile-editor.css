@@ -32,8 +32,16 @@
 
   .right-dock:not(.closed){
     display:block;
+    position:absolute;
+    grid-column:auto;
+    grid-row:auto;
+    left:auto;
+    right:0;
+    top:0;
+    bottom:0;
     width:min(320px,92vw);
     height:100%;
+    z-index:40;
   }
 
   .canvas{
