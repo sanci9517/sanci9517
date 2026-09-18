@@ -40,38 +40,72 @@ export function setRichTextBlockType(document,lineIndex,type='paragraph',level=1
   return next;
 }
 
-export function toggleRichTextMark(document,start,end,mark){
-  const next=structuredClone(document);
-  if(start===end||!mark) return next;
+function forEachRichTextInline(document,callback){
   let offset=0;
-  for(const block of next.blocks||[]){
+  for(const block of document?.blocks||[]){
     if(block.type==='bulleted-list'||block.type==='numbered-list'){
       for(const item of block.items||[]){
         for(const inline of item||[]){
-          const text=inline.text||'';
-          const a=Math.max(0,start-offset),b=Math.min(text.length,end-offset);
-          if(b>a){
-            inline.marks=Array.isArray(inline.marks)?[...new Set(inline.marks)]:[];
-            inline.marks=inline.marks.includes(mark)?inline.marks.filter(x=>x!==mark):[...inline.marks,mark];
-          }
-          offset+=text.length;
+          callback(inline,offset);
+          offset+=(inline.text||'').length;
         }
         offset+=1;
       }
       continue;
     }
     for(const inline of block.children||[]){
-      const text=inline.text||'';
-      const a=Math.max(0,start-offset),b=Math.min(text.length,end-offset);
-      if(b>a){
-        inline.marks=Array.isArray(inline.marks)?[...new Set(inline.marks)]:[];
-        inline.marks=inline.marks.includes(mark)?inline.marks.filter(x=>x!==mark):[...inline.marks,mark];
-      }
-      offset+=text.length;
+      callback(inline,offset);
+      offset+=(inline.text||'').length;
     }
     offset+=1;
   }
+}
+
+export function toggleRichTextMark(document,start,end,mark){
+  const next=structuredClone(document);
+  if(!mark||start===end) return next;
+  let hasCoveredText=false;
+  let allActive=true;
+  forEachRichTextInline(next,(inline,offset)=>{
+    const text=inline.text||'';
+    const a=Math.max(start,offset);
+    const b=Math.min(end,offset+text.length);
+    if(b>a){
+      hasCoveredText=true;
+      const marks=Array.isArray(inline.marks)?[...new Set(inline.marks)]:[];
+      if(!marks.includes(mark)) allActive=false;
+    }
+  });
+  if(!hasCoveredText) return next;
+  const nextMode=allActive?'remove':'add';
+  forEachRichTextInline(next,(inline,offset)=>{
+    const text=inline.text||'';
+    const a=Math.max(start,offset);
+    const b=Math.min(end,offset+text.length);
+    if(b<=a) return;
+    const marks=Array.isArray(inline.marks)?[...new Set(inline.marks)]:[];
+    inline.marks=nextMode==='remove'?marks.filter(x=>x!==mark):[...new Set([...marks,mark])];
+  });
   return next;
+}
+
+export function isRichTextMarkActive(document,start,end,mark){
+  if(!mark) return false;
+  const rangeStart=Math.min(start,end);
+  const rangeEnd=Math.max(start,end);
+  let hasCoveredText=false;
+  let active=true;
+  forEachRichTextInline(document,(inline,offset)=>{
+    const text=inline.text||'';
+    const a=Math.max(rangeStart,offset);
+    const b=Math.min(rangeEnd,offset+text.length);
+    if(b>a){
+      hasCoveredText=true;
+      const marks=Array.isArray(inline.marks)?inline.marks:[];
+      if(!marks.includes(mark)) active=false;
+    }
+  });
+  return hasCoveredText&&active;
 }
 
 export function richTextLineIndexAtOffset(text,offset){
