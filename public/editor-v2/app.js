@@ -52,6 +52,10 @@ document.addEventListener('DOMContentLoaded',()=>{
  $('#zoomIn').onclick=()=>{zoom=Math.min(1.5,zoom+.1);render()};$('#zoomOut').onclick=()=>{zoom=Math.max(.35,zoom-.1);render()};$('#fitCanvas').onclick=()=>{const d=state?.viewport?.device||'desktop';zoom=Math.max(.35,Math.min(1.2,(canvas.clientWidth-120)/sizes[d]));render()};
  $('#selectTool').onclick=()=>{$('#selectTool').classList.add('active');$('#panTool').classList.remove('active');canvas.style.cursor='default'};$('#panTool').onclick=()=>{$('#panTool').classList.add('active');$('#selectTool').classList.remove('active');canvas.style.cursor='grab'};
  document.querySelectorAll('[data-device]').forEach(b=>b.onclick=()=>setDevice(b.dataset.device));
+ canvas.addEventListener('click',event=>{
+   if(event.target.closest('.node')) return;
+   if(state) { command('selection.clear'); }
+ });
  document.querySelectorAll('.inspector-tabs button').forEach(b=>b.addEventListener('click',()=>{const names=['design','content','advanced'];inspectorTab=names[[...document.querySelectorAll('.inspector-tabs button')].indexOf(b)]||'design';document.querySelectorAll('.inspector-tabs button').forEach(x=>x.classList.toggle('active',x===b));renderInspector()}));
  document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();save(false)}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();if(state){execute(state,{type:e.shiftKey?'history.redo':'history.undo'});render()}}});
  renderPalette();loadPages().then(()=>window.__sanciEditorBoot?.ready()).catch(showError);
