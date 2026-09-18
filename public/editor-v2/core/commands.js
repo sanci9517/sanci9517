@@ -5,7 +5,7 @@
  * of changing the Page Model directly. Validation and history stay centralized.
  */
 
-import { canContain, cloneDocument, createNode, getNode } from './schema.js';
+import { canContain, cloneDocument, createNode, getNode, normalizeRichText } from './schema.js';
 import { assertValidEditorDocument } from './validation.js';
 import { activePage, clearSelection, setSelection } from './state.js';
 
@@ -137,12 +137,24 @@ export const commands = Object.freeze({
     { type: 'element.content.set', payload: { nodeId, content: String(content) } },
     (draft) => {
       const { node } = requireNode(draft, nodeId);
+      if (node.type === 'richtext') throw new Error('Use richtext.content.set for Rich Text');
       const value = String(content);
-      const textTypes = new Set(['heading', 'text', 'richtext', 'button', 'link']);
+      const textTypes = new Set(['heading', 'text', 'button', 'link']);
       node.props = {
         ...node.props,
         ...(textTypes.has(node.type) ? { text: value, content: value } : { content: value })
       };
+      bumpRevision(draft.document);
+    }
+  ),
+
+  'richtext.content.set': (state, { nodeId, document } = {}) => commit(
+    state,
+    { type: 'richtext.content.set', payload: { nodeId, document: structuredClone(document) } },
+    (draft) => {
+      const { node } = requireNode(draft, nodeId);
+      if (node.type !== 'richtext') throw new Error('richtext.content.set requires a Rich Text node');
+      node.props = { ...node.props, richText: normalizeRichText(document) };
       bumpRevision(draft.document);
     }
   ),
