@@ -1742,7 +1742,7 @@ Implementációs commitok:
 Statikus visszaolvasás: PASS.
 Még nincs felhasználói/runtime teszt, ezért a pont nem [x].
 
-**10.1.2.2 runtime/integrációs teszt — TESZTALAP ELŐKÉSZÍTVE, FELHASZNÁLÓI BÖNGÉSZŐTESZT HÁTRA**
+**10.1.2.2 runtime/integrációs teszt — [!] AUTOMATIKUS TESZT HIBA, JAVÍTÁS FOLYAMATBAN**
 
 Automatizált core tesztek hozzáadva:
 - Rich Text canonical node létrehozása és valid strukturált módosítása;
@@ -1765,6 +1765,13 @@ A következő egyetlen felhasználói tesztben még ellenőrizni kell:
 8. Canvas render;
 9. desktop/tablet/mobile regresszió;
 10. user confirmation.
+
+Automatikus GitHub Actions teszt futott a 1bc1c2715f0c6e9f569c3b7d47b93f5e49cecce4 commiton: 17 tesztből 16 PASS, 1 FAIL. A hiba nem a Rich Text implementációban, hanem a frissen hozzáadott teszt assertion alakjában volt: a normalizáló a list itemet közvetlen children tömbbé alakítja, ezért a teszt tévesen `items[0].children[0]` struktúrát várt. Javítás: `items[0][0]`. Javító commit: `11d8121acb312614f4824ca293688596710de2f1`.
+
+A Node.js 20 deprecation warning nem okozta a hibát; a futás Node 24.20.0-val történt. Cloudflare Workers build ugyanazon előző commiton PASS volt.
+
+**Egyetlen aktuális folytatási pont:** várjuk a javító commit GitHub Actions `editor-core` futásának eredményét. Sikeres futás nélkül sem runtime felhasználói tesztet, sem [x] lezárást nem végzünk.
+
 
 **UI-t még nem építünk. Más fejlesztési pontra addig nem lépünk tovább.**
 
