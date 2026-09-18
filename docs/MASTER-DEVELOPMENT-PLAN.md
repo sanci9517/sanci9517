@@ -1742,38 +1742,46 @@ Implementációs commitok:
 Statikus visszaolvasás: PASS.
 Még nincs felhasználói/runtime teszt, ezért a pont nem [x].
 
-**10.1.2.2 runtime/integrációs teszt — [~] AUTOMATIKUS CORE TESZT JAVÍTVA, FELHASZNÁLÓI TESZT FOLYAMATBAN**
+**10.1.2.2 runtime/integrációs teszt — [~] RICH TEXT LÉTREHOZÁS PASS, A TOVÁBBI RUNTIME TESZTEK FOLYAMATBAN**
 
-Automatizált core tesztek hozzáadva:
+Automatizált core tesztek:
 - Rich Text canonical node létrehozása és valid strukturált módosítása;
 - heading/mark/link/list/quote/code adatok megőrzése;
 - invalid Rich Text elutasítása;
 - pontos document rollback és history-változatlanság hibánál;
 - Undo/Redo exact structured document visszaállítása.
 
-Teszt commit:
-- core tests: `f4fe10a2f13a93ce5232f92b263c78565437973b`
+A korábbi teszt assertion-hibája javítva lett:
+- hibás elvárás: `items[0].children[0]`;
+- helyes normalizált forma: `items[0][0]`;
+- javító commit: `11d8121acb312614f4824ca293688596710de2f1`.
 
-A következő egyetlen felhasználói tesztben még ellenőrizni kell:
-1. Rich Text node létrehozása az Elements panelből;
-2. canonical Rich Text modellhez kapcsolódó Inspector/Command út működése;
-3. valid Rich Text tartalom módosítása;
-4. invalid tartalom elutasítása és rollback;
-5. Undo;
-6. Redo;
-7. mentés/reload;
-8. Canvas render;
-9. desktop/tablet/mobile regresszió;
-10. user confirmation.
+**Felhasználói runtime teszt — PASS:**
+- Editor megnyitása;
+- Elements panel → Rich Text;
+- Rich Text node létrejött;
+- Canvason megjelent;
+- kijelölődött;
+- a művelet nem jelzett Diagnostics hibát.
 
-Automatikus GitHub Actions teszt futott a 1bc1c2715f0c6e9f569c3b7d47b93f5e49cecce4 commiton: 17 tesztből 16 PASS, 1 FAIL. A hiba nem a Rich Text implementációban, hanem a frissen hozzáadott teszt assertion alakjában volt: a normalizáló a list itemet közvetlen children tömbbé alakítja, ezért a teszt tévesen `items[0].children[0]` struktúrát várt. Javítás: `items[0][0]`. Javító commit: `11d8121acb312614f4824ca293688596710de2f1`.
+**Felhasználói visszaigazolás:** „Működik”.
 
-A Node.js 20 deprecation warning nem okozta a hibát; a futás Node 24.20.0-val történt. Cloudflare Workers build ugyanazon előző commiton PASS volt.
+A teljes 10.1.2.2 kapu még nem zárható le, mert hátra van:
+1. strukturált Rich Text tartalom módosítása;
+2. valid modell elfogadása;
+3. invalid tartalom elutasítása + rollback;
+4. Undo;
+5. Redo;
+6. mentés/reload;
+7. Canvas render ellenőrzése strukturált tartalommal;
+8. desktop/tablet/mobile regresszió;
+9. teljes user confirmation.
 
-**Egyetlen aktuális folytatási pont:** az automatikus core teszt javítása felhasználói visszaigazolással elfogadva. Következőként kizárólag az Editorban a Rich Text elem létrehozását teszteljük. A teljes 10.1.2.2 lezárás csak a további runtime/integrációs tesztek és a teljes felhasználói visszaigazolás után történhet.
+A Node.js 20 deprecation warning dokumentált, de nem a Rich Text implementáció hibája; a korábbi futás Node 24.20.0-val történt.
 
+**EGYETLEN AKTUÁLIS FOLYTATÁSI PONT:** következőként kizárólag a létrehozott Rich Text elem strukturált tartalmának módosítását teszteljük az Editorban. UI-t még nem építünk; a Rich Text Command + Validation kapu lezárásáig nem lépünk más fejlesztési pontra.
 
-**UI-t még nem építünk. Más fejlesztési pontra addig nem lépünk tovább.**
+**MASTER állapotfrissítés:** a felhasználói létrehozási teszt lezárva, további tesztelés szükséges.
 
 **Frissen feltárt editor library/add problémagyanú:** a jelenlegi `renderPalette()` mindig a kijelölt node-ot használja új elem szülőjeként. Leaf elem kijelölésekor ezért az új elem hozzáadása `Invalid parent for element` hibával leállhat. Emellett az Elements listában vannak olyan bejegyzések, amelyekhez jelenleg nincs `NODE_TYPES` érték (ezek `undefined` típussal nem adhatók hozzá). Ezt a hibát a Rich Text runtime teszt előtt külön javítási lépésként kell kezelni, mert közvetlenül érinti az Elements panel alapműködését.
 
