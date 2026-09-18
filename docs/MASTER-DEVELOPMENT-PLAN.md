@@ -1328,29 +1328,75 @@ Minden jelentős editor/platform bővítés előtt ellenőrizni kell:
 - [x] Inspector kapcsolat 8.1–8.6: felhasználói tesztek PASS.
 
 ## JELENLEGI EGYETLEN AKTÍV PONT — EZT KELL FOLYTATNI
-**10.0.2 Inspector törlés – teljes tesztkapu edge-case része.**
+**10.0.2 Inspector törlés – teljes tesztkapu edge-case része + mobil Editor Shell újratervezésének 1. lépéses felhasználói tesztje.**
 
 **Új beszélgetésben ez az egyetlen folytatási pont.** A 7.1, 7.2, 7.3 és minden más fejezet `[ ]` pontja jelenleg várólistán van; azokból nem szabad folytatni, amíg a 10.0.2 teljes tesztkapuja nincs lezárva.
 
-### Új beszélgetés folytatási parancsa
-Ha a felhasználó azt mondja: **„Folytassuk a Sanci9517 MASTER tervet.”**, akkor ezt a MASTER fájlt kell alapul venni, a 35. fejezetet kell ellenőrizni, és kizárólag a **10.0.2 Inspector törlés – edge-case teszteket** kell folytatni.
+### 2026-09-18 — mobil Editor Shell újratervezés
+A korábbi mobil megoldást nem foltozzuk tovább. A mobil szerkesztő kezelőfelületét dedikált mobil shellként újraterveztük, miközben a Page Model, Command, History, Canvas, Inspector működését és a desktop shell alapját nem változtatjuk meg.
 
-### Aktuális folytatási állapot
-**2026-09-18 fejlesztési döntés — mobil Inspector kétlépcsős javítás:** a mobil UX-et két külön ellenőrzött lépésre bontjuk. **1. lépés elkészült:** az Inspector mobilon explicit jobb oldali overlay/drawer pozíciót kapott (right:0, saját grid-elhelyezés kikapcsolva), így nem tud a korábbi grid-column:3 miatt a képernyőn kívülre kerülni. Desktop viselkedés változatlan. **2. lépés:** csak az 1. lépés felhasználói PASS után következhet a mobil Inspector részletes finomhangolása (méret, belső elrendezés, bezárás, használhatóság, érintési célméretek).
+A kutatás alapján átvett minták:
+- Wix Studio: a vászon marad központi, az Inspector külön panel, a responsive működés breakpoint-alapú és nem egyszerű desktop-összenyomás. citeturn0search1turn0search3turn0search4
+- Canva: oldalsó panelek megnyithatók/bezárhatók, mobilon a további műveletek kontextusos/floating toolbarból érhetők el. citeturn0search8
+- Adobe Express: mobilon a kiválasztott elemhez kapcsolódó műveletek és rétegek külön kezelhetők, a rétegpanel külön nyitható/zárható. citeturn0search0turn0search9turn0search15
 
-**2026-09-18 mobil nézet javítás:** a mobil CSS-ben az Undo/Redo gombok korábban szándékosan rejtve voltak. Ezt javítottuk: az Undo (↶) és Redo (↷) gombok mobil nézetben is láthatók maradnak. A CSS cache-verzió frissítve. GitHub commitok: `63ffd0b50b1a03e005ff43c9964db8a1bdb423be`, `da34d2d53a5d9716ed7de97e16c2995f3cea64d8`, `110030a30ae206a0a7b151918a861a9249e87c30`, `c95f94de14a854d992096aef1eebcc98f0964886`. MASTER állapotfrissítés: `86d91037efb17ddfabb80a38d59a8ea8598e6200`. **Az Undo/Redo mobil láthatóság javítása után a jobb oldali Inspector külön funkcionális javítást kapott; a mobil felhasználói teszt még szükséges. 10.0.2 státusza nem változik.**
+A gyúrt végső irány:
+1. mobilon külön topbar;
+2. hamburger → bal oldali Oldalak / Elemek / Rétegek drawer;
+3. Inspector → jobb oldali overlay drawer;
+4. középen mindig a Canvas marad a fő felület;
+5. külön mobil alsó quick-action bar: kijelölés, Fit, zoom, Előnézet, Publikálás;
+6. Escape vagy háttér-kattintás bezárja az overlayeket;
+7. nincs desktop shell összenyomása;
+8. tablet továbbra is külön breakpointként kezelhető;
+9. a mobil shell állapota külön localStorage kulcsot használ, hogy a régi hibás shell állapota ne szivárogjon át.
 
-**Aktuális egyetlen folytatási pont — Mobil Inspector 1. lépés felhasználói teszt:** telefonon frissített oldal betöltése, `◧` Inspector gomb megnyomása, ellenőrzés hogy az Inspector a jobb oldalon teljesen látható overlayként megjelenik és a Canvas használható marad; bezárás `›` gombbal. Ha PASS, jöhet a 2. lépés finomhangolása. Ha FAIL, nem lépünk tovább.
+### Elkészült fejlesztési lépés — Mobile Shell v2
+Módosított fájlok:
+- `public/editor-v2/index.html`
+- `public/editor-v2/mobile-editor.css`
+- `public/editor-v2/ui/shell.js`
 
-**A 10.0.2 edge-case tesztek továbbra is kötelezőek; a mobil UX javítás csak a jelenlegi tesztkapu részeként fut, nem hoz létre második aktív tervpontot.**
+GitHub commitok:
+- `17f167bc8b382ff2b5032e990ed81e959b13d5cc`
+- `abd331dddeb6514c21e2d89dbd95417a6f1139cb`
+- `6ad424d295da778bd5adf133fc74d0bccf674d4d`
 
+Kódellenőrzés:
+- új mobil overlay/backdrop markup: megvan;
+- külön mobil alsó quick-action bar: megvan;
+- mobil topbar desktoptól elkülönítve: megvan;
+- bal/jobb drawer overlay: megvan;
+- háttér-kattintás és Escape bezárás: megvan;
+- mobil shell v2 localStorage kulcs: megvan;
+- desktop CSS szabályok mobilon kívül változatlanul maradnak.
+
+**A kód megléte nem jelent PASS-t. A felhasználói teszt még kötelező.**
+
+### AKTUÁLIS EGYETLEN FOLYTATÁSI LÉPÉS — Mobile Shell v2 felhasználói teszt
+Telefonon:
+1. Nyisd meg/frissítsd az Editor v2-t.
+2. Ellenőrizd, hogy a felső sáv külön mobil elrendezésben jelenik meg: ☰, oldalválasztó, ↶, ↷, mentés, Inspector.
+3. Nyomd meg a ☰ gombot → bal oldali drawer jelenjen meg, a Canvas maradjon mögötte.
+4. Nyomd meg a háttér sötét részét vagy Escape-et → drawer záródjon.
+5. Nyomd meg a ◧ Inspector gombot → jobb oldali drawer jelenjen meg teljesen a képernyőn.
+6. Inspector megnyitva a Canvas maradjon elérhető a háttérben.
+7. Zárd be háttér-kattintással vagy az Inspector saját bezáró gombjával.
+8. Az alsó mobil sávban ellenőrizd: Kijelölés, Fit, −, zoom, +, Előnézet, Publikálás.
+9. Ellenőrizd, hogy Undo/Redo továbbra is működik.
+10. Ellenőrizd, hogy desktop nézetben a korábbi shell nem romlott el.
+
+**Ha bármelyik pont rossz:** nem lépünk tovább, és csak azt javítjuk.
+**Ha minden PASS:** következő lépés a Mobile Shell v2 részletes vizuális finomhangolása (méretek, spacing, touch targetek, drawer animáció, Inspector belső elrendezés), majd külön felhasználói teszt.
+
+### 10.0.2 edge-case tesztek továbbra is kötelezőek
 1. Redo teszt: törölt elem visszaállítása után Redo újra törölje.
 2. Root törlésének védelme.
 3. Locked elem törlésének védelme.
 4. Selection állapot ellenőrzése törlés után.
 5. Dirty state/revision ellenőrzése, ha az adott runtime ezt már megjeleníti.
 6. Felhasználói visszaigazolás.
-7. Csak a teljes tesztkapu sikeres felhasználói visszaigazolása után jelölhető 10.0.2 `[x]`, és csak ezután választunk új aktív pontot.
+7. Csak a teljes tesztkapu sikeres felhasználói visszaigazolása után jelölhető 10.0.2 `[x]`.
 
 **A fejlesztés nem lép tovább a következő aktív pontra sikertelen vagy részleges teszt esetén.**
 
