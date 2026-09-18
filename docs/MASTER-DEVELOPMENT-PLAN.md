@@ -1330,6 +1330,19 @@ Minden jelentős editor/platform bővítés előtt ellenőrizni kell:
 ## JELENLEGI EGYETLEN AKTÍV PONT — EZT KELL FOLYTATNI
 **10.1 Inspector — Content rendszer teljes kód- és adatfolyam-auditja.**
 
+**2026-09-18 — 10.1 Content audit eredménye:**
+- public/editor-v2/app.js: a Content tab jelenleg két általános mezőt ad: Szöveg és Link / URL; mindkettő kanonikus element.update commandot használ.
+- public/editor-v2/core/commands.js: element.update validált history/revision/dirty láncon működik; külön element.content.set command is létezik, de a jelenlegi Content UI ezt nem használja.
+- Page Model: props és dataBindings rendelkezésre állnak; schemaVersion 1 validáció megvan.
+- Canvas: a heading/text/richtext/button/link típusok jelenlegi renderje a props.text / props.content értéket jeleníti meg; a Content módosítás visszahat a Canvasra.
+- Persistence: az editor teljes canonical documentet küld mentéskor, ezért a Content módosítás ugyanazon save/reload láncon marad.
+- Külön ui/inspector.js modul nincs; az aktuális Inspector runtime az app.js-ben van.
+- Hiányzik: típusfüggő Content UI, valódi Rich Text, strukturált link-kezelés, média kiválasztás, alt/title mezők és későbbi dynamic content binding UI.
+
+**Audit eredmény:** PASS. Architektúrai második state/command rendszer nem szükséges; a következő módosítás a meglévő Page Model + Command + Canvas + Persistence láncot bővíti.
+
+**Következő egyetlen lépés:** 10.1.1 — Plain Text Content UI stabilizálása: típusfüggő szövegmező, a meglévő element.content.set command használatával, majd Undo/Redo + reload + Canvas teszt.
+
 A 10.0.2 Inspector törlés + lock tesztkapu lezárult [x], ezért a következő aktív pont a 10.1 Content. Első lépés kizárólag audit: az aktuális Inspector content-kezelés, Page Model, Command API, Canvas render, history és persistence kapcsolatának ellenőrzése. Audit előtt nem módosítunk kódot.
 
 **Új beszélgetésben ez az egyetlen folytatási pont.** A 7.1, 7.2, 7.3 és minden más fejezet `[ ]` pontja jelenleg várólistán van; azokból nem szabad folytatni, amíg a 10.0.2 teljes tesztkapuja nincs lezárva.
