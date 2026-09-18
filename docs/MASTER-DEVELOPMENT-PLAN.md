@@ -1341,7 +1341,15 @@ Minden jelentős editor/platform bővítés előtt ellenőrizni kell:
 
 **Audit eredmény:** PASS. Architektúrai második state/command rendszer nem szükséges; a következő módosítás a meglévő Page Model + Command + Canvas + Persistence láncot bővíti.
 
-**Következő egyetlen lépés:** 10.1.1 — Plain Text Content UI stabilizálása: típusfüggő szövegmező, a meglévő element.content.set command használatával, majd Undo/Redo + reload + Canvas teszt.
+**Fejlesztés elkészült:** 10.1.1 első implementáció. A Content tab típusfüggően jeleníti meg a szövegmezőt; heading/text/richtext/button/link az `element.content.set` canonical commandot használja, a command pedig a megfelelő `props.text` + `props.content` értékeket normalizálja. Button/link esetén a Link / URL mező továbbra is külön marad.
+
+**Kódváltozások:** `public/editor-v2/app.js`, `public/editor-v2/core/commands.js`.
+**Kód-audit:** PASS — nincs új state/command rendszer; a meglévő Command → Page Model → History → Canvas → Persistence lánc maradt.
+**GitHub:** app commit `9a77a39ff3570fec213e1ea3a38488c39091a633`; command commit `2bcfca1bafad2e184bc1f790a7377d7e7601ecd5`.
+
+**Állapot:** `[~]` — user runtime teszt még szükséges.
+
+**Következő egyetlen lépés:** 10.1.1 felhasználói teszt: egy `text` vagy `heading` elem Szöveg mezőjének módosítása → Canvas ellenőrzés → Undo → Redo → mentés/reload ellenőrzés.
 
 A 10.0.2 Inspector törlés + lock tesztkapu lezárult [x], ezért a következő aktív pont a 10.1 Content. Első lépés kizárólag audit: az aktuális Inspector content-kezelés, Page Model, Command API, Canvas render, history és persistence kapcsolatának ellenőrzése. Audit előtt nem módosítunk kódot.
 
