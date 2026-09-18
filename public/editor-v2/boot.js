@@ -24,6 +24,10 @@
   }
 
   function fail(message, detail = null) {
+    const record = { source: 'boot', code: 'SANCI-BOOT-E001', message, file: detail?.filename || '', line: detail?.lineno || 0, column: detail?.colno || 0, error: detail };
+    window.__sanciEditorEarlyErrors = window.__sanciEditorEarlyErrors || [];
+    window.__sanciEditorEarlyErrors.push(record);
+    window.__sanciEditorDiagnostics?.add(record);
     const text = `Editor betöltési hiba: ${message}`;
     status(text);
     console.error('[Sanci9517 Editor Boot]', text, detail || '');
