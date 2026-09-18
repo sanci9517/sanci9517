@@ -1356,6 +1356,26 @@ Első körben az Elements palette készül el. A szerkesztő egyéb gombjaihoz k
 
 Követelmény: minden jelenleg támogatott palette elemhez legyen leírás; az információs UI ne fedje el tartósan a vásznat; billentyűzettel is elérhető legyen; a funkció ne vezessen be második state/command rendszert.
 
+### 9.1.0 aktuális javítás — teljes érintett editor-kód audit + Elements info UI
+A teljes releváns Editor v2 kódlánc újra lett nézve. A lista eltűnésének konkrét hibája megvan: a `renderPalette()` létrehozta a kategória `section` elemet, de nem fűzte hozzá az `#elementList` gyökérhez. Emiatt a DOM-ban létrejött elemek nem jelentek meg.
+
+Javítások:
+- `app.js`: `root.append(section)` visszaállítva;
+- az Elements kategóriák továbbra is **csukott alapállapotból** indulnak;
+- minden elemhez külön kis **ⓘ / i** gomb került;
+- az i gomb nem ad hozzá elemet, hanem helyben megjeleníti az elem rövid leírását;
+- minden jelenlegi palette elemhez leírás került, fallback szöveggel;
+- CSS az info gombhoz és a leíráshoz hozzáadva;
+- editor cache verzió frissítve.
+
+Commitok:
+- app: `b972d2a1ea281966a5387a7bc1ca07d662504dc6`
+- CSS: `ffd57c6e1e4840def8d104428adf8f9b8b14f761`
+- cache: `c4e8ef533c1302d4850bdfa993d59d2ebe8c9f7a`
+
+Statikus visszaolvasás: PASS — `root.append(section)`, info vezérlő és leírás-adatmodell jelen van.
+Felhasználói/runtime teszt még hátra. A szerkesztő többi gombjához tartozó i-súgó külön következő UX-lépés lesz, miután ez a palette tesztelve van.
+
 ### Egyetlen aktuális teszt
 1. nyisd meg az **Elemek** panelt: a kategóriafejlécek látszanak, de a kategóriák alapból csukva vannak;
 2. nyiss ki egy kategóriát: az elemek jelenjenek meg;
