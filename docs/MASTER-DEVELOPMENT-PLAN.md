@@ -1376,15 +1376,32 @@ Commitok:
 Statikus visszaolvasás: PASS — `root.append(section)`, info vezérlő és leírás-adatmodell jelen van.
 Felhasználói/runtime teszt még hátra. A szerkesztő többi gombjához tartozó i-súgó külön következő UX-lépés lesz, miután ez a palette tesztelve van.
 
+### 9.1.0 — Elements palette javítás — syntax/runtime előellenőrzés
+A frissítés után a böngésző az `app.js` betöltésekor syntax error-t jelzett: `app.js?v=20260918-8:10:492`.
+
+A teljes érintett `app.js`-t újra átnéztük. A hiba oka a frissen hozzáadott `ELEMENT_DESCRIPTIONS` objektum néhány idézőjel nélküli, szóközt vagy `/` jelet tartalmazó kulcsa volt (pl. `Rich Text`, `Social Links`, `Badge/Tag`, `Business Contact`, `About Me`, `Sanci Button`). Emellett a fájlban egy literal `\\n` került a `const groups` elé.
+
+Javítás:
+- az érintett leírás-kulcsok érvényes string kulcsokká lettek alakítva;
+- a hibás literal sortörés normalizálva lett;
+- csak az `app.js` módosult, a működési logika nem lett újraépítve.
+
+Javító commit:
+- app: `0536aedc45d3963bc7ebcf9f8d3581d2958755ca`
+- app content SHA: `bb35e394cca4edb9f13ee2e3719f72c02bfb7855`
+
+A user által jelzett hiba alapján az előző változat **nem tekinthető teszteltnek**. A jelenlegi változatnál először a böngészős betöltést és az Elements panel megjelenését kell ellenőrizni.
+
 ### Egyetlen aktuális teszt
-1. nyisd meg az **Elemek** panelt: a kategóriafejlécek látszanak, de a kategóriák alapból csukva vannak;
-2. nyiss ki egy kategóriát: az elemek jelenjenek meg;
-3. válassz ki egy container/layout elemet → adj hozzá több különböző elemet;
-4. válassz ki egy leaf elemet (pl. Heading, Szöveg, Kép) → adj hozzá elemet, és ellenőrizd, hogy a szülőjébe kerül;
-5. próbáld ki a palette minden jelenleg megjelenő elemét;
-6. Undo/Redo;
-7. mentés + újratöltés;
-8. user confirmation.
+1. frissítsd az editor oldalt teljes újratöltéssel;
+2. ellenőrizd, hogy az `app.js` már nem ad syntax error-t;
+3. nyisd meg az **Elemek** panelt: a kategóriafejlécek látszanak, alapból csukva;
+4. nyiss ki egy kategóriát: az elemek jelenjenek meg;
+5. az elemgombok mellett legyen kis **i** ikon;
+6. az **i** megnyomása leírást mutasson, és ne adjon hozzá elemet;
+7. az elemgomb továbbra is adjon hozzá elemet;
+8. jelezd, hogy működik-e. **Más tesztre addig nem lépünk tovább.**
+
 
 ### 10.1.1 — Plain Text Content UI — LEZÁRVA
 **Felhasználói teszt:** PASS — „Működik”. Canvas, Undo, Redo és mentés/reload ellenőrzése sikeres.
