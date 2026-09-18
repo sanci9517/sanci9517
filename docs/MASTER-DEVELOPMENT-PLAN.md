@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.4  
+**Verzió:** MASTER-2.5  
 **Dátum:** 2026-09-18  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -1805,19 +1805,25 @@ Javító commitok:
 - renderer első implementáció: `8916fdd9524bc0c95c9d91893bf0936332fe316a`
 - renderer inline-node javítás: `2ec066e304bf8e400a34e39b882088a47d42d3db`
 
-**Hiba állapota:** a renderer javítva, de a felhasználói újrateszt még NEM történt meg.
+**Hiba állapota:** a renderer javítása után a felhasználói újrateszt PASS.
 
-**EGYETLEN AKTUÁLIS FOLYTATÁSI PONT:** ugyanazt a Rich Text tartalom-módosítási tesztet kell újra lefuttatni:
-1. Rich Text maradjon kijelölve;
+**Felhasználói visszaigazolás:** „Működik”.
+
+Ellenőrzött:
+1. Rich Text kijelölve maradt;
 2. Inspector → Content;
-3. `Sanci9517 Rich Text teszt` beírása;
-4. mentés/mező elhagyása;
-5. ellenőrizni: a tartalom megváltozik;
-6. Diagnostics: `✓ 0 hiba`.
+3. `Sanci9517 Rich Text teszt` tartalom beírása;
+4. a módosítás elfogadásra került;
+5. a canonical Rich Text tartalom megjelent a Canvason;
+6. Diagnostics nem jelzett hibát: `✓ 0 hiba`.
 
-Ha ez PASS, utána kizárólag a következő 10.1.2.2 tesztpontra lépünk.
+A korábbi silent render hibát ezzel lezártuk: a Command → Page Model → Canvas útvonal jelen tesztesetben működik.
 
-**MASTER állapotfrissítés:** a felhasználói létrehozási teszt lezárva, további tesztelés szükséges.
+**10.1.2.2 következő tesztkapuja:** strukturált/érvénytelen Rich Text tartalom kezelése. Ezt külön, egyetlen aktív tesztként kell folytatni; Undo/Redo, save/reload és responsive regresszió még nem tesztelendő.
+
+**MASTER állapotfrissítés:** a Rich Text egyszerű tartalom-módosítási runtime teszt lezárva PASS állapotban.
+
+**EGYETLEN AKTUÁLIS FOLYTATÁSI PONT:** 10.1.2.2 — Rich Text strukturált/érvénytelen tartalom runtime teszt; elsőként egy valid strukturált tartalom beállítása és megjelenésének ellenőrzése.
 
 **Frissen feltárt editor library/add problémagyanú:** a jelenlegi `renderPalette()` mindig a kijelölt node-ot használja új elem szülőjeként. Leaf elem kijelölésekor ezért az új elem hozzáadása `Invalid parent for element` hibával leállhat. Emellett az Elements listában vannak olyan bejegyzések, amelyekhez jelenleg nincs `NODE_TYPES` érték (ezek `undefined` típussal nem adhatók hozzá). Ezt a hibát a Rich Text runtime teszt előtt külön javítási lépésként kell kezelni, mert közvetlenül érinti az Elements panel alapműködését.
 
