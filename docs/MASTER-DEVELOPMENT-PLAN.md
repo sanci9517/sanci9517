@@ -1779,7 +1779,31 @@ A teljes 10.1.2.2 kapu még nem zárható le, mert hátra van:
 
 A Node.js 20 deprecation warning dokumentált, de nem a Rich Text implementáció hibája; a korábbi futás Node 24.20.0-val történt.
 
-**EGYETLEN AKTUÁLIS FOLYTATÁSI PONT:** következőként kizárólag a létrehozott Rich Text elem strukturált tartalmának módosítását teszteljük az Editorban. UI-t még nem építünk; a Rich Text Command + Validation kapu lezárásáig nem lépünk más fejlesztési pontra.
+**Frissített runtime eredmény — strukturált Rich Text módosítási útvonal javítása:**
+
+A felhasználói teszt során a Rich Text Inspector tartalommezője még a generic `element.content.set` commandot hívta. A központi command réteg ezt szándékosan elutasította `SANCI-CMD-E001: Use richtext.content.set for Rich Text` hibával.
+
+Javítás:
+- `public/editor-v2/app.js`: Rich Text esetén a Content Inspector most kizárólag a `richtext.content.set` commandot használja.
+- `public/editor-v2/core/richtext-editor.js`: létrejött egy kis adapter, amely a felhasználó által megadott egyszerű szöveget canonical Rich Text dokumentummá alakítja; több sor külön paragraph blokkot kap.
+- A canonical source-of-truth továbbra is `node.props.richText`.
+- Nem jött létre második command/state/history rendszer.
+
+Javító commitok:
+- app: `0ea8afa9fb7ac132358a875b33e5c12c5f798539`
+- Rich Text adapter: `5ca7b0a64035bb0998e3249944651a48961963fd`
+
+**Hiba állapota:** a javítás elkészült, de a felhasználói újrateszt még NEM történt meg.
+
+**EGYETLEN AKTUÁLIS FOLYTATÁSI PONT:** ugyanazt a Rich Text tartalom-módosítási tesztet kell újra lefuttatni:
+1. Rich Text maradjon kijelölve;
+2. Inspector → Content;
+3. `Sanci9517 Rich Text teszt` beírása;
+4. mentés/mező elhagyása;
+5. ellenőrizni: a tartalom megváltozik;
+6. Diagnostics: `✓ 0 hiba`.
+
+Ha ez PASS, utána kizárólag a következő 10.1.2.2 tesztpontra lépünk.
 
 **MASTER állapotfrissítés:** a felhasználói létrehozási teszt lezárva, további tesztelés szükséges.
 
