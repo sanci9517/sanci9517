@@ -1467,7 +1467,11 @@ GitHub commit: `89e7e632af5f444490c661c8617fa1a9d9934383`.
 
 **Állapot:** `[~]` — Redo, Root-védelem és selection-kezelés PASS. A 10.0.2 teljes tesztkapujához a dirty state/revision ellenőrzés és a végső felhasználói visszaigazolás van hátra.
 
-**Következő egyetlen lépés:** dirty state / revision változás ellenőrzése törlés után.
+**Felhasználói teszt eredménye:** dirty state / revision változás **PASS**. A törlés módosított állapotot eredményez, az állapot Undo/Redo közben is következetes.
+
+**Állapot:** `[~]` — a 10.0.2 minden technikai edge-case pontja PASS. Egyetlen hátralévő kapu a végső felhasználói visszaigazolás, hogy a teljes Inspector törlés + lock + history működés rendben van.
+
+**Következő egyetlen lépés:** 10.0.2 végső felhasználói teszt és lezárás.
 
 # 36 — TERVKARBANTARTÁS
 
