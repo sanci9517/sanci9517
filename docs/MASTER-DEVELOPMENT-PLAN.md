@@ -1336,6 +1336,8 @@ Minden jelentős editor/platform bővítés előtt ellenőrizni kell:
 Ha a felhasználó azt mondja: **„Folytassuk a Sanci9517 MASTER tervet.”**, akkor ezt a MASTER fájlt kell alapul venni, a 35. fejezetet kell ellenőrizni, és kizárólag a **10.0.2 Inspector törlés – edge-case teszteket** kell folytatni.
 
 ### Aktuális folytatási állapot
+**2026-09-18 mobil nézet javítás:** a mobil CSS-ben az Undo/Redo gombok korábban szándékosan rejtve voltak. Ezt javítottuk: az Undo (↶) és Redo (↷) gombok mobil nézetben is láthatók maradnak. A CSS cache-verzió frissítve. GitHub commitok: `63ffd0b50b1a03e005ff43c9964db8a1bdb423be` és `da34d2d53a5d9716ed7de97e16c2995f3cea64d8`. **Felhasználói mobil teszt még szükséges; 10.0.2 státusza nem változik.**
+
 1. Redo teszt: törölt elem visszaállítása után Redo újra törölje.
 2. Root törlésének védelme.
 3. Locked elem törlésének védelme.
