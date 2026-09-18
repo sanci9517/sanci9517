@@ -1463,7 +1463,11 @@ GitHub commit: `89e7e632af5f444490c661c8617fa1a9d9934383`.
 
 **Állapot:** `[~]` — a Redo és Root-védelem PASS. A 10.0.2 teljes tesztkapujához a selection állapot, dirty/revision ellenőrzés (ha runtime-ban látható), majd a végső felhasználói visszaigazolás van hátra.
 
-**Következő egyetlen lépés:** törölt elem utáni selection állapot tesztje.
+**Felhasználói teszt eredménye:** törölt elem utáni selection állapot **PASS**. A törölt elem nem marad kijelölve/árva Inspector-állapotban, Undo után visszaállítható és újra kijelölhető.
+
+**Állapot:** `[~]` — Redo, Root-védelem és selection-kezelés PASS. A 10.0.2 teljes tesztkapujához a dirty state/revision ellenőrzés és a végső felhasználói visszaigazolás van hátra.
+
+**Következő egyetlen lépés:** dirty state / revision változás ellenőrzése törlés után.
 
 # 36 — TERVKARBANTARTÁS
 
