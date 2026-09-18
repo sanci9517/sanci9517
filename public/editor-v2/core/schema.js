@@ -104,6 +104,88 @@ const LEAF_TYPES = new Set([
   NODE_TYPES.SUBS
 ]);
 
+export const RICH_TEXT_SCHEMA_VERSION = 1;
+export const RICH_TEXT_TYPE = 'richtext-document';
+
+export const RICH_TEXT_BLOCK_TYPES = Object.freeze(new Set([
+  'paragraph', 'heading', 'quote', 'code', 'bulleted-list', 'numbered-list'
+]));
+
+export const RICH_TEXT_MARKS = Object.freeze(new Set([
+  'bold', 'italic', 'underline', 'strike', 'code'
+]));
+
+export function createEmptyRichText() {
+  return {
+    schemaVersion: RICH_TEXT_SCHEMA_VERSION,
+    type: RICH_TEXT_TYPE,
+    blocks: [{
+      type: 'paragraph',
+      children: [{ type: 'text', text: '', marks: [] }]
+    }]
+  };
+}
+
+export function normalizeRichText(value) {
+  if (!value || typeof value !== 'object') throw new Error('Rich Text document must be an object');
+  if (value.schemaVersion !== RICH_TEXT_SCHEMA_VERSION) throw new Error('Unsupported Rich Text schema version');
+  if (value.type !== RICH_TEXT_TYPE) throw new Error('Invalid Rich Text document type');
+  if (!Array.isArray(value.blocks) || value.blocks.length === 0) throw new Error('Rich Text blocks are required');
+
+  const blocks = value.blocks.map((block) => {
+    if (!block || typeof block !== 'object' || !RICH_TEXT_BLOCK_TYPES.has(block.type)) {
+      throw new Error('Invalid Rich Text block type');
+    }
+    if (block.type === 'heading') {
+      if (![1, 2, 3, 4, 5, 6].includes(block.level)) throw new Error('Heading level must be 1-6');
+    }
+    if (block.type === 'bulleted-list' || block.type === 'numbered-list') {
+      if (!Array.isArray(block.items) || block.items.length === 0) throw new Error('List items are required');
+      return {
+        type: block.type,
+        items: block.items.map((item) => normalizeRichTextInlineChildren(item?.children))
+      };
+    }
+    return {
+      type: block.type,
+      ...(block.type === 'heading' ? { level: block.level } : {}),
+      children: normalizeRichTextInlineChildren(block.children)
+    };
+  });
+
+  return {
+    schemaVersion: RICH_TEXT_SCHEMA_VERSION,
+    type: RICH_TEXT_TYPE,
+    blocks
+  };
+}
+
+function normalizeRichTextInlineChildren(children) {
+  if (!Array.isArray(children) || children.length === 0) {
+    return [{ type: 'text', text: '', marks: [] }];
+  }
+  return children.map((inline) => {
+    if (!inline || inline.type !== 'text' || typeof inline.text !== 'string') {
+      throw new Error('Invalid Rich Text inline node');
+    }
+    const marks = [...new Set(Array.isArray(inline.marks) ? inline.marks : [])];
+    if (marks.some((mark) => !RICH_TEXT_MARKS.has(mark))) throw new Error('Invalid Rich Text mark');
+    const result = { type: 'text', text: inline.text, marks };
+    if (inline.link != null) {
+      if (!inline.link || typeof inline.link !== 'object' || typeof inline.link.href !== 'string' || !inline.link.href.trim()) {
+        throw new Error('Invalid Rich Text link');
+      }
+      result.link = {
+        href: inline.link.href,
+        ...(inline.link.target ? { target: String(inline.link.target) } : {}),
+        ...(inline.link.rel ? { rel: String(inline.link.rel) } : {}),
+        ...(inline.link.title ? { title: String(inline.link.title) } : {})
+      };
+    }
+    return result;
+  });
+}
+
 export const DEFAULT_RESPONSIVE = Object.freeze({
   desktop: {},
   tablet: {},
