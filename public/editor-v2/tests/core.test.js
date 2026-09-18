@@ -7,6 +7,7 @@ import { createEditorState, activePage } from '../core/state.js';
 import { beginTransaction, commitTransaction, execute, executeBatch, rollbackTransaction } from '../core/commands.js';
 import { getProperty, listProperties, listPropertyGroups } from '../core/property-registry.js';
 import { hasResponsiveOverride, resolveResponsiveValue, setResponsiveValue } from '../core/responsive.js';
+import { isRichTextMarkActive, plainTextToRichText, toggleRichTextMark } from '../core/richtext-editor.js';
 
 test('new document is structurally valid', () => {
   const document = createDocument();
@@ -130,6 +131,22 @@ test('invalid Rich Text is rejected and the document rolls back exactly', () => 
   assert.deepEqual(state.document, before);
   assert.equal(state.history.past.length, historyBefore);
   assertValidEditorDocument(state.document);
+});
+
+
+test('Rich Text marks toggle on and off and report active state', () => {
+  const document = plainTextToRichText('Sanci9517');
+  const selected = toggleRichTextMark(document, 0, 10, 'bold');
+  assert.deepEqual(selected.blocks[0].children[0].marks, ['bold']);
+  assert.equal(isRichTextMarkActive(selected, 0, 10, 'bold'), true);
+
+  const deselected = toggleRichTextMark(selected, 0, 10, 'bold');
+  assert.deepEqual(deselected.blocks[0].children[0].marks, []);
+  assert.equal(isRichTextMarkActive(deselected, 0, 10, 'bold'), false);
+
+  const italic = toggleRichTextMark(deselected, 0, 10, 'italic');
+  assert.deepEqual(italic.blocks[0].children[0].marks, ['italic']);
+  assert.equal(isRichTextMarkActive(italic, 0, 10, 'italic'), true);
 });
 
 test('Rich Text Undo and Redo restore the exact structured document', () => {
