@@ -312,7 +312,7 @@ Minden mutáció validation + history + ahol szükséges audit + rollback kompat
 - [x] Canvas Engine render
 - [x] user browser test: **Működik**
 
-## 6.2 **AKTUÁLIS KÖVETKEZŐ PONT — Geometry Inspector presets**
+## 6.2 Geometry Inspector presets
 **Csak ezt a pontot dolgozzuk most.**
 
 Cél: a geometry kézi mezői mellett gyors, értelmes presetek legyenek, anélkül hogy más adatfolyam jönne létre.
@@ -361,14 +361,15 @@ Cél: a geometry kézi mezői mellett gyors, értelmes presetek legyenek, anélk
 10. invalid/edge case;
 11. user confirmation.
 
-**Ezt a pontot addig nem pipáljuk ki, amíg a felhasználó nem mondja: működik/jó.**
+**[x] User browser test: mind az 5 kötelező 6.2 teszt PASS; felhasználói visszaigazolás: „Mind az 5 jó”.**
 
 ---
 
 # 07 — EDITOR SHELL ÉS CANVAS UX
 
-## 7.1 Shell
-- [ ] top toolbar
+## 7.1 **AKTUÁLIS KÖVETKEZŐ PONT — Editor Shell**
+- [~] top toolbar
+
 - [ ] Elements panel
 - [ ] Layers/Navigator
 - [ ] Canvas
@@ -377,7 +378,7 @@ Cél: a geometry kézi mezői mellett gyors, értelmes presetek legyenek, anélk
 - [ ] panel open/close
 - [ ] collapse
 - [ ] panel width min/max
-- [ ] state persistence
+- [x] state persistence — UI-only localStorage; panel open/close, left tab és dock width visszaáll refresh után; user test: „Működik”
 - [ ] mobile editor UX
 - [ ] egységes dark Sanci design
 
@@ -1267,24 +1268,29 @@ Minden jelentős editor/platform bővítés előtt ellenőrizni kell:
 - [x] Geometry Inspector X/Y/width/height/position kézi szerkesztése.
 - [x] Geometry változások Command API → Page Model → Canvas Engine lánca.
 - [x] Geometry browser teszt: felhasználó visszajelzése: **„Működik”**.
+- [x] 6.2 Geometry Inspector presets: mind az 5 felhasználói teszt PASS.
+- [x] 7.1 Shell state persistence: felhasználói teszt PASS.
 
 ## Jelenlegi egyetlen aktív pont
-**6.2 Geometry Inspector presets.**
+**7.1 Editor Shell.**
+
+### 7.1 eddig lezárt alfeladat
+- [x] Shell UI state persistence — panel open/close, bal oldali tab és dock szélességek localStorage-ból történő visszaállítása refresh után.
+- Commit: `b023382e5893b03d1b79f4a37e78139a04bea195`
+- User browser confirmation: **„Működik”**.
 
 ### Következő konkrét munkamenet
-1. aktuális `app.js`, `property-registry.js`, `commands.js`, `responsive.js`, `canvas-engine.js`, `schema.js` teljes audit;
-2. csak a preset funkcióhoz szükséges minimális módosítás;
-3. commit a `v2/foundation` branchre;
-4. build/deploy;
-5. desktop/tablet/mobile preset teszt;
-6. manual ↔ preset teszt;
-7. reset/inherit teszt;
-8. undo/redo teszt;
-9. reload teszt;
-10. user confirmation;
-11. csak akkor `[x]`, majd a következő MASTER pont kiválasztása.
+1. aktuális `index.html`, `editor.css`, `shell.js` teljes audit;
+2. a 7.1 következő egyetlen alfeladatának kiválasztása a tényleges jelenlegi shell alapján;
+3. minimális módosítás;
+4. érintett fájl visszaolvasása;
+5. GitHub commit és branch/HEAD ellenőrzés;
+6. Cloudflare build/deploy;
+7. browser teszt desktop/tablet/mobile ahol releváns;
+8. user confirmation;
+9. csak sikeres visszaigazolás után MASTER frissítése és a következő 7.1 alfeladat kiválasztása.
 
-**Nem ugrunk át más pontra addig, amíg a 6.2 pont nincs lezárva.**
+**Nem lépünk 7.2-re, amíg a 7.1 shell nincs végig lezárva és tesztelve.**
 
 ## Folytatási szabály új beszélgetésben
 A következő beszélgetésben elég ezt mondani:
