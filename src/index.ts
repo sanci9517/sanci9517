@@ -65,5 +65,5 @@ export default {
     return injectSystemRuntime(asset);
   }
 };
-function assetRequest(pathname: string, request: Request): Request { const url = new URL(pathname, request.url); return new Request(url.toString(), { method: "GET", headers: request.headers }); }
+function assetRequest(pathname: string, request: Request): Request { const url = new URL(pathname, request.url); url.search = new URL(request.url).search; return new Request(url.toString(), { method: "GET", headers: request.headers }); }
 async function injectSystemRuntime(response: Response): Promise<Response> { const type=response.headers.get("content-type")||""; if(!type.includes("text/html"))return response; const html=await response.text(); if(html.includes('/assets/system-page-runtime.js'))return new Response(html,{status:response.status,headers:response.headers}); const out=html.replace('</body>','<script src="/assets/system-page-runtime.js"></script></body>'); const headers=new Headers(response.headers); headers.delete('content-length'); return new Response(out,{status:response.status,statusText:response.statusText,headers}); }
