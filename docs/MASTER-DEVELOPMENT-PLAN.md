@@ -1466,6 +1466,8 @@ Még nincs felhasználói/runtime teszt, ezért a pont nem [x].
 
 **Következő egyetlen aktív lépés:** 10.1.2.2 runtime teszt — érvényes Rich Text modell létrehozása/módosítása, invalid modell elutasítása, rollback és Undo/Redo ellenőrzése. UI-t továbbra sem építünk.
 
+**Frissen feltárt editor library/add problémagyanú:** a jelenlegi `renderPalette()` mindig a kijelölt node-ot használja új elem szülőjeként. Leaf elem kijelölésekor ezért az új elem hozzáadása `Invalid parent for element` hibával leállhat. Emellett az Elements listában vannak olyan bejegyzések, amelyekhez jelenleg nincs `NODE_TYPES` érték (ezek `undefined` típussal nem adhatók hozzá). Ezt a hibát a Rich Text runtime teszt előtt külön javítási lépésként kell kezelni, mert közvetlenül érinti az Elements panel alapműködését.
+
 **Audit/specifikáció dátuma:** 2026-09-18.
 # 36 — TERVKARBANTARTÁS
 
