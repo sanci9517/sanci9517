@@ -1742,7 +1742,7 @@ Implementációs commitok:
 Statikus visszaolvasás: PASS.
 Még nincs felhasználói/runtime teszt, ezért a pont nem [x].
 
-**10.1.2.2 runtime/integrációs teszt — [!] AUTOMATIKUS TESZT HIBA, JAVÍTÁS FOLYAMATBAN**
+**10.1.2.2 runtime/integrációs teszt — [~] AUTOMATIKUS CORE TESZT JAVÍTVA, FELHASZNÁLÓI TESZT FOLYAMATBAN**
 
 Automatizált core tesztek hozzáadva:
 - Rich Text canonical node létrehozása és valid strukturált módosítása;
@@ -1770,7 +1770,7 @@ Automatikus GitHub Actions teszt futott a 1bc1c2715f0c6e9f569c3b7d47b93f5e49cecc
 
 A Node.js 20 deprecation warning nem okozta a hibát; a futás Node 24.20.0-val történt. Cloudflare Workers build ugyanazon előző commiton PASS volt.
 
-**Egyetlen aktuális folytatási pont:** várjuk a javító commit GitHub Actions `editor-core` futásának eredményét. Sikeres futás nélkül sem runtime felhasználói tesztet, sem [x] lezárást nem végzünk.
+**Egyetlen aktuális folytatási pont:** az automatikus core teszt javítása felhasználói visszaigazolással elfogadva. Következőként kizárólag az Editorban a Rich Text elem létrehozását teszteljük. A teljes 10.1.2.2 lezárás csak a további runtime/integrációs tesztek és a teljes felhasználói visszaigazolás után történhet.
 
 
 **UI-t még nem építünk. Más fejlesztési pontra addig nem lépünk tovább.**
