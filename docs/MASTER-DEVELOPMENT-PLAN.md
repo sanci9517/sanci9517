@@ -7,7 +7,7 @@
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-> **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd az itt jelölt **AKTUÁLIS KÖVETKEZŐ PONTBÓL** folytatni.
+> **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd kizárólag a 35. fejezetben kijelölt **EGYETLEN AKTÍV PONTBÓL** folytatni. Más fejezet `[ ]` pontja nem jelent aktuális folytatási pontot.
 
 ---
 
@@ -367,20 +367,21 @@ Cél: a geometry kézi mezői mellett gyors, értelmes presetek legyenek, anélk
 
 # 07 — EDITOR SHELL ÉS CANVAS UX
 
-## 7.1 **AKTUÁLIS KÖVETKEZŐ PONT — Editor Shell**
+## 7.1 Editor Shell — későbbi tesztkapuk, jelenleg NEM aktív
+A 7.1 pont nem az aktuális folytatási pont. Az itt maradt feladatok későbbi tesztkapuk.
 - [~] top toolbar
 
-- [ ] Elements panel
-- [ ] Layers/Navigator
-- [ ] Canvas
-- [ ] Inspector
-- [ ] status/save bar
-- [ ] panel open/close
-- [ ] collapse
-- [ ] panel width min/max
+- [x] Elements panel — felhasználói tesztekkel lezárva
+- [ ] Layers/Navigator — későbbi
+- [ ] Canvas — későbbi
+- [ ] Inspector — későbbi
+- [ ] status/save bar — későbbi
+- [x] panel open/close — felhasználói teszttel lezárva
+- [x] collapse — felhasználói teszttel lezárva
+- [x] panel width min/max — felhasználói teszttel lezárva
 - [x] state persistence — UI-only localStorage; panel open/close, left tab és dock width visszaáll refresh után; user test: „Működik”
-- [ ] mobile editor UX
-- [ ] egységes dark Sanci design
+- [ ] mobile editor UX — későbbi
+- [ ] egységes dark Sanci design — későbbi
 
 ## 7.2 Toolbar
 - [ ] page name
@@ -550,7 +551,7 @@ Cél: a geometry kézi mezői mellett gyors, értelmes presetek legyenek, anélk
 
 A Geometry pont után az Inspector fokozatosan, szekciónként készül.
 
-## 10.0 Inspector kapcsolat — aktuális tesztállapot
+## 10.0 Inspector kapcsolat — történeti, lezárt tesztállapot
 - [x] kijelölt elem adatai megjelennek az Inspectorban
 - [x] szövegtartalom módosítása → Canvas frissül
 - [x] X/Y pozíció módosítása
@@ -1311,10 +1312,13 @@ Minden jelentős editor/platform bővítés előtt ellenőrizni kell:
 - [x] Panel width min/max: felhasználói teszt PASS.
 - [x] Inspector kapcsolat 8.1–8.6: felhasználói tesztek PASS.
 
-## Jelenlegi egyetlen aktív pont
+## JELENLEGI EGYETLEN AKTÍV PONT — EZT KELL FOLYTATNI
 **10.0.1 Inspector törlés UI.**
 
-A 7.1 Editor Shell további pontjai későbbi tesztkapuk; a jelenlegi konkrét blokkoló feladat az Inspector törlés műveletének UI-ból történő elérhetővé tétele.
+**Új beszélgetésben ez az egyetlen folytatási pont.** A 7.1, 7.2, 7.3 és minden más fejezet `[ ]` pontja jelenleg várólistán van; azokból nem szabad folytatni, amíg a 10.0.1 nincs lezárva.
+
+### Új beszélgetés folytatási parancsa
+Ha a felhasználó azt mondja: **„Folytassuk a Sanci9517 MASTER tervet.”**, akkor ezt a MASTER fájlt kell alapul venni, a 35. fejezetet kell ellenőrizni, és kizárólag a **10.0.1 Inspector törlés UI** pontot kell folytatni. A 7.1 korábbi/ütemezett pontjaihoz nem szabad visszatérni.
 
 ### Aktuális folytatási állapot
 1. Teljes érintett Inspector/app/command kód audit.
