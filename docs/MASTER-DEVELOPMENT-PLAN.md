@@ -1499,6 +1499,41 @@ Tesztelendő sorrend:
 **Más fejlesztési pontra addig nem lépünk tovább, amíg ez a tesztkapu nincs lezárva.**
 
 
+### 9.1.2 — Diagnostics műveleti eredményellenőrző réteg — ÚJ KÖVETKEZŐ PONT
+
+Cél: a Diagnostics ne csak tényleges JavaScript/Command/API/UI hibákat jelezzen, hanem az olyan „csendes” hibákat is, amikor egy felhasználói művelet lefutónak tűnik, de a várt eredmény nem jön létre.
+
+Alapelv:
+- a Diagnostics továbbra is csak megfigyelő/ellenőrző réteg;
+- nem hoz létre második state-, Page Model-, selection-, history- vagy command-rendszert;
+- az ellenőrzés a meglévő Command → Validation → Page Model → History → Canvas → Persistence lánc eredményét vizsgálja;
+- csak olyan állapotot tekintünk hibának, amelyhez előre meghatározható elvárt eredmény tartozik;
+- a hibák egyedi `SANCI-VERIFY-E...` kódot kapnak.
+
+Első célzott művelet: **Elem hozzáadása**.
+Ellenőrizendő:
+1. a művelet elindult;
+2. Command sikeresen lefutott;
+3. új node ténylegesen létrejött;
+4. a node bekerült a Page Modelbe;
+5. a kijelölés szükség esetén frissült;
+6. a Canvason megjelent;
+7. hiba esetén a Diagnostics konkrét hibakódot és ellenőrzési pontot ad.
+
+Később ugyanez a verification réteg használható törlésre, mozgatásra, méretezésre, tartalommódosításra, Undo/Redo-ra, mentésre, betöltésre, publikálásra és egyéb műveletekre.
+
+Kötelező tesztkapu:
+- normál elem hozzáadása PASS;
+- Rich Text hozzáadása PASS;
+- szándékosan sikertelen/hiányos műveleti eredmény felismerése PASS;
+- hibakód és technikai részletek PASS;
+- meglévő Diagnostics regresszió PASS;
+- user confirmation.
+
+**Állapot:** [~] tervezve, implementáció előtt.
+
+**E pont lezárása után kötelező visszatérési pont:** **10.1.2.2 — Rich Text strukturált Command + Validation runtime/integrációs teszt**, pontosan onnan folytatva, ahol a Diagnostics 9.1.1 lezárásakor abbahagytuk. A MASTER-ben ez marad a 9.1.2 utáni következő egyetlen aktív pont.
+
 ### 9.1.1 — Editor Diagnostics / automatikus hibakereső — LEZÁRVA
 A felhasználó kérésére elkészült az Editor v2 első automatikus hibakereső rendszere.
 
