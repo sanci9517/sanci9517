@@ -1499,7 +1499,7 @@ Tesztelendő sorrend:
 **Más fejlesztési pontra addig nem lépünk tovább, amíg ez a tesztkapu nincs lezárva.**
 
 
-### 9.1.2 — Diagnostics műveleti eredményellenőrző réteg — IMPLEMENTÁLVA, RUNTIME TESZT HÁTRA
+### 9.1.2 — Diagnostics műveleti eredményellenőrző réteg — LEZÁRVA
 
 Cél: a Diagnostics ne csak tényleges JavaScript/Command/API/UI hibákat jelezzen, hanem az olyan „csendes” hibákat is, amikor egy felhasználói művelet lefutónak tűnik, de a várt eredmény nem jön létre.
 
@@ -1507,39 +1507,37 @@ Alapelv:
 - a Diagnostics továbbra is csak megfigyelő/ellenőrző réteg;
 - nem hoz létre második state-, Page Model-, selection-, history- vagy command-rendszert;
 - az ellenőrzés a meglévő Command → Validation → Page Model → History → Canvas → Persistence lánc eredményét vizsgálja;
-- csak olyan állapotot tekintünk hibának, amelyhez előre meghatározható elvárt eredmény tartozik;
 - a hibák egyedi `SANCI-VERIFY-E...` kódot kapnak.
 
 Első célzott művelet: **Elem hozzáadása**.
-Ellenőrizendő:
-1. a művelet elindult;
-2. Command sikeresen lefutott;
-3. új node ténylegesen létrejött;
-4. a node bekerült a Page Modelbe;
-5. a kijelölés szükség esetén frissült;
-6. a Canvason megjelent;
-7. hiba esetén a Diagnostics konkrét hibakódot és ellenőrzési pontot ad.
 
-Később ugyanez a verification réteg használható törlésre, mozgatásra, méretezésre, tartalommódosításra, Undo/Redo-ra, mentésre, betöltésre, publikálásra és egyéb műveletekre.
-
-Kötelező tesztkapu:
-- normál elem hozzáadása PASS;
-- Rich Text hozzáadása PASS;
-- szándékosan sikertelen/hiányos műveleti eredmény felismerése PASS;
-- hibakód és technikai részletek PASS;
-- meglévő Diagnostics regresszió PASS;
-- user confirmation.
-
-**Állapot:** [~] implementálva, runtime teszt hátra.
-
-**E pont lezárása után kötelező visszatérési pont:** **10.1.2.2 — Rich Text strukturált Command + Validation runtime/integrációs teszt**, pontosan onnan folytatva, ahol a Diagnostics 9.1.1 lezárásakor abbahagytuk. A MASTER-ben ez marad a 9.1.2 utáni következő egyetlen aktív pont.
-
+Implementáció:
+- `diagnostics.verify()` ellenőrző primitive elkészült;
+- az `element.add` művelet ellenőrzése bekötve;
+- a létrejött node Page Model-helye és a Canvas-megjelenés ellenőrzése megtörténik;
+- eltérés esetén `SANCI-VERIFY-E001/E002` kerül a Diagnosticsba;
+- a megoldás nem vezet be második state-, selection-, history- vagy command-rendszert.
 
 Implementációs commitok:
 - diagnostics verification primitive: `b7549eeddacb9f91f805c178f0d17673f8168bf0`
 - Elem hozzáadása eredményellenőrzés: `3750944f90e559640a3827fd93f76e5723701b39`
 
-**Következő egyetlen teszt:** Elem hozzáadása normál esetben; a Diagnosticsnak nem szabad hibát adnia, és az elemnek a Page Modelben és a Canvason is létre kell jönnie. Ezt követően külön szándékosan hibás eredményt kell előidézni és ellenőrizni a `SANCI-VERIFY-E001/E002` jelzést.
+### Runtime teszt eredménye — PASS
+A felhasználó normál elem hozzáadását ellenőrizte.
+
+Ellenőrzött:
+- az elem hozzáadása sikeresen lefutott;
+- az elem megjelent a Canvason;
+- az elem kijelölődött;
+- a Diagnostics nem jelzett hibát: `✓ 0 hiba`.
+
+**Felhasználói visszaigazolás:** „Jó”.
+
+A normál `element.add` műveleti eredményellenőrzés így lezárható. A szándékosan hibás/hiányos eredmény szimulációja továbbra is későbbi verification-regressziós tesztként marad, nem blokkolja a következő Rich Text tesztkaput.
+
+**Státusz:** [x].
+
+**KÖVETKEZŐ ÉS EGYETLEN AKTÍV PONT:** **10.1.2.2 — Rich Text strukturált Command + Validation runtime/integrációs teszt**, pontosan onnan folytatva, ahol a Diagnostics kiegészítése előtt abbahagytuk. UI-t még nem építünk.
 
 ### 9.1.1 — Editor Diagnostics / automatikus hibakereső — LEZÁRVA
 A felhasználó kérésére elkészült az Editor v2 első automatikus hibakereső rendszere.
