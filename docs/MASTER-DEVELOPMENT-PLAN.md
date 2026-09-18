@@ -1328,176 +1328,42 @@ Minden jelentős editor/platform bővítés előtt ellenőrizni kell:
 - [x] Inspector kapcsolat 8.1–8.6: felhasználói tesztek PASS.
 
 ## JELENLEGI EGYETLEN AKTÍV PONT — EZT KELL FOLYTATNI
-**10.1 Inspector — Content rendszer teljes kód- és adatfolyam-auditja.**
+**10.1.2 Inspector — Rich Text Content rendszer auditja és specifikációja.**
 
-**2026-09-18 — 10.1 Content audit eredménye:**
-- public/editor-v2/app.js: a Content tab jelenleg két általános mezőt ad: Szöveg és Link / URL; mindkettő kanonikus element.update commandot használ.
-- public/editor-v2/core/commands.js: element.update validált history/revision/dirty láncon működik; külön element.content.set command is létezik, de a jelenlegi Content UI ezt nem használja.
-- Page Model: props és dataBindings rendelkezésre állnak; schemaVersion 1 validáció megvan.
-- Canvas: a heading/text/richtext/button/link típusok jelenlegi renderje a props.text / props.content értéket jeleníti meg; a Content módosítás visszahat a Canvasra.
-- Persistence: az editor teljes canonical documentet küld mentéskor, ezért a Content módosítás ugyanazon save/reload láncon marad.
-- Külön ui/inspector.js modul nincs; az aktuális Inspector runtime az app.js-ben van.
-- Hiányzik: típusfüggő Content UI, valódi Rich Text, strukturált link-kezelés, média kiválasztás, alt/title mezők és későbbi dynamic content binding UI.
+### 10.1.1 — Plain Text Content UI — LEZÁRVA
+**Felhasználói teszt eredménye:** PASS — a felhasználó visszaigazolta: **„Működik”**.
 
-**Audit eredmény:** PASS. Architektúrai második state/command rendszer nem szükséges; a következő módosítás a meglévő Page Model + Command + Canvas + Persistence láncot bővíti.
+Ellenőrzött adatfolyam:
+1. `text`/`heading` elem kiválasztása;
+2. Inspector → Content → Szöveg módosítása;
+3. Canvas azonnali frissülése;
+4. Undo visszaállítja az előző értéket;
+5. Redo visszaállítja az új értéket;
+6. mentés/reload után a módosított tartalom megmarad.
 
-**Fejlesztés elkészült:** 10.1.1 első implementáció. A Content tab típusfüggően jeleníti meg a szövegmezőt; heading/text/richtext/button/link az `element.content.set` canonical commandot használja, a command pedig a megfelelő `props.text` + `props.content` értékeket normalizálja. Button/link esetén a Link / URL mező továbbra is külön marad.
+**Kódállapot:**
+- `public/editor-v2/app.js`: típusfüggő Content UI;
+- `public/editor-v2/core/commands.js`: canonical `element.content.set`, amely text típusoknál `props.text` + `props.content` értékeket normalizál;
+- nincs második state/command rendszer.
 
-**Kódváltozások:** `public/editor-v2/app.js`, `public/editor-v2/core/commands.js`.
-**Kód-audit:** PASS — nincs új state/command rendszer; a meglévő Command → Page Model → History → Canvas → Persistence lánc maradt.
-**GitHub:** app commit `9a77a39ff3570fec213e1ea3a38488c39091a633`; command commit `2bcfca1bafad2e184bc1f790a7377d7e7601ecd5`.
+**GitHub:**
+- app: `9a77a39ff3570fec213e1ea3a38488c39091a633`
+- command: `2bcfca1bafad2e184bc1f790a7377d7e7601ecd5`
 
-**Állapot:** `[~]` — user runtime teszt még szükséges.
+**Állapot:** `[x]` — 10.1.1 teljesen tesztelve és a felhasználó által visszaigazolva.
 
-**Következő egyetlen lépés:** 10.1.1 felhasználói teszt: egy `text` vagy `heading` elem Szöveg mezőjének módosítása → Canvas ellenőrzés → Undo → Redo → mentés/reload ellenőrzés.
+### 10.1.2 — Rich Text Content rendszer audit + specifikáció
+**Állapot:** `[~]` — ez az egyetlen aktuális fejlesztési lépés.
 
-A 10.0.2 Inspector törlés + lock tesztkapu lezárult [x], ezért a következő aktív pont a 10.1 Content. Első lépés kizárólag audit: az aktuális Inspector content-kezelés, Page Model, Command API, Canvas render, history és persistence kapcsolatának ellenőrzése. Audit előtt nem módosítunk kódot.
+Cél:
+- megállapítani, hogy a jelenlegi `richtext` Page Model, renderer és Command lánc milyen formátumot támogat;
+- meghatározni a valódi Rich Text szerkesztés kanonikus adatmodelljét;
+- biztosítani, hogy a Rich Text ugyanazon `Command → Validation → Page Model → History → Canvas → Persistence` láncon működjön;
+- szükség esetén előbb a MASTER-ben rögzíteni az adatmodell/architektúra döntést, és csak utána implementálni.
 
-**Új beszélgetésben ez az egyetlen folytatási pont.** A 7.1, 7.2, 7.3 és minden más fejezet `[ ]` pontja jelenleg várólistán van; azokból nem szabad folytatni, amíg a 10.0.2 teljes tesztkapuja nincs lezárva.
+**Következő egyetlen lépés:** teljes érintett kód- és adatfolyam-audit kizárólag a Rich Texthez: `app.js`, `commands.js`, `schema.js`, `validation.js`, Canvas/render mapping és persistence kapcsolat. Audit előtt nem módosítunk kódot.
 
-### 2026-09-18 — mobil Editor Shell újratervezés — v5 irány
-A v3/v4 felhasználói ellenőrzés alapján további UX-finomság maradt: a lebegő nézet- és zoomvezérlők továbbra is rátakartak a Canvas tartalmára, különösen az oldal nevére; a Publikálás mobilon nem volt látható. A teljes mobil shellt ezért hierarchikus, normál elrendezésű vezérlősávokra rendeztük, nem további lebegő rétegekre.
-
-Új elv:
-- a Canvas fölötti vezérlők nem takarhatják a szerkesztett oldalt;
-- a mobil vezérlés legyen három jól elkülönülő szint: fejléc, műveleti sáv, Canvas-eszközsáv;
-- az oldal neve és a felső azonosító mindig szabadon látható marad;
-- a mobil fejléc két soros: 1. sor márka + oldalválasztó, 2. sor minden fő művelet;
-- a Publikálás mobilon rövid `P` gombként jelenik meg;
-- a Mentés, Előnézet, Publikálás és Inspector mobilon is közvetlenül elérhető;
-- Desktop / Tablet / Mobil nézetválasztó normál toolbar-rész, nem lebeg a Canvas fölött;
-- Zoom / Fit normál toolbar-rész, nem lebeg a Canvas fölött;
-- a lebegő drawer/overlay csak a bal oldali panelhez és Inspectorhoz marad;
-- a Canvas kapja a fennmaradó helyet, és minden vezérlő a saját helyén marad;
-- a Canvas eszközsávban külön sor: Kijelölés/Nézet → Desktop/Tablet/Mobil → Fit/Zoom;
-- desktop shell logikája nem változik.
-
-Módosított fájlok:
-- `public/editor-v2/mobile-editor.css`
-- `public/editor-v2/index.html`
-
-GitHub commitok:
-- `36a3ba7f30b8350578f10cf5b090786723391680`
-- `569348781423169c18cb52c1121f0d5a21fbbdbc`
-- `2d73f0ebe4523c79dd45c152340fad74cf1b809b`
-- `8bc8c372da9f149ff4c74df58be6b7ab3dcaed95`
-- `3114f233557d9fe0cbb0b47c8f90535a4f5e0459`
-
-**A v5 kód elkészült, de felhasználói újrateszt még nincs.**
-
-### AKTUÁLIS EGYETLEN FOLYTATÁSI LÉPÉS — Mobile Shell v6 lezárás
-
-A v5 felhasználói visszajelzés szerint a gombok elrendezése továbbra sem professzionális érzetű, és panelnyitáskor a fehér Canvas vizuálisan eltűnik. A mobil shellt ezért újra kellett gondolni a professzionális editorok mintájára.
-
-**v6 döntések:**
-- canvas-first elrendezés: a vászon marad a fő felület;
-- kompakt, egy soros felső fejléc: menü + SANCI9517 + oldalválasztó + fő műveletek;
-- mobilon a Publikálás rövid `P` gomb;
-- a Canvas eszközsáv egyetlen kompakt sorban marad a Canvas előtt;
-- a bal és jobb panelek sheet/drawer jellegűek, nem teljes képernyős oldalak;
-- panelnyitáskor a Canvas továbbra is látható marad, csak enyhén sötétedik a panelen kívüli rész;
-- nem használunk lebegő vezérlőt a fehér szerkesztett oldal fölött.
-
-**Referenciaelemzés:** Wix a mobil szerkesztőben bal oldali menüt/paneleket és eszközsávot használ, míg Framer a Canvas-központú felületet és külön canvas vezérlőket alkalmaz. A közös tanulság: a Canvas az elsődleges munkaterület, a panelek és eszközök pedig köré szerveződnek. citeturn0search0turn0search4turn0search13
-
-**Felhasználói teszt eredménye:**
-A felhasználó megerősítette, hogy a v6 kinézete megfelelő, és minden ellenőrzött funkció működik. A Canvas látható marad panelnyitáskor, a mobil vezérlés rendezett, a `P` publikálás gomb megfelelő.
-
-**Felhasználói teszt kötelező pontjai:**
-1. Felső fejléc egy sorban, nem zsúfolt.
-2. Az oldalválasztó egyértelműen látszik.
-3. Undo/Redo, Preview, Save, `P`, Inspector elérhető.
-4. Canvas eszközsáv kompakt és nem takarja a fehér oldalt.
-5. Bal menü megnyitásakor a fehér Canvas látható marad mellette/mögötte.
-6. Inspector megnyitásakor ugyanígy a Canvas nem tűnik el.
-7. A panel nem foglalja el indokolatlanul a teljes kijelzőt.
-8. Escape/backdrop bezárás működik.
-9. Desktop működése változatlan.
-10. Ha bármelyik pont nem megfelelő, nem lépünk tovább.
-
-**Állapot:** v6 `[x]` — felhasználó által ellenőrizve.
-
-GitHub commitok: `13c27d4608847b52cee0c6da007bb40f88d0c808`, `5641b6e0c23a79bca63b5711aae4f28201e2eaa9`.
-
-### 2026-09-18 — 10.0.2 kód- és adatfolyam-audit
-A következő felhasználói teszt előtt teljes érintett kód-audit megtörtént: `public/editor-v2/core/commands.js`, `public/editor-v2/app.js`, `public/editor-v2/ui/shell.js`, valamint az aktuális `editor.css` állapot ellenőrizve.
-
-Audit eredmény:
-- `element.delete` root-védelem a command rétegben megvan;
-- locked elemnél a központi `requireNode` blokkolja a törlést;
-- törlés után a descendant node-ok eltávolítása és selection-tisztítás megvan;
-- undo/redo ugyanazon history-láncon működik;
-- revision növelés és dirty state törléskor megtörténik;
-- Inspector törlés közvetlenül a kanonikus `element.delete` commandot hívja;
-- nincs külön második delete/state rendszer az Inspectorban;
-- a v6 mobil shell működését érintő kódot ebben a lépésben nem módosítottuk.
-
-**Tesztállapot:** kód-audit PASS. Felhasználói teszt: 1–7 közül minden végrehajtható pont PASS; a Locked elem törlése nem tesztelhető, mert az aktuális Inspector UI-ban nincs Lock/Locked vezérlő vagy elérhető lock állapotváltás. A command réteg lock-védelme kódban létezik, de UI-ból jelenleg nem aktiválható.
-**Aktuális egyetlen folytatási pont:** az új Inspector `Zárolt elem` vezérlő felhasználói tesztje, majd a 10.0.2 teljes tesztkapu lezárása.
-
-### 10.0.2 edge-case tesztek továbbra is kötelezőek
-1. Redo teszt: törölt elem visszaállítása után Redo újra törölje.
-2. Root törlésének védelme.
-3. Locked elem törlésének védelme.
-4. Selection állapot ellenőrzése törlés után.
-5. Dirty state/revision ellenőrzése, ha az adott runtime ezt már megjeleníti.
-6. Felhasználói visszaigazolás.
-7. Csak a teljes tesztkapu sikeres felhasználói visszaigazolása után jelölhető 10.0.2 `[x]`.
-
-**A fejlesztés nem lép tovább a következő aktív pontra sikertelen vagy részleges teszt esetén.**
-
-
-### 2026-09-18 — Inspector Lock UI + Layers zárolt állapot vizuális jelzése
-A felhasználói ellenőrzés szerint a zárolás funkcionálisan működik, de a korábbi Inspector vezérlő vizuális kialakítása nem volt megfelelő, és a Rétegek panelben nem volt látható a zárolt állapot.
-
-Módosítások:
-- public/editor-v2/app.js: az Inspector Zárolt elem vezérlője megmaradt a kanonikus element.lock.set commandon; a Rétegek sorai most locked állapotot kapnak és zárolt elemnél látható 🔒 jelzést jelenítenek meg.
-- public/editor-v2/editor.css: az Inspector zárolásvezérlő kapott külön, rendezett toggle-megjelenést; a zárolt layer sor és lakat jelzése vizuálisan elkülönül.
-
-GitHub commitok:
-- 7ff126ed363fd724c00d879874639d9e107d5b28 — Layers lock state
-- 5fc948a65c3c3c28ed8e641bf53f7be01fe75e4e — Inspector lock styling
-- 3ceb167113ebf42c55601d51ac3bd4145edf9543 — locked layer emphasis
-- bd0344d44d50b6bbdcbffdda0a3ddc8075ca21f7 — locked layer CSS emphasis
-
-**Állapot:** [~] — kód elkészült, de a vizuális és működési felhasználói újrateszt még szükséges. A 10.0.2 tesztkapu továbbra sem zárható le.
-
-**Következő egyetlen lépés:** a felhasználó ellenőrizze az új Inspector zárolás-megjelenést és a Rétegek panelben a 🔒 jelzést; ellenőrizze továbbá, hogy zárolt elem nem módosítható/törölhető, feloldás után pedig törölhető.
-
-
-### 2026-09-18 — Locked layer ikon finomítás
-A Rétegek panel zárolt állapotának jelzése módosítva lett egyszerű lakat ikonra (`🔐`).
-
-GitHub commit: `89e7e632af5f444490c661c8617fa1a9d9934383`.
-
-**Felhasználói visszajelzés:** a lakat ikon használatát a felhasználó jóváhagyta ("igen"). A vizuális irány elfogadott, ezért a következő ellenőrzés már a teljes lock edge-case működés.
-
-**Állapot:** `[~]` — a 10.0.2 tesztkapu még nincs lezárva; a locked/unlocked működési teszt és a teljes edge-case visszaigazolás hátravan.
-
-**Felhasználói teszt eredménye:** a felhasználó visszaigazolta: **„Működik”**. A zárolt állapot, a Layers lakatjelzése, a zárolt elem védelme, valamint a feloldás utáni működés rendben van.
-
-**Állapot:** `[~]` — a lock működési rész PASS, de a 10.0.2 teljes tesztkapuja még nem zárható le; a Redo, Root-védelem, selection/dirty-revision és végső felhasználói visszaigazolás még hátravan.
-
-**Felhasználói teszt eredménye:** a felhasználó visszaigazolta: **„Működik”**. A törlés → Undo → Redo teljes history-lánc PASS.
-
-**Állapot:** `[~]` — a Redo edge-case PASS; a 10.0.2 teljes tesztkapujához a Root törlésének védelme, selection/dirty-revision ellenőrzés és végső felhasználói visszaigazolás még hátravan.
-
-**Felhasználói teszt eredménye:** a Root elem törlésének védelme **PASS**. A Root nem törölhető.
-
-**Állapot:** `[~]` — a Redo és Root-védelem PASS. A 10.0.2 teljes tesztkapujához a selection állapot, dirty/revision ellenőrzés (ha runtime-ban látható), majd a végső felhasználói visszaigazolás van hátra.
-
-**Felhasználói teszt eredménye:** törölt elem utáni selection állapot **PASS**. A törölt elem nem marad kijelölve/árva Inspector-állapotban, Undo után visszaállítható és újra kijelölhető.
-
-**Állapot:** `[~]` — Redo, Root-védelem és selection-kezelés PASS. A 10.0.2 teljes tesztkapujához a dirty state/revision ellenőrzés és a végső felhasználói visszaigazolás van hátra.
-
-**Felhasználói teszt eredménye:** dirty state / revision változás **PASS**. A törlés módosított állapotot eredményez, az állapot Undo/Redo közben is következetes.
-
-**Állapot:** `[x]` — 10.0.2 teljesen tesztelve és a felhasználó által visszaigazolva. Inspector törlés, Undo/Redo, Root-védelem, lock-védelem, Layers lock-jelzés, selection-kezelés és dirty/revision működés PASS.
-
-**Lezárás:** a 10.0.2 tesztkapu lezárva.
-
-**Következő egyetlen lépés:** a MASTER 35. fejezetében megadott következő aktív pont folytatása; új funkciót csak az aktuális pont teljes auditja után kezdünk.
-
+**10.1.1 lezárásának dátuma:** 2026-09-18.
 # 36 — TERVKARBANTARTÁS
 
 - Ez az egyetlen aktív terv.
