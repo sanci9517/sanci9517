@@ -55,12 +55,14 @@ function copy(){
 }
 function init(){
   const root=document.createElement('div');
-  root.innerHTML='<button id="diagnosticsBadge" class="diagnostics-badge" type="button" title="Editor hibakereső">✓ 0 hiba</button><aside id="diagnosticsPanel" class="diagnostics-panel" hidden><header><div><strong>Editor hibakereső</strong><small>Automatikus hibajelentés</small></div><div class="diagnostics-actions"><button id="diagnosticsCopy" type="button">Másolás</button><button id="diagnosticsClear" type="button">Törlés</button><button id="diagnosticsClose" type="button" aria-label="Bezárás">×</button></div></header><div id="diagnosticsList" class="diagnostics-list"></div></aside>';
+  const testMode=new URLSearchParams(location.search).get('diagnosticsTest')==='1';
+  root.innerHTML='<button id="diagnosticsBadge" class="diagnostics-badge" type="button" title="Editor hibakereső">✓ 0 hiba</button><aside id="diagnosticsPanel" class="diagnostics-panel" hidden><header><div><strong>Editor hibakereső</strong><small>Automatikus hibajelentés</small></div><div class="diagnostics-actions">'+(testMode?'<button id="diagnosticsTestError" type="button">Teszt hiba</button>':'')+'<button id="diagnosticsCopy" type="button">Másolás</button><button id="diagnosticsClear" type="button">Törlés</button><button id="diagnosticsClose" type="button" aria-label="Bezárás">×</button></div></header><div id="diagnosticsList" class="diagnostics-list"></div></aside>';
   document.body.append(...root.children);
   document.querySelector('#diagnosticsBadge').onclick=open;
   document.querySelector('#diagnosticsClose').onclick=close;
   document.querySelector('#diagnosticsClear').onclick=clear;
   document.querySelector('#diagnosticsCopy').onclick=copy;
+  if(testMode)document.querySelector('#diagnosticsTestError').onclick=()=>add({code:'SANCI-TEST-E001',source:'test',message:'Diagnosztikai teszthiba — az automatikus hibajelzés működik.',context:'Developer diagnostics test'});
   const early=window.__sanciEditorEarlyErrors||[];
   delete window.__sanciEditorEarlyErrors;
   for(const item of early)add(item);
