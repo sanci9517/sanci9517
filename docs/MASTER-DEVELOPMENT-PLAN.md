@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.2  
+**Verzió:** MASTER-2.4  
 **Dátum:** 2026-09-18  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -1336,9 +1336,13 @@ Minden jelentős editor/platform bővítés előtt ellenőrizni kell:
 Ha a felhasználó azt mondja: **„Folytassuk a Sanci9517 MASTER tervet.”**, akkor ezt a MASTER fájlt kell alapul venni, a 35. fejezetet kell ellenőrizni, és kizárólag a **10.0.2 Inspector törlés – edge-case teszteket** kell folytatni.
 
 ### Aktuális folytatási állapot
-**2026-09-18 fejlesztési döntés — mobil Inspector kétlépcsős javítás:** a mobil UX-et két külön ellenőrzött lépésre bontjuk. **1. lépés:** Inspector funkcionális láthatósága és megnyitása mobilon, valódi overlay/drawer pozicionálással; desktop viselkedés változatlan. **2. lépés:** csak az 1. lépés felhasználói PASS után következhet a mobil Inspector részletes finomhangolása (méret, belső elrendezés, bezárás, használhatóság, érintési célméretek).
+**2026-09-18 fejlesztési döntés — mobil Inspector kétlépcsős javítás:** a mobil UX-et két külön ellenőrzött lépésre bontjuk. **1. lépés elkészült:** az Inspector mobilon explicit jobb oldali overlay/drawer pozíciót kapott (right:0, saját grid-elhelyezés kikapcsolva), így nem tud a korábbi grid-column:3 miatt a képernyőn kívülre kerülni. Desktop viselkedés változatlan. **2. lépés:** csak az 1. lépés felhasználói PASS után következhet a mobil Inspector részletes finomhangolása (méret, belső elrendezés, bezárás, használhatóság, érintési célméretek).
 
-**2026-09-18 mobil nézet javítás:** a mobil CSS-ben az Undo/Redo gombok korábban szándékosan rejtve voltak. Ezt javítottuk: az Undo (↶) és Redo (↷) gombok mobil nézetben is láthatók maradnak. A CSS cache-verzió frissítve. GitHub commitok: `63ffd0b50b1a03e005ff43c9964db8a1bdb423be` és `da34d2d53a5d9716ed7de97e16c2995f3cea64d8`. **Felhasználói mobil teszt még szükséges; 10.0.2 státusza nem változik.**
+**2026-09-18 mobil nézet javítás:** a mobil CSS-ben az Undo/Redo gombok korábban szándékosan rejtve voltak. Ezt javítottuk: az Undo (↶) és Redo (↷) gombok mobil nézetben is láthatók maradnak. A CSS cache-verzió frissítve. GitHub commitok: `63ffd0b50b1a03e005ff43c9964db8a1bdb423be`, `da34d2d53a5d9716ed7de97e16c2995f3cea64d8`, `110030a30ae206a0a7b151918a861a9249e87c30`, `c95f94de14a854d992096aef1eebcc98f0964886`. MASTER állapotfrissítés: `86d91037efb17ddfabb80a38d59a8ea8598e6200`. **Az Undo/Redo mobil láthatóság javítása után a jobb oldali Inspector külön funkcionális javítást kapott; a mobil felhasználói teszt még szükséges. 10.0.2 státusza nem változik.**
+
+**Aktuális egyetlen folytatási pont — Mobil Inspector 1. lépés felhasználói teszt:** telefonon frissített oldal betöltése, `◧` Inspector gomb megnyomása, ellenőrzés hogy az Inspector a jobb oldalon teljesen látható overlayként megjelenik és a Canvas használható marad; bezárás `›` gombbal. Ha PASS, jöhet a 2. lépés finomhangolása. Ha FAIL, nem lépünk tovább.
+
+**A 10.0.2 edge-case tesztek továbbra is kötelezőek; a mobil UX javítás csak a jelenlegi tesztkapu részeként fut, nem hoz létre második aktív tervpontot.**
 
 1. Redo teszt: törölt elem visszaállítása után Redo újra törölje.
 2. Root törlésének védelme.
