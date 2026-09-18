@@ -1742,7 +1742,31 @@ Implementációs commitok:
 Statikus visszaolvasás: PASS.
 Még nincs felhasználói/runtime teszt, ezért a pont nem [x].
 
-**Következő egyetlen aktív lépés:** 10.1.2.2 runtime teszt — érvényes Rich Text modell létrehozása/módosítása, invalid modell elutasítása, rollback és Undo/Redo ellenőrzése. UI-t továbbra sem építünk.
+**10.1.2.2 runtime/integrációs teszt — TESZTALAP ELŐKÉSZÍTVE, FELHASZNÁLÓI BÖNGÉSZŐTESZT HÁTRA**
+
+Automatizált core tesztek hozzáadva:
+- Rich Text canonical node létrehozása és valid strukturált módosítása;
+- heading/mark/link/list/quote/code adatok megőrzése;
+- invalid Rich Text elutasítása;
+- pontos document rollback és history-változatlanság hibánál;
+- Undo/Redo exact structured document visszaállítása.
+
+Teszt commit:
+- core tests: `f4fe10a2f13a93ce5232f92b263c78565437973b`
+
+A következő egyetlen felhasználói tesztben még ellenőrizni kell:
+1. Rich Text node létrehozása az Elements panelből;
+2. canonical Rich Text modellhez kapcsolódó Inspector/Command út működése;
+3. valid Rich Text tartalom módosítása;
+4. invalid tartalom elutasítása és rollback;
+5. Undo;
+6. Redo;
+7. mentés/reload;
+8. Canvas render;
+9. desktop/tablet/mobile regresszió;
+10. user confirmation.
+
+**UI-t még nem építünk. Más fejlesztési pontra addig nem lépünk tovább.**
 
 **Frissen feltárt editor library/add problémagyanú:** a jelenlegi `renderPalette()` mindig a kijelölt node-ot használja új elem szülőjeként. Leaf elem kijelölésekor ezért az új elem hozzáadása `Invalid parent for element` hibával leállhat. Emellett az Elements listában vannak olyan bejegyzések, amelyekhez jelenleg nincs `NODE_TYPES` érték (ezek `undefined` típussal nem adhatók hozzá). Ezt a hibát a Rich Text runtime teszt előtt külön javítási lépésként kell kezelni, mert közvetlenül érinti az Elements panel alapműködését.
 
