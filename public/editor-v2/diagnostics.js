@@ -8,7 +8,7 @@ const entries=[];
 const listeners=new Set();
 
 function codeFor(source,severity='error'){
-  const prefix={boot:'BOOT',runtime:'RUNTIME',command:'CMD',api:'API',validation:'VALID',ui:'UI',save:'SAVE'}[source]||'RUNTIME';
+  const prefix={boot:'BOOT',runtime:'RUNTIME',command:'CMD',api:'API',validation:'VALID',ui:'UI',save:'SAVE',verify:'VERIFY'}[source]||'RUNTIME';
   const letter=severity==='warning'?'W':'E';
   return 'SANCI-'+prefix+'-'+letter+String(entries.length+1).padStart(4,'0');
 }
@@ -29,6 +29,7 @@ function add(input={}){
   return entry;
 }
 function clear(){entries.length=0;render();notify()}
+function verify(condition,{code,message,context=''}={}){if(condition)return true;add({source:'verify',code:code||'SANCI-VERIFY-E000',message:message||'A művelet elvárt eredménye nem jött létre.',context});return false}
 function esc(value){return String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]))}
 function render(){
   const badge=document.querySelector('#diagnosticsBadge');
@@ -73,4 +74,4 @@ function init(){
   });
   render();
 }
-export const diagnostics=Object.freeze({init,add,clear,open,close,subscribe(listener){listeners.add(listener);return()=>listeners.delete(listener)},get entries(){return entries.slice()}});
+export const diagnostics=Object.freeze({init,add,clear,verify,open,close,subscribe(listener){listeners.add(listener);return()=>listeners.delete(listener)},get entries(){return entries.slice()}});
