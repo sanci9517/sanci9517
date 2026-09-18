@@ -1328,7 +1328,9 @@ Minden jelentős editor/platform bővítés előtt ellenőrizni kell:
 - [x] Inspector kapcsolat 8.1–8.6: felhasználói tesztek PASS.
 
 ## JELENLEGI EGYETLEN AKTÍV PONT — EZT KELL FOLYTATNI
-**9.1.0 — Elements panel „elem hozzáadása” stabilizálás — javítás utáni felhasználói tesztje.**
+**10.1.2.2 — Rich Text strukturált Command + Validation runtime/integrációs teszt.**
+
+A Diagnostics 9.1.1 runtime kapuja lezárva, a következő és egyetlen aktív tesztkapu a Rich Text strukturált modell integrációs tesztje.
 
 **9.1.0 — Elements panel „elem hozzáadása” stabilizálás — IMPLEMENTÁLVA, FELHASZNÁLÓI TESZT HÁTRA**
 
@@ -1497,7 +1499,7 @@ Tesztelendő sorrend:
 **Más fejlesztési pontra addig nem lépünk tovább, amíg ez a tesztkapu nincs lezárva.**
 
 
-### 9.1.1 — Editor Diagnostics / automatikus hibakereső — IMPLEMENTÁLVA, RUNTIME TESZT HÁTRA
+### 9.1.1 — Editor Diagnostics / automatikus hibakereső — LEZÁRVA
 A felhasználó kérésére elkészült az Editor v2 első automatikus hibakereső rendszere.
 
 Cél: ha az editorban JavaScript, Promise, Command, API vagy UI hiba történik, azonnal legyen látható egy egyedi hibakód és részletes technikai információ.
@@ -1537,7 +1539,24 @@ Statikus visszaolvasás: PASS.
 - diagnostics CSS: PASS;
 - app cache: PASS.
 
-Runtime teszt még nincs, ezért ez a pont nem [x].
+Runtime teszt: PASS. A felhasználó visszaigazolta a működést.
+
+**Felhasználói/runtime teszt eredménye:** PASS.
+- `✓ 0 hiba` állapot megjelenik;
+- a diagnosztikai panel megnyitható;
+- a kontrollált teszthiba `SANCI-TEST-E001` hibakóddal megjelent;
+- a hibaszámláló `🔴 1 hiba` állapotra váltott;
+- a hibarekord technikai részletei megjeleníthetők;
+- a teszt után a fejlesztői tesztgomb eltávolításra került, így production használatban nincs tesztvezérlő.
+
+Kapcsolódó utolsó teszt/cleanup commitok:
+- query/hash tesztút javítás: `706f5659579be521db9fc524050dc69a1e6f4c74`
+- kontrollált runtime tesztvezérlő: `21dd1d619a89b1129b0b98639c6b3a871925bb82`
+- tesztvezérlő eltávolítása: `c3534aa5501a94adb1da135863ba8e5600db5142`
+
+**Státusz:** `[x]`.
+
+**Következő egyetlen aktív pont:** 10.1.2.2 — Rich Text strukturált Command + Validation runtime/integrációs teszt. A diagnostics pont lezárva; UI-t továbbra sem építünk a Rich Text tesztkapu lezárása előtt.
 
 ### Egyetlen aktuális teszt — Elements syntax fix + Diagnostics első runtime kapu
 1. teljesen töltsd újra az Editor v2 oldalt;
