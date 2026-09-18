@@ -1469,9 +1469,11 @@ GitHub commit: `89e7e632af5f444490c661c8617fa1a9d9934383`.
 
 **Felhasználói teszt eredménye:** dirty state / revision változás **PASS**. A törlés módosított állapotot eredményez, az állapot Undo/Redo közben is következetes.
 
-**Állapot:** `[~]` — a 10.0.2 minden technikai edge-case pontja PASS. Egyetlen hátralévő kapu a végső felhasználói visszaigazolás, hogy a teljes Inspector törlés + lock + history működés rendben van.
+**Állapot:** `[x]` — 10.0.2 teljesen tesztelve és a felhasználó által visszaigazolva. Inspector törlés, Undo/Redo, Root-védelem, lock-védelem, Layers lock-jelzés, selection-kezelés és dirty/revision működés PASS.
 
-**Következő egyetlen lépés:** 10.0.2 végső felhasználói teszt és lezárás.
+**Lezárás:** a 10.0.2 tesztkapu lezárva.
+
+**Következő egyetlen lépés:** a MASTER 35. fejezetében megadott következő aktív pont folytatása; új funkciót csak az aktuális pont teljes auditja után kezdünk.
 
 # 36 — TERVKARBANTARTÁS
 
