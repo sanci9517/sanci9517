@@ -1441,6 +1441,16 @@ GitHub commitok:
 
 **Következő egyetlen lépés:** a felhasználó ellenőrizze az új Inspector zárolás-megjelenést és a Rétegek panelben a 🔒 jelzést; ellenőrizze továbbá, hogy zárolt elem nem módosítható/törölhető, feloldás után pedig törölhető.
 
+
+### 2026-09-18 — Locked layer ikon finomítás
+A Rétegek panel zárolt állapotának jelzése módosítva lett egyszerű lakat ikonra (`🔐`).
+
+GitHub commit: `89e7e632af5f444490c661c8617fa1a9d9934383`.
+
+**Állapot:** `[~]` — felhasználói vizuális ellenőrzés szükséges.
+
+**Következő egyetlen lépés:** ellenőrizni, hogy a lakat ikon megjelenése megfelelő-e a Rétegek panelben.
+
 # 36 — TERVKARBANTARTÁS
 
 - Ez az egyetlen aktív terv.
