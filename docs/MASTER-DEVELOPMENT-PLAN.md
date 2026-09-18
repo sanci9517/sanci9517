@@ -1410,7 +1410,7 @@ Audit eredmény:
 - a v6 mobil shell működését érintő kódot ebben a lépésben nem módosítottuk.
 
 **Tesztállapot:** kód-audit PASS. Felhasználói teszt: 1–7 közül minden végrehajtható pont PASS; a Locked elem törlése nem tesztelhető, mert az aktuális Inspector UI-ban nincs Lock/Locked vezérlő vagy elérhető lock állapotváltás. A command réteg lock-védelme kódban létezik, de UI-ból jelenleg nem aktiválható.
-**Aktuális egyetlen folytatási pont:** a Locked állapot UI-ból való elérhetőségének ellenőrzése és a 10.0.2 tesztkapu lezárása. Amíg Locked állapot nem állítható elő az Editor UI-ban, 10.0.2 nem jelölhető `[x]`-re.
+**Aktuális egyetlen folytatási pont:** az új Inspector `Zárolt elem` vezérlő felhasználói tesztje, majd a 10.0.2 teljes tesztkapu lezárása.
 
 ### 10.0.2 edge-case tesztek továbbra is kötelezőek
 1. Redo teszt: törölt elem visszaállítása után Redo újra törölje.
