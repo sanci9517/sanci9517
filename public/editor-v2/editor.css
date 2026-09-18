@@ -4,4 +4,4 @@
 
 .richtext-editor{border-bottom:1px solid var(--line)}.richtext-toolbar{display:flex;align-items:center;gap:4px;padding:8px 11px;border-bottom:1px solid var(--line);background:#0d131b}.richtext-toolbar select{height:28px;min-width:92px;background:#0b1017;color:var(--text);border:1px solid var(--line);border-radius:5px;padding:0 7px;font-size:9px}.richtext-toolbar button{width:30px;height:28px;padding:0;font-size:10px;font-weight:700}.richtext-toolbar button:hover{background:#1a2636;border-color:#3a4c66}.richtext-editor .field{border-bottom:0}
 
-.richtext-content strong{font-weight:700}.richtext-content em{font-style:italic}
+.richtext-content .richtext-mark-bold{font-weight:700 !important}.richtext-content .richtext-mark-italic{font-style:italic !important}
