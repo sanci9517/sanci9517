@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.1  
+**Verzió:** MASTER-2.2  
 **Dátum:** 2026-09-18  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -574,7 +574,7 @@ A Geometry pont után az Inspector fokozatosan, szekciónként készül.
 - [!] Inspectorból elem törlése jelenleg nem érhető el UI-gombbal
 - [x] a kanonikus `element.delete` command már létezik és validált history-láncon működik
 
-## 10.0.1 Következő aktív javítás — Inspector törlés UI
+## 10.0.1 Inspector törlés UI — LEZÁRVA
 Cél: a meglévő `element.delete` commandhoz biztonságos Inspector műveletet adni.
 
 Követelmények:
@@ -589,6 +589,8 @@ Követelmények:
 - felhasználói teszt nélkül nem lesz [x].
 
 ## 10.0.2 Tesztkapu
+**[~] Részleges felhasználói teszt: az alap törlés + Canvas/Layers + Undo működését a felhasználó visszaigazolta („Működik”). A teljes kapuhoz az alábbi edge-case tesztek még hátravannak.**
+
 1. Inspectorban a törlés művelet látható.
 2. Nem-root elem törlése működik.
 3. Törlés után az elem eltűnik a Canvasról.
@@ -1326,22 +1328,21 @@ Minden jelentős editor/platform bővítés előtt ellenőrizni kell:
 - [x] Inspector kapcsolat 8.1–8.6: felhasználói tesztek PASS.
 
 ## JELENLEGI EGYETLEN AKTÍV PONT — EZT KELL FOLYTATNI
-**10.0.1 Inspector törlés UI.**
+**10.0.2 Inspector törlés – teljes tesztkapu edge-case része.**
 
-**Új beszélgetésben ez az egyetlen folytatási pont.** A 7.1, 7.2, 7.3 és minden más fejezet `[ ]` pontja jelenleg várólistán van; azokból nem szabad folytatni, amíg a 10.0.1 nincs lezárva.
+**Új beszélgetésben ez az egyetlen folytatási pont.** A 7.1, 7.2, 7.3 és minden más fejezet `[ ]` pontja jelenleg várólistán van; azokból nem szabad folytatni, amíg a 10.0.2 teljes tesztkapuja nincs lezárva.
 
 ### Új beszélgetés folytatási parancsa
-Ha a felhasználó azt mondja: **„Folytassuk a Sanci9517 MASTER tervet.”**, akkor ezt a MASTER fájlt kell alapul venni, a 35. fejezetet kell ellenőrizni, és kizárólag a **10.0.1 Inspector törlés UI** pontot kell folytatni. A 7.1 korábbi/ütemezett pontjaihoz nem szabad visszatérni.
+Ha a felhasználó azt mondja: **„Folytassuk a Sanci9517 MASTER tervet.”**, akkor ezt a MASTER fájlt kell alapul venni, a 35. fejezetet kell ellenőrizni, és kizárólag a **10.0.2 Inspector törlés – edge-case teszteket** kell folytatni.
 
 ### Aktuális folytatási állapot
-1. Teljes érintett Inspector/app/command kód audit.
-2. Minimális UI-módosítás a meglévő `element.delete` command használatával.
-3. Érintett fájl visszaolvasása és statikus ellenőrzése.
-4. GitHub commit + branch/HEAD ellenőrzés.
-5. Cloudflare build/deploy.
-6. Felhasználói browser teszt.
-7. Csak a **„Működik”** visszaigazolás után jelölhető 10.0.1 és a hozzá tartozó tesztkapu [x].
-8. Ezután választjuk ki a következő egyetlen aktív pontot.
+1. Redo teszt: törölt elem visszaállítása után Redo újra törölje.
+2. Root törlésének védelme.
+3. Locked elem törlésének védelme.
+4. Selection állapot ellenőrzése törlés után.
+5. Dirty state/revision ellenőrzése, ha az adott runtime ezt már megjeleníti.
+6. Felhasználói visszaigazolás.
+7. Csak a teljes tesztkapu sikeres felhasználói visszaigazolása után jelölhető 10.0.2 `[x]`, és csak ezután választunk új aktív pontot.
 
 **A fejlesztés nem lép tovább a következő aktív pontra sikertelen vagy részleges teszt esetén.**
 
