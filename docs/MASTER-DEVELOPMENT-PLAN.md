@@ -1328,7 +1328,9 @@ Minden jelentős editor/platform bővítés előtt ellenőrizni kell:
 - [x] Inspector kapcsolat 8.1–8.6: felhasználói tesztek PASS.
 
 ## JELENLEGI EGYETLEN AKTÍV PONT — EZT KELL FOLYTATNI
-**10.0.2 Inspector törlés – teljes tesztkapu edge-case része + mobil Editor Shell újratervezésének 1. lépéses felhasználói tesztje.**
+**10.1 Inspector — Content rendszer teljes kód- és adatfolyam-auditja.**
+
+A 10.0.2 Inspector törlés + lock tesztkapu lezárult [x], ezért a következő aktív pont a 10.1 Content. Első lépés kizárólag audit: az aktuális Inspector content-kezelés, Page Model, Command API, Canvas render, history és persistence kapcsolatának ellenőrzése. Audit előtt nem módosítunk kódot.
 
 **Új beszélgetésben ez az egyetlen folytatási pont.** A 7.1, 7.2, 7.3 és minden más fejezet `[ ]` pontja jelenleg várólistán van; azokból nem szabad folytatni, amíg a 10.0.2 teljes tesztkapuja nincs lezárva.
 
