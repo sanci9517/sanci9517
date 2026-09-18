@@ -1446,7 +1446,25 @@ A 10.1.2.2 pontban külön tesztelendő:
 
 **10.1.2.1 eredménye:** a canonical Rich Text adatmodell és a hozzá tartozó architekturális/validációs szabályok rögzítve. UI és HTML/DOM szerkesztés még nem implementált.
 
-**Következő egyetlen aktív pont:** **10.1.2.2 — Rich Text strukturált Command + Validation implementáció**, UI nélkül.
+**10.1.2.2 — Rich Text strukturált Command + Validation implementáció — IMPLEMENTÁLVA, INTEGRÁCIÓS TESZT MÉG HÁTRA**
+
+Elkészült:
+- schema.js: Rich Text schema constants, üres dokumentum factory és determinisztikus normalizáló.
+- validation.js: célzott Rich Text node validation bekötve a canonical document validationba.
+- commands.js: új richtext.content.set strukturált command.
+- A régi element.content.set Rich Text node-on szándékosan blokkol, hogy ne maradjon HTML/string alapú kerülőút.
+- A strukturált command ugyanazon commit → validation → history → revision/dirty láncot használja.
+- Ismeretlen block/mark, hibás heading/list/link/inline adat esetén a command hibával leáll és rollbackel.
+
+Implementációs commitok:
+- schema: 68506150bbbd1b9f512157e0088a39424e95518f
+- validation: 7e6ba6e14a1ec487dc9d88ab5ccd787c7f4eb136
+- commands: 466f81f2113cbab0ba5b1d5d6e8f9a6e0af6a215
+
+Statikus visszaolvasás: PASS.
+Még nincs felhasználói/runtime teszt, ezért a pont nem [x].
+
+**Következő egyetlen aktív lépés:** 10.1.2.2 runtime teszt — érvényes Rich Text modell létrehozása/módosítása, invalid modell elutasítása, rollback és Undo/Redo ellenőrzése. UI-t továbbra sem építünk.
 
 **Audit/specifikáció dátuma:** 2026-09-18.
 # 36 — TERVKARBANTARTÁS
