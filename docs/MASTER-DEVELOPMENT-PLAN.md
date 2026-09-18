@@ -1328,7 +1328,30 @@ Minden jelentős editor/platform bővítés előtt ellenőrizni kell:
 - [x] Inspector kapcsolat 8.1–8.6: felhasználói tesztek PASS.
 
 ## JELENLEGI EGYETLEN AKTÍV PONT — EZT KELL FOLYTATNI
-**10.1.2.2 — Rich Text strukturált Command + Validation implementáció, UI nélkül.**
+**9.1.0 — Elements panel „elem hozzáadása” stabilizálásának felhasználói tesztje.**
+
+**9.1.0 — Elements panel „elem hozzáadása” stabilizálás — IMPLEMENTÁLVA, FELHASZNÁLÓI TESZT HÁTRA**
+
+Elkészült:
+- Leaf elem kijelölése esetén az új elem nem a leaf node alá kerül, hanem automatikusan a legközelebbi érvényes szülőbe.
+- Container jellegű kijelölés esetén az új elem továbbra is közvetlenül a kijelölt elem alá kerül.
+- Az Elements palette korábbi `undefined` típusú bejegyzéseihez canonical node type értékek kerültek.
+- Az add művelet továbbra is a meglévő `element.add` Command → Validation → History → Page Model láncot használja.
+
+Implementációs commitok:
+- app: `1bc79fde326890a75da5ac2dee6172adc42984fd`
+- schema: `496b976af259e44f3ced9ad2bf1ef9c9fd23f23e`
+
+Statikus visszaolvasás: PASS.
+Felhasználói/runtime teszt még nincs, ezért `[x]` státusz még nem adható.
+
+### Egyetlen aktuális teszt
+1. válassz ki egy container/layout elemet → adj hozzá több különböző elemet;
+2. válassz ki egy leaf elemet (pl. Heading, Szöveg, Kép) → adj hozzá elemet, és ellenőrizd, hogy a szülőjébe kerül;
+3. próbáld ki a palette minden jelenleg megjelenő elemét;
+4. Undo/Redo;
+5. mentés + újratöltés;
+6. user confirmation.
 
 ### 10.1.1 — Plain Text Content UI — LEZÁRVA
 **Felhasználói teszt:** PASS — „Működik”. Canvas, Undo, Redo és mentés/reload ellenőrzése sikeres.
