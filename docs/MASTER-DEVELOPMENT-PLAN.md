@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.7  
+**Verzió:** MASTER-2.8  
 **Dátum:** 2026-09-18  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -601,7 +601,7 @@ Követelmények:
 
 ## 10.1 Content
 - [ ] plain text
-- [ ] rich text
+- [~] rich text — strukturált Rich Text Inspector első formázó UI implementálva; canonical schema/command/validation/Canvas lánc változatlan. Inspector: Bekezdés/H1-H6 + B/I vezérlők. Runtime felhasználói teszt még hátra van.
 - [ ] links
 - [ ] media selection
 - [ ] alt/title
@@ -1832,7 +1832,7 @@ Ellenőrzött:
 
 Ez a teszt lezárta a valid, többblokkos/paragraph-alapú Rich Text megjelenítés alap runtime kapuját. A Rich Text formázott elemei (heading, bold, italic, underline, strike, inline code, link, listák, blockquote, code block) külön tesztelendők.
 
-**EGYETLEN AKTUÁLIS FOLYTATÁSI PONT:** 10.1.2.2 — Rich Text formázott/strukturált modell runtime teszt; következőként a canonical heading + bold/italic inline tartalom Canvas-megjelenítését ellenőrizzük. Undo/Redo, save/reload és responsive regresszió továbbra sem tesztelendő.
+**EGYETLEN AKTUÁLIS FOLYTATÁSI PONT:** 10.1.2.2 — Rich Text formázó Inspector első runtime tesztje. Implementáció kész: strukturált blokk típus választó (Bekezdés/H1-H6) és B/I mark vezérlők ugyanazon `richtext.content.set` → Validation → Page Model → History → Canvas láncon. Következő egyetlen aktív lépés: böngészőben valid Rich Text kiválasztása, egy sor H1-re állítása, egy sor B és I formázásának ellenőrzése, Canvas + Diagnostics ellenőrzéssel. Undo/Redo, save/reload és responsive regresszió továbbra sem tesztelendő ebben a lépésben.
 
 **Frissen feltárt editor library/add problémagyanú:** a jelenlegi `renderPalette()` mindig a kijelölt node-ot használja új elem szülőjeként. Leaf elem kijelölésekor ezért az új elem hozzáadása `Invalid parent for element` hibával leállhat. Emellett az Elements listában vannak olyan bejegyzések, amelyekhez jelenleg nincs `NODE_TYPES` érték (ezek `undefined` típussal nem adhatók hozzá). Ezt a hibát a Rich Text runtime teszt előtt külön javítási lépésként kell kezelni, mert közvetlenül érinti az Elements panel alapműködését.
 
