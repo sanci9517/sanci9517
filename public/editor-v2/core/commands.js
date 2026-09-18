@@ -134,10 +134,15 @@ export const commands = Object.freeze({
 
   'element.content.set': (state, { nodeId, content = '' } = {}) => commit(
     state,
-    { type: 'element.content.set', payload: { nodeId } },
+    { type: 'element.content.set', payload: { nodeId, content: String(content) } },
     (draft) => {
       const { node } = requireNode(draft, nodeId);
-      node.props = { ...node.props, content: String(content) };
+      const value = String(content);
+      const textTypes = new Set(['heading', 'text', 'richtext', 'button', 'link']);
+      node.props = {
+        ...node.props,
+        ...(textTypes.has(node.type) ? { text: value, content: value } : { content: value })
+      };
       bumpRevision(draft.document);
     }
   ),
