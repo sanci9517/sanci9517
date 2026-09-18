@@ -1349,6 +1349,13 @@ Javító commitok:
 - `257577335e046ddf8584ae832ed5f2f904554f9b` — palette csoportok láthatóvá tétele.
 - `51a63531176f8f4a00eee378e3cce52cb03897f8` — csoportok csukott alapállapotának visszaállítása.
 
+### ÚJ KÖVETELMÉNY — 9.1.0 elemkatalógus információs súgó
+A felhasználó kéri, hogy az Elements palette minden hozzáadható elemgombján legyen egy kis **ⓘ információs ikon**, amely egyértelműen leírja, mi az adott elem és mire használható. Az ikon ne indítsa el az elem hozzáadását; a teljes elemgomb továbbra is hozzáadásra szolgál.
+
+Első körben az Elements palette készül el. A szerkesztő egyéb gombjaihoz külön következő UX-lépésben készül ugyanilyen konzisztens információs súgó.
+
+Követelmény: minden jelenleg támogatott palette elemhez legyen leírás; az információs UI ne fedje el tartósan a vásznat; billentyűzettel is elérhető legyen; a funkció ne vezessen be második state/command rendszert.
+
 ### Egyetlen aktuális teszt
 1. nyisd meg az **Elemek** panelt: a kategóriafejlécek látszanak, de a kategóriák alapból csukva vannak;
 2. nyiss ki egy kategóriát: az elemek jelenjenek meg;
