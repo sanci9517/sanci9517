@@ -5,7 +5,7 @@
  * of changing the Page Model directly. Validation and history stay centralized.
  */
 
-import { canContain, cloneDocument, createNode, getNode, normalizeRichText } from './schema.js';
+import { canContain, cloneDocument, createEmptyRichText, createNode, getNode, normalizeRichText } from './schema.js';
 import { assertValidEditorDocument } from './validation.js';
 import { activePage, clearSelection, setSelection } from './state.js';
 
@@ -105,8 +105,12 @@ export const commands = Object.freeze({
       const selectedParent = draft.selection.primaryId ? getNode(page, draft.selection.primaryId) : null;
       const parent = getNode(page, parentId ?? selectedParent?.id ?? page.rootId);
       if (!parent || !canContain(parent, type)) throw new Error('Invalid parent for element');
+      const nodeProps = structuredClone(props);
+      if (type === 'richtext' && !nodeProps.richText) {
+        nodeProps.richText = createEmptyRichText();
+      }
       const node = createNode(type, {
-        props: structuredClone(props),
+        props: nodeProps,
         style: structuredClone(style),
         name: name ?? type,
         parentId: parent.id
