@@ -1342,18 +1342,22 @@ Implementációs commitok:
 - app: `1bc79fde326890a75da5ac2dee6172adc42984fd`
 - schema: `496b976af259e44f3ced9ad2bf1ef9c9fd23f23e`
 
-Statikus visszaolvasás: PASS. A javítás után a palette csoportjai ismét alapból láthatók.
-Felhasználói/runtime teszt még nincs, ezért `[x]` státusz még nem adható.
+Statikus visszaolvasás: PASS. A javítás után a palette csoportfejlécei láthatók, de a felhasználói visszajelzés alapján a kívánt alapállapot az, hogy a csoportok csukva legyenek; ezért a csoportok alapértelmezett állapotát visszaállítottuk `collapsed` értékre. A korábbi „teljesen eltűnt” problémát az okozta, hogy a panel/csoport láthatóságot összekevertük: a csoport fejlécének láthatónak kell maradnia, csak a benne lévő elemgombok legyenek csukva.
+Felhasználói/runtime teszt még nincs, ezért `[x]` státusz nem adható.
 
-Javító commit: `257577335e046ddf8584ae832ed5f2f904554f9b`.
+Javító commitok:
+- `257577335e046ddf8584ae832ed5f2f904554f9b` — palette csoportok láthatóvá tétele.
+- `51a63531176f8f4a00eee378e3cce52cb03897f8` — csoportok csukott alapállapotának visszaállítása.
 
 ### Egyetlen aktuális teszt
-1. válassz ki egy container/layout elemet → adj hozzá több különböző elemet;
-2. válassz ki egy leaf elemet (pl. Heading, Szöveg, Kép) → adj hozzá elemet, és ellenőrizd, hogy a szülőjébe kerül;
-3. próbáld ki a palette minden jelenleg megjelenő elemét;
-4. Undo/Redo;
-5. mentés + újratöltés;
-6. user confirmation.
+1. nyisd meg az **Elemek** panelt: a kategóriafejlécek látszanak, de a kategóriák alapból csukva vannak;
+2. nyiss ki egy kategóriát: az elemek jelenjenek meg;
+3. válassz ki egy container/layout elemet → adj hozzá több különböző elemet;
+4. válassz ki egy leaf elemet (pl. Heading, Szöveg, Kép) → adj hozzá elemet, és ellenőrizd, hogy a szülőjébe kerül;
+5. próbáld ki a palette minden jelenleg megjelenő elemét;
+6. Undo/Redo;
+7. mentés + újratöltés;
+8. user confirmation.
 
 ### 10.1.1 — Plain Text Content UI — LEZÁRVA
 **Felhasználói teszt:** PASS — „Működik”. Canvas, Undo, Redo és mentés/reload ellenőrzése sikeres.
