@@ -1362,7 +1362,7 @@ GitHub commitok:
 
 **A v5 kód elkészült, de felhasználói újrateszt még nincs.**
 
-### AKTUÁLIS EGYETLEN FOLYTATÁSI LÉPÉS — Mobile Shell v6 felhasználói teszt
+### AKTUÁLIS EGYETLEN FOLYTATÁSI LÉPÉS — Mobile Shell v6 lezárás
 
 A v5 felhasználói visszajelzés szerint a gombok elrendezése továbbra sem professzionális érzetű, és panelnyitáskor a fehér Canvas vizuálisan eltűnik. A mobil shellt ezért újra kellett gondolni a professzionális editorok mintájára.
 
@@ -1377,6 +1377,9 @@ A v5 felhasználói visszajelzés szerint a gombok elrendezése továbbra sem pr
 
 **Referenciaelemzés:** Wix a mobil szerkesztőben bal oldali menüt/paneleket és eszközsávot használ, míg Framer a Canvas-központú felületet és külön canvas vezérlőket alkalmaz. A közös tanulság: a Canvas az elsődleges munkaterület, a panelek és eszközök pedig köré szerveződnek. citeturn0search0turn0search4turn0search13
 
+**Felhasználói teszt eredménye:**
+A felhasználó megerősítette, hogy a v6 kinézete megfelelő, és minden ellenőrzött funkció működik. A Canvas látható marad panelnyitáskor, a mobil vezérlés rendezett, a `P` publikálás gomb megfelelő.
+
 **Felhasználói teszt kötelező pontjai:**
 1. Felső fejléc egy sorban, nem zsúfolt.
 2. Az oldalválasztó egyértelműen látszik.
@@ -1388,6 +1391,8 @@ A v5 felhasználói visszajelzés szerint a gombok elrendezése továbbra sem pr
 8. Escape/backdrop bezárás működik.
 9. Desktop működése változatlan.
 10. Ha bármelyik pont nem megfelelő, nem lépünk tovább.
+
+**Állapot:** v6 `[x]` — felhasználó által ellenőrizve.
 
 GitHub commitok: `13c27d4608847b52cee0c6da007bb40f88d0c808`, `5641b6e0c23a79bca63b5711aae4f28201e2eaa9`.
 
