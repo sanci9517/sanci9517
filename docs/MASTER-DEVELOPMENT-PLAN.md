@@ -1455,7 +1455,11 @@ GitHub commit: `89e7e632af5f444490c661c8617fa1a9d9934383`.
 
 **Állapot:** `[~]` — a lock működési rész PASS, de a 10.0.2 teljes tesztkapuja még nem zárható le; a Redo, Root-védelem, selection/dirty-revision és végső felhasználói visszaigazolás még hátravan.
 
-**Következő egyetlen lépés:** 10.0.2 edge-case teszt következő pontja: törlés → Undo → Redo, majd Root törlésének védelme.
+**Felhasználói teszt eredménye:** a felhasználó visszaigazolta: **„Működik”**. A törlés → Undo → Redo teljes history-lánc PASS.
+
+**Állapot:** `[~]` — a Redo edge-case PASS; a 10.0.2 teljes tesztkapujához a Root törlésének védelme, selection/dirty-revision ellenőrzés és végső felhasználói visszaigazolás még hátravan.
+
+**Következő egyetlen lépés:** Root elem törlésének védelmi tesztje.
 
 # 36 — TERVKARBANTARTÁS
 
