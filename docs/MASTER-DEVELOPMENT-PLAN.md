@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.11  
+**Verzió:** MASTER-2.12  
 **Dátum:** 2026-09-18  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -1851,6 +1851,7 @@ Kódjavítás:
 Commitok:
 - rich text toggle: 4262c63d67ceb334ca98a196959895da52446e33
 - app toolbar: 37f8fa8f5d254642e3b5a94dd11ed2382d6b154d
+- document shadowing fix: bd2a4c213221f64c8067c2055b863cf5de1d16c7
 - active CSS: 96d9017f7cb563ce42baacec83109dd50ac0bb6e
 - CSS cache: a158024158ac60894685264a1b010aa8394080a0
 - core test: 4643406d7284231458fe404b6213eafb1c329800
