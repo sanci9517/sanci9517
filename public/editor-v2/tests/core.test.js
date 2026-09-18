@@ -47,6 +47,120 @@ test('element add creates a real parent-child relationship', () => {
   assertValidEditorDocument(state.document);
 });
 
+test('Rich Text creates canonical structured content and accepts valid updates', () => {
+  const state = createEditorState();
+  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.RICHTEXT } });
+  const id = state.selection.primaryId;
+  const node = activePage(state).nodes[id];
+
+  assert.equal(node.type, NODE_TYPES.RICHTEXT);
+  assert.equal(node.props.richText.type, 'richtext-document');
+  assert.equal(node.props.richText.schemaVersion, 1);
+  assert.equal(node.props.richText.blocks[0].type, 'paragraph');
+
+  const richText = {
+    schemaVersion: 1,
+    type: 'richtext-document',
+    blocks: [
+      {
+        type: 'heading',
+        level: 2,
+        children: [{ type: 'text', text: 'Sanci9517', marks: ['bold'] }]
+      },
+      {
+        type: 'paragraph',
+        children: [{
+          type: 'text',
+          text: 'Twitch',
+          marks: ['italic'],
+          link: { href: 'https://www.twitch.tv/sanci9517', target: '_blank' }
+        }]
+      },
+      {
+        type: 'bulleted-list',
+        items: [{ children: [{ type: 'text', text: 'Fortnite', marks: [] }] }]
+      },
+      {
+        type: 'quote',
+        children: [{ type: 'text', text: 'Stream', marks: ['underline'] }]
+      },
+      {
+        type: 'code',
+        children: [{ type: 'text', text: 'const sanci = true;', marks: ['code'] }]
+      }
+    ]
+  };
+
+  execute(state, { type: 'richtext.content.set', payload: { nodeId: id, document: richText } });
+
+  const updated = activePage(state).nodes[id].props.richText;
+  assert.equal(updated.blocks[0].level, 2);
+  assert.equal(updated.blocks[0].children[0].marks[0], 'bold');
+  assert.equal(updated.blocks[1].children[0].link.href, 'https://www.twitch.tv/sanci9517');
+  assert.equal(updated.blocks[2].items[0].children[0].text, 'Fortnite');
+  assert.equal(updated.blocks[3].children[0].marks[0], 'underline');
+  assert.equal(updated.blocks[4].children[0].marks[0], 'code');
+  assert.equal(state.persistence.dirty, true);
+  assert.equal(state.document.revision, 2);
+  assertValidEditorDocument(state.document);
+});
+
+test('invalid Rich Text is rejected and the document rolls back exactly', () => {
+  const state = createEditorState();
+  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.RICHTEXT } });
+  const id = state.selection.primaryId;
+  const before = structuredClone(state.document);
+  const historyBefore = state.history.past.length;
+
+  assert.throws(() => execute(state, {
+    type: 'richtext.content.set',
+    payload: {
+      nodeId: id,
+      document: {
+        schemaVersion: 1,
+        type: 'richtext-document',
+        blocks: [{
+          type: 'paragraph',
+          children: [{ type: 'text', text: 'Hiba', marks: ['unknown-mark'] }]
+        }]
+      }
+    }
+  }));
+
+  assert.deepEqual(state.document, before);
+  assert.equal(state.history.past.length, historyBefore);
+  assertValidEditorDocument(state.document);
+});
+
+test('Rich Text Undo and Redo restore the exact structured document', () => {
+  const state = createEditorState();
+  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.RICHTEXT } });
+  const id = state.selection.primaryId;
+  const richText = {
+    schemaVersion: 1,
+    type: 'richtext-document',
+    blocks: [{
+      type: 'paragraph',
+      children: [{ type: 'text', text: 'Első változat', marks: ['bold'] }]
+    }]
+  };
+
+  execute(state, { type: 'richtext.content.set', payload: { nodeId: id, document: richText } });
+  const afterSet = structuredClone(state.document);
+
+  execute(state, { type: 'history.undo' });
+  const undone = activePage(state).nodes[id];
+  assert.deepEqual(undone.props.richText, {
+    schemaVersion: 1,
+    type: 'richtext-document',
+    blocks: [{ type: 'paragraph', children: [{ type: 'text', text: '', marks: [] }] }]
+  });
+
+  execute(state, { type: 'history.redo' });
+  assert.deepEqual(state.document, afterSet);
+  assertValidEditorDocument(state.document);
+});
+
 test('content, style and responsive commands mutate only through the command engine', () => {
   const state = createEditorState();
   execute(state, { type: 'element.add', payload: { type: NODE_TYPES.TEXT } });
