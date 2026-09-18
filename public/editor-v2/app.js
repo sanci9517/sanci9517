@@ -3,7 +3,7 @@ import {createEditorState,activePage,selectedNodes,setSelection,markSaved} from 
 import {execute} from './core/commands.js';
 import {applyNodeStyle,getNodeGeometry} from './core/canvas-engine.js';
 import {resolveResponsiveValue} from './core/responsive.js';
-import {diagnostics} from './diagnostics.js';
+import {diagnostics} from './diagnostics.js?v=20260918-2';
 
 let state=null;let pages=[];let zoom=1;let inspectorTab='design';
 const $=s=>document.querySelector(s);const canvas=$('#canvas');const inspector=$('#inspectorBody');
