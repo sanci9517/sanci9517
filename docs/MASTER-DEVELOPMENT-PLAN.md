@@ -1793,7 +1793,19 @@ Javító commitok:
 - app: `0ea8afa9fb7ac132358a875b33e5c12c5f798539`
 - Rich Text adapter: `5ca7b0a64035bb0998e3249944651a48961963fd`
 
-**Hiba állapota:** a javítás elkészült, de a felhasználói újrateszt még NEM történt meg.
+**Új runtime eredmény:** a Rich Text tartalom módosítása a Command rétegen már lefutott, de a Canvas nem jelenítette meg a canonical `props.richText` dokumentumot. A renderer továbbra is a régi `props.text/content` mezőt olvasta, ezért a módosítás csendes megjelenítési hibát okozott.
+
+Javítás:
+- `public/editor-v2/app.js`: a Rich Text node most a canonical `props.richText` strukturált dokumentumból renderel.
+- támogatott alap render: paragraph, heading, quote, code, bulleted-list, numbered-list, valamint bold/italic inline megjelenítés.
+- a Rich Text Inspector továbbra is `richtext.content.set` commandot használ.
+- a canonical Page Model nem változott; nincs második renderer/state/command rendszer.
+
+Javító commitok:
+- renderer első implementáció: `8916fdd9524bc0c95c9d91893bf0936332fe316a`
+- renderer inline-node javítás: `2ec066e304bf8e400a34e39b882088a47d42d3db`
+
+**Hiba állapota:** a renderer javítva, de a felhasználói újrateszt még NEM történt meg.
 
 **EGYETLEN AKTUÁLIS FOLYTATÁSI PONT:** ugyanazt a Rich Text tartalom-módosítási tesztet kell újra lefuttatni:
 1. Rich Text maradjon kijelölve;
