@@ -1451,7 +1451,11 @@ GitHub commit: `89e7e632af5f444490c661c8617fa1a9d9934383`.
 
 **Állapot:** `[~]` — a 10.0.2 tesztkapu még nincs lezárva; a locked/unlocked működési teszt és a teljes edge-case visszaigazolás hátravan.
 
-**Következő egyetlen lépés:** ellenőrizni, hogy zárolt elem nem módosítható és nem törölhető, feloldás után pedig törölhető; majd Redo, Root-védelem és selection teszt.
+**Felhasználói teszt eredménye:** a felhasználó visszaigazolta: **„Működik”**. A zárolt állapot, a Layers lakatjelzése, a zárolt elem védelme, valamint a feloldás utáni működés rendben van.
+
+**Állapot:** `[~]` — a lock működési rész PASS, de a 10.0.2 teljes tesztkapuja még nem zárható le; a Redo, Root-védelem, selection/dirty-revision és végső felhasználói visszaigazolás még hátravan.
+
+**Következő egyetlen lépés:** 10.0.2 edge-case teszt következő pontja: törlés → Undo → Redo, majd Root törlésének védelme.
 
 # 36 — TERVKARBANTARTÁS
 
