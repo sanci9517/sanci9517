@@ -25,7 +25,20 @@
 ## 00.2 Egyetlen aktív pont
 Egyszerre **csak egy fejlesztési pont** lehet aktív. Az aktuális pont lezárása előtt nem kezdünk következő pontot.
 
-## 00.3 Kötelező munkaciklus
+**KÖTELEZŐ ÁLLAPOTMENTÉS MINDEN LÉPÉS UTÁN:** minden fejlesztési, javítási, tesztelési vagy döntési lépés lezárásakor frissíteni kell ezt a MASTER fájlt. A frissítés akkor is kötelező, ha egy beszélgetésen belül több lépést teszünk meg. A MASTER-nek mindig a **legutolsó ténylegesen elvégzett lépés utáni állapotot** kell tükröznie, ezért új beszélgetés bármikor megszakíthatja a munkát anélkül, hogy elveszne a pontos folytatási pont.
+
+## 00.3 Kötelező MASTER-állapotfrissítés minden lépés után
+Minden egyes lépés után, még a következő lépés megkezdése előtt:
+1. rögzíteni kell, mit végeztünk el;
+2. rögzíteni kell a teszt eredményét;
+3. rögzíteni kell, mi maradt hátra vagy mi blokkol;
+4. rögzíteni kell az **egyetlen aktuális folytatási pontot**;
+5. szükség esetén rögzíteni kell a commit/HEAD állapotot;
+6. a MASTER fájlt GitHubon frissíteni kell.
+
+**Tilos** több fejlesztési lépést úgy végrehajtani, hogy közben a MASTER ne tükrözze az aktuális állapotot. Ha a beszélgetés bármikor megszakad, az utolsó MASTER-frissítés legyen a hivatalos folytatási pont.
+
+## 00.4 Kötelező munkaciklus
 Minden aktív pont:
 
 `MASTER pont → teljes érintett kód audit → adatfolyam audit → minimális módosítás → érintett fájl visszaolvasása → GitHub commit → branch/HEAD ellenőrzés → Cloudflare build → deploy → API ellenőrzés → D1/R2/KV ellenőrzés → admin teszt → public teszt → desktop/tablet/mobile teszt → regresszió → felhasználói teszt → felhasználói visszaigazolás → MASTER frissítése`
