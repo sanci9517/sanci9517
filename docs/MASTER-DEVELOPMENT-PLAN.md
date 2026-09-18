@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.12  
+**Verzió:** MASTER-2.13  
 **Dátum:** 2026-09-18  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -1832,7 +1832,7 @@ Ellenőrzött:
 
 Ez a teszt lezárta a valid, többblokkos/paragraph-alapú Rich Text megjelenítés alap runtime kapuját. A Rich Text formázott elemei (heading, bold, italic, underline, strike, inline code, link, listák, blockquote, code block) külön tesztelendők.
 
-**EGYETLEN AKTUÁLIS FOLYTATÁSI PONT:** 10.1.2.2 — Rich Text formázó UI iparági minta szerinti ki/be kapcsolható markok runtime tesztje. Benchmark alapján a Tiptap/Slate és WordPress/Gutenberg Rich Text toolbarjai a B/I formázást valódi toggle-ként kezelik, és aktív állapotot vizuálisan jelzik; a formázás a kijelölt szövegrészre vonatkozik. Ennek megfelelően a saját canonical JSON modellben a B/I most ugyanazon toggleRichTextMark útvonalon működik: kijelölt rész esetén csak a kijelölt tartományt módosítja, kijelölés nélkül az aktuális sort; ha a teljes cél-tartomány már formázott, a következő kattintás eltávolítja a markot. Az Inspector toolbar a B/I aktív állapotát is mutatja. Új helper: isRichTextMarkActive. Automatikus core teszt is hozzáadva a ki/be kapcsolásra és aktív állapot ellenőrzésére. A kód elkészült, runtime felhasználói teszt még nincs lezárva. Következő és egyetlen teszt: frissítés után Rich Text → egy sor kijelölése → B → látható félkövér + B aktív állapot → B újra → félkövér eltűnik + B inaktív állapot; ugyanez I-vel. Diagnostics maradjon ✓ 0 hiba. Undo/Redo, save/reload és responsive regresszió továbbra sem tesztelendő ebben a lépésben.
+**EGYETLEN AKTUÁLIS FOLYTATÁSI PONT:** 10.1.2.2 — Rich Text formázó UI iparági minta szerinti ki/be kapcsolható markok runtime tesztje. Benchmark alapján a Tiptap/Slate és WordPress/Gutenberg Rich Text toolbarjai a B/I formázást valódi toggle-ként kezelik, és aktív állapotot vizuálisan jelzik; a formázás a kijelölt szövegrészre vonatkozik. Ennek megfelelően a saját canonical JSON modellben a B/I most ugyanazon toggleRichTextMark útvonalon működik: kijelölt rész esetén csak a kijelölt tartományt módosítja, kijelölés nélkül az aktuális sort; ha a teljes cél-tartomány már formázott, a következő kattintás eltávolítja a markot. Az Inspector toolbar a B/I aktív állapotát is mutatja. Új helper: isRichTextMarkActive. Automatikus core teszt is hozzáadva a ki/be kapcsolásra és aktív állapot ellenőrzésére. A kód elkészült, runtime felhasználói teszt még nincs lezárva. A felhasználó jelezte, hogy a következő lépésben kifejezetten a teszteléssel folytatjuk. Következő és egyetlen teszt: frissítés után Rich Text → egy sor kijelölése → B → látható félkövér + B aktív állapot → B újra → félkövér eltűnik + B inaktív állapot; ugyanez I-vel. Diagnostics maradjon ✓ 0 hiba. Undo/Redo, save/reload és responsive regresszió továbbra sem tesztelendő ebben a lépésben.
 
 **10.1.2.2 — Rich Text formázó UI benchmark + toggle javítás — IMPLEMENTÁLVA, RUNTIME TESZT HÁTRA**
 
@@ -1857,6 +1857,9 @@ Commitok:
 - core test: 4643406d7284231458fe404b6213eafb1c329800
 
 Tesztállapot: statikus kódútvonal PASS; automatikus teszt és böngészős runtime még ellenőrizendő. A pont [~], nem [x].
+
+**TESZTELÉSI FOLYTATÁS RÖGZÍTVE:**
+A következő munkamenetben kizárólag a 10.1.2.2 Rich Text B/I toggle runtime tesztet végezzük. Fejlesztési pontot nem nyitunk, amíg a felhasználó nem jelzi a teszt eredményét. Tesztelendő: B kijelölt szövegen ki/be, B aktív/inaktív vizuális állapot, I ugyanez, Canvas megjelenés, Diagnostics `✓ 0 hiba`. Sikertelenségnél nem lépünk tovább; előbb a hibás réteget auditáljuk és a MASTER-t újra frissítjük.
 
 **Frissen feltárt editor library/add problémagyanú:** a jelenlegi `renderPalette()` mindig a kijelölt node-ot használja új elem szülőjeként. Leaf elem kijelölésekor ezért az új elem hozzáadása `Invalid parent for element` hibával leállhat. Emellett az Elements listában vannak olyan bejegyzések, amelyekhez jelenleg nincs `NODE_TYPES` érték (ezek `undefined` típussal nem adhatók hozzá). Ezt a hibát a Rich Text runtime teszt előtt külön javítási lépésként kell kezelni, mert közvetlenül érinti az Elements panel alapműködését.
 
