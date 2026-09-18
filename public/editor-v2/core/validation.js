@@ -5,7 +5,7 @@
  * A document must be structurally valid before it may be saved or published.
  */
 
-import { getNode, validateDocument } from './schema.js';
+import { getNode, validateDocument, normalizeRichText } from './schema.js';
 
 export function findReachableNodeIds(page) {
   const reachable = new Set();
@@ -74,10 +74,17 @@ export function validateHierarchy(page) {
   return errors;
 }
 
+export function validateRichTextNode(node) {
+  if (node?.type !== 'richtext') return [];
+  try { normalizeRichText(node.props?.richText); return []; }
+  catch (error) { return [`invalid richtext node ${node.id}: ${error instanceof Error ? error.message : String(error)}`]; }
+}
+
 export function validateEditorDocument(document) {
   const errors = validateDocument(document);
   for (const page of Object.values(document?.pages ?? {})) {
     errors.push(...validateHierarchy(page).map((error) => `page ${page.id}: ${error}`));
+    for (const node of Object.values(page.nodes ?? {})) errors.push(...validateRichTextNode(node).map((error) => `page ${page.id}: ${error}`));
   }
   return [...new Set(errors)];
 }
