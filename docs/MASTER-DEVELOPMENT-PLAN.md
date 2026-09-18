@@ -1419,6 +1419,58 @@ A következő lépés előtt a böngészős betöltés és az Elements panel run
 8. jelezd, hogy működik-e. **Más tesztre addig nem lépünk tovább.**
 
 
+### 9.1.1 — Editor Diagnostics / automatikus hibakereső — IMPLEMENTÁLVA, RUNTIME TESZT HÁTRA
+A felhasználó kérésére elkészült az Editor v2 első automatikus hibakereső rendszere.
+
+Cél: ha az editorban JavaScript, Promise, Command, API vagy UI hiba történik, azonnal legyen látható egy egyedi hibakód és részletes technikai információ.
+
+Architektúra:
+- a Diagnostics csak megfigyelő/reporting réteg;
+- nem hoz létre második Page Model-, selection-, history- vagy command-rendszert;
+- az adatok átmeneti, böngészőben élő diagnostics listában vannak;
+- a canonical editor state továbbra is változatlan marad.
+
+Elkészült:
+- `public/editor-v2/diagnostics.js`: strukturált hibarekordok, kódok, forrás, üzenet, fájl/sor/oszlop, technikai részletek;
+- automatikus JavaScript runtime error és unhandled Promise rejection figyelés;
+- látható `✓ 0 hiba` / `🔴 N hiba` jelző;
+- részletes hibapanel;
+- technikai részletek lenyitható nézetben;
+- Másolás és Törlés művelet;
+- Command hibák jelentése: `SANCI-CMD-E001`;
+- API hibák jelentése: `SANCI-API-E001/E002`;
+- UI hibák jelentése: `SANCI-UI-E001`;
+- korai boot/module hibák továbbítása a diagnostics rendszerbe: `SANCI-BOOT-E001`;
+- `boot.js` korai hibapuffert is használ, így az app modul elindulása előtti hibák sem vesznek el;
+- diagnostics UI desktop és mobile nézetre is kapott saját CSS-t;
+- app/index cache verzió frissítve.
+
+Commitok:
+- diagnostics: `2106b7f8d0a2b386bc1bdd519c63db3feb6b2eca`
+- boot: `edf97107b27b7968092ed6c08f4307500d318b20`
+- app: `f533d718138da5f65dd86b12427cfb88b2504b4e`
+- CSS: `70833b8e46b8f19bb0585eebad06d6e384fde8d5`
+- cache/index: `bbfc000aaab310db1596f07232266604400159b1`
+
+Statikus visszaolvasás: PASS.
+- diagnostics modul: PASS;
+- boot error bridge: PASS;
+- app Command/API/UI diagnostics bekötés: PASS;
+- diagnostics CSS: PASS;
+- app cache: PASS.
+
+Runtime teszt még nincs, ezért ez a pont nem [x].
+
+### Egyetlen aktuális teszt — Elements syntax fix + Diagnostics első runtime kapu
+1. teljesen töltsd újra az Editor v2 oldalt;
+2. ellenőrizd, hogy nincs `app.js:10:1702` syntax error és az editor betölt;
+3. az Elements panel kategóriafejlécei látszódjanak és alapból csukva legyenek;
+4. nyiss ki egy kategóriát, majd ellenőrizd az i súgót és egy elem hozzáadását;
+5. az editor jobb alsó részén legyen `✓ 0 hiba`;
+6. ha szándékosan hibát okozunk a következő tesztlépésben, a panelben egyedi `SANCI-...` kód jelenjen meg.
+
+**Más fejlesztési pontra addig nem lépünk tovább, amíg ezt a runtime kaput és a felhasználói visszaigazolást nem zártuk le.**
+
 ### 10.1.1 — Plain Text Content UI — LEZÁRVA
 **Felhasználói teszt:** PASS — „Működik”. Canvas, Undo, Redo és mentés/reload ellenőrzése sikeres.
 **Állapot:** `[x]`.
