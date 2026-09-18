@@ -1328,7 +1328,7 @@ Minden jelentős editor/platform bővítés előtt ellenőrizni kell:
 - [x] Inspector kapcsolat 8.1–8.6: felhasználói tesztek PASS.
 
 ## JELENLEGI EGYETLEN AKTÍV PONT — EZT KELL FOLYTATNI
-**9.1.0 — Elements panel „elem hozzáadása” stabilizálásának felhasználói tesztje.**
+**9.1.0 — Elements panel „elem hozzáadása” stabilizálás — javítás utáni felhasználói tesztje.**
 
 **9.1.0 — Elements panel „elem hozzáadása” stabilizálás — IMPLEMENTÁLVA, FELHASZNÁLÓI TESZT HÁTRA**
 
@@ -1342,8 +1342,10 @@ Implementációs commitok:
 - app: `1bc79fde326890a75da5ac2dee6172adc42984fd`
 - schema: `496b976af259e44f3ced9ad2bf1ef9c9fd23f23e`
 
-Statikus visszaolvasás: PASS.
+Statikus visszaolvasás: PASS. A javítás után a palette csoportjai ismét alapból láthatók.
 Felhasználói/runtime teszt még nincs, ezért `[x]` státusz még nem adható.
+
+Javító commit: `257577335e046ddf8584ae832ed5f2f904554f9b`.
 
 ### Egyetlen aktuális teszt
 1. válassz ki egy container/layout elemet → adj hozzá több különböző elemet;
