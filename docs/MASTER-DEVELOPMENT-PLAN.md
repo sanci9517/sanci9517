@@ -1396,6 +1396,22 @@ A felhasználó megerősítette, hogy a v6 kinézete megfelelő, és minden elle
 
 GitHub commitok: `13c27d4608847b52cee0c6da007bb40f88d0c808`, `5641b6e0c23a79bca63b5711aae4f28201e2eaa9`.
 
+### 2026-09-18 — 10.0.2 kód- és adatfolyam-audit
+A következő felhasználói teszt előtt teljes érintett kód-audit megtörtént: `public/editor-v2/core/commands.js`, `public/editor-v2/app.js`, `public/editor-v2/ui/shell.js`, valamint az aktuális `editor.css` állapot ellenőrizve.
+
+Audit eredmény:
+- `element.delete` root-védelem a command rétegben megvan;
+- locked elemnél a központi `requireNode` blokkolja a törlést;
+- törlés után a descendant node-ok eltávolítása és selection-tisztítás megvan;
+- undo/redo ugyanazon history-láncon működik;
+- revision növelés és dirty state törléskor megtörténik;
+- Inspector törlés közvetlenül a kanonikus `element.delete` commandot hívja;
+- nincs külön második delete/state rendszer az Inspectorban;
+- a v6 mobil shell működését érintő kódot ebben a lépésben nem módosítottuk.
+
+**Tesztállapot:** kód-audit PASS. Böngészős edge-case felhasználói teszt még nincs lezárva.
+**Aktuális egyetlen folytatási pont:** az alábbi 10.0.2 edge-case tesztek végrehajtása és felhasználói visszaigazolása.
+
 ### 10.0.2 edge-case tesztek továbbra is kötelezőek
 1. Redo teszt: törölt elem visszaállítása után Redo újra törölje.
 2. Root törlésének védelme.
