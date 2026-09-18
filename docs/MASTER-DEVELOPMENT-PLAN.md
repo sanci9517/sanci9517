@@ -1423,6 +1423,24 @@ Audit eredmény:
 
 **A fejlesztés nem lép tovább a következő aktív pontra sikertelen vagy részleges teszt esetén.**
 
+
+### 2026-09-18 — Inspector Lock UI + Layers zárolt állapot vizuális jelzése
+A felhasználói ellenőrzés szerint a zárolás funkcionálisan működik, de a korábbi Inspector vezérlő vizuális kialakítása nem volt megfelelő, és a Rétegek panelben nem volt látható a zárolt állapot.
+
+Módosítások:
+- public/editor-v2/app.js: az Inspector Zárolt elem vezérlője megmaradt a kanonikus element.lock.set commandon; a Rétegek sorai most locked állapotot kapnak és zárolt elemnél látható 🔒 jelzést jelenítenek meg.
+- public/editor-v2/editor.css: az Inspector zárolásvezérlő kapott külön, rendezett toggle-megjelenést; a zárolt layer sor és lakat jelzése vizuálisan elkülönül.
+
+GitHub commitok:
+- 7ff126ed363fd724c00d879874639d9e107d5b28 — Layers lock state
+- 5fc948a65c3c3c28ed8e641bf53f7be01fe75e4e — Inspector lock styling
+- 3ceb167113ebf42c55601d51ac3bd4145edf9543 — locked layer emphasis
+- bd0344d44d50b6bbdcbffdda0a3ddc8075ca21f7 — locked layer CSS emphasis
+
+**Állapot:** [~] — kód elkészült, de a vizuális és működési felhasználói újrateszt még szükséges. A 10.0.2 tesztkapu továbbra sem zárható le.
+
+**Következő egyetlen lépés:** a felhasználó ellenőrizze az új Inspector zárolás-megjelenést és a Rétegek panelben a 🔒 jelzést; ellenőrizze továbbá, hogy zárolt elem nem módosítható/törölhető, feloldás után pedig törölhető.
+
 # 36 — TERVKARBANTARTÁS
 
 - Ez az egyetlen aktív terv.
