@@ -1459,7 +1459,11 @@ GitHub commit: `89e7e632af5f444490c661c8617fa1a9d9934383`.
 
 **Állapot:** `[~]` — a Redo edge-case PASS; a 10.0.2 teljes tesztkapujához a Root törlésének védelme, selection/dirty-revision ellenőrzés és végső felhasználói visszaigazolás még hátravan.
 
-**Következő egyetlen lépés:** Root elem törlésének védelmi tesztje.
+**Felhasználói teszt eredménye:** a Root elem törlésének védelme **PASS**. A Root nem törölhető.
+
+**Állapot:** `[~]` — a Redo és Root-védelem PASS. A 10.0.2 teljes tesztkapujához a selection állapot, dirty/revision ellenőrzés (ha runtime-ban látható), majd a végső felhasználói visszaigazolás van hátra.
+
+**Következő egyetlen lépés:** törölt elem utáni selection állapot tesztje.
 
 # 36 — TERVKARBANTARTÁS
 
