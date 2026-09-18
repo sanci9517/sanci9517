@@ -1,7 +1,7 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.0  
-**Dátum:** 2026-09-17  
+**Verzió:** MASTER-2.1  
+**Dátum:** 2026-09-18  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
@@ -549,6 +549,42 @@ Cél: a geometry kézi mezői mellett gyors, értelmes presetek legyenek, anélk
 # 10 — INSPECTOR TELJES RENDSZER
 
 A Geometry pont után az Inspector fokozatosan, szekciónként készül.
+
+## 10.0 Inspector kapcsolat — aktuális tesztállapot
+- [x] kijelölt elem adatai megjelennek az Inspectorban
+- [x] szövegtartalom módosítása → Canvas frissül
+- [x] X/Y pozíció módosítása
+- [x] szélesség/magasság módosítása
+- [x] geometry preset működése
+- [x] Inspector módosítások visszakijelölés után megmaradnak
+- [!] Inspectorból elem törlése jelenleg nem érhető el UI-gombbal
+- [x] a kanonikus `element.delete` command már létezik és validált history-láncon működik
+
+## 10.0.1 Következő aktív javítás — Inspector törlés UI
+Cél: a meglévő `element.delete` commandhoz biztonságos Inspector műveletet adni.
+
+Követelmények:
+- törlés csak kijelölt elemnél;
+- root elem ne legyen törölhető;
+- locked elem törlését a command réteg blokkolja;
+- törlés után selection frissüljön;
+- Canvas és Layers/Navigator állapota frissüljön;
+- undo/redo működjön;
+- dirty state és revision frissüljön;
+- nincs második mutation/state rendszer;
+- felhasználói teszt nélkül nem lesz [x].
+
+## 10.0.2 Tesztkapu
+1. Inspectorban a törlés művelet látható.
+2. Nem-root elem törlése működik.
+3. Törlés után az elem eltűnik a Canvasról.
+4. Kijelölés megszűnik vagy értelmes szomszédos kijelölés marad.
+5. Layers/Navigator frissül.
+6. Undo visszahozza.
+7. Redo újra törli.
+8. Root törlése védett.
+9. Locked elem törlése védett.
+10. User confirmation.
 
 ## 10.1 Content
 - [ ] plain text
@@ -1269,39 +1305,28 @@ Minden jelentős editor/platform bővítés előtt ellenőrizni kell:
 - [x] Geometry változások Command API → Page Model → Canvas Engine lánca.
 - [x] Geometry browser teszt: felhasználó visszajelzése: **„Működik”**.
 - [x] 6.2 Geometry Inspector presets: mind az 5 felhasználói teszt PASS.
-- [x] 7.1 Shell state persistence: felhasználói teszt PASS.
+- [x] Elements panel alapfunkciók és kijelölés tesztelve.
+- [x] Shell state persistence: felhasználói teszt PASS.
+- [x] Panel collapse/reopen: felhasználói teszt PASS.
+- [x] Panel width min/max: felhasználói teszt PASS.
+- [x] Inspector kapcsolat 8.1–8.6: felhasználói tesztek PASS.
 
 ## Jelenlegi egyetlen aktív pont
-**7.1 Editor Shell.**
+**10.0.1 Inspector törlés UI.**
 
-### 7.1 eddig lezárt alfeladat
-- [x] Shell UI state persistence — panel open/close, bal oldali tab és dock szélességek localStorage-ból történő visszaállítása refresh után.
-- Commit: `b023382e5893b03d1b79f4a37e78139a04bea195`
-- User browser confirmation: **„Működik”**.
-- [x] Panel collapse / reopen UX — bal és jobb panel összecsukása és visszanyitása, bal oldali Oldalak/Elemek/Rétegek nézet megtartása.
-- User browser confirmation: **„Rendben”**.
+A 7.1 Editor Shell további pontjai későbbi tesztkapuk; a jelenlegi konkrét blokkoló feladat az Inspector törlés műveletének UI-ból történő elérhetővé tétele.
 
-### Következő konkrét munkamenet
-1. aktuális `index.html`, `editor.css`, `shell.js` teljes audit;
-2. a 7.1 következő egyetlen alfeladatának kiválasztása a tényleges jelenlegi shell alapján;
-3. minimális módosítás;
-4. érintett fájl visszaolvasása;
-5. GitHub commit és branch/HEAD ellenőrzés;
-6. Cloudflare build/deploy;
-7. browser teszt desktop/tablet/mobile ahol releváns;
-8. user confirmation;
-9. csak sikeres visszaigazolás után MASTER frissítése és a következő 7.1 alfeladat kiválasztása.
+### Aktuális folytatási állapot
+1. Teljes érintett Inspector/app/command kód audit.
+2. Minimális UI-módosítás a meglévő `element.delete` command használatával.
+3. Érintett fájl visszaolvasása és statikus ellenőrzése.
+4. GitHub commit + branch/HEAD ellenőrzés.
+5. Cloudflare build/deploy.
+6. Felhasználói browser teszt.
+7. Csak a **„Működik”** visszaigazolás után jelölhető 10.0.1 és a hozzá tartozó tesztkapu [x].
+8. Ezután választjuk ki a következő egyetlen aktív pontot.
 
-**Nem lépünk 7.2-re, amíg a 7.1 shell nincs végig lezárva és tesztelve.**
-
-## Folytatási szabály új beszélgetésben
-A következő beszélgetésben elég ezt mondani:
-
-**„Folytassuk a Sanci9517 MASTER tervet.”**
-
-A rendszernek először ezt a fájlt kell lekérnie, az `AKTUÁLIS ÁLLAPOT ÉS FOLYTATÁSI SZERZŐDÉS` részt meg kell néznie, majd az ott megadott egyetlen aktív pontból kell folytatnia.
-
----
+**A fejlesztés nem lép tovább a következő aktív pontra sikertelen vagy részleges teszt esetén.**
 
 # 36 — TERVKARBANTARTÁS
 
