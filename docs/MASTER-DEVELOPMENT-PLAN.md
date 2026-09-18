@@ -1278,6 +1278,8 @@ Minden jelentős editor/platform bővítés előtt ellenőrizni kell:
 - [x] Shell UI state persistence — panel open/close, bal oldali tab és dock szélességek localStorage-ból történő visszaállítása refresh után.
 - Commit: `b023382e5893b03d1b79f4a37e78139a04bea195`
 - User browser confirmation: **„Működik”**.
+- [x] Panel collapse / reopen UX — bal és jobb panel összecsukása és visszanyitása, bal oldali Oldalak/Elemek/Rétegek nézet megtartása.
+- User browser confirmation: **„Rendben”**.
 
 ### Következő konkrét munkamenet
 1. aktuális `index.html`, `editor.css`, `shell.js` teljes audit;
