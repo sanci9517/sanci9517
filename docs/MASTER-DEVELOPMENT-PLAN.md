@@ -1436,6 +1436,40 @@ Javító commit:
 
 A következő egyetlen aktív pont továbbra is a runtime ellenőrzés.
 
+### 9.1.0 — Rich Text elem hozzáadásának javítása
+
+A felhasználói teszt során az Elements palette többi eleme hozzáadható volt, de a **Rich Text** elem nem. A teljes Command/Schema lánc ellenőrzése alapján a konkrét ok:
+
+- az `element.add` generic `createNode()` útvonalon hozta létre a Rich Text node-ot;
+- a Rich Text node így nem kapott `props.richText` canonical dokumentumot;
+- a 10.1.2.2-ben bevezetett Rich Text validation ezt helyesen elutasította;
+- tehát nem a palette típusa vagy a szülőválasztás volt hibás, hanem a Rich Text node létrehozása nem követte az új canonical adatmodellt.
+
+Javítás:
+- `commands.js`: az `element.add` Rich Text esetén automatikusan létrehozza a `createEmptyRichText()` canonical dokumentumot;
+- a művelet továbbra is ugyanazon `Command → Validation → Page Model → History → Canvas → Persistence` láncot használja;
+- a többi elem hozzáadási útvonala változatlan;
+- editor cache frissítve.
+
+Javító commitok:
+- commands: `23faaf85a32cc8add77f4fc1158202c862850656`
+- commands content SHA: `637f43440e6c036acce26aeb83ea7c61b40e2a50`
+- cache/index: `a54aa07a29e4b7f7c6e880db04428a4bc8422aa1`
+- index content SHA: `8c4e5217d666beadace0e29c3905282395d244f4`
+
+Statikus visszaolvasás: PASS.
+Felhasználói/runtime teszt még hátra.
+
+### EGYETLEN AKTÍV TESZT — Rich Text hozzáadás
+1. teljesen frissítsd az Editort;
+2. Elemek → Szöveg kategória;
+3. kattints a **Rich Text** elemgombra;
+4. az elemnek létre kell jönnie és ki kell jelölődnie;
+5. ne legyen `SANCI-...` hiba;
+6. utána csak jelezd: **„Rich Text hozzáadható”** vagy írd le a megjelenő hibát.
+
+Más tesztre addig nem lépünk tovább.
+
 ### 9.1.1 — Editor Diagnostics / automatikus hibakereső — IMPLEMENTÁLVA, RUNTIME TESZT HÁTRA
 A felhasználó kérésére elkészült az Editor v2 első automatikus hibakereső rendszere.
 
