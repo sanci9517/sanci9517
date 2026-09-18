@@ -1409,8 +1409,8 @@ Audit eredmény:
 - nincs külön második delete/state rendszer az Inspectorban;
 - a v6 mobil shell működését érintő kódot ebben a lépésben nem módosítottuk.
 
-**Tesztállapot:** kód-audit PASS. Böngészős edge-case felhasználói teszt még nincs lezárva.
-**Aktuális egyetlen folytatási pont:** az alábbi 10.0.2 edge-case tesztek végrehajtása és felhasználói visszaigazolása.
+**Tesztállapot:** kód-audit PASS. Felhasználói teszt: 1–7 közül minden végrehajtható pont PASS; a Locked elem törlése nem tesztelhető, mert az aktuális Inspector UI-ban nincs Lock/Locked vezérlő vagy elérhető lock állapotváltás. A command réteg lock-védelme kódban létezik, de UI-ból jelenleg nem aktiválható.
+**Aktuális egyetlen folytatási pont:** a Locked állapot UI-ból való elérhetőségének ellenőrzése és a 10.0.2 tesztkapu lezárása. Amíg Locked állapot nem állítható elő az Editor UI-ban, 10.0.2 nem jelölhető `[x]`-re.
 
 ### 10.0.2 edge-case tesztek továbbra is kötelezőek
 1. Redo teszt: törölt elem visszaállítása után Redo újra törölje.
