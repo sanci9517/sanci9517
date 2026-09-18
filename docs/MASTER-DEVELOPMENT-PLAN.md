@@ -1499,7 +1499,7 @@ Tesztelendő sorrend:
 **Más fejlesztési pontra addig nem lépünk tovább, amíg ez a tesztkapu nincs lezárva.**
 
 
-### 9.1.2 — Diagnostics műveleti eredményellenőrző réteg — ÚJ KÖVETKEZŐ PONT
+### 9.1.2 — Diagnostics műveleti eredményellenőrző réteg — IMPLEMENTÁLVA, RUNTIME TESZT HÁTRA
 
 Cél: a Diagnostics ne csak tényleges JavaScript/Command/API/UI hibákat jelezzen, hanem az olyan „csendes” hibákat is, amikor egy felhasználói művelet lefutónak tűnik, de a várt eredmény nem jön létre.
 
@@ -1530,9 +1530,16 @@ Kötelező tesztkapu:
 - meglévő Diagnostics regresszió PASS;
 - user confirmation.
 
-**Állapot:** [~] tervezve, implementáció előtt.
+**Állapot:** [~] implementálva, runtime teszt hátra.
 
 **E pont lezárása után kötelező visszatérési pont:** **10.1.2.2 — Rich Text strukturált Command + Validation runtime/integrációs teszt**, pontosan onnan folytatva, ahol a Diagnostics 9.1.1 lezárásakor abbahagytuk. A MASTER-ben ez marad a 9.1.2 utáni következő egyetlen aktív pont.
+
+
+Implementációs commitok:
+- diagnostics verification primitive: `b7549eeddacb9f91f805c178f0d17673f8168bf0`
+- Elem hozzáadása eredményellenőrzés: `3750944f90e559640a3827fd93f76e5723701b39`
+
+**Következő egyetlen teszt:** Elem hozzáadása normál esetben; a Diagnosticsnak nem szabad hibát adnia, és az elemnek a Page Modelben és a Canvason is létre kell jönnie. Ezt követően külön szándékosan hibás eredményt kell előidézni és ellenőrizni a `SANCI-VERIFY-E001/E002` jelzést.
 
 ### 9.1.1 — Editor Diagnostics / automatikus hibakereső — LEZÁRVA
 A felhasználó kérésére elkészült az Editor v2 első automatikus hibakereső rendszere.
