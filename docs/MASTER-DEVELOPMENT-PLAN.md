@@ -1331,39 +1331,33 @@ Minden jelentős editor/platform bővítés előtt ellenőrizni kell:
 **10.1.2 Inspector — Rich Text Content rendszer auditja és specifikációja.**
 
 ### 10.1.1 — Plain Text Content UI — LEZÁRVA
-**Felhasználói teszt eredménye:** PASS — a felhasználó visszaigazolta: **„Működik”**.
+**Felhasználói teszt:** PASS — „Működik”. Canvas, Undo, Redo és mentés/reload ellenőrzése sikeres.
+**Állapot:** `[x]`.
 
-Ellenőrzött adatfolyam:
-1. `text`/`heading` elem kiválasztása;
-2. Inspector → Content → Szöveg módosítása;
-3. Canvas azonnali frissülése;
-4. Undo visszaállítja az előző értéket;
-5. Redo visszaállítja az új értéket;
-6. mentés/reload után a módosított tartalom megmarad.
+### 10.1.2 — Rich Text Content rendszer audit — AUDIT LEZÁRVA
+**Audit eredmény:** PASS, de a jelenlegi rendszerben **valódi Rich Text még nincs implementálva**.
 
-**Kódállapot:**
-- `public/editor-v2/app.js`: típusfüggő Content UI;
-- `public/editor-v2/core/commands.js`: canonical `element.content.set`, amely text típusoknál `props.text` + `props.content` értékeket normalizál;
-- nincs második state/command rendszer.
+**Vizsgált fájlok:**
+- `public/editor-v2/app.js`
+- `public/editor-v2/core/commands.js`
+- `public/editor-v2/core/schema.js`
+- `public/editor-v2/core/validation.js`
 
-**GitHub:**
-- app: `9a77a39ff3570fec213e1ea3a38488c39091a633`
-- command: `2bcfca1bafad2e184bc1f790a7377d7e7601ecd5`
+**Megállapítások:**
+- A Page Modelben külön `richtext` node type létezik.
+- A node `props` szabad struktúrájú, ezért a Rich Text adatmodell technikailag bővíthető, de jelenleg nincs meghatározott Rich Text dokumentumstruktúra.
+- Az `element.content.set` jelenleg a `richtext` típust a plain text típusokkal együtt kezeli, és egyszerű stringet ír `props.text` + `props.content` mezőbe.
+- A Canvas jelenlegi editor renderere a `richtext` tartalmat `textContent` segítségével jeleníti meg, ezért formázott inline tartalom, link, lista stb. nem tud megjelenni.
+- Nincs `contenteditable`, Rich Text toolbar, inline mark/node modell vagy Rich Text-specifikus validation.
+- A history/revision/dirty lánc megfelelően központi: a Rich Text jövőbeli módosítását ugyanazon `element.content.set`/új Rich Text command láncban kell tartani.
+- A mentés az egész canonical `state.document` objektumot küldi a `/api/admin/editor` végpontra, ezért a Rich Text adatmodell ugyanazon persistence láncon menthető.
+- A jelenlegi schema/validation nem kényszerít Rich Text formátumot, ezért az új modellhez célzott validáció szükséges.
 
-**Állapot:** `[x]` — 10.1.1 teljesen tesztelve és a felhasználó által visszaigazolva.
+**Architekturális döntés:** nem vezetünk be HTML-string alapú Rich Text source-of-truth rendszert. A Rich Text canonical tartalma strukturált dokumentum lesz; a Canvas renderer ebből generálja a megjelenítést. A HTML/DOM csak renderelt eredmény.
 
-### 10.1.2 — Rich Text Content rendszer audit + specifikáció
-**Állapot:** `[~]` — ez az egyetlen aktuális fejlesztési lépés.
+**Következő egyetlen lépés:** 10.1.2.1 — Rich Text canonical adatmodell megtervezése és MASTER-ben rögzítése. Még nem implementálunk UI-t vagy HTML/DOM szerkesztést.
 
-Cél:
-- megállapítani, hogy a jelenlegi `richtext` Page Model, renderer és Command lánc milyen formátumot támogat;
-- meghatározni a valódi Rich Text szerkesztés kanonikus adatmodelljét;
-- biztosítani, hogy a Rich Text ugyanazon `Command → Validation → Page Model → History → Canvas → Persistence` láncon működjön;
-- szükség esetén előbb a MASTER-ben rögzíteni az adatmodell/architektúra döntést, és csak utána implementálni.
-
-**Következő egyetlen lépés:** teljes érintett kód- és adatfolyam-audit kizárólag a Rich Texthez: `app.js`, `commands.js`, `schema.js`, `validation.js`, Canvas/render mapping és persistence kapcsolat. Audit előtt nem módosítunk kódot.
-
-**10.1.1 lezárásának dátuma:** 2026-09-18.
+**Audit dátuma:** 2026-09-18.
 # 36 — TERVKARBANTARTÁS
 
 - Ez az egyetlen aktív terv.
