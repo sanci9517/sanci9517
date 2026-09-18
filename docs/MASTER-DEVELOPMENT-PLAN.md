@@ -1328,7 +1328,7 @@ Minden jelentős editor/platform bővítés előtt ellenőrizni kell:
 - [x] Inspector kapcsolat 8.1–8.6: felhasználói tesztek PASS.
 
 ## JELENLEGI EGYETLEN AKTÍV PONT — EZT KELL FOLYTATNI
-**10.1.2 Inspector — Rich Text Content rendszer auditja és specifikációja.**
+**10.1.2.2 — Rich Text strukturált Command + Validation implementáció, UI nélkül.**
 
 ### 10.1.1 — Plain Text Content UI — LEZÁRVA
 **Felhasználói teszt:** PASS — „Működik”. Canvas, Undo, Redo és mentés/reload ellenőrzése sikeres.
@@ -1355,9 +1355,100 @@ Minden jelentős editor/platform bővítés előtt ellenőrizni kell:
 
 **Architekturális döntés:** nem vezetünk be HTML-string alapú Rich Text source-of-truth rendszert. A Rich Text canonical tartalma strukturált dokumentum lesz; a Canvas renderer ebből generálja a megjelenítést. A HTML/DOM csak renderelt eredmény.
 
-**Következő egyetlen lépés:** 10.1.2.1 — Rich Text canonical adatmodell megtervezése és MASTER-ben rögzítése. Még nem implementálunk UI-t vagy HTML/DOM szerkesztést.
+**10.1.2.1 — Rich Text canonical adatmodell — LEZÁRVA**
 
-**Audit dátuma:** 2026-09-18.
+**Döntés:** a Rich Text canonical source-of-truth egy strukturált, JSON-alapú dokumentum lesz a node props.richText mezőjében. HTML-string nem kerül canonical tárolásba.
+
+### Canonical Rich Text shape
+- props.richText.schemaVersion: jelenleg 1.
+- props.richText.type: richtext-document.
+- props.richText.blocks: sorrendben tárolt blokk-node-ok.
+- Egy blokk minimális alakja:
+  - type: pl. paragraph, heading, quote, code, list;
+  - children: inline-node lista.
+- Egy inline text-node minimális alakja:
+  - type: text;
+  - text: string;
+  - marks: tömb, pl. bold, italic, underline, strike, code;
+  - opcionális strukturált link: href, target, rel, title.
+- A lista és hasonló összetett blokkok saját children/items struktúrát használhatnak; ezt célzott schema/validation szabályok védik.
+- Üres dokumentum érvényes reprezentációja: legalább egy üres paragraph blokk, egy üres text inline-node-dal.
+
+### Canonicalizálási szabályok
+- A formázás nem HTML-ben és nem DOM-ban tárolódik.
+- A renderer a strukturált dokumentumból állít elő DOM-ot.
+- A DOM/HTML csak renderelt eredmény vagy import/export formátum lehet.
+- A Rich Text dokumentum stabil, sorrendérzékeny struktúra; a UI nem tárolhat külön másolatot source-of-truthként.
+- Ismeretlen blokk/mark típus mentés előtt validation hibát okoz, nem csendes fallbacket.
+- href/link adatok strukturált mezők; nyers HTML beszúrás nem része a canonical modellnek.
+- A dokumentum verziózása a Rich Text saját schemaVersion mezőjén keresztül történik, és a jövőbeli migrációk explicit mappinggel készülnek.
+
+### Tervezett Command-lánc
+A későbbi implementáció továbbra is a központi láncot használja:
+Rich Text UI → Command → Validation → Page Model → History → Canvas Renderer → Persistence.
+A meglévő element.content.set parancsot nem használjuk HTML-string tárolására. A Rich Text számára strukturált content command/action készül, amikor a 10.1.2.2 implementáció megkezdődik.
+
+### Tervezett támogatási minimum
+Első Rich Text implementáció:
+- paragraph;
+- H1–H6 heading;
+- bold;
+- italic;
+- underline;
+- strike;
+- inline code;
+- link;
+- bulleted list;
+- numbered list;
+- blockquote;
+- code block;
+- hard/soft line break kezelése;
+- üres állapot és normalizálás.
+
+Későbbi bővítésként külön kezelhető:
+- text color/highlight;
+- alignment;
+- nested lists;
+- mentions;
+- inline media;
+- tables;
+- embeds;
+- custom marks/nodes.
+
+### Kötelező validation
+A Rich Text validationnek ellenőriznie kell:
+1. root/type/schemaVersion;
+2. blocks tömböt;
+3. megengedett block-típusokat;
+4. blokk-specifikus kötelező mezőket;
+5. inline-node típust és text értéket;
+6. markok engedélyezett készletét;
+7. link URL/target/rel mezőket;
+8. tiltott/érvénytelen HTML vagy ismeretlen struktúra ne kerülhessen canonical state-be;
+9. normalizálható hibák esetén determinisztikus normalizálást;
+10. nem javítható hibánál teljes command rollbacket.
+
+### Tesztkapu a következő implementációs ponthoz
+A 10.1.2.2 pontban külön tesztelendő:
+- modell létrehozása;
+- plain → Rich Text átmenet;
+- inline markok;
+- link;
+- listák;
+- blockquote/code;
+- Undo/Redo;
+- save/reload;
+- Canvas render;
+- invalid document rejection;
+- schema migration alap;
+- desktop/tablet/mobile;
+- user confirmation.
+
+**10.1.2.1 eredménye:** a canonical Rich Text adatmodell és a hozzá tartozó architekturális/validációs szabályok rögzítve. UI és HTML/DOM szerkesztés még nem implementált.
+
+**Következő egyetlen aktív pont:** **10.1.2.2 — Rich Text strukturált Command + Validation implementáció**, UI nélkül.
+
+**Audit/specifikáció dátuma:** 2026-09-18.
 # 36 — TERVKARBANTARTÁS
 
 - Ez az egyetlen aktív terv.
