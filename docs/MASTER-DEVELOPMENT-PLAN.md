@@ -1332,18 +1332,21 @@ Minden jelentős editor/platform bővítés előtt ellenőrizni kell:
 
 **Új beszélgetésben ez az egyetlen folytatási pont.** A 7.1, 7.2, 7.3 és minden más fejezet `[ ]` pontja jelenleg várólistán van; azokból nem szabad folytatni, amíg a 10.0.2 teljes tesztkapuja nincs lezárva.
 
-### 2026-09-18 — mobil Editor Shell újratervezés — v4 irány
-A v3 felhasználói teszt újabb konkrét UX-hibát azonosított: a lebegő nézet- és zoomvezérlők továbbra is rátakartak a Canvas tartalmára, különösen az oldal nevére; a Publikálás mobilon nem volt látható. A teljes mobil shellt ezért nem további lebegő rétegekkel foltozzuk, hanem a kezelőszervek normál elrendezésbe kerülnek.
+### 2026-09-18 — mobil Editor Shell újratervezés — v5 irány
+A v3/v4 felhasználói ellenőrzés alapján további UX-finomság maradt: a lebegő nézet- és zoomvezérlők továbbra is rátakartak a Canvas tartalmára, különösen az oldal nevére; a Publikálás mobilon nem volt látható. A teljes mobil shellt ezért hierarchikus, normál elrendezésű vezérlősávokra rendeztük, nem további lebegő rétegekre.
 
 Új elv:
 - a Canvas fölötti vezérlők nem takarhatják a szerkesztett oldalt;
+- a mobil vezérlés legyen három jól elkülönülő szint: fejléc, műveleti sáv, Canvas-eszközsáv;
 - az oldal neve és a felső azonosító mindig szabadon látható marad;
 - a mobil fejléc két soros: 1. sor márka + oldalválasztó, 2. sor minden fő művelet;
+- a Publikálás mobilon rövid `P` gombként jelenik meg;
 - a Mentés, Előnézet, Publikálás és Inspector mobilon is közvetlenül elérhető;
 - Desktop / Tablet / Mobil nézetválasztó normál toolbar-rész, nem lebeg a Canvas fölött;
 - Zoom / Fit normál toolbar-rész, nem lebeg a Canvas fölött;
 - a lebegő drawer/overlay csak a bal oldali panelhez és Inspectorhoz marad;
 - a Canvas kapja a fennmaradó helyet, és minden vezérlő a saját helyén marad;
+- a Canvas eszközsávban külön sor: Kijelölés/Nézet → Desktop/Tablet/Mobil → Fit/Zoom;
 - desktop shell logikája nem változik.
 
 Módosított fájlok:
@@ -1353,10 +1356,13 @@ Módosított fájlok:
 GitHub commitok:
 - `36a3ba7f30b8350578f10cf5b090786723391680`
 - `569348781423169c18cb52c1121f0d5a21fbbdbc`
+- `2d73f0ebe4523c79dd45c152340fad74cf1b809b`
+- `8bc8c372da9f149ff4c74df58be6b7ab3dcaed95`
+- `3114f233557d9fe0cbb0b47c8f90535a4f5e0459`
 
-**A v4 kód elkészült, de felhasználói újrateszt még nincs.**
+**A v5 kód elkészült, de felhasználói újrateszt még nincs.**
 
-### AKTUÁLIS EGYETLEN FOLYTATÁSI LÉPÉS — Mobile Shell v4 felhasználói teszt
+### AKTUÁLIS EGYETLEN FOLYTATÁSI LÉPÉS — Mobile Shell v5 felhasználói teszt
 Telefonon frissítés után:
 1. Első sorban jól látszódjon a ☰, SANCI9517 és az oldal neve/oldalválasztó; semmi ne takarja az oldal azonosítását.
 2. Második sorban közvetlenül látszódjon és megnyomható legyen: ↶ Undo, ↷ Redo, Előnézet, Mentés, Publikálás, Inspector.
