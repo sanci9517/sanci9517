@@ -1392,6 +1392,22 @@ Javító commit:
 
 A user által jelzett hiba alapján az előző változat **nem tekinthető teszteltnek**. A jelenlegi változatnál először a böngészős betöltést és az Elements panel megjelenését kell ellenőrizni.
 
+### 9.1.0 — Elements palette második syntax hiba javítva
+A felhasználó újabb betöltési hibát jelzett: `app.js?v=20260918-8:10:1702`.
+
+A teljes aktuális `app.js` 10. sorát újraellenőrizve a hiba oka az `ELEMENT_DESCRIPTIONS` objektumban maradt, szóközt tartalmazó, idézőjel nélküli kulcsok voltak, többek között `Élő állapot`, `Stream számláló`, `Játékkártya`, `Játéklista`, `Egyedi elem` és hasonló kulcsok. Ezek JavaScript objektumkulcsként így syntax error-t okoztak.
+
+Javítás:
+- minden érintett, szóközt tartalmazó kulcs érvényes string kulccsá alakítva;
+- működési logika nem változott;
+- app.js frissített tartalma visszaolvasva: a leírásobjektum szintaktikailag konzisztens.
+
+Javító commit:
+- app: `487cee39dd89e2eb1ece26304294dce49d64770b`
+- app content SHA: `40f8180d727d4d6ca70b3614cb5644511f17043b`
+
+A következő lépés előtt a böngészős betöltés és az Elements panel runtime ellenőrzése szükséges. A korábbi syntax hiba miatt a palette funkció még nem tekinthető felhasználó által lezártnak.
+
 ### Egyetlen aktuális teszt
 1. frissítsd az editor oldalt teljes újratöltéssel;
 2. ellenőrizd, hogy az `app.js` már nem ad syntax error-t;
