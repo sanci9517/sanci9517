@@ -1362,24 +1362,34 @@ GitHub commitok:
 
 **A v5 kód elkészült, de felhasználói újrateszt még nincs.**
 
-### AKTUÁLIS EGYETLEN FOLYTATÁSI LÉPÉS — Mobile Shell v5 felhasználói teszt
-Telefonon frissítés után:
-1. Első sorban jól látszódjon a ☰, SANCI9517 és az oldal neve/oldalválasztó; semmi ne takarja az oldal azonosítását.
-2. Második sorban közvetlenül látszódjon és megnyomható legyen: ↶ Undo, ↷ Redo, Előnézet, Mentés, Publikálás, Inspector.
-3. A Canvas fölötti toolbarban látszódjon a Desktop / Tablet / Mobil nézetválasztó.
-4. A Canvas toolbar második sorában látszódjon és működjön a Fit / − / zoom / +.
-5. A nézet- és zoomvezérlők egyike se takarja a szerkesztett oldal tartalmát vagy az oldal nevét.
-6. Próbáld ki a − / + zoomot és a Fit-et.
-7. Próbáld ki mindhárom nézetet: Desktop / Tablet / Mobil.
-8. Ellenőrizd külön a Mentés, Előnézet és Publikálás gombot.
-9. A ☰ bal drawer továbbra is működjön.
-10. ◧ Inspector továbbra is működjön.
-11. Háttér-kattintás / Escape zárja az overlayt.
-12. Undo / Redo működjön.
-13. Desktop nézetben ellenőrizd, hogy nem történt regresszió.
+### AKTUÁLIS EGYETLEN FOLYTATÁSI LÉPÉS — Mobile Shell v6 felhasználói teszt
 
-**Ha bármi takar, nem látszik vagy nehezen kezelhető: nem lépünk tovább; újabb mobil shell módosítás következik.**
-**Ha minden PASS:** jöhet a Mobile Shell v3 részletes vizuális finomhangolása, majd a 10.0.2 edge-case tesztkapu lezárása.
+A v5 felhasználói visszajelzés szerint a gombok elrendezése továbbra sem professzionális érzetű, és panelnyitáskor a fehér Canvas vizuálisan eltűnik. A mobil shellt ezért újra kellett gondolni a professzionális editorok mintájára.
+
+**v6 döntések:**
+- canvas-first elrendezés: a vászon marad a fő felület;
+- kompakt, egy soros felső fejléc: menü + SANCI9517 + oldalválasztó + fő műveletek;
+- mobilon a Publikálás rövid `P` gomb;
+- a Canvas eszközsáv egyetlen kompakt sorban marad a Canvas előtt;
+- a bal és jobb panelek sheet/drawer jellegűek, nem teljes képernyős oldalak;
+- panelnyitáskor a Canvas továbbra is látható marad, csak enyhén sötétedik a panelen kívüli rész;
+- nem használunk lebegő vezérlőt a fehér szerkesztett oldal fölött.
+
+**Referenciaelemzés:** Wix a mobil szerkesztőben bal oldali menüt/paneleket és eszközsávot használ, míg Framer a Canvas-központú felületet és külön canvas vezérlőket alkalmaz. A közös tanulság: a Canvas az elsődleges munkaterület, a panelek és eszközök pedig köré szerveződnek. citeturn0search0turn0search4turn0search13
+
+**Felhasználói teszt kötelező pontjai:**
+1. Felső fejléc egy sorban, nem zsúfolt.
+2. Az oldalválasztó egyértelműen látszik.
+3. Undo/Redo, Preview, Save, `P`, Inspector elérhető.
+4. Canvas eszközsáv kompakt és nem takarja a fehér oldalt.
+5. Bal menü megnyitásakor a fehér Canvas látható marad mellette/mögötte.
+6. Inspector megnyitásakor ugyanígy a Canvas nem tűnik el.
+7. A panel nem foglalja el indokolatlanul a teljes kijelzőt.
+8. Escape/backdrop bezárás működik.
+9. Desktop működése változatlan.
+10. Ha bármelyik pont nem megfelelő, nem lépünk tovább.
+
+GitHub commitok: `13c27d4608847b52cee0c6da007bb40f88d0c808`, `5641b6e0c23a79bca63b5711aae4f28201e2eaa9`.
 
 ### 10.0.2 edge-case tesztek továbbra is kötelezőek
 1. Redo teszt: törölt elem visszaállítása után Redo újra törölje.
