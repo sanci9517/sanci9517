@@ -29,28 +29,14 @@ function typeForElement(name){const map={'Badge/Tag':'badge','Quote':'quote','Pa
 function resolveAddParent(current,type){const selected=state.selection.primaryId?getNode(current,state.selection.primaryId):null;if(selected&&canContain(selected,type))return selected;if(selected?.parentId){const parent=getNode(current,selected.parentId);if(parent&&canContain(parent,type))return parent}return getNode(current,current.rootId)}
 function renderPalette(filter=''){const root=$('#elementList');if(!root){diagnostics.add({source:'ui',code:'SANCI-UI-E002',message:'Az Elemek lista konténere nem található.'});return}root.replaceChildren();const q=String(filter||'').trim().toLowerCase();for(const[group,items]of groups){const matches=items.filter(([name,type])=>{const resolvedType=type||typeForElement(name);return name.toLowerCase().includes(q)&&Boolean(resolvedType)});if(!matches.length)continue;const section=document.createElement('section');section.className='element-group collapsed';const title=document.createElement('button');title.type='button';title.className='element-group-title';title.innerHTML='<span>'+group+'</span><b>'+matches.length+'</b>';const body=document.createElement('div');for(const[name,type]of matches){const resolvedType=type||typeForElement(name);const row=document.createElement('div');row.className='element-row';const b=document.createElement('button');b.type='button';b.className='element';b.innerHTML='<i>◇</i><span>'+name+'</span>';b.onclick=()=>{const current=page();if(!current)return;const parent=resolveAddParent(current,resolvedType);command('element.add',{type:resolvedType,name,parentId:parent?.id||current.rootId,props:{text:name}})};const info=document.createElement('button');info.type='button';info.className='element-info';info.textContent='i';info.title='Mi ez? '+name;info.setAttribute('aria-label','Mi ez? '+name);const help=document.createElement('div');help.className='element-description';help.textContent=ELEMENT_DESCRIPTIONS[name]||name+' elem hozzáadására szolgál.';help.hidden=true;info.onclick=e=>{e.stopPropagation();help.hidden=!help.hidden};row.append(b,info,help);body.append(row)}title.onclick=()=>section.classList.toggle('collapsed');section.append(title,body);root.append(section)}if(!root.children.length)diagnostics.add({source:'ui',code:'SANCI-UI-E003',message:'Az Elemek lista üres: egyetlen érvényes elem típus sem került a palettába.'})}
 function renderRichTextInline(inline){
-  const text=document.createElement('span');
-  text.textContent=inline?.text||'';
-  const marks=new Set(inline?.marks||[]);
-  let result=text;
-  const weight=Number(inline?.fontWeight)||(marks.has('bold')?700:0);
-  if(weight){
-    const strong=document.createElement('span');
-    strong.className='richtext-mark-weight';
-    strong.style.setProperty('font-weight',String(weight),'important');
-    strong.append(result);
-    result=strong;
+  let result=document.createTextNode(inline?.text||'');
+  for(const mark of [...new Set(inline?.marks||[])].reverse()){
+    const tag={bold:'strong',italic:'em',underline:'u',strike:'s',code:'code'}[mark];if(!tag)continue;
+    const wrapper=document.createElement(tag);wrapper.append(result);result=wrapper;
   }
-  if(marks.has('italic')){
-    const em=document.createElement('em');
-    em.className='richtext-mark-italic';
-    em.style.setProperty('font-style','italic','important');
-    em.append(result);
-    result=em;
-  }
+  if(inline?.link?.href){const link=document.createElement('a');link.href=inline.link.href;for(const key of ['target','rel','title'])if(inline.link[key])link[key]=inline.link[key];link.append(result);result=link}
   return result;
 }
-
 function renderRichTextDocument(container,doc){
   for(const block of doc?.blocks||[]){
     const tag=block.type==='heading'?`h${Math.min(6,Math.max(1,Number(block.level)||1))}`:block.type==='quote'?'blockquote':block.type==='code'?'pre':'p';
