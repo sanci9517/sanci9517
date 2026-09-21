@@ -69,6 +69,20 @@ function renderRichTextDocument(container,doc){
   }
 }
 
+function verifyRichTextBoldRender(nodeId){
+  const current=page();
+  const node=nodeId&&current?getNode(current,nodeId):null;
+  const marked=(node?.props?.richText?.blocks||[]).flatMap(block=>block.children||[]).filter(inline=>inline?.marks?.includes('bold')&&inline.text);
+  if(!marked.length)return;
+  const canvasNode=canvas.querySelector('[data-node-id="'+CSS.escape(nodeId)+'"] .richtext-content');
+  const strong=canvasNode?.querySelector('strong.richtext-mark-bold');
+  diagnostics.verify(Boolean(strong),{code:'SANCI-VERIFY-E003',message:'A Rich Text canonical bold mark létrejött, de a Canvas nem hozott létre megfelelő <strong> elemet.',context:'Rich Text bold → Canvas DOM'});
+  if(strong){
+    const weight=window.getComputedStyle(strong).fontWeight;
+    diagnostics.verify(Number(weight)>=600||weight==='bold',{code:'SANCI-VERIFY-E004',message:'A Rich Text bold <strong> elem létrejött, de a böngésző computed font-weight értéke nem félkövér: '+weight+'.',context:'Canvas DOM → computedStyle.fontWeight'});
+  }
+}
+
 function verifyRichTextBoldModel(nodeId,expectedStart,expectedEnd){
   const current=page();
   const node=nodeId&&current?getNode(current,nodeId):null;
