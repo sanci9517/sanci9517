@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.33  
+**Verzió:** MASTER-2.34  
 **Dátum:** 2026-09-21  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -1651,4 +1651,33 @@ Ellenőrzött:
 
 A teljes 04.3 Foundation újrateszt lezárható: routing, legacy redirectek, Worker health, D1, public pages, auth/session, GitHub/Cloudflare build-deploy kapu, törlésvédelem és canonical renderer ellenőrzések PASS állapotban vannak. Új kódmódosítás nem történt.
 
-**Egyetlen aktuális folytatási pont:** 05.3 — Command API coverage audit; első aktív részfeladat: `move` + `resize` action teljes adatfolyamának auditja.
+**Egyetlen aktuális folytatási pont:** 05.3 — `move` + `resize` audit lezárva; a következő lépés csak a teljes 5.2 action-katalógus következő valóban hiányzó elemének auditja, kódolás előtt.
+
+
+## 40.25 — `move` + `resize` geometry audit korrekció — 2026-09-21
+
+**Állapot:** [x] AUDIT PASS — nincs szükség új geometry commandra.
+
+A felhasználói visszajelzés alapján tisztáztuk, hogy az Editor v2 jelenleg ténylegesen biztosítja:
+- X pozíció módosítását;
+- Y pozíció módosítását;
+- szélesség módosítását;
+- magasság módosítását;
+- responsive desktop/tablet/mobile környezetet;
+- meglévő Canvas viewport méretpreseteket.
+
+A teljes érintett kód auditja ezt megerősítette:
+1. A Geometry Inspector X/Y/width/height módosításai a meglévő `responsive.set` Command API-n keresztül írják a Page Model `responsive[device]` állapotát.
+2. A `canvas-engine.js` ugyanebből a Page Model + responsive állapotból számolja és rendereli a geometriát.
+3. A `property-registry.js` az X/Y/width/height tulajdonságokat responsive propertyként kezeli.
+4. Nincs második geometry state, nincs párhuzamos `move` vagy `resize` renderer/mutációs rendszer.
+5. Az Editor jelenlegi kódjában nincs külön canvas drag/resize interaction path; a tényleges geometry szerkesztés jelenleg az Inspectorból történik.
+6. A `move` és `resize` külön Command névként való bevezetése önmagában nem adna új felhasználói funkciót, viszont párhuzamos command-logikát hozna létre.
+
+**Döntés:** nem építünk csak a Command-katalógus miatt mesterséges `move`/`resize` wrapper commandokat. A meglévő geometry útvonal marad a canonical megoldás.
+
+**Fontos pontosítás:** a jelenlegi `sizes={desktop:1440, tablet:768, mobile:390}` a Canvas viewport preseteket jelenti; ez külön fogalom az elem X/Y/width/height szerkesztésétől. Az audit során külön elem-méret preset commandot nem találtunk.
+
+**Kódmódosítás:** nem történt.
+
+**Következő egyetlen aktív pont:** az 5.2 Command API katalógus következő valóban hiányzó actionjének teljes auditja. Nem vezetünk be új commandot addig, amíg a meglévő funkció nem bizonyul ténylegesen elégtelennek.
