@@ -2057,3 +2057,30 @@ Javítás:
 - 0a5a97c461c3f969e1d4653ba110bd2e726411fd — cache refresh
 
 **Következő egyetlen teszt:** frissítés után ugyanaz a kijelölés + B teszt. Ellenőrizd a félkövér vizuális megjelenést és a Diagnostics állapotát. Ha továbbra sem jelenik meg, a következő lépés közvetlen Canvas DOM/render audit lesz; CSS-t addig nem módosítunk.
+
+
+### 10.1.2.2 — Rich Text editor újraépítése — 2026-09-21
+**Állapot:** [~] ÚJ IMPLEMENTÁCIÓ, RUNTIME TESZT MÉG NINCS LEZÁRVA.
+
+Döntés: a korábbi textarea + selectionStart/selectionEnd + saját offset-mark rendszer nem kerül tovább foltozásra. A működő Page Model/schema/validation/command/history/persistence réteg megmarad; a Rich Text Inspector szerkesztési felülete újraépült contenteditable alapra.
+
+Új irány:
+- canonical Rich Text JSON továbbra is a Page Model forrása;
+- Inspector: contenteditable DOM;
+- B/I műveletek valódi DOM Selection/Range alapján dolgoznak;
+- DOM → canonical JSON szinkron a meglévő richtext.content.set commandon keresztül;
+- canonical JSON → editor DOM betöltéskor;
+- Canvas renderer külön marad;
+- Undo/Redo továbbra is a központi History rendszeren fut.
+
+Implementációs commitok:
+- 1f7f0f8fbee503225dec5cce0608aabdd6cd575d — Rich Text editor core contenteditable selection engine
+- 3bb673434e90fe84844f96dd0b4f96968ead4c06 — Inspector textarea → contenteditable
+- 5efb78923e16e6ff49cca42d7d6153dcd4eb37e1 — editor surface CSS
+- a099aa5ddadcd23ca5f0165d53650fd566492594 — canonical mark-toggle compatibility tests
+- e82a6a9b0ad3ff8b3e926aa2073b7971e2518712 — obsolete textarea verification removal
+- 083414a439169d7c7487b4f10e4eb7ce90a68e30 — cache refresh
+
+**Fontos:** a korábbi E003 verification útvonalat eltávolítottuk, mert az a régi textarea-alapú implementációhoz tartozott. Az új editor saját DOM → model ellenőrzést kap a következő tesztkörben.
+
+**Következő egyetlen teszt:** Editor betöltés → Rich Text kijelölése → B → félkövér → kijelölés megszüntetése → újra kijelölés és B → félkövér ki. Diagnosticsnak 0 hibát kell mutatnia. Más Rich Text funkciót még nem tesztelünk.
