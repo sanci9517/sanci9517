@@ -98,7 +98,7 @@ test('Rich Text creates canonical structured content and accepts valid updates',
   assert.equal(updated.blocks[0].level, 2);
   assert.equal(updated.blocks[0].children[0].marks.length, 0);
   assert.equal(updated.blocks[1].children[0].link.href, 'https://www.twitch.tv/sanci9517');
-  assert.equal(updated.blocks[2].items[0].children[0].text, 'Fortnite');
+  assert.equal(updated.blocks[2].items[0][0].text, 'Fortnite');
   assert.equal(updated.blocks[3].children[0].marks.length, 0);
   assert.equal(updated.blocks[4].children[0].marks.length, 0);
   assert.equal(state.persistence.dirty, true);
