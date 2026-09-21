@@ -2544,3 +2544,23 @@ Commitok:
 - `4331c91f0b9f84e49877d87fbfa16336b133fa65` — stale CSS eltávolítása.
 
 **Következő egyetlen lépés:** teljes editor-core CI újrafuttatása. Ha PASS, csak ezután jöhet a Cloudflare/browser runtime B ki/be teszt. Ha FAIL, kizárólag a teszt által jelzett regressziót javítjuk.
+
+
+## 40.5 — B runtime útvonal: Canvas frissítés hiányzó hívása javítva — 2026-09-21
+
+**Állapot:** [~] KONKRÉT RUNTIME HIBA JAVÍTVA, CI ÉS BÖNGÉSZŐS TESZT MÉG HÁTRA.
+
+A B/I canonical formázási tranzakció működött, de az Inspector applyMark() útvonala a richtext.content.set után csak az Inspector Rich Text DOM-ot renderelte újra. A Canvas külön renderCanvas() hívás nélkül maradt, ezért a Page Model már módosulhatott, miközben a Canvas vizuálisan a régi állapotot mutatta. Ez magyarázza, hogy a B „nem működik” látszólag, miközben az engine unit tesztje PASS.
+
+Javítás:
+- Commit: 7c54be312d763daa604172c209e5595549cfe591
+- applyMark() most a canonical richtext.content.set után:
+  1. újrarendereli az Inspector Rich Text DOM-ot;
+  2. visszaállítja a logikai Selectiont;
+  3. azonnal meghívja a renderCanvas()-t;
+  4. frissíti a B/I aktív állapotot.
+- Nem készült új Rich Text motor, új state vagy párhuzamos renderút.
+
+**Egyetlen következő lépés:** a commit automatikus editor-core CI ellenőrzése. PASS után közvetlenül a Cloudflare/browser B ki/be runtime teszt következik.
+
+**Runtime teszt:** kijelölés → B → Inspectorban és Canvason látható félkövér → B újra → normál → Diagnostics 0. Más Rich Text funkciót most nem tesztelünk.
