@@ -1966,3 +1966,25 @@ A fejlesztés nem egyszeri projektlezárás: **folyamatos funkcióbővítés**, 
 - `d76d42b8305d3e690157031d2608bf2fb45ed56e` — célzott Rich Text tesztek
 
 **Egyetlen aktuális folytatási pont:** a javított build után ugyanazt a B/I runtime tesztet kell elvégezni, különösen részleges kijelöléssel. Ha a bold továbbra sem látható, a következő audit közvetlenül a Canvas DOM `strong` elemét és `getComputedStyle(...).fontWeight` értékét ellenőrzi.
+
+
+# 40 — KÖTELEZŐ FEJLESZTÉSI MINŐSÉGI ÉS ARCHITEKTÚRAI SZABÁLYOK — 2026-09-18
+
+A felhasználó kérésére a teljes Sanci9517 fejlesztésre, minden jövőbeli funkcióra, javításra, refaktorra és tesztelésre kötelezően érvényes:
+
+1. **Senior Full-Stack / Architect szemlélet:** minden módosítás előtt az érintett teljes kódútvonalat, adatfolyamot és függőségeket át kell auditálni. Nem készítünk gyors, tüneti javítást a rendszer architekturális következményeinek vizsgálata nélkül.
+2. **Clean Code:** a kód legyen tiszta, moduláris, olvasható, következetesen elnevezett, iparági konvencióknak megfelelő és lehetőség szerint újrafelhasználható.
+3. **Error Handling:** minden releváns hibát és edge case-t előre azonosítani és kezelni kell. A hibák ne maradjanak csendesek; ahol értelmes, a Diagnostics/verification rétegen keresztül legyenek láthatók és visszakövethetők.
+4. **Kommentek és dokumentálhatóság:** csak a működés megértéséhez szükséges, rövid és pontos kommenteket írunk. A komplex döntéseknél a kód magyarázza az okot és a szerződéses viselkedést, nem felesleges kommentár készül.
+5. **Biztonság:** minden új funkciónál vizsgálni kell a jogosultságot, input-validációt, injection/XSS lehetőségeket, adatkezelést, hibaszivárgást, jogosulatlan állapotmódosítást és egyéb releváns támadási felületeket.
+6. **Teljesítmény:** kerülni kell a felesleges DOM-műveleteket, ismételt számításokat, túlzott hálózati/DB-hívásokat, memória- és history-pazarlást. A teljesítménykritikus útvonalaknál a választott megoldás indokolt legyen.
+7. **Canonical architektúra:** továbbra is egy Page Model, egy state-rendszer, egy selection/hierarchy rendszer, egy renderer és egy központi Command/Action lánc használható. Kerülőút vagy párhuzamos állapot csak külön, dokumentált architekturális döntéssel vezethető be.
+8. **Validation + recovery:** minden mutáció validáción, history-n és szükség esetén rollback/verification útvonalon menjen keresztül. Silent failure nem tekinthető sikeres műveletnek.
+9. **Tesztelhetőség:** minden új vagy módosított funkcióhoz a megfelelő unit/integration/browser/regression teszteket meg kell tervezni és a relevánsakat le kell futtatni. A kód jelenléte önmagában nem jelent kész állapotot.
+10. **Végrehajtási ciklus:** MASTER pont → teljes érintett kód audit → adatfolyam audit → minimális, tiszta módosítás → fájl-visszaolvasás → GitHub commit → branch/HEAD ellenőrzés → build/deploy, ha az adott változás ezt igényli → célzott tesztek → regresszió → felhasználói teszt → MASTER frissítés.
+11. **Dokumentáció:** minden lépés után a docs/MASTER-DEVELOPMENT-PLAN.md az egyetlen hivatalos állapotforrásban frissül. Új beszélgetésben kizárólag ebből a tervből és a tényleges kódállapotból folytatunk.
+12. **Rövid futtatási/telepítési útmutató:** minden önállóan futtatható új program, script vagy fejlesztői eszköz elkészítésekor a végleges átadás része legyen a rövid, pontos futtatási/telepítési útmutató. A meglévő Sanci editor esetében ez nem jelent minden apró patch után külön használati leírást; a változás ellenőrzéséhez szükséges parancsokat és tesztlépéseket viszont dokumentáljuk.
+
+**Döntés:** ezek nem külön fejlesztési pontok, hanem az egész MASTER tervre és minden jövőbeli fejlesztési pontra kötelező minőségi kapuk.
+
+**Állapot:** rögzítve; a jelenlegi 10.1.2.2 Rich Text B/I runtime teszt továbbra is az EGYETLEN aktív fejlesztési/tesztpont.
