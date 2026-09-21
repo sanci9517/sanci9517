@@ -599,6 +599,40 @@ Követelmények:
 9. Locked elem törlése védett.
 10. User confirmation.
 
+## 10.1.0 — Rich Text tipográfiai UX újratervezési döntés — 2026-09-21
+
+**[D] DÖNTÉS RÖGZÍTVE — implementáció előtt.**
+
+A Rich Text szerkesztő tipográfiai kezelése a Word / LibreOffice / OpenOffice / Google Docs mintájára különválasztja a betűméretet, a szemantikus formázást és a haladó betűvastagságot.
+
+### Új végleges irány
+- a csúszkás 100–900 betűvastagság-kezelő UI megszűnik;
+- a normál felhasználói formázásban a **B = félkövér**, **I = dőlt**, később U/S stb. külön kapcsolók;
+- a betűméret külön tulajdonság lesz, későbbi `− / érték / +` kezeléssel;
+- a 100–900 `fontWeight` nem kerül törlésre a kanonikus modellből, hanem haladó Typography tulajdonságként marad meg;
+- a haladó fontWeight később preset/dropdown formában használható, nem csúszkával;
+- a kijelölt szöveg logikai Selection tartományát minden formázási műveletnek meg kell őriznie;
+- a kijelölés PC-n egérrel/billentyűzettel, mobilon érintéssel és contenteditable natív kijelöléssel is használható marad;
+- a formázás nem a DOM-ot tekinti forrásnak: Selection → canonical Rich Text → Command → Validation → Page Model → History → Canvas;
+- az Inspector mobilon nagy érintési célokkal, görgethető/horizontal overflow nélküli, PC-n pedig kompakt, egységes UI-val működjön;
+- a meglévő `setRichTextFontWeight` és logikai Selection motor csak akkor módosul, ha az új UX ezt ténylegesen igényli;
+- meglévő kijelölés-, undo/redo-, canonical model-, Canvas- és Diagnostics-funkció nem törhet.
+
+### Kötelező tesztkapu
+1. kijelölt szövegrész formázása PC-n;
+2. ugyanazon kijelölés megtartása a formázás után;
+3. kijelölt szövegrész formázása mobilon;
+4. B ki/be és kijelölés megőrzése;
+5. betűméret külön kezelése;
+6. haladó fontWeight modell visszaolvasása és Canvas megjelenítése;
+7. undo/redo;
+8. reload/save;
+9. Diagnostics = 0 hiba;
+10. desktop/tablet/mobile regresszió;
+11. felhasználói visszaigazolás.
+
+**Aktuális egyetlen folytatási pont:** a Rich Text Inspector UI és a hozzá tartozó kód teljes auditja, majd a felesleges slider/weight UI cseréje a fenti Word/LibreOffice-szerű felépítésre úgy, hogy a Selection motor változatlanul megmaradjon.
+
 ## 10.1 Content
 - [ ] plain text
 - [~] rich text — strukturált Rich Text Inspector első formázó UI implementálva; canonical schema/command/validation/Canvas lánc változatlan. Inspector: Bekezdés/H1-H6 + B/I vezérlők. Runtime felhasználói teszt még hátra van.
