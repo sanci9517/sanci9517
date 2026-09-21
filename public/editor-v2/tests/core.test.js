@@ -222,6 +222,8 @@ test('Rich Text formatting engine applies font weight only to the selected range
   ]);
   assert.equal(getRichTextFontWeight(weighted, 0, 5), 700);
   assert.equal(getRichTextFontWeight(weighted, 5, 9), 400);
+  const reset = setRichTextFontWeight({ schemaVersion: 1, type: 'richtext-document', blocks: [{ type: 'paragraph', children: [{ type: 'text', text: 'Bold', marks: ['bold'] }] }] }, 0, 4, 400);
+  assert.deepEqual(reset.blocks[0].children[0], { type: 'text', text: 'Bold', marks: [], fontWeight: 400 });
   const mixed = setRichTextFontWeight(weighted, 2, 7, 600);
   assert.deepEqual(mixed.blocks[0].children, [
     { type: 'text', text: 'Sa', marks: [], fontWeight: 700 },
