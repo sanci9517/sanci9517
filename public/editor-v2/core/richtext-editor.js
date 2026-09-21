@@ -55,11 +55,18 @@ export function renderRichTextEditor(container,doc){
   }
 }
 
-function marksForTextNode(node){
+function propsForTextNode(node){
   const marks=[];
+  let fontWeight=null;
   let current=node.parentElement;
   while(current){
     const tag=current.tagName?.toLowerCase();
+    const dataWeight=current.dataset?.fontWeight;
+    const styleWeight=current.style?.fontWeight;
+    if(fontWeight===null&&(dataWeight||styleWeight)){
+      const parsed=Number(dataWeight||styleWeight);
+      if(Number.isInteger(parsed)&&parsed>=100&&parsed<=900)fontWeight=parsed;
+    }
     if(tag==='strong'||tag==='b')marks.push('bold');
     if(tag==='em'||tag==='i')marks.push('italic');
     if(tag==='u')marks.push('underline');
@@ -67,7 +74,7 @@ function marksForTextNode(node){
     if(tag==='code')marks.push('code');
     current=current.parentElement;
   }
-  return [...new Set(marks)];
+  return {marks:[...new Set(marks)],fontWeight};
 }
 
 function linkForTextNode(node){
@@ -88,8 +95,11 @@ function inlineRuns(blockEl){
   while(node=walker.nextNode()){
     const text=node.nodeValue||'';
     if(!text)continue;
-    const run={type:'text',text,marks:marksForTextNode(node)};
-        const link=linkForTextNode(node);if(link)run.link=link;
+    const {marks,fontWeight}=propsForTextNode(node);
+    const run={type:'text',text,marks};
+    if(fontWeight!==null)run.fontWeight=fontWeight;
+    const link=linkForTextNode(node);
+    if(link)run.link=link;
     runs.push(run);
   }
   return runs.length?runs:[{type:'text',text:'',marks:[]}];
