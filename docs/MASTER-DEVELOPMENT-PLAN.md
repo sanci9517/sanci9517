@@ -2173,3 +2173,15 @@ Implementációs commitok:
 **Ellenőrzési állapot:** a GitHub Actions futása a legutóbbi commitokra jelenleg nem jelent meg a connectorban; lokális futtatás nem volt lehetséges, mert a környezetből a GitHub DNS nem érhető el. Ezért a unit teszteket jelenleg nem jelöljük PASS-nak és a kódot nem tekintjük lezártnak.
 
 **Egyetlen aktuális folytatási pont:** a modell-alapú Rich Text motor statikus visszaolvasása + unit/CI ellenőrzése. Ha ez PASS, utána külön browser runtime teszt következik.
+
+### 2026-09-21 — Félkövér alternatív modell kipróbálása
+**Állapot:** [~] IMPLEMENTÁLVA, RUNTIME TESZT HÁTRA.
+
+A 100–900-as font-weight modellt nem használjuk a félkövér vezérlésére. A Rich Text félkövérsége visszatért egy egyszerű canonical `bold` inline markhoz, amely a Canvason `<strong>` elemmé renderelődik. A toolbar újra egy egyszerű B ki/be kapcsoló. A dőlt továbbra is ugyanazon range-mark motoron működik.
+
+Implementáció:
+- `68f364ab6219226eee9c0d85905b1a30eda748d6` — Inspector: +/−/érték helyett B + I mark vezérlés.
+- `fe15fafc068b7a3eca577a6064bf8f78516b6fde` — DOM serializerből kikerült a font-weight alapú bold kezelés.
+- `3d2c33ec99f0f441f20413bcf58c24be9e279585` — editor cache frissítés.
+
+**Egyetlen következő teszt:** Rich Textben jelölj ki egy rövid szövegrészt → **B** → azonnal látszódjon félkövérnek a Canvasban és a szerkesztőben → B ismét → álljon vissza normálra → Diagnostics maradjon 0. Csak ezt teszteljük; további Rich Text funkciót most ne.
