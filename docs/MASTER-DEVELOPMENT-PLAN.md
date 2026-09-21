@@ -22,8 +22,18 @@
 
 **Kód jelenléte önmagában soha nem jelent `[x]` státuszt.**
 
-## 00.2 Egyetlen aktív pont
-Egyszerre **csak egy fejlesztési pont** lehet aktív. Az aktuális pont lezárása előtt nem kezdünk következő pontot.
+## 00.2 Egyetlen MASTER terv + párhuzamos munkasávok
+Ez a projekt **egyetlen aktív MASTER tervet** használ. A tervben lehet több, egymással párhuzamosan haladó munkasáv, ha azok technikailag összehangolhatók és nem hoznak létre párhuzamos state/command/renderer rendszert.
+
+A párhuzamos haladás szabálya:
+- minden munkasávnak saját, egyértelmű állapota van;
+- a PC/desktop és mobil/touch UX külön tesztelési/implementációs sáv lehet;
+- a közös canonical State, Page Model, Command API és selection rendszer csak egyszer létezhet;
+- egyik sáv sem írhatja felül vagy kerülheti meg a másik sáv kanonikus adatfolyamát;
+- minden lépés után **ugyanazt az egyetlen MASTER fájlt** kell frissíteni, és minden aktív sáv aktuális állapotát rögzíteni kell;
+- új beszélgetésben kizárólag ezt a MASTER fájlt kell alapul venni, és az összes `[~]` aktív sávból lehet folytatni.
+
+A jelenlegi fejlesztési állapotban a **Multi-select PC/desktop** és **Multi-select mobil/touch** két párhuzamos munkasáv, közös canonical selection API-val. Nem készítünk külön selection state-et egyik platformhoz sem.
 
 **KÖTELEZŐ ÁLLAPOTMENTÉS MINDEN LÉPÉS UTÁN:** minden fejlesztési, javítási, tesztelési vagy döntési lépés lezárásakor frissíteni kell ezt a MASTER fájlt. A frissítés akkor is kötelező, ha egy beszélgetésen belül több lépést teszünk meg. A MASTER-nek mindig a **legutolsó ténylegesen elvégzett lépés utáni állapotot** kell tükröznie, ezért új beszélgetés bármikor megszakíthatja a munkát anélkül, hogy elveszne a pontos folytatási pont.
 
@@ -1940,4 +1950,31 @@ A 40.32 audit alapján a multi-select interaction a meglévő canonical `state.s
 9. Diagnostics: 0 hiba.
 10. Ezután CI, majd MASTER lezárás.
 
-**Következő egyetlen aktív pont:** Group / Ungroup command implementáció — csak a multi-select tesztkapu PASS után.
+**Következő aktív párhuzamos munkasávok:**
+- **A — PC/desktop multi-select:** a 40.33 implementáció élő browser tesztje, majd CI és lezárás.
+- **B — Mobil/touch multi-select:** külön touch interaction audit + implementáció + mobil browser teszt, ugyanarra a canonical selection API-ra építve.
+
+**Függőségi kapu:** a Group/Ungroup command csak akkor indulhat, amikor az A és B multi-select sáv is PASS állapotban van.
+
+
+## 40.34 — PC + mobil párhuzamos multi-select fejlesztési modell — 2026-09-21
+
+**Állapot:** [x] TERV / ARCHITEKTÚRA DÖNTÉS — kódmódosítás ebben a lépésben nem történt.
+
+A felhasználói kérés alapján rögzítve: a fejlesztést nem kell sorban kizárólag PC → mobil irányban végezni. A **PC/desktop és mobil/touch multi-select párhuzamos munkasávként** halad, miközben továbbra is pontosan **egy MASTER terv** marad.
+
+### Kötelező párhuzamos működési szabály
+1. PC és mobil külön interaction/test track lehet.
+2. Közös canonical selection state marad: state.selection.ids + primaryId.
+3. Közös selection helper/API marad; nem készül platformonként második selection state.
+4. A Page Model, Command API, history és renderer nem duplikálható PC és mobil között.
+5. Minden egyes lépés után a **MASTER-DEVELOPMENT-PLAN.md** frissül, még akkor is, ha csak az egyik munkasáv haladt.
+6. A MASTER mindig tartalmazza mindkét sáv legutolsó állapotát, teszteredményét, commitját és következő lépését.
+7. Új beszélgetésben a MASTER az egyetlen folytatási igazságforrás; a párhuzamos `[~]` sávokból lehet folytatni.
+8. Group/Ungroup csak akkor léphet tovább implementációra, ha a PC és mobil multi-select tesztkapuja is PASS.
+
+### Aktuális sávállapot
+- **A — PC/desktop:** 40.33 implementáció kész; browser teszt pending.
+- **B — Mobil/touch:** interaction audit/implementáció pending; normál tap, long-press multi-select, további tap toggle, Kész/Mégse és Canvas/Layers szinkron a tervezett viselkedés.
+
+**Következő lépés:** a két sáv párhuzamosan folytatható; először a mobil touch interaction teljes kód-auditja és implementációja, miközben a PC 40.33 browser tesztkapuja külön lezárható.
