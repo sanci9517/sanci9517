@@ -1322,9 +1322,9 @@ Minden jelentős editor/platform bővítés előtt ellenőrizni kell:
 - [x] Inspector kapcsolat 8.1–8.6: felhasználói tesztek PASS.
 
 ## JELENLEGI EGYETLEN AKTÍV PONT — EZT KELL FOLYTATNI
-**10.1.2.2 — Rich Text strukturált Command + Validation runtime/integrációs teszt.**
+**10.1.2.2 — Rich Text formázási motor teljes újratervezése.**
 
-A Diagnostics 9.1.1 runtime kapuja lezárva, a következő és egyetlen aktív tesztkapu a Rich Text strukturált modell integrációs tesztje.
+A jelenlegi félkövér/font-weight megoldást nem foltozzuk tovább. A Rich Text formázást modell-alapú tranzakciós rendszerként építjük újra, ahol a DOM csak szerkesztési nézet és a felhasználói Selection hordozója; a kanonikus Page Model marad az egyetlen igazságforrás. A cél az, hogy a félkövér, dőlt és későbbi inline formázások ugyanazon stabil mechanizmuson működjenek.
 
 **9.1.0 — Elements panel „elem hozzáadása” stabilizálás — IMPLEMENTÁLVA, FELHASZNÁLÓI TESZT HÁTRA**
 
@@ -2125,3 +2125,40 @@ Implementációs commitok:
 **Fontos:** a korábbi E003 verification útvonalat eltávolítottuk, mert az a régi textarea-alapú implementációhoz tartozott. Az új editor saját DOM → model ellenőrzést kap a következő tesztkörben.
 
 **Következő egyetlen teszt:** Editor betöltés → Rich Text kijelölése → B → félkövér → kijelölés megszüntetése → újra kijelölés és B → félkövér ki. Diagnosticsnak 0 hibát kell mutatnia. Más Rich Text funkciót még nem tesztelünk.
+
+
+### 2026-09-21 — Rich Text formázási motor alapjaiban újratervezve — döntés
+**Állapot:** [~] ARCHITEKTURÁLIS ÚJRATERVEZÉS ELŐKÉSZÍTVE, KÓDIMPLEMENTÁCIÓ MÉG NINCS LEZÁRVA.
+
+**Miért nem foltozzuk tovább:** a jelenlegi contenteditable → DOM wrapper → serializer útvonal túl sok, egymástól függő Selection/Range és wrapper-állapotot kezel. A felhasználói tesztben a font-weight továbbra sem működik, ezért a korábbi +/− javítások és az azonnali Canvas-refresh sem tekinthető megfelelő végleges megoldásnak.
+
+**Új kanonikus szerkesztési modell:**
+1. A Page Model Rich Text JSON marad az egyetlen perzisztált igazságforrás.
+2. A contenteditable DOM csak szerkesztési felület; nem ezen hajtunk végre végleges formázási mutációt.
+3. A browser Selectionből először logikai Rich Text tartományt képezünk (from/to).
+4. A formázás közvetlenül a kanonikus Rich Text dokumentumon történik determinisztikus tranzakcióval.
+5. A font-weight nem bold kapcsolóként működik, hanem inline fontWeight: 100..900 attribútumként; 400 az alapérték, 700 a klasszikus félkövér kompatibilitási érték.
+6. A dőlt külön italic mark marad, de ugyanazon modell-alapú range-transform mechanizmust használja.
+7. A formázási művelet után: Command → Validation → Page Model → History → Canvas; az Inspector szerkesztőfelülete ugyanebből a kanonikus dokumentumból épül újra.
+8. A DOM-ban lévő ideiglenes span/strong/em wrapper nem lesz önálló state és nem lesz source of truth.
+9. A Selection visszaállítása logikai from/to pozícióból történik, nem egy korábban elmentett DOM Range objektumból.
+10. A későbbi font-family, font-size, color, underline, strike, link stb. ugyanebbe a generic inline-style/range engine-be illeszthető, nem külön-külön egyedi hackként.
+
+**Iparági benchmark:** a Tiptap dokumentációja szerint a Bold/Italic külön markként kezelhető, a TextStyle pedig span-alapú inline stílusok hordozója; a font-size és más szövegstílusok is ezen a mintán működnek. Ezt az elvet saját, dependency-mentes Rich Text engine-ben követjük, hogy a jelenlegi vanilla editor/Cloudflare asset architektúrába illeszkedjen. citeturn0search2turn0search3turn0search0turn0search5
+
+**Kötelező implementációs részek:**
+- logikai DOM Selection → Rich Text position mapper;
+- canonical range splitter/merger;
+- generic setInlineStyleRange / toggleInlineMarkRange transzformáció;
+- font-weight set/increase/decrease és 400-ra reset;
+- italic toggle ugyanazon motoron;
+- mixed selection helyes kezelése;
+- meglévő mark/link/fontWeight megőrzése;
+- redundant inline run-ok összevonása;
+- selection visszaállítása új DOM render után;
+- canonical → Inspector → Canvas azonos adatforrásból;
+- unit + integration + browser verification.
+
+**Teszthatár:** amíg az új motor nincs runtime szinten lezárva, Save/Reload, Undo/Redo, responsive, link/list és további Rich Text funkciók nem kerülnek előre.
+
+**EGYETLEN KÖVETKEZŐ LÉPÉS:** az új modell-alapú Rich Text formázási motor implementációja és statikus/unit ellenőrzése. Ezután külön MASTER-frissítés, majd külön runtime teszt.
