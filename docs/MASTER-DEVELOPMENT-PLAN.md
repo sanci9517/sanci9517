@@ -2185,3 +2185,15 @@ Implementáció:
 - `3d2c33ec99f0f441f20413bcf58c24be9e279585` — editor cache frissítés.
 
 **Egyetlen következő teszt:** Rich Textben jelölj ki egy rövid szövegrészt → **B** → azonnal látszódjon félkövérnek a Canvasban és a szerkesztőben → B ismét → álljon vissza normálra → Diagnostics maradjon 0. Csak ezt teszteljük; további Rich Text funkciót most ne.
+
+
+### 2026-09-21 — Stale font-weight hivatkozás javítása
+**Állapot:** [~] JAVÍTVA, RUNTIME TESZT HÁTRA.
+
+A frissen bevezetett B/italic mark modell első runtime indulásakor régi `updateWeightControl()` hivatkozások maradtak az egér/keyboard/selection eseménykezelőkben. Ez okozta a `SANCI-RUNTIME-E0004` / `SANCI-BOOT-E001` hibákat. A hivatkozásokat eltávolítottuk; a toolbar már csak B + I mark vezérlést használ.
+
+Commits:
+- `1fdf7ec1b1a1fe679f4d3c814533a4d82f3d8de3` — stale weight-control event handlers eltávolítása.
+- `f4bfb14bce47a62cc13f51ff7e2afbdbd88033c4` — cache frissítés `app.js?v=20260921-7`.
+
+**Egyetlen következő teszt:** frissítsd az editort, ellenőrizd, hogy nincs-e boot/runtime hiba, majd ugyanazt a B ki/be tesztet végezd el. Ha hiba van, ne menjünk tovább.
