@@ -2214,3 +2214,18 @@ A meglévő canonical fontWeight schema/command/Canvas útvonalat használjuk; a
 Statikus ellenőrzés: az érintett fájlok visszaolvasva; a slider vezérlő, getRichTextFontWeight, setRichTextFontWeight, Canvas fontWeight render és canonical schema egymáshoz illeszkedik. Runtime/CI még nincs lezárva.
 
 **Egyetlen következő lépés:** a Rich Text tipográfiai vezérlő mobil-first újratervezése. A jelenlegi slider/toolbar elrendezést nem tekintjük tesztelhetőnek mobilon, ezért runtime funkciótesztet csak az új mobil UI után indítunk. A vezérlőnek keskeny mobil Inspectorban is használhatónak kell lennie, érintéssel állítható sliderrel és jól látható aktuális értékkel. Asztali megjelenés ehhez igazodik. A funkciólogika nem változik, csak az UI réteg. → írj ki szöveget → jelölj ki egy rövid részt → állítsd a slider-t 400-ról 700-ra → az érték legyen 700 és a kijelölt rész legyen láthatóan vastagabb a Canvasban is → Diagnostics 0. Ezután állítsd 400-ra ugyanazon kijelölésen és ellenőrizd a visszaállást. Más funkciót most nem tesztelünk.
+
+
+### 2026-09-21 — Rich Text DOM → canonical fontWeight visszaolvasás kipróbálása
+**Állapot:** [~] IMPLEMENTÁCIÓS TESZT FOLYAMATBAN.
+
+A felhasználó által megadott Rich Text core-változatot kipróbáljuk, mert a jelenlegi repository-verzióban a canonical `fontWeight` renderelődik a szerkesztő DOM-ba, de a DOM → canonical serializer nem olvasta vissza ezt az értéket. Ez különösen input/sync után okozhatja a betűvastagság elvesztését.
+
+A kipróbált megoldás:
+- a text node szülőelemeiből a serializer kiolvassa a `data-font-weight` / inline `style.fontWeight` értéket;
+- a kapott `fontWeight` bekerül az inline AST-runba;
+- a meglévő italic, underline, strike, code és link markok megmaradnak;
+- a canonical `fontWeight: 100..900` modell változatlan marad;
+- a range-transform és selection logika nem kerül megkerülésre.
+
+**Egyetlen aktuális következő lépés:** a módosított `public/editor-v2/core/richtext-editor.js` statikus visszaolvasása, majd célzott unit/CI ellenőrzés. Runtime tesztet csak sikeres statikus/CI ellenőrzés után indítunk.
