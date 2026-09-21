@@ -2584,7 +2584,7 @@ Javítás:
 
 ## 40.12 — Élő app.js duplikált Rich Text deklaráció javítása — 2026-09-21
 
-**Állapot:** [~] KÓD JAVÍTVA, BUILD/RUNTIME ELLENŐRZÉS HÁTRA.
+**Állapot:** [x] PASS — felhasználói élő ellenőrzéssel lezárva.
 
 Az új élő hiba URL-je (app.js?v=20260921-11:42:10) alapján a repository aktuális public/editor-v2/app.js fájlját ismét teljes tartalommal ellenőriztük. A Rich Text Inspector blokkban ténylegesen két azonos const currentRichText deklaráció maradt egymás alatt. Ez önmagában JavaScript szintaktikai hibát okoz, ezért az editor betöltése megállhatott.
 
@@ -2599,3 +2599,26 @@ Javítás:
 - ez kizárólag a tényleges szintaktikai hibát javítja.
 
 **Egyetlen aktuális folytatási pont:** a 092c34125e460f8e6bcae58be252f56aa5775fe5 commit Cloudflare build/deploy és az élő /editor-v2/ betöltésének ellenőrzése. Ha ezután új hiba jelenik meg, csak annak konkrét okát javítjuk, párhuzamos kódút létrehozása nélkül.
+
+
+## 40.13 — Editor v2 böngészős smoke/regression teszt — 2026-09-21
+
+**Állapot:** [~] AKTÍV TESZTPONT.
+
+A felhasználó visszaigazolta, hogy az előző javítás után az editor-v2 élőben működik. A következő lépés nem új funkciófejlesztés, hanem a jelenlegi editor fő működési útvonalainak ellenőrzése.
+
+Tesztelendő sorrend:
+1. oldal betöltése és editor shell;
+2. elem hozzáadása a palettából;
+3. kijelölés és Layers kapcsolat;
+4. Geometry: X/Y/szélesség/magasság;
+5. lock állapot és látható lock jelzés;
+6. Rich Text tartalom módosítása és mentése;
+7. Undo/Redo;
+8. elem törlése;
+9. mentés és újratöltés;
+10. Diagnostics: 0 hiba.
+
+**Szabály:** csak a ténylegesen hibás tesztpontot javítjuk. Új funkciót addig nem építünk, amíg ez a smoke/regression kapu nincs lezárva.
+
+**Egyetlen aktuális folytatási pont:** az 1. pont, az editor shell és oldalbetöltés ellenőrzése.
