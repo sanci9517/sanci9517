@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.16  
+**Verzió:** MASTER-2.17  
 **Dátum:** 2026-09-21  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -2561,3 +2561,22 @@ Lezárva:
 - nincs párhuzamos Rich Text motor bevezetve.
 
 **Következő egyetlen folytatási pont:** a Rich Text unit/CI kapu lezárása után a következő munkaciklusban a Cloudflare build/deploy és az aktuális editor böngészős smoke/regression teszt következik. Új funkciót csak a build/deploy és browser kapu után kezdünk.
+
+
+## 40.11 — Élő editor-v2 app.js szintaktikai hiba javítása — 2026-09-21
+
+**Állapot:** [~] KÓD JAVÍTVA, BUILD/RUNTIME ELLENŐRZÉS HÁTRA.
+
+A felhasználó jelezte, hogy a Rich Text CI kapu PASS, majd az élő editor-v2 URL `app.js?v=20260921-11:41:67` helyére mutatott. A repository aktuális `public/editor-v2/app.js` 41. sorának visszaolvasásakor tényleges szintaktikai/duplikált hibát találtunk:
+`const currentRichText=node.props?.ricif(node.type==='richtext'){`
+
+A helyes, egyetlen sor:
+`const currentRichText=node.props?.richText||plainTextToRichText('');`
+
+Javítás:
+- Commit: `3b42263216f61930076287c668ae999d8ccf75b3`;
+- csak a hibás duplikált/sérült sort javítottuk;
+- Rich Text architektúrához, schema-hoz és command-réteghez nem nyúltunk;
+- nem készült párhuzamos kódút.
+
+**Egyetlen aktuális folytatási pont:** a `3b42263216f61930076287c668ae999d8ccf75b3` commit Cloudflare build/deploy és az élő `/editor-v2/` betöltés ellenőrzése. Ha új hiba jelenik meg, csak annak konkrét okát javítjuk.
