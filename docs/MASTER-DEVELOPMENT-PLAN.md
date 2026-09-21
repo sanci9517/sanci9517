@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.28  
+**Verzió:** MASTER-2.29  
 **Dátum:** 2026-09-21  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -2146,4 +2146,25 @@ Ellenőrzési kör:
 
 A kapu lezárva, új editor funkciót még nem nyitunk. A következő egyetlen aktív pont a Foundation API/health → D1 pages → auth/session ellenőrzése.
 
+
+
+
+## 40.22 — Foundation újrateszt: API → D1 → Public Pages → Auth Session — 2026-09-21
+
+**Állapot:** [x] PASS — felhasználói élő tesztekkel lezárva.
+
+A 04.3 Foundation újrateszt következő köre lezárva.
+
+Ellenőrzött végpontok:
+1. `/api/health` → Worker válasz: `ok: true`.
+2. `/api/db-health` → D1 kapcsolat valóban működik, `connected: true`.
+3. `/api/public/pages` → D1-ből tényleges oldal- és Page Model adatok visszaérkeznek.
+4. `/api/public/system-pages` → System Pages API elérhető, jelenleg üres blokk-tartalommal.
+5. `/api/auth/session` → aktív admin session igazolt.
+
+**Felhasználói visszaigazolás:** az összes végpont tesztje sikeres volt.
+
+A Foundation API/D1/Public/Auth alapútvonal ebben a körben PASS. Új kódmódosítás nem történt.
+
+**Egyetlen aktuális folytatási pont:** 04.3 — a Foundation további ellenőrzése: canonical `/` és `/p/<slug>` renderer + legacy redirectek, majd az eredmények alapján a MASTER frissítése.
 
