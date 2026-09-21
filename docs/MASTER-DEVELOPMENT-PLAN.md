@@ -634,6 +634,24 @@ A Rich Text szerkesztő tipográfiai kezelése a Word / LibreOffice / OpenOffice
 **Aktuális egyetlen folytatási pont:** a Rich Text Inspector UI és a hozzá tartozó kód teljes auditja, majd a felesleges slider/weight UI cseréje a fenti Word/LibreOffice-szerű felépítésre úgy, hogy a Selection motor változatlanul megmaradjon.
 
 ### 2026-09-21 — Rich Text UI cseréje implementálva
+### 2026-09-21 — Rich Text UI statikus audit PASS
+
+**[~] IMPLEMENTÁLVA, STATIKUS ELLENŐRZÉS PASS, RUNTIME/DEPLOY TESZT MÉG HÁTRA.**
+
+Ellenőrizve a módosított fájlokban:
+- `weightSlider`, `weightName`, `getRichTextFontWeight` és `setRichTextFontWeight` már nem szerepelnek az Inspector UI-ban;
+- B és I vezérlők jelen vannak;
+- a logikai Selection mentés/visszaállítás továbbra is az editor Rich Text core-on keresztül történik;
+- a B művelet canonical `fontWeight=700` értéket, kikapcsoláskor `400` értéket használ;
+- mobil toolbaron a blokk-választó külön sorban van, a B/I gombok minimum 44px érintési célúak;
+- nincs vízszintes toolbar-túlcsordulásra épített slider;
+- az asset cache verziók frissítve;
+- a Rich Text core tesztek B-formázási elvárásai az új canonical súlymodellel összehangolva.
+
+**CI:** a GitHub connector jelenleg nem adott vissza commit statusokat; ezért CI PASS nem állítható.
+
+**Aktuális egyetlen folytatási pont:** Cloudflare build/deploy után mobilon és PC-n vizuális ellenőrzés: a Rich Text Inspector legyen könnyen használható, B/I legyen látható, és a kijelölés formázás után maradjon meg. Funkcionális B teszt csak akkor indul, ha a UI a mobilon ténylegesen használható.
+
 
 **[~] KÓD ELKÉSZÜLT, TESZT MÉG HÁTRA.**
 
