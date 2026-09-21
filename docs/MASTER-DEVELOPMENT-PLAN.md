@@ -2498,3 +2498,20 @@ A teljes eddig felépített editor-core útvonal visszaolvasásakor a következ�
 **Audit döntés:** most nem építünk új funkciót. Először a CI regressziót zárjuk le, majd a következő egyetlen tesztpontból folytatunk.
 
 **EGYETLEN AKTUÁLIS FOLYTATÁSI PONT:** `Editor Core Test` CI PASS ellenőrzése a `6dd631ec1565989c587a15d9054dc4d3e31b8808` commiton.
+
+
+## 40.8 — Rich Text teszt-fixture második regresszió javítva — 2026-09-21
+
+**Állapot:** [~] TESZTKÓD JAVÍTVA, CI ELLENŐRZÉS HÁTRA.
+
+A `6dd631ec...` commit után a CI már elindult, de 18 tesztből 16 PASS / 2 FAIL eredményt adott. A két hiba oka az volt, hogy a Rich Text tesztfájlban a B/I importok mellett több régi `marks: ['bold'|'italic'|'underline'|'code']` fixture és egy régi listastruktúra-assertion is megmaradt.
+
+Javítás:
+- Commit: `a19db2c2cd3865b55e7fcb456be23f2189d3cc60`
+- minden régi mark fixture `marks: []` állapotra került;
+- a lista assertion a canonical `items[].children[]` struktúrát ellenőrzi;
+- Undo/Redo Rich Text fixture is plain-text canonical modellre került.
+
+**Fontos:** a schema/engine kódot nem módosítottuk. Ez tisztán stale tesztadat javítás volt.
+
+**EGYETLEN AKTUÁLIS FOLYTATÁSI PONT:** az `a19db2c2cd3865b55e7fcb456be23f2189d3cc60` commit utáni Editor Core CI eredmény ellenőrzése. PASS nélkül nincs további funkciófejlesztés.
