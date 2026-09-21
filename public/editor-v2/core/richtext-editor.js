@@ -134,7 +134,7 @@ export function applyRichTextMarkToSelection(editor,mark){
     const parent=selected.parentNode;
     if(allActive){
       const wrapper=selected.parentElement?.tagName.toLowerCase()===tag?selected.parentElement:null;
-      if(wrapper){parent.insertBefore(selected,wrapper);if(!wrapper.textContent)wrapper.remove();else if(wrapper.childNodes.length===0)wrapper.remove()}
+      if(wrapper){const wrapperParent=wrapper.parentNode;if(wrapperParent){wrapperParent.insertBefore(selected,wrapper);if(!wrapper.textContent||wrapper.childNodes.length===0)wrapper.remove()}}
     }else{
       const wrapper=document.createElement(tag);parent.insertBefore(wrapper,selected);wrapper.append(selected);
     }
