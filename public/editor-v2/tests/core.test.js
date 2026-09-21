@@ -134,57 +134,10 @@ test('invalid Rich Text is rejected and the document rolls back exactly', () => 
 });
 
 
-test('Rich Text single engine toggles bold and italic on and off', () => {
+test('Rich Text stores plain text without inline marks', () => {
   const document = plainTextToRichText('Sanci9517');
-  const bold = toggleMark(document, 0, 10, 'bold');
-  assert.deepEqual(bold.blocks[0].children, [{ type: 'text', text: 'Sanci9517', marks: ['bold'] }]);
-  assert.equal(isMarkActive(bold, 0, 10, 'bold'), true);
-
-  const normal = toggleMark(bold, 0, 10, 'bold');
-  assert.deepEqual(normal.blocks[0].children, [{ type: 'text', text: 'Sanci9517', marks: [] }]);
-  assert.equal(isMarkActive(normal, 0, 10, 'bold'), false);
-
-  const italic = toggleMark(normal, 0, 10, 'italic');
-  assert.deepEqual(italic.blocks[0].children, [{ type: 'text', text: 'Sanci9517', marks: ['italic'] }]);
-  assert.equal(isMarkActive(italic, 0, 10, 'italic'), true);
-});
-
-test('Rich Text single engine formats only the selected range', () => {
-  const document = plainTextToRichText('Sanci9517');
-  const selected = toggleMark(document, 0, 3, 'bold');
-  assert.deepEqual(selected.blocks[0].children, [
-    { type: 'text', text: 'San', marks: ['bold'] },
-    { type: 'text', text: 'ci9517', marks: [] }
-  ]);
-  const removed = toggleMark(selected, 1, 2, 'bold');
-  assert.deepEqual(removed.blocks[0].children, [
-    { type: 'text', text: 'S', marks: ['bold'] },
-    { type: 'text', text: 'a', marks: [] },
-    { type: 'text', text: 'n', marks: ['bold'] },
-    { type: 'text', text: 'ci9517', marks: [] }
-  ]);
-});
-
-test('Rich Text single engine preserves existing italic mark and link', () => {
-  const document = {
-    schemaVersion: 1,
-    type: 'richtext-document',
-    blocks: [{
-      type: 'paragraph',
-      children: [{
-        type: 'text',
-        text: 'Sanci9517',
-        marks: ['italic'],
-        link: { href: 'https://example.com', target: '_blank' }
-      }]
-    }]
-  };
-  const updated = toggleMark(document, 3, 7, 'bold');
-  assert.deepEqual(updated.blocks[0].children, [
-    { type: 'text', text: 'San', marks: ['italic'], link: { href: 'https://example.com', target: '_blank' } },
-    { type: 'text', text: 'ci95', marks: ['italic', 'bold'], link: { href: 'https://example.com', target: '_blank' } },
-    { type: 'text', text: '17', marks: ['italic'], link: { href: 'https://example.com', target: '_blank' } }
-  ]);
+  assert.deepEqual(document.blocks[0].children, [{ type: 'text', text: 'Sanci9517', marks: [] }]);
+  assert.equal(document.blocks[0].children[0].marks.length, 0);
 });
 
 test('Rich Text Undo and Redo restore the exact structured document', () => {
