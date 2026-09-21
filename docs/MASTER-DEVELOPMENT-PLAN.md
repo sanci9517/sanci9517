@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.29  
+**Verzió:** MASTER-2.30  
 **Dátum:** 2026-09-21  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -2168,3 +2168,27 @@ A Foundation API/D1/Public/Auth alapútvonal ebben a körben PASS. Új kódmódo
 
 **Egyetlen aktuális folytatási pont:** 04.3 — a Foundation további ellenőrzése: canonical `/` és `/p/<slug>` renderer + legacy redirectek, majd az eredmények alapján a MASTER frissítése.
 
+
+
+## 40.23 — Foundation újrateszt: Canonical Renderer + Legacy Redirectek — 2026-09-21
+
+**Állapot:** [x] PASS — felhasználói élő teszttel lezárva.
+
+A 04.3 Foundation újrateszt következő köre lezárva.
+
+Ellenőrzött:
+1. canonical `/` renderer;
+2. canonical `/p/home` renderer;
+3. canonical `/p/community` renderer;
+4. legacy `/about.html` redirect;
+5. legacy `/community.html` redirect;
+6. legacy `/contact.html` redirect;
+7. legacy `/schedule.html` redirect;
+8. legacy `/twitch.html` redirect;
+9. legacy `/youtube.html` redirect.
+
+**Felhasználói visszaigazolás:** „Pipa”.
+
+A canonical renderer és a felsorolt legacy redirectek ebben a Foundation browser/live ellenőrzési körben PASS. Új kódmódosítás nem történt.
+
+**Egyetlen aktuális folytatási pont:** 04.3 — Foundation további ellenőrzése: véletlen törlés elleni ellenőrzés + renderer hibamentesség, majd a teljes 04.3 kapu lezárása vagy a talált hiba javítása.
