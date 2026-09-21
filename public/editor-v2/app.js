@@ -77,7 +77,7 @@ function renderInspector(){inspector.replaceChildren();const nodes=state?selecte
    const saveSelection=()=>{const value=getSelectionOffsets(editor);if(!value)return false;savedRichTextSelection=value;return true};
    const restoreSelection=()=>restoreSelectionOffsets(editor,savedRichTextSelection);
    const sync=()=>{const doc=richTextEditorToDocument(editor);command('richtext.content.set',{nodeId:node.id,document:doc},{render:false});richTextDirty=true};
-   const activeDocument=()=>richTextEditorToDocument(editor);
+   const activeDocument=()=>page()?.nodes?.[node.id]?.props?.richText||currentRichText;
    const selectionRange=()=>savedRichTextSelection||getSelectionOffsets(editor);
    const updateMarkState=()=>{const range=selectionRange();for(const [button,mark] of [[boldButton,'bold'],[italicButton,'italic']]){const active=Boolean(range&&!range.collapsed&&isMarkActive(activeDocument(),range.from,range.to,mark));button.classList.toggle('active',active);button.setAttribute('aria-pressed',active?'true':'false')}};
    const applyMark=(mark)=>{const range=selectionRange();if(!range||range.collapsed)return;const updated=toggleMark(activeDocument(),range.from,range.to,mark);command('richtext.content.set',{nodeId:node.id,document:updated},{render:false});renderRichTextEditor(editor,updated);restoreSelection();richTextDirty=true;updateMarkState();editor.focus()};
