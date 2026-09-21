@@ -7,7 +7,7 @@ import { createEditorState, activePage } from '../core/state.js';
 import { beginTransaction, commitTransaction, execute, executeBatch, rollbackTransaction } from '../core/commands.js';
 import { getProperty, listProperties, listPropertyGroups } from '../core/property-registry.js';
 import { hasResponsiveOverride, resolveResponsiveValue, setResponsiveValue } from '../core/responsive.js';
-import { getRichTextFontWeight, isRichTextMarkActive, isRichTextMarkRangeActive, plainTextToRichText, setRichTextFontWeight, toggleRichTextMark, toggleRichTextMarkRange } from '../core/richtext-editor.js';
+import { isMarkActive, plainTextToRichText, toggleMark } from '../core/richtext-engine.js';
 
 test('new document is structurally valid', () => {
   const document = createDocument();
@@ -134,64 +134,38 @@ test('invalid Rich Text is rejected and the document rolls back exactly', () => 
 });
 
 
-test('Rich Text fontWeight accepts 100-900 values and preserves legacy bold compatibility', () => {
-  const state = createEditorState();
-  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.RICHTEXT } });
-  const id = state.selection.primaryId;
-  execute(state, { type: 'richtext.content.set', payload: { nodeId: id, document: {
-    schemaVersion: 1,
-    type: 'richtext-document',
-    blocks: [{ type: 'paragraph', children: [
-      { type: 'text', text: 'Weight', marks: [], fontWeight: 600 },
-      { type: 'text', text: 'Legacy', marks: ['bold'] }
-    ] }]
-  }}});
-  const richText = activePage(state).nodes[id].props.richText;
-  assert.equal(richText.blocks[0].children[0].fontWeight, 600);
-  assert.equal(richText.blocks[0].children[1].fontWeight, 700);
-  assert.throws(() => execute(state, { type: 'richtext.content.set', payload: { nodeId: id, document: {
-    schemaVersion: 1,
-    type: 'richtext-document',
-    blocks: [{ type: 'paragraph', children: [{ type: 'text', text: 'Bad', marks: [], fontWeight: 650 }] }]
-  }}}));
-  assertValidEditorDocument(state.document);
+test('Rich Text single engine toggles bold and italic on and off', () => {
+  const document = plainTextToRichText('Sanci9517');
+  const bold = toggleMark(document, 0, 10, 'bold');
+  assert.deepEqual(bold.blocks[0].children, [{ type: 'text', text: 'Sanci9517', marks: ['bold'] }]);
+  assert.equal(isMarkActive(bold, 0, 10, 'bold'), true);
+
+  const normal = toggleMark(bold, 0, 10, 'bold');
+  assert.deepEqual(normal.blocks[0].children, [{ type: 'text', text: 'Sanci9517', marks: [] }]);
+  assert.equal(isMarkActive(normal, 0, 10, 'bold'), false);
+
+  const italic = toggleMark(normal, 0, 10, 'italic');
+  assert.deepEqual(italic.blocks[0].children, [{ type: 'text', text: 'Sanci9517', marks: ['italic'] }]);
+  assert.equal(isMarkActive(italic, 0, 10, 'italic'), true);
 });
 
-test('Rich Text marks toggle on and off and report active state', () => {
+test('Rich Text single engine formats only the selected range', () => {
   const document = plainTextToRichText('Sanci9517');
-  const selected = toggleRichTextMark(document, 0, 10, 'bold');
-  assert.deepEqual(selected.blocks[0].children[0], { type: 'text', text: 'Sanci9517', marks: ['bold'], fontWeight: 700 });
-  assert.equal(isRichTextMarkActive(selected, 0, 10, 'bold'), true);
-
-  const deselected = toggleRichTextMark(selected, 0, 10, 'bold');
-  assert.deepEqual(deselected.blocks[0].children[0], { type: 'text', text: 'Sanci9517', marks: [], fontWeight: 400 });
-  assert.equal(isRichTextMarkActive(deselected, 0, 10, 'bold'), false);
-
-  const italic = toggleRichTextMark(deselected, 0, 10, 'italic');
-  assert.deepEqual(italic.blocks[0].children[0].marks, ['italic']);
-  assert.equal(isRichTextMarkActive(italic, 0, 10, 'italic'), true);
-});
-
-test('Rich Text partial selection splits inline nodes and preserves outside marks', () => {
-  const document = plainTextToRichText('Sanci9517');
-  const selected = toggleRichTextMark(document, 0, 3, 'bold');
+  const selected = toggleMark(document, 0, 3, 'bold');
   assert.deepEqual(selected.blocks[0].children, [
-    { type: 'text', text: 'San', marks: ['bold'], fontWeight: 700 },
+    { type: 'text', text: 'San', marks: ['bold'] },
     { type: 'text', text: 'ci9517', marks: [] }
   ]);
-  assert.equal(isRichTextMarkActive(selected, 0, 3, 'bold'), true);
-  assert.equal(isRichTextMarkActive(selected, 3, 9, 'bold'), false);
-
-  const removed = toggleRichTextMark(selected, 1, 2, 'bold');
+  const removed = toggleMark(selected, 1, 2, 'bold');
   assert.deepEqual(removed.blocks[0].children, [
-    { type: 'text', text: 'S', marks: ['bold'], fontWeight: 700 },
-    { type: 'text', text: 'a', marks: [], fontWeight: 400 },
-    { type: 'text', text: 'n', marks: ['bold'], fontWeight: 700 },
+    { type: 'text', text: 'S', marks: ['bold'] },
+    { type: 'text', text: 'a', marks: [] },
+    { type: 'text', text: 'n', marks: ['bold'] },
     { type: 'text', text: 'ci9517', marks: [] }
   ]);
 });
 
-test('Rich Text partial selection preserves existing marks and links', () => {
+test('Rich Text single engine preserves existing italic mark and link', () => {
   const document = {
     schemaVersion: 1,
     type: 'richtext-document',
@@ -205,67 +179,12 @@ test('Rich Text partial selection preserves existing marks and links', () => {
       }]
     }]
   };
-  const selected = toggleRichTextMark(document, 3, 7, 'bold');
-  assert.deepEqual(selected.blocks[0].children, [
-    { type: 'text', text: 'San', marks: ['italic'], link: { href: 'https://example.com', target: '_blank' } },
-    { type: 'text', text: 'ci95', marks: ['italic', 'bold'], fontWeight: 700, link: { href: 'https://example.com', target: '_blank' } },
-    { type: 'text', text: '17', marks: ['italic'], link: { href: 'https://example.com', target: '_blank' } }
-  ]);
-});
-
-test('Rich Text formatting engine applies font weight only to the selected range', () => {
-  const document = plainTextToRichText('Sanci9517');
-  const weighted = setRichTextFontWeight(document, 0, 5, 700);
-  assert.deepEqual(weighted.blocks[0].children, [
-    { type: 'text', text: 'Sanci', marks: [], fontWeight: 700 },
-    { type: 'text', text: '9517', marks: [] }
-  ]);
-  assert.equal(getRichTextFontWeight(weighted, 0, 5), 700);
-  assert.equal(getRichTextFontWeight(weighted, 5, 9), 400);
-  const reset = setRichTextFontWeight({ schemaVersion: 1, type: 'richtext-document', blocks: [{ type: 'paragraph', children: [{ type: 'text', text: 'Bold', marks: ['bold'] }] }] }, 0, 4, 400);
-  assert.deepEqual(reset.blocks[0].children[0], { type: 'text', text: 'Bold', marks: [], fontWeight: 400 });
-  const mixed = setRichTextFontWeight(weighted, 2, 7, 600);
-  assert.deepEqual(mixed.blocks[0].children, [
-    { type: 'text', text: 'Sa', marks: [], fontWeight: 700 },
-    { type: 'text', text: 'nci95', marks: [], fontWeight: 600 },
-    { type: 'text', text: '17', marks: [] }
-  ]);
-});
-
-test('Rich Text formatting engine preserves other inline marks while changing weight', () => {
-  const document = {
-    schemaVersion: 1,
-    type: 'richtext-document',
-    blocks: [{
-      type: 'paragraph',
-      children: [{
-        type: 'text',
-        text: 'Sanci9517',
-        marks: ['italic'],
-        link: { href: 'https://example.com', target: '_blank' }
-      }]
-    }]
-  };
-  const updated = setRichTextFontWeight(document, 3, 7, 700);
+  const updated = toggleMark(document, 3, 7, 'bold');
   assert.deepEqual(updated.blocks[0].children, [
     { type: 'text', text: 'San', marks: ['italic'], link: { href: 'https://example.com', target: '_blank' } },
-    { type: 'text', text: 'ci95', marks: ['italic'], link: { href: 'https://example.com', target: '_blank' }, fontWeight: 700 },
+    { type: 'text', text: 'ci95', marks: ['italic', 'bold'], link: { href: 'https://example.com', target: '_blank' } },
     { type: 'text', text: '17', marks: ['italic'], link: { href: 'https://example.com', target: '_blank' } }
   ]);
-});
-
-test('Rich Text formatting engine toggles italic through the same canonical range path', () => {
-  const document = plainTextToRichText('Sanci9517');
-  const updated = toggleRichTextMarkRange(document, 2, 7, 'italic');
-  assert.equal(isRichTextMarkRangeActive(updated, 2, 7, 'italic'), true);
-  assert.deepEqual(updated.blocks[0].children, [
-    { type: 'text', text: 'Sa', marks: [] },
-    { type: 'text', text: 'nci95', marks: ['italic'] },
-    { type: 'text', text: '17', marks: [] }
-  ]);
-  const reverted = toggleRichTextMarkRange(updated, 2, 7, 'italic');
-  assert.equal(isRichTextMarkRangeActive(reverted, 2, 7, 'italic'), false);
-  assert.deepEqual(reverted.blocks[0].children, [{ type: 'text', text: 'Sanci9517', marks: [] }]);
 });
 
 test('Rich Text Undo and Redo restore the exact structured document', () => {
