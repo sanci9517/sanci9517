@@ -2417,3 +2417,42 @@ Javítás:
 **Teszthatár:** I, részleges kijelölés több markkal, Undo/Redo, Save/Reload, mobil regresszió és további Rich Text funkciók most nem tesztelendők. Ha ez a B teszt továbbra is hibás, közvetlenül a canonical `toggleMark() → command → Canvas` adatútvonalat auditáljuk; új párhuzamos motort nem készítünk.
 
 **Egyetlen folytatási pont:** a fenti B ki/be runtime teszt eredménye.
+
+
+# 40 — 2026-09-21 — RICH TEXT TELJES RESET: UNIT TESZT KAPU
+
+**Állapot:** [~] ÚJ, EGYETLEN RICH TEXT MOTOR LÉTREHOZVA; AUTOMATIKUS UNIT TESZT FUTTATÁSA FOLYAMATBAN.
+
+A korábbi Rich Text formázási kódot teljesen elvetettük. Nincs párhuzamos régi motor, nincs aktív 100–900 slider/fontWeight formázási útvonal, és nincs régi `richtext-editor.js`.
+
+Aktív egyetlen motor:
+- `public/editor-v2/core/richtext-engine.js`
+- canonical Rich Text dokumentum = egyetlen source of truth;
+- DOM = kizárólag szerkesztési felület + natív Selection forrás;
+- logikai `from/to` tartomány;
+- determinisztikus inline split/merge;
+- egyetlen `toggleMark()` útvonal B/I és későbbi markok számára;
+- canonical → editor render;
+- editor → canonical serializer;
+- `richtext.content.set` → Validation → Page Model → History → Canvas.
+
+A statikus audit korábban PASS:
+- régi `richtext-editor.js` hivatkozás nincs;
+- `fontWeight`, `weightSlider`, régi Rich Text mark API-k nincsenek aktív kódban;
+- app az új egyetlen engine-t importálja;
+- tesztfájl az új engine-re épül.
+
+**Automatikus unit teszt kapu most futtatandó:**
+1. teljes szöveg B ki/be;
+2. teljes szöveg I ki/be;
+3. részleges kijelölés B;
+4. meglévő italic + link megőrzése részleges B esetén;
+5. inline range split/merge;
+6. Rich Text Undo/Redo regresszió;
+7. teljes meglévő editor core tesztcsomag.
+
+A GitHub Actions workflow: `.github/workflows/editor-core-test.yml`, Node 24, `npm run test:editor`.
+
+**Teszthatár:** amíg ez a unit/CI kapu nincs PASS állapotban, nincs Cloudflare deploy és nincs böngészős B/I runtime teszt.
+
+**Egyetlen aktuális folytatási pont:** az automatikus unit/CI teszt eredménye. PASS esetén külön MASTER-frissítés után Cloudflare build/deploy következik; FAIL esetén csak az új egyetlen `richtext-engine.js` motort javítjuk.
