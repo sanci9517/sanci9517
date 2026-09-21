@@ -25,6 +25,7 @@ function inlineElement(inline){
   let el=document.createTextNode(inline?.text||'');
   const marks=new Set(inline?.marks||[]);
   if(marks.has('bold')){const n=document.createElement('strong');n.append(el);el=n}
+  if(Number.isInteger(Number(inline?.fontWeight))){const n=document.createElement('span');n.dataset.fontWeight=String(Number(inline.fontWeight));n.style.fontWeight=String(Number(inline.fontWeight));n.append(el);el=n}
   if(marks.has('italic')){const n=document.createElement('em');n.append(el);el=n}
   if(marks.has('underline')){const n=document.createElement('u');n.append(el);el=n}
   if(marks.has('strike')){const n=document.createElement('s');n.append(el);el=n}
@@ -88,6 +89,10 @@ function inlineRuns(blockEl){
     const text=node.nodeValue||'';
     if(!text)continue;
     const run={type:'text',text,marks:marksForTextNode(node)};
+    const weightNode=node.parentElement?.closest('[data-font-weight]');
+    const legacyBold=run.marks.includes('bold');
+    if(weightNode?.dataset.fontWeight)run.fontWeight=Math.min(900,Math.max(100,Number(weightNode.dataset.fontWeight)||400));
+    else if(legacyBold)run.fontWeight=700;
     const link=linkForTextNode(node);if(link)run.link=link;
     runs.push(run);
   }
@@ -105,6 +110,37 @@ export function richTextEditorToDocument(container){
     else blocks.push({type:'paragraph',children});
   }
   return {schemaVersion:RICH_TEXT_SCHEMA_VERSION,type:RICH_TEXT_TYPE,blocks:blocks.length?blocks:[{type:'paragraph',children:[{type:'text',text:'',marks:[]}]}]};
+}
+
+export function applyRichTextFontWeightToSelection(editor,weight){
+  const selection=window.getSelection();
+  if(!selection||selection.rangeCount===0||!selection.toString())return false;
+  const range=selection.getRangeAt(0);
+  if(!editor.contains(range.commonAncestorContainer))return false;
+  const value=Math.min(900,Math.max(100,Number(weight)||400));
+  const walker=document.createTreeWalker(editor,NodeFilter.SHOW_TEXT);
+  const nodes=[];let node;
+  while(node=walker.nextNode()){
+    if(!range.intersectsNode(node))continue;
+    const start=node===range.startContainer?range.startOffset:0;
+    const end=node===range.endContainer?range.endOffset:node.nodeValue.length;
+    if(end>start)nodes.push({node,start,end});
+  }
+  if(!nodes.length)return false;
+  for(const item of [...nodes].reverse()){
+    let target=item.node;
+    if(item.end<target.nodeValue.length)target.splitText(item.end);
+    let selected=target;
+    if(item.start>0)selected=target.splitText(item.start);
+    const wrapper=document.createElement('span');
+    wrapper.dataset.fontWeight=String(value);
+    wrapper.style.fontWeight=String(value);
+    const parent=selected.parentNode;
+    if(parent)parent.insertBefore(wrapper,selected);
+    wrapper.append(selected);
+  }
+  editor.normalize();
+  return true;
 }
 
 export function applyRichTextMarkToSelection(editor,mark){
