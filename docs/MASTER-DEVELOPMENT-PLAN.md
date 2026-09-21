@@ -635,6 +635,40 @@ A Rich Text szerkesztő tipográfiai kezelése a Word / LibreOffice / OpenOffice
 
 ### 2026-09-21 — Rich Text UI cseréje implementálva
 ### 2026-09-21 — Rich Text UI statikus audit PASS
+### 2026-09-21 — Rich Text formázási motor teljes RESET döntés
+
+**[D] DÖNTÉS: a jelenlegi Rich Text formázási kódot elvetjük és egyetlen, tiszta motorral kezdjük újra.**
+
+Indok: a jelenlegi implementációban párhuzamos mark/fontWeight/DOM-visszaolvasási logikák alakultak ki, miközben a félkövér működése nem volt megbízható. Weboldal-szerkesztőként nem fogadunk el további foltozást.
+
+### Reset szabályok
+- a régi `richtext-editor.js` formázási motor törlésre kerül;
+- egyetlen új Rich Text engine lesz, egyetlen Selection, egyetlen transform/command út és egyetlen renderer/serializer;
+- B/I először kizárólag szemantikus inline markként készül;
+- `fontWeight 100–900` nem része az első új formázási körnek; csak későbbi Typography funkcióként térhet vissza;
+- a DOM nem source of truth;
+- a canonical Rich Text modell az egyetlen tartós adatforrás;
+- a kijelölés külön, logikai tartományként megmarad, és minden formázási tranzakció után visszaállítható;
+- PC és mobil ugyanazt a motort használja, csak az UI touch/desktop megjelenítése térhet el;
+- a meglévő Page Model, `richtext.content.set`, History, Undo/Redo, Diagnostics és Canvas lánc megmarad;
+- nincs második fallback, párhuzamos régi API vagy kompatibilitási kerülőút.
+
+### Új építési sorrend
+1. tiszta Rich Text adatmodell: paragraph + inline text + marks + link;
+2. tiszta Selection mapper;
+3. deterministic range splitter/merger;
+4. egyetlen `toggleMark` transform;
+5. canonical → editor renderer;
+6. editor → canonical serializer csak input/sync célra;
+7. command + validation + history integráció;
+8. B izolált teszt;
+9. I izolált teszt;
+10. részleges kijelölés + Selection megőrzés;
+11. PC/mobile browser teszt;
+12. csak ezután betűméret és haladó Typography.
+
+**Aktuális egyetlen folytatási pont:** a régi Rich Text engine eltávolítása és az új, egyetlen engine minimális magjának létrehozása; runtime teszt csak a tiszta mag statikus/unit ellenőrzése után.
+
 
 **[~] IMPLEMENTÁLVA, STATIKUS ELLENŐRZÉS PASS, RUNTIME/DEPLOY TESZT MÉG HÁTRA.**
 
