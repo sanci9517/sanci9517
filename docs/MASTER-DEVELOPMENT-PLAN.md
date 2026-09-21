@@ -1988,3 +1988,36 @@ A felhasználó kérésére a teljes Sanci9517 fejlesztésre, minden jövőbeli 
 **Döntés:** ezek nem külön fejlesztési pontok, hanem az egész MASTER tervre és minden jövőbeli fejlesztési pontra kötelező minőségi kapuk.
 
 **Állapot:** rögzítve; a jelenlegi 10.1.2.2 Rich Text B/I runtime teszt továbbra is az EGYETLEN aktív fejlesztési/tesztpont.
+
+
+## 10.1.2.2 — félkövér Canvas-vizsgálat, új diagnosztikai ellenőrzés — 2026-09-18
+
+**Állapot:** `[~]` JAVÍTÁS ELKÉSZÜLT, FELHASZNÁLÓI RUNTIME TESZT SZÜKSÉGES.
+
+A felhasználói teszt alapján:
+- a részleges kijelölés működik;
+- a B ki/be kapcsolása működik;
+- a félkövér vizuális megjelenése továbbra sem igazolt.
+
+Senior full-stack audit után a Canvas oldali teljes útvonalat külön ellenőrző réteggel egészítettük ki:
+1. canonical Rich Text mark meglétének ellenőrzése;
+2. Canvas `strong.richtext-mark-bold` DOM elem meglétének ellenőrzése;
+3. `getComputedStyle(...).fontWeight` ellenőrzése, legalább 600 vagy `bold` értékkel;
+4. eltérés esetén Diagnostics kód:
+   - `SANCI-VERIFY-E003` — canonical bold megvan, de megfelelő Canvas `<strong>` nincs;
+   - `SANCI-VERIFY-E004` — `<strong>` megvan, de computed font-weight nem félkövér.
+
+A Rich Text renderer közös `renderRichTextInline()` útvonalat használ; a bold elem szemantikailag `<strong>`, és explicit `font-weight:700 !important` inline stílust kap. A listaelemek inline mark renderelése is ugyanebbe a közös útvonalba került.
+
+**Implementáció:**
+- `a3ca1a6fd2286f2739f9c6605e169dda7113165e` — renderer refaktor + bold DOM/computed-style verification.
+- `f3138933e17e4e83b66361d1eea4c2ed5ec123f0` — editor app cache frissítése.
+
+**Következő egyetlen tesztpont:** frissített editor betöltése után ugyanazzal a részleges B teszttel ellenőrizni:
+- kijelölt rész félkövér;
+- kijelöletlen rész normál;
+- B második megnyomására a kijelölt rész visszaáll;
+- Diagnostics állapota;
+- ha vizuálisan továbbra sem látható, a Diagnostics panelben különösen az `E003/E004` eredményét kell figyelni.
+
+**Teszthatár:** Undo/Redo, save/reload, responsive regresszió és további Rich Text funkciók továbbra sem tesztelendők, amíg ez a pont nincs lezárva.
