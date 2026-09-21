@@ -69,42 +69,6 @@ function renderRichTextDocument(container,doc){
   }
 }
 
-function verifyRichTextBoldRender(nodeId){
-  const current=page();
-  const node=nodeId&&current?getNode(current,nodeId):null;
-  const marked=(node?.props?.richText?.blocks||[]).flatMap(block=>block.children||[]).filter(inline=>inline?.marks?.includes('bold')&&inline.text);
-  if(!marked.length)return;
-  const canvasNode=Array.from(canvas.querySelectorAll('[data-node-id]')).find(el=>el.dataset.nodeId===nodeId);
-  const richTextCanvas=canvasNode?.querySelector('.richtext-content');
-  const strong=richTextCanvas?.querySelector('strong.richtext-mark-bold');
-  diagnostics.verify(Boolean(strong),{code:'SANCI-VERIFY-E003',message:'A Rich Text canonical bold mark létrejött, de a Canvas nem hozott létre megfelelő <strong> elemet.',context:'Rich Text bold → Canvas DOM'});
-  if(strong){
-    const weight=window.getComputedStyle(strong).fontWeight;
-    diagnostics.verify(Number(weight)>=600||weight==='bold',{code:'SANCI-VERIFY-E004',message:'A Rich Text bold <strong> elem létrejött, de a böngésző computed font-weight értéke nem félkövér: '+weight+'.',context:'Canvas DOM → computedStyle.fontWeight'});
-  }
-}
-
-function verifyRichTextBoldModel(nodeId,expectedStart,expectedEnd){
-  const current=page();
-  const node=nodeId&&current?getNode(current,nodeId):null;
-  const inlines=(node?.props?.richText?.blocks||[]).flatMap(block=>block.children||[]);
-  let offset=0;
-  let covered=false;
-  let boldCovered=false;
-  for(const inline of inlines){
-    const text=String(inline?.text||'');
-    const a=Math.max(expectedStart,offset);
-    const b=Math.min(expectedEnd,offset+text.length);
-    if(b>a){
-      covered=true;
-      if(Array.isArray(inline.marks)&&inline.marks.includes('bold'))boldCovered=true;
-    }
-    offset+=text.length+1;
-  }
-  diagnostics.verify(covered,{code:'SANCI-VERIFY-E005',message:'A B művelet ellenőrzési tartománya nem található a canonical Rich Text modellben.',context:'B → Page Model selection'});
-  diagnostics.verify(boldCovered,{code:'SANCI-VERIFY-E006',message:'A kijelölt Rich Text rész canonical modelljében nem jött létre a bold mark.',context:'B → toggleRichTextMark → Page Model'});
-}
-
 function renderNode(currentPage,id){const node=getNode(currentPage,id);if(!node)return null;const el=document.createElement('div');el.className=`node ${state.selection.ids.includes(id)?'selected':''}`;el.dataset.nodeId=id;el.dataset.device=state.viewport.device;applyNodeStyle(el,node,state.viewport.device);const head=document.createElement('div');head.className='node-head';head.innerHTML=`<span>${node.name||node.type}</span><small>${node.type}</small>`;el.append(head);if(node.type===NODE_TYPES.RICHTEXT){const c=document.createElement('div');c.className='node-content richtext-content';renderRichTextDocument(c,node.props?.richText);el.append(c)}else if([NODE_TYPES.HEADING,NODE_TYPES.TEXT,NODE_TYPES.BUTTON,NODE_TYPES.LINK].includes(node.type)){const c=document.createElement('div');c.className='node-content';c.textContent=node.props?.text??node.props?.content??node.name;el.append(c)}for(const child of node.children||[]){const x=renderNode(currentPage,child);if(x)el.append(x)}el.onclick=e=>{e.stopPropagation();setSelection(state,[id]);render()};return el}
 function renderCanvas(){canvas.querySelectorAll('.page-canvas').forEach(x=>x.remove());const current=page();const device=state?.viewport?.device||'desktop';const width=sizes[device];const pc=document.createElement('div');pc.className='page-canvas';pc.dataset.device=device;pc.style.width=`${width}px`;pc.style.transform=`scale(${zoom})`;if(current)pc.append(renderNode(current,current.rootId));canvas.append(pc);$('#canvasEmpty').hidden=Boolean(current);$('#canvasMode').textContent=`${device} · ${width}px`;$('#zoom').textContent=`${Math.round(zoom*100)}%`;syncDeviceButtons(device)}
 function syncDeviceButtons(device){document.querySelectorAll('[data-device]').forEach(b=>b.classList.toggle('active',b.dataset.device===device));document.querySelectorAll('.canvas-device-btn').forEach(b=>b.classList.toggle('active',b.dataset.device===device))}
