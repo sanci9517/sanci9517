@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.35  
+**Verzió:** MASTER-2.36  
 **Dátum:** 2026-09-21  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -1700,3 +1700,26 @@ A teljes következő action-terület vizsgálata alapján:
 **Kódmódosítás:** nem történt.
 
 **Következő egyetlen aktív pont:** `page.create/delete/rename/duplicate` adatfolyam és history/persistence szerződésének teljes auditja.
+
+
+## 40.27 — Page lifecycle teljes kód-audit és MASTER-korrekció — 2026-09-21
+
+**Állapot:** [x] AUDIT PASS — a page létrehozás meglévő funkció; a valódi Editor v2 hiány a page törlése.
+
+A releváns teljes adatfolyamot összevetettük: Editor v2 `app.js` → Editor Core → admin pages API → D1 → Page Model → history/persistence, valamint a jelenlegi admin tartalomkezelő felületet.
+
+### Megállapítások
+- **Oldal létrehozás:** működő Editor v2 funkció. Az `app.js` `createNew()` canonical Editor v2 Page Model dokumentumot készít és POST-olja az `/api/admin/pages` endpointot.
+- **Oldal törlés:** az Editor v2 oldallistájában jelenleg nincs törlés gomb/művelet. Ez a tényleges felhasználói hiány.
+- **Szerveroldali törlés:** az `/api/admin/pages` route már tartalmaz DELETE kezelést, body-ban `id` alapján, és védi az utolsó oldalt. Audit logot is ír.
+- **Page rename:** a backendben már van PATCH alapú névváltoztatás, de az Editor v2 jelenlegi page-list UI-ja nem használja.
+- **Page duplicate:** nincs jelenlegi Editor Core/API/UI megoldás; ezt most nem építjük be, mert a felhasználó konkrét hiánya a törlés.
+- **Editor history:** a jelenlegi `history.undo/redo` kizárólag az aktuális Page Model dokumentum snapshotjait kezeli. D1-oldal törlését nem szabad úgy hozzáadni, mintha az egyszerű node-művelet lenne.
+- **Admin legacy/content UI eltérés:** a `public/admin.html` jelenlegi REST-hívásai (`/api/admin/pages/:id`, `PUT`, `content`, `published`) nem egyeznek a jelenlegi `src/routes/admin/pages.ts` szerződésével (`DELETE` body-id, `PATCH` title, POST canonical document). Ezt külön technikai adósságként rögzítjük; nem keverjük össze az Editor v2 page-delete implementációval.
+
+### Következtetés
+A MASTER korábbi `page.create/delete/rename/duplicate` megfogalmazása túl tág volt. A jelenlegi fejlesztési feladatot a tényleges felhasználói hiányra szűkítjük: **Editor v2-ben legyen biztonságos, szerveroldalilag perzisztált oldal-törlés, utolsó oldal védelemmel, sikeres törlés után lista/állapot frissítéssel és hibakezeléssel.**
+
+**Kódmódosítás ebben az auditlépésben:** nem történt.
+
+**Következő egyetlen aktív pont:** `page.delete` Editor v2 implementáció → unit/integration teszt → GitHub CI → élő browser teszt → MASTER lezárás.
