@@ -160,11 +160,11 @@ test('Rich Text fontWeight accepts 100-900 values and preserves legacy bold comp
 test('Rich Text marks toggle on and off and report active state', () => {
   const document = plainTextToRichText('Sanci9517');
   const selected = toggleRichTextMark(document, 0, 10, 'bold');
-  assert.deepEqual(selected.blocks[0].children[0].marks, ['bold']);
+  assert.deepEqual(selected.blocks[0].children[0], { type: 'text', text: 'Sanci9517', marks: ['bold'], fontWeight: 700 });
   assert.equal(isRichTextMarkActive(selected, 0, 10, 'bold'), true);
 
   const deselected = toggleRichTextMark(selected, 0, 10, 'bold');
-  assert.deepEqual(deselected.blocks[0].children[0].marks, []);
+  assert.deepEqual(deselected.blocks[0].children[0], { type: 'text', text: 'Sanci9517', marks: [], fontWeight: 400 });
   assert.equal(isRichTextMarkActive(deselected, 0, 10, 'bold'), false);
 
   const italic = toggleRichTextMark(deselected, 0, 10, 'italic');
@@ -176,7 +176,7 @@ test('Rich Text partial selection splits inline nodes and preserves outside mark
   const document = plainTextToRichText('Sanci9517');
   const selected = toggleRichTextMark(document, 0, 3, 'bold');
   assert.deepEqual(selected.blocks[0].children, [
-    { type: 'text', text: 'San', marks: ['bold'] },
+    { type: 'text', text: 'San', marks: ['bold'], fontWeight: 700 },
     { type: 'text', text: 'ci9517', marks: [] }
   ]);
   assert.equal(isRichTextMarkActive(selected, 0, 3, 'bold'), true);
@@ -184,9 +184,9 @@ test('Rich Text partial selection splits inline nodes and preserves outside mark
 
   const removed = toggleRichTextMark(selected, 1, 2, 'bold');
   assert.deepEqual(removed.blocks[0].children, [
-    { type: 'text', text: 'S', marks: ['bold'] },
-    { type: 'text', text: 'a', marks: [] },
-    { type: 'text', text: 'n', marks: ['bold'] },
+    { type: 'text', text: 'S', marks: ['bold'], fontWeight: 700 },
+    { type: 'text', text: 'a', marks: [], fontWeight: 400 },
+    { type: 'text', text: 'n', marks: ['bold'], fontWeight: 700 },
     { type: 'text', text: 'ci9517', marks: [] }
   ]);
 });
@@ -208,7 +208,7 @@ test('Rich Text partial selection preserves existing marks and links', () => {
   const selected = toggleRichTextMark(document, 3, 7, 'bold');
   assert.deepEqual(selected.blocks[0].children, [
     { type: 'text', text: 'San', marks: ['italic'], link: { href: 'https://example.com', target: '_blank' } },
-    { type: 'text', text: 'ci95', marks: ['italic', 'bold'], link: { href: 'https://example.com', target: '_blank' } },
+    { type: 'text', text: 'ci95', marks: ['italic', 'bold'], fontWeight: 700, link: { href: 'https://example.com', target: '_blank' } },
     { type: 'text', text: '17', marks: ['italic'], link: { href: 'https://example.com', target: '_blank' } }
   ]);
 });
