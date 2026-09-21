@@ -2391,3 +2391,29 @@ Statikus visszaolvasás: PASS — a serializer új `propsForTextNode()` útvonal
 A `6348f4276420d97d2b8fda2a9b7862d501ec1e78` commithez a GitHub combined status üres, és a commit workflow-run lekérdezés sem adott vissza futást. Ezért CI PASS-t nem állítunk.
 
 **Következő egyetlen lépés:** a Cloudflare automatikus build/deploy után mobilon célzottan ellenőrizni a Rich Text 100–900 betűvastagság útvonalat: szöveg → kijelölés → 700 → Canvas → 400 → Canvas. Diagnosticsnak 0 hibát kell mutatnia. Más funkciót nem tesztelünk.
+
+
+### 2026-09-21 — Rich Text B működési hiba célzott javítása
+**Állapot:** [~] JAVÍTVA, CÉLZOTT RUNTIME TESZT HÁTRA.
+
+A felhasználói teszt szerint a **B (félkövér)** nem működik, miközben az **I (dőlt)** működik. A friss motor ellenőrzése alapján az Inspector formázási művelete a DOM-ból visszaszerializált dokumentumot használta az aktív canonical Page Model helyett. Ez felesleges második adatértelmezési pontot hagyott a B útvonalban.
+
+Javítás:
+- `public/editor-v2/app.js`: a Rich Text `activeDocument()` most közvetlenül a kiválasztott node canonical `props.richText` dokumentumát használja.
+- A B/I továbbra is ugyanazon egyetlen `toggleMark()` range-motoron fut.
+- A DOM csak szerkesztési felület és selection-forrás; nem lesz második Rich Text state/source of truth.
+- Editor cache frissítve: `app.js?v=20260921-11`.
+- Commitok: `e7966af4a208c1792969de2ec45489d08c1baf32`, `b0fa40d4b60d367d1e9e2517b1aee8069f2c1563`.
+
+**Egyetlen aktuális teszt:** Cloudflare frissítés után csak ezt kell ellenőrizni:
+1. Rich Textben írj be szöveget.
+2. Jelölj ki egy rövid részt.
+3. Nyomd meg a **B** gombot.
+4. A kijelölt rész legyen láthatóan félkövér a szerkesztőben és a Canvason.
+5. Nyomd meg újra a **B** gombot ugyanazon kijelölésen.
+6. A félkövérség szűnjön meg.
+7. Diagnostics maradjon **0 hiba**.
+
+**Teszthatár:** I, részleges kijelölés több markkal, Undo/Redo, Save/Reload, mobil regresszió és további Rich Text funkciók most nem tesztelendők. Ha ez a B teszt továbbra is hibás, közvetlenül a canonical `toggleMark() → command → Canvas` adatútvonalat auditáljuk; új párhuzamos motort nem készítünk.
+
+**Egyetlen folytatási pont:** a fenti B ki/be runtime teszt eredménye.
