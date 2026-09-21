@@ -1857,3 +1857,52 @@ A Command API következő valódi domain-hiányát, a group / ungroup területet
 Nem építünk most rögtön kódot. Előbb a multi-select UX és a group/ungroup command contract együtt kell végleges legyen, mert a group command bemenete több node ID. Nem vezetünk be párhuzamos selection rendszert.
 
 **Következő egyetlen aktív pont:** multi-select teljes adatfolyam auditja (Canvas + Layers + keyboard/pointer + selection state + history interaction), majd ebből közvetlenül a group command implementáció következik.
+
+
+## 40.32 — Multi-select teljes adatfolyam audit — 2026-09-21
+
+**Állapot:** [x] AUDIT PASS — kódmódosítás még nem történt.
+
+A Group/ungroup előfeltételét, a multi-select teljes jelenlegi adatfolyamát ellenőriztük: State → Canvas → Layers → keyboard → Inspector → History.
+
+### Megállapítások
+
+- A canonical selection state már eleve több ID-t képes tárolni:
+  - `state.selection.ids`
+  - `state.selection.primaryId`
+- A `setSelection()` deduplikálja az ID-kat és csak létező node-okat enged a selectionbe.
+- A `selectedNodes()` a canonical Page Modelből állítja elő a kiválasztott node-okat.
+- A Canvas render már az összes `selection.ids` elemet `selected` állapottal jelölheti.
+- **A Canvas kattintás jelenleg nem multi-select:** a node click mindig `setSelection(state,[id])`, tehát egyetlen elemet cserél.
+- **A Layers kattintás jelenleg nem multi-select:** a layer click szintén mindig `setSelection(state,[id])`.
+- A jelenlegi `app.js`-ben nincs Ctrl/Cmd/Shift alapú selection toggle/range logika.
+- A globális keyboard handler jelenleg Ctrl/Cmd+S és Ctrl/Cmd+Z/Shift+Z kezelésére szolgál; selection billentyűparancs nincs.
+- A selection módosítása nem kerül history-be, ami helyes: a selection UI/editor state, nem Page Model mutation.
+- A Geometry/Inspector jelenleg csak `selectedNodes()[0]` alapján szerkeszt, ezért több kijelölés esetén nincs definiált közös inspector-művelet.
+- A meglévő history rendszer dokumentum snapshotokat kezel, ezért a későbbi Group/Ungroup egyetlen mutationként kezelhető és Undo/Redo-kompatibilis lehet.
+- A Group node már canonical `NODE_TYPES.GROUP`, nincs szükség új node/state modellre.
+- A group/ungroup művelethez a multi-selectnek nem kell külön history-rendszer; a selection state maradhat history-n kívül.
+
+### Következtetés
+
+A multi-select **adatmodell már készen áll**, de a felhasználói interaction layer hiányzik. Nem szabad új selection state-et létrehozni.
+
+A következő implementáció kizárólag a meglévő canonical selection API-ra épüljön:
+
+1. normál kattintás → egyetlen kijelölés;
+2. Ctrl/Cmd + kattintás → kijelölés hozzáadása/eltávolítása;
+3. Shift + kattintás → determinisztikus sibling-range kijelölés ugyanazon parenten;
+4. Canvas és Layers ugyanazt a selection logikát használja;
+5. primaryId determinisztikus marad;
+6. root külön szabály szerint kezelendő;
+7. üres Canvas kattintás továbbra is selection.clear;
+8. a selection vizuális állapota Canvas + Layers oldalon azonnal szinkronizált;
+9. Undo/Redo nem módosítja külön a selectiont; a Group/Ungroup command saját eredmény-selectiont explicit módon állítja.
+
+### Fontos döntés
+
+**Nem építünk még Group/Ungroup commandot.** Először a multi-select interaction kerül be a meglévő `setSelection()` / `selectedNodes()` canonical útra, utána unit + browser teszt, majd ebből következik a Group command.
+
+**Kódmódosítás:** ebben az auditlépésben nem történt.
+
+**Következő egyetlen aktív pont:** Multi-select interaction implementáció — Canvas + Layers közös selection helperrel, Ctrl/Cmd toggle + Shift sibling-range támogatással, párhuzamos selection state nélkül.
