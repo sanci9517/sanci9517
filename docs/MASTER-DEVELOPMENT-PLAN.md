@@ -2128,7 +2128,7 @@ Implementációs commitok:
 
 
 ### 2026-09-21 — Rich Text formázási motor alapjaiban újratervezve — döntés
-**Állapot:** [~] ARCHITEKTURÁLIS ÚJRATERVEZÉS ELŐKÉSZÍTVE, KÓDIMPLEMENTÁCIÓ MÉG NINCS LEZÁRVA.
+**Állapot:** [~] ARCHITEKTURÁLIS ÚJRATERVEZÉS IMPLEMENTÁLVA, STATIKUS/UNIT ELLENŐRZÉS MÉG NINCS LEZÁRVA.
 
 **Miért nem foltozzuk tovább:** a jelenlegi contenteditable → DOM wrapper → serializer útvonal túl sok, egymástól függő Selection/Range és wrapper-állapotot kezel. A felhasználói tesztben a font-weight továbbra sem működik, ezért a korábbi +/− javítások és az azonnali Canvas-refresh sem tekinthető megfelelő végleges megoldásnak.
 
@@ -2162,3 +2162,14 @@ Implementációs commitok:
 **Teszthatár:** amíg az új motor nincs runtime szinten lezárva, Save/Reload, Undo/Redo, responsive, link/list és további Rich Text funkciók nem kerülnek előre.
 
 **EGYETLEN KÖVETKEZŐ LÉPÉS:** az új modell-alapú Rich Text formázási motor implementációja és statikus/unit ellenőrzése. Ezután külön MASTER-frissítés, majd külön runtime teszt.
+
+**Implementációs lépés — modell-alapú motor:**
+- `6a9844eadc6a06a595e09a7fe22c8159f66e997a` — Rich Text core: logikai Selection position mapper, canonical range transformation, font-weight setter, generic italic mark range toggle, merge és active-state logika.
+- `28222c3ecab8c22c68dcfa7f14f197cad127b182` — Inspector átállítva arra, hogy a formázás közvetlenül a canonical Rich Text modellen történjen; DOM csak szerkesztési nézet; formázás után az editor DOM a canonical dokumentumból újrarenderelődik, majd a logikai selection visszaáll.
+- `900606f886036ad53d02a1cf9f7eab2400903344` — explicit fontWeight elsőbbsége: a régi `bold` markot a súlybeállítás eltávolítja, így 400 valóban normál súly lehet.
+- `5461a589129c753055839edd6fe1668bb646e02d` + `fe27efd63e83ddc60c863022ffcd1c7d5e0a4b18` + `ced5bb6818f5af50d6ffe65c5299c8349e7ab816` — célzott unit tesztek a részleges súlyozásra, mark-megőrzésre, italic range toggle-ra és legacy bold → 400 resetre.
+- `32d73be5579476c2426e5ca6508affe4792f3960` — editor app cache frissítve.
+
+**Ellenőrzési állapot:** a GitHub Actions futása a legutóbbi commitokra jelenleg nem jelent meg a connectorban; lokális futtatás nem volt lehetséges, mert a környezetből a GitHub DNS nem érhető el. Ezért a unit teszteket jelenleg nem jelöljük PASS-nak és a kódot nem tekintjük lezártnak.
+
+**Egyetlen aktuális folytatási pont:** a modell-alapú Rich Text motor statikus visszaolvasása + unit/CI ellenőrzése. Ha ez PASS, utána külön browser runtime teszt következik.
