@@ -633,6 +633,26 @@ A Rich Text szerkesztő tipográfiai kezelése a Word / LibreOffice / OpenOffice
 
 **Aktuális egyetlen folytatási pont:** a Rich Text Inspector UI és a hozzá tartozó kód teljes auditja, majd a felesleges slider/weight UI cseréje a fenti Word/LibreOffice-szerű felépítésre úgy, hogy a Selection motor változatlanul megmaradjon.
 
+### 2026-09-21 — Rich Text UI cseréje implementálva
+
+**[~] KÓD ELKÉSZÜLT, TESZT MÉG HÁTRA.**
+
+Elkészült a mobil/PC-barát első UI-csere:
+- a 100–900 slider teljesen kikerült az Inspectorból;
+- a normál formázás most szemantikus **B / I** kapcsoló;
+- a B művelet a canonical modellben a félkövér állapotot és a 700-as megjelenési súlyt összehangolja, a kikapcsolás 400-ra állítja;
+- a kijelölés továbbra is a meglévő logikai `from/to` Selection modellen keresztül kerül mentésre és visszaállításra;
+- a toolbar PC-n kompakt, mobilon nagy érintési célokat és külön soros blokk-típus választót használ;
+- vízszintes túlcsordulást nem vezet be;
+- a meglévő canonical `fontWeight` adatmodell megmaradt, de a slider UI megszűnt;
+- asset cache frissítve.
+
+**Érintett commitok:** app `e77c174036adc0d72b9d13a2800ee9c870b66201`, Rich Text core `db944be858f814639951c6da4814602ea01aac19`, CSS `ef253f9c3e839d048b84bab7825a79c5d09ac549`, index `190ef77c283dffc68efb572bae7df5c997f35a91`.
+
+**Teszt:** még nincs runtime felhasználói teszt. Először statikus/automatizált ellenőrzés, majd Cloudflare build/deploy szükséges.
+
+**Aktuális egyetlen folytatási pont:** statikus és core teszt — ellenőrizni, hogy nincs slider/weightSlider/weight UI hivatkozás, az app importjai érvényesek, a Rich Text core tesztek PASS, és a B/I + Selection kód egyben maradt.
+
 ## 10.1 Content
 - [ ] plain text
 - [~] rich text — strukturált Rich Text Inspector első formázó UI implementálva; canonical schema/command/validation/Canvas lánc változatlan. Inspector: Bekezdés/H1-H6 + B/I vezérlők. Runtime felhasználói teszt még hátra van.
