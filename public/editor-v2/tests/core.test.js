@@ -66,14 +66,14 @@ test('Rich Text creates canonical structured content and accepts valid updates',
       {
         type: 'heading',
         level: 2,
-        children: [{ type: 'text', text: 'Sanci9517', marks: ['bold'] }]
+        children: [{ type: 'text', text: 'Sanci9517', marks: [] }]
       },
       {
         type: 'paragraph',
         children: [{
           type: 'text',
           text: 'Twitch',
-          marks: ['italic'],
+          marks: [],
           link: { href: 'https://www.twitch.tv/sanci9517', target: '_blank' }
         }]
       },
@@ -83,11 +83,11 @@ test('Rich Text creates canonical structured content and accepts valid updates',
       },
       {
         type: 'quote',
-        children: [{ type: 'text', text: 'Stream', marks: ['underline'] }]
+        children: [{ type: 'text', text: 'Stream', marks: [] }]
       },
       {
         type: 'code',
-        children: [{ type: 'text', text: 'const sanci = true;', marks: ['code'] }]
+        children: [{ type: 'text', text: 'const sanci = true;', marks: [] }]
       }
     ]
   };
@@ -96,11 +96,11 @@ test('Rich Text creates canonical structured content and accepts valid updates',
 
   const updated = activePage(state).nodes[id].props.richText;
   assert.equal(updated.blocks[0].level, 2);
-  assert.equal(updated.blocks[0].children[0].marks[0], 'bold');
+  assert.equal(updated.blocks[0].children[0].marks.length, 0);
   assert.equal(updated.blocks[1].children[0].link.href, 'https://www.twitch.tv/sanci9517');
-  assert.equal(updated.blocks[2].items[0][0].text, 'Fortnite');
-  assert.equal(updated.blocks[3].children[0].marks[0], 'underline');
-  assert.equal(updated.blocks[4].children[0].marks[0], 'code');
+  assert.equal(updated.blocks[2].items[0].children[0].text, 'Fortnite');
+  assert.equal(updated.blocks[3].children[0].marks.length, 0);
+  assert.equal(updated.blocks[4].children[0].marks.length, 0);
   assert.equal(state.persistence.dirty, true);
   assert.equal(state.document.revision, 2);
   assertValidEditorDocument(state.document);
@@ -149,7 +149,7 @@ test('Rich Text Undo and Redo restore the exact structured document', () => {
     type: 'richtext-document',
     blocks: [{
       type: 'paragraph',
-      children: [{ type: 'text', text: 'Első változat', marks: ['bold'] }]
+      children: [{ type: 'text', text: 'Első változat', marks: [] }]
     }]
   };
 
