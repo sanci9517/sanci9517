@@ -89,11 +89,14 @@ function renderInspector(){inspector.replaceChildren();const nodes=state?selecte
   renderRichTextEditor(editor,currentRichText);
   let richTextDirty=false;
   const sync=({render:false}={})=>{const doc=richTextEditorToDocument(editor);command('richtext.content.set',{nodeId:node.id,document:doc},{render});richTextDirty=true};
-  const applyMark=(mark)=>{if(applyRichTextMarkToSelection(editor,mark)){sync({render:false})}editor.focus()};
+  const updateMarkButtonState=()=>{const selection=window.getSelection();if(!selection||selection.rangeCount===0||selection.isCollapsed)return;const range=selection.getRangeAt(0);if(!editor.contains(range.commonAncestorContainer))return;for(const [mark,button] of [['bold',boldButton],['italic',italicButton]]){let active=false;const walker=document.createTreeWalker(editor,NodeFilter.SHOW_TEXT);let n;let covered=0;while(n=walker.nextNode()){if(!range.intersectsNode(n))continue;const start=n===range.startContainer?range.startOffset:0;const end=n===range.endContainer?range.endOffset:n.nodeValue.length;if(end<=start)continue;covered+=end-start;let p=n.parentElement;let has=false;while(p&&p!==editor){const tag=p.tagName?.toLowerCase();if((mark==='bold'&&(tag==='strong'||tag==='b'))||(mark==='italic'&&(tag==='em'||tag==='i'))){has=true;break}p=p.parentElement}if(!has){active=false;break}active=true}button.classList.toggle('active',covered>0&&active);button.setAttribute('aria-pressed',covered>0&&active?'true':'false')}};
+  const applyMark=(mark)=>{if(applyRichTextMarkToSelection(editor,mark)){sync({render:false});updateMarkButtonState()}editor.focus()};
   const boldButton=makeButton('B','Félkövér ki/be',()=>applyMark('bold'));
   const italicButton=makeButton('I','Dőlt ki/be',()=>applyMark('italic'));
   blockSelect.onchange=()=>{const selection=window.getSelection();const block=selection?.anchorNode?.parentElement?.closest('p,h1,h2,h3,h4,h5,h6,blockquote,pre');if(!block||!editor.contains(block))return;const tag=blockSelect.value==='paragraph'?'p':`h${blockSelect.value.split('-')[1]}`;const replacement=document.createElement(tag);while(block.firstChild)replacement.append(block.firstChild);block.replaceWith(replacement);sync({render:true});richTextDirty=false;editor.focus()};
-  editor.addEventListener('input',()=>sync({render:false}));
+  editor.addEventListener('input',()=>{sync({render:false});updateMarkButtonState()});
+  editor.addEventListener('mouseup',updateMarkButtonState);
+  editor.addEventListener('keyup',updateMarkButtonState);
   editor.addEventListener('blur',()=>{if(richTextDirty){sync({render:true});richTextDirty=false}});
   toolbar.append(blockSelect,boldButton,italicButton);
   section.append(toolbar,editor);
