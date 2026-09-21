@@ -149,6 +149,47 @@ test('Rich Text marks toggle on and off and report active state', () => {
   assert.equal(isRichTextMarkActive(italic, 0, 10, 'italic'), true);
 });
 
+test('Rich Text partial selection splits inline nodes and preserves outside marks', () => {
+  const document = plainTextToRichText('Sanci9517');
+  const selected = toggleRichTextMark(document, 0, 3, 'bold');
+  assert.deepEqual(selected.blocks[0].children, [
+    { type: 'text', text: 'San', marks: ['bold'] },
+    { type: 'text', text: 'ci9517', marks: [] }
+  ]);
+  assert.equal(isRichTextMarkActive(selected, 0, 3, 'bold'), true);
+  assert.equal(isRichTextMarkActive(selected, 3, 9, 'bold'), false);
+
+  const removed = toggleRichTextMark(selected, 1, 2, 'bold');
+  assert.deepEqual(removed.blocks[0].children, [
+    { type: 'text', text: 'S', marks: ['bold'] },
+    { type: 'text', text: 'a', marks: [] },
+    { type: 'text', text: 'n', marks: ['bold'] },
+    { type: 'text', text: 'ci9517', marks: [] }
+  ]);
+});
+
+test('Rich Text partial selection preserves existing marks and links', () => {
+  const document = {
+    schemaVersion: 1,
+    type: 'richtext-document',
+    blocks: [{
+      type: 'paragraph',
+      children: [{
+        type: 'text',
+        text: 'Sanci9517',
+        marks: ['italic'],
+        link: { href: 'https://example.com', target: '_blank' }
+      }]
+    }]
+  };
+  const selected = toggleRichTextMark(document, 3, 7, 'bold');
+  assert.deepEqual(selected.blocks[0].children, [
+    { type: 'text', text: 'San', marks: ['italic'], link: { href: 'https://example.com', target: '_blank' } },
+    { type: 'text', text: 'ci95', marks: ['italic', 'bold'], link: { href: 'https://example.com', target: '_blank' } },
+    { type: 'text', text: '17', marks: ['italic'], link: { href: 'https://example.com', target: '_blank' } }
+  ]);
+});
+
 test('Rich Text Undo and Redo restore the exact structured document', () => {
   const state = createEditorState();
   execute(state, { type: 'element.add', payload: { type: NODE_TYPES.RICHTEXT } });
