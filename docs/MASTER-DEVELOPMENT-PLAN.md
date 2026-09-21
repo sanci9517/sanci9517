@@ -669,6 +669,42 @@ Indok: a jelenlegi implementációban párhuzamos mark/fontWeight/DOM-visszaolva
 
 **Aktuális egyetlen folytatási pont:** a régi Rich Text engine eltávolítása és az új, egyetlen engine minimális magjának létrehozása; runtime teszt csak a tiszta mag statikus/unit ellenőrzése után.
 
+### 2026-09-21 — Rich Text engine RESET implementálva, statikus audit PASS
+
+**[~] ÚJ MOTOR LÉTREHOZVA, UNIT/RUNTIME TESZT MÉG HÁTRA.**
+
+A régi párhuzamos Rich Text motor törölve lett. Új egyetlen `public/editor-v2/core/richtext-engine.js` készült.
+
+Az új motor egyetlen útja:
+`DOM Selection → logikai from/to → egyetlen toggleMark transform → canonical Rich Text → richtext.content.set → History → Canvas`
+
+Megmaradt alapok:
+- canonical Page Model;
+- `richtext.content.set` command;
+- Validation;
+- History / Undo / Redo;
+- Diagnostics;
+- Canvas renderer;
+- PC és mobil ugyanazt a Rich Text motort használja.
+
+Az első körből szándékosan kikerült:
+- 100–900 fontWeight motor;
+- fontWeight serializer;
+- slider;
+- régi `toggleRichTextMark` / `toggleRichTextMarkRange` párhuzam;
+- régi `setRichTextFontWeight` / `getRichTextFontWeight` API;
+- DOM-ból fontWeight visszaolvasás.
+
+Az új motor elsődleges inline formázása: `bold, italic, underline, strike, code`, egyetlen `toggleMark()` transzformációval. A Canvas ugyanebből a canonical mark modellből renderel `strong/em/u/s/code` elemeket.
+
+**Érintett fő commitok:** engine `0ac0fb0e936111456dfaac779220244a71790dad`, app `1141d22079b17cb1a82570e5c34084eeaf29af78`, schema `9d9ae56a80b3af11784ad4a106e8e90f1e0d19e0`, régi engine törlés `b134621d9020e083697e4fb82ec588a074ce1f85`, tesztek `e1497ce933cc9895c0cabab94de888f927887f46`.
+
+**Statikus audit:** PASS. GitHub code search alapján nincs már régi `richtext-editor.js`, `fontWeight`, `weightSlider`, `getRichTextFontWeight`, `setRichTextFontWeight` vagy `toggleRichTextMark*` hivatkozás.
+
+**CI:** a GitHub connector jelenleg üres commit statusokat adott vissza; ezért CI PASS nem állítható.
+
+**Aktuális egyetlen folytatási pont:** az új engine unit tesztjeinek futtatása/ellenőrzése és az esetleges matematikai Selection/range-hibák javítása; csak PASS után következhet Cloudflare deploy és a legelső izolált B teszt.
+
 
 **[~] IMPLEMENTÁLVA, STATIKUS ELLENŐRZÉS PASS, RUNTIME/DEPLOY TESZT MÉG HÁTRA.**
 
