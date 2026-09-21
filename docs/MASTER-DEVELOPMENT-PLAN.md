@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.37  
+**Verzió:** MASTER-2.38.37  
 **Dátum:** 2026-09-21  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -1761,3 +1761,41 @@ Már stabil: element add/update/content, richtext content, style, responsive, vi
 Még valódi domain-gap: group/ungroup, component/template/media műveletek és page lifecycle/persistence műveletek teljes Editor v2 integrációja.
 
 **Következő egyetlen aktív kódpont továbbra is:** `page.delete` Editor v2 bekötése a már meglévő backend DELETE API-ra, majd annak tesztkapuja. Ezután folytatjuk a command-katalógust függőségi sorrendben.
+
+
+## 40.29 — Editor v2 Page Delete implementáció — 2026-09-21
+
+**Állapot:** [~] KÓD ELKÉSZÜLT — CI és élő böngészős teszt hátra.
+
+A 40.28 szerinti következő egyetlen aktív pont, az Editor v2 biztonságos oldal-törlésének bekötése elkészült.
+
+### Implementáció
+- Az Editor v2 **Oldalak** listájában minden oldal kapott külön törlés gombot.
+- A törlés külön gomb, nem a teljes oldalsor kattintása, így nem ütközik az oldal kiválasztásával.
+- Törlés előtt egyértelmű böngészős megerősítés jelenik meg.
+- A UI a már meglévő canonical backend szerződést használja: `DELETE /api/admin/pages` + `{id}` body.
+- A backend meglévő utolsó-oldal védelme változatlan maradt; az Editor nem hozott létre párhuzamos törlési szabályt.
+- Sikeres törlés után az oldallista újratöltődik.
+- Ha az aktuális oldal törlődött, az Editor automatikusan kiválaszt egy megmaradt oldalt.
+- Ha nem az aktuális oldal törlődött, az aktuális Editor state megmarad.
+- API hiba esetén a meglévő Diagnostics/API hibakezelési útvonal fut.
+- A page lifecycle törlés nem került bele a node-level `history.undo/redo` rendszerbe; a D1 persistence marad a page lifecycle canonical határa.
+
+### Kódmódosítások
+- `public/editor-v2/app.js` — `deletePage()` + oldallistáska törlésvezérlő + sikeres törlés utáni állapotkezelés.
+  - commit: `26c35cc32e6077c6b78fac0975fd1a3a657f3ce1`
+- `public/editor-v2/editor.css` — oldal törlés gomb és oldalsor layout.
+  - commit: `516f1ce8b2040d5653d4993801fa1669ce70512d`
+
+**Fontos:** backend `src/routes/admin/pages.ts` nem módosult, mert a szükséges DELETE API már canonical és működő volt.
+
+### Következő egyetlen aktív tesztpont
+1. Editor teljes újratöltése.
+2. Oldalak panel megnyitása.
+3. Ellenőrizni, hogy minden oldalnál látható a `×` törlés gomb.
+4. Nem aktuális oldal törlése → lista frissül, aktuális oldal marad.
+5. Aktuális oldal törlése → automatikusan másik oldal töltődik be.
+6. Törlés megszakítása → semmi nem törlődik.
+7. Utolsó oldal törlésének próbája → backend elutasítja, oldal megmarad.
+8. Diagnostics → 0 hiba normál esetben.
+9. Ezután GitHub CI ellenőrzés, majd MASTER lezárás.
