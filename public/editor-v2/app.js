@@ -4,7 +4,7 @@ import {execute} from './core/commands.js';
 import {applyNodeStyle,getNodeGeometry} from './core/canvas-engine.js';
 import {resolveResponsiveValue} from './core/responsive.js';
 import {diagnostics} from './diagnostics.js?v=20260918-2';
-import {plainTextToRichText,richTextToPlainText,renderRichTextEditor,richTextEditorToDocument,applyRichTextMarkToSelection} from './core/richtext-editor.js';
+import {plainTextToRichText,richTextToPlainText,renderRichTextEditor,richTextEditorToDocument,applyRichTextMarkToSelection,applyRichTextFontWeightToSelection} from './core/richtext-editor.js';
 
 let state=null;let pages=[];let zoom=1;let inspectorTab='design';
 const $=s=>document.querySelector(s);const canvas=$('#canvas');const inspector=$('#inspectorBody');
@@ -33,18 +33,19 @@ function renderRichTextInline(inline){
   text.textContent=inline?.text||'';
   const marks=new Set(inline?.marks||[]);
   let result=text;
-  if(marks.has('bold')){
-    const strong=document.createElement('strong');
-    strong.className='richtext-mark-bold';
-    strong.textContent=text.textContent;
-    strong.style.setProperty('font-weight','700','important');
+  const weight=Number(inline?.fontWeight)||(marks.has('bold')?700:0);
+  if(weight){
+    const strong=document.createElement('span');
+    strong.className='richtext-mark-weight';
+    strong.style.setProperty('font-weight',String(weight),'important');
+    strong.append(result);
     result=strong;
   }
   if(marks.has('italic')){
     const em=document.createElement('em');
     em.className='richtext-mark-italic';
-    em.textContent=result.textContent;
     em.style.setProperty('font-style','italic','important');
+    em.append(result);
     result=em;
   }
   return result;
@@ -89,16 +90,21 @@ function renderInspector(){inspector.replaceChildren();const nodes=state?selecte
   renderRichTextEditor(editor,currentRichText);
   let richTextDirty=false;
   const sync=(options={})=>{const doc=richTextEditorToDocument(editor);command('richtext.content.set',{nodeId:node.id,document:doc},{render:options.render===true});richTextDirty=true};
+  const getSelectionWeight=()=>{const selection=window.getSelection();if(!selection||selection.rangeCount===0||selection.isCollapsed)return 400;const range=selection.getRangeAt(0);if(!editor.contains(range.commonAncestorContainer))return 400;const walker=document.createTreeWalker(editor,NodeFilter.SHOW_TEXT);let n;let first=null;while(n=walker.nextNode()){if(!range.intersectsNode(n))continue;const start=n===range.startContainer?range.startOffset:0;const end=n===range.endContainer?range.endOffset:n.nodeValue.length;if(end<=start)continue;const w=n.parentElement?.closest('[data-font-weight]')?.dataset.fontWeight;if(w){first=Number(w);break}if(n.parentElement?.closest('strong')){first=700;break}}return Number.isInteger(first)&&first>=100&&first<=900?first:400};
+  const updateWeightControl=()=>{weightValue.value=String(getSelectionWeight());weightValue.textContent=String(getSelectionWeight())};
   const updateMarkButtonState=()=>{const selection=window.getSelection();if(!selection||selection.rangeCount===0||selection.isCollapsed)return;const range=selection.getRangeAt(0);if(!editor.contains(range.commonAncestorContainer))return;for(const [mark,button] of [['bold',boldButton],['italic',italicButton]]){let active=false;const walker=document.createTreeWalker(editor,NodeFilter.SHOW_TEXT);let n;let covered=0;while(n=walker.nextNode()){if(!range.intersectsNode(n))continue;const start=n===range.startContainer?range.startOffset:0;const end=n===range.endContainer?range.endOffset:n.nodeValue.length;if(end<=start)continue;covered+=end-start;let p=n.parentElement;let has=false;while(p&&p!==editor){const tag=p.tagName?.toLowerCase();if((mark==='bold'&&(tag==='strong'||tag==='b'))||(mark==='italic'&&(tag==='em'||tag==='i'))){has=true;break}p=p.parentElement}if(!has){active=false;break}active=true}button.classList.toggle('active',covered>0&&active);button.setAttribute('aria-pressed',covered>0&&active?'true':'false')}};
+  const applyWeight=(delta)=>{const next=Math.min(900,Math.max(100,getSelectionWeight()+delta));if(applyRichTextFontWeightToSelection(editor,next)){sync({render:false});updateWeightControl()}editor.focus()};
   const applyMark=(mark)=>{if(applyRichTextMarkToSelection(editor,mark)){sync({render:false});updateMarkButtonState()}editor.focus()};
-  const boldButton=makeButton('B','Félkövér ki/be',()=>applyMark('bold'));
+  const weightMinus=makeButton('−','Betűvastagság csökkentése',()=>applyWeight(-100));
+  const weightValue=document.createElement('output');weightValue.className='richtext-weight-value';weightValue.textContent='400';weightValue.value='400';weightValue.title='Betűvastagság: 100–900';
+  const weightPlus=makeButton('+','Betűvastagság növelése',()=>applyWeight(100));
   const italicButton=makeButton('I','Dőlt ki/be',()=>applyMark('italic'));
   blockSelect.onchange=()=>{const selection=window.getSelection();const block=selection?.anchorNode?.parentElement?.closest('p,h1,h2,h3,h4,h5,h6,blockquote,pre');if(!block||!editor.contains(block))return;const tag=blockSelect.value==='paragraph'?'p':`h${blockSelect.value.split('-')[1]}`;const replacement=document.createElement(tag);while(block.firstChild)replacement.append(block.firstChild);block.replaceWith(replacement);sync({render:true});richTextDirty=false;editor.focus()};
   editor.addEventListener('input',()=>{sync({render:false});updateMarkButtonState()});
-  editor.addEventListener('mouseup',updateMarkButtonState);
-  editor.addEventListener('keyup',updateMarkButtonState);
+  editor.addEventListener('mouseup',()=>{updateMarkButtonState();updateWeightControl()});
+  editor.addEventListener('keyup',()=>{updateMarkButtonState();updateWeightControl()});
   editor.addEventListener('blur',()=>{if(richTextDirty){sync({render:true});richTextDirty=false}});
-  toolbar.append(blockSelect,boldButton,italicButton);
+  toolbar.append(blockSelect,weightMinus,weightValue,weightPlus,italicButton);
   section.append(toolbar,editor);
   inspector.append(section);
 }else if(textTypes.has(node.type)){inspector.append(field('Szöveg',node.props?.text??node.props?.content??'',v=>command('element.content.set',{nodeId:node.id,content:v})))}if(['button','link'].includes(node.type)){inspector.append(field('Link / URL',node.props?.href||'',v=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),href:v}}})))}else if(!textTypes.has(node.type)){inspector.append(field('Tartalom',node.props?.content??'',v=>command('element.content.set',{nodeId:node.id,content:v})))} }else{inspector.append(field('Node ID',node.id,()=>{},true),field('Típus',node.type,()=>{},true),field('Szülő ID',node.parentId||'',()=>{},true))}const actions=document.createElement('div');actions.className='inspector-actions';const del=document.createElement('button');del.type='button';del.className='danger-action';del.textContent='Törlés';del.disabled=node.id===page()?.rootId;del.title=del.disabled?'A gyökérelem nem törölhető':'Kijelölt elem törlése';del.onclick=()=>{if(del.disabled)return;command('element.delete',{nodeId:node.id})};actions.append(del);inspector.append(actions)}
