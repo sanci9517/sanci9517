@@ -52,7 +52,7 @@ function renderInspector(){inspector.replaceChildren();const nodes=state?selecte
    const activeDocument=()=>page()?.nodes?.[node.id]?.props?.richText||currentRichText;
    const selectionRange=()=>savedRichTextSelection||getSelectionOffsets(editor);
    const updateMarkState=()=>{const range=selectionRange();for(const [button,mark] of [[boldButton,'bold'],[italicButton,'italic']]){const active=Boolean(range&&!range.collapsed&&isMarkActive(activeDocument(),range.from,range.to,mark));button.classList.toggle('active',active);button.setAttribute('aria-pressed',active?'true':'false')}};
-   const applyMark=(mark)=>{const range=selectionRange();if(!range||range.collapsed)return;const updated=toggleMark(activeDocument(),range.from,range.to,mark);command('richtext.content.set',{nodeId:node.id,document:updated},{render:false});renderRichTextEditor(editor,updated);restoreSelection();richTextDirty=true;updateMarkState();editor.focus()};
+   const applyMark=(mark)=>{const range=selectionRange();if(!range||range.collapsed)return;const updated=toggleMark(activeDocument(),range.from,range.to,mark);command('richtext.content.set',{nodeId:node.id,document:updated},{render:false});renderRichTextEditor(editor,updated);restoreSelection();renderCanvas();richTextDirty=true;updateMarkState();editor.focus()};
    const makeButton=(label,title,handler)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.title=title;b.setAttribute('aria-label',title);b.addEventListener('mousedown',e=>{e.preventDefault();saveSelection();restoreSelection()});b.onclick=handler;return b};
    const boldButton=makeButton('B','Félkövér ki/be',()=>applyMark('bold'));
    const italicButton=makeButton('I','Dőlt ki/be',()=>applyMark('italic'));
