@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.17  
+**Verzió:** MASTER-2.18  
 **Dátum:** 2026-09-21  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -2580,3 +2580,22 @@ Javítás:
 - nem készült párhuzamos kódút.
 
 **Egyetlen aktuális folytatási pont:** a `3b42263216f61930076287c668ae999d8ccf75b3` commit Cloudflare build/deploy és az élő `/editor-v2/` betöltés ellenőrzése. Ha új hiba jelenik meg, csak annak konkrét okát javítjuk.
+
+
+## 40.12 — Élő app.js duplikált Rich Text deklaráció javítása — 2026-09-21
+
+**Állapot:** [~] KÓD JAVÍTVA, BUILD/RUNTIME ELLENŐRZÉS HÁTRA.
+
+Az új élő hiba URL-je (app.js?v=20260921-11:42:10) alapján a repository aktuális public/editor-v2/app.js fájlját ismét teljes tartalommal ellenőriztük. A Rich Text Inspector blokkban ténylegesen két azonos const currentRichText deklaráció maradt egymás alatt. Ez önmagában JavaScript szintaktikai hibát okoz, ezért az editor betöltése megállhatott.
+
+A hibás rész két azonos sor volt:
+const currentRichText=node.props?.richText||plainTextToRichText('');
+const currentRichText=node.props?.richText||plainTextToRichText('');
+
+Javítás:
+- Commit: 092c34125e460f8e6bcae58be252f56aa5775fe5;
+- a duplikált deklarációból pontosan egy maradt;
+- más Rich Text motort, schema-t, command-réteget vagy renderutat nem vezettünk be;
+- ez kizárólag a tényleges szintaktikai hibát javítja.
+
+**Egyetlen aktuális folytatási pont:** a 092c34125e460f8e6bcae58be252f56aa5775fe5 commit Cloudflare build/deploy és az élő /editor-v2/ betöltésének ellenőrzése. Ha ezután új hiba jelenik meg, csak annak konkrét okát javítjuk, párhuzamos kódút létrehozása nélkül.
