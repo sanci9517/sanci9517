@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.19  
+**Verzió:** MASTER-2.20  
 **Dátum:** 2026-09-21  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -2623,4 +2623,6 @@ Tesztelendő sorrend:
 
 **Szabály:** csak a ténylegesen hibás tesztpontot javítjuk. Új funkciót addig nem építünk, amíg ez a smoke/regression kapu nincs lezárva.
 
-**Egyetlen aktuális folytatási pont:** a 2. pont, elem hozzáadása a palettából; ellenőrizni kell a létrehozást, Canvas-megjelenést, Layers-megjelenést és kijelölhetőséget.
+**2. pont eredmény:** [x] PASS — a felhasználó visszaigazolta a létrehozást, Canvas-megjelenést, Layers-megjelenést és kijelölhetőséget.
+
+**Egyetlen aktuális folytatási pont:** a 3. pont, kijelölés és Layers kapcsolat; ellenőrizni kell, hogy Canvas-kijelölés és Layers-kijelölés ugyanazt a canonical node-ot vezérli, a kijelölés vizuálisan egyértelmű, és a két felület szinkronban marad.
