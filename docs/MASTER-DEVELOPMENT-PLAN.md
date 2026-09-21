@@ -1904,3 +1904,47 @@ Az aktív terv kizárólag:
 A rendszer később képes legyen a lehető legrészletesebb weboldal-szerkesztőként működni: pixelpontos layout, responsive design, components, templates, design tokens, dynamic data, integrations, interactions, animation, accessibility, SEO, analytics, collaboration/recovery, automation és AI ugyanarra a strukturált alapra építve.
 
 A fejlesztés nem egyszeri projektlezárás: **folyamatos funkcióbővítés**, ahol minden új igény először a MASTER tervbe kerül, majd ugyanazon ellenőrzött fejlesztési cikluson megy végig.
+
+# 39 — 10.1.2.2 RICH TEXT FORMÁZÁS — MÉLYDIAGNOSZTIKA
+
+**Állapot:** [!] A jelenlegi B/I implementáció runtime viselkedése hibás. A felhasználói teszt alapján a kijelölt szövegrész helyett a teljes sor/inline blokk kapja a markot, és a félkövér vizuálisan nem jelenik meg megbízhatóan. Ezért a korábbi 10.1.2.2 runtime teszt nem zárható le.
+
+**Kód-audit eredménye:**
+
+1. **Biztosan azonosított fő hiba — nincs inline node split a kijelölés határainál.**
+   - A toggleRichTextMark() a meglévő inline node-okat járja be.
+   - Ha a kijelölés csak az inline node egy részét fedi le, a jelenlegi kód az egész inline node marks tömbjét módosítja.
+   - Példa: Sanci9517 esetén San kijelölésekor nem San[bold] + ci9517 jön létre, hanem az egész Sanci9517 inline node kapja a bold markot.
+   - Ez közvetlenül magyarázza a „kijelölésnél az egész sort alakítja” hibát.
+
+2. **Második valószínű hiba — a toolbar nem védi a kijelölést a fókuszvesztéstől.**
+   - A B/I gombok jelenleg onclick eseményre dolgoznak.
+   - Modern Rich Text editorok toolbar gombjai pointer/mousedown default viselkedését megakadályozzák, hogy a toolbar ne vegye el a fókuszt és ne omoljon össze a selection a formázás előtt.
+   - A jelenlegi textarea-alapú megoldás selectionStart/selectionEnd értékeket használ, ezért ez nem feltétlenül minden esetben okozza a hibát, de a selection kezelése stabilizálandó.
+
+3. **Harmadik vizsgálati pont — félkövér Canvas render.**
+   - A canonical renderer már strong elemet, richtext-mark-bold class-t és font-weight:700 inline style-t alkalmaz.
+   - A CSS-ben szintén explicit font-weight:700 !important van.
+   - Emiatt a „B nem látszik” problémát nem szabad újabb vak CSS-módosítással javítani.
+   - A következő javításban ellenőrizni kell a teljes láncot: canonical marks → létrejött DOM elem → class/style → tényleges computed fontWeight.
+   - Ha a mark a Page Modelben bold, de a DOM/computed style nem 700, renderer/CSS probléma; ha a Page Modelben nincs bold, command/selection probléma.
+
+4. **Architekturális döntés.**
+   - Nem vezetünk be második Rich Text state-et.
+   - Nem tárolunk HTML-t source-of-truthként.
+   - A canonical JSON marad az egyetlen forrás.
+   - A javítás lánca: Rich Text selection → mark transformation → Command → Validation → Page Model → History → Canvas Renderer → Persistence.
+
+**Kötelező javítási sorrend:**
+1. pontos inline range-splitting megvalósítása, amely a kijelölt tartományt leválasztja az inline node-on belül, és az eredeti mark/link adatokat megőrzi;
+2. toolbar pointer/mousedown selection-lock;
+3. B/I active-state újraellenőrzése a tényleges kijelölt tartomány alapján;
+4. Canvas DOM/computed-style ellenőrzés a félkövér vizuális hibára;
+5. célzott automatikus tesztek: részleges kijelölés csak a kijelölt karakterekre alkalmazza a boldot; részleges kijelölés csak a kijelölt karakterekről veszi le; selection két inline node-on át; meglévő italic/link markok megőrzése; B/I active state; canonical validation;
+6. ezután ugyanazon browser runtime teszt újra.
+
+**Teszthatár:** Undo/Redo, save/reload és responsive regresszió továbbra sem része ennek az egyetlen javítási kapunak.
+
+**Egyetlen aktuális folytatási pont:** a Rich Text inline selection/mark transzformáció javítása és utána ugyanennek a B/I runtime tesztnek az ismétlése.
+
+**Benchmark:** Tiptap/Slate/tldraw dokumentáció alapján a markok kijelölt tartományra kerülnek, toggle-ként működnek, az active state a selection alapján frissül, és a toolbar pointerdown/default viselkedését a selection megőrzése érdekében kezelik.
