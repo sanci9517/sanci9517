@@ -2037,3 +2037,13 @@ Implementáció:
 - 112fa13f8b0afe096f31b775bcb66e00768d0570 — editor app cache refresh
 
 **Következő egyetlen teszt:** frissítés után ugyanaz a részleges B teszt. Ha nem látszik félkövérnek, Diagnostics panelben ellenőrizni, megjelent-e E005/E006. Más funkciót nem tesztelünk.
+
+
+### 10.1.2.2 hibajavítás — 2026-09-18
+A célzott verification módosítás közben a korábbi `verifyRichTextBoldRender()` függvény véletlenül kikerült az app.js-ből, ezért a runtime/boot teszt `SANCI-RUNTIME-E0002` / `SANCI-BOOT-E001` hibával leállt. Ezt nem tekintjük Rich Text funkcionális eredménynek; regresszióként javítva lett.
+
+Javítások:
+- d7891b1b7d71050ee35c9b03098013a6ca71b9c6 — `verifyRichTextBoldRender()` visszaállítva.
+- c451ce6f51ed3abc8cde5bab24900a89667a2381 — cache frissítve.
+
+**Következő egyetlen teszt:** teljes frissítés után ellenőrizd, hogy nincs-e runtime/boot hiba, majd ugyanaz a B kijelölés teszt. Más funkciót nem tesztelünk.
