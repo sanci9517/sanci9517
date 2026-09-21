@@ -1948,3 +1948,21 @@ A fejlesztés nem egyszeri projektlezárás: **folyamatos funkcióbővítés**, 
 **Egyetlen aktuális folytatási pont:** a Rich Text inline selection/mark transzformáció javítása és utána ugyanennek a B/I runtime tesztnek az ismétlése.
 
 **Benchmark:** Tiptap/Slate/tldraw dokumentáció alapján a markok kijelölt tartományra kerülnek, toggle-ként működnek, az active state a selection alapján frissül, és a toolbar pointerdown/default viselkedését a selection megőrzése érdekében kezelik.
+
+
+## 10.1.2.2 javítási napló — inline selection range split
+**Állapot:** `[~]` Kódjavítás elkészült, runtime még nincs lezárva.
+
+- A fő hibát azonosítottuk: a korábbi `toggleRichTextMark()` az egész inline node marks tömbjét módosította, ha a kijelölés csak az inline node egy részére esett.
+- Javítás: az inline node a kijelölés elején/végén feldarabolódik; csak a középső kijelölt rész kapja/veszíti el a markot; a külső részek és meglévő link/egyéb markok megmaradnak.
+- A toolbar B/I gombok `mousedown` alatt megakadályozzák a fókuszvesztést, hogy a textarea selection stabil maradjon.
+- Új automatikus tesztek: részleges kijelölés split, részleges mark eltávolítás, meglévő italic + link megőrzése.
+- A Canvas renderer kódját is visszaellenőriztük: bold esetén `strong` + `richtext-mark-bold` + inline `fontWeight=700` készül. A vizuális hibát runtime DOM/computed-style teszttel kell még bizonyítani.
+- GitHub Actions eredménye ehhez a commitfolyamhoz jelenleg nem igazolt; nem tekintjük automatikusan sikeresnek.
+
+**Legutóbbi implementációs commitok:**
+- `90f339de31ea34be54605e1ba2a7b926ac745a06` — inline range split
+- `5fc400449d4dd1fe30031bff8d10d5735d4d5849` — toolbar selection lock
+- `d76d42b8305d3e690157031d2608bf2fb45ed56e` — célzott Rich Text tesztek
+
+**Egyetlen aktuális folytatási pont:** a javított build után ugyanazt a B/I runtime tesztet kell elvégezni, különösen részleges kijelöléssel. Ha a bold továbbra sem látható, a következő audit közvetlenül a Canvas DOM `strong` elemét és `getComputedStyle(...).fontWeight` értékét ellenőrzi.
