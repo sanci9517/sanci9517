@@ -2175,7 +2175,7 @@ Implementációs commitok:
 **Egyetlen aktuális folytatási pont:** a modell-alapú Rich Text motor statikus visszaolvasása + unit/CI ellenőrzése. Ha ez PASS, utána külön browser runtime teszt következik.
 
 ### 2026-09-21 — Félkövér alternatív modell kipróbálása
-**Állapot:** [~] IMPLEMENTÁLVA, RUNTIME TESZT HÁTRA.
+**Állapot:** [~] UI ÚJRATERVEZÉS SZÜKSÉGES — RUNTIME TESZT NEM INDÍTHATÓ MOBILON.
 
 A 100–900-as font-weight modellt nem használjuk a félkövér vezérlésére. A Rich Text félkövérsége visszatért egy egyszerű canonical `bold` inline markhoz, amely a Canvason `<strong>` elemmé renderelődik. A toolbar újra egy egyszerű B ki/be kapcsoló. A dőlt továbbra is ugyanazon range-mark motoron működik.
 
@@ -2213,4 +2213,4 @@ A meglévő canonical fontWeight schema/command/Canvas útvonalat használjuk; a
 
 Statikus ellenőrzés: az érintett fájlok visszaolvasva; a slider vezérlő, getRichTextFontWeight, setRichTextFontWeight, Canvas fontWeight render és canonical schema egymáshoz illeszkedik. Runtime/CI még nincs lezárva.
 
-**Egyetlen következő teszt:** frissítés után Rich Text → írj ki szöveget → jelölj ki egy rövid részt → állítsd a slider-t 400-ról 700-ra → az érték legyen 700 és a kijelölt rész legyen láthatóan vastagabb a Canvasban is → Diagnostics 0. Ezután állítsd 400-ra ugyanazon kijelölésen és ellenőrizd a visszaállást. Más funkciót most nem tesztelünk.
+**Egyetlen következő lépés:** a Rich Text tipográfiai vezérlő mobil-first újratervezése. A jelenlegi slider/toolbar elrendezést nem tekintjük tesztelhetőnek mobilon, ezért runtime funkciótesztet csak az új mobil UI után indítunk. A vezérlőnek keskeny mobil Inspectorban is használhatónak kell lennie, érintéssel állítható sliderrel és jól látható aktuális értékkel. Asztali megjelenés ehhez igazodik. A funkciólogika nem változik, csak az UI réteg. → írj ki szöveget → jelölj ki egy rövid részt → állítsd a slider-t 400-ról 700-ra → az érték legyen 700 és a kijelölt rész legyen láthatóan vastagabb a Canvasban is → Diagnostics 0. Ezután állítsd 400-ra ugyanazon kijelölésen és ellenőrizd a visszaállást. Más funkciót most nem tesztelünk.
