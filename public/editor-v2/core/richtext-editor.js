@@ -112,71 +112,217 @@ export function richTextEditorToDocument(container){
   return {schemaVersion:RICH_TEXT_SCHEMA_VERSION,type:RICH_TEXT_TYPE,blocks:blocks.length?blocks:[{type:'paragraph',children:[{type:'text',text:'',marks:[]}]}]};
 }
 
-export function applyRichTextFontWeightToSelection(editor,weight){
+function inlineGroups(document){
+  const groups=[];
+  for(const block of document?.blocks||[]){
+    if(block.type==='bulleted-list'||block.type==='numbered-list'){
+      for(const item of block.items||[])groups.push(item?.children||[]);
+    }else{
+      groups.push(block.children||[]);
+    }
+  }
+  return groups;
+}
+
+function inlineEquals(a,b){
+  if((a?.fontWeight??null)!==(b?.fontWeight??null))return false;
+  if(JSON.stringify(a?.link??null)!==JSON.stringify(b?.link??null))return false;
+  const am=[...(a?.marks||[])].slice().sort(),bm=[...(b?.marks||[])].slice().sort();
+  return JSON.stringify(am)===JSON.stringify(bm);
+}
+
+function mergeInlineRuns(runs){
+  const merged=[];
+  for(const run of runs||[]){
+    const next=structuredClone(run);
+    if(!next.text&&!merged.length)continue;
+    const previous=merged[merged.length-1];
+    if(previous&&inlineEquals(previous,next)){
+      previous.text=String(previous.text||'')+String(next.text||'');
+    }else{
+      merged.push(next);
+    }
+  }
+  return merged.length?merged:[{type:'text',text:'',marks:[]}];
+}
+
+function transformRichTextRange(document,start,end,transform){
+  const next=structuredClone(document);
+  const a=Math.max(0,Math.min(Number(start)||0,Number(end)||0));
+  const b=Math.max(0,Math.max(Number(start)||0,Number(end)||0));
+  if(a===b)return next;
+  let offset=0;
+  const groups=inlineGroups(next);
+  for(const group of groups){
+    const rebuilt=[];
+    for(const inline of group){
+      const text=String(inline?.text||'');
+      const localStart=Math.max(0,a-offset);
+      const localEnd=Math.min(text.length,b-offset);
+      if(localEnd<=localStart){
+        rebuilt.push(inline);
+      }else{
+        if(localStart>0)rebuilt.push({...structuredClone(inline),text:text.slice(0,localStart)});
+        const selected={...structuredClone(inline),text:text.slice(localStart,localEnd)};
+        rebuilt.push(transform(selected));
+        if(localEnd<text.length)rebuilt.push({...structuredClone(inline),text:text.slice(localEnd)});
+      }
+      offset+=text.length;
+    }
+    const merged=mergeInlineRuns(rebuilt);
+    const index=groups.indexOf(group);
+    const blockEntry=next.blocks?.find(block=>{
+      if(block.type==='bulleted-list'||block.type==='numbered-list')return (block.items||[]).some(item=>item?.children===group);
+      return block.children===group;
+    });
+    if(blockEntry?.type==='bulleted-list'||blockEntry?.type==='numbered-list'){
+      const item=(blockEntry.items||[]).find(item=>item?.children===group);
+      if(item)item.children=merged;
+    }else if(blockEntry){
+      blockEntry.children=merged;
+    }
+    offset+=1;
+  }
+  return next;
+}
+
+export function getRichTextSelectionOffsets(editor,range=null){
   const selection=window.getSelection();
-  if(!selection||selection.rangeCount===0||!selection.toString())return false;
-  const range=selection.getRangeAt(0);
-  if(!editor.contains(range.commonAncestorContainer))return false;
-  const value=Math.min(900,Math.max(100,Number(weight)||400));
-  const walker=document.createTreeWalker(editor,NodeFilter.SHOW_TEXT);
-  const nodes=[];let node;
-  while(node=walker.nextNode()){
-    if(!range.intersectsNode(node))continue;
-    const start=node===range.startContainer?range.startOffset:0;
-    const end=node===range.endContainer?range.endOffset:node.nodeValue.length;
-    if(end>start)nodes.push({node,start,end});
-  }
-  if(!nodes.length)return false;
-  for(const item of [...nodes].reverse()){
-    let target=item.node;
-    if(item.end<target.nodeValue.length)target.splitText(item.end);
-    let selected=target;
-    if(item.start>0)selected=target.splitText(item.start);
-    const wrapper=document.createElement('span');
-    wrapper.dataset.fontWeight=String(value);
-    wrapper.style.fontWeight=String(value);
-    const parent=selected.parentNode;
-    if(parent)parent.insertBefore(wrapper,selected);
-    wrapper.append(selected);
-  }
-  editor.normalize();
+  const activeRange=range||((selection&&selection.rangeCount)?selection.getRangeAt(0):null);
+  if(!activeRange||!editor.contains(activeRange.commonAncestorContainer))return null;
+  const blockElements=[...editor.children];
+  const blockForNode=node=>{
+    if(node===editor)return null;
+    let current=node.nodeType===Node.ELEMENT_NODE?node:node.parentElement;
+    while(current&&current.parentElement!==editor)current=current.parentElement;
+    return current;
+  };
+  const pointOffset=(node,offset)=>{
+    if(node===editor){
+      let total=0;
+      for(let i=0;i<Math.min(offset,blockElements.length);i++)total+=(blockElements[i].textContent||'').length+(i<blockElements.length-1?1:0);
+      return total;
+    }
+    const block=blockForNode(node);
+    if(!block)return 0;
+    const index=blockElements.indexOf(block);
+    let total=0;
+    for(let i=0;i<index;i++)total+=(blockElements[i].textContent||'').length+1;
+    const local=document.createRange();
+    local.selectNodeContents(block);
+    try{local.setEnd(node,offset)}catch{ return total }
+    return total+local.toString().length;
+  };
+  const start=pointOffset(activeRange.startContainer,activeRange.startOffset);
+  const end=pointOffset(activeRange.endContainer,activeRange.endOffset);
+  return {from:Math.min(start,end),to:Math.max(start,end),collapsed:start===end};
+}
+
+export function restoreRichTextSelectionOffsets(editor,selectionState){
+  if(!selectionState)return false;
+  const target=Math.max(0,Number(selectionState.from)||0);
+  const endTarget=Math.max(target,Number(selectionState.to)||0);
+  const blocks=[...editor.children];
+  const pointAt=position=>{
+    let remaining=position;
+    for(let i=0;i<blocks.length;i++){
+      const block=blocks[i];
+      const length=(block.textContent||'').length;
+      if(remaining<=length){
+        const walker=document.createTreeWalker(block,NodeFilter.SHOW_TEXT);
+        let node;let seen=0;
+        while(node=walker.nextNode()){
+          const len=node.nodeValue?.length||0;
+          if(remaining<=seen+len)return {node,offset:remaining-seen};
+          seen+=len;
+        }
+        return {node:block,offset:block.childNodes.length};
+      }
+      remaining-=length;
+      if(i<blocks.length-1)remaining-=1;
+    }
+    const last=blocks[blocks.length-1];
+    return last?{node:last,offset:last.childNodes.length}:{node:editor,offset:0};
+  };
+  const startPoint=pointAt(target),endPoint=pointAt(endTarget);
+  const range=document.createRange();
+  range.setStart(startPoint.node,startPoint.offset);
+  range.setEnd(endPoint.node,endPoint.offset);
+  const selection=window.getSelection();
+  selection.removeAllRanges();
+  selection.addRange(range);
+  editor.focus();
   return true;
 }
 
-export function applyRichTextMarkToSelection(editor,mark){
-  const selection=window.getSelection();
-  if(!selection||selection.rangeCount===0||!selection.toString())return false;
-  const range=selection.getRangeAt(0);
-  if(!editor.contains(range.commonAncestorContainer))return false;
-  const walker=document.createTreeWalker(editor,NodeFilter.SHOW_TEXT);
-  const nodes=[];
-  let node;
-  while(node=walker.nextNode()){
-    if(!range.intersectsNode(node))continue;
-    const start=node===range.startContainer?range.startOffset:0;
-    const end=node===range.endContainer?range.endOffset:node.nodeValue.length;
-    if(end>start)nodes.push({node,start,end});
-  }
-  if(!nodes.length)return false;
-  const tag=mark==='bold'?'strong':mark==='italic'?'em':mark==='underline'?'u':mark==='strike'?'s':mark==='code'?'code':null;
-  if(!tag)return false;
-  const allActive=nodes.every(({node})=>{let p=node.parentElement;while(p&&p!==editor){if(p.tagName.toLowerCase()===tag)return true;p=p.parentElement}return false});
-  for(const item of [...nodes].reverse()){
-    let target=item.node;
-    const selectedLength=item.end-item.start;
-    if(item.end<target.nodeValue.length)target.splitText(item.end);
-    let selected=target;
-    if(item.start>0)selected=target.splitText(item.start);
-    const parent=selected.parentNode;
-    if(allActive){
-      const wrapper=selected.parentElement?.tagName.toLowerCase()===tag?selected.parentElement:null;
-      if(wrapper){const wrapperParent=wrapper.parentNode;if(wrapperParent){wrapperParent.insertBefore(selected,wrapper);if(!wrapper.textContent||wrapper.childNodes.length===0)wrapper.remove()}}
-    }else{
-      const wrapper=document.createElement(tag);parent.insertBefore(wrapper,selected);wrapper.append(selected);
+export function getRichTextFontWeight(document,start,end){
+  const a=Math.min(start,end),b=Math.max(start,end);
+  let offset=0;let first=null;let same=true;let covered=false;
+  for(const group of inlineGroups(document)){
+    for(const inline of group){
+      const text=String(inline?.text||'');
+      const x=Math.max(a,offset),y=Math.min(b,offset+text.length);
+      if(y>x){
+        covered=true;
+        const weight=Number.isInteger(Number(inline?.fontWeight))?Number(inline.fontWeight):(inline?.marks||[]).includes('bold')?700:400;
+        if(first===null)first=weight;else if(first!==weight)same=false;
+      }
+      offset+=text.length;
     }
+    offset+=1;
   }
-  editor.normalize();
-  return true;
+  return covered&&same&&first!==null?first:400;
+}
+
+export function setRichTextFontWeight(document,start,end,weight){
+  const value=Math.min(900,Math.max(100,Math.round(Number(weight)/100)*100));
+  return transformRichTextRange(document,start,end,inline=>{
+    const next=structuredClone(inline);
+    next.fontWeight=value;
+    return next;
+  });
+}
+
+export function toggleRichTextMarkRange(document,start,end,mark){
+  const a=Math.min(start,end),b=Math.max(start,end);
+  let allActive=true;let covered=false;let offset=0;
+  for(const group of inlineGroups(document)){
+    for(const inline of group){
+      const text=String(inline?.text||'');
+      const x=Math.max(a,offset),y=Math.min(b,offset+text.length);
+      if(y>x){
+        covered=true;
+        if(!(inline.marks||[]).includes(mark))allActive=false;
+      }
+      offset+=text.length;
+    }
+    offset+=1;
+  }
+  if(!covered)return structuredClone(document);
+  return transformRichTextRange(document,a,b,inline=>{
+    const next=structuredClone(inline);
+    const marks=[...(next.marks||[])];
+    next.marks=allActive?marks.filter(value=>value!==mark):[...new Set([...marks,mark])];
+    return next;
+  });
+}
+
+export function isRichTextMarkRangeActive(document,start,end,mark){
+  const a=Math.min(start,end),b=Math.max(start,end);
+  let offset=0;let covered=false;let active=true;
+  for(const group of inlineGroups(document)){
+    for(const inline of group){
+      const text=String(inline?.text||'');
+      const x=Math.max(a,offset),y=Math.min(b,offset+text.length);
+      if(y>x){
+        covered=true;
+        if(!(inline.marks||[]).includes(mark))active=false;
+      }
+      offset+=text.length;
+    }
+    offset+=1;
+  }
+  return covered&&active;
 }
 
 export function setRichTextBlockType(document,lineIndex,type='paragraph',level=1){
