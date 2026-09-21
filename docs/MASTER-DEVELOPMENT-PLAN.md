@@ -1905,4 +1905,39 @@ A következő implementáció kizárólag a meglévő canonical selection API-ra
 
 **Kódmódosítás:** ebben az auditlépésben nem történt.
 
-**Következő egyetlen aktív pont:** Multi-select interaction implementáció — Canvas + Layers közös selection helperrel, Ctrl/Cmd toggle + Shift sibling-range támogatással, párhuzamos selection state nélkül.
+## 40.33 — Multi-select interaction implementáció — 2026-09-21
+
+**Állapot:** [x] IMPLEMENTÁCIÓ PASS — kódmódosítás elkészült, élő böngészős teszt még hátra van.
+
+A 40.32 audit alapján a multi-select interaction a meglévő canonical `state.selection` / `setSelection()` útvonalra került, új selection state nélkül.
+
+### Implementáció
+- Egyetlen közös `selectNodeInteraction(id,event)` helper kezeli a Canvas és Layers kijelölését.
+- Normál kattintás → egyetlen node kijelölése.
+- Ctrl/Cmd + kattintás → node hozzáadása vagy eltávolítása a kijelölésből.
+- Shift + kattintás → az aktuális `primaryId` és a célpont közötti sibling-range kijelölése, az eredeti sibling sorrend alapján.
+- Shift csak azonos közvetlen parent esetén alkalmaz range-et; más esetben biztonságosan single-select történik.
+- A root node modifieres kijelölése is egyetlen root kijelölésre normalizálódik.
+- A `primaryId` determinisztikusan a legutóbb kattintott/tartomány célpontja.
+- Canvas és Layers ugyanazt a helper útvonalat használja.
+- Az üres Canvas kattintás továbbra is `selection.clear`.
+- Undo/Redo rendszerhez nem került külön selection history.
+- Párhuzamos selection state vagy második mutációs út nem készült.
+
+### Kód
+- `public/editor-v2/app.js`
+- commit: `c8444029629f18eea5363b5c24b68e9d74a020da`
+
+### Következő egyetlen aktív tesztpont
+1. Editor újratöltése.
+2. Canvas normál single-select.
+3. Canvas Ctrl/Cmd toggle: hozzáadás + eltávolítás.
+4. Layers Ctrl/Cmd toggle: ugyanaz a selection.
+5. Shift sibling-range kijelölés Canvasról.
+6. Shift sibling-range kijelölés Layersből.
+7. Canvas + Layers vizuális szinkron.
+8. Root és eltérő parent edge case.
+9. Diagnostics: 0 hiba.
+10. Ezután CI, majd MASTER lezárás.
+
+**Következő egyetlen aktív pont:** Group / Ungroup command implementáció — csak a multi-select tesztkapu PASS után.
