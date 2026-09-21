@@ -2456,3 +2456,25 @@ A GitHub Actions workflow: `.github/workflows/editor-core-test.yml`, Node 24, `n
 **Teszthatár:** amíg ez a unit/CI kapu nincs PASS állapotban, nincs Cloudflare deploy és nincs böngészős B/I runtime teszt.
 
 **Egyetlen aktuális folytatási pont:** az automatikus unit/CI teszt eredménye. PASS esetén külön MASTER-frissítés után Cloudflare build/deploy következik; FAIL esetén csak az új egyetlen `richtext-engine.js` motort javítjuk.
+
+
+## 40.1 — Unit-kapu eredmény — 2026-09-21
+
+**Állapot:** [~] AZ ÚJ MOTOR CÉLZOTT ENGINE-TESZTJE PASS; A TELJES npm run test:editor FUTÁS TOVÁBBRA SEM IGAZOLT.
+
+A közvetlenül az új richtext-engine.js forrásra reprodukált célzott tesztcsomag PASS:
+- B teljes kijelölés: ki/be;
+- I teljes kijelölés: ki/be;
+- részleges B kijelölés;
+- részleges B visszakapcsolás/levétel;
+- meglévő italic megőrzése;
+- meglévő link megőrzése;
+- több blokkos range kezelés.
+
+**Eredmény:** ENGINE TEST PASS: 7/7.
+
+Fontos: ez nem azonos a teljes repository npm run test:editor futtatásával. A GitHub Actions connector a push-triggerelt workflow futásokat nem adja vissza; a commit combined status jelenleg üres. Ezért teljes CI PASS-t nem állítunk.
+
+**Architekturális eredmény:** a célzott teszt az új, egyetlen range-motor alaplogikáját igazolja; párhuzamos régi motor nem került vissza.
+
+**Egyetlen aktuális folytatási pont:** a teljes npm run test:editor repository teszt tényleges PASS-jának megszerzése. Amíg ez nincs igazolva, Cloudflare deploy és böngészős B/I runtime teszt nincs.
