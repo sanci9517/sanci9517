@@ -2060,37 +2060,32 @@ Javítás:
 
 
 ### 10.1.2.2 — Rich Text editor formázási modell újratervezése — 2026-09-21
-**Állapot:** [~] ÚJRATERVEZÉS, KÓDOLÁS ELŐTTI ARCHITEKTÚRAI DÖNTÉS.
+**Állapot:** [~] IMPLEMENTÁLVA, RUNTIME TESZT MÉG NINCS LEZÁRVA.
 
-A jelenlegi B/félkövér megoldást nem foltozzuk tovább. A dőlt jelenleg az Inspector contenteditable felületén látható, de a Canvas megjelenítés/persistencia teljes adatútját külön kell helyreállítani és ellenőrizni.
+Az audit alapján a félkövér boolean/mark modell helyett számszerű betűvastagság került bevezetésre. A dőlt Canvas-problémát is javítottuk: a renderer most nem csak textContent alapján építi újra a formázást, hanem megőrzi a nested inline formázást.
 
-**Döntés:**
-- A félkövér többé ne egyszerű B ki/be gomb legyen.
-- A professzionálisabb modell: Betűvastagság / Font Weight érték, 100–900 tartományban, 100-as lépéssel.
-- UI: − [400] + jellegű vezérlő, 100 és 900 között; később opcionálisan lenyíló értéklista.
-- 400 = normál, 500 = medium, 600 = semibold, 700 = bold; a tényleges betűkészlet támogatása szerint a böngésző választ megfelelő megjelenést.
-- A canonical inline adatban a súly érték legyen számszerű fontWeight, ne egyetlen bold boolean/mark. A régi bold adatot kompatibilitási migrációként 700-ra kell értelmezni.
-- Az italic marad külön italic mark, de a Canvas renderernek és a DOM → canonical serializernek is támogatnia kell, hogy ne csak az Inspectorban látszódjon.
-- A formázás valódi DOM Selection/Range alapján történik; részleges kijelölésnél csak a kijelölt szövegrész módosulhat.
-- A Canvas az Inspector DOM-jától függetlenül, ugyanabból a canonical Rich Text JSON-ból renderel.
-- Nem nyúlunk a Page Model, History, Undo/Redo, Add/Delete, Layers, Lock, Geometry, Responsive, Save/Load, Publish rendszerekhez.
+**Elvégzett módosítások:**
+- `schema.js`: `fontWeight` támogatás 100–900 között, 100-as lépéssel; a régi `bold` mark kompatibilitásból 700-as súlyt kap.
+- `richtext-editor.js`: DOM Selection/Range alapú `applyRichTextFontWeightToSelection()`; a kiválasztott rész csak saját súly-wrappert kap.
+- `richtext-editor.js`: DOM → canonical serializer a `fontWeight` értéket visszaolvassa.
+- `app.js`: B gomb helyett `− [400] +` vezérlő; 100-as lépésekben 100–900 között.
+- `app.js`: Canvas renderer a canonical `fontWeight` értéket ténylegesen alkalmazza.
+- `app.js`: italic renderer javítva, hogy ne veszítse el a körülötte lévő más inline formázásokat.
+- `editor.css`: font-weight vezérlő megjelenítése.
+- `core.test.js`: fontWeight validáció és legacy bold kompatibilitás automatizált tesztje.
+- `index.html`: cache frissítve `app.js?v=20260921-4`.
 
-**Megvalósítási sorrend:**
-1. Canonical Rich Text modell: fontWeight érték + backward compatibility.
-2. Validation/normalization frissítés.
-3. Inspector: B helyett − 400 + font-weight vezérlő.
-4. DOM Selection → canonical fontWeight részleges kijelöléssel.
-5. Canvas renderer: font-weight tényleges megjelenítése.
-6. Italic teljes adatút javítása: Inspector → canonical → Canvas → újrarenderelés.
-7. Mentés/újratöltés ellenőrzése.
-8. Undo/Redo ellenőrzése.
-9. Desktop/Tablet/Mobile regresszió.
-10. Diagnostics: 0 hiba + műveleti eredményellenőrzés.
+**Commitok:**
+- 3ad2baed725fc9d1ce4af2183442f10c9fdd1abd — Rich Text font-weight Selection engine
+- 3c8fbdaa6e01abc2eedaa0860603a3fb1db3f89b — fontWeight validation + legacy compatibility
+- 55bd89cf1de95d5117b14590efd571c281686b08 — Inspector font-weight controls + Canvas renderer
+- bd36832dffefd1917cb81265446225a3e051d54b — font-weight UI CSS
+- 01637b0957bc51f4070ddda8ea2a845f84637909 — automated fontWeight test
+- cfc3c290c6fd26edf3216ab146b3f12150ac6980 — cache refresh
 
-**Szigorú tesztelési szabály:** egyszerre csak az aktuális pontot teszteljük. A font-weight alapművelet lezárásáig italic/lista/link/egyéb Rich Text funkciót nem tekintünk késznek.
+**Automata teszt állapot:** a `3c8fbdaa...` commithez tartozó Editor Core Test sikeres. A legfrissebb `01637b...` tesztfutás még fut; a cache-refresh commit `cfc3c...` új futása még sorban áll. Ezért a teljes pont nem zárható le.
 
-**Első fejlesztési feladat:** teljes Rich Text adatút audit (schema.js → validation.js → commands.js → richtext-editor.js → app.js Canvas renderer → History/Persistence), majd minimális, célzott módosítás.
-
+**Következő egyetlen teszt:** Editor betöltés → Rich Text kijelölése → `+` többször → ellenőrizd, hogy 400 → 500 → 600 → 700 értékre vált és a Canvas ugyanilyen vastagságot mutat. Ezután ugyanazon kijelölésen `−` vissza 400-ig. Diagnosticsnak 0 hibát kell mutatnia. Más Rich Text funkciót még nem tesztelünk.
 ### 10.1.2.2 — Rich Text editor újraépítése — 2026-09-21
 **Állapot:** [~] ÚJ IMPLEMENTÁCIÓ, RUNTIME TESZT MÉG NINCS LEZÁRVA.
 
