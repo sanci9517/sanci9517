@@ -63,29 +63,97 @@ function forEachRichTextInline(document,callback){
 
 export function toggleRichTextMark(document,start,end,mark){
   const next=structuredClone(document);
-  if(!mark||start===end) return next;
+  if(!mark) return next;
+
+  const rangeStart=Math.min(Number(start)||0,Number(end)||0);
+  const rangeEnd=Math.max(Number(start)||0,Number(end)||0);
+  if(rangeStart===rangeEnd) return next;
+
+  let offset=0;
   let hasCoveredText=false;
   let allActive=true;
-  forEachRichTextInline(next,(inline,offset)=>{
-    const text=inline.text||'';
-    const a=Math.max(start,offset);
-    const b=Math.min(end,offset+text.length);
-    if(b>a){
-      hasCoveredText=true;
-      const marks=Array.isArray(inline.marks)?[...new Set(inline.marks)]:[];
-      if(!marks.includes(mark)) allActive=false;
+
+  const inspectInline=(inline,inlineOffset)=>{
+    const text=String(inline?.text||'');
+    const a=Math.max(rangeStart,inlineOffset);
+    const b=Math.min(rangeEnd,inlineOffset+text.length);
+    if(b<=a)return;
+    hasCoveredText=true;
+    const marks=Array.isArray(inline.marks)?inline.marks:[];
+    if(!marks.includes(mark))allActive=false;
+  };
+
+  for(const block of next.blocks||[]){
+    if(block.type==='bulleted-list'||block.type==='numbered-list'){
+      for(const item of block.items||[]){
+        for(const inline of item||[]){
+          inspectInline(inline,offset);
+          offset+=String(inline?.text||'').length;
+        }
+        offset+=1;
+      }
+    }else{
+      for(const inline of block.children||[]){
+        inspectInline(inline,offset);
+        offset+=String(inline?.text||'').length;
+      }
+      offset+=1;
     }
-  });
-  if(!hasCoveredText) return next;
-  const nextMode=allActive?'remove':'add';
-  forEachRichTextInline(next,(inline,offset)=>{
-    const text=inline.text||'';
-    const a=Math.max(start,offset);
-    const b=Math.min(end,offset+text.length);
-    if(b<=a) return;
-    const marks=Array.isArray(inline.marks)?[...new Set(inline.marks)]:[];
-    inline.marks=nextMode==='remove'?marks.filter(x=>x!==mark):[...new Set([...marks,mark])];
-  });
+  }
+
+  if(!hasCoveredText)return next;
+  const mode=allActive?'remove':'add';
+
+  const transformInline=(inline,inlineOffset)=>{
+    const text=String(inline?.text||'');
+    const localStart=Math.max(0,rangeStart-inlineOffset);
+    const localEnd=Math.min(text.length,rangeEnd-inlineOffset);
+    if(localEnd<=localStart)return [inline];
+
+    const baseMarks=Array.isArray(inline.marks)?[...new Set(inline.marks)]:[];
+    const marked=mode==='remove'
+      ?baseMarks.filter(x=>x!==mark)
+      :[...new Set([...baseMarks,mark])];
+
+    const make=(value,marks)=>({
+      ...structuredClone(inline),
+      text:value,
+      marks:[...marks]
+    });
+
+    const parts=[];
+    if(localStart>0)parts.push(make(text.slice(0,localStart),baseMarks));
+    parts.push(make(text.slice(localStart,localEnd),marked));
+    if(localEnd<text.length)parts.push(make(text.slice(localEnd),baseMarks));
+    return parts;
+  };
+
+  offset=0;
+  for(const block of next.blocks||[]){
+    if(block.type==='bulleted-list'||block.type==='numbered-list'){
+      for(let itemIndex=0;itemIndex<(block.items||[]).length;itemIndex++){
+        const item=block.items[itemIndex]||[];
+        const rebuilt=[];
+        for(const inline of item){
+          const parts=transformInline(inline,offset);
+          rebuilt.push(...parts);
+          offset+=String(inline?.text||'').length;
+        }
+        block.items[itemIndex]=rebuilt;
+        offset+=1;
+      }
+    }else{
+      const rebuilt=[];
+      for(const inline of block.children||[]){
+        const parts=transformInline(inline,offset);
+        rebuilt.push(...parts);
+        offset+=String(inline?.text||'').length;
+      }
+      block.children=rebuilt;
+      offset+=1;
+    }
+  }
+
   return next;
 }
 
