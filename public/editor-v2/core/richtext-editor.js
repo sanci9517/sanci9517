@@ -157,17 +157,46 @@ export function toggleRichTextMark(document,start,end,mark){
   const next=structuredClone(document);if(!mark)return next;
   const rangeStart=Math.min(Number(start)||0,Number(end)||0),rangeEnd=Math.max(Number(start)||0,Number(end)||0);
   if(rangeStart===rangeEnd)return next;
-  let offset=0;
-  for(const block of next.blocks||[]){
-    for(const inline of block.children||[]){
-      const text=String(inline.text||''),a=Math.max(rangeStart,offset),b=Math.min(rangeEnd,offset+text.length);
-      if(b>a){const marks=new Set(inline.marks||[]);marks.has(mark)?marks.delete(mark):marks.add(mark);inline.marks=[...marks]}
-      offset+=text.length;
+  let offset=0,hasCovered=false,allActive=true;
+  const inspect=(inline,inlineOffset)=>{
+    const text=String(inline?.text||''),a=Math.max(rangeStart,inlineOffset),b=Math.min(rangeEnd,inlineOffset+text.length);
+    if(b<=a)return;hasCovered=true;if(!(inline.marks||[]).includes(mark))allActive=false;
+  };
+  const each=(callback)=>{
+    offset=0;
+    for(const block of next.blocks||[]){
+      const groups=(block.type==='bulleted-list'||block.type==='numbered-list')
+        ?(block.items||[]).map(item=>item?.children||[])
+        :[block.children||[]];
+      for(const group of groups){for(const inline of group){callback(inline,offset);offset+=String(inline?.text||'').length}offset+=1}
     }
-    offset+=1;
+  };
+  each(inspect);if(!hasCovered)return next;
+  const mode=allActive?'remove':'add';
+  offset=0;
+  for(const block of next.blocks||[]){
+    const isList=block.type==='bulleted-list'||block.type==='numbered-list';
+    const groups=isList?(block.items||[]).map(item=>item?.children||[]):[block.children||[]];
+    groups.forEach((group,index)=>{
+      const rebuilt=[];
+      for(const inline of group){
+        const text=String(inline?.text||''),localStart=Math.max(0,rangeStart-offset),localEnd=Math.min(text.length,rangeEnd-offset);
+        if(localEnd<=localStart){rebuilt.push(inline);offset+=text.length;continue}
+        const base=[...new Set(inline.marks||[])];
+        const marks=mode==='remove'?base.filter(x=>x!==mark):[...new Set([...base,mark])];
+        const make=(value,m)=>({...structuredClone(inline),text:value,marks:[...m]});
+        if(localStart>0)rebuilt.push(make(text.slice(0,localStart),base));
+        rebuilt.push(make(text.slice(localStart,localEnd),marks));
+        if(localEnd<text.length)rebuilt.push(make(text.slice(localEnd),base));
+        offset+=text.length;
+      }
+      if(isList)block.items[index]={children:rebuilt};else block.children=rebuilt;
+      offset+=1;
+    });
   }
   return next;
 }
+
 
 export function isRichTextMarkActive(document,start,end,mark){
   const a=Math.min(start,end),b=Math.max(start,end);let offset=0,covered=false,active=true;
