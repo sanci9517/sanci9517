@@ -279,6 +279,7 @@ export function setRichTextFontWeight(document,start,end,weight){
   return transformRichTextRange(document,start,end,inline=>{
     const next=structuredClone(inline);
     next.fontWeight=value;
+    next.marks=[...(next.marks||[])].filter(mark=>mark!=='bold');
     return next;
   });
 }
