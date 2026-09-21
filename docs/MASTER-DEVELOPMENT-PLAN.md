@@ -2197,3 +2197,20 @@ Commits:
 - `f4bfb14bce47a62cc13f51ff7e2afbdbd88033c4` — cache frissítés `app.js?v=20260921-7`.
 
 **Egyetlen következő teszt:** frissítsd az editort, ellenőrizd, hogy nincs-e boot/runtime hiba, majd ugyanazt a B ki/be tesztet végezd el. Ha hiba van, ne menjünk tovább.
+
+
+### 2026-09-21 — Rich Text betűvastagság 100–900 slider modell implementálva
+**Állapot:** [~] IMPLEMENTÁLVA, RUNTIME TESZT HÁTRA.
+
+A félkövér B/mark kísérlet helyett a felhasználó által küldött tipográfiai demó mintájára visszaépítettük a 100–900-as, 100-as lépésű betűvastagság modellt, de a Sanci editor canonical Command → Page Model → Canvas láncába illesztve.
+
+Implementáció:
+- 3ee8cb5e2dda40942ad31db5e0c877c55e79cf15 — Rich Text Inspector: 100–900 slider, numerikus érték, súlynév, kijelölés-alapú alkalmazás.
+- b339ac8a0099cdeca94ac9c28d95fc688070e584 — slider UI CSS, mobil méretkezelés.
+- 7563e640c51876c350a0dc1269b8c626fa967fda — app.js?v=20260921-8, editor CSS cache frissítés.
+
+A meglévő canonical fontWeight schema/command/Canvas útvonalat használjuk; a kijelölt rész súlya a canonical Rich Text dokumentumból kerül kiolvasásra. A slider használata nem külön state/renderer rendszert vezet be.
+
+Statikus ellenőrzés: az érintett fájlok visszaolvasva; a slider vezérlő, getRichTextFontWeight, setRichTextFontWeight, Canvas fontWeight render és canonical schema egymáshoz illeszkedik. Runtime/CI még nincs lezárva.
+
+**Egyetlen következő teszt:** frissítés után Rich Text → írj ki szöveget → jelölj ki egy rövid részt → állítsd a slider-t 400-ról 700-ra → az érték legyen 700 és a kijelölt rész legyen láthatóan vastagabb a Canvasban is → Diagnostics 0. Ezután állítsd 400-ra ugyanazon kijelölésen és ellenőrizd a visszaállást. Más funkciót most nem tesztelünk.
