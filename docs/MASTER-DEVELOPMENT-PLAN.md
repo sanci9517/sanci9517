@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.26  
+**Verzió:** MASTER-2.27  
 **Dátum:** 2026-09-21  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -2115,5 +2115,22 @@ Ellenőrzött:
 A teszt alapján a mentés → újratöltés → canonical dokumentum visszatöltés útvonala ebben a browser smoke/regression körben PASS. Új kódmódosítás nem történt.
 
 **Egyetlen aktuális folytatási pont:** 40.13 / 10. pont — Diagnostics: 0 hiba.
+
+## 40.20 — Editor v2 smoke/regression: Diagnostics — 2026-09-21
+
+**Állapot:** [x] PASS — felhasználói visszaigazolással lezárva.
+
+A 40.13 / 10. Diagnostics tesztpont ellenőrzése megtörtént.
+
+Ellenőrzött:
+1. Diagnostics panel ellenőrzése;
+2. a lezárt smoke/regression műveletek után nincs fennmaradt hiba;
+3. Diagnostics állapot: `✓ 0 hiba`.
+
+**Felhasználói visszaigazolás:** „Pipa”.
+
+A 40.13 teljes browser smoke/regression köre ezzel lezárult. A teljes körben az elem hozzáadás, kijelölés/Layers kapcsolat, Geometry, Lock, Rich Text alap szerkesztés, Undo/Redo, törlés, mentés/újratöltés és Diagnostics ellenőrzése PASS lett. Új kódmódosítás nem történt.
+
+**Következő egyetlen aktív pont:** a MASTER-ben már dokumentált Foundation teljes újrateszt (`04.3`) első ellenőrzési pontja: GitHub branch/HEAD → Cloudflare deploy/build állapot ellenőrzése. Új editor funkciót addig nem nyitunk, amíg a Foundation kapu nincs ellenőrizve.
 
 
