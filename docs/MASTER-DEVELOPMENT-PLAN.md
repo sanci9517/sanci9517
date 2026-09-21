@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.27  
+**Verzió:** MASTER-2.28  
 **Dátum:** 2026-09-21  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -2131,6 +2131,19 @@ Ellenőrzött:
 
 A 40.13 teljes browser smoke/regression köre ezzel lezárult. A teljes körben az elem hozzáadás, kijelölés/Layers kapcsolat, Geometry, Lock, Rich Text alap szerkesztés, Undo/Redo, törlés, mentés/újratöltés és Diagnostics ellenőrzése PASS lett. Új kódmódosítás nem történt.
 
-**Következő egyetlen aktív pont:** a MASTER-ben már dokumentált Foundation teljes újrateszt (`04.3`) első ellenőrzési pontja: GitHub branch/HEAD → Cloudflare deploy/build állapot ellenőrzése. Új editor funkciót addig nem nyitunk, amíg a Foundation kapu nincs ellenőrizve.
+**Következő egyetlen aktív pont:** a Foundation teljes újrateszt (`04.3`) következő ellenőrzése: API/health → D1 pages → auth/session. Új editor funkciót addig nem nyitunk, amíg a Foundation kapu nincs ellenőrizve.
+
+## 40.21 — Foundation újrateszt: GitHub/Cloudflare build-deploy kapu — 2026-09-21
+
+**Állapot:** [x] PASS — felhasználói visszaigazolással lezárva.
+
+A 04.3 első ellenőrzési pontja lezárva. A felhasználó visszaigazolta: „Pipa”.
+
+Ellenőrzési kör:
+1. GitHub branch/HEAD ellenőrzés;
+2. Cloudflare build/deploy ellenőrzés;
+3. a live rendszer működő állapotának felhasználói visszaigazolása.
+
+A kapu lezárva, új editor funkciót még nem nyitunk. A következő egyetlen aktív pont a Foundation API/health → D1 pages → auth/session ellenőrzése.
 
 
