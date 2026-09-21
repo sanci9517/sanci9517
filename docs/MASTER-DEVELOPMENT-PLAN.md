@@ -1,7 +1,7 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.13  
-**Dátum:** 2026-09-18  
+**Verzió:** MASTER-2.14  
+**Dátum:** 2026-09-21  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
@@ -599,151 +599,28 @@ Követelmények:
 9. Locked elem törlése védett.
 10. User confirmation.
 
-## 10.1.0 — Rich Text tipográfiai UX újratervezési döntés — 2026-09-21
+## 10.1.0 — Rich Text inline formázás elvetése — 2026-09-21
 
-**[D] DÖNTÉS RÖGZÍTVE — implementáció előtt.**
+**[D] VÉGLEGES DÖNTÉS:** a jelenlegi B/I inline formázási implementációt nem támogatjuk tovább és teljesen eltávolítottuk.
 
-A Rich Text szerkesztő tipográfiai kezelése a Word / LibreOffice / OpenOffice / Google Docs mintájára különválasztja a betűméretet, a szemantikus formázást és a haladó betűvastagságot.
+A korábbi B/I próbálkozások több runtime hibát és párhuzamos logikai útvonalat eredményeztek. Nem foltozzuk tovább és nem vezetünk be újabb párhuzamos Rich Text motort.
 
-### Új végleges irány
-- a csúszkás 100–900 betűvastagság-kezelő UI megszűnik;
-- a normál felhasználói formázásban a **B = félkövér**, **I = dőlt**, később U/S stb. külön kapcsolók;
-- a betűméret külön tulajdonság lesz, későbbi `− / érték / +` kezeléssel;
-- a 100–900 `fontWeight` nem kerül törlésre a kanonikus modellből, hanem haladó Typography tulajdonságként marad meg;
-- a haladó fontWeight később preset/dropdown formában használható, nem csúszkával;
-- a kijelölt szöveg logikai Selection tartományát minden formázási műveletnek meg kell őriznie;
-- a kijelölés PC-n egérrel/billentyűzettel, mobilon érintéssel és contenteditable natív kijelöléssel is használható marad;
-- a formázás nem a DOM-ot tekinti forrásnak: Selection → canonical Rich Text → Command → Validation → Page Model → History → Canvas;
-- az Inspector mobilon nagy érintési célokkal, görgethető/horizontal overflow nélküli, PC-n pedig kompakt, egységes UI-val működjön;
-- a meglévő `setRichTextFontWeight` és logikai Selection motor csak akkor módosul, ha az új UX ezt ténylegesen igényli;
-- meglévő kijelölés-, undo/redo-, canonical model-, Canvas- és Diagnostics-funkció nem törhet.
+A jelenlegi támogatott Rich Text mag:
+- canonical strukturált dokumentum;
+- plain text szerkesztés;
+- blokk típusok: paragraph, heading, quote, code;
+- link adatok;
+- canonical `richtext.content.set` command;
+- validation + Page Model + History/Undo/Redo;
+- egyetlen render/serialize útvonal.
 
-### Kötelező tesztkapu
-1. kijelölt szövegrész formázása PC-n;
-2. ugyanazon kijelölés megtartása a formázás után;
-3. kijelölt szövegrész formázása mobilon;
-4. B ki/be és kijelölés megőrzése;
-5. betűméret külön kezelése;
-6. haladó fontWeight modell visszaolvasása és Canvas megjelenítése;
-7. undo/redo;
-8. reload/save;
-9. Diagnostics = 0 hiba;
-10. desktop/tablet/mobile regresszió;
-11. felhasználói visszaigazolás.
+A jelenlegi schema inline mark készlete üres. A B/I későbbi visszaépítése külön architekturális feladat és külön tesztkapu lesz.
 
-**Aktuális egyetlen folytatási pont:** a Rich Text Inspector UI és a hozzá tartozó kód teljes auditja, majd a felesleges slider/weight UI cseréje a fenti Word/LibreOffice-szerű felépítésre úgy, hogy a Selection motor változatlanul megmaradjon.
-
-### 2026-09-21 — Rich Text UI cseréje implementálva
-### 2026-09-21 — Rich Text UI statikus audit PASS
-### 2026-09-21 — Rich Text formázási motor teljes RESET döntés
-
-**[D] DÖNTÉS: a jelenlegi Rich Text formázási kódot elvetjük és egyetlen, tiszta motorral kezdjük újra.**
-
-Indok: a jelenlegi implementációban párhuzamos mark/fontWeight/DOM-visszaolvasási logikák alakultak ki, miközben a félkövér működése nem volt megbízható. Weboldal-szerkesztőként nem fogadunk el további foltozást.
-
-### Reset szabályok
-- a régi `richtext-editor.js` formázási motor törlésre kerül;
-- egyetlen új Rich Text engine lesz, egyetlen Selection, egyetlen transform/command út és egyetlen renderer/serializer;
-- B/I először kizárólag szemantikus inline markként készül;
-- `fontWeight 100–900` nem része az első új formázási körnek; csak későbbi Typography funkcióként térhet vissza;
-- a DOM nem source of truth;
-- a canonical Rich Text modell az egyetlen tartós adatforrás;
-- a kijelölés külön, logikai tartományként megmarad, és minden formázási tranzakció után visszaállítható;
-- PC és mobil ugyanazt a motort használja, csak az UI touch/desktop megjelenítése térhet el;
-- a meglévő Page Model, `richtext.content.set`, History, Undo/Redo, Diagnostics és Canvas lánc megmarad;
-- nincs második fallback, párhuzamos régi API vagy kompatibilitási kerülőút.
-
-### Új építési sorrend
-1. tiszta Rich Text adatmodell: paragraph + inline text + marks + link;
-2. tiszta Selection mapper;
-3. deterministic range splitter/merger;
-4. egyetlen `toggleMark` transform;
-5. canonical → editor renderer;
-6. editor → canonical serializer csak input/sync célra;
-7. command + validation + history integráció;
-8. B izolált teszt;
-9. I izolált teszt;
-10. részleges kijelölés + Selection megőrzés;
-11. PC/mobile browser teszt;
-12. csak ezután betűméret és haladó Typography.
-
-**Aktuális egyetlen folytatási pont:** a régi Rich Text engine eltávolítása és az új, egyetlen engine minimális magjának létrehozása; runtime teszt csak a tiszta mag statikus/unit ellenőrzése után.
-
-### 2026-09-21 — Rich Text engine RESET implementálva, statikus audit PASS
-
-**[~] ÚJ MOTOR LÉTREHOZVA, UNIT/RUNTIME TESZT MÉG HÁTRA.**
-
-A régi párhuzamos Rich Text motor törölve lett. Új egyetlen `public/editor-v2/core/richtext-engine.js` készült.
-
-Az új motor egyetlen útja:
-`DOM Selection → logikai from/to → egyetlen toggleMark transform → canonical Rich Text → richtext.content.set → History → Canvas`
-
-Megmaradt alapok:
-- canonical Page Model;
-- `richtext.content.set` command;
-- Validation;
-- History / Undo / Redo;
-- Diagnostics;
-- Canvas renderer;
-- PC és mobil ugyanazt a Rich Text motort használja.
-
-Az első körből szándékosan kikerült:
-- 100–900 fontWeight motor;
-- fontWeight serializer;
-- slider;
-- régi `toggleRichTextMark` / `toggleRichTextMarkRange` párhuzam;
-- régi `setRichTextFontWeight` / `getRichTextFontWeight` API;
-- DOM-ból fontWeight visszaolvasás.
-
-Az új motor elsődleges inline formázása: `bold, italic, underline, strike, code`, egyetlen `toggleMark()` transzformációval. A Canvas ugyanebből a canonical mark modellből renderel `strong/em/u/s/code` elemeket.
-
-**Érintett fő commitok:** engine `0ac0fb0e936111456dfaac779220244a71790dad`, app `1141d22079b17cb1a82570e5c34084eeaf29af78`, schema `9d9ae56a80b3af11784ad4a106e8e90f1e0d19e0`, régi engine törlés `b134621d9020e083697e4fb82ec588a074ce1f85`, tesztek `e1497ce933cc9895c0cabab94de888f927887f46`.
-
-**Statikus audit:** PASS. GitHub code search alapján nincs már régi `richtext-editor.js`, `fontWeight`, `weightSlider`, `getRichTextFontWeight`, `setRichTextFontWeight` vagy `toggleRichTextMark*` hivatkozás.
-
-**CI:** a GitHub connector jelenleg üres commit statusokat adott vissza; ezért CI PASS nem állítható.
-
-**Aktuális egyetlen folytatási pont:** az új engine unit tesztjeinek futtatása/ellenőrzése és az esetleges matematikai Selection/range-hibák javítása; csak PASS után következhet Cloudflare deploy és a legelső izolált B teszt.
-
-
-**[~] IMPLEMENTÁLVA, STATIKUS ELLENŐRZÉS PASS, RUNTIME/DEPLOY TESZT MÉG HÁTRA.**
-
-Ellenőrizve a módosított fájlokban:
-- `weightSlider`, `weightName`, `getRichTextFontWeight` és `setRichTextFontWeight` már nem szerepelnek az Inspector UI-ban;
-- B és I vezérlők jelen vannak;
-- a logikai Selection mentés/visszaállítás továbbra is az editor Rich Text core-on keresztül történik;
-- a B művelet canonical `fontWeight=700` értéket, kikapcsoláskor `400` értéket használ;
-- mobil toolbaron a blokk-választó külön sorban van, a B/I gombok minimum 44px érintési célúak;
-- nincs vízszintes toolbar-túlcsordulásra épített slider;
-- az asset cache verziók frissítve;
-- a Rich Text core tesztek B-formázási elvárásai az új canonical súlymodellel összehangolva.
-
-**CI:** a GitHub connector jelenleg nem adott vissza commit statusokat; ezért CI PASS nem állítható.
-
-**Aktuális egyetlen folytatási pont:** Cloudflare build/deploy után mobilon és PC-n vizuális ellenőrzés: a Rich Text Inspector legyen könnyen használható, B/I legyen látható, és a kijelölés formázás után maradjon meg. Funkcionális B teszt csak akkor indul, ha a UI a mobilon ténylegesen használható.
-
-
-**[~] KÓD ELKÉSZÜLT, TESZT MÉG HÁTRA.**
-
-Elkészült a mobil/PC-barát első UI-csere:
-- a 100–900 slider teljesen kikerült az Inspectorból;
-- a normál formázás most szemantikus **B / I** kapcsoló;
-- a B művelet a canonical modellben a félkövér állapotot és a 700-as megjelenési súlyt összehangolja, a kikapcsolás 400-ra állítja;
-- a kijelölés továbbra is a meglévő logikai `from/to` Selection modellen keresztül kerül mentésre és visszaállításra;
-- a toolbar PC-n kompakt, mobilon nagy érintési célokat és külön soros blokk-típus választót használ;
-- vízszintes túlcsordulást nem vezet be;
-- a meglévő canonical `fontWeight` adatmodell megmaradt, de a slider UI megszűnt;
-- asset cache frissítve.
-
-**Érintett commitok:** app `e77c174036adc0d72b9d13a2800ee9c870b66201`, Rich Text core `db944be858f814639951c6da4814602ea01aac19`, CSS `ef253f9c3e839d048b84bab7825a79c5d09ac549`, index `190ef77c283dffc68efb572bae7df5c997f35a91`.
-
-**Teszt:** még nincs runtime felhasználói teszt. Először statikus/automatizált ellenőrzés, majd Cloudflare build/deploy szükséges.
-
-**Aktuális egyetlen folytatási pont:** statikus és core teszt — ellenőrizni, hogy nincs slider/weightSlider/weight UI hivatkozás, az app importjai érvényesek, a Rich Text core tesztek PASS, és a B/I + Selection kód egyben maradt.
+**Fontos audit-megjegyzés:** a blokk-séma már ismeri a listákat, de a jelenlegi Rich Text renderer és Inspector UI még nem teljes listakezelésű. Ezt külön Content/Rich Text feladatként kezeljük, nem rejtett részfunkcióként.
 
 ## 10.1 Content
-- [ ] plain text
-- [~] rich text — strukturált Rich Text Inspector első formázó UI implementálva; canonical schema/command/validation/Canvas lánc változatlan. Inspector: Bekezdés/H1-H6 + B/I vezérlők. Runtime felhasználói teszt még hátra van.
+- [x] plain text
+- [~] rich text — plain-text canonical szerkesztés és blokk/alap link kezelés megvan; B/I inline formázás elvetve és eltávolítva. Teljes lista/UI/haladó Rich Text funkciók még hátra.
 - [ ] links
 - [ ] media selection
 - [ ] alt/title
@@ -2568,25 +2445,56 @@ Javítás:
 
 ## 40.6 — B/I Rich Text inline formázás teljes eltávolítása — 2026-09-21
 
-**Állapot:** [x] ELVETVE ÉS KITAKARÍTVA. A B/I funkciót nem tekintjük támogatott editorfunkciónak.
-
-A sikertelen runtime próbálkozások után a B/I teljes inline formázási útvonalat eltávolítottuk, nem maradt félig működő toolbar vagy párhuzamos megoldás.
+**Állapot:** [!] A KÓDTAKARÍTÁS KÉSZ, DE A TELJES AUTOMATIKUS TESZTKAPU FAIL MIATT NEM LEZÁRT.
 
 Eltávolítva:
-- B és I toolbar gombok és event handlerek az `app.js` Rich Text Inspectorból.
-- `toggleMark()` és `isMarkActive()` motorlogika.
-- inline mark felismerés/renderelés (`strong`, `em`, `u`, `s`, `code`) a Rich Text engine-ből.
-- inline mark tesztek; helyettük plain-text canonical Rich Text teszt maradt.
-- Rich Text mark CSS maradványok.
-- a schema támogatott inline mark készlete üres.
+- B és I toolbar/event handlerek az `app.js` Rich Text Inspectorból;
+- `toggleMark()` és `isMarkActive()`;
+- inline mark render/parsing;
+- B/I mark tesztek;
+- Rich Text mark CSS;
+- schema mark készlet.
 
 Megmaradt:
-- canonical Rich Text dokumentum.
-- normál szövegszerkesztés.
-- blokk típusok, például bekezdés/címsor/idézet/kód.
-- link adat kezelése.
-- egyetlen Rich Text render/serialize útvonal.
+- canonical Rich Text dokumentum;
+- plain text szerkesztés;
+- blokk típusok;
+- link adat;
+- egyetlen render/serialize útvonal.
 
-**Fontos:** a B/I későbbi visszaépítése új feladat lesz, külön architekturális döntéssel. A jelenlegi sikertelen implementációt nem foltozzuk tovább.
+**CI regresszió:** a cleanup után a `Editor Core Test` #355, commit `e87d26be6b7d2928125a2e9c7fcb73fdbca71840` FAIL lett. A hiba nem runtime editorhiba, hanem stale tesztimport: `core.test.js` még a már törölt `isMarkActive` és `toggleMark` exportokat importálta.
 
-**Következő lépés:** editor-core CI futtatás és az alap Rich Text működés ellenőrzése. Ha PASS, továbblépünk az editor következő tesztpontjára.
+**Javítási lépés elvégezve:** commit `6dd631ec1565989c587a15d9054dc4d3e31b8808` — a teszt a plain-text Rich Text modellhez igazítva; B/I mark assertions eltávolítva, strukturális/link/list adatellenőrzések megőrizve.
+
+**Következő egyetlen lépés:** a `6dd631ec1565989c587a15d9054dc4d3e31b8808` commit utáni `Editor Core Test` CI eredmény ellenőrzése. PASS nélkül nincs további funkciófejlesztés.
+
+## 40.7 — Teljes editor kód-audit — 2026-09-21
+
+**Állapot:** [!] AUDIT BLOKKOLÓ REGRESSZIÓT TALÁLT; FUNKCIÓFEJLESZTÉS NEM INDÍTHATÓ.
+
+A teljes eddig felépített editor-core útvonal visszaolvasásakor a következő állapot rögzíthető:
+
+### Ami architekturálisan rendben van
+- Page Model marad a source of truth;
+- mutation a central `execute(command)` útvonalon megy;
+- command → validation → history → state lánc megvan;
+- responsive értékek külön canonical responsive state-ben vannak;
+- geometry a Canvas Engine-en keresztül renderelődik;
+- selection külön editor state;
+- lock/delete/reparent/reorder/duplicate/undo/redo command-szinten védett;
+- Rich Text B/I maradványai a támogatott runtime útvonalból eltávolítva;
+- nincs második Rich Text renderer az `app.js`-ben;
+- Diagnostics rendszer megmaradt.
+
+### Talált problémák / technikai adósságok
+1. **CI regresszió:** stale Rich Text tesztimport a cleanup után. Ezt a `6dd631e...` commit javítja; CI még nincs újra igazolva.
+2. **MASTER terv inkonzisztencia:** korábbi 10.1.0 és 40.x részek még a már elvetett B/I modellt írták le. Ezt a jelen pontban egységesítettük.
+3. **Rich Text lista-renderelés hiánya:** a schema támogat listablokkokat, de a jelenlegi renderer nem rendereli őket valódi `ul/ol/li` struktúrában; ezt külön feladatként kell megoldani.
+4. **Rich Text blokk-típus UI korlátozott:** az Inspector jelenleg paragraph/H1-H6 választást ad; quote/code/list nem választható teljes körűen UI-ból.
+5. **Renderer neve/szerepe:** a `renderRichTextEditor()` jelenleg Inspector és Canvas renderelésre is használva van. Ez működő egyetlen renderút, de a név félrevezető; későbbi tisztításként `renderRichText()` névre érdemes átnevezni, új renderer létrehozása nélkül.
+6. **Element palette vs actual element support:** a palette sok node típust kínál, miközben több típusnak még nincs dedikált Canvas/Inspector viselkedése. Ezeket nem tekintjük kész funkciónak csak attól, hogy hozzáadhatók.
+7. **Foundation tesztkapu még nincs teljesen lezárva:** Cloudflare build/deploy, API/D1, responsive, accessibility, security és browser regression külön kapuk.
+
+**Audit döntés:** most nem építünk új funkciót. Először a CI regressziót zárjuk le, majd a következő egyetlen tesztpontból folytatunk.
+
+**EGYETLEN AKTUÁLIS FOLYTATÁSI PONT:** `Editor Core Test` CI PASS ellenőrzése a `6dd631ec1565989c587a15d9054dc4d3e31b8808` commiton.
