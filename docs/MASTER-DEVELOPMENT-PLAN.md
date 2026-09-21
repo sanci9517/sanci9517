@@ -2047,3 +2047,13 @@ Javítások:
 - c451ce6f51ed3abc8cde5bab24900a89667a2381 — cache frissítve.
 
 **Következő egyetlen teszt:** teljes frissítés után ellenőrizd, hogy nincs-e runtime/boot hiba, majd ugyanaz a B kijelölés teszt. Más funkciót nem tesztelünk.
+
+
+### 10.1.2.2 — E003 pontosítás — 2026-09-21
+A felhasználói tesztben a canonical bold mark már létrejött, tehát az upstream B → Page Model szakasz működik. A kapott E003 alapján a hiba a Canvas DOM ellenőrzési/renderelési szakaszban van. A DOM-ellenőrzést robusztusabbá tettük: nem összetett escaped CSS selectorral keresi a node-ot, hanem a canvas data-node-id értékével azonosítja, majd azon belül keresi a Rich Text DOM-ot és a bold strong elemet.
+
+Javítás:
+- 260c004cbaf44c73b8fc9308b5855d8de7f1579f — robust Rich Text bold DOM verification
+- 0a5a97c461c3f969e1d4653ba110bd2e726411fd — cache refresh
+
+**Következő egyetlen teszt:** frissítés után ugyanaz a kijelölés + B teszt. Ellenőrizd a félkövér vizuális megjelenést és a Diagnostics állapotát. Ha továbbra sem jelenik meg, a következő lépés közvetlen Canvas DOM/render audit lesz; CSS-t addig nem módosítunk.
