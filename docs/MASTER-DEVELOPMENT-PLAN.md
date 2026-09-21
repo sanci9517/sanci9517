@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.22  
+**Verzió:** MASTER-2.23  
 **Dátum:** 2026-09-21  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -2037,4 +2037,23 @@ Ellenőrzött:
 
 A teszt alapján a lock/unlock és a hozzá tartozó védelmi viselkedés ebben a browser smoke/regression körben PASS. Új kódmódosítás nem történt.
 
-**Egyetlen aktuális folytatási pont:** 40.13 / 6. pont — Rich Text tartalom módosítása és mentése.
+## 40.16 — Editor v2 smoke/regression: Rich Text — 2026-09-21
+
+**Állapot:** [x] PASS — felhasználói visszaigazolással lezárva.
+
+A 40.13 / 6. Rich Text tesztpont ellenőrzése megtörtént.
+
+Ellenőrzött:
+1. Rich Text elem kijelölése;
+2. Content Inspector megnyitása;
+3. szövegtartalom módosítása;
+4. módosítás mentése/elfogadása;
+5. Canvas frissítése;
+6. újrakijelölés után a tartalom megmarad;
+7. Diagnostics állapot: 0 hiba.
+
+**Felhasználói visszaigazolás:** „Pipa”.
+
+A teszt alapján a Rich Text alap tartalom-módosítási és mentési útvonala ebben a browser smoke/regression körben PASS. Új kódmódosítás nem történt.
+
+**Egyetlen aktuális folytatási pont:** 40.13 / 7. pont — Undo/Redo.
