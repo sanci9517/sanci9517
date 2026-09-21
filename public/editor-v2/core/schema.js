@@ -183,13 +183,6 @@ function normalizeRichTextInlineChildren(children) {
     const marks = [...new Set(Array.isArray(inline.marks) ? inline.marks : [])];
     if (marks.some((mark) => !RICH_TEXT_MARKS.has(mark))) throw new Error('Invalid Rich Text mark');
     const result = { type: 'text', text: inline.text, marks };
-    if (inline.fontWeight != null) {
-      const weight = Number(inline.fontWeight);
-      if (!Number.isInteger(weight) || weight < 100 || weight > 900 || weight % 100 !== 0) throw new Error('Rich Text fontWeight must be an integer from 100 to 900');
-      result.fontWeight = weight;
-    } else if (marks.includes('bold')) {
-      result.fontWeight = 700;
-    }
     if (inline.link != null) {
       if (!inline.link || typeof inline.link !== 'object' || typeof inline.link.href !== 'string' || !inline.link.href.trim()) {
         throw new Error('Invalid Rich Text link');
