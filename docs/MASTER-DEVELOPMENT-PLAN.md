@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.24  
+**Verzió:** MASTER-2.25  
 **Dátum:** 2026-09-21  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -2074,3 +2074,26 @@ Ellenőrzött:
 A teszt alapján a Rich Text Undo/Redo útvonala ebben a browser smoke/regression körben PASS. Új kódmódosítás nem történt.
 
 **Egyetlen aktuális folytatási pont:** 40.13 / 8. pont — elem törlése.
+
+## 40.18 — Editor v2 smoke/regression: Elem törlése — 2026-09-21
+
+**Állapot:** [x] PASS — felhasználói visszaigazolással lezárva.
+
+A 40.13 / 8. elem törlése tesztpont ellenőrzése megtörtént.
+
+Ellenőrzött:
+1. nem-root elem kijelölése;
+2. Inspectorból törlés;
+3. elem eltűnik a Canvasról;
+4. elem eltűnik a Layers/Navigator nézetből;
+5. selection állapota megfelelően frissül;
+6. Undo → az elem visszaáll;
+7. Redo → az elem ismét törlődik;
+8. Diagnostics állapot: 0 hiba.
+
+**Felhasználói visszaigazolás:** „Pipa”.
+
+A teszt alapján az Inspector → element.delete → Page Model → Canvas/Layers → History útvonal ebben a browser smoke/regression körben PASS. Új kódmódosítás nem történt.
+
+**Egyetlen aktuális folytatási pont:** 40.13 / 9. pont — mentés és újratöltés.
+
