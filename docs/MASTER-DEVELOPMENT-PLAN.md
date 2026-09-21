@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.25  
+**Verzió:** MASTER-2.26  
 **Dátum:** 2026-09-21  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -2096,4 +2096,24 @@ Ellenőrzött:
 A teszt alapján az Inspector → element.delete → Page Model → Canvas/Layers → History útvonal ebben a browser smoke/regression körben PASS. Új kódmódosítás nem történt.
 
 **Egyetlen aktuális folytatási pont:** 40.13 / 9. pont — mentés és újratöltés.
+
+## 40.19 — Editor v2 smoke/regression: Mentés és újratöltés — 2026-09-21
+
+**Állapot:** [x] PASS — felhasználói visszaigazolással lezárva.
+
+A 40.13 / 9. mentés és újratöltés tesztpont ellenőrzése megtörtént.
+
+Ellenőrzött:
+1. módosított editorállapot mentése;
+2. oldal újratöltése;
+3. a módosítások megmaradása;
+4. Canvas, Layers/Navigator és Inspector állapotának konzisztenciája;
+5. Diagnostics állapot: 0 hiba.
+
+**Felhasználói visszaigazolás:** „Pipa”.
+
+A teszt alapján a mentés → újratöltés → canonical dokumentum visszatöltés útvonala ebben a browser smoke/regression körben PASS. Új kódmódosítás nem történt.
+
+**Egyetlen aktuális folytatási pont:** 40.13 / 10. pont — Diagnostics: 0 hiba.
+
 
