@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.38.37  
+**Verzió:** MASTER-2.39.37  
 **Dátum:** 2026-09-21  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -1810,3 +1810,50 @@ A 40.29-ben elkészült oldal-törlés teljes élő böngészős tesztje a felha
 Ellenőrzött terület: oldal törlés UI, megerősítés, lista frissülés, aktuális oldal kezelése, utolsó oldal védelme és hibamentes működés.
 
 **Következő egyetlen aktív pont:** a Command API következő valódi domain-hiánya, az **Editor v2 group / ungroup** teljes kód-auditja és szerződésének megtervezése; csak az audit után következhet kódmódosítás.
+
+
+## 40.31 — Group / Ungroup teljes kód-audit — 2026-09-21
+
+**Állapot:** [x] AUDIT PASS — kódmódosítás még nem történt.
+
+A Command API következő valódi domain-hiányát, a group / ungroup területet összevetettük a teljes Editor Core jelenlegi állapotával.
+
+### Megállapítások
+- A schema már tartalmaz `NODE_TYPES.GROUP` típust.
+- A `canContain()` a group node-ot jelenleg normál containerként kezeli; külön group-invariáns nincs.
+- A `element.add`, `element.delete`, `element.duplicate`, `hierarchy.reparent` és `hierarchy.reorder` már képesek a group típusú node-okra általános hierarchy műveleteket végrehajtani.
+- Nincs `group` vagy `ungroup` Command a `commands.js`-ben.
+- A selection state technikailag tömbös (`selection.ids`), de az aktuális UI fő útvonala továbbra is egy elsődleges node kijelölésére épül; külön multi-select interaction contractot nem találtunk.
+- Nincs olyan canonical művelet, amely több kijelölt node-ból új GROUP node-ot hozna létre, a kijelöltek sorrendjét és közös parentjét kezeli, majd a children/parent kapcsolatokat atomikusan átépíti.
+- Nincs olyan canonical művelet, amely egy GROUP node-ot biztonságosan felbont úgy, hogy a gyermekek a group eredeti parentjébe kerüljenek vissza, sorrendjük megmaradjon, majd a group eltűnjön.
+- A jelenlegi transaction/batch/history infrastruktúra alkalmas lehet a group/ungroup műveletek atomikus kezelésére, ezért új history-rendszerre nincs szükség.
+- A Page Model maradhat a canonical source of truth; Canvas csak renderel.
+
+### Kötelező contract a későbbi implementációhoz
+**group:**
+1. legalább két kijelölt node szükséges;
+2. azonos közvetlen parent szükséges, vagy explicit szabály kell a vegyes parent kezelésére — az első implementációban azonos parent legyen kötelező;
+3. root nem csoportosítható;
+4. locked node ne legyen csoportosítható, vagy a szabályt explicit módon definiálni kell — a meglévő lock-védelemhez igazodva első körben blokkoljuk;
+5. a kiválasztott node-ok sibling sorrendje maradjon determinisztikus;
+6. új GROUP node ugyanazon parent alá kerüljön, a kijelölés első elemének pozíciójába;
+7. minden kijelölt node parentId-ja az új group ID legyen;
+8. a group children sorrendje kövesse az eredeti sibling sorrendet;
+9. egyetlen command + history entry legyen az egész művelet;
+10. rollback és schema validation legyen kötelező.
+
+**ungroup:**
+1. csak GROUP node-on legyen engedélyezett;
+2. locked group ne legyen bontható;
+3. a group children kerüljenek a group eredeti parentjébe;
+4. a gyermekek eredeti sorrendje maradjon meg;
+5. a group helyén jelenjenek meg a gyermekek;
+6. a group törlődjön;
+7. selection determinisztikusan a felszabadított gyermekekre kerüljön;
+8. egyetlen command + history entry legyen az egész művelet;
+9. rollback és schema validation legyen kötelező.
+
+### Fontos döntés
+Nem építünk most rögtön kódot. Előbb a multi-select UX és a group/ungroup command contract együtt kell végleges legyen, mert a group command bemenete több node ID. Nem vezetünk be párhuzamos selection rendszert.
+
+**Következő egyetlen aktív pont:** multi-select teljes adatfolyam auditja (Canvas + Layers + keyboard/pointer + selection state + history interaction), majd ebből közvetlenül a group command implementáció következik.
