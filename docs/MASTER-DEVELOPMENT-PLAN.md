@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.31  
+**Verzió:** MASTER-2.32  
 **Dátum:** 2026-09-21  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -274,15 +274,17 @@ Tesztkategóriák:
 - [x] régi editor archive: `archive/pre-editor-rebuild-2026-09-16`
 
 ## 4.3 Foundation teljes újrateszt
-- [ ] `/`, `/p/home`, további `/p/<slug>`
-- [ ] legacy redirectek
-- [ ] health/API
-- [ ] D1 pages
-- [ ] auth/session
-- [ ] GitHub branch/HEAD
-- [ ] Cloudflare deploy
-- [ ] nincs véletlen törlés
-- [ ] renderer hibamentes
+- [x] `/`, `/p/home`, `/p/community` + canonical renderer
+- [x] legacy redirectek
+- [x] health/API
+- [x] D1 pages
+- [x] auth/session
+- [x] GitHub branch/HEAD
+- [x] Cloudflare deploy/build gate — felhasználói visszaigazolással
+- [x] nincs véletlen törlés
+- [x] renderer hibamentes
+
+**04.3 állapot:** [x] TELJESEN LEZÁRVA — 2026-09-21.
 
 ---
 
@@ -309,6 +311,24 @@ Alap actionök:
 
 Minden mutáció validation + history + ahol szükséges audit + rollback kompatibilitással készüljön.
 
+**Audit állapot:** a jelenlegi `commands.js` stabilan lefedi és teszteli az element CRUD/hierarchy/selection/style/responsive/content/lock, Rich Text, undo/redo és transaction/batch alapokat. A 5.2 teljes action-katalógusa viszont még nem teljes: különösen a `move`, `resize`, `group`, `ungroup`, page-level és component/template/media/persistence actionök további kanonikus Command réteget igényelnek. Ezeket nem szabad UI-specifikus kerülőútként megvalósítani.
+
+## 5.3 — Command API coverage audit — AKTÍV
+**Cél:** a 5.2-ben felsorolt action-katalógust összevetni a tényleges implementációval, tesztekkel és Page Model-lel, majd a hiányzó actionöket függőségi sorrendben, egyetlen kanonikus command-rendszerben megvalósítani.
+
+Első aktív részfeladat: **`move` + `resize` Command szerződés és meglévő geometry útvonal auditja.**
+Követelmények:
+1. ne legyen második geometry state;
+2. a meglévő `style.set` / responsive útvonal ne törjön;
+3. desktop/tablet/mobile context legyen egyértelmű;
+4. validation + history + undo/redo maradjon központi;
+5. Canvas Engine továbbra is csak rendereljen;
+6. a jelenlegi Geometry Inspector működése ne regresszáljon;
+7. unit/integration teszt készüljön az actionökre és edge case-ekre;
+8. user browser test csak a statikus/CI kapu után.
+
+**Egyetlen következő fejlesztési lépés:** a `move` és `resize` actionök teljes adatfolyamának auditja, kódmódosítás nélkül.
+
 ---
 
 # 06 — AKTUÁLIS EDITOR UI / INSPECTOR STABILIZÁLÁS
@@ -325,7 +345,7 @@ Minden mutáció validation + history + ahol szükséges audit + rollback kompat
 - [x] user browser test: **Működik**
 
 ## 6.2 Geometry Inspector presets
-**Csak ezt a pontot dolgozzuk most.**
+**Lezárt pont; nem ez az aktuális folytatási pont.**
 
 Cél: a geometry kézi mezői mellett gyors, értelmes presetek legyenek, anélkül hogy más adatfolyam jönne létre.
 
@@ -1620,4 +1640,4 @@ Ellenőrzött:
 
 A teljes 04.3 Foundation újrateszt lezárható: routing, legacy redirectek, Worker health, D1, public pages, auth/session, GitHub/Cloudflare build-deploy kapu, törlésvédelem és canonical renderer ellenőrzések PASS állapotban vannak. Új kódmódosítás nem történt.
 
-**Egyetlen aktuális folytatási pont:** 05 — Editor Core / State / Command következő tervezett fejlesztési/testkapuja; az aktuális MASTER-ben kijelölt következő konkrét részfeladatot külön audit után nyitjuk meg.
+**Egyetlen aktuális folytatási pont:** 05.3 — Command API coverage audit; első aktív részfeladat: `move` + `resize` action teljes adatfolyamának auditja.
