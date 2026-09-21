@@ -2478,3 +2478,19 @@ Fontos: ez nem azonos a teljes repository npm run test:editor futtatásával. A 
 **Architekturális eredmény:** a célzott teszt az új, egyetlen range-motor alaplogikáját igazolja; párhuzamos régi motor nem került vissza.
 
 **Egyetlen aktuális folytatási pont:** a teljes npm run test:editor repository teszt tényleges PASS-jának megszerzése. Amíg ez nincs igazolva, Cloudflare deploy és böngészős B/I runtime teszt nincs.
+
+
+## 40.2 — Teljes repository editor-core CI eredmény — 2026-09-21
+
+**Állapot:** [x] PASS.
+
+A teljes `npm run test:editor` GitHub Actions futás sikeresen lefutott Node 24 alatt.
+- Workflow: `Editor Core Test`
+- Run: #342
+- Commit: `a1f90e5b05c15e9078b1e79debfd8b3fcce43fe6`
+- Eredmény: `completed / success`
+- A workflow parancsa: `node --test public/editor-v2/tests/core.test.js`
+
+Ezzel a 40. pont teljes automatikus tesztkapuja igazolt PASS állapotba került. A következő lépés már nem további unit teszt: **Cloudflare frissítés/build/deploy, majd a célzott böngészős B ki/be runtime teszt**.
+
+**Következő egyetlen teszt:** Rich Text → szöveg → kijelölés → B → látható félkövér → B újra → félkövér megszűnik → Diagnostics = 0 hiba.
