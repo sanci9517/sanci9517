@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.15  
+**Verzió:** MASTER-2.16  
 **Dátum:** 2026-09-21  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -2545,3 +2545,19 @@ Javítás:
 - új párhuzamos Rich Text útvonal nem készült.
 
 **EGYETLEN AKTUÁLIS FOLYTATÁSI PONT:** a `6efcbae496acd52f1a9d9b3b97393cba72be4c41` commit utáni `Editor Core Test` CI eredmény ellenőrzése. PASS nélkül nincs további funkciófejlesztés.
+
+
+## 40.10 — Rich Text teljes Editor Core CI kapu PASS — 2026-09-21
+
+**Állapot:** [x] PASS — felhasználói visszaigazolással lezárva.
+
+A felhasználó jelezte, hogy az utolsó két ellenőrzés PASS. Ezzel a 6efcbae496acd52f1a9d9b3b97393cba72be4c41 commit után javított Rich Text lista assertion tesztkapuja felhasználói visszaigazolás alapján sikeresnek tekinthető.
+
+Lezárva:
+- Rich Text stale mark fixture regressziók eltávolítva;
+- canonical lista-struktúra assertion javítva;
+- teljes Editor Core CI kapu PASS a felhasználói visszaigazolás szerint;
+- új schema/engine/command módosítás nem szükséges;
+- nincs párhuzamos Rich Text motor bevezetve.
+
+**Következő egyetlen folytatási pont:** a Rich Text unit/CI kapu lezárása után a következő munkaciklusban a Cloudflare build/deploy és az aktuális editor böngészős smoke/regression teszt következik. Új funkciót csak a build/deploy és browser kapu után kezdünk.
