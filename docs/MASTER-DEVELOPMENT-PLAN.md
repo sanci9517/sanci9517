@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.23  
+**Verzió:** MASTER-2.24  
 **Dátum:** 2026-09-21  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -2056,4 +2056,21 @@ Ellenőrzött:
 
 A teszt alapján a Rich Text alap tartalom-módosítási és mentési útvonala ebben a browser smoke/regression körben PASS. Új kódmódosítás nem történt.
 
-**Egyetlen aktuális folytatási pont:** 40.13 / 7. pont — Undo/Redo.
+## 40.17 — Editor v2 smoke/regression: Undo/Redo — 2026-09-21
+
+**Állapot:** [x] PASS — felhasználói visszaigazolással lezárva.
+
+A 40.13 / 7. Undo/Redo tesztpont ellenőrzése megtörtént.
+
+Ellenőrzött:
+1. Rich Text tartalom módosítása;
+2. Undo → eredeti tartalom visszaáll;
+3. Redo → módosított tartalom visszaáll;
+4. Canvas és Inspector tartalma egyezik;
+5. Diagnostics állapot: 0 hiba.
+
+**Felhasználói visszaigazolás:** „Pipa”.
+
+A teszt alapján a Rich Text Undo/Redo útvonala ebben a browser smoke/regression körben PASS. Új kódmódosítás nem történt.
+
+**Egyetlen aktuális folytatási pont:** 40.13 / 8. pont — elem törlése.
