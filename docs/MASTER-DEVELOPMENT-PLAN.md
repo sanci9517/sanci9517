@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.38  
+**Verzió:** MASTER-2.39.39  
 **Dátum:** 2026-09-21  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -1805,6 +1805,36 @@ Ellenőrzött terület: oldal törlés UI, megerősítés, lista frissülés, ak
 
 **Következő egyetlen aktív pont:** a Command API következő valódi domain-hiánya, az **Editor v2 group / ungroup** teljes kód-auditja és szerződésének megtervezése; csak az audit után következhet kódmódosítás.
 
+
+## 40.36 — PC/DESKTOP MULTI-SELECT TESZT ELŐAUDIT — 2026-09-21
+
+**Állapot:** [x] KÓDAUDIT PASS — új kódmódosítás nélkül; a tényleges browser teszt a következő felhasználói tesztkapu.
+
+Ellenőrizve a jelenlegi `app.js`, `state.js`, `commands.js`, `core.test.js` és Editor Core workflow alapján:
+- [x] egyetlen közös `selectNodeInteraction()` kezeli a Canvas + Layers kijelölést;
+- [x] normál kattintás → egyetlen kijelölés;
+- [x] Ctrl/Cmd + kattintás → add/remove toggle;
+- [x] Shift + kattintás → azonos parent alatti determinisztikus sibling-range;
+- [x] root elem → mindig egyetlen kijelölés;
+- [x] eltérő parent esetén a Shift fallback egyetlen célpont kijelölés;
+- [x] `state.selection.ids` + `primaryId` marad az egyetlen canonical selection state;
+- [x] Canvas és Layers ugyanazt a selection helper-t használja;
+- [x] üres Canvas-kattintás továbbra is selection clear;
+- [x] Inspector több kijelölt elem esetén nem mutat hamis „közös” értéket: jelenleg az első kijelölt node adatait használja — ezt későbbi explicit multi-edit UX pontként kell kezelni;
+- [x] Editor Core workflow Node 24-et használ és a core tesztparancsot futtatja;
+- [ ] browser: normál kattintás;
+- [ ] browser: Ctrl/Cmd toggle add;
+- [ ] browser: Ctrl/Cmd toggle remove;
+- [ ] browser: Shift range előre;
+- [ ] browser: Shift range visszafelé;
+- [ ] browser: Canvas ↔ Layers szinkron;
+- [ ] browser: selection visuals;
+- [ ] browser: root/locked edge case;
+- [ ] browser: undo/redo regresszió;
+- [ ] browser: diagnostics 0 hiba;
+- [ ] user PASS.
+
+**Következő teszt:** PC browser multi-select élő teszt. Group/Ungroup továbbra is blokkolva marad mindaddig, amíg a PC és mobil multi-select kapu egyaránt PASS.
 
 ## 40.35 — TELJES MASTER HIÁNYOSSÁGI AUDIT — 2026-09-21
 
