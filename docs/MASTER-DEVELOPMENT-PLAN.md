@@ -2021,3 +2021,19 @@ A Rich Text renderer közös `renderRichTextInline()` útvonalat használ; a bol
 - ha vizuálisan továbbra sem látható, a Diagnostics panelben különösen az `E003/E004` eredményét kell figyelni.
 
 **Teszthatár:** Undo/Redo, save/reload, responsive regresszió és további Rich Text funkciók továbbra sem tesztelendők, amíg ez a pont nincs lezárva.
+
+
+### 10.1.2.2 — Bold canonical model verification — 2026-09-18
+**Állapot:** [~] CÉLZOTT HIBAFELTÁRÁS, FELHASZNÁLÓI TESZT SZÜKSÉGES.
+
+A felhasználói teszt szerint a dőlt működik, a kijelölés ki/be működik, a félkövér vizuálisan nem jelenik meg, Diagnostics pedig 0 hibát mutat. Ez alapján a következő vizsgálat a B művelet teljes adatútja.
+
+Új ellenőrzések: SANCI-VERIFY-E005 ellenőrzi, hogy a B művelet tartománya megtalálható-e a canonical modellben; SANCI-VERIFY-E006 ellenőrzi, hogy a kijelölt tartományban létrejött-e a canonical bold mark.
+
+A cél annak eldöntése, hogy a hiba a toggleRichTextMark/selection → Page Model szakaszban van-e, vagy a Canvas renderer/CSS szakaszban. A pont lezárása továbbra is tiltott a felhasználói visszaigazolásig.
+
+Implementáció:
+- ad1329caaeaea502036fd63a6e25d5fe1a15246d — canonical bold model verification
+- 112fa13f8b0afe096f31b775bcb66e00768d0570 — editor app cache refresh
+
+**Következő egyetlen teszt:** frissítés után ugyanaz a részleges B teszt. Ha nem látszik félkövérnek, Diagnostics panelben ellenőrizni, megjelent-e E005/E006. Más funkciót nem tesztelünk.
