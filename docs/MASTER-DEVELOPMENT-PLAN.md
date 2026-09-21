@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.34  
+**Verzió:** MASTER-2.35  
 **Dátum:** 2026-09-21  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -1681,3 +1681,22 @@ A teljes érintett kód auditja ezt megerősítette:
 **Kódmódosítás:** nem történt.
 
 **Következő egyetlen aktív pont:** az 5.2 Command API katalógus következő valóban hiányzó actionjének teljes auditja. Nem vezetünk be új commandot addig, amíg a meglévő funkció nem bizonyul ténylegesen elégtelennek.
+
+
+## 40.26 — Command API következő hiányzó terület: Page lifecycle audit — 2026-09-21
+
+**Állapot:** [~] AUDIT FOLYAMATBAN — kódmódosítás még nem történt.
+
+A teljes következő action-terület vizsgálata alapján:
+- `page.create` funkcióként már létezik az Editor v2 UI-ban és az `/api/admin/pages` POST API-ban;
+- `page.delete` szerveroldali API-műveletként már létezik, utolsó oldal törlését védi és audit logot ír;
+- `page.rename` szerveroldali PATCH API-műveletként már létezik és audit logot ír;
+- `page.duplicate` jelenleg nem került elő sem az Editor v2 command engine-ben, sem az admin pages API-ban;
+- az Editor v2 `commands.js` jelenleg nem tartalmaz `page.*` commandokat;
+- a page létrehozása jelenleg közvetlen API-hívással történik az `app.js`-ből, nem a központi command engine-en keresztül.
+
+**Fontos döntés:** nem kezdünk azonnal `page.*` commandok építésébe. Először azt kell meghatározni, hogy a page lifecycle commandoknak milyen canonical határa legyen az Editor lokális Page Modelje, a D1 persistence API és a history/undo rendszer között. Különösen a törlés és duplikálás esetén nem szabad olyan lokális history-t készíteni, amely nincs összhangban a szerveroldali perzisztenciával.
+
+**Kódmódosítás:** nem történt.
+
+**Következő egyetlen aktív pont:** `page.create/delete/rename/duplicate` adatfolyam és history/persistence szerződésének teljes auditja.
