@@ -134,6 +134,29 @@ test('invalid Rich Text is rejected and the document rolls back exactly', () => 
 });
 
 
+test('Rich Text fontWeight accepts 100-900 values and preserves legacy bold compatibility', () => {
+  const state = createEditorState();
+  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.RICHTEXT } });
+  const id = state.selection.primaryId;
+  execute(state, { type: 'richtext.content.set', payload: { nodeId: id, document: {
+    schemaVersion: 1,
+    type: 'richtext-document',
+    blocks: [{ type: 'paragraph', children: [
+      { type: 'text', text: 'Weight', marks: [], fontWeight: 600 },
+      { type: 'text', text: 'Legacy', marks: ['bold'] }
+    ] }]
+  }}});
+  const richText = activePage(state).nodes[id].props.richText;
+  assert.equal(richText.blocks[0].children[0].fontWeight, 600);
+  assert.equal(richText.blocks[0].children[1].fontWeight, 700);
+  assert.throws(() => execute(state, { type: 'richtext.content.set', payload: { nodeId: id, document: {
+    schemaVersion: 1,
+    type: 'richtext-document',
+    blocks: [{ type: 'paragraph', children: [{ type: 'text', text: 'Bad', marks: [], fontWeight: 650 }] }]
+  }}}));
+  assertValidEditorDocument(state.document);
+});
+
 test('Rich Text marks toggle on and off and report active state', () => {
   const document = plainTextToRichText('Sanci9517');
   const selected = toggleRichTextMark(document, 0, 10, 'bold');
