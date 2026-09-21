@@ -2229,3 +2229,15 @@ A kipróbált megoldás:
 - a range-transform és selection logika nem kerül megkerülésre.
 
 **Egyetlen aktuális következő lépés:** a módosított `public/editor-v2/core/richtext-editor.js` statikus visszaolvasása, majd célzott unit/CI ellenőrzés. Runtime tesztet csak sikeres statikus/CI ellenőrzés után indítunk.
+
+
+### 2026-09-21 — fontWeight DOM serializer implementálva
+**Állapot:** [~] KÓD ELKÉSZÜLT, STATIKUS VISSZAOLVASÁS PASS, CI/RUNTIME MÉG HÁTRA.
+
+A `public/editor-v2/core/richtext-editor.js` DOM → canonical útvonalát a kipróbált modell szerint módosítottuk. A text node szülői láncából kiolvasható a `data-font-weight` vagy inline `style.fontWeight`, és ez `fontWeight` mezőként bekerül a canonical inline runba. Az italic/underline/strike/code és link feldolgozás megmaradt.
+
+Commit: `6348f4276420d97d2b8fda2a9b7862d501ec1e78`.
+
+Statikus visszaolvasás: PASS — a serializer új `propsForTextNode()` útvonala, `fontWeight` AST-mezője, link/mark feldolgozás és a meglévő range engine jelen van.
+
+**Egyetlen következő teszt:** GitHub CI/status ellenőrzés a commiton. Ha PASS, utána külön mobil runtime teszt következik; ha FAIL, csak a hibát javítjuk.
