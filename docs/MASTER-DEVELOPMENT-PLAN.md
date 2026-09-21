@@ -2512,3 +2512,35 @@ A teljes jelenlegi Rich Text útvonal visszaolvasása alapján a korábbi „egy
 **Fontos következtetés:** a repository CI PASS nem bizonyítja, hogy a böngészős B működik. A felhasználói tapasztalat („félkövér sehogy nem működik”) ezért továbbra is érvényes, és a B runtime funkciót nem jelöljük PASS-nak.
 
 **Egyetlen aktuális folytatási pont:** a Rich Text teljes render/selection/command adatútvonalának újabb statikus auditja és a párhuzamos renderelési logika megszüntetésének megtervezése. Ezt követően csak minimális, egyetlen útvonalas javítás készül. Új Rich Text engine nem készül.
+
+
+## 40.4 — Párhuzamos Rich Text renderkód eltávolítva — 2026-09-21
+
+**Állapot:** [x] KÓDTAKARÍTÁS KÉSZ, RUNTIME TESZT MÉG HÁTRA.
+
+A 40.3 audit alapján a felesleges párhuzamos Rich Text renderelési útvonalat megszüntettük.
+
+Eltávolítva:
+- az `app.js` saját `renderRichTextInline()` függvénye;
+- az `app.js` saját `renderRichTextDocument()` függvénye;
+- a már nem használt `richTextToPlainText` import;
+- a régi `.richtext-mark-weight` CSS selector.
+
+Most a Canvas és az Inspector szerkesztőfelület is ugyanazt az egyetlen canonical renderfüggvényt használja:
+- `public/editor-v2/core/richtext-engine.js → renderRichTextEditor()`
+
+A B/I módosítás továbbra is ugyanazon canonical `toggleMark()` → `richtext.content.set` útvonalon történik.
+
+Statikus ellenőrzés PASS:
+- nincs `renderRichTextInline`;
+- nincs `renderRichTextDocument`;
+- nincs `richtext-mark-weight`;
+- nincs régi `fontWeight/weightSlider` Rich Text formázási útvonal;
+- nincs régi `richtext-editor.js` import/hivatkozás;
+- a Canvas Rich Text renderelése és az Inspector szerkesztő ugyanazt az engine-renderelőt használja.
+
+Commitok:
+- `a46e24ee76e4387f97a60231e41137351e74c7ad` — duplicate Canvas renderer eltávolítása;
+- `4331c91f0b9f84e49877d87fbfa16336b133fa65` — stale CSS eltávolítása.
+
+**Következő egyetlen lépés:** teljes editor-core CI újrafuttatása. Ha PASS, csak ezután jöhet a Cloudflare/browser runtime B ki/be teszt. Ha FAIL, kizárólag a teszt által jelzett regressziót javítjuk.
