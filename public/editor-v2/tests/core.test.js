@@ -7,7 +7,7 @@ import { createEditorState, activePage } from '../core/state.js';
 import { beginTransaction, commitTransaction, execute, executeBatch, rollbackTransaction } from '../core/commands.js';
 import { getProperty, listProperties, listPropertyGroups } from '../core/property-registry.js';
 import { hasResponsiveOverride, resolveResponsiveValue, setResponsiveValue } from '../core/responsive.js';
-import { isRichTextMarkActive, plainTextToRichText, toggleRichTextMark } from '../core/richtext-editor.js';
+import { getRichTextFontWeight, isRichTextMarkActive, isRichTextMarkRangeActive, plainTextToRichText, setRichTextFontWeight, toggleRichTextMark, toggleRichTextMarkRange } from '../core/richtext-editor.js';
 
 test('new document is structurally valid', () => {
   const document = createDocument();
@@ -211,6 +211,60 @@ test('Rich Text partial selection preserves existing marks and links', () => {
     { type: 'text', text: 'ci95', marks: ['italic', 'bold'], link: { href: 'https://example.com', target: '_blank' } },
     { type: 'text', text: '17', marks: ['italic'], link: { href: 'https://example.com', target: '_blank' } }
   ]);
+});
+
+test('Rich Text formatting engine applies font weight only to the selected range', () => {
+  const document = plainTextToRichText('Sanci9517');
+  const weighted = setRichTextFontWeight(document, 0, 5, 700);
+  assert.deepEqual(weighted.blocks[0].children, [
+    { type: 'text', text: 'Sanci', marks: [], fontWeight: 700 },
+    { type: 'text', text: '9517', marks: [] }
+  ]);
+  assert.equal(getRichTextFontWeight(weighted, 0, 5), 700);
+  assert.equal(getRichTextFontWeight(weighted, 5, 9), 400);
+  const mixed = setRichTextFontWeight(weighted, 2, 7, 600);
+  assert.deepEqual(mixed.blocks[0].children, [
+    { type: 'text', text: 'Sa', marks: [], fontWeight: 700 },
+    { type: 'text', text: 'nci', marks: [], fontWeight: 600 },
+    { type: 'text', text: '95', marks: [], fontWeight: 600 },
+    { type: 'text', text: '17', marks: [] }
+  ]);
+});
+
+test('Rich Text formatting engine preserves other inline marks while changing weight', () => {
+  const document = {
+    schemaVersion: 1,
+    type: 'richtext-document',
+    blocks: [{
+      type: 'paragraph',
+      children: [{
+        type: 'text',
+        text: 'Sanci9517',
+        marks: ['italic'],
+        link: { href: 'https://example.com', target: '_blank' }
+      }]
+    }]
+  };
+  const updated = setRichTextFontWeight(document, 3, 7, 700);
+  assert.deepEqual(updated.blocks[0].children, [
+    { type: 'text', text: 'San', marks: ['italic'], link: { href: 'https://example.com', target: '_blank' } },
+    { type: 'text', text: 'ci95', marks: ['italic'], link: { href: 'https://example.com', target: '_blank' }, fontWeight: 700 },
+    { type: 'text', text: '17', marks: ['italic'], link: { href: 'https://example.com', target: '_blank' } }
+  ]);
+});
+
+test('Rich Text formatting engine toggles italic through the same canonical range path', () => {
+  const document = plainTextToRichText('Sanci9517');
+  const updated = toggleRichTextMarkRange(document, 2, 7, 'italic');
+  assert.equal(isRichTextMarkRangeActive(updated, 2, 7, 'italic'), true);
+  assert.deepEqual(updated.blocks[0].children, [
+    { type: 'text', text: 'Sa', marks: [] },
+    { type: 'text', text: 'nci95', marks: ['italic'] },
+    { type: 'text', text: '17', marks: [] }
+  ]);
+  const reverted = toggleRichTextMarkRange(updated, 2, 7, 'italic');
+  assert.equal(isRichTextMarkRangeActive(reverted, 2, 7, 'italic'), false);
+  assert.deepEqual(reverted.blocks[0].children, [{ type: 'text', text: 'Sanci9517', marks: [] }]);
 });
 
 test('Rich Text Undo and Redo restore the exact structured document', () => {
