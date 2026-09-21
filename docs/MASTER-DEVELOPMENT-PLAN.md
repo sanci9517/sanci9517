@@ -1765,7 +1765,7 @@ Még valódi domain-gap: group/ungroup, component/template/media műveletek és 
 
 ## 40.29 — Editor v2 Page Delete implementáció — 2026-09-21
 
-**Állapot:** [~] KÓD ELKÉSZÜLT — CI és élő böngészős teszt hátra.
+**Állapot:** [x] PASS — felhasználói élő böngészős teszttel lezárva.
 
 A 40.28 szerinti következő egyetlen aktív pont, az Editor v2 biztonságos oldal-törlésének bekötése elkészült.
 
@@ -1799,3 +1799,14 @@ A 40.28 szerinti következő egyetlen aktív pont, az Editor v2 biztonságos old
 7. Utolsó oldal törlésének próbája → backend elutasítja, oldal megmarad.
 8. Diagnostics → 0 hiba normál esetben.
 9. Ezután GitHub CI ellenőrzés, majd MASTER lezárás.
+
+
+## 40.30 — Editor v2 Page Delete élő teszt PASS — 2026-09-21
+
+**Állapot:** [x] PASS — felhasználói visszaigazolással lezárva.
+
+A 40.29-ben elkészült oldal-törlés teljes élő böngészős tesztje a felhasználó visszajelzése alapján működik.
+
+Ellenőrzött terület: oldal törlés UI, megerősítés, lista frissülés, aktuális oldal kezelése, utolsó oldal védelme és hibamentes működés.
+
+**Következő egyetlen aktív pont:** a Command API következő valódi domain-hiánya, az **Editor v2 group / ungroup** teljes kód-auditja és szerződésének megtervezése; csak az audit után következhet kódmódosítás.
