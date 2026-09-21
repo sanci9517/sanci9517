@@ -123,9 +123,7 @@ export const RICH_TEXT_BLOCK_TYPES = Object.freeze(new Set([
   'paragraph', 'heading', 'quote', 'code', 'bulleted-list', 'numbered-list'
 ]));
 
-export const RICH_TEXT_MARKS = Object.freeze(new Set([
-  'bold', 'italic', 'underline', 'strike', 'code'
-]));
+export const RICH_TEXT_MARKS = Object.freeze(new Set([]));
 
 export function createEmptyRichText() {
   return {
