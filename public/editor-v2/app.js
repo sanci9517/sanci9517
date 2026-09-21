@@ -74,8 +74,9 @@ function verifyRichTextBoldRender(nodeId){
   const node=nodeId&&current?getNode(current,nodeId):null;
   const marked=(node?.props?.richText?.blocks||[]).flatMap(block=>block.children||[]).filter(inline=>inline?.marks?.includes('bold')&&inline.text);
   if(!marked.length)return;
-  const canvasNode=canvas.querySelector('[data-node-id="'+CSS.escape(nodeId)+'"] .richtext-content');
-  const strong=canvasNode?.querySelector('strong.richtext-mark-bold');
+  const canvasNode=Array.from(canvas.querySelectorAll('[data-node-id]')).find(el=>el.dataset.nodeId===nodeId);
+  const richTextCanvas=canvasNode?.querySelector('.richtext-content');
+  const strong=richTextCanvas?.querySelector('strong.richtext-mark-bold');
   diagnostics.verify(Boolean(strong),{code:'SANCI-VERIFY-E003',message:'A Rich Text canonical bold mark létrejött, de a Canvas nem hozott létre megfelelő <strong> elemet.',context:'Rich Text bold → Canvas DOM'});
   if(strong){
     const weight=window.getComputedStyle(strong).fontWeight;
