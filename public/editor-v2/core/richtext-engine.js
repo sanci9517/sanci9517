@@ -1,9 +1,5 @@
-/*
- * Sanci9517 Visual Editor v2 — Rich Text Engine
- *
- * Single source of truth: canonical Rich Text document.
- * DOM is only the editing surface. Formatting always uses one deterministic
- * range transform; there is no parallel mark/font-weight engine.
+/* Sanci9517 Visual Editor v2 — Rich Text Engine
+ * Plain structured Rich Text only. Inline B/I formatting is intentionally removed.
  */
 
 export function plainTextToRichText(text=''){
@@ -19,99 +15,17 @@ export function richTextToPlainText(document){
 }
 
 function clone(value){return structuredClone(value)}
-function inlineKey(inline){return JSON.stringify({marks:[...(inline.marks??[])].sort(),link:inline.link??null})}
+function inlineKey(inline){return JSON.stringify({link:inline.link??null})}
 function mergeRuns(children){
   const out=[];
   for(const child of children??[]){
-    const item={type:'text',text:String(child.text??''),marks:[...new Set(child.marks??[])]};
+    const item={type:'text',text:String(child.text??''),marks:[]};
     if(child.link)item.link=clone(child.link);
     const prev=out[out.length-1];
     if(prev&&inlineKey(prev)===inlineKey(item))prev.text+=item.text;
     else out.push(item);
   }
   return out.length?out:[{type:'text',text:'',marks:[]}];
-}
-function splitInline(inline,start,end){
-  const text=inline.text??'',parts=[];
-  if(start>0)parts.push({...clone(inline),text:text.slice(0,start)});
-  parts.push({...clone(inline),text:text.slice(start,end)});
-  if(end<text.length)parts.push({...clone(inline),text:text.slice(end)});
-  return parts;
-}
-function blocksWithOffsets(document){
-  const result=[];let offset=0;
-  for(let index=0;index<(document.blocks??[]).length;index++){
-    const block=document.blocks[index];
-    const children=block.children??[];
-    const length=children.reduce((n,x)=>n+(x.text?.length??0),0);
-    result.push({block,index,children,start:offset,end:offset+length});
-    offset+=length+1;
-  }
-  return result;
-}
-function transformChildren(children,from,to,transform){
-  const result=[];let offset=0;
-  for(const inline of children??[]){
-    const text=inline.text??'',start=offset,end=offset+text.length;
-    if(to<=start||from>=end){result.push(clone(inline))}
-    else{
-      const localFrom=Math.max(0,from-start),localTo=Math.min(text.length,to-start);
-      const parts=splitInline(inline,localFrom,localTo);
-      let partOffset=0;
-      for(const part of parts){
-        const selected=partOffset<localTo&&partOffset+part.text.length>localFrom;
-        result.push(selected?transform(part):part);
-        partOffset+=part.text.length;
-      }
-    }
-    offset=end;
-  }
-  return mergeRuns(result);
-}
-function transformRange(document,from,to,transform){
-  const next=clone(document);
-  for(const entry of blocksWithOffsets(next)){
-    if(to<=entry.start||from>=entry.end)continue;
-    const localFrom=Math.max(0,from-entry.start),localTo=Math.min(entry.end-entry.start,to-entry.start);
-    entry.block.children=transformChildren(entry.children,localFrom,localTo,transform);
-  }
-  return next;
-}
-
-export function toggleMark(document,from,to,mark){
-  if(!['bold','italic','underline','strike','code'].includes(mark))throw new Error('Unsupported Rich Text mark');
-  if(!Number.isInteger(from)||!Number.isInteger(to)||from<0||to<=from)throw new Error('Invalid Rich Text selection');
-  const ranges=blocksWithOffsets(document).filter(x=>to>x.start&&from<x.end);
-  const active=ranges.length>0&&ranges.every(entry=>{
-    const localFrom=Math.max(0,from-entry.start),localTo=Math.min(entry.end-entry.start,to-entry.start);
-    let offset=0,covered=false;
-    for(const inline of entry.children){
-      const end=offset+(inline.text?.length??0);
-      if(localTo>offset&&localFrom<end){covered=true;if(!inline.marks?.includes(mark))return false}
-      offset=end;
-    }
-    return covered;
-  });
-  return transformRange(document,from,to,inline=>{
-    const marks=[...(inline.marks??[])];
-    return {...inline,marks:active?marks.filter(x=>x!==mark):[...new Set([...marks,mark])]};
-  });
-}
-
-export function isMarkActive(document,from,to,mark){
-  if(!Number.isInteger(from)||!Number.isInteger(to)||from>=to)return false;
-  const ranges=blocksWithOffsets(document).filter(x=>to>x.start&&from<x.end);
-  if(!ranges.length)return false;
-  for(const entry of ranges){
-    const localFrom=Math.max(0,from-entry.start),localTo=Math.min(entry.end-entry.start,to-entry.start);
-    let offset=0;
-    for(const inline of entry.children){
-      const end=offset+(inline.text?.length??0);
-      if(localTo>offset&&localFrom<end&&!inline.marks?.includes(mark))return false;
-      offset=end;
-    }
-  }
-  return true;
 }
 
 export function getSelectionOffsets(editor){
@@ -136,10 +50,6 @@ export function restoreSelectionOffsets(editor,selection){
 function inlineElement(inline){
   let node=document.createElement('span');node.textContent=inline.text??'';
   if(inline.link){const link=document.createElement('a');link.href=inline.link.href;for(const key of ['target','rel','title'])if(inline.link[key])link[key]=inline.link[key];link.append(node);node=link}
-  for(const mark of [...(inline.marks??[])].reverse()){
-    const tag={bold:'strong',italic:'em',underline:'u',strike:'s',code:'code'}[mark];if(!tag)continue;
-    const wrapper=document.createElement(tag);wrapper.append(node);node=wrapper;
-  }
   return node;
 }
 
@@ -155,19 +65,6 @@ export function renderRichTextEditor(editor,documentModel){
   if(!editor.firstChild)editor.append(document.createElement('p'));
 }
 
-function marksFromNode(node){
-  const marks=[];let current=node.parentElement;
-  while(current){
-    const tag=current.tagName;
-    if(tag==='STRONG'||tag==='B')marks.push('bold');
-    if(tag==='EM'||tag==='I')marks.push('italic');
-    if(tag==='U')marks.push('underline');
-    if(tag==='S'||tag==='DEL')marks.push('strike');
-    if(tag==='CODE')marks.push('code');
-    current=current.parentElement;
-  }
-  return [...new Set(marks)];
-}
 function linkFromNode(node){
   const link=node.parentElement?.closest('a');
   return link?{href:link.getAttribute('href')||'',...(link.target?{target:link.target}:{}),...(link.rel?{rel:link.rel}:{}),...(link.title?{title:link.title}:{})}:null;
@@ -181,7 +78,7 @@ export function richTextEditorToDocument(editor){
     const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);let node;
     while(node=walker.nextNode()){
       if(!node.nodeValue)continue;
-      const item={type:'text',text:node.nodeValue,marks:marksFromNode(node)};const link=linkFromNode(node);if(link)item.link=link;block.children.push(item);
+      const item={type:'text',text:node.nodeValue,marks:[]};const link=linkFromNode(node);if(link)item.link=link;block.children.push(item);
     }
     block.children=mergeRuns(block.children);blocks.push(block);
   });
@@ -189,10 +86,11 @@ export function richTextEditorToDocument(editor){
 }
 
 export function setBlockType(document,from,to,type,level=1){
-  const next=clone(document);
-  for(const entry of blocksWithOffsets(next)){
-    if(to<=entry.start||from>=entry.end)continue;
-    entry.block.type=type;if(type==='heading')entry.block.level=Math.min(6,Math.max(1,Number(level)||1));else delete entry.block.level;
+  const next=clone(document);let offset=0;
+  for(const block of next.blocks??[]){
+    const length=(block.children??[]).reduce((n,x)=>n+(x.text?.length??0),0);const start=offset,end=offset+length;
+    if(to>start&&from<end){block.type=type;if(type==='heading')block.level=Math.min(6,Math.max(1,Number(level)||1));else delete block.level;}
+    offset=end+1;
   }
   return next;
 }
