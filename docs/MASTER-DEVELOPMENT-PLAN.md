@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.14  
+**Verzió:** MASTER-2.15  
 **Dátum:** 2026-09-21  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -2515,3 +2515,33 @@ Javítás:
 **Fontos:** a schema/engine kódot nem módosítottuk. Ez tisztán stale tesztadat javítás volt.
 
 **EGYETLEN AKTUÁLIS FOLYTATÁSI PONT:** az `a19db2c2cd3865b55e7fcb456be23f2189d3cc60` commit utáni Editor Core CI eredmény ellenőrzése. PASS nélkül nincs további funkciófejlesztés.
+
+
+## 40.9 — Rich Text lista assertion második korrekciója — 2026-09-21
+
+**Állapot:** [~] KÓD JAVÍTVA, AZ ÚJ CI ELLENŐRZÉSE HÁTRA.
+
+A #359 Editor Core Test továbbra is FAIL volt, de már csak 1 teszt maradt hibás:
+- 17 PASS / 1 FAIL;
+- hiba: `core.test.js:101:51`;
+- `Cannot read properties of undefined (reading '0')`.
+
+A teljes aktuális Rich Text schema visszaolvasása alapján azonosítottuk a pontos eltérést. A `normalizeRichText()` a listablokk `items` elemeit közvetlenül inline-child tömbökké normalizálja:
+
+`items: block.items.map((item) => normalizeRichTextInlineChildren(item?.children))`
+
+Ezért a canonical adatútvonalban a helyes elérés:
+
+`updated.blocks[2].items[0][0].text`
+
+nem pedig:
+
+`updated.blocks[2].items[0].children[0].text`
+
+Javítás:
+- Commit: `6efcbae496acd52f1a9d9b3b97393cba72be4c41`
+- csak a hibás teszt assertion módosult;
+- schema/engine/command kódhoz nem nyúltunk;
+- új párhuzamos Rich Text útvonal nem készült.
+
+**EGYETLEN AKTUÁLIS FOLYTATÁSI PONT:** a `6efcbae496acd52f1a9d9b3b97393cba72be4c41` commit utáni `Editor Core Test` CI eredmény ellenőrzése. PASS nélkül nincs további funkciófejlesztés.
