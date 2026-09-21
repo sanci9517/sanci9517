@@ -2564,3 +2564,29 @@ Javítás:
 **Egyetlen következő lépés:** a commit automatikus editor-core CI ellenőrzése. PASS után közvetlenül a Cloudflare/browser B ki/be runtime teszt következik.
 
 **Runtime teszt:** kijelölés → B → Inspectorban és Canvason látható félkövér → B újra → normál → Diagnostics 0. Más Rich Text funkciót most nem tesztelünk.
+
+
+## 40.6 — B/I Rich Text inline formázás teljes eltávolítása — 2026-09-21
+
+**Állapot:** [x] ELVETVE ÉS KITAKARÍTVA. A B/I funkciót nem tekintjük támogatott editorfunkciónak.
+
+A sikertelen runtime próbálkozások után a B/I teljes inline formázási útvonalat eltávolítottuk, nem maradt félig működő toolbar vagy párhuzamos megoldás.
+
+Eltávolítva:
+- B és I toolbar gombok és event handlerek az `app.js` Rich Text Inspectorból.
+- `toggleMark()` és `isMarkActive()` motorlogika.
+- inline mark felismerés/renderelés (`strong`, `em`, `u`, `s`, `code`) a Rich Text engine-ből.
+- inline mark tesztek; helyettük plain-text canonical Rich Text teszt maradt.
+- Rich Text mark CSS maradványok.
+- a schema támogatott inline mark készlete üres.
+
+Megmaradt:
+- canonical Rich Text dokumentum.
+- normál szövegszerkesztés.
+- blokk típusok, például bekezdés/címsor/idézet/kód.
+- link adat kezelése.
+- egyetlen Rich Text render/serialize útvonal.
+
+**Fontos:** a B/I későbbi visszaépítése új feladat lesz, külön architekturális döntéssel. A jelenlegi sikertelen implementációt nem foltozzuk tovább.
+
+**Következő lépés:** editor-core CI futtatás és az alap Rich Text működés ellenőrzése. Ha PASS, továbblépünk az editor következő tesztpontjára.
