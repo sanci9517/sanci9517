@@ -98,10 +98,10 @@ function renderInspector(){inspector.replaceChildren();const nodes=state?selecte
   const italicButton=makeButton('I','Dőlt ki/be',()=>applyMark('italic'));
   blockSelect.onchange=()=>{const selection=window.getSelection();const block=selection?.anchorNode?.parentElement?.closest('p,h1,h2,h3,h4,h5,h6,blockquote,pre');if(!block||!editor.contains(block))return;const tag=blockSelect.value==='paragraph'?'p':`h${blockSelect.value.split('-')[1]}`;const replacement=document.createElement(tag);while(block.firstChild)replacement.append(block.firstChild);block.replaceWith(replacement);sync({render:true});richTextDirty=false;editor.focus()};
   editor.addEventListener('input',()=>{saveRichTextSelection();sync({render:false});updateMarkButtonState()});
-  editor.addEventListener('mouseup',()=>{saveRichTextSelection();updateMarkButtonState();updateWeightControl()});
-  editor.addEventListener('keyup',()=>{saveRichTextSelection();updateMarkButtonState();updateWeightControl()});
-  editor.addEventListener('select',()=>{saveRichTextSelection();updateWeightControl()});
-  document.addEventListener('selectionchange',()=>{if(document.activeElement===editor||editor.contains(document.activeElement)){saveRichTextSelection();updateMarkButtonState();updateWeightControl()}});
+  editor.addEventListener('mouseup',()=>{saveRichTextSelection();updateMarkButtonState()});
+  editor.addEventListener('keyup',()=>{saveRichTextSelection();updateMarkButtonState()});
+  editor.addEventListener('select',()=>{saveRichTextSelection();updateMarkButtonState()});
+  document.addEventListener('selectionchange',()=>{if(document.activeElement===editor||editor.contains(document.activeElement)){saveRichTextSelection();updateMarkButtonState()}});
   editor.addEventListener('blur',()=>{if(richTextDirty){sync({render:true});richTextDirty=false}});
   const boldButton=makeButton('B','Félkövér ki/be',()=>applyMark('bold'));
   toolbar.append(blockSelect,boldButton,italicButton);
