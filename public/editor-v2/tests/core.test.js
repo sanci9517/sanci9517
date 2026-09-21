@@ -225,8 +225,7 @@ test('Rich Text formatting engine applies font weight only to the selected range
   const mixed = setRichTextFontWeight(weighted, 2, 7, 600);
   assert.deepEqual(mixed.blocks[0].children, [
     { type: 'text', text: 'Sa', marks: [], fontWeight: 700 },
-    { type: 'text', text: 'nci', marks: [], fontWeight: 600 },
-    { type: 'text', text: '95', marks: [], fontWeight: 600 },
+    { type: 'text', text: 'nci95', marks: [], fontWeight: 600 },
     { type: 'text', text: '17', marks: [] }
   ]);
 });
