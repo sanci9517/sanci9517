@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.37  
+**Verzió:** MASTER-2.39.38  
 **Dátum:** 2026-09-21  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-> **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd kizárólag a 35. fejezetben kijelölt **EGYETLEN AKTÍV PONTBÓL** folytatni. Más fejezet `[ ]` pontja nem jelent aktuális folytatási pontot.
+> **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd kizárólag a 35. fejezetben kijelölt **aktuális munkasávokból** folytatni. Más fejezet `[ ]` pontja nem jelent aktuális folytatási pontot.
 
 ---
 
@@ -55,7 +55,7 @@ Minden aktív pont:
 
 Sikertelen tesztnél **nem lépünk tovább**.
 
-## 00.4 Folyamatos funkcióbővítés
+## 00.4a Folyamatos funkcióbővítés
 A cél nem egy egyszer elkészített minimális editor. A Visual Editor és a teljes platform **folyamatosan bővülő rendszer**.
 
 Ha a fejlesztés során:
@@ -323,7 +323,7 @@ Minden mutáció validation + history + ahol szükséges audit + rollback kompat
 
 **Audit állapot:** a jelenlegi `commands.js` stabilan lefedi és teszteli az element CRUD/hierarchy/selection/style/responsive/content/lock, Rich Text, undo/redo és transaction/batch alapokat. A 5.2 teljes action-katalógusa viszont még nem teljes: különösen a `move`, `resize`, `group`, `ungroup`, page-level és component/template/media/persistence actionök további kanonikus Command réteget igényelnek. Ezeket nem szabad UI-specifikus kerülőútként megvalósítani.
 
-## 5.3 — Command API coverage audit — AKTÍV
+## 5.3 — Command API coverage audit — LEZÁRVA
 **Cél:** a 5.2-ben felsorolt action-katalógust összevetni a tényleges implementációval, tesztekkel és Page Model-lel, majd a hiányzó actionöket függőségi sorrendben, egyetlen kanonikus command-rendszerben megvalósítani.
 
 Első aktív részfeladat: **`move` + `resize` Command szerződés és meglévő geometry útvonal auditja.**
@@ -453,7 +453,8 @@ A 7.1 pont nem az aktuális folytatási pont. Az itt maradt feladatok későbbi 
 - [ ] egységes dark Sanci design — későbbi
 
 ## 7.2 Toolbar
-- [ ] page name- [ ] save status
+- [ ] page name
+- [ ] save status
 - [ ] undo/redo
 - [ ] preview
 - [ ] publish preparation
@@ -496,14 +497,14 @@ A 7.1 pont nem az aktuális folytatási pont. Az itt maradt feladatok későbbi 
 - [x] geometry style mapping
 
 ## 8.2 Selection
-- [ ] click
+- [x] click alap
 - [ ] hover
 - [ ] selected outline
 - [ ] parent highlight
-- [ ] multi-select
+- [~] multi-select — PC implementálva, browser/CI teszt pending; mobil/touch külön párhuzamos sáv
 - [ ] keyboard navigation
 - [ ] escape/parent navigation
-- [ ] tree/canvas sync
+- [~] tree/canvas sync — közös selection helper implementálva, teljes teszt pending
 
 ## 8.3 Drag/drop és manipulation
 - [ ] drag
@@ -936,7 +937,7 @@ Templates:
 - [ ] rename
 - [ ] edit
 - [ ] duplicate
-- [ ] delete
+- [x] delete — Editor v2-ben implementálva és felhasználó által élőben tesztelve
 - [ ] slug
 - [ ] title
 - [ ] metadata
@@ -1069,7 +1070,8 @@ Régi tesztoldalak csak a valódi oldalak biztonságos migrációja után:
 - [ ] viewer statistics
 - [ ] followers/subscribers where available
 - [ ] VOD
-- [ ] clips- [ ] events/webhooks where applicable
+- [ ] clips
+- [ ] events/webhooks where applicable
 
 ## YouTube
 - [ ] channel
@@ -1268,7 +1270,8 @@ Secrets remain Cloudflare Secrets; external APIs are normalized behind services.
 - [ ] large-tree editor performance
 - [ ] history memory limits
 - [ ] autosave efficiency
-- [ ] API latency monitoring- [ ] production smoke test
+- [ ] API latency monitoring
+- [ ] production smoke test
 - [ ] visual regression baseline
 
 ---
@@ -1397,56 +1400,37 @@ Minden jelentős editor/platform bővítés előtt ellenőrizni kell:
 - [x] Panel width min/max: felhasználói teszt PASS.
 - [x] Inspector kapcsolat 8.1–8.6: felhasználói tesztek PASS.
 
-## JELENLEGI EGYETLEN AKTÍV PONT — EZT KELL FOLYTATNI
-**10.1.2.2 — Rich Text formázási motor teljes újratervezése.**
+## JELENLEGI AKTÍV MUNKASÁVOK — A MASTER EGYETLEN FOLYTATÁSI IGAZSÁGA
 
-A jelenlegi félkövér/font-weight megoldást nem foltozzuk tovább. A Rich Text formázást modell-alapú tranzakciós rendszerként építjük újra, ahol a DOM csak szerkesztési nézet és a felhasználói Selection hordozója; a kanonikus Page Model marad az egyetlen igazságforrás. A cél az, hogy a félkövér, dőlt és későbbi inline formázások ugyanazon stabil mechanizmuson működjenek.
+A korábbi, már lezárt Rich Text B/I és Elements-palette tesztpontok nem lehetnek aktív folytatási pontok. A jelenlegi MASTER állapotot a 40.34 és az alábbi két párhuzamos munkasáv határozza meg.
 
-**9.1.0 — Elements panel „elem hozzáadása” stabilizálás — IMPLEMENTÁLVA, FELHASZNÁLÓI TESZT HÁTRA**
+### A — PC/Desktop multi-select
+- [x] canonical multi-select interaction implementáció
+- [ ] teljes browser teszt
+- [ ] Editor Core/CI kapu
+- [ ] regresszióteszt
+- [ ] felhasználói PASS
 
-Elkészült:
-- Leaf elem kijelölése esetén az új elem nem a leaf node alá kerül, hanem automatikusan a legközelebbi érvényes szülőbe.
-- Container jellegű kijelölés esetén az új elem továbbra is közvetlenül a kijelölt elem alá kerül.
-- Az Elements palette korábbi `undefined` típusú bejegyzéseihez canonical node type értékek kerültek.
-- Az add művelet továbbra is a meglévő `element.add` Command → Validation → History → Page Model láncot használja.
+### B — Mobile/Touch multi-select
+- [ ] teljes touch interaction audit
+- [ ] long-press → multi-select mód
+- [ ] további tap → add/remove
+- [ ] látható multi-select mód és kijelölt elemszám
+- [ ] Kész / Mégse működés
+- [ ] Canvas + Layers közös selection
+- [ ] touch edge case-ek: scroll vs long-press, accidental tap, locked/root, nested nodes
+- [ ] mobile browser teszt
+- [ ] regresszió + felhasználói PASS
 
-Implementációs commitok:
-- app: `1bc79fde326890a75da5ac2dee6172adc42984fd`
-- schema: `496b976af259e44f3ced9ad2bf1ef9c9fd23f23e`
+### Függőségi kapu
+**Group/Ungroup implementáció csak az A és B multi-select kapu PASS állapota után indulhat.**
 
-Statikus visszaolvasás: PASS. A javítás után a palette csoportfejlécei láthatók, de a felhasználói visszajelzés alapján a kívánt alapállapot az, hogy a csoportok csukva legyenek; ezért a csoportok alapértelmezett állapotát visszaállítottuk `collapsed` értékre. A korábbi „teljesen eltűnt” problémát az okozta, hogy a panel/csoport láthatóságot összekevertük: a csoport fejlécének láthatónak kell maradnia, csak a benne lévő elemgombok legyenek csukva.
-Felhasználói/runtime teszt még nincs, ezért `[x]` státusz nem adható.
-
-Javító commitok:
-- `257577335e046ddf8584ae832ed5f2f904554f9b` — palette csoportok láthatóvá tétele.
-- `51a63531176f8f4a00eee378e3cce52cb03897f8` — csoportok csukott alapállapotának visszaállítása.
-
-### ÚJ KÖVETELMÉNY — 9.1.0 elemkatalógus információs súgó
-A felhasználó kéri, hogy az Elements palette minden hozzáadható elemgombján legyen egy kis **ⓘ információs ikon**, amely egyértelműen leírja, mi az adott elem és mire használható. Az ikon ne indítsa el az elem hozzáadását; a teljes elemgomb továbbra is hozzáadásra szolgál.
-
-Első körben az Elements palette készül el. A szerkesztő egyéb gombjaihoz külön következő UX-lépésben készül ugyanilyen konzisztens információs súgó.
-
-Követelmény: minden jelenleg támogatott palette elemhez legyen leírás; az információs UI ne fedje el tartósan a vásznat; billentyűzettel is elérhető legyen; a funkció ne vezessen be második state/command rendszert.
-
-### 9.1.0 aktuális javítás — teljes érintett editor-kód audit + Elements info UI
-A teljes releváns Editor v2 kódlánc újra lett nézve. A lista eltűnésének konkrét hibája megvan: a `renderPalette()` létrehozta a kategória `section` elemet, de nem fűzte hozzá az `#elementList` gyökérhez. Emiatt a DOM-ban létrejött elemek nem jelentek meg.
-
-Javítások:
-- `app.js`: `root.append(section)` visszaállítva;
-- az Elements kategóriák továbbra is **csukott alapállapotból** indulnak;
-- minden elemhez külön kis **ⓘ / i** gomb került;
-- az i gomb nem ad hozzá elemet, hanem helyben megjeleníti az elem rövid leírását;
-- minden jelenlegi palette elemhez leírás került, fallback szöveggel;
-- CSS az info gombhoz és a leíráshoz hozzáadva;
-- editor cache verzió frissítve.
-
-Commitok:
-- app: `b972d2a1ea281966a5387a7bc1ca07d662504dc6`
-- CSS: `ffd57c6e1e4840def8d104428adf8f9b8b14f761`
-- cache: `c4e8ef533c1302d4850bdfa993d59d2ebe8c9f7a`
-
-Statikus visszaolvasás: PASS — `root.append(section)`, info vezérlő és leírás-adatmodell jelen van.
-Felhasználói/runtime teszt még hátra. A szerkesztő többi gombjához tartozó i-súgó külön következő UX-lépés lesz, miután ez a palette tesztelve van.
+### Következő végrehajtási sorrend
+1. A PC multi-select élő tesztje külön lezárható.
+2. B mobil/touch audit és implementáció párhuzamosan haladhat.
+3. Mindkét sáv PASS után Group/Ungroup contract → command → unit/integration → CI → browser.
+4. Ezután a Command API következő valódi domain-gapjei: page lifecycle (rename/duplicate teljes Editor v2 integráció), component/template, media, persistence.
+5. A roadmap többi [ ] pontja nem veszik el; a 40.x szakasz minden újonnan azonosított hiányt pontosít.
 
 ### 9.1.0 — Elements palette javítás — syntax/runtime előellenőrzés
 A frissítés után a böngésző az `app.js` betöltésekor syntax error-t jelzett: `app.js?v=20260918-8:10:492`.
@@ -1821,6 +1805,170 @@ Ellenőrzött terület: oldal törlés UI, megerősítés, lista frissülés, ak
 
 **Következő egyetlen aktív pont:** a Command API következő valódi domain-hiánya, az **Editor v2 group / ungroup** teljes kód-auditja és szerződésének megtervezése; csak az audit után következhet kódmódosítás.
 
+
+## 40.35 — TELJES MASTER HIÁNYOSSÁGI AUDIT — 2026-09-21
+
+**Állapot:** [x] AUDIT PASS — a MASTER szerkezete átvizsgálva; státusz- és lefedettségi pontosítások rögzítve, azonosított architekturális hiányterületek felvéve.
+
+### 1. Státuszkonzisztencia
+- A 35. fejezet korábbi Rich Text B/I aktív pontja elavult volt; lecserélve a tényleges 40.34-es PC + mobil multi-select munkasávokra.
+- A 05.3 korábbi „AKTÍV” jelölése lezártra korrigálva.
+- A 08.2 multi-select státusza a tényleges implementációhoz igazítva: [~].
+- A Page CRUD törlés státusza a tényleges Editor v2 + élő teszt állapothoz igazítva.
+- A 40.x történeti bejegyzések megmaradnak, de nem írhatják felül a jelenlegi 35. fejezetet.
+
+### 2. Kötelezően felvett / pontosított hiányterületek
+
+**A. Mobil/touch teljes editor**
+- [ ] touch selection, long-press, multi-select mode
+- [ ] drag/drop touch
+- [ ] resize handles touch
+- [ ] pan/zoom gesture
+- [ ] touch target méretek
+- [ ] scroll-vs-drag konfliktus
+- [ ] keyboard nélküli alternatívák
+- [ ] mobile toolbar/sheet/bottom-sheet UX
+- [ ] mobile Inspector
+- [ ] orientation/safe-area
+- [ ] iOS/Android browser regression
+
+**B. Collaboration / concurrency**
+- [ ] multi-user presence
+- [ ] locking/ownership
+- [ ] realtime collaboration, ha indokolt
+- [ ] optimistic concurrency
+- [ ] conflict resolution
+- [ ] merge/diff
+- [ ] operation ordering
+- [ ] offline queue
+- [ ] reconnect
+- [ ] collaboration audit
+
+**C. Forms + data actions**
+- [ ] form schema
+- [ ] field validation
+- [ ] submit action
+- [ ] success/error/loading state
+- [ ] spam/rate protection
+- [ ] server action/API binding
+- [ ] email/notification integration
+- [ ] data privacy/retention
+- [ ] secure secrets boundary
+
+**D. Custom code / Embed biztonság**
+- [ ] HTML/embed sandbox policy
+- [ ] iframe allowlist
+- [ ] script execution policy
+- [ ] CSP
+- [ ] third-party isolation
+- [ ] unsafe HTML sanitization
+- [ ] custom CSS scope
+- [ ] custom JS explicit permission
+- [ ] preview/publish security validation
+
+**E. Localization / i18n**
+- [ ] UI language architecture
+- [ ] content language
+- [ ] locale-aware dates/numbers
+- [ ] timezone
+- [ ] translation fallback
+- [ ] per-page/per-content locale
+- [ ] SEO hreflang where needed
+
+**F. Legal / privacy / consent**
+- [ ] privacy policy/content surface
+- [ ] cookie/consent model where legally required
+- [ ] analytics consent
+- [ ] external embed consent where needed
+- [ ] data export/delete
+- [ ] retention/deletion policy
+- [ ] audit access controls
+
+**G. Deployment / release engineering**
+- [ ] branch promotion strategy
+- [ ] preview deployments
+- [ ] migration gating
+- [ ] deploy rollback
+- [ ] feature flags
+- [ ] environment separation
+- [ ] release notes
+- [ ] production smoke automation
+- [ ] CI required checks
+- [ ] cache/version invalidation strategy
+
+**H. Observability**
+- [ ] structured logs
+- [ ] request correlation IDs
+- [ ] error aggregation
+- [ ] performance metrics
+- [ ] API latency/error dashboards
+- [ ] D1 query monitoring
+- [ ] R2/media failure monitoring
+- [ ] alert thresholds
+- [ ] privacy-safe logging
+
+**I. Editor schema/version migration**
+- [ ] schema version registry
+- [ ] document migration runner
+- [ ] backward compatibility policy
+- [ ] migration preview
+- [ ] migration rollback
+- [ ] fixture corpus
+- [ ] corrupted-document recovery
+
+**J. Testing infrastructure**
+- [ ] deterministic fixture set
+- [ ] visual regression baseline
+- [ ] responsive screenshot tests
+- [ ] accessibility automated checks
+- [ ] performance budgets
+- [ ] browser matrix
+- [ ] mobile device matrix
+- [ ] migration tests
+- [ ] backup/restore drill
+- [ ] concurrency tests
+- [ ] security regression suite
+
+**K. Editor UX alapfunkciók, amelyek még explicit kaput igényelnek**
+- [ ] hover/selection visuals
+- [ ] keyboard navigation
+- [ ] parent navigation / Escape
+- [ ] drag/reorder/reparent
+- [ ] resize handles
+- [ ] guides/snap/alignment/distribute
+- [ ] complete Layers/Navigator
+- [ ] complete Inspector
+- [ ] toolbar/save/preview/publish UX
+- [ ] zoom/pan
+- [ ] clipboard/context menu
+- [ ] command palette
+- [ ] complete mobile shell
+
+**L. Content/editor feature completeness**
+- [ ] typography
+- [ ] spacing/box model
+- [ ] flex/grid
+- [ ] appearance
+- [ ] transform/animation
+- [ ] interactions
+- [ ] media workflow
+- [ ] dynamic bindings
+- [ ] components/variants/templates
+- [ ] Rich Text advanced features; a korábbi B/I elvetése nem jelenti a teljes Rich Text domain lezárását
+- [ ] lists and structured content
+- [ ] links/media embedding
+- [ ] accessibility metadata
+
+### 3. Kritikus függőségi sorrend
+A hiányosságok nem egyszerre kerülnek kódolásra. A MASTER sorrendje:
+
+**canonical schema → selection/hierarchy → group/ungroup → layout/manipulation → Inspector → responsive → components/templates → media → bindings/forms → page lifecycle → draft/preview/publish → version/rollback → backup/restore → security/accessibility/performance → AI/automation → production hardening.**
+
+### 4. Új szabály
+Egy roadmap [ ] pont csak akkor válhat [x]-re, ha implementáció, megfelelő unit/integration/CI, szükséges browser/production teszt, regresszió és felhasználói visszaigazolás is PASS, és a MASTER ugyanebben a lépésben frissült.
+
+### 5. Következő aktív pont
+**A + B multi-select munkasáv folytatása. Group/Ungroup csak a két multi-select kapu PASS után.**
 
 ## 40.31 — Group / Ungroup teljes kód-audit — 2026-09-21
 
