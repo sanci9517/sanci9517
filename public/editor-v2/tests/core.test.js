@@ -7,7 +7,7 @@ import { createEditorState, activePage } from '../core/state.js';
 import { beginTransaction, commitTransaction, execute, executeBatch, rollbackTransaction } from '../core/commands.js';
 import { getProperty, listProperties, listPropertyGroups } from '../core/property-registry.js';
 import { hasResponsiveOverride, resolveResponsiveValue, setResponsiveValue } from '../core/responsive.js';
-import { isMarkActive, plainTextToRichText, toggleMark } from '../core/richtext-engine.js';
+import { plainTextToRichText } from '../core/richtext-engine.js';
 
 test('new document is structurally valid', () => {
   const document = createDocument();
