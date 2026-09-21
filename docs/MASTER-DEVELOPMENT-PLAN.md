@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.21  
+**Verzió:** MASTER-2.22  
 **Dátum:** 2026-09-21  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -2018,3 +2018,23 @@ Ellenőrzött:
 A teszt alapján a Geometry Inspector kézi X/Y/width/height útvonala ebben a browser smoke/regression körben PASS. Új kódmódosítás nem történt.
 
 **Egyetlen aktuális folytatási pont:** 40.13 / 5. pont — lock állapot és látható lock jelzés.
+
+
+## 40.15 — Editor v2 smoke/regression: Lock — 2026-09-21
+
+**Állapot:** [x] PASS — felhasználói visszaigazolással lezárva.
+
+A 40.13 / 5. Lock tesztpont ellenőrzése megtörtént.
+
+Ellenőrzött:
+1. elem lockolása;
+2. látható lock jelzés;
+3. locked elem védett módosítási/törlési műveletei;
+4. unlock után újra szerkeszthető;
+5. Canvas és Layers állapot szinkronban marad.
+
+**Felhasználói visszaigazolás:** „Pipa”.
+
+A teszt alapján a lock/unlock és a hozzá tartozó védelmi viselkedés ebben a browser smoke/regression körben PASS. Új kódmódosítás nem történt.
+
+**Egyetlen aktuális folytatási pont:** 40.13 / 6. pont — Rich Text tartalom módosítása és mentése.
