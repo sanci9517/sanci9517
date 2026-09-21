@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.36  
+**Verzió:** MASTER-2.37  
 **Dátum:** 2026-09-21  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -338,7 +338,23 @@ Követelmények:
 - Következtetés: a következő kódolási lépésben a `move` és `resize` legyen kanonikus command-alias/contract a meglévő responsive geometry útvonal fölött, ne új state és ne új renderer.
 
 **Audit állapot:** [x] 05.3 audit kész, kódmódosítás nélkül.
-**Következő egyetlen kódolási pont:** `move` + `resize` command implementáció + unit tesztek, a meglévő `responsive.set` geometry útvonal változatlanul megtartásával.
+
+**Korrekció a korábbi command-tervhez — 2026-09-21:** a `move` és `resize` külön commandként történő bevezetése nem indokolt. A teljes geometry útvonal már canonical `responsive.set` commandon működik, és a külön alias command csak párhuzamos mutation API-t hozna létre. A 5.2 action-katalógusban ezért a `move`/`resize` fogalmakat capabilityként kezeljük, nem kötelező külön command-névként.
+
+**Command fejlesztési szabály:** minden új command csak akkor készülhet, ha valóban új domain-műveletet képvisel. Az implementáció sorrendje:
+1. canonical adatmodell és határ meghatározása;
+2. command contract (payload + validation + precondition + error);
+3. egyetlen mutation útvonal a Page Modelhez;
+4. history snapshot / transaction kompatibilitás;
+5. rollback/error safety;
+6. audit/persistence integráció, ha szerveroldali művelet;
+7. unit/integration teszt;
+8. CI;
+9. csak ezután UI és browser teszt.
+
+**Külön szabály:** page-level persistence commandok (`page.create/delete/rename/duplicate`, `save`, `publish`, `rollback`, `restore`) nem kezelhetők egyszerű node-mutationként. Ezeknél a D1 API a persistence boundary, az Editor Core history pedig csak a lokális dokumentumra vonatkozik. A szerveroldali művelet sikerét/hibáját külön kell kezelni.
+
+**Következő hiányzó command-terület:** a jelenlegi aktív `page.delete` funkció lezárása után a 5.2 katalógusból a valóban új, kanonikus domain-műveletek auditja következik; elsőként `group/ungroup`, majd component/template/media/persistence területek.
 
 ---
 
@@ -1723,3 +1739,25 @@ A MASTER korábbi `page.create/delete/rename/duplicate` megfogalmazása túl tá
 **Kódmódosítás ebben az auditlépésben:** nem történt.
 
 **Következő egyetlen aktív pont:** `page.delete` Editor v2 implementáció → unit/integration teszt → GitHub CI → élő browser teszt → MASTER lezárás.
+
+
+## 40.28 — Command API fejlesztési szabályok és sorrend összehangolása — 2026-09-21
+
+**Állapot:** [x] AUDIT / TERV PASS — kódmódosítás még nem történt.
+
+A 05.2/05.3 Command API tervet összevetettük a tényleges `commands.js`, Page Model, history, responsive geometry és tesztstruktúrával. A tervet korrigáltuk, hogy ne követeljen mesterséges `move`/`resize` commandokat, miközben a funkciók már működnek a canonical `responsive.set` útvonalon.
+
+### Kötelező command-fejlesztési lánc
+- contract → validation/precondition → canonical Page Model mutation → history/transaction → rollback/error safety → szükség esetén D1/audit persistence → unit/integration test → CI → UI/browser test.
+
+### Canonical határok
+- **Element command:** lokális Page Model mutation, központi history-val.
+- **Page lifecycle command:** szerveroldali D1 persistence boundary; nem szabad egyszerű node historyként kezelni.
+- **Canvas:** csak renderel, nem kap külön mutation state-et.
+- **Inspector/UI:** commandot hív, nem közvetlenül módosítja a Page Modelt.
+
+### Jelenlegi command coverage
+Már stabil: element add/update/content, richtext content, style, responsive, visibility, lock, duplicate/delete, hierarchy reparent/reorder, selection, undo/redo, transaction/batch.
+Még valódi domain-gap: group/ungroup, component/template/media műveletek és page lifecycle/persistence műveletek teljes Editor v2 integrációja.
+
+**Következő egyetlen aktív kódpont továbbra is:** `page.delete` Editor v2 bekötése a már meglévő backend DELETE API-ra, majd annak tesztkapuja. Ezután folytatjuk a command-katalógust függőségi sorrendben.
