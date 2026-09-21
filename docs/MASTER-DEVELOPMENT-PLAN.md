@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.32  
+**Verzió:** MASTER-2.33  
 **Dátum:** 2026-09-21  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -327,7 +327,18 @@ Követelmények:
 7. unit/integration teszt készüljön az actionökre és edge case-ekre;
 8. user browser test csak a statikus/CI kapu után.
 
-**Egyetlen következő fejlesztési lépés:** a `move` és `resize` actionök teljes adatfolyamának auditja, kódmódosítás nélkül.
+**Audit eredmény — 2026-09-21:**
+- A jelenlegi geometry source of truth a Page Model node `style` + `responsive[device]`.
+- A Canvas Engine csak feloldja és rendereli a `x/y/width/height` értékeket; nem mutál state-et.
+- A Geometry Inspector jelenleg közvetlenül a kanonikus `responsive.set` commandot hívja X/Y/width/height módosítására.
+- Külön `move` és `resize` command jelenleg nincs.
+- Ez nem jelent második geometry rendszert, de a 5.2 action-katalógus és a tényleges Command API között coverage-hiány van.
+- A `position.x` / `position.y` és `size.width` / `size.height` property-k már ugyanarra a responsive style adatra mutatnak.
+- Jelenleg nincs külön canvas drag/resize interakciós adatfolyam az `app.js`-ben; ezért most nem szabad UI-szintű drag/resize kódot hozzáadni.
+- Következtetés: a következő kódolási lépésben a `move` és `resize` legyen kanonikus command-alias/contract a meglévő responsive geometry útvonal fölött, ne új state és ne új renderer.
+
+**Audit állapot:** [x] 05.3 audit kész, kódmódosítás nélkül.
+**Következő egyetlen kódolási pont:** `move` + `resize` command implementáció + unit tesztek, a meglévő `responsive.set` geometry útvonal változatlanul megtartásával.
 
 ---
 
