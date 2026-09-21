@@ -309,7 +309,12 @@ export function toggleRichTextMarkRange(document,start,end,mark){
   return transformRichTextRange(document,a,b,inline=>{
     const next=structuredClone(inline);
     const marks=[...(next.marks||[])];
-    next.marks=allActive?marks.filter(value=>value!==mark):[...new Set([...marks,mark])];
+    const active=allActive;
+    next.marks=active?marks.filter(value=>value!==mark):[...new Set([...marks,mark])];
+    if(mark==='bold'){
+      if(active) next.fontWeight=400;
+      else next.fontWeight=700;
+    }
     return next;
   });
 }
