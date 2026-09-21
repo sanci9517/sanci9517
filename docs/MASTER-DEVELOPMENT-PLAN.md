@@ -2241,3 +2241,11 @@ Commit: `6348f4276420d97d2b8fda2a9b7862d501ec1e78`.
 Statikus visszaolvasás: PASS — a serializer új `propsForTextNode()` útvonala, `fontWeight` AST-mezője, link/mark feldolgozás és a meglévő range engine jelen van.
 
 **Egyetlen következő teszt:** GitHub CI/status ellenőrzés a commiton. Ha PASS, utána külön mobil runtime teszt következik; ha FAIL, csak a hibát javítjuk.
+
+
+### 2026-09-21 — CI állapot a fontWeight serializer commit után
+**Állapot:** [~] KÓD ELKÉSZÜLT, CI ELLENŐRZÉS NEM ELÉRHETŐ A CONNECTORON.
+
+A `6348f4276420d97d2b8fda2a9b7862d501ec1e78` commithez a GitHub combined status üres, és a commit workflow-run lekérdezés sem adott vissza futást. Ezért CI PASS-t nem állítunk.
+
+**Következő egyetlen lépés:** a Cloudflare automatikus build/deploy után mobilon célzottan ellenőrizni a Rich Text 100–900 betűvastagság útvonalat: szöveg → kijelölés → 700 → Canvas → 400 → Canvas. Diagnosticsnak 0 hibát kell mutatnia. Más funkciót nem tesztelünk.
