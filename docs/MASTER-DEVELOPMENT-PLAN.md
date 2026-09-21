@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.18  
+**Verzió:** MASTER-2.19  
 **Dátum:** 2026-09-21  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -2608,7 +2608,7 @@ Javítás:
 A felhasználó visszaigazolta, hogy az előző javítás után az editor-v2 élőben működik. A következő lépés nem új funkciófejlesztés, hanem a jelenlegi editor fő működési útvonalainak ellenőrzése.
 
 Tesztelendő sorrend:
-1. oldal betöltése és editor shell;
+1. oldal betöltése és editor shell — **[x] PASS**;
 2. elem hozzáadása a palettából;
 3. kijelölés és Layers kapcsolat;
 4. Geometry: X/Y/szélesség/magasság;
@@ -2619,6 +2619,8 @@ Tesztelendő sorrend:
 9. mentés és újratöltés;
 10. Diagnostics: 0 hiba.
 
+**1. pont tesztmegjegyzés:** a teszt során megjelenő „lock miatt nem törölhető” jelzés nem hiba. Ez a védett locked elemre vonatkozó elvárt működés, ezért nem nyitott regresszió.
+
 **Szabály:** csak a ténylegesen hibás tesztpontot javítjuk. Új funkciót addig nem építünk, amíg ez a smoke/regression kapu nincs lezárva.
 
-**Egyetlen aktuális folytatási pont:** az 1. pont, az editor shell és oldalbetöltés ellenőrzése.
+**Egyetlen aktuális folytatási pont:** a 2. pont, elem hozzáadása a palettából; ellenőrizni kell a létrehozást, Canvas-megjelenést, Layers-megjelenést és kijelölhetőséget.
