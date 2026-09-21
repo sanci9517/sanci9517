@@ -89,11 +89,7 @@ function inlineRuns(blockEl){
     const text=node.nodeValue||'';
     if(!text)continue;
     const run={type:'text',text,marks:marksForTextNode(node)};
-    const weightNode=node.parentElement?.closest('[data-font-weight]');
-    const legacyBold=run.marks.includes('bold');
-    if(weightNode?.dataset.fontWeight)run.fontWeight=Math.min(900,Math.max(100,Number(weightNode.dataset.fontWeight)||400));
-    else if(legacyBold)run.fontWeight=700;
-    const link=linkForTextNode(node);if(link)run.link=link;
+        const link=linkForTextNode(node);if(link)run.link=link;
     runs.push(run);
   }
   return runs.length?runs:[{type:'text',text:'',marks:[]}];
