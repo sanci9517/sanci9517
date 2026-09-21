@@ -2092,6 +2092,14 @@ Javítás:
 Ha ez sikeres, csak utána teszteljük külön az italic Inspector → canonical → Canvas adatútját.
 
 **Még nem lezárható:** Save/Reload, Undo/Redo, mobil regresszió, lista/link és egyéb Rich Text funkciók.
+
+### 2026-09-21 — Azonnali Canvas-frissítés formázás után
+- A Rich Text `+ / −` font-weight és dőlt művelet eddig `render:false` mellett módosította a canonical modellt, ezért a Canvas csak későbbi teljes rendernél frissült.
+- Javítás: a formázási művelet továbbra sem rendereli újra az Inspectort, de sikeres canonical módosítás után azonnal meghívja a `renderCanvas()`-t.
+- Commit: `8c4129df2f6d55c941a2fac8792b4a040d6ffa2e`
+- Tesztállapot: kódjavítás kész, runtime/Cloudflare deploy ellenőrzés még nincs lezárva.
+- Következő egyetlen teszt: Rich Text szöveg kijelölése → `+` → Canvas azonnal változik → `+` → újabb változás → `−` → visszaváltozik; ugyanígy dőlt ki/be. Diagnostics maradjon 0.
+
 ### 10.1.2.2 — Rich Text editor újraépítése — 2026-09-21
 **Állapot:** [~] ÚJ IMPLEMENTÁCIÓ, RUNTIME TESZT MÉG NINCS LEZÁRVA.
 
