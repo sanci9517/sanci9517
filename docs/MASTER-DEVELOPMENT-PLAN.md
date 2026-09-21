@@ -2059,6 +2059,38 @@ Javítás:
 **Következő egyetlen teszt:** frissítés után ugyanaz a kijelölés + B teszt. Ellenőrizd a félkövér vizuális megjelenést és a Diagnostics állapotát. Ha továbbra sem jelenik meg, a következő lépés közvetlen Canvas DOM/render audit lesz; CSS-t addig nem módosítunk.
 
 
+### 10.1.2.2 — Rich Text editor formázási modell újratervezése — 2026-09-21
+**Állapot:** [~] ÚJRATERVEZÉS, KÓDOLÁS ELŐTTI ARCHITEKTÚRAI DÖNTÉS.
+
+A jelenlegi B/félkövér megoldást nem foltozzuk tovább. A dőlt jelenleg az Inspector contenteditable felületén látható, de a Canvas megjelenítés/persistencia teljes adatútját külön kell helyreállítani és ellenőrizni.
+
+**Döntés:**
+- A félkövér többé ne egyszerű B ki/be gomb legyen.
+- A professzionálisabb modell: Betűvastagság / Font Weight érték, 100–900 tartományban, 100-as lépéssel.
+- UI: − [400] + jellegű vezérlő, 100 és 900 között; később opcionálisan lenyíló értéklista.
+- 400 = normál, 500 = medium, 600 = semibold, 700 = bold; a tényleges betűkészlet támogatása szerint a böngésző választ megfelelő megjelenést.
+- A canonical inline adatban a súly érték legyen számszerű fontWeight, ne egyetlen bold boolean/mark. A régi bold adatot kompatibilitási migrációként 700-ra kell értelmezni.
+- Az italic marad külön italic mark, de a Canvas renderernek és a DOM → canonical serializernek is támogatnia kell, hogy ne csak az Inspectorban látszódjon.
+- A formázás valódi DOM Selection/Range alapján történik; részleges kijelölésnél csak a kijelölt szövegrész módosulhat.
+- A Canvas az Inspector DOM-jától függetlenül, ugyanabból a canonical Rich Text JSON-ból renderel.
+- Nem nyúlunk a Page Model, History, Undo/Redo, Add/Delete, Layers, Lock, Geometry, Responsive, Save/Load, Publish rendszerekhez.
+
+**Megvalósítási sorrend:**
+1. Canonical Rich Text modell: fontWeight érték + backward compatibility.
+2. Validation/normalization frissítés.
+3. Inspector: B helyett − 400 + font-weight vezérlő.
+4. DOM Selection → canonical fontWeight részleges kijelöléssel.
+5. Canvas renderer: font-weight tényleges megjelenítése.
+6. Italic teljes adatút javítása: Inspector → canonical → Canvas → újrarenderelés.
+7. Mentés/újratöltés ellenőrzése.
+8. Undo/Redo ellenőrzése.
+9. Desktop/Tablet/Mobile regresszió.
+10. Diagnostics: 0 hiba + műveleti eredményellenőrzés.
+
+**Szigorú tesztelési szabály:** egyszerre csak az aktuális pontot teszteljük. A font-weight alapművelet lezárásáig italic/lista/link/egyéb Rich Text funkciót nem tekintünk késznek.
+
+**Első fejlesztési feladat:** teljes Rich Text adatút audit (schema.js → validation.js → commands.js → richtext-editor.js → app.js Canvas renderer → History/Persistence), majd minimális, célzott módosítás.
+
 ### 10.1.2.2 — Rich Text editor újraépítése — 2026-09-21
 **Állapot:** [~] ÚJ IMPLEMENTÁCIÓ, RUNTIME TESZT MÉG NINCS LEZÁRVA.
 
