@@ -2494,3 +2494,21 @@ A teljes `npm run test:editor` GitHub Actions futás sikeresen lefutott Node 24 
 Ezzel a 40. pont teljes automatikus tesztkapuja igazolt PASS állapotba került. A következő lépés már nem további unit teszt: **Cloudflare frissítés/build/deploy, majd a célzott böngészős B ki/be runtime teszt**.
 
 **Következő egyetlen teszt:** Rich Text → szöveg → kijelölés → B → látható félkövér → B újra → félkövér megszűnik → Diagnostics = 0 hiba.
+
+
+## 40.3 — Teljes Rich Text kód-audit a B runtime hiba miatt — 2026-09-21
+
+**Állapot:** [!] ARCHITEKTURÁLIS INKONZISZTENCIA TALÁLVA — A B runtime tesztet NEM tekintjük érvényesnek, javítás nélkül nem lépünk tovább.
+
+A teljes jelenlegi Rich Text útvonal visszaolvasása alapján a korábbi „egyetlen motor” reset után is maradt egy párhuzamos renderelési logika az `app.js`-ben:
+
+- az egyetlen új motorban létezik a kanonikus `renderRichTextEditor()` és `renderRichTextEditorToDocument()` útvonal;
+- ezzel párhuzamosan az `app.js` saját `renderRichTextInline()` + `renderRichTextDocument()` függvényeket tartalmaz a Canvas rendereléshez;
+- ezért a Rich Text renderelésnek jelenleg két külön implementációja van, ami ellentétes a 40. pont „egy motor / egy renderút” szabályával;
+- az `editor.css`-ben maradt egy régi `.richtext-mark-weight` selector is, miközben a jelenlegi modell már nem használja ezt a jelölést;
+- az új engine unit tesztjei a canonical range-transzformációt igazolják, de nem fedik le a teljes Inspector → selection → command → editor render → Canvas render runtime láncot;
+- a B/I gomb eseménykezelése és a selection mentése jelenleg `app.js`-ben, a Rich Text renderelés részben pedig több helyen oszlik meg.
+
+**Fontos következtetés:** a repository CI PASS nem bizonyítja, hogy a böngészős B működik. A felhasználói tapasztalat („félkövér sehogy nem működik”) ezért továbbra is érvényes, és a B runtime funkciót nem jelöljük PASS-nak.
+
+**Egyetlen aktuális folytatási pont:** a Rich Text teljes render/selection/command adatútvonalának újabb statikus auditja és a párhuzamos renderelési logika megszüntetésének megtervezése. Ezt követően csak minimális, egyetlen útvonalas javítás készül. Új Rich Text engine nem készül.
