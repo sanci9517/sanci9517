@@ -1,4 +1,4 @@
-import { normalizeScheduleConfig } from './schedule-schema.js';
+import { createDefaultScheduleConfig, normalizeScheduleConfig } from './schedule-schema.js';
 
 /*
  * Sanci9517 Visual Editor v2 — Page Model schema
@@ -215,7 +215,7 @@ export function createNode(type = NODE_TYPES.CONTAINER, overrides = {}) {
     name: type,
     parentId: null,
     children: [],
-    props: {},
+    props: type === NODE_TYPES.SCHEDULE ? { schedule: createDefaultScheduleConfig() } : {},
     style: {},
     responsive: {
       desktop: {},
