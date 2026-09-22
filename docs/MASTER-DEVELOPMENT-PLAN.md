@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.78  
+**Verzió:** MASTER-2.39.79  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -2979,7 +2979,7 @@ Kötelezően megőrzendő külső adatok:
 - Cloudflare secret `TWITCH_TOKEN_ENCRYPTION_KEY` még nincs igazolva.
 - redirect URI production/custom-domain egyezés még nincs élőben ellenőrizve.
 - connect/disconnect audit teljes atomicitását még célzottan tesztelni kell.
-- A Cloudflare typecheck a `a2b21d594b0f6bc481f05a5d784226e05329d2af` commiton még egyetlen TS hibával állt meg: `twitch-oauth.ts:178` — `token.expires_in` narrowing hiányzott a refresh ágon. A Cloudflare/GitHub log alapján ez volt az egyetlen tényleges TypeScript blocker; a Node 20 és Ubuntu 26 üzenetek warning/notice, nem build blocker.
+- A Cloudflare/GitHub typecheck a `a2b21d594b0f6bc481f05a5d784226e05329d2af` és `f1e9cc934edff64a3f5658bb72026c0ca15d7f0e` commitokon továbbra is ugyanazon gyökérokú TypeScript hibával állt meg: a `Number.isFinite(...)` önmagában nem szűkíti TypeScriptben az opcionális `expires_in` mezőt. A `f1e9cc...` lokális változós javítása ezért nem volt elegendő. A végleges javításban explicit `typeof token.expires_in !== "number"` narrowing került az authorization-code és refresh response validációba, a korábbi cast megszüntetésével. A Node 20 és Ubuntu 26 üzenetek továbbra is warning/notice, nem build blocker.
 
 #### B.4 Commitok
 - `2b30e229d5ed76439cc03f0511368cdca2ea31cc` — Twitch integration persistence migration.
@@ -2988,7 +2988,8 @@ Kötelezően megőrzendő külső adatok:
 - `163f9921a6f798572ce6334571692d1780d6dc4d` — Twitch connection routes.
 - `c9007fdcc624be9895200ba7040f9b587e0b0e04` — Twitch route registration.
 - `a2b21d594b0f6bc481f05a5d784226e05329d2af` — első `expires_in` narrowing javítás, de a refresh ágban egy második előfordulás megmaradt.
-- `f1e9cc934edff64a3f5658bb72026c0ca15d7f0e` — refresh `expires_in` narrowing véglegesítése lokális `expiresIn` változóval.
+- `f1e9cc934edff64a3f5658bb72026c0ca15d7f0e` — második `expires_in` narrowing javítás, de TypeScriptben a `Number.isFinite` nem adott valódi type narrowinget.
+- `8a79af41d97f3d352bb07bc90e56599929725c47` — explicit `typeof token.expires_in === "number"` narrowing az exchange + refresh ágban; a korábbi cast megszüntetése.
 
 **Egyetlen aktív folytatási pont:**
-> 40.69.13.B folytatás: a `f1e9cc934edff64a3f5658bb72026c0ca15d7f0e` javítás utáni CI/typecheck újraellenőrzése. Ha PASS, ezután refresh concurrency lock + token validation lifecycle audit/implementáció. E pont lezárása előtt nincs Builder/Inspector kódolás.
+> 40.69.13.B folytatás: a `8a79af41d97f3d352bb07bc90e56599929725c47` javítás utáni CI/typecheck újraellenőrzése. Ha PASS, ezután refresh concurrency lock + token validation lifecycle audit/implementáció. E pont lezárása előtt nincs Builder/Inspector kódolás.
