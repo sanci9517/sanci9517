@@ -2736,3 +2736,23 @@ A Mobile/Touch Layers hierarchy teljes diagnosztikai ellenőrzése sikeresen lez
 **Mobile Layers hierarchy tesztblokk lezárva.**
 
 **Következő aktív terület:** Desktop/PC Layers teljes élő regression — az implementáció korábban elkészült, most külön desktop élő validáció szükséges.
+
+
+## 40.62 — CANONIKUS OLDALSZERKEZET DÖNTÉS — 2026-09-22
+
+**Állapot:** [D] FEJLESZTÉSI DÖNTÉS RÖGZÍTVE.
+
+A felhasználó törlési tesztje után egyértelműsítettük az oldallifecycle végleges szabályát:
+
+- Egy webhelyoldal = egyetlen **Editor v2 Page Model** oldal a `pages` táblában.
+- Nem állítunk vissza régi statikus HTML-oldalakat külön tartalomrendszerként.
+- Nem készül második/duplikált „alapstruktúrájú” oldalrendszer.
+- A hiányzó standard oldalak tartalmát most nem kell visszaállítani; üres, szerkesztőben létrehozott canonical dokumentummal térnek vissza.
+- A közösségi oldal(ak) meglévő canonical rekordját nem duplikáljuk.
+- A főoldal megmarad canonical Editor v2 oldalnak, és a publikus főoldalon az **Admin belépés** megmarad.
+- A publikus menü nem tarthat fenn olyan statikus linket, amelynek nincs valódi `pages` rekordja; a menü a canonical publikus oldallistából épül fel, így törölt oldal nem marad 404-et okozó menüpontként.
+- A `/p/<slug>` útvonal kizárólag a canonical `pages` rekordot szolgálja ki.
+- A standard oldalak strukturális visszaállítása egyszeri, idempotens adatbázis-migrációval történik; nem alkalmazunk legacy HTML-t vagy külön rendszeroldal-tartalmat az editoros oldalak helyett.
+- A PC/Desktop élő teszteket a felhasználó külön kéréséig **PENDING** állapotban tartjuk; a mostani strukturális javítás nem indít automatikus PC regression kört.
+
+**Következő implementáció:** canonical üres standard oldalak egyszeri visszaállítása + publikus menü canonical `pages` listára kötése, majd CI/strukturális ellenőrzés és MASTER-frissítés.
