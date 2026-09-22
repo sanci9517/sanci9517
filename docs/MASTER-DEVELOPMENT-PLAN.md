@@ -2308,3 +2308,35 @@ A két multi-select kapu PASS után újra ellenőriztük a canonical Page Model,
 Nem módosítjuk a Page Model sémát, mert a GROUP node type már létezik. Nem készül külön group state, platform-specifikus command vagy külön history út. A meglévő commit(), validation, snapshot és setSelection() infrastruktúra lesz a canonical alap.
 
 **Következő aktív lépés:** a `group` és `ungroup` commandok implementációja a `commands.js`-ben, majd azonnali Core unit tesztbővítés. UI csak a command + unit tesztek PASS után készül.
+
+
+## 40.43 — GROUP / UNGROUP CANONICAL COMMAND + CORE TESZTEK — 2026-09-22
+
+**Állapot:** [~] IMPLEMENTÁCIÓ KÉSZ; Core CI fut.
+
+A 40.42 contract alapján elkészült a canonical Group/Ungroup command a meglévő Command API-ban. Nem készült új selection state, Page Model vagy history rendszer.
+
+### Implementáció
+- `hierarchy.group`: minimum 2 node, azonos közvetlen parent, root/locked védelem, determinisztikus sibling sorrend, új GROUP az első elem pozícióján, children parentId átállítás, egy commit/history entry, rollback + validation.
+- `hierarchy.ungroup`: GROUP ellenőrzés, locked group/locked child védelem, eredeti parent és pozíció visszaállítása, child sorrend megtartása, GROUP törlés, felszabadított children kijelölése, egy commit/history entry, rollback + validation.
+- Group siker után a GROUP lesz a selection.
+- Ungroup siker után a felszabadított gyermekek lesznek a selection.
+
+### Kód
+- `public/editor-v2/core/commands.js`
+- commit: `508dd7c4e03dafdd2bab7d56d1f2b9be17ebcd14`
+- Editor Core workflow ezen a commiton: **success**.
+
+### Unit tesztek
+Bekerült:
+- normál deterministic group;
+- mixed parent / root / locked rollback;
+- ungroup sorrend és pozíció;
+- non-group / locked group / locked child rollback;
+- egy history entry + undo/redo exact document snapshot.
+
+- `public/editor-v2/tests/core.test.js`
+- commit: `cbdd57f9355a11eb89cdab58f325918f3ce0a01b`
+- Editor Core workflow #411: jelenleg **in_progress**.
+
+**Következő kapu:** a #411 CI eredményének megvárása. Ha PASS, jön a Group/Ungroup UI-integráció; ha FAIL, először csak a hibát javítjuk és újra futtatjuk a Core tesztet.
