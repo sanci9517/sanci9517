@@ -2650,3 +2650,17 @@ A Mobile/Touch Layers Container/Group alá történő reparent élő tesztje sik
 - [x] Nem jelentkezett teszt közben jelzett hiba.
 
 **Következő egyetlen aktív tesztpont:** Mobile Layers invalid target / saját descendant alá történő reparent védelem.
+
+
+## 40.56 — MOBILE LAYERS INVALID TARGET / DESCENDANT VÉDELEM LIVE TESZT — 2026-09-22
+
+**Állapot:** [x] PASS — felhasználói élő teszt: **Jó**.
+
+A Mobile/Touch Layers hierarchy invalid target és saját descendant alá történő reparent védelme élő teszten sikeresen működött.
+
+- [x] Érvénytelen célra történő drop nem módosította a dokumentumot.
+- [x] Saját descendant alá történő reparent blokkolva maradt.
+- [x] Nem történt hibás hierarchy-módosítás.
+- [x] Nem jelentkezett teszt közben jelzett hiba.
+
+**Következő egyetlen aktív tesztpont:** Mobile Layers locked/root protection.
