@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.51  
+**Verzió:** MASTER-2.39.52  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -3222,7 +3222,27 @@ A következő minimális canonical javítási csomag szükséges:
 - PC/Desktop live teszt: **PENDING**, és továbbra is csak külön felhasználói kérésre.
 
 ### Következő egyetlen aktív ellenőrzési lépés
-**40.69.2 részeként: dependency install után CI újraellenőrzés, majd D1 migration és API persistence regression teszt.**
+**40.69.2 részeként: a canonical D1 migration branchbe emelése után CI ellenőrzés, majd a remote D1 migration alkalmazása és API persistence regression teszt.**
+
+### 40.69.2 — MIGRATION GAP AZONOSÍTVA ÉS JAVÍTVA — 2026-09-22
+
+**Állapot:** [~] MIGRATION A BRANCHBEN PÓTOLVA; REMOTE D1 + API LIVE TESZT MÉG HÁTRA.
+
+A live Editor v2 `API hiba (500)` problémájának auditja során kiderült egy konkrét persistence-gap: a `v2/foundation` branch `migrations/` könyvtárában a kód által már használt `pages.published_revision_id` oszlophoz tartozó `0010_canonical_revision_contract.sql` migration nem szerepelt, miközben a `src/routes/admin/pages.ts` és `src/routes/admin/editor.ts` már erre az oszlopra támaszkodik.
+
+**Bizonyított állapot:**
+- `migrations/0009_page_sort_order.sql` volt a branch utolsó migrationje.
+- A `0010_canonical_revision_contract.sql` a `main` ágon létezett, de `v2/foundation` alatt hiányzott.
+- A Cloudflare Worker ezért a canonical revision contract új DB oszlopát csak kódból várhatta; a remote D1 migráció külön alkalmazása továbbra is szükséges.
+- A migration tartalma: `published_revision_id` hozzáadása, meglévő published snapshotok best-effort revision-link visszaállítása, index létrehozása.
+
+**Javítás:**
+- új fájl: `migrations/0010_canonical_revision_contract.sql`
+- commit: `eb9d89dc35db854c6b0de6368ba38fe577853a4c`
+- CI ellenőrzés: még hátra ezen új commitra.
+
+**Fontos:** a 500-as live hibát ezzel még nem tekintjük automatikusan lezártnak. A következő lépés kötelezően a migration CI → remote D1 apply → `/api/admin/pages` live ellenőrzés. Csak az exact API eredmény alapján léphetünk tovább.
+
 
 **Továbbra sem indul PC/Desktop live teszt.**
 
@@ -3253,4 +3273,4 @@ A hiba tisztán JavaScript parse-hiba volt: az `async` kulcsszó kétszer szerep
 - [ ] Oldalak panel és canvas betöltés.
 - [ ] 40.69.2 persistence tesztfolytatás.
 
-**Következő egyetlen aktív ellenőrzés:** az új commit CI/deploy után az Editor v2 teljes betöltésének élő újratesztje. PC/Desktop live teszt továbbra is PENDING.
+**Következő egyetlen aktív ellenőrzés:** a canonical D1 migration branch/CI ellenőrzése, majd remote D1 apply és az Editor v2 `/api/admin/pages` live API ellenőrzése. PC/Desktop live teszt továbbra is PENDING.
