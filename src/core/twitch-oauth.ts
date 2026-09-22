@@ -167,6 +167,7 @@ export async function refreshTwitchConnection(env: Env, connectionId: string): P
   if (!token.access_token || !token.refresh_token || !Number.isFinite(token.expires_in)) {
     throw new Error("TWITCH_REFRESH_RESPONSE_INVALID");
   }
+  const expiresIn = token.expires_in;
 
   const access = await encryptTwitchToken(encryptionKey, token.access_token);
   const refresh = await encryptTwitchToken(encryptionKey, token.refresh_token);
@@ -175,7 +176,7 @@ export async function refreshTwitchConnection(env: Env, connectionId: string): P
   ).bind(
     access.ciphertext, access.iv, refresh.ciphertext, refresh.iv,
     JSON.stringify(Array.isArray(token.scope) ? token.scope : []),
-    new Date(Date.now() + token.expires_in * 1000).toISOString(), connectionId
+    new Date(Date.now() + expiresIn * 1000).toISOString(), connectionId
   ).run();
 
   return token.access_token;
