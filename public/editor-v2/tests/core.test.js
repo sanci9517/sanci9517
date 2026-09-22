@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { createDocument, NODE_TYPES } from '../core/schema.js';
+import { createDocument, createNode, NODE_TYPES } from '../core/schema.js';
 import { assertValidEditorDocument } from '../core/validation.js';
 import { createEditorState, activePage } from '../core/state.js';
 import { beginTransaction, commitTransaction, execute, executeBatch, rollbackTransaction } from '../core/commands.js';
@@ -78,6 +78,9 @@ test('Schedule config rejects unsupported or unsafe values', () => {
 });
 
 test('Schedule nodes receive canonical defaults and validate through the Page Model', () => {
+  const created = createNode(NODE_TYPES.SCHEDULE);
+  assert.deepEqual(created.props.schedule, createDefaultScheduleConfig());
+
   const document = createDocument();
   const page = document.pages[document.activePageId];
   const schedule = {
