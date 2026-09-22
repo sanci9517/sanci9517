@@ -3209,15 +3209,17 @@ A következő minimális canonical javítási csomag szükséges:
   - reloadkor revision felvétele
 
 ### Jelenlegi tesztállapot
-- Kód audit: PASS.
-- MASTER állapotfrissítés: PASS.
-- GitHub CI / typecheck: **PENDING** — a workflow fájl kibővítve typecheckkel, de a connector jelenleg nem adott vissza workflow run eredményt.
+- Canonical revision contract implementálva.
+- Első CI futás a pages.ts szintaktikai hibáját jelezte; javítva.
+- Második CI futás már eljutott a typecheckig, ahol a workflow dependency-install hiánya miatt `@cloudflare/workers-types` nem volt elérhető.
+- Javítás: `.github/workflows/editor-core-test.yml` most `npm install --no-audit --no-fund` lépést futtat typecheck előtt.
+- CI újrafuttatás: **PENDING**.
 - Remote D1 migration: **PENDING**.
-- API concurrency/publish/rollback/metadata teszt: **PENDING**.
+- API persistence regression: **PENDING**.
 - Mobil live teszt: **PENDING**.
 - PC/Desktop live teszt: **PENDING**, és továbbra is csak külön felhasználói kérésre.
 
 ### Következő egyetlen aktív ellenőrzési lépés
-**40.69.2 részeként: CI + migration + API persistence regression teszt.**
+**40.69.2 részeként: dependency install után CI újraellenőrzés, majd D1 migration és API persistence regression teszt.**
 
 **Továbbra sem indul PC/Desktop live teszt.**
