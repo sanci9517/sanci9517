@@ -7,6 +7,7 @@ import {
 } from "../../core/auth/session";
 import { verifyPassword } from "../../core/auth/password";
 import type { Env } from "../../types/env";
+import { auditStatement } from "../../core/audit";
 
 type LoginBody = {
   email?: unknown;
@@ -74,26 +75,11 @@ export async function authLoginRoute(request: Request, env: Env): Promise<Respon
     const sessionId = crypto.randomUUID();
     const expiresAt = new Date(Date.now() + SESSION_TTL_SECONDS * 1000).toISOString();
 
-    await env.DB.prepare(
-      `INSERT INTO sessions (id, user_id, token_hash, expires_at)
-       VALUES (?, ?, ?, ?)`
-    )
-      .bind(sessionId, user.id, tokenHash, expiresAt)
-      .run();
-
-    await env.DB.prepare(
-      `INSERT INTO audit_log (id, user_id, action, entity_type, entity_id, metadata_json)
-       VALUES (?, ?, ?, ?, ?, ?)`
-    )
-      .bind(
-        crypto.randomUUID(),
-        user.id,
-        "auth.login",
-        "session",
-        sessionId,
-        JSON.stringify({ method: "password" })
-      )
-      .run();
+    await env.DB.batch([
+      env.DB.prepare(`INSERT INTO sessions (id, user_id, token_hash, expires_at)
+       VALUES (?, ?, ?, ?)`).bind(sessionId, user.id, tokenHash, expiresAt),
+      auditStatement(env, user.id, "auth.login", "session", sessionId, { method: "password" })
+    ]);
 
     const response = ok({
       authenticated: true,
