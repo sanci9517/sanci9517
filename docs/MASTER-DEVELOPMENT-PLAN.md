@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.67  
+**Verzió:** MASTER-2.39.68  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt PASS:** 2026-09-22 — a 40.69.8 CI/typecheck/editor-core és Cloudflare deploy kapuja zöld; a célzott új admin/auth live regresszió még hátra van.
+**Legutóbbi igazolt PASS:** 2026-09-22 — 40.69.8 Settings/Schedule/Login-Logout live tesztek PASS; a System Page teszt blokkolt, mert a jelenlegi rendszeroldal-kezelés még a régi system_page_content + fix SYSTEM lista architektúrára épül.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -27,7 +27,7 @@ Ha bármilyen régi checkpoint, összefoglaló, korábbi üzenet vagy történet
 - 40.69.1 — `[x]` AUDIT PASS — teljes kód- és adatfolyam-audit lezárva.
 - 40.69.2 — `[x]` LEZÁRVA.
 - 40.69.5 — `[x]` LEZÁRVA — rollback + republish live regresszió PASS.
-- 40.69.7 — `[~]` TESZT KAPU — CI/typecheck/editor-core és deploy zöld; a célzott live audit state + audit_log együttállása PASS, a MASTER lezárása és következő pont kijelölése még dokumentálandó.
+- 40.69.7 — `[x]` LEZÁRVA — célzott live page.update + audit_log együttállás PASS.
 - A pageOrder mobil élő tesztje nem aktuális feladat; a 40.67 teljes mobil tesztje már lezárt.
 - A korábban csak mobilon tesztelt funkciók PC/Desktop visszatesztje későbbi tesztkapu, és csak a felhasználó külön kérésére indul.
 
@@ -169,6 +169,25 @@ Nem vezetünk be második selection-, hierarchy-, state-, renderer- vagy command
 - [x] Nem találtunk más, az `index.ts` által regisztrált admin state-mutation route-ot a vizsgált route-készletben.
 
 **Következtetés:** a feltárt coverage/consistency hiányok kódoldali javítása elkészült. A CI/typecheck/editor-core és a Cloudflare deploy zöld. A 40.69.8 még nem PASS, amíg a célzott live regresszió nem igazolja az új atomic audit útvonalakat.
+
+**40.69.8 live teszt — 2026-09-22:**
+- [x] Settings módosítás + mentés működik.
+- [x] Schedule létrehozás/módosítás/törlés működik.
+- [x] Login/Logout működik.
+- [!] System Page teszt blokkolt: nem lehet új rendszeroldalt hozzáadni, illetve meglévő rendszeroldalt törölni.
+
+**System Page kód-audit eredmény:**
+- [x] Az Editor v2 public/editor-v2/app.js nem használja az /api/admin/system-pages végpontot; az Editor v2 canonical page lifecycle az /api/admin/pages útvonalon fut.
+- [x] src/routes/admin/system-pages.ts csak a fix SYSTEM_PATHS listát engedi (/ , /twitch.html, /youtube.html, /tiktok.html, /schedule.html, /vod.html, /community.html, /about.html, /contact.html).
+- [x] A backend system-page route csak GET és PUT műveletet támogat; nincs létrehozási vagy törlési művelet.
+- [x] public/assets/system-page-editor.js ugyanezt a fix 9 oldalas listát használja, és régi /admin-editor.html?system=... útvonalra hivatkozik.
+- [x] A jelenlegi v2/foundation tree-ben nincs public/admin-editor.html, tehát ez a régi system-page editor árva/legacy kód.
+- [x] src/index.ts a .html útvonalakat már canonical /p/... oldalakra redirecteli.
+- [x] Következtetés: a jelzett hiba valós; a System Page kezelés nincs egységesen bekötve az Editor v2 canonical pages rendszerébe, hanem egy régi külön system-page architektúrát őriz.
+
+**Döntés:** nem javítjuk foltozással a régi system-page CRUD-ot. Először a canonical Editor v2 pages + revision/publish rendszert kell kijelölni a rendszeroldalak egyetlen forrásának, majd a régi system_page_content/system-page-editor/runtime útvonalat kontrolláltan ki kell vezetni vagy kompatibilitási rétegként lezárni.
+
+**Következő egyetlen aktív pont:** System Page → canonical Pages architektúra teljes audit és migrációs terv; kódmódosítás csak az audit után.
 
 **40.69.7 lezárás:**
 - [x] CI/typecheck/editor-core PASS.
