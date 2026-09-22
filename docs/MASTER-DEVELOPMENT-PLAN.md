@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.58  
+**Verzió:** MASTER-2.39.59  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -34,7 +34,7 @@ Ha bármilyen régi checkpoint, összefoglaló, korábbi üzenet vagy történet
 **Boot-szabály:** új beszélgetésben a modellnek először ezt a 00/B blokkot, majd közvetlenül a 00/A indexet kell figyelembe vennie. Ha bármely régi checkpoint ettől eltér, a régi checkpointot kell figyelmen kívül hagyni, nem az aktuális MASTER állapotot.
 
 **Egyetlen aktuális folytatási mondat:**
-> „Folytassuk a Sanci9517 MASTER tervet a 40.69.6 pontnál: teljes revision/persistence audit, majd csak bizonyított szükség esetén minimális stabilizáció.”
+> „Folytassuk a Sanci9517 MASTER tervet a 40.69.7 pontnál: audit-log atomicity és persistence-boundary hardening.”
 
 > **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd kizárólag a **00/A MASTER VÉGREHAJTÁSI INDEX egyetlen aktív pontjából** folytatni. Más fejezet `[ ]`, `[~]` vagy régebbi „következő lépés” szövege nem jelent aktuális folytatási pontot.
 
@@ -153,9 +153,9 @@ Nem vezetünk be második selection-, hierarchy-, state-, renderer- vagy command
   - [x] Core CI 24/24
 
 ### 🔵 EGYETLEN AKTÍV PONT
-**40.69.6 — Revision persistence teljes audit és stabilizáció**
+**40.69.7 — Audit-log atomicity és persistence-boundary hardening**
 
-**Státusz:** `[~]` — a 40.69.5 regressziós teszt PASS. Most nem változtatunk kódot találomra; a teljes érintett revision/persistence adatfolyamot újra auditáljuk.
+**Státusz:** `[~]` — a 40.69.5 regressziós kapu PASS, a 40.69.6 teljes revision/persistence audit PASS. A következő egyetlen feladat az audit események és a state-módosítások atomicity boundaryjának célzott felülvizsgálata.
 
 **Aktív munkasáv száma:** **1**
 
@@ -233,6 +233,38 @@ Ez azt jelenti, hogy ha egy már LIVE oldalon új draft módosítás történik,
 **40.69.5 regressziós kapu lezárása:** a rollback és az újrapublikálás felhasználói élő tesztje PASS. A PC/Desktop live teszt továbbra is PENDING és nem indul automatikusan.
 
 **Következő egyetlen aktív lépés:** 40.69.6 teljes revision/persistence audit; csak audit alapján készülhet új kódmódosítás.
+
+
+### 40.69.6 — REVISION PERSISTENCE TELJES AUDIT — 2026-09-22
+
+**Állapot:** [x] AUDIT PASS — új kódmódosítás nem szükséges ebben a lépésben.
+
+**Áttekintett fő útvonalak:**
+- `src/routes/admin/editor.ts`: Save, Publish, Rollback, Unpublish, expectedVersion, revision numbering.
+- `src/routes/admin/pages.ts`: page list revision source, metadata/slug revision, published linkage, page-create + initial revision batch.
+- `src/routes/public/pages.ts`: normal public route kizárólag published snapshotból dolgozik; explicit preview külön auth-gated.
+- `src/core/page-model.ts`: canonical `sanci-page-document` normalizálás.
+- `src/core/editor-validation.ts`: Publish előtti hierarchy/Page Model validation.
+- `migrations/0010_canonical_revision_contract.sql`: published revision linkage és meglévő snapshotok visszakötése.
+- `public/editor-v2/app.js`: egyetlen `save(true)` publish útvonal és a republish UI állapot.
+- `.github/workflows/editor-core-test.yml`: Node 24 + install + typecheck + editor core teszt.
+
+**Audit eredmények:**
+- [x] `pages.content_json` továbbra is a draft snapshot.
+- [x] `pages.published_content_json` továbbra is a LIVE snapshot.
+- [x] `pages.published_revision_id` a LIVE snapshot konkrét revisionjére mutat.
+- [x] Save/Publish/rollback revision számozása az `editor_revisions` MAX(version) értékéhez igazodik.
+- [x] `expectedVersion` védelem nincs megkerülve.
+- [x] Rollback draft-only marad; nem publikál automatikusan.
+- [x] Publish egy D1 batchben írja a draftot, revisiont és LIVE snapshotot.
+- [x] Page create + initial revision egy D1 batch.
+- [x] Normál public route nem szolgál ki draftot.
+- [x] Republish nem hozott létre második publish-rendszert.
+- [x] A vizsgált canonical state/persistence útvonalban nem találtunk olyan hibát, amely most új kódmódosítást indokolna.
+
+**Megállapított következő audit-téma:** az üzleti state-módosítások és az `audit_log` írása jelenleg több helyen külön lépés. Például Publish/Save/rollback/unpublish után az audit insert külön történik. Ez nem rontotta el a mostani live regressziós tesztet, de hiba esetén az üzleti művelet és az audit esemény eltérhet.
+
+**Következő egyetlen aktív lépés:** 40.69.7 — audit-log atomicity és persistence-boundary hardening célzott audit.
 
 
 ### Kötelező folytatási szabály
@@ -1998,21 +2030,3 @@ Ellenőrizve a jelenlegi `app.js`, `state.js`, `commands.js`, `core.test.js` és
 - A 05.3 korábbi „AKTÍV” jelölése lezártra korrigálva.
 - A 08.2 multi-select státusza a tényleges implementációhoz igazítva: [~].
 - A Page CRUD törlés státusza a tényleges Editor v2 + élő teszt állapothoz igazítva.
-- A 40.x történeti bejegyzések megmaradnak, de nem írhatják felül a jelenlegi 35. fejezetet.
-
-### 2. Kötelezően felvett / pontosított hiányterületek
-
-**A. Mobil/touch teljes editor**
-- [ ] touch selection, long-press, multi-select mode
-- [ ] drag/drop touch
-- [ ] resize handles touch
-- [ ] pan/zoom gesture
-- [ ] touch target méretek
-- [ ] scroll-vs-drag konfliktus
-- [ ] keyboard nélküli alternatívák
-- [ ] mobile toolbar/sheet/bottom-sheet UX
-- [ ] mobile Inspector
-- [ ] orientation/safe-area
-- [ ] iOS/Android browser regression
-
-**B. Collaboration / concurrency**
