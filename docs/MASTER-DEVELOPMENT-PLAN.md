@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.61  
+**Verzió:** MASTER-2.39.62  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt PASS:** 2026-09-22 — a 40.69.7 CI/typecheck/editor-core tesztkapu zöld; a Mentés, Publish, rollback és az újrapublikálás élő tesztje korábban működött.
+**Legutóbbi igazolt PASS:** 2026-09-22 — a 40.69.7 CI/typecheck/editor-core kapu zöld; a Cloudflare deploy felhasználói visszaigazolással zöld; a célzott live auditban az `uj-oldal` metadata/state módosítása és a hozzá tartozó `page.update` audit esemény együtt létrejött.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -27,14 +27,14 @@ Ha bármilyen régi checkpoint, összefoglaló, korábbi üzenet vagy történet
 - 40.69.1 — `[x]` AUDIT PASS — teljes kód- és adatfolyam-audit lezárva.
 - 40.69.2 — `[x]` LEZÁRVA.
 - 40.69.5 — `[x]` LEZÁRVA — rollback + republish live regresszió PASS.
-- Aktív feladat: **canonical revision contract + D1 persistence boundary megtervezése és minimális séma/code módosítás előkészítése**.
+- 40.69.7 — `[~]` TESZT KAPU — CI/typecheck/editor-core és deploy zöld; a célzott live audit state + audit_log együttállása PASS, a MASTER lezárása és következő pont kijelölése még dokumentálandó.
 - A pageOrder mobil élő tesztje nem aktuális feladat; a 40.67 teljes mobil tesztje már lezárt.
 - A korábban csak mobilon tesztelt funkciók PC/Desktop visszatesztje későbbi tesztkapu, és csak a felhasználó külön kérésére indul.
 
 **Boot-szabály:** új beszélgetésben a modellnek először ezt a 00/B blokkot, majd közvetlenül a 00/A indexet kell figyelembe vennie. Ha bármely régi checkpoint ettől eltér, a régi checkpointot kell figyelmen kívül hagyni, nem az aktuális MASTER állapotot.
 
 **Egyetlen aktuális folytatási mondat:**
-> „Folytassuk a Sanci9517 MASTER tervet a 40.69.7 deploy/live audit kapujánál: CI/typecheck/editor-core már zöld, most csak deploy és célzott live audit.”
+> „Folytassuk a Sanci9517 MASTER tervet a 40.69.7 live audit lezárásánál: a state-módosítás és a hozzá tartozó `audit_log` esemény együtt létrejött; most a 40.69.7 PASS dokumentálása és a következő egyetlen pont kijelölése következik.”
 
 > **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd kizárólag a **00/A MASTER VÉGREHAJTÁSI INDEX egyetlen aktív pontjából** folytatni. Más fejezet `[ ]`, `[~]` vagy régebbi „következő lépés” szövege nem jelent aktuális folytatási pontot.
 
@@ -155,7 +155,7 @@ Nem vezetünk be második selection-, hierarchy-, state-, renderer- vagy command
 ### 🔵 EGYETLEN AKTÍV PONT
 **40.69.7 — Audit-log atomicity és persistence-boundary hardening**
 
-**Státusz:** `[~]` — implementálva, CI/typecheck/editor-core teszt PASS; a célzott live audit/deploy kapu következik. Az audit események ugyanabba a D1 batch-be kerülnek, mint az általuk naplózott state-módosítások.
+**Státusz:** `[~]` — implementálva; CI/typecheck/editor-core PASS, Cloudflare deploy zöld, célzott live audit PASS. Az audit események ugyanabba a D1 batch-be kerülnek, mint az általuk naplózott state-módosítások. A pont még nincs `[x]`, mert a MASTER lezárása és a következő egyetlen aktív pont kijelölése külön dokumentációs lépés.
 
 **Aktív munkasáv száma:** **1**
 
@@ -288,10 +288,14 @@ Ez azt jelenti, hogy ha egy már LIVE oldalon új draft módosítás történik,
 - [x] Typecheck PASS.
 - [x] Editor Core Test PASS.
 - [x] A 40.69.7 tesztkapu kódoldali/CI része lezárható.
-- [ ] Deploy ellenőrzés.
-- [ ] Célzott live audit: state-módosítás + megfelelő `audit_log` esemény együtt igazolása.
+- [x] Deploy ellenőrzés — a felhasználó visszaigazolta, hogy az utolsó Cloudflare állapot zöld.
+- [x] Célzott live audit — az `uj-oldal` cím módosítása `Új oldal` → `Új oldal test` sikeresen létrejött a `pages` táblában, és ugyanahhoz a pageId-hoz `page.update` audit rekord jött létre.
+- [x] Audit metadata ellenőrzés: `version=15`, `revisionId=924b38b0-8d7f-4fac-acbb-4696dc7e421e` rögzült az audit rekordban.
+- [x] Az audit rekord időpontja közvetlenül a state-módosítás előtt/azzal összhangban jelent meg; a live smoke teszt bizonyította, hogy a canonical admin update útvonal az auditot is létrehozza.
 
-**Következő egyetlen lépés:** deploy/live audit. Ha a live audit PASS, a 40.69.7 pont lezárható; ha FAIL, csak a bizonyított hibát javítjuk.
+**Live teszt eredmény:** PASS — a state-módosítás és a megfelelő `audit_log` esemény együtt igazolva.
+
+**Következő egyetlen lépés:** 40.69.7 lezárásának dokumentálása a MASTER-ben, majd csak ezután a következő egyetlen fejlesztési/testpont kijelölése.
 
 **Fontos:** a kódot a módosítás után újraolvastuk; a CI/typecheck/editor-core tesztkapu zöld. PC/Desktop live teszt továbbra is PENDING.
 
