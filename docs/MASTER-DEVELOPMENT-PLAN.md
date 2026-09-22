@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.59  
+**Verzió:** MASTER-2.39.60  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -34,7 +34,7 @@ Ha bármilyen régi checkpoint, összefoglaló, korábbi üzenet vagy történet
 **Boot-szabály:** új beszélgetésben a modellnek először ezt a 00/B blokkot, majd közvetlenül a 00/A indexet kell figyelembe vennie. Ha bármely régi checkpoint ettől eltér, a régi checkpointot kell figyelmen kívül hagyni, nem az aktuális MASTER állapotot.
 
 **Egyetlen aktuális folytatási mondat:**
-> „Folytassuk a Sanci9517 MASTER tervet a 40.69.7 pontnál: audit-log atomicity és persistence-boundary hardening.”
+> „Folytassuk a Sanci9517 MASTER tervet a 40.69.7 tesztkapujánál: CI/typecheck/editor-core teszt, majd csak siker esetén deploy/live audit.”
 
 > **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd kizárólag a **00/A MASTER VÉGREHAJTÁSI INDEX egyetlen aktív pontjából** folytatni. Más fejezet `[ ]`, `[~]` vagy régebbi „következő lépés” szövege nem jelent aktuális folytatási pontot.
 
@@ -155,7 +155,7 @@ Nem vezetünk be második selection-, hierarchy-, state-, renderer- vagy command
 ### 🔵 EGYETLEN AKTÍV PONT
 **40.69.7 — Audit-log atomicity és persistence-boundary hardening**
 
-**Státusz:** `[~]` — a 40.69.5 regressziós kapu PASS, a 40.69.6 teljes revision/persistence audit PASS. A következő egyetlen feladat az audit események és a state-módosítások atomicity boundaryjának célzott felülvizsgálata.
+**Státusz:** `[~]` — implementálva, tesztkapu alatt. Az audit események most ugyanabba a D1 batch-be kerülnek, mint az általuk naplózott state-módosítások.
 
 **Aktív munkasáv száma:** **1**
 
@@ -265,6 +265,25 @@ Ez azt jelenti, hogy ha egy már LIVE oldalon új draft módosítás történik,
 **Megállapított következő audit-téma:** az üzleti state-módosítások és az `audit_log` írása jelenleg több helyen külön lépés. Például Publish/Save/rollback/unpublish után az audit insert külön történik. Ez nem rontotta el a mostani live regressziós tesztet, de hiba esetén az üzleti művelet és az audit esemény eltérhet.
 
 **Következő egyetlen aktív lépés:** 40.69.7 — audit-log atomicity és persistence-boundary hardening célzott audit.
+
+
+### 40.69.7 — AUDIT-LOG ATOMICITY HARDENING — 2026-09-22
+
+**Állapot:** [~] TESZT KAPU.
+
+**Elvégzett módosítás:**
+- [x] Létrejött a közös `src/core/audit.ts` `auditStatement()` helper.
+- [x] Editor Save/Publish/Unpublish/Rollback audit statementek a state-módosítással azonos D1 batch-ben futnak.
+- [x] Page create/delete/update audit statementek a megfelelő state-módosító batch részei.
+- [x] Megszűnt a különálló `await audit(...)` persistence-lépés az érintett Editor/Page admin útvonalakon.
+- [x] Nem készült második audit-rendszer.
+
+**Módosító commitok:**
+- `3e424605a5599f32f7e94f546c4eeaa3ad76e00f` — audit helper
+- `e7389f87102227155f9b9998d9114c5a0f51ca48` — editor atomic audit
+- `95fb08738c69b5c47710efd6fbd8ebb674005ed1` — page update atomic audit
+
+**Fontos:** a kódot újraolvastuk a módosítás után. A következő kapu nem újabb kódolás, hanem **CI/typecheck/editor-core teszt**. Ha ez PASS, utána jöhet deploy és célzott live audit; ha FAIL, csak a konkrét hibát javítjuk.
 
 
 ### Kötelező folytatási szabály
