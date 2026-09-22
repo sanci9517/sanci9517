@@ -2976,7 +2976,7 @@ A kanonikus oldal-életciklus után a következő lépés a Draft/Preview/Publis
 - [ ] Editor v2 betöltés syntax error nélkül.
 - [x] Draft mentés után oldal továbbra is DRAFT — mobil élő teszt: PASS, felhasználói visszaigazolás: „Jó”.
 - [x] Preview az aktuális draftot mutatja jogosult szerkesztőnek — mobil élő teszt: PASS, felhasználói visszaigazolás: „Jó”.
-- [ ] Publikálás után publikus útvonal az új snapshotot mutatja.
+- [x] Publikálás után publikus útvonal az új snapshotot mutatja — mobil élő teszt: PASS, felhasználói visszaigazolás: „Jó”.
 - [x] Publikálás után Editor állapot LIVE — mobil élő teszt: PASS, felhasználói visszaigazolás: „Jó”.
 - [ ] Visszavonás után publikus útvonal eltűnik / nem publikált állapotot ad.
 - [ ] Visszavonás után draft tartalom megmarad.
