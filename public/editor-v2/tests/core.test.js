@@ -256,6 +256,146 @@ test('locked elements reject mutation but can be explicitly unlocked', () => {
   assert.equal(activePage(state).nodes[id].props.content, 'allowed');
 });
 
+test('group creates one deterministic GROUP from same-parent selection', () => {
+  const state = createEditorState();
+  const rootId = activePage(state).rootId;
+  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.SECTION, parentId: rootId } });
+  const first = state.selection.primaryId;
+  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.TEXT, parentId: rootId } });
+  const second = state.selection.primaryId;
+  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.BUTTON, parentId: rootId } });
+  const third = state.selection.primaryId;
+
+  execute(state, { type: 'selection.set', payload: { ids: [third, first, second], primaryId: second } });
+  const historyBefore = state.history.past.length;
+  execute(state, { type: 'hierarchy.group' });
+
+  const page = activePage(state);
+  const group = page.nodes[state.selection.primaryId];
+  assert.equal(group.type, NODE_TYPES.GROUP);
+  assert.equal(group.parentId, rootId);
+  assert.deepEqual(page.nodes[rootId].children, [group.id]);
+  assert.deepEqual(group.children, [first, second, third]);
+  assert.deepEqual(group.children.map((id) => page.nodes[id].parentId), [group.id, group.id, group.id]);
+  assert.equal(state.history.past.length, historyBefore + 1);
+  assertValidEditorDocument(state.document);
+});
+
+test('group rejects mixed parents, root, locked nodes and rolls back exactly', () => {
+  const state = createEditorState();
+  const rootId = activePage(state).rootId;
+  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.SECTION, parentId: rootId } });
+  const first = state.selection.primaryId;
+  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.TEXT, parentId: rootId } });
+  const second = state.selection.primaryId;
+  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.CONTAINER, parentId: first } });
+  const nested = state.selection.primaryId;
+
+  execute(state, { type: 'selection.set', payload: { ids: [first, nested] } });
+  const beforeMixed = structuredClone(state.document);
+  assert.throws(() => execute(state, { type: 'hierarchy.group' }));
+  assert.deepEqual(state.document, beforeMixed);
+
+  execute(state, { type: 'selection.set', payload: { ids: [rootId, second] } });
+  const beforeRoot = structuredClone(state.document);
+  assert.throws(() => execute(state, { type: 'hierarchy.group' }));
+  assert.deepEqual(state.document, beforeRoot);
+
+  execute(state, { type: 'element.lock.set', payload: { nodeId: second, locked: true } });
+  execute(state, { type: 'selection.set', payload: { ids: [first, second] } });
+  const beforeLocked = structuredClone(state.document);
+  assert.throws(() => execute(state, { type: 'hierarchy.group' }));
+  assert.deepEqual(state.document, beforeLocked);
+  assertValidEditorDocument(state.document);
+});
+
+test('ungroup restores children at the group position and preserves order', () => {
+  const state = createEditorState();
+  const rootId = activePage(state).rootId;
+  for (const type of [NODE_TYPES.SECTION, NODE_TYPES.TEXT, NODE_TYPES.BUTTON]) {
+    execute(state, { type: 'element.add', payload: { type, parentId: rootId } });
+  }
+  const original = [...activePage(state).nodes[rootId].children];
+  execute(state, { type: 'selection.set', payload: { ids: [original[0], original[1], original[2]] } });
+  execute(state, { type: 'hierarchy.group' });
+  const groupId = state.selection.primaryId;
+
+  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.IMAGE, parentId: rootId } });
+  const trailing = state.selection.primaryId;
+  const beforeUngroup = [...activePage(state).nodes[rootId].children];
+
+  execute(state, { type: 'hierarchy.ungroup', payload: { nodeId: groupId } });
+  const page = activePage(state);
+  assert.equal(page.nodes[groupId], undefined);
+  assert.deepEqual(page.nodes[rootId].children, [original[0], original[1], original[2], trailing]);
+  assert.deepEqual(state.selection.ids, original);
+  assert.equal(state.selection.primaryId, original[2]);
+  assert.equal(beforeUngroup[0], groupId);
+  assertValidEditorDocument(state.document);
+});
+
+test('ungroup rejects non-group, locked group and locked child with exact rollback', () => {
+  const state = createEditorState();
+  const rootId = activePage(state).rootId;
+  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.SECTION, parentId: rootId } });
+  const first = state.selection.primaryId;
+  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.TEXT, parentId: rootId } });
+  const second = state.selection.primaryId;
+
+  execute(state, { type: 'selection.set', payload: { ids: [first, second] } });
+  execute(state, { type: 'hierarchy.group' });
+  const groupId = state.selection.primaryId;
+
+  execute(state, { type: 'hierarchy.ungroup', payload: { nodeId: first } });
+  assert.equal(activePage(state).nodes[groupId].type, NODE_TYPES.GROUP);
+
+  execute(state, { type: 'element.lock.set', payload: { nodeId: groupId, locked: true } });
+  const beforeLockedGroup = structuredClone(state.document);
+  assert.throws(() => execute(state, { type: 'hierarchy.ungroup', payload: { nodeId: groupId } }));
+  assert.deepEqual(state.document, beforeLockedGroup);
+
+  execute(state, { type: 'element.lock.set', payload: { nodeId: groupId, locked: false } });
+  execute(state, { type: 'element.lock.set', payload: { nodeId: first, locked: true } });
+  const beforeLockedChild = structuredClone(state.document);
+  assert.throws(() => execute(state, { type: 'hierarchy.ungroup', payload: { nodeId: groupId } }));
+  assert.deepEqual(state.document, beforeLockedChild);
+  assertValidEditorDocument(state.document);
+});
+
+test('group and ungroup each use one history entry and undo/redo restore exact documents', () => {
+  const state = createEditorState();
+  const rootId = activePage(state).rootId;
+  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.TEXT, parentId: rootId } });
+  const first = state.selection.primaryId;
+  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.TEXT, parentId: rootId } });
+  const second = state.selection.primaryId;
+  execute(state, { type: 'selection.set', payload: { ids: [first, second] } });
+
+  const beforeGroup = structuredClone(state.document);
+  const historyBeforeGroup = state.history.past.length;
+  execute(state, { type: 'hierarchy.group' });
+  const afterGroup = structuredClone(state.document);
+  assert.equal(state.history.past.length, historyBeforeGroup + 1);
+
+  execute(state, { type: 'history.undo' });
+  assert.deepEqual(state.document, beforeGroup);
+  execute(state, { type: 'history.redo' });
+  assert.deepEqual(state.document, afterGroup);
+
+  const groupId = state.selection.primaryId;
+  const beforeUngroup = structuredClone(state.document);
+  const historyBeforeUngroup = state.history.past.length;
+  execute(state, { type: 'hierarchy.ungroup', payload: { nodeId: groupId } });
+  const afterUngroup = structuredClone(state.document);
+  assert.equal(state.history.past.length, historyBeforeUngroup + 1);
+
+  execute(state, { type: 'history.undo' });
+  assert.deepEqual(state.document, beforeUngroup);
+  execute(state, { type: 'history.redo' });
+  assert.deepEqual(state.document, afterUngroup);
+  assertValidEditorDocument(state.document);
+});
+
 test('undo and redo restore exact document snapshots', () => {
   const state = createEditorState();
   const initial = structuredClone(state.document);
