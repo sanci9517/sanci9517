@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.50  
+**Verzió:** MASTER-2.39.51  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -497,8 +497,7 @@ Cél: a geometry kézi mezői mellett gyors, értelmes presetek legyenek, anélk
 
 ### Tesztkapu
 1. desktop preset;
-2. tablet preset;
-3. mobile preset;
+2. tablet preset;3. mobile preset;
 4. manual → preset;
 5. preset → manual;
 6. preset → reset/inherit;
@@ -997,8 +996,7 @@ Templates:
 - [ ] unsaved navigation protection
 - [ ] browser close recovery
 
-## Conflict
-- [ ] revision/ETag
+## Conflict- [ ] revision/ETag
 - [ ] multi-tab detection
 - [ ] conflict screen
 - [ ] reload
@@ -1497,8 +1495,7 @@ A korábbi, már lezárt Rich Text B/I és Elements-palette tesztpontok nem lehe
 - [ ] Kész / Mégse működés
 - [ ] Canvas + Layers közös selection
 - [ ] touch edge case-ek: scroll vs long-press, accidental tap, locked/root, nested nodes
-- [ ] mobile browser teszt
-- [ ] regresszió + felhasználói PASS
+- [ ] mobile browser teszt- [ ] regresszió + felhasználói PASS
 
 ### Függőségi kapu
 **Group/Ungroup implementáció csak az A és B multi-select kapu PASS állapota után indulhat.**
@@ -1997,8 +1994,7 @@ Ellenőrizve a jelenlegi `app.js`, `state.js`, `commands.js`, `core.test.js` és
 - [ ] preview deployments
 - [ ] migration gating
 - [ ] deploy rollback
-- [ ] feature flags
-- [ ] environment separation
+- [ ] feature flags- [ ] environment separation
 - [ ] release notes
 - [ ] production smoke automation
 - [ ] CI required checks
@@ -2498,7 +2494,6 @@ A Group/Ungroup UI-integráció PC/Desktop és Mobile/Touch környezetben végig
 **Állapot:** [x] AUDIT PASS — kódmódosítás ebben a lépésben nem történt.
 
 A Group/Ungroup lezárása után a MASTER kritikus függőségi sorrendje szerint a következő domain a **layout/manipulation**. Első részterületként a meglévő hierarchy mutation útvonalat auditáltuk, mielőtt UI-szintű drag/drop kerülne be.
-
 ### Audit eredmény
 - A Page Model canonical hierarchy adatforrása a `parentId + children[]`.
 - A canonical `hierarchy.reorder` command már létezik és history-kompatibilis.
@@ -2997,7 +2992,6 @@ A felhasználó kérésére az oldal sorrendje mostantól nem lehet külön fron
 - [x] Mobilon az order gombok használhatók és nem takarják ki egymást.
 - [x] Diagnosztika: 0 hiba.
 - [ ] PC/Desktop live teszt továbbra is csak külön felhasználói kérésre.
-
 **Következő aktív lépés:** deploy után mobilon a fenti sorrendteszt végrehajtása.
 
 
@@ -3231,3 +3225,32 @@ A következő minimális canonical javítási csomag szükséges:
 **40.69.2 részeként: dependency install után CI újraellenőrzés, majd D1 migration és API persistence regression teszt.**
 
 **Továbbra sem indul PC/Desktop live teszt.**
+
+## 40.69.2.1 — EDITOR V2 BETÖLTÉSI SYNTAX HIBA — 2026-09-22
+
+**Állapot:** [~] JAVÍTVA; élő újrateszt még hátra.
+
+A felhasználói élő ellenőrzés során az Editor v2 betöltése ezt a böngészőhibát jelezte:
+- `Uncaught SyntaxError: Unexpected token 'async'`
+- `public/editor-v2/app.js`
+- a deployolt fájlban a `editPageMeta()` deklaráció hibásan `async async function` formában szerepelt.
+
+### Gyökérok
+A hiba tisztán JavaScript parse-hiba volt: az `async` kulcsszó kétszer szerepelt a függvény deklarációjában. Emiatt az egész `app.js` modul parse-olása megszakadt, tehát az Editor runtime egyáltalán nem tudott elindulni.
+
+### Javítás
+- csak a hibás deklaráció javult: `async async function editPageMeta(...)` → `async function editPageMeta(...)`;
+- más Editor Core, Page Model, hierarchy vagy persistence logika nem változott;
+- teljes fájlszintű kereséssel ellenőrizve: **1** hibás `async async` előfordulás volt, és az javítva lett.
+- Javító commit: `55b3346435a93eab76b5e70109add1f2290c6689`.
+
+### Tesztállapot
+- [x] A konkrét syntax hiba azonosítva.
+- [x] A konkrét syntax hiba javítva.
+- [ ] GitHub Actions új CI futás a javító commitra.
+- [ ] Cloudflare deploy után Editor v2 teljes betöltés.
+- [ ] Diagnostics: 0 hiba.
+- [ ] Oldalak panel és canvas betöltés.
+- [ ] 40.69.2 persistence tesztfolytatás.
+
+**Következő egyetlen aktív ellenőrzés:** az új commit CI/deploy után az Editor v2 teljes betöltésének élő újratesztje. PC/Desktop live teszt továbbra is PENDING.
