@@ -8,7 +8,104 @@ import { beginTransaction, commitTransaction, execute, executeBatch, rollbackTra
 import { getProperty, listProperties, listPropertyGroups } from '../core/property-registry.js';
 import { hasResponsiveOverride, resolveResponsiveValue, setResponsiveValue } from '../core/responsive.js';
 import { plainTextToRichText } from '../core/richtext-engine.js';
+import { createDefaultScheduleConfig, normalizeScheduleConfig, validateScheduleConfig } from '../core/schedule-schema.js';
 import { validatePublishDocument } from '../../../src/core/editor-validation.ts';
+
+test('Schedule config uses canonical defaults and normalizes valid input', () => {
+  const defaults = createDefaultScheduleConfig();
+  assert.deepEqual(defaults, {
+    version: 1,
+    mode: 'upcoming',
+    limit: 10,
+    statuses: ['scheduled', 'live'],
+    platforms: [],
+    order: 'asc',
+    showTitle: true,
+    showPlatform: true,
+    showTime: true,
+    showEndTime: false,
+    showStatus: false,
+    showNotes: false,
+    showLink: true,
+    emptyText: 'Nincs tervezett stream.'
+  });
+
+  const normalized = normalizeScheduleConfig({
+    mode: 'all',
+    limit: 25,
+    statuses: [' live ', 'scheduled', 'live'],
+    platforms: [' Twitch ', 'YouTube'],
+    order: 'desc',
+    showTitle: false,
+    showPlatform: true,
+    showTime: false,
+    showEndTime: true,
+    showStatus: true,
+    showNotes: false,
+    showLink: false,
+    emptyText: '  Nincs következő stream.  '
+  });
+
+  assert.deepEqual(normalized, {
+    version: 1,
+    mode: 'all',
+    limit: 25,
+    statuses: ['live', 'scheduled'],
+    platforms: ['Twitch', 'YouTube'],
+    order: 'desc',
+    showTitle: false,
+    showPlatform: true,
+    showTime: false,
+    showEndTime: true,
+    showStatus: true,
+    showNotes: false,
+    showLink: false,
+    emptyText: 'Nincs következő stream.'
+  });
+});
+
+test('Schedule config rejects unsupported or unsafe values', () => {
+  assert.throws(() => normalizeScheduleConfig({ mode: 'random' }));
+  assert.throws(() => normalizeScheduleConfig({ limit: 0 }));
+  assert.throws(() => normalizeScheduleConfig({ limit: 51 }));
+  assert.throws(() => normalizeScheduleConfig({ statuses: ['cancelled'] }));
+  assert.throws(() => normalizeScheduleConfig({ statuses: [] }));
+  assert.throws(() => normalizeScheduleConfig({ platforms: ['   '] }));
+  assert.throws(() => normalizeScheduleConfig({ showTitle: 'true' }));
+  assert.throws(() => normalizeScheduleConfig({ emptyText: '   ' }));
+  assert.equal(validateScheduleConfig({ mode: 'all', limit: 5 }).length, 0);
+  assert.equal(validateScheduleConfig({ mode: 'invalid' }).length, 1);
+});
+
+test('Schedule nodes receive canonical defaults and validate through the Page Model', () => {
+  const document = createDocument();
+  const page = document.pages[document.activePageId];
+  const schedule = {
+    id: 'schedule_test',
+    type: NODE_TYPES.SCHEDULE,
+    name: 'Menetrend',
+    parentId: page.rootId,
+    children: [],
+    props: { schedule: createDefaultScheduleConfig() },
+    style: {},
+    responsive: { desktop: {}, tablet: {}, mobile: {} },
+    states: {},
+    visibility: { desktop: true, tablet: true, mobile: true },
+    locked: false,
+    component: null,
+    dataBindings: {},
+    interactions: [],
+    accessibility: {},
+    metadata: {}
+  };
+  page.nodes[schedule.id] = schedule;
+  page.nodes[page.rootId].children.push(schedule.id);
+  assertValidEditorDocument(document);
+
+  const invalid = structuredClone(document);
+  invalid.pages[invalid.activePageId].nodes[schedule.id].props.schedule.limit = 0;
+  assert.throws(() => assertValidEditorDocument(invalid));
+});
 
 test('new document is structurally valid', () => {
   const document = createDocument();
