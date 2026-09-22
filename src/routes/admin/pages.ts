@@ -2,6 +2,7 @@ import { error, ok } from "../../core/response";
 import { getAuthenticatedUser, hasRole } from "../../core/auth/require-auth";
 import { normalizeEditorDocument } from "../../core/page-model";
 import type { Env } from "../../types/env";
+import { auditStatement } from "../../core/audit";
 
 type PageRow={id:string;slug:string;title:string;description:string;content_json:string;published_content_json:string|null;is_published:number;published_revision_id:string|null;sort_order:number;created_at:string;updated_at:string;revision?:number};
 type PageBody={id?:unknown;slug?:unknown;title?:unknown;description?:unknown;document?:unknown;isPublished?:unknown;sortOrder?:unknown;expectedVersion?:unknown};
@@ -9,12 +10,11 @@ function parse(value:string):any{try{return JSON.parse(value)}catch{return {}}}
 function canonical(value:unknown,id:string):boolean{const d:any=value;const p=d?.pages?.[id];return Boolean(d&&d.type==='sanci-page-document'&&d.schemaVersion===1&&d.activePageId===id&&p&&p.id===id&&p.rootId&&p.nodes&&typeof p.nodes==='object')}
 function serialize(row:PageRow,includeContent=true){const raw=parse(row.content_json);const document=normalizeEditorDocument(raw,row.id,row.title,row.slug,row.description);const revision=Number(row.revision??document?.revision??document?.pages?.[row.id]?.revision??0);return{id:row.id,slug:row.slug,title:row.title,description:row.description,sortOrder:row.sort_order,revision,...(includeContent?{content:document||raw}:{}),isPublished:Boolean(row.is_published),publishedRevisionId:row.published_revision_id??null,createdAt:row.created_at,updatedAt:row.updated_at}}
 function validSlug(value:string){return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value)}
-async function audit(env:Env,userId:string,action:string,id:string,metadata:unknown){await env.DB.prepare('INSERT INTO audit_log (id,user_id,action,entity_type,entity_id,metadata_json) VALUES (?,?,?,?,?,?)').bind(crypto.randomUUID(),userId,action,"page",id,JSON.stringify(metadata)).run()}
 export async function adminPagesRoute(request:Request,env:Env):Promise<Response>{
  const user=await getAuthenticatedUser(request,env);if(!user)return error('UNAUTHORIZED',401,'Authentication required');if(!hasRole(user,'editor'))return error('FORBIDDEN',403,'Editor role required');
  if(request.method==='GET'){const metaOnly=new URL(request.url).searchParams.get('meta')==='1';const rows=await env.DB.prepare('SELECT p.id,p.slug,p.title,p.description,p.content_json,p.is_published,p.published_revision_id,p.sort_order,p.created_at,p.updated_at,COALESCE((SELECT MAX(er.version) FROM editor_revisions er WHERE er.page_id=p.id),0) AS revision FROM pages p ORDER BY p.sort_order ASC').all<PageRow>();return ok(rows.results.map(r=>serialize(r,!metaOnly)))}
  let body:PageBody;try{body=await request.json() as PageBody}catch{return error('INVALID_JSON',400)}
- if(request.method==='DELETE'){const id=typeof body.id==='string'?body.id:'';if(!id)return error('INVALID_PAGE_ID',400);const count=await env.DB.prepare('SELECT COUNT(*) AS count FROM pages').first<{count:number}>();if(Number(count?.count||0)<=1)return error('LAST_PAGE',409,'Az utolsó oldal nem törölhető.');const existingOrder=await env.DB.prepare('SELECT sort_order FROM pages WHERE id=? LIMIT 1').bind(id).first<{sort_order:number}>();const result=await env.DB.prepare('DELETE FROM pages WHERE id=?').bind(id).run();if(!result.meta.changes)return error('PAGE_NOT_FOUND',404);if(existingOrder){await env.DB.prepare('UPDATE pages SET sort_order=sort_order-1 WHERE sort_order>?').bind(existingOrder.sort_order).run()}await audit(env,user.id,'page.delete',id,{});return ok({id,deleted:true})}
+ if(request.method==='DELETE'){const id=typeof body.id==='string'?body.id:'';if(!id)return error('INVALID_PAGE_ID',400);const count=await env.DB.prepare('SELECT COUNT(*) AS count FROM pages').first<{count:number}>();if(Number(count?.count||0)<=1)return error('LAST_PAGE',409,'Az utolsó oldal nem törölhető.');const existingOrder=await env.DB.prepare('SELECT sort_order FROM pages WHERE id=? LIMIT 1').bind(id).first<{sort_order:number}>();if(!existingOrder)return error('PAGE_NOT_FOUND',404);const deleteStatements:any[]=[env.DB.prepare('DELETE FROM pages WHERE id=?').bind(id)];if(existingOrder)deleteStatements.push(env.DB.prepare('UPDATE pages SET sort_order=sort_order-1 WHERE sort_order>?').bind(existingOrder.sort_order));deleteStatements.push(auditStatement(env,user.id,'page.delete','page',id,{}));await env.DB.batch(deleteStatements);return ok({id,deleted:true})}
  if(request.method==='PATCH'){
   const id=typeof body.id==='string'?body.id:'';const requestedOrder=typeof body.sortOrder==='number'?Math.floor(body.sortOrder):null;const title=typeof body.title==='string'?body.title.trim():'';const requestedSlug=typeof body.slug==='string'?body.slug.trim().toLowerCase():'';const requestedDescription=typeof body.description==='string'?body.description.trim():null;
   if(!id)return error('INVALID_PAGE_ID',400);if(requestedOrder!==null&&requestedOrder<0)return error('INVALID_PAGE_ORDER',400);if(title&&title.length>160)return error('INVALID_PAGE_TITLE',400);if(requestedSlug&&(!validSlug(requestedSlug)||requestedSlug.length>80))return error('INVALID_PAGE_SLUG',400,'A slug csak kisbetűs betűket, számokat és kötőjeleket tartalmazhat.');if(requestedDescription!==null&&requestedDescription.length>500)return error('INVALID_PAGE_DESCRIPTION',400);if(!title&&!requestedSlug&&requestedDescription===null&&requestedOrder===null)return error('INVALID_PAGE_UPDATE',400);
@@ -32,7 +32,7 @@ export async function adminPagesRoute(request:Request,env:Env):Promise<Response>
    if(contentChanged&&existing.is_published)statements.push(env.DB.prepare('UPDATE pages SET published_content_json=?,published_revision_id=? WHERE id=?').bind(contentJson,revisionId,id));
    await env.DB.batch(statements);
   }catch(e){if(String(e).toLowerCase().includes('unique'))return error('SLUG_EXISTS',409,'Slug already exists');throw e}
-  await audit(env,user.id,'page.update',id,{oldTitle:existing.title,title:nextTitle,oldSlug:existing.slug,slug:nextSlug,oldDescription:existing.description,description:nextDescription,version:contentChanged?nextVersion:null,revisionId});return ok(serialize({...existing,title:nextTitle,slug:nextSlug,description:nextDescription,sort_order:nextOrder,content_json:contentJson,published_content_json:existing.published_content_json, published_revision_id:existing.is_published&&contentChanged?revisionId:existing.published_revision_id},true))
+  return ok(serialize({...existing,title:nextTitle,slug:nextSlug,description:nextDescription,sort_order:nextOrder,content_json:contentJson,published_content_json:existing.published_content_json, published_revision_id:existing.is_published&&contentChanged?revisionId:existing.published_revision_id},true))
  }
  if(request.method!=='POST')return error('METHOD_NOT_ALLOWED',405);
  const title=typeof body.title==='string'?body.title.trim():'';
@@ -52,11 +52,10 @@ export async function adminPagesRoute(request:Request,env:Env):Promise<Response>
  try{
   const pageInsert=env.DB.prepare('INSERT INTO pages (id,slug,title,description,content_json,published_content_json,published_revision_id,is_published,sort_order,updated_at) VALUES (?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP)').bind(id,slug,title,description,initialJson,isPublished?initialJson:null,isPublished?revisionId:null,isPublished?1:0,nextOrder);
   const revisionInsert=env.DB.prepare('INSERT INTO editor_revisions (id,page_id,version,document_json,created_by,note) VALUES (?,?,?,?,?,?)').bind(revisionId,id,1,initialJson,user.id,'Oldal létrehozva az Editor v2-ben');
-  await env.DB.batch([pageInsert,revisionInsert]);
+  await env.DB.batch([pageInsert,revisionInsert,auditStatement(env,user.id,'page.create','page',id,{slug,title,revisionId})]);
  }catch(e){
   if(String(e).toLowerCase().includes('unique'))return error('SLUG_EXISTS',409,'Slug already exists');
   throw e;
  }
- await audit(env,user.id,'page.create',id,{slug,title,revisionId});
  return ok({id,slug,title,description,content:initialDocument,isPublished,version:1,revisionId});
 }
