@@ -2484,3 +2484,15 @@ A 40.48 audit alapján elkészült a minimális desktop Layers hierarchy interac
 8. User PASS.
 
 Sikertelen tesztnél nem lépünk tovább; mobile/touch drag csak a desktop hierarchy interaction lezárása után indul.
+
+## 40.50 — LAYERS DRAG / REORDER / REPARENT CORE CI — 2026-09-22
+
+**Állapot:** [x] CI PASS — a 40.49 implementáció syntax/Core kapuja hibamentesen lefutott.
+
+- Editor Core workflow: **#423**
+- head: `c3a272ed953a44ca2c07182d11684fc932358fda`
+- conclusion: **success**
+- A Group/Ungroup korábbi Core 23/23 PASS állapota változatlan.
+- Production command API ebben a CI-lépésben nem módosult.
+
+**Következő egyetlen aktív tesztkapu:** desktop Layers élő browser teszt a drag/reorder/reparent interactionre.
