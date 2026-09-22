@@ -22,20 +22,17 @@
 
 **Kód jelenléte önmagában soha nem jelent `[x]` státuszt.**
 
-## 00.2 Egyetlen MASTER terv + párhuzamos munkasávok
-Ez a projekt **egyetlen aktív MASTER tervet** használ. A tervben lehet több, egymással párhuzamosan haladó munkasáv, ha azok technikailag összehangolhatók és nem hoznak létre párhuzamos state/command/renderer rendszert.
+## 00.2 Egyetlen MASTER terv + egyetlen aktív munkapont
+Ez a projekt **egyetlen aktív MASTER tervet és pontosan egy aktív végrehajtási pontot** használ.
 
-A párhuzamos haladás szabálya:
-- minden munkasávnak saját, egyértelmű állapota van;
-- a PC/desktop és mobil/touch UX külön tesztelési/implementációs sáv lehet;
-- a közös canonical State, Page Model, Command API és selection rendszer csak egyszer létezhet;
-- egyik sáv sem írhatja felül vagy kerülheti meg a másik sáv kanonikus adatfolyamát;
-- minden lépés után **ugyanazt az egyetlen MASTER fájlt** kell frissíteni, és minden aktív sáv aktuális állapotát rögzíteni kell;
-- új beszélgetésben kizárólag ezt a MASTER fájlt kell alapul venni, és az összes `[~]` aktív sávból lehet folytatni.
+- Soha nincs két párhuzamos fejlesztési munkasáv.
+- PC/Desktop és Mobile/Touch **nem külön munkasáv**, csak ugyanazon funkció külön tesztfelülete.
+- A közös canonical State, Page Model, Command API, selection, hierarchy, history és renderer csak egyszer létezhet.
+- Minden további funkció csak backlogként létezhet, amíg az aktuális aktív pont le nincs zárva.
+- Új beszélgetésben kizárólag a **00/A MASTER VÉGREHAJTÁSI INDEX** alapján szabad folytatni.
+- Régi fejezetekben található `[~]`, `[ ]` vagy régebbi „következő lépés” szöveg nem aktiválható önállóan.
 
-A jelenlegi fejlesztési állapotban a **Multi-select PC/desktop** és **Multi-select mobil/touch** két párhuzamos munkasáv, közös canonical selection API-val. Nem készítünk külön selection state-et egyik platformhoz sem.
-
-**KÖTELEZŐ ÁLLAPOTMENTÉS MINDEN LÉPÉS UTÁN:** minden fejlesztési, javítási, tesztelési vagy döntési lépés lezárásakor frissíteni kell ezt a MASTER fájlt. A frissítés akkor is kötelező, ha egy beszélgetésen belül több lépést teszünk meg. A MASTER-nek mindig a **legutolsó ténylegesen elvégzett lépés utáni állapotot** kell tükröznie, ezért új beszélgetés bármikor megszakíthatja a munkát anélkül, hogy elveszne a pontos folytatási pont.
+**KÖTELEZŐ ÁLLAPOTMENTÉS MINDEN LÉPÉS UTÁN:** minden fejlesztési, javítási, tesztelési vagy döntési lépés lezárásakor frissíteni kell ezt a MASTER fájlt. Az indexnek mindig az utolsó ténylegesen lezárt lépést és az egyetlen következő aktív pontot kell mutatnia.
 
 ## 00.3 Kötelező MASTER-állapotfrissítés minden lépés után
 Minden egyes lépés után, még a következő lépés megkezdése előtt:
