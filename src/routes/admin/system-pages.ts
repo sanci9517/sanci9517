@@ -1,6 +1,7 @@
 import { error, ok } from "../../core/response";
 import { getAuthenticatedUser, hasRole } from "../../core/auth/require-auth";
 import type { Env } from "../../types/env";
+import { auditStatement } from "../../core/audit";
 
 const SYSTEM_PATHS = new Set(["/", "/twitch.html", "/youtube.html", "/tiktok.html", "/schedule.html", "/vod.html", "/community.html", "/about.html", "/contact.html"]);
 
@@ -46,16 +47,12 @@ export async function adminSystemPagesRoute(request: Request, env: Env): Promise
   if (!content) return error("INVALID_CONTENT", 400);
   const contentJson = JSON.stringify(content);
 
-  await env.DB.prepare(
-    `INSERT INTO system_page_content (path,content_json,updated_at)
+  await env.DB.batch([
+    env.DB.prepare(`INSERT INTO system_page_content (path,content_json,updated_at)
      VALUES (?,?,CURRENT_TIMESTAMP)
-     ON CONFLICT(path) DO UPDATE SET content_json=excluded.content_json, updated_at=CURRENT_TIMESTAMP`
-  ).bind(path, contentJson).run();
-
-  await env.DB.prepare(
-    `INSERT INTO audit_log (id,user_id,action,entity_type,entity_id,metadata_json)
-     VALUES (?,?,?,?,?,?)`
-  ).bind(crypto.randomUUID(), user.id, "system_page.update", "system_page", path, JSON.stringify({ path })).run();
+     ON CONFLICT(path) DO UPDATE SET content_json=excluded.content_json, updated_at=CURRENT_TIMESTAMP`).bind(path, contentJson),
+    auditStatement(env, user.id, "system_page.update", "system_page", path, { path })
+  ]);
 
   return ok({ path, content });
 }
