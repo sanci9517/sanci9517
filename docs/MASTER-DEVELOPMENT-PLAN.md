@@ -2239,3 +2239,14 @@ A mobil/touch multi-select browser teszt a felhasználó visszajelzése alapján
 A tesztelési kapu teljesüléséhez az implementáció + kódaudit + élő felhasználói teszt együtt PASS. A következő blokkoló feltétel továbbra is az A — PC/Desktop multi-select élő tesztje; Group/Ungroup csak A és B együttes PASS után indulhat.
 
 **Következő aktív pont:** A — PC/Desktop multi-select élő browser teszt lezárása, amikor a felhasználó teszteli.
+
+
+## 40.40 — KÖVETKEZŐ LÉPÉS ÚJRATERELÉSE — 2026-09-22
+
+**Állapot:** [x] MASTER döntési kapu ellenőrizve.
+
+A felhasználó kérésére folytatjuk a fejlesztést, de az előre rögzített biztonsági függőségi szabályt nem ugrunk át: **Group/Ungroup implementáció csak az A — PC/Desktop multi-select élő PASS és a már teljesített B — Mobile/Touch PASS után indulhat.**
+
+B állapot: PASS. A állapot: élő teszt pending, mert a felhasználó ezt későbbre halasztotta.
+
+Ezért ebben a lépésben nem készül párhuzamos Group/Ungroup kód, nem kerül be második selection rendszer és nem jelöljük A-t PASS-nak teszt nélkül. A következő fejlesztési kapu az A PC/Desktop multi-select élő tesztjének lezárása; annak PASS-a után közvetlenül indul a Group/Ungroup canonical command + unit test + UI + browser regression munkasor.
