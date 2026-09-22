@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.68  
+**Verzió:** MASTER-2.39.69  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt PASS:** 2026-09-22 — 40.69.8 Settings/Schedule/Login-Logout live tesztek PASS; a System Page teszt blokkolt, mert a jelenlegi rendszeroldal-kezelés még a régi system_page_content + fix SYSTEM lista architektúrára épül.
+**Legutóbbi igazolt PASS:** 2026-09-22 — 40.69.8 Settings/Schedule/Login-Logout live tesztek PASS; a System Page teszt blokkolt, mert a jelenlegi rendszeroldal-kezelés még a régi system_page_content + fix SYSTEM lista architektúrára épül. A teljes kód-audit ezután az aktív Editor v2 mellett külön legacy editor/admin rétegeket is azonosított.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -34,7 +34,7 @@ Ha bármilyen régi checkpoint, összefoglaló, korábbi üzenet vagy történet
 **Boot-szabály:** új beszélgetésben a modellnek először ezt a 00/B blokkot, majd közvetlenül a 00/A indexet kell figyelembe vennie. Ha bármely régi checkpoint ettől eltér, a régi checkpointot kell figyelmen kívül hagyni, nem az aktuális MASTER állapotot.
 
 **Egyetlen aktuális folytatási mondat:**
-> „Folytassuk a Sanci9517 MASTER tervet a 40.69.8 audit-log coverage és consistency teljes kód- és adatfolyam-auditjával: először csak audit, kódmódosítás csak bizonyított hiány esetén.”
+> „Folytassuk a Sanci9517 MASTER tervet a 40.69.9 canonical Pages / Visual Editor / Schedule architektúra auditjával: először legacy-rétegek feltérképezése és archiválási terv, kódmódosítás csak az audit után.”
 
 > **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd kizárólag a **00/A MASTER VÉGREHAJTÁSI INDEX egyetlen aktív pontjából** folytatni. Más fejezet `[ ]`, `[~]` vagy régebbi „következő lépés” szövege nem jelent aktuális folytatási pontot.
 
@@ -188,6 +188,29 @@ Nem vezetünk be második selection-, hierarchy-, state-, renderer- vagy command
 **Döntés:** nem javítjuk foltozással a régi system-page CRUD-ot. Először a canonical Editor v2 pages + revision/publish rendszert kell kijelölni a rendszeroldalak egyetlen forrásának, majd a régi system_page_content/system-page-editor/runtime útvonalat kontrolláltan ki kell vezetni vagy kompatibilitási rétegként lezárni.
 
 **Következő egyetlen aktív pont:** System Page → canonical Pages architektúra teljes audit és migrációs terv; kódmódosítás csak az audit után.
+
+## 40.69.9 — CANONICAL PAGES / VISUAL EDITOR / SCHEDULE ARCHITEKTÚRA TELJES AUDIT — 2026-09-22
+
+**Állapot:** [~] AUDIT FOLYAMATBAN — ebben a lépésben nincs kódmódosítás.
+
+### Audit eredmény
+- [x] A jelenlegi aktív Visual Editor a `public/editor-v2/` rendszer: közös state, command, schema, validation, canvas, property registry, responsive, rich-text, diagnostics és core tesztek.
+- [x] `/admin/editor` közvetlenül az Editor v2 felületre nyit; nem a régi `public/editor/` rendszert használja.
+- [x] A canonical oldal-életciklus: `/api/admin/pages` + `/api/admin/editor` + `editor_revisions` + draft/published snapshot + rollback/audit.
+- [x] A régi `public/assets/system-page-editor.js` fix 9 rendszeroldalas modellt és külön `/api/admin/system-pages` GET/PUT rendszert használ; create/delete nincs.
+- [x] A régi `public/assets/system-page-runtime.js` külön `system_page_content` adatmodellt renderel, tehát nem a canonical Page Modelt.
+- [x] A repositoryban külön `public/editor/` legacy editor-kódbázis is van; ez nem lehet az új fejlesztések alapja.
+- [x] `public/admin.html` legacy admin UI; tartalomkezelési API-szerződése eltér a canonical pages API-tól, ezért nem lehet a jövőbeli Visual Editor forrása.
+- [x] Az Adásrend D1 CRUD backendje már működik; a 40.69.8 live create/update/delete teszt PASS.
+- [x] Döntés: az Adásrend adat-domainje marad külön D1-ben, de a vizuális Adásrend oldal canonical `pages` + Editor v2 dokumentum lesz.
+- [x] Döntés: nem készül külön Schedule Editor és nem marad fenn második Visual Editor.
+
+### Hol van a weboldal szerkesztő a MASTER-ben?
+A weboldal-szerkesztő **már elkészült alapként**: ez az Editor v2. A MASTER további editor-pontjai ennek a canonical rendszernek a folyamatos bővítései. Az Adásrend-készítő ennek egy domain-specifikus felhasználási rétege lesz, nem új szerkesztő.
+
+### Következő egyetlen aktív pont
+**Legacy System Page + legacy editor/admin rétegek pontos archiválási határának auditja és migrációs sorrendje.** Kódot csak ennek lezárása után módosítunk.
+
 
 **40.69.7 lezárás:**
 - [x] CI/typecheck/editor-core PASS.
