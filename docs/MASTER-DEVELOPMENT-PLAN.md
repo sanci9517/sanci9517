@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.81  
+**Verzió:** MASTER-2.39.82  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -259,7 +259,7 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 - [x] A `schedule_items` D1 domain megmarad.
 - [x] A Page Model nem másolja bele az eseményrekordokat.
 - [x] A `schedule` node külön canonical Editor v2 blokk.
-- [ ] Twitch integrációs contract még nincs auditálva/implementálva.
+- [~] Twitch integrációs contract audit PASS; a 40.69.13.B token lifecycle/security hardening folyamatban.
 - [ ] Játékprofil/sablon adatmodell még nincs véglegesítve.
 - [ ] Inspectorból történő Schedule event CRUD még nincs implementálva.
 - [ ] Schedule Builder végső UX még nincs implementálva.
@@ -2921,7 +2921,7 @@ Kötelezően megőrzendő külső adatok:
 
 ### 40.69.13.B — TWITCH ACCOUNT/CHANNEL CONNECTION + TOKEN LIFECYCLE — 2026-09-22
 
-**Státusz:** [~] IMPLEMENTÁCIÓ ELKEZDVE; typecheck/deploy kapu PASS, de a 40.69.13.B teljes biztonsági/lifecycle PASS még nincs.
+**Státusz:** [~] IMPLEMENTÁLÁS + HARDENING FOLYAMATBAN; a refresh concurrency és token validation lifecycle gyökérokai azonosítva és a canonical megoldás implementálva, de CI/typecheck, deploy, D1 migration és live OAuth/refresh/validation teszt még hátra van.
 
 #### B.1 Canonical döntések
 - A Twitch kapcsolat kizárólag az authenticated admin sessionből indítható.
@@ -2933,14 +2933,17 @@ Kötelezően megőrzendő külső adatok:
 - Broadcaster ID a Twitch connection canonical external identity kulcsa.
 - `social_accounts` továbbra is statikus social-link domain; nem használható OAuth connection storage-ra.
 - Disconnect Twitch revoke endpointet használ, majd a lokális kapcsolat státuszát `revoked` értékre állítja.
-- Refreshkor az új refresh token kötelezően mentésre kerül; Twitch szerint refreshkor változhat. citeturn0search1
-- Twitch token validáció a `/oauth2/validate` endpointon történik; Twitch third-party OAuth session esetén ezt induláskor és óránkénti validációval írja elő. citeturn0search2
-- Első connectionnél nem kérünk felesleges scope-okat; a Twitch dokumentáció szerint csak a ténylegesen szükséges scope-okat szabad kérni. citeturn1search1
+- Refreshkor az új refresh token kötelezően mentésre kerül.
+- Twitch token validáció a `/oauth2/validate` endpointon történik; a validáció eredménye a connection canonical állapotát frissíti.
+- Minimális scope elv: csak bizonyítottan szükséges jogosultságokat kérünk.
 
-#### B.2 Implementált alap
+#### B.2 Implementált alap + jelenlegi hardening
 - `migrations/0011_twitch_integration.sql`
   - `twitch_connections`
   - `twitch_oauth_states`
+- `migrations/0012_twitch_refresh_lock.sql`
+  - `refresh_lock_token`
+  - `refresh_lock_until`
 - `src/core/twitch-crypto.ts`
   - AES-GCM token encryption/decryption
   - OAuth state hashing
@@ -2950,7 +2953,8 @@ Kötelezően megőrzendő külső adatok:
   - token validation
   - refresh
   - revoke
-  - connection read
+  - canonical valid-token accessor
+  - refresh concurrency lease
 - `src/routes/integrations/twitch.ts`
   - connect
   - callback
@@ -2961,36 +2965,75 @@ Kötelezően megőrzendő külső adatok:
 - `src/index.ts`
   - Twitch integration routes registered.
 
-#### B.3 Biztonsági ellenőrzés — jelenlegi állapot
-**PASS:**
-- tokenek nem kerülnek kliensválaszba;
-- tokenek nem kerülnek Page Modelbe;
-- OAuth state nem plaintext formában kerül D1-be;
-- state userhez kötött és egyszer használható;
-- tokenek nem plaintext D1 mezőkben vannak;
-- refresh token rotation támogatott;
-- Twitch revoke endpoint használata implementálva;
-- minimális scope elv rögzítve.
+#### B.3 Audit megállapítások és javítások
+**Az audit során talált valódi hibák:**
 
-**PENDING / NEM PASS:**
-- refresh concurrency lock még nincs lezárva; ezt a következő javító lépésben kötelező megoldani, mert Twitch külön figyelmeztet a párhuzamos refresh problémára. citeturn0search1
-- token validáció óránkénti lifecycle még nincs scheduler/cron szinten megépítve.
-- live OAuth callback teszt még nincs lefuttatva.
-- Cloudflare secret `TWITCH_TOKEN_ENCRYPTION_KEY` még nincs igazolva.
-- redirect URI production/custom-domain egyezés még nincs élőben ellenőrizve.
-- connect/disconnect audit teljes atomicitását még célzottan tesztelni kell.
-- A Cloudflare/GitHub typecheck a `a2b21d594b0f6bc481f05a5d784226e05329d2af` és `f1e9cc934edff64a3f5658bb72026c0ca15d7f0e` commitokon továbbra is ugyanazon gyökérokú TypeScript hibával állt meg: a `Number.isFinite(...)` önmagában nem szűkíti TypeScriptben az opcionális `expires_in` mezőt. A `f1e9cc...` lokális változós javítása ezért nem volt elegendő. A végleges javításban explicit `typeof token.expires_in !== "number"` narrowing került az authorization-code és refresh response validációba, a korábbi cast megszüntetésével. A Node 20 és Ubuntu 26 üzenetek továbbra is warning/notice, nem build blocker.
+1. **Refresh concurrency**
+   - A korábbi refresh útvonal ugyanazt a refresh tokent párhuzamosan több Worker requestből is elküldhette.
+   - Twitch a refresh tokenek rotációját és a párhuzamos refresh kockázatát külön kezeli; ezért egyetlen connectionhöz server-side lock szükséges. 
+   - Canonical javítás: D1-alapú rövid lease lock ugyanazon `twitch_connections` rekordon.
+   - A lock atomikus `UPDATE ... WHERE lock szabad/lejárt` művelettel szerezhető meg.
+   - A lock tulajdonosa a Twitch refresh HTTP hívást a lock alatt végzi, majd siker/failure esetén felszabadítja.
+   - A várakozó requestek rövid pollinggal megvárják az első refresh eredményét.
+   - Ha egy másik request már frissítette a connectiont, az új request a friss access tokent használja, és nem indít második refresh-t.
+   - Lock timeout esetén explicit `TWITCH_REFRESH_CONCURRENCY_TIMEOUT` hiba keletkezik.
 
-#### B.4 Commitok
-- `2b30e229d5ed76439cc03f0511368cdca2ea31cc` — Twitch integration persistence migration.
-- `c9606aecfa2a0b6a49881eeb9f5b4ad6a0b1ef78` — Twitch token encryption primitives.
-- `9614ae7b08f4928196ca70f10e2103c775b012ad` — Twitch OAuth lifecycle service.
-- `163f9921a6f798572ce6334571692d1780d6dc4d` — Twitch connection routes.
-- `c9007fdcc624be9895200ba7040f9b587e0b0e04` — Twitch route registration.
-- `a2b21d594b0f6bc481f05a5d784226e05329d2af` — első `expires_in` narrowing javítás, de a refresh ágban egy második előfordulás megmaradt.
-- `f1e9cc934edff64a3f5658bb72026c0ca15d7f0e` — második `expires_in` narrowing javítás, de TypeScriptben a `Number.isFinite` nem adott valódi type narrowinget.
-- `8a79af41d97f3d352bb07bc90e56599929725c47` — explicit `typeof` narrowing kísérlet, de a branch állapotában a TypeScript továbbra is hibát jelzett mindkét felhasználásnál.
-- `7f037d0594611fdff94044c81ea0e1082d07ead4` — `requireExpiresIn(value, errorCode): number` központi runtime/type guard bevezetése; mind az authorization-code exchange, mind a refresh ugyanazt a bizonyított `number` értéket használja.
+2. **Token validation lifecycle**
+   - A korábbi `validateAccessToken()` csak az OAuth callbackben futott; a későbbi Twitch API használathoz nem volt canonical valid-token lifecycle.
+   - Létrejött a `getValidTwitchAccessToken()` canonical service boundary.
+   - A token csak akkor kerül újra validálásra, ha a lokális validációs ablak lejárt, vagy az access token lejárathoz közel van.
+   - Érvénytelen access token esetén a rendszer reaktívan refresh-el, majd az új tokent újra validálja.
+   - A validation ellenőrzi a client ID és broadcaster/user ID egyezését.
+   - Sikeres validation frissíti a `last_validated_at`, scope és expiry állapotot.
+   - A validation lifecycle nem adja vissza a tokeneket kliensoldali route response-ban.
 
-**Egyetlen aktív folytatási pont:**
-> 40.69.13.B folytatás: a `7f037d0594611fdff94044c81ea0e1082d07ead4` javítás után a Cloudflare typecheck PASS, a deploy PASS, D1 migration kapu PASS (`No migrations to apply`), Worker deploy PASS (`b6f3f2f6-4487-4578-83e0-49034b1f4135`). A GitHub workflow futásban csak Node 20 deprecation warning és Ubuntu 26 notice maradt; nincs TypeScript/build hiba. Következő és egyetlen aktív lépés: a refresh concurrency lock + token validation lifecycle teljes auditja és minimális implementációs terve. Builder/Inspector kódolás továbbra is blokkolt.
+3. **OAuth state expiry / replay**
+   - Az audit során észleltük, hogy az ISO `T` formátumú expiry érték és a SQLite `CURRENT_TIMESTAMP` közvetlen szöveges összehasonlítása nem volt elég biztonságos/egyértelmű.
+   - A cleanup és validáció most `julianday(...)` alapú időösszehasonlítást használ.
+   - Az OAuth state a token exchange előtt egyszer használatosként atomikusan claimelődik; párhuzamos callback nem használhatja fel ugyanazt az állapotot kétszer.
+
+4. **Token secret handling**
+   - A token továbbra is csak server-side plaintextként létezik a szükséges HTTP hívás idejére.
+   - D1-ben AES-GCM ciphertext + IV tárolódik.
+   - Token nem kerül API response-ba, Page Modelbe vagy Editor state-be.
+   - Plaintext token logolása nem megengedett.
+
+#### B.4 Biztonsági / lifecycle állapot
+**PASS implementációs szinten:**
+- [x] OAuth state hash + user binding + TTL.
+- [x] OAuth state egyszer használatos atomic claim.
+- [x] Tokenek titkosított D1 storage-ban.
+- [x] Refresh token rotation mentése.
+- [x] Refresh concurrency lease.
+- [x] 401 → refresh → revalidate lifecycle.
+- [x] Client ID + broadcaster ID identity ellenőrzés.
+- [x] Tokenek nem kerülnek kliensválaszba.
+
+**PENDING tesztkapuk:**
+- [ ] Typecheck / GitHub CI.
+- [ ] D1 migration `0012` remote apply.
+- [ ] Cloudflare Worker deploy.
+- [ ] Cloudflare secret `TWITCH_TOKEN_ENCRYPTION_KEY` jelenléte.
+- [ ] Production redirect URI egyezés.
+- [ ] Live OAuth connect.
+- [ ] Live connection status.
+- [ ] Live token validation.
+- [ ] Controlled refresh concurrency test.
+- [ ] Invalid/revoked token → reauthorization flow.
+- [ ] No-secret/no-token leakage audit live logokban.
+- [ ] Connect/disconnect audit atomicity célzott teszt.
+
+#### B.5 Módosító commitok
+- `974221e93d896b6b861212b2501dd4608cbdee38` — `fix: add Twitch refresh concurrency lease`
+- `7ae8af57ce5b86b92e915de838b40b6b8b4a79ae` — `fix: harden Twitch token lifecycle and refresh concurrency`
+
+Korábbi kapcsolódó B commitok a történeti auditban maradnak.
+
+#### B.6 Külső szerződés
+A Twitch dokumentáció szerint third-party app esetén az OAuth access tokent induláskor és óránként validálni kell; érvénytelen tokennél a Twitch 401-et ad, a refresh token pedig rotálódhat, ezért a refresh lifecycle-nek ezt kezelnie kell. A párhuzamos refresh kockázatát a Twitch külön dokumentálja. 
+
+#### B.7 Következő és egyetlen aktív lépés
+**40.69.13.B folytatás — CI/typecheck → D1 migration → Cloudflare deploy → live OAuth/connection/validation/refresh security teszt.**
+
+**Builder/Inspector kódolás továbbra is blokkolt.**
+
