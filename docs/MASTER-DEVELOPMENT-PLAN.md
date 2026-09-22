@@ -2756,3 +2756,41 @@ A felhasználó törlési tesztje után egyértelműsítettük az oldallifecycle
 - A PC/Desktop élő teszteket a felhasználó külön kéréséig **PENDING** állapotban tartjuk; a mostani strukturális javítás nem indít automatikus PC regression kört.
 
 **Következő implementáció:** canonical üres standard oldalak egyszeri visszaállítása + publikus menü canonical `pages` listára kötése, majd CI/strukturális ellenőrzés és MASTER-frissítés.
+
+
+## 40.63 — CANONIKUS STANDARD OLDALAK + DINAMIKUS MENÜ IMPLEMENTÁCIÓ — 2026-09-22
+
+**Állapot:** [~] IMPLEMENTÁCIÓ KÉSZ; deploy/D1 migration és élő publikus ellenőrzés még hátra.
+
+A 40.62 döntés alapján a 404-es menüpont problémát nem régi HTML-oldalak visszahozásával és nem duplikált oldalszerkezettel oldottuk meg.
+
+### Elkészült
+- Új, idempotens D1 migration: `migrations/0008_restore_canonical_standard_pages.sql`.
+- A migration csak hiányzó standard oldalakat hoz létre, és nem ír felül meglévő rekordot.
+- A visszaállított oldalak közvetlenül **Editor v2 canonical Page Model** dokumentumok: `sanci-page-document`, `schemaVersion: 1`, saját root node-dal és üres children listával.
+- Visszaállított standard slugok: `home`, `twitch`, `schedule`, `youtube`, `tiktok`, `about`, `contact`.
+- A `community` rekordhoz nem nyúltunk, ezért nincs duplikáció.
+- Minden visszaállított oldal publikált, de üres tartalmú; a tényleges tartalom később az Editor v2-ben kerül feltöltésre.
+- A publikus menü mostantól a `/api/public/pages` canonical oldallistájából épül fel, ezért törölt oldal nem marad bent statikus 404-es menüpontként.
+- A régi statikus menülinkek kikerültek a `visual-page.html`-ból.
+- A főoldal publikus sablonjában az **Admin belépés** továbbra is megmaradt.
+- A `/p/<slug>` útvonal továbbra is kizárólag a canonical `pages` rekordot szolgálja ki.
+
+### Módosított fájlok
+- `migrations/0008_restore_canonical_standard_pages.sql`
+  - commit: `20dc5a87150244166ac864a9d948ff5875b32b99`
+- `public/assets/site.js`
+  - commit: `cdb03a1d08ed9cbf5efb67104720a9d5ab6858b9`
+- `public/visual-page.html`
+  - commit: `a089665e6ee9b1264bb9f5e925ef727c75d8d818`
+
+### Tesztállapot
+- [ ] D1 migration futtatása/deploy.
+- [ ] Publikus menü élő ellenőrzése: nincs 404-es standard menüpont.
+- [ ] `/` főoldal betöltése és Admin belépés jelenléte.
+- [ ] `/p/home`, `/p/twitch`, `/p/schedule`, `/p/youtube`, `/p/tiktok`, `/p/community`, `/p/about`, `/p/contact` élő ellenőrzése.
+- [ ] Editor v2 oldalválasztóban az oldalak megjelenése és szerkeszthetősége.
+- [ ] Diagnosztika 0 hiba.
+- [ ] PC/Desktop élő teszt továbbra is **PENDING**, és csak a felhasználó külön kérésére futtatjuk.
+
+**Következő aktív lépés:** deploy/D1 migration után mobilról strukturális élő ellenőrzés; PC tesztet nem indítunk automatikusan.
