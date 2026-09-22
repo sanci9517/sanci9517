@@ -2357,3 +2357,16 @@ A log alapján:
 **Javítási szabály:** csak a hibás unit teszt assertionét javítjuk; a production command logikáját nem változtatjuk meg, mert a jelenlegi hiba a kívánt védelmi viselkedés.
 
 **Következő aktív lépés:** a teszt assertion javítása, új Core CI futtatás.
+
+
+## 40.45 — GROUP/UNGROUP CORE TEST ASSERTION JAVÍTVA — 2026-09-22
+
+**Állapot:** [~] JAVÍTÁS KÉSZ; új Core CI fut.
+
+A 40.44-ben azonosított egyetlen teszt-specifikus hibát javítottuk: a non-GROUP ungroup edge case most `assert.throws()`-szal ellenőrzi a kívánt blokkolást és rollbacket.
+
+- `public/editor-v2/tests/core.test.js`
+- commit: `9d5e2be4345abd01168bf3481b133a71ef458b43`
+- production `commands.js` nem változott.
+
+**Következő kapu:** az új Core CI eredménye. PASS esetén a Group/Ungroup Core domain lezárható, és indulhat az UI-integráció.
