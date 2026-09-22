@@ -2989,7 +2989,7 @@ A kanonikus oldal-életciklus után a következő lépés a Draft/Preview/Publis
 
 **40.68.1 — UNPUBLISH VALIDÁCIÓS SORREND JAVÍTÁS — 2026-09-22**
 
-**Állapot:** [~] JAVÍTVA; az érintett mobil élő újrateszt még hátra.
+**Állapot:** [x] PASS — mobil élő újrateszt: felhasználói visszaigazolás: „Pipa”.
 
 A 40.68 mobil tesztjén az Unpublish művelet hibásan az Editor v2 dokumentum-validációval kezdődött, ezért a „A mentett dokumentumnak az Editor v2 Page Modelt kell követnie.” hiba jelent meg. Ez logikai sorrendhiba volt: az Unpublish csak a publikációs állapotot módosítja, ezért nem kell hozzá új dokumentumot küldeni vagy validálni.
 
