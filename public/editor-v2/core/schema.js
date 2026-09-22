@@ -226,7 +226,7 @@ export function createNode(type = NODE_TYPES.CONTAINER, overrides = {}) {
     visibility: { desktop: true, tablet: true, mobile: true },
     locked: false,
     component: null,
-    dataBindings: {},
+    dataBindings: type === NODE_TYPES.SCHEDULE ? { schedule: { source: 'schedule_items', version: 1 } } : {},
     interactions: [],
     accessibility: {},
     metadata: {},
