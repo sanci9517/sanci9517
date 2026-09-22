@@ -2555,6 +2555,20 @@ A felhasználó jelenleg elsősorban mobilon tud élő tesztet végezni. Ezért:
 
 **Hivatalos folytatási pont:** a párhuzamos Mobile/Touch hierarchy manipulation implementáció, miközben a Desktop Layers live teszt PENDING állapotban marad.
 
+
+## 40.53 — MOBILE LAYERS HIERARCHY UI ELŐTESZT — 2026-09-22
+
+**Állapot:** [x] PASS — felhasználói élő teszt: **Működik**.
+
+A Mobile/Touch Layers hierarchy manipulation teljes funkcionális tesztje előtt az első UI-előteszt sikeresen lezárult.
+
+- Layers panel megnyitható.
+- A mozgatható elemeknél látható a `⠿` drag handle.
+- A Layers UI nem jelez hibát.
+- A touch hierarchy drag további funkcionális tesztje folytatható.
+
+**Következő egyetlen aktív tesztpont:** Mobile Layers drag → sibling reorder.
+
 ## 40.52 — PC + MOBIL LAYERS HIERARCHY MANIPULATION PÁRHUZAMOS IMPLEMENTÁCIÓ — 2026-09-22
 
 **Állapot:** [~] IMPLEMENTÁCIÓ KÉSZ; élő browser teszt és teljes CI-kapu még hátra.
