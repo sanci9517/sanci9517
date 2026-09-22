@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.85  
+**Verzió:** MASTER-2.39.86  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt PASS:** 2026-09-22 — 40.69.13.B CI/typecheck + `0012_twitch_refresh_lock` remote D1 migration + Cloudflare Worker deploy PASS; a Twitch Integration Check és Editor Core Test sikeresen lefutott az `a2bdcea2de44c3f3fd66cebe6533966e2eeb5909` commiton, a remote D1 sémában a refresh lock oszlopok és index igazoltan jelen vannak, a Worker sikeresen deployolva lett a `sanci9517-streamer-brand` projektbe. Live Twitch lifecycle tesztek még hátra vannak.
+**Legutóbbi igazolt PASS:** 2026-09-22 — 40.69.13.B CI/typecheck + `0012_twitch_refresh_lock` remote D1 migration + Cloudflare Worker deploy + production `TWITCH_TOKEN_ENCRYPTION_KEY` secret presence PASS; a Twitch Integration Check és Editor Core Test sikeresen lefutott az `a2bdcea2de44c3f3fd66cebe6533966e2eeb5909` commiton, a remote D1 sémában a refresh lock oszlopok és index igazoltan jelen vannak, a Worker sikeresen deployolva lett, és a production secret létrehozása sikeresen megtörtént. A production redirect URI és a live Twitch lifecycle tesztek még hátra vannak.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -3013,7 +3013,7 @@ Kötelezően megőrzendő külső adatok:
 - [x] Typecheck / GitHub CI — Twitch Integration Check #1 PASS + Editor Core Test #625 PASS az `a2bdcea2de44c3f3fd66cebe6533966e2eeb5909` commiton; futás: 21–23 mp.
 - [x] D1 migration `0012` remote apply — PASS; `refresh_lock_token` és `refresh_lock_until` oszlopok létrejöttek, az `idx_twitch_connections_refresh_lock` index jelen van.
 - [x] Cloudflare Worker deploy — PASS; `sanci9517-streamer-brand` sikeresen deployolva, version ID: `dc69ff9d-e9fb-486e-928d-8a9454eb661e`.
-- [ ] Cloudflare secret `TWITCH_TOKEN_ENCRYPTION_KEY` jelenléte.
+- [x] Cloudflare secret `TWITCH_TOKEN_ENCRYPTION_KEY` jelenléte — `wrangler secret list` production Workeren igazolta a secret nevet; ezt követően `wrangler secret put TWITCH_TOKEN_ENCRYPTION_KEY` sikeresen feltöltötte.
 - [ ] Production redirect URI egyezés.
 - [ ] Live OAuth connect.
 - [ ] Live connection status.
@@ -3036,7 +3036,22 @@ Kötelezően megőrzendő külső adatok:
 - Twitch Integration Check run: `35771532887`.
 - Editor Core Test run: `35771532842`.
 
-**Következő egyetlen tesztkapu:** production `TWITCH_TOKEN_ENCRYPTION_KEY` secret + Twitch production redirect URI ellenőrzése, majd live OAuth connection lifecycle.
+**Következő egyetlen tesztkapu:** Twitch production redirect URI egyezés ellenőrzése, majd live OAuth connection lifecycle.
+
+#### B.4b — Production Twitch encryption secret — 2026-09-22
+
+**PASS:**
+- [x] Production `TWITCH_TOKEN_ENCRYPTION_KEY` secret jelenléte ellenőrizve.
+- [x] A secret értéke nem került chatbe, logba vagy MASTER dokumentumba.
+- [x] `wrangler secret put TWITCH_TOKEN_ENCRYPTION_KEY` sikeresen lefutott a `sanci9517-streamer-brand` Workerre.
+
+**Bizonyíték:**
+- `wrangler secret list` kezdeti kimenete csak `ADMIN_BOOTSTRAP_TOKEN` secretet mutatott.
+- A secret feltöltése után a Wrangler ezt jelezte: `Success! Uploaded secret TWITCH_TOKEN_ENCRYPTION_KEY`.
+
+**Státusz:** `[x]`.
+
+**Következő egyetlen aktív tesztkapu:** Twitch production redirect URI egyezés ellenőrzése. Ezután indulhat a live OAuth connect → connection status → token validation → refresh/reauthorization security tesztlánc.
 
 #### B.5 Módosító commitok
 - `974221e93d896b6b861212b2501dd4608cbdee38` — `fix: add Twitch refresh concurrency lease`
