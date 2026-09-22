@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.75  
+**Verzió:** MASTER-2.39.76  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -2833,4 +2833,87 @@ A Schedule blokk egyetlen adatvezérelt komponens marad, amely több layouttal t
 - felhasználói PASS;
 - MASTER lezárva.
 
-**EGYETLEN AKTÍV VÉGREHAJTÁSI PONT:** **40.69.13.A — teljes Twitch + meglévő Social/Integration kód- és adatfolyam-audit.**
+### 40.69.13.A — TELJES TWITCH / SOCIAL / INTEGRATION AUDIT — 2026-09-22
+
+**Audit státusz:** [x] AUDIT PASS — kódolási kapu lezárva; a következő egyetlen pont a 40.69.13.B szerinti Twitch account/channel connection + token lifecycle + security. Ebben a pontban alkalmazáskódot nem módosítottunk.
+
+#### A.1 Meglévő Twitch / Integration állapot
+- `src/types/env.ts` már deklarál opcionális `TWITCH_CLIENT_ID` és `TWITCH_CLIENT_SECRET` környezeti változókat.
+- `wrangler.jsonc` jelenleg D1 + Assets + Observability konfigurációt tartalmaz; Twitch binding/service/route nincs definiálva.
+- Nincs canonical Twitch OAuth route vagy OAuth callback.
+- Nincs Twitch token persistence modell/tábla.
+- Nincs Twitch API client/service vagy Helix wrapper.
+- Nincs EventSub webhook/WebSocket/Conduit integration.
+- Nincs Twitch account/channel connection state vagy canonical broadcaster ID tárolás.
+- Nincs token refresh/recovery service.
+- Nincs Twitch-specific rate-limit/cache policy implementation.
+- A Twitch említések jelenleg főként legacy/public placeholder és generic Sanci blokkok; ezek nem jelentenek valódi API-integrációt.
+
+**Következtetés:** a Twitch integráció technikailag még nincs megépítve; az env változók csak előkészítésnek számítanak.
+
+#### A.2 Meglévő Social réteg
+A D1 schema tartalmaz `social_accounts` táblát (`platform`, `handle`, `url`, `is_visible`, `sort_order`), de ez statikus social-link rekordmodell, nem OAuth/integration connection modell.
+
+**Döntés:** a `social_accounts` táblát nem használjuk Twitch tokenek vagy integration state tárolására. A későbbi unified integration réteg külön ownershipet és adatmodellt kap.
+
+#### A.3 Meglévő Schedule domain
+A canonical `schedule_items` jelenleg `id`, `title`, `platform`, `starts_at`, `ends_at`, `status`, `url`, `notes`, `created_at`, `updated_at` mezőkből áll. A domain CRUD authenticated editor útvonalon működik, audit-log batch-cel.
+
+Hiányzó Twitch/sync képességek:
+- source (`manual` / `twitch` / későbbi platform);
+- external source ID;
+- sync state / last sync;
+- game/category reference;
+- Twitch category/game ID;
+- canonical UTC/timezone stratégia;
+- recurring/external recurrence metadata;
+- optional artwork/media reference;
+- conflict/override state.
+
+**Döntés:** Twitch adat nem kerül közvetlenül a Page Modelbe, és a Page Model nem lesz sync cache.
+
+#### A.4 Twitch API szerződés — audit eredménye
+- OAuth 2.0 user és app access token létezik; access token, refresh token és client secret titkos adatként kezelendő. citeturn0search3turn2search3
+- Channel Information app vagy user tokennel olvasható, és többek között broadcaster/game/title adatokat ad. citeturn1search0
+- Channel Stream Schedule app vagy user tokennel olvasható; a schedule UTC RFC3339 időket, címet, kategóriát és recurring információt adhat, paginációval. citeturn1search0
+- Schedule módosításához user token + `channel:manage:schedule` kell; ezt nem kérjük az első connectionnél, amíg nincs rá bizonyított szükség. citeturn1search0turn0search4
+- Authorization Code Grant user tokenje refresh tokennel frissíthető; refreshkor új refresh token is érkezhet, ezért rotationt kezelni kell. citeturn2search2
+- EventSub webhook esetén app access token kell; a webhook callback challenge és HMAC-SHA256 signature ellenőrzést igényel. citeturn0search0turn0search5
+- A Helix rate limit 429 esetén `Ratelimit-Reset` alapján kezelendő. citeturn2search0
+
+#### A.5 Canonical Twitch connection döntés
+1. Egyetlen server-side Twitch Integration Service.
+2. Authorization Code Grant alapú broadcaster connection.
+3. A browser csak az OAuth folyamatot indítja és a callback eredményét kapja; access/refresh token nem kerül Page Modelbe vagy kliens state-be.
+4. Külön integration connection adatmodell szükséges.
+5. Tokenek secret-managed/titkosított módon tárolandók; plaintext token logolása tilos.
+6. Minimális scope elv: csak bizonyítottan szükséges jogosultságok.
+7. Token recovery reaktív 401-kezeléssel és refresh-token rotationnel.
+8. Twitch broadcaster ID az external account canonical kulcsa.
+9. Minden Twitch API hívás egyetlen service boundaryn keresztül menjen.
+10. EventSub csak bizonyított callback + signature + subscription lifecycle után aktiválható.
+
+#### A.6 Schedule sync szerződés — audit eredménye
+A Twitch schedule nem másolható veszteség nélkül a jelenlegi `schedule_items` modellbe. A B/C/D pontok előtt adatmodellt kell bővíteni vagy külön external mapping réteget létrehozni.
+
+Kötelezően megőrzendő külső adatok:
+- Twitch broadcaster ID;
+- Twitch schedule segment ID;
+- UTC start/end;
+- Twitch title;
+- Twitch category/game ID + name;
+- recurring flag / recurrence metadata, amennyiben a forrás ezt adja;
+- source és sync state.
+
+**Conflict szabály:** manual rekordot nem írunk felül csendben Twitch sync-kel. External rekordnál source identity és sync ownership explicit.
+
+**Timezone döntés:** a D1 canonical időformátumot UTC/RFC3339 irányba kell vinni; a jelenlegi `starts_at`/`ends_at` élő adatformátumát migráció előtt külön auditálni kell.
+
+#### A.7 Audit eredmény
+**PASS:** az aktív irány technikailag tiszta, de a Twitch integration teljesen hiányzik, ezért új integration réteg szükséges. A `social_accounts` nem megfelelő erre, a `schedule_items` pedig domain alapként megtartható.
+
+**Ebben a pontban nem implementáltuk:** OAuth, token storage, Twitch API client, EventSub, Twitch connection UI, game profile, Schedule Inspector és template system.
+
+**Következő egyetlen pont:** 40.69.13.B — Twitch account/channel connection + token lifecycle + security.
+
+**EGYETLEN AKTÍV VÉGREHAJTÁSI PONT:** **40.69.13.B — Twitch account/channel connection + token lifecycle + security.**
