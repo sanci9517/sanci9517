@@ -2370,3 +2370,26 @@ A 40.44-ben azonosított egyetlen teszt-specifikus hibát javítottuk: a non-GRO
 - production `commands.js` nem változott.
 
 **Következő kapu:** az új Core CI eredménye. PASS esetén a Group/Ungroup Core domain lezárható, és indulhat az UI-integráció.
+
+
+## 40.46 — GROUP / UNGROUP UI-INTEGRÁCIÓ — 2026-09-22
+
+**Állapot:** [~] UI implementáció kész; browser/live regression még hátra.
+
+A Core CI #414 PASS után elkészült a Group/Ungroup editor UI-integráció.
+
+### Canonical UI
+- Rétegek panelen megjelent a **Csoport** és **Bontás** művelet.
+- A gombok állapota a canonical selection + Page Model alapján frissül.
+- Csoport csak legalább 2, azonos parentű, nem root és nem locked kijelölésnél aktív.
+- Bontás csak nem locked GROUP primary selection esetén aktív.
+- A műveletek kizárólag a canonical `hierarchy.group` / `hierarchy.ungroup` commandokat hívják.
+- Mobil multi-select módban ugyanaz a két command külön mobil gombbal elérhető.
+- Nem készült platform-specifikus Group/Ungroup logika.
+
+### Commitok
+- index: `44be21b60a533afb5dc2b3b5b77a44f9a67dc27c`
+- app.js: `28a07fc2c00a1e3a068580166ae5c3dffffacb52`
+- editor.css: `b5c25afd65e64275f8d25bb1a276e36cf8109bb6`
+
+**Következő kapu:** PC/Desktop és Mobile/Touch browser regression: Group, nested Group, Ungroup, lock/root edge cases, undo/redo, diagnostics 0 error. Csak user PASS után zárható a Group/Ungroup domain.
