@@ -15,6 +15,13 @@ type TokenResponse = {
   scope?: string[];
 };
 
+function requireExpiresIn(value: unknown, errorCode: string): number {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    throw new Error(errorCode);
+  }
+  return value;
+}
+
 type ValidateResponse = {
   client_id: string;
   scopes: string[];
@@ -103,9 +110,10 @@ export async function exchangeTwitchCode(
   if (!response.ok) throw new Error("TWITCH_TOKEN_EXCHANGE_FAILED");
 
   const token = await response.json<TokenResponse>();
-  if (!token.access_token || !token.refresh_token || !Number.isFinite(token.expires_in)) {
+  if (!token.access_token || !token.refresh_token) {
     throw new Error("TWITCH_TOKEN_RESPONSE_INVALID");
   }
+  const expiresIn = requireExpiresIn(token.expires_in, "TWITCH_TOKEN_RESPONSE_INVALID");
 
   const identity = await validateAccessToken(env, token.access_token);
   if (identity.client_id !== clientId) throw new Error("TWITCH_CLIENT_MISMATCH");
@@ -125,7 +133,7 @@ export async function exchangeTwitchCode(
       id, userId, identity.user_id, identity.login,
       access.ciphertext, access.iv, refresh.ciphertext, refresh.iv,
       JSON.stringify(scopes),
-      new Date(Date.now() + token.expires_in * 1000).toISOString()
+      new Date(Date.now() + expiresIn * 1000).toISOString()
     ),
     env.DB.prepare("UPDATE twitch_oauth_states SET used_at=CURRENT_TIMESTAMP WHERE id=?").bind(stateRow.id)
   ]);
@@ -164,10 +172,10 @@ export async function refreshTwitchConnection(env: Env, connectionId: string): P
   }
 
   const token = await response.json<TokenResponse>();
-  if (!token.access_token || !token.refresh_token || !Number.isFinite(token.expires_in)) {
+  if (!token.access_token || !token.refresh_token) {
     throw new Error("TWITCH_REFRESH_RESPONSE_INVALID");
   }
-  const expiresIn = token.expires_in;
+  const expiresIn = requireExpiresIn(token.expires_in, "TWITCH_REFRESH_RESPONSE_INVALID");
 
   const access = await encryptTwitchToken(encryptionKey, token.access_token);
   const refresh = await encryptTwitchToken(encryptionKey, token.refresh_token);
