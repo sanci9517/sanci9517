@@ -2226,3 +2226,16 @@ Módosítás:
 - commit: \`f2e6ca07e78901a43905bef0a6bd54e9ee9e9dc7\`.
 
 **Tesztkapu változatlanul:** élő mobil browser teszt szükséges; csak utána lehet B sávot PASS-ra zárni. A Group/Ungroup továbbra is blokkolt A+B multi-select PASS-ig.
+
+
+## 40.39 — MOBIL/TOUCH MULTI-SELECT ÉLŐ TESZT — 2026-09-22
+
+**Állapot:** [x] PASS — felhasználói élő teszt: **Működik**.
+
+A mobil/touch multi-select browser teszt a felhasználó visszajelzése alapján működőképes. A mobil munkasáv lezárható PASS-ként.
+
+**B — Mobile/Touch multi-select:** PASS.
+
+A tesztelési kapu teljesüléséhez az implementáció + kódaudit + élő felhasználói teszt együtt PASS. A következő blokkoló feltétel továbbra is az A — PC/Desktop multi-select élő tesztje; Group/Ungroup csak A és B együttes PASS után indulhat.
+
+**Következő aktív pont:** A — PC/Desktop multi-select élő browser teszt lezárása, amikor a felhasználó teszteli.
