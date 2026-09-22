@@ -153,42 +153,42 @@ Nem vezetünk be második selection-, hierarchy-, state-, renderer- vagy command
   - [x] Core CI 24/24
 
 ### 🔵 EGYETLEN AKTÍV PONT
-**40.69.8 — Audit-log coverage és consistency teljes audit**
+**40.69.12.B — Schedule binding + read service**
 
-**Státusz:** `[~]` — KÓDMÓDOSÍTÁS + CI/DEPLOY PASS, CÉLZOTT LIVE VALIDÁCIÓ FOLYAMATBAN. A teljes admin/auth state-mutation audit által feltárt külön audit-írási útvonalakat canonical `auditStatement()` + D1 batch használatra állítottuk.
+**Státusz:** [~] IMPLEMENTÁLVA — CI/tesztkapu folyamatban.
 
-**40.69.8 audit eredmények — 2026-09-22:**
-- [x] `src/routes/admin/editor.ts`: Save/Publish/Unpublish/Rollback audit útvonal lefedett és atomic.
-- [x] `src/routes/admin/pages.ts`: Create/Update/Delete audit útvonal lefedett és atomic.
-- [x] `src/routes/admin/settings.ts`: state mutation + audit canonical batch-be került.
-- [x] `src/routes/admin/schedule.ts`: Create/Update/Delete canonical batch-be került.
-- [x] `src/routes/admin/system-pages.ts`: update + audit canonical batch-be került.
-- [x] `src/routes/auth/login.ts`: session insert + `auth.login` audit canonical batch-be került.
-- [x] `src/routes/auth/bootstrap.ts`: első admin létrehozása + `auth.bootstrap` audit canonical batch-be került.
-- [x] `src/routes/auth/logout.ts`: session törlés + `auth.logout` audit canonical batch-be került.
-- [x] Nem találtunk más, az `index.ts` által regisztrált admin state-mutation route-ot a vizsgált route-készletben.
+- [x] Schedule node canonical binding: `dataBindings.schedule = { source: "schedule_items", version: 1 }`.
+- [x] Új szerveroldali canonical read service: `src/core/schedule-read.ts`.
+- [x] A read service kizárólag a canonical Schedule domainből olvas; nem enged tetszőleges endpointot vagy SQL-t a Page Modelből.
+- [x] Támogatott módok: `upcoming`, `all`, `next`.
+- [x] Limit 1–50; `next` automatikusan 1 elemre korlátoz.
+- [x] Státuszok whitelistelve: `scheduled`, `live`, `completed`; `cancelled` kizárt.
+- [x] Platformszűrés maximum 20 értékkel, értékenként maximum 40 karakterrel.
+- [x] Sorrend csak `asc` / `desc`.
+- [x] Az `upcoming/next` lekérdezés D1 `datetime('now')` alapján szűr, így kompatibilis a meglévő SQLite timestamp formátummal.
+- [x] `/api/public/schedule` most a canonical read service-t használja, és biztonságos query paraméterekkel képes a node-konfiguráció szűrési szerződését kiszolgálni.
+- [x] A route továbbra sem fogad tetszőleges SQL-t vagy endpointot.
+- [x] Unit teszt a Schedule bindingra és a read-config normalizálásra.
 
-**Következtetés:** a feltárt coverage/consistency hiányok kódoldali javítása elkészült. A CI/typecheck/editor-core és a Cloudflare deploy zöld. A 40.69.8 még nem PASS, amíg a célzott live regresszió nem igazolja az új atomic audit útvonalakat.
+**Érintett commitok:**
+- `67d0e970b0c9ba99747704983e92c28f48db803` — canonical Schedule read service.
+- `b5ab599fc2d6948a17fb9262caf964b667a93994` — Schedule node canonical binding.
+- `2fff994360ba453644f06b0c9b7220dfcd964612` — public Schedule route canonical read service.
+- `0ff1a61362e66d643a90abbaabd4f141280cb0ff` — route request forwarding.
+- `9c07b700813f081ffb713dc8d1f7471364121604` — D1 timestamp comparison hardening.
+- `be2f81890168220b12d1ddd338794b238396ef9e` — binding test.
+- `8bfd384752aead962756b18b23ecd118c6cb9793` — read-config test.
 
-**40.69.8 live teszt — 2026-09-22:**
-- [x] Settings módosítás + mentés működik.
-- [x] Schedule létrehozás/módosítás/törlés működik.
-- [x] Login/Logout működik.
-- [!] System Page teszt blokkolt: nem lehet új rendszeroldalt hozzáadni, illetve meglévő rendszeroldalt törölni.
+**Fontos audit-megjegyzés:**
+- [!] A szerveroldali `validatePublishDocument()` jelenleg még nem végzi el a Schedule config teljes Schedule-schema validációját; ezt külön hardeningként a publish/render kapu előtt rendezni kell. Nem tekintjük ezt megoldottnak pusztán a kliensoldali schema miatt.
 
-**System Page kód-audit eredmény:**
-- [x] Az Editor v2 public/editor-v2/app.js nem használja az /api/admin/system-pages végpontot; az Editor v2 canonical page lifecycle az /api/admin/pages útvonalon fut.
-- [x] src/routes/admin/system-pages.ts csak a fix SYSTEM_PATHS listát engedi (/ , /twitch.html, /youtube.html, /tiktok.html, /schedule.html, /vod.html, /community.html, /about.html, /contact.html).
-- [x] A backend system-page route csak GET és PUT műveletet támogat; nincs létrehozási vagy törlési művelet.
-- [x] public/assets/system-page-editor.js ugyanezt a fix 9 oldalas listát használja, és régi /admin-editor.html?system=... útvonalra hivatkozik.
-- [x] A jelenlegi v2/foundation tree-ben nincs public/admin-editor.html, tehát ez a régi system-page editor árva/legacy kód.
-- [x] src/index.ts a .html útvonalakat már canonical /p/... oldalakra redirecteli.
-- [x] Következtetés: a jelzett hiba valós; a System Page kezelés nincs egységesen bekötve az Editor v2 canonical pages rendszerébe, hanem egy régi külön system-page architektúrát őriz.
+**Tesztkapu:**
+- [ ] GitHub Editor Core CI PASS
+- [ ] typecheck/build PASS igazolása
+- [ ] élő `/api/public/schedule` teszt a tényleges D1 adatokkal
+- [ ] MASTER lezárás
 
-**Döntés:** nem javítjuk foltozással a régi system-page CRUD-ot. Először a canonical Editor v2 pages + revision/publish rendszert kell kijelölni a rendszeroldalak egyetlen forrásának, majd a régi system_page_content/system-page-editor/runtime útvonalat kontrolláltan ki kell vezetni vagy kompatibilitási rétegként lezárni.
-
-**Következő egyetlen aktív pont:** System Page → canonical Pages architektúra teljes audit és migrációs terv; kódmódosítás csak az audit után.
-
+**Következő aktív pont a kapu után:** 40.69.12.C — Editor preview renderer.
 ## 40.69.9 — CANONICAL PAGES / VISUAL EDITOR / SCHEDULE ARCHITEKTÚRA TELJES AUDIT — 2026-09-22
 
 **Állapot:** [~] AUDIT FOLYAMATBAN — ebben a lépésben nincs kódmódosítás.
@@ -2353,7 +2353,7 @@ Nem kezdjük el még a teljes Builder UI-t. Előbb a **Schedule schema + normali
 
 ## 40.69.12.A — Schedule schema + defaults + normalizer — 2026-09-22
 
-**Állapot:** [~] IMPLEMENTÁLVA — CI/tesztkapu folyamatban.
+**Állapot:** [x] PASS — felhasználói tesztkapu: PIPA.
 
 ### Elkészült
 
@@ -2391,8 +2391,8 @@ Nem kezdjük el még a teljes Builder UI-t. Előbb a **Schedule schema + normali
 
 ### Tesztkapu
 
-- [ ] GitHub Editor Core CI PASS
-- [ ] élő Editor browser teszt
-- [ ] MASTER lezárás
+- [x] Felhasználói tesztkapu: PIPA.
+- [x] Schedule schema/default/normalizer működése visszaigazolva.
+- [x] MASTER állapotfrissítve.
 
-**Következő aktív lépés a tesztkapu után:** 40.69.12.B — Schedule binding + read service.
+**Következő aktív lépés:** 40.69.12.B — Schedule binding + read service.
