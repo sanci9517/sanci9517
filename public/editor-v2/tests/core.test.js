@@ -605,3 +605,10 @@ test('publish validator blocks invalid Page Model and accepts valid document', (
   };
   assert.equal(validatePublishDocument(cycle, pageId), 'INVALID_HIERARCHY');
 });
+
+test('schedule nodes receive the canonical domain binding', () => {
+  const node = createNode(NODE_TYPES.SCHEDULE);
+  assert.deepEqual(node.dataBindings, {
+    schedule: { source: 'schedule_items', version: 1 }
+  });
+});
