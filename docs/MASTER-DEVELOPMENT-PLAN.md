@@ -2464,4 +2464,10 @@ Nem kezdjük el még a teljes Builder UI-t. Előbb a **Schedule schema + normali
 - [ ] Diagnostics 0 hiba.
 - [ ] MASTER lezárás.
 
-**Következő egyetlen aktív pont:** 40.69.12.C — CI + élő Editor preview teszt.
+**40.69.12.C — PC Editor UI olvashatósági köztes javítás — 2026-09-22**
+- [x] Desktop-only CSS override hozzáadva a túl kicsi Editor UI feliratokhoz.
+- [x] Mobil layouthoz nem nyúltunk.
+- [x] Canvas tartalomméretezéshez nem nyúltunk; csak az Editor kezelőfelületének olvashatósága nőtt.
+- [ ] Felhasználói PC teszt.
+
+**Következő egyetlen aktív pont:** 40.69.12.C — PC UI betűméret live ellenőrzés, majd Schedule preview teszt.
