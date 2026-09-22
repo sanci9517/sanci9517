@@ -3168,6 +3168,14 @@ A következő minimális canonical javítási csomag szükséges:
 
 ## 40.69.2 — CANONICAL REVISION CONTRACT + D1 PERSISTENCE BOUNDARY — 2026-09-22
 
+### 40.69.2 CI VALIDÁCIÓS JAVÍTÁS — 2026-09-22
+- A revision-contract implementáció első Core CI futása TypeScript hibával állt meg.
+- Javítva: `src/routes/admin/pages.ts` metadata spread csak objektum-típusra történhet.
+- A GitHub által jelzett `.ts` importhibák az érintett jelenlegi fájlokban már nem reprodukálhatók; a következő CI futás döntő ellenőrzés.
+- Node 20 deprecation és Ubuntu 26 migration csak warning/notice, nem a build törési oka.
+- PC/Desktop live teszt továbbra sem indul.
+
+
 **Állapot:** [~] IMPLEMENTÁCIÓ KÉSZ; VALIDÁCIÓ FOLYAMATBAN.
 
 ### Canonical contract
