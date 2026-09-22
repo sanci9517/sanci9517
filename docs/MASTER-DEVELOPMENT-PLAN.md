@@ -2211,3 +2211,141 @@ A következő implementációs kapu előtt rögzítendő minimum:
 A régi System Page / `system_page_content` útvonalhoz nem térünk vissza. A következő kódpont kizárólag a **canonical Schedule node contract + renderer/binding terv** kidolgozása, majd ennek unit/integration tesztje. Csak ezután jöhet a Schedule Builder UI.
 
 **Következő egyetlen aktív pont:** **40.69.11 — Schedule node contract és runtime binding teljes audit/tervezés**, kódmódosítás nélkül.
+
+## 40.69.11 — Schedule node contract + runtime binding audit/terv — 2026-09-22
+
+**Állapot:** [x] AUDIT/TERV PASS — kódmódosítás még nem történt.
+
+A Schedule node jelenlegi állapotát összevetettük az Editor v2 Page Modellel és a D1 Schedule domain API-val.
+
+### Megállapítások
+
+- A `schedule` node type már része a canonical `NODE_TYPES` listának.
+- A node alapból rendelkezik `props`, `style`, `responsive`, `dataBindings`, `metadata` mezőkkel.
+- A Schedule node jelenleg nincs leaf-ként definiálva, ezért önálló blokk lehet, de nincs még specializált domain-logikája.
+- A Page Model validáció jelenleg általános; Schedule-specifikus validáció nincs.
+- Az admin Schedule API és public Schedule API már működik.
+- A public API jelenleg maximum 50, nem cancelled elemet ad vissza `starts_at ASC` sorrendben.
+- A domain API a Schedule események forrása; a Page Model nem tárolhatja ezeket az eseményeket.
+
+### Canonical Schedule node contract v1
+
+A Schedule node `props.schedule` alatt kizárólag konfigurációt tárol:
+
+```text
+props.schedule = {
+  version: 1,
+  mode: "upcoming" | "all" | "next",
+  limit: number,
+  statuses: string[],
+  platforms: string[],
+  order: "asc" | "desc",
+  showTitle: boolean,
+  showPlatform: boolean,
+  showTime: boolean,
+  showEndTime: boolean,
+  showStatus: boolean,
+  showNotes: boolean,
+  showLink: boolean,
+  emptyText: string
+}
+```
+
+Alapértelmezett cél: `mode=upcoming`, `limit=10`, `statuses=["scheduled","live"]`, `platforms=[]`, `order="asc"`.
+
+**Fontos:** eseménylista vagy egyedi `schedule_item` rekordok nem kerülnek a Page Modelbe.
+
+### Binding contract
+
+A runtime binding egyetlen canonical domainforrásra mutat:
+
+```text
+dataBindings = {
+  schedule: {
+    source: "schedule_items",
+    version: 1
+  }
+}
+```
+
+A binding nem tartalmaz URL-t, auth tokent vagy konkrét eseményadatot. A public runtime saját belső API-rétegen keresztül olvassa a Schedule domain adatot.
+
+### Preview contract
+
+Editor previewban a Schedule node nem ír D1 adatot.
+
+Első implementációs verzióban:
+- ha van read-only Schedule adatforrás, azt használja;
+- ha nincs elérhető adat, determinisztikus preview fixture jelenik meg;
+- a fixture kizárólag megjelenítési célú, nem menthető domain adat;
+- az Inspector mindig a konfigurációt szerkeszti, nem az eseményeket.
+
+### Runtime/public contract
+
+A publikált Page Model renderelésekor:
+1. a renderer felismeri a `schedule` node-ot;
+2. validálja/normalizálja a Schedule konfigurációt;
+3. lekéri a Schedule domain adatot;
+4. a konfiguráció alapján szűr/rendez/limitál;
+5. biztonságosan rendereli a kártyákat;
+6. ha nincs adat, az `emptyText` jelenik meg.
+
+A domain adatok változása önmagában nem módosítja a Page revisiont.
+
+### Biztonsági és adatkonzisztencia szabályok
+
+- A Page Modelből nem lehet közvetlen SQL-lekérdezést indítani.
+- A node konfiguráció nem adhat tetszőleges endpointot.
+- A runtime nem bízhat a kliens által küldött nyers HTML-ben.
+- URL-eket és szövegeket escaped/safe DOM renderinggel kell kezelni.
+- A Schedule API saját státusz/platform szabályai maradnak az elsődleges domain validáció.
+- A Schedule node konfigurációját külön schema/normalizer fogja védeni.
+
+### Következő implementációs bontás
+
+**40.69.12.A — Schedule schema + defaults + normalizer**
+- canonical config schema;
+- defaultok;
+- invalid értékek normalizálása/elutasítása;
+- unit tesztek.
+
+**40.69.12.B — Schedule binding + read service**
+- belső canonical read service;
+- konfiguráció → domain query leképezés;
+- publikus API-val kompatibilis eredmény;
+- unit/integration tesztek.
+
+**40.69.12.C — Editor preview renderer**
+- Schedule node preview;
+- fixture/read-only adat;
+- mobil/desktop alaprender.
+
+**40.69.12.D — Public page renderer**
+- published Page Model → Schedule runtime;
+- safe rendering;
+- empty state;
+- runtime teszt.
+
+**40.69.12.E — Schedule Inspector / Builder UI**
+- megjelenítési mód;
+- limit;
+- státusz/platform filter;
+- sorrend;
+- megjelenítési kapcsolók;
+- üres állapot szövege.
+
+**40.69.12.F — Élő end-to-end teszt**
+- Schedule item CRUD;
+- Schedule node konfiguráció mentése;
+- preview;
+- publish;
+- public oldal;
+- domain item módosítás → oldal újratöltve friss adat;
+- rollback;
+- audit.
+
+### Döntés
+
+Nem kezdjük el még a teljes Builder UI-t. Előbb a **Schedule schema + normalizer + read/binding réteg** készül el, mert ez akadályozza meg, hogy az Inspector, preview és public renderer három külön logikát használjon.
+
+**Következő egyetlen aktív pont:** **40.69.12.A — Schedule schema + defaults + normalizer.**
