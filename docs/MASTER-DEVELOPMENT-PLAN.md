@@ -2879,3 +2879,45 @@ A 40.65 implementációját ellenőriztük:
 8. Diagnosztika: 0 hiba.
 
 A teljes 40.65 blokk csak ezen élő ellenőrzés után kaphat [x] PASS státuszt.
+
+
+## 40.67 — CANONIKUS OLDALSORREND: EDITOR = PUBLIKUS MENÜ — 2026-09-22
+
+**Állapot:** [~] IMPLEMENTÁCIÓ KÉSZ; D1 migration/deploy és mobil élő teszt még hátra.
+
+A felhasználó kérésére az oldal sorrendje mostantól nem lehet külön frontend-logika kérdése. Bevezetésre került az egyetlen canonical `pages.sort_order`, amelyet az Editor v2 és a publikus menü ugyanúgy használ.
+
+### Elkészült
+- Új migration: `migrations/0009_page_sort_order.sql`.
+- A meglévő oldalak sorrendje a migrationben determinisztikusan a jelenlegi Editor-oldalsorrend alapján inicializálódik.
+- Admin oldallistázás: `ORDER BY sort_order ASC`.
+- Publikus oldallistázás: ugyanaz a `sort_order ASC`.
+- Az Editor v2 Oldalak panel megjeleníti az aktuális sorrendet.
+- Az Editor v2-ben minden oldalnál **↑ / ↓** sorrendmódosító gomb került be.
+- A sorrendváltás ugyanazt a canonical `pages` rekordot módosítja; nincs külön menülista.
+- A publikus menü automatikusan követi az Editor v2-ben beállított sorrendet.
+- Új oldal automatikusan a lista végére kerül.
+- A sorrend nem függ a címtől vagy az utolsó módosítás idejétől.
+- Nincs második oldal- vagy menürendszer.
+
+### Módosítások
+- `migrations/0009_page_sort_order.sql` — `b2dce938d8aa0f57d9dc6970a7484584f2858c5d`
+- `src/routes/admin/pages.ts` — canonical sort order + order swap API.
+- `src/routes/public/pages.ts` — canonical sort order használata.
+- `public/editor-v2/app.js` — Editor oldalsorrend vezérlők.
+- `public/editor-v2/editor.css` — order gombok mobil/desktop stílusa.
+
+### Tesztállapot
+- [ ] D1 0009 migration futtatása/deploy.
+- [ ] Editor v2 oldalak sorrendjének ellenőrzése.
+- [ ] ↑ gombbal oldal feljebb mozgatása.
+- [ ] ↓ gombbal oldal lejjebb mozgatása.
+- [ ] Editor újratöltés után sorrend megmarad.
+- [ ] Publikus menü ugyanebben a sorrendben jelenik meg.
+- [ ] Új oldal a lista végére kerül.
+- [ ] Törlés után a fennmaradó sorrend helyes marad.
+- [ ] Mobilon az order gombok használhatók és nem takarják ki egymást.
+- [ ] Diagnosztika: 0 hiba.
+- [ ] PC/Desktop live teszt továbbra is csak külön felhasználói kérésre.
+
+**Következő aktív lépés:** deploy után mobilon a fenti sorrendteszt végrehajtása.
