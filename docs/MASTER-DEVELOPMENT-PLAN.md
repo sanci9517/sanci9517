@@ -2664,3 +2664,17 @@ A Mobile/Touch Layers hierarchy invalid target és saját descendant alá tört�
 - [x] Nem jelentkezett teszt közben jelzett hiba.
 
 **Következő egyetlen aktív tesztpont:** Mobile Layers locked/root protection.
+
+
+## 40.57 — MOBILE LAYERS LOCKED/ROOT VÉDELEM LIVE TESZT — 2026-09-22
+
+**Állapot:** [x] PASS — felhasználói élő teszt: **Jó**.
+
+A Mobile/Touch Layers locked/root protection élő tesztje sikeresen lezárult.
+
+- [x] Locked elem mozgatása a `⠿` fogantyúról blokkolva maradt.
+- [x] Root elem mozgatása blokkolva maradt.
+- [x] Nem történt hibás hierarchy-módosítás.
+- [x] Nem jelentkezett teszt közben jelzett hiba.
+
+**Következő egyetlen aktív tesztpont:** Mobile Layers scroll-vs-drag edge case.
