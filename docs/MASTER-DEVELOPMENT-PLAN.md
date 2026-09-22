@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.41  
+**Verzió:** MASTER-2.39.42  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -2980,7 +2980,7 @@ A kanonikus oldal-életciklus után a következő lépés a Draft/Preview/Publis
 - [x] Publikálás után Editor állapot LIVE — mobil élő teszt: PASS, felhasználói visszaigazolás: „Jó”.
 - [x] Visszavonás után publikus útvonal eltűnik / nem publikált állapotot ad — mobil élő teszt: PASS, felhasználói visszaigazolás: „Pipa”.
 - [x] Visszavonás után draft tartalom megmarad — mobil élő teszt: PASS, felhasználói visszaigazolás: „Jó”.
-- [ ] Újrapublikálás működik.
+- [x] Újrapublikálás működik — mobil élő teszt: PASS, felhasználói visszaigazolás: „Pipa”.
 - [ ] Hibás Page Model publikálása blokkolódik.
 - [ ] Publish/unpublish audit esemény létrejön.
 - [ ] Mobil UI gombok nem takarják egymást.
@@ -3015,5 +3015,13 @@ A Visszavonás/Unpublish után ugyanazon az oldalon a korábban szerkesztett dra
 - [x] Nem jelentkezett teszt közben jelzett hiba.
 
 **Következő egyetlen teszt:** Újrapublikálás ugyanazon az oldalon. Elvárt: a megmaradt draft ismét publikálható, és az oldal LIVE állapotba kerül.
+
+**40.68.3 — ÚJRAPUBLIKÁLÁS — 2026-09-22**
+
+**Állapot:** [x] PASS — mobil élő teszt: felhasználói visszaigazolás: „Pipa”.
+
+Unpublish után a megmaradt draft ugyanazon az oldalon újra publikálható volt, és az oldal ismét LIVE állapotba került.
+
+**Következő egyetlen teszt:** Invalid Page Model publikálás blokkolása. Elvárt: hibás dokumentum nem publikálható, az oldal nem kerül LIVE állapotba.
 
 **Következő aktív lépés:** CI ellenőrzés, majd a fenti mobil élő tesztkapu lépésenként.
