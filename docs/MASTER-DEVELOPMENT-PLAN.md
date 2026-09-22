@@ -91,6 +91,50 @@ A Visual Editor specifikációját több dokumentált rendszer mintái alapján 
 ## 00.7 Architektúra elsőbbsége
 Nem vezetünk be második selection-, hierarchy-, state-, renderer- vagy command-rendszert. Az új funkciók a kanonikus rendszert bővítik.
 
+
+# 00/A — MASTER VÉGREHAJTÁSI INDEX — EZ AZ EGYETLEN AKTÍV SORREND
+
+> **KÖTELEZŐ:** A dokumentum bármely más fejezetében szereplő `[ ]`, `[~]` vagy régebbi „következő lépés” szöveg **nem végrehajtási utasítás**. Az egyetlen végrehajtási forrás az alábbi index **1. pontja**. Így nem lehet több párhuzamos aktív munkasáv.
+
+### Kész, lezárt fő blokkok
+- [x] **40.62–40.63 — Canonical standard oldalak + dinamikus publikus menü**
+- [x] **40.64–40.66 — Oldal slug/meta lifecycle**
+- [x] **40.67 — Canonikus oldalsorrend: Editor = publikus menü**
+- [x] **40.68 — Draft / Preview / Publish hardening**
+  - [x] Draft mentés
+  - [x] Preview
+  - [x] Publish → LIVE
+  - [x] Published snapshot / publikus route
+  - [x] Unpublish
+  - [x] Draft megmaradás
+  - [x] Republish
+  - [x] Invalid Page Model publish-védelem
+  - [x] Publish/Unpublish audit
+  - [x] Mobil UI regresszió
+  - [x] Diagnosztika 0 hiba
+  - [x] Core CI 24/24
+
+### 🔵 EGYETLEN AKTÍV PONT
+**40.69.1 — editor_revisions + draft/publish persistence teljes kód- és sémaaudit**
+
+**Státusz:** `[~]` — audit következik; implementáció még nincs.
+
+**Aktív munkasáv száma:** **1**
+
+**Nem aktív:** PC/Desktop, Mobile/Touch, Rich Text, Group/Ungroup, Page CRUD, 40.68 és minden más régebbi vagy későbbi fejezet. Ezek csak történeti dokumentáció, lezárt tesztek vagy későbbi backlogok. A PC és Mobile nem külön fejlesztési sáv, hanem ugyanazon funkció tesztfelülete.
+
+### Kötelező folytatási szabály
+1. Csak a kék **EGYETLEN AKTÍV PONT** dolgozható fel.
+2. Egy ponton belül is csak **egy következő lépés** lehet kijelölve.
+3. A következő pontot csak akkor írjuk át aktívra, ha az előző pont implementációja + szükséges tesztje + user PASS + MASTER frissítése megtörtént.
+4. Minden lépés után a MASTER tetején lévő indexet azonnal frissíteni kell.
+5. Ha új funkció merül fel, először backlogba kerül; **nem nyithat második aktív sávot**.
+6. PC/Desktop live teszt csak külön felhasználói kérésre indítható; ettől nem jön létre külön munkasáv.
+7. Új beszélgetés mindig ezt az indexet olvassa először. A folytatás automatikusan a kék aktív pontról indul.
+
+### Új beszélgetés checkpoint
+**„Folytassuk a Sanci9517 MASTER tervet. Nézd meg a MASTER VÉGREHAJTÁSI INDEXET, és csak az egyetlen aktív pontot folytasd.”**
+
 ---
 
 # 01 — VÉGLEGES CÉLKÉP
