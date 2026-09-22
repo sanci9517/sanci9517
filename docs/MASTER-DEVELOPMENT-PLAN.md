@@ -2815,3 +2815,40 @@ Követelmények:
 - UI-ban a művelet egyértelmű legyen és ne módosítsa a dokumentum tartalmát.
 
 **Utána:** unit/integration ellenőrzés → szükséges mobil élő teszt felhasználói kérésre; PC teszt továbbra is PENDING.
+
+
+## 40.65 — OLDAL SLUG / META LIFECYCLE IMPLEMENTÁCIÓ — 2026-09-22
+
+**Állapot:** [~] IMPLEMENTÁCIÓ KÉSZ; live teszt és CI ellenőrzés még hátra.
+
+A 40.64 alapján elkészült az Editor v2 canonical oldal metaadat/slug kezelése.
+
+### Elkészült
+- Admin page PATCH most már támogatja a címet és a slugot.
+- Slug validáció: csak kisbetűs URL-biztos `[a-z0-9]+(?:-[a-z0-9]+)*`, maximum 80 karakter.
+- Slug ütközés `SLUG_EXISTS` 409 hibával blokkolódik.
+- A DB `pages.slug` és az ugyanahhoz az oldalhoz tartozó Editor v2 `pages[id].slug` egyetlen műveletben frissül.
+- Az Editor v2 Page Model cím/metaadatai is szinkronban maradnak.
+- Publikált oldalnál a publikált canonical snapshot is frissül a slug/meta változással, így a publikus útvonal nem válik inkonzisztenssé.
+- Audit log készül a régi és új cím/slug értékkel.
+- Editor v2 Oldalak panelen megjelent az oldal metaadat-szerkesztő művelet (✎).
+- A művelet után az aktuális oldal canonical dokumentuma újratöltődik, tartalmi módosítás nélkül.
+- Nincs új oldal, nincs legacy rendszer, nincs duplikáció.
+
+### Módosítások
+- `src/routes/admin/pages.ts` — `fd8fd9c5c6da68e60e82f80d213d2e709f010819`
+- `public/editor-v2/app.js` — `843d1ef4d94f0513011bc6edbe2d9028033adbc7`
+- `public/editor-v2/editor.css` — `ea2e2f5a9842f3d4d2ed62bcbbcb1ce084fb39ae`
+
+### Még nincs PASS
+- [ ] cím módosítása
+- [ ] slug módosítása
+- [ ] slug ütközés blokkolása
+- [ ] új sluggal publikus `/p/<slug>` útvonal
+- [ ] Editor v2 Page Model slug egyezése
+- [ ] mentés/újratöltés után metaadat megmaradása
+- [ ] diagnosztika 0 hiba
+- [ ] szükséges regresszió/CI
+- [ ] PC/Desktop élő teszt — továbbra is csak külön felhasználói kérésre
+
+**Következő aktív lépés:** az oldal slug/meta lifecycle kódellenőrzése és a hozzá tartozó CI/tesztkapu; utána a felhasználói mobil teszt kérésre.
