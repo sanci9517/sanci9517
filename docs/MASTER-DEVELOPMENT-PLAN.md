@@ -2794,3 +2794,24 @@ A 40.62 döntés alapján a 404-es menüpont problémát nem régi HTML-oldalak 
 - [ ] PC/Desktop élő teszt továbbra is **PENDING**, és csak a felhasználó külön kérésére futtatjuk.
 
 **Következő aktív lépés:** deploy/D1 migration után mobilról strukturális élő ellenőrzés; PC tesztet nem indítunk automatikusan.
+
+
+## 40.64 — KÖVETKEZŐ DOMAIN: OLDAL ÉLETCIKLUS / SLUG KEZELÉS — 2026-09-22
+
+**Állapot:** [D] KÖVETKEZŐ FEJLESZTÉSI LÉPÉS RÖGZÍTVE.
+
+A 40.63 strukturális oldaljavítás felhasználói PASS után a következő fejlesztési lépés az Editor v2 **oldal lifecycle** hiányzó részeinek lezárása. A PC/Desktop élő tesztek továbbra sem indulnak automatikusan.
+
+Első részfeladat: a már létező oldal-átnevezés mellé a **slug kezelés és ütközéskezelés** canonical megvalósítása.
+
+Követelmények:
+- slug módosítása kizárólag az egyetlen canonical `pages` rekordot módosíthatja;
+- a hozzá tartozó Editor v2 Page Model page.slug mező is ugyanabban a műveletben frissüljön;
+- meglévő slug ütközés determinisztikusan `SLUG_EXISTS` hibával blokkolódjon;
+- slug formátuma maradjon kisbetűs, URL-biztos `[a-z0-9]+(?:-[a-z0-9]+)*`;
+- audit log készüljön;
+- ne legyen második oldal vagy legacy tartalomrendszer;
+- a publikus `/p/<slug>` útvonal az új sluggal szolgálja ki az oldalt;
+- UI-ban a művelet egyértelmű legyen és ne módosítsa a dokumentum tartalmát.
+
+**Utána:** unit/integration ellenőrzés → szükséges mobil élő teszt felhasználói kérésre; PC teszt továbbra is PENDING.
