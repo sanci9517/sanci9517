@@ -2271,3 +2271,40 @@ A két multi-select platformkapu egyaránt PASS, ezért a korábban blokkolt kö
 5. Ezután UI-integráció és PC + mobile browser regresszió.
 
 **Továbbra is kötelező:** egyetlen canonical Page Model + selection state + Command API; platformonként nem készül külön group/selection logika.
+
+
+## 40.42 — GROUP / UNGROUP IMPLEMENTÁCIÓ ELŐAUDIT — 2026-09-22
+
+**Állapot:** [x] AUDIT PASS — implementáció előtt.
+
+A két multi-select kapu PASS után újra ellenőriztük a canonical Page Model, validation, selection és Command API kapcsolatát. Az audit alapján a Group/Ungroup megvalósítható a meglévő infrastruktúrával, új state/history rendszer nélkül.
+
+### Group contract véglegesítve
+- legalább 2 kijelölt node;
+- minden kijelölt node ugyanazon közvetlen parent alatt legyen;
+- root nem csoportosítható;
+- locked node esetén a művelet teljesen blokkolódik;
+- a kijelöltek sibling sorrendje a Page Model parent.children sorrendje alapján marad determinisztikus;
+- az új GROUP az első kijelölt node eredeti sibling pozíciójára kerül;
+- a kijelölt node-ok parentId-ja az új GROUP ID lesz;
+- GROUP children sorrendje az eredeti sibling sorrendet követi;
+- az egész művelet egyetlen canonical command + egy history entry;
+- minden hiba rollbacket és változatlan dokumentumot eredményez;
+- siker után selection az új GROUP-ra áll.
+
+### Ungroup contract véglegesítve
+- pontosan egy GROUP legyen az elsődleges kijelölés, és csak GROUP node bontható;
+- locked GROUP blokkolja a műveletet;
+- root GROUP nem lehet;
+- a gyermekek a GROUP eredeti parentjébe kerülnek;
+- a gyermekek sorrendje megmarad;
+- a GROUP helyén, azonos sorrendi blokkban jelennek meg a gyermekek;
+- a GROUP törlődik;
+- siker után selection a felszabadított gyermekekre kerül, primaryId az utolsó felszabadított gyermek;
+- egyetlen canonical command + history entry;
+- minden hiba rollbacket eredményez.
+
+### Architektúra-döntés
+Nem módosítjuk a Page Model sémát, mert a GROUP node type már létezik. Nem készül külön group state, platform-specifikus command vagy külön history út. A meglévő commit(), validation, snapshot és setSelection() infrastruktúra lesz a canonical alap.
+
+**Következő aktív lépés:** a `group` és `ungroup` commandok implementációja a `commands.js`-ben, majd azonnali Core unit tesztbővítés. UI csak a command + unit tesztek PASS után készül.
