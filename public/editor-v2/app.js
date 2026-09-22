@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  $('#preview').onclick=()=>{const p=page();if(p)window.open(`/p/${encodeURIComponent(p.slug)}?preview=1`,'_blank','noopener,noreferrer')};
  $('#undo').onclick=()=>{if(state){try{execute(state,{type:'history.undo'});render()}catch(e){showError(e)}}};$('#redo').onclick=()=>{if(state){try{execute(state,{type:'history.redo'});render()}catch(e){showError(e)}}};
  $('#zoomIn').onclick=()=>{zoom=Math.min(1.5,zoom+.1);render()};$('#zoomOut').onclick=()=>{zoom=Math.max(.35,zoom-.1);render()};$('#fitCanvas').onclick=()=>{const d=state?.viewport?.device||'desktop';zoom=Math.max(.35,Math.min(1.2,(canvas.clientWidth-120)/sizes[d]));render()};
- $('#selectTool').onclick=()=>{$('#selectTool').classList.add('active');$('#panTool').classList.remove('active');canvas.style.cursor='default'};$('#panTool').onclick=()=>{$('#panTool').classList.add('active');$('#selectTool').classList.remove('active');canvas.style.cursor='grab'};
+ $('#selectTool').onclick=()=>{$('#selectTool').classList.add('active');$('#panTool').classList.remove('active');canvas.style.cursor='default'};$('#mobileMultiDone').onclick=()=>finishMobileMultiSelect();$('#mobileMultiCancel').onclick=()=>cancelMobileMultiSelect();$('#panTool').onclick=()=>{$('#panTool').classList.add('active');$('#selectTool').classList.remove('active');canvas.style.cursor='grab'};
  document.querySelectorAll('[data-device]').forEach(b=>b.onclick=()=>setDevice(b.dataset.device));
  canvas.addEventListener('click',event=>{
    if(event.target.closest('.node')) return;
