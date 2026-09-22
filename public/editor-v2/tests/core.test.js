@@ -8,7 +8,7 @@ import { beginTransaction, commitTransaction, execute, executeBatch, rollbackTra
 import { getProperty, listProperties, listPropertyGroups } from '../core/property-registry.js';
 import { hasResponsiveOverride, resolveResponsiveValue, setResponsiveValue } from '../core/responsive.js';
 import { plainTextToRichText } from '../core/richtext-engine.js';
-import { validatePublishDocument } from '../../../src/routes/admin/editor.ts';
+import { validatePublishDocument } from '../../../src/core/editor-validation.ts';
 
 test('new document is structurally valid', () => {
   const document = createDocument();
