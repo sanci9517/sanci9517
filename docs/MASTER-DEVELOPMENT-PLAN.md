@@ -2250,3 +2250,24 @@ A felhasználó kérésére folytatjuk a fejlesztést, de az előre rögzített 
 B állapot: PASS. A állapot: élő teszt pending, mert a felhasználó ezt későbbre halasztotta.
 
 Ezért ebben a lépésben nem készül párhuzamos Group/Ungroup kód, nem kerül be második selection rendszer és nem jelöljük A-t PASS-nak teszt nélkül. A következő fejlesztési kapu az A PC/Desktop multi-select élő tesztjének lezárása; annak PASS-a után közvetlenül indul a Group/Ungroup canonical command + unit test + UI + browser regression munkasor.
+
+
+## 40.41 — PC/DESKTOP MULTI-SELECT ÉLŐ TESZT — 2026-09-22
+
+**Állapot:** [x] PASS — felhasználói élő teszt: **Működik**.
+
+A PC/Desktop multi-select élő böngészős tesztje a felhasználó visszajelzése alapján PASS. Ezzel az A munkasáv is lezárható.
+
+**A — PC/Desktop multi-select:** PASS.
+**B — Mobile/Touch multi-select:** PASS.
+
+A két multi-select platformkapu egyaránt PASS, ezért a korábban blokkolt következő domain most megnyitható: **Group/Ungroup canonical command**.
+
+### Következő aktív pont
+1. Group command teljes kód-audit és pontos invariánsok rögzítése.
+2. Ungroup command teljes kód-audit és pontos invariánsok rögzítése.
+3. Canonical group / ungroup command implementáció a meglévő transaction/history/validation rendszerre.
+4. Core unit tesztek: normál, sorrend, azonos parent, locked/root/hibás input, rollback, undo/redo.
+5. Ezután UI-integráció és PC + mobile browser regresszió.
+
+**Továbbra is kötelező:** egyetlen canonical Page Model + selection state + Command API; platformonként nem készül külön group/selection logika.
