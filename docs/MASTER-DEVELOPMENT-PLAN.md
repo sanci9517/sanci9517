@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.83  
+**Verzió:** MASTER-2.39.84  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt PASS:** 2026-09-22 — 40.69.13.B CI/typecheck kapu PASS; Twitch Integration Check és Editor Core Test sikeresen lefutott az `a2bdcea2de44c3f3fd66cebe6533966e2eeb5909` commiton. A D1 remote migration, deploy és live Twitch lifecycle tesztek még hátra vannak.
+**Legutóbbi igazolt PASS:** 2026-09-22 — 40.69.13.B CI/typecheck + `0012_twitch_refresh_lock` remote D1 migration PASS; Twitch Integration Check és Editor Core Test sikeresen lefutott az `a2bdcea2de44c3f3fd66cebe6533966e2eeb5909` commiton, a remote D1 sémában a refresh lock oszlopok és index igazoltan jelen vannak. A deploy és live Twitch lifecycle tesztek még hátra vannak.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -2921,7 +2921,7 @@ Kötelezően megőrzendő külső adatok:
 
 ### 40.69.13.B — TWITCH ACCOUNT/CHANNEL CONNECTION + TOKEN LIFECYCLE — 2026-09-22
 
-**Státusz:** [~] IMPLEMENTÁLÁS + HARDENING FOLYAMATBAN; a refresh concurrency és token validation lifecycle gyökérokai azonosítva és a canonical megoldás implementálva, de CI/typecheck, deploy, D1 migration és live OAuth/refresh/validation teszt még hátra van.
+**Státusz:** [~] IMPLEMENTÁLÁS + HARDENING FOLYAMATBAN; a refresh concurrency és token validation lifecycle gyökérokai azonosítva és a canonical megoldás implementálva. CI/typecheck és a `0012` remote D1 migration PASS; a deploy és live OAuth/refresh/validation/security tesztek még hátra vannak.
 
 #### B.1 Canonical döntések
 - A Twitch kapcsolat kizárólag az authenticated admin sessionből indítható.
@@ -3011,7 +3011,7 @@ Kötelezően megőrzendő külső adatok:
 
 **PENDING tesztkapuk:**
 - [x] Typecheck / GitHub CI — Twitch Integration Check #1 PASS + Editor Core Test #625 PASS az `a2bdcea2de44c3f3fd66cebe6533966e2eeb5909` commiton; futás: 21–23 mp.
-- [ ] D1 migration `0012` remote apply.
+- [x] D1 migration `0012` remote apply — PASS; `refresh_lock_token` és `refresh_lock_until` oszlopok létrejöttek, az `idx_twitch_connections_refresh_lock` index jelen van.
 - [ ] Cloudflare Worker deploy.
 - [ ] Cloudflare secret `TWITCH_TOKEN_ENCRYPTION_KEY` jelenléte.
 - [ ] Production redirect URI egyezés.
@@ -3036,7 +3036,7 @@ Kötelezően megőrzendő külső adatok:
 - Twitch Integration Check run: `35771532887`.
 - Editor Core Test run: `35771532842`.
 
-**Következő egyetlen tesztkapu:** `0012_twitch_refresh_lock` remote D1 migration alkalmazása és ellenőrzése.
+**Következő egyetlen tesztkapu:** Cloudflare Worker deploy, majd a production Twitch secret/redirect konfiguráció és a live OAuth connection lifecycle ellenőrzése.
 
 #### B.5 Módosító commitok
 - `974221e93d896b6b861212b2501dd4608cbdee38` — `fix: add Twitch refresh concurrency lease`
@@ -3048,7 +3048,7 @@ Korábbi kapcsolódó B commitok a történeti auditban maradnak.
 A Twitch dokumentáció szerint third-party app esetén az OAuth access tokent induláskor és óránként validálni kell; érvénytelen tokennél a Twitch 401-et ad, a refresh token pedig rotálódhat, ezért a refresh lifecycle-nek ezt kezelnie kell. A párhuzamos refresh kockázatát a Twitch külön dokumentálja. 
 
 #### B.7 Következő és egyetlen aktív lépés
-**40.69.13.B folytatás — D1 migration `0012` remote apply → Cloudflare deploy → live OAuth/connection/validation/refresh security teszt.**
+**40.69.13.B folytatás — Cloudflare Worker deploy → production secret/redirect ellenőrzés → live OAuth/connection/validation/refresh security teszt.**
 
 **Builder/Inspector kódolás továbbra is blokkolt.**
 
