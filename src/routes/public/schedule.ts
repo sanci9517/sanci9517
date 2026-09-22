@@ -1,34 +1,24 @@
-import { ok } from "../../core/response";
+import { error, ok } from "../../core/response";
+import { readPublicSchedule } from "../../core/schedule-read";
 import type { Env } from "../../types/env";
 
-type ScheduleRow = {
-  id: string;
-  title: string;
-  platform: string;
-  starts_at: string;
-  ends_at: string | null;
-  status: string;
-  url: string | null;
-  notes: string;
-};
+const parseList = (value: string | null) => value
+  ? value.split(",").map(item => item.trim()).filter(Boolean)
+  : undefined;
 
-export async function publicScheduleRoute(env: Env): Promise<Response> {
-  const rows = await env.DB.prepare(
-    `SELECT id,title,platform,starts_at,ends_at,status,url,notes
-     FROM schedule_items
-     WHERE status != 'cancelled'
-     ORDER BY starts_at ASC
-     LIMIT 50`
-  ).all<ScheduleRow>();
+export async function publicScheduleRoute(request: Request, env: Env): Promise<Response> {
+  const url = new URL(request.url);
 
-  return ok(rows.results.map(row => ({
-    id: row.id,
-    title: row.title,
-    platform: row.platform,
-    startsAt: row.starts_at,
-    endsAt: row.ends_at,
-    status: row.status,
-    url: row.url,
-    notes: row.notes
-  })));
+  try {
+    const items = await readPublicSchedule(env.DB, {
+      mode: url.searchParams.get("mode") ?? undefined,
+      limit: url.searchParams.has("limit") ? Number(url.searchParams.get("limit")) : undefined,
+      statuses: parseList(url.searchParams.get("statuses")),
+      platforms: parseList(url.searchParams.get("platforms")),
+      order: url.searchParams.get("order") ?? undefined
+    });
+    return ok(items);
+  } catch {
+    return error("INVALID_SCHEDULE_QUERY", 400, "Invalid schedule query");
+  }
 }
