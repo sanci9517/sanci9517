@@ -32,7 +32,7 @@ export async function adminPagesRoute(request:Request,env:Env):Promise<Response>
    if(contentChanged&&existing.is_published)statements.push(env.DB.prepare('UPDATE pages SET published_content_json=?,published_revision_id=? WHERE id=?').bind(contentJson,revisionId,id));
    await env.DB.batch(statements);
   }catch(e){if(String(e).toLowerCase().includes('unique'))return error('SLUG_EXISTS',409,'Slug already exists');throw e}
-  await audit(env,user.id,'page.update',id,{oldTitle:existing.title,title:nextTitle,oldSlug:existing.slug,slug:nextSlug,oldDescription:existing.description,description:nextDescription,version:contentChanged?nextVersion:null,revisionId});return ok(serialize({...existing,title:nextTitle,slug:nextSlug,description:nextDescription,sort_order:nextOrder,content_json:contentJson,published_revision_id:existing.is_published&&contentChanged?revisionId:existing.published_revision_id},true))
+  await audit(env,user.id,'page.update',id,{oldTitle:existing.title,title:nextTitle,oldSlug:existing.slug,slug:nextSlug,oldDescription:existing.description,description:nextDescription,version:contentChanged?nextVersion:null,revisionId});return ok(serialize({...existing,title:nextTitle,slug:nextSlug,description:nextDescription,sort_order:nextOrder,content_json:contentJson,published_content_json:existing.published_content_json, published_revision_id:existing.is_published&&contentChanged?revisionId:existing.published_revision_id},true))
  }
  if(request.method!=='POST')return error('METHOD_NOT_ALLOWED',405);
  const title=typeof body.title==='string'?body.title.trim():'';
