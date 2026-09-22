@@ -155,7 +155,7 @@ Nem vezetünk be második selection-, hierarchy-, state-, renderer- vagy command
 ### 🔵 EGYETLEN AKTÍV PONT
 **40.69.12.B — Schedule binding + read service**
 
-**Státusz:** [~] IMPLEMENTÁLVA — CI/tesztkapu folyamatban.
+**Státusz:** [!] BLOKKOLVA — a read service CI PASS, az üres élő endpoint PASS, de a meglévő legacy Schedule UI nem kompatibilis a canonical admin API-val, ezért a tényleges D1 rekord létrehozási live teszt még nem zárható.
 
 - [x] Schedule node canonical binding: `dataBindings.schedule = { source: "schedule_items", version: 1 }`.
 - [x] Új szerveroldali canonical read service: `src/core/schedule-read.ts`.
@@ -183,10 +183,26 @@ Nem vezetünk be második selection-, hierarchy-, state-, renderer- vagy command
 - [!] A szerveroldali `validatePublishDocument()` jelenleg még nem végzi el a Schedule config teljes Schedule-schema validációját; ezt külön hardeningként a publish/render kapu előtt rendezni kell. Nem tekintjük ezt megoldottnak pusztán a kliensoldali schema miatt.
 
 **Tesztkapu:**
-- [ ] GitHub Editor Core CI PASS
-- [ ] typecheck/build PASS igazolása
-- [ ] élő `/api/public/schedule` teszt a tényleges D1 adatokkal
-- [ ] MASTER lezárás
+- [x] GitHub Editor Core CI PASS — Editor Core Test #585 / commit `ae7fe4c` zöld.
+- [x] Üres élő `/api/public/schedule` válasz: `{"ok":true,"data":[]}`.
+- [!] Tényleges D1 rekorddal végzett read teszt blokkolva: a legacy `public/admin.html` Schedule UI nem a canonical admin API szerződését használja.
+- [ ] Tényleges D1 Schedule rekord létrehozása canonical API-n keresztül.
+- [ ] Rekord visszaolvasása `/api/public/schedule` útvonalon.
+- [ ] `next`, platform- és status-szűrés live ellenőrzése.
+- [ ] MASTER lezárás.
+
+### 40.69.12.B — Live audit megállapítás: legacy Schedule UI / canonical API eltérés
+
+- [x] `src/routes/admin/schedule.ts` teljes létrehozási validáció auditálva.
+- [x] A canonical POST body mezői: `title`, `platform`, `startsAt`, `endsAt`, `status`, `url`, `notes`.
+- [x] A backend a kezdés/befejezés értékeket `Date.parse()` alapján validálja.
+- [x] A meglévő `public/admin.html` Schedule UI nem a canonical kontraktust használja: `startAt` és `endAt` mezőket küld, miközben a backend `startsAt` és `endsAt` mezőket vár.
+- [x] A legacy UI ráadásul `/api/admin/schedule/:id` URL-struktúrát használ, miközben a jelenlegi canonical route body-alapú `id` mezőt használ ugyanazon `/api/admin/schedule` végponton.
+- [x] Ez magyarázza az `INVALID_SCHEDULE_ITEM` létrehozási hibát; a dátumválasztó önmagában nem bizonyult hibásnak.
+- [x] Döntés: a legacy Schedule UI-t nem javítjuk vissza aktív rendszerként, mert a 40.69.9 szerint archivált réteg.
+- [!] A live D1 read teszt csak akkor zárható, ha a canonical Schedule domainhez készül egy nem-legacy létrehozási útvonal / tesztadat, vagy a D1-ben kontrollált tesztrekord jön létre.
+
+**Következő egyetlen aktív pont:** 40.69.12.B — canonical D1 Schedule tesztadat létrehozása legacy UI visszakapcsolása nélkül, majd public read/szűrés live teszt.
 
 **Következő aktív pont a kapu után:** 40.69.12.C — Editor preview renderer.
 ## 40.69.9 — CANONICAL PAGES / VISUAL EDITOR / SCHEDULE ARCHITEKTÚRA TELJES AUDIT — 2026-09-22
