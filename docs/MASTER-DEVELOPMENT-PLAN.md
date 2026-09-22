@@ -3294,3 +3294,72 @@ A hiba tisztán JavaScript parse-hiba volt: az `async` kulcsszó kétszer szerep
 4. csak PASS után persistence regression folytatás.
 
 **PC/Desktop live teszt:** továbbra is PENDING, nem indul.
+
+
+## 40.69.3 — REVISION_CONFLICT GYÖKÉROK: DOCUMENT/PAGE REVISION SZÉTCSÚZÁS — 2026-09-22
+
+**Állapot:** [~] GYÖKÉROK AZONOSÍTVA ÉS KÓDBAN JAVÍTVA; LIVE MENTÉS/PUBLISH ÚJRATESZT MÉG HÁTRA.
+
+A felhasználói live teszt során az Editor v2 betöltött, de **Mentés** és **Publish** közben folyamatosan ezt jelezte:
+
+> „Az oldal időközben módosult. Töltsd újra az oldalt a legfrissebb verzióval.”
+
+### Gyökérok
+
+A canonical Page Model két revision mezőt tart:
+- dokumentumszintű `document.revision`;
+- oldalszintű `document.pages[pageId].revision`.
+
+A korábbi persistence implementáció mentéskor csak a dokumentumszintű revisiont frissítette. Emiatt:
+1. az `editor_revisions` szerveroldali verziószáma növekedett;
+2. a `document.revision` növekedett;
+3. a `pages[pageId].revision` régi értéken maradt;
+4. az `/api/admin/pages` válasz ezt követően régi revisiont adhatott vissza;
+5. a kliens következő Mentés/Publish kérésében hibás `expectedVersion` ment ki;
+6. a szerver helyesen `REVISION_CONFLICT` hibával blokkolta a műveletet.
+
+Ez tehát **nem valódi másik felhasználó által okozott módosítás**, hanem a saját canonical revision állapotunk szétszinkronizálása.
+
+### Javítás
+
+- `src/routes/admin/pages.ts`
+  - az oldallistázás revision értéke a canonical document revisionből, szükség esetén a page revisionből kerül meghatározásra;
+  - metadata/slug revision esetén a `document.revision` és `document.pages[pageId].revision` együtt frissül;
+  - új oldal létrehozásakor mindkét revision mező `1`.
+
+- `src/routes/admin/editor.ts`
+  - normál Save/Publish esetén a document- és page-level revision együtt frissül;
+  - Rollback esetén ugyanígy együtt frissül a következő revision.
+
+- `public/editor-v2/app.js`
+  - a kliens továbbra is a szerver által visszaadott canonical revisiont használja az `expectedVersion` értékéhez; külön második revision-logika nem került be.
+
+### Fontos döntés
+
+Nem kerül be „force save”, „ignore conflict” vagy automatikus konfliktusmegkerülés.
+
+A `REVISION_CONFLICT` védelem marad aktív, mert ez védi a valódi multi-tab/multi-user stale mentéseket. A javítás a revision canonical szinkronizációját teszi helyessé.
+
+### Érintett commitok
+
+- `src/routes/admin/pages.ts` — `9a796e5ab020c2de24fe2354ad59b9cf641ee1ef`
+- `src/routes/admin/editor.ts` — `1a95fda5d8ef8fbb2a1022975302b18421c3eb5a`
+
+### Következő egyetlen aktív tesztkapu
+
+Deploy után ugyanazon az oldalon:
+
+1. Editor v2 betöltés.
+2. Egy elem tartalmának módosítása.
+3. **Mentés** → nem lehet `REVISION_CONFLICT`.
+4. Oldal újratöltése.
+5. Módosítás megmaradása.
+6. Revision növekedése.
+7. Második módosítás → **Mentés**.
+8. **Publish** → nem lehet `REVISION_CONFLICT`.
+9. Publikus oldal ellenőrzése.
+10. Diagnostics: 0 hiba.
+
+**Ha ez PASS, akkor folytatjuk a rollback + publish snapshot + unpublish regresszióval.**
+
+**PC/Desktop live teszt:** továbbra is PENDING és nem indul, amíg külön nem kérjük.
