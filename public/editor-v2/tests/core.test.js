@@ -346,7 +346,7 @@ test('ungroup rejects non-group, locked group and locked child with exact rollba
   execute(state, { type: 'hierarchy.group' });
   const groupId = state.selection.primaryId;
 
-  execute(state, { type: 'hierarchy.ungroup', payload: { nodeId: first } });
+  assert.throws(() => execute(state, { type: 'hierarchy.ungroup', payload: { nodeId: first } }));
   assert.equal(activePage(state).nodes[groupId].type, NODE_TYPES.GROUP);
 
   execute(state, { type: 'element.lock.set', payload: { nodeId: groupId, locked: true } });
