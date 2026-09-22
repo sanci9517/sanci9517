@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.69  
+**Verzió:** MASTER-2.39.70  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt PASS:** 2026-09-22 — 40.69.8 Settings/Schedule/Login-Logout live tesztek PASS; a System Page teszt blokkolt, mert a jelenlegi rendszeroldal-kezelés még a régi system_page_content + fix SYSTEM lista architektúrára épül. A teljes kód-audit ezután az aktív Editor v2 mellett külön legacy editor/admin rétegeket is azonosított.
+**Legutóbbi igazolt PASS:** 2026-09-22 — 40.69.9 legacy Editor/Admin/System Page működési útvonal archiválása PASS; canonical Editor v2 maradt az egyetlen aktív vizuális szerkesztő.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -208,8 +208,27 @@ Nem vezetünk be második selection-, hierarchy-, state-, renderer- vagy command
 ### Hol van a weboldal szerkesztő a MASTER-ben?
 A weboldal-szerkesztő **már elkészült alapként**: ez az Editor v2. A MASTER további editor-pontjai ennek a canonical rendszernek a folyamatos bővítései. Az Adásrend-készítő ennek egy domain-specifikus felhasználási rétege lesz, nem új szerkesztő.
 
+### 40.69.9 — LEGACY ARCHITEKTÚRA ARCHIVÁLÁSA — [x] PASS
+
+A teljes audit után a régi rendszer működési útvonalait leválasztottuk a canonical rendszerről.
+
+- [x] `/admin` és `/admin.html` többé nem nyitja meg a legacy admin UI-t; authenticated felhasználót az `/admin/editor` canonical Editor v2-re irányít.
+- [x] `/api/admin/system-pages` route-regisztráció megszüntetve.
+- [x] `/api/public/system-pages` route-regisztráció megszüntetve.
+- [x] `system-page-runtime.js` automatikus HTML-injektálása megszüntetve.
+- [x] A régi Editor/Admin/System Page fájlokat nem töröltük véglegesen; dokumentált legacy archív rétegként megmaradnak visszaállítási lehetőséggel.
+- [x] Archiválási dokumentum: `docs/ARCHIVE-LEGACY-LAYERS.md`.
+- [x] A `system_page_content` D1 adatot ebben a lépésben nem töröltük; cleanup/migráció külön kapu lesz.
+- [x] A canonical rendszer egyetlen aktív Visual Editorja továbbra is `public/editor-v2/`.
+
+**Implementációs commitok:**
+- `3a8c9afbe52429e84d2c2d7272215ae52e558b95` — legacy route/runtime leválasztás
+- `c5ad2b870a11b394d07903ca1e35c4c9425f6bd5` — legacy archívum dokumentálása
+
+**Fontos:** a régi fájlok fizikai törlése/migrációja nem része ennek a kapunak. Előbb az új canonical Schedule/Page rendszert kell felépíteni és validálni; utána külön cleanup kapuban lehet véglegesíteni a régi adatot/fájlokat.
+
 ### Következő egyetlen aktív pont
-**Legacy System Page + legacy editor/admin rétegek pontos archiválási határának auditja és migrációs sorrendje.** Kódot csak ennek lezárása után módosítunk.
+**40.69.10 — Canonical Schedule Builder szerződés:** az Adásrend D1 domain-adat és a canonical Pages + Editor v2 dokumentum közötti kapcsolat teljes auditja, majd az új builder implementációs terv. Kódmódosítás csak az audit lezárása után.
 
 
 **40.69.7 lezárás:**
