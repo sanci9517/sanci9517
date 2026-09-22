@@ -2447,3 +2447,40 @@ A Group/Ungroup lezárása után a MASTER kritikus függőségi sorrendje szerin
 11. Nem készül külön drag/reparent command vagy platform-specifikus hierarchy state.
 
 **Következő aktív lépés:** Desktop Layers drag/reorder/reparent minimális UI implementáció a meglévő `hierarchy.reorder` / `hierarchy.reparent` commandokra építve, majd Core + browser teszt.
+
+## 40.49 — LAYERS DRAG / REORDER / REPARENT UI IMPLEMENTÁCIÓ — 2026-09-22
+
+**Állapot:** [~] IMPLEMENTÁCIÓ KÉSZ; CI és élő browser teszt még hátra.
+
+A 40.48 audit alapján elkészült a minimális desktop Layers hierarchy interaction a már meglévő canonical commandokra építve.
+
+### Implementáció
+- Layers node-ok desktopon natív drag source-ként működnek.
+- Siblingre dobás → canonical `hierarchy.reorder`.
+- Container/Group kompatibilis node-ra dobás → canonical `hierarchy.reparent`, a cél children listájának végére.
+- Root nem dragelhető.
+- Locked source nem dragelhető.
+- Locked target nem fogad dropot.
+- Saját descendant alá történő reparent UI-szinten blokkolt, a command-szintű védelem továbbra is megmarad.
+- Invalid target esetén nincs mutation.
+- Egy drop egyetlen canonical commandot hajt végre, ezért egy history entry.
+- Drag vizuális visszajelzés bekerült.
+- Canvas drag és mobile touch drag ebben a lépésben szándékosan nem készült; nincs párhuzamos hierarchy adatfolyam.
+
+### Módosítások
+- `public/editor-v2/app.js`
+  - commit: `974156f76422b3f4991b2eb80923a395698a884e`
+- `public/editor-v2/editor.css`
+  - commit: `c3a272ed953a44ca2c07182d11684fc932358fda`
+
+### Következő kapu
+1. Core CI / syntax ellenőrzés.
+2. Desktop Layers reorder live test.
+3. Desktop Layers reparent live test.
+4. locked/root/descendant protection.
+5. Undo/Redo.
+6. Save/reload.
+7. Diagnostics 0 hiba.
+8. User PASS.
+
+Sikertelen tesztnél nem lépünk tovább; mobile/touch drag csak a desktop hierarchy interaction lezárása után indul.
