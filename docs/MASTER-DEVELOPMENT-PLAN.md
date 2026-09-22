@@ -2496,3 +2496,61 @@ Sikertelen tesztnél nem lépünk tovább; mobile/touch drag csak a desktop hier
 - Production command API ebben a CI-lépésben nem módosult.
 
 **Következő egyetlen aktív tesztkapu:** desktop Layers élő browser teszt a drag/reorder/reparent interactionre.
+
+## 40.51 — PÁRHUZAMOS PC + MOBIL FEJLESZTÉSI MÓD RÖGZÍTÉSE — 2026-09-22
+
+**Állapot:** [D] FEJLESZTÉSI DÖNTÉS RÖGZÍTVE.
+
+A felhasználó kérése alapján a fejlesztést mostantól **párhuzamos PC/Desktop + Mobile/Touch munkasávokban folytatjuk**, és nem várunk arra, hogy az egyik platform teljes élő tesztje lezáruljon a másik fejlesztése előtt.
+
+### Kötelező párhuzamos fejlesztési szabály
+
+- PC/Desktop és Mobile/Touch funkciók párhuzamosan fejleszthetők.
+- Mindkét platform ugyanazt a canonical Page Modelt, State-et, Selectiont, Command API-t, Historyt és validációt használja.
+- Platformonként csak az input/render/UI interaction réteg térhet el.
+- Nem vezetünk be platform-specifikus második mutation/state/hierarchy rendszert.
+- Minden implementációs lépést, CI-eredményt, commitot, hibát, javítást és döntést ebbe az egy MASTER-be kell rögzíteni.
+- A felhasználói élő tesztelés nem blokkolja a párhuzamos fejlesztést, **ha a kód és a CI-kapu már ellenőrzött**.
+- A végleges domain-lezárás továbbra is csak a szükséges PC + Mobile élő regressziók és felhasználói PASS után történhet.
+- Ha egy funkció mobilon működik, azt **nem tekintjük automatikusan PC PASS-nak**. A közös canonical command/data út miatt ez erős architekturális bizonyíték, de a külön desktop input/UI útvonalat később külön validáljuk.
+- Fordítva ugyanez érvényes: PC működése nem bizonyítja automatikusan a mobil touch működését.
+
+### Tesztelési stratégia
+
+A felhasználó jelenleg elsősorban mobilon tud élő tesztet végezni. Ezért:
+1. a mobilon elvégezhető kész funkciókat most tesztelhetjük és rögzíthetjük;
+2. a PC-only teszteket **PENDING** állapotban megtartjuk;
+3. közben a PC és mobil következő funkcióit tovább implementáljuk párhuzamosan;
+4. amikor a felhasználó kéri a teljes tesztelési kört, végigmegyünk az összes korábban rögzített PC + Mobile + regression ponton;
+5. egyetlen tesztpontot sem jelölünk PASS-nak felhasználói visszaigazolás nélkül, ha az élő browser teszt előírt kapu.
+
+### 40.51 aktuális munkasávok
+
+**A — PC/Desktop**
+- 40.49 Layers drag/reorder/reparent implementáció: kész.
+- 40.50 Core CI: PASS.
+- Live browser: **PENDING**.
+- Következő fejlesztési cél: desktop manipulation további részei párhuzamosan.
+
+**B — Mobile/Touch**
+- Multi-select: PASS.
+- Group/Ungroup: PASS.
+- Layers drag/reorder/reparent touch implementáció: még nincs kész.
+- Következő fejlesztési cél: mobile/touch hierarchy manipulation ugyanarra a canonical hierarchy.reorder / hierarchy.reparent commandokra.
+
+**C — Közös Core**
+- Canonical Page Model: aktív.
+- Canonical Command API: aktív.
+- Selection/History/Validation: közös.
+- Core CI: PASS.
+- Új platform-specifikus state vagy command nem engedélyezett.
+
+### Következő fejlesztési sorrend
+
+1. Mobil Layers drag/reorder/reparent interaction megtervezése és implementációja.
+2. Mobil touch edge case-ek: scroll-vs-drag, long-press konfliktus, locked/root/descendant, invalid target.
+3. Közös hierarchy regression/CI bővítés.
+4. Desktop hierarchy interaction további képességei párhuzamosan.
+5. Később teljes PC + Mobile élő regressziócsomag egyben.
+
+**Hivatalos folytatási pont:** a párhuzamos Mobile/Touch hierarchy manipulation implementáció, miközben a Desktop Layers live teszt PENDING állapotban marad.
