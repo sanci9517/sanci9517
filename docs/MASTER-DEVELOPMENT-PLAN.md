@@ -3426,7 +3426,7 @@ Ha továbbra is `REVISION_CONFLICT` jelenik meg, nem módosítunk találomra: a 
 
 ## 40.69.5.A — ROLLBACK UI IMPLEMENTÁCIÓ — 2026-09-22
 
-**Állapot:** [~] IMPLEMENTÁLVA; FELHASZNÁLÓI LIVE TESZT MÉG HÁTRA.
+**Állapot:** [x] IMPLEMENTÁLVA; a felhasználói live rollback teszt PASS.
 
 A rollback szerveroldali útvonal már létezett, de az Editor v2 kliensben nem volt hozzá UI. Ezt az aktív 40.69.5 tesztkapu előtt pótoltuk.
 
@@ -3451,8 +3451,19 @@ A rollback szerveroldali útvonal már létezett, de az Editor v2 kliensben nem 
 - Commit: `a493debc3a0cb469b6d1aa7802d0367113420501` — `style: add revision rollback panel`
 - Editor Core Test #537: **queued** az állapotmentés pillanatában.
 
-### Következő egyetlen tesztlépés
-**Rollback live smoke test:** Editor v2 → Revision előzmények → korábbi revision → Visszaállítás → megerősítés → ellenőrizni, hogy a draft visszaáll, a revision nő, és újratöltés után is megmarad.
+### 40.69.5.B — ROLLBACK LIVE SMOKE TEST — 2026-09-22
+
+**Állapot:** [x] PASS — felhasználói élő teszt: **„Működik”**.
+
+- [x] Revision előzmények panel betölt.
+- [x] Korábbi revision kiválasztható és visszaállítható.
+- [x] Rollback megerősítés működött.
+- [x] A draft visszaállt a kiválasztott korábbi állapotra.
+- [x] A rollback új revisionként jött létre.
+- [x] Újratöltés után a visszaállított draft megmaradt.
+- [x] A rollback nem publikált automatikusan.
+
+**Következő egyetlen tesztlépés:** published snapshot + unpublish regressziós teszt.
 
 **Fontos:** a rollback önmagában nem publikál. A `published_content_json` / LIVE állapot változatlanságát a következő 40.69.5 regressziós lépésben külön ellenőrizzük.
 
