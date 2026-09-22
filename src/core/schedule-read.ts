@@ -31,7 +31,7 @@ const DEFAULTS = {
   order: "asc"
 } as const;
 
-function normalizeConfig(input: ScheduleReadConfig = {}) {
+export function normalizeScheduleReadConfig(input: ScheduleReadConfig = {}) {
   const mode = input.mode ?? DEFAULTS.mode;
   if (!(SCHEDULE_READ_MODES as readonly string[]).includes(mode)) throw new Error("Invalid schedule mode");
 
@@ -61,7 +61,7 @@ function normalizeConfig(input: ScheduleReadConfig = {}) {
 }
 
 export async function readPublicSchedule(db: D1Database, input: ScheduleReadConfig = {}): Promise<PublicScheduleItem[]> {
-  const config = normalizeConfig(input);
+  const config = normalizeScheduleReadConfig(input);
   const where = ["status != 'cancelled'"];
   const binds: unknown[] = [];
 
@@ -69,8 +69,7 @@ export async function readPublicSchedule(db: D1Database, input: ScheduleReadConf
   binds.push(...config.statuses);
 
   if (config.mode === "upcoming" || config.mode === "next") {
-    where.push("starts_at >= ?");
-    binds.push(new Date().toISOString());
+    where.push("starts_at >= datetime('now')");
   }
 
   if (config.platforms.length) {
