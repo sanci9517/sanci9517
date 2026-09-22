@@ -125,7 +125,7 @@ export async function exchangeTwitchCode(
       id, userId, identity.user_id, identity.login,
       access.ciphertext, access.iv, refresh.ciphertext, refresh.iv,
       JSON.stringify(scopes),
-      new Date(Date.now() + token.expires_in * 1000).toISOString()
+      new Date(Date.now() + (token.expires_in as number) * 1000).toISOString()
     ),
     env.DB.prepare("UPDATE twitch_oauth_states SET used_at=CURRENT_TIMESTAMP WHERE id=?").bind(stateRow.id)
   ]);
