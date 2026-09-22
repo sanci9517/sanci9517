@@ -3040,3 +3040,20 @@ A publikálási validátor exportálva lett, és az Editor Core tesztkészletbe 
 
 ### 40.68.4.1 — CI IMPORT JAVÍTÁS — 2026-09-22
 - [~] CI újrafuttatás szükséges.
+
+
+### 40.68.4.2 — HIERARCHY CYCLE TESZT FIX — 2026-09-22
+
+**Állapot:** [~] TESZT JAVÍTVA; ÚJ CI ELLENŐRZÉS FÜGGŐBEN.
+
+A CI #484/#485 eredményéből kiderült, hogy az előző cycle fixture nem tudta elérni az INVALID_HIERARCHY ágat: a root → cycleA kapcsolat miatt a validátor helyesen korábban INVALID_CHILD_LINK hibával leállt.
+
+A tesztet úgy javítottuk, hogy a ciklus (cycleA ↔ cycleB) konzisztens parent/children kapcsolatú, de a rootból elérhetetlen legyen. Így a validátor végig tud menni a node-link ellenőrzéseken, majd a reachability/hierarchy ellenőrzésnél determinisztikusan INVALID_HIERARCHY eredményt ad.
+
+- Tesztjavító commit: 71d47f8d162b1da000eecdeac8783f2a7a5c3628
+- Validátor kódja nem változott.
+- A #485-ben látott INVALID_CHILD_LINK eltérés a teszt fixture hibája volt, nem validátor regresszió.
+- [ ] GitHub Actions / Core CI 24/24 PASS
+- [ ] 40.68.4 lezárása CI PASS után
+
+**Következő egyetlen lépés:** az új commit után induló GitHub Actions Editor Core Test ellenőrzése.
