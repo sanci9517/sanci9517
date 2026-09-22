@@ -42,7 +42,7 @@ export async function adminPagesRoute(request:Request,env:Env):Promise<Response>
  const document=body.document;
  if(!title||title.length>160||!validSlug(slug)||slug.length>80||description.length>500)return error('INVALID_PAGE',400);
  if(!canonical(document,id))return error('INVALID_EDITOR_DOCUMENT',400,'Az új oldalnak Editor v2 Page Model dokumentumot kell tartalmaznia.');
- const initialDocument={...document,revision:1};
+ const initialDocument={...(document as Record<string,unknown>),revision:1};
  const initialJson=JSON.stringify(initialDocument);
  if(initialJson.length>180000)return error('PAGE_TOO_LARGE',400);
  const isPublished=body.isPublished===true;
