@@ -3036,3 +3036,7 @@ A publikálási validátor exportálva lett, és az Editor Core tesztkészletbe 
 - [ ] CI PASS után MASTER lezárás
 
 **Következő aktív lépés:** CI ellenőrzés, majd a fenti mobil élő tesztkapu lépésenként.
+
+
+### 40.68.4.1 — CI IMPORT JAVÍTÁS — 2026-09-22
+- [~] CI újrafuttatás szükséges.
