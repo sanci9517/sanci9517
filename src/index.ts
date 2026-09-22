@@ -40,7 +40,7 @@ export default {
     if (pathname === "/api/admin/pages") return adminPagesRoute(request, env);
     if (pathname === "/api/admin/editor") return adminEditorRoute(request, env);
     if (pathname === "/api/public/site-settings") return publicSiteSettingsRoute(env);
-    if (pathname === "/api/public/schedule") return publicScheduleRoute(env);
+    if (pathname === "/api/public/schedule") return publicScheduleRoute(request, env);
     if (pathname === "/api/public/pages") return publicPagesRoute(request, env);
     if (pathname === "/admin/login" || pathname === "/admin-login.html") return env.ASSETS.fetch(assetRequest("/admin-login.html", request));
     if (pathname === "/admin" || pathname === "/admin.html") {
