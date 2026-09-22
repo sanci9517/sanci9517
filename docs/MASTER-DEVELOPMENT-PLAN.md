@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.56  
+**Verzió:** MASTER-2.39.57  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -190,6 +190,32 @@ Nem vezetünk be második selection-, hierarchy-, state-, renderer- vagy command
 
 **Fontos:** a pre-publish draft leak javítását nem tekintjük kész regressziónak, amíg a Publish → LIVE útvonal ugyanazon teszten nem igazolt.
 
+
+### 40.69.5.C — PUBLISHED SNAPSHOT REGRESSZIÓ: PUBLISH UI GYÖKÉROK AZONOSÍTVA — 2026-09-22
+
+**Állapot:** [~] BLOKKOLÓ GYÖKÉROK AZONOSÍTVA; KÓDJAVÍTÁS ELŐTT.
+
+A live D1/API audit bizonyította:
+- [x] is_published=1.
+- [x] published_revision_id pontosan a LIVE revisionre mutat.
+- [x] published_content_json byte-pontosan megegyezik a published revision document_json értékével.
+- [x] A publikus API normál módban ezt a published snapshotot adja vissza.
+- [x] v10 publikált dokumentum a korábbi, üres root állapot.
+- [x] v11 draft már tartalmazza az új Section/Stack/Row node-hierarchiát.
+- [x] A jelenlegi v11 mentés után a Publish UI nem indít új publish revisiont.
+
+**Bizonyított kliens oldali gyökérok:**
+A public/editor-v2/app.js syncPublishControls() függvénye a Publish gombot feltétel nélkül letiltja, ha az oldal már publikált: publish.disabled=published.
+Ez azt jelenti, hogy ha egy már LIVE oldalon új draft módosítás történik, a jelenlegi UI nem engedi ugyanazt a módosított draftot újra publikálni. A szerveroldali save(true) útvonal viszont erre képes lenne.
+
+**Következő egyetlen aktív lépés:**
+1. csak a Publish UI állapotlogikáját javítjuk úgy, hogy már publikált, de dirty draft esetén a Publish/Re-publish művelet engedélyezett legyen;
+2. ugyanazt a meglévő save(true) → POST /api/admin/editor útvonalat használjuk;
+3. nem készül második publish state vagy API;
+4. reread + CI/build + deploy;
+5. élő teszt: v11 draft → Publish → új published revision → published_content_json = új revision → public API már az új node-hierarchiát adja.
+
+**PC/Desktop live teszt:** továbbra is PENDING, nem indul.
 
 ### Kötelező folytatási szabály
 1. Csak a kék **EGYETLEN AKTÍV PONT** dolgozható fel.
