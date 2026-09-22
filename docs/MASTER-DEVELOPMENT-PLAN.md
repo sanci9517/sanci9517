@@ -2987,4 +2987,20 @@ A kanonikus oldal-életciklus után a következő lépés a Draft/Preview/Publis
 - [ ] Diagnosztika: 0 hiba.
 - [ ] PC/Desktop live teszt csak külön felhasználói kérésre.
 
+**40.68.1 — UNPUBLISH VALIDÁCIÓS SORREND JAVÍTÁS — 2026-09-22**
+
+**Állapot:** [~] JAVÍTVA; az érintett mobil élő újrateszt még hátra.
+
+A 40.68 mobil tesztjén az Unpublish művelet hibásan az Editor v2 dokumentum-validációval kezdődött, ezért a „A mentett dokumentumnak az Editor v2 Page Modelt kell követnie.” hiba jelent meg. Ez logikai sorrendhiba volt: az Unpublish csak a publikációs állapotot módosítja, ezért nem kell hozzá új dokumentumot küldeni vagy validálni.
+
+**Javítás:**
+- az action === 'unpublish' ág most a dokumentum-validáció előtt fut le;
+- Unpublish esetén csak a page ID és a jelenlegi publikációs állapot szükséges;
+- a draft és a published snapshot továbbra sem törlődik;
+- a normál mentés/publikálás dokumentum-validációja változatlan maradt.
+
+**Commit:** `8acb23427006012f9834756b40663b6f9bab67db`
+
+**Következő egyetlen teszt:** ugyanazon a LIVE oldalon nyomd meg újra a **Visszavonás / Unpublish** gombot. Elvárt: hibaüzenet nélkül DRAFT-ra vált.
+
 **Következő aktív lépés:** CI ellenőrzés, majd a fenti mobil élő tesztkapu lépésenként.
