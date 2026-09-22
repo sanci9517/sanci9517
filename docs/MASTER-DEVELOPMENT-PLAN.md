@@ -2425,17 +2425,43 @@ Nem kezdjük el még a teljes Builder UI-t. Előbb a **Schedule schema + normali
 
 ## 40.69.12.C — Editor preview renderer — 2026-09-22
 
-**Állapot:** [~] AKTÍV — teljes érintett renderer-kód audit megtörtént; implementáció és tesztkapu folyamatban.
+**Állapot:** [~] IMPLEMENTÁLVA — CI és élő Editor browser tesztkapu folyamatban.
 
 ### Audit
-- [x] Az Editor v2 jelenlegi canvas renderer központi útvonala: `public/editor-v2/app.js` → `renderCanvas()` → `renderNode()`.
-- [x] A `schedule` node jelenleg csak általános node-ként jelenik meg; nincs Schedule-specifikus preview renderer.
-- [x] A canonical Schedule config és domain binding már a Page Model része.
-- [x] A preview nem írhat D1-be és nem módosíthat Schedule domain adatot.
-- [x] Első preview verzióban determinisztikus fixture használható, így az Editor preview nem függ az admin D1 sessiontől.
-- [ ] Schedule preview renderer implementáció.
-- [ ] Preview fixture/config teszt.
-- [ ] Editor browser teszt.
+- [x] Az Editor v2 központi canvas renderer útvonala: `public/editor-v2/app.js` → `renderCanvas()` → `renderNode()`.
+- [x] A `schedule` node eddig csak általános node-ként jelent meg; Schedule-specifikus preview renderer nem volt.
+- [x] A Schedule config és domain binding canonical Page Model szerződésben már rögzített.
+- [x] A preview nem ír D1-be és nem módosít Schedule domain adatot.
+- [x] Az első preview determinisztikus, read-only fixture adatot használ; nem függ admin D1 sessiontől.
+- [x] A preview configot a meglévő canonical `normalizeScheduleConfig()` validálja.
+- [x] Szöveg és URL biztonságos DOM API-val kerül renderelésre; nyers HTML nem kerül a fixtureből a DOM-ba.
+
+### Implementáció
+- [x] Új `public/editor-v2/core/schedule-preview.js`.
+- [x] Schedule node branch bekötve az Editor v2 `renderNode()` útvonalába.
+- [x] Preview támogatja a canonical `mode`, `limit`, `statuses`, `platforms`, `order` konfigurációt.
+- [x] Megjelenítési kapcsolók: title/platform/time/endTime/status/notes/link.
+- [x] Üres állapot: canonical `emptyText`.
+- [x] Preview stylesheet: `public/editor-v2/schedule-preview.css`.
+- [x] Preview unit teszt hozzáadva a `public/editor-v2/tests/core.test.js` fájlhoz.
+
+**Implementációs commitok:**
+- `5fcb826b377774dfe375aa208ef8258be034f192` — Schedule preview renderer.
+- `3d28a92516cf9e911736143e0214c88e4024bff4` — Editor canvas integration.
+- `6ee4131d44755b1a1132d04048153c70a68286dd` — preview styling.
+- `69358449d398ef1aa05ddd7616a7b4e3ee3ae7f2` — stylesheet integration.
+- `3c87794da3e58671f160b25fb48edc9b5fb16b0a` — preview tests.
+
+### Fontos hardening
+- [!] A szerveroldali `src/core/editor-validation.ts` még nem ellenőrzi teljesen a Schedule configot; ezt a public publish/render hardening előtt kötelező rendezni.
+- [ ] A preview fixture jelenleg szándékosan nem domain adat; a D1 read-only preview bekötése csak akkor jöhet, ha az Editor preview adatfolyama erre külön, biztonságos szerződést kap.
+
+### Tesztkapu
+- [ ] GitHub Editor Core CI PASS az új commitláncra.
+- [ ] Typecheck/build PASS.
+- [ ] Élő Editor browser teszt: Schedule node hozzáadása → preview kártyák megjelennek.
+- [ ] Mode/filter/display toggle regresszió.
+- [ ] Diagnostics 0 hiba.
 - [ ] MASTER lezárás.
 
-**Következő egyetlen aktív pont:** 40.69.12.C — Schedule preview renderer implementáció.
+**Következő egyetlen aktív pont:** 40.69.12.C — CI + élő Editor preview teszt.
