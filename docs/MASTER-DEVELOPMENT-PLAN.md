@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.74  
+**Verzió:** MASTER-2.39.75  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -128,6 +128,45 @@ A Visual Editor specifikációját több dokumentált rendszer mintái alapján 
 ## 00.7 Architektúra elsőbbsége
 Nem vezetünk be második selection-, hierarchy-, state-, renderer- vagy command-rendszert. Az új funkciók a kanonikus rendszert bővítik.
 
+## 00.8 — PROFI WEBENGINEERING / EDITOR-ENGINEERING ALAPELV — KÖTELEZŐ
+A projektet nem „kódolási feladatként”, hanem professzionális, hosszú távon karbantartható webplatform és vizuális webszerkesztő fejlesztéseként kezeljük. A gondolkodási sorrend mindig: probléma → követelmény → architektúra → adatfolyam → állapot → biztonság → implementáció → automatizált teszt → élő teszt → regresszió → felhasználói visszaigazolás.
+
+Kötelező szakmai szabályok:
+- Gyökérok, nem tünet: hibát nem CSS-/JS-patcheléssel fedünk el. Először a valódi gyökérokot keressük az UI → state → command → validation → Page Model → persistence/API → D1 → renderer teljes láncában.
+- Egyetlen canonical megoldás: ugyanarra a feladatra nem maradhat párhuzamos, egymást részben helyettesítő kódút. A régi utat auditáljuk, leválasztjuk/archiváljuk, és egyértelmű canonical utat jelölünk ki.
+- Audit megelőzi a kódolást: jelentősebb funkció előtt kötelező az érintett fájlok, API-k, adatmodell, állapotátmenetek, meglévő tesztek és legacy rétegek teljes auditja.
+- Minimális, de helyes módosítás: nem a legkevesebb kódsor a cél, hanem a legkisebb architekturálisan helyes, tesztelhető és bővíthető változtatás. Ha az alap rossz, előbb refaktorálunk.
+- Szerződésalapú fejlesztés: minden domainhez és komponenshez egyértelmű input/output, schema, validation, ownership és lifecycle tartozik. A kliens nem írhatja felül a szerver üzleti szabályait.
+- Egyértelmű adat-tulajdonos: minden adatnak pontosan egy canonical source of truth-ja legyen. Cache, preview, derived state és UI state nem válhat véletlenül elsődleges adattárolóvá.
+- Perzisztencia és concurrency első osztályú: save, publish, rollback, revision, expectedVersion, audit és hibatűrés a funkció része, nem utólagos extra.
+- Security by design: auth, authorization, secret/token kezelés, input validation, URL/HTML sanitization, session/CSRF szempontok, rate limit és abuse protection már tervezéskor szerepel.
+- Accessibility by design: billentyűzet, fókusz, kontraszt, szemantikus vezérlők, érthető állapotjelzés, touch célméret és reduced-motion szempontok a funkció részei.
+- Responsive by architecture: Desktop, tablet és mobile ugyanazt a canonical rendszert használja. Nem készül külön mobil üzleti logika.
+- Performance by default: kerüljük a felesleges újrarenderelést, N+1 lekérést, memóriaszivárgást és indokolatlan hálózati terhelést.
+- Megfigyelhetőség: hibákhoz stabil diagnosztikai kód, reprodukálható logika és értelmezhető állapot szükséges. A „nem működik” nem elfogadható diagnosztikai állapot.
+- Teszt bizonyíték, nem dísz: unit/contract/integration/live/E2E tesztet az adott kockázat alapján választunk. A kód jelenléte vagy egy zöld unit teszt önmagában nem PASS.
+- UX és technikai minőség együtt: egy funkció akkor kész, ha működik, érthető, olvasható, kiszámítható, hibakezelhető és profi használatra alkalmas.
+- Benchmarkból tanulunk, nem másolunk: ismert editorokból mintát veszünk, de a saját domainhez és architektúrához igazítjuk.
+- Nem overengineerelünk: új absztrakció, tábla, service, cache vagy dependency csak bizonyítható felelősséggel és haszonnal kerül be.
+- Visszafelé kompatibilitás tudatos: meglévő adatok és dokumentumok esetén migráció/normalizálás/rollback stratégia nélkül nem törünk szerződést.
+- Minden döntés dokumentált: elutasított irányt és okát a MASTER-ben rögzítjük, hogy új beszélgetésben ne térjünk vissza ugyanahhoz a hibás párhuzamos úthoz.
+- Nincs bizonytalan PASS: ha egy kapu hibás, részleges vagy nem ellenőrzött, marad [~]/[!]. Nem nevezünk késznek valamit csak azért, hogy haladhassunk.
+
+### 00.8a — Profi fejlesztési döntési sorrend
+1. Követelmény és Definition of Done pontosítása.
+2. Teljes érintett kód- és adatfolyam-audit.
+3. Canonical ownership és szerződések rögzítése.
+4. Security, data integrity, concurrency, performance, accessibility, responsive és migration kockázatok felmérése.
+5. Implementációs terv a legkisebb helyes változtatással.
+6. Implementáció után az érintett fájlak visszaolvasása és diff/audit.
+7. Automatizált tesztek.
+8. Élő API/D1/Editor/Public teszt, ahol releváns.
+9. Regresszió és diagnosztika.
+10. Felhasználói ellenőrzés.
+11. MASTER frissítés még a következő fejlesztési lépés előtt.
+
+Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI visszafoltozása vagy szerződés nélküli kódolás csak akkor megengedett, ha az audit bizonyítja, hogy az adott megoldás valóban canonical és architekturálisan indokolt.
+
 
 # 00/A — MASTER VÉGREHAJTÁSI INDEX — EZ AZ EGYETLEN AKTÍV SORREND
 
@@ -157,7 +196,9 @@ Nem vezetünk be második selection-, hierarchy-, state-, renderer- vagy command
 
 **Státusz:** [~] AKTÍV — a Schedule technikai alapjai (schema, D1 read, Editor preview, publish validation, public renderer) már implementálva vannak, de a végső Adásrend Builder előtt először a Twitch integráció teljes, biztonságos szerződését kell megtervezni és bekötni. A felhasználó PC Editor live tesztje továbbra is későbbi visszatérő tesztkapu.
 
-### Kötelező sorrend
+### Kötelező sorrend — 40.69.13 aktív munkapont
+**Szigorú szabály:** először csak audit és szerződéstervezés történik. OAuth bekötés, Twitch kódolás vagy Schedule Builder UI implementáció csak az audit eredményének MASTER-be rögzítése után indul.
+
 1. **Twitch integráció teljes audit**
    - OAuth / jogosultságok / token-kezelés;
    - Twitch API kliens és szerveroldali service boundary;
@@ -2792,4 +2833,4 @@ A Schedule blokk egyetlen adatvezérelt komponens marad, amely több layouttal t
 - felhasználói PASS;
 - MASTER lezárva.
 
-**Következő egyetlen végrehajtási pont:** **40.69.13.A — teljes Twitch + meglévő Social/Integration kód- és adatfolyam-audit.**
+**EGYETLEN AKTÍV VÉGREHAJTÁSI PONT:** **40.69.13.A — teljes Twitch + meglévő Social/Integration kód- és adatfolyam-audit.**
