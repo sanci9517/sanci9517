@@ -7,7 +7,7 @@ type PageRow={id:string;slug:string;title:string;description:string;content_json
 type PageBody={id?:unknown;slug?:unknown;title?:unknown;description?:unknown;document?:unknown;isPublished?:unknown};
 function parse(value:string):any{try{return JSON.parse(value)}catch{return {}}}
 function canonical(value:unknown,id:string):boolean{const d:any=value;const p=d?.pages?.[id];return Boolean(d&&d.type==='sanci-page-document'&&d.schemaVersion===1&&d.activePageId===id&&p&&p.id===id&&p.rootId&&p.nodes&&typeof p.nodes==='object')}
-function serialize(row:PageRow,includeContent=true){const raw=parse(row.content_json);const document=normalizeEditorDocument(raw,row.id,row.title,row.slug,row.description);return{id:row.id,slug:row.slug,title:row.title,description:row.description,...(includeContent?{content:document||raw}:{}),isPublished:Boolean(row.is_published),createdAt:row.created_at,updatedAt:row.updated_at}}
+function serialize(row:PageRow,includeContent=true){const raw=parse(row.content_json);const document=normalizeEditorDocument(raw,row.id,row.title,row.slug,row.description);return{id:row.id,slug:row.slug,title:row.title,description:row.description,sortOrder:row.sort_order,...(includeContent?{content:document||raw}:{}),isPublished:Boolean(row.is_published),createdAt:row.created_at,updatedAt:row.updated_at}}
 function validSlug(value:string){return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value)}
 async function audit(env:Env,userId:string,action:string,id:string,metadata:unknown){await env.DB.prepare(`INSERT INTO audit_log (id,user_id,action,entity_type,entity_id,metadata_json) VALUES (?,?,?,?,?,?)`).bind(crypto.randomUUID(),userId,action,"page",id,JSON.stringify(metadata)).run()}
 export async function adminPagesRoute(request:Request,env:Env):Promise<Response>{
