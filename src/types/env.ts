@@ -8,6 +8,7 @@ export interface Env {
   ADMIN_BOOTSTRAP_TOKEN: string;
   TWITCH_CLIENT_ID?: string;
   TWITCH_CLIENT_SECRET?: string;
+  TWITCH_TOKEN_ENCRYPTION_KEY?: string;
   YOUTUBE_CLIENT_ID?: string;
   YOUTUBE_CLIENT_SECRET?: string;
   TIKTOK_CLIENT_KEY?: string;
