@@ -3057,6 +3057,23 @@ A Publish → Unpublish ciklus élő ellenőrzése megtörtént. A teszt célja 
 **Következő egyetlen teszt:** Publish/Unpublish mobil UI regresszió — ellenőrizni, hogy az aktuális publikációs állapotnak megfelelően csak a releváns Publish/Visszavonás vezérlő jelenik meg, és a gombok nem takarják egymást.
 
 
+### 40.68.6 — PUBLISH / UNPUBLISH MOBIL UI REGRESSZIÓ — 2026-09-22
+
+**Állapot:** [x] PASS — mobil élő teszt: felhasználói visszaigazolás: „Pipa”.
+
+A Publish/Unpublish mobil regressziós ellenőrzés megtörtént.
+
+- [x] LIVE állapotban a Visszavonás/Unpublish vezérlő jelenik meg.
+- [x] DRAFT állapotban a Publish vezérlő használható.
+- [x] A publikációs állapothoz tartozó vezérlők nem jelennek meg egymásra hibás állapotban.
+- [x] Mobil UI gombok nem takarják egymást.
+- [x] Felhasználói mobil élő ellenőrzés: „Pipa”.
+
+**40.68 lezárási állapot:** a funkcionális publish lifecycle, invalid Page Model védelem, draft-megmaradás, unpublish, republish, audit és mobil UI regresszió tesztelve; a Core CI 24/24 PASS.
+
+**Következő egyetlen teszt:** Editor v2 diagnosztika ellenőrzése a teljes Publish/Unpublish ciklus után — elvárt: 0 hiba.
+
+
 ### 40.68.4.2 — HIERARCHY CYCLE TESZT FIX — 2026-09-22
 
 **Állapot:** [x] PASS — GitHub Actions Editor Core Test 24/24.
