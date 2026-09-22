@@ -2707,3 +2707,17 @@ A Mobile/Touch Layers hierarchy Undo/Redo élő tesztje sikeresen lezárult.
 - [x] Nem jelentkezett teszt közben jelzett hiba.
 
 **Következő egyetlen aktív tesztpont:** Mobile Layers Save/Reload.
+
+
+## 40.60 — MOBILE LAYERS SAVE/RELOAD LIVE TESZT — 2026-09-22
+
+**Állapot:** [x] PASS — felhasználói élő teszt: **Jó**.
+
+A Mobile/Touch Layers hierarchy mentés és újratöltés élő tesztje sikeresen lezárult.
+
+- [x] Hierarchy-módosítás mentésre került.
+- [x] Editor/oldal újratöltése után a módosított Layers-hierarchia megmaradt.
+- [x] A mentett parent/order állapot helyesen töltődött vissza.
+- [x] Nem jelentkezett teszt közben jelzett hiba.
+
+**Következő egyetlen aktív tesztpont:** Mobile Layers diagnostics — 0 hiba.
