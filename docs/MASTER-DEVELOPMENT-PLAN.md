@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.80  
+**Verzió:** MASTER-2.39.81  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -2921,7 +2921,7 @@ Kötelezően megőrzendő külső adatok:
 
 ### 40.69.13.B — TWITCH ACCOUNT/CHANNEL CONNECTION + TOKEN LIFECYCLE — 2026-09-22
 
-**Státusz:** [~] IMPLEMENTÁCIÓ ELKEZDVE; teljes PASS még nincs.
+**Státusz:** [~] IMPLEMENTÁCIÓ ELKEZDVE; typecheck/deploy kapu PASS, de a 40.69.13.B teljes biztonsági/lifecycle PASS még nincs.
 
 #### B.1 Canonical döntések
 - A Twitch kapcsolat kizárólag az authenticated admin sessionből indítható.
@@ -2993,4 +2993,4 @@ Kötelezően megőrzendő külső adatok:
 - `7f037d0594611fdff94044c81ea0e1082d07ead4` — `requireExpiresIn(value, errorCode): number` központi runtime/type guard bevezetése; mind az authorization-code exchange, mind a refresh ugyanazt a bizonyított `number` értéket használja.
 
 **Egyetlen aktív folytatási pont:**
-> 40.69.13.B folytatás: a `7f037d0594611fdff94044c81ea0e1082d07ead4` javítás utáni CI/typecheck újraellenőrzése. Ha PASS, ezután refresh concurrency lock + token validation lifecycle audit/implementáció. E pont lezárása előtt nincs Builder/Inspector kódolás.
+> 40.69.13.B folytatás: a `7f037d0594611fdff94044c81ea0e1082d07ead4` javítás után a Cloudflare typecheck PASS, a deploy PASS, D1 migration kapu PASS (`No migrations to apply`), Worker deploy PASS (`b6f3f2f6-4487-4578-83e0-49034b1f4135`). A GitHub workflow futásban csak Node 20 deprecation warning és Ubuntu 26 notice maradt; nincs TypeScript/build hiba. Következő és egyetlen aktív lépés: a refresh concurrency lock + token validation lifecycle teljes auditja és minimális implementációs terve. Builder/Inspector kódolás továbbra is blokkolt.
