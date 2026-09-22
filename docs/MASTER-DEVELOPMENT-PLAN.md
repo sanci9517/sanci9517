@@ -1,11 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.53  
+**Verzió:** MASTER-2.39.54  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
+
+**Legutóbbi igazolt PASS:** 2026-09-22 — a 40.69.4 revision-konfliktus javítás után a felhasználói live teszt szerint a Mentés és Publish folyamat is működik.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -31,7 +33,7 @@ Ha bármilyen régi checkpoint, összefoglaló, korábbi üzenet vagy történet
 **Boot-szabály:** új beszélgetésben a modellnek először ezt a 00/B blokkot, majd közvetlenül a 00/A indexet kell figyelembe vennie. Ha bármely régi checkpoint ettől eltér, a régi checkpointot kell figyelmen kívül hagyni, nem az aktuális MASTER állapotot.
 
 **Egyetlen aktuális folytatási mondat:**
-> „Folytassuk a Sanci9517 MASTER tervet a 40.69.2 pontnál: canonical revision contract + D1 persistence boundary implementációjának teljes CI/D1/API tesztelése.”
+> „Folytassuk a Sanci9517 MASTER tervet a 40.69.5 pontnál: rollback + published snapshot + unpublish teljes regressziós teszt.”
 
 > **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd kizárólag a **00/A MASTER VÉGREHAJTÁSI INDEX egyetlen aktív pontjából** folytatni. Más fejezet `[ ]`, `[~]` vagy régebbi „következő lépés” szövege nem jelent aktuális folytatási pontot.
 
@@ -149,9 +151,9 @@ Nem vezetünk be második selection-, hierarchy-, state-, renderer- vagy command
   - [x] Core CI 24/24
 
 ### 🔵 EGYETLEN AKTÍV PONT
-**40.69.2 — canonical revision contract + D1 persistence boundary megtervezése és minimális implementációja**
+**40.69.5 — Revision persistence regression: rollback + published snapshot + unpublish teljes regressziós teszt**
 
-**Státusz:** `[~]` — implementáció elkészült; a teljes ellenőrzési/CI/deploy teszt még hátra van.
+**Státusz:** `[~]` — a Save és Publish live teszt PASS; a következő egyetlen aktív kapu a rollback/published snapshot/unpublish regresszió.
 
 **Aktív munkasáv száma:** **1**
 
@@ -3367,7 +3369,7 @@ Deploy után ugyanazon az oldalon:
 
 ## 40.69.4 — REVISION_CONFLICT MÁSODIK GYÖKÉROK: MEGLÉVŐ OLDALAK REVISION FORRÁSA — 2026-09-22
 
-**Állapot:** [~] ÚJ GYÖKÉROK AZONOSÍTVA ÉS JAVÍTVA; LIVE SAVE/PUBLISH TESZT MÉG HÁTRA.
+**Állapot:** [x] LEZÁRVA — LIVE SAVE + PUBLISH PASS, 2026-09-22.
 
 A javítás után is fennálló `REVISION_CONFLICT` auditja megmutatta, hogy nem elég a Page Model revision mezőire támaszkodni. A már létező oldalaknál a `editor_revisions` táblában lehet a tényleges legfrissebb revision, miközben a régi `content_json` dokumentumban a revision mező elavult.
 
@@ -3392,5 +3394,15 @@ Deploy után:
 6. Publikus oldal ellenőrzése.
 
 Ha továbbra is `REVISION_CONFLICT` jelenik meg, nem módosítunk találomra: a konkrét API response + Network request `expectedVersion` és a szerver `currentVersion` értékét kell összevetni.
+
+### 40.69.4 LIVE TESZT EREDMÉNY — 2026-09-22
+- [x] Editor v2 betölt.
+- [x] Mentés egy kis módosítással — PASS.
+- [x] Oldal újratöltése után a módosítás megmaradt.
+- [x] Második mentés — PASS.
+- [x] Publish — PASS.
+- [x] A felhasználói visszajelzés szerint a teljes Save/Publish folyamat működik.
+- [x] A `REVISION_CONFLICT` hiba megszűnt.
+- [ ] Rollback + published snapshot + unpublish regresszió — következő aktív tesztkapu.
 
 **PC/Desktop live teszt:** továbbra is PENDING.
