@@ -2554,3 +2554,56 @@ A felhasználó jelenleg elsősorban mobilon tud élő tesztet végezni. Ezért:
 5. Később teljes PC + Mobile élő regressziócsomag egyben.
 
 **Hivatalos folytatási pont:** a párhuzamos Mobile/Touch hierarchy manipulation implementáció, miközben a Desktop Layers live teszt PENDING állapotban marad.
+
+## 40.52 — PC + MOBIL LAYERS HIERARCHY MANIPULATION PÁRHUZAMOS IMPLEMENTÁCIÓ — 2026-09-22
+
+**Állapot:** [~] IMPLEMENTÁCIÓ KÉSZ; élő browser teszt és teljes CI-kapu még hátra.
+
+A 40.51 döntés alapján nem állítottuk meg a fejlesztést a PC-s élő teszt hiánya miatt. A meglévő desktop Layers drag/reorder/reparent útvonal mellé elkészült a **Mobile/Touch Layers hierarchy manipulation** ugyanarra a canonical hierarchy command rétegre.
+
+### PC/Desktop
+- A 40.49-ben elkészült Layers drag/reorder/reparent továbbra is aktív.
+- Sibling cél → `hierarchy.reorder`.
+- Container/Group cél → `hierarchy.reparent`.
+- Root/locked/descendant/invalid cél védelem megmarad.
+- A PC live browser teszt továbbra is PENDING; ettől a fejlesztési sáv nem áll le.
+
+### Mobile/Touch
+- A Layers sorhoz külön **mozgató fogantyú** került, így a hierarchy drag nem ütközik a már lezárt mobile multi-select long-press interactionnel.
+- A fogantyú hosszú érintése után aktiválódik a touch drag.
+- Mozgatás közben a cél Layers sor vizuálisan jelölődik.
+- A drop ugyanazt a `resolveLayerDrop()` döntési logikát használja, mint a desktop.
+- Sibling reorder és Container/Group reparent ugyanarra a canonical `hierarchy.reorder` / `hierarchy.reparent` commandokra kerül.
+- Root, locked source/target, saját descendant és invalid target mobilon is blokkolt.
+- Rövid elmozdulás a long-press aktiválása előtt megszakítja a draget, hogy a Layers scroll ne váljon véletlen mozgatássá.
+- A touch drag eseményei izoláltak a meglévő multi-select pointer lifecycle-től.
+- Nem készült mobil-specifikus hierarchy state vagy command.
+
+### Módosított fájlok
+- `public/editor-v2/app.js`
+  - touch hierarchy drag state, handle, drop resolution és event isolation.
+  - commit: `2a2876d1bb64127a9b7545a694abd1d1549bbf53`
+  - event isolation fix: `22b3375e908072228993c361f22149f12d3d1adc`
+- `public/editor-v2/editor.css`
+  - touch drag handle és drop feedback.
+  - commit: `a9b7b80523b1892a7597d2653584d936104ac26a`
+
+### Fontos tesztállapot
+Ezeket **nem** jelöljük még PASS-nak:
+1. Mobile Layers drag → sibling reorder.
+2. Mobile Layers drag → Container/Group reparent.
+3. Mobile invalid target / descendant protection.
+4. Mobile locked/root protection.
+5. Mobile scroll-vs-drag.
+6. Mobile Undo/Redo.
+7. Mobile Save/Reload.
+8. Mobile diagnostics 0 hiba.
+9. Desktop teljes 40.49 browser regression.
+
+### Következő párhuzamos fejlesztési irány
+- PC: Layers hierarchy interaction továbbfejlesztése és a következő manipulation capability-k auditja.
+- Mobile: Layers touch hierarchy edge case-ek és interaction polish.
+- Közös: hierarchy regression tesztek bővítése.
+- Később: teljes PC + Mobile browser regressziós kör egyben.
+
+**Hivatalos folytatási pont:** PC + Mobile hierarchy manipulation közös stabilizálása; a felhasználói tesztelés akkor indul teljes körben, amikor a felhasználó gépnél/mobilnál rendelkezésre áll.
