@@ -11,3 +11,5 @@
 .layer-drag-handle:active,.layer-drag-handle.armed{cursor:grabbing;opacity:1}
 .layer-row.mobile-dragging{opacity:.55}
 .layer-row.mobile-drag-over{outline:2px solid var(--accent);outline-offset:-2px;background:#1d3150;color:#fff}
+
+.page-order{width:26px;min-width:26px;height:30px;padding:0;border:1px solid var(--line);background:#101821;color:var(--text);border-radius:5px;font-size:13px;line-height:1;cursor:pointer}.page-order:hover:not(:disabled){background:#1b2a3a}.page-order:disabled{opacity:.3;cursor:not-allowed}
