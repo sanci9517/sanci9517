@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.48  
+**Verzió:** MASTER-2.39.49  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -31,7 +31,7 @@ Ha bármilyen régi checkpoint, összefoglaló, korábbi üzenet vagy történet
 **Boot-szabály:** új beszélgetésben a modellnek először ezt a 00/B blokkot, majd közvetlenül a 00/A indexet kell figyelembe vennie. Ha bármely régi checkpoint ettől eltér, a régi checkpointot kell figyelmen kívül hagyni, nem az aktuális MASTER állapotot.
 
 **Egyetlen aktuális folytatási mondat:**
-> „Folytassuk a Sanci9517 MASTER tervet a 40.69.2 ponttól: canonical revision contract + D1 persistence boundary megtervezése és minimális implementációja.”
+> „Folytassuk a Sanci9517 MASTER tervet a 40.69.2 pontnál: canonical revision contract + D1 persistence boundary implementációjának teljes CI/D1/API tesztelése.”
 
 > **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd kizárólag a **00/A MASTER VÉGREHAJTÁSI INDEX egyetlen aktív pontjából** folytatni. Más fejezet `[ ]`, `[~]` vagy régebbi „következő lépés” szövege nem jelent aktuális folytatási pontot.
 
@@ -151,7 +151,7 @@ Nem vezetünk be második selection-, hierarchy-, state-, renderer- vagy command
 ### 🔵 EGYETLEN AKTÍV PONT
 **40.69.2 — canonical revision contract + D1 persistence boundary megtervezése és minimális implementációja**
 
-**Státusz:** `[~]` — audit PASS után implementáció következik.
+**Státusz:** `[~]` — implementáció elkészült; a teljes ellenőrzési/CI/deploy teszt még hátra van.
 
 **Aktív munkasáv száma:** **1**
 
@@ -3162,3 +3162,62 @@ A következő minimális canonical javítási csomag szükséges:
 **40.69.2 — canonical revision contract + D1 persistence boundary megtervezése és minimális implementációja.**
 
 **PC/Desktop live teszt:** továbbra is PENDING, és csak külön felhasználói kérésre indítható.
+
+
+---
+
+## 40.69.2 — CANONICAL REVISION CONTRACT + D1 PERSISTENCE BOUNDARY — 2026-09-22
+
+**Állapot:** [~] IMPLEMENTÁCIÓ KÉSZ; VALIDÁCIÓ FOLYAMATBAN.
+
+### Canonical contract
+- `editor_revisions` marad az egyetlen szerveroldali dokumentum-snapshot történet.
+- `pages.content_json` = aktuális draft.
+- `pages.published_content_json` = LIVE snapshot.
+- `pages.published_revision_id` = a LIVE snapshothoz tartozó pontos revision.
+- A document `revision` mezője a page-en belüli revision verziószámot követi.
+- Save / rollback / metadata változás új revisiont hoz létre, ha a dokumentum/meta ténylegesen változik.
+- Unpublish nem készít document revisiont; a korábbi published revision hivatkozás megmarad a legutóbbi LIVE snapshot azonosítására.
+- Rollback továbbra is csak draft rollback; publish külön művelet.
+- Publish a draft revisiont és a published snapshotot ugyanazon D1 batchben írja.
+- Page létrehozásakor a page + első revision egyetlen D1 batchben jön létre.
+- Revision ütközés ellen `expectedVersion` optimistic-concurrency ellenőrzés került be.
+- Rollback audit eseménye: `page.rollback`.
+- Publikálás auditja tartalmazza a revision ID-t.
+- Published metadata/slug módosítás revisiont hoz létre és az új revision lesz a LIVE revision.
+
+### Implementált változások
+- `migrations/0010_canonical_revision_contract.sql`
+  - `pages.published_revision_id`
+  - meglévő published snapshotok best-effort revision-link visszaállítása
+  - index
+- `src/routes/admin/editor.ts`
+  - expectedVersion konfliktusvédelem
+  - szerveroldali revision számmal mentett document
+  - published revision linkage
+  - rollback revision ID + audit
+- `src/routes/admin/pages.ts`
+  - page list revision/publishedRevisionId
+  - metadata/slug/description revision
+  - expectedVersion
+  - page create + initial revision atomic batch
+  - published metadata revision linkage
+- `public/editor-v2/app.js`
+  - mentéskor expectedVersion küldése
+  - persisted revision követése
+  - metadata módosításnál expectedVersion
+  - reloadkor revision felvétele
+
+### Jelenlegi tesztállapot
+- Kód audit: PASS.
+- MASTER állapotfrissítés: PASS.
+- GitHub CI / typecheck: **PENDING**.
+- Remote D1 migration: **PENDING**.
+- API concurrency/publish/rollback/metadata teszt: **PENDING**.
+- Mobil live teszt: **PENDING**.
+- PC/Desktop live teszt: **PENDING**, és továbbra is csak külön felhasználói kérésre.
+
+### Következő egyetlen aktív ellenőrzési lépés
+**40.69.2 részeként: CI + migration + API persistence regression teszt.**
+
+**Továbbra sem indul PC/Desktop live teszt.**
