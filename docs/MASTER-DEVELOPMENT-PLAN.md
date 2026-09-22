@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.65  
+**Verzió:** MASTER-2.39.66  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -155,20 +155,20 @@ Nem vezetünk be második selection-, hierarchy-, state-, renderer- vagy command
 ### 🔵 EGYETLEN AKTÍV PONT
 **40.69.8 — Audit-log coverage és consistency teljes audit**
 
-**Státusz:** `[~]` — AUDIT FOLYAMATBAN. A 40.69.7 atomicitási kapu PASS és lezárt. A teljes admin/auth state-mutation audit több konkrét hiányosságot talált; először ezek canonicalizálása következik, majd CI + live regresszió.
+**Státusz:** `[~]` — HIÁNYOSSÁGOK JAVÍTVA, VALIDÁCIÓ FOLYAMATBAN. A teljes admin/auth state-mutation audit által feltárt külön audit-írási útvonalakat canonical `auditStatement()` + D1 batch használatra állítottuk. Következik CI/typecheck/editor-core és célzott live ellenőrzés.
 
 **40.69.8 audit eredmények — 2026-09-22:**
 - [x] `src/routes/admin/editor.ts`: Save/Publish/Unpublish/Rollback audit útvonal lefedett és atomic.
 - [x] `src/routes/admin/pages.ts`: Create/Update/Delete audit útvonal lefedett és atomic.
-- [ ] `src/routes/admin/settings.ts`: state mutation + audit jelenleg két külön DB művelet; atomicitás hiányzik.
-- [ ] `src/routes/admin/schedule.ts`: Create/Update/Delete mind külön audit insertet használ; atomicitás hiányzik.
-- [ ] `src/routes/admin/system-pages.ts`: update + audit két külön DB művelet; atomicitás hiányzik.
-- [ ] `src/routes/auth/login.ts`: session insert + `auth.login` audit külön művelet; részleges állapot lehetséges.
-- [ ] `src/routes/auth/bootstrap.ts`: első admin user létrehozása jelenleg audit nélkül történik.
-- [ ] `src/routes/auth/logout.ts`: session törlés jelenleg audit nélkül történik.
+- [x] `src/routes/admin/settings.ts`: state mutation + audit canonical batch-be került.
+- [x] `src/routes/admin/schedule.ts`: Create/Update/Delete canonical batch-be került.
+- [x] `src/routes/admin/system-pages.ts`: update + audit canonical batch-be került.
+- [x] `src/routes/auth/login.ts`: session insert + `auth.login` audit canonical batch-be került.
+- [x] `src/routes/auth/bootstrap.ts`: első admin létrehozása + `auth.bootstrap` audit canonical batch-be került.
+- [x] `src/routes/auth/logout.ts`: session törlés + `auth.logout` audit canonical batch-be került.
 - [x] Nem találtunk más, az `index.ts` által regisztrált admin state-mutation route-ot a vizsgált route-készletben.
 
-**Következtetés:** a canonical `auditStatement()` helper jó alap, de a coverage/consistency kapu még nem PASS. A következő kódmódosítás kizárólag a fenti bizonyított hiányok megszüntetése lehet.
+**Következtetés:** a feltárt coverage/consistency hiányok kódoldali javítása elkészült. A 40.69.8 még nem PASS, amíg a CI és célzott live regresszió nem igazolja az új atomic audit útvonalakat.
 
 **40.69.7 lezárás:**
 - [x] CI/typecheck/editor-core PASS.
