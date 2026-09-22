@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.40  
+**Verzió:** MASTER-2.39.41  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -2978,8 +2978,8 @@ A kanonikus oldal-életciklus után a következő lépés a Draft/Preview/Publis
 - [x] Preview az aktuális draftot mutatja jogosult szerkesztőnek — mobil élő teszt: PASS, felhasználói visszaigazolás: „Jó”.
 - [x] Publikálás után publikus útvonal az új snapshotot mutatja — mobil élő teszt: PASS, felhasználói visszaigazolás: „Jó”.
 - [x] Publikálás után Editor állapot LIVE — mobil élő teszt: PASS, felhasználói visszaigazolás: „Jó”.
-- [ ] Visszavonás után publikus útvonal eltűnik / nem publikált állapotot ad.
-- [ ] Visszavonás után draft tartalom megmarad.
+- [x] Visszavonás után publikus útvonal eltűnik / nem publikált állapotot ad — mobil élő teszt: PASS, felhasználói visszaigazolás: „Pipa”.
+- [x] Visszavonás után draft tartalom megmarad — mobil élő teszt: PASS, felhasználói visszaigazolás: „Jó”.
 - [ ] Újrapublikálás működik.
 - [ ] Hibás Page Model publikálása blokkolódik.
 - [ ] Publish/unpublish audit esemény létrejön.
@@ -3002,5 +3002,18 @@ A 40.68 mobil tesztjén az Unpublish művelet hibásan az Editor v2 dokumentum-v
 **Commit:** `8acb23427006012f9834756b40663b6f9bab67db`
 
 **Következő egyetlen teszt:** ugyanazon a LIVE oldalon nyomd meg újra a **Visszavonás / Unpublish** gombot. Elvárt: hibaüzenet nélkül DRAFT-ra vált.
+
+**40.68.2 — DRAFT MEGMARADÁS UNPUBLISH UTÁN — 2026-09-22**
+
+**Állapot:** [x] PASS — mobil élő teszt: felhasználói visszaigazolás: „Jó”.
+
+A Visszavonás/Unpublish után ugyanazon az oldalon a korábban szerkesztett draft tartalom megmaradt és továbbra is szerkeszthető volt. A visszavonás nem törölte a draftot és nem állította üres dokumentumra az oldalt.
+
+- [x] Draft tartalom megmaradt.
+- [x] A tartalom továbbra is szerkeszthető.
+- [x] Nem történt tartalomvesztés.
+- [x] Nem jelentkezett teszt közben jelzett hiba.
+
+**Következő egyetlen teszt:** Újrapublikálás ugyanazon az oldalon. Elvárt: a megmaradt draft ismét publikálható, és az oldal LIVE állapotba kerül.
 
 **Következő aktív lépés:** CI ellenőrzés, majd a fenti mobil élő tesztkapu lépésenként.
