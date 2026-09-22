@@ -1,6 +1,7 @@
 import { error, ok } from "../../core/response";
 import { getAuthenticatedUser, hasRole } from "../../core/auth/require-auth";
 import type { Env } from "../../types/env";
+import { auditStatement } from "../../core/audit";
 
 type SettingsBody = {
   siteName?: unknown;
@@ -53,29 +54,14 @@ export async function adminSettingsRoute(request: Request, env: Env): Promise<Re
   }
 
   const valueJson = JSON.stringify({ siteName, tagline });
-  await env.DB.prepare(
-    `INSERT INTO site_settings (key, value_json, updated_at)
+  await env.DB.batch([
+    env.DB.prepare(`INSERT INTO site_settings (key, value_json, updated_at)
      VALUES (?, ?, CURRENT_TIMESTAMP)
      ON CONFLICT(key) DO UPDATE SET
        value_json = excluded.value_json,
-       updated_at = CURRENT_TIMESTAMP`
-  )
-    .bind(SETTINGS_KEY, valueJson)
-    .run();
-
-  await env.DB.prepare(
-    `INSERT INTO audit_log (id, user_id, action, entity_type, entity_id, metadata_json)
-     VALUES (?, ?, ?, ?, ?, ?)`
-  )
-    .bind(
-      crypto.randomUUID(),
-      user.id,
-      "settings.update",
-      "site_settings",
-      SETTINGS_KEY,
-      valueJson
-    )
-    .run();
+       updated_at = CURRENT_TIMESTAMP`).bind(SETTINGS_KEY, valueJson),
+    auditStatement(env, user.id, "settings.update", "site_settings", SETTINGS_KEY, { siteName, tagline })
+  ]);
 
   return ok({ siteName, tagline });
 }
