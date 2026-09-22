@@ -2471,3 +2471,14 @@ Nem kezdjük el még a teljes Builder UI-t. Előbb a **Schedule schema + normali
 - [ ] Felhasználói PC teszt.
 
 **Következő egyetlen aktív pont:** 40.69.12.C — PC UI betűméret live ellenőrzés, majd Schedule preview teszt.
+
+### 40.69.12.C — PC Editor UI olvashatóság 2. pass — 2026-09-22
+- [x] A felhasználói visszajelzés alapján az első desktop font-emelés nem hozott elég látható különbséget.
+- [x] Második, erősebb desktop-only tipográfiai pass készült: fő kezelőfelületi szövegek jellemzően 12–14px, címek 15–17px, inputok 14px, elemgombok 14px.
+- [x] Az elemgombok minimális magassága is nőtt a jobb olvashatóság érdekében.
+- [x] Mobil CSS változatlan maradt.
+- [x] A vászon tartalmának tényleges méretezését nem módosítottuk.
+- Commit: `7f4c7b7a02d2970768184887c76bb3cd09d5489e` — `style: increase desktop editor readability further`.
+- [ ] Felhasználói PC live teszt még szükséges.
+
+**Aktív kapu továbbra is:** 40.69.12.C — PC Editor UI olvashatóság live ellenőrzés. A Schedule preview teszt csak akkor indul, ha a PC-s kezelőfelület kényelmesen olvasható.
