@@ -477,18 +477,32 @@ test('publish validator blocks invalid Page Model and accepts valid document', (
   };
   assert.equal(validatePublishDocument(invalidParent, pageId), 'INVALID_NODE_PARENT');
 
-  const orphan = structuredClone(valid);
-  const orphanId = 'orphan-node';
-  orphan.pages[pageId].nodes[orphanId] = {
-    id: orphanId,
+  const cycle = structuredClone(valid);
+  const cycleA = 'cycle-a';
+  const cycleB = 'cycle-b';
+  const cycleRoot = cycle.pages[pageId].nodes[cycle.pages[pageId].rootId];
+  cycleRoot.children = [cycleA];
+  cycle.pages[pageId].nodes[cycleA] = {
+    id: cycleA,
     type: NODE_TYPES.TEXT,
-    name: 'Orphan',
-    parentId: null,
-    children: [],
+    name: 'Cycle A',
+    parentId: cycleB,
+    children: [cycleB],
     props: {},
     style: {},
     responsive: { desktop: {}, tablet: {}, mobile: {} },
     states: {}
   };
-  assert.equal(validatePublishDocument(orphan, pageId), 'INVALID_HIERARCHY');
+  cycle.pages[pageId].nodes[cycleB] = {
+    id: cycleB,
+    type: NODE_TYPES.TEXT,
+    name: 'Cycle B',
+    parentId: cycleA,
+    children: [cycleA],
+    props: {},
+    style: {},
+    responsive: { desktop: {}, tablet: {}, mobile: {} },
+    states: {}
+  };
+  assert.equal(validatePublishDocument(cycle, pageId), 'INVALID_HIERARCHY');
 });
