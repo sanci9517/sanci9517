@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.52  
+**Verzió:** MASTER-2.39.53  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -3239,9 +3239,9 @@ A live Editor v2 `API hiba (500)` problémájának auditja során kiderült egy 
 **Javítás:**
 - új fájl: `migrations/0010_canonical_revision_contract.sql`
 - commit: `eb9d89dc35db854c6b0de6368ba38fe577853a4c`
-- CI ellenőrzés: még hátra ezen új commitra.
+- CI ellenőrzés: **PASS — Editor Core Test #525** (`eb9d89dc35db854c6b0de6368ba38fe577853a4c`).
 
-**Fontos:** a 500-as live hibát ezzel még nem tekintjük automatikusan lezártnak. A következő lépés kötelezően a migration CI → remote D1 apply → `/api/admin/pages` live ellenőrzés. Csak az exact API eredmény alapján léphetünk tovább.
+**Fontos:** a 500-as live hibát ezzel még nem tekintjük automatikusan lezártnak. A migration már branchben van és a Core CI PASS. A következő lépés kötelezően a remote D1 migration alkalmazása → `/api/admin/pages` live ellenőrzés → Editor v2 betöltés. Csak az exact API eredmény alapján léphetünk tovább.
 
 
 **Továbbra sem indul PC/Desktop live teszt.**
@@ -3274,3 +3274,23 @@ A hiba tisztán JavaScript parse-hiba volt: az `async` kulcsszó kétszer szerep
 - [ ] 40.69.2 persistence tesztfolytatás.
 
 **Következő egyetlen aktív ellenőrzés:** a canonical D1 migration branch/CI ellenőrzése, majd remote D1 apply és az Editor v2 `/api/admin/pages` live API ellenőrzése. PC/Desktop live teszt továbbra is PENDING.
+
+
+### 40.69.2 — CORE CI PASS / REMOTE D1 KAPU — 2026-09-22
+
+**Állapot:** [~] CORE CI PASS; REMOTE D1 MIGRATION ÉS LIVE API TESZT BLOKKOLÓ KAPU.
+
+- migrations/0010_canonical_revision_contract.sql branchben jelen van.
+- Editor Core Test #525: **SUCCESS**.
+- A dokumentációs checkpoint #526 szintén **SUCCESS**.
+- A kód + migration statikus/TypeScript/editor-core ellenőrzése jelenleg zöld.
+- A production/remote D1 séma állapota még nincs ellenőrizve ezen a ponton.
+- Az Editor v2 korábbi live API hiba (500) ezért továbbra is nyitott; nem tekintjük javítottnak addig, amíg a remote D1 migration után az /api/admin/pages ténylegesen 200-at nem ad.
+
+**Egyetlen következő lépés:**
+1. remote D1 migration alkalmazása a v2/foundation aktuális HEAD-re;
+2. /api/admin/pages live API ellenőrzés;
+3. Editor v2 teljes betöltés;
+4. csak PASS után persistence regression folytatás.
+
+**PC/Desktop live teszt:** továbbra is PENDING, nem indul.
