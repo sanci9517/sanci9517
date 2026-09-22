@@ -1,7 +1,7 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.39  
-**Dátum:** 2026-09-21  
+**Verzió:** MASTER-2.39.40  
+**Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
@@ -2393,3 +2393,24 @@ A Core CI #414 PASS után elkészült a Group/Ungroup editor UI-integráció.
 - editor.css: `b5c25afd65e64275f8d25bb1a276e36cf8109bb6`
 
 **Következő kapu:** PC/Desktop és Mobile/Touch browser regression: Group, nested Group, Ungroup, lock/root edge cases, undo/redo, diagnostics 0 error. Csak user PASS után zárható a Group/Ungroup domain.
+
+## 40.47 — GROUP / UNGROUP TELJES BÖNGÉSZŐS REGRESSZIÓ — 2026-09-22
+
+**Állapot:** [x] PASS — mind a 10 kötelező felhasználói élő teszt pipa.
+
+A Group/Ungroup UI-integráció PC/Desktop és Mobile/Touch környezetben végigtesztelve. A felhasználó visszaigazolása alapján mind a 10 teszt PASS:
+
+1. [x] PC/Desktop Group
+2. [x] PC/Desktop Ungroup
+3. [x] Nested Group
+4. [x] Locked element védelem
+5. [x] Locked Group védelem
+6. [x] Root protection
+7. [x] Undo/Redo
+8. [x] Mobile/Touch Group
+9. [x] Mobile/Touch Ungroup
+10. [x] Diagnostics: 0 hiba
+
+**Domain státusz:** Group/Ungroup implementáció + Core CI + UI-integráció + PC/Mobile élő regresszió PASS.
+
+**Következő aktív folytatási pont:** a MASTER-ben kijelölt következő hiányzó kanonikus editor-domain audit/implementáció; Group/Ungroup nem marad nyitott blocker.
