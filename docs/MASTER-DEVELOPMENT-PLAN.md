@@ -3042,6 +3042,21 @@ A publikálási validátor exportálva lett, és az Editor Core tesztkészletbe 
 - [~] CI újrafuttatás szükséges.
 
 
+### 40.68.5 — PUBLISH / UNPUBLISH AUDIT ELLENŐRZÉS — 2026-09-22
+
+**Állapot:** [x] PASS — mobil élő teszt: felhasználói visszaigazolás: „Pipa”.
+
+A Publish → Unpublish ciklus élő ellenőrzése megtörtént. A teszt célja annak igazolása volt, hogy a két szerveroldali életciklus-művelethez az audit események létrejönnek.
+
+- [x] Publish művelet auditálása: `page.publish`.
+- [x] Unpublish művelet auditálása: `page.unpublish`.
+- [x] A műveletek ugyanahhoz a canonical page lifecycle-hoz tartoznak.
+- [x] Nem történt második audit/content state rendszer bevezetése.
+- [x] Felhasználói mobil élő ellenőrzés: „Pipa”.
+
+**Következő egyetlen teszt:** Publish/Unpublish mobil UI regresszió — ellenőrizni, hogy az aktuális publikációs állapotnak megfelelően csak a releváns Publish/Visszavonás vezérlő jelenik meg, és a gombok nem takarják egymást.
+
+
 ### 40.68.4.2 — HIERARCHY CYCLE TESZT FIX — 2026-09-22
 
 **Állapot:** [x] PASS — GitHub Actions Editor Core Test 24/24.
