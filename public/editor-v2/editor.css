@@ -36,3 +36,27 @@
   .diagnostic-head strong{font-size:11px}.diagnostic-head span{font-size:10px}.diagnostic-message{font-size:11px}.diagnostic-location{font-size:9px}.diagnostic-item summary{font-size:10px}
   .element-description{font-size:11px}
 }
+
+
+/* Desktop readability pass 2: intentionally larger editor UI typography */
+@media(min-width:851px){
+  .brand strong{font-size:17px}.brand span{font-size:12px}
+  .top-label{font-size:12px}.top-page-control select{font-size:14px}
+  .device-btn{font-size:13px}.subtle-btn,.primary-btn,.publish-btn{font-size:14px}.save-state{font-size:12px}
+  .dock-heading,.dock-heading strong{font-size:16px}.panel-subtitle{font-size:12px}
+  .wide-action,.search{font-size:14px}.page-row{font-size:14px}.page-row .page-meta{font-size:11px}
+  .element-group-title{font-size:14px}.element-group-title b{font-size:11px}.element{font-size:14px;min-height:42px}.element-info{font-size:13px}
+  .element-description{font-size:12px;line-height:1.55}
+  .rail-btn small{font-size:10px}
+  .layer-row{font-size:13px;min-height:34px}.layer-row small{font-size:10px}.layer-row .layer-caret{font-size:10px}
+  .tool-btn{font-size:14px}.viewport-label{font-size:11px}.canvas-device-btn{font-size:12px}.zoom-label{font-size:13px}.toolbar-info{font-size:13px}
+  .node-head{font-size:11px}.node-head small{font-size:10px}
+  .inspector-tabs button{font-size:14px}.inspector-empty{font-size:13px}.inspector-empty b{font-size:15px}
+  .inspector-selection b{font-size:15px}.inspector-selection small{font-size:11px}
+  .field label,.field span{font-size:12px}.field input,.field textarea,.field select{font-size:14px;min-height:34px}
+  .inspector-toggle{font-size:14px}.danger-action{font-size:14px}
+  .statusbar{font-size:11px}
+  .diagnostics-badge{font-size:12px}.diagnostics-panel header strong{font-size:15px}.diagnostics-panel header small{font-size:11px}
+  .diagnostics-actions button{font-size:11px}.diagnostics-empty{font-size:12px}.diagnostic-item{font-size:12px}
+  .diagnostic-head strong{font-size:12px}.diagnostic-head span{font-size:11px}.diagnostic-message{font-size:12px}.diagnostic-location{font-size:10px}.diagnostic-item summary{font-size:11px}
+}
