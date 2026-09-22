@@ -248,6 +248,91 @@ export const commands = Object.freeze({
     }
   ),
 
+  'hierarchy.group': (state, { nodeIds } = {}) => commit(
+    state,
+    { type: 'hierarchy.group', payload: { nodeIds: [...(nodeIds ?? state.selection.ids)] } },
+    (draft) => {
+      const page = requirePage(draft);
+      const ids = [...new Set(Array.isArray(nodeIds) ? nodeIds : draft.selection.ids)];
+      if (ids.length < 2) throw new Error('Group requires at least two nodes');
+
+      const nodes = ids.map((id) => {
+        const node = getNode(page, id);
+        if (!node) throw new Error(`Node not found: ${id}`);
+        if (node.id === page.rootId) throw new Error('Root cannot be grouped');
+        if (node.locked) throw new Error(`Node is locked: ${id}`);
+        return node;
+      });
+
+      const parentId = nodes[0].parentId;
+      if (!parentId) throw new Error('Selected nodes must share a parent');
+      const parent = getNode(page, parentId);
+      if (!parent || !canContain(parent, 'group')) throw new Error('Invalid group parent');
+
+      if (nodes.some((node) => node.parentId !== parentId)) {
+        throw new Error('Selected nodes must share the same parent');
+      }
+
+      const selected = new Set(ids);
+      const orderedIds = parent.children.filter((id) => selected.has(id));
+      if (orderedIds.length !== ids.length) throw new Error('Invalid group selection');
+
+      const firstIndex = parent.children.indexOf(orderedIds[0]);
+      const group = createNode('group', {
+        name: 'Csoport',
+        parentId: parent.id,
+        children: [...orderedIds]
+      });
+
+      page.nodes[group.id] = group;
+      parent.children = parent.children.filter((id) => !selected.has(id));
+      insertChild(parent, group.id, firstIndex);
+
+      for (const nodeId of orderedIds) page.nodes[nodeId].parentId = group.id;
+
+      setSelection(draft, [group.id], group.id);
+      bumpRevision(draft.document);
+    }
+  ),
+
+  'hierarchy.ungroup': (state, { nodeId } = {}) => commit(
+    state,
+    { type: 'hierarchy.ungroup', payload: { nodeId: nodeId ?? state.selection.primaryId } },
+    (draft) => {
+      const page = requirePage(draft);
+      const targetId = nodeId ?? draft.selection.primaryId;
+      if (!targetId) throw new Error('Ungroup requires a selected group');
+
+      const group = getNode(page, targetId);
+      if (!group) throw new Error(`Node not found: ${targetId}`);
+      if (group.type !== 'group') throw new Error('Ungroup requires a GROUP node');
+      if (group.locked) throw new Error(`Node is locked: ${targetId}`);
+      if (!group.parentId) throw new Error('Group has no parent');
+
+      const parent = getNode(page, group.parentId);
+      if (!parent) throw new Error('Group parent not found');
+
+      const childIds = [...group.children];
+      const children = childIds.map((childId) => {
+        const child = getNode(page, childId);
+        if (!child) throw new Error(`Node not found: ${childId}`);
+        if (child.locked) throw new Error(`Node is locked: ${childId}`);
+        return child;
+      });
+
+      const groupIndex = parent.children.indexOf(group.id);
+      if (groupIndex < 0) throw new Error('Group is not present in its parent');
+
+      parent.children = parent.children.filter((id) => id !== group.id);
+      for (const child of children) child.parentId = parent.id;
+      parent.children.splice(groupIndex, 0, ...childIds);
+      delete page.nodes[group.id];
+
+      setSelection(draft, childIds, childIds.at(-1) ?? null);
+      bumpRevision(draft.document);
+    }
+  ),
+
   'hierarchy.reparent': (state, { nodeId, parentId, index } = {}) => commit(
     state,
     { type: 'hierarchy.reparent', payload: { nodeId, parentId, index } },
