@@ -2852,3 +2852,30 @@ A 40.64 alapján elkészült az Editor v2 canonical oldal metaadat/slug kezelés
 - [ ] PC/Desktop élő teszt — továbbra is csak külön felhasználói kérésre
 
 **Következő aktív lépés:** az oldal slug/meta lifecycle kódellenőrzése és a hozzá tartozó CI/tesztkapu; utána a felhasználói mobil teszt kérésre.
+
+
+## 40.66 — OLDAL SLUG / META KÓD- ÉS TESZTKAPU ELLENŐRZÉS — 2026-09-22
+
+**Állapot:** [~] KÓD ELLENŐRZÉS PASS; FELHASZNÁLÓI ÉLŐ TESZT MÉG HÁTRA.
+
+A 40.65 implementációját ellenőriztük:
+- az admin page PATCH egyetlen canonical `pages` rekordot módosít;
+- a DB slug és az Editor v2 Page Model slug együtt frissül;
+- a slug validáció és a `SLUG_EXISTS` ütközéskezelés jelen van;
+- a publikált snapshot frissítése megmarad az oldal metaadat-változásakor;
+- audit log készül;
+- az Editor v2-ben egyetlen ✎ metaadat-művelet kezeli a címet és slugot;
+- nincs második oldal- vagy tartalomrendszer;
+- PC/Desktop élő teszt továbbra is csak külön kérésre.
+
+**Következő kötelező felhasználói teszt:**
+1. Editor v2 → Oldalak → ✎ egy oldalnál.
+2. Cím megváltoztatása → mentés.
+3. Slug megváltoztatása szabályos értékre.
+4. Az új `/p/<slug>` oldal megnyitása.
+5. Régi slug ne legyen aktív útvonal.
+6. Próbálj egy már létező slugot megadni → `SLUG_EXISTS` / ütközési hiba.
+7. Editor újratöltés után a cím és slug maradjon meg.
+8. Diagnosztika: 0 hiba.
+
+A teljes 40.65 blokk csak ezen élő ellenőrzés után kaphat [x] PASS státuszt.
