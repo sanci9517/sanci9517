@@ -2945,7 +2945,7 @@ Az oldalsorrend funkció első deploy/élő betöltésekor az Editor v2 `app.js`
 
 ## 40.68 — DRAFT / PREVIEW / PUBLISH HARDENING — 2026-09-22
 
-**Állapot:** [~] IMPLEMENTÁCIÓ KÉSZ; CI és mobil élő teszt még hátra.
+**Állapot:** [~] IMPLEMENTÁCIÓ KÉSZ; CI és mobil élő teszt folyamatban.
 
 A kanonikus oldal-életciklus után a következő lépés a Draft/Preview/Publish alapfolyamat biztonságos lezárása. A meglévő Editor v2 Page Model és D1 snapshot rendszer maradt az egyetlen forrás; nem került be második tartalomrendszer.
 
@@ -2977,7 +2977,7 @@ A kanonikus oldal-életciklus után a következő lépés a Draft/Preview/Publis
 - [x] Draft mentés után oldal továbbra is DRAFT — mobil élő teszt: PASS, felhasználói visszaigazolás: „Jó”.
 - [x] Preview az aktuális draftot mutatja jogosult szerkesztőnek — mobil élő teszt: PASS, felhasználói visszaigazolás: „Jó”.
 - [ ] Publikálás után publikus útvonal az új snapshotot mutatja.
-- [ ] Publikálás után Editor állapot LIVE.
+- [x] Publikálás után Editor állapot LIVE — mobil élő teszt: PASS, felhasználói visszaigazolás: „Jó”.
 - [ ] Visszavonás után publikus útvonal eltűnik / nem publikált állapotot ad.
 - [ ] Visszavonás után draft tartalom megmarad.
 - [ ] Újrapublikálás működik.
