@@ -2349,3 +2349,50 @@ A domain adatok változása önmagában nem módosítja a Page revisiont.
 Nem kezdjük el még a teljes Builder UI-t. Előbb a **Schedule schema + normalizer + read/binding réteg** készül el, mert ez akadályozza meg, hogy az Inspector, preview és public renderer három külön logikát használjon.
 
 **Következő egyetlen aktív pont:** **40.69.12.A — Schedule schema + defaults + normalizer.**
+
+
+## 40.69.12.A — Schedule schema + defaults + normalizer — 2026-09-22
+
+**Állapot:** [~] IMPLEMENTÁLVA — CI/tesztkapu folyamatban.
+
+### Elkészült
+
+- Új canonical modul: `public/editor-v2/core/schedule-schema.js`.
+- Rögzített Schedule schema version: `1`.
+- Rögzített módok: `upcoming`, `all`, `next`.
+- Rögzített sorrend: `asc`, `desc`.
+- A publikus megjelenítéshez engedélyezett státuszok: `scheduled`, `live`, `completed`; a `cancelled` státusz nem kerülhet a Page Model Schedule konfigurációjába.
+- Limit: 1–50.
+- Platformlista: trimelt, egyedi értékek, maximum 20 platform, platformnév maximum 40 karakter.
+- Megjelenítési kapcsolók szigorúan boolean értékek.
+- `emptyText` trimelve, nem lehet üres, maximum 200 karakter.
+- Default konfiguráció:
+  - `mode=upcoming`
+  - `limit=10`
+  - `statuses=['scheduled','live']`
+  - `platforms=[]`
+  - `order=asc`
+  - cím/platform/idő/link megjelenítés alapból aktív;
+  - end time/status/notes alapból rejtett;
+  - `emptyText='Nincs tervezett stream.'`.
+- `createNode('schedule')` automatikusan canonical Schedule default konfigurációt kap.
+- A Page Model `validatePage()` Schedule-specifikusan ellenőrzi a konfigurációt.
+- A normalizer a whitespace-t trimeli és az ismétlődő státusz/platform értékeket deduplikálja.
+- Ismeretlen mód/státusz, hibás limit, hibás boolean, üres platform/státuszlista vagy üres `emptyText` elutasításra kerül.
+- Készült unit teszt a defaultokra, valid normalizálásra, invalid értékek elutasítására és Page Model validációra.
+
+### Kódmódosítások
+
+- `ed24df33e731e8c86939d35528ec5522829da435` — canonical Schedule schema module.
+- `40d7206d06f59e81a0669234c5cdbfa3522151dc` — Page Model Schedule validation.
+- `da236d1c955c8231f2a118ebe01b1b0b66f818e9` — Schedule node default initialization.
+- `4a47cb20653e60fff646c51fe3ebcc0fe713b7b2` — Schedule schema tests.
+- `daf09c0cd3cafa26cddc5ba1e5a6aad9bb5f599c` — Schedule node default test.
+
+### Tesztkapu
+
+- [ ] GitHub Editor Core CI PASS
+- [ ] élő Editor browser teszt
+- [ ] MASTER lezárás
+
+**Következő aktív lépés a tesztkapu után:** 40.69.12.B — Schedule binding + read service.
