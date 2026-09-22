@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.47  
+**Verzió:** MASTER-2.39.48  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -22,8 +22,9 @@ Ha bármilyen régi checkpoint, összefoglaló, korábbi üzenet vagy történet
 **Hivatalos aktuális állapot:**
 - 40.67 — `[x]` LEZÁRVA.
 - 40.68 — `[x]` LEZÁRVA.
-- 40.69.1 — `[~]` AZ EGYETLEN AKTÍV PONT.
-- Aktív feladat: **editor_revisions + draft/publish persistence teljes kód- és sémaaudit**.
+- 40.69.1 — `[x]` AUDIT PASS — teljes kód- és adatfolyam-audit lezárva.
+- 40.69.2 — `[~]` AZ EGYETLEN AKTÍV PONT.
+- Aktív feladat: **canonical revision contract + D1 persistence boundary megtervezése és minimális séma/code módosítás előkészítése**.
 - A pageOrder mobil élő tesztje nem aktuális feladat; a 40.67 teljes mobil tesztje már lezárt.
 - A korábban csak mobilon tesztelt funkciók PC/Desktop visszatesztje későbbi tesztkapu, és csak a felhasználó külön kérésére indul.
 
@@ -3022,4 +3023,142 @@ Az oldalsorrend funkció első deploy/élő betöltésekor az Editor v2 `app.js`
 
 ## 40.68 — DRAFT / PREVIEW / PUBLISH HARDENING — 2026-09-22
 
-**Állapot:** [~] IMPLEMENTÁCIÓ KÉSZ; CI és mobil élő teszt folyamatban.
+**Állapot:** [x] LEZÁRVA — a 40.68 lifecycle korábban teljes funkcionális, CI és mobil teszttel lezárult.
+
+---
+
+## 40.69.1 — EDITOR_REVISIONS + DRAFT/PUBLISH PERSISTENCE TELJES KÓD- ÉS D1-SÉMAAUDIT — 2026-09-22
+
+**Állapot:** [x] AUDIT PASS — kódmódosítás ebben a lépésben nem történt.
+
+### Auditált források
+- `src/routes/admin/editor.ts`
+- `src/routes/admin/pages.ts`
+- `migrations/0001_initial_schema.sql`
+- `migrations/0002_editor_revisions.sql`
+- `migrations/0008_restore_canonical_standard_pages.sql`
+- `migrations/0009_page_sort_order.sql`
+- `docs/MASTER-DEVELOPMENT-PLAN.md`
+
+### 1. Canonical draft állapot
+- `pages.content_json` = aktuális Editor v2 draft dokumentum.
+- Normál Editor mentéskor ugyanaz a dokumentum kerül a `pages.content_json` mezőbe.
+- A mentéssel együtt új `editor_revisions` rekord készül.
+- A revision dokumentuma a mentett JSON teljes snapshotja, nem diff.
+- Ez jelenleg egyértelmű és használható canonical alap.
+
+### 2. editor_revisions D1-séma
+A `migrations/0002_editor_revisions.sql` alapján:
+- `id TEXT PRIMARY KEY`
+- `page_id TEXT NOT NULL`
+- `version INTEGER NOT NULL`
+- `document_json TEXT NOT NULL`
+- `created_by TEXT`
+- `note TEXT NOT NULL DEFAULT ''`
+- `created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP`
+- `UNIQUE(page_id, version)`
+- `FOREIGN KEY(page_id) REFERENCES pages(id) ON DELETE CASCADE`
+- `FOREIGN KEY(created_by) REFERENCES users(id) ON DELETE SET NULL`
+- index: `(page_id, version DESC)`
+- index: `created_at`
+
+**Megállapítás:** a page-onkénti verzió-egyediség canonical szinten már létezik. Külön globális version sequence nem szükséges.
+
+### 3. Publish snapshot
+- `pages.published_content_json` a publikált snapshot.
+- Publishkor a `content_json` és az új `editor_revisions` rekord létrehozása egy D1 `batch()` műveletben történik, majd ugyanabban a batchben a published snapshot is frissül.
+- A snapshot jelenleg **nem tartalmaz explicit revision-ID hivatkozást**.
+- Következmény: a published snapshot és az `editor_revisions` között jelenleg tartalmi egyezés van, de nincs közvetlen adatbázis-szintű „ezt a revisiont publikáltuk” kapcsolat.
+
+### 4. Version-generálás / atomicitás
+A jelenlegi útvonal:
+1. `MAX(version)` lekérdezés.
+2. `+1`.
+3. revision INSERT.
+4. szükség esetén publish snapshot update.
+
+A 3–4. lépések batchben atomikusak, **de a version kiosztás a batch előtt történik**.
+
+**Audit finding:** konkurens mentéseknél két kérés ugyanazt a következő verziószámot láthatja; ezt a `UNIQUE(page_id, version)` constraint végül megakadályozhatja, de a kliens determinisztikus concurrency-kezelése még nincs kialakítva. Ezt nem tekintjük lezárt concurrency contractnak.
+
+### 5. Rollback
+A `PUT /api/admin/editor` jelenlegi rollback útvonala:
+- kiválasztja a `page_id + version` revisiont;
+- validálható Editor v2 dokumentummá normalizálja;
+- a legnagyobb verzió után új verziót hoz létre;
+- `pages.content_json`-ba visszaírja a kiválasztott dokumentumot;
+- az új revision note-ja `Rollback from vX`.
+
+**Fontos:** a rollback jelenleg **draft rollback**, nem automatikus publish.
+- `published_content_json` nem változik.
+- `is_published` nem változik.
+- külön Publish szükséges, ha a rollbackelt draftot LIVE állapotba akarjuk vinni.
+- Ez jó canonical irány, de ezt a contractot explicit módon rögzíteni kell.
+
+**Audit finding:** rollback jelenleg nem ír `audit_log` eseményt.
+
+### 6. Unpublish
+- Az unpublish csak `is_published=0` állapotot ír.
+- Draft és published snapshot megmarad.
+- Már unpublished állapotban idempotens választ ad.
+- `page.unpublish` audit esemény készül.
+- Unpublish nem hoz létre új editor revisiont, ami a jelenlegi jelentése mellett indokolható: nem dokumentumváltozás, hanem publication-state változás.
+
+### 7. Page metadata / slug módosítás
+A `src/routes/admin/pages.ts` PATCH útvonal:
+- a canonical `pages` rekordot módosítja;
+- a Page Model page metaadatait is frissíti;
+- publikált oldalnál a published snapshotot is frissíti.
+
+**Audit finding:** a title/slug/metadata változás jelenleg **nem hoz létre `editor_revisions` rekordot**. Emiatt a revision history dokumentum-snapshotként működik, de nem teljes oldal-életciklus-történet.
+
+Ez különösen fontos, mert a slug/meta változás publikált snapshotot is módosíthat anélkül, hogy a revision historyban megjelenne.
+
+### 8. Page creation
+Az új oldal létrehozásakor:
+- `pages` INSERT történik;
+- ezután külön `editor_revisions` INSERT készül v1-ként.
+
+**Audit finding:** a page létrehozása és az első revision létrehozása jelenleg nem egy közös D1 batch/transaction boundaryban történik. Hiba esetén elméletileg létrejöhet page revision nélkül.
+
+### 9. Auth boundary
+Mind az Editor, mind a Pages admin route elején:
+- authentication ellenőrzés történik;
+- `editor` szerepkör szükséges.
+
+A revision write tehát nem publikus API-útvonalon történik.
+
+### 10. Corrupted revision / Page Model
+- Rollback előtt a revision dokumentuma `normalizeEditorDocument()` útvonalon kerül feldolgozásra.
+- Publish előtt a tényleges `validatePublishDocument()` fut.
+- A jelenlegi validációs védelem nem engedi, hogy hibás canonical hierarchy publikálódjon.
+- Revisionek teljes történeti korruptsági auditja és helyreállítási policy még nincs lezárva.
+
+### 11. Cache / diff / retention / stale revision
+Jelenlegi állapot:
+- explicit revision diff nincs;
+- retention policy nincs;
+- cache invalidation contract nincs külön revision-szinten;
+- stale revision / optimistic concurrency contract nincs;
+- multi-tab / multi-user konfliktuskezelés nincs.
+
+Ezek nem kerülnek most külön párhuzamos munkasávba; a canonical revision contract részeként kell őket megoldani.
+
+### 12. Canonical audit conclusion
+**A jelenlegi rendszer alapja használható, de a revision/publish kapcsolat még nem tekinthető teljesen lezártnak.**
+
+A következő minimális canonical javítási csomag szükséges:
+1. explicit published-revision kapcsolat;
+2. determinisztikus version/concurrency contract;
+3. rollback audit esemény;
+4. metadata/slug revision-stratégia;
+5. page-create + initial-revision atomicity;
+6. tesztelt persistence boundary;
+7. később retention/diff/cache/conflict policy ugyanebben a canonical revision rendszerben.
+
+**Kódmódosítás ebben a pontban:** nincs.
+
+### Következő egyetlen aktív pont
+**40.69.2 — canonical revision contract + D1 persistence boundary megtervezése és minimális implementációja.**
+
+**PC/Desktop live teszt:** továbbra is PENDING, és csak külön felhasználói kérésre indítható.
