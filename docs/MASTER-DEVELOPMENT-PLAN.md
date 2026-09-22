@@ -2693,3 +2693,17 @@ A Mobile/Touch Layers scroll-vs-drag edge case élő tesztje sikeresen lezárult
 - [x] Nem történt hibás hierarchy-módosítás.
 
 **Következő egyetlen aktív tesztpont:** Mobile Layers Undo/Redo.
+
+
+## 40.59 — MOBILE LAYERS UNDO/REDO LIVE TESZT — 2026-09-22
+
+**Állapot:** [x] PASS — felhasználói élő teszt: **Jó**.
+
+A Mobile/Touch Layers hierarchy Undo/Redo élő tesztje sikeresen lezárult.
+
+- [x] Hierarchy-módosítás után Undo pontosan visszaállította az eredeti helyet.
+- [x] Redo pontosan visszaállította az új helyet.
+- [x] A Layers hierarchia mindkét állapotban helyes maradt.
+- [x] Nem jelentkezett teszt közben jelzett hiba.
+
+**Következő egyetlen aktív tesztpont:** Mobile Layers Save/Reload.
