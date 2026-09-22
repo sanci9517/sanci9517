@@ -612,3 +612,17 @@ test('schedule nodes receive the canonical domain binding', () => {
     schedule: { source: 'schedule_items', version: 1 }
   });
 });
+
+test('schedule read config normalizes canonical query constraints', async () => {
+  const { normalizeScheduleReadConfig } = await import('../../../src/core/schedule-read.ts');
+  assert.deepEqual(normalizeScheduleReadConfig({ mode: 'next', limit: 50, statuses: ['live', 'live'], platforms: [' Twitch '], order: 'desc' }), {
+    mode: 'next',
+    limit: 1,
+    statuses: ['live'],
+    platforms: ['Twitch'],
+    order: 'desc'
+  });
+  assert.throws(() => normalizeScheduleReadConfig({ limit: 51 }));
+  assert.throws(() => normalizeScheduleReadConfig({ statuses: ['cancelled'] }));
+  assert.throws(() => normalizeScheduleReadConfig({ platforms: [''] }));
+});
