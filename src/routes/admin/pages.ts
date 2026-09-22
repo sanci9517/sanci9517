@@ -35,10 +35,28 @@ export async function adminPagesRoute(request:Request,env:Env):Promise<Response>
   await audit(env,user.id,'page.update',id,{oldTitle:existing.title,title:nextTitle,oldSlug:existing.slug,slug:nextSlug,oldDescription:existing.description,description:nextDescription,version:contentChanged?nextVersion:null,revisionId});return ok(serialize({...existing,title:nextTitle,slug:nextSlug,description:nextDescription,sort_order:nextOrder,content_json:contentJson,published_revision_id:existing.is_published&&contentChanged?revisionId:existing.published_revision_id},true))
  }
  if(request.method!=='POST')return error('METHOD_NOT_ALLOWED',405);
- const title=typeof body.title==='string'?body.title.trim():'';const slug=typeof body.slug==='string'?body.slug.trim().toLowerCase():'';const description=typeof body.description==='string'?body.description.trim():'';const id=typeof body.id==='string'?body.id.trim():crypto.randomUUID();const document=body.document;
- if(!title||title.length>160||!validSlug(slug)||slug.length>80||description.length>500)return error('INVALID_PAGE',400);if(!canonical(document,id))return error('INVALID_EDITOR_DOCUMENT',400,'Az új oldalnak Editor v2 Page Model dokumentumot kell tartalmaznia.');
- let contentJson:string;try{contentJson=JSON.stringify(document);if(contentJson.length>180000)return error('PAGE_TOO_LARGE',400)}catch{return error('INVALID_CONTENT',400)}
- const isPublished=body.isPublished===true;const revisionId=crypto.randomUUID();const initialDocument={...document,revision:1};const initialJson=JSON.stringify(initialDocument);const nextOrder=(await env.DB.prepare('SELECT COALESCE(MAX(sort_order),-1)+1 AS next FROM pages').first<{next:number}>())?.next??0;
- try{await env.DB.batch([env.DB.prepare('INSERT INTO pages (id,slug,title,description,content_json,published_content_json,published_revision_id,is_published,sort_order,updated_at) VALUES (?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP)').bind(id,slug,title,description,initialJson,isPublished?initialJson:null,isPublished?revisionId:null,isPublished?1:0,nextOrder),env.DB.prepare('INSERT INTO editor_revisions (id,page_id,version,document_json,created_by,note) VALUES (?,?,?,?,?,?)').bind(revisionId,id,1,initialJson,user.id,'Oldal létrehozva az Editor v2-ben'))])}catch(e){if(String(e).toLowerCase().includes('unique'))return error('SLUG_EXISTS',409,'Slug already exists');throw e}
- await audit(env,user.id,'page.create',id,{slug,title,revisionId});return ok({id,slug,title,description,content:initialDocument,isPublished,version:1,revisionId});
+ const title=typeof body.title==='string'?body.title.trim():'';
+ const slug=typeof body.slug==='string'?body.slug.trim().toLowerCase():'';
+ const description=typeof body.description==='string'?body.description.trim():'';
+ const id=typeof body.id==='string'?body.id.trim():crypto.randomUUID();
+ const document=body.document;
+ if(!title||title.length>160||!validSlug(slug)||slug.length>80||description.length>500)return error('INVALID_PAGE',400);
+ if(!canonical(document,id))return error('INVALID_EDITOR_DOCUMENT',400,'Az új oldalnak Editor v2 Page Model dokumentumot kell tartalmaznia.');
+ const initialDocument={...document,revision:1};
+ const initialJson=JSON.stringify(initialDocument);
+ if(initialJson.length>180000)return error('PAGE_TOO_LARGE',400);
+ const isPublished=body.isPublished===true;
+ const revisionId=crypto.randomUUID();
+ const nextOrderRow=await env.DB.prepare('SELECT COALESCE(MAX(sort_order),-1)+1 AS next FROM pages').first<{next:number}>();
+ const nextOrder=Number(nextOrderRow?.next??0);
+ try{
+  const pageInsert=env.DB.prepare('INSERT INTO pages (id,slug,title,description,content_json,published_content_json,published_revision_id,is_published,sort_order,updated_at) VALUES (?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP)').bind(id,slug,title,description,initialJson,isPublished?initialJson:null,isPublished?revisionId:null,isPublished?1:0,nextOrder);
+  const revisionInsert=env.DB.prepare('INSERT INTO editor_revisions (id,page_id,version,document_json,created_by,note) VALUES (?,?,?,?,?,?)').bind(revisionId,id,1,initialJson,user.id,'Oldal létrehozva az Editor v2-ben');
+  await env.DB.batch([pageInsert,revisionInsert]);
+ }catch(e){
+  if(String(e).toLowerCase().includes('unique'))return error('SLUG_EXISTS',409,'Slug already exists');
+  throw e;
+ }
+ await audit(env,user.id,'page.create',id,{slug,title,revisionId});
+ return ok({id,slug,title,description,content:initialDocument,isPublished,version:1,revisionId});
 }
