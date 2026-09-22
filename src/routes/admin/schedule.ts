@@ -1,6 +1,7 @@
 import { error, ok } from "../../core/response";
 import { getAuthenticatedUser, hasRole } from "../../core/auth/require-auth";
 import type { Env } from "../../types/env";
+import { auditStatement } from "../../core/audit";
 
 type ScheduleBody = { id?: unknown; title?: unknown; platform?: unknown; startsAt?: unknown; endsAt?: unknown; status?: unknown; url?: unknown; notes?: unknown };
 type ScheduleRow = { id: string; title: string; platform: string; starts_at: string; ends_at: string | null; status: string; url: string | null; notes: string };
@@ -45,23 +46,31 @@ export async function adminScheduleRoute(request: Request, env: Env): Promise<Re
   if (request.method === "POST") {
     const data = normalize(body); if (!data) return error("INVALID_SCHEDULE_ITEM", 400);
     const id = crypto.randomUUID();
-    await env.DB.prepare(`INSERT INTO schedule_items (id,title,platform,starts_at,ends_at,status,url,notes) VALUES (?,?,?,?,?,?,?,?)`).bind(id, data.title, data.platform, data.startsAt, data.endsAt, data.status, data.url, data.notes).run();
-    await env.DB.prepare(`INSERT INTO audit_log (id,user_id,action,entity_type,entity_id,metadata_json) VALUES (?,?,?,?,?,?)`).bind(crypto.randomUUID(), user.id, "schedule.create", "schedule_item", id, JSON.stringify(data)).run();
+    await env.DB.batch([
+      env.DB.prepare(`INSERT INTO schedule_items (id,title,platform,starts_at,ends_at,status,url,notes) VALUES (?,?,?,?,?,?,?,?)`).bind(id, data.title, data.platform, data.startsAt, data.endsAt, data.status, data.url, data.notes),
+      auditStatement(env, user.id, "schedule.create", "schedule_item", id, data)
+    ]);
     return ok({ id, ...data });
   }
   if (request.method === "PUT") {
     const id = typeof body.id === "string" ? body.id.trim() : ""; const data = normalize(body);
     if (!id || !data) return error("INVALID_SCHEDULE_ITEM", 400);
-    const result = await env.DB.prepare(`UPDATE schedule_items SET title=?,platform=?,starts_at=?,ends_at=?,status=?,url=?,notes=?,updated_at=CURRENT_TIMESTAMP WHERE id=?`).bind(data.title, data.platform, data.startsAt, data.endsAt, data.status, data.url, data.notes, id).run();
-    if (!result.meta.changes) return error("NOT_FOUND", 404, "Schedule item not found");
-    await env.DB.prepare(`INSERT INTO audit_log (id,user_id,action,entity_type,entity_id,metadata_json) VALUES (?,?,?,?,?,?)`).bind(crypto.randomUUID(), user.id, "schedule.update", "schedule_item", id, JSON.stringify(data)).run();
+    const result = await env.DB.prepare(`SELECT id FROM schedule_items WHERE id=? LIMIT 1`).bind(id).first<{id:string}>();
+    if (!result) return error("NOT_FOUND", 404, "Schedule item not found");
+    await env.DB.batch([
+      env.DB.prepare(`UPDATE schedule_items SET title=?,platform=?,starts_at=?,ends_at=?,status=?,url=?,notes=?,updated_at=CURRENT_TIMESTAMP WHERE id=?`).bind(data.title, data.platform, data.startsAt, data.endsAt, data.status, data.url, data.notes, id),
+      auditStatement(env, user.id, "schedule.update", "schedule_item", id, data)
+    ]);
     return ok({ id, ...data });
   }
   if (request.method === "DELETE") {
     const id = typeof body.id === "string" ? body.id.trim() : ""; if (!id) return error("INVALID_SCHEDULE_ITEM", 400);
-    const result = await env.DB.prepare("DELETE FROM schedule_items WHERE id=?").bind(id).run();
-    if (!result.meta.changes) return error("NOT_FOUND", 404, "Schedule item not found");
-    await env.DB.prepare(`INSERT INTO audit_log (id,user_id,action,entity_type,entity_id,metadata_json) VALUES (?,?,?,?,?,?)`).bind(crypto.randomUUID(), user.id, "schedule.delete", "schedule_item", id, "{}").run();
+    const result = await env.DB.prepare("SELECT id FROM schedule_items WHERE id=? LIMIT 1").bind(id).first<{id:string}>();
+    if (!result) return error("NOT_FOUND", 404, "Schedule item not found");
+    await env.DB.batch([
+      env.DB.prepare("DELETE FROM schedule_items WHERE id=?").bind(id),
+      auditStatement(env, user.id, "schedule.delete", "schedule_item", id, {})
+    ]);
     return ok({ id, deleted: true });
   }
   return error("METHOD_NOT_ALLOWED", 405);
