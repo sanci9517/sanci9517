@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.79  
+**Verzió:** MASTER-2.39.80  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -2989,7 +2989,8 @@ Kötelezően megőrzendő külső adatok:
 - `c9007fdcc624be9895200ba7040f9b587e0b0e04` — Twitch route registration.
 - `a2b21d594b0f6bc481f05a5d784226e05329d2af` — első `expires_in` narrowing javítás, de a refresh ágban egy második előfordulás megmaradt.
 - `f1e9cc934edff64a3f5658bb72026c0ca15d7f0e` — második `expires_in` narrowing javítás, de TypeScriptben a `Number.isFinite` nem adott valódi type narrowinget.
-- `8a79af41d97f3d352bb07bc90e56599929725c47` — explicit `typeof token.expires_in === "number"` narrowing az exchange + refresh ágban; a korábbi cast megszüntetése.
+- `8a79af41d97f3d352bb07bc90e56599929725c47` — explicit `typeof` narrowing kísérlet, de a branch állapotában a TypeScript továbbra is hibát jelzett mindkét felhasználásnál.
+- `7f037d0594611fdff94044c81ea0e1082d07ead4` — `requireExpiresIn(value, errorCode): number` központi runtime/type guard bevezetése; mind az authorization-code exchange, mind a refresh ugyanazt a bizonyított `number` értéket használja.
 
 **Egyetlen aktív folytatási pont:**
-> 40.69.13.B folytatás: a `8a79af41d97f3d352bb07bc90e56599929725c47` javítás utáni CI/typecheck újraellenőrzése. Ha PASS, ezután refresh concurrency lock + token validation lifecycle audit/implementáció. E pont lezárása előtt nincs Builder/Inspector kódolás.
+> 40.69.13.B folytatás: a `7f037d0594611fdff94044c81ea0e1082d07ead4` javítás utáni CI/typecheck újraellenőrzése. Ha PASS, ezután refresh concurrency lock + token validation lifecycle audit/implementáció. E pont lezárása előtt nincs Builder/Inspector kódolás.
