@@ -1,3 +1,5 @@
+import { normalizeScheduleConfig } from './schedule-schema.js';
+
 /*
  * Sanci9517 Visual Editor v2 — Page Model schema
  *
@@ -319,6 +321,13 @@ export function validatePage(page) {
 
     if (!node.id || node.id !== id) errors.push(`node id mismatch: ${id}`);
     if (!node.type) errors.push(`node type missing: ${id}`);
+    if (node.type === NODE_TYPES.SCHEDULE) {
+      try {
+        normalizeScheduleConfig(node.props?.schedule);
+      } catch (error) {
+        errors.push(`invalid schedule config: ${id}: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    }
     if (!Array.isArray(node.children)) errors.push(`children must be an array: ${id}`);
 
     for (const childId of node.children ?? []) {
