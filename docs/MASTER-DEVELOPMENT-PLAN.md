@@ -3105,3 +3105,45 @@ A tesztet úgy javítottuk, hogy a ciklus (cycleA ↔ cycleB) konzisztens parent
 - [x] 40.68.4 lezárása CI PASS után
 
 **Következő egyetlen lépés:** az új commit után induló GitHub Actions Editor Core Test ellenőrzése.
+
+
+---
+
+## 40.69 — KÖVETKEZŐ DOMAIN: VERSIONING / REVISION / ROLLBACK AUDIT — 2026-09-22
+
+**Állapot:** [~] KÖVETKEZŐ AKTÍV PONT — még nincs implementáció.
+
+### Miért ez a következő pont?
+A 40.68 DRAFT / PREVIEW / PUBLISH lifecycle most lezárult. A MASTER kritikus függőségi sorrendje szerint a következő közvetlen domain a **version / rollback**, még a backup/restore, security és production hardening előtt.
+
+### Cél
+Először teljes kód- és adatmodell-auditot végzünk, és csak utána implementálunk. A cél egyetlen canonical revision/version rendszer, amely nem hoz létre második dokumentum-, history- vagy state-rendszert.
+
+### Kötelező auditpontok
+- [ ] editor_revisions jelenlegi schema és tényleges használata
+- [ ] draft mentés → revision kapcsolat
+- [ ] publish snapshot → revision kapcsolat
+- [ ] version ID és timestamp meghatározása
+- [ ] mely állapotokból lehet rollbackelni
+- [ ] rollback atomicitás D1-ben
+- [ ] rollback után draft/published state viselkedése
+- [ ] audit log kapcsolat (page.publish, page.unpublish, később rollback)
+- [ ] jogosultság / auth boundary
+- [ ] konkurens módosítás / stale revision alapjai
+- [ ] diff előkészíthetőség
+- [ ] cache invalidation előkészítése
+- [ ] retention policy előkészítése
+- [ ] corrupted revision / invalid Page Model védelem
+- [ ] unit/integration/CI tesztelhetőség
+
+### Szigorú szabály
+**Most még nem készítünk rollback UI-t.** Először a canonical revision contractot és a persistence boundaryt kell lezárni. Nem készül párhuzamos local revision/state rendszer.
+
+### Következő egyetlen teszt / munkalépés
+**40.69.1 — editor_revisions + publish/draft persistence teljes kód- és sémaaudit.**
+A következő beszélgetésben innen kell folytatni; nem kell újra végigvenni a korábbi 40.68 lifecycle munkát.
+
+### Új beszélgetés folytatási checkpoint
+**Folytatási parancs:** „Folytassuk a Sanci9517 MASTER tervet a 40.69.1 ponttól.”
+
+**PC/Desktop live teszt:** továbbra is PENDING, és csak külön felhasználói kérésre futtatandó.
