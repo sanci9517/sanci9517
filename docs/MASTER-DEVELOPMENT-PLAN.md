@@ -31,7 +31,7 @@ Ha bármilyen régi checkpoint, összefoglaló, korábbi üzenet vagy történet
 **Boot-szabály:** új beszélgetésben a modellnek először ezt a 00/B blokkot, majd közvetlenül a 00/A indexet kell figyelembe vennie. Ha bármely régi checkpoint ettől eltér, a régi checkpointot kell figyelmen kívül hagyni, nem az aktuális MASTER állapotot.
 
 **Egyetlen aktuális folytatási mondat:**
-> „Folytassuk a Sanci9517 MASTER tervet a 40.69.1 ponttól: editor_revisions + draft/publish persistence teljes kód- és sémaaudit.”
+> „Folytassuk a Sanci9517 MASTER tervet a 40.69.2 ponttól: canonical revision contract + D1 persistence boundary megtervezése és minimális implementációja.”
 
 > **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd kizárólag a **00/A MASTER VÉGREHAJTÁSI INDEX egyetlen aktív pontjából** folytatni. Más fejezet `[ ]`, `[~]` vagy régebbi „következő lépés” szövege nem jelent aktuális folytatási pontot.
 
@@ -149,9 +149,9 @@ Nem vezetünk be második selection-, hierarchy-, state-, renderer- vagy command
   - [x] Core CI 24/24
 
 ### 🔵 EGYETLEN AKTÍV PONT
-**40.69.1 — editor_revisions + draft/publish persistence teljes kód- és sémaaudit**
+**40.69.2 — canonical revision contract + D1 persistence boundary megtervezése és minimális implementációja**
 
-**Státusz:** `[~]` — audit következik; implementáció még nincs.
+**Státusz:** `[~]` — audit PASS után implementáció következik.
 
 **Aktív munkasáv száma:** **1**
 
