@@ -1,6 +1,7 @@
 import { clearSessionCookie, getSessionToken, hashSessionToken } from "../../core/auth/session";
 import { ok, error } from "../../core/response";
 import type { Env } from "../../types/env";
+import { auditStatement } from "../../core/audit";
 
 export async function authLogoutRoute(request: Request, env: Env): Promise<Response> {
   if (request.method !== "POST") {
@@ -19,7 +20,13 @@ export async function authLogoutRoute(request: Request, env: Env): Promise<Respo
   const token = getSessionToken(request);
   if (token) {
     const tokenHash = await hashSessionToken(token);
-    await env.DB.prepare("DELETE FROM sessions WHERE token_hash = ?").bind(tokenHash).run();
+    const session = await env.DB.prepare("SELECT id,user_id FROM sessions WHERE token_hash=? LIMIT 1").bind(tokenHash).first<{id:string;user_id:string}>();
+    if (session) {
+      await env.DB.batch([
+        env.DB.prepare("DELETE FROM sessions WHERE token_hash = ?").bind(tokenHash),
+        auditStatement(env, session.user_id, "auth.logout", "session", session.id, {})
+      ]);
+    }
   }
 
   const response = ok({ loggedOut: true });
