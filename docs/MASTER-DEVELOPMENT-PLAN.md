@@ -2678,3 +2678,18 @@ A Mobile/Touch Layers locked/root protection élő tesztje sikeresen lezárult.
 - [x] Nem jelentkezett teszt közben jelzett hiba.
 
 **Következő egyetlen aktív tesztpont:** Mobile Layers scroll-vs-drag edge case.
+
+
+## 40.58 — MOBILE LAYERS SCROLL-VS-DRAG LIVE TESZT — 2026-09-22
+
+**Állapot:** [x] PASS — felhasználói élő teszt: **Jó**.
+
+A Mobile/Touch Layers scroll-vs-drag edge case élő tesztje sikeresen lezárult.
+
+- [x] Normál Layers lista-görgetés működött.
+- [x] Görgetés közben nem indult véletlen hierarchy drag.
+- [x] A `⠿` fogantyúról a hosszú nyomásos drag továbbra is működik.
+- [x] Rövid érintés/mozdítás nem okozott véletlen mozgatást.
+- [x] Nem történt hibás hierarchy-módosítás.
+
+**Következő egyetlen aktív tesztpont:** Mobile Layers Undo/Redo.
