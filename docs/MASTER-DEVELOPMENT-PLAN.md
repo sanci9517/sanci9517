@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.70  
+**Verzió:** MASTER-2.39.71  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -2482,3 +2482,39 @@ Nem kezdjük el még a teljes Builder UI-t. Előbb a **Schedule schema + normali
 - [ ] Felhasználói PC live teszt még szükséges.
 
 **Aktív kapu továbbra is:** 40.69.12.C — PC Editor UI olvashatóság live ellenőrzés. A Schedule preview teszt csak akkor indul, ha a PC-s kezelőfelület kényelmesen olvasható.
+
+
+### 40.69.12.C — PC Editor UI egységes tipográfiai rendszer — 2026-09-22
+
+**Állapot:** [~] IMPLEMENTÁLVA — felhasználói PC live teszt még szükséges.
+
+A két korábbi, egymásra rakódó desktop font-override helyett egyetlen canonical desktop tipográfiai blokk készült. A cél nem az, hogy minden szöveg szó szerint azonos méretű legyen, hanem hogy az Editorban kevés, következetes méretszint legyen, világos hierarchiával és kényelmes hosszú távú használattal.
+
+- [x] A korábbi két desktop readability override megszüntetve; nincs további egymásra rakódó font-patch.
+- [x] Egyetlen desktop typography system használ CSS változókat: fő UI 14px, másodlagos 12px, cím 16px, brand 17px.
+- [x] A középső canvas toolbar, device/zoom/info elemek bekerültek ugyanabba a rendszerbe.
+- [x] A bal oldali oldalak, elemlista, layer/hierarchy terület egységesebb méretszinteket kapott.
+- [x] A jobb oldali Inspector, mezők, kapcsolók és műveleti gombok ugyanazt a tipográfiai rendszert használják.
+- [x] A Revision panel különösen javítva: cím 16px, fő információ 14px, meta 12px, Restore gomb 12px.
+- [x] A Diagnostics panel és alsó státuszsáv nem maradt 7–10px-es mikroszöveg.
+- [x] A Rich Text toolbar is a canonical desktop UI méretszintekhez igazodik.
+- [x] Line-height értékek is rendezve lettek; a hosszabb szövegek nem csak nagyobbak, hanem levegősebbek is.
+- [x] Mobil CSS-t nem módosítottuk.
+- [x] Canvas tartalom tényleges méretét nem módosítottuk.
+- [x] A kód szerkezete most egyetlen desktop tipográfiai felülírási pontot használ, így későbbi fejlesztésnél kisebb az ütközés és a regresszió kockázata.
+
+**Benchmark-alapelv:** a professzionális vizuális szerkesztőkben a következetes typography system és a kevés, jól meghatározott méretszint fontosabb, mint az, hogy minden felirat azonos pixelméretű legyen. A Figma és Webflow dokumentációja is a text style/type system, következetes hierarchia és spacing használatát hangsúlyozza. citeturn0search6turn0search2
+
+**Implementációs commit:**
+- `0fa4c8f4e7b6e4a7d66b867f88055c98bbc49495` — `style: unify desktop editor typography system`
+
+**Felhasználói tesztkapu:**
+- [ ] Ctrl+F5 / teljes frissítés.
+- [ ] Hosszabb munkánál ellenőrizni: felső sáv → középső toolbar → bal panel → canvas → jobb Inspector → Revision → Diagnostics.
+- [ ] Ellenőrizni, hogy nincs kiugróan apró, nehezen olvasható felirat.
+- [ ] Ellenőrizni, hogy a méretek hierarchikusak, nem túlzsúfoltak.
+- [ ] Diagnostics: 0 hiba.
+- [ ] Felhasználói PC PASS.
+- [ ] Ezután lehet továbbmenni a Schedule preview live tesztre.
+
+**Egyetlen aktuális folytatási pont:** 40.69.12.C — PC Editor UI hosszú munkamenetes olvashatósági live teszt.
