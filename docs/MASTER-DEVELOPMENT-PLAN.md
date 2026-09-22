@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.55  
+**Verzió:** MASTER-2.39.56  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt PASS:** 2026-09-22 — a 40.69.4 revision-konfliktus javítás után a Mentés és Publish működik; ezt követően a rollback UI implementációja elkészült, CI #537 elindult.
+**Legutóbbi igazolt PASS:** 2026-09-22 — a 40.69.4 revision-konfliktus javítás után a Mentés és Publish működik; a rollback UI elkészült és a felhasználói élő rollback teszt is PASS.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -159,6 +159,21 @@ Nem vezetünk be második selection-, hierarchy-, state-, renderer- vagy command
 **Aktív munkasáv száma:** **1**
 
 **Nem aktív:** PC/Desktop, Mobile/Touch, Rich Text, Group/Ungroup, Page CRUD, 40.68 és minden más régebbi vagy későbbi fejezet. Ezek csak történeti dokumentáció, lezárt tesztek vagy későbbi backlogok. A PC és Mobile nem külön fejlesztési sáv, hanem ugyanazon funkció tesztfelülete.
+
+### 40.69.5.B — ROLLBACK LIVE SMOKE TEST — 2026-09-22
+
+**Állapot:** [x] PASS — felhasználói élő teszt: **„Működik”**.
+
+- [x] Revision előzmények panel betölt.
+- [x] Korábbi revision kiválasztható és visszaállítható.
+- [x] Rollback megerősítés működött.
+- [x] A draft visszaállt a kiválasztott korábbi állapotra.
+- [x] A rollback új revisionként jött létre.
+- [x] Újratöltés után a visszaállított draft megmaradt.
+- [x] A felhasználói live teszt eredménye: **Működik**.
+- [x] A rollback nem tekintendő automatikus publishnak; a published snapshot külön tesztkapu.
+
+**Következő egyetlen aktív tesztlépés:** published snapshot + unpublish regressziós teszt.
 
 ### Kötelező folytatási szabály
 1. Csak a kék **EGYETLEN AKTÍV PONT** dolgozható fel.
