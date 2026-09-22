@@ -8,6 +8,7 @@ import { beginTransaction, commitTransaction, execute, executeBatch, rollbackTra
 import { getProperty, listProperties, listPropertyGroups } from '../core/property-registry.js';
 import { hasResponsiveOverride, resolveResponsiveValue, setResponsiveValue } from '../core/responsive.js';
 import { plainTextToRichText } from '../core/richtext-engine.js';
+import { validatePublishDocument } from '../../../src/routes/admin/editor.ts';
 
 test('new document is structurally valid', () => {
   const document = createDocument();
@@ -446,4 +447,48 @@ test('unknown command fails without corrupting the document', () => {
   assert.deepEqual(state.document, before);
   assert.equal(state.runtime.activeCommand, null);
   assertValidEditorDocument(state.document);
+});
+
+
+test('publish validator blocks invalid Page Model and accepts valid document', () => {
+  const valid = createDocument();
+  const pageId = valid.activePageId;
+  assert.equal(validatePublishDocument(valid, pageId), null);
+
+  const missingRoot = structuredClone(valid);
+  const page = missingRoot.pages[pageId];
+  delete page.nodes[page.rootId];
+  assert.equal(validatePublishDocument(missingRoot, pageId), 'INVALID_PAGE_ROOT');
+
+  const invalidParent = structuredClone(valid);
+  const root = invalidParent.pages[pageId].nodes[invalidParent.pages[pageId].rootId];
+  const childId = 'invalid-child';
+  root.children = [childId];
+  invalidParent.pages[pageId].nodes[childId] = {
+    id: childId,
+    type: NODE_TYPES.TEXT,
+    name: 'Invalid child',
+    parentId: 'missing-parent',
+    children: [],
+    props: {},
+    style: {},
+    responsive: { desktop: {}, tablet: {}, mobile: {} },
+    states: {}
+  };
+  assert.equal(validatePublishDocument(invalidParent, pageId), 'INVALID_NODE_PARENT');
+
+  const orphan = structuredClone(valid);
+  const orphanId = 'orphan-node';
+  orphan.pages[pageId].nodes[orphanId] = {
+    id: orphanId,
+    type: NODE_TYPES.TEXT,
+    name: 'Orphan',
+    parentId: null,
+    children: [],
+    props: {},
+    style: {},
+    responsive: { desktop: {}, tablet: {}, mobile: {} },
+    states: {}
+  };
+  assert.equal(validatePublishDocument(orphan, pageId), 'INVALID_HIERARCHY');
 });
