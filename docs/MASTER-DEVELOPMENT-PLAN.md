@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.54  
+**Verzió:** MASTER-2.39.55  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt PASS:** 2026-09-22 — a 40.69.4 revision-konfliktus javítás után a felhasználói live teszt szerint a Mentés és Publish folyamat is működik.
+**Legutóbbi igazolt PASS:** 2026-09-22 — a 40.69.4 revision-konfliktus javítás után a Mentés és Publish működik; ezt követően a rollback UI implementációja elkészült, CI #537 elindult.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -133,6 +133,7 @@ Nem vezetünk be második selection-, hierarchy-, state-, renderer- vagy command
 > **KÖTELEZŐ:** A dokumentum bármely más fejezetében szereplő `[ ]`, `[~]` vagy régebbi „következő lépés” szöveg **történeti dokumentáció vagy backlog**, és **nem végrehajtási utasítás**. Az egyetlen végrehajtási forrás az alábbi index **EGYETLEN AKTÍV PONT** sora. A történeti fejezetek státuszai nem írhatják felül az indexet, és nem nyithatnak új munkasávot.
 
 ### Kész, lezárt fő blokkok
+- [x] **40.69.4 — Revision conflict második gyökérok + LIVE Save/Publish regresszió**
 - [x] **40.62–40.63 — Canonical standard oldalak + dinamikus publikus menü**
 - [x] **40.64–40.66 — Oldal slug/meta lifecycle**
 - [x] **40.67 — Canonikus oldalsorrend: Editor = publikus menü**
@@ -153,7 +154,7 @@ Nem vezetünk be második selection-, hierarchy-, state-, renderer- vagy command
 ### 🔵 EGYETLEN AKTÍV PONT
 **40.69.5 — Revision persistence regression: rollback + published snapshot + unpublish teljes regressziós teszt**
 
-**Státusz:** `[~]` — a Save és Publish live teszt PASS; a következő egyetlen aktív kapu a rollback/published snapshot/unpublish regresszió.
+**Státusz:** `[~]` — Save/Publish live PASS; a rollback UI implementáció elkészült és statikus/CI ellenőrzés alatt; a következő egyetlen aktív felhasználói kapu a rollback élő teszt.
 
 **Aktív munkasáv száma:** **1**
 
@@ -3406,3 +3407,38 @@ Ha továbbra is `REVISION_CONFLICT` jelenik meg, nem módosítunk találomra: a 
 - [ ] Rollback + published snapshot + unpublish regresszió — következő aktív tesztkapu.
 
 **PC/Desktop live teszt:** továbbra is PENDING.
+
+
+## 40.69.5.A — ROLLBACK UI IMPLEMENTÁCIÓ — 2026-09-22
+
+**Állapot:** [~] IMPLEMENTÁLVA; FELHASZNÁLÓI LIVE TESZT MÉG HÁTRA.
+
+A rollback szerveroldali útvonal már létezett, de az Editor v2 kliensben nem volt hozzá UI. Ezt az aktív 40.69.5 tesztkapu előtt pótoltuk.
+
+### Implementáció
+- `public/editor-v2/app.js`
+  - az Editor oldal betöltése most lekéri az adott oldal revision historyját a canonical `GET /api/admin/editor?pageId=...` végpontról;
+  - revision lista megjelenítése;
+  - korábbi revision kiválasztható;
+  - megerősítés után a meglévő `PUT /api/admin/editor` rollback útvonalat használja;
+  - `expectedVersion` kötelezően a legfrissebb ismert revisionből kerül elküldésre;
+  - sikeres rollback után friss Editor dokumentum és revision history töltődik be;
+  - nincs force-save és nincs második rollback/state rendszer.
+- `public/editor-v2/index.html`
+  - Revision előzmények panel került az Oldalak panel alá;
+  - verzió, megjegyzés és időpont látható;
+  - aktuális revision nem állítható vissza önmagára.
+- `public/editor-v2/editor.css`
+  - desktop és mobile kompatibilis revision-lista/stílus.
+
+### Git / CI
+- Aktuális branch HEAD: `a493debc3a0cb469b6d1aa7802d0367113420501`
+- Commit: `a493debc3a0cb469b6d1aa7802d0367113420501` — `style: add revision rollback panel`
+- Editor Core Test #537: **queued** az állapotmentés pillanatában.
+
+### Következő egyetlen tesztlépés
+**Rollback live smoke test:** Editor v2 → Revision előzmények → korábbi revision → Visszaállítás → megerősítés → ellenőrizni, hogy a draft visszaáll, a revision nő, és újratöltés után is megmarad.
+
+**Fontos:** a rollback önmagában nem publikál. A `published_content_json` / LIVE állapot változatlanságát a következő 40.69.5 regressziós lépésben külön ellenőrizzük.
+
+**PC/Desktop live teszt:** továbbra is PENDING, nem indul automatikusan.
