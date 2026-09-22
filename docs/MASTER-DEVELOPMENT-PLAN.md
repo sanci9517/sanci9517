@@ -2145,3 +2145,69 @@ Ellenőrizve a jelenlegi `app.js`, `state.js`, `commands.js`, `core.test.js` és
 - A 05.3 korábbi „AKTÍV” jelölése lezártra korrigálva.
 - A 08.2 multi-select státusza a tényleges implementációhoz igazítva: [~].
 - A Page CRUD törlés státusza a tényleges Editor v2 + élő teszt állapothoz igazítva.
+
+## 40.69.10 — Canonical Schedule Builder contract audit — 2026-09-22
+
+**Állapot:** [x] AUDIT PASS — kódmódosítás nem történt.
+
+A teljes releváns Schedule → Page Model → Editor v2 → public render adatfolyamot auditáltuk a 40.69.9 legacy rendszer-archiválás után.
+
+### Canonical határ rögzítve
+
+A Schedule két külön, de összekapcsolt réteg marad:
+
+1. **Schedule domain data — D1**
+   - a `schedule_items` tábla tartalmazza a tényleges stream eseményadatot;
+   - mezők: id, title, platform, startsAt, endsAt, status, url, notes;
+   - az admin Schedule API már működő POST/PUT/DELETE/GET CRUD;
+   - létrehozás, módosítás és törlés canonical `auditStatement()` + D1 batch útvonalon történik;
+   - ez a domain adat, nem Editor-vászon state.
+
+2. **Schedule page — canonical Pages + Editor v2**
+   - a menetrend oldal egy normál canonical `pages` rekord;
+   - tartalma `sanci-page-document`, schemaVersion 1, Editor v2 Page Model;
+   - a vizuális elrendezés, stílus, responsive állapot és komponenshierarchia a Page Model része;
+   - draft/live revision, preview, publish, rollback és audit ugyanazt a canonical pages/editor lifecycle-t használja;
+   - nem készül külön Schedule Editor és nem készül második Page Model.
+
+### Kritikus audit-megállapítás
+
+Az Editor v2 schema már tartalmazza a `schedule` node típust, de a jelenlegi editor command/schema rétegben nincs még kész, canonical Schedule-domain binding/rendering szerződés.
+
+A jelenlegi `src/routes/public/schedule.ts` külön domain API-t ad vissza, miközben a canonical public Page útvonal a `pages.published_content_json` snapshotból renderelhető Page Modelt szolgáltatja.
+
+Ezért **nem** kötjük a Schedule node-ot közvetlenül egy konkrét HTML oldalhoz, és **nem** másoljuk be a schedule_items adatokat a Page Model snapshotba. A Page Model csak a Schedule blokk konfigurációját és megjelenítési struktúráját tárolja; az aktuális eseményadat runtime-ban a Schedule domain API-ból érkezik.
+
+### Tervezett canonical Schedule node szerződés
+
+A következő implementációs kapu előtt rögzítendő minimum:
+
+- node type: `schedule`;
+- stabil domain azonosítás: a Schedule blokk konfigurációja ne tartalmazzon másolatot az eseményekről;
+- konfigurációs mezők: megjelenítési mód, darabszám, státuszszűrés, platformszűrés, sorrend és szükség esetén cím/üres állapot;
+- runtime adatforrás: canonical public Schedule API;
+- editor preview: determinisztikus minta/preview adat vagy ugyanazon read-only domain adatforrás, de soha nem írható közvetlenül a Page Modelből;
+- publish: csak a Page Model konfigurációja kerül a published revisionbe;
+- schedule item CRUD: továbbra is D1 domain művelet, saját audit-tal;
+- oldal publish/rollback: kizárólag a Page Model/revision lifecycle-t kezeli;
+- Schedule item változás ne hozzon létre automatikusan Page revisiont, ha csak domain adat változott;
+- Page design változás ne írja át a Schedule domain rekordokat.
+
+### Audit eredmény
+
+- [x] `schedule_items` domain tábla és index létezik.
+- [x] Admin Schedule CRUD létezik és auditált.
+- [x] Public Schedule read API létezik.
+- [x] Canonical Pages + Editor v2 lifecycle létezik.
+- [x] Editor v2-ben a `schedule` node type már definiált.
+- [ ] Schedule node runtime renderer/binding contract még nincs lezárva.
+- [ ] Schedule Inspector konfiguráció még nincs lezárva.
+- [ ] Schedule preview renderer még nincs lezárva.
+- [ ] Schedule node → public renderer integráció még nincs implementálva.
+- [ ] Élő Schedule Builder teszt még nincs.
+
+### Döntés
+
+A régi System Page / `system_page_content` útvonalhoz nem térünk vissza. A következő kódpont kizárólag a **canonical Schedule node contract + renderer/binding terv** kidolgozása, majd ennek unit/integration tesztje. Csak ezután jöhet a Schedule Builder UI.
+
+**Következő egyetlen aktív pont:** **40.69.11 — Schedule node contract és runtime binding teljes audit/tervezés**, kódmódosítás nélkül.
