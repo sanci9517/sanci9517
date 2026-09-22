@@ -2556,6 +2556,20 @@ A felhasználó jelenleg elsősorban mobilon tud élő tesztet végezni. Ezért:
 **Hivatalos folytatási pont:** a párhuzamos Mobile/Touch hierarchy manipulation implementáció, miközben a Desktop Layers live teszt PENDING állapotban marad.
 
 
+
+## 40.54 — MOBILE LAYERS SIBLING REORDER LIVE TESZT — 2026-09-22
+
+**Állapot:** [x] PASS — felhasználói élő teszt: **Jó**.
+
+A Mobile/Touch Layers fogantyús drag funkció sibling reorder útvonala sikeresen működött.
+
+- [x] Long-press drag aktiválás.
+- [x] Azonos szintű elemre dobás.
+- [x] Sibling sorrend tényleges módosítása.
+- [x] Nem jelentkezett teszt közben jelzett hiba.
+
+**Következő egyetlen aktív tesztpont:** Mobile Layers drag → Container/Group reparent.
+
 ## 40.53 — MOBILE LAYERS HIERARCHY UI ELŐTESZT — 2026-09-22
 
 **Állapot:** [x] PASS — felhasználói élő teszt: **Működik**.
