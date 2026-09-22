@@ -2211,3 +2211,18 @@ Az implementáció kódszinten elkészült, de nem jelöljük teszt-PASS-nak. K�
 - Group/Ungroup: továbbra is blokkolva, amíg A és B multi-select kapu nem PASS.
 
 **Következő aktív pont:** B mobil élő browser teszt; közben A PC teszt külön lezárható.
+
+
+## 40.38 — MOBIL TOUCH MULTI-SELECT IMPLEMENTÁCIÓ UTÓAUDIT/FIX — 2026-09-22
+
+**Állapot:** [x] KÓDAUDIT/FIX PASS — browser teszt továbbra is pending.
+
+Az implementáció rövid kódszintű utóauditja során két UX-biztonsági részletet korrigáltunk a mobil munkasávban:
+- a \`Mégse\` most az eredeti \`ids + primaryId\` állapotot állítja vissza, nem csak az ID-listát;
+- a touch click-suppression időzítése védettebb lett, és a megszakítás törli az esetleges futó long-press timert.
+
+Módosítás:
+- \`public/editor-v2/app.js\`
+- commit: \`f2e6ca07e78901a43905bef0a6bd54e9ee9e9dc7\`.
+
+**Tesztkapu változatlanul:** élő mobil browser teszt szükséges; csak utána lehet B sávot PASS-ra zárni. A Group/Ungroup továbbra is blokkolt A+B multi-select PASS-ig.
