@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.73  
+**Verzió:** MASTER-2.39.74  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt PASS:** 2026-09-22 — 40.69.9 legacy Editor/Admin/System Page működési útvonal archiválása PASS; canonical Editor v2 maradt az egyetlen aktív vizuális szerkesztő.
+**Legutóbbi igazolt PASS:** 2026-09-22 — 40.69.12.B Schedule canonical D1 → public read live kapu PASS; `next`, platform- és status-szűrés PASS. A C/D rétegek implementálva vannak, de teljes live/user PASS még nincs.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -34,7 +34,7 @@ Ha bármilyen régi checkpoint, összefoglaló, korábbi üzenet vagy történet
 **Boot-szabály:** új beszélgetésben a modellnek először ezt a 00/B blokkot, majd közvetlenül a 00/A indexet kell figyelembe vennie. Ha bármely régi checkpoint ettől eltér, a régi checkpointot kell figyelmen kívül hagyni, nem az aktuális MASTER állapotot.
 
 **Egyetlen aktuális folytatási mondat:**
-> „Folytassuk a Sanci9517 MASTER tervet a 40.69.9 canonical Pages / Visual Editor / Schedule architektúra auditjával: először legacy-rétegek feltérképezése és archiválási terv, kódmódosítás csak az audit után.”
+> „Folytassuk a Sanci9517 MASTER tervet a 40.69.13 Twitch-integrációs alap és az új, első osztályú Adásrend/Schedule Builder teljes auditjával; először Twitch API/OAuth/EventSub + Schedule domain szerződés, majd csak ennek lezárása után Builder/Inspector kódolás.”
 
 > **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd kizárólag a **00/A MASTER VÉGREHAJTÁSI INDEX egyetlen aktív pontjából** folytatni. Más fejezet `[ ]`, `[~]` vagy régebbi „következő lépés” szövege nem jelent aktuális folytatási pontot.
 
@@ -153,43 +153,91 @@ Nem vezetünk be második selection-, hierarchy-, state-, renderer- vagy command
   - [x] Core CI 24/24
 
 ### 🔵 EGYETLEN AKTÍV PONT
-**40.69.12.C — Editor preview renderer**
+**40.69.13 — Twitch-integrációs alap + Schedule/Adásrend újratervezés audit**
 
-**Státusz:** [~] AKTÍV — a 40.69.12.B canonical D1/read/szűrés live kapuja PASS; most a Schedule node tényleges Editor v2 preview renderelése következik.
+**Státusz:** [~] AKTÍV — a Schedule technikai alapjai (schema, D1 read, Editor preview, publish validation, public renderer) már implementálva vannak, de a végső Adásrend Builder előtt először a Twitch integráció teljes, biztonságos szerződését kell megtervezni és bekötni. A felhasználó PC Editor live tesztje továbbra is későbbi visszatérő tesztkapu.
 
-- [x] Schedule node canonical binding: `dataBindings.schedule = { source: "schedule_items", version: 1 }`.
-- [x] Új szerveroldali canonical read service: `src/core/schedule-read.ts`.
-- [x] A read service kizárólag a canonical Schedule domainből olvas; nem enged tetszőleges endpointot vagy SQL-t a Page Modelből.
-- [x] Támogatott módok: `upcoming`, `all`, `next`.
-- [x] Limit 1–50; `next` automatikusan 1 elemre korlátoz.
-- [x] Státuszok whitelistelve: `scheduled`, `live`, `completed`; `cancelled` kizárt.
-- [x] Platformszűrés maximum 20 értékkel, értékenként maximum 40 karakterrel.
-- [x] Sorrend csak `asc` / `desc`.
-- [x] Az `upcoming/next` lekérdezés D1 `datetime('now')` alapján szűr, így kompatibilis a meglévő SQLite timestamp formátummal.
-- [x] `/api/public/schedule` most a canonical read service-t használja, és biztonságos query paraméterekkel képes a node-konfiguráció szűrési szerződését kiszolgálni.
-- [x] A route továbbra sem fogad tetszőleges SQL-t vagy endpointot.
-- [x] Unit teszt a Schedule bindingra és a read-config normalizálásra.
+### Kötelező sorrend
+1. **Twitch integráció teljes audit**
+   - OAuth / jogosultságok / token-kezelés;
+   - Twitch API kliens és szerveroldali service boundary;
+   - stream live/offline állapot;
+   - csatorna alapadatok;
+   - aktuális kategória/játék;
+   - Twitch Schedule API és a meglévő `schedule_items` domain kapcsolata;
+   - webhook/EventSub lehetőségek;
+   - rate limit, cache, token refresh/recovery;
+   - audit/security/secret kezelés.
+2. **Twitch → Schedule domain szerződés**
+   - a saját `schedule_items` marad a weboldal canonical Schedule domainje;
+   - Twitch lehet külső forrás/szinkron, de nem veheti át ellenőrizetlenül a Page Model vagy a saját D1 domain igazságforrás szerepét;
+   - egyértelmű source/sync állapot kell;
+   - kézi saját adás és Twitchből származó adat együtt kezelhető;
+   - ütközés esetén ne történjen csendes felülírás.
+3. **Adásrend mint első osztályú Editor v2 blokk**
+   - belső node type: `schedule`;
+   - UI-ban külön „Adásrend/Menetrend” blokk, nem a generic Sanci blokk része;
+   - Editor Inspectorból kezelhető adások;
+   - ne kelljen minden streamet külön Text/Image node-okból kézzel felépíteni;
+   - a vizuális blokk egy adatvezérelt rendszer legyen.
+4. **Játékprofil + sablon rendszer**
+   - játékprofilok: név, slug, kép/media, opcionális színek/brand adatok;
+   - első példák: Fortnite, Hearthstone, Hades, majd korlátlan új játékprofil;
+   - vizuális sablonok külön a játékprofiloktól: Minimal, Gaming, Neon, Cards, Timeline, Weekly Grid, Featured Stream stb.;
+   - saját sablon menthető legyen;
+   - új játékhoz ne kelljen kódot írni.
+5. **Adás rekord modell bővítésének auditja**
+   - játékprofil referencia;
+   - opcionális eseménykép / borító;
+   - cím, leírás/jegyzet;
+   - kezdés/végzés;
+   - platform;
+   - stream URL;
+   - státusz;
+   - timezone kezelési stratégia;
+   - későbbi recurring stream támogatás előkészítése;
+   - naptár/emlékeztető későbbi bővíthetőség.
+6. **Profi Schedule UX**
+   - Next Stream / Next 3 / Weekly / Full / Featured nézet;
+   - desktopon kártya/grid/timeline lehetőségek;
+   - mobilon rendezett stacked/day-card megjelenítés;
+   - helyi időzóna megjelenítés;
+   - live/next státusz kiemelés;
+   - játék artwork;
+   - platform és link;
+   - később calendar/reminder és export;
+   - social/share formátumok későbbi bővíthetősége.
+7. **Integrációs jövőkép**
+   - Twitch mellett később YouTube/TikTok/Discord/VOD/Clips integrációk;
+   - egységes Integration service layer;
+   - a Schedule Builder ne legyen Twitch-specifikus hardcoded rendszer.
 
-**Érintett commitok:**
-- `67d0e970b0c9ba99747704983e92c28f48db803` — canonical Schedule read service.
-- `b5ab599fc2d6948a17fb9262caf964b667a93994` — Schedule node canonical binding.
-- `2fff994360ba453644f06b0c9b7220dfcd964612` — public Schedule route canonical read service.
-- `0ff1a61362e66d643a90abbaabd4f141280cb0ff` — route request forwarding.
-- `9c07b700813f081ffb713dc8d1f7471364121604` — D1 timestamp comparison hardening.
-- `be2f81890168220b12d1ddd338794b238396ef9e` — binding test.
-- `8bfd384752aead962756b18b23ecd118c6cb9793` — read-config test.
+### Szigorú architekturális döntések
+- [x] Nem készül külön második Visual Editor.
+- [x] A legacy Admin Schedule UI-t nem élesztjük újra.
+- [x] A `schedule_items` D1 domain megmarad.
+- [x] A Page Model nem másolja bele az eseményrekordokat.
+- [x] A `schedule` node külön canonical Editor v2 blokk.
+- [ ] Twitch integrációs contract még nincs auditálva/implementálva.
+- [ ] Játékprofil/sablon adatmodell még nincs véglegesítve.
+- [ ] Inspectorból történő Schedule event CRUD még nincs implementálva.
+- [ ] Schedule Builder végső UX még nincs implementálva.
+- [ ] End-to-end Twitch → Schedule → Editor → Publish → Public teszt még nincs.
 
-**Fontos audit-megjegyzés:**
-- [!] A szerveroldali `validatePublishDocument()` jelenleg még nem végzi el a Schedule config teljes Schedule-schema validációját; ezt külön hardeningként a publish/render kapu előtt rendezni kell. Nem tekintjük ezt megoldottnak pusztán a kliensoldali schema miatt.
+### Tesztkapu
+Az aktív pont csak akkor zárható, ha:
+- [ ] teljes Twitch kód/adatfolyam audit;
+- [ ] token/security/rate-limit stratégia ellenőrizve;
+- [ ] Twitch API szerződés és D1 Schedule mapping rögzítve;
+- [ ] szükséges migration/data-model terv rögzítve;
+- [ ] CI/typecheck;
+- [ ] Twitch API integration smoke test;
+- [ ] Schedule domain regression;
+- [ ] no-secret/no-token leakage ellenőrzés;
+- [ ] MASTER frissítve;
+- [ ] felhasználói PASS.
 
-**Tesztkapu:**
-- [x] GitHub Editor Core CI PASS — Editor Core Test #585 / commit `ae7fe4c` zöld.
-- [x] Üres élő `/api/public/schedule` válasz: `{"ok":true,"data":[]}`.
-- [!] Tényleges D1 rekorddal végzett read teszt blokkolva: a legacy `public/admin.html` Schedule UI nem a canonical admin API szerződését használja.
-- [ ] Tényleges D1 Schedule rekord létrehozása canonical API-n keresztül.
-- [ ] Rekord visszaolvasása `/api/public/schedule` útvonalon.
-- [ ] `next`, platform- és status-szűrés live ellenőrzése.
-- [ ] MASTER lezárás.
+**PC Editor live olvashatósági teszt:** későbbi visszatérő tesztkapu, nem külön aktív fejlesztési ág.
 
 ### 40.69.12.B — Live audit megállapítás: legacy Schedule UI / canonical API eltérés
 
@@ -2577,3 +2625,171 @@ A canonical `pages` Page Model Schedule node most már a publikus `/p/*` rendere
 - [ ] üres Schedule állapot ellenőrzése
 - [ ] diagnostics / console hiba ellenőrzése
 - [ ] csak ezután 40.69.12.D lezárás
+
+## 40.69.13 — TWITCH-FIRST ADÁSREND / SCHEDULE BUILDER ÚJRATERVEZÉS — 2026-09-22
+
+**Állapot:** [~] AKTÍV — döntés rögzítve; kódolás előtt teljes Twitch + Schedule adatfolyam audit szükséges.
+
+### Felhasználói cél
+Az Adásrend az oldal egyik kiemelt része lesz, ezért nem egyszerű admin CRUD listaként kezeljük. A cél egy profi, streamer-központú, adatvezérelt Schedule rendszer, amely Twitchből is képes hiteles adatot kapni, miközben a saját weboldal továbbra is kontrollálható marad.
+
+### Benchmarkból átvett funkcióirányok
+A korábbi iparági audit alapján a modern streamer schedule oldalaknál visszatérő minták:
+- következő adás kiemelése;
+- heti és teljes menetrend;
+- játék/kategória megjelenítése;
+- helyi időzóna;
+- platform és stream link;
+- egyedi és ismétlődő események;
+- vizuális game artwork;
+- többféle kártya/timeline/grid elrendezés;
+- megosztható/public schedule oldal;
+- később emlékeztető/naptár és social export.
+
+Ezeket saját Sanci9517 rendszerben, nem másolt UI-ként valósítjuk meg.
+
+### Twitch-integrációs cél
+A Twitch bekötése **megelőzi a végleges Schedule Buildert**, mert így az Adásrend már a valódi platformadatokra épülhet.
+
+Tervezett Twitch funkciók:
+- OAuth és biztonságos token lifecycle;
+- csatornaazonosítás;
+- live/offline állapot;
+- aktuális stream/category/game adatok;
+- Twitch Schedule API integráció;
+- később EventSub/webhook események;
+- cache/rate-limit kezelés;
+- token refresh/recovery;
+- explicit sync állapot;
+- hiba esetén a saját Schedule domain marad használható.
+
+### Canonical adatfolyam
+```
+Twitch API / EventSub
+        ↓
+Twitch Integration Service
+        ↓
+Sync / Validation / Conflict handling
+        ↓
+schedule_items + game profiles
+        ↓
+Editor v2 Schedule node
+        ↓
+Page Model (csak konfiguráció)
+        ↓
+Published Page
+        ↓
+Public Schedule renderer
+```
+
+**Fontos:** a Page Model nem tárolja a Twitch eseményeket. A Schedule node csak megjelenítési/configuration adatot tartalmaz. A domain események D1-ben maradnak.
+
+### Schedule Builder végleges iránya
+Az Editor v2-ben külön **Adásrend/Menetrend blokk** lesz.
+
+Az Inspectorból később:
+- új adás létrehozása;
+- meglévő adás szerkesztése;
+- adás törlése;
+- játék kiválasztása;
+- időpont/platform/link;
+- kép/game artwork;
+- leírás;
+- státusz;
+- megjelenítési mód;
+- sablon kiválasztása;
+- játékprofil kiválasztása.
+
+A felhasználónak nem kell egy streamhez külön Heading + Image + Text + Button elemeket létrehoznia.
+
+### Játékprofilok
+Külön domain/preset réteg:
+- game name;
+- slug;
+- artwork/media;
+- opcionális brand/accent adatok;
+- Twitch game/category azonosító;
+- későbbi YouTube/egyéb platform mapping lehetősége.
+
+Első használati profilok lehetnek Fortnite, Hearthstone, Hades, majd tetszőleges új játékok.
+
+### Sablonrendszer
+A játékprofil és a vizuális sablon **két külön fogalom**.
+
+Példák:
+- Minimal;
+- Gaming Cards;
+- Neon;
+- Timeline;
+- Weekly Grid;
+- Featured Stream;
+- Compact List;
+- saját mentett sablon.
+
+A sablon a Schedule node konfigurációját és vizuális elrendezését kezeli; nem másolja az eseményeket.
+
+### Tervezett Schedule nézetek
+- Next Stream;
+- Next 3;
+- Weekly Schedule;
+- Full Schedule;
+- Featured Stream.
+
+A Schedule blokk egyetlen adatvezérelt komponens marad, amely több layouttal tud megjelenni. Nem hozunk létre eseményenként külön Page Model node-okat.
+
+### Későbbi bővítési lehetőségek
+- recurring streams;
+- több időzóna;
+- calendar/reminder;
+- export;
+- social schedule image/export;
+- Twitch/YouTube/TikTok/Discord egységes platformréteg;
+- VOD/Clips összekapcsolása egy stream eseménnyel;
+- live állapot automatikus kiemelése;
+- stream utáni státusz és archive/VOD link.
+
+### Mi marad külön?
+- Schedule domain CRUD = D1/domain service;
+- Twitch integration = külön integration service;
+- Editor v2 = egyetlen vizuális szerkesztő;
+- Schedule node = a vizuális komponens;
+- Page Model = csak konfiguráció/layout;
+- Public renderer = domain adatot olvasó runtime.
+
+### Aktív megvalósítási sorrend
+**40.69.13.A** — meglévő Twitch/Social/integration kód teljes audit + Twitch API/OAuth szerződés.
+
+**40.69.13.B** — Twitch account/channel connection + token lifecycle + security.
+
+**40.69.13.C** — Twitch channel/live/game/schedule read service.
+
+**40.69.13.D** — Twitch → `schedule_items` sync/conflict/source model.
+
+**40.69.13.E** — game profile adatmodell + media kapcsolat.
+
+**40.69.13.F** — Schedule event CRUD az Editor v2 Inspectorból.
+
+**40.69.13.G** — Schedule template system + professional layouts.
+
+**40.69.13.H** — Editor preview + public renderer teljes integráció.
+
+**40.69.13.I** — teljes E2E: Twitch → D1 → Editor → Save → Publish → Public → live update → audit → rollback/regression.
+
+**40.69.13.J** — legacy Schedule UI végleges archive/cleanup, csak az új rendszer PASS után.
+
+### Definition of Done
+- Twitch kapcsolat biztonságosan működik;
+- nincs token/secret kliensoldali leakage;
+- Twitch adat és saját Schedule adat között egyértelmű source/sync szabály van;
+- Editor v2-ből kezelhető az Adásrend;
+- game artwork támogatott;
+- sablonok működnek;
+- desktop/mobile responsive;
+- public page és preview ugyanazt a canonical configot használja;
+- live/offline és schedule adatok frissülnek;
+- audit/revision/publish szabályok nem sérülnek;
+- CI/typecheck/E2E/live tesztek PASS;
+- felhasználói PASS;
+- MASTER lezárva.
+
+**Következő egyetlen végrehajtási pont:** **40.69.13.A — teljes Twitch + meglévő Social/Integration kód- és adatfolyam-audit.**
