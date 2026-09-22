@@ -3074,6 +3074,22 @@ A Publish/Unpublish mobil regressziós ellenőrzés megtörtént.
 **Következő egyetlen teszt:** Editor v2 diagnosztika ellenőrzése a teljes Publish/Unpublish ciklus után — elvárt: 0 hiba.
 
 
+### 40.68.7 — PUBLISH / UNPUBLISH DIAGNOSZTIKA REGRESSZIÓ — 2026-09-22
+
+**Állapot:** [x] PASS — mobil élő teszt: felhasználói visszaigazolás: „Pipa”.
+
+A teljes Publish → Unpublish → Publish ciklus után az Editor v2 diagnosztikája ellenőrizve lett.
+
+- [x] Diagnosztika: 0 hiba.
+- [x] Nem jelent meg új Page Model/hierarchia hiba.
+- [x] A lifecycle műveletek után az editor dokumentuma konzisztens maradt.
+- [x] Felhasználói mobil élő ellenőrzés: „Pipa”.
+
+**40.68 DRAFT / PREVIEW / PUBLISH HARDENING:** [x] LEZÁRVA — funkcionális lifecycle, invalid Page Model publish-védelem, draft-megmaradás, unpublish, republish, audit, mobil UI regresszió és diagnosztika lezárva; Core CI 24/24 PASS.
+
+**Következő egyetlen lépés:** MASTER aktuális munkasávjának kijelölt következő domainjének ellenőrzése; PC/Desktop live teszt továbbra is csak külön felhasználói kérésre.
+
+
 ### 40.68.4.2 — HIERARCHY CYCLE TESZT FIX — 2026-09-22
 
 **Állapot:** [x] PASS — GitHub Actions Editor Core Test 24/24.
