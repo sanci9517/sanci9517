@@ -1,5 +1,5 @@
-import type { Env } from "../../types/env";
-import { getSessionToken, hashSessionToken } from "./session";
+import type { Env } from "../../types/env.ts";
+import { getSessionToken, hashSessionToken } from "./session.ts";
 
 export type AuthUser = {
   id: string;
