@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.63  
+**Verzió:** MASTER-2.39.64  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -34,7 +34,7 @@ Ha bármilyen régi checkpoint, összefoglaló, korábbi üzenet vagy történet
 **Boot-szabály:** új beszélgetésben a modellnek először ezt a 00/B blokkot, majd közvetlenül a 00/A indexet kell figyelembe vennie. Ha bármely régi checkpoint ettől eltér, a régi checkpointot kell figyelmen kívül hagyni, nem az aktuális MASTER állapotot.
 
 **Egyetlen aktuális folytatási mondat:**
-> „Folytassuk a Sanci9517 MASTER tervet a 40.69.7 live audit lezárásánál: a state-módosítás és a hozzá tartozó `audit_log` esemény együtt létrejött; most a 40.69.7 PASS dokumentálása és a következő egyetlen pont kijelölése következik.”
+> „Folytassuk a Sanci9517 MASTER tervet a 40.69.8 audit-log coverage és consistency teljes kód- és adatfolyam-auditjával: először csak audit, kódmódosítás csak bizonyított hiány esetén.”
 
 > **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd kizárólag a **00/A MASTER VÉGREHAJTÁSI INDEX egyetlen aktív pontjából** folytatni. Más fejezet `[ ]`, `[~]` vagy régebbi „következő lépés” szövege nem jelent aktuális folytatási pontot.
 
@@ -153,9 +153,17 @@ Nem vezetünk be második selection-, hierarchy-, state-, renderer- vagy command
   - [x] Core CI 24/24
 
 ### 🔵 EGYETLEN AKTÍV PONT
-**40.69.7 — Audit-log atomicity és persistence-boundary hardening**
+**40.69.8 — Audit-log coverage és consistency teljes audit**
 
-**Státusz:** `[~]` — implementálva; CI/typecheck/editor-core PASS, Cloudflare deploy zöld, célzott live audit PASS. Az audit események ugyanabba a D1 batch-be kerülnek, mint az általuk naplózott state-módosítások. A pont még nincs `[x]`, mert a MASTER lezárása és a következő egyetlen aktív pont kijelölése külön dokumentációs lépés.
+**Státusz:** `[~]` — AUDIT ELŐKÉSZÍTÉS. A 40.69.7 atomicitási kapu PASS és lezárt. Most kizárólag azt kell auditálni, hogy az összes releváns admin state-módosítás rendelkezik-e canonical audit eseménnyel, egységes action/entity/metadata szerződéssel, és nincs-e párhuzamos vagy kimaradó audit útvonal.
+
+**40.69.7 lezárás:**
+- [x] CI/typecheck/editor-core PASS.
+- [x] Cloudflare deploy zöld.
+- [x] Célzott live `page.update` + `audit_log` együttállás PASS.
+- [x] MASTER-2.39.63-ban a 40.69.7 lezárása dokumentálva.
+
+**40.69.8 audit szabály:** először csak teljes érintett kód- és adatfolyam-audit; kódmódosítás kizárólag bizonyított hiányosság esetén. A vizsgálat fókusza: page create/update/delete/rename, save/publish/unpublish/rollback, valamint minden további admin state mutation audit lefedettsége. Nem indítunk új UI- vagy platformfunkciót.
 
 **Aktív munkasáv száma:** **1**
 
