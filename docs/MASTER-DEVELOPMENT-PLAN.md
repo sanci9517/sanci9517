@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.60  
+**Verzió:** MASTER-2.39.61  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt PASS:** 2026-09-22 — a Mentés, Publish, rollback és az újrapublikálás élő tesztje működik.
+**Legutóbbi igazolt PASS:** 2026-09-22 — a 40.69.7 CI/typecheck/editor-core tesztkapu zöld; a Mentés, Publish, rollback és az újrapublikálás élő tesztje korábban működött.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -34,7 +34,7 @@ Ha bármilyen régi checkpoint, összefoglaló, korábbi üzenet vagy történet
 **Boot-szabály:** új beszélgetésben a modellnek először ezt a 00/B blokkot, majd közvetlenül a 00/A indexet kell figyelembe vennie. Ha bármely régi checkpoint ettől eltér, a régi checkpointot kell figyelmen kívül hagyni, nem az aktuális MASTER állapotot.
 
 **Egyetlen aktuális folytatási mondat:**
-> „Folytassuk a Sanci9517 MASTER tervet a 40.69.7 tesztkapujánál: CI/typecheck/editor-core teszt, majd csak siker esetén deploy/live audit.”
+> „Folytassuk a Sanci9517 MASTER tervet a 40.69.7 deploy/live audit kapujánál: CI/typecheck/editor-core már zöld, most csak deploy és célzott live audit.”
 
 > **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd kizárólag a **00/A MASTER VÉGREHAJTÁSI INDEX egyetlen aktív pontjából** folytatni. Más fejezet `[ ]`, `[~]` vagy régebbi „következő lépés” szövege nem jelent aktuális folytatási pontot.
 
@@ -155,7 +155,7 @@ Nem vezetünk be második selection-, hierarchy-, state-, renderer- vagy command
 ### 🔵 EGYETLEN AKTÍV PONT
 **40.69.7 — Audit-log atomicity és persistence-boundary hardening**
 
-**Státusz:** `[~]` — implementálva, tesztkapu alatt. Az audit események most ugyanabba a D1 batch-be kerülnek, mint az általuk naplózott state-módosítások.
+**Státusz:** `[~]` — implementálva, CI/typecheck/editor-core teszt PASS; a célzott live audit/deploy kapu következik. Az audit események ugyanabba a D1 batch-be kerülnek, mint az általuk naplózott state-módosítások.
 
 **Aktív munkasáv száma:** **1**
 
@@ -283,7 +283,17 @@ Ez azt jelenti, hogy ha egy már LIVE oldalon új draft módosítás történik,
 - `e7389f87102227155f9b9998d9114c5a0f51ca48` — editor atomic audit
 - `95fb08738c69b5c47710efd6fbd8ebb674005ed1` — page update atomic audit
 
-**Fontos:** a kódot újraolvastuk a módosítás után. A következő kapu nem újabb kódolás, hanem **CI/typecheck/editor-core teszt**. Ha ez PASS, utána jöhet deploy és célzott live audit; ha FAIL, csak a konkrét hibát javítjuk.
+**CI / typecheck / Editor Core teszt — 2026-09-22:**
+- [x] CI zöld.
+- [x] Typecheck PASS.
+- [x] Editor Core Test PASS.
+- [x] A 40.69.7 tesztkapu kódoldali/CI része lezárható.
+- [ ] Deploy ellenőrzés.
+- [ ] Célzott live audit: state-módosítás + megfelelő `audit_log` esemény együtt igazolása.
+
+**Következő egyetlen lépés:** deploy/live audit. Ha a live audit PASS, a 40.69.7 pont lezárható; ha FAIL, csak a bizonyított hibát javítjuk.
+
+**Fontos:** a kódot a módosítás után újraolvastuk; a CI/typecheck/editor-core tesztkapu zöld. PC/Desktop live teszt továbbra is PENDING.
 
 
 ### Kötelező folytatási szabály
