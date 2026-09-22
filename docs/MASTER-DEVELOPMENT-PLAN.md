@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.42  
+**Verzió:** MASTER-2.39.43  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -3023,5 +3023,16 @@ A Visszavonás/Unpublish után ugyanazon az oldalon a korábban szerkesztett dra
 Unpublish után a megmaradt draft ugyanazon az oldalon újra publikálható volt, és az oldal ismét LIVE állapotba került.
 
 **Következő egyetlen teszt:** Invalid Page Model publikálás blokkolása. Elvárt: hibás dokumentum nem publikálható, az oldal nem kerül LIVE állapotba.
+
+**40.68.4 — INVALID PAGE MODEL AUTOMATA TESZT — 2026-09-22**
+
+**Állapot:** [~] IMPLEMENTÁLVA, CI ELLENŐRZÉS FÜGGŐBEN.
+
+A publikálási validátor exportálva lett, és az Editor Core tesztkészletbe bekerült egy közvetlen teszt, amely valid dokumentumot elfogad, hiányzó rootot, hibás parent kapcsolatot és elérhetetlen/orphan node-ot elutasít. A teszt a publikálási validátor tényleges implementációját hívja, nem párhuzamos másolatot.
+
+- Implementáció commit: `71d6b37e127313476bebd4a446fb5e1f6944e1c5`
+- Teszt commit: `aa62689e0b6fcfc848b803e1a04223a9225be64d`
+- [ ] GitHub Actions / Core CI PASS
+- [ ] CI PASS után MASTER lezárás
 
 **Következő aktív lépés:** CI ellenőrzés, majd a fenti mobil élő tesztkapu lépésenként.
