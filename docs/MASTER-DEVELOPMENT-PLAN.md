@@ -2340,3 +2340,20 @@ Bekerült:
 - Editor Core workflow #411: jelenleg **in_progress**.
 
 **Következő kapu:** a #411 CI eredményének megvárása. Ha PASS, jön a Group/Ungroup UI-integráció; ha FAIL, először csak a hibát javítjuk és újra futtatjuk a Core tesztet.
+
+
+## 40.44 — GROUP/UNGROUP CORE CI HIBA AZONOSÍTVA — 2026-09-22
+
+**Állapot:** [x] HIBA AZONOSÍTVA — command működés rendben, teszt-specifikus hiba.
+
+A Core CI #411 22/23 tesztje PASS. Az egyetlen FAIL nem a canonical `hierarchy.ungroup` implementáció hibája: a teszt a non-GROUP edge case-nél közvetlenül meghívta a hibát dobó commandot, de nem `assert.throws()`-szal ellenőrizte. Emiatt a teszt futása megszakadt.
+
+A log alapján:
+- 22 PASS
+- 1 FAIL
+- hiba: `Ungroup requires a GROUP node`
+- érintett teszt: `ungroup rejects non-group, locked group and locked child with exact rollback`
+
+**Javítási szabály:** csak a hibás unit teszt assertionét javítjuk; a production command logikáját nem változtatjuk meg, mert a jelenlegi hiba a kívánt védelmi viselkedés.
+
+**Következő aktív lépés:** a teszt assertion javítása, új Core CI futtatás.
