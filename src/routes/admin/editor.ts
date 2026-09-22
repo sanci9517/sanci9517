@@ -1,7 +1,7 @@
-import { error, ok } from "../../core/response";
-import { getAuthenticatedUser, hasRole } from "../../core/auth/require-auth";
-import { normalizeEditorDocument } from "../../core/page-model";
-import type { Env } from "../../types/env";
+import { error, ok } from "../../core/response.ts";
+import { getAuthenticatedUser, hasRole } from "../../core/auth/require-auth.ts";
+import { normalizeEditorDocument } from "../../core/page-model.ts";
+import type { Env } from "../../types/env.ts";
 
 type PageRow={id:string;slug:string;title:string;description:string;content_json:string;is_published:number;updated_at:string};
 function parse(value:string):any{try{return JSON.parse(value)}catch{return {}}}
