@@ -9,6 +9,7 @@ import { getProperty, listProperties, listPropertyGroups } from '../core/propert
 import { hasResponsiveOverride, resolveResponsiveValue, setResponsiveValue } from '../core/responsive.js';
 import { plainTextToRichText } from '../core/richtext-engine.js';
 import { createDefaultScheduleConfig, normalizeScheduleConfig, validateScheduleConfig } from '../core/schedule-schema.js';
+import { getSchedulePreviewItems } from '../core/schedule-preview.js';
 import { validatePublishDocument } from '../../../src/core/editor-validation.ts';
 
 test('Schedule config uses canonical defaults and normalizes valid input', () => {
@@ -606,6 +607,24 @@ test('publish validator blocks invalid Page Model and accepts valid document', (
   assert.equal(validatePublishDocument(cycle, pageId), 'INVALID_HIERARCHY');
 });
 
+test('Schedule preview renderer uses canonical config without mutating domain data', () => {
+  const defaults = createDefaultScheduleConfig();
+  const upcoming = getSchedulePreviewItems(defaults);
+  assert.equal(upcoming.length, 2);
+  assert.equal(upcoming[0].platform, 'Twitch');
+
+  const next = getSchedulePreviewItems({ ...defaults, mode: 'next', limit: 50 });
+  assert.equal(next.length, 1);
+  assert.equal(next[0].id, 'preview-1');
+
+  const youtube = getSchedulePreviewItems({ ...defaults, platforms: ['YouTube'] });
+  assert.equal(youtube.length, 1);
+  assert.equal(youtube[0].platform, 'YouTube');
+
+  const completedOnly = getSchedulePreviewItems({ ...defaults, statuses: ['completed'] });
+  assert.equal(completedOnly.length, 0);
+});
+ 
 test('schedule nodes receive the canonical domain binding', () => {
   const node = createNode(NODE_TYPES.SCHEDULE);
   assert.deepEqual(node.dataBindings, {
