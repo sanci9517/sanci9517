@@ -2921,3 +2921,23 @@ A felhasználó kérésére az oldal sorrendje mostantól nem lehet külön fron
 - [ ] PC/Desktop live teszt továbbra is csak külön felhasználói kérésre.
 
 **Következő aktív lépés:** deploy után mobilon a fenti sorrendteszt végrehajtása.
+
+
+### 40.67.1 — BETÖLTÉSI HIBA JAVÍTÁS — 2026-09-22
+
+**Állapot:** [~] JAVÍTVA; élő újrateszt még hátra.
+
+Az oldalsorrend funkció első deploy/élő betöltésekor az Editor v2 `app.js` fájlban szintaktikai hiba jelent meg: `Uncaught SyntaxError: Invalid or unexpected token` a `movePage` és `editPageMeta` közötti részen. A kódban egy véletlenül literal `\\n` token került JavaScript-forrásként a sorba, ezért a böngésző nem tudta parse-olni az egész `app.js` fájlt.
+
+**Javítás:** a hibás literal token valódi sorvége karakterre lett cserélve.
+
+- Fájl: `public/editor-v2/app.js`
+- Javító commit: `7541e5dd5cf52b69323bb97726fbfd67e5009404`
+- A javítás nem módosítja az oldalsorrend logikáját, csak a betöltést blokkoló syntax errort szünteti meg.
+
+**Kötelező következő ellenőrzés:**
+1. Deploy után Editor v2 betöltése.
+2. Ellenőrizni, hogy az `app.js` már syntax error nélkül betöltődik.
+3. Diagnosztika / betöltés működik.
+4. Ezután folytatni a 40.67 oldalsorrend mobil élő tesztjeit.
+5. PC/Desktop live teszt továbbra is csak külön felhasználói kérésre.
