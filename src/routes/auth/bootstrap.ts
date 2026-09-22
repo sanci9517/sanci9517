@@ -1,6 +1,7 @@
 import { error, ok } from "../../core/response";
 import { generateSalt, hashPassword } from "../../core/auth/password";
 import type { Env } from "../../types/env";
+import { auditStatement } from "../../core/audit";
 
 export async function authBootstrapRoute(request: Request, env: Env): Promise<Response> {
   if (request.method !== "POST") {
@@ -56,12 +57,11 @@ export async function authBootstrapRoute(request: Request, env: Env): Promise<Re
   const now = new Date().toISOString();
 
   try {
-    await env.DB.prepare(
-      `INSERT INTO users (id, email, display_name, role, is_active, password_hash, password_salt, created_at, updated_at)
-       VALUES (?, ?, ?, 'admin', 1, ?, ?, ?, ?)`
-    )
-      .bind(id, email, displayName, passwordHash, passwordSalt, now, now)
-      .run();
+    await env.DB.batch([
+      env.DB.prepare(`INSERT INTO users (id, email, display_name, role, is_active, password_hash, password_salt, created_at, updated_at)
+       VALUES (?, ?, ?, 'admin', 1, ?, ?, ?, ?)`).bind(id, email, displayName, passwordHash, passwordSalt, now, now),
+      auditStatement(env, id, "auth.bootstrap", "user", id, { role: "admin" })
+    ]);
   } catch {
     return error("BOOTSTRAP_DB_INSERT_FAILED", 500, "Unable to create the admin account");
   }
