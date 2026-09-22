@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.71  
+**Verzió:** MASTER-2.39.72  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -2518,3 +2518,30 @@ A két korábbi, egymásra rakódó desktop font-override helyett egyetlen canon
 - [ ] Ezután lehet továbbmenni a Schedule preview live tesztre.
 
 **Egyetlen aktuális folytatási pont:** 40.69.12.C — PC Editor UI hosszú munkamenetes olvashatósági live teszt.
+
+
+### 40.69.12.C — Schedule publish-validation hardening — 2026-09-22
+
+**Állapot:** [~] AKTÍV — fejlesztési hardening elkészült, PC live UI teszt továbbra is későbbre halasztva.
+
+A korábbi auditban azonosított szerveroldali hiányosságot most megszüntettük: a publish-validáció már nem csak az általános Page Model struktúrát ellenőrzi, hanem a `schedule` node canonical konfigurációját is.
+
+- [x] `src/core/editor-validation.ts` Schedule-specifikus validációt kapott.
+- [x] Schema version csak `1`.
+- [x] Mode csak `upcoming | all | next`.
+- [x] Limit csak egész szám, 1–50.
+- [x] Status whitelist: `scheduled | live | completed`; `cancelled` tiltott.
+- [x] Platformlista maximum 20 elem, értékenként maximum 40 karakter, üres érték tiltva.
+- [x] Order csak `asc | desc`.
+- [x] Minden megjelenítési kapcsoló szigorúan boolean.
+- [x] `emptyText` kötelező, trim után nem lehet üres, maximum 200 karakter.
+- [x] Hibás Schedule konfiguráció publishkor `INVALID_SCHEDULE_CONFIG` hibával elutasítható.
+- [x] A kliensoldali Schedule schema és a szerveroldali publish-kapu ugyanazt a canonical szerződést követi.
+- [x] Nem készült második Schedule runtime vagy második Page Model.
+
+**Commit:**
+- `a97c1916621f1b497a57254de33d8c39603da5c7` — `fix: enforce schedule config at publish validation`
+
+**Fontos:** ez implementációs hardening, nem felhasználói PASS. A PC Editor olvashatósági tesztet a felhasználó későbbre halasztotta; ez nem blokkolja a további fejlesztést.
+
+**Következő fejlesztési lépés:** 40.69.12.C Schedule preview tesztelhető/finomítható rétegeinek teljes kód-auditja, majd a következő szükséges canonical renderer-réteg. A PC UI live teszt külön későbbi visszatérő tesztkapu.
