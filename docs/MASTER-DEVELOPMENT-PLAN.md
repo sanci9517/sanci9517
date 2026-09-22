@@ -2414,3 +2414,36 @@ A Group/Ungroup UI-integráció PC/Desktop és Mobile/Touch környezetben végig
 **Domain státusz:** Group/Ungroup implementáció + Core CI + UI-integráció + PC/Mobile élő regresszió PASS.
 
 **Következő aktív folytatási pont:** a MASTER-ben kijelölt következő hiányzó kanonikus editor-domain audit/implementáció; Group/Ungroup nem marad nyitott blocker.
+
+## 40.48 — LAYOUT / MANIPULATION: DRAG-REORDER-REPARENT ELŐAUDIT — 2026-09-22
+
+**Állapot:** [x] AUDIT PASS — kódmódosítás ebben a lépésben nem történt.
+
+A Group/Ungroup lezárása után a MASTER kritikus függőségi sorrendje szerint a következő domain a **layout/manipulation**. Első részterületként a meglévő hierarchy mutation útvonalat auditáltuk, mielőtt UI-szintű drag/drop kerülne be.
+
+### Audit eredmény
+- A Page Model canonical hierarchy adatforrása a `parentId + children[]`.
+- A canonical `hierarchy.reorder` command már létezik és history-kompatibilis.
+- A canonical `hierarchy.reparent` command már létezik és ellenőrzi: érvényes parent; `canContain()` kompatibilitást; root-védelmet; saját descendant alá reparent tiltását.
+- Az `execute()` → `commit()` útvonal biztosítja az egyetlen mutation/history adatfolyamot.
+- A jelenlegi `app.js`-ben nincs desktop Canvas drag/drop UI.
+- A jelenlegi Layers/Navigator UI-ban nincs drag/reorder/reparent interaction.
+- Mobilon nincs touch drag/reparent interaction; a jelenlegi touch rendszer selection/multi-select célú.
+- Külön drag state vagy második hierarchy state jelenleg nincs.
+- A Canvas Engine nem mutál hierarchy-t, ami helyes és megmarad.
+- A Group/Ungroup után a következő biztonságos fejlesztési lépés nem új command, hanem a meglévő `hierarchy.reorder` + `hierarchy.reparent` UI interaction rétegének megtervezése.
+
+### Következő implementációs contract
+1. Desktop Layers drag → sibling reorder.
+2. Desktop Layers drag → másik container/group alá reparent.
+3. Canvas drag első körben nem készül párhuzamosan; előbb a Layers hierarchy interaction stabilizálása.
+4. Root nem mozgatható.
+5. Saját descendant alá reparent tiltott.
+6. Locked node mozgatása tiltott.
+7. Invalid target esetén nincs dokumentumváltozás.
+8. Egy felhasználói drag művelet egy history entry legyen.
+9. Undo/Redo pontosan állítsa vissza az előző hierarchy snapshotot.
+10. Mobile/touch drag csak a desktop Layers interaction stabilizálása után, ugyanarra a command API-ra építve.
+11. Nem készül külön drag/reparent command vagy platform-specifikus hierarchy state.
+
+**Következő aktív lépés:** Desktop Layers drag/reorder/reparent minimális UI implementáció a meglévő `hierarchy.reorder` / `hierarchy.reparent` commandokra építve, majd Core + browser teszt.
