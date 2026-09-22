@@ -1,11 +1,36 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.46  
+**Verzió:** MASTER-2.39.47  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
+
+
+## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
+
+**Ez a blokk kötelező boot-ellenőrzés új beszélgetés indításakor.**
+
+Ha bármilyen régi checkpoint, összefoglaló, korábbi üzenet vagy történeti fejezet az alábbiak bármelyikét állítja, az **ELAVULT**, és nem szabad folytatási pontként használni:
+- „40.68 – pageOrder teljes tesztelése”
+- „Most következő pont: 40.68”
+- „deploy után kezdjük a mobilos pageOrder tesztet”
+- „40.67 → 40.68 pageOrder teszt”
+- bármely olyan állapot, amely 40.67-et vagy 40.68-at aktív/pending fejlesztési pontként jelöl.
+
+**Hivatalos aktuális állapot:**
+- 40.67 — `[x]` LEZÁRVA.
+- 40.68 — `[x]` LEZÁRVA.
+- 40.69.1 — `[~]` AZ EGYETLEN AKTÍV PONT.
+- Aktív feladat: **editor_revisions + draft/publish persistence teljes kód- és sémaaudit**.
+- A pageOrder mobil élő tesztje nem aktuális feladat; a 40.67 teljes mobil tesztje már lezárt.
+- A korábban csak mobilon tesztelt funkciók PC/Desktop visszatesztje későbbi tesztkapu, és csak a felhasználó külön kérésére indul.
+
+**Boot-szabály:** új beszélgetésben a modellnek először ezt a 00/B blokkot, majd közvetlenül a 00/A indexet kell figyelembe vennie. Ha bármely régi checkpoint ettől eltér, a régi checkpointot kell figyelmen kívül hagyni, nem az aktuális MASTER állapotot.
+
+**Egyetlen aktuális folytatási mondat:**
+> „Folytassuk a Sanci9517 MASTER tervet a 40.69.1 ponttól: editor_revisions + draft/publish persistence teljes kód- és sémaaudit.”
 
 > **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd kizárólag a **00/A MASTER VÉGREHAJTÁSI INDEX egyetlen aktív pontjából** folytatni. Más fejezet `[ ]`, `[~]` vagy régebbi „következő lépés” szövege nem jelent aktuális folytatási pontot.
 
@@ -2998,204 +3023,3 @@ Az oldalsorrend funkció első deploy/élő betöltésekor az Editor v2 `app.js`
 ## 40.68 — DRAFT / PREVIEW / PUBLISH HARDENING — 2026-09-22
 
 **Állapot:** [~] IMPLEMENTÁCIÓ KÉSZ; CI és mobil élő teszt folyamatban.
-
-A kanonikus oldal-életciklus után a következő lépés a Draft/Preview/Publish alapfolyamat biztonságos lezárása. A meglévő Editor v2 Page Model és D1 snapshot rendszer maradt az egyetlen forrás; nem került be második tartalomrendszer.
-
-### Elkészült
-- Publikálás előtt canonical Page Model/hierarchia validáció fut.
-- Ellenőrzés: root létezik, node-kapcsolatok érvényesek, parent/child kapcsolatok kölcsönösek, nincs elérhetetlen vagy ciklikus node.
-- Hibás publikálható dokumentumot a szerver 409-es validációs hibával blokkol.
-- Publikálás továbbra is a draft content_json és a published_content_json snapshotot egyetlen D1 batchben frissíti.
-- Publikálás audit eseményt ír.
-- Bevezetésre került a publikálás visszavonása (unpublish) ugyanazon Editor API-n keresztül.
-- A publikálás visszavonása csak a publikált állapotot kapcsolja ki; a draft és a korábbi published snapshot nem törlődik.
-- Editor v2 desktop és mobil felületén külön Visszavonás vezérlő került be.
-- A publikálási állapotot az Editor oldal-metaadataiból kell megjeleníteni; nincs második state-rendszer.
-- A változtatások nem érintik az elvetett Rich Text B/I funkciót.
-
-### Módosítások
-- src/routes/admin/editor.ts — publish validation, unpublish API, publish/unpublish audit.
-- public/editor-v2/index.html — desktop/mobile Visszavonás vezérlő.
-- public/editor-v2/app.js — publish state UI és unpublish interaction.
-- Implementációs commitok:
-  - c518ac202097d2fb270cd0d6ef3d6fd23a9498f6
-  - 0826e1f0b8bd5b4b823fe445c8f56c8ef88c95a3
-  - f386d04788b365a6fb67630f86b539c0cc00b988
-  - 93303e8923255a072ea570b4a6ec04cfd83a94f1
-
-### Kötelező tesztkapu
-- [ ] Core/CI tesztek PASS.
-- [ ] Editor v2 betöltés syntax error nélkül.
-- [x] Draft mentés után oldal továbbra is DRAFT — mobil élő teszt: PASS, felhasználói visszaigazolás: „Jó”.
-- [x] Preview az aktuális draftot mutatja jogosult szerkesztőnek — mobil élő teszt: PASS, felhasználói visszaigazolás: „Jó”.
-- [x] Publikálás után publikus útvonal az új snapshotot mutatja — mobil élő teszt: PASS, felhasználói visszaigazolás: „Jó”.
-- [x] Publikálás után Editor állapot LIVE — mobil élő teszt: PASS, felhasználói visszaigazolás: „Jó”.
-- [x] Visszavonás után publikus útvonal eltűnik / nem publikált állapotot ad — mobil élő teszt: PASS, felhasználói visszaigazolás: „Pipa”.
-- [x] Visszavonás után draft tartalom megmarad — mobil élő teszt: PASS, felhasználói visszaigazolás: „Jó”.
-- [x] Újrapublikálás működik — mobil élő teszt: PASS, felhasználói visszaigazolás: „Pipa”.
-- [ ] Hibás Page Model publikálása blokkolódik.
-- [ ] Publish/unpublish audit esemény létrejön.
-- [ ] Mobil UI gombok nem takarják egymást.
-- [ ] Diagnosztika: 0 hiba.
-- [ ] PC/Desktop live teszt csak külön felhasználói kérésre.
-
-**40.68.1 — UNPUBLISH VALIDÁCIÓS SORREND JAVÍTÁS — 2026-09-22**
-
-**Állapot:** [x] PASS — mobil élő újrateszt: felhasználói visszaigazolás: „Pipa”.
-
-A 40.68 mobil tesztjén az Unpublish művelet hibásan az Editor v2 dokumentum-validációval kezdődött, ezért a „A mentett dokumentumnak az Editor v2 Page Modelt kell követnie.” hiba jelent meg. Ez logikai sorrendhiba volt: az Unpublish csak a publikációs állapotot módosítja, ezért nem kell hozzá új dokumentumot küldeni vagy validálni.
-
-**Javítás:**
-- az action === 'unpublish' ág most a dokumentum-validáció előtt fut le;
-- Unpublish esetén csak a page ID és a jelenlegi publikációs állapot szükséges;
-- a draft és a published snapshot továbbra sem törlődik;
-- a normál mentés/publikálás dokumentum-validációja változatlan maradt.
-
-**Commit:** `8acb23427006012f9834756b40663b6f9bab67db`
-
-**Következő egyetlen teszt:** ugyanazon a LIVE oldalon nyomd meg újra a **Visszavonás / Unpublish** gombot. Elvárt: hibaüzenet nélkül DRAFT-ra vált.
-
-**40.68.2 — DRAFT MEGMARADÁS UNPUBLISH UTÁN — 2026-09-22**
-
-**Állapot:** [x] PASS — mobil élő teszt: felhasználói visszaigazolás: „Jó”.
-
-A Visszavonás/Unpublish után ugyanazon az oldalon a korábban szerkesztett draft tartalom megmaradt és továbbra is szerkeszthető volt. A visszavonás nem törölte a draftot és nem állította üres dokumentumra az oldalt.
-
-- [x] Draft tartalom megmaradt.
-- [x] A tartalom továbbra is szerkeszthető.
-- [x] Nem történt tartalomvesztés.
-- [x] Nem jelentkezett teszt közben jelzett hiba.
-
-**Következő egyetlen teszt:** Újrapublikálás ugyanazon az oldalon. Elvárt: a megmaradt draft ismét publikálható, és az oldal LIVE állapotba kerül.
-
-**40.68.3 — ÚJRAPUBLIKÁLÁS — 2026-09-22**
-
-**Állapot:** [x] PASS — mobil élő teszt: felhasználói visszaigazolás: „Pipa”.
-
-Unpublish után a megmaradt draft ugyanazon az oldalon újra publikálható volt, és az oldal ismét LIVE állapotba került.
-
-**Következő egyetlen teszt:** Invalid Page Model publikálás blokkolása. Elvárt: hibás dokumentum nem publikálható, az oldal nem kerül LIVE állapotba.
-
-**40.68.4 — INVALID PAGE MODEL AUTOMATA TESZT — 2026-09-22**
-
-**Állapot:** [~] IMPLEMENTÁLVA, CI ELLENŐRZÉS FÜGGŐBEN.
-
-A publikálási validátor exportálva lett, és az Editor Core tesztkészletbe bekerült egy közvetlen teszt, amely valid dokumentumot elfogad, hiányzó rootot, hibás parent kapcsolatot és elérhetetlen/orphan node-ot elutasít. A teszt a publikálási validátor tényleges implementációját hívja, nem párhuzamos másolatot.
-
-- Implementáció commit: `71d6b37e127313476bebd4a446fb5e1f6944e1c5`
-- Teszt commit: `aa62689e0b6fcfc848b803e1a04223a9225be64d`
-- [ ] GitHub Actions / Core CI PASS
-- [ ] CI PASS után MASTER lezárás
-
-**Következő aktív lépés:** CI ellenőrzés, majd a fenti mobil élő tesztkapu lépésenként.
-
-
-### 40.68.4.1 — CI IMPORT JAVÍTÁS — 2026-09-22
-- [~] CI újrafuttatás szükséges.
-
-
-### 40.68.5 — PUBLISH / UNPUBLISH AUDIT ELLENŐRZÉS — 2026-09-22
-
-**Állapot:** [x] PASS — mobil élő teszt: felhasználói visszaigazolás: „Pipa”.
-
-A Publish → Unpublish ciklus élő ellenőrzése megtörtént. A teszt célja annak igazolása volt, hogy a két szerveroldali életciklus-művelethez az audit események létrejönnek.
-
-- [x] Publish művelet auditálása: `page.publish`.
-- [x] Unpublish művelet auditálása: `page.unpublish`.
-- [x] A műveletek ugyanahhoz a canonical page lifecycle-hoz tartoznak.
-- [x] Nem történt második audit/content state rendszer bevezetése.
-- [x] Felhasználói mobil élő ellenőrzés: „Pipa”.
-
-**Következő egyetlen teszt:** Publish/Unpublish mobil UI regresszió — ellenőrizni, hogy az aktuális publikációs állapotnak megfelelően csak a releváns Publish/Visszavonás vezérlő jelenik meg, és a gombok nem takarják egymást.
-
-
-### 40.68.6 — PUBLISH / UNPUBLISH MOBIL UI REGRESSZIÓ — 2026-09-22
-
-**Állapot:** [x] PASS — mobil élő teszt: felhasználói visszaigazolás: „Pipa”.
-
-A Publish/Unpublish mobil regressziós ellenőrzés megtörtént.
-
-- [x] LIVE állapotban a Visszavonás/Unpublish vezérlő jelenik meg.
-- [x] DRAFT állapotban a Publish vezérlő használható.
-- [x] A publikációs állapothoz tartozó vezérlők nem jelennek meg egymásra hibás állapotban.
-- [x] Mobil UI gombok nem takarják egymást.
-- [x] Felhasználói mobil élő ellenőrzés: „Pipa”.
-
-**40.68 lezárási állapot:** a funkcionális publish lifecycle, invalid Page Model védelem, draft-megmaradás, unpublish, republish, audit és mobil UI regresszió tesztelve; a Core CI 24/24 PASS.
-
-**Következő egyetlen teszt:** Editor v2 diagnosztika ellenőrzése a teljes Publish/Unpublish ciklus után — elvárt: 0 hiba.
-
-
-### 40.68.7 — PUBLISH / UNPUBLISH DIAGNOSZTIKA REGRESSZIÓ — 2026-09-22
-
-**Állapot:** [x] PASS — mobil élő teszt: felhasználói visszaigazolás: „Pipa”.
-
-A teljes Publish → Unpublish → Publish ciklus után az Editor v2 diagnosztikája ellenőrizve lett.
-
-- [x] Diagnosztika: 0 hiba.
-- [x] Nem jelent meg új Page Model/hierarchia hiba.
-- [x] A lifecycle műveletek után az editor dokumentuma konzisztens maradt.
-- [x] Felhasználói mobil élő ellenőrzés: „Pipa”.
-
-**40.68 DRAFT / PREVIEW / PUBLISH HARDENING:** [x] LEZÁRVA — funkcionális lifecycle, invalid Page Model publish-védelem, draft-megmaradás, unpublish, republish, audit, mobil UI regresszió és diagnosztika lezárva; Core CI 24/24 PASS.
-
-**Következő egyetlen lépés:** MASTER aktuális munkasávjának kijelölt következő domainjének ellenőrzése; PC/Desktop live teszt továbbra is csak külön felhasználói kérésre.
-
-
-### 40.68.4.2 — HIERARCHY CYCLE TESZT FIX — 2026-09-22
-
-**Állapot:** [x] PASS — GitHub Actions Editor Core Test 24/24.
-
-A CI #484/#485 eredményéből kiderült, hogy az előző cycle fixture nem tudta elérni az INVALID_HIERARCHY ágat: a root → cycleA kapcsolat miatt a validátor helyesen korábban INVALID_CHILD_LINK hibával leállt.
-
-A tesztet úgy javítottuk, hogy a ciklus (cycleA ↔ cycleB) konzisztens parent/children kapcsolatú, de a rootból elérhetetlen legyen. Így a validátor végig tud menni a node-link ellenőrzéseken, majd a reachability/hierarchy ellenőrzésnél determinisztikusan INVALID_HIERARCHY eredményt ad.
-
-- Tesztjavító commit: 71d47f8d162b1da000eecdeac8783f2a7a5c3628
-- Validátor kódja nem változott.
-- A #485-ben látott INVALID_CHILD_LINK eltérés a teszt fixture hibája volt, nem validátor regresszió.
-- [x] GitHub Actions / Core CI 24/24 PASS — felhasználói visszaigazolás: „Pipa”
-- [x] 40.68.4 lezárása CI PASS után
-
-**Következő egyetlen lépés:** az új commit után induló GitHub Actions Editor Core Test ellenőrzése.
-
-
----
-
-## 40.69 — KÖVETKEZŐ DOMAIN: VERSIONING / REVISION / ROLLBACK AUDIT — 2026-09-22
-
-**Állapot:** [~] KÖVETKEZŐ AKTÍV PONT — még nincs implementáció.
-
-### Miért ez a következő pont?
-A 40.68 DRAFT / PREVIEW / PUBLISH lifecycle most lezárult. A MASTER kritikus függőségi sorrendje szerint a következő közvetlen domain a **version / rollback**, még a backup/restore, security és production hardening előtt.
-
-### Cél
-Először teljes kód- és adatmodell-auditot végzünk, és csak utána implementálunk. A cél egyetlen canonical revision/version rendszer, amely nem hoz létre második dokumentum-, history- vagy state-rendszert.
-
-### Kötelező auditpontok
-- [ ] editor_revisions jelenlegi schema és tényleges használata
-- [ ] draft mentés → revision kapcsolat
-- [ ] publish snapshot → revision kapcsolat
-- [ ] version ID és timestamp meghatározása
-- [ ] mely állapotokból lehet rollbackelni
-- [ ] rollback atomicitás D1-ben
-- [ ] rollback után draft/published state viselkedése
-- [ ] audit log kapcsolat (page.publish, page.unpublish, később rollback)
-- [ ] jogosultság / auth boundary
-- [ ] konkurens módosítás / stale revision alapjai
-- [ ] diff előkészíthetőség
-- [ ] cache invalidation előkészítése
-- [ ] retention policy előkészítése
-- [ ] corrupted revision / invalid Page Model védelem
-- [ ] unit/integration/CI tesztelhetőség
-
-### Szigorú szabály
-**Most még nem készítünk rollback UI-t.** Először a canonical revision contractot és a persistence boundaryt kell lezárni. Nem készül párhuzamos local revision/state rendszer.
-
-### Következő egyetlen teszt / munkalépés
-**40.69.1 — editor_revisions + publish/draft persistence teljes kód- és sémaaudit.**
-A következő beszélgetésben innen kell folytatni; nem kell újra végigvenni a korábbi 40.68 lifecycle munkát.
-
-### Új beszélgetés folytatási checkpoint
-**Folytatási parancs:** „Folytassuk a Sanci9517 MASTER tervet a 40.69.1 ponttól.”
-
-**PC/Desktop live teszt:** továbbra is PENDING, és csak külön felhasználói kérésre futtatandó.
