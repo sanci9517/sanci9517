@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.77  
+**Verzió:** MASTER-2.39.78  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -2979,14 +2979,16 @@ Kötelezően megőrzendő külső adatok:
 - Cloudflare secret `TWITCH_TOKEN_ENCRYPTION_KEY` még nincs igazolva.
 - redirect URI production/custom-domain egyezés még nincs élőben ellenőrizve.
 - connect/disconnect audit teljes atomicitását még célzottan tesztelni kell.
-- CI/typecheck fut; a 612-es Editor Core Test workflow jelenleg fut, ezért még nincs PASS eredmény.
+- A Cloudflare typecheck a `a2b21d594b0f6bc481f05a5d784226e05329d2af` commiton még egyetlen TS hibával állt meg: `twitch-oauth.ts:178` — `token.expires_in` narrowing hiányzott a refresh ágon. A Cloudflare/GitHub log alapján ez volt az egyetlen tényleges TypeScript blocker; a Node 20 és Ubuntu 26 üzenetek warning/notice, nem build blocker.
 
 #### B.4 Commitok
 - `2b30e229d5ed76439cc03f0511368cdca2ea31cc` — Twitch integration persistence migration.
 - `c9606aecfa2a0b6a49881eeb9f5b4ad6a0b1ef78` — Twitch token encryption primitives.
 - `9614ae7b08f4928196ca70f10e2103c775b012ad` — Twitch OAuth lifecycle service.
 - `163f9921a6f798572ce6334571692d1780d6dc4d` — Twitch connection routes.
-- `c9007fdcc624be9895200ba7040f9b587e0b0e04` — Twitch route registration; current HEAD.
+- `c9007fdcc624be9895200ba7040f9b587e0b0e04` — Twitch route registration.
+- `a2b21d594b0f6bc481f05a5d784226e05329d2af` — első `expires_in` narrowing javítás, de a refresh ágban egy második előfordulás megmaradt.
+- `f1e9cc934edff64a3f5658bb72026c0ca15d7f0e` — refresh `expires_in` narrowing véglegesítése lokális `expiresIn` változóval.
 
 **Egyetlen aktív folytatási pont:**
-> 40.69.13.B folytatás: refresh concurrency lock + token validation lifecycle + CI/typecheck PASS ellenőrzés, majd live OAuth konfigurációs/redirect audit. E pont lezárása előtt nincs Builder/Inspector kódolás.
+> 40.69.13.B folytatás: a `f1e9cc934edff64a3f5658bb72026c0ca15d7f0e` javítás utáni CI/typecheck újraellenőrzése. Ha PASS, ezután refresh concurrency lock + token validation lifecycle audit/implementáció. E pont lezárása előtt nincs Builder/Inspector kódolás.
