@@ -2156,3 +2156,58 @@ A felhasználói kérés alapján rögzítve: a fejlesztést nem kell sorban kiz
 - **B — Mobil/touch:** interaction audit/implementáció pending; normál tap, long-press multi-select, további tap toggle, Kész/Mégse és Canvas/Layers szinkron a tervezett viselkedés.
 
 **Következő lépés:** a két sáv párhuzamosan folytatható; először a mobil touch interaction teljes kód-auditja és implementációja, miközben a PC 40.33 browser tesztkapuja külön lezárható.
+
+
+## 40.37 — MOBIL/TOUCH MULTI-SELECT IMPLEMENTÁCIÓ — 2026-09-22
+
+**Állapot:** [x] IMPLEMENTÁCIÓ KÉSZ — élő mobil böngészős teszt még hátra van.
+
+A PC/Desktop multi-select élő tesztjét a felhasználó későbbre halasztotta; a párhuzamos mobil munkasáv most továbbment. A mobil interaction ugyanarra a canonical \`state.selection.ids + primaryId\` és a meglévő \`setSelection()\` API-ra épül, külön selection state nélkül.
+
+### Mobil interaction contract
+- [x] normál rövid tap → single-select a meglévő Canvas/Layers click útvonalon;
+- [x] long-press (~450 ms) → multi-select mód aktiválása és a célpont kijelölése;
+- [x] multi-select módban további tap → add/remove toggle;
+- [x] látható mobil action bar: kijelölt elemszám + \`Mégse\` + \`Kész\`;
+- [x] \`Mégse\` → a long-press előtti selection visszaállítása;
+- [x] \`Kész\` → a jelenlegi canonical selection megtartása és multi-select mód lezárása;
+- [x] Escape → multi-select mód megszakítása;
+- [x] Canvas és Layers ugyanazt a touch interaction logikát használja;
+- [x] rövid elmozdulás (<~10 px) nem indítja el a long-press-t, így a scroll-vs-drag konfliktus alapvédelme megvan;
+- [x] root node long-press esetén nem lép multi-select módba;
+- [x] selection nem kerül history-be;
+- [x] nincs második mobil selection state.
+
+### Módosított fájlok
+- \`public/editor-v2/app.js\`
+  - touch pointer lifecycle, long-press, toggle, Kész/Mégse, Escape;
+  - Canvas + Layers közös touch útvonal.
+  - commit: \`6d61adb12ee8b862208089f0dc0d54ca51b24927\` + \`a93622076bee6abc7d3903c6d3bc7dd4215555db\` + \`ab1b071a894e03098d866657ac7b1d51c9129d60\`;
+- \`public/editor-v2/index.html\`
+  - mobil multi-select action bar.
+  - commit: \`ee5d19b4c7be239b630348741d920fd176f899c0\`;
+- \`public/editor-v2/mobile-editor.css\`
+  - mobil action bar + touch interaction alapstílus.
+  - commit: \`4bba011cd5cdae38ce309b277916adf5a20f6be7\`.
+
+### Fontos: még nincs PASS
+Az implementáció kódszinten elkészült, de nem jelöljük teszt-PASS-nak. Következő mobil tesztkapu:
+1. normál tap → single-select;
+2. long-press → multi-select mód + 1 kijelölés;
+3. második tap → 2 kijelölés;
+4. harmadik tap → 3 kijelölés;
+5. már kijelölt elem tap → remove;
+6. Kész → selection megmarad, mód bezár;
+7. Mégse → eredeti selection visszaáll;
+8. Canvas ↔ Layers touch szinkron;
+9. rövid húzás/scroll nem indít multi-select-et;
+10. root/locked/nested edge case;
+11. diagnostics 0 hiba;
+12. mobil browser regresszió.
+
+**Párhuzamos állapot:**
+- A — PC/Desktop multi-select: browser teszt továbbra is pending.
+- B — Mobile/Touch multi-select: implementáció kész, browser teszt pending.
+- Group/Ungroup: továbbra is blokkolva, amíg A és B multi-select kapu nem PASS.
+
+**Következő aktív pont:** B mobil élő browser teszt; közben A PC teszt külön lezárható.
