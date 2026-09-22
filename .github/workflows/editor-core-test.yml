@@ -18,5 +18,8 @@ jobs:
         with:
           node-version: 24
 
+      - name: Run TypeScript typecheck
+        run: npm run typecheck
+
       - name: Run editor core tests
         run: npm run test:editor
