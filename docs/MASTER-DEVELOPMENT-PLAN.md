@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.49  
+**Verzió:** MASTER-2.39.50  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -3211,7 +3211,7 @@ A következő minimális canonical javítási csomag szükséges:
 ### Jelenlegi tesztállapot
 - Kód audit: PASS.
 - MASTER állapotfrissítés: PASS.
-- GitHub CI / typecheck: **PENDING**.
+- GitHub CI / typecheck: **PENDING** — a workflow fájl kibővítve typecheckkel, de a connector jelenleg nem adott vissza workflow run eredményt.
 - Remote D1 migration: **PENDING**.
 - API concurrency/publish/rollback/metadata teszt: **PENDING**.
 - Mobil live teszt: **PENDING**.
