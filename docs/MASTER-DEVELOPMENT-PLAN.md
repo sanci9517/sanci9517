@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.66  
+**Verzió:** MASTER-2.39.67  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt PASS:** 2026-09-22 — a 40.69.7 teljes kapu PASS: CI/typecheck/editor-core zöld, Cloudflare deploy zöld, célzott live audit PASS; a state-módosítás és a hozzá tartozó `page.update` audit esemény együtt létrejött.
+**Legutóbbi igazolt PASS:** 2026-09-22 — a 40.69.8 CI/typecheck/editor-core és Cloudflare deploy kapuja zöld; a célzott új admin/auth live regresszió még hátra van.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -155,7 +155,7 @@ Nem vezetünk be második selection-, hierarchy-, state-, renderer- vagy command
 ### 🔵 EGYETLEN AKTÍV PONT
 **40.69.8 — Audit-log coverage és consistency teljes audit**
 
-**Státusz:** `[~]` — HIÁNYOSSÁGOK JAVÍTVA, VALIDÁCIÓ FOLYAMATBAN. A teljes admin/auth state-mutation audit által feltárt külön audit-írási útvonalakat canonical `auditStatement()` + D1 batch használatra állítottuk. Következik CI/typecheck/editor-core és célzott live ellenőrzés.
+**Státusz:** `[~]` — KÓDMÓDOSÍTÁS + CI/DEPLOY PASS, CÉLZOTT LIVE VALIDÁCIÓ FOLYAMATBAN. A teljes admin/auth state-mutation audit által feltárt külön audit-írási útvonalakat canonical `auditStatement()` + D1 batch használatra állítottuk.
 
 **40.69.8 audit eredmények — 2026-09-22:**
 - [x] `src/routes/admin/editor.ts`: Save/Publish/Unpublish/Rollback audit útvonal lefedett és atomic.
@@ -168,7 +168,7 @@ Nem vezetünk be második selection-, hierarchy-, state-, renderer- vagy command
 - [x] `src/routes/auth/logout.ts`: session törlés + `auth.logout` audit canonical batch-be került.
 - [x] Nem találtunk más, az `index.ts` által regisztrált admin state-mutation route-ot a vizsgált route-készletben.
 
-**Következtetés:** a feltárt coverage/consistency hiányok kódoldali javítása elkészült. A 40.69.8 még nem PASS, amíg a CI és célzott live regresszió nem igazolja az új atomic audit útvonalakat.
+**Következtetés:** a feltárt coverage/consistency hiányok kódoldali javítása elkészült. A CI/typecheck/editor-core és a Cloudflare deploy zöld. A 40.69.8 még nem PASS, amíg a célzott live regresszió nem igazolja az új atomic audit útvonalakat.
 
 **40.69.7 lezárás:**
 - [x] CI/typecheck/editor-core PASS.
