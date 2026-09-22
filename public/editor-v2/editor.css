@@ -15,3 +15,24 @@
 .page-order{width:26px;min-width:26px;height:30px;padding:0;border:1px solid var(--line);background:#101821;color:var(--text);border-radius:5px;font-size:13px;line-height:1;cursor:pointer}.page-order:hover:not(:disabled){background:#1b2a3a}.page-order:disabled{opacity:.3;cursor:not-allowed}
 
 .revision-panel{margin-top:4px;border-top:1px solid var(--line);background:#0c1219}.revision-heading{padding:10px 9px 8px;border-bottom:1px solid var(--line)}.revision-heading>div{display:flex;flex-direction:column;gap:2px}.revision-heading strong{font-size:10px;color:#dce4ef}.revision-heading span{font-size:8px;color:#68768b}.revision-list{padding:6px;max-height:310px;overflow:auto}.revision-empty{padding:12px 7px;color:#68768b;font-size:9px;text-align:center}.revision-row{display:flex;align-items:center;gap:7px;padding:7px;border:1px solid #202a38;border-radius:6px;background:#101720;margin:4px 0}.revision-info{min-width:0;flex:1;display:flex;flex-direction:column;gap:2px}.revision-info strong{font-size:9px;color:#dce5f1}.revision-info span{font-size:8px;color:#8d9aae;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.revision-info small{font-size:7px;color:#647287}.revision-restore{flex:0 0 auto;height:27px;padding:0 7px;border-color:#304765;background:#142238;color:#bcd0ee;font-size:8px}.revision-restore:hover:not(:disabled){background:#1c3353;border-color:#4a6c9e}.revision-restore:disabled{opacity:.35;cursor:not-allowed}@media(max-width:520px){.revision-list{max-height:260px}.revision-row{gap:5px}.revision-restore{padding:0 6px;font-size:7px}}
+
+@media(min-width:851px){
+  .brand strong{font-size:15px}.brand span{font-size:11px}
+  .top-label{font-size:11px}.top-page-control select{font-size:12px}
+  .device-btn{font-size:12px}.subtle-btn,.primary-btn,.publish-btn{font-size:12px}.save-state{font-size:11px}
+  .dock-heading,.dock-heading strong{font-size:14px}.panel-subtitle{font-size:11px}
+  .wide-action,.search{font-size:12px}.page-row{font-size:12px}.page-row .page-meta{font-size:10px}
+  .element-group-title{font-size:12px}.element-group-title b{font-size:10px}.element{font-size:12px}
+  .layer-row{font-size:11px}.layer-row small{font-size:9px}
+  .tool-btn{font-size:12px}.viewport-label{font-size:10px}.canvas-device-btn{font-size:11px}.zoom-label{font-size:12px}.toolbar-info{font-size:12px}
+  .node-head{font-size:10px}.node-head small{font-size:9px}
+  .inspector-tabs button{font-size:12px}.inspector-empty{font-size:12px}.inspector-empty b{font-size:13px}
+  .inspector-selection b{font-size:13px}.inspector-selection small{font-size:10px}
+  .field label,.field span{font-size:11px}.field input,.field textarea,.field select{font-size:12px}
+  .inspector-toggle{font-size:12px}.danger-action{font-size:12px}
+  .statusbar{font-size:10px}
+  .diagnostics-badge{font-size:11px}.diagnostics-panel header strong{font-size:13px}.diagnostics-panel header small{font-size:10px}
+  .diagnostics-actions button{font-size:10px}.diagnostics-empty{font-size:11px}.diagnostic-item{font-size:11px}
+  .diagnostic-head strong{font-size:11px}.diagnostic-head span{font-size:10px}.diagnostic-message{font-size:11px}.diagnostic-location{font-size:9px}.diagnostic-item summary{font-size:10px}
+  .element-description{font-size:11px}
+}
