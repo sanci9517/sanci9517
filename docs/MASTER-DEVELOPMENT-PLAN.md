@@ -2635,3 +2635,18 @@ Ezeket **nem** jelöljük még PASS-nak:
 - Később: teljes PC + Mobile browser regressziós kör egyben.
 
 **Hivatalos folytatási pont:** PC + Mobile hierarchy manipulation közös stabilizálása; a felhasználói tesztelés akkor indul teljes körben, amikor a felhasználó gépnél/mobilnál rendelkezésre áll.
+
+
+## 40.55 — MOBILE LAYERS CONTAINER/GROUP REPARENT LIVE TESZT — 2026-09-22
+
+**Állapot:** [x] PASS — felhasználói élő teszt: **Jó**.
+
+A Mobile/Touch Layers Container/Group alá történő reparent élő tesztje sikeresen lezárult.
+
+- [x] Long-press drag aktiválás a mozgató fogantyúról.
+- [x] Container/Group célra történő drop működött.
+- [x] Az elem ténylegesen a cél Container/Group gyermekévé vált.
+- [x] A Layers hierarchiában a gyermekkapcsolat/behúzás megjelent.
+- [x] Nem jelentkezett teszt közben jelzett hiba.
+
+**Következő egyetlen aktív tesztpont:** Mobile Layers invalid target / saját descendant alá történő reparent védelem.
