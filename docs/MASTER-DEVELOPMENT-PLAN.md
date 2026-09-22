@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.76  
+**Verzió:** MASTER-2.39.77  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -2917,3 +2917,76 @@ Kötelezően megőrzendő külső adatok:
 **Következő egyetlen pont:** 40.69.13.B — Twitch account/channel connection + token lifecycle + security.
 
 **EGYETLEN AKTÍV VÉGREHAJTÁSI PONT:** **40.69.13.B — Twitch account/channel connection + token lifecycle + security.**
+
+
+### 40.69.13.B — TWITCH ACCOUNT/CHANNEL CONNECTION + TOKEN LIFECYCLE — 2026-09-22
+
+**Státusz:** [~] IMPLEMENTÁCIÓ ELKEZDVE; teljes PASS még nincs.
+
+#### B.1 Canonical döntések
+- A Twitch kapcsolat kizárólag az authenticated admin sessionből indítható.
+- OAuth flow: Twitch Authorization Code Grant, server-side confidential client.
+- OAuth state: kriptográfiailag véletlen, hash-elve D1-ben tárolt, 10 perces, egyszer használható és a kezdeményező Sanci session useréhez kötött.
+- Redirect URI canonical útja: `/api/integrations/twitch/callback`, az aktuális request originből képezve.
+- Twitch access/refresh token nem kerül Page Modelbe, Editor state-be vagy API response-ba.
+- Tokenek AES-GCM titkosítással kerülnek D1-be; a titkosítás kulcsa külön `TWITCH_TOKEN_ENCRYPTION_KEY` secret.
+- Broadcaster ID a Twitch connection canonical external identity kulcsa.
+- `social_accounts` továbbra is statikus social-link domain; nem használható OAuth connection storage-ra.
+- Disconnect Twitch revoke endpointet használ, majd a lokális kapcsolat státuszát `revoked` értékre állítja.
+- Refreshkor az új refresh token kötelezően mentésre kerül; Twitch szerint refreshkor változhat. citeturn0search1
+- Twitch token validáció a `/oauth2/validate` endpointon történik; Twitch third-party OAuth session esetén ezt induláskor és óránkénti validációval írja elő. citeturn0search2
+- Első connectionnél nem kérünk felesleges scope-okat; a Twitch dokumentáció szerint csak a ténylegesen szükséges scope-okat szabad kérni. citeturn1search1
+
+#### B.2 Implementált alap
+- `migrations/0011_twitch_integration.sql`
+  - `twitch_connections`
+  - `twitch_oauth_states`
+- `src/core/twitch-crypto.ts`
+  - AES-GCM token encryption/decryption
+  - OAuth state hashing
+- `src/core/twitch-oauth.ts`
+  - authorization URL
+  - authorization-code exchange
+  - token validation
+  - refresh
+  - revoke
+  - connection read
+- `src/routes/integrations/twitch.ts`
+  - connect
+  - callback
+  - connection status
+  - disconnect
+- `src/types/env.ts`
+  - `TWITCH_TOKEN_ENCRYPTION_KEY`
+- `src/index.ts`
+  - Twitch integration routes registered.
+
+#### B.3 Biztonsági ellenőrzés — jelenlegi állapot
+**PASS:**
+- tokenek nem kerülnek kliensválaszba;
+- tokenek nem kerülnek Page Modelbe;
+- OAuth state nem plaintext formában kerül D1-be;
+- state userhez kötött és egyszer használható;
+- tokenek nem plaintext D1 mezőkben vannak;
+- refresh token rotation támogatott;
+- Twitch revoke endpoint használata implementálva;
+- minimális scope elv rögzítve.
+
+**PENDING / NEM PASS:**
+- refresh concurrency lock még nincs lezárva; ezt a következő javító lépésben kötelező megoldani, mert Twitch külön figyelmeztet a párhuzamos refresh problémára. citeturn0search1
+- token validáció óránkénti lifecycle még nincs scheduler/cron szinten megépítve.
+- live OAuth callback teszt még nincs lefuttatva.
+- Cloudflare secret `TWITCH_TOKEN_ENCRYPTION_KEY` még nincs igazolva.
+- redirect URI production/custom-domain egyezés még nincs élőben ellenőrizve.
+- connect/disconnect audit teljes atomicitását még célzottan tesztelni kell.
+- CI/typecheck fut; a 612-es Editor Core Test workflow jelenleg fut, ezért még nincs PASS eredmény.
+
+#### B.4 Commitok
+- `2b30e229d5ed76439cc03f0511368cdca2ea31cc` — Twitch integration persistence migration.
+- `c9606aecfa2a0b6a49881eeb9f5b4ad6a0b1ef78` — Twitch token encryption primitives.
+- `9614ae7b08f4928196ca70f10e2103c775b012ad` — Twitch OAuth lifecycle service.
+- `163f9921a6f798572ce6334571692d1780d6dc4d` — Twitch connection routes.
+- `c9007fdcc624be9895200ba7040f9b587e0b0e04` — Twitch route registration; current HEAD.
+
+**Egyetlen aktív folytatási pont:**
+> 40.69.13.B folytatás: refresh concurrency lock + token validation lifecycle + CI/typecheck PASS ellenőrzés, majd live OAuth konfigurációs/redirect audit. E pont lezárása előtt nincs Builder/Inspector kódolás.
