@@ -2721,3 +2721,18 @@ A Mobile/Touch Layers hierarchy mentés és újratöltés élő tesztje sikerese
 - [x] Nem jelentkezett teszt közben jelzett hiba.
 
 **Következő egyetlen aktív tesztpont:** Mobile Layers diagnostics — 0 hiba.
+
+
+## 40.61 — MOBILE LAYERS DIAGNOSTICS LIVE TESZT — 2026-09-22
+
+**Állapot:** [x] PASS — felhasználói élő teszt: **Jó**.
+
+A Mobile/Touch Layers hierarchy teljes diagnosztikai ellenőrzése sikeresen lezárult.
+
+- [x] A Layers műveletek után a debugger/diagnosztika 0 hibát jelzett.
+- [x] Nem jelentkezett új runtime vagy hierarchy hiba.
+- [x] A korábbi Mobile Layers tesztek eredményei változatlanul érvényesek.
+
+**Mobile Layers hierarchy tesztblokk lezárva.**
+
+**Következő aktív terület:** Desktop/PC Layers teljes élő regression — az implementáció korábban elkészült, most külön desktop élő validáció szükséges.
