@@ -153,9 +153,9 @@ Nem vezetünk be második selection-, hierarchy-, state-, renderer- vagy command
   - [x] Core CI 24/24
 
 ### 🔵 EGYETLEN AKTÍV PONT
-**40.69.12.B — Schedule binding + read service**
+**40.69.12.C — Editor preview renderer**
 
-**Státusz:** [!] BLOKKOLVA — a read service CI PASS, az üres élő endpoint PASS, de a meglévő legacy Schedule UI nem kompatibilis a canonical admin API-val, ezért a tényleges D1 rekord létrehozási live teszt még nem zárható.
+**Státusz:** [~] AKTÍV — a 40.69.12.B canonical D1/read/szűrés live kapuja PASS; most a Schedule node tényleges Editor v2 preview renderelése következik.
 
 - [x] Schedule node canonical binding: `dataBindings.schedule = { source: "schedule_items", version: 1 }`.
 - [x] Új szerveroldali canonical read service: `src/core/schedule-read.ts`.
@@ -202,7 +202,16 @@ Nem vezetünk be második selection-, hierarchy-, state-, renderer- vagy command
 - [x] Döntés: a legacy Schedule UI-t nem javítjuk vissza aktív rendszerként, mert a 40.69.9 szerint archivált réteg.
 - [!] A live D1 read teszt csak akkor zárható, ha a canonical Schedule domainhez készül egy nem-legacy létrehozási útvonal / tesztadat, vagy a D1-ben kontrollált tesztrekord jön létre.
 
-**Következő egyetlen aktív pont:** 40.69.12.B — canonical D1 Schedule tesztadat létrehozása legacy UI visszakapcsolása nélkül, majd public read/szűrés live teszt.
+**40.69.12.B — LIVE LEZÁRÁS — 2026-09-22**
+- [x] Canonical POST → D1 rekord létrehozás PASS.
+- [x] Public read PASS.
+- [x] `next` PASS.
+- [x] Platform filter PASS.
+- [x] Status filter PASS.
+- [x] A legacy Schedule UI nem lett újraaktiválva.
+- [x] Felhasználói tesztkapu lezárva.
+
+**Következő egyetlen aktív pont:** **40.69.12.C — Editor preview renderer.**
 
 **Következő aktív pont a kapu után:** 40.69.12.C — Editor preview renderer.
 ## 40.69.9 — CANONICAL PAGES / VISUAL EDITOR / SCHEDULE ARCHITEKTÚRA TELJES AUDIT — 2026-09-22
@@ -2412,3 +2421,21 @@ Nem kezdjük el még a teljes Builder UI-t. Előbb a **Schedule schema + normali
 - [x] MASTER állapotfrissítve.
 
 **Következő aktív lépés:** 40.69.12.B — Schedule binding + read service.
+
+
+## 40.69.12.C — Editor preview renderer — 2026-09-22
+
+**Állapot:** [~] AKTÍV — teljes érintett renderer-kód audit megtörtént; implementáció és tesztkapu folyamatban.
+
+### Audit
+- [x] Az Editor v2 jelenlegi canvas renderer központi útvonala: `public/editor-v2/app.js` → `renderCanvas()` → `renderNode()`.
+- [x] A `schedule` node jelenleg csak általános node-ként jelenik meg; nincs Schedule-specifikus preview renderer.
+- [x] A canonical Schedule config és domain binding már a Page Model része.
+- [x] A preview nem írhat D1-be és nem módosíthat Schedule domain adatot.
+- [x] Első preview verzióban determinisztikus fixture használható, így az Editor preview nem függ az admin D1 sessiontől.
+- [ ] Schedule preview renderer implementáció.
+- [ ] Preview fixture/config teszt.
+- [ ] Editor browser teszt.
+- [ ] MASTER lezárás.
+
+**Következő egyetlen aktív pont:** 40.69.12.C — Schedule preview renderer implementáció.
