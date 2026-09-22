@@ -2941,3 +2941,50 @@ Az oldalsorrend funkció első deploy/élő betöltésekor az Editor v2 `app.js`
 3. Diagnosztika / betöltés működik.
 4. Ezután folytatni a 40.67 oldalsorrend mobil élő tesztjeit.
 5. PC/Desktop live teszt továbbra is csak külön felhasználói kérésre.
+
+
+## 40.68 — DRAFT / PREVIEW / PUBLISH HARDENING — 2026-09-22
+
+**Állapot:** [~] IMPLEMENTÁCIÓ KÉSZ; CI és mobil élő teszt még hátra.
+
+A kanonikus oldal-életciklus után a következő lépés a Draft/Preview/Publish alapfolyamat biztonságos lezárása. A meglévő Editor v2 Page Model és D1 snapshot rendszer maradt az egyetlen forrás; nem került be második tartalomrendszer.
+
+### Elkészült
+- Publikálás előtt canonical Page Model/hierarchia validáció fut.
+- Ellenőrzés: root létezik, node-kapcsolatok érvényesek, parent/child kapcsolatok kölcsönösek, nincs elérhetetlen vagy ciklikus node.
+- Hibás publikálható dokumentumot a szerver 409-es validációs hibával blokkol.
+- Publikálás továbbra is a draft content_json és a published_content_json snapshotot egyetlen D1 batchben frissíti.
+- Publikálás audit eseményt ír.
+- Bevezetésre került a publikálás visszavonása (unpublish) ugyanazon Editor API-n keresztül.
+- A publikálás visszavonása csak a publikált állapotot kapcsolja ki; a draft és a korábbi published snapshot nem törlődik.
+- Editor v2 desktop és mobil felületén külön Visszavonás vezérlő került be.
+- A publikálási állapotot az Editor oldal-metaadataiból kell megjeleníteni; nincs második state-rendszer.
+- A változtatások nem érintik az elvetett Rich Text B/I funkciót.
+
+### Módosítások
+- src/routes/admin/editor.ts — publish validation, unpublish API, publish/unpublish audit.
+- public/editor-v2/index.html — desktop/mobile Visszavonás vezérlő.
+- public/editor-v2/app.js — publish state UI és unpublish interaction.
+- Implementációs commitok:
+  - c518ac202097d2fb270cd0d6ef3d6fd23a9498f6
+  - 0826e1f0b8bd5b4b823fe445c8f56c8ef88c95a3
+  - f386d04788b365a6fb67630f86b539c0cc00b988
+  - 93303e8923255a072ea570b4a6ec04cfd83a94f1
+
+### Kötelező tesztkapu
+- [ ] Core/CI tesztek PASS.
+- [ ] Editor v2 betöltés syntax error nélkül.
+- [ ] Draft mentés után oldal továbbra is DRAFT.
+- [ ] Preview az aktuális draftot mutatja jogosult szerkesztőnek.
+- [ ] Publikálás után publikus útvonal az új snapshotot mutatja.
+- [ ] Publikálás után Editor állapot LIVE.
+- [ ] Visszavonás után publikus útvonal eltűnik / nem publikált állapotot ad.
+- [ ] Visszavonás után draft tartalom megmarad.
+- [ ] Újrapublikálás működik.
+- [ ] Hibás Page Model publikálása blokkolódik.
+- [ ] Publish/unpublish audit esemény létrejön.
+- [ ] Mobil UI gombok nem takarják egymást.
+- [ ] Diagnosztika: 0 hiba.
+- [ ] PC/Desktop live teszt csak külön felhasználói kérésre.
+
+**Következő aktív lépés:** CI ellenőrzés, majd a fenti mobil élő tesztkapu lépésenként.
