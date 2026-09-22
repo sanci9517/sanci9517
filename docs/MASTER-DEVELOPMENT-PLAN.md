@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.72  
+**Verzió:** MASTER-2.39.73  
 **Dátum:** 2026-09-22  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -2545,3 +2545,35 @@ A korábbi auditban azonosított szerveroldali hiányosságot most megszüntett�
 **Fontos:** ez implementációs hardening, nem felhasználói PASS. A PC Editor olvashatósági tesztet a felhasználó későbbre halasztotta; ez nem blokkolja a további fejlesztést.
 
 **Következő fejlesztési lépés:** 40.69.12.C Schedule preview tesztelhető/finomítható rétegeinek teljes kód-auditja, majd a következő szükséges canonical renderer-réteg. A PC UI live teszt külön későbbi visszatérő tesztkapu.
+
+
+### 40.69.12.D — Public Schedule renderer — 2026-09-22
+
+**Állapot:** [~] IMPLEMENTÁLVA — CI és élő publikus oldal tesztkapu még hátra van.
+
+A canonical `pages` Page Model Schedule node most már a publikus `/p/*` rendererben is saját runtime ágat kapott.
+
+- [x] `public/assets/page-renderer.js` felismeri a `schedule` node típust.
+- [x] A node saját canonical Schedule konfigurációját szigorúan ellenőrzi.
+- [x] A publikus renderer kizárólag a fix `/api/public/schedule` API-n keresztül kér adatot.
+- [x] A Page Model nem adhat meg tetszőleges endpointot vagy SQL-forrást.
+- [x] A query a canonical mode/limit/status/platform/order konfigurációból épül.
+- [x] Az API válasza cache-elt konfigurációnként, egy oldalon belül.
+- [x] Cím, platform, időpont, végidő, státusz, jegyzet és link a canonical display kapcsolók szerint jelenik meg.
+- [x] URL csak `http:` / `https:` sémával kerülhet linkként a DOM-ba.
+- [x] Szöveg HTML helyett escaped outputtal kerül renderelésre.
+- [x] Üres eredménynél a canonical `emptyText` jelenik meg.
+- [x] Nincs D1 írás a publikus render során.
+- [x] A Schedule domain adata nem kerül bemásolásra a Page Modelbe.
+
+**Commit:**
+- `ebb665f9738caec83735222122902ab10b9e6e42` — `feat: render canonical schedule nodes on public pages`
+
+**Következő tesztkapu:**
+- [ ] GitHub Editor Core CI PASS
+- [ ] typecheck PASS
+- [ ] publikus Schedule oldal élő teszt
+- [ ] mode/filter/display kapcsolók ellenőrzése
+- [ ] üres Schedule állapot ellenőrzése
+- [ ] diagnostics / console hiba ellenőrzése
+- [ ] csak ezután 40.69.12.D lezárás
