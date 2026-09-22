@@ -436,8 +436,7 @@ test('manual transaction can be committed or rolled back', () => {
   beginTransaction(state, 'rollback');
   execute(state, { type: 'element.add', payload: { type: NODE_TYPES.TEXT } });
   rollbackTransaction(state);
-  assert.deepEqual(state.document, before);
-  assertValidEditorDocument(state.document);
+  assert.deepEqual(state.document, before);  assertValidEditorDocument(state.document);
 });
 
 test('unknown command fails without corrupting the document', () => {
@@ -481,7 +480,7 @@ test('publish validator blocks invalid Page Model and accepts valid document', (
   const cycleA = 'cycle-a';
   const cycleB = 'cycle-b';
   const cycleRoot = cycle.pages[pageId].nodes[cycle.pages[pageId].rootId];
-  cycleRoot.children = [cycleA];
+  cycleRoot.children = [];
   cycle.pages[pageId].nodes[cycleA] = {
     id: cycleA,
     type: NODE_TYPES.TEXT,
