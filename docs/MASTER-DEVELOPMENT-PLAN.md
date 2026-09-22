@@ -3363,3 +3363,34 @@ Deploy után ugyanazon az oldalon:
 **Ha ez PASS, akkor folytatjuk a rollback + publish snapshot + unpublish regresszióval.**
 
 **PC/Desktop live teszt:** továbbra is PENDING és nem indul, amíg külön nem kérjük.
+
+
+## 40.69.4 — REVISION_CONFLICT MÁSODIK GYÖKÉROK: MEGLÉVŐ OLDALAK REVISION FORRÁSA — 2026-09-22
+
+**Állapot:** [~] ÚJ GYÖKÉROK AZONOSÍTVA ÉS JAVÍTVA; LIVE SAVE/PUBLISH TESZT MÉG HÁTRA.
+
+A javítás után is fennálló `REVISION_CONFLICT` auditja megmutatta, hogy nem elég a Page Model revision mezőire támaszkodni. A már létező oldalaknál a `editor_revisions` táblában lehet a tényleges legfrissebb revision, miközben a régi `content_json` dokumentumban a revision mező elavult.
+
+### Gyökérok
+A GET `/api/admin/pages` korábban közvetlenül a documentből számolta a kliensnek küldött revisiont. Így egy régi page-document revision érték kimehetett a kliensnek akkor is, ha az `editor_revisions` már magasabb verzión állt. A kliens ezt küldte vissza `expectedVersion` néven, a szerver pedig helyesen elutasította.
+
+### Javítás
+- `src/routes/admin/pages.ts`
+  - az oldallistázás revision forrása most az adott oldal `editor_revisions` rekordjainak `MAX(version)` értéke;
+  - ha nincs revision rekord, fallbackként a document/page revision marad;
+  - a kliens így ugyanazt a canonical server revisiont kapja, amit a konfliktusellenőrzés használ.
+
+**Javító commit:** `d14400a33bd4097bf7eb87cf6ded8341e021eb92`
+
+### Következő egyetlen aktív tesztkapu
+Deploy után:
+1. Editor v2 betölt.
+2. Mentés egy kis módosítással.
+3. **PASS esetén** ugyanaz az oldal újratölt.
+4. Második mentés.
+5. Publish.
+6. Publikus oldal ellenőrzése.
+
+Ha továbbra is `REVISION_CONFLICT` jelenik meg, nem módosítunk találomra: a konkrét API response + Network request `expectedVersion` és a szerver `currentVersion` értékét kell összevetni.
+
+**PC/Desktop live teszt:** továbbra is PENDING.
