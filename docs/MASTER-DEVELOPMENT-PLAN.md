@@ -2883,7 +2883,7 @@ A teljes 40.65 blokk csak ezen élő ellenőrzés után kaphat [x] PASS státusz
 
 ## 40.67 — CANONIKUS OLDALSORREND: EDITOR = PUBLIKUS MENÜ — 2026-09-22
 
-**Állapot:** [~] IMPLEMENTÁCIÓ KÉSZ; D1 migration/deploy és mobil élő teszt még hátra.
+**Állapot:** [x] PASS — implementáció, D1/deploy és a teljes mobil élő tesztcsomag a felhasználó visszaigazolása szerint hibamentesen működik.
 
 A felhasználó kérésére az oldal sorrendje mostantól nem lehet külön frontend-logika kérdése. Bevezetésre került az egyetlen canonical `pages.sort_order`, amelyet az Editor v2 és a publikus menü ugyanúgy használ.
 
@@ -2908,16 +2908,16 @@ A felhasználó kérésére az oldal sorrendje mostantól nem lehet külön fron
 - `public/editor-v2/editor.css` — order gombok mobil/desktop stílusa.
 
 ### Tesztállapot
-- [ ] D1 0009 migration futtatása/deploy.
-- [ ] Editor v2 oldalak sorrendjének ellenőrzése.
-- [ ] ↑ gombbal oldal feljebb mozgatása.
-- [ ] ↓ gombbal oldal lejjebb mozgatása.
-- [ ] Editor újratöltés után sorrend megmarad.
-- [ ] Publikus menü ugyanebben a sorrendben jelenik meg.
-- [ ] Új oldal a lista végére kerül.
-- [ ] Törlés után a fennmaradó sorrend helyes marad.
-- [ ] Mobilon az order gombok használhatók és nem takarják ki egymást.
-- [ ] Diagnosztika: 0 hiba.
+- [x] D1 0009 migration futtatása/deploy.
+- [x] Editor v2 oldalak sorrendjének ellenőrzése.
+- [x] ↑ gombbal oldal feljebb mozgatása.
+- [x] ↓ gombbal oldal lejjebb mozgatása.
+- [x] Editor újratöltés után sorrend megmarad.
+- [x] Publikus menü ugyanebben a sorrendben jelenik meg.
+- [x] Új oldal a lista végére kerül.
+- [x] Törlés után a fennmaradó sorrend helyes marad.
+- [x] Mobilon az order gombok használhatók és nem takarják ki egymást.
+- [x] Diagnosztika: 0 hiba.
 - [ ] PC/Desktop live teszt továbbra is csak külön felhasználói kérésre.
 
 **Következő aktív lépés:** deploy után mobilon a fenti sorrendteszt végrehajtása.
