@@ -43,6 +43,7 @@ export default {
     if (pathname === "/api/public/site-settings") return publicSiteSettingsRoute(env);
     if (pathname === "/api/public/schedule") return publicScheduleRoute(request, env);
     if (pathname === "/api/integrations/twitch/diagnostic") return twitchConfigDiagnosticRoute(request, env);
+    if (pathname === "/api/integrations/twitch/diagnostic") return twitchConfigDiagnosticRoute(request, env);
     if (pathname === "/api/integrations/twitch/connect") return twitchConnectRoute(request, env);
     if (pathname === "/api/integrations/twitch/callback") return twitchCallbackRoute(request, env);
     if (pathname === "/api/integrations/twitch/connection") return twitchConnectionRoute(request, env);
