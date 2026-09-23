@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.97  
+**Verzió:** MASTER-2.39.98  
 **Dátum:** 2026-09-23  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt PASS:** 2026-09-23 — 40.69.13.B.8 live Twitch token validation lifecycle PASS; production authenticated `GET /api/integrations/twitch/validation` válasza `ok:true`, `valid:true`, `status:"connected"`, broadcaster `sanci9517`, kitöltött `accessTokenExpiresAt` és friss `lastValidatedAt` értékeket adott vissza. Ez bizonyítja, hogy a canonical `getValidTwitchAccessToken()` validation útvonal production környezetben ténylegesen lefutott.
+**Legutóbbi igazolt PASS:** 2026-09-23 — 40.69.13.B.9 controlled refresh concurrency automated test PASS; a két párhuzamos `refreshTwitchConnection()` hívásból pontosan egy jutott el a Twitch refresh endpointig, mindkét hívás ugyanazt a friss access tokent kapta vissza, a rotált access/refresh tokenek titkosítva kerültek mentésre, és a D1 refresh lock a teszt végén felszabadult.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -3202,4 +3202,28 @@ Ez igazolja, hogy a létrejött Twitch OAuth kapcsolat production környezetben 
 5. [x] validation eredmény + `lastValidatedAt` live bizonyítva;
 6. [x] B.8 lezárva PASS.
 
-**Következő egyetlen tesztkapu:** **B.9 — controlled refresh concurrency teszt**.
+**B.9 — CONTROLLED REFRESH CONCURRENCY AUTOMATED TEST — 2026-09-23**
+
+**Státusz:** [x] PASS — automatizált concurrency teszt sikeres.
+
+**Cél:** bizonyítani, hogy ugyanahhoz a Twitch connectionhöz érkező párhuzamos refresh műveletek közül csak egy Worker kér új tokent a Twitchtől, miközben a többi kérés a már frissített connection állapotát használja.
+
+**Tesztbizonyíték:**
+- [x] Létrejött a külön `tests/twitch-oauth.test.js` Node 24 `node:test` teszt.
+- [x] A teszt a meglévő `twitch-crypto.ts` AES-GCM encryption/decryption útvonalát használja; nincs második token-kriptográfiai implementáció.
+- [x] A teszt két párhuzamos `refreshTwitchConnection()` hívást indít ugyanarra a connectionre.
+- [x] A fake Twitch token endpoint ellenőrizte, hogy pontosan **1** refresh HTTP kérés történik.
+- [x] Mindkét párhuzamos hívás `REFRESHED_ACCESS_TOKEN` értékkel tért vissza.
+- [x] Az új access és refresh tokenek titkosítva kerültek a connection rekordba, majd visszafejtve a várt értéket adták.
+- [x] A `refresh_lock_token` és `refresh_lock_until` a teszt végén `NULL` állapotba került.
+- [x] A teszt eredménye: **1 test, 1 pass, 0 fail**.
+- [x] Futtatási környezet: Node `v24.21.0`.
+- [x] A közvetlen Node ESM futtatás extension nélküli TypeScript importja miatt külön, csak tesztfuttatásra használt `tests/ts-extension-loader.mjs` loader szükséges; production `src/` importokat nem módosítottuk.
+
+**Commit:** `793b9cb79e0991ecbd4258833e0c8f834a8f6237` — `tests: add Twitch refresh concurrency test`.
+
+**Fontos korlát:** ez a teszt a D1 refresh lock + refresh művelet concurrency primitívét bizonyítja. Nem helyettesíti a teljes `401 → getValidTwitchAccessToken() → refresh → revalidate` live lifecycle tesztet.
+
+**Következő egyetlen aktív tesztkapu:** B.10 — invalid/revoked token → reauthorization recovery és no-secret/no-token leakage célzott ellenőrzése. Builder/Inspector fejlesztés továbbra is blokkolt.
+
+
