@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.93  
+**Verzió:** MASTER-2.39.94  
 **Dátum:** 2026-09-23  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt PASS:** 2026-09-23 — 40.69.13.B live Twitch OAuth connection PASS; a javított 9e024d6a3c143d4ededaa4d4d6fea23aa3a90d8d commit production deployja sikeres, Cloudflare Worker version 36172775-b47a-4036-94b9-522095683e92, és a live callback ?twitch=connected eredménnyel zárult. A production Twitch OAuth kapcsolat létrejött; a további connection status / token validation / refresh / reauthorization / security lifecycle tesztkapuk még hátra vannak.
+**Legutóbbi igazolt PASS:** 2026-09-23 — 40.69.13.B live Twitch OAuth connection + live connection status PASS; production `/api/integrations/twitch/connection` válasza `connected:true`, `status:"connected"`, broadcaster `sanci9517`, kitöltött `accessTokenExpiresAt` és `lastValidatedAt` értékeket adott vissza. A token validation / refresh / reauthorization / security lifecycle tesztkapuk még hátra vannak.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -3141,7 +3141,7 @@ Kötelezően megőrzendő külső adatok:
 - [x] A `338fc8e8a2d2562278fa06fb7ed9e52507fe02ab` callback diagnosztikai commit segítségével feltártuk a validation shape hibát.
 - [x] A végleges javítás után a diagnosztikai `code` query használata már nem szükséges; a végleges takarítás külön lépés.
 
-**Következő egyetlen aktív tesztkapu:** `/api/integrations/twitch/connection` élő connection status ellenőrzése, majd csak annak PASS-a után token validation lifecycle teszt.
+**B.7 lezárva:** live `/api/integrations/twitch/connection` connection status PASS. **Következő egyetlen aktív tesztkapu:** 40.69.13.B.8 — live Twitch token validation lifecycle teszt.
 #### B.5 Módosító commitok
 - `974221e93d896b6b861212b2501dd4608cbdee38` — `fix: add Twitch refresh concurrency lease`
 - `7ae8af57ce5b86b92e915de838b40b6b8b4a79ae` — `fix: harden Twitch token lifecycle and refresh concurrency`
@@ -3152,9 +3152,38 @@ Korábbi kapcsolódó B commitok a történeti auditban maradnak.
 #### B.6 Külső szerződés
 A Twitch dokumentáció szerint third-party app esetén az OAuth access tokent induláskor és óránként validálni kell; érvénytelen tokennél a Twitch 401-et ad, a refresh token pedig rotálódhat, ezért a refresh lifecycle-nek ezt kezelnie kell. A párhuzamos refresh kockázatát a Twitch külön dokumentálja.
 
-#### B.7 Következő és egyetlen aktív lépés
-**40.69.13.B folytatás — élő `/api/integrations/twitch/connection` connection status ellenőrzés.**
+#### B.7 — Live Twitch connection status — 2026-09-23
 
-A live OAuth connection létrejött, ezért most a létrejött kapcsolatot az authenticated connection endpointen igazoljuk. Ezután következhet a token validation lifecycle teszt.
+**Státusz:** [x] PASS.
+
+**Bizonyíték:** production authenticated endpoint:
+`/api/integrations/twitch/connection`
+
+Visszaadott állapot:
+- `ok: true`
+- `connected: true`
+- `status: "connected"`
+- broadcaster: `sanci9517`
+- `scopes: []`
+- `accessTokenExpiresAt` kitöltve
+- `lastValidatedAt` kitöltve
+
+Ez igazolja, hogy a létrejött Twitch OAuth kapcsolat production környezetben az authenticated connection status endpointen is elérhető és connected állapotú.
+
+**Következő egyetlen aktív tesztkapu:** 40.69.13.B.8 — live Twitch token validation lifecycle teszt.
+
+#### B.8 — Live Twitch token validation lifecycle — 2026-09-23
+
+**Státusz:** [ ] PENDING — következő teszt.
+
+**Cél:** bizonyítani, hogy a canonical `getValidTwitchAccessToken()` lifecycle nem csak a D1-ben tárolt connection státuszt olvassa, hanem a token érvényességét megfelelően validálja, és szükség esetén a refresh/revalidation útvonalat használja.
+
+**Teszt sorrend:**
+1. production környezetben egy olyan canonical Twitch API-hívást azonosítunk, amely a `getValidTwitchAccessToken()` service boundaryn keresztül fut;
+2. a hívás sikeres token-validációját ellenőrizzük;
+3. ellenőrizzük, hogy a validation eredménye a connection állapotában és `last_validated_at` mezőben helyesen tükröződik;
+4. csak bizonyíték alapján jelölhető PASS-ra.
+
+**Fontos:** a jelenlegi `/api/integrations/twitch/connection` válasz önmagában a B.7 connection status kaput bizonyítja; a B.8 token validation lifecycle PASS-hoz külön, célzott bizonyíték szükséges.
 
 **Builder/Inspector kódolás továbbra is blokkolt.**
