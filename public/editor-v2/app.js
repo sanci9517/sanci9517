@@ -22,7 +22,41 @@ const groups=[
  ['Sanci9517',[['Élő állapot',NODE_TYPES.LIVE],['Countdown',NODE_TYPES.COUNTDOWN],['Adásrend',NODE_TYPES.SCHEDULE],['Stream számláló',NODE_TYPES.STREAM_COUNT],['Követők',NODE_TYPES.FOLLOWERS],['Feliratkozók',NODE_TYPES.SUBS],['VOD',NODE_TYPES.VOD],['Támogatás',NODE_TYPES.SUPPORT],['Közösség',NODE_TYPES.COMMUNITY],['Játékkártya',NODE_TYPES.GAME_CARD],['Játéklista',NODE_TYPES.GAME_LIST],['Komponens',NODE_TYPES.COMPONENT],['Egyedi elem',NODE_TYPES.CUSTOM]]]
 ];
 const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const api=async(url,options={})=>{try{const response=await fetch(url,{credentials:'same-origin',headers:{'Content-Type':'application/json',...(options.headers||{})},...options});const data=await response.json().catch(()=>({}));if(!response.ok){const error=new Error(data?.error?.message||data?.message||`API hiba (${response.status})`);diagnostics.add({source:'api',code:'SANCI-API-E001',message:error.message,context:url,error});throw error}return data}catch(e){if(!(e instanceof Error&&String(e.message).startsWith('API hiba')))diagnostics.add({source:'api',code:'SANCI-API-E002',message:e instanceof Error?e.message:String(e),context:url,error:e});throw e}};
-const page=()=>state&&activePage(state);const setStatus=t=>$('#saveStatus').textContent=t;
+const page=()=>state&&activePage(state);
+async function loadTwitchConnection(){
+  const button=$('#twitchConnection');
+  if(!button)return;
+  button.disabled=true;
+  try{
+    const result=await api('/api/integrations/twitch/connection');
+    const connection=result?.data||result||{};
+    if(connection.connected){
+      const login=connection.broadcaster?.login||'csatorna';
+      button.textContent=`Twitch: ${login} ✓`;
+      button.title='Twitch csatlakoztatva — kattints a leválasztáshoz';
+      button.dataset.connected='true';
+      button.onclick=async()=>{
+        if(!confirm(`Leválasztod a Twitch csatornát: ${login}?`))return;
+        button.disabled=true;
+        try{
+          await api('/api/integrations/twitch/disconnect',{method:'POST',body:'{}'});
+          await loadTwitchConnection();
+        }catch(e){showError(e)}
+      };
+    }else{
+      button.textContent='Twitch: csatlakoztatás';
+      button.title='Twitch csatorna csatlakoztatása';
+      button.dataset.connected='false';
+      button.onclick=()=>{window.location.href='/api/integrations/twitch/connect'};
+    }
+  }catch(e){
+    button.textContent='Twitch: hiba';
+    button.title='A Twitch kapcsolat állapota nem ellenőrizhető';
+    button.dataset.connected='error';
+    button.onclick=()=>loadTwitchConnection();
+  }finally{button.disabled=false}
+}
+const setStatus=t=>$('#saveStatus').textContent=t;
 const canonical=(doc,id)=>Boolean(doc?.type==='sanci-page-document'&&doc?.schemaVersion===1&&doc?.activePageId===id&&doc?.pages?.[id]);
 function verifyCommandResult(type,payload){if(type!=='element.add')return;const current=page();const nodeId=state?.selection?.primaryId;const node=nodeId&&current?getNode(current,nodeId):null;const parentId=payload?.parentId||current?.rootId;const parent=parentId&&current?getNode(current,parentId):null;const exists=Boolean(node&&node.id!==current?.rootId&&node.type===payload?.type&&node.parentId===parent?.id&&parent?.children?.includes(node.id));const canvasNode=nodeId?canvas.querySelector('[data-node-id="'+CSS.escape(nodeId)+'"]'):null;diagnostics.verify(exists,{code:'SANCI-VERIFY-E001',message:'Az elem hozzáadása lefutott, de az új node nem jött létre a várt Page Model helyen.',context:'element.add → Page Model'});diagnostics.verify(Boolean(canvasNode),{code:'SANCI-VERIFY-E002',message:'Az elem létrejött a Page Modelben, de nem jelent meg a Canvason.',context:'element.add → Canvas'});}
 function command(type,payload,{render:shouldRender=true}={}){try{execute(state,{type,payload});if(shouldRender)render();if(shouldRender)verifyCommandResult(type,payload);}catch(e){diagnostics.add({source:'command',code:'SANCI-CMD-E001',message:e instanceof Error?e.message:String(e),context:type,error:e});if(state?.persistence)state.persistence.error=e instanceof Error?e.message:String(e);setStatus('Szerkesztési hiba');alert(state.persistence.error)}}
@@ -109,5 +143,5 @@ document.addEventListener('DOMContentLoaded',()=>{
  });
  document.querySelectorAll('.inspector-tabs button').forEach(b=>b.addEventListener('click',()=>{const names=['design','content','advanced'];inspectorTab=names[[...document.querySelectorAll('.inspector-tabs button')].indexOf(b)]||'design';document.querySelectorAll('.inspector-tabs button').forEach(x=>x.classList.toggle('active',x===b));renderInspector()}));
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&mobileTouch.active){e.preventDefault();cancelMobileMultiSelect();return}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();save(false)}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();if(state){execute(state,{type:e.shiftKey?'history.redo':'history.undo'});render()}}});
- renderPalette();loadPages().then(()=>window.__sanciEditorBoot?.ready()).catch(showError);
+ renderPalette();loadTwitchConnection();loadPages().then(()=>window.__sanciEditorBoot?.ready()).catch(showError);
 });
