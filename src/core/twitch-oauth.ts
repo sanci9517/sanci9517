@@ -317,7 +317,11 @@ export async function refreshTwitchConnection(
   throw new Error("TWITCH_REFRESH_CONCURRENCY_TIMEOUT");
 }
 
-export async function getValidTwitchAccessToken(env: Env, connectionId: string): Promise<string> {
+export async function getValidTwitchAccessToken(
+  env: Env,
+  connectionId: string,
+  options: { forceValidation?: boolean } = {}
+): Promise<string> {
   const { encryptionKey, clientId } = requireConfig(env);
   let row = await readConnection(env, connectionId);
   if (!row || row.status !== "connected") throw new Error("TWITCH_CONNECTION_NOT_FOUND");
@@ -327,7 +331,8 @@ export async function getValidTwitchAccessToken(env: Env, connectionId: string):
   const lastValidatedAt = row.lastValidatedAt ? Date.parse(row.lastValidatedAt) : 0;
   const now = Date.now();
 
-  if (Number.isFinite(expiresAt) && expiresAt > now + 60_000 &&
+  if (!options.forceValidation &&
+      Number.isFinite(expiresAt) && expiresAt > now + 60_000 &&
       Number.isFinite(lastValidatedAt) && now - lastValidatedAt < TWITCH_VALIDATION_TTL_SECONDS * 1000) {
     return accessToken;
   }
