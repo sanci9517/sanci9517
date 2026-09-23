@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.02  
+**Verzió:** MASTER-2.40.03  
 **Dátum:** 2026-09-23  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt PASS:** 2026-09-23 — 40.69.13.B.12 production/observability no-secret/no-token leakage audit PASS; az új production deploy után végrehajtott Twitch OAuth callback Observability eseménye már query string nélkül jelent meg, így az authorization code, state és scope nem került a logolt request URL-be. A korábbi, 20:37-es callback még a régi deploy eseménye volt; a 20:57-es új callback már maszkolt URL-t mutatott.
+**Legutóbbi igazolt PASS:** 2026-09-23 — 40.69.13.B.13 disconnect/reconnect atomicity + state transition audit PASS; a `revocation_pending` failure-safe átmenet, a post-revoke D1 failure elleni védelem és a kapcsolódó CI tesztek sikeresen lezárultak.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -194,7 +194,7 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 ### 🔵 EGYETLEN AKTÍV PONT
 **40.69.13 — Twitch-integrációs alap + Schedule/Adásrend újratervezés audit**
 
-**Státusz:** [~] AKTÍV — a Schedule technikai alapjai (schema, D1 read, Editor preview, publish validation, public renderer) már implementálva vannak, de a végső Adásrend Builder előtt először a Twitch integráció teljes, biztonságos szerződését kell megtervezni és bekötni. A felhasználó PC Editor live tesztje továbbra is későbbi visszatérő tesztkapu.
+**Státusz:** [~] AKTÍV — a Twitch lifecycle/security audit és a disconnect/reconnect atomicity kapu lezárult; a következő egyetlen munkapont a Twitch → Schedule domain szerződés teljes auditja és rögzítése. A Builder/Inspector implementáció továbbra is blokkolt, amíg ez a szerződés nincs lezárva. A felhasználó PC Editor live tesztje továbbra is későbbi visszatérő tesztkapu.
 
 ### Kötelező sorrend — 40.69.13 aktív munkapont
 **Szigorú szabály:** először csak audit és szerződéstervezés történik. OAuth bekötés, Twitch kódolás vagy Schedule Builder UI implementáció csak az audit eredményének MASTER-be rögzítése után indul.
@@ -259,7 +259,7 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 - [x] A `schedule_items` D1 domain megmarad.
 - [x] A Page Model nem másolja bele az eseményrekordokat.
 - [x] A `schedule` node külön canonical Editor v2 blokk.
-- [~] Twitch integrációs contract audit PASS; a B.4–B.12 token lifecycle/security hardening, live reauthorization recovery és production/observability query-string leakage kapuk lezárultak. A disconnect/reconnect atomicity még külön tesztkapu.
+- [x] Twitch integrációs contract audit PASS; a B.4–B.13 token lifecycle/security hardening, live reauthorization recovery, production/observability query-string leakage és disconnect/reconnect atomicity/state-transition kapuk lezárultak.
 - [ ] Játékprofil/sablon adatmodell még nincs véglegesítve.
 - [ ] Inspectorból történő Schedule event CRUD még nincs implementálva.
 - [ ] Schedule Builder végső UX még nincs implementálva.
@@ -3299,7 +3299,30 @@ Ez igazolja, hogy a létrejött Twitch OAuth kapcsolat production környezetben 
 
 **Korlát:** a live Worker/observability logok külön no-secret/no-token auditja még nincs lezárva; ezt nem tekintjük B.11 bizonyítékának.
 
-**Következő egyetlen aktív tesztkapu:** 40.69.13.B.13 — disconnect/reconnect atomicity + state transition audit. Builder/Inspector fejlesztés továbbra is blokkolt.
+**B.13 lezárva:** disconnect/reconnect atomicity + state transition audit PASS.
+
+**B.13 — DISCONNECT/RECONNECT ATOMICITY + STATE TRANSITION AUDIT — 2026-09-23**
+
+**Státusz:** [x] PASS — failure-safe revocation state machine, automatizált regresszió és CI igazolva.
+
+**Cél:** bizonyítani, hogy a Twitch külső revoke művelete és a saját D1 állapotátmenete között fellépő hiba nem hagyhatja a kapcsolatot tévesen `connected` állapotban, és a disconnect/reconnect lifecycle állapotai egyértelműek maradnak.
+
+**Bizonyíték:**
+- [x] A kezdeti teszt reprodukálta a valódi atomicitási rést: sikeres Twitch revoke után D1 update hiba esetén a korábbi logika tévesen `connected` állapotot hagyhatott volna.
+- [x] A production javítás a külső revoke előtt `revocation_pending` állapotot ír D1-be.
+- [x] Ha a `revocation_pending` előkészítő D1 update hibázik, a külső Twitch revoke nem indul el.
+- [x] Sikeres Twitch revoke után a végső D1 átmenet csak `revocation_pending` → `revoked` irányban történhet.
+- [x] Post-revoke D1 hiba esetén a kapcsolat nem térhet vissza tévesen `connected` állapotba; a failure-safe `revocation_pending` állapot marad a recovery alapja.
+- [x] A célzott B.13 teszt erre a tulajdonságra lett módosítva: a post-revoke D1 failure soha nem hagyhatja a connectiont hamisan connected állapotban.
+- [x] GitHub CI: a B.13 javítás és teszt sikeresen lefutott; a kapcsolódó Editor Core / Twitch Integration ellenőrzések PASS.
+- [x] A korábbi B.4–B.12 lifecycle, recovery, security és observability kapuk regresszió nélkül lezártak.
+- [x] B.13 lezárható PASS; Builder/Inspector fejlesztés a következő domain-contract kapuig továbbra is blokkolt.
+
+**Módosító commitok:**
+- `cd9f4cef54f496a3a5f6be26f9ac6d66aea6f82d` — production failure-safe `revocation_pending` state transition
+- `aec520be0da3623e8953487d57a518099fc3b8f4` — B.13 post-revoke D1 failure regression test
+
+**Következő egyetlen aktív tesztkapu:** 40.69.13.C.1 — Twitch → Schedule domain contract teljes audit és canonical mapping rögzítése. Builder/Inspector fejlesztés továbbra is blokkolt.
 
 
 **B.12 — PRODUCTION/OBSERVABILITY NO-SECRET/NO-TOKEN LEAKAGE AUDIT — 2026-09-23**
