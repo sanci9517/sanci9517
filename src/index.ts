@@ -10,7 +10,7 @@ import { adminPagesRoute } from "./routes/admin/pages";
 import { adminEditorRoute } from "./routes/admin/editor";
 import { publicSiteSettingsRoute } from "./routes/public/site-settings";
 import { publicScheduleRoute } from "./routes/public/schedule";
-import { twitchConnectRoute, twitchCallbackRoute, twitchConnectionRoute, twitchDisconnectRoute } from "./routes/integrations/twitch";
+import { twitchConfigDiagnosticRoute, twitchConnectRoute, twitchCallbackRoute, twitchConnectionRoute, twitchDisconnectRoute } from "./routes/integrations/twitch";
 import { publicPagesRoute } from "./routes/public/pages";
 import { getAuthenticatedUser } from "./core/auth/require-auth";
 import type { Env } from "./types/env";
@@ -42,6 +42,7 @@ export default {
     if (pathname === "/api/admin/editor") return adminEditorRoute(request, env);
     if (pathname === "/api/public/site-settings") return publicSiteSettingsRoute(env);
     if (pathname === "/api/public/schedule") return publicScheduleRoute(request, env);
+    if (pathname === "/api/integrations/twitch/diagnostic") return twitchConfigDiagnosticRoute(request, env);
     if (pathname === "/api/integrations/twitch/connect") return twitchConnectRoute(request, env);
     if (pathname === "/api/integrations/twitch/callback") return twitchCallbackRoute(request, env);
     if (pathname === "/api/integrations/twitch/connection") return twitchConnectionRoute(request, env);
