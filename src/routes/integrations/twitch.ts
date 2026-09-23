@@ -10,6 +10,17 @@ function redirect(request: Request, status: string): Response {
   return Response.redirect(url.toString(), 303);
 }
 
+export async function twitchConfigDiagnosticRoute(request: Request, env: Env): Promise<Response> {
+  if (request.method !== "GET") return error("METHOD_NOT_ALLOWED", 405);
+  const auth = await requireAuthenticatedUser(request, env);
+  if (auth instanceof Response) return auth;
+  return ok({
+    TWITCH_CLIENT_ID: Boolean(env.TWITCH_CLIENT_ID),
+    TWITCH_CLIENT_SECRET: Boolean(env.TWITCH_CLIENT_SECRET),
+    TWITCH_TOKEN_ENCRYPTION_KEY: Boolean(env.TWITCH_TOKEN_ENCRYPTION_KEY)
+  });
+}
+
 export async function twitchConnectRoute(request: Request, env: Env): Promise<Response> {
   if (request.method !== "GET") return error("METHOD_NOT_ALLOWED", 405);
   const user = await getAuthenticatedUser(request, env);
