@@ -1,7 +1,13 @@
 import { error, ok } from "../../core/response";
 import { getAuthenticatedUser, requireAuthenticatedUser } from "../../core/auth/require-auth";
 import { auditStatement } from "../../core/audit";
-import { createTwitchAuthorizationUrl, exchangeTwitchCode, getTwitchConnection, revokeTwitchConnection } from "../../core/twitch-oauth";
+import {
+  createTwitchAuthorizationUrl,
+  exchangeTwitchCode,
+  getTwitchConnection,
+  getValidTwitchAccessToken,
+  revokeTwitchConnection
+} from "../../core/twitch-oauth";
 import type { Env } from "../../types/env";
 
 function redirect(request: Request, status: string): Response {
@@ -85,6 +91,45 @@ export async function twitchConnectionRoute(request: Request, env: Env): Promise
     accessTokenExpiresAt: connection.accessTokenExpiresAt,
     lastValidatedAt: connection.lastValidatedAt
   });
+}
+
+export async function twitchValidationRoute(request: Request, env: Env): Promise<Response> {
+  if (request.method !== "GET") return error("METHOD_NOT_ALLOWED", 405);
+  const auth = await requireAuthenticatedUser(request, env);
+  if (auth instanceof Response) return auth;
+
+  const connection = await getTwitchConnection(env, auth.id);
+  if (!connection) return error("TWITCH_CONNECTION_NOT_FOUND", 404);
+
+  try {
+    await getValidTwitchAccessToken(env, connection.id, { forceValidation: true });
+    const refreshed = await getTwitchConnection(env, auth.id);
+    if (!refreshed) return error("TWITCH_CONNECTION_NOT_FOUND", 404);
+
+    return ok({
+      valid: true,
+      status: refreshed.status,
+      broadcaster: { id: refreshed.broadcasterId, login: refreshed.broadcasterLogin },
+      accessTokenExpiresAt: refreshed.accessTokenExpiresAt,
+      lastValidatedAt: refreshed.lastValidatedAt
+    });
+  } catch (err) {
+    if (!(err instanceof Error)) return error("TWITCH_TOKEN_VALIDATION_FAILED", 502);
+    switch (err.message) {
+      case "TWITCH_CONNECTION_NOT_FOUND":
+        return error("TWITCH_CONNECTION_NOT_FOUND", 404);
+      case "TWITCH_ACCESS_TOKEN_INVALID":
+        return error("TWITCH_ACCESS_TOKEN_INVALID", 401);
+      case "TWITCH_REFRESH_FAILED":
+        return error("TWITCH_REAUTHORIZATION_REQUIRED", 401);
+      case "TWITCH_TOKEN_IDENTITY_MISMATCH":
+        return error("TWITCH_TOKEN_IDENTITY_MISMATCH", 502);
+      case "TWITCH_INTEGRATION_NOT_CONFIGURED":
+        return error("TWITCH_INTEGRATION_NOT_CONFIGURED", 503);
+      default:
+        return error("TWITCH_TOKEN_VALIDATION_FAILED", 502);
+    }
+  }
 }
 
 export async function twitchDisconnectRoute(request: Request, env: Env): Promise<Response> {
