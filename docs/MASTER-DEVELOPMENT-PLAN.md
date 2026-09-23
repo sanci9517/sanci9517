@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.88  
+**Verzió:** MASTER-2.39.89  
 **Dátum:** 2026-09-23  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -3096,7 +3096,7 @@ Kötelezően megőrzendő külső adatok:
 - [x] Kapcsolat esetén a broadcaster login látható, és ugyanaz a vezérlő indítja a disconnect műveletet.
 - [x] Disconnect továbbra is a meglévő POST `/api/integrations/twitch/disconnect` route-on történik; token nem kerül kliensoldalra.
 - [x] Nincs második Twitch OAuth flow vagy külön connection state rendszer bevezetve.
-- [ ] GitHub CI PASS az új UI commiton.
+- [x] GitHub CI PASS az új UI commiton — Editor Core Test #634 és Twitch Integration Check #10 sikeres.
 - [ ] Production Worker deploy az új UI commitokkal.
 - [ ] Élő Editor teszt: Twitch gomb → Twitch engedélyezési oldal → callback → connected állapot.
 
