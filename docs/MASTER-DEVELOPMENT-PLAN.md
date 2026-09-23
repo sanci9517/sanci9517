@@ -1,7 +1,7 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.86  
-**Dátum:** 2026-09-22  
+**Verzió:** MASTER-2.39.87  
+**Dátum:** 2026-09-23  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
@@ -2916,7 +2916,7 @@ Kötelezően megőrzendő külső adatok:
 
 **Következő egyetlen pont:** 40.69.13.B — Twitch account/channel connection + token lifecycle + security.
 
-**EGYETLEN AKTÍV VÉGREHAJTÁSI PONT:** **40.69.13.B — Twitch account/channel connection + token lifecycle + security.**
+**EGYETLEN AKTÍV VÉGREHAJTÁSI PONT:** **40.69.13.B — Twitch account/channel connection + token lifecycle + security — B.4d UI bekötés blokkoló pont.**
 
 
 ### 40.69.13.B — TWITCH ACCOUNT/CHANNEL CONNECTION + TOKEN LIFECYCLE — 2026-09-22
@@ -3066,6 +3066,23 @@ Kötelezően megőrzendő külső adatok:
 **Státusz:** `[x]`.
 
 **Következő egyetlen aktív tesztkapu:** live Twitch OAuth connect → connection status → token validation.
+
+#### B.4d — Live OAuth connect UI audit — 2026-09-23
+
+**Státusz:** [!] BLOKKOLVA — a live OAuth teszt nem indítható az Editor v2 jelenlegi UI-jából, mert a canonical Twitch connect route ugyan létezik backend oldalon, de nincs hozzá bekötött frontend „Twitch csatlakoztatása” indítófelület.
+
+**Audit eredmény:**
+- [x] `src/routes/integrations/twitch.ts` tartalmazza a canonical connect route-ot.
+- [x] `src/index.ts` regisztrálja a `/api/integrations/twitch/connect` útvonalat.
+- [x] Az Editor v2 `public/editor-v2/app.js` jelenlegi UI-kódjában nincs Twitch OAuth connect gomb vagy a `/api/integrations/twitch/connect` route-ra mutató indítás.
+- [x] Emiatt a felhasználó nem találhatta meg a csatlakoztatási funkciót; ez UI-integrációs hiány, nem felhasználói kezelési hiba.
+- [ ] Canonical admin/editor Twitch connection UI létrehozása és a meglévő backend connect route-ra kötése.
+- [ ] UI state: nincs kapcsolat / kapcsolódás / kapcsolódva / hiba.
+- [ ] Ezután live OAuth connect teszt.
+
+**Architekturális döntés:** nem hozunk létre külön második Twitch OAuth flow-t. A frontend kizárólag a meglévő canonical `/api/integrations/twitch/connect` route-ot indíthatja; tokenkezelés továbbra is server-side marad.
+
+**Egyetlen következő aktív pont:** a Twitch connection UI teljes érintett kód- és adatfolyam-auditja, majd minimális canonical UI-bekötés. Builder/Inspector fejlesztés továbbra is blokkolt.
 
 #### B.5 Módosító commitok
 - `974221e93d896b6b861212b2501dd4608cbdee38` — `fix: add Twitch refresh concurrency lease`
