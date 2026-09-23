@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.87  
+**Verzió:** MASTER-2.39.88  
 **Dátum:** 2026-09-23  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -3083,6 +3083,28 @@ Kötelezően megőrzendő külső adatok:
 **Architekturális döntés:** nem hozunk létre külön második Twitch OAuth flow-t. A frontend kizárólag a meglévő canonical `/api/integrations/twitch/connect` route-ot indíthatja; tokenkezelés továbbra is server-side marad.
 
 **Egyetlen következő aktív pont:** a Twitch connection UI teljes érintett kód- és adatfolyam-auditja, majd minimális canonical UI-bekötés. Builder/Inspector fejlesztés továbbra is blokkolt.
+
+#### B.4e — Canonical Twitch connection UI bekötés — 2026-09-23
+
+**Státusz:** [~] IMPLEMENTÁLVA, AUTOMATIZÁLT/ÉLŐ ELLENŐRZÉS PENDING.
+
+**Audit + implementáció:**
+- [x] A meglévő `/api/integrations/twitch/connect` route maradt az egyetlen OAuth indító útvonal.
+- [x] Az Editor v2 topbar kapott egyetlen canonical Twitch connection vezérlőt.
+- [x] A UI induláskor a `/api/integrations/twitch/connection` státusz endpointot hívja.
+- [x] Kapcsolat nélkül a vezérlő a canonical OAuth connect route-ra navigál.
+- [x] Kapcsolat esetén a broadcaster login látható, és ugyanaz a vezérlő indítja a disconnect műveletet.
+- [x] Disconnect továbbra is a meglévő POST `/api/integrations/twitch/disconnect` route-on történik; token nem kerül kliensoldalra.
+- [x] Nincs második Twitch OAuth flow vagy külön connection state rendszer bevezetve.
+- [ ] GitHub CI PASS az új UI commiton.
+- [ ] Production Worker deploy az új UI commitokkal.
+- [ ] Élő Editor teszt: Twitch gomb → Twitch engedélyezési oldal → callback → connected állapot.
+
+**Módosító commitok:**
+- `13300a7896e1cf1f3c3e0cf2dd48ba229d591f05` — Editor v2 Twitch connection UI
+- `9eea32f28126d0de0846769c34a5955b8e56acf8` — canonical Twitch connection lifecycle wiring
+
+**Egyetlen következő aktív lépés:** az új UI commit CI eredményének megvárása és ellenőrzése. Sikertelen CI esetén nem deployolunk.
 
 #### B.5 Módosító commitok
 - `974221e93d896b6b861212b2501dd4608cbdee38` — `fix: add Twitch refresh concurrency lease`
