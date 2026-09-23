@@ -139,7 +139,11 @@ async function validateAccessToken(env: Env, accessToken: string): Promise<Valid
     typeof validation.expires_in !== "number" ||
     !Number.isFinite(validation.expires_in)
   ) {
-    throw new Error("TWITCH_TOKEN_VALIDATION_INVALID");
+    const shape = Object.entries(validation as Record<string, unknown>)
+      .map(([key, value]) => `${key}:${Array.isArray(value) ? "array" : value === null ? "null" : typeof value}`)
+      .sort()
+      .join(",");
+    throw new Error(`TWITCH_TOKEN_VALIDATION_INVALID_SHAPE_${shape || "empty"}`);
   }
   return validation;
 }
