@@ -28,7 +28,7 @@ function requireExpiresIn(value: unknown, errorCode: string): number {
 
 type ValidateResponse = {
   client_id: string;
-  scopes: string[];
+  scopes: string[] | null;
   expires_in: number;
   login: string;
   user_id: string;
@@ -135,15 +135,11 @@ async function validateAccessToken(env: Env, accessToken: string): Promise<Valid
     typeof validation.client_id !== "string" ||
     typeof validation.user_id !== "string" ||
     typeof validation.login !== "string" ||
-    !Array.isArray(validation.scopes) ||
+    (validation.scopes !== null && !Array.isArray(validation.scopes)) ||
     typeof validation.expires_in !== "number" ||
     !Number.isFinite(validation.expires_in)
   ) {
-    const shape = Object.entries(validation as Record<string, unknown>)
-      .map(([key, value]) => `${key}:${Array.isArray(value) ? "array" : value === null ? "null" : typeof value}`)
-      .sort()
-      .join(",");
-    throw new Error(`TWITCH_TOKEN_VALIDATION_INVALID_SHAPE_${shape || "empty"}`);
+    throw new Error("TWITCH_TOKEN_VALIDATION_INVALID");
   }
   return validation;
 }
