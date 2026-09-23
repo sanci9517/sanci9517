@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.96  
+**Verzió:** MASTER-2.39.97  
 **Dátum:** 2026-09-23  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt PASS:** 2026-09-23 — 40.69.13.B live Twitch OAuth connection + live connection status PASS; production `/api/integrations/twitch/connection` válasza `connected:true`, `status:"connected"`, broadcaster `sanci9517`, kitöltött `accessTokenExpiresAt` és `lastValidatedAt` értékeket adott vissza. A B.8 célzott canonical validation test endpoint implementációja elkészült, és a felhasználó CI PASS-ként visszaigazolta. A live token-validation bizonyítás még hátra van.
+**Legutóbbi igazolt PASS:** 2026-09-23 — 40.69.13.B.8 live Twitch token validation lifecycle PASS; production authenticated `GET /api/integrations/twitch/validation` válasza `ok:true`, `valid:true`, `status:"connected"`, broadcaster `sanci9517`, kitöltött `accessTokenExpiresAt` és friss `lastValidatedAt` értékeket adott vissza. Ez bizonyítja, hogy a canonical `getValidTwitchAccessToken()` validation útvonal production környezetben ténylegesen lefutott.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -3174,34 +3174,32 @@ Ez igazolja, hogy a létrejött Twitch OAuth kapcsolat production környezetben 
 
 #### B.8 — Live Twitch token validation lifecycle — 2026-09-23
 
-**Státusz:** [~] CANONICAL TESZTÚTVONAL IMPLEMENTÁLVA + CI PASS — LIVE VALIDATION TESZT PENDING.
+**Státusz:** [x] PASS — PRODUCTION LIVE VALIDATION BIZONYÍTVA.
 
 **Cél:** bizonyítani, hogy a canonical `getValidTwitchAccessToken()` lifecycle nem csak a D1-ben tárolt connection státuszt olvassa, hanem a token érvényességét megfelelően validálja, és szükség esetén a refresh/revalidation útvonalat használja.
 
-**Audit eredmény:**
+**Audit + live bizonyíték:**
 - [x] `getValidTwitchAccessToken()` canonical service boundary létezik a `src/core/twitch-oauth.ts` fájlban.
 - [x] A token validáció → identity ellenőrzés → `updateValidation()` lánc implementálva van.
 - [x] 401 esetén a canonical refresh → újra-validálás → identity ellenőrzés lánc implementálva van.
-- [x] A production `/api/integrations/twitch/connection` route csak a D1 connection státuszt olvassa; önmagában nem hívja a `getValidTwitchAccessToken()` lifecycle-t.
-- [x] Az `src/index.ts` jelenleg nem regisztrál olyan Twitch API route-ot, amely a canonical valid-token service-t használná.
-- [x] Ezért a B.8 live PASS jelenleg nem bizonyítható pusztán a connection endpointtal.
-- [x] Célzott, authenticated, token-visszaadás nélküli canonical Twitch API/test endpoint implementálva: `GET /api/integrations/twitch/validation`.
+- [x] Célzott, authenticated, token-visszaadás nélküli canonical endpoint: `GET /api/integrations/twitch/validation`.
 - [x] Az endpoint kizárólag a `getValidTwitchAccessToken()` canonical service boundaryt használja, `forceValidation:true` móddal.
 - [x] A token nem kerül route response-ba.
-- [x] `getValidTwitchAccessToken()` kapott explicit `forceValidation` opciót, így a live teszt nem függ a lokális validation TTL-től.
-- [x] GitHub CI PASS a módosításokra; a felhasználó ezt külön visszaigazolta.
-- [ ] Production deploy + authenticated live `/api/integrations/twitch/validation` teszt.
-- [ ] A validation eredmény és `last_validated_at` live bizonyítása.
+- [x] `getValidTwitchAccessToken()` explicit `forceValidation` opcióval rendelkezik, így a live teszt nem függ a lokális validation TTL-től.
+- [x] GitHub CI PASS.
+- [x] Production deploy PASS; Worker version: `f263ecee-9d2e-4af0-9c19-1e30f0afb812`.
+- [x] Authenticated production live validation endpoint PASS.
+- [x] Live válasz: `ok:true`, `valid:true`, `status:"connected"`, broadcaster `sanci9517`.
+- [x] Live válaszban az `accessTokenExpiresAt` és `lastValidatedAt` mezők kitöltve érkeztek.
+- [x] A live `lastValidatedAt` érték `2026-09-23 17:56:26`, ami igazolja a validation lifecycle futását és a canonical connection állapot frissítését.
+- [x] A route nem ad vissza access/refresh tokent.
 
 **Teszt sorrend:**
-1. [x] a célzott endpoint a canonical `getValidTwitchAccessToken()` service boundaryn keresztül fusson;
+1. [x] a célzott endpoint a canonical `getValidTwitchAccessToken()` service boundaryn keresztül fut;
 2. [x] CI/typecheck PASS;
-3. [ ] production deploy után a célzott endpoint live hívása;
-4. [ ] ellenőrizzük, hogy a validation eredménye a connection állapotában és `last_validated_at` mezőben helyesen tükröződik;
-5. [ ] csak live bizonyíték alapján jelölhető B.8 PASS-ra.
+3. [x] production deploy PASS;
+4. [x] authenticated live `GET /api/integrations/twitch/validation` PASS;
+5. [x] validation eredmény + `lastValidatedAt` live bizonyítva;
+6. [x] B.8 lezárva PASS.
 
-**Fontos:** a jelenlegi `/api/integrations/twitch/connection` válasz önmagában a B.7 connection status kaput bizonyítja; a B.8 token validation lifecycle PASS-hoz külön, célzott bizonyíték szükséges.
-
-**Builder/Inspector kódolás továbbra is blokkolt.**
-
-**Egyetlen aktuális folytatási pont:** production deploy → authenticated `GET /api/integrations/twitch/validation` live teszt → `lastValidatedAt` változás/érvényesség ellenőrzése. B.8 csak ezután zárható PASS-ra.
+**Következő egyetlen tesztkapu:** **B.9 — controlled refresh concurrency teszt**.
