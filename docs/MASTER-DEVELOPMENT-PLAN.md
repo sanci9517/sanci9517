@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.99  
+**Verzió:** MASTER-2.40.00  
 **Dátum:** 2026-09-23  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt PASS:** 2026-09-23 — 40.69.13.B.10 invalid/revoked token → reauthorization recovery célzott automated test PASS; a forced validation 401 után pontosan egy refresh kérés indult, a sikertelen refresh `reauthorization_required` D1 állapotot eredményezett, a belső hiba `TWITCH_REFRESH_FAILED` maradt, és a teszt igazolta, hogy access token, refresh token és client secret nem szivárgott a hibában.
+**Legutóbbi igazolt PASS:** 2026-09-23 — 40.69.13.B.10.a route-level reauthorization mapping + no-token response verification PASS; a valódi twitchValidationRoute() → requireAuthenticatedUser() → canonical token lifecycle útvonal hiteles sessionnel futott, a validation 401 + refresh 400 után HTTP 401 TWITCH_REAUTHORIZATION_REQUIRED választ adott, tokenek/client secret nélkül.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -3250,4 +3250,31 @@ Ez igazolja, hogy a létrejött Twitch OAuth kapcsolat production környezetben 
 
 **Korlát:** ez a teszt a service-layer recovery + leakage tulajdonságokat bizonyítja. A route-szintű `TWITCH_REAUTHORIZATION_REQUIRED` HTTP 401 mapping és a production/live revoked-token recovery külön kapu marad.
 
-**Következő egyetlen aktív tesztkapu:** 40.69.13.B.10.a — route-szintű reauthorization mapping + no-token response verification. Builder/Inspector fejlesztés továbbra is blokkolt.
+**Következő egyetlen aktív tesztkapu:** 40.69.13.B.11 — production/live revoked-token recovery + no-secret/no-token leakage ellenőrzés. Builder/Inspector fejlesztés továbbra is blokkolt.
+
+
+**B.10.a — ROUTE-LEVEL REAUTHORIZATION MAPPING + NO-TOKEN RESPONSE VERIFICATION — 2026-09-23**
+
+**Státusz:** [x] PASS — célzott route-level automatizált teszt sikeres.
+
+**Cél:** bizonyítani, hogy a valódi twitchValidationRoute() a valódi authentication és response contracton keresztül egy invalid access token → sikertelen refresh helyzetet biztonságosan HTTP 401 + TWITCH_REAUTHORIZATION_REQUIRED válaszra képez, tokenek vagy client secret nélkül.
+
+**Tesztbizonyíték:**
+- [x] A valódi twitchValidationRoute() került meghívásra; nem készült külön route-mock.
+- [x] A valódi requireAuthenticatedUser() futott le a sanci9517_session cookie-val és a valódi SHA-256 session-token hash útvonalon.
+- [x] A meglévő D1 fake ugyanazt a canonical auth + Twitch connection lekérdezési utat kezelte; nem készült második auth/D1 fake rendszer.
+- [x] A Twitch validation fake endpoint 401 választ adott.
+- [x] A refresh fake endpoint 400 invalid_grant választ adott.
+- [x] A route HTTP státusza pontosan 401 lett.
+- [x] A route body pontosan TWITCH_REAUTHORIZATION_REQUIRED hibakódot adott.
+- [x] A válasz body nem tartalmazta az access tokent, refresh tokent vagy client secretet.
+- [x] A teszt pontosan két Twitch HTTP hívást igazolt: validation → refresh.
+- [x] A D1 connection státusza reauthorization_required lett.
+- [x] A refresh lock a hibás refresh után is felszabadult.
+- [x] Futtatás: Node v24.21.0, node --loader ./tests/ts-extension-loader.mjs --test ./tests/twitch-oauth.test.js.
+- [x] Eredmény: 3 test, 3 pass, 0 fail.
+- [x] A korábbi B.10 két service-layer tesztje regresszió nélkül továbbra is PASS.
+
+**Korlát:** ez a kapu a route mappinget és a válasz-leakage védelmet bizonyítja. Nem bizonyít production/live revoked-token recoveryt; ez külön B.11 kapu.
+
+**Következő egyetlen aktív tesztkapu:** 40.69.13.B.11 — production/live revoked-token recovery + no-secret/no-token leakage. Builder/Inspector fejlesztés továbbra is blokkolt.
