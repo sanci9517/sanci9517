@@ -367,15 +367,21 @@ export async function revokeTwitchConnection(env: Env, connectionId: string): Pr
   ).bind(connectionId).first<{ ciphertext: string; iv: string }>();
   if (!row) throw new Error("TWITCH_CONNECTION_NOT_FOUND");
 
+  await env.DB.prepare(
+    "UPDATE twitch_connections SET status='revocation_pending',updated_at=CURRENT_TIMESTAMP WHERE id=? AND status='connected'"
+  ).bind(connectionId).run();
+
   const token = await decryptTwitchToken(encryptionKey, row.ciphertext, row.iv);
   const response = await fetch(REVOKE_URL, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({ client_id: clientId, token })
   });
-  if (!response.ok && response.status !== 400) throw new Error("TWITCH_REVOKE_FAILED");
+  if (!response.ok && response.status !== 400) {
+    throw new Error("TWITCH_REVOKE_FAILED");
+  }
 
   await env.DB.prepare(
-    "UPDATE twitch_connections SET status='revoked',refresh_lock_token=NULL,refresh_lock_until=NULL,updated_at=CURRENT_TIMESTAMP WHERE id=?"
+    "UPDATE twitch_connections SET status='revoked',refresh_lock_token=NULL,refresh_lock_until=NULL,updated_at=CURRENT_TIMESTAMP WHERE id=? AND status='revocation_pending'"
   ).bind(connectionId).run();
 }
