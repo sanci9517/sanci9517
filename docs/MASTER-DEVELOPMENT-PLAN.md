@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.92  
+**Verzió:** MASTER-2.39.93  
 **Dátum:** 2026-09-23  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt PASS:** 2026-09-23 — 40.69.13.B Twitch OAuth callback diagnosztikai módosítás CI PASS; Cloudflare Worker version `75168241-a5ab-4124-bc80-22b2971ca44b` sikeresen deployolva, az új UI production Workerre került. A live Twitch OAuth/connection lifecycle teszt még hátra van; a Twitch Integration Check és Editor Core Test sikeresen lefutott az `a2bdcea2de44c3f3fd66cebe6533966e2eeb5909` commiton, a remote D1 sémában a refresh lock oszlopok és index igazoltan jelen vannak, a Worker sikeresen deployolva lett, és a production secret létrehozása sikeresen megtörtént. A production redirect URI és a live Twitch lifecycle tesztek még hátra vannak.
+**Legutóbbi igazolt PASS:** 2026-09-23 — 40.69.13.B live Twitch OAuth connection PASS; a javított 9e024d6a3c143d4ededaa4d4d6fea23aa3a90d8d commit production deployja sikeres, Cloudflare Worker version 36172775-b47a-4036-94b9-522095683e92, és a live callback ?twitch=connected eredménnyel zárult. A production Twitch OAuth kapcsolat létrejött; a további connection status / token validation / refresh / reauthorization / security lifecycle tesztkapuk még hátra vannak.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -3123,33 +3123,38 @@ Kötelezően megőrzendő külső adatok:
 
 **Következő egyetlen aktív lépés:** a runtime secret újra-put után az authenticated diagnostic endpoint mindhárom secretet `true` értékkel adta vissza; a secret/runtime blokk lezárva. A live OAuth indítás ezt követően `editor?twitch=error` állapotba tért vissza. A `/api/integrations/twitch/connect` kézi fetch redirect-manual teszt `status:0, location:null, body:''` eredményt adott, ami böngészős opaque redirectként értelmezhető.
 
-#### B.4g — OAuth callback hiba diagnosztika — 2026-09-23
+#### B.4g — OAuth callback hiba diagnosztika + live OAuth connection — 2026-09-23
 
-**Státusz:** [~] CI PASS; production deploy és live callback teszt PENDING.
+**Státusz:** [x] PASS.
 
-**Megállapítás:**
+**Megállapítás és bizonyíték:**
 - [x] A production runtime secret diagnosztika mindhárom szükséges secretet jelenlévőnek mutatta.
-- [x] A `/api/integrations/twitch/connection` authenticated endpoint továbbra is helyesen `connected:false` választ ad.
-- [x] A live OAuth indítás után a felhasználó ismét `editor?twitch=error` állapotba került.
-- [x] A jelenlegi callback catch ág korábban minden nem-state hibát általános `error` státuszra egyszerűsített, ezért a valódi gyökérok nem volt látható.
-- [x] Ideiglenes, titokmentes diagnosztikai módosítás készült: a callback csak a belső stabil hibakódot teszi az editor redirect query paraméterébe `code` néven; access/refresh token vagy secret nem kerül ki.
-- [x] Módosító commit: `338fc8e8a2d2562278fa06fb7ed9e52507fe02ab`.
-- [x] A felhasználó a commit CI kapuját PASS-ként visszaigazolta.
-- [ ] Production deploy.
-- [ ] Egyetlen live OAuth próba az új hibakód visszanyerésére.
-- [ ] A diagnosztikai query paraméter production után eltávolítandó, és csak a végleges hibakezelés maradhat.
+- [x] A Twitch validation során feltárt `scopes:null` válaszformátum gyökérokát azonosítottuk és javítottuk.
+- [x] A javító commit: `9e024d6a3c143d4ededaa4d4d6fea23aa3a90d8d` — `fix: normalize Twitch validation scopes`.
+- [x] A helyi Git clone frissítve lett erre a commitra.
+- [x] Production deploy sikeres: Cloudflare Worker version `36172775-b47a-4036-94b9-522095683e92`.
+- [x] Live Twitch OAuth teszt sikeres: a callback az editorba `?twitch=connected` állapottal tért vissza.
+- [x] Ez igazolja, hogy a Twitch authorization → callback → authorization-code exchange → token validation → encrypted connection persistence lánc élő production környezetben végigfutott.
+- [x] A Twitch access/refresh token továbbra sem kerül kliensválaszba vagy Page Modelbe.
 
-**Következő egyetlen aktív lépés:** a `338fc8e8a2d2562278fa06fb7ed9e52507fe02ab` production deployja.
+**Korábbi diagnosztikai módosítás:**
+- [x] A `338fc8e8a2d2562278fa06fb7ed9e52507fe02ab` callback diagnosztikai commit segítségével feltártuk a validation shape hibát.
+- [x] A végleges javítás után a diagnosztikai `code` query használata már nem szükséges; a végleges takarítás külön lépés.
+
+**Következő egyetlen aktív tesztkapu:** `/api/integrations/twitch/connection` élő connection status ellenőrzése, majd csak annak PASS-a után token validation lifecycle teszt.
 #### B.5 Módosító commitok
 - `974221e93d896b6b861212b2501dd4608cbdee38` — `fix: add Twitch refresh concurrency lease`
 - `7ae8af57ce5b86b92e915de838b40b6b8b4a79ae` — `fix: harden Twitch token lifecycle and refresh concurrency`
+- `9e024d6a3c143d4ededaa4d4d6fea23aa3a90d8d` — `fix: normalize Twitch validation scopes`
 
 Korábbi kapcsolódó B commitok a történeti auditban maradnak.
 
 #### B.6 Külső szerződés
-A Twitch dokumentáció szerint third-party app esetén az OAuth access tokent induláskor és óránként validálni kell; érvénytelen tokennél a Twitch 401-et ad, a refresh token pedig rotálódhat, ezért a refresh lifecycle-nek ezt kezelnie kell. A párhuzamos refresh kockázatát a Twitch külön dokumentálja. 
+A Twitch dokumentáció szerint third-party app esetén az OAuth access tokent induláskor és óránként validálni kell; érvénytelen tokennél a Twitch 401-et ad, a refresh token pedig rotálódhat, ezért a refresh lifecycle-nek ezt kezelnie kell. A párhuzamos refresh kockázatát a Twitch külön dokumentálja.
 
 #### B.7 Következő és egyetlen aktív lépés
-**40.69.13.B folytatás — a `338fc8e8a2d2562278fa06fb7ed9e52507fe02ab` production deployja, majd egyetlen live OAuth callback diagnosztikai teszt.**
+**40.69.13.B folytatás — élő `/api/integrations/twitch/connection` connection status ellenőrzés.**
+
+A live OAuth connection létrejött, ezért most a létrejött kapcsolatot az authenticated connection endpointen igazoljuk. Ezután következhet a token validation lifecycle teszt.
 
 **Builder/Inspector kódolás továbbra is blokkolt.**
