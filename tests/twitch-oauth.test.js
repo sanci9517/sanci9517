@@ -201,3 +201,52 @@ test('Twitch refresh uses one D1 lock for two concurrent refresh calls', async (
     globalThis.fetch = originalFetch;
   }
 });
+
+test('Twitch invalid access token requires reauthorization after refresh failure', async () => {
+  const initialAccess = await encryptTwitchToken(ENCRYPTION_KEY, INITIAL_ACCESS_TOKEN);
+  const initialRefresh = await encryptTwitchToken(ENCRYPTION_KEY, INITIAL_REFRESH_TOKEN);
+  const db = createD1Fake({
+    id: CONNECTION_ID, userId: 'user-test', broadcasterId: '1144260301', broadcasterLogin: 'sanci9517',
+    accessCiphertext: initialAccess.ciphertext, accessIv: initialAccess.iv,
+    refreshCiphertext: initialRefresh.ciphertext, refreshIv: initialRefresh.iv,
+    scopesJson: '[]', accessTokenExpiresAt: new Date(Date.now() + 3600_000).toISOString(),
+    status: 'connected', lastValidatedAt: null, refreshLockToken: null, refreshLockUntil: null
+  });
+  const env = {
+    DB: db, TWITCH_CLIENT_ID: CLIENT_ID, TWITCH_CLIENT_SECRET: CLIENT_SECRET,
+    TWITCH_TOKEN_ENCRYPTION_KEY: ENCRYPTION_KEY
+  };
+  const originalFetch = globalThis.fetch;
+  const requests = [];
+  globalThis.fetch = async (input, init) => {
+    const url = String(input);
+    requests.push({ url, init });
+    if (url === 'https://id.twitch.tv/oauth2/validate') return jsonResponse({ error: 'Unauthorized' }, 401);
+    if (url === 'https://id.twitch.tv/oauth2/token') return jsonResponse({ error: 'invalid_grant' }, 400);
+    throw new Error('Unexpected fetch URL: ' + url);
+  };
+  try {
+    await assert.rejects(
+      () => import('../src/core/twitch-oauth.ts').then(({ getValidTwitchAccessToken }) =>
+        getValidTwitchAccessToken(env, CONNECTION_ID, { forceValidation: true })
+      ),
+      (err) => {
+        assert.ok(err instanceof Error);
+        assert.equal(err.message, 'TWITCH_REFRESH_FAILED');
+        const message = String(err.message);
+        assert.equal(message.includes(INITIAL_ACCESS_TOKEN), false);
+        assert.equal(message.includes(INITIAL_REFRESH_TOKEN), false);
+        assert.equal(message.includes(CLIENT_SECRET), false);
+        return true;
+      }
+    );
+    assert.equal(requests.length, 2);
+    assert.equal(requests[0].url, 'https://id.twitch.tv/oauth2/validate');
+    assert.equal(requests[1].url, 'https://id.twitch.tv/oauth2/token');
+    assert.equal(db.row.status, 'reauthorization_required');
+    assert.equal(db.row.refreshLockToken, null);
+    assert.equal(db.row.refreshLockUntil, null);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
