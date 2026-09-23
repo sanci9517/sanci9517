@@ -250,3 +250,70 @@ test('Twitch invalid access token requires reauthorization after refresh failure
     globalThis.fetch = originalFetch;
   }
 });
+
+
+test('B.13 exposes disconnect atomicity gap when Twitch revoke succeeds but D1 state update fails', async () => {
+  const initialAccess = await encryptTwitchToken(ENCRYPTION_KEY, INITIAL_ACCESS_TOKEN);
+  let status = 'connected';
+  let revokeRequests = 0;
+
+  const db = {
+    prepare(sql) {
+      let binds = [];
+      const statement = {
+        bind(...values) {
+          binds = values;
+          return statement;
+        },
+        async first() {
+          assert.match(sql, /^SELECT access_token_ciphertext AS ciphertext,access_token_iv AS iv/);
+          assert.equal(binds[0], CONNECTION_ID);
+          return {
+            ciphertext: initialAccess.ciphertext,
+            iv: initialAccess.iv
+          };
+        },
+        async run() {
+          assert.match(sql, /^UPDATE twitch_connections SET status='revoked'/);
+          assert.equal(binds[0], CONNECTION_ID);
+          throw new Error('SIMULATED_D1_STATE_UPDATE_FAILURE');
+        }
+      };
+      return statement;
+    }
+  };
+
+  const env = {
+    DB: db,
+    TWITCH_CLIENT_ID: CLIENT_ID,
+    TWITCH_CLIENT_SECRET: CLIENT_SECRET,
+    TWITCH_TOKEN_ENCRYPTION_KEY: ENCRYPTION_KEY
+  };
+
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (input, init) => {
+    const url = String(input);
+    assert.equal(url, 'https://id.twitch.tv/oauth2/revoke');
+    assert.equal(init?.method, 'POST');
+    revokeRequests += 1;
+    return jsonResponse({}, 200);
+  };
+
+  try {
+    await assert.rejects(
+      () => import('../src/core/twitch-oauth.ts').then(({ revokeTwitchConnection }) =>
+        revokeTwitchConnection(env, CONNECTION_ID)
+      ),
+      (err) => {
+        assert.ok(err instanceof Error);
+        assert.equal(err.message, 'SIMULATED_D1_STATE_UPDATE_FAILURE');
+        return true;
+      }
+    );
+
+    assert.equal(revokeRequests, 1);
+    assert.equal(status, 'connected', 'the simulated persisted state remains connected after the external revoke');
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
