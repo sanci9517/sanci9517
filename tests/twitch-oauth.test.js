@@ -274,8 +274,12 @@ test('B.13 exposes disconnect atomicity gap when Twitch revoke succeeds but D1 s
           };
         },
         async run() {
-          assert.match(sql, /^UPDATE twitch_connections SET status='revoked'/);
           assert.equal(binds[0], CONNECTION_ID);
+          if (/status='revocation_pending'/.test(sql)) {
+            status = 'revocation_pending';
+            return { meta: { changes: 1 } };
+          }
+          assert.match(sql, /status='revoked'/);
           throw new Error('SIMULATED_D1_STATE_UPDATE_FAILURE');
         }
       };
@@ -312,7 +316,7 @@ test('B.13 exposes disconnect atomicity gap when Twitch revoke succeeds but D1 s
     );
 
     assert.equal(revokeRequests, 1);
-    assert.equal(status, 'connected', 'the simulated persisted state remains connected after the external revoke');
+    assert.equal(status, 'revocation_pending', 'a post-revoke D1 failure must never leave the connection falsely marked connected');
   } finally {
     globalThis.fetch = originalFetch;
   }
