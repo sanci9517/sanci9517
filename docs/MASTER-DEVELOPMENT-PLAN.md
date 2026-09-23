@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.89  
+**Verzió:** MASTER-2.39.90  
 **Dátum:** 2026-09-23  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt PASS:** 2026-09-22 — 40.69.13.B CI/typecheck + `0012_twitch_refresh_lock` remote D1 migration + Cloudflare Worker deploy + production `TWITCH_TOKEN_ENCRYPTION_KEY` secret presence PASS; a Twitch Integration Check és Editor Core Test sikeresen lefutott az `a2bdcea2de44c3f3fd66cebe6533966e2eeb5909` commiton, a remote D1 sémában a refresh lock oszlopok és index igazoltan jelen vannak, a Worker sikeresen deployolva lett, és a production secret létrehozása sikeresen megtörtént. A production redirect URI és a live Twitch lifecycle tesztek még hátra vannak.
+**Legutóbbi igazolt PASS:** 2026-09-23 — 40.69.13.B Twitch connection UI production deploy PASS; Cloudflare Worker version `75168241-a5ab-4124-bc80-22b2971ca44b` sikeresen deployolva, az új UI production Workerre került. A live Twitch OAuth/connection lifecycle teszt még hátra van; a Twitch Integration Check és Editor Core Test sikeresen lefutott az `a2bdcea2de44c3f3fd66cebe6533966e2eeb5909` commiton, a remote D1 sémában a refresh lock oszlopok és index igazoltan jelen vannak, a Worker sikeresen deployolva lett, és a production secret létrehozása sikeresen megtörtént. A production redirect URI és a live Twitch lifecycle tesztek még hátra vannak.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -3086,7 +3086,7 @@ Kötelezően megőrzendő külső adatok:
 
 #### B.4e — Canonical Twitch connection UI bekötés — 2026-09-23
 
-**Státusz:** [~] IMPLEMENTÁLVA, AUTOMATIZÁLT/ÉLŐ ELLENŐRZÉS PENDING.
+**Státusz:** [x] PRODUCTION DEPLOY PASS; LIVE OAUTH TESZT PENDING.
 
 **Audit + implementáció:**
 - [x] A meglévő `/api/integrations/twitch/connect` route maradt az egyetlen OAuth indító útvonal.
@@ -3097,14 +3097,15 @@ Kötelezően megőrzendő külső adatok:
 - [x] Disconnect továbbra is a meglévő POST `/api/integrations/twitch/disconnect` route-on történik; token nem kerül kliensoldalra.
 - [x] Nincs második Twitch OAuth flow vagy külön connection state rendszer bevezetve.
 - [x] GitHub CI PASS az új UI commiton — Editor Core Test #634 és Twitch Integration Check #10 sikeres.
-- [ ] Production Worker deploy az új UI commitokkal.
+- [x] Production Worker deploy az új UI-val — Wrangler 4.130.0, Worker version `75168241-a5ab-4124-bc80-22b2971ca44b`.
+- [x] Deploy sikeresen lezárult; a Worker production URL aktív.
 - [ ] Élő Editor teszt: Twitch gomb → Twitch engedélyezési oldal → callback → connected állapot.
 
 **Módosító commitok:**
 - `13300a7896e1cf1f3c3e0cf2dd48ba229d591f05` — Editor v2 Twitch connection UI
 - `9eea32f28126d0de0846769c34a5955b8e56acf8` — canonical Twitch connection lifecycle wiring
 
-**Egyetlen következő aktív lépés:** az új UI commit CI eredményének megvárása és ellenőrzése. Sikertelen CI esetén nem deployolunk.
+**Egyetlen következő aktív lépés:** élő production Editor v2 teszt: Twitch connection gomb → Twitch authorization → callback → connected állapot. Builder/Inspector fejlesztés továbbra is blokkolt, amíg ez a live lifecycle kapu nincs lezárva.
 
 #### B.5 Módosító commitok
 - `974221e93d896b6b861212b2501dd4608cbdee38` — `fix: add Twitch refresh concurrency lease`
