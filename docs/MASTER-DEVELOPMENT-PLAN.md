@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.01  
+**Verzió:** MASTER-2.40.02  
 **Dátum:** 2026-09-23  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt PASS:** 2026-09-23 — 40.69.13.B.11 production/live revoked-token recovery + reauthorization recovery PASS; Twitchből külső authorization-visszavonás után a production validation route 401 TWITCH_REAUTHORIZATION_REQUIRED állapotot adott, D1-ben reauthorization_required állapot jelent meg, majd a canonical OAuth újraengedélyezés után a live connection ismét connected lett. A route-válasz nem tartalmazott tokent vagy client secretet.
+**Legutóbbi igazolt PASS:** 2026-09-23 — 40.69.13.B.12 production/observability no-secret/no-token leakage audit PASS; az új production deploy után végrehajtott Twitch OAuth callback Observability eseménye már query string nélkül jelent meg, így az authorization code, state és scope nem került a logolt request URL-be. A korábbi, 20:37-es callback még a régi deploy eseménye volt; a 20:57-es új callback már maszkolt URL-t mutatott.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -259,7 +259,7 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 - [x] A `schedule_items` D1 domain megmarad.
 - [x] A Page Model nem másolja bele az eseményrekordokat.
 - [x] A `schedule` node külön canonical Editor v2 blokk.
-- [~] Twitch integrációs contract audit PASS; a B.4–B.11 token lifecycle/security hardening és live reauthorization recovery kapuk lezárultak, a live log leakage és disconnect/reconnect atomicity még külön tesztkapu.
+- [~] Twitch integrációs contract audit PASS; a B.4–B.12 token lifecycle/security hardening, live reauthorization recovery és production/observability query-string leakage kapuk lezárultak. A disconnect/reconnect atomicity még külön tesztkapu.
 - [ ] Játékprofil/sablon adatmodell még nincs véglegesítve.
 - [ ] Inspectorból történő Schedule event CRUD még nincs implementálva.
 - [ ] Schedule Builder végső UX még nincs implementálva.
@@ -274,7 +274,7 @@ Az aktív pont csak akkor zárható, ha:
 - [ ] CI/typecheck;
 - [ ] Twitch API integration smoke test;
 - [ ] Schedule domain regression;
-- [ ] no-secret/no-token leakage ellenőrzés;
+- [x] no-secret/no-token leakage ellenőrzés — B.12 PASS;
 - [ ] MASTER frissítve;
 - [ ] felhasználói PASS.
 
@@ -3299,4 +3299,38 @@ Ez igazolja, hogy a létrejött Twitch OAuth kapcsolat production környezetben 
 
 **Korlát:** a live Worker/observability logok külön no-secret/no-token auditja még nincs lezárva; ezt nem tekintjük B.11 bizonyítékának.
 
-**Következő egyetlen aktív tesztkapu:** 40.69.13.B.12 — production/observability no-secret/no-token leakage audit. Builder/Inspector fejlesztés továbbra is blokkolt.
+**Következő egyetlen aktív tesztkapu:** 40.69.13.B.13 — disconnect/reconnect atomicity + state transition audit. Builder/Inspector fejlesztés továbbra is blokkolt.
+
+
+**B.12 — PRODUCTION/OBSERVABILITY NO-SECRET/NO-TOKEN LEAKAGE AUDIT — 2026-09-23**
+
+**Státusz:** [x] PASS — production Observability query-string leakage megszüntetése és live OAuth callback ellenőrzése igazolva.
+
+**Cél:** bizonyítani, hogy a production Worker Observability request URL-jei nem rögzítik a Twitch OAuth callback query stringjét, így az authorization code, OAuth state és scope nem kerül logolt request URL-be.
+
+**Implementáció és deploy bizonyíték:**
+- [x] A kezdeti nested `observability.logs.redact_query_string` konfigurációt a Cloudflare build warningja miatt elvetettük; az nem volt érvényes Wrangler 4.130.0 konfiguráció.
+- [x] A canonical konfiguráció a top-level `observability.redact_query_string: true` beállításra lett javítva.
+- [x] A javított konfiguráció commitja: `69c3ce1e73f624e82134a6fc643686be4fbbf50e`.
+- [x] Production deploy sikeres, Worker version: `a1f4bda7-4981-4a15-8abe-4fa67057c641`.
+- [x] A deploy során a typecheck PASS volt.
+- [x] A deploy során nem jelent meg az előző `Unexpected fields found in observability field` warning.
+- [x] D1 migration állapot: `No migrations to apply!`.
+
+**Live Observability bizonyíték:**
+- [x] A production OAuth újracsatlakoztatási folyamatot a javított deploy után lefuttattuk.
+- [x] Az új Twitch callback esemény időpontja: `2026-09-23 20:57:45.666 CEST`.
+- [x] Az új callback Observability üzenete kizárólag a callback útvonalat mutatta: `GET .../api/integrations/twitch/callback`.
+- [x] Az új callback URL-jében nem jelent meg `code`, `state` vagy `scope` query paraméter.
+- [x] A régi, 20:37-es callback query stringje csak a korábbi deploy eseményében látszott; ezt nem tekintjük az új konfiguráció működésének cáfolatának.
+- [x] A kapcsolódó 20:57-es production Twitch connect/disconnect/connection események sikeresen lefutottak, 0 Errors mellett.
+- [x] A logban access token, refresh token vagy client secret nem jelent meg.
+
+**Biztonsági következtetés:**
+- [x] Az OAuth authorization code request-URL leakage probléma a production Observabilityben a javított deploy után megszűnt.
+- [x] A `redact_query_string` beállítás a request URL query stringjének logolását maszkolja; a secret/token értékek server-side kezelése továbbra is canonical maradt.
+- [x] A B.12 live teszt bizonyítéka a 20:57-es új callback esemény; korábbi logbejegyzések történeti események.
+
+**Korlát:** ez a kapu a Cloudflare Worker request URL / Observability leakage felületét ellenőrizte. Nem minősíti a Cloudflare platform belső, szolgáltatói logkezelését, és nem helyettesíti az alkalmazás response-body / exception-message leakage tesztjeit, amelyeket B.10/B.10.a már célzottan ellenőriztek.
+
+**Következő egyetlen aktív tesztkapu:** 40.69.13.B.13 — disconnect/reconnect atomicity + state transition audit. Builder/Inspector fejlesztés továbbra is blokkolt.
