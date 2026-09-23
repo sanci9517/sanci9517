@@ -3053,6 +3053,20 @@ Kötelezően megőrzendő külső adatok:
 
 **Következő egyetlen aktív tesztkapu:** Twitch production redirect URI egyezés ellenőrzése. Ezután indulhat a live OAuth connect → connection status → token validation → refresh/reauthorization security tesztlánc.
 
+
+
+#### B.4c — Production Twitch redirect URI egyezés — 2026-09-23
+
+**PASS:**
+- [x] A Twitch Developer Console OAuth Redirect URLs listájához hozzá lett adva a canonical production callback:
+  `https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/integrations/twitch/callback`.
+- [x] A kód és a production Twitch OAuth redirect URI most ugyanazt a callback útvonalat használja.
+- [x] A korábbi `sanci9517-api.sandor-bogadi95.workers.dev/callback` redirectet egyelőre nem töröltük, hogy a live átállás előtt ne okozzunk felesleges kompatibilitási kockázatot.
+
+**Státusz:** `[x]`.
+
+**Következő egyetlen aktív tesztkapu:** live Twitch OAuth connect → connection status → token validation.
+
 #### B.5 Módosító commitok
 - `974221e93d896b6b861212b2501dd4608cbdee38` — `fix: add Twitch refresh concurrency lease`
 - `7ae8af57ce5b86b92e915de838b40b6b8b4a79ae` — `fix: harden Twitch token lifecycle and refresh concurrency`
