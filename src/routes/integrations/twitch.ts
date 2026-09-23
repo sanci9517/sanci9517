@@ -59,9 +59,12 @@ export async function twitchCallbackRoute(request: Request, env: Env): Promise<R
     }
     return redirect(request, "connected");
   } catch (err) {
-    const codeName = err instanceof Error ? err.message : "";
+    const codeName = err instanceof Error ? err.message : "TWITCH_OAUTH_UNKNOWN";
     const status = codeName === "TWITCH_OAUTH_STATE_INVALID" ? "invalid" : "error";
-    return redirect(request, status);
+    const target = new URL("/admin/editor", request.url);
+    target.searchParams.set("twitch", status);
+    target.searchParams.set("code", codeName);
+    return Response.redirect(target.toString(), 303);
   }
 }
 
