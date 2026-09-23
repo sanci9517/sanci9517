@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.00  
+**Verzió:** MASTER-2.40.01  
 **Dátum:** 2026-09-23  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt PASS:** 2026-09-23 — 40.69.13.B.10.a route-level reauthorization mapping + no-token response verification PASS; a valódi twitchValidationRoute() → requireAuthenticatedUser() → canonical token lifecycle útvonal hiteles sessionnel futott, a validation 401 + refresh 400 után HTTP 401 TWITCH_REAUTHORIZATION_REQUIRED választ adott, tokenek/client secret nélkül.
+**Legutóbbi igazolt PASS:** 2026-09-23 — 40.69.13.B.11 production/live revoked-token recovery + reauthorization recovery PASS; Twitchből külső authorization-visszavonás után a production validation route 401 TWITCH_REAUTHORIZATION_REQUIRED állapotot adott, D1-ben reauthorization_required állapot jelent meg, majd a canonical OAuth újraengedélyezés után a live connection ismét connected lett. A route-válasz nem tartalmazott tokent vagy client secretet.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -259,7 +259,7 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 - [x] A `schedule_items` D1 domain megmarad.
 - [x] A Page Model nem másolja bele az eseményrekordokat.
 - [x] A `schedule` node külön canonical Editor v2 blokk.
-- [~] Twitch integrációs contract audit PASS; a 40.69.13.B token lifecycle/security hardening folyamatban.
+- [~] Twitch integrációs contract audit PASS; a B.4–B.11 token lifecycle/security hardening és live reauthorization recovery kapuk lezárultak, a live log leakage és disconnect/reconnect atomicity még külön tesztkapu.
 - [ ] Játékprofil/sablon adatmodell még nincs véglegesítve.
 - [ ] Inspectorból történő Schedule event CRUD még nincs implementálva.
 - [ ] Schedule Builder végső UX még nincs implementálva.
@@ -3278,3 +3278,25 @@ Ez igazolja, hogy a létrejött Twitch OAuth kapcsolat production környezetben 
 **Korlát:** ez a kapu a route mappinget és a válasz-leakage védelmet bizonyítja. Nem bizonyít production/live revoked-token recoveryt; ez külön B.11 kapu.
 
 **Következő egyetlen aktív tesztkapu:** 40.69.13.B.11 — production/live revoked-token recovery + no-secret/no-token leakage. Builder/Inspector fejlesztés továbbra is blokkolt.
+**B.11 — PRODUCTION/LIVE REVOKED-TOKEN RECOVERY + REAUTHORIZATION RECOVERY — 2026-09-23**
+
+**Státusz:** [x] PASS — production/live recovery és reauthorization lifecycle igazolva.
+
+**Cél:** bizonyítani, hogy a Twitch-fiókban külsőleg visszavont authorization után a production canonical validation route nem hagyja tévesen connected állapotban a kapcsolatot, a D1-ben reauthorization_required állapot jön létre, majd a canonical OAuth újraengedélyezés után a kapcsolat ismét connected állapotba kerül.
+
+**Élő teszt bizonyíték:**
+- [x] A Twitch Connections felületén a Sanci9517 alkalmazás hozzáférését külsőleg visszavontuk; nem a saját disconnect route-ot használtuk.
+- [x] Az authenticated production `GET /api/integrations/twitch/validation` válasza pontosan `TWITCH_REAUTHORIZATION_REQUIRED` lett.
+- [x] A production connection endpoint ezt követően `connected:false`, `status:"reauthorization_required"` állapotot adott.
+- [x] A broadcaster azonosító és login a hibás állapotban is konzisztens maradt.
+- [x] A validation route válaszában nem jelent meg access token, refresh token vagy client secret.
+- [x] A canonical `/api/integrations/twitch/connect` OAuth flow-val újraengedélyeztük a kapcsolatot.
+- [x] Az új authorization után a production connection endpoint ismét `connected:true`, `status:"connected"` állapotot adott.
+- [x] Az új kapcsolat új `accessTokenExpiresAt` és `lastValidatedAt` értékekkel állt helyre.
+- [x] Nem készült külön recovery flow vagy párhuzamos tokenkezelés; ugyanaz a canonical OAuth/token lifecycle állt helyre.
+
+**Twitch külső szerződésének megerősítése:** a Twitch dokumentáció szerint a felhasználó a Connections oldalon visszavonhatja az alkalmazás authorizationét; az ilyen token érvénytelenné válhat, és a refresh token is invalidálódhat, ilyenkor új authorization szükséges. A Twitch a harmadik fél alkalmazások számára a token validation használatát is előírja. 
+
+**Korlát:** a live Worker/observability logok külön no-secret/no-token auditja még nincs lezárva; ezt nem tekintjük B.11 bizonyítékának.
+
+**Következő egyetlen aktív tesztkapu:** 40.69.13.B.12 — production/observability no-secret/no-token leakage audit. Builder/Inspector fejlesztés továbbra is blokkolt.
