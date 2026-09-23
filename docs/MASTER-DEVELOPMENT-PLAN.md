@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.39.90  
+**Verzió:** MASTER-2.39.91  
 **Dátum:** 2026-09-23  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -3106,6 +3106,22 @@ Kötelezően megőrzendő külső adatok:
 - `9eea32f28126d0de0846769c34a5955b8e56acf8` — canonical Twitch connection lifecycle wiring
 
 **Egyetlen következő aktív lépés:** élő production Editor v2 teszt: Twitch connection gomb → Twitch authorization → callback → connected állapot. Builder/Inspector fejlesztés továbbra is blokkolt, amíg ez a live lifecycle kapu nincs lezárva.
+
+#### B.4f — Twitch runtime konfiguráció diagnosztika — 2026-09-23
+
+**Státusz:** [x] DIAGNOSZTIKAI IMPLEMENTÁCIÓ + CI PASS; PRODUCTION DEPLOY PENDING.
+
+**Indok:**
+- [x] A hitelesített production `/api/integrations/twitch/connect` kérés bizonyítottan 503-at ad.
+- [x] A Cloudflare production secret list mindhárom szükséges secret nevét tartalmazza.
+- [x] Emiatt célzott, ideiglenes runtime diagnosztikai endpoint készült, amely kizárólag boolean jelenlétet ad vissza, secret értéket soha.
+- [x] Endpoint: authenticated GET `/api/integrations/twitch/diagnostic`.
+- [x] Diagnosztizált értékek: `TWITCH_CLIENT_ID`, `TWITCH_CLIENT_SECRET`, `TWITCH_TOKEN_ENCRYPTION_KEY`.
+- [x] A diagnosztikai endpoint nem módosít Twitch OAuth logikát és nem ad ki secretet.
+- [x] GitHub CI PASS: Twitch Integration Check #15, Editor Core Test #639.
+- [x] Implementációs commitok: `d49a7aa54e28ac19d3315f29ccd9c849b70dabb4` és `195edeb8e0f847260ab47a6e8102d2091a85b71f`.
+
+**Következő egyetlen aktív lépés:** a diagnosztikai commit production deployja, majd authenticated `/api/integrations/twitch/diagnostic` lekérés. A három boolean eredmény alapján azonnal eldöntjük, secret-binding/runtime vagy más konfigurációs eltérés okozza-e a 503-at.
 
 #### B.5 Módosító commitok
 - `974221e93d896b6b861212b2501dd4608cbdee38` — `fix: add Twitch refresh concurrency lease`
