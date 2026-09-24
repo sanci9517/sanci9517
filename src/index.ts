@@ -6,6 +6,7 @@ import { authLogoutRoute } from "./routes/auth/logout";
 import { authSessionRoute } from "./routes/auth/session";
 import { adminSettingsRoute } from "./routes/admin/settings";
 import { adminScheduleRoute } from "./routes/admin/schedule";
+import { adminTwitchScheduleSyncRoute } from "./routes/admin/twitch-schedule-sync";
 import { adminPagesRoute } from "./routes/admin/pages";
 import { adminEditorRoute } from "./routes/admin/editor";
 import { publicSiteSettingsRoute } from "./routes/public/site-settings";
@@ -45,6 +46,7 @@ export default {
     if (pathname === "/api/auth/session") return authSessionRoute(request, env);
     if (pathname === "/api/admin/settings") return adminSettingsRoute(request, env);
     if (pathname === "/api/admin/schedule") return adminScheduleRoute(request, env);
+    if (pathname === "/api/admin/twitch/schedule-sync") return adminTwitchScheduleSyncRoute(request, env);
     if (pathname === "/api/admin/pages") return adminPagesRoute(request, env);
     if (pathname === "/api/admin/editor") return adminEditorRoute(request, env);
     if (pathname === "/api/public/site-settings") return publicSiteSettingsRoute(env);
