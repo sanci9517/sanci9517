@@ -107,6 +107,39 @@ akkor **először ezt a MASTER tervet frissítjük**, megfelelő helyre soroljuk
 
 A terv ezért élő dokumentum: nem rövidíteni kell, hanem új funkciókkal és pontos státuszokkal folyamatosan bővíteni.
 
+## 00.4b — GLOBAL LOCALIZATION-READY ALAP — 1.0 ELŐTT KÖTELEZŐ
+
+A platform hosszú távú célja globálisan használható streamer platform, ezért a teljes többnyelvű rendszer nem kerül 1.0 előtt teljes implementálásra, de az 1.0-ig elkészülő architektúra kötelezően localization-ready lesz.
+
+**1.0 scope döntés:**
+- [x] 1.0 elsődleges és teljesen támogatott tartalmi nyelve: **magyar (hu-HU)**.
+- [ ] 1.0 előtt teljes többnyelvű UI/content rendszer implementációja: **nem cél**.
+- [ ] 1.0 előtt minden nyelvhez teljes fordítás: **nem cél**.
+- [x] 1.0 előtt tilos olyan Page Model, routing, D1 schema, editor, renderer vagy domain contract döntést hozni, amely később szükségtelen újraépítést kényszerítene ki a lokalizáció miatt.
+
+**Kötelező alapok 1.0 előtt:**
+- locale fogalom és canonical locale azonosításának szerződése;
+- platform UI stringek és streamer által létrehozott tartalom szétválasztásának architekturális szabálya;
+- Page Model localization-safe kialakítása;
+- domain adatok és lokalizálható megjelenítési szövegek szétválasztása;
+- Schedule és egyéb dinamikus domain adatok localization-safe modellje;
+- locale-aware dátum/idő/szám megjelenítésre előkészített adatfolyam;
+- fallback stratégia helyének és működési szerződésének meghatározása;
+- localized routing/SEO későbbi bevezethetőségének biztosítása;
+- Unicode és RTL kompatibilitás megőrzése;
+- Editor és renderer úgy épüljön, hogy a lokalizáció később ne igényeljen második editort, renderert, Page Modelt vagy command rendszert;
+- migration strategy a későbbi locale-bővítéshez.
+
+**Fontos:** 1.0 előtt csak a szükséges **alap/szerződés** készül el. Nem készítünk félkész HU/EN rendszert, nem másoljuk le az oldalakat nyelvenként, és nem vezetünk be párhuzamos lokalizációs adatutat.
+
+**1.0 után külön fő szakasz:** Global Localization Architecture & Implementation.
+Ennek teljes auditja és implementációja külön MASTER munkapont lesz, többek között: locale registry, region/language kezelés, fallback, platform UI localization, Page/content localization, component/editor localization, dynamic data localization, localized routing/SEO, translation state/versioning, per-locale publish, missing-translation detection, locale-aware formatting, RTL, localization testing és későbbi AI-assisted translation/human review workflow.
+
+**Definition of Done az 1.0 előtti alaphoz:**
+- a fenti localization-safe szerződések auditálva és a MASTER-ben rögzítve;
+- a meglévő canonical Page Model, D1, routing, renderer, Editor v2 és domain modellek nem akadályozzák a későbbi többnyelvűséget;
+- ahol szükséges, minimális foundation módosítás készül és tesztelve van;
+- tényleges többnyelvű UI/content csak a külön 1.0 utáni szakaszban indul.
 ## 00.5 Preset + manuális beállítás szabály
 Ahol a felhasználó gyakran ismétlődő értékeket állít, ott a manuális mező mellett értelmes presetek is legyenek.
 
