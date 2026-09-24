@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.05  
+**Verzió:** MASTER-2.40.06  
 **Dátum:** 2026-09-24  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt PASS:** 2026-09-24 — 40.69.13.C.2 canonical Schedule source/sync adatmodell + migration terv audit PASS; a schema-bővítés, source identity, sync-state, missing/reconcile, migration és backward-compatibility stratégia rögzítve. Implementáció még nem indult.
+**Legutóbbi igazolt PASS:** 2026-09-24 — 40.69.13.C.2 canonical Schedule source/sync adatmodell + migration terv audit PASS. A C.3 migration implementáció elkészült, de még nincs runtime/remote migration PASS.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -194,7 +194,7 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 ### 🔵 EGYETLEN AKTÍV PONT
 **40.69.13 — Twitch-integrációs alap + Schedule/Adásrend újratervezés audit**
 
-**Státusz:** [~] AKTÍV — B.4–B.13 és C.1–C.2 lezárva. A canonical Schedule source/sync adatmodell és migration terv rögzítve van, de kódmódosítás még nincs. A következő egyetlen munkapont: C.3 — migration implementáció + canonical source-aware Schedule service/mapper alap. Builder/Inspector továbbra is blokkolt.
+**Státusz:** [~] AKTÍV — B.4–B.13 és C.1–C.2 lezárva. A C.3 migration fájl implementálva, runtime/remote ellenőrzése még hátra van. A következő egyetlen munkapont: C.3 — migration runtime/schema/integrity verification. Builder/Inspector továbbra is blokkolt.
 
 ### Kötelező sorrend — 40.69.13 aktív munkapont
 **Szigorú szabály:** először csak audit és szerződéstervezés történik. OAuth bekötés, Twitch kódolás vagy Schedule Builder UI implementáció csak az audit eredményének MASTER-be rögzítése után indul.
@@ -3391,7 +3391,35 @@ Ez igazolja, hogy a létrejött Twitch OAuth kapcsolat production környezetben 
 
 **Hivatalos Twitch szerződés bizonyítéka:** a Twitch `Get Channel Stream Schedule` 200-as válasza occurrence-alapú `id/start_time/end_time/title/canceled_until/category/is_recurring` adatokat és cursoros paginationt ad; 404 azt jelenti, hogy nincs létrehozott streaming schedule. A `Get Streams` user_id alapján adja a live presence-t. A Twitch dokumentáció szerint a schedule olvasása app/user tokennel működik, míg a `channel:manage:schedule` scope a módosító műveletekhez kell. citeturn0search0turn1search0turn2search0turn2search1
 
-**Következő egyetlen aktív munkapont:** **40.69.13.C.2 — canonical Schedule source/sync adatmodell + migration terv teljes audit és rögzítés.** Builder/Inspector implementáció továbbra is blokkolt.
+
+
+#### C.3 — SCHEDULE SOURCE/SYNC MIGRATION IMPLEMENTÁCIÓ — 2026-09-24
+
+**Státusz:** [~] IMPLEMENTÁLVA — runtime/remote verification még nincs lezárva.
+
+**Implementáció:**
+- [x] Új migration létrejött: `migrations/0013_schedule_source_sync.sql`.
+- [x] A meglévő `schedule_items` táblához hozzáadva: `source`, `source_id`, `source_account_id`, `source_presence`, `source_synced_at`, `source_missing_at`, `is_recurring`, `source_category_id`, `source_category_name`.
+- [x] Meglévő rekordok kompatibilitása biztosított: `source='manual'`, `source_presence='present'`, `is_recurring=0` defaulttal.
+- [x] External identityhez külön UNIQUE index készült: `(source, source_account_id, source_id)`.
+- [x] Source/account/start lookup index elkészült.
+- [x] Source/account/presence/start reconciliation index elkészült.
+- [x] `schedule_sync_state` canonical sync-state tábla létrejön a C.2-ben rögzített állapotokkal.
+- [x] Sync-state státusz- és updated indexek elkészülnek.
+- [x] A migration nem írja át és nem rebuildeli a meglévő `schedule_items` táblát.
+- [x] A Twitch refresh-lock migration (`0012`) változatlan maradt.
+
+**Migration technikai ellenőrzés:**
+- [x] A migration fájlt GitHubon visszaolvastuk a `v2/foundation` branchen.
+- [x] A SQLite stratégia megfelel a korábban rögzített C.2 döntésnek: az ADD COLUMN nem kap UNIQUE/PRIMARY KEY constraintet; az external identity külön UNIQUE indexként készül. SQLite ezt támogatja, és a NULL értékeket UNIQUE indexben különbözőnek tekinti. citeturn0search1turn0search3
+- [ ] Remote D1 migration apply / schema inspection még nincs PASS-ként igazolva.
+- [ ] Existing-data integrity regression még nincs PASS-ként igazolva.
+- [ ] CI/typecheck még nincs PASS-ként igazolva erre a commitra.
+
+**Commit:**
+- `79a4ef776400c891900adf44c56fd87154a6460f` — `feat(schedule): add canonical source and sync schema`
+
+**Következő egyetlen aktív munkapont:** **40.69.13.C.3 — migration runtime/schema/integrity verification.**
 
 #### C.2 — CANONICAL SCHEDULE SOURCE/SYNC ADATMODELL + MIGRATION TERV AUDIT — 2026-09-24
 
