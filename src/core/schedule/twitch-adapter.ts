@@ -1,5 +1,6 @@
 import type { Env } from "../../types/env";
 import { getValidTwitchAccessToken } from "../twitch-oauth";
+import { mapTwitchScheduleResponseStatus, type TwitchScheduleResponseErrorCode } from "./twitch-errors";
 import { normalizeScheduleSyncWindow, type ScheduleSyncWindow, type TwitchScheduleSegment, type TwitchScheduleSnapshot } from "./types";
 
 const TWITCH_SCHEDULE_URL = "https://api.twitch.tv/helix/schedule";
@@ -16,22 +17,6 @@ type TwitchPayload = {
   };
   pagination?: { cursor?: unknown };
 };
-
-export type TwitchScheduleResponseErrorCode =
-  | "TWITCH_SCHEDULE_REAUTHORIZATION_REQUIRED"
-  | "TWITCH_SCHEDULE_SOURCE_EMPTY"
-  | "TWITCH_SCHEDULE_RATE_LIMITED"
-  | "TWITCH_SCHEDULE_BAD_RESPONSE"
-  | "TWITCH_SCHEDULE_TRANSIENT_FAILURE";
-
-export function mapTwitchScheduleResponseStatus(status: number): TwitchScheduleResponseErrorCode | null {
-  if (status === 401) return "TWITCH_SCHEDULE_REAUTHORIZATION_REQUIRED";
-  if (status === 404) return "TWITCH_SCHEDULE_SOURCE_EMPTY";
-  if (status === 429) return "TWITCH_SCHEDULE_RATE_LIMITED";
-  if (status >= 500) return "TWITCH_SCHEDULE_TRANSIENT_FAILURE";
-  if (status < 200 || status >= 300) return "TWITCH_SCHEDULE_BAD_RESPONSE";
-  return null;
-}
 
 export class TwitchScheduleAdapterError extends Error {
   public readonly code: TwitchScheduleResponseErrorCode | "TWITCH_SCHEDULE_PAGE_LIMIT";
