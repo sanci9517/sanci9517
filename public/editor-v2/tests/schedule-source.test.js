@@ -3,7 +3,7 @@ import test from 'node:test';
 
 const { normalizeScheduleSyncWindow } = await import('../../../src/core/schedule/types.ts');
 const { mapTwitchScheduleSegment } = await import('../../../src/core/schedule/mapper.ts');
-const { mapTwitchScheduleResponseStatus } = await import('../../../src/core/schedule/twitch-adapter.ts');
+const { mapTwitchScheduleResponseStatus } = await import('../../../src/core/schedule/twitch-errors.ts');
 const { readPublicSchedule } = await import('../../../src/core/schedule-read.ts');
 
 test('schedule sync window normalizes to UTC', () => {
