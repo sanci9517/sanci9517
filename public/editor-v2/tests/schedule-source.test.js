@@ -3,6 +3,8 @@ import test from 'node:test';
 
 const { normalizeScheduleSyncWindow } = await import('../../../src/core/schedule/types.ts');
 const { mapTwitchScheduleSegment } = await import('../../../src/core/schedule/mapper.ts');
+const { mapTwitchScheduleResponseStatus } = await import('../../../src/core/schedule/twitch-adapter.ts');
+const { readPublicSchedule } = await import('../../../src/core/schedule-read.ts');
 
 test('schedule sync window normalizes to UTC', () => {
   assert.deepEqual(
@@ -74,4 +76,60 @@ test('Twitch mapper rejects malformed timestamps', () => {
     categoryName: null,
     isRecurring: false
   }, '12345', 'sanci9517', '2026-09-24T16:00:00.000Z'), /INVALID_TWITCH_SCHEDULE_SEGMENT/);
+});
+
+
+test('Twitch adapter maps canonical HTTP errors', () => {
+  assert.equal(mapTwitchScheduleResponseStatus(401), 'TWITCH_SCHEDULE_REAUTHORIZATION_REQUIRED');
+  assert.equal(mapTwitchScheduleResponseStatus(404), 'TWITCH_SCHEDULE_SOURCE_EMPTY');
+  assert.equal(mapTwitchScheduleResponseStatus(429), 'TWITCH_SCHEDULE_RATE_LIMITED');
+  assert.equal(mapTwitchScheduleResponseStatus(500), 'TWITCH_SCHEDULE_TRANSIENT_FAILURE');
+  assert.equal(mapTwitchScheduleResponseStatus(400), 'TWITCH_SCHEDULE_BAD_RESPONSE');
+  assert.equal(mapTwitchScheduleResponseStatus(200), null);
+});
+
+test('public schedule DTO does not leak source or sync fields', async () => {
+  const row = {
+    id: 'public-1',
+    title: 'Fortnite',
+    platform: 'Twitch',
+    starts_at: '2026-09-25T18:00:00.000Z',
+    ends_at: '2026-09-25T19:00:00.000Z',
+    status: 'scheduled',
+    url: 'https://www.twitch.tv/sanci9517',
+    notes: '',
+    source: 'twitch',
+    source_id: 'segment-1',
+    source_account_id: '12345',
+    source_presence: 'present',
+    source_synced_at: '2026-09-24T16:00:00.000Z',
+    source_missing_at: null,
+    source_category_id: '33214',
+    source_category_name: 'Fortnite'
+  };
+
+  const db = {
+    prepare() {
+      return {
+        bind() {
+          return {
+            all: async () => ({ results: [row] })
+          };
+        }
+      };
+    }
+  };
+
+  const result = await readPublicSchedule(db);
+  assert.deepEqual(Object.keys(result[0]).sort(), [
+    'endsAt', 'id', 'notes', 'platform', 'startsAt', 'status', 'title', 'url'
+  ]);
+  assert.equal(result[0].source, undefined);
+  assert.equal(result[0].sourceId, undefined);
+  assert.equal(result[0].sourceAccountId, undefined);
+  assert.equal(result[0].sourcePresence, undefined);
+  assert.equal(result[0].sourceSyncedAt, undefined);
+  assert.equal(result[0].sourceMissingAt, undefined);
+  assert.equal(result[0].sourceCategoryId, undefined);
+  assert.equal(result[0].sourceCategoryName, undefined);
 });
