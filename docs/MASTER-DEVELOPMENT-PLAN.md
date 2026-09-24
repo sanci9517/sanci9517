@@ -3687,3 +3687,53 @@ A Page Model nem tárolja a schedule rekordokat.
 **Korlát:** ez a kapu a Cloudflare Worker request URL / Observability leakage felületét ellenőrizte. Nem minősíti a Cloudflare platform belső, szolgáltatói logkezelését, és nem helyettesíti az alkalmazás response-body / exception-message leakage tesztjeit, amelyeket B.10/B.10.a már célzottan ellenőriztek.
 
 **Következő egyetlen aktív tesztkapu:** 40.69.13.B.13 — disconnect/reconnect atomicity + state transition audit. Builder/Inspector fejlesztés továbbra is blokkolt.
+
+
+#### C.5 — CANONICAL TWITCH SCHEDULE ADAPTER / MAPPER / SYNC CORE + CONTRACT TEST GATE — 2026-09-24
+
+**Státusz:** [x] IMPLEMENTATION + CI CONTRACT TEST PASS — 2026-09-24. A C.5 első runtime implementációs kapuja lezárva; a teljes remote D1 sync/runtime tesztkapu a következő C.5 al-lépés.
+
+**Implementáció:**
+- [x] src/core/schedule/types.ts — canonical Schedule sync/domain DTO-k és determinisztikus UTC window-normalizálás.
+- [x] src/core/schedule/mapper.ts — Twitch external segment → canonical schedule_items input mapper.
+- [x] src/core/schedule/twitch-adapter.ts — Twitch Get Channel Stream Schedule adapter.
+- [x] src/core/schedule/sync.ts — canonical upsert, sync-state transition, concurrency guard és successful-window missing reconciliation.
+- [x] public/editor-v2/tests/schedule-source.test.js — window/mapper contract regression tesztek.
+- [x] package.json — test:schedule CI parancs.
+- [x] .github/workflows/editor-core-test.yml — canonical Schedule contract teszt bekerült a CI kapuba.
+
+**Twitch API contract ellenőrzés:**
+- [x] A hivatalos Twitch dokumentáció alapján a Get Channel Stream Schedule app access tokennel vagy user access tokennel olvasható; ehhez a read endpointhez nem kell külön schedule-read scope. A channel:manage:schedule scope a módosító műveletekhez tartozik. citeturn4view0turn0search2
+- [x] A schedule response segmentenként external id, start_time, end_time, title, canceled_until, category és is_recurring mezőket ad; cursoros pagination használható, a page size maximuma 25. citeturn0search0
+- [x] A canonical external identity továbbra is (source, source_account_id, source_id), ahol Twitchnél source_id a Twitch schedule segment ID, source_account_id a broadcaster ID.
+
+**Ownership / safety:**
+- [x] Twitch sync csak source='twitch' rekordot kezel.
+- [x] Manual rekordot a Twitch upsert nem ír felül.
+- [x] Twitch segment ID nem válik Sanci primary key-vé.
+- [x] A live presence nem kerül tartós Schedule status-logikába; a mapper csak scheduled/cancelled állapotot állít elő a Twitch occurrence adataiból.
+- [x] Missing reconciliation csak sikeres, teljesen bejárt explicit window után fut.
+- [x] Adapter 401/404/429/5xx hibái külön canonical hibakódokra fordulnak; ezek nem indítanak destructive reconciliationt.
+- [x] Pagination bounded: alapértelmezett 100 oldal, oldalanként legfeljebb 25 Twitch segment.
+- [x] Token kezelés továbbra is a meglévő getValidTwitchAccessToken() canonical boundaryn történik; az adapter nem tárol tokent.
+
+**CI bizonyíték:**
+- [x] TypeScript typecheck PASS.
+- [x] Existing Editor Core regression tests PASS.
+- [x] Új canonical Schedule contract tests PASS.
+- [x] Twitch Integration Check PASS.
+- [x] Editor Core Test PASS a canonical schedule tests lépéssel.
+- [x] PASS futások a v2/foundation branch aktuális C.5 kódjára: Editor Core Test run 36032375136, Twitch Integration Check run 36032375168.
+
+**Korlát / következő C.5 kapu:**
+- [ ] Remote D1 integrációs teszt: idempotent upsert + duplicate external identity.
+- [ ] Manual isolation regresszió remote/test D1-en.
+- [ ] Missing reconciliation guard és source_presence lifecycle remote/test D1-en.
+- [ ] Concurrent running sync rejection remote/test D1-en.
+- [ ] schedule_sync_state teljes transition matrix runtime ellenőrzése.
+- [ ] Adapter 404/401/429 viselkedés integrációs ellenőrzése.
+- [ ] Public Schedule DTO leakage regression a source/sync mezőkre.
+
+**Következő egyetlen aktív munkapont:** **40.69.13.C.5.1 — remote/test D1 canonical Schedule sync integration + regression gate.**
+
+**Builder/Inspector blokkolás:** továbbra is aktív; a Schedule Builder/Inspector UI csak a C.5 teljes runtime/integrációs tesztkapu PASS után indulhat.
