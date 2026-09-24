@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.10  
+**Verzió:** MASTER-2.40.11  
 **Dátum:** 2026-09-24  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -3785,7 +3785,7 @@ A Page Model nem tárolja a schedule rekordokat.
 - [x] A source-empty futás `last_error_code=TWITCH_SCHEDULE_SOURCE_EMPTY` értéket rögzített; ez nem destructive reconciliation.
 - [x] Remote D1 `PRAGMA quick_check` = `ok`.
 - [x] A remote D1 inspection kizárólag SELECT/PRAGMA parancsokat használt; adatot nem módosított.
-- [ ] Idempotent upsert + duplicate external identity tényleges D1 regression még nincs lezárva.
+- [x] Idempotent upsert + duplicate external identity remote D1 regression PASS: ugyanazon `(source, source_account_id, source_id)` identity mellett 2 upsert után pontosan 1 rekord maradt, a második upsert adatai (`C5.1 TEST B`) érvényesültek; a tesztadat a futás végén törölve lett.
 - [ ] Missing reconciliation guard + `source_presence` lifecycle még nincs lezárva.
 - [ ] Concurrent running sync rejection tényleges runtime regression még nincs lezárva.
 - [ ] Teljes sync-state transition matrix még nincs lezárva.
@@ -3793,6 +3793,7 @@ A Page Model nem tárolja a schedule rekordokat.
 - [ ] Public Schedule DTO source/sync mező leakage regression még nincs lezárva.
 
 **C.5.1 aktuális következő egyetlen lépés — 2026-09-24:**
-- **Remote/test D1 célzott regression:** idempotent upsert + duplicate external identity ellenőrzés.
-- Ezt követi a missing reconciliation guard/lifecycle, majd concurrency/state matrix, adapter error mapping és public DTO leakage regression.
+- **Remote/test D1 célzott regression:** missing reconciliation guard + `source_presence` lifecycle.
+- Ezt követi a concurrency/state matrix, adapter error mapping és public DTO leakage regression.
+- A duplicate external identity teszt közben elsőként próbált `BEGIN/COMMIT` SQL tranzakciós forma Cloudflare D1 remote API-n tiltott volt; ez tesztparancs-korlátozás volt, nem alkalmazási hiba. A tranzakció nélküli izolált teszt ezután sikeresen lefutott.
 - Builder/Inspector továbbra is blokkolt a teljes C.5.1 gate PASS-ig.
