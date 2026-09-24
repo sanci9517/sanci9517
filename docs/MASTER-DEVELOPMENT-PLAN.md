@@ -3737,3 +3737,11 @@ A Page Model nem tárolja a schedule rekordokat.
 **Következő egyetlen aktív munkapont:** **40.69.13.C.5.1 — remote/test D1 canonical Schedule sync integration + regression gate.**
 
 **Builder/Inspector blokkolás:** továbbra is aktív; a Schedule Builder/Inspector UI csak a C.5 teljes runtime/integrációs tesztkapu PASS után indulhat.
+
+
+**C.5.1 előkészítés — 2026-09-24:**
+- [x] Létrejött az authenticated admin trigger: POST /api/admin/twitch/schedule-sync.
+- [x] A trigger editor jogosultságot kér, explicit connectionId + startAt + endAt windownel működik.
+- [x] A trigger a canonical sync service-t hívja; nem hoz létre második Schedule adatutat.
+- [x] Concurrency, reauthorization, rate-limit, source-empty és generic sync hibák HTTP szinten is elkülönítve kezelhetők.
+- [ ] A remote D1 tényleges triggerelt sync még nincs PASS-ra jelölve.
