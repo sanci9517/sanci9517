@@ -34,11 +34,12 @@ export function mapTwitchScheduleResponseStatus(status: number): TwitchScheduleR
 }
 
 export class TwitchScheduleAdapterError extends Error {
-  constructor(public readonly code:
-    | TwitchScheduleResponseErrorCode
-    | "TWITCH_SCHEDULE_PAGE_LIMIT") {
+  public readonly code: TwitchScheduleResponseErrorCode | "TWITCH_SCHEDULE_PAGE_LIMIT";
+
+  constructor(code: TwitchScheduleResponseErrorCode | "TWITCH_SCHEDULE_PAGE_LIMIT") {
     super(code);
     this.name = "TwitchScheduleAdapterError";
+    this.code = code;
   }
 }
 
