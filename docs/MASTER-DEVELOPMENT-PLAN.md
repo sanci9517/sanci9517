@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.08  
+**Verzió:** MASTER-2.40.09  
 **Dátum:** 2026-09-24  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -184,6 +184,32 @@ Kötelező szakmai szabályok:
 - Visszafelé kompatibilitás tudatos: meglévő adatok és dokumentumok esetén migráció/normalizálás/rollback stratégia nélkül nem törünk szerződést.
 - Minden döntés dokumentált: elutasított irányt és okát a MASTER-ben rögzítjük, hogy új beszélgetésben ne térjünk vissza ugyanahhoz a hibás párhuzamos úthoz.
 - Nincs bizonytalan PASS: ha egy kapu hibás, részleges vagy nem ellenőrzött, marad [~]/[!]. Nem nevezünk késznek valamit csak azért, hogy haladhassunk.
+
+### 00.8b — GITHUB ↔ VS CODE / LOCAL WORKTREE SZINKRONIZÁCIÓ — KÖTELEZŐ
+
+A projektben a GitHub repository és a Cloudflare deployhoz használt lokális VS Code munkakönyvtár állapota nem térhet el észrevétlenül. A 2026-09-24-i C.5.1 live route ellenőrzés során bizonyítást nyert, hogy a GitHub `v2/foundation` ágon a C.5 admin Twitch Schedule sync route már létezett, miközben a lokális munkakönyvtárból az `src/routes/admin/twitch-schedule-sync.ts` fájl és az `src/index.ts` route-bekötés hiányzott. Emiatt egy sikeres Cloudflare deploy egy régebbi lokális állapotot tett live-ba, amely a route-ra 404-et adott.
+
+**Rögzített canonical fejlesztési szabály:**
+- [x] GitHub `v2/foundation` a repository referenciaállapota.
+- [x] A VS Code lokális munkakönyvtár a fejlesztési/deploy forrás, ezért annak GitHub branch állapotával szinkronban kell lennie.
+- [x] GitHub webes módosítás után a lokális munkakönyvtárat tudatosan Sync/Pull művelettel kell frissíteni, mielőtt további lokális módosítás vagy deploy történik.
+- [x] Lokális módosítás után a GitHub branchre Commit + Push szükséges, mielőtt a GitHub állapotot tekintenénk kész/canonical változatnak.
+- [x] Cloudflare deploy csak az ellenőrzött, szinkronizált lokális állapotból történhet.
+- [x] Automatikus háttérben futó pull/sync nem kötelező és nem kívánatos, mert helyi, még nem mentett munkát felülírhatna; a szinkronizálás legyen explicit és ellenőrizhető.
+- [ ] A felhasználó gépén a Git CLI / VS Code Git integráció tényleges beállítása és ellenőrzése még hátra van.
+- [ ] A GitHub ↔ VS Code → CI → Cloudflare teljes szinkronizált munkafolyamatát lépésenként kell beállítani és végigtesztelni.
+
+**Kötelező ellenőrzési szabály minden deploy előtt:**
+1. lokális branch/HEAD azonosítása;
+2. lokális módosítások ellenőrzése;
+3. GitHub branch aktuális állapotának ellenőrzése;
+4. eltérés esetén Sync/Pull vagy Commit/Push rendezése;
+5. typecheck + érintett tesztek;
+6. csak ezután Cloudflare deploy;
+7. live API ellenőrzés;
+8. MASTER frissítése.
+
+**Szigorú tiltás:** GitHub weben létrehozott/javított fájlt nem tekintünk automatikusan lokálisan jelen lévőnek. A lokális fájlrendszer és a GitHub branch közötti eltérést minden deploy előtt ellenőrizni kell.
 
 ### 00.8a — Profi fejlesztési döntési sorrend
 1. Követelmény és Definition of Done pontosítása.
@@ -3738,6 +3764,15 @@ A Page Model nem tárolja a schedule rekordokat.
 
 **Builder/Inspector blokkolás:** továbbra is aktív; a Schedule Builder/Inspector UI csak a C.5 teljes runtime/integrációs tesztkapu PASS után indulhat.
 
+
+**C.5.1 deployment/sync diagnosztika — 2026-09-24:**
+- [x] A friss Worker deploy sikeresen lefutott, de a live `/api/admin/twitch/schedule-sync` route 404-et adott.
+- [x] `/api/health` live 200 OK volt, ezért az általános Worker deployment/URL működése igazolt.
+- [x] GitHub `v2/foundation` audit igazolta, hogy az admin sync route az `src/index.ts`-ben és a `src/routes/admin/twitch-schedule-sync.ts` fájlban létezik.
+- [x] Lokális audit igazolta, hogy mindkét C.5 route-elem hiányzott a deployált lokális munkakönyvtárból.
+- [x] A lokális route fájl és az `src/index.ts` bekötése vissza lett állítva.
+- [ ] A lokális állapot GitHub/VS Code szinkronizálása még nincs lezárva.
+- [ ] Typecheck, új deploy és live route runtime gate még hátra van.
 
 **C.5.1 előkészítés — 2026-09-24:**
 - [x] Létrejött az authenticated admin trigger: POST /api/admin/twitch/schedule-sync.
