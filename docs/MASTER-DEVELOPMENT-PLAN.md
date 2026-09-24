@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.12  
+**Verzió:** MASTER-2.40.13  
 **Dátum:** 2026-09-24  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -3793,7 +3793,7 @@ A Page Model nem tárolja a schedule rekordokat.
 - [ ] Public Schedule DTO source/sync mező leakage regression még nincs lezárva.
 
 **C.5.1 aktuális következő egyetlen lépés — 2026-09-24:**
-- **Remote/test D1 célzott regression:** concurrent running sync rejection + `schedule_sync_state` transition matrix.
+- **Live API regression:** authenticated concurrent/running sync rejection (`409 SCHEDULE_SYNC_ALREADY_RUNNING`).
 - Ezt követi az adapter error mapping és public DTO leakage regression.
 - A duplicate external identity teszt közben elsőként próbált `BEGIN/COMMIT` SQL tranzakciós forma Cloudflare D1 remote API-n tiltott volt; ez tesztparancs-korlátozás volt, nem alkalmazási hiba. A tranzakció nélküli izolált teszt ezután sikeresen lefutott.
 - Builder/Inspector továbbra is blokkolt a teljes C.5.1 gate PASS-ig.
