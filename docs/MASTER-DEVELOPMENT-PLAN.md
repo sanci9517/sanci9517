@@ -7,7 +7,7 @@
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt PASS:** 2026-09-24 — 40.69.13.C.3 Schedule source/sync migration runtime/schema/integrity verification PASS. Remote D1 schema, indexes, `schedule_sync_state`, `PRAGMA quick_check` és migration state ellenőrizve; `0013_schedule_source_sync.sql` a repository authoritative migrationje, a remote állapot `No migrations to apply!`.
+**Legutóbbi igazolt PASS:** 2026-09-24 — 40.69.13.C.4 canonical Schedule service/mapper runtime contract audit PASS. A meglévő public read, admin CRUD, Twitch OAuth/token boundary, routing és D1 ownership teljes érintett runtime auditja lezárva; canonical service/mapper adatfolyam és error/state/concurrency szerződés rögzítve. C.3 remote D1 migration/schema/integrity PASS továbbra is érvényes.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -227,7 +227,7 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 ### 🔵 EGYETLEN AKTÍV PONT
 **40.69.13 — Twitch-integrációs alap + Schedule/Adásrend újratervezés audit**
 
-**Státusz:** [~] AKTÍV — B.4–B.13 és C.1–C.3 lezárva. C.3 remote D1/runtime/schema/integrity verification PASS. A következő egyetlen munkapont: C.4 — canonical source-aware Schedule service/mapper runtime contract audit + implementáció előkészítés. Builder/Inspector továbbra is blokkolt.
+**Státusz:** [~] AKTÍV — B.4–B.13 és C.1–C.4 lezárva. C.4 runtime contract audit PASS; implementáció még nem történt. A következő egyetlen munkapont: C.5 — canonical source-aware Schedule service/mapper minimális implementáció + contract/regression tesztek. Builder/Inspector továbbra is blokkolt.
 
 ### Kötelező sorrend — 40.69.13 aktív munkapont
 **Szigorú szabály:** először csak audit és szerződéstervezés történik. OAuth bekötés, Twitch kódolás vagy Schedule Builder UI implementáció csak az audit eredményének MASTER-be rögzítése után indul.
@@ -3457,11 +3457,11 @@ Ez igazolja, hogy a létrejött Twitch OAuth kapcsolat production környezetben 
 **Commit:**
 - `79a4ef776400c891900adf44c56fd87154a6460f` — `feat(schedule): add canonical source and sync schema`
 
-**Következő egyetlen aktív munkapont:** **40.69.13.C.4 — canonical source-aware Schedule service/mapper runtime contract audit + implementáció előkészítés.**
+**Következő egyetlen aktív munkapont:** **40.69.13.C.5 — canonical source-aware Schedule service/mapper minimális implementáció + contract/regression tesztek.**
 
 #### C.4 — CANONICAL SOURCE-AWARE SCHEDULE SERVICE / MAPPER RUNTIME CONTRACT — KÖVETKEZŐ AKTÍV MUNKAPONT
 
-**Státusz:** [ ] AKTÍV — implementáció előtt teljes runtime contract audit.
+**Státusz:** [x] PASS — canonical Schedule service/mapper runtime contract audit lezárva — 2026-09-24. Ebben a lépésben runtime kódmódosítás nem történt.
 
 **Cél:** a már lezárt D1 source/sync adatmodell fölé egyetlen canonical Schedule service + mapper adatfolyamot kialakítani, amely a Twitch adapterből érkező validált DTO-t a schedule_items és schedule_sync_state domainbe vezeti, miközben a manual rekordok és a public read contract sértetlenek maradnak.
 
@@ -3475,6 +3475,30 @@ Ez igazolja, hogy a létrejött Twitch OAuth kapcsolat production környezetben 
 7. Concurrency/lock stratégia összevetése a meglévő Twitch refresh-lock és Schedule sync state modellel.
 8. Public read compatibility ellenőrzése: a source/sync belső mezők nem kerülhetnek ki indokolatlanul a public contractba.
 9. Csak az audit PASS után következhet a minimális service/mapper implementáció.
+
+**Audit eredmény — C.4:**
+- [x] src/core/schedule-read.ts teljes audit: a public read csak canonical public mezőket ad vissza; source/sync belső mezők nem kerülnek ki. A query kizárólag a schedule_items canonical domainből olvas.
+- [x] src/routes/public/schedule.ts audit: a public endpoint a canonical read service egyetlen útját használja; nincs külön source-aware public adatút.
+- [x] src/routes/admin/schedule.ts audit: manual CRUD közvetlenül a schedule_items domainen dolgozik; az új 0013 defaultokkal a manual rekordok source='manual', source_presence='present', is_recurring=0 értékeket kapnak. A Twitch sync nem használhatja ezt a route-ot adapterként.
+- [x] src/core/twitch-oauth.ts audit: a canonical getValidTwitchAccessToken() marad az egyetlen Twitch access-token boundary; a Schedule service nem tárolhat/dekódolhat külön tokent és nem kezelhet saját refresh lifecycle-t. A meglévő refresh lock külön felelősség.
+- [x] src/routes/integrations/twitch.ts audit: OAuth/connect/validation/disconnect route-ok nem keverhetők a Schedule sync domainnel; a sync service szerveroldali domain/service réteg marad.
+- [x] src/index.ts audit: jelenleg nincs Twitch Schedule sync endpoint; C.5-ben egy canonical internal/admin sync belépési pont készülhet, de nem hozható létre második public Schedule adatút.
+- [x] Repository history audit: a C.3 migration után nem található meglévő canonical Schedule sync/mapper/service implementáció; ezért C.5-ben egyetlen új canonical service/mapper réteg készül, nem meglévő párhuzamos megoldást foltozunk.
+- [x] Canonical runtime flow: Twitch OAuth/token service → Twitch Schedule adapter → validált external DTO → canonical Schedule mapper → D1 schedule_items + schedule_sync_state → existing readPublicSchedule() → későbbi schedule Editor node.
+- [x] External ownership: Twitch-owned title/startsAt/endsAt/platform/source identity/isRecurring/source category metadata csak source='twitch' rekordot frissíthet; manual rekordot source sync nem módosíthat.
+- [x] Derived live state külön marad: Streams API live presence nem írja át tartósan a Schedule rekord idő- vagy identity mezőit.
+- [x] Idempotency: (source, source_account_id, source_id) az egyetlen external identity; upsert ezen történik. Duplicate external input nem hozhat létre második canonical rekordot.
+- [x] Missing reconciliation: csak teljes, sikeres, explicit window sync után engedélyezett; 404, 401, rate-limit vagy részleges pagination esetén nincs destructive missing reconciliation.
+- [x] Sync-state transition matrix: idle → running → success/source_empty/rate_limited/reauthorization_required/failed; running alatt konkurens második sync nem indulhat.
+- [x] Concurrency: a Twitch token refresh lock és a Schedule sync lock/state két külön lock-domain; egyik nem használható a másik helyettesítésére.
+- [x] Error policy: 401/invalid token → canonical reauthorization lifecycle; 404/no schedule → source_empty, manual rekordok változatlanok; rate-limit → rate_limited; partial/transient failure → failed; egyik eset sem jogosít automatikus delete-re.
+- [x] Pagination: a Twitch Schedule adapternek a teljes releváns cursoros oldalsort le kell olvasnia bounded safety limit mellett; az első oldal önmagában nem canonical teljes eredmény.
+- [x] Public compatibility: source/sync state csak belső persistence metadata; a jelenlegi public DTO nem bővül automatikusan ezekkel.
+- [x] C.5 boundary: adapter + mapper + sync service külön felelősségek, de egy canonical Schedule adatút; nem készül második repository vagy Schedule table.
+- [x] Contract/regression test scope: manual isolation, idempotent upsert, duplicate identity, missing reconciliation guard, 404/source_empty, 401/reauthorization, rate-limit, pagination, sync-state transitions, public DTO leakage és concurrency.
+- [x] Builder/Inspector továbbra is blokkolt a C.5 implementáció és tesztkapu lezárásáig.
+
+**C.4 döntés:** a runtime audit alapján nincs szükség schema-módosításra. A következő módosítás kizárólag a canonical adapter/mapper/sync service implementáció lehet, a C.5-ben rögzített contract szerint.
 
 **Definition of Done:**
 - [ ] minden érintett runtime fájl és adatfolyam auditálva;
