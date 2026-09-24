@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.06  
+**Verzió:** MASTER-2.40.07  
 **Dátum:** 2026-09-24  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt PASS:** 2026-09-24 — 40.69.13.C.2 canonical Schedule source/sync adatmodell + migration terv audit PASS. A C.3 migration implementáció elkészült, de még nincs runtime/remote migration PASS.
+**Legutóbbi igazolt PASS:** 2026-09-24 — 40.69.13.C.2 canonical Schedule source/sync adatmodell + migration terv audit PASS. A C.3 migration implementáció elkészült; a lokális SQLite séma/integrity regression PASS, a remote D1 migration/apply PASS még nincs igazolva.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -3413,8 +3413,9 @@ Ez igazolja, hogy a létrejött Twitch OAuth kapcsolat production környezetben 
 - [x] A migration fájlt GitHubon visszaolvastuk a `v2/foundation` branchen.
 - [x] A SQLite stratégia megfelel a korábban rögzített C.2 döntésnek: az ADD COLUMN nem kap UNIQUE/PRIMARY KEY constraintet; az external identity külön UNIQUE indexként készül. SQLite ezt támogatja, és a NULL értékeket UNIQUE indexben különbözőnek tekinti. citeturn0search1turn0search3
 - [ ] Remote D1 migration apply / schema inspection még nincs PASS-ként igazolva.
-- [ ] Existing-data integrity regression még nincs PASS-ként igazolva.
+- [x] SQLite migration/integrity regression PASS: manual defaultok, external identity uniqueness és sync-state CHECK/UNIQUE szabályok ellenőrizve.
 - [ ] CI/typecheck még nincs PASS-ként igazolva erre a commitra.
+- [D] A remote D1 ellenőrzést a tényleges Cloudflare/Wrangler runtime-ban kell lezárni; a jelenlegi GitHub toolkörnyezetből a hitelesített Wrangler remote parancs közvetlen futtatása nem elérhető.
 
 **Commit:**
 - `79a4ef776400c891900adf44c56fd87154a6460f` — `feat(schedule): add canonical source and sync schema`
