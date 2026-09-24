@@ -17,13 +17,25 @@ type TwitchPayload = {
   pagination?: { cursor?: unknown };
 };
 
+export type TwitchScheduleResponseErrorCode =
+  | "TWITCH_SCHEDULE_REAUTHORIZATION_REQUIRED"
+  | "TWITCH_SCHEDULE_SOURCE_EMPTY"
+  | "TWITCH_SCHEDULE_RATE_LIMITED"
+  | "TWITCH_SCHEDULE_BAD_RESPONSE"
+  | "TWITCH_SCHEDULE_TRANSIENT_FAILURE";
+
+export function mapTwitchScheduleResponseStatus(status: number): TwitchScheduleResponseErrorCode | null {
+  if (status === 401) return "TWITCH_SCHEDULE_REAUTHORIZATION_REQUIRED";
+  if (status === 404) return "TWITCH_SCHEDULE_SOURCE_EMPTY";
+  if (status === 429) return "TWITCH_SCHEDULE_RATE_LIMITED";
+  if (status >= 500) return "TWITCH_SCHEDULE_TRANSIENT_FAILURE";
+  if (status < 200 || status >= 300) return "TWITCH_SCHEDULE_BAD_RESPONSE";
+  return null;
+}
+
 export class TwitchScheduleAdapterError extends Error {
   constructor(public readonly code:
-    | "TWITCH_SCHEDULE_REAUTHORIZATION_REQUIRED"
-    | "TWITCH_SCHEDULE_SOURCE_EMPTY"
-    | "TWITCH_SCHEDULE_RATE_LIMITED"
-    | "TWITCH_SCHEDULE_BAD_RESPONSE"
-    | "TWITCH_SCHEDULE_TRANSIENT_FAILURE"
+    | TwitchScheduleResponseErrorCode
     | "TWITCH_SCHEDULE_PAGE_LIMIT") {
     super(code);
     this.name = "TwitchScheduleAdapterError";
@@ -91,12 +103,8 @@ export async function fetchTwitchSchedule(
       headers: { Authorization: `Bearer ${token}`, "Client-Id": env.TWITCH_CLIENT_ID }
     });
 
-    if (response.status === 401) throw new TwitchScheduleAdapterError("TWITCH_SCHEDULE_REAUTHORIZATION_REQUIRED");
-    if (response.status === 404) throw new TwitchScheduleAdapterError("TWITCH_SCHEDULE_SOURCE_EMPTY");
-    if (response.status === 429) throw new TwitchScheduleAdapterError("TWITCH_SCHEDULE_RATE_LIMITED");
-    if (!response.ok) throw new TwitchScheduleAdapterError(
-      response.status >= 500 ? "TWITCH_SCHEDULE_TRANSIENT_FAILURE" : "TWITCH_SCHEDULE_BAD_RESPONSE"
-    );
+    const responseError = mapTwitchScheduleResponseStatus(response.status);
+    if (responseError) throw new TwitchScheduleAdapterError(responseError);
 
     let payload: TwitchPayload;
     try { payload = await response.json() as TwitchPayload; }
