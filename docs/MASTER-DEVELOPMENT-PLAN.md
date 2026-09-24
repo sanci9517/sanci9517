@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.04  
+**Verzió:** MASTER-2.40.05  
 **Dátum:** 2026-09-24  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt PASS:** 2026-09-24 — 40.69.13.C.1 Twitch → Schedule domain contract audit PASS; a canonical ownership, source mapping, recurring/cancelled/404/live/concurrency/timezone/pagination és collision szabályok rögzítve. Implementáció még nem indult.
+**Legutóbbi igazolt PASS:** 2026-09-24 — 40.69.13.C.2 canonical Schedule source/sync adatmodell + migration terv audit PASS; a schema-bővítés, source identity, sync-state, missing/reconcile, migration és backward-compatibility stratégia rögzítve. Implementáció még nem indult.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -194,7 +194,7 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 ### 🔵 EGYETLEN AKTÍV PONT
 **40.69.13 — Twitch-integrációs alap + Schedule/Adásrend újratervezés audit**
 
-**Státusz:** [~] AKTÍV — B.4–B.13 lezárva; 40.69.13.C.1 Twitch → Schedule domain contract audit PASS. A canonical mapping és edge-case szabályok rögzítve vannak, de migration/mapper kód még nincs. A következő egyetlen munkapont: C.2 — canonical Schedule source/sync adatmodell + migration terv, majd csak annak lezárása után implementáció. Builder/Inspector továbbra is blokkolt.
+**Státusz:** [~] AKTÍV — B.4–B.13 és C.1–C.2 lezárva. A canonical Schedule source/sync adatmodell és migration terv rögzítve van, de kódmódosítás még nincs. A következő egyetlen munkapont: C.3 — migration implementáció + canonical source-aware Schedule service/mapper alap. Builder/Inspector továbbra is blokkolt.
 
 ### Kötelező sorrend — 40.69.13 aktív munkapont
 **Szigorú szabály:** először csak audit és szerződéstervezés történik. OAuth bekötés, Twitch kódolás vagy Schedule Builder UI implementáció csak az audit eredményének MASTER-be rögzítése után indul.
@@ -3392,6 +3392,149 @@ Ez igazolja, hogy a létrejött Twitch OAuth kapcsolat production környezetben 
 **Hivatalos Twitch szerződés bizonyítéka:** a Twitch `Get Channel Stream Schedule` 200-as válasza occurrence-alapú `id/start_time/end_time/title/canceled_until/category/is_recurring` adatokat és cursoros paginationt ad; 404 azt jelenti, hogy nincs létrehozott streaming schedule. A `Get Streams` user_id alapján adja a live presence-t. A Twitch dokumentáció szerint a schedule olvasása app/user tokennel működik, míg a `channel:manage:schedule` scope a módosító műveletekhez kell. citeturn0search0turn1search0turn2search0turn2search1
 
 **Következő egyetlen aktív munkapont:** **40.69.13.C.2 — canonical Schedule source/sync adatmodell + migration terv teljes audit és rögzítés.** Builder/Inspector implementáció továbbra is blokkolt.
+
+#### C.2 — CANONICAL SCHEDULE SOURCE/SYNC ADATMODELL + MIGRATION TERV AUDIT — 2026-09-24
+
+**Státusz:** [x] PASS — adatmodell és migration stratégia lezárva; ebben a lépésben nincs kódmódosítás.
+
+**Megvizsgált jelenlegi állapot:**
+- [x] `schedule_items` jelenleg source identity nélkül működik.
+- [x] Meglévő manual rekordokat meg kell őrizni.
+- [x] Twitch OAuth connection külön canonical domain; a Schedule rekordokba token vagy secret semmilyen formában nem kerülhet.
+- [x] A Twitch refresh-lock külön migrationben (`0012_twitch_refresh_lock.sql`) él; ezt nem keverjük a Schedule migrationnel.
+- [x] A public read jelenlegi contractját csak a source-aware backend elkészülte után módosítjuk, nem előre.
+
+**Rögzített canonical Schedule rekordmodell:**
+```
+schedule_items
+  id                  Sanci-owned primary key
+  source              manual | twitch | későbbi integration
+  source_id           external occurrence/record ID, nullable manualnál
+  source_account_id   external account/broadcaster ID, nullable manualnál
+  source_presence     present | missing, default present
+  source_synced_at    utolsó sikeres source-observation timestamp
+  source_missing_at   mikor vált source_missing állapotúvá, nullable
+  is_recurring        0/1, default 0
+  source_category_id  nullable external category/game ID
+  source_category_name nullable external category/game display name
+  title
+  platform
+  starts_at
+  ends_at
+  status
+  url
+  notes
+  created_at
+  updated_at
+```
+
+**Fontos ownership szabály:**
+- [x] `source` + `source_id` + `source_account_id` az external identity; Twitch sync ezen a kulcson idempotens.
+- [x] Sanci `id` soha nem lesz external ID.
+- [x] `source_category_*` kizárólag source metadata; saját játékprofil-rendszer később külön domain lesz.
+- [x] `source_presence='missing'` nem jelent hard delete-et.
+- [x] Manual rekordok `source='manual'` értékkel kerülnek backfillre.
+- [x] Meglévő rekordok tartalma nem változik a migration során, csak az új source mezők kapnak biztonságos defaultot.
+
+**Canonical sync-state tábla:**
+```
+schedule_sync_state
+  id
+  source
+  source_account_id
+  status
+  window_start_at
+  window_end_at
+  last_started_at
+  last_succeeded_at
+  last_completed_at
+  last_seen_count
+  last_error_code
+  last_error_at
+  updated_at
+  UNIQUE(source, source_account_id)
+```
+
+Engedélyezett sync-state értékek:
+- `idle`
+- `running`
+- `success`
+- `source_empty`
+- `reauthorization_required`
+- `rate_limited`
+- `failed`
+
+**Sync window / reconciliation stratégia:**
+- [x] Nem használjuk a Twitch alapértelmezett „mostantól” lekérést teljes reconciliation truth-ként.
+- [x] A sync explicit `start_time`-mal dolgozik, hogy a teljes vizsgált időablak determinisztikus legyen.
+- [x] Első canonical verzióban a window a sync policy konfigurációja; a migration nem éget fix nap-számot a domainbe.
+- [x] Egy successful full sync után csak a ténylegesen lefedett window korábban látott Twitch rekordjai jelölhetők `missing` állapotúra.
+- [x] 404 esetén nincs destructive reconciliation; a sync-state `source_empty`, a manual és korábbi canonical rekordok megmaradnak.
+- [x] Részleges/failed/rate-limited sync esetén **tilos** missing reconciliationt futtatni.
+- [x] `reauthorization_required` esetén **tilos** üres schedule-ként kezelni a forrást.
+
+**Migration stratégia:**
+- [x] Új migration külön fájlban, az aktuális utolsó migration után készül; meglévő migrationt nem írunk át.
+- [x] A `schedule_items` új mezői nullable/defaultolt formában kerülnek hozzáadásra, majd kontrollált backfill történik.
+- [x] Mivel SQLite ALTER TABLE korlátozott, új UNIQUE identity indexet külön `CREATE UNIQUE INDEX` formában készítünk; az existing manual NULL source identityk nem ütköznek. SQLite a NULL értékeket UNIQUE alatt különbözőnek tekinti. citeturn2search0turn2search2
+- [x] A migration nem végez destructive table rebuildet.
+- [x] Existing schedule data rollbackja csak külön backup/rollback migrationnel történhet; implicit adatvesztés nem megengedett.
+- [x] Migration után schema/integrity és canonical Schedule regression kötelező.
+
+**Indexek:**
+- [x] unique external identity: `(source, source_account_id, source_id)`
+- [x] lookup: `(source, source_account_id, starts_at)`
+- [x] public read továbbra is `starts_at/status/platform` szerint optimalizálható.
+- [x] sync reconciliationhez `source/source_account_id/source_presence/starts_at` kombináció szükséges.
+
+**Data-flow ownership:**
+```
+Twitch OAuth connection
+        ↓
+canonical token service
+        ↓
+Twitch Schedule adapter
+        ↓
+validated external DTO
+        ↓
+canonical Schedule mapper
+        ↓
+D1 schedule_items + schedule_sync_state
+        ↓
+public Schedule read
+        ↓
+Editor schedule node
+        ↓
+Page publish/render
+```
+A Page Model nem tárolja a schedule rekordokat.
+
+**Concurrency / idempotency:**
+- [x] Egy source-account alatt egyszerre futó sync-et DB state/lock stratégia védi.
+- [x] Ugyanaz az external identity ismételt importja ugyanazt a Sanci rekordot frissíti.
+- [x] Missing reconciliation csak teljes, sikeres window sync után futhat.
+- [x] A sync-state nem kerül a public API response-ba.
+- [x] User-facing CRUD és source-sync ownership külön marad; Twitch sync nem írhat manual rekordot.
+
+**Elutasított irányok:**
+- [x] Nem duplikáljuk a teljes Twitch payloadot egy korlátlan `metadata_json` mezőben.
+- [x] Nem tesszük a Twitch ID-t primary key-vé.
+- [x] Nem hozzuk létre a Schedule rekordokat Page Model JSON-ban.
+- [x] Nem használunk implicit „404 = delete all” logikát.
+- [x] Nem készítünk külön Twitch Schedule táblát a canonical `schedule_items` helyett.
+- [x] Nem kérünk Schedule manage scope-ot read-only sync miatt.
+
+**C.2 Definition of Done:**
+- [x] canonical source-aware schema rögzítve;
+- [x] external identity rögzítve;
+- [x] sync-state rögzítve;
+- [x] reconciliation/missing szabály rögzítve;
+- [x] migration/backward compatibility stratégia rögzítve;
+- [x] concurrency/idempotency stratégia rögzítve;
+- [x] Builder/Inspector továbbra is blokkolt.
+
+**Következő egyetlen aktív munkapont:** **40.69.13.C.3 — migration implementáció + canonical source-aware Schedule service/mapper alap.** Builder/Inspector implementáció továbbra is blokkolt.
+
 
 
 
