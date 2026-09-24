@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.13  
+**Verzió:** MASTER-2.40.14  
 **Dátum:** 2026-09-24  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt mérföldkő:** 2026-09-24 — 40.69.13.C.5.1 remote D1 canonical Schedule sync első live/runtime ellenőrzése PASS: production health/auth boundary, authenticated schedule sync trigger, manual isolation, sync-state rögzítés és D1 integrity igazolva. A teljes C.5.1 regression gate még nincs lezárva.
+**Legutóbbi igazolt mérföldkő:** 2026-09-24 — 40.69.13.C.5.1 live authenticated `409 SCHEDULE_SYNC_ALREADY_RUNNING` concurrency regression PASS. A remote D1 running-state gate után a production API helyesen 409-cel és canonical hibakóddal utasította el a második syncet; a tesztállapot cleanup után `idle` lett. A teljes C.5.1 regression gate még nincs lezárva.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -3766,7 +3766,7 @@ A Page Model nem tárolja a schedule rekordokat.
 
 
 **C.5.1 deployment/sync diagnosztika — 2026-09-24:**
-- [x] A friss Worker deploy sikeresen lefutott; aktuális production Worker version: `d679ef32-26fa-4bd7-96d6-991410a917ad`.
+- [x] A friss Worker deploy sikeresen lefutott; aktuális production Worker version: `d0bcdada-a660-422c-98bc-83471b90f811`.
 - [x] `/api/health` live 200 OK: általános Worker deployment/URL működés igazolva.
 - [x] `POST /api/admin/twitch/schedule-sync` unauthenticated hívás 401 `UNAUTHORIZED`: auth boundary működik.
 - [x] Live login sikeres; admin userrel létrejött authenticated session.
@@ -3787,13 +3787,19 @@ A Page Model nem tárolja a schedule rekordokat.
 - [x] A remote D1 inspection kizárólag SELECT/PRAGMA parancsokat használt; adatot nem módosított.
 - [x] Idempotent upsert + duplicate external identity remote D1 regression PASS: ugyanazon `(source, source_account_id, source_id)` identity mellett 2 upsert után pontosan 1 rekord maradt, a második upsert adatai (`C5.1 TEST B`) érvényesültek; a tesztadat a futás végén törölve lett.
 - [x] Missing reconciliation guard + `source_presence` lifecycle remote D1 regression PASS: `present → missing` kitöltött `source_missing_at` értékkel, majd `missing → present` esetén `source_missing_at=NULL` és `source_synced_at` frissült; már `missing` rekordot a `source_presence='present'` guard miatt az ismételt reconciliation UPDATE nem módosította.
-- [ ] Concurrent running sync rejection tényleges runtime regression még nincs lezárva.
-- [ ] Teljes sync-state transition matrix még nincs lezárva.
+- [x] Concurrent running sync rejection tényleges production runtime regression PASS: remote D1 `status='running'` előállítása után az authenticated `POST /api/admin/twitch/schedule-sync` válasza 409 `SCHEDULE_SYNC_ALREADY_RUNNING` lett.
+- [x] A concurrency teszt cleanup után a Twitch sync-state visszaállt `idle` állapotra, `last_error_code=NULL` értékkel.
+- [x] Sync-state transition matrix remote D1 runtime regression PASS: `idle → running → success` útvonal és running alatti második indítás elutasítása igazolva; a `last_started_at`, `last_succeeded_at`, `last_completed_at`, `last_seen_count` és `last_error_code` mezők viselkedése megfelelt a contractnak.
 - [ ] Adapter 401/404/429 integrációs runtime regression még nincs lezárva.
 - [ ] Public Schedule DTO source/sync mező leakage regression még nincs lezárva.
 
+- [x] Live API concurrency regression PASS: a remote D1-ben előállított `running` sync-state mellett authenticated `POST /api/admin/twitch/schedule-sync` hívás canonical `409 SCHEDULE_SYNC_ALREADY_RUNNING` hibával tért vissza.
+- [x] A PowerShell `Invoke-WebRequest` a 409-es HTTP választ exceptionként jelezte, ezért a `$runningTest.StatusCode` / `$runningTest.Content` változók nem töltődtek fel; ez kliensoldali viselkedés, nem API-hiba. A response body közvetlenül a PowerShell hibakimenetben igazolható volt.
+- [x] Concurrency regression cleanup PASS: a teszt végén a Twitch `schedule_sync_state` rekord `status=idle`, `last_error_code=NULL`.
+- [x] A schedule contract regression aktuális futása: 5/5 PASS.
+
 **C.5.1 aktuális következő egyetlen lépés — 2026-09-24:**
-- **Live API regression:** authenticated concurrent/running sync rejection (`409 SCHEDULE_SYNC_ALREADY_RUNNING`).
-- Ezt követi az adapter error mapping és public DTO leakage regression.
+- **Adapter error mapping + public Schedule DTO leakage regression.**
+- Következő kapu: Twitch 401/404/429 canonical error/state viselkedés integrációs ellenőrzése, majd annak bizonyítása, hogy `source_*` és `schedule_sync_state` belső mezők nem szivárognak a public Schedule DTO-ba.
 - A duplicate external identity teszt közben elsőként próbált `BEGIN/COMMIT` SQL tranzakciós forma Cloudflare D1 remote API-n tiltott volt; ez tesztparancs-korlátozás volt, nem alkalmazási hiba. A tranzakció nélküli izolált teszt ezután sikeresen lefutott.
 - Builder/Inspector továbbra is blokkolt a teljes C.5.1 gate PASS-ig.
