@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.14  
+**Verzió:** MASTER-2.40.15  
 **Dátum:** 2026-09-24  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt mérföldkő:** 2026-09-24 — 40.69.13.C.5.1 live authenticated `409 SCHEDULE_SYNC_ALREADY_RUNNING` concurrency regression PASS. A remote D1 running-state gate után a production API helyesen 409-cel és canonical hibakóddal utasította el a második syncet; a tesztállapot cleanup után `idle` lett. A teljes C.5.1 regression gate még nincs lezárva.
+**Legutóbbi igazolt mérföldkő:** 2026-09-24 — 40.69.13.C.5.1 concurrency regression PASS. 2026-09-24: az adapter error mapping + public Schedule DTO leakage regression kódja elkészült; CI ellenőrzés folyamatban. A teljes C.5.1 regression gate még nincs lezárva.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
