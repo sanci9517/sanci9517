@@ -26,3 +26,6 @@ jobs:
 
       - name: Run editor core tests
         run: npm run test:editor
+
+      - name: Run canonical schedule tests
+        run: npm run test:schedule
