@@ -81,17 +81,24 @@ async function reconcileMissing(
 }
 
 export async function syncCanonicalTwitchSchedule(
-  db: D1Database, window: ScheduleSyncWindow, fetcher: ScheduleSyncFetcher
+  db: D1Database, window: ScheduleSyncWindow, fetcher: ScheduleSyncFetcher, accountId?: string
 ): Promise<CanonicalScheduleSyncResult> {
   const normalized = normalizeScheduleSyncWindow(window);
-  const snapshot = await fetcher(normalized);
-  await beginSync(db, snapshot.broadcasterId, normalized);
+  let syncAccountId = accountId ?? "";
+  let snapshot: TwitchScheduleSnapshot | null = null;
 
-  const syncedAt = new Date().toISOString();
-  const seenIds = new Set<string>();
-  let upsertedCount = 0;
+  if (syncAccountId) await beginSync(db, syncAccountId, normalized);
 
   try {
+    snapshot = await fetcher(normalized);
+    syncAccountId = snapshot.broadcasterId;
+
+    if (!accountId) await beginSync(db, syncAccountId, normalized);
+
+    const syncedAt = new Date().toISOString();
+    const seenIds = new Set<string>();
+    let upsertedCount = 0;
+
     for (const segment of snapshot.segments) {
       const item = mapTwitchScheduleSegment(segment, snapshot.broadcasterId, snapshot.broadcasterLogin, syncedAt);
       await upsert(db, item);
@@ -104,7 +111,13 @@ export async function syncCanonicalTwitchSchedule(
     return { status: "success", seenCount: snapshot.segments.length, upsertedCount, missingCount };
   } catch (error) {
     const code = error instanceof Error ? error.message : "SCHEDULE_SYNC_FAILED";
-    await finishSync(db, snapshot.broadcasterId, "failed", snapshot.segments.length, code);
+    if (syncAccountId && code !== "SCHEDULE_SYNC_ALREADY_RUNNING") {
+      const status: ScheduleSyncStatus =
+        error instanceof TwitchScheduleAdapterError && error.code === "TWITCH_SCHEDULE_REAUTHORIZATION_REQUIRED" ? "reauthorization_required" :
+        error instanceof TwitchScheduleAdapterError && error.code === "TWITCH_SCHEDULE_RATE_LIMITED" ? "rate_limited" :
+        error instanceof TwitchScheduleAdapterError && error.code === "TWITCH_SCHEDULE_SOURCE_EMPTY" ? "source_empty" : "failed";
+      await finishSync(db, syncAccountId, status, snapshot?.segments.length ?? 0, code);
+    }
     throw error;
   }
 }
@@ -113,23 +126,16 @@ export async function syncTwitchSchedule(
   env: Env, connectionId: string, window: ScheduleSyncWindow, options: { maxPages?: number } = {}
 ): Promise<CanonicalScheduleSyncResult> {
   const normalized = normalizeScheduleSyncWindow(window);
-  try {
-    const snapshot = await fetchTwitchSchedule(env, connectionId, normalized, options);
-    return syncCanonicalTwitchSchedule(env.DB, normalized, async () => snapshot);
-  } catch (error) {
-    const row = await env.DB.prepare(
-      "SELECT broadcaster_id AS broadcasterId FROM twitch_connections WHERE id=? LIMIT 1"
-    ).bind(connectionId).first<{ broadcasterId: string }>();
+  const row = await env.DB.prepare(
+    "SELECT broadcaster_id AS broadcasterId FROM twitch_connections WHERE id=? LIMIT 1"
+  ).bind(connectionId).first<{ broadcasterId: string }>();
 
-    if (row?.broadcasterId && error instanceof TwitchScheduleAdapterError) {
-      const status: ScheduleSyncStatus =
-        error.code === "TWITCH_SCHEDULE_REAUTHORIZATION_REQUIRED" ? "reauthorization_required" :
-        error.code === "TWITCH_SCHEDULE_RATE_LIMITED" ? "rate_limited" :
-        error.code === "TWITCH_SCHEDULE_SOURCE_EMPTY" ? "source_empty" : "failed";
+  if (!row?.broadcasterId) throw new Error("TWITCH_CONNECTION_NOT_FOUND");
 
-      await beginSync(env.DB, row.broadcasterId, normalized).catch(() => undefined);
-      await finishSync(env.DB, row.broadcasterId, status, 0, error.code);
-    }
-    throw error;
-  }
+  return syncCanonicalTwitchSchedule(
+    env.DB,
+    normalized,
+    async () => fetchTwitchSchedule(env, connectionId, normalized, options),
+    row.broadcasterId
+  );
 }
