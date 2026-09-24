@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.09  
+**Verzió:** MASTER-2.40.10  
 **Dátum:** 2026-09-24  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt PASS:** 2026-09-24 — 40.69.13.C.4 canonical Schedule service/mapper runtime contract audit PASS. A meglévő public read, admin CRUD, Twitch OAuth/token boundary, routing és D1 ownership teljes érintett runtime auditja lezárva; canonical service/mapper adatfolyam és error/state/concurrency szerződés rögzítve. C.3 remote D1 migration/schema/integrity PASS továbbra is érvényes.
+**Legutóbbi igazolt mérföldkő:** 2026-09-24 — 40.69.13.C.5.1 remote D1 canonical Schedule sync első live/runtime ellenőrzése PASS: production health/auth boundary, authenticated schedule sync trigger, manual isolation, sync-state rögzítés és D1 integrity igazolva. A teljes C.5.1 regression gate még nincs lezárva.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -3766,17 +3766,33 @@ A Page Model nem tárolja a schedule rekordokat.
 
 
 **C.5.1 deployment/sync diagnosztika — 2026-09-24:**
-- [x] A friss Worker deploy sikeresen lefutott, de a live `/api/admin/twitch/schedule-sync` route 404-et adott.
-- [x] `/api/health` live 200 OK volt, ezért az általános Worker deployment/URL működése igazolt.
-- [x] GitHub `v2/foundation` audit igazolta, hogy az admin sync route az `src/index.ts`-ben és a `src/routes/admin/twitch-schedule-sync.ts` fájlban létezik.
-- [x] Lokális audit igazolta, hogy mindkét C.5 route-elem hiányzott a deployált lokális munkakönyvtárból.
-- [x] A lokális route fájl és az `src/index.ts` bekötése vissza lett állítva.
-- [ ] A lokális állapot GitHub/VS Code szinkronizálása még nincs lezárva.
-- [ ] Typecheck, új deploy és live route runtime gate még hátra van.
+- [x] A friss Worker deploy sikeresen lefutott; aktuális production Worker version: `d679ef32-26fa-4bd7-96d6-991410a917ad`.
+- [x] `/api/health` live 200 OK: általános Worker deployment/URL működés igazolva.
+- [x] `POST /api/admin/twitch/schedule-sync` unauthenticated hívás 401 `UNAUTHORIZED`: auth boundary működik.
+- [x] Live login sikeres; admin userrel létrejött authenticated session.
+- [x] Authenticated schedule sync trigger sikeres: `status=source_empty`, `seenCount=0`, `upsertedCount=0`, `missingCount=0`.
+- [x] A korábbi live 404 okának feltárása lezárva: GitHub/local sync után az admin route és az `src/index.ts` bekötése a deployált állapot része lett.
+- [x] GitHub `v2/foundation` és lokális VS Code repository állapot szinkronban van a vizsgált C.5 route/source állapottal.
+- [x] TypeScript typecheck PASS.
+- [x] Editor Core regression: 30/30 PASS.
+- [x] Schedule contract regression: 5/5 PASS.
+- [x] A korábbi remote D1 inspection SQL-hiba csak tesztlekérdezési schema-mismatch volt (`is_deleted` oszlop nem létezik); adatbázis-módosítás nem történt.
 
-**C.5.1 előkészítés — 2026-09-24:**
-- [x] Létrejött az authenticated admin trigger: POST /api/admin/twitch/schedule-sync.
-- [x] A trigger editor jogosultságot kér, explicit connectionId + startAt + endAt windownel működik.
-- [x] A trigger a canonical sync service-t hívja; nem hoz létre második Schedule adatutat.
-- [x] Concurrency, reauthorization, rate-limit, source-empty és generic sync hibák HTTP szinten is elkülönítve kezelhetők.
-- [ ] A remote D1 tényleges triggerelt sync még nincs PASS-ra jelölve.
+**C.5.1 remote D1 runtime verification — 2026-09-24:**
+- [x] Remote schema tényleges ellenőrzése: `schedule_items.source_presence`, `source_synced_at`, `source_missing_at` és a canonical `schedule_sync_state` mezők igazolva.
+- [x] Manual isolation PASS: `schedule_items` állapot jelenleg `manual / present / 3`; a Twitch sync nem módosította a meglévő 3 manual rekordot.
+- [x] Twitch sync-state rekord létrejött a broadcasterhez; `status=source_empty`, `last_seen_count=0`, `last_started_at`, `last_succeeded_at` és `last_completed_at` kitöltve.
+- [x] A source-empty futás `last_error_code=TWITCH_SCHEDULE_SOURCE_EMPTY` értéket rögzített; ez nem destructive reconciliation.
+- [x] Remote D1 `PRAGMA quick_check` = `ok`.
+- [x] A remote D1 inspection kizárólag SELECT/PRAGMA parancsokat használt; adatot nem módosított.
+- [ ] Idempotent upsert + duplicate external identity tényleges D1 regression még nincs lezárva.
+- [ ] Missing reconciliation guard + `source_presence` lifecycle még nincs lezárva.
+- [ ] Concurrent running sync rejection tényleges runtime regression még nincs lezárva.
+- [ ] Teljes sync-state transition matrix még nincs lezárva.
+- [ ] Adapter 401/404/429 integrációs runtime regression még nincs lezárva.
+- [ ] Public Schedule DTO source/sync mező leakage regression még nincs lezárva.
+
+**C.5.1 aktuális következő egyetlen lépés — 2026-09-24:**
+- **Remote/test D1 célzott regression:** idempotent upsert + duplicate external identity ellenőrzés.
+- Ezt követi a missing reconciliation guard/lifecycle, majd concurrency/state matrix, adapter error mapping és public DTO leakage regression.
+- Builder/Inspector továbbra is blokkolt a teljes C.5.1 gate PASS-ig.
