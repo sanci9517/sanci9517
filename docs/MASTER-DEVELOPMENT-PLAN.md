@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.07  
+**Verzió:** MASTER-2.40.08  
 **Dátum:** 2026-09-24  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt PASS:** 2026-09-24 — 40.69.13.C.2 canonical Schedule source/sync adatmodell + migration terv audit PASS. A C.3 migration implementáció elkészült; a lokális SQLite séma/integrity regression PASS, a remote D1 migration/apply PASS még nincs igazolva.
+**Legutóbbi igazolt PASS:** 2026-09-24 — 40.69.13.C.3 Schedule source/sync migration runtime/schema/integrity verification PASS. Remote D1 schema, indexes, `schedule_sync_state`, `PRAGMA quick_check` és migration state ellenőrizve; `0013_schedule_source_sync.sql` a repository authoritative migrationje, a remote állapot `No migrations to apply!`.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -227,7 +227,7 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 ### 🔵 EGYETLEN AKTÍV PONT
 **40.69.13 — Twitch-integrációs alap + Schedule/Adásrend újratervezés audit**
 
-**Státusz:** [~] AKTÍV — B.4–B.13 és C.1–C.2 lezárva. A C.3 migration fájl implementálva, runtime/remote ellenőrzése még hátra van. A következő egyetlen munkapont: C.3 — migration runtime/schema/integrity verification. Builder/Inspector továbbra is blokkolt.
+**Státusz:** [~] AKTÍV — B.4–B.13 és C.1–C.3 lezárva. C.3 remote D1/runtime/schema/integrity verification PASS. A következő egyetlen munkapont: C.4 — canonical source-aware Schedule service/mapper runtime contract audit + implementáció előkészítés. Builder/Inspector továbbra is blokkolt.
 
 ### Kötelező sorrend — 40.69.13 aktív munkapont
 **Szigorú szabály:** először csak audit és szerződéstervezés történik. OAuth bekötés, Twitch kódolás vagy Schedule Builder UI implementáció csak az audit eredményének MASTER-be rögzítése után indul.
@@ -3428,7 +3428,7 @@ Ez igazolja, hogy a létrejött Twitch OAuth kapcsolat production környezetben 
 
 #### C.3 — SCHEDULE SOURCE/SYNC MIGRATION IMPLEMENTÁCIÓ — 2026-09-24
 
-**Státusz:** [~] IMPLEMENTÁLVA — runtime/remote verification még nincs lezárva.
+**Státusz:** [x] PASS — migration runtime/schema/integrity verification lezárva — 2026-09-24.
 
 **Implementáció:**
 - [x] Új migration létrejött: `migrations/0013_schedule_source_sync.sql`.
@@ -3445,10 +3445,14 @@ Ez igazolja, hogy a létrejött Twitch OAuth kapcsolat production környezetben 
 **Migration technikai ellenőrzés:**
 - [x] A migration fájlt GitHubon visszaolvastuk a `v2/foundation` branchen.
 - [x] A SQLite stratégia megfelel a korábban rögzített C.2 döntésnek: az ADD COLUMN nem kap UNIQUE/PRIMARY KEY constraintet; az external identity külön UNIQUE indexként készül. SQLite ezt támogatja, és a NULL értékeket UNIQUE indexben különbözőnek tekinti. citeturn0search1turn0search3
-- [ ] Remote D1 migration apply / schema inspection még nincs PASS-ként igazolva.
-- [x] SQLite migration/integrity regression PASS: manual defaultok, external identity uniqueness és sync-state CHECK/UNIQUE szabályok ellenőrizve.
-- [ ] CI/typecheck még nincs PASS-ként igazolva erre a commitra.
-- [D] A remote D1 ellenőrzést a tényleges Cloudflare/Wrangler runtime-ban kell lezárni; a jelenlegi GitHub toolkörnyezetből a hitelesített Wrangler remote parancs közvetlen futtatása nem elérhető.
+- [x] Remote D1 `schedule_items` schema ellenőrzés PASS: source/sync mezők jelen vannak a canonical migration szerint.
+- [x] Remote D1 index ellenőrzés PASS: external identity UNIQUE, source/account/start és source/account/presence/start indexek jelen vannak.
+- [x] Remote D1 `schedule_sync_state` tábla és oszlopai ellenőrizve.
+- [x] Remote D1 `PRAGMA quick_check` → `ok`.
+- [x] Remote D1 migration state: `npx wrangler d1 migrations list sanci9517-db --remote` → `No migrations to apply!`.
+- [x] Repository provenance ellenőrizve: `migrations/0013_schedule_source_sync.sql` pontosan lefedi a remote schema-változásokat; új migration nem szükséges.
+- [x] Korábbi SQLite migration/integrity regression PASS továbbra is érvényes.
+- [D] A C.3 célzott remote runtime/schema kapu lezárva; további adatbázis-módosítás csak új, indokolt migrationnel történhet.
 
 **Commit:**
 - `79a4ef776400c891900adf44c56fd87154a6460f` — `feat(schedule): add canonical source and sync schema`
@@ -3595,7 +3599,7 @@ A Page Model nem tárolja a schedule rekordokat.
 - [x] concurrency/idempotency stratégia rögzítve;
 - [x] Builder/Inspector továbbra is blokkolt.
 
-**Következő egyetlen aktív munkapont:** **40.69.13.C.3 — migration implementáció + canonical source-aware Schedule service/mapper alap.** Builder/Inspector implementáció továbbra is blokkolt.
+**Következő egyetlen aktív munkapont:** **40.69.13.C.4 — canonical source-aware Schedule service/mapper runtime contract audit + implementáció előkészítés.** Builder/Inspector implementáció továbbra is blokkolt.
 
 
 
