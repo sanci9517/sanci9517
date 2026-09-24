@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.16  
+**Verzió:** MASTER-2.40.17  
 **Dátum:** 2026-09-24  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt mérföldkő:** 2026-09-24 — 40.69.13.C.5.1 concurrency regression PASS. Az adapter error mapping + public Schedule DTO leakage regression első CI futása Node 24 strip-only TypeScript kompatibilitási hibát talált a parameter-property miatt; a hibás tesztet nem hagytuk lezárva, az adapter hibakódosztályát Node 24-kompatibilisre javítottuk, új CI futás folyamatban. A teljes C.5.1 regression gate még nincs lezárva.
+**Legutóbbi igazolt mérföldkő:** 2026-09-24 — 40.69.13.C.5.1 concurrency regression PASS. Az adapter error mapping + public Schedule DTO leakage regression CI-je a Node 24 parameter-property hibát már javította, majd a következő futásban egy újabb tesztkörnyezeti hibát talált: a közvetlen `twitch-adapter.ts` import transzitív `../twitch-oauth` extensionless import miatt `ERR_MODULE_NOT_FOUND` lett. A mappinget ezért dependency-free `src/core/schedule/twitch-errors.ts` modulba izoláltuk, az adapter és a teszt erre támaszkodik. Új CI futás folyamatban; a teljes C.5.1 regression gate még nincs lezárva.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -3799,7 +3799,7 @@ A Page Model nem tárolja a schedule rekordokat.
 - [x] A schedule contract regression aktuális futása: 5/5 PASS.
 
 **C.5.1 aktuális következő egyetlen lépés — 2026-09-24:**
-- **Adapter error mapping + public Schedule DTO leakage regression.**
+- **Adapter error mapping + public Schedule DTO leakage regression — CI runtime import fix folyamatban.**
 - Következő kapu: Twitch 401/404/429 canonical error/state viselkedés integrációs ellenőrzése, majd annak bizonyítása, hogy `source_*` és `schedule_sync_state` belső mezők nem szivárognak a public Schedule DTO-ba.
 - A duplicate external identity teszt közben elsőként próbált `BEGIN/COMMIT` SQL tranzakciós forma Cloudflare D1 remote API-n tiltott volt; ez tesztparancs-korlátozás volt, nem alkalmazási hiba. A tranzakció nélküli izolált teszt ezután sikeresen lefutott.
 - Builder/Inspector továbbra is blokkolt a teljes C.5.1 gate PASS-ig.
