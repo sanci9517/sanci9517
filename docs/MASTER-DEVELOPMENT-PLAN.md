@@ -3457,9 +3457,36 @@ Ez igazolja, hogy a létrejött Twitch OAuth kapcsolat production környezetben 
 **Commit:**
 - `79a4ef776400c891900adf44c56fd87154a6460f` — `feat(schedule): add canonical source and sync schema`
 
-**Következő egyetlen aktív munkapont:** **40.69.13.C.3 — migration runtime/schema/integrity verification.**
+**Következő egyetlen aktív munkapont:** **40.69.13.C.4 — canonical source-aware Schedule service/mapper runtime contract audit + implementáció előkészítés.**
 
-#### C.2 — CANONICAL SCHEDULE SOURCE/SYNC ADATMODELL + MIGRATION TERV AUDIT — 2026-09-24
+#### C.4 — CANONICAL SOURCE-AWARE SCHEDULE SERVICE / MAPPER RUNTIME CONTRACT — KÖVETKEZŐ AKTÍV MUNKAPONT
+
+**Státusz:** [ ] AKTÍV — implementáció előtt teljes runtime contract audit.
+
+**Cél:** a már lezárt D1 source/sync adatmodell fölé egyetlen canonical Schedule service + mapper adatfolyamot kialakítani, amely a Twitch adapterből érkező validált DTO-t a schedule_items és schedule_sync_state domainbe vezeti, miközben a manual rekordok és a public read contract sértetlenek maradnak.
+
+**Kötelező audit sorrend:**
+1. Meglévő schedule CRUD, read service, route-ok és repository/data-access réteg teljes visszaolvasása.
+2. Meglévő Twitch OAuth/token service és Twitch API kliens boundary teljes auditja.
+3. Canonical external DTO → Schedule mapper input/output szerződés rögzítése.
+4. Ownership szabályok véglegesítése: Twitch-owned mezők, manual-owned mezők, source metadata és derived live state.
+5. Idempotent upsert, duplicate protection, missing reconciliation és sync-state transition runtime szerződésének rögzítése.
+6. 401 / reauthorization, 404/source_empty, rate-limit, partial pagination és transient failure viselkedésének rögzítése.
+7. Concurrency/lock stratégia összevetése a meglévő Twitch refresh-lock és Schedule sync state modellel.
+8. Public read compatibility ellenőrzése: a source/sync belső mezők nem kerülhetnek ki indokolatlanul a public contractba.
+9. Csak az audit PASS után következhet a minimális service/mapper implementáció.
+
+**Definition of Done:**
+- [ ] minden érintett runtime fájl és adatfolyam auditálva;
+- [ ] canonical service/mapper ownership és input/output contract rögzítve;
+- [ ] error/state transition matrix rögzítve;
+- [ ] concurrency/idempotency stratégia auditálva;
+- [ ] public read backward compatibility igazolva;
+- [ ] implementáció csak egy canonical adatúton történik;
+- [ ] automatizált/contract tesztterv rögzítve;
+- [ ] MASTER frissítve az audit eredményével, mielőtt Builder/Inspector fejlesztés indul.
+
+**Szigorú blokkolás:** Schedule Builder/Inspector UI, Twitch Schedule write endpoint vagy második Schedule adatút nem indulhat el a C.4 audit lezárása előtt.
 
 **Státusz:** [x] PASS — adatmodell és migration stratégia lezárva; ebben a lépésben nincs kódmódosítás.
 
