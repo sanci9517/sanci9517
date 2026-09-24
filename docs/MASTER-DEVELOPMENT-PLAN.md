@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.03  
-**Dátum:** 2026-09-23  
+**Verzió:** MASTER-2.40.04  
+**Dátum:** 2026-09-24  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt PASS:** 2026-09-23 — 40.69.13.B.13 disconnect/reconnect atomicity + state transition audit PASS; a `revocation_pending` failure-safe átmenet, a post-revoke D1 failure elleni védelem és a kapcsolódó CI tesztek sikeresen lezárultak.
+**Legutóbbi igazolt PASS:** 2026-09-24 — 40.69.13.C.1 Twitch → Schedule domain contract audit PASS; a canonical ownership, source mapping, recurring/cancelled/404/live/concurrency/timezone/pagination és collision szabályok rögzítve. Implementáció még nem indult.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -194,7 +194,7 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 ### 🔵 EGYETLEN AKTÍV PONT
 **40.69.13 — Twitch-integrációs alap + Schedule/Adásrend újratervezés audit**
 
-**Státusz:** [~] AKTÍV — a Twitch lifecycle/security audit és a disconnect/reconnect atomicity kapu lezárult; a következő egyetlen munkapont a Twitch → Schedule domain szerződés teljes auditja és rögzítése. A Builder/Inspector implementáció továbbra is blokkolt, amíg ez a szerződés nincs lezárva. A felhasználó PC Editor live tesztje továbbra is későbbi visszatérő tesztkapu.
+**Státusz:** [~] AKTÍV — B.4–B.13 lezárva; 40.69.13.C.1 Twitch → Schedule domain contract audit PASS. A canonical mapping és edge-case szabályok rögzítve vannak, de migration/mapper kód még nincs. A következő egyetlen munkapont: C.2 — canonical Schedule source/sync adatmodell + migration terv, majd csak annak lezárása után implementáció. Builder/Inspector továbbra is blokkolt.
 
 ### Kötelező sorrend — 40.69.13 aktív munkapont
 **Szigorú szabály:** először csak audit és szerződéstervezés történik. OAuth bekötés, Twitch kódolás vagy Schedule Builder UI implementáció csak az audit eredményének MASTER-be rögzítése után indul.
@@ -3323,6 +3323,76 @@ Ez igazolja, hogy a létrejött Twitch OAuth kapcsolat production környezetben 
 - `aec520be0da3623e8953487d57a518099fc3b8f4` — B.13 post-revoke D1 failure regression test
 
 **Következő egyetlen aktív tesztkapu:** 40.69.13.C.1 — Twitch → Schedule domain contract teljes audit és canonical mapping rögzítése. Builder/Inspector fejlesztés továbbra is blokkolt.
+
+#### C.1 — TWITCH → SCHEDULE DOMAIN CONTRACT + CANONICAL MAPPING AUDIT — 2026-09-24
+
+**Státusz:** [x] PASS — szerződés és edge-case audit lezárva; kódmódosítás ebben a lépésben nem történt.
+
+**Audit scope:**
+- [x] Meglévő canonical D1 domain: `schedule_items`.
+- [x] Meglévő public read contract: `src/core/schedule-read.ts`.
+- [x] Meglévő admin Schedule CRUD: `src/routes/admin/schedule.ts`.
+- [x] Twitch OAuth/token boundary: `src/core/twitch-oauth.ts`; a Schedule service ezt használja majd, nem kezel külön access/refresh tokent.
+- [x] Twitch Schedule API és Streams API hivatalos szerződés ellenőrizve.
+
+**Canonical ownership döntés:**
+- [x] A Sanci Schedule domain marad a saját D1 canonical source of truth.
+- [x] Twitch csak külső `source`/sync forrás; nem írhat közvetlenül Page Modelbe.
+- [x] A Page Model / `schedule` node csak a canonical Schedule domainből olvas.
+- [x] Manual és Twitch eredetű rekord együtt élhet.
+- [x] Nincs csendes cross-source felülírás.
+- [x] A Sanci saját `id` megmarad domain-owned ID-ként; Twitch `segment.id` kizárólag külső `sourceId`.
+
+**Canonical source mapping — rögzített:**
+- `source` = `manual` | `twitch` | későbbi integráció.
+- `sourceId` = Twitch `segment.id` egy adott schedule occurrence-hoz.
+- `sourceAccountId` = Twitch `broadcaster_id`.
+- `title` ← Twitch `title`.
+- `startsAt` ← Twitch `start_time` (UTC RFC3339 → canonical instant).
+- `endsAt` ← Twitch `end_time` (UTC RFC3339 → canonical instant).
+- `platform` = `twitch` Twitch-forrású rekordnál.
+- `url` = canonical Twitch channel URL / későbbi explicit source URL stratégia; nem generálunk URL-t nem validált külső inputból.
+- `status` = `cancelled`, ha `canceled_until != null`; egyébként schedule state-ből `scheduled`/`completed`, míg tényleges `live` állapotot a Twitch Streams API külön live presence-ként felülrétegzi.
+- `isRecurring` = Twitch `is_recurring`.
+- `game/category` adatait külön canonical játékprofil-referenciaként kezeljük; a Twitch category név/id nem írja felül automatikusan a saját játékprofilt.
+
+**Edge-case döntések:**
+1. **Recurring segment:** minden API-ban kapott occurrence külön canonical schedule occurrence rekord; `sourceId` az adott Twitch occurrence ID. Nem próbálunk nem dokumentált recurrence-master ID-t kitalálni.
+2. **`canceled_until`:** nem töröljük a rekordot. A forrásállapotot `cancelled`-ként őrizzük, hogy auditálható és ütközéskezelhető maradjon.
+3. **Twitch schedule 404 / üres:** 404 azt jelenti, hogy a broadcasternek nincs létrehozott Twitch schedule-je; ez nem jogosít fel a teljes saját Sanci Schedule törlésére. A sync eredmény legyen `source_empty`/no-source-data jellegű állapot, és a manual rekordok érintetlenek maradnak.
+4. **Twitch live + schedule egyszerre:** a live állapot nem módosítja vissza a schedule rekord kezdés/végzés adatait. A `live` megjelenítési állapot derived/live presence, nem tartós forrásadat-felülírás.
+5. **Twitchen módosított rekord:** ugyanazon `source + sourceAccountId + sourceId` kulcson idempotens upsert történik; a Twitch által birtokolt mezők frissülnek.
+6. **Twitchen törölt rekord:** a következő teljes sync során a korábban látott, de már nem visszakapott Twitch rekordot nem hard-delete-eljük azonnal. `source_missing`/sync metadata jelzéssel kezeljük; a végleges cleanup külön lifecycle szabály lesz.
+7. **Duplikált Twitch segment:** ugyanazon external key mellett egy canonical rekord; duplicate input nem hoz létre második Sanci rekordot.
+8. **Lejárt/érvénytelen Twitch token:** kizárólag a meglévő canonical `getValidTwitchAccessToken()` lifecycle használható. `reauthorization_required` esetén sync nem hamisít üres schedule-t és nem töröl adatot.
+9. **Több platform:** a domain nem Twitch-specifikus; `platform` továbbra is domainmező, későbbi YouTube/TikTok/manual source külön adapterrel jöhet.
+10. **Manual/Twitch collision:** külön source ownership; nincs automatikus merge csak hasonló cím/idő alapján. A felhasználói manual rekordot a Twitch sync nem írhatja felül.
+11. **Timezone/UTC:** a storage canonical instantként UTC/RFC3339; UI conversion későbbi display concern. Twitch read schedule UTC időt ad vissza; a Twitch create API IANA timezone-ja nem kerül át a canonical read modelbe automatikusan.
+12. **Pagination:** Twitch schedule forward cursoros; a syncnek a `pagination.cursor` alapján minden releváns oldalt le kell olvasnia, bounded/safety limit mellett. Nem csak az első 25 rekordot szabad canonicalnak tekinteni.
+
+**Live-state döntés:**
+- [x] `/helix/streams?user_id=<broadcaster_id>` az élő állapot külön source-ja.
+- [x] Ha van live stream: UI-derived status = `live`.
+- [x] Ha nincs live stream: a persisted schedule status nem lesz automatikusan `completed` pusztán egy üres Streams válasz miatt; a schedule időablak és sync policy alapján történik.
+- [x] Twitch Streams API válaszai önmagukban nem írják át a schedule event címét, idejét vagy source identity-jét.
+
+**Scope/security döntés:**
+- [x] Schedule olvasáshoz Twitch app vagy user access token elegendő; `channel:manage:schedule` csak schedule-módosító endpointokhoz szükséges, ezért read-only sync miatt nem kérünk indokolatlan manage scope-ot.
+- [x] A sync service a canonical OAuth/token boundaryt használja; tokenek nem kerülnek D1 schedule rekordba, Page Modelbe vagy kliens response-ba.
+- [x] 401/revocation esetén a meglévő reauthorization lifecycle marad az egyetlen recovery út.
+
+**Elutasított irányok:**
+- [x] Twitch `segment.id` nem válik Sanci primary key-vé.
+- [x] Twitch schedule nem válik a weboldal közvetlen source of truth-jává.
+- [x] Live status nem írja át tartósan a schedule időpontját.
+- [x] 404 miatt nem töröljük a manual/canonical schedule teljes tartalmát.
+- [x] Nem készül külön Twitch Schedule Builder vagy második editor.
+- [x] Nem vezetünk be most EventSub-alapú schedule truth-t; a Schedule sync első canonical változata pull/sync alapú lesz. EventSub későbbi freshness-optimalizálás lehet.
+
+**Hivatalos Twitch szerződés bizonyítéka:** a Twitch `Get Channel Stream Schedule` 200-as válasza occurrence-alapú `id/start_time/end_time/title/canceled_until/category/is_recurring` adatokat és cursoros paginationt ad; 404 azt jelenti, hogy nincs létrehozott streaming schedule. A `Get Streams` user_id alapján adja a live presence-t. A Twitch dokumentáció szerint a schedule olvasása app/user tokennel működik, míg a `channel:manage:schedule` scope a módosító műveletekhez kell. citeturn0search0turn1search0turn2search0turn2search1
+
+**Következő egyetlen aktív munkapont:** **40.69.13.C.2 — canonical Schedule source/sync adatmodell + migration terv teljes audit és rögzítés.** Builder/Inspector implementáció továbbra is blokkolt.
+
 
 
 **B.12 — PRODUCTION/OBSERVABILITY NO-SECRET/NO-TOKEN LEAKAGE AUDIT — 2026-09-23**
