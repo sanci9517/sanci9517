@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.32  
+**Verzió:** MASTER-2.40.33  
 **Dátum:** 2026-09-25  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -37,7 +37,7 @@ Ha bármilyen régi checkpoint, összefoglaló, korábbi üzenet vagy történet
 **Boot-szabály:** új beszélgetésben a modellnek először ezt a 00/B blokkot, majd közvetlenül a 00/A indexet kell figyelembe vennie. Ha bármely régi checkpoint ettől eltér, a régi checkpointot kell figyelmen kívül hagyni, nem az aktuális MASTER állapotot.
 
 **Egyetlen aktuális folytatási mondat:**
-> „Folytassuk a Sanci9517 MASTER tervet a **40.69.13.E1.1 — Component Registry / Property Registry / Render Contract + Presentation/Theme Contract döntési audit** egyetlen aktív al-ponttal. Először a jelenlegi rendszert és a profi referenciaeditorokat (Puck, Craft.js, GrapesJS, Builder, Framer, Webflow, Sanity) vizsgáljuk, majd E1–E5 sorrendben rögzítjük és implementáljuk a canonical domain + editor alapot. Twitch/C.5.1 lezárva; nem ugrunk vissza Twitchre, és F Inspector csak E teljes lezárása után indul.”
+> „Folytassuk a Sanci9517 MASTER tervet a **40.69.13.E3 — Game Profile + Media Asset + Schedule Event + Presentation/Theme canonical domain contract megtervezése és freeze** ponttal. Az E3 során külön rögzítjük a Creator Center felületi/UX-architektúrát is: egy közös admin shell, de külön, feladatközpontú munkaterületek (Weboldal/Website Editor, Stream/Twitch, későbbi Overlay Studio stb.).”
 
 > **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd kizárólag a **00/A MASTER VÉGREHAJTÁSI INDEX egyetlen aktív pontjából** folytatni. Más fejezet `[ ]`, `[~]` vagy régebbi „következő lépés” szövege nem jelent aktuális folytatási pontot.
 
@@ -297,6 +297,115 @@ Kötelező előkészítés:
 - [ ] social link management
 - [ ] platform availability/status
 - [ ] future platform adapters
+
+## 00.9.6.A — CREATOR CENTER / ADMIN UX ARCHITECTURE — RÖGZÍTVE 2026-09-25
+
+A platform felhasználóbarát működésének alapelve: **egy közös Creator Center, de nem egyetlen óriási adminoldal**.
+
+A referencia-elemzés alapján a profi creator- és website-platformok közös mintája az, hogy a felhasználó egy központi dashboardból éri el az eszközöket, miközben a komplex szerkesztők saját, célfeladatra optimalizált munkaterületet kapnak. A Wix a Dashboardból indítja a Site Editort és külön dashboard-feladatokat csoportosít; a StreamElements pedig egy közös creator platformon belül külön Overlays/Alerts szerkesztési élményt használ. citeturn0search9turn0search11turn0search2turn0search0
+
+### Kötelező felületi modell
+
+```
+Creator Center
+│
+├── 🏠 Dashboard
+│
+├── 🌐 Weboldal
+│   ├── Oldalak
+│   ├── Weboldalszerkesztő
+│   ├── Megjelenés / Theme
+│   ├── Navigáció
+│   └── SEO
+│
+├── 🎮 Stream
+│   ├── Twitch / platformok
+│   ├── Schedule
+│   └── Stream beállítások
+│
+├── 🎨 Overlay Studio       ← későbbi külön visual editor
+│   ├── Overlays
+│   ├── Alerts
+│   ├── Widgets
+│   └── Scenes / layoutok
+│
+├── 🗂️ Tartalom / Média
+├── 🤖 Automatizáció
+├── 📊 Analytics
+├── 👥 Community
+└── ⚙️ Beállítások
+```
+
+**Fontos architekturális különbség:**
+- **külön adminpont / workspace:** IGEN;
+- **külön canonical domain/state rendszer:** NEM;
+- **külön editor runtime:** IGEN, ha az adott feladat runtime-ja indokolja;
+- **párhuzamos adatmodell, command/history vagy asset rendszer:** NEM.
+
+### Website Editor
+
+A Weboldalszerkesztő önálló product surface lesz:
+- oldalépítés;
+- Layers;
+- Inspector;
+- responsive canvas;
+- presentation/theme;
+- page preview/publish;
+- content/domain binding;
+- website-specific onboarding és contextual help.
+
+A felhasználónak nem kell az egész Creator Platform fogalmait ismernie ahhoz, hogy egy oldalt elkészítsen.
+
+### Későbbi Overlay Studio
+
+Az Overlay Studio külön adminpont és külön visual workspace lehet. Az OBS/streaming munkafolyamat más mentális modellt használ, ezért nem célszerű a Website Editor minden paneljét és funkcióját egy képernyőre kényszeríteni. Az OBS alapmodellje Scenes + Sources, míg a StreamElements overlay szerkesztése overlay + widget/alert elemekből indul; ezeket a felhasználói feladatnak megfelelően külön kezeljük. citeturn0search6turn0search7turn0search1
+
+Az Overlay Studio azonban továbbra is ugyanazokat a canonical alapokat használja:
+- Media Asset;
+- Component Registry;
+- Presentation/Theme Contract;
+- brand tokens;
+- domain/event binding;
+- Command/History/Transaction;
+- persistence/revision;
+- site/creator scope.
+
+### Felhasználóbarát döntések
+
+1. **Progressive disclosure:** kezdő felhasználónak csak a szükséges funkciók látszanak; haladó funkciók fokozatosan nyithatók meg.
+2. **Feladat-alapú navigáció:** „Weboldal”, „Stream”, „Overlay” és „Tartalom” legyen érthetőbb, mint technikai backend-nevek.
+3. **Contextual UI:** az adott workspace csak az ahhoz tartozó eszközöket mutassa.
+4. **Quick actions:** gyakori feladatok a Dashboardból egy lépésben indíthatók.
+5. **Közös vizuális nyelv:** navigation, dialogs, notifications, status, permissions és help ugyanazon design systemből jöjjön.
+6. **Editor isolation:** egy editor megnyitásakor a canvas kapja a fókuszt; az admin shell ne zsúfolja tele a munkaterületet.
+7. **Clear return path:** minden editorból egyértelműen vissza lehet térni a Creator Centerbe.
+8. **Safe destructive actions:** törlés, publish, disconnect, reset és overwrite megerősítést/undo/recovery lehetőséget kap, ahol indokolt.
+9. **Beginner → Pro:** ugyanaz a rendszer használható egyszerű template-szerkesztéssel és később mélyebb szakértői vezérléssel.
+10. **Mobile admin ≠ mobile editor:** a mobil adminfelület legyen használható; a komplex visual editor külön responsive editor shellt kap, és nem próbáljuk a desktop canvas teljes funkcionalitását egyetlen keskeny nézetbe beszorítani.
+
+### Termékarchitektúra-szabály
+
+A Creator Center **navigation shell**, nem canonical domain.
+
+A Website Editor, Overlay Studio és későbbi editorok saját workspace/runtime lehetnek, de:
+`Domain → Component → Field → Presentation → Render → Command → History → Persistence`
+ugyanazon canonical szerződésláncon marad.
+
+**Tilos:** külön „Overlay Node Model”, külön „Overlay History”, külön „Overlay Asset DB”, külön „Theme DB” vagy külön „AI Editor State” létrehozása csak azért, mert az új workspace más UI-t használ.
+
+**Megengedett:** editor-specifikus UI state, runtime adapter és workspace layout, ha az nem veszi át a canonical domain ownershipet.
+
+### UX Definition of Done
+
+Minden új admin workspace esetén ellenőrizni kell:
+- [ ] a creator egyértelműen tudja, mire való;
+- [ ] az elsődleges feladat 1–3 logikus lépésből elindítható;
+- [ ] a haladó funkciók nem terhelik a kezdő nézetet;
+- [ ] van mentés/állapot-visszajelzés;
+- [ ] van hibakezelés és recovery;
+- [ ] van egyértelmű visszalépés;
+- [ ] desktop + mobil admin használhatóság külön vizsgálandó;
+- [ ] az adott workspace nem hoz létre canonical párhuzamos rendszert.
 
 ### Design system
 - [ ] typography
@@ -1020,9 +1129,26 @@ Persistence / Revision / Publish
 - **E1.3 — E1 benchmark lezárás + E2 decision matrix:** [x] PASS
 - **E2 — Canonical architecture decision:** [x] PASS — az E1 eredményei alapján rögzítve, implementáció nélkül.
 
-**Következő egyetlen aktív pont:** **40.69.13.E3 — Game Profile + Media Asset + Schedule Event + Presentation/Theme canonical domain contract megtervezése és freeze.**
+**Következő egyetlen aktív pont:** **40.69.13.E3 — Game Profile + Media Asset + Schedule Event + Presentation/Theme canonical domain contract megtervezése és freeze**, kiegészítve a Creator Center / külön workspace admin-UX szerződéssel.
 
-**MASTER-2.40.25 checkpoint:** E0 lezárva; funkcióvesztés nélkül továbbhaladunk E1-be. A teljes 1.0 és post-1.0 backlog megmarad, és minden új funkció ugyanebbe az egyetlen MASTER-be kerül.
+### E3 kiegészített contract-scope
+
+Az E3 nem csak adatmodellt freeze-el. Rögzíteni kell:
+- [ ] Creator Center / Admin Shell ownership és navigation boundary.
+- [ ] Website workspace / Visual Editor boundary.
+- [ ] későbbi Overlay Studio workspace boundary.
+- [ ] közös canonical domain és presentation rétegek.
+- [ ] editor-specifikus UI/runtime state határa.
+- [ ] Media Asset és brand-token megosztás szabálya.
+- [ ] site/creator/tenant scope.
+- [ ] workspace-permission és capability boundary.
+- [ ] onboarding / progressive disclosure alapelvek.
+- [ ] deep-link / return-to-workspace / unsaved-changes viselkedés későbbi contractja.
+- [ ] a Website Editor és Overlay Studio külön UI-ja mellett is egyetlen canonical mutation/persistence útvonal.
+
+**E3 UX döntési alap:** a platformot nem „egy nagy adminpanelként”, hanem **egy Creator Center + több célfeladatra optimalizált workspace** modellként építjük. Ez a felhasználóbarátságot javítja anélkül, hogy a canonical architektúrát szétbontaná.
+
+**MASTER-2.40.33 checkpoint:** E0–E2 lezárva; az E3 most a canonical domain contract mellett a Creator Center / külön workspace UX- és ownership-határait is freeze-eli. Funkcióvesztés nincs; az új igény hozzáadódott a MASTER-hez. A teljes 1.0 és post-1.0 backlog megmarad, és minden új funkció ugyanebbe az egyetlen MASTER-be kerül.
 
 **1.0 fókusz:** először egy stabil, professzionális magyar streamer-weboldal + működő visual editor + Twitch Schedule alap + publish/public flow. A globális piacra szükséges architekturális alapok már 1.0 előtt készülnek, de a teljes többnyelvű tartalom, fordítási workflow, további platformok és haladó SaaS funkciók 1.0 utáni szakaszok.
 
@@ -4780,8 +4906,10 @@ A projekt végső célja egy **Streamer / YouTuber Creator Operating System**: e
 - [ ] SEO, Open Graph, megosztási preview, gyors és akadálymentes public runtime.
 - [ ] Később custom domain / white-label / tenant onboarding.
 
-### B. Creator Control Center — egyetlen adminból
+### B. Creator Control Center — egy közös admin shell, külön feladatközpontú munkaterületekkel
 - [ ] Dashboard: live state, upcoming streams, content queue, clips, alerts, integrations, health.
+- [ ] Közös admin shell, amelyből a creator egyértelműen elérheti a külön munkaterületeket.
+- [ ] A Website Editor, későbbi Overlay Studio, Stream/OBS Studio és egyéb visual editorok külön product surface-ként jelennek meg; nem egyetlen túlzsúfolt „mindent szerkesztő” képernyő.
 - [ ] Platform connections: Twitch, YouTube, TikTok, később Kick és további platformok adapterként.
 - [ ] Közös creator identity, social links, schedule, games, media, content records és publishing állapot.
 - [ ] Jogosultságok: account/site/role scoped, később team és collaborator szerepek.
