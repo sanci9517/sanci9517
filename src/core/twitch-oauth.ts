@@ -117,7 +117,7 @@ export async function createTwitchAuthorizationUrl(request: Request, env: Env, u
   url.searchParams.set("response_type", "code");
   url.searchParams.set("client_id", clientId);
   url.searchParams.set("redirect_uri", getTwitchRedirectUri(request));
-  url.searchParams.set("scope", "");
+  url.searchParams.set("scope", "channel:manage:schedule");
   url.searchParams.set("state", state);
   return url.toString();
 }
