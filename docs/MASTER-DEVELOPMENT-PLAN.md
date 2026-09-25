@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.22  
+**Verzió:** MASTER-2.40.23  
 **Dátum:** 2026-09-25  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -33,7 +33,7 @@ Ha bármilyen régi checkpoint, összefoglaló, korábbi üzenet vagy történet
 **Boot-szabály:** új beszélgetésben a modellnek először ezt a 00/B blokkot, majd közvetlenül a 00/A indexet kell figyelembe vennie. Ha bármely régi checkpoint ettől eltér, a régi checkpointot kell figyelmen kívül hagyni, nem az aktuális MASTER állapotot.
 
 **Egyetlen aktuális folytatási mondat:**
-> „Folytassuk a Sanci9517 MASTER tervet a **40.69.13.E — game profile adatmodell + media kapcsolat** egyetlen aktív ponttal; először teljes kód/adatfolyam-audit, majd canonical szerződés, minimális implementáció és regression/live gate. Csak az E lezárása után lépünk tovább a Schedule event CRUD / Inspector pontra.”
+> „Folytassuk a Sanci9517 MASTER tervet a **40.69.13.E0 — teljes repo/Visual Editor/domain audit** egyetlen aktív al-ponttal. Először a jelenlegi rendszert és a profi referenciaeditorokat (Puck, Craft.js, GrapesJS, Builder, Framer, Webflow, Sanity) vizsgáljuk, majd E1–E5 sorrendben rögzítjük és implementáljuk a canonical domain + editor alapot. Twitch/C.5.1 lezárva; nem ugrunk vissza Twitchre, és F Inspector csak E teljes lezárása után indul.”
 
 > **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd kizárólag a **00/A MASTER VÉGREHAJTÁSI INDEX egyetlen aktív pontjából** folytatni. Más fejezet `[ ]`, `[~]` vagy régebbi „következő lépés” szövege nem jelent aktuális folytatási pontot.
 
@@ -252,7 +252,49 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 ### 🔵 EGYETLEN AKTÍV PONT
 **40.69.13 — Twitch-integrációs alap + Schedule/Adásrend újratervezés**
 
-**Státusz:** [~] AKTÍV — A–D/C.5 Twitch + canonical Schedule alapok lezárva. C.5.1 production/live + adapter runtime + regression kapu PASS. A következő egyetlen munkapont: **40.69.13.E — game profile adatmodell + media kapcsolat audit és implementációs szerződés**. Builder/Inspector UI még nem indul; előbb az E domain-alapot zárjuk le.
+**Státusz:** [~] AKTÍV — **Twitch/C.5.1 lezárva.** A következő munkafázis már nem Twitch-fejlesztés: **40.69.13.E — Global-grade Domain + Visual Editor Architecture Audit**. Cél: az 1.0-hoz szükséges stabil, adatvezérelt, opcionális, többnyelvűségre előkészített Schedule/Game/Media modellt és a Visual Editor canonical architektúráját előbb megtervezni, majd lépésenként implementálni. Builder/Inspector UI implementáció még nem indul; az E audit és szerződés lezárása kötelező előfeltétel.
+
+**Szigorú haladási szabály 2026-09-25-től:** a Twitch alapréteg késznek tekintendő és nem nyitunk új Twitch-munkasávot. A következő pontokat szigorúan egymás után zárjuk: **E0 audit → E1 benchmark → E2 saját architektúra döntés → E3 domain contract → E4 minimális foundation implementáció → E5 regression/live gate → F Schedule CRUD + Inspector → G templates/presentation → H preview/public integration → I teljes E2E → J legacy cleanup.** Új ötlet vagy későbbi funkció csak backlogként kerül be, és nem szakíthatja meg az aktív pontot.
+
+### 40.69.13.E — GLOBAL-GRADE DOMAIN + VISUAL EDITOR ARCHITECTURE AUDIT — 2026-09-25
+
+**Új döntés:** az E pontot kibővítjük a korábban külön kezelt Game Profile/Media auditból egy teljes, de szigorúan fókuszált **domain + visual editor architecture gate**-té. Ennek oka, hogy a Schedule Builder/Inspector és a későbbi globális streamer-platform csak akkor építhető stabilan, ha előtte a tárolt adat, az opcionális megjelenés, a média, a localization-safe tartalom és az Editor state/command/renderer modell egyetlen canonical rendszerben kapcsolódik.
+
+**Benchmark irány — nem másolás, célzott referenciaelemzés:**
+- [D] **Puck:** component registry, field-driven Inspector, component data/config, render boundary, ownership és extensibility.
+- [D] **Craft.js:** node tree, selection, hierarchy, drag/drop, connectors, serialization és editor state.
+- [D] **GrapesJS:** component/block model, Style Manager, Layer Manager, Asset Manager, commands és storage.
+- [D] **Builder Visual Editor:** live visual editing, layers/X-Ray, responsive breakpoints, reusable templates/symbols, locale picker és preview workflow.
+- [D] **Framer:** responsive canvas, CMS-driven templates, reusable components, drafts/publish, conditional visibility és localization.
+- [D] **Webflow:** CMS + visual design + localization; különösen a locale-inheritance/override modell.
+- [D] **Sanity:** structured content + visual editing + click-to-edit + draft/published perspective + localization.
+- [D] További releváns nyílt forrású projektek csak akkor kerülnek be, ha egy konkrét architekturális kérdésre jobb bizonyítékot adnak.
+
+**E Definition of Done:**
+- [ ] A jelenlegi teljes Editor v2 architektúra és érintett domain/data flow auditálva.
+- [ ] Puck/Craft.js/GrapesJS és a kiválasztott profi rendszerek releváns mintái dokumentálva, forrással és saját projektbeli alkalmazhatósággal.
+- [ ] Canonical döntés rögzítve a document/node tree, selection, hierarchy, command, history, transaction, inspector/property registry, renderer és persistence határaira.
+- [ ] Schedule/Game/Media domain canonical ownership rögzítve.
+- [ ] Game Profile nem csak név/kép rekord: identity, slug, platform mappings, media references, opcionális brand/presentation metadata és lifecycle szükségessége auditálva.
+- [ ] Schedule Event minden ésszerűen opcionális mezője explicit contractban kezelhető; hiányzó adat nem generálhat hibás/üres UI-t.
+- [ ] A tartalom és a megjelenés szétválasztása rögzítve: domain data ≠ presentation/template ≠ editor UI state.
+- [ ] Látható mezők, template, layout, media, typography, spacing, visibility és egyéb megjelenési tulajdonságok későbbi szerkeszthetőségének canonical modellje rögzítve.
+- [ ] Media/asset kapcsolat meglévő rendszerhez igazítva; második asset/media rendszer nem hozható létre.
+- [ ] Localization-ready alap rögzítve: hu-HU az 1.0 elsődleges nyelve, későbbi locale-bővítéshez nincs szükség második editorra/rendererre/Page Modelre.
+- [ ] Responsive, accessibility, security, performance és concurrency követelmények az Editor/domain contract részei.
+- [ ] 1.0 scope és post-1.0 global backlog szétválasztva.
+- [ ] Csak az audit eredménye után indulhat implementáció; az E alatt nincs Schedule Inspector UI fejlesztés.
+
+**1.0 fókusz:** először egy stabil, professzionális magyar streamer-weboldal + működő visual editor + Twitch Schedule alap + publish/public flow. A globális piacra szükséges architekturális alapok már 1.0 előtt készülnek, de a teljes többnyelvű tartalom, fordítási workflow, további platformok és haladó SaaS funkciók 1.0 utáni szakaszok.
+
+**Tervezett, szigorú E al-sorrend:**
+- **E0 — teljes jelenlegi repo/Editor/domain audit**
+- **E1 — benchmark/reference code audit**
+- **E2 — saját canonical architecture decision**
+- **E3 — Game Profile + Media + Schedule Event + Presentation contract**
+- **E4 — minimális domain/foundation implementation**
+- **E5 — regression + D1/live verification + user PASS**
+- **E6 — MASTER closure; csak ezután F**
 
 ### Kötelező sorrend — 40.69.13 aktív munkapont
 **Szigorú szabály:** először csak audit és szerződéstervezés történik. OAuth bekötés, Twitch kódolás vagy Schedule Builder UI implementáció csak az audit eredményének MASTER-be rögzítése után indul.
