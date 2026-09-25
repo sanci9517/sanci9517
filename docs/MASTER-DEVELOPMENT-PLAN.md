@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.36  
+**Verzió:** MASTER-2.40.37  
 **Dátum:** 2026-09-25  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -37,7 +37,7 @@ Ha bármilyen régi checkpoint, összefoglaló, korábbi üzenet vagy történet
 **Boot-szabály:** új beszélgetésben a modellnek először ezt a 00/B blokkot, majd közvetlenül a 00/A indexet kell figyelembe vennie. Ha bármely régi checkpoint ettől eltér, a régi checkpointot kell figyelmen kívül hagyni, nem az aktuális MASTER állapotot.
 
 **Egyetlen aktuális folytatási mondat:**
-> „Folytassuk a Sanci9517 MASTER tervet a **40.69.13.E3 — Game Profile + Media Asset + Schedule Event + Presentation/Theme canonical domain contract megtervezése és freeze** ponttal. Az E3 során külön rögzítjük a Creator Center felületi/UX-architektúrát is: egy közös admin shell, de külön, feladatközpontú munkaterületek (Weboldal/Website Editor, Stream/Twitch, későbbi Overlay Studio stb.).”
+> „Folytassuk a Sanci9517 MASTER tervet a **40.69.13.E4.3 — site-scoped consumer/read-write audit és canonical ownership enforcement** ponttal. Az E4.2 D1 ownership foundation és production schema verification lezárult; most azt kell biztosítani, hogy a runtime read/write fogyasztók ténylegesen site-scope alapján működjenek, mielőtt a site_id NOT NULL hardening megtörténik.”
 
 > **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd kizárólag a **00/A MASTER VÉGREHAJTÁSI INDEX egyetlen aktív pontjából** folytatni. Más fejezet `[ ]`, `[~]` vagy régebbi „következő lépés” szövege nem jelent aktuális folytatási pontot.
 
@@ -1373,28 +1373,44 @@ A teszteli:
 
 **E4 következő egyetlen al-pont: 40.69.13.E4.2 — canonical site ownership + D1 foundation migration megtervezése és implementálása.**
 
-### E4.2 — SITE OWNERSHIP D1 FOUNDATION — IMPLEMENTATION PREPARED
+### E4.2 — SITE OWNERSHIP D1 FOUNDATION — VERIFIED / CLOSED
 
-Elkészült a `migrations/0015_site_ownership_foundation.sql` migration.
+Elkészült és production remote D1-ben igazoltan érvényesült a `migrations/0015_site_ownership_foundation.sql` migration.
 
-A migration:
-- létrehozza a canonical `sites` ownership rootot;
-- létrehoz egy determinisztikus bootstrap site-ot: `site-default / sanci9517`;
-- a meglévő `pages`, `schedule_items`, `media`, `social_accounts` és `twitch_connections` rekordokat site-scoped mezővel látja el;
-- minden meglévő rekord automatikusan a bootstrap site-hoz kerül;
-- site-alapú indexeket hoz létre;
-- nem törli és nem másolja a meglévő production adatokat;
-- a legacy `site_settings` táblát szándékosan nem alakítja át, mert annak read/write fogyasztóit előbb auditálni kell.
+**Migration-kompatibilitási korrekció:**
+- az első változatot a Cloudflare D1/SQLite elutasította a `REFERENCES` + nem-null default kombináció miatt;
+- a végleges változat nullable `site_id` oszlopot ad hozzá, majd azonnali backfillt végez;
+- a későbbi `NOT NULL` hardening csak a consumer audit után történhet.
 
-**Fontos:** a migration még nincs remote D1-re alkalmazva. A következő ellenőrzés a lokális migration/static syntax + typecheck/regression, majd a remote D1 apply és `PRAGMA foreign_key_check; PRAGMA quick_check;`.
+**Production verification — 2026-09-25:**
+- `sites` tábla létezik;
+- bootstrap site: `site-default / sanci9517 / Sanci9517 / active`;
+- `pages`: 9 rekord, 0 NULL `site_id`;
+- `schedule_items`: 3 rekord, 0 NULL `site_id`;
+- `media`: 0 rekord;
+- `social_accounts`: 0 rekord;
+- `twitch_connections`: 1 rekord, 0 NULL `site_id`;
+- meglévő Twitch kapcsolat változatlanul `connected`, broadcaster `1144260301 / sanci9517`;
+- mindhárom meglévő manual schedule rekord `site-default` ownership alatt megmaradt;
+- `PRAGMA quick_check` → `ok`;
+- `PRAGMA foreign_key_check` → nem jelzett hibát;
+- a compound-count lekérdezés D1-ben SQLite compound-term limit miatt hibázott, de ez nem adatbázis- vagy migrationhiba; az egyenként végrehajtott countok sikeresek voltak.
 
-**E4.2 jelen állapota:** első remote alkalmazási kísérlet SQLite/Cloudflare D1 inkompatibilis `NOT NULL DEFAULT` + `REFERENCES` kombináció miatt elutasítva; a migration javítva nullable + azonnali backfill megoldásra. Remote D1-re még nincs sikeresen alkalmazva.
+**E4.2 státusz: [x] PASS — remote schema, ownership backfill és adatmegőrzés ellenőrizve.**
 
-**Következő aktív ellenőrzési pont: E4.2 verification gate — javított 0015 migration lokális pull/typecheck után újra remote apply.**
+**Következő egyetlen aktív pont: 40.69.13.E4.3 — site-scoped consumer/read-write audit és canonical ownership enforcement.**
+
+E4.3 célja:
+- a `pages`, `schedule_items`, `media`, `social_accounts` és `twitch_connections` összes releváns read/write consumerének feltérképezése;
+- minden user/site-facing querynél és mutationnél explicit site ownership ellenőrzése;
+- legacy/global fogyasztók azonosítása, különösen `site_settings`;
+- a canonical site context egyértelmű meghatározása;
+- cross-site hozzáférés kizárása;
+- csak ezután a `site_id NOT NULL` hardening megtervezése;
+- production deploy és live gate csak a consumer audit/regression után.
 
 
-
-**MASTER-2.40.36 checkpoint:** E0–E3 lezárva. Az E3 contract freeze a Creator Center / külön workspace UX- és ownership-határait, Game Profile, Schedule Event, Media Asset, Presentation/Theme, localization és cross-workspace canonical szabályokat is rögzítette. Funkcióvesztés nincs; a következő egyetlen aktív pont E4. A teljes 1.0 és post-1.0 backlog megmarad, és minden új funkció ugyanebbe az egyetlen MASTER-be kerül.
+**MASTER-2.40.37 checkpoint:** E0–E3 lezárva. Az E3 contract freeze a Creator Center / külön workspace UX- és ownership-határait, Game Profile, Schedule Event, Media Asset, Presentation/Theme, localization és cross-workspace canonical szabályokat is rögzítette. Funkcióvesztés nincs; a következő egyetlen aktív pont E4. A teljes 1.0 és post-1.0 backlog megmarad, és minden új funkció ugyanebbe az egyetlen MASTER-be kerül.
 
 **1.0 fókusz:** először egy stabil, professzionális magyar streamer-weboldal + működő visual editor + Twitch Schedule alap + publish/public flow. A globális piacra szükséges architekturális alapok már 1.0 előtt készülnek, de a teljes többnyelvű tartalom, fordítási workflow, további platformok és haladó SaaS funkciók 1.0 utáni szakaszok.
 
