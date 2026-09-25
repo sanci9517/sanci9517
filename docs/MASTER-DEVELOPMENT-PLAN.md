@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.29  
+**Verzió:** MASTER-2.40.30  
 **Dátum:** 2026-09-25  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -736,13 +736,70 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 6. Draft/Preview/Published snapshot boundary marad első osztályú; preview csak explicit authenticated/editor contextben használhat draftot.
 7. A benchmark nem indít refaktort önmagában; minden változtatás KEEP/IMPROVE/REFACTOR/REPLACE döntést kap E2-ben.
 
-**Még hátralévő E1 rész:**
-- [ ] Puck/Craft.js/GrapesJS további konkrét modules/tests adatfolyamának célzott összevetése.
-- [ ] Component/field/registry/history/serialization minták összevetése a saját fájlokkal.
+**E1 hátralévő rész:**
+- [x] Component/field/registry/history/serialization saját fájlokkal összevetve.
 - [ ] Media/asset manager és template/reusable-component minták célzott auditja.
+- [ ] Property Registry konkrét Inspector-adatfolyam és schema audit.
 - [ ] Benchmark eredmények végleges E2 decision matrixba rendezése.
 
-**Következő egyetlen aktív al-pont:** **40.69.13.E1.1 — saját Component Registry / Property Registry / Render Contract összevetése a benchmarkokkal, konkrét KEEP/IMPROVE/REFACTOR/REPLACE döntési táblával.**
+**40.69.13.E1.1 — Component Registry / Property Registry / Render Contract + Presentation/Theme Contract döntési audit — PASS — 2026-09-25**
+
+**Auditált saját kód:**
+- [x] public/editor-v2/core/schema.js — canonical Page Model/node tree, node lifecycle, responsive, visibility, dataBindings.
+- [x] public/editor-v2/core/state.js — isolated editor state, selection, viewport, history, persistence, recovery/runtime.
+- [x] public/editor-v2/core/commands.js — egyetlen canonical mutation path, validation, rollback, history, transaction/batch, locked-node protection.
+- [x] public/editor-v2/core/canvas-engine.js — responsive style resolution és DOM canvas mapping.
+- [x] public/editor-v2/core/responsive.js — desktop/tablet/mobile inheritance + override/reset.
+- [x] public/editor-v2/app.js — palette, hierarchy, selection, canvas, jelenlegi kézi Inspector, preview/publish és API lifecycle.
+- [x] Property Registry megléte és jelenlegi használati határa: a registry jó canonical alap, de az Inspector jelenleg kézi field-renderinggel dolgozik.
+
+**Benchmark-ellenőrzés:**
+- [x] Puck: component config → fields → defaultProps → render contract → data payload modell megerősítve. A saját rendszerben ennek megfelelő canonical registry + property/field + render boundary szükséges. citeturn0search0turn0search3turn0search4
+- [x] Craft.js: node tree/state/selection/hierarchy/serialization irány kompatibilis a meglévő Core döntéseivel; teljes Core-csere nem indokolt.
+- [x] GrapesJS: Component/Block/Style/Layer/Command/Storage külön felelősségi rétegei megerősítik, hogy a saját registry, hierarchy, command és persistence külön maradjon. citeturn0search11
+- [x] Builder: live visual canvas + Layers + reusable Templates/Symbols + responsive + data/comments minták megerősítik a későbbi reusable component/template/presentation irányt. citeturn0search15
+- [x] Framer: Canvas/CMS/localization/analytics/settings szétválasztása és draft/publish modell megerősíti a presentation és domain/content különválasztását. citeturn0search18turn0search9
+- [x] Webflow: secondary locale primary locale-ból örököl, majd field/style szinten override-ol; a struktúra nem másolódik locale-onként. Ez a saját localization contract irányát megerősíti. citeturn0search13
+- [x] Sanity: Presentation Tool iframe/live preview/click-to-edit + draft mode/published boundary megerősíti, hogy a public renderer és editor preview ugyanazon presentation contract felé közelítsen, miközben a draft/published adatforrás külön marad. citeturn0search6turn0search14turn0search12
+
+### E1.1 döntési mátrix
+
+| Terület | Döntés | Indok |
+|---|---|---|
+| Page Model / node tree | **KEEP** | Már canonical, validálható és tesztelt. |
+| Selection / editor state | **KEEP** | Egyetlen state ownership, nincs bizonyíték cserére. |
+| Command engine | **KEEP** | AI/integráció később ugyanide fordítható. |
+| History / transaction | **KEEP** | Undo/redo/batch/rollback már működő canonical alap. |
+| Responsive model | **KEEP + IMPROVE** | Jó inheritance contract; később property-level schema-val bővítendő. |
+| Property Registry | **IMPROVE** | Megvan a canonical registry, de az Inspector nincs teljesen rákötve. |
+| Component Registry | **IMPLEMENT / CANONICALIZE** | A node type lista önmagában nem elég: kell explicit component definition/ownership/capability/render metadata registry. |
+| Render Contract | **IMPLEMENT** | A canvas jelenleg generic DOM preview; végleges shared render boundary kell. |
+| Public Renderer boundary | **IMPROVE** | A published snapshot marad; ugyanazt a component/render contractot kell használnia, ahol runtime-kompatibilis. |
+| Presentation/Theme | **IMPLEMENT / CANONICALIZE** | Site-scoped theme/design tokens + component presentation kell; nem lehet ad-hoc Inspector CSS. |
+| Domain bindings | **KEEP + IMPROVE** | Schedule binding jó irány; domain rekordok referencia/binding alapján kerüljenek a componentbe. |
+| Media/Asset | **AUDIT → CANONICALIZE** | Nem hozunk létre második media rendszert; meglévő ownershiphez igazítjuk. |
+| Template/reusable component | **IMPLEMENT LATER** | Builder/Framer/Puck minták alapján szükséges, de E2/E3 contract után. |
+| Localization | **KEEP DIRECTION + IMPLEMENT FOUNDATION** | Primary/default + fallback + field-level override, struktúra duplikáció nélkül. |
+| Draft/Preview/Published | **KEEP** | A jelenlegi revision/published snapshot boundary bizonyítottan működik. |
+| Legacy Inspector / renderer | **DO NOT REUSE AS CANONICAL** | Csak akkor maradhat compatibility UI, ha nincs más ownership; új rendszer ne erre épüljön. |
+
+### E1.1 kötelező architekturális következtetések
+1. **Nem cseréljük le a Visual Editor Core-t.**
+2. A következő canonical lánc:
+   **Component Registry → Property/Field Registry → Presentation/Theme Contract → Render Contract → Command Contract → Persistence/Revision.**
+3. A Component Registry nem pusztán NODE_TYPES lista: minden komponenshez definiálható legyen legalább identity, label/category, allowed parent/children capability, default props/presentation, field/property schema, render adapter, data-binding capability, accessibility metadata és permission/lock capability.
+4. A Property/Field Registry legyen az Inspector egyetlen meződefiníciós forrása; az Inspector UI csak ennek a contractnak a megjelenítője lehet.
+5. A Presentation/Theme Contract legyen site-scoped, token-alapú és publishable. A component saját presentation schema-ja és a site theme tokenjei összehangoltan működjenek.
+6. A Render Contract válassza szét a canonical data és a runtime renderer felelősségét. A Canvas preview és Public Renderer ugyanarra a canonical component definitionre támaszkodjon, de külön runtime adaptert használhat.
+7. Domain adat (Schedule/Game/Media) nem kerülhet teljes rekordmásolatként a node props-ba; binding/reference + runtime resolution szükséges.
+8. Localization nem hozhat létre külön Page Modelt vagy külön editort locale-onként.
+9. AI/OBS/jövőbeli integrations csak Command/Domain/Presentation contractokon keresztül módosíthatnak.
+10. Minden új componentnek ugyanazon validation/history/persistence útvonalon kell működnie.
+11. A mostani app.js kézi Inspector-renderelése célzottan lecserélendő a canonical Property Registry adapterre, de csak E2 döntés + E3 contract után.
+
+**E1.1 státusz:** [x] PASS — benchmark + saját kód összevetés és KEEP/IMPROVE/REFACTOR/REPLACE döntés elkészült. Kódmódosítás ebben az al-pontban nem történt.
+
+**Következő egyetlen aktív al-pont:** **40.69.13.E1.2 — Media/Asset + Template/Reusable Component + Property Registry konkrét adatfolyam-audit és E2 decision matrix előkészítése.**
 
 **MASTER-2.40.25 checkpoint:** E0 lezárva; funkcióvesztés nélkül továbbhaladunk E1-be. A teljes 1.0 és post-1.0 backlog megmarad, és minden új funkció ugyanebbe az egyetlen MASTER-be kerül.
 
