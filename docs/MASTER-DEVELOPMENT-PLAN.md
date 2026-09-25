@@ -5346,3 +5346,6 @@ A fenti lista **végső termékvízió és megőrzendő backlog**, nem azt jelen
 Minden új capability külön domain contracttal, benchmarkkal, implementációval, regressionnel és live gate-tel kerülhet be.
 
 **Feature-preservation:** a fenti végső vízió minden pontja megőrzendő MASTER backlog. Egy új beszélgetés vagy újabb 1.0 scope-döntés nem törölheti ezeket implicit módon.
+
+
+**2026-09-25 munkamenet-záró állapot:** E4.2 production verification lezárva és a MASTER-2.40.37 verzióban rögzítve. A helyi munkakönyvtár sikeresen fast-forwarddal szinkronizálva lett a GitHub `v2/foundation` ággal: `54165ec → 9e2e4e6`. Nincs szükség production deployra az E4.2 miatt. **Holnapi folytatás pontosan innen:** 40.69.13.E4.3. Első feladat a teljes repository/runtime consumer audit; először feltérképezzük a site-scoped táblák minden read/write fogyasztóját és a canonical site context jelenlegi hiányait, külön ellenőrizve a legacy/global `site_settings` fogyasztókat. Ezt követi az ownership enforcement, majd csak annak regression- és biztonsági ellenőrzése után az E4.4 `site_id NOT NULL` schema hardening. Új beszélgetésben ezt a checkpointot kell folytatni, nem régebbi E pontot.
