@@ -1,11 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.24  
+**Verzió:** MASTER-2.40.25  
 **Dátum:** 2026-09-25  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
+
+**Feature-preservation szabály:** a korábbi MASTER/roadmap bármely kívánt funkciója megmarad. Új igények csak hozzáadódnak; sem funkció, sem domain, sem jövőbeli backlog tétel nem törölhető vagy némítható el döntés nélkül. A régi 19–34 szakaszok teljes funkciólistája archivált backlogként továbbra is érvényes, és az 1.0/post-1.0 besorolás csak explicit döntéssel változhat.
 
 **Legutóbbi igazolt állapot:** 2026-09-25 — a C.5.1 production/live gate jelentős része igazolt: CI #98/#722 PASS, remote migration/schema/quick_check PASS, GitHub↔local szinkron és production deploy PASS, health/db-health/public schedule live PASS, Twitch connection + `channel:manage:schedule` scope + token validation PASS, valamint authenticated Twitch Schedule sync élesben `source_empty` állapotot adott. A remote D1 sync-state és a 3 meglévő manual schedule rekord változatlansága szintén igazolt. A C.5.1 adapter/runtime kapuja lezárult: az adapter-boundary 401/404/429 integration regression 9/9 PASS, a local typecheck és Editor Core regression 30/30 PASS, valamint a commitra indult Twitch Integration #104 és Editor Core #728 GitHub Actions futások is SUCCESS.
 
@@ -656,11 +658,54 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 - [ ] 1.0 scope és post-1.0 global backlog szétválasztva.
 - [ ] Csak az audit eredménye után indulhat implementáció; az E alatt nincs Schedule Inspector UI fejlesztés.
 
+### E0 — teljes jelenlegi repo / Visual Editor / domain audit — PASS — 2026-09-25
+**Státusz:** [x] AUDIT PASS. Kódot ebben az al-lépésben nem módosítottunk.
+
+**Auditált rétegek:**
+- [x] Repository structure: src/core, src/routes, migrations, public/editor-v2/core, public/editor-v2/ui, editor tests és Cloudflare/D1 entrypoints.
+- [x] Page Model: src/core/page-model.ts szerveroldali legacy-normalizációs boundary; public/editor-v2/core/schema.js a browser oldali canonical sanci-page-document v1 modell.
+- [x] Node tree/hierarchy: rootId + nodes map + parentId + children invariáns; hierarchy validation és command-level rollback működik.
+- [x] Selection/state: egy editor state tartalmazza selection, viewport, history, persistence, recovery, UI és runtime állapotot.
+- [x] Command engine: mutationok központi commands.js útvonalon, validation + history + transaction/batch + locked-node védelemmel.
+- [x] History/transactions: undo/redo, transaction és atomic batch egy közös history modellen.
+- [x] Responsive: desktop/tablet/mobile inheritance/override/reset contract létezik.
+- [x] Property Registry: extensible registry létezik, de az aktuális app.js Inspector még nem használja közvetlenül; jelenleg kézi Inspector-renderelés működik. Ez E2 architekturális döntési/IMPROVE tétel, nem indokolt most párhuzamos registryt létrehozni.
+- [x] Canvas/render boundary: Page Model az editor source of truth, de a jelenlegi canvas renderer még foundation/preview jellegű: a node-ok általános DOM konténerekként jelennek meg, speciális render jelenleg főleg Rich Text/Schedule esetén van. A valódi component registry → render boundary → public renderer E2/E3 alatt szükséges.
+- [x] Schedule: a schedule node konfigurációja külön Page Model contract; a domain rekordok D1-ben maradnak.
+- [x] Persistence/revision: pages.content_json = draft/canonical document, editor_revisions = immutable revision snapshots, published_content_json + published_revision_id = live published snapshot/linkage; expectedVersion concurrency guard működik.
+- [x] Public boundary: public page route published snapshotot olvas, preview explicit auth után draftot; Schedule public read külön DTO-ban nem szivárogtat source/sync mezőket.
+- [x] Auth/security/audit: auth role boundary, session lookup, audit statement és publish validation meglévő canonical réteg.
+- [x] Feature preservation: a korábbi 19–34 roadmap teljes funkciótérképe megmarad; az E pont csak az 1.0/post-1.0 besorolást és a megvalósítás sorrendjét rendezi, funkciót nem töröl.
+
+**E0 fő architekturális megállapítások:**
+1. A meglévő Core alap jó és megtartandó: KEEP schema/state/commands/validation/history/transactions/responsive/revision/concurrency/Twitch Schedule boundary.
+2. Az Inspector jelenlegi kézi UI-rétege és a Property Registry között nincs még teljes canonical bekötés: IMPROVE, nem REPLACE.
+3. A Canvas jelenleg nem végleges component renderer: IMPROVE/EXPAND szükséges egy valódi component registry + render boundary felé.
+4. A domain/presentation/editor-state szétválasztás megfelelő irány, ezt meg kell őrizni.
+5. A szerveroldali normalizeEditorDocument() nem második editor; migration/compatibility boundaryként kezelendő.
+6. A published_content_json/published_revision_id modell jó alap; a public renderernek erre a published snapshotra kell épülnie, nem a draft UI state-re.
+7. A jelenlegi Schedule rendszerhez nem nyúlunk vissza; C.5.1 lezárva.
+
+**E0 döntés:** nincs bizonyíték teljes Core újraírására. A következő lépés célzott benchmark és az E2 saját canonical architecture decision előkészítése.
+
+**E0 tesztbizonyíték / állapot:**
+- [x] Legutóbbi felhasználó által visszaigazolt local typecheck PASS.
+- [x] Schedule regression 9/9 PASS.
+- [x] Editor Core regression 30/30 PASS.
+- [x] GitHub Actions #104 Twitch Integration SUCCESS.
+- [x] GitHub Actions #728 Editor Core SUCCESS.
+- [x] Production C.5.1 gate PASS.
+- [x] E0 audit repository/current branch v2/foundation állapotára készült.
+
+**Következő egyetlen aktív al-pont:** **40.69.13.E1 — célzott Puck/Craft.js/GrapesJS + profi Visual Editor benchmark/source-code audit.**
+
+**MASTER-2.40.25 checkpoint:** E0 lezárva; funkcióvesztés nélkül továbbhaladunk E1-be. A teljes 1.0 és post-1.0 backlog megmarad, és minden új funkció ugyanebbe az egyetlen MASTER-be kerül.
+
 **1.0 fókusz:** először egy stabil, professzionális magyar streamer-weboldal + működő visual editor + Twitch Schedule alap + publish/public flow. A globális piacra szükséges architekturális alapok már 1.0 előtt készülnek, de a teljes többnyelvű tartalom, fordítási workflow, további platformok és haladó SaaS funkciók 1.0 utáni szakaszok.
 
 **Tervezett, szigorú E al-sorrend:**
-- **E0 — teljes jelenlegi repo/Editor/domain audit**
-- **E1 — benchmark/reference code audit**
+- **E0 — teljes jelenlegi repo/Editor/domain audit** `[x]`
+- **E1 — benchmark/reference code audit** `[~]`
 - **E2 — saját canonical architecture decision**
 - **E3 — Game Profile + Media + Schedule Event + Presentation contract**
 - **E4 — minimális domain/foundation implementation**
