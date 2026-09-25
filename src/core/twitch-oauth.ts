@@ -1,5 +1,5 @@
-import type { Env } from "../types/env";
-import { decryptTwitchToken, encryptTwitchToken, hashTwitchOAuthState } from "./twitch-crypto";
+import type { Env } from "../types/env.ts";
+import { decryptTwitchToken, encryptTwitchToken, hashTwitchOAuthState } from "./twitch-crypto.ts";
 
 const AUTHORIZE_URL = "https://id.twitch.tv/oauth2/authorize";
 const TOKEN_URL = "https://id.twitch.tv/oauth2/token";
