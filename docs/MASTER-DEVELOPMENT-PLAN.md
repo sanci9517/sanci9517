@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.33  
+**Verzió:** MASTER-2.40.34  
 **Dátum:** 2026-09-25  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -1148,7 +1148,189 @@ Az E3 nem csak adatmodellt freeze-el. Rögzíteni kell:
 
 **E3 UX döntési alap:** a platformot nem „egy nagy adminpanelként”, hanem **egy Creator Center + több célfeladatra optimalizált workspace** modellként építjük. Ez a felhasználóbarátságot javítja anélkül, hogy a canonical architektúrát szétbontaná.
 
-**MASTER-2.40.33 checkpoint:** E0–E2 lezárva; az E3 most a canonical domain contract mellett a Creator Center / külön workspace UX- és ownership-határait is freeze-eli. Funkcióvesztés nincs; az új igény hozzáadódott a MASTER-hez. A teljes 1.0 és post-1.0 backlog megmarad, és minden új funkció ugyanebbe az egyetlen MASTER-be kerül.
+### E3 — CANONICAL CONTRACT FREEZE — 2026-09-25
+
+**Repo-audit eredmény:** a jelenlegi rendszer már jó alapot ad a közös platformmotorhoz, de a domain-scope és néhány domain ownership még nincs canonicalizálva. A jelenlegi Document már tartalmaz siteId mezőt, viszont a default értéke null; a jelenlegi media tábla még globális/legacy jellegű és csak alap metaadatot tárol; a schedule_items jelenleg canonical Schedule domainként működik, de még nincs Game Profile referencia; a Presentation/Theme külön canonical domain még nincs implementálva. Ezeket E4-ben, új párhuzamos rendszer létrehozása nélkül rendezzük.
+
+#### 1. Creator Center / Workspace Contract
+
+**Canonical:**
+- Creator Center = navigation/orchestration shell.
+- Website Editor = külön workspace/runtime.
+- Stream/Twitch = külön management workspace.
+- Overlay Studio = későbbi külön visual workspace.
+- Future Content/Automation/Analytics/Community/OBS/Video workspaces = külön felületek lehetnek.
+
+**Nem canonical:**
+- workspace saját domain DB;
+- workspace saját asset store;
+- workspace saját theme store;
+- workspace saját command/history;
+- workspace saját Page/Node Model.
+
+**Workspace state** csak UI/runtime állapot lehet: megnyitott panel, aktív tab, zoom, layout, filter, temporary selection stb.
+
+**Navigációs szerződés:**
+Creator Center → Workspace → konkrét entity/editor → mentés/publish → visszatérés Creator Centerbe.
+
+Deep-link, unsaved changes és permission ellenőrzés később közös platformszinten kezelendő.
+
+#### 2. Site / Creator / Tenant Scope
+
+Minden creatorhoz tartozó tartalom és konfiguráció később site/tenant scope alatt él:
+- pages;
+- editor documents/revisions;
+- media assets;
+- game profiles;
+- schedule data;
+- presentation/theme;
+- templates;
+- reusable components;
+- integrations;
+- későbbi automation/analytics/configuration.
+
+**Egyetlen Sanci site esetén is most ezt az ownershipet tervezzük**, hogy később multi-tenant átépítés nélkül bővíthető legyen.
+
+A meglévő global/legacy táblák csak migrációs/kompatibilitási források lehetnek; új canonical domain ownership nem épül rájuk változtatás nélkül.
+
+#### 3. Game Profile Contract
+
+A Game Profile külön domain entity, nem Schedule node prop.
+
+Minimum canonical mezők:
+- id
+- siteId
+- slug
+- name
+- platform/category opcionális domain metadata
+- coverAssetId / iconAssetId opcionális Asset Reference
+- brand opcionális presentation metadata
+- metadata
+- isActive
+- createdAt
+- updatedAt
+
+A Schedule Event csak gameProfileId referencia lehet; a játék neve/képe nem kerül minden adás rekordjába duplikált domain adatként.
+
+#### 4. Schedule Event Contract
+
+A meglévő schedule_items marad a Schedule domain kiindulópontja, de E4-ben canonical Schedule Event fogalomként kell kezelni.
+
+Minimum:
+- identity + site scope;
+- title;
+- start/end;
+- status;
+- platform;
+- URL/notes;
+- gameProfileId nullable reference;
+- source/sourceAccount/source identity;
+- source presence/sync timestamps;
+- recurring metadata;
+- source category metadata;
+- created/updated lifecycle.
+
+**Twitch továbbra is adapter/source, nem canonical owner.**
+
+Editorban a Schedule node csak:
+ScheduleBinding + PresentationConfig
+formában hivatkozik a domainre.
+
+#### 5. Media Asset Contract
+
+A jelenlegi media tábla nem tekintendő végleges canonical Media domainnek.
+
+Canonical Asset:
+- assetId
+- siteId
+- kind
+- storageProvider
+- storageKey
+- mimeType
+- size
+- width
+- height
+- duration
+- originalName
+- altText
+- title
+- metadata
+- lifecycle/orphan/reference metadata
+- created/updated timestamps.
+
+A binary object külön storage boundaryn marad. MEDIA R2 már rendelkezésre áll az environmentben, de **E3-ban nem implementálunk upload rendszert**.
+
+Page Modelben csak immutable Asset Reference / asset ID szerepelhet.
+
+#### 6. Presentation / Theme Contract
+
+A Presentation/Theme nem egyetlen „CSS blob” és nem editor-specifikus beállítás.
+
+Két szint:
+1. **Site Theme** — site-scoped design tokens.
+2. **Component Presentation** — component-scoped presentation overrides.
+
+Theme token kategóriák későbbi canonical alapjai:
+- colors;
+- typography;
+- spacing;
+- radii;
+- shadows;
+- borders;
+- layout/container;
+- responsive breakpoints;
+- motion;
+- states;
+- accessibility-related presentation tokens.
+
+A komponens instance saját override-ot kaphat, de az alapértelmezés a theme/component contractból öröklődik.
+
+Theme és presentation publisholható, revisioned állapot legyen; a Public Renderer publishelt snapshotból dolgozhat.
+
+#### 7. Localization Contract
+
+E3-ban nincs locale-onként külön Page Model.
+
+A domain:
+- default locale;
+- supported locales;
+- localized field/value reference;
+- fallback locale
+
+modellt támogat későbbi bővítéshez.
+
+1.0-ban HU az aktív tartalmi locale; az adatmodell nem zárhatja ki a későbbi DE/UK/RU/EN stb. bővítést.
+
+#### 8. Cross-workspace ownership
+
+Egy későbbi Overlay Studio használhat:
+- ugyanabból a Media Asset domainből;
+- ugyanabból a brand/theme token rendszerből;
+- ugyanabból a Component Registryből;
+- ugyanabból a domain/event binding rétegből;
+- ugyanabból a Command/History/Persistence boundaryból
+
+de az Overlay UI nem veheti át a Website Page Model ownershipét, és fordítva.
+
+**Ez a „közös motor, külön személyre szabott felület” végleges architekturális értelmezése.**
+
+#### 9. E3 Definition of Done
+
+- [x] Creator Center / workspace boundary freeze.
+- [x] Site/tenant ownership freeze.
+- [x] Game Profile contract freeze.
+- [x] Schedule Event contract freeze.
+- [x] Media Asset contract freeze.
+- [x] Presentation/Theme contract freeze.
+- [x] Localization boundary freeze.
+- [x] Cross-workspace canonical ownership freeze.
+- [x] No second editor/core/state/mutation system decision.
+
+**E3 státusz: [x] PASS — contract freeze kész, implementáció nélkül.**
+
+**Következő egyetlen aktív pont: 40.69.13.E4 — minimális canonical domain/foundation implementation.**
+
+**MASTER-2.40.34 checkpoint:** E0–E3 lezárva. Az E3 contract freeze a Creator Center / külön workspace UX- és ownership-határait, Game Profile, Schedule Event, Media Asset, Presentation/Theme, localization és cross-workspace canonical szabályokat is rögzítette. Funkcióvesztés nincs; a következő egyetlen aktív pont E4. A teljes 1.0 és post-1.0 backlog megmarad, és minden új funkció ugyanebbe az egyetlen MASTER-be kerül.
 
 **1.0 fókusz:** először egy stabil, professzionális magyar streamer-weboldal + működő visual editor + Twitch Schedule alap + publish/public flow. A globális piacra szükséges architekturális alapok már 1.0 előtt készülnek, de a teljes többnyelvű tartalom, fordítási workflow, további platformok és haladó SaaS funkciók 1.0 utáni szakaszok.
 
