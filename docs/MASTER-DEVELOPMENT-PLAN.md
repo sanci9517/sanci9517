@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.27  
+**Verzió:** MASTER-2.40.28  
 **Dátum:** 2026-09-25  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -37,7 +37,7 @@ Ha bármilyen régi checkpoint, összefoglaló, korábbi üzenet vagy történet
 **Boot-szabály:** új beszélgetésben a modellnek először ezt a 00/B blokkot, majd közvetlenül a 00/A indexet kell figyelembe vennie. Ha bármely régi checkpoint ettől eltér, a régi checkpointot kell figyelmen kívül hagyni, nem az aktuális MASTER állapotot.
 
 **Egyetlen aktuális folytatási mondat:**
-> „Folytassuk a Sanci9517 MASTER tervet a **40.69.13.E0 — teljes repo/Visual Editor/domain audit** egyetlen aktív al-ponttal. Először a jelenlegi rendszert és a profi referenciaeditorokat (Puck, Craft.js, GrapesJS, Builder, Framer, Webflow, Sanity) vizsgáljuk, majd E1–E5 sorrendben rögzítjük és implementáljuk a canonical domain + editor alapot. Twitch/C.5.1 lezárva; nem ugrunk vissza Twitchre, és F Inspector csak E teljes lezárása után indul.”
+> „Folytassuk a Sanci9517 MASTER tervet a **40.69.13.E1.1 — Component Registry / Property Registry / Render Contract + Presentation/Theme Contract döntési audit** egyetlen aktív al-ponttal. Először a jelenlegi rendszert és a profi referenciaeditorokat (Puck, Craft.js, GrapesJS, Builder, Framer, Webflow, Sanity) vizsgáljuk, majd E1–E5 sorrendben rögzítjük és implementáljuk a canonical domain + editor alapot. Twitch/C.5.1 lezárva; nem ugrunk vissza Twitchre, és F Inspector csak E teljes lezárása után indul.”
 
 > **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd kizárólag a **00/A MASTER VÉGREHAJTÁSI INDEX egyetlen aktív pontjából** folytatni. Más fejezet `[ ]`, `[~]` vagy régebbi „következő lépés” szövege nem jelent aktuális folytatási pontot.
 
@@ -497,8 +497,7 @@ A platform hosszú távú célja globálisan használható streamer platform, ez
 - Page Model localization-safe kialakítása;
 - domain adatok és lokalizálható megjelenítési szövegek szétválasztása;
 - Schedule és egyéb dinamikus domain adatok localization-safe modellje;
-- locale-aware dátum/idő/szám megjelenítésre előkészített adatfolyam;
-- fallback stratégia helyének és működési szerződésének meghatározása;
+- locale-aware dátum/idő/szám megjelenítésre előkészített adatfolyam;- fallback stratégia helyének és működési szerződésének meghatározása;
 - localized routing/SEO későbbi bevezethetőségének biztosítása;
 - Unicode és RTL kompatibilitás megőrzése;
 - Editor és renderer úgy épüljön, hogy a lokalizáció később ne igényeljen második editort, renderert, Page Modelt vagy command rendszert;
@@ -997,8 +996,7 @@ Ez azt jelenti, hogy ha egy már LIVE oldalon új draft módosítás történik,
 
 **Állapot:** [x] AUDIT PASS — új kódmódosítás nem szükséges ebben a lépésben.
 
-**Áttekintett fő útvonalak:**
-- `src/routes/admin/editor.ts`: Save, Publish, Rollback, Unpublish, expectedVersion, revision numbering.
+**Áttekintett fő útvonalak:**- `src/routes/admin/editor.ts`: Save, Publish, Rollback, Unpublish, expectedVersion, revision numbering.
 - `src/routes/admin/pages.ts`: page list revision source, metadata/slug revision, published linkage, page-create + initial revision batch.
 - `src/routes/public/pages.ts`: normal public route kizárólag published snapshotból dolgozik; explicit preview külön auth-gated.
 - `src/core/page-model.ts`: canonical `sanci-page-document` normalizálás.
@@ -1497,8 +1495,7 @@ A 7.1 pont nem az aktuális folytatási pont. Az itt maradt feladatok későbbi 
 - [ ] snap to sibling/parent
 - [ ] distance indicators
 - [ ] alignment tools
-- [ ] match width/height
-- [ ] distribute
+- [ ] match width/height- [ ] distribute
 
 ## 8.4 Layers/Navigator
 - [ ] complete tree
@@ -1997,8 +1994,7 @@ Régi tesztoldalak csak a valódi oldalak biztonságos migrációja után:
 - [ ] filter
 - [ ] preview
 - [ ] metadata
-- [ ] alt text
-- [ ] crop
+- [ ] alt text- [ ] crop
 - [ ] resize
 - [ ] replace
 - [ ] archive/delete
@@ -2497,8 +2493,7 @@ Felhasználói/runtime teszt még hátra.
 Ellenőrzött:
 - Elements kategóriák megjelenése;
 - kategóriák csukott alapállapota;
-- elemek hozzáadása;
-- Rich Text hozzáadása;
+- elemek hozzáadása;- Rich Text hozzáadása;
 - Rich Text automatikus canonical üres dokumentuma;
 - elem kijelölése hozzáadás után.
 
@@ -2997,8 +2992,7 @@ A domain adatok változása önmagában nem módosítja a Page revisiont.
 - mobil/desktop alaprender.
 
 **40.69.12.D — Public page renderer**
-- published Page Model → Schedule runtime;
-- safe rendering;
+- published Page Model → Schedule runtime;- safe rendering;
 - empty state;
 - runtime teszt.
 
@@ -3498,7 +3492,6 @@ Kötelezően megőrzendő külső adatok:
 - Refreshkor az új refresh token kötelezően mentésre kerül.
 - Twitch token validáció a `/oauth2/validate` endpointon történik; a validáció eredménye a connection canonical állapotát frissíti.
 - Minimális scope elv: csak bizonyítottan szükséges jogosultságokat kérünk. A Schedule Builder tényleges Twitch schedule-kezeléséhez a canonical OAuth flow `channel:manage:schedule` scope-ot kér; a scope-változás után a meglévő kapcsolatot újra kell autorizálni.
-
 #### B.2 Implementált alap + jelenlegi hardening
 - `migrations/0011_twitch_integration.sql`
   - `twitch_connections`
@@ -3997,8 +3990,7 @@ Ez igazolja, hogy a létrejött Twitch OAuth kapcsolat production környezetben 
 
 **Cél:** a már lezárt D1 source/sync adatmodell fölé egyetlen canonical Schedule service + mapper adatfolyamot kialakítani, amely a Twitch adapterből érkező validált DTO-t a schedule_items és schedule_sync_state domainbe vezeti, miközben a manual rekordok és a public read contract sértetlenek maradnak.
 
-**Kötelező audit sorrend:**
-1. Meglévő schedule CRUD, read service, route-ok és repository/data-access réteg teljes visszaolvasása.
+**Kötelező audit sorrend:**1. Meglévő schedule CRUD, read service, route-ok és repository/data-access réteg teljes visszaolvasása.
 2. Meglévő Twitch OAuth/token service és Twitch API kliens boundary teljes auditja.
 3. Canonical external DTO → Schedule mapper input/output szerződés rögzítése.
 4. Ownership szabályok véglegesítése: Twitch-owned mezők, manual-owned mezők, source metadata és derived live state.
@@ -4359,3 +4351,195 @@ A Page Model nem tárolja a schedule rekordokat.
 - Gyökérok: a revokeTwitchConnection() a Twitch revoke sikeres válasza után nem ellenőrizte, hogy a revocation_pending → revoked D1 UPDATE ténylegesen módosított-e egy sort; ezért a tesztben szimulált D1 állapotfrissítési hiba nem jutott vissza a hívóhoz.
 - Javítás elkészült: e7a04baa683caf35252bec721ed1fa362c9bc660 — fix: verify Twitch revocation state transition.
 - A javítás után CI ellenőrzés még nincs PASS-szal igazolva. Következő kapu: az új Twitch Integration futás eredménye.
+
+## 00.9.10 — VÉGLEGES TERMÉKVÍZIÓ
+
+**Rögzítve: 2026-09-25 — MASTER-2.40.28.**
+
+A projekt végső célja egy **Streamer / YouTuber Creator Operating System**: egyetlen felhasználóbarát platform, amelyből a creator a saját brand-weboldalát, tartalmait, élő adásait, közösségét, médiáját és később a streamből keletkező teljes tartalomgyártási folyamatot kezelheti. A Sanci9517 oldal az első valódi reference site; a platformot úgy építjük, hogy egy kezdő és egy professzionális creator is ugyanazt a rendszert használhassa, csak eltérő mélységben.
+
+### A. Brand / Public Site — elsődleges aktuális termékirány
+- [x] Egyedi, site-scoped public design: minden streamer saját vizuális identitást készíthet.
+- [x] Template/preset gyors indulás + mély egyedi testreszabás.
+- [ ] Twitch + YouTube + TikTok + Discord + támogatás/social jelenlét egységes brand-rendszerben.
+- [ ] Home / About / Schedule / Community / Support / Social / Media / Video oldalak, ahol az adott creator számára értelmesek.
+- [ ] Élő állapot, következő stream, schedule, platformlinkek és kiemelt tartalmak dinamikus megjelenítése.
+- [ ] SEO, Open Graph, megosztási preview, gyors és akadálymentes public runtime.
+- [ ] Később custom domain / white-label / tenant onboarding.
+
+### B. Creator Control Center — egyetlen adminból
+- [ ] Dashboard: live state, upcoming streams, content queue, clips, alerts, integrations, health.
+- [ ] Platform connections: Twitch, YouTube, TikTok, később Kick és további platformok adapterként.
+- [ ] Közös creator identity, social links, schedule, games, media, content records és publishing állapot.
+- [ ] Jogosultságok: account/site/role scoped, később team és collaborator szerepek.
+- [ ] Audit, security, token isolation, rate-limit, usage/plan limitek és hibajelzés.
+
+### C. Twitch / YouTube / TikTok / platform layer
+**Canonical irány:** minden platform saját adapteren keresztül kapcsolódik a közös creator/domain réteghez; platform-specifikus payload nem kerül a Page Modelbe.
+
+- **Twitch:** OAuth, live state, schedule, chat/event ingestion, channel metadata, később clips/VOD és további creator API-k.
+- **YouTube:** OAuth, channel/video metadata, live broadcast lifecycle, schedule, live chat, uploads/Shorts workflow és későbbi analytics. A YouTube Live API hivatalosan támogat broadcast/stream lifecycle és live-chat műveleteket.
+- **TikTok:** OAuth és creator/content workflow, később Direct Post és publishing/scheduling, a platform aktuális Content Posting API szabályaihoz és auditjához igazítva. A Direct Post API explicit creator consentet, creator-info lekérést és video.publish scope-ot ír elő; az unaudited kliensek posztjai korlátozott láthatóságúak lehetnek.
+- **További platformok:** Kick, Instagram, Facebook, X és más releváns csatornák csak külön adapter/domain contract alapján.
+- **Multi-platform identity:** egy creator több platform-accountját egy site/account alatt lehessen kezelni, platformonkénti capability- és permission-modellel.
+
+### D. OBS / Local Creator Bridge
+Az OBS kapcsolat **nem pusztán webes UI-funkció**, hanem külön local integration boundary lesz.
+
+- [ ] Hivatalos OBS WebSocket alapú kapcsolat; OBS 28+ esetén ez beépítetten rendelkezésre áll.
+- [ ] Local Companion / Bridge komponens: a webplatform ne kapjon közvetlen, ellenőrizetlen hozzáférést a streamer gépéhez.
+- [ ] Biztonságos pairing, explicit permission, revoke/disconnect és local health állapot.
+- [ ] OBS state: scenes, scene collections, sources, stream/recording state, replay buffer és szükséges audio/input állapotok olvasása.
+- [ ] OBS control: scene switching, start/stop recording/streaming, replay/clip trigger és más csak engedélyezett műveletek.
+- [ ] Event-driven kapcsolat és reconnect/backoff; ne polling-alapú „minden másodpercben kérdezzük az OBS-t” rendszer.
+- [ ] Macro/automation layer: esemény → szabály → OBS action, auditálható és visszavonható módon.
+- [ ] Később Macro Deck / Stream Deck / Touch Portal / egyéb kontrollerek integrálható capability-ként, nem külön platformként.
+
+### E. Stream Intelligence / AI Copilot
+Az AI célja nem egy chatbot hozzáadása, hanem **valós creator-asszisztens**.
+
+- [ ] Live stream állapot és technikai health figyelése.
+- [ ] AI-assisted stream monitoring: hang, jelenet, események, chat és rendelkezésre álló stream/VOD jelek elemzése.
+- [ ] „Valami nincs rendben” típusú technikai jelzések: OBS disconnected, stream stopped, audio/video issue, scene/source mismatch, bitrate/health anomaly — ahol a platform/OBS adat ezt megbízhatóan lehetővé teszi.
+- [ ] Live assistant: fontos pillanat, chat spike, reakció, gameplay event vagy egyéb clip-jelölt felismerése.
+- [ ] Voice/command workflow: például clip-marker vagy OBS művelet explicit user command alapján.
+- [ ] AI content assistant: cím, leírás, caption, hashtag, chapter, social copy és fordítási javaslat; emberi jóváhagyás kötelező a publikálás előtt.
+- [ ] AI design assistant: brand-kompatibilis layout/theme/content javaslatok, de a canonical editor/command rendszerbe írva, nem külön második szerkesztőként.
+- [ ] AI memory/profile: creator által engedélyezett preferenciák, brand voice és workflow beállítások; tenant/site izolációval.
+- [ ] AI privacy controls: milyen adatot figyelhet, mennyi ideig, mely platformra küldhet adatot, és bármikor kikapcsolható.
+
+### F. Stream → Content Factory
+A végső rendszer egyik legfontosabb része: **a stream ne a folyamat vége legyen, hanem a tartalomgyártás bemenete.**
+
+- [ ] VOD ingestion / import.
+- [ ] AI highlight detection: gameplay, clutch, reaction, chat spike, funny moment, milestone stb.
+- [ ] Live clip trigger + post-stream automatic analysis.
+- [ ] Clip queue: AI score, timestamp, reason/evidence, source VOD és status.
+- [ ] Vertical/Shorts/Reels/TikTok 9:16 workflow.
+- [ ] Smart reframe / subject tracking / facecam + gameplay composition.
+- [ ] Captions/subtitles, burned-in or platform-native where supported.
+- [ ] Creator branding: logo, fonts, colors, intro/outro, watermark, lower-third.
+- [ ] Manual editor + AI-assisted editor ugyanazon media/project modelen.
+- [ ] Long-form YouTube video workflow később: highlight selection, chapters, title/description, thumbnail, export/publish.
+- [ ] Content queue + approval + scheduling + publish state.
+- [ ] Platform-specific export profiles, aspect ratios, duration and metadata.
+- [ ] Direct publishing where official APIs and permissions allow it; otherwise one-click export/download workflow.
+
+### G. Analytics / Creator Intelligence
+- [ ] Cross-platform live/content analytics.
+- [ ] Streamenkénti teljesítmény: nézők, chat aktivitás, stream quality, retention ahol elérhető.
+- [ ] Content analytics: clip/video teljesítmény, platformonkénti összehasonlítható metrikák.
+- [ ] Content-to-stream feedback loop: mely témák/játékok/formátumok teljesítenek jól.
+- [ ] Creator dashboard trends, nem csak nyers API-adatok.
+- [ ] Később experiment/A-B tooling, de csak megfelelő mérési és privacy alapok után.
+
+### H. Community / Audience layer
+- [ ] Unified community surface: Discord, chat/community links, support, social.
+- [ ] Platform capability alapján később közös/moderációs nézet.
+- [ ] Chat/event aggregation csak jogszerű és engedélyezett API-kból.
+- [ ] Alerts, loyalty/community mechanics későbbi bővítésként.
+- [ ] Viewer-facing public profile/community pages.
+
+### I. OBS Layout / Stream Scene Studio — későbbi, de már most architekturálisan előkészítendő
+- [ ] OBS scene/layout templates.
+- [ ] Stream overlay/layout builder, amely a public visual editor design systemjétől külön, de kompatibilis presentation contractot használ.
+- [ ] Scene collections, browser sources, text/image/media layers, alerts és widgets kezelése.
+- [ ] Template → customize → local sync workflow.
+- [ ] Brand tokensból OBS layout generálás.
+- [ ] Responsive/vertical/TikTok stream layouts.
+- [ ] Import/export/backup és verziózott layoutok.
+- [ ] Később community/template marketplace.
+
+**Fontos:** az OBS Layout Studio nem hozhat létre második, párhuzamos design/state rendszert. A canonical presentation/token/asset/command rétegekre kell épülnie.
+
+### J. Media / Asset / Storage pipeline
+- [ ] Unified media library: images, logos, banners, thumbnails, clips, VOD references, audio/video assets.
+- [ ] Metadata, alt text, ownership, usage references és lifecycle.
+- [ ] Asset transformations/optimization.
+- [ ] R2-backed storage when scale requires it.
+- [ ] Orphan/reference cleanup.
+- [ ] Content processing queue és retry model nagy médiafeladatokra.
+
+### K. Automation / Workflow Engine
+- [ ] Trigger → condition → action model.
+- [ ] Példák: stream started → public site live state; stream ended → VOD analysis; highlight found → clip queue; approved clip → export/publish; schedule changed → public site update.
+- [ ] OBS actions, platform actions, notifications és content actions ugyanazon workflow modelben.
+- [ ] Idempotency, retries, rate limits, dead-letter/error state, audit.
+- [ ] User-visible automation history és safe disable.
+
+### L. Monetization / Creator Business
+- [ ] Support/tipping integration.
+- [ ] Sponsorship/brand asset support.
+- [ ] Affiliate links and campaigns.
+- [ ] Merch/product links.
+- [ ] Subscription/billing for the platform later.
+- [ ] Package/usage limits for future SaaS plans.
+- [ ] Revenue/commerce data only where legally and technically available.
+
+### M. Professional / Enterprise-grade capabilities
+- [ ] Team workspaces and role-based collaboration.
+- [ ] Approval workflows.
+- [ ] Comments/annotations.
+- [ ] Multiple sites/channels per account.
+- [ ] Tenant isolation.
+- [ ] Custom domains / white-label.
+- [ ] Backup/export/restore.
+- [ ] Observability, usage quotas, rate limits, incident diagnostics.
+- [ ] Accessibility and performance budgets.
+- [ ] Secure secret/token management and least-privilege OAuth scopes.
+
+### N. Final product principle — „Beginner to Pro”
+A platform akkor éri el a végső célját, ha a kezdő creator ezt tudja tenni:
+1. összeköti a Twitch/YouTube/TikTok fiókját;
+2. kiválaszt egy template-et;
+3. saját brandre szabja az oldalt technikai CSS nélkül;
+4. beállítja a schedule/social/community adatokat;
+5. összeköti az OBS Bridge-et;
+6. elindítja a streamet;
+7. a rendszer figyeli a streamet és a platform eseményeit;
+8. a fontos pillanatokból automatikusan clip-jelöltek készülnek;
+9. a creator jóváhagyja/szerkeszti őket;
+10. a rendszer platform-kompatibilis formában publikálja vagy előkészíti őket;
+11. a dashboard megmutatja, mi működött és mi következhet.
+
+A professzionális creator ugyanennek a rendszernek a mélyebb rétegeit kapja: több csatorna, több site, csapat, automatizálás, advanced analytics, saját template-ek, OBS scene automation, AI workflows, content pipeline, approvals és custom domain.
+
+**Végső UX-elv:** ne 20 külön eszköznek érződjön. A platform feladata, hogy a creator számára egy összefüggő workflow legyen:
+
+PLAN → BRAND → GO LIVE → MONITOR → CAPTURE → EDIT → APPROVE → PUBLISH → ANALYZE → IMPROVE
+
+### O. Architecture rules for the ultimate platform
+- [ ] Minden platform integration adapter/capability alapú.
+- [ ] Domain entities közös canonical modellek; platform payloadok adapterben maradnak.
+- [ ] OBS local bridge külön trust boundary.
+- [ ] AI külön capability/service boundary, nem kevert editor state.
+- [ ] Media processing aszinkron job/queue alapú, nem hosszú Worker requestben.
+- [ ] Public design/theme site-scoped és publishable snapshot része.
+- [ ] Public renderer, editor canvas és későbbi OBS layout renderer közös presentation/render contractot használ, ahol az eltérő runtime ezt megengedi.
+- [ ] Minden automatizálás idempotens, auditálható és letiltható.
+- [ ] OAuth scope-ok least privilege szerint kerülnek felépítésre.
+- [ ] AI csak explicit jogosultsággal és kontrollal fér hozzá creator-adatokhoz.
+- [ ] Egyetlen canonical command/history/validation/persistence útvonal; nincs párhuzamos „AI editor”, „OBS editor” vagy „theme editor” state.
+
+### P. Reference-product audit backlog
+A MASTER folyamatosan figyeli a creator-tool ökoszisztéma releváns termékeit és open-source projektjeit, többek között:
+- OBS Studio / obs-websocket;
+- StreamElements / Streamlabs;
+- Restream;
+- Eklipse / OpusClip és hasonló AI clipping/content tools;
+- Puck / Craft.js / GrapesJS;
+- Builder / Framer / Webflow / Sanity;
+- további open-source OBS automation, media processing és creator-tool projektek.
+
+**Benchmark-szabály:** konkrét capabilityt vizsgálunk (pl. clip pipeline, scene automation, template system, analytics, social publishing), és csak a bizonyítottan hasznos mintát vesszük át a saját canonical architektúrába. Nem építünk „feature shopping” miatt párhuzamos rendszereket.
+
+### Q. Scope / sequencing rule
+A fenti lista **végső termékvízió és megőrzendő backlog**, nem azt jelenti, hogy mindent most egyszerre kell megépíteni.
+
+**Most:** Sanci9517 Brand Core + canonical domain/editor alap + Twitch stabilitás lezárása + YouTube/TikTok integrációs előkészítés.
+
+**Utána:** public design/editor completion → content/media → YouTube/TikTok platform capabilities → OBS local bridge → stream intelligence/AI → clip/content factory → analytics/automation → professional/multi-tenant/SaaS.
+
+Minden új capability külön domain contracttal, benchmarkkal, implementációval, regressionnel és live gate-tel kerülhet be.
+
+**Feature-preservation:** a fenti végső vízió minden pontja megőrzendő MASTER backlog. Egy új beszélgetés vagy újabb 1.0 scope-döntés nem törölheti ezeket implicit módon.
