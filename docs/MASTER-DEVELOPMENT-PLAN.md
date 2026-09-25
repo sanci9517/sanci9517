@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.19  
+**Verzió:** MASTER-2.40.20  
 **Dátum:** 2026-09-25  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -3819,6 +3819,16 @@ A Page Model nem tárolja a schedule rekordokat.
 - [ ] Public Schedule DTO production leakage ellenőrzés.
 - [ ] Csak ezek után C.5.1 lezárás.
 - **Builder/Inspector továbbra is blokkolt a teljes C.5.1 gate PASS-ig.**
+
+### 2026-09-25 OAuth CI #95 mélyellenőrzés + célzott javítás
+- [x] A #95 teljes GitHub Actions logja újraellenőrizve: a workflow valóban az a1fff8c commitot checkoutolta; typecheck PASS, Editor Core 30/30 PASS, Schedule Source 8/8 PASS, kizárólag B.13 OAuth teszt FAIL.
+- [x] A B.13 hiba új gyökérokát azonosítottuk: maga a teszt D1 fake rosszul azonosította a két SQL UPDATE-et. A status='revocation_pending' keresés a végleges WHERE ... status='revocation_pending' feltételt is elkapta, ezért a fake D1 a véglegesítés helyett tévesen a pending átmenetet szimulálta, és nem dobta a várt hibát.
+- [x] A production revokeTwitchConnection() további state-transition hardeninget kapott: a connected → revocation_pending UPDATE meta.changes === 1 ellenőrzése kötelező; eltérő állapot esetén TWITCH_REVOKE_STATE_TRANSITION_FAILED hibával megáll.
+- [x] A B.13 teszt D1 fake javítva lett úgy, hogy a pending és revoked SQL UPDATE-ket külön kezeli.
+- [x] A Twitch hivatalos API dokumentációt újraellenőriztük: schedule kezeléshez channel:manage:schedule user access token kell; revoke POST client_id + token paraméterekkel működik, sikeres revoke 200, invalid token 400 lehet. citeturn0search1turn0search5turn0search6
+- [x] Külső Twitch OAuth/Schedule implementációkat referencia-szinten ellenőriztünk; ezek megerősítik a code-flow + channel:manage:schedule irányt, de nem másolunk külső state/storage modellt. citeturn0search0turn0search8
+- [ ] A c13bd03f48bec44f3a63204bece28668864425ff commit után új Twitch Integration CI PASS még nincs igazolva.
+- **Egyetlen következő aktív pont:** a friss Twitch Integration futás teljes ellenőrzése; PASS esetén 0014 remote apply következik, FAIL esetén csak a tényleges új hiba javítható.
 
 ### 2026-09-25 OAuth CI hibafeltárás
 - Twitch Integration Check #93 logja alapján a typecheck PASS, Editor Core 30/30 PASS, Schedule source 8/8 PASS.
