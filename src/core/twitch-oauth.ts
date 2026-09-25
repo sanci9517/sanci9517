@@ -381,7 +381,11 @@ export async function revokeTwitchConnection(env: Env, connectionId: string): Pr
     throw new Error("TWITCH_REVOKE_FAILED");
   }
 
-  await env.DB.prepare(
+  const finalized = await env.DB.prepare(
     "UPDATE twitch_connections SET status='revoked',refresh_lock_token=NULL,refresh_lock_until=NULL,updated_at=CURRENT_TIMESTAMP WHERE id=? AND status='revocation_pending'"
   ).bind(connectionId).run();
+
+  if (finalized.meta.changes !== 1) {
+    throw new Error("TWITCH_REVOKE_STATE_UPDATE_FAILED");
+  }
 }
