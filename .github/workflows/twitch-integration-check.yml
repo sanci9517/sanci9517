@@ -22,3 +22,7 @@ jobs:
         run: npm run typecheck
       - name: Run editor core regression tests
         run: npm run test:editor
+      - name: Run schedule source regression tests
+        run: npm run test:schedule
+      - name: Run Twitch OAuth regression tests
+        run: node --test tests/twitch-oauth.test.js
