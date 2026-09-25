@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.20  
+**Verzió:** MASTER-2.40.21  
 **Dátum:** 2026-09-25  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt állapot:** 2026-09-25 — a C.5.1 Twitch runtime hardening/regressziós gate aktuális HEAD-en igazoltan PASS: Twitch Integration Check #98 és Editor Core Test #722 sikeresen lefutott; typecheck, Editor Core, Schedule Source és Twitch OAuth regressziók PASS. A remote production D1-en az `0014_twitch_connection_status.sql` migration hivatalosan alkalmazva van (d1_migrations id=20, applied_at=2026-09-25 02:30:32), és a `twitch_connections` CHECK constraint már engedi a `revocation_pending` állapotot. A közvetlen remote D1 query működik; az előző Wrangler 7403 hiba nem áll fenn a közvetlen `d1 execute --remote` útvonalon. A C.5.1 teljes production/live gate még nincs lezárva: local worktree szinkron + ellenőrzött deploy, live Twitch reauthorization/schedule sync, 401/404/429 live/integration bizonyítás és public Schedule DTO production leakage teszt még hátra van.
+**Legutóbbi igazolt állapot:** 2026-09-25 — a C.5.1 production/live gate jelentős része igazolt: CI #98/#722 PASS, remote migration/schema/quick_check PASS, GitHub↔local szinkron és production deploy PASS, health/db-health/public schedule live PASS, Twitch connection + `channel:manage:schedule` scope + token validation PASS, valamint authenticated Twitch Schedule sync élesben `source_empty` állapotot adott. A remote D1 sync-state és a 3 meglévő manual schedule rekord változatlansága szintén igazolt. A C.5.1 teljes lezárásához jelenleg csak az adapter 401/404/429 tényleges production/integration runtime bizonyítása maradt.
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
 
@@ -3804,22 +3804,30 @@ A Page Model nem tárolja a schedule rekordokat.
 - [x] A schedule contract regression aktuális futása: 5/5 PASS.
 
 **C.5.1 aktuális egyetlen aktív lépés — 2026-09-25:**
-- **Production D1 migration/state verification → local worktree sync → ellenőrzött deploy → live Twitch/Schedule gate.**
+- **Production D1 migration/state verification → synchronized local deploy → live Twitch/Schedule gate.**
 - [x] Node 24 ESM importlánc hibája azonosítva és `src/core/twitch-oauth.ts`-ban javítva.
 - [x] CI workflow kibővítve `test:schedule` + `tests/twitch-oauth.test.js` futtatással.
 - [x] `revocation_pending` schema mismatch gyökérok azonosítva és `0014_twitch_connection_status.sql` migration létrehozva.
-- [x] Twitch OAuth scope frissítve `channel:manage:schedule` értékre a későbbi Schedule Builder kezelési műveleteihez.
+- [x] Twitch OAuth scope frissítve `channel:manage:schedule` értékre.
 - [x] Twitch Integration Check #98 PASS — run 36087275074; typecheck, Editor Core, Schedule Source és Twitch OAuth PASS.
 - [x] Editor Core Test #722 PASS — run 36087275076; typecheck, Editor Core és canonical Schedule PASS.
-- [x] Remote `0014_twitch_connection_status.sql` alkalmazása hivatalosan igazolva a `d1_migrations` táblában: id=20, applied_at=`2026-09-25 02:30:32`.
-- [x] Remote `twitch_connections` schema ellenőrzés: a CHECK constraint tartalmazza `connected`, `reauthorization_required`, `revocation_pending`, `revoked` értékeket.
-- [x] Remote D1 közvetlen `SELECT`/schema lekérdezés működik a `sanci9517-db` adatbázison; a korábbi Wrangler 7403 hiba nem reprodukálódott a közvetlen query útvonalon.
-- [x] Remote D1 post-migration `PRAGMA quick_check` újraellenőrzése: `ok`.
-- [ ] GitHub `v2/foundation` → local VS Code worktree szinkron explicit ellenőrzése.
-- [ ] Szinkronizált local worktree alapján Cloudflare production deploy.
-- [ ] Live Twitch connection → reauthorization → validation → schedule sync újrateszt.
+- [x] Remote `0014_twitch_connection_status.sql` alkalmazása hivatalosan igazolva: d1_migrations id=20, applied_at=`2026-09-25 02:30:32`.
+- [x] Remote `twitch_connections` schema CHECK constraint ellenőrizve.
+- [x] Remote D1 `PRAGMA quick_check` = `ok`.
+- [x] GitHub `v2/foundation` és local VS Code worktree explicit sync/deploy-prep ellenőrzése PASS: local HEAD=`f394f2d`, `origin/v2/foundation` ugyanazon HEAD; tracked changes nincsenek.
+- [x] Local `npm.cmd run typecheck` PASS.
+- [x] Local `npm.cmd run test:editor`: 30/30 PASS.
+- [x] Local `npm.cmd run test:schedule`: 8/8 PASS.
+- [x] Synchronized local worktree-ból production Worker deploy PASS: Worker version=`930d89bd-b6d1-48e5-9676-f6e06b384006`.
+- [x] Production `/api/health` 200 OK.
+- [x] Production `/api/db-health` 200 OK, D1 connected.
+- [x] Production `/api/public/schedule` 200 OK; response=`{"ok":true,"data":[]}`, internal source/sync mezők nem kerültek ki.
+- [x] Live Twitch connection endpoint PASS: connected=true, status=connected, broadcaster=`1144260301 / sanci9517`, scope=`channel:manage:schedule`.
+- [x] Live Twitch validation PASS: valid=true, status=connected; access token expiry refreshed to `2026-09-25T20:36:07.554Z`.
+- [x] Live authenticated Twitch Schedule sync PASS HTTP 200: `status=source_empty`, `seenCount=0`, `upsertedCount=0`, `missingCount=0`, explicit window `2026-09-25T00:00:00.000Z → 2026-10-25T00:00:00.000Z`.
+- [x] Remote D1 sync-state post-live-sync verified: source=`twitch`, source_account_id=`1144260301`, status=`source_empty`, last_seen_count=0, last_error_code=`TWITCH_SCHEDULE_SOURCE_EMPTY`, start/success/completed timestamps populated for `2026-09-25 16:14:20`.
+- [x] Remote D1 manual isolation reverified after live sync: exactly 3 manual/present records remain; no Twitch destructive reconciliation occurred.
 - [ ] Adapter 401/404/429 tényleges production/integration runtime bizonyítása.
-- [ ] Public Schedule DTO production endpoint leakage élő ellenőrzése.
 - [ ] Csak ezek után C.5.1 teljes lezárás.
 - **Builder/Inspector továbbra is blokkolt a teljes C.5.1 gate PASS-ig.**
 
