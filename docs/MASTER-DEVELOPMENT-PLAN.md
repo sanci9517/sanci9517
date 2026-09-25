@@ -1388,9 +1388,9 @@ A migration:
 
 **Fontos:** a migration még nincs remote D1-re alkalmazva. A következő ellenőrzés a lokális migration/static syntax + typecheck/regression, majd a remote D1 apply és `PRAGMA foreign_key_check; PRAGMA quick_check;`.
 
-**E4.2 jelen állapota:** implementáció elkészítve, remote alkalmazás előtt.
+**E4.2 jelen állapota:** első remote alkalmazási kísérlet SQLite/Cloudflare D1 inkompatibilis `NOT NULL DEFAULT` + `REFERENCES` kombináció miatt elutasítva; a migration javítva nullable + azonnali backfill megoldásra. Remote D1-re még nincs sikeresen alkalmazva.
 
-**Következő aktív ellenőrzési pont: E4.2 verification gate.**
+**Következő aktív ellenőrzési pont: E4.2 verification gate — javított 0015 migration lokális pull/typecheck után újra remote apply.**
 
 
 
