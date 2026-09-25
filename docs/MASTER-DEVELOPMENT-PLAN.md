@@ -33,7 +33,7 @@ Ha bármilyen régi checkpoint, összefoglaló, korábbi üzenet vagy történet
 **Boot-szabály:** új beszélgetésben a modellnek először ezt a 00/B blokkot, majd közvetlenül a 00/A indexet kell figyelembe vennie. Ha bármely régi checkpoint ettől eltér, a régi checkpointot kell figyelmen kívül hagyni, nem az aktuális MASTER állapotot.
 
 **Egyetlen aktuális folytatási mondat:**
-> „Folytassuk a Sanci9517 MASTER tervet a 40.69.13 Twitch-integrációs alap és az új, első osztályú Adásrend/Schedule Builder teljes auditjával; először Twitch API/OAuth/EventSub + Schedule domain szerződés, majd csak ennek lezárása után Builder/Inspector kódolás.”
+> „Folytassuk a Sanci9517 MASTER tervet a **40.69.13.E — game profile adatmodell + media kapcsolat** egyetlen aktív ponttal; először teljes kód/adatfolyam-audit, majd canonical szerződés, minimális implementáció és regression/live gate. Csak az E lezárása után lépünk tovább a Schedule event CRUD / Inspector pontra.”
 
 > **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd kizárólag a **00/A MASTER VÉGREHAJTÁSI INDEX egyetlen aktív pontjából** folytatni. Más fejezet `[ ]`, `[~]` vagy régebbi „következő lépés” szövege nem jelent aktuális folytatási pontot.
 
@@ -250,9 +250,9 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
   - [x] Core CI 24/24
 
 ### 🔵 EGYETLEN AKTÍV PONT
-**40.69.13 — Twitch-integrációs alap + Schedule/Adásrend újratervezés audit**
+**40.69.13 — Twitch-integrációs alap + Schedule/Adásrend újratervezés**
 
-**Státusz:** [~] AKTÍV — B.4–B.13 és C.1–C.4 lezárva. C.4 runtime contract audit PASS; implementáció még nem történt. A következő egyetlen munkapont: C.5 — canonical source-aware Schedule service/mapper minimális implementáció + contract/regression tesztek. Builder/Inspector továbbra is blokkolt.
+**Státusz:** [~] AKTÍV — A–D/C.5 Twitch + canonical Schedule alapok lezárva. C.5.1 production/live + adapter runtime + regression kapu PASS. A következő egyetlen munkapont: **40.69.13.E — game profile adatmodell + media kapcsolat audit és implementációs szerződés**. Builder/Inspector UI még nem indul; előbb az E domain-alapot zárjuk le.
 
 ### Kötelező sorrend — 40.69.13 aktív munkapont
 **Szigorú szabály:** először csak audit és szerződéstervezés történik. OAuth bekötés, Twitch kódolás vagy Schedule Builder UI implementáció csak az audit eredményének MASTER-be rögzítése után indul.
@@ -3762,7 +3762,7 @@ A Page Model nem tárolja a schedule rekordokat.
 - [ ] Adapter 404/401/429 viselkedés integrációs ellenőrzése.
 - [ ] Public Schedule DTO leakage regression a source/sync mezőkre.
 
-**Következő egyetlen aktív munkapont:** **40.69.13.C.5.1 — production/deploy closure + final user PASS, majd C.5 utáni következő pont meghatározása a teljes index alapján.**
+**Következő egyetlen aktív munkapont:** **40.69.13.E — game profile adatmodell + media kapcsolat audit és implementációs szerződés.**
 
 **Builder/Inspector blokkolás:** továbbra is aktív; a Schedule Builder/Inspector UI csak a C.5 teljes runtime/integrációs tesztkapu PASS után indulhat.
 
@@ -3834,8 +3834,10 @@ A Page Model nem tárolja a schedule rekordokat.
 - [x] Commit `3365748cb7b81e46971c0550db32b42380f502ea` GitHub Actions: Twitch Integration Check #104 SUCCESS, Editor Core Test #728 SUCCESS.
 - [x] A Node 24 ESM importlánc teljes Schedule adapter importlánca explicit `.ts` kiterjesztésekre állítva.
 - [x] C.5.1 automatikus regression gate lezárva.
-- [ ] C.5.1 teljes production/deploy closure és MASTER-felhasználói PASS még hátra van.
-- **Builder/Inspector továbbra is blokkolt a C.5.1 production/deploy closure és felhasználói PASS lezárásáig.**
+- [x] C.5.1 teljes production/deploy closure lezárva: a már deployált production runtime élő health/db-health/public schedule/Twitch connection/validation/schedule-sync kapui PASS.
+- [x] C.5.1 végső felhasználói PASS: local typecheck + 9/9 Schedule + 30/30 Editor eredmények felhasználó által visszaigazolva.
+- [x] C.5.1 teljes regression/production gate lezárva.
+- **Builder/Inspector még blokkolt, de már nem a C.5.1 miatt: az aktív 40.69.13.E domain-alap lezárásáig.**
 
 ### 2026-09-25 OAuth CI #95 mélyellenőrzés + célzott javítás
 - [x] A #95 teljes GitHub Actions logja újraellenőrizve: a workflow valóban az a1fff8c commitot checkoutolta; typecheck PASS, Editor Core 30/30 PASS, Schedule Source 8/8 PASS, kizárólag B.13 OAuth teszt FAIL.
