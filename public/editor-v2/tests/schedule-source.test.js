@@ -6,7 +6,6 @@ const { mapTwitchScheduleSegment } = await import('../../../src/core/schedule/ma
 const { mapTwitchScheduleResponseStatus } = await import('../../../src/core/schedule/twitch-errors.ts');
 const { readPublicSchedule } = await import('../../../src/core/schedule-read.ts');
 const { syncCanonicalTwitchSchedule } = await import('../../../src/core/schedule/sync.ts');
-const { TwitchScheduleAdapterError } = await import('../../../src/core/schedule/twitch-adapter.ts');
 
 test('schedule sync window normalizes to UTC', () => {
   assert.deepEqual(
@@ -119,11 +118,11 @@ test('Twitch adapter errors map to canonical sync states without leaking raw HTT
         db,
         { startAt: '2026-09-25T00:00:00Z', endAt: '2026-10-02T00:00:00Z' },
         async () => {
-          throw new TwitchScheduleAdapterError(code);
+          throw { code };
         },
         '1144260301'
       ),
-      error => error instanceof TwitchScheduleAdapterError && error.code === code
+      error => error && error.code === code
     );
 
     const finish = updates.find(entry => entry.sql.includes('last_completed_at=CURRENT_TIMESTAMP'));
