@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.34  
+**Verzió:** MASTER-2.40.35  
 **Dátum:** 2026-09-25  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -1330,7 +1330,51 @@ de az Overlay UI nem veheti át a Website Page Model ownershipét, és fordítva
 
 **Következő egyetlen aktív pont: 40.69.13.E4 — minimális canonical domain/foundation implementation.**
 
-**MASTER-2.40.34 checkpoint:** E0–E3 lezárva. Az E3 contract freeze a Creator Center / külön workspace UX- és ownership-határait, Game Profile, Schedule Event, Media Asset, Presentation/Theme, localization és cross-workspace canonical szabályokat is rögzítette. Funkcióvesztés nincs; a következő egyetlen aktív pont E4. A teljes 1.0 és post-1.0 backlog megmarad, és minden új funkció ugyanebbe az egyetlen MASTER-be kerül.
+### E4.1 — CANONICAL DOMAIN CONTRACT FOUNDATION — 2026-09-25
+
+**Státusz:** [x] IMPLEMENTED — első minimális foundation.
+
+Létrejött a 'src/core/domain/contracts.ts' canonical domain-contract réteg.
+
+Rögzített és normalizálható domain-ek:
+- **Media Asset / Asset Reference** — az Editor/Page Model felé csak Asset Reference ('assetId') mehet; binary/storage adat külön domain.
+- **Game Profile** — site-scoped entity, saját identity/slug/lifecycle, opcionális media references és brand metadata.
+- **Schedule Event** — site-scoped canonical esemény, a Game Profilet csak 'gameProfileId' referenciával kapcsolja; a játék neve/képe nem duplikálódik minden eseménybe.
+- **Site Presentation / Theme** — site-scoped, revisioned, draft/published állapotú theme token + component/page override foundation.
+- **Theme tokens** — colors, typography, spacing, radii, shadows, borders, layout, responsive, motion, states és accessibility kategóriák canonical alapok.
+
+### E4.1 invariánsok
+
+- [x] Minden új domain contract site-scoped.
+- [x] Asset binary nem kerül Page Modelbe.
+- [x] Schedule Event nem másolja a Game Profile adatát.
+- [x] Twitch továbbra is source/adapter, nem canonical owner.
+- [x] Presentation/Theme különválik a domain adattól.
+- [x] Workspace/editor UI state nem került a domain contractba.
+- [x] Hibás azonosító/időintervallum normalizációval elutasítható.
+- [x] Új párhuzamos Editor/State/Command/History rendszer nem jött létre.
+
+### E4.1 regression gate
+
+Létrejött:
+- 'tests/domain-contracts.test.js'
+- 'npm run test:domain'
+
+A teszteli:
+- Asset Reference minimalitás;
+- Game Profile site-scope + asset reference;
+- Schedule Event → Game Profile reference;
+- hibás időintervallum elutasítása;
+- Presentation site-scope + revision/draft alap.
+
+**Fontos:** a GitHubon létrejött kódot a lokális munkagépnek előbb 'git pull --ff-only origin v2/foundation' paranccsal kell átvennie. A lokális 'typecheck', 'test:domain', 'test:schedule' és 'test:editor' futtatása ezután a következő ellenőrzési kapu része; production deploy még nincs.
+
+**E4.1 státusz: [x] PASS — contract foundation létrehozva.**
+
+**E4 következő egyetlen al-pont: 40.69.13.E4.2 — canonical site ownership + D1 foundation migration megtervezése és implementálása.**
+
+
+**MASTER-2.40.35 checkpoint:** E0–E3 lezárva. Az E3 contract freeze a Creator Center / külön workspace UX- és ownership-határait, Game Profile, Schedule Event, Media Asset, Presentation/Theme, localization és cross-workspace canonical szabályokat is rögzítette. Funkcióvesztés nincs; a következő egyetlen aktív pont E4. A teljes 1.0 és post-1.0 backlog megmarad, és minden új funkció ugyanebbe az egyetlen MASTER-be kerül.
 
 **1.0 fókusz:** először egy stabil, professzionális magyar streamer-weboldal + működő visual editor + Twitch Schedule alap + publish/public flow. A globális piacra szükséges architekturális alapok már 1.0 előtt készülnek, de a teljes többnyelvű tartalom, fordítási workflow, további platformok és haladó SaaS funkciók 1.0 utáni szakaszok.
 
