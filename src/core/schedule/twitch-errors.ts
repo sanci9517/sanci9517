@@ -5,6 +5,16 @@ export type TwitchScheduleResponseErrorCode =
   | "TWITCH_SCHEDULE_BAD_RESPONSE"
   | "TWITCH_SCHEDULE_TRANSIENT_FAILURE";
 
+export function isTwitchScheduleResponseError(error: unknown): error is { code: TwitchScheduleResponseErrorCode } {
+  if (!error || typeof error !== "object" || !("code" in error)) return false;
+  const code = (error as { code?: unknown }).code;
+  return code === "TWITCH_SCHEDULE_REAUTHORIZATION_REQUIRED"
+    || code === "TWITCH_SCHEDULE_SOURCE_EMPTY"
+    || code === "TWITCH_SCHEDULE_RATE_LIMITED"
+    || code === "TWITCH_SCHEDULE_BAD_RESPONSE"
+    || code === "TWITCH_SCHEDULE_TRANSIENT_FAILURE";
+}
+
 export function mapTwitchScheduleResponseStatus(
   status: number
 ): TwitchScheduleResponseErrorCode | null {
