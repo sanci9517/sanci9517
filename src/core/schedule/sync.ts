@@ -1,7 +1,7 @@
 import type { D1Database } from "@cloudflare/workers-types";
-import { mapTwitchScheduleSegment } from "./mapper";
-import { isTwitchScheduleResponseError } from "./twitch-errors";
-import { normalizeScheduleSyncWindow, type ScheduleSyncStatus, type ScheduleSyncWindow, type TwitchScheduleSnapshot } from "./types";
+import { mapTwitchScheduleSegment } from "./mapper.ts";
+import { isTwitchScheduleResponseError } from "./twitch-errors.ts";
+import { normalizeScheduleSyncWindow, type ScheduleSyncStatus, type ScheduleSyncWindow, type TwitchScheduleSnapshot } from "./types.ts";
 
 const SOURCE = "twitch";
 
@@ -109,7 +109,7 @@ export async function syncCanonicalTwitchSchedule(
     await finishSync(db, snapshot.broadcasterId, "success", snapshot.segments.length, null);
     return { status: "success", seenCount: snapshot.segments.length, upsertedCount, missingCount };
   } catch (error) {
-    const code = error instanceof Error ? error.message : "SCHEDULE_SYNC_FAILED";
+    const code = isTwitchScheduleResponseError(error) ? error.code : error instanceof Error ? error.message : "SCHEDULE_SYNC_FAILED";
     if (syncAccountId && code !== "SCHEDULE_SYNC_ALREADY_RUNNING") {
       const status: ScheduleSyncStatus =
         isTwitchScheduleResponseError(error) && error.code === "TWITCH_SCHEDULE_REAUTHORIZATION_REQUIRED" ? "reauthorization_required" :
