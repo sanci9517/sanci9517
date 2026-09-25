@@ -5,6 +5,8 @@ const { normalizeScheduleSyncWindow } = await import('../../../src/core/schedule
 const { mapTwitchScheduleSegment } = await import('../../../src/core/schedule/mapper.ts');
 const { mapTwitchScheduleResponseStatus } = await import('../../../src/core/schedule/twitch-errors.ts');
 const { readPublicSchedule } = await import('../../../src/core/schedule-read.ts');
+const { syncCanonicalTwitchSchedule } = await import('../../../src/core/schedule/sync.ts');
+const { TwitchScheduleAdapterError } = await import('../../../src/core/schedule/twitch-adapter.ts');
 
 test('schedule sync window normalizes to UTC', () => {
   assert.deepEqual(
@@ -86,6 +88,50 @@ test('Twitch adapter maps canonical HTTP errors', () => {
   assert.equal(mapTwitchScheduleResponseStatus(500), 'TWITCH_SCHEDULE_TRANSIENT_FAILURE');
   assert.equal(mapTwitchScheduleResponseStatus(400), 'TWITCH_SCHEDULE_BAD_RESPONSE');
   assert.equal(mapTwitchScheduleResponseStatus(200), null);
+});
+
+test('Twitch adapter errors map to canonical sync states without leaking raw HTTP status', async () => {
+  const cases = [
+    ['TWITCH_SCHEDULE_REAUTHORIZATION_REQUIRED', 'reauthorization_required'],
+    ['TWITCH_SCHEDULE_SOURCE_EMPTY', 'source_empty'],
+    ['TWITCH_SCHEDULE_RATE_LIMITED', 'rate_limited']
+  ];
+
+  for (const [code, expectedStatus] of cases) {
+    const updates = [];
+    const db = {
+      prepare(sql) {
+        return {
+          bind(...values) {
+            return {
+              run: async () => {
+                updates.push({ sql, values });
+                return { meta: { changes: 1 } };
+              }
+            };
+          }
+        };
+      }
+    };
+
+    await assert.rejects(
+      syncCanonicalTwitchSchedule(
+        db,
+        { startAt: '2026-09-25T00:00:00Z', endAt: '2026-10-02T00:00:00Z' },
+        async () => {
+          throw new TwitchScheduleAdapterError(code);
+        },
+        '1144260301'
+      ),
+      error => error instanceof TwitchScheduleAdapterError && error.code === code
+    );
+
+    const finish = updates.find(entry => entry.sql.includes('last_completed_at=CURRENT_TIMESTAMP'));
+    assert.ok(finish);
+    assert.equal(finish.values[0], expectedStatus);
+    assert.equal(finish.values[3], code);
+    assert.equal(finish.values[3].startsWith('HTTP_'), false);
+  }
 });
 
 test('public schedule DTO does not leak source or sync fields', async () => {
