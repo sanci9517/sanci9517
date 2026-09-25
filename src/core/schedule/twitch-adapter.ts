@@ -1,5 +1,5 @@
 import type { Env } from "../../types/env";
-import { getValidTwitchAccessToken } from "../twitch-oauth";
+import { getValidTwitchAccessToken } from "../twitch-oauth.ts";
 import { mapTwitchScheduleResponseStatus, type TwitchScheduleResponseErrorCode } from "./twitch-errors";
 import { normalizeScheduleSyncWindow, type ScheduleSyncWindow, type TwitchScheduleSegment, type TwitchScheduleSnapshot } from "./types";
 
