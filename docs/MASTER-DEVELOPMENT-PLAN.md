@@ -3143,7 +3143,7 @@ Kötelezően megőrzendő külső adatok:
 
 **Architekturális döntés:** nem hozunk létre külön második Twitch OAuth flow-t. A frontend kizárólag a meglévő canonical `/api/integrations/twitch/connect` route-ot indíthatja; tokenkezelés továbbra is server-side marad.
 
-**Egyetlen következő aktív pont:** live Twitch OAuth callback diagnosztikai teszt a friss CI PASS után. Builder/Inspector fejlesztés továbbra is blokkolt.
+**Egyetlen következő aktív pont:** Remote schema gate lezárva → GitHub `v2/foundation` → local worktree szinkron explicit ellenőrzése → aktuális HEAD production deploy.
 
 #### B.4e — Canonical Twitch connection UI bekötés — 2026-09-23
 
@@ -3814,7 +3814,7 @@ A Page Model nem tárolja a schedule rekordokat.
 - [x] Remote `0014_twitch_connection_status.sql` alkalmazása hivatalosan igazolva a `d1_migrations` táblában: id=20, applied_at=`2026-09-25 02:30:32`.
 - [x] Remote `twitch_connections` schema ellenőrzés: a CHECK constraint tartalmazza `connected`, `reauthorization_required`, `revocation_pending`, `revoked` értékeket.
 - [x] Remote D1 közvetlen `SELECT`/schema lekérdezés működik a `sanci9517-db` adatbázison; a korábbi Wrangler 7403 hiba nem reprodukálódott a közvetlen query útvonalon.
-- [ ] Remote D1 post-migration `PRAGMA quick_check` újraellenőrzése.
+- [x] Remote D1 post-migration `PRAGMA quick_check` újraellenőrzése: `ok`.
 - [ ] GitHub `v2/foundation` → local VS Code worktree szinkron explicit ellenőrzése.
 - [ ] Szinkronizált local worktree alapján Cloudflare production deploy.
 - [ ] Live Twitch connection → reauthorization → validation → schedule sync újrateszt.
