@@ -1,7 +1,8 @@
 import type { D1Database } from "@cloudflare/workers-types";
 import type { Env } from "../../types/env";
-import { fetchTwitchSchedule, TwitchScheduleAdapterError } from "./twitch-adapter";
+import { fetchTwitchSchedule } from "./twitch-adapter";
 import { mapTwitchScheduleSegment } from "./mapper";
+import { isTwitchScheduleResponseError } from "./twitch-errors";
 import { normalizeScheduleSyncWindow, type ScheduleSyncStatus, type ScheduleSyncWindow, type TwitchScheduleSnapshot } from "./types";
 
 const SOURCE = "twitch";
@@ -113,9 +114,9 @@ export async function syncCanonicalTwitchSchedule(
     const code = error instanceof Error ? error.message : "SCHEDULE_SYNC_FAILED";
     if (syncAccountId && code !== "SCHEDULE_SYNC_ALREADY_RUNNING") {
       const status: ScheduleSyncStatus =
-        error instanceof TwitchScheduleAdapterError && error.code === "TWITCH_SCHEDULE_REAUTHORIZATION_REQUIRED" ? "reauthorization_required" :
-        error instanceof TwitchScheduleAdapterError && error.code === "TWITCH_SCHEDULE_RATE_LIMITED" ? "rate_limited" :
-        error instanceof TwitchScheduleAdapterError && error.code === "TWITCH_SCHEDULE_SOURCE_EMPTY" ? "source_empty" : "failed";
+        isTwitchScheduleResponseError(error) && error.code === "TWITCH_SCHEDULE_REAUTHORIZATION_REQUIRED" ? "reauthorization_required" :
+        isTwitchScheduleResponseError(error) && error.code === "TWITCH_SCHEDULE_RATE_LIMITED" ? "rate_limited" :
+        isTwitchScheduleResponseError(error) && error.code === "TWITCH_SCHEDULE_SOURCE_EMPTY" ? "source_empty" : "failed";
       await finishSync(db, syncAccountId, status, snapshot?.segments.length ?? 0, code);
     }
     throw error;
