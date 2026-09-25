@@ -1,6 +1,6 @@
 import { error, ok } from "../../core/response";
 import { getAuthenticatedUser, hasRole } from "../../core/auth/require-auth";
-import { syncTwitchSchedule } from "../../core/schedule/sync";
+import { syncTwitchSchedule } from "../../core/schedule/twitch-sync";
 import type { Env } from "../../types/env";
 
 type Body = {
