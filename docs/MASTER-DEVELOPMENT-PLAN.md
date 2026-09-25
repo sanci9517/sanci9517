@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.30  
+**Verzió:** MASTER-2.40.31  
 **Dátum:** 2026-09-25  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -799,7 +799,98 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 
 **E1.1 státusz:** [x] PASS — benchmark + saját kód összevetés és KEEP/IMPROVE/REFACTOR/REPLACE döntés elkészült. Kódmódosítás ebben az al-pontban nem történt.
 
-**Következő egyetlen aktív al-pont:** **40.69.13.E1.2 — Media/Asset + Template/Reusable Component + Property Registry konkrét adatfolyam-audit és E2 decision matrix előkészítése.**
+**40.69.13.E1.2 — Media/Asset + Template/Reusable Component + Property Registry adatfolyam-audit — PASS — 2026-09-25**
+
+**Saját repository audit:**
+- [x] A jelenlegi Editor v2-ben nincs külön canonical Media/Asset Manager vagy `src/core/media` domain: a media node-ok léteznek a Page Modelben, de a tényleges asset ownership/storage lifecycle még nincs önálló canonical contractként kiépítve.
+- [x] A régi public oldalak `/assets/site.css` és `/assets/site.js` fájlokat használnak, de ez nem tekinthető Editor v2 Media/Asset rendszernek.
+- [x] A Property Registry jelenleg valódi extensibility boundary, de a registry és az app.js Inspector között még nincs teljes runtime adapter.
+- [x] A Property Registryben már van asset típusú property (`background.image`), ezért a későbbi Asset Reference contractot ehhez kell igazítani; nem szabad új, párhuzamos asset mezőrendszert létrehozni.
+- [x] A schema jelenleg sok node type-ot ismer, köztük COMPONENT/CUSTOM, de nincs még explicit reusable-component definition/template registry ownership.
+- [x] A repository audit alapján nincs kész canonical Template/Reusable Component storage/domain; ezt E2/E3 alatt kell megtervezni, nem most ad-hoc Page Model mezőként hozzáadni.
+
+### E1.2 döntések
+
+| Terület | Döntés | Következő canonical irány |
+|---|---|---|
+| Media ownership | **IMPLEMENT LATER / CONTRACT NOW** | Site-scoped Media Asset + metadata + ownership + lifecycle + references. |
+| Asset reference | **IMPLEMENT IN E3** | Node/domain csak immutable/reference ID-t tároljon; binary/storage rész külön boundary. |
+| R2 | **BACKLOG** | R2 későbbi storage backend; a domain contract ne függjön közvetlenül R2-től. |
+| Image/background asset | **KEEP + BIND** | A `type: asset` property canonical Asset Reference-re forduljon. |
+| Template | **CONTRACT NOW / IMPLEMENT LATER** | Template = versioned reusable presentation/document preset, nem külön editor. |
+| Reusable Component | **CONTRACT NOW / IMPLEMENT LATER** | Component definition + props/schema + presentation + version/lifecycle. |
+| Component instance | **CANONICALIZE** | Page node hivatkozhat component definitionre; instance override-ok a node saját canonical state-jében legyenek. |
+| Template vs Component | **SEPARATE** | Template oldal/szekció/preset jellegű; Component kisebb újrafelhasználható definíció. |
+| Inspector | **IMPROVE** | Property Registry legyen az egyetlen field schema; asset/template/component választók adapterből jöjjenek. |
+| Legacy assets | **DO NOT REUSE AS DOMAIN** | Statikus public assetek maradhatnak runtime resource-ok, de nem válnak media database-é. |
+| Storage backend | **ABSTRACT** | D1 metadata + későbbi R2/object storage; provider csere ne törje a Page Modelt. |
+
+### E1.2 szükséges Media/Asset contract
+
+Minimum canonical irány:
+- `assetId`
+- `siteId`
+- `kind` (image/video/audio/font/file/other)
+- `storageProvider`
+- `storageKey`
+- `mimeType`
+- `size`
+- `width/height/duration` ahol értelmezhető
+- `altText`
+- `title`
+- `metadata`
+- `createdAt/updatedAt`
+- ownership/reference state
+- lifecycle/orphan state
+
+**Biztonsági szabály:** a Page Model nem tárolhat titkos storage credentialt, signed URL-t vagy provider-specifikus session adatot.
+
+### E1.2 szükséges Template/Reusable Component contract
+
+**Template:**
+- identity + site scope
+- type (page/section/layout/preset)
+- version
+- canonical document/presentation reference
+- preview metadata
+- published/active state
+- clone/fork lifecycle
+
+**Reusable Component:**
+- definition identity/version
+- component registry key
+- property schema
+- allowed children/slots
+- default props/presentation
+- data-binding capability
+- accessibility metadata
+- instance override policy
+- compatibility/migration version
+
+**Fontos:** Template és Reusable Component nem kap külön command/history/renderer rendszert. Mindkettő a canonical Editor Core-ra fordul.
+
+### Property Registry E1.2 megállapítás
+
+- [x] A registry jó alap és bővíthető.
+- [x] `asset` field type már létezik.
+- [x] Group taxonomy széles, későbbi professional Inspectorhoz megfelelő irányt ad.
+- [ ] A schema nincs még elég szigorúan gépesítve: type-specific validation, defaults, visibility/conditions, readOnly/locked, responsive capability, localized capability, binding capability és UI control metadata később canonical field contractba kerül.
+- [ ] A jelenlegi `appliesTo` lista jó kezdet, de Component Registry capability/field resolution váltja fel.
+- [ ] A jelenlegi `command` stringek maradnak command boundary-re mutató metadata-k; az Inspector nem hajthat végre közvetlen DOM mutációt.
+
+### E1.2 E2-előkészítő döntés
+
+**KEEP:** meglévő Core, Property Registry, Page Model, asset property irány.
+
+**IMPROVE:** Property/Field schema, Component Registry, asset reference resolution, presentation/theme contract.
+
+**IMPLEMENT LATER:** Media Manager, Template Registry, Reusable Component Registry, R2 backend, visual asset picker.
+
+**REJECT:** külön Media Editor state, külön Template Editor, külön Component Editor, külön Asset Page Model vagy második renderer.
+
+**E1.2 státusz:** [x] PASS — a saját Media/Asset, Template/Reusable Component és Property Registry adatfolyam audit elkészült. Kódmódosítás ebben az al-pontban nem történt.
+
+**Következő egyetlen aktív al-pont:** **40.69.13.E1.3 — teljes E1 benchmark lezárás + E2 canonical architecture decision matrix.**
 
 **MASTER-2.40.25 checkpoint:** E0 lezárva; funkcióvesztés nélkül továbbhaladunk E1-be. A teljes 1.0 és post-1.0 backlog megmarad, és minden új funkció ugyanebbe az egyetlen MASTER-be kerül.
 
