@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.23  
+**Verzió:** MASTER-2.40.24  
 **Dátum:** 2026-09-25  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -38,6 +38,377 @@ Ha bármilyen régi checkpoint, összefoglaló, korábbi üzenet vagy történet
 > **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd kizárólag a **00/A MASTER VÉGREHAJTÁSI INDEX egyetlen aktív pontjából** folytatni. Más fejezet `[ ]`, `[~]` vagy régebbi „következő lépés” szövege nem jelent aktuális folytatási pontot.
 
 ---
+
+# 00.9 — VÉGÁLLAPOT / TERMÉKCÉL — Sanci9517 → GLOBAL STREAMER PLATFORM
+
+**Célmeghatározás — 2026-09-25**
+
+A projekt végső iránya nem egyszerűen egy Sanci9517 bemutatkozó weboldal és nem csak egy Schedule Builder. Az **1.0 cél egy működő, professzionális, szerveroldali streamer-weboldal + admin/content management + visual website editor platform**, amely jelenleg **Sanci9517 Streamer Brand** néven és saját tartalommal készül, de az architektúra úgy épül, hogy később más streamerek számára is használható legyen.
+
+**1.0 elsődleges célja:**
+- [ ] Sanci9517 teljes, professzionális streamer-weboldala.
+- [ ] Admin rendszer, ahol a webhely tartalma és beállításai kezelhetők.
+- [ ] Visual Editor v2, amely valódi oldalépítőként használható.
+- [ ] Canonical Page Model + node tree + property/Inspector rendszer.
+- [ ] Draft → Preview → Publish → Public workflow.
+- [ ] Twitch integráció és Schedule domain stabil működése.
+- [ ] Media/asset kezelés.
+- [ ] Responsive desktop/tablet/mobile működés ugyanazon canonical rendszerrel.
+- [ ] Security, accessibility, performance, observability és audit alapok.
+- [ ] Magyar (hu-HU) teljesen támogatott 1.0 tartalmi nyelv.
+- [ ] Localization-ready architektúra későbbi globális nyelvi bővítéshez.
+- [ ] Olyan domain és adatmodell, amelyből később több streamer/site/account kezelhető ugyanazon platformon.
+
+**Ami 1.0 előtt NEM cél:** minden későbbi platformintegráció, teljes fordítási ökoszisztéma, SaaS billing, csapatmunka, AI content generation, analytics/AB testing, calendar/reminder/export, minden közösségi integráció és minden haladó template. Ezeket a MASTER külön post-1.0 backlogként kezeli, de az 1.0 architektúra nem akadályozhatja őket.
+
+## 00.9.1 — Szakmai szerep és fejlesztési minőség
+
+A projekt fejlesztését a beszélgetésekben **Senior Full-Stack Software Architect / Senior Programmer / Web Designer / UX-UI Designer / Systems & Product Engineer** szerepkörben kell kezelni. Ez nem marketingcím, hanem munkamódszer: a válaszok és implementációk a teljes webplatform, adatmodell, UI/UX, visual editor, backend, D1, Cloudflare, security, testing és product architecture összefüggésében készülnek.
+
+**Kötelező szakmai hozzáállás:**
+- [x] Senior architektúra-szemlélet: előbb ownership, contract, adatfolyam, lifecycle, majd kód.
+- [x] Senior full-stack szemlélet: frontend, editor, Worker/API, D1, media, deploy és public renderer együtt kezelendő.
+- [x] Webdesigner/UX szemlélet: nem elég működnie; hierarchia, spacing, typography, visual rhythm, responsive viselkedés, accessibility és használhatóság is követelmény.
+- [x] Product engineering: 1.0 scope, Definition of Done és felhasználói érték szerint haladunk.
+- [x] Nem változtatjuk meg azt, ami már bizonyítottan jó. Először bizonyítékot keresünk; refaktor csak akkor történik, ha kisebb kockázatot, jobb karbantarthatóságot vagy jobb bővíthetőséget ad.
+- [x] A hibás részeknél nem patch-elünk végtelenül: gyökérok-audit → canonical javítás → regresszió.
+- [x] Új funkciót nem azért építünk, mert „lehet”, hanem mert a termékcélhoz, UX-hez, domainhez vagy jövőbeli bővíthetőséghez szükséges.
+
+## 00.9.2 — Profi benchmark / forráskód-vizsgálati szabály
+
+Minden jelentős Visual Editor, CMS, Schedule, Media vagy localization architekturális döntés előtt a MASTER alapján célzott benchmarkot végzünk.
+
+**Elsődleges referencia-csoport:**
+- [ ] **Puck** — component registry, fields/Inspector, component data, render boundary, permissions/extensibility, serialization.
+- [ ] **Craft.js** — node tree, selection, hierarchy, connectors, drag/drop, state, serialization/history.
+- [ ] **GrapesJS** — component model, Blocks, Style Manager, Layer Manager, Asset Manager, commands, storage.
+- [ ] **Builder Visual Editor** — iframe/live visual editing, Layers/X-Ray, reusable Templates/Symbols, responsive Artboard Mode, locale picker, history/comments.
+- [ ] **Framer** — Canvas/Layers/Assets, CMS, reusable components, drafts/publish, localization, responsive design.
+- [ ] **Webflow** — visual/CMS model, responsive styling, localization inheritance/override, Navigator/Components.
+- [ ] **Sanity** — structured content, visual editing, content-source mapping, draft/published perspective, localization and custom Studio.
+- [ ] További open-source projektek, ha egy konkrét problémára jobb, bizonyítható referencia van.
+
+**Forrásvizsgálati szabály:** ahol a forráskód nyíltan és jogszerűen hozzáférhető, a releváns implementationt, modulhatárokat, teszteket és adatfolyamot is megvizsgáljuk — nem csak a marketing/documentation oldalt. Zárt/proprietary rendszereknél csak a nyilvánosan dokumentált működést és UI/UX mintákat használjuk; nem állítjuk, hogy a belső kódjukat láttuk.
+
+**Cél:** gyorsabb, egyszerűbb, pontosabb és kevesebb visszalépéssel járó fejlesztés. Benchmark nem másolás; a saját Cloudflare/D1/Page Model rendszerünk canonical contractja mindig elsőbbséget élvez.
+
+## 00.9.3 — A platform canonical rétegei
+
+A célarchitektúra:
+
+```
+Platform / Site / Account
+        │
+        ├── Localization
+        ├── Content / Page Model
+        ├── Domain Data
+        │      ├── Schedule
+        │      ├── Game Profiles
+        │      ├── Platforms
+        │      ├── Media
+        │      └── future VOD/Clips/etc.
+        │
+        ├── Visual Presentation
+        │      ├── Components
+        │      ├── Templates
+        │      ├── Design tokens
+        │      ├── Responsive rules
+        │      └── Visibility
+        │
+        ├── Editor State
+        │      ├── Selection
+        │      ├── Hierarchy
+        │      ├── Commands
+        │      ├── History
+        │      └── Transactions
+        │
+        ├── Persistence / Revision
+        │      ├── Draft
+        │      ├── Preview
+        │      ├── Publish
+        │      └── Rollback
+        │
+        └── Public Runtime
+               ├── Renderer
+               ├── SEO/meta
+               ├── localized route
+               └── public domain data
+```
+
+**Tiltás:** domain adat, Page Model/presentation és Editor UI state nem keverhető össze csak azért, hogy egy UI funkció gyorsabban elkészüljön.
+
+## 00.9.4 — Tartalom és megjelenés: minden ésszerűen szerkeszthető
+
+Az 1.0-ig a rendszernek elő kell készítenie, hogy egy komponensnél a felhasználó a domain által engedett tulajdonságokat Inspectorból kezelhesse.
+
+**Content/data példák:**
+- cím, leírás, rich text/structured text;
+- link, URL, CTA;
+- media/asset referencia;
+- game profile;
+- platform;
+- schedule időpont/status;
+- optional metadata;
+- SEO/meta;
+- alt text;
+- visibility/conditional data, ahol indokolt.
+
+**Presentation példák:**
+- template;
+- layout;
+- width/height;
+- spacing;
+- padding/margin/gap;
+- alignment;
+- typography;
+- color/accent;
+- border/radius/shadow;
+- image fit/position;
+- visible/hidden fields;
+- responsive breakpoint overrides;
+- component-specific options;
+- reusable style/token/preset.
+
+**Szabály:** opcionális adat hiánya normális állapot. A renderer nem generál hibás üres blokkokat; a component csak azt mutatja, amire van adat és amire a presentation contract engedélyt ad.
+
+**Preset + manual:** ahol értelmes, ugyanazon canonical command/validation/history/persistence útvonalon legyen preset és kézi beállítás.
+
+## 00.9.5 — Global-ready localization stratégia
+
+**1.0:** HU-HU.  
+**Architektúra:** később tetszőleges locale hozzáadható.
+
+Kötelező előkészítés:
+- locale registry;
+- default/fallback locale;
+- translatable vs non-translatable fields;
+- localized content reference/field strategy;
+- locale-aware date/time/number formatting;
+- localized route/SEO stratégia;
+- alt text/meta localization;
+- Editor locale context;
+- draft/publish per locale későbbi támogatásának lehetősége;
+- RTL-kompatibilis UI és CSS alapok;
+- missing translation állapot későbbi kezelhetősége.
+
+**Referenciaelv:** a secondary locale ne kényszerítse a teljes oldalstruktúra lemásolását. A tartalom/field szintű lokalizáció és fallback legyen első osztályú lehetőség; a Webflow és Sanity dokumentált localization modelljei erre hasznos referenciát adnak. citeturn0search8turn0search4
+
+## 00.9.6 — 1.0 Admin / Streamer Platform funkciótérkép
+
+**A 1.0 admin rendszer célja:** egy streamer a saját webhelyét fejlesztői segítség nélkül, biztonságosan és vizuálisan kezelhesse.
+
+### Site / Pages
+- [ ] Dashboard
+- [ ] Pages lista
+- [ ] oldal létrehozás/duplikálás/archiválás
+- [ ] slug
+- [ ] meta title/description
+- [ ] Open Graph alapok
+- [ ] menu/navigation
+- [ ] page order
+- [ ] draft/preview/publish/unpublish
+- [ ] revision/history
+- [ ] rollback/republish
+- [ ] page-level visibility
+- [ ] future localization-ready page structure
+
+### Visual Editor
+- [ ] canvas
+- [ ] responsive viewport
+- [ ] element/block library
+- [ ] component registry
+- [ ] Layers/tree
+- [ ] selection
+- [ ] inspector
+- [ ] contextual toolbar
+- [ ] drag/drop
+- [ ] reparent
+- [ ] reorder
+- [ ] duplicate
+- [ ] delete
+- [ ] lock/unlock
+- [ ] group/ungroup, ahol a component contract engedi
+- [ ] undo/redo
+- [ ] transactions/batch
+- [ ] responsive values
+- [ ] presets/tokens
+- [ ] media/asset picker
+- [ ] template/section reuse
+- [ ] preview
+- [ ] publish
+- [ ] diagnostics/debugger
+- [ ] keyboard/accessibility
+- [ ] mobile editor shell
+- [ ] future collaboration/comments/permissions előkészítés
+
+### Content / CMS
+- [ ] structured content
+- [ ] reusable content records
+- [ ] optional fields
+- [ ] content validation
+- [ ] references
+- [ ] status/lifecycle
+- [ ] future localization fields
+- [ ] SEO content
+- [ ] alt text/accessibility content
+
+### Schedule / Streamer
+- [x] Twitch OAuth alap
+- [x] Twitch schedule read/sync foundation
+- [ ] Schedule CRUD
+- [ ] manual + source-aware events
+- [ ] Game Profiles
+- [ ] media/artwork
+- [ ] platform
+- [ ] status
+- [ ] Next Stream
+- [ ] Next 3
+- [ ] Weekly
+- [ ] Full
+- [ ] Featured
+- [ ] responsive layouts
+- [ ] templates
+- [ ] future recurring
+- [ ] future timezone/reminder/calendar/export
+
+### Media / Assets
+- [ ] canonical asset model audit
+- [ ] image upload/reference
+- [ ] asset metadata
+- [ ] alt text
+- [ ] reuse/reference
+- [ ] orphan cleanup strategy
+- [ ] future R2-backed storage
+- [ ] transformations/optimization később
+- [ ] access/security policy
+
+### Streamer identity / social
+- [ ] profile/about
+- [ ] avatar/banner
+- [ ] Twitch
+- [ ] YouTube
+- [ ] TikTok
+- [ ] Discord/community
+- [ ] support links
+- [ ] social link management
+- [ ] platform availability/status
+- [ ] future platform adapters
+
+### Design system
+- [ ] typography
+- [ ] spacing scale
+- [ ] colors
+- [ ] semantic colors
+- [ ] radius
+- [ ] shadows
+- [ ] container/layout
+- [ ] responsive breakpoints
+- [ ] buttons/forms/cards
+- [ ] reusable components
+- [ ] design presets/tokens
+- [ ] theme/brand settings
+- [ ] accessibility states
+- [ ] dark/light strategy, ha indokolt
+
+### Public website
+- [ ] home
+- [ ] about
+- [ ] schedule
+- [ ] community
+- [ ] support
+- [ ] social/platform pages
+- [ ] SEO/meta
+- [ ] responsive
+- [ ] fast rendering
+- [ ] accessible navigation
+- [ ] dynamic live/next-stream state
+- [ ] public published snapshot
+- [ ] future localized routes
+
+### Admin / Security
+- [ ] authentication
+- [ ] role/permission boundary
+- [ ] session/security hardening
+- [ ] CSRF/session policy where applicable
+- [ ] input validation
+- [ ] URL/HTML/content sanitization
+- [ ] rate limits
+- [ ] audit log
+- [ ] secret/token isolation
+- [ ] error codes
+- [ ] observability without secret leakage
+- [ ] destructive action confirmation/recovery
+- [ ] revision/concurrency protection
+
+### Platform foundation
+- [ ] site/account ownership boundary
+- [ ] future multi-tenant-ready IDs/scoping
+- [ ] D1 canonical storage
+- [ ] media abstraction/R2 később
+- [ ] API/domain services
+- [ ] public read boundaries
+- [ ] migration discipline
+- [ ] backup/export strategy később
+- [ ] test/CI/deploy gate
+
+## 00.9.7 — Post-1.0 global roadmap
+
+**Nem szakítja meg az 1.0 aktív sorrendet.**
+
+Későbbi fő szakaszok:
+1. Global Localization full implementation.
+2. Multi-streamer / multi-site / tenant onboarding.
+3. YouTube integration.
+4. Kick/egyéb platform adapters.
+5. Discord/community automation.
+6. VOD/Clips domain.
+7. Recurring schedule + timezone + calendar/reminders.
+8. Social content/export.
+9. Advanced Media/R2 pipeline.
+10. Analytics.
+11. SEO advanced tooling.
+12. Collaboration/team roles/comments.
+13. Template marketplace/library.
+14. Advanced design system/theme engine.
+15. AI-assisted content/design/translation tools with human control.
+16. Subscription/billing/package system.
+17. White-label/custom domains.
+18. Advanced experimentation/personalization.
+19. Monitoring/usage limits/tenant isolation.
+20. Public platform onboarding and documentation.
+
+Ezek sorrendje csak az 1.0 lezárása után kerül külön MASTER aktív pontokba.
+
+## 00.9.8 — „Ami jó, ahhoz nem nyúlunk” szabály
+
+A jelenlegi projektben már bizonyítottan működő részeket **nem építjük újra csak azért, mert egy benchmark projekt máshogy csinálja**.
+
+Minden E0/E1/E2 audit végén minden érintett terület kap egy döntést:
+- **KEEP** — jó, canonical, nem változtatjuk.
+- **IMPROVE** — jó alap, célzott javítás szükséges.
+- **REFACTOR** — architekturális probléma bizonyított.
+- **REPLACE** — csak akkor, ha a jelenlegi út hosszú távon hibás vagy nem tartható.
+
+A benchmarkból származó ötlet önmagában **nem ok refaktorra**.
+
+## 00.9.9 — Haladás láthatósága
+
+Minden fő pontnak látható legyen:
+- cél;
+- aktuális al-pont;
+- Definition of Done;
+- kész/pending/blokkolt tételek;
+- tesztbizonyíték;
+- commit/HEAD;
+- production állapot, ha releváns;
+- következő **egyetlen** lépés.
+
+A felhasználó számára a fejlesztés mindig ilyen láncban legyen követhető:
+
+**TERV → AUDIT → DÖNTÉS → IMPLEMENTÁCIÓ → TESZT → LIVE → PASS → MASTER → KÖVETKEZŐ PONT**
+
+Nem ugrunk egy másik funkcióra azért, mert közben új ötlet merült fel.
+
 
 # 00 — A MASTER TERV SZABÁLYAI
 
