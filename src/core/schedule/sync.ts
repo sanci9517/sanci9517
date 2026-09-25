@@ -1,6 +1,4 @@
 import type { D1Database } from "@cloudflare/workers-types";
-import type { Env } from "../../types/env";
-import { fetchTwitchSchedule } from "./twitch-adapter";
 import { mapTwitchScheduleSegment } from "./mapper";
 import { isTwitchScheduleResponseError } from "./twitch-errors";
 import { normalizeScheduleSyncWindow, type ScheduleSyncStatus, type ScheduleSyncWindow, type TwitchScheduleSnapshot } from "./types";
@@ -123,20 +121,3 @@ export async function syncCanonicalTwitchSchedule(
   }
 }
 
-export async function syncTwitchSchedule(
-  env: Env, connectionId: string, window: ScheduleSyncWindow, options: { maxPages?: number } = {}
-): Promise<CanonicalScheduleSyncResult> {
-  const normalized = normalizeScheduleSyncWindow(window);
-  const row = await env.DB.prepare(
-    "SELECT broadcaster_id AS broadcasterId FROM twitch_connections WHERE id=? LIMIT 1"
-  ).bind(connectionId).first<{ broadcasterId: string }>();
-
-  if (!row?.broadcasterId) throw new Error("TWITCH_CONNECTION_NOT_FOUND");
-
-  return syncCanonicalTwitchSchedule(
-    env.DB,
-    normalized,
-    async () => fetchTwitchSchedule(env, connectionId, normalized, options),
-    row.broadcasterId
-  );
-}
