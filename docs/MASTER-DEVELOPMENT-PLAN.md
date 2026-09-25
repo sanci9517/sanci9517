@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.35  
+**Verzió:** MASTER-2.40.36  
 **Dátum:** 2026-09-25  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -1373,8 +1373,28 @@ A teszteli:
 
 **E4 következő egyetlen al-pont: 40.69.13.E4.2 — canonical site ownership + D1 foundation migration megtervezése és implementálása.**
 
+### E4.2 — SITE OWNERSHIP D1 FOUNDATION — IMPLEMENTATION PREPARED
 
-**MASTER-2.40.35 checkpoint:** E0–E3 lezárva. Az E3 contract freeze a Creator Center / külön workspace UX- és ownership-határait, Game Profile, Schedule Event, Media Asset, Presentation/Theme, localization és cross-workspace canonical szabályokat is rögzítette. Funkcióvesztés nincs; a következő egyetlen aktív pont E4. A teljes 1.0 és post-1.0 backlog megmarad, és minden új funkció ugyanebbe az egyetlen MASTER-be kerül.
+Elkészült a `migrations/0015_site_ownership_foundation.sql` migration.
+
+A migration:
+- létrehozza a canonical `sites` ownership rootot;
+- létrehoz egy determinisztikus bootstrap site-ot: `site-default / sanci9517`;
+- a meglévő `pages`, `schedule_items`, `media`, `social_accounts` és `twitch_connections` rekordokat site-scoped mezővel látja el;
+- minden meglévő rekord automatikusan a bootstrap site-hoz kerül;
+- site-alapú indexeket hoz létre;
+- nem törli és nem másolja a meglévő production adatokat;
+- a legacy `site_settings` táblát szándékosan nem alakítja át, mert annak read/write fogyasztóit előbb auditálni kell.
+
+**Fontos:** a migration még nincs remote D1-re alkalmazva. A következő ellenőrzés a lokális migration/static syntax + typecheck/regression, majd a remote D1 apply és `PRAGMA foreign_key_check; PRAGMA quick_check;`.
+
+**E4.2 jelen állapota:** implementáció elkészítve, remote alkalmazás előtt.
+
+**Következő aktív ellenőrzési pont: E4.2 verification gate.**
+
+
+
+**MASTER-2.40.36 checkpoint:** E0–E3 lezárva. Az E3 contract freeze a Creator Center / külön workspace UX- és ownership-határait, Game Profile, Schedule Event, Media Asset, Presentation/Theme, localization és cross-workspace canonical szabályokat is rögzítette. Funkcióvesztés nincs; a következő egyetlen aktív pont E4. A teljes 1.0 és post-1.0 backlog megmarad, és minden új funkció ugyanebbe az egyetlen MASTER-be kerül.
 
 **1.0 fókusz:** először egy stabil, professzionális magyar streamer-weboldal + működő visual editor + Twitch Schedule alap + publish/public flow. A globális piacra szükséges architekturális alapok már 1.0 előtt készülnek, de a teljes többnyelvű tartalom, fordítási workflow, további platformok és haladó SaaS funkciók 1.0 utáni szakaszok.
 
