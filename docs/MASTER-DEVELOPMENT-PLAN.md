@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.21  
+**Verzió:** MASTER-2.40.22  
 **Dátum:** 2026-09-25  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt állapot:** 2026-09-25 — a C.5.1 production/live gate jelentős része igazolt: CI #98/#722 PASS, remote migration/schema/quick_check PASS, GitHub↔local szinkron és production deploy PASS, health/db-health/public schedule live PASS, Twitch connection + `channel:manage:schedule` scope + token validation PASS, valamint authenticated Twitch Schedule sync élesben `source_empty` állapotot adott. A remote D1 sync-state és a 3 meglévő manual schedule rekord változatlansága szintén igazolt. A C.5.1 teljes lezárásához jelenleg csak az adapter 401/404/429 tényleges production/integration runtime bizonyítása maradt.
+**Legutóbbi igazolt állapot:** 2026-09-25 — a C.5.1 production/live gate jelentős része igazolt: CI #98/#722 PASS, remote migration/schema/quick_check PASS, GitHub↔local szinkron és production deploy PASS, health/db-health/public schedule live PASS, Twitch connection + `channel:manage:schedule` scope + token validation PASS, valamint authenticated Twitch Schedule sync élesben `source_empty` állapotot adott. A remote D1 sync-state és a 3 meglévő manual schedule rekord változatlansága szintén igazolt. A C.5.1 adapter/runtime kapuja lezárult: az adapter-boundary 401/404/429 integration regression 9/9 PASS, a local typecheck és Editor Core regression 30/30 PASS, valamint a commitra indult Twitch Integration #104 és Editor Core #728 GitHub Actions futások is SUCCESS.
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
 
@@ -3762,7 +3762,7 @@ A Page Model nem tárolja a schedule rekordokat.
 - [ ] Adapter 404/401/429 viselkedés integrációs ellenőrzése.
 - [ ] Public Schedule DTO leakage regression a source/sync mezőkre.
 
-**Következő egyetlen aktív munkapont:** **40.69.13.C.5.1 — production D1 state/migration verification → synchronized local deploy → live Twitch/Schedule gate.**
+**Következő egyetlen aktív munkapont:** **40.69.13.C.5.1 — production/deploy closure + final user PASS, majd C.5 utáni következő pont meghatározása a teljes index alapján.**
 
 **Builder/Inspector blokkolás:** továbbra is aktív; a Schedule Builder/Inspector UI csak a C.5 teljes runtime/integrációs tesztkapu PASS után indulhat.
 
@@ -3827,9 +3827,15 @@ A Page Model nem tárolja a schedule rekordokat.
 - [x] Live authenticated Twitch Schedule sync PASS HTTP 200: `status=source_empty`, `seenCount=0`, `upsertedCount=0`, `missingCount=0`, explicit window `2026-09-25T00:00:00.000Z → 2026-10-25T00:00:00.000Z`.
 - [x] Remote D1 sync-state post-live-sync verified: source=`twitch`, source_account_id=`1144260301`, status=`source_empty`, last_seen_count=0, last_error_code=`TWITCH_SCHEDULE_SOURCE_EMPTY`, start/success/completed timestamps populated for `2026-09-25 16:14:20`.
 - [x] Remote D1 manual isolation reverified after live sync: exactly 3 manual/present records remain; no Twitch destructive reconciliation occurred.
-- [ ] Adapter 401/404/429 tényleges production/integration runtime bizonyítása.
-- [ ] Csak ezek után C.5.1 teljes lezárás.
-- **Builder/Inspector továbbra is blokkolt a teljes C.5.1 gate PASS-ig.**
+- [x] Adapter 401/404/429 adapter-boundary integration runtime regresszió: 9/9 schedule-source teszt PASS; a kontrollált 401/404/429 HTTP válaszok a valódi adapter runtime-on keresztül canonical hibakódokra fordultak.
+- [x] Local `npm.cmd run typecheck` PASS.
+- [x] Local `npm.cmd run test:schedule`: 9/9 PASS.
+- [x] Local `npm.cmd run test:editor`: 30/30 PASS.
+- [x] Commit `3365748cb7b81e46971c0550db32b42380f502ea` GitHub Actions: Twitch Integration Check #104 SUCCESS, Editor Core Test #728 SUCCESS.
+- [x] A Node 24 ESM importlánc teljes Schedule adapter importlánca explicit `.ts` kiterjesztésekre állítva.
+- [x] C.5.1 automatikus regression gate lezárva.
+- [ ] C.5.1 teljes production/deploy closure és MASTER-felhasználói PASS még hátra van.
+- **Builder/Inspector továbbra is blokkolt a C.5.1 production/deploy closure és felhasználói PASS lezárásáig.**
 
 ### 2026-09-25 OAuth CI #95 mélyellenőrzés + célzott javítás
 - [x] A #95 teljes GitHub Actions logja újraellenőrizve: a workflow valóban az a1fff8c commitot checkoutolta; typecheck PASS, Editor Core 30/30 PASS, Schedule Source 8/8 PASS, kizárólag B.13 OAuth teszt FAIL.
