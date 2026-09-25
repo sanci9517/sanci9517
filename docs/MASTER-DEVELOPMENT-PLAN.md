@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.18  
+**Verzió:** MASTER-2.40.19  
 **Dátum:** 2026-09-25  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -3819,3 +3819,10 @@ A Page Model nem tárolja a schedule rekordokat.
 - [ ] Public Schedule DTO production leakage ellenőrzés.
 - [ ] Csak ezek után C.5.1 lezárás.
 - **Builder/Inspector továbbra is blokkolt a teljes C.5.1 gate PASS-ig.**
+
+### 2026-09-25 OAuth CI hibafeltárás
+- Twitch Integration Check #93 logja alapján a typecheck PASS, Editor Core 30/30 PASS, Schedule source 8/8 PASS.
+- A tényleges egyetlen hiba a tests/twitch-oauth.test.js B.13 tesztje: „Missing expected rejection” a 307. sornál.
+- Gyökérok: a revokeTwitchConnection() a Twitch revoke sikeres válasza után nem ellenőrizte, hogy a revocation_pending → revoked D1 UPDATE ténylegesen módosított-e egy sort; ezért a tesztben szimulált D1 állapotfrissítési hiba nem jutott vissza a hívóhoz.
+- Javítás elkészült: e7a04baa683caf35252bec721ed1fa362c9bc660 — fix: verify Twitch revocation state transition.
+- A javítás után CI ellenőrzés még nincs PASS-szal igazolva. Következő kapu: az új Twitch Integration futás eredménye.
