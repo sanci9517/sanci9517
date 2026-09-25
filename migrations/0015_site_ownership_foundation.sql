@@ -14,29 +14,38 @@ CREATE TABLE IF NOT EXISTS sites (
 INSERT OR IGNORE INTO sites (id, slug, name)
 VALUES ('site-default', 'sanci9517', 'Sanci9517');
 
-ALTER TABLE pages ADD COLUMN site_id TEXT NOT NULL DEFAULT 'site-default'
+ALTER TABLE pages ADD COLUMN site_id TEXT
   REFERENCES sites(id) ON DELETE RESTRICT;
+UPDATE pages SET site_id = 'site-default' WHERE site_id IS NULL;
 CREATE INDEX IF NOT EXISTS idx_pages_site_id ON pages(site_id);
 
-ALTER TABLE schedule_items ADD COLUMN site_id TEXT NOT NULL DEFAULT 'site-default'
+ALTER TABLE schedule_items ADD COLUMN site_id TEXT
   REFERENCES sites(id) ON DELETE RESTRICT;
+UPDATE schedule_items SET site_id = 'site-default' WHERE site_id IS NULL;
 CREATE INDEX IF NOT EXISTS idx_schedule_site_starts
   ON schedule_items(site_id, starts_at);
 
-ALTER TABLE media ADD COLUMN site_id TEXT NOT NULL DEFAULT 'site-default'
+ALTER TABLE media ADD COLUMN site_id TEXT
   REFERENCES sites(id) ON DELETE RESTRICT;
+UPDATE media SET site_id = 'site-default' WHERE site_id IS NULL;
 CREATE INDEX IF NOT EXISTS idx_media_site_id ON media(site_id);
 
-ALTER TABLE social_accounts ADD COLUMN site_id TEXT NOT NULL DEFAULT 'site-default'
+ALTER TABLE social_accounts ADD COLUMN site_id TEXT
   REFERENCES sites(id) ON DELETE RESTRICT;
+UPDATE social_accounts SET site_id = 'site-default' WHERE site_id IS NULL;
 CREATE INDEX IF NOT EXISTS idx_social_accounts_site_id
   ON social_accounts(site_id);
 
-ALTER TABLE twitch_connections ADD COLUMN site_id TEXT NOT NULL DEFAULT 'site-default'
+ALTER TABLE twitch_connections ADD COLUMN site_id TEXT
   REFERENCES sites(id) ON DELETE RESTRICT;
+UPDATE twitch_connections SET site_id = 'site-default' WHERE site_id IS NULL;
 CREATE INDEX IF NOT EXISTS idx_twitch_connections_site_id
   ON twitch_connections(site_id);
 
 -- site_settings intentionally remains legacy/global in E4.2.
 -- A canonical site-scoped settings contract will be introduced only
 -- after its read/write consumers are audited, avoiding a parallel settings system.
+
+-- SQLite cannot add a REFERENCES column with a non-NULL DEFAULT.
+-- Existing rows are backfilled immediately; NOT NULL hardening is deferred to
+-- a controlled table-rebuild migration after all consumers are site-aware.
