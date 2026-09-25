@@ -735,9 +735,9 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 ### 🔵 EGYETLEN AKTÍV PONT
 **40.69.13 — Twitch-integrációs alap + Schedule/Adásrend újratervezés**
 
-**Státusz:** [~] AKTÍV — **Twitch/C.5.1 lezárva.** A következő munkafázis már nem Twitch-fejlesztés: **40.69.13.E — Global-grade Domain + Visual Editor Architecture Audit**. Cél: az 1.0-hoz szükséges stabil, adatvezérelt, opcionális, többnyelvűségre előkészített Schedule/Game/Media modellt és a Visual Editor canonical architektúráját előbb megtervezni, majd lépésenként implementálni. Builder/Inspector UI implementáció még nem indul; az E audit és szerződés lezárása kötelező előfeltétel.
+**Státusz:** [~] AKTÍV — **Twitch/C.5.1, E4.1 és E4.2 lezárva.** A következő egyetlen munkapont: **40.69.13.E4.3 — site-scoped consumer/read-write audit és canonical ownership enforcement**. Az E4.2 production verification igazolta a `sites` ownership rootot, az öt érintett tábla site-scopingját, a backfillt és a meglévő Twitch/Schedule adatok megőrzését. A következő lépés a runtime ownership enforcement; `site_id NOT NULL` hardening csak ezután jöhet.
 
-**Szigorú haladási szabály 2026-09-25-től:** a Twitch alapréteg késznek tekintendő és nem nyitunk új Twitch-munkasávot. A következő pontokat szigorúan egymás után zárjuk: **E0 audit → E1 benchmark → E2 saját architektúra döntés → E3 domain contract → E4 minimális foundation implementáció → E5 regression/live gate → F Schedule CRUD + Inspector → G templates/presentation → H preview/public integration → I teljes E2E → J legacy cleanup.** Új ötlet vagy későbbi funkció csak backlogként kerül be, és nem szakíthatja meg az aktív pontot.
+**Szigorú haladási szabály 2026-09-25-től:** a Twitch alapréteg késznek tekintendő és nem nyitunk új Twitch-munkasávot. Az E szakaszban az E4.2 production verification lezárult; most szigorúan a **E4.3 site-scoped consumer audit/enforcement → E4.4 NOT NULL/schema hardening → E5 regression/live gate → F Schedule CRUD + Inspector → G templates/presentation → H preview/public integration → I teljes E2E → J legacy cleanup** sorrendet követjük. Új ötlet vagy későbbi funkció csak backlogként kerül be, és nem szakíthatja meg az aktív pontot.
 
 ### 40.69.13.E — GLOBAL-GRADE DOMAIN + VISUAL EDITOR ARCHITECTURE AUDIT — 2026-09-25
 
@@ -1410,7 +1410,7 @@ E4.3 célja:
 - production deploy és live gate csak a consumer audit/regression után.
 
 
-**MASTER-2.40.37 checkpoint:** E0–E3 lezárva. Az E3 contract freeze a Creator Center / külön workspace UX- és ownership-határait, Game Profile, Schedule Event, Media Asset, Presentation/Theme, localization és cross-workspace canonical szabályokat is rögzítette. Funkcióvesztés nincs; a következő egyetlen aktív pont E4. A teljes 1.0 és post-1.0 backlog megmarad, és minden új funkció ugyanebbe az egyetlen MASTER-be kerül.
+**MASTER-2.40.37 checkpoint:** E0–E3, E4.1 és E4.2 lezárva. Az E4.2 production verification igazolta a `sites` ownership rootot, az érintett táblák site-scopingját, a backfillt, a meglévő Twitch/Schedule adatok megőrzését és a D1 integritást. Funkcióvesztés nincs; a következő egyetlen aktív pont E4.3. A teljes 1.0 és post-1.0 backlog megmarad, és minden új funkció ugyanebbe az egyetlen MASTER-be kerül.
 
 **1.0 fókusz:** először egy stabil, professzionális magyar streamer-weboldal + működő visual editor + Twitch Schedule alap + publish/public flow. A globális piacra szükséges architekturális alapok már 1.0 előtt készülnek, de a teljes többnyelvű tartalom, fordítási workflow, további platformok és haladó SaaS funkciók 1.0 utáni szakaszok.
 
