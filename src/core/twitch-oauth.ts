@@ -367,9 +367,13 @@ export async function revokeTwitchConnection(env: Env, connectionId: string): Pr
   ).bind(connectionId).first<{ ciphertext: string; iv: string }>();
   if (!row) throw new Error("TWITCH_CONNECTION_NOT_FOUND");
 
-  await env.DB.prepare(
+  const pending = await env.DB.prepare(
     "UPDATE twitch_connections SET status='revocation_pending',updated_at=CURRENT_TIMESTAMP WHERE id=? AND status='connected'"
   ).bind(connectionId).run();
+
+  if (pending.meta.changes !== 1) {
+    throw new Error("TWITCH_REVOKE_STATE_TRANSITION_FAILED");
+  }
 
   const token = await decryptTwitchToken(encryptionKey, row.ciphertext, row.iv);
   const response = await fetch(REVOKE_URL, {
