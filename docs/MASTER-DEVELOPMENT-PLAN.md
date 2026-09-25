@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.28  
+**Verzió:** MASTER-2.40.29  
 **Dátum:** 2026-09-25  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -4351,6 +4351,141 @@ A Page Model nem tárolja a schedule rekordokat.
 - Gyökérok: a revokeTwitchConnection() a Twitch revoke sikeres válasza után nem ellenőrizte, hogy a revocation_pending → revoked D1 UPDATE ténylegesen módosított-e egy sort; ezért a tesztben szimulált D1 állapotfrissítési hiba nem jutott vissza a hívóhoz.
 - Javítás elkészült: e7a04baa683caf35252bec721ed1fa362c9bc660 — fix: verify Twitch revocation state transition.
 - A javítás után CI ellenőrzés még nincs PASS-szal igazolva. Következő kapu: az új Twitch Integration futás eredménye.
+
+## 00.9.11 — PRO CREATOR / NAGY STREAMER ÖKOSZISZTÉMA AUDIT — 2026-09-25
+
+**Cél:** a végső Creator Operating System ne csak a már ismert weboldal/editor/OBS/AI/media elemeket tartalmazza, hanem azokat a professzionális creator-workflow képességeket is, amelyek a jelenlegi nagy streaming ökoszisztémákban dokumentáltan megjelennek.
+
+**Fontos értelmezés:** ez capability-benchmark, nem állítás arról, hogy minden nagy streamer ugyanazt a konkrét terméket használja. A vizsgált rendszerek (OBS Studio, StreamElements, Streamer.bot, Stream Deck, Twitch/YouTube/TikTok creator tooling) alapján az alábbi képességcsoportok visszatérőek.
+
+### A. Live Production / OBS
+- [ ] Scenes + Sources + source ordering/visibility/transform.
+- [ ] Browser-source alapú overlay/alert/widget runtime.
+- [ ] Audio mixer, per-source filters, mute/monitoring és későbbi advanced audio routing.
+- [ ] Stream/recording/replay-buffer állapot és vezérlés.
+- [ ] Screenshot/scene-state/diagnostic capability.
+- [ ] Multi-scene / scene-collection kezelés.
+- [ ] Vertical/dual-format production előkészítése.
+- [ ] Production profile/config backup és restore.
+
+**Benchmark-evidence:** OBS hivatalosan scene/source alapú production modellt, browser source-t, audio mixert és per-source filtereket dokumentál; az OBS WebSocket külső vezérlést és automatizálást biztosít. citeturn1search20turn1search8turn0search1
+
+### B. Event / Automation / Stream Bot
+- [ ] Trigger → condition → action → sub-action modell.
+- [ ] Event types: follow/sub/raid/chat/channel-point/poll/prediction/stream-state és platformonként elérhető események.
+- [ ] Variables/context/state a workflow-khoz.
+- [ ] Reusable automation actions.
+- [ ] Local execution capability a gépen.
+- [ ] WebSocket/HTTP integration boundary.
+- [ ] Safe enable/disable, retry, idempotency, cooldown/rate-limit.
+- [ ] Automation execution history és audit.
+- [ ] User-created macros/workflows.
+- [ ] Discord/IFTTT/Ko-fi és hasonló külső trigger/action adapterek későbbi lehetősége.
+
+**Benchmark-evidence:** Streamer.bot dokumentációja külön Actions, Triggers, Variables, platform-, OBS-, multi-stream chat- és integration réteget kezel, és local botként közvetlenül a creator gépéről kapcsolódik a külső szolgáltatásokhoz. citeturn1search0turn1search4turn1search12
+
+### C. Community / Chat / Moderation / Loyalty
+- [ ] Unified chat/event view capability-alapon.
+- [ ] Chatbot commands/timers/modules.
+- [ ] Spam/toxicity/moderation rules.
+- [ ] Moderator roles/permissions.
+- [ ] Automated event messages.
+- [ ] Loyalty/watch-time points.
+- [ ] Leaderboards.
+- [ ] Giveaways/contests/queues.
+- [ ] Chat games, ahol jogilag és platformszabály szerint indokolt.
+- [ ] Community/store/reward hooks.
+- [ ] Discord integration későbbi capabilityként.
+
+**Benchmark-evidence:** StreamElements dokumentáltan overlay/alerts, chatbot, tipping és loyalty rendszert, továbbá moderációt, event alerts, leaderboards, giveaways és viewer queue funkciókat kezel. citeturn1search1turn1search3turn1search15turn1search22
+
+### D. Alerts / Engagement / Monetization
+- [ ] Follow/sub/raid/tip/cheer/gift/merch és egyéb platform-eseményekhez alert/event pipeline.
+- [ ] Alert templates és brand-aware presentation.
+- [ ] Tipping/support destination.
+- [ ] Donation/tip event reconciliation.
+- [ ] Merch/affiliate/support link capability.
+- [ ] Sponsor/brand campaign asset support később.
+- [ ] Revenue event audit és platform-source megjelölés.
+- [ ] Platformonként eltérő monetization capability model.
+
+**Benchmark-evidence:** StreamElements jelenlegi creator toolingje az overlay/alert, tipping, chatbot és loyalty rétegeket egy dashboardban kezeli. citeturn1search1turn1search6
+
+### E. Control Surface / Creator Hardware
+- [ ] Abstract control-action model, amelyhez több kliens csatlakozhat.
+- [ ] Keyboard/hotkey actions.
+- [ ] Mobile/tablet control surface.
+- [ ] Stream Deck / Macro Deck / Touch Portal / Bitfocus Companion jellegű adapterek.
+- [ ] Profile/page/folder based control layouts.
+- [ ] Multi-action / macro buttons.
+- [ ] Device connection health + revoke/pairing.
+- [ ] Nem külön state-rendszer: minden action a canonical automation/command boundaryre fordul.
+
+**Benchmark-evidence:** az Elgato Stream Deck profilok megosztható action-layoutokat és multi-action/workflow mintát támogatnak; a Twitch plugin dokumentáltan stream title, viewer, clip, marker és chat műveleteket is ad. citeturn1search9turn1search13turn1search21
+
+### F. Multi-platform / Multistream
+- [ ] Több platform egyidejű live állapotának canonical kezelése.
+- [ ] Platformonkénti capability/permission.
+- [ ] Unified chat csak ott, ahol az API és a felhasználói jogosultság lehetővé teszi.
+- [ ] Platform-specific title/category/tag synchronization.
+- [ ] Multistream health és per-platform failure state.
+- [ ] Platformonkénti output profile.
+- [ ] Rate-limit aware fan-out.
+- [ ] Egy platform hibája ne tegye tönkre a többi platform működését.
+
+**Benchmark-evidence:** StreamElements SE.Live és Streamlabs jelenlegi termékfelületei multistreaminget és több platformot kezelnek; Streamer.bot külön Twitch/YouTube/Kick platform- és event-integrációt dokumentál. citeturn1search10turn1search0turn0search9
+
+### G. Vertical / Short-form Production
+- [ ] 16:9 primary + 9:16 vertical output profile.
+- [ ] Safe-area / crop / camera+gameplay composition.
+- [ ] Caption/subtitle pipeline.
+- [ ] Platform-specific duration/metadata rules.
+- [ ] Reframe/subject tracking későbbi AI capabilityként.
+- [ ] Egy source media/project modellből több output variant.
+- [ ] Live vertical + post-stream vertical workflow.
+
+**Benchmark-evidence:** Twitch jelenlegi Clips rendszere landscape és portrait kimenetet, automatikus crop-javaslatot és közösségi megosztási workflow-t dokumentál. citeturn0search6
+
+### H. Creator Dashboard / Operational Health
+- [ ] Live state, platform states és OBS state egy dashboardban.
+- [ ] Upcoming schedule.
+- [ ] Recent events.
+- [ ] Content/clip queue.
+- [ ] Automation status.
+- [ ] Integration health.
+- [ ] Token/permission warnings.
+- [ ] Error/retry state.
+- [ ] Actionable recovery instructions.
+- [ ] Operational audit timeline.
+
+### I. Sync / Backup / Portability
+- [ ] Creator configuration export/import.
+- [ ] Scene/control/brand preset backup.
+- [ ] Versioned profiles.
+- [ ] Restore/rollback.
+- [ ] Cross-device synchronization később.
+- [ ] Cloud storage csak explicit security/ownership modellel.
+- [ ] No silent overwrite: revision/concurrency guard minden sync műveletnél.
+
+### J. Canonical architecture additions from this audit
+- [ ] **Event Model:** normalized creator/platform event envelope, source + event type + occurredAt + idempotency key + payload reference.
+- [ ] **Capability Model:** platform/device capability + required permission/scope + availability state.
+- [ ] **Automation Model:** trigger + condition + action + execution context + retry/cooldown + audit.
+- [ ] **Control Action Model:** canonical action intents shared by Web UI, mobile, OBS bridge and future hardware adapters.
+- [ ] **Media Variant Model:** one canonical media/project source → multiple presentation/output variants.
+- [ ] **Health/Integration Model:** connection state, last success, last error, reauth/recovery requirement.
+- [ ] **Profile/Configuration Model:** versioned creator production profiles, import/export and safe restore.
+- [ ] **Monetization Event Model:** source-aware revenue/support events separated from presentation.
+- [ ] These models are architectural contracts only at this stage; implementation order remains governed by the active MASTER index.
+
+### K. Placement / sequencing
+- **1.0 minimum:** only those pieces necessary for the Sanci9517 professional website/editor, Twitch schedule and secure platform foundation.
+- **Architecture-prep now:** Event, Capability, Automation, Control Action, Media Variant, Health/Integration and Profile boundaries must be considered during E2/E3 so later features do not force a second state system.
+- **Post-1.0 implementation:** chatbot/community, advanced alerts, loyalty, multistream, control surfaces, vertical production, creator operations dashboard, advanced sync/backup and monetization workflows.
+- **No parallel systems:** all future implementations must reuse the canonical command/history/validation/domain/presentation/automation boundaries.
+
+**Források:** OBS, OBS WebSocket, StreamElements, Streamer.bot, Elgato Stream Deck és Twitch hivatalos dokumentáció/termékoldalak. citeturn1search20turn0search1turn1search1turn1search0turn1search13turn0search6
+
 
 ## 00.9.10 — VÉGLEGES TERMÉKVÍZIÓ
 
