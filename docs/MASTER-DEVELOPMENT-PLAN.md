@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.25  
+**Verzió:** MASTER-2.40.26  
 **Dátum:** 2026-09-25  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -698,6 +698,36 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 - [x] E0 audit repository/current branch v2/foundation állapotára készült.
 
 **Következő egyetlen aktív al-pont:** **40.69.13.E1 — célzott Puck/Craft.js/GrapesJS + profi Visual Editor benchmark/source-code audit.**
+
+### E1 — célzott benchmark / source-code audit — [~] FOLYAMATBAN — 2026-09-25
+
+**Első benchmark kör lezárva:** Puck, Craft.js, GrapesJS, Builder, Framer, Webflow és Sanity releváns nyilvános működése és a nyílt forrású projektek releváns forráskód-részletei ellenőrizve.
+
+**Rögzített benchmark megfigyelések:**
+- [x] **Puck:** a component config, fields, render boundary, defaultProps és a központi store/history/nodes/permissions szeparáció erős referencia arra, hogy a component registry és Inspector-konfiguráció egyértelmű szerződésből származzon. A saját rendszerben ezt a Property Registry + Component Registry + Render Contract irányába alkalmazzuk, nem Puck-adatmodellt másolunk. citeturn2search0turn2search4
+- [x] **Craft.js:** a node tree, editor state, serialization/deserialization és history-kezelés megerősíti a saját canonical node-tree/state irány helyességét. A saját Page Model marad a canonical storage shape. citeturn2search1turn2search3
+- [x] **GrapesJS:** a Component modell külön kezeli a children/selection/layer/toolbar/styling/commands jellegű felelősségeket; a Component collection és command-réteg jó referencia a saját component registry + hierarchy + command boundary kialakításához. citeturn2search2turn2search8turn2search9
+- [x] **Builder:** a live iframe preview, Blocks/Templates/Symbols, Layers/X-Ray, responsive device preview, history/comments minták alapján a későbbi Preview/Visual Editing rétegnek a valós public renderhez kell közel lennie, nem egy külön „fake canvas” világhoz. citeturn3search16
+- [x] **Framer:** a Page/CMS Page különválasztás, responsive layout, draft/publish és locale workflow megerősíti a domain content és visual presentation szétválasztását. A localizationben page/content/component/metadata/alt text és locale path is kezelhető. citeturn4search3turn4search6turn4search9
+- [x] **Webflow:** a secondary locale primary locale-ból örököl, majd field/style/asset/visibility szinten felülírható; a dokumentált modellben a struktúra a primary locale tulajdona. Ez fontos referencia a jövőbeli localization inheritance modellhez. citeturn3search3turn3search13
+- [x] **Sanity:** a Presentation Tool iframe-ben futó frontend preview, secure draft mode, published/draft perspective, click-to-edit overlays és page-building modellje erős referencia a saját Draft/Preview/Public boundary és későbbi visual editing összekötéséhez. citeturn3search0turn3search1turn3search11
+
+**E1 aktuális architekturális következtetés:**
+1. Nem indokolt a meglévő canonical Core lecserélése.
+2. A következő canonical rétegnek egy **Component Registry → Property/Field Registry → Render Contract → Command Contract** láncot kell adnia.
+3. A Canvas és a Public Renderer közös render-contract felé kell közeledjen; a mostani editor preview renderer foundation maradhat, de nem lehet végleges külön világ.
+4. A domain rekordok (Schedule/Game/Media) nem kerülnek component props-ba teljes másolatként; a component konfiguráció binding/reference jellegű marad.
+5. Localizationnél primary/default locale + fallback + field-level localized values/overrides irány szükséges; a Page Model struktúráját nem szabad locale-onként lemásolni.
+6. Draft/Preview/Published snapshot boundary marad első osztályú; preview csak explicit authenticated/editor contextben használhat draftot.
+7. A benchmark nem indít refaktort önmagában; minden változtatás KEEP/IMPROVE/REFACTOR/REPLACE döntést kap E2-ben.
+
+**Még hátralévő E1 rész:**
+- [ ] Puck/Craft.js/GrapesJS további konkrét modules/tests adatfolyamának célzott összevetése.
+- [ ] Component/field/registry/history/serialization minták összevetése a saját fájlokkal.
+- [ ] Media/asset manager és template/reusable-component minták célzott auditja.
+- [ ] Benchmark eredmények végleges E2 decision matrixba rendezése.
+
+**Következő egyetlen aktív al-pont:** **40.69.13.E1.1 — saját Component Registry / Property Registry / Render Contract összevetése a benchmarkokkal, konkrét KEEP/IMPROVE/REFACTOR/REPLACE döntési táblával.**
 
 **MASTER-2.40.25 checkpoint:** E0 lezárva; funkcióvesztés nélkül továbbhaladunk E1-be. A teljes 1.0 és post-1.0 backlog megmarad, és minden új funkció ugyanebbe az egyetlen MASTER-be kerül.
 
