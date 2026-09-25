@@ -6,6 +6,8 @@ const { mapTwitchScheduleSegment } = await import('../../../src/core/schedule/ma
 const { mapTwitchScheduleResponseStatus } = await import('../../../src/core/schedule/twitch-errors.ts');
 const { readPublicSchedule } = await import('../../../src/core/schedule-read.ts');
 const { syncCanonicalTwitchSchedule } = await import('../../../src/core/schedule/sync.ts');
+const { fetchTwitchSchedule } = await import('../../../src/core/schedule/twitch-adapter.ts');
+const { encryptTwitchToken } = await import('../../../src/core/twitch-crypto.ts');
 
 test('schedule sync window normalizes to UTC', () => {
   assert.deepEqual(
@@ -87,6 +89,89 @@ test('Twitch adapter maps canonical HTTP errors', () => {
   assert.equal(mapTwitchScheduleResponseStatus(500), 'TWITCH_SCHEDULE_TRANSIENT_FAILURE');
   assert.equal(mapTwitchScheduleResponseStatus(400), 'TWITCH_SCHEDULE_BAD_RESPONSE');
   assert.equal(mapTwitchScheduleResponseStatus(200), null);
+});
+
+test('Twitch adapter integration maps live HTTP failure responses through the adapter boundary', async () => {
+  const encryptionKey = 'schedule-adapter-integration-key';
+  const access = await encryptTwitchToken(encryptionKey, 'adapter-test-token');
+  const db = {
+    prepare(sql) {
+      assert.match(sql, /SELECT broadcaster_id AS broadcasterId,broadcaster_login AS broadcasterLogin/);
+      return {
+        bind() {
+          return {
+            first: async () => ({
+              broadcasterId: '1144260301',
+              broadcasterLogin: 'sanci9517'
+            })
+          };
+        }
+      };
+    }
+  };
+  const env = {
+    DB: db,
+    TWITCH_CLIENT_ID: 'adapter-test-client',
+    TWITCH_CLIENT_SECRET: 'adapter-test-secret',
+    TWITCH_TOKEN_ENCRYPTION_KEY: encryptionKey
+  };
+  const tokenDb = {
+    prepare(sql) {
+      return {
+        bind() {
+          return {
+            first: async () => ({
+              id: 'connection-test',
+              userId: 'user-test',
+              broadcasterId: '1144260301',
+              broadcasterLogin: 'sanci9517',
+              accessCiphertext: access.ciphertext,
+              accessIv: access.iv,
+              refreshCiphertext: access.ciphertext,
+              refreshIv: access.iv,
+              scopesJson: '[\"channel:manage:schedule\"]',
+              accessTokenExpiresAt: new Date(Date.now() + 3600_000).toISOString(),
+              status: 'connected',
+              lastValidatedAt: new Date().toISOString()
+            })
+          };
+        }
+      };
+    }
+  };
+  env.DB = {
+    prepare(sql) {
+      if (/SELECT broadcaster_id AS broadcasterId/.test(sql)) {
+        return {
+          bind() {
+            return {
+              first: async () => ({
+                broadcasterId: '1144260301',
+                broadcasterLogin: 'sanci9517'
+              })
+            };
+          }
+        };
+      }
+      return tokenDb.prepare(sql);
+    }
+  };
+
+  for (const [httpStatus, expectedCode] of [
+    [401, 'TWITCH_SCHEDULE_REAUTHORIZATION_REQUIRED'],
+    [404, 'TWITCH_SCHEDULE_SOURCE_EMPTY'],
+    [429, 'TWITCH_SCHEDULE_RATE_LIMITED']
+  ]) {
+    await assert.rejects(
+      fetchTwitchSchedule(
+        env,
+        'connection-test',
+        { startAt: '2026-09-25T00:00:00Z', endAt: '2026-10-02T00:00:00Z' },
+        { fetchImpl: async () => new Response('{}', { status: httpStatus }) }
+      ),
+      error => error?.code === expectedCode
+    );
+  }
 });
 
 test('Twitch adapter errors map to canonical sync states without leaking raw HTTP status', async () => {
