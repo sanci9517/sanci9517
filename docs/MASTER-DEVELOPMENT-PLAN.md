@@ -1,13 +1,13 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.17  
-**Dátum:** 2026-09-24  
+**Verzió:** MASTER-2.40.18  
+**Dátum:** 2026-09-25  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
-**Legutóbbi igazolt mérföldkő:** 2026-09-24 — 40.69.13.C.5.1 concurrency regression PASS. Az adapter error mapping + public Schedule DTO leakage regression CI-je a Node 24 parameter-property hibát már javította, majd a következő futásban egy újabb tesztkörnyezeti hibát talált: a közvetlen `twitch-adapter.ts` import transzitív `../twitch-oauth` extensionless import miatt `ERR_MODULE_NOT_FOUND` lett. A mappinget ezért dependency-free `src/core/schedule/twitch-errors.ts` modulba izoláltuk, az adapter és a teszt erre támaszkodik. Új CI futás folyamatban; a teljes C.5.1 regression gate még nincs lezárva.
+**Legutóbbi igazolt állapot:** 2026-09-25 — a Twitch/Schedule regressziós láncban a `test:editor` 30/30 és a `test:schedule` 8/8 PASS. A kibővített Twitch Integration Check #91 azonban a közvetlen `tests/twitch-oauth.test.js` futtatásnál Node 24 ESM `ERR_MODULE_NOT_FOUND` hibát talált, mert a `twitch-oauth.ts` → `twitch-crypto` import extensionless volt. Ezt a `739bb3a5b026f24bbf305a3d87692bffd5b09b03` commitban `.ts` importokra javítottuk; a Twitch Integration Check #92 és Editor Core #716 az új commiton még fut. Közben auditáltuk a Twitch connection státusz modellt is: a `revocation_pending` runtime állapothoz hiányzott a DB CHECK-engedélyezés, ezért elkészült az `0014_twitch_connection_status.sql` migration. A Twitch authorization most a Schedule Builder későbbi írási műveleteihez szükséges `channel:manage:schedule` scope-ot is kéri. A teljes C.5.1 kapu és a production újratelepítés még nincs lezárva.
 
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
@@ -2994,7 +2994,7 @@ Kötelezően megőrzendő külső adatok:
 - Disconnect Twitch revoke endpointet használ, majd a lokális kapcsolat státuszát `revoked` értékre állítja.
 - Refreshkor az új refresh token kötelezően mentésre kerül.
 - Twitch token validáció a `/oauth2/validate` endpointon történik; a validáció eredménye a connection canonical állapotát frissíti.
-- Minimális scope elv: csak bizonyítottan szükséges jogosultságokat kérünk.
+- Minimális scope elv: csak bizonyítottan szükséges jogosultságokat kérünk. A Schedule Builder tényleges Twitch schedule-kezeléséhez a canonical OAuth flow `channel:manage:schedule` scope-ot kér; a scope-változás után a meglévő kapcsolatot újra kell autorizálni.
 
 #### B.2 Implementált alap + jelenlegi hardening
 - `migrations/0011_twitch_integration.sql`
@@ -3081,6 +3081,9 @@ Kötelezően megőrzendő külső adatok:
 - [ ] Invalid/revoked token → reauthorization flow.
 - [ ] No-secret/no-token leakage audit live logokban.
 - [ ] Connect/disconnect audit atomicity célzott teszt.
+- [x] `revocation_pending` állapot runtime használatának schema auditja: az `0011` CHECK-je eredetileg nem engedte ezt az állapotot.
+- [x] Javítás: `0014_twitch_connection_status.sql` létrehozva, amely a connection táblát a `revocation_pending` státusszal együtt canonicalizálja.
+- [ ] `0014_twitch_connection_status.sql` remote D1 apply + schema ellenőrzés.
 
 #### B.4a — CI/typecheck kapu — 2026-09-22
 
@@ -3790,16 +3793,29 @@ A Page Model nem tárolja a schedule rekordokat.
 - [x] Concurrent running sync rejection tényleges production runtime regression PASS: remote D1 `status='running'` előállítása után az authenticated `POST /api/admin/twitch/schedule-sync` válasza 409 `SCHEDULE_SYNC_ALREADY_RUNNING` lett.
 - [x] A concurrency teszt cleanup után a Twitch sync-state visszaállt `idle` állapotra, `last_error_code=NULL` értékkel.
 - [x] Sync-state transition matrix remote D1 runtime regression PASS: `idle → running → success` útvonal és running alatti második indítás elutasítása igazolva; a `last_started_at`, `last_succeeded_at`, `last_completed_at`, `last_seen_count` és `last_error_code` mezők viselkedése megfelelt a contractnak.
-- [ ] Adapter 401/404/429 integrációs runtime regression még nincs lezárva.
-- [ ] Public Schedule DTO source/sync mező leakage regression még nincs lezárva.
+- [x] Adapter HTTP 401/404/429 canonical mapping unit/contract regresszió: 8/8 schedule-source teszt PASS.
+- [x] Public Schedule DTO source/sync mező leakage regression: 8/8 schedule-source tesztben PASS.
+- [ ] Adapter 401/404/429 tényleges production/integration runtime teszt még nincs lezárva.
+- [ ] Public Schedule DTO production endpoint élő leakage teszt még nincs lezárva.
+- [ ] Twitch OAuth teljes regressziós teszt CI-ban még nincs lezárva; a #91 extensionless import hibája javítva, #92 folyamatban.
 
 - [x] Live API concurrency regression PASS: a remote D1-ben előállított `running` sync-state mellett authenticated `POST /api/admin/twitch/schedule-sync` hívás canonical `409 SCHEDULE_SYNC_ALREADY_RUNNING` hibával tért vissza.
 - [x] A PowerShell `Invoke-WebRequest` a 409-es HTTP választ exceptionként jelezte, ezért a `$runningTest.StatusCode` / `$runningTest.Content` változók nem töltődtek fel; ez kliensoldali viselkedés, nem API-hiba. A response body közvetlenül a PowerShell hibakimenetben igazolható volt.
 - [x] Concurrency regression cleanup PASS: a teszt végén a Twitch `schedule_sync_state` rekord `status=idle`, `last_error_code=NULL`.
 - [x] A schedule contract regression aktuális futása: 5/5 PASS.
 
-**C.5.1 aktuális következő egyetlen lépés — 2026-09-24:**
-- **Adapter error mapping + public Schedule DTO leakage regression — CI runtime import fix folyamatban.**
-- Következő kapu: Twitch 401/404/429 canonical error/state viselkedés integrációs ellenőrzése, majd annak bizonyítása, hogy `source_*` és `schedule_sync_state` belső mezők nem szivárognak a public Schedule DTO-ba.
-- A duplicate external identity teszt közben elsőként próbált `BEGIN/COMMIT` SQL tranzakciós forma Cloudflare D1 remote API-n tiltott volt; ez tesztparancs-korlátozás volt, nem alkalmazási hiba. A tranzakció nélküli izolált teszt ezután sikeresen lefutott.
-- Builder/Inspector továbbra is blokkolt a teljes C.5.1 gate PASS-ig.
+**C.5.1 aktuális egyetlen aktív lépés — 2026-09-25:**
+- **Twitch runtime hardening + teljes regressziós gate.**
+- [x] Node 24 ESM importlánc hibája azonosítva és `src/core/twitch-oauth.ts`-ban javítva.
+- [x] CI workflow kibővítve `test:schedule` + `tests/twitch-oauth.test.js` futtatással; ez már nem engedi, hogy a Twitch OAuth regresszió rejtve maradjon.
+- [x] `revocation_pending` schema mismatch gyökérok azonosítva és `0014_twitch_connection_status.sql` migration létrehozva.
+- [x] Twitch OAuth scope frissítve `channel:manage:schedule` értékre a későbbi Schedule Builder kezelési műveleteihez.
+- [ ] Twitch Integration Check #92 PASS.
+- [ ] Editor Core #716 PASS.
+- [ ] `0014` remote D1 apply + schema/quick_check.
+- [ ] Szinkronizált local worktree ellenőrzés után Cloudflare production deploy.
+- [ ] Live Twitch connection → validation → schedule sync újrateszt.
+- [ ] Adapter 401/404/429 live/integration bizonyítás.
+- [ ] Public Schedule DTO production leakage ellenőrzés.
+- [ ] Csak ezek után C.5.1 lezárás.
+- **Builder/Inspector továbbra is blokkolt a teljes C.5.1 gate PASS-ig.**
