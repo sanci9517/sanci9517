@@ -9,7 +9,8 @@
     "test:editor": "node --test public/editor-v2/tests/core.test.js",
     "test:schedule": "node --test public/editor-v2/tests/schedule-source.test.js",
     "db:migrations:apply": "wrangler d1 migrations apply DB --remote",
-    "deploy": "npm run db:migrations:apply && wrangler deploy"
+    "deploy": "npm run db:migrations:apply && wrangler deploy",
+    "test:domain": "node --test tests/domain-contracts.test.js"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "5.20260908.1",
