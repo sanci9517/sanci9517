@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.26  
+**Verzió:** MASTER-2.40.27  
 **Dátum:** 2026-09-25  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -8,6 +8,8 @@
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
 **Feature-preservation szabály:** a korábbi MASTER/roadmap bármely kívánt funkciója megmarad. Új igények csak hozzáadódnak; sem funkció, sem domain, sem jövőbeli backlog tétel nem törölhető vagy némítható el döntés nélkül. A régi 19–34 szakaszok teljes funkciólistája archivált backlogként továbbra is érvényes, és az 1.0/post-1.0 besorolás csak explicit döntéssel változhat.
+
+**Public Design Freedom / Multi-user uniqueness szabály:** az 1.0 vizuális rendszerének nem csak tartalom- és komponensszerkesztést kell biztosítania. A publikusan megjelenő weboldal vizuális identitása is felhasználónként/site-onként egyedileg konfigurálható kell legyen. A felhasználóbarát admin/editor célja, hogy technikai CSS-kód nélkül is létrehozható legyen saját brand és megjelenés: theme/design tokens, typography, colors, semantic colors, backgrounds, spacing, radius, shadows, containers, layout variants, component styles, navigation/header/footer, card/button/form styles, responsive presentation, visibility, imagery, templates és page-level presentation. A rendszernek preset/template alapú gyors indulást és mélyebb egyedi testreszabást is támogatnia kell. A domain adat, a Page Model és az Editor UI state továbbra is külön marad; a public design egy canonical presentation/theme réteg lesz. Multi-user jövőre készülve minden design/configuration site-scoped/tenant-scoped kell legyen, ne globális megosztott állapot. A default design csak kiindulópont, nem korlát.
 
 **Legutóbbi igazolt állapot:** 2026-09-25 — a C.5.1 production/live gate jelentős része igazolt: CI #98/#722 PASS, remote migration/schema/quick_check PASS, GitHub↔local szinkron és production deploy PASS, health/db-health/public schedule live PASS, Twitch connection + `channel:manage:schedule` scope + token validation PASS, valamint authenticated Twitch Schedule sync élesben `source_empty` állapotot adott. A remote D1 sync-state és a 3 meglévő manual schedule rekord változatlansága szintén igazolt. A C.5.1 adapter/runtime kapuja lezárult: az adapter-boundary 401/404/429 integration regression 9/9 PASS, a local typecheck és Editor Core regression 30/30 PASS, valamint a commitra indult Twitch Integration #104 és Editor Core #728 GitHub Actions futások is SUCCESS.
 
@@ -698,6 +700,20 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 - [x] E0 audit repository/current branch v2/foundation állapotára készült.
 
 **Következő egyetlen aktív al-pont:** **40.69.13.E1 — célzott Puck/Craft.js/GrapesJS + profi Visual Editor benchmark/source-code audit.**
+
+### Public Design Freedom — 1.0 követelmény — RÖGZÍTVE — 2026-09-25
+
+- [x] Az 1.0 célja nem egyetlen fix Sanci9517 design.
+- [x] A public site megjelenése site/user szinten egyedivé tehető.
+- [x] A design/theme nem hardcoded page CSS-ként, hanem canonical presentation/theme rétegként kezelendő.
+- [x] Admin-friendly preset → advanced customization útvonal szükséges.
+- [x] A vizuálisan szerkeszthető területek közé tartozik a brand, typography, colors, spacing, layout, backgrounds, cards, buttons, navigation, header/footer, imagery, responsive behavior és component-level presentation.
+- [x] A template nem zárja be a felhasználót; template-ből indulhat, majd saját designná alakíthatja.
+- [x] Multi-user esetén a design konfiguráció site/tenant scoped.
+- [x] A public renderer kizárólag az adott site published presentation + content + domain data állapotából renderel.
+- [x] Az E1/E2 során külön canonical **Presentation/Theme Contract** készül; külön párhuzamos styling rendszer nem hozható létre.
+
+**Következmény:** a későbbi Visual Editor nem pusztán elemek elhelyezésére szolgál. A cél egy olyan user-friendly admin/editor, ahol a felhasználó a saját publikus oldalának teljes vizuális identitását és komponensmegjelenését is kialakíthatja, miközben a technikai CSS és platform-komplexitás el van rejtve.
 
 ### E1 — célzott benchmark / source-code audit — [~] FOLYAMATBAN — 2026-09-25
 
