@@ -1,4 +1,4 @@
-import type { CanonicalScheduleInput, TwitchScheduleSegment } from "./types";
+import type { CanonicalScheduleInput, TwitchScheduleSegment } from "./types.ts";
 
 export function mapTwitchScheduleSegment(
   segment: TwitchScheduleSegment,
