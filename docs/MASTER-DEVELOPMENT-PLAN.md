@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.31  
+**Verzió:** MASTER-2.40.32  
 **Dátum:** 2026-09-25  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -890,7 +890,137 @@ Minimum canonical irány:
 
 **E1.2 státusz:** [x] PASS — a saját Media/Asset, Template/Reusable Component és Property Registry adatfolyam audit elkészült. Kódmódosítás ebben az al-pontban nem történt.
 
-**Következő egyetlen aktív al-pont:** **40.69.13.E1.3 — teljes E1 benchmark lezárás + E2 canonical architecture decision matrix.**
+**40.69.13.E1.3 — teljes E1 benchmark lezárás + E2 canonical architecture decision matrix — PASS — 2026-09-25**
+
+### E1 teljes benchmark lezárás
+
+A saját Editor Core, Page Model, State, Commands, Canvas/Responsive, Property Registry, Schedule domain binding, valamint a korábban elvégzett Puck / Craft.js / GrapesJS / Builder / Framer / Webflow / Sanity referenciaauditok alapján az E1 benchmark lezárható.
+
+**E1 végleges következtetés:**
+- [x] A meglévő Visual Editor Core nem cserélendő le.
+- [x] A Page Model marad az egyetlen canonical document source of truth.
+- [x] A Selection / State / Command / History / Transaction réteg marad.
+- [x] A Responsive rendszer marad, canonical property resolutionnel továbbfejlesztve.
+- [x] A Property Registry marad, de canonical Field Contract irányba fejlődik.
+- [x] Component Registry kerül bevezetésre mint a komponens definíciók egyetlen canonical registry-je.
+- [x] Render Contract kerül bevezetésre a canonical component definition és a runtime renderer közé.
+- [x] Presentation / Theme Contract kerül bevezetésre site-scoped, token-alapú és publisholható rétegként.
+- [x] Domain bindings maradnak reference/binding alapúak; domain rekordokat nem másolunk node props-ba.
+- [x] Media/Asset külön canonical domain lesz, storage-provider agnosztikus contracttal.
+- [x] Template és Reusable Component külön fogalom marad.
+- [x] Localization ugyanazt a document/presentation modellt használja; nem készül locale-onként külön Page Model.
+- [x] Draft / Preview / Published boundary marad.
+- [x] AI / OBS / későbbi integrációk csak canonical command/domain/presentation boundaryn keresztül módosíthatnak.
+- [x] Legacy Inspector és legacy renderer nem lesz canonical.
+
+## E2 — CANONICAL ARCHITECTURE DECISION MATRIX
+
+| Réteg | Döntés | Canonical ownership | Következő megvalósítás |
+|---|---|---|---|
+| Document/Page Model | KEEP | Editor Core Schema | E3 contract freeze |
+| Node Tree | KEEP | Editor Core Schema | capability-k finomítása |
+| Selection/Editor State | KEEP | Editor Core State | nincs második state |
+| Command Engine | KEEP | Editor Core Commands | minden mutation ezen át |
+| History/Undo/Redo | KEEP | Command/State | nincs feature-specifikus history |
+| Transaction/Batch | KEEP | Command Engine | domain műveletek is ezt használják |
+| Responsive | IMPROVE | Responsive + Field Contract | inheritance/override/reset contract |
+| Component Registry | IMPLEMENT | Component Domain/Registry | identity/capability/props/render metadata |
+| Property/Field Registry | IMPROVE | Field Contract | schema + UI adapter + validation |
+| Render Contract | IMPLEMENT | Presentation/Renderer boundary | Canvas + Public Renderer közös contract |
+| Presentation/Theme | IMPLEMENT | Site-scoped Presentation Domain | tokenek, component presentation, publish snapshot |
+| Domain Binding | KEEP + IMPROVE | Domain Binding layer | reference/runtime resolution |
+| Schedule Binding | KEEP | Schedule domain | canonical source már működik |
+| Media/Asset | IMPLEMENT | Media Domain | metadata/reference/storage abstraction |
+| Asset Storage | ABSTRACT | Storage boundary | R2 később, provider-agnosztikusan |
+| Template | IMPLEMENT LATER | Template Domain | versioned document/presentation preset |
+| Reusable Component | IMPLEMENT LATER | Component Definition Domain | versioned definition + instance overrides |
+| Localization | FOUNDATION | Localization layer | 1.0 HU, későbbi locale bővítés |
+| Draft/Preview/Published | KEEP | Revision/Publishing | explicit lifecycle |
+| Public Renderer | IMPROVE | Render Contract | editor/public parity |
+| Inspector | REFACTOR | Property Registry adapter | manual field branches fokozatos kivezetése |
+| Media Picker | IMPLEMENT LATER | Media Domain UI | canonical Asset Reference |
+| Template Picker | IMPLEMENT LATER | Template Domain UI | no separate editor |
+| AI | FUTURE CAPABILITY | Command/Domain/Presentation | no parallel editor state |
+| OBS | FUTURE CAPABILITY | Local bridge + Presentation/Command | separate trust boundary |
+| Automation | FUTURE CAPABILITY | Event/Automation/Command | idempotent/auditable |
+| Analytics | FUTURE DOMAIN | Analytics boundary | no direct editor mutation |
+| Multi-tenant | ARCHITECTURE FOUNDATION | site/tenant scope | design/data/storage isolation |
+
+### E2 canonical dependency chain
+
+A rendszer fő függőségi sorrendje:
+
+```
+Domain entities / integrations
+          ↓
+Canonical Domain Contracts
+          ↓
+Component Registry
+          ↓
+Property / Field Registry
+          ↓
+Presentation / Theme Contract
+          ↓
+Render Contract
+          ↓
+Canvas Renderer / Public Renderer
+          ↓
+Command Contract
+          ↓
+History / Transaction
+          ↓
+Persistence / Revision / Publish
+```
+
+**Fontos korrekció:** a fenti rétegek logikai contractok; a Command Engine továbbra is az Editor Core mutation boundaryja. A Component/Field/Presentation/Render réteg nem kerülhet meg semmilyen validation/history/persistence szabályt.
+
+### E2 nem-negotiable architektúra szabályok
+
+1. Egyetlen Page Model.
+2. Egyetlen canonical node tree.
+3. Egyetlen selection/state rendszer.
+4. Egyetlen mutation/Command boundary.
+5. Egyetlen history/transaction rendszer.
+6. Egyetlen Property/Field definition source.
+7. Egyetlen Component definition registry.
+8. Egyetlen Presentation/Theme contract.
+9. Egyetlen Render contract.
+10. Domain adat node props-ba csak reference/binding formában kerülhet.
+11. Asset binary és storage credential soha nem kerül Page Modelbe.
+12. Template és reusable component nem hoz létre második editort.
+13. Locale nem hoz létre második Page Modelt.
+14. Public renderer és Editor canvas ugyanazt a canonical component/presentation contractot használja, ahol a runtime különbség indokolja, ott külön adapterrel.
+15. AI, OBS, Automation és későbbi integrációk nem hozhatnak létre saját állapot- vagy mutation-rendszert.
+16. Minden új feature a meglévő validation/history/persistence útvonalon megy.
+17. Site/tenant scope kötelező a user-specifikus design, media, template és későbbi configuration adatoknál.
+18. R2/storage provider cserélhető marad.
+19. Feature preservation kötelező: új igény nem törölhet korábbi MASTER backlog elemet.
+20. Legacy rendszer csak kompatibilitási/átmeneti szerepet tölthet be, canonical ownershipet nem.
+
+### E2 scope boundary
+
+**Most nem implementáljuk:**
+- teljes Media Manager UI
+- R2 upload
+- Template Builder
+- Reusable Component Builder UI
+- teljes Inspector UI rewrite
+- teljes Theme Editor
+- AI editor
+- OBS editor
+- multi-platform control surface
+
+**Ezeknek most a canonical contractját és ownershipét rögzítjük.**
+
+### E1/E2 státusz
+
+- **E0 — Audit:** [x] PASS
+- **E1.1 — Benchmark + saját Editor Core audit:** [x] PASS
+- **E1.2 — Media/Asset + Template/Reusable Component + Property Registry audit:** [x] PASS
+- **E1.3 — E1 benchmark lezárás + E2 decision matrix:** [x] PASS
+- **E2 — Canonical architecture decision:** [x] PASS — az E1 eredményei alapján rögzítve, implementáció nélkül.
+
+**Következő egyetlen aktív pont:** **40.69.13.E3 — Game Profile + Media Asset + Schedule Event + Presentation/Theme canonical domain contract megtervezése és freeze.**
 
 **MASTER-2.40.25 checkpoint:** E0 lezárva; funkcióvesztés nélkül továbbhaladunk E1-be. A teljes 1.0 és post-1.0 backlog megmarad, és minden új funkció ugyanebbe az egyetlen MASTER-be kerül.
 
