@@ -1,7 +1,7 @@
 import type { Env } from "../../types/env";
 import { getValidTwitchAccessToken } from "../twitch-oauth.ts";
-import { mapTwitchScheduleResponseStatus, type TwitchScheduleResponseErrorCode } from "./twitch-errors";
-import { normalizeScheduleSyncWindow, type ScheduleSyncWindow, type TwitchScheduleSegment, type TwitchScheduleSnapshot } from "./types";
+import { mapTwitchScheduleResponseStatus, type TwitchScheduleResponseErrorCode } from "./twitch-errors.ts";
+import { normalizeScheduleSyncWindow, type ScheduleSyncWindow, type TwitchScheduleSegment, type TwitchScheduleSnapshot } from "./types.ts";
 
 const TWITCH_SCHEDULE_URL = "https://api.twitch.tv/helix/schedule";
 const PAGE_SIZE = 25;
