@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.47.0  
+**Verzió:** MASTER-2.48.0  
 **Dátum:** 2026-09-28  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -8937,6 +8937,286 @@ A későbbi:
 ugyanerre a canonical alapra épül.
 
 ---
+
+# 00.9.16 — TEMPLATE/LIBRARY PROFESSIONAL EXTENSIONS — RÖGZÍTVE 2026-09-28
+
+A 00.9.15 rendszert további, érett builder/design-system rendszerekből következő funkciókkal egészítjük ki. Ezek nem mind 1.0 funkciók; minden elem a megfelelő roadmap ponthoz kerül.
+
+## 00.9.16.1 — Design System / Style Guide felület
+- színek és semantic colors
+- typography scale
+- spacing/radius/shadow
+- container widths
+- buttons/forms/cards/navigation
+- states, components, variants
+- responsive examples
+- accessibility examples
+- token/component single-source-of-truth nézet
+
+## 00.9.16.2 — Component states
+Canonical state contract:
+- default, hover, focus-visible, active, disabled, loading, selected, error, success, empty
+- domain-specific live/offline state ahol indokolt.
+
+## 00.9.16.3 — Responsive/container-aware readiness
+- fluid values
+- responsive token modes
+- container-aware layout
+- component-level responsive behavior
+- auto/wrap/minmax/intrinsic sizing
+- orientation
+- reduced-motion
+- touch/hover capability-aware presentation
+
+## 00.9.16.4 — Accessibility-by-default templates
+- semantic structure
+- heading hierarchy
+- keyboard/focus
+- contrast
+- touch targets
+- alt text/labels
+- errors
+- reduced motion
+- screen-reader states
+- logical reading order
+
+## 00.9.16.5 — Content/data preview mode
+Template preview támogatja:
+- realistic demo content
+- empty/long/missing data
+- loading/error
+- zero/many items
+- live/offline
+- missing optional fields.
+
+## 00.9.16.6 — Localization preview
+- HU
+- hosszú/rövid szövegek
+- future EN/DE/UK/RU
+- locale date/time
+- pluralization
+- RTL readiness.
+
+## 00.9.16.7 — Dependency / impact graph
+Minden reusable artifactnél gépileg lekérdezhető:
+USED BY / USES / DEPENDS ON / VERSION / SOURCE / OVERRIDE.
+Cél: módosítási hatás, törési kockázat, template- és asset-függőségek láthatósága.
+
+## 00.9.16.8 — Usage / orphan / health
+- unused
+- used/heavily used
+- deprecated/archived
+- broken dependency
+- missing asset
+- incompatible
+- orphaned
+- safe archive/delete warnings.
+
+## 00.9.16.9 — Naming / taxonomy / governance
+- stable IDs
+- human-readable names
+- namespace
+- category/tags
+- semantic/variant naming
+- version/status
+A név változhat, az ID nem.
+
+## 00.9.16.10 — Template permissions
+Külön action scope:
+view, use, edit, duplicate, detach, publish, manage, share, export, delete, update-source.
+A reusable permission nem helyettesíti az oldal ownership/publish permissiont.
+
+## 00.9.16.11 — Safe template sandbox / capability boundary
+1.0 template payloadban nincs arbitrary executable code.
+Későbbi code component/plugin rendszer csak capability, sandbox, dependency allowlist, version pinning, permission, audit, security scan és rollback után.
+
+## 00.9.16.12 — Starter wizard
+Creator type → goal → layout → theme → pages → integrations → template pack → responsive preview → create.
+A wizard kizárólag canonical creation commandokat használ.
+
+## 00.9.16.13 — Template packs
+Egy pack tartalmazhat Home, About, Schedule, Live, Videos, Community, Contact, theme, components, assets, navigation és footer elemeket.
+
+## 00.9.16.14 — Multi-site / cross-site library readiness
+4.0+:
+- one creator / multiple sites
+- shared brand library
+- shared components/themes/templates
+- site-specific overrides
+- controlled propagation
+A Webflow Shared Libraries és Figma Libraries központi reusable asset + kontrollált downstream update modellje referencia. citeturn0search0turn0search1turn0search17
+
+## 00.9.16.15 — Update channels
+- stable
+- preview/beta
+- pinned
+- security update
+- deprecated
+A nem kritikus update-ek később manuális vagy automatikus elfogadással kezelhetők.
+
+## 00.9.16.16 — Migration toolkit
+- migration version
+- preflight
+- transform
+- validation
+- post-check
+- rollback
+- migration log
+Template update nem lehet egyszerű JSON replacement.
+
+## 00.9.16.17 — Visual regression / snapshot testing
+- canonical viewport snapshots
+- component/template/theme snapshots
+- visual diff
+- overflow detection
+- layout-shift detection
+- critical reusable elements automated regression.
+
+## 00.9.16.18 — Performance budget
+- render cost
+- asset weight
+- image dimensions
+- lazy-loading
+- font loading
+- animation cost
+- DOM complexity
+- layout shift
+Látványos template sem lehet indokolatlanul lassú.
+
+## 00.9.16.19 — Template documentation / metadata
+- description
+- intended use
+- preview
+- responsive behavior
+- editable areas
+- required data/integrations
+- dependencies
+- accessibility/performance notes
+- changelog
+- author/source
+- license.
+
+## 00.9.16.20 — Safe experimental lifecycle
+Draft → Preview → Experimental → Stable → Deprecated → Archived.
+Experimental artifact normál galleryben csak stable gate után jelenhet meg.
+
+## 00.9.16.21 — Personalization without structural fork
+Colors, fonts, spacing, imagery, copy, CTA és component variants módosíthatók úgy, hogy ne kelljen azonnal teljes detach.
+
+## 00.9.16.22 — Compatibility matrix
+Template ↔ Renderer ↔ Editor ↔ Theme ↔ Component versions ↔ CMS schema ↔ Integrations ↔ Locale ↔ Capabilities.
+Apply/install előtt incompatibility warning.
+
+## 00.9.16.23 — Audit / history / restore
+Audit:
+created, changed, published, installed, updated, detached, shared, exported, imported, deprecated, archived, restored.
+Reusable artifact is history/rollback capable.
+
+## 00.9.16.24 — Search/index foundation
+- metadata/full-text
+- tags/type
+- compatibility/capability
+- author/source
+- updated date
+- favorites/recent
+- usage
+Marketplace search később ebből a foundationből nő ki.
+
+## 00.9.16.25 — Template onboarding / first-run UX
+- blank
+- template
+- pack
+- import
+- recent
+- own library
+A blank editing mindig elérhető.
+
+## 00.9.16.26 — Canonical reusable lifecycle
+CREATE → VALIDATE → SAVE → VERSION → PREVIEW → APPLY/INSTALL → CUSTOMIZE → REUSE → UPDATE → MIGRATE → PUBLISH → AUDIT → ROLLBACK/RESTORE
+Később: SHARE → DISTRIBUTE → ENTITLE → LICENSE → MARKETPLACE → REVIEW → UPDATE
+
+## 00.9.16.27 — Roadmap mapping
+
+### 0.3 — Domain/data
+- reusable artifact entities
+- library/scope/namespace
+- dependency/lineage graph
+- lifecycle/status metadata
+
+### 0.4 — Commands/history
+- install/apply/save/duplicate/detach/update/migrate/archive/restore
+- impact validation
+- idempotency
+- revisions/rollback
+
+### 0.5 — Presentation
+- component states
+- responsive/container-aware rules
+- accessibility presentation
+- localization preview
+- design-system/style-guide contracts
+
+### 0.8 — Quality
+- visual regression
+- performance budgets
+- template health
+- compatibility matrix
+- accessibility/data-state test matrix
+
+### 1.0.1–1.0.4
+- Library UX
+- starter wizard
+- design-system view
+- own template/pack save
+- variants/states
+- responsive/data/locale preview
+- permissions
+- safe reusable lifecycle
+
+### 1.0.5–1.0.8
+- CMS bindings
+- Asset Library/dependencies
+- template-driven public pages
+- public renderer snapshot safety
+
+### 1.0.9
+- reusable artifact production gate
+- visual/accessibility/performance/security/migration regression
+
+### 1.5–2.0
+- platform-aware packs
+- OBS/overlay/widget/automation/content templates
+- richer creator libraries
+- multi-platform capabilities
+
+### 3.0
+- AI template recommendation/customization
+- AI content-to-slot mapping
+- AI layout proposals
+- canonical command + approval + audit
+
+### 4.0–5.0
+- multi-site/shared libraries
+- team permissions
+- entitlement-aware libraries
+- stable/preview channels
+- creator packs
+
+### 6.0
+- public marketplace
+- author/distributor lifecycle
+- moderation/trust & safety
+- licensing
+- reviews/feedback
+- install/update ecosystem
+
+### 7.0–10.0
+- adaptive templates
+- AI-maintained design systems
+- context-aware layouts
+- live template adaptation
+- multimodal/personal brand template intelligence
+
 
 # 00.9.10 — SAAS / CSOMAG / ENTITLEMENT / AI-OPCIONÁLIS MONETIZÁCIÓ — RÖGZÍTVE 2026-09-28
 
