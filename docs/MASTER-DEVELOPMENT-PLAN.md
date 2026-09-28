@@ -7158,3 +7158,389 @@ A cél egy **AI-native creator platform**, ahol a creator természetes nyelven t
 És minden lépés ugyanazon canonical platform-, permission-, validation-, history-, publish- és audit-rendszeren keresztül történik.
 
 **Nem az AI helyettesíti a platform architektúráját; az AI a platform minden megfelelő rétegét használó intelligens kezelőréteg lesz.**
+
+
+### 50.24.A.48 — AI LIVE STREAM CO-PILOT — VALÓS IDEJŰ STREAMFIGYELÉS
+
+**Kiemelt jövőbeli cél:** az AI ne csak a stream után elemezzen, hanem megfelelő hardver/szoftver és lokális bridge esetén **élő adás közben is figyelje a streamet**, és időben adjon hasznos visszajelzést.
+
+Figyelendő jelcsoportok:
+- stream technikai állapot;
+- OBS állapot;
+- encoder/CPU/GPU terhelés ahol elérhető;
+- dropped frames / render/encoding problémák;
+- bitrate;
+- FPS;
+- resolution;
+- audio levels;
+- clipping/distortion;
+- mikrofon hangerő;
+- játékhang / beszéd arány;
+- jelenet és source állapot;
+- kamera állapot;
+- chat aktivitás;
+- stream események;
+- játék események ahol megbízható adatforrás áll rendelkezésre;
+- beszéd/transcript;
+- reakciók;
+- hosszú csendek;
+- ismétlődő hibák;
+- tartalmi csúcspontok.
+
+Az OBS WebSocket valós idejű eseményeket és vezérlést biztosít, és az OBS 28+ verziókban alapból része az OBS-nek; a kapcsolatot hitelesíteni kell. citeturn0search0turn0search2
+
+### 50.24.A.49 — AI LIVE TECHNICAL COACH
+
+Az AI élőben jelezheti például:
+- „A mikrofonod túl halk.”
+- „A játék hangja elnyomja a beszédet.”
+- „A jelenlegi encoder terhelése szokatlanul magas.”
+- „A stream képkockavesztést mutat.”
+- „A kamera forrás eltűnt.”
+- „A jelenlegi scene-ben nincs hangforrás.”
+- „A stream minősége romlott.”
+- „A bitrate eltér a beállított tartománytól.”
+
+**Fontos:** az AI csak a ténylegesen rendelkezésre álló mérésből állíthat tényt. Bizonytalanság esetén ezt egyértelműen jelzi.
+
+Lehetséges üzemmódok:
+- csak figyelmeztetés;
+- javaslat;
+- súlyossági szint;
+- hangos/visual notification;
+- automatikus javítás csak külön engedélyezett, biztonságos műveleteknél.
+
+### 50.24.A.50 — AI LIVE CONTENT COACH
+
+Az AI ne csak a technikát figyelje, hanem a **stream tartalmi minőségét és ritmusát** is.
+
+Lehetséges jelek:
+- túl hosszú csend;
+- alacsony interakció;
+- beszélgetési lehetőség;
+- érdekes téma;
+- ismétlődő téma;
+- fontos játékpillanat;
+- erős reakció;
+- chat spike;
+- új követő/sub/donation/event;
+- különösen érdekes vagy klippelhető pillanat.
+
+Az AI javasolhat rövid, nem tolakodó tanácsot:
+- „Most magas a chat aktivitás.”
+- „Ez jó klipjelölt.”
+- „Új esemény történt.”
+- „Érdemes lehet lezárni ezt a témát és továbblépni.”
+- „A közönség erre a részre reagál erősebben.”
+
+**Nem cél**, hogy az AI folyamatosan zavarja a streamert. A notification frequency, quiet mode, severity threshold és context-aware suppression kötelező tervezési elem.
+
+### 50.24.A.51 — AI LIVE CONTENT OPPORTUNITY ENGINE
+
+Valós időben candidate-eket készíthet:
+- clip;
+- Short;
+- TikTok;
+- highlight;
+- quote;
+- recap;
+- social post;
+- stream marker.
+
+Egy candidate:
+- timestamp;
+- source;
+- event evidence;
+- transcript context;
+- chat/activity signal;
+- visual signal;
+- audio signal;
+- confidence;
+- suggested duration;
+- target format;
+- target platform;
+- reason.
+
+Több jel együttes értékelése előnyben:
+**VIDEO + AUDIO + TRANSCRIPT + CHAT + STREAM EVENTS + PLATFORM DATA**
+
+A rendszer ne egyetlen jelből döntsön.
+
+### 50.24.A.52 — AI REAL-TIME CLIP PIPELINE
+
+Cél:
+
+**LIVE STREAM → CAPTURE/BUFFER → DETECT → SCORE → SELECT → PRE-CUT → CAPTION → REFRESH/REFRAME → BRAND → QUALITY CHECK → PREVIEW → APPROVE/AUTO-PUBLISH → ANALYTICS**
+
+A technológia fejlődésével a pipeline képes lehet arra, hogy a stream alatt néhány percen belül elkészüljön egy használható Short/TikTok/clip. Már jelenlegi creator eszközök is kínálnak live clipping, automatikus reframe, caption és publikálási workflow-kat; ezt benchmarkként kezeljük, nem másolási specifikációként. citeturn0search8turn0search11turn0search15
+
+### 50.24.A.53 — AI AUTOMATIC VIDEO EDITOR
+
+A jövőbeli AI képes legyen:
+- legjobb kezdőpont kiválasztására;
+- megfelelő befejezés kiválasztására;
+- dead-air levágására;
+- érdekes rész megtartására;
+- 9:16/1:1/16:9 változat készítésére;
+- facecam/action framingre;
+- captions készítésére;
+- caption timingra;
+- hook javaslatra;
+- intro/outro alkalmazására;
+- brand overlayre;
+- watermarkre;
+- sound mix ellenőrzésre;
+- thumbnail frame választásra;
+- title/description generálásra.
+
+A cél nem az, hogy „csak levágja a videót”, hanem hogy **platformra kész, vizuálisan és technikailag megfelelő tartalomcsomagot** készítsen.
+
+### 50.24.A.54 — AI VIDEO QUALITY GATE
+
+Automatikus publikálás előtt ellenőrzendő:
+- resolution;
+- frame rate;
+- aspect ratio;
+- audio presence;
+- audio clipping;
+- caption sync;
+- caption readability;
+- black frames;
+- frozen frames;
+- render failure;
+- watermark/branding;
+- safe margins;
+- title/metadata;
+- platform requirements;
+- file integrity.
+
+Hiba esetén:
+**REJECT → FIX/RENDER AGAIN → QUALITY CHECK**
+
+### 50.24.A.55 — AI AUTO-PUBLISHING LEVELS
+
+A rendszer ne egyetlen „AI automatikusan publikál” kapcsolót használjon.
+
+Szintek:
+
+**P0 — Manual**
+AI csak javasol.
+
+**P1 — Draft**
+AI elkészíti a teljes klipet, de ember publikál.
+
+**P2 — Auto-prepare**
+AI automatikusan előkészíti és várakozó listára teszi.
+
+**P3 — Trusted auto-publish**
+Csak előre engedélyezett formátumra/platformra és meghatározott minőségi küszöb fölött publikál.
+
+**P4 — Adaptive auto-publish**
+A rendszer a korábbi jóváhagyások és teljesítmény alapján finomítja a kiválasztást, de a biztonsági/publikálási korlátokat nem lépheti át.
+
+Az automatikus publikálás csak:
+- megfelelő permission;
+- platform capability;
+- quality gate;
+- rate limit;
+- duplicate protection;
+- content policy checks;
+- audit;
+- rollback/takedown workflow;
+- failure handling
+
+után történhet.
+
+### 50.24.A.56 — AI TANULÓ / FEJLŐDŐ RENDSZER
+
+A „tanuló AI” alatt **nem azt értjük, hogy kontroll nélkül saját magát átírja**.
+
+A rendszer fejlődése több forrásból történhet:
+- felhasználói jóváhagyás/elutasítás;
+- szerkesztett AI eredmények;
+- kiválasztott/nem kiválasztott clip candidate-ek;
+- publikált tartalmak teljesítménye;
+- platform analytics;
+- creator feedback;
+- brand rules;
+- content preferences;
+- explicit ratings;
+- A/B teszt eredmények.
+
+Ebből készülhet:
+- preference model;
+- ranking signal;
+- personalization;
+- prompt/context optimization;
+- model selection;
+- clip scoring calibration.
+
+A canonical szabályok és biztonsági korlátok nem „tanulhatók felül”.
+
+### 50.24.A.57 — AI PERSONAL CONTENT MODEL
+
+Hosszú távon a rendszer megtanulhatja, hogy az adott creator számára:
+- mi számít jó klipnek;
+- milyen hosszúság működik;
+- milyen hook működik;
+- milyen caption stílus tetszik;
+- milyen thumbnail stílus használatos;
+- milyen témák érdekesek;
+- milyen platformra milyen tartalom illik;
+- mikor érdemes publikálni.
+
+Ez **creator-specifikus preferencia**, nem általános modell átírás.
+
+### 50.24.A.58 — AI FEEDBACK LOOP
+
+**GENERATE → APPROVE/REJECT → PUBLISH → MEASURE → LEARN SIGNAL → RE-RANK → IMPROVE**
+
+Minden loopnál külön kell választani:
+- korreláció;
+- valódi feedback;
+- platform noise;
+- kis mintaszám;
+- bizonytalanság.
+
+Az AI nem állíthatja biztos tényként, hogy egy változtatás okozta a teljesítményváltozást, ha erre nincs megfelelő bizonyíték.
+
+### 50.24.A.59 — AI LIVE PERFORMANCE DASHBOARD
+
+Creator Centerben külön Live AI nézet:
+- Live Health;
+- Technical Coach;
+- Content Coach;
+- Clip Candidates;
+- Current Events;
+- AI Alerts;
+- Processing Queue;
+- Ready to Publish;
+- Published;
+- Performance;
+- AI confidence;
+- current AI mode.
+
+Telefonról is használható legyen.
+
+### 50.24.A.60 — AI LIVE PRIVACY / LOCAL-FIRST ARCHITECTURE
+
+A valós idejű elemzésnél elsődleges cél:
+**amit lehet, lokálisan dolgozzunk fel.**
+
+Lehetséges később:
+- local capture;
+- local audio analysis;
+- local scene telemetry;
+- local technical metrics;
+- csak szükséges adatok továbbítása cloud AI felé.
+
+A creator választhassa meg, hogy mely adatokat enged a cloud AI-nak.
+
+Különösen védendő:
+- privát stream részletek;
+- kamera;
+- mikrofon;
+- chat;
+- személyes adatok;
+- OAuth tokenek;
+- API kulcsok.
+
+### 50.24.A.61 — AI LIVE ASSISTANT VOICE MODE
+
+Későbbi kutatási irány:
+- AI rövid hangos figyelmeztetése;
+- „Sanci, a mikrofonod leesett.”
+- „Jó klipjelölt.”
+- „A stream kapcsolat stabilizálódott.”
+
+Alapértelmezett legyen a minimális zavarás; a streamer állíthassa:
+- silent;
+- notification;
+- voice;
+- severity only.
+
+### 50.24.A.62 — AI MULTIMODAL STREAM UNDERSTANDING
+
+Hosszú távú cél:
+**audio + video + transcript + chat + telemetry + platform events**
+
+együttes értelmezése.
+
+Ez lehet az alapja annak, hogy az AI ne csak azt értse:
+„mit mondott a streamer”,
+
+hanem:
+„mi történt a képernyőn + mit mondott + hogyan reagált + hogyan reagált a chat + mi történt a platformon”.
+
+### 50.24.A.63 — AI QUALITY-BASED AUTONOMY
+
+Az automatikus működéshez ne pusztán confidence score kelljen.
+
+A publish döntés többfeltételes:
+**MODEL CONFIDENCE + CONTENT QUALITY + TECHNICAL QUALITY + PLATFORM VALIDITY + POLICY CHECK + CREATOR SETTINGS**
+
+Ha bármely kritikus feltétel nem megfelelő:
+**NO AUTO-PUBLISH.**
+
+### 50.24.A.64 — AI AUTONOMY SAFETY BRAKE
+
+Mindig legyen:
+- global AI pause;
+- live AI pause;
+- auto-publish off;
+- provider disable;
+- feature disable;
+- workflow cancel;
+- job cancel;
+- emergency revoke;
+- all AI sessions revoke.
+
+Ha rendellenes működés történik, az AI azonnal leállítható.
+
+### 50.24.A.65 — AI ROADMAP KIEGÉSZÍTÉS
+
+**AI Live Foundation**
+- OBS/local bridge;
+- telemetry;
+- secure connection;
+- stream health;
+- event ingestion.
+
+**AI Live 1**
+- technical alerts;
+- audio/stream health;
+- event markers.
+
+**AI Live 2**
+- transcript + chat + event correlation;
+- content coach;
+- clip candidates.
+
+**AI Live 3**
+- near-real-time clip generation;
+- captions;
+- reframe;
+- quality gate.
+
+**AI Live 4**
+- auto-publish with explicit creator policy;
+- adaptive ranking;
+- feedback loop.
+
+**AI Live 5**
+- multimodal real-time understanding;
+- voice assistant;
+- advanced personal creator model;
+- controlled autonomous content operation.
+
+### 50.24.A.66 — AI „LEGJOBB MINŐSÉG” ELV
+
+A rendszer nem a lehető leggyorsabb publikálást tekinti automatikusan céljának.
+
+Prioritás:
+**CORRECTNESS → QUALITY → BRAND CONSISTENCY → PLATFORM FITNESS → SPEED**
+
+Ha a gyors publikálás rosszabb minőséget eredményez, várni kell.
+
+A cél:
+**amikor az AI már bizonyítottan elég megbízható, a creator akár úgy is streamelhet, hogy a háttérben az AI folyamatosan figyel, felismeri a pillanatokat, elkészíti a tartalmat, ellenőrzi a minőséget, és a creator által meghatározott szabályok szerint akár automatikusan publikálja is.**
