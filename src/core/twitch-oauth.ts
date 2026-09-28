@@ -89,17 +89,19 @@ async function readConnection(env: Env, siteId: string, connectionId: string): P
 
 async function updateValidation(
   env: Env,
+  siteId: string,
   connectionId: string,
   validation: ValidateResponse
 ): Promise<void> {
   await env.DB.prepare(
     "UPDATE twitch_connections SET broadcaster_login=?,scopes_json=?,access_token_expires_at=?," +
-    "last_validated_at=CURRENT_TIMESTAMP,status='connected',updated_at=CURRENT_TIMESTAMP WHERE id=?"
+    "last_validated_at=CURRENT_TIMESTAMP,status='connected',updated_at=CURRENT_TIMESTAMP WHERE id=? AND site_id=?"
   ).bind(
     validation.login,
     JSON.stringify(Array.isArray(validation.scopes) ? validation.scopes : []),
     new Date(Date.now() + validation.expires_in * 1000).toISOString(),
-    connectionId
+    connectionId,
+    siteId
   ).run();
 }
 
@@ -151,22 +153,23 @@ export async function exchangeTwitchCode(
   env: Env,
   code: string,
   state: string,
-  userId: string
+  userId: string,
+  siteId: string = DEFAULT_SITE_ID
 ): Promise<void> {
   const { clientId, clientSecret, encryptionKey } = requireConfig(env);
   const stateHash = await hashTwitchOAuthState(state);
 
   const stateRow = await env.DB.prepare(
-    "SELECT id,user_id AS userId FROM twitch_oauth_states " +
-    "WHERE state_hash=? AND julianday(expires_at)>julianday('now') AND used_at IS NULL LIMIT 1"
-  ).bind(stateHash).first<{ id: string; userId: string }>();
+    "SELECT id,site_id AS siteId,user_id AS userId FROM twitch_oauth_states " +
+    "WHERE state_hash=? AND site_id=? AND julianday(expires_at)>julianday('now') AND used_at IS NULL LIMIT 1"
+  ).bind(stateHash, siteId).first<{ id: string; userId: string }>();
 
-  if (!stateRow || stateRow.userId !== userId) throw new Error("TWITCH_OAUTH_STATE_INVALID");
+  if (!stateRow || stateRow.userId !== userId || stateRow.siteId !== siteId) throw new Error("TWITCH_OAUTH_STATE_INVALID");
 
   const claimed = await env.DB.prepare(
     "UPDATE twitch_oauth_states SET used_at=CURRENT_TIMESTAMP " +
-    "WHERE id=? AND user_id=? AND julianday(expires_at)>julianday('now') AND used_at IS NULL"
-  ).bind(stateRow.id, userId).run();
+    "WHERE id=? AND site_id=? AND user_id=? AND julianday(expires_at)>julianday('now') AND used_at IS NULL"
+  ).bind(stateRow.id, siteId, userId).run();
 
   if (claimed.meta.changes !== 1) throw new Error("TWITCH_OAUTH_STATE_INVALID");
 
