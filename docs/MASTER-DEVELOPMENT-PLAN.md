@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.51.0  
+**Verzió:** MASTER-2.52.0  
 **Dátum:** 2026-09-28  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -11589,6 +11589,163 @@ A korábbi 00.9.20 auditot a 00.9.21 kiegészíti; egyik sem törölhető.
 
 **A benchmark audit nem nyit új fejlesztési ágat az aktuális checkpoint előtt.**
 
+# 00.9.22.A — HIÁNYZÓ FUNKCIÓK ÉS SPECIFIKÁCIÓS KORREKCIÓ — RÖGZÍTVE 2026-09-28
+
+A teljes MASTER újraellenőrzése alapján a korábbi WBS több capability-t csak magasabb szintű névként tartalmazott, de nem rögzítette azok kötelező működési specifikációját. Ezeket most nem törlésként vagy átsorolásként, hanem explicit canonical követelményként rögzítjük.
+
+### 00.9.22.A.1 — Editor History Stack / Transaction Boundary
+- Az undo history immutábilis, maximum 50 lépéses FIFO stack.
+- 50 fölött a legrégebbi entry automatikusan kiesik.
+- Egy user-intent egy history transaction.
+- Gépelés: 800 ms inaktivitás vagy blur után egy history entry.
+- Slider/drag: pointer/mouse down → pointer/mouse up egyetlen transaction.
+- Strukturális módosítás: elem hozzáadás/törlés/áthelyezés/reparent/duplicate külön transaction.
+- Programozott/preset/batch módosítás explicit transaction boundary-val.
+- Félbemaradt transaction nem ír félállapotot a historyba.
+- Undo/redo nem hoz létre önmagára mutató history entry-t.
+
+### 00.9.22.A.2 — Autosave + Local Crash Recovery
+- 2000 ms debounced háttérmentés az aktív draftba.
+- Ctrl/Cmd+S azonnali kényszerített mentés.
+- Mentés alatt új módosítás nem veszhet el, hanem következő flush-ba kerül.
+- Sikertelen hálózati/D1 mentés esetén a lokális pending buffer megmarad.
+- LocalStorage crash/recovery buffer tartja a még nem igazoltan szerverre mentett draftot.
+- Újranyitáskor local-buffer kontra szerver-draft/revision összevetés.
+- Eltérésnél explicit recovery döntés.
+- Sikeres szervermentés után az igazolt local buffer törölhető.
+- A local buffer csak recovery safety net, nem a D1 draft helyettesítője.
+
+### 00.9.22.A.3 — Block-level Frontend Error Isolation
+- Minden izolálható blokk/component saját FE Error Boundary alatt fut.
+- Egy hibás component nem döntheti le a teljes Canvas/Editor runtime-ot.
+- Hiba esetén lokális SANCI-RENDER-E500 error card jelenik meg.
+- A hibás node azonosítója és diagnosztikai referencia megmarad.
+- Layers/tree, Inspector és a többi node tovább szerkeszthető.
+- Preview/public rendererben is graceful degradation kell.
+- Retry/reload/remove/replace útvonalat a component capability engedhet.
+
+### 00.9.22.A.4 — Pre-R2 Transitional Media Policy
+- Külső URL-ek kötelező szanitizációja.
+- Csak engedélyezett URL scheme/protocol.
+- XSS-re és unsafe embedre védett URL kezelés.
+- Átmeneti upload/reference limit: maximum 5 MB.
+- MIME/type allowlist.
+- SVG esetén <script> és on* event handler attribútumok eltávolítása/szigorú sanitizáció.
+- SVG/image content nem kerülhet trusted HTML-ként közvetlenül a DOM-ba.
+- Külső media hostok CSP/allowlist szabályhoz kötve.
+- R2-re váltáskor a canonical Asset ID/metadata contract nem változhat.
+
+### 00.9.22.A.5 — Editor Keyboard Shortcuts
+- Ctrl/Cmd+Z → Undo.
+- Ctrl+Y vagy Cmd+Shift+Z → Redo.
+- Ctrl/Cmd+S → force save.
+- Delete / Backspace → kijelölt node törlése, ha a node policy engedi.
+- Escape → előző/szülő kijelölési szint, majd selection clear.
+- Input/textarea/contenteditable mezőben a natív szerkesztési viselkedés elsőbbséget élvez.
+- Shortcut scope csak editor-active állapotban fusson.
+- Platform-specific modifier normalizálás kötelező.
+
+### 00.9.22.A.6 — Dynamic Live Hero / Auto Stream Mode
+- Twitch/YouTube provider event/webhook alapján canonical live state.
+- Home/Hero automatikusan Live Mode-ra válthat.
+- Live Mode-ban kiemelt player, élő chat, stream cím, kategória/játék, futásidő és támogatási CTA jelenhet meg.
+- Offline/next-stream layout fallbackként megmarad.
+- Stream end után automatikus visszaállás.
+- Provider outage vagy stale event esetén ne jelenjen meg hamis live állapot.
+- A Live Mode presentation Editorból konfigurálható, a live state domainből származik.
+
+### 00.9.22.A.7 — Gamer Setup / Gear Showcase
+- PC: CPU, GPU, RAM és további konfigurációs mezők.
+- Perifériák: egér, billentyűzet, fejhallgató, mikrofon, kamera.
+- Eszközönként kép, név, leírás, link és opcionális partner/szponzor metadata.
+- Affiliate/sponsor URL.
+- Partner/kuponkód.
+- Egy kattintásos coupon-copy action.
+- Másolási siker és privacy-safe analytics.
+- Reszponzív kártya/lista prezentáció.
+
+### 00.9.22.A.8 — Interactive Schedule Calendar + Stream Notifications
+- .ics esemény export.
+- Google Calendar / Apple Calendar add-to-calendar útvonal.
+- Timezone-aware event export.
+- Konkrét streamre feliratkozás.
+- Játék/kategória alapú notification preference.
+- Böngészős Push notification capability.
+- Discord notification integration boundary.
+- Reminder lifecycle és leiratkozás.
+- Cancellation/reschedule kezelés.
+- Notification consent/privacy policy.
+- A schedule és reminder domain ugyanazon canonical Event ID-ra épül.
+
+### 00.9.22.A.9 — Automated Press / Media Kit
+- /media-kit vagy /sponsors public route.
+- Hivatalos logók és letölthető brand assetek.
+- Átlátszó PNG/brand asset metadata.
+- Brand színek és használati információ.
+- Twitch/YouTube és későbbi provider API-ból aggregált statisztikák.
+- Follower/subscriber, average viewers és reach jellegű metrikák provider capability szerint.
+- Last-updated timestamp és adatforrás.
+- Üzleti megkeresési űrlap.
+- Letölthető media-kit artifact/version.
+- Public/private field policy.
+
+### 00.9.22.A.10 — Public Clip Share + OpenGraph Video Preview
+- /clips/<clip-slug> canonical route.
+- Title/description/thumbnail Open Graph metadata.
+- Video-specific OG metadata, ahol a célplatform támogatja.
+- Stabil share URL.
+- Discord/X/iMessage és hasonló preview-khez megfelelő metadata/public delivery.
+- Protected/private clip ne legyen véletlenül publikus.
+- Clip expiry/unpublish/permission állapotot a renderer tiszteletben tartja.
+
+### 00.9.22.A.11 — Public Poll / Prediction Widget
+- Twitch/YouTube provider poll/prediction state canonical normalization.
+- Public web widget live state szinkronizáció.
+- Provider capability szerint szavazás/participation.
+- Ha provider nem engedi a webes participationt, read-only fallback.
+- Session/identity/permission és rate limit kezelés.
+- Lezárás/eredmény/frissítés real-time.
+- Provider outage fallback.
+- Editorból konfigurálható public presentation.
+
+### 00.9.22.A.12 — Gated Content / Subscriber-Member Zone
+- Twitch Subscriber és YouTube Member entitlement, ahol megbízhatóan igazolható.
+- Gated page/block/post/media/download.
+- Entitlement state + expiry/revalidation.
+- Unauthenticated fallback CTA.
+- Provider disconnect esetén fail-closed viselkedés érzékeny tartalomnál.
+- Creator által konfigurálható access policy.
+- Audit és access log.
+- Későbbi native membership rendszerrel kompatibilis entitlement contract.
+
+### 00.9.22.A.13 — Sponsor/Affiliate Click & Conversion Analytics
+- Privacy-safe click event.
+- Sponsor/affiliate link canonical ID.
+- Campaign/UTM attribution.
+- Aggregate click analytics.
+- Conversion signal csak jogszerű és elérhető provider/merchant adatból.
+- Creator dashboard összesített kimutatás.
+- Szükségtelen személyes adat gyűjtése tilos.
+- Consent/privacy/retention.
+- Bot/duplicate click filtering.
+- Auditability.
+
+### 00.9.22.A.14 — Streamer Updates / Mini-Blog / Patch Notes CMS
+- Cím, slug, excerpt, body.
+- Structured/rich text tartalom.
+- Kategóriák: Bejelentés, Verseny, Setup, Személyes, később bővíthető módon.
+- YouTube/TikTok és engedélyezett media embeds.
+- Featured image.
+- Draft/publish/revision/archive.
+- Tags, related content, featured/pinned.
+- SEO/meta.
+- Public detail + archive + search/filter.
+- Localization-ready fields.
+- Ugyanazon canonical CMS/Revision/Publish rendszerben, nem külön mini-blog motorban.
+
+### 00.9.22.A.15 — Coverage / Preservation Rule
+A fenti követelmények nem helyettesítik a már meglévő magasabb szintű pontokat. Az általános capability-k ezekkel explicit működési DoD-t kapnak. Új benchmark vagy saját termékigény esetén ugyanígy: canonical domain → phase → egy logikus standalone development point → DoD → teszt → live gate → MASTER checkpoint.
+
 # 00.9.22 — KANONIKUS FEATURE → FEJLESZTÉSI PONT WBS — RÖGZÍTVE 2026-09-28
 
 ## 00.9.22.1 — WBS szabály
@@ -11597,6 +11754,20 @@ A MASTER mostantól a feature/domain/phase térkép mellett **kanonikus fejleszt
 Minden pont lezárásához: canonical contract → ownership/scope → permission/capability → persistence/API szükség szerint → validation/idempotency → history/audit szükség szerint → failure/rollback → accessibility/responsive/localization/performance → tests → live verification → MASTER checkpoint.
 
 ## 00.9.22.2 — PHASE 0 — PLATFORM FOUNDATION
+**0.3 Canonical Page/Editor — explicit reliability specifications**
+- 0.3.24 History Stack 50-step FIFO + transaction boundary contract
+- 0.3.25 Editor shortcut command contract
+- 0.3.26 Block-level renderer/editor error isolation contract
+
+**0.5 Media — transitional storage**
+- 0.5.18 Pre-R2 external media URL/type/size/SVG sanitization policy
+
+**0.8 Platform Services — recovery/notification foundations**
+- 0.8.26 Local crash buffer / recovery protocol
+- 0.8.27 Stream reminder/notification subscription contract
+- 0.8.28 Sponsor/affiliate attribution event contract
+
+
 
 **0.1 Runtime/Delivery**
 - 0.1.1 Repository baseline
@@ -11771,6 +11942,17 @@ Minden pont lezárásához: canonical contract → ownership/scope → permissio
 - 0.8.25 Audit explorer
 
 ## 00.9.22.3 — PHASE 1 — CREATOR WEBSITE PLATFORM
+**1.1 Public website — explicit advanced capabilities**
+- 1.1.36 Dynamic Live Hero / Auto Stream Mode
+- 1.1.37 Interactive Schedule Calendar / Add-to-Calendar
+- 1.1.38 Stream Reminder Subscription
+- 1.1.39 Public Poll/Prediction Widget
+- 1.1.40 Public Clip Share / OpenGraph Video Preview
+- 1.1.41 Streamer Updates / Mini-Blog / Patch Notes
+- 1.1.42 Gated Content public presentation layer
+- 1.1.43 Sponsor/Affiliate link presentation + click event boundary
+
+
 
 **1.1 Public website**
 - 1.1.1 Public shell
@@ -12142,6 +12324,13 @@ Minden pont lezárásához: canonical contract → ownership/scope → permissio
 - 5.1.25 Tenant backup/recovery
 
 ## 00.9.22.8 — PHASE 6 — CREATOR BUSINESS
+- 6.1.49 Provider-gated subscriber/member content entitlement
+- 6.1.50 Sponsor/affiliate conversion analytics
+- 6.1.51 Automated Media Kit statistics aggregation
+- 6.1.52 Media Kit downloadable brand artifact package
+- 6.1.53 Gear sponsor/partner coupon tracking
+
+
 - 6.1.1 Storefront
 - 6.1.2 Store theme
 - 6.1.3 Physical product
@@ -12246,6 +12435,13 @@ Minden pont lezárásához: canonical contract → ownership/scope → permissio
 
 ## 00.9.22.11 — PHASE/POINT GATE
 Egy pont csak saját DoD-jének PASS állapotában zárható. Egy phase csak akkor zárható, ha minden pont functional, data/ownership, permission/security, migration/rollback, history/audit, API/webhook, portability, accessibility, responsive/mobile, performance, failure/degraded, backup/recovery, observability, localization és production/live gate szempontból PASS.
+
+## 00.9.22.12.A — HIÁNYZÓ FUNKCIÓK KORREKCIÓJÁNAK STÁTUSZA
+
+**Rögzítve:** 2026-09-28.  
+A korábbi auditokban szereplő, de csak magas szintű capability-ként vagy nem explicit módon dokumentált funkciók most canonical specifikációt és fejlesztési pontot kaptak: 50-step history/transaction rules, 2s autosave + LocalStorage recovery, block-level SANCI-RENDER-E500 isolation, pre-R2 5 MB/SVG/media security policy, editor hotkeys, Dynamic Live Hero, Gear Showcase, calendar/reminders, automated Media Kit, Clip OG video preview, public Poll/Prediction widget, gated subscriber/member content, sponsor/affiliate analytics és Streamer Updates CMS.
+
+**Feature-preservation:** a meglévő 0.x–8.x WBS pontok nem törlődtek és nem lettek kiváltva; a fenti pontok azok explicit részletezései vagy új standalone capability-k.
 
 ## 00.9.22.12 — CURRENT CHECKPOINT
 A WBS **nem módosítja az aktuális fejlesztési pontot**:
