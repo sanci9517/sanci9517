@@ -1,5 +1,5 @@
 import type { D1Database } from "@cloudflare/workers-types";
-import { DEFAULT_SITE_ID } from "./site-context";
+import { DEFAULT_SITE_ID } from "./site-context.ts";
 
 export const SCHEDULE_READ_MODES = ["upcoming", "all", "next"] as const;
 export const SCHEDULE_READ_ORDERS = ["asc", "desc"] as const;
