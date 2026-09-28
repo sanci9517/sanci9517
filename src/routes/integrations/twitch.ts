@@ -35,7 +35,8 @@ export async function twitchConnectRoute(request: Request, env: Env): Promise<Re
   if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302);
 
   try {
-    return Response.redirect(await createTwitchAuthorizationUrl(request, env, user.id), 302);
+    const { siteId } = getCanonicalSiteContext();
+    return Response.redirect(await createTwitchAuthorizationUrl(request, env, user.id, siteId), 302);
   } catch (err) {
     if (err instanceof Error && err.message === "TWITCH_INTEGRATION_NOT_CONFIGURED") {
       return error("TWITCH_INTEGRATION_NOT_CONFIGURED", 503);
@@ -84,8 +85,10 @@ export async function twitchConnectionRoute(request: Request, env: Env): Promise
   if (auth instanceof Response) return auth;
 
   const { siteId } = getCanonicalSiteContext();
-  const connection = await getOwnedTwitchConnection(env, siteId, auth.id);
-  if (!connection) return ok({ connected: false });
+  const owned = await getOwnedTwitchConnection(env, siteId, auth.id);
+  if (!owned) return ok({ connected: false });
+  const connection = await getTwitchConnection(env, auth.id);
+  if (!connection || connection.id !== owned.id) return ok({ connected: false });
   let scopes: string[] = [];
   try { scopes = JSON.parse(connection.scopesJson); } catch {}
   return ok({
@@ -104,13 +107,17 @@ export async function twitchValidationRoute(request: Request, env: Env): Promise
   if (auth instanceof Response) return auth;
 
   const { siteId } = getCanonicalSiteContext();
-  const connection = await getOwnedTwitchConnection(env, siteId, auth.id);
-  if (!connection) return error("TWITCH_CONNECTION_NOT_FOUND", 404);
+  const owned = await getOwnedTwitchConnection(env, siteId, auth.id);
+  if (!owned) return error("TWITCH_CONNECTION_NOT_FOUND", 404);
+  const connection = await getTwitchConnection(env, auth.id);
+  if (!connection || connection.id !== owned.id) return error("TWITCH_CONNECTION_NOT_FOUND", 404);
 
   try {
     if (!(await assertTwitchConnectionOwnership(env, siteId, auth.id, connection.id))) return error("TWITCH_CONNECTION_NOT_FOUND", 404);
     await getValidTwitchAccessToken(env, connection.id, { forceValidation: true });
-    const refreshed = await getOwnedTwitchConnection(env, siteId, auth.id);
+    const refreshedOwned = await getOwnedTwitchConnection(env, siteId, auth.id);
+    const refreshed = refreshedOwned ? await getTwitchConnection(env, auth.id) : null;
+    if (refreshed && refreshed.id !== refreshedOwned?.id) return error("TWITCH_CONNECTION_NOT_FOUND", 404);
     if (!refreshed) return error("TWITCH_CONNECTION_NOT_FOUND", 404);
 
     return ok({
