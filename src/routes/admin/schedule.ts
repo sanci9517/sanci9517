@@ -2,6 +2,7 @@ import { error, ok } from "../../core/response";
 import { getAuthenticatedUser, hasRole } from "../../core/auth/require-auth";
 import type { Env } from "../../types/env";
 import { auditStatement } from "../../core/audit";
+import { getCanonicalSiteContext } from "../../core/site-context";
 
 type ScheduleBody = { id?: unknown; title?: unknown; platform?: unknown; startsAt?: unknown; endsAt?: unknown; status?: unknown; url?: unknown; notes?: unknown };
 type ScheduleRow = { id: string; title: string; platform: string; starts_at: string; ends_at: string | null; status: string; url: string | null; notes: string };
@@ -34,11 +35,12 @@ function normalize(body: ScheduleBody) {
 function mapRow(row: ScheduleRow) { return { id: row.id, title: row.title, platform: row.platform, startsAt: row.starts_at, endsAt: row.ends_at, status: row.status, url: row.url, notes: row.notes }; }
 
 export async function adminScheduleRoute(request: Request, env: Env): Promise<Response> {
-  const user = await getAuthenticatedUser(request, env);
+  const { siteId } = getCanonicalSiteContext();
+ const user = await getAuthenticatedUser(request, env);
   if (!user) return error("UNAUTHORIZED", 401, "Authentication required");
   if (!hasRole(user, "editor")) return error("FORBIDDEN", 403, "Editor role required");
   if (request.method === "GET") {
-    const rows = await env.DB.prepare("SELECT id,title,platform,starts_at,ends_at,status,url,notes FROM schedule_items ORDER BY starts_at ASC").all<ScheduleRow>();
+    const rows = await env.DB.prepare("SELECT id,title,platform,starts_at,ends_at,status,url,notes FROM schedule_items WHERE site_id=? ORDER BY starts_at ASC").bind(siteId).all<ScheduleRow>();
     return ok(rows.results.map(mapRow));
   }
   let body: ScheduleBody;
@@ -47,7 +49,7 @@ export async function adminScheduleRoute(request: Request, env: Env): Promise<Re
     const data = normalize(body); if (!data) return error("INVALID_SCHEDULE_ITEM", 400);
     const id = crypto.randomUUID();
     await env.DB.batch([
-      env.DB.prepare(`INSERT INTO schedule_items (id,title,platform,starts_at,ends_at,status,url,notes) VALUES (?,?,?,?,?,?,?,?)`).bind(id, data.title, data.platform, data.startsAt, data.endsAt, data.status, data.url, data.notes),
+      env.DB.prepare(`INSERT INTO schedule_items (id,site_id,title,platform,starts_at,ends_at,status,url,notes) VALUES (?,?,?,?,?,?,?,?,?)`).bind(id, siteId, data.title, data.platform, data.startsAt, data.endsAt, data.status, data.url, data.notes),
       auditStatement(env, user.id, "schedule.create", "schedule_item", id, data)
     ]);
     return ok({ id, ...data });
@@ -55,10 +57,10 @@ export async function adminScheduleRoute(request: Request, env: Env): Promise<Re
   if (request.method === "PUT") {
     const id = typeof body.id === "string" ? body.id.trim() : ""; const data = normalize(body);
     if (!id || !data) return error("INVALID_SCHEDULE_ITEM", 400);
-    const result = await env.DB.prepare(`SELECT id FROM schedule_items WHERE id=? LIMIT 1`).bind(id).first<{id:string}>();
+    const result = await env.DB.prepare(`SELECT id FROM schedule_items WHERE id=? AND site_id=? LIMIT 1`).bind(id,siteId).first<{id:string}>();
     if (!result) return error("NOT_FOUND", 404, "Schedule item not found");
     await env.DB.batch([
-      env.DB.prepare(`UPDATE schedule_items SET title=?,platform=?,starts_at=?,ends_at=?,status=?,url=?,notes=?,updated_at=CURRENT_TIMESTAMP WHERE id=?`).bind(data.title, data.platform, data.startsAt, data.endsAt, data.status, data.url, data.notes, id),
+      env.DB.prepare(`UPDATE schedule_items SET title=?,platform=?,starts_at=?,ends_at=?,status=?,url=?,notes=?,updated_at=CURRENT_TIMESTAMP WHERE id=? AND site_id=?`).bind(data.title, data.platform, data.startsAt, data.endsAt, data.status, data.url, data.notes, id, siteId),
       auditStatement(env, user.id, "schedule.update", "schedule_item", id, data)
     ]);
     return ok({ id, ...data });
@@ -68,7 +70,7 @@ export async function adminScheduleRoute(request: Request, env: Env): Promise<Re
     const result = await env.DB.prepare("SELECT id FROM schedule_items WHERE id=? LIMIT 1").bind(id).first<{id:string}>();
     if (!result) return error("NOT_FOUND", 404, "Schedule item not found");
     await env.DB.batch([
-      env.DB.prepare("DELETE FROM schedule_items WHERE id=?").bind(id),
+      env.DB.prepare("undefined").bind(id,siteId),
       auditStatement(env, user.id, "schedule.delete", "schedule_item", id, {})
     ]);
     return ok({ id, deleted: true });
