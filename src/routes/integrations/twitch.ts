@@ -9,6 +9,8 @@ import {
   revokeTwitchConnection
 } from "../../core/twitch-oauth";
 import type { Env } from "../../types/env";
+import { getCanonicalSiteContext } from "../../core/site-context.ts";
+import { assertTwitchConnectionOwnership, bindNewTwitchConnectionToSite, getOwnedTwitchConnection } from "../../core/twitch-site-ownership.ts";
 
 function redirect(request: Request, status: string): Response {
   const url = new URL("/admin/editor", request.url);
@@ -55,9 +57,11 @@ export async function twitchCallbackRoute(request: Request, env: Env): Promise<R
   if (oauthError) return redirect(request, "denied");
   if (!code || !state) return redirect(request, "invalid");
 
+  const { siteId } = getCanonicalSiteContext();
   try {
-    await exchangeTwitchCode(request, env, code, state, user.id);
-    const connection = await getTwitchConnection(env, user.id);
+    await exchangeTwitchCode(request, env, code, state, user.id, siteId);
+    await bindNewTwitchConnectionToSite(env, siteId, user.id);
+    const connection = await getOwnedTwitchConnection(env, siteId, user.id);
     if (connection) {
       await env.DB.prepare("INSERT INTO audit_log (id,user_id,action,entity_type,entity_id,metadata_json) VALUES (?,?,?,?,?,?)")
         .bind(crypto.randomUUID(), user.id, "integration.twitch.connect", "twitch_connection", connection.id, JSON.stringify({ broadcasterId: connection.broadcasterId }))
@@ -79,7 +83,8 @@ export async function twitchConnectionRoute(request: Request, env: Env): Promise
   const auth = await requireAuthenticatedUser(request, env);
   if (auth instanceof Response) return auth;
 
-  const connection = await getTwitchConnection(env, auth.id);
+  const { siteId } = getCanonicalSiteContext();
+  const connection = await getOwnedTwitchConnection(env, siteId, auth.id);
   if (!connection) return ok({ connected: false });
   let scopes: string[] = [];
   try { scopes = JSON.parse(connection.scopesJson); } catch {}
@@ -98,12 +103,14 @@ export async function twitchValidationRoute(request: Request, env: Env): Promise
   const auth = await requireAuthenticatedUser(request, env);
   if (auth instanceof Response) return auth;
 
-  const connection = await getTwitchConnection(env, auth.id);
+  const { siteId } = getCanonicalSiteContext();
+  const connection = await getOwnedTwitchConnection(env, siteId, auth.id);
   if (!connection) return error("TWITCH_CONNECTION_NOT_FOUND", 404);
 
   try {
+    if (!(await assertTwitchConnectionOwnership(env, siteId, auth.id, connection.id))) return error("TWITCH_CONNECTION_NOT_FOUND", 404);
     await getValidTwitchAccessToken(env, connection.id, { forceValidation: true });
-    const refreshed = await getTwitchConnection(env, auth.id);
+    const refreshed = await getOwnedTwitchConnection(env, siteId, auth.id);
     if (!refreshed) return error("TWITCH_CONNECTION_NOT_FOUND", 404);
 
     return ok({
@@ -137,10 +144,12 @@ export async function twitchDisconnectRoute(request: Request, env: Env): Promise
   const auth = await requireAuthenticatedUser(request, env);
   if (auth instanceof Response) return auth;
 
-  const connection = await getTwitchConnection(env, auth.id);
+  const { siteId } = getCanonicalSiteContext();
+  const connection = await getOwnedTwitchConnection(env, siteId, auth.id);
   if (!connection) return ok({ disconnected: true });
 
   try {
+    if (!(await assertTwitchConnectionOwnership(env, siteId, auth.id, connection.id))) return error("TWITCH_CONNECTION_NOT_FOUND", 404);
     await revokeTwitchConnection(env, connection.id);
     await env.DB.batch([
       auditStatement(env, auth.id, "integration.twitch.disconnect", "twitch_connection", connection.id, {})
