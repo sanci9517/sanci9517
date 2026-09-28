@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.43.0  
+**Verzió:** MASTER-2.44.0  
 **Dátum:** 2026-09-28  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -8263,3 +8263,313 @@ PC/Desktop regression csak akkor nyílik meg, amikor a MASTER aktuális pontja t
 7. Ezután kizárólag a MASTER következő aktív checkpointja.
 
 **Nincs előreugrás.** A 0.x–10.0 terv azért van most rögzítve, hogy minden jelenlegi döntés később bővíthető legyen; nem azért, hogy a jelenlegi checkpointot megkerüljük.
+
+
+---
+
+# 00.9.10 — SAAS / CSOMAG / ENTITLEMENT / AI-OPCIONÁLIS MONETIZÁCIÓ — RÖGZÍTVE 2026-09-28
+
+**Döntés:** a későbbi platform nem kötelezően AI-termék. A felhasználó választhat olyan csomagot, amely csak a weboldal/creator-platform funkciókat tartalmazza, és külön dönthet AI-funkciók használatáról. A monetizáció teljes implementációja **nem 1.0 scope**, hanem a 4.0 Team/SaaS szakasz része; az 1.0–3.x során azonban a canonical capability/permission/usage architecture-t úgy kell kialakítani, hogy a későbbi csomagokhoz ne kelljen újraépíteni a domainrendszert.
+
+## Terméklogika
+
+A platform értéke nem az AI, hanem a teljes Creator Platform. Az AI egy választható capability/usage réteg.
+
+Lehetséges későbbi csomaglogika, végleges árak nélkül:
+- **Free/Starter:** alap weboldal és alap creator funkciók, szigorú limitekkel.
+- **Website:** professzionális weboldal, Visual Editor, Theme/Design, Pages, Schedule, alap platform-integrációk, SEO és domainhez kapcsolódó funkciók.
+- **Creator:** Website + több platform, content/media/analytics/automation funkciók a későbbi 2.x capability-kből.
+- **AI:** egy magasabb vagy külön AI-entitlement réteg; AI csak ott aktív, ahol a csomag vagy külön AI add-on engedélyezi.
+- **Pro/Business:** nagyobb limitek, több site/team/automation/content/analytics és üzleti funkciók.
+- **Enterprise:** egyedi limitek, csapat/tenant funkciók, speciális támogatás és szerződéses képességek.
+
+**Fontos:** ez példa-termékstruktúra, nem végleges csomagnevek vagy árak. A végleges árképzés külön üzleti/önköltségi audit után készül.
+
+## Canonical Entitlement modell
+
+A rendszer ne egyetlen `premium=true` flaggel dolgozzon. A későbbi subscription réteg legalább az alábbi fogalmakat különítse el:
+
+```
+Account / Tenant
+  └── Subscription
+       ├── Plan
+       ├── Plan Version
+       ├── Entitlements
+       ├── Usage Limits
+       ├── Usage Counters
+       ├── Billing State
+       └── Effective Dates
+```
+
+Az entitlementnek lehet:
+- capability;
+- limit;
+- quota;
+- usage metric;
+- feature flag;
+- site limit;
+- team/member limit;
+- storage limit;
+- platform limit;
+- automation limit;
+- AI capability;
+- AI usage/token/compute limit;
+- media/video processing limit.
+
+**Canonical szabály:** a csomag csak entitlementet ad; a tényleges biztonsági jogosultságot továbbra is a Permission/Authorization rendszer ellenőrzi. Egy UI-ban elrejtett gomb soha nem jelent security boundaryt.
+
+## AI külön kezelése
+
+Az AI capability-k külön entitlementként kezelhetők, például:
+- `ai.use`
+- `ai.read_content`
+- `ai.read_analytics`
+- `ai.modify_draft`
+- `ai.generate_content`
+- `ai.generate_media_job`
+- `ai.execute_automation`
+- `ai.publish`
+- `ai.external_publish`
+
+A csomag meghatározhatja, hogy ezek közül melyik érhető el, de a tényleges végrehajtást az AI permission + canonical command + validation + approval + audit lánc végzi.
+
+**Tilos:** olyan csomaglogika, amely közvetlenül megkerüli az authorizationt.
+
+## Usage / quota rendszer
+
+A későbbi AI és médiafunkcióknál nem elég a havi előfizetés. Mérhető capability-khez usage metrikák szükségesek, például:
+- AI inference/use;
+- AI generated content;
+- AI media jobs;
+- video processing minutes;
+- storage GB;
+- asset count;
+- automation executions;
+- platform connections;
+- team seats;
+- published sites;
+- API/webhook usage.
+
+A usage számlálásnak:
+- tenant/site/account scope;
+- idempotency;
+- period;
+- metric version;
+- source/action;
+- auditability;
+- correction/reconciliation
+képességgel kell rendelkeznie.
+
+## Árpolitikai döntési szabály
+
+A végleges árakat **nem most** határozzuk meg. A 4.0 Billing szakaszban külön költségmodell készül:
+
+`infrastructure cost + AI/media cost + payment cost + support/operations + safety margin + development/business cost → package economics`
+
+A csomagárat nem szabad kizárólag a konkurencia ára vagy érzés alapján meghatározni.
+
+A későbbi önköltségi modell külön vizsgálja:
+- Cloudflare Workers;
+- D1;
+- R2;
+- Queues/Workflows/Durable Objects;
+- AI provider/model költség;
+- videó/audio processing;
+- e-mail/notification;
+- payment provider;
+- monitoring/logging;
+- support;
+- backup/recovery;
+- tenant-isolation/operational overhead.
+
+A Cloudflare jelenlegi dokumentációja szerint Workers Paid minimum 5 USD/hó, D1 pedig használat és storage alapján számláz, míg R2-nél 10 GB/hó storage, 1M Class A és 10M Class B művelet ingyenes, internetes egress díj nélkül; ezek az árak később változhatnak, ezért a végleges csomagárakhoz mindig aktuális árlista kell. citeturn0search2turn0search1turn0search0
+
+A későbbi fizetésnél a payment provider díja is önköltség. A jelenlegi Stripe Hungary standard EEA kártyadíj 1,5% + 85 Ft, a Stripe Billing pay-as-you-go díja 0,7% Billing volume; ezek csak jelenlegi referenciaértékek, nem végleges üzleti feltételek. citeturn0search8turn0search10
+
+## Upgrade / downgrade / cancellation
+
+A Billing rendszernek később kezelnie kell:
+- trial;
+- upgrade;
+- downgrade;
+- cancellation;
+- renewal;
+- failed payment;
+- grace period;
+- entitlement effective date;
+- plan version;
+- proration;
+- refund/credit;
+- expired subscription;
+- account/site suspension;
+- export/delete;
+- invoice/payment history.
+
+**Adatbiztonság:** billing state és payment provider secret külön security boundary. Kártyaadatot saját D1-ben nem tárolunk.
+
+## 4.0 SaaS hardening
+
+A monetizáció csak a következő alapok stabil állapota után aktiválható:
+- account/site/workspace tenant isolation;
+- cross-tenant denial;
+- ownership;
+- role/permission;
+- audit;
+- usage accounting;
+- entitlement enforcement;
+- subscription lifecycle;
+- payment-provider adapter;
+- billing webhook verification/idempotency;
+- invoice/subscription state reconciliation;
+- export/delete;
+- backup/recovery.
+
+**Payment provider adapter:** a domain nem lehet Stripe-specifikus. A canonical Billing domain provider-agnosztikus marad, így később más payment provider integrálható.
+
+## 1.0–3.x előkészítés
+
+Az 1.0-ig csak a szükséges alapok készülnek:
+- capability registry;
+- permission registry;
+- site/account scope;
+- canonical actor/ownership;
+- feature availability ellenőrzési pont;
+- jövőbeli entitlement hookok helye;
+- usage-sensitive feature-ekhez domain contract;
+- AI capability registry és permission model előkészítése.
+
+**Nem készül 1.0 előtt:** checkout, subscription UI, payment webhook, számlázás, végleges pricing page, AI-paid quota billing.
+
+## 4.0 Definition of Done
+
+- [ ] Plan/Plan Version canonical domain.
+- [ ] Subscription lifecycle.
+- [ ] Entitlement engine.
+- [ ] Capability ↔ Permission ↔ Entitlement boundary.
+- [ ] Usage metering.
+- [ ] AI-specific usage metering.
+- [ ] Media/video usage metering.
+- [ ] Payment provider abstraction.
+- [ ] Payment webhook signature verification.
+- [ ] Idempotent billing event processing.
+- [ ] Invoice/payment/subscription reconciliation.
+- [ ] Upgrade/downgrade/cancel/trial/grace/refund lifecycle.
+- [ ] Tenant/site entitlement enforcement.
+- [ ] Admin Billing workspace.
+- [ ] Customer-facing plan/usage view.
+- [ ] Audit/observability.
+- [ ] Export/recovery.
+- [ ] Security/abuse/denial-of-wallet protections.
+- [ ] Production billing gate.
+
+## 100 felhasználós üzemeltetési döntés
+
+A platformot nem úgy tervezzük, hogy minden új felhasználóhoz külön szerver kelljen. A jelenlegi Cloudflare-alapú control-plane architektúra közös Workers/D1/R2 infrastruktúrán tud több site-ot kezelni; később a tényleges költség fő hajtóereje a használat, különösen média/video és AI lehet. Cloudflare saját webapp-architektúra dokumentációja is Workers + D1 + R2 + Durable Objects + Queues jellegű rétegeket használ erre a célra. citeturn0search13
+
+**Termékdöntés:** a 100 felhasználó eléréséhez nem szükséges előre drága infrastruktúrát kiépíteni. A költségfigyelést és budget alertet már a használat növekedésével kell bevezetni; Cloudflare jelenleg account-szintű budget alert lehetőséget is biztosít. citeturn0search11
+
+---
+
+# 00.9.11 — 1.0 „MIKOR LÁTOM A MŰKÖDŐ WEBOLDALT?” — RÖGZÍTETT SZAKASZ
+
+A fejlesztés két külön mérföldkövet kezel:
+
+### A. Első működő public weboldal
+Ez **nem azonos a teljes 1.0-val**.
+
+A lehető leghamarabbi értelmes mérföldkő:
+- canonical Page Model;
+- legalább egy stabil public renderer;
+- Home oldal;
+- alap Sanci tartalom;
+- published snapshot;
+- public route;
+- responsive alap;
+- működő deploy.
+
+Ezen a ponton a felhasználó már ténylegesen meg tudja nyitni a saját weboldalát és látja a működő publikus oldalt.
+
+### B. 1.0 Production Milestone
+Az 1.0 csak akkor zárható, amikor a teljes 1.0 scope elkészült és végigment a kötelező production gate-en:
+**FUNCTIONAL → SECURITY → DATA → API → AUTHORIZATION → UX → ACCESSIBILITY → TEST → CI → LIVE → PERFORMANCE → OBSERVABILITY → BACKUP/RECOVERY → NEXT-VERSION READINESS → MASTER CHECKPOINT.**
+
+A „működő weboldal” ezért korábban megjelenhet, mint a teljes 1.0.
+
+## Időbecslési módszer
+
+A korábbi tapasztalatok alapján nem optimista „ha minden elsőre sikerül” becslést használunk. A projektet lassú, alapos, auditált fejlesztéssel kell becsülni, beleértve:
+- auditot;
+- kódolást;
+- regressziót;
+- CI-t;
+- Cloudflare/D1 live tesztet;
+- felhasználói ellenőrzést;
+- MASTER frissítést;
+- szükséges visszalépéseket és gyökérok-javításokat.
+
+**Jelenlegi állapotból a következő becslési sávok:**
+
+| Mérföldkő | Becsült fejlesztési idő |
+|---|---:|
+| Első valóban működő public Home/weboldal | **kb. 15–30 óra** |
+| Sanci weboldal első használható 1.0-közeli változata | **kb. 50–90 óra** |
+| Teljes 1.0 production milestone | **kb. 100–170 óra** |
+| 1.0 + komolyabb stabilizáció/regresszió tartalék | **kb. 120–190 óra** |
+
+Ezek **fejlesztési órák**, nem naptári napok. Műszakos munka és család mellett a naptári idő hosszabb lehet.
+
+### Miért nem mondok egyetlen dátumot?
+
+Mert a jelenlegi aktív pont még a Twitch ownership security gate. Utána E4.3 teljes lezárás → E4.4 → E5 → F Schedule CRUD/Inspector → G presentation/templates → H preview/public integration → I teljes E2E → J legacy cleanup, majd az 1.0 további website/editor/media/public production gate-jei következnek.
+
+A **15–30 óra** az első működő public weboldalra nem azt jelenti, hogy addig minden 1.0 kész. A cél az, hogy legyen egy valódi, publikus, szerveroldali, deployolt oldal, amelyre már rá lehet építeni a teljes rendszert.
+
+## Kötelező fejlesztési sorrend a weboldalig
+
+1. **40.69.13.E4.3.4** — remote 0016 migration + live security gate.
+2. **E4.3.5–E4.3.8** — teljes Twitch/site ownership hardening.
+3. **E4.4** — site_id NOT NULL/schema hardening.
+4. **E5** — regression + D1/live verification.
+5. **F** — Schedule CRUD + Inspector.
+6. **G** — templates/presentation/theme integration.
+7. **H** — preview/public integration + shared render contract.
+8. **I** — teljes Editor → Schedule → Publish → Public E2E.
+9. **J** — legacy cleanup.
+10. **Early Public Website milestone** — Home + public renderer + published content + responsive + production deploy.
+11. Ezután a további 1.0 weboldal/editor/media/public funkciók.
+12. **1.0 Production Gate** — teljes Definition of Done.
+
+**Fontos:** az Early Public Website mérföldkő nem nyit új párhuzamos munkasávot. Az aktuális aktív pont továbbra is kizárólag **40.69.13.E4.3.4**.
+
+---
+
+# 00.9.12 — VÉGLEGES HOSSZÚ TÁVÚ TERMÉK- ÉS MONETIZÁCIÓS ELV
+
+A platform fejlődési sorrendje:
+
+**0.x Foundation**
+→ **1.0 Working Creator Website Platform**
+→ **1.5 Multi-platform Creator**
+→ **2.0 Creator Operating System**
+→ **3.0 AI Creator Platform**
+→ **4.0 Team/SaaS + Billing**
+→ **5.0 Creator Platform**
+→ **6.0 Creator Ecosystem**
+→ **7.0 Advanced Automation + AI**
+→ **8.0 Multimodal Creator Intelligence**
+→ **9.0 Advanced Personal Creator AI**
+→ **10.0 Full Creator Operating Platform**
+
+A monetizáció nem változtatja meg ezt a sorrendet.
+
+**AI nem kötelező termékkomponens a felhasználó számára.** A platform úgy készül, hogy:
+- csak weboldalt használó creator is értelmes csomagot kaphasson;
+- többplatformos creator magasabb capability csomagot választhasson;
+- AI-t használó creator AI entitlementet és usage limitet kaphasson;
+- nagyobb media/video/automation igény külön usage/limit réteggel kezelhető legyen;
+- team/business ügyfelek külön entitlementszerkezetet kaphassanak;
+- minden csomag ugyanarra a canonical domain/permission/command/audit alapra épüljön.
+
+**Tilos:** csomagonként külön Page Model, külön Editor, külön Theme, külön Asset rendszer, külön AI command system vagy külön authorization rendszer.
+
+**Ez a döntés 1.0-tól 10.0-ig érvényes.**
