@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.42  
+**Verzió:** MASTER-2.41.0  
 **Dátum:** 2026-09-28  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -5498,3 +5498,767 @@ A remote migration/live gate előtt az E4.3.5 technikai döntési alapjai telefo
 **Következő valódi blokkoló:** a remote `0016_twitch_oauth_site_ownership.sql` migration alkalmazása és a hozzá tartozó live D1/security verification. Ez már PC Execution Packet.
 
 Ez a munkamódszer **nem gyorsítási kényszer**, hanem PC-idő optimalizálás biztonságos keretek között. Ha a teljes ellenőrzéshez gép kell, a fejlesztés várhat; a MASTER terv és az előkészítő munka közben telefonról folytatható.
+---
+
+# 50 — ULTIMATE CREATOR PLATFORM CAPABILITY MATRIX — 2026-09-28
+
+**Státusz:** [x] TERVSZINTŰEN RÖGZÍTVE. Ez a MASTER végállapotának részletes capability-rétege; nem írja felül a jelenlegi aktív 40.x checkpointokat.
+
+**Cél:** a Sanci9517 legyen moduláris Creator Platform: professzionális website builder + CMS + streamer hub + multi-platform integrations + OBS + content factory + automation + analytics + AI + későbbi SaaS. A modern visual editorok külön kezelik a komponenseket, field/Inspector réteget, nested struktúrát, responsive viewportokat, permissions-t és pluginokat; ezeket saját canonical contractként használjuk. citeturn0search1turn0search2turn0search4turn0search7
+
+## 50.1 — MODULÁRIS CREATOR CENTER
+
+**Nem készül egyetlen óriási adminoldal.** Közös AdminShell + külön workspace-ek:
+
+1. Dashboard
+2. Weboldal
+3. Tartalom
+4. Média
+5. Stream
+6. Platformok
+7. Overlay Studio
+8. Automatizáció
+9. Content Factory
+10. Analytics
+11. Community
+12. Monetization
+13. AI Copilot
+14. Biztonság
+15. Beállítások
+
+Weboldal: Áttekintés, Oldalak, Weboldalszerkesztő, Theme, Navigáció, SEO, Domain, Preview/Publish.
+
+Stream: Áttekintés, Schedule, Live Status, Games/Categories, Stream Settings.
+
+Platformok: Twitch, YouTube, TikTok, Kick, Discord, future adapters.
+
+Tartalom: Posts/Updates, VOD, Clips, Videos, Games, Collections, Forms.
+
+Média: Asset Library, Images, Video, Audio, Thumbnails, Brand Assets, Cleanup/Storage.
+
+**Megjegyzés:** a Dashboard összefoglaló és navigációs központ. A komplex munkát mindig a megfelelő workspace végzi.
+
+## 50.2 — KÖZÖS ADMIN SHELL / NAVIGÁCIÓ
+
+Minden admin route ugyanazt a canonical AdminShell-t használja.
+
+Minden admin oldalon:
+- Creator Center főoldal
+- Publikus weboldal
+- aktuális workspace
+- site/account context
+- save/dirty state
+- notification
+- help
+- profile
+- logout
+- session-expiry jelzés
+- responsive navigation
+- breadcrumb, ahol indokolt
+- „Megnyitás publik oldalként”
+- „Szerkesztés”, ha jogosult
+
+**Kötelező navigációs kör:**
+
+PUBLIC HOME → LOGIN → CREATOR CENTER → BÁRMELY MODUL → DASHBOARD → PUBLIC SITE
+
+A felhasználó nem kerülhet zsákutcába.
+
+## 50.3 — AUTOMATIKUS KIJELENTKEZÉS / SESSION SECURITY
+
+Kötelező:
+- server-side session
+- HttpOnly cookie
+- Secure productionban
+- megfelelő SameSite
+- login utáni session rotation
+- idle timeout
+- absolute timeout
+- session revoke
+- current/all-session logout
+- session/device lista
+- security audit
+- CSRF-védelem cookie-alapú state-changing műveleteknél
+- login/sensitive-action rate limit
+- brute-force védelem
+
+Két timeout:
+1. Idle timeout — inaktivitás után.
+2. Absolute timeout — maximális munkamenet után.
+
+Lejárás előtt figyelmeztetés:
+„A munkameneted hamarosan lejár. [Maradok bejelentkezve] [Kijelentkezés]”
+
+Lejárás után:
+„A munkameneted lejárt. Jelentkezz be újra.”
+
+**Tiltás:** localStorage token nem lehet az admin auth canonical mechanizmusa.
+
+Editor dirty state esetén lejárás előtt figyelmeztetés; lejárás után nincs végtelen 401 retry.
+
+## 50.4 — PUBLIC / ADMIN HATÁR
+
+PUBLIC:
+- published Page Model
+- public domain API
+- SEO
+- public assets
+
+ADMIN:
+- authenticated Creator Center
+- Editor
+- CMS
+- integrations
+- settings
+
+A public renderer nem bízhat az admin UI-ban.
+
+## 50.5 — PUBLIC WEBSITE TELJES KÉPESSÉGTÉR
+
+Oldalak:
+Home, About, Schedule, Live, Videos, VOD, Clips, Games, Updates/News, Community, Contact, Support, Media Kit, FAQ, Search, Custom Pages, 404, error fallback, privacy/legal, cookie preferences.
+
+Komponensek:
+Hero, Header, Footer, Navigation, Live indicator, Countdown, Next Stream, Schedule, Stream Card, Game Card, Video Card, VOD Grid, Clip Grid, Social Links, Discord CTA, Support CTA, Newsletter, FAQ, Contact Form, Gallery, Stats, Timeline, Tabs, Accordion, Modal, Search, Pagination/Load more, Breadcrumb, Related content, Share controls.
+
+Dinamikus:
+live state, schedule, current game, VOD, clips, social, community, creator profile, games, collections, announcements, platform status.
+
+**Szabály:** platform payload nem kerül közvetlenül Page Modelbe.
+
+## 50.6 — VISUAL EDITOR VÉGÁLLAPOT
+
+Canvas:
+- desktop/tablet/mobile
+- custom viewport
+- zoom/fit
+- guides/grid
+- responsive preview
+- editor theme
+
+Structure:
+- Layers
+- nested nodes
+- selection
+- multi-select
+- range selection
+- reparent
+- reorder
+- group/ungroup
+- lock/hide
+- duplicate/delete
+- copy/paste
+- reusable components
+- slots
+- symbols
+- variants
+- instance overrides
+
+Inspector:
+- content
+- typography
+- spacing
+- layout
+- flex/grid
+- sizing
+- position
+- responsive
+- visibility
+- interaction
+- accessibility
+- SEO
+- data binding
+- component properties
+- advanced options
+
+History/safety:
+- undo/redo
+- transactions
+- batches
+- command log
+- revisions
+- autosave
+- recovery
+- conflict detection
+- diagnostics
+- error boundary
+
+## 50.7 — THEME / DESIGN SYSTEM
+
+Tokens:
+colors, semantic colors, typography, fonts, scale, line-height, spacing, radius, shadows, borders, container widths, breakpoints, z-index, motion.
+
+Component styles:
+buttons, cards, forms, navigation, header/footer, badges, alerts, inputs, tables, modals.
+
+Lifecycle:
+Preset → Customize → Preview → Draft → Publish → Rollback
+
+Presets:
+Minimal, Dark Gaming, Streamer, Esports, Creator, Clean, Neon, Custom.
+
+Preset nem írhatja megkerülő úton a Page Modelt.
+
+## 50.8 — CMS / STRUCTURED CONTENT
+
+Content types:
+pages, posts, announcements, videos, clips, games, creators, events, FAQs, links, testimonials, custom collections.
+
+Fields:
+text, long text, rich text, number, boolean, date/datetime, URL, image/video/audio, reference, multi-reference, select, multi-select, slug, structured JSON where justified.
+
+Capabilities:
+draft, publish/unpublish, archive, duplicate, search/filter/sort, saved views, bulk actions, validation, references, import/export, revision, rollback, localization, permissions.
+
+A Wix CMS collection-alapú tartalmat kapcsol dinamikus oldalakhoz és elemekhez; ezt a separation-of-concerns elvet saját canonical modellel követjük. citeturn2search1
+
+## 50.9 — FORM PLATFORM
+
+Public:
+contact, business inquiry, support, newsletter, community, custom forms.
+
+Admin:
+form builder, field types, validation, consent, submissions, status, notes, export, retention, deletion, audit.
+
+Security:
+CSRF, spam protection, rate limit, sanitization, upload validation, file-size/type limits, PII minimization.
+
+## 50.10 — MEDIA / ASSET PLATFORM
+
+Library:
+folders, tags, search, filters, sorting, preview, metadata, alt text, title, caption, source/copyright, dimensions, size, mime, usage references.
+
+Lifecycle:
+Upload → Validate → Scan → Metadata → Optimize → Store → Reference → Publish → Usage tracking → Cleanup
+
+Future:
+R2, signed upload/download, public/private assets, CDN, responsive images, thumbnails, video posters, transcoding queue.
+
+## 50.11 — SEO / DISCOVERABILITY
+
+Site:
+title, description, favicon, default social image, canonical domain, sitemap, robots, schema defaults.
+
+Page:
+title, description, slug, canonical, index/noindex, OG, structured data, locale, hreflang.
+
+Technical:
+301 redirects, redirect-chain detection, broken links, sitemap validation, robots validation, canonical validation, duplicate content, heading hierarchy, alt audit, structured-data validation.
+
+Webflow és Wix is külön kezeli a sitemap, redirect, canonical, OG, schema és robots capability-ket. citeturn2search0turn2search2
+
+## 50.12 — SEARCH PLATFORM
+
+Public:
+pages, posts, videos, VOD, clips, games, tags, filters, pagination, empty state, később typo tolerance.
+
+Admin:
+pages, content, media, integrations, audit.
+
+Közös indexing/query abstraction; nem modulonként külön search engine.
+
+## 50.13 — LOCALIZATION
+
+1.0: HU-HU. Később bővíthető.
+
+- locale registry
+- language/region
+- display name
+- fallback
+- route strategy
+- enable/disable
+- publish state
+- UI translations
+- content translations
+- SEO/OG translations
+- alt text
+- localized slugs
+- metadata
+- date/time/number formatting
+- RTL
+- translation status
+- missing translation
+- inheritance/override
+- locale-specific visibility
+
+A Webflow localization modellje primary-locale inheritance/override megközelítést használ contentre, style-ra, komponensekre és page settingsre; ez releváns referencia. citeturn2search8turn2search10turn2search13
+
+## 50.14 — MULTI-PLATFORM ADAPTER LAYER
+
+Minden platform:
+auth → identity → capabilities → live → schedule → content → media → events → publishing → analytics
+
+Twitch:
+OAuth, identity, live, metadata, schedule, EventSub, VOD, clips, permitted analytics.
+
+YouTube:
+OAuth, channel, live, videos, Shorts workflow, live chat, playlists, analytics.
+
+TikTok:
+OAuth, creator identity, content workflow, permitted publishing, consent/audit, capability detection.
+
+Kick/future: csak dokumentált, stabil API-képesség esetén.
+
+**Platform payload nem kerül Page Modelbe.**
+
+## 50.15 — SCHEDULE VÉGÁLLAPOT
+
+Next Stream, Next 3, Weekly, Full, Featured, manual event, platform event, game, artwork, timezone, recurring, exceptions, conflict detection, source ownership, manual override, sync state, calendar export, reminders, social export, Discord notification, VOD linkage, clip linkage.
+
+## 50.16 — LIVE STATUS
+
+Public:
+live/offline, current game, title, viewer count where permitted, start time, watch CTA, live badge, countdown, graceful stale state.
+
+Backend:
+EventSub/webhook where appropriate, minimal polling, cache/TTL, stale-while-revalidate where useful, rate limits, failure fallback.
+
+## 50.17 — CONTENT FACTORY
+
+STREAM → VOD → INGEST → ANALYZE → HIGHLIGHT → CLIP → CAPTION → REFRAME → BRAND → REVIEW → APPROVE → PUBLISH → ANALYZE
+
+- VOD import
+- processing queue
+- clip candidates
+- timestamps
+- reason/evidence
+- confidence
+- manual selection
+- 9:16/16:9/1:1
+- captions
+- subtitle styling
+- branding
+- watermark
+- intro/outro
+- lower thirds
+- thumbnail
+- title/description/tags
+- chapters
+- export
+- publish
+- approval
+- scheduling
+
+## 50.18 — OBS LOCAL CREATOR BRIDGE
+
+Az OBS WebSocket távoli vezérlést, scene switchinget és automatizálást támogat; OBS 28+ esetén beépített és hitelesíthető. citeturn2search4
+
+Bridge:
+local app, secure pairing, explicit permissions, status, reconnect/backoff, revoke, local secret, audit.
+
+Read:
+scenes, scene collections, sources, stream state, recording, replay buffer, audio state.
+
+Control:
+scene switch, stream start/stop, recording start/stop, replay trigger, marker, permitted source operations.
+
+**Tiltás:** public Worker nem kap közvetlen, korlátlan hozzáférést a streamer gépéhez.
+
+## 50.19 — OVERLAY STUDIO
+
+Külön workspace.
+
+text, image, video, alerts, chat, goals, counters, events, webcam frame, game frame, browser source, custom widget, scene layers, canvas, layers, inspector, alignment, snapping, vertical layouts, preview, templates, brand tokens, asset library.
+
+A StreamElements Overlay Editor overlay/widget/alert capability-ket használ; ez benchmark, nem másolási cél. citeturn2search3
+
+## 50.20 — AUTOMATION ENGINE
+
+TRIGGER → CONDITION → ACTION → RESULT → RETRY/FAILURE → AUDIT
+
+Triggers:
+stream started/ended, schedule changed, new VOD, clip candidate, content approved, platform event, timer, webhook, manual, threshold.
+
+Actions:
+public live-state update, notification, Discord, content job, export, publish, OBS action, email, CMS update.
+
+Reliability:
+idempotency, retry, backoff, dead-letter, cancellation, timeout, rate limit, audit, replay, manual retry.
+
+## 50.21 — ANALYTICS
+
+Website:
+views, unique visitors, referrer, device, locale, CTA, outbound, search.
+
+Stream:
+duration, viewers where available, chat activity, game/category, quality, events.
+
+Content:
+views, engagement, retention where available, clip performance, platform comparison.
+
+Privacy:
+consent-aware, minimization, retention, export, deletion, provider configuration, opt-out.
+
+## 50.22 — COMMUNITY
+
+Discord, social, unified profile, announcements, notifications, events, future chat aggregation, permitted moderation, member-facing pages, future loyalty.
+
+## 50.23 — MONETIZATION / BUSINESS
+
+Support:
+support links, tips, donation providers, thank-you.
+
+Business:
+business contact, media kit, sponsorship inquiry, affiliate links, campaigns.
+
+Future:
+merch, products, checkout, subscriptions, memberships, gated content.
+
+Billing/payment külön security/compliance domain.
+
+## 50.24 — AI COPILOT
+
+AI nem lehet második editor.
+
+Permissions:
+enable/disable, data scope, retention, provider/model, usage/cost limits, publish permission, audit.
+
+Capabilities:
+page suggestions, section generation, rewrite, SEO, translation, schedule suggestions, stream summary, highlight detection, clip candidates, captions, social copy, thumbnail brief, analytics explanation, automation suggestions.
+
+Safety:
+AI proposal → Preview → User approval → Canonical command → Validation → History → Rollback → Audit.
+
+AI nem írhat közvetlenül tetszőleges D1/Page Model állapotot.
+
+## 50.25 — SECURITY CENTER
+
+Account:
+profile, email, auth, recovery, 2FA later, account deletion, export.
+
+Sessions:
+active sessions, device, browser, last activity, revoke, revoke all.
+
+Integrations:
+OAuth status, scopes, identity, last validation, last sync, reconnect, disconnect, revoke.
+
+Security log:
+login, logout, session expiry, OAuth, publish, permission changes, sensitive settings.
+
+## 50.26 — PERMISSIONS / ROLES
+
+1.0 foundation:
+owner, admin, editor, content editor, analyst, viewer.
+
+Future:
+custom roles, site permissions, workspace permissions, publish permission, integration permission, billing permission, AI permission.
+
+## 50.27 — BACKUP / RECOVERY / EXPORT
+
+Export:
+pages, theme, navigation, content, media manifest, integration metadata without secrets.
+
+Recovery:
+revision restore, site snapshot, backup timestamp, integrity check, restore preview, restore publish.
+
+Secret/token plaintext export tilos.
+
+## 50.28 — CUSTOM DOMAIN
+
+custom domain, DNS verification, SSL, primary domain, redirects, www/non-www, locale routing, ownership, removal, staging, preview.
+
+## 50.29 — NOTIFICATION CENTER
+
+Events:
+success, warning, error, security, publish, integration, automation, media processing, session expiry.
+
+Delivery:
+in-app, email, Discord, push, webhook.
+
+## 50.30 — MINDEN ADMIN MODUL DEFINÍCIÓS SZABÁLYA
+
+Minden új modulhoz:
+1. route
+2. workspace
+3. domain contract
+4. permission
+5. API
+6. validation
+7. loading
+8. empty
+9. error
+10. success
+11. audit
+12. responsive
+13. accessibility
+14. diagnostics
+15. tests
+16. CI
+17. live gate
+18. MASTER checkpoint
+
+## 50.31 — MINDEN ADMIN OLDAL ÁLLAPOTAI
+
+LOADING, EMPTY, READY, DIRTY, SAVING, SAVED, ERROR, OFFLINE/DEGRADED, UNAUTHORIZED, SESSION_EXPIRED, PERMISSION_DENIED.
+
+Editor plusz:
+DRAFT, PREVIEW, PUBLISHING, PUBLISHED, CONFLICT, RECOVERY.
+
+## 50.32 — RESPONSIVE ADMIN
+
+Desktop: full navigation, multi-panel workspace, keyboard.
+
+Tablet: collapsible navigation, responsive inspector, touch-safe controls.
+
+Mobile: drawer/bottom navigation, one primary task, panels as drawers, sticky primary actions, no horizontal overflow, touch targets, session warning, admin/public quick navigation.
+
+**Megjegyzés:** mobile admin nem desktop összenyomva.
+
+## 50.33 — ACCESSIBILITY
+
+Semantic HTML, keyboard, visible focus, aria, live regions, focus trap, escape, reduced motion, contrast, text scaling, touch targets, form error association, heading hierarchy, alt, captions, screen-reader audit.
+
+## 50.34 — PERFORMANCE
+
+Production gate:
+LCP, CLS, INP, image optimization, lazy loading, responsive images, font optimization, JS budget, caching, CDN, server response budget, third-party script budget, analytics budget, renderer profiling.
+
+A Google Page Experience útmutatója a Core Web Vitals, biztonságos kiszolgálás és mobil használhatóság együttesét hangsúlyozza. citeturn2search5
+
+## 50.35 — KÖZÖS BRAND SYSTEM
+
+Website Theme → Public Website → Overlay Studio → OBS Layouts → Content Templates → Social Export.
+
+Közös tokenek:
+colors, typography, logo, spacing, imagery, component styles, motion, watermark.
+
+Közös brand token igen; közös runtime/state nem kötelező.
+
+## 50.36 — TEMPLATE ECOSYSTEM
+
+Website:
+streamer, gaming, creator, esports, minimal, portfolio, content creator.
+
+Sections:
+hero, schedule, live, about, social, videos, clips, community, support, footer.
+
+Future:
+personal templates, shared templates, marketplace, versioning, compatibility, import/export.
+
+## 50.37 — PUBLIC PAGE LIFECYCLE
+
+Create → Edit → Save Draft → Preview → Validate → Publish → Public Snapshot → Monitor → Revision → Rollback
+
+Publish gate:
+schema, binding, asset, links, SEO, accessibility warnings, responsive sanity, permission, audit, revision.
+
+## 50.38 — PRE-PUBLISH QUALITY CENTER
+
+Külön Publish Check nézet:
+- Page valid
+- Required content
+- Internal links
+- Image alt
+- SEO title
+- Mobile sanity
+- Unused asset warning
+- Missing OG warning
+
+Minden problémához lehetőleg:
+**probléma → hely → javítás**
+
+## 50.39 — DIAGNOSTICS / HEALTH CENTER
+
+Developer:
+JS, promise, command, API, renderer, validation.
+
+Product:
+database, integration, sync, storage, publish, automation, media.
+
+User-facing:
+operational, reauthorization required, degraded, processing delayed.
+
+## 50.40 — INTEGRATION HEALTH
+
+Minden connection:
+connected / disconnected / expired / reauthorization required / degraded / rate limited / sync error / last successful sync / next retry / reconnect.
+
+## 50.41 — MULTI-SITE / MULTI-TENANT
+
+Minden mutable adatnál explicit:
+account_id, site_id, workspace_id where required.
+
+Kötelező:
+tenant isolation, site isolation, integration ownership, asset ownership, content ownership, page ownership, permission enforcement, cross-site denial, audit scope.
+
+## 50.42 — API / WEBHOOK PLATFORM
+
+API:
+versioning, authentication, authorization, rate limits, pagination, filtering, idempotency, validation, error envelope, request IDs, audit.
+
+Webhooks:
+verification, signatures, replay protection, retry, delivery logs, dead letter, disable, secret rotation.
+
+## 50.43 — DATA GOVERNANCE
+
+classification, PII, secrets, retention, deletion, export, audit, backup, restore, access logging, privacy.
+
+## 50.44 — FEATURE COMPLETENESS AUDIT
+
+Minden nagy milestone előtt:
+
+**Public:** pages, navigation, content, media, SEO, accessibility, performance, forms, search, legal, analytics.
+
+**Admin:** dashboard, modular navigation, permissions, session, logout, auto logout, errors, audit.
+
+**Editor:** canvas, layers, inspector, components, responsive, history, publish, recovery.
+
+**Domain:** schedule, games, platforms, content, media.
+
+**Integration:** Twitch, YouTube, TikTok, future platforms.
+
+**Creator:** OBS, overlays, automation, content factory, analytics, AI.
+
+**Professional:** custom domain, collaboration, roles, backups, multi-site, SaaS.
+
+## 50.45 — TELJES VÉGREHAJTÁSI SORREND
+
+### PHASE 0 — Foundation / Security / Contract
+architecture audit → route inventory → domain inventory → API inventory → D1 ownership → auth/session → public/admin boundary → error contract → audit contract → capability registry → account/site scope → permission foundation → feature flags → observability → test harness.
+
+### PHASE 1 — Creator Center
+AdminShell → global navigation → Dashboard → public shortcut → profile → session indicator → auto logout → expiry modal → unauthorized state → mobile navigation → breadcrumbs → notifications → help → module registry → permission-aware navigation.
+
+### PHASE 2 — Website Management
+pages → create → rename → duplicate → archive → delete → order → slug → SEO → navigation → preview → publish → revisions → rollback → redirects → 404.
+
+### PHASE 3 — Visual Editor
+selection → multi-select → group/ungroup → reusable components → slots → variants → responsive → inspector → typography → layout → spacing → visibility → accessibility → data binding → history → autosave → recovery → conflict → diagnostics.
+
+### PHASE 4 — Theme
+tokens → theme → presets → typography → colors → spacing → component styles → responsive → preview → publish → rollback.
+
+### PHASE 5 — CMS
+types → records → fields → references → validation → collections → filters → search → bulk → import/export → revisions → publish.
+
+### PHASE 6 — Media
+library → upload → metadata → alt → optimization → references → orphan detection → storage → R2 preparation → processing queue.
+
+### PHASE 7 — Twitch / Schedule
+ownership → OAuth → token lifecycle → live → schedule → games → sync → conflict → Editor → public → templates → E2E.
+
+### PHASE 8 — YouTube / TikTok / Future Platforms
+adapter → OAuth → identity → capabilities → content → live → schedule → publishing → analytics → errors → rate limits → revoke.
+
+### PHASE 9 — Public Content
+VOD → Clips → Videos → Games → Updates → Search → Collections → related content → dynamic SEO.
+
+### PHASE 10 — Forms / Community
+forms → submissions → newsletter → Discord → community → notifications → moderation foundation.
+
+### PHASE 11 — OBS / Overlay
+bridge → secure pairing → permissions → scene read → scene control → alerts → widgets → templates → brand sync → automation.
+
+### PHASE 12 — Automation
+triggers → conditions → actions → jobs → retry → idempotency → audit → UI → run history → recovery.
+
+### PHASE 13 — Content Factory
+VOD ingestion → processing → highlight detection → clips → captions → reframe → branding → review → publish → analytics.
+
+### PHASE 14 — Analytics
+website → stream → content → platform → audience → reports → privacy → trends → future experiments.
+
+### PHASE 15 — AI
+permission → assistant → content → design → stream intelligence → clips → translation → analytics → automation suggestions → approval → audit.
+
+### PHASE 16 — Professional / SaaS
+multi-site → team → roles → collaboration → custom domains → backup → restore → billing → packages → usage limits → white-label → marketplace.
+
+## 50.46 — DEFINITION OF DONE
+
+DESIGN → DOMAIN CONTRACT → DATA MODEL → API → AUTHORIZATION → VALIDATION → UI → PUBLIC/ADMIN RENDER → ERROR STATES → AUDIT → UNIT TEST → INTEGRATION TEST → CI → LIVE TEST → SECURITY TEST → ACCESSIBILITY TEST → PERFORMANCE CHECK → USER PASS → MASTER CHECKPOINT
+
+## 50.47 — NO FEATURE LEFT BEHIND
+
+Új benchmark capability esetén:
+1. azonosítás
+2. forrás
+3. user value
+4. platform fit
+5. security impact
+6. data impact
+7. domain
+8. workspace
+9. public/admin szükséglet
+10. dependency
+11. verzióbesorolás
+12. implementation contract
+13. test contract
+14. MASTER rögzítés
+
+Releváns funkció nem veszhet el azért, mert „most még nem kell”; backlogba kerül.
+
+## 50.48 — NO FEATURE BLOAT / NO PARALLEL SYSTEMS
+
+Canonical:
+ONE Page Model
+ONE Presentation Contract
+ONE Theme System
+ONE Command System
+ONE History System
+ONE Validation Layer
+ONE Asset Model
+ONE Permission Model
+ONE Audit Model
+ONE Publish Model
+ONE Integration Capability Model
+
+Külön workspace/runtime lehet; második canonical state nem.
+
+## 50.49 — BENCHMARK GATE
+
+Minden jelentős capability előtt:
+Puck, Craft.js, GrapesJS, Webflow, Wix, Framer, Sanity, Builder, StreamElements, Streamlabs, OBS ecosystem és releváns open-source media/automation projektek.
+
+Open-source esetben jogszerűen elérhető implementation, modulhatár és teszt vizsgálható. Proprietary rendszernél dokumentált működés és UX.
+
+## 50.50 — VÉGSŐ WORKFLOW
+
+PLAN → BUILD → BRAND → GO LIVE → MONITOR → CAPTURE → EDIT → APPROVE → PUBLISH → ANALYZE → IMPROVE
+
+## 50.51 — FELHASZNÁLÓI ADMIN UX KÖTELEZŐSÉGEK
+
+1. Admin nem egyetlen nagy oldal.
+2. Minden funkció saját modul/workspace.
+3. Minden admin oldalról elérhető Creator Center főoldala.
+4. Minden admin oldalról elérhető a publikus weboldal.
+5. Publik oldalról jogosult felhasználónak elérhető Creator Center.
+6. Automatikus kijelentkezés.
+7. Session expiry figyelmeztetés.
+8. Lejárt session után canonical 401, nincs végtelen retry.
+9. Security Center session/device kezelés.
+10. Mobile admin külön UX.
+11. Minden modul loading/empty/error/success/permission/session state-et kezel.
+12. Nincs párhuzamos auth/state/persistence.
+13. Capability/permission-aware navigation.
+14. Dashboard navigációs központ.
+15. Website Editor külön workspace.
+16. Schedule külön workspace.
+17. Media külön workspace.
+18. Connections külön workspace.
+19. Automation külön workspace.
+20. Analytics külön workspace.
+21. Overlay Studio külön workspace.
+
+## 50.52 — AKTUÁLIS CHECKPOINT VÉDELME
+
+A capability-mátrix nem írhatja felül a jelenlegi végrehajtási pontot:
+
+**40.69.13.E4.3.4 — Twitch connection/OAuth ownership enforcement**
+
+- E4.3.1–E4.3.3 lezárva.
+- E4.3.4 kód + regressziók PASS.
+- Twitch Integration Check #176 PASS.
+- Editor Core Test #800 PASS.
+- remote 0016 migration még hátra.
+- live D1/security gate még hátra.
+- E4.4 csak E4.3 teljes lezárása után.
+
+## 50.53 — FEATURE-PRESERVATION ZÁR
+
+A capability-k nem törölhetők implicit módon. Kategóriák:
+1.0 Core / 1.0 Foundation / 1.x / 2.x / Future / Research-Benchmark.
+
+Ha egy capability később bizonyítottan rossz, veszélyes vagy értelmetlen, külön döntési pont dokumentálja az okot. Csendben nem törölhető.
+
+**Végső cél:** a canonical architektúra már az első stabil verzióban ne zárja le a fejlődési utat website → creator → stream → content → automation → AI → SaaS irányban.
