@@ -1,10 +1,12 @@
 import type { D1Database } from "@cloudflare/workers-types";
+import { DEFAULT_SITE_ID } from "../site-context";
 
 export const SCHEDULE_READ_MODES = ["upcoming", "all", "next"] as const;
 export const SCHEDULE_READ_ORDERS = ["asc", "desc"] as const;
 export const SCHEDULE_READ_STATUSES = ["scheduled", "live", "completed"] as const;
 
 export type ScheduleReadConfig = {
+  siteId?: string;
   mode?: string;
   limit?: number;
   statuses?: string[];
@@ -62,8 +64,8 @@ export function normalizeScheduleReadConfig(input: ScheduleReadConfig = {}) {
 
 export async function readPublicSchedule(db: D1Database, input: ScheduleReadConfig = {}): Promise<PublicScheduleItem[]> {
   const config = normalizeScheduleReadConfig(input);
-  const where = ["status != 'cancelled'"];
-  const binds: unknown[] = [];
+  const where = ["site_id = ?", "status != 'cancelled'"];
+  const binds: unknown[] = [config.siteId ?? DEFAULT_SITE_ID];
 
   where.push(`status IN (${config.statuses.map(() => "?").join(",")})`);
   binds.push(...config.statuses);
