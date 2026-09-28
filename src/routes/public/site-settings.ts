@@ -1,5 +1,4 @@
 import type { Env } from "../../types/env";
-import { getCanonicalSiteContext } from "../../core/site-context";
 
 const DEFAULT_SITE = {
   siteName: "Sanci9517",
@@ -7,11 +6,10 @@ const DEFAULT_SITE = {
 };
 
 export async function publicSiteSettingsRoute(env: Env): Promise<Response> {
-  const { siteId } = getCanonicalSiteContext();
   const row = await env.DB.prepare(
-    "SELECT value_json FROM site_settings WHERE site_id = ?1 AND key = ?2 LIMIT 1"
+    "SELECT value_json FROM site_settings WHERE key = ?1 LIMIT 1"
   )
-    .bind(siteId, "site")
+    .bind("site")
     .first<{ value_json: string }>();
 
   let settings = DEFAULT_SITE;
