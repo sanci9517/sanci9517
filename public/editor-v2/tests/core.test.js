@@ -635,6 +635,7 @@ test('schedule nodes receive the canonical domain binding', () => {
 test('schedule read config normalizes canonical query constraints', async () => {
   const { normalizeScheduleReadConfig } = await import('../../../src/core/schedule-read.ts');
   assert.deepEqual(normalizeScheduleReadConfig({ mode: 'next', limit: 50, statuses: ['live', 'live'], platforms: [' Twitch '], order: 'desc' }), {
+    siteId: 'site-default',
     mode: 'next',
     limit: 1,
     statuses: ['live'],
