@@ -321,3 +321,5 @@ test('B.13 exposes disconnect atomicity gap when Twitch revoke succeeds but D1 s
     globalThis.fetch = originalFetch;
   }
 });
+
+await import('./twitch-site-ownership.test.js');
