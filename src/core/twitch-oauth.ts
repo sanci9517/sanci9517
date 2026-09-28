@@ -1,6 +1,5 @@
 import type { Env } from "../types/env.ts";
 import { decryptTwitchToken, encryptTwitchToken, hashTwitchOAuthState } from "./twitch-crypto.ts";
-import { DEFAULT_SITE_ID } from "./site-context.ts";
 
 const AUTHORIZE_URL = "https://id.twitch.tv/oauth2/authorize";
 const TOKEN_URL = "https://id.twitch.tv/oauth2/token";
@@ -37,7 +36,6 @@ type ValidateResponse = {
 
 type TwitchConnectionRow = {
   id: string;
-  siteId: string;
   userId: string;
   broadcasterId: string;
   broadcasterLogin: string;
@@ -77,35 +75,33 @@ async function sleep(ms: number): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function readConnection(env: Env, siteId: string, connectionId: string): Promise<TwitchConnectionRow | null> {
+async function readConnection(env: Env, connectionId: string): Promise<TwitchConnectionRow | null> {
   return env.DB.prepare(
-    "SELECT id,site_id AS siteId,user_id AS userId,broadcaster_id AS broadcasterId,broadcaster_login AS broadcasterLogin," +
+    "SELECT id,user_id AS userId,broadcaster_id AS broadcasterId,broadcaster_login AS broadcasterLogin," +
     "access_token_ciphertext AS accessCiphertext,access_token_iv AS accessIv," +
     "refresh_token_ciphertext AS refreshCiphertext,refresh_token_iv AS refreshIv," +
     "scopes_json AS scopesJson,access_token_expires_at AS accessTokenExpiresAt,status," +
-    "last_validated_at AS lastValidatedAt FROM twitch_connections WHERE id=? AND site_id=? LIMIT 1"
-  ).bind(connectionId, siteId).first<TwitchConnectionRow>();
+    "last_validated_at AS lastValidatedAt FROM twitch_connections WHERE id=? LIMIT 1"
+  ).bind(connectionId).first<TwitchConnectionRow>();
 }
 
 async function updateValidation(
   env: Env,
-  siteId: string,
   connectionId: string,
   validation: ValidateResponse
 ): Promise<void> {
   await env.DB.prepare(
     "UPDATE twitch_connections SET broadcaster_login=?,scopes_json=?,access_token_expires_at=?," +
-    "last_validated_at=CURRENT_TIMESTAMP,status='connected',updated_at=CURRENT_TIMESTAMP WHERE id=? AND site_id=?"
+    "last_validated_at=CURRENT_TIMESTAMP,status='connected',updated_at=CURRENT_TIMESTAMP WHERE id=?"
   ).bind(
     validation.login,
     JSON.stringify(Array.isArray(validation.scopes) ? validation.scopes : []),
     new Date(Date.now() + validation.expires_in * 1000).toISOString(),
-    connectionId,
-    siteId
+    connectionId
   ).run();
 }
 
-export async function createTwitchAuthorizationUrl(request: Request, env: Env, userId: string, siteId: string = DEFAULT_SITE_ID): Promise<string> {
+export async function createTwitchAuthorizationUrl(request: Request, env: Env, userId: string): Promise<string> {
   const { clientId } = requireConfig(env);
   const state = randomState();
   const stateHash = await hashTwitchOAuthState(state);
@@ -113,8 +109,8 @@ export async function createTwitchAuthorizationUrl(request: Request, env: Env, u
 
   await env.DB.batch([
     env.DB.prepare("DELETE FROM twitch_oauth_states WHERE julianday(expires_at) <= julianday('now')"),
-    env.DB.prepare("INSERT INTO twitch_oauth_states (id,site_id,user_id,state_hash,expires_at) VALUES (?,?,?,?,?)")
-      .bind(crypto.randomUUID(), siteId, userId, stateHash, expiresAt)
+    env.DB.prepare("INSERT INTO twitch_oauth_states (id,user_id,state_hash,expires_at) VALUES (?,?,?,?)")
+      .bind(crypto.randomUUID(), userId, stateHash, expiresAt)
   ]);
 
   const url = new URL(AUTHORIZE_URL);
@@ -153,23 +149,22 @@ export async function exchangeTwitchCode(
   env: Env,
   code: string,
   state: string,
-  userId: string,
-  siteId: string = DEFAULT_SITE_ID
+  userId: string
 ): Promise<void> {
   const { clientId, clientSecret, encryptionKey } = requireConfig(env);
   const stateHash = await hashTwitchOAuthState(state);
 
   const stateRow = await env.DB.prepare(
-    "SELECT id,site_id AS siteId,user_id AS userId FROM twitch_oauth_states " +
-    "WHERE state_hash=? AND site_id=? AND julianday(expires_at)>julianday('now') AND used_at IS NULL LIMIT 1"
-  ).bind(stateHash, siteId).first<{ id: string; userId: string }>();
+    "SELECT id,user_id AS userId FROM twitch_oauth_states " +
+    "WHERE state_hash=? AND julianday(expires_at)>julianday('now') AND used_at IS NULL LIMIT 1"
+  ).bind(stateHash).first<{ id: string; userId: string }>();
 
-  if (!stateRow || stateRow.userId !== userId || stateRow.siteId !== siteId) throw new Error("TWITCH_OAUTH_STATE_INVALID");
+  if (!stateRow || stateRow.userId !== userId) throw new Error("TWITCH_OAUTH_STATE_INVALID");
 
   const claimed = await env.DB.prepare(
     "UPDATE twitch_oauth_states SET used_at=CURRENT_TIMESTAMP " +
-    "WHERE id=? AND site_id=? AND user_id=? AND julianday(expires_at)>julianday('now') AND used_at IS NULL"
-  ).bind(stateRow.id, siteId, userId).run();
+    "WHERE id=? AND user_id=? AND julianday(expires_at)>julianday('now') AND used_at IS NULL"
+  ).bind(stateRow.id, userId).run();
 
   if (claimed.meta.changes !== 1) throw new Error("TWITCH_OAUTH_STATE_INVALID");
 
@@ -198,7 +193,7 @@ export async function exchangeTwitchCode(
   const access = await encryptTwitchToken(encryptionKey, token.access_token);
   const refresh = await encryptTwitchToken(encryptionKey, token.refresh_token);
   const scopes = Array.isArray(token.scope) ? token.scope : [];
-  const existing = await env.DB.prepare("SELECT id,site_id AS siteId FROM twitch_connections WHERE broadcaster_id=? LIMIT 1")
+  const existing = await env.DB.prepare("SELECT id FROM twitch_connections WHERE broadcaster_id=? LIMIT 1")
     .bind(identity.user_id).first<{ id: string }>();
   const id = existing?.id ?? crypto.randomUUID();
 
