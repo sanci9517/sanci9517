@@ -2,6 +2,7 @@ import { error, ok } from "../../core/response";
 import { getAuthenticatedUser, hasRole } from "../../core/auth/require-auth";
 import { syncTwitchSchedule } from "../../core/schedule/twitch-sync";
 import type { Env } from "../../types/env";
+import { getCanonicalSiteContext } from "../../core/site-context";
 
 type Body = {
   connectionId?: unknown;
@@ -21,6 +22,7 @@ function normalize(body: Body) {
 }
 
 export async function adminTwitchScheduleSyncRoute(request: Request, env: Env): Promise<Response> {
+  const { siteId } = getCanonicalSiteContext();
   const user = await getAuthenticatedUser(request, env);
   if (!user) return error("UNAUTHORIZED", 401, "Authentication required");
   if (!hasRole(user, "editor")) return error("FORBIDDEN", 403, "Editor role required");
@@ -32,7 +34,7 @@ export async function adminTwitchScheduleSyncRoute(request: Request, env: Env): 
   if (!data) return error("INVALID_SCHEDULE_SYNC_REQUEST", 400);
 
   try {
-    const result = await syncTwitchSchedule(env, data.connectionId, {
+    const result = await syncTwitchSchedule(env, siteId, data.connectionId, {
       startAt: data.startAt,
       endAt: data.endAt
     });
