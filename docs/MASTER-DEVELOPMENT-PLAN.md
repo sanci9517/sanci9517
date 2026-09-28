@@ -9936,3 +9936,303 @@ Ezek a MASTER későbbi 2.x–6.x szakaszaiban maradnak, az architektúra azonba
 10. checkpoint rögzítés.
 
 **Soha nem készül külön competitor feature backlog, amely párhuzamosan élne a MASTER-rel.** Minden elfogadott funkció egyetlen canonical MASTER ponton él.
+
+
+# 00.9.18 — TELJES CREATOR PLATFORM GAP-AUDIT / FUNKCIÓTARTALÉK — RÖGZÍTVE 2026-09-28
+
+**Döntés:** a MASTER-t nem csak a jelenlegi 1.0 igényekre, hanem egy hosszú távon teljes creator operating platformmá fejlődő termékre auditáltuk. A cél az, hogy később ne kelljen alapfunkciók miatt Page Modelt, identityt, asset rendszert, command rendszert, event rendszert vagy permission architektúrát újraépíteni. A funkciók bekerülnek a megfelelő későbbi roadmap-pontra; ettől az 1.0 scope nem bővül automatikusan.
+
+A friss benchmark megerősíti, hogy a komoly creator platformok a weboldalon túl monetizációt, audience ownershipet, content hostingot, custom domaint, integrációkat, automatizációt, analytics-et és újrahasznosítható production asseteket is kezelnek. Fourthwall például custom weboldalt/domain-t, digital/physical products, memberships, donations és több külső integrációt kínál; Beacons creator business hubként website/link-in-bio, commerce, media kit és email funkciókat ad; az Elgato Marketplace pedig installálható, kezelhető creator asseteket és OBS scene collectionöket támogat. citeturn0search0turn0search2turn0search12turn0search15
+
+## 00.9.18.1 — FOUNDATION CAPABILITY INVENTORY
+
+A canonical platform capability registry hosszú távon az alábbi domain-csoportokat tartalmazza:
+
+**Identity & ownership**
+- account, creator profile, site, workspace, tenant;
+- sessions, roles, permissions, ownership;
+- API keys/service identities később;
+- connected-account identities;
+- device/session management;
+- security center, revoke-all, suspicious activity;
+- consent/privacy/data export/delete.
+
+**Website & presentation**
+- pages, navigation, menus, headers/footers;
+- sections, components, patterns, templates, packs;
+- theme/design tokens;
+- responsive/container rules;
+- states/variants;
+- SEO/OG/schema metadata;
+- redirects/canonical URLs;
+- preview/staging/publish;
+- custom domains;
+- localization/RTL;
+- accessibility/performance contracts.
+
+**Content/CMS**
+- posts, pages, VOD, clips, audio, gallery;
+- collections/series;
+- categories/tags;
+- drafts/revisions/scheduling;
+- featured/pinned/archived;
+- related content;
+- content status/moderation;
+- structured references;
+- import/export;
+- search/indexing.
+
+**Media**
+- asset library;
+- folders/collections/tags;
+- image/video/audio/document types;
+- metadata/EXIF where appropriate;
+- alt text/captions/transcripts;
+- thumbnails/posters/waveforms;
+- variants/responsive derivatives;
+- optimization/transcoding jobs;
+- deduplication/orphan detection;
+- access policy/signed URLs;
+- future R2 storage;
+- retention/deletion/recovery.
+
+**Streaming / live**
+- Twitch, YouTube, TikTok, Kick and future adapters;
+- identity/capabilities/live/schedule/content/media/events/publish/analytics;
+- live/offline/starting/ending/error states;
+- stream session records;
+- raids/subs/follows/donations/redemptions/events where provider permits;
+- chat/event ingestion later;
+- OBS/local bridge;
+- Stream Deck;
+- overlays/widgets/alerts;
+- technical stream telemetry.
+
+**Schedule & calendar**
+- manual/source events;
+- recurring rules;
+- exceptions/cancellations;
+- timezone and locale;
+- conflict detection;
+- multiple platform events;
+- featured/next/weekly/full views;
+- reminders;
+- calendar feeds/export;
+- calendar provider integration later;
+- public/private visibility.
+
+**Community & audience**
+- visitor/follower/subscriber/member distinctions;
+- contacts/audience records;
+- consent and preferences;
+- comments/reactions/polls;
+- notifications;
+- DMs/group chat later;
+- roles/badges/tiers;
+- Discord synchronization;
+- moderation/report/block/mute;
+- anti-spam/abuse controls.
+
+**Commerce / creator business**
+- products/catalog;
+- digital products;
+- physical/merch integration;
+- tips/donations;
+- memberships/subscriptions/tiers;
+- coupons/discounts/bundles;
+- orders/fulfillment/refunds;
+- customer access entitlements;
+- sales/tax/reporting boundaries;
+- provider adapters;
+- payout/reconciliation.
+
+**Marketing / communications**
+- forms;
+- newsletter/subscribers;
+- campaigns;
+- segmentation/tags;
+- scheduled messages;
+- transactional/marketing separation;
+- unsubscribe/suppression;
+- provider adapters;
+- delivery/bounce/complaint status;
+- campaign analytics.
+
+**Analytics**
+- technical observability;
+- website analytics;
+- content analytics;
+- stream/session analytics;
+- platform metrics;
+- audience growth;
+- conversion/funnel;
+- commerce/support/membership metrics;
+- campaign analytics;
+- retention/cohort metrics later;
+- privacy/consent/retention/export.
+
+**Automation**
+- trigger/condition/action/result;
+- schedules;
+- webhooks;
+- queues/jobs;
+- retries/backoff/DLQ;
+- idempotency;
+- rate limits;
+- dry-run/test mode;
+- approval gates;
+- execution history;
+- emergency stop;
+- workflow templates.
+
+**Reusable ecosystem**
+- component/template/section/theme packs;
+- overlay/widget packs;
+- OBS scene collections;
+- Stream Deck profiles;
+- automation workflows;
+- content workflows;
+- compatibility matrix;
+- dependency graph;
+- migration/update/rollback;
+- author/source/license;
+- moderation/takedown;
+- marketplace later.
+
+## 00.9.18.2 — TOVÁBBI FUNKCIÓK, AMELYEKET EXPLICITEN ELŐKÉSZÍTÜNK
+
+Az eddigi tervből könnyen hiányozhatnának, ezért külön rögzítve:
+
+1. **Search everywhere** — pages, content, assets, templates, integrations, settings és később audience/commerce kereshető indexből.
+2. **Global command palette** — gyors navigáció és műveletek; később editor/creator operations parancsokkal.
+3. **Quick actions** — publish, schedule, go live, add content, upload media, open editor, emergency pause.
+4. **Global activity center** — minden domain eseménye egy unified activity streamben.
+5. **Draft autosave / recovery** — mentési állapot, dirty state, conflict detection, crash recovery.
+6. **Preview environments** — draft/preview/published és később staging environment.
+7. **Import/export** — oldal, content, assets metadata, templates, workflows; később teljes creator portability.
+8. **Backup/recovery** — revisions mellett domain-level backup, restore és recovery drill.
+9. **Data portability** — creator ne legyen platformba zárva; export contract legyen domainenként.
+10. **Webhook/API foundation** — későbbi public/developer API provider-neutral contracttal.
+11. **Integration health center** — connection status, scopes, token expiry, last sync, errors, retry, reconnect, revoke.
+12. **Integration consent/scope review** — minden OAuth/provider connectionnél látható scope és utolsó engedélyezés.
+13. **Rate-limit/quota visibility** — provider/API limits és saját platform usage.
+14. **Feature/capability discovery** — UI és API csak tényleges capability/permission/scope alapján kínál funkciót.
+15. **Offline/degraded mode** — public renderer és admin kezelje a provider kiesést biztonságosan.
+16. **Graceful degradation** — Twitch/API/asset/search/analytics kiesés ne törje az egész public oldalt.
+17. **Health/status page foundation** — később public platform status és creator integration status.
+18. **Audit explorer** — actor, site, resource, action, time, outcome és correlation/request ID szerinti keresés.
+19. **Retention policies** — audit, analytics, audience, media, jobs és logs külön retention szabályokkal.
+20. **Privacy center** — consent, export, deletion request, data categories és provider connections.
+21. **Accessibility center** — site/editor accessibility diagnostics, not only CSS checks.
+22. **Performance center** — page weight, media, LCP/CLS/INP jellegű web vitals, asset and render budgets.
+23. **Content quality checks** — broken links, missing alt text, empty SEO fields, oversized media, invalid embeds.
+24. **Link/embed health** — külső linkek, social embeds, video embeds és provider endpoints ellenőrzése.
+25. **Asset licensing metadata** — source, license, attribution, expiration/usage restrictions where needed.
+26. **Creator brand kit** — logos, colors, typography, voice/copy guidelines, imagery and reusable brand assets.
+27. **Brand presets** — personal brand variants without structural page fork.
+28. **A/B/experimentation foundation** — később, 2.x+; canonical variant/analytics/consent architecture.
+29. **Feature flags / gradual rollout** — internal, beta, stable, tenant/site-scoped release controls.
+30. **Maintenance mode** — public site maintenance fallback without destroying published snapshot.
+31. **Error/fallback pages** — 404, 403, 429, 500, integration unavailable, offline/degraded states.
+32. **Embeddable widgets** — schedule, live status, latest content, social, support és későbbi community/commerce widgetek.
+33. **Embed security policy** — allowed origins, sandbox/CSP and provider allowlist.
+34. **QR/deep-link foundation** — creator profile, schedule, support, campaign/content URLs; useful later for stream/offline promotion.
+35. **UTM/campaign attribution** — source/medium/campaign tracking without contaminating canonical content data.
+36. **Referral/affiliate capability** — későbbi creator business/marketplace domain.
+37. **Sponsor/collaboration CRM** — brands, contacts, campaigns, deliverables, media kit and reporting; 5.x/6.x.
+38. **Contract/invoice/document metadata** — business tooling later, external billing/provider boundary.
+39. **Localization QA matrix** — long strings, missing translation, date/number formats, pluralization and RTL readiness.
+40. **Content lifecycle scheduler** — publish-at, unpublish-at, archive-at, expire-at.
+41. **Approval workflow** — draft → review → approved → publish; later team/AI/community workflows.
+42. **Safe bulk operations** — bulk tag, archive, publish, move, delete with preview, confirmation, permission and rollback where possible.
+43. **Undoable destructive operations** — soft-delete/trash where domain permits.
+44. **Conflict resolution** — concurrent edit detection and explicit merge/overwrite policy later.
+45. **User preferences** — timezone, locale, notification preferences, editor preferences, accessibility preferences.
+46. **Onboarding/checklists** — progressive setup checklist based on actual missing configuration.
+47. **Help/contextual docs** — feature-level help, diagnostics explanation and recovery guidance.
+48. **Telemetry privacy controls** — opt-in/consent-aware analytics and diagnostics.
+49. **Security emergency controls** — revoke provider, revoke sessions, pause automation, disable publishing, disable AI, disable external publishing.
+50. **Disaster recovery drills** — not just backup existence; periodic restore verification.
+
+## 00.9.18.3 — ROADMAP BESOROLÁS
+
+### 0.3 Domain/Data
+Identity, ownership, content, media, integration, event, capability, reusable artifact, notification, audience placeholder, domain status/lifecycle és data portability contracts.
+
+### 0.4 Commands/History
+Command palette contracts, autosave/recovery, bulk operations, soft-delete/trash, scheduled lifecycle commands, approval commands, import/export validation, idempotency, rollback and conflict contracts.
+
+### 0.5 Presentation
+Design system, brand kit, states, responsive/container rules, embeddable widget presentation contract, accessibility/performance presentation, error/fallback templates.
+
+### 0.6 Localization
+Locale preferences, formatting, localized content/SEO, translation QA, RTL readiness.
+
+### 0.7 Public Boundary
+Custom-domain abstraction, canonical URLs, maintenance mode, degraded public rendering, CSP/embed policy, preview/staging/public separation.
+
+### 0.8 Quality/Operations
+Integration Health Center, Status/Health, Audit Explorer, retention, privacy center, accessibility/performance/content quality checks, link/embed health, feature flags, telemetry controls, DR verification foundation.
+
+### 1.0.1 Creator Center
+Global search, command palette, quick actions, notifications/activity center, onboarding checklist, user preferences, mobile creator operations, contextual help.
+
+### 1.0.2 Pages
+Scheduled publishing, scheduled unpublish/archive, redirects, 404/403/500/maintenance, SEO/content quality diagnostics.
+
+### 1.0.3 Editor
+Autosave/recovery, reusable artifact actions, safe bulk operations, accessibility diagnostics, responsive preview, template/section library, dependency warnings.
+
+### 1.0.4 Theme
+Brand Kit, theme presets, style guide, component states, responsive tokens, accessibility/performance presentation contracts.
+
+### 1.0.5 CMS
+Posts/collections/tags, search/filter/sort, scheduled content, related content, featured/pinned, structured references, import/export foundation, content quality checks.
+
+### 1.0.6 Twitch/Schedule
+Integration health, scope review, token expiry, retry/reconnect, degraded mode, recurring events/exception-ready model, timezone, calendar export contract, source/manual conflict model.
+
+### 1.0.7 Media
+Asset folders/tags/search, metadata/license, alt text, derivatives, orphan detection, optimization contracts, secure access and future R2 adapter.
+
+### 1.0.8 Public Site
+Creator Home blocks, Media Kit, dynamic content blocks, embeds/widgets, SEO/schema, social/feed integrations, campaign/UTM links, QR/deep-link-ready routes, graceful fallback pages.
+
+### 1.0.9 Production Gate
+Visual regression, accessibility, performance, security, backup/recovery, portability/export, failure-mode and degraded-mode tests, production observability.
+
+### 1.5 Multi-platform
+YouTube/TikTok/Kick adapters, unified identity/capabilities/content/media/events, Discord integration, provider webhooks/API foundation, richer calendar integrations.
+
+### 2.0 Creator Operating System
+OBS/Stream Deck/local bridge, Overlay Studio, automation engine, content factory, community, notifications, analytics, newsletter, audience, search/discovery, embeddable widgets, workflow packs, technical live telemetry.
+
+### 3.0 AI
+AI assistant/editor/content/analytics/stream/clip workflows, recommendation, brand assistant, translation, automation planning, AI quality evaluation, controlled autonomy and AI emergency controls.
+
+### 4.0 SaaS/Business
+Tenant hardening, teams, billing, native memberships/commerce, entitlements, customer/audience ownership, custom domain/staging, advanced analytics, CRM/business tooling, payment/reconciliation, abuse controls.
+
+### 5.0 Creator Business
+Sponsor/collaboration CRM, campaigns, media-kit analytics, affiliate/referral, advanced marketing, business documents, creator monetization analytics and integrations.
+
+### 6.0 Ecosystem
+Marketplace, public templates/components/workflows, author/distributor lifecycle, moderation, licensing, reviews, payouts, discovery, install/update ecosystem.
+
+### 7.0–10.0
+Advanced automation, adaptive templates, multimodal AI, live co-pilot, personal brand intelligence, autonomous-but-controlled creator operating platform.
+
+## 00.9.18.4 — „NE HIÁNYOZZON KÉSŐBB” DOMAIN CHECKLIST
+
+Minden új domainnél a MASTER audit kötelezően ellenőrzi:
+**data model → ownership → scope → permissions → capability → commands → validation → transactions → idempotency → revisions → audit → notifications → search/index → API/webhook → import/export → privacy/retention → accessibility → performance → failure/degraded mode → backup/recovery → observability → mobile UX → localization → security emergency controls → future entitlement hook.**
+
+Ezzel nem azt állítjuk, hogy minden funkciót hamar meg kell építeni. Azt rögzítjük, hogy a megfelelő helye és későbbi szerződése már meglegyen, amikor a domainre sor kerül.
+
+## 00.9.18.5 — BENCHMARK GOVERNANCE
+
+A jövőbeni benchmark során külön figyeljük az alábbi kategóriákat: creator website/CMS, visual editor, live streaming, OBS/local control, Stream Deck, overlays/widgets, content/media, audience/community, newsletter, commerce, memberships, analytics, automation, integrations/API/webhooks, templates/marketplace, mobile operations, security/privacy, accessibility/performance és portability/export.
+
+**Referenciaelv:** egy konkurens funkciót nem másolunk automatikusan. Előbb meg kell határozni, milyen creator problémát old meg, melyik canonical domainhez tartozik, milyen security/permission/data követelménye van, és melyik roadmap ponton ad valódi értéket.
+
+**Feature-preservation:** ez a gap-audit kizárólag hozzáad. Korábbi MASTER-funkciót nem töröl és nem sorol át csendben.
