@@ -71,7 +71,7 @@ function randomState(): string {
   return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
 }
 
-async function sleep(ms: number): Promise<void> {
+async function sleep(ms: number): Promise<string> {
   await new Promise((resolve) => setTimeout(resolve, ms));
 }
 
@@ -216,6 +216,7 @@ export async function exchangeTwitchCode(
     JSON.stringify(scopes),
     new Date(Date.now() + expiresIn * 1000).toISOString()
   ).run();
+  return id;
 }
 
 export async function getTwitchConnection(env: Env, userId: string) {
