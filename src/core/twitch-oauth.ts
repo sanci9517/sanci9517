@@ -198,7 +198,7 @@ export async function exchangeTwitchCode(
   const access = await encryptTwitchToken(encryptionKey, token.access_token);
   const refresh = await encryptTwitchToken(encryptionKey, token.refresh_token);
   const scopes = Array.isArray(token.scope) ? token.scope : [];
-  const existing = await env.DB.prepare("SELECT id FROM twitch_connections WHERE broadcaster_id=? LIMIT 1")
+  const existing = await env.DB.prepare("SELECT id,site_id AS siteId FROM twitch_connections WHERE broadcaster_id=? LIMIT 1")
     .bind(identity.user_id).first<{ id: string }>();
   const id = existing?.id ?? crypto.randomUUID();
 
