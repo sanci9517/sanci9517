@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.41  
+**Verzió:** MASTER-2.40.42  
 **Dátum:** 2026-09-28  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -5398,7 +5398,7 @@ Minden új capability külön domain contracttal, benchmarkkal, implementációv
 **Feature-preservation:** a fenti végső vízió minden pontja megőrzendő MASTER backlog. Egy új beszélgetés vagy újabb 1.0 scope-döntés nem törölheti ezeket implicit módon.
 
 
-**2026-09-28 munkamenet-záró állapot:** E4.3.1–E4.3.3 lezárva. E4.3.4 alatt a Twitch connection/OAuth site-ownership enforcement kódja, exact-ID binding hardeningje és célzott regressziói elkészültek. A végleges hardening HEAD-en a Twitch Integration Check #176 és az Editor Core Test #800 is PASS (`c8d1501b7e17b9db1f3d55b1229e74ae7519191a`). A remote `0016_twitch_oauth_site_ownership.sql` migration és a live D1/security gate még hátra van. **Következő folytatás pontosan innen: 40.69.13.E4.3.4 — Twitch connection/OAuth ownership enforcement.** E4.4 `site_id NOT NULL` schema hardening továbbra is blokkolva marad az E4.3 teljes lezárásáig. Új beszélgetésben ezt a checkpointot kell folytatni, nem régebbi E pontot.
+**2026-09-28 munkamenet-záró állapot:** E4.3.1–E4.3.3 lezárva. A 2.40.42 frissítésben az E4.3.4 PC nélküli E4.3.5 contract-előkészítése is dokumentálva lett; a `site_settings` legacy/global contract változatlan marad. E4.3.4 alatt a Twitch connection/OAuth site-ownership enforcement kódja, exact-ID binding hardeningje és célzott regressziói elkészültek. A végleges hardening HEAD-en a Twitch Integration Check #176 és az Editor Core Test #800 is PASS (`c8d1501b7e17b9db1f3d55b1229e74ae7519191a`). A remote `0016_twitch_oauth_site_ownership.sql` migration és a live D1/security gate még hátra van. **Következő folytatás pontosan innen: 40.69.13.E4.3.4 — Twitch connection/OAuth ownership enforcement.** E4.4 `site_id NOT NULL` schema hardening továbbra is blokkolva marad az E4.3 teljes lezárásáig. Új beszélgetésben ezt a checkpointot kell folytatni, nem régebbi E pontot.
 
 ---
 
@@ -5474,12 +5474,27 @@ A „telefonról elvégezhető” és a „PC-ről kötelezően elvégzendő” 
 
 Az aktuális **40.69.13.E4.3.4** pontnál a következő PC Execution Packet:
 
-**A. PC nélkül már igazolt:** E4.3.4 kód, ownership boundary, célzott regressziók, Twitch Integration Check #166 PASS, Editor Core Test #790 PASS.
+**A. PC nélkül már igazolt:** E4.3.4 kód, ownership boundary, exact-ID hardening, célzott regressziók, Twitch Integration Check #176 PASS, Editor Core Test #800 PASS ugyanazon végleges hardening HEAD-en.
 
 **B. PC szükséges:** helyi repository frissességének ellenőrzése, majd remote D1 migration alkalmazása.
 
 **C. Live gate:** `0016_twitch_oauth_site_ownership.sql` alkalmazása után `PRAGMA table_info("twitch_oauth_states")`, `PRAGMA quick_check`, `PRAGMA foreign_key_check`, majd célzott live ownership/cross-site ellenőrzések.
 
 **D. Továbbhaladás:** csak a fenti live gate PASS után zárható E4.3.4 és aktiválható E4.3.5.
+
+### E4.3.4 — PC nélküli előkészítő audit: E4.3.5 legacy `site_settings`
+
+A remote migration/live gate előtt az E4.3.5 technikai döntési alapjai telefonról előkészíthetők, de ez **nem aktiválja** az E4.3.5 fejlesztési pontot.
+
+- [x] `src/routes/public/site-settings.ts` jelenlegi contractja ellenőrizve: a route a legacy/global `site_settings` táblából a `key = "site"` rekordot olvassa.
+- [x] `0001_initial_schema.sql` alapján a `site_settings` jelenlegi kulcsa kizárólag `key`; nincs `site_id`.
+- [x] Döntés rögzítve: E4.3 alatt nincs részleges vagy implicit site-scoping ezen a consumeren.
+- [x] A route nem módosul csak azért, hogy az E4.3 ownership modell minden táblára ugyanúgy nézzen ki.
+- [x] Ha később site-scoped settings szükséges, külön domain contract + migration + backfill + consumer audit + regression + live gate kell.
+- [ ] E4.3.5 implementáció csak az E4.3.4 live/security gate PASS után aktiválható.
+
+**PC nélkül most lezárható munka:** az E4.3.5 döntési/contract-előkészítés kész; nincs szükség kódmódosításra, mert a jelenlegi global settings contract szándékosan megmarad.
+
+**Következő valódi blokkoló:** a remote `0016_twitch_oauth_site_ownership.sql` migration alkalmazása és a hozzá tartozó live D1/security verification. Ez már PC Execution Packet.
 
 Ez a munkamódszer **nem gyorsítási kényszer**, hanem PC-idő optimalizálás biztonságos keretek között. Ha a teljes ellenőrzéshez gép kell, a fejlesztés várhat; a MASTER terv és az előkészítő munka közben telefonról folytatható.
