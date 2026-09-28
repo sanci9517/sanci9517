@@ -1,7 +1,7 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.37  
-**Dátum:** 2026-09-25  
+**Verzió:** MASTER-2.40.38  
+**Dátum:** 2026-09-28  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
@@ -5392,4 +5392,88 @@ Minden új capability külön domain contracttal, benchmarkkal, implementációv
 **Feature-preservation:** a fenti végső vízió minden pontja megőrzendő MASTER backlog. Egy új beszélgetés vagy újabb 1.0 scope-döntés nem törölheti ezeket implicit módon.
 
 
-**2026-09-28 munkamenet-záró állapot:** E4.3.1–E4.3.3 lezárva. E4.3.3 alatt a Schedule CRUD/public read/Twitch Schedule ownership enforcement elkészült, majd a Node ESM import-kompatibilitási hiba javítása után a végleges CI kapu **Twitch Integration Check #151 PASS + Editor Core Test #775 PASS** lett. A köztes sikertelen #149/#773 és #150/#774 futások már nem reprezentálják a végleges HEAD állapotot. **Következő folytatás pontosan innen: 40.69.13.E4.3.4 — Twitch connection/OAuth ownership enforcement.** E4.4 `site_id NOT NULL` schema hardening továbbra is blokkolva marad az E4.3 teljes lezárásáig. Új beszélgetésben ezt a checkpointot kell folytatni, nem régebbi E pontot.
+**2026-09-28 munkamenet-záró állapot:** E4.3.1–E4.3.3 lezárva. E4.3.4 alatt a Twitch connection/OAuth site-ownership enforcement kódja és célzott regressziói elkészültek; a végleges CI kapuk **Twitch Integration Check #166 PASS + Editor Core Test #790 PASS**. A remote `0016_twitch_oauth_site_ownership.sql` migration és a live D1/security gate még hátra van. **Következő folytatás pontosan innen: 40.69.13.E4.3.4 — Twitch connection/OAuth ownership enforcement.** E4.4 `site_id NOT NULL` schema hardening továbbra is blokkolva marad az E4.3 teljes lezárásáig. Új beszélgetésben ezt a checkpointot kell folytatni, nem régebbi E pontot.
+
+---
+
+## 00.10 — FEJLESZTÉSI MUNKAMÓDSZER: PC-IGÉNY MINIMALIZÁLÁSA, HIBAMENTESSÉG ELSŐDLEGESSÉGE — RÖGZÍTVE 2026-09-28
+
+A fejlesztési folyamatot úgy kell kialakítani, hogy a felhasználó **telefonról + Chrome asztali nézetből a lehető legtöbb érdemi munkát el tudja végezni**, miközben a megbízhatóság, security, adatbázis-integritás és production helyesség nem sérülhet.
+
+### Kötelező prioritási sorrend
+
+**1. Helyesség és biztonság**  
+**2. Ellenőrizhetőség**  
+**3. PC-igény minimalizálása**  
+**4. Fejlesztési sebesség**
+
+Ha a PC elhagyása növelné a hibakockázatot vagy csökkentené az ellenőrzés megbízhatóságát, **nem váltjuk ki a PC-s lépést**. Inkább várunk a gépre és lassabban haladunk.
+
+### Telefonról alapértelmezetten végezhető munka
+
+- MASTER terv auditja és frissítése.
+- GitHub repository, branch, commit, diff és Actions ellenőrzése.
+- Kód és architektúra elemzése.
+- Open-source referencia- és benchmark-vizsgálat.
+- Domain contractok és adatfolyamok megtervezése.
+- Tesztterv és Definition of Done előkészítése.
+- Biztonsági/ownership audit.
+- Következő PC-s végrehajtási lépések előkészítése.
+- CI eredmények elemzése.
+- Dokumentáció és checkpoint-kezelés.
+
+### PC-t igénylő művelet csak akkor marad PC-s, ha szükséges
+
+Ide tartozhat például:
+
+- lokális parancs vagy lokális teszt, ha azt a CI vagy más megbízható ellenőrzés nem helyettesíti;
+- Wrangler/Cloudflare művelet, ha a szükséges hitelesített környezet csak a gépen áll rendelkezésre;
+- production/live művelet, amelyet a rendelkezésre álló biztonságos connector vagy GitHub/Cloudflare felület nem tud helyettesíteni;
+- lokális build/deploy vagy környezeti ellenőrzés, ha annak eredménye érdemben szükséges a gate lezárásához.
+
+### „PC Execution Packet” szabály
+
+Minden PC-t igénylő fejlesztési pontnál előre elkészítendő egy rövid, determinisztikus végrehajtási csomag:
+
+1. pontos projektmappa;
+2. elvárt branch;
+3. repository állapot ellenőrzése;
+4. local HEAD ↔ remote HEAD ellenőrzése;
+5. szükség esetén `git pull --ff-only`;
+6. pontos parancsok;
+7. minden parancshoz elvárt eredmény;
+8. hiba esetén **megállás**, nincs következő lépés;
+9. eredmény visszaküldése és közös értékelés;
+10. csak igazolt PASS után következő gate.
+
+A felhasználónak nem kell gépnél újra megterveznie a fejlesztési folyamatot; a PC-s idő célja a végrehajtás és az objektív ellenőrzés.
+
+### „No Guessing / No Silent Bypass” szabály
+
+- A „valószínűleg működik” nem számít PASS-nak.
+- Production D1, OAuth, ownership, migration és security gate nem zárható le pusztán lokális vagy elméleti bizonyíték alapján, ha live ellenőrzés szükséges.
+- Nem használunk kerülőutat csak azért, hogy ne kelljen PC-re várni.
+- Egy hibás vagy hiányosan ellenőrzött lépés blokkolja a következő függő lépést.
+- Ha két megoldás közül az egyik gyorsabb, de kevésbé bizonyítható, a lassabb és jobban ellenőrizhető megoldást választjuk.
+
+### Fázisonkénti állapotmodell
+
+Minden jelentős fejlesztési pontnál külön kezelendő:
+
+**TERVEZVE → IMPLEMENTÁLVA → AUTOMATIKUSAN TESZTELVE → CI PASS → LIVE/PRODUCTION ELLENŐRIZVE → MASTER CHECKPOINT LEZÁRVA**
+
+A „telefonról elvégezhető” és a „PC-ről kötelezően elvégzendő” részeket minden aktív pontnál külön jelölni kell.
+
+### Következő konkrét alkalmazás
+
+Az aktuális **40.69.13.E4.3.4** pontnál a következő PC Execution Packet:
+
+**A. PC nélkül már igazolt:** E4.3.4 kód, ownership boundary, célzott regressziók, Twitch Integration Check #166 PASS, Editor Core Test #790 PASS.
+
+**B. PC szükséges:** helyi repository frissességének ellenőrzése, majd remote D1 migration alkalmazása.
+
+**C. Live gate:** `0016_twitch_oauth_site_ownership.sql` alkalmazása után `PRAGMA table_info("twitch_oauth_states")`, `PRAGMA quick_check`, `PRAGMA foreign_key_check`, majd célzott live ownership/cross-site ellenőrzések.
+
+**D. Továbbhaladás:** csak a fenti live gate PASS után zárható E4.3.4 és aktiválható E4.3.5.
+
+Ez a munkamódszer **nem gyorsítási kényszer**, hanem PC-idő optimalizálás biztonságos keretek között. Ha a teljes ellenőrzéshez gép kell, a fejlesztés várhat; a MASTER terv és az előkészítő munka közben telefonról folytatható.
