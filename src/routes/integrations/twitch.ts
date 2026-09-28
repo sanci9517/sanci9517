@@ -11,7 +11,7 @@ import {
 import type { Env } from "../../types/env";
 import { getCanonicalSiteContext } from "../../core/site-context.ts";
 import { hashTwitchOAuthState } from "../../core/twitch-crypto.ts";
-import { assertTwitchConnectionOwnership, bindNewTwitchConnectionToSite, getOwnedTwitchConnection } from "../../core/twitch-site-ownership.ts";
+import { assertTwitchConnectionOwnership, bindTwitchConnectionToSite, getOwnedTwitchConnection } from "../../core/twitch-site-ownership.ts";
 
 function redirect(request: Request, status: string): Response {
   const url = new URL("/admin/editor", request.url);
@@ -73,8 +73,9 @@ export async function twitchCallbackRoute(request: Request, env: Env): Promise<R
       "AND julianday(expires_at)>julianday('now') AND used_at IS NULL LIMIT 1"
     ).bind(stateHash, user.id, siteId).first<{ id: string }>();
     if (!stateOwnership) throw new Error("TWITCH_OAUTH_STATE_INVALID");
-    await exchangeTwitchCode(request, env, code, state, user.id);
-    await bindNewTwitchConnectionToSite(env, siteId, user.id);
+    const connectionId = await exchangeTwitchCode(request, env, code, state, user.id);
+    const bound = await bindTwitchConnectionToSite(env, siteId, connectionId);
+    if (!bound) throw new Error("TWITCH_CONNECTION_SITE_BIND_FAILED");
     const connection = await getOwnedTwitchConnection(env, siteId, user.id);
     if (connection) {
       await env.DB.prepare("INSERT INTO audit_log (id,user_id,action,entity_type,entity_id,metadata_json) VALUES (?,?,?,?,?,?)")
