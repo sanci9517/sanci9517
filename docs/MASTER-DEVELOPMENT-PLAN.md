@@ -9524,3 +9524,415 @@ A monetizáció nem változtatja meg ezt a sorrendet.
 **Tilos:** csomagonként külön Page Model, külön Editor, külön Theme, külön Asset rendszer, külön AI command system vagy külön authorization rendszer.
 
 **Ez a döntés 1.0-tól 10.0-ig érvényes.**
+
+
+# 00.9.17 — CREATOR/STREAMER PLATFORM FUNKCIÓ-AUDIT — RÖGZÍTVE 2026-09-28
+
+**Cél:** a Sanci9517 MASTER teljes funkcióterét összevetettük több jelenleg működő creator/streamer/web-platform dokumentált képességeivel. Az audit nem másolási lista: csak olyan képesség kerül a MASTER-be, amely a saját canonical Page Model / Domain / Command / Permission / Asset / Renderer architektúrába illeszthető.
+
+**Vizsgált referencia-platformok és megfigyelt minták:**
+- Fourthwall: testreszabható creator website, custom domain, themes, social feed, ecommerce integrációk, memberships, tiers, members-only content, polls, video catalog, Discord role integration, digital products és supporter analytics. citeturn0search0turn0search2turn0search3turn0search5
+- Beacons: creator website/link-in-bio, email marketing, digital store, audience manager, post activity tracking, media kit és creator-business tooling. citeturn0search12turn0search16
+- Streamlabs: Creator Sites, tipping, merch, widgets/alerts, themes/overlays és clip workflow. citeturn0search13turn0search14
+- StreamElements: alerts/overlays, chatbot, merch/tips, leaderboard, live tooling és sponsor workflow; merchhez purchase alerts, activity feed, commands/timers és widgets is kapcsolódnak. citeturn2search10turn2search13
+- Patreon: posts/feed, collections, native media, memberships, shop/digital products, comments, polls, group chats, DMs, livestreams és creator analytics. citeturn1search1turn1search3turn1search4turn1search16
+- Ko-fi: tips, memberships, shop, commissions, posts, polls, gallery, widgets/embeds és creator-owned supporter relationship. citeturn1search6turn1search7turn1search21
+- Kit: newsletter, forms/opt-ins, landing pages, segmentation/tagging, visual automations, analytics, commerce, recommendations és events. citeturn1search8turn1search2turn1search18
+- Ghost: custom website/branding, CMS, dynamic content, tags, SEO, memberships, newsletters, native payments és member analytics. citeturn1search10turn1search11turn1search14
+- Elgato Marketplace / Stream Deck: plugins, profiles, reusable ready-made workflows, compatibility/version concerns, validation, author metadata, marketplace distribution és install/update lifecycle. citeturn2search0turn2search6turn2search8turn2search11
+- Squarespace: website + store + scheduling + donations + memberships + blog + portfolio mint egy creator/business site capability-set. citeturn2search14
+
+## 00.9.17.1 — A közös funkcióminták, amelyeket a MASTER-nek kezelnie kell
+
+### A) Creator Home / identity layer
+**Újonnan explicit rögzítve:**
+- creator profile / bio / avatar / banner;
+- social links és platform icons;
+- primary CTA;
+- current live status;
+- next stream;
+- featured content;
+- latest content;
+- support CTA;
+- community CTA;
+- optional media kit CTA;
+- optional store/membership CTA későbbi capabilityként.
+
+**Roadmap:** 1.0.8 public streamer site; dynamic/live adatok 1.0.6; advanced personalization 1.5–2.x.
+
+### B) Creator Home page blocks
+A public page/template library alapból kezelhesse:
+- Hero;
+- Live Now / Offline;
+- Next Stream / Countdown;
+- Schedule preview;
+- Featured Game;
+- Latest VOD;
+- Latest Clips;
+- Social links/feed;
+- Community/Discord CTA;
+- Support/tip CTA;
+- About;
+- Media Kit;
+- FAQ;
+- Contact;
+- Newsletter/Join CTA;
+- Store/Products;
+- Membership teaser;
+- Footer.
+
+**Roadmap:** base 1.0.8 + template system; store/membership/newsletter capability later.
+
+### C) Content collections, tagging és discovery
+A creator platformnak hosszú távon nem csak pages-t, hanem strukturált tartalom-gyűjteményeket is kezelnie kell:
+- posts;
+- videos/VOD;
+- clips;
+- audio;
+- images/gallery;
+- collections/series;
+- tags;
+- categories;
+- featured/pinned;
+- search/filter/sort;
+- related content;
+- archive.
+
+**Roadmap:** CMS foundation 1.0.5; VOD/clips/media 1.0.8/2.0; search/filter/discovery 2.0; public discovery/ecosystem 6.0.
+
+### D) Creator-owned audience / contact capture
+A platform később támogassa:
+- newsletter opt-in;
+- forms;
+- subscriber/contact records;
+- consent;
+- tags/segments;
+- source attribution;
+- export/delete;
+- transactional vs marketing communication separation.
+
+**Roadmap:** 1.0 forms/content contract előkészítés; 2.0 Community/Notifications + newsletter foundation; 4.0 audience/CRM/business hardening.
+
+**Security rule:** consent és audience data tenant/site scoped; marketing permission nem azonos login permissionnel.
+
+### E) Community engagement
+Későbbi creator community capability-k:
+- comments;
+- reactions;
+- polls;
+- group chat;
+- DMs;
+- announcements;
+- member-only/public content;
+- community roles;
+- Discord role synchronization;
+- moderation;
+- report/block/mute;
+- anti-spam/rate limits.
+
+**Roadmap:** 1.0.8 community CTA + external Discord; 2.0 Community domain; 4.0 membership/entitlement enforcement; 6.0 ecosystem/community scale.
+
+### F) Monetization primitives
+A referencia-platformok alapján a creator monetization több külön capability, nem egyetlen shop:
+- tips/donations;
+- memberships/subscriptions;
+- membership tiers;
+- digital products/downloads;
+- physical products/merch integration;
+- commissions/services;
+- promo codes/discounts;
+- bundles/collections;
+- member-only products/content;
+- purchase delivery/access;
+- refund/fulfillment state;
+- sales analytics.
+
+**Roadmap:**
+- 1.0: external support/tip/store links and presentation only.
+- 2.0: domain contracts and integration-ready commerce/content primitives where they do not require billing.
+- 4.0: native billing/payment/subscription/entitlement/sales infrastructure.
+- 5.0: broader creator business tooling.
+- 6.0: marketplace/distribution.
+
+**Critical boundary:** native payment/billing never kerül a 1.0-ba csak azért, mert konkurens platformok már tudják.
+
+### G) Newsletter / marketing automation
+Long-term capabilities:
+- newsletter;
+- opt-in forms;
+- segmentation;
+- tagging;
+- campaign;
+- scheduled send;
+- automation;
+- transactional/marketing separation;
+- unsubscribe/suppression;
+- analytics;
+- provider adapters.
+
+**Roadmap:** 2.0 Notifications/Community/Content; 3.0 AI-assisted content/segmentation suggestions; 4.0 business/CRM hardening.
+
+### H) Media Kit
+A creator saját, megosztható media kit oldala legyen template-ként kezelhető:
+- profile;
+- creator bio;
+- platforms;
+- audience/analytics summary;
+- content examples;
+- contact/business inquiry;
+- selected collaborations/sponsors;
+- downloadable/exportable presentation később.
+
+**Roadmap:** 1.0.8 basic Media Kit page/template; 2.0 analytics-backed dynamic metrics; 5.0/6.0 sponsor/business ecosystem.
+
+### I) Creator analytics foundation
+A platform később egyetlen analytics domainben kezelje:
+- website traffic;
+- content views;
+- schedule/live performance;
+- social/platform metrics;
+- audience growth;
+- conversions;
+- support/shop/membership metrics;
+- campaign/newsletter metrics.
+
+**Roadmap:** 0.8 observability nem azonos creator analytics. 2.0 Analytics domain; 3.0 AI Analyst; 4.0 business analytics/entitlements.
+
+### J) Integrations / adapter ecosystem
+Az audit megerősíti a már rögzített adapter-elvet:
+AUTH → IDENTITY → CAPABILITIES → LIVE → SCHEDULE → CONTENT → MEDIA → EVENTS → PUBLISH → ANALYTICS
+
+További integration categories:
+- Twitch;
+- YouTube;
+- TikTok;
+- Kick;
+- Discord;
+- OBS;
+- Stream Deck / local control;
+- newsletter/email providers;
+- commerce/payment providers;
+- social/content providers;
+- analytics providers.
+
+**Roadmap:** Twitch 1.0.6; other platforms 1.5; OBS/Stream Deck/local bridge 2.0; provider ecosystem 4.0+.
+
+### K) Ready-made workflow/profile packs
+Elgato Marketplace mintájára a reusable artifact rendszer ne csak web template-et tudjon:
+- website template;
+- section pack;
+- component pack;
+- theme pack;
+- overlay pack;
+- OBS scene collection;
+- Stream Deck profile;
+- widget pack;
+- automation pack;
+- content workflow pack;
+- AI workflow pack később.
+
+Minden ilyen artifact:
+- stable ID;
+- version;
+- compatibility;
+- dependencies;
+- capabilities;
+- permissions;
+- install/apply/update/migrate/rollback;
+- author/source;
+- changelog;
+- validation;
+- audit.
+
+**Roadmap:** 0.3/0.4 foundation; 1.0 website templates; 2.0 creator workflow packs; 6.0 marketplace.
+
+### L) Marketplace / distribution foundation
+A referencia marketplace-ek alapján későbbi rendszer:
+- creator/author profile;
+- artifact submission;
+- validation;
+- review/moderation;
+- preview;
+- compatibility;
+- pricing/entitlement;
+- install count;
+- update channel;
+- changelog;
+- reviews/ratings;
+- report/takedown;
+- license;
+- revenue/payout;
+- ownership/IP metadata.
+
+**Roadmap:** 4.0 shared library/entitlement preparation; 6.0 public marketplace.
+**Security:** arbitrary executable code nem mehet át a template systemen; plugin/code-component ecosystem külön sandbox/capability boundary.
+
+### M) Workflow automation
+Az audit alapján külön kezelendő:
+TRIGGER → CONDITION → ACTION → RESULT → RETRY/FAILURE → AUDIT
+
+Creator examples:
+- schedule published → social announcement draft;
+- stream starts → public live status;
+- stream ends → VOD/content ingestion;
+- new supporter → notification/thank-you workflow;
+- merch/product purchase → stream alert;
+- new post → newsletter/social draft;
+- analytics threshold → recommendation.
+
+**Roadmap:** 2.0 Event + Automation Engine; 3.0 AI planning; 4.0 controlled business automation.
+
+### N) Recommendations / related content
+A content platformnak később:
+- related videos/posts;
+- recommended next content;
+- series/collection navigation;
+- creator-to-creator recommendations;
+- personalized content surfaces
+képességekkel kell rendelkeznie.
+
+**Roadmap:** 2.0 content discovery; 3.0 AI recommendations; 6.0 ecosystem/discovery.
+
+### O) Creator mobile-first management
+A benchmark megerősíti, hogy creator platformnál nem elég a public site mobile responsive volta. A management experience-nek is támogatnia kell:
+- dashboard quick actions;
+- content publish;
+- schedule update;
+- live status;
+- notifications;
+- approvals;
+- analytics overview;
+- emergency controls.
+
+**Roadmap:** 1.0.1 mobile Creator Center; 1.0.3 mobile Website Editor shell; 2.0 mobile creator operations; later native/PWA/mobile app options.
+
+### P) Custom domain / branded presence
+A custom domain és branded presence későbbi capabilityként canonical site/domain layerbe kerüljön:
+- domain verification;
+- DNS setup guidance;
+- SSL/provisioning state;
+- primary domain;
+- redirects;
+- canonical URL;
+- localized URLs;
+- preview/staging domain;
+- domain ownership audit.
+
+**Roadmap:** 0.7 public boundary/domain abstraction; 1.0 domain-ready public renderer; 4.0 custom domain/staging production capability.
+
+### Q) Notifications / activity center
+A creator adminnak és később a communitynek legyen canonical notification/activity modellje:
+- system;
+- integration;
+- content;
+- schedule;
+- publish;
+- security;
+- billing;
+- community;
+- automation;
+- AI;
+- unread/read;
+- severity;
+- action/deep link.
+
+**Roadmap:** 0.8 audit/observability foundation; 1.0.1 admin notification surface; 2.0 unified notifications; 4.0 billing/community notification extensions.
+
+### R) Trust, moderation és safety
+A community/marketplace/automation növekedésével:
+- report;
+- block/mute;
+- moderation queue;
+- spam/rate limit;
+- content policy state;
+- artifact takedown;
+- suspicious automation;
+- abuse/denial-of-wallet protection;
+- audit and appeal workflow.
+
+**Roadmap:** 0.x security foundation; 2.0 community safety; 4.0 SaaS abuse controls; 6.0 marketplace trust & safety.
+
+## 00.9.17.2 — Funkciók, amelyeket NEM emelünk automatikusan 1.0-ba
+
+A benchmark során látott funkció önmagában nem módosítja az 1.0 scope-ot. Különösen nem kerül előre:
+- native payments;
+- paid memberships;
+- full ecommerce;
+- digital-product fulfillment;
+- advanced email marketing;
+- full CRM;
+- native mobile app;
+- marketplace;
+- sponsor marketplace;
+- multi-creator discovery;
+- advanced recommendation engine;
+- full social media publishing suite;
+- team collaboration;
+- AI autonomous publishing.
+
+Ezek a MASTER későbbi 2.x–6.x szakaszaiban maradnak, az architektúra azonban már most előkészíthető.
+
+## 00.9.17.3 — Benchmarkból levont architekturális következtetések
+
+1. A creator platform nem egyetlen weboldal-editor. A Website, Stream, Content, Community, Automation, Media és később Business/AI külön product surface lehet.
+2. A reusable artifact nem csak template. Ugyanaz a lifecycle szükséges template, component, overlay, widget, automation és később AI workflow esetén.
+3. Audience ownership külön domain. A public visitor, subscriber/member, authenticated creator és admin actor nem keverhető össze.
+4. Content és presentation külön marad. A public creator website egyszerre CMS + renderer + live domain data consumer.
+5. Integration-first architecture kötelező. A platform ne egyetlen Twitch/Discord/payment provider belső modelljére épüljön.
+6. Commerce később is ugyanazt a command/audit/permission/idempotency rendszert használja.
+7. Marketplace csak governance-szel együtt értelmes. Distribution + compatibility + moderation + license + update + rollback nélkül nem nyitjuk meg.
+8. Mobile creator operations first-class. A mobil nem csak public breakpoint.
+9. Quick actions és progressive disclosure kötelező UX-minta.
+10. A platform saját adatának exportálhatónak kell maradnia, ahol a későbbi audience/content/commerce domain ezt lehetővé teszi.
+11. Capability discovery: egy integráció vagy artifact csak azt a funkciót lássa, amelyhez capability + permission + scope ténylegesen rendelkezésre áll.
+12. Observability és creator analytics különválasztandó: technikai telemetry nem azonos a creator üzleti/content analitikával.
+
+## 00.9.17.4 — Canonical roadmap mapping audit
+
+| Funkció / minta | MASTER célpont |
+|---|---|
+| Creator profile/hero/live/next stream | 1.0.6 + 1.0.8 |
+| Public template blocks | 0.5 + 1.0.3 + 1.0.8 |
+| Content posts/collections/tags | 1.0.5 → 2.0 |
+| Search/filter/related content | 2.0 |
+| Newsletter/forms/contacts | 1.0 foundation → 2.0 → 4.0 |
+| Community/comments/polls/chat/DM | 2.0 |
+| Tips/donations presentation | 1.0.8 |
+| Native monetization | 4.0 |
+| Digital products | 4.0 |
+| Memberships/tiers | 4.0 |
+| Media Kit | 1.0.8 → 2.0 analytics |
+| Creator analytics | 2.0 → 3.0 AI Analyst |
+| Twitch/YouTube/TikTok/Kick | 1.0.6 → 1.5 |
+| Discord | 1.0 external CTA → 2.0 integration |
+| OBS/local bridge | 2.0 |
+| Stream Deck/profile workflow | 2.0 → 6.0 marketplace |
+| Reusable template/component packs | 0.3/0.4 → 1.0 → 2.0 |
+| Marketplace | 6.0 |
+| Automation | 2.0 → 3.0 AI planning |
+| Recommendations | 2.0 → 3.0 |
+| Mobile creator operations | 1.0.1 → 2.0 |
+| Custom domain | 0.7 foundation → 4.0 production |
+| Notification/activity center | 0.8 → 1.0.1 → 2.0 |
+| Moderation/safety | 0.x security → 2.0 → 6.0 |
+| Sponsor/business tooling | 5.0/6.0 |
+| Native mobile app | 5.0/6.0 |
+| AI creator operations | 3.0+ |
+
+**Audit result:** a jelenlegi MASTER már tartalmazta a legtöbb nagy domain alapját. Az audit fő eredménye nem egy új, párhuzamos feature-lista, hanem a hiányzó capability-k explicit domainhez és roadmap-ponthoz kötése.
+
+## 00.9.17.5 — Kötelező benchmark → MASTER szabály
+
+Új hasonló platform vagy weboldal vizsgálatakor:
+1. feature discovery;
+2. dokumentált source ellenőrzés;
+3. existing MASTER capability keresés;
+4. duplicate esetén csak referenciafrissítés;
+5. valódi új capability esetén domainbe sorolás;
+6. roadmap ponthoz rendelés;
+7. dependency/security/permission/tenant scope meghatározás;
+8. 1.0 scope változtatás csak külön döntéssel;
+9. MASTER frissítés;
+10. checkpoint rögzítés.
+
+**Soha nem készül külön competitor feature backlog, amely párhuzamosan élne a MASTER-rel.** Minden elfogadott funkció egyetlen canonical MASTER ponton él.
