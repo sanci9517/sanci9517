@@ -77,14 +77,14 @@ async function sleep(ms: number): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function readConnection(env: Env, connectionId: string): Promise<TwitchConnectionRow | null> {
+async function readConnection(env: Env, siteId: string, connectionId: string): Promise<TwitchConnectionRow | null> {
   return env.DB.prepare(
-    "SELECT id,user_id AS userId,broadcaster_id AS broadcasterId,broadcaster_login AS broadcasterLogin," +
+    "SELECT id,site_id AS siteId,user_id AS userId,broadcaster_id AS broadcasterId,broadcaster_login AS broadcasterLogin," +
     "access_token_ciphertext AS accessCiphertext,access_token_iv AS accessIv," +
     "refresh_token_ciphertext AS refreshCiphertext,refresh_token_iv AS refreshIv," +
     "scopes_json AS scopesJson,access_token_expires_at AS accessTokenExpiresAt,status," +
-    "last_validated_at AS lastValidatedAt FROM twitch_connections WHERE id=? LIMIT 1"
-  ).bind(connectionId).first<TwitchConnectionRow>();
+    "last_validated_at AS lastValidatedAt FROM twitch_connections WHERE id=? AND site_id=? LIMIT 1"
+  ).bind(connectionId, siteId).first<TwitchConnectionRow>();
 }
 
 async function updateValidation(
@@ -103,7 +103,7 @@ async function updateValidation(
   ).run();
 }
 
-export async function createTwitchAuthorizationUrl(request: Request, env: Env, userId: string): Promise<string> {
+export async function createTwitchAuthorizationUrl(request: Request, env: Env, userId: string, siteId: string = DEFAULT_SITE_ID): Promise<string> {
   const { clientId } = requireConfig(env);
   const state = randomState();
   const stateHash = await hashTwitchOAuthState(state);
@@ -111,8 +111,8 @@ export async function createTwitchAuthorizationUrl(request: Request, env: Env, u
 
   await env.DB.batch([
     env.DB.prepare("DELETE FROM twitch_oauth_states WHERE julianday(expires_at) <= julianday('now')"),
-    env.DB.prepare("INSERT INTO twitch_oauth_states (id,user_id,state_hash,expires_at) VALUES (?,?,?,?)")
-      .bind(crypto.randomUUID(), userId, stateHash, expiresAt)
+    env.DB.prepare("INSERT INTO twitch_oauth_states (id,site_id,user_id,state_hash,expires_at) VALUES (?,?,?,?,?)")
+      .bind(crypto.randomUUID(), siteId, userId, stateHash, expiresAt)
   ]);
 
   const url = new URL(AUTHORIZE_URL);
