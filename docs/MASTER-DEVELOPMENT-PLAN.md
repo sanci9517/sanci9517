@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.46.0  
+**Verzió:** MASTER-2.47.0  
 **Dátum:** 2026-09-28  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -7690,6 +7690,12 @@ FUNCTIONAL → SECURITY → DATA → API → AUTHORIZATION → UX → ACCESSIBIL
 - capability-aware navigation
 - automatic logout/session states
 - mobile admin shell
+- Template/Library workspace
+- Recent/Favorites/Saved
+- template quick-start
+- own-template management
+- system/free template gallery
+- preview-before-apply flow
 
 **Komment:** nem óriási adminoldal; külön workspace-ek, közös shelllel.
 
@@ -7704,6 +7710,11 @@ FUNCTIONAL → SECURITY → DATA → API → AUTHORIZATION → UX → ACCESSIBIL
 - draft/preview/publish/unpublish
 - revisions
 - rollback/republish
+- create page from Page Template
+- assign/change Layout Template
+- template lineage
+- safe template update preview
+- page/template detach where applicable
 
 ## 1.0.3 Visual Editor v2
 - canvas
@@ -7721,6 +7732,16 @@ FUNCTIONAL → SECURITY → DATA → API → AUTHORIZATION → UX → ACCESSIBIL
 - responsive values
 - media picker
 - reusable sections
+- component/pattern library
+- variants
+- named slots
+- component properties
+- save selection as own reusable item
+- save section as own pattern
+- save page as own template
+- apply/duplicate/detach
+- synced/global components
+- template preview
 - diagnostics
 - mobile editor shell
 
@@ -7737,6 +7758,11 @@ FUNCTIONAL → SECURITY → DATA → API → AUTHORIZATION → UX → ACCESSIBIL
 - responsive presentation
 - component styles
 - per-site brand tokens
+- Theme/Design Presets
+- save current theme as own preset
+- apply/duplicate theme presets
+- responsive token modes
+- reusable component style variants
 
 ## 1.0.5 Content/CMS core
 - structured content
@@ -8080,16 +8106,32 @@ CREATE → CAPTURE → ANALYZE → EDIT → APPROVE → PUBLISH → DISTRIBUTE �
 # I. 6.0 — CREATOR ECOSYSTEM
 
 ## 6.0.1 Template ecosystem
+- public/community templates
 - personal/shared templates
+- template packs
 - versioning
 - compatibility
 - import/export
+- install/update/detach
+- migration
+- dependency graph
+- author/source/provenance
+- licensing
+- preview/discovery
+- moderation/trust & safety
 
 ## 6.0.2 Component ecosystem
 - reusable components
 - variants
 - slots
 - compatibility constraints
+- shared component libraries
+- synced/global components
+- local overrides
+- detach
+- versioning
+- update migration
+- dependency validation
 
 ## 6.0.3 Automation/integration ecosystem
 - connector contracts
@@ -8099,10 +8141,19 @@ CREATE → CAPTURE → ANALYZE → EDIT → APPROVE → PUBLISH → DISTRIBUTE �
 
 ## 6.0.4 Marketplace foundation
 - templates
+- template packs
 - components
+- patterns/sections
 - widgets
+- overlays
 - automations
 - integrations
+- free/premium distribution
+- author identity
+- licensing
+- moderation/trust & safety
+- compatibility/versioning
+- install/update/review lifecycle
 
 **Komment:** marketplace csak stabil permission, tenant, versioning, billing és trust/safety alap után.
 
@@ -8264,6 +8315,626 @@ PC/Desktop regression csak akkor nyílik meg, amikor a MASTER aktuális pontja t
 
 **Nincs előreugrás.** A 0.x–10.0 terv azért van most rögzítve, hogy minden jelenlegi döntés később bővíthető legyen; nem azért, hogy a jelenlegi checkpointot megkerüljük.
 
+
+---
+
+
+# 00.9.15 — PROFESSZIONÁLIS TEMPLATE / COMPONENT / LIBRARY RENDSZER — RÖGZÍTVE 2026-09-28
+
+Ez a blokk a korábbi responsive/template döntéseket **kibővíti és részletezi**, nem helyettesíti azokat. A sablonrendszer nem egyszerű „copy/paste” funkció lesz, hanem a Page Model + Component Registry + Property/Field Registry + Presentation/Theme + Asset + Revision + Permission + Publish canonical rendszerekre épülő újrafelhasználási réteg.
+
+## 00.9.15.1 — Benchmarkból rögzített alapelvek
+
+A célzott referenciaelemzés alapján:
+
+- **Framer:** Layout Template + Content Slot + responsive breakpoint + page-level variables; egy template módosítása a hozzá kapcsolt oldalakra is hathat. citeturn0search0
+- **Webflow:** Components, properties/slots, variables/design system, page templates és responsive cascade; az újrafelhasználható komponens központi módosítása minden példányon érvényesíthető. citeturn0search12turn0search18turn0search5
+- **WordPress:** Patterns + Synced Patterns + Template Parts; külön kezeli a beillesztett, szinkronizált és site-structure jellegű újrahasznosítást, és támogatja a detach műveletet. Saját pattern mentés, duplikálás, export és törlés is része a modellnek. citeturn0search1turn0search11
+- **Builder:** Template = új példányként testreszabható starter; Symbol = központilag szinkronizált elem. Ez a két életciklus külön kezelendő. citeturn0search3turn0search4turn0search17
+- **GrapesJS:** component tree + Block Manager + Symbols; a komponensek placement/behavior/editability szabályokat is hordozhatnak. citeturn0search6turn0search7turn0search19
+- **Puck:** component registry, config/fields/render boundary és permission szintek; a reusable rendszernek ugyanígy canonical component contractokra kell támaszkodnia. citeturn0search2turn0search20
+- **Figma:** Library + Components + Variables + Variants; a közös design assetek más fájlokban újrahasznosíthatók és frissíthetők. citeturn0search10turn0search16
+
+**Következtetés:** nem egyetlen „Template” fogalom kell. Legalább **Template, Layout Template, Section Pattern, Component, Variant, Synced Component, Asset Preset és Design Preset** külön életciklust kap.
+
+## 00.9.15.2 — A Sanci9517 canonical reusable hierarchy
+
+```
+Design Tokens
+   ↓
+Components
+   ↓
+Variants / Slots / Patterns
+   ↓
+Sections
+   ↓
+Layout Templates
+   ↓
+Page Templates
+   ↓
+Pages
+```
+
+Mellettük:
+
+```
+Asset Library
+Component Library
+Pattern/Section Library
+Template Library
+Theme/Design Preset Library
+```
+
+A könyvtárak kereshetők, kategorizálhatók és scope szerint szűrhetők.
+
+## 00.9.15.3 — Sablontípusok
+
+### A. Component
+Egy canonical komponens, például Button, Hero, Card, Schedule Card, Social Links.
+
+### B. Variant
+Ugyanazon komponens vizuális/viselkedési variánsa, például Button: Primary/Secondary/Ghost vagy Header: Full/Compact.
+
+### C. Section Pattern
+Több komponensből álló újrafelhasználható szakasz, például Hero, Schedule Showcase, VOD Grid, Community CTA.
+
+### D. Layout Template
+Oldalváz: Header + Content Slot + Footer, esetleg Sidebar/Announcement/Secondary Navigation.
+
+### E. Page Template
+Teljes induló oldal: Home, About, Schedule, Creator Profile, Landing, Media Kit stb.
+
+### F. Design/Theme Preset
+Szín, typography, spacing, radius, shadow, container, component style és responsive presentation csomag.
+
+### G. Asset Preset
+Kép/video/thumbnail/poster kezeléshez kapcsolódó előre definiált crop/aspect-ratio/fit/position/quality/presentation beállítások.
+
+### H. Synced/Global Component
+Egy központi példányhoz kötött komponens; módosítása az összes példányon megjelenik.
+
+### I. Local/Detached Copy
+A reusable elem leválasztott példánya; a forrás későbbi módosítása nem írja felül.
+
+## 00.9.15.4 — Kötelező saját sablon mentés
+
+A felhasználó **saját sablont menthet** több szinten:
+
+- kijelölt komponens → saját Component Preset;
+- kijelölt node-tree/section → saját Section Pattern;
+- oldal shell → saját Layout Template;
+- teljes oldal → saját Page Template;
+- teljes visual identity → saját Theme/Design Preset;
+- később komplett site → Site Starter/Template Pack.
+
+Mentéskor canonical snapshot + metadata + dependency manifest készül.
+
+**Nem elég:** HTML/CSS vagy egy pillanatnyi Page Model JSON egyszerű elmentése. A mentett sablon hivatkozásait, component/version függőségeit, tokeneket, asseteket, locale-támogatást és compatibility adatot is rögzíteni kell.
+
+## 00.9.15.5 — Template instance vs synced instance
+
+Két külön működési mód kötelező:
+
+**Starter/Instance:**
+- sablonból létrejön egy új példány;
+- tartalom szabadon módosítható;
+- az eredeti sablon későbbi módosítása nem írja át automatikusan.
+
+**Synced/Global:**
+- központi forráshoz kötött;
+- a forrás módosítása propagálódik;
+- frissítés előtt diff/impact látható;
+- jogosultság és publish szabály érvényes.
+
+**Detach:**
+- synced példány leválasztható;
+- a jelenlegi állapotból önálló local instance lesz;
+- a további source update nem érinti.
+
+Ez a Template és Symbol/Synced Pattern különbségét canonical módon rögzíti. citeturn0search4turn0search11
+
+## 00.9.15.6 — Slots / properties / content binding
+
+A template ne kényszerítse egyetlen fix tartalomra az oldalt.
+
+Kötelező előkészítés:
+- named content slots;
+- allowed component types;
+- slot constraints;
+- component properties;
+- variant properties;
+- content bindings;
+- domain data bindings;
+- default content;
+- required/optional fields;
+- fallback content;
+- validation.
+
+Példa:
+
+`StreamerHero`:
+- title slot;
+- description slot;
+- CTA slot;
+- image/media slot;
+- Live Status binding;
+- theme variant;
+- responsive layout rules.
+
+A Framer content-slot és Webflow component property/slot modellje itt referencia, de a saját canonical Page Model marad az igazságforrás. citeturn0search0turn0search12
+
+## 00.9.15.7 — Template inheritance és composition
+
+A sablonok egymásból épülhetnek:
+
+```
+Base Creator Layout
+   ├── Streamer Layout
+   │    ├── Gaming Layout
+   │    └── Just Chatting Layout
+   └── Portfolio Layout
+```
+
+Kötelező szabályok:
+- inheritance depth limit;
+- dependency graph;
+- circular dependency tiltás;
+- explicit override;
+- reset-to-source;
+- compatibility validation;
+- migration path.
+
+Nem engedjük, hogy a template-rendszer ellenőrizhetetlen öröklési lánccá váljon.
+
+## 00.9.15.8 — Template versioning
+
+Minden reusable artifactnek verziózhatónak kell lennie:
+
+- template_id;
+- template_version;
+- component dependencies + versions;
+- schema version;
+- renderer compatibility;
+- editor compatibility;
+- theme compatibility;
+- required capabilities;
+- required integrations;
+- locale support;
+- asset requirements;
+- migration strategy;
+- source/template lineage.
+
+Egy oldalnak mindig meghatározható legyen:
+**melyik sablon melyik verziójából származik**, és mely helyi módosításokat végzett rajta a creator.
+
+## 00.9.15.9 — Update / migration / conflict modell
+
+Ha egy template új verziója megjelenik:
+
+1. compatibility check;
+2. dependency check;
+3. preview;
+4. diff;
+5. impacted instances list;
+6. migration plan;
+7. user approval, ha szükséges;
+8. apply;
+9. validation;
+10. revision/audit;
+11. rollback lehetőség.
+
+**Tilos:** egy template update vakon átírni a creator oldalát.
+
+Konfliktus esetén:
+- source changed;
+- local changed;
+- both changed;
+- structural conflict
+állapot külön legyen kezelhető.
+
+## 00.9.15.10 — Library rendszer
+
+Külön, de egységes Library UX:
+
+- My Components;
+- My Patterns;
+- My Sections;
+- My Templates;
+- My Themes;
+- My Assets;
+- Favorites;
+- Recent;
+- Installed;
+- Shared;
+- System;
+- Free;
+- Premium (később);
+- Community/Marketplace (később).
+
+Keresés:
+- name;
+- type;
+- category;
+- tags;
+- author;
+- version;
+- compatibility;
+- responsive support;
+- dependencies;
+- last updated;
+- scope.
+
+Minden library itemnél:
+**Preview → Use → Duplicate → Edit → Rename → Favorite → Export (ha engedélyezett) → Delete/Archive**.
+
+## 00.9.15.11 — Import / Export
+
+Későbbi, de most előkészítendő canonical manifest:
+
+```
+artifact
+├── metadata
+├── schemaVersion
+├── rendererCompatibility
+├── componentDependencies
+├── themeDependencies
+├── assetManifest
+├── localeManifest
+├── capabilityRequirements
+├── permissions
+├── license
+└── payload
+```
+
+Importkor:
+- schema validation;
+- dependency resolution;
+- capability check;
+- permission check;
+- license check;
+- asset reference resolution;
+- migration;
+- preview;
+- conflict detection;
+- audit.
+
+Exportkor secret/token nem kerülhet a csomagba.
+
+## 00.9.15.12 — Template scope / sharing
+
+Scope:
+- System;
+- Site;
+- Account/Creator;
+- Workspace;
+- Team;
+- Shared;
+- Public Marketplace.
+
+A személyes template alapértelmezés szerint **nem publikus**.
+
+Későbbi megosztás:
+- read/use;
+- edit;
+- manage;
+- publish;
+- distribute.
+
+Cross-tenant hozzáférés mindig explicit authorizationon keresztül.
+
+## 00.9.15.13 — Free / Premium / entitlement readiness
+
+A template metadata már a korai verziókban tartalmazhat:
+- entitlement requirement;
+- capability requirement;
+- usage/asset requirement;
+- license;
+- author;
+- distribution scope.
+
+**1.0:** saját + rendszer + Free alapok.  
+**2.x–3.x:** creator packs / shared libraries.  
+**4.0:** entitlement enforcement + premium readiness.  
+**6.0:** marketplace.
+
+Premium template nem pusztán UI-ban elrejtett elem; a felhasználási jogot szerveroldali authorization/entitlement ellenőrzés védi.
+
+## 00.9.15.14 — Template discovery / preview UX
+
+A sablonválasztó később:
+
+- kategória;
+- keresés;
+- tag;
+- preview thumbnail;
+- responsive preview;
+- full-page preview;
+- component/section preview;
+- dependency/capability warning;
+- compatibility badge;
+- Free/Premium badge;
+- author/source;
+- version;
+- last updated;
+- use/apply;
+- save as own;
+- duplicate;
+- customize.
+
+**Preview ≠ Apply:** a preview nem módosít adatot.
+
+## 00.9.15.15 — Template update policy
+
+Három lifecycle:
+1. **Linked:** source update elérhető.
+2. **Customized:** local override van, update csak diff/migration után.
+3. **Detached:** nincs automatikus source update.
+
+Később:
+- update available;
+- review changes;
+- apply;
+- skip version;
+- rollback;
+- re-link, ahol biztonságosan lehetséges.
+
+## 00.9.15.16 — Template quality gate
+
+Minden rendszer- vagy későbbi marketplace template ellenőrzése:
+
+- schema valid;
+- renderer compatible;
+- responsive 360/390/414/768/834/1024/1280/1440/1920+;
+- no overflow/clipping;
+- accessibility;
+- keyboard/focus;
+- long text;
+- missing data;
+- loading/empty/error;
+- asset availability;
+- performance;
+- localization fallback;
+- dependency validity;
+- permissions;
+- security;
+- publish/rollback;
+- migration;
+- license metadata.
+
+## 00.9.15.17 — Template analytics később
+
+A későbbi platform mérheti:
+- usage;
+- apply success/failure;
+- customization depth;
+- detach rate;
+- update adoption;
+- render errors;
+- performance;
+- popularity.
+
+Ez nem 1.0 requirement, de a metadata és event model legyen később bővíthető.
+
+## 00.9.15.18 — Marketplace / ecosystem
+
+A marketplace csak stabil alapok után:
+
+**6.0:**
+- templates;
+- components;
+- patterns;
+- widgets;
+- overlays;
+- automations;
+- integrations;
+- author profiles;
+- versioning;
+- compatibility;
+- reviews/feedback;
+- licensing;
+- moderation/trust & safety;
+- distribution.
+
+**4.0 előkészítés:** billing + entitlement + tenant + audit + identity.
+
+**Marketplace szabály:** feltöltés nem jelent automatikus bizalmat; install/use előtt artifact validation, dependency validation, capability review és trust/safety gate szükséges.
+
+## 00.9.15.19 — Template security
+
+A template nem lehet rejtett permission bypass.
+
+Kötelező:
+- allowed component registry;
+- allowed property registry;
+- capability checks;
+- permission checks;
+- asset access checks;
+- external URL validation;
+- integration reference validation;
+- no secret/token payload;
+- no arbitrary executable code az 1.0 template payloadban;
+- audit;
+- provenance.
+
+Későbbi custom-code/plugin ecosystem külön sandbox/security modell nélkül nem aktiválható.
+
+## 00.9.15.20 — Fejlesztési pontokhoz rendelt végleges mapping
+
+### 0.3 — Canonical domain/data
+- reusable artifact domain;
+- template/component/pattern identity;
+- scope/ownership;
+- source lineage;
+- dependency references.
+
+### 0.4 — Command/transaction/history
+- create/update/delete/duplicate/apply/detach/sync/update-template commands;
+- atomic apply;
+- revision;
+- diff;
+- rollback;
+- idempotency.
+
+### 0.5 — Presentation/theme/responsive
+- design token presets;
+- responsive template rules;
+- variants;
+- component presentation contracts;
+- layout system;
+- template compatibility with renderer.
+
+### 0.7 — Public/admin boundary
+- template visibility;
+- preview isolation;
+- public render safety;
+- secret exclusion;
+- published template snapshot behavior.
+
+### 0.8 — Quality/observability
+- template diagnostics;
+- compatibility checks;
+- migration tests;
+- render/performance metrics;
+- responsive/accessibility test matrix.
+
+### 1.0.1 — Creator Center
+- Template/Library workspace;
+- recent/favorites;
+- quick start;
+- template selector;
+- saved-template management.
+
+### 1.0.2 — Website/Page management
+- page template apply;
+- page starter;
+- layout template assignment;
+- duplicate from template;
+- page/template lineage.
+
+### 1.0.3 — Visual Editor v2
+- component library;
+- pattern/section insertion;
+- slots/properties;
+- variants;
+- save selection as reusable;
+- save section as pattern;
+- save page as template;
+- apply/duplicate/detach;
+- synced/global components;
+- template preview;
+- responsive template editing;
+- permissions for locked/reusable elements.
+
+### 1.0.4 — Theme/visual identity
+- Theme/Design Presets;
+- save current theme as preset;
+- apply preset;
+- per-site design library;
+- responsive token values;
+- component style variants.
+
+### 1.0.5 — Content/CMS
+- template ↔ structured content binding;
+- slot/content schema;
+- reusable content blocks;
+- references;
+- locale-aware reusable content.
+
+### 1.0.7 — Media/Assets
+- Asset Library;
+- asset presets;
+- dependency/reference tracking;
+- template asset manifest;
+- orphan detection;
+- future R2 compatibility.
+
+### 1.0.8 — Public website
+- template-driven Home/About/Schedule/etc.;
+- responsive public renderer;
+- public template preview;
+- template-safe public snapshot.
+
+### 1.0.9 — Production gate
+- template migration/update tests;
+- responsive visual QA;
+- accessibility;
+- performance;
+- publish/rollback;
+- security/permission audit.
+
+### 1.5 — Multi-platform
+- platform-aware templates;
+- Schedule/Live/Platform component variants;
+- capability-aware templates;
+- platform-specific content bindings.
+
+### 2.0 — Creator Operating System
+- Overlay templates;
+- OBS scene/layout templates;
+- widgets;
+- automation templates;
+- content factory templates;
+- shared creator libraries;
+- richer import/export;
+- future R2 asset packs.
+
+### 3.0 — AI Creator Platform
+- AI-assisted template selection;
+- AI layout suggestions;
+- AI theme suggestions;
+- AI content-to-template mapping;
+- AI template customization proposal;
+- human approval for structural/publish changes;
+- AI must use canonical template commands and audit.
+
+### 4.0 — Team/SaaS
+- template entitlements;
+- Free/Premium enforcement;
+- team/shared libraries;
+- tenant-level template policies;
+- billing/usage;
+- author/distributor identity;
+- template licensing foundations.
+
+### 5.0 — Creator Platform
+- unified website/stream/content/overlay template workspace;
+- creator packs;
+- template analytics;
+- reusable workflow packs.
+
+### 6.0 — Creator Ecosystem
+- public marketplace;
+- author accounts;
+- submission/review/moderation;
+- licensing;
+- versioning;
+- compatibility;
+- ratings/feedback;
+- install/update/detach;
+- paid/free distribution;
+- revenue/payout foundation.
+
+### 7.0–10.0
+- AI agents for template maintenance;
+- adaptive templates;
+- content-aware layout;
+- real-time live/overlay template adaptation;
+- multimodal template generation;
+- personal brand template intelligence;
+- natural-language site/overlay/template creation.
+
+## 00.9.15.21 — Fontos döntés
+
+**A saját sablon mentés nem 6.0 feature.** A mentés és alap reuse az 1.0 visual editor/productivity része.
+
+A marketplace, public sharing, paid templates és ecosystem későbbi.
+
+A rendszernek ezért már 1.0-ban képesnek kell lennie:
+**CREATE → SAVE AS OWN → PREVIEW → APPLY → CUSTOMIZE → DUPLICATE → REUSE → DETACH → REVISION → PUBLISH → ROLLBACK**
+
+A későbbi:
+**SHARE → UPDATE → MIGRATE → MARKETPLACE → ENTITLEMENT → LICENSE → DISTRIBUTE**
+ugyanerre a canonical alapra épül.
 
 ---
 
