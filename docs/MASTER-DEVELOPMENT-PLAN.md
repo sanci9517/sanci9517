@@ -37,7 +37,7 @@ Ha bármilyen régi checkpoint, összefoglaló, korábbi üzenet vagy történet
 **Boot-szabály:** új beszélgetésben a modellnek először ezt a 00/B blokkot, majd közvetlenül a 00/A indexet kell figyelembe vennie. Ha bármely régi checkpoint ettől eltér, a régi checkpointot kell figyelmen kívül hagyni, nem az aktuális MASTER állapotot.
 
 **Egyetlen aktuális folytatási mondat:**
-> „Folytassuk a Sanci9517 MASTER tervet a **40.69.13.E4.3 — site-scoped consumer/read-write audit és canonical ownership enforcement** ponttal. Az E4.2 D1 ownership foundation és production schema verification lezárult; most azt kell biztosítani, hogy a runtime read/write fogyasztók ténylegesen site-scope alapján működjenek, mielőtt a site_id NOT NULL hardening megtörténik.”
+> „Folytassuk a Sanci9517 MASTER tervet a **40.69.13.E4.3.4 — Twitch connection/OAuth ownership enforcement** ponttal. E4.3.1–E4.3.3 lezárult; az E4.3.4 kód és CI regressziók PASS állapotban vannak, de a remote 0016 migration és live D1/security gate még hátra van. E4.4 site_id NOT NULL hardening csak az E4.3 teljes lezárása után indulhat.”
 
 > **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd kizárólag a **00/A MASTER VÉGREHAJTÁSI INDEX egyetlen aktív pontjából** folytatni. Más fejezet `[ ]`, `[~]` vagy régebbi „következő lépés” szövege nem jelent aktuális folytatási pontot.
 
