@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.42.0  
+**Verzió:** MASTER-2.43.0  
 **Dátum:** 2026-09-28  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -7544,3 +7544,722 @@ Ha a gyors publikálás rosszabb minőséget eredményez, várni kell.
 
 A cél:
 **amikor az AI már bizonyítottan elég megbízható, a creator akár úgy is streamelhet, hogy a háttérben az AI folyamatosan figyel, felismeri a pillanatokat, elkészíti a tartalmat, ellenőrzi a minőséget, és a creator által meghatározott szabályok szerint akár automatikusan publikálja is.**
+
+
+---
+
+# 00.9.7 — VÉGLEGES HOSSZÚ TÁVÚ FEJLESZTÉSI SORREND — 0.x → 10.0
+**Rögzítve:** 2026-09-28  
+**Státusz:** STRATÉGIAI VÉGREHAJTÁSI INDEX — a teljes MASTER kötelező sorrendje
+
+> Ez a blokk a teljes MASTER fejlesztési sorrendjét rögzíti. A korábbi capability matrixok, AI-specifikációk és részletes funkciólisták nem vesznek el; ezekből itt egyetlen, egymásra épülő végrehajtási sorrend készül. Régebbi fejezet eltérő sorrendje nem írhatja felül ezt az indexet.
+
+## A. Végleges verziós létra
+
+| Verzió | Mérföldkő | Fő cél | Következő verzió alapja |
+|---|---|---|---|
+| 0.x | Foundation | biztonságos canonical platformmag | minden későbbi domain |
+| 1.0 | Working Creator Website Platform | weboldal + Creator Center + Editor + Twitch/Schedule | platformfüggetlen creator/domain alap |
+| 1.5 | Multi-platform Creator | Twitch + YouTube + TikTok + Kick/future adapter layer | unified platform capability |
+| 2.0 | Creator Operating System | Content + Media + OBS + Overlay + Automation + Community + Analytics | teljes creator operations layer |
+| 3.0 | AI Creator Platform | Assistant + Copilot + Content + SEO + Translation + Stream Intelligence | AI runtime és kontrollált autonómia |
+| 4.0 | Team / SaaS | multi-user + workspace + roles + billing + tenant isolation | skálázható szolgáltatás |
+| 5.0 | Creator Platform | teljes creator workflow egy központban | ecosystem |
+| 6.0 | Creator Ecosystem | template/component/integration/automation ecosystem | extension/marketplace |
+| 7.0 | Advanced Automation + AI | specialist agents + orchestration + controlled autonomy | magasabb autonómia |
+| 8.0 | Multimodal Creator Intelligence | video + audio + transcript + chat + telemetry | multimodális creator intelligence |
+| 9.0 | Advanced Personal Creator AI | creator-specific preferences + brand/workflow intelligence | személyre szabott AI OS |
+| 10.0 | Full Creator Operating Platform | web + stream + content + community + business + automation + AI | további verziók már evolúciósak |
+
+### Kötelező verziózár
+
+Minden verzió önmagában működő production milestone. Minden verzió végén:
+FUNCTIONAL → SECURITY → DATA → API → AUTHORIZATION → UX → ACCESSIBILITY → TEST → CI → LIVE → PERFORMANCE → OBSERVABILITY → BACKUP/RECOVERY → NEXT-VERSION READINESS → MASTER CHECKPOINT.
+
+---
+
+# B. 0.x — FOUNDATION
+
+## 0.1 Runtime / repository / deployment
+- Worker/Pages/D1
+- modular source tree
+- config/environment contract
+- migrations
+- health/db-health
+- CI
+- request/response/error envelope
+- logging/request-id
+
+**Komment:** itt a stabil alap fontosabb, mint a látványos funkciómennyiség.
+
+## 0.2 Security / identity / session
+- server-side session
+- HttpOnly/Secure/SameSite
+- session rotation
+- idle + absolute timeout
+- expiry warning
+- revoke current/all
+- canonical 401
+- CSRF
+- rate limiting
+- brute-force protection
+- audit
+- permission foundation
+
+**Komment:** az admin auth nem lehet később újraépítendő rendszer.
+
+## 0.3 Canonical domain/data
+- account/site/workspace ownership
+- Page Model
+- Content
+- Asset
+- Integration
+- Event
+- Capability
+- Permission
+- Audit
+- Revision
+- Publish
+
+**Komment:** domain adat, Page Model/presentation és editor UI state külön marad.
+
+## 0.4 Command / transaction / validation / history
+- canonical commands
+- validation
+- transactions
+- undo/redo foundation
+- revision/diff/rollback
+- idempotency
+- consistent errors
+
+**Komment:** később ember, editor, automation és AI ugyanazt a command rendszert használja.
+
+## 0.5 Presentation / Theme / Responsive
+- design tokens
+- typography
+- colors/semantic colors
+- spacing/radius/shadow
+- containers
+- breakpoints
+- component presentation contract
+- responsive rules
+- visibility
+- presets
+
+**Komment:** minden site saját brandet és megjelenést tudjon létrehozni technikai CSS nélkül.
+
+## 0.6 Localization foundation
+- HU-HU default
+- locale registry
+- fallback
+- translatable/non-translatable fields
+- locale-aware formatting
+- localized route/SEO foundation
+- RTL-ready structure
+
+**Komment:** 1.0-ig magyar; később angol/német/ukrán/orosz stb. hozzáadható adatmodell-újraépítés nélkül.
+
+## 0.7 Public/Admin boundary
+- public renderer
+- admin boundary
+- published snapshot
+- preview isolation
+- permission separation
+- secret protection
+
+## 0.8 Quality/observability
+- diagnostics
+- audit
+- health
+- integration health
+- CI regression
+- live verification
+- accessibility/performance gates
+
+**0.x EXIT:** biztonságos, migrálható, tesztelhető platformmag, amelyre 1.0 újraépítés nélkül ráépíthető.
+
+---
+
+# C. 1.0 — WORKING CREATOR WEBSITE PLATFORM
+
+## 1.0.1 Creator Center
+- Dashboard
+- közös AdminShell
+- minden admin oldalról Creator Center
+- minden admin oldalról public website
+- capability-aware navigation
+- automatic logout/session states
+- mobile admin shell
+
+**Komment:** nem óriási adminoldal; külön workspace-ek, közös shelllel.
+
+## 1.0.2 Website/Page management
+- Pages
+- create/duplicate/archive
+- slug
+- menu/navigation
+- page order
+- SEO
+- Open Graph
+- draft/preview/publish/unpublish
+- revisions
+- rollback/republish
+
+## 1.0.3 Visual Editor v2
+- canvas
+- responsive viewport
+- component registry
+- Layers
+- selection
+- Inspector
+- drag/drop
+- reparent/reorder
+- duplicate/delete
+- lock/hide
+- undo/redo
+- transactions
+- responsive values
+- media picker
+- reusable sections
+- diagnostics
+- mobile editor shell
+
+**Komment:** komoly editor döntésnél célzott Puck/Craft.js/GrapesJS és további releváns benchmark + forráskód/teszt vizsgálat.
+
+## 1.0.4 Theme / visual identity
+- presets
+- typography
+- colors
+- backgrounds
+- layout variants
+- buttons/cards/forms
+- header/footer/navigation
+- responsive presentation
+- component styles
+- per-site brand tokens
+
+## 1.0.5 Content/CMS core
+- structured content
+- reusable records
+- optional fields
+- references
+- validation
+- lifecycle
+- SEO content
+- alt text
+
+## 1.0.6 Twitch + Schedule production
+- OAuth ownership
+- connection security
+- schedule read/sync
+- Schedule CRUD
+- source-aware events
+- Game Profiles
+- platform/status
+- Next Stream/Next 3/Weekly/Full/Featured
+- responsive presentation
+- canonical mapping
+- sync health
+
+**Komment:** ez kapcsolódik a jelenlegi tényleges fejlesztési ponthoz.
+
+## 1.0.7 Media/Assets core
+- asset references
+- metadata
+- alt text
+- reuse tracking
+- validation
+- orphan strategy
+- future R2 contract
+
+## 1.0.8 Public streamer site
+- Home
+- About
+- Schedule
+- Live
+- Videos/VOD/Clips foundation
+- Games
+- Community
+- Contact
+- Support
+- social links
+- navigation/footer
+- 404/error fallback
+- legal/privacy/cookie foundation
+
+## 1.0.9 Production gate
+- security
+- accessibility
+- responsive
+- performance
+- SEO
+- CI
+- live D1
+- deploy
+- rollback
+- production smoke
+- user acceptance
+
+**1.0 EXIT:** Sanci9517 productionben működő, szerveroldali, vizuálisan szerkeszthető streamer platform.
+
+---
+
+# D. 1.5 — MULTI-PLATFORM CREATOR
+
+## 1.5.1 Adapter framework
+AUTH → IDENTITY → CAPABILITIES → LIVE → SCHEDULE → CONTENT → MEDIA → EVENTS → PUBLISH → ANALYTICS.
+
+## 1.5.2 Integrations
+- Twitch hardening
+- YouTube
+- TikTok
+- Kick
+- future adapter registry
+
+**Komment:** platform payload soha nem kerül közvetlenül Page Modelbe.
+
+## 1.5.3 Unified platform identity
+- platform identities
+- capabilities
+- availability
+- live state
+- content links
+
+## 1.5.4 Unified schedule/live
+- platform source
+- conflicts
+- timezone
+- recurring foundation
+- exceptions
+- source ownership
+- manual override
+
+**1.5 EXIT:** több platform kezelhető egy canonical creator/domain modellen.
+
+---
+
+# E. 2.0 — CREATOR OPERATING SYSTEM
+
+## 2.0.1 Media Platform
+- folders/tags/search/filter
+- upload validation
+- metadata
+- optimization
+- thumbnails/posters
+- future R2
+- private/public assets
+- signed access
+
+## 2.0.2 OBS Local Bridge
+- secure pairing
+- local secret
+- permission scopes
+- scenes/sources
+- stream/recording/replay state
+- reconnect/backoff
+- revoke
+- audit
+
+**Komment:** a publikus Worker nem kap korlátlan lokális gép-hozzáférést.
+
+## 2.0.3 Overlay Studio
+- canvas/layers
+- text/image/video
+- alerts/chat/goals/counters
+- webcam/game/browser source
+- brand tokens
+- templates
+- preview
+- vertical layouts
+
+## 2.0.4 Event + Automation Engine
+TRIGGER → CONDITION → ACTION → RESULT → RETRY/FAILURE → AUDIT.
+- stream/schedule/content/webhook/timer triggers
+- notifications
+- OBS/CMS actions
+- retry/backoff
+- dead letter
+- idempotency
+- cancel/timeout
+- audit
+
+## 2.0.5 Content Factory foundation
+STREAM → VOD → INGEST → ANALYZE → HIGHLIGHT → CLIP → CAPTION → BRAND → REVIEW → APPROVE → PUBLISH → ANALYZE.
+
+## 2.0.6 Community
+- Discord/social
+- announcements
+- notifications
+- events
+- moderation foundation
+
+## 2.0.7 Analytics
+- website
+- stream
+- content
+- platform
+- consent
+- retention
+- export/deletion
+
+## 2.0.8 Forms / notifications / operations
+- contact/support/newsletter
+- submissions
+- spam/rate-limit
+- notification center
+- operational alerts
+
+**2.0 EXIT:** web + stream + media + content + community + automation + analytics egy Creator Centerből.
+
+---
+
+# F. 3.0 — AI CREATOR PLATFORM
+
+## 3.0.1 AI Foundation
+- provider abstraction
+- model router
+- capability registry
+- tool registry
+- AI permissions
+- context boundary
+- cost tracking
+- audit
+- guardrails
+- observability
+- evaluation
+
+## 3.0.2 Assistant / Help
+- natural-language admin help
+- site state
+- error explanation
+- content search
+- onboarding
+
+## 3.0.3 Content / SEO / Translation
+- titles/descriptions
+- news/FAQ/announcements
+- SEO
+- alt text
+- social copy
+- translation drafts
+- locale-aware generation
+- human review
+
+## 3.0.4 Editor Copilot
+- page/section proposals
+- layout suggestions
+- responsive/accessibility/SEO checks
+- rewriting
+- canonical commands only
+
+## 3.0.5 Brand Brain
+- brand voice
+- preferred/prohibited wording
+- visual tokens
+- CTA style
+- platform-specific style
+
+## 3.0.6 Analytics / Schedule AI
+- natural-language analytics
+- trend explanation
+- content suggestions
+- schedule suggestions
+- canonical schedule commands
+
+## 3.0.7 Stream Intelligence
+- transcript
+- event correlation
+- important moments
+- reactions
+- chapters
+- VOD analysis
+
+## 3.0.8 Clip / Content Factory AI
+- clip candidates
+- scoring
+- captions
+- reframe
+- thumbnails
+- metadata
+- platform variants
+- quality gate
+
+## 3.0.9 Background jobs / RAG
+- VOD jobs
+- translation jobs
+- media jobs
+- permission-aware knowledge retrieval
+- progress/retry/cancel
+
+## 3.0.10 Controlled autonomy
+L0 read-only → L1 suggest → L2 draft → L3 approved execution → L4 controlled automation → L5 only much later/restricted.
+
+**3.0 EXIT:** AI capability layerként működik, de nem kerülheti meg a permission, command, validation, history, publish és audit rendszert.
+
+---
+
+# G. 4.0 — TEAM / SaaS
+
+## 4.0.1 Multi-tenant hardening
+- account/site/workspace
+- tenant isolation
+- cross-tenant denial
+- ownership
+- audit scope
+
+## 4.0.2 Roles
+- owner
+- admin
+- editor
+- content editor
+- analyst
+- viewer
+- future custom roles
+
+## 4.0.3 Collaboration
+- comments
+- approvals
+- assignments
+- activity
+- conflict/concurrent edit foundation
+
+## 4.0.4 Billing/subscription boundary
+- plans
+- usage
+- entitlements
+- billing state
+- payment provider boundary
+- invoice/subscription state
+
+**Komment:** billing külön security/compliance domain.
+
+## 4.0.5 Custom domains/staging
+- DNS
+- SSL
+- primary domain
+- redirects
+- staging/preview
+- domain ownership
+
+## 4.0.6 Backup/recovery/export
+- site snapshot
+- content/media manifest
+- revision restore
+- no plaintext secret export
+
+**4.0 EXIT:** más creatorok számára izolált, biztonságos SaaS-képes platform.
+
+---
+
+# H. 5.0 — CREATOR PLATFORM
+
+## 5.0.1 Unified Creator Workspace
+Web + Stream + Content + Media + Overlay + Automation + Community + Analytics + Monetization + AI.
+
+## 5.0.2 Unified content lifecycle
+CREATE → CAPTURE → ANALYZE → EDIT → APPROVE → PUBLISH → DISTRIBUTE → MEASURE → IMPROVE.
+
+## 5.0.3 Monetization
+- support/tips
+- sponsorship
+- affiliate
+- business inquiries
+- media kit
+- future products/subscriptions/memberships
+
+## 5.0.4 Creator business tools
+- campaign workflows
+- sponsor pipeline
+- reporting
+- business content
+
+**5.0 EXIT:** teljes creator operating platform, nem csak website builder.
+
+---
+
+# I. 6.0 — CREATOR ECOSYSTEM
+
+## 6.0.1 Template ecosystem
+- personal/shared templates
+- versioning
+- compatibility
+- import/export
+
+## 6.0.2 Component ecosystem
+- reusable components
+- variants
+- slots
+- compatibility constraints
+
+## 6.0.3 Automation/integration ecosystem
+- connector contracts
+- event schemas
+- capability registry
+- safe extension points
+
+## 6.0.4 Marketplace foundation
+- templates
+- components
+- widgets
+- automations
+- integrations
+
+**Komment:** marketplace csak stabil permission, tenant, versioning, billing és trust/safety alap után.
+
+---
+
+# J. 7.0 — ADVANCED AUTOMATION + AI
+
+## 7.0.1 Specialist agents
+Website, Content, SEO, Stream, Clip, Analytics, Localization, Automation, Brand, Support.
+
+## 7.0.2 Agent orchestration
+- task decomposition
+- handoff
+- scoped context
+- tool permissions
+- approval gates
+- tracing
+
+## 7.0.3 Controlled autonomous workflows
+- creator policies
+- event-driven actions
+- scheduled automation
+- failure recovery
+- kill switch
+- audit
+
+**Komment:** autonómia nem jelent korlátlan hozzáférést.
+
+---
+
+# K. 8.0 — MULTIMODAL CREATOR INTELLIGENCE
+
+## 8.0.1 Multimodal understanding
+VIDEO + AUDIO + TRANSCRIPT + CHAT + TELEMETRY + PLATFORM EVENTS.
+
+## 8.0.2 Real-time Live Co-Pilot
+- technical coach
+- content coach
+- event detection
+- live alerts
+- clip opportunities
+- stream health
+
+## 8.0.3 Real-time clip pipeline
+CAPTURE → DETECT → SCORE → PRE-CUT → CAPTION → REFRAME → BRAND → QUALITY CHECK → PREVIEW → APPROVE/AUTO-PUBLISH.
+
+## 8.0.4 Automatic video editor
+- dead-air
+- start/end
+- framing
+- captions
+- hook
+- intro/outro
+- branding
+- thumbnail
+- metadata
+
+## 8.0.5 Quality-based autonomy
+MODEL CONFIDENCE + CONTENT QUALITY + TECHNICAL QUALITY + PLATFORM VALIDITY + POLICY CHECK + CREATOR SETTINGS.
+
+Ha kritikus feltétel hibás: NO AUTO-PUBLISH.
+
+---
+
+# L. 9.0 — ADVANCED PERSONAL CREATOR AI
+
+## 9.0.1 Personal Content Model
+- clip preference
+- hook preference
+- caption style
+- thumbnail style
+- topic preference
+- platform fit
+- timing preference
+
+## 9.0.2 Feedback loop
+GENERATE → APPROVE/REJECT → PUBLISH → MEASURE → LEARN SIGNAL → RE-RANK → IMPROVE.
+
+**Komment:** preference tanulható; canonical security/policy szabály nem.
+
+## 9.0.3 Personal Brand Brain
+- tone
+- visual identity
+- content rules
+- platform behavior
+- glossary
+- preferred workflows
+
+## 9.0.4 Adaptive assistance
+- context-aware suggestions
+- workflow shortcuts
+- suppressible proactive notifications
+- later voice mode
+
+---
+
+# M. 10.0 — FULL CREATOR OPERATING PLATFORM
+
+A 10.0 nem újraírás, hanem az előző verziókban felépített canonical rendszerek összeérése:
+
+CREATOR INTENT → AI UNDERSTANDING → CONTEXT → PLAN → TOOL → GUARDRAIL → VALIDATION → APPROVAL/POLICY → COMMAND → EXECUTION → RESULT → AUDIT → HISTORY → LEARNING.
+
+A creator természetes nyelven kérhet weboldalt, oldalt, schedule-t, tartalomcsomagot, klippeket, fordítást, social csomagot, analytics elemzést, automationt vagy publikálást; a rendszer mindezt ugyanazon permission/validation/history/publish/audit modellen keresztül kezeli.
+
+**10.0 EXIT:** teljes, AI-native, bővíthető Creator Operating Platform.
+
+---
+
+# N. BUILD FOR 10.0 — IMPLEMENT ONLY WHEN READY
+
+Minden fejlesztés előtt kötelező kérdések:
+1. Mi kell most?
+2. Mi kell a következő verzióhoz?
+3. Mi kell az azt követő 2–3 verzióhoz?
+4. Mi okozna később újraépítést?
+5. Milyen canonical contractot kell most rögzíteni?
+6. Mit kell most implementálni?
+7. Mit csak elő kell készíteni?
+8. Mit kell későbbi backlogban tartani?
+9. Milyen migration/compatibility út kell?
+10. Milyen teszt bizonyítja a visszafelé kompatibilitást?
+
+**Tilos:** párhuzamos Page/Theme/Command/History/Permission/Asset rendszerek; külön AI command system; platformonként teljesen külön domain model; admin UI-ra épített security; későbbi verzióra hivatkozva a jelenlegi production gate átugrása.
+
+**Kötelező:** domain contract → data model → API → authorization → validation → implementation → UI/UX → errors → audit → tests → CI → live → security/accessibility/performance → MASTER checkpoint.
+
+---
+
+# O. PC GATE SZABÁLY
+
+PC/Desktop regression csak akkor nyílik meg, amikor a MASTER aktuális pontja ténylegesen megköveteli. Addig minden telefonról biztonságosan végrehajtható fejlesztés és dokumentáció folytatható. A későbbi PC-teszt nem külön fejlesztési ág, hanem a megfelelő production/UX gate része.
+
+---
+
+# P. AKTUÁLIS VALÓS VÉGREHAJTÁSI PONT — NEM VÁLTOZIK
+
+### 40.69.13.E4.3.4 — Twitch connection/OAuth ownership enforcement
+
+Állapot:
+- E4.3.1–E4.3.3 — LEZÁRVA
+- E4.3.4 code/regressions — PASS
+- Twitch Integration Check #176 — PASS
+- Editor Core Test #800 — PASS
+- remote 0016_twitch_oauth_site_ownership.sql migration — PENDING
+- live D1/security gate — PENDING
+- E4.3.5 — csak a live/security gate után
+- E4.4 site_id NOT NULL hardening — csak E4.3 teljes lezárása után
+- PC/Desktop regression — továbbra sem aktuális
+
+### Következő konkrét sorrend
+
+1. Remote D1 0016 migration végrehajtása.
+2. Live D1 schema/ownership/security verification.
+3. E4.3.4 live/security gate lezárása.
+4. MASTER checkpoint frissítése.
+5. E4.3.5.
+6. E4.3 teljes lezárása után E4.4.
+7. Ezután kizárólag a MASTER következő aktív checkpointja.
+
+**Nincs előreugrás.** A 0.x–10.0 terv azért van most rögzítve, hogy minden jelenlegi döntés később bővíthető legyen; nem azért, hogy a jelenlegi checkpointot megkerüljük.
