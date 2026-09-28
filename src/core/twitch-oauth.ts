@@ -1,5 +1,6 @@
 import type { Env } from "../types/env.ts";
 import { decryptTwitchToken, encryptTwitchToken, hashTwitchOAuthState } from "./twitch-crypto.ts";
+import { DEFAULT_SITE_ID } from "./site-context.ts";
 
 const AUTHORIZE_URL = "https://id.twitch.tv/oauth2/authorize";
 const TOKEN_URL = "https://id.twitch.tv/oauth2/token";
@@ -36,6 +37,7 @@ type ValidateResponse = {
 
 type TwitchConnectionRow = {
   id: string;
+  siteId: string;
   userId: string;
   broadcasterId: string;
   broadcasterLogin: string;
