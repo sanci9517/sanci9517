@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.40.38  
+**Verzió:** MASTER-2.40.40  
 **Dátum:** 2026-09-28  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -1446,15 +1446,20 @@ Cél:
 - [ ] Remote 0016_twitch_oauth_site_ownership.sql migration alkalmazása és D1 verification.
 - [x] Célzott Twitch connection site-ownership regression tesztek bekerültek a Twitch regression suite-ba; cross-site ownership, site-scoped lookup és NULL legacy binding ellenőrzések PASS.
 - [x] GitHub Actions Twitch Integration Check #166 — PASS; Editor Core Test #790 — PASS.
+- [x] E4.3.4 hardening: az OAuth callback már az exchange által visszaadott pontos `twitch_connections.id` rekordot köti a canonical site-hoz; megszűnt a user összes NULL `site_id` kapcsolatának tömeges bindingja.
+- [x] E4.3.4 hardening: új `bindTwitchConnectionToSite(siteId, connectionId)` exact-ID ownership helper készült `site_id IS NULL` guarddal.
+- [x] E4.3.4 hardening: `exchangeTwitchCode()` server-side módon visszaadja a létrehozott/frissített connection ID-t; token vagy secret nem kerül visszaadásra.
+- [x] Célzott exact-ID site-binding regression teszt hozzáadva: új connection pontos bindingja és már owned connection újrakötésének tiltása.
+- [ ] A hardening utáni Twitch Integration CI PASS még nincs lezárva: run #174 jelenleg queued.
+- [x] Editor Core Test #798 — PASS a hardening utáni HEAD-en.
 - [ ] Remote 0016 migration alkalmazása és D1 verification.
-- [ ] E4.3.4 végleges security/live gate.
 - [ ] E4.3.4 végleges security/live gate.
 
 **Fontos:** E4.3.4 még NEM lezárt pont. A remote migration és célzott cross-site regression nélkül nem lépünk tovább E4.3.5-re.
 
 **E4.4 `site_id NOT NULL` schema hardening csak az E4.3.4–E4.3.8 teljes lezárása után indítható.**
 
-**MASTER-2.40.39 checkpoint:** E4.2 és E4.3.1–E4.3.3 lezárva. E4.3.3 végleges CI gate-je Twitch Integration #151 és Editor Core #775 PASS. A következő és egyetlen aktív fejlesztési pont: **40.69.13.E4.3.4 — Twitch connection/OAuth ownership enforcement**. A teljes 1.0 és post-1.0 backlog megmarad, és minden új funkció ugyanebbe az egyetlen MASTER-be kerül.
+**MASTER-2.40.40 checkpoint:** E4.2 és E4.3.1–E4.3.3 lezárva. E4.3.3 végleges CI gate-je Twitch Integration #151 és Editor Core #775 PASS. A következő és egyetlen aktív fejlesztési pont: **40.69.13.E4.3.4 — Twitch connection/OAuth ownership enforcement**. A teljes 1.0 és post-1.0 backlog megmarad, és minden új funkció ugyanebbe az egyetlen MASTER-be kerül.
 
 **1.0 fókusz:** először egy stabil, professzionális magyar streamer-weboldal + működő visual editor + Twitch Schedule alap + publish/public flow. A globális piacra szükséges architekturális alapok már 1.0 előtt készülnek, de a teljes többnyelvű tartalom, fordítási workflow, további platformok és haladó SaaS funkciók 1.0 utáni szakaszok.
 
@@ -5392,7 +5397,7 @@ Minden új capability külön domain contracttal, benchmarkkal, implementációv
 **Feature-preservation:** a fenti végső vízió minden pontja megőrzendő MASTER backlog. Egy új beszélgetés vagy újabb 1.0 scope-döntés nem törölheti ezeket implicit módon.
 
 
-**2026-09-28 munkamenet-záró állapot:** E4.3.1–E4.3.3 lezárva. E4.3.4 alatt a Twitch connection/OAuth site-ownership enforcement kódja és célzott regressziói elkészültek; a végleges CI kapuk **Twitch Integration Check #166 PASS + Editor Core Test #790 PASS**. A remote `0016_twitch_oauth_site_ownership.sql` migration és a live D1/security gate még hátra van. **Következő folytatás pontosan innen: 40.69.13.E4.3.4 — Twitch connection/OAuth ownership enforcement.** E4.4 `site_id NOT NULL` schema hardening továbbra is blokkolva marad az E4.3 teljes lezárásáig. Új beszélgetésben ezt a checkpointot kell folytatni, nem régebbi E pontot.
+**2026-09-28 munkamenet-záró állapot:** E4.3.1–E4.3.3 lezárva. E4.3.4 alatt a Twitch connection/OAuth site-ownership enforcement kódja és célzott regressziói elkészültek; az exact-ID binding hardening is bekerült. A hardening utáni Editor Core Test #798 PASS, míg a Twitch Integration Check #174 még queued. A remote `0016_twitch_oauth_site_ownership.sql` migration és a live D1/security gate még hátra van. **Következő folytatás pontosan innen: 40.69.13.E4.3.4 — Twitch connection/OAuth ownership enforcement.** E4.4 `site_id NOT NULL` schema hardening továbbra is blokkolva marad az E4.3 teljes lezárásáig. Új beszélgetésben ezt a checkpointot kell folytatni, nem régebbi E pontot.
 
 ---
 
