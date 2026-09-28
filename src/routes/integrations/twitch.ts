@@ -10,6 +10,7 @@ import {
 } from "../../core/twitch-oauth";
 import type { Env } from "../../types/env";
 import { getCanonicalSiteContext } from "../../core/site-context.ts";
+import { hashTwitchOAuthState } from "../../core/twitch-crypto.ts";
 import { assertTwitchConnectionOwnership, bindNewTwitchConnectionToSite, getOwnedTwitchConnection } from "../../core/twitch-site-ownership.ts";
 
 function redirect(request: Request, status: string): Response {
@@ -36,7 +37,13 @@ export async function twitchConnectRoute(request: Request, env: Env): Promise<Re
 
   try {
     const { siteId } = getCanonicalSiteContext();
-    return Response.redirect(await createTwitchAuthorizationUrl(request, env, user.id, siteId), 302);
+    const target = await createTwitchAuthorizationUrl(request, env, user.id);
+    const state = new URL(target).searchParams.get("state");
+    if (!state) throw new Error("TWITCH_OAUTH_STATE_INVALID");
+    const stateHash = await hashTwitchOAuthState(state);
+    await env.DB.prepare("UPDATE twitch_oauth_states SET site_id=? WHERE state_hash=? AND user_id=? AND site_id IS NULL")
+      .bind(siteId, stateHash, user.id).run();
+    return Response.redirect(target, 302);
   } catch (err) {
     if (err instanceof Error && err.message === "TWITCH_INTEGRATION_NOT_CONFIGURED") {
       return error("TWITCH_INTEGRATION_NOT_CONFIGURED", 503);
@@ -60,7 +67,13 @@ export async function twitchCallbackRoute(request: Request, env: Env): Promise<R
 
   const { siteId } = getCanonicalSiteContext();
   try {
-    await exchangeTwitchCode(request, env, code, state, user.id, siteId);
+    const stateHash = await hashTwitchOAuthState(state);
+    const stateOwnership = await env.DB.prepare(
+      "SELECT id FROM twitch_oauth_states WHERE state_hash=? AND user_id=? AND site_id=? " +
+      "AND julianday(expires_at)>julianday('now') AND used_at IS NULL LIMIT 1"
+    ).bind(stateHash, user.id, siteId).first<{ id: string }>();
+    if (!stateOwnership) throw new Error("TWITCH_OAUTH_STATE_INVALID");
+    await exchangeTwitchCode(request, env, code, state, user.id);
     await bindNewTwitchConnectionToSite(env, siteId, user.id);
     const connection = await getOwnedTwitchConnection(env, siteId, user.id);
     if (connection) {
