@@ -4,7 +4,8 @@ export function mapTwitchScheduleSegment(
   segment: TwitchScheduleSegment,
   sourceAccountId: string,
   broadcasterLogin: string,
-  syncedAt: string
+  syncedAt: string,
+  siteId: string
 ): CanonicalScheduleInput {
   if (!segment.id || !segment.startAt || !segment.endAt || !segment.title) {
     throw new Error("INVALID_TWITCH_SCHEDULE_SEGMENT");
@@ -15,6 +16,7 @@ export function mapTwitchScheduleSegment(
     throw new Error("INVALID_TWITCH_SCHEDULE_SEGMENT");
   }
   return {
+    siteId,
     source: "twitch",
     sourceId: segment.id,
     sourceAccountId,
