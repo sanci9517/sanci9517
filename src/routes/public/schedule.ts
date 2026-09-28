@@ -1,6 +1,7 @@
 import { error, ok } from "../../core/response";
 import { readPublicSchedule } from "../../core/schedule-read";
 import type { Env } from "../../types/env";
+import { getCanonicalSiteContext } from "../../core/site-context";
 
 const parseList = (value: string | null) => value
   ? value.split(",").map(item => item.trim()).filter(Boolean)
@@ -8,9 +9,11 @@ const parseList = (value: string | null) => value
 
 export async function publicScheduleRoute(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url);
+  const { siteId } = getCanonicalSiteContext();
 
   try {
     const items = await readPublicSchedule(env.DB, {
+      siteId,
       mode: url.searchParams.get("mode") ?? undefined,
       limit: url.searchParams.has("limit") ? Number(url.searchParams.get("limit")) : undefined,
       statuses: parseList(url.searchParams.get("statuses")),
