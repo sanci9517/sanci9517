@@ -45,28 +45,28 @@ async function finishSync(
 async function upsert(db: D1Database, item: ReturnType<typeof mapTwitchScheduleSegment>): Promise<void> {
   await db.prepare(
     "INSERT INTO schedule_items " +
-    "(id,title,platform,starts_at,ends_at,status,url,notes,source,source_id,source_account_id," +
+    "(id,site_id,title,platform,starts_at,ends_at,status,url,notes,source,source_id,source_account_id," +
     "source_presence,source_synced_at,source_missing_at,is_recurring,source_category_id,source_category_name,updated_at) " +
-    "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,NULL,?,?,?,CURRENT_TIMESTAMP) " +
+    "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,NULL,?,?,?,CURRENT_TIMESTAMP) " +
     "ON CONFLICT(source,source_account_id,source_id) DO UPDATE SET " +
     "title=excluded.title,platform=excluded.platform,starts_at=excluded.starts_at,ends_at=excluded.ends_at," +
     "status=excluded.status,url=excluded.url,source_presence='present',source_synced_at=excluded.source_synced_at," +
     "source_missing_at=NULL,is_recurring=excluded.is_recurring,source_category_id=excluded.source_category_id," +
     "source_category_name=excluded.source_category_name,updated_at=CURRENT_TIMESTAMP"
   ).bind(
-    crypto.randomUUID(), item.title, item.platform, item.startsAt, item.endsAt, item.status,
+    crypto.randomUUID(), item.siteId, item.title, item.platform, item.startsAt, item.endsAt, item.status,
     item.url, item.notes, item.source, item.sourceId, item.sourceAccountId, item.sourcePresence,
     item.sourceSyncedAt, item.isRecurring ? 1 : 0, item.sourceCategoryId, item.sourceCategoryName
   ).run();
 }
 
 async function reconcileMissing(
-  db: D1Database, accountId: string, window: ScheduleSyncWindow, seenIds: Set<string>
+  db: D1Database, siteId: string, accountId: string, window: ScheduleSyncWindow, seenIds: Set<string>
 ): Promise<number> {
   const rows = await db.prepare(
     "SELECT id,source_id AS sourceId FROM schedule_items " +
-    "WHERE source=? AND source_account_id=? AND source_presence='present' AND starts_at>=? AND starts_at<?"
-  ).bind(SOURCE, accountId, window.startAt, window.endAt)
+    "WHERE site_id=? AND source=? AND source_account_id=? AND source_presence='present' AND starts_at>=? AND starts_at<?"
+  ).bind(siteId, SOURCE, accountId, window.startAt, window.endAt)
     .all<{ id: string; sourceId: string | null }>();
 
   const statements = rows.results
@@ -80,7 +80,7 @@ async function reconcileMissing(
 }
 
 export async function syncCanonicalTwitchSchedule(
-  db: D1Database, window: ScheduleSyncWindow, fetcher: ScheduleSyncFetcher, accountId?: string
+  db: D1Database, window: ScheduleSyncWindow, fetcher: ScheduleSyncFetcher, accountId?: string, siteId = "site-default"
 ): Promise<CanonicalScheduleSyncResult> {
   const normalized = normalizeScheduleSyncWindow(window);
   let syncAccountId = accountId ?? "";
@@ -99,13 +99,13 @@ export async function syncCanonicalTwitchSchedule(
     let upsertedCount = 0;
 
     for (const segment of snapshot.segments) {
-      const item = mapTwitchScheduleSegment(segment, snapshot.broadcasterId, snapshot.broadcasterLogin, syncedAt);
+      const item = mapTwitchScheduleSegment(segment, snapshot.broadcasterId, snapshot.broadcasterLogin, syncedAt, siteId);
       await upsert(db, item);
       seenIds.add(item.sourceId);
       upsertedCount++;
     }
 
-    const missingCount = await reconcileMissing(db, snapshot.broadcasterId, normalized, seenIds);
+    const missingCount = await reconcileMissing(db, siteId, snapshot.broadcasterId, normalized, seenIds);
     await finishSync(db, snapshot.broadcasterId, "success", snapshot.segments.length, null);
     return { status: "success", seenCount: snapshot.segments.length, upsertedCount, missingCount };
   } catch (error) {
