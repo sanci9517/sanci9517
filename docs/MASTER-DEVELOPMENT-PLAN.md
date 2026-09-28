@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.48.0  
+**Verzió:** MASTER-2.49.0  
 **Dátum:** 2026-09-28  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -10589,3 +10589,743 @@ Következő sorrend:
 5. E4.3.5;
 6. E4.4 csak E4.3 teljes lezárása után;
 7. következő aktív MASTER checkpoint.
+
+
+
+# 00.9.20 — KÜLSŐ CREATOR / STREAMER WEBOLDAL + PLATFORM + OPEN-SOURCE ARCHITEKTÚRA AUDIT — RÖGZÍTVE 2026-09-28
+
+## 00.9.20.1 — AUDIT CÉLJA ÉS MÓDSZERE
+
+Ez az audit a meglévő MASTER teljes funkciótérképét külső, jelenleg elérhető creator/streamer weboldalak, creator-platformok, streaming-tool platformok, commerce/membership rendszerek és nyílt forráskódú editor/CMS projektek alapján ellenőrzi.
+
+Az audit célja nem konkurens termék másolása, hanem annak ellenőrzése, hogy a Sanci9517 MASTER-ből ne maradjon ki olyan funkció vagy canonical szerződés, amely a végső creator/streamer platformhoz ésszerűen szükséges lehet.
+
+**Audit-forráscsoportok:**
+- nagy creator/streamer saját oldalak: Kai Cenat, Ludwig és hasonló creator-brand oldalak;
+- creator website / commerce: Fourthwall, StreamrList, StreamerPlatform;
+- stream operating tools: StreamElements, OWN3D, CloverCast, Aquilo;
+- visual website/editor/CMS: Puck, Craft.js, GrapesJS, Builder, Sanity;
+- egyszerű creator-site benchmark: Carrd;
+- multi-platform/live/community minták: Twitch/YouTube/Kick környezet és az ezeket összekötő creator tooling.
+
+**Fontos:** ahol nyílt forráskód áll rendelkezésre, az audit nem csak marketingfunkciókat, hanem architekturális mintákat is vizsgál. A saját Sanci9517 canonical contractjai elsőbbséget élveznek.
+
+## 00.9.20.2 — KÜLSŐ AUDIT FŐ EREDMÉNYE
+
+Az audit alapján a MASTER alapvető iránya helyes és a fő domainek már szerepelnek benne. Ugyanakkor több olyan funkciót és részfunkciót találtunk, amelyeket érdemes explicit módon rögzíteni, hogy később ne kelljen újratervezni őket.
+
+Az audit eredménye **feature-preserving + additive**:
+- meglévő funkció nem törölhető;
+- meglévő phase-besorolás nem írható felül csendben;
+- az új funkció a megfelelő canonical domainhez kerül;
+- foundation contract korábban készülhet, a teljes UI/üzleti funkció később;
+- ugyanazt a capability-t nem építjük fel párhuzamos domainként.
+
+## 00.9.20.3 — CREATOR WEBSITE / PUBLIC EXPERIENCE ÚJONNAN EXPLICITÁLT KÖVETELMÉNYEK
+
+A creator weboldal ne csak statikus „About + Twitch + Schedule” oldal legyen.
+
+**Creator Home / Link Hub:**
+- [ ] hero / creator identity blokk;
+- [ ] live now / offline / next stream állapot;
+- [ ] dinamikus platform-linkek;
+- [ ] social hub;
+- [ ] latest content;
+- [ ] featured content;
+- [ ] merch/store CTA;
+- [ ] membership/support CTA;
+- [ ] Discord/community CTA;
+- [ ] newsletter/email CTA;
+- [ ] kampány/event CTA;
+- [ ] smart links / deep links;
+- [ ] későbbi UTM/campaign attribution;
+- [ ] QR/deep-link támogatás;
+- [ ] creator-specific link ordering és visibility;
+- [ ] mobile-first link-hub presentation.
+
+**Content discovery:**
+- [ ] VOD / clips / highlights / Shorts / social feed;
+- [ ] kategória / tag / collection;
+- [ ] keresés;
+- [ ] filter;
+- [ ] sort;
+- [ ] pagination / infinite-load ahol indokolt;
+- [ ] related content;
+- [ ] featured/pinned;
+- [ ] playlist/series;
+- [ ] content archive;
+- [ ] content detail page;
+- [ ] share/deep-link metadata.
+
+**Creator identity / trust:**
+- [ ] About;
+- [ ] setup / gear;
+- [ ] games;
+- [ ] creator history;
+- [ ] FAQ;
+- [ ] sponsor/media-kit;
+- [ ] contact/business inquiry;
+- [ ] legal/privacy/contact surface;
+- [ ] branded 404/403/500/maintenance pages.
+
+**Külső auditból következő szabály:** a public website legyen saját brand-home és audience-owned destination, ne egyszerű linklista.
+
+## 00.9.20.4 — NAGY CREATOR OLDALAK TANULSÁGAI
+
+A Kai Cenat oldalán külön Home, Stream Clips, Events, About és közösségi/Mafia Lounge felületek jelennek meg; az eseményoldal külön programokat és streameseményeket kezel, a clip oldal pedig stream highlightokat rendszerez. Ez megerősíti, hogy a creator site-on a **content + events + community + identity** külön, de összekapcsolt public felületek legyenek. 
+
+Ludwig környezetében külön store, adományozási és esemény/aukciós oldalak is megjelennek. Ez azt támasztja alá, hogy a creator brand hosszabb távon több üzleti és kampányélményt is képes legyen kiszolgálni, nem csak a főoldalt.
+
+**MASTER-be rögzített következtetés:**
+- [ ] Events/Event Hub első osztályú domain;
+- [ ] campaign/event landing page;
+- [ ] creator-specific campaign microsite capability;
+- [ ] public archive / historical event content;
+- [ ] event-to-content relationship;
+- [ ] event-to-community relationship;
+- [ ] event-to-commerce/support relationship;
+- [ ] későbbi auction/raffle/giveaway domain a Business/Community fázisban, ahol jogilag és üzletileg értelmes.
+
+## 00.9.20.5 — CREATOR PLATFORM / STREAM TOOL AUDIT
+
+A StreamElements dokumentált funkciói alapján a stream-operating rétegben visszatérő elemek:
+- overlay editor;
+- alert system;
+- widgets;
+- custom widgets;
+- chatbot;
+- commands;
+- timers;
+- spam/moderation;
+- loyalty points;
+- contests/giveaways;
+- song requests;
+- automated chat announcements;
+- tipping;
+- OBS/browser-source alapú renderelés.
+
+Az OWN3D külön alert-set konfigurációt és streaming asset/overlay ecosystemet használ. A CloverCast és hasonló újabb creator control-centerek a dashboard + stream manager + unified chat/events + overlay studio + automation + analytics + OBS control kombinációját mutatják.
+
+**MASTER-be explicit módon bekerül:**
+- [ ] unified event bus a creator stream eseményeire;
+- [ ] event normalization providerenként;
+- [ ] alert definitions + alert sets;
+- [ ] widget definitions;
+- [ ] widget state/configuration;
+- [ ] browser-source/public embed endpoint;
+- [ ] chatbot commands;
+- [ ] timers;
+- [ ] moderation actions;
+- [ ] loyalty/points foundation;
+- [ ] viewer rewards;
+- [ ] giveaways/raffles/polls foundation;
+- [ ] song/media request queue;
+- [ ] TTS capability;
+- [ ] event-triggered automation;
+- [ ] stream control permissions;
+- [ ] OBS source/browser-source management;
+- [ ] overlay snapshot/version/rollback;
+- [ ] real-time event delivery;
+- [ ] queue/backpressure/retry/idempotency;
+- [ ] emergency stream-control disable.
+
+**Elhelyezés:** alap event/capability contract PHASE 0; tényleges stream-tool UI és runtime PHASE 3; monetized/advanced engagement PHASE 6; public ecosystem/packs PHASE 7; intelligent orchestration PHASE 8.
+
+## 00.9.20.6 — AUDIENCE / COMMUNITY / LOYALTY GAP CHECK
+
+A külső platformok alapján a viewer nem csak „anonymous visitor”. A végső platformban különbséget kell tartani:
+- visitor;
+- known contact;
+- free account/member;
+- follower/subscriber;
+- paid member;
+- supporter/donor;
+- moderator;
+- VIP/role;
+- customer;
+- banned/restricted user.
+
+**Explicit foundation:**
+- [ ] audience identity;
+- [ ] account linking;
+- [ ] provider identities;
+- [ ] consent/preferences;
+- [ ] notification preferences;
+- [ ] roles/badges;
+- [ ] membership state;
+- [ ] support/tip history;
+- [ ] loyalty balance/ledger;
+- [ ] rewards/redemptions;
+- [ ] moderation state;
+- [ ] block/mute/restrict;
+- [ ] reports;
+- [ ] anti-spam/anti-abuse;
+- [ ] audience export/delete;
+- [ ] audience segmentation később;
+- [ ] audience activity timeline később.
+
+**Fontos:** loyalty/points nem az 1.0 része. Az adatmodell és identity/capability foundation azonban ne akadályozza a későbbi bevezetést.
+
+## 00.9.20.7 — COMMERCE / MEMBERSHIP AUDIT BŐVÍTÉS
+
+Fourthwall és hasonló creator-commerce rendszerek alapján a későbbi commerce rétegben explicit:
+- [ ] storefront;
+- [ ] custom storefront themes;
+- [ ] custom domain;
+- [ ] physical products;
+- [ ] self-fulfilled products;
+- [ ] provider-fulfilled products;
+- [ ] POD provider adapter;
+- [ ] digital products;
+- [ ] downloads / protected delivery;
+- [ ] memberships;
+- [ ] membership tiers;
+- [ ] free account;
+- [ ] paid account;
+- [ ] member-only posts;
+- [ ] member-only products;
+- [ ] private media/video;
+- [ ] polls for members;
+- [ ] badges/streaks;
+- [ ] Discord role sync;
+- [ ] promo codes;
+- [ ] discounts;
+- [ ] bundles;
+- [ ] limited drops;
+- [ ] preorder;
+- [ ] gifting;
+- [ ] payment-method abstraction;
+- [ ] tax/VAT boundary;
+- [ ] refund/cancellation;
+- [ ] fulfillment;
+- [ ] customer support;
+- [ ] sales analytics;
+- [ ] audience ownership/export.
+
+**Phase mapping:** foundation contracts PHASE 0; basic commerce/membership PHASE 6; SaaS entitlement/payment/billing infrastructure PHASE 5; ecosystem/provider expansion PHASE 7.
+
+## 00.9.20.8 — VISUAL EDITOR / CMS / OPEN-SOURCE CODE AUDIT
+
+### Puck
+Puck dokumentációja és repositoryja megerősíti:
+- component configuration;
+- fields;
+- root configuration;
+- nested/multi-column layouts;
+- categories;
+- dynamic props/fields;
+- external data sources;
+- server components;
+- data migration;
+- same-origin viewport simulation;
+- permissions API;
+- plugin/extensibility.
+
+**Sanci következtetés:**
+- [ ] canonical component registry;
+- [ ] typed field definitions;
+- [ ] conditional/dynamic fields;
+- [ ] component categories;
+- [ ] component capability/permission metadata;
+- [ ] schema/data migration contract;
+- [ ] editor viewport simulation;
+- [ ] external/domain data binding;
+- [ ] plugin/extension contract későbbre.
+
+### Craft.js
+A Craft.js nyílt forráskódú architektúrája a node-based page editor, drag/drop, rendering és UI-független editor-core szétválasztását erősíti meg. A layers panel külön package-ként is létezik.
+
+**Sanci következtetés:**
+- [ ] canonical node identity;
+- [ ] parent/child hierarchy;
+- [ ] node capabilities;
+- [ ] connectors/drag/drop boundary;
+- [ ] selection state;
+- [ ] node serialization;
+- [ ] editor-core és editor-shell szétválasztása;
+- [ ] Layers mint önálló presentation surface;
+- [ ] history/transaction state canonicalizálása.
+
+### GrapesJS
+A GrapesJS dokumentáltan Blocks, Style Manager, Layer Manager, Code Viewer, Asset Manager, storage és commands rétegeket ad.
+
+**Sanci következtetés:**
+- [ ] Block Library;
+- [ ] Style/Inspector Manager;
+- [ ] Layer Manager;
+- [ ] Asset Manager;
+- [ ] Command registry;
+- [ ] storage adapter boundary;
+- [ ] developer/debug mode;
+- [ ] későbbi safe custom-code boundary — nem arbitrary code execution.
+
+### Builder
+A Builder nyílt repositoryja és dokumentált modellje megerősíti a meglévő componentekre épülő visual editinget, component registrationt, drag/dropot és publish workflow-t.
+
+**Sanci következtetés:**
+- [ ] component registry legyen a public rendererrel közös;
+- [ ] editor ne generáljon saját, párhuzamos component runtime-ot;
+- [ ] registered component → fields → renderer → validation → persistence;
+- [ ] visual editing meglévő canonical components fölött;
+- [ ] external data source contract.
+
+### Sanity
+A Sanity Studio nyílt architektúrája schema-driven, plugin-extensible, workspace/tool alapú és strukturált tartalomra épít; a dokumentált Presentation tool vizuális szerkesztési irányt is támogat.
+
+**Sanci következtetés:**
+- [ ] schema-driven content contracts;
+- [ ] workspace/tool separation;
+- [ ] plugin/tool registry később;
+- [ ] structured content;
+- [ ] document diff;
+- [ ] validation;
+- [ ] content actions;
+- [ ] presentation preview;
+- [ ] real-time collaboration foundation később;
+- [ ] presence/comments később.
+
+### Kódminőségi benchmark-szabály
+Nyílt forráskódú referenciánál a későbbi komoly editor-fejlesztés előtt vizsgálni kell:
+- package/module boundary;
+- state ownership;
+- serialization;
+- history;
+- transactions;
+- drag/drop;
+- field schema;
+- migrations;
+- tests;
+- error handling;
+- performance;
+- accessibility;
+- extension/plugin model.
+
+Nem másolunk kódot vakon. A referencia csak döntéstámogatás; a Sanci9517 canonical domain és security contract kötelező.
+
+## 00.9.20.9 — WEBSITE BUILDER / SIMPLE CREATOR-SITE AUDIT
+
+A Carrd és Fourthwall jellegű egyszerű site builder mintákból explicit követelmény:
+- [ ] custom domains;
+- [ ] SSL/domain state;
+- [ ] custom meta tags;
+- [ ] canonical URL;
+- [ ] downloadable/exportable site data ahol a saját platform modell engedi;
+- [ ] embeds;
+- [ ] forms;
+- [ ] newsletter signup;
+- [ ] payment-enabled form később;
+- [ ] analytics integrations;
+- [ ] template creation;
+- [ ] reusable template;
+- [ ] no-code customization;
+- [ ] responsive by default;
+- [ ] no vendor lock-in / data portability stratégia.
+
+**Fontos:** a Sanci9517 esetében az export nem jelenthet arbitrary Worker-code exportot. A hordozhatóság a canonical data/Page Model/asset metadata/configuration rétegen történik.
+
+## 00.9.20.10 — CONTENT / CAMPAIGN / EVENT DOMAIN BŐVÍTÉS
+
+A creator oldalak és campaign/commerce oldalak alapján a Content domain mellé explicit:
+- [ ] Event entity;
+- [ ] Event page;
+- [ ] event schedule;
+- [ ] event status;
+- [ ] registration/RSVP foundation;
+- [ ] event media;
+- [ ] event highlights;
+- [ ] event archive;
+- [ ] event CTA;
+- [ ] campaign entity;
+- [ ] campaign landing page;
+- [ ] campaign start/end;
+- [ ] campaign attribution;
+- [ ] UTM metadata;
+- [ ] referral metadata;
+- [ ] QR/deep-link metadata;
+- [ ] campaign analytics;
+- [ ] campaign-to-content relation;
+- [ ] campaign-to-product relation;
+- [ ] campaign-to-community relation.
+
+**Phase mapping:** Event/Campaign contract PHASE 0; basic public event/campaign pages PHASE 1; advanced campaigns/marketing PHASE 6; ecosystem campaign packs PHASE 7.
+
+## 00.9.20.11 — PUBLIC EMBED / WIDGET PLATFORM
+
+Az audit alapján a végső platform egyik fontos differentiáló képessége lehet, hogy canonical domain adatból biztonságos, külön endpointon beágyazható widgeteket szolgáltat.
+
+Foundation:
+- [ ] embed identity;
+- [ ] embed configuration;
+- [ ] origin/referrer policy;
+- [ ] CSP;
+- [ ] sandbox;
+- [ ] token/signature where required;
+- [ ] public/private data boundary;
+- [ ] cache policy;
+- [ ] rate limit;
+- [ ] versioned embed contract;
+- [ ] widget health;
+- [ ] widget fallback;
+- [ ] embed analytics.
+
+Későbbi widgetek:
+- Live Status;
+- Next Stream;
+- Schedule;
+- Chat;
+- Alert;
+- Goal;
+- Leaderboard;
+- Content Feed;
+- Product;
+- Membership;
+- Donation/Support;
+- Social Feed.
+
+**Phase mapping:** contract PHASE 0; basic website embeds PHASE 1; stream widgets PHASE 3; commerce/community widgets PHASE 6; public widget marketplace PHASE 7.
+
+## 00.9.20.12 — CREATOR OPERATIONS / DASHBOARD GAP
+
+A CloverCast és Aquilo jellegű creator control-centerek alapján explicit:
+- [ ] current stream overview;
+- [ ] platform health;
+- [ ] current viewers;
+- [ ] current game/category;
+- [ ] recent events;
+- [ ] recent alerts;
+- [ ] chat/event summary;
+- [ ] quick actions;
+- [ ] automation status;
+- [ ] integration health;
+- [ ] OBS connection status;
+- [ ] content processing jobs;
+- [ ] publish queue;
+- [ ] failed jobs;
+- [ ] system incident banner;
+- [ ] emergency controls.
+
+**Phase mapping:** basic Creator Center PHASE 1; live operations PHASE 3; AI-driven operational recommendations PHASE 4.
+
+## 00.9.20.13 — MOBILE CREATOR OPERATIONS GAP
+
+A mobile auditból következően különbséget kell tenni:
+1. public mobile website;
+2. mobile admin;
+3. mobile editor;
+4. creator operations mobile/PWA;
+5. future native creator app.
+
+Explicit:
+- [ ] push notification contract;
+- [ ] mobile quick actions;
+- [ ] live/offline alert;
+- [ ] schedule change notification;
+- [ ] approval queue;
+- [ ] content publish approval;
+- [ ] moderation quick actions;
+- [ ] integration reconnect;
+- [ ] analytics snapshot;
+- [ ] emergency automation/AI pause;
+- [ ] secure re-auth for sensitive actions.
+
+## 00.9.20.14 — ACCESSIBILITY / PERFORMANCE / TRUST GAP
+
+A benchmark nem csak funkciókat jelent. A public creator platformnál explicit:
+- [ ] WCAG-oriented component defaults;
+- [ ] keyboard navigation;
+- [ ] focus management;
+- [ ] reduced motion;
+- [ ] contrast checks;
+- [ ] alt text enforcement;
+- [ ] captions/transcript support;
+- [ ] semantic headings;
+- [ ] form labels/errors;
+- [ ] image dimensions/aspect ratio;
+- [ ] responsive image variants;
+- [ ] lazy loading;
+- [ ] critical rendering budget;
+- [ ] third-party embed budget;
+- [ ] script budget;
+- [ ] Core Web Vitals-style performance monitoring;
+- [ ] broken link/embed detection;
+- [ ] uptime/health indication;
+- [ ] graceful degradation;
+- [ ] privacy-aware analytics.
+
+## 00.9.20.15 — SECURITY / TRUST ARCHITECTURE GAP
+
+A külső creator tooling különösen sok OAuth, webhook, embed, payment és user-generated content felületet hoz. Ezért explicit foundation:
+- [ ] OAuth state/PKCE where applicable;
+- [ ] encrypted token storage;
+- [ ] minimum scopes;
+- [ ] scope review;
+- [ ] token rotation/expiry;
+- [ ] revoke;
+- [ ] webhook signature verification;
+- [ ] webhook replay protection;
+- [ ] idempotency;
+- [ ] rate limiting;
+- [ ] provider outage handling;
+- [ ] secret isolation;
+- [ ] signed media URLs;
+- [ ] protected digital downloads;
+- [ ] embed isolation;
+- [ ] CSP;
+- [ ] iframe/sandbox policy;
+- [ ] XSS-safe rich text/content;
+- [ ] safe HTML/Markdown policy;
+- [ ] user-generated content sanitization;
+- [ ] upload validation;
+- [ ] malware/content scanning hook;
+- [ ] abuse/report/block pipeline;
+- [ ] payment webhook verification;
+- [ ] audit log for sensitive actions;
+- [ ] emergency revoke-all;
+- [ ] emergency disable external publishing;
+- [ ] emergency disable automation;
+- [ ] emergency disable AI;
+- [ ] incident recovery runbook.
+
+## 00.9.20.16 — DATA OWNERSHIP / PORTABILITY AUDIT
+
+A creator platform hosszú távú értéke miatt explicit:
+- [ ] account export;
+- [ ] site export;
+- [ ] page model export;
+- [ ] content export;
+- [ ] schedule export;
+- [ ] media metadata export;
+- [ ] integration metadata export (secret/token nélkül);
+- [ ] audience export jogszerűen;
+- [ ] commerce export;
+- [ ] analytics export;
+- [ ] automation export;
+- [ ] template export;
+- [ ] version metadata;
+- [ ] import validation;
+- [ ] dry-run import;
+- [ ] compatibility version;
+- [ ] migration report;
+- [ ] partial import recovery;
+- [ ] export audit trail.
+
+## 00.9.20.17 — TEMPLATE / PACK / EXTENSION AUDIT BŐVÍTÉS
+
+A template és marketplace irányt a benchmark alapján még pontosabban kell modellezni:
+
+Artifact types:
+- page template;
+- layout template;
+- section template;
+- component;
+- component pack;
+- theme;
+- brand preset;
+- overlay;
+- widget;
+- alert set;
+- OBS scene collection;
+- Stream Deck profile;
+- automation workflow;
+- content workflow;
+- AI prompt/tool pack;
+- integration extension.
+
+Minden artifact:
+- identity;
+- version;
+- author/source;
+- license;
+- compatibility;
+- dependencies;
+- permissions/capabilities;
+- required integrations;
+- required assets;
+- schema version;
+- migration;
+- update channel;
+- changelog;
+- preview;
+- install state;
+- customization state;
+- rollback;
+- uninstall cleanup;
+- usage/impact graph;
+- trust/moderation state.
+
+## 00.9.20.18 — FUNKCIÓK FÁZISBA SOROLÁSA
+
+### PHASE 0 — foundation contract
+- Event entity / event bus;
+- campaign entity;
+- audience identity;
+- loyalty ledger contract;
+- public embed contract;
+- widget contract;
+- content discovery query contract;
+- custom domain contract;
+- form/submission contract;
+- notification/push contract;
+- audience consent/preferences;
+- provider webhook security;
+- export/import schema;
+- artifact metadata/compatibility;
+- mobile operations capability model;
+- accessibility/performance metadata;
+- creator event normalization;
+- provider capability registry.
+
+### PHASE 1 — Creator Website Platform
+- Event Hub;
+- campaign landing pages;
+- creator link hub;
+- content archive/discovery;
+- creator profile/About/FAQ/setup;
+- Media Kit public page;
+- contact/business inquiry;
+- forms/newsletter signup foundation;
+- public embeds/widgets;
+- branded system pages;
+- custom domain UX;
+- smart-link/deep-link foundation;
+- creator dashboard quick actions;
+- mobile Creator Center basics;
+- public content search/filter;
+- public content detail pages.
+
+### PHASE 2 — Multi-platform Creator
+- unified cross-platform content;
+- unified audience/provider identity;
+- provider event normalization;
+- Discord;
+- multi-platform live state;
+- multi-platform schedule;
+- provider webhook ecosystem;
+- quota/rate-limit UI;
+- cross-platform media/content actions.
+
+### PHASE 3 — Creator Operating System
+- Overlay Studio;
+- alerts;
+- widgets;
+- chatbot;
+- commands;
+- timers;
+- loyalty/rewards;
+- giveaways/raffles/polls;
+- song/media requests;
+- TTS;
+- OBS/browser-source control;
+- Stream Deck;
+- live operations dashboard;
+- unified chat/events;
+- content processing queue;
+- content factory;
+- technical telemetry;
+- mobile creator operations;
+- embeddable stream widgets.
+
+### PHASE 4 — Creator Intelligence / AI
+- AI website assistant;
+- editor copilot;
+- content/SEO/translation;
+- brand assistant;
+- analytics/schedule AI;
+- stream coach;
+- clip opportunity engine;
+- AI moderation assistance;
+- automation planning;
+- AI quality evaluation;
+- controlled agent workflows.
+
+### PHASE 5 — SaaS / Teams / Multi-tenant
+- tenant isolation;
+- team roles;
+- shared libraries;
+- multi-site;
+- staging;
+- entitlements;
+- subscriptions;
+- billing;
+- usage metering;
+- provider billing webhooks;
+- reconciliation;
+- tenant security/abuse controls.
+
+### PHASE 6 — Creator Business
+- store;
+- physical/digital products;
+- memberships;
+- tips/donations;
+- promo codes;
+- bundles;
+- limited drops;
+- preorder;
+- fulfillment;
+- customer accounts;
+- member feeds;
+- private content;
+- Discord roles;
+- sponsorship;
+- CRM;
+- campaigns;
+- affiliate/referral;
+- conversion analytics;
+- business docs;
+- auction/raffle/giveaway where legally appropriate.
+
+### PHASE 7 — Creator Ecosystem / Marketplace
+- public templates;
+- component/theme packs;
+- overlay/widget/alert packs;
+- OBS/Stream Deck packs;
+- automation/content workflow packs;
+- integration extensions;
+- AI packs;
+- licensing;
+- reviews;
+- moderation;
+- trust;
+- dependency graph;
+- update/migration/rollback;
+- distribution;
+- payouts.
+
+### PHASE 8 — Adaptive Creator Platform
+- adaptive layouts;
+- context-aware creator experiences;
+- multimodal/voice;
+- live co-pilot;
+- autonomous-but-controlled operations;
+- cross-domain workflow composition;
+- personal brand intelligence;
+- adaptive content production;
+- multi-agent orchestration;
+- quality-based autonomy.
+
+## 00.9.20.19 — AUDIT DÖNTÉS
+
+**Audit állapot: PASS — additive coverage audit.**
+
+A MASTER a külső benchmark alapján tovább bővült. A jelen audit alapján nincs olyan fő creator-domain, amelyet a teljes platformvízióból el kellene hagyni.
+
+A következő fejlesztés előtt azonban nem kell a teljes auditot újra végrehajtani. Új funkció vagy új benchmark esetén csak a változásra kell célzott gap-auditot végezni, majd:
+**domain → contract → phase → dependency → implementation point → DoD → MASTER update.**
+
+A jelen audit **nem módosítja az aktuális engineering checkpointot**.
+
+# 00.9.20.20 — KÖVETKEZŐ BENCHMARK / AUDIT GOVERNANCE
+
+Minden nagyobb új creator-domain hozzáadásakor legalább:
+- 1 nagy creator saját oldal;
+- 1 creator-platform;
+- 1 stream-operations platform;
+- 1 commerce/community platform;
+- 1 nyílt forráskódú technikai referencia, ha van;
+- 1 security/accessibility/performance szempont
+kerüljön ellenőrzésre.
+
+A benchmark eredményét mindig a megfelelő phase-be kell tenni, nem a jelenlegi fejlesztési pontba csak azért, mert újonnan fedeztük fel.
+
+**Feature-preservation továbbra is kötelező.**
+**A jelenlegi E4.3.4 végrehajtási sorrend változatlan.**
