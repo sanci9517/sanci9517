@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.50.0  
+**Verzió:** MASTER-2.51.0  
 **Dátum:** 2026-09-28  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -11588,3 +11588,184 @@ A korábbi 00.9.20 auditot a 00.9.21 kiegészíti; egyik sem törölhető.
 40.69.13.E4.3.4 → remote 0016 migration → live D1/schema/ownership/security gate → E4.3.5 → E4.4.
 
 **A benchmark audit nem nyit új fejlesztési ágat az aktuális checkpoint előtt.**
+
+# 00.9.22 — KANONIKUS FEATURE → FEJLESZTÉSI PONT WBS — RÖGZÍTVE 2026-09-28
+
+## 00.9.22.1 — WBS szabály
+A MASTER mostantól a feature/domain/phase térkép mellett **kanonikus fejlesztési WBS**. Alapszabály: **1 logikus, önálló feature/capability = 1 fejlesztési pont.** A technikai frontend/backend részfeladatok az adott pont DoD-ján belül maradnak; nem készítünk mesterségesen két külön feature-t ugyanabból a capability-ből.
+
+Minden pont lezárásához: canonical contract → ownership/scope → permission/capability → persistence/API szükség szerint → validation/idempotency → history/audit szükség szerint → failure/rollback → accessibility/responsive/localization/performance → tests → live verification → MASTER checkpoint.
+
+## 00.9.22.2 — PHASE 0 — PLATFORM FOUNDATION
+
+**0.1 Runtime/Delivery**
+- 0.1.1 Repository baseline
+- 0.1.2 Worker runtime
+- 0.1.3 D1 baseline
+- 0.1.4 CI/CD
+- 0.1.5 Environment/config contract
+- 0.1.6 Request/response contract
+- 0.1.7 Error contract
+- 0.1.8 Structured logging
+- 0.1.9 Health endpoint
+- 0.1.10 DB health
+- 0.1.11 Deployment verification
+- 0.1.12 Deployment rollback
+
+**0.2 Identity/Security**
+- 0.2.1 Account identity
+- 0.2.2 Creator identity
+- 0.2.3 Site ownership
+- 0.2.4 Workspace scope
+- 0.2.5 Tenant-ready scope
+- 0.2.6 Session model
+- 0.2.7 Role model
+- 0.2.8 Permission model
+- 0.2.9 Capability registry
+- 0.2.10 Provider identity linking
+- 0.2.11 OAuth state/PKCE
+- 0.2.12 OAuth scope review
+- 0.2.13 Token encryption
+- 0.2.14 Token refresh/expiry
+- 0.2.15 Token revoke
+- 0.2.16 Emergency revoke-all
+- 0.2.17 Security activity log
+- 0.2.18 Consent
+- 0.2.19 Privacy preferences
+- 0.2.20 Data deletion
+- 0.2.21 Account export
+
+**0.3 Canonical Page/Editor**
+- 0.3.1 Page Model
+- 0.3.2 Node identity
+- 0.3.3 Parent/child hierarchy
+- 0.3.4 Component registry
+- 0.3.5 Typed field registry
+- 0.3.6 Dynamic field visibility
+- 0.3.7 Dynamic props
+- 0.3.8 Component categories
+- 0.3.9 Component capability metadata
+- 0.3.10 Root configuration
+- 0.3.11 Node serialization
+- 0.3.12 Page validation
+- 0.3.13 Data migration/versioning
+- 0.3.14 Field transforms
+- 0.3.15 Editor plugin boundary
+- 0.3.16 Editor permission resolution
+- 0.3.17 Selection state
+- 0.3.18 Drag/drop boundary
+- 0.3.19 Layers model
+- 0.3.20 Command registry
+- 0.3.21 Transaction/history
+- 0.3.22 Storage adapter
+- 0.3.23 Renderer/editor isolation
+
+**0.4 CMS**
+- 0.4.1 Structured content model
+- 0.4.2 Content type registry
+- 0.4.3 Draft lifecycle
+- 0.4.4 Published lifecycle
+- 0.4.5 Revision model
+- 0.4.6 Document diff
+- 0.4.7 Validation
+- 0.4.8 Content actions
+- 0.4.9 Content references
+- 0.4.10 Collections
+- 0.4.11 Categories
+- 0.4.12 Tags
+- 0.4.13 Featured/pinned
+- 0.4.14 Archive
+- 0.4.15 Search query contract
+- 0.4.16 Filter/sort contract
+- 0.4.17 Related-content relation
+- 0.4.18 Series/playlist relation
+
+**0.5 Media**
+- 0.5.1 Asset identity
+- 0.5.2 Asset metadata
+- 0.5.3 Licensing metadata
+- 0.5.4 Asset folders
+- 0.5.5 Asset tags
+- 0.5.6 Access policy
+- 0.5.7 Signed URLs
+- 0.5.8 Image variants
+- 0.5.9 Video variants
+- 0.5.10 Audio variants
+- 0.5.11 Thumbnail/poster
+- 0.5.12 Caption/transcript metadata
+- 0.5.13 EXIF/privacy
+- 0.5.14 Dedup/orphan detection
+- 0.5.15 Upload validation
+- 0.5.16 R2 adapter boundary
+- 0.5.17 Protected media delivery
+
+**0.6 Event/Integration**
+- 0.6.1 Event entity
+- 0.6.2 Event status
+- 0.6.3 Event timezone
+- 0.6.4 Recurrence
+- 0.6.5 Event exceptions
+- 0.6.6 Cancellation
+- 0.6.7 Visibility
+- 0.6.8 Event/content relation
+- 0.6.9 Event/community relation
+- 0.6.10 Event/commerce relation
+- 0.6.11 Campaign entity
+- 0.6.12 Campaign lifecycle
+- 0.6.13 Campaign attribution
+- 0.6.14 UTM metadata
+- 0.6.15 QR/deep-link metadata
+- 0.6.16 Provider adapter contract
+- 0.6.17 Provider capability registry
+- 0.6.18 Provider event normalization
+- 0.6.19 Webhook signature verification
+- 0.6.20 Webhook replay protection
+- 0.6.21 Webhook idempotency
+
+**0.7 Audience/Community**
+- 0.7.1 Visitor identity
+- 0.7.2 Known-contact identity
+- 0.7.3 Account/member identity
+- 0.7.4 Provider identity linking
+- 0.7.5 Follower/subscriber relation
+- 0.7.6 Paid-member relation
+- 0.7.7 Supporter/donor relation
+- 0.7.8 Customer relation
+- 0.7.9 Moderator/VIP/role state
+- 0.7.10 Consent/preferences
+- 0.7.11 Notification preferences
+- 0.7.12 Block/mute/restrict
+- 0.7.13 Report/abuse record
+- 0.7.14 Audience export
+- 0.7.15 Audience deletion
+- 0.7.16 Loyalty ledger
+- 0.7.17 Rewards
+- 0.7.18 Community chat
+- 0.7.19 Direct-message/inbox
+
+**0.8 Platform Services**
+- 0.8.1 Notification contract
+- 0.8.2 Activity center
+- 0.8.3 Push notification
+- 0.8.4 Search/index foundation
+- 0.8.5 Command palette
+- 0.8.6 Quick actions
+- 0.8.7 Autosave/recovery
+- 0.8.8 Import contract
+- 0.8.9 Export contract
+- 0.8.10 Dry-run import
+- 0.8.11 Compatibility versioning
+- 0.8.12 Migration report
+- 0.8.13 Backup
+- 0.8.14 Recovery
+- 0.8.15 Disaster-recovery drill
+- 0.8.16 Feature flags
+- 0.8.17 Maintenance mode
+- 0.8.18 Graceful degradation
+- 0.8.19 Rate limiting
+- 0.8.20 Queue/retry/DLQ
+- 0.8.21 Idempotency
+- 0.8.22 Retention policy
+- 0.8.23 Accessibility metadata
+- 0.8.24 Performance budget
+- 0.8.25 Audit explorer
