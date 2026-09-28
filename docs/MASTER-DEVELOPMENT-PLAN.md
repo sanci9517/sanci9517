@@ -1398,19 +1398,43 @@ Elkészült és production remote D1-ben igazoltan érvényesült a `migrations/
 
 **E4.2 státusz: [x] PASS — remote schema, ownership backfill és adatmegőrzés ellenőrizve.**
 
-**Következő egyetlen aktív pont: 40.69.13.E4.3 — site-scoped consumer/read-write audit és canonical ownership enforcement.**
+### E4.3 — site-scoped consumer/read-write audit és canonical ownership enforcement
 
-E4.3 célja:
-- a `pages`, `schedule_items`, `media`, `social_accounts` és `twitch_connections` összes releváns read/write consumerének feltérképezése;
-- minden user/site-facing querynél és mutationnél explicit site ownership ellenőrzése;
-- legacy/global fogyasztók azonosítása, különösen `site_settings`;
-- a canonical site context egyértelmű meghatározása;
-- cross-site hozzáférés kizárása;
-- csak ezután a `site_id NOT NULL` hardening megtervezése;
-- production deploy és live gate csak a consumer audit/regression után.
+**E4.3.1 — Consumer audit:** [x] PASS
+- [x] `pages`, `schedule_items`, `media`, `social_accounts` és `twitch_connections` runtime fogyasztóinak feltérképezése.
+- [x] Legacy/global `site_settings` fogyasztó azonosítva és elkülönítve.
+- [x] Canonical site context boundary létrehozva: `src/core/site-context.ts`, bootstrap site=`site-default`.
+- [x] Döntés rögzítve: `site_settings` jelenleg legacy/global marad; párhuzamos site-scoped settings rendszer nem kerül bevezetésre E4.3 alatt.
 
+**E4.3.2 — Pages + Editor ownership enforcement:** [x] PASS
+- [x] Admin Pages list/create/update/delete/order/count műveletek site-scoped.
+- [x] Editor GET/save/publish/unpublish/rollback műveletek site ownership alapján védettek.
+- [x] Editor rollback előtt explicit page ownership ellenőrzés történik.
+- [x] Canonical site context minden érintett runtime consumerhez átvezetve.
 
-**MASTER-2.40.37 checkpoint:** E0–E3, E4.1 és E4.2 lezárva. Az E4.2 production verification igazolta a `sites` ownership rootot, az érintett táblák site-scopingját, a backfillt, a meglévő Twitch/Schedule adatok megőrzését és a D1 integritást. Funkcióvesztés nincs; a következő egyetlen aktív pont E4.3. A teljes 1.0 és post-1.0 backlog megmarad, és minden új funkció ugyanebbe az egyetlen MASTER-be kerül.
+**E4.3.3 — Schedule CRUD + public read + Twitch Schedule sync ownership:** [x] PASS
+- [x] Admin Schedule CRUD minden SELECT/INSERT/UPDATE/DELETE művelete site-scoped.
+- [x] Public Schedule read kizárólag a canonical site contexthez tartozó rekordokat olvassa.
+- [x] Twitch Schedule sync connection lookup site ownership alapján történik.
+- [x] Canonical schedule sync mapper/upsert/reconcile a `site_id` értéket végigviszi.
+- [x] Korábbi C.5.1 regressziós viselkedés megőrizve.
+- [x] GitHub Actions **Twitch Integration Check #151 — PASS**.
+- [x] GitHub Actions **Editor Core Test #775 — PASS**.
+- [x] A #149/#773 és #150/#774 köztes sikertelen futások diagnosztizálva és a végleges javítás után nem tekintendők aktuális állapotnak.
+- [x] Végső javító commit: `7cfbef4d3cb02d592b69ef4d36b6b6f5d28aecafac` — schedule context import Node ESM kompatibilitásának javítása és canonical site context teszt rögzítése.
+
+**E4.3 aktuális egyetlen aktív lépése: 40.69.13.E4.3.4 — Twitch connection/OAuth ownership enforcement.**
+
+Cél:
+- Twitch connection lookup/mutation műveletek site ownership alapján történjenek;
+- user/connection/broadcaster azonosító alapján ne legyen cross-site hozzáférés;
+- OAuth state és connection lifecycle a canonical site contexttel összhangban maradjon;
+- token refresh/revoke/validation műveletek csak a megfelelő site connectionjét érhessék el;
+- meglévő OAuth security és regression viselkedés változatlanul megmaradjon.
+
+**E4.4 `site_id NOT NULL` schema hardening csak az E4.3.4–E4.3.8 teljes lezárása után indítható.**
+
+**MASTER-2.40.39 checkpoint:** E4.2 és E4.3.1–E4.3.3 lezárva. E4.3.3 végleges CI gate-je Twitch Integration #151 és Editor Core #775 PASS. A következő és egyetlen aktív fejlesztési pont: **40.69.13.E4.3.4 — Twitch connection/OAuth ownership enforcement**. A teljes 1.0 és post-1.0 backlog megmarad, és minden új funkció ugyanebbe az egyetlen MASTER-be kerül.
 
 **1.0 fókusz:** először egy stabil, professzionális magyar streamer-weboldal + működő visual editor + Twitch Schedule alap + publish/public flow. A globális piacra szükséges architekturális alapok már 1.0 előtt készülnek, de a teljes többnyelvű tartalom, fordítási workflow, további platformok és haladó SaaS funkciók 1.0 utáni szakaszok.
 
@@ -5348,4 +5372,4 @@ Minden új capability külön domain contracttal, benchmarkkal, implementációv
 **Feature-preservation:** a fenti végső vízió minden pontja megőrzendő MASTER backlog. Egy új beszélgetés vagy újabb 1.0 scope-döntés nem törölheti ezeket implicit módon.
 
 
-**2026-09-25 munkamenet-záró állapot:** E4.2 production verification lezárva és a MASTER-2.40.37 verzióban rögzítve. A helyi munkakönyvtár sikeresen fast-forwarddal szinkronizálva lett a GitHub `v2/foundation` ággal: `54165ec → 9e2e4e6`. Nincs szükség production deployra az E4.2 miatt. **Holnapi folytatás pontosan innen:** 40.69.13.E4.3. Első feladat a teljes repository/runtime consumer audit; először feltérképezzük a site-scoped táblák minden read/write fogyasztóját és a canonical site context jelenlegi hiányait, külön ellenőrizve a legacy/global `site_settings` fogyasztókat. Ezt követi az ownership enforcement, majd csak annak regression- és biztonsági ellenőrzése után az E4.4 `site_id NOT NULL` schema hardening. Új beszélgetésben ezt a checkpointot kell folytatni, nem régebbi E pontot.
+**2026-09-28 munkamenet-záró állapot:** E4.3.1–E4.3.3 lezárva. E4.3.3 alatt a Schedule CRUD/public read/Twitch Schedule ownership enforcement elkészült, majd a Node ESM import-kompatibilitási hiba javítása után a végleges CI kapu **Twitch Integration Check #151 PASS + Editor Core Test #775 PASS** lett. A köztes sikertelen #149/#773 és #150/#774 futások már nem reprezentálják a végleges HEAD állapotot. **Következő folytatás pontosan innen: 40.69.13.E4.3.4 — Twitch connection/OAuth ownership enforcement.** E4.4 `site_id NOT NULL` schema hardening továbbra is blokkolva marad az E4.3 teljes lezárásáig. Új beszélgetésben ezt a checkpointot kell folytatni, nem régebbi E pontot.
