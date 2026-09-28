@@ -24,6 +24,7 @@ export type TwitchScheduleSnapshot = {
 };
 
 export type CanonicalScheduleInput = {
+  siteId: string;
   source: "twitch";
   sourceId: string;
   sourceAccountId: string;
