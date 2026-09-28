@@ -11967,3 +11967,288 @@ Minden pont lezárásához: canonical contract → ownership/scope → permissio
 - 2.1.26 Cross-platform content actions
 - 2.1.27 Cross-platform schedule actions
 - 2.1.28 Cross-platform media metadata
+
+## 00.9.22.5 — PHASE 3 — CREATOR OPERATING SYSTEM
+
+**3.1 Stream runtime**
+- 3.1.1 Stream session
+- 3.1.2 Unified event bus
+- 3.1.3 Event normalization runtime
+- 3.1.4 Real-time event delivery
+- 3.1.5 Connection health
+- 3.1.6 Event queue/backpressure
+- 3.1.7 Event retry/idempotency
+- 3.1.8 Technical telemetry
+- 3.1.9 OBS connection state
+- 3.1.10 Stream emergency control
+
+**3.2 Overlay Studio**
+- 3.2.1 Overlay shell
+- 3.2.2 Overlay canvas
+- 3.2.3 Widget library
+- 3.2.4 Overlay layers
+- 3.2.5 Overlay inspector
+- 3.2.6 Scene/canvas sizes
+- 3.2.7 Preview
+- 3.2.8 Test mode
+- 3.2.9 Publish
+- 3.2.10 Rollback
+- 3.2.11 Browser-source endpoint
+- 3.2.12 Live push
+
+**3.3 Widgets/Alerts**
+- 3.3.1 Text widget
+- 3.3.2 Image widget
+- 3.3.3 Video widget
+- 3.3.4 Audio widget
+- 3.3.5 Clock
+- 3.3.6 Timer
+- 3.3.7 Goal
+- 3.3.8 Counter
+- 3.3.9 Chat
+- 3.3.10 Now Playing
+- 3.3.11 Viewer count
+- 3.3.12 Follower/subscriber count
+- 3.3.13 Alert
+- 3.3.14 Progress
+- 3.3.15 Leaderboard
+- 3.3.16 Poll
+- 3.3.17 Prediction
+- 3.3.18 Custom widget schema
+- 3.3.19 Widget configuration
+- 3.3.20 Event binding
+- 3.3.21 Widget versioning
+- 3.3.22 Widget fallback
+- 3.3.23 Widget health
+
+**3.4 Chat/Engagement**
+- 3.4.1 Chat aggregation
+- 3.4.2 Commands
+- 3.4.3 Timers
+- 3.4.4 Moderation helpers
+- 3.4.5 Spam filters
+- 3.4.6 Link/caps filters
+- 3.4.7 Auto announcements
+- 3.4.8 Viewer queue
+- 3.4.9 Song requests
+- 3.4.10 TTS
+- 3.4.11 Loyalty points
+- 3.4.12 Rewards
+- 3.4.13 Redemption ledger
+- 3.4.14 Polls
+- 3.4.15 Predictions
+- 3.4.16 Raffles
+- 3.4.17 Contests
+- 3.4.18 Giveaways
+- 3.4.19 Viewer challenges
+- 3.4.20 Interactive audience moments
+
+**3.5 Automation/OBS/Stream Deck**
+- 3.5.1 Trigger registry
+- 3.5.2 Condition registry
+- 3.5.3 Action registry
+- 3.5.4 Visual workflow model
+- 3.5.5 Workflow validation
+- 3.5.6 Test/dry-run
+- 3.5.7 Workflow versioning
+- 3.5.8 Execution history
+- 3.5.9 Retry/DLQ
+- 3.5.10 Approval
+- 3.5.11 Emergency stop
+- 3.5.12 OBS scene control
+- 3.5.13 OBS source control
+- 3.5.14 OBS start/stop
+- 3.5.15 Stream Deck integration
+- 3.5.16 Stream Deck profiles
+- 3.5.17 Remote/mobile control
+- 3.5.18 External command import
+
+**3.6 Content Factory**
+- 3.6.1 VOD ingestion
+- 3.6.2 Clip creation
+- 3.6.3 Highlight markers
+- 3.6.4 Thumbnail pipeline
+- 3.6.5 Caption pipeline
+- 3.6.6 Transcript pipeline
+- 3.6.7 Reframe pipeline
+- 3.6.8 Short-form export
+- 3.6.9 Content approval queue
+- 3.6.10 Content publish queue
+- 3.6.11 Media processing jobs
+- 3.6.12 Processing retry/DLQ
+
+## 00.9.22.6 — PHASE 4 — CREATOR INTELLIGENCE / AI
+- 4.1.1 AI provider abstraction
+- 4.1.2 Model router
+- 4.1.3 AI capability registry
+- 4.1.4 AI permission registry
+- 4.1.5 Context policy
+- 4.1.6 Cost/usage meter
+- 4.1.7 AI audit record
+- 4.1.8 Evaluation framework
+- 4.1.9 AI emergency pause
+- 4.1.10 Assistant
+- 4.1.11 Editor Copilot
+- 4.1.12 Content Assistant
+- 4.1.13 SEO Assistant
+- 4.1.14 Translation Assistant
+- 4.1.15 Brand Assistant
+- 4.1.16 Analytics Assistant
+- 4.1.17 Schedule Assistant
+- 4.1.18 Community Assistant
+- 4.1.19 Moderation Assistant
+- 4.1.20 Stream Coach
+- 4.1.21 Clip Opportunity Engine
+- 4.1.22 AI captions
+- 4.1.23 AI reframe
+- 4.1.24 AI quality gate
+- 4.1.25 Automation Planner
+- 4.1.26 AI workflow generation
+- 4.1.27 Background AI jobs
+- 4.1.28 AI approval queue
+- 4.1.29 Controlled external publishing
+- 4.1.30 Live Co-Pilot
+- 4.1.31 Recommendation engine
+- 4.1.32 Feedback/evaluation loop
+- 4.1.33 Controlled agent runtime
+- 4.1.34 Multi-agent orchestration
+- 4.1.35 Multimodal/voice workflows
+
+## 00.9.22.7 — PHASE 5 — SAAS / TEAMS / MULTI-TENANT
+- 5.1.1 Tenant isolation
+- 5.1.2 Account/site/workspace separation
+- 5.1.3 Team membership
+- 5.1.4 Team roles
+- 5.1.5 Custom roles
+- 5.1.6 Shared library
+- 5.1.7 Multi-site
+- 5.1.8 Staging
+- 5.1.9 Custom domains
+- 5.1.10 Plan model
+- 5.1.11 Plan versioning
+- 5.1.12 Subscription lifecycle
+- 5.1.13 Entitlement engine
+- 5.1.14 Usage metering
+- 5.1.15 Usage limits
+- 5.1.16 Billing provider abstraction
+- 5.1.17 Payment webhook verification
+- 5.1.18 Billing reconciliation
+- 5.1.19 Invoice/receipt metadata
+- 5.1.20 Cancellation
+- 5.1.21 Grace period
+- 5.1.22 Billing failure state
+- 5.1.23 Tenant abuse controls
+- 5.1.24 Billing audit
+- 5.1.25 Tenant backup/recovery
+
+## 00.9.22.8 — PHASE 6 — CREATOR BUSINESS
+- 6.1.1 Storefront
+- 6.1.2 Store theme
+- 6.1.3 Physical product
+- 6.1.4 Digital product
+- 6.1.5 Protected digital delivery
+- 6.1.6 One-time purchase
+- 6.1.7 Membership product
+- 6.1.8 Membership tiers
+- 6.1.9 Membership upgrade
+- 6.1.10 Membership downgrade
+- 6.1.11 Membership cancellation
+- 6.1.12 Member-only post
+- 6.1.13 Member-only media
+- 6.1.14 Member-only product
+- 6.1.15 Member polls
+- 6.1.16 Member badges
+- 6.1.17 Member streaks
+- 6.1.18 Discord role sync
+- 6.1.19 Tips/donations
+- 6.1.20 Promo codes
+- 6.1.21 Discounts
+- 6.1.22 Bundles
+- 6.1.23 Limited drops
+- 6.1.24 Preorders
+- 6.1.25 Gifting
+- 6.1.26 Fulfillment
+- 6.1.27 Refunds
+- 6.1.28 Customer support
+- 6.1.29 Customer accounts
+- 6.1.30 Customer entitlements
+- 6.1.31 Commissions
+- 6.1.32 Commission availability
+- 6.1.33 Commission slots
+- 6.1.34 Commission terms
+- 6.1.35 Commission order lifecycle
+- 6.1.36 Creator/customer communication
+- 6.1.37 CRM
+- 6.1.38 Newsletter
+- 6.1.39 Campaigns
+- 6.1.40 Segmentation
+- 6.1.41 Conversion analytics
+- 6.1.42 Sponsor CRM
+- 6.1.43 Media-kit analytics
+- 6.1.44 Affiliate/referral
+- 6.1.45 Business document metadata
+- 6.1.46 Payout/reconciliation
+- 6.1.47 Tax/VAT boundary
+- 6.1.48 Auction/raffle capability, subject to legal/product review
+
+## 00.9.22.9 — PHASE 7 — CREATOR ECOSYSTEM / MARKETPLACE
+- 7.1.1 Template marketplace
+- 7.1.2 Component marketplace
+- 7.1.3 Theme marketplace
+- 7.1.4 Section/pattern marketplace
+- 7.1.5 Overlay marketplace
+- 7.1.6 Widget marketplace
+- 7.1.7 Alert-set marketplace
+- 7.1.8 OBS scene marketplace
+- 7.1.9 Stream Deck marketplace
+- 7.1.10 Automation workflow marketplace
+- 7.1.11 Content workflow marketplace
+- 7.1.12 AI pack marketplace
+- 7.1.13 Integration extension marketplace
+- 7.1.14 Author identity
+- 7.1.15 Licensing
+- 7.1.16 Compatibility
+- 7.1.17 Dependency graph
+- 7.1.18 Install
+- 7.1.19 Update
+- 7.1.20 Migration
+- 7.1.21 Rollback
+- 7.1.22 Uninstall cleanup
+- 7.1.23 Reviews
+- 7.1.24 Feedback
+- 7.1.25 Moderation
+- 7.1.26 Takedown
+- 7.1.27 Trust/safety
+- 7.1.28 Entitlement-aware distribution
+- 7.1.29 Marketplace analytics
+- 7.1.30 Creator payouts
+- 7.1.31 Discovery/search
+- 7.1.32 Release channels
+- 7.1.33 Compatibility governance
+
+## 00.9.22.10 — PHASE 8 — ADAPTIVE CREATOR PLATFORM
+- 8.1.1 Adaptive templates
+- 8.1.2 Context-aware layouts
+- 8.1.3 Adaptive content production
+- 8.1.4 Cross-domain recommendations
+- 8.1.5 Intelligent workflow composition
+- 8.1.6 Real-time creator assistance
+- 8.1.7 Personal brand intelligence
+- 8.1.8 Multimodal intelligence
+- 8.1.9 Voice workflows
+- 8.1.10 Controlled multi-agent orchestration
+- 8.1.11 Quality-based autonomy
+- 8.1.12 Personal feedback loops
+- 8.1.13 Platform-wide evaluation
+- 8.1.14 Advanced Live Co-Pilot
+- 8.1.15 Adaptive automation
+- 8.1.16 Safe autonomous execution
+
+## 00.9.22.11 — PHASE/POINT GATE
+Egy pont csak saját DoD-jének PASS állapotában zárható. Egy phase csak akkor zárható, ha minden pont functional, data/ownership, permission/security, migration/rollback, history/audit, API/webhook, portability, accessibility, responsive/mobile, performance, failure/degraded, backup/recovery, observability, localization és production/live gate szempontból PASS.
+
+## 00.9.22.12 — CURRENT CHECKPOINT
+A WBS **nem módosítja az aktuális fejlesztési pontot**:
+40.69.13.E4.3.4 → remote 0016 migration → live D1/schema/ownership/security gate → E4.3.5 → E4.4.
+
+PC/Desktop regression továbbra is későbbi, MASTER által megnyitott kapu.
