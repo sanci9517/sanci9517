@@ -10236,3 +10236,356 @@ A jövőbeni benchmark során külön figyeljük az alábbi kategóriákat: crea
 **Referenciaelv:** egy konkurens funkciót nem másolunk automatikusan. Előbb meg kell határozni, milyen creator problémát old meg, melyik canonical domainhez tartozik, milyen security/permission/data követelménye van, és melyik roadmap ponton ad valódi értéket.
 
 **Feature-preservation:** ez a gap-audit kizárólag hozzáad. Korábbi MASTER-funkciót nem töröl és nem sorol át csendben.
+
+# 00.9.19 — CANONICAL TERMÉK- ÉS RELEASE-FÁZIS MODELL — RÖGZÍTVE 2026-09-28
+
+## Döntés
+
+A korábbi „0.x → 1.0 → 1.5 → 2.0 → … → 10.0” felosztás nem kötelező termékverzió-számozás. Ezek korábbi tervezési mérföldkőszámok voltak. A teljes terv átnézése után a termékfejlődést logikai platformfázisokra rendezzük.
+
+Ennek oka:
+- a korábbi számok önmagukban nem írják le pontosan az elérendő termékállapotot;
+- egyes funkciók több számozási blokkot érintenek;
+- a 40.x checkpointok fejlesztési végrehajtási azonosítók, nem termékverziók;
+- a nagy platformfunkciókat domain és termékcél szerint kell összefogni;
+- új funkció hozzáadásakor nem kell mesterségesen új főverziót létrehozni pusztán a számozás miatt.
+
+Feature-preservation: ez a fejezet csak új szervezési réteget ad. A korábbi részletes funkciók, technikai checkpointok, 1.0 követelmények és későbbi célok továbbra is érvényesek. Semmi nem kerül törlésre.
+
+## CANONICAL NAGYFÁZISOK
+
+### PHASE 0 — PLATFORM FOUNDATION
+Stabil, biztonságos, bővíthető platformmag:
+- runtime, repository, Cloudflare, D1, CI/CD;
+- request/response/error contract;
+- identity, account, session, ownership;
+- site/workspace/tenant-ready scope;
+- permissions/capabilities;
+- canonical Page Model;
+- domain data modellek;
+- Asset/Media és Integration contract;
+- Event/Notification;
+- Revision/Publish/Audit;
+- Command/Transaction/Validation/Idempotency;
+- security, observability;
+- import/export, portability;
+- localization, design-token, responsive foundation;
+- public/admin boundary;
+- failure/degraded-mode;
+- backup/recovery;
+- feature flags/capability discovery.
+
+Belső technikai al-fázisok: 0.1–0.9 és 40.x checkpointok.
+
+Exit: a core domainek canonical contracttal, ownership/permission/security/audit/history/failure viselkedéssel rendelkeznek, és nem kell őket később párhuzamosan újraépíteni.
+
+### PHASE 1 — CREATOR WEBSITE PLATFORM
+Teljes professzionális creator/streamer weboldal + admin + visual editor:
+- Creator Center;
+- Pages/navigation/SEO;
+- Visual Editor v2;
+- component registry, Layers, Inspector, selection, drag/drop;
+- responsive desktop/tablet/mobile editor;
+- Theme/Brand Kit/Design System;
+- templates/sections/reusable artifacts;
+- CMS core;
+- Media/Asset Library;
+- Twitch + Schedule production;
+- live/next-stream/status;
+- Home/About/Schedule/Live/VOD/Clips foundation/Games/Community/Contact/Support;
+- public renderer;
+- preview/publish/rollback;
+- responsive public site;
+- accessibility/performance;
+- quality/content/link checks;
+- integration health;
+- notifications/activity center;
+- search/command palette/quick actions;
+- import/export foundation;
+- HU-HU complete support;
+- localization-ready architecture;
+- production gate.
+
+Az 1.0 itt a Phase 1 production milestone.
+
+Exit: Sanci9517 teljes publikus webhelye és creator admin/editor rendszere stabilan, biztonságosan és reprodukálhatóan működik productionben.
+
+### PHASE 2 — MULTI-PLATFORM CREATOR
+Provider-neutral creator platform:
+- adapter framework;
+- unified identity/capabilities;
+- Twitch hardening;
+- YouTube, TikTok, Kick és későbbi adapterek;
+- unified live state;
+- unified schedule/events;
+- source/manual conflict model;
+- provider webhooks/API;
+- OAuth scope/consent/reconnect/revoke;
+- rate-limit/quota handling;
+- Discord integration;
+- richer calendar integrations;
+- cross-platform content/media;
+- integration health/degraded behavior;
+- capability discovery.
+
+Exit: új platform adapter hozzáadható a canonical contractokhoz a website/editor/domain mag átírása nélkül.
+
+### PHASE 3 — CREATOR OPERATING SYSTEM
+A weboldal mellett teljes creator production/operations:
+- Media Platform + R2;
+- OBS Local Bridge;
+- Overlay Studio;
+- alerts/widgets/scenes;
+- Stream Deck workflows/profiles;
+- Event + Automation Engine;
+- Content Factory;
+- VOD/clip/highlight pipeline;
+- captions/transcripts;
+- Community;
+- audience foundation;
+- newsletter/forms;
+- notifications;
+- creator analytics;
+- technical stream telemetry;
+- reusable workflow/template/packs;
+- embeddable widgets;
+- creator mobile operations;
+- search/discovery;
+- retry/DLQ/idempotency;
+- emergency controls.
+
+Exit: a creator a weboldal mellett streamelési, tartalom-előállítási és napi működési folyamatai jelentős részét ugyanazon canonical platformon kezeli.
+
+### PHASE 4 — CREATOR INTELLIGENCE / AI
+AI mint canonical intelligens réteg:
+- provider/model abstraction;
+- AI capability/tool registry;
+- AI permissions;
+- permission-aware context/RAG;
+- cost/usage tracking;
+- audit, guardrails, evaluation;
+- Assistant;
+- Editor Copilot;
+- content/SEO/translation;
+- Brand Assistant;
+- Analytics/Schedule AI;
+- Stream Intelligence;
+- Clip/Content Factory AI;
+- automation planning;
+- background jobs;
+- recommendations;
+- controlled autonomy;
+- Live Co-Pilot;
+- real-time clip opportunity engine;
+- caption/reframe/brand/quality pipeline;
+- human approval;
+- emergency AI pause;
+- external publish controls.
+
+Autonomy: L0 read → L1 suggest → L2 draft → L3 approved execution → L4 controlled automation. Magasabb autonómia csak külön biztonsági gate után.
+
+Exit: AI nem kerülheti meg a permission → validation → command → execution → result → audit/history láncot.
+
+### PHASE 5 — SAAS / TEAMS / MULTI-TENANT PLATFORM
+Valódi többfelhasználós SaaS:
+- tenant hardening;
+- account/site/workspace separation;
+- team roles/collaboration;
+- shared libraries;
+- multi-site;
+- controlled cross-site propagation;
+- custom domains;
+- staging;
+- entitlement engine;
+- plans/versions;
+- subscriptions;
+- usage metering;
+- billing/payment abstraction;
+- verified/idempotent webhooks;
+- reconciliation;
+- portability;
+- backup/recovery;
+- abuse prevention;
+- billing/security/tenant observability.
+
+Entitlement nem váltja ki a server-side authorizationt.
+
+Exit: több creator/site/team biztonságosan izoláltan használhatja ugyanazt a platformot mérhető entitlement/usage/billing modellel.
+
+### PHASE 6 — CREATOR BUSINESS PLATFORM
+Creator üzleti működés:
+- native memberships/subscriptions;
+- digital products;
+- physical/merch provider integrations;
+- tips/donations;
+- coupons/discounts/bundles;
+- orders/fulfillment/refunds;
+- customer entitlements;
+- audience ownership;
+- CRM;
+- advanced newsletter/marketing;
+- campaigns/segmentation;
+- conversion/funnel analytics;
+- sponsor/collaboration CRM;
+- media-kit analytics;
+- affiliate/referral;
+- business document/contract metadata;
+- payout/reconciliation;
+- tax/reporting boundaries;
+- commerce provider ecosystem.
+
+Exit: webhely, közönség és üzleti folyamatok egy összefüggő, exportálható és auditálható business domainben kezelhetők.
+
+### PHASE 7 — CREATOR ECOSYSTEM / MARKETPLACE
+Bővíthető, terjeszthető ökoszisztéma:
+- public templates;
+- component/theme packs;
+- overlay/widget packs;
+- OBS scene collections;
+- Stream Deck profiles;
+- automation/content workflows;
+- integration extensions;
+- author/distributor identity;
+- licensing;
+- compatibility/dependency graph;
+- install/update/migration/rollback;
+- reviews/feedback;
+- moderation/takedown;
+- trust & safety;
+- entitlement-aware distribution;
+- marketplace analytics;
+- payouts;
+- discovery;
+- version channels/governance.
+
+Exit: külső készítők biztonságosan publikálhatnak, creatorok pedig biztonságosan telepíthetnek, frissíthetnek, rollbackelhetnek és eltávolíthatnak artifactokat.
+
+### PHASE 8 — ADAPTIVE CREATOR PLATFORM
+Nyitott végű, fejlett platformréteg:
+- adaptive templates;
+- context-aware layouts;
+- intelligent workflow composition;
+- multimodal creator intelligence;
+- expanded live co-pilot;
+- personal brand intelligence;
+- cross-domain recommendation;
+- adaptive content production;
+- advanced automation orchestration;
+- multimodal/voice workflows;
+- controlled multi-agent orchestration;
+- quality-based autonomy;
+- personal feedback loops;
+- platform-wide learning/evaluation;
+- real-time creator assistance.
+
+Exit: összetett creator intentből biztonságosan terv, eszközlánc és végrehajtható workflow állítható elő, miközben permission, approval, validation, audit, rollback és emergency control megmarad.
+
+## 00.9.19.1 — TECHNIKAI AZONOSÍTÓK
+
+Product phase: PHASE 0 → PHASE 1 → ... → PHASE 8.
+
+Engineering checkpoint: például 40.69.13.E4.3.4.
+
+A checkpoint száma nem változik a product phase modell miatt. A jelenlegi aktív pont továbbra is 40.69.13.E4.3.4.
+
+## 00.9.19.2 — RÉGI ROADMAP → ÚJ PHASE MAP
+
+| Korábbi jelölés | Új canonical phase |
+|---|---|
+| 0.1–0.8 Foundation | PHASE 0 |
+| 1.0.1–1.0.9 Creator Website | PHASE 1 |
+| 1.5 Multi-platform | PHASE 2 |
+| 2.0 Creator Operating System | PHASE 3 |
+| 3.0 AI Creator Platform | PHASE 4 |
+| 4.0 SaaS/Business | PHASE 5 + PHASE 6 |
+| 5.0 Creator Business | PHASE 6 |
+| 6.0 Ecosystem/Marketplace | PHASE 7 |
+| 7.0–10.0 advanced automation/AI | PHASE 8 |
+
+A régi számok történeti/technikai hivatkozásként megmaradnak; az új phase az elsődleges termékstratégiai besorolás.
+
+## 00.9.19.3 — FUNKCIÓ-ELHELYEZÉSI SZABÁLY
+
+Új funkciónál mindig ezt vizsgáljuk:
+1. canonical domain;
+2. creator probléma;
+3. phase, ahol valóban használható;
+4. korábbi foundation contract;
+5. ownership/scope/permission/capability;
+6. command/validation/history/audit;
+7. API/webhook/import/export;
+8. privacy/retention/accessibility/performance;
+9. failure/degraded/backup/recovery;
+10. phase exit contribution.
+
+Ha egy funkció több phase-t érint: foundation contract a legkorábbi szükséges phase-ben; első valódi használat a megfelelő phase-ben; advanced implementation később. Párhuzamos canonical domain nem készül.
+
+## 00.9.19.4 — RELEASE ÉS VERZIÓZÁSI ELV
+
+Phase = nagy termékfejlődési állapot.
+Milestone = lezárható termékcsomag.
+Engineering checkpoint = konkrét fejlesztési/testelési pont.
+Git commit = implementációs változás.
+MASTER revision = tervdokumentum-verzió.
+
+A termékstratégia, checkpoint és Git history nem ugyanazzal a számozással működik.
+
+## 00.9.19.5 — PHASE EXIT GATE
+
+Phase csak akkor zárható, ha:
+- functional DoD PASS;
+- data/ownership/scope helyes;
+- permission/capability/security PASS;
+- migration/rollback ellenőrzött;
+- command/history/audit rendben;
+- API/webhook contract rendben, ha releváns;
+- import/export/portability rendben, ha releváns;
+- accessibility/responsive QA PASS;
+- performance budget PASS;
+- failure/degraded behavior tesztelve;
+- backup/recovery ellenőrzött;
+- observability rendben;
+- mobile UX rendben;
+- localization contract sértetlen;
+- production/live verification PASS;
+- MASTER checkpoint frissítve;
+- nincs kritikus regresszió.
+
+## 00.9.19.6 — VÉGLEGES STRATÉGIAI SORREND
+
+PHASE 0 → Platform Foundation
+PHASE 1 → Creator Website Platform
+PHASE 2 → Multi-platform Creator
+PHASE 3 → Creator Operating System
+PHASE 4 → Creator Intelligence / AI
+PHASE 5 → SaaS / Teams / Multi-tenant
+PHASE 6 → Creator Business Platform
+PHASE 7 → Creator Ecosystem / Marketplace
+PHASE 8 → Adaptive Creator Platform
+
+Ez nyitott végű modell. Új phase csak akkor jön létre, ha új, önálló domainhatár, termékcél és exit condition indokolja; pusztán számozási okból nem.
+
+## 00.9.19.7 — JELENLEGI FEJLESZTÉS HELYE
+
+Jelenlegi product phase: PHASE 0 — PLATFORM FOUNDATION.
+
+Aktív engineering checkpoint:
+40.69.13.E4.3.4 — Twitch connection/OAuth ownership enforcement.
+
+Állapot:
+- E4.3.1–E4.3.3 lezárva;
+- E4.3.4 kód/regresszió PASS;
+- remote 0016_twitch_oauth_site_ownership.sql migration pending;
+- live D1/schema/ownership/security gate pending;
+- E4.3.5 csak E4.3.4 live/security gate után;
+- E4.4 site_id NOT NULL hardening csak teljes E4.3 után;
+- PC/Desktop regression gate későbbi külön MASTER-kapu.
+
+Következő sorrend:
+1. remote D1 0016 migration;
+2. live D1 schema/ownership/security verification;
+3. E4.3.4 live/security gate lezárása;
+4. MASTER checkpoint frissítése;
+5. E4.3.5;
+6. E4.4 csak E4.3 teljes lezárása után;
+7. következő aktív MASTER checkpoint.
