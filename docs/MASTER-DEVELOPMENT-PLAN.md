@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.49.0  
+**Verzió:** MASTER-2.50.0  
 **Dátum:** 2026-09-28  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -11329,3 +11329,262 @@ A benchmark eredményét mindig a megfelelő phase-be kell tenni, nem a jelenleg
 
 **Feature-preservation továbbra is kötelező.**
 **A jelenlegi E4.3.4 végrehajtási sorrend változatlan.**
+
+# 00.9.21 — AUDIT 2.0 / ELSŐ AUDIT ELLENŐRZÉSE ÉS HIÁNYTALANSÁGI BŐVÍTÉS — RÖGZÍTVE 2026-09-28
+
+## 00.9.21.1 — MIÉRT KELLETT MÁSODIK ELLENŐRZÉS?
+
+A 00.9.20 audit hasznos és additive volt, de önmagában nem indokolja az abszolút „minden biztosan benne van” állítást. A második ellenőrzés ezért friss, elsődleges/gyártói dokumentációval és további creator-business benchmarkokkal ellenőrizte az előző auditot.
+
+**Audit 2.0 döntés:** az előző auditot nem tekintjük végleges, változtathatatlan teljességi bizonyítéknak. A MASTER-t tovább kell bővíteni minden új, releváns gap-pel.
+
+## 00.9.21.2 — MÁSODIK AUDITBAN MEGERŐSÍTETT / ÚJONNAN EXPLICITÁLT TERÜLETEK
+
+### Creator community / direct relationship
+A Patreon aktuális dokumentációja alapján a creator platformban külön kezelendő:
+- [ ] community feed;
+- [ ] community chats;
+- [ ] direct messages / inbox;
+- [ ] creator/member relationship state;
+- [ ] member billing history;
+- [ ] member notification preferences;
+- [ ] membership upgrade/downgrade/cancel lifecycle;
+- [ ] free account → paid membership conversion path;
+- [ ] supporter-owned relationship/data export.
+
+Ezek nem feltétlenül az 1.0 részei, de az audience/community canonical modelnek fel kell készülnie rájuk.
+
+### Commerce / creator services
+A Ko-fi és Patreon benchmark alapján explicit:
+- [ ] commissions / custom services;
+- [ ] commission availability/open/closed state;
+- [ ] commission slots;
+- [ ] commission terms;
+- [ ] commission order lifecycle;
+- [ ] creator-to-customer communication;
+- [ ] digital product protected delivery;
+- [ ] one-time purchase;
+- [ ] recurring membership;
+- [ ] supporter-only content;
+- [ ] creator-owned audience export;
+- [ ] direct payment-provider integration boundary.
+
+### Native media / content delivery
+A creator-business benchmark alapján:
+- [ ] native video/audio hosting contract;
+- [ ] protected media playback;
+- [ ] download entitlement;
+- [ ] captions;
+- [ ] playback quality/variant;
+- [ ] media collection;
+- [ ] private/member-only media;
+- [ ] content purchase entitlement;
+- [ ] media access audit.
+
+### Mobile creator product
+A Patreon mobil dokumentációja alapján külön explicit:
+- [ ] creator mobile dashboard;
+- [ ] member-list overview;
+- [ ] business-stat snapshot;
+- [ ] notification management;
+- [ ] community chat;
+- [ ] direct-message inbox;
+- [ ] membership management;
+- [ ] purchase/billing history view;
+- [ ] secure account settings;
+- [ ] 2FA/security surface;
+- [ ] integration settings/reconnect.
+
+A későbbi native app továbbra sem kötelező; a canonical API és mobile operations layer viszont igen.
+
+## 00.9.21.3 — STREAM / CREATOR TOOLING ÚJ ELLENŐRZÉS
+
+A StreamElements jelenlegi dokumentációja alapján a stream automation rétegben explicit maradjon:
+- [ ] chat modules;
+- [ ] automated chat alerts;
+- [ ] live announcements;
+- [ ] raffles;
+- [ ] contests;
+- [ ] viewer queue;
+- [ ] moderation helpers;
+- [ ] song requests;
+- [ ] loyalty events;
+- [ ] event-triggered messages;
+- [ ] provider-specific event normalization;
+- [ ] provider-specific capabilities;
+- [ ] platform-specific paid-event types.
+
+A platform-specific capability registry ezért nem opcionális convenience feature, hanem canonical adapter requirement.
+
+## 00.9.21.4 — VISUAL EDITOR MÁSODIK TECHNIKAI ELLENŐRZÉS
+
+A Puck aktuális dokumentációja külön megerősíti:
+- component configuration;
+- typed fields;
+- custom/external fields;
+- dynamic fields;
+- dynamic props;
+- root configuration;
+- categories;
+- plugins;
+- permissions;
+- async permission resolution;
+- same-origin viewport simulation;
+- data migration;
+- field transforms;
+- custom editor UI;
+- plugin rail / responsive editor UI.
+
+**MASTER-követelmény:**
+- [ ] field schema registry;
+- [ ] dynamic visibility;
+- [ ] conditional fields;
+- [ ] async permission resolution boundary;
+- [ ] field metadata;
+- [ ] editor plugin boundary;
+- [ ] data migration/versioning;
+- [ ] preview/editor isolation;
+- [ ] field-transform boundary;
+- [ ] component-level capability resolution.
+
+A Puck 360/768/1280/full-width viewport mintája külön megerősíti a már rögzített responsive editor modellt.
+
+## 00.9.21.5 — CMS / WORKSPACE / PRESENTATION MÁSODIK ELLENŐRZÉS
+
+A Sanity jelenlegi dokumentációja alapján explicit:
+- [ ] workspace/tool separation;
+- [ ] schema-driven content model;
+- [ ] document types;
+- [ ] field types;
+- [ ] document references;
+- [ ] draft/published lifecycle;
+- [ ] document diff;
+- [ ] validation;
+- [ ] content actions;
+- [ ] custom tools;
+- [ ] reusable plugins;
+- [ ] presentation/live preview;
+- [ ] allowed preview origins;
+- [ ] visual click-to-edit protocol;
+- [ ] multi-environment preview.
+
+A Sanci9517-nél ezek canonical CMS/Page/Revision/Preview szerződésként értendők, nem Sanity-féle külön rendszerként.
+
+## 00.9.21.6 — GRAPESJS / EDITOR INFRASTRUKTÚRA ELLENŐRZÉS
+
+Az editor benchmarkból továbbra is kötelezően kezelendő:
+- [ ] asset provider abstraction;
+- [ ] asset manager;
+- [ ] global styles/design tokens;
+- [ ] command registry;
+- [ ] storage adapter boundary;
+- [ ] editor layout/panel architecture;
+- [ ] extensible provider model.
+
+A saját Page Model, Renderer és Command system marad az egyetlen canonical rendszer.
+
+## 00.9.21.7 — AUDIT 2.0 FÁZIS-MAPPING
+
+**PHASE 0**
+- audience identity/relationship contract;
+- community identity;
+- commission/order contract;
+- native media/protected delivery contract;
+- payment provider boundary;
+- mobile API/capability contract;
+- platform-specific capability registry;
+- provider-specific event normalization;
+- editor field/plugin/migration contracts;
+- workspace/tool/presentation contract.
+
+**PHASE 1**
+- creator profile/home;
+- content discovery;
+- event hub;
+- public community surfaces;
+- public forms;
+- public media/content pages;
+- Creator Center mobile basics;
+- public embeds/widgets.
+
+**PHASE 2**
+- multi-platform identity;
+- provider event normalization;
+- provider-specific capabilities;
+- unified community/provider identities;
+- cross-platform content.
+
+**PHASE 3**
+- chatbot/modules;
+- loyalty;
+- raffles/contests/queues;
+- song requests;
+- native media processing;
+- protected media pipeline;
+- mobile creator operations;
+- OBS/overlay/widgets/alerts.
+
+**PHASE 4**
+- AI community assistance;
+- AI moderation assistance;
+- AI content discovery;
+- AI media processing;
+- AI commission/support assistance;
+- AI operational copilot.
+
+**PHASE 5**
+- team/community roles;
+- tenant-level community;
+- subscription/entitlement/billing;
+- usage metering;
+- mobile/team administration.
+
+**PHASE 6**
+- memberships;
+- digital products;
+- physical products;
+- commissions;
+- tips;
+- customer accounts;
+- private media;
+- community chats;
+- direct messages;
+- promotions;
+- CRM;
+- campaigns;
+- affiliate/referral;
+- commerce analytics.
+
+**PHASE 7**
+- community/template/widget packs;
+- extension marketplace;
+- creator workflow packs;
+- commerce/community extensions;
+- AI packs;
+- compatibility/dependency/migration/review.
+
+**PHASE 8**
+- adaptive community;
+- adaptive content;
+- multimodal/voice;
+- autonomous-but-controlled creator operations;
+- multi-agent orchestration.
+
+## 00.9.21.8 — TELJESSÉGI SZABÁLY
+
+Nem mondjuk azt, hogy a MASTER „örökre minden funkciót tartalmaz”. A helyes állítás:
+
+**A MASTER a jelenleg ismert és auditált creator/streamer/product/platform követelményeket canonical domain + phase + foundation contract szinten tartalmazza, és minden új benchmarkból vagy saját termékigényből származó releváns funkciót ugyanebbe a MASTER-be kell beilleszteni.**
+
+Ez a governance szabály megakadályozza, hogy új feature külön, elvesző backloggá váljon.
+
+## 00.9.21.9 — AUDIT 2.0 STÁTUSZ
+
+**PASS — megerősített és kibővített coverage audit.**
+
+A korábbi 00.9.20 auditot a 00.9.21 kiegészíti; egyik sem törölhető.
+
+**Aktuális engineering checkpoint változatlan:**
+40.69.13.E4.3.4 → remote 0016 migration → live D1/schema/ownership/security gate → E4.3.5 → E4.4.
+
+**A benchmark audit nem nyit új fejlesztési ágat az aktuális checkpoint előtt.**
