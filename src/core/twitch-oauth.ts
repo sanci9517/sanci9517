@@ -71,7 +71,7 @@ function randomState(): string {
   return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
 }
 
-async function sleep(ms: number): Promise<string> {
+async function sleep(ms: number): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, ms));
 }
 
@@ -150,7 +150,7 @@ export async function exchangeTwitchCode(
   code: string,
   state: string,
   userId: string
-): Promise<void> {
+): Promise<string> {
   const { clientId, clientSecret, encryptionKey } = requireConfig(env);
   const stateHash = await hashTwitchOAuthState(state);
 
