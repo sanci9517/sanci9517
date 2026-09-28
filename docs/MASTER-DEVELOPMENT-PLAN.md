@@ -1432,6 +1432,23 @@ Cél:
 - token refresh/revoke/validation műveletek csak a megfelelő site connectionjét érhessék el;
 - meglévő OAuth security és regression viselkedés változatlanul megmaradjon.
 
+**E4.3.4 részállapot — 2026-09-28:**
+- [x] migrations/0016_twitch_oauth_site_ownership.sql létrehozva: twitch_oauth_states.site_id hozzáadása, meglévő state rekordok site-default backfillje és index.
+- [x] Canonical site context bekerült a Twitch integration route rétegbe.
+- [x] OAuth connect indításkor a létrehozott state site ownership mezője site-default-hoz kötődik.
+- [x] OAuth callback a state hash alapján előzetesen ellenőrzi a user_id + site_id + expiry + used_at ownership feltételeket, mielőtt a kódcsere megtörténik.
+- [x] Callback után az új/legacy NULL site ownershipű Twitch connection rekordok site bindingot kapnak.
+- [x] Connection, validation és disconnect route-ok explicit site ownership ellenőrzést végeznek a user + connection + site hármas alapján.
+- [x] A validation/revoke token-műveletek előtt külön ownership assertion történik; cross-site connection ID nem használható a route boundaryn keresztül.
+- [x] Twitch Schedule sync meglévő site ownership védelme megmaradt.
+- [x] GitHub Actions Twitch Integration Check #163 — PASS: typecheck, Editor Core, Schedule Source és Twitch OAuth regression PASS.
+- [x] GitHub Actions Editor Core Test #787 — PASS: typecheck, Editor Core és canonical Schedule PASS.
+- [ ] Remote 0016_twitch_oauth_site_ownership.sql migration alkalmazása és D1 verification.
+- [ ] Célzott cross-site OAuth/connection regression tesztek.
+- [ ] E4.3.4 végleges security/live gate.
+
+**Fontos:** E4.3.4 még NEM lezárt pont. A remote migration és célzott cross-site regression nélkül nem lépünk tovább E4.3.5-re.
+
 **E4.4 `site_id NOT NULL` schema hardening csak az E4.3.4–E4.3.8 teljes lezárása után indítható.**
 
 **MASTER-2.40.39 checkpoint:** E4.2 és E4.3.1–E4.3.3 lezárva. E4.3.3 végleges CI gate-je Twitch Integration #151 és Editor Core #775 PASS. A következő és egyetlen aktív fejlesztési pont: **40.69.13.E4.3.4 — Twitch connection/OAuth ownership enforcement**. A teljes 1.0 és post-1.0 backlog megmarad, és minden új funkció ugyanebbe az egyetlen MASTER-be kerül.
