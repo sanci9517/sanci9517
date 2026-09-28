@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.41.0  
+**Verzió:** MASTER-2.42.0  
 **Dátum:** 2026-09-28  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -6262,3 +6262,899 @@ A capability-k nem törölhetők implicit módon. Kategóriák:
 Ha egy capability később bizonyítottan rossz, veszélyes vagy értelmetlen, külön döntési pont dokumentálja az okot. Csendben nem törölhető.
 
 **Végső cél:** a canonical architektúra már az első stabil verzióban ne zárja le a fejlődési utat website → creator → stream → content → automation → AI → SaaS irányban.
+
+
+## 50.24.A — AI PLATFORM MASTER SPECIFICATION — KIEMELT, HOSSZÚ TÁVÚ KÖZPONTI RENDSZER
+
+**Döntés — 2026-09-28:** az AI nem kiegészítő chatbot, hanem a platform egyik központi képességi rétege. A cél az, hogy minden olyan területen használjuk, ahol az AI valódi értéket adhat, de az AI soha ne kerülhesse meg a canonical domain contractokat, jogosultságot, validációt, historyt, publish folyamatot vagy auditot.
+
+**Alapelv:**
+USER INTENT → AI UNDERSTANDING → CONTEXT → PLAN/PROPOSAL → TOOL/WORKFLOW → GUARDRAIL → VALIDATION → HUMAN APPROVAL WHERE REQUIRED → CANONICAL COMMAND → EXECUTION → RESULT → AUDIT → HISTORY/ROLLBACK → EVALUATION
+
+### 50.24.A.1 — AI szerepe
+
+Az AI rétegek:
+1. **AI Assistant** — természetes nyelvű segítség a Creator Centerben.
+2. **AI Copilot** — a felhasználó mellett dolgozó szakmai segítő.
+3. **AI Content Engine** — szöveg, SEO, social, fordítás, meta, tartalomcsomag.
+4. **AI Design/Editor Assistant** — oldal, szekció, komponens, layout és theme javaslatok.
+5. **AI Stream Intelligence** — stream/VOD elemzés, események, összefoglalók.
+6. **AI Clip/Content Factory** — highlight- és klipjelölés, caption, reframe, metadata.
+7. **AI Analytics Analyst** — adatok értelmezése, trendek, magyarázatok, kérdés-válasz.
+8. **AI Automation Planner** — workflow-k és automatizálások javaslata.
+9. **AI Community Assistant** — közösségi tartalom és értesítési javaslatok, később moderációs segítség.
+10. **AI Localization Assistant** — fordítás és lokalizáció.
+11. **AI Brand Assistant** — a site brand-szabályaihoz igazodó tartalom és design.
+12. **AI Knowledge/Context Layer** — site-, content-, brand-, integration- és workflow-kontextus biztonságos átadása.
+13. **AI Agent Runtime** — több lépéses feladatok, tool use, specialisták/handoffs és hosszabb workflow-k.
+14. **AI Evaluation/Observability** — minőség, költség, latency, tool-használat és hibák mérése.
+
+A modern agent-architektúrákban a tool use, guardrails, human approval, state/session, specialisták közötti handoff és tracing már külön első osztályú építőelemek; ezeket referenciaelvekként figyelembe vesszük. citeturn0search0turn0search1turn0search3turn0search4
+
+### 50.24.A.2 — AI Chat / Assistant
+
+A Creator Centerben elérhető AI:
+- kérdések megválaszolása;
+- „mit csináljak most?” segítség;
+- modulok megmagyarázása;
+- hibák közérthető magyarázata;
+- weboldal állapotának összefoglalása;
+- platformkapcsolatok állapotának magyarázata;
+- publish problémák magyarázata;
+- tartalom keresése;
+- admin feladatok indításának segítése;
+- természetes nyelvű parancsok.
+
+Példák:
+- „Mutasd meg, mi hibás a weboldalon.”
+- „Mikor lesz a következő stream?”
+- „Készíts egy új Fortnite oldalt.”
+- „Miért nem jelent meg a változtatás?”
+- „Melyik tartalmakat érdemes most klippé alakítani?”
+
+### 50.24.A.3 — AI Weboldalépítő
+
+Természetes nyelvből képes legyen javasolni:
+- teljes oldalt;
+- szekciót;
+- hero részt;
+- schedule blokkot;
+- live blokkot;
+- about blokkot;
+- video/clip blokkot;
+- community blokkot;
+- support blokkot;
+- footer/navigation struktúrát;
+- responsive változatot;
+- theme/preset módosítást.
+
+**Soha nem generál közvetlenül tetszőleges runtime/Page Model állapotot.**
+A generált eredmény canonical Page Model + component registry + command system útján kerül végrehajtásra.
+
+### 50.24.A.4 — AI Editor Copilot
+
+Az editorban:
+- elem keresése;
+- elem létrehozási javaslat;
+- szöveg javítása;
+- rövidítés/hosszabbítás;
+- layout javaslat;
+- spacing javaslat;
+- responsive javítási javaslat;
+- accessibility javítás;
+- SEO javítás;
+- alt text;
+- CTA javaslat;
+- vizuális hierarchia javaslat;
+- design consistency ellenőrzés;
+- hibás/missing binding jelzése.
+
+**AI által végzett módosítás minden esetben command/history rendszerbe kerül.**
+
+### 50.24.A.5 — AI Content Studio
+
+Generálható/javasolható:
+- cím;
+- leírás;
+- rövid leírás;
+- blog/news;
+- announcement;
+- FAQ;
+- CTA;
+- social post;
+- platform-specifikus social copy;
+- YouTube title/description/tags;
+- clip title;
+- thumbnail brief;
+- chapter címek;
+- meta title;
+- meta description;
+- structured content;
+- kampányváltozatok.
+
+Támogatandó workflow:
+BRIEF → GENERATE → VARIANTS → REVIEW → EDIT → APPROVE → PUBLISH.
+
+### 50.24.A.6 — AI Stream Intelligence
+
+Stream/VOD esetén:
+- beszéd/átirat;
+- fejezetek;
+- témák;
+- fontos események;
+- játék- és jelenetváltások;
+- reakciók;
+- kiemelhető pillanatok;
+- összefoglaló;
+- stream recap;
+- Q&A összegzés;
+- időbélyeges események;
+- tartalomjelöltek.
+
+A rendszer külön kezeli az AI által javasolt eseményt és a bizonyított forrásadatot.
+
+### 50.24.A.7 — AI Clip Engine
+
+AI jelölhet:
+- highlight candidate;
+- clip candidate;
+- Shorts candidate;
+- TikTok candidate;
+- hosszabb YouTube-videó candidate.
+
+Minden candidate tartalmazhat:
+- timestamp;
+- forrás/VOD;
+- indoklás;
+- confidence;
+- relevancia;
+- javasolt hossz;
+- aspect ratio;
+- caption;
+- title;
+- description;
+- target platform.
+
+Az AI nem publikál automatikusan csak azért, mert candidate-et készített.
+
+### 50.24.A.8 — AI Video/Media Processing Assistant
+
+Későbbi bővítés:
+- vágási javaslat;
+- silence/dead-air detection;
+- scene detection;
+- speaker/voice segmentation ahol jogszerű és szükséges;
+- caption;
+- subtitle styling;
+- 9:16/16:9/1:1 reframe;
+- thumbnail frame javaslat;
+- intro/outro javaslat;
+- watermark/brand alkalmazás;
+- chaptering;
+- export preset.
+
+### 50.24.A.9 — AI Social Content Factory
+
+Egy streamből vagy videóból:
+- YouTube leírás;
+- Shorts copy;
+- TikTok copy;
+- Discord announcement;
+- weboldal hír;
+- X/egyéb platform copy ahol támogatott;
+- thumbnail brief;
+- hashtags/tags javaslat;
+- többféle hangnem.
+
+A platform adapter csak a megengedett képességeket használhatja.
+
+### 50.24.A.10 — AI Translation / Localization
+
+AI segíthet:
+- HU → EN;
+- HU → DE;
+- HU → UK;
+- HU → RU;
+- későbbi további locale-ok;
+- SEO;
+- OG;
+- alt text;
+- captions;
+- social copy;
+- localized slugs javaslata.
+
+Kötelező:
+- locale context;
+- terminology/glossary;
+- brand tone;
+- human review;
+- missing translation detection;
+- source/target tracking;
+- publish state.
+
+### 50.24.A.11 — AI Brand Brain
+
+A site saját brand-kontextusa:
+- név;
+- tone of voice;
+- tiltott kifejezések;
+- preferált kifejezések;
+- színek;
+- typography;
+- visual style;
+- logo;
+- CTA-stílus;
+- content rules;
+- platform-specific style.
+
+AI generáláskor ezt figyelembe kell venni.
+
+### 50.24.A.12 — AI Analytics Analyst
+
+Természetes nyelvű analytics:
+- „Mi változott ezen a héten?”
+- „Melyik tartalom teljesített jobban?”
+- „Melyik játékhoz kapcsolódik a legtöbb érdeklődés?”
+- „Melyik oldalról mennek ki legtöbben Twitchre?”
+- „Melyik klipet érdemes újra felhasználni?”
+
+Az AI nem módosítja az alapmérést; az analytics canonical adatait értelmezi.
+
+### 50.24.A.13 — AI Automation Builder
+
+Természetes nyelvből workflow-javaslat:
+„Ha véget ér a stream, készíts összefoglalót, jelölj klipeket, készíts social szöveget, majd kérj jóváhagyást.”
+
+Átalakítás:
+INTENT → WORKFLOW PLAN → VALIDATION → APPROVAL → AUTOMATION DEFINITION → EXECUTION.
+
+Támogatandó:
+- trigger;
+- condition;
+- action;
+- delay;
+- branching;
+- retry;
+- timeout;
+- rate limit;
+- approval step;
+- notification;
+- audit.
+
+### 50.24.A.14 — AI Agent / Specialist Architecture
+
+Nem kell minden feladatra egyetlen óriási agent.
+
+Lehetséges specialisták:
+- Website Agent;
+- Content Agent;
+- SEO Agent;
+- Stream Agent;
+- Clip Agent;
+- Analytics Agent;
+- Localization Agent;
+- Automation Agent;
+- Brand Agent;
+- Support/Help Agent.
+
+A koordinátor csak a megfelelő specialistát hívja.
+
+**Agent → Tool → Domain API → Validation → Result.**
+
+Tool use esetén a modell strukturált tool-kérést ad; az alkalmazás végzi el a tényleges műveletet. Ez a határ legyen a rendszerben is explicit. citeturn0search5turn0search9
+
+### 50.24.A.15 — AI Tool Registry
+
+Minden AI által használható műveletnek legyen:
+- stabil neve;
+- leírása;
+- input schema;
+- output schema;
+- permission;
+- site/account scope;
+- read/write jelölés;
+- approval requirement;
+- rate limit;
+- audit requirement;
+- timeout;
+- idempotency;
+- error contract;
+- version.
+
+Példák:
+- get_site;
+- search_content;
+- get_schedule;
+- get_live_status;
+- create_draft_page;
+- propose_page_change;
+- update_content;
+- search_media;
+- create_clip_candidate;
+- generate_social_copy;
+- create_translation_draft;
+- propose_automation;
+- publish_page **csak megfelelő jogosultsággal és szükség esetén explicit approval után**.
+
+### 50.24.A.16 — Human-in-the-loop
+
+Kötelező jóváhagyási kategóriák:
+- publikálás;
+- törlés;
+- külső platformra publikálás;
+- pénzügyi/billing művelet;
+- biztonsági beállítás;
+- OAuth kapcsolat módosítása;
+- tömeges tartalommódosítás;
+- visszafordíthatatlan művelet;
+- érzékeny adat kezelése.
+
+Alacsony kockázatú read-only és draft-jellegű műveletek automatizálhatók.
+
+### 50.24.A.17 — AI Guardrails
+
+Három szint:
+1. **Input guardrail** — felhasználói kérés ellenőrzése.
+2. **Tool guardrail** — minden tool-hívás előtt/után ellenőrzés.
+3. **Output guardrail** — AI eredmény ellenőrzése.
+
+A modern agent rendszerek külön tool guardrailokat is használnak, amelyek minden tool-invocation körül validálhatják vagy blokkolhatják a műveletet. citeturn0search1turn0search2
+
+Kötelező ellenőrzések:
+- schema;
+- permission;
+- scope;
+- data access;
+- dangerous action;
+- prompt injection;
+- external content trust boundary;
+- secret leakage;
+- unsupported capability;
+- invalid command.
+
+### 50.24.A.18 — AI Context / Knowledge Layer
+
+Az AI ne kapjon „mindent egyszerre”.
+
+Context rétegek:
+- global system rules;
+- account;
+- site;
+- workspace;
+- current page;
+- selected node;
+- current content;
+- current integration;
+- current workflow;
+- user permissions;
+- brand;
+- locale;
+- task context.
+
+**Least-context principle:** csak a feladathoz szükséges adat kerül a modellhez.
+
+### 50.24.A.19 — AI Memory
+
+Típusok:
+- short-term conversation;
+- task state;
+- project/site context;
+- user preferences;
+- brand memory;
+- workflow memory;
+- approved terminology.
+
+Külön kell választani:
+- tartós user preference;
+- canonical business data;
+- AI conversation history.
+
+Az AI memory nem lehet a canonical adatmodell helyettesítője.
+
+### 50.24.A.20 — RAG / Knowledge Search
+
+Később:
+- dokumentáció;
+- help;
+- project rules;
+- brand guide;
+- content library;
+- historical approved content;
+- workflow documentation.
+
+Retrieval:
+SEARCH → RANK → FILTER BY PERMISSION/SCOPE → CONTEXT PACK → MODEL.
+
+### 50.24.A.21 — AI Provider / Model Router
+
+Ne legyen az egész platform egyetlen modellhez kötve.
+
+Provider abstraction:
+- provider;
+- model;
+- capability;
+- context limit;
+- latency;
+- cost;
+- availability;
+- privacy/data policy;
+- fallback.
+
+Router például:
+- olcsó modell egyszerű átíráshoz;
+- erősebb modell komplex reasoninghez;
+- multimodal modell képek/videókhoz;
+- speech model átíráshoz;
+- embedding/retrieval modell kereséshez.
+
+**Provider csere ne igényelje a domain újraírását.**
+
+### 50.24.A.22 — AI Cost / Usage Management
+
+Mérendő:
+- request;
+- tokens;
+- model;
+- provider;
+- latency;
+- estimated cost;
+- tool calls;
+- workflow duration;
+- success/failure.
+
+Korlátok:
+- napi;
+- havi;
+- user;
+- site;
+- workspace;
+- feature;
+- model/provider.
+
+Lehetséges később:
+- budget warning;
+- hard limit;
+- soft limit;
+- approval above threshold.
+
+### 50.24.A.23 — AI Privacy / Data Governance
+
+AI-hoz továbbított adat osztályozása:
+- public;
+- internal;
+- personal;
+- sensitive;
+- secret.
+
+Kötelező:
+- minimization;
+- retention policy;
+- deletion;
+- provider policy;
+- opt-out;
+- audit;
+- secret redaction;
+- PII handling;
+- tenant isolation.
+
+**OAuth token, session secret, API key és más secret nem kerülhet AI contextbe.**
+
+### 50.24.A.24 — AI Security
+
+Kiemelt védelem:
+- prompt injection;
+- indirect prompt injection;
+- tool abuse;
+- excessive agency;
+- privilege escalation;
+- data exfiltration;
+- insecure output handling;
+- malicious external content;
+- cross-tenant data leakage;
+- unauthorized publishing;
+- runaway loops.
+
+Az AI security külön tesztcsomag legyen, ne csak általános API/security teszt.
+
+### 50.24.A.25 — AI Observability / Tracing
+
+Mérjük:
+- agent run;
+- model call;
+- tool call;
+- handoff;
+- guardrail;
+- approval;
+- token usage;
+- latency;
+- failure;
+- final outcome.
+
+A modern agent runtime-ok tracinggel külön is követik a model generation, tool call, handoff és guardrail eseményeket; ezt a platform saját observability modelljében is le kell képezni. citeturn0search3turn0search8
+
+### 50.24.A.26 — AI Evaluation
+
+Minden fontos AI funkcióhoz eval dataset:
+- expected behavior;
+- bad input;
+- ambiguous input;
+- adversarial input;
+- permission boundary;
+- hallucination case;
+- tool error;
+- provider failure.
+
+Mérőszámok:
+- correctness;
+- groundedness;
+- tool accuracy;
+- refusal/approval correctness;
+- latency;
+- cost;
+- regression rate.
+
+**Prompt módosítás nem tekinthető ártalmatlan változtatásnak: eval + regression szükséges.**
+
+### 50.24.A.27 — AI Failure Handling
+
+Ha az AI:
+- nem tudja;
+- bizonytalan;
+- hibás tool eredményt kap;
+- provider leáll;
+- rate limitet kap;
+- timeoutol;
+- invalid outputot ad;
+
+akkor:
+**nem talál ki adatot**, hanem jelzi a bizonytalanságot és biztonságosan visszalép.
+
+Lehetséges:
+- retry;
+- fallback model;
+- fallback provider;
+- human review;
+- partial result;
+- resume;
+- cancel.
+
+### 50.24.A.28 — AI Background Jobs
+
+Hosszabb feladatok:
+- VOD elemzés;
+- videó feldolgozás;
+- batch translation;
+- content generation;
+- analytics report;
+- large media analysis.
+
+Ezek queue/job rendszerben:
+QUEUED → RUNNING → PAUSED → SUCCEEDED / FAILED / CANCELLED.
+
+A felhasználó lássa:
+- folyamat;
+- előrehaladás;
+- becsült állapot;
+- hiba;
+- retry;
+- cancel.
+
+### 50.24.A.29 — AI Bulk Operations
+
+Később:
+- több oldal SEO-ja;
+- sok kép alt textje;
+- több videó leírása;
+- teljes content library fordítása;
+- több klip social csomagja.
+
+Kötelező:
+- preview;
+- diff;
+- selected items;
+- batch limit;
+- approval;
+- rollback;
+- audit.
+
+### 50.24.A.30 — AI + Public Website
+
+AI segíthet:
+- FAQ;
+- search answers;
+- content recommendations;
+- related content;
+- personalized content később;
+- conversational site assistant később.
+
+De a public AI nem kaphat admin jogosultságot.
+
+### 50.24.A.31 — AI + Community
+
+Későbbi:
+- Discord announcement draft;
+- community FAQ;
+- event reminders;
+- moderation suggestions;
+- spam/toxicity classification;
+- recurring community summary.
+
+Automatikus moderationnél human escalation és audit szükséges.
+
+### 50.24.A.32 — AI + Business / Monetization
+
+Később:
+- media kit draft;
+- sponsorship proposal draft;
+- business email draft;
+- campaign content;
+- affiliate content;
+- product description;
+- sales analytics explanation.
+
+Pénzügyi tranzakciót az AI nem hajthat végre szabadon.
+
+### 50.24.A.33 — AI + OBS / Streaming
+
+Később:
+- stream state interpretation;
+- scene recommendation;
+- stream title suggestion;
+- category/game suggestion;
+- stream recap;
+- marker suggestion;
+- replay candidate;
+- automation recommendation.
+
+OBS control csak explicit engedélyezett toolokon keresztül.
+
+### 50.24.A.34 — AI + Schedule
+
+AI javasolhat:
+- időpontot;
+- stream témát;
+- játékrotációt;
+- recurring schedule-t;
+- social reminder szöveget;
+- Discord reminder-t.
+
+Az időpont tényleges mentése canonical Schedule commandon keresztül történik.
+
+### 50.24.A.35 — AI + Search
+
+AI-powered natural-language search:
+„Mutasd az összes Fortnite klipet az elmúlt hónapból.”
+
+A keresés mindig permission- és site-scope-aware.
+
+### 50.24.A.36 — AI + Help / Onboarding
+
+Az AI legyen beépített tanár:
+- megmutatja, hol van egy funkció;
+- elmagyarázza a beállítást;
+- segít az első weboldal elkészítésében;
+- felismeri a gyakori hibákat;
+- contextual help-et ad.
+
+### 50.24.A.37 — AI Personalization
+
+Később:
+- user skill level;
+- preferred workflow;
+- frequent actions;
+- preferred tone;
+- preferred templates.
+
+Csak megfelelő consent és adatvédelmi keretek között.
+
+### 50.24.A.38 — AI Autonomy Levels
+
+A rendszer több autonómiaszintet támogasson:
+
+**L0 — Read only:** csak válaszol/keres.
+
+**L1 — Suggest:** javaslatot készít.
+
+**L2 — Draft:** módosítást készít, de nem publikál.
+
+**L3 — Approved execution:** jóváhagyott toolt végrehajt.
+
+**L4 — Controlled automation:** előre engedélyezett workflow automatikusan fut.
+
+**L5 — High autonomy:** csak későbbi, erősen korlátozott és külön engedélyezett esetekben.
+
+Alapértelmezés: minél nagyobb a hatás, annál nagyobb a jóváhagyási követelmény.
+
+### 50.24.A.39 — AI Permission Model
+
+Külön jogosultságok:
+- ai.use;
+- ai.read_content;
+- ai.read_analytics;
+- ai.modify_draft;
+- ai.generate_content;
+- ai.generate_media_job;
+- ai.execute_automation;
+- ai.publish;
+- ai.external_publish;
+- ai.manage_settings;
+- ai.manage_integrations.
+
+Az AI nem örököl automatikusan owner/admin jogot.
+
+### 50.24.A.40 — AI Audit Model
+
+Minden komoly AI művelethez:
+- actor;
+- user;
+- account;
+- site;
+- workspace;
+- agent;
+- model/provider;
+- prompt/task identifier;
+- context scope;
+- tool;
+- requested action;
+- approval;
+- result;
+- changed records;
+- timestamp;
+- cost;
+- outcome;
+- error.
+
+Secret és érzékeny prompt-tartalom csak a retention policy szerint kezelhető.
+
+### 50.24.A.41 — AI Command Integration
+
+**AI nem saját parancsrendszert hoz létre.**
+
+AI output:
+AI PLAN → canonical command(s) → validation → transaction → history → persistence.
+
+Így az ember és az AI ugyanazt a valódi alkalmazási logikát használja.
+
+### 50.24.A.42 — AI Rollback
+
+AI által létrehozott változás:
+- azonosítható;
+- diffelhető;
+- visszavonható;
+- revisionhöz kötött;
+- publish előtt preview-zható.
+
+Tömeges AI módosításnál egyetlen batch/revision keret legyen visszaállítható.
+
+### 50.24.A.43 — AI + Feature Registry
+
+Minden AI capability legyen capability registry-ben:
+- enabled;
+- provider;
+- required permission;
+- required data;
+- risk level;
+- approval level;
+- rollout state;
+- version;
+- experiment flag.
+
+### 50.24.A.44 — AI UX
+
+A felhasználó mindig lássa:
+- mit akar az AI;
+- mit fog módosítani;
+- milyen adatokra támaszkodik;
+- mit hajt végre;
+- mihez kér engedélyt;
+- mi történt;
+- hogyan lehet visszavonni.
+
+Nem lehet „varázsgomb”, amely láthatatlanul nagy mennyiségű adatot módosít.
+
+### 50.24.A.45 — AI Roadmap
+
+**AI Foundation**
+- provider abstraction;
+- AI capability registry;
+- permissions;
+- tool registry;
+- context boundary;
+- audit;
+- cost tracking;
+- guardrails.
+
+**AI 1**
+- Assistant;
+- content generation;
+- SEO;
+- translation;
+- help.
+
+**AI 2**
+- Editor Copilot;
+- brand brain;
+- analytics analyst;
+- schedule assistant.
+
+**AI 3**
+- stream intelligence;
+- VOD analysis;
+- clip candidates;
+- captions;
+- content factory.
+
+**AI 4**
+- automation builder;
+- specialist agents;
+- background jobs;
+- RAG/knowledge.
+
+**AI 5**
+- controlled autonomous workflows;
+- multi-agent orchestration;
+- advanced personalization;
+- multimodal/voice;
+- advanced business/community assistance.
+
+**AI Research**
+- local/open models;
+- self-hosted inference;
+- advanced video understanding;
+- real-time stream copilot;
+- voice control;
+- predictive content optimization.
+
+### 50.24.A.46 — AI Definition of Done
+
+AI feature csak akkor tekinthető késznek, ha:
+1. use case;
+2. user value;
+3. domain contract;
+4. tool schema;
+5. permission;
+6. context scope;
+7. input validation;
+8. output validation;
+9. guardrails;
+10. approval policy;
+11. canonical command integration;
+12. audit;
+13. history/rollback;
+14. error/fallback;
+15. cost tracking;
+16. observability;
+17. evaluation dataset;
+18. unit/integration tests;
+19. security/adversarial tests;
+20. accessibility/UX;
+21. live verification;
+22. MASTER checkpoint.
+
+### 50.24.A.47 — AI hosszú távú cél
+
+A végső cél nem egy „AI chatablak”.
+
+A cél egy **AI-native creator platform**, ahol a creator természetes nyelven tud dolgozni a teljes rendszerrel:
+
+„Készíts egy új gaming kezdőoldalt a jelenlegi brandemmel.”
+
+„Nézd át az oldalt mobil szempontból, és javasold a hibákat.”
+
+„A tegnapi streamből keress öt jó klipet.”
+
+„Készíts ezekből Shorts és TikTok csomagot.”
+
+„Fordítsd le angolra.”
+
+„Készíts hozzá social posztokat.”
+
+„Mutasd meg előnézetben.”
+
+„Jóváhagyom.”
+
+„Publikáld az engedélyezett platformokra.”
+
+És minden lépés ugyanazon canonical platform-, permission-, validation-, history-, publish- és audit-rendszeren keresztül történik.
+
+**Nem az AI helyettesíti a platform architektúráját; az AI a platform minden megfelelő rétegét használó intelligens kezelőréteg lesz.**
