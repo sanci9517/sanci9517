@@ -67,10 +67,10 @@ export async function adminScheduleRoute(request: Request, env: Env): Promise<Re
   }
   if (request.method === "DELETE") {
     const id = typeof body.id === "string" ? body.id.trim() : ""; if (!id) return error("INVALID_SCHEDULE_ITEM", 400);
-    const result = await env.DB.prepare("SELECT id FROM schedule_items WHERE id=? LIMIT 1").bind(id).first<{id:string}>();
+    const result = await env.DB.prepare("SELECT id FROM schedule_items WHERE id=? AND site_id=? LIMIT 1").bind(id, siteId).first<{id:string}>();
     if (!result) return error("NOT_FOUND", 404, "Schedule item not found");
     await env.DB.batch([
-      env.DB.prepare("undefined").bind(id,siteId),
+      env.DB.prepare("DELETE FROM schedule_items WHERE id=? AND site_id=?").bind(id,siteId),
       auditStatement(env, user.id, "schedule.delete", "schedule_item", id, {})
     ]);
     return ok({ id, deleted: true });
