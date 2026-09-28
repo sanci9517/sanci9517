@@ -1,5 +1,5 @@
 import type { D1Database } from "@cloudflare/workers-types";
-import { DEFAULT_SITE_ID } from "../site-context";
+import { DEFAULT_SITE_ID } from "./site-context";
 
 export const SCHEDULE_READ_MODES = ["upcoming", "all", "next"] as const;
 export const SCHEDULE_READ_ORDERS = ["asc", "desc"] as const;
@@ -54,6 +54,7 @@ export function normalizeScheduleReadConfig(input: ScheduleReadConfig = {}) {
   if (!(SCHEDULE_READ_ORDERS as readonly string[]).includes(order)) throw new Error("Invalid schedule order");
 
   return {
+    siteId: input.siteId ?? DEFAULT_SITE_ID,
     mode: mode as typeof SCHEDULE_READ_MODES[number],
     limit: mode === "next" ? 1 : limit,
     statuses: [...new Set(statuses)],
