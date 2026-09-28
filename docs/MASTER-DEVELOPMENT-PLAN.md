@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.52.0  
+**Verzió:** MASTER-2.53.0  
 **Dátum:** 2026-09-28  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -8,6 +8,8 @@
 **Állapot:** ez az egyetlen aktív fejlesztési terv.
 
 **Feature-preservation szabály:** a korábbi MASTER/roadmap bármely kívánt funkciója megmarad. Új igények csak hozzáadódnak; sem funkció, sem domain, sem jövőbeli backlog tétel nem törölhető vagy némítható el döntés nélkül. A régi 19–34 szakaszok teljes funkciólistája archivált backlogként továbbra is érvényes, és az 1.0/post-1.0 besorolás csak explicit döntéssel változhat.
+
+**Optimalizált fejlesztési sebesség / minőségi kapu szabály — 2026-09-28:** A fejlesztést minden olyan ponton gyorsítani kell, ahol ez a minőségi, biztonsági és architekturális bizonyosság csökkentése nélkül megtehető. A gyorsítás nem jelent teszt, security gate, ownership/permission ellenőrzés, validation, idempotency, failure/rollback, live verification vagy MASTER checkpoint kihagyását. A gyorsítás elsődleges eszközei: kevesebb felesleges újraépítés, canonical contract előre rögzítése, célzott referencia-architektúra/kódvizsgálat, automatizált CI/regressziótesztek, újrahasználható infrastruktúra és független munkák biztonságos párhuzamosítása. Egy logikai, önálló feature továbbra is egy fejlesztési pont; annak technikai al-lépései a pont DoD-ján belül maradnak. Sikertelen ellenőrzés esetén nincs „elég jó” lezárás és nincs minőségi kapu átugrás. A cél: a teljes fejlesztési idő csökkentése úgy, hogy a hibamentes, reprodukálható és hosszú távon bővíthető megvalósítási standard változatlan maradjon.
 
 **Public Design Freedom / Multi-user uniqueness szabály:** az 1.0 vizuális rendszerének nem csak tartalom- és komponensszerkesztést kell biztosítania. A publikusan megjelenő weboldal vizuális identitása is felhasználónként/site-onként egyedileg konfigurálható kell legyen. A felhasználóbarát admin/editor célja, hogy technikai CSS-kód nélkül is létrehozható legyen saját brand és megjelenés: theme/design tokens, typography, colors, semantic colors, backgrounds, spacing, radius, shadows, containers, layout variants, component styles, navigation/header/footer, card/button/form styles, responsive presentation, visibility, imagery, templates és page-level presentation. A rendszernek preset/template alapú gyors indulást és mélyebb egyedi testreszabást is támogatnia kell. A domain adat, a Page Model és az Editor UI state továbbra is külön marad; a public design egy canonical presentation/theme réteg lesz. Multi-user jövőre készülve minden design/configuration site-scoped/tenant-scoped kell legyen, ne globális megosztott állapot. A default design csak kiindulópont, nem korlát.
 
