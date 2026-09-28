@@ -1444,7 +1444,10 @@ Cél:
 - [x] GitHub Actions Twitch Integration Check #163 — PASS: typecheck, Editor Core, Schedule Source és Twitch OAuth regression PASS.
 - [x] GitHub Actions Editor Core Test #787 — PASS: typecheck, Editor Core és canonical Schedule PASS.
 - [ ] Remote 0016_twitch_oauth_site_ownership.sql migration alkalmazása és D1 verification.
-- [ ] Célzott cross-site OAuth/connection regression tesztek.
+- [x] Célzott Twitch connection site-ownership regression tesztek bekerültek a Twitch regression suite-ba; cross-site ownership, site-scoped lookup és NULL legacy binding ellenőrzések PASS.
+- [x] GitHub Actions Twitch Integration Check #166 — PASS; Editor Core Test #790 — PASS.
+- [ ] Remote 0016 migration alkalmazása és D1 verification.
+- [ ] E4.3.4 végleges security/live gate.
 - [ ] E4.3.4 végleges security/live gate.
 
 **Fontos:** E4.3.4 még NEM lezárt pont. A remote migration és célzott cross-site regression nélkül nem lépünk tovább E4.3.5-re.
