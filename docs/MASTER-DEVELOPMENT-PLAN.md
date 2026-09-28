@@ -11769,3 +11769,201 @@ Minden pont lezárásához: canonical contract → ownership/scope → permissio
 - 0.8.23 Accessibility metadata
 - 0.8.24 Performance budget
 - 0.8.25 Audit explorer
+
+## 00.9.22.3 — PHASE 1 — CREATOR WEBSITE PLATFORM
+
+**1.1 Public website**
+- 1.1.1 Public shell
+- 1.1.2 Responsive renderer
+- 1.1.3 Header/navigation
+- 1.1.4 Footer
+- 1.1.5 Creator Home
+- 1.1.6 Hero/identity
+- 1.1.7 Live status
+- 1.1.8 Next-stream status
+- 1.1.9 Social/link hub
+- 1.1.10 Smart links
+- 1.1.11 About
+- 1.1.12 Setup/gear
+- 1.1.13 Games
+- 1.1.14 Schedule
+- 1.1.15 Live page
+- 1.1.16 VOD
+- 1.1.17 Clips
+- 1.1.18 Highlights
+- 1.1.19 Community
+- 1.1.20 Contact
+- 1.1.21 Support
+- 1.1.22 FAQ
+- 1.1.23 Media Kit
+- 1.1.24 Business inquiry
+- 1.1.25 Event Hub
+- 1.1.26 Campaign landing page
+- 1.1.27 Content detail
+- 1.1.28 Content archive
+- 1.1.29 Public content search
+- 1.1.30 Public content filters
+- 1.1.31 Related content
+- 1.1.32 Featured/pinned content
+- 1.1.33 Series/playlist
+- 1.1.34 Branded error pages
+- 1.1.35 Maintenance page
+
+**1.2 SEO/quality**
+- 1.2.1 Metadata
+- 1.2.2 Canonical URLs
+- 1.2.3 Open Graph
+- 1.2.4 Social previews
+- 1.2.5 Structured data
+- 1.2.6 Sitemap
+- 1.2.7 Robots policy
+- 1.2.8 Redirect manager
+- 1.2.9 Broken-link checker
+- 1.2.10 Broken-embed checker
+- 1.2.11 Performance budget
+- 1.2.12 Image optimization
+- 1.2.13 Lazy loading
+- 1.2.14 Third-party embed budget
+
+**1.3 Visual Editor**
+- 1.3.1 Editor shell
+- 1.3.2 Component library
+- 1.3.3 Block insertion
+- 1.3.4 Selection
+- 1.3.5 Move
+- 1.3.6 Resize
+- 1.3.7 Duplicate
+- 1.3.8 Delete
+- 1.3.9 Layers
+- 1.3.10 Inspector
+- 1.3.11 Field editing
+- 1.3.12 Responsive viewport simulation
+- 1.3.13 Responsive overrides
+- 1.3.14 Desktop/tablet/mobile preview
+- 1.3.15 Custom viewport
+- 1.3.16 Alignment/guides
+- 1.3.17 Undo/redo
+- 1.3.18 Autosave
+- 1.3.19 Recovery
+- 1.3.20 Preview
+- 1.3.21 Publish
+- 1.3.22 Revision history
+- 1.3.23 Diff
+- 1.3.24 Rollback
+- 1.3.25 Safe destructive actions
+- 1.3.26 Debug/error surface
+- 1.3.27 Mobile editor shell
+- 1.3.28 Tablet editor shell
+- 1.3.29 Keyboard/focus
+- 1.3.30 Touch/gesture
+
+**1.4 Theme/Templates**
+- 1.4.1 Design tokens
+- 1.4.2 Typography tokens
+- 1.4.3 Spacing tokens
+- 1.4.4 Color tokens
+- 1.4.5 Radius/shadow tokens
+- 1.4.6 Theme model
+- 1.4.7 Brand Kit
+- 1.4.8 Brand presets
+- 1.4.9 Component states
+- 1.4.10 Responsive variants
+- 1.4.11 Page templates
+- 1.4.12 Layout templates
+- 1.4.13 Section templates
+- 1.4.14 Reusable patterns
+- 1.4.15 Template metadata
+- 1.4.16 Compatibility
+- 1.4.17 Preview
+- 1.4.18 Gallery
+- 1.4.19 Install/apply
+- 1.4.20 Customization
+- 1.4.21 Versioning
+- 1.4.22 Migration
+- 1.4.23 Rollback
+- 1.4.24 Usage/health
+- 1.4.25 Visual regression
+- 1.4.26 Performance budget
+
+**1.5 Creator Center**
+- 1.5.1 Creator Center shell
+- 1.5.2 Dashboard overview
+- 1.5.3 Integration health
+- 1.5.4 Current stream overview
+- 1.5.5 Recent events
+- 1.5.6 Recent alerts
+- 1.5.7 Content jobs
+- 1.5.8 Publish queue
+- 1.5.9 Failed jobs
+- 1.5.10 Quick actions
+- 1.5.11 Activity center
+- 1.5.12 Notifications
+- 1.5.13 Mobile Creator Center
+- 1.5.14 Mobile approval queue
+- 1.5.15 Sensitive-action re-auth
+
+**1.6 Forms/Embeds**
+- 1.6.1 Contact form
+- 1.6.2 Business inquiry
+- 1.6.3 Newsletter signup
+- 1.6.4 Form validation
+- 1.6.5 Submission storage
+- 1.6.6 Spam protection
+- 1.6.7 Public embed contract
+- 1.6.8 Live Status widget
+- 1.6.9 Next Stream widget
+- 1.6.10 Schedule widget
+- 1.6.11 Content Feed widget
+- 1.6.12 Social widget
+- 1.6.13 Embed CSP/sandbox
+- 1.6.14 Embed rate limiting
+- 1.6.15 Embed versioning
+- 1.6.16 Embed fallback
+
+**1.7 Localization/Accessibility**
+- 1.7.1 Hungarian production locale
+- 1.7.2 Localization keys
+- 1.7.3 Locale-aware dates/times
+- 1.7.4 Locale-aware schedule
+- 1.7.5 Future locale contract
+- 1.7.6 RTL readiness
+- 1.7.7 Semantic HTML
+- 1.7.8 Keyboard navigation
+- 1.7.9 Focus management
+- 1.7.10 Reduced motion
+- 1.7.11 Contrast
+- 1.7.12 Alt text
+- 1.7.13 Captions/transcripts
+- 1.7.14 Form accessibility
+- 1.7.15 Mobile QA
+- 1.7.16 Production performance QA
+
+## 00.9.22.4 — PHASE 2 — MULTI-PLATFORM CREATOR
+- 2.1.1 Provider adapter framework
+- 2.1.2 Capability discovery
+- 2.1.3 Twitch hardening
+- 2.1.4 YouTube identity
+- 2.1.5 YouTube live
+- 2.1.6 YouTube schedule/content
+- 2.1.7 TikTok identity
+- 2.1.8 TikTok live
+- 2.1.9 Kick identity
+- 2.1.10 Kick live
+- 2.1.11 Future-provider adapter
+- 2.1.12 Unified live state
+- 2.1.13 Unified schedule
+- 2.1.14 Unified content identity
+- 2.1.15 Unified provider events
+- 2.1.16 Provider-specific capabilities
+- 2.1.17 OAuth reconnect
+- 2.1.18 OAuth revoke
+- 2.1.19 Rate-limit visibility
+- 2.1.20 Quota visibility
+- 2.1.21 Provider outage state
+- 2.1.22 Degraded integration
+- 2.1.23 Discord identity
+- 2.1.24 Discord role sync
+- 2.1.25 Discord community integration
+- 2.1.26 Cross-platform content actions
+- 2.1.27 Cross-platform schedule actions
+- 2.1.28 Cross-platform media metadata
