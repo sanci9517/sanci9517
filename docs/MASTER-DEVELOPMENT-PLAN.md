@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.61.0  
+**Verzió:** MASTER-2.62.0  
 **Dátum:** 2026-10-07  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -13,7 +13,7 @@
 
 **Public Design Freedom / Multi-user uniqueness szabály:** az 1.0 vizuális rendszerének nem csak tartalom- és komponensszerkesztést kell biztosítania. A publikusan megjelenő weboldal vizuális identitása is felhasználónként/site-onként egyedileg konfigurálható kell legyen. A felhasználóbarát admin/editor célja, hogy technikai CSS-kód nélkül is létrehozható legyen saját brand és megjelenés: theme/design tokens, typography, colors, semantic colors, backgrounds, spacing, radius, shadows, containers, layout variants, component styles, navigation/header/footer, card/button/form styles, responsive presentation, visibility, imagery, templates és page-level presentation. A rendszernek preset/template alapú gyors indulást és mélyebb egyedi testreszabást is támogatnia kell. A domain adat, a Page Model és az Editor UI state továbbra is külön marad; a public design egy canonical presentation/theme réteg lesz. Multi-user jövőre készülve minden design/configuration site-scoped/tenant-scoped kell legyen, ne globális megosztott állapot. A default design csak kiindulópont, nem korlát.
 
-**Legutóbbi igazolt állapot:** 2026-10-07 — az E4.3.4–E4.3.8 teljes ownership/security/live hardening sorozat PASS és lezárva. Az E4.4 teljes `site_id NOT NULL` schema-hardening DoD is PASS és lezárva: az E4.4.1 migration design/exact SQL audit PASS, az E4.4.2 actual implementation + isolated dry-run PASS, a production schema már mind a hat érintett táblán `site_id TEXT NOT NULL REFERENCES sites(id) ON DELETE RESTRICT`, minden érintett rekord `site_id` értéke kitöltött, `foreign_key_check` PASS, a pages → published revision linkage megmaradt, és a live Worker/public API smoke tesztek PASS állapotban vannak. A következő fejlesztési kapu csak az E5 lehet; E5 az E4.4 teljes lezárása után nyitható meg.
+**Legutóbbi igazolt állapot:** 2026-10-07 — az E4.3.4–E4.3.8 teljes ownership/security/live hardening sorozat PASS és lezárva. Az E4.4 teljes `site_id NOT NULL` schema-hardening DoD is PASS és lezárva: az E4.4.1 migration design/exact SQL audit PASS, az E4.4.2 actual implementation + isolated dry-run PASS, a production schema már mind a hat érintett táblán `site_id TEXT NOT NULL REFERENCES sites(id) ON DELETE RESTRICT`, minden érintett rekord `site_id` értéke kitöltött, `foreign_key_check` PASS, a pages → published revision linkage megmaradt, és a live Worker/public API smoke tesztek PASS állapotban vannak. A következő és egyetlen fejlesztési kapu az E5; E5 az E4.4 teljes lezárása után nyitható meg.
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
 
@@ -39,7 +39,7 @@ Ha bármilyen régi checkpoint, összefoglaló, korábbi üzenet vagy történet
 **Boot-szabály:** új beszélgetésben a modellnek először ezt a 00/B blokkot, majd közvetlenül a 00/A indexet kell figyelembe vennie. Ha bármely régi checkpoint ettől eltér, a régi checkpointot kell figyelmen kívül hagyni, nem az aktuális MASTER állapotot.
 
 **Egyetlen aktuális folytatási mondat:**
- > „Folytassuk a Sanci9517 MASTER tervet az **E5 következő fejlesztési kapujánál**. E4.3.1–E4.3.8 és E4.4 teljesen lezárultak; az E4.4 production schema, integrity, ownership és live public smoke gate-jei PASS. A következő munka kizárólag az E5 MASTER-ben rögzített követelményei szerint nyitható meg.”
+ > „Folytassuk a Sanci9517 MASTER tervet az **E5** pontnál. E4.3.1–E4.3.8 és E4.4 teljesen lezárultak; az E4.4 production schema, integrity, ownership és live public smoke gate-jei PASS. A következő munka kizárólag az E5 MASTER-ben rögzített követelményei szerint nyitható meg.”
 
 > **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd kizárólag a **00/A MASTER VÉGREHAJTÁSI INDEX egyetlen aktív pontjából** folytatni. Más fejezet `[ ]`, `[~]` vagy régebbi „következő lépés” szövege nem jelent aktuális folytatási pontot.
 
@@ -711,6 +711,161 @@ A projektben a GitHub repository és a Cloudflare deployhoz használt lokális V
 Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI visszafoltozása vagy szerződés nélküli kódolás csak akkor megengedett, ha az audit bizonyítja, hogy az adott megoldás valóban canonical és architekturálisan indokolt.
 
 
+# 00/A — MASTER VÉGREHAJTÁSI INDEX — EZ AZ EGYETLEN AKTÍV VÉGREHAJTÁSI FORRÁS
+
+> **BOOT / ABSZOLÚT SZABÁLY:** A dokumentum teljes tartalmából kizárólag ez a blokk határozza meg, hogy mit szabad végrehajtani. Más fejezetben szereplő `[ ]`, `[~]`, „következő pont”, „aktív”, „pending” vagy hasonló történeti szöveg **nem végrehajtási utasítás**. A történeti részeket nem szabad újra megnyitni.
+
+## 00/A.1 — EGYETLEN AKTÍV PONT
+
+**ACTIVE_POINT_ID:** `E5`  
+**ACTIVE_POINT_STATUS:** `ACTIVE`  
+**ACTIVE_POINT_TITLE:** Regression + D1/live verification + user PASS  
+**PREVIOUS_GATE:** `E4.4` — CLOSED / PASS  
+**NEXT_GATE:** `E6` — csak E5 teljes PASS után nyitható  
+**PARALLEL_WORKSTREAMS:** `0`
+
+### Jelenlegi igazolt állapot
+- [x] E4.3.1–E4.3.8 lezárva.
+- [x] E4.4.1 final migration design + SQL audit lezárva.
+- [x] E4.4.2 implementation/dry-run/remote schema verification lezárva.
+- [x] Production `site_id NOT NULL` schema/integrity/ownership ellenőrzés PASS.
+- [x] Live Worker/public API smoke PASS.
+- [x] E4.4 teljes DoD PASS.
+- [ ] E5 teljes regression/live/user PASS még nincs lezárva.
+- [ ] E6 closure még nincs megnyitva.
+
+**Következő végrehajtható pont: kizárólag E5.**
+
+## 00/A.2 — E5 HIVATALOS DEFINITION OF DONE
+
+E5 nem új feature-fejlesztési szakasz. **E5 célja a már elkészült E4 foundation bizonyítása, regressziómentesítése és felhasználói elfogadása.** E5 alatt nem kezdünk Schedule Buildert, új Editor-funkciót, template-rendszert vagy más későbbi feature-t.
+
+### E5.1 — Repository / branch / baseline verification
+- [ ] GitHub `v2/foundation` és lokális worktree állapot összevetése.
+- [ ] Aktuális HEAD és MASTER verzió rögzítése.
+- [ ] Working tree / nem kívánt módosítások ellenőrzése.
+- [ ] A lezárt E4.3/E4.4 állapot bizonyítékainak ellenőrzése.
+
+### E5.2 — Automated regression gate
+- [ ] Typecheck PASS.
+- [ ] Editor Core teszt PASS.
+- [ ] Schedule teszt PASS.
+- [ ] Domain contract teszt PASS.
+- [ ] Site-ownership contract teszt PASS.
+- [ ] Twitch integration/security regression tesztek PASS, ahol a repository aktuális CI-je ezt előírja.
+- [ ] Nincs új teszt-regresszió.
+
+### E5.3 — D1 production integrity gate
+- [ ] Production D1 migration state ellenőrzése.
+- [ ] `PRAGMA quick_check` PASS.
+- [ ] `PRAGMA foreign_key_check` PASS / üres eredmény.
+- [ ] Mind a hat E4.4 érintett táblán `site_id NOT NULL` ellenőrzése.
+- [ ] NULL ownership count = 0 minden érintett táblán.
+- [ ] Row-count / ownership invariánsok ellenőrzése.
+- [ ] Published revision linkage ellenőrzése.
+- [ ] Index/FK/schema invariánsok ellenőrzése.
+- [ ] A verification csak read-only módon történjen, kivéve ha egy külön, előzetesen jóváhagyott tesztadat szükséges.
+
+### E5.4 — Live application / public verification
+- [ ] Worker health PASS.
+- [ ] Public pages list PASS.
+- [ ] Valid page lookup PASS.
+- [ ] Invalid page lookup → megfelelő `PAGE_NOT_FOUND` / 404 contract PASS.
+- [ ] Public published snapshot helyes.
+- [ ] Admin/editor alap Save/Publish/Unpublish/Rollback regresszió ellenőrizve, ahol a jelenlegi live contract releváns.
+- [ ] Schedule public read alap regresszió ellenőrizve.
+- [ ] Nincs cross-site adat-hozzáférés a canonical site-scoped útvonalakon.
+- [ ] Nincs secret/token leakage.
+
+### E5.5 — User acceptance gate
+- [ ] A szükséges live ellenőrzéseket a felhasználó elvégzi.
+- [ ] A felhasználói eredmény egyértelműen `PASS / MŰKÖDIK`.
+- [ ] Hiba esetén E5 nem zárható le: gyökérok-audit → minimális javítás → teljes érintett regresszió → új live ellenőrzés.
+
+### E5.6 — E5 closure
+E5 csak akkor állítható `CLOSED` állapotba, ha **minden E5.1–E5.5 kötelező pont PASS**, a bizonyítékok rögzítve vannak, a felhasználói PASS megtörtént, és a MASTER frissítve lett.
+
+## 00/A.3 — SZIGORÚ SORREND E5 UTÁN
+
+**Nem:** E5 → közvetlenül Editor.
+
+**Hivatalos sorrend:**
+
+`E5 → E6 → F → G → H → I → J → Early Public Website → további 1.0 munkák → 1.0 Production Gate`
+
+- **E6:** MASTER closure / E-szakasz lezárása.
+- **F:** Schedule CRUD + Inspector / domain-driven Editor bővítés.
+- **G:** templates / presentation / design-system bővítések.
+- **H:** preview / public integration.
+- **I:** teljes E2E integráció.
+- **J:** legacy cleanup.
+- Ezután következnek az Early Public Website és a további 1.0 production munkák.
+
+A későbbi DoD-ket csak az adott kapu megnyitásakor aktiváljuk; **nem nyitunk előre több aktív pontot**.
+
+## 00/A.4 — DUPLIKÁCIÓ ELLENI REGISZTER
+
+### Lezárt, nem újranyitható fő kapuk
+- `E4.1` — CLOSED
+- `E4.2` — CLOSED
+- `E4.3.1` — CLOSED
+- `E4.3.2` — CLOSED
+- `E4.3.3` — CLOSED
+- `E4.3.4` — CLOSED
+- `E4.3.5` — CLOSED
+- `E4.3.6` — CLOSED
+- `E4.3.7` — CLOSED
+- `E4.3.8` — CLOSED
+- `E4.4.1` — CLOSED
+- `E4.4.2` — CLOSED
+
+**Újranyitási szabály:** `CLOSED` pontot későbbi munka miatt sem nyitunk vissza. Ha ugyanazon területen új munka szükséges, új, egyedi azonosítójú pontot kap, és az új pont explicit módon hivatkozik a lezárt pontra.
+
+**Duplikációs ellenőrzés minden új munka előtt:**
+1. ACTIVE_POINT_ID ellenőrzése;
+2. CLOSED regiszter ellenőrzése;
+3. annak ellenőrzése, hogy ugyanaz a feature/DoD már nem szerepel-e lezártként;
+4. ha igen, nem implementáljuk újra;
+5. valódi új követelmény esetén új pontazonosító;
+6. csak ezután audit vagy kódolás.
+
+## 00/A.5 — TÖRTÉNETI RÉSZEK VÉDELME
+
+A MASTER történeti fejezetei megmaradnak teljes auditnyomként, de:
+- nem nyithatnak új munkapontot;
+- nem írhatják felül az ACTIVE_POINT_ID-t;
+- nem írhatják felül a CLOSED regisztert;
+- régi „Következő pont” mondatuk történeti információ;
+- régi `[ ]` / `[~]` státuszuk nem jelenti azt, hogy a pont még fejlesztendő;
+- régi hibaleírás csak történeti bizonyíték, ha a későbbi lezárás bizonyítja, hogy megoldódott.
+
+**Történeti audit és jelenlegi végrehajtás két külön fogalom.**
+
+## 00/A.6 — MASTER CHECKPOINT FORMÁTUM
+
+Minden aktív pontnál kötelező:
+
+`ACTIVE_POINT_ID → STATUS → DOD → EVIDENCE → USER_PASS → CLOSED → NEXT_POINT`
+
+Egy pont nem válik CLOSED állapotúvá pusztán attól, hogy a kód elkészült.
+
+## 00/A.7 — ÚJ BESZÉLGETÉS BOOT
+
+1. `00/A.1 — EGYETLEN AKTÍV PONT`
+2. `00/A.2 — az aktív pont DoD-ja`
+3. `00/A.4 — lezárt pontok regisztere`
+4. csak ezután a történeti fejezetek, ha szükséges.
+
+**Egyetlen aktuális folytatási mondat:**
+
+> „Folytassuk a Sanci9517 MASTER tervet az **E5** pontnál. E4.1–E4.4 lezárva. Először az E5 aktuális DoD szerinti első ellenőrzést végezzük el. Más történeti fejezetet nem aktiválunk.”
+
+---
+
+# 00/H — TÖRTÉNETI MASTER / ARCHIVÁLT E-FEJEZETEK
+
+> **ARCHIVE LOCK:** Az alábbi blokk a korábbi fejlesztési történetet és bizonyítékokat őrzi. **NEM AKTÍV.** Semmilyen benne lévő „következő pont”, `[ ]`, `[~]` vagy régi checkpoint nem nyithat új munkasávot. A jelenlegi végrehajtási állapotot kizárólag a 00/A index adja.
+
 # 00/A — MASTER VÉGREHAJTÁSI INDEX — EZ AZ EGYETLEN AKTÍV SORREND
 
 > **KÖTELEZŐ:** A dokumentum bármely más fejezetében szereplő `[ ]`, `[~]` vagy régebbi „következő lépés” szöveg **történeti dokumentáció vagy backlog**, és **nem végrehajtási utasítás**. Az egyetlen végrehajtási forrás az alábbi index **EGYETLEN AKTÍV PONT** sora. A történeti fejezetek státuszai nem írhatják felül az indexet, és nem nyithatnak új munkasávot.
@@ -1131,7 +1286,7 @@ Persistence / Revision / Publish
 - **E1.3 — E1 benchmark lezárás + E2 decision matrix:** [x] PASS
 - **E2 — Canonical architecture decision:** [x] PASS — az E1 eredményei alapján rögzítve, implementáció nélkül.
 
-**Következő egyetlen aktív pont:** **40.69.13.E3 — Game Profile + Media Asset + Schedule Event + Presentation/Theme canonical domain contract megtervezése és freeze**, kiegészítve a Creator Center / külön workspace admin-UX szerződéssel.
+**TÖRTÉNETI — NEM AKTÍV — korábbi checkpoint:** **40.69.13.E3 — Game Profile + Media Asset + Schedule Event + Presentation/Theme canonical domain contract megtervezése és freeze**, kiegészítve a Creator Center / külön workspace admin-UX szerződéssel.
 
 ### E3 kiegészített contract-scope
 
@@ -1469,7 +1624,7 @@ Elkészült és production remote D1-ben igazoltan érvényesült a `migrations/
 
 **E4.3.4 státusz:** `[x] LEZÁRVA`. Több E4.3.4 pending tétel nem maradhat aktív checkpointként.
 
-### E4.3.5–E4.3.8 — CANONICAL CONTRACT + HARDENING + DoD SPECIFICATION — [~] AKTÍV
+### E4.3.5–E4.3.8 — CANONICAL CONTRACT + HARDENING + DoD SPECIFICATION — [x] PASS / CLOSED — TÖRTÉNETI RÉSZ
 
 **Cél:** az E4.3.4 bizonyított ownership enforcementre építve rögzíteni azokat a canonical szerződéseket és hardening előfeltételeket, amelyekből az E4.4 `site_id NOT NULL` schema hardening biztonságosan, visszaellenőrizhetően és D1-kompatibilisen végrehajtható.
 
@@ -1687,9 +1842,9 @@ Az aktív pont csak akkor zárható, ha:
 - [x] A legacy Schedule UI nem lett újraaktiválva.
 - [x] Felhasználói tesztkapu lezárva.
 
-**Következő egyetlen aktív pont:** **40.69.12.C — Editor preview renderer.**
+**TÖRTÉNETI — NEM AKTÍV — korábbi checkpoint:** **40.69.12.C — Editor preview renderer.**
 
-**Következő aktív pont a kapu után:** 40.69.12.C — Editor preview renderer.
+**TÖRTÉNETI — NEM AKTÍV — korábbi checkpoint:** 40.69.12.C — Editor preview renderer.
 ## 40.69.9 — CANONICAL PAGES / VISUAL EDITOR / SCHEDULE ARCHITEKTÚRA TELJES AUDIT — 2026-09-22
 
 **Állapot:** [~] AUDIT FOLYAMATBAN — ebben a lépésben nincs kódmódosítás.
@@ -1757,7 +1912,7 @@ A teljes audit után a régi rendszer működési útvonalait leválasztottuk a 
 - [x] A felhasználói live teszt eredménye: **Működik**.
 - [x] A rollback nem tekintendő automatikus publishnak; a published snapshot külön tesztkapu.
 
-**Következő egyetlen aktív tesztlépés:** published snapshot + unpublish regressziós teszt.
+**TÖRTÉNETI — NEM AKTÍV — korábbi checkpoint:** published snapshot + unpublish regressziós teszt.
 
 ### 40.69.5.C — PUBLISHED SNAPSHOT REGRESSZIÓ: PRE-PUBLISH JAVÍTVA, POST-PUBLISH HIBA — 2026-09-22
 
@@ -1877,7 +2032,7 @@ Ez azt jelenti, hogy ha egy már LIVE oldalon új draft módosítás történik,
 
 **Live teszt eredmény:** PASS — a state-módosítás és a megfelelő `audit_log` esemény együtt igazolva.
 
-**Következő egyetlen lépés:** 40.69.7 lezárva; a következő egyetlen aktív pont kijelölése a MASTER index alapján, külön audit után.
+**TÖRTÉNETI — NEM AKTÍV — korábbi checkpoint:** 40.69.7 lezárva; a következő egyetlen aktív pont kijelölése a MASTER index alapján, külön audit után.
 
 **Fontos:** a kódot a módosítás után újraolvastuk; a CI/typecheck/editor-core tesztkapu zöld. PC/Desktop live teszt továbbra is PENDING.
 
