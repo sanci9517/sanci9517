@@ -10,7 +10,8 @@
     "test:schedule": "node --test public/editor-v2/tests/schedule-source.test.js",
     "db:migrations:apply": "wrangler d1 migrations apply DB --remote",
     "deploy": "npm run db:migrations:apply && wrangler deploy",
-    "test:domain": "node --test tests/domain-contracts.test.js"
+    "test:domain": "node --test tests/domain-contracts.test.js",
+    "db:ownership:preflight": "wrangler d1 execute sanci9517-db --remote --file=./scripts/e4-3-7-preflight.sql --json"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "5.20260908.1",
