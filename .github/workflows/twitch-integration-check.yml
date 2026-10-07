@@ -27,4 +27,4 @@ jobs:
       - name: Run Twitch OAuth regression tests
         run: node --test tests/twitch-oauth.test.js
       - name: Run site ownership contract tests
-        run: node --test tests/site-ownership-contract.test.js
+        run: node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/site-ownership-contract.test.js
