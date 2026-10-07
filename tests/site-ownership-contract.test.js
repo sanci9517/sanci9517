@@ -26,7 +26,7 @@ function emptyPagesDb() {
         },
         async first() {
           calls.push({ method: 'first', sql, binds });
-          assert.match(sql, /FROM pages WHERE site_id=? AND slug=?1/);
+          assert.match(sql, /FROM pages WHERE site_id=\? AND slug=\?1/);
           assert.equal(binds[0], SITE_ID);
           assert.equal(binds[1], 'about');
           return null;
@@ -86,7 +86,9 @@ test('Twitch OAuth state creation writes site ownership atomically', async () =>
   const DB = oauthStateDb();
   const env = {
     DB,
-    TWITCH_CLIENT_ID: 'test-client-id'
+    TWITCH_CLIENT_ID: 'test-client-id',
+    TWITCH_CLIENT_SECRET: 'test-client-secret',
+    TWITCH_TOKEN_ENCRYPTION_KEY: 'test-encryption-key'
   };
 
   const target = await createTwitchAuthorizationUrl(
