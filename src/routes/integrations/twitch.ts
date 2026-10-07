@@ -37,12 +37,7 @@ export async function twitchConnectRoute(request: Request, env: Env): Promise<Re
 
   try {
     const { siteId } = getCanonicalSiteContext();
-    const target = await createTwitchAuthorizationUrl(request, env, user.id);
-    const state = new URL(target).searchParams.get("state");
-    if (!state) throw new Error("TWITCH_OAUTH_STATE_INVALID");
-    const stateHash = await hashTwitchOAuthState(state);
-    await env.DB.prepare("UPDATE twitch_oauth_states SET site_id=? WHERE state_hash=? AND user_id=? AND site_id IS NULL")
-      .bind(siteId, stateHash, user.id).run();
+    const target = await createTwitchAuthorizationUrl(request, env, user.id, siteId);
     return Response.redirect(target, 302);
   } catch (err) {
     if (err instanceof Error && err.message === "TWITCH_INTEGRATION_NOT_CONFIGURED") {
@@ -73,9 +68,10 @@ export async function twitchCallbackRoute(request: Request, env: Env): Promise<R
       "AND julianday(expires_at)>julianday('now') AND used_at IS NULL LIMIT 1"
     ).bind(stateHash, user.id, siteId).first<{ id: string }>();
     if (!stateOwnership) throw new Error("TWITCH_OAUTH_STATE_INVALID");
-    const connectionId = await exchangeTwitchCode(request, env, code, state, user.id);
-    const bound = await bindTwitchConnectionToSite(env, siteId, connectionId);
-    if (!bound) throw new Error("TWITCH_CONNECTION_SITE_BIND_FAILED");
+    const connectionId = await exchangeTwitchCode(request, env, code, state, user.id, siteId);
+    if (!(await assertTwitchConnectionOwnership(env, siteId, user.id, connectionId))) {
+      throw new Error("TWITCH_CONNECTION_SITE_BIND_FAILED");
+    }
     const connection = await getOwnedTwitchConnection(env, siteId, user.id);
     if (connection) {
       await env.DB.prepare("INSERT INTO audit_log (id,user_id,action,entity_type,entity_id,metadata_json) VALUES (?,?,?,?,?,?)")
@@ -101,7 +97,7 @@ export async function twitchConnectionRoute(request: Request, env: Env): Promise
   const { siteId } = getCanonicalSiteContext();
   const owned = await getOwnedTwitchConnection(env, siteId, auth.id);
   if (!owned) return ok({ connected: false });
-  const connection = await getTwitchConnection(env, auth.id);
+  const connection = await getTwitchConnection(env, auth.id, siteId);
   if (!connection || connection.id !== owned.id) return ok({ connected: false });
   let scopes: string[] = [];
   try { scopes = JSON.parse(connection.scopesJson); } catch {}
@@ -123,12 +119,12 @@ export async function twitchValidationRoute(request: Request, env: Env): Promise
   const { siteId } = getCanonicalSiteContext();
   const owned = await getOwnedTwitchConnection(env, siteId, auth.id);
   if (!owned) return error("TWITCH_CONNECTION_NOT_FOUND", 404);
-  const connection = await getTwitchConnection(env, auth.id);
+  const connection = await getTwitchConnection(env, auth.id, siteId);
   if (!connection || connection.id !== owned.id) return error("TWITCH_CONNECTION_NOT_FOUND", 404);
 
   try {
     if (!(await assertTwitchConnectionOwnership(env, siteId, auth.id, connection.id))) return error("TWITCH_CONNECTION_NOT_FOUND", 404);
-    await getValidTwitchAccessToken(env, connection.id, { forceValidation: true });
+    await getValidTwitchAccessToken(env, siteId, auth.id, connection.id, { forceValidation: true });
     const refreshedOwned = await getOwnedTwitchConnection(env, siteId, auth.id);
     const refreshed = refreshedOwned ? await getTwitchConnection(env, auth.id) : null;
     if (refreshed && refreshed.id !== refreshedOwned?.id) return error("TWITCH_CONNECTION_NOT_FOUND", 404);
@@ -171,7 +167,7 @@ export async function twitchDisconnectRoute(request: Request, env: Env): Promise
 
   try {
     if (!(await assertTwitchConnectionOwnership(env, siteId, auth.id, connection.id))) return error("TWITCH_CONNECTION_NOT_FOUND", 404);
-    await revokeTwitchConnection(env, connection.id);
+    await revokeTwitchConnection(env, siteId, auth.id, connection.id);
     await env.DB.batch([
       auditStatement(env, auth.id, "integration.twitch.disconnect", "twitch_connection", connection.id, {})
     ]);
