@@ -42,15 +42,14 @@ function oauthStateDb() {
   return {
     calls,
     async batch(statements) {
-      for (const statement of statements) {
-        calls.push(statement);
-      }
+      calls.push(...statements);
     },
     prepare(sql) {
-      let binds = [];
       const statement = {
+        sql,
+        binds: [],
         bind(...values) {
-          binds = values;
+          statement.binds = values;
           return statement;
         }
       };
