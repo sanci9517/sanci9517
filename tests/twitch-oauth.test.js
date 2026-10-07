@@ -318,7 +318,11 @@ test('B.13 exposes disconnect atomicity gap when Twitch revoke succeeds but D1 s
         },
         async run() {
           assert.equal(binds[0], CONNECTION_ID);
-          if (/SET status='revocation_pending'/.test(sql) && /WHERE id=\? AND status='connected'/.test(sql)) {
+          if (/SET status='revocation_pending'/.test(sql) && /WHERE id=\? AND user_id=\? AND site_id=\? AND status='connected'/.test(sql)) {
+            const [connectionId, userId, siteId] = binds;
+            if (connectionId !== CONNECTION_ID || userId !== USER_ID || siteId !== SITE_ID) {
+              return { meta: { changes: 0 } };
+            }
             status = 'revocation_pending';
             return { meta: { changes: 1 } };
           }
