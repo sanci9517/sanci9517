@@ -34,7 +34,7 @@ export async function adminTwitchScheduleSyncRoute(request: Request, env: Env): 
   if (!data) return error("INVALID_SCHEDULE_SYNC_REQUEST", 400);
 
   try {
-    const result = await syncTwitchSchedule(env, siteId, data.connectionId, {
+    const result = await syncTwitchSchedule(env, siteId, user.id, data.connectionId, {
       startAt: data.startAt,
       endAt: data.endAt
     });
