@@ -165,6 +165,8 @@ test('Twitch adapter integration maps live HTTP failure responses through the ad
     await assert.rejects(
       fetchTwitchSchedule(
         env,
+        'site-default',
+        'user-test',
         'connection-test',
         { startAt: '2026-09-25T00:00:00Z', endAt: '2026-10-02T00:00:00Z' },
         { fetchImpl: async () => new Response('{}', { status: httpStatus }) }
