@@ -75,33 +75,47 @@ async function sleep(ms: number): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function readConnection(env: Env, connectionId: string): Promise<TwitchConnectionRow | null> {
+async function readConnection(
+  env: Env,
+  siteId: string,
+  userId: string,
+  connectionId: string
+): Promise<TwitchConnectionRow | null> {
   return env.DB.prepare(
     "SELECT id,user_id AS userId,broadcaster_id AS broadcasterId,broadcaster_login AS broadcasterLogin," +
     "access_token_ciphertext AS accessCiphertext,access_token_iv AS accessIv," +
     "refresh_token_ciphertext AS refreshCiphertext,refresh_token_iv AS refreshIv," +
     "scopes_json AS scopesJson,access_token_expires_at AS accessTokenExpiresAt,status," +
-    "last_validated_at AS lastValidatedAt FROM twitch_connections WHERE id=? LIMIT 1"
-  ).bind(connectionId).first<TwitchConnectionRow>();
+    "last_validated_at AS lastValidatedAt FROM twitch_connections " +
+    "WHERE id=? AND user_id=? AND site_id=? LIMIT 1"
+  ).bind(connectionId, userId, siteId).first<TwitchConnectionRow>();
 }
 
 async function updateValidation(
   env: Env,
+  siteId: string,
+  userId: string,
   connectionId: string,
   validation: ValidateResponse
 ): Promise<void> {
   await env.DB.prepare(
     "UPDATE twitch_connections SET broadcaster_login=?,scopes_json=?,access_token_expires_at=?," +
-    "last_validated_at=CURRENT_TIMESTAMP,status='connected',updated_at=CURRENT_TIMESTAMP WHERE id=?"
+    "last_validated_at=CURRENT_TIMESTAMP,status='connected',updated_at=CURRENT_TIMESTAMP " +
+    "WHERE id=? AND user_id=? AND site_id=?"
   ).bind(
     validation.login,
     JSON.stringify(Array.isArray(validation.scopes) ? validation.scopes : []),
     new Date(Date.now() + validation.expires_in * 1000).toISOString(),
-    connectionId
+    connectionId, userId, siteId
   ).run();
 }
 
-export async function createTwitchAuthorizationUrl(request: Request, env: Env, userId: string): Promise<string> {
+export async function createTwitchAuthorizationUrl(
+  request: Request,
+  env: Env,
+  userId: string,
+  siteId: string
+): Promise<string> {
   const { clientId } = requireConfig(env);
   const state = randomState();
   const stateHash = await hashTwitchOAuthState(state);
@@ -109,8 +123,8 @@ export async function createTwitchAuthorizationUrl(request: Request, env: Env, u
 
   await env.DB.batch([
     env.DB.prepare("DELETE FROM twitch_oauth_states WHERE julianday(expires_at) <= julianday('now')"),
-    env.DB.prepare("INSERT INTO twitch_oauth_states (id,user_id,state_hash,expires_at) VALUES (?,?,?,?)")
-      .bind(crypto.randomUUID(), userId, stateHash, expiresAt)
+    env.DB.prepare("INSERT INTO twitch_oauth_states (id,user_id,site_id,state_hash,expires_at) VALUES (?,?,?,?,?)")
+      .bind(crypto.randomUUID(), userId, siteId, stateHash, expiresAt)
   ]);
 
   const url = new URL(AUTHORIZE_URL);
@@ -149,22 +163,27 @@ export async function exchangeTwitchCode(
   env: Env,
   code: string,
   state: string,
-  userId: string
+  userId: string,
+  siteId: string
 ): Promise<string> {
   const { clientId, clientSecret, encryptionKey } = requireConfig(env);
   const stateHash = await hashTwitchOAuthState(state);
 
   const stateRow = await env.DB.prepare(
-    "SELECT id,user_id AS userId FROM twitch_oauth_states " +
-    "WHERE state_hash=? AND julianday(expires_at)>julianday('now') AND used_at IS NULL LIMIT 1"
-  ).bind(stateHash).first<{ id: string; userId: string }>();
+    "SELECT id,user_id AS userId,site_id AS siteId FROM twitch_oauth_states " +
+    "WHERE state_hash=? AND user_id=? AND site_id=? AND " +
+    "julianday(expires_at)>julianday('now') AND used_at IS NULL LIMIT 1"
+  ).bind(stateHash, userId, siteId).first<{ id: string; userId: string; siteId: string }>();
 
-  if (!stateRow || stateRow.userId !== userId) throw new Error("TWITCH_OAUTH_STATE_INVALID");
+  if (!stateRow || stateRow.userId !== userId || stateRow.siteId !== siteId) {
+    throw new Error("TWITCH_OAUTH_STATE_INVALID");
+  }
 
   const claimed = await env.DB.prepare(
     "UPDATE twitch_oauth_states SET used_at=CURRENT_TIMESTAMP " +
-    "WHERE id=? AND user_id=? AND julianday(expires_at)>julianday('now') AND used_at IS NULL"
-  ).bind(stateRow.id, userId).run();
+    "WHERE id=? AND user_id=? AND site_id=? AND " +
+    "julianday(expires_at)>julianday('now') AND used_at IS NULL"
+  ).bind(stateRow.id, userId, siteId).run();
 
   if (claimed.meta.changes !== 1) throw new Error("TWITCH_OAUTH_STATE_INVALID");
 
@@ -193,25 +212,31 @@ export async function exchangeTwitchCode(
   const access = await encryptTwitchToken(encryptionKey, token.access_token);
   const refresh = await encryptTwitchToken(encryptionKey, token.refresh_token);
   const scopes = Array.isArray(token.scope) ? token.scope : [];
-  const existing = await env.DB.prepare("SELECT id FROM twitch_connections WHERE broadcaster_id=? LIMIT 1")
-    .bind(identity.user_id).first<{ id: string }>();
+  const existing = await env.DB.prepare(
+    "SELECT id,user_id AS userId,site_id AS siteId FROM twitch_connections WHERE broadcaster_id=? LIMIT 1"
+  ).bind(identity.user_id).first<{ id: string; userId: string; siteId: string | null }>();
+
+  if (existing && (existing.userId !== userId || existing.siteId !== siteId)) {
+    throw new Error("TWITCH_CONNECTION_OWNERSHIP_CONFLICT");
+  }
+
   const id = existing?.id ?? crypto.randomUUID();
 
   await env.DB.prepare(
     "INSERT INTO twitch_connections " +
-    "(id,user_id,broadcaster_id,broadcaster_login,access_token_ciphertext,access_token_iv," +
+    "(id,user_id,site_id,broadcaster_id,broadcaster_login,access_token_ciphertext,access_token_iv," +
     "refresh_token_ciphertext,refresh_token_iv,scopes_json,access_token_expires_at,status," +
     "last_validated_at,updated_at,refresh_lock_token,refresh_lock_until) " +
-    "VALUES (?,?,?,?,?,?,?,?,?,?,'connected',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,NULL,NULL) " +
+    "VALUES (?,?,?,?,?,?,?,?,?,?,?,'connected',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,NULL,NULL) " +
     "ON CONFLICT(broadcaster_id) DO UPDATE SET " +
-    "user_id=excluded.user_id,broadcaster_login=excluded.broadcaster_login," +
+    "user_id=excluded.user_id,site_id=excluded.site_id,broadcaster_login=excluded.broadcaster_login," +
     "access_token_ciphertext=excluded.access_token_ciphertext,access_token_iv=excluded.access_token_iv," +
     "refresh_token_ciphertext=excluded.refresh_token_ciphertext,refresh_token_iv=excluded.refresh_token_iv," +
     "scopes_json=excluded.scopes_json,access_token_expires_at=excluded.access_token_expires_at," +
     "status='connected',last_validated_at=CURRENT_TIMESTAMP,updated_at=CURRENT_TIMESTAMP," +
     "refresh_lock_token=NULL,refresh_lock_until=NULL"
   ).bind(
-    id, userId, identity.user_id, identity.login,
+    id, userId, siteId, identity.user_id, identity.login,
     access.ciphertext, access.iv, refresh.ciphertext, refresh.iv,
     JSON.stringify(scopes),
     new Date(Date.now() + expiresIn * 1000).toISOString()
@@ -219,37 +244,51 @@ export async function exchangeTwitchCode(
   return id;
 }
 
-export async function getTwitchConnection(env: Env, userId: string) {
+export async function getTwitchConnection(env: Env, userId: string, siteId: string) {
   return env.DB.prepare(
     "SELECT id,broadcaster_id AS broadcasterId,broadcaster_login AS broadcasterLogin," +
     "scopes_json AS scopesJson,access_token_expires_at AS accessTokenExpiresAt,status," +
-    "last_validated_at AS lastValidatedAt FROM twitch_connections WHERE user_id=? " +
-    "ORDER BY updated_at DESC LIMIT 1"
-  ).bind(userId).first<{
+    "last_validated_at AS lastValidatedAt FROM twitch_connections " +
+    "WHERE user_id=? AND site_id=? ORDER BY updated_at DESC LIMIT 1"
+  ).bind(userId, siteId).first<{
     id: string; broadcasterId: string; broadcasterLogin: string; scopesJson: string;
     accessTokenExpiresAt: string; status: string; lastValidatedAt: string | null;
   }>();
 }
 
-async function acquireRefreshLock(env: Env, connectionId: string, lockToken: string): Promise<boolean> {
+async function acquireRefreshLock(
+  env: Env,
+  siteId: string,
+  userId: string,
+  connectionId: string,
+  lockToken: string
+): Promise<boolean> {
   const lockUntil = new Date(Date.now() + TWITCH_REFRESH_LOCK_SECONDS * 1000).toISOString();
   const result = await env.DB.prepare(
     "UPDATE twitch_connections SET refresh_lock_token=?,refresh_lock_until=? " +
-    "WHERE id=? AND status='connected' AND " +
+    "WHERE id=? AND user_id=? AND site_id=? AND status='connected' AND " +
     "(refresh_lock_until IS NULL OR julianday(refresh_lock_until)<=julianday('now'))"
-  ).bind(lockToken, lockUntil, connectionId).run();
+  ).bind(lockToken, lockUntil, connectionId, userId, siteId).run();
   return result.meta.changes === 1;
 }
 
-async function releaseRefreshLock(env: Env, connectionId: string, lockToken: string): Promise<void> {
+async function releaseRefreshLock(
+  env: Env,
+  siteId: string,
+  userId: string,
+  connectionId: string,
+  lockToken: string
+): Promise<void> {
   await env.DB.prepare(
     "UPDATE twitch_connections SET refresh_lock_token=NULL,refresh_lock_until=NULL " +
-    "WHERE id=? AND refresh_lock_token=?"
-  ).bind(connectionId, lockToken).run();
+    "WHERE id=? AND user_id=? AND site_id=? AND refresh_lock_token=?"
+  ).bind(connectionId, userId, siteId, lockToken).run();
 }
 
 export async function refreshTwitchConnection(
   env: Env,
+  siteId: string,
+  userId: string,
   connectionId: string,
   observedAccessCiphertext?: string
 ): Promise<string> {
@@ -257,9 +296,9 @@ export async function refreshTwitchConnection(
   const lockToken = crypto.randomUUID();
 
   for (let attempt = 0; attempt < TWITCH_REFRESH_WAIT_ATTEMPTS; attempt++) {
-    if (await acquireRefreshLock(env, connectionId, lockToken)) {
+    if (await acquireRefreshLock(env, siteId, userId, connectionId, lockToken)) {
       try {
-        const row = await readConnection(env, connectionId);
+        const row = await readConnection(env, siteId, userId, connectionId);
         if (!row || row.status !== "connected") throw new Error("TWITCH_CONNECTION_NOT_FOUND");
 
         if (observedAccessCiphertext && row.accessCiphertext !== observedAccessCiphertext) {
@@ -281,8 +320,8 @@ export async function refreshTwitchConnection(
         if (!response.ok) {
           await env.DB.prepare(
             "UPDATE twitch_connections SET status='reauthorization_required',updated_at=CURRENT_TIMESTAMP " +
-            "WHERE id=? AND refresh_lock_token=?"
-          ).bind(connectionId, lockToken).run();
+            "WHERE id=? AND user_id=? AND site_id=? AND refresh_lock_token=?"
+          ).bind(connectionId, userId, siteId, lockToken).run();
           throw new Error("TWITCH_REFRESH_FAILED");
         }
 
@@ -298,17 +337,17 @@ export async function refreshTwitchConnection(
           "UPDATE twitch_connections SET access_token_ciphertext=?,access_token_iv=?," +
           "refresh_token_ciphertext=?,refresh_token_iv=?,scopes_json=?,access_token_expires_at=?," +
           "status='connected',updated_at=CURRENT_TIMESTAMP,refresh_lock_token=NULL,refresh_lock_until=NULL " +
-          "WHERE id=? AND refresh_lock_token=?"
+          "WHERE id=? AND user_id=? AND site_id=? AND refresh_lock_token=?"
         ).bind(
           access.ciphertext, access.iv, refresh.ciphertext, refresh.iv,
           JSON.stringify(Array.isArray(token.scope) ? token.scope : []),
           new Date(Date.now() + expiresIn * 1000).toISOString(),
-          connectionId, lockToken
+          connectionId, userId, siteId, lockToken
         ).run();
 
         return token.access_token;
       } finally {
-        await releaseRefreshLock(env, connectionId, lockToken);
+        await releaseRefreshLock(env, siteId, userId, connectionId, lockToken);
       }
     }
 
@@ -320,11 +359,13 @@ export async function refreshTwitchConnection(
 
 export async function getValidTwitchAccessToken(
   env: Env,
+  siteId: string,
+  userId: string,
   connectionId: string,
   options: { forceValidation?: boolean } = {}
 ): Promise<string> {
   const { encryptionKey, clientId } = requireConfig(env);
-  let row = await readConnection(env, connectionId);
+  let row = await readConnection(env, siteId, userId, connectionId);
   if (!row || row.status !== "connected") throw new Error("TWITCH_CONNECTION_NOT_FOUND");
 
   let accessToken = await decryptTwitchToken(encryptionKey, row.accessCiphertext, row.accessIv);
@@ -343,34 +384,41 @@ export async function getValidTwitchAccessToken(
     if (validation.client_id !== clientId || validation.user_id !== row.broadcasterId) {
       throw new Error("TWITCH_TOKEN_IDENTITY_MISMATCH");
     }
-    await updateValidation(env, connectionId, validation);
+    await updateValidation(env, siteId, userId, connectionId, validation);
     return accessToken;
   } catch (err) {
     if (!(err instanceof Error) || err.message !== "TWITCH_ACCESS_TOKEN_INVALID") throw err;
 
-    accessToken = await refreshTwitchConnection(env, connectionId, row.accessCiphertext);
-    row = await readConnection(env, connectionId);
+    accessToken = await refreshTwitchConnection(env, siteId, userId, connectionId, row.accessCiphertext);
+    row = await readConnection(env, siteId, userId, connectionId);
     if (!row || row.status !== "connected") throw new Error("TWITCH_CONNECTION_NOT_FOUND");
 
     const validation = await validateAccessToken(env, accessToken);
     if (validation.client_id !== clientId || validation.user_id !== row.broadcasterId) {
       throw new Error("TWITCH_TOKEN_IDENTITY_MISMATCH");
     }
-    await updateValidation(env, connectionId, validation);
+    await updateValidation(env, siteId, userId, connectionId, validation);
     return accessToken;
   }
 }
 
-export async function revokeTwitchConnection(env: Env, connectionId: string): Promise<void> {
+export async function revokeTwitchConnection(
+  env: Env,
+  siteId: string,
+  userId: string,
+  connectionId: string
+): Promise<void> {
   const { clientId, encryptionKey } = requireConfig(env);
   const row = await env.DB.prepare(
-    "SELECT access_token_ciphertext AS ciphertext,access_token_iv AS iv FROM twitch_connections WHERE id=? LIMIT 1"
-  ).bind(connectionId).first<{ ciphertext: string; iv: string }>();
+    "SELECT access_token_ciphertext AS ciphertext,access_token_iv AS iv FROM twitch_connections " +
+    "WHERE id=? AND user_id=? AND site_id=? LIMIT 1"
+  ).bind(connectionId, userId, siteId).first<{ ciphertext: string; iv: string }>();
   if (!row) throw new Error("TWITCH_CONNECTION_NOT_FOUND");
 
   const pending = await env.DB.prepare(
-    "UPDATE twitch_connections SET status='revocation_pending',updated_at=CURRENT_TIMESTAMP WHERE id=? AND status='connected'"
-  ).bind(connectionId).run();
+    "UPDATE twitch_connections SET status='revocation_pending',updated_at=CURRENT_TIMESTAMP " +
+    "WHERE id=? AND user_id=? AND site_id=? AND status='connected'"
+  ).bind(connectionId, userId, siteId).run();
 
   if (pending.meta.changes !== 1) {
     throw new Error("TWITCH_REVOKE_STATE_TRANSITION_FAILED");
@@ -387,8 +435,9 @@ export async function revokeTwitchConnection(env: Env, connectionId: string): Pr
   }
 
   const finalized = await env.DB.prepare(
-    "UPDATE twitch_connections SET status='revoked',refresh_lock_token=NULL,refresh_lock_until=NULL,updated_at=CURRENT_TIMESTAMP WHERE id=? AND status='revocation_pending'"
-  ).bind(connectionId).run();
+    "UPDATE twitch_connections SET status='revoked',refresh_lock_token=NULL,refresh_lock_until=NULL,updated_at=CURRENT_TIMESTAMP " +
+    "WHERE id=? AND user_id=? AND site_id=? AND status='revocation_pending'"
+  ).bind(connectionId, userId, siteId).run();
 
   if (finalized.meta.changes !== 1) {
     throw new Error("TWITCH_REVOKE_STATE_UPDATE_FAILED");
