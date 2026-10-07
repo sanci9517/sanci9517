@@ -6,6 +6,7 @@ import { normalizeScheduleSyncWindow, type ScheduleSyncWindow } from "./types";
 export async function syncTwitchSchedule(
   env: Env,
   siteId: string,
+  userId: string,
   connectionId: string,
   window: ScheduleSyncWindow,
   options: { maxPages?: number } = {}
@@ -20,7 +21,7 @@ export async function syncTwitchSchedule(
   return syncCanonicalTwitchSchedule(
     env.DB,
     normalized,
-    async () => fetchTwitchSchedule(env, connectionId, normalized, options),
+    async () => fetchTwitchSchedule(env, siteId, userId, connectionId, normalized, options),
     row.broadcasterId,
     siteId
   );
