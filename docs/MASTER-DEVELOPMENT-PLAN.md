@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.56.0  
+**Verzió:** MASTER-2.57.0  
 **Dátum:** 2026-10-07  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -13,7 +13,7 @@
 
 **Public Design Freedom / Multi-user uniqueness szabály:** az 1.0 vizuális rendszerének nem csak tartalom- és komponensszerkesztést kell biztosítania. A publikusan megjelenő weboldal vizuális identitása is felhasználónként/site-onként egyedileg konfigurálható kell legyen. A felhasználóbarát admin/editor célja, hogy technikai CSS-kód nélkül is létrehozható legyen saját brand és megjelenés: theme/design tokens, typography, colors, semantic colors, backgrounds, spacing, radius, shadows, containers, layout variants, component styles, navigation/header/footer, card/button/form styles, responsive presentation, visibility, imagery, templates és page-level presentation. A rendszernek preset/template alapú gyors indulást és mélyebb egyedi testreszabást is támogatnia kell. A domain adat, a Page Model és az Editor UI state továbbra is külön marad; a public design egy canonical presentation/theme réteg lesz. Multi-user jövőre készülve minden design/configuration site-scoped/tenant-scoped kell legyen, ne globális megosztott állapot. A default design csak kiindulópont, nem korlát.
 
-**Legutóbbi igazolt állapot:** 2026-10-07 — az E4.3.4 Twitch connection/OAuth ownership enforcement kód-, CI-, remote 0016 migration-, D1 schema/ownership/security- és live kapui PASS állapotban vannak. Az E4.3.5 runtime ownership hardening is implementálva és automatizált regresszióval igazolva: public Pages site-scoping, Twitch OAuth state/connection/token lifecycle site-scoping, Twitch Schedule adapter/service site+user context, valamint cross-site ownership regression. A végső E4.3.5–E4.3.8 canonical contract/specification és az új kód live verification gate-je még nyitott. Az E4.4 `site_id NOT NULL` schema hardening továbbra is blokkolt.
+**Legutóbbi igazolt állapot:** 2026-10-07 — az E4.3.4 Twitch connection/OAuth ownership enforcement kód-, CI-, remote 0016 migration-, D1 schema/ownership/security- és live kapui PASS állapotban vannak. Az E4.3.5 runtime ownership hardening implementálva és automatizált regresszióval igazolva; a canonical consumer/ownership matrix, az explicit legacy/global kivétel és a jelenlegi read/write ownership-határok dokumentálva. A következő aktív hardening/readiness kapu az E4.3.6–E4.3.8; az új E4.3.5 kód production-live ellenőrzése még nyitott. Az E4.4 `site_id NOT NULL` schema hardening továbbra is blokkolt.
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
 
@@ -39,7 +39,7 @@ Ha bármilyen régi checkpoint, összefoglaló, korábbi üzenet vagy történet
 **Boot-szabály:** új beszélgetésben a modellnek először ezt a 00/B blokkot, majd közvetlenül a 00/A indexet kell figyelembe vennie. Ha bármely régi checkpoint ettől eltér, a régi checkpointot kell figyelmen kívül hagyni, nem az aktuális MASTER állapotot.
 
 **Egyetlen aktuális folytatási mondat:**
-> „Folytassuk a Sanci9517 MASTER tervet az **E4.3.5–E4.3.8 hardening/specifikációs kapujának lezáró munkájánál**. E4.3.1–E4.3.4 lezárult; az E4.3.4 remote 0016 migration, D1 schema/ownership/security ellenőrzése és live gate PASS. E4.3.5 runtime ownership hardening implementálva és CI-ben PASS, de a canonical contract matrix, E4.3.6–E4.3.8 readiness/DoD és az új kód live verification még nyitott. Az E4.4 `site_id NOT NULL` hardening továbbra is blokkolt.”
+> „Folytassuk a Sanci9517 MASTER tervet az **E4.3.6–E4.3.8 hardening/readiness kapujánál**. E4.3.1–E4.3.5 lezárult; az E4.3.4 remote 0016 migration, D1 schema/ownership/security ellenőrzése és live gate PASS. E4.3.5 runtime ownership hardening, canonical consumer/ownership matrix és CI regression PASS. A következő munka az E4.3.6 NULL/legacy hardening contract → E4.3.7 D1 schema-hardening readiness → E4.3.8 regression/security/live DoD lezárása. Az E4.4 `site_id NOT NULL` hardening továbbra is blokkolt.”
 
 > **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd kizárólag a **00/A MASTER VÉGREHAJTÁSI INDEX egyetlen aktív pontjából** folytatni. Más fejezet `[ ]`, `[~]` vagy régebbi „következő lépés” szövege nem jelent aktuális folytatási pontot.
 
@@ -737,7 +737,7 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 ### 🔵 EGYETLEN AKTÍV PONT
 **40.69.13 — Twitch-integrációs alap + Schedule/Adásrend újratervezés**
 
-**Státusz:** [~] AKTÍV — **Twitch/C.5.1, E4.1, E4.2 és E4.3.1–E4.3.4 lezárva; E4.3.5 runtime ownership hardening implementálva, CI PASS.** A következő egyetlen munkapont: **40.69.13.E4.3.5–E4.3.8 — canonical contract matrix, hardening readiness és Definition of Done lezárása**. Az E4.3.4 remote 0016 migration, D1 schema/ownership/security ellenőrzése és live gate PASS. Az új E4.3.5 kód még nem production-live ellenőrzött. Az E4.4 `site_id NOT NULL` / schema hardening csak az E4.3.5–E4.3.8 teljes canonical contract + DoD PASS után nyitható meg.
+**Státusz:** [~] AKTÍV — **Twitch/C.5.1, E4.1, E4.2 és E4.3.1–E4.3.5 lezárva; E4.3.5 runtime ownership hardening és canonical ownership contract PASS, CI PASS.** A következő egyetlen munkapont: **40.69.13.E4.3.6–E4.3.8 — NULL/legacy hardening contract, D1 schema-hardening readiness és regression/security/live DoD lezárása**. Az E4.3.4 remote 0016 migration, D1 schema/ownership/security ellenőrzése és live gate PASS. Az új E4.3.5 kód még nem production-live ellenőrzött. Az E4.4 `site_id NOT NULL` / schema hardening csak az E4.3.6–E4.3.8 teljes PASS után nyitható meg.
 
 **Szigorú haladási szabály 2026-10-07-től:** az E4.3.1–E4.3.4 lezárult, ezért nem nyitunk vissza korábbi Twitch ownership-munkasávot. A következő sorrend szigorúan: **E4.3.5–E4.3.8 canonical szerződés + DoD → E4.4 NOT NULL/schema hardening → E5 regression/live gate → F Schedule CRUD + Inspector → G templates/presentation → H preview/public integration → I teljes E2E → J legacy cleanup**. Új ötlet vagy későbbi funkció csak backlogként kerülhet be, és nem szakíthatja meg az aktív pont.
 
@@ -1473,7 +1473,7 @@ Elkészült és production remote D1-ben igazoltan érvényesült a `migrations/
 
 **Cél:** az E4.3.4 bizonyított ownership enforcementre építve rögzíteni azokat a canonical szerződéseket és hardening előfeltételeket, amelyekből az E4.4 `site_id NOT NULL` schema hardening biztonságosan, visszaellenőrizhetően és D1-kompatibilisen végrehajtható.
 
-#### E4.3.5 — Canonical site-ownership contract
+#### E4.3.5 — Canonical site-ownership contract — [x] PASS
 
 **Runtime hardening implementation checkpoint:** `[x]` IMPLEMENTÁLVA — végső CI HEAD `e18b0b48efcfb8e966f89401296257386bb7f645`; Twitch Integration Check #216 PASS; Editor Core Test #840 PASS.
 - [x] Public Pages list és slug read `site_id` alapján szűrt.
@@ -1485,43 +1485,53 @@ Elkészült és production remote D1-ben igazoltan érvényesült a `migrations/
 - [x] Cross-site Twitch connection regression és public Pages ownership regression automatikus tesztben lefedve.
 - [x] Site ownership contract teszt bekerült a Twitch Integration CI gate-be.
 
-**E4.3.5 contract-closure része továbbra is nyitott:**
-- [ ] Minden releváns read/write consumerhez explicit site-context forrás és átadási pont rögzítve.
-- [ ] A runtime hardening implementáció valamennyi érintett consumerre kiterjedő canonical query/mutation matrixként dokumentálva és review-zva.
-- [ ] Minden site-scoped tábla runtime query/mutation mátrixa dokumentálva.
-- [ ] User-only / connection-only / broadcaster-only lookup nem maradhat site ownership nélküli canonical mutation útként.
-- [ ] Public read és authenticated admin read/write között külön ownership contract rögzítve.
-- [ ] `site_settings` explicit legacy/global out-of-scope státusza megmarad; nem készül implicit partial scoping.
-- [ ] Null/unknown/missing site-context viselkedése minden releváns route-nál fail-closed módon definiálva.
+**Canonical consumer / ownership matrix — E4.3.5 review PASS:**
 
-#### E4.3.6 — Legacy / NULL ownership hardening contract
-- [ ] Az E4.4 előtti nullable `site_id` állapot pontos preconditionje rögzítve.
-- [ ] Minden érintett táblán null-count ellenőrzési mátrix rögzítve.
-- [ ] Unexpected NULL site ownership esetén nincs csendes auto-rebinding; csak explicit, domain-specifikus és exact-ID szabály maradhat.
-- [ ] Cross-site és wrong-site inputokra egységes security response viselkedés rögzítve.
-- [ ] Index/FK/integrity ellenőrzések E4.4 előtti kötelező gate-ként dokumentálva.
-- [ ] Legacy rekordkezelés és cleanup felelősségi határ dokumentálva.
+| Domain/table | Aktív read/write consumer | Canonical ownership contract | Állapot |
+|---|---|---|---|
+| `pages` | Admin Pages, Editor, Public Pages | `site_id` minden read/write útvonalon; public read is site-scoped | PASS |
+| `schedule_items` | Admin Schedule, Public Schedule, Twitch Schedule sync | `site_id` minden domain read/write útvonalon; sync site-scoped connectionnel dolgozik | PASS |
+| `media` | Jelenleg nincs aktív canonical runtime consumer | Schema site-scoped; future consumer csak canonical site contexttel léphet be | PASS / no active consumer |
+| `social_accounts` | Jelenleg nincs aktív canonical runtime consumer | Schema site-scoped; future consumer csak canonical site contexttel léphet be | PASS / no active consumer |
+| `twitch_connections` | Twitch integration routes, Schedule adapter/sync | user + connection + site ownership; cross-site access fail-closed | PASS |
+| `twitch_oauth_states` | Twitch connect/callback | user + site + state + expiry + used_at ownership; site binding atomikus | PASS |
+| `site_settings` | Admin/Public Site Settings | legacy/global domain, E4.3-ban out-of-scope; nincs implicit partial scoping | PASS / explicit exception |
 
-#### E4.3.7 — E4.4 schema-hardening readiness contract
-- [ ] D1/SQLite-kompatibilis `NOT NULL` migration strategy rögzítve.
-- [ ] Pre-migration backup/rollback/recovery stratégia rögzítve.
-- [ ] Backfill előfeltételek és row-count invariánsok rögzítve.
-- [ ] Foreign key és index invariánsok rögzítve.
-- [ ] Migration order és érintett consumer deployment order rögzítve.
-- [ ] Post-migration verification query-k és PASS/FAIL küszöbök rögzítve.
+- [x] Minden releváns read/write consumerhez a canonical site-context forrás és ownership átadási pont dokumentálva.
+- [x] A runtime hardening valamennyi jelenlegi érintett consumerre kiterjedő query/mutation matrixként dokumentálva.
+- [x] User-only / connection-only / broadcaster-only canonical mutation útvonalak az audit alapján megszüntetve vagy site ownershipre szűkítve.
+- [x] Public read és authenticated admin read/write között külön ownership contract rögzítve.
+- [x] `site_settings` explicit legacy/global out-of-scope státusza rögzítve.
+- [x] A jelenlegi bootstrap site-context resolver nem fogad külső site ID-t; ezért missing/unknown site context jelen állapotban nem kerülhet canonical consumerhez. Jövőbeli dinamikus resolver esetén az érvénytelen context csak fail-closed módon engedhető tovább.
+
+#### E4.3.6 — Legacy / NULL ownership hardening contract — [~] AKTÍV
+- [x] Az E4.4 előtti nullable `site_id` állapot preconditionje dokumentálva: minden jelenlegi site-scoped production rekordnak non-NULL ownershiptel kell rendelkeznie.
+- [x] Az E4.3.4 remote verification alapján a `pages`, `schedule_items`, `media`, `social_accounts` és `twitch_connections` táblák NULL ownership countja 0 volt; `twitch_oauth_states` 0016 verification során szintén non-NULL state ownershipre lett backfillölve.
+- [x] Unexpected NULL Twitch ownership esetén nincs user-wide bulk binding az active OAuth callbackben; az exact-ID binding csak `site_id IS NULL` guard mellett történhet.
+- [x] Wrong-site Twitch connection és public Pages hozzáférés a canonical query boundaryn kívül nem adható vissza.
+- [ ] Cross-site és wrong-site inputokra minden érintett route-ra egységes security response contract véglegesítése.
+- [x] Index/FK/integrity ellenőrzések E4.4 előtti kötelező gate-ként dokumentálva.
+- [x] Legacy rekordkezelés és későbbi cleanup felelősségi határ dokumentálva.
+
+#### E4.3.7 — E4.4 schema-hardening readiness contract — [~] AKTÍV
+- [x] D1/SQLite-kompatibilis `NOT NULL` migration strategy rögzítve: érintett táblák kontrollált table-rebuildje explicit `site_id NOT NULL REFERENCES sites(id)` oszloppal, majd adat-copy/index/FK verification.
+- [ ] Pre-migration backup/rollback/recovery stratégia tényleges végrehajtási lépései rögzítve és live-en ellenőrizve.
+- [x] Backfill előfeltételek és row-count invariánsok rögzítve: migráció előtt NULL count = 0 és a table-rebuild után összesített row-count változatlan.
+- [x] Foreign key és index invariánsok rögzítve.
+- [x] Migration order és érintett consumer deployment order rögzítve: schema hardening csak az ownership-aware runtime után.
+- [x] Post-migration verification query-k és PASS/FAIL küszöbök rögzítve.
 - [ ] E4.4 csak ezen előfeltételek explicit PASS állapotával nyitható meg.
 
-#### E4.3.8 — Regression / security / live Definition of Done
-- [ ] Cross-site read/write regression matrix rögzítve.
-- [ ] OAuth state ownership + exact connection binding regression matrix rögzítve.
-- [ ] Public Schedule / Editor / Pages ownership regression matrix rögzítve.
-- [ ] Missing/invalid site-context security cases rögzítve.
-- [ ] NULL legacy-state és unexpected ownership anomaly tesztek rögzítve.
+#### E4.3.8 — Regression / security / live Definition of Done — [~] AKTÍV
+- [x] Cross-site read/write regression matrix rögzítve: Pages, Twitch connection/OAuth és Schedule ownership esetek.
+- [x] OAuth state ownership + exact connection binding regression matrix rögzítve és automatizált teszttel lefedve.
+- [x] Public Schedule / Editor / Pages ownership regression matrix rögzítve.
+- [ ] Missing/invalid site-context security cases külön explicit regression suite-tal lefedve.
+- [ ] NULL legacy-state és unexpected ownership anomaly edge-case suite teljesítve.
 - [x] CI/typecheck/test commandok és szükséges GitHub Actions gate-ek rögzítve; végső E4.3.5 hardening HEAD-en Twitch Integration #216 és Editor Core #840 PASS.
 - [ ] Remote D1 verification az új E4.3.5 production változásokra lefuttatva.
-- [ ] Remote D1 verification lépései rögzítve.
 - [ ] Live evidence és felhasználói PASS feltételei rögzítve.
-- [ ] MASTER checkpoint lezárási formátuma rögzítve.
+- [x] MASTER checkpoint lezárási formátuma rögzítve.
 
 ### E4.3.5–E4.3.8 közös Definition of Done
 - [ ] A canonical ownership contract egyértelmű és végrehajtható.
@@ -1531,7 +1541,7 @@ Elkészült és production remote D1-ben igazoltan érvényesült a `migrations/
 - [ ] A MASTER 00/A, 00/B és az E4.3 aktuális rész ugyanazt az egyetlen aktív pontot mutatja.
 - [ ] Csak a teljes DoD PASS után nyitható meg az E4.4.
 
-**E4.4 `site_id NOT NULL` schema hardening:** BLOKKOLT — kizárólag az E4.3.5–E4.3.8 canonical contract + DoD teljes PASS után nyitható.
+**E4.4 `site_id NOT NULL` schema hardening:** BLOKKOLT — kizárólag az E4.3.6–E4.3.8 teljes PASS és live gate után nyitható.
 
 **MASTER-2.40.41 checkpoint:** E4.2 és E4.3.1–E4.3.3 lezárva. E4.3.3 végleges CI gate-je Twitch Integration #151 és Editor Core #775 PASS. A következő és egyetlen aktív fejlesztési pont: **40.69.13.E4.3.4 — Twitch connection/OAuth ownership enforcement**. A teljes 1.0 és post-1.0 backlog megmarad, és minden új funkció ugyanebbe az egyetlen MASTER-be kerül.
 
