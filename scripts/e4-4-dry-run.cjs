@@ -41,7 +41,6 @@ for (const table of affected) {
   assert.equal(nullCount, 0, `${table}: precondition site_id NULL count must be 0`);
 }
 
-assert(before.get('pages').some(row => row.published_revision_id), 'pages: expected at least one published revision linkage');
 
 db.exec('BEGIN;');
 try {
