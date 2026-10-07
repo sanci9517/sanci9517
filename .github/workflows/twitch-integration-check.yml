@@ -26,3 +26,5 @@ jobs:
         run: npm run test:schedule
       - name: Run Twitch OAuth regression tests
         run: node --test tests/twitch-oauth.test.js
+      - name: Run site ownership contract tests
+        run: node --test tests/site-ownership-contract.test.js
