@@ -39,7 +39,7 @@ Ha bármilyen régi checkpoint, összefoglaló, korábbi üzenet vagy történet
 **Boot-szabály:** új beszélgetésben a modellnek először ezt a 00/B blokkot, majd közvetlenül a 00/A indexet kell figyelembe vennie. Ha bármely régi checkpoint ettől eltér, a régi checkpointot kell figyelmen kívül hagyni, nem az aktuális MASTER állapotot.
 
 **Egyetlen aktuális folytatási mondat:**
-> „Folytassuk a Sanci9517 MASTER tervet az **E4.3.5–E4.3.8 hardening/specifikációs kapujának lezáró munkájánál**. E4.3.1–E4.3.4 lezárult; az E4.3.4 remote 0016 migration, D1 schema/ownership/security ellenőrzése és live gate PASS. E4.3.5 runtime ownership hardening implementálva és CI-ben PASS, de a canonical contract matrix, E4.3.6–E4.3.8 readiness/DoD és az új kód live verification még nyitott. Az E4.4 `site_id NOT NULL` hardening továbbra is blokkolt.
+> „Folytassuk a Sanci9517 MASTER tervet az **E4.3.5–E4.3.8 hardening/specifikációs kapujának lezáró munkájánál**. E4.3.1–E4.3.4 lezárult; az E4.3.4 remote 0016 migration, D1 schema/ownership/security ellenőrzése és live gate PASS. E4.3.5 runtime ownership hardening implementálva és CI-ben PASS, de a canonical contract matrix, E4.3.6–E4.3.8 readiness/DoD és az új kód live verification még nyitott. Az E4.4 `site_id NOT NULL` hardening továbbra is blokkolt.”
 
 > **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd kizárólag a **00/A MASTER VÉGREHAJTÁSI INDEX egyetlen aktív pontjából** folytatni. Más fejezet `[ ]`, `[~]` vagy régebbi „következő lépés” szövege nem jelent aktuális folytatási pontot.
 
@@ -1998,17 +1998,3 @@ Minden nagy funkció ellenőrzése:
 3. API;
 4. jogosultság;
 5. validation;
-6. command/action;
-7. state;
-8. history;
-9. save;
-10. reload;
-11. preview;
-12. publish;
-13. error handling;
-14. recovery;
-15. responsive;
-16. accessibility;
-17. performance;
-18. AI compatibility;
-19. rollback;
