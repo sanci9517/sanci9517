@@ -100,6 +100,6 @@ test('Twitch OAuth state creation writes site ownership atomically', async () =>
 
   assert.equal(new URL(target).pathname, '/oauth2/authorize');
   assert.equal(DB.calls.length, 2);
-  assert.match(DB.calls[1].sql, /INSERT INTO twitch_oauth_states \\(id,user_id,site_id,state_hash,expires_at\\)/);
+  assert.equal(DB.calls[1].sql.includes('INSERT INTO twitch_oauth_states (id,user_id,site_id,state_hash,expires_at)'), true);
   assert.deepEqual(DB.calls[1].binds.slice(1, 3), [USER_ID, SITE_ID]);
 });
