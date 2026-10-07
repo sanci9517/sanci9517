@@ -7,28 +7,6 @@ export type OwnedTwitchConnection = {
   status: string;
 };
 
-export async function bindNewTwitchConnectionToSite(
-  env: Env,
-  siteId: string,
-  userId: string
-): Promise<void> {
-  await env.DB.prepare(
-    "UPDATE twitch_connections SET site_id=?,updated_at=CURRENT_TIMESTAMP " +
-    "WHERE user_id=? AND site_id IS NULL"
-  ).bind(siteId, userId).run();
-}
-
-export async function bindTwitchConnectionToSite(
-  env: Env,
-  siteId: string,
-  connectionId: string
-): Promise<boolean> {
-  const result = await env.DB.prepare(
-    "UPDATE twitch_connections SET site_id=?,updated_at=CURRENT_TIMESTAMP WHERE id=? AND site_id IS NULL"
-  ).bind(siteId, connectionId).run();
-  return result.meta.changes === 1;
-}
-
 export async function getOwnedTwitchConnection(
   env: Env,
   siteId: string,
