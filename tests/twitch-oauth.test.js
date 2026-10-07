@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { encryptTwitchToken, decryptTwitchToken } from '../src/core/twitch-crypto.ts';
-import { refreshTwitchConnection } from '../src/core/twitch-oauth.ts';
+import { encryptTwitchToken, decryptTwitchToken, hashTwitchOAuthState } from '../src/core/twitch-crypto.ts';
+import { exchangeTwitchCode, refreshTwitchConnection } from '../src/core/twitch-oauth.ts';
 
 const CONNECTION_ID = 'connection-test';
 const SITE_ID = 'site-a';
@@ -370,3 +370,104 @@ test('B.13 exposes disconnect atomicity gap when Twitch revoke succeeds but D1 s
 });
 
 await import('./twitch-site-ownership.test.js');
+
+
+test('Twitch OAuth fails closed when an existing broadcaster connection has NULL site ownership', async () => {
+  const state = 'legacy-null-site-state';
+  const stateHash = await hashTwitchOAuthState(state);
+  const existingConnectionId = 'legacy-null-site-connection';
+  const calls = [];
+  const DB = {
+    prepare(sql) {
+      let binds = [];
+      const statement = {
+        bind(...values) {
+          binds = values;
+          return statement;
+        },
+        async first() {
+          calls.push({ type: 'first', sql, binds });
+          if (sql.includes('FROM twitch_oauth_states')) {
+            assert.deepEqual(binds, [stateHash, USER_ID, SITE_ID]);
+            return { id: 'oauth-state-1', userId: USER_ID, siteId: SITE_ID };
+          }
+          if (sql.includes('FROM twitch_connections WHERE broadcaster_id=? LIMIT 1')) {
+            assert.deepEqual(binds, ['1144260301']);
+            return { id: existingConnectionId, userId: USER_ID, siteId: null };
+          }
+          throw new Error('Unexpected first() query: ' + sql);
+        },
+        async run() {
+          calls.push({ type: 'run', sql, binds });
+          if (sql.startsWith('UPDATE twitch_oauth_states SET used_at=')) {
+            assert.deepEqual(binds, ['oauth-state-1', USER_ID, SITE_ID]);
+            return { meta: { changes: 1 } };
+          }
+          throw new Error('Unexpected run() query: ' + sql);
+        }
+      };
+      return statement;
+    }
+  };
+
+  const env = {
+    DB,
+    TWITCH_CLIENT_ID: CLIENT_ID,
+    TWITCH_CLIENT_SECRET: CLIENT_SECRET,
+    TWITCH_TOKEN_ENCRYPTION_KEY: ENCRYPTION_KEY
+  };
+
+  const originalFetch = globalThis.fetch;
+  const requests = [];
+  globalThis.fetch = async (input) => {
+    const url = String(input);
+    requests.push(url);
+    if (url === 'https://id.twitch.tv/oauth2/token') {
+      return jsonResponse({
+        access_token: INITIAL_ACCESS_TOKEN,
+        refresh_token: INITIAL_REFRESH_TOKEN,
+        expires_in: 3600,
+        scope: ['channel:manage:schedule']
+      });
+    }
+    if (url === 'https://id.twitch.tv/oauth2/validate') {
+      return jsonResponse({
+        client_id: CLIENT_ID,
+        scopes: ['channel:manage:schedule'],
+        expires_in: 3600,
+        login: 'sanci9517',
+        user_id: '1144260301'
+      });
+    }
+    throw new Error('Unexpected fetch URL: ' + url);
+  };
+
+  try {
+    await assert.rejects(
+      () => exchangeTwitchCode(
+        new Request('https://example.test/api/integrations/twitch/callback'),
+        env,
+        'authorization-code',
+        state,
+        USER_ID,
+        SITE_ID
+      ),
+      (err) => {
+        assert.ok(err instanceof Error);
+        assert.equal(err.message, 'TWITCH_CONNECTION_OWNERSHIP_CONFLICT');
+        return true;
+      }
+    );
+
+    assert.deepEqual(requests, [
+      'https://id.twitch.tv/oauth2/token',
+      'https://id.twitch.tv/oauth2/validate'
+    ]);
+    assert.equal(
+      calls.some((call) => call.type === 'run' && call.sql.startsWith('INSERT INTO twitch_connections')),
+      false
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});

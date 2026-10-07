@@ -4,13 +4,13 @@ export type SiteContext = {
   siteId: string;
 };
 
-/**
- * Canonical site context bootstrap.
- *
- * The current product has one production site. Keeping site resolution behind
- * this boundary lets future user/site membership replace the bootstrap without
- * changing domain consumers.
- */
+export function validateSiteId(siteId: unknown): string {
+  if (typeof siteId !== "string" || siteId.trim() === "") {
+    throw new Error("SITE_CONTEXT_INVALID");
+  }
+  return siteId.trim();
+}
+
 export function getCanonicalSiteContext(): SiteContext {
-  return { siteId: DEFAULT_SITE_ID };
+  return { siteId: validateSiteId(DEFAULT_SITE_ID) };
 }

@@ -3,14 +3,13 @@ import test from 'node:test';
 
 import {
   assertTwitchConnectionOwnership,
-  bindNewTwitchConnectionToSite,
-  bindTwitchConnectionToSite,
   getOwnedTwitchConnection
 } from '../src/core/twitch-site-ownership.ts';
 
 const SITE_A = 'site-a';
 const SITE_B = 'site-b';
 const USER_ID = 'user-test';
+const OTHER_USER_ID = 'other-user';
 const CONNECTION_ID = 'connection-test';
 
 function createD1Fake() {
@@ -43,34 +42,14 @@ function createD1Fake() {
 
           if (sql.includes('SELECT id,broadcaster_id AS broadcasterId,broadcaster_login AS broadcasterLogin')) {
             const [userId, siteId] = binds;
-            const row = rows.find((item) => item.userId === userId && item.siteId === siteId);
+            const row = rows
+              .filter((item) => item.userId === userId && item.siteId === siteId)
+              .sort(() => 0)
+              .at(0);
             return row ? structuredClone(row) : null;
           }
 
           throw new Error('Unexpected first() query: ' + sql);
-        },
-        async run() {
-          if (sql.startsWith('UPDATE twitch_connections SET site_id=?') && sql.includes('WHERE id=? AND site_id IS NULL')) {
-            const [siteId, connectionId] = binds;
-            const row = rows.find((item) => item.id === connectionId && item.siteId === null);
-            if (!row) return { meta: { changes: 0 } };
-            row.siteId = siteId;
-            return { meta: { changes: 1 } };
-          }
-
-          if (sql.startsWith('UPDATE twitch_connections SET site_id=?')) {
-            const [siteId, userId] = binds;
-            let changes = 0;
-            for (const row of rows) {
-              if (row.userId === userId && row.siteId === null) {
-                row.siteId = siteId;
-                changes += 1;
-              }
-            }
-            return { meta: { changes } };
-          }
-
-          throw new Error('Unexpected run() query: ' + sql);
         }
       };
       return statement;
@@ -78,7 +57,7 @@ function createD1Fake() {
   };
 }
 
-test('Twitch connection ownership rejects a different site', async () => {
+test('Twitch connection ownership rejects a different site or user', async () => {
   const env = { DB: createD1Fake() };
 
   assert.equal(
@@ -87,6 +66,10 @@ test('Twitch connection ownership rejects a different site', async () => {
   );
   assert.equal(
     await assertTwitchConnectionOwnership(env, SITE_B, USER_ID, CONNECTION_ID),
+    false
+  );
+  assert.equal(
+    await assertTwitchConnectionOwnership(env, SITE_A, OTHER_USER_ID, CONNECTION_ID),
     false
   );
 });
@@ -101,7 +84,7 @@ test('Twitch owned connection lookup is site-scoped', async () => {
   assert.equal(otherSite, null);
 });
 
-test('legacy NULL Twitch connection ownership can be bound to the canonical site', async () => {
+test('legacy NULL Twitch connection ownership is fail-closed and never returned as owned', async () => {
   const db = createD1Fake();
   db.rows.push({
     id: 'legacy-connection',
@@ -113,28 +96,12 @@ test('legacy NULL Twitch connection ownership can be bound to the canonical site
   });
   const env = { DB: db };
 
-  await bindNewTwitchConnectionToSite(env, SITE_A, USER_ID);
-
-  assert.equal(db.rows.find((row) => row.id === 'legacy-connection')?.siteId, SITE_A);
-  assert.equal(db.rows.find((row) => row.id === CONNECTION_ID)?.siteId, SITE_A);
-});
-
-
-test('Twitch new connection binding is exact and cannot rebind an owned connection', async () => {
-  const db = createD1Fake();
-  db.rows.push({
-    id: 'legacy-connection',
-    userId: USER_ID,
-    siteId: null,
-    broadcasterId: 'legacy-broadcaster',
-    broadcasterLogin: 'legacy',
-    status: 'connected'
-  });
-  const env = { DB: db };
-
-  assert.equal(await bindTwitchConnectionToSite(env, SITE_B, 'legacy-connection'), true);
-  assert.equal(db.rows.find((row) => row.id === 'legacy-connection')?.siteId, SITE_B);
-
-  assert.equal(await bindTwitchConnectionToSite(env, SITE_B, CONNECTION_ID), false);
-  assert.equal(db.rows.find((row) => row.id === CONNECTION_ID)?.siteId, SITE_A);
+  assert.equal(
+    await assertTwitchConnectionOwnership(env, SITE_A, USER_ID, 'legacy-connection'),
+    false
+  );
+  assert.equal(
+    await getOwnedTwitchConnection(env, SITE_A, USER_ID).then((row) => row?.id),
+    CONNECTION_ID
+  );
 });
