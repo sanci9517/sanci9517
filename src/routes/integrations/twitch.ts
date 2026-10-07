@@ -11,7 +11,7 @@ import {
 import type { Env } from "../../types/env";
 import { getCanonicalSiteContext } from "../../core/site-context.ts";
 import { hashTwitchOAuthState } from "../../core/twitch-crypto.ts";
-import { assertTwitchConnectionOwnership, bindTwitchConnectionToSite, getOwnedTwitchConnection } from "../../core/twitch-site-ownership.ts";
+import { assertTwitchConnectionOwnership, getOwnedTwitchConnection } from "../../core/twitch-site-ownership.ts";
 
 function redirect(request: Request, status: string): Response {
   const url = new URL("/admin/editor", request.url);
