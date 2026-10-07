@@ -28,7 +28,7 @@ function emptyPagesDb() {
         },
         async first() {
           calls.push({ method: 'first', sql, binds });
-          assert.match(sql, /FROM pages WHERE site_id=\? AND slug=\?1/);
+          assert.match(sql, /FROM pages WHERE site_id=\?1 AND slug=\?2/);
           assert.equal(binds[0], SITE_ID);
           assert.equal(binds[1], 'about');
           return null;
