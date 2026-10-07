@@ -5,6 +5,9 @@ import { encryptTwitchToken, decryptTwitchToken } from '../src/core/twitch-crypt
 import { refreshTwitchConnection } from '../src/core/twitch-oauth.ts';
 
 const CONNECTION_ID = 'connection-test';
+const SITE_ID = 'site-a';
+const OTHER_SITE_ID = 'site-b';
+const USER_ID = 'user-test';
 const ENCRYPTION_KEY = 'test-encryption-key';
 const CLIENT_ID = 'test-client-id';
 const CLIENT_SECRET = 'test-client-secret';
@@ -29,7 +32,7 @@ function createD1Fake(initialRow) {
 
         async first() {
           if (sql.startsWith('SELECT id,user_id AS userId,broadcaster_id AS broadcasterId')) {
-            if (binds[0] !== CONNECTION_ID) return null;
+            if (binds[0] !== CONNECTION_ID || binds[1] !== USER_ID || binds[2] !== SITE_ID) return null;
             return structuredClone(row);
           }
 
@@ -38,10 +41,10 @@ function createD1Fake(initialRow) {
 
         async run() {
           if (sql.startsWith('UPDATE twitch_connections SET refresh_lock_token=?,refresh_lock_until=?')) {
-            const [lockToken, lockUntil, connectionId] = binds;
+            const [lockToken, lockUntil, connectionId, userId, siteId] = binds;
             const lockExpired = row.refreshLockUntil === null || Date.parse(row.refreshLockUntil) <= Date.now();
 
-            if (connectionId !== CONNECTION_ID || row.status !== 'connected' || !lockExpired) {
+            if (connectionId !== CONNECTION_ID || userId !== USER_ID || siteId !== SITE_ID || row.status !== 'connected' || !lockExpired) {
               return { meta: { changes: 0 } };
             }
 
@@ -51,8 +54,8 @@ function createD1Fake(initialRow) {
           }
 
           if (sql.startsWith('UPDATE twitch_connections SET refresh_lock_token=NULL,refresh_lock_until=NULL')) {
-            const [connectionId, lockToken] = binds;
-            if (connectionId === CONNECTION_ID && row.refreshLockToken === lockToken) {
+            const [connectionId, userId, siteId, lockToken] = binds;
+            if (connectionId === CONNECTION_ID && userId === USER_ID && siteId === SITE_ID && row.refreshLockToken === lockToken) {
               row.refreshLockToken = null;
               row.refreshLockUntil = null;
               return { meta: { changes: 1 } };
@@ -69,10 +72,12 @@ function createD1Fake(initialRow) {
               scopesJson,
               accessTokenExpiresAt,
               connectionId,
+              userId,
+              siteId,
               lockToken
             ] = binds;
 
-            if (connectionId !== CONNECTION_ID || row.refreshLockToken !== lockToken) {
+            if (connectionId !== CONNECTION_ID || userId !== USER_ID || siteId !== SITE_ID || row.refreshLockToken !== lockToken) {
               return { meta: { changes: 0 } };
             }
 
@@ -89,8 +94,8 @@ function createD1Fake(initialRow) {
           }
 
           if (sql.startsWith('UPDATE twitch_connections SET status=\'reauthorization_required\'')) {
-            const [connectionId, lockToken] = binds;
-            if (connectionId === CONNECTION_ID && row.refreshLockToken === lockToken) {
+            const [connectionId, userId, siteId, lockToken] = binds;
+            if (connectionId === CONNECTION_ID && userId === USER_ID && siteId === SITE_ID && row.refreshLockToken === lockToken) {
               row.status = 'reauthorization_required';
               return { meta: { changes: 1 } };
             }
@@ -112,6 +117,44 @@ function jsonResponse(body, status = 200) {
     headers: { 'content-type': 'application/json' }
   });
 }
+
+test('Twitch valid-token lookup rejects a cross-site connection before touching Twitch', async () => {
+  const initialAccess = await encryptTwitchToken(ENCRYPTION_KEY, INITIAL_ACCESS_TOKEN);
+  const initialRefresh = await encryptTwitchToken(ENCRYPTION_KEY, INITIAL_REFRESH_TOKEN);
+  const db = createD1Fake({
+    id: CONNECTION_ID,
+    userId: USER_ID,
+    broadcasterId: '1144260301',
+    broadcasterLogin: 'sanci9517',
+    accessCiphertext: initialAccess.ciphertext,
+    accessIv: initialAccess.iv,
+    refreshCiphertext: initialRefresh.ciphertext,
+    refreshIv: initialRefresh.iv,
+    scopesJson: '[]',
+    accessTokenExpiresAt: new Date(Date.now() + 3600_000).toISOString(),
+    status: 'connected',
+    lastValidatedAt: null,
+    refreshLockToken: null,
+    refreshLockUntil: null
+  });
+  const env = {
+    DB: db,
+    TWITCH_CLIENT_ID: CLIENT_ID,
+    TWITCH_CLIENT_SECRET: CLIENT_SECRET,
+    TWITCH_TOKEN_ENCRYPTION_KEY: ENCRYPTION_KEY
+  };
+
+  await assert.rejects(
+    () => import('../src/core/twitch-oauth.ts').then(({ getValidTwitchAccessToken }) =>
+      getValidTwitchAccessToken(env, OTHER_SITE_ID, USER_ID, CONNECTION_ID, { forceValidation: true })
+    ),
+    (err) => {
+      assert.ok(err instanceof Error);
+      assert.equal(err.message, 'TWITCH_CONNECTION_NOT_FOUND');
+      return true;
+    }
+  );
+});
 
 test('Twitch refresh uses one D1 lock for two concurrent refresh calls', async () => {
   const initialAccess = await encryptTwitchToken(ENCRYPTION_KEY, INITIAL_ACCESS_TOKEN);
@@ -167,10 +210,10 @@ test('Twitch refresh uses one D1 lock for two concurrent refresh calls', async (
   };
 
   try {
-    const first = refreshTwitchConnection(env, CONNECTION_ID, initialAccess.ciphertext);
+    const first = refreshTwitchConnection(env, SITE_ID, USER_ID, CONNECTION_ID, initialAccess.ciphertext);
     await new Promise((resolve) => setTimeout(resolve, 10));
 
-    const second = refreshTwitchConnection(env, CONNECTION_ID, initialAccess.ciphertext);
+    const second = refreshTwitchConnection(env, SITE_ID, USER_ID, CONNECTION_ID, initialAccess.ciphertext);
 
     releaseRefreshResponse();
 
@@ -228,7 +271,7 @@ test('Twitch invalid access token requires reauthorization after refresh failure
   try {
     await assert.rejects(
       () => import('../src/core/twitch-oauth.ts').then(({ getValidTwitchAccessToken }) =>
-        getValidTwitchAccessToken(env, CONNECTION_ID, { forceValidation: true })
+        getValidTwitchAccessToken(env, SITE_ID, USER_ID, CONNECTION_ID, { forceValidation: true })
       ),
       (err) => {
         assert.ok(err instanceof Error);
@@ -306,7 +349,7 @@ test('B.13 exposes disconnect atomicity gap when Twitch revoke succeeds but D1 s
   try {
     await assert.rejects(
       () => import('../src/core/twitch-oauth.ts').then(({ revokeTwitchConnection }) =>
-        revokeTwitchConnection(env, CONNECTION_ID)
+        revokeTwitchConnection(env, SITE_ID, USER_ID, CONNECTION_ID)
       ),
       (err) => {
         assert.ok(err instanceof Error);
