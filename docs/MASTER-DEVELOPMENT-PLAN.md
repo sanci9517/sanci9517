@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.58.0  
+**Verzió:** MASTER-2.59.0  
 **Dátum:** 2026-10-07  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -13,7 +13,7 @@
 
 **Public Design Freedom / Multi-user uniqueness szabály:** az 1.0 vizuális rendszerének nem csak tartalom- és komponensszerkesztést kell biztosítania. A publikusan megjelenő weboldal vizuális identitása is felhasználónként/site-onként egyedileg konfigurálható kell legyen. A felhasználóbarát admin/editor célja, hogy technikai CSS-kód nélkül is létrehozható legyen saját brand és megjelenés: theme/design tokens, typography, colors, semantic colors, backgrounds, spacing, radius, shadows, containers, layout variants, component styles, navigation/header/footer, card/button/form styles, responsive presentation, visibility, imagery, templates és page-level presentation. A rendszernek preset/template alapú gyors indulást és mélyebb egyedi testreszabást is támogatnia kell. A domain adat, a Page Model és az Editor UI state továbbra is külön marad; a public design egy canonical presentation/theme réteg lesz. Multi-user jövőre készülve minden design/configuration site-scoped/tenant-scoped kell legyen, ne globális megosztott állapot. A default design csak kiindulópont, nem korlát.
 
-**Legutóbbi igazolt állapot:** 2026-10-07 — az E4.3.4 Twitch connection/OAuth ownership enforcement kód-, CI-, remote 0016 migration-, D1 schema/ownership/security- és live kapui PASS állapotban vannak. Az E4.3.5 runtime ownership hardening lezárult, az E4.3.6 NULL/legacy hardening contract lezárult, és az aktuális E4.3.6 hardening HEAD-en a Twitch Integration #221 + Editor Core #845 CI gate PASS. A jelenlegi következő egyetlen aktív kapu az E4.3.7 D1 schema-hardening readiness; az E4.3.7/E4.3.8 remote/live része még nyitott. Az E4.4 `site_id NOT NULL` schema hardening továbbra is blokkolt.
+**Legutóbbi igazolt állapot:** 2026-10-07 — az E4.3.4 Twitch connection/OAuth ownership enforcement kód-, CI-, remote 0016 migration-, D1 schema/ownership/security- és live kapui PASS állapotban vannak. Az E4.3.5 runtime ownership hardening és az E4.3.6 NULL/legacy hardening lezárult; az aktuális hardening CI regressziók PASS. Az E4.3.7 D1 schema-hardening readiness is lezárult: production D1 backup export PASS (412 387 bájt, SHA-256 rögzítve), remote preflight PASS (11 query, 0 write; quick_check OK, foreign_key_check üres; minden érintett site_id NULL count 0; 6 ownership index PASS), és izolált SQLite recovery PASS (22 tábla, quick_check OK, foreign_key_check üres). A jelenlegi egyetlen aktív kapu az E4.3.8 regression/security/live DoD; remote production verification és live evidence még nyitott. Az E4.4 `site_id NOT NULL` schema hardening továbbra is blokkolt.
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
 
@@ -39,7 +39,7 @@ Ha bármilyen régi checkpoint, összefoglaló, korábbi üzenet vagy történet
 **Boot-szabály:** új beszélgetésben a modellnek először ezt a 00/B blokkot, majd közvetlenül a 00/A indexet kell figyelembe vennie. Ha bármely régi checkpoint ettől eltér, a régi checkpointot kell figyelmen kívül hagyni, nem az aktuális MASTER állapotot.
 
 **Egyetlen aktuális folytatási mondat:**
-> „Folytassuk a Sanci9517 MASTER tervet az **E4.3.7 D1 schema-hardening readiness kapujánál**. E4.3.1–E4.3.6 lezárult; az E4.3.4 remote 0016 migration, D1 schema/ownership/security ellenőrzése és live gate PASS. E4.3.5 runtime ownership hardening, E4.3.6 NULL/legacy hardening és a kapcsolódó CI regressziók PASS. A következő munka az E4.3.7 backup/rollback/recovery readiness és remote preflight lezárása, majd E4.3.8 regression/security/live DoD. Az E4.4 `site_id NOT NULL` hardening továbbra is blokkolt.”
+> „Folytassuk a Sanci9517 MASTER tervet az **E4.3.8 regression/security/live DoD kapujánál**. E4.3.1–E4.3.7 lezárult; az E4.3.7 production D1 backup/export, remote preflight és izolált recovery gate PASS. A következő munka az E4.3.8 remote production verification és live evidence lezárása. Az E4.4 `site_id NOT NULL` hardening továbbra is blokkolt.”
 
 > **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd kizárólag a **00/A MASTER VÉGREHAJTÁSI INDEX egyetlen aktív pontjából** folytatni. Más fejezet `[ ]`, `[~]` vagy régebbi „következő lépés” szövege nem jelent aktuális folytatási pontot.
 
@@ -737,7 +737,7 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 ### 🔵 EGYETLEN AKTÍV PONT
 **40.69.13 — Twitch-integrációs alap + Schedule/Adásrend újratervezés**
 
-**Státusz:** [~] AKTÍV — **Twitch/C.5.1, E4.1, E4.2 és E4.3.1–E4.3.6 lezárva; E4.3.5 runtime ownership hardening, E4.3.6 NULL/legacy hardening és CI regresszió PASS.** A következő egyetlen munkapont: **40.69.13.E4.3.7 — D1 schema-hardening readiness: backup/rollback/recovery + remote preflight**. Az E4.3.4 remote 0016 migration, D1 schema/ownership/security ellenőrzése és live gate PASS. Az E4.3.7/E4.3.8 remote/live kapui még nyitottak. Az E4.4 `site_id NOT NULL` / schema hardening csak az E4.3.7–E4.3.8 teljes PASS után nyitható meg.
+**Státusz:** [~] AKTÍV — **Twitch/C.5.1, E4.1, E4.2 és E4.3.1–E4.3.7 lezárva; E4.3.5–E4.3.7 canonical ownership/hardening és D1 readiness PASS.** A következő egyetlen munkapont: **40.69.13.E4.3.8 — regression/security/live DoD: remote production verification + live evidence**. Az E4.3.7 production D1 backup/export, remote preflight és izolált recovery gate PASS; az E4.3.8 remote/live kapui még nyitottak. Az E4.4 `site_id NOT NULL` / schema hardening csak az E4.3.8 teljes PASS után nyitható meg.
 
 **Szigorú haladási szabály 2026-10-07-től:** az E4.3.1–E4.3.4 lezárult, ezért nem nyitunk vissza korábbi Twitch ownership-munkasávot. A következő sorrend szigorúan: **E4.3.5–E4.3.8 canonical szerződés + DoD → E4.4 NOT NULL/schema hardening → E5 regression/live gate → F Schedule CRUD + Inspector → G templates/presentation → H preview/public integration → I teljes E2E → J legacy cleanup**. Új ötlet vagy későbbi funkció csak backlogként kerülhet be, és nem szakíthatja meg az aktív pont.
 
@@ -1513,23 +1513,23 @@ Elkészült és production remote D1-ben igazoltan érvényesült a `migrations/
 - [x] Index/FK/integrity ellenőrzések E4.4 előtti kötelező gate-ként dokumentálva.
 - [x] Legacy rekordkezelés és későbbi cleanup felelősségi határ dokumentálva.
 
-#### E4.3.7 — E4.4 schema-hardening readiness contract — [~] AKTÍV — EGYETLEN AKTUÁLIS MUNKAPONT
+#### E4.3.7 — E4.4 schema-hardening readiness contract — [x] PASS / CLOSED
 - [x] D1/SQLite-kompatibilis `NOT NULL` migration strategy rögzítve: érintett táblák kontrollált table-rebuildje explicit `site_id NOT NULL REFERENCES sites(id)` oszloppal, majd adat-copy/index/FK verification.
-- [ ] Pre-migration backup/rollback/recovery stratégia tényleges végrehajtási lépései rögzítve és live-en ellenőrizve; ehhez az új `scripts/e4-3-7-preflight.sql` reprodukálható remote preflightot ad, a D1 teljes export pedig a Wrangler `d1 export --remote` útvonalon készül.
+- [x] Pre-migration backup/rollback/recovery stratégia ténylegesen végrehajtva és igazolva: production D1 export 412 387 bájt, SHA-256 `6D26A38712A0F9BBA087612A61788530239AFF5FE9B0740773D734A5E93A4CF9`; remote preflight PASS; izolált SQLite recovery PASS (`quick_check=ok`, `foreign_key_check=[]`, 22 tábla). A Wrangler 4.130.0 export hitelesítési hibája után a 4.148.0 export sikeresen teljesült.
 - [x] Backfill előfeltételek és row-count invariánsok rögzítve: migráció előtt NULL count = 0 és a table-rebuild után összesített row-count változatlan.
 - [x] Foreign key és index invariánsok rögzítve.
 - [x] Migration order és érintett consumer deployment order rögzítve: schema hardening csak az ownership-aware runtime után.
 - [x] Post-migration verification query-k és PASS/FAIL küszöbök rögzítve.
-- [ ] E4.4 csak ezen előfeltételek explicit PASS állapotával nyitható meg.
+- [x] E4.3.7 minden readiness előfeltétele explicit PASS állapotban van; E4.4 továbbra is az E4.3.8 teljes PASS-jához kötött.
 
-#### E4.3.8 — Regression / security / live Definition of Done — [ ] READY AFTER E4.3.7
+#### E4.3.8 — Regression / security / live Definition of Done — [~] AKTÍV — EGYETLEN AKTUÁLIS MUNKAPONT
 - [x] Cross-site read/write regression matrix rögzítve: Pages, Twitch connection/OAuth és Schedule ownership esetek.
 - [x] OAuth state ownership + exact connection binding regression matrix rögzítve és automatizált teszttel lefedve.
 - [x] Public Schedule / Editor / Pages ownership regression matrix rögzítve.
 - [x] Missing/invalid site-context security cases külön explicit regression suite-tal lefedve.
 - [x] NULL legacy-state és unexpected ownership anomaly edge-case suite teljesítve.
 - [x] CI/typecheck/test commandok és szükséges GitHub Actions gate-ek rögzítve; az új hardening HEAD-en Twitch Integration #221 és Editor Core #845 PASS; a Twitch Integration és Editor Core workflow-k PR-gate-ként is futtathatók `v2/foundation` ellen.
-- [ ] Remote D1 verification az új E4.3.5 production változásokra lefuttatva.
+- [x] E4.3.7 remote D1 verification/preflight PASS: quick_check OK, foreign_key_check üres, érintett site-scoped táblák NULL ownership countja 0, ownership indexek mind jelen vannak, séma az E4.4 table-rebuild előtti canonical állapotnak megfelelő.
 - [ ] Live evidence és felhasználói PASS feltételei rögzítve.
 - [x] MASTER checkpoint lezárási formátuma rögzítve.
 
