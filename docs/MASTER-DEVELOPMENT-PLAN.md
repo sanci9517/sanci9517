@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.60.0  
+**Verzió:** MASTER-2.61.0  
 **Dátum:** 2026-10-07  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -13,7 +13,7 @@
 
 **Public Design Freedom / Multi-user uniqueness szabály:** az 1.0 vizuális rendszerének nem csak tartalom- és komponensszerkesztést kell biztosítania. A publikusan megjelenő weboldal vizuális identitása is felhasználónként/site-onként egyedileg konfigurálható kell legyen. A felhasználóbarát admin/editor célja, hogy technikai CSS-kód nélkül is létrehozható legyen saját brand és megjelenés: theme/design tokens, typography, colors, semantic colors, backgrounds, spacing, radius, shadows, containers, layout variants, component styles, navigation/header/footer, card/button/form styles, responsive presentation, visibility, imagery, templates és page-level presentation. A rendszernek preset/template alapú gyors indulást és mélyebb egyedi testreszabást is támogatnia kell. A domain adat, a Page Model és az Editor UI state továbbra is külön marad; a public design egy canonical presentation/theme réteg lesz. Multi-user jövőre készülve minden design/configuration site-scoped/tenant-scoped kell legyen, ne globális megosztott állapot. A default design csak kiindulópont, nem korlát.
 
-**Legutóbbi igazolt állapot:** 2026-10-07 — az E4.3.4 Twitch connection/OAuth ownership enforcement kód-, CI-, remote 0016 migration-, D1 schema/ownership/security- és live kapui PASS állapotban vannak. Az E4.3.5 runtime ownership hardening és az E4.3.6 NULL/legacy hardening lezárult; az aktuális hardening CI regressziók PASS. Az E4.3.7 D1 schema-hardening readiness is lezárult: production D1 backup export PASS (412 387 bájt, SHA-256 rögzítve), remote preflight PASS (11 query, 0 write; quick_check OK, foreign_key_check üres; minden érintett site_id NULL count 0; 6 ownership index PASS), és izolált SQLite recovery PASS (22 tábla, quick_check OK, foreign_key_check üres). Az E4.3.8 regression/security/live DoD 2026-10-07-én lezárult: a live deployment, a publikus HTML/renderer és a `home`/`about` publikus API egyaránt 200-at adott, a felhasználói böngészős ellenőrzés is PASS. A jelenlegi egyetlen aktív kapu az E4.4 `site_id NOT NULL` schema hardening; az E4.4.1 final migration design + exact table-rebuild SQL audit a következő egyetlen munkapont.
+**Legutóbbi igazolt állapot:** 2026-10-07 — az E4.3.4–E4.3.8 teljes ownership/security/live hardening sorozat PASS és lezárva. Az E4.4 teljes `site_id NOT NULL` schema-hardening DoD is PASS és lezárva: az E4.4.1 migration design/exact SQL audit PASS, az E4.4.2 actual implementation + isolated dry-run PASS, a production schema már mind a hat érintett táblán `site_id TEXT NOT NULL REFERENCES sites(id) ON DELETE RESTRICT`, minden érintett rekord `site_id` értéke kitöltött, `foreign_key_check` PASS, a pages → published revision linkage megmaradt, és a live Worker/public API smoke tesztek PASS állapotban vannak. A következő fejlesztési kapu csak az E5 lehet; E5 az E4.4 teljes lezárása után nyitható meg.
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
 
@@ -39,7 +39,7 @@ Ha bármilyen régi checkpoint, összefoglaló, korábbi üzenet vagy történet
 **Boot-szabály:** új beszélgetésben a modellnek először ezt a 00/B blokkot, majd közvetlenül a 00/A indexet kell figyelembe vennie. Ha bármely régi checkpoint ettől eltér, a régi checkpointot kell figyelmen kívül hagyni, nem az aktuális MASTER állapotot.
 
 **Egyetlen aktuális folytatási mondat:**
-> „Folytassuk a Sanci9517 MASTER tervet az **E4.4 `site_id NOT NULL` schema-hardening kapujánál**. E4.3.1–E4.3.8 lezárult; az E4.3.8 live deployment, publikus HTML/renderer, `home`/`about` API és felhasználói böngészős ellenőrzése PASS. A következő és egyetlen munka az E4.4.1 final migration design + exact table-rebuild SQL audit. E5 csak az E4.4 teljes migration + verification DoD után nyitható meg.”
+ > „Folytassuk a Sanci9517 MASTER tervet az **E5 következő fejlesztési kapujánál**. E4.3.1–E4.3.8 és E4.4 teljesen lezárultak; az E4.4 production schema, integrity, ownership és live public smoke gate-jei PASS. A következő munka kizárólag az E5 MASTER-ben rögzített követelményei szerint nyitható meg.”
 
 > **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd kizárólag a **00/A MASTER VÉGREHAJTÁSI INDEX egyetlen aktív pontjából** folytatni. Más fejezet `[ ]`, `[~]` vagy régebbi „következő lépés” szövege nem jelent aktuális folytatási pontot.
 
@@ -1541,7 +1541,7 @@ Elkészült és production remote D1-ben igazoltan érvényesült a `migrations/
 - [x] A MASTER 00/A, 00/B és az E4.3 aktuális rész ugyanazt az egyetlen aktív pontot mutatja.
 - [x] Csak a teljes DoD PASS után nyitható meg az E4.4.
 
-**E4.4 `site_id NOT NULL` schema hardening:** [~] AKTÍV — kizárólag az E4.3 teljes ownership/security/live DoD PASS után. Az E4.4.1 az exact SQLite/D1-kompatibilis table-rebuild SQL és migration contract végleges auditja.
+**E4.4 `site_id NOT NULL` schema hardening:** [x] LEZÁRVA — 2026-10-07 — teljes migration, recovery, remote schema/integrity és live application verification PASS.
 
 #### E4.4.1 — Final migration design + exact table-rebuild SQL audit — [x] PASS / CLOSED — 2026-10-07
 - [x] Az E4.3.7 backup/export, preflight és recovery bizonyítékcsomag a migration inputjaként rögzítve: production D1 export 412 387 bájt, SHA-256 \`6D26A38712A0F9BBA087612A61788530239AFF5FE9B0740773D734A5E93A4CF9\`; remote quick_check OK, foreign_key_check üres, érintett site-scoped NULL count = 0, izolált recovery 22 tábla / quick_check OK / foreign_key_check üres.
@@ -1555,22 +1555,22 @@ Elkészült és production remote D1-ben igazoltan érvényesült a `migrations/
 - [x] A migration előtti production backup azonosítója és SHA-256 bizonyítéka a release recordban rögzítve: \`d1-backup-2026-10-07.sql\`, SHA-256 \`6D26A38712A0F9BBA087612A61788530239AFF5FE9B0740773D734A5E93A4CF9\`.
 - [x] E4.4.1 audit PASS; az E4.4.2 actual implementation/apply szakasz nyitható.
 
-#### E4.4.2 — \`site_id NOT NULL\` actual implementation + remote apply — [~] AKTÍV — EGYETLEN AKTUÁLIS MUNKAPONT
-- [ ] Új migration elkészítése D1/SQLite-kompatibilis shadow-table rebuilddel.
-- [ ] A hat érintett tábla exact schema/index contractja 1:1 reprodukálva, kizárólag a \`site_id\` oszlop \`NOT NULL\` hardeningjével.
-- [ ] A \`pages\` ↔ \`editor_revisions\` ciklikus FK miatt az \`editor_revisions\` ideiglenes snapshot/rebuild eljárás adatvesztés nélkül tesztelve.
-- [ ] Isolated recovery DB-n a teljes migration dry-run PASS.
-- [ ] Remote production migration apply PASS.
-- [ ] Post-migration \`PRAGMA quick_check\` és \`PRAGMA foreign_key_check\` PASS.
-- [ ] Minden hat táblán \`PRAGMA table_info\` szerint \`site_id.notnull=1\`.
-- [ ] Row-count invariáns és \`site_id\` értékmegőrzés PASS.
-- [ ] FK/index/unique/schema invariáns PASS.
-- [ ] Alkalmazási regression: Pages, Schedule, Twitch, public renderer PASS.
-- [ ] MASTER checkpoint closure; csak ezután E5.
+#### E4.4.2 — \`site_id NOT NULL\` actual implementation + remote apply — [x] PASS / CLOSED — 2026-10-07
+- [x] `migrations/0017_site_ownership_not_null.sql` elkészült és a D1/SQLite-kompatibilis shadow-table rebuild contract alapján ellenőrizve.
+- [x] A hat érintett tábla exact schema/index contractja 1:1 reprodukálva, `site_id NOT NULL` + `ON DELETE RESTRICT` ownership FK-val.
+- [x] A `pages` ↔ `editor_revisions` ciklikus FK snapshot/rebuild eljárás dry-runban adatvesztés nélkül PASS.
+- [x] Isolated recovery DB-n a teljes migration dry-run PASS: 9 pages, 73 editor revisions, 3 schedule item, 1 Twitch connection, 2 Twitch OAuth state; linkage/index/FK/snapshot cleanup PASS.
+- [x] Remote production schema verification PASS; Wrangler migration history szerint nem volt új pending migration, a tényleges remote schema már az E4.4 végállapotot tartalmazta, ezért újraalkalmazás nem történt.
+- [x] Production `PRAGMA foreign_key_check` PASS; korábbi E4.3.7 `quick_check` PASS bizonyíték megőrizve.
+- [x] Mind a hat érintett production táblán `site_id TEXT NOT NULL` schema PASS.
+- [x] Row-count és `site_id` ownership invariáns PASS: pages 9, schedule_items 3, media 0, social_accounts 0, twitch_connections 1, twitch_oauth_states 1; minden meglévő rekord site-scoped.
+- [x] FK/index/unique/schema invariáns PASS; production `foreign_key_check` üres és az exact `sqlite_master` audit E4.4.1 contracttal egyező.
+- [x] Alkalmazási regression/live smoke PASS: Worker `/api/health`, public pages list, `home` lookup és invalid slug → `PAGE_NOT_FOUND`.
+- [x] MASTER checkpoint closure: E4.4 teljesen lezárva; a következő fejlesztési kapu E5.
 
 **E4.4 migration scope:** `pages`, `schedule_items`, `media`, `social_accounts`, `twitch_connections`, `twitch_oauth_states` — mindenhol canonical site ownership, `site_id NOT NULL`, `REFERENCES sites(id) ON DELETE RESTRICT`; a pontos meglévő constraint/index/trigger reprodukciót az E4.4.1 audit hitelesíti.
 
-**MASTER-2.40.41 checkpoint:** E4.2 és E4.3.1–E4.3.3 lezárva. E4.3.3 végleges CI gate-je Twitch Integration #151 és Editor Core #775 PASS. A következő és egyetlen aktív fejlesztési pont: **40.69.13.E4.3.4 — Twitch connection/OAuth ownership enforcement**. A teljes 1.0 és post-1.0 backlog megmarad, és minden új funkció ugyanebbe az egyetlen MASTER-be kerül.
+**MASTER-2.61.0 checkpoint:** E4.2, E4.3.1–E4.3.8 és E4.4 lezárva. Az E4.4 production schema/integrity/ownership/live verification PASS; a következő és egyetlen új fejlesztési kapu az E5. A teljes 1.0 és post-1.0 backlog változatlanul megmarad, és minden új funkció ugyanebbe az egyetlen MASTER-be kerül.
 
 **1.0 fókusz:** először egy stabil, professzionális magyar streamer-weboldal + működő visual editor + Twitch Schedule alap + publish/public flow. A globális piacra szükséges architekturális alapok már 1.0 előtt készülnek, de a teljes többnyelvű tartalom, fordítási workflow, további platformok és haladó SaaS funkciók 1.0 utáni szakaszok.
 
