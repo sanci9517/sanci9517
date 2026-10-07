@@ -28,10 +28,16 @@ export class TwitchScheduleAdapterError extends Error {
   }
 }
 
-async function readIdentity(env: Env, connectionId: string): Promise<{ broadcasterId: string; broadcasterLogin: string }> {
+async function readIdentity(
+  env: Env,
+  siteId: string,
+  userId: string,
+  connectionId: string
+): Promise<{ broadcasterId: string; broadcasterLogin: string }> {
   const row = await env.DB.prepare(
-    "SELECT broadcaster_id AS broadcasterId,broadcaster_login AS broadcasterLogin FROM twitch_connections WHERE id=? LIMIT 1"
-  ).bind(connectionId).first<{ broadcasterId: string; broadcasterLogin: string }>();
+    "SELECT broadcaster_id AS broadcasterId,broadcaster_login AS broadcasterLogin " +
+    "FROM twitch_connections WHERE id=? AND user_id=? AND site_id=? LIMIT 1"
+  ).bind(connectionId, userId, siteId).first<{ broadcasterId: string; broadcasterLogin: string }>();
   if (!row?.broadcasterId) throw new Error("TWITCH_CONNECTION_NOT_FOUND");
   return row;
 }
@@ -64,12 +70,16 @@ function parseSegment(raw: NonNullable<NonNullable<TwitchPayload["data"]>["segme
 }
 
 export async function fetchTwitchSchedule(
-  env: Env, connectionId: string, window: ScheduleSyncWindow,
+  env: Env,
+  siteId: string,
+  userId: string,
+  connectionId: string,
+  window: ScheduleSyncWindow,
   options: { maxPages?: number; fetchImpl?: typeof fetch } = {}
 ): Promise<TwitchScheduleSnapshot> {
   const normalized = normalizeScheduleSyncWindow(window);
-  const identity = await readIdentity(env, connectionId);
-  const token = await getValidTwitchAccessToken(env, connectionId);
+  const identity = await readIdentity(env, siteId, userId, connectionId);
+  const token = await getValidTwitchAccessToken(env, siteId, userId, connectionId);
   if (!env.TWITCH_CLIENT_ID) throw new Error("TWITCH_INTEGRATION_NOT_CONFIGURED");
 
   const maxPages = options.maxPages ?? DEFAULT_MAX_PAGES;
