@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.62.0  
+**Verzió:** MASTER-2.63.0  
 **Dátum:** 2026-10-07  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -784,6 +784,27 @@ E5 nem új feature-fejlesztési szakasz. **E5 célja a már elkészült E4 found
 
 ### E5.6 — E5 closure
 E5 csak akkor állítható `CLOSED` állapotba, ha **minden E5.1–E5.5 kötelező pont PASS**, a bizonyítékok rögzítve vannak, a felhasználói PASS megtörtént, és a MASTER frissítve lett.
+
+### E5.4 ellenőrzési bizonyíték — 2026-10-07
+
+Az E5.4 live verification eddig ellenőrzött részei:
+
+- [x] Worker health: HTTP 200, `ok:true`, service `sanci9517-streamer-brand`, version `2.0.0`.
+- [x] Public root: HTTP 200, `lang="hu"`.
+- [x] Canonical public page `/p/about`: HTTP 200.
+- [x] Public pages list: HTTP 200, `ok:true`.
+- [x] Valid page lookup: `/api/public/pages?slug=home` → HTTP 200.
+- [x] Invalid page lookup: `/api/public/pages?slug=this-page-must-not-exist` → `PAGE_NOT_FOUND` / 404 contract.
+- [x] Published public snapshot: `/api/public/pages?slug=about` → HTTP 200, canonical page payload.
+- [x] Public Schedule read: `/api/public/schedule` → HTTP 200, current public result `[]`.
+- [x] Unauthenticated `/api/admin/pages` → HTTP 401.
+- [x] Unauthenticated `/api/admin/editor` → HTTP 401.
+- [x] Public Pages route uses canonical `siteId` and SQL `WHERE site_id=?` for list and slug lookup.
+- [x] Public Schedule route obtains canonical `siteId` and passes it into the public schedule reader.
+- [x] Public route secret/token scan: no matches for `token`, `access_token`, `refresh_token`, `client_secret`, `authorization`, `oauth`.
+- [x] `wrangler deploy --dry-run`: PASS; 76 assets read, DB/ASSETS bindings resolved, no deployment performed.
+
+**E5.4 még nem zárható teljes PASS-ként:** a jelenlegi DoD szerinti live admin/editor Save/Publish/Unpublish/Rollback regresszió explicit újraellenőrzése és a teljes E5.5 felhasználói PASS még hátravan. Ezek nélkül E5 nem kerül CLOSED állapotba.
 
 ## 00/A.3 — SZIGORÚ SORREND E5 UTÁN
 
