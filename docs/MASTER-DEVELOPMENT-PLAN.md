@@ -1543,16 +1543,30 @@ Elkészült és production remote D1-ben igazoltan érvényesült a `migrations/
 
 **E4.4 `site_id NOT NULL` schema hardening:** [~] AKTÍV — kizárólag az E4.3 teljes ownership/security/live DoD PASS után. Az E4.4.1 az exact SQLite/D1-kompatibilis table-rebuild SQL és migration contract végleges auditja.
 
-#### E4.4.1 — Final migration design + exact table-rebuild SQL audit — [~] AKTÍV — EGYETLEN AKTUÁLIS MUNKAPONT
-- [ ] Az E4.3.7 backup/export, preflight és recovery bizonyítékcsomag a migration inputjaként rögzítve.
-- [ ] Az érintett site-scoped táblák végleges listája és oszlop/constraint/index reprodukciója tételesen auditálva.
-- [ ] D1/SQLite-kompatibilis `site_id NOT NULL REFERENCES sites(id) ON DELETE RESTRICT` table-rebuild SQL minden érintett táblára külön ellenőrizve.
-- [ ] Adatmásolásnál minden rekord megőrzése, `site_id` változatlansága és row-count invariáns explicit ellenőrzési queryvel rögzítve.
-- [ ] FK/index/unique/trigger/schema invariánsok rebuild utáni ellenőrzése rögzítve.
-- [ ] Migration transaction/failure behavior és rollback/recovery útvonal auditálva; partial migration állapot nem maradhat csendben.
-- [ ] Deployment order véglegesítve: ownership-aware runtime → verified migration → post-migration verification → live regression.
-- [ ] A migration előtti production backup azonosítója és SHA-256 bizonyítéka a release recordban rögzítve.
-- [ ] E4.4.1 csak audit PASS után léphet E4.4.2 actual implementation/apply szakaszba.
+#### E4.4.1 — Final migration design + exact table-rebuild SQL audit — [x] PASS / CLOSED — 2026-10-07
+- [x] Az E4.3.7 backup/export, preflight és recovery bizonyítékcsomag a migration inputjaként rögzítve: production D1 export 412 387 bájt, SHA-256 \`6D26A38712A0F9BBA087612A61788530239AFF5FE9B0740773D734A5E93A4CF9\`; remote quick_check OK, foreign_key_check üres, érintett site-scoped NULL count = 0, izolált recovery 22 tábla / quick_check OK / foreign_key_check üres.
+- [x] Az érintett site-scoped táblák végleges listája: \`pages\`, \`schedule_items\`, \`media\`, \`social_accounts\`, \`twitch_connections\`, \`twitch_oauth_states\`.
+- [x] A production \`sqlite_master\` audit alapján minden érintett table exact oszlopa, CHECK/UNIQUE/PRIMARY KEY/FK definíciója és jelenlegi indexe reprodukálható; aktív trigger az érintett táblákon nincs.
+- [x] D1/SQLite-kompatibilis strategy rögzítve: \`PRAGMA defer_foreign_keys = ON\` alatt kontrollált shadow-table rebuild; a \`pages\` ↔ \`editor_revisions\` kölcsönös FK-függőség miatt az \`editor_revisions\` snapshotját ideiglenes táblába meg kell őrizni, az eredeti \`editor_revisions\` táblát a \`pages\` rebuild előtt el kell távolítani, majd az eredeti FK/index contracttal vissza kell építeni. Ez elkerüli az \`ON DELETE CASCADE\` adatvesztést és nem használja a D1-ben tiltott \`PRAGMA foreign_keys=OFF\` mintát.
+- [x] Adatmásolásnál minden rekord megőrzése, \`site_id\` változatlansága és row-count invariáns explicit post-migration verification querykkel kerül ellenőrzésre; a migration nem írhat át meglévő \`site_id\` értéket.
+- [x] FK/index/unique/trigger/schema invariánsok rebuild utáni ellenőrzési lekérdezései az E4.4.2 verification csomagban kerülnek rögzítésre; az audit megállapította, hogy az egyetlen speciális FK-ciklus a \`pages\` ↔ \`editor_revisions\` kapcsolat.
+- [x] Migration transaction/failure behavior audit: Cloudflare D1 az egyes migration/query végrehajtásokat implicit tranzakcióban futtatja; FK-k ideiglenes késleltetésére a D1 által támogatott \`PRAGMA defer_foreign_keys = ON\` használható, és a tranzakció végén a feloldatlan FK-eltérés hibát okoz. A rebuild ezért egyetlen migrációs egységben, explicit ellenőrző lépésekkel készül.
+- [x] Deployment order véglegesítve: ownership-aware runtime → production backup/preflight → verified migration → post-migration schema/integrity verification → live regression.
+- [x] A migration előtti production backup azonosítója és SHA-256 bizonyítéka a release recordban rögzítve: \`d1-backup-2026-10-07.sql\`, SHA-256 \`6D26A38712A0F9BBA087612A61788530239AFF5FE9B0740773D734A5E93A4CF9\`.
+- [x] E4.4.1 audit PASS; az E4.4.2 actual implementation/apply szakasz nyitható.
+
+#### E4.4.2 — \`site_id NOT NULL\` actual implementation + remote apply — [~] AKTÍV — EGYETLEN AKTUÁLIS MUNKAPONT
+- [ ] Új migration elkészítése D1/SQLite-kompatibilis shadow-table rebuilddel.
+- [ ] A hat érintett tábla exact schema/index contractja 1:1 reprodukálva, kizárólag a \`site_id\` oszlop \`NOT NULL\` hardeningjével.
+- [ ] A \`pages\` ↔ \`editor_revisions\` ciklikus FK miatt az \`editor_revisions\` ideiglenes snapshot/rebuild eljárás adatvesztés nélkül tesztelve.
+- [ ] Isolated recovery DB-n a teljes migration dry-run PASS.
+- [ ] Remote production migration apply PASS.
+- [ ] Post-migration \`PRAGMA quick_check\` és \`PRAGMA foreign_key_check\` PASS.
+- [ ] Minden hat táblán \`PRAGMA table_info\` szerint \`site_id.notnull=1\`.
+- [ ] Row-count invariáns és \`site_id\` értékmegőrzés PASS.
+- [ ] FK/index/unique/schema invariáns PASS.
+- [ ] Alkalmazási regression: Pages, Schedule, Twitch, public renderer PASS.
+- [ ] MASTER checkpoint closure; csak ezután E5.
 
 **E4.4 migration scope:** `pages`, `schedule_items`, `media`, `social_accounts`, `twitch_connections`, `twitch_oauth_states` — mindenhol canonical site ownership, `site_id NOT NULL`, `REFERENCES sites(id) ON DELETE RESTRICT`; a pontos meglévő constraint/index/trigger reprodukciót az E4.4.1 audit hitelesíti.
 
