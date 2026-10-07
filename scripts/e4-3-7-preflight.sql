@@ -1,7 +1,5 @@
 PRAGMA foreign_keys = ON;
 
-SELECT sqlite_version() AS sqlite_version;
-
 PRAGMA quick_check;
 PRAGMA foreign_key_check;
 
