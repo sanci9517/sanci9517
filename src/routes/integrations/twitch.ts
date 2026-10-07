@@ -126,7 +126,7 @@ export async function twitchValidationRoute(request: Request, env: Env): Promise
     if (!(await assertTwitchConnectionOwnership(env, siteId, auth.id, connection.id))) return error("TWITCH_CONNECTION_NOT_FOUND", 404);
     await getValidTwitchAccessToken(env, siteId, auth.id, connection.id, { forceValidation: true });
     const refreshedOwned = await getOwnedTwitchConnection(env, siteId, auth.id);
-    const refreshed = refreshedOwned ? await getTwitchConnection(env, auth.id) : null;
+    const refreshed = refreshedOwned ? await getTwitchConnection(env, auth.id, siteId) : null;
     if (refreshed && refreshed.id !== refreshedOwned?.id) return error("TWITCH_CONNECTION_NOT_FOUND", 404);
     if (!refreshed) return error("TWITCH_CONNECTION_NOT_FOUND", 404);
 
