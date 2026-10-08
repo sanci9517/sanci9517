@@ -750,42 +750,671 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 - [x] Minden új adatút site-scoped és a lezárt E4 ownership contractot használja.
 - [x] Minden új mutation meglévő command/history/validation/persistence/audit mintára épül.
 
-### F0 — Canonical Schedule + Inspector contract/repository/data-flow audit — AUDIT PASS / USER PASS PENDING
-**Státusz:** `[~] ACTIVE — audit completed; implementation not yet started.`
+### F0 — CANONICAL EDITOR UI + SCHEDULE + INSPECTOR — TELJES BŐVÍTETT AUDIT, CONTRACT ÉS JAVÍTÁSI KAPU
+**F0 státusz:** `[~] ACTIVE — teljesített audit + remediation specification; USER PASS PENDING`
 
-**F0 audit evidence — 2026-10-08:**
-- [x] Existing `src/routes/admin/schedule.ts` already provides canonical GET/POST/PUT/DELETE CRUD; no second CRUD API will be created.
-- [x] Admin Schedule is site-scoped through `getCanonicalSiteContext()`; mutation/read queries use `site_id=?`.
-- [x] Admin Schedule requires authentication and minimum `editor` role.
-- [x] POST/PUT/DELETE use the existing D1 batch + `auditStatement()` boundary.
-- [x] Existing manual Schedule validation covers required title/platform/start, status enum, URL/notes limits, timestamps and start/end ordering.
-- [x] `src/core/schedule-read.ts` already provides the canonical public read DTO with site scope and validated mode/limit/status/platform/order.
-- [x] Public Schedule DTO excludes Twitch source/sync fields.
-- [x] `src/core/domain/contracts.ts` already defines the canonical `ScheduleEvent`, including gameProfile/source/sync metadata.
-- [x] Existing Twitch Schedule types/mapper/sync/adapter form the source boundary; this will not be rebuilt.
-- [x] Editor v2 already has the canonical `schedule` node and versioned `schedule-schema.js`; domain records remain outside the Page Model.
-- [x] Schedule node config already covers mode, limit, statuses, platforms, order, visibility fields and empty text.
-- [x] Existing Editor command engine centralizes mutation validation, history and transactions/batches.
-- [x] **Concrete Inspector gap found:** `public/editor-v2/core/property-registry.js` exists as the intended extensibility boundary, but current `public/editor-v2/app.js` Inspector rendering does not import/use it and still renders fields manually. We will wire the existing registry; no second registry will be created.
-- [x] Legacy Schedule/Admin/Editor remains excluded from the active architecture.
-- [x] Existing Schedule source/mapper/public DTO/domain tests and the E5 regression evidence are reusable.
-- [x] Duplicate audit completed: CRUD, public read, Schedule domain, Schedule node schema and command/history foundations already exist and must not be reimplemented.
+**F0 célja:**  
+A jelenlegi `public/editor-v2/` canonical Editor v2 teljes használhatósági alapjának helyreállítása és bizonyítása úgy, hogy az Editor **desktopon, tableten és mobilon ugyanazt a canonical Page Modelt szerkessze**, a bal oldali navigáció valóban használható legyen, az Inspector valódi szerkesztési felületként működjön, az Adásrend külön domain-szerkesztési felületként elérhető legyen, és egyetlen szerkesztési/mutation/persistence útvonal maradjon.
 
-**F0 decisions:**
-- **KEEP:** existing canonical Schedule D1 domain, admin CRUD API, public reader/DTO, Twitch source layer, Page Model Schedule node, command/history/transaction core.
-- **IMPROVE:** Inspector → existing Property Registry integration; Schedule-specific Inspector property contract; domain ↔ Page Model binding/action boundary; targeted regression coverage.
-- **DO NOT REPLACE:** Editor v2 core, Schedule domain, existing CRUD API, existing public reader.
-- **DO NOT REACTIVATE:** legacy Schedule/Admin/Editor.
-- **NEW DATA MODEL:** none required by this audit.
+Ez az F0 **nem egy új Visual Editor és nem egy második Schedule Builder**. Az F0 az eddig meglévő canonical alapokat auditálja, összeköti és csak a bizonyított UI/contract hiányosságokat javítja.
 
-**F0 implementation plan (not active yet):**
-1. **F1:** existing Property Registry canonical Inspector integration + Schedule property contract.
-2. **F2:** Schedule domain ↔ Page Model binding/action boundary using existing domain/API layers.
-3. **F3:** Schedule CRUD/Inspector integration regression + permission/site-scope/concurrency/audit tests.
-4. **F4:** live browser acceptance + F closure.
-**Strict rule:** only one F point may be active at a time; F1 opens only after F0 user PASS.
+**F0 scope egyetlen ponton belül:**
+- Editor shell és panel lifecycle.
+- Desktop/tablet/mobile responsive shell.
+- Bal oldali navigáció / Pages / Elements / Layers.
+- Jobb oldali Inspector.
+- Selection → Inspector binding.
+- Property Registry → Inspector binding.
+- Schedule node → Schedule Inspector contract.
+- Schedule domain → Page Model boundary.
+- Canonical command/history/mutation útvonal.
+- Dirty/save/reload/recovery állapot.
+- Publish/republish kapcsolat.
+- Permission/site-scope/concurrency/audit.
+- Accessibility/keyboard/touch.
+- Diagnostics és regresszió.
+- Live browser acceptance.
 
-**F0 result:** audit and architecture decisions are **PASS**, but F0 is **not CLOSED** because explicit user acceptance is still required. No feature code was modified during this audit.
+**F0 kizárólagos szabály:** a fenti technikai alrészek nem külön aktív fejlesztési pontok. Mind ugyanennek az F0 kapunak a DoD-ján belüli al-lépések. Az F1 csak akkor nyitható, ha az egész F0 PASS és a felhasználói acceptance is PASS.
+
+---
+
+## F0.0 — KIINDULÁSI BASELINE ÉS DUPLIKÁCIÓS ZÁR
+
+### Canonical rendszer
+- [x] Az aktív Visual Editor kizárólag `public/editor-v2/`.
+- [x] A régi `public/editor/`, legacy admin és system-page editor nem aktiválható újra.
+- [x] A Schedule domain továbbra is külön canonical domain adat.
+- [x] A Schedule vizuális konfigurációja a canonical Page Model `schedule` node-ja.
+- [x] D1 a strukturált domain/persistence source of truth.
+- [x] A frontend nem ír közvetlenül D1/R2/KV-be.
+- [x] Existing command/history/transaction infrastruktúra marad az egyetlen mutation boundary.
+- [x] Existing revision/save/publish/rollback infrastruktúra marad az egyetlen persistence lifecycle.
+- [x] Existing diagnostics rendszer marad az editor hibák és verification jelzések canonical helye.
+
+### Tiltott duplikációk
+- [x] Nem készül második Visual Editor.
+- [x] Nem készül második Schedule CRUD API.
+- [x] Nem készül második Schedule domain modell.
+- [x] Nem készül második Property Registry.
+- [x] Nem készül UI-only Schedule state, amely megkerüli a Page Modelt.
+- [x] Nem készül külön mobil Editor-kódút.
+- [x] Nem kerül vissza legacy renderer/admin/editor.
+- [x] Nem készül külön save/publish API.
+- [x] Nem készül DOM-as-source-of-truth megoldás.
+
+---
+
+## F0.1 — TELJES EDITOR SHELL / PANEL CONTRACT AUDIT
+
+### Jelenlegi állapot — bizonyított
+- [x] `index.html` tartalmazza a topbar, workspace, leftDock, canvas-area, rightDock és statusbar canonical shellt.
+- [x] `ui/shell.js` kezeli a panel open/close state-et.
+- [x] `ui/shell.js` localStorage-ban tárolja a shell state-et.
+- [x] Left panel tabok: `pages`, `elements`, `layers`.
+- [x] Right panel canonical célja az Inspector.
+- [x] Desktop resizer logika létezik.
+- [x] Mobile drawer/backdrop logika létezik.
+- [x] `window.sanciEditor` shell API létezik.
+
+### Bizonyított problémák / kockázatok
+- [x] A default shell state `leftOpen:false`, ezért mobilon és friss sessionben a bal oldali panel alapból zárt.
+- [x] A mobile shell nem tart fenn állandó bal oldali railt; a teljes bal navigáció a drawer megnyitásától függ.
+- [x] A shell állapot és a CSS két külön rétegben kezeli a panel viselkedését, ezért a panel láthatóságot end-to-end kell validálni.
+- [x] A localStorage-ból visszatöltött állapot hibás/stale értéke képes elrejteni a panelt még akkor is, ha a CSS önmagában helyes.
+- [x] A mobile backdrop pozicionálása több kombinációt kezel, ezért left/right simultaneous state külön acceptance eset.
+- [x] A panel open/close és tab-switch lifecycle külön eseményekre épül; az eseménysorrendet validálni kell.
+
+### F0 shell contract
+A shellnek minden viewporton garantálnia kell:
+1. topbar elérhető;
+2. Pages megnyitható;
+3. Elements megnyitható;
+4. Layers megnyitható;
+5. Inspector megnyitható;
+6. panel bezárható;
+7. Escape bezárás működik;
+8. backdrop csak mobil drawer esetén aktív;
+9. panel state nem tudja elrejteni a teljes szerkesztő canvas-t;
+10. stale localStorage nem okozhat végleges elérhetetlenséget;
+11. reload után a shell determinisztikusan visszaáll;
+12. touch és mouse ugyanazt a panel contractot használja.
+
+---
+
+## F0.2 — BAL OLDALI NAVIGÁCIÓ / PAGES / ELEMENTS / LAYERS CONTRACT
+
+### Pages
+- [x] Page lista canonical `/api/admin/pages` adatra épül.
+- [x] Page kiválasztás `loadPage()` útvonalon történik.
+- [x] Page create/update/delete meglévő canonical admin API-t használ.
+- [x] Page order meglévő API-t használ.
+- [x] Revision panel ugyanazon Editor lifecycle-höz kötött.
+
+### Elements
+- [x] Element palette meglévő `NODE_TYPES` és Page Model contractból épül.
+- [x] Element hozzáadás `element.add` commandon keresztül történik.
+- [x] A paletta jelenleg a Schedule-t a Sanci9517 elemcsoport részeként tartalmazza.
+
+### Layers
+- [x] Layer tree a Page Modelből épül.
+- [x] Selection canonical state-ből történik.
+- [x] Desktop drag/drop reparent/reorder meglévő commandokat használ.
+- [x] Mobile long-press / touch drag logika létezik.
+
+### F0 szükséges eredmény
+A bal oldali rendszernek egyértelmű navigációs modellé kell válnia:
+
+`Pages → oldalválasztás`
+`Elements → általános node hozzáadás`
+`Layers → hierarchia/selection`
+`Schedule → Schedule domain/config editor elérése`
+
+A Schedule **nem lehet egyszerűen csak egy általános element-row**, ha a felhasználó domain-specifikus szerkesztést vár. A domain-specifikus UI-t a canonical Editor shellen belül kell megoldani, nem új editorban.
+
+---
+
+## F0.3 — SCHEDULE UI / DOMAIN-SPECIFIC EDITOR CONTRACT
+
+### Jelenlegi állapot
+- [x] Schedule node létezik.
+- [x] `schedule-schema.js` létezik és versioned.
+- [x] `renderSchedulePreview()` létezik.
+- [x] Schedule domain D1 CRUD már létezik.
+- [x] Public Schedule reader már létezik.
+- [x] Twitch source/mapper/sync boundary már létezik.
+- [x] A Page Model és a Schedule domain külön rétegben marad.
+
+### Bizonyított hiány
+- [x] Nincs jelenleg valódi külön Schedule Editor/Inspector tab a shellben.
+- [x] A Schedule jelenleg az Elements palettán belül jelenik meg.
+- [x] A jelenlegi `renderInspector()` nem tartalmaz Schedule-specifikus Inspector contractot.
+- [x] Emiatt a felhasználó számára az Adásrend domain adatai nem kezelhetők teljes értékű, célzott Inspector UI-ból.
+
+### F0 Schedule contract
+A canonical Editoren belül a Schedule szerkesztése legalább az alábbi rétegeket kell kezelje:
+
+**Schedule domain rekordok:**
+- cím;
+- platform;
+- start/end;
+- status;
+- notes;
+- URL;
+- game profile / domain metadata;
+- source/sync metadata ahol jogosított;
+- site scope;
+- optimistic concurrency.
+
+**Schedule node presentation/config:**
+- mode: `upcoming | all | next`;
+- limit;
+- statuses;
+- platforms;
+- order;
+- showTitle;
+- showPlatform;
+- showTime;
+- showEndTime;
+- showStatus;
+- showNotes;
+- showLink;
+- emptyText;
+- schema version.
+
+**Szigorú boundary:**
+- Domain rekordot nem írunk közvetlenül Page Model propsba.
+- Page Model schedule node nem tartalmazhat Twitch token/source secretet.
+- Preview a canonical Schedule read/config contractot használja.
+- CRUD mutation a canonical Schedule API/domain command boundaryn keresztül történik.
+- Presentation mutation a Page Model command boundaryn keresztül történik.
+- A kettő között explicit action/binding contract szükséges.
+
+---
+
+## F0.4 — INSPECTOR TELJES REBUILD CONTRACT — PROPERTY REGISTRY AZ EGYETLEN FORRÁS
+
+### Jelenlegi állapot
+- [x] `public/editor-v2/core/property-registry.js` már létezik.
+- [x] Property groupok canonical listája létezik.
+- [x] Property metadata létezik.
+- [x] Command típus propertynként definiálható.
+- [x] Responsive property támogatás definiálható.
+- [x] Schedule-specifikus property metadata azonban még nincs teljesen bekötve.
+- [x] `app.js` jelenleg **nem importálja és nem használja** a Property Registryt.
+- [x] `renderInspector()` jelenleg kézzel rendereli a mezőket.
+
+### F0 Inspector célállapot
+Az Inspector pipeline:
+
+`selected node`
+→ `node capability`
+→ `property registry`
+→ `property contract`
+→ `value resolver`
+→ `UI control`
+→ `canonical command`
+→ `state/history`
+→ `render`
+→ `dirty`
+→ `save`
+→ `revision/audit`
+
+### Kötelező property csoportok
+- Tartalom;
+- Elrendezés;
+- Méret;
+- Térközök;
+- Flex;
+- Grid;
+- Pozíció;
+- Tipográfia;
+- Háttér;
+- Szegély;
+- Lekerekítés;
+- Árnyék;
+- Átlátszóság;
+- Transzformáció;
+- Szűrők;
+- Animáció;
+- Interakció;
+- Responsive;
+- Akadálymentesítés;
+- SEO;
+- Adat;
+- Haladó.
+
+### Inspector tilalmak
+- [ ] hardcoded field branch nem maradhat az új propertyk számára;
+- [ ] property update nem módosíthat DOM-ot közvetlenül;
+- [ ] property update nem írhat API-t közvetlenül;
+- [ ] property update nem kerülheti meg a command/history rendszert;
+- [ ] property update nem használhat második state-et.
+
+### Inspector acceptance
+Egy kiválasztott node minden támogatott propertyje:
+1. betölthető;
+2. módosítható;
+3. validálható;
+4. commandon keresztül alkalmazható;
+5. historyba kerül;
+6. dirty state-et okoz;
+7. reload után megmarad Save után;
+8. publish után public outputban helyesen jelenik meg, ha public property.
+
+---
+
+## F0.5 — SELECTION → INSPECTOR → MUTATION CONTRACT
+
+### Kötelező invariáns
+`Canvas selection`, `Layers selection` és `Inspector selection` mindig ugyanarra a canonical `state.selection` állapotra mutat.
+
+### Ellenőrzendő
+- [x] Canvas click selection létezik.
+- [x] Layers click selection létezik.
+- [x] Multi-selection logika létezik.
+- [x] Mobile touch selection logika létezik.
+- [x] Inspector az első selected node-ra épül.
+- [ ] multi-selection Inspector policy explicit;
+- [ ] locked node Inspector policy explicit;
+- [ ] root node edit/delete policy explicit;
+- [ ] unsupported property fallback explicit;
+- [ ] selection + panel open lifecycle explicit.
+
+### Mutation contract
+Minden szerkesztés:
+`UI → canonical command → state → render → dirty → persistence`
+
+Nem engedett:
+`UI → DOM hack`
+`UI → fetch → D1`
+`UI → second state`
+`UI → legacy API`
+
+---
+
+## F0.6 — EDITOR DATA EDITABILITY / SAVE / RELOAD / RECOVERY
+
+A felhasználói „nem tudom módosítani az editor adatot” problémát F0-ban nem egyetlen mező hibájaként kezeljük, hanem teljes lifecycle-ként.
+
+### Kötelező tesztlánc
+1. oldal betölt;
+2. node kiválaszt;
+3. Inspector megnyílik;
+4. érték módosítható;
+5. UI azonnal visszatükrözi;
+6. state dirty;
+7. Save;
+8. revision növekszik;
+9. reload;
+10. ugyanaz az érték visszatölt;
+11. Undo;
+12. Redo;
+13. Publish;
+14. public/preview output ellenőrzés.
+
+### Recovery
+- LocalStorage/browser recovery csak külön recovery stateként kezelhető.
+- Successful Save után recovery state törölhető/lezárható.
+- Browser reload nem veszíthet el dirty state-et csendben.
+- Save failure esetén a working state nem tűnhet el.
+- Concurrency conflict esetén nem lehet silent overwrite.
+
+---
+
+## F0.7 — RESPONSIVE / MOBILE EDITOR CONTRACT
+
+### Desktop
+- [x] 3-részes shell: left / canvas / right.
+- [x] resizer.
+- [x] inspector.
+- [x] page/element/layer navigation.
+
+### Mobile
+- [x] dedicated mobile CSS exists.
+- [x] drawer concept exists.
+- [x] backdrop exists.
+- [x] topbar menu exists.
+- [x] mobile selection/multiselect exists.
+- [x] touch hierarchy drag exists.
+
+### F0 mobile acceptance
+- [ ] Menu gomb → bal navigáció ténylegesen megjelenik.
+- [ ] Pages/Elements/Layers között váltás működik.
+- [ ] Drawer bezárható.
+- [ ] Canvas a drawer mögött megmarad.
+- [ ] Inspector külön megnyitható.
+- [ ] Inspector bezárható.
+- [ ] left + right panel egyidejű állapot kontrollált.
+- [ ] localStorage reset után is működik.
+- [ ] portrait 320–390–430 px teszt.
+- [ ] tablet 768–850 px teszt.
+- [ ] touch selection.
+- [ ] touch multi-select.
+- [ ] touch layer movement.
+- [ ] keyboard hiányát nem tekintjük hibának mobilon, de accessibility alternative biztosított.
+
+**Fontos:** a mobile CSS nem lehet külön funkcionális Editor. Ugyanazt a canonical state/command/schema/Inspector használja.
+
+---
+
+## F0.8 — ACCESSIBILITY / KEYBOARD / TOUCH
+
+Kötelező:
+- [ ] minden panel openernek accessible name;
+- [ ] focus-visible;
+- [ ] modal/drawer focus lifecycle;
+- [ ] Escape close;
+- [ ] tab order;
+- [ ] disabled állapotok;
+- [ ] form label;
+- [ ] error message;
+- [ ] touch target minimum;
+- [ ] reduced motion consideration;
+- [ ] screen-reader meaningful labels;
+- [ ] no color-only state;
+- [ ] locked/selected/dirty/published state textually is felismerhető.
+
+---
+
+## F0.9 — SECURITY / OWNERSHIP / CONCURRENCY / DATA INTEGRITY
+
+### Schedule
+- [x] admin authentication.
+- [x] editor role requirement.
+- [x] canonical site context.
+- [x] site-scoped SQL.
+- [x] existing audit boundary.
+- [x] existing validation.
+
+### Editor
+- [x] admin Editor API auth.
+- [x] page/site ownership contract.
+- [x] expectedVersion persistence guard.
+- [x] published snapshot boundary.
+- [x] preview auth boundary.
+
+### F0 additional checks
+- [ ] Inspectorból semmilyen siteId nem fogadható el authorityként a kliensből.
+- [ ] Schedule action mindig canonical site contextből dolgozik.
+- [ ] Cross-site page/schedule access regresszió teszt.
+- [ ] stale version → deterministic conflict.
+- [ ] simultaneous save → no silent overwrite.
+- [ ] failed mutation → no partial UI state falsely marked saved.
+- [ ] audit event → state mutation contract megmarad.
+
+---
+
+## F0.10 — PERFORMANCE / D1 / REQUEST BOUNDARY
+
+Az F0-ban nem építünk túlméretezett adatútvonalat.
+
+### Kötelező elvek
+- [ ] Editor initial load csak szükséges page/revision adatot tölt.
+- [ ] Inspector nem kér külön API-t minden mezőhöz.
+- [ ] Schedule preview nem végez szükségtelen CRUD requesteket.
+- [ ] Schedule list/read megfelelő indexelt site-scoped queryt használ.
+- [ ] Mutation batching ahol már canonical támogatott.
+- [ ] Debounce/autosave csak canonical persistence contracton belül.
+- [ ] Nem készül N+1 Inspector API.
+- [ ] Nem kerül D1-be UI-only state.
+- [ ] D1 write csak szükséges mutation esetén.
+
+A D1 jelenlegi platformkorlátai miatt a felesleges row read/write különösen kerülendő; Cloudflare jelenlegi dokumentációja szerint a D1 free tier napi row read/write limiteket alkalmaz, és az egyedi adatbázis throughputját a query duration/concurrency is meghatározza. citeturn0search2turn0search8
+
+---
+
+## F0.11 — PROPERTY REGISTRY / SCHEDULE PROPERTY CONTRACT
+
+Az F0 végére létrehozandó canonical contract logikája:
+
+### General properties
+- `content.text`
+- `content.href`
+- `size.width`
+- `size.height`
+- `spacing.margin`
+- `spacing.padding`
+- `layout.display`
+- `layout.overflow`
+- `position.position`
+- `position.x`
+- `position.y`
+- `position.zIndex`
+- typography/background/border/radius/shadow/opacity stb.
+
+### Schedule properties
+- `schedule.mode`
+- `schedule.limit`
+- `schedule.statuses`
+- `schedule.platforms`
+- `schedule.order`
+- `schedule.showTitle`
+- `schedule.showPlatform`
+- `schedule.showTime`
+- `schedule.showEndTime`
+- `schedule.showStatus`
+- `schedule.showNotes`
+- `schedule.showLink`
+- `schedule.emptyText`
+
+### Schedule domain actions
+Külön action contract:
+- `schedule.record.create`
+- `schedule.record.update`
+- `schedule.record.delete`
+- `schedule.record.refresh`
+- `schedule.node.config.update`
+
+Ezek közül a mutation csak a meglévő canonical API/domain/command rétegekhez kötődhet. Nem szabad olyan új actiont bevezetni, amely ugyanazt a D1 rekordot más úton írja.
+
+---
+
+## F0.12 — DIAGNOSTICS / VERIFICATION / ERROR UX
+
+Minden kritikus útvonalon legyen bizonyítható:
+- selection;
+- Inspector open;
+- property resolve;
+- command;
+- state mutation;
+- render;
+- dirty;
+- save;
+- revision;
+- schedule read;
+- schedule mutation;
+- publish.
+
+Hibakód minták:
+- `SANCI-UI-*`
+- `SANCI-INSPECTOR-*`
+- `SANCI-SCHEDULE-*`
+- `SANCI-MUTATION-*`
+- `SANCI-PERSISTENCE-*`
+- `SANCI-VERIFY-*`
+
+A diagnosztika nem lehet a felhasználó számára szükséges működési feltétel; hiba esetén a UI érthető magyar hibaállapotot ad.
+
+---
+
+## F0.13 — AUTOMATIZÁLT TESZT DOCK
+
+F0 lezárás előtt kötelező tesztcsomag:
+
+### Unit / core
+- [ ] Property Registry lookup/filter/register.
+- [ ] Schedule schema normalize/validate.
+- [ ] Schedule property value resolver.
+- [ ] Responsive value resolver.
+- [ ] Selection/Inspector binding.
+- [ ] Command → state → history.
+- [ ] Dirty/save state.
+
+### Integration
+- [ ] Schedule CRUD.
+- [ ] Schedule site scope.
+- [ ] Schedule permission.
+- [ ] Schedule audit.
+- [ ] Schedule concurrency.
+- [ ] Page Model schedule node.
+- [ ] Inspector mutation.
+
+### Browser / E2E
+- [ ] Desktop shell.
+- [ ] Mobile shell.
+- [ ] Pages tab.
+- [ ] Elements tab.
+- [ ] Layers tab.
+- [ ] Inspector open.
+- [ ] Node select.
+- [ ] property edit.
+- [ ] Schedule select.
+- [ ] Schedule config edit.
+- [ ] Save/reload.
+- [ ] Undo/redo.
+- [ ] Publish/preview.
+
+---
+
+## F0.14 — LIVE ACCEPTANCE MATRIX
+
+**Desktop**
+1. login;
+2. Editor open;
+3. Pages visible;
+4. page select;
+5. Elements visible;
+6. node add;
+7. Layers visible;
+8. node select;
+9. Inspector open;
+10. text/property edit;
+11. Schedule node select;
+12. Schedule config edit;
+13. Save;
+14. reload;
+15. Undo/Redo;
+16. Publish;
+17. Preview/public verification.
+
+**Mobile**
+1. Editor open;
+2. menu;
+3. Pages;
+4. Elements;
+5. Layers;
+6. Schedule entry;
+7. node select;
+8. Inspector;
+9. property edit;
+10. save;
+11. reload;
+12. preview;
+13. close panels;
+14. reopen panels.
+
+**Failure rule:** egyetlen alapvető shell/selection/Inspector/Schedule/save regresszió esetén F0 nem zárható.
+
+---
+
+## F0.15 — IMPLEMENTÁCIÓS SORREND — EGY AKTÍV PONTON BELÜLI FIX SORREND
+
+1. **Shell baseline és panel state javítás.**
+2. **Bal navigáció determinisztikus működése desktop/mobile.**
+3. **Selection contract stabilizálása.**
+4. **Inspector shell + tab lifecycle stabilizálása.**
+5. **Property Registry bekötése.**
+6. **General property renderer/mutation canonicalizálása.**
+7. **Schedule Inspector contract bekötése.**
+8. **Schedule domain action/binding boundary bekötése.**
+9. **Save/reload/recovery/concurrency ellenőrzés.**
+10. **Undo/Redo regresszió.**
+11. **Automated test gate.**
+12. **Desktop live acceptance.**
+13. **Mobile live acceptance.**
+14. **Public preview/publish regresszió.**
+15. **Teljes F0 diff + reread + architecture audit.**
+16. **User PASS.**
+17. **MASTER closure.**
+
+**Tiltás:** a 2–15 pontból semmi nem nyitható önálló aktív munkasávként. Ez mind F0 része.
+
+---
+
+## F0.16 — F0 DEFINITION OF DONE
+
+F0 csak akkor `CLOSED / PASS`, ha **mindegyik** teljesül:
+
+- [ ] Shell desktop/tablet/mobile deterministic.
+- [ ] Bal navigáció működik.
+- [ ] Pages működik.
+- [ ] Elements működik.
+- [ ] Layers működik.
+- [ ] Schedule elérhető domain-specifikus Editor/Inspector felületként.
+- [ ] Selection mindenhol ugyanazt a canonical state-et használja.
+- [ ] Inspector Property Registryből épül.
+- [ ] General property edit működik.
+- [ ] Schedule config edit működik.
+- [ ] Schedule domain CRUD a meglévő canonical API/domain boundaryt használja.
+- [ ] Nem készült második editor/API/domain/state.
+- [ ] Undo/Redo működik.
+- [ ] Dirty/save/reload működik.
+- [ ] Revision/version contract működik.
+- [ ] Concurrency conflict nem okoz silent overwrite-et.
+- [ ] Permission/site-scope regresszió PASS.
+- [ ] Audit boundary megmarad.
+- [ ] Diagnostics PASS.
+- [ ] Automated tests PASS.
+- [ ] Desktop browser PASS.
+- [ ] Mobile browser PASS.
+- [ ] Preview/public output PASS.
+- [ ] A módosított fájlak teljesen visszaolvasva.
+- [ ] Diff review PASS.
+- [ ] MASTER frissítve.
+- [ ] **Felhasználói explicit PASS megtörtént.**
+
+### F0 végállapot szabály
+**F0 CLOSED / PASS nélkül F1 nem nyitható meg.**
+
+---
+
+## F0 AUDIT EREDMÉNY — 2026-10-08
+
+**Már bizonyítottan meglévő foundation:**
+- [x] canonical Schedule D1 CRUD;
+- [x] site ownership;
+- [x] public Schedule reader;
+- [x] Schedule domain contract;
+- [x] Twitch source boundary;
+- [x] Schedule Page Model node;
+- [x] versioned Schedule schema;
+- [x] command/history foundation;
+- [x] revision/save/publish/rollback foundation;
+- [x] diagnostics;
+- [x] responsive resolver;
+- [x] mobile touch foundation;
+- [x] Property Registry foundation.
+
+**Bizonyított current gaps:**
+- [x] Property Registry nincs bekötve az Inspectorba.
+- [x] Inspector jelenleg kézzel renderelt és túl szűk property-kört kezel.
+- [x] Schedule jelenleg csak általános Elements palette elemként jelenik meg.
+- [x] Nincs teljes Schedule-specific Inspector contract.
+- [x] A mobile left navigation alapból zárt és a drawer lifecycle különösen érzékeny a persisted state-re.
+- [x] A felhasználói adat-editability panasz teljes lifecycle szinten vizsgálandó, nem csak egyetlen mezőként.
+- [x] F0-ban ezért a korábbi szűk „Schedule + Inspector audit” definíció **bővítve és kiterjesztve** teljes Editor UI + Schedule + Inspector remediation kapuvá.
+
+**F0 döntés:**
+- KEEP: minden bizonyított canonical foundation.
+- REPAIR: shell, navigation, Inspector, Schedule Editor binding, property registry integration, mutation UX.
+- REUSE: schema, state, commands, history, responsive, schedule schema/preview, API, D1, audit, revision.
+- REMOVE FROM ACTIVE PATH: hardcoded Inspector property growth, UI-only Schedule mutation, legacy editor.
+- NEW DATA MODEL: továbbra sem szükséges.
+
+**F0 állapot:** `ACTIVE — implementation/remediation pending, user acceptance pending`.
+
+**F következő pontja:** `F1` csak a teljes F0 CLOSED / PASS után. F1 feladata ezt követően a már bizonyított canonical Property Registry/Inspector szerződés további domain-szintű bővítése, nem az F0-ban elvégzett alapok újraépítése.
 
 
 ## 00/A.2 — E5 HIVATALOS DEFINITION OF DONE
