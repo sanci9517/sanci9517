@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.64.0  
+**Verzió:** MASTER-2.65.0  
 **Dátum:** 2026-10-08  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -717,11 +717,11 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 
 ## 00/A.1 — EGYETLEN AKTÍV PONT
 
-**ACTIVE_POINT_ID:** `E5`  
+**ACTIVE_POINT_ID:** `E6`  
 **ACTIVE_POINT_STATUS:** `ACTIVE`  
-**ACTIVE_POINT_TITLE:** Regression + D1/live verification + user PASS  
-**PREVIOUS_GATE:** `E4.4` — CLOSED / PASS  
-**NEXT_GATE:** `E6` — csak E5 teljes PASS után nyitható  
+**ACTIVE_POINT_TITLE:** MASTER closure / E-stage closure  
+**PREVIOUS_GATE:** `E5` — CLOSED / PASS  
+**NEXT_GATE:** `F` — csak E6 teljes PASS után nyitható  
 **PARALLEL_WORKSTREAMS:** `0`
 
 ### Jelenlegi igazolt állapot
@@ -731,8 +731,8 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 - [x] Production `site_id NOT NULL` schema/integrity/ownership ellenőrzés PASS.
 - [x] Live Worker/public API smoke PASS.
 - [x] E4.4 teljes DoD PASS.
-- [ ] E5 teljes regression/live/user PASS még nincs lezárva.
-- [ ] E6 closure még nincs megnyitva.
+- [x] E5 teljes regression/live/user PASS lezárva.
+- [ ] E6 closure folyamatban.
 
 **Következő végrehajtható pont: kizárólag E5.**
 
@@ -815,6 +815,23 @@ Az E5.4 live verification eddig ellenőrzött részei:
 - [x] E5.4 összes kötelező live/public/security ellenőrzési eleme PASS.
 
 **E5.4 állapot:** **PASS / teljesítve**. E5.4 lezárásához már csak az E5.5 explicit felhasználói acceptance gate szükséges; E5 ettől még nem CLOSED.
+
+**E5.5 — User acceptance — 2026-10-08 — PASS**
+- [x] A felhasználó a szükséges live ellenőrzéseket elvégezte.
+- [x] A felhasználói eredmény: **PASS / MŰKÖDIK**.
+- [x] Nem maradt nyitott E5.4 live regressziós hiba.
+
+**E5.6 — E5 closure — 2026-10-08 — CLOSED / PASS**
+- [x] E5.1 repository/baseline verification PASS.
+- [x] E5.2 automated regression gate PASS: typecheck + 60/60 tesztassertion.
+- [x] E5.3 production D1 integrity gate PASS.
+- [x] E5.4 live application/public verification PASS.
+- [x] E5.5 user acceptance PASS.
+- [x] A kötelező E5 bizonyítékok rögzítve.
+- [x] **E5 hivatalosan CLOSED / PASS.**
+- [x] **Következő kapu: E6.**
+
+**E5 végállapot:** CLOSED / PASS. Az E5 alatt nem történt új feature-fejlesztés; kizárólag a meglévő E4 foundation regression/live/user acceptance kapuja került lezárásra.
 
 ## 00/A.3 — SZIGORÚ SORREND E5 UTÁN
 
