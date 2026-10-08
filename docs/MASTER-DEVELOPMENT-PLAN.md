@@ -1376,3 +1376,247 @@ Nem a végcél.**
 
 A roadmap ezen pontja után egyetlen funkció sem „veszhet el”: ha még nem implementáljuk, a megfelelő későbbi PHASE-ben marad dokumentálva, canonical ownerrel és előfeltételekkel.
 
+
+## 00.9.6.D — MASTER-2.72 — FULL HISTORICAL ROADMAP PRESERVATION + 10-STAGE ENDGAME
+
+**Fontos korrekció:** a 00.9.6.C nem a teljes korábbi roadmap kivonata volt. A MASTER korábbi állapotából ismert **0.x → 1.0 → 1.5 → 2.0 → 3.0 → 4.0 → 5.0 → 6.0 → 7.0 → 8.0 → 9.0 → 10.0** végső fejlődési ívet is meg kell őrizni. A korábbi **19–34** szakaszok archivált backlogja továbbra is érvényes; funkció, domain vagy későbbi capability explicit döntés nélkül nem törölhető.
+
+### 00.9.6.D.1 — Teljes végső fejlődési ív
+
+**0.x — Foundation / Platform Hardening**
+- canonical architecture
+- Page Model
+- D1/R2 boundary
+- auth/RBAC/site ownership
+- revisions/publishing
+- command/history/validation
+- diagnostics/audit
+- migration/legacy isolation
+- test/live gates
+- performance/accessibility/security foundation
+
+**1.0 — Working Professional Sanci9517 Creator Website**
+- teljes public site
+- Creator Center/Admin
+- Visual Editor
+- pages/navigation/layers/inspector
+- responsive
+- content/components
+- Media/Assets
+- Icons
+- Theme foundation
+- Templates
+- Schedule/Game Profiles
+- Twitch
+- live/next stream
+- draft/preview/publish/rollback
+- SEO/accessibility
+- regression/E2E/live acceptance
+
+**1.5 — Multi-Platform Creator**
+- YouTube
+- TikTok
+- Discord/community
+- platform profiles
+- richer live state
+- VOD/clips/highlights
+- cross-platform content
+- platform-aware widgets
+- unified social/link system
+
+**2.0 — Creator Operating System**
+- advanced CMS
+- advanced Asset/Resource Manager
+- Template/Section/Component/Symbol ecosystem
+- Theme Editor
+- Design System
+- Forms/backend actions
+- advanced interactions/motion
+- calendar/reminders/export
+- content workflows
+- creator dashboard
+- media/video workflows
+- richer scheduling
+
+**3.0 — AI Creator Platform**
+- AI Creator Copilot
+- AI website/section/component generation
+- AI content/copy
+- AI SEO/AEO
+- AI metadata/alt text
+- AI media assistance
+- AI translation
+- AI schedule/content assistance
+- AI analytics explanation
+- AI automation generation
+- AI support assistant
+- AI personalization assistance
+
+**4.0 — Team / SaaS / Billing**
+- multi-creator
+- multi-site
+- teams
+- roles/permissions
+- collaboration
+- approvals
+- concurrency
+- staging/production
+- custom domains
+- subscriptions
+- billing
+- entitlements
+- usage limits
+- plans
+- creator onboarding
+
+**5.0 — Creator Business / Commerce**
+- Shop
+- Merch
+- products
+- variants
+- collections
+- inventory
+- digital products
+- bundles
+- coupons
+- cart
+- checkout integration
+- orders
+- customer/order management
+- payments
+- donations
+- supporter programs
+- memberships
+- CRM/fan relationships
+- marketing automation
+- conversion optimization
+
+**6.0 — Creator Ecosystem / Marketplace**
+- template marketplace
+- component marketplace
+- widget marketplace
+- theme marketplace
+- asset packs
+- creator libraries
+- public sharing
+- ratings/reviews
+- moderation
+- licensing/reuse
+- creator ecosystem
+- partner/integration ecosystem
+
+**7.0 — Advanced Automation + AI**
+- event/trigger/condition/action engine
+- webhooks
+- workflows
+- scheduled automation
+- cross-platform automation
+- commerce automation
+- content automation
+- stream automation
+- notification automation
+- AI-generated workflows
+- agent-assisted operations
+
+**8.0 — Multimodal Creator Intelligence**
+- unified text/image/video/audio understanding
+- content intelligence
+- media classification
+- clip/highlight assistance
+- semantic search
+- knowledge/context layer
+- cross-domain recommendations
+- multimodal analytics
+- creator knowledge base
+
+**9.0 — Advanced Personal Creator AI**
+- persistent creator copilot
+- creator-specific context
+- proactive recommendations
+- personalized content strategy
+- personalized website optimization
+- personalized commerce optimization
+- personalized stream/overlay assistance
+- advanced experimentation/personalization
+- AI-assisted decision support
+
+**10.0 — Full Creator Operating Platform**
+- website
+- builder
+- CMS
+- media
+- assets
+- templates
+- components
+- themes
+- streaming
+- Twitch/YouTube/TikTok and future platforms
+- community
+- overlays
+- OBS
+- commerce/merch
+- analytics
+- automation
+- AI
+- localization
+- SaaS
+- marketplace
+- creator ecosystem
+- global expansion
+
+### 00.9.6.D.2 — Korábbi backlog megőrzési szabály
+
+A korábbi MASTER **19–34** szakaszai nem kerültek kivonásra vagy törlésre. Ezek archivált, de érvényes backlogként kezelendők. Ha egy funkció új domain alá került, az csak **canonical owner consolidation**, nem feature deletion.
+
+Minden korábbi funkciót a végrehajtás előtt újra kell térképezni:
+**historical ID → canonical domain → surface → phase → dependency → DoD → test → acceptance**.
+
+### 00.9.6.D.3 — Teljes termékfelület
+
+A végső platformon külön-külön, de közös architektúrával kezelendő:
+- Public Website
+- Creator Center
+- Visual Editor
+- CMS
+- Media/Resource Library
+- Icon Library
+- Theme/Design System
+- Template Library
+- Component/Symbol Library
+- Schedule/Calendar
+- Stream Center
+- Overlay/Stream Studio
+- Platform Integrations
+- Community
+- Support
+- Shop/Merch
+- Analytics
+- Automation
+- AI Center
+- Localization
+- Settings/Security
+- Billing
+- Marketplace
+- Developer/Integration surface
+- Backup/Import/Export
+- Diagnostics/Observability
+
+### 00.9.6.D.4 — Kutatási és benchmark kapu
+
+Minden nagyobb capability megvalósítása előtt külön research pass végezhető:
+- hivatalos dokumentáció
+- publikus API dokumentáció
+- nyilvános demo
+- működő creator oldalak
+- nagy külföldi streamerek publikus oldalai
+- CMS/builder/commerce/streaming benchmarkok
+- szükség esetén publikus repositoryk és licencek
+
+A kutatás eredménye a MASTER megfelelő pontjába kerülhet **reference / benchmark / edge-case evidence** formában. Más rendszerek zárt kódját nem másoljuk; saját canonical implementáció készül.
+
+### 00.9.6.D.5 — Végrehajtási szabály
+
+A teljes végső tervből egyszerre mindig csak **egy ACTIVE engineering point** nyílhat. A többi:
+**QUEUED / PLANNED / BLOCKED / CLOSED / ARCHIVED**.
+
+Ez biztosítja, hogy a teljes világvezető cél megmaradjon, miközben a tényleges fejlesztés továbbra is kontrollált, tesztelt és sorrendhelyes marad.
