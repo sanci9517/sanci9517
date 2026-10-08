@@ -373,6 +373,17 @@ A capability-lista önmagában nem elég: az alábbi keresztmetszeti domainek a 
 
 **Round 3 conclusion:** the audited canonical paths are internally consistent with the M0.4 ownership matrix. No new duplicate canonical owner was identified. This round still does **not** close M0.4 because runtime/browser evidence, complete legacy disposition, repository-wide mutation mapping and user acceptance remain outstanding.
 
+### M0.4 evidence round 4 — route-level mutation map / repository-wide active-path baseline
+- [x] **Schedule mutation path:** `src/routes/admin/schedule.ts` is the active CRUD owner for `schedule_items`; all CRUD queries are site-scoped and create/update/delete operations append shared audit records.
+- [x] **Editor persistence path:** `src/routes/admin/editor.ts` owns Editor v2 save/publish/rollback persistence through `pages` + `editor_revisions`; expected-version conflict protection is present.
+- [x] **Page management path:** `src/routes/admin/pages.ts` owns canonical page metadata/order/create/delete operations and uses the same `pages` + `editor_revisions` model and shared audit boundary.
+- [x] **Public read path:** `src/routes/public/pages.ts` serves published page snapshots by default; draft access requires authenticated Editor role. `src/routes/public/schedule.ts` delegates to the canonical Schedule read service.
+- [x] **Twitch integration path:** `src/routes/integrations/twitch.ts` uses site/user ownership checks and the shared audit boundary; it does not introduce a second streamer/site ownership model.
+- [x] **Auth path:** `src/core/auth/require-auth.ts` resolves the active user/session and applies the shared role hierarchy; domain routes do not define separate authentication stores.
+- [x] **Repository-wide active mutation baseline:** the audited active route families map to the canonical owners already frozen in M0.4. No additional active mutation owner was identified in the inspected route/core surface.
+
+**Round 4 conclusion:** the active route-level mutation map is consistent with the ownership matrix. M0.4 is now reduced to closure evidence rather than unresolved ownership design: legacy disposition, runtime/browser verification and user acceptance remain the blocking items for PASS.
+
 ### M0.4 evidence round 1 — gate limitations / not yet PASS
 - [ ] Repository-wide implementation evidence for every matrix row is still required; absence from code search is not proof of non-existence.
 - [ ] Storage/mutation/UI/public/revision/permission mapping still needs targeted verification for each high-risk domain.
