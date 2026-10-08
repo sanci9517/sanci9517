@@ -1720,12 +1720,26 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 **M0 alatt új feature runtime implementáció NEM indul.** M0 csak audit, specifikáció, scope-rendezés, ownership-döntés és legacy-felület osztályozás.
 
 ### M0.1 — MASTER teljes funkcióinventár
-- [ ] teljes jelenlegi MASTER 2957 soros állapotának átnézése;
-- [ ] régi 19–34 backlog és későbbi roadmap funkcióinak összevetése;
+**Állapot:** `[~] FOLYAMATBAN — repository + MASTER evidence audit megkezdve; implementáció fagyasztva.`
+
+- [~] teljes jelenlegi MASTER **4117 soros** állapotának átnézése; a 00/A és 00.9–00.9.6.B újrapontozása megtörtént, a történeti 19–34 szakasz teljes összevetése még hátra van;
+- [~] régi 19–34 backlog és későbbi roadmap funkcióinak összevetése;
 - [ ] minden funkció egyedi domain/surface/owner/státusz szerint regisztrálva;
 - [ ] duplikált feature-ek összevonása;
 - [ ] történeti státusz és jelenlegi végrehajtási státusz szétválasztása;
 - [ ] elveszett/implicit funkciók visszaemelése a canonical product mapbe.
+
+**M0.1 audit evidence snapshot — 2026-10-08:**
+- [x] `src/index.ts` jelenlegi canonical API/admin/public belépési pontjai ellenőrizve: auth, admin settings/schedule/twitch-schedule-sync/pages/editor, public site-settings/schedule/pages és Twitch integration route-ok regisztrálva.
+- [x] `/admin` és `/admin.html` authenticated esetben `/admin/editor` → `public/editor-v2/index.html` felé redirectel; az aktív admin belépési runtime ezért az Editor v2.
+- [x] `public/editor-v2/` az aktív canonical Editor runtime; külön `public/editor/` legacy editor-kódbázis továbbra is fizikailag jelen van.
+- [x] `public/admin.html` továbbra is fizikailag jelen lévő legacy/admin surface, miközben a router már nem ezt szolgálja ki authenticated `/admin` útvonalon.
+- [x] `public/assets/system-page-editor.js` és `system-page-runtime.js`, továbbá `src/routes/admin/system-pages.ts` és `src/routes/public/system-pages.ts` fizikailag jelen vannak; ezek legacy system-page rétegek, ezért M0 alatt explicit KEEP/FIX/MIGRATE/REMOVE/DISABLE/ARCHIVE döntést kell kapniuk.
+- [x] `src/core/page-model.ts`, `src/core/editor-validation.ts`, `src/core/domain/contracts.ts`, `src/core/schedule-read.ts` és `src/core/schedule/` jelenlegi canonical backend/domain alapként azonosítva.
+- [x] `public/editor-v2/core/commands.js`, `schema.js`, `state.js`, `validation.js`, `property-registry.js`, `responsive.js`, `schedule-schema.js` és `schedule-preview.js` az Editor v2 canonical kliensoldali core-jának részei; külön második canonical core létrehozása tilos.
+- [x] Migrations inventory alapján legacy/canonical rétegek történetileg egymás mellett léteznek (`0003_legacy_pages`, `0004_system_page_content`, majd canonical page/revision migrációk), ezért a fizikai legacy maradványok nem tekinthetők automatikusan aktív domainnek.
+
+**M0.1 következő egyetlen lépése:** a MASTER történeti 19–34 backlogjának és a jelenlegi 00.9.6.B capability mapnek soronkénti összevetése; minden eltérésből egyedi KEEP/MERGE/ADD döntés készül. Addig M0.1 nem zárható le.
 
 ### M0.2 — Platform domain inventory
 Kötelező audit:
