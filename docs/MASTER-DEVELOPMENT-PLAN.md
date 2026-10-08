@@ -39,7 +39,7 @@ Ha bármilyen régi checkpoint, összefoglaló, korábbi üzenet vagy történet
 **Boot-szabály:** új beszélgetésben a modellnek először ezt a 00/B blokkot, majd közvetlenül a 00/A indexet kell figyelembe vennie. Ha bármely régi checkpoint ettől eltér, a régi checkpointot kell figyelmen kívül hagyni, nem az aktuális MASTER állapotot.
 
 **Egyetlen aktuális folytatási mondat:**
- > „Folytassuk a Sanci9517 MASTER tervet az **F** pontnál. E4.1–E4.4, E5 és E6 lezárva. Az F első és egyetlen aktív lépése a **kibővített F0 canonical Editor UI + Schedule + Inspector audit/remediation kapu**.”
+ > „Folytassuk a Sanci9517 MASTER tervet az **M0** pontnál. E4.1–E4.4, E5 és E6 lezárva. Először a teljes platform-scope, central resource/asset, template/component, streamer/OBS capability és legacy/dead-function auditot zárjuk le; addig nincs új F0 feature-fejlesztési workstream.”
 
 > **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd kizárólag a **00/A MASTER VÉGREHAJTÁSI INDEX egyetlen aktív pontjából** folytatni. Más fejezet `[ ]`, `[~]` vagy régebbi „következő lépés” szövege nem jelent aktuális folytatási pontot.
 
@@ -2581,7 +2581,7 @@ F0 csak akkor `CLOSED / PASS`, ha **mindegyik** teljesül:
 **F0 runtime/UI remediation checkpoint — 2026-10-08:**
 - [x] Reprodukált és azonosított hiba: a `schedule.config.set` command a `normalizeScheduleConfig` canonical függvényt használta, de a `commands.js` nem importálta; ezért a runtime minden Schedule config mutationnél `normalizeScheduleConfig is not defined` hibát adott.
 - [x] Javítás: `commands.js` explicit importot kapott a canonical `./schedule-schema.js` modulból; új Schedule normalizer/domain réteg nem készült.
-- [x] Admin kezdőlap vizuális auditja elkészült; a korábbi üres placeholder alapú dashboard helyett professzionális Creator Center / Control Center navigációs dashboard készült, amely a meglévő modulokra navigál és nem vezet be új adatmodellt.
+- [~] Admin kezdőlap: korábbi Creator Center / Control Center dashboard-változat készült, de **NEM elfogadott és NEM tekintendő véglegesnek**. Az M0 No Dead Admin Surface auditban újra kell osztályozni minden menüpontot; a cél nem a funkciók elrejtése, hanem a valódi canonical működő és a future/planned felületek egyértelmű szétválasztása.
 - [x] Visual-editor UX benchmark audit: a Webflow canvas-first selection/navigation modellje, valamint a Wix Studio Inspector + breakpoint/responsive modellje alapján rögzítve lett, hogy az Editorban a canvas, selection, hierarchy, Inspector és responsive controls legyenek egyértelműen összekötve; az Inspector csak a kiválasztott node releváns capability/property csoportjait mutassa. citeturn0search11turn0search0turn0search9
 - [ ] A runtime fix és a teljes F0 UI változások browserben még ellenőrzendők.
 - [ ] Mobile shell + persisted panel state élő ellenőrzése még hátra van.
@@ -2594,7 +2594,7 @@ F0 csak akkor `CLOSED / PASS`, ha **mindegyik** teljesül:
 - REMOVE FROM ACTIVE PATH: hardcoded Inspector property growth, UI-only Schedule mutation, legacy editor.
 - NEW DATA MODEL: továbbra sem szükséges.
 
-**F0 állapot:** `ACTIVE — implementation/remediation IN PROGRESS, verification + user acceptance pending`.
+**F0 állapot:** `PAUSED / QUEUED — M0 global product + legacy audit lezárásáig nincs további F0 feature-fejlesztési workstream.`
 
 **F következő pontja:** `F1` csak a teljes F0 CLOSED / PASS után. F1 feladata ezt követően a már bizonyított canonical Property Registry/Inspector szerződés további domain-szintű bővítése, nem az F0-ban elvégzett alapok újraépítése.
 
