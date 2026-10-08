@@ -173,6 +173,18 @@ export const commands = Object.freeze({
     }
   ),
 
+  'schedule.config.set': (state, { nodeId, patch = {} } = {}) => commit(
+    state,
+    { type: 'schedule.config.set', payload: { nodeId, patch: structuredClone(patch) } },
+    (draft) => {
+      const { node } = requireNode(draft, nodeId);
+      if (node.type !== 'schedule') throw new Error('schedule.config.set requires a Schedule node');
+      const current = normalizeScheduleConfig(node.props?.schedule);
+      node.props = { ...node.props, schedule: normalizeScheduleConfig({ ...current, ...structuredClone(patch) }) };
+      bumpRevision(draft.document);
+    }
+  ),
+
   'responsive.set': (state, { nodeId, device = 'desktop', patch = {} } = {}) => commit(
     state,
     { type: 'responsive.set', payload: { nodeId, device, patch: structuredClone(patch) } },
