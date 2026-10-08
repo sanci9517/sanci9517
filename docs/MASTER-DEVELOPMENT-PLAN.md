@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.69.1  
+**Verzió:** MASTER-2.69.2  
 **Dátum:** 2026-10-08  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -1418,6 +1418,15 @@ F0 csak akkor `CLOSED / PASS`, ha **mindegyik** teljesül:
 - [ ] Save/reload/concurrency/public-output acceptance still required.
 - [ ] User PASS still required.
 
+**F0 runtime/UI remediation checkpoint — 2026-10-08:**
+- [x] Reprodukált és azonosított hiba: a `schedule.config.set` command a `normalizeScheduleConfig` canonical függvényt használta, de a `commands.js` nem importálta; ezért a runtime minden Schedule config mutationnél `normalizeScheduleConfig is not defined` hibát adott.
+- [x] Javítás: `commands.js` explicit importot kapott a canonical `./schedule-schema.js` modulból; új Schedule normalizer/domain réteg nem készült.
+- [x] Admin kezdőlap vizuális auditja elkészült; a korábbi üres placeholder alapú dashboard helyett professzionális Creator Center / Control Center navigációs dashboard készült, amely a meglévő modulokra navigál és nem vezet be új adatmodellt.
+- [x] Visual-editor UX benchmark audit: a Webflow canvas-first selection/navigation modellje, valamint a Wix Studio Inspector + breakpoint/responsive modellje alapján rögzítve lett, hogy az Editorban a canvas, selection, hierarchy, Inspector és responsive controls legyenek egyértelműen összekötve; az Inspector csak a kiválasztott node releváns capability/property csoportjait mutassa. citeturn0search11turn0search0turn0search9
+- [ ] A runtime fix és a teljes F0 UI változások browserben még ellenőrzendők.
+- [ ] Mobile shell + persisted panel state élő ellenőrzése még hátra van.
+- [ ] Inspector registry coverage és minden property control mutation ellenőrzése még hátra van.
+- [ ] Admin kezdőlap desktop/mobile vizuális acceptance még hátra van.
 **F0 döntés:**
 - KEEP: minden bizonyított canonical foundation.
 - REPAIR: shell, navigation, Inspector, Schedule Editor binding, property registry integration, mutation UX.
