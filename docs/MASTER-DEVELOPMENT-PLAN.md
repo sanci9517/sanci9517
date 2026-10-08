@@ -333,14 +333,91 @@ A capability-lista önmagában nem elég: az alábbi keresztmetszeti domainek a 
 **M0.3 legacy rule:** no dead backend or static legacy surface may remain linked as an ACTIVE Admin capability. Physical legacy files may remain temporarily only under explicit ARCHIVE/MIGRATE status and must have no canonical ownership.
 
 ### M0.4 — Canonical ownership matrix freeze
-Minden domainhez pontosan egy:
-- source of truth;
-- storage owner;
-- mutation boundary;
-- UI owner;
-- public consumer;
-- revision/publish lifecycle;
-- permission boundary.
+**Állapot:** [~] FOLYAMATBAN — ownership contract v1 rögzítve; implementation/runtime evidence és user acceptance még nem zárta le a gate-et.
+
+**M0.4 célja:** minden canonical domainhez pontosan egy source of truth, storage owner, mutation boundary, UI owner, public consumer, revision/publish lifecycle és permission boundary tartozzon. A történeti feature-ek több helyről származhatnak, de canonical ownershipből csak egy lehet.
+
+| Domain | Source of truth | Storage owner | Mutation boundary | UI owner | Public consumer | Revision / publish | Permission |
+|---|---|---|---|---|---|---|---|
+| Site / Site Context | Site Context + site contract | D1 | site-scoped server boundary | Creator Center / Editor | public renderer | site revision/publish | site owner |
+| Account / Tenant | Auth + ownership | D1/session | auth/ownership boundary | Creator Center settings | none | account state | account/tenant |
+| Pages | Page Model | D1 | canonical Editor commands/API | Visual Editor | published renderer | Revision/Publishing | site roles |
+| Navigation | Page order/navigation contract | D1/Page Model | Page/navigation mutation API | Editor / Creator Center | public nav | published revision | site roles |
+| CMS / Content | CMS/Content domain | D1 + R2 refs | CMS mutation API/commands | Creator Center/CMS | published bindings | content revisions | content roles |
+| Schedule | Schedule domain | D1 | Schedule service/API | Schedule Editor/Inspector | public schedule | schedule state + publish binding | site roles |
+| Game Profiles | Game Profile domain | D1 | Game Profile service/API | Creator Center | public bindings | revision/publish as applicable | site roles |
+| Platform Integrations | Integration/Platform registry | D1 + secret/config boundary | adapter service/API | Integrations UI | adapter-fed public data | config/revision as applicable | integration/admin roles |
+| Streamer Identity | Creator profile domain | D1 | profile mutation API | Creator Center | public profile | profile publish | site roles |
+| Live State | integration-derived Live State | provider/cache boundary | adapter sync/read boundary | Stream Center | live widgets/public renderer | ephemeral; no Page Model ownership | integration roles |
+| Resources / Assets | Resource/Asset registry | R2 binary + D1 metadata | Resource service/API | Resource Library + pickers | published asset refs | asset metadata/version | site/media roles |
+| Icons | Icon Registry | D1 metadata + R2/external refs | Icon Registry service | Icon picker/Editor | published icon refs | registry/version | site/design roles |
+| Files / Documents | Resource domain | R2 + D1 metadata | Resource service | Resource Library | published/download refs | metadata/version | site/media roles |
+| Fonts | Resource/Design domain | R2 + D1 metadata | Resource service | Theme/Resource UI | published theme refs | version/publish | site/design roles |
+| Theme / Presentation | Theme/Presentation domain | D1 | Theme commands/API | Theme/Design UI + Inspector | renderer | draft/published presentation | design/site roles |
+| Design Tokens | Design System | D1 | Theme/Design commands | Theme Editor | renderer | theme revision/publish | design/site roles |
+| Components | Component Registry | D1/Page Model refs | Component service/commands | Editor + Component Library | renderer | component version/publish | design/site roles |
+| Symbols / Reusable Components | Component Registry | D1 | Symbol mutation boundary | Component Library/Editor | renderer | shared version/publish | design/site roles |
+| Templates | Template Registry | D1 + canonical refs | Template service | Template Library/Editor | template start/fork only | template version | site/design roles |
+| Forms | Form domain | D1 + secure submission boundary | Form service/action boundary | Editor + Form Manager | public form runtime | form version/publish | site/admin roles |
+| Interactions / Motion | Interaction contract | Page Model/config | Editor command/validation boundary | Inspector | renderer/runtime | page revision/publish | editor roles |
+| SEO / AEO | SEO metadata contract | D1/Page Model | SEO mutation boundary | Page/SEO Inspector | renderer/head metadata | publish | content/site roles |
+| Publishing / Revisions | Revision/Publishing domain | D1 | publish/rollback service | Creator Center/Editor | public renderer | canonical lifecycle | publisher roles |
+| Twitch | Twitch adapter | D1 + provider boundary | Twitch integration service | Integrations/Stream Center | public live/schedule bindings | adapter sync state | integration roles |
+| YouTube | YouTube adapter | D1 + provider boundary | YouTube integration service | Integrations/Stream Center | future public bindings | adapter sync state | integration roles |
+| TikTok | TikTok adapter | D1 + provider boundary | TikTok integration service | Integrations/Stream Center | future public bindings | adapter sync state | integration roles |
+| Discord / Community | Community integration/domain | D1 + provider boundary | community adapter | Community UI | public links/widgets | config/content publish | community roles |
+| VOD / Clips / Highlights | Stream Media/Content domain | R2 + D1 | content/media service | Stream Center/CMS | public media pages/widgets | content revision/publish | content roles |
+| Overlay / Widgets | Stream Studio domain | D1 + R2 refs | Stream Studio commands/API | Overlay Studio | browser-source/runtime | version/publish | creator/design roles |
+| OBS Bridge | OBS integration adapter | integration/config boundary | adapter/browser-source boundary | Stream Studio | external OBS/browser source | config/version | integration roles |
+| Community / Support / Membership | Community/Support domain | D1 + provider boundary | support/community service | Creator Center | public support/community | content/config publish | site/admin roles |
+| Analytics | Analytics domain | analytics store/edge boundary | analytics ingestion API | Analytics Center | none by default | immutable/event lifecycle | analytics/admin roles |
+| Automation | Automation/Event domain | D1 + queue/event boundary | workflow engine | Automation Center | runtime effects only | workflow version | automation roles |
+| Localization | Locale/content system | D1/Page Model | locale/content mutation boundary | Localization Center/Editor | locale-aware renderer | locale publish | content/admin roles |
+| Permissions / RBAC | Auth/RBAC contract | D1/session | authorization boundary | Security/Settings | enforcement only | policy version as needed | owner/admin |
+| Audit / Governance | Audit contract | D1/log boundary | server audit boundary | Diagnostics/Security | none | append-only evidence | admin/auditor |
+| Backup / Recovery | Backup/Recovery domain | D1/R2/export | backup/export service | Settings/Recovery | none | snapshot/version lifecycle | owner/admin |
+| Search / Discovery | Search/index contract | indexed metadata + canonical refs | indexing/search service | Library/CMS/Creator Center | public search later | index rebuild lifecycle | scoped roles |
+| Notifications / Messaging | Notification domain | D1 + provider boundary | notification service | Creator Center | user-facing channels | message/event lifecycle | scoped roles |
+| Privacy / Consent / Compliance | Policy/Privacy contract | D1/config + provider boundary | policy/consent service | Settings | public consent/privacy surfaces | policy version | owner/admin |
+| API / Webhook / Developer | API contract | Worker routes + webhook boundary | API/integration layer | Developer/Integration UI later | external consumers | contract version | API roles |
+| Deployment / Environments | Release contract | environment/deploy state | deployment boundary | Creator Center/ops | deployed public runtime | release/version | owner/admin |
+| Performance / Caching / Edge | Platform performance contract | Worker/cache/CDN | edge/runtime boundary | Diagnostics/ops | public runtime | release-level | system |
+| Accessibility | Accessibility contract | Editor/renderer config | validation/render boundary | Editor + Diagnostics | public renderer | page/release gate | system/editor |
+| Billing / Entitlements | Billing domain | D1 + payment provider | billing service | Billing Center | commerce/SaaS runtime | entitlement lifecycle | billing/admin |
+| Marketplace | Marketplace domain | D1 + R2 | marketplace service | Marketplace Center | public marketplace | listing/version/moderation | marketplace roles |
+| Import / Export / Portability | Data Portability contract | package/export boundary | import/export service | Settings/Library | none | package/version | owner/admin |
+| Secure Custom Code / Embed | Secure Embed contract | Page Model config + sandbox boundary | validated command/render boundary | Advanced Inspector | sandboxed public renderer | page revision/publish | privileged editor/admin |
+
+**Canonical ownership rules:**
+1. Egy domainnek csak egy canonical source of truth lehet.
+2. A Page Model nem válhat második Asset, Theme, Component, Schedule, CMS vagy Integration adatbázissá.
+3. A Resource/Asset rendszer közös; Image/Video/Audio/Icon/Font/File nem hozhat létre saját párhuzamos library-t.
+4. A Schedule domain egyetlen adat-owner; az Editor schedule node csak konfiguráció/binding.
+5. A Property Registry az Inspector egyetlen property-registryje.
+6. Template és Symbol külön fogalom: Template = copy/fork; Symbol = shared definition.
+7. Platformok adapterek; Twitch/YouTube/TikTok nem hozhatnak létre külön, egymással inkompatibilis streamer modellt.
+8. Minden mutation canonical command/service/API boundaryn keresztül történik.
+9. A public renderer csak canonical published state-et fogyaszt.
+10. Legacy kód jelenléte önmagában nem ownership; legacy csak explicit KEEP/FIX/MIGRATE/REPLACE/REMOVE/DISABLE/ARCHIVE státusszal maradhat.
+11. Auth/RBAC, audit, validation, migration, diagnostics és persistence nem másolható domainenként.
+12. Minden későbbi AI, automation, SaaS, marketplace vagy commerce funkció ugyanezeket a canonical contractokat használja; nem kerülheti meg őket.
+13. Custom code/HTML/embed nem kaphat közvetlen privilegizált D1/R2 hozzáférést.
+14. Egy időben továbbra is pontosan egy ACTIVE engineering point lehet.
+
+**M0.4 evidence baseline:**
+- [x] Site context contract létezik: src/core/site-context.ts.
+- [x] Page Model canonical: src/core/page-model.ts.
+- [x] Domain contracts tartalmaznak Asset/Game/Schedule/Theme/SitePresentation canonical modelleket: src/core/domain/contracts.ts.
+- [x] Publish validation a canonical Page Model/Schedule kapcsolatot ellenőrzi: src/core/editor-validation.ts.
+- [x] Audit mutation boundary létezik: src/core/audit.ts.
+- [x] Editor Property Registry egyetlen registryként működik: public/editor-v2/core/property-registry.js.
+- [x] Schedule command/config canonical normalizer útvonal már korábban javítva lett.
+- [ ] minden fenti domain teljes repository-level implementation evidence-e összegyűjtve;
+- [ ] storage/mutation/UI/public/revision/permission mapping minden domainnél runtime tesztekkel is igazolva;
+- [ ] legacy ownership/disposition teljesen lezárva;
+- [ ] user review / acceptance.
+
+**M0.4 döntés:** a fenti matrix a további fejlesztés canonical ownership baseline-ja. Amíg M0.4 nem kap teljes PASS-t, új domain-level feature implementation nem nyitható.
 
 ### M0.5 — Central Resource contract freeze
 Kötelező eldönteni és MASTER-ben rögzíteni:
