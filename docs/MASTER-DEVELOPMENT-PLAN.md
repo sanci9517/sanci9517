@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.69.2  
+**Verzió:** MASTER-2.70.0  
 **Dátum:** 2026-10-08  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -13,7 +13,7 @@
 
 **Public Design Freedom / Multi-user uniqueness szabály:** az 1.0 vizuális rendszerének nem csak tartalom- és komponensszerkesztést kell biztosítania. A publikusan megjelenő weboldal vizuális identitása is felhasználónként/site-onként egyedileg konfigurálható kell legyen. A felhasználóbarát admin/editor célja, hogy technikai CSS-kód nélkül is létrehozható legyen saját brand és megjelenés: theme/design tokens, typography, colors, semantic colors, backgrounds, spacing, radius, shadows, containers, layout variants, component styles, navigation/header/footer, card/button/form styles, responsive presentation, visibility, imagery, templates és page-level presentation. A rendszernek preset/template alapú gyors indulást és mélyebb egyedi testreszabást is támogatnia kell. A domain adat, a Page Model és az Editor UI state továbbra is külön marad; a public design egy canonical presentation/theme réteg lesz. Multi-user jövőre készülve minden design/configuration site-scoped/tenant-scoped kell legyen, ne globális megosztott állapot. A default design csak kiindulópont, nem korlát.
 
-**Legutóbbi igazolt állapot:** 2026-10-07 — az E4.3.4–E4.3.8 teljes ownership/security/live hardening sorozat PASS és lezárva. Az E4.4 teljes `site_id NOT NULL` schema-hardening DoD is PASS és lezárva: az E4.4.1 migration design/exact SQL audit PASS, az E4.4.2 actual implementation + isolated dry-run PASS, a production schema már mind a hat érintett táblán `site_id TEXT NOT NULL REFERENCES sites(id) ON DELETE RESTRICT`, minden érintett rekord `site_id` értéke kitöltött, `foreign_key_check` PASS, a pages → published revision linkage megmaradt, és a live Worker/public API smoke tesztek PASS állapotban vannak. Az E4.4, E5 és E6 teljesen lezárult. Az F az egyetlen aktív fejlesztési kapu; elsőként a kibővített F0 canonical Editor UI + Schedule + Inspector contract/remediation kapu fut.
+**Legutóbbi igazolt állapot:** 2026-10-08 — E4.1–E4.4, E5 és E6 lezárva. A korábbi F0 implementációs munka nem tekintendő automatikusan elfogadottnak: a Schedule/Inspector/admin felületek új, teljes platform- és legacy-auditja szükséges. Az E4.4 teljes `site_id NOT NULL` schema-hardening DoD is PASS és lezárva: az E4.4.1 migration design/exact SQL audit PASS, az E4.4.2 actual implementation + isolated dry-run PASS, a production schema már mind a hat érintett táblán `site_id TEXT NOT NULL REFERENCES sites(id) ON DELETE RESTRICT`, minden érintett rekord `site_id` értéke kitöltött, `foreign_key_check` PASS, a pages → published revision linkage megmaradt, és a live Worker/public API smoke tesztek PASS állapotban vannak. Az E4.4, E5 és E6 teljesen lezárult. Az F az egyetlen aktív fejlesztési kapu; elsőként a kibővített F0 canonical Editor UI + Schedule + Inspector contract/remediation kapu fut.
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
 
@@ -466,6 +466,966 @@ Minden új admin workspace esetén ellenőrizni kell:
 - [ ] backup/export strategy később
 - [ ] test/CI/deploy gate
 
+
+## 00.9.6.B — GLOBAL CREATOR PLATFORM PRODUCT MAP — MASTER-2.70 REBASELINE
+
+**Döntés — 2026-10-08:** a MASTER-t nem kizárólag „Visual Editor + Schedule” tervként kezeljük. A cél egy **Creator OS / Global Streamer Platform**, amelynek első működő terméke a Sanci9517 site, de amelyhez közös Content, Media, Design, Template, Component, Stream és future creator tooling rétegek tartoznak.
+
+**Fontos:** ez a bővítés nem jelenti azt, hogy minden funkció 1.0-ban implementálandó. A MASTER minden képességet explicit **1.0 / 1.x / post-1.0 / future** státuszba sorol. A funkciótérkép viszont teljes: nem veszítünk el későbbi képességet csak azért, mert most nem implementáljuk.
+
+### 00.9.6.B.1 — Creator Center / Admin teljes jövőbeli felülete
+
+A Creator Center megmutathatja a teljes platformot, de minden felületnek explicit állapotot kell mutatnia:
+
+- **LIVE / READY** — ténylegesen használható.
+- **FOUNDATION** — canonical alap elkészült, a teljes UI még fejlesztés alatt.
+- **BETA** — működő, de még nem 1.0 stabilitási kapu.
+- **PLANNED** — jövőbeli funkció, nincs használható runtime.
+- **DISABLED / LEGACY** — régi vagy hibás útvonal, nem használható.
+
+**No Dead Admin Surface szabály:** egy Admin menüpont sem mutathat olyan aktívnak látszó funkciót, amely régi, hibás, 404-es, elárvult vagy nem támogatott runtime-ra vezet. A jövőbeli funkciók megjelenhetnek, de PLANNED/COMING SOON állapotban kell lenniük. A már létező Schedule példája külön legacy-auditot igényel: az Adminból elérhető Schedule és az Editor Schedule ugyanahhoz a canonical domain/API/ownership szerződéshez kell tartozzon.
+
+### 00.9.6.B.2 — PLATFORM SURFACE MAP
+
+```
+Creator Center
+│
+├── Dashboard
+│
+├── WEBSITE
+│   ├── Pages
+│   ├── Visual Editor
+│   ├── Theme / Design
+│   ├── Navigation
+│   ├── Templates
+│   ├── Components
+│   ├── SEO
+│   └── Publishing
+│
+├── CONTENT / CMS
+│   ├── Content records
+│   ├── Collections
+│   ├── Structured fields
+│   ├── Rich content
+│   ├── References
+│   ├── Categories / Tags
+│   └── Localization
+│
+├── MEDIA / ASSETS
+│   ├── Images
+│   ├── Videos
+│   ├── Audio
+│   ├── Documents
+│   ├── SVG / Icons
+│   ├── Logos
+│   ├── Avatars
+│   ├── Banners
+│   ├── Game artwork
+│   ├── Stream artwork
+│   └── Asset usage / orphan management
+│
+├── STREAM
+│   ├── Schedule
+│   ├── Twitch
+│   ├── YouTube / future adapters
+│   ├── Platforms
+│   ├── Game Profiles
+│   ├── Live status
+│   ├── Stream metadata
+│   └── future VOD / Clips
+│
+├── DESIGN SYSTEM
+│   ├── Theme
+│   ├── Design tokens
+│   ├── Typography
+│   ├── Colors
+│   ├── Spacing
+│   ├── Radius
+│   ├── Shadows
+│   ├── Components
+│   ├── Variants
+│   ├── Icons
+│   └── Responsive rules
+│
+├── TEMPLATES / LIBRARY
+│   ├── Site templates
+│   ├── Page templates
+│   ├── Section templates
+│   ├── Component templates
+│   ├── Reusable sections
+│   ├── Reusable components / Symbols
+│   └── future marketplace
+│
+├── STREAM STUDIO / OVERLAY
+│   ├── Overlays
+│   ├── Alerts
+│   ├── Widgets
+│   ├── Browser sources
+│   ├── Scenes / layouts
+│   ├── Stream themes
+│   └── OBS integration
+│
+├── COMMUNITY
+│   ├── Social links
+│   ├── Discord
+│   ├── Support
+│   ├── Membership/supporter features
+│   └── future community automation
+│
+├── AUTOMATION
+│   ├── Events
+│   ├── Triggers
+│   ├── Actions
+│   ├── Webhooks
+│   └── future creator workflows
+│
+├── ANALYTICS
+│   ├── Website
+│   ├── Stream
+│   ├── Content
+│   └── future conversion / experiment data
+│
+└── SETTINGS
+    ├── Site
+    ├── Account
+    ├── Integrations
+    ├── Security
+    ├── Permissions
+    ├── Domains
+    └── Export / backup
+```
+
+### 00.9.6.B.3 — CENTRAL RESOURCE PLATFORM
+
+A platform egyik legfontosabb hiányzó közös fogalma a **Central Resource / Asset Library**.
+
+**Canonical asset domain:**
+- asset identity;
+- site/tenant scope;
+- asset kind;
+- MIME/type;
+- storage provider;
+- storage key;
+- original filename;
+- size;
+- dimensions;
+- duration;
+- title;
+- alt text;
+- caption/description;
+- metadata;
+- preview/thumbnail;
+- lifecycle;
+- reference count/usage information;
+- orphan state;
+- created/updated information;
+- security/access policy.
+
+**Asset típusok:**
+- raster image;
+- SVG/vector;
+- animated image;
+- video;
+- audio;
+- document/file;
+- icon;
+- logo;
+- avatar;
+- banner;
+- background;
+- game artwork;
+- stream artwork;
+- alert/overlay asset;
+- font;
+- future specialized creator asset.
+
+**Tárolási szabály:**
+- binary → storage boundary (R2 vagy más provider-agnosztikus backend);
+- metadata → canonical structured domain;
+- Page Model → csak Asset Reference;
+- Schedule/Game/Profile/Template/Component → csak Asset Reference;
+- signed URL / credential / storage secret → soha nem Page Model.
+
+**Kötelező Asset Manager képességek:**
+- upload;
+- drag/drop;
+- picker;
+- search;
+- filter;
+- folders/collections;
+- tags;
+- preview;
+- metadata edit;
+- alt text;
+- replace;
+- duplicate detection később;
+- usage/references;
+- orphan detection;
+- safe delete;
+- restore/recovery;
+- image dimensions;
+- file size/type validation;
+- optimization/transform később;
+- CDN/public delivery boundary;
+- access/security policy.
+
+### 00.9.6.B.4 — CENTRAL ICON SYSTEM
+
+Az ikonok külön assetként kezelhetők, de a rendszernek **canonical Icon Registry** fogalommal is rendelkeznie kell.
+
+- system/UI icons;
+- social icons;
+- platform icons;
+- streaming icons;
+- game/category icons;
+- status icons;
+- custom uploaded icons;
+- SVG icons;
+- future icon packs.
+
+Az UI nem random inline SVG/emoji gyűjteményből épül. A közös Icon Registry lehetővé teszi:
+- név/id alapján használatot;
+- accessibility labelt;
+- méret/stroke/variant kezelését;
+- theme-aware színezést;
+- platform icon cserét;
+- központi frissítést;
+- asset/reference alapú használatot.
+
+### 00.9.6.B.5 — TEMPLATE / REUSABLE / SYMBOL SYSTEM
+
+A **Template**, **Reusable Component**, **Section Preset** és **Symbol/Global Component** külön fogalom.
+
+**Site Template**
+- teljes starter website;
+- pages;
+- theme;
+- navigation;
+- components;
+- starter content;
+- responsive rules.
+
+**Page Template**
+- oldalstruktúra;
+- layout;
+- default presentation;
+- optional content slots.
+
+**Section Template**
+- Hero;
+- Schedule;
+- About;
+- Social;
+- Support;
+- Media;
+- Featured content;
+- Footer/header sections.
+
+**Component Template**
+- Button;
+- Card;
+- Social link;
+- Stream card;
+- Game card;
+- Schedule card;
+- Media card;
+- Form;
+- Navigation element.
+
+**Reusable Component / Symbol**
+- közös definition;
+- közös presentation;
+- controlled instance overrides;
+- update propagation;
+- versioning/migration.
+
+**Template és Symbol nem ugyanaz:**
+- Template = kiindulási másolat/fork;
+- Symbol/Reusable Component = központilag újrahasznosított definition.
+
+A benchmarkok alapján ez a különbség fontos: Builder külön kezeli a Template-et és a minden példányra kiterjedő Symbolt; Webflow Components és Framer Components/Libraries hasonló újrahasznosítási mintát használ. citeturn0search7turn0search10turn1search1turn4search2
+
+### 00.9.6.B.6 — WEBSITE BUILDER KÉPESSÉGTÉRKÉP
+
+A Visual Editor hosszú távú célja egy valódi visual website builder, nem csak néhány mezőt tartalmazó Inspector.
+
+**Canvas / layout:**
+- freeform/structured layout;
+- container;
+- stack;
+- flex;
+- grid;
+- columns;
+- alignment;
+- gap;
+- width/height;
+- min/max;
+- padding/margin;
+- overflow;
+- position;
+- z-index;
+- responsive constraints;
+- aspect ratio;
+- object fit/position.
+
+**Structure:**
+- pages;
+- sections;
+- containers;
+- components;
+- slots;
+- children;
+- layers;
+- grouping;
+- reparenting;
+- reorder;
+- duplicate;
+- lock;
+- hide;
+- rename;
+- comments később.
+
+**Content:**
+- text;
+- rich text;
+- image;
+- video;
+- audio;
+- link;
+- button;
+- icon;
+- embed;
+- form;
+- list;
+- dynamic content;
+- domain bindings.
+
+**Presentation:**
+- typography;
+- colors;
+- backgrounds;
+- gradients;
+- borders;
+- radius;
+- shadows;
+- opacity;
+- filters;
+- transforms;
+- states;
+- hover/focus/active;
+- animation/motion;
+- transitions.
+
+**Responsive:**
+- desktop;
+- tablet;
+- mobile;
+- custom breakpoints később;
+- inheritance;
+- override;
+- reset;
+- visibility;
+- responsive typography;
+- responsive spacing;
+- responsive media;
+- responsive component variants.
+
+A Wix Studio és Builder dokumentált modelljei különösen megerősítik, hogy a breakpointok, resize preview, responsive inheritance/override és canvas-központú szerkesztés első osztályú editor-képesség. citeturn1search2turn1search3turn0search7
+
+### 00.9.6.B.7 — CMS / STRUCTURED CONTENT
+
+A Creator Platformnak a Page Modeltől külön **structured content** képességet is támogatnia kell.
+
+Későbbi collection példák:
+- Blog/News;
+- Videos;
+- Clips;
+- Games;
+- Stream Events;
+- Projects;
+- Gallery;
+- Links;
+- Sponsors;
+- Supporters;
+- FAQs;
+- announcements;
+- custom creator content.
+
+Canonical modell:
+`Collection → Record → Fields → References → Presentation binding → Renderer`
+
+A design és content külön marad: egy CMS rekord változása több megjelenési helyen frissülhet anélkül, hogy a Page Model mindenhol duplikálná az adatot. A Wix és Webflow dokumentációja ezt a „structured content + visual canvas + reusable presentation” irányt használja. citeturn4search1turn4search3
+
+### 00.9.6.B.8 — STREAMER DOMAIN TELJES TÉRKÉP
+
+**Identity**
+- streamer profile;
+- display name;
+- avatar;
+- banner;
+- bio/about;
+- brand;
+- contact/support.
+
+**Platforms**
+- Twitch;
+- TikTok;
+- YouTube;
+- Discord;
+- future Kick/other platforms;
+- social links;
+- platform icon/status;
+- platform URL validation.
+
+**Schedule**
+- events;
+- start/end;
+- timezone;
+- title;
+- game;
+- platform;
+- status;
+- artwork;
+- notes;
+- URL;
+- source;
+- sync state;
+- recurring events később;
+- featured;
+- views;
+- filters;
+- templates.
+
+**Live state**
+- online/offline;
+- current game;
+- viewer count később;
+- current title;
+- live CTA;
+- next stream;
+- countdown;
+- timezone-aware display.
+
+**Game Profiles**
+- canonical game identity;
+- slug;
+- artwork;
+- icon;
+- platform mappings;
+- category;
+- brand metadata;
+- schedule references;
+- future VOD/clip references.
+
+**Content**
+- VOD;
+- clips;
+- highlights;
+- posts;
+- announcements;
+- game guides;
+- stream recap;
+- media gallery.
+
+### 00.9.6.B.9 — STREAM / OBS / OVERLAY PLATFORM MAP
+
+A későbbi streamer platformot az OBS/streaming munkafolyamatra is fel kell készíteni.
+
+OBS alapmodellje Scenes + Sources, és a Browser Source webes widgeteket/alertokat képes megjeleníteni; ez indokolja, hogy a későbbi Overlay Studio külön workspace legyen, de ugyanazt a Media/Theme/Component alapot használja. citeturn2search1turn2search2turn2search6
+
+**Overlay Studio későbbi képességei:**
+- scenes/layouts;
+- overlay canvas;
+- browser-source output;
+- alerts;
+- chat;
+- goals;
+- labels;
+- event widgets;
+- follower/subscriber/donation events;
+- game-specific overlays;
+- starting/BRB/ending screens;
+- webcam frames;
+- social handles;
+- ticker;
+- countdown;
+- media;
+- animation;
+- theme profiles;
+- reusable widgets;
+- widget variables;
+- preview/test;
+- OBS/browser-source integration.
+
+A StreamElements és Streamlabs mintái alapján a template/theme library, alert/widget rendszer, reusable stream themes és browser-source/overlay workflow különösen fontos streamer-platform képességek. citeturn0search6turn0search11turn2search0turn2search10
+
+**Szigorú határ:** Overlay Studio nem kap külön Asset DB, Theme DB, Component Registry, Command/History vagy Page Modelt. Saját workspace/runtime lehet, közös canonical platform contracttal.
+
+### 00.9.6.B.10 — DESIGN SYSTEM / BRAND ENGINE
+
+A site egyedi brandje első osztályú feature.
+
+**Global tokens:**
+- primary/secondary/accent;
+- semantic colors;
+- text/background/surface;
+- typography scale;
+- font family/weights;
+- spacing scale;
+- radius scale;
+- shadow scale;
+- border;
+- container widths;
+- breakpoints;
+- z-index layers;
+- motion;
+- focus states.
+
+**Theme modes később:**
+- light;
+- dark;
+- custom;
+- seasonal/event theme.
+
+**Component variants:**
+- size;
+- style;
+- state;
+- theme;
+- breakpoint;
+- context.
+
+**Brand assets:**
+- logo;
+- favicon;
+- avatar;
+- banner;
+- social images;
+- OG image;
+- game/stream artwork.
+
+Webflow jelenlegi design-system dokumentációja külön kiemeli a reusable variables/tokens, components, page templates és shared libraries szerepét; ez jó benchmark a saját site-scoped Presentation/Theme réteghez. citeturn1search14turn4search7
+
+### 00.9.6.B.11 — INTERACTION / MOTION / BEHAVIOR
+
+A visual editor hosszú távú célja ne csak statikus CSS legyen.
+
+Későbbi behavior contract:
+- hover;
+- focus;
+- active;
+- pressed;
+- disabled;
+- show/hide;
+- reveal;
+- scroll animation;
+- entrance/exit;
+- transition;
+- click action;
+- navigation;
+- external link;
+- anchor;
+- modal/drawer;
+- tooltip;
+- accordion;
+- tabs;
+- carousel;
+- conditional visibility;
+- dynamic filtering.
+
+**Security:** custom JS nem lehet alapértelmezett mutation út. Embed/custom code külön sandbox/trust boundary.
+
+### 00.9.6.B.12 — FORMS / USER INTERACTION
+
+Website-builder alapként később:
+- contact form;
+- support form;
+- newsletter;
+- feedback;
+- custom fields;
+- validation;
+- spam protection;
+- rate limiting;
+- consent/privacy;
+- success/error state;
+- email/webhook integration;
+- storage policy.
+
+### 00.9.6.B.13 — SEO / DISCOVERABILITY / SOCIAL SHARING
+
+Per site/page/domain:
+- title;
+- description;
+- canonical URL;
+- robots;
+- sitemap;
+- Open Graph;
+- Twitter/X card;
+- favicon;
+- structured data/schema;
+- headings;
+- alt text;
+- redirects;
+- 404;
+- index/noindex;
+- locale metadata;
+- clean URLs;
+- slug management;
+- social preview;
+- performance signals;
+- future AEO/AI-search support.
+
+Framer és Webflow jelenlegi dokumentációja alapján a SEO nem külön utólagos extra, hanem a publishing/CMS réteg része, beleértve a metadata, robots/sitemap, localized SEO és accessibility-adatokat is. citeturn4search15turn4search3turn4search0
+
+### 00.9.6.B.14 — PUBLISHING / ENVIRONMENT / VERSIONING
+
+Későbbi teljes lifecycle:
+- draft;
+- autosave;
+- recovery;
+- revision;
+- preview;
+- shareable preview;
+- publish;
+- unpublish;
+- rollback;
+- scheduled publish később;
+- staging/production később;
+- publish diff;
+- validation gate;
+- broken-link check;
+- asset validation;
+- SEO validation;
+- accessibility validation;
+- performance check;
+- publish audit.
+
+### 00.9.6.B.15 — SEARCH / COMMAND PALETTE / PRODUCTIVITY
+
+Profi editor:
+- global search;
+- page search;
+- layer search;
+- asset search;
+- template search;
+- component search;
+- command palette;
+- keyboard shortcuts;
+- quick actions;
+- recent items;
+- favorites;
+- context menu;
+- duplicate;
+- copy/paste;
+- copy/paste style;
+- copy/paste component;
+- multi-select;
+- batch operations.
+
+### 00.9.6.B.16 — COLLABORATION / GOVERNANCE — POST-1.0
+
+- user roles;
+- permissions;
+- editor/viewer;
+- approvals;
+- comments;
+- mentions;
+- change history;
+- review;
+- staging;
+- branch/variant;
+- locks;
+- conflict resolution;
+- team workspaces;
+- activity log.
+
+### 00.9.6.B.17 — ANALYTICS / OPTIMIZATION — POST-1.0
+
+- page views;
+- traffic;
+- referrer;
+- device;
+- content performance;
+- CTA clicks;
+- stream clicks;
+- schedule engagement;
+- social outbound clicks;
+- asset usage;
+- conversion;
+- experiments/A-B;
+- personalization;
+- privacy-aware analytics.
+
+### 00.9.6.B.18 — AUTOMATION / EVENT SYSTEM — POST-1.0
+
+Canonical event bus / automation layer későbbre:
+`Event → Condition → Action → Audit → Idempotency`
+
+Példák:
+- Twitch goes live → site live state;
+- schedule changed → page update;
+- new VOD → content record;
+- new clip → gallery;
+- supporter event → content/widget;
+- social publish → notification;
+- asset processing completed → update metadata.
+
+Automation nem írhat közvetlenül D1-be; canonical command/domain boundaryt használ.
+
+### 00.9.6.B.19 — INTEGRATION / ADAPTER SYSTEM
+
+Adapter architecture:
+- Twitch;
+- YouTube;
+- TikTok;
+- Discord;
+- Kick/future;
+- OBS/browser source;
+- analytics providers;
+- storage providers;
+- email;
+- webhooks;
+- social publishing;
+- calendar/reminder;
+- future creator APIs.
+
+Minden adapter:
+- credentials;
+- scopes;
+- connection status;
+- source identity;
+- sync state;
+- retry/backoff;
+- error state;
+- disconnect;
+- revoke;
+- audit.
+
+**Provider adat ≠ canonical domain.** Provider csak adapter/source.
+
+### 00.9.6.B.20 — BACKUP / EXPORT / IMPORT
+
+Későbbi platformbiztonság:
+- site export;
+- page export;
+- content export;
+- media manifest;
+- asset references;
+- theme export;
+- template export;
+- schedule export;
+- JSON backup;
+- restore validation;
+- migration/import;
+- version compatibility.
+
+### 00.9.6.B.21 — PLATFORM MARKETPLACE / LIBRARY — POST-1.0
+
+Future ecosystem:
+- templates;
+- components;
+- sections;
+- icons;
+- themes;
+- overlays;
+- widgets;
+- stream packs;
+- creator presets;
+- free/premium;
+- licensing;
+- author metadata;
+- version compatibility;
+- reviews;
+- updates;
+- install/uninstall;
+- dependency resolution.
+
+A Framer/Streamlabs jellegű library/marketplace modellből az a termékoldali tanulság, hogy a kész template-ek és komponensek nem pusztán „szép minták”, hanem gyors indulási és újrahasznosítási infrastruktúra. citeturn4search5turn4search2turn2search10
+
+### 00.9.6.B.22 — ACCESSIBILITY / PERFORMANCE / QUALITY PLATFORM
+
+Minden workspace és public output:
+- semantic HTML;
+- keyboard;
+- focus;
+- screen reader;
+- contrast;
+- reduced motion;
+- touch target;
+- alt text;
+- captions/transcripts később;
+- responsive;
+- image optimization;
+- lazy loading;
+- code splitting;
+- caching;
+- CDN;
+- Core Web Vitals;
+- no N+1;
+- bounded D1 access;
+- diagnostics;
+- error boundaries;
+- telemetry without secrets.
+
+### 00.9.6.B.23 — 1.0 / 1.X / POST-1.0 SCOPE
+
+**1.0 kötelező minimum, a jelenlegi terv kibővített értelmezésében:**
+- professional public Sanci9517 site;
+- working Creator Center/Admin shell with no dead active surfaces;
+- canonical Visual Editor;
+- Pages;
+- Layers;
+- Elements;
+- Inspector;
+- canonical Property/Field Registry;
+- responsive desktop/tablet/mobile;
+- Page Model;
+- Schedule domain + usable Schedule management;
+- Game Profile foundation;
+- Media/Asset foundation + central asset references;
+- image/media picker foundation;
+- canonical Theme/Presentation foundation;
+- reusable basic components/sections foundation;
+- starter templates/foundation;
+- navigation/header/footer;
+- content basics;
+- Twitch integration;
+- live/next-stream state;
+- draft/preview/publish/unpublish/rollback;
+- revisions/concurrency;
+- security/site ownership;
+- accessibility baseline;
+- SEO/meta baseline;
+- diagnostics/audit;
+- localization-ready architecture with HU;
+- public renderer;
+- regression/E2E/live acceptance;
+- legacy dead-surface elimination for all active 1.0 paths.
+
+**1.x / immediate expansion:**
+- richer CMS collections;
+- richer Asset Manager;
+- advanced template library;
+- reusable Symbols;
+- richer theme editor;
+- forms;
+- interactions/motion;
+- more platform adapters;
+- VOD/Clips;
+- advanced Schedule;
+- deeper media transforms;
+- stronger SEO tooling.
+
+**Post-1.0:**
+- Overlay Studio;
+- full OBS bridge;
+- automation;
+- analytics;
+- collaboration;
+- localization implementation;
+- marketplace;
+- billing;
+- multi-tenant onboarding;
+- white-label/custom domains;
+- AI;
+- advanced experimentation/personalization.
+
+**Feature preservation:** a későbbi pont nem törölhető; csak átsorolható explicit döntéssel.
+
+### 00.9.6.B.24 — LEGACY / DEAD FUNCTION AUDIT — ÚJ KÖTELEZŐ PLATFORM GATE
+
+Minden meglévő Admin/Editor/Public funkciót az alábbi táblába kell besorolni:
+
+| Surface | Function | Current implementation | Canonical owner | Status | Action |
+|---|---|---|---|---|---|
+| Admin | Schedule | audit required | Schedule domain | UNKNOWN | root-cause audit |
+| Editor | Schedule | current F0 implementation | Schedule + Page Model | UNKNOWN | runtime acceptance |
+| Admin | Pages | existing | Pages/Page Model | VERIFY | regression |
+| Admin | Twitch | existing | Integration domain | VERIFY | regression |
+| Editor | Inspector | current implementation | Property Registry | UNKNOWN | visual/runtime audit |
+| Public | Schedule | existing | Public Schedule reader | VERIFY | regression |
+
+**Legacy audit minden surfacenél:**
+1. route;
+2. UI entry;
+3. state;
+4. command;
+5. API;
+6. domain;
+7. D1/storage;
+8. permission;
+9. renderer;
+10. tests;
+11. live behavior;
+12. duplicate/legacy path;
+13. user-visible status.
+
+**Action vocabulary:**
+- KEEP;
+- FIX;
+- MIGRATE;
+- REPLACE;
+- REMOVE;
+- DISABLE;
+- ARCHIVE.
+
+**Nem fogadható el:** „UI létezik” = működő feature.
+
+### 00.9.6.B.25 — CANONICAL OWNERSHIP MATRIX
+
+| Domain | Source of truth | UI | Storage | Renderer/consumer |
+|---|---|---|---|---|
+| Page | Page Model | Editor | D1/revision | Public |
+| Schedule | Schedule domain | Schedule workspace/Inspector | D1 | Public/Editor |
+| Game | Game Profile | CMS/Inspector | D1 | Schedule/Public |
+| Asset | Asset domain | Asset Manager/Picker | R2 + metadata | Editor/Public/Overlay |
+| Icon | Icon Registry/Asset | Icon Picker | asset/storage | All UI/renderers |
+| Theme | Presentation/Theme | Theme/Inspector | D1/revision | Editor/Public |
+| Component | Component Registry | Elements/Inspector | D1/code registry | Editor/Public |
+| Template | Template Registry | Template Picker | D1/assets | Editor |
+| Content | CMS domain | Content workspace | D1 | Public/Editor |
+| Integration | Integration domain | Settings | secure credential boundary | Domain adapters |
+| Editor UI state | Editor State | Editor | local/session only | Editor |
+| Publish | Revision/Publishing | Publish UI | D1 | Public |
+
+**Tiltás:** ugyanarra a domainre két source of truth.
+
+### 00.9.6.B.26 — ADMIN FEATURE STATE CONTRACT
+
+Minden Admin menüpont canonical metadata alapján jelenjen meg:
+
+- id;
+- label;
+- icon;
+- workspace;
+- capability;
+- status;
+- required permission;
+- availability;
+- route;
+- legacy flag;
+- help text;
+- future/planned marker.
+
+A navigation nem tartalmazhat olyan route-ot, amely nincs a canonical feature registryben.
+
+### 00.9.6.B.27 — RESEARCH / BENCHMARK RESULT — 2026-10-08
+
+A bővítéshez friss hivatalos benchmarkokat is ellenőriztünk:
+
+- **Webflow:** visual design, CMS, reusable components, shared libraries/assets, SEO, localization, publishing, collaboration és responsive design egy platformon jelenik meg. citeturn1search0turn4search3turn1search1turn4search7turn4search0
+- **Wix Studio:** canvas + breakpointok + Assets + CMS + templates + dynamic content; a CMS tartalmat külön kezeli az Editortól, miközben ugyanahhoz a designhoz köti. citeturn1search2turn4search1turn4search11
+- **Framer:** pages, CMS pages, design pages, components, shared libraries, templates, layout templates, SEO és localization külön, de összefüggő capability-ként jelennek meg. citeturn1search17turn4search2turn4search18turn4search5turn4search17
+- **GrapesJS:** Component Manager + Layer Manager + Style Manager + Asset Manager + Commands mintázat erősíti a component/property/asset/command különválasztását. citeturn0search1turn0search0turn0search13turn0search2
+- **Builder:** Visual Editor + responsive preview + Layers/X-Ray + Templates + Symbols + locale picker + preview/publish workflow. citeturn0search7turn0search10turn0search19
+- **Sanity:** structured content + visual editing + click-to-edit + draft/published perspective + localization, ami a content/domain és presentation kapcsolatára fontos referencia. citeturn0search3turn0search16turn0search12
+- **StreamElements / Streamlabs:** overlays, alerts, widgets, themes, libraries és reusable stream assets különösen fontos streamer-platform minták. citeturn0search6turn0search11turn2search0turn2search10
+- **OBS Studio:** Scenes/Sources és Browser Source miatt a későbbi Overlay Studio és stream-output boundaryt a webplatformtól külön workspace-ként, de közös Media/Theme/Component alapokkal kell kezelni. citeturn2search1turn2search2
+
+**Benchmark döntés:** nem másolunk UI-t vagy belső implementációt. A saját canonical Page Model, Domain, Component, Field, Presentation, Asset, Command, History és Persistence contract elsőbbséget élvez.
+
+---
+
 ## 00.9.7 — Post-1.0 global roadmap
 
 **Nem szakítja meg az 1.0 aktív sorrendet.**
@@ -717,11 +1677,11 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 
 ## 00/A.1 — EGYETLEN AKTÍV PONT
 
-**ACTIVE_POINT_ID:** `F`  
+**ACTIVE_POINT_ID:** `M0`  
 **ACTIVE_POINT_STATUS:** `ACTIVE`  
-**ACTIVE_POINT_TITLE:** Schedule CRUD + Inspector / domain-driven Editor bővítés  
+**ACTIVE_POINT_TITLE:** Global Product Rebaseline + Legacy/Dead Surface Audit + Canonical Platform Scope Freeze  
 **PREVIOUS_GATE:** `E6` — CLOSED / PASS  
-**NEXT_GATE:** `F1` — csak F0 teljes PASS után nyitható  
+**NEXT_GATE:** `F0` — csak M0 teljes PASS után, a rebaselined F0 scope szerint nyitható  
 **PARALLEL_WORKSTREAMS:** `0`
 
 ### Jelenlegi igazolt állapot
@@ -734,7 +1694,7 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 - [x] E5 teljes regression/live/user PASS lezárva.
 - [x] E6 closure PASS / lezárva.
 
-**F végrehajtási állapot:** ACTIVE. Az F ponton belül jelenleg kizárólag az **F0 canonical contract + repository/data-flow audit** aktív.
+**F végrehajtási állapot:** PAUSED / QUEUED. Az F/F0 korábbi implementációja nem törlődik és nem tekintendő automatikusan rossznak, de az új M0 audit lezárásáig nem folytatunk további F0/F1 feature-kódolást. Az M0 eredménye alapján a F0 scope és DoD véglegesítendő.
 
 
 ## 00/A.2.2 — F — SCHEDULE CRUD + INSPECTOR / DOMAIN-DRIVEN EDITOR — DEFINITION OF DONE
@@ -750,7 +1710,207 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 - [x] Minden új adatút site-scoped és a lezárt E4 ownership contractot használja.
 - [x] Minden új mutation meglévő command/history/validation/persistence/audit mintára épül.
 
-### F0 — CANONICAL EDITOR UI + SCHEDULE + INSPECTOR — TELJES BŐVÍTETT AUDIT, CONTRACT ÉS JAVÍTÁSI KAPU
+#
+## M0 — GLOBAL PRODUCT REBASELINE + LEGACY / DEAD SURFACE AUDIT
+
+**M0 státusz:** `[~] ACTIVE — scope/documentation audit IN PROGRESS; implementation frozen`
+
+**M0 célja:** a jelenlegi teljes MASTER, repository és meglévő runtime alapján bizonyítani, hogy a Sanci9517 projekt valódi termék- és platformcélja teljesen lefedett, nincs elfelejtett domain vagy későbbi funkció, nincs párhuzamos canonical rendszer, és az Admin/Editor/Public felületeken nem marad olyan régi működés, amelyet az új platform nem tud kezelni.
+
+**M0 alatt új feature runtime implementáció NEM indul.** M0 csak audit, specifikáció, scope-rendezés, ownership-döntés és legacy-felület osztályozás.
+
+### M0.1 — MASTER teljes funkcióinventár
+- [ ] teljes jelenlegi MASTER 2957 soros állapotának átnézése;
+- [ ] régi 19–34 backlog és későbbi roadmap funkcióinak összevetése;
+- [ ] minden funkció egyedi domain/surface/owner/státusz szerint regisztrálva;
+- [ ] duplikált feature-ek összevonása;
+- [ ] történeti státusz és jelenlegi végrehajtási státusz szétválasztása;
+- [ ] elveszett/implicit funkciók visszaemelése a canonical product mapbe.
+
+### M0.2 — Platform domain inventory
+Kötelező audit:
+- Site;
+- Account/Tenant;
+- Pages;
+- Navigation;
+- Content/CMS;
+- Schedule;
+- Game Profiles;
+- Platforms;
+- Streamer Identity;
+- Live State;
+- Media/Assets;
+- Icons;
+- Files/Documents;
+- Fonts;
+- Theme/Presentation;
+- Design Tokens;
+- Components;
+- Reusable Components/Symbols;
+- Templates;
+- Forms;
+- Interactions/Motion;
+- SEO;
+- Publishing/Revisions;
+- Integrations;
+- Twitch;
+- future platform adapters;
+- Overlay/Widgets;
+- OBS bridge;
+- Community;
+- Support;
+- Automation;
+- Analytics;
+- Localization;
+- Permissions;
+- Audit;
+- Backup/Export;
+- Marketplace;
+- Billing/future commercial layer.
+
+### M0.3 — Admin / Editor / Public surface audit
+Minden jelenlegi felületre:
+- [ ] route;
+- [ ] UI entry;
+- [ ] current state;
+- [ ] API;
+- [ ] command;
+- [ ] domain owner;
+- [ ] storage;
+- [ ] permission;
+- [ ] renderer;
+- [ ] automated tests;
+- [ ] live verification;
+- [ ] legacy dependency;
+- [ ] user-visible status.
+
+**Külön kiemelt audit:** Admin Schedule → jelenlegi hiba reprodukciója és gyökérok-azonosítása. Nem fogadunk el UI-rejtést mint javítást, ha a funkciót 1.0-ban valóban biztosítani kell.
+
+### M0.4 — Canonical ownership matrix freeze
+Minden domainhez pontosan egy:
+- source of truth;
+- storage owner;
+- mutation boundary;
+- UI owner;
+- public consumer;
+- revision/publish lifecycle;
+- permission boundary.
+
+### M0.5 — Central Resource contract freeze
+Kötelező eldönteni és MASTER-ben rögzíteni:
+- Asset;
+- Image;
+- Video;
+- Audio;
+- File;
+- Document;
+- Icon;
+- Font;
+- Logo;
+- Game artwork;
+- Stream artwork;
+- Overlay asset;
+- Thumbnail/derivative;
+- usage/reference/orphan lifecycle;
+- storage abstraction;
+- R2 implementation boundary.
+
+### M0.6 — Template / Component / Design-system contract freeze
+Kötelezően külön:
+- Theme;
+- Token;
+- Component;
+- Variant;
+- Reusable Component/Symbol;
+- Section;
+- Page Template;
+- Site Template;
+- Preset;
+- Library item.
+
+### M0.7 — Streamer / OBS capability freeze
+- Schedule;
+- Game;
+- platform;
+- live state;
+- VOD;
+- clips;
+- overlays;
+- alerts;
+- widgets;
+- themes;
+- scenes;
+- browser-source outputs;
+- OBS bridge;
+- future automation.
+
+### M0.8 — 1.0 / 1.x / post-1.0 scope freeze
+Minden funkció explicit státuszt kap. A „majd egyszer” kategória is megmarad, de nem blokkolhatja az 1.0-t.
+
+### M0.9 — Legacy removal plan
+Minden legacy surface kap:
+- KEEP;
+- FIX;
+- MIGRATE;
+- REPLACE;
+- REMOVE;
+- DISABLE;
+- ARCHIVE.
+
+**Kötelező:** a legacy útvonalnak nem lehet canonical ownershipje.
+
+### M0.10 — No Dead Admin Surface gate
+- [ ] nincs aktívnak látszó hibás admin funkció;
+- [ ] future funkciók PLANNED/BETA/FOUNDATION állapotot mutatnak;
+- [ ] régi route-ok redirect/disabled/archive stratégiát kapnak;
+- [ ] Admin navigation canonical feature registryből származik.
+
+### M0.11 — Benchmark completion
+A hivatalos benchmarkok releváns részei rögzítve:
+- Webflow;
+- Wix Studio;
+- Framer;
+- GrapesJS;
+- Builder;
+- Sanity;
+- StreamElements;
+- Streamlabs;
+- OBS Studio;
+- további streamer/creator website példák, ha új képességet bizonyítanak.
+
+### M0.12 — M0 Definition of Done
+M0 csak akkor PASS:
+- [ ] teljes feature inventory auditált;
+- [ ] minden domain canonical ownerrel rendelkezik;
+- [ ] central Asset/Resource scope freeze kész;
+- [ ] Icon Registry scope freeze kész;
+- [ ] Template/Component/Symbol scope freeze kész;
+- [ ] Theme/Design System scope freeze kész;
+- [ ] Website Builder capability map kész;
+- [ ] Streamer/OBS capability map kész;
+- [ ] CMS/content map kész;
+- [ ] SEO/accessibility/performance map kész;
+- [ ] publishing/revision map kész;
+- [ ] integration/automation/analytics future map kész;
+- [ ] Admin feature state contract kész;
+- [ ] Schedule legacy/dead surface audit PASS;
+- [ ] minden jelenlegi legacy surface KEEP/FIX/MIGRATE/REPLACE/REMOVE/DISABLE/ARCHIVE státuszt kap;
+- [ ] nincs azonos célra két canonical rendszer;
+- [ ] 1.0/1.x/post-1.0 scope freeze kész;
+- [ ] F0 új scope-ja explicit M0 eredményére épül;
+- [ ] user review PASS;
+- [ ] MASTER frissítve;
+- [ ] M0 CLOSED / PASS.
+
+### M0.13 — M0 utáni sorrend
+M0 után az egyetlen aktív pont:
+**F0 — Canonical Editor UI + Schedule + Inspector remediation, a rebaselined platform contract szerint.**
+
+F0 után csak a teljes PASS lánc:
+**F0 → G → H → I → J → Early Public Website → további 1.0 production gates → 1.0 Production Gate.**
+
+
+## F0 — CANONICAL EDITOR UI + SCHEDULE + INSPECTOR — TELJES BŐVÍTETT AUDIT, CONTRACT ÉS JAVÍTÁSI KAPU
 **F0 státusz:** `[~] ACTIVE — audit completed; remediation implementation IN PROGRESS; USER PASS PENDING`
 
 **F0 célja:**  
