@@ -349,6 +349,17 @@ A capability-lista önmagában nem elég: az alábbi keresztmetszeti domainek a 
 - [x] Initial duplicate-storage search did not reveal a second canonical Asset/Media/Theme/Component/Template table in the indexed repository evidence.
 - [x] The existing evidence supports the ownership matrix as the current canonical baseline.
 
+### M0.4 evidence round 2 — high-risk domain findings
+- [x] **Schedule:** canonical storage/API path is identifiable; no second schedule table was found by targeted repository search. The Editor schedule schema is a client configuration contract, not a second Schedule record store.
+- [x] **Publishing/Revisions:** canonical revision linkage is represented by migration `0010_canonical_revision_contract.sql`, including `pages.published_revision_id → editor_revisions(id)`.
+- [x] **RBAC/Auth:** the MASTER and current canonical route structure identify Auth/RBAC as a shared boundary; no domain-specific RBAC store was found in targeted search.
+- [x] **Integration ownership:** Twitch is implemented as an adapter/integration boundary; YouTube/TikTok/Discord remain planned/future adapters rather than parallel streamer-domain stores.
+- [x] **Legacy editor:** the repository still contains legacy editor files; these are not evidence of a second canonical ownership and remain subject to the explicit legacy disposition gate.
+- [x] **Resource/Theme/Component/Template:** targeted code search did not find implemented parallel canonical stores for these future domains. This is a **planned-domain gap**, not permission to invent parallel storage later; M0.5/M0.6 must freeze their contracts before implementation.
+- [x] **Historical public pages:** old `public/*.html` surfaces contain placeholder/legacy content and are not to be promoted back to canonical ownership; routing/legacy disposition remains an M0.9/M0.10 closure item.
+
+**Round 2 conclusion:** no confirmed duplicate canonical owner was found in the targeted high-risk search. M0.4 nevertheless remains [~] until repository-wide mapping, legacy disposition and runtime/user acceptance are closed.
+
 ### M0.4 evidence round 1 — gate limitations / not yet PASS
 - [ ] Repository-wide implementation evidence for every matrix row is still required; absence from code search is not proof of non-existence.
 - [ ] Storage/mutation/UI/public/revision/permission mapping still needs targeted verification for each high-risk domain.
