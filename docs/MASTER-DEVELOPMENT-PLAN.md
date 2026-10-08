@@ -360,6 +360,19 @@ A capability-lista önmagában nem elég: az alábbi keresztmetszeti domainek a 
 
 **Round 2 conclusion:** no confirmed duplicate canonical owner was found in the targeted high-risk search. M0.4 nevertheless remains [~] until repository-wide mapping, legacy disposition and runtime/user acceptance are closed.
 
+### M0.4 evidence round 3 — canonical mutation/ownership path audit
+- [x] **Page Model boundary:** `src/core/page-model.ts` normalizes legacy documents into the canonical `sanci-page-document` shape; it does not introduce a second domain database.
+- [x] **Shared contracts:** `src/core/domain/contracts.ts` is the common contract layer for MediaAsset, GameProfile, ScheduleEvent and presentation/theme state; normalization is centralized there.
+- [x] **Site context:** `src/core/site-context.ts` provides the canonical site-context boundary; current default site is explicit rather than inferred from individual domains.
+- [x] **Schedule read boundary:** `src/core/schedule-read.ts` reads canonical `schedule_items` with site scoping and controlled filters; the Editor Schedule schema remains configuration-only.
+- [x] **Publish validation:** `src/core/editor-validation.ts` centrally validates canonical page structure and Schedule-node configuration before publish.
+- [x] **Audit boundary:** `src/core/audit.ts` writes through the shared `audit_log` mutation boundary instead of creating domain-specific audit stores.
+- [x] **Inspector ownership:** `public/editor-v2/core/property-registry.js` is the single extensibility boundary for Inspector properties; mutation is delegated to the Core command API.
+- [x] **Schedule config ownership:** `public/editor-v2/core/schedule-schema.js` explicitly states that it owns only Page Model Schedule-node configuration, while Schedule records remain outside Page Model.
+- [x] **Canonical command model:** the Editor Core command layer provides the mutation/history boundary for document state; direct feature-specific Inspector mutation is not established by the audited files.
+
+**Round 3 conclusion:** the audited canonical paths are internally consistent with the M0.4 ownership matrix. No new duplicate canonical owner was identified. This round still does **not** close M0.4 because runtime/browser evidence, complete legacy disposition, repository-wide mutation mapping and user acceptance remain outstanding.
+
 ### M0.4 evidence round 1 — gate limitations / not yet PASS
 - [ ] Repository-wide implementation evidence for every matrix row is still required; absence from code search is not proof of non-existence.
 - [ ] Storage/mutation/UI/public/revision/permission mapping still needs targeted verification for each high-risk domain.
