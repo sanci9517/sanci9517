@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.67.0  
+**Verzió:** MASTER-2.68.0  
 **Dátum:** 2026-10-08  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -750,35 +750,43 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 - [x] Minden új adatút site-scoped és a lezárt E4 ownership contractot használja.
 - [x] Minden új mutation meglévő command/history/validation/persistence/audit mintára épül.
 
-### F0 — Canonical Schedule + Inspector contract/repository/data-flow audit — AKTÍV
-**Státusz:** `[~] ACTIVE — audit only; feature-kód még nem módosítható.`
+### F0 — Canonical Schedule + Inspector contract/repository/data-flow audit — AUDIT PASS / USER PASS PENDING
+**Státusz:** `[~] ACTIVE — audit completed; implementation not yet started.`
 
-**Egyetlen aktuális lépés:** először a jelenlegi repositoryt kell célzottan auditálni, hogy pontosan mi van már kész, mi használható újra, és mi hiányzik. Ugyanazt a funkciót nem építjük meg másodszor.
+**F0 audit evidence — 2026-10-08:**
+- [x] Existing `src/routes/admin/schedule.ts` already provides canonical GET/POST/PUT/DELETE CRUD; no second CRUD API will be created.
+- [x] Admin Schedule is site-scoped through `getCanonicalSiteContext()`; mutation/read queries use `site_id=?`.
+- [x] Admin Schedule requires authentication and minimum `editor` role.
+- [x] POST/PUT/DELETE use the existing D1 batch + `auditStatement()` boundary.
+- [x] Existing manual Schedule validation covers required title/platform/start, status enum, URL/notes limits, timestamps and start/end ordering.
+- [x] `src/core/schedule-read.ts` already provides the canonical public read DTO with site scope and validated mode/limit/status/platform/order.
+- [x] Public Schedule DTO excludes Twitch source/sync fields.
+- [x] `src/core/domain/contracts.ts` already defines the canonical `ScheduleEvent`, including gameProfile/source/sync metadata.
+- [x] Existing Twitch Schedule types/mapper/sync/adapter form the source boundary; this will not be rebuilt.
+- [x] Editor v2 already has the canonical `schedule` node and versioned `schedule-schema.js`; domain records remain outside the Page Model.
+- [x] Schedule node config already covers mode, limit, statuses, platforms, order, visibility fields and empty text.
+- [x] Existing Editor command engine centralizes mutation validation, history and transactions/batches.
+- [x] **Concrete Inspector gap found:** `public/editor-v2/core/property-registry.js` exists as the intended extensibility boundary, but current `public/editor-v2/app.js` Inspector rendering does not import/use it and still renders fields manually. We will wire the existing registry; no second registry will be created.
+- [x] Legacy Schedule/Admin/Editor remains excluded from the active architecture.
+- [x] Existing Schedule source/mapper/public DTO/domain tests and the E5 regression evidence are reusable.
+- [x] Duplicate audit completed: CRUD, public read, Schedule domain, Schedule node schema and command/history foundations already exist and must not be reimplemented.
 
-**Audit scope:**
-- [ ] Schedule D1 schema, repository/service/API és jelenlegi CRUD útvonalak.
-- [ ] Schedule public read és source-aware mezők határa.
-- [ ] site ownership / auth / RBAC / validation / audit boundary.
-- [ ] Schedule Event canonical mezők: title, description, start/end, platform, status, game, media/artwork, links, visibility és opcionális adatok.
-- [ ] Inspector Property Registry jelenlegi bekötése és hiányosságai.
-- [ ] Page Model schedule node contract és domain binding.
-- [ ] Editor command/history/transaction útvonal Schedule mutationokra.
-- [ ] Existing tests/live evidence és újrafelhasználható tesztek.
-- [ ] Legacy Schedule UI/API útvonalak kizárása.
-- [ ] Duplicate check: nincs-e már kész/lezárt pont ugyanarra a DoD-ra.
+**F0 decisions:**
+- **KEEP:** existing canonical Schedule D1 domain, admin CRUD API, public reader/DTO, Twitch source layer, Page Model Schedule node, command/history/transaction core.
+- **IMPROVE:** Inspector → existing Property Registry integration; Schedule-specific Inspector property contract; domain ↔ Page Model binding/action boundary; targeted regression coverage.
+- **DO NOT REPLACE:** Editor v2 core, Schedule domain, existing CRUD API, existing public reader.
+- **DO NOT REACTIVATE:** legacy Schedule/Admin/Editor.
+- **NEW DATA MODEL:** none required by this audit.
 
-**F0 DoD:**
-- [ ] teljes érintett code/data-flow audit rögzítve;
-- [ ] reuse/keep/improve/replace döntés minden érintett rétegre;
-- [ ] canonical Schedule CRUD contract véglegesítve;
-- [ ] Inspector field/property contract véglegesítve;
-- [ ] domain ↔ Page Model binding contract véglegesítve;
-- [ ] validation/permission/site-scope/audit/concurrency követelmények rögzítve;
-- [ ] implementációs bontás F1…F-n pontokra elkészítve úgy, hogy egyszerre csak egy legyen aktív;
-- [ ] nincs párhuzamos workstream;
-- [ ] F0 user PASS + MASTER checkpoint után nyitható csak F1.
+**F0 implementation plan (not active yet):**
+1. **F1:** existing Property Registry canonical Inspector integration + Schedule property contract.
+2. **F2:** Schedule domain ↔ Page Model binding/action boundary using existing domain/API layers.
+3. **F3:** Schedule CRUD/Inspector integration regression + permission/site-scope/concurrency/audit tests.
+4. **F4:** live browser acceptance + F closure.
+**Strict rule:** only one F point may be active at a time; F1 opens only after F0 user PASS.
 
-**Tiltás F0 alatt:** nincs új CRUD UI, nincs új Inspector UI, nincs új Schedule adatmodell, nincs második Editor, nincs legacy reaktiválás. Kódmódosítás csak akkor indítható, ha az audit bizonyított hiányosságot és minimális canonical javítást azonosít; ilyen eset is külön, explicit F-pontot kap.
+**F0 result:** audit and architecture decisions are **PASS**, but F0 is **not CLOSED** because explicit user acceptance is still required. No feature code was modified during this audit.
+
 
 ## 00/A.2 — E5 HIVATALOS DEFINITION OF DONE
 
