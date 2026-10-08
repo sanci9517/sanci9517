@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.66.0  
+**Verzió:** MASTER-2.67.0  
 **Dátum:** 2026-10-08  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -13,7 +13,7 @@
 
 **Public Design Freedom / Multi-user uniqueness szabály:** az 1.0 vizuális rendszerének nem csak tartalom- és komponensszerkesztést kell biztosítania. A publikusan megjelenő weboldal vizuális identitása is felhasználónként/site-onként egyedileg konfigurálható kell legyen. A felhasználóbarát admin/editor célja, hogy technikai CSS-kód nélkül is létrehozható legyen saját brand és megjelenés: theme/design tokens, typography, colors, semantic colors, backgrounds, spacing, radius, shadows, containers, layout variants, component styles, navigation/header/footer, card/button/form styles, responsive presentation, visibility, imagery, templates és page-level presentation. A rendszernek preset/template alapú gyors indulást és mélyebb egyedi testreszabást is támogatnia kell. A domain adat, a Page Model és az Editor UI state továbbra is külön marad; a public design egy canonical presentation/theme réteg lesz. Multi-user jövőre készülve minden design/configuration site-scoped/tenant-scoped kell legyen, ne globális megosztott állapot. A default design csak kiindulópont, nem korlát.
 
-**Legutóbbi igazolt állapot:** 2026-10-07 — az E4.3.4–E4.3.8 teljes ownership/security/live hardening sorozat PASS és lezárva. Az E4.4 teljes `site_id NOT NULL` schema-hardening DoD is PASS és lezárva: az E4.4.1 migration design/exact SQL audit PASS, az E4.4.2 actual implementation + isolated dry-run PASS, a production schema már mind a hat érintett táblán `site_id TEXT NOT NULL REFERENCES sites(id) ON DELETE RESTRICT`, minden érintett rekord `site_id` értéke kitöltött, `foreign_key_check` PASS, a pages → published revision linkage megmaradt, és a live Worker/public API smoke tesztek PASS állapotban vannak. Az E4.4 és E5 teljesen lezárult. E6 MASTER-closure PASS; a következő és egyetlen megnyitható fejlesztési kapu az F.
+**Legutóbbi igazolt állapot:** 2026-10-07 — az E4.3.4–E4.3.8 teljes ownership/security/live hardening sorozat PASS és lezárva. Az E4.4 teljes `site_id NOT NULL` schema-hardening DoD is PASS és lezárva: az E4.4.1 migration design/exact SQL audit PASS, az E4.4.2 actual implementation + isolated dry-run PASS, a production schema már mind a hat érintett táblán `site_id TEXT NOT NULL REFERENCES sites(id) ON DELETE RESTRICT`, minden érintett rekord `site_id` értéke kitöltött, `foreign_key_check` PASS, a pages → published revision linkage megmaradt, és a live Worker/public API smoke tesztek PASS állapotban vannak. Az E4.4, E5 és E6 teljesen lezárult. Az F az egyetlen aktív fejlesztési kapu; elsőként F0 canonical Schedule + Inspector contract/repository/data-flow audit fut.
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
 
@@ -39,7 +39,7 @@ Ha bármilyen régi checkpoint, összefoglaló, korábbi üzenet vagy történet
 **Boot-szabály:** új beszélgetésben a modellnek először ezt a 00/B blokkot, majd közvetlenül a 00/A indexet kell figyelembe vennie. Ha bármely régi checkpoint ettől eltér, a régi checkpointot kell figyelmen kívül hagyni, nem az aktuális MASTER állapotot.
 
 **Egyetlen aktuális folytatási mondat:**
- > „Folytassuk a Sanci9517 MASTER tervet az **F** pontnál. E4.1–E4.4, E5 és E6 lezárva. A következő munka kizárólag az F MASTER-ben rögzített követelményei szerint nyitható meg.”
+ > „Folytassuk a Sanci9517 MASTER tervet az **F** pontnál. E4.1–E4.4, E5 és E6 lezárva. Az F első és egyetlen aktív lépése az F0 canonical Schedule + Inspector contract/repository/data-flow audit.”
 
 > **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd kizárólag a **00/A MASTER VÉGREHAJTÁSI INDEX egyetlen aktív pontjából** folytatni. Más fejezet `[ ]`, `[~]` vagy régebbi „következő lépés” szövege nem jelent aktuális folytatási pontot.
 
@@ -717,11 +717,11 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 
 ## 00/A.1 — EGYETLEN AKTÍV PONT
 
-**ACTIVE_POINT_ID:** `E6`  
-**ACTIVE_POINT_STATUS:** `CLOSED`  
-**ACTIVE_POINT_TITLE:** MASTER closure / E-stage closure  
-**PREVIOUS_GATE:** `E5` — CLOSED / PASS  
-**NEXT_GATE:** `F` — E6 CLOSED / PASS után nyitható  
+**ACTIVE_POINT_ID:** `F`  
+**ACTIVE_POINT_STATUS:** `ACTIVE`  
+**ACTIVE_POINT_TITLE:** Schedule CRUD + Inspector / domain-driven Editor bővítés  
+**PREVIOUS_GATE:** `E6` — CLOSED / PASS  
+**NEXT_GATE:** `F1` — csak F0 teljes PASS után nyitható  
 **PARALLEL_WORKSTREAMS:** `0`
 
 ### Jelenlegi igazolt állapot
@@ -734,7 +734,51 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 - [x] E5 teljes regression/live/user PASS lezárva.
 - [x] E6 closure PASS / lezárva.
 
-**E6 végállapot:** CLOSED / PASS. A következő és egyetlen megnyitható fejlesztési kapu: **F**.
+**F végrehajtási állapot:** ACTIVE. Az F ponton belül jelenleg kizárólag az **F0 canonical contract + repository/data-flow audit** aktív.
+
+
+## 00/A.2.2 — F — SCHEDULE CRUD + INSPECTOR / DOMAIN-DRIVEN EDITOR — DEFINITION OF DONE
+
+**Cél:** a lezárt E-stage foundationre építve elkészíteni a canonical Schedule CRUD és az Inspector/domain-driven Editor bővítés első 1.0-s megvalósítási szakaszát. Ez nem új Visual Editor, nem új Schedule domain és nem a legacy rendszer visszaaktiválása.
+
+**Kötelező architekturális szabályok:**
+- [x] A canonical Visual Editor kizárólag `public/editor-v2/`.
+- [x] A Schedule domain D1-ben marad canonical domain adatként.
+- [x] A Page Model/presentation és a Schedule domain adat külön réteg marad.
+- [x] Inspector nem hoz létre párhuzamos property/state rendszert.
+- [x] Legacy Schedule/Admin/Editor réteg nem aktiválható újra.
+- [x] Minden új adatút site-scoped és a lezárt E4 ownership contractot használja.
+- [x] Minden új mutation meglévő command/history/validation/persistence/audit mintára épül.
+
+### F0 — Canonical Schedule + Inspector contract/repository/data-flow audit — AKTÍV
+**Státusz:** `[~] ACTIVE — audit only; feature-kód még nem módosítható.`
+
+**Egyetlen aktuális lépés:** először a jelenlegi repositoryt kell célzottan auditálni, hogy pontosan mi van már kész, mi használható újra, és mi hiányzik. Ugyanazt a funkciót nem építjük meg másodszor.
+
+**Audit scope:**
+- [ ] Schedule D1 schema, repository/service/API és jelenlegi CRUD útvonalak.
+- [ ] Schedule public read és source-aware mezők határa.
+- [ ] site ownership / auth / RBAC / validation / audit boundary.
+- [ ] Schedule Event canonical mezők: title, description, start/end, platform, status, game, media/artwork, links, visibility és opcionális adatok.
+- [ ] Inspector Property Registry jelenlegi bekötése és hiányosságai.
+- [ ] Page Model schedule node contract és domain binding.
+- [ ] Editor command/history/transaction útvonal Schedule mutationokra.
+- [ ] Existing tests/live evidence és újrafelhasználható tesztek.
+- [ ] Legacy Schedule UI/API útvonalak kizárása.
+- [ ] Duplicate check: nincs-e már kész/lezárt pont ugyanarra a DoD-ra.
+
+**F0 DoD:**
+- [ ] teljes érintett code/data-flow audit rögzítve;
+- [ ] reuse/keep/improve/replace döntés minden érintett rétegre;
+- [ ] canonical Schedule CRUD contract véglegesítve;
+- [ ] Inspector field/property contract véglegesítve;
+- [ ] domain ↔ Page Model binding contract véglegesítve;
+- [ ] validation/permission/site-scope/audit/concurrency követelmények rögzítve;
+- [ ] implementációs bontás F1…F-n pontokra elkészítve úgy, hogy egyszerre csak egy legyen aktív;
+- [ ] nincs párhuzamos workstream;
+- [ ] F0 user PASS + MASTER checkpoint után nyitható csak F1.
+
+**Tiltás F0 alatt:** nincs új CRUD UI, nincs új Inspector UI, nincs új Schedule adatmodell, nincs második Editor, nincs legacy reaktiválás. Kódmódosítás csak akkor indítható, ha az audit bizonyított hiányosságot és minimális canonical javítást azonosít; ilyen eset is külön, explicit F-pontot kap.
 
 ## 00/A.2 — E5 HIVATALOS DEFINITION OF DONE
 
