@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.69.0  
+**Verzió:** MASTER-2.69.1  
 **Dátum:** 2026-10-08  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -751,7 +751,7 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 - [x] Minden új mutation meglévő command/history/validation/persistence/audit mintára épül.
 
 ### F0 — CANONICAL EDITOR UI + SCHEDULE + INSPECTOR — TELJES BŐVÍTETT AUDIT, CONTRACT ÉS JAVÍTÁSI KAPU
-**F0 státusz:** `[~] ACTIVE — teljesített audit + remediation specification; USER PASS PENDING`
+**F0 státusz:** `[~] ACTIVE — audit completed; remediation implementation IN PROGRESS; USER PASS PENDING`
 
 **F0 célja:**  
 A jelenlegi `public/editor-v2/` canonical Editor v2 teljes használhatósági alapjának helyreállítása és bizonyítása úgy, hogy az Editor **desktopon, tableten és mobilon ugyanazt a canonical Page Modelt szerkessze**, a bal oldali navigáció valóban használható legyen, az Inspector valódi szerkesztési felületként működjön, az Adásrend külön domain-szerkesztési felületként elérhető legyen, és egyetlen szerkesztési/mutation/persistence útvonal maradjon.
@@ -1405,6 +1405,19 @@ F0 csak akkor `CLOSED / PASS`, ha **mindegyik** teljesül:
 - [x] A felhasználói adat-editability panasz teljes lifecycle szinten vizsgálandó, nem csak egyetlen mezőként.
 - [x] F0-ban ezért a korábbi szűk „Schedule + Inspector audit” definíció **bővítve és kiterjesztve** teljes Editor UI + Schedule + Inspector remediation kapuvá.
 
+**F0 implementation checkpoint — 2026-10-08:**
+- [x] Canonical Schedule navigation surface added to the existing Editor shell.
+- [x] Canonical `schedule.config.set` command added; it validates through the existing Schedule schema and history/dirty boundary.
+- [x] Inspector now imports the existing Property Registry and uses registry-driven general property rendering for supported style properties.
+- [x] Schedule node now receives a dedicated domain-specific Inspector configuration surface.
+- [x] Schedule panel can locate the canonical Schedule node and open the Inspector on that node.
+- [x] No second Schedule API/domain/state/editor was introduced.
+- [ ] Browser/runtime verification still required.
+- [ ] Mobile shell acceptance still required.
+- [ ] Full automated regression suite still required.
+- [ ] Save/reload/concurrency/public-output acceptance still required.
+- [ ] User PASS still required.
+
 **F0 döntés:**
 - KEEP: minden bizonyított canonical foundation.
 - REPAIR: shell, navigation, Inspector, Schedule Editor binding, property registry integration, mutation UX.
@@ -1412,7 +1425,7 @@ F0 csak akkor `CLOSED / PASS`, ha **mindegyik** teljesül:
 - REMOVE FROM ACTIVE PATH: hardcoded Inspector property growth, UI-only Schedule mutation, legacy editor.
 - NEW DATA MODEL: továbbra sem szükséges.
 
-**F0 állapot:** `ACTIVE — implementation/remediation pending, user acceptance pending`.
+**F0 állapot:** `ACTIVE — implementation/remediation IN PROGRESS, verification + user acceptance pending`.
 
 **F következő pontja:** `F1` csak a teljes F0 CLOSED / PASS után. F1 feladata ezt követően a már bizonyított canonical Property Registry/Inspector szerződés további domain-szintű bővítése, nem az F0-ban elvégzett alapok újraépítése.
 
