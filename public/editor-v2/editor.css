@@ -135,3 +135,12 @@
 
   .richtext-toolbar select{font-size:var(--editor-ui-text)}
 }
+
+/* F0 — canonical Schedule navigation + Inspector controls */
+.schedule-panel-intro{padding:12px;color:var(--muted);font-size:11px;line-height:1.5;border-bottom:1px solid var(--line)}
+.schedule-panel-status{margin:8px 9px;padding:9px;border:1px solid var(--line);border-radius:6px;background:#0d131b;color:#aebbd0;font-size:10px;line-height:1.4}
+.schedule-inspector .inspector-group-title{display:flex;align-items:center;justify-content:space-between}
+.schedule-check-grid{display:grid;grid-template-columns:1fr;gap:4px}
+.schedule-check-grid .inspector-toggle{margin:0}
+.schedule-inspector .field{border-bottom:1px solid var(--line)}
+@media(max-width:850px){.schedule-panel-intro{font-size:10px}.schedule-panel-status{font-size:10px}.schedule-check-grid{gap:3px}}
