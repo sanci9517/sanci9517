@@ -2791,9 +2791,9 @@ Egy pont nem válik CLOSED állapotúvá pusztán attól, hogy a kód elkészül
 
 > **ARCHIVE LOCK:** Az alábbi blokk a korábbi fejlesztési történetet és bizonyítékokat őrzi. **NEM AKTÍV.** Semmilyen benne lévő „következő pont”, `[ ]`, `[~]` vagy régi checkpoint nem nyithat új munkasávot. A jelenlegi végrehajtási állapotot kizárólag a 00/A index adja.
 
-# 00/A — MASTER VÉGREHAJTÁSI INDEX — EZ AZ EGYETLEN AKTÍV SORREND
+# ARCHIVÁLT 00/A — KORÁBBI MASTER VÉGREHAJTÁSI INDEX — NEM AKTÍV
 
-> **KÖTELEZŐ:** A dokumentum bármely más fejezetében szereplő `[ ]`, `[~]` vagy régebbi „következő lépés” szöveg **történeti dokumentáció vagy backlog**, és **nem végrehajtási utasítás**. Az egyetlen végrehajtási forrás az alábbi index **EGYETLEN AKTÍV PONT** sora. A történeti fejezetek státuszai nem írhatják felül az indexet, és nem nyithatnak új munkasávot.
+> **ARCHIVE LOCK:** Ez a blokk kizárólag történeti bizonyíték. **NEM VÉGREHAJTÁSI FORRÁS.** Az itt szereplő aktív pont, következő lépés, `[ ]`, `[~]` vagy régi checkpoint nem nyitható meg újra. A jelenlegi egyetlen aktív végrehajtási forrás a dokumentum korábbi, 00/A.1 `M0` sora.
 
 ### Kész, lezárt fő blokkok
 - [x] **40.69.4 — Revision conflict második gyökérok + LIVE Save/Publish regresszió**
@@ -2814,8 +2814,8 @@ Egy pont nem válik CLOSED állapotúvá pusztán attól, hogy a kód elkészül
   - [x] Diagnosztika 0 hiba
   - [x] Core CI 24/24
 
-### 🔵 EGYETLEN AKTÍV PONT
-**40.69.13 — Twitch-integrációs alap + Schedule/Adásrend újratervezés**
+### TÖRTÉNETI — KORÁBBAN AKTÍV PONT
+**40.69.13 — Twitch-integrációs alap + Schedule/Adásrend újratervezés — LEZÁRT / ARCHIVÁLT**
 
 **Státusz:** [~] AKTÍV — **Twitch/C.5.1, E4.1, E4.2 és E4.3.1–E4.3.8 lezárva; E4.3 ownership/hardening és D1 readiness/live DoD PASS.** A következő egyetlen munkapont: **40.69.13.E4.4.1 — `site_id NOT NULL` schema hardening: final migration design + exact table-rebuild SQL audit**. Az E4.3.8 live deployment, publikus HTML/renderer, `home`/`about` API és felhasználói böngészős ellenőrzése PASS. Az E4.4 migration továbbra is csak a teljes E4.4 DoD szerinti kontrollált table-rebuild + post-migration verification után tekinthető lezártnak.
 
