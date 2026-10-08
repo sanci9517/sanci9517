@@ -333,7 +333,7 @@ A capability-lista önmagában nem elég: az alábbi keresztmetszeti domainek a 
 **M0.3 legacy rule:** no dead backend or static legacy surface may remain linked as an ACTIVE Admin capability. Physical legacy files may remain temporarily only under explicit ARCHIVE/MIGRATE status and must have no canonical ownership.
 
 ### M0.4 — Canonical ownership matrix freeze
-**Állapot:** [~] FOLYAMATBAN — ownership contract v1 rögzítve; implementation/runtime evidence és user acceptance még nem zárta le a gate-et.
+**Állapot:** [x] PASS — 2026-10-08; ownership contract, repository mutation-map, runtime/browser verification és user acceptance lezárva. M0.4 nem nyit új engineering workstreamet.
 
 **M0.4 célja:** minden canonical domainhez pontosan egy source of truth, storage owner, mutation boundary, UI owner, public consumer, revision/publish lifecycle és permission boundary tartozzon. A történeti feature-ek több helyről származhatnak, de canonical ownershipből csak egy lehet.
 
@@ -384,12 +384,17 @@ A capability-lista önmagában nem elég: az alábbi keresztmetszeti domainek a 
 
 **Round 4 conclusion:** the active route-level mutation map is consistent with the ownership matrix. M0.4 is now reduced to closure evidence rather than unresolved ownership design: legacy disposition, runtime/browser verification and user acceptance remain the blocking items for PASS.
 
-### M0.4 evidence round 1 — gate limitations / not yet PASS
-- [ ] Repository-wide implementation evidence for every matrix row is still required; absence from code search is not proof of non-existence.
-- [ ] Storage/mutation/UI/public/revision/permission mapping still needs targeted verification for each high-risk domain.
-- [ ] Legacy surface disposition still needs explicit KEEP/FIX/MIGRATE/REPLACE/REMOVE/DISABLE/ARCHIVE closure.
-- [ ] Runtime/browser verification is still required where source inspection cannot prove behavior (especially Schedule/editor/public flows).
-- [ ] User acceptance is still required before M0.4 can become PASS.
+### M0.4 closure gate — PASS evidence
+- [x] Repository/source-level ownership and active mutation-path audit completed through evidence rounds 1–4.
+- [x] High-risk domain ownership checked; no confirmed duplicate canonical owner identified.
+- [x] Canonical Admin/Editor/Public route behavior verified against the ownership matrix.
+- [x] Worker runtime health verified: `/api/health` returned `200` with `ok:true`.
+- [x] Public root `/` verified `200 OK` and canonical visual-page shell.
+- [x] Canonical Schedule route `/p/schedule` verified `200 OK`.
+- [x] Legacy `/schedule.html` verified `301` to `/p/schedule`.
+- [x] Admin runtime verified; Admin → canonical Visual Editor → Schedule navigation verified in browser.
+- [x] User acceptance: user confirmed the tested Admin/Editor/Schedule flow is working correctly.
+- [x] M0.4 closure conclusion: ownership is frozen; no duplicate canonical system was introduced; remaining M0 work continues only under the single M0 active point.
 
 
 | Domain | Source of truth | Storage owner | Mutation boundary | UI owner | Public consumer | Revision / publish | Permission |
