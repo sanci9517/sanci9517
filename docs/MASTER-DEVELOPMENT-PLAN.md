@@ -337,6 +337,26 @@ A capability-lista önmagában nem elég: az alábbi keresztmetszeti domainek a 
 
 **M0.4 célja:** minden canonical domainhez pontosan egy source of truth, storage owner, mutation boundary, UI owner, public consumer, revision/publish lifecycle és permission boundary tartozzon. A történeti feature-ek több helyről származhatnak, de canonical ownershipből csak egy lehet.
 
+### M0.4 evidence round 1 — repository baseline
+- [x] Canonical Site Context exists: `src/core/site-context.ts`.
+- [x] Canonical Page Model exists: `src/core/page-model.ts`; legacy document input is normalized into the canonical page-document shape rather than creating a second Page Model.
+- [x] Shared domain contracts exist in `src/core/domain/contracts.ts` for assets, game profiles, schedule events and presentation/theme state.
+- [x] Publish validation is centralized in `src/core/editor-validation.ts`, including canonical page hierarchy and Schedule-node contract validation.
+- [x] Audit mutation evidence exists in `src/core/audit.ts` through the server-side `audit_log` boundary.
+- [x] Schedule read ownership is explicit in `src/core/schedule-read.ts`; Schedule integration code is grouped under `src/core/schedule/`.
+- [x] Editor Inspector property ownership is centralized in `public/editor-v2/core/property-registry.js`.
+- [x] Editor Schedule configuration ownership is isolated to `public/editor-v2/core/schedule-schema.js`; the module explicitly does not own Schedule domain records.
+- [x] Initial duplicate-storage search did not reveal a second canonical Asset/Media/Theme/Component/Template table in the indexed repository evidence.
+- [x] The existing evidence supports the ownership matrix as the current canonical baseline.
+
+### M0.4 evidence round 1 — gate limitations / not yet PASS
+- [ ] Repository-wide implementation evidence for every matrix row is still required; absence from code search is not proof of non-existence.
+- [ ] Storage/mutation/UI/public/revision/permission mapping still needs targeted verification for each high-risk domain.
+- [ ] Legacy surface disposition still needs explicit KEEP/FIX/MIGRATE/REPLACE/REMOVE/DISABLE/ARCHIVE closure.
+- [ ] Runtime/browser verification is still required where source inspection cannot prove behavior (especially Schedule/editor/public flows).
+- [ ] User acceptance is still required before M0.4 can become PASS.
+
+
 | Domain | Source of truth | Storage owner | Mutation boundary | UI owner | Public consumer | Revision / publish | Permission |
 |---|---|---|---|---|---|---|---|
 | Site / Site Context | Site Context + site contract | D1 | site-scoped server boundary | Creator Center / Editor | public renderer | site revision/publish | site owner |
