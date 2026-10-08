@@ -291,6 +291,7 @@ A capability-lista önmagában nem elég: az alábbi keresztmetszeti domainek a 
 | Billing / Entitlements | Billing/Subscription domain | D1 + payment-provider boundary | 4.0+ |
 | Audit / Governance | Audit + policy contract | D1/log boundary | 0.x–10.0 |
 | Data Portability | Import/Export/Portability contract | JSON/media/package boundary | 1.0+ |
+| Custom Code / HTML / Embed | Secure Embed/Custom-Code contract | sandboxed renderer boundary; never direct privileged persistence | 1.x+ |
 | Experimentation / Personalization | Experimentation domain | analytics/config/content boundary | 6.0–10.0 |
 
 **M0.2.A szabály:** ezek nem „extra funkciók”, hanem platform-szintű cross-cutting contracts. Ha egy későbbi capability ezekre támaszkodik, a capability saját domainje nem hozhat létre második auth, permission, audit, resource, search, analytics, notification, deployment, migration vagy persistence rendszert.
