@@ -1739,6 +1739,155 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 - [x] `public/editor-v2/core/commands.js`, `schema.js`, `state.js`, `validation.js`, `property-registry.js`, `responsive.js`, `schedule-schema.js` és `schedule-preview.js` az Editor v2 canonical kliensoldali core-jának részei; külön második canonical core létrehozása tilos.
 - [x] Migrations inventory alapján legacy/canonical rétegek történetileg egymás mellett léteznek (`0003_legacy_pages`, `0004_system_page_content`, majd canonical page/revision migrációk), ezért a fizikai legacy maradványok nem tekinthetők automatikusan aktív domainnek.
 
+**M0.1 legacy 01–140 preservation matrix — 2026-10-08**
+
+A korábbi MASTER 44f42403… állapotából visszaolvastuk a **140 számozott funkciópontot**. Egyik sem törlődik. Az alábbi mátrix megőrzi a történeti státuszt és hozzárendeli a jelenlegi canonical product/domain ownerhez. A történeti [x]/[~]/[ ] nem jelenti a mai runtime készültségét; csak a régi állapot bizonyítéka.
+
+| ID | Történeti funkció | Jelenlegi canonical owner / capability | Jelenlegi scope |
+|---:|---|---|---|
+| 001 | [x] GitHub + Cloudflare alapstruktúra működő branch/deploy útja | Platform foundation / persistence | 1.0 foundation |
+| 002 | [~] D1 séma és canonical oldalmodell teljes auditja | Platform foundation / persistence | 1.0 foundation |
+| 003 | [~] Legacy → canonical migráció véglegesítése és ellenőrzése | Platform foundation / persistence | 1.0 foundation |
+| 004 | [ ] Legacy HTML teljes leválasztása és archiválása | Platform foundation / persistence | 1.0 foundation |
+| 005 | [ ] Canonical Page Model kizárólagos aktív használata | Platform foundation / persistence | 1.0 foundation |
+| 006 | [ ] D1 draft / published snapshot / revision modell teljes validálása | Platform foundation / persistence | 1.0 foundation |
+| 007 | [ ] Revision rollback teljes tesztje | Platform foundation / persistence | 1.0 foundation |
+| 008 | [ ] Audit log teljes ellenőrzése | Platform foundation / persistence | 1.0 foundation |
+| 009 | [ ] Autosave | Platform foundation / persistence | 1.0 foundation |
+| 010 | [ ] Backup / restore | Platform foundation / persistence | 1.0 foundation |
+| 011 | [x] Auth / session alap | Auth + Pages/CMS | 1.0 |
+| 012 | [x] Editor jogosultság / RBAC alap | Auth + Pages/CMS | 1.0 |
+| 013 | [~] Oldallista D1-ből | Auth + Pages/CMS | 1.0 |
+| 014 | [~] Egyedi oldal megnyitása D1-ből | Auth + Pages/CMS | 1.0 |
+| 015 | [~] Oldal létrehozása | Auth + Pages/CMS | 1.0 |
+| 016 | [~] Oldal átnevezése | Auth + Pages/CMS | 1.0 |
+| 017 | [~] Oldal törlése | Auth + Pages/CMS | 1.0 |
+| 018 | [ ] Slug kezelés és ütközéskezelés teljes UI teszttel | Auth + Pages/CMS | 1.0 |
+| 019 | [ ] CMS teljes regressziós teszt | Auth + Pages/CMS | 1.0 |
+| 020 | [x] Editor betöltés / boot diagnostics | Visual Editor Core | 1.0 foundation |
+| 021 | [x] Canonical Page Model betöltése | Visual Editor Core | 1.0 foundation |
+| 022 | [x] Node ID / parent / children modell | Visual Editor Core | 1.0 foundation |
+| 023 | [x] Selection alap | Visual Editor Core | 1.0 foundation |
+| 024 | [x] Layer tree alap | Visual Editor Core | 1.0 foundation |
+| 025 | [x] Command API alap | Visual Editor Core | 1.0 foundation |
+| 026 | [x] Undo / redo alap | Visual Editor Core | 1.0 foundation |
+| 027 | [x] Element update / add / delete / duplicate commandok alapja | Visual Editor Core | 1.0 foundation |
+| 028 | [x] Hierarchy reparent / reorder command alapja | Visual Editor Core | 1.0 foundation |
+| 029 | [~] Canvas Engine foundation | Visual Editor Core | 1.0 foundation |
+| 030 | [~] Responsive engine foundation | Visual Editor Core | 1.0 foundation |
+| 031 | [~] Property Registry foundation | Visual Editor Core | 1.0 foundation |
+| 032 | [ ] Canvas Engine tényleges bekötése az Editor rendererbe | Website Builder / Layout / Inspector | 1.0 + 1.x |
+| 033 | [ ] Stabil DOM ↔ Page Model node binding | Website Builder / Layout / Inspector | 1.0 + 1.x |
+| 034 | [ ] Geometry Inspector | Website Builder / Layout / Inspector | 1.0 + 1.x |
+| 035 | [ ] Responsive geometry | Website Builder / Layout / Inspector | 1.0 + 1.x |
+| 036 | [ ] Drag | Website Builder / Layout / Inspector | 1.0 + 1.x |
+| 037 | [ ] Resize | Website Builder / Layout / Inspector | 1.0 + 1.x |
+| 038 | [ ] Snap / guides / alignment | Website Builder / Layout / Inspector | 1.0 + 1.x |
+| 039 | [ ] Layer / lock / hide / rename teljes editor UX | Website Builder / Layout / Inspector | 1.0 + 1.x |
+| 040 | [ ] Multi-select / group / ungroup | Website Builder / Layout / Inspector | 1.0 + 1.x |
+| 041 | [ ] Canvas zoom / fit / grid / viewport UX | Website Builder / Layout / Inspector | 1.0 + 1.x |
+| 042 | [ ] Nested hierarchy teljes működése | Website Builder / Layout / Inspector | 1.0 + 1.x |
+| 043 | [ ] Invalid nesting védelem | Website Builder / Layout / Inspector | 1.0 + 1.x |
+| 044 | [ ] Section / container / row / columns / flex / grid / stack | Website Builder / Layout / Inspector | 1.0 + 1.x |
+| 045 | [ ] Layout sizing / spacing / alignment / distribution | Website Builder / Layout / Inspector | 1.0 + 1.x |
+| 046 | [ ] Positioning / overflow | Website Builder / Layout / Inspector | 1.0 + 1.x |
+| 047 | [ ] Responsive layout szabályok | Website Builder / Layout / Inspector | 1.0 + 1.x |
+| 048 | [ ] Typography Inspector | Website Builder / Layout / Inspector | 1.0 + 1.x |
+| 049 | [ ] Appearance Inspector | Website Builder / Layout / Inspector | 1.0 + 1.x |
+| 050 | [ ] Interaction / accessibility / advanced properties | Website Builder / Layout / Inspector | 1.0 + 1.x |
+| 051 | [ ] Property search / reset / validation | Website Builder / Layout / Inspector | 1.0 + 1.x |
+| 052 | [ ] Text / rich text | Content / Media / Asset | 1.0 foundation + 1.x |
+| 053 | [ ] Image / video / embed | Content / Media / Asset | 1.0 foundation + 1.x |
+| 054 | [ ] Button / link / CTA | Content / Media / Asset | 1.0 foundation + 1.x |
+| 055 | [ ] Card / list / table / accordion / tabs | Content / Media / Asset | 1.0 foundation + 1.x |
+| 056 | [ ] Social és streamer blokkok | Content / Media / Asset | 1.0 foundation + 1.x |
+| 057 | [ ] Twitch / YouTube / TikTok / Discord blokkok | Content / Media / Asset | 1.0 foundation + 1.x |
+| 058 | [ ] Schedule / Live / Countdown / VOD blokkok | Content / Media / Asset | 1.0 foundation + 1.x |
+| 059 | [ ] Form / contact blokkok | Content / Media / Asset | 1.0 foundation + 1.x |
+| 060 | [ ] Media library / R2 | Content / Media / Asset | 1.0 foundation + 1.x |
+| 061 | [ ] Draft | Publishing / Revision / Import-Export | 1.0 + 1.x |
+| 062 | [ ] Preview | Publishing / Revision / Import-Export | 1.0 + 1.x |
+| 063 | [ ] Publish | Publishing / Revision / Import-Export | 1.0 + 1.x |
+| 064 | [ ] Public renderer canonical published documentből | Publishing / Revision / Import-Export | 1.0 + 1.x |
+| 065 | [ ] Public / draft izoláció | Publishing / Revision / Import-Export | 1.0 + 1.x |
+| 066 | [ ] Revision history UI | Publishing / Revision / Import-Export | 1.0 + 1.x |
+| 067 | [ ] Rollback UI | Publishing / Revision / Import-Export | 1.0 + 1.x |
+| 068 | [ ] Import / export | Publishing / Revision / Import-Export | 1.0 + 1.x |
+| 069 | [ ] Főoldal | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
+| 070 | [ ] Twitch | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
+| 071 | [ ] YouTube | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
+| 072 | [ ] TikTok | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
+| 073 | [ ] Adásrend | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
+| 074 | [ ] Következő adás / countdown | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
+| 075 | [ ] Élő / offline állapot | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
+| 076 | [ ] VOD / Shorts / Clips | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
+| 077 | [ ] Rólam | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
+| 078 | [ ] Közösség / Discord | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
+| 079 | [ ] Kapcsolat | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
+| 080 | [ ] Támogatás | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
+| 081 | [ ] Szponzor / üzleti / Press Kit | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
+| 082 | [ ] 404 / loading / empty / error állapotok | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
+| 083 | [ ] Egységes mobil / tablet / desktop UX | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
+| 084 | [ ] SEO / Open Graph / structured data | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
+| 085 | [ ] Accessibility | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
+| 086 | [ ] Performance / caching | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
+| 087 | [ ] Schedule D1 rendszer | Streamer Domain / Integrations / Analytics | 1.0 + 1.x + future adapters |
+| 088 | [ ] Twitch API / live state | Streamer Domain / Integrations / Analytics | 1.0 + 1.x + future adapters |
+| 089 | [ ] YouTube API | Streamer Domain / Integrations / Analytics | 1.0 + 1.x + future adapters |
+| 090 | [ ] TikTok rendszer | Streamer Domain / Integrations / Analytics | 1.0 + 1.x + future adapters |
+| 091 | [ ] VOD rendszer | Streamer Domain / Integrations / Analytics | 1.0 + 1.x + future adapters |
+| 092 | [ ] Community / Discord | Streamer Domain / Integrations / Analytics | 1.0 + 1.x + future adapters |
+| 093 | [ ] Contact / collaboration | Streamer Domain / Integrations / Analytics | 1.0 + 1.x + future adapters |
+| 094 | [ ] Site settings | Streamer Domain / Integrations / Analytics | 1.0 + 1.x + future adapters |
+| 095 | [ ] Analytics | Streamer Domain / Integrations / Analytics | 1.0 + 1.x + future adapters |
+| 096 | [ ] Unit tesztek | QA / Security / Production | 1.0 gates |
+| 097 | [ ] API / integration tesztek | QA / Security / Production | 1.0 gates |
+| 098 | [ ] D1 tesztek | QA / Security / Production | 1.0 gates |
+| 099 | [ ] E2E / browser tesztek | QA / Security / Production | 1.0 gates |
+| 100 | [ ] Regression tesztek | QA / Security / Production | 1.0 gates |
+| 101 | [ ] Security hardening | QA / Security / Production | 1.0 gates |
+| 102 | [ ] Observability / error reporting | QA / Security / Production | 1.0 gates |
+| 103 | [ ] Production backup / recovery teszt | QA / Security / Production | 1.0 gates |
+| 104 | [ ] Production release checklist | QA / Security / Production | 1.0 gates |
+| 105 | [ ] Stabil page / node / component / action / revision / media / schedule ID-k | Platform contracts / Governance / AI-ready actions | 1.0 foundation + post-1.0 |
+| 106 | [ ] Strukturált page model teljes lezárása | Platform contracts / Governance / AI-ready actions | 1.0 foundation + post-1.0 |
+| 107 | [ ] Közös Action API az Editor és későbbi AI számára | Platform contracts / Governance / AI-ready actions | 1.0 foundation + post-1.0 |
+| 108 | [ ] Permission / approval / audit réteg | Platform contracts / Governance / AI-ready actions | 1.0 foundation + post-1.0 |
+| 109 | [ ] Preview-before-apply / rollback mechanizmus | Platform contracts / Governance / AI-ready actions | 1.0 foundation + post-1.0 |
+| 110 | [ ] AI Orchestrator | SANCI AI / Creator Intelligence | post-1.0 |
+| 111 | [ ] Agent / Tool / Model Registry | SANCI AI / Creator Intelligence | post-1.0 |
+| 112 | [ ] Task Planner / Context Selector | SANCI AI / Creator Intelligence | post-1.0 |
+| 113 | [ ] Permission Checker / Approval Flow | SANCI AI / Creator Intelligence | post-1.0 |
+| 114 | [ ] Execution / verification / recovery | SANCI AI / Creator Intelligence | post-1.0 |
+| 115 | [ ] Multi-model routing | SANCI AI / Creator Intelligence | post-1.0 |
+| 116 | [ ] Web Engineer Agent | SANCI AI / Creator Intelligence | post-1.0 |
+| 117 | [ ] Visual Editor Agent | SANCI AI / Creator Intelligence | post-1.0 |
+| 118 | [ ] QA Agent | SANCI AI / Creator Intelligence | post-1.0 |
+| 119 | [ ] GitHub / Cloudflare Engineer Agent | SANCI AI / Creator Intelligence | post-1.0 |
+| 120 | [ ] Browser QA AI | SANCI AI / Creator Intelligence | post-1.0 |
+| 121 | [ ] Stream observation | SANCI AI / Creator Intelligence | post-1.0 |
+| 122 | [ ] Silence / pacing detection | SANCI AI / Creator Intelligence | post-1.0 |
+| 123 | [ ] Chat / context analysis | SANCI AI / Creator Intelligence | post-1.0 |
+| 124 | [ ] Contextual live suggestions | SANCI AI / Creator Intelligence | post-1.0 |
+| 125 | [ ] Streamer profile / long-term memory | SANCI AI / Creator Intelligence | post-1.0 |
+| 126 | [ ] Experience learning / evaluation cycles | SANCI AI / Creator Intelligence | post-1.0 |
+| 127 | [ ] One-click clip / Short creation | SANCI AI / Creator Intelligence | post-1.0 |
+| 128 | [ ] Stream setup diagnostics assistant | SANCI AI / Creator Intelligence | post-1.0 |
+| 129 | [ ] AI control center | SANCI AI / Creator Intelligence | post-1.0 |
+| 130 | [ ] End-to-end AI platform test | SANCI AI / Creator Intelligence | post-1.0 |
+| 131 | [ ] Teljes public website teszt | Final production QA / release gates | 1.0 production gates |
+| 132 | [ ] Teljes admin / CMS teszt | Final production QA / release gates | 1.0 production gates |
+| 133 | [ ] Teljes Visual Editor teszt | Final production QA / release gates | 1.0 production gates |
+| 134 | [ ] D1 / R2 / integrations teszt | Final production QA / release gates | 1.0 production gates |
+| 135 | [ ] Mobile / tablet / desktop teszt | Final production QA / release gates | 1.0 production gates |
+| 136 | [ ] Security / permissions teszt | Final production QA / release gates | 1.0 production gates |
+| 137 | [ ] Performance / accessibility teszt | Final production QA / release gates | 1.0 production gates |
+| 138 | [ ] Backup / restore / disaster recovery teszt | Final production QA / release gates | 1.0 production gates |
+| 139 | [ ] Regression teszt | Final production QA / release gates | 1.0 production gates |
+| 140 | [ ] Production release jóváhagyás | Final production QA / release gates | 1.0 production gates |
+
+**M0.1 megállapítás:** a korábbi 01–140 backlog **nem veszett el**; minden pontnak van jelenlegi helye a rebaselined platform mapben. Ahol a régi pont több mai capability-re bomlik (pl. 60 Media library → Central Resource + Asset Manager + storage boundary; 55 Card/list/table/accordion/tabs → Component/Interaction system), ott nem összevonással töröljük, hanem egyedi feature-ként megőrizzük a traceabilityt.
+
 **M0.1 következő egyetlen lépése:** a MASTER történeti 19–34 backlogjának és a jelenlegi 00.9.6.B capability mapnek soronkénti összevetése; minden eltérésből egyedi KEEP/MERGE/ADD döntés készül. Addig M0.1 nem zárható le.
 
 ### M0.2 — Platform domain inventory
