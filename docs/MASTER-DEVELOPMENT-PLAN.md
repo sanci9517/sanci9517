@@ -487,3 +487,892 @@ Ez az F0 **nem egy új Visual Editor és nem egy második Schedule Builder**. Az
 ---
 
 ## F0.1 — TELJES EDITOR SHELL / PANEL CONTRACT AUDIT
+
+---
+
+# 00.9.6.C — ULTIMATE CREATOR PLATFORM — VÉGLEGES TERMÉK- ÉS FEJLESZTÉSI VILÁGTÉRKÉP — MASTER-2.71
+
+**Rögzítve:** 2026-10-08  
+**Jelleg:** CANONICAL PRODUCT SCOPE / ROADMAP FREEZE  
+**Aktív engineering pont:** továbbra is **M0**. Ez a fejezet nem nyit párhuzamos fejlesztési pontot és nem írja felül az M0 sorrendjét.  
+**Cél:** a Sanci9517 ne csak egy streamer weboldal legyen, hanem lépésről lépésre egy világpiaci, többplatformos **Creator OS / Creator Platform** legyen.
+
+## 00.9.6.C.1 — Végső termékígéret
+
+A végső rendszernek egyetlen összefüggő platformként kell kezelnie:
+
+1. Creator Website / public site
+2. Visual Website Builder
+3. Pages / Navigation / Layout / Components
+4. CMS / structured content
+5. Media / Asset / Resource Library
+6. Icons / Icon Registry
+7. Themes / Design System / Tokens
+8. Templates / Sections / Components / Symbols
+9. Streamer identity / profile / games / platforms
+10. Schedule / Live / Countdown / VOD / Clips / Highlights
+11. Twitch / YouTube / TikTok és további platform adapterek
+12. Community / Discord / social/community functions
+13. Stream Studio / Overlay Studio / Widgets / Alerts
+14. OBS / Browser Source / streaming output
+15. Forms / support / newsletter / contact
+16. Shop / Merch / products / collections / orders / checkout integration
+17. Payments / supporter / donation / membership capabilities
+18. SEO / AEO / social sharing / discoverability
+19. Analytics / conversion / audience insights
+20. Automation / event / trigger / workflow engine
+21. AI-assisted creation / content / SEO / analytics / localization / automation
+22. Localization / internationalization / multilingual publishing
+23. Accounts / permissions / multi-creator / future multi-tenant SaaS
+24. Backup / import / export / migration
+25. Marketplace / template library / component library / creator ecosystem
+26. Performance / accessibility / security / diagnostics / observability
+27. Future integrations through a canonical adapter/integration architecture
+
+**Semmilyen későbbi capability nem törölhető csak azért, mert nem része az első 1.0-nak.** A későbbi capability-t a megfelelő PHASE alá kell helyezni és explicit státusszal kell megőrizni.
+
+---
+
+## 00.9.6.C.2 — Szerkeszthetőség alapelve: „minden értelmezhető helyen”
+
+A platform minden olyan területén, ahol technikailag és UX szempontból értelmezhető, támogatnia kell:
+
+- létrehozás
+- szerkesztés
+- duplikálás
+- áthelyezés
+- újrarendezés
+- törlés
+- archiválás
+- mentés
+- előnézet
+- visszaállítás
+- verziózás
+- keresés
+- szűrés
+- kiválasztás pickerből
+- saját egyedi elem létrehozása
+- meglévő elem testreszabása
+- sablonból indulás
+- saját sablon mentése
+- sablon duplikálása/forkolása
+- újrafelhasználás
+- import/export
+- jogosultság és állapotkezelés
+- ahol indokolt: globális/shared módosítás vagy csak az adott instance módosítása
+
+A „template” nem lehet merev kész oldal. A template **kiindulási állapot**. A template-ből létrehozott oldal minden megengedett property-jével tovább szerkeszthető.
+
+---
+
+## 00.9.6.C.3 — Canonical Template / Component / Symbol rendszer
+
+### A. Site Template
+Komplett creator/webshop/site kiinduló rendszer:
+- pages
+- navigation
+- header/footer
+- theme
+- design tokens
+- components
+- content structure
+- SEO defaults
+- responsive rules
+- asset references
+
+### B. Page Template
+Egy teljes oldal kiinduló állapota.
+
+### C. Section Template
+Hero, schedule, about, social, gallery, support, shop, footer stb. újrahasznosítható szekció.
+
+### D. Component Template
+Egy komponens előre definiált, de teljesen tovább szerkeszthető kiinduló változata.
+
+### E. Reusable Component / Symbol
+Közös definíció, amely több helyen használható. A main definition módosítása az összes instance-ra kihat, miközben az engedélyezett instance properties egyedileg felülírhatók.
+
+### F. Variants
+Egy komponens több hivatalos változata:
+- layout
+- size
+- color
+- typography
+- state
+- responsive behavior
+- content arrangement
+
+### G. User-created library
+A felhasználó saját:
+- site template
+- page template
+- section template
+- component template
+- symbol/reusable component
+- theme
+- icon pack
+- asset collection
+- overlay
+- widget
+- stream scene
+- shop section
+- content structure
+
+elemeit mentheti és később újra felhasználhatja.
+
+**Kötelező különbség:** Template = copy/fork; Symbol = shared definition. Egyik sem hozhat létre második Page Modelt, Asset DB-t, Theme DB-t vagy Component Registryt.
+
+---
+
+## 00.9.6.C.4 — Resource / Asset / Icon / Font / File Library
+
+Egyetlen központi Resource réteg kezeli a:
+- images
+- videos
+- audio
+- documents
+- SVG
+- icons
+- logos
+- avatars
+- banners
+- game artwork
+- stream artwork
+- thumbnails
+- fonts
+- downloadable files
+- future resource types
+
+Minden resource rendelkezzen szükség szerint:
+- ID
+- type
+- storage reference
+- metadata
+- title/name
+- alt text
+- MIME/type
+- dimensions/duration
+- size
+- tags
+- usage references
+- owner/site scope
+- status
+- created/updated timestamps
+- version/restore information where applicable
+
+**Storage boundary:**
+- binary/media -> R2
+- structured metadata/domain -> D1
+- Page Model -> csak canonical resource reference
+- nincs második Asset DB.
+
+Picker funkciók:
+- search
+- filter
+- sort
+- upload
+- select
+- preview
+- replace
+- crop/transform where supported
+- metadata edit
+- alt text
+- usage inspection
+- orphan detection
+- safe delete
+- restore
+
+---
+
+## 00.9.6.C.5 — Website Builder teljes capability-köre
+
+A visual buildernek végső állapotban kezelnie kell:
+
+**Canvas/layout**
+- container
+- stack
+- flex
+- grid
+- rows/columns
+- alignment
+- gap
+- padding/margin
+- width/height/min/max
+- aspect ratio
+- overflow
+- position
+- z-index
+- responsive constraints
+- viewport-specific overrides
+
+**Structure**
+- pages
+- sections
+- containers
+- components
+- slots
+- children
+- layers
+- grouping
+- reparenting
+- reorder
+- duplicate
+- lock
+- hide
+- rename
+
+**Content**
+- text
+- rich text
+- image
+- video
+- audio
+- link
+- button
+- icon
+- embed
+- form
+- list
+- dynamic content
+- CMS binding
+- platform binding
+
+**Presentation**
+- typography
+- color
+- background
+- gradient
+- border
+- radius
+- shadow
+- opacity
+- filters
+- transform
+- animation
+- state styles
+
+**Responsive**
+- desktop
+- tablet
+- mobile
+- future custom breakpoints
+- inheritance
+- override
+- reset
+- responsive visibility
+- responsive typography
+- responsive spacing
+- responsive media
+- responsive component variants
+
+**Editor productivity**
+- drag/drop
+- multi-select
+- copy/paste
+- duplicate
+- style copy
+- command palette
+- keyboard shortcuts
+- undo/redo
+- search
+- recent/favorites
+- context menu
+- batch operations
+
+---
+
+## 00.9.6.C.6 — CMS / Content Factory
+
+A CMS végső capability-köre:
+- collections
+- records
+- custom fields
+- references
+- relationships
+- rich text
+- media fields
+- taxonomy/tags
+- drafts
+- publishing
+- scheduling
+- revisions
+- authoring
+- reusable content
+- dynamic page bindings
+
+Creator-specific collections:
+- posts
+- news
+- videos
+- VOD
+- clips
+- highlights
+- games
+- stream events
+- projects
+- gallery
+- sponsors
+- supporters
+- FAQs
+- links
+- social posts
+- custom creator records
+
+---
+
+## 00.9.6.C.7 — Streamer platform
+
+Canonical streamer domains:
+- creator identity
+- profile
+- social platforms
+- games
+- game profiles
+- schedule
+- live state
+- current game
+- next stream
+- VOD
+- clips
+- highlights
+- stream events
+- platform links
+- community links
+
+Integrációs sorrend:
+1. Twitch
+2. YouTube
+3. TikTok
+4. Discord/community
+5. további adapterek
+
+Minden adapter közös Integration/Platform contractot használ. Nincs platformonként külön, párhuzamos Page Model vagy Schedule domain.
+
+---
+
+## 00.9.6.C.8 — Schedule végső capability
+
+A Schedule nem egyszerű lista.
+
+Támogatandó:
+- date
+- start/end
+- timezone
+- title
+- game
+- platform
+- status
+- artwork
+- notes
+- URL
+- source
+- sync state
+- recurring events
+- featured
+- visibility
+- filters
+- views
+- templates
+- external integration
+- live linkage
+- cancellation/reschedule
+- past/upcoming/all/next views
+
+A Schedule eseményekhez is használható legyen template/recurring/template-based creation, de a canonical Schedule domain marad az egyetlen domain owner.
+
+---
+
+## 00.9.6.C.9 — Theme / Design System
+
+Global:
+- colors
+- typography
+- spacing
+- radius
+- shadows
+- borders
+- containers
+- breakpoints
+- z-index
+- motion
+- focus
+- theme modes
+- component variants
+- brand assets
+
+A user:
+- saját theme-et hozhat létre
+- meglévő theme-et duplikálhat
+- theme-et módosíthat
+- theme-et menthet
+- theme-et template-hez kötheti
+- később theme package-ként exportálhat/megoszthat.
+
+---
+
+## 00.9.6.C.10 — Stream Studio / Overlay Studio / OBS
+
+Végső capability:
+- overlay canvas
+- scenes
+- starting soon
+- BRB
+- ending
+- webcam frame
+- alerts
+- widgets
+- chat
+- goals
+- countdown
+- labels
+- ticker
+- social handles
+- media
+- game widgets
+- stream variables
+- event triggers
+- animations
+- themes
+- reusable widgets
+- preview/test
+- browser-source output
+- OBS integration
+
+Az overlay/widget rendszer ugyanazokat a Resource, Theme, Component, Template és Integration contractokat használja; nem készül második párhuzamos Asset/Theme/Component rendszer.
+
+A StreamElements benchmark alapján különösen fontos a vizuális editor, testreszabható alert/widget, theme/package és browser-source workflow; a jelenlegi hivatalos dokumentáció ezt a modellt igazolja. citeturn0search0turn0search1turn0search3turn0search4
+
+---
+
+## 00.9.6.C.11 — Shop / Merch / Creator Commerce
+
+A végső platform része:
+- shop
+- products
+- product variants
+- collections
+- categories
+- product media
+- pricing
+- stock/inventory
+- digital products where applicable
+- merch
+- creator bundles
+- discount/coupon capability
+- cart
+- checkout integration
+- orders
+- customer/order status
+- shipping/tax integration boundary
+- supporter products
+- limited drops
+- shop analytics
+
+A webshop ne külön, idegen rendszer legyen: ugyanazt a Page Model / Resource / Theme / Component / Template / Auth / Publishing architektúrát használja, miközben a commerce domain külön canonical owner.
+
+---
+
+## 00.9.6.C.12 — Community / Support / Membership
+
+- contact
+- support
+- donations
+- supporter listing
+- memberships
+- gated content foundation
+- community links
+- Discord integration
+- community events
+- polls
+- forms
+- newsletter integration
+- future member profiles
+
+---
+
+## 00.9.6.C.13 — SEO / AEO / Discoverability
+
+- title
+- description
+- canonical
+- robots
+- sitemap
+- OG
+- social cards
+- favicon
+- structured data
+- headings
+- alt text
+- redirects
+- 404
+- clean URLs
+- locale metadata
+- index/noindex
+- performance signals
+- AEO/AI-search readiness
+- content discoverability
+- social preview
+
+---
+
+## 00.9.6.C.14 — AI platform
+
+AI nem egyetlen „AI gomb”.
+
+Későbbi capability-k:
+- AI site generation
+- AI section generation
+- AI component generation
+- AI copywriting
+- AI rewriting
+- AI SEO suggestions
+- AI AEO suggestions
+- AI alt text
+- AI metadata
+- AI translation
+- AI content planning
+- AI social post generation
+- AI schedule/content assistance
+- AI analytics explanation
+- AI optimization suggestions
+- AI theme/design assistance
+- AI image/media assistance where legally and technically appropriate
+- AI automation creation
+- AI support assistant
+- AI creator copilot
+
+**Biztonsági szabály:** AI által generált módosítás mindig a canonical Editor/Command/Validation/Persistence útvonalon menjen át; az AI nem írhat közvetlenül D1/R2-be.
+
+---
+
+## 00.9.6.C.15 — Localization / World Language
+
+**Jelenlegi 1.0 nyelv:** magyar.
+
+Az architektúra viszont már most localization-ready legyen:
+- locale-aware content
+- translation keys
+- localized metadata
+- localized slugs
+- locale fallback
+- RTL-ready layout
+- locale-specific assets where needed
+- translation workflow
+- future AI translation
+
+Későbbi világnyelvi sorrend:
+- magyar
+- angol
+- német
+- további nagy világnyelvek
+- szükség esetén regionális locale-ok
+
+A Framer jelenlegi localization modellje is külön kezeli a locale-t, fallbacket, CMS-t, képeket, slugokat és AI translationt; ezt benchmarkként használjuk, nem másolandó implementációként. citeturn0search5turn0search20turn0search21
+
+---
+
+## 00.9.6.C.16 — Analytics / Automation
+
+**Analytics:**
+- visitors
+- traffic
+- sources
+- engagement
+- stream metrics
+- content performance
+- shop performance
+- supporter/conversion metrics
+- campaign performance
+- dashboard
+- reports
+- export
+
+**Automation:**
+- event
+- trigger
+- condition
+- action
+- schedule
+- webhook
+- integration event
+- content workflow
+- stream workflow
+- commerce workflow
+- notification
+- AI-assisted workflow creation
+
+---
+
+## 00.9.6.C.17 — Accounts / SaaS / Ecosystem
+
+Későbbi platform:
+- multi-creator
+- multi-site
+- roles
+- permissions
+- teams
+- collaboration
+- approvals
+- audit
+- environments
+- staging
+- production
+- custom domains
+- billing
+- subscriptions
+- marketplace
+- creator onboarding
+- public template marketplace
+- component/widget marketplace
+- creator ecosystem
+
+---
+
+# 00.9.6.C.18 — VÉGLEGES FÁZIS-MENETREND
+
+## PHASE 0 — Foundation / M0 → F0
+**Cél:** canonical architecture, ownership, dead-surface cleanup, builder foundation.
+
+- M0.1–M0.13 teljes audit/freeze
+- canonical ownership
+- Resource contract
+- Template/Component/Theme contract
+- streamer/OBS capability freeze
+- 1.0 scope freeze
+- legacy cleanup plan
+- no-dead-admin gate
+- benchmark gate
+- M0 PASS
+- F0 rebaselined DoD
+
+## PHASE 1 — Creator Website 1.0
+**Cél:** professzionális, működő Sanci9517 creator site.
+
+- Visual Editor
+- Page Model
+- Pages
+- Navigation
+- Header/Footer
+- Layers
+- Inspector
+- Property Registry
+- responsive
+- content blocks
+- Media/Asset foundation
+- Icon picker
+- Theme foundation
+- basic reusable components
+- templates
+- Schedule
+- Game Profiles
+- Twitch
+- live/next-stream
+- draft/preview/publish/unpublish
+- revisions/rollback
+- SEO
+- accessibility
+- diagnostics
+- public renderer
+- regression/E2E/live acceptance
+- legacy active-surface elimination
+
+**1.0 nem jelent végállapotot.** Ez az első stabil Creator Platform release.
+
+## PHASE 2 — Creator Platform 1.x
+- richer CMS
+- advanced Resource Manager
+- advanced templates
+- Symbols
+- Theme Editor
+- forms
+- advanced interactions
+- animation
+- richer schedule
+- VOD/Clips
+- YouTube/TikTok integrations
+- richer social/community
+- media transforms
+- stronger SEO/AEO
+- richer shop foundation
+
+## PHASE 3 — Creator OS 2.x
+- Stream Studio
+- Overlay Studio
+- widgets
+- alerts
+- scenes
+- browser source
+- OBS integration
+- reusable stream packages
+- automation
+- creator analytics
+- advanced community
+- creator commerce
+- merch
+- supporter/membership system
+
+## PHASE 4 — AI Creator Platform 3.x
+- AI copilot
+- AI website generation
+- AI sections/components
+- AI content
+- AI SEO/AEO
+- AI media metadata
+- AI translation
+- AI analytics
+- AI automation
+- AI creator workflows
+
+## PHASE 5 — SaaS / Business 4.x
+- multi-creator
+- multi-site
+- accounts
+- teams
+- roles
+- permissions
+- collaboration
+- custom domains
+- billing
+- subscriptions
+- environments
+- advanced analytics
+
+## PHASE 6 — Creator Business 5.x
+- full commerce
+- merch
+- products
+- collections
+- campaigns
+- memberships
+- supporter programs
+- creator CRM/fan relationships
+- marketing automation
+- conversion optimization
+
+## PHASE 7 — Ecosystem / Marketplace 6.x
+- template marketplace
+- component marketplace
+- widget marketplace
+- theme marketplace
+- creator asset packs
+- public creator libraries
+- sharing
+- ratings/reviews/moderation
+- licensing/reuse model
+
+## PHASE 8 — Global / Advanced AI 7.x+
+- world-language rollout
+- advanced localization
+- advanced AI agents
+- autonomous workflow assistance
+- personalization
+- experimentation
+- advanced analytics
+- global creator ecosystem
+- future capabilities discovered through continuous benchmark/research
+
+---
+
+## 00.9.6.C.19 — Benchmark / Research szabály
+
+A fejlesztés során nem csak a saját ötleteinkből dolgozunk.
+
+Minden nagy capability előtt ellenőrizhető benchmarkforrás:
+- Webflow
+- Wix Studio
+- Framer
+- Sanity
+- Builder.io
+- GrapesJS
+- StreamElements
+- Streamlabs
+- OBS
+- Shopify
+- további releváns creator/e-commerce/CMS/platform rendszerek
+
+A benchmark célja:
+1. hiányzó capability felismerése;
+2. jó UX pattern felismerése;
+3. edge case-ek azonosítása;
+4. működési szerződések összehasonlítása;
+5. saját canonical design kialakítása.
+
+**Tilos** harmadik fél kódját vagy zárt implementációját engedély nélkül másolni. Nyilvános dokumentáció, működés, API-contract, UX és saját implementáció használható; ahol jogilag/technikailag indokolt, külön licence/API feltételek ellenőrzendők.
+
+A Webflow komponensmodellje például a main component / instance / props / slots / variants különbségét explicit kezeli; ez releváns benchmark a saját reusable component rendszerhez. citeturn0search2
+
+A Sanity visual editing modellje a live preview, click-to-edit és drag-and-drop szerkesztést egy közös visual editing workflow-ban kezeli; ez releváns benchmark a public preview ↔ editor kapcsolathoz. citeturn0search8turn0search18
+
+A Wix Studio template-rendszere responsive és erősen testreszabható template-eket használ; ez releváns benchmark a saját template libraryhoz. citeturn0search17
+
+---
+
+## 00.9.6.C.20 — „Nem maradhat ki” szabály
+
+Minden új funkció bekerülése előtt ezt a kérdéssort kell lefuttatni:
+
+1. Van-e saját canonical domain owner?
+2. Van-e saját UI/editor surface?
+3. Szerkeszthető-e, ahol értelmezhető?
+4. Menthető-e?
+5. Újrahasznosítható-e?
+6. Template-ként használható-e, ahol értelmezhető?
+7. Reusable Component/Symbol lehet-e?
+8. Resource/Asset pickerből kiválasztható-e, ahol értelmezhető?
+9. Responsive?
+10. Permission/security?
+11. Draft/preview/publish?
+12. Revision/rollback?
+13. Validation?
+14. Accessibility?
+15. SEO/AEO?
+16. Analytics?
+17. Integration/adapter?
+18. Import/export/backup?
+19. Future localization?
+20. Future AI integration?
+21. Future marketplace/ecosystem?
+22. Legacy/duplicate owner keletkezik-e?
+23. Van-e teszt/acceptance/diagnostic?
+24. Melyik PHASE-ben kell ténylegesen megvalósítani?
+
+Ha egy capability valamelyik pontja későbbi fázis, azt explicit **PLANNED / PHASE-X** státusszal kell rögzíteni, nem elfelejteni és nem félkészként ACTIVE-nak jelölni.
+
+---
+
+## 00.9.6.C.21 — Sorrendiség és végrehajtási zár
+
+**Egy időben pontosan egy ACTIVE engineering point lehet.**
+
+Sorrend:
+**M0 → M0 PASS → F0 → F1... → 1.0 gates → Phase 2 → Phase 3 → Phase 4 → Phase 5 → Phase 6 → Phase 7 → Phase 8+**
+
+Minden pont:
+- előfeltételekkel
+- inputtal
+- outputtal
+- DoD-val
+- tesztekkel
+- live acceptance-szel, ahol szükséges
+- MASTER checkpointtal
+- commit/revision evidence-szel
+
+zárandó.
+
+**Nem lépünk tovább azért, mert „nagyjából működik”.**
+
+---
+
+## 00.9.6.C.22 — Végső állapot
+
+A végső cél nem a „Sanci9517 1.0 weboldal”.
+
+A végső cél:
+
+> **Sanci9517 — egy világpiaci, magyar alapokról induló, teljesen szerkeszthető Creator Platform / Creator OS, amelyben a website, visual builder, CMS, media, icons, themes, templates, reusable components, streaming, Twitch, YouTube, TikTok, community, overlays, OBS, shop/merch, analytics, automation, AI, localization és később a creator ecosystem egyetlen canonical platformként működik.**
+
+**1.0 = első stabil mérföldkő.  
+Nem a végcél.**
+
+A roadmap ezen pontja után egyetlen funkció sem „veszhet el”: ha még nem implementáljuk, a megfelelő későbbi PHASE-ben marad dokumentálva, canonical ownerrel és előfeltételekkel.
+
