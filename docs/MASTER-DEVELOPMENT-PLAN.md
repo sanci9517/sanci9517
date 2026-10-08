@@ -271,6 +271,30 @@ A korábbi MASTER 44f42403… állapotából visszaolvastuk a **140 számozott f
 
 **M0.2 bizonyíték:** a repository jelenlegi core/routes/migrations/editor-v2 felépítése alapján a fenti canonical tulajdonosi modell összeállítható; ahol a capability még csak product-map szinten létezik, azt explicit `ADD/PLANNED` jelöléssel tartjuk nyilván, nem tekintjük késznek.
 
+### M0.2.A — Cross-cutting platform domains, amelyek minden későbbi fázist lefednek
+A capability-lista önmagában nem elég: az alábbi keresztmetszeti domainek a teljes 0.x → 10.0 roadmap kötelező platformrétegei, és nem veszhetnek el egyetlen későbbi fázisban sem.
+
+| Domain | Canonical owner / source of truth | Storage / boundary | Scope |
+|---|---|---|---|
+| Search / Discovery | Platform Search / indexing contract | indexed metadata + D1/R2 refs | 1.0 foundation / 1.x+ |
+| Notifications / Messaging | Notification domain + integration adapters | D1 + provider boundary | 1.x+ |
+| Privacy / Consent / Compliance | Privacy & Policy domain | D1/config + legal/provider boundary | 1.0 foundation / SaaS+ |
+| Secrets / Integration Config | Secret/config boundary | Cloudflare secret/config layer; never Page Model | 1.0+ |
+| API / Webhook / Developer Surface | Integration/API contract | Worker routes + webhook boundary | 1.0 foundation / 1.x+ |
+| Deployment / Release / Environments | Release/Deployment domain | Worker/deploy config + environment state | 1.0 gates / SaaS+ |
+| Migration / Data Lifecycle | Migration contract | D1 migrations + import/export boundary | 0.x–10.0 |
+| Backup / Disaster Recovery | Backup/Recovery domain | D1/R2/export boundary | 1.0 gates / 1.x+ |
+| Testing / Quality Gates | QA/Verification contract | CI/test/live acceptance evidence | 0.x–10.0 |
+| Diagnostics / Observability | Diagnostics/Observability domain | logs/metrics/error boundary | 0.x–10.0 |
+| Performance / Caching / Edge | Performance platform contract | Worker/cache/CDN boundary | 1.0+ |
+| Accessibility | Accessibility contract | Editor + renderer + public UI | 1.0+ |
+| Billing / Entitlements | Billing/Subscription domain | D1 + payment-provider boundary | 4.0+ |
+| Audit / Governance | Audit + policy contract | D1/log boundary | 0.x–10.0 |
+| Data Portability | Import/Export/Portability contract | JSON/media/package boundary | 1.0+ |
+| Experimentation / Personalization | Experimentation domain | analytics/config/content boundary | 6.0–10.0 |
+
+**M0.2.A szabály:** ezek nem „extra funkciók”, hanem platform-szintű cross-cutting contracts. Ha egy későbbi capability ezekre támaszkodik, a capability saját domainje nem hozhat létre második auth, permission, audit, resource, search, analytics, notification, deployment, migration vagy persistence rendszert.
+
 ### M0.3 — Admin / Editor / Public surface audit
 **Állapot:** `[~] FOLYAMATBAN — source-level route/surface audit PASS; runtime browser acceptance és végleges legacy disposition még szükséges.`
 
@@ -1376,6 +1400,12 @@ Nem a végcél.**
 
 A roadmap ezen pontja után egyetlen funkció sem „veszhet el”: ha még nem implementáljuk, a megfelelő későbbi PHASE-ben marad dokumentálva, canonical ownerrel és előfeltételekkel.
 
+
+## 00.9.6.C/D — CANONICAL ROADMAP PRECEDENCE
+A **00.9.6.C** fejezet a teljes capability/product inventoryt rögzíti; nem önálló alternatív roadmap.
+A **00.9.6.D** fejezet a canonical lifecycle/fázis-sorrend, és az 0.x → 1.0 → 1.5 → 2.0 → 3.0 → 4.0 → 5.0 → 6.0 → 7.0 → 8.0 → 9.0 → 10.0 fejlődési ív elsődleges végrehajtási referenciája.
+
+Ha C és D bármely fáziscímkéje eltérően csoportosít egy capability-t, **D a mérvadó a phase/scope besorolásban, C pedig a capability megőrzését és részleteit biztosítja**. Ez nem két terv, hanem egyetlen MASTER két nézetben: capability inventory + canonical lifecycle.
 
 ## 00.9.6.D — MASTER-2.72 — FULL HISTORICAL ROADMAP PRESERVATION + 10-STAGE ENDGAME
 
