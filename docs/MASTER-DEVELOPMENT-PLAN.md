@@ -1710,7 +1710,6 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 - [x] Minden új adatút site-scoped és a lezárt E4 ownership contractot használja.
 - [x] Minden új mutation meglévő command/history/validation/persistence/audit mintára épül.
 
-#
 ## M0 — GLOBAL PRODUCT REBASELINE + LEGACY / DEAD SURFACE AUDIT
 
 **M0 státusz:** `[~] ACTIVE — scope/documentation audit IN PROGRESS; implementation frozen`
@@ -1720,7 +1719,7 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 **M0 alatt új feature runtime implementáció NEM indul.** M0 csak audit, specifikáció, scope-rendezés, ownership-döntés és legacy-felület osztályozás.
 
 ### M0.1 — MASTER teljes funkcióinventár
-**Állapot:** `[~] FOLYAMATBAN — repository + MASTER evidence audit megkezdve; implementáció fagyasztva.`
+**Állapot:** `[x] PASS — 2026-10-08; teljes 01–140 traceability és canonical capability hozzárendelés dokumentálva.`
 
 - [~] teljes jelenlegi MASTER **4117 soros** állapotának átnézése; a 00/A és 00.9–00.9.6.B újrapontozása megtörtént, a történeti 19–34 szakasz teljes összevetése még hátra van;
 - [~] régi 19–34 backlog és későbbi roadmap funkcióinak összevetése;
@@ -1888,48 +1887,68 @@ A korábbi MASTER 44f42403… állapotából visszaolvastuk a **140 számozott f
 
 **M0.1 megállapítás:** a korábbi 01–140 backlog **nem veszett el**; minden pontnak van jelenlegi helye a rebaselined platform mapben. Ahol a régi pont több mai capability-re bomlik (pl. 60 Media library → Central Resource + Asset Manager + storage boundary; 55 Card/list/table/accordion/tabs → Component/Interaction system), ott nem összevonással töröljük, hanem egyedi feature-ként megőrizzük a traceabilityt.
 
-**M0.1 következő egyetlen lépése:** a MASTER történeti 19–34 backlogjának és a jelenlegi 00.9.6.B capability mapnek soronkénti összevetése; minden eltérésből egyedi KEEP/MERGE/ADD döntés készül. Addig M0.1 nem zárható le.
+**M0.1 zárási döntés:** PASS. A történeti funkciólista nem törlődött; a modern capability map alá lett rendezve, és ahol egy régi funkció több új capability-re bomlik, az eredeti ID traceability megmaradt.
 
 ### M0.2 — Platform domain inventory
-Kötelező audit:
-- Site;
-- Account/Tenant;
-- Pages;
-- Navigation;
-- Content/CMS;
-- Schedule;
-- Game Profiles;
-- Platforms;
-- Streamer Identity;
-- Live State;
-- Media/Assets;
-- Icons;
-- Files/Documents;
-- Fonts;
-- Theme/Presentation;
-- Design Tokens;
-- Components;
-- Reusable Components/Symbols;
-- Templates;
-- Forms;
-- Interactions/Motion;
-- SEO;
-- Publishing/Revisions;
-- Integrations;
-- Twitch;
-- future platform adapters;
-- Overlay/Widgets;
-- OBS bridge;
-- Community;
-- Support;
-- Automation;
-- Analytics;
-- Localization;
-- Permissions;
-- Audit;
-- Backup/Export;
-- Marketplace;
-- Billing/future commercial layer.
+**Állapot:** `[~] FOLYAMATBAN — canonical ownership matrix rögzítve; repository evidence audit PASS, runtime-capability gapek külön jelölve.`
+
+| Domain | Canonical owner / source of truth | Jelenlegi bizonyított alap | Storage / boundary | Scope | Döntés |
+|---|---|---|---|---|---|
+| Site | Site Context / site-scoped domain | `src/core/site-context.ts`, site ownership contracts | D1 | 1.0 | KEEP |
+| Account / Tenant | Auth + ownership | auth routes/core + site ownership | D1/session | 1.0 foundation | KEEP |
+| Pages | Page Model | `src/core/page-model.ts`, page/revision migrations | D1 | 1.0 | KEEP |
+| Navigation | Page order / public menu contract | page sort-order + public renderer path | D1/Page Model | 1.0 | KEEP |
+| Content / CMS | CMS/Content domain | legacy backlog + canonical content contracts to be completed | D1 | 1.0 foundation / 1.x richer | EXPAND |
+| Schedule | Schedule domain | `src/core/schedule/`, `schedule-read.ts`, Editor `schedule-schema.js` | D1 | 1.0 | KEEP / SINGLE OWNER |
+| Game Profiles | Game Profile domain | product-map scope; no second registry allowed | D1 | 1.0 foundation / 1.x | ADD/EXPAND |
+| Platforms | Integration/Platform adapter registry | Twitch foundation; future adapters planned | D1/config | 1.0 Twitch + future | KEEP/EXPAND |
+| Streamer Identity | Site/Creator profile domain | product-map scope | D1 | 1.0 | ADD |
+| Live State | Integration-derived stream state | Twitch foundation; future adapters | API/cache boundary | 1.0 Twitch | KEEP/EXPAND |
+| Media / Assets | Asset domain | product-map only; no canonical Asset DB yet | R2 binary + D1 metadata | 1.0 foundation | ADD FOUNDATION |
+| Icons | Icon Registry / Asset reference | product-map only | D1 metadata + R2/SVG | 1.0 foundation | ADD |
+| Files / Documents | Resource/Asset domain | product-map only | R2 + D1 metadata | 1.x | ADD |
+| Fonts | Asset/Design domain | product-map only | R2 + metadata | 1.x | ADD |
+| Theme / Presentation | Theme/Presentation domain | Editor property registry + product-map | D1/Page Model | 1.0 foundation | KEEP/EXPAND |
+| Design Tokens | Design System | property registry foundation; token system to formalize | D1/config | 1.0 foundation | ADD/FORMALIZE |
+| Components | Component Registry | Page Model + Editor core; registry needs formal contract | Page Model + registry | 1.0 foundation | KEEP/FORMALIZE |
+| Reusable Components / Symbols | Component Registry | product-map only | D1 | 1.x | ADD |
+| Templates | Template Registry | product-map only | D1 + Asset refs | 1.0 starter / 1.x advanced | ADD |
+| Forms | Form domain | legacy feature 059 + product-map | D1 + secure submission boundary | 1.x | ADD |
+| Interactions / Motion | Interaction domain | property registry foundation | Page Model/config | 1.0 foundation / 1.x | EXPAND |
+| SEO | SEO metadata domain | public/product-map scope | D1/Page Model | 1.0 | KEEP/EXPAND |
+| Publishing / Revisions | Revision/Publishing domain | canonical revision migrations + publish path | D1 | 1.0 | KEEP |
+| Integrations | Adapter boundary | `src/routes/integrations/`, Twitch core | API secrets/config + D1 | 1.0/1.x | KEEP/EXPAND |
+| Twitch | Twitch integration | OAuth/ownership/live/schedule foundations | D1 + external API | 1.0 | KEEP |
+| YouTube | Platform adapter | planned only | external API + D1 | 1.x | ADD |
+| TikTok | Platform adapter | planned only | external API + D1 | 1.x | ADD |
+| Discord / Community | Community integration/domain | planned only | external API + D1 | 1.x | ADD |
+| VOD / Clips / Highlights | Content/Stream media domain | planned only | R2 + D1 + external adapters | 1.x | ADD |
+| Overlay / Widgets | Stream Studio domain | product-map scope | Page/Widget model + R2/D1 | post-1.0 | ADD |
+| OBS Bridge | Integration adapter | product-map scope only | browser-source/integration boundary | post-1.0 | ADD |
+| Community | Community domain | product-map scope | D1/external adapters | 1.x/post-1.0 | ADD |
+| Support | Support/Funding content | public product scope | D1/config + external provider | 1.0 | KEEP/EXPAND |
+| Automation | Automation/Event domain | product-map scope only | D1 + event/queue boundary | post-1.0 | ADD |
+| Analytics | Analytics domain | legacy backlog 095 + product-map | analytics store/edge boundary | 1.x | ADD |
+| Localization | Locale/content system | HU-first + i18n-ready architecture | D1/Page Model | 1.0 foundation / 1.x | KEEP/EXPAND |
+| Permissions | Auth/RBAC/ownership | auth + site ownership foundation | D1/session | 1.0 | KEEP/EXPAND |
+| Audit | Audit domain | `src/core/audit.ts` + existing contracts | D1/log boundary | 1.0 | KEEP |
+| Backup / Export | Backup/Recovery domain | production backup evidence + legacy 068/103/138 | external export + D1/R2 | 1.0 gate / 1.x | KEEP/EXPAND |
+| Marketplace | Template/Asset marketplace | product-map only | future service/storage | post-1.0 | ADD |
+| Billing | Commercial layer | product-map only | future provider boundary | post-1.0 | ADD |
+
+**Canonical boundary rules — M0.2 freeze:**
+1. **D1 = structured domain metadata/state; R2 = binary assets/media.**
+2. **Page Model nem tárol külön Asset/Theme/Component/Schedule adatbázist.** Csak canonical reference/config/binding lehet benne.
+3. **Schedule egyetlen domain owner:** `src/core/schedule/` + hozzá tartozó API/storage contract. Az Editor `schedule-schema.js` csak kliensoldali contract/normalizer; nem második Schedule domain.
+4. **Editor Property Registry egyetlen property-registry owner.** Új Inspector kategória csak ide kerülhet.
+5. **Twitch/YouTube/TikTok/Discord külön adapterek lehetnek, de közös Integration/Platform contract alatt.**
+6. **Asset picker, icon picker, template picker, component picker ugyanazt a Resource/Registry réteget használja; nem épül külön, párhuzamos storage.**
+7. **Template ≠ Symbol:** Template másolható/forkolható kiindulási állapot; Symbol/Reusabe Component közös, változásra reagáló definíció.
+8. **Public renderer csak canonical published state-et szolgálhat ki.**
+9. **Legacy code jelenléte nem jelent ownershipet.**
+10. **Admin menüpont csak canonical capability registryből kaphat ACTIVE állapotot.**
+
+**M0.2 bizonyíték:** a repository jelenlegi core/routes/migrations/editor-v2 felépítése alapján a fenti canonical tulajdonosi modell összeállítható; ahol a capability még csak product-map szinten létezik, azt explicit `ADD/PLANNED` jelöléssel tartjuk nyilván, nem tekintjük késznek.
 
 ### M0.3 — Admin / Editor / Public surface audit
 Minden jelenlegi felületre:
