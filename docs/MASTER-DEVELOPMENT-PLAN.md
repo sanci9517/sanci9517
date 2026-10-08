@@ -1,6 +1,6 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.65.0  
+**Verzió:** MASTER-2.66.0  
 **Dátum:** 2026-10-08  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
@@ -13,7 +13,7 @@
 
 **Public Design Freedom / Multi-user uniqueness szabály:** az 1.0 vizuális rendszerének nem csak tartalom- és komponensszerkesztést kell biztosítania. A publikusan megjelenő weboldal vizuális identitása is felhasználónként/site-onként egyedileg konfigurálható kell legyen. A felhasználóbarát admin/editor célja, hogy technikai CSS-kód nélkül is létrehozható legyen saját brand és megjelenés: theme/design tokens, typography, colors, semantic colors, backgrounds, spacing, radius, shadows, containers, layout variants, component styles, navigation/header/footer, card/button/form styles, responsive presentation, visibility, imagery, templates és page-level presentation. A rendszernek preset/template alapú gyors indulást és mélyebb egyedi testreszabást is támogatnia kell. A domain adat, a Page Model és az Editor UI state továbbra is külön marad; a public design egy canonical presentation/theme réteg lesz. Multi-user jövőre készülve minden design/configuration site-scoped/tenant-scoped kell legyen, ne globális megosztott állapot. A default design csak kiindulópont, nem korlát.
 
-**Legutóbbi igazolt állapot:** 2026-10-07 — az E4.3.4–E4.3.8 teljes ownership/security/live hardening sorozat PASS és lezárva. Az E4.4 teljes `site_id NOT NULL` schema-hardening DoD is PASS és lezárva: az E4.4.1 migration design/exact SQL audit PASS, az E4.4.2 actual implementation + isolated dry-run PASS, a production schema már mind a hat érintett táblán `site_id TEXT NOT NULL REFERENCES sites(id) ON DELETE RESTRICT`, minden érintett rekord `site_id` értéke kitöltött, `foreign_key_check` PASS, a pages → published revision linkage megmaradt, és a live Worker/public API smoke tesztek PASS állapotban vannak. A következő és egyetlen fejlesztési kapu az E5; E5 az E4.4 teljes lezárása után nyitható meg.
+**Legutóbbi igazolt állapot:** 2026-10-07 — az E4.3.4–E4.3.8 teljes ownership/security/live hardening sorozat PASS és lezárva. Az E4.4 teljes `site_id NOT NULL` schema-hardening DoD is PASS és lezárva: az E4.4.1 migration design/exact SQL audit PASS, az E4.4.2 actual implementation + isolated dry-run PASS, a production schema már mind a hat érintett táblán `site_id TEXT NOT NULL REFERENCES sites(id) ON DELETE RESTRICT`, minden érintett rekord `site_id` értéke kitöltött, `foreign_key_check` PASS, a pages → published revision linkage megmaradt, és a live Worker/public API smoke tesztek PASS állapotban vannak. Az E4.4 és E5 teljesen lezárult. E6 MASTER-closure PASS; a következő és egyetlen megnyitható fejlesztési kapu az F.
 
 ## 00/B — ÚJ BESZÉLGETÉS / CHECKPOINT VÉDELMI ZÁR — 2026-09-22
 
@@ -39,7 +39,7 @@ Ha bármilyen régi checkpoint, összefoglaló, korábbi üzenet vagy történet
 **Boot-szabály:** új beszélgetésben a modellnek először ezt a 00/B blokkot, majd közvetlenül a 00/A indexet kell figyelembe vennie. Ha bármely régi checkpoint ettől eltér, a régi checkpointot kell figyelmen kívül hagyni, nem az aktuális MASTER állapotot.
 
 **Egyetlen aktuális folytatási mondat:**
- > „Folytassuk a Sanci9517 MASTER tervet az **E5** pontnál. E4.3.1–E4.3.8 és E4.4 teljesen lezárultak; az E4.4 production schema, integrity, ownership és live public smoke gate-jei PASS. A következő munka kizárólag az E5 MASTER-ben rögzített követelményei szerint nyitható meg.”
+ > „Folytassuk a Sanci9517 MASTER tervet az **F** pontnál. E4.1–E4.4, E5 és E6 lezárva. A következő munka kizárólag az F MASTER-ben rögzített követelményei szerint nyitható meg.”
 
 > **Ez a dokumentum az egyetlen végrehajtási igazságforrás.** A korábbi blueprint-ek, roadmap-ek, editor-tervek, AI-tervek és státuszfájlok archivált tudásanyagként maradnak meg. Új beszélgetésben, akár hónapok múlva is, ezt a fájlt kell először elolvasni, majd kizárólag a **00/A MASTER VÉGREHAJTÁSI INDEX egyetlen aktív pontjából** folytatni. Más fejezet `[ ]`, `[~]` vagy régebbi „következő lépés” szövege nem jelent aktuális folytatási pontot.
 
@@ -718,10 +718,10 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 ## 00/A.1 — EGYETLEN AKTÍV PONT
 
 **ACTIVE_POINT_ID:** `E6`  
-**ACTIVE_POINT_STATUS:** `ACTIVE`  
+**ACTIVE_POINT_STATUS:** `CLOSED`  
 **ACTIVE_POINT_TITLE:** MASTER closure / E-stage closure  
 **PREVIOUS_GATE:** `E5` — CLOSED / PASS  
-**NEXT_GATE:** `F` — csak E6 teljes PASS után nyitható  
+**NEXT_GATE:** `F` — E6 CLOSED / PASS után nyitható  
 **PARALLEL_WORKSTREAMS:** `0`
 
 ### Jelenlegi igazolt állapot
@@ -732,9 +732,9 @@ Szigorú tiltás: gyors patch, második renderer, külön mobil hack, legacy UI 
 - [x] Live Worker/public API smoke PASS.
 - [x] E4.4 teljes DoD PASS.
 - [x] E5 teljes regression/live/user PASS lezárva.
-- [ ] E6 closure folyamatban.
+- [x] E6 closure PASS / lezárva.
 
-**Következő végrehajtható pont: kizárólag E5.**
+**E6 végállapot:** CLOSED / PASS. A következő és egyetlen megnyitható fejlesztési kapu: **F**.
 
 ## 00/A.2 — E5 HIVATALOS DEFINITION OF DONE
 
@@ -833,6 +833,20 @@ Az E5.4 live verification eddig ellenőrzött részei:
 
 **E5 végállapot:** CLOSED / PASS. Az E5 alatt nem történt új feature-fejlesztés; kizárólag a meglévő E4 foundation regression/live/user acceptance kapuja került lezárásra.
 
+
+## 00/A.2.1 — E6 — MASTER / E-STAGE CLOSURE — DEFINITION OF DONE
+
+- [x] E5 hivatalos állapota CLOSED / PASS.
+- [x] E5.1–E5.6 minden kötelező bizonyítéka rögzítve.
+- [x] A 00/A index az egyetlen végrehajtási forrás marad.
+- [x] Az E5 → E6 → F sorrend explicit rögzítve.
+- [x] E6 nem igényel új runtime/feature implementációt; dokumentációs és végrehajtási-state closure gate.
+- [x] A lezárt pontok nem nyílnak újra.
+- [x] Párhuzamos workstream = 0.
+- [x] E6 **CLOSED / PASS**.
+- [x] **Következő kapu: F — Schedule CRUD + Inspector / domain-driven Editor bővítés.**
+
+**E6 closure evidence — 2026-10-08:** az aktuális MASTER 00/A index, E5 closure evidence, duplicate registry és strict sequence auditálva; az E5 lezárás és az F-re vezető egyetlen sorrend összhangban van. E6 alatt feature-kód nem módosult.
 ## 00/A.3 — SZIGORÚ SORREND E5 UTÁN
 
 **Nem:** E5 → közvetlenül Editor.
