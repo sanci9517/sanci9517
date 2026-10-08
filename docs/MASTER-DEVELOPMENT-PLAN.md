@@ -1,7 +1,7 @@
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 
-**Verzió:** MASTER-2.63.0  
-**Dátum:** 2026-10-07  
+**Verzió:** MASTER-2.64.0  
+**Dátum:** 2026-10-08  
 **Repository:** `sanci9517/sanci9517`  
 **Aktív branch:** `v2/foundation`  
 **Projekt:** Sanci9517 Streamer Brand Platform  
@@ -804,7 +804,17 @@ Az E5.4 live verification eddig ellenőrzött részei:
 - [x] Public route secret/token scan: no matches for `token`, `access_token`, `refresh_token`, `client_secret`, `authorization`, `oauth`.
 - [x] `wrangler deploy --dry-run`: PASS; 76 assets read, DB/ASSETS bindings resolved, no deployment performed.
 
-**E5.4 még nem zárható teljes PASS-ként:** a jelenlegi DoD szerinti live admin/editor Save/Publish/Unpublish/Rollback regresszió explicit újraellenőrzése és a teljes E5.5 felhasználói PASS még hátravan. Ezek nélkül E5 nem kerül CLOSED állapotba.
+**E5.4 live admin/editor regression — 2026-10-08 — PASS**
+- [x] Hitelesített admin session létrejött a live Workeren.
+- [x] Editor v2 Főoldal (page-home) betöltve.
+- [x] **Save:** változtatás nélküli mentés sikeresen lefutott.
+- [x] **Publish:** publikálás sikeresen lefutott.
+- [x] **Unpublish:** publikálás visszavonása sikeresen lefutott.
+- [x] **Rollback:** korábbi revision kiválasztása és visszaállítása sikeresen lefutott.
+- [x] A teljes live Save → Publish → Unpublish → Rollback regressziós lánc felhasználói böngészős ellenőrzéssel PASS.
+- [x] E5.4 összes kötelező live/public/security ellenőrzési eleme PASS.
+
+**E5.4 állapot:** **PASS / teljesítve**. E5.4 lezárásához már csak az E5.5 explicit felhasználói acceptance gate szükséges; E5 ettől még nem CLOSED.
 
 ## 00/A.3 — SZIGORÚ SORREND E5 UTÁN
 
