@@ -6,6 +6,8 @@ import {resolveResponsiveValue} from './core/responsive.js';
 import {diagnostics} from './diagnostics.js?v=20260918-2';
 import {plainTextToRichText,renderRichTextEditor,richTextEditorToDocument,setBlockType} from './core/richtext-engine.js';
 import {renderSchedulePreview} from './core/schedule-preview.js';
+import {normalizeScheduleConfig,SCHEDULE_MODES,SCHEDULE_ORDERS,SCHEDULE_STATUSES} from './core/schedule-schema.js';
+import {listPropertyGroups,listProperties} from './core/property-registry.js';
 
 let state=null;let pages=[];let revisionHistory=[];let zoom=1;let inspectorTab='design';let mobileTouch={active:false,timer:null,downId:null,startX:0,startY:0,snapshot:[],snapshotPrimary:null,suppressClick:false,longPressTriggered:false};let hierarchyDrag={nodeId:null,overId:null};let mobileHierarchyDrag={active:false,timer:null,nodeId:null,overId:null,startX:0,startY:0,suppressClick:false};
 const $=s=>document.querySelector(s);const canvas=$('#canvas');const inspector=$('#inspectorBody');
@@ -83,21 +85,145 @@ function resolvedGeometry(node,device){return getNodeGeometry(node,device)}
 function responsiveDisplay(node,property,device,fallback){const result=resolveResponsiveValue(node?.responsive,property,device);return result.value??fallback}
 function setGeometry(node,device,property,value){const normalized=normalizeDimension(value,{allowAuto:property==='width'||property==='height'});if(normalized===undefined)return;command('responsive.set',{nodeId:node.id,device,patch:{[property]:normalized}})}
 function renderGeometryInspector(node){const device=state.viewport.device;const geometry=resolvedGeometry(node,device);const position=responsiveDisplay(node,'position',device,node.style?.position||'relative');const section=document.createElement('section');section.className='inspector-group';const title=document.createElement('div');title.className='inspector-group-title';title.innerHTML=`<strong>Geometria</strong><small>${device}</small>`;section.append(title,field('X pozíció',geometry.x,v=>setGeometry(node,device,'x',v)),field('Y pozíció',geometry.y,v=>setGeometry(node,device,'y',v)),field('Szélesség',geometry.width,v=>setGeometry(node,device,'width',v)),field('Magasság',geometry.height,v=>setGeometry(node,device,'height',v)),field('Pozícionálás',position,v=>command('responsive.set',{nodeId:node.id,device,patch:{position:v}})));return section}
-function renderInspector(){inspector.replaceChildren();const nodes=state?selectedNodes(state):[];if(!nodes.length){inspector.innerHTML='<div class="inspector-empty"><b>Inspector</b><span>Válassz ki egy elemet a vásznon vagy a Rétegek panelen.</span></div>';return}const node=nodes[0];const header=document.createElement('div');header.className='inspector-selection';header.innerHTML=`<b>${node.name||node.type}</b><small>${node.type}</small>`;inspector.append(header);if(inspectorTab==='design'){inspector.append(field('Elem neve',node.name,v=>command('element.update',{nodeId:node.id,patch:{name:v}})),renderGeometryInspector(node));const lockRow=document.createElement('label');lockRow.className='inspector-toggle';const lockInput=document.createElement('input');lockInput.type='checkbox';lockInput.checked=Boolean(node.locked);lockInput.disabled=node.id===page()?.rootId;lockInput.onchange=()=>command('element.lock.set',{nodeId:node.id,locked:lockInput.checked});const lockText=document.createElement('span');lockText.textContent='Zárolt elem';lockRow.append(lockInput,lockText);inspector.append(lockRow)}else if(inspectorTab==='content'){const textTypes=new Set(['heading','text','richtext','button','link']);if(node.type==='richtext'){
-   const currentRichText=node.props?.richText||plainTextToRichText('');
-   const section=document.createElement('section');section.className='richtext-editor';
-   const toolbar=document.createElement('div');toolbar.className='richtext-toolbar';
-   const blockSelect=document.createElement('select');blockSelect.title='Aktuális blokk típusa';
-   [['paragraph','Bekezdés'],['heading-1','H1'],['heading-2','H2'],['heading-3','H3'],['heading-4','H4'],['heading-5','H5'],['heading-6','H6']].forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;blockSelect.append(option)});
-   const editor=document.createElement('div');editor.className='richtext-content richtext-editor-surface';editor.contentEditable='true';editor.spellcheck=true;editor.setAttribute('role','textbox');editor.setAttribute('aria-label','Rich Text szerkesztő');
-   renderRichTextEditor(editor,currentRichText);
-   let richTextDirty=false;
-   const save=()=>{const doc=richTextEditorToDocument(editor);command('richtext.content.set',{nodeId:node.id,document:doc});richTextDirty=false};
-   blockSelect.onchange=()=>{const value=blockSelect.value;const range={from:0,to:richTextEditorToDocument(editor).blocks.reduce((n,b)=>n+(b.children??[]).reduce((m,x)=>m+(x.text?.length??0),0)+1,0)};const type=value==='paragraph'?'paragraph':'heading';const level=value==='paragraph'?1:Number(value.split('-')[1]);const updated=setBlockType(currentRichText,range.from,range.to,type,level);command('richtext.content.set',{nodeId:node.id,document:updated});renderRichTextEditor(editor,updated);};
-   editor.addEventListener('input',()=>{richTextDirty=true;});
-   editor.addEventListener('blur',()=>{if(richTextDirty)save();});
-   toolbar.append(blockSelect);section.append(toolbar,editor);inspector.append(section);
-}else if(textTypes.has(node.type)){inspector.append(field('Szöveg',node.props?.text??node.props?.content??'',v=>command('element.content.set',{nodeId:node.id,content:v})))}if(['button','link'].includes(node.type)){inspector.append(field('Link / URL',node.props?.href||'',v=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),href:v}}})))}else if(!textTypes.has(node.type)){inspector.append(field('Tartalom',node.props?.content??'',v=>command('element.content.set',{nodeId:node.id,content:v})))} }else{inspector.append(field('Node ID',node.id,()=>{},true),field('Típus',node.type,()=>{},true),field('Szülő ID',node.parentId||'',()=>{},true))}const actions=document.createElement('div');actions.className='inspector-actions';const del=document.createElement('button');del.type='button';del.className='danger-action';del.textContent='Törlés';del.disabled=node.id===page()?.rootId;del.title=del.disabled?'A gyökérelem nem törölhető':'Kijelölt elem törlése';del.onclick=()=>{if(del.disabled)return;command('element.delete',{nodeId:node.id})};actions.append(del);inspector.append(actions)}
+function renderScheduleInspector(node){
+  const config=normalizeScheduleConfig(node.props?.schedule||{});
+  const section=document.createElement('section');
+  section.className='inspector-group schedule-inspector';
+  const title=document.createElement('div');
+  title.className='inspector-group-title';
+  title.innerHTML='<strong>Adásrend</strong><small>Schedule konfiguráció</small>';
+  section.append(title);
+
+  const selectField=(label,value,options,onChange)=>{
+    const wrap=document.createElement('label');wrap.className='field';
+    const text=document.createElement('span');text.textContent=label;
+    const select=document.createElement('select');
+    for(const optionValue of options){const option=document.createElement('option');option.value=optionValue;option.textContent=optionValue;option.selected=optionValue===value;select.append(option)}
+    select.onchange=()=>command('schedule.config.set',{nodeId:node.id,patch:{[label==='Mód'?'mode':label==='Sorrend'?'order':'__invalid']:select.value}});
+    wrap.append(text,select);return wrap;
+  };
+
+  const mode=selectField('Mód',config.mode,SCHEDULE_MODES,()=>{});
+  mode.querySelector('select').onchange=()=>command('schedule.config.set',{nodeId:node.id,patch:{mode:mode.querySelector('select').value}});
+  const order=selectField('Sorrend',config.order,SCHEDULE_ORDERS,()=>{});
+  order.querySelector('select').onchange=()=>command('schedule.config.set',{nodeId:node.id,patch:{order:order.querySelector('select').value}});
+  section.append(mode,order);
+
+  section.append(
+    field('Elemszám',String(config.limit),v=>{
+      const limit=Math.max(1,Math.min(50,Number.parseInt(v,10)||1));
+      command('schedule.config.set',{nodeId:node.id,patch:{limit}});
+    })
+  );
+
+  const statusWrap=document.createElement('div');statusWrap.className='field';
+  const statusLabel=document.createElement('span');statusLabel.textContent='Státuszok';
+  const statusGrid=document.createElement('div');statusGrid.className='schedule-check-grid';
+  for(const status of SCHEDULE_STATUSES){
+    const label=document.createElement('label');label.className='inspector-toggle';
+    const input=document.createElement('input');input.type='checkbox';input.checked=config.statuses.includes(status);
+    input.onchange=()=>{
+      const next=statusGrid.querySelectorAll('input:checked');
+      const values=[...next].map(x=>x.dataset.status);
+      if(!values.length){input.checked=true;return}
+      command('schedule.config.set',{nodeId:node.id,patch:{statuses:values}});
+    };
+    input.dataset.status=status;
+    const span=document.createElement('span');span.textContent=status;
+    label.append(input,span);statusGrid.append(label);
+  }
+  statusWrap.append(statusLabel,statusGrid);section.append(statusWrap);
+
+  const toggles=[
+    ['showTitle','Cím megjelenítése'],['showPlatform','Platform megjelenítése'],
+    ['showTime','Kezdés megjelenítése'],['showEndTime','Befejezés megjelenítése'],
+    ['showStatus','Státusz megjelenítése'],['showNotes','Megjegyzés megjelenítése'],
+    ['showLink','Link megjelenítése']
+  ];
+  for(const [key,labelText] of toggles){
+    const row=document.createElement('label');row.className='inspector-toggle';
+    const input=document.createElement('input');input.type='checkbox';input.checked=Boolean(config[key]);
+    input.onchange=()=>command('schedule.config.set',{nodeId:node.id,patch:{[key]:input.checked}});
+    const span=document.createElement('span');span.textContent=labelText;row.append(input,span);section.append(row);
+  }
+  section.append(field('Üres állapot szövege',config.emptyText,v=>{
+    const value=String(v).trim();if(!value)return;
+    command('schedule.config.set',{nodeId:node.id,patch:{emptyText:value}});
+  },false,true));
+  return section;
+}
+
+function renderRegistryInspector(node){
+  const groups=listPropertyGroups();
+  const root=document.createDocumentFragment();
+  for(const group of groups){
+    const properties=listProperties({group:group.id,nodeType:node.type});
+    if(!properties.length)continue;
+    const section=document.createElement('section');section.className='inspector-group';
+    const title=document.createElement('div');title.className='inspector-group-title';
+    title.innerHTML='<strong></strong><small></small>';title.querySelector('strong').textContent=group.label;title.querySelector('small').textContent=String(properties.length);
+    section.append(title);
+    for(const property of properties){
+      if(property.id==='content.text'||property.id==='content.href'||property.id==='advanced.nodeName')continue;
+      const current=property.id.startsWith('size.')?node.style?.[property.id.split('.')[1]]??'':node.style?.[property.id.split('.')[1]]??'';
+      if(property.type==='select'){
+        const wrap=document.createElement('label');wrap.className='field';const label=document.createElement('span');label.textContent=property.label;const select=document.createElement('select');
+        for(const optionValue of property.options||[]){const option=document.createElement('option');option.value=optionValue;option.textContent=optionValue;option.selected=String(current)===String(optionValue);select.append(option)}
+        select.onchange=()=>command(property.command,{nodeId:node.id,patch:{[property.id.split('.')[1]]:select.value}});
+        wrap.append(label,select);section.append(wrap);
+      }else{
+        section.append(field(property.label,current,v=>{
+          const key=property.id.split('.')[1];
+          command(property.command,{nodeId:node.id,patch:{[key]:v}});
+        }));
+      }
+    }
+    root.append(section);
+  }
+  return root;
+}
+
+function renderInspector(){
+  inspector.replaceChildren();
+  const nodes=state?selectedNodes(state):[];
+  if(!nodes.length){inspector.innerHTML='<div class="inspector-empty"><b>Inspector</b><span>Válassz ki egy elemet a vásznon vagy a Rétegek panelen.</span></div>';return}
+  const node=nodes[0];
+  const header=document.createElement('div');header.className='inspector-selection';
+  const headerName=document.createElement('b');headerName.textContent=node.name||node.type;
+  const headerType=document.createElement('small');headerType.textContent=node.type;
+  header.append(headerName,headerType);inspector.append(header);
+
+  if(inspectorTab==='design'){
+    inspector.append(field('Elem neve',node.name,v=>command('element.update',{nodeId:node.id,patch:{name:v}})),renderGeometryInspector(node));
+    if(node.type==='schedule')inspector.append(renderScheduleInspector(node));
+    else inspector.append(renderRegistryInspector(node));
+    const lockRow=document.createElement('label');lockRow.className='inspector-toggle';
+    const lockInput=document.createElement('input');lockInput.type='checkbox';lockInput.checked=Boolean(node.locked);lockInput.disabled=node.id===page()?.rootId;
+    lockInput.onchange=()=>command('element.lock.set',{nodeId:node.id,locked:lockInput.checked});
+    const lockText=document.createElement('span');lockText.textContent='Zárolt elem';lockRow.append(lockInput,lockText);inspector.append(lockRow);
+  }else if(inspectorTab==='content'){
+    if(node.type==='schedule')inspector.append(renderScheduleInspector(node));
+    else {
+      const textTypes=new Set(['heading','text','richtext','button','link']);
+      if(node.type==='richtext'){
+        const currentRichText=node.props?.richText||plainTextToRichText('');
+        const section=document.createElement('section');section.className='richtext-editor';
+        const toolbar=document.createElement('div');toolbar.className='richtext-toolbar';
+        const blockSelect=document.createElement('select');blockSelect.title='Aktuális blokk típusa';
+        [['paragraph','Bekezdés'],['heading-1','H1'],['heading-2','H2'],['heading-3','H3'],['heading-4','H4'],['heading-5','H5'],['heading-6','H6']].forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;blockSelect.append(option)});
+        const editor=document.createElement('div');editor.className='richtext-content richtext-editor-surface';editor.contentEditable='true';editor.spellcheck=true;editor.setAttribute('role','textbox');editor.setAttribute('aria-label','Rich Text szerkesztő');renderRichTextEditor(editor,currentRichText);
+        let richTextDirty=false;const saveRich=()=>{const doc=richTextEditorToDocument(editor);command('richtext.content.set',{nodeId:node.id,document:doc});richTextDirty=false};
+        blockSelect.onchange=()=>{const value=blockSelect.value;const range={from:0,to:richTextEditorToDocument(editor).blocks.reduce((n,b)=>n+(b.children??[]).reduce((m,x)=>m+(x.text?.length??0),0)+1,0)};const type=value==='paragraph'?'paragraph':'heading';const level=value==='paragraph'?1:Number(value.split('-')[1]);const updated=setBlockType(currentRichText,range.from,range.to,type,level);command('richtext.content.set',{nodeId:node.id,document:updated});renderRichTextEditor(editor,updated)};
+        editor.addEventListener('input',()=>{richTextDirty=true});editor.addEventListener('blur',()=>{if(richTextDirty)saveRich()});toolbar.append(blockSelect);section.append(toolbar,editor);inspector.append(section);
+      }else if(textTypes.has(node.type))inspector.append(field('Szöveg',node.props?.text??node.props?.content??'',v=>command('element.content.set',{nodeId:node.id,content:v})));
+      if(['button','link'].includes(node.type))inspector.append(field('Link / URL',node.props?.href||'',v=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),href:v}}})));
+      else if(!textTypes.has(node.type))inspector.append(field('Tartalom',node.props?.content??'',v=>command('element.content.set',{nodeId:node.id,content:v})));
+    }
+  }else{
+    inspector.append(field('Node ID',node.id,()=>{},true),field('Típus',node.type,()=>{},true),field('Szülő ID',node.parentId||'',()=>{},true));
+  }
+  const actions=document.createElement('div');actions.className='inspector-actions';const del=document.createElement('button');del.type='button';del.className='danger-action';del.textContent='Törlés';del.disabled=node.id===page()?.rootId;del.title=del.disabled?'A gyökérelem nem törölhető':'Kijelölt elem törlése';del.onclick=()=>{if(!del.disabled)command('element.delete',{nodeId:node.id})};actions.append(del);inspector.append(actions)
+}
 function clearHierarchyDrag(){hierarchyDrag.nodeId=null;hierarchyDrag.overId=null;document.querySelectorAll('.layer-row.drag-over,.layer-row.dragging').forEach(el=>el.classList.remove('drag-over','dragging'))}
 function clearMobileHierarchyDrag(){clearTimeout(mobileHierarchyDrag.timer);mobileHierarchyDrag.active=false;mobileHierarchyDrag.timer=null;mobileHierarchyDrag.nodeId=null;mobileHierarchyDrag.overId=null;mobileHierarchyDrag.suppressClick=false;document.querySelectorAll('.layer-row.mobile-dragging,.layer-row.mobile-drag-over,.layer-drag-handle.armed').forEach(el=>el.classList.remove('mobile-dragging','mobile-drag-over','armed'))}
 function isDescendant(current,nodeId,targetId){let cursor=getNode(current,targetId);while(cursor){if(cursor.id===nodeId)return true;cursor=cursor.parentId?getNode(current,cursor.parentId):null}return false}
