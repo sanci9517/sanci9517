@@ -1,11 +1,14 @@
 **ACTIVE_POINT_ID:** `M0`  
 **ACTIVE_POINT_STATUS:** `ACTIVE`  
 **ACTIVE_POINT_TITLE:** Global Product Rebaseline + Legacy/Dead Surface Audit + Canonical Platform Scope Freeze  
+**ACTIVE_SUBPOINT_ID:** `M0.1-RESIDUAL-CONSISTENCY-CLOSURE`  
+**ACTIVE_SUBPOINT_STATUS:** `ACTIVE — a státuszellentmondások és a M0.1 nyitott traceability-feladatai rendezendők; feature-implementáció továbbra is tiltott`  
 **PREVIOUS_GATE:** `E6` — CLOSED / PASS  
-**NEXT_GATE:** `F0` — csak M0 teljes PASS után, a rebaselined F0 scope szerint nyitható  
+**NEXT_GATE:** `M0.1 residual closure → M0.2 closure → M0.3 closure → M0.5 Resource contract freeze; F0 csak a teljes M0 PASS után nyitható`  
 **PARALLEL_WORKSTREAMS:** `0`
 
 ### Jelenlegi igazolt állapot
+Ez a blokk kizárólag az M0 előtti lezárt gate-eket rögzíti; nem jelenti azt, hogy az M0 alatti részpontok lezárultak.
 - [x] E4.3.1–E4.3.8 lezárva.
 - [x] E4.4.1 final migration design + SQL audit lezárva.
 - [x] E4.4.2 implementation/dry-run/remote schema verification lezárva.
@@ -18,7 +21,9 @@
 **F végrehajtási állapot:** PAUSED / QUEUED. Az F/F0 korábbi implementációja nem törlődik és nem tekintendő automatikusan rossznak, de az új M0 audit lezárásáig nem folytatunk további F0/F1 feature-kódolást. Az M0 eredménye alapján a F0 scope és DoD véglegesítendő.
 
 
-## 00/A.2.2 — F — SCHEDULE CRUD + INSPECTOR / DOMAIN-DRIVEN EDITOR — DEFINITION OF DONE
+## HISTORICAL / QUEUED — 00/A.2.2 — F — SCHEDULE CRUD + INSPECTOR / DOMAIN-DRIVEN EDITOR — DEFINITION OF DONE
+
+**Állapot:** HISTORICAL SCOPE / QUEUED. Ez a korábbi F-terv megőrzött definíciója, nem aktív végrehajtási utasítás; a jelenlegi sorrendet az M0, majd a rebaselined F0 határozza meg.
 
 **Cél:** a lezárt E-stage foundationre építve elkészíteni a canonical Schedule CRUD és az Inspector/domain-driven Editor bővítés első 1.0-s megvalósítási szakaszát. Ez nem új Visual Editor, nem új Schedule domain és nem a legacy rendszer visszaaktiválása.
 
@@ -40,14 +45,15 @@
 **M0 alatt új feature runtime implementáció NEM indul.** M0 csak audit, specifikáció, scope-rendezés, ownership-döntés és legacy-felület osztályozás.
 
 ### M0.1 — MASTER teljes funkcióinventár
-**Állapot:** `[x] PASS — 2026-10-08; teljes 01–140 traceability és canonical capability hozzárendelés dokumentálva.`
+**Állapot:** `[~] IN PROGRESS — a 01–140 traceability mátrix dokumentálva van, de a történeti 19–34 backlog teljes összevetése és az alábbi maradék ellenőrzések lezárása nincs a MASTER-ben bizonyítva. M0.1 ezért nem jelölhető PASS-nak.`
 
-- [~] teljes jelenlegi MASTER **4117 soros** állapotának átnézése; a 00/A és 00.9–00.9.6.B újrapontozása megtörtént, a történeti 19–34 szakasz teljes összevetése még hátra van;
-- [~] régi 19–34 backlog és későbbi roadmap funkcióinak összevetése;
-- [ ] minden funkció egyedi domain/surface/owner/státusz szerint regisztrálva;
-- [ ] duplikált feature-ek összevonása;
-- [ ] történeti státusz és jelenlegi végrehajtási státusz szétválasztása;
-- [ ] elveszett/implicit funkciók visszaemelése a canonical product mapbe.
+- [x] A 01–140 történeti funkciópont egyedi ID-val megőrizve és canonical capability/domain alá rendelve.
+- [x] A történeti státuszok a preservation matrixban történeti jelölésként vannak megmagyarázva; nem tekinthetők mai runtime készültségnek.
+- [ ] A 00/A és 00.9–00.9.6.B szakaszok teljes, pontról pontra történő egyeztetése a jelenlegi canonical product map-pel.
+- [ ] A korábbi 19–34 backlog hiteles forrásának visszakeresése, teljes összevetése, és minden elemhez egyedi traceability-kapcsolat vagy indokolt superseded/duplicate döntés rögzítése.
+- [ ] A teljes capability inventoryban minden funkcióhoz domain, surface, owner, phase/scope és lifecycle státusz hozzárendelése.
+- [ ] A tényleges duplikátumok azonosítása és csak bizonyíték alapján történő összevonása; külön capability-k nem törölhetők puszta hasonlóság miatt.
+- [ ] Minden elveszett vagy implicit funkció visszavezetése a canonical mapbe vagy dokumentált, indokolt kizárása.
 
 **M0.1 audit evidence snapshot — 2026-10-08:**
 - [x] `src/index.ts` jelenlegi canonical API/admin/public belépési pontjai ellenőrizve: auth, admin settings/schedule/twitch-schedule-sync/pages/editor, public site-settings/schedule/pages és Twitch integration route-ok regisztrálva.
@@ -208,7 +214,7 @@ A korábbi MASTER 44f42403… állapotából visszaolvastuk a **140 számozott f
 
 **M0.1 megállapítás:** a korábbi 01–140 backlog **nem veszett el**; minden pontnak van jelenlegi helye a rebaselined platform mapben. Ahol a régi pont több mai capability-re bomlik (pl. 60 Media library → Central Resource + Asset Manager + storage boundary; 55 Card/list/table/accordion/tabs → Component/Interaction system), ott nem összevonással töröljük, hanem egyedi feature-ként megőrizzük a traceabilityt.
 
-**M0.1 zárási döntés:** PASS. A történeti funkciólista nem törlődött; a modern capability map alá lett rendezve, és ahol egy régi funkció több új capability-re bomlik, az eredeti ID traceability megmaradt.
+**M0.1 interim megállapítás — nem zárási döntés:** a 01–140 mátrix megőrzi a korábban visszaolvasott funkciópontokat, de ez önmagában nem bizonyítja a 19–34 backlog teljes egyeztetését vagy a teljes MASTER konzisztenciáját. M0.1 csak a fenti nyitott ellenőrzések bizonyíték-alapú lezárása után kaphat PASS.
 
 ### M0.2 — Platform domain inventory
 **Állapot:** `[~] FOLYAMATBAN — canonical ownership matrix rögzítve; repository evidence audit PASS, runtime-capability gapek külön jelölve.`
@@ -297,7 +303,7 @@ A capability-lista önmagában nem elég: az alábbi keresztmetszeti domainek a 
 **M0.2.A szabály:** ezek nem „extra funkciók”, hanem platform-szintű cross-cutting contracts. Ha egy későbbi capability ezekre támaszkodik, a capability saját domainje nem hozhat létre második auth, permission, audit, resource, search, analytics, notification, deployment, migration vagy persistence rendszert.
 
 ### M0.3 — Admin / Editor / Public surface audit
-**Állapot:** `[~] FOLYAMATBAN — source-level route/surface audit PASS; runtime browser acceptance és végleges legacy disposition még szükséges.`
+**Állapot:** `[~] IN PROGRESS — a canonical Admin → Editor → Schedule böngészős útvonal és felhasználói acceptance igazolt; a teljes legacy disposition és az Admin/Editor/Public surface-leltár lezárása még M0.9/M0.10 feladat. A pont ezért nem PASS.`
 
 | Surface | Current entry | Canonical runtime | Evidence | Current finding | M0 action |
 |---|---|---|---|---|---|
@@ -326,9 +332,9 @@ A capability-lista önmagában nem elég: az alábbi keresztmetszeti domainek a 
 - [x] Schedule domain is not duplicated in `public/admin.html`.
 - [x] Editor Schedule configuration is owned by `public/editor-v2/core/schedule-schema.js`; it does not own D1 schedule records.
 - [x] The Editor command path uses the canonical Schedule normalizer; no second Schedule normalizer is permitted.
-- [ ] Actual browser reproduction of the previously observed Admin/Schedule UI error still required before declaring the user-facing root cause closed.
+- [x] The previously observed Admin/Schedule UI flow was rechecked in browser; the user confirmed the Admin → canonical Editor → Schedule flow works. This closes that specific UX reproduction/acceptance item only; it does not close all M0.3 legacy-disposition work.
 - [ ] Compare all Schedule fields required by the final product contract against the current admin form. Current legacy admin form exposes title/platform/start/end/status/url/notes, while the canonical product target also requires richer metadata such as artwork, game, timezone/source/sync/recurrence/featured/views/filters/template binding where applicable.
-- [ ] User acceptance of the final Schedule UX remains pending.
+- [x] User acceptance of the tested Admin → canonical Editor → Schedule flow was recorded on 2026-10-08. Richer product-field parity remains a separate scope/contract item and is not implied by this acceptance.
 
 **M0.3 legacy rule:** no dead backend or static legacy surface may remain linked as an ACTIVE Admin capability. Physical legacy files may remain temporarily only under explicit ARCHIVE/MIGRATE status and must have no canonical ownership.
 
@@ -371,7 +377,7 @@ A capability-lista önmagában nem elég: az alábbi keresztmetszeti domainek a 
 - [x] **Schedule config ownership:** `public/editor-v2/core/schedule-schema.js` explicitly states that it owns only Page Model Schedule-node configuration, while Schedule records remain outside Page Model.
 - [x] **Canonical command model:** the Editor Core command layer provides the mutation/history boundary for document state; direct feature-specific Inspector mutation is not established by the audited files.
 
-**Round 3 conclusion:** the audited canonical paths are internally consistent with the M0.4 ownership matrix. No new duplicate canonical owner was identified. This round still does **not** close M0.4 because runtime/browser evidence, complete legacy disposition, repository-wide mutation mapping and user acceptance remain outstanding.
+**Round 3 historical snapshot:** at the time of this round, runtime/browser evidence and later route-level closure evidence had not yet been recorded. This snapshot is superseded by evidence round 4 and the explicit M0.4 closure gate below; it must not be read as the current status.
 
 ### M0.4 evidence round 4 — route-level mutation map / repository-wide active-path baseline
 - [x] **Schedule mutation path:** `src/routes/admin/schedule.ts` is the active CRUD owner for `schedule_items`; all CRUD queries are site-scoped and create/update/delete operations append shared audit records.
@@ -382,7 +388,7 @@ A capability-lista önmagában nem elég: az alábbi keresztmetszeti domainek a 
 - [x] **Auth path:** `src/core/auth/require-auth.ts` resolves the active user/session and applies the shared role hierarchy; domain routes do not define separate authentication stores.
 - [x] **Repository-wide active mutation baseline:** the audited active route families map to the canonical owners already frozen in M0.4. No additional active mutation owner was identified in the inspected route/core surface.
 
-**Round 4 conclusion:** the active route-level mutation map is consistent with the ownership matrix. M0.4 is now reduced to closure evidence rather than unresolved ownership design: legacy disposition, runtime/browser verification and user acceptance remain the blocking items for PASS.
+**Round 4 historical snapshot:** the source-level mutation map was consistent with the ownership matrix. The remaining runtime/browser and user-acceptance items were subsequently closed by the M0.4 closure gate below. Complete legacy disposition remains an M0.3/M0.9 concern and is not falsely claimed as complete by M0.4.
 
 ### M0.4 closure gate — PASS evidence
 - [x] Repository/source-level ownership and active mutation-path audit completed through evidence rounds 1–4.
@@ -464,7 +470,7 @@ A capability-lista önmagában nem elég: az alábbi keresztmetszeti domainek a 
 13. Custom code/HTML/embed nem kaphat közvetlen privilegizált D1/R2 hozzáférést.
 14. Egy időben továbbra is pontosan egy ACTIVE engineering point lehet.
 
-**M0.4 evidence baseline:**
+**M0.4 initial evidence snapshot (historical; not the current gate):** The unchecked bullets below record what remained open at the time of the initial baseline. The later `M0.4 closure gate — PASS evidence` is the authoritative current M0.4 status.
 - [x] Site context contract létezik: src/core/site-context.ts.
 - [x] Page Model canonical: src/core/page-model.ts.
 - [x] Domain contracts tartalmaznak Asset/Game/Schedule/Theme/SitePresentation canonical modelleket: src/core/domain/contracts.ts.
@@ -477,9 +483,11 @@ A capability-lista önmagában nem elég: az alábbi keresztmetszeti domainek a 
 - [ ] legacy ownership/disposition teljesen lezárva;
 - [ ] user review / acceptance.
 
-**M0.4 döntés:** a fenti matrix a további fejlesztés canonical ownership baseline-ja. Amíg M0.4 nem kap teljes PASS-t, új domain-level feature implementation nem nyitható.
+**M0.4 döntés — lezárt:** a fenti matrix a további fejlesztés canonical ownership baseline-ja. Az M0.4 closure gate alatti, 2026-10-08-i runtime/browser/user-acceptance bizonyítékok alapján M0.4 PASS. Ez nem jelenti az M0 egészének PASS állapotát.
 
 ### M0.5 — Central Resource contract freeze
+**Állapot:** `[ ] QUEUED — M0.1–M0.3 státusz- és lezárási konzisztencia rendezéséig nem indul. M0.5 a következő termék/domain contract feladat, amint az előtte lévő M0 részpontok lezárása és a sorrend explicit igazolása megtörtént. Feature-implementáció itt sem indulhat.`
+
 Kötelező eldönteni és MASTER-ben rögzíteni:
 - Asset;
 - Image;
@@ -499,6 +507,8 @@ Kötelező eldönteni és MASTER-ben rögzíteni:
 - R2 implementation boundary.
 
 ### M0.6 — Template / Component / Design-system contract freeze
+**Állapot:** `[ ] QUEUED — kizárólag M0.5 PASS után.`
+
 Kötelezően külön:
 - Theme;
 - Token;
@@ -512,6 +522,8 @@ Kötelezően külön:
 - Library item.
 
 ### M0.7 — Streamer / OBS capability freeze
+**Állapot:** `[ ] QUEUED — kizárólag M0.6 PASS után.`
+
 - Schedule;
 - Game;
 - platform;
@@ -528,9 +540,13 @@ Kötelezően külön:
 - future automation.
 
 ### M0.8 — 1.0 / 1.x / post-1.0 scope freeze
+**Állapot:** `[ ] QUEUED — kizárólag M0.7 PASS után.`
+
 Minden funkció explicit státuszt kap. A „majd egyszer” kategória is megmarad, de nem blokkolhatja az 1.0-t.
 
 ### M0.9 — Legacy removal plan
+**Állapot:** `[ ] QUEUED — kizárólag M0.8 PASS után.`
+
 Minden legacy surface kap:
 - KEEP;
 - FIX;
@@ -543,12 +559,16 @@ Minden legacy surface kap:
 **Kötelező:** a legacy útvonalnak nem lehet canonical ownershipje.
 
 ### M0.10 — No Dead Admin Surface gate
+**Állapot:** `[ ] QUEUED — kizárólag M0.9 PASS után.`
+
 - [ ] nincs aktívnak látszó hibás admin funkció;
 - [ ] future funkciók PLANNED/BETA/FOUNDATION állapotot mutatnak;
 - [ ] régi route-ok redirect/disabled/archive stratégiát kapnak;
 - [ ] Admin navigation canonical feature registryből származik.
 
 ### M0.11 — Benchmark completion
+**Állapot:** `[ ] QUEUED — kizárólag M0.10 PASS után.`
+
 A hivatalos benchmarkok releváns részei rögzítve:
 - Webflow;
 - Wix Studio;
@@ -562,6 +582,8 @@ A hivatalos benchmarkok releváns részei rögzítve:
 - további streamer/creator website példák, ha új képességet bizonyítanak.
 
 ### M0.12 — M0 Definition of Done
+**Állapot:** `[ ] QUEUED — kizárólag M0.1–M0.11 minden előírt feltételének teljesülése után.`
+
 M0 csak akkor PASS:
 - [ ] teljes feature inventory auditált;
 - [ ] minden domain canonical ownerrel rendelkezik;
@@ -586,6 +608,8 @@ M0 csak akkor PASS:
 - [ ] M0 CLOSED / PASS.
 
 ### M0.13 — M0 utáni sorrend
+**Állapot:** `[ ] QUEUED — csak M0.12 PASS és felhasználói jóváhagyás után.`
+
 M0 után az egyetlen aktív pont:
 **F0 — Canonical Editor UI + Schedule + Inspector remediation, a rebaselined platform contract szerint.**
 
@@ -1503,6 +1527,8 @@ Ha egy capability valamelyik pontja későbbi fázis, azt explicit **PLANNED / P
 ---
 
 ## 00.9.6.C.21 — Sorrendiség és végrehajtási zár
+
+**Precedence:** ez a fejezet a globális végrehajtási szabályt rögzíti. Az aktuális aktív részpontot kizárólag a MASTER eleji `ACTIVE_POINT_ID` és `ACTIVE_SUBPOINT_ID` adja meg; a roadmap fejezetekben felsorolt fázisok nem aktív munkapontok.
 
 **Egy időben pontosan egy ACTIVE engineering point lehet.**
 
