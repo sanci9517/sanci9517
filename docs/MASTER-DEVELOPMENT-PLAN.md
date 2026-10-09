@@ -217,7 +217,7 @@ A korábbi MASTER 44f42403… állapotából visszaolvastuk a **140 számozott f
 **M0.1 interim megállapítás — nem zárási döntés:** a 01–140 mátrix megőrzi a korábban visszaolvasott funkciópontokat, de ez önmagában nem bizonyítja a 19–34 backlog teljes egyeztetését vagy a teljes MASTER konzisztenciáját. M0.1 csak a fenti nyitott ellenőrzések bizonyíték-alapú lezárása után kaphat PASS.
 
 ### M0.2 — Platform domain inventory
-**Állapot:** `[~] FOLYAMATBAN — canonical ownership matrix rögzítve; repository evidence audit PASS, runtime-capability gapek külön jelölve.`
+**Állapot:** `[~] IN PROGRESS — a domain inventory és a cross-cutting inventory dokumentálva van; a záró ellenőrzésnek még explicit módon igazolnia kell az összes domain owner/storage/scope lefedését, a tervezett és implementált capability-k szétválasztását, valamint a hiányzó domainek kizárását vagy felvételét.`
 
 | Domain | Canonical owner / source of truth | Jelenlegi bizonyított alap | Storage / boundary | Scope | Döntés |
 |---|---|---|---|---|---|
@@ -302,8 +302,16 @@ A capability-lista önmagában nem elég: az alábbi keresztmetszeti domainek a 
 
 **M0.2.A szabály:** ezek nem „extra funkciók”, hanem platform-szintű cross-cutting contracts. Ha egy későbbi capability ezekre támaszkodik, a capability saját domainje nem hozhat létre második auth, permission, audit, resource, search, analytics, notification, deployment, migration vagy persistence rendszert.
 
+**M0.2 closure checklist — PASS csak mindegyik teljesülése után:**
+- [ ] Minden core domain és minden cross-cutting domain szerepel a megfelelő inventoryban.
+- [ ] Minden domainhez egy canonical owner, storage/boundary, scope és KEEP/EXPAND/ADD/PLANNED döntés tartozik.
+- [ ] A még nem implementált capability-k explicit PLANNED/ADD állapotúak; a tervezett modell nem állítja, hogy a runtime már elkészült.
+- [ ] Az inventory és az M0.4 ownership matrix között nincs megmagyarázatlan eltérés vagy párhuzamos owner.
+- [ ] A hiányzó vagy összevont domainek döntése indoklással és traceabilityvel dokumentált.
+- [ ] Felhasználói áttekintés és MASTER checkpoint rögzítve.
+
 ### M0.3 — Admin / Editor / Public surface audit
-**Állapot:** `[~] IN PROGRESS — a canonical Admin → Editor → Schedule böngészős útvonal és felhasználói acceptance igazolt; a teljes legacy disposition és az Admin/Editor/Public surface-leltár lezárása még M0.9/M0.10 feladat. A pont ezért nem PASS.`
+**Állapot:** `[~] IN PROGRESS — a canonical Admin → Editor → Schedule böngészős útvonal és felhasználói acceptance igazolt. Az Admin/Editor/Public surface-leltár és az egyes felületek canonical/legacy/placeholder besorolása még lezárandó. A végleges legacy eltávolítás/archiválás végrehajtása M0.9/M0.10 feladat, ezért nem lehet M0.3 előfeltétele; M0.3 a teljes leltár és az ideiglenes disposition rögzítése után zárható.`
 
 | Surface | Current entry | Canonical runtime | Evidence | Current finding | M0 action |
 |---|---|---|---|---|---|
@@ -337,6 +345,14 @@ A capability-lista önmagában nem elég: az alábbi keresztmetszeti domainek a 
 - [x] User acceptance of the tested Admin → canonical Editor → Schedule flow was recorded on 2026-10-08. Richer product-field parity remains a separate scope/contract item and is not implied by this acceptance.
 
 **M0.3 legacy rule:** no dead backend or static legacy surface may remain linked as an ACTIVE Admin capability. Physical legacy files may remain temporarily only under explicit ARCHIVE/MIGRATE status and must have no canonical ownership.
+
+**M0.3 closure checklist — PASS csak mindegyik teljesülése után:**
+- [x] Az Admin → canonical Editor → Schedule böngészős útvonalat ellenőriztük; a felhasználói acceptance rögzítve van.
+- [ ] A jelenlegi route-, navigation-, static asset- és public surface-leltár teljes; az ismeretlen/ellenőrizetlen felületek nem tekinthetők lezártnak.
+- [ ] Minden leltárelem besorolása canonical active / legacy unreachable / legacy reachable / placeholder-planned / disabled, bizonyítékkal.
+- [ ] Minden legacy elem ideiglenes dispositiont és későbbi végrehajtási pontot kap; az M0.9/M0.10 törlési/archiválási feladatait nem kell előre végrehajtani.
+- [ ] A Schedule UX jelenlegi acceptance-e és a későbbi termékmezők scope-ja különválasztva van; a hiányzó termékmezők nem minősülnek már elkészült funkciónak.
+- [ ] Felhasználói review és MASTER checkpoint rögzítve.
 
 ### M0.4 — Canonical ownership matrix freeze
 **Állapot:** [x] PASS — 2026-10-08; ownership contract, repository mutation-map, runtime/browser verification és user acceptance lezárva. M0.4 nem nyit új engineering workstreamet.
