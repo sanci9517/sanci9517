@@ -2505,6 +2505,75 @@ The short decision record must name the problem and acceptance criteria; existin
 
 **Batch 3 result:** 45 E.10–E.14 source bullets mapped. Structural validation on commit 107e7a46628d290067631d0b32063bdd31538611 confirmed 45 rows, 150 distinct explicit/range-expanded feature/QA references and no unresolved IDs. Provider access, financial operations, member data and AI remain explicitly phase-/permission-gated. Mapping is not runtime PASS.
 
+
+### 37.25. P0.2 — Bullet-szintű crosswalk, batch 4: E.15–E.21, E.20 contract és negatív tesztek
+
+**Forrás:** archived MASTER snapshot, 00.9.6.E.15–E.21, E.20 funkciókártya-sablon és kötelező negatív tesztek. A történeti F0.1–F0.13 fázisnevek nem aktív utasítások; a jelenlegi §39 roadmap és P0/P1 végrehajtási állapot az irányadó.
+
+| Forráskulcs | Megőrzött követelmény röviden | Canonical current ID | Döntés | Célfázis | QA-horgony |
+|---|---|---|---|---|---|
+| E.15-01 | Media kit, current creator stats, audience overview, brand category, rate card and brand assets | CAM-004, CAM-007, ANL-004, CAM-005 | DEFER | 5.0 | QA-002/008 |
+| E.15-02 | Sponsor lead/deal/brief/deliverables/deadlines/status/analytics/invoice later | CAM-001, CAM-003, CAM-005–CAM-009 | DEFER | 5.0 | QA-002/003/008 |
+| E.15-03 | Role-based business-document access; public media kit only exposes selected data | CAM-004, CAM-008, SEC-002, SEC-011 | KEEP | 5.0 privacy gate | QA-003/008 |
+| E.15-04 | Sponsorship module later and must not block 1.0 website/editor | CAM-001–CAM-009, §39.7 | KEEP | 5.0 | QA-008 |
+| E.16-01 | Hungarian first; model/UI ready for multiple languages | LOC-001–LOC-008, WEB-001 | EXPAND | 1.0 architecture-ready; full workflow later | QA-004/005 |
+| E.16-02 | Translation keys/fallback/date-timezone/number-currency/locale SEO metadata | LOC-001–LOC-008, SEO-001, SCH-003 | EXPAND | 1.0 foundations; full locale workflow later | QA-004/005 |
+| E.16-03 | Translate Page/Content/Navigation/Theme/Template fields without overwriting another locale | LOC-002, LOC-003, WEB-001, CNT-001, DSN-008 | DEFER/EXPAND | 2.0 | QA-002/004 |
+| E.16-04 | Visible incomplete-translation status, preview and publish policy | LOC-004, LOC-005, WEB-005, WEB-006 | DEFER/EXPAND | 2.0 | QA-002/004 |
+| E.16-05 | AI-assisted translation only after review/explicit acceptance | LOC-006, AI-012, AI-007, AI-019 | DEFER | 3.0 | QA-003/004/008 |
+| E.17-01 | Future tenant/workspace→users/members→sites→modules structure | TEAM-001–TEAM-006, SEC-003 | DEFER | 4.0+ | QA-003/008 |
+| E.17-02 | Multiple sites in workspace with separate settings | TEAM-001, TEAM-002, SET-001–SET-003, SEC-003 | DEFER | 4.0+; current global uniqueness constraints block unreviewed rollout | QA-003/008 |
+| E.17-03 | Owner/admin/editor/designer/moderator/analyst/content/store/finance roles with granular site/module permissions | TEAM-003, TEAM-005, SEC-002, SEC-003 | DEFER | 4.0+; 1.0 RBAC baseline still mandatory | QA-003/008 |
+| E.17-04 | Package tiers only after actual cost/usage/business-model evidence | TEAM-006, STO-019, CAM-009, OPS-008 | DEFER | 4.0–5.0 | QA-003/008 |
+| E.17-05 | Billing/subscription/quota/usage/invoice/upgrade/downgrade/cancel and revenue boundaries | TEAM-006, STO-008–STO-010, STO-014, STO-019, CAM-009 | DEFER | 4.0–5.0 | QA-002/003/008 |
+| E.17-06 | Tenant isolation on every record/action; client-supplied site ID is not authorization | SEC-002, SEC-003, TEAM-001, OPS-004 | KEEP | 0.x–1.0 baseline; expand before 4.0 | QA-003/008 |
+| E.17-07 | Multi-site/team/SaaS is long-term and not automatic 1.0 scope | TEAM-001–TEAM-006, §39.6 | KEEP | 4.0+ | QA-008 |
+| E.18-01 | Versioned validated import/export for Site/Page/Template/Component/Theme; no secrets/tokens | OPS-005, DSN-015, WEB-008, SEC-008 | EXPAND | 1.0 recovery/export baseline; broad packages later | QA-003/007 |
+| E.18-02 | Backup/restore for published/draft states with dry-run and integrity check | OPS-005, OPS-006, OPS-009, WEB-007, WEB-008 | EXPAND | 0.x–1.0 baseline | QA-002/006/007 |
+| E.18-03 | Structured logs/correlation IDs/integration health/errors/sync/queue/DB/cache metrics | OPS-002, OPS-003, OPS-008, INT-008, AUT-008 | EXPAND | 0.x–1.0 baseline; advanced operations later | QA-006/008 |
+| E.18-04 | Admin diagnostics for failed jobs/syncs/integration/deploy version without secrets in logs | OPS-001–OPS-003, OPS-007, INT-020, SEC-008 | EXPAND | 1.0 baseline | QA-003/006/008 |
+| E.18-05 | Future public API/webhooks/developer keys/extensions/marketplace with scoped permissions/rate limits/versioning | INT-017, INT-018, INT-021, MKT-001–MKT-005, SEC-007 | DEFER | 6.0+ | QA-002/003/008 |
+| E.19-01 | D1 structured data, R2 binaries, Queues retryable work, Workflows long jobs, Durable Objects only for justified stateful coordination | RES-002, AUT-007, OPS-011, INT-001 | KEEP | Architecture baseline; each runtime capability gated | QA-002/003/006 |
+| E.19-02 | Every domain has schema/service/API/auth/validation/audit/tests/failure behavior | §25–26, SEC-002, SEC-010, QA-001–QA-010 | KEEP | All phases | QA-002/003/008 |
+| E.19-03 | Integration adapters normalize provider payloads | INT-001, INT-018, LIV-006, AUT-001 | KEEP | 0.x–1.0 baseline; expand per provider | QA-002/003 |
+| E.19-04 | Webhook/sync signature/state/replay/idempotency/rate/retry/diagnostics | INT-003, INT-009, INT-017, SEC-004, SEC-009, AUT-006–AUT-008 | KEEP | 0.x–1.0 baseline; provider-specific tests later | QA-003/006 |
+| E.19-05 | Auth/RBAC/site/tenant/input/output/XSS/CSRF/cookie/secrets/OAuth/upload/least privilege/audit | SEC-001–SEC-010, SEC-003, RES-003, INT-003, INT-019 | KEEP | 0.x–1.0 release gate | QA-003 |
+| E.19-06 | Consent/privacy/access/export/delete/retention/cookies/unsubscribe and legal review | SEC-011, COM-017, ANL-009, OPS-005 | KEEP | Privacy baseline 1.0; domain-specific later | QA-003/008 |
+| E.19-07 | Event/publish-bound cache invalidation; no dangerous stale Admin/Editor state | WEB-030, DYN-006, OPS-008, EDT-028 | KEEP | 0.x–1.0 | QA-002/004/006 |
+| E.19-08 | Forward-only migrations with rollback/data-loss analysis, preflight/dry-run/post-check | OPS-004–OPS-006, OPS-009, SEC-010 | KEEP | 0.x–1.0 release gate | QA-003/006/007 |
+| E.20-01 | Every feature defines user goal/outcome | §26.1, QA-001 | KEEP | All phases | QA-002/008 |
+| E.20-02 | UI route, entry and return navigation | ADM-001, WEB-012, EDT-035 | KEEP | All phases | QA-004/005 |
+| E.20-03 | Normal/empty/loading/validation/error/retry/permission-denied behavior | ADM-008, QA-006 | KEEP | All phases | QA-004/006 |
+| E.20-04 | Canonical domain/data model/owner/fields/status/relations/invariants | §5, §29, SEC-002 | KEEP | All phases | QA-002/003 |
+| E.20-05 | API/service contract, validation/auth/error codes/idempotency | §26.1, SEC-002, INT-001, AUT-006 | KEEP | All phases | QA-002/003/006 |
+| E.20-06 | Admin/Editor/Public rendering and responsive/accessibility requirements | ADM, WEB, EDT, QA-005 | KEEP | All phases | QA-004/005 |
+| E.20-07 | Integration/dependencies/scopes/rate limits/timeouts/provider downtime | INT-001–INT-009, OPS-011 | KEEP | Every provider-dependent phase | QA-003/006/008 |
+| E.20-08 | Unit/domain/API/D1/migration/permission/ownership/browser desktop-tablet-mobile/regression tests | QA-001–QA-010 | KEEP | All phases | QA-002–QA-010 |
+| E.20-09 | Reproducible acceptance scenario input→action→expected result | §26.1, QA-009 | KEEP | All phases | QA-009 |
+| E.20-10 | Evidence: commands/test output/browser/live check/commit/known limitations | §16–18, QA-009, OPS-001 | KEEP | All phases | QA-009 |
+| E.20-11 | Explicit PLANNED/ACTIVE/BLOCKED/PASS/FAIL/DEFERRED status; PASS only after DoD | §11, §25, QA-009 | KEEP | All phases | QA-009 |
+| E.20-12 | MASTER checkpoint records result/contracts/next single active point | §0.2, §16–18 | KEEP | All phases | QA-009 |
+| E.20-N01 | Unauthorized user cannot read/write another site's data | SEC-002, SEC-003, QA-003 | KEEP | All mutation domains | QA-003 |
+| E.20-N02 | Invalid input cannot persist | SEC-002, EDT-022, QA-002 | KEEP | All mutation domains | QA-002/003 |
+| E.20-N03 | Repeated webhook/sync cannot create duplicate event/transaction | INT-017, AUT-006, SCH-008, STO-018 | KEEP | All integrations | QA-003/006 |
+| E.20-N04 | Provider outage cannot disable the entire public site/Admin | INT-020, LIV-002, DYN-005, OPS-003 | KEEP | All provider domains | QA-003/006 |
+| E.20-N05 | Failed save/publish cannot show success or delete draft | EDT-027–EDT-031, WEB-006–WEB-007 | KEEP | 1.0 release gate | QA-002/004/006 |
+| E.20-N06 | Stale revision cannot silently overwrite newer state | EDT-029, EDT-030, WEB-008 | KEEP | 1.0 release gate | QA-002/003/004 |
+| E.20-N07 | Delete cannot leave broken references or remove used assets invisibly | RES-008, RES-009, WEB-003, QA-007 | KEEP | 1.0 resource/page safety | QA-002/004/007 |
+| E.20-N08 | Mobile cannot have critical overflow/inaccessible controls | ADM-010, EDT-035–EDT-037, QA-005 | KEEP | 1.0 release gate | QA-004/005 |
+| E.20-N09 | Secrets/tokens never appear in client code/URL/log/export | SEC-008, INT-019, OPS-002, OPS-005 | KEEP | 0.x–1.0 release gate | QA-003 |
+| E.20-N10 | After rollback/restore canonical data and public rendering remain consistent | WEB-007, WEB-008, OPS-005, OPS-009 | KEEP | 0.x–1.0 release gate | QA-002/006/007 |
+| E.21-01 | Historical F0.1–F0.13 Creator Website 1.0 program and feature set | §39.2, EDT, ADM, WEB, RES, DSN, SCH, INT, SEO, QA | REPLACE | Current §39 + P0/P1 sequence | QA-002/004/008 |
+| E.21-02 | 1.x Creator Profile/Link Hub/Content Hub/VOD/Shorts/calendar/integrations/audience/basic analytics | WEB-022, CNT-002–CNT-020, INT-013–INT-021, COM-015, ANL-001–ANL-004 | MERGE | 1.5–2.0 | QA-002/004/008 |
+| E.21-03 | 1.5–1.9 monetization/community/automation foundations | STO-001–STO-020, SUP-001–SUP-012, COM, AUT | MERGE | 1.5–7.0 by domain | QA-002/003/008 |
+| E.21-04 | 2.x Creator OS dashboard/analytics/content/email/sponsorship/OBS/AI | ADM, ANL-001–ANL-010, CNT, COM-015–COM-017, CAM, OBS, AI | MERGE | §39.4–39.5 | QA-002/003/008 |
+| E.21-05 | 3.x business/marketplace and revenue share | STO, SUP, MKT-001–MKT-005, CAM, TEAM | MERGE | 5.0–6.0 | QA-002/003/008 |
+| E.21-06 | 4.x multi-site/teams/workspaces/roles | TEAM-001–TEAM-006, SEC-003 | MERGE | 4.0 | QA-003/008 |
+| E.21-07 | 5.x SaaS/multi-tenant/packages/billing/usage/platform admin | TEAM-006, STO-019, CAM-009, SEC-003, OPS-008 | MERGE | 4.0–5.0 | QA-003/008 |
+| E.21-08 | 6.x–10.x global ecosystem/extensions/advanced automation/AI/localization | MKT-001–MKT-005, AUT-001–AUT-014, AI-001–AI-020, LOC-001–LOC-008, §39.8–39.12 | MERGE | 6.0–10.0 | QA-002/003/008 |
+
+**Batch 4 result:** 69 source requirements mapped (47 E.15–E.21 bullets, 12 feature-card fields, 10 negative-test requirements). The historical phase labels are preserved as provenance; only the current §39 roadmap controls execution. Structural validation is pending; no runtime PASS is implied.
+
 ## 38. Részletes Visual Editor képességkatalógus
 
 **Cél:** a vizuális szerkesztő teljes részletképességeinek önálló, tesztelhető katalógusa. A felsorolás a végleges platform követelményét rögzíti, nem a runtime készültségét. Minden elem a közös Page Model, command/history/validation/persistence és jogosultsági szerződésen keresztül működik.
