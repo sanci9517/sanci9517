@@ -4260,3 +4260,13 @@ F0.2 DoD:
 - [ ] F0.2 további DoD-elemei — jogosultsági határok, minden CTA, reszponzív/keyboard állapotok és production acceptance — továbbra is nyitottak.
 
 **Biztonsági megjegyzés:** a statikus Editor asset közvetlen elérhetősége önmagában nem bizonyít jogosulatlan adathozzáférést; az adat/API route-ok szerveroldali auth/role ellenőrzése a lényegi határ. Az asset-route kezelését csak célzott vizsgálat és regressziós terv után szabad módosítani, hogy a CSS/JS betöltés és a bejelentkezett Editor működése ne törjön el.
+
+
+## 2.77.9.G — F0.2 mobil navigáció fókuszkezelése — 2026-10-13
+
+**Állapot: IMPLEMENTING — NOT PASS.** Az F0.2 aktív route/navigation elfogadási munkájának következő kis szelete.
+
+- [x] A mobil oldalsáv Escape-pel vagy háttérre kattintással történő bezárásakor a fókusz visszakerül a navigációt nyitó gombra.
+- [x] Contract teszt fedi a fókusz-visszaállítási viselkedést és a meglévő mobil kereső fókuszkezelését.
+- [ ] Friss CI PASS a teljes kötelező tesztkészleten.
+- [ ] Éles deploy utáni mobilos, billentyűzetes elfogadás továbbra is szükséges; F0.2 nem zárható le pusztán statikus tesztek alapján.
