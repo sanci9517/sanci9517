@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 
 import { createDocument, createNode, NODE_TYPES } from '../core/schema.js';
@@ -12,6 +14,11 @@ import { plainTextToRichText } from '../core/richtext-engine.js';
 import { createDefaultScheduleConfig, normalizeScheduleConfig, validateScheduleConfig } from '../core/schedule-schema.js';
 import { getSchedulePreviewItems } from '../core/schedule-preview.js';
 import { validatePublishDocument } from '../../../src/core/editor-validation.ts';
+
+test('Editor browser module parses before it is shipped', () => {
+  const appPath = fileURLToPath(new URL('../app.js', import.meta.url));
+  execFileSync(process.execPath, ['--check', appPath], { stdio: 'pipe' });
+});
 
 test('Schedule config uses canonical defaults and normalizes valid input', () => {
   const defaults = createDefaultScheduleConfig();
