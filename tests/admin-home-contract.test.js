@@ -37,7 +37,7 @@ test("dashboard reads real canonical APIs instead of hard-coded creator metrics"
     assert.ok(dashboard.includes(endpoint), `missing dashboard data source: ${endpoint}`);
   }
   assert.match(dashboard, /Promise\.allSettled/);
-  assert.match(dashboard, /Nem talál ki időpontot/);
+  assert.match(dashboard, /nem talál ki időpontot/i);
   assert.match(dashboard, /A provider állapota nem érhető el/);
 });
 
