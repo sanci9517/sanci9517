@@ -9,7 +9,7 @@
 
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 **Dokumentum státusza:** ez az egyetlen végrehajtási igazságforrás.
-**Audit baseline:** GitHub `v2/foundation`, commit `9a6ae12` (2026-10-13). A repository-snapshot nem helyettesíti a külön szükséges runtime-, teszt- és felhasználói bizonyítékokat.
+**Audit baseline:** GitHub `v2/foundation`, commit `080a436` (2026-10-13; current audited snapshot). A repository-snapshot nem helyettesíti a külön szükséges runtime-, teszt- és felhasználói bizonyítékokat.
 
 ### Jelenlegi igazolt állapot
 Ez a blokk kizárólag az M0 előtti lezárt gate-eket rögzíti; nem jelenti azt, hogy az M0 alatti részpontok lezárultak.
@@ -29,7 +29,7 @@ Ez a blokk kizárólag az M0 előtti lezárt gate-eket rögzíti; nem jelenti az
 
 **Állapot:** HISTORICAL SCOPE / QUEUED. Ez a korábbi F-terv megőrzött definíciója, nem aktív végrehajtási utasítás; a jelenlegi sorrendet az M0, majd a rebaselined F0 határozza meg.
 
-**Cél:** a lezárt E-stage foundationre építve elkészíteni a canonical Schedule CRUD és az Inspector/domain-driven Editor bővítés első 1.0-s megvalósítási szakaszát. Ez nem új Visual Editor, nem új Schedule domain és nem a legacy rendszer visszaaktiválása.
+**Cél:** az új, felhasználó által elfogadott Visual Editor-koncepció megvalósítása a meglévő canonical platformra építve. A szerkesztő felülete és interakciós modellje jelentősen újratervezhető vagy újraépíthető; a meglévő UI nem élvez elsőbbséget pusztán azért, mert korábban elkészült. A canonical Page Model, domain ownership, command/history/validation, revision/save/publish és site-ownership boundary viszont megőrzendő, hacsak bizonyított architekturális ok és külön jóváhagyott tervmódosítás mást nem indokol. Ez nem jelent második canonical Editor core-t, Schedule domaint vagy persistence útvonalat.
 
 **Kötelező architekturális szabályok:**
 - [x] A canonical Visual Editor kizárólag `public/editor-v2/`.
@@ -54,7 +54,8 @@ Ez a blokk kizárólag az M0 előtti lezárt gate-eket rögzíti; nem jelenti az
 - [x] A 01–140 történeti funkciópont egyedi ID-val megőrizve és canonical capability/domain alá rendelve.
 - [x] A történeti státuszok a preservation matrixban történeti jelölésként vannak megmagyarázva; nem tekinthetők mai runtime készültségnek.
 - [ ] Az aktuális végrehajtási index (a dokumentum eleji ACTIVE_* blokk) és a canonical 00.9.6.C capability map + 00.9.6.D phase/lifecycle roadmap teljes, pontról pontra történő egyeztetése; a régi 00/A és 00.9–00.9.6.B változatokból származó követelményeket repository history/archive alapján vissza kell vezetni vagy indokolt superseded döntéssel lezárni.
-- [ ] A korábbi 19–34 backlog hiteles forrásának visszakeresése, teljes összevetése, és minden elemhez egyedi traceability-kapcsolat vagy indokolt superseded/duplicate döntés rögzítése.
+- [x] A korábbi 19–34 backlog hiteles történeti forrása az `aedb2ea` revízióban azonosítva; a 19–34 szakaszok forráskivonata elkészült. A ledger azonosítóinak/rekordszerkezetének korábbi ellenőrzését lezártnak kell tekinteni, és nem szabad pusztán a darabszám-eltérés miatt újra lefuttatni.
+- [ ] Nyitott: minden történeti követelmény tartalmi crosswalkje a `00.9.6.C` canonical capability owneréhez és a `00.9.6.D` fázisához; az eltérő rekordok funkció-, architekturális vagy governance-jellegének indokolt dispositionje; a régi `00/A` és `00.9–00.9.6.B` követelményeinek history/archive alapú megőrzési döntése.
 - [ ] A teljes capability inventory minden 001–140 és H19–H34 tételéhez domain, surface, canonical owner, a 00.9.6.D-vel egyeztetett phase/scope, dependency/boundary és lifecycle/döntés tartozzon; a még nem implementált tételeknél a phase-specifikus DoD/test/acceptance legyen megadva vagy explicit PLANNED/TBD állapotban maradjon.
 - [ ] A tényleges duplikátumok azonosítása és csak bizonyíték alapján történő összevonása; külön capability-k nem törölhetők puszta hasonlóság miatt.
 - [ ] Minden elveszett vagy implicit funkció visszavezetése a canonical mapbe vagy dokumentált, indokolt kizárása.
@@ -233,7 +234,7 @@ A korábbi MASTER 44f42403… állapotából visszaolvastuk a **140 számozott f
 - A korábbi 00/A és 00.9–00.9.6.B címek nem találhatók meg jelen formában a jelenlegi MASTER-ben; az aktuális ACTIVE_* index és a 00.9.6.C/D roadmap az elsődleges jelenlegi nézet. A korábbi forrásokból esetleg még megőrzendő követelményeket history/archive alapon kell visszavezetni, nem feltételezni, hogy a cím hiánya önmagában funkciótörlést jelent.
 - A H19–H34 ledger generic DoD-szövege traceability-feladatot rögzít, nem az egyes jövőbeli implementációk kész DoD-ját. A konkrét engineering pointban kell majd capability-specifikus tesztet, failure case-t és acceptance-t definiálni.
 
-**M0.1 továbbra is IN PROGRESS.** Sem a 01–140, sem a H19–H34 szerkezeti egyezése nem zárja le a pontonkénti crosswalket, a duplikátum-döntéseket vagy a kimaradt capability-k bizonyítását.
+**M0.1 továbbra is IN PROGRESS, de a már lezárt szerkezeti ellenőrzések nem ismétlendők.** A történeti forrás azonosítása, a 01–140 ID folytonossága és a H19–H34 ledger korábban vizsgált rekordazonosítóinak ellenőrzése nem nyitható újra új bizonyíték vagy konkrét ellentmondás nélkül. A fennmaradó munka a tartalmi capability/phase crosswalk, a `00/A` és `00.9–00.9.6.B` követelménymegőrzési döntései, valamint a hiányzó surface/dependency/lifecycle hivatkozások célzott pótlása.
 
 ### M0.1 historical traceability ledger — batch 1 (sections 19–22)
 
@@ -972,9 +973,15 @@ F0 után csak a teljes PASS lánc:
 **F0 célja:**  
 A jelenlegi `public/editor-v2/` canonical Editor v2 teljes használhatósági alapjának helyreállítása és bizonyítása úgy, hogy az Editor **desktopon, tableten és mobilon ugyanazt a canonical Page Modelt szerkessze**, a bal oldali navigáció valóban használható legyen, az Inspector valódi szerkesztési felületként működjön, az Adásrend külön domain-szerkesztési felületként elérhető legyen, és egyetlen szerkesztési/mutation/persistence útvonal maradjon.
 
-Ez az F0 **nem egy új Visual Editor és nem egy második Schedule Builder**. Az F0 az eddig meglévő canonical alapokat auditálja, összeköti és csak a bizonyított UI/contract hiányosságokat javítja.
+Az F0 **a Visual Editor új UX/UI-koncepciójának újraalapozási és megvalósítási kapuja**: nem kötelező a régi felületet foltozgatni, és indokolt esetben a UI-réteg újraépíthető. A meglévő, bizonyítottan megfelelő domain- és platformalapokat újra kell használni. Nem készül második canonical Page Model, Editor core, Schedule domain, Property Registry vagy save/publish útvonal.
 
 **F0 scope egyetlen ponton belül:**
+- Új szerkesztői információ-architektúra és UI a felhasználó által elfogadott koncepció szerint.
+- Strukturált hierarchia: Page → Section → Box → szerkeszthető elemek; a Box támogathat egymásba ágyazott Boxot.
+- Canvas + Layers/tree + jobb oldali Inspector + responsive breakpointok + preview.
+- Pozíció, igazítás, méret, spacing és layout dropdown/vezérlőkön keresztül; hétköznapi szerkesztéshez nem szükséges CSS- vagy JSON-kódot írni.
+- Belső vertikális/horizontális és két-/háromoszlopos Box-layout; elemek sorrendje és térköze szerkeszthető.
+- Alapelemek: heading, text, image, button, divider, spacer, nested box és Sanci-specifikus blokkok; összetett Schedule-kártyák szerkeszthető részekből épülnek, nem monolitikus HTML-ként.
 - Editor shell és panel lifecycle.
 - Desktop/tablet/mobile responsive shell.
 - Bal oldali navigáció / Pages / Elements / Layers.
