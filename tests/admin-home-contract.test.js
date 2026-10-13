@@ -5,6 +5,28 @@ import test from "node:test";
 const worker = readFileSync(new URL("../src/index.ts", import.meta.url), "utf8");
 const dashboard = readFileSync(new URL("../public/admin-home.html", import.meta.url), "utf8");
 const loginPage = readFileSync(new URL("../public/admin-login.html", import.meta.url), "utf8");
+const adminSettingsRoute = readFileSync(new URL("../src/routes/admin/settings.ts", import.meta.url), "utf8");
+const adminPagesRoute = readFileSync(new URL("../src/routes/admin/pages.ts", import.meta.url), "utf8");
+const adminScheduleRoute = readFileSync(new URL("../src/routes/admin/schedule.ts", import.meta.url), "utf8");
+const adminEditorRoute = readFileSync(new URL("../src/routes/admin/editor.ts", import.meta.url), "utf8");
+
+test("Admin and Editor pages authenticate before serving assets and their APIs enforce roles", () => {
+  const adminStart = worker.indexOf('if (pathname === "/admin") {');
+  const editorStart = worker.indexOf('if (pathname === "/admin/editor") {');
+  assert.ok(adminStart >= 0 && editorStart > adminStart, "Admin and Editor routes must exist in the expected order");
+  const adminRouteBlock = worker.slice(adminStart, editorStart);
+  const editorRouteBlock = worker.slice(editorStart);
+  assert.ok(adminRouteBlock.includes("const user = await getAuthenticatedUser(request, env);"));
+  assert.ok(adminRouteBlock.includes('if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302);'));
+  assert.ok(adminRouteBlock.includes('return env.ASSETS.fetch(assetRequest("/admin-home.html", request));'));
+  assert.ok(editorRouteBlock.includes("const user = await getAuthenticatedUser(request, env);"));
+  assert.ok(editorRouteBlock.includes('if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302);'));
+  assert.ok(editorRouteBlock.includes('return env.ASSETS.fetch(assetRequest("/editor-v2/index.html", request));'));
+  assert.ok(adminSettingsRoute.includes('if (!hasRole(user, "admin")) return error("FORBIDDEN", 403, "Admin role required");'));
+  assert.ok(adminPagesRoute.includes("hasRole(user,'editor')"));
+  assert.ok(adminScheduleRoute.includes('if (!hasRole(user, "editor")) return error("FORBIDDEN", 403, "Editor role required");'));
+  assert.ok(adminEditorRoute.includes("hasRole(user,'editor')"));
+});
 
 test("login confirms the new session before navigating to Admin and avoids a redirect loop", () => {
   assert.match(loginPage, /async function waitForAuthenticatedSession\(\)/);
