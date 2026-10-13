@@ -2374,6 +2374,82 @@ The short decision record must name the problem and acceptance criteria; existin
 
 **Batch 1 result:** 57 E.2/E.3 bullets mapped to canonical feature IDs, explicit decision, phase and QA family. Structural check on commit b1be3097cdbcfec570cc22da4bbe0d96c82dac72 confirmed 57 mapping rows and 125 distinct explicit/range-expanded feature/QA references, with no unresolved IDs. This validates references, not semantic correctness or runtime PASS. Continue with E.4–E.22 and F.1–F.13 in further batches.
 
+
+### 37.23. P0.2 — Bullet-szintű crosswalk, batch 2: E.4–E.9
+
+**Forrás:** archived MASTER snapshot, 00.9.6.E.4–E.9. A táblázat a 66 forrásbulletet külön sorba bontja; a célfázis a teljes termék-roadmap szerinti ütemezés, nem készültségi állítás.
+
+| Forráskulcs | Megőrzött követelmény röviden | Canonical current ID | Döntés | Célfázis | QA-horgony |
+|---|---|---|---|---|---|
+| E.4-01 | Page CRUD, slug/status/locale/SEO/template/access/navigation/duplicate/archive | WEB-001–WEB-003, WEB-009, SEO-001, LOC-001 | EXPAND | 1.0 core; locale workflow later | QA-002/004 |
+| E.4-02 | Draft/review/published/scheduled/archived states and valid transitions | WEB-004, WEB-006, CNT-013–CNT-015 | EXPAND | 1.0 page lifecycle; content queue later | QA-002/004/008 |
+| E.4-03 | Preview without modifying live version; no draft leakage through public routes/cache | WEB-005, WEB-031, WEB-030 | KEEP | 1.0 | QA-002/003/004 |
+| E.4-04 | Revision author/time/diff/restore/published-revision linkage | WEB-008, WEB-007, EDT-028, EDT-029 | EXPAND | 1.0 | QA-002/004 |
+| E.4-05 | Transactional publish/rollback, authorization, cache invalidation and failed-publish recovery | WEB-006–WEB-008, WEB-030, SEC-002, OPS-009 | EXPAND | 1.0 | QA-002/003/004/006 |
+| E.4-06 | Future content types: posts/news/video/VOD/clip/Short/playlist/campaign/calendar/platform metadata | CNT-001–CNT-020, CAM-001–CAM-003 | DEFER/EXPAND | 1.5–5.0 by domain | QA-002/004/008 |
+| E.4-07 | Reuse content in feeds/dynamic blocks with configurable query/sort | CNT-019, DYN-001–DYN-006 | EXPAND | 2.0; minimal 1.0 blocks only | QA-002/004 |
+| E.5-01 | One canonical Resource Library referenced by Editor/CMS/Schedule/Theme/Store | RES-001, RES-002, RES-008, EDT-018, SCH-013, DSN-001 | KEEP | 1.0 foundation; all consumer wiring phased | QA-002/004/007 |
+| E.5-02 | Upload progress/cancel/retry/picker/preview/search/filter/folders/tags/metadata | RES-003–RES-007, RES-010 | EXPAND | 1.0 foundation | QA-002/004/006 |
+| E.5-03 | Resource metadata: site/owner/MIME/size/dimensions/duration/alt/caption/checksum/key/status/usage | RES-001, RES-007, RES-008, RES-015 | EXPAND | 1.0 foundation | QA-002/003/004 |
+| E.5-04 | D1 metadata and R2 binary boundary; upload validation, limits, MIME and permissions | RES-002, RES-003, RES-014, SEC-002, SEC-005 | KEEP | 0.x–1.0; actual R2 binding is blocking | QA-002/003/006 |
+| E.5-05 | Image variants; font license/metadata; icon registry/search/rendering | RES-004, RES-011–RES-013 | EXPAND | 1.0 baseline; advanced transforms phased | QA-002/004/005 |
+| E.5-06 | Usage checks before replace/rename/archive/delete; soft delete/restore where appropriate | RES-008, RES-009, RES-015 | EXPAND | 1.0 | QA-002/004/007 |
+| E.5-07 | Public vs protected files; protected digital downloads later | RES-014, RES-016, STO-012, STO-013, SEC-002 | DEFER/EXPAND | Public resource 1.0; protected commerce 5.0 | QA-003/004/008 |
+| E.6-01 | Design tokens for colors/type/spacing/size/breakpoints/radius/shadow/border/button/card/form/focus | DSN-001, DSN-005–DSN-007, DSN-016, QA-005 | EXPAND | 1.0 baseline | QA-002/004/005 |
+| E.6-02 | Theme token changes propagate; local override must be explicit | DSN-002–DSN-004, DSN-013 | EXPAND | 2.0 full Theme Editor; 1.0 preset baseline | QA-002/004 |
+| E.6-03 | Site/page/section/block presets and later creator templates | DSN-008–DSN-011 | EXPAND | 1.0 starter templates; library growth later | QA-002/004 |
+| E.6-04 | Starter template categories: gaming/chat/esports/variety/VTuber/music/podcast/business/merch | DSN-005, DSN-008–DSN-010 | EXPAND | 1.0 initial selection; more later | QA-004 |
+| E.6-05 | Reusable component library, variants, slots, defaults, internal structure and update policy | DSN-011–DSN-014 | EXPAND | 2.0 full registry | QA-002/004 |
+| E.6-06 | Sanci Button Registry: stable ID, icon reference, route/action, visibility/order, display modes, states, global style and local override | DSN-016, DSN-017, EDT-017, SEC-005 | EXPAND | 1.0 core button behavior; registry maturity phased | QA-002/004/005 |
+| E.6-07 | Linked Symbol instance; visible propagation scope and explicit detach | DSN-012, DSN-013 | EXPAND | 2.0 | QA-002/004 |
+| E.6-08 | Import/export/version/compatibility/preview/rollback; marketplace later | DSN-014, DSN-015, MKT-001–MKT-005 | DEFER/EXPAND | 2.0 library; marketplace 6.0 | QA-002/004/007 |
+| E.6-09 | Template/component updates cannot silently break published pages; preview/migration/revision | DSN-014, WEB-008, WEB-032, OPS-009 | EXPAND | 2.0 | QA-002/004/007 |
+| E.7.1-01 | Dashboard: live/next stream/content/tasks/integration health/warnings and later business metrics | ADM-002–ADM-005, LIV-007, SCH-009, INT-002, ANL | EXPAND | 1.0 truthful baseline; later cards phased | QA-002/004/006 |
+| E.7.1-02 | Only real data/actions; no fake/placeholder action as active | ADM-003, ADM-004, ADM-008, QA-008 | KEEP | 0.x–1.0 and always-on | QA-004/006/008 |
+| E.7.1-03 | Empty/loading/stale/partial failure/permission/error UI states | ADM-008, QA-006, INT-008, LIV-002 | EXPAND | 1.0 baseline | QA-004/006 |
+| E.7.1-04 | Quick actions for edit/schedule/content/integration repair and future product/campaign | ADM-003, WEB-001, SCH-001, CNT-001, INT-007, STO-001, CAM-001 | EXPAND | 1.0 only implemented actions; future modules phased | QA-002/004/008 |
+| E.7.2-01 | Module navigation, breadcrumb, active state, mobile menu, public/admin safe return | ADM-001, ADM-003, ADM-010, WEB-011 | EXPAND | 1.0 | QA-004/005 |
+| E.7.2-02 | Global search for pages/assets/schedule/content/products/settings | ADM-006, WEB-029, RES-005, SCH-002, CNT-006, STO-007 | EXPAND | Shell baseline 1.0; cross-domain search phased | QA-002/004 |
+| E.7.2-03 | Keyboard-accessible quick actions/command palette/recent items | ADM-006, ADM-003, QA-005 | EXPAND | 1.0 baseline; advanced command palette phased | QA-004/005 |
+| E.7.2-04 | Unbuilt modules are not active; planned modules clearly labeled | ADM-001, ADM-003, ADM-008, QA-008 | KEEP | 0.x–1.0 and always-on | QA-004/008 |
+| E.7.2-05 | Auth/session protection on all admin routes/APIs; logout/expiry explicit and tested | SEC-001, SEC-002, SEC-004, ADM-007 | KEEP | 0.x–1.0 | QA-003/004 |
+| E.7.3-01 | Shared success/error/warning/info, inline validation, toast and destructive confirmation | ADM-008, QA-005 | EXPAND | 1.0 baseline | QA-004/005 |
+| E.7.3-02 | Lists provide loading/empty/error/retry/pagination/permission states | ADM-008, QA-006 | EXPAND | 1.0 baseline | QA-004/006 |
+| E.7.3-03 | Form dirty state/save status/error preservation/accessibility focus | EDT-027, ADM-008, QA-005 | EXPAND | 1.0 baseline | QA-002/004/005 |
+| E.7.3-04 | Explain destructive effects; confirm delete/disconnect/rollback | ADM-008, RES-009, INT-007, WEB-007, OPS-009 | EXPAND | 1.0 | QA-003/004 |
+| E.7.3-05 | UI cannot claim success before backend confirmation | ADM-008, EDT-027, INT-008, QA-006 | KEEP | 0.x–1.0 and always-on | QA-002/004/006 |
+| E.7.4-01 | Website Manager owns pages/navigation/SEO/publish/theme settings | WEB, SEO, DSN, SET | MERGE | 1.0 core | QA-002/004 |
+| E.7.4-02 | Schedule Manager owns event/calendar/recurrence/timezone/sync | SCH-001–SCH-015 | KEEP | 1.0 core with staged advanced features | QA-002/004 |
+| E.7.4-03 | Integration Manager owns connect/disconnect/scope/token/sync/health/errors | INT-001–INT-020 | EXPAND | 1.0 Twitch Connections Center; providers later | QA-002/003/008 |
+| E.7.4-04 | Media Manager owns files/metadata/usage/storage status | RES-001–RES-016 | EXPAND | 1.0 foundation; R2 binding/API blocker | QA-002/003/007 |
+| E.7.4-05 | Content Manager owns ideas/drafts/media/metadata/calendar/publish queue | CNT-001–CNT-020 | DEFER/EXPAND | 1.5–2.0 | QA-002/004/008 |
+| E.7.4-06 | Store Manager owns products/variants/collections/orders/discounts/fulfillment | STO-001–STO-020 | DEFER | 5.0 | QA-002/003/008 |
+| E.7.4-07 | Community Manager owns members/roles/events/polls/moderation/reports/reputation | COM-001–COM-018 | DEFER/EXPAND | 1.0 links only; full community later | QA-003/004/008 |
+| E.7.4-08 | Analytics Manager owns date/platform/domain metrics and export | ANL-001–ANL-010 | DEFER | 2.0+ by source capability | QA-002/003/008 |
+| E.7.4-09 | Automation Manager owns triggers/conditions/actions/version/log/retry/toggle | AUT-001–AUT-014 | DEFER | 7.0 | QA-002/003/008 |
+| E.7.4-10 | AI Manager owns model/config/usage/jobs/approval/diff/rollback | AI-001–AI-020 | DEFER | 3.0+ | QA-002/003/008 |
+| E.7.4-11 | Business/Sponsorship Manager owns media kit/leads/deals/deliverables/deadlines/campaign | CAM-001–CAM-009 | DEFER | 5.0 | QA-002/003/008 |
+| E.7.4-12 | Settings/Security owns account/site/locale/domain/SEO/roles/privacy/integrations/export/delete/audit | SET-001–SET-003, SEC-001–SEC-011, OPS-005 | EXPAND | 0.x–1.0 baseline; advanced settings later | QA-003/004/008 |
+| E.7.4-13 | These are full Creator OS surfaces; only phased implemented modules may be active | ADM-001, ADM-003, QA-008; all domain owners | KEEP | All phases by canonical owner | QA-004/008 |
+| E.8-01 | One canonical Schedule item; Editor only configures the display block | SCH-001, SCH-011, EDT-020 | KEEP | 1.0 | QA-002/003/004 |
+| E.8-02 | Schedule fields include title/description/timezone/platform/game/artwork/link/visibility/status/featured/recurrence/override/provider ID | SCH-001, SCH-003–SCH-008, SCH-012–SCH-014, RES-013 | EXPAND | 1.0 core fields; advanced recurrence phased | QA-002/004 |
+| E.8-03 | Planned/live/completed/cancelled/postponed states drive public display and notifications | SCH-005, SCH-010, COM-011 | EXPAND | 1.0 states; notifications later | QA-002/004 |
+| E.8-04 | List/calendar/upcoming/past/filter/search/pagination/details views | SCH-002, SCH-006 | EXPAND | 1.0 baseline; advanced views phased | QA-002/004 |
+| E.8-05 | Timezone/DST storage and local display correctness | SCH-003 | KEEP | 1.0 | QA-002/004 |
+| E.8-06 | Edit one occurrence/this and future/all series when recurrence supported | SCH-004 | EXPAND | 1.5–2.0 if not supported in 1.0 | QA-002/004 |
+| E.8-07 | Twitch sync vs manual override precedence; sync status/error/retry/source | SCH-007, SCH-008, INT-008, INT-009 | EXPAND | 1.0 Twitch sync baseline | QA-002/003/006 |
+| E.8-08 | Site ownership, permission, validation, idempotency and public API/render tests | SCH-001, SEC-002, SEC-003, QA-002–QA-004 | KEEP | 0.x–1.0 | QA-002/003/004 |
+| E.8-09 | Current Schedule CRUD is only a starting point, not full capability completion | SCH-001–SCH-015 | KEEP | Incremental by §39 | QA-002/004/008 |
+| E.9-01 | Common connection lifecycle, scopes, expiry, last success, health and diagnostics | INT-001–INT-009, INT-020 | EXPAND | 1.0 Twitch; later providers phased | QA-002/003/008 |
+| E.9-02 | Connect/reconnect/revoke/expiry/network/rate-limit/outage/payload failure handling | INT-007–INT-009, INT-020 | EXPAND | 1.0 Twitch baseline; providers later | QA-002/003/006 |
+| E.9-03 | OAuth state/PKCE where applicable, safe token storage, state/nonce and callback defense | INT-003–INT-006, SEC-004, SEC-008 | KEEP | 0.x–1.0 | QA-003 |
+| E.9-04 | Twitch 1.0 ownership/live/channel/game/schedule sync/last sync/error/retry | INT-005, INT-010, INT-011, INT-020, LIV-001–LIV-007, SCH-007–SCH-008 | EXPAND | 1.0 Twitch | QA-002/003/004/006 |
+| E.9-05 | Normalize external webhook/API payloads into canonical StreamEvent/Integration state | INT-001, INT-017, INT-018, LIV-006, AUT-001 | EXPAND | Twitch baseline 1.0; event ecosystem later | QA-002/003 |
+| E.9-06 | Later YouTube/TikTok/Kick/Discord/OBS/email/payment/commerce adapters with independent capability tests | INT-013–INT-021, OBS, COM, STO, SUP | DEFER | 1.5–5.0 by provider/domain | QA-002/003/008 |
+| E.9-07 | Provider outage cannot take down the whole public site or Admin | INT-008, INT-020, LIV-002, DYN-005, OPS-003, OPS-008 | KEEP | 0.x–1.0 and all future providers | QA-003/006/008 |
+
+**Batch 2 result:** 66 E.4–E.9 source bullets mapped at requirement level. Mapping remains non-runtime evidence; the next batch covers E.10–E.22, then F.1–F.13. Before P0.2 PASS, verify source bullet counts and every feature/QA reference, and resolve any broad family mapping to the exact per-feature acceptance contract.
+
 ## 38. Részletes Visual Editor képességkatalógus
 
 **Cél:** a vizuális szerkesztő teljes részletképességeinek önálló, tesztelhető katalógusa. A felsorolás a végleges platform követelményét rögzíti, nem a runtime készültségét. Minden elem a közös Page Model, command/history/validation/persistence és jogosultsági szerződésen keresztül működik.
