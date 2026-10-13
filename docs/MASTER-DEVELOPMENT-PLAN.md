@@ -6180,3 +6180,29 @@ The historical H28/H29 rows were updated to reflect the canonical registry defin
 
 **Status:** 46 C.23 rows have narrower registry-aligned candidate mappings. Only two intentionally cross-domain policy rows retain broad ranges: C.23.22-05 (historical 1.0 vs 1.x+ phase allocation, with 00.9.6.D still unrecovered) and C.23.22-06 (dependency-order/no-parallel-work rule). The remaining C.23 rows still need semantic acceptance, owner/phase/dependency/negative-test/evidence completion; this is not full C.23 PASS. P0.2 **IN PROGRESS / NOT PASS**.
 
+### 41.3.51. P0.2 — Crosswalk structural recount after source-specific corrections (2026-10-13)
+
+**Recount performed on the current MASTER blob after the latest mapping corrections:**
+
+| Inventory | Unique source/definition keys | Raw rows or notes | Interpretation |
+|---|---:|---:|---|
+| Canonical feature registry (§24) | 359 | 359 definitions | All 359 stable IDs are uniquely defined; no duplicate registry definition detected. |
+| Registry ID crosswalk coverage | 359 | 359 explicit ID references at minimum | 0 IDs remain range-only and 0 are absent from the crosswalk scan. This is reference coverage, not semantic PASS. |
+| H19–H34 | 271 | 286 H-keyed table rows | 15 additional rows are targeted correction notes that repeat existing H keys; unique historical source keys remain 271. |
+| C.23 | 210 | 253 C.23-keyed table rows | 43 additional rows are targeted correction notes that repeat existing C.23 keys; unique historical source keys remain 210. |
+| F.1–F.13 | 100 original source bullets | 103 unique crosswalk rows | 100 source-level rows plus three explicit ADD/DEFER roadmap rows for abandoned cart and membership entitlement/billing; no original source bullet is dropped. |
+| MASTER-FINAL-ROADMAP | 454 unordered list items | Individual source-key ledgers in §41.3.25–34 | Source-key coverage includes nested bullets/checklists; the 43 global/Foundation/Data Model/Core/execution directives are separately keyed. |
+| SANCI-MASTER-PLAN | 438 | 438 unique SMP source keys | 423 unordered bullets plus 15 numbered steps; candidate mappings remain open for semantic review. |
+| V2-BLUEPRINT | 135 | 135 unique BLUE source keys | 117 unordered bullets plus 18 numbered steps; nine additional ordered validation steps from Ultimate Platform Direction are separately keyed. |
+| Editor unification amendment | 164 | 164 PA source keys | 140 bullet/checklist lines plus 24 numbered migration steps; duplicates across sections are preserved as source evidence, not automatically counted as separate capabilities. |
+| Ultimate Platform Direction | 42 | 42 UPD bullet keys plus 9 UPD-STEP keys | Architecture direction and ordered validation chain are preserved separately. |
+| Visual Editor architecture | 27 | 27 VEA keys | Historical architecture rules preserved; old runtime path explicitly superseded. |
+| Visual Editor roadmap | 38 | 38 original roadmap bullets; duplicate crosswalk references are historical/semantic ledgers | Desktop/mobile scope, phase order and shell controls retained without reviving old active milestones. |
+| Historical current-status / legacy HTML sources | 30 status bullets; 8 legacy page mappings | Keyed in §41.3.41–42 | Historical status is not current release evidence; page-by-page migration/public parity remains a separate gate. |
+
+**Provenance boundary:** all 359 IDs now have explicit crosswalk references, but five IDs (STO-016, SUP-005, SUP-007, SUP-008, SUP-011) still have no direct historical source bullet and remain explicit ADD/DEFER roadmap requirements. This is not a source-recovery success. The original 00/A and 00.9–00.9.6.B text remains UNRECOVERED / PARTIALLY RECOVERED / OPEN.
+
+**Semantic boundary:** candidate mapping narrowing and exact ID references do not prove that every behavior is covered, that the named API/table/binding exists, or that the runtime passes tests. Each remaining OPEN/PARTIAL item still needs canonical owner, surface, data source, permissions, phase/dependency, DoD, positive/negative tests and acceptance evidence.
+
+**Status:** structural recount completed; semantic source-by-source review remains in progress. P0.2 **IN PROGRESS / NOT PASS**. Documentation-only; no runtime code/data changed and no tests were run.
+
