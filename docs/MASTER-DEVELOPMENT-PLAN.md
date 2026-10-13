@@ -2442,3 +2442,290 @@ Continuous feature discovery is never permanently closed; repeat the review befo
 
 ### 40.17. Zárási szabály
 Minden tételhez stabil funkció-ID, domain owner, user outcome, permission, dependency, lifecycle, pozitív/negatív teszt, runtime acceptance és evidence kell. KEEP/DEFERRED nem jelent implementáltságot; REPLACE/REJECT csak indokolt, auditált döntéssel lehetséges.
+
+
+## 41. Történeti követelmény-crosswalk — első tételes leképezés
+
+**Állapot: MAPPED DRAFT — P0.2 nem PASS.** Az alábbi 271 sor mindegyike megőrzi a történeti kulcsot és rövid címkét, javasolt canonical funkció-ID-t, domain owner-t, fő döntést, célfázist és QA-elfogadási horgonyt. A leképezés a §24.1–24.18 stabil ID-jegyzékéhez készül. A QA-horgony nem egyenlő a konkrét teszt végrehajtásával: minden sort továbbra is ellenőrizni kell a pontos user outcome, permission, adatforrás, dependency, negatív teszt és acceptance részletei alapján. Ahol egy sor összevont ID-ra mutat, az eredeti történeti kulcs önálló nyomon követhetősége megmarad.
+
+| Történeti kulcs | Megőrzött követelmény | Canonical funkció-ID | Domain owner | Döntés | Célfázis | QA-horgony |
+|---|---|---|---|---|---|---|
+| H19.01 | upload | RES-003 | RES | MERGE | 1.0 | QA-002/004 |
+| H19.02 | folders | RES-006 | RES | MERGE | 1.0 | QA-002/004 |
+| H19.03 | search | RES-005 | RES | MERGE | 1.0 | QA-002/004 |
+| H19.04 | filter | RES-005 | RES | MERGE | 1.0 | QA-002/004 |
+| H19.05 | preview | RES-004 | RES | MERGE | 1.0 | QA-002/004 |
+| H19.06 | metadata | RES-007 | RES | MERGE | 1.0 | QA-002/004 |
+| H19.07 | alt text | RES-007 | RES | MERGE | 1.0 | QA-002/004 |
+| H19.08 | crop | RES-004 | RES | MERGE | 1.0 | QA-002/004 |
+| H19.09 | resize | RES-004 | RES | MERGE | 1.0 | QA-002/004 |
+| H19.10 | replace | RES-009 | RES | MERGE | 1.0 | QA-002/004 |
+| H19.11 | archive/delete | RES-009 | RES | MERGE | 1.0 | QA-002/004 |
+| H19.12 | usage tracking | RES-008 | RES | MERGE | 1.0 | QA-002/004 |
+| H19.13 | unused media detection | RES-015 | RES | MERGE | 1.0 | QA-002/004 |
+| H19.14 | MIME validation | RES-003 | RES | MERGE | 1.0 | QA-002/004 |
+| H19.15 | file-size limits | RES-003 | RES | MERGE | 1.0 | QA-002/004 |
+| H19.16 | secure object keys | RES-002 | RES | MERGE | 1.0 | QA-002/004 |
+| H19.17 | image optimization | RES-004 | RES | MERGE | 1.0 | QA-002/004 |
+| H19.18 | video/audio | RES-004 | RES | MERGE | 1.0 | QA-002/004 |
+| H19.19 | clip/Short assets | CNT-003 | CNT | MERGE | 1.0 | QA-002/004 |
+| H19.20 | cache policy | OPS-008 | OPS | MERGE | 1.0 | QA-002/004 |
+| H20.01 | D1 binding | DYN-001 | DYN | MERGE | 1.0 | QA-002 |
+| H20.02 | site settings | SET-001 | SET | MERGE | 1.0 | QA-002 |
+| H20.03 | schedule | SCH-001 | SCH | MERGE | 1.0 | QA-002 |
+| H20.04 | Twitch | INT-011 | INT | MERGE | 1.0 | QA-002 |
+| H20.05 | YouTube | INT-013 | INT | MERGE | 1.0 | QA-002 |
+| H20.06 | TikTok | INT-014 | INT | MERGE | 1.0 | QA-002 |
+| H20.07 | Discord | INT-015 | INT | MERGE | 1.0 | QA-002 |
+| H20.08 | VOD | CNT-002 | CNT | MERGE | 1.0 | QA-002 |
+| H20.09 | collections | CNT-005 | CNT | MERGE | 1.0 | QA-002 |
+| H20.10 | API data source | DYN-001 | DYN | MERGE | 1.0 | QA-002 |
+| H20.11 | loading state | DYN-005 | DYN | MERGE | 1.0 | QA-002 |
+| H20.12 | empty state | DYN-005 | DYN | MERGE | 1.0 | QA-002 |
+| H20.13 | error state | DYN-005 | DYN | MERGE | 1.0 | QA-002 |
+| H20.14 | conditional rendering | DYN-004 | DYN | MERGE | 1.0 | QA-002 |
+| H20.15 | data transforms | DYN-003 | DYN | MERGE | 1.0 | QA-002 |
+| H20.16 | caching | DYN-006 | DYN | MERGE | 1.0 | QA-002 |
+| H20.17 | stale-data handling | DYN-005 | DYN | MERGE | 1.0 | QA-002 |
+| H20.18 | binding validation | DYN-002 | DYN | MERGE | 1.0 | QA-002 |
+| H21.01 | Twitch OAuth | INT-003 | INT | MERGE | 1.0 | QA-002/003 |
+| H21.02 | Twitch live/offline | LIV-001 | LIV | MERGE | 1.0 | QA-002/003 |
+| H21.03 | Twitch title | LIV-003 | LIV | MERGE | 1.0 | QA-002/003 |
+| H21.04 | Twitch game | LIV-003 | LIV | MERGE | 1.0 | QA-002/003 |
+| H21.05 | Twitch viewer statistics | LIV-004 | LIV | MERGE | 1.0 | QA-002/003 |
+| H21.06 | Twitch followers/subscribers where available | LIV-004 | LIV | MERGE | 1.0 | QA-002/003 |
+| H21.07 | Twitch VOD | INT-012 | INT | MERGE | 1.0 | QA-002/003 |
+| H21.08 | Twitch clips | INT-012 | INT | MERGE | 1.0 | QA-002/003 |
+| H21.09 | Twitch events/webhooks where applicable | INT-017 | INT | MERGE | 1.0 | QA-002/003 |
+| H21.10 | YouTube channel | INT-013 | INT | MERGE | 1.5 | QA-002/003 |
+| H21.11 | YouTube videos | INT-013 | INT | MERGE | 1.5 | QA-002/003 |
+| H21.12 | YouTube Shorts | CNT-003 | CNT | MERGE | 1.5 | QA-002/003 |
+| H21.13 | YouTube statistics where available | LIV-004 | LIV | MERGE | 1.5 | QA-002/003 |
+| H21.14 | YouTube API quota/error handling | INT-009 | INT | MERGE | 1.5 | QA-002/003 |
+| H21.15 | TikTok profile | INT-014 | INT | MERGE | 1.5 | QA-002/003 |
+| H21.16 | TikTok supported content integration | INT-014 | INT | MERGE | 1.5 | QA-002/003 |
+| H21.17 | TikTok API capability review | INT-014 | INT | MERGE | 1.5 | QA-002/003 |
+| H21.18 | TikTok rate limits/fallback | INT-009 | INT | MERGE | 1.5 | QA-002/003 |
+| H21.19 | Discord community link | INT-015 | INT | MERGE | 1.5 | QA-002/003 |
+| H21.20 | Discord optional integration | INT-015 | INT | MERGE | 1.5 | QA-002/003 |
+| H21.21 | Discord status where justified | INT-015 | INT | MERGE | 1.5 | QA-002/003 |
+| H21.22 | Architecture constraint: keep secrets in Cloudflare Secrets; normalize external APIs behind services | INT-019 | INT | MERGE | 1.5 | QA-002/003 |
+| H22.01 | schedule CRUD | SCH-001 | SCH | MERGE | 1.0 | QA-002/004 |
+| H22.02 | recurring schedule | SCH-004 | SCH | MERGE | 1.0 | QA-002/004 |
+| H22.03 | timezone handling | SCH-003 | SCH | MERGE | 1.0 | QA-002/004 |
+| H22.04 | next-stream calculation | SCH-009 | SCH | DEFER | 1.5–2.0 | QA-002/004 |
+| H22.05 | countdown | SCH-009 | SCH | MERGE | 1.0 | QA-002/004 |
+| H22.06 | live state | LIV-001 | LIV | MERGE | 1.0 | QA-002/004 |
+| H22.07 | game/category | SCH-012 | SCH | MERGE | 1.0 | QA-002/004 |
+| H22.08 | stream type | SCH-001 | SCH | DEFER | 1.5–2.0 | QA-002/004 |
+| H22.09 | VOD ingestion | CNT-002 | CNT | DEFER | 1.5–2.0 | QA-002/004 |
+| H22.10 | VOD categorization | CNT-002 | CNT | DEFER | 1.5–2.0 | QA-002/004 |
+| H22.11 | VOD search/filter | CNT-002 | CNT | DEFER | 1.5–2.0 | QA-002/004 |
+| H22.12 | Shorts management | CNT-003 | CNT | DEFER | 1.5–2.0 | QA-002/004 |
+| H22.13 | clips management | CNT-003 | CNT | DEFER | 1.5–2.0 | QA-002/004 |
+| H22.14 | content calendar | CNT-009 | CNT | DEFER | 1.5–2.0 | QA-002/004 |
+| H22.15 | platform-specific variants | CNT-011 | CNT | DEFER | 1.5–2.0 | QA-002/004 |
+| H22.16 | title/description/hashtag suggestions | AI-013 | AI | DEFER | 1.5–2.0 | QA-002/004 |
+| H22.17 | thumbnail brief | CNT-012 | CNT | DEFER | 1.5–2.0 | QA-002/004 |
+| H22.18 | publishing workflow | CNT-013 | CNT | DEFER | 1.5–2.0 | QA-002/004 |
+| H22.19 | performance feedback loop | ANL-004 | ANL | DEFER | 1.5–2.0 | QA-002/004 |
+| H23.01 | event model | EDT-039 | EDT | MERGE | 2.0 | QA-002/004 |
+| H23.02 | click | QA-010 | QA | MERGE | 1.0 | QA-002/004 |
+| H23.03 | hover | QA-010 | QA | MERGE | 1.0 | QA-002/004 |
+| H23.04 | focus | QA-010 | QA | MERGE | 1.0 | QA-002/004 |
+| H23.05 | active | QA-010 | QA | MERGE | 1.0 | QA-002/004 |
+| H23.06 | submit | QA-010 | QA | MERGE | 1.0 | QA-002/004 |
+| H23.07 | scroll | QA-010 | QA | MERGE | 2.0 | QA-002/004 |
+| H23.08 | load | QA-010 | QA | MERGE | 2.0 | QA-002/004 |
+| H23.09 | timer | QA-010 | QA | MERGE | 2.0 | QA-002/004 |
+| H23.10 | open/close | QA-010 | QA | MERGE | 2.0 | QA-002/004 |
+| H23.11 | navigation | QA-010 | QA | MERGE | 1.0 | QA-002/004 |
+| H23.12 | show/hide | QA-010 | QA | MERGE | 1.0 | QA-002/004 |
+| H23.13 | toggle | QA-010 | QA | MERGE | 1.0 | QA-002/004 |
+| H23.14 | state machine | EDT-040 | EDT | MERGE | 2.0 | QA-002/004 |
+| H23.15 | transition | EDT-040 | EDT | MERGE | 2.0 | QA-002/004 |
+| H23.16 | animation timeline | EDT-040 | EDT | MERGE | 2.0 | QA-002/004 |
+| H23.17 | keyframes | EDT-040 | EDT | MERGE | 2.0 | QA-002/004 |
+| H23.18 | reduced-motion | EDT-040 | EDT | MERGE | 2.0 | QA-002/004 |
+| H23.19 | interaction validation | EDT-022 | EDT | MERGE | 2.0 | QA-002/004 |
+| H23.20 | performance safeguards | QA-005 | QA | MERGE | 2.0 | QA-002/004 |
+| H24.01 | semantic HTML | QA-005 | QA | MERGE | 1.0 | QA-004/005 |
+| H24.02 | heading hierarchy | QA-005 | QA | MERGE | 1.0 | QA-004/005 |
+| H24.03 | alt text | RES-007 | RES | MERGE | 1.0 | QA-004/005 |
+| H24.04 | labels | QA-005 | QA | MERGE | 1.0 | QA-004/005 |
+| H24.05 | ARIA | QA-005 | QA | MERGE | 1.0 | QA-004/005 |
+| H24.06 | keyboard navigation | EDT-037 | EDT | MERGE | 1.0 | QA-004/005 |
+| H24.07 | focus order | QA-005 | QA | MERGE | 1.0 | QA-004/005 |
+| H24.08 | focus visibility | QA-005 | QA | MERGE | 1.0 | QA-004/005 |
+| H24.09 | contrast warnings | QA-005 | QA | MERGE | 1.0 | QA-004/005 |
+| H24.10 | screen-reader metadata | QA-005 | QA | MERGE | 1.0 | QA-004/005 |
+| H24.11 | form validation accessibility | QA-005 | QA | MERGE | 1.0 | QA-004/005 |
+| H24.12 | editor accessibility checks | QA-004 | QA | MERGE | 1.0 | QA-004/005 |
+| H24.13 | public accessibility audit | QA-005 | QA | MERGE | 1.0 | QA-004/005 |
+| H25.01 | title | SEO-001 | SEO | MERGE | 1.0 | QA-005 |
+| H25.02 | description | SEO-001 | SEO | MERGE | 1.0 | QA-005 |
+| H25.03 | canonical | SEO-001 | SEO | MERGE | 1.0 | QA-005 |
+| H25.04 | Open Graph | SEO-002 | SEO | MERGE | 1.0 | QA-005 |
+| H25.05 | X/Twitter card | SEO-002 | SEO | MERGE | 1.0 | QA-005 |
+| H25.06 | structured data | SEO-003 | SEO | MERGE | 1.0 | QA-005 |
+| H25.07 | sitemap | SEO-004 | SEO | MERGE | 1.0 | QA-005 |
+| H25.08 | robots | SEO-004 | SEO | MERGE | 1.0 | QA-005 |
+| H25.09 | per-page SEO | SEO-005 | SEO | MERGE | 1.0 | QA-005 |
+| H25.10 | SEO preview | SEO-005 | SEO | MERGE | 1.0 | QA-005 |
+| H25.11 | redirects | SEO-005 | SEO | MERGE | 1.0 | QA-005 |
+| H25.12 | broken-link detection | SEO-005 | SEO | MERGE | 1.0 | QA-005 |
+| H26.01 | page views | ANL-001 | ANL | DEFER | 2.0+ | QA-002 |
+| H26.02 | button clicks | ANL-001 | ANL | DEFER | 2.0+ | QA-002 |
+| H26.03 | social clicks | ANL-001 | ANL | DEFER | 2.0+ | QA-002 |
+| H26.04 | stream events | ANL-001 | ANL | DEFER | 2.0+ | QA-002 |
+| H26.05 | conversion events | ANL-001 | ANL | DEFER | 2.0+ | QA-002 |
+| H26.06 | privacy-aware analytics | ANL-002 | ANL | DEFER | 2.0+ | QA-002 |
+| H26.07 | retention policy | ANL-009 | ANL | DEFER | 2.0+ | QA-002 |
+| H26.08 | admin dashboard | ANL-007 | ANL | DEFER | 2.0+ | QA-002 |
+| H26.09 | editor/content performance | ANL-004 | ANL | DEFER | 2.0+ | QA-002 |
+| H26.10 | content performance | ANL-004 | ANL | DEFER | 2.0+ | QA-002 |
+| H26.11 | stream performance | ANL-003 | ANL | DEFER | 2.0+ | QA-002 |
+| H26.12 | anomaly detection later | ANL-008 | ANL | DEFER | 2.0+ | QA-002 |
+| H27.01 | dashboard | ADM-002 | ADM | MERGE | 1.0 | QA-008 |
+| H27.02 | navigation | ADM-001 | ADM | MERGE | 1.0 | QA-008 |
+| H27.03 | responsive admin | ADM-010 | ADM | MERGE | 1.0 | QA-008 |
+| H27.04 | diagnostics | OPS-007 | OPS | DEFER | phase-dependent | QA-008 |
+| H27.05 | page list | WEB-001 | WEB | MERGE | 1.0 | QA-008 |
+| H27.06 | content management | CNT-001 | CNT | DEFER | phase-dependent | QA-008 |
+| H27.07 | schedule | SCH-001 | SCH | MERGE | 1.0 | QA-008 |
+| H27.08 | socials | INT-002 | INT | DEFER | phase-dependent | QA-008 |
+| H27.09 | VOD | CNT-002 | CNT | DEFER | phase-dependent | QA-008 |
+| H27.10 | media | RES-001 | RES | DEFER | phase-dependent | QA-008 |
+| H27.11 | settings | SET-001 | SET | MERGE | 1.0 | QA-008 |
+| H27.12 | SEO | SEO-005 | SEO | DEFER | phase-dependent | QA-008 |
+| H27.13 | analytics | ANL-007 | ANL | DEFER | phase-dependent | QA-008 |
+| H27.14 | integrations | INT-002 | INT | DEFER | phase-dependent | QA-008 |
+| H27.15 | editor management | EDT-001 | EDT | MERGE | 1.0 | QA-008 |
+| H27.16 | preview | WEB-005 | WEB | MERGE | 1.0 | QA-008 |
+| H27.17 | recovery | OPS-009 | OPS | DEFER | phase-dependent | QA-008 |
+| H27.18 | history | EDT-005 | EDT | DEFER | phase-dependent | QA-008 |
+| H27.19 | permissions | ADM-009 | ADM | DEFER | phase-dependent | QA-008 |
+| H28.01 | HttpOnly | SEC-001 | SEC | MERGE | 0.x–1.0 | QA-003 |
+| H28.02 | Secure cookie | SEC-001 | SEC | MERGE | 0.x–1.0 | QA-003 |
+| H28.03 | SameSite | SEC-001 | SEC | MERGE | 0.x–1.0 | QA-003 |
+| H28.04 | password hash | SEC-001 | SEC | MERGE | 0.x–1.0 | QA-003 |
+| H28.05 | CSRF | SEC-004 | SEC | MERGE | 0.x–1.0 | QA-003 |
+| H28.06 | rate limiting | SEC-007 | SEC | MERGE | 0.x–1.0 | QA-003 |
+| H28.07 | RBAC | SEC-002 | SEC | MERGE | 0.x–1.0 | QA-003 |
+| H28.08 | API authorization | SEC-002 | SEC | MERGE | 0.x–1.0 | QA-003 |
+| H28.09 | public/admin separation | SEC-002 | SEC | MERGE | 0.x–1.0 | QA-003 |
+| H28.10 | Cloudflare Secrets | SEC-008 | SEC | MERGE | 0.x–1.0 | QA-003 |
+| H28.11 | audit log | SEC-010 | SEC | MERGE | 0.x–1.0 | QA-003 |
+| H28.12 | input validation | SEC-005 | SEC | MERGE | 0.x–1.0 | QA-003 |
+| H28.13 | output validation | SEC-005 | SEC | MERGE | 0.x–1.0 | QA-003 |
+| H28.14 | file validation | RES-003 | RES | MERGE | 0.x–1.0 | QA-003 |
+| H28.15 | replay protection where applicable | SEC-009 | SEC | MERGE | 0.x–1.0 | QA-003 |
+| H28.16 | action permission `can()` checks | SEC-002 | SEC | MERGE | 0.x–1.0 | QA-003 |
+| H28.17 | AI permission boundary | AI-006 | AI | MERGE | 0.x–1.0 | QA-003 |
+| H29.01 | full backup | OPS-005 | OPS | MERGE | 0.x–1.0 | QA-007 |
+| H29.02 | page backup | WEB-008 | WEB | MERGE | 0.x–1.0 | QA-007 |
+| H29.03 | revision backup | WEB-008 | WEB | MERGE | 0.x–1.0 | QA-007 |
+| H29.04 | media references | RES-008 | RES | MERGE | 0.x–1.0 | QA-007 |
+| H29.05 | restore validation | OPS-005 | OPS | MERGE | 0.x–1.0 | QA-007 |
+| H29.06 | rollback | OPS-009 | OPS | MERGE | 0.x–1.0 | QA-007 |
+| H29.07 | import/export JSON | OPS-005 | OPS | MERGE | 0.x–1.0 | QA-007 |
+| H29.08 | migration compatibility | OPS-004 | OPS | MERGE | 0.x–1.0 | QA-007 |
+| H29.09 | backup integrity check | OPS-005 | OPS | MERGE | 0.x–1.0 | QA-007 |
+| H29.10 | recovery drill | OPS-006 | OPS | MERGE | 0.x–1.0 | QA-007 |
+| H30.01 | bundle review | OPS-010 | OPS | MERGE | 0.x–1.0 | QA-001/005/006 |
+| H30.02 | lazy loading | RES-004 | RES | MERGE | 0.x–1.0 | QA-001/005/006 |
+| H30.03 | image optimization | RES-004 | RES | MERGE | 0.x–1.0 | QA-001/005/006 |
+| H30.04 | caching | OPS-008 | OPS | MERGE | 0.x–1.0 | QA-001/005/006 |
+| H30.05 | cache invalidation | OPS-008 | OPS | MERGE | 0.x–1.0 | QA-001/005/006 |
+| H30.06 | Core Web Vitals | QA-005 | QA | MERGE | 0.x–1.0 | QA-001/005/006 |
+| H30.07 | rendering performance | QA-005 | QA | MERGE | 0.x–1.0 | QA-001/005/006 |
+| H30.08 | large-page performance | QA-005 | QA | MERGE | 0.x–1.0 | QA-001/005/006 |
+| H30.09 | large-tree editor performance | QA-004 | QA | MERGE | 0.x–1.0 | QA-001/005/006 |
+| H30.10 | history memory limits | EDT-005 | EDT | MERGE | 0.x–1.0 | QA-001/005/006 |
+| H30.11 | autosave efficiency | EDT-030 | EDT | MERGE | 0.x–1.0 | QA-001/005/006 |
+| H30.12 | API latency monitoring | OPS-008 | OPS | MERGE | 0.x–1.0 | QA-001/005/006 |
+| H30.13 | production smoke test | QA-006 | QA | MERGE | 0.x–1.0 | QA-001/005/006 |
+| H30.14 | visual regression baseline | QA-004 | QA | MERGE | 0.x–1.0 | QA-001/005/006 |
+| H31.00 | AI editor must use the same canonical action system as manual Editor; pipeline: Intent -> Plan -> Actions -> Permission -> Validation -> Preview/Diff -> Approval -> Execute -> Verify -> Audit -> Version | AI-008 | AI | DEFER | 3.0 | QA-002/003/008 |
+| H31.01 | AI page operations | AI-011 | AI | DEFER | 3.0 | QA-002/003/008 |
+| H31.02 | AI element operations | AI-011 | AI | DEFER | 3.0 | QA-002/003/008 |
+| H31.03 | AI style/layout operations | AI-011 | AI | DEFER | 3.0 | QA-002/003/008 |
+| H31.04 | AI responsive operations | AI-011 | AI | DEFER | 3.0 | QA-002/003/008 |
+| H31.05 | AI content generation | AI-013 | AI | DEFER | 3.0 | QA-002/003/008 |
+| H31.06 | AI SEO assistance | AI-012 | AI | DEFER | 3.0 | QA-002/003/008 |
+| H31.07 | AI accessibility QA | AI-012 | AI | DEFER | 3.0 | QA-002/003/008 |
+| H31.08 | AI visual QA | AI-012 | AI | DEFER | 3.0 | QA-002/003/008 |
+| H31.09 | action permissions | AI-006 | AI | DEFER | 3.0 | QA-002/003/008 |
+| H31.10 | approval rules | AI-007 | AI | DEFER | 3.0 | QA-002/003/008 |
+| H31.11 | rollback | AI-009 | AI | DEFER | 3.0 | QA-002/003/008 |
+| H31.12 | audit | AI-009 | AI | DEFER | 3.0 | QA-002/003/008 |
+| H31.13 | rate/cost controls | AI-010 | AI | DEFER | 3.0 | QA-002/003/008 |
+| H32.01 | live stream monitoring | AI-015 | AI | DEFER | 3.0–8.0 | QA-002/008 |
+| H32.02 | silence/speech detection | AI-015 | AI | DEFER | 3.0–8.0 | QA-002/008 |
+| H32.03 | chat activity analysis | AI-015 | AI | DEFER | 3.0–8.0 | QA-002/008 |
+| H32.04 | technical issue detection | AI-015 | AI | DEFER | 3.0–8.0 | QA-002/008 |
+| H32.05 | audio problem detection | AI-015 | AI | DEFER | 3.0–8.0 | QA-002/008 |
+| H32.06 | stream quality checks | AI-015 | AI | DEFER | 3.0–8.0 | QA-002/008 |
+| H32.07 | scene suggestions | AI-015 | AI | DEFER | 3.0–8.0 | QA-002/008 |
+| H32.08 | context-aware ideas | AI-014 | AI | DEFER | 3.0 | QA-002/008 |
+| H32.09 | interesting moment detection | AI-014 | AI | DEFER | 3.0 | QA-002/008 |
+| H32.10 | post-stream summary | AI-014 | AI | DEFER | 3.0 | QA-002/008 |
+| H32.11 | VOD analysis | AI-014 | AI | DEFER | 3.0 | QA-002/008 |
+| H32.12 | clip candidates | AI-014 | AI | DEFER | 3.0 | QA-002/008 |
+| H32.13 | Short candidates | AI-014 | AI | DEFER | 3.0 | QA-002/008 |
+| H32.14 | title/description suggestions | AI-013 | AI | DEFER | 3.0 | QA-002/008 |
+| H32.15 | platform variants | AI-013 | AI | DEFER | 3.0 | QA-002/008 |
+| H32.16 | thumbnail briefs | AI-013 | AI | DEFER | 3.0 | QA-002/008 |
+| H32.17 | publishing recommendations | AI-013 | AI | DEFER | 3.0 | QA-002/008 |
+| H32.18 | content performance analysis | ANL-004 | ANL | DEFER | 3.0 | QA-002/008 |
+| H32.19 | streamer profile | AI-016 | AI | DEFER | 3.0 | QA-002/008 |
+| H32.20 | long-term memory | AI-016 | AI | DEFER | 3.0 | QA-002/008 |
+| H32.21 | preferences | AI-016 | AI | DEFER | 3.0 | QA-002/008 |
+| H32.22 | historical outcomes | AI-015 | AI | DEFER | 3.0 | QA-002/008 |
+| H32.23 | experiment tracking | AI-015 | AI | DEFER | 3.0 | QA-002/008 |
+| H32.24 | evaluation cycle | AI-015 | AI | DEFER | 3.0 | QA-002/008 |
+| H32.25 | feedback loop | AI-015 | AI | DEFER | 3.0 | QA-002/008 |
+| H33.00 | Automation lifecycle contract: Trigger -> Condition -> Action -> Result -> Verify -> Audit | AUT-001 | AUT | DEFER | 7.0 | QA-002/003 |
+| H33.01 | scheduled automations | AUT-005 | AUT | DEFER | 7.0 | QA-002/003 |
+| H33.02 | event automations | AUT-002 | AUT | DEFER | 7.0 | QA-002/003 |
+| H33.03 | content workflows | AUT-014 | AUT | DEFER | 7.0 | QA-002/003 |
+| H33.04 | media workflows | AUT-014 | AUT | DEFER | 7.0 | QA-002/003 |
+| H33.05 | stream workflows | AUT-014 | AUT | DEFER | 7.0 | QA-002/003 |
+| H33.06 | notification workflows | AUT-014 | AUT | DEFER | 7.0 | QA-002/003 |
+| H33.07 | retry policy | AUT-007 | AUT | DEFER | 7.0 | QA-002/003 |
+| H33.08 | idempotency | AUT-006 | AUT | DEFER | 7.0 | QA-002/003 |
+| H33.09 | failure handling | AUT-012 | AUT | DEFER | 7.0 | QA-002/003 |
+| H33.10 | permissions | AUT-004 | AUT | DEFER | 7.0 | QA-002/003 |
+| H33.11 | audit | AUT-008 | AUT | DEFER | 7.0 | QA-002/003 |
+| H33.12 | Queues/Durable Objects only when justified by a real background-task or realtime requirement | AUT-007 | AUT | DEFER | 7.0 | QA-002/003 |
+| H34.00 | Continuous feature discovery is never permanently closed; repeat the review before every significant Editor/platform extension | QA-010 | QA | EXPAND | all phases | QA-010 |
+| H34.01 | modern visual builder minták | QA-010 | QA | EXPAND | all phases | QA-010 |
+| H34.02 | GrapesJS / Craft.js / Puck architekturális minták | QA-010 | QA | EXPAND | all phases | QA-010 |
+| H34.03 | új responsive/layout megoldások | EDT-024 | EDT | EXPAND | all phases | QA-010 |
+| H34.04 | accessibility | QA-005 | QA | EXPAND | all phases | QA-010 |
+| H34.05 | performance | OPS-008 | OPS | EXPAND | all phases | QA-010 |
+| H34.06 | reusable components | DSN-012 | DSN | EXPAND | all phases | QA-010 |
+| H34.07 | design systems | DSN-001 | DSN | EXPAND | all phases | QA-010 |
+| H34.08 | collaboration/conflict | TEAM-004 | TEAM | EXPAND | all phases | QA-010 |
+| H34.09 | backup/recovery | OPS-005 | OPS | EXPAND | all phases | QA-010 |
+| H34.10 | AI action safety | AI-006 | AI | EXPAND | all phases | QA-010 |
+| H34.11 | stream/content intelligence | AI-015 | AI | EXPAND | all phases | QA-010 |
+| H34.12 | azonosítás | QA-010 | QA | EXPAND | all phases | QA-010 |
+| H34.13 | cél és felhasználási eset | QA-010 | QA | EXPAND | all phases | QA-010 |
+| H34.14 | függőségek | QA-010 | QA | EXPAND | all phases | QA-010 |
+| H34.15 | Page Model/adatmodell | EDT-001 | EDT | EXPAND | all phases | QA-010 |
+| H34.16 | Command/Action | EDT-003 | EDT | EXPAND | all phases | QA-010 |
+| H34.17 | Inspector/Canvas/UI | EDT-021 | EDT | EXPAND | all phases | QA-010 |
+| H34.18 | persistence | EDT-028 | EDT | EXPAND | all phases | QA-010 |
+| H34.19 | teszt | QA-002 | QA | EXPAND | all phases | QA-010 |
+| H34.20 | MASTER-be felvétel | QA-010 | QA | EXPAND | all phases | QA-010 |
+| H34.21 | implementáció | QA-001 | QA | EXPAND | all phases | QA-010 |
+| H34.22 | felhasználói validáció | QA-009 | QA | EXPAND | all phases | QA-010 |
+
+### 41.1. P0.2 crosswalk lezárási szabály
+
+- A fenti tábla **leképezési munkaverzió**, nem azt állítja, hogy minden korábbi követelmény már teljes feature contracttal rendelkezik.
+- A QA-horgony csak azt jelzi, mely tesztcsaládhoz kell a követelményt kapcsolni; nem helyettesíti a teszteset és acceptance pontos leírását.
+- A 271 sort össze kell vetni a teljes §24 ID-jegyzékkel és a régi forrásokkal; a hibásan tág vagy túl általános ID-mappingot pontosítani kell.
+- A funkciók végrehajtási státusza nem változik a crosswalk elkészítésétől. A kód, CI, runtime és user acceptance bizonyítéka külön marad.
+- P0.2 csak akkor PASS, ha nincs mapping nélküli vagy árva ID, a döntés és fázis indokolt, és minden tétel saját feature contract/acceptance mezői kitöltöttek.
