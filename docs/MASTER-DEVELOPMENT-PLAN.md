@@ -11,7 +11,7 @@
 **Verzió:** MASTER-2.77 — végleges termékleírás, Admin UI-specifikáció és egyetlen függőség-alapú fejlesztési sorrend; a 2.75–2.76 roadmapek történetiek.  
 **Frissítve:** 2026-10-13.  
 **Dokumentum státusza:** ez az egyetlen végrehajtási igazságforrás.
-**Audit / implementation baseline:** GitHub `v2/foundation`, commit `aeba30d9` (2026-10-13). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
+**Audit / implementation baseline:** GitHub `v2/foundation`, commit `64b964b18da0f20926440e65f8bb0e8231167cc6` (2026-10-13; F0.2 canonical Admin navigation, login-session handoff hardening és link contract beintegrálva; böngészős acceptance nyitott). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
 
 ### Jelenlegi igazolt állapot
 Ez a blokk kizárólag az E4/E5/E6 korábban bizonyított lezárt gate-jeit rögzíti. Az M0 auditfázist a felhasználó döntése lezárta / superseded állapotba helyezte; ez nem runtime PASS.
@@ -4218,13 +4218,13 @@ A felhasználó pontos követelménye: nem kizárólag a jelenlegi működő mod
 **Következő aktív munkapont: F0.2 — Admin navigation + global shell acceptance.** Ez nem külön elméleti tervezési fázis: a specifikációt és az ellenőrzési mátrixot a tényleges navigáció/route/auth/state implementációjával együtt kell kidolgozni, majd ugyanabban a munkapontban tesztelni.
 
 F0.2 DoD:
-- [ ] Teljes menü- és route-leltár a valós alkalmazásból; minden aktív menüpont létező, helyes, hitelesített célra mutat.
-- [ ] A működő, részben elérhető, tervezett, későbbi és letiltott modulok státusza következetes; nincs halott vagy hamisan aktív CTA.
-- [ ] Site context és az admin belépési útvonalak következetesek; a canonical Editor továbbra is `/admin/editor`.
+- [x] Teljes menü- és route-leltár a valós alkalmazásból; minden aktív menüpont létező, helyes, hitelesített célra mutat.
+- [x] A működő, részben elérhető, tervezett, későbbi és letiltott modulok státusza következetes; nincs halott vagy hamisan aktív CTA.
+- [x] Site context és az admin belépési útvonalak következetesek; a canonical Editor továbbra is `/admin/editor`.
 - [ ] Auth/role guard, közvetlen asset- és route-kérések, jogosultsághibák és visszairányítások ellenőrizve.
 - [ ] Desktop/tablet/mobil navigáció, billentyűzetes fókusz, kontraszt, téma, túlcsordulás és reduced-motion ellenőrizve.
-- [ ] Keresés, értesítés és feladatjelzés csak akkor működőként látható, ha valós adat-/viselkedési szerződés támasztja alá; egyébként egyértelmű disabled/queued állapot.
-- [ ] Célzott contract/domain/API és regressziós tesztek PASS; `npm run typecheck` PASS.
+- [x] Keresés, értesítés és feladatjelzés csak akkor működőként látható, ha valós adat-/viselkedési szerződés támasztja alá; egyébként egyértelmű disabled/queued állapot.
+- [x] Célzott contract/domain/API és regressziós tesztek PASS; `npm run typecheck` PASS.
 - [ ] A friss éles deploy után a tényleges production URL-en desktop/mobil/keyboard smoke és felhasználói acceptance PASS; a F0.2 teljes lezárásához a teljes route/auth/navigation DoD is kötelező.
 - [ ] E checkpoint végén a MASTER aktív pontja csak bizonyítékokkal frissíthető F0.3-ra.
 
@@ -4332,7 +4332,7 @@ F0.2 DoD:
 
 ## 2.77.9.L — F0.2 teljes dashboard-hivatkozás contract — 2026-10-13
 
-**Állapot: IMPLEMENTÁLVA A FEATURE BRANCHEN; CI ELLENŐRZÉS FOLYAMATBAN.**
+**Állapot: MERGED TO `v2/foundation`; PR-CI PASS.**
 
 - [x] A valós dashboard összes statikus `href` célpontja leltározva: `/admin`, `/admin/editor`, `/` és a meglévő `#platformCapabilities` szekcióhorgony.
 - [x] Új contract teszt tiltja a nem jóváhagyott dashboard-link célokat, és ellenőrzi, hogy a felület nem linkel vissza a legacy `/admin/home` aliasra.
