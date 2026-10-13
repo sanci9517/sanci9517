@@ -2300,28 +2300,28 @@ A migrációk kódja alapján az alábbi adatobjektumok jelen vannak a schema-t�
 | H33.11 | audit | AUT-008 | AUT | later phase / gated | PROVISIONAL |
 | H33.12 | Queues/Durable Objects only when justified by a real background-task or realtime requirement | AUT-007, OPS-008 | AUT/OPS | later phase / gated | SPLIT_REQUIRED |
 | H34.00 | Continuous feature discovery and repeated review before significant Editor/platform extensions | QA-010 | QA | later phase / gated | PROVISIONAL |
-| H34.01 | Continuous feature discovery is never permanently closed, with review repeated before every significant Editor/platform extension | QA-010 | QA | later phase / gated | PROVISIONAL |
-| H34.02 | modern visual builder minták | EDT-001, EDT-015, DSN-008 | EDT/DSN | later phase / gated | SPLIT_REQUIRED |
-| H34.03 | GrapesJS / Craft.js / Puck architekturális minták | EDT-001, EDT-015, DSN-008 | EDT/DSN | later phase / gated | SPLIT_REQUIRED |
-| H34.04 | új responsive/layout megoldások | EDT-024 | EDT | later phase / gated | PROVISIONAL |
-| H34.05 | accessibility | QA-005 | QA | later phase / gated | PROVISIONAL |
-| H34.06 | performance | OPS-008 | OPS | later phase / gated | PROVISIONAL |
-| H34.07 | reusable components | DSN-012 | DSN | later phase / gated | PROVISIONAL |
-| H34.08 | design systems | DSN-001 | DSN | later phase / gated | PROVISIONAL |
-| H34.09 | collaboration/conflict | TEAM-004, EDT-029 | TEAM/EDT | later phase / gated | SPLIT_REQUIRED |
-| H34.10 | backup/recovery | OPS-005 | OPS | later phase / gated | PROVISIONAL |
-| H34.11 | AI action safety | AI-006 | AI | later phase / gated | PROVISIONAL |
-| H34.12 | stream/content intelligence | AI-015 | AI | later phase / gated | PROVISIONAL |
-| H34.13 | azonosítás | QA-009 | QA | later phase / gated | PROVISIONAL |
-| H34.14 | cél és felhasználási eset | QA-009 | QA | later phase / gated | PROVISIONAL |
-| H34.15 | függőségek | QA-009 | QA | later phase / gated | PROVISIONAL |
-| H34.16 | Page Model/adatmodell | EDT-001 | EDT | later phase / gated | PROVISIONAL |
-| H34.17 | Command/Action | EDT-003 | EDT | later phase / gated | PROVISIONAL |
-| H34.18 | Inspector/Canvas/UI | EDT-021 | EDT | later phase / gated | PROVISIONAL |
-| H34.19 | persistence | EDT-028 | EDT | later phase / gated | PROVISIONAL |
-| H34.20 | teszt | QA-009 | QA | later phase / gated | PROVISIONAL |
-| H34.21 | MASTER-be felvétel | QA-009 | QA | later phase / gated | PROVISIONAL |
-| H34.22 | implementáció | QA-009 | QA | later phase / gated | PROVISIONAL |
+| H34.01 | modern visual builder patterns | EDT-001, EDT-015, DSN-008 | EDT/DSN | later phase / gated | SPLIT_REQUIRED |
+| H34.02 | GrapesJS / Craft.js / Puck architectural patterns | EDT-001, EDT-015, DSN-008 | EDT/DSN | later phase / gated | SPLIT_REQUIRED |
+| H34.03 | new responsive/layout patterns | EDT-024 | EDT | later phase / gated | PROVISIONAL |
+| H34.04 | accessibility | QA-005 | QA | later phase / gated | PROVISIONAL |
+| H34.05 | performance | OPS-008 | OPS | later phase / gated | PROVISIONAL |
+| H34.06 | reusable components | DSN-012 | DSN | later phase / gated | PROVISIONAL |
+| H34.07 | design systems | DSN-001 | DSN | later phase / gated | PROVISIONAL |
+| H34.08 | collaboration/conflict | TEAM-004, EDT-029 | TEAM/EDT | later phase / gated | SPLIT_REQUIRED |
+| H34.09 | backup/recovery | OPS-005 | OPS | later phase / gated | PROVISIONAL |
+| H34.10 | AI action safety | AI-006 | AI | later phase / gated | PROVISIONAL |
+| H34.11 | stream/content intelligence | AI-015 | AI | later phase / gated | PROVISIONAL |
+| H34.12 | identification | QA-010 | QA | later phase / gated | PROVISIONAL |
+| H34.13 | goal and use case | QA-010 | QA | later phase / gated | PROVISIONAL |
+| H34.14 | dependencies | QA-010 | QA | later phase / gated | PROVISIONAL |
+| H34.15 | Page Model/data model | EDT-001 | EDT | later phase / gated | PROVISIONAL |
+| H34.16 | Command/Action | EDT-003 | EDT | later phase / gated | PROVISIONAL |
+| H34.17 | Inspector/Canvas/UI | EDT-021 | EDT | later phase / gated | PROVISIONAL |
+| H34.18 | persistence | EDT-028 | EDT | later phase / gated | PROVISIONAL |
+| H34.19 | tests | QA-002 | QA | later phase / gated | PROVISIONAL |
+| H34.20 | add to MASTER | QA-010 | QA | later phase / gated | PROVISIONAL |
+| H34.21 | implementation | QA-010 | QA | later phase / gated | PROVISIONAL |
+| H34.22 | user validation | QA-009 | QA | later phase / gated | PROVISIONAL |
 
 **P0.2 lezárási feltételei:** minden sor forráskulcsát vissza kell egyeztetni az eredeti 19–34 szakaszokkal; minden javasolt ID-nál ellenőrizni kell a feature contractot; több ID-t igénylő soroknál szét kell bontani az acceptance-eket; minden sorhoz user outcome, dependency, lifecycle, permission, pozitív/negatív teszt és runtime evidence szükséges. Ez az első tételes reconciliációs munkalap, nem a P0.2 PASS bizonyítéka.
 
