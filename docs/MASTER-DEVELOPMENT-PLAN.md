@@ -2168,6 +2168,21 @@ Ez a rész a 37.10 első áttekintésének frissített, endpoint- és approval-s
 
 **P0.3 acceptance additions:** (1) read-only remote sqlite_master/PRAGMA table_info/PRAGMA index_list/PRAGMA foreign_key_check; (2) compare remote tables and indexes against the migration-derived final schema; (3) count canonical vs legacy document shapes and published snapshot/linkage mismatches without mutating rows; (4) record every result with timestamp, environment and commit; (5) no data repair until the read-only report and rollback plan are reviewed.
 
+
+### 37.16. P0.2 — Crosswalk szemantikai review, 2. kör
+
+**Ellenőrzési forrás:** a §24 stabil feature-ID registry és a §41 teljes, 17 oszlopos crosswalk; 2026-10-13.
+
+- 271 történeti kulcs → 271 sor, 271 egyedi kulcs.
+- 357 stabil feature ID a registryben; a crosswalk minden hivatkozott ID-ja feloldható.
+- A jelenlegi feature-ID prefix és a megadott canonical domain owner egyezik; a vegyes ownerű sorok explicit több-ID hozzárendelést használnak.
+- A kilenc több-ID hozzárendelés külön felülvizsgálva: architektúra+secret boundary; reduced-motion/QA; interaction validation/QA; performance/ops; content management/Page Model; integrations/Connections Center; permissions/security; AI Editor action pipeline; collaboration/conflict. A több-ID sor nem helyettesíti a kapcsolódó feature ID-k külön DoD-ját.
+- A korábbi általános phase-dependent célfázisok megszüntetve: a VOD-admin capability 1.5–2.0, az analytics reporting 2.0 célfázist kapott; a crosswalkban már nincs phase-dependent célfázis.
+- A történeti eljárási checklist H34 soraiban az „all phases” a folyamatos governance-kötelezettséget jelenti, nem azt, hogy az összes termékfunkció minden fázisban implementálandó.
+- A H27 Admin-capability soroknál a jelenlegi menüben látható placeholder nem runtime feature: a crosswalk csak a canonical owner/funkcióazonosítóhoz rendeli, és külön jelzi a későbbi fázist.
+
+**Továbbra is nyitott:** a sorok eredeti történeti forrásával való emberi, tartalmi összevetés; minden cél-ID feature contractjának (permission, data owner, dependency, negative tests, acceptance evidence) kitöltése; a 271 követelmény és a 357 feature ID közötti teljes lefedettségi mátrix. Ez a második review-kör sem P0.2 PASS, és nem változtat implementációs státuszt.
+
 ## 38. Részletes Visual Editor képességkatalógus
 
 **Cél:** a vizuális szerkesztő teljes részletképességeinek önálló, tesztelhető katalógusa. A felsorolás a végleges platform követelményét rögzíti, nem a runtime készültségét. Minden elem a közös Page Model, command/history/validation/persistence és jogosultsági szerződésen keresztül működik.
