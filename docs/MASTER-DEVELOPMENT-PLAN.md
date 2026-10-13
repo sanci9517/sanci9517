@@ -8,7 +8,7 @@
 **PARALLEL_WORKSTREAMS:** `0`
 
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
-**Verzió:** MASTER-2.89 — teljesebb történeti capability-lefedettség; streamer metrikák és tartalom-újrahasznosítás.  
+**Verzió:** MASTER-2.90 — 01–140 soronkénti Admin/Editor/AREA/fázis megfeleltetés; archív capability-k megőrzése.  
 **Frissítve:** 2026-10-13.  
 **Dokumentum státusza:** ez az egyetlen végrehajtási igazságforrás.
 **Audit / implementation baseline:** GitHub `v2/foundation`, commit `54daad2357ca576d9e333a052e7bcbb6c2e2d51a` (2026-10-13; F0.3 history-integrity, revision-conflict recovery és save/reload client hardening PR #18–#25 integrálva; production save/reload runtime acceptance továbbra is nyitott). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
@@ -4014,148 +4014,148 @@ A benchmark rekordnak tartalmaznia kell: dátum, forrás, user problem, releván
 
 Az alábbi táblázat a MASTER eredeti 140 funkciósorát egyenként megőrzi, és hozzákapcsolja a 2.76 végrehajtási szakaszait. A régi státusz és scope történeti adat; nem runtime PASS. Ha egy sor több domaint érint, a legkorábbi szükséges függőség és a downstream modul is szerepel.
 
-| Historical ID | Megőrzött funkció | Eredeti canonical owner | MASTER-2.76 cél |
-|---|---|---|---|
-| 001 | GitHub + Cloudflare alapstruktúra működő branch/deploy útja | Platform foundation / persistence | Stage 0, 1, 19, 21 |
-| 002 | D1 séma és canonical oldalmodell teljes auditja | Platform foundation / persistence | Stage 0, 1, 3 |
-| 003 | Legacy → canonical migráció véglegesítése és ellenőrzése | Platform foundation / persistence | Stage 0, 1, 19, 21 |
-| 004 | Legacy HTML teljes leválasztása és archiválása | Platform foundation / persistence | Stage 0, 1, 19, 21 |
-| 005 | Canonical Page Model kizárólagos aktív használata | Platform foundation / persistence | Stage 1, 3 |
-| 006 | D1 draft / published snapshot / revision modell teljes validálása | Platform foundation / persistence | Stage 6, 11, 19 |
-| 007 | Revision rollback teljes tesztje | Platform foundation / persistence | Stage 6, 11, 19 |
-| 008 | Audit log teljes ellenőrzése | Platform foundation / persistence | Stage 0, 1, 19, 21 |
-| 009 | Autosave | Platform foundation / persistence | Stage 0, 1, 19, 21 |
-| 010 | Backup / restore | Platform foundation / persistence | Stage 19, 21 |
-| 011 | Auth / session alap | Auth + Pages/CMS | Stage 1, 2, 6, 7, 17 |
-| 012 | Editor jogosultság / RBAC alap | Auth + Pages/CMS | Stage 1, 3 |
-| 013 | Oldallista D1-ből | Auth + Pages/CMS | Stage 1, 2, 6, 7, 17 |
-| 014 | Egyedi oldal megnyitása D1-ből | Auth + Pages/CMS | Stage 1, 2, 6, 7, 17 |
-| 015 | Oldal létrehozása | Auth + Pages/CMS | Stage 1, 2, 6, 7, 17 |
-| 016 | Oldal átnevezése | Auth + Pages/CMS | Stage 1, 2, 6, 7, 17 |
-| 017 | Oldal törlése | Auth + Pages/CMS | Stage 1, 2, 6, 7, 17 |
-| 018 | Slug kezelés és ütközéskezelés teljes UI teszttel | Auth + Pages/CMS | Stage 1, 2, 6, 7, 17 |
-| 019 | CMS teljes regressziós teszt | Auth + Pages/CMS | Stage 1, 2, 6, 7, 17 |
-| 020 | Editor betöltés / boot diagnostics | Visual Editor Core | Stage 1, 3 |
-| 021 | Canonical Page Model betöltése | Visual Editor Core | Stage 1, 3 |
-| 022 | Node ID / parent / children modell | Visual Editor Core | Stage 1, 3 |
-| 023 | Selection alap | Visual Editor Core | Stage 1 |
-| 024 | Layer tree alap | Visual Editor Core | Stage 1, 3 |
-| 025 | Command API alap | Visual Editor Core | Stage 1 |
-| 026 | Undo / redo alap | Visual Editor Core | Stage 1, 3 |
-| 027 | Element update / add / delete / duplicate commandok alapja | Visual Editor Core | Stage 1 |
-| 028 | Hierarchy reparent / reorder command alapja | Visual Editor Core | Stage 14 |
-| 029 | Canvas Engine foundation | Visual Editor Core | Stage 1, 3 |
-| 030 | Responsive engine foundation | Visual Editor Core | Stage 1, 3 |
-| 031 | Property Registry foundation | Visual Editor Core | Stage 1 |
-| 032 | Canvas Engine tényleges bekötése az Editor rendererbe | Website Builder / Layout / Inspector | Stage 1, 3 |
-| 033 | Stabil DOM ↔ Page Model node binding | Website Builder / Layout / Inspector | Stage 1, 3 |
-| 034 | Geometry Inspector | Website Builder / Layout / Inspector | Stage 1, 3 |
-| 035 | Responsive geometry | Website Builder / Layout / Inspector | Stage 1, 3 |
-| 036 | Drag | Website Builder / Layout / Inspector | Stage 1, 3 |
-| 037 | Resize | Website Builder / Layout / Inspector | Stage 1, 3 |
-| 038 | Snap / guides / alignment | Website Builder / Layout / Inspector | Stage 3, 6 |
-| 039 | Layer / lock / hide / rename teljes editor UX | Website Builder / Layout / Inspector | Stage 1, 3 |
-| 040 | Multi-select / group / ungroup | Website Builder / Layout / Inspector | Stage 3, 6 |
-| 041 | Canvas zoom / fit / grid / viewport UX | Website Builder / Layout / Inspector | Stage 1, 3 |
-| 042 | Nested hierarchy teljes működése | Website Builder / Layout / Inspector | Stage 3, 6 |
-| 043 | Invalid nesting védelem | Website Builder / Layout / Inspector | Stage 3, 6 |
-| 044 | Section / container / row / columns / flex / grid / stack | Website Builder / Layout / Inspector | Stage 3, 6 |
-| 045 | Layout sizing / spacing / alignment / distribution | Website Builder / Layout / Inspector | Stage 3, 6 |
-| 046 | Positioning / overflow | Website Builder / Layout / Inspector | Stage 3, 6 |
-| 047 | Responsive layout szabályok | Website Builder / Layout / Inspector | Stage 1, 3 |
-| 048 | Typography Inspector | Website Builder / Layout / Inspector | Stage 1, 3 |
-| 049 | Appearance Inspector | Website Builder / Layout / Inspector | Stage 1, 3 |
-| 050 | Interaction / accessibility / advanced properties | Website Builder / Layout / Inspector | Stage 20, 21, 22 |
-| 051 | Property search / reset / validation | Website Builder / Layout / Inspector | Stage 3, 6 |
-| 052 | Text / rich text | Content / Media / Asset | Stage 4, 7, 10 |
-| 053 | Image / video / embed | Content / Media / Asset | Stage 4, 7, 10 |
-| 054 | Button / link / CTA | Content / Media / Asset | Stage 4, 7, 10 |
-| 055 | Card / list / table / accordion / tabs | Content / Media / Asset | Stage 4, 7, 10 |
-| 056 | Social és streamer blokkok | Content / Media / Asset | Stage 8, 9 |
-| 057 | Twitch / YouTube / TikTok / Discord blokkok | Public social-link blocks + platform adapters | Stage 8, 9 |
-| 058 | Schedule / Live / Countdown / VOD blokkok | Content / Media / Asset | Stage 8, 9 |
-| 059 | Form / contact blokkok | CMS / Form domain + secure submission boundary | Stage 6, 15 |
-| 060 | Media library / R2 | Content / Media / Asset | Stage 4 |
-| 061 | Draft | Publishing / Revision / Import-Export | Stage 6, 11, 19 |
-| 062 | Preview | Publishing / Revision / Import-Export | Stage 6, 7, 11, 19 |
-| 063 | Publish | Publishing / Revision / Import-Export | Stage 6, 11, 19 |
-| 064 | Public renderer canonical published documentből | Publishing / Revision / Import-Export | Stage 6, 11, 19 |
-| 065 | Public / draft izoláció | Publishing / Revision / Import-Export | Stage 6, 11, 19 |
-| 066 | Revision history UI | Publishing / Revision / Import-Export | Stage 6, 11, 19 |
-| 067 | Rollback UI | Publishing / Revision / Import-Export | Stage 6, 11, 19 |
-| 068 | Import / export | Publishing / Revision / Import-Export | Stage 6, 7, 11, 19 |
-| 069 | Főoldal | Public Website / UX / SEO / Accessibility / Performance | Stage 6, 20, 21 |
-| 070 | Twitch | Public Website / UX / SEO / Accessibility / Performance | Stage 8, 9 |
-| 071 | YouTube | Public Website / social-link presentation | Stage 6, 8 |
-| 072 | TikTok | Public Website / social-link presentation | Stage 6, 8 |
-| 073 | Adásrend | Public Website / UX / SEO / Accessibility / Performance | Stage 6, 20, 21 |
-| 074 | Következő adás / countdown | Public Website / UX / SEO / Accessibility / Performance | Stage 6, 20, 21 |
-| 075 | Élő / offline állapot | Public Website / UX / SEO / Accessibility / Performance | Stage 6, 20, 21 |
-| 076 | VOD / Shorts / Clips | Public link/embed baseline + Stream Media/Content domain | Stage 6, 9, 10 |
-| 077 | Rólam | Public Website / UX / SEO / Accessibility / Performance | Stage 6, 20, 21 |
-| 078 | Közösség / Discord | Public community links + Community domain | Stage 6, 12 |
-| 079 | Kapcsolat | Public Website / UX / SEO / Accessibility / Performance | Stage 6, 20, 21 |
-| 080 | Támogatás | Public support content/link + Support/Membership domain | Stage 6, 14 |
-| 081 | Szponzor / üzleti / Press Kit | Public Website / UX / SEO / Accessibility / Performance | Stage 6, 20, 21 |
-| 082 | 404 / loading / empty / error állapotok | Public Website / UX / SEO / Accessibility / Performance | Stage 6, 20, 21 |
-| 083 | Egységes mobil / tablet / desktop UX | Public Website / UX / SEO / Accessibility / Performance | Stage 20, 21, 22 |
-| 084 | SEO / Open Graph / structured data | Public Website / UX / SEO / Accessibility / Performance | Stage 6 |
-| 085 | Accessibility | Public Website / UX / SEO / Accessibility / Performance | Stage 20, 21, 22 |
-| 086 | Performance / caching | Public Website / UX / SEO / Accessibility / Performance | Stage 6, 15 |
-| 087 | Schedule D1 rendszer | Streamer Domain / Integrations / Analytics | Stage 8, 9 |
-| 088 | Twitch API / live state | Streamer Domain / Integrations / Analytics | Stage 8, 9 |
-| 089 | YouTube API | YouTube platform adapter under Integration/Platform contract | Stage 8, 11 |
-| 090 | TikTok rendszer | TikTok platform adapter under Integration/Platform contract | Stage 8, 11 |
-| 091 | VOD rendszer | Stream Media/Content domain + provider adapters | Stage 7, 10, 11 |
-| 092 | Community / Discord | Community domain + Discord integration adapter | Stage 12 |
-| 093 | Contact / collaboration | Public contact entry + later collaboration/CRM domains | Stage 6, 15 |
-| 094 | Site settings | Streamer Domain / Integrations / Analytics | Stage 8, 13 |
-| 095 | Analytics | Release/operational telemetry + Creator Analytics domain | Stage 13 |
-| 096 | Unit tesztek | QA / Security / Production | Stage 0, 21, 22 |
-| 097 | API / integration tesztek | QA / Security / Production | Stage 0, 21, 22 |
-| 098 | D1 tesztek | QA / Security / Production | Stage 0, 21, 22 |
-| 099 | E2E / browser tesztek | QA / Security / Production | Stage 0, 21, 22 |
-| 100 | Regression tesztek | QA / Security / Production | Stage 20, 21, 22 |
-| 101 | Security hardening | QA / Security / Production | Stage 20, 21, 22 |
-| 102 | Observability / error reporting | QA / Security / Production | Stage 8, 9 |
-| 103 | Production backup / recovery teszt | QA / Security / Production | Stage 14 |
-| 104 | Production release checklist | QA / Security / Production | Stage 14 |
-| 105 | Stabil page / node / component / action / revision / media / schedule ID-k | Platform contracts / Governance / AI-ready actions | Stage 6, 11, 19 |
-| 106 | Strukturált page model teljes lezárása | Platform contracts / Governance / AI-ready actions | Stage 1, 3 |
-| 107 | Közös Action API az Editor és későbbi AI számára | Platform contracts / Governance / AI-ready actions | Stage 1, 3 |
-| 108 | Permission / approval / audit réteg | Platform contracts / Governance / AI-ready actions | Stage 0, 16, 24 |
-| 109 | Preview-before-apply / rollback mechanizmus | Platform contracts / Governance / AI-ready actions | Stage 6, 11, 19 |
-| 110 | AI Orchestrator | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
-| 111 | Agent / Tool / Model Registry | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
-| 112 | Task Planner / Context Selector | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
-| 113 | Permission Checker / Approval Flow | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
-| 114 | Execution / verification / recovery | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
-| 115 | Multi-model routing | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
-| 116 | Web Engineer Agent | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
-| 117 | Visual Editor Agent | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
-| 118 | QA Agent | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
-| 119 | GitHub / Cloudflare Engineer Agent | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
-| 120 | Browser QA AI | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
-| 121 | Stream observation | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
-| 122 | Silence / pacing detection | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
-| 123 | Chat / context analysis | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
-| 124 | Contextual live suggestions | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
-| 125 | Streamer profile / long-term memory | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
-| 126 | Experience learning / evaluation cycles | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
-| 127 | One-click clip / Short creation | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
-| 128 | Stream setup diagnostics assistant | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
-| 129 | AI control center | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
-| 130 | End-to-end AI platform test | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
-| 131 | Teljes public website teszt | Final production QA / release gates | Stage 22 |
-| 132 | Teljes admin / CMS teszt | Final production QA / release gates | Stage 22 |
-| 133 | Teljes Visual Editor teszt | Final production QA / release gates | Stage 1, 3 |
-| 134 | D1 / R2 / integrations teszt | Final production QA / release gates | Stage 22 |
-| 135 | Mobile / tablet / desktop teszt | Final production QA / release gates | Stage 20, 21, 22 |
-| 136 | Security / permissions teszt | Final production QA / release gates | Stage 20, 21, 22 |
-| 137 | Performance / accessibility teszt | Final production QA / release gates | Stage 6, 15 |
-| 138 | Backup / restore / disaster recovery teszt | Final production QA / release gates | Stage 19, 21 |
-| 139 | Regression teszt | Final production QA / release gates | Stage 20, 21, 22 |
-| 140 | Production release jóváhagyás | Final production QA / release gates | Stage 14 |
+| Historical ID | Megőrzött funkció | Eredeti canonical owner | MASTER-2.76 cél | Admin munkaterület | Editor-csoport | Canonical AREA | Fázis / acceptance irány |
+|---|---|---|---|---|---|---|---|
+| 001 | GitHub + Cloudflare alapstruktúra működő branch/deploy útja | Platform foundation / persistence | Stage 0, 1, 19, 21  UI-22 | — | AREA-01 | F0 alap / platform |
+| 002 | D1 séma és canonical oldalmodell teljes auditja | Platform foundation / persistence | Stage 0, 1, 3  UI-02, UI-18 | E-01 | AREA-01, AREA-03 | F0 alap / canonical Page Model |
+| 003 | Legacy → canonical migráció véglegesítése és ellenőrzése | Platform foundation / persistence | Stage 0, 1, 19, 21  UI-02, UI-17 | E-01, E-13 | AREA-01, AREA-03 | F0 / legacy-migrációs kapu |
+| 004 | Legacy HTML teljes leválasztása és archiválása | Platform foundation / persistence | Stage 0, 1, 19, 21  UI-02, UI-17 | E-01, E-13 | AREA-01, AREA-03 | F0 / legacy-migrációs kapu |
+| 005 | Canonical Page Model kizárólagos aktív használata | Platform foundation / persistence | Stage 1, 3  UI-02 | E-01 | AREA-03 | F0 / canonical Editor |
+| 006 | D1 draft / published snapshot / revision modell teljes validálása | Platform foundation / persistence | Stage 6, 11, 19  UI-17, UI-22 | E-13, E-14, E-16 | AREA-01 | F0 / persistence és recovery |
+| 007 | Revision rollback teljes tesztje | Platform foundation / persistence | Stage 6, 11, 19  UI-17, UI-22 | E-13, E-14, E-16 | AREA-01 | F0 / persistence és recovery |
+| 008 | Audit log teljes ellenőrzése | Platform foundation / persistence | Stage 0, 1, 19, 21  UI-17, UI-22 | E-13, E-14, E-16 | AREA-01 | F0 / persistence és recovery |
+| 009 | Autosave | Platform foundation / persistence | Stage 0, 1, 19, 21  UI-17, UI-22 | E-13, E-14, E-16 | AREA-01 | F0 / persistence és recovery |
+| 010 | Backup / restore | Platform foundation / persistence | Stage 19, 21  UI-17, UI-22 | E-13, E-14, E-16 | AREA-01 | F0 / persistence és recovery |
+| 011 | Auth / session alap | Auth + Pages/CMS | Stage 1, 2, 6, 7, 17  UI-18 | — | AREA-01 | Foundation / auth és jogosultság |
+| 012 | Editor jogosultság / RBAC alap | Auth + Pages/CMS | Stage 1, 3  UI-18 | — | AREA-01 | Foundation / auth és jogosultság |
+| 013 | Oldallista D1-ből | Auth + Pages/CMS | Stage 1, 2, 6, 7, 17  UI-02, UI-03 | E-01, E-12 | AREA-02, AREA-04 | 1.0 / Pages-CMS |
+| 014 | Egyedi oldal megnyitása D1-ből | Auth + Pages/CMS | Stage 1, 2, 6, 7, 17  UI-02, UI-03 | E-01, E-12 | AREA-02, AREA-04 | 1.0 / Pages-CMS |
+| 015 | Oldal létrehozása | Auth + Pages/CMS | Stage 1, 2, 6, 7, 17  UI-02, UI-03 | E-01, E-12 | AREA-02, AREA-04 | 1.0 / Pages-CMS |
+| 016 | Oldal átnevezése | Auth + Pages/CMS | Stage 1, 2, 6, 7, 17  UI-02, UI-03 | E-01, E-12 | AREA-02, AREA-04 | 1.0 / Pages-CMS |
+| 017 | Oldal törlése | Auth + Pages/CMS | Stage 1, 2, 6, 7, 17  UI-02, UI-03 | E-01, E-12 | AREA-02, AREA-04 | 1.0 / Pages-CMS |
+| 018 | Slug kezelés és ütközéskezelés teljes UI teszttel | Auth + Pages/CMS | Stage 1, 2, 6, 7, 17  UI-02, UI-03 | E-01, E-12 | AREA-02, AREA-04 | 1.0 / Pages-CMS |
+| 019 | CMS teljes regressziós teszt | Auth + Pages/CMS | Stage 1, 2, 6, 7, 17  UI-02, UI-03 | E-01, E-12 | AREA-02, AREA-04 | 1.0 / Pages-CMS |
+| 020 | Editor betöltés / boot diagnostics | Visual Editor Core | Stage 1, 3  UI-02, UI-22 | E-16 | AREA-03, AREA-22 | F0 / diagnostics |
+| 021 | Canonical Page Model betöltése | Visual Editor Core | Stage 1, 3  UI-02 | E-01, E-03 | AREA-03 | F0 / Page Model |
+| 022 | Node ID / parent / children modell | Visual Editor Core | Stage 1, 3  UI-02 | E-01, E-03 | AREA-03 | F0 / Page Model |
+| 023 | Selection alap | Visual Editor Core | Stage 1  UI-02 | E-02, E-13, E-14 | AREA-03 | F0 / selection és command/history |
+| 024 | Layer tree alap | Visual Editor Core | Stage 1, 3  UI-02 | E-02, E-13, E-14 | AREA-03 | F0 / selection és command/history |
+| 025 | Command API alap | Visual Editor Core | Stage 1  UI-02 | E-02, E-13, E-14 | AREA-03 | F0 / selection és command/history |
+| 026 | Undo / redo alap | Visual Editor Core | Stage 1, 3  UI-02 | E-02, E-13, E-14 | AREA-03 | F0 / selection és command/history |
+| 027 | Element update / add / delete / duplicate commandok alapja | Visual Editor Core | Stage 1  UI-02 | E-02, E-13, E-14 | AREA-03 | F0 / selection és command/history |
+| 028 | Hierarchy reparent / reorder command alapja | Visual Editor Core | Stage 14  UI-02 | E-03, E-13 | AREA-03 | F0 / hierarchy commands |
+| 029 | Canvas Engine foundation | Visual Editor Core | Stage 1, 3  UI-02 | E-02, E-04, E-05 | AREA-03 | F0 / canvas-responsive-property foundation |
+| 030 | Responsive engine foundation | Visual Editor Core | Stage 1, 3  UI-02 | E-02, E-04, E-05 | AREA-03 | F0 / canvas-responsive-property foundation |
+| 031 | Property Registry foundation | Visual Editor Core | Stage 1  UI-02 | E-02, E-04, E-05 | AREA-03 | F0 / canvas-responsive-property foundation |
+| 032 | Canvas Engine tényleges bekötése az Editor rendererbe | Website Builder / Layout / Inspector | Stage 1, 3  UI-02 | E-02, E-04, E-05 | AREA-03 | F0 / canvas és geometry |
+| 033 | Stabil DOM ↔ Page Model node binding | Website Builder / Layout / Inspector | Stage 1, 3  UI-02 | E-02, E-04, E-05 | AREA-03 | F0 / canvas és geometry |
+| 034 | Geometry Inspector | Website Builder / Layout / Inspector | Stage 1, 3  UI-02 | E-02, E-04, E-05 | AREA-03 | F0 / canvas és geometry |
+| 035 | Responsive geometry | Website Builder / Layout / Inspector | Stage 1, 3  UI-02 | E-02, E-04, E-05 | AREA-03 | F0 / canvas és geometry |
+| 036 | Drag | Website Builder / Layout / Inspector | Stage 1, 3  UI-02 | E-02, E-04, E-05 | AREA-03 | F0 / canvas és geometry |
+| 037 | Resize | Website Builder / Layout / Inspector | Stage 1, 3  UI-02 | E-02, E-04, E-05 | AREA-03 | F0 / canvas és geometry |
+| 038 | Snap / guides / alignment | Website Builder / Layout / Inspector | Stage 3, 6  UI-02 | E-02, E-04, E-05 | AREA-03 | F0 / canvas és geometry |
+| 039 | Layer / lock / hide / rename teljes editor UX | Website Builder / Layout / Inspector | Stage 1, 3  UI-02 | E-03 | AREA-03 | F0 / layers és hierarchy |
+| 040 | Multi-select / group / ungroup | Website Builder / Layout / Inspector | Stage 3, 6  UI-02 | E-03 | AREA-03 | F0 / layers és hierarchy |
+| 041 | Canvas zoom / fit / grid / viewport UX | Website Builder / Layout / Inspector | Stage 1, 3  UI-02 | E-03 | AREA-03 | F0 / layers és hierarchy |
+| 042 | Nested hierarchy teljes működése | Website Builder / Layout / Inspector | Stage 3, 6  UI-02 | E-03 | AREA-03 | F0 / layers és hierarchy |
+| 043 | Invalid nesting védelem | Website Builder / Layout / Inspector | Stage 3, 6  UI-02 | E-03 | AREA-03 | F0 / layers és hierarchy |
+| 044 | Section / container / row / columns / flex / grid / stack | Website Builder / Layout / Inspector | Stage 3, 6  UI-02, UI-05 | E-04, E-05 | AREA-03, AREA-05 | F0→1.0 / layout és responsive |
+| 045 | Layout sizing / spacing / alignment / distribution | Website Builder / Layout / Inspector | Stage 3, 6  UI-02, UI-05 | E-04, E-05 | AREA-03, AREA-05 | F0→1.0 / layout és responsive |
+| 046 | Positioning / overflow | Website Builder / Layout / Inspector | Stage 3, 6  UI-02, UI-05 | E-04, E-05 | AREA-03, AREA-05 | F0→1.0 / layout és responsive |
+| 047 | Responsive layout szabályok | Website Builder / Layout / Inspector | Stage 1, 3  UI-02, UI-05 | E-04, E-05 | AREA-03, AREA-05 | F0→1.0 / layout és responsive |
+| 048 | Typography Inspector | Website Builder / Layout / Inspector | Stage 1, 3  UI-02, UI-05 | E-04, E-06, E-07 | AREA-03, AREA-05 | F0→1.0 / inspector és property UX |
+| 049 | Appearance Inspector | Website Builder / Layout / Inspector | Stage 1, 3  UI-02, UI-05 | E-04, E-06, E-07 | AREA-03, AREA-05 | F0→1.0 / inspector és property UX |
+| 050 | Interaction / accessibility / advanced properties | Website Builder / Layout / Inspector | Stage 20, 21, 22  UI-02, UI-05 | E-04, E-06, E-07 | AREA-03, AREA-05 | F0→1.0 / inspector és property UX |
+| 051 | Property search / reset / validation | Website Builder / Layout / Inspector | Stage 3, 6  UI-02, UI-05 | E-04, E-06, E-07 | AREA-03, AREA-05 | F0→1.0 / inspector és property UX |
+| 052 | Text / rich text | Content / Media / Asset | Stage 4, 7, 10  UI-02, UI-03, UI-06 | E-06, E-09 | AREA-03, AREA-04, AREA-06 | 1.0+ / content blocks |
+| 053 | Image / video / embed | Content / Media / Asset | Stage 4, 7, 10  UI-02, UI-03, UI-06 | E-06, E-09 | AREA-03, AREA-04, AREA-06 | 1.0+ / content blocks |
+| 054 | Button / link / CTA | Content / Media / Asset | Stage 4, 7, 10  UI-02, UI-03, UI-06 | E-06, E-09 | AREA-03, AREA-04, AREA-06 | 1.0+ / content blocks |
+| 055 | Card / list / table / accordion / tabs | Content / Media / Asset | Stage 4, 7, 10  UI-02, UI-03, UI-06 | E-06, E-09 | AREA-03, AREA-04, AREA-06 | 1.0+ / content blocks |
+| 056 | Social és streamer blokkok | Content / Media / Asset | Stage 8, 9  UI-02, UI-07, UI-09, UI-10, UI-11 | E-09, E-10 | AREA-02, AREA-07, AREA-09, AREA-10, AREA-11 | 1.0+ / domain widgets |
+| 057 | Twitch / YouTube / TikTok / Discord blokkok | Public social-link blocks + platform adapters | Stage 8, 9  UI-02, UI-07, UI-09, UI-10, UI-11 | E-09, E-10 | AREA-02, AREA-07, AREA-09, AREA-10, AREA-11 | 1.0+ / domain widgets |
+| 058 | Schedule / Live / Countdown / VOD blokkok | Content / Media / Asset | Stage 8, 9  UI-02, UI-07, UI-09, UI-10, UI-11 | E-09, E-10 | AREA-02, AREA-07, AREA-09, AREA-10, AREA-11 | 1.0+ / domain widgets |
+| 059 | Form / contact blokkok | CMS / Form domain + secure submission boundary | Stage 6, 15  UI-02, UI-14 | E-09, E-11 | AREA-04, AREA-14 | 1.0+ / forms |
+| 060 | Media library / R2 | Content / Media / Asset | Stage 4  UI-04 | E-08 | AREA-05 | 1.0 / Resource foundation |
+| 061 | Draft | Publishing / Revision / Import-Export | Stage 6, 11, 19  UI-02, UI-17 | E-01, E-12, E-13, E-14 | AREA-01, AREA-04 | 1.0 / draft-publish-revision |
+| 062 | Preview | Publishing / Revision / Import-Export | Stage 6, 7, 11, 19  UI-02, UI-17 | E-01, E-12, E-13, E-14 | AREA-01, AREA-04 | 1.0 / draft-publish-revision |
+| 063 | Publish | Publishing / Revision / Import-Export | Stage 6, 11, 19  UI-02, UI-17 | E-01, E-12, E-13, E-14 | AREA-01, AREA-04 | 1.0 / draft-publish-revision |
+| 064 | Public renderer canonical published documentből | Publishing / Revision / Import-Export | Stage 6, 11, 19  UI-02, UI-17 | E-01, E-12, E-13, E-14 | AREA-01, AREA-04 | 1.0 / draft-publish-revision |
+| 065 | Public / draft izoláció | Publishing / Revision / Import-Export | Stage 6, 11, 19  UI-02, UI-17 | E-01, E-12, E-13, E-14 | AREA-01, AREA-04 | 1.0 / draft-publish-revision |
+| 066 | Revision history UI | Publishing / Revision / Import-Export | Stage 6, 11, 19  UI-02, UI-17 | E-01, E-12, E-13, E-14 | AREA-01, AREA-04 | 1.0 / draft-publish-revision |
+| 067 | Rollback UI | Publishing / Revision / Import-Export | Stage 6, 11, 19  UI-02, UI-17 | E-01, E-12, E-13, E-14 | AREA-01, AREA-04 | 1.0 / draft-publish-revision |
+| 068 | Import / export | Publishing / Revision / Import-Export | Stage 6, 7, 11, 19  UI-02, UI-17 | E-01, E-12, E-13, E-14 | AREA-01, AREA-04 | 1.0 / draft-publish-revision |
+| 069 | Főoldal | Public Website / UX / SEO / Accessibility / Performance | Stage 6, 20, 21  UI-02 | — | AREA-02 | 1.0 / public homepage |
+| 070 | Twitch | Public Website / UX / SEO / Accessibility / Performance | Stage 8, 9  UI-09, UI-10 | — | AREA-09, AREA-10 | 1.0 / Twitch public integration |
+| 071 | YouTube | Public Website / social-link presentation | Stage 6, 8  UI-09 | — | AREA-09 | 1.x / social platform links and adapters |
+| 072 | TikTok | Public Website / social-link presentation | Stage 6, 8  UI-09 | — | AREA-09 | 1.x / social platform links and adapters |
+| 073 | Adásrend | Public Website / UX / SEO / Accessibility / Performance | Stage 6, 20, 21  UI-07 | E-09, E-10 | AREA-07 | 1.0 / Schedule |
+| 074 | Következő adás / countdown | Public Website / UX / SEO / Accessibility / Performance | Stage 6, 20, 21  UI-07 | E-09, E-10 | AREA-07 | 1.0 / Schedule |
+| 075 | Élő / offline állapot | Public Website / UX / SEO / Accessibility / Performance | Stage 6, 20, 21  UI-10 | E-10 | AREA-10 | 1.0 / live state |
+| 076 | VOD / Shorts / Clips | Public link/embed baseline + Stream Media/Content domain | Stage 6, 9, 10  UI-11 | E-09, E-10 | AREA-11 | 1.x / video, VOD, clips |
+| 077 | Rólam | Public Website / UX / SEO / Accessibility / Performance | Stage 6, 20, 21  UI-03 | E-06 | AREA-02, AREA-04 | 1.0 / About content |
+| 078 | Közösség / Discord | Public community links + Community domain | Stage 6, 12  UI-13 | E-09, E-10 | AREA-13 | 1.x / community |
+| 079 | Kapcsolat | Public Website / UX / SEO / Accessibility / Performance | Stage 6, 20, 21  UI-14 | E-09, E-11 | AREA-14 | 1.0 / contact |
+| 080 | Támogatás | Public support content/link + Support/Membership domain | Stage 6, 14  UI-20 | E-09, E-10 | AREA-20 | 1.x+ / support and monetization |
+| 081 | Szponzor / üzleti / Press Kit | Public Website / UX / SEO / Accessibility / Performance | Stage 6, 20, 21  UI-03, UI-20 | E-09 | AREA-02, AREA-20 | 1.x+ / sponsor and business pages |
+| 082 | 404 / loading / empty / error állapotok | Public Website / UX / SEO / Accessibility / Performance | Stage 6, 20, 21  UI-02, UI-15, UI-22 | E-16 | AREA-02, AREA-15, AREA-22 | 1.0 / public state handling |
+| 083 | Egységes mobil / tablet / desktop UX | Public Website / UX / SEO / Accessibility / Performance | Stage 20, 21, 22  UI-02, UI-15 | E-05, E-15 | AREA-02, AREA-03 | 1.0 / responsive acceptance |
+| 084 | SEO / Open Graph / structured data | Public Website / UX / SEO / Accessibility / Performance | Stage 6  UI-15 | E-07, E-11, E-16 | AREA-15 | 1.0 / SEO and accessibility |
+| 085 | Accessibility | Public Website / UX / SEO / Accessibility / Performance | Stage 20, 21, 22  UI-15 | E-07, E-11, E-16 | AREA-15 | 1.0 / SEO and accessibility |
+| 086 | Performance / caching | Public Website / UX / SEO / Accessibility / Performance | Stage 6, 15  UI-15, UI-22 | E-16 | AREA-02, AREA-22 | 1.0 / performance and cache |
+| 087 | Schedule D1 rendszer | Streamer Domain / Integrations / Analytics | Stage 8, 9  UI-07 | E-10 | AREA-07 | 1.0 / canonical Schedule domain |
+| 088 | Twitch API / live state | Streamer Domain / Integrations / Analytics | Stage 8, 9  UI-09, UI-10 | E-10 | AREA-09, AREA-10 | 1.0 / Twitch adapter |
+| 089 | YouTube API | YouTube platform adapter under Integration/Platform contract | Stage 8, 11  UI-09 | E-10 | AREA-09 | 1.x / YouTube and TikTok adapters |
+| 090 | TikTok rendszer | TikTok platform adapter under Integration/Platform contract | Stage 8, 11  UI-09 | E-10 | AREA-09 | 1.x / YouTube and TikTok adapters |
+| 091 | VOD rendszer | Stream Media/Content domain + provider adapters | Stage 7, 10, 11  UI-11 | E-10 | AREA-11 | 1.x / VOD content domain |
+| 092 | Community / Discord | Community domain + Discord integration adapter | Stage 12  UI-13 | E-10 | AREA-13 | 1.x / Discord and community |
+| 093 | Contact / collaboration | Public contact entry + later collaboration/CRM domains | Stage 6, 15  UI-14, UI-20 | E-11 | AREA-14, AREA-20 | 1.x / contact and collaboration |
+| 094 | Site settings | Streamer Domain / Integrations / Analytics | Stage 8, 13  UI-18 | — | AREA-01, AREA-18 | Foundation / site settings |
+| 095 | Analytics | Release/operational telemetry + Creator Analytics domain | Stage 13  UI-19, UI-22 | E-16 | AREA-19, AREA-22 | 1.x+ / analytics and telemetry |
+| 096 | Unit tesztek | QA / Security / Production | Stage 0, 21, 22  UI-22 | E-16 | AREA-01, AREA-22 | Every release / test and security gates |
+| 097 | API / integration tesztek | QA / Security / Production | Stage 0, 21, 22  UI-22 | E-16 | AREA-01, AREA-22 | Every release / test and security gates |
+| 098 | D1 tesztek | QA / Security / Production | Stage 0, 21, 22  UI-22 | E-16 | AREA-01, AREA-22 | Every release / test and security gates |
+| 099 | E2E / browser tesztek | QA / Security / Production | Stage 0, 21, 22  UI-22 | E-16 | AREA-01, AREA-22 | Every release / test and security gates |
+| 100 | Regression tesztek | QA / Security / Production | Stage 20, 21, 22  UI-22 | E-16 | AREA-01, AREA-22 | Every release / test and security gates |
+| 101 | Security hardening | QA / Security / Production | Stage 20, 21, 22  UI-22 | E-16 | AREA-01, AREA-22 | Every release / test and security gates |
+| 102 | Observability / error reporting | QA / Security / Production | Stage 8, 9  UI-22 | E-16 | AREA-22 | Every release / observability |
+| 103 | Production backup / recovery teszt | QA / Security / Production | Stage 14  UI-17, UI-22 | E-13, E-16 | AREA-01, AREA-22 | Every release / recovery and release gate |
+| 104 | Production release checklist | QA / Security / Production | Stage 14  UI-17, UI-22 | E-13, E-16 | AREA-01, AREA-22 | Every release / recovery and release gate |
+| 105 | Stabil page / node / component / action / revision / media / schedule ID-k | Platform contracts / Governance / AI-ready actions | Stage 6, 11, 19  UI-02, UI-17, UI-18 | E-13, E-14, E-16 | AREA-01, AREA-03 | Foundation / shared contracts, permission and rollback |
+| 106 | Strukturált page model teljes lezárása | Platform contracts / Governance / AI-ready actions | Stage 1, 3  UI-02, UI-17, UI-18 | E-13, E-14, E-16 | AREA-01, AREA-03 | Foundation / shared contracts, permission and rollback |
+| 107 | Közös Action API az Editor és későbbi AI számára | Platform contracts / Governance / AI-ready actions | Stage 1, 3  UI-02, UI-17, UI-18 | E-13, E-14, E-16 | AREA-01, AREA-03 | Foundation / shared contracts, permission and rollback |
+| 108 | Permission / approval / audit réteg | Platform contracts / Governance / AI-ready actions | Stage 0, 16, 24  UI-02, UI-17, UI-18 | E-13, E-14, E-16 | AREA-01, AREA-03 | Foundation / shared contracts, permission and rollback |
+| 109 | Preview-before-apply / rollback mechanizmus | Platform contracts / Governance / AI-ready actions | Stage 6, 11, 19  UI-02, UI-17, UI-18 | E-13, E-14, E-16 | AREA-01, AREA-03 | Foundation / shared contracts, permission and rollback |
+| 110 | AI Orchestrator | SANCI AI / Creator Intelligence | Stage 24 (optional AI)  UI-21, UI-22 | E-14, E-16 | AREA-21, AREA-22 | Later phase / AI orchestration and engineering agents |
+| 111 | Agent / Tool / Model Registry | SANCI AI / Creator Intelligence | Stage 24 (optional AI)  UI-21, UI-22 | E-14, E-16 | AREA-21, AREA-22 | Later phase / AI orchestration and engineering agents |
+| 112 | Task Planner / Context Selector | SANCI AI / Creator Intelligence | Stage 24 (optional AI)  UI-21, UI-22 | E-14, E-16 | AREA-21, AREA-22 | Later phase / AI orchestration and engineering agents |
+| 113 | Permission Checker / Approval Flow | SANCI AI / Creator Intelligence | Stage 24 (optional AI)  UI-21, UI-22 | E-14, E-16 | AREA-21, AREA-22 | Later phase / AI orchestration and engineering agents |
+| 114 | Execution / verification / recovery | SANCI AI / Creator Intelligence | Stage 24 (optional AI)  UI-21, UI-22 | E-14, E-16 | AREA-21, AREA-22 | Later phase / AI orchestration and engineering agents |
+| 115 | Multi-model routing | SANCI AI / Creator Intelligence | Stage 24 (optional AI)  UI-21, UI-22 | E-14, E-16 | AREA-21, AREA-22 | Later phase / AI orchestration and engineering agents |
+| 116 | Web Engineer Agent | SANCI AI / Creator Intelligence | Stage 24 (optional AI)  UI-21, UI-22 | E-14, E-16 | AREA-21, AREA-22 | Later phase / AI orchestration and engineering agents |
+| 117 | Visual Editor Agent | SANCI AI / Creator Intelligence | Stage 24 (optional AI)  UI-21, UI-22 | E-14, E-16 | AREA-21, AREA-22 | Later phase / AI orchestration and engineering agents |
+| 118 | QA Agent | SANCI AI / Creator Intelligence | Stage 24 (optional AI)  UI-21, UI-22 | E-14, E-16 | AREA-21, AREA-22 | Later phase / AI orchestration and engineering agents |
+| 119 | GitHub / Cloudflare Engineer Agent | SANCI AI / Creator Intelligence | Stage 24 (optional AI)  UI-21, UI-22 | E-14, E-16 | AREA-21, AREA-22 | Later phase / AI orchestration and engineering agents |
+| 120 | Browser QA AI | SANCI AI / Creator Intelligence | Stage 24 (optional AI)  UI-21, UI-22 | E-14, E-16 | AREA-21, AREA-22 | Later phase / AI orchestration and engineering agents |
+| 121 | Stream observation | SANCI AI / Creator Intelligence | Stage 24 (optional AI)  UI-10, UI-11, UI-12, UI-21 | E-10, E-16 | AREA-10, AREA-11, AREA-12, AREA-21 | Later phase / stream intelligence and clip workflows |
+| 122 | Silence / pacing detection | SANCI AI / Creator Intelligence | Stage 24 (optional AI)  UI-10, UI-11, UI-12, UI-21 | E-10, E-16 | AREA-10, AREA-11, AREA-12, AREA-21 | Later phase / stream intelligence and clip workflows |
+| 123 | Chat / context analysis | SANCI AI / Creator Intelligence | Stage 24 (optional AI)  UI-10, UI-11, UI-12, UI-21 | E-10, E-16 | AREA-10, AREA-11, AREA-12, AREA-21 | Later phase / stream intelligence and clip workflows |
+| 124 | Contextual live suggestions | SANCI AI / Creator Intelligence | Stage 24 (optional AI)  UI-10, UI-11, UI-12, UI-21 | E-10, E-16 | AREA-10, AREA-11, AREA-12, AREA-21 | Later phase / stream intelligence and clip workflows |
+| 125 | Streamer profile / long-term memory | SANCI AI / Creator Intelligence | Stage 24 (optional AI)  UI-10, UI-11, UI-12, UI-21 | E-10, E-16 | AREA-10, AREA-11, AREA-12, AREA-21 | Later phase / stream intelligence and clip workflows |
+| 126 | Experience learning / evaluation cycles | SANCI AI / Creator Intelligence | Stage 24 (optional AI)  UI-10, UI-11, UI-12, UI-21 | E-10, E-16 | AREA-10, AREA-11, AREA-12, AREA-21 | Later phase / stream intelligence and clip workflows |
+| 127 | One-click clip / Short creation | SANCI AI / Creator Intelligence | Stage 24 (optional AI)  UI-10, UI-11, UI-12, UI-21 | E-10, E-16 | AREA-10, AREA-11, AREA-12, AREA-21 | Later phase / stream intelligence and clip workflows |
+| 128 | Stream setup diagnostics assistant | SANCI AI / Creator Intelligence | Stage 24 (optional AI)  UI-10, UI-11, UI-12, UI-21 | E-10, E-16 | AREA-10, AREA-11, AREA-12, AREA-21 | Later phase / stream intelligence and clip workflows |
+| 129 | AI control center | SANCI AI / Creator Intelligence | Stage 24 (optional AI)  UI-21, UI-22 | E-14, E-16 | AREA-21, AREA-22 | Later phase / AI control and E2E |
+| 130 | End-to-end AI platform test | SANCI AI / Creator Intelligence | Stage 24 (optional AI)  UI-21, UI-22 | E-14, E-16 | AREA-21, AREA-22 | Later phase / AI control and E2E |
+| 131 | Teljes public website teszt | Final production QA / release gates | Stage 22  UI-02, UI-17, UI-18, UI-22 | E-15, E-16 | AREA-01, AREA-02, AREA-03, AREA-22 | Release gate / full regression and acceptance |
+| 132 | Teljes admin / CMS teszt | Final production QA / release gates | Stage 22  UI-02, UI-17, UI-18, UI-22 | E-15, E-16 | AREA-01, AREA-02, AREA-03, AREA-22 | Release gate / full regression and acceptance |
+| 133 | Teljes Visual Editor teszt | Final production QA / release gates | Stage 1, 3  UI-02, UI-17, UI-18, UI-22 | E-15, E-16 | AREA-01, AREA-02, AREA-03, AREA-22 | Release gate / full regression and acceptance |
+| 134 | D1 / R2 / integrations teszt | Final production QA / release gates | Stage 22  UI-02, UI-17, UI-18, UI-22 | E-15, E-16 | AREA-01, AREA-02, AREA-03, AREA-22 | Release gate / full regression and acceptance |
+| 135 | Mobile / tablet / desktop teszt | Final production QA / release gates | Stage 20, 21, 22  UI-02, UI-17, UI-18, UI-22 | E-15, E-16 | AREA-01, AREA-02, AREA-03, AREA-22 | Release gate / full regression and acceptance |
+| 136 | Security / permissions teszt | Final production QA / release gates | Stage 20, 21, 22  UI-02, UI-17, UI-18, UI-22 | E-15, E-16 | AREA-01, AREA-02, AREA-03, AREA-22 | Release gate / full regression and acceptance |
+| 137 | Performance / accessibility teszt | Final production QA / release gates | Stage 6, 15  UI-02, UI-17, UI-18, UI-22 | E-15, E-16 | AREA-01, AREA-02, AREA-03, AREA-22 | Release gate / full regression and acceptance |
+| 138 | Backup / restore / disaster recovery teszt | Final production QA / release gates | Stage 19, 21  UI-02, UI-17, UI-18, UI-22 | E-15, E-16 | AREA-01, AREA-02, AREA-03, AREA-22 | Release gate / full regression and acceptance |
+| 139 | Regression teszt | Final production QA / release gates | Stage 20, 21, 22  UI-02, UI-17, UI-18, UI-22 | E-15, E-16 | AREA-01, AREA-02, AREA-03, AREA-22 | Release gate / full regression and acceptance |
+| 140 | Production release jóváhagyás | Final production QA / release gates | Stage 14  UI-02, UI-17, UI-18, UI-22 | E-15, E-16 | AREA-01, AREA-02, AREA-03, AREA-22 | Release gate / full regression and acceptance |
 
 ## 2.76.9 — Teljes, soronkénti visszakövethetőség: H19–H34
 
