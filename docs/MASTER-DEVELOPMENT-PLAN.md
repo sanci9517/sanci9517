@@ -7391,3 +7391,16 @@ The top-level §0.3 runtime baseline previously stated R2 as if it were already 
 **Important boundary:** these mappings specify required coverage; they do not report that the tests have run or passed. No release status is changed by documentation edits.
 
 **Status:** six historical QA/release rows corrected. P0.2 remains **IN PROGRESS / NOT PASS**. Documentation-only; no runtime code/data/configuration changed and no tests were run.
+
+
+### 41.3.66. P0.2 — Repository-tree and archived-source content recovery audit (2026-10-13)
+
+**Purpose:** continue the search for the missing original `00/A` and `00.9–00.9.6.B` source bodies without reconstructing them from secondary summaries.
+
+**Repository-tree checks:** recursive Git tree inventories were checked for the current `v2/foundation` HEAD (`e0af7265cb37e3e49cdfa1ef71c2800304246324`, 193 paths) and historical snapshots `aedb2ea` (141 paths), `78788ca86a05cb56ae95fa9d56cdacd4c19d1f89` (189 paths) and `c21997f90260aa37742345f118e6bd64277511dd` (193 paths). Across these four snapshots, no standalone path/file matching the original `00/A`, `00.9`, `00.9.6.B` or `MASTER-HISTORICAL-19-34-AUDIT` source names was present. The three historical source plans `MASTER-FINAL-ROADMAP.md` (13,883 chars), `SANCI-MASTER-PLAN.md` (14,325 chars) and `V2-BLUEPRINT.md` (9,509 chars), plus `MASTER-CURRENT-STATUS.md` (2,696 chars), contain no `00/A`, `00.9.6.B`, `00.9.6` or `00/A.2.2` source markers.
+
+**Archived MASTER snapshot result:** `docs/archive/MASTER-DEVELOPMENT-PLAN-2026-10-13.md` is available (687,033 chars). Its only substantive `00/A` body found by this targeted search is the preserved `00/A.2.2` Schedule CRUD + Inspector / Domain-Driven Editor DoD fragment. The `00.9–00.9.6.B` occurrence is a retrospective statement that the earlier headings are not present in their former form, followed by a reminder that remaining requirements must be traced; it is not the missing source body. The snapshot therefore does not recover the complete original `00/A` or `00.9–00.9.6.B` sections.
+
+**Evidence boundary:** these checks establish absence from the named files and four inspected Git trees, not nonexistence across every branch, deleted commit, pull-request attachment, local archive or external backup. Keep the source recovery status **UNRECOVERED / OPEN**. Do not synthesize missing bullet points from C.23/F/H or mark the source reconciliation complete from indirect references alone.
+
+**Status:** additional reproducible repository/source inventory recorded; no new original source recovered. P0.2 remains **IN PROGRESS / NOT PASS**. Documentation-only; no runtime code/data/configuration changed and no tests were run.
