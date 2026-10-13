@@ -5298,7 +5298,7 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 | Source key | Archive line | Source section | Exact source item | Candidate canonical IDs | Decision / acceptance |
 |---|---:|---|---|---|---|
 | SMP-023 | 23 | 1. A Sanci9517 oldal célja | 1. **Publikus Sanci9517 weboldal** — a nézőknek. | WEB-001–032; DSN-001–018; QA-003/004; QA-001–009; OPS-001/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
-| SMP-024 | 24 | 1. A Sanci9517 oldal célja | 2. **Admin + Visual Editor** — minden tartalom és megjelenés szerkesztésére. | ADM-001–010; SEC-001–011; QA-002/003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
+| SMP-024 | 24 | 1. A Sanci9517 oldal célja | 2. **Admin + Visual Editor** — minden tartalom és megjelenés szerkesztésére. | ADM-001–010; EDT-001–042; SEC-001–011; QA-002/004/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-025 | 25 | 1. A Sanci9517 oldal célja | 3. **Szerveroldali platform + későbbi AI réteg** — adatok, integrációk, elemzés és automatizálás. | AI-001–018; AUT-001–014; ANL-001–010; QA-008/009 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-035 | 35 | 2.1 Alapélmény | - [ ] Modern, professzionális streamer megjelenés | WEB-014–032; QA-003/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-036 | 36 | 2.1 Alapélmény | - [ ] Magyar nyelvű publikus tartalom | WEB-001–032; DSN-001–018; QA-003/004; QA-001–009; OPS-001/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
@@ -5319,7 +5319,7 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 | SMP-056 | 56 | 2.2 Főoldal | - [ ] Legfontosabb social csatornák | INT-001–021; LIV-001–007; CNT-001–020; SEC-001–011; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-057 | 57 | 2.2 Főoldal | - [ ] Kiemelt tartalom | CNT-001–CNT-020; RES-001–RES-015; QA-002/003/004; WEB-001–032; DSN-001–018; QA-003/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-058 | 58 | 2.2 Főoldal | - [ ] Rövid bemutatkozás | WEB-001–032; DSN-001–018; QA-003/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
-| SMP-059 | 59 | 2.2 Főoldal | - [ ] Közösség / Discord kiemelés | INT-001–021; LIV-001–007; CNT-001–020; SEC-001–011; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
+| SMP-059 | 59 | 2.2 Főoldal | - [ ] Közösség / Discord kiemelés | COM-001/014; INT-016; WEB-022; QA-003/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-060 | 60 | 2.2 Főoldal | - [ ] Támogatás lehetőség | SUP-001–012; COM-001–018; WEB-014–032; SEC-011; QA-003/008 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-064 | 64 | 2.3 Twitch oldal | - [ ] Twitch profil és élő állapot | INT-001–021; LIV-001–007; CNT-001–020; SEC-001–011; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-065 | 65 | 2.3 Twitch oldal | - [ ] Twitch player | INT-001–021; LIV-001–007; CNT-001–020; SEC-001–011; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
@@ -5339,7 +5339,7 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 | SMP-085 | 85 | 2.5 YouTube oldal | - [ ] Videók | INT-013/014; CNT-001–CNT-020; WEB-022; QA-003/006; RES-001–RES-015; QA-002/003/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-086 | 86 | 2.5 YouTube oldal | - [ ] Shorts | CNT-001–020; INT-001–021; RES-001–015; WEB-014–032; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-087 | 87 | 2.5 YouTube oldal | - [ ] Kiemelt videó | INT-013/014; CNT-001–CNT-020; WEB-022; QA-003/006; RES-001–RES-015; QA-002/003/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
-| SMP-088 | 88 | 2.5 YouTube oldal | - [ ] YouTube statisztikák, ha elérhetők | INT-001–021; LIV-001–007; CNT-001–020; SEC-001–011; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
+| SMP-088 | 88 | 2.5 YouTube oldal | - [ ] YouTube statisztikák, ha elérhetők | INT-013/014; ANL-001–010; SEC-011; QA-003/008 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-092 | 92 | 2.6 Menetrend / Schedule | - [ ] Heti menetrend | SCH-001–011; INT-001–021; WEB-014–032; QA-002/003/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-093 | 93 | 2.6 Menetrend / Schedule | - [ ] Következő adás | SCH-001–011; WEB-015/016; QA-002/003/004 | KEEP — derive from canonical schedule query; test timezone, cancelled events, empty state and live-now distinction |
 | SMP-094 | 94 | 2.6 Menetrend / Schedule | - [ ] Visszaszámláló | SCH-003/004/008; WEB-018/019; QA-003/004 | EXPAND — client timer must use an explicit timezone/date contract, handle zero/past event and reduced-motion/accessibility |
@@ -5359,7 +5359,7 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 | SMP-114 | 114 | 2.8 About / Bemutatkozás | - [ ] Célok | WEB-001–032; DSN-001–018; QA-003/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-115 | 115 | 2.8 About / Bemutatkozás | - [ ] Közösségi szemlélet | COM-001–018; INT-016; SEC-011; QA-003/008; WEB-001–032; DSN-001–018; QA-003/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-116 | 116 | 2.8 About / Bemutatkozás | - [ ] Social linkek | INT-001–021; LIV-001–007; CNT-001–020; SEC-001–011; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
-| SMP-120 | 120 | 2.9 Community / Discord | - [ ] Discord közösség bemutatása | INT-001–021; LIV-001–007; CNT-001–020; SEC-001–011; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
+| SMP-120 | 120 | 2.9 Community / Discord | - [ ] Discord közösség bemutatása | COM-001/014; INT-016; WEB-022; QA-003/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-121 | 121 | 2.9 Community / Discord | - [ ] Csatlakozási gomb | COM-001–018; INT-016; SEC-011; QA-003/008 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-122 | 122 | 2.9 Community / Discord | - [ ] Közösségi információk | COM-001–018; INT-016; SEC-011; QA-003/008 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-123 | 123 | 2.9 Community / Discord | - [ ] Későbbi community funkciók helye | COM-001–018; INT-016; SEC-011; QA-003/008 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
@@ -5451,7 +5451,7 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 | SMP-250 | 250 | Streamer-specifikus elemek | - [ ] Game card | WEB-014–032; QA-003/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-251 | 251 | Streamer-specifikus elemek | - [ ] Game list | WEB-014–032; QA-003/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-252 | 252 | Streamer-specifikus elemek | - [ ] Social buttons | INT-001–021; LIV-001–007; CNT-001–020; SEC-001–011; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
-| SMP-253 | 253 | Streamer-specifikus elemek | - [ ] Discord CTA | INT-001–021; LIV-001–007; CNT-001–020; SEC-001–011; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
+| SMP-253 | 253 | Streamer-specifikus elemek | - [ ] Discord CTA | COM-001; INT-016; WEB-022; SEC-005; QA-003/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-254 | 254 | Streamer-specifikus elemek | - [ ] Support CTA | SUP-001–012; COM-001–018; WEB-014–032; SEC-011; QA-003/008 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-255 | 255 | Streamer-specifikus elemek | - [ ] Sanci Button | EDT-001–042; DSN-001–018; QA-002/004/005 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-265 | 265 | 6. Sanci Button rendszer | - [ ] Központi registry | EDT-001–042; DSN-001–018; QA-002/004/005 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
@@ -5478,7 +5478,7 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 | SMP-286 | 286 | 6. Sanci Button rendszer | - [ ] Ikon + szöveg | EDT-001–042; DSN-001–018; QA-002/004/005 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-287 | 287 | 6. Sanci Button rendszer | - [ ] Csak ikon | EDT-001–042; DSN-001–018; QA-002/004/005 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-288 | 288 | 6. Sanci Button rendszer | - [ ] Csak szöveg | EDT-001–042; DSN-001–018; QA-002/004/005 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
-| SMP-289 | 289 | 6. Sanci Button rendszer | - [ ] AI által módosítható, jogosultsághoz kötve | AI-001–018; AUT-001–014; ANL-001–010; QA-008/009 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
+| SMP-289 | 289 | 6. Sanci Button rendszer | - [ ] AI által módosítható, jogosultsághoz kötve | AI-002/003/005/006; EDT-039; SEC-002/003/010; QA-008/009 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-295 | 295 | 7. Design rendszer | - [ ] Központi színpaletta | WEB-014–032; QA-003/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-296 | 296 | 7. Design rendszer | - [ ] Typography scale | WEB-014–032; QA-003/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-297 | 297 | 7. Design rendszer | - [ ] Spacing scale | WEB-014–032; QA-003/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
@@ -5507,7 +5507,7 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 | SMP-325 | 325 | 8. Szerveroldal és adatmodell | - [ ] Schedule | SCH-001–011; INT-001–021; WEB-014–032; QA-002/003/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-326 | 326 | 8. Szerveroldal és adatmodell | - [ ] Media | RES-001–015; OPS-004/005/008; SEC-005/008; QA-002/003/005 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-327 | 327 | 8. Szerveroldal és adatmodell | - [ ] SEO metadata | SEO-001–008; WEB-014–032; QA-003/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
-| SMP-328 | 328 | 8. Szerveroldal és adatmodell | - [ ] Analytics events | SCH-001–011; INT-001–021; WEB-014–032; QA-002/003/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
+| SMP-328 | 328 | 8. Szerveroldal és adatmodell | - [ ] Analytics events | ANL-001–010; SEC-011; OPS-004/008; QA-003/008 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-329 | 329 | 8. Szerveroldal és adatmodell | - [ ] Audit logs | QA-001–010; OPS-001/004/005/006/009; SEC-001–011 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-330 | 330 | 8. Szerveroldal és adatmodell | - [ ] Integrations | INT-001–021; LIV-001–007; CNT-001–020; SEC-001–011; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-336 | 336 | 9. Admin rendszer | - [ ] Biztonságos admin login | ADM-001–010; SEC-001–011; QA-002/003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
@@ -5535,7 +5535,7 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 | SMP-363 | 363 | 10. Média rendszer | - [ ] MIME ellenőrzés | RES-001–015; SEC-005/008; QA-002/004/005; QA-001–009; OPS-001/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-364 | 364 | 10. Média rendszer | - [ ] Fájlméret korlátozás | RES-001–015; SEC-005/008; QA-002/004/005 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-365 | 365 | 10. Média rendszer | - [ ] Biztonságos fájlnevek | RES-001–015; SEC-005/008; QA-002/004/005 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
-| SMP-366 | 366 | 10. Média rendszer | - [ ] Videó támogatás | SUP-001–012; COM-001–018; WEB-014–032; SEC-011; QA-003/008 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
+| SMP-366 | 366 | 10. Média rendszer | - [ ] Videó támogatás | RES-001–015; CNT-001–020; SEC-005/008; QA-002/003/005 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-367 | 367 | 10. Média rendszer | - [ ] Audio támogatás | SUP-001–012; COM-001–018; WEB-014–032; SEC-011; QA-003/008 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-368 | 368 | 10. Média rendszer | - [ ] Clip/short fájlok támogatása | CNT-001–020; INT-001–021; RES-001–015; WEB-014–032; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-374 | 374 | 11. Publikálás és verziózás | - [ ] Draft | OPS-001/004/005/006/009; SEC-002/003; QA-001/002/006; QA-001–009; OPS-001/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
@@ -5582,7 +5582,7 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 | SMP-430 | 430 | 14. Biztonság | - [ ] Input validation | SEC-001–011; ADM-001/003/008; QA-002/003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-431 | 431 | 14. Biztonság | - [ ] Output validation | WEB-014–032; QA-003/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-432 | 432 | 14. Biztonság | - [ ] File validation | RES-001–015; OPS-004/005/008; SEC-005/008; QA-002/003/005 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
-| SMP-433 | 433 | 14. Biztonság | - [ ] AI permission boundary | ADM-001–010; SEC-001–011; QA-002/003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
+| SMP-433 | 433 | 14. Biztonság | - [ ] AI permission boundary | AI-002/003/005/006; SEC-002/003/010; QA-002/003/006/008 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-441 | 441 | Twitch | - [ ] OAuth | INT-001–021; LIV-001–007; CNT-001–020; SEC-001–011; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-442 | 442 | Twitch | - [ ] Live state | INT-001–INT-012; LIV-001–LIV-007; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-443 | 443 | Twitch | - [ ] Stream title | INT-001–INT-012; LIV-001–LIV-007; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
@@ -5598,7 +5598,7 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 | SMP-459 | 459 | TikTok | - [ ] Profil | INT-015; CNT-009–CNT-018; WEB-022; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-460 | 460 | TikTok | - [ ] Tartalmak | INT-015; CNT-009–CNT-018; WEB-022; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-461 | 461 | TikTok | - [ ] Integrációs lehetőségek vizsgálata | INT-015; CNT-009–CNT-018; WEB-022; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
-| SMP-465 | 465 | Discord | - [ ] Community link | WEB-001–032; SEO-001–008; DSN-001–018; QA-003/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
+| SMP-465 | 465 | Discord | - [ ] Community link | COM-001; INT-016; WEB-022; SEC-005; QA-003/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-466 | 466 | Discord | - [ ] Későbbi integráció, ha indokolt | COM-001–018; INT-016; SEC-011; QA-003/008 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-480 | 480 | Adás közben | - [ ] Figyeli az adás állapotát | WEB-014–032; QA-003/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-481 | 481 | Adás közben | - [ ] Figyeli a beszédaktivitást | WEB-014–032; QA-003/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
@@ -5633,8 +5633,8 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 | SMP-519 | 519 | AI + weboldal | - [ ] AI oldalváltoztatási javaslat | AI-001–018; AUT-001–014; ANL-001–010; QA-008/009 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-520 | 520 | AI + weboldal | - [ ] AI által létrehozott draft | AI-001–018; AUT-001–014; ANL-001–010; QA-008/009 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-521 | 521 | AI + weboldal | - [ ] AI által módosított Sanci Button | AI-001–018; AUT-001–014; ANL-001–010; QA-008/009 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
-| SMP-522 | 522 | AI + weboldal | - [ ] AI által módosított schedule | SCH-001–011; INT-001–021; WEB-014–032; QA-002/003/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
-| SMP-523 | 523 | AI + weboldal | - [ ] AI által előkészített social tartalom | INT-001–021; LIV-001–007; CNT-001–020; SEC-001–011; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
+| SMP-522 | 522 | AI + weboldal | - [ ] AI által módosított schedule | AI-002/003/005/006; SCH-001–011; EDT-003/039; SEC-002/003/010; QA-008/009 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
+| SMP-523 | 523 | AI + weboldal | - [ ] AI által előkészített social tartalom | AI-001–006; INT-013–016; CNT-001–020; SEC-002/003/010; QA-008/009 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-524 | 524 | AI + weboldal | - [ ] AI által előkészített oldal | AI-001–018; AUT-001–014; ANL-001–010; QA-008/009 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-525 | 525 | AI + weboldal | - [ ] Minden AI művelet auditált | AI-001–018; AUT-001–014; ANL-001–010; QA-008/009 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-526 | 526 | AI + weboldal | - [ ] Veszélyes műveletekhez felhasználói jóváhagyás | AI-001–018; AUT-001–014; SEC-002/003/010; QA-008/009; WEB-001–032; DSN-001–018; QA-003/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
@@ -5660,7 +5660,7 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 | SMP-563 | 563 | 18. Tesztelési rendszer | - [ ] Responsive regression tesztek | EDT-001–042; DSN-001–018; WEB-032; QA-002/004/005/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-564 | 564 | 18. Tesztelési rendszer | - [ ] Security tesztek | ADM-001–010; SEC-001–011; QA-002/003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-565 | 565 | 18. Tesztelési rendszer | - [ ] Publish regression tesztek | QA-001–009; OPS-001/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
-| SMP-566 | 566 | 18. Tesztelési rendszer | - [ ] AI tool permission tesztek | ADM-001–010; SEC-001–011; QA-002/003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
+| SMP-566 | 566 | 18. Tesztelési rendszer | - [ ] AI tool permission tesztek | AI-002/003/005/006; SEC-002/003/010; QA-002/003/006/008 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-574 | 574 | Ellenőrzött | - [x] Editor működik | EDT-001–042; DSN-001–018; WEB-032; QA-002/004/005/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-575 | 575 | Ellenőrzött | - [x] Elem kiválasztás működik | QA-001–009; OPS-001/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-576 | 576 | Ellenőrzött | - [x] H1 módosítás működik | QA-001–009; OPS-001/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
@@ -5691,7 +5691,7 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 | SMP-604 | 604 | Nem tekintjük késznek | - [ ] Teljes komponensrendszer | WEB-014–032; QA-003/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-605 | 605 | Nem tekintjük késznek | - [ ] Teljes admin auth | ADM-001–010; SEC-001–011; QA-002/003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-606 | 606 | Nem tekintjük késznek | - [ ] Twitch/TikTok/YouTube teljes integráció | INT-001–021; LIV-001–007; CNT-001–020; SEC-001–011; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
-| SMP-607 | 607 | Nem tekintjük késznek | - [ ] AI layer | EDT-001–042; DSN-001–018; WEB-032; QA-002/004/005/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
+| SMP-607 | 607 | Nem tekintjük késznek | - [ ] AI layer | AI-001–018; SEC-002/003/010; EDT-003/039; QA-008/009 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-608 | 608 | Nem tekintjük késznek | - [ ] Stream Assistant | AI-001–018; AUT-001–014; ANL-001–010; QA-008/009 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-616 | 616 | P0 — Alap és biztonság | - [ ] Server-side auth | ADM-001–010; SEC-001–011; QA-002/003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-617 | 617 | P0 — Alap és biztonság | - [ ] D1 schema stabilizálás | OPS-001/004/005/006; DYN-001–007; SEC-001–011; QA-002/003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
@@ -5759,6 +5759,9 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 
 
 **Targeted candidate-mapping refinement:** 245 rows that previously pointed to the same broad WEB/EDT/ADM/QA ranges now use source wording/section-based domain candidates (for example, Schedule, provider integrations, content/VOD, resource/media, SEO, analytics, support/community, security and Editor). This is a discovery refinement only; each row remains OPEN until a human-semantic comparison confirms exact behavior, owner and acceptance. Candidate generation is not proof of feature coverage.
+
+
+**Second targeted semantic correction batch:** 14 rows were corrected where the source capability and the former candidate family diverged: Admin/Editor, community links, YouTube statistics, analytics events, video resource support, AI permission boundaries and AI-mediated schedule/social actions. Broad provider/editor ranges are not substitutes for community, analytics, resource or AI authorization contracts. This remains a partial row audit; the rest of the ledger is OPEN.
 
 ### 41.3.40. P0.2 — Visual Editor roadmap: item-level milestone and work-rule ledger (2026-10-13)
 
