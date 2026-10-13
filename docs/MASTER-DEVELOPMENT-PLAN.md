@@ -2317,7 +2317,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | E.2.1-01 | Public page types: Home/About/Schedule/Live/VOD/Clips/platform pages/Community/Contact/Resources/Store/Membership/Events/News/Digital/Sponsor | WEB-014–WEB-027 | EXPAND | 1.0 core pages; 1.5–5.0 later domains | QA-002/004/008 |
 | E.2.1-02 | Page and route editing through Page/CMS, no routine hand-edited HTML | WEB-001, WEB-002, WEB-012, WEB-013 | MERGE | 1.0 | QA-002/004 |
 | E.2.1-03 | Shared header/footer/navigation/mobile menu/logo/social links | WEB-009, WEB-010, WEB-011 | EXPAND | 1.0 | QA-004/005 |
-| E.2.1-04 | Navigation order/label/target/visibility/new-tab; server-side URL and permission validation | WEB-009, WEB-013, SEC-008 | EXPAND | 1.0 | QA-003/004 |
+| E.2.1-04 | Navigation order/label/target/visibility/new-tab; server-side URL and permission validation | WEB-009, WEB-013, SEC-006 | EXPAND | 1.0 | QA-003/004 |
 | E.2.1-05 | 404, empty/loading/API error/offline/maintenance states | WEB-028, ADM-008, QA-006 | EXPAND | 1.0 baseline | QA-004/006 |
 | E.2.1-06 | Per-language title/slug/metadata/content and explicit missing-translation fallback | LOC-001, WEB-001, SEO-001 | DEFER/EXPAND | 1.0 architecture-ready; full workflow later | QA-004/005 |
 | E.2.2-01 | Trustworthy/fresh Twitch live status, player, game/category and provider-permitted metrics | LIV-001–LIV-007, INT-010, INT-011 | EXPAND | 1.0 Twitch baseline; metrics scope-gated | QA-002/003/004 |
@@ -2329,7 +2329,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | E.2.3-02 | Correct share preview and pre-publish metadata preview | SEO-002, WEB-005, WEB-006 | MERGE | 1.0 | QA-004/005 |
 | E.2.3-03 | Keyboard/focus/heading/contrast/alt/forms/reduced motion | QA-005, EDT-037, EDT-040, RES-007 | EXPAND | 1.0 baseline; advanced interaction QA later | QA-004/005 |
 | E.2.3-04 | Image optimization/lazy loading/layout shift/cache invalidation | RES-004, WEB-030, OPS-008, QA-006 | EXPAND | 1.0 baseline | QA-004/006 |
-| E.2.3-05 | Consent-aware analytics and data minimization | ANL-002, COM-015, COM-017, SEC-010 | DEFER/EXPAND | Privacy baseline 1.0; audience analytics later | QA-003/008 |
+| E.2.3-05 | Consent-aware analytics and data minimization | ANL-002, COM-015, COM-017, SEC-011 | DEFER/EXPAND | Privacy baseline 1.0; audience analytics later | QA-003/008 |
 | E.3.1-01 | Editor toolbar with page/save/history/viewport/zoom/preview/publish actions | EDT-005, EDT-007, EDT-027, EDT-032, EDT-033 | EXPAND | 1.0 | QA-002/004 |
 | E.3.1-02 | Pages/Layers/Elements panels; later assets/templates/symbols | EDT-012, EDT-015, RES-010, DSN-008–DSN-012 | EXPAND | Core panels 1.0; library tabs phased | QA-002/004 |
 | E.3.1-03 | Canvas with selection frame/drop zones/guides/viewport width | EDT-007–EDT-010, EDT-025 | EXPAND | 1.0 | QA-002/004/005 |
@@ -2361,10 +2361,10 @@ The short decision record must name the problem and acceptance criteria; existin
 | E.3.6-01 | Base elements and plain text; Rich Text editor explicitly later | EDT-017–EDT-019 | EXPAND | 1.0 base elements; advanced Rich Text later | QA-002/004 |
 | E.3.6-02 | Table/Accordion/Tabs typed fields, validation, keyboard/responsive/public renderer | EDT-019, WEB-032, QA-005 | EXPAND | 1.0 only if full acceptance passes; otherwise defer individual blocks | QA-002/004/005 |
 | E.3.6-03 | Section/Box/Stack/Row/Columns/Grid/reusable Slot | EDT-016, DSN-013 | EXPAND | 1.0 layout primitives; reusable slot phased | QA-002/004 |
-| E.3.6-04 | Live/Twitch/Next Stream/Schedule/VOD/Clips/Social/Community/Support/Store dynamic blocks | EDT-020, LIV, SCH, CNT, COM, SUP, STO, DYN | EXPAND | 1.0 Twitch/Schedule/social baseline; later domains only in their phases | QA-002/003/004 |
+| E.3.6-04 | Live/Twitch/Next Stream/Schedule/VOD/Clips/Social/Community/Support/Store dynamic blocks | EDT-020, LIV-001–LIV-007, SCH-001–SCH-015, CNT-002–CNT-020, COM-001–COM-018, SUP-001–SUP-012, STO-001–STO-020, DYN-001–DYN-008 | EXPAND | 1.0 Twitch/Schedule/social baseline; later domains only in their phases | QA-002/003/004 |
 | E.3.6-05 | Every element has typed defaults/validation/renderer/responsive/accessibility/error-empty states | EDT-015–EDT-020, WEB-032, QA-005 | EXPAND | 1.0 for included elements | QA-002/004/005 |
 | E.3.6-06 | Categorized searchable block library, canvas preview and compatible drag-drop | EDT-008, EDT-015 | EXPAND | 1.0 | QA-002/004 |
-| E.3.6-07 | Embeds limited to approved hosts with CSP/permission controls | WEB-032, SEC-008, QA-003 | EXPAND | 1.0 | QA-003/004 |
+| E.3.6-07 | Embeds limited to approved hosts with CSP/permission controls | WEB-032, SEC-005, SEC-006, QA-003 | EXPAND | 1.0 | QA-003/004 |
 | E.3.7-01 | Undo/redo from structured commands, never DOM snapshots | EDT-003, EDT-005 | KEEP | 0.x–1.0 | QA-002/004 |
 | E.3.7-02 | Dirty/save-in-progress/success/error/retry/conflict states | EDT-027, EDT-029, EDT-031 | EXPAND | 1.0 | QA-002/004/006 |
 | E.3.7-03 | Validated autosave and explicit save | EDT-027, EDT-028, EDT-031 | EXPAND | 1.0; autosave only if its own acceptance passes | QA-002/004/006 |
@@ -2404,7 +2404,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | E.6-07 | Linked Symbol instance; visible propagation scope and explicit detach | DSN-012, DSN-013 | EXPAND | 2.0 | QA-002/004 |
 | E.6-08 | Import/export/version/compatibility/preview/rollback; marketplace later | DSN-014, DSN-015, MKT-001–MKT-005 | DEFER/EXPAND | 2.0 library; marketplace 6.0 | QA-002/004/007 |
 | E.6-09 | Template/component updates cannot silently break published pages; preview/migration/revision | DSN-014, WEB-008, WEB-032, OPS-009 | EXPAND | 2.0 | QA-002/004/007 |
-| E.7.1-01 | Dashboard: live/next stream/content/tasks/integration health/warnings and later business metrics | ADM-002–ADM-005, LIV-007, SCH-009, INT-002, ANL | EXPAND | 1.0 truthful baseline; later cards phased | QA-002/004/006 |
+| E.7.1-01 | Dashboard: live/next stream/content/tasks/integration health/warnings and later business metrics | ADM-002–ADM-005, LIV-007, SCH-009, INT-002, ANL-001–ANL-010 | EXPAND | 1.0 truthful baseline; later cards phased | QA-002/004/006 |
 | E.7.1-02 | Only real data/actions; no fake/placeholder action as active | ADM-003, ADM-004, ADM-008, QA-008 | KEEP | 0.x–1.0 and always-on | QA-004/006/008 |
 | E.7.1-03 | Empty/loading/stale/partial failure/permission/error UI states | ADM-008, QA-006, INT-008, LIV-002 | EXPAND | 1.0 baseline | QA-004/006 |
 | E.7.1-04 | Quick actions for edit/schedule/content/integration repair and future product/campaign | ADM-003, WEB-001, SCH-001, CNT-001, INT-007, STO-001, CAM-001 | EXPAND | 1.0 only implemented actions; future modules phased | QA-002/004/008 |
@@ -2418,7 +2418,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | E.7.3-03 | Form dirty state/save status/error preservation/accessibility focus | EDT-027, ADM-008, QA-005 | EXPAND | 1.0 baseline | QA-002/004/005 |
 | E.7.3-04 | Explain destructive effects; confirm delete/disconnect/rollback | ADM-008, RES-009, INT-007, WEB-007, OPS-009 | EXPAND | 1.0 | QA-003/004 |
 | E.7.3-05 | UI cannot claim success before backend confirmation | ADM-008, EDT-027, INT-008, QA-006 | KEEP | 0.x–1.0 and always-on | QA-002/004/006 |
-| E.7.4-01 | Website Manager owns pages/navigation/SEO/publish/theme settings | WEB, SEO, DSN, SET | MERGE | 1.0 core | QA-002/004 |
+| E.7.4-01 | Website Manager owns pages/navigation/SEO/publish/theme settings | WEB-001–WEB-013, SEO-001–SEO-005, DSN-001–DSN-017, SET-001–SET-003 | MERGE | 1.0 core | QA-002/004 |
 | E.7.4-02 | Schedule Manager owns event/calendar/recurrence/timezone/sync | SCH-001–SCH-015 | KEEP | 1.0 core with staged advanced features | QA-002/004 |
 | E.7.4-03 | Integration Manager owns connect/disconnect/scope/token/sync/health/errors | INT-001–INT-020 | EXPAND | 1.0 Twitch Connections Center; providers later | QA-002/003/008 |
 | E.7.4-04 | Media Manager owns files/metadata/usage/storage status | RES-001–RES-016 | EXPAND | 1.0 foundation; R2 binding/API blocker | QA-002/003/007 |
@@ -2430,7 +2430,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | E.7.4-10 | AI Manager owns model/config/usage/jobs/approval/diff/rollback | AI-001–AI-020 | DEFER | 3.0+ | QA-002/003/008 |
 | E.7.4-11 | Business/Sponsorship Manager owns media kit/leads/deals/deliverables/deadlines/campaign | CAM-001–CAM-009 | DEFER | 5.0 | QA-002/003/008 |
 | E.7.4-12 | Settings/Security owns account/site/locale/domain/SEO/roles/privacy/integrations/export/delete/audit | SET-001–SET-003, SEC-001–SEC-011, OPS-005 | EXPAND | 0.x–1.0 baseline; advanced settings later | QA-003/004/008 |
-| E.7.4-13 | These are full Creator OS surfaces; only phased implemented modules may be active | ADM-001, ADM-003, QA-008; all domain owners | KEEP | All phases by canonical owner | QA-004/008 |
+| E.7.4-13 | These are full Creator OS surfaces; only phased implemented modules may be active | ADM-003, ADM-008, QA-008 | KEEP | All phases by canonical owner | QA-004/008 |
 | E.8-01 | One canonical Schedule item; Editor only configures the display block | SCH-001, SCH-011, EDT-020 | KEEP | 1.0 | QA-002/003/004 |
 | E.8-02 | Schedule fields include title/description/timezone/platform/game/artwork/link/visibility/status/featured/recurrence/override/provider ID | SCH-001, SCH-003–SCH-008, SCH-012–SCH-014, RES-013 | EXPAND | 1.0 core fields; advanced recurrence phased | QA-002/004 |
 | E.8-03 | Planned/live/completed/cancelled/postponed states drive public display and notifications | SCH-005, SCH-010, COM-011 | EXPAND | 1.0 states; notifications later | QA-002/004 |
@@ -2445,7 +2445,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | E.9-03 | OAuth state/PKCE where applicable, safe token storage, state/nonce and callback defense | INT-003–INT-006, SEC-004, SEC-008 | KEEP | 0.x–1.0 | QA-003 |
 | E.9-04 | Twitch 1.0 ownership/live/channel/game/schedule sync/last sync/error/retry | INT-005, INT-010, INT-011, INT-020, LIV-001–LIV-007, SCH-007–SCH-008 | EXPAND | 1.0 Twitch | QA-002/003/004/006 |
 | E.9-05 | Normalize external webhook/API payloads into canonical StreamEvent/Integration state | INT-001, INT-017, INT-018, LIV-006, AUT-001 | EXPAND | Twitch baseline 1.0; event ecosystem later | QA-002/003 |
-| E.9-06 | Later YouTube/TikTok/Kick/Discord/OBS/email/payment/commerce adapters with independent capability tests | INT-013–INT-021, OBS, COM, STO, SUP | DEFER | 1.5–5.0 by provider/domain | QA-002/003/008 |
+| E.9-06 | Later YouTube/TikTok/Kick/Discord/OBS/email/payment/commerce adapters with independent capability tests | INT-013–INT-021, OBS-001–OBS-010, COM-001–COM-018, STO-001–STO-020, SUP-001–SUP-012 | DEFER | 1.5–5.0 by provider/domain | QA-002/003/008 |
 | E.9-07 | Provider outage cannot take down the whole public site or Admin | INT-008, INT-020, LIV-002, DYN-005, OPS-003, OPS-008 | KEEP | 0.x–1.0 and all future providers | QA-003/006/008 |
 
 **Batch 2 result:** 66 E.4–E.9 source bullets mapped at requirement level. Mapping remains non-runtime evidence; the next batch covers E.10–E.22, then F.1–F.13. Before P0.2 PASS, verify source bullet counts and every feature/QA reference, and resolve any broad family mapping to the exact per-feature acceptance contract.
