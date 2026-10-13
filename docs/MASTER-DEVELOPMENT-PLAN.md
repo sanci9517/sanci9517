@@ -3388,7 +3388,7 @@ Az alábbi táblázat a MASTER eredeti 140 funkciósorát egyenként megőrzi, �
 | Historical ID | Megőrzött funkció | Eredeti canonical owner | MASTER-2.76 cél |
 |---|---|---|---|
 | 001 | GitHub + Cloudflare alapstruktúra működő branch/deploy útja | Platform foundation / persistence | Stage 0, 1, 19, 21 |
-| 002 | D1 séma és canonical oldalmodell teljes auditja | Platform foundation / persistence | Stage 24 (optional AI) |
+| 002 | D1 séma és canonical oldalmodell teljes auditja | Platform foundation / persistence | Stage 0, 1, 3 |
 | 003 | Legacy → canonical migráció véglegesítése és ellenőrzése | Platform foundation / persistence | Stage 0, 1, 19, 21 |
 | 004 | Legacy HTML teljes leválasztása és archiválása | Platform foundation / persistence | Stage 0, 1, 19, 21 |
 | 005 | Canonical Page Model kizárólagos aktív használata | Platform foundation / persistence | Stage 1, 3 |
@@ -3430,7 +3430,7 @@ Az alábbi táblázat a MASTER eredeti 140 funkciósorát egyenként megőrzi, �
 | 041 | Canvas zoom / fit / grid / viewport UX | Website Builder / Layout / Inspector | Stage 1, 3 |
 | 042 | Nested hierarchy teljes működése | Website Builder / Layout / Inspector | Stage 3, 6 |
 | 043 | Invalid nesting védelem | Website Builder / Layout / Inspector | Stage 3, 6 |
-| 044 | Section / container / row / columns / flex / grid / stack | Website Builder / Layout / Inspector | Stage 24 (optional AI) |
+| 044 | Section / container / row / columns / flex / grid / stack | Website Builder / Layout / Inspector | Stage 3, 6 |
 | 045 | Layout sizing / spacing / alignment / distribution | Website Builder / Layout / Inspector | Stage 3, 6 |
 | 046 | Positioning / overflow | Website Builder / Layout / Inspector | Stage 3, 6 |
 | 047 | Responsive layout szabályok | Website Builder / Layout / Inspector | Stage 1, 3 |
