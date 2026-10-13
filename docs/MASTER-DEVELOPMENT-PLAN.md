@@ -8,7 +8,7 @@
 **PARALLEL_WORKSTREAMS:** `0`
 
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
-**Verzió:** MASTER-2.86 — Visual Editor capability-térkép és Admin munkaterületek; shared canonical funkciók; teljes katalógus auditja nyitott.  
+**Verzió:** MASTER-2.87 — archivált tervek keresztellenőrzése; Sanci Buttons és Creator Resources explicit lefedése; egyetlen canonical owner.  
 **Frissítve:** 2026-10-13.  
 **Dokumentum státusza:** ez az egyetlen végrehajtási igazságforrás.
 **Audit / implementation baseline:** GitHub `v2/foundation`, commit `54daad2357ca576d9e333a052e7bcbb6c2e2d51a` (2026-10-13; F0.3 history-integrity, revision-conflict recovery és save/reload client hardening PR #18–#25 integrálva; production save/reload runtime acceptance továbbra is nyitott). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
@@ -1111,6 +1111,7 @@ A Twitch, YouTube, TikTok, Discord és minden későbbi provider külön fejlesz
 | UI-20 | **Támogatás, monetizáció és bolt** | Tip/support, kampányok, termékek, digitális termékek, merch, checkout, membership a fázis és provider szerint | Editorban termék-/support-blokk konfigurálható, de termékár, készlet, rendelés, fizetés és tagság nem az Editorban tárolódik |
 | UI-21 | **Automatizálás és SANCI AI** | Későbbi, opcionális automation/agent/workflow, engedélyezés, preview, jóváhagyás és audit | Későbbi fázis; az alap weboldal/Creator Center AI nélkül is teljesen használható marad |
 | UI-22 | **Rendszerállapot, diagnosztika és segítség** | Hibák, integrációs állapotok, utolsó sikeres szinkron, diagnosztika, dokumentált help és recovery | A canonical diagnosztikai forrásból olvas; titok/token/stack trace nem jelenhet meg felhasználói UI-ban |
+| UI-23 | **Sanci Buttons / központi gomb- és CTA-kezelő** | A brandgombok stabil ID-ja, neve/leírása, ikonja, link/action típusa, láthatósága, sorrendje, variánsai és állapotai; globális és explicit oldal-/példányoverride | Ugyanazt a canonical Button Registryt használja az Editor, a komponenskönyvtár és a publikus oldal; egy gomb definíciójának frissítése minden kapcsolódó használatnál megjelenik, a lokális override pedig külön és látható
 
 **Navigációs szabály:** az Admin főoldalról a modulok logikus, egyértelmű nevekkel legyenek elérhetők. Csak a valós route-tal és jogosultsággal rendelkező, működő modul legyen aktív. A későbbi modulok a fázisnak megfelelően tervezési jegyzékben maradnak, nem lehetnek hamis működő linkek. A Dashboard adhat gyorsműveletet ugyanarra a funkcióra, de nem építhet második implementációt.
 
@@ -1126,7 +1127,7 @@ A Twitch, YouTube, TikTok, Discord és minden későbbi provider külön fejlesz
 | E-06 Szöveg és tipográfia | Text elem, szövegérték, font family/size/weight/line height/letter spacing/alignment; Rich Text a külön jóváhagyott scope szerint | CMS/content, Design System | A tartalomérték és stílus külön kezelendő; global token és local override szabályozott |
 | E-07 Megjelenés | Szín, háttér, border, radius, shadow, opacity, state és láthatóság | Design System/Theme + Property Registry | Globális theme-módosítás minden azt használó felületen megjelenik; explicit local override csak ott ír felül |
 | E-08 Média és ikonok | Resource picker, kép/videó/embed/ikon kiválasztása, alt text megjelenítése és szükséges lokális crop/fit | Resource Library / R2 / Content | Az Editor nem készít másolatot a médiából; közös Resource ID és metadata |
-| E-09 Komponensek és blokkok | Element library, section/container/row/columns, text/image/video/button/card/list/table/accordion/tabs, domain widgetek beszúrása | Component/Template Manager + domain manager | A block saját megjelenítési konfigurációt tárol; üzleti/domain rekordot nem duplikál |
+| E-09 Komponensek és blokkok | Element library, section/container/row/columns, text/image/video/button/card/list/table/accordion/tabs, domain widgetek beszúrása; Sanci Button példányok | Component/Template Manager + Sanci Button Registry + domain manager | A block saját megjelenítési konfigurációt tárol; üzleti/domain rekordot nem duplikál; a közös gombdefiníció nem másolódik oldalanként |
 | E-10 Dinamikus adatkötés | Támogatott binding kiválasztása, field/format/filter, loading/empty/error/fallback/conditional visibility preview | CMS, Schedule, Integration, Content és más domain adapterek | Typed binding contract, auth/site scope, freshness/cache/error states; az Editor nem kerülheti meg a jogosultságot |
 | E-11 Navigation/link/action | Link/CTA, target, validált click/hover/focus/submit/open/close/toggle/navigation actions | Navigation/Forms/Communication és accessibility contract | Nincs arbitrary unsafe script; validáció, keyboard/focus és reduced-motion kötelező |
 | E-12 Page settings | Oldalnév/slug, oldal-specifikus metadata, publikus/preview állapot | Pages/CMS + SEO | Egy canonical oldalfelvétel és slug; globális site setting nem másolódik oldalanként |
@@ -1159,6 +1160,36 @@ Ugyanaz a funkció szándékosan megjelenhet a Dashboardon, a saját Managerben 
 A következő fázisok megkezdése előtt a 01–140, H19–H34, 00/A, 00.9.6.C/D/E/F, E/F és 2.76 domain-katalógus Visual Editorhoz és Admin munkaterületekhez tartozó tételeit ehhez a képességtérképhez kell hozzárendelni. Ez egy **kétirányú traceability ellenőrzés**: minden régi követelményhez legyen célmodul és fázis; minden új modulfunkcióhoz legyen forrás/indoklás, canonical owner, dependency és acceptance. A hasonló nevű tételek összevonása csak akkor engedélyezett, ha a különálló viselkedés/mező/permission/edge case explicit módon megmarad. Hiányzó, nem egyértelmű vagy egymásnak ellentmondó tétel nem törölhető: nyitott döntésként rögzítendő.
 
 A végső, felhasználónak átadandó **teljes funkciókatalógus** csak a fenti traceability ellenőrzés és a fázisbesorolás befejezése után készülhet el; tartalmazza a teljes Sanci9517 platform valamennyi funkcióját, a hozzá tartozó Admin belépési pontot, canonical domain owner-t, függőségeket, tervezett fázist, státuszt és elfogadási feltételeket. A jelen fejezet még nem a végső teljes lista.
+
+---
+
+### F0.0.4 — ARCHIVÁLT TERVEK KERESZTELLENŐRZÉSE ÉS KIMARADÁSI JAVÍTÁSOK (2026-10-13)
+
+**Állapot:** archivált forrásdokumentumok dokumentumszintű összevetése elvégezve; az explicit eltérések bekerültek a közvetlen termékkövetelményekbe. Ez nem runtime PASS, és nem írja át az egyetlen aktív végrehajtási pontot.
+
+**Elsődleges szabály:** a jelenlegi MASTER és az eleji ACTIVE_POINT_ID az operatív igazságforrás. Az archívum a korábbi igények, döntések és állapotok eredetét őrzi; régi fázissorrend, checkbox vagy „következő pont” nem aktiválható vissza automatikusan. Az archívum egyetlen feature-e sem tekinthető töröltnek pusztán azért, mert régi tervből származik.
+
+| Átnézett forrás | A jelenlegi MASTER-be átvezetendő / visszakövetendő tartalom | Kezelés |
+|---|---|---|
+| `docs/archive/plans/MASTER-CURRENT-STATUS.md` | 2026-09-17-i Editor Core állapot, régi tesztkapuk és következő pont | Történeti státusz; a jelenlegi ACTIVE_* és friss acceptance bizonyíték az irányadó |
+| `docs/archive/plans/MASTER-FINAL-ROADMAP.md` | E3–E24 Editor, A1–A6 Admin, AI és T1–T6 teszt/release kapuk | Capability-k az E/F specifikációkhoz és F0.x végrehajtási pontokhoz vannak rendelve; a régi fázissorrend nem aktív |
+| `docs/archive/plans/PLAN-AMENDMENT-EDITOR-UNIFICATION.md` | Egyetlen Page Model, valódi oldalak megőrzése/migrációja, tesztoldalak és legacy réteg külön kezelése | E.1/E.3, F0.0 és legacy/archive szabály; nincs második Editor vagy párhuzamos renderer |
+| `docs/archive/plans/SANCI-MASTER-PLAN.md` | Publikus oldalak, Sanci Buttons, kiválasztott brandikonok, stream/game/social elemek, Creator Resources és későbbi oldalak | **Kiegészítve:** UI-23 Sanci Button Registry, E.6 Button/ikon-kontraktus, E.2.1 Creator Resources; a többi képesség a Public Website, CMS, Integration, Schedule, Media, SEO, Analytics és AI ownerhez tartozik |
+| `docs/archive/plans/ULTIMATE-PLATFORM-DIRECTION-2026-09-16.md` | Központi action rendszer, validáció, document model, Content/Data/Integration/Automation/AI/Intelligence rétegek, AI Engineer | **Explicit pontosítva:** az AI Engineer biztonságos intent→action→validation→preview/diff→approval→execution→test→audit folyamat; nem önálló, korlátlan módosítási út |
+| `docs/archive/plans/V2-BLUEPRINT.md` | Worker/D1/R2 és későbbi KV/Queues/Durable Objects, auth, API, SEO/cache/security és integrációs rétegek | E.19, foundation és a megfelelő platform/domain fejezetek; infrastruktúra nem jelent automatikusan bekapcsolt termékfunkciót |
+| `docs/archive/plans/VISUAL-EDITOR-ARCHITECTURE.md` | Stabil node ID, structured tree, selection/hierarchy/layer order, history, AI és kompatibilitási szerződés | F0.0/F0.4 és 00.9.6.F; egy canonical Page Model/state/command/history útvonal marad |
+| `docs/archive/plans/visual-editor-roadmap.md` | Korai Editor Shell és lépésenkénti felhasználói teszt szabálya | Történeti sorrend; a tényleges aktív F0.4 gate és jelenlegi tesztbizonyíték irányadó |
+| `docs/SANCI-CONTINUOUS-CONTEXT.md` | Magyar-first publikus oldal, moduláris backend, Sanci Buttons, mobil/desktop parity, korábbi Editor funkciók és egy-lépéses acceptance | Történeti állapotok nem mai készültségi bizonyítékok; a követelmények a jelenlegi E/F és aktív buildpont szerint maradnak érvényben |
+| `docs/ARCHIVE-LEGACY-LAYERS.md` | Legacy Editor/Admin/system-page fájlok és régi adat megőrzése, amíg külön cleanup/migráció nincs jóváhagyva | Legacy réteg nem canonical és nem aktiválható vissza; adatbázis-takarítás csak külön, bizonyított migrációs/rollback kapu után |
+
+**Keresztellenőrzésből rögzített konkrét korrekciók**
+1. A Sanci Buttons nem pusztán általános „button” elem: saját, stabil ID-val és központi definícióval rendelkező brandgomb-regisztert kap, önálló Admin belépési ponttal (UI-23). Az Editor csak a regiszterből származó példányt használja; a globális definíció és a helyi override külön marad.
+2. A kiválasztott Sanci ikonok referenciahű megőrzése explicit követelmény. Hard-coded emoji vagy véletlenszerű ikoncsere nem elfogadható.
+3. A Creator Resources / alkotói erőforrások külön jövőbeli publikus oldal és CMS-tartalomcél; nem tűnhet el az általános „Content” megnevezésben.
+4. Az AI Engineer a SANCI AI/Automation munkaterület biztonságos action pipeline-jának része, nem külön canonical Editor, nem közvetlen DOM/DB író.
+5. Az archívumokban felsorolt lock/hide, copy/paste, multi-select, grouping, responsive, media upload/replace/archive, revision/restore, SEO, security, integrations, OBS, VOD/Clips/Shorts, analytics, automation, teams/SaaS és marketplace képességek a jelenlegi E/F katalógus megfelelő részeiben maradnak. A történeti checklist státusz önmagában nem jelent runtime készültséget.
+
+**Fennmaradó teljességi szabály:** a forrásdokumentumok áttekintése nem jogosít fel egyetlen tétel hallgatólagos elhagyására. A 01–140 preservation matrix és a H19–H34 ledger megőrzött nyomkövetési alap; ha a részletes, soronkénti kétirányú megfeleltetés során bármelyik tétel nem rendelhető egyértelmű UI-hoz, canonical ownerhez, fázishoz és acceptance-hez, azt `UNMAPPED REQUIREMENT` nyitott tételként kell rögzíteni. Ez a korrekciós munka nem módosítja a F0.4 aktív státuszát és nem enged párhuzamos implementációt.
 
 ---
 
@@ -2821,7 +2852,7 @@ A platform egy egységes creator-rendszer, amelynek felületei ugyanazokat a can
 A publikus oldal mobilon, tableten és asztali gépen is egységes, gyors és használható creator-márkaélményt adjon.
 
 ### E.2.1 — Alapoldalak és navigáció
-- Kezdőlap, bemutatkozás / About, Schedule, Live, VOD / videók, Clips / Shorts, platformonkénti profil- vagy tartalomoldal, Community, Contact és későbbi Store, Membership, Events, Blog/News, Digital Products és Sponsor/Business oldalak.
+- Kezdőlap, bemutatkozás / About, Schedule, Live, VOD / videók, Clips / Shorts, platformonkénti profil- vagy tartalomoldal, Community, Contact és későbbi Store, Membership, Events, Blog/News, **Creator Resources / alkotói erőforrások**, Digital Products és Sponsor/Business oldalak. A Creator Resources önálló publikus oldalcél és CMS-tartalomkategória; a hozzá tartozó elemek a Page/CMS rendszerből kezelhetők, nem külön HTML-rétegben.
 - Az oldalak és az útvonalak a Page/CMS rendszerből legyenek kezelhetők; ne legyen szükség kézi HTML-módosításra a normál tartalomfrissítéshez.
 - Közös fejléc, navigáció, lábléc, mobilmenü, aktív navigációs állapot, logó és közösségi linkek.
 - Navigációs elemek sorrendje, címkéje, célja, láthatósága és új ablakos viselkedése kezelhető legyen; a jogosultság és külső URL validációja szerveroldalon is történjen.
@@ -2928,6 +2959,7 @@ Az Editor önálló, professzionális, vizuális alkalmazás. Az alapvető oldal
 - Template Library: teljes site starter, page template, section template, block preset és későbbi creator-created template.
 - Kiinduló template-kategóriák: Gaming, Just Chatting, Esports, Variety, VTuber, Music, Podcast, Creator Business, Merch-first.
 - Component Library: reusable komponensek, variantok, slotok, alapértékek, belső struktúra és frissítési szabály.
+- **Sanci Button Registry (külön UI-23 munkaterület):** stabil ID, név/leírás, ikon ID és központi icon registry, külső URL/belső route/validált action, láthatóság és sorrend, duplikálás, ikon+szöveg/csak ikon/csak szöveg megjelenítés, hover/focus/active/disabled állapotok, globális változtatás és explicit helyi override. A kiválasztott brandikonokat referencia alapján kell megőrizni; nem helyettesíthetők találomra emoji-val vagy hard-coded HTML-lel.
 - Symbol/linked instance: közös forrás és hivatkozott példány; a közös módosítás hatóköre előre látható, detach csak explicit művelet.
 - Import/export, versioning, kompatibilitás, preview és rollback; későbbi marketplace licenc- és jogosultságkezeléssel.
 - Template/component változás nem ronthat el csendben már publikált oldalt; migráció/preview és revízió szükséges.
@@ -3047,7 +3079,8 @@ Az Editor önálló, professzionális, vizuális alkalmazás. Az alapvető oldal
 - Egy automation hibája ne indítsa el végtelenül ugyanazt a műveletet, és ne kerülje meg a domain permissionöket.
 
 ### AI
-- AI website assistant strukturált szándékot alakítson validált Page Operations listává; közvetlen, korlátlan HTML/DB/kódmódosítás nem engedélyezett.
+- AI website assistant / későbbi AI Engineer strukturált szándékot alakítson validált Page Operations vagy más engedélyezett action listává; közvetlen, korlátlan HTML/DOM/DB/kódmódosítás nem engedélyezett.
+- Kötelező pipeline: intent → strukturált terv/action lista → schema és jogosultság validáció → preview/diff → emberi jóváhagyás, ahol szükséges → végrehajtás a canonical command/API útvonalon → teszt/ellenőrzés → audit/version. Az AI nem kerülheti meg a Page Modelt, a command/history/persistence útvonalat, a domain permissionöket vagy a publish gate-et.
 - Folyamat: intent → structured operations → schema validation → draft revision → diff preview → human approval → publish.
 - AI-javaslatok: layout, content, SEO, title/description, localization, schedule/content workflow és később stream transcript, chapters, highlights, clip candidates, title/description és short-form scripts.
 - AI-generated változás mindig preview, jogosultságellenőrzés, validáció, rollback és usage tracking mellett fusson.
