@@ -6219,3 +6219,52 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 
 **Status:** 38/38 source list items keyed; semantic acceptance, owner/phase/dependency and current UI evidence remain OPEN. P0.2 **IN PROGRESS / NOT PASS**.
 
+
+### 41.3.41. P0.2 — Historical current-status report: evidence and precedence ledger (2026-10-13)
+
+**Source:** `docs/archive/plans/MASTER-CURRENT-STATUS.md`, source blob `d3e9b171d601f93b09c4fe0c3038d208c8766163`. This status file records an earlier E2 test result and earlier active E3 direction. Its checkmarks and counts must remain historical; they do not supersede the current MASTER's P0/P0.2 gate.
+
+**Inventory:** 30 unordered source bullets individually keyed.
+
+| Source key | Archive line | Source section | Exact source item | Candidate canonical IDs | Decision / evidence boundary |
+|---|---:|---|---|---|---|
+| STATUS-019 | 19 | E2 végleges ellenőrzés | - 12 teszt; | EDT-002–005/011–014/022/039; QA-001/002/006 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+| STATUS-020 | 20 | E2 végleges ellenőrzés | - 12 pass; | EDT-002–005/011–014/022/039; QA-001/002/006 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+| STATUS-021 | 21 | E2 végleges ellenőrzés | - 0 fail; | EDT-002–005/011–014/022/039; QA-001/002/006 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+| STATUS-022 | 22 | E2 végleges ellenőrzés | - 0 skipped; | EDT-002–005/011–014/022/039; QA-001/002/006 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+| STATUS-023 | 23 | E2 végleges ellenőrzés | - 0 cancelled; | EDT-002–005/011–014/022/039; QA-001/002/006 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+| STATUS-024 | 24 | E2 végleges ellenőrzés | - batch history grouping PASS; | EDT-002–005/011–014/022/039; QA-001/002/006 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+| STATUS-025 | 25 | E2 végleges ellenőrzés | - hierarchy/reparent/reorder PASS; | EDT-001/002/011/012/034; WEB-032; QA-002/004 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+| STATUS-026 | 26 | E2 végleges ellenőrzés | - duplicate subtree PASS; | EDT-002–005/011–014/022/039; QA-001/002/006 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+| STATUS-027 | 27 | E2 végleges ellenőrzés | - lock/validation PASS; | EDT-002–005/011–014/022/039; QA-001/002/006 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+| STATUS-028 | 28 | E2 végleges ellenőrzés | - undo/redo PASS; | EDT-002–005/011–014/022/039; QA-001/002/006 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+| STATUS-029 | 29 | E2 végleges ellenőrzés | - transaction commit/rollback PASS; | EDT-002–005/011–014/022/039; QA-001/002/006 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+| STATUS-030 | 30 | E2 végleges ellenőrzés | - unknown command corruption protection PASS. | EDT-002–005/011–014/022/039; QA-001/002/006 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+| STATUS-039 | 39 | E2 CÉLTERÜLETEK — LEZÁRVA | - selection; | EDT-003/008/009/011/014/021–026; QA-002/004 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+| STATUS-040 | 40 | E2 CÉLTERÜLETEK — LEZÁRVA | - element add/update/content; | EDT-003/008/009/011/014/021–026; QA-002/004 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+| STATUS-041 | 41 | E2 CÉLTERÜLETEK — LEZÁRVA | - style/layout/responsive módosítás; | EDT-003/008/009/011/014/021–026; QA-002/004 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+| STATUS-042 | 42 | E2 CÉLTERÜLETEK — LEZÁRVA | - visibility/lock; | EDT-003/008/009/011/014/021–026; QA-002/004 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+| STATUS-043 | 43 | E2 CÉLTERÜLETEK — LEZÁRVA | - delete/duplicate; | EDT-003/008/009/011/014/021–026; QA-002/004 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+| STATUS-044 | 44 | E2 CÉLTERÜLETEK — LEZÁRVA | - hierarchy reparent/reorder; | EDT-001/002/011/012/034; WEB-032; QA-002/004 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+| STATUS-045 | 45 | E2 CÉLTERÜLETEK — LEZÁRVA | - undo/redo; | EDT-002–005/011–014/022/039; QA-001/002/006 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+| STATUS-046 | 46 | E2 CÉLTERÜLETEK — LEZÁRVA | - tranzakció/rollback; | EDT-002–005/011–014/022/039; QA-001/002/006 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+| STATUS-047 | 47 | E2 CÉLTERÜLETEK — LEZÁRVA | - validáció és hibás hierarchy megakadályozása; | EDT-001/002/011/012/034; WEB-032; QA-002/004 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+| STATUS-048 | 48 | E2 CÉLTERÜLETEK — LEZÁRVA | - batch command history grouping; | EDT-002–005/011–014/022/039; QA-001/002/006 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+| STATUS-049 | 49 | E2 CÉLTERÜLETEK — LEZÁRVA | - ismeretlen command hibabiztos kezelése. | EDT-002–005/011–014/022/039; QA-001/002/006 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+| STATUS-059 | 59 | KORÁBBI DÖNTÉSEK | - A régi Visual Editor nem kerül továbbfoltozásra. | EDT-001/003/039; WEB-012/032; OPS-004; QA-002/006 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+| STATUS-060 | 60 | KORÁBBI DÖNTÉSEK | - Régi editor archive: `archive/pre-editor-rebuild-2026-09-16`. | EDT-001/003/039; WEB-012/032; OPS-004; QA-002/006 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+| STATUS-061 | 61 | KORÁBBI DÖNTÉSEK | - Régi publikus HTML archive: `archive/pre-canonical-public-2026-09-16`. | EDT-001/003/039; WEB-012/032; OPS-004; QA-002/006 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+| STATUS-062 | 62 | KORÁBBI DÖNTÉSEK | - Az új editor tiszta, egyetlen architektúrára épül. | EDT-001–042; QA-001/002/004/006/009 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+| STATUS-063 | 63 | KORÁBBI DÖNTÉSEK | - A strukturált Page Model az editor igazságforrása; nem HTML-importból kell működnie. | EDT-001/002/011/012/034; WEB-032; QA-002/004 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+| STATUS-064 | 64 | KORÁBBI DÖNTÉSEK | - A parent/child hierarchy valódi adatmodell legyen. | EDT-001/002/011/012/034; WEB-032; QA-002/004 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+| STATUS-065 | 65 | KORÁBBI DÖNTÉSEK | - Minden jelentős pontnál: implementáció → tényleges teszt → felhasználói visszaigazolás → csak ezután tovább. | EDT-001–042; QA-001/002/004/006/009 | HISTORICAL CLAIM — exact commit/scope not current release evidence; revalidate as applicable |
+
+**Semantic exceptions:**
+- The historical “12 tests / 12 pass / 0 fail” result is scoped to its original test command, commit and Editor Core. It does not prove the current Editor v2 UI, responsive canvas, save/reload, public renderer, authorization, D1/R2 ownership or current release build.
+- Historical PASS statements for batch history, hierarchy/reparent/reorder, duplicate subtree, lock/validation, undo/redo, transaction rollback and unknown-command protection must be kept as prior evidence. Re-run affected tests against the exact current commit before using them as release acceptance.
+- The historical “next point” is superseded. Current execution remains P0.2; no E3 implementation starts until P0.2 and the following P0 gates pass.
+- The Page Model source-of-truth, true parent/child hierarchy, no-legacy-runtime and user-verification rules remain architecture invariants and are cross-referenced with the canonical Editor contract.
+- No runtime code/data changed; no tests run.
+
+**Status:** 30/30 source bullets keyed; historical test evidence and current runtime acceptance deliberately separated. P0.2 **IN PROGRESS / NOT PASS**.
+
