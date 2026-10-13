@@ -1,3 +1,9 @@
+> **ARCHÍV / NEM VÉGREHAJTÁSI TERV — SUPERSEDED 2026-10-13**
+>
+> Ez a fájl kizárólag történeti forrás és bizonyíték. A benne szereplő régi ACTIVE_POINT, F0.x/M0 státuszok, kapuk és végrehajtási sorrendek nem érvényesek a jelenlegi munkára, és új beszélgetésben sem választhatók aktív tervként. Az egyetlen irányadó terv: [`docs/MASTER-DEVELOPMENT-PLAN.md`](../MASTER-DEVELOPMENT-PLAN.md) a `v2/foundation` ágon. A követelményeket meg kell őrizni és az egyetlen MASTER-be kell reconciliálni; az archívum nem törölhető pusztán azért, mert elavult.
+
+---
+
 **ACTIVE_POINT_ID:** `F0.4-VISUAL-BUILDER-LAYERS-INSPECTOR`
 **ACTIVE_POINT_STATUS:** `ACTIVE — Canvas közvetlen manipuláció, Layers és Inspector egységes Page Model/command útvonalon`
 **ACTIVE_POINT_TITLE:** Visual Builder, Layers, Inspector és responsive szerkesztés
