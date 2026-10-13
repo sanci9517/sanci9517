@@ -60,7 +60,7 @@ test("mobile users can open and close the same capability search", () => {
   assert.match(dashboard, /@media \(max-width: 600px\)[\s\S]*?\.search-wrap \{ display: none; \}/);
   assert.match(dashboard, /\.search-wrap\.mobile-search-open\s*\{[^}]*display: block;[^}]*position:\s*absolute/);
   assert.match(dashboard, /mobileSearch\.addEventListener\("click"/);
-  assert.match(dashboard, /if \(event\.key === "Escape"\)\s*\{\s*closeSidebar\(\);\s*closeMobileSearch\(true\);/);
+  assert.match(dashboard, /if \(event\.key === "Escape"\)\s*\{\s*closeSidebar\(true\);\s*closeMobileSearch\(true\);/);
   assert.match(dashboard, /if \(restoreFocus && wasOpen && window\.matchMedia\("\(max-width: 600px\)"\)\.matches\)\s*\{\s*mobileSearch\.focus\(\);/);
   assert.match(dashboard, /else mobileSearch\.focus\(\);/);
 });
