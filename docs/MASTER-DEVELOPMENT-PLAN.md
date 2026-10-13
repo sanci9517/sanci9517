@@ -4265,3 +4265,34 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 
 **Status:** 359 IDs structurally unique; 210 C.23 and 100 F source bullets individually preserved; F.3 is split one-to-one; the source crosswalk now explicitly references 354 IDs and has 5 range-only references. Five items above still lack an individual source-key mapping; COM-003/COM-007 have a roadmap mapping but require detailed phase/acceptance contracts. Full 359-ID semantic bidirectional reconciliation remains **OPEN**; all IDs still require owner/phase/dependency/DoD/test/acceptance validation. P0.2 **IN PROGRESS / NOT PASS**. No runtime code/data changed and no tests were run.
 
+### 41.3.24. P0.2 — Archive-plan inventory, historical MASTER commit and unresolved source recovery (2026-10-13)
+
+**Inventory verified against the current branch:** the dated archive contains the 2026-10-13 MASTER snapshot and a 2026-09-16 directory with the legacy HTML manifest. The current branch's docs/archive/plans directory contains the following eight plan files; their historical contents are requirements/decision sources, not current execution instructions.
+
+| Archived source | Raw Markdown list items* | Provenance treatment and remaining work |
+|---|---:|---|
+| docs/archive/plans/MASTER-CURRENT-STATUS.md | 30 | E2 completion/test evidence applies only to its named historical commit and exact scope; former active point is superseded. |
+| docs/archive/plans/MASTER-FINAL-ROADMAP.md | 454 | E3–E24 and the old release sequence are historical. The current E crosswalk has 249 rows, so it is not a proven one-to-one mapping of every raw list item; bullet-level semantic reconciliation remains OPEN. |
+| docs/archive/plans/PLAN-AMENDMENT-EDITOR-UNIFICATION.md | 140 | Preserve one Page Model/Editor/renderer/save path, safe real-page migration, per-page migration gates, temporary fallback rules, and separation of real pages from disposable editor test pages. Individual migration requirements still need current feature ID, owner, phase, tests and acceptance evidence. |
+| docs/archive/plans/SANCI-MASTER-PLAN.md | 423 | Public Brand pages, navigation, Admin, media, SEO, analytics, security, integrations and Stream Assistant; reconcile all unique requirements, not only headings or shared keywords. |
+| docs/archive/plans/ULTIMATE-PLATFORM-DIRECTION-2026-09-16.md | 42 | Preserve the long-term modular Creator Platform, stable object/action IDs, central action-validation-security chain, document model, platform layers and AI/engineering/QA direction. Exact bullet-level crosswalk remains OPEN. |
+| docs/archive/plans/V2-BLUEPRINT.md | 117 | Preserve Worker/D1/R2/KV/Queues/DO, auth, API, cache, SEO, security and deployment architecture as historical intent. Each planned binding/service must be reconciled to current wrangler config, runtime consumers and phase gates; the document is not proof of implementation. |
+| docs/archive/plans/VISUAL-EDITOR-ARCHITECTURE.md | 27 | Preserve structured-tree, shared Canvas/Layers/Inspector state, selection/hierarchy/history and AI action boundaries. Its historical runtime path public/editor/editor-core.js is not canonical; current canonical Editor is public/editor-v2. |
+| docs/archive/plans/visual-editor-roadmap.md | 38 | Historical Editor shell/canvas/elements/Sanci blocks/Inspector/Layers/design/responsive milestone sequence; map each unique requirement to current EDT/DSN/QA contracts without reviving the old active point. |
+| docs/archive/2026-09-16/LEGACY-HTML-ARCHIVE.md | 8 | Preserve the exact eight legacy page-to-slug mappings and migration 0006_canonicalize_legacy_pages.sql. Legacy HTML must not become a second active source; historical SQL migrations remain in migrations/. Current router reconciliation is recorded in §37.18, but migration/data-preservation/public parity evidence remains a separate acceptance gate. |
+
+*Counts above are raw Markdown list-item counts, including nested and ordered lists; they are inventory metrics, not unique-feature counts and not evidence of coverage.
+
+**Historical MASTER source at commit aedb2eaab2440c29bd0c05959d5064f410de5966:** the historical docs/MASTER-DEVELOPMENT-PLAN.md is 1,338 lines and contains 00.1–00.7, 01/A–01/C and sections 19–38. It does **not** contain a section named 00/A or the 00.9–00.9.6.B sequence. Its 19–34 source contains 266 Markdown list items (255 unordered bullets plus 11 ordered steps). The current H19–H34 ledger has 271 rows: 266 source items plus five separately retained cross-cutting/summary rows—H21.22, H31.00, H33.00, H33.12 and H34.00. This explains the five-row difference; those extra rows must remain labeled as architecture/process constraints, not misrepresented as additional historical bullets.
+
+**Unrecovered source boundary:** in the current branch's dated archive, archived plan directory and the inspected historical MASTER commit, the full original 00/A and original 00.9–00.9.6.B files/text are not present. The current snapshot contains only a partial 00/A.2.2 fragment and later 00.9.6.C–F material. Exact-path and content search did not recover the missing originals. This is evidence of non-recovery from the inspected sources, **not proof that the documents never existed in any uninspected commit or external location**. Keep the source status UNRECOVERED / PARTIALLY RECOVERED / OPEN; do not reconstruct missing original text from guesses or silently mark it reconciled.
+
+**Required next source-reconciliation sequence:**
+1. Continue with MASTER-FINAL-ROADMAP.md as the first large secondary source: establish source heading/list-item keys for E3–E24, reconcile each unique item to current canonical IDs and phase, and record explicit duplicate/merge/superseded decisions. Do not treat the 249-row E crosswalk as one-to-one proof.
+2. Reconcile the PLAN-AMENDMENT-EDITOR-UNIFICATION.md migration checklist item-by-item, including each real page, fallback, verification stage and test-page cleanup.
+3. Reconcile SANCI-MASTER-PLAN.md, ULTIMATE-PLATFORM-DIRECTION-2026-09-16.md and V2-BLUEPRINT.md for any capability or architectural constraint not already represented by a specific source-key/ID mapping.
+4. Reconcile the Visual Editor architecture and roadmap against the current canonical runtime, preserving constraints while explicitly superseding only old paths/milestone labels.
+5. Keep the legacy HTML manifest as a separate migration acceptance source; validate each listed route/content mapping and do not infer success from the manifest alone.
+
+**Status:** the eight secondary plans plus legacy manifest have been enumerated and their precedence recorded; this is inventory, not full semantic coverage. The missing 00/A and 00.9–00.9.6.B source gap remains OPEN, and the secondary-plan bullet-level reconciliations remain OPEN. P0.2 **IN PROGRESS / NOT PASS**. No runtime code/data changed and no tests were run.
+
