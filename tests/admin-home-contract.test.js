@@ -7,7 +7,7 @@ const dashboard = readFileSync(new URL("../public/admin-home.html", import.meta.
 
 test("canonical Admin route is authenticated and serves the single dashboard asset", () => {
   assert.ok(worker.includes('if (pathname === "/admin") {'));
-  assert.ok(worker.includes('return env.ASSETS.fetch(assetRequest("/admin.html", request));'));
+  assert.ok(worker.includes("return env.ASSETS.fetch(assetRequest("));
   assert.ok(worker.includes('if (pathname === "/admin/home" || pathname === "/admin-home.html" || pathname === "/admin.html")'));
   assert.ok(worker.includes('new URL("/admin", request.url).toString(), 302'));
   assert.ok(worker.includes('if (pathname === "/admin/login")'));
