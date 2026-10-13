@@ -96,6 +96,7 @@
     .main-shell { min-height: 100vh; margin-left: var(--sidebar-width); }
     .topbar { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 16px; min-height: 72px; padding: 0 34px; border-bottom: 1px solid var(--line); background: rgba(16,13,24,.94); backdrop-filter: blur(18px); }
     .mobile-menu { display: none; width: 38px; height: 38px; border: 1px solid var(--line); border-radius: 11px; background: var(--surface); }
+    .mobile-search { display: none; }
     .breadcrumbs { min-width: 150px; flex: 1; }
     .breadcrumbs small { display: block; margin-bottom: 4px; color: var(--subtle); font-size: 10px; }
     .breadcrumbs strong { font-size: 14px; letter-spacing: -.02em; }
@@ -225,7 +226,9 @@
       .breadcrumbs { min-width: 0; }
       .breadcrumbs small { font-size: 9px; }
       .breadcrumbs strong { font-size: 12px; }
-      .search-wrap { display: none; }
+      .mobile-search { display: grid; flex: 0 0 auto; }
+      .search-wrap.mobile-search-open { display: block; position: absolute; top: calc(100% + 6px); left: 12px; right: 12px; z-index: 50; width: auto; }
+      .search-wrap.mobile-search-open .menu-search { height: 44px; }
       .top-actions { margin-left: auto; }
       .icon-action { width: 35px; height: 35px; }
       .theme-toggle { width: 35px; padding: 0; }
@@ -347,7 +350,6 @@
       <div class="site-switcher" aria-label="Aktuális webhely">
         <span class="site-avatar" aria-hidden="true">S</span>
         <span class="site-info"><strong id="sidebarSiteName">Sanci9517</strong><small>Aktuális webhely</small></span>
-        <span class="chevron" aria-hidden="true">⌄</span>
       </div>
       <div class="nav-label">Munkaterület</div>
       <nav class="nav-list" aria-label="Főmenü">
@@ -386,8 +388,9 @@
       <header class="topbar">
         <button class="mobile-menu" id="mobileMenu" type="button" aria-label="Navigáció megnyitása" aria-expanded="false">☰</button>
         <div class="breadcrumbs"><small>Sanci9517 / Creator Center</small><strong>Kezdőlap</strong></div>
-        <label class="search-wrap"><span aria-hidden="true">⌕</span><input class="menu-search" id="menuSearch" type="search" placeholder="Funkció keresése…" aria-label="Funkció keresése"></label>
+        <label class="search-wrap" id="searchWrap"><span aria-hidden="true">⌕</span><input class="menu-search" id="menuSearch" type="search" placeholder="Funkció keresése…" aria-label="Funkció keresése"></label>
         <div class="top-actions">
+          <button class="icon-action mobile-search" id="mobileSearch" type="button" aria-label="Funkciókeresés megnyitása" aria-expanded="false" aria-controls="searchWrap" title="Funkciókeresés">⌕</button>
           <button class="icon-action" id="refresh" type="button" aria-label="Adatok frissítése" title="Adatok frissítése">↻</button>
           <button class="theme-toggle" id="themeToggle" type="button" aria-label="Világos téma bekapcsolása" title="Téma váltása"><span aria-hidden="true" id="themeIcon">☼</span><span class="theme-toggle-label" id="themeLabel">Világos mód</span></button>
           <a class="icon-action" href="/" target="_blank" rel="noopener noreferrer" aria-label="Publikus webhely megnyitása" title="Publikus webhely megnyitása">↗</a>
@@ -763,7 +766,28 @@
       $("mobileMenu").setAttribute("aria-expanded", String(open));
     });
     backdrop.addEventListener("click", closeSidebar);
-    document.addEventListener("keydown", (event) => { if (event.key === "Escape") closeSidebar(); });
+    const searchWrap = $("searchWrap");
+    const mobileSearch = $("mobileSearch");
+    function closeMobileSearch() {
+      searchWrap.classList.remove("mobile-search-open");
+      mobileSearch.setAttribute("aria-expanded", "false");
+      mobileSearch.setAttribute("aria-label", "Funkciókeresés megnyitása");
+      mobileSearch.title = "Funkciókeresés";
+    }
+    mobileSearch.addEventListener("click", () => {
+      const open = !searchWrap.classList.contains("mobile-search-open");
+      searchWrap.classList.toggle("mobile-search-open", open);
+      mobileSearch.setAttribute("aria-expanded", String(open));
+      mobileSearch.setAttribute("aria-label", open ? "Funkciókeresés bezárása" : "Funkciókeresés megnyitása");
+      mobileSearch.title = open ? "Keresés bezárása" : "Funkciókeresés";
+      if (open) $("menuSearch").focus();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        closeSidebar();
+        closeMobileSearch();
+      }
+    });
     $("menuSearch").addEventListener("input", (event) => {
       const query = event.target.value.trim().toLocaleLowerCase("hu-HU");
       document.querySelectorAll("[data-nav-label]").forEach((item) => {
