@@ -4320,13 +4320,12 @@ F0.2 DoD:
 
 ## 2.77.9.K — F0.2 login session handoff hardening — 2026-10-13
 
-**Állapot: FEATURE BRANCHEN IMPLEMENTÁLVA; PR-CI ÉS TABLETES PRODUCTION ACCEPTANCE MÉG NINCS.**
+**Állapot: MERGED TO `v2/foundation`; PR-CI PASS; ANDROID CHROME TABLET ACCEPTANCE MÉG NYITOTT.**
 
 - [x] A login API sikeres válasza után a kliens ellenőrzi a `GET /api/auth/session` tényleges állapotát, mielőtt az Adminra navigálna.
 - [x] A munkamenet ellenőrzése `credentials: same-origin` és `cache: no-store` beállítással, legfeljebb három rövid próbálkozással történik.
 - [x] Ha a böngésző nem küldi vissza a sessiont, a login oldal nem indít újabb /admin → /admin/login átirányítási hurkot; helyette egyértelmű hibaüzenetet mutat.
-- [ ] Typecheck és teljes regressziós tesztkészlet PASS.
-- [ ] PR-CI PASS.
+- [x] PR #15 squash merge-elve: `03bcb47d98ed66173272cd7895daf3d5c0ef4b9c`; PR HEAD `ced0e7899efc1619839ef3b428764702006c2f01` alatt az `Editor Core Test` #990 és a `Twitch Integration Check` #366 PASS, beleértve a typecheck, Admin contract, Editor, Schedule és domain regressziókat.
 - [ ] Éles acceptance Android Chrome tableten: sikeres belépés után az Admin maradjon nyitva; a `/api/auth/session` authenticated=true állapotú legyen. Ha a javított flow még mindig jelzi, hogy a munkamenet nem igazolható, a sütikezelés gyökérokát célzott böngészős diagnosztikával kell feltárni; ez a változtatás önmagában nem bizonyítja, hogy a tablet böngésző eltárolja a sütit.
 
 **Biztonság:** a session-cookie attribútumokat és a szerveroldali auth/RBAC logikát ez a szelet nem módosítja. Nincs automatikus élesítés pusztán a CI zöld állapota alapján; a tablet-login acceptance szükséges.
