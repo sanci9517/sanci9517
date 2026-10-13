@@ -8,7 +8,7 @@
 **PARALLEL_WORKSTREAMS:** `0`
 
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
-**Verzió:** MASTER-2.85 — 24 canonical fejlesztési terület különválasztása; integrációk önálló területként megőrizve; aktív pont változatlanul F0.4.  
+**Verzió:** MASTER-2.86 — Visual Editor capability-térkép és Admin munkaterületek; shared canonical funkciók; teljes katalógus auditja nyitott.  
 **Frissítve:** 2026-10-13.  
 **Dokumentum státusza:** ez az egyetlen végrehajtási igazságforrás.
 **Audit / implementation baseline:** GitHub `v2/foundation`, commit `54daad2357ca576d9e333a052e7bcbb6c2e2d51a` (2026-10-13; F0.3 history-integrity, revision-conflict recovery és save/reload client hardening PR #18–#25 integrálva; production save/reload runtime acceptance továbbra is nyitott). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
@@ -1076,6 +1076,89 @@ A Twitch, YouTube, TikTok, Discord és minden későbbi provider külön fejlesz
 2. A következő aktív pontra váltáskor az adott terület kap konkrét scope-ot, fájl/API/adatmodell érintettséget, függőségi ellenőrzést, DoD-t és tesztlistát.
 3. Minden terület saját alfeladatokra bontható, de az eleji `ACTIVE_POINT_ID` és `ACTIVE_SUBPOINT_ID` továbbra is az egyetlen végrehajtási igazságforrás.
 4. Ha a meglévő MASTER másik fejezete részletesebb képességet sorol fel, a részletesebb követelmény megmarad és ehhez a területhez kell hozzárendelni; az összefoglaló táblázat soha nem indok egy funkció elhagyására.
+
+---
+
+## F0.0.3 — VISUAL EDITOR KÉPESSÉGTÉRKÉP ÉS ADMIN FŐOLDALRÓL ELÉRHETŐ MUNKATERÜLETEK
+
+**Felhasználói termékdöntés — 2026-10-13:** a Visual Editor összes képességét funkciónként felül kell vizsgálni. Ami az oldal vásznon történő vizuális felépítéséhez és az adott oldal elemének megjelenéséhez tartozik, az maradjon az Editorban. Ami önálló üzleti/domain-feladat (például média kezelése, adásrend szerkesztése, integráció csatlakoztatása, témák kezelése), az kapjon saját, logikus, a Creator Center/Admin főoldalról elérhető munkaterületet. A felhasználó ugyanazt a canonical funkciót több belépési pontból is elérheti, ha az adott munkafolyamat ezt igényli; ezek **nem külön példányok**, hanem ugyanannak a funkciónak a nézetei.
+
+**Ez a fejezet UI- és capability-térkép, nem új végrehajtási sorrend.** Az aktuális F0.4 pont és a MASTER egyetlen ACTIVE_POINT_ID-je változatlan. A táblázat nem állítja, hogy a felsorolt funkciók már megvalósultak.
+
+### A Creator Center/Admin főoldal canonical munkaterületei
+
+| Modul ID | Adminból elérhető munkaterület | Mit kezel elsődlegesen? | Editor-kapcsolat / közös adat |
+|---|---|---|---|
+| UI-01 | **Áttekintés / Dashboard** | Állapotok, gyorsműveletek, figyelmeztetések, legutóbbi munka és valós modulokhoz vezető hivatkozások | Csak összefoglal és navigál; nem sajátít el domain-adatot és nem színlel még nem létező funkciót |
+| UI-02 | **Weboldalak és oldalszerkesztő** | Oldallista, oldal létrehozás/átnevezés/törlés, slug, oldalhierarchia/navigáció, Visual Editor, canvas, Layers, Inspector, preview, draft/save/publish | Canonical Page Model és Page/CMS API; az Editor kizárólag ezt a dokumentumot szerkeszti |
+| UI-03 | **Tartalomkezelő / CMS** | Strukturált tartalom és tartalomtípusok, kézi tartalom, későbbi cikkek/kampányok és content lifecycle a fázis szerint | A tartalmi blokkok és Editor-bindings ugyanazokat a CMS rekordokat olvassák; nem készül második tartalomadatbázis |
+| UI-04 | **Média- és erőforráskönyvtár** | Feltöltés, keresés/szűrés, mappák/címkék, előnézet, alt text, metaadat, képek/videók/ikonok/fontok | Az Editor Media Picker és az önálló Resource Manager ugyanazt a Resource ID-t/metadata-t és R2 fájlt használja |
+| UI-05 | **Témák és Design System** | Brand tokens, színek, tipográfia, spacing, theme, global styles, state-ek | Editorban látható/gyorsan szerkeszthető lehet, de ugyanazt a canonical theme/token registryt módosítja |
+| UI-06 | **Komponensek és sablonok** | Újrafelhasználható komponensek, blokkok, változatok, template-ek, későbbi linked instances/symbols | Editor elemtárból beszúrható és szükség szerint gyorsan megnyitható a manager; egyetlen canonical registry/instance-szabály |
+| UI-07 | **Adásrend és naptár** | Esemény CRUD, ismétlődés/időzóna, státusz, lemondás/áthelyezés, nézetek | Editor Schedule node csak elrendezést, szűrőt és megjelenítési beállítást szerkeszt; az eseményadatot a canonical Schedule Manager írja |
+| UI-08 | **Játékprofilok** | Játékok/kategóriák, artwork, címkék és a Schedule/stream profilhoz tartozó canonical metaadat | Editorból kiválasztás vagy gyors megnyitás; ugyanaz a Game Profile ID és domain |
+| UI-09 | **Platformintegrációk** | Twitch, később YouTube, TikTok, Discord és további providerek connect/disconnect/reconnect, scope, sync, státusz és diagnosztika | Editor a provider adatait csak fogyasztja és megjelenítési bindingot állít; OAuth/secrets/adapter nem kerül az Editorba |
+| UI-10 | **Stream és Live állapot** | A hiteles providerből származó streamállapot, cím/kategória és elérhető metrikák; manuális mezők csak egyértelműen elkülönítve | Public/Editor blokkok ugyanazt a Streamer/Integration domain adatot használják; adatforrás és frissesség jelzett |
+| UI-11 | **VOD, Clips, Shorts és videótár** | Tartalomimport, külső ID-k, kategóriák/tagek, playlist/kiemelések, link/embed és elérhető metadata | Editorban videóblokkok választhatók; a tartalomkiválasztó és Content Manager ugyanazt a canonical tartalomrekordot használja |
+| UI-12 | **Overlay Studio / Stream Studio** | Stream overlayek, alert-ek, widgetek, scene-/browser-source konfiguráció és későbbi OBS kapcsolat | Külön munkaterület, nem a website Editor második példánya; ahol Page Model/command/history használható, csak közös canonical engine/API útvonalon |
+| UI-13 | **Közösség és Discord** | Közösségi hivatkozások, elérhető Discord funkciók, később audience/moderation/engagement az engedélyezett scope szerint | Editorban link/widget lehet, de a közösségi adat és jogosultság a Community/Integration domainé |
+| UI-14 | **Űrlapok és kommunikáció** | Kapcsolati űrlap, későbbi audience/email/consent/unsubscribe/delivery állapot | Editor a mezők és megjelenés konfigurációját szerkeszti; beküldés, adatkezelés és küldési logika a biztonságos form/communication domainé |
+| UI-15 | **SEO és publikus minőség** | Page metadata, title/description, canonical URL, Open Graph, sitemap/robots/structured data, accessibility és performance jelzések | Oldalspecifikus metaadat a Page/CMS ownerhez, globális technikai beállítás a site/settings ownerhez tartozik; egy értéknek egy forrása legyen |
+| UI-16 | **Navigáció és menük** | Menüszerkezet, linkek, sorrend, láthatóság, aktív állapot és mobilmenü-konfiguráció | Editorból a kiválasztott menü vizuális stílusa módosítható, a menüpontlista azonban ugyanazt a canonical navigation rekordot használja |
+| UI-17 | **Publikálás, verziók és helyreállítás** | Draft/published állapot, preview, revision history, rollback, conflict recovery, export/backup ahol a fázis előírja | A mentés, revision, publish és rollback közös lifecycle; Editor és dashboard ugyanazt az állapotot mutatja |
+| UI-18 | **Beállítások és hozzáférések** | Site/profile settings, jogosultságok, felhasználók, security és későbbi workspace/teams a roadmap szerint | Az Editor csak az aktuális jogosultság szerint jelenít műveletet; a szerveroldali auth/RBAC marad kötelező |
+| UI-19 | **Analitika és riportok** | Először üzemeltetési állapotok; később creator/site/content/platform analytics a privacy és provider-hozzáférés szerint | Dashboard kártyák és részletes riportok ugyanabból a canonical analytics/telemetry forrásból olvasnak |
+| UI-20 | **Támogatás, monetizáció és bolt** | Tip/support, kampányok, termékek, digitális termékek, merch, checkout, membership a fázis és provider szerint | Editorban termék-/support-blokk konfigurálható, de termékár, készlet, rendelés, fizetés és tagság nem az Editorban tárolódik |
+| UI-21 | **Automatizálás és SANCI AI** | Későbbi, opcionális automation/agent/workflow, engedélyezés, preview, jóváhagyás és audit | Későbbi fázis; az alap weboldal/Creator Center AI nélkül is teljesen használható marad |
+| UI-22 | **Rendszerállapot, diagnosztika és segítség** | Hibák, integrációs állapotok, utolsó sikeres szinkron, diagnosztika, dokumentált help és recovery | A canonical diagnosztikai forrásból olvas; titok/token/stack trace nem jelenhet meg felhasználói UI-ban |
+
+**Navigációs szabály:** az Admin főoldalról a modulok logikus, egyértelmű nevekkel legyenek elérhetők. Csak a valós route-tal és jogosultsággal rendelkező, működő modul legyen aktív. A későbbi modulok a fázisnak megfelelően tervezési jegyzékben maradnak, nem lehetnek hamis működő linkek. A Dashboard adhat gyorsműveletet ugyanarra a funkcióra, de nem építhet második implementációt.
+
+### Visual Editor funkcióleltár — mi marad a szerkesztőben?
+
+| Editor funkciócsoport | Editorban maradó feladatok | Külön manager / shared owner | Megőrzendő szabály |
+|---|---|---|---|
+| E-01 Oldal és dokumentum | Oldal megnyitása, vászon, oldalankénti draft, preview, save/publish state | Pages/CMS, Publishing lifecycle | Egy canonical Page Model; draft nem módosítja a publikált snapshotot |
+| E-02 Canvas és kijelölés | Kijelölés, hover/focus outline, közvetlen drag/resize, handles, viewport, zoom/fit/grid/guides/snap | Visual Editor Core | Canvas és Layers ugyanazt a node ID-t és selection state-et használja |
+| E-03 Layers/hierarchia | Tree, reorder, nesting, rename, lock/hide, duplicate/delete, group/ungroup, valid nesting | Visual Editor Core + Page Model | Minden módosítás command/history/validation útvonalon; nincs DOM-as-source-of-truth |
+| E-04 Inspector / layout | Width/height/min/max, position, overflow, flex/grid/stack, columns, gap, padding/margin, align, order, wrap, sizing | Property Registry + Layout/Responsive | A kiválasztott node és viewport canonical értékei; egy mező nem írhatja felül a tőle független értéket |
+| E-05 Responsive | Desktop/tablet/mobile viewport, breakpoint, öröklés és override, reset/clear override | Shared Responsive engine | Egy Page Model; override törlésekor öröklés áll vissza; minden viewporton ellenőrizhető |
+| E-06 Szöveg és tipográfia | Text elem, szövegérték, font family/size/weight/line height/letter spacing/alignment; Rich Text a külön jóváhagyott scope szerint | CMS/content, Design System | A tartalomérték és stílus külön kezelendő; global token és local override szabályozott |
+| E-07 Megjelenés | Szín, háttér, border, radius, shadow, opacity, state és láthatóság | Design System/Theme + Property Registry | Globális theme-módosítás minden azt használó felületen megjelenik; explicit local override csak ott ír felül |
+| E-08 Média és ikonok | Resource picker, kép/videó/embed/ikon kiválasztása, alt text megjelenítése és szükséges lokális crop/fit | Resource Library / R2 / Content | Az Editor nem készít másolatot a médiából; közös Resource ID és metadata |
+| E-09 Komponensek és blokkok | Element library, section/container/row/columns, text/image/video/button/card/list/table/accordion/tabs, domain widgetek beszúrása | Component/Template Manager + domain manager | A block saját megjelenítési konfigurációt tárol; üzleti/domain rekordot nem duplikál |
+| E-10 Dinamikus adatkötés | Támogatott binding kiválasztása, field/format/filter, loading/empty/error/fallback/conditional visibility preview | CMS, Schedule, Integration, Content és más domain adapterek | Typed binding contract, auth/site scope, freshness/cache/error states; az Editor nem kerülheti meg a jogosultságot |
+| E-11 Navigation/link/action | Link/CTA, target, validált click/hover/focus/submit/open/close/toggle/navigation actions | Navigation/Forms/Communication és accessibility contract | Nincs arbitrary unsafe script; validáció, keyboard/focus és reduced-motion kötelező |
+| E-12 Page settings | Oldalnév/slug, oldal-specifikus metadata, publikus/preview állapot | Pages/CMS + SEO | Egy canonical oldalfelvétel és slug; globális site setting nem másolódik oldalanként |
+| E-13 History/recovery | Undo/redo, revision state, conflict warning/recovery, unsaved changes és draft export ahol támogatott | Command/History + Publishing/Revision | Dokumentum, selection, dirty state, revision és persistence következetes; konfliktus nem veszhet el csendben |
+| E-14 Közös műveletek | Save, explicit publish/republish, preview, keyboard shortcuts, contextual quick action, accessible panels | Publishing lifecycle + Creator Center shell | Save és publish külön művelet; a desktop/mobil ugyanazt a command/API/permission utat használja |
+| E-15 Mobile/tablet UX | Canvas-first mobilnézet, elérhető action bar, külön Pages/Layers/Inspector panelek, bezárás/fókusz és safe-area | Ugyanaz az Editor core, külön responsive presentation | Nem második mobil Editor; a desktop képességek funkcionálisan elérhetők, a UI adaptálható; tablet-login külön ismert tétel |
+| E-16 Editor diagnostics | Boot/validation/binding error, save conflict, provider/data freshness jelzések | Közös diagnostics/Integration/Publishing | Hasznos, érthető hiba; secret/raw stack trace nem szivároghat ki |
+
+### Több belépési pont, egy funkció — kötelező adat- és viselkedési szerződés
+
+Ugyanaz a funkció szándékosan megjelenhet a Dashboardon, a saját Managerben és az Editor kontextuális eszköztárában. Példák:
+
+- Egy kép kiválasztása az Editorban és ugyanazon kép átnevezése/alt textjének módosítása a Resource Libraryben: ugyanaz a Resource ID és metadata; az új érték minden fogyasztónál megjelenik.
+- Egy Schedule blokk kiválasztása az Editorban: a blokk elrendezése és szűrője az Editor Page Modelben tárolódik, az események a Schedule Manager canonical rekordjai. Az esemény módosítása a Schedule Managerben frissíti az összes fogyasztót; a blokk stílusának változása nem módosítja az eseményadatot.
+- Egy globális szín token változtatása a Design Systemben azonnal minden olyan elemen érvényesül, amely ezt a tokent használja; az explicit helyi override továbbra is felülbírálhatja.
+- Egy YouTube/Twitch/Discord kapcsolat a saját Integration Managerben kezelhető; az Editor csak a jogosultság szerint elérhető adatot/állapotot és widget-konfigurációt fogyasztja.
+- A dashboard „Publikálásra vár” jelzése és az Editor „Újrapublikálás” gombja ugyanazt a draft/published revision viszonyt olvassa, nem két külön státuszt tárol.
+
+**Minden megosztott funkció DoD-ja:**
+1. Egyértelmű canonical domain owner, rekord/ID és írási út.
+2. Minden UI-entrypoint ugyanazt az API/service/command szerződést használja; a kliens nem ír közvetlenül adatbázist.
+3. A módosítások más belépési pontokon is a canonical adat frissülése alapján jelennek meg; ahol cache van, invalidation/freshness policy dokumentált.
+4. Jogosultságot szerveroldalon kell ellenőrizni minden útvonalon, nem csak elrejteni a gombot.
+5. Hibák, loading/empty/stale states és offline/provider hiba egyértelműen kezelendő.
+6. Unit/domain/API contract/regression + browser responsive teszt, majd ahol szükséges production smoke és user acceptance.
+7. Ha két UI ugyanazt az értéket mutatja, ugyanarra a canonical mezőre hivatkozik; a másolat nem válhat második source of truth-vá.
+
+### Követelménymegőrzési és audit-zár
+
+A következő fázisok megkezdése előtt a 01–140, H19–H34, 00/A, 00.9.6.C/D/E/F, E/F és 2.76 domain-katalógus Visual Editorhoz és Admin munkaterületekhez tartozó tételeit ehhez a képességtérképhez kell hozzárendelni. Ez egy **kétirányú traceability ellenőrzés**: minden régi követelményhez legyen célmodul és fázis; minden új modulfunkcióhoz legyen forrás/indoklás, canonical owner, dependency és acceptance. A hasonló nevű tételek összevonása csak akkor engedélyezett, ha a különálló viselkedés/mező/permission/edge case explicit módon megmarad. Hiányzó, nem egyértelmű vagy egymásnak ellentmondó tétel nem törölhető: nyitott döntésként rögzítendő.
+
+A végső, felhasználónak átadandó **teljes funkciókatalógus** csak a fenti traceability ellenőrzés és a fázisbesorolás befejezése után készülhet el; tartalmazza a teljes Sanci9517 platform valamennyi funkcióját, a hozzá tartozó Admin belépési pontot, canonical domain owner-t, függőségeket, tervezett fázist, státuszt és elfogadási feltételeket. A jelen fejezet még nem a végső teljes lista.
 
 ---
 
