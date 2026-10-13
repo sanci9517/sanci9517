@@ -2703,6 +2703,46 @@ The short decision record must name the problem and acceptance criteria; existin
 
 **Fontos korlát:** a 73 sor a részletes működési követelménycsoportokat fedi le, nem állítja, hogy az archivált fejezet minden felsorolási pontja önálló sorba került. A következő auditkörben az eredeti F.1–F.13 szöveg minden felsorolását soronként össze kell vetni e táblákkal, összevont sor esetén dokumentálni kell a csoportosítás indokát, majd el kell végezni a 00/A és C.23/C.24, illetve az E.1 bullet-szintű crosswalkját. A P0.2 csak kétirányú source-to-feature és feature-to-source coverage után zárható le.
 
+
+### 37.32. P0.2 — Bullet-szintű crosswalk, batch 8: E.1, C.23.1–C.23.22 és C.24.1–C.24.7
+
+**Forrás:** archived MASTER snapshot, 00.9.6.E.1, 00.9.6.C.23 és 00.9.6.C.24. A C.23 sorok az archivált részletképesség-mátrix 22 követelménycsoportját tartják külön. A C.24 open-source-first szabályok fejlesztési policy-k, nem önálló runtime feature-ek.
+
+| Forráskulcs | Megőrzött követelmény | Canonical current ID / owner | Döntés | Célfázis | QA-horgony |
+|---|---|---|---|---|---|
+| E.1-01 | Product surfaces and canonical boundaries; Admin only exposes active, real modules | ADM-001–ADM-010, WEB-001–WEB-032, EDT-001–EDT-042, §5, §39 | KEEP | All phases by canonical roadmap | QA-004/008 |
+| C.23.01 | Benchmark UX and implement independently without copying closed-source code | EDT-001–EDT-042, DSN-001–DSN-018, QA-008 | KEEP | Continuous | QA-008 |
+| C.23.02 | Distinct preset/template/reusable types with apply/replace/merge/reset/fork/version/rollback semantics | DSN-009–DSN-015, EDT-008, EDT-012, WEB-009 | EXPAND | 1.0 foundations; advanced reuse 2.0 | QA-002/004 |
+| C.23.03 | Canvas zoom/pan/fit, rulers/guides/snapping, marquee/multiselect/drop targets/cancel/pointer loss/extent/geometry | EDT-001–EDT-004, EDT-009–EDT-016, EDT-036, QA-005 | EXPAND | 1.0 core; advanced canvas phased | QA-002/004/005 |
+| C.23.04 | Canonical Page Model/Layers, group/ungroup/wrapper/alignment/distribution/mixed state/stable IDs/nesting | EDT-002–EDT-007, EDT-022, WEB-001 | KEEP | 1.0 | QA-002/004 |
+| C.23.05 | Layout/geometry/property registry validates flex/grid/flow/sizing/units/position/z-index/overflow/transforms/inheritance | EDT-009–EDT-016, EDT-022, DSN-004 | EXPAND | 1.0 supported subset; advanced CSS later | QA-002/004 |
+| C.23.06 | Typography/color/tokens/font fallback/license/token usage/dependency search/detach/reset/site impact preview | DSN-001–DSN-008, DSN-012, RES-015, EDT-019 | EXPAND | 1.0 token foundation; advanced tooling 2.0 | QA-002/004/008 |
+| C.23.07 | Inspector/Property Registry search/favorites/help/mixed values/copy-paste/reset/schema migration and command-validation-history-persistence round-trip | EDT-006, EDT-007, EDT-022, EDT-027–EDT-030 | EXPAND | 1.0 core; advanced registry phased | QA-002/004 |
+| C.23.08 | Element/component catalog across structure/content/navigation/actions/cards/forms/media/social/CMS/commerce with schema/defaults/accessibility/responsive/tests | EDT-017–EDT-024, WEB-009–WEB-020, RES-001, DSN-016–DSN-018 | EXPAND | 1.0 core subset; full catalog phased | QA-002/004/005 |
+| C.23.09 | Responsive/device preview, custom viewports/presets/orientation/side-by-side/inheritance/reset/diagnostics and browser acceptance | EDT-035–EDT-040, QA-005 | EXPAND | 1.0 responsive baseline; advanced preview phased | QA-004/005 |
+| C.23.10 | Interaction states/motion tokens/reduced-motion/trigger-action validation; no arbitrary script | EDT-020–EDT-022, EDT-040, SEC-007, QA-005 | KEEP/EXPAND | 1.0 safe interaction baseline; advanced motion 2.0 | QA-003/004/005 |
+| C.23.11 | Site shell/navigation/header/footer/global sections, navigation data vs style, route/slug/404/redirect/mobile menu | WEB-001–WEB-003, WEB-012, WEB-013, WEB-030, ADM-001 | EXPAND | 1.0 | QA-002/004 |
+| C.23.12 | CMS/dynamic binding registry, allowed schema/relationships/lists/filter/sort/pagination/fallback/states; canonical domain data stays separate | DYN-001–DYN-008, CNT-001–CNT-020, EDT-018 | EXPAND | Safe core 1.0; advanced bindings 2.0 | QA-002/003/004 |
+| C.23.13 | One Resource/media/icon/font picker; upload/replace/crop/variants/usage/license/metadata/fallback/safe delete/restore | RES-001–RES-016, EDT-018 | EXPAND | Resource foundation 1.0; binding/API blocker remains | QA-002/004/007 |
+| C.23.14 | Preview/save/publish/version/recovery, draft/public separation, expected version/conflict/retry/revision diff/rollback/refresh/cache | WEB-004–WEB-008, EDT-027–EDT-034, OPS-005, OPS-009 | KEEP | 1.0 release gate | QA-002/003/004/006/007 |
+| C.23.15 | SEO/social preview/canonical/sitemap/robots/structured data/redirect/public output tests | SEO-001–SEO-005, WEB-030–WEB-032 | KEEP/EXPAND | 1.0 SEO baseline; redirect tooling later | QA-004/008 |
+| C.23.16 | Accessibility/privacy/security/consent, keyboard/focus/contrast/alt/reduced-motion/secure embeds/forms/server permission/no secrets | QA-003–QA-005, SEC-001–SEC-011, WEB-027 | KEEP | 0.x–1.0 release gate | QA-003/004/005 |
+| C.23.17 | Editor workspace preferences separate from site data; command palette/shortcuts/recent/favorites/panel collapse/touch-tablet behavior | EDT-035–EDT-042, QA-005 | EXPAND | 1.0 core responsive; power-user later | QA-004/005 |
+| C.23.18 | Integration/streamer blocks use provider capability/freshness/ownership/error/fallback/allowed embed hosts/public renderer contract | INT-001–INT-021, LIV-001–LIV-007, SCH-001–SCH-015, DYN-001 | KEEP/EXPAND | Twitch core 1.0; others gated | QA-002/003/004 |
+| C.23.19 | Site-wide/bulk operations, multi-select, global token/component/preset change, usage search, impact preview and rollback | EDT-003, EDT-004, EDT-012, DSN-012, WEB-008 | EXPAND | Advanced 2.0 | QA-002/004/007 |
+| C.23.20 | Extensions/custom code/future AI require versioning/permissions/sandbox gate; AI uses canonical actions/validation/preview/approval/audit | INT-018, MKT-001–MKT-005, AI-003–AI-010, SEC-002, SEC-007 | DEFER/EXPAND | 3.0+; safe integration contracts earlier | QA-003/008 |
+| C.23.21 | Quality/observability/acceptance: unit/domain/API/D1/browser/responsive/E2E/production smoke and separate creator analytics from telemetry | QA-001–QA-010, OPS-001–OPS-008, ANL-001 | KEEP | All phases | QA-002–QA-010 |
+| C.23.22 | No-loss phase assignment: every capability has one owner, phase, dependency, acceptance/status; no silent deletion | §11, §16–§18, §24–§26, §39–§41 | KEEP | All phases | QA-008/009 |
+| C.24.01 | Open-source-first principle: prefer suitable maintained projects when they reduce cost/risk without compromising product contract | OPS-010, QA-008 | KEEP | Continuous | QA-008 |
+| C.24.02 | Before adoption, inspect license, maintenance, security posture, accessibility, API compatibility, migration and operational cost | OPS-010, SEC-010, QA-008 | KEEP | Before each dependency decision | QA-003/008 |
+| C.24.03 | Acceptance/rejection criteria and comparison evidence recorded; do not adopt unmaintained or incompatible dependencies | OPS-010, QA-008, §16 | KEEP | Continuous | QA-008 |
+| C.24.04 | Integrations are adapters behind canonical services; no dependency-specific payload leaks into Page Model/domain contract | INT-001, INT-018, DYN-001, §6 | KEEP | All phases | QA-002/003 |
+| C.24.05 | Build custom only when open-source options fail documented requirements or create unacceptable risk | OPS-010, §16 | KEEP | Continuous | QA-008 |
+| C.24.06 | Revisit dependency decisions as ecosystem/security/API requirements change | OPS-010, OPS-007, QA-008 | KEEP | Continuous | QA-006/008 |
+| C.24.07 | Policy is subordinate to the current MASTER gates and does not authorize parallel implementation or bypass acceptance | §0, §11, §16–§18, QA-009 | KEEP | Always | QA-009 |
+
+**Batch 8 státusz:** 30 source-key sor felvéve (E.1: 1; C.23: 22; C.24: 7). Ez a C.23 kategóriák és C.24 policy-alpontok leképezése, nem a C.23 minden belső bulletjének teljes granularitású crosswalkja. A részletes C.23.1–C.23.22 archív alpontokkal való line-by-line összevetés még szükséges.
+
 ## 38. Részletes Visual Editor képességkatalógus
 
 **Cél:** a vizuális szerkesztő teljes részletképességeinek önálló, tesztelhető katalógusa. A felsorolás a végleges platform követelményét rögzíti, nem a runtime készültségét. Minden elem a közös Page Model, command/history/validation/persistence és jogosultsági szerződésen keresztül működik.
