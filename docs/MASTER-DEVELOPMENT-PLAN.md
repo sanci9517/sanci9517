@@ -2586,6 +2586,44 @@ The short decision record must name the problem and acceptance criteria; existin
 - A crosswalk továbbra is tervszintű leképezés. Nem bizonyítja, hogy a hivatkozott feature contractok teljesek, a történeti forrás minden alpontja szó szerint lefedett, vagy a funkciók runtime PASS állapotúak.
 - Következő batch: a történeti F.1–F.13 forrásalpontok külön kulcsokra bontása, feature-ID-k validálása a §24 registry ellen, majd a forráskulcs-szám és a hivatkozások ellenőrzése. A régi F0.1–F0.13 fázisnevek provenance-adatok, nem aktív végrehajtási pontok.
 
+
+### 37.27. P0.2 — Bullet-szintű crosswalk, batch 5: F.1–F.4 (Editor, data binding, layout, public content)
+
+**Forrás:** archivált MASTER snapshot, 00.9.6.F.1–F.4. A forráskövetelmények az alábbi sorokban külön, stabil történeti kulcsot kapnak. A jelenlegi §39 fázisai irányadók; a régi F0 állapotnevek nem aktiválhatók újra.
+
+| Forráskulcs | Megőrzött követelmény | Canonical current ID | Döntés | Célfázis | QA-horgony |
+|---|---|---|---|---|---|
+| F.1-01 | Editor full user flow: select/create page, add/select element, Inspector/canvas edit, undo/redo, save draft, preview, explicit publish | EDT-001, EDT-005, EDT-027–EDT-034, WEB-004–WEB-008 | KEEP | 1.0 | QA-002/004 |
+| F.1-02 | Reload/reopen preserves selection/editability; saved elements are not delete-only | EDT-003, EDT-027–EDT-030, WEB-004 | KEEP | 1.0 release gate | QA-002/004 |
+| F.1-03 | Regression sequence: Box + heading/text/button/divider; Layers reselects earlier nodes; layout edit/save/reload/public render parity | EDT-003, EDT-004, EDT-022, EDT-027–EDT-034, WEB-004–WEB-006 | KEEP | 1.0 release gate | QA-002/004 |
+| F.1-04 | Immutable history, maximum 50 entries, FIFO overflow | EDT-005, EDT-006 | KEEP | 1.0 | QA-002 |
+| F.1-05 | One user intent per transaction; text debounce/blur groups edits; drag/slider groups pointer-down to pointer-up | EDT-005, EDT-006, EDT-007 | KEEP | 1.0 | QA-002/004 |
+| F.1-06 | Preset/batch explicit transaction boundaries; no partial or self-referential undo/redo entries | EDT-005–EDT-007, QA-002 | KEEP | 1.0 | QA-002 |
+| F.1-07 | Canvas, Layers, Inspector and persisted model share canonical command/state, not DOM snapshots | EDT-003–EDT-007, EDT-027–EDT-030 | KEEP | 1.0 release gate | QA-002/004 |
+| F.1-08 | Debounced 2000 ms draft autosave; explicit Save Draft remains immediate; only validated Page Model persists | EDT-022, EDT-027, EDT-028, WEB-004 | KEEP | 1.0 | QA-002/004 |
+| F.1-09 | Local crash recovery is separate from server draft and stores no secrets; conflict offers recovery/server/discard choices | EDT-030, WEB-007, WEB-008, OPS-009, SEC-008 | EXPAND | 1.0 recovery baseline | QA-003/006/007 |
+| F.1-10 | Optimistic concurrency, unsaved-change warning, real retry/restore; larger Page Model history/autosave performance tests | EDT-027–EDT-034, WEB-008, OPS-008, QA-005/006 | KEEP | 1.0 release gate | QA-002/004/006 |
+| F.2-01 | Canonical dynamic data pipeline: domain service → declared source → schema-valid binding → allowed transform → conditional render | DYN-001–DYN-008, WEB-020, EDT-018 | KEEP | 2.0, with 1.0 safe core only | QA-002/003/004 |
+| F.2-02 | Provider sources enabled only by phase, official capability and connection scope | DYN-001, INT-001, INT-013–INT-016, SEC-002 | KEEP | Per-provider 1.5+ | QA-002/003/008 |
+| F.2-03 | Query/filter/sort/limit saved only against declared schema; prohibit arbitrary SQL, arbitrary fetch and unrestricted JS | DYN-002–DYN-004, SEC-002, SEC-007 | KEEP | 2.0 | QA-002/003 |
+| F.2-04 | Separate loading/empty/error/stale/partial-provider-failure states; redact internals and secrets | DYN-005, DYN-006, OPS-003, SEC-008 | KEEP | 1.0 baseline; full binding UI 2.0 | QA-003/004/006 |
+| F.2-05 | Conditional visibility never bypasses authorization; cache invalidates on publish/schedule/sync | DYN-006, WEB-030, OPS-008, SEC-002 | KEEP | 1.0–2.0 | QA-002/003/006 |
+| F.2-06 | Editor stores display configuration only; a Schedule block cannot mutate Schedule domain rows | EDT-018, SCH-001–SCH-015, DYN-001, SEC-002 | KEEP | 1.0 | QA-002/003/004 |
+| F.3-01 | No-code Inspector choices for alignment, text alignment, stack/columns/grid and vertical alignment | EDT-009–EDT-016, EDT-022 | EXPAND | 1.0 core; advanced layout phased | QA-002/004 |
+| F.3-02 | Width/height/units, independent horizontal/vertical spacing, gap/padding/margin and per-side values | EDT-010–EDT-016, DSN-004 | EXPAND | 1.0 | QA-002/004/005 |
+| F.3-03 | Min/max, aspect ratio, overflow, wrap, order and responsive overrides validated against layout mode | EDT-009–EDT-016, EDT-036, QA-005 | KEEP | 1.0 core; advanced responsive later | QA-002/004/005 |
+| F.3-04 | Canvas and Layers selection target same canonical node; drag/resize does not unexpectedly convert flex/grid to absolute positioning | EDT-003, EDT-004, EDT-009–EDT-016 | KEEP | 1.0 release gate | QA-002/004 |
+| F.3-05 | Plain Text is 1.0 baseline; no parallel rich-text path delaying core editor closure | EDT-019, EDT-020, EDT-022 | KEEP | 1.0 plain text; rich text separately scoped | QA-002/004 |
+| F.4-01 | Explicit public page types: Creator Home, Stream, Schedule, VOD/Video Hub, Clips/Shorts, About, Community, Contact, Support, Link Hub and Press Kit | WEB-001, WEB-021–WEB-026, CNT-001–CNT-005 | EXPAND | 1.0 core pages; later pages phased | QA-002/004/008 |
+| F.4-02 | Creator Home uses authenticated provider data only, upcoming stream, content, social/community/support and phased merch/email/campaign | WEB-021–WEB-026, LIV-001–LIV-004, SCH-009, INT-001, COM-001, SUP-001 | EXPAND | 1.0 core; later capabilities phased | QA-002/003/004 |
+| F.4-03 | Stream page: player/embed, real status/title/category/start, next stream and safe optional embeds | WEB-022, LIV-001–LIV-004, SCH-009, SEC-007 | EXPAND | 1.0 Twitch baseline | QA-002/003/004 |
+| F.4-04 | VOD/content hub supports categories/tags/search/filter/playlists/related content and honest manual fallback when API unavailable | WEB-023, CNT-001–CNT-005, CNT-007, INT-013–INT-016 | EXPAND | 1.5–2.0 | QA-002/003/004 |
+| F.4-05 | About, Link Hub and press-kit content are configurable; no hardcoded creator-specific product behavior | WEB-024–WEB-026, CAM-004, DSN-001, LOC-001 | EXPAND | 1.0 basic profile/link; advanced kit later | QA-002/004 |
+| F.4-06 | Basic accessible interactions: click/hover/focus/active/submit/scroll/load/timer/open-close/navigation/show-hide/toggle | EDT-020, EDT-021, EDT-022, QA-004, QA-005 | KEEP | 1.0 baseline | QA-002/004/005 |
+| F.4-07 | Advanced state machines/timeline/keyframes remain separately scoped; reduced motion, keyboard/focus, valid actions and performance are required | EDT-040, QA-005, SEC-007, OPS-008 | EXPAND | 1.0 reduced-motion baseline; advanced motion 2.0 | QA-004/005/008 |
+
+**Batch 5 result:** 28 source requirements mapped for F.1–F.4. Structural checks must confirm each referenced ID exists in §24; source-bullet completeness and runtime behavior remain separate gates.
+
 ## 38. Részletes Visual Editor képességkatalógus
 
 **Cél:** a vizuális szerkesztő teljes részletképességeinek önálló, tesztelhető katalógusa. A felsorolás a végleges platform követelményét rögzíti, nem a runtime készültségét. Minden elem a közös Page Model, command/history/validation/persistence és jogosultsági szerződésen keresztül működik.
