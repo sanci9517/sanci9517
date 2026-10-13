@@ -35,6 +35,22 @@
       const form = document.getElementById("login-form");
       const result = document.getElementById("result");
       const submit = document.getElementById("submit");
+      async function waitForAuthenticatedSession() {
+        for (let attempt = 0; attempt < 3; attempt += 1) {
+          try {
+            const response = await fetch("/api/auth/session", {
+              method: "GET",
+              credentials: "same-origin",
+              cache: "no-store",
+              headers: { "Accept": "application/json" }
+            });
+            const payload = await response.json();
+            if (response.ok && payload?.ok && payload?.data?.authenticated === true) return true;
+          } catch {}
+          if (attempt < 2) await new Promise((resolve) => window.setTimeout(resolve, 200 * (attempt + 1)));
+        }
+        return false;
+      }
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
         result.textContent = "Belépés...";
@@ -54,7 +70,13 @@
             result.textContent = data?.error?.message || "Sikertelen bejelentkezés.";
             return;
           }
-          window.location.assign("/admin");
+          result.textContent = "Belépés sikeres, munkamenet ellenőrzése…";
+          const sessionReady = await waitForAuthenticatedSession();
+          if (!sessionReady) {
+            result.textContent = "A belépés sikerült, de a munkamenet nem igazolható. A böngésző nem küldte vissza a munkamenetet; próbáld újra, vagy nyisd meg a webhelyet normál Chrome-lapon.";
+            return;
+          }
+          window.location.replace("/admin");
         } catch {
           result.textContent = "A bejelentkezés nem sikerült. Próbáld újra.";
         } finally {
