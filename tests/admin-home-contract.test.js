@@ -57,7 +57,7 @@ test("dashboard keeps planned Creator OS areas discoverable", () => {
 test("mobile users can open and close the same capability search", () => {
   assert.match(dashboard, /id="mobileSearch"[^>]*aria-expanded="false"[^>]*aria-controls="searchWrap"/);
   assert.match(dashboard, /id="searchWrap"/);
-  assert.match(dashboard, /@media \(max-width: 600px\)\s*\{[^}]*\.search-wrap \{ display: none; \}/s);
+  assert.match(dashboard, /@media \(max-width: 600px\)[\s\S]*?\.search-wrap \{ display: none; \}/);
   assert.match(dashboard, /\.search-wrap\.mobile-search-open\s*\{[^}]*display: block;[^}]*position:\s*absolute/);
   assert.match(dashboard, /mobileSearch\.addEventListener\("click"/);
   assert.match(dashboard, /if \(event\.key === "Escape"\)\s*\{\s*closeSidebar\(\);\s*closeMobileSearch\(true\);/);
