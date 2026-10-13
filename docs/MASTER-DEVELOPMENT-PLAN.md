@@ -11,7 +11,7 @@
 **Verzió:** MASTER-2.77 — végleges termékleírás, Admin UI-specifikáció és egyetlen függőség-alapú fejlesztési sorrend; a 2.75–2.76 roadmapek történetiek.  
 **Frissítve:** 2026-10-13.  
 **Dokumentum státusza:** ez az egyetlen végrehajtási igazságforrás.
-**Audit / implementation baseline:** GitHub `v2/foundation`, commit `eb228f772b72ec3688dbf47785e6399bb8a426ac` (2026-10-13; F0.3 history-integrity PR #18–#20 lezárva, a save/reload conflict-recovery szelet a következő aktív feladat). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
+**Audit / implementation baseline:** GitHub `v2/foundation`, commit `c4d31f56075c2b29d30bda019022943085818167` (2026-10-13; F0.3 history-integrity és explicit revision-conflict recovery UI PR #18–#22 integrálva; save/reload runtime acceptance továbbra is nyitott). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
 
 ### Jelenlegi igazolt állapot
 Ez a blokk kizárólag az E4/E5/E6 korábban bizonyított lezárt gate-jeit rögzíti. Az M0 auditfázist a felhasználó döntése lezárta / superseded állapotba helyezte; ez nem runtime PASS.
@@ -4407,13 +4407,13 @@ A felhasználó egyértelmű döntése: „A tablet belépés később a többi 
 - [ ] Valós production acceptance külön szükséges; a tabletes login hiba ettől független, elhalasztott tétel.
 
 
-## 2.77.9.S — F0.3 revision-conflict recovery UI — IMPLEMENTING
+## 2.77.9.S — F0.3 revision-conflict recovery UI — MERGED / CI PASS (PR #22; merge commit `c4d31f56075c2b29d30bda019022943085818167`)
 
 **Cél:** a szerveroldali `REVISION_CONFLICT` (409) esetén az Editor ne csak egy alertet mutasson: a helyi draft maradjon memóriában, legyen explicit JSON-export, és csak felhasználói megerősítéssel történhessen a frissebb szerververzió betöltése.
 
 **DoD:**
-- [ ] Az API-hiba státusza és kódja elérhető a kliensben; a 409 konfliktus külön felismerhető.
-- [ ] A helyi canonical Page Model JSON-fájlként exportálható a szerververzió újratöltése előtt.
-- [ ] A szerververzió betöltése figyelmeztet a helyi módosítások felülírására, és explicit megerősítést kér.
-- [ ] A konfliktuspanel reszponzív, billentyűzettel kezelhető, és nem módosítja a szerver auth/RBAC szabályait.
-- [ ] Editor Core + Twitch Integration CI PASS; production smoke külön szükséges.
+- [x] Az API-hiba státusza és kódja elérhető a kliensben; a 409 konfliktus külön felismerhető.
+- [x] A helyi canonical Page Model JSON-fájlként exportálható a szerververzió újratöltése előtt.
+- [x] A szerververzió betöltése figyelmeztet a helyi módosítások felülírására, és explicit megerősítést kér.
+- [x] A konfliktuspanel reszponzív, billentyűzettel kezelhető, és nem módosítja a szerver auth/RBAC szabályait.
+- [x] Editor Core Test és Twitch Integration Check PASS; production smoke külön szükséges.
