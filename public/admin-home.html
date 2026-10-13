@@ -903,7 +903,7 @@
       const user = session.user || {};
       const name = user.displayName || user.email || "Felhasználó";
       $("userName").textContent = name;
-      if ($("welcomeName")) $("welcomeName").textContent = (user.displayName || "alkotó").split(/\\s+/)[0];
+      if ($("welcomeName")) $("welcomeName").textContent = (user.displayName || "alkotó").split(/\s+/)[0];
       $("userRole").textContent = user.role || "Felhasználó";
       $("userAvatar").textContent = Array.from(name.trim())[0]?.toLocaleUpperCase("hu-HU") || "S";
       $("siteMetric").textContent = "—";
