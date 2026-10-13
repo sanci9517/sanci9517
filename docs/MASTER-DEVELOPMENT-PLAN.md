@@ -2448,7 +2448,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | E.9-06 | Later YouTube/TikTok/Kick/Discord/OBS/email/payment/commerce adapters with independent capability tests | INT-013–INT-021, OBS-001–OBS-010, COM-001–COM-018, STO-001–STO-020, SUP-001–SUP-012 | DEFER | 1.5–5.0 by provider/domain | QA-002/003/008 |
 | E.9-07 | Provider outage cannot take down the whole public site or Admin | INT-008, INT-020, LIV-002, DYN-005, OPS-003, OPS-008 | KEEP | 0.x–1.0 and all future providers | QA-003/006/008 |
 
-**Batch 2 result:** 66 E.4–E.9 source bullets mapped at requirement level. Mapping remains non-runtime evidence; the next batch covers E.10–E.22, then F.1–F.13. Before P0.2 PASS, verify source bullet counts and every feature/QA reference, and resolve any broad family mapping to the exact per-feature acceptance contract.
+**Batch 2 result:** 66 E.4–E.9 source bullets mapped at requirement level. Structural validation on commit 13da8d20c9483281d2d4b48532d8f2ca584e5e80 confirmed 66 rows, 282 distinct explicit/range-expanded feature/QA references and no unresolved IDs. Mapping remains non-runtime evidence; the next batch covers E.10–E.22, then F.1–F.13. Before P0.2 PASS, verify source bullet text/counts against the archive and resolve any broad domain mapping to the exact per-feature acceptance contract.
 
 ## 38. Részletes Visual Editor képességkatalógus
 
