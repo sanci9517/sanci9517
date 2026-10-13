@@ -1180,3 +1180,404 @@ A terv véglegesítésének ellenőrzése:
 - [ ] A P0.1 valós repository/runtime ellenőrzése után a következő pont konkrét fájlokkal és tesztparancsokkal aktiválható.
 
 A P0.1 lezárásáig új product feature nem implementálható. A tervben szereplő jövőbeli képesség nem kész funkció; csak a saját pontjának PASS elfogadása után tekinthető megvalósítottnak.
+
+
+
+## 24. Teljes funkcióazonosító-jegyzék
+
+Az alábbi jegyzék a menüfunkciókat külön, stabil munkapontokra bontja. A státusz minden ID-nál külön vezetendő; az, hogy egy képesség szerepel a tervben, nem jelenti a megvalósítását. Az egyes ID-k csak a 10. fejezet szerinti feature contracttal és saját acceptance-szel zárhatók le.
+
+### 24.1. Dashboard és Admin shell — ADM
+- ADM-001: Admin shell és globális navigáció.
+- ADM-002: Dashboard állapotkártyák.
+- ADM-003: Gyorsműveletek és canonical route-ok.
+- ADM-004: Teendők és hibajelzések.
+- ADM-005: Legutóbbi aktivitás és audit összefoglaló.
+- ADM-006: Globális keresés és command palette.
+- ADM-007: Profil/session/logout és lejáratkezelés.
+- ADM-008: Közös loading/empty/error/stale/success state-ek.
+- ADM-009: Permission-alapú menü- és action-visibility.
+- ADM-010: Mobil/tablet Admin shell.
+
+### 24.2. Weboldal és publikus renderer — WEB
+- WEB-001: Page CRUD és listanézet.
+- WEB-002: Slug, hierarchy és URL lifecycle.
+- WEB-003: Page duplicate/archive/delete és usage warning.
+- WEB-004: Draft/published state és published snapshot.
+- WEB-005: Preview link és preview authorization.
+- WEB-006: Publish validation és publish report.
+- WEB-007: Unpublish/restore/rollback.
+- WEB-008: Revision history és diff.
+- WEB-009: Canonical navigation tree.
+- WEB-010: Header/footer és global layout.
+- WEB-011: Mobile navigation és keyboard behavior.
+- WEB-012: Public route registry és 404.
+- WEB-013: Redirect manager és broken-link report.
+- WEB-014: Public Home/Creator-home.
+- WEB-015: Public Live/Stream page.
+- WEB-016: Public Schedule page.
+- WEB-017: Public VOD/Content Hub.
+- WEB-018: Public About/Creator profile.
+- WEB-019: Public Community page/CTA.
+- WEB-020: Public Contact page/form.
+- WEB-021: Public Creator Resources page.
+- WEB-022: Public Link Hub.
+- WEB-023: Public Support page.
+- WEB-024: Public Sponsor/Press Kit.
+- WEB-025: Public Store/Product pages.
+- WEB-026: Public Membership/Member area.
+- WEB-027: Public Events/Blog/News/Digital Products routes.
+- WEB-028: Public error/maintenance/offline states.
+- WEB-029: Public search index and query.
+- WEB-030: Public cache/invalidation.
+- WEB-031: Published-only data visibility enforcement.
+- WEB-032: Public content rendering security and safe embeds.
+
+### 24.3. Visual Editor — EDT
+- EDT-001: Canonical Page Model schema/version.
+- EDT-002: Node IDs and parent/child invariants.
+- EDT-003: Command mutation pipeline.
+- EDT-004: Transaction/batch/rollback semantics.
+- EDT-005: Undo/redo history integrity.
+- EDT-006: Selection state synchronization.
+- EDT-007: Canvas viewport, zoom, pan and fit.
+- EDT-008: Canvas drag/drop.
+- EDT-009: Canvas resize/geometry constraints.
+- EDT-010: Alignment guides/snap/grid.
+- EDT-011: Reorder/reparent/duplicate/delete.
+- EDT-012: Layers tree expand/collapse.
+- EDT-013: Layers/canvas/Inspector selection sync.
+- EDT-014: Layer rename/hide/lock and hierarchy.
+- EDT-015: Element/Block Library and search.
+- EDT-016: Section/Container/Stack/Row/Columns/Grid.
+- EDT-017: Text/Heading/Link/Button/Icon/Divider/Spacer.
+- EDT-018: Image/Video/Embed/List/Card/Badge.
+- EDT-019: Table/Accordion/Tabs/Form capability.
+- EDT-020: Dynamic Sanci block configuration.
+- EDT-021: Inspector Property Registry.
+- EDT-022: Inspector schema validation and control types.
+- EDT-023: Inspector resolved viewport value.
+- EDT-024: Responsive override/inheritance/reset.
+- EDT-025: Responsive desktop/tablet/mobile preview.
+- EDT-026: Responsive visibility/order/column changes.
+- EDT-027: Dirty state and explicit Save Draft.
+- EDT-028: Save/reload round-trip.
+- EDT-029: Revision conflict recovery.
+- EDT-030: In-flight edit preservation during save.
+- EDT-031: Network failure/retry/local recovery.
+- EDT-032: Preview without publishing.
+- EDT-033: Explicit publish separate from save.
+- EDT-034: Public renderer parity with Editor preview.
+- EDT-035: Mobile Editor action bar/safe area.
+- EDT-036: Mobile Layers/Inspector panel switching.
+- EDT-037: Keyboard-accessible canvas alternatives.
+- EDT-038: Copy/paste and multi-select where enabled.
+- EDT-039: Interactions and action registry.
+- EDT-040: Motion/reduced-motion behavior.
+- EDT-041: Empty-project onboarding and template start.
+- EDT-042: Editor error recovery and no-data-loss guard.
+
+### 24.4. Design system, templates and components — DSN
+- DSN-001: Global design token schema.
+- DSN-002: Token editor and live preview.
+- DSN-003: Token usage/dependency map.
+- DSN-004: Global change diff and rollback.
+- DSN-005: Theme and brand presets.
+- DSN-006: Responsive defaults and breakpoint tokens.
+- DSN-007: Typography/font registry.
+- DSN-008: Site template library.
+- DSN-009: Page template library.
+- DSN-010: Section template library.
+- DSN-011: Component template library.
+- DSN-012: Reusable component/symbol master-instance.
+- DSN-013: Variants, slots and explicit overrides.
+- DSN-014: Template versioning/compatibility/migration.
+- DSN-015: Template import/export.
+- DSN-016: Button Registry and global button styles.
+- DSN-017: Icon/action registry linkage.
+- DSN-018: Future community/marketplace templates.
+
+### 24.5. Resource/media/icons/fonts — RES
+- RES-001: Canonical asset registry and IDs.
+- RES-002: R2 binary storage and D1 metadata.
+- RES-003: Upload validation/progress/cancel/retry.
+- RES-004: Image preview/thumbnail/variant.
+- RES-005: Media search/filter/sort/pagination.
+- RES-006: Collections/tags/folders.
+- RES-007: Alt text/caption/license/source metadata.
+- RES-008: Asset usage/reference map.
+- RES-009: Replace/archive/delete/restore safety.
+- RES-010: Editor asset picker.
+- RES-011: Icon registry/search/category/preview.
+- RES-012: SVG safety and sanitization.
+- RES-013: Font registry/weight/style/fallback.
+- RES-014: File download authorization/expiry.
+- RES-015: Media diagnostics and broken asset scan.
+- RES-016: Paid/private asset access integration.
+
+### 24.6. Connections/integrations — INT
+- INT-001: Canonical provider adapter contract.
+- INT-002: Integration overview and health.
+- INT-003: OAuth state/callback/CSRF protection.
+- INT-004: Token lifecycle/refresh/revoke.
+- INT-005: Site ownership and connection binding.
+- INT-006: Scope/permission visibility.
+- INT-007: Connect/reconnect/disconnect flow.
+- INT-008: Sync history, retry and provider errors.
+- INT-009: Rate-limit/quota handling.
+- INT-010: Twitch OAuth and channel binding.
+- INT-011: Twitch live/schedule data.
+- INT-012: Twitch VOD/clip metadata where allowed.
+- INT-013: YouTube channel/video/live adapter.
+- INT-014: TikTok capability-gated adapter.
+- INT-015: Discord bot/guild/channel/role integration.
+- INT-016: Kick capability-gated adapter.
+- INT-017: Webhook subscription/signature/replay defense.
+- INT-018: Provider capability registry.
+- INT-019: Integration secret redaction and audit.
+- INT-020: Integration diagnostics and recovery.
+- INT-021: Future payment/email/commerce adapters.
+
+### 24.7. Live/Stream/OBS — LIV / OBS
+- LIV-001: Normalized live/offline state.
+- LIV-002: Live data freshness/stale indicator.
+- LIV-003: Stream title/category/game/start time.
+- LIV-004: Viewer/follower/subscriber metrics where permitted.
+- LIV-005: Player/embed and offline fallback.
+- LIV-006: Stream event normalization.
+- LIV-007: Stream status in Dashboard and public blocks.
+- OBS-001: Overlay asset and scene metadata.
+- OBS-002: OBS secure pairing/connection.
+- OBS-003: Scene/stream/recording state where supported.
+- OBS-004: Authorized commands and stream markers.
+- OBS-005: Browser source configuration.
+- OBS-006: Alerts for provider-supported events.
+- OBS-007: Chatbot/commands/timers/loyalty/giveaways.
+- OBS-008: Test mode, event replay and rate limit.
+- OBS-009: Macro Deck or external control adapter.
+- OBS-010: Overlay preview/export/version.
+
+### 24.8. Schedule/game profiles — SCH
+- SCH-001: Schedule item CRUD.
+- SCH-002: Calendar/list/upcoming/past views.
+- SCH-003: Timezone and daylight-saving correctness.
+- SCH-004: Recurrence and series edit scopes.
+- SCH-005: Postponed/cancelled/completed/live states.
+- SCH-006: Schedule conflict detection.
+- SCH-007: Twitch schedule sync/manual override.
+- SCH-008: Sync status/retry/audit.
+- SCH-009: Next stream/countdown.
+- SCH-010: Public schedule rendering.
+- SCH-011: Editor Schedule block.
+- SCH-012: Game Profile CRUD.
+- SCH-013: Game artwork/resource linkage.
+- SCH-014: Game/content/schedule relationship.
+- SCH-015: iCal/export and later notifications.
+
+### 24.9. Content/Content Studio — CNT
+- CNT-001: Canonical content item schema.
+- CNT-002: VOD import and metadata.
+- CNT-003: Clip/highlight/Short management.
+- CNT-004: YouTube/TikTok video feed.
+- CNT-005: Tags/categories/collections/playlists.
+- CNT-006: Search/filter/sort/pagination/bulk actions.
+- CNT-007: Duplicate detection and external IDs.
+- CNT-008: Featured/related content.
+- CNT-009: Content calendar.
+- CNT-010: Ideas/drafts/scripts/briefs.
+- CNT-011: Platform-specific title/description/tag variants.
+- CNT-012: Thumbnail and media asset workflow.
+- CNT-013: Publishing queue and schedule.
+- CNT-014: Publish status/retry/partial success.
+- CNT-015: Approval workflow and public publish gate.
+- CNT-016: Campaign linkage and content attribution.
+- CNT-017: Short-form export preparation.
+- CNT-018: Transcript/chapter/highlight suggestions later.
+- CNT-019: Editor content feed block.
+- CNT-020: Content public hub.
+
+### 24.10. Community/audience — COM
+- COM-001: External community links.
+- COM-002: Discord community entry point.
+- COM-003: Community posts.
+- COM-004: Polls and voting.
+- COM-005: Events and RSVP.
+- COM-006: Member profiles and follows later.
+- COM-007: Comments/reactions later.
+- COM-008: Clip submission.
+- COM-009: Moderation/report/ban/role.
+- COM-010: Badges/reputation/challenges later.
+- COM-011: Notifications and delivery status.
+- COM-012: Abuse/spam/rate-limit controls.
+- COM-013: Member-only content access.
+- COM-014: Founding Supporters opt-in listing.
+- COM-015: Email signup/consent/subscriber list.
+- COM-016: Segmentation/newsletter/automation.
+- COM-017: Unsubscribe/suppression/export/delete.
+- COM-018: Public/member/private visibility policy.
+
+### 24.11. Store/commerce — STO
+- STO-001: Product catalog.
+- STO-002: Product variants/SKU/price/currency.
+- STO-003: Categories/collections/tags.
+- STO-004: Product media and SEO.
+- STO-005: Physical/digital/bundle/preorder/limited drop.
+- STO-006: Inventory/fulfillment abstraction.
+- STO-007: Storefront listing/detail/search/filter.
+- STO-008: Cart and checkout provider adapter.
+- STO-009: Order lifecycle/payment status.
+- STO-010: Fulfillment/tracking/cancellation/refund.
+- STO-011: Coupons/promotions/gift cards.
+- STO-012: Digital purchase entitlement.
+- STO-013: Secure download/access delivery.
+- STO-014: Tax/shipping/VAT/invoice integration review.
+- STO-015: Customer account/history where needed.
+- STO-016: Abandoned cart later.
+- STO-017: Product/collection Editor blocks.
+- STO-018: Provider webhook idempotency and audit.
+- STO-019: Merchant-of-record/provider decision.
+- STO-020: Store analytics.
+
+### 24.12. Support/membership — SUP
+- SUP-001: Support/tip links and provider.
+- SUP-002: Donation/tip state where available.
+- SUP-003: Supporter goals and progress.
+- SUP-004: Membership tiers and billing period.
+- SUP-005: Perks and member-only access.
+- SUP-006: Entitlement lifecycle.
+- SUP-007: Membership renewal/cancel/failed payment.
+- SUP-008: Refund/chargeback entitlement handling.
+- SUP-009: Discord role sync from entitlement.
+- SUP-010: Supporter history and opt-in public listing.
+- SUP-011: Membership content and event access.
+- SUP-012: Member discount/exclusive drop.
+
+### 24.13. Analytics/campaign/business — ANL / CAM
+- ANL-001: Canonical event taxonomy.
+- ANL-002: Privacy-safe web analytics.
+- ANL-003: Stream analytics.
+- ANL-004: Content/platform analytics.
+- ANL-005: Commerce analytics.
+- ANL-006: Community analytics.
+- ANL-007: Date range/comparison/filter/export.
+- ANL-008: Freshness/source/unit/missing-data state.
+- ANL-009: Consent/retention/bot filtering.
+- CAM-001: Campaign CRUD/status/goals.
+- CAM-002: Campaign links/UTM/attribution.
+- CAM-003: Campaign asset/content/product relationships.
+- CAM-004: Media kit generation/export.
+- CAM-005: Brand lead/deal/rate card.
+- CAM-006: Deliverables/deadlines/reminders.
+- CAM-007: Sponsor campaign analytics.
+- CAM-008: Private business documents and permission.
+- CAM-009: Invoice/payment status only after business/legal review.
+
+### 24.14. Automation — AUT
+- AUT-001: Canonical event registry.
+- AUT-002: Trigger catalogue.
+- AUT-003: Condition/filter rules.
+- AUT-004: Action registry and permission checks.
+- AUT-005: Delay/schedule and timezone.
+- AUT-006: Idempotency/deduplication.
+- AUT-007: Retry/backoff/dead-letter.
+- AUT-008: Run log and audit.
+- AUT-009: Dry-run/preview/approval.
+- AUT-010: Enable/pause/version/clone.
+- AUT-011: Cycle detection and rate limits.
+- AUT-012: Provider outage and recovery.
+- AUT-013: Automation templates.
+- AUT-014: Safe cross-domain actions.
+
+### 24.15. SANCI AI — AI
+- AI-001: Provider/model registry.
+- AI-002: Prompt/template versioning.
+- AI-003: Intent and task planner.
+- AI-004: Context selection and privacy filter.
+- AI-005: Structured action schema.
+- AI-006: Permission/ownership checker.
+- AI-007: Diff/preview/approval workflow.
+- AI-008: Execute through canonical API/commands.
+- AI-009: Verification/audit/version/rollback.
+- AI-010: Cost/quota/usage/error tracking.
+- AI-011: Website structure/content assistant.
+- AI-012: SEO/accessibility/localization suggestions.
+- AI-013: Content title/script/description/thumbnail brief.
+- AI-014: Transcript/chapter/highlight/clip candidates.
+- AI-015: Stream diagnostics/summary where supported.
+- AI-016: Specialist agent roles under shared permissions.
+- AI-017: AI Control Center and approval queue.
+- AI-018: Prompt injection and untrusted content tests.
+- AI-019: Human approval for public/destructive/financial action.
+- AI-020: AI-free fallback for all critical manual workflows.
+
+### 24.16. Settings/security/operations — SEC / OPS
+- SEC-001: Authentication/session lifecycle.
+- SEC-002: Server-side RBAC and ownership.
+- SEC-003: Site/workspace/tenant isolation.
+- SEC-004: OAuth/CSRF/session security.
+- SEC-005: XSS/sanitization/safe embeds.
+- SEC-006: SSRF/open redirect/injection defenses.
+- SEC-007: Rate limiting and abuse protection.
+- SEC-008: Secret storage/redaction/rotation.
+- SEC-009: Webhook signature/replay defense.
+- SEC-010: Audit log and privacy.
+- SEC-011: Consent/retention/export/delete.
+- OPS-001: Health/deploy version.
+- OPS-002: Structured logs/correlation IDs.
+- OPS-003: Error tracking/alerting.
+- OPS-004: Migration preflight/integrity.
+- OPS-005: Backup/export/restore.
+- OPS-006: Recovery drill and runbook.
+- OPS-007: Diagnostics report.
+- OPS-008: Performance baseline/cache/query monitoring.
+- OPS-009: Rollback and incident procedure.
+- OPS-010: Dependency/license/CVE review.
+
+### 24.17. Localization/team/marketplace/quality — LOC / TEAM / MKT / QA
+- LOC-001: Translation key/fallback.
+- LOC-002: Locale-aware dates/numbers/currency/timezone.
+- LOC-003: Page/content/navigation translation.
+- LOC-004: Localized SEO/hreflang/canonical.
+- TEAM-001: Workspace/site switcher.
+- TEAM-002: Invite/accept/revoke.
+- TEAM-003: Roles and granular permissions.
+- TEAM-004: Approval/review/activity feed.
+- TEAM-005: Multi-site isolation.
+- TEAM-006: SaaS billing/plan entitlements/quota.
+- MKT-001: Extension manifest/permissions.
+- MKT-002: Extension install/update/uninstall/migration.
+- MKT-003: Theme/block/template/overlay marketplace.
+- MKT-004: License/attribution/version/review.
+- MKT-005: Marketplace payment/revenue-share after legal review.
+- QA-001: Typecheck/build/CI gates.
+- QA-002: Domain/API/integration tests.
+- QA-003: Ownership/security negative tests.
+- QA-004: Browser/device responsive acceptance.
+- QA-005: Public SEO/accessibility/performance audit.
+- QA-006: Production smoke and runtime verification.
+- QA-007: Backup/restore/rollback acceptance.
+- QA-008: End-to-end creator journey.
+- QA-009: User acceptance and evidence log.
+- QA-010: Continuous benchmark and feature-discovery review.
+
+---
+
+## 25. Kötelező státuszmezők a funkciójegyzékben
+
+Minden ID-hoz az alábbi mezők tartoznak a terv karbantartásakor:
+- Status;
+- Phase/priority;
+- Menu/surface;
+- Canonical domain owner;
+- Data source;
+- Permission;
+- Dependencies;
+- Implementation point;
+- Tests;
+- Negative tests;
+- Live/user acceptance;
+- Evidence;
+- Known issues;
+- Next action.
+
+A státuszt nem szabad pusztán a kód jelenléte alapján átállítani. Ha egy funkció több részre bontható, az al-ID-k saját DoD-t kapnak, és a szülő csak akkor PASS, ha minden kötelező al-ID PASS vagy az elhagyás explicit, indokolt és dokumentált scope döntés.
