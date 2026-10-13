@@ -753,3 +753,19 @@ test('Editor save conflict exposes recoverable local-draft export and explicit r
   assert.match(html, /id="exportConflictDraft"/);
   assert.match(html, /id="reloadConflictPage"/);
 });
+
+
+test('Editor save/reload uses server revision and fails closed on incomplete save responses', () => {
+  const app = readFileSync(new URL('../app.js', import.meta.url), 'utf8');
+  const loadPage = app.slice(app.indexOf('async function loadPage('), app.indexOf('async function rollbackToRevision('));
+  const save = app.slice(app.indexOf('async function save('), app.indexOf('async function unpublishPage('));
+
+  assert.match(loadPage, /const rawRevision=revisions\.length\?Number\(revisions\[0\]\?\.version\):0/);
+  assert.match(loadPage, /document\.revision=latestRevision;document\.pages\[id\]\.revision=latestRevision/);
+  assert.doesNotMatch(loadPage, /revisions\[0\]\?\.version\|\|meta\.revision/);
+  assert.match(save, /const submittedDocument=structuredClone\(stateAtStart\.document\)/);
+  assert.match(save, /JSON\.stringify\(stateAtStart\.document\)===submittedJson/);
+  assert.match(save, /!Number\.isInteger\(version\)\|\|version<1/);
+  assert.match(save, /stateAtStart\.persistence\.dirty=true/);
+  assert.match(save, /további helyi módosítások még nincsenek mentve/);
+});
