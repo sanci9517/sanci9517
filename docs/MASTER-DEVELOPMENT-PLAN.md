@@ -2731,3 +2731,328 @@ Fázis szerinti zár:
 
 **Végső operatív szabály:** egyetlen aktív pont van: F0.1. A dokumentum minden fenti követelménye megmarad a maga fázisában. Új igény csak canonical ownerrel, fázissal, függőséggel, DoD-val, teszttel és acceptance-szel vehető fel; korábbi funkció nem maradhat puszta névként specifikáció nélkül.
 
+
+
+---
+
+# MASTER-2.75 — FULL CREATOR PLATFORM: DEPENDENCY-FIRST EXECUTION ROADMAP
+**Döntési státusz:** CANONICAL PRODUCT DIRECTION / LOGICAL ROADMAP  
+**Cél:** a teljes Sanci9517 Creator Platform és AI Creator OS felépítése; nincs előre kijelölt végső kiadás vagy olyan verzióhatár, amelynél a fejlesztésnek meg kell állnia.  
+**Végrehajtási szabály:** a dokumentum eleji `ACTIVE_POINT_ID` és `ACTIVE_SUBPOINT_ID` továbbra is kizárólagos az aktuális munkapont meghatározására. E fejezet a hosszú távú, függőség-alapú sorrendet teszi egyértelművé; nem indít párhuzamos munkát és nem írja felül az aktív F0.1-et.  
+**Tervkarbantartás:** a korábbi fázis- és verziónevek történeti/nyomkövetési célból megmaradnak. A termék teljességét és a fejlesztés sorrendjét ezentúl nem egy 1.0/2.0-s címke, hanem az alábbi képesség- és függőségi térkép határozza meg. A már rögzített követelményeket nem töröljük; az átfedéseket canonical ownerhez kapcsoljuk, a hiányzó részleteket pedig új, egyértelmű azonosítóval vesszük fel.
+
+## 2.75.1 — Termékcél és sikerdefiníció
+A Sanci9517 egy magyar alapokról induló, nemzetközi alkotói platform: weboldal- és tartalomépítő rendszer, Creator Center, közösségi és streaming integrációs központ, videó- és média Content Factory, OBS/Stream Studio, alkotói üzleti eszközök, valamint ezekre épülő AI Creator OS. A cél nem a funkciók puszta mennyisége, hanem az, hogy a tartalomgyártó a lehető legtöbb napi feladatot egy egységes, személyre szabható, biztonságos és tanulásra képes munkakörnyezetben végezhesse.
+
+**Kiemelt termékígéretek**
+- Kezdők számára érthető, vezetett beállítás és egyszerű alapmunkafolyamatok; haladóknak mély testreszabás és részletes vezérlés.
+- Egy közös Creator Centerből kezelhető weboldal, média, tartalom, platformkapcsolatok, közösség, stream, shop, analitika és automatizálás.
+- Egyetlen canonical domain- és adatmodell, közös Resource Library, egyetlen publishing lifecycle és közös, engedélyezésen alapuló AI-eszközrendszer.
+- Az AI az alkotó munkáját támogatja és automatizálja, de nem garantál nézettséget, virálisságot vagy bevételt. Javaslatait mérhető eredmények, minőségellenőrzés és felhasználói visszajelzés alapján javítja.
+- A termék új alkotói típusokkal, platformokkal, formátumokkal és üzleti modellekkel bővíthető, anélkül, hogy minden alkalommal újra kellene építeni a központi rendszert.
+
+## 2.75.2 — Külső benchmark: tanulságok és alkalmazásuk
+A benchmark nem más termékek felületének vagy márkájának másolása. A cél a bevált képességek feltérképezése, a lefedettségi hiányok felderítése és a Sanci9517 saját, egységes megoldásának megtervezése.
+
+| Referencia | Megfigyelt képesség / tanulság | Sanci9517-ben lefedendő képesség |
+|---|---|---|
+| Wix AI Website Builder | AI-alapú oldalindítás, üzleti és marketingeszközök, akadálymentességi segítség, fokozatos bővítés | Vezetett AI-onboarding, weboldalgenerálás, módosítható eredmény, SEO/accessibility ellenőrzés |
+| Webflow CMS / Visual Builder | Vizualitás és strukturált CMS, komponensek, tartalomelőnézet, szerepkörök, lokalizáció, SEO/AEO | Canonical Page Model, CMS collections, reusable components, preview/publish, lokalizáció, granular permissions |
+| OBS Studio | Helyi WebSocket-alapú vezérlés, scene/source automation, helyi futtatás és biztonságos kapcsolat | OBS connector/local companion, hitelesített kapcsolat, állapotfigyelés, scene/source műveletek és reconnect/error handling |
+| Restream | Többplatformos streamelés, közös chat, platformonkénti streamstatisztika, transcript/chat alapján visszakereshető időpontok | Közös Live Center, ha a platformjogok és technikai útvonal ezt lehetővé teszik; egységes chat és visszanézhető streamtimeline |
+| Streamlabs | Stream alert-ek, platformkapcsolatok, overlayek és eseményvezérelt reakciók | Overlay/Widget Studio, alert registry, eseményadapterek, tesztelhető browser source |
+| OpusClip | Hosszú videóból klipjelöltek, AI caption, reframing, virality/quality scoring és publikálási munkafolyamat | Stream/VOD highlight detection, szerkeszthető clip project, platformonkénti kimenetek, pontszám indoklással és emberi review |
+| Descript | Transzkripció-alapú szerkesztés, filler-word eltávolítás, felirat, hangjavítás, fordítás és klipgyártás | Transcript-alapú timeline/editing, hangjavítási pipeline, feliratok, nyelvi változatok, visszavonható AI-módosítások |
+| Metricool / Buffer | Többplatformos naptár, ütemezés, analitika, inbox, legjobb időpontok és AI-javaslatok | Social Publishing Center, platformonkénti preview/validation, unified calendar/inbox, cross-platform analytics |
+| Beacons | Link-in-bio, store, email marketing, media kit és beépített AI | Link Hub, Media Kit, CRM/audience ownership, digitális termékek, AI által támogatott üzleti munkafolyamat |
+| Fourthwall | Merch fulfillment, digitális termék, tagság, shop, Discord/Twitch előnyök és integrációk | Commerce provider abstraction, merch provider, termék-/rendelés-/entitlement modell, membership/Discord role sync |
+| Patreon | Tagság, közösségi tartalom, egyszeri digitális értékesítés és alkotói közönségkapcsolat | Saját közösségi feed, tagsági szintek, paywall/entitlement, digitális termék, közvetlen közönségkapcsolat |
+| Canva | Sablonvezérelt vizuális készítés, márkaelemek és többféle kreatív kimenet | Brand Kit, design tokens, kreatív sablonok, thumbnail/overlay/asset export, következetes arculat |
+| WordPress ökoszisztéma tanulsága | Bővíthetőség és sokféle integráció, ugyanakkor plugin-konfliktus és karbantartási teher kockázata | Verziózott extension/adapter contract, kompatibilitási ellenőrzés, permission sandbox, marketplace moderation és deprecation policy |
+
+**Benchmark-források (elsődleges termék-/dokumentációs oldalak):**
+- Wix AI Website Builder: https://www.wix.com/ai-website-builder
+- Webflow CMS: https://webflow.com/feature/cms
+- OBS Remote Control Guide: https://obsproject.com/kb/remote-control-guide
+- OBS Developer Guide: https://obsproject.com/kb/developer-guide
+- Restream Chat: https://restream.io/chat
+- Restream Analytics: https://support.restream.io/en/articles/4167758-track-your-stream-s-performance-with-analytics
+- Streamlabs Alerts: https://support.streamlabs.com/hc/en-us/articles/52499995174299-Setting-up-Your-Streamlabs-Alerts
+- OpusClip: https://www.opus.pro/
+- Descript Features: https://www.descript.com/features
+- Metricool Planner: https://metricool.com/planner/
+- Buffer Insights: https://support.buffer.com/en-us/articles/using-insights-in-buffer-x4gLauQU5a
+- Beacons creator tools: https://help.beacons.ai/en/articles/4695105
+- Fourthwall Memberships: https://fourthwall.com/memberships
+- Patreon Digital Products: https://www.patreon.com/product/digital-products
+- Webflow Localization: https://help.webflow.com/hc/en-us/articles/33961240752147-Webflow-Localize-overview
+
+**Benchmark korlátja:** a funkciók elérhetősége platformonként, országonként, account-jogosultságonként és API-verziónként eltér. Minden külső integráció képességét a megvalósításkor az aktuális hivatalos dokumentációval és tényleges API-hozzáféréssel kell ellenőrizni; a marketingoldalon felsorolt funkció nem bizonyítja, hogy harmadik fél API-ja ugyanezt biztosítja.
+
+## 2.75.3 — Canonical architekturális szabályok a teljes termékre
+1. **Egy termék, egy canonical owner/domain:** a weboldal, CMS, media, schedule, platformintegráció, stream, content factory, shop, community, analytics és AI adatai saját domainhez tartoznak; ugyanazt az üzleti entitást nem tárolhatjuk több, egymással versengő modellben.
+2. **D1 és R2 közös erőforrás-szabálya:** D1 tárolja a strukturált metaadatot, állapotot, jogosultságot, verziót és hivatkozásokat; R2 a nagy bináris fájlokat. A media, video, audio, thumbnail, font, overlay, template asset, export és clip ugyanazon Resource/Asset contracton keresztül érhető el. R2 nem önálló domain-adatbázis.
+3. **Aszinkron feldolgozás:** nagy médiafeltöltés, transzkódolás, speech-to-text, AI-elemzés, klipgenerálás, fordítás, publikálás és analitika ne blokkoló webkérésben fusson. Queue/retry/idempotency/progress/cancel/dead-letter és költségkorlát kell; tartós, több lépéses workflow csak a szükséges infrastruktúrával.
+4. **Platformadapterek:** Twitch, YouTube, TikTok, Discord, Kick és a későbbi platformok külön adapterek, közös capability/credential/rate-limit/retry/error/sync contract alatt. A platformonként nem támogatott funkciót a UI nem ígérheti; szükséges a kézi fallback.
+5. **OBS helyi határ:** a böngészőben futó weboldal önmagában nem kap közvetlen, korlátlan hozzáférést a felhasználó gépén futó OBS-hez. Ehhez hitelesített helyi connector/companion vagy a felhasználó által engedélyezett helyi WebSocket-kapcsolat kell; alapértelmezésben localhost/explicit endpoint, titkosított secret-kezelés, explicit párosítás, visszavonás, reconnect és permission scope.
+6. **AI nem ír közvetlenül adatbázisba:** minden AI által kezdeményezett változtatás canonical command/API, validation, authorization, audit, revision és rollback útvonalon megy át. A modellkimenet nem megbízható parancs és nem kap közvetlen D1/R2/OBS hozzáférést.
+7. **Egységes AI Tool Registry:** a website, CMS, media, integrations, schedule, video, OBS, analytics, community és commerce műveletekhez leírt, verziózott tool-contractok tartoznak; a permission checker feladatonként és erőforrásonként ellenőriz, az approval flow pedig veszélyes vagy külső hatású műveleteknél kötelező.
+8. **Bővíthetőség:** új platform, media-formátum, AI-modell, sablon, widget vagy commerce provider extension pointon csatlakozik. Nem engedünk be nem ellenőrzött plugin-kódot a privilegizált runtime-ba.
+9. **Data portability:** export, import, törlés, account/site törlés, retention és helyreállítás nem utólagos kiegészítés; az adatmodell és az erőforrás-hivatkozások része.
+10. **Minden kritikus funkció mérhető:** structured logs, correlation/task IDs, audit log, metrics, error states, latency/cost counters, health checks és diagnosztikai UI szükséges a megfelelő fázisban.
+11. **API- és platformkorlátok tisztelete:** csak hivatalosan engedélyezett OAuth scope, API, kvóta, rate limit és monetizációs útvonal használható. A hiányzó hozzáféréshez őszinte státusz és kézi alternatíva kell.
+12. **Accessibility és felhasználóbarátság:** billentyűzet, képernyőolvasó, kontraszt, reduced motion, reszponzív működés, érthető hibák, onboarding, üres állapotok és undo/redo a termék alapjai.
+13. **Biztonság és adatvédelem:** site/workspace ownership, RBAC, tenant izoláció, OAuth secret védelem, rate limiting, CSRF/XSS/SSRF/IDOR védelem, fájlvalidáció, consent/retention, export/delete, AI-adatkezelés és audit.
+14. **Nincs kettős implementáció:** meglévő canonical domain vagy lifecycle bővítendő; új párhuzamos editor, külön save/publish rendszer, második Resource Library vagy AI-only mutation útvonal nem hozható létre.
+
+## 2.75.4 — Függőség-alapú teljes fejlesztési sorrend
+A sorrend capability-gate-eket jelent, nem dátumokat és nem release-verziókat. Minden munkapont a MASTER elején szereplő egyetlen aktív pont szerint fut. A fázisok közötti átmenethez acceptance bizonyíték kell; a későbbi fázisok részletes alfeladatait a tényleges kódbázis és az előző fázis tanulságai alapján kell lebontani.
+
+### STAGE 0 — Meglévő alapok és végrehajtási fegyelem
+- A már bizonyított E4/E5/E6 alapok megőrzése: site ownership, D1-migrációk, Worker/API, Twitch OAuth ownership, regression és health checks.
+- Aktív MASTER-pont, tiszta git-állapot, egyetlen aktív workstream, scope, tesztparancsok, rollback és acceptance rögzítése.
+- Legacy editor/admin/surface csak dokumentált migrációval vagy eltávolítási döntéssel kezelhető; régi funkció nem törölhető pusztán hasonló elnevezés miatt.
+- Kimenet: reprodukálható fejlesztési alap, regressziós baseline és a canonical útvonalak listája.
+
+### STAGE 1 — Editor foundation és első teljes vertikális szelet
+- `public/editor-v2/` az egyetlen aktív Editor.
+- Shell, route/state lifecycle, loading/error/empty states, command/history/transaction boundary.
+- Legalább egy valós szerkesztési út: kiválasztás → módosítás → validation → save/draft → reload → ugyanaz az állapot.
+- A munkapontban már legyenek mérhető browser acceptance-ek, keyboard accessibility és regressziótesztek.
+- Gate: az első slice ténylegesen működik; nem csak mock UI és nem csak typecheck.
+
+### STAGE 2 — Creator Center / Admin shell és navigáció
+- Áttekinthető dashboard, globális site/workspace selector, fő navigáció és státuszok.
+- Onboarding checklist, első használatú konfiguráció, súgó és diagnosztika.
+- A felület kezdő és haladó módja; a kritikus funkciók elérhetők legyenek fölösleges menühalmozás nélkül.
+- Szerepkörönkénti láthatóság és tiltott műveletek visszajelzése.
+- Gate: minden kanonikus admin területnek egyértelmű tulajdonosa és útvonala van.
+
+### STAGE 3 — Canonical Page Model, Layers és vizuális szerkesztés
+- Page/section/container/element fa, layers tree, selection, drag/drop, direct manipulation.
+- Inspector + Property Registry, typed props, defaultok, validation és property serialization.
+- Undo/redo, multi-select ahol biztonságos, copy/paste/duplicate, keyboard shortcuts.
+- Layout primitives, flex/grid, spacing, sizing, constraints, stacking, alignment és responsive breakpoints.
+- Desktop/tablet/mobile preview, overflow diagnostics, breakpoint inheritance és per-device override szabályok.
+- Formázás, interakció, linkek, anchors, hover/focus/active, animációk, reduced-motion fallback.
+- Gate: a vizuális állapot és a mentett Page Model mindig egyezik; nincs DOM mint adatforrás.
+
+### STAGE 4 — Resource / Asset / Media közös rendszer
+- Canonical Resource Registry és Resource Service/API; D1 metadata + R2 binary.
+- Upload, multipart/large-file flow, MIME/magic-byte validation, méretkorlát, jogosultság, secure object key, malware/abuse policy.
+- Folders/collections, search, filters, tags, metadata, alt text, crop, resize, replace, archive/delete, usage tracking, unused asset detection.
+- Képek, SVG/icon, video, audio, font, dokumentum, thumbnail, overlay, scene asset, clip és export közös contract alatt.
+- Transcoding/derivatives, thumbnails, cache/CDN, deduplication ahol biztonságos, checksum/integrity, lifecycle és cleanup.
+- A media picker, Editor, CMS, Content Factory, shop és AI ugyanazt a Resource API-t használja.
+- Gate: upload → metadata → R2 object → permission → preview → editor/content reference → publish → delete/recovery végig tesztelve.
+
+### STAGE 5 — Design system, templates és komponens-ökoszisztéma alap
+- Theme, tokens, typography, color, spacing, borders, shadows, breakpoints, component variants.
+- Reusable components, symbols, global/local styles, component properties, versioning és dependency updates.
+- Template/section/block library, kategóriák, preview, search, import/insert, replace/override és custom save.
+- Brand Kit: logo, palette, font, imagery, voice/tone, thumbnail/overlay rules.
+- Template-ből indulás, de teljes utólagos szerkeszthetőség; lock/override és compatibility validation.
+- Gate: template/component használata nem hoz létre eltérő Page Modelt vagy második asset libraryt.
+
+### STAGE 6 — CMS és teljes alkotói weboldal
+- Structured content types/collections, fields, relationships, tags/categories, drafts, scheduled publishing, revisions.
+- Blog/news, creator bio, games/categories, projects, portfolio, videos/VOD/clips, events, FAQs, sponsor/partner, press/media kit, downloadable resources.
+- Navigation/menu, footer, breadcrumbs, search, pagination, related content, filters, dynamic pages, reusable content blocks.
+- Forms/contact, newsletter signup, lead capture, spam protection, consent and submission management.
+- Website settings, custom domain, DNS/SSL lifecycle, redirects, 404, preview links, staging/production separation.
+- Public renderer: SSR/static/edge strategy a tényleges architektúrához illesztve, cache invalidation, canonical URL, sitemap, robots, RSS/feeds, metadata, Open Graph, structured data.
+- SEO/AEO: page-level és site-wide audit, internal linking, crawl/index diagnostics, social previews, performance and accessibility checks.
+- Gate: draft → preview → publish → public rendering → revision → rollback és cache refresh végig ellenőrizve.
+
+### STAGE 7 — Schedule, streamer profile és első platformintegrációk
+- Canonical schedule domain, timezone/DST, recurring events, exceptions, game/category, stream type, countdown, live/offline state.
+- Twitch OAuth/connection lifecycle, token refresh/revoke, live state, title/category és csak ténylegesen engedélyezett statisztikák.
+- Provider capability registry, integration health, scopes, quota, sync status, last success, retry and error recovery.
+- YouTube, TikTok, Discord, Kick és későbbi platformok külön adapterként; kézi link/import fallback, ahol API hiányos.
+- Közös Integration Center, account linking, disconnect, scope explanation, data freshness és permission review.
+- Gate: token/secret nem kerül kliensoldalra, site ownership és platform identity nem keveredik, rate limit/error path tesztelt.
+
+### STAGE 8 — Content Factory: tartalom- és publikációs központ
+- Egy központi tartalom-entitás és asset provenance: source stream/VOD → transcript → highlight candidates → edit project → platform variants → scheduled/published items.
+- VOD ingestion/import, source URL/file, metadata, collections, tags, chapters, search/filter, transcript és timeline.
+- Content calendar, backlog, campaign, content pillars, recurring series, status workflow, draft/review/approved/scheduled/published/failed.
+- Platformonkénti változatok: aspect ratio, duration, title, description, CTA, hashtags, cover/thumbnail, subtitles, safe zones, disclosure.
+- Publishing queue, idempotency, retry, scheduled time/timezone, platform response, external IDs és duplikációvédelem.
+- AI által készített title/caption/description/hashtags/thumbnail briefs, de szerkeszthető és jóváhagyható formában.
+- Gate: egy forrásból több platformra készülő tartalom visszakövethető; nincs csendes duplikált publikálás vagy adatvesztés.
+
+### STAGE 9 — Stream Studio, Overlay Studio és OBS connector
+- Overlay/scene/widget/alert builder; responsive browser-source canvas; custom themes; preview/test event; version/publish/rollback.
+- Alert event registry: follow/sub/raid/donation/purchase/membership csak ahol a provider vagy saját integráció hitelesen biztosítja.
+- OBS pairing és local connector; WebSocket auth, local endpoint allowlist, secret rotation, permission scopes, disconnect/revoke.
+- Read-only status: connection, scene, source, recording/stream state, dropped frames/stats ahol elérhető.
+- Engedélyezett control: scene/source switch, stream marker, replay buffer, recording/stream actions csak explicit user grants és confirmation mellett.
+- Browser source URL/token lifecycle, overlay cache, reconnect, safe-mode, failure indicators.
+- Audio/video device/setup diagnostics és guided OBS configuration; platform-specific limitation handling.
+- Gate: helyi és felhős határ biztonságos, illetéktelen távoli vezérlés nem lehetséges, disconnect és credential revoke tesztelt.
+
+### STAGE 10 — Live Stream Intelligence és technikai asszisztens
+- Valós idejű vagy near-real-time eseményekből álló timeline; timestampelt markers és visszanézhető bizonyíték.
+- Audio: silence/speech, clipping, loudness, noise, voice/game balance, desync és dropout jelek, a rendelkezésre álló jelforrások szerint.
+- Video/stream health: OBS stats, dropped frames, bitrate/encoding/network warnings, scene/source failures, black/frozen frame gyanú, CPU/GPU/system telemetry csak explicit local connectorral.
+- Chat/audience signals: message velocity, emote/reaction bursts, moderation flags és platformonkénti különbségek.
+- Contextual assistance: scene, game/category, stream title, schedule, past content performance és creator preferences alapján javaslat.
+- Live cue panel: rövid, prioritásos, nem tolakodó tanács; mute/quiet mode, sensitivity, ignore/dismiss, explain-why.
+- Privacy controls: live audio/video analysis opt-in, retention windows, sensitive segment exclusions, delete/export, local-vs-cloud processing choice where feasible.
+- Gate: false positive/negative mérés, latency/cost budget, opt-in/out, stream impact és no-interference test.
+
+### STAGE 11 — AI Highlight Detection és automatikus klipgyártás
+- Több jelből történő highlight candidate detection: speech/emotion cues, chat spikes, game events where available, scene changes, creator markers and manual hotkeys.
+- OBS replay buffer / local recording marker / VOD timestamp összerendelése; az esemény előtti és utáni context ablak megőrzése.
+- Candidate scoring több dimenzióban: érthetőség, kontextus, audio/video minőség, hook, önálló érthetőség, duplikáció, policy/copyright risk.
+- AI által indokolt pontszám és confidence; nem állítható garantált viralitás.
+- Clip editor: in/out trim, timeline, crop/reframe, face/game focus, captions, speaker labels, blur/redaction, audio cleanup, brand overlay, safe zones.
+- 9:16 / 1:1 / 16:9 és platformspecifikus export; captions, fonts, brand presets, thumbnails, hooks, CTA, translated variants.
+- Human review, batch approve/reject, edit history, undo, regenerate, source linkage, export queue és R2 storage lifecycle.
+- Gate: valós tesztanyaggal mérhető klipminőség, timestamp pontosság, audio/video sync, feliratminőség és visszavonhatóság.
+
+### STAGE 12 — AI Video/Audio Studio és teljes tartalom-újrahasznosítás
+- Transcript-based editing, word/sentence cuts, filler/pauses detection, chapter generation, show notes.
+- Speech-to-text, speaker diarization ahol megbízható, captions/subtitles, translation/dubbing csak a jogok és voice consent szabályaival.
+- Audio cleanup, loudness normalization, noise/echo reduction, silence trim, voice/music balance.
+- Thumbnail/cover/graphic generation, brand consistency, editable layers and export formats.
+- Long-form video, stream VOD, podcast/audio, tutorial, clip/Short, trailer, quote card és text post egy közös source lineage alatt.
+- AI-assisted script, outline, hook, title, thumbnail brief, CTA, description, chapters és content repurposing.
+- Human review, licensed assets/music, rights provenance, synthetic media disclosure where required.
+- Gate: eredeti forrás és minden derivative kapcsolatban marad; nincs felülírás vagy publikálás jóváhagyás nélkül.
+
+### STAGE 13 — Cross-platform publishing, social inbox és community
+- Közös social calendar, platformonkénti composer/preview/validation, drafts, approvals, scheduled publishing, retries and failure queue.
+- Twitch, YouTube, TikTok, Discord és későbbi adapterek capability-alapú funkciókkal; API hiány esetén kézi publikálási út.
+- Unified inbox/comments/mentions/messages csak ott, ahol hivatalos API és engedély ezt biztosítja.
+- Moderation tools, keyword filters, escalation, spam controls, saved replies, community announcements and event notifications.
+- Discord bot/roles/channels, membership sync és event routing külön permissioned adapteren keresztül.
+- Campaigns, collaborations, guest content, sponsor deliverables, cross-posting, link tracking and UTM.
+- Gate: platformonkénti API scope, publish status, retries, duplicate prevention, moderation audit and data deletion verified.
+
+### STAGE 14 — Creator Analytics, growth intelligence és kísérletezés
+- Egységes dashboard, de a nem összehasonlítható platformmetrikák nem keverhetők félrevezető közös számmá.
+- Stream, video, Shorts, social post, website, store, membership, email and campaign analytics.
+- Audience retention, watch time, CTR, engagement, returning audience, conversion funnel, revenue, churn and content cadence, ahol a provider ad adatot.
+- Content cohort, topic/format/platform/time comparisons; attribution confidence és API data coverage láthatóvá tétele.
+- AI insight: mi változott, mi lehet az oka, milyen bizonyíték támasztja alá, milyen következő kísérletet érdemes futtatni.
+- A/B vagy controlled experiments csak megfelelő mintával, mérési tervvel és platform-/privacy-szabályokkal.
+- Creator goal planning, weekly review, progress tracking, experiment history, outcome feedback loop.
+- Gate: metrika-definíciók dokumentáltak, adatforrás és frissesség látható, a korrelációt nem állítjuk bizonyított ok-okozatnak.
+
+### STAGE 15 — Creator Business, merch, shop és monetizáció
+- Product catalog: physical merch, print-on-demand provider, creator-fulfilled items, digital downloads, bundles, courses/assets, licenses and access rights.
+- Product variants, inventory, pricing, discounts, coupons, drops, preorder, gift cards, campaign landing pages.
+- Orders, checkout provider abstraction, payment status, refunds, chargebacks, taxes/VAT, shipping, fulfillment and customer support workflows.
+- Digital delivery secure links, expiring downloads, license/entitlement checks, member-only products and post-purchase access.
+- Membership tiers, recurring payments, perks, supporter goals, donations/tips, subscriptions, exclusive posts/videos, private events.
+- Twitch/Discord/member benefit sync where supported; purchase/sub events can trigger overlays and automations through the shared event system.
+- Shop builder blocks inside the same Page Model, theme and Resource library; commerce has its own canonical domain and never duplicates website content storage.
+- Gate: payment/webhook idempotency, order state transitions, refund/revoke, entitlement security, tax/region rules and reconciliation tests.
+
+### STAGE 16 — Audience ownership, CRM, email és creator communication
+- First-party subscriber/contact list with consent source, purpose, timestamp, unsubscribe and deletion controls.
+- Segments, tags, forms, lead magnets, newsletter, campaign templates, sequences and scheduled messages.
+- Event-triggered messages, welcome/retention/reactivation flows, content notifications and member communication.
+- Contact preference center, suppression lists, deliverability/bounce handling, anti-spam and compliance.
+- Media kit, sponsor/brand CRM, outreach pipeline, contract/deliverables, campaign reporting and invoices where appropriate.
+- Gate: consent and suppression enforced across every campaign, unsubscribes are immediate, sensitive data is not fed to AI without a valid purpose/permission.
+
+### STAGE 17 — AI Orchestrator és platformszintű AI-asszisztens
+- One AI Control Center for provider/model selection, tool registry, prompt/task versions, permissions, approvals, budget, usage, latency, error and audit.
+- Context selector combines only authorized workspace/site/resource/platform data and applies data minimization.
+- Task planner breaks a goal into steps, checks dependencies, executes through canonical tools, reports results and offers rollback where possible.
+- Specialist agents: Website/Editor, Content Strategist, Clip/Video Editor, Live Stream Assistant, OBS/Technical Diagnostics, Social Publishing, Analytics/Growth, Shop/Business, Accessibility/SEO, QA/Release.
+- AI can inspect broad authorized context but does not automatically receive unlimited permissions. Read, propose, draft, execute-low-risk and execute-high-risk are separate capability levels.
+- Confirmation required for publish, delete, payment/refund, account connection, external messages, OBS stream controls and other consequential operations according to risk.
+- Durable creator profile/preferences and outcome history with user inspection, correction, export and deletion.
+- Prompt-injection defense, tool output validation, untrusted-source labeling, secrets redaction, model fallback, cost limits, timeouts and retry policies.
+- Evaluation harness: task success, factuality, quality, tool correctness, regression, latency, cost, user approval and rollback tests.
+- Gate: end-to-end workflows work with least privilege, audit trail and deterministic fallback; model output never bypasses domain validation.
+
+### STAGE 18 — Automation and event/workflow engine
+- Canonical event registry and typed triggers/conditions/actions across website, schedule, platforms, stream, content, community, store and analytics.
+- Visual workflow builder, templates, test/simulate mode, schedule, delay, branch, loop limits, retry, idempotency, cancellation and dead-letter handling.
+- Example workflows: stream live → site live state + announcement; stream ended → VOD import + transcript; highlight candidate → clip draft; approved clip → platform-specific publish queue; new order → thank-you + eligible overlay event; member join → entitlement + Discord role where supported.
+- User-defined conditions, rate limits, per-provider quotas, dry-run, execution history, permissions and audit.
+- Gate: loops/duplicate events bounded, failures visible, replays safe, external side effects require proper approvals.
+
+### STAGE 19 — Multi-creator, teams, workspaces and SaaS readiness
+- Tenant → workspace → members → sites/projects → domain resources model with strict tenant isolation.
+- Invites, roles, granular permissions, team ownership, handoff, agency/client workspace, shared libraries and per-site settings.
+- Collaborative editing, comments, review/approval, change history, conflict resolution and lock strategy.
+- Plan/entitlement/quota model, usage metering, billing integration, AI/media storage budgets and transparent limits if the product becomes commercial SaaS.
+- White-label/custom domain, organization-level templates, brand kits and controlled client access.
+- Gate: cross-tenant IDOR/access tests, billing/entitlement consistency, data export/delete and audit coverage pass.
+
+### STAGE 20 — Template/extension marketplace and creator ecosystem
+- Public/private template, section, component, theme, overlay, OBS scene, widget, workflow, automation and digital asset catalogs.
+- Compatibility/version manifest, preview, dependencies, permissions, asset provenance, update/rollback and migration.
+- Creator publisher profiles, submission review, malware/security scan, policy checks, ratings/reviews, reporting and moderation.
+- Licensing, attribution, revenue share, purchase/entitlement and refund/revocation.
+- Extension API/SDK, sandboxing and permission declarations; no unreviewed code in privileged server/browser contexts.
+- Gate: malicious package, incompatible version, license violation, payment/refund and publisher withdrawal scenarios tested.
+
+### STAGE 21 — Globalization, accessibility, mobile and broad creator support
+- Localization architecture for UI, CMS, site, shop, email, AI output and metadata; Hungarian-first but not Hungarian-only.
+- Translation memory, glossary, locale-specific URLs, hreflang, date/time/currency/number formats, fallback, RTL readiness where relevant.
+- Accessibility audits and remediation workflow; keyboard/screen reader, contrast, focus, reduced motion, captions, transcript and accessible forms.
+- Mobile-first Creator Center and public site, tablet/desktop responsive behavior; optional mobile companion for notifications, quick approvals and stream markers.
+- Support for multiple creator types: streamer, video creator, podcaster, educator, artist, musician, esports/team, coach, writer, community operator and small creator business.
+- Gate: representative persona journeys, locale fallback, accessibility regression and mobile/tablet/desktop tests pass.
+
+### STAGE 22 — Security, reliability, performance and operations at scale
+- Threat modeling per domain, secure defaults, RBAC/tenant isolation, rate limits, input validation, upload protection, secrets rotation and incident playbooks.
+- Database migration safety, backup/restore drills, R2 object integrity, orphan cleanup, disaster recovery and retention enforcement.
+- Performance budgets, Core Web Vitals, CDN/cache invalidation, image/video derivative strategy, lazy loading and public-site load testing.
+- Queue depth/lag, job retries, webhook health, external provider outages, circuit breakers and status dashboards.
+- Observability, SLOs, alerting, error budgets, dependency inventory, supply-chain scanning, accessibility/security regression.
+- Cost controls for storage, egress, media processing, AI tokens, transcription, video rendering and provider APIs; quotas and transparent usage.
+- Gate: tested recovery, incident response, load, security and degradation paths; graceful failure instead of silent corruption.
+
+### STAGE 23 — Continuous discovery and product evolution (always active)
+- Minden jelentős bővítés előtt benchmark a releváns piaci szereplőkkel és hivatalos API-dokumentációval.
+- User feedback, creator interviews, usability tests, support issue themes and analytics-informed prioritization.
+- Feature-gap review against the 27 product domains in 00.9.6.C.1 and the historical ledgers H19–H34.
+- Minden új igényhez canonical owner, dependency, data contract, permissions, UX, DoD, tests, rollback and phase assignment.
+- Meglévő feature nem törölhető hasonló név vagy újabb ötlet miatt; előbb usage/dependency audit és explicit migration/supersession decision kell.
+- E fejezet folyamatosan bővül; a termék teljessége nem jelentheti a kutatás végleges lezárását.
+
+## 2.75.5 — Cross-stage capability checklist (nem hagyható ki)
+- [ ] Website builder: pages, navigation, layers, canvas, inspector, responsive, forms, CMS, dynamic data, preview, publishing, revisions and recovery.
+- [ ] Design system: tokens, brand kit, reusable components, templates, symbols, icons, fonts, media, asset provenance and template compatibility.
+- [ ] Public website: custom domains, SSL, redirects, SEO/AEO, social preview, sitemap, RSS, performance, accessibility and analytics.
+- [ ] Content Factory: VOD ingestion, transcript, clips/Shorts, captions, thumbnails, format conversion, content calendar, platform variants, approval and publishing queue.
+- [ ] Live/OBS: local connector, scene/source controls, replay buffer/markers, technical diagnostics, overlays, widgets, alerts and secure pairing.
+- [ ] Integrations: Twitch, YouTube, TikTok, Discord, Kick and future providers under a shared adapter contract with scope/rate-limit/error handling.
+- [ ] Community: unified inbox where supported, moderation, Discord roles, announcements, memberships, audience consent and direct communication.
+- [ ] Commerce: merch, POD, own fulfillment, digital products, shop, checkout/payment adapters, orders, refunds, taxes/shipping, memberships and entitlements.
+- [ ] Analytics: platform-specific metrics, cross-platform views, audience, content performance, conversion, revenue, experimentation and evidence-backed AI insights.
+- [ ] AI: tool/model registry, context permissions, task planner, specialist agents, approvals, budget, audit, long-term preferences, evaluation and rollback.
+- [ ] Automation: events, triggers, conditions, workflow UI, idempotency, retries, quotas, dry-run and execution history.
+- [ ] Platform foundation: accounts, workspace/site ownership, teams, RBAC, import/export, backups, recovery, privacy, deletion, localization and accessibility.
+- [ ] Ecosystem: extension SDK, template/component/overlay marketplace, moderation, licensing, billing and revenue share.
+- [ ] Operations: security, reliability, observability, performance, cost limits, migration safety and disaster recovery.
+- [ ] Governance: continuous benchmarking, no duplicate canonical domains, no feature removal without evidence, one active workstream and proof-based PASS.
+
+## 2.75.6 — Definition of Done for every future work item
+Every implementation point must include, before coding:
+1. User problem and measurable acceptance outcome.
+2. Canonical domain/owner and impacted surfaces (Admin, Editor, public site, integrations, AI, storage).
+3. Data/API contract, migrations, ownership/tenant scope and backward-compatibility plan.
+4. Permission/security/privacy threat review and external API capability verification.
+5. UX states: loading, empty, error, offline, permission denied, quota/rate limit, partial success and retry.
+6. Unit/domain tests, integration tests, regression tests and browser/runtime acceptance as applicable.
+7. Observability and diagnostics, with redacted logs and correlation/task IDs.
+8. Failure recovery, rollback, idempotency and cleanup requirements.
+9. Accessibility, responsive behavior, localization and performance impact.
+10. User acceptance and explicit evidence before marking PASS.
+
+**PASS jelentése:** a követelmény a tényleges implementációban működik, a releváns tesztek és runtime acceptance-ek sikeresek, a hibautak ellenőrzöttek, és a bizonyíték a MASTER-ben rögzített. A dokumentumba felvett funkció, mock UI, leforduló kód vagy puszta API-válasz önmagában nem PASS.
+
+## 2.75.7 — Végrehajtási zár
+- A jelenlegi aktív munkapont változatlanul az MASTER elején megadott `F0.1-EDITOR-FOUNDATION-AND-FIRST-USABLE-SLICE`.
+- A következő fejlesztési lépést nem az határozza meg, hogy melyik távoli fázis tűnik izgalmasabbnak, hanem az aktív pont DoD-je és a függőségi sorrend.
+- A későbbi OBS/AI/Content Factory funkciók tervezése most megőrzött cél; implementációjuk a szükséges helyi connector, media pipeline, integration contract, event model, security and async processing alapok megléte után indul.
+- A roadmap bővítése nem jelent automatikus párhuzamos munkát, és nem engedélyez második Editor/Resource/Publishing/AI mutation rendszert.
+- A korábbi követelmények és történeti traceability táblák továbbra is megmaradnak. Ha egy követelmény több helyen szerepel, egy canonical implementációhoz kell kapcsolni, nem törölni.
