@@ -2503,7 +2503,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | E.14-15 | AI usage/permission/prompt templates/jobs/approval/errors; provider keys never in browser | AI-001, AI-002, AI-010, AI-017, SEC-008 | DEFER | 3.0 | QA-003/008 |
 | E.14-16 | No irreversible public/business action without required human approval | AI-007, AI-019, STO-018, AUT-009, SEC-002 | KEEP | 3.0+ safety gate | QA-003/008 |
 
-**Batch 3 result:** 45 E.10–E.14 source bullets mapped. Provider access, financial operations, member data and AI remain explicitly phase-/permission-gated. Structural validation is pending for this batch; mapping is not runtime PASS.
+**Batch 3 result:** 45 E.10–E.14 source bullets mapped. Structural validation on commit 107e7a46628d290067631d0b32063bdd31538611 confirmed 45 rows, 150 distinct explicit/range-expanded feature/QA references and no unresolved IDs. Provider access, financial operations, member data and AI remain explicitly phase-/permission-gated. Mapping is not runtime PASS.
 
 ## 38. Részletes Visual Editor képességkatalógus
 
