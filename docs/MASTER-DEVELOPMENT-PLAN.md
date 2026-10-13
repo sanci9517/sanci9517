@@ -1,10 +1,11 @@
-**ACTIVE_POINT_ID:** `F0.1-ADMIN-HOME-VISUAL-DESIGN-AND-SHELL`  
-**ACTIVE_POINT_STATUS:** `ACTIVE — először a Creator Center/Admin főoldal vizuális terve és valós navigációs shellje készül el; a modulok csak valós adatokkal és acceptance után tekinthetők késznek`  
-**ACTIVE_POINT_TITLE:** Creator Center/Admin főoldal — végleges UI/UX irány, dashboard shell és navigációs alap  
-**ACTIVE_SUBPOINT_ID:** `F0.1-ADMIN-HOME-VISUAL-DESIGN-AND-SHELL`  
-**ACTIVE_SUBPOINT_STATUS:** `ACTIVE — Admin főoldal layout/design system/responsive shell; valós modulállapot, jogosultság és linkek; nincs hamis metrika vagy működőnek látszó placeholder`  
-**PREVIOUS_GATE:** `E6` — CLOSED / PASS  
-**NEXT_GATE:** `F0.1 Admin főoldal vizuális terv + shell → F0.2 Admin navigáció és globális shell acceptance → F0.3 Editor foundation → F0.4 Layers/structure → további pontok szigorú sorrendben; nincs M0 audit előfeltétel`  
+**ACTIVE_POINT_ID:** `F0.2-ADMIN-NAVIGATION-GLOBAL-SHELL-ACCEPTANCE`
+**ACTIVE_POINT_STATUS:** `ACTIVE — az Admin/Creator Center globális navigációjának, site contextjének, route-jainak, jogosultsági és állapotjelzéseinek valós ellenőrzése és javítása`
+**ACTIVE_POINT_TITLE:** Admin navigáció és globális shell acceptance
+**ACTIVE_SUBPOINT_ID:** `F0.2-ADMIN-NAVIGATION-GLOBAL-SHELL-ACCEPTANCE`
+**ACTIVE_SUBPOINT_STATUS:** `ACTIVE — ellenőrizd az összes látható menülinket, aktív/tervezett/letiltott állapotot, site contextet, auth/role határokat és mobil navigációt; csak létező funkciót mutass működőként`
+**PREVIOUS_GATE:** `F0.1 — CLOSED / PASS` (PR #7 squash merge: `047d66f78cc4bdd6c7b50ddd83140d3ddf4aae48`)
+**NEXT_GATE:** `F0.2 Admin navigation + global shell acceptance → F0.3 Editor foundation + first vertical slice → F0.4 Visual Builder/Layers/Inspector → további F0.x pontok szigorú sorrendben; M0 audit PASS nem előfeltétel`
+**PARALLEL_WORKSTREAMS:** `0`
 **PARALLEL_WORKSTREAMS:** `0`
 
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
@@ -4100,9 +4101,9 @@ Minden nagyobb domain fejlesztése előtt a benchmarkot újra kell ellenőrizni,
 - [x] A PR egyetlen dokumentumot módosított, a base branch a v2/foundation volt, a GitHub a merge előtt mergeable állapotot jelzett.
 - [x] Az Admin UI F0.1 lett a következő aktív munkapont; a terv merge-je nem jelenti az Admin UI implementáltságát.
 
-## 2.77.9 — F0.1 Admin home shell: aktuális implementációs checkpoint
+## 2.77.9 — F0.1 Admin home shell: lezárt implementációs checkpoint
 
-**Állapot:** IMPLEMENTING — NOT PASS.  
+**Állapot:** CLOSED / PASS — 2026-10-13; a részletes végleges closure record a 2.77.9.D szakaszban található.  
 **Kód PR:** https://github.com/sanci9517/sanci9517/pull/7  
 **Branch:** feature/admin-home-shell  
 **Aktív scope:** a dashboard vizuális shell, az authenticated /admin belépési út, a valódi read-only dashboard adatforrások és a contract tesztek.
@@ -4146,7 +4147,7 @@ Elkészült a munkapont első implementációs szelete:
 
 ## 2.77.9.A — F0.1 user feedback: Admin home must be a working Creator Platform dashboard
 
-**Állapot:** IMPLEMENTING / NOT PASS. Ez a kiegészítés a 2.77.9 checkpointot pontosítja, nem zárja le az F0.1-et.
+**Történeti checkpoint:** az akkori `IMPLEMENTING / NOT PASS` állapotot a 2.77.9.D closure record felülírja; az alábbi követelmények scope-megőrző acceptance-irányelvek.
 
 A felhasználó egyértelmű visszajelzése: az Admin főoldal ne vizuális fejlesztési terv vagy funkciókatalógus legyen, hanem valódi Creator Platform adminfelület.
 
@@ -4163,7 +4164,7 @@ A felhasználó egyértelmű visszajelzése: az Admin főoldal ne vizuális fejl
 
 ## 2.77.9.B — Dashboard copy hierarchy and capability completeness clarification
 
-**Állapot:** IMPLEMENTING / NOT PASS.
+**Történeti checkpoint:** az akkori `IMPLEMENTING / NOT PASS` állapotot a 2.77.9.D closure record felülírja.
 
 - A felhasználó pontosította, hogy a Sanci9517 Creator Platform teljes funkciókészlete jóval több a mostani Admin menüben látható elemeknél. A menü rövid, első szintű navigáció; **nem a teljes capability inventory és nem a végleges termékscope**.
 - A teljes scope továbbra is a MASTER 00.9.6.C / 00.9.6.D, az E/F buildpontok, a 01–140 preservation matrix és a H19–H34 történeti traceability alapján vezetendő. A képességek nem hagyhatók el azért, mert a dashboardon vagy a menüben nincs mindegyik felsorolva. A történeti vagy tervezett tétel nem jelent kész runtime-funkciót.
@@ -4176,7 +4177,7 @@ A felhasználó egyértelmű visszajelzése: az Admin főoldal ne vizuális fejl
 
 ## 2.77.9.C — Full Creator Platform Admin home and universal action alignment
 
-**Állapot:** IMPLEMENTING / NOT PASS — user visual acceptance and local/browser validation are still required.
+**Történeti checkpoint:** az akkori `IMPLEMENTING / NOT PASS` és nyitott acceptance állapotot a 2.77.9.D closure record felülírja.
 
 A felhasználó pontos követelménye: nem kizárólag a jelenlegi működő modulok listája kell, hanem a teljes, MASTER-ben rögzített Creator Platform termékirányának áttekinthető megjelenítése az Admin főoldalon, prémium kivitelezéssel. A gombok feliratának és ikonjának függőlegesen és vízszintesen középre kell kerülnie.
 
@@ -4200,3 +4201,33 @@ A felhasználó pontos követelménye: nem kizárólag a jelenlegi működő mod
 - [x] A felhasználó elfogadta a jelenlegi Admin főoldal irányát; a később hiányzóként felismert funkciók fejlesztés közben, a MASTER scope megőrzésével bővíthetők. Ez nem tekintendő a még futtatandó lokális/böngészős ellenőrzések helyettesítésének.
 
 - [x] CI bővítve `test:domain` és `test:admin-home` futtatásával; a `97c3ea85b62991d878d1d63c8f821f41abcc3b02` HEAD-en mindkét GitHub Actions workflow sikeres. Az Admin home szerződéses teszt egy elavult `.panel` CSS-szelektor elvárása miatt először hibázott; az elvárás a tényleges közös `.panel, .module-card` stílushoz igazítva lett, majd az újrafuttatás sikeres volt.
+
+## 2.77.9.D — F0.1 closure record and F0.2 activation — 2026-10-13
+
+**F0.1 státusz: CLOSED / PASS.** Ez a záróbejegyzés a 2.77.9 és 2.77.9.A–C korábbi, köztes ellenőrzési állapotait felülírja. A korábbi „draft / unmerged” és „még ellenőrzés szükséges” szövegek az akkori pillanatképeket írják le, nem a jelenlegi státuszt.
+
+- [x] PR #7 `feat: start Admin home visual shell (F0.1)` a `feature/admin-home-shell` ágról a `v2/foundation` ágba squash merge-elve.
+- [x] Merge commit: `047d66f78cc4bdd6c7b50ddd83140d3ddf4aae48`.
+- [x] Merge előtti PR HEAD: `2dcc769c13571d532d27d65e0c7c658001d30e4c`; mindkét kötelező GitHub Actions workflow sikeres.
+- [x] Helyi validáció: `npm run typecheck` sikeres; `npm run test:admin-home` 11/11, `npm run test:editor` 30/30, `npm run test:schedule` 9/9, `npm run test:domain` 5/5 — összesen 55 teszt PASS.
+- [x] Felhasználói Preview acceptance: a legfrissebb Admin Home preview „teljesen rendben van” visszajelzést kapott.
+- [x] A felhasználó elfogadta, hogy az esetlegesen hiányzó capability-k a tényleges fejlesztés közben, a MASTER teljes scope-jának megőrzésével kerülnek hozzáadásra.
+- [x] Nem állítjuk, hogy a 24 capability-kártya minden jövőbeli funkciót implementál; a tervezett modulok továbbra sem kész runtime-funkciók.
+
+**M0 értelmezése:** a külön M0 audit munkafázis korábbi felhasználói termékdöntéssel `SUPERSEDED / CLOSED BY PRODUCT DECISION` státuszú. Ez nem M0 audit-PASS; a fejlesztés folytatásának nem előfeltétele. A releváns scope-követelményeket az aktív F0.x munkapontok DoD-jába kell átvezetni.
+
+**Következő aktív munkapont: F0.2 — Admin navigation + global shell acceptance.** Ez nem külön elméleti tervezési fázis: a specifikációt és az ellenőrzési mátrixot a tényleges navigáció/route/auth/state implementációjával együtt kell kidolgozni, majd ugyanabban a munkapontban tesztelni.
+
+F0.2 DoD:
+- [ ] Teljes menü- és route-leltár a valós alkalmazásból; minden aktív menüpont létező, helyes, hitelesített célra mutat.
+- [ ] A működő, részben elérhető, tervezett, későbbi és letiltott modulok státusza következetes; nincs halott vagy hamisan aktív CTA.
+- [ ] Site context és az admin belépési útvonalak következetesek; a canonical Editor továbbra is `/admin/editor`.
+- [ ] Auth/role guard, közvetlen asset- és route-kérések, jogosultsághibák és visszairányítások ellenőrizve.
+- [ ] Desktop/tablet/mobil navigáció, billentyűzetes fókusz, kontraszt, téma, túlcsordulás és reduced-motion ellenőrizve.
+- [ ] Keresés, értesítés és feladatjelzés csak akkor működőként látható, ha valós adat-/viselkedési szerződés támasztja alá; egyébként egyértelmű disabled/queued állapot.
+- [ ] Célzott contract/domain/API és regressziós tesztek PASS; `npm run typecheck` PASS.
+- [ ] Friss Preview ellenőrzés és felhasználói acceptance PASS.
+- [ ] E checkpoint végén a MASTER aktív pontja csak bizonyítékokkal frissíthető F0.3-ra.
+
+**Végrehajtási szabály:** nincs párhuzamos engineering stream; nincs új külön auditfázis; nincs funkciótörlés pusztán azért, mert a jelenlegi menüben nem látszik. A MASTER marad az egyetlen source of truth.
+
