@@ -4646,3 +4646,52 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 
 **Coverage count:** 42 E13–E16 source items are individually keyed. E17–E24 and the roadmap's global rules remain OPEN. P0.2 **IN PROGRESS / NOT PASS**; documentation-only, no runtime code/data changed and no tests run.
 
+### 41.3.30. P0.2 — MASTER-FINAL-ROADMAP source-key ledger: E17 Templates, E18 real pages, E19 Media/R2 (2026-10-13)
+
+**Source:** docs/archive/plans/MASTER-FINAL-ROADMAP.md, E17–E19, archive lines 411–453. All 34 source checklist items are retained individually; old checkbox status is historical.
+
+| Source key | Archive line | Exact source item | Current E target | Candidate canonical IDs | Decision / phase / acceptance |
+|---|---:|---|---|---|---|
+| ROADMAP-E17-01 | 412 | - [ ] blank | E.6.3-01 | EDT-041; DSN-009/010 | KEEP — blank starter is a valid empty Page Model and onboarding flow; acceptance evidence OPEN |
+| ROADMAP-E17-02 | 413 | - [ ] streamer home | E.6.3-01; E.2.1-01 | DSN-009; WEB-014 | KEEP — streamer-home template must be editable and use canonical page/data sources; acceptance evidence OPEN |
+| ROADMAP-E17-03 | 414 | - [ ] schedule | E.6.3-01; E.8 | DSN-009/010; WEB-016; SCH-001–015 | KEEP — Schedule template is presentation config, not a second Schedule data store; acceptance evidence OPEN |
+| ROADMAP-E17-04 | 415 | - [ ] about | E.6.3-01; E.2.1-01 | DSN-009; WEB-018 | KEEP — About template binds to canonical profile/page content; acceptance evidence OPEN |
+| ROADMAP-E17-05 | 416 | - [ ] contact | E.6.3-01; C.23.8-07 | DSN-009; WEB-020 | KEEP — Contact template uses validated form route and server-side consent/security; acceptance evidence OPEN |
+| ROADMAP-E17-06 | 417 | - [ ] community | E.6.3-01; E.13 | DSN-009; WEB-019; COM-001/002 | KEEP — Community template distinguishes public links/CTA from future posts/comments; acceptance evidence OPEN |
+| ROADMAP-E17-07 | 418 | - [ ] VOD | E.6.3-01; E.10 | DSN-009; WEB-017; CNT-001–020 | KEEP — VOD template uses canonical content records and honest provider fallback; acceptance evidence OPEN |
+| ROADMAP-E17-08 | 419 | - [ ] support | E.6.3-01 | DSN-009; WEB-023; SUP-001–003 | KEEP — Support template is not proof of active payments/membership; acceptance evidence OPEN |
+| ROADMAP-E17-09 | 420 | - [ ] custom template | E.6.3-01; DSN-014 | DSN-008/009/010/014 | KEEP — custom templates require compatibility, migration, preview and rollback policy; acceptance evidence OPEN |
+| ROADMAP-E18-01 | 423 | - [ ] Home | E.2.1-01 | WEB-014; WEB-001/002 | KEEP — Home route/page model and content preserved; migration parity tests required; acceptance evidence OPEN |
+| ROADMAP-E18-02 | 424 | - [ ] Rólam | E.2.1-01; F.4-05 | WEB-018; WEB-001/002 | KEEP — About/Profile route uses canonical page CRUD and profile content; acceptance evidence OPEN |
+| ROADMAP-E18-03 | 425 | - [ ] Adásrend | E.2.1-01; E.8 | WEB-016; SCH-001–015 | KEEP — Schedule page and canonical Schedule domain remain separate but connected by safe binding; acceptance evidence OPEN |
+| ROADMAP-E18-04 | 426 | - [ ] Twitch | E.2.1-01; E.9 | WEB-015; INT-001–012; LIV-001–007 | KEEP — Twitch/live page only uses permitted normalized data and safe embeds; acceptance evidence OPEN |
+| ROADMAP-E18-05 | 427 | - [ ] YouTube | E.2.1-01; E.9 | WEB-001/002; INT-013; CNT-001–020 | OPEN — no distinct canonical YouTube page ID; decide whether generic Page/Content Hub route or platform-specific route is canonical; acceptance evidence OPEN |
+| ROADMAP-E18-06 | 428 | - [ ] TikTok | E.2.1-01; E.9 | WEB-001/002; INT-014; CNT-001–020 | OPEN — no distinct canonical TikTok page ID; preserve source intent and decide route/template/adapter boundary; acceptance evidence OPEN |
+| ROADMAP-E18-07 | 429 | - [ ] Közösség | E.2.1-01; E.13 | WEB-019; COM-001/002 | KEEP — Community page and public community links; posts/comments are separately gated; acceptance evidence OPEN |
+| ROADMAP-E18-08 | 430 | - [ ] Kapcsolat | E.2.1-01; F.7-04 | WEB-020; SEC-002/005/011 | KEEP — Contact route/form schema, spam/rate limits, consent/privacy and no-secret logging; acceptance evidence OPEN |
+| ROADMAP-E18-09 | 431 | - [ ] Támogatás | E.2.1-01; F.12-05 | WEB-023; SUP-001–003; COM-014 | KEEP — Support page with external CTA/verified goal; payment integration separately gated; acceptance evidence OPEN |
+| ROADMAP-E18-10 | 432 | - [ ] VOD | E.2.1-01; E.10 | WEB-017; CNT-001–020; INT-013–016 | KEEP — VOD route includes VOD/highlight/clip/Shorts and provider/manual fallback; acceptance evidence OPEN |
+| ROADMAP-E18-11 | 433 | - [ ] Shorts | E.2.1-01; E.10 | WEB-017; CNT-003/004 | KEEP — Shorts remain content records/feeds, not hardcoded page logic; acceptance evidence OPEN |
+| ROADMAP-E18-12 | 434 | - [ ] Sponsor/Business | E.2.1-01; E.15 | WEB-024; CAM-001/004 | KEEP — Sponsor/Business page remains public press-kit/lead surface, not active CRM by default; acceptance evidence OPEN |
+| ROADMAP-E18-13 | 435 | - [ ] Press Kit | E.2.1-01; E.15 | WEB-024; CAM-004 | KEEP — Press Kit export/privacy/version acceptance required; acceptance evidence OPEN |
+| ROADMAP-E19-01 | 442 | - [ ] upload | E.5.1 | RES-003; RES-001/002 | KEEP — upload validates owner/site, MIME/content/size/object key and progress/cancel/retry; acceptance evidence OPEN |
+| ROADMAP-E19-02 | 443 | - [ ] folders | E.5.1 | RES-006 | KEEP — folders/collections are metadata organization, not a second binary store; acceptance evidence OPEN |
+| ROADMAP-E19-03 | 444 | - [ ] search | E.5.1 | RES-005/010 | KEEP — search indexes canonical metadata and permissions; acceptance evidence OPEN |
+| ROADMAP-E19-04 | 445 | - [ ] filter | E.5.1 | RES-005 | KEEP — filter respects media type/status/owner/site scope; acceptance evidence OPEN |
+| ROADMAP-E19-05 | 446 | - [ ] preview | E.5.1 | RES-004/010 | KEEP — preview uses safe variants and protected asset authorization; acceptance evidence OPEN |
+| ROADMAP-E19-06 | 447 | - [ ] metadata | E.5.1 | RES-002/007 | KEEP — metadata belongs to D1; binary belongs to R2; acceptance evidence OPEN |
+| ROADMAP-E19-07 | 448 | - [ ] alt text | E.5.1 | RES-007 | KEEP — alt text/caption/source/license fields have schema and requiredness policy; acceptance evidence OPEN |
+| ROADMAP-E19-08 | 449 | - [ ] crop/resize | E.5.1 | RES-004; RES-002 | OPEN — crop/resize must distinguish non-destructive display variants from binary transformation/overwrite; acceptance evidence OPEN |
+| ROADMAP-E19-09 | 450 | - [ ] replace | E.5.1 | RES-009; RES-008 | KEEP — replace is usage-aware, versioned and rollback-safe; acceptance evidence OPEN |
+| ROADMAP-E19-10 | 451 | - [ ] delete | E.5.1 | RES-009; RES-008; SEC-002 | KEEP — delete checks references, site scope and restore/soft-delete policy; acceptance evidence OPEN |
+| ROADMAP-E19-11 | 452 | - [ ] usage tracking | E.5.1 | RES-008 | KEEP — usage tracking covers Pages, blocks, templates, Schedule and protected downloads; acceptance evidence OPEN |
+| ROADMAP-E19-12 | 453 | - [ ] unused media | E.5.1 | RES-008/015 | KEEP — unused-media report must distinguish truly unused from unindexed/failed references; acceptance evidence OPEN |
+
+**Semantic findings:**
+- Templates are reusable structured Page Model instances. They must not copy live Schedule/domain rows, bypass the canonical renderer or introduce a parallel Editor/page model.
+- The old roadmap names separate Twitch, YouTube and TikTok pages. Twitch has the explicit public Live page ID WEB-015; YouTube/TikTok currently have adapters/content IDs but no distinct public page ID in the registry. This is an explicit route/template decision still OPEN, not permission to drop those historical pages.
+- Media lifecycle is D1 metadata + R2 binary, with canonical resource IDs and site ownership. Upload, replace, delete and unused-media detection need reference checks and negative ownership tests; an upload button or media preview does not prove a complete Media Manager.
+- Crop/resize must clarify whether it changes display metadata, generates a new derivative, or overwrites binary. Non-destructive variant generation and usage-aware rollback must be specified before accepting destructive transformations.
+
+**Coverage count:** 34 E17–E19 source items are individually keyed. E20–E24 and the roadmap's global rules remain OPEN. P0.2 **IN PROGRESS / NOT PASS**; documentation-only, no runtime code/data changed and no tests run.
+
