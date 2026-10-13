@@ -255,7 +255,45 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
     }
-  </style>
+  
+    /* F0.1 visual refinement: centered hierarchy, concise copy, readable working controls. */
+    .welcome-row { flex-direction: column; align-items: center; text-align: center; }
+    .welcome-row > div:first-child { display: flex; flex-direction: column; align-items: center; }
+    .intro { max-width: 660px; margin-left: auto; margin-right: auto; }
+    .welcome-actions { justify-content: center; }
+    .section-heading { justify-content: center; text-align: center; }
+    .section-heading > div { max-width: 760px; }
+    .section-heading h2::before { display: none; }
+    .section-heading p { max-width: 680px; margin: 6px auto 0; line-height: 1.55; }
+    .section-heading .freshness { position: absolute; right: 0; }
+    .metric-card { text-align: center; }
+    .metric-top { justify-content: center; position: relative; min-height: 34px; }
+    .metric-icon { position: absolute; right: 0; }
+    .metric-value { margin-top: 14px; }
+    .panel-header { align-items: center; flex-direction: column; text-align: center; }
+    .panel-header p { max-width: 460px; margin-left: auto; margin-right: auto; }
+    .site-preview { justify-content: center; flex-wrap: wrap; text-align: center; }
+    .preview-copy { flex: 0 1 auto; }
+    .preview-actions { justify-content: center; flex-wrap: wrap; }
+    .empty-state { text-align: center; }
+    .status-message { text-align: center; }
+    .action-card { align-items: center; flex-direction: column; text-align: center; }
+    .action-copy { width: 100%; }
+    .action-copy p { max-width: 360px; margin-left: auto; margin-right: auto; }
+    .module-list .module-card { text-align: left; }
+    .module-copy { text-align: left; }
+    .section-heading + .content-grid { margin-top: 0; }
+    @media (max-width: 900px) {
+      .section-heading { position: relative; }
+      .section-heading .freshness { position: static; }
+    }
+    @media (max-width: 600px) {
+      .welcome-actions { width: 100%; }
+      .welcome-actions .btn { flex: 1 1 150px; }
+      .site-preview { flex-direction: column; }
+      .preview-copy { max-width: 100%; }
+    }
+</style>
 </head>
 <body>
   <div class="app-shell">
