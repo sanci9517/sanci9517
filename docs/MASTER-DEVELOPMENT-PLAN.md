@@ -2183,6 +2183,19 @@ Ez a rész a 37.10 első áttekintésének frissített, endpoint- és approval-s
 
 **Továbbra is nyitott:** a sorok eredeti történeti forrásával való emberi, tartalmi összevetés; minden cél-ID feature contractjának (permission, data owner, dependency, negative tests, acceptance evidence) kitöltése; a 271 követelmény és a 357 feature ID közötti teljes lefedettségi mátrix. Ez a második review-kör sem P0.2 PASS, és nem változtat implementációs státuszt.
 
+
+### 37.17. P0.2 — Történeti és új funkciók közti lefedettségi különbség
+
+A §24 registry és a §41 crosswalk újraszámolt kapcsolata:
+
+- §24: 357 egyedi stabil feature ID.
+- §41: 271 egyedi történeti követelménykulcs.
+- A történeti crosswalk 128 különböző aktuális feature ID-t hivatkozik közvetlenül; minden ilyen ID feloldható a registryben, és a crosswalkban használt QA-ID-k is feloldhatók.
+- A 357-ből fennmaradó 229 feature ID nem kap közvetlen történeti kulcsot a jelenlegi crosswalkban. Ez önmagában nem hiba: ezek között lehet újonnan hozzáadott termékigény, kibővített acceptance, biztonsági/üzemeltetési kapu vagy korábbi tervben nem szereplő képesség. **De mindegyikhez explicit eredetbesorolás kell**: NEW PRODUCT REQUIREMENT, EXPANDED ACCEPTANCE, CROSS-CUTTING CONTROL, PLATFORM/OPERATIONS, vagy HISTORICAL MAPPING GAP.
+- A P0.2 zárás előtt a 357 ID mindegyikéhez ki kell tölteni a provenance mezőt: historical key(s), new requirement source, domain owner, target phase, dependency IDs, acceptance/test IDs és státusz. Ha egy ID új, a forrás a MASTER döntési naplójában szerepeljen; ha történeti, a H-key legyen visszakövethető. Az üres provenance nem törlési ok, hanem nyitott auditfeladat.
+
+**Aktuális döntés:** a 271 történeti követelmény soronkénti megőrzése szerkezetileg PASS; a teljes történeti↔aktuális feature coverage nem PASS, amíg a 229 közvetlenül nem hivatkozott ID eredete és a tételenkénti feature contract nem dokumentált.
+
 ## 38. Részletes Visual Editor képességkatalógus
 
 **Cél:** a vizuális szerkesztő teljes részletképességeinek önálló, tesztelhető katalógusa. A felsorolás a végleges platform követelményét rögzíti, nem a runtime készültségét. Minden elem a közös Page Model, command/history/validation/persistence és jogosultsági szerződésen keresztül működik.
