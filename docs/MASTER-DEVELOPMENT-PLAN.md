@@ -1949,7 +1949,7 @@ PWA/offline/mobile; provider capabilities/Discord roles; email/CRM/consent; Stre
 - **P0.3:** IN PROGRESS — az első kódalapú domain/adatforrás-leltár elkészült; a teljes tábla-, owner-, lifecycle- és consumer-térkép még hiányzik.
 - **P0.4:** IN PROGRESS — az első router/static surface-leltár elkészült; a teljes menü-/route-/block-lefedettség és legacy/placeholder besorolás még hiányzik.
 - **P0.5:** IN PROGRESS — az első hivatalos provider-dokumentációs capability review rögzítve; a teljes feature-to-endpoint/scope/quota/approval matrix és élő integrációs acceptance még nyitott.
-- **P0.6:** NOT STARTED — dependency- és acceptance-freeze.
+- **P0.6:** IN PROGRESS — a domain-szintű függőségi gerinc rögzítve; a teljes feature-ID szintű dependency/acceptance freeze még nyitott.
 
 P0 csak minden kapu bizonyítékalapú PASS-a után zárható.
 
@@ -2335,7 +2335,7 @@ A migrációk kódja alapján az alábbi adatobjektumok jelen vannak a schema-t�
 
 | Provider | Hivatalos forrás / igazolt képesség | Architekturális következmény | Jelenlegi besorolás |
 |---|---|---|---|
-| Twitch | API reference tartalmazza a stream/channel adatokat, a VOD/clip és a schedule műveleteket; a schedule olvasása app- vagy user-tokenhez kötött, schedule-módosítás user tokennel és \x60channel:manage:schedule\x60 scope-pal jár. Forrás: https://dev.twitch.tv/docs/api/reference és https://dev.twitch.tv/docs/api/schedule | Meglévő Twitch OAuth/schedule adaptert endpointonként kell capability registrybe leképezni. Az olvasás, írás, viewer/subscriber adat és VOD/clip jogosultság külön scope/approval acceptance. | KÓDBAN RÉSZBEN MEGLÉVŐ; feature-szintű runtime acceptance nyitott. |
+| Twitch | API reference tartalmazza a stream/channel adatokat, a VOD/clip és a schedule műveleteket; a schedule olvasása app- vagy user-tokenhez kötött, schedule-módosítás user tokennel és `channel:manage:schedule` scope-pal jár. Forrás: https://dev.twitch.tv/docs/api/reference és https://dev.twitch.tv/docs/api/schedule | Meglévő Twitch OAuth/schedule adaptert endpointonként kell capability registrybe leképezni. Az olvasás, írás, viewer/subscriber adat és VOD/clip jogosultság külön scope/approval acceptance. | KÓDBAN RÉSZBEN MEGLÉVŐ; feature-szintű runtime acceptance nyitott. |
 | YouTube | A Data API külön csatorna-, videó- és élő közvetítési erőforrásokat ad; kvótaalapú. A hivatalos leírás szerint az alapkvóta jellemzően 10 000 egység/nap a legtöbb végpontra, a search.list és videos.insert külön keretet kap; a kvóta változhat. Forrás: https://developers.google.com/youtube/v3/getting-started | Adapterben quota accounting, retry/backoff, pagination, API-error normalization és capability-level disabled states szükséges. Publikálás nem vállalható app- és quota-ellenőrzés nélkül. | PLANNED / CAPABILITY REVIEW REQUIRED. |
 | TikTok | A Display API profilt és nyilvános videómetaadatot szolgáltat; a Content Posting API külön jogosultságot és video.publish scope-ot igényel. Az auditálatlan kliens közvetlenül publikált tartalma privát megtekintésre korlátozódhat; a dokumentáció külön domain-verifikációs és rate-limit feltételeket is leír. Forrás: https://developers.tiktok.com/docs/en/display-api-overview és https://developers.tiktok.com/docs/en/content-posting-api-get-started | Read/display és publish két külön capability. Közvetlen publikálás csak jóváhagyás, UX-consent, scope, domain és status-polling után; fallback lehet export/hand-off, nem hamis „published” státusz. | PLANNED / CAPABILITY-GATED. |
 | Discord | Interactions érkezhetnek Gateway WebSocketen vagy HTTP endpointon; HTTP esetén PING handshake és Ed25519 aláírás-ellenőrzés szükséges. A Gateway valós idejű eseményekhez tartós kapcsolatot használ. Forrás: https://github.com/discord/discord-api-docs/blob/main/developers/platform/interactions.mdx és https://github.com/discord/discord-api-docs/blob/main/developers/events/gateway.mdx | Egyszerű slash-command/interactions endpoint kezelhető HTTP modellel; tartós Gateway event fogyasztást nem szabad stateless Worker route-nak feltételezni. Durable Objects/queue csak konkrét persistent/realtime igény esetén, security- és reconnect-tervvel. | PLANNED / MODE-DEPENDENT. |
@@ -2352,6 +2352,34 @@ A migrációk kódja alapján az alábbi adatobjektumok jelen vannak a schema-t�
 8. Acceptance evidence és utolsó felülvizsgálat dátuma.
 
 **P0.5 nem PASS:** a fenti áttekintés csak a fő provider-korlátokat és architekturális döntéseket rögzíti. Az összes feature ID-t a konkrét endpointokkal, scope-okkal, approval feltételekkel, quota-val, rate limittel és teszttervvel összekötő mátrix még hátravan.
+
+
+### 37.11. P0.6 — Függőségi gerinc és release-gate szabályok (első freeze-kör)
+
+**Státusz: IN PROGRESS.** Ez a domain-szintű blokkolási sorrend. Nem helyettesíti a 24. fejezet minden egyes feature-ID-jához szükséges teljes dependency listát és acceptance cardot.
+
+| Gate | Kötelező előfeltételek | Blokkolt domain / feature-csoport | Záró bizonyíték |
+|---|---|---|---|
+| G0 — Repository és biztonságos alap | P0.1–P0.6 PASS; aktív branch/commit baseline; migrációs sorrend; auth/session/RBAC/site ownership; CI és rollback útvonal | Minden új implementáció | Tiszta baseline; typecheck/build/domain/API/security tesztek; migration/schema/ownership evidence; route inventory és egyetlen aktív pont. |
+| G1 — Canonical Page Model | EDT-001–EDT-006, canonical site context, schema validation, command/transaction/history, permission check | Minden Editor-művelet, page mutation, AI Editor action | Invariant/negative tests; node/parent invariants; command atomicity/rollback; site isolation. |
+| G2 — Save/revision/publish contract | WEB-004–WEB-008, EDT-027–EDT-034, server-side revision conflict, published-only public read, public renderer parity | Editor 1.0, public content, AI page edits | Draft save/reload; conflict; preview vs public; publish/unpublish; revision restore; cache invalidation; runtime route acceptance. |
+| G3 — Resource/asset contract | RES-001–RES-009, RES-010/012/014 where applicable; D1 metadata + R2 object lifecycle; authorization and usage map | Editor media picker, public images/video, templates/assets, future Content Studio | Upload/validation/retry; metadata/object consistency; safe download; referenced-delete protection; orphan/broken-object scan. |
+| G4 — Design system and component contract | DSN-001–DSN-017 as phased scope; token registry; explicit override precedence; template/component version compatibility | Theme/template/section/component builder and design-system UI | Token usage map; instance propagation; override test; template migration/rollback; invalid-reference behavior. |
+| G5 — Canonical domain data | SCH-001–SCH-015, SET-001–SET-003, DYN-001–DYN-008; explicit site scope and public-safe projection | Schedule, site settings, dynamic blocks, dashboard cards | Single owner/source; cross-surface consistency; timezone/DST; published-only; stale/error states; site isolation. |
+| G6 — Connections and provider adapters | INT-001–INT-020; OAuth state/CSRF, token lifecycle, site binding, capability registry, secret redaction, quota/error/retry | Twitch enhancements; YouTube/TikTok/Discord/Kick; all cross-provider features | Provider-specific scope matrix; approval evidence; valid/expired/mismatched state; reconnect/disconnect; outage and quota tests. |
+| G7 — Content and publication workflows | CNT-001–CNT-020; RES asset contract; provider capability; queue/status/idempotency; consent and approval | VOD/clip/Shorts, content calendar, cross-platform publishing | Draft→review→scheduled→publishing→published/failed lifecycle; duplicate retry test; provider confirmation before success; media and permission checks. |
+| G8 — Analytics and business data | ANL-001–ANL-009; event taxonomy; consent/retention; provider source/freshness; campaign/content identity | Analytics, campaigns, sponsorship reporting, performance feedback loops | Source/unit/freshness labels; missing data is not fabricated; duplicate/bot/consent tests; access/export policy. |
+| G9 — Automation | AUT-001–AUT-014; stable domain events/actions; permission registry; idempotency; durable run log | Cross-domain workflows, notifications, automated publishing | Dry-run; approval; cycle detection; retry/backoff/dead-letter; pause/kill switch; failure/recovery tests. |
+| G10 — SANCI AI | AI-001–AI-020; allowed context; structured actions; canonical API/command; permission; preview/diff; approval; verify/audit/rollback | AI Editor, content/stream intelligence, proactive recommendations | Prompt-injection tests; wrong-site denial; no secret access; mutation audit; explicit approval for public/destructive/financial actions; AI-off manual fallback. |
+| G11 — Multi-creator/SaaS/marketplace | TEAM-001–TEAM-006, SEC-003, MKT-001–MKT-005; billing/entitlement/legal review; extension permission manifest | Multi-site teams, SaaS billing, marketplace/extensions | Tenant isolation; role/entitlement negative tests; secure install/update/uninstall; billing/webhook idempotency; legal/security sign-off. |
+
+**Globális nem-megkerülhető szabályok**
+- Egyetlen canonical domain írhat egy üzleti rekordot; a Dashboard, Editor, public block és AI csak a domain API-ján keresztül olvas/módosít.
+- A site ownership és authorization ellenőrzés a szerveren, minden mutációnál történik; UI visibility nem security boundary.
+- A D1/R2, provider és payment műveletnél a részleges hiba és kompenzáló/rollback út dokumentált.
+- A „disabled/placeholder”, roadmap vagy dokumentációs jelenlét nem PASS bizonyíték.
+- Egy feature nem léphet át gate-et a blokkoló acceptance-ek megkerülésével; az 1.0-ból kimaradó tétel DEFERRED marad és a későbbi fázisban is megőrzendő.
+- P0.6 csak akkor PASS, ha minden stabil feature ID-hoz explicit prerequisite ID-k, blokkoló/nem blokkoló dependency, acceptance scenario és evidence location tartozik.
 
 ## 38. Részletes Visual Editor képességkatalógus
 
