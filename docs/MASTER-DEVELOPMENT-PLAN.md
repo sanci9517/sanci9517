@@ -6040,7 +6040,7 @@ The historical H28/H29 rows were updated to reflect the canonical registry defin
 
 **Status:** 135 V2 Blueprint list items and 9 ordered validation steps are individually keyed. Semantics, current runtime existence, owner/phase/dependency/permission/negative tests and acceptance remain OPEN. P0.2 **IN PROGRESS / NOT PASS**.
 
-### 41.3.45. P0.2 — AI safety crosswalk completeness and memory/evaluation boundary (2026-10-13)
+### 41.3.46. P0.2 — AI safety crosswalk completeness and memory/evaluation boundary (2026-10-13)
 
 **Confirmed registry comparison:**
 - F.8-04 now explicitly includes AI-004 context/privacy filtering, AI-018 prompt-injection/untrusted-content tests, AI-019 human approval and AI-020 AI-free fallback, along with canonical Editor actions and server-side permissions. This is a mapping correction only; all controls remain deferred until a phase-specific security acceptance is passed.
@@ -6053,7 +6053,7 @@ The historical H28/H29 rows were updated to reflect the canonical registry defin
 
 **Status:** F.8-04/08 mapping completeness improved; F.8-07 remains **OPEN / PARTIAL**. P0.2 **IN PROGRESS / NOT PASS**. Documentation-only; no runtime code/data changed and no tests were run.
 
-### 41.3.46. P0.2 — Repository documentation precedence and historical context files (2026-10-13)
+### 41.3.47. P0.2 — Repository documentation precedence and historical context files (2026-10-13)
 
 **Files checked:** `docs/SANCI-CONTINUOUS-CONTEXT.md`, `docs/DEVELOPMENT-LOG.md`, `docs/ARCHIVE-LEGACY-LAYERS.md`, `docs/CHANGELOG.md`, archive root and `docs/archive/2026-09-16/LEGACY-HTML-ARCHIVE.md`.
 
@@ -6075,7 +6075,7 @@ The historical H28/H29 rows were updated to reflect the canonical registry defin
 
 **Status:** repository-level documentation precedence checked for the named files and archive folders. This does not recover the missing original `00/A` and `00.9–00.9.6.B` source texts, and does not close route/page migration acceptance. P0.2 **IN PROGRESS / NOT PASS**. Documentation-only; no runtime code/data changed and no tests were run.
 
-### 41.3.46. P0.2 — H19–H27 resource, provider, content and analytics mapping corrections (2026-10-13)
+### 41.3.48. P0.2 — H19–H27 resource, provider, content and analytics mapping corrections (2026-10-13)
 
 **Registry-based semantic review:** the following source rows had a candidate ID whose canonical definition was too narrow or belonged to a different capability. Corrections preserve the source key and phase-gate advanced features rather than implying they are shipped.
 
