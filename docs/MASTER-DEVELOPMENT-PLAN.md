@@ -4990,3 +4990,56 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 
 **Status:** 27 source bullets individually keyed VEA-01–VEA-27. Item-level inventory for this file is complete; semantic acceptance evidence remains OPEN. P0.2 **IN PROGRESS / NOT PASS**. Documentation-only; no runtime code/data changed and no tests were run.
 
+### 41.3.36. P0.2 — Visual Editor roadmap: all 38 historical bullets individually reconciled (2026-10-13)
+
+**Source:** `docs/archive/plans/visual-editor-roadmap.md`. Its old phase labels are retained as historical source keys, not as the active execution order.
+
+| Source key | Original requirement | Current target / candidate IDs | Decision and acceptance |
+|---|---|---|---|
+| VER-01 | Do not continue repairing the old Visual Editor; build the new editor on a separate architecture | E.3.2; EDT-001/003/034/039 | KEEP. Current canonical `public/editor-v2`; legacy code remains classified/archived, not reactivated. |
+| VER-02 | Every phase follows build → user test → feedback → fix → approval | P0 release contract; QA-009 | KEEP. User acceptance must be tied to exact build/scope before marking a gate PASS. |
+| VER-03 | Next phase starts only after approval | P0 single-active-point gate; QA-009 | KEEP. No later feature phase starts while current gate fails or remains open. |
+| VER-04 | Returning to an earlier phase is allowed | P0 change/recovery process; QA-009/OPS-009 | KEEP. Reopen the affected gate with explicit reason/evidence; do not silently rewrite history. |
+| VER-05 | PC Editor first; mobile Editor gets separate UX | E.3 shell / responsive; EDT-036, QA-004 | EXPAND. Desktop baseline first; mobile viewport support and dedicated mobile editing UX are distinct acceptance scopes. |
+| VER-06 | Progressive disclosure: accordions, tabs, search and Beginner/Advanced/Pro levels | E.3 shell/Inspector; EDT-016/021, QA-004 | KEEP/EXPAND. Each mode must expose discoverable controls without hiding required accessibility/keyboard paths. |
+| VER-07 | Phase 00 — specification | P0/P0.2 | HISTORICAL COMPLETE CLAIM ONLY. Current MASTER baseline/audit gates supersede old checkbox state. |
+| VER-08 | Phase 01 — Editor Shell | E.3 shell; EDT-001/036 | HISTORICAL MILESTONE. Current shell functionality is verified through current tests, not this old phase label. |
+| VER-09 | Phase 02 — Canvas Engine | E.4; EDT-008/009/034 | KEEP AS SCOPE. Canvas geometry, pan/zoom, resize and viewport extent require browser acceptance. |
+| VER-10 | Phase 03 — Element System | E.6; EDT-002/011/017–020 | KEEP AS SCOPE. Type registry, add/delete/duplicate, content and stable IDs need current tests. |
+| VER-11 | Phase 04 — Sanci9517 Blocks | E.6/E.11; EDT-017–020, DSN-011–013 | KEEP AS SCOPE. Streamer-specific blocks must be canonical components, not hard-coded parallel renderer paths. |
+| VER-12 | Phase 05 — Inspector | E.7/E.8; EDT-016/021/022 | KEEP AS SCOPE. Control visibility alone is insufficient; validation, command path and save/reload must pass. |
+| VER-13 | Phase 06 — Layers | E.5; EDT-008/011–014 | KEEP AS SCOPE. Shared selection, hierarchy, order, visibility and lock invariants required. |
+| VER-14 | Phase 07 — Design System | E.10; DSN-001–018 | KEEP AS SCOPE. Token/component ownership, theme persistence and public parity require tests. |
+| VER-15 | Phase 08 — Drag & Drop | E.4/E.6; EDT-004/009/011 | KEEP AS SCOPE. Drop targets, nested reparent, no-op/cancel, pointer and history cases require browser tests. |
+| VER-16 | Phase 09 — History / Autosave / Recovery | E.13/E.14; EDT-005/027–029, OPS-006/009 | EXPAND. Undo/redo, autosave, revisions, conflict recovery, backup and rollback are distinct capabilities; no checkbox substitutes for evidence. |
+| VER-17 | Phase 10 — Preview | E.16; EDT-030/034, WEB-004 | KEEP AS SCOPE. Preview must match canonical renderer and must not mutate/publish the live version. |
+| VER-18 | Phase 11 — Twitch/YouTube/TikTok/Discord/Schedule/VOD integrations | E.20/E.21; INT-001–021, SCH-001–011, CNT-001–020, LIV-001–007 | EXPAND/PHASED. 1.0 link/manual fallbacks are distinct from API-backed provider integrations; each provider requires scopes, site ownership and failure tests. |
+| VER-19 | Phase 12 — Animation / Interaction | E.22; EDT-035/036, WEB-018/019, SEC-005 | KEEP AS SCOPE. Reduced-motion, safe interaction schemas and no arbitrary script execution are required. |
+| VER-20 | Phase 13 — Responsive | E.9; EDT-023–026/036, QA-004 | KEEP AS SCOPE. Desktop/tablet/mobile property inheritance, overflow and save/reload need a viewport matrix. |
+| VER-21 | Phase 14 — SEO / Accessibility | E.23/E.24; WEB-001–016, QA-003/004 | KEEP AS SCOPE. Metadata, semantic structure, keyboard/focus, contrast, reduced motion, sitemap/canonical/robots require separate checks. |
+| VER-22 | Phase 15 — Reusable Components | E.11; DSN-011–015, EDT-018/020 | KEEP AS SCOPE. Reuse/instances, detach/override, dependency and version behavior need a defined contract. |
+| VER-23 | Phase 16 — Templates | E.17; DSN-014/015, EDT-031/032 | KEEP AS SCOPE. Template install/import must validate schema, dependencies, IDs, licenses and rollback. |
+| VER-24 | Phase 17 — PC Editor 1.0 | 1.0 release gate; QA-001–009 | HISTORICAL MILESTONE ONLY. Release requires current exact-commit CI, deploy, browser regression and user acceptance. |
+| VER-25 | Phase 18 — Mobile Editor | Later mobile editing UX; EDT-036, QA-004 | KEEP AS FUTURE SCOPE. Responsive public site/tablet access does not automatically mean full mobile Editor UX is complete. |
+| VER-26 | Shell topbar and page selector | E.3 shell; EDT-001/036 | VERIFY. Test page switching, unsaved-change protection, authorization and URL/deep-link behavior. |
+| VER-27 | Undo/redo control placement and behavior | E.13; EDT-005 | VERIFY. Button presence is not enough; disabled state, history boundary and keyboard parity must work. |
+| VER-28 | Left element panel | E.6; EDT-017–020 | VERIFY. Add action must create a canonical node, not only a visual placeholder. |
+| VER-29 | Expand/collapse element categories | E.3 shell/E.6; EDT-017/036 | VERIFY. State/keyboard/accessibility behavior and responsive panel behavior required. |
+| VER-30 | Element search | E.6; EDT-017/036 | VERIFY. Search results must be discoverable, correctly filtered and keyboard accessible. |
+| VER-31 | Center canvas | E.4; EDT-008/009/034 | VERIFY. Canvas must render the same canonical document as Preview/Public renderer. |
+| VER-32 | Zoom / fit | E.4; EDT-009/036 | VERIFY. Test zoom bounds, fit after content resize, viewport extent and device scaling. |
+| VER-33 | Grid / snap toggles | E.4/E.8; EDT-009/016 | VERIFY. Toggle behavior must be functional and must not mutate document state unless an explicit edit is performed. |
+| VER-34 | Layers panel | E.5; EDT-008/011–014 | VERIFY. Selection, reparenting, visibility/lock and order must use canonical state. |
+| VER-35 | Inspector panel | E.7/E.8; EDT-016/021/022 | VERIFY. Inputs must validate, dispatch canonical actions and persist through save/reload. |
+| VER-36 | Collapsible Inspector groups | E.7; EDT-016/036 | VERIFY. Group state, keyboard navigation and narrow viewport behavior need browser evidence. |
+| VER-37 | Bottom status bar | E.3 shell; EDT-036, QA-006 | VERIFY. Must communicate save/publish/conflict/error state truthfully and accessibly. |
+| VER-38 | Phase 01 was PC-only | Historical phase scope | SUPERSEDED AS GLOBAL LIMIT. Desktop-first is retained, but current public-site responsive and tablet/mobile accessibility requirements remain independently scoped. |
+
+**Semantic exceptions:**
+- The roadmap's old checkboxes and Phase 01 note explicitly said backend save and real Publish were not ready and local-browser state was used. That is historical context, not the current implementation status; current save/publish acceptance must be tied to the deployed commit and D1/public behavior.
+- “Mobile Editor” and “responsive editor/public canvas” are not interchangeable requirements. Full mobile editing can be deferred while the public site and editor shell still meet the current responsive/tablet gates.
+- “Animation / Interaction” must not authorize arbitrary user-supplied JavaScript; use schema-bound actions and safe renderer contracts.
+- The old milestone sequence cannot override the active P0/P0.2 audit.
+
+**Status:** all 38 historical source bullets have distinct keys VER-01–VER-38. This closes item-level inventory for this file only. P0.2 remains **IN PROGRESS / NOT PASS**; detailed owner/dependency/DoD/test/acceptance evidence remains open where marked. Documentation-only; no runtime code/data changed and no tests were run.
+
