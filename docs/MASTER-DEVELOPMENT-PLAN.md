@@ -1428,6 +1428,35 @@ Az alábbi jegyzék a menüfunkciókat külön, stabil munkapontokra bontja. A s
 
 ---
 
+
+### 24.18. Site settings, dinamikus adatbinding és SEO — SET / DYN / SEO
+
+Ezek a stabil ID-k azért szükségesek, mert a korábbi követelménykatalógus külön site settings, data source, binding-state és SEO-meta képességeket tartalmaz, amelyeket a korábbi WEB/EDT/INT ID-k nem fedtek le kellő pontossággal. Az ID-k a követelmény-nyilvántartás célpontjai; a létük nem jelent implementációs státuszt.
+
+**SET — Site settings**
+- SET-001: Canonical site settings schema és CRUD lifecycle.
+- SET-002: Site ownership/scope és multi-site kompatibilitás.
+- SET-003: Public-safe settings projection és secret/private mezők kizárása.
+
+**DYN — Dinamikus adatforrás és binding**
+- DYN-001: Canonical data source registry és provider/domain adapter.
+- DYN-002: Binding schema, type validation és resource/field compatibility.
+- DYN-003: Whitelisted transforms, filter, sort, limit és pagination.
+- DYN-004: Feltételes rendering és adatfüggő visibility.
+- DYN-005: Loading/empty/error/partial/stale állapotgép.
+- DYN-006: Cache policy, freshness, invalidation és stale fallback.
+- DYN-007: Permission, site scope és published-only data boundary.
+- DYN-008: Binding diagnostics, preview, invalid-reference report és recovery.
+
+**SEO — Search/social metadata**
+- SEO-001: Per-page title, description, canonical URL és robots policy.
+- SEO-002: Open Graph, X/Twitter card és social preview/image validation.
+- SEO-003: Validált structured data/schema.org, ahol releváns.
+- SEO-004: Sitemap és robots.txt lifecycle, publish/cache invalidation.
+- SEO-005: SEO preview/diagnostics, duplicate/missing metadata és page-level audit.
+
+**Függőségi szabály:** SET/DYN/SEO csak a canonical Page Model, Resource, domain ownership és publish contracton keresztül működhet. Ezek nem adhatnak alternatív persistence vagy publikálási útvonalat. A korábbi ID-k megmaradnak; a crosswalk az eredeti követelményt a legpontosabb új vagy meglévő ID-hoz rendeli.
+
 ## 25. Kötelező státuszmezők a funkciójegyzékben
 
 Minden ID-hoz az alábbi mezők tartoznak a terv karbantartásakor:
