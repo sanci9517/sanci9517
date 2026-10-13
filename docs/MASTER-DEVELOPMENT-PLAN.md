@@ -1026,6 +1026,59 @@ Az F0 **a Visual Editor új UX/UI-koncepciójának újraalapozási és megvalós
 - A modulonkénti navigációs elem csak akkor aktív, ha van valós célútvonal és a felhasználó jogosult rá; a még nem kész funkciót egyértelműen jelölni kell, vagy el kell rejteni.
 - A jelenlegi aktív F0.4 acceptance és az azt követő F0.x sorrend nem ugrik át emiatt. A modulhatárok a további pontok UI-/acceptance-tervezését irányítják; a MASTER eleji ACTIVE_POINT_ID változatlanul a végrehajtási igazságforrás.
 
+## F0.0.2 — CANONICAL FEJLESZTÉSI TERÜLETJEGYZÉK ÉS FUNKCIÓMEGŐRZÉSI TÉRKÉP
+
+**Cél:** a teljes termék ne egyetlen óriási fejlesztési feladatként jelenjen meg. Minden önálló termékterület saját azonosítót, canonical domain-tulajdonost, fázisbesorolást, függőségeket és acceptance-követelményeket kap. Ez a jegyzék navigációs és tervezési térkép: **nem hoz létre második roadmapet, nem indít párhuzamos munkát, és nem módosítja a dokumentum eleji aktív pontot.**
+
+**Megőrzési zár:**
+- A 01–140 funkcióazonosítók, H19–H34 történeti tételek, a 00.9.6.C/D teljes capability- és fázisleírásai, valamint az E/F közvetlen követelményei változatlanul érvényben maradnak.
+- Az alábbi területjegyzék nem helyettesíti a részletes specifikációkat; azok továbbra is a hivatkozott MASTER-fejezetekben maradnak.
+- A külön terület külön felelősségi kört és elfogadási kaput jelent, **nem** automatikusan külön adatbázist, API-t, Page Modelt, auth-rendszert vagy párhuzamos szolgáltatást.
+- Egy terület csak a függőségei teljesülésekor válhat aktívvá. Egyszerre továbbra is **egy** implementációs pont lehet ACTIVE. A későbbi területek QUEUED/PLANNED állapotban maradnak.
+- A fázis a tervezett scope-ot jelenti, nem készültséget. Késznek csak a saját tesztje, browser/runtime ellenőrzése, security/regression ellenőrzése és felhasználói acceptance-e után jelölhető.
+
+### Canonical területjegyzék
+
+| Terület ID | Külön fejlesztési terület | Canonical owner / határ | Fázis és függőség | Követelmény-eredet / megőrzendő scope |
+|---|---|---|---|---|
+| AREA-01 | Platform foundation, auth, site ownership, persistence, recovery | Platform / Auth / D1 / R2 / audit | F0 alapok; E4/E5/E6 lezárt gate-ek megőrzendők | E.1, E.12–E.19, történeti 001–019; site-scoped ownership, session/RBAC, migrations, backup/recovery, revision és audit |
+| AREA-02 | Public Website, navigáció és brandélmény | Public renderer + canonical Page/CMS | 1.0; Editor/Page Model és publish contract függvénye | 01–140: 069–086; E.2; kezdőlap, About, Live, Schedule, Contact, community/social linkek, 404/empty/error, mobil/tablet/desktop |
+| AREA-03 | Visual Editor, Page Model, Layers, Inspector és responsive | Egyetlen `public/editor-v2/` + canonical command/history | F0 szekvenciális pontjai → 1.0 release gate | 020–051, E.3 és F0.x; canvas, hierarchy, selection, drag/resize, layout, properties, undo/redo, save/reload, preview/publish |
+| AREA-04 | CMS és tartalomkezelés | Canonical Page/CMS + későbbi Content domain | Alapoldalak 1.0; bővített CMS 1.x | 013–019, 052, 061–068, E.4/E.10; draft/revision/publish, content types, import/export a megfelelő későbbi scope-ban |
+| AREA-05 | Media / Resource Library / R2 | Közös Resource metadata + R2 binary boundary | Resource foundation 1.0; advanced manager/transforms 1.x | 053, 060, E.5 és C.4; upload, browse/search/filter, metadata, alt text, icons/fonts, resource references, fallback |
+| AREA-06 | Layout, component, template, theme és design system | Canonical Page Model + Property/Resource/Template registries | Alapok 1.0; fejlett Symbol/Theme/Template 1.x+ | 044–051, C.3/C.5/C.9/C.23; section/box/layout, reusable components, tokens, themes, templates, validation és responsive rules |
+| AREA-07 | Schedule / Calendar / Game Profiles | Egyetlen canonical Schedule domain + külön Game Profile domain | Schedule/Game Profile 1.0; richer recurrence/views/sync 1.x | 058, 073–075, 087, E.6/F.13; timezone, recurrence, status, artwork refs, visibility, filters, reschedule/cancel, live linkage, Editor schedule node |
+| AREA-08 | Twitch integration — külön szolgáltatói terület | Közös Integration contract + Twitch adapter; titkok Cloudflare Secretsben | 1.0 kötelező; Schedule/ownership/API és Editor/public függőségekkel | 070, 088, E.9, H21; OAuth/callback, connect/disconnect/reconnect, channel/profile, live/offline, current game, schedule sync, health, retry, diagnostics, ownership, error/rate-limit és tesztek |
+| AREA-09 | YouTube integration — külön szolgáltatói terület | Ugyanazon Integration contract + YouTube adapter | 1.x; platform API-jogosultságok, quota/error policy és közös content/resource contract után | 057, 071, 089, C.7/C.23, E.9/E.10, H21; channel/videos/Shorts/stats, sync/import, quota/rate-limit, reauth, API review/permissions, failure states |
+| AREA-10 | TikTok integration — külön szolgáltatói terület | Ugyanazon Integration contract + TikTok adapter | 1.x; platform approval/API-hozzáférés és közös content contract után | 057, 072, 090, C.7/C.23, E.9/E.10, H21; profile/content, elérhető statisztikák, API review/scopes, rate limits, sync/error/retry és fallback |
+| AREA-11 | Discord / Community integration — külön szolgáltatói terület | Community domain + közös Integration contract + Discord adapter | Publikus közösségi link 1.0; mélyebb integráció/community 1.x; membership 5.x | 078, 092, C.7/C.12, E.9/E.12, H21; community link, csak indokolt/engedélyezett állapotjelzés, bot/OAuth-jogosultságok ha releváns, reconnect/error/permission boundary |
+| AREA-12 | További provider-adapterek (pl. Kick, e-mail, payment/commerce) | Közös Integration contract, szolgáltatónként külön adapter és scope | A konkrét fogyasztó domain és roadmap fázisa szerint; nem része automatikusan az 1.0-nak | E.9, C.7, D roadmap, H21; providerenkénti scope, secrets, rate-limit, retry, sync, permissions, failure-path acceptance |
+| AREA-13 | VOD / Clips / Shorts / Stream Media | Canonical Content/Stream Media domain + provider adapterek | Egyszerű link/embed csak az elfogadott 1.0 scope-ban; canonical workflow 1.x | 076, 091, C.7/C.23, E.10, H21/H22; külön tartalomtípusok, külső ID-k, deduplikáció, metadata, import/sync, playlist/highlight |
+| AREA-14 | Content Factory, content calendar és cross-platform publishing | Canonical Content domain + külön provider adapterek | 1.x–2.x; provider API és permission contract után | E.10, C.6, H22; ötlet/draft/script/thumbnail/title/description/tags, queue, approval, campaign, platform-specifikus mezők, publishing status/error |
+| AREA-15 | Stream Studio, Overlay Studio, widgets, alerts és OBS | Külön Stream/Overlay domain; Integration contract OBS/provider felé | Creator OS 2.x; website/editor foundation után | C.10, E.11, D roadmap; scenes, browser sources, overlay/alert packages, OBS connection, stream widgets, reusable packages, connection diagnostics |
+| AREA-16 | Community, audience, support, membership és fan relationship | Canonical Community/Audience + későbbi Membership/Support domains | Link baseline 1.0; community 1.x; membership/support 5.x | C.12, E.12, 078/080/092; community features, roles/moderation ahol scope-ban, supporter programs, consent/privacy, memberships és fan relationship |
+| AREA-17 | Analytics, observability és creator insights | Üzemeltetési telemetry külön a Creator Analytics domaintől | Release/operational telemetry 1.0; Creator Analytics 2.x; advanced analytics 4.x+ | 095, 102, C.16, E.13; errors/health/last-success külön domain-analitikától, privacy/consent és data minimization |
+| AREA-18 | SEO, accessibility, performance és public quality | Public Website shared quality gates | 1.0 release gate, folyamatos regression | 084–086, E.2; metadata, Open Graph, structured data, sitemap, keyboard/focus, contrast, alt text, reduced motion, cache/performance |
+| AREA-19 | Forms, contact, e-mail audience és communications | CMS form presentation + secure submission / audience service | Contact entry 1.0; secure form and audience/newsletter workflows later phase | 059, 079, E.10/F.13; spam/security, validation, consent/purpose, unsubscribe, delivery/error/retention |
+| AREA-20 | Store, monetization, digital products és merch | Canonical commerce domain + payment provider adapters | Store foundation későbbi 1.x; teljes commerce/membership 5.x | C.11/C.12, E.14, D roadmap; products, collections, campaigns, checkout, payment state, inventory/delivery és refund/security scope |
+| AREA-21 | SANCI AI / Creator Intelligence / agents | Későbbi AI orchestrator, shared Action API, permissions/approval/audit | AI Creator Platform 3.x és későbbi fázisok; stabil platform contracts után | 110–130, C.14, E.15; planner, context, model/tool registry, agents, approval, preview-before-apply, verification/recovery |
+| AREA-22 | SaaS, accounts, workspace, teams, roles, billing és custom domains | Platform Administration / tenant-workspace-site boundary | 4.x+; 1.0 site ownershiptől elkülönített bővítés | 093, C.17, F.13, D roadmap; multi-site, collaboration, server-side permission checks, domain verification, SSL, billing/usage |
+| AREA-23 | Localization, marketplace, developer extensions és ecosystem | Shared localization/resource/template/extension contracts | Marketplace 6.x; global/advanced AI 7.x+; API contractok után | C.15/C.17/C.19, E.16, D roadmap; translations/fallback, marketplace/licensing/moderation, extension API, versioning, compatibility |
+| AREA-24 | QA, security, release és disaster recovery | Cross-cutting release gates; nincs külön feature-domain adatduplikáció | Minden fázisban kötelező, 1.0 release előtt teljes kapu | 096–104, 131–140, E.18/E.19; unit/domain/API/D1/E2E, browser responsive, regression, security, production smoke, backup/restore |
+
+### Külön integrációs területek kötelező elfogadási szabálya
+
+A Twitch, YouTube, TikTok, Discord és minden későbbi provider külön fejlesztési terület és külön acceptance-csomag, de **közös Integration lifecycle/contract** alatt működik. Providerenként külön dokumentálandó: (1) támogatott képességek és API-korlátok, (2) OAuth/scopes/permission és secret-kezelés, (3) adatmapping a canonical domainekbe, (4) sync/refresh/idempotency, (5) rate-limit/quota, retry/backoff és provider downtime, (6) token expiry/revocation/reauth, (7) UI connection state és diagnosztika, (8) unit/contract/integration/browser tesztek, (9) user/runtime acceptance. Egy adapter megléte nem jelenti, hogy a másik platform kész, és egy provider hibája nem állíthatja le a teljes weboldalt.
+
+### Végrehajtási használat
+
+1. Az aktuális F0.4 acceptance befejezéséig ez a területjegyzék csak megőrzési és tervezési referencia.
+2. A következő aktív pontra váltáskor az adott terület kap konkrét scope-ot, fájl/API/adatmodell érintettséget, függőségi ellenőrzést, DoD-t és tesztlistát.
+3. Minden terület saját alfeladatokra bontható, de az eleji `ACTIVE_POINT_ID` és `ACTIVE_SUBPOINT_ID` továbbra is az egyetlen végrehajtási igazságforrás.
+4. Ha a meglévő MASTER másik fejezete részletesebb képességet sorol fel, a részletesebb követelmény megmarad és ehhez a területhez kell hozzárendelni; az összefoglaló táblázat soha nem indok egy funkció elhagyására.
+
+---
+
 ### Szekvenciális megvalósítás
 
 1. A jelenlegi F0.4 Layers/Inspector/responsive acceptance befejezése; a mostani, igazoltan működő canvas/undo/redo viselkedés megőrzése.
@@ -3185,7 +3238,7 @@ Fázis szerinti zár:
 - Később creator-created template, component/block/theme/overlay/OBS scene/digital asset marketplace, licenc, kompatibilitás, verzió, preview, rating/review és revenue share. A marketplace csak külön jogosultsági, moderációs, fizetési és licencelési scope után aktív.
 
 
-**Végső operatív szabály:** egyetlen aktív pont van: F0.1. A dokumentum minden fenti követelménye megmarad a maga fázisában. Új igény csak canonical ownerrel, fázissal, függőséggel, DoD-val, teszttel és acceptance-szel vehető fel; korábbi funkció nem maradhat puszta névként specifikáció nélkül.
+**Történeti fejezetre vonatkozó operatív szabály:** az itt leírt követelmények megmaradnak a maguk fázisában; az aktuális aktív pontot kizárólag a MASTER eleji ACTIVE_POINT_ID / ACTIVE_SUBPOINT_ID határozza meg. Új igény csak canonical ownerrel, fázissal, függőséggel, DoD-val, teszttel és acceptance-szel vehető fel; korábbi funkció nem maradhat puszta névként specifikáció nélkül.
 
 
 
@@ -3196,7 +3249,7 @@ Fázis szerinti zár:
  > **Történeti pillanatkép, nem aktuális végrehajtási sorrend.** A képességek és a benchmarkforrások megőrzendők. A végrehajtási sorrendet a MASTER-2.77 váltja fel.
 **Döntési státusz:** CANONICAL PRODUCT DIRECTION / LOGICAL ROADMAP  
 **Cél:** a teljes Sanci9517 Creator Platform és AI Creator OS felépítése; nincs előre kijelölt végső kiadás vagy olyan verzióhatár, amelynél a fejlesztésnek meg kell állnia.  
-**Végrehajtási szabály:** a dokumentum eleji `ACTIVE_POINT_ID` és `ACTIVE_SUBPOINT_ID` továbbra is kizárólagos az aktuális munkapont meghatározására. E fejezet a hosszú távú, függőség-alapú sorrendet teszi egyértelművé; nem indít párhuzamos munkát és nem írja felül az aktív F0.1-et.  
+**Végrehajtási szabály:** a dokumentum eleji `ACTIVE_POINT_ID` és `ACTIVE_SUBPOINT_ID` továbbra is kizárólagos az aktuális munkapont meghatározására. E fejezet történeti roadmapként megőrzi a hosszú távú, függőség-alapú sorrendet; nem indít párhuzamos munkát, és nem írja felül a MASTER eleji aktuális ACTIVE_POINT_ID / ACTIVE_SUBPOINT_ID értékeket.  
 **Tervkarbantartás:** a korábbi fázis- és verziónevek történeti/nyomkövetési célból megmaradnak. A termék teljességét és a fejlesztés sorrendjét ezentúl nem egy 1.0/2.0-s címke, hanem az alábbi képesség- és függőségi térkép határozza meg. A már rögzített követelményeket nem töröljük; az átfedéseket canonical ownerhez kapcsoljuk, a hiányzó részleteket pedig új, egyértelmű azonosítóval vesszük fel.
 
 ## 2.75.1 — Termékcél és sikerdefiníció
