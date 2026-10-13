@@ -8,7 +8,7 @@
 **PARALLEL_WORKSTREAMS:** `0`
 
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
-**Verzió:** MASTER-2.93 — E.1–E.22 keresztmátrix; Admin IA hiányok rögzítve; feature-acceptance audit folyamatban.  
+**Verzió:** MASTER-2.94 — E.1–E.22 crosswalk javítva; AREA-25 Creator Business canonical owner rögzítve.  
 **Frissítve:** 2026-10-13.  
 **Dokumentum státusza:** ez az egyetlen végrehajtási igazságforrás.
 **Audit / implementation baseline:** GitHub `v2/foundation`, commit `54daad2357ca576d9e333a052e7bcbb6c2e2d51a` (2026-10-13; F0.3 history-integrity, revision-conflict recovery és save/reload client hardening PR #18–#25 integrálva; production save/reload runtime acceptance továbbra is nyitott). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
@@ -1065,6 +1065,7 @@ Az F0 **a Visual Editor új UX/UI-koncepciójának újraalapozási és megvalós
 | AREA-22 | SaaS, accounts, workspace, teams, roles, billing és custom domains | Platform Administration / tenant-workspace-site boundary | 4.x+; 1.0 site ownershiptől elkülönített bővítés | 093, C.17, F.13, D roadmap; multi-site, collaboration, server-side permission checks, domain verification, SSL, billing/usage |
 | AREA-23 | Localization, marketplace, developer extensions és ecosystem | Shared localization/resource/template/extension contracts | Marketplace 6.x; global/advanced AI 7.x+; API contractok után | C.15/C.17/C.19, E.16, D roadmap; translations/fallback, marketplace/licensing/moderation, extension API, versioning, compatibility |
 | AREA-24 | QA, security, release és disaster recovery | Cross-cutting release gates; nincs külön feature-domain adatduplikáció | Minden fázisban kötelező, 1.0 release előtt teljes kapu | 096–104, 131–140, E.18/E.19; unit/domain/API/D1/E2E, browser responsive, regression, security, production smoke, backup/restore |
+| AREA-25 | Sponsorship / Creator Business Hub | Canonical Business/Sponsorship domain, a public CMS és Analytics hiteles adatait fogyasztja | Későbbi Creator OS fázis; a weboldal/media kit baseline és a deal/CRM workflow külön acceptance | E.15, 081, sponsor/business oldalak; media kit, lead/deal, deliverable, határidő, kampány, hiteles statisztika és export |
 
 ### Külön integrációs területek kötelező elfogadási szabálya
 
@@ -1241,7 +1242,7 @@ A H34 sorai között folyamatlépések/javaslatok is vannak, nem mind önálló 
 | E.12 Store/Monetization | AREA-20, AREA-16, AREA-12 | UI-20 | E-09, E-10 | Fázis- és providerfüggő; purchase→entitlement→access, payment state, refund/security külön tesztelendő |
 | E.13 Community/Audience | AREA-16, AREA-19, AREA-11 | UI-13, UI-14 | E-09–E-11 | Consent, opt-out, role/permission, privacy, retention/export/delete acceptance |
 | E.14 Analytics/Automation/AI | AREA-17, AREA-21, AREA-24 | UI-19, UI-21, UI-22 | E-14, E-16 | Telemetry és creator analytics külön; AI action schema/permission/preview/approval/verification/audit |
-| E.15 Sponsorship/Creator Business | AREA-26 (nyitott ID), AREA-20, AREA-17 | UI-26, UI-19, UI-03 | E-09–E-11 | Későbbi üzleti domain; metrika csak hiteles forrásból; deal/deliverable és publikus media kit külön kezelve |
+| E.15 Sponsorship/Creator Business | AREA-25, AREA-20, AREA-17 | UI-26, UI-19, UI-03 | E-09–E-11 | Későbbi üzleti domain; metrika csak hiteles forrásból; deal/deliverable és publikus media kit külön kezelve |
 | E.16 Localization | AREA-23 | UI-24, UI-02, UI-03, UI-18 | E-01, E-06, E-12 | Locale registry, translation status/fallback, URL/meta és dátum/idő formázás tesztelve |
 | E.17 Accounts/multi-site/teams/SaaS | AREA-01, AREA-22 | UI-18, UI-22 | E-14, E-16 | 1.0 site ownership nem jelenti a későbbi multi-tenant/SaaS készültséget; szerveroldali RBAC |
 | E.18 Import/export/backup/diagnostics/developer | AREA-01, AREA-24, AREA-23 | UI-17, UI-22, UI-25 | E-13, E-16 | Validáció, preview, integrity check, audit, rollback/restore; extension/API csak későbbi contract után |
@@ -1254,7 +1255,7 @@ A H34 sorai között folyamatlépések/javaslatok is vannak, nem mind önálló 
 1. A lokalizáció korábban csak a Settings/Website modulokon keresztül volt elérhető; önálló UI-24 nyelv- és fordításkezelő munkaterületet kapott.
 2. Az import/export, backup, API és későbbi extension/marketplace korábban szétszórtan szerepelt; UI-25 külön kezelőfelületet kapott. Ez nem engedélyez veszélyes, validálatlan adatimportot vagy arbitrary code executiont.
 3. A Sponsorship/Creator Business korábban csak általános tartalom/monetizáció alatt jelent meg; UI-26 külön üzleti munkaterületet kapott.
-4. A 24 AREA-lista már nem tartalmazott külön AREA-26 azonosítót, ezért a fenti táblában szereplő `AREA-26 (nyitott ID)` nem tekinthető érvényes canonical ownernek. A következő korrekcióban a Creator Business/Sponsorship besorolását az AREA-17 és AREA-20 közé kell tenni vagy külön AREA-25-ként felvenni. **Ezt az azonosító-ütközést nyitott auditeltérésként rögzítjük; nem hagyjuk rejtve.**
+4. Az AREA-25 most explicit módon lefedi a Sponsorship / Creator Business Hub területet; az AREA-26 nem jött létre. A korábbi ideiglenes hivatkozás javítva, a crosswalk most az érvényes AREA-25 canonical ownerre mutat.
 
 **Kanonikus viselkedés minden Editorból elérhető domain funkciónál**
 - Az Editor a megjelenést, layoutot, bindingot és engedélyezett megjelenítési konfigurációt írja; a domain rekordját a domain manager írja.
