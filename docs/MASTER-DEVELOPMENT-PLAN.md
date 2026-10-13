@@ -4589,3 +4589,60 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 
 **Coverage count:** 34 E10–E12 source items are individually keyed. E13–E24 and the roadmap's global rules remain OPEN. P0.2 **IN PROGRESS / NOT PASS**; documentation-only, no runtime code/data changed and no tests run.
 
+### 41.3.29. P0.2 — MASTER-FINAL-ROADMAP source-key ledger: E13 History, E14 Recovery, E15 Pages, E16 Publish (2026-10-13)
+
+**Source:** docs/archive/plans/MASTER-FINAL-ROADMAP.md, E13–E16, archive lines 357–409. All 42 source checklist items are individually keyed below; the old [x]/[ ] state is historical and does not override the current MASTER.
+
+| Source key | Archive line | Exact source item | Current E target | Candidate canonical IDs | Decision / phase / acceptance |
+|---|---:|---|---|---|---|
+| ROADMAP-E13-01 | 358 | - [x] Core undo/redo alap | E.3.7-01 | EDT-005 | KEEP — core undo/redo historical check applies only to its exact commit; current runtime needs fresh tests; acceptance evidence OPEN |
+| ROADMAP-E13-02 | 359 | - [ ] UI history panel | E.3.7-01 | EDT-005; EDT-027 | KEEP — history panel must reflect canonical command history, not create independent state; acceptance evidence OPEN |
+| ROADMAP-E13-03 | 360 | - [ ] grouped history | E.3.7-01 | EDT-004/005 | KEEP — grouped history transaction boundaries are explicit and undoable; acceptance evidence OPEN |
+| ROADMAP-E13-04 | 361 | - [ ] drag/resize grouping | F.1-05; E.3.7-01 | EDT-004/005/009 | KEEP — drag/resize from pointer-down to pointer-up is one history entry; acceptance evidence OPEN |
+| ROADMAP-E13-05 | 362 | - [ ] typing grouping | F.1-05; E.3.7-01 | EDT-004/005 | KEEP — typing groups after debounce/blur; text changes cannot flood history; acceptance evidence OPEN |
+| ROADMAP-E13-06 | 363 | - [ ] named versions | E.4-04 | WEB-008; EDT-005 | OPEN — named versions require explicit schema/retention/owner and restore contract; acceptance evidence OPEN |
+| ROADMAP-E13-07 | 364 | - [ ] restore | E.4-04; E.4-05 | WEB-008; OPS-009 | KEEP — restore creates auditable revision and validates compatibility/ownership; acceptance evidence OPEN |
+| ROADMAP-E13-08 | 365 | - [ ] history preview | E.4-03; E.3.7-01 | EDT-032; WEB-008 | KEEP — history preview is read-only and cannot mutate current draft or published snapshot; acceptance evidence OPEN |
+| ROADMAP-E13-09 | 366 | - [ ] diff | E.4-04 | WEB-008 | KEEP — diff shows exact schema-safe change set and supports restore verification; acceptance evidence OPEN |
+| ROADMAP-E13-10 | 367 | - [ ] server-side versions | E.4-04 | WEB-008; EDT-028/029 | KEEP — server-side versions are authoritative; client history is not persistence; acceptance evidence OPEN |
+| ROADMAP-E14-01 | 370 | - [ ] autosave debounce | F.1-08; E.3.7-03 | EDT-027/028/030 | KEEP — debounce interval and explicit save semantics tested; acceptance evidence OPEN |
+| ROADMAP-E14-02 | 371 | - [ ] save queue | F.1-08 | EDT-030/031 | OPEN — save queue ordering, coalescing and stale-response handling need explicit acceptance; acceptance evidence OPEN |
+| ROADMAP-E14-03 | 372 | - [ ] retry | F.1-08 | EDT-031/042; OPS-003 | KEEP — retry is bounded/idempotent and preserves user edits; acceptance evidence OPEN |
+| ROADMAP-E14-04 | 373 | - [ ] timeout | F.1-08 | EDT-031; OPS-003 | KEEP — timeout shows recoverable error and cannot report false success; acceptance evidence OPEN |
+| ROADMAP-E14-05 | 374 | - [ ] dirty state | F.1-08; E.3.7-02 | EDT-027 | KEEP — dirty state follows canonical model and save status; acceptance evidence OPEN |
+| ROADMAP-E14-06 | 375 | - [ ] local recovery | F.1-09 | EDT-031/042; SEC-008 | KEEP — local recovery is a separate recovery copy and stores no secrets/tokens; acceptance evidence OPEN |
+| ROADMAP-E14-07 | 376 | - [ ] crash recovery | F.1-09 | EDT-031/042; SEC-008 | KEEP — crash recovery survives reload/crash without overwriting server draft silently; acceptance evidence OPEN |
+| ROADMAP-E14-08 | 377 | - [ ] unsaved changes protection | F.1-08 | EDT-027/031 | KEEP — navigation/refresh protection covers unsaved edits and failed saves; acceptance evidence OPEN |
+| ROADMAP-E14-09 | 378 | - [ ] revision/ETag | F.1-10 | EDT-029; WEB-008 | KEEP — expected revision/ETag is checked server-side before mutation; acceptance evidence OPEN |
+| ROADMAP-E14-10 | 379 | - [ ] conflict screen | F.1-09; F.1-10 | EDT-029 | KEEP — conflict UI offers explicit valid choices; no silent overwrite; acceptance evidence OPEN |
+| ROADMAP-E14-11 | 380 | - [ ] reload/merge/overwrite policy | F.1-09 | EDT-029/031/042; WEB-008 | OPEN — reload/merge/overwrite policy must define conflict types and preserve user edits; acceptance evidence OPEN |
+| ROADMAP-E14-12 | 381 | - [ ] multi-tab detection | F.1-10 | EDT-029/030 | OPEN — multi-tab detection/coordination has no dedicated stable ID; define local coordination and server conflict tests; acceptance evidence OPEN |
+| ROADMAP-E15-01 | 388 | - [ ] page create | E.4-01 | WEB-001; EDT-001/002 | KEEP — create page validates site scope, slug and initial Page Model; acceptance evidence OPEN |
+| ROADMAP-E15-02 | 389 | - [ ] edit | E.4-01 | WEB-001/004; EDT-001/021/022 | KEEP — edit targets canonical page/draft version, not generated HTML; acceptance evidence OPEN |
+| ROADMAP-E15-03 | 390 | - [ ] duplicate | E.4-01 | WEB-001; EDT-011 | KEEP — page duplicate generates unique slug/IDs and validates all references; acceptance evidence OPEN |
+| ROADMAP-E15-04 | 391 | - [ ] delete | E.4-01 | WEB-001; RES-008/009; SEC-002 | KEEP — delete checks dependencies/redirect/asset usage and follows restore policy; acceptance evidence OPEN |
+| ROADMAP-E15-05 | 392 | - [ ] slug | E.4-01 | WEB-001/013; SEC-002 | KEEP — slug changes are validated and redirect/URL conflicts are handled; acceptance evidence OPEN |
+| ROADMAP-E15-06 | 393 | - [ ] title | E.4-01 | WEB-001; EDT-001 | KEEP — title is persisted as canonical page metadata and rendered safely; acceptance evidence OPEN |
+| ROADMAP-E15-07 | 394 | - [ ] meta | E.4-01; E.2.3-01 | SEO-001/002; WEB-005 | KEEP — meta fields have schema/length/locale and preview validation; acceptance evidence OPEN |
+| ROADMAP-E15-08 | 395 | - [ ] canonical | E.4-01; F.9-02 | SEO-001; WEB-013 | KEEP — canonical URL is normalized, unique and cannot point to unsafe/unowned destination; acceptance evidence OPEN |
+| ROADMAP-E15-09 | 396 | - [ ] status | E.4-01; E.4-02 | WEB-004/006 | KEEP — draft/review/published/scheduled/archived transitions validated; acceptance evidence OPEN |
+| ROADMAP-E15-10 | 397 | - [ ] template | E.4-01; E.6.3 | DSN-009/014; WEB-001 | KEEP — template assignment checks schema/version compatibility and migration; acceptance evidence OPEN |
+| ROADMAP-E15-11 | 398 | - [ ] permissions | E.4-01; E.19 | SEC-002/003/010; WEB-001 | KEEP — page CRUD is server-authorized, site-scoped and audited; acceptance evidence OPEN |
+| ROADMAP-E16-01 | 401 | - [ ] draft | E.4-02 | WEB-004 | KEEP — draft is not publicly reachable or indexable; acceptance evidence OPEN |
+| ROADMAP-E16-02 | 402 | - [ ] preview | E.4-03 | EDT-032; WEB-005 | KEEP — preview is isolated from published state and cache; acceptance evidence OPEN |
+| ROADMAP-E16-03 | 403 | - [ ] publish | E.4-05 | EDT-033; WEB-006 | KEEP — publish is explicit, authorized and atomic; acceptance evidence OPEN |
+| ROADMAP-E16-04 | 404 | - [ ] unpublish | E.4-05 | WEB-006 | KEEP — unpublish has explicit public-route/cache behavior and audit; acceptance evidence OPEN |
+| ROADMAP-E16-05 | 405 | - [ ] published snapshot | E.4-04; E.4-05 | WEB-006/008 | KEEP — published snapshot/revision linkage is immutable and traceable; acceptance evidence OPEN |
+| ROADMAP-E16-06 | 406 | - [ ] version ID | E.4-04 | WEB-008; EDT-029 | KEEP — version ID binds revision and expected-version concurrency; acceptance evidence OPEN |
+| ROADMAP-E16-07 | 407 | - [ ] rollback | E.4-05 | OPS-009; WEB-008 | KEEP — rollback has explicit authorization, cache invalidation and recovery; acceptance evidence OPEN |
+| ROADMAP-E16-08 | 408 | - [ ] publish validation | E.4-05; E.20 | WEB-006; SEC-002; SEO-001–005 | KEEP — publish validation blocks invalid schema/permission/SEO/asset references; acceptance evidence OPEN |
+| ROADMAP-E16-09 | 409 | - [ ] atomic publish | E.4-05 | WEB-006; OPS-009 | KEEP — publish is atomic: failure leaves prior published snapshot and cache behavior consistent; acceptance evidence OPEN |
+
+**Semantic findings:**
+- Historical undo/redo PASS is limited to the exact old commit/scope. Current acceptance must cover grouped typing/drag transactions, transaction rollback, history panel consistency, reload behavior and no DOM-snapshot history.
+- Autosave, retry, timeout, local/crash recovery, dirty state, expected-version concurrency, conflict choices and multi-tab coordination are distinct failure modes. EDT-031/042 and EDT-029 acceptance must prove no lost edits, no duplicate command and no silent stale overwrite.
+- Page CRUD and Publish are separate lifecycle contracts. Draft/preview/unpublish/publish/rollback must be site-scoped, server-authorized, revision-bound, cache-safe and failure-atomic. A visible button or a stored Page Model does not prove public route behavior.
+- Multi-tab coordination remains OPEN because the historical requirement does not identify a dedicated stable ID; retain it as a requirement and resolve the canonical owner/implementation before P0.2 PASS.
+
+**Coverage count:** 42 E13–E16 source items are individually keyed. E17–E24 and the roadmap's global rules remain OPEN. P0.2 **IN PROGRESS / NOT PASS**; documentation-only, no runtime code/data changed and no tests run.
+
