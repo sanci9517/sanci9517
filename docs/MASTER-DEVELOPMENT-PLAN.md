@@ -4159,3 +4159,16 @@ A felhasználó egyértelmű visszajelzése: az Admin főoldal ne vizuális fejl
 - A dashboard elrendezésének célja egy operatív munkaközpont; a funkciókészültségi címkék a navigációban és a modul saját képernyőjén jelenjenek meg, ne a kezdőoldal egészét uraló katalógusként.
 - Az új irányt külön vizuálisan kell ellenőrizni desktop/tablet/mobile méreteken, világos és sötét témában. A frissített contract teszteknek biztosítaniuk kell, hogy a kezdőoldal ne regresszáljon roadmap-katalógussá.
 - **Nincs merge és nincs F0.1 PASS** a helyi tesztek/typecheck, böngészős ellenőrzés és a felhasználó kifejezett vizuális elfogadása előtt.
+
+
+## 2.77.9.B — Dashboard copy hierarchy and capability completeness clarification
+
+**Állapot:** IMPLEMENTING / NOT PASS.
+
+- A felhasználó pontosította, hogy a Sanci9517 Creator Platform teljes funkciókészlete jóval több a mostani Admin menüben látható elemeknél. A menü rövid, első szintű navigáció; **nem a teljes capability inventory és nem a végleges termékscope**.
+- A teljes scope továbbra is a MASTER 00.9.6.C / 00.9.6.D, az E/F buildpontok, a 01–140 preservation matrix és a H19–H34 történeti traceability alapján vezetendő. A képességek nem hagyhatók el azért, mert a dashboardon vagy a menüben nincs mindegyik felsorolva. A történeti vagy tervezett tétel nem jelent kész runtime-funkciót.
+- A kezdőoldal szöveghierarchiája legyen rendezett és középre igazított: főcím és bevezető, szekciócímek, státuszkártyák és gyorsműveletek. A navigációs elemek, sűrű adatlisták és hosszabb munkafelületi tartalmak maradjanak balra igazítva, ahol ez gyorsabb olvashatóságot biztosít.
+- Kerülendő a fölösleges ismétlés: ne ismételje ugyanazt a magyarázatot a főcím, szekcióleírás, kártya és gombszöveg. A státuszjelölés, rövid leírás vagy ismétlés csak akkor maradhat, ha külön döntést segít, navigációs kontextust ad, vagy szükséges akadálymentességi/állapotjelzés.
+- A középre igazítás nem lehet minden elemre automatikusan ráhúzott szabály; a bal oldali navigáció és a listajellegű tartalom olvashatósága elsőbbséget élvez.
+- A PR ellenőrzése tartalmazza a sötét/világos témát, desktop/tablet/mobil töréspontokat, a szövegek túlcsordulását, valamint a fölösleges ismétlések vizuális felülvizsgálatát.
+- **Nincs merge és nincs F0.1 PASS** a helyi tesztek/typecheck, a böngészős vizuális ellenőrzés és a felhasználó kifejezett elfogadása előtt.
