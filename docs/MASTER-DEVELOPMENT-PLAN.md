@@ -4225,10 +4225,10 @@ F0.2 DoD:
 - [ ] Desktop/tablet/mobil navigáció, billentyűzetes fókusz, kontraszt, téma, túlcsordulás és reduced-motion ellenőrizve.
 - [ ] Keresés, értesítés és feladatjelzés csak akkor működőként látható, ha valós adat-/viselkedési szerződés támasztja alá; egyébként egyértelmű disabled/queued állapot.
 - [ ] Célzott contract/domain/API és regressziós tesztek PASS; `npm run typecheck` PASS.
-- [ ] Friss Preview ellenőrzés és felhasználói acceptance PASS.
+- [ ] A friss éles deploy után a tényleges production URL-en desktop/mobil/keyboard smoke és felhasználói acceptance PASS; a F0.2 teljes lezárásához a teljes route/auth/navigation DoD is kötelező.
 - [ ] E checkpoint végén a MASTER aktív pontja csak bizonyítékokkal frissíthető F0.3-ra.
 
-**Végrehajtási szabály:** nincs párhuzamos engineering stream; nincs új külön auditfázis; nincs funkciótörlés pusztán azért, mert a jelenlegi menüben nem látszik. A MASTER marad az egyetlen source of truth.
+**Végrehajtási szabály:** nincs párhuzamos engineering stream; nincs új külön auditfázis; nincs funkciótörlés pusztán azért, mert a jelenlegi menüben nem látszik. Amíg a terméket kizárólag a tulajdonos használja, alacsony kockázatú, kizárólag UI/static változás a teljes zöld CI után a meglévő `v2/foundation` → Cloudflare production folyamatba integrálható, majd az éles URL-en történik a vizuális/keyboard acceptance. Adatbázis-migráció, auth/RBAC, titokkezelés, adatvesztési vagy visszafordíthatatlan művelet nem kap automatikus élesítési kivételt. A MASTER marad az egyetlen source of truth.
 
 ## 2.77.9.E — F0.2 első implementációs szelet: mobil funkciókeresés — 2026-10-13
 
@@ -4244,5 +4244,5 @@ F0.2 DoD:
 - [ ] A feature branch lokális TypeScript- és tesztfuttatásai még szükségesek.
 - [ ] PR-hez kötött friss CI, a mobil kereső böngészős ellenőrzése, auth/role/direct-route regresszióteszt és felhasználói acceptance még szükséges.
 
-**Aktuális feature branch:** `feature/f0-2-admin-global-shell`. A változások nem kerültek a `v2/foundation` ágba; csak a tesztek és Preview elfogadása után integrálhatók. A következő munka az F0.2 ugyanazon checkpointján belül folytatódik: minden navigációs cél és a jogosultsági határ teljes ellenőrzése, majd a szükséges javítások és tesztek. Nem készítünk külön tervezési dokumentumot.
+**Aktuális feature branch:** `feature/f0-2-admin-global-shell`. A változások még nem kerültek a `v2/foundation` ágba. A kizárólag UI/static szelet a friss zöld CI után a felhasználó által jóváhagyott solo-production-first szabály szerint integrálható; az éles oldali acceptance a deploy után történik, és F0.2 ettől még nyitva marad a teljes route/auth/navigation DoD-ig. A következő munka az F0.2 ugyanazon checkpointján belül folytatódik: minden navigációs cél és a jogosultsági határ teljes ellenőrzése, majd a szükséges javítások és tesztek. Nem készítünk külön tervezési dokumentumot.
 
