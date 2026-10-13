@@ -27,7 +27,7 @@ Ez a blokk kizárólag az E4/E5/E6 korábban bizonyított lezárt gate-jeit rög
 
 ## HISTORICAL / QUEUED — 00/A.2.2 — F — SCHEDULE CRUD + INSPECTOR / DOMAIN-DRIVEN EDITOR — DEFINITION OF DONE
 
-**Állapot:** HISTORICAL SCOPE / QUEUED. Ez a korábbi F-terv megőrzött definíciója, nem aktív végrehajtási utasítás; a jelenlegi sorrendet az M0, majd a rebaselined F0 határozza meg.
+**Állapot:** HISTORICAL SCOPE / QUEUED. Ez a korábbi F-terv megőrzött definíciója, nem aktív végrehajtási utasítás. A jelenlegi végrehajtási sorrendet kizárólag a dokumentum eleji ACTIVE_POINT_ID és az F0.x szekvenciális implementációs program határozza meg; M0 audit PASS nem előfeltétel.
 
 **Cél:** az új, felhasználó által elfogadott Visual Editor-koncepció megvalósítása a meglévő canonical platformra építve. A szerkesztő felülete és interakciós modellje jelentősen újratervezhető vagy újraépíthető; a meglévő UI nem élvez elsőbbséget pusztán azért, mert korábban elkészült. A canonical Page Model, domain ownership, command/history/validation, revision/save/publish és site-ownership boundary viszont megőrzendő, hacsak bizonyított architekturális ok és külön jóváhagyott tervmódosítás mást nem indokol. Ez nem jelent második canonical Editor core-t, Schedule domaint vagy persistence útvonalat.
 
