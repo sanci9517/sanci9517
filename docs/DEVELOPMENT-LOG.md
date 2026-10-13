@@ -1,8 +1,10 @@
 # Sanci9517 V2 — Development Log
 
-## Current development point
+> **HISTORICAL DEVELOPMENT LOG — 2026-09 snapshot.** The current implementation point and next action are defined only by `docs/MASTER-DEVELOPMENT-PLAN.md` at the top-level `ACTIVE_POINT_ID` on `v2/foundation`. Entries below preserve historical implementation and verification evidence; they do not override the current MASTER.
+
+## Historical development point (2026-09-15)
 - Visual Editor stabilization/testing
-- Next implementation: real parent/child hierarchy foundation
+- Then-planned implementation: real parent/child hierarchy foundation
 
 ## 2026-09-15 — Parent/Child hierarchy foundation
 - Reviewed the existing Visual Editor hierarchy implementation before changing it.
