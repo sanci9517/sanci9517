@@ -2450,6 +2450,61 @@ The short decision record must name the problem and acceptance criteria; existin
 
 **Batch 2 result:** 66 E.4–E.9 source bullets mapped at requirement level. Structural validation on commit 13da8d20c9483281d2d4b48532d8f2ca584e5e80 confirmed 66 rows, 282 distinct explicit/range-expanded feature/QA references and no unresolved IDs. Mapping remains non-runtime evidence; the next batch covers E.10–E.22, then F.1–F.13. Before P0.2 PASS, verify source bullet text/counts against the archive and resolve any broad domain mapping to the exact per-feature acceptance contract.
 
+
+### 37.24. P0.2 — Bullet-szintű crosswalk, batch 3: E.10–E.14 (Content, OBS, Commerce, Community, Analytics, Automation, AI)
+
+**Forrás:** archived MASTER snapshot, 00.9.6.E.10–E.14.1. A 45 forrásbullet külön mappinget kapott; a provider- és üzleti képességek későbbi fázisúak, amíg konkrét endpoint, engedély, jogi/pénzügyi döntés és acceptance nincs.
+
+| Forráskulcs | Megőrzött követelmény röviden | Canonical current ID | Döntés | Célfázis | QA-horgony |
+|---|---|---|---|---|---|
+| E.10-01 | Content ideas/drafts/scripts/thumbnails/title/description/tags/platform/date/campaign | CNT-010–CNT-012, CNT-016 | EXPAND | 1.5–2.0 | QA-002/004 |
+| E.10-02 | Content calendar/queue/approval/publish status/failure handling | CNT-009, CNT-013–CNT-015 | EXPAND | 1.5–2.0 | QA-002/004/006 |
+| E.10-03 | Distinct VOD/clip/Short/highlight/video/playlist/post types with shared metadata | CNT-001–CNT-005, CNT-018, CNT-020 | EXPAND | 1.5–2.0 | QA-002/004 |
+| E.10-04 | Platform-specific title/description/thumbnail/tags and publishing restrictions | CNT-011, CNT-012, INT-013–INT-016 | EXPAND | 1.5+ capability-gated | QA-002/003/004 |
+| E.10-05 | Import/sync, duplicate detection, external IDs and idempotency | CNT-002, CNT-007, INT-008, INT-009 | EXPAND | 1.5–2.0 | QA-002/003/006 |
+| E.10-06 | Clip/Short workflow, cut points, vertical format, captions, hooks and export preparation | CNT-003, CNT-017, CNT-018, AI-014, RES-004 | DEFER/EXPAND | 2.0–3.0 | QA-002/004/008 |
+| E.10-07 | Cross-platform adaptation/publishing queue only when provider APIs/scopes allow it | CNT-011, CNT-013–CNT-015, INT-013–INT-016 | DEFER | 1.5–2.0 by provider | QA-002/003/008 |
+| E.11-01 | Overlay/alert packs, stream frames, scenes/browser sources and responsive rendering | OBS-001, OBS-005, OBS-010, LIV-005 | DEFER/EXPAND | 2.0 | QA-002/004/005 |
+| E.11-02 | OBS connection, scene/stream/recording state, commands/markers/replay buffer where supported | OBS-002–OBS-004, INT-001, INT-018 | DEFER | 2.0+ OBS capability-gated | QA-002/003/008 |
+| E.11-03 | Follow/sub/raid/tip/purchase/membership alerts only from real supported events | OBS-006, OBS-008, AUT-001, INT-017, SUP-002, STO-018 | DEFER | 2.0–7.0 by event source | QA-002/003/008 |
+| E.11-04 | Chatbot/commands/timers/loyalty/giveaways/polls/moderation/prediction | OBS-007, OBS-008, COM-004, COM-009, COM-010, AUT-004 | DEFER | 2.0–7.0, platform-policy gated | QA-002/003/008 |
+| E.11-05 | Macro Deck/external controls through an adapter, no hidden provider dependency | OBS-009, INT-001, INT-018 | DEFER | 2.0+ | QA-002/003 |
+| E.11-06 | Stream tools remain outside Editor core; Editor only configures layout/display | EDT-020, OBS-001–OBS-010, LIV-005 | KEEP | 2.0 | QA-002/004 |
+| E.12-01 | Product catalogue with variants/categories/collections/media/price/currency/stock/fulfillment state | STO-001–STO-004, STO-006 | DEFER | 5.0 | QA-002/003/008 |
+| E.12-02 | Physical/digital/bundle/limited/preorder/membership-linked product types | STO-005, STO-012, SUP-004–SUP-006 | DEFER | 5.0 | QA-002/003/008 |
+| E.12-03 | Storefront list/detail/search/filter/cart/checkout/order confirmation | WEB-025, STO-007–STO-009, STO-019 | DEFER | 5.0 | QA-002/003/004 |
+| E.12-04 | Fulfillment provider adapters (e.g. Fourthwall/Printful/Shopify) after feasibility review | STO-006, STO-010, STO-019, INT-021 | DEFER | 5.0 provider-gated | QA-002/003/008 |
+| E.12-05 | Orders/refunds/discounts/gift cards/customer account/shipping/tax/VAT/invoice | STO-009–STO-015, STO-018–STO-019, CAM-009 | DEFER | 5.0 after legal/business review | QA-002/003/008 |
+| E.12-06 | Digital products and license/access control | STO-005, STO-012–STO-014, RES-016 | DEFER | 5.0 | QA-002/003/008 |
+| E.12-07 | Purchase→entitlement→customer access; protected files never exposed through unrestricted public R2 URL | STO-012, STO-013, SUP-006, RES-014, RES-016, SEC-002 | KEEP | 5.0 security gate | QA-003/008 |
+| E.12-08 | Tips/supporter goals/membership/perks/private content/Discord role/sub benefits/discounts/exclusive events | SUP-001–SUP-012, COM-013, STO-011, INT-015 | DEFER | 5.0 provider/policy-gated | QA-002/003/008 |
+| E.12-09 | Separate creator revenue from platform revenue; multi-creator funds only after payment/compliance/legal review | STO-019, CAM-009, SEC-003, TEAM-001 | KEEP | 4.0–5.0 legal gate | QA-003/008 |
+| E.13-01 | External community entry points first; later member/profile/follow/comment/reaction/post/poll/event/notification | COM-001–COM-008, COM-011, COM-018 | DEFER/EXPAND | 1.0 links; full community later | QA-002/004/008 |
+| E.13-02 | Moderation/report/ban/roles/submissions/badges/challenges/reputation | COM-008–COM-012 | DEFER | 2.0+ | QA-002/003/008 |
+| E.13-03 | Discord role sync and membership entitlement through authenticated audited adapter | INT-015, SUP-006, SUP-009, COM-009, SEC-010 | DEFER | 1.5–5.0 | QA-002/003/008 |
+| E.13-04 | Email audience: signup/consent/lists/segments/campaign/newsletter/transactional email/unsubscribe | COM-015–COM-017, CAM-002, SEC-011 | DEFER | 2.0+ provider/legal-gated | QA-003/008 |
+| E.13-05 | Consent revoke, export/delete and retention | SEC-011, COM-017, OPS-005 | KEEP | Privacy baseline 1.0; audience workflows later | QA-003/008 |
+| E.13-06 | Future member area/PWA/mobile notifications/schedule/live/community/store/dashboard | WEB-026, COM-006–COM-018, SCH-002, LIV-007, STO-007, ADM-010 | DEFER | 2.0+ | QA-004/005/008 |
+| E.13-07 | Founding Supporters list requires separate voluntary revocable opt-in | COM-014, SEC-011, COM-018 | KEEP | 1.0 only if enabled; otherwise later | QA-003/004/008 |
+| E.14-01 | Website analytics: visitors/sessions/pageviews/device/referrer/conversion/legally permitted aggregate geography | ANL-001, ANL-002, ANL-009 | DEFER/EXPAND | 2.0 privacy-gated | QA-003/008 |
+| E.14-02 | Provider creator metrics only when provider/time period/scope permits | ANL-003, ANL-004, LIV-004, INT-013–INT-016 | DEFER | 1.5–2.0 by provider | QA-002/003/008 |
+| E.14-03 | Stream intelligence: silence/chat/audio/OBS quality/highlights/weekly summary only with supported sources and consent | ANL-003, ANL-006, AI-014, AI-015, OBS-003, OPS-007 | DEFER | 3.0–8.0 | QA-003/006/008 |
+| E.14-04 | Commerce analytics: sales/revenue/AOV/conversion/product/campaign | ANL-005, CAM-007, STO-020 | DEFER | 5.0 | QA-002/003/008 |
+| E.14-05 | Community analytics: active members/engagement/retention/event participation | ANL-006, COM-005, COM-010 | DEFER | 2.0+ | QA-002/003/008 |
+| E.14-06 | Unified metrics source/period/freshness/missing data/provider limits/CSV/export/permissions | ANL-001, ANL-007–ANL-009, SEC-002, SEC-011 | EXPAND | 2.0+ | QA-002/003/008 |
+| E.14-07 | Versioned event→trigger→condition→action automation | AUT-001–AUT-005 | DEFER | 7.0 | QA-002/003/008 |
+| E.14-08 | Cross-domain examples: live→site/Discord, video→feed, purchase→alert, member→role, schedule→notification, clip→social | AUT-001–AUT-004, AUT-014, INT-015, SCH-008, CNT-013 | DEFER | 7.0 after domain APIs | QA-002/003/008 |
+| E.14-09 | Delay/retry/idempotency/rate limits/dead-letter/audit/enable-disable/site rules | AUT-005–AUT-012, SEC-003, SEC-010 | DEFER | 7.0 | QA-002/003/006/008 |
+| E.14-10 | Automation failure cannot loop indefinitely or bypass domain permissions | AUT-006, AUT-007, AUT-011, AUT-014, SEC-002 | KEEP | 7.0 release gate | QA-003/006/008 |
+| E.14-11 | AI website assistant converts intent to validated Page Operations, not arbitrary HTML/DOM/DB/code edits | AI-003, AI-005, AI-006, AI-008, EDT-003, SEC-002 | DEFER | 3.0 | QA-002/003/008 |
+| E.14-12 | AI pipeline: intent→plan/actions→schema/permission validation→preview/diff→approval→canonical execute→verify→audit/version | AI-003, AI-005–AI-009, AI-019, EDT-003, SEC-002 | KEEP | 3.0 safety gate | QA-002/003/008 |
+| E.14-13 | AI suggestions for layout/content/SEO/localization/schedule and later transcripts/chapters/highlights/clips/scripts | AI-011–AI-015, AI-012, AI-013, AI-014 | DEFER/EXPAND | 3.0–8.0 | QA-002/004/008 |
+| E.14-14 | AI changes require preview/permission/validation/rollback/usage tracking | AI-006–AI-010, AI-019 | KEEP | 3.0 safety gate | QA-002/003/008 |
+| E.14-15 | AI usage/permission/prompt templates/jobs/approval/errors; provider keys never in browser | AI-001, AI-002, AI-010, AI-017, SEC-008 | DEFER | 3.0 | QA-003/008 |
+| E.14-16 | No irreversible public/business action without required human approval | AI-007, AI-019, STO-018, AUT-009, SEC-002 | KEEP | 3.0+ safety gate | QA-003/008 |
+
+**Batch 3 result:** 45 E.10–E.14 source bullets mapped. Provider access, financial operations, member data and AI remain explicitly phase-/permission-gated. Structural validation is pending for this batch; mapping is not runtime PASS.
+
 ## 38. Részletes Visual Editor képességkatalógus
 
 **Cél:** a vizuális szerkesztő teljes részletképességeinek önálló, tesztelhető katalógusa. A felsorolás a végleges platform követelményét rögzíti, nem a runtime készültségét. Minden elem a közös Page Model, command/history/validation/persistence és jogosultsági szerződésen keresztül működik.
