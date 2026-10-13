@@ -2625,37 +2625,41 @@ The short decision record must name the problem and acceptance criteria; existin
 **Batch 5 result:** 28 source requirements mapped for F.1–F.4. Structural checks must confirm each referenced ID exists in §24; source-bullet completeness and runtime behavior remain separate gates.
 
 
-### 37.29. P0.2 — Bullet-szintű crosswalk, batch 6: F.5–F.8
 
-**Forrás:** archived MASTER, 00.9.6.F.5–F.8. A provider-, pénzügyi és AI-műveletek csak a saját capability/security gate után aktiválhatók.
+### 37.29. P0.2 — Bullet-szintű crosswalk, batch 6: F.5–F.8 (Content, Schedule, Admin, Analytics, Automation, AI)
+
+**Forrás:** archived MASTER snapshot, 00.9.6.F.5–F.8. Mind a 26 forrásbullet külön kulcsot kap; a provider-, pénzügyi és AI-műveletek csak a saját capability/security gate után aktiválhatók.
 
 | Forráskulcs | Megőrzött követelmény | Canonical current ID | Döntés | Célfázis | QA-horgony |
 |---|---|---|---|---|---|
-| F.5-01 | Content idea/draft/script/title/description/tags/thumbnail/platform/date/campaign/approval lifecycle | CNT-009–CNT-016 | EXPAND | 1.5–2.0 | QA-002/004 |
-| F.5-02 | VOD ingestion, clips/Shorts, calendar, platform variants, publish queue, deduplication | CNT-001–CNT-007, CNT-013–CNT-018 | DEFER/EXPAND | 1.5–2.0 | QA-002/003/006 |
-| F.5-03 | Twitch OAuth/live/title/category/permitted metrics/VOD/clips/events/sync diagnostics | INT-001–INT-012, LIV-001–LIV-004 | KEEP/EXPAND | 1.0 core; advanced later | QA-002/003/006 |
-| F.5-04 | YouTube channel/video/Shorts/analytics with quota/scope/failure fallback | INT-013, ANL-004, CNT-002, CNT-003 | DEFER | 1.5+ provider-gated | QA-002/003/008 |
-| F.5-05 | TikTok API/account-capability-gated profile/content with rate-limit and manual fallback | INT-014, CNT-002, CNT-003 | DEFER | 1.5+ provider-gated | QA-002/003/008 |
-| F.5-06 | Discord community link baseline; bot/role/status only with separate permissioned integration | INT-015, COM-001, SUP-006, SEC-002 | EXPAND | 1.0 link; later integration gated | QA-002/003/008 |
-| F.5-07 | Normalize provider data; provider outage cannot break public site; never invent missing metrics | INT-001, INT-020, LIV-002, DYN-005, OPS-003 | KEEP | 0.x–1.0 baseline | QA-003/006 |
-| F.6-01 | Canonical schedule fields, lifecycle, recurrence, source and external-ID mapping | SCH-001–SCH-015 | KEEP | 1.0 core | QA-002/004 |
-| F.6-02 | Schedule list/calendar/upcoming/past, search/filter/sort, timezone/DST and supported recurrence edits | SCH-001–SCH-010 | EXPAND | 1.0 core; advanced recurrence phased | QA-002/004 |
-| F.6-03 | Next-stream/countdown uses canonical schedule, site timezone and authenticated live state | SCH-009, LIV-001–LIV-003, SET-001 | KEEP | 1.0 | QA-002/004 |
-| F.6-04 | VOD/clip/Short links to schedule item; Editor Schedule node changes presentation only | SCH-013, CNT-002–CNT-005, EDT-018 | KEEP | 1.0 display; richer content later | QA-002/003/004 |
-| F.7-01 | Admin shell navigation, breadcrumbs, public link, session/logout/help and mobile shell | ADM-001, ADM-002, ADM-007, ADM-010, QA-005 | EXPAND | 1.0 | QA-004/005 |
-| F.7-02 | Every module has loading/empty/error/success/disabled/unsaved states, validation, confirmation and keyboard support | ADM-008, QA-004–QA-006 | KEEP | 1.0 and all later modules | QA-004/005/006 |
-| F.7-03 | Session expiry, logout and unsaved-change flow are protected by server-side auth/permission policy | ADM-007, SEC-001–SEC-004, EDT-030 | KEEP | 0.x–1.0 release gate | QA-003/004 |
-| F.7-04 | Public form schema/validation/spam protection/consent and delivery states | WEB-027, COM-015–COM-017, SEC-011 | EXPAND | Basic contact 1.0; audience later | QA-002/003/004 |
-| F.7-05 | Store products/variants/SKU/pricing/stock/order/payment/fulfillment/refund flows | STO-001–STO-020 | DEFER | 5.0 after provider/legal review | QA-002/003/008 |
-| F.8-01 | Privacy-permitted analytics with source/period/freshness/missing-data/export/role permissions | ANL-001–ANL-010, SEC-011 | DEFER/EXPAND | 2.0+ | QA-002/003/008 |
-| F.8-02 | Versioned automation lifecycle with retry/idempotency/rate limit/dead-letter/disable/audit | AUT-001–AUT-014, SEC-002, SEC-010 | DEFER | 7.0 | QA-003/006/008 |
-| F.8-03 | AI page edits use canonical action pipeline, permission/schema validation, preview/diff, approval, verification, audit and rollback | AI-003, AI-005–AI-010, AI-019, EDT-003, WEB-008, SEC-002 | DEFER | 3.0 safety gate | QA-002/003/008 |
-| F.8-04 | AI provider/model registry, specialist agents, context minimization, quota/cost and usage/error logs; keys server-side | AI-001, AI-002, AI-010, AI-017, SEC-008 | DEFER | 3.0 | QA-003/008 |
-| F.8-05 | Stream intelligence/audio/chat/highlights/summary requires supported source, consent and human review | ANL-003, ANL-006, AI-014, AI-015, OBS-003, SEC-011 | DEFER | 3.0–8.0 | QA-003/006/008 |
+| F.5-01 | Content Manager ideas/drafts/scripts/title/description/tags/thumbnail/platform/date/campaign/approval | CNT-009–CNT-016, CAM-001 | EXPAND | 1.5–2.0 | QA-002/004 |
+| F.5-02 | VOD ingestion/category, clips/Shorts, calendar, platform metadata variants, publish queue/external IDs/dedupe | CNT-001–CNT-007, CNT-009–CNT-015, CNT-018 | DEFER/EXPAND | 1.5–2.0 | QA-002/003/006 |
+| F.5-03 | Twitch OAuth/live/channel/game/permitted metrics/VOD/clips/events/sync diagnostics | INT-003–INT-012, INT-017, INT-020, LIV-001–LIV-007, CNT-002–CNT-004 | KEEP/EXPAND | 1.0 core; advanced content later | QA-002/003/006 |
+| F.5-04 | YouTube channel/video/Shorts/available analytics/quota/scope/fallback | INT-013, ANL-004, CNT-002, CNT-003 | DEFER | 1.5+ provider-gated | QA-002/003/008 |
+| F.5-05 | TikTok account-capability-gated profile/content with rate-limit/manual fallback | INT-014, CNT-002, CNT-003, INT-008, INT-009 | DEFER | 1.5+ provider-gated | QA-002/003/008 |
+| F.5-06 | Discord link baseline; bot/role/status and Kick/OBS/email/payment/commerce adapters have own contracts | INT-015, COM-001, SUP-006, OBS-001–OBS-010, STO-001–STO-020, INT-021 | DEFER/EXPAND | 1.0 links; integrations later | QA-002/003/008 |
+| F.5-07 | Normalize provider data; outage fallback; never invent missing metrics | INT-001, INT-018, INT-020, LIV-002, DYN-005, ANL-008 | KEEP | 0.x–1.0 baseline | QA-002/003/006 |
+| F.6-01 | Canonical Schedule fields, lifecycle, recurrence, source and external-ID mapping | SCH-001–SCH-015, RES-013 | EXPAND | 1.0 core; advanced recurrence phased | QA-002/004 |
+| F.6-02 | Schedule list/calendar/upcoming/past/search/filter/sort and lifecycle states | SCH-002, SCH-005, SCH-006, SCH-010 | EXPAND | 1.0 baseline | QA-002/004 |
+| F.6-03 | DST/timezone and recurrence edits scoped to one event/future events/series where supported | SCH-003, SCH-004 | EXPAND | 1.0 timezone; recurrence 1.5–2.0 if not accepted | QA-002/004 |
+| F.6-04 | Next stream/countdown uses canonical schedule/site timezone/authenticated live state and excludes cancelled/past events | SCH-009, SCH-003, SCH-005, LIV-001, WEB-016 | KEEP | 1.0 | QA-002/004 |
+| F.6-05 | Link VOD/clip/Short to stream and calendar; Editor Schedule block changes presentation only | SCH-015, CNT-002–CNT-004, EDT-020, SCH-011 | EXPAND | 1.0 Schedule; richer content later | QA-002/003/004 |
+| F.7-01 | Admin shell navigation/breadcrumb/public return/profile/session/logout/help/notifications/mobile shell | ADM-001–ADM-010, SEC-001, WEB-011 | EXPAND | 1.0 | QA-003/004/005 |
+| F.7-02 | Shared loading/empty/error/success/disabled/unsaved states, validation/confirm/search/filter/pagination/keyboard/Hungarian UI | ADM-008, QA-005, EDT-027 | EXPAND | 1.0 | QA-004/005/006 |
+| F.7-03 | Session expiry/logout/inactivity/multi-tab/unsaved flow and server-side admin/API authorization | SEC-001, SEC-002, SEC-004, ADM-007, EDT-031 | KEEP | 0.x–1.0 | QA-003/004 |
+| F.7-04 | Public forms: schema/required labels/client+server validation/spam rate limit/success/error/privacy notice | WEB-027, SEC-007, SEC-011, QA-006 | EXPAND | 1.0 if form enabled | QA-003/004/006 |
+| F.7-05 | Store CRUD/variants/SKU/pricing/stock/order/payment/fulfillment/refund/provider errors | STO-001–STO-020, WEB-025 | DEFER | 5.0 | QA-002/003/008 |
+| F.7-06 | Merch/digital/bundle/preorder/limited drop/coupon/gift card/invoice/shipping/tax | STO-005–STO-020, CAM-009, SUP-004–SUP-006 | DEFER | 5.0 after legal/payment review | QA-002/003/008 |
+| F.8-01 | Consent-aware web/content/stream/commerce/community analytics only from real sources | ANL-001–ANL-006, ANL-009, SEC-011 | DEFER/EXPAND | 2.0+ by source | QA-003/008 |
+| F.8-02 | Metrics source/period/freshness/missing values/API limits/retention/export/role; anomaly detection later | ANL-007–ANL-010, SEC-002 | EXPAND | 2.0+ | QA-002/003/008 |
+| F.8-03 | Automation event/schedule→trigger→condition→action→result→verify→audit with retry/idempotency/rate/dead-letter/version/site rules | AUT-001–AUT-014, SEC-003, SEC-010 | DEFER | 7.0 | QA-002/003/006/008 |
+| F.8-04 | AI website edits use canonical Page Model/action pipeline, permission/schema validation, preview/diff/approval/verify/audit; no arbitrary DB/HTML | AI-003, AI-005–AI-009, AI-019, EDT-003, SEC-002 | DEFER | 3.0 safety gate | QA-002/003/008 |
+| F.8-05 | AI orchestrator/agent/tool/model registry, task planner/context selector, permission/approval, specialist agents and multi-model routing | AI-001–AI-006, AI-016–AI-018 | DEFER | 3.0–8.0 | QA-002/003/008 |
+| F.8-06 | AI costs/quotas/approval/prompt versions/usage/errors/recovery/rollback; provider keys server-side | AI-001, AI-002, AI-010, AI-017, SEC-008 | DEFER | 3.0 | QA-003/008 |
+| F.8-07 | Stream Intelligence for live/silence/speech/chat/audio/OBS/highlights/VOD/clips/feedback/opt-in memory | AI-014–AI-016, ANL-003, ANL-006, OBS-003, LIV-006, SEC-011 | DEFER | 3.0–8.0 | QA-003/006/008 |
+| F.8-08 | Human-reviewed clip/export, stream setup assistant, AI Control Center, experience evaluation and E2E tests | AI-014, AI-015, AI-017–AI-020, OPS-007, QA-008 | DEFER | 3.0–8.0 | QA-002/003/008 |
 
-**Batch 6 státusz:** 21 forráskövetelménycsoport leképezve. A hivatkozások szerkezeti validációja és a történeti alpontokkal való teljességi egyeztetés még külön lépés; ez nem runtime PASS.
-
-
+**Batch 6 result:** all 26 F.5–F.8 source bullets are individually represented. This does not establish provider approval, runtime capability, or acceptance PASS.
 ### 37.30. P0.2 — Bullet-szintű crosswalk, batch 7: F.9–F.13 (quality gates, recovery, context, Game Profile, domains)
 
 **Forrás:** archived MASTER snapshot, 00.9.6.F.9–F.13. A személyes/projektindulási kontextus konfigurációként marad meg; a custom domain, email audience és workspace/team későbbi, külön security/legal acceptance-t igénylő scope. A korábbi F.10–F.13 sorok külön detail mappingjét ebbe az egyetlen táblába vontam össze, hogy ne maradjon két párhuzamos crosswalk.
