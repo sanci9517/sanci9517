@@ -2662,6 +2662,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.7-04 | Public forms: schema/required labels/client+server validation/spam rate limit/success/error/privacy notice | WEB-020, SEC-002/007/011, QA-006 | EXPAND | 1.0 if form enabled | QA-003/004/006 |
 | F.7-05 | Store CRUD/variants/SKU/pricing/stock/order/payment/fulfillment/refund/provider errors | STO-001–STO-020 (including STO-002 variants/SKU/pricing and STO-003 categories/collections), STO-017, WEB-025 | DEFER | 5.0 | QA-002/003/008 |
 | F.7-06 | Merch/digital/bundle/preorder/limited drop/coupon/gift card/invoice/shipping/tax | STO-005–STO-020, CAM-009, SUP-004–SUP-006 | DEFER | 5.0 after legal/payment review | QA-002/003/008 |
+| F.7-07 | Abandoned-cart lifecycle: cart state, expiry, consent-aware reminder eligibility, opt-out, dedupe and provider-safe recovery | STO-016, STO-001/004/007/010, CAM-002, COM-017, SEC-011, OPS-005 | ADD / DEFER | 5.0 after canonical cart/order/payment, consent and email-provider contracts | QA-002/003/006/008 |
 | F.8-01 | Consent-aware web/content/stream/commerce/community analytics only from real sources | ANL-001–ANL-006, ANL-009, SEC-011 | DEFER/EXPAND | 2.0+ by source | QA-003/008 |
 | F.8-02 | Metrics source/period/freshness/missing values/API limits/retention/export/role; anomaly detection later | ANL-007–ANL-010, SEC-002 | EXPAND | 2.0+ | QA-002/003/008 |
 | F.8-03 | Automation event/schedule→trigger→condition→action→result→verify→audit with retry/idempotency/rate/dead-letter/version/site rules | AUT-001–AUT-014 (including AUT-003 condition/filter rules, AUT-010 enable/pause/version/clone lifecycle, and AUT-013 templates as separately phased), SEC-003, SEC-010 | DEFER | 7.0 | QA-002/003/006/008 |
@@ -2699,6 +2700,8 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.12-04 | Weekly stream cadence is editable Schedule data, not a hardcoded product rule | SCH-001–SCH-003, SCH-009 | KEEP | 1.0 | QA-002/004 |
 | F.12-05 | Historical support goal/platforms are not active payment integration; recheck current target/platform/privacy/legal text before campaign | SUP-001, SUP-002, SUP-003 supporter goal/progress, WEB-023, COM-014, SEC-011 | KEEP | 1.0 external links only if confirmed; payments later | QA-003/004/008 |
 | F.12-06 | Project brand/profile/goal data remains configurable and changeable | SET-001–SET-003, WEB-001, SCH-001, INT-001 | KEEP | 1.0 | QA-002/004 |
+| F.12-07 | Membership entitlement and member-only content/event access; expiry/revocation enforced server-side, never by UI-only hiding | SUP-005, SUP-011, SEC-002/003/004, TEAM-003/005, WEB-004/008 | ADD / DEFER | 3.0+ after identity/entitlement contract and authorization tests | QA-002/003/008 |
+| F.12-08 | Membership billing lifecycle: renewal, cancellation, failed payment, refund and chargeback effects on entitlements with verified/idempotent provider events | SUP-007, SUP-008, SUP-005/011, SEC-003/010/011, OPS-005/006 | ADD / DEFER | 4.0+ after provider/legal decision, webhook verification and recovery contract | QA-002/003/006/008 |
 | F.13-01 | Game Profile stable ID/slug/name/provider mapping/resource refs/brand metadata/cover/status/description | SCH-012–SCH-014, RES-013, SET-001 | EXPAND | 1.5–2.0 | QA-002/004 |
 | F.13-02 | Schedule references Game Profile by stable ID, not copied fields or name matching | SCH-001, SCH-012, SCH-014 | KEEP | 1.5–2.0; 1.0 schedule stays canonical | QA-002/003 |
 | F.13-03 | Missing artwork/metadata must use explicit fallback; Inspector shows only valid fields | SCH-013, RES-001/004/008/010/015, DYN-005, EDT-022 | EXPAND | 1.5–2.0 | QA-002/004/006 |
@@ -4251,7 +4254,7 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 
 **Structural recheck:** the §24 registry contains **359 unique stable IDs** with no duplicate definition. The C.23 source ledger contains **210 individual source rows**; the F.1–F.13 source ledger contains **100 individual source rows**, and the active F crosswalk now contains **100 rows** after F.3 was split to preserve all nine original bullets. The H19–H34 ledger contains **271 rows**. These counts establish inventory cardinality only, not semantic correctness.
 
-**Range-only review:** before the explicit mapping refinements in the preceding commit, 22 registry IDs appeared after §24 only through a broad ID range and had no individual exact reference. The crosswalk has now been made explicit for the source-backed capabilities that can be safely tied to an existing source row (including WEB-015, RES-012, INT-004, CNT-008/CNT-014, STO-002/STO-003/STO-017, SUP-003, AUT-003, CAM-006 and MKT-002–MKT-004). Within the source crosswalk tables (excluding audit commentary), the remaining **five range-only IDs** are STO-016, SUP-005, SUP-007, SUP-008 and SUP-011. AUT-010 and AI-004 are now explicit in the F.8 automation/AI rows; COM-003 and COM-007 are explicitly retained in F.11-02, though their detailed contracts remain open.
+**Range-only review:** before the explicit mapping refinements in the preceding commit, 22 registry IDs appeared after §24 only through a broad ID range and had no individual exact reference. The crosswalk has now been made explicit for the source-backed capabilities that can be safely tied to an existing source row (including WEB-015, RES-012, INT-004, CNT-008/CNT-014, STO-002/STO-003/STO-017, SUP-003, AUT-003, CAM-006 and MKT-002–MKT-004). Within the source crosswalk tables (excluding audit commentary), the five formerly range-only IDs are now explicit in F.7-07 and F.12-07/08. This resolves range-only reference coverage, but not historical provenance: STO-016, SUP-005, SUP-007, SUP-008 and SUP-011 are newly dispositioned roadmap requirements, not retroactively claimed as recovered historical bullets. AUT-010 and AI-004 are explicit in F.8; COM-003 and COM-007 are retained in F.11-02 with detailed contracts still open.
 
 - **COM-003 — Community posts:** F.11-02 now explicitly retains this as a planned community capability under the 1.x/2.0 community roadmap. It is not 1.0 runtime scope. **DEFER / phase-specific contract OPEN:** authoring/moderation roles, post visibility, abuse/spam controls, report/remove/audit, user privacy and negative authorization tests must be defined before implementation.
 - **COM-007 — Comments/reactions:** F.11-02 now explicitly retains this planned capability, but it must not be inferred from a generic community link or post feed. **DEFER / phase-specific contract OPEN:** who can comment/react, rate limits, moderation, block/report, deletion/retention and abuse tests are required.
@@ -4263,7 +4266,7 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 
 **Decision rule:** an ID that appears only inside a broad COM/STORE/SUPPORT range is not considered semantically reconciled. Where a historical source bullet does not explicitly establish the capability, the plan must record it as a new/roadmap requirement with an explicit rationale and phase decision, or retain it as an open provenance gap. Do not invent an archive source and do not delete the registry ID.
 
-**Status:** 359 IDs structurally unique; 210 C.23 and 100 F source bullets individually preserved; F.3 is split one-to-one; the source crosswalk now explicitly references 354 IDs and has 5 range-only references. Five items above still lack an individual source-key mapping; COM-003/COM-007 have a roadmap mapping but require detailed phase/acceptance contracts. Full 359-ID semantic bidirectional reconciliation remains **OPEN**; all IDs still require owner/phase/dependency/DoD/test/acceptance validation. P0.2 **IN PROGRESS / NOT PASS**. No runtime code/data changed and no tests were run.
+**Status:** 359 IDs structurally unique; 210 C.23 and 100 F source bullets individually preserved; F.3 is split one-to-one; all 359 IDs now have explicit source-crosswalk references, with 0 range-only IDs. Five IDs have an unresolved historical-source provenance gap but now have explicit ADD/DEFER roadmap dispositions; COM-003/COM-007 have roadmap mappings but require detailed phase/acceptance contracts. Full 359-ID semantic bidirectional reconciliation remains **OPEN**; all IDs still require owner/phase/dependency/DoD/test/acceptance validation. P0.2 **IN PROGRESS / NOT PASS**. No runtime code/data changed and no tests were run.
 
 ### 41.3.24. P0.2 — Archive-plan inventory, historical MASTER commit and unresolved source recovery (2026-10-13)
 
@@ -5847,7 +5850,30 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 **Status:** all eight route mappings are individually keyed; route-by-route runtime/data acceptance remains OPEN. P0.2 **IN PROGRESS / NOT PASS**. Documentation-only; no runtime code/data changed and no tests run.
 
 
-### 41.3.43. P0.2 — V2 Blueprint full list ledger and Ultimate Platform validation chain (2026-10-13)
+
+### 41.3.43. P0.2 — Confirmed feature-ID semantic mismatches in F.6/F.7/F.9/F.12/F.13 (2026-10-13)
+
+**Confirmed corrections from the registry definitions (not guess-based ID replacement):**
+- F.6-01 canonical Schedule lifecycle/source/external-ID mapping no longer includes RES-013 because RES-013 is the font registry. The Schedule lifecycle remains SCH-001–SCH-015; phase-specific acceptance is still open.
+- F.7-04 public form mapping now uses WEB-020 (Public Contact page/form), not WEB-027 (Public Events/Blog/News/Digital Products routes). Server validation, spam/rate limiting and privacy remain separate security acceptance requirements.
+- F.9-02 redirect/broken-link tooling now uses WEB-013 (redirect manager) and SEO-005 (SEO preview/diagnostics); WEB-008 is revision history/diff and was not a suitable redirect owner. SEC-002 authorization and SEC-010 audit are included for preview/approval governance.
+- F.12-02 game profile configuration no longer includes WEB-022 (Public Link Hub) or RES-013 (font registry); canonical game profile IDs SCH-012–SCH-014 and SET-001 site settings remain.
+- F.13-03 game artwork fallback no longer treats RES-013 font registry as artwork. It now points to resource registry, variants, usage map, asset picker and diagnostics (RES-001/004/008/010/015), alongside SCH-013/DYN-005/EDT-022.
+- F.13-17 future SaaS billing/quota no longer includes OPS-008, which is performance/cache/query monitoring. TEAM-006, STO-019 and CAM-009 remain candidate billing/provider/legal IDs; usage ledger, metering, invoices and state transitions still require explicit DoD/tests.
+
+**Status:** six mapping rows corrected by checking the canonical registry descriptions. This does not close the broader F.5–F.13 audit; P0.2 remains **IN PROGRESS / NOT PASS**. Documentation-only; no runtime code/data changed and no tests were run.
+
+### 41.3.44. P0.2 — H28 validation/output and H29 backup crosswalk corrections (2026-10-13)
+
+The historical H28/H29 rows were updated to reflect the canonical registry definitions rather than treating the nearest-sounding ID as complete coverage:
+- **H28.12 input validation:** SEC-005 is specifically XSS/sanitization/safe embeds, not all schema/type/range/ownership validation. Candidate mapping now includes SEC-002 and EDT-022, but full domain/API schema validation remains a cross-cutting acceptance contract and may not be considered complete from these IDs alone.
+- **H28.13 output validation:** SEC-005 covers sanitization, not every output contract. WEB-032 is included for the public-render contract; server-side response schema, redaction, public/private and cross-site negative cases remain required.
+- **H29.02 page backup:** WEB-008 is revision history/diff, not backup/restore. Candidate mapping now points to OPS-005/006 and Editor draft/revision state, with explicit backup integrity, restore drill and no-data-loss acceptance.
+- **H29.03 revision backup:** WEB-008 remains relevant for revision history/diff but cannot replace export/restore or conflict recovery. OPS-005/006 and EDT-029 are retained as candidate owners; verify whether a revision backup means revision metadata/history, full restorable Page Model, or both.
+
+**Status:** four crosswalk rows narrowed; semantics and runtime acceptance remain OPEN until the source meaning is verified against the current recovery contract. P0.2 **IN PROGRESS / NOT PASS**. Documentation-only; no runtime code/data changed and no tests were run.
+
+### 41.3.44. P0.2 — V2 Blueprint full list ledger and Ultimate Platform validation chain (2026-10-13)
 
 **Sources:** `docs/archive/plans/V2-BLUEPRINT.md` (`66e9064e518cc0276555ea3f986074526b80ae82`) and the ordered validation steps in `docs/archive/plans/ULTIMATE-PLATFORM-DIRECTION-2026-09-16.md` (`2caecf3c1f4a5738a5a0a4bca69476875264df84`). Historical endpoint/table/binding names are not automatically current architecture.
 
@@ -6013,26 +6039,3 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 - No runtime code/data changed; no tests run.
 
 **Status:** 135 V2 Blueprint list items and 9 ordered validation steps are individually keyed. Semantics, current runtime existence, owner/phase/dependency/permission/negative tests and acceptance remain OPEN. P0.2 **IN PROGRESS / NOT PASS**.
-
-### 41.3.43. P0.2 — Confirmed feature-ID semantic mismatches in F.6/F.7/F.9/F.12/F.13 (2026-10-13)
-
-**Confirmed corrections from the registry definitions (not guess-based ID replacement):**
-- F.6-01 canonical Schedule lifecycle/source/external-ID mapping no longer includes RES-013 because RES-013 is the font registry. The Schedule lifecycle remains SCH-001–SCH-015; phase-specific acceptance is still open.
-- F.7-04 public form mapping now uses WEB-020 (Public Contact page/form), not WEB-027 (Public Events/Blog/News/Digital Products routes). Server validation, spam/rate limiting and privacy remain separate security acceptance requirements.
-- F.9-02 redirect/broken-link tooling now uses WEB-013 (redirect manager) and SEO-005 (SEO preview/diagnostics); WEB-008 is revision history/diff and was not a suitable redirect owner. SEC-002 authorization and SEC-010 audit are included for preview/approval governance.
-- F.12-02 game profile configuration no longer includes WEB-022 (Public Link Hub) or RES-013 (font registry); canonical game profile IDs SCH-012–SCH-014 and SET-001 site settings remain.
-- F.13-03 game artwork fallback no longer treats RES-013 font registry as artwork. It now points to resource registry, variants, usage map, asset picker and diagnostics (RES-001/004/008/010/015), alongside SCH-013/DYN-005/EDT-022.
-- F.13-17 future SaaS billing/quota no longer includes OPS-008, which is performance/cache/query monitoring. TEAM-006, STO-019 and CAM-009 remain candidate billing/provider/legal IDs; usage ledger, metering, invoices and state transitions still require explicit DoD/tests.
-
-**Status:** six mapping rows corrected by checking the canonical registry descriptions. This does not close the broader F.5–F.13 audit; P0.2 remains **IN PROGRESS / NOT PASS**. Documentation-only; no runtime code/data changed and no tests were run.
-
-### 41.3.44. P0.2 — H28 validation/output and H29 backup crosswalk corrections (2026-10-13)
-
-The historical H28/H29 rows were updated to reflect the canonical registry definitions rather than treating the nearest-sounding ID as complete coverage:
-- **H28.12 input validation:** SEC-005 is specifically XSS/sanitization/safe embeds, not all schema/type/range/ownership validation. Candidate mapping now includes SEC-002 and EDT-022, but full domain/API schema validation remains a cross-cutting acceptance contract and may not be considered complete from these IDs alone.
-- **H28.13 output validation:** SEC-005 covers sanitization, not every output contract. WEB-032 is included for the public-render contract; server-side response schema, redaction, public/private and cross-site negative cases remain required.
-- **H29.02 page backup:** WEB-008 is revision history/diff, not backup/restore. Candidate mapping now points to OPS-005/006 and Editor draft/revision state, with explicit backup integrity, restore drill and no-data-loss acceptance.
-- **H29.03 revision backup:** WEB-008 remains relevant for revision history/diff but cannot replace export/restore or conflict recovery. OPS-005/006 and EDT-029 are retained as candidate owners; verify whether a revision backup means revision metadata/history, full restorable Page Model, or both.
-
-**Status:** four crosswalk rows narrowed; semantics and runtime acceptance remain OPEN until the source meaning is verified against the current recovery contract. P0.2 **IN PROGRESS / NOT PASS**. Documentation-only; no runtime code/data changed and no tests were run.
-
