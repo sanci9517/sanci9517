@@ -1919,7 +1919,7 @@ Az oldalakat a pont implementációja előtt újra ellenőrizni kell, mert a ter
 ## 32. Teljességi és ellentmondásfeloldási kapu
 
 Mielőtt P0 lezárul:
-1. A teljes repository és a korábbi tervanyagok minden egyedi képességét a 24. fejezet valamely stabil ID-jához kell rendelni.
+1. A teljes követelménykatalógus minden egyedi képességét a 24. fejezet valamely stabil ID-jához kell rendelni.
 2. Minden korábbi funkcióról explicit döntés készül: megmarad, összevonás (azonos canonical domain mellett), későbbre ütemezés, vagy indokolt elutasítás. Az elutasítás oka, hatása és alternatívája rögzítendő.
 3. Két hasonló nevű funkciót nem szabad automatikusan duplikátumnak tekinteni: a felhasználói cél, domain owner, lifecycle és adatforrás összehasonlítása kötelező.
 4. A capability matrix és a menürendszer minden ID-ja kölcsönösen ellenőrizendő; árva ID és árva követelmény nem maradhat.
