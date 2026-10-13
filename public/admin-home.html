@@ -4,28 +4,28 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <meta name="theme-color" content="#0b1020">
+  <meta name="theme-color" content="#100d18" id="themeColorMeta">
   <title>Sanci9517 — Vezérlőpult</title>
   <style>
     :root {
       color-scheme: dark;
-      --bg: #0b1020;
-      --surface: #11182a;
-      --surface-raised: #151e33;
-      --surface-soft: #0f1627;
-      --line: #26334d;
-      --line-strong: #344564;
-      --text: #f1f5ff;
-      --muted: #9ba9c3;
-      --subtle: #71819f;
-      --accent: #8aa7ff;
-      --accent-strong: #5e83f5;
-      --accent-soft: rgba(94, 131, 245, .13);
+      --bg: #100d18;
+      --surface: #191522;
+      --surface-raised: #211b2d;
+      --surface-soft: #15111e;
+      --line: #30283d;
+      --line-strong: #493b5d;
+      --text: #f7f3fc;
+      --muted: #b9afc8;
+      --subtle: #8f849f;
+      --accent: #c5a0ff;
+      --accent-strong: #9662e8;
+      --accent-soft: rgba(166, 112, 238, .14);
       --success: #70d6ae;
       --warning: #f0c579;
       --danger: #ff8e9b;
-      --sidebar-width: 258px;
-      --radius: 16px;
+      --sidebar-width: 252px;
+      --radius: 14px;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--text);
       background: var(--bg);
@@ -33,8 +33,28 @@
       text-rendering: optimizeLegibility;
     }
     * { box-sizing: border-box; }
+    :root[data-theme="light"] {
+      color-scheme: light; --bg:#f7f5fa; --surface:#fff; --surface-raised:#fff; --surface-soft:#f0edf5;
+      --line:#e4deec; --line-strong:#d2c7e1; --text:#21182d; --muted:#61566f; --subtle:#83788f;
+      --accent:#7041b8; --accent-strong:#7845c6; --accent-soft:rgba(120,69,198,.09);
+      --success:#187b58; --warning:#936016; --danger:#b52f50;
+    }
+    :root[data-theme="light"] body { background:radial-gradient(ellipse at 75% -15%,rgba(120,69,198,.07),transparent 38%),var(--bg); }
+    :root[data-theme="light"] .sidebar { background:rgba(255,255,255,.96); }
+    :root[data-theme="light"] .topbar { background:rgba(247,245,250,.92); }
+    :root[data-theme="light"] .metric-card,:root[data-theme="light"] .panel,:root[data-theme="light"] .module-card { background:var(--surface);box-shadow:none; }
+    :root[data-theme="light"] .site-preview,:root[data-theme="light"] .empty-state { background:#faf9fc; }
+    :root[data-theme="light"] .action-card { background:rgba(255,255,255,.9); }
+    :root[data-theme="light"] .site-avatar,:root[data-theme="light"] .user-avatar { background:#eee5fb;color:#6134a0; }
+    :root[data-theme="light"] .brand-mark { border-color:#d8c5f2;background:linear-gradient(145deg,#eee3fb,#faf7ff);color:#60349d; }
+    :root[data-theme="light"] .nav-item[aria-current="page"] { color:#5d3297; }
+    :root[data-theme="light"] .btn:hover { background:#f2ecfa; }
+    .theme-toggle { display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:40px;height:38px;padding:0 11px;border:1px solid var(--line);border-radius:11px;background:var(--surface);color:var(--muted);font-size:11px;font-weight:700; }
+    .theme-toggle:hover { border-color:var(--accent);color:var(--text); }
+    .theme-toggle-label { white-space:nowrap; }
+
     html { min-width: 320px; min-height: 100%; background: var(--bg); }
-    body { margin: 0; min-height: 100vh; background: radial-gradient(ellipse at 75% -15%, rgba(91, 122, 220, .17), transparent 38%), var(--bg); }
+    body { margin: 0; min-height: 100vh; background: radial-gradient(ellipse at 75% -15%, rgba(150, 98, 232, .13), transparent 38%), var(--bg); }
     button, input, a { font: inherit; }
     button, a { -webkit-tap-highlight-color: transparent; }
     button { color: inherit; cursor: pointer; }
@@ -98,7 +118,7 @@
     .section-heading p { margin: 4px 0 0; color: var(--subtle); font-size: 10px; }
     .freshness { color: var(--subtle); font-size: 10px; }
     .overview-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 13px; }
-    .metric-card, .panel, .module-card { min-width: 0; border: 1px solid var(--line); border-radius: var(--radius); background: linear-gradient(145deg, rgba(21,30,51,.88), rgba(16,24,42,.92)); box-shadow: 0 12px 34px rgba(0,0,0,.08); }
+    .metric-card, .panel, .module-card { min-width: 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); box-shadow: 0 5px 24px rgba(0,0,0,.06); }
     .metric-card { min-height: 142px; padding: 17px; }
     .metric-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
     .metric-label { color: var(--muted); font-size: 11px; font-weight: 650; }
@@ -238,7 +258,11 @@
         <button class="nav-item" type="button" disabled data-nav-label="Automatizálás workflow"><span class="nav-icon" aria-hidden="true">⤳</span><span class="nav-text">Automatizálás</span><span class="nav-tag">Tervezett</span></button>
         <div class="nav-label">Rendszer</div>
         <button class="nav-item" type="button" disabled data-nav-label="Integrációk Twitch YouTube TikTok Discord"><span class="nav-icon" aria-hidden="true">⛓</span><span class="nav-text">Integrációk</span><span class="nav-tag">Tervezett</span></button>
-        <button class="nav-item" type="button" disabled data-nav-label="Beállítások domain biztonság"><span class="nav-icon" aria-hidden="true">⚙</span><span class="nav-text">Beállítások</span><span class="nav-tag">Tervezett</span></button>
+        <button class="nav-item" type="button" disabled data-nav-label="VOD videótár klipek shorts"><span class="nav-icon" aria-hidden="true">▷</span><span class="nav-text">VOD és rövid videók</span><span class="nav-tag">Tervezett</span></button>
+        <button class="nav-item" type="button" disabled data-nav-label="AI asszisztens tartalomsegéd"><span class="nav-icon" aria-hidden="true">✧</span><span class="nav-text">AI-asszisztens</span><span class="nav-tag">Későbbi</span></button>
+        <button class="nav-item" type="button" disabled data-nav-label="Beállítások domain biztonság jogosultság"><span class="nav-icon" aria-hidden="true">⚙</span><span class="nav-text">Beállítások és biztonság</span><span class="nav-tag">Tervezett</span></button>
+        <button class="nav-item" type="button" disabled data-nav-label="Nyelvek lokalizáció fordítás"><span class="nav-icon" aria-hidden="true">文</span><span class="nav-text">Nyelvek és lokalizáció</span><span class="nav-tag">Tervezett</span></button>
+        <button class="nav-item" type="button" disabled data-nav-label="Fejlesztői eszközök API bővítmények"><span class="nav-icon" aria-hidden="true">⌘</span><span class="nav-text">Fejlesztői eszközök</span><span class="nav-tag">Tervezett</span></button>
       </nav>
       <div class="sidebar-footer">
         <div class="user-row">
@@ -256,6 +280,7 @@
         <label class="search-wrap"><span aria-hidden="true">⌕</span><input class="menu-search" id="menuSearch" type="search" placeholder="Menüpont keresése…" aria-label="Menüpont keresése"></label>
         <div class="top-actions">
           <button class="icon-action" id="refresh" type="button" aria-label="Adatok frissítése" title="Adatok frissítése">↻</button>
+          <button class="theme-toggle" id="themeToggle" type="button" aria-label="Világos téma bekapcsolása" title="Téma váltása"><span aria-hidden="true" id="themeIcon">☼</span><span class="theme-toggle-label" id="themeLabel">Világos mód</span></button>
           <a class="icon-action" href="/" target="_blank" rel="noopener noreferrer" aria-label="Publikus webhely megnyitása" title="Publikus webhely megnyitása">↗</a>
         </div>
       </header>
@@ -364,6 +389,25 @@
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
   <script>
     const $ = (id) => document.getElementById(id);
+    const root = document.documentElement;
+    function applyTheme(theme) {
+      const selected = theme === "light" ? "light" : "dark";
+      root.dataset.theme = selected;
+      $("themeToggle").setAttribute("aria-label", selected === "dark" ? "Világos téma bekapcsolása" : "Sötét téma bekapcsolása");
+      $("themeToggle").title = selected === "dark" ? "Világos téma bekapcsolása" : "Sötét téma bekapcsolása";
+      $("themeIcon").textContent = selected === "dark" ? "☼" : "☾";
+      $("themeLabel").textContent = selected === "dark" ? "Világos mód" : "Sötét mód";
+      $("themeColorMeta").content = selected === "dark" ? "#100d18" : "#f7f5fa";
+    }
+    let savedTheme = "dark";
+    try { savedTheme = localStorage.getItem("sanci9517-admin-theme") || "dark"; } catch {}
+    applyTheme(savedTheme);
+    $("themeToggle").addEventListener("click", () => {
+      const next = root.dataset.theme === "dark" ? "light" : "dark";
+      applyTheme(next);
+      try { localStorage.setItem("sanci9517-admin-theme", next); } catch {}
+    });
+
     const toast = (message) => {
       const node = $("toast");
       node.textContent = message;
