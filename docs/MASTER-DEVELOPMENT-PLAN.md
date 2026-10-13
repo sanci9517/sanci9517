@@ -4339,3 +4339,13 @@ F0.2 DoD:
 - [x] Az oldalsávban csak a canonical Admin és Editor útvonal aktív; a későbbi modulok disabled/queued állapota megmarad.
 - [ ] A teljes F0.2 role/accessibility/responsive production acceptance és az Android Chrome tablet-login eredmény még nyitott.
 
+## 2.77.9.M — F0.2 auth-before-asset and API role contract — 2026-10-13
+
+**Állapot: CONTRACT TESZT FEATURE BRANCHEN; PR-CI ELLENŐRZÉS FOLYAMATBAN.**
+
+- [x] A Worker `/admin` és `/admin/editor` útvonalai a dashboard/Editor asset kiszolgálása előtt munkamenetet ellenőriznek.
+- [x] Az Admin settings API admin szerepkört, az oldalak, schedule és Editor domain API-k legalább editor szerepkört követelnek meg szerveroldalon.
+- [x] Új regressziós contract teszt rögzíti az auth-before-asset sorrendet és az API role guardokat.
+- [ ] A statikus assetek közvetlen URL-je nem tekinthető önmagában adat-hozzáférésnek; a protected API-k szerepkörtesztjei és a valós böngészős 401/403 útvonalak acceptance-e még a F0.2 végső kapujának része.
+- [ ] Éles Android Chrome tablet-login acceptance és teljes mobil/keyboard smoke.
+
