@@ -61,7 +61,7 @@ test("dashboard visually separates surfaces and navigation groups", () => {
   assert.match(dashboard, /\.action-card\s*\{[^}]*border:\s*1px solid var\(--line\)/);
 });
 
-test("dashboard is an operational creator workspace, not a roadmap catalog", () => {
+test("dashboard is an operational workspace with the complete Creator Platform capability map", () => {
   assert.match(dashboard, /<h2>Gyors műveletek<\/h2>/);
   assert.match(dashboard, /aria-label="Gyors műveletek"/);
   assert.match(dashboard, /Weboldal szerkesztése/);
@@ -69,21 +69,24 @@ test("dashboard is an operational creator workspace, not a roadmap catalog", () 
   assert.match(dashboard, /Publikus webhely ellenőrzése/);
   assert.match(dashboard, /id="platformCapabilities"/);
   assert.match(dashboard, /Egy alkotói platform\. Minden munkafolyamat/);
-  assert.match(dashboard, /class="capability-card"/);
-  assert.match(dashboard, /Webshop, merch és tagság/);
-  assert.match(dashboard, /AI Creator Copilot/);
-  assert.match(dashboard, /Csapatok és több webhely/);
+  assert.equal((dashboard.match(/class="capability-card"/g) || []).length, 20);
+  for (const capability of ["Weboldal és CMS", "Visual Editor v2", "Design Studio", "Média- és erőforráskönyvtár", "Adásrend és játékprofilok", "Stream Studio és OBS", "VOD, klipek és Shorts", "Publikálási központ", "Twitch-integráció", "YouTube, TikTok és Discord", "Közösségi központ", "Közönség és e-mail", "Analitika és riportok", "AI Creator Copilot", "Webshop, merch és tagság", "Automatizálás és workflow", "Csapatok és több webhely", "Biztonság és helyreállítás", "Nyelvek, SEO és hozzáférhetőség", "Fejlesztői eszközök és piactér"]) {
+    assert.ok(dashboard.includes(capability), "missing capability: " + capability);
+  }
   assert.doesNotMatch(dashboard, /class="catalog-card"/);
   assert.match(dashboard, /A „Tervezett” és „Későbbi” elemek nem aktív funkciók/);
 });
 
-test("dashboard uses centered copy hierarchy without centering navigation controls", () => {
+test("dashboard centers all action controls on both axes and preserves readable navigation", () => {
   assert.match(dashboard, /\.welcome-row \{ flex-direction: column; align-items: center; text-align: center; \}/);
   assert.match(dashboard, /\.section-heading \{ justify-content: center; text-align: center; \}/);
   assert.match(dashboard, /\.metric-card \{ text-align: center; \}/);
   assert.match(dashboard, /\.action-card \{ align-items: center; flex-direction: column; text-align: center; \}/);
   assert.match(dashboard, /\.module-list \.module-card \{ text-align: left; \}/);
   assert.match(dashboard, /\.module-copy \{ text-align: left; \}/);
+  assert.match(dashboard, /\.btn,\.small-btn,\.logout,\.icon-action,\.theme-toggle,\.action-copy a,\.capability-cta \{ display:inline-flex; align-items:center; justify-content:center/);
+  assert.match(dashboard, /\.nav-item \{ justify-content:flex-start; text-align:left; \}/);
+  assert.match(dashboard, /document\.querySelectorAll\("\[data-capability-search\]"\)/);
 });
 
 test("dashboard includes responsive, keyboard and reduced-motion affordances", () => {
