@@ -154,7 +154,7 @@ test("Admin home uses the full Creator Control Center redesign with operational 
     "Mai áttekintés",
     "Indítsd el a munkát",
     "Következő adás",
-    "Gyakori műveletek",
+    "Gyors műveletek",
     "id=\"welcomeName\"",
     "id=\"heroSystemState\"",
     "id=\"platformCapabilities\"",
