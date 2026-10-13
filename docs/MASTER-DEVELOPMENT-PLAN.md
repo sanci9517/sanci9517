@@ -1,15 +1,15 @@
-**ACTIVE_POINT_ID:** `M0`  
-**ACTIVE_POINT_STATUS:** `ACTIVE`  
-**ACTIVE_POINT_TITLE:** Global Product Rebaseline + Legacy/Dead Surface Audit + Canonical Platform Scope Freeze  
-**ACTIVE_SUBPOINT_ID:** `M0.1-RESIDUAL-CONSISTENCY-CLOSURE`  
-**ACTIVE_SUBPOINT_STATUS:** `ACTIVE — a státuszellentmondások és a M0.1 nyitott traceability-feladatai rendezendők; feature-implementáció továbbra is tiltott`  
+**ACTIVE_POINT_ID:** `F0.1-EDITOR-FOUNDATION-AND-FIRST-USABLE-SLICE`  
+**ACTIVE_POINT_STATUS:** `ACTIVE — az Editor tényleges fejlesztése indul; a régi UI/funkciók nem tekinthetők késznek bizonyítás nélkül`  
+**ACTIVE_POINT_TITLE:** Visual Editor újraépítése — működő alap, strukturált canvas és szerkesztési lánc  
+**ACTIVE_SUBPOINT_ID:** `F0.1-EDITOR-FOUNDATION-AND-FIRST-USABLE-SLICE`  
+**ACTIVE_SUBPOINT_STATUS:** `ACTIVE — az Editor shell és az első végig működő szerkesztési út építése; a funkciók csak tesztelt acceptance után kapnak PASS-t`  
 **PREVIOUS_GATE:** `E6` — CLOSED / PASS  
-**NEXT_GATE:** `M0.1 residual closure → M0.2 closure → M0.3 closure → M0.5 Resource contract freeze; F0 csak a teljes M0 PASS után nyitható`  
+**NEXT_GATE:** `F0.1 Editor foundation → F0.2 Admin dashboard shell → F0.3 Editor structure/layers → további F0 pontok sorrendben; nincs M0 audit előfeltétel`  
 **PARALLEL_WORKSTREAMS:** `0`
 
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 **Dokumentum státusza:** ez az egyetlen végrehajtási igazságforrás.
-**Audit baseline:** GitHub `v2/foundation`, commit `aeba30d9` (2026-10-13; audit-index and Visual Editor rebaseline update). A repository-snapshot nem helyettesíti a külön szükséges runtime-, teszt- és felhasználói bizonyítékokat.
+**Audit / implementation baseline:** GitHub `v2/foundation`, commit `aeba30d9` (2026-10-13). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
 
 ### Jelenlegi igazolt állapot
 Ez a blokk kizárólag az M0 előtti lezárt gate-eket rögzíti; nem jelenti azt, hogy az M0 alatti részpontok lezárultak.
@@ -22,7 +22,7 @@ Ez a blokk kizárólag az M0 előtti lezárt gate-eket rögzíti; nem jelenti az
 - [x] E5 teljes regression/live/user PASS lezárva.
 - [x] E6 closure PASS / lezárva.
 
-**F végrehajtási állapot:** PAUSED / QUEUED. Az F/F0 korábbi implementációja nem törlődik és nem tekintendő automatikusan rossznak, de az új M0 audit lezárásáig nem folytatunk további F0/F1 feature-kódolást. Az M0 eredménye alapján a F0 scope és DoD véglegesítendő.
+**F végrehajtási állapot:** ACTIVE. A felhasználó döntése alapján a M0 audit lezárult mint külön munkafázis, nem PASS-minősítéssel, hanem SUPERSEDED / CLOSED BY PRODUCT DECISION állapottal. A korábbi Editor UI és részleges funkciók nem számítanak késznek; a szükséges képességeket a F0 egymás után végrehajtott, tesztelt fejlesztési pontjai valósítják meg. A lezáratlan audit-tételek nem blokkolók: ahol termékkövetelményt őriznek, átkerülnek a megfelelő buildpont acceptance-ébe.
 
 
 ## HISTORICAL / QUEUED — 00/A.2.2 — F — SCHEDULE CRUD + INSPECTOR / DOMAIN-DRIVEN EDITOR — DEFINITION OF DONE
@@ -40,16 +40,16 @@ Ez a blokk kizárólag az M0 előtti lezárt gate-eket rögzíti; nem jelenti az
 - [x] Minden új adatút site-scoped és a lezárt E4 ownership contractot használja.
 - [x] Minden új mutation meglévő command/history/validation/persistence/audit mintára épül.
 
-## M0 — GLOBAL PRODUCT REBASELINE + LEGACY / DEAD SURFACE AUDIT
+## M0 — GLOBAL PRODUCT REBASELINE + LEGACY / DEAD SURFACE AUDIT — LEZÁRVA / SUPERSEDED
 
-**M0 státusz:** `[~] ACTIVE — scope/documentation audit IN PROGRESS; implementation frozen`
+**M0 státusz:** `CLOSED BY USER PRODUCT DECISION — nem PASS auditminősítés; a külön auditfázis megszűnt, mert a fejlesztés a ténylegesen használható termék felépítésével folytatódik.`
 
-**M0 célja:** a jelenlegi teljes MASTER, repository és meglévő runtime alapján bizonyítani, hogy a Sanci9517 projekt valódi termék- és platformcélja teljesen lefedett, nincs elfelejtett domain vagy későbbi funkció, nincs párhuzamos canonical rendszer, és az Admin/Editor/Public felületeken nem marad olyan régi működés, amelyet az új platform nem tud kezelni.
+**Lezárási döntés:** a felhasználó 2026-10-13-án úgy döntött, hogy a további történeti/strukturális auditkörök helyett a MASTER teljes termékkövetelményeit meg kell őrizni, majd a megvalósítást egymás után végrehajtott, runtime- és felhasználói acceptance-szel lezárt fejlesztési pontokban kell elvégezni. Az M0 alatt nyitva maradt traceability, domain, surface és benchmark tételek nem maradnak külön blokkoló auditfeladatok: a releváns követelményeket a megfelelő implementációs pontok DoD-jába kell átvezetni.
 
-**M0 alatt új feature runtime implementáció NEM indul.** M0 csak audit, specifikáció, scope-rendezés, ownership-döntés és legacy-felület osztályozás.
+**Fontos különbség:** ez nem állítja, hogy a régi Editor/Admin/Schedule kész, biztonságos vagy hibamentes. Az Editor a termékfunkciók szempontjából új fejlesztésnek számít; a meglévő kód csak akkor használható fel, ha az adott buildpontban ténylegesen megfelel és teszttel bizonyítható. A lezárt E4/E5/E6 ownership/regression bizonyítékok érvényben maradnak, amíg konkrét új ellentmondás nem merül fel.
 
 ### M0.1 — MASTER teljes funkcióinventár
-**Állapot:** `[~] IN PROGRESS — a 01–140 traceability mátrix dokumentálva van, de a történeti 19–34 backlog teljes összevetése és az alábbi maradék ellenőrzések lezárása nincs a MASTER-ben bizonyítva. M0.1 ezért nem jelölhető PASS-nak.`
+**Állapot:** `SUPERSEDED / CLOSED AS AUDIT WORK — a nyitva maradt checklist sorok nem külön auditblokkolók; az általuk képviselt követelményeket a releváns F0.x buildpontok DoD-jába kell átvezetni. Nem állítjuk, hogy ezek a funkciók már implementálva vannak.`
 
 - [x] A 01–140 történeti funkciópont egyedi ID-val megőrizve és canonical capability/domain alá rendelve.
 - [x] A történeti státuszok a preservation matrixban történeti jelölésként vannak megmagyarázva; nem tekinthetők mai runtime készültségnek.
@@ -932,7 +932,7 @@ A hivatalos benchmarkok releváns részei rögzítve:
 - további streamer/creator website példák, ha új képességet bizonyítanak.
 
 ### M0.12 — M0 Definition of Done
-**Állapot:** `[ ] QUEUED — kizárólag M0.1–M0.11 minden előírt feltételének teljesülése után.`
+**Állapot:** `SUPERSEDED — a felhasználó döntése alapján a külön M0 audit DoD nem előfeltétele a fejlesztésnek. A checklist követelményei a megfelelő implementációs pontok acceptance-listáiban maradnak meg.`
 
 M0 csak akkor PASS:
 - [ ] teljes feature inventory auditált;
@@ -958,17 +958,17 @@ M0 csak akkor PASS:
 - [ ] M0 CLOSED / PASS.
 
 ### M0.13 — M0 utáni sorrend
-**Állapot:** `[ ] QUEUED — csak M0.12 PASS és felhasználói jóváhagyás után.`
+**Állapot:** `SUPERSEDED — F0 közvetlenül aktív; M0.12 PASS nem szükséges.`
 
-M0 után az egyetlen aktív pont:
-**F0 — Canonical Editor UI + Schedule + Inspector remediation, a rebaselined platform contract szerint.**
+Az egyetlen aktív fejlesztési pont:
+**F0.1 — Editor foundation és első végig működő szerkesztési szelet.**
 
 F0 után csak a teljes PASS lánc:
 **F0 → G → H → I → J → Early Public Website → további 1.0 production gates → 1.0 Production Gate.**
 
 
-## F0 — CANONICAL EDITOR UI + SCHEDULE + INSPECTOR — TELJES BŐVÍTETT AUDIT, CONTRACT ÉS JAVÍTÁSI KAPU
-**F0 státusz:** `[ ] QUEUED / PAUSED — M0 PASS-ig nincs F0 feature-implementáció. A korábbi audit/implementáció bizonyítékait M0 újraértékeli.`
+## F0 — VISUAL EDITOR + CREATOR CENTER + SCHEDULE — SZEKVENCIÁLIS IMPLEMENTÁCIÓS PROGRAM
+**F0 státusz:** `ACTIVE — az egyes F0.x pontok egymás után hajthatók végre; egyszerre csak egy aktív.`
 
 **F0 célja:**  
 A Visual Editor UX/UI-jának újraalapozása a korábban elfogadott strukturált-konténeres koncepció szerint, úgy, hogy desktopon, tableten és mobilon ugyanazt a canonical Page Modelt szerkessze. A régi UI csak akkor maradhat meg, ha a célkövetelményeknek bizonyíthatóan megfelel; egyébként a felületi réteg újraépítendő, miközben a bizonyított canonical domain-, mutation- és persistence alapokat megőrizzük. A bal oldali navigáció/Layers, a canvas, a jobb oldali Inspector, a responsive módok és az Adásrend szerkesztése egyetlen összefüggő felhasználói folyamat részei.
@@ -998,7 +998,7 @@ Az F0 **a Visual Editor új UX/UI-koncepciójának újraalapozási és megvalós
 - Diagnostics és regresszió.
 - Live browser acceptance.
 
-**F0 kizárólagos szabály:** a fenti technikai alrészek nem külön aktív fejlesztési pontok. Mind ugyanennek az F0 kapunak a DoD-ján belüli al-lépések. Az F1 csak akkor nyitható, ha az egész F0 PASS és a felhasználói acceptance is PASS.
+**F0 végrehajtási szabály:** a korábban egyetlen nagy kapuba zsúfolt Editor/Schedule munkát kisebb, sorrendben végrehajtott F0.x pontokra bontjuk. Minden pontnak saját scope-ja, fájl-/API-/adatmodell-változáslistája, tesztje, runtime acceptance-e és felhasználói ellenőrzése van. Egy pont PASS után a következő nyílik; az F1 és a következő termékfázisok csak a hozzájuk tartozó 1.0 release gate-ek után indulnak.
 
 ---
 
@@ -1028,7 +1028,38 @@ Az F0 **a Visual Editor új UX/UI-koncepciójának újraalapozási és megvalós
 
 ---
 
-## F0.1 — TELJES EDITOR SHELL / PANEL CONTRACT AUDIT
+## F0.1 — EDITOR FOUNDATION ÉS ELSŐ VÉGIG MŰKÖDŐ SZERKESZTÉSI SZELET
+
+**Cél:** az Editor új fejlesztési alapja: az új shell elindul, betölti a canonical Page Modelt, létrejön vagy kiválasztható egy elem, a változás a canonical command/validation/history láncon halad, a canvas és az Inspector ugyanazt az állapotot mutatja, a mentés/visszatöltés pedig bizonyíthatóan működik. Nem a régi Editor „készre jelölése”.
+
+**F0.1 DoD:**
+- [ ] A régi Editor funkciók ténylegesen újratesztelve; a hiányos/hibás elemek nincsenek késznek jelölve.
+- [ ] Új shell/layout és canvas workspace; bal oldali panel, canvas, jobb oldali Inspector elrendezés.
+- [ ] Egyetlen canonical Page Model és command/state/validation/history/persistence útvonal.
+- [ ] Első elemtípus legalább add/select/edit/delete + undo/redo útja végig működik.
+- [ ] Dirty/save/reload állapot és hibaüzenetek valósak, nem dekoratívak.
+- [ ] `npm run typecheck`, célzott unit/domain tesztek, browser desktop + mobile smoke, mentés-visszatöltés és user acceptance PASS.
+- [ ] MASTER checkpoint és a következő egyetlen aktív pont frissítve.
+
+### F0 végrehajtási sorrend — egyetlen aktív ponttal
+
+| Pont | Implementációs cél | Kötelező készültségi bizonyíték |
+|---|---|---|
+| **F0.1 ACTIVE** | Editor foundation + első végig működő szerkesztési szelet | add/select/edit/delete → command/history/validation → save/reload; desktop/mobile smoke + user acceptance |
+| F0.2 | Admin / Creator Center kezdőoldal és navigation teljes újratervezése | új dashboard, valós állapotok és linkek, nincs halott/hamis ACTIVE capability; auth/role + browser acceptance |
+| F0.3 | Page/Section/Box/element hierarchia + Layers tree | create/rename/duplicate/reparent/reorder/lock/hide/delete; Page Model round-trip |
+| F0.4 | Canvas selection és direct manipulation | hit-testing, drag/resize, guides/snap, zoom/grid, multi-select ahol scope; no DOM-as-source-of-truth |
+| F0.5 | Inspector + Property Registry | selection binding, category/search/reset, validation, undo/redo, responsive-aware properties |
+| F0.6 | Layout és responsive | stack/flex/grid/rows/columns, alignment/gap/padding/margin/size/position, desktop/tablet/mobile preview + overrides |
+| F0.7 | Element library + Resource/Media/Icon contract | text/rich text/image/button/icon/divider/spacer/link/media/embed/form/list; upload/picker/metadata/alt/usage/delete safety |
+| F0.8 | Reusable components, templates, theme/design tokens | canonical registry/reference model; insert/edit/preview; no duplicate resource/property stores |
+| F0.9 | Schedule domain és Schedule Inspector bővítése | rich fields, timezone/recurrence, status/visibility/featured, filtering/views, artwork, cancel/reschedule, site ownership, API + Editor + public read tests |
+| F0.10 | Twitch integration UX és schedule/live linkage bővítése | OAuth/connection states, live/offline, schedule sync, errors/retry/diagnostics, ownership and failure-path tests |
+| F0.11 | Draft/preview/publish/revisions/recovery | save/reload, preview, publish/unpublish/republish, rollback/recovery, concurrency and authorization tests |
+| F0.12 | Public renderer + SEO/accessibility/performance integration | published-only state, semantic output, keyboard/reduced motion, metadata, responsive/performance gates |
+| F0.13 | End-to-end production readiness for Editor/Admin/Schedule/Twitch | regression matrix, browser desktop/tablet/mobile, Worker/API/D1 checks, user acceptance; only then mark this release slice PASS |
+
+**Sorrendi szabály:** F0.1 az egyetlen aktív pont. A többi csak QUEUED; nem készül párhuzamosan. Minden következő pont előtt a MASTER `ACTIVE_POINT_ID`, DoD, tesztparancsok és acceptance legyen frissítve.
 
 ---
 
@@ -1036,7 +1067,7 @@ Az F0 **a Visual Editor új UX/UI-koncepciójának újraalapozási és megvalós
 
 **Rögzítve:** 2026-10-08  
 **Jelleg:** CANONICAL PRODUCT SCOPE / ROADMAP FREEZE  
-**Aktív engineering pont:** továbbra is **M0**. Ez a fejezet nem nyit párhuzamos fejlesztési pontot és nem írja felül az M0 sorrendjét.  
+**Aktív engineering pont:** **F0.1**. A capability map teljes termékigény-lista; a megvalósítás a F0.x pontokban történik, nem párhuzamos munkában.  
 **Cél:** a Sanci9517 ne csak egy streamer weboldal legyen, hanem lépésről lépésre egy világpiaci, többplatformos **Creator OS / Creator Platform** legyen.
 
 ## 00.9.6.C.1 — Végső termékígéret
@@ -1672,20 +1703,16 @@ Későbbi platform:
 
 # 00.9.6.C.18 — VÉGLEGES FÁZIS-MENETREND
 
-## PHASE 0 — Foundation / M0 → F0
-**Cél:** canonical architecture, ownership, dead-surface cleanup, builder foundation.
+## PHASE 0 — FOUNDATION → F0 IMPLEMENTATION
+**Cél:** a már lezárt ownership/regression alapokra támaszkodva elindítani a tényleges Builder/Creator Center/Schedule építést.
 
-- M0.1–M0.13 teljes audit/freeze
-- canonical ownership
-- Resource contract
-- Template/Component/Theme contract
-- streamer/OBS capability freeze
-- 1.0 scope freeze
-- legacy cleanup plan
-- no-dead-admin gate
-- benchmark gate
-- M0 PASS
-- F0 rebaselined DoD
+- [x] E4/E5/E6 lezárt alapok megőrzése; csak konkrét új hiba nyitja újra.
+- [x] M0 külön auditfázis lezárva a felhasználó döntésével; ez nem hamis PASS, és nem állít kész runtime funkciókat.
+- [ ] F0.1 Editor foundation + első végig működő szerkesztési szelet.
+- [ ] F0.2 Admin/Creator Center dashboard újratervezés.
+- [ ] F0.3–F0.13 Editor/Layers/Inspector/Layout/Resource/Schedule/Twitch/publish/public/QA sorban.
+
+A történeti funkciólisták és a teljes `00.9.6.C` capability map továbbra is a fejlesztés követelményei; a nyitott történeti egyeztetések a releváns pontok DoD-jában záródnak, nem külön auditprojektként.
 
 ## PHASE 1 — Creator Website 1.0
 **Cél:** professzionális, működő Sanci9517 creator site.
