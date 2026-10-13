@@ -753,3 +753,22 @@ test('Editor save conflict exposes recoverable local-draft export and explicit r
   assert.match(html, /id="exportConflictDraft"/);
   assert.match(html, /id="reloadConflictPage"/);
 });
+
+
+test('Editor conflict recovery requires a local draft export before replacing the local document', () => {
+  const app = readFileSync(new URL('../app.js', import.meta.url), 'utf8');
+  assert.match(app, /state\.persistence\.conflict\.exportedAt=payload\.exportedAt/);
+  assert.match(app, /if\(!conflict\.exportedAt\)\{alert\(/);
+  assert.match(app, /Ellenőrizd, hogy a letöltött JSON tartalmazza a legutóbbi módosításaidat/);
+});
+
+test('Editor Page Model persistence contract enforces canonical ownership and optimistic revision checks', () => {
+  const route = readFileSync(new URL('../../../src/routes/admin/editor.ts', import.meta.url), 'utf8');
+  assert.match(route, /getAuthenticatedUser\(request,env\)/);
+  assert.match(route, /hasRole\(user,'editor'\)/);
+  assert.match(route, /WHERE id=\? AND site_id=\? LIMIT 1/);
+  assert.match(route, /!canonical\(document,id\)/);
+  assert.match(route, /expectedVersion!==null&&\(!Number\.isInteger\(expectedVersion\)\|\|expectedVersion!==currentVersion\)/);
+  assert.match(route, /error\('REVISION_CONFLICT',409/);
+  assert.match(route, /INSERT INTO editor_revisions/);
+});
