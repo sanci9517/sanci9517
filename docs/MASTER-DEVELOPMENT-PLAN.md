@@ -2658,7 +2658,7 @@ The short decision record must name the problem and acceptance criteria; existin
 
 ### 37.30. P0.2 — Bullet-szintű crosswalk, batch 7: F.9–F.13 (quality gates, recovery, context, Game Profile, domains)
 
-**Forrás:** archivált MASTER, 00.9.6.F.9–F.13. A személyes/projektindulási kontextus konfigurációként marad meg; nem lehet hardcoded domain- vagy UI-szabály. A custom domain, email audience és workspace/team későbbi, külön security/legal acceptance-t igénylő scope.
+**Forrás:** archived MASTER snapshot, 00.9.6.F.9–F.13. A személyes/projektindulási kontextus konfigurációként marad meg; a custom domain, email audience és workspace/team későbbi, külön security/legal acceptance-t igénylő scope. A korábbi F.10–F.13 sorok külön detail mappingjét ebbe az egyetlen táblába vontam össze, hogy ne maradjon két párhuzamos crosswalk.
 
 | Forráskulcs | Megőrzött követelmény | Canonical current ID | Döntés | Célfázis | QA-horgony |
 |---|---|---|---|---|---|
@@ -2669,87 +2669,6 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.9-05 | Separate public/preview/admin permission boundaries; no draft or secret leakage in logs/export | SEC-002, SEC-008, WEB-005, WEB-006, OPS-002, OPS-005 | KEEP | 0.x–1.0 | QA-003/004 |
 | F.9-06 | Performance budgets based on measured baseline; image variants/lazy load/cache invalidation/Core Web Vitals/large-tree tests | OPS-008, WEB-030, RES-004, QA-005 | EXPAND | 1.0 baseline; advanced optimization phased | QA-005/006 |
 | F.9-07 | Visual regression for public home/navigation/schedule, Editor state and desktop/tablet/mobile | QA-004, QA-005, EDT-035–EDT-037 | KEEP | 1.0 release gate | QA-004/005 |
-| F.10-01 | Versioned export of Page Model/revisions/theme/templates/components/media references without secrets | OPS-005, WEB-008, DSN-015, SEC-008, RES-002 | EXPAND | 1.0 recovery baseline; full package later | QA-003/007 |
-| F.10-02 | Import dry-run validates schema/version/assets/duplicate IDs/owner/permission/migration compatibility | OPS-005, OPS-006, OPS-009, SEC-002 | EXPAND | 1.0 recovery baseline | QA-003/006/007 |
-| F.10-03 | Restore previews target/conflicts, validates integrity and preserves Page Model/revision/public-render consistency | OPS-005, OPS-006, OPS-009, WEB-007, WEB-008 | KEEP | 0.x–1.0 release gate | QA-002/006/007 |
-| F.10-04 | Diagnostics show deploy/request IDs, sync/provider health, failed jobs, D1/migration/cache and latency without secrets/needless PII | OPS-001–OPS-008, SEC-008 | EXPAND | 1.0 operational baseline | QA-003/006/008 |
-| F.11-01 | Preserve explicit coverage for resource, data binding, providers, schedule, content, Editor interactions, accessibility, SEO, analytics, security, recovery, AI and automation | §21, §24, §38–§41, RES, DYN, INT, SCH, CNT, EDT, QA, SEC, OPS, AI, AUT | KEEP | All phases, according to §39 | QA-002/003/008 |
-| F.11-02 | 1.0 release gate remains public site + Admin + one Editor + resource foundation + Schedule/Twitch + draft/preview/publish/revision + responsive/security/SEO/accessibility/performance | §39.2, WEB, ADM, EDT, RES, SCH, INT, QA | KEEP | 1.0 | QA-002–QA-010 |
-| F.11-03 | 1.x and later Creator OS, commerce, teams/SaaS, marketplace and advanced AI are phased, not implicit 1.0 requirements | §39.3–§39.12, CNT, COM, STO, SUP, TEAM, MKT, AI, AUT | KEEP | Per §39 roadmap | QA-008 |
-| F.12-01 | Hungarian-first and internationalization-ready; dates/time/strings configurable rather than hardcoded | LOC-001–LOC-004, SCH-003, WEB-001 | KEEP | 1.0 architecture baseline | QA-004/005 |
-| F.12-02 | Initial streamer/game/platform/support context is editable configuration, not product hardcoding | SET-001–SET-003, WEB-021–WEB-026, SCH-001, INT-001 | KEEP | 1.0 | QA-002/004 |
-| F.12-03 | Personal growth/streaming/funding targets are not UI guarantees or automatic payment modules; public campaigns require current verification and voluntary opt-in | COM-014, SEC-011, SUP-001, WEB-026 | KEEP | Only if enabled; otherwise defer | QA-003/004/008 |
-| F.13-01 | Canonical Game Profile with stable ID/slug/external mappings/media references/status; Schedule links by stable reference | SCH-013, CNT-001, RES-002, WEB-024 | EXPAND | 1.0 basic profile; advanced domain phased | QA-002/004 |
-| F.13-02 | Missing artwork/metadata has explicit public fallback; no duplicate Editor-only game store | WEB-024, RES-002, EDT-018, SCH-013 | KEEP | 1.0 | QA-002/004 |
-| F.13-03 | Custom domain lifecycle: add/verify DNS/primary/SSL/canonical/redirect/error state; unverified domain cannot become primary | TEAM-002, SEO-001, SEO-004, SEC-002, OPS-008 | DEFER | 4.0+ | QA-003/008 |
-| F.13-04 | Brand registry: creator name/logo/favicon/social links/colors/fonts/tokens/media references configurable centrally | DSN-001–DSN-008, RES-002, SET-001 | EXPAND | 1.0 brand foundation | QA-002/004 |
-| F.13-05 | Link Hub links/CTA ordering/visibility and mobile layout; later scheduling/UTM/QR/smart redirect/analytics with privacy rules | WEB-025, WEB-026, SEO-004, ANL-001, SEC-011 | EXPAND | Basic links 1.0; analytics later | QA-002/004/008 |
-| F.13-06 | Email signup stores purpose/consent version/time/unsubscribe; marketing and transactional mail remain separate | COM-015–COM-017, SEC-011, OPS-005 | DEFER/EXPAND | Contact/privacy baseline 1.0; campaigns 2.0+ | QA-003/008 |
-| F.13-07 | Future tenant/workspace/member/site hierarchy; server-side workspace/site permissions and package tiers based on evidence | TEAM-001–TEAM-006, SEC-002, SEC-003, OPS-004 | DEFER | 4.0+; tenant isolation is a baseline invariant | QA-003/008 |
-
-**Batch 7 státusz:** 24 követelménycsoport leképezve. A tervszintű megfeleltetés nem jelenti a custom domain, email marketing, Game Profile, export/import vagy SaaS modul implementáltságát.
-
-
-### 37.31. P0.2 — F.1–F.13 mapping validation summary and remaining provenance work
-
-**Validációs eredmények a jelenlegi MASTER commitból:**
-
-| Batch | Scope | Source rows | Unique keys | Unknown §24 feature IDs | Duplicate keys |
-|---|---|---:|---:|---:|---:|
-| §37.27 | F.1–F.4 | 28 | 28 | 0 | 0 |
-| §37.29 | F.5–F.8 | 21 | 21 | 0 | 0 |
-| §37.30 | F.9–F.13 | 24 | 24 | 0 | 0 |
-| **Total** | **F.1–F.13** | **73** | **73** | **0** | **0** |
-
-**Fontos korlát:** a 73 sor a részletes működési követelménycsoportokat fedi le, nem állítja, hogy az archivált fejezet minden felsorolási pontja önálló sorba került. A következő auditkörben az eredeti F.1–F.13 szöveg minden felsorolását és a C.23 belső bulletjeit soronként össze kell vetni a táblákkal; összevont sor esetén dokumentálni kell a csoportosítás indokát. Az E.1, C.23.1–C.23.22 és C.24.1–C.24.7 csoportszintű sorai már megvannak, de a teljes 00/A provenance és a line-by-line egyeztetés nyitott. A P0.2 csak kétirányú source-to-feature és feature-to-source coverage után zárható le.
-
-
-### 37.32. P0.2 — Bullet-szintű crosswalk, batch 8: E.1, C.23.1–C.23.22 és C.24.1–C.24.7
-
-**Forrás:** archived MASTER snapshot, 00.9.6.E.1, 00.9.6.C.23 és 00.9.6.C.24. A C.23 sorok az archivált részletképesség-mátrix 22 követelménycsoportját tartják külön. A C.24 open-source-first szabályok fejlesztési policy-k, nem önálló runtime feature-ek.
-
-| Forráskulcs | Megőrzött követelmény | Canonical current ID / owner | Döntés | Célfázis | QA-horgony |
-|---|---|---|---|---|---|
-| E.1-01 | Product surfaces and canonical boundaries; Admin only exposes active, real modules | ADM-001–ADM-010, WEB-001–WEB-032, EDT-001–EDT-042, §5, §39 | KEEP | All phases by canonical roadmap | QA-004/008 |
-| C.23.01 | Benchmark UX and implement independently without copying closed-source code | EDT-001–EDT-042, DSN-001–DSN-018, QA-008 | KEEP | Continuous | QA-008 |
-| C.23.02 | Distinct preset/template/reusable types with apply/replace/merge/reset/fork/version/rollback semantics | DSN-009–DSN-015, EDT-008, EDT-012, WEB-009 | EXPAND | 1.0 foundations; advanced reuse 2.0 | QA-002/004 |
-| C.23.03 | Canvas zoom/pan/fit, rulers/guides/snapping, marquee/multiselect/drop targets/cancel/pointer loss/extent/geometry | EDT-001–EDT-004, EDT-009–EDT-016, EDT-036, QA-005 | EXPAND | 1.0 core; advanced canvas phased | QA-002/004/005 |
-| C.23.04 | Canonical Page Model/Layers, group/ungroup/wrapper/alignment/distribution/mixed state/stable IDs/nesting | EDT-002–EDT-007, EDT-022, WEB-001 | KEEP | 1.0 | QA-002/004 |
-| C.23.05 | Layout/geometry/property registry validates flex/grid/flow/sizing/units/position/z-index/overflow/transforms/inheritance | EDT-009–EDT-016, EDT-022, DSN-004 | EXPAND | 1.0 supported subset; advanced CSS later | QA-002/004 |
-| C.23.06 | Typography/color/tokens/font fallback/license/token usage/dependency search/detach/reset/site impact preview | DSN-001–DSN-008, DSN-012, RES-015, EDT-019 | EXPAND | 1.0 token foundation; advanced tooling 2.0 | QA-002/004/008 |
-| C.23.07 | Inspector/Property Registry search/favorites/help/mixed values/copy-paste/reset/schema migration and command-validation-history-persistence round-trip | EDT-006, EDT-007, EDT-022, EDT-027–EDT-030 | EXPAND | 1.0 core; advanced registry phased | QA-002/004 |
-| C.23.08 | Element/component catalog across structure/content/navigation/actions/cards/forms/media/social/CMS/commerce with schema/defaults/accessibility/responsive/tests | EDT-017–EDT-024, WEB-009–WEB-020, RES-001, DSN-016–DSN-018 | EXPAND | 1.0 core subset; full catalog phased | QA-002/004/005 |
-| C.23.09 | Responsive/device preview, custom viewports/presets/orientation/side-by-side/inheritance/reset/diagnostics and browser acceptance | EDT-035–EDT-040, QA-005 | EXPAND | 1.0 responsive baseline; advanced preview phased | QA-004/005 |
-| C.23.10 | Interaction states/motion tokens/reduced-motion/trigger-action validation; no arbitrary script | EDT-020–EDT-022, EDT-040, SEC-007, QA-005 | KEEP/EXPAND | 1.0 safe interaction baseline; advanced motion 2.0 | QA-003/004/005 |
-| C.23.11 | Site shell/navigation/header/footer/global sections, navigation data vs style, route/slug/404/redirect/mobile menu | WEB-001–WEB-003, WEB-012, WEB-013, WEB-030, ADM-001 | EXPAND | 1.0 | QA-002/004 |
-| C.23.12 | CMS/dynamic binding registry, allowed schema/relationships/lists/filter/sort/pagination/fallback/states; canonical domain data stays separate | DYN-001–DYN-008, CNT-001–CNT-020, EDT-018 | EXPAND | Safe core 1.0; advanced bindings 2.0 | QA-002/003/004 |
-| C.23.13 | One Resource/media/icon/font picker; upload/replace/crop/variants/usage/license/metadata/fallback/safe delete/restore | RES-001–RES-016, EDT-018 | EXPAND | Resource foundation 1.0; binding/API blocker remains | QA-002/004/007 |
-| C.23.14 | Preview/save/publish/version/recovery, draft/public separation, expected version/conflict/retry/revision diff/rollback/refresh/cache | WEB-004–WEB-008, EDT-027–EDT-034, OPS-005, OPS-009 | KEEP | 1.0 release gate | QA-002/003/004/006/007 |
-| C.23.15 | SEO/social preview/canonical/sitemap/robots/structured data/redirect/public output tests | SEO-001–SEO-005, WEB-030–WEB-032 | KEEP/EXPAND | 1.0 SEO baseline; redirect tooling later | QA-004/008 |
-| C.23.16 | Accessibility/privacy/security/consent, keyboard/focus/contrast/alt/reduced-motion/secure embeds/forms/server permission/no secrets | QA-003–QA-005, SEC-001–SEC-011, WEB-027 | KEEP | 0.x–1.0 release gate | QA-003/004/005 |
-| C.23.17 | Editor workspace preferences separate from site data; command palette/shortcuts/recent/favorites/panel collapse/touch-tablet behavior | EDT-035–EDT-042, QA-005 | EXPAND | 1.0 core responsive; power-user later | QA-004/005 |
-| C.23.18 | Integration/streamer blocks use provider capability/freshness/ownership/error/fallback/allowed embed hosts/public renderer contract | INT-001–INT-021, LIV-001–LIV-007, SCH-001–SCH-015, DYN-001 | KEEP/EXPAND | Twitch core 1.0; others gated | QA-002/003/004 |
-| C.23.19 | Site-wide/bulk operations, multi-select, global token/component/preset change, usage search, impact preview and rollback | EDT-003, EDT-004, EDT-012, DSN-012, WEB-008 | EXPAND | Advanced 2.0 | QA-002/004/007 |
-| C.23.20 | Extensions/custom code/future AI require versioning/permissions/sandbox gate; AI uses canonical actions/validation/preview/approval/audit | INT-018, MKT-001–MKT-005, AI-003–AI-010, SEC-002, SEC-007 | DEFER/EXPAND | 3.0+; safe integration contracts earlier | QA-003/008 |
-| C.23.21 | Quality/observability/acceptance: unit/domain/API/D1/browser/responsive/E2E/production smoke and separate creator analytics from telemetry | QA-001–QA-010, OPS-001–OPS-008, ANL-001 | KEEP | All phases | QA-002–QA-010 |
-| C.23.22 | No-loss phase assignment: every capability has one owner, phase, dependency, acceptance/status; no silent deletion | §11, §16–§18, §24–§26, §39–§41 | KEEP | All phases | QA-008/009 |
-| C.24.01 | Open-source-first principle: prefer suitable maintained projects when they reduce cost/risk without compromising product contract | OPS-010, QA-008 | KEEP | Continuous | QA-008 |
-| C.24.02 | Before adoption, inspect license, maintenance, security posture, accessibility, API compatibility, migration and operational cost | OPS-010, SEC-010, QA-008 | KEEP | Before each dependency decision | QA-003/008 |
-| C.24.03 | Acceptance/rejection criteria and comparison evidence recorded; do not adopt unmaintained or incompatible dependencies | OPS-010, QA-008, §16 | KEEP | Continuous | QA-008 |
-| C.24.04 | Integrations are adapters behind canonical services; no dependency-specific payload leaks into Page Model/domain contract | INT-001, INT-018, DYN-001, §6 | KEEP | All phases | QA-002/003 |
-| C.24.05 | Build custom only when open-source options fail documented requirements or create unacceptable risk | OPS-010, §16 | KEEP | Continuous | QA-008 |
-| C.24.06 | Revisit dependency decisions as ecosystem/security/API requirements change | OPS-010, OPS-007, QA-008 | KEEP | Continuous | QA-006/008 |
-| C.24.07 | Policy is subordinate to the current MASTER gates and does not authorize parallel implementation or bypass acceptance | §0, §11, §16–§18, QA-009 | KEEP | Always | QA-009 |
-
-**Batch 8 státusz:** 30 source-key sor felvéve (E.1: 1; C.23: 22; C.24: 7). Ez a C.23 kategóriák és C.24 policy-alpontok leképezése, nem a C.23 minden belső bulletjének teljes granularitású crosswalkja. A részletes C.23.1–C.23.22 archív alpontokkal való line-by-line összevetés még szükséges.
-
-
-### 37.33. P0.2 — Bullet-szintű crosswalk, F.10–F.13 kiegészítő granularitás
-
-**Forrás:** archived MASTER snapshot, 00.9.6.F.10–F.13. A projektkontextus személyes célokat és induló tartalmi adatokat is tartalmaz; ezek konfigurálható példák, nem hardcoded termékígéretek vagy aktív fizetési műveletek.
-
-| Forráskulcs | Megőrzött követelmény | Canonical current ID | Döntés | Célfázis | QA-horgony |
-|---|---|---|---|---|---|
 | F.10-01 | Versioned export of Page/revision/theme/template/component/media refs/domain data; never export secrets/tokens | OPS-005, WEB-008, DSN-015, RES-001, SEC-008 | EXPAND | 1.0 safe export foundation; full package later | QA-003/007 |
 | F.10-02 | Import dry-run validates schema/version/assets/duplicate IDs/owner/permissions/migration compatibility | OPS-004, OPS-005, WEB-008, DSN-015, SEC-002 | EXPAND | 2.0 full import/export | QA-002/003/007 |
 | F.10-03 | Recovery preview/conflicts/integrity/backup verification and post-restore Page Model/revision/public-render consistency | OPS-005, OPS-006, OPS-009, WEB-007, WEB-008, EDT-028 | KEEP | 0.x–1.0 safety baseline | QA-002/006/007 |
@@ -2786,7 +2705,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.13-20 | Starter template categories remain available as configurable library choices | DSN-008–DSN-010 | EXPAND | 1.0 starter templates; library later | QA-004 |
 | F.13-21 | Future creator-made template/component/theme/overlay/OBS/digital asset marketplace with license/version/review/revenue share | DSN-014, DSN-015, OBS-001–OBS-010, STO-012, MKT-001–MKT-005, CAM-009 | DEFER | 3.0–6.0 | QA-002/003/008 |
 
-**Batch 8 result:** 35 F.10–F.13 requirements mapped individually. This completes the F.1–F.13 source-heading crosswalk at requirement level; source text/count validation and full provenance coverage across all earlier 00/A/C sections remain open.
+**Batch 7 result:** 42 egyedi source bullet F.9–F.13 között (7 F.9 + 35 F.10–F.13). A hivatkozások szerkezeti validációja külön gate; ez a mapping nem runtime PASS.
 
 ## 38. Részletes Visual Editor képességkatalógus
 
