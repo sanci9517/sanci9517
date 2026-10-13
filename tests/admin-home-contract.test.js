@@ -76,10 +76,10 @@ test("dashboard is an operational workspace with the complete Creator Platform c
   assert.match(dashboard, /<h2>Gyors műveletek<\/h2>/);
   assert.match(dashboard, /aria-label="Gyors műveletek"/);
   assert.match(dashboard, /Weboldal szerkesztése/);
-  assert.match(dashboard, /Adásrend kezelése/);
-  assert.match(dashboard, /Publikus webhely ellenőrzése/);
+  assert.match(dashboard, /Adásrend frissítése/);
+  assert.match(dashboard, /Publikus oldal ellenőrzése/);
   assert.match(dashboard, /id="platformCapabilities"/);
-  assert.match(dashboard, /href="#platformCapabilities">Teljes funkciótérkép<\/a>/);
+  assert.match(dashboard, /href="#platformCapabilities">Teljes funkciótérkép <span/);
   assert.match(dashboard, /Egy alkotói platform\. Minden munkafolyamat/);
   assert.equal((dashboard.match(/class="capability-card"/g) || []).length, 24);
   for (const capability of ["Weboldal és CMS", "Visual Editor v2", "Design Studio", "Média- és erőforráskönyvtár", "Adásrend és játékprofilok", "Stream Studio és OBS", "VOD, klipek és Shorts", "Publikálási központ", "Twitch-integráció", "YouTube, TikTok és Discord", "Közösségi központ", "Közönség és e-mail", "Analitika és riportok", "AI Creator Copilot", "Webshop, merch és tagság", "Automatizálás és workflow", "Csapatok és több webhely", "Biztonság és helyreállítás", "Nyelvek, SEO és hozzáférhetőség", "Fejlesztői eszközök és piactér", "Dinamikus adatok és adatbinding", "Űrlapok és interakciók", "Publikálás és verziókezelés", "Tartalommodellek és bővíthető blokkok"]) {
@@ -144,4 +144,29 @@ test("closing mobile navigation with Escape or backdrop restores toggle focus", 
   assert.match(dashboard, /if \(restoreFocus && wasOpen && window\.matchMedia\("\(max-width: 900px\)"\)\.matches\)\s*\{\s*\$\("mobileMenu"\)\.focus\(\);/);
   assert.match(dashboard, /backdrop\.addEventListener\("click", \(\) => closeSidebar\(true\)\)/);
   assert.match(dashboard, /if \(event\.key === "Escape"\)\s*\{\s*closeSidebar\(true\);\s*closeMobileSearch\(true\);/);
+});
+
+
+test("Admin home uses the full Creator Control Center redesign with operational and planned areas separated", () => {
+  for (const fragment of [
+    "hero-panel",
+    "Építs valami emlékezeteset.",
+    "Mai áttekintés",
+    "Indítsd el a munkát",
+    "Következő adás",
+    "Gyors műveletek",
+    "id=\"welcomeName\"",
+    "id=\"heroSystemState\"",
+    "id=\"platformCapabilities\"",
+    "workspace-card-muted",
+    "F0.1 full Admin Home redesign",
+    "prefers-reduced-motion:reduce"
+  ]) {
+    assert.ok(dashboard.includes(fragment), "missing full Admin redesign feature: " + fragment);
+  }
+  assert.match(dashboard, /id="welcomeName"[\s\S]*?hero-gradient/);
+  assert.match(dashboard, /function loadDashboard\(\)[\s\S]*?Promise\.allSettled/);
+  assert.match(dashboard, /if \(\$\("welcomeName"\)\) \$\("welcomeName"\)\.textContent/);
+  assert.match(dashboard, /id="heroSystemState"/);
+  assert.equal((dashboard.match(/class="capability-card"/g) || []).length, 24);
 });
