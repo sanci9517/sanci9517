@@ -5757,6 +5757,9 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 - This is a targeted correction of ten source rows only. The remaining broad candidates in the 438-row inventory are still open and must be reviewed section-by-section; do not treat this batch as the full SANCI-MASTER-PLAN semantic audit.
 
 
+
+**Targeted candidate-mapping refinement:** 0 rows that previously pointed to the same broad WEB/EDT/ADM/QA ranges now use source wording/section-based domain candidates (for example, Schedule, provider integrations, content/VOD, resource/media, SEO, analytics, support/community, security and Editor). This is a discovery refinement only; each row remains OPEN until a human-semantic comparison confirms exact behavior, owner and acceptance. Candidate generation is not proof of feature coverage.
+
 ### 41.3.40. P0.2 — Visual Editor roadmap: item-level milestone and work-rule ledger (2026-10-13)
 
 **Source:** `docs/archive/plans/visual-editor-roadmap.md`, source blob `082b4afbb40d4b4e3363f91691e546cf91ced32d`. The archived file is a compact milestone/work-rule source, not the active execution plan.
