@@ -223,7 +223,7 @@ A korábbi MASTER 44f42403… állapotából visszaolvastuk a **140 számozott f
 
 **M0.1 megállapítás:** a korábbi 01–140 backlog **nem veszett el**; minden pontnak van jelenlegi helye a rebaselined platform mapben. Ahol a régi pont több mai capability-re bomlik (pl. 60 Media library → Central Resource + Asset Manager + storage boundary; 55 Card/list/table/accordion/tabs → Component/Interaction system), ott nem összevonással töröljük, hanem egyedi feature-ként megőrizzük a traceabilityt.
 
-**M0.1 interim megállapítás — nem zárási döntés:** a 01–140 mátrix megőrzi a korábban visszaolvasott funkciópontokat, de ez önmagában nem bizonyítja a 19–34 backlog teljes egyeztetését vagy a teljes MASTER konzisztenciáját. M0.1 csak a fenti nyitott ellenőrzések bizonyíték-alapú lezárása után kaphat PASS.
+**M0.1 történeti auditpillanatkép — SUPERSEDED:** az akkori megállapítás a 2026-10-13-i termékdöntés előtt rögzült; nem aktuális státusz és nem írhatja felül az aktív F0.1 pontot. Az audit külön fázisként nem kapott PASS-t és nem kell újraindítani. A közvetlen termékkövetelmények a MASTER E/F fejezeteiben, a megvalósítási acceptance pedig az aktív buildpontban található.
 
 ### M0.1 teljes MASTER-audit — szerkezeti bizonyíték és nyitott korrekciók (2026-10-13)
 
@@ -532,7 +532,7 @@ A korábbi MASTER 44f42403… állapotából visszaolvastuk a **140 számozott f
 | H34.22 | felhasználói validáció. | User acceptance / product validation for the proposed extension | User validation and acceptance record | User-validation step under H34.00; not an independent feature or milestone | Depends on implementation and test evidence; user validation must not replace automated/security tests | Historical procedure step retained; process step, not a product feature | M0.1: preserve traceability to H34.00; evidence belongs to the relevant extension's canonical engineering record; do not mark this row as a completed product capability |
 
 ### M0.2 — Platform domain inventory
-**Állapot:** `[~] IN PROGRESS — a domain inventory és a cross-cutting inventory dokumentálva van; a záró ellenőrzésnek még explicit módon igazolnia kell az összes domain owner/storage/scope lefedését, a tervezett és implementált capability-k szétválasztását, valamint a hiányzó domainek kizárását vagy felvételét.`
+**Állapot:** `SUPERSEDED AS SEPARATE AUDIT WORK — a domain és cross-cutting követelmények operatív szerződése az E/F fejezetben, illetve az érintett F0.x acceptance-ben van. Ez a korábbi auditstátusz nem blokkol és nem jelent automatikus runtime PASS-t.`
 
 | Domain | Canonical owner / source of truth | Jelenlegi bizonyított alap | Storage / boundary | Scope | Döntés |
 |---|---|---|---|---|---|
@@ -838,7 +838,7 @@ A capability-lista önmagában nem elég: az alábbi keresztmetszeti domainek a 
 **M0.4 döntés — lezárt:** a fenti matrix a további fejlesztés canonical ownership baseline-ja. Az M0.4 closure gate alatti, 2026-10-08-i runtime/browser/user-acceptance bizonyítékok alapján M0.4 PASS. Ez nem jelenti az M0 egészének PASS állapotát.
 
 ### M0.5 — Central Resource contract freeze
-**Állapot:** `[ ] QUEUED — M0.1–M0.3 státusz- és lezárási konzisztencia rendezéséig nem indul. M0.5 a következő termék/domain contract feladat, amint az előtte lévő M0 részpontok lezárása és a sorrend explicit igazolása megtörtént. Feature-implementáció itt sem indulhat.`
+**Állapot:** `SUPERSEDED AS SEPARATE AUDIT POINT — a Resource/Media követelményeket az E.5 és az F0.7 acceptance kezeli. A korábbi M0.5 PASS nem előfeltétele az F0.1–F0.13 sorrendnek.`
 
 Kötelező eldönteni és MASTER-ben rögzíteni:
 - Asset;
@@ -859,7 +859,7 @@ Kötelező eldönteni és MASTER-ben rögzíteni:
 - R2 implementation boundary.
 
 ### M0.6 — Template / Component / Design-system contract freeze
-**Állapot:** `[ ] QUEUED — kizárólag M0.5 PASS után.`
+**Állapot:** `SUPERSEDED AS SEPARATE AUDIT POINT — a Template/Component/Design System követelményeket az E.6 és az F0.8 acceptance kezeli; nincs külön M0.6 blokk.`
 
 Kötelezően külön:
 - Theme;
@@ -874,7 +874,7 @@ Kötelezően külön:
 - Library item.
 
 ### M0.7 — Streamer / OBS capability freeze
-**Állapot:** `[ ] QUEUED — kizárólag M0.6 PASS után.`
+**Állapot:** `SUPERSEDED AS SEPARATE AUDIT POINT — a Streamer/OBS jövőkép az E.9/E.11/F.8 fejezetben marad, a fázis szerinti implementáció későbbi roadmap feladata; nincs külön M0.7 blokk.`
 
 - Schedule;
 - Game;
@@ -892,12 +892,12 @@ Kötelezően külön:
 - future automation.
 
 ### M0.8 — 1.0 / 1.x / post-1.0 scope freeze
-**Állapot:** `[ ] QUEUED — kizárólag M0.7 PASS után.`
+**Állapot:** `SUPERSEDED AS SEPARATE AUDIT POINT — az 1.0/1.x/post-1.0 scope-ot az E.21/F.11 és a közvetlen F0 végrehajtási sorrend adja.`
 
 Minden funkció explicit státuszt kap. A „majd egyszer” kategória is megmarad, de nem blokkolhatja az 1.0-t.
 
 ### M0.9 — Legacy removal plan
-**Állapot:** `[ ] QUEUED — kizárólag M0.8 PASS után.`
+**Állapot:** `SUPERSEDED AS SEPARATE AUDIT POINT — a legacy felületek csak akkor módosíthatók, ha az adott F0.x vagy production-readiness pont pontosan megnevezi az érintett route-ot és bizonyítja a biztonságos dispositiont; a régi M0.9 nem önálló munkapont.`
 
 Minden legacy surface kap:
 - KEEP;
@@ -911,7 +911,7 @@ Minden legacy surface kap:
 **Kötelező:** a legacy útvonalnak nem lehet canonical ownershipje.
 
 ### M0.10 — No Dead Admin Surface gate
-**Állapot:** `[ ] QUEUED — kizárólag M0.9 PASS után.`
+**Állapot:** `SUPERSEDED AS SEPARATE AUDIT POINT — a működő/tervezett/legacy adminfelületek elvárt státusza a F0.2 és a production-readiness acceptance része; nincs külön M0.10 gate.`
 
 - [ ] nincs aktívnak látszó hibás admin funkció;
 - [ ] future funkciók PLANNED/BETA/FOUNDATION állapotot mutatnak;
@@ -919,7 +919,7 @@ Minden legacy surface kap:
 - [ ] Admin navigation canonical feature registryből származik.
 
 ### M0.11 — Benchmark completion
-**Állapot:** `[ ] QUEUED — kizárólag M0.10 PASS után.`
+**Állapot:** `SUPERSEDED AS SEPARATE AUDIT POINT — a benchmark-kutatást minden jelentős capability előtt az E.22/E.20 szabályok szerint, az adott buildpont részeként végezzük; nincs teljes fejlesztést blokkoló M0.11 kapu.`
 
 **Sorrendi pontosítás:** M0.11 a teljes benchmark-lefedettség végső összesítő kapuja; nem engedi a benchmarkot a későbbi fázisokra halasztani. Az M0.5/M0.6/M0.7 contract freeze során minden érintett domain célzott benchmarkját a contract lezárása előtt kell elvégezni és az adott pontban rögzíteni. M0.11 ezután azt ellenőrzi, hogy a teljes platform-scope releváns benchmarkjai megvannak-e, és nincs-e indokolatlanul kihagyott terület.
 
@@ -979,7 +979,7 @@ A Visual Editor UX/UI-jának újraalapozása a korábban elfogadott strukturált
 
 Az F0 **a Visual Editor új UX/UI-koncepciójának újraalapozási és megvalósítási kapuja**: nem kötelező a régi felületet foltozgatni, és indokolt esetben a UI-réteg újraépíthető. A meglévő, bizonyítottan megfelelő domain- és platformalapokat újra kell használni. Nem készül második canonical Page Model, Editor core, Schedule domain, Property Registry vagy save/publish útvonal.
 
-**F0 teljes scope-ja (nem egyetlen óriási feladat):** a teljes Builder/Creator Center/Schedule capability-lista megmarad a 00.9.6.C és a történeti ledger fejezetekben; az alábbi F0.x pontok ezt fokozatosan, egyetlen aktív ponttal építik fel. Az editorban a korábban kipipált alapok sem jelentenek automatikusan használható, kész felhasználói funkciót. Minden képességet az adott pontban újra kell validálni, és ha nem felel meg a célkoncepciónak, javítani vagy újraépíteni.
+**F0 teljes scope-ja (nem egyetlen óriási feladat):** az operatív funkciók teljes leírását a 00.9.6.E/F közvetlen termékkövetelmény-fejezetek adják; a 00.9.6.C/D a platform térképét és a fázisokat őrzi, a történeti ledger csak nyomkövetésre szolgál. Az alábbi F0.x pontok a szükséges 1.0 képességeket fokozatosan, egyetlen aktív ponttal építik fel. A korábban kipipált alapok sem jelentenek automatikusan használható, kész felhasználói funkciót. Minden képességet az adott pont acceptance-e igazol.
 
 - Új szerkesztői információ-architektúra és UI: Page → Section → Box → szerkeszthető elemek; nested Box.
 - Canvas + Layers/tree + jobb oldali Inspector + responsive breakpointok + preview; hétköznapi szerkesztés dropdown/vezérlő alapú, CSS/JSON írása nélkül.
@@ -1709,7 +1709,7 @@ Későbbi platform:
 - [ ] F0.2 Admin/Creator Center dashboard újratervezés.
 - [ ] F0.3–F0.13 Editor/Layers/Inspector/Layout/Resource/Schedule/Twitch/publish/public/QA sorban.
 
-A történeti funkciólisták és a teljes `00.9.6.C` capability map továbbra is a fejlesztés követelményei; a nyitott történeti egyeztetések a releváns pontok DoD-jában záródnak, nem külön auditprojektként.
+Az E/F fejezetek közvetlen, részletes termékkövetelményei és a F0.x DoD-k adják a fejlesztés operatív specifikációját. A 00.9.6.C/D a teljes platformcélt és fázisokat őrzi; a történeti listák kizárólag megőrzési/eredet-nyomkövetési szerepűek, és nem igényelnek külön újratérképezési auditkört.
 
 ## PHASE 1 — Creator Website 1.0
 **Cél:** professzionális, működő Sanci9517 creator site.
