@@ -68,6 +68,7 @@ test("dashboard is an operational workspace with the complete Creator Platform c
   assert.match(dashboard, /Adásrend kezelése/);
   assert.match(dashboard, /Publikus webhely ellenőrzése/);
   assert.match(dashboard, /id="platformCapabilities"/);
+  assert.match(dashboard, /href="#platformCapabilities">Teljes funkciótérkép<\/a>/);
   assert.match(dashboard, /Egy alkotói platform\. Minden munkafolyamat/);
   assert.equal((dashboard.match(/class="capability-card"/g) || []).length, 20);
   for (const capability of ["Weboldal és CMS", "Visual Editor v2", "Design Studio", "Média- és erőforráskönyvtár", "Adásrend és játékprofilok", "Stream Studio és OBS", "VOD, klipek és Shorts", "Publikálási központ", "Twitch-integráció", "YouTube, TikTok és Discord", "Közösségi központ", "Közönség és e-mail", "Analitika és riportok", "AI Creator Copilot", "Webshop, merch és tagság", "Automatizálás és workflow", "Csapatok és több webhely", "Biztonság és helyreállítás", "Nyelvek, SEO és hozzáférhetőség", "Fejlesztői eszközök és piactér"]) {
