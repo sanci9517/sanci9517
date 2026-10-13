@@ -2032,3 +2032,42 @@ Amíg ez nincs teljesítve, a terv **a végleges cél- és végrehajtási keret*
 - **A fejlesztés nem indulhat előre a kapukon:** P0 lezárásáig új termékfeature implementációja tilos; csak a terv, a leltár, a baseline és a követelmény-lefedettség tisztázható.
 - **A teljes platform nem egyetlen kiadás:** a stabil alap, a creator weboldal és brand, a többplatformos működés, a monetizáció és a SANCI AI egymásra épülő, külön elfogadási feltételekkel rendelkező szakaszokban készül.
 
+## 37. P0.1/P0.2 — Repositoryterv-leltár és feltárt ellenőrzési feladatok
+
+### 37.1. Ellenőrzött repository-leltár
+
+**Ellenőrzés dátuma:** 2026-10-13  
+**Vizsgált ág:** `v2/foundation`  
+**Leltár eredménye:** 160 repository-fájl; a Git tree nem volt csonkolt. A kanonikus terv mellett a tervjellegű dokumentumok a dokumentációs archívumban vannak; az aktuális fejlesztési napló külön marad. A régi összesített MASTER-pillanatkép 5 161 soros, 686 481 karakteres, 283 címsorral. Ez a méretkülönbség miatt önmagában nem bizonyítja, hogy minden régi követelmény átkerült az új katalógusba.
+
+Ez **leltárbizonyíték, nem történeti lefedettségi PASS**. A fájlok megtalálása és archiválása nem helyettesíti a tartalmi összehasonlítást. A P0.1 csak akkor zárható le, ha az aktív ág, a tervverzió, az archiválási állapot, a nyitott kérdések és a folytatási pont egyértelműek; a P0.2 csak a követelményenkénti leképezés után zárható le.
+
+### 37.2. A részletes összevetésben külön ellenőrizendő képességek
+
+Az összevetés során az alábbiak önálló követelményként kapjanak döntést és stabil funkció-ID-t, akkor is, ha nagyobb domain alá tartoznak:
+
+- **PWA és mobilüzem:** telepíthetőség, offline/gyenge hálózati állapotok, újracsatlakozás, megszakadt feltöltés/művelet folytatása, mobilos napi operáció és biztonságos munkamenet-kezelés.
+- **Külső csatornák és szerepkörök:** Discord szerepszinkron, YouTube/TikTok/Twitch capability- és rate-limit különbségek, lejárt/ visszavont OAuth-hozzáférés, részleges szolgáltatói kiesés és kézi újracsatlakoztatás.
+- **E-mail és audience CRM:** feliratkozás, megerősítés, leiratkozás, consent-bizonyíték, szegmentálás, kampány, kézbesítési állapot, bounce/complaint, export/törlés és szolgáltatófüggetlen adatmodell. Külső e-mail szolgáltató választása külön döntési kapu.
+- **Stream-vezérlés:** Stream Deck vagy más fizikai vezérlő csak támogatott integráció és capability alapján; események, hotkey/action mapping, permission, rate limit és vészleállítás.
+- **Interakciós widgetek:** alert, chat, chatbot, timer, poll, giveaway, loyalty/points, TTS, moderáció és overlay külön állapotokkal, forrásadatokkal, jogosultságokkal és stream közbeni hibakezeléssel.
+- **Creator tartalomgyártó pipeline:** VOD → clip → short → platformonkénti metaadat/preview → jóváhagyás → ütemezés/publikálás → eredmény-visszamérés; a pipeline nem feltételezheti, hogy minden platform ugyanazt az API-képességet nyújtja.
+- **Médiafeldolgozás:** thumbnail és preview, transzkódolás/átalakítás, méret- és formátumkorlát, folytatható feltöltés, checksum, duplikációkezelés, hozzáférés-védelem, R2-életciklus és törlés.
+- **Platformüzem:** event/queue feldolgozás, retry és idempotencia, dead-letter/hibasor, időzített feladatok, webhook aláírás/újrajátszás-védelem, diagnosztika, riasztás, költségkontroll és vészleállítás.
+- **Brand és több creator-típus:** streamer mellett más creator-típusok konfigurálható profiljai, brand kit, kampányidentitás, márkahang, csatornánkénti brandvariánsok és az AI által használt jóváhagyott brand-kontextus.
+- **Pénzügyi és hozzáférési életciklus:** fizetési események, refund/chargeback ahol a szolgáltató támogatja, subscription státusz, entitlement lejárat, hozzáférés-visszavonás, reconciliation és admin audit.
+- **Exportálhatóság és helyreállítás:** teljes adat- és médiakatalógus export, formátumverzió, import előtti dry-run, konfliktusfeloldás, mentésellenőrzés, visszaállítási próba, kompatibilitás és rollback.
+- **AI agentek:** model routing, tool registry, context minimization, prompt-injection védelem, eszközszintű jogosultság, jóváhagyás, végrehajtás utáni ellenőrzés, részleges hiba helyreállítása, költségkeret és szolgáltató kiesése.
+- **Megfigyelhetőség és minőség:** strukturált audit/operációs naplók, correlation ID, redaktált hibajelentés, accessibility/reduced-motion, billentyűzetes használat, reszponzív és tablet smoke, teljesítménybudget, biztonsági regresszió és éles rollback-próba.
+
+### 37.3. A P0 aktuális állapota
+
+- **P0.1 Tervintegritás és baseline:** IN PROGRESS — a repository-leltár és az új terv szerkezeti alapja dokumentálva; a teljes követelmény-lefedettség és az aktív feladatlista konzisztenciája még lezárandó.
+- **P0.2 Követelmény- és funkciólefedettség:** NOT STARTED / részletes reconciliáció szükséges — az összes archivált tervanyag és a nagy történeti MASTER tételes feldolgozása még nem igazolt.
+- **P0.3 Domain/adatforrás térkép:** NOT STARTED — a katalógust a tényleges repository-útvonalakkal és adatgazdákkal össze kell vetni.
+- **P0.4 Admin/Public/Editor felületleltár:** NOT STARTED — minden tényleges route, legacy/placeholder és elérhető felület kódalapú ellenőrzése szükséges.
+- **P0.5 Szolgáltatói és benchmark megvalósíthatóság:** NOT STARTED — az egyes integrációk hivatalos képességeit, limiteit és feltételeit tételesen igazolni kell.
+- **P0.6 Függőségi sorrend és acceptance freeze:** NOT STARTED — csak az előző kapuk bizonyítékalapú lezárása után.
+
+**Tilos P0 PASS-t vagy teljes történeti lefedettséget állítani addig, amíg a fenti tételek mindegyikéhez ellenőrizhető bizonyíték nem tartozik.**
+
