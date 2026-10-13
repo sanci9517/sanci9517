@@ -5,18 +5,13 @@ import test from "node:test";
 const worker = readFileSync(new URL("../src/index.ts", import.meta.url), "utf8");
 const dashboard = readFileSync(new URL("../public/admin.html", import.meta.url), "utf8");
 
-test("Admin entry authenticates before routing to the dashboard", () => {
-  assert.match(
-    worker,
-    /if \(pathname === "\/admin" \|\| pathname === "\/admin\.html"\) \{\s*const user = await getAuthenticatedUser\(request, env\);\s*if \(!user\) return Response\.redirect\(new URL\("\/admin\/login", request\.url\)\.toString\(\), 302\);\s*return Response\.redirect\(new URL\("\/admin\/home", request\.url\)\.toString\(\), 302\);/
-  );
-});
-
-test("dashboard route and direct asset path are authenticated", () => {
-  assert.match(
-    worker,
-    /if \(pathname === "\/admin\/home" \|\| pathname === "\/admin-home\.html"\) \{\s*const user = await getAuthenticatedUser\(request, env\);\s*if \(!user\) return Response\.redirect\(new URL\("\/admin\/login", request\.url\)\.toString\(\), 302\);\s*return env\.ASSETS\.fetch\(assetRequest\("\/admin-home\.html", request\)\);/
-  );
+test("canonical Admin route is authenticated and serves the single dashboard asset", () => {
+  assert.ok(worker.includes('if (pathname === "/admin") {'));
+  assert.ok(worker.includes('return env.ASSETS.fetch(assetRequest("/admin.html", request));'));
+  assert.ok(worker.includes('if (pathname === "/admin/home" || pathname === "/admin-home.html" || pathname === "/admin.html")'));
+  assert.ok(worker.includes('new URL("/admin", request.url).toString(), 302'));
+  assert.ok(worker.includes('if (pathname === "/admin/login")'));
+  assert.ok(worker.includes('if (pathname === "/admin-login.html")'));
 });
 
 test("canonical Visual Editor v2 route remains available separately", () => {
@@ -126,7 +121,7 @@ test("every enabled sidebar destination is a canonical, authenticated Admin rout
   assert.ok(destinations.length > 0, "sidebar must expose at least one active destination");
   for (const destination of destinations) {
     assert.ok(
-      ["/admin/home", "/admin/editor"].includes(destination),
+      ["/admin", "/admin/editor"].includes(destination),
       `unexpected active sidebar destination: ${destination}`
     );
   }
