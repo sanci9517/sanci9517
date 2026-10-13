@@ -4121,6 +4121,10 @@ Elkészült a munkapont első implementációs szelete:
 - [ ] Ellenőrizni kell a tényleges API-válaszokat és a Cloudflare branch preview viselkedését.
 - [ ] Felhasználói vizuális acceptance után lehet F0.1 PASS; addig a következő munkapont nem aktiválható.
 
+**Vizuális irány — 2026-10-13, felhasználói döntés:** sötét és világos téma közötti váltás; lila kiemelőszín; kiegyensúlyozott, nem túlzsúfolt dashboard; a teljes későbbi Creator OS modulrendszer maradjon felfedezhető, a még nem kész modulok jól látható „Tervezett” / AI esetén „Későbbi” státusszal. A téma választása helyi beállításként megmarad. A főoldal vizuális acceptance továbbra is nyitott; PR #7 nem merge-elhető és F0.1 nem jelölhető PASS-nak a felhasználó kifejezett vizuális elfogadása előtt.
+
+**2026-10-13 vizuális iteráció:** PR #7 dashboard színrendszere lila hangsúlyú lett, bekerült a világos/sötét téma kapcsoló és a navigációba a VOD/rövid videók, AI-asszisztens, lokalizáció és fejlesztői eszközök tervezett bejegyzése. A tesztkontraktus külön ellenőrzi a téma kapcsolót és a tervezett modulok láthatóságát. Ez kódmódosítás, nem browser acceptance; a Cloudflare preview új commitjának tényleges megjelenését és a mobil/tablet nézetet még ellenőrizni kell.
+
 **Megőrzési szabály:** a korábbi public/admin.html és a régi Admin panel nem törölhető ezen munkapontban. Csak a tényleges használati útvonal és a canonical dashboard shell változik; a legacy kód későbbi migrációs/archiválási döntésig megmarad.
 
 **A jelen fejezet a termékirány és a fejlesztési sorrend végleges specifikációja.** A terv a jövőbeli capability-k teljes katalógusa; a runtime készültség kizárólag az egyes aktív munkapontok tesztjeiből és elfogadásából következhet.
