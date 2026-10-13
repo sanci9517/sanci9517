@@ -124,7 +124,7 @@ test("future modules are visibly disabled rather than presented as implemented",
 });
 
 test("every dashboard link targets the canonical Admin, Editor, public site, or an existing section", () => {
-  const destinations = [...dashboard.matchAll(/\\bhref="([^"]+)"/g)].map((match) => match[1]);
+  const destinations = [...dashboard.matchAll(/\bhref="([^"]+)"/g)].map((match) => match[1]);
   const allowed = new Set(["/admin", "/admin/editor", "/", "#platformCapabilities"]);
   assert.ok(destinations.length > 0, "dashboard must contain navigable destinations");
   for (const destination of destinations) {
@@ -134,7 +134,7 @@ test("every dashboard link targets the canonical Admin, Editor, public site, or 
   assert.ok(destinations.includes("/admin/editor"), "canonical Editor link must exist");
   assert.ok(destinations.includes("/"), "public site link must exist");
   assert.ok(destinations.includes("#platformCapabilities"), "capability map anchor must exist");
-  assert.doesNotMatch(dashboard, /href="\\/admin\\/home"/, "legacy Admin alias must not be linked from the dashboard");
+  assert.doesNotMatch(dashboard, /href="\/admin\/home"/, "legacy Admin alias must not be linked from the dashboard");
 });
 
 test("every enabled sidebar destination is a canonical, authenticated Admin route", () => {
