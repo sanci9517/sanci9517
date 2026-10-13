@@ -13,7 +13,16 @@ import { hasResponsiveOverride, resolveResponsiveValue, setResponsiveValue } fro
 import { plainTextToRichText } from '../core/richtext-engine.js';
 import { createDefaultScheduleConfig, normalizeScheduleConfig, validateScheduleConfig } from '../core/schedule-schema.js';
 import { getSchedulePreviewItems } from '../core/schedule-preview.js';
+import { computeCanvasMinHeight } from '../core/canvas-extent.js';
 import { validatePublishDocument } from '../../../src/core/editor-validation.ts';
+
+test('canvas minimum height follows content below the default page extent', () => {
+  assert.equal(computeCanvasMinHeight([], 1), 844);
+  assert.equal(computeCanvasMinHeight([500], 1), 844);
+  assert.equal(computeCanvasMinHeight([1200], 1), 1280);
+  assert.equal(computeCanvasMinHeight([2400], 2), 1280);
+  assert.equal(computeCanvasMinHeight([Number.NaN, 1200], 1, 900, 64), 1264);
+});
 
 test('Editor browser module parses before it is shipped', () => {
   const appPath = fileURLToPath(new URL('../app.js', import.meta.url));

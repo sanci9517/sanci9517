@@ -2,13 +2,13 @@
 **ACTIVE_POINT_STATUS:** `ACTIVE — Canvas közvetlen manipuláció, Layers és Inspector egységes Page Model/command útvonalon`
 **ACTIVE_POINT_TITLE:** Visual Builder, Layers, Inspector és responsive szerkesztés
 **ACTIVE_SUBPOINT_ID:** `F0.4-CANVAS-DRAG-RESIZE`
-**ACTIVE_SUBPOINT_STATUS:** `IN PROGRESS — PR #27 merge-elve; canvas drag + resize handle a canonical responsive.set command útvonalat használja. A PR legfrissebb Editor Core és Twitch Integration CI futásai PASS (typecheck, editor core, schedule/domain/Admin home, OAuth/site ownership). A felhasználó az előző böngészős tesztet befejezettnek jelezte; ez az F0.3 tesztre vonatkozik, nem bizonyítja az új drag/resize éles runtime acceptance-ét. Deploy/live drag-resize acceptance még nincs igazolva. Következő: böngészős drag/resize elfogadás, majd F0.4 Layers–Inspector–responsive összehangolás; tablet-login továbbra is külön, elhalasztott nem blokkoló tétel.`
+**ACTIVE_SUBPOINT_STATUS:** `IN PROGRESS — PR #27 canvas drag + resize a canonical responsive.set command útvonalat használja. A felhasználó megerősítette, hogy mozgatás, átméretezés és Undo/Redo működik, de a nagy Y-eltoláskor a fehér vászon nem nő a tartalommal. Javítás készül: a vászon minimális magasságát a kirajzolt node-ok tényleges, zoommal korrigált alsó határa és alsó térköze alapján számítjuk, húzás/átméretezés közben is frissítve; pure helper teszt hozzáadva. Következő: CI PASS, auto-deploy után live ellenőrzés (nagy Y-eltolás, visszahúzás, save/reload, Undo/Redo), utána Layers–Inspector–responsive összehangolás. Tablet-login továbbra is külön, elhalasztott nem blokkoló tétel.`
 **PREVIOUS_GATE:** `F0.3 — USER-REPORTED BROWSER TEST COMPLETE; PR #18–#25 CI PASS; stale-session/live runtime evidence not independently verified`
 **NEXT_GATE:** `F0.4 canvas drag/resize acceptance → Layers/Inspector/responsive integration → next F0.x point in strict order`
 **PARALLEL_WORKSTREAMS:** `0`
 
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
-**Verzió:** MASTER-2.78 — végleges termékleírás, Admin UI-specifikáció és egyetlen függőség-alapú fejlesztési sorrend; a 2.75–2.76 roadmapek történetiek.  
+**Verzió:** MASTER-2.79 — végleges termékleírás, Admin UI-specifikáció és egyetlen függőség-alapú fejlesztési sorrend; a 2.75–2.76 roadmapek történetiek.  
 **Frissítve:** 2026-10-13.  
 **Dokumentum státusza:** ez az egyetlen végrehajtási igazságforrás.
 **Audit / implementation baseline:** GitHub `v2/foundation`, commit `54daad2357ca576d9e333a052e7bcbb6c2e2d51a` (2026-10-13; F0.3 history-integrity, revision-conflict recovery és save/reload client hardening PR #18–#25 integrálva; production save/reload runtime acceptance továbbra is nyitott). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
