@@ -11,7 +11,7 @@
 **Verzió:** MASTER-2.77 — végleges termékleírás, Admin UI-specifikáció és egyetlen függőség-alapú fejlesztési sorrend; a 2.75–2.76 roadmapek történetiek.  
 **Frissítve:** 2026-10-13.  
 **Dokumentum státusza:** ez az egyetlen végrehajtási igazságforrás.
-**Audit / implementation baseline:** GitHub `v2/foundation`, commit `64b964b18da0f20926440e65f8bb0e8231167cc6` (2026-10-13; F0.2 canonical Admin navigation, login-session handoff hardening és link contract beintegrálva; böngészős acceptance nyitott). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
+**Audit / implementation baseline:** GitHub `v2/foundation`, commit `bf19963b12b4abe34e5e4e56f0d21692e72be4b6` (2026-10-13; F0.2 canonical navigation, login-session handoff, dashboard link és auth/role contract tesztek integrálva; production acceptance nyitott). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
 
 ### Jelenlegi igazolt állapot
 Ez a blokk kizárólag az E4/E5/E6 korábban bizonyított lezárt gate-jeit rögzíti. Az M0 auditfázist a felhasználó döntése lezárta / superseded állapotba helyezte; ez nem runtime PASS.
@@ -4341,11 +4341,12 @@ F0.2 DoD:
 
 ## 2.77.9.M — F0.2 auth-before-asset and API role contract — 2026-10-13
 
-**Állapot: CONTRACT TESZT FEATURE BRANCHEN; PR-CI ELLENŐRZÉS FOLYAMATBAN.**
+**Állapot: MERGED TO `v2/foundation`; PR-CI PASS.**
 
 - [x] A Worker `/admin` és `/admin/editor` útvonalai a dashboard/Editor asset kiszolgálása előtt munkamenetet ellenőriznek.
 - [x] Az Admin settings API admin szerepkört, az oldalak, schedule és Editor domain API-k legalább editor szerepkört követelnek meg szerveroldalon.
 - [x] Új regressziós contract teszt rögzíti az auth-before-asset sorrendet és az API role guardokat.
-- [ ] A statikus assetek közvetlen URL-je nem tekinthető önmagában adat-hozzáférésnek; a protected API-k szerepkörtesztjei és a valós böngészős 401/403 útvonalak acceptance-e még a F0.2 végső kapujának része.
+- [x] A statikus assetek közvetlen URL-je nem tekinthető önmagában adat-hozzáférésnek; a protected API-k szerveroldali szerepkör-ellenőrzését a contract teszt ellenőrzi.
+- [ ] A valós böngészős 401/403 jogosultsági útvonalak és közvetlen route-kérések production acceptance-e még a F0.2 végső kapujának része.
 - [ ] Éles Android Chrome tablet-login acceptance és teljes mobil/keyboard smoke.
 
