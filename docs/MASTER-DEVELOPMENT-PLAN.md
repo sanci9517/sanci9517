@@ -2,13 +2,13 @@
 **ACTIVE_POINT_STATUS:** `ACTIVE — Canvas közvetlen manipuláció, Layers és Inspector egységes Page Model/command útvonalon`
 **ACTIVE_POINT_TITLE:** Visual Builder, Layers, Inspector és responsive szerkesztés
 **ACTIVE_SUBPOINT_ID:** `F0.4-LAYERS-INSPECTOR-RESPONSIVE-INTEGRATION`
-**ACTIVE_SUBPOINT_STATUS:** `IN PROGRESS — A felhasználó visszaigazolta, hogy a Canvas működése most megfelelő; a korábbi vászonmagasság-probléma nem marad nyitott hibaként. Következő: Layers–Inspector–responsive integráció a meglévő canonical Page Model, command/history/validation, Property Registry és responsive override contract használatával. Acceptance: vászon- és Layers-kijelölés oda-vissza szinkron; név/típus/szülő/hierarchia konzisztens; Inspector módosítások ugyanazon command/history útvonalon; drag/reorder/reparent és lock szabályok; responsive property override; Undo/Redo; save/reload round-trip; célzott tesztek és production smoke. Tablet-login külön, elhalasztott nem blokkoló tétel.`
+**ACTIVE_SUBPOINT_STATUS:** `IN PROGRESS — Canvas működését a felhasználó visszaigazolta; a korábbi vászonmagasság-hiba lezártnak tekintett. Implementálva: a Property Registry explicit canonical style-key metaadatai; Inspector mezők az aktív viewport resolved értékét olvassák és responsive.set parancson keresztül írják; a responsive override null/undefined/üres értékkel törölhető és visszaáll az öröklés; reset vezérlő csak saját override esetén jelenik meg. CI: editor-core PASS és twitch-integration PASS a 020757b0437122e6d5f3d2dc98d2e0590862317d commiton. Következő: böngészős/production smoke az Inspector desktop/tablet/mobile értékekkel, reset, Undo/Redo, mentés és újratöltés ellenőrzésére; majd Layers-kijelölés/hierarchia és teljes acceptance. Tablet-login külön, elhalasztott nem blokkoló tétel.`
 **PREVIOUS_GATE:** `F0.4-CANVAS-DRAG-RESIZE — USER CONFIRMED CANVAS NOW WORKS; PR #27/#28 merged; canvas-height defect no longer treated as open`
 **NEXT_GATE:** `F0.4 Layers/Inspector/responsive integration acceptance → next F0.x point in strict order`
 **PARALLEL_WORKSTREAMS:** `0`
 
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
-**Verzió:** MASTER-2.80 — nyílt forráskód-first mérnöki alapelv, bővített Visual Editor-képességleltár és F0.4 aktív részpont frissítése; a 2.75–2.76 roadmapek történetiek.  
+**Verzió:** MASTER-2.81 — F0.4 Inspector–responsive contract fix, canonical Property Registry kulcsok, override-reset és CI PASS rögzítése; a 2.75–2.76 roadmapek történetiek.  
 **Frissítve:** 2026-10-13.  
 **Dokumentum státusza:** ez az egyetlen végrehajtási igazságforrás.
 **Audit / implementation baseline:** GitHub `v2/foundation`, commit `54daad2357ca576d9e333a052e7bcbb6c2e2d51a` (2026-10-13; F0.3 history-integrity, revision-conflict recovery és save/reload client hardening PR #18–#25 integrálva; production save/reload runtime acceptance továbbra is nyitott). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
