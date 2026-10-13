@@ -9,7 +9,7 @@
 
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 **Dokumentum státusza:** ez az egyetlen végrehajtási igazságforrás.
-**Audit baseline:** GitHub `v2/foundation`, commit `5430485a` (2026-10-13; audit-index and Visual Editor rebaseline update). A repository-snapshot nem helyettesíti a külön szükséges runtime-, teszt- és felhasználói bizonyítékokat.
+**Audit baseline:** GitHub `v2/foundation`, commit `aeba30d9` (2026-10-13; audit-index and Visual Editor rebaseline update). A repository-snapshot nem helyettesíti a külön szükséges runtime-, teszt- és felhasználói bizonyítékokat.
 
 ### Jelenlegi igazolt állapot
 Ez a blokk kizárólag az M0 előtti lezárt gate-eket rögzíti; nem jelenti azt, hogy az M0 alatti részpontok lezárultak.
