@@ -3971,3 +3971,22 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 **Döntés / státusz:** a H19–H34 ID-szintű archive-to-current egyezés **PASS kizárólag erre a szűk ellenőrzésre**. A teljes H19–H34 szemantikai reconciliáció, a `00/A` és `00.9–00.9.6.B` eredeti források teljes visszanyerése, valamint a kétirányú 359 funkció-ID contract/evidence kitöltése továbbra is **OPEN**. P0.2 **IN PROGRESS / NOT PASS**. Nincs runtime kódmódosítás és nem indult feature-fejlesztés.
 
 **Következő auditlépés:** a jelenlegi MASTER 41. fejezetének H19–H34 sorait eredeti forrásbullet- és capability-szinten kell folytatni, elsőként a 19–22 tartományban már megkezdett nyomkövetés bizonyítékainak kiterjesztésével a 23–34 tartományra; közben külön kell megőrizni a forrásból nem bizonyítható állításokat OPEN státusszal. A hiányzó eredeti fájlok tartalmát nem szabad az archív MASTER összefoglalóiból kitalálni.
+
+### 41.3.14. P0.2 — dynamic binding contract versus canonical Schedule read path (2026-10-13)
+
+**Átnézett források:** `public/editor-v2/core/schema.js`, `public/editor-v2/core/validation.js`, `src/core/editor-validation.ts`, `src/core/schedule-read.ts`, `src/routes/public/schedule.ts`, `public/assets/page-renderer.js`. Ez célzott kódút-ellenőrzés; tesztet és böngészős acceptance-et ebben a körben nem futtattam.
+
+**Pozitív, konkrétan igazolható szerződések:**
+- A kanonikus Editor schema a Schedule node létrehozásakor alapértelmezett `dataBindings.schedule = { source: 'schedule_items', version: 1 }` értéket állít be.
+- A szerveroldali `validatePublishDocument` a Schedule node `props.schedule` konfigurációját validálja: verzió, mód, limit, statusok, platformok, sorrend, boolean megjelenítési kapcsolók és üres állapot szövege.
+- A publikus renderer külön `/api/public/schedule` végpontot kér le a Schedule preview/render útvonalon; a `publicScheduleRoute` a canonical site contextből származó `siteId`-t továbbadja a `readPublicSchedule` függvénynek.
+- A `readPublicSchedule` normalizálja és korlátozza a lekérdezési konfigurációt, a SQL lekérdezés pedig kötelező `site_id = ?` feltételt és engedélyezett státuszszűrést használ. Ez a konkrét Schedule olvasási útvonalon site-scope védelmet mutat.
+
+**Nyitott contract-rés / határ:**
+- A vizsgált `validatePublishDocument` a `props.schedule` konfigurációt ellenőrzi, de a node általános `dataBindings` mezőjét nem validálja source/field/type/version/permission/site-scope szerződésként.
+- A Schedule node `dataBindings.schedule.source = schedule_items` és a `props.schedule` olvasási konfiguráció két külön mező; a vizsgált fájlok nem bizonyítják, hogy a generic `dataBindings` mező a runtime adatlekérés vezérlője. A megfigyelt publikus renderer a `props.schedule` konfigurációból építi a queryt. Ezért a konkrét Schedule API site-scope védelmét nem szabad általános data-binding contract PASS-ként kiterjeszteni.
+- A vizsgált útvonalból nem következtetek arra, hogy a backend más részein nincs további védelem; a megállapítás kizárólag a felsorolt kódút és mezők közötti igazolható kapcsolatra vonatkozik.
+
+**Következő bizonyítékigény:** (1) döntés, hogy `dataBindings` canonical konfigurációs metadata, tényleges runtime binding, vagy átmeneti/legacy mező; (2) ha runtime binding, explicit schema és szerveroldali allowlist/type/permission/site-scope/published-state validáció; (3) negatív tesztek másik site, draft/private adat, tiltott source/field és ismeretlen binding-version ellen; (4) save → publish → public-render end-to-end bizonyíték. A hiányzó contractot nem szabad pusztán a Schedule endpoint meglévő site-szűréséből lezártnak tekinteni.
+
+**Státusz:** a Schedule-specifikus olvasási validáció és site-scope útvonal **FORRÁSSZINTEN IGAZOLT**; a generic `dataBindings` contract és a renderer/schema közötti kanonikus szerep **OPEN**. P0.2 **IN PROGRESS / NOT PASS**. Nincs runtime kódmódosítás.
