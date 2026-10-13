@@ -2307,6 +2307,73 @@ The short decision record must name the problem and acceptance criteria; existin
 **Érintett canonical ID-k:** EDT-007, EDT-009, EDT-024/025, EDT-027/028, QA-002, QA-004, QA-006.  
 **Státusz:** OPEN — runtime/browser acceptance szükséges; a korábbi „resize + undo/redo működik” visszaigazolás nem zárja le a canvas height/scroll extent hibát.
 
+
+### 37.22. P0.2 — Bullet-szintű crosswalk, batch 1: E.2 Public Website és E.3 Editor Core
+
+**Forrás:** archived MASTER snapshot, 00.9.6.E.2.1–E.2.3 és E.3.1–E.3.7. A forráshely + sorszám stabil hivatkozás az adott fejezeten belüli bullet sorrendjére. A mapping a jelenlegi ID-khoz rendel, nem jelenti a runtime funkció készültségét.
+
+| Forráskulcs | Megőrzött követelmény röviden | Canonical current ID | Döntés | Célfázis | QA-horgony |
+|---|---|---|---|---|---|
+| E.2.1-01 | Public page types: Home/About/Schedule/Live/VOD/Clips/platform pages/Community/Contact/Resources/Store/Membership/Events/News/Digital/Sponsor | WEB-014–WEB-027 | EXPAND | 1.0 core pages; 1.5–5.0 later domains | QA-002/004/008 |
+| E.2.1-02 | Page and route editing through Page/CMS, no routine hand-edited HTML | WEB-001, WEB-002, WEB-012, WEB-013 | MERGE | 1.0 | QA-002/004 |
+| E.2.1-03 | Shared header/footer/navigation/mobile menu/logo/social links | WEB-009, WEB-010, WEB-011 | EXPAND | 1.0 | QA-004/005 |
+| E.2.1-04 | Navigation order/label/target/visibility/new-tab; server-side URL and permission validation | WEB-009, WEB-013, SEC-008 | EXPAND | 1.0 | QA-003/004 |
+| E.2.1-05 | 404, empty/loading/API error/offline/maintenance states | WEB-028, ADM-008, QA-006 | EXPAND | 1.0 baseline | QA-004/006 |
+| E.2.1-06 | Per-language title/slug/metadata/content and explicit missing-translation fallback | LOC-001, WEB-001, SEO-001 | DEFER/EXPAND | 1.0 architecture-ready; full workflow later | QA-004/005 |
+| E.2.2-01 | Trustworthy/fresh Twitch live status, player, game/category and provider-permitted metrics | LIV-001–LIV-007, INT-010, INT-011 | EXPAND | 1.0 Twitch baseline; metrics scope-gated | QA-002/003/004 |
+| E.2.2-02 | Next stream, timezone/countdown, postponed/cancelled state | SCH-003, SCH-005, SCH-009, WEB-016 | EXPAND | 1.0 | QA-002/004 |
+| E.2.2-03 | Configurable VOD/clip/Short feed and empty/provider-error states | CNT-002–CNT-004, CNT-019, DYN-005 | DEFER/EXPAND | 1.5–2.0 | QA-002/004/006 |
+| E.2.2-04 | Community/support CTA and later membership/product blocks | COM-001, SUP-001, WEB-019, WEB-023 | MERGE | 1.0 external links; membership/product later | QA-004/008 |
+| E.2.2-05 | Provider outage fallback, last success/freshness and retry | INT-008, INT-009, INT-020, LIV-002, DYN-005, OPS-008 | EXPAND | 1.0 baseline; provider-specific later | QA-003/006/008 |
+| E.2.3-01 | Canonical URL/title/description/OG/Twitter/favicon/robots/sitemap/structured data | SEO-001–SEO-004 | EXPAND | 1.0 | QA-004/005 |
+| E.2.3-02 | Correct share preview and pre-publish metadata preview | SEO-002, WEB-005, WEB-006 | MERGE | 1.0 | QA-004/005 |
+| E.2.3-03 | Keyboard/focus/heading/contrast/alt/forms/reduced motion | QA-005, EDT-037, EDT-040, RES-007 | EXPAND | 1.0 baseline; advanced interaction QA later | QA-004/005 |
+| E.2.3-04 | Image optimization/lazy loading/layout shift/cache invalidation | RES-004, WEB-030, OPS-008, QA-006 | EXPAND | 1.0 baseline | QA-004/006 |
+| E.2.3-05 | Consent-aware analytics and data minimization | ANL-002, COM-015, COM-017, SEC-010 | DEFER/EXPAND | Privacy baseline 1.0; audience analytics later | QA-003/008 |
+| E.3.1-01 | Editor toolbar with page/save/history/viewport/zoom/preview/publish actions | EDT-005, EDT-007, EDT-027, EDT-032, EDT-033 | EXPAND | 1.0 | QA-002/004 |
+| E.3.1-02 | Pages/Layers/Elements panels; later assets/templates/symbols | EDT-012, EDT-015, RES-010, DSN-008–DSN-012 | EXPAND | Core panels 1.0; library tabs phased | QA-002/004 |
+| E.3.1-03 | Canvas with selection frame/drop zones/guides/viewport width | EDT-007–EDT-010, EDT-025 | EXPAND | 1.0 | QA-002/004/005 |
+| E.3.1-04 | Inspector categories/search/help/validation/default reset | EDT-021–EDT-023 | EXPAND | 1.0 | QA-002/004 |
+| E.3.1-05 | Resizable/collapsible panels and no clipped small-screen workspace | ADM-010, EDT-035, EDT-036, QA-005 | EXPAND | 1.0 desktop/mobile baseline; tablet acceptance explicitly required | QA-004/005 |
+| E.3.1-06 | Empty-project onboarding/template start and save-protection messaging | EDT-041, EDT-042, DSN-008, DSN-009 | EXPAND | 1.0 | QA-002/004/006 |
+| E.3.2-01 | One canonical Page Model and one save/publish/revision path | EDT-001, EDT-003–EDT-005, WEB-004–WEB-008 | KEEP | 0.x–1.0 | QA-002/003/004 |
+| E.3.2-02 | Page→Section→Container/Box→Column/Stack→Element with reusable slots | EDT-002, EDT-016–EDT-019, DSN-012, DSN-013 | EXPAND | 1.0 core; reusable components phased | QA-002/004 |
+| E.3.2-03 | Stable node IDs/types/props/children/order/visibility/lock/responsive/source/schema | EDT-001, EDT-002, EDT-014, EDT-024 | EXPAND | 0.x–1.0 | QA-002/003 |
+| E.3.2-04 | DOM/canvas never source of truth; mutations through structured commands | EDT-003, EDT-004, EDT-006 | KEEP | 0.x–1.0 | QA-002/003 |
+| E.3.2-05 | No tree cycles, invalid parent-child relations or forbidden node types | EDT-002, EDT-003, EDT-022 | EXPAND | 0.x–1.0 | QA-002/003 |
+| E.3.2-06 | Atomic, validated reorder/reparent/duplicate/delete | EDT-004, EDT-011, EDT-038 | EXPAND | 1.0 | QA-002/004 |
+| E.3.3-01 | Canvas/Layers selection sync, hover/focus and parent breadcrumb | EDT-006, EDT-012, EDT-013 | EXPAND | 1.0 | QA-002/004/005 |
+| E.3.3-02 | Move/resize/drop/snap/guides/grid/zoom/pan/viewport bounds | EDT-007–EDT-010 | EXPAND | 1.0 | QA-002/004/005 |
+| E.3.3-03 | Drag/resize respects layout mode; no accidental flex/grid→absolute conversion | EDT-009, EDT-016, EDT-022, EDT-024 | EXPAND | 1.0 | QA-002/004 |
+| E.3.3-04 | Duplicate/delete/copy/paste/order/lock/hide/multi-select | EDT-011, EDT-014, EDT-038 | EXPAND | 1.0 core actions; multi-select only when accepted | QA-002/004 |
+| E.3.3-05 | Keyboard shortcuts/context menu/accessibility/touch interactions | EDT-035, EDT-037, QA-005 | EXPAND | 1.0 baseline | QA-004/005 |
+| E.3.4-01 | User-friendly Stack/Row/2–3 column/Grid layout selectors | EDT-016 | EXPAND | 1.0 | QA-002/004 |
+| E.3.4-02 | Alignment/gap/padding/margin/size/min-max/aspect/position/overflow/wrap | EDT-009, EDT-016, EDT-021, EDT-022 | EXPAND | 1.0 | QA-002/004 |
+| E.3.4-03 | Prefer Flex/Grid/flow over rigid absolute positioning | EDT-016, EDT-024 | EXPAND | 1.0 | QA-002/004/005 |
+| E.3.4-04 | Desktop/tablet/mobile viewports and visible inherited responsive overrides | EDT-024, EDT-025 | EXPAND | 1.0 | QA-002/004/005 |
+| E.3.4-05 | Controlled mobile hide/reorder/column changes without silent desktop regressions | EDT-024–EDT-026 | EXPAND | 1.0 | QA-002/004/005 |
+| E.3.4-06 | Overflow/wrap warnings and minimum viewport checks | EDT-025, QA-005, OPS-008 | EXPAND | 1.0 baseline | QA-004/005/006 |
+| E.3.5-01 | Declarative typed Property Registry, no per-element ad hoc Inspector | EDT-021, EDT-022 | KEEP | 0.x–1.0 | QA-002/004 |
+| E.3.5-02 | Text/URL/resource/number/unit/color/token/select/toggle/spacing/type/responsive fields | EDT-022, DSN-007, RES-010, RES-013 | EXPAND | 1.0 core fields; advanced types phased | QA-002/004 |
+| E.3.5-03 | Inspector categories/search/validation/help/default/reset/dirty/dependency/readonly/permission | EDT-021–EDT-023, ADM-009 | EXPAND | 1.0 | QA-002/003/004 |
+| E.3.5-04 | Inspector/Canvas/Layers share one state; invalid changes cannot persist | EDT-006, EDT-013, EDT-021, EDT-022 | KEEP | 0.x–1.0 | QA-002/004 |
+| E.3.5-05 | Schedule block presentation config never mutates Schedule domain records | EDT-020, SCH-011, DYN-001, DYN-007 | KEEP | 1.0 | QA-002/003/004 |
+| E.3.6-01 | Base elements and plain text; Rich Text editor explicitly later | EDT-017–EDT-019 | EXPAND | 1.0 base elements; advanced Rich Text later | QA-002/004 |
+| E.3.6-02 | Table/Accordion/Tabs typed fields, validation, keyboard/responsive/public renderer | EDT-019, WEB-032, QA-005 | EXPAND | 1.0 only if full acceptance passes; otherwise defer individual blocks | QA-002/004/005 |
+| E.3.6-03 | Section/Box/Stack/Row/Columns/Grid/reusable Slot | EDT-016, DSN-013 | EXPAND | 1.0 layout primitives; reusable slot phased | QA-002/004 |
+| E.3.6-04 | Live/Twitch/Next Stream/Schedule/VOD/Clips/Social/Community/Support/Store dynamic blocks | EDT-020, LIV, SCH, CNT, COM, SUP, STO, DYN | EXPAND | 1.0 Twitch/Schedule/social baseline; later domains only in their phases | QA-002/003/004 |
+| E.3.6-05 | Every element has typed defaults/validation/renderer/responsive/accessibility/error-empty states | EDT-015–EDT-020, WEB-032, QA-005 | EXPAND | 1.0 for included elements | QA-002/004/005 |
+| E.3.6-06 | Categorized searchable block library, canvas preview and compatible drag-drop | EDT-008, EDT-015 | EXPAND | 1.0 | QA-002/004 |
+| E.3.6-07 | Embeds limited to approved hosts with CSP/permission controls | WEB-032, SEC-008, QA-003 | EXPAND | 1.0 | QA-003/004 |
+| E.3.7-01 | Undo/redo from structured commands, never DOM snapshots | EDT-003, EDT-005 | KEEP | 0.x–1.0 | QA-002/004 |
+| E.3.7-02 | Dirty/save-in-progress/success/error/retry/conflict states | EDT-027, EDT-029, EDT-031 | EXPAND | 1.0 | QA-002/004/006 |
+| E.3.7-03 | Validated autosave and explicit save | EDT-027, EDT-028, EDT-031 | EXPAND | 1.0; autosave only if its own acceptance passes | QA-002/004/006 |
+| E.3.7-04 | Expected-version concurrency; no silent overwrite | EDT-029, EDT-030 | KEEP | 1.0 | QA-002/003/004 |
+| E.3.7-05 | Unsaved navigation warning, recovery and browser refresh recovery | EDT-031, EDT-042 | EXPAND | 1.0 | QA-002/004/006 |
+| E.3.7-06 | Canvas/Layers/Inspector/history/backend stay consistent after each operation | EDT-006, EDT-013, EDT-028, QA-002 | KEEP | 0.x–1.0 | QA-002/004 |
+
+**Batch 1 result:** 57 E.2/E.3 bullets mapped to canonical feature IDs, explicit decision, phase and QA family. The mapping is not runtime PASS. Before P0.2 closure, verify the source bullet count and text against the archive, validate every ID/QA anchor, and continue with E.4–E.22 and F.1–F.13 in further batches.
+
 ## 38. Részletes Visual Editor képességkatalógus
 
 **Cél:** a vizuális szerkesztő teljes részletképességeinek önálló, tesztelhető katalógusa. A felsorolás a végleges platform követelményét rögzíti, nem a runtime készültségét. Minden elem a közös Page Model, command/history/validation/persistence és jogosultsági szerződésen keresztül működik.
