@@ -1970,6 +1970,49 @@ P0 csak minden kapu bizonyítékalapú PASS-a után zárható.
 5. P0.5–P0.6 csak az előző evidence körök után zárható.
 
 
+
+### 37.7. P0.4 — Admin menü és ténylegesen elérhető munkaterületek
+
+**Ellenőrzött forrás:** public/admin-home.html, public/editor-v2/index.html, public/editor-v2/app.js és src/index.ts. A következő táblázat a jelenlegi UI-ban látható menü és a tényleges elérhetőség közti különbséget rögzíti. A felületi felirat önmagában nem igazolja a teljes backend capabilityt.
+
+| Admin felületi elem | HTML/route állapot | Jelenlegi besorolás | Kötelező következő ellenőrzés |
+|---|---|---|---|
+| Kezdőlap | Aktív link /admin → public/admin-home.html | Elérhető Admin home | A Dashboard minden számlálójának és állapotának forrását, frissességét, hibakezelését és API-függését ellenőrizni. |
+| Weboldal szerkesztése | Aktív link /admin/editor | Canonical Editor v2 belépés | A save/reload/preview/publish/unpublish/conflict/rollback útvonalak külön acceptance-e. |
+| Adásrend | Aktív link az Editor v2-re; Editorban külön Adásrend tab | Meglévő canonical Schedule útvonal, nem külön Admin app | A Schedule UI és az admin/public API közös domainjének regressziós ellenőrzése. |
+| Oldalak és tartalom | Aktív link az Editor v2-re | Editor által kezelt Page Model; külön CMS/content studio nincs igazolva | A tervben szereplő tartalomkezelési bővítéseket külön CNT capabilityként kell kezelni. |
+| Média és erőforrások | HTML-ben disabled gomb, „Tervezett” címkével | Placeholder / nem elérhető munkaterület | Nem szabad késznek jelölni; Resource API, upload, registry és usage-map audit szükséges. |
+| Design Studio | Disabled gomb, „Tervezett” | Placeholder | Design token/template/component domain még külön contractot igényel. |
+| Stream Studio | Disabled gomb, „Tervezett” | Placeholder | OBS/overlay/alert funkciók külön fázis és provider/permission contract. |
+| Publikálás | Disabled gomb, „Tervezett”; a tényleges Editorban van publish művelet | Admin menü-placeholder, de Editor publish művelet létezik | Külön kell választani az Editor page-publish-t a jövőbeli többplatformos content-publishingtól. |
+| Közösség, Analitika, Üzlet és tagság, Közönség és e-mail, Automatizálás | Disabled gombok | Placeholder / tervezett | Nincs igazolt teljes modul-backend; roadmapban megőrzendők. |
+| Integrációk | Disabled Admin menügomb, de Twitch connection kezelőgomb létezik az Editorban és Twitch API-k regisztráltak | Részben működő Twitch-integráció, még nem teljes Connections Center | A kapcsolatok önálló canonical Admin moduljának route/UI/permission/health/sync history szerződése hiányzik. |
+| VOD és rövid videók, AI-asszisztens, Beállítások és biztonság, Nyelvek és lokalizáció, Fejlesztői eszközök | Disabled gombok | Placeholder / későbbi fázis | A jövőbeli igényeket nem szabad a menü jelenléte miatt implementáltnak minősíteni. |
+| Editor: undo/redo, preview, save, publish/unpublish, konfliktus export/újratöltés, Oldalak/Elemek/Rétegek/Adásrend tab, canvas zoom/fit, Inspector és mobil műveletsor | public/editor-v2/index.html kontrolljai és app.js | Kódolvasással igazolt UI-elemek; a teljes működés nincs automatikusan bizonyítva | Minden actionhez event-handler → command/API → persistence → teszt → browser acceptance láncot kell ellenőrizni. |
+
+**UI-állapot szabály:** a disabled „Tervezett” menüelem hasznos termék-roadmap jelzés, nem hiba és nem kész funkció. A következő felület-audit külön listázza az aktív, disabled, csak vizuális, hiányzó handlerű, hibás célra mutató és API nélküli műveleteket.
+
+### 37.8. P0.3 — Migrációkból igazolt első D1 tábla- és ownership-leltár
+
+A migrációk kódja alapján az alábbi adatobjektumok jelen vannak a schema-történetben. Ez nem helyettesíti a távoli D1 aktuális sémájának lekérdezését, a foreign key ellenőrzést vagy az összes runtime consumer feltérképezését.
+
+| Tábla / objektum | Bizonyított szerep a migrációk alapján | Site-scope / életciklus státusz |
+|---|---|---|
+| users, sessions | Felhasználók és munkamenetek | Auth domain; session lejárat és revocation külön security acceptance. |
+| sites | Site ownership alap | A sites tábla és kapcsolódó ownership migrációk léteznek; teljes tenant-szintű runtime enforcement audit nyitott. |
+| pages | Canonical oldalak, draft JSON, published snapshot, sort order és site_id | 0017 migrációban site_id NOT NULL és sites FK szerepel; a korábbi állapot és éles D1 schema külön ellenőrzendő. |
+| editor_revisions | Oldalrevíziók, verzió, dokumentum, készítő és időbélyeg | pages-hez kapcsolódó FK/lifecycle; a migráció explicit módon kezeli a két tábla közötti FK-ciklust. |
+| schedule_items / schedule_items_v2 | Canonical adásrend és később site/source mezőkkel bővített változat | A 0017 migráció schedule_items_v2 objektumot hoz létre és átmozgat; a végső táblanév és a remote schema a migráció utáni állapotban ellenőrizendő. |
+| media / media_v2 | Média metaadat és site ownership | A migrációs lánc site_id indexet/ownership mezőt kezel; az R2 objektumok, upload route-ok, törlés és usage-map teljes leltára nyitott. |
+| social_accounts / social_accounts_v2 | Külső social account kapcsolatok | Site-scope migráció igazolt; teljes provider runtime adapter-lefedettség nem következik belőle. |
+| twitch_connections / twitch_connections_v2, twitch_oauth_states / twitch_oauth_states_v2 | Twitch kapcsolat és OAuth state | 0016 site ownership mezőt/indexet ad, 0017 NOT NULL hardeninget végez; teljes token/security/live provider acceptance külön bizonyítandó. |
+| site_settings | Webhely beállításai | Jelenlegi route key='site' rekordot használ; site_id scope hiánya nyitott multi-site döntés. |
+| design_tokens, editor_components, editor_preferences | Editor/platform bővítési táblák a korábbi migrationben | A schema jelenléte nem bizonyít teljes aktív consumer/API/UI-lifecycle-t; mindegyikhez külön consumer-leltár kell. |
+| social_accounts, media, audit_log | Integrációs metadata, media metadata, audit események | Az ownership és adatretention, hozzáférés, cleanup, audit-korlátozás és R2 egyezőség teljes ellenőrzése nyitott. |
+| __e44_*_snapshot_20261007 | 0017 migráció során létrehozott átmeneti snapshot táblák | **Kiemelt ellenőrzési feladat:** meg kell vizsgálni, hogy az éles migráció utáni schema tartalmazza-e ezeket; eltávolításról csak bizonyított adatmegőrzés és migrációs/recovery döntés után lehet dönteni. |
+
+**P0.3 következő technikai feladata:** migrációs sorrendből determinisztikusan rekonstruálni a végső schema-t, majd ezt összevetni a remote D1 schema-val; az összes SQL-ben előforduló tábla/mező/consumer listát ki kell nyerni, és domainenként rögzíteni az olvasókat, írókat, owner-t, site scope-ot, FK-kat, lifecycle-t és teszteket. A fenti snapshot-tábla megjegyzés nem állítja, hogy azok a remote D1-ben biztosan megmaradtak; csak azt jelzi, hogy a migráció létrehozza őket, ezért a végeredmény ellenőrzése szükséges.
+
 ## 38. Részletes Visual Editor képességkatalógus
 
 **Cél:** a vizuális szerkesztő teljes részletképességeinek önálló, tesztelhető katalógusa. A felsorolás a végleges platform követelményét rögzíti, nem a runtime készültségét. Minden elem a közös Page Model, command/history/validation/persistence és jogosultsági szerződésen keresztül működik.
