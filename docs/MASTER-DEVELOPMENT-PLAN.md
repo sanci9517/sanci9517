@@ -4238,8 +4238,9 @@ F0.2 DoD:
 - [x] A kanonikus Editor útvonal `/admin/editor`; a Schedule és oldalstruktúra jelenleg ebből az Editor munkaterületből érhető el, ezért külön Schedule URL-t nem szabad kitalálni.
 - [x] A webhelybeállítások API admin szerepkört, az oldalak és adásrend API-k editor szerepkört igényelnek; a kezdőoldal valós session/role-adatot jelenít meg, az API-k pedig külön végzik a jogosultságellenőrzést.
 - [x] F0.2 első kódváltozás: a korábban legfeljebb 600 px szélességen teljesen eltűnő funkciókeresés mobilon külön, billentyűzetet fókuszáló keresőgombbal megnyitható és Escape-pel bezárható.
+- [x] A mobil kereső alapállapotban rejtett; megnyitáskor a keresőmező kap fókuszt, bezáráskor és Escape-re a fókusz visszatér a keresőgombra.
 - [x] A statikus webhely-kontekstuson szereplő, működő webhelyváltót sugalló chevron eltávolítva; nincs még több-webhelyes váltófunkció, ezért nem mutatjuk interaktívnak.
-- [x] Új Admin Home contract teszt készült a mobil kereső nyitására, bezárására és Escape-kezelésére.
+- [x] Új Admin Home contract teszt készült a mobil kereső rejtett alapállapotára, nyitására, bezárására és fókuszkezelésére.
 - [ ] A feature branch lokális TypeScript- és tesztfuttatásai még szükségesek.
 - [ ] PR-hez kötött friss CI, a mobil kereső böngészős ellenőrzése, auth/role/direct-route regresszióteszt és felhasználói acceptance még szükséges.
 
