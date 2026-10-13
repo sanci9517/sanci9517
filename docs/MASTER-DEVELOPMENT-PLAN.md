@@ -4539,3 +4539,53 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 
 **Coverage count:** 57 E7–E9 source items are individually keyed. E10–E24 and the roadmap's global rules remain OPEN. P0.2 **IN PROGRESS / NOT PASS**; documentation-only, no runtime code/data changed and no tests run.
 
+### 41.3.28. P0.2 — MASTER-FINAL-ROADMAP source-key ledger: E10 Design System, E11 Components, E12 Clipboard (2026-10-13)
+
+**Source:** docs/archive/plans/MASTER-FINAL-ROADMAP.md, E10–E12, archive lines 313–355. All 35 source checklist items are retained individually below; old checkbox status is historical.
+
+| Source key | Archive line | Exact source item | Current E target | Candidate canonical IDs | Decision / phase / acceptance |
+|---|---:|---|---|---|---|
+| ROADMAP-E10-01 | 314 | - [ ] colors | E.6.1-01 | DSN-001/002 | KEEP — token schema/type/allowed value definitions required; acceptance evidence OPEN |
+| ROADMAP-E10-02 | 315 | - [ ] typography | E.6.1-01 | DSN-001/007 | KEEP — typography tokens and font registry must be canonical; acceptance evidence OPEN |
+| ROADMAP-E10-03 | 316 | - [ ] spacing | E.6.1-01 | DSN-001/006 | KEEP — spacing tokens preserve scale and unit semantics; acceptance evidence OPEN |
+| ROADMAP-E10-04 | 317 | - [ ] radius | E.6.1-01 | DSN-001 | KEEP — radius token schema and supported CSS units OPEN; acceptance evidence OPEN |
+| ROADMAP-E10-05 | 318 | - [ ] shadows | E.6.1-01 | DSN-001 | KEEP — shadow tokens require validated structured values; acceptance evidence OPEN |
+| ROADMAP-E10-06 | 319 | - [ ] breakpoints | E.6.1-01; E.3.4-04 | DSN-006; EDT-023–026 | KEEP — breakpoints shared with responsive engine, not independent values; acceptance evidence OPEN |
+| ROADMAP-E10-07 | 320 | - [ ] CSS variables/tokens | E.6.1-01 | DSN-001/002 | KEEP — CSS variables are generated from canonical token IDs; no second token store; acceptance evidence OPEN |
+| ROADMAP-E10-08 | 321 | - [ ] themes | E.6.2-01 | DSN-005 | KEEP — theme/preset lifecycle and versioning acceptance OPEN; acceptance evidence OPEN |
+| ROADMAP-E10-09 | 322 | - [ ] light/dark későbbi lehetőség | E.6.2-01 | DSN-005; QA-005 | DEFER — light/dark theme switching only after contrast, asset and responsive acceptance; acceptance evidence OPEN |
+| ROADMAP-E10-10 | 323 | - [ ] Sanci brand tokens | E.6.1-01 | DSN-001/005/016 | KEEP — Sanci brand tokens remain reusable and configurable, not hardcoded per page; acceptance evidence OPEN |
+| ROADMAP-E10-11 | 324 | - [ ] token override | E.6.2-02 | DSN-002/003/004 | KEEP — local override explicit, visible and reversible; acceptance evidence OPEN |
+| ROADMAP-E10-12 | 325 | - [ ] usage search | E.6.2-03 | DSN-003 | KEEP — usage search/dependency map includes pages, components and templates; acceptance evidence OPEN |
+| ROADMAP-E11-01 | 328 | - [ ] reusable component | E.6.5-01 | DSN-011/012 | KEEP — reusable component definition and typed schema; acceptance evidence OPEN |
+| ROADMAP-E11-02 | 329 | - [ ] component instance | E.6.5-01 | DSN-012 | KEEP — instance references canonical master, not copied duplicate state; acceptance evidence OPEN |
+| ROADMAP-E11-03 | 330 | - [ ] master/instance kapcsolat | E.6.5-01 | DSN-012/013 | KEEP — master/instance propagation and sync policy explicit; acceptance evidence OPEN |
+| ROADMAP-E11-04 | 331 | - [ ] local override | E.6.5-01 | DSN-013 | KEEP — local override explicit, visible and resettable; acceptance evidence OPEN |
+| ROADMAP-E11-05 | 332 | - [ ] variants | E.6.5-02 | DSN-013 | KEEP — variants use typed props/slots and compatibility checks; acceptance evidence OPEN |
+| ROADMAP-E11-06 | 333 | - [ ] state variants | E.6.5-02 | DSN-013 | KEEP — state variants do not bypass interaction/action validation; acceptance evidence OPEN |
+| ROADMAP-E11-07 | 334 | - [ ] reusable sections | E.6.3-01 | DSN-010/012/013 | KEEP — reusable section preserves hierarchy and resource references; acceptance evidence OPEN |
+| ROADMAP-E11-08 | 335 | - [ ] header/footer | E.2.1-03; E.6.5-01 | WEB-002; DSN-012/013 | KEEP — shared header/footer/navigation are reusable canonical components, not duplicated hardcoded page markup; acceptance evidence OPEN |
+| ROADMAP-E11-09 | 336 | - [ ] card systems | E.6.5-02 | EDT-018/019; DSN-011/013 | KEEP — card system uses typed data and shared variants; acceptance evidence OPEN |
+| ROADMAP-E11-10 | 337 | - [ ] CTA | E.3.6-01; E.6.5-02 | EDT-017/039; DSN-016 | KEEP — CTA/button registry has canonical action/route, permission and style; acceptance evidence OPEN |
+| ROADMAP-E11-11 | 338 | - [ ] component validation | E.3.5-04; E.6.5-02 | EDT-021/022; QA-002/003 | KEEP — component schema/props/slots validated before save and render; acceptance evidence OPEN |
+| ROADMAP-E12-01 | 345 | - [ ] copy | E.3.3-04 | EDT-038; EDT-004 | KEEP — copy preserves source and creates immutable clipboard payload; acceptance evidence OPEN |
+| ROADMAP-E12-02 | 346 | - [ ] cut | E.3.3-04 | EDT-038; EDT-004 | KEEP — cut is atomic/undoable; delete semantics and references validated; acceptance evidence OPEN |
+| ROADMAP-E12-03 | 347 | - [ ] paste | E.3.3-04 | EDT-038; EDT-004 | KEEP — paste generates fresh IDs and validates parent/child rules; acceptance evidence OPEN |
+| ROADMAP-E12-04 | 348 | - [ ] duplicate | E.3.3-04 | EDT-011/038 | KEEP — duplicate creates fresh IDs and rewrites internal references; acceptance evidence OPEN |
+| ROADMAP-E12-05 | 349 | - [ ] multi-copy | E.3.3-04 | EDT-038 | KEEP — multi-copy is atomic, permission-safe and undoable; acceptance evidence OPEN |
+| ROADMAP-E12-06 | 350 | - [ ] cross-page paste | E.3.3-04; E.4-01 | EDT-038; EDT-002/011; SEC-003 | KEEP — cross-page paste checks source/target site/page permissions and asset/binding references; acceptance evidence OPEN |
+| ROADMAP-E12-07 | 351 | - [ ] paste structure | E.3.2-02 | EDT-001/002/038 | KEEP — pasted structure validated as a whole before mutation; acceptance evidence OPEN |
+| ROADMAP-E12-08 | 352 | - [ ] paste style only | E.3.5-02 | EDT-021/022/038 | KEEP — style-only paste changes only compatible style properties and is undoable; acceptance evidence OPEN |
+| ROADMAP-E12-09 | 353 | - [ ] import/export JSON | E.18-01; DSN-015 | EDT-001; DSN-015; OPS-004/005; SEC-002 | KEEP — JSON import/export requires schema/version validation, dry-run, permission and no-secret checks; acceptance evidence OPEN |
+| ROADMAP-E12-10 | 354 | - [ ] context menu | E.3.1-01; E.3.3-05 | EDT-039; ADM-006 | KEEP — context menu actions map to canonical action registry and respect permissions; acceptance evidence OPEN |
+| ROADMAP-E12-11 | 355 | - [ ] keyboard shortcuts | E.3.3-05 | EDT-037/038/039; QA-004 | KEEP — keyboard shortcuts have discoverable labels, focus behavior and conflict/disabled-state tests; acceptance evidence OPEN |
+
+**Semantic findings:**
+- Design tokens, themes, breakpoints and font metadata must remain a single canonical token system. Local overrides require explicit inheritance/detach/reset semantics, dependency search, impact preview and rollback; a token selector alone is not proof of these behaviors.
+- Theme light/dark support remains phase-gated. The historical “later possibility” cannot be presented as an active 1.0 switch before contrast, responsive, asset and public-render tests pass.
+- Components, instances, variants and reusable sections must use DSN-012/013 master-instance semantics; shared updates cannot silently overwrite local overrides or break published pages.
+- Clipboard and JSON import/export are not raw DOM/JSON injection. Copy/cut/paste/duplicate must create valid fresh IDs and preserve/validate references; cross-page paste checks site/page ownership; JSON import requires dry-run/no-write, schema/version, permission, no-secret, asset/reference and rollback tests.
+- Context menu and keyboard shortcuts are action-registry entries, not parallel mutation handlers.
+
+**Coverage count:** 34 E10–E12 source items are individually keyed. E13–E24 and the roadmap's global rules remain OPEN. P0.2 **IN PROGRESS / NOT PASS**; documentation-only, no runtime code/data changed and no tests run.
+
