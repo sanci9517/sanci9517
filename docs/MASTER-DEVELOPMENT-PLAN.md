@@ -1950,7 +1950,7 @@ PWA/offline/mobile; provider capabilities/Discord roles; email/CRM/consent; Stre
 ### 37.3. A P0 aktuális állapota
 
 - **P0.1:** IN PROGRESS — a branch/MASTER/archive baseline és a fő route-viselkedés ellenőrizve; az archív route-leírás javítva és a canonical Admin/Dashboard vs Editor v2 útvonal egyeztetve. A commit `a083cf879c3dd15e565cffeb7556dac6d4728faa` ellenőrzésekor a Cloudflare Workers Build, Editor Core Test és Twitch Integration Check mind SUCCESS lett. Az Editor Core workflow typecheck + Editor + Schedule + domain + Admin-home contract tesztet futtat; a Twitch workflow typecheck + Editor/Schedule + Twitch OAuth + site-ownership teszteket futtat. A gate azért marad nyitva, mert a teljes helyi working-tree állapot, a remote D1/schema integritás, valamint a save/reload/publish/mobile browser acceptance ebből a forráskód-auditból nem bizonyítható.
-- **P0.2:** IN PROGRESS — a 271 H19–H34 történeti kulcs soronkénti MAPPED DRAFT crosswalkja (§41) megvan, és a 00.9.6.E/F 35 fő fejezete szintű crosswalkja elkészült (§37.20). A teljes bullet-szintű E/F és korábbi 00/A/C.23/C.24 provenance, a 359 feature ID teljes eredetbesorolása, a döntésindoklás és az ID-nkénti permission/dependency/acceptance contract még nincs lezárva.
+- **P0.2:** IN PROGRESS — a 271 H19–H34 történeti kulcs MAPPED DRAFT crosswalkja (§41), az E.2–E.21 bullet-szintű mappingek (§37.22–37.25), valamint az F.1–F.13 működési részletek első bullet-szintű mappingje (§37.27–37.30) elkészült. A F.1–F.4 batch 28 sorból áll; az F.5–F.8 batch 21 sorából és az F.9–F.13 batch 24 sorából minden hivatkozott feature ID valid a §24 registry ellen, nincs duplikált source key. Még hátra van E.1, a teljes 00/A/C.23/C.24 bullet/provenance reconciliation, a 359 feature ID teljes kétirányú eredetbesorolása, a döntésindoklás és az ID-nkénti permission/dependency/acceptance contract. Ezért P0.2 továbbra sem PASS.
 - **P0.3:** IN PROGRESS — a migrációk és Page Model runtime forrásának első összevetése elkészült (§37.15); nyitott a remote D1 alkalmazott migrációk/séma/index/FK ellenőrzése, a teljes tábla-consumer térkép, a site-scope döntések és az R2 binding/resource API hiánya.
 - **P0.4:** IN PROGRESS — a fő router, Admin placeholder-ek és Editor handler modulok első leltára megvan; a teljes surface/route/action acceptance még nyitott. A felhasználó által jelzett canvas-height/scroll-extent regresszió külön, reprodukálható acceptance-ként rögzítve (§37.21), de runtime PASS nincs.
 - **P0.5:** IN PROGRESS — Twitch/YouTube/TikTok/Discord/Kick hivatalos dokumentációs review és approval/quota/runtime korlátok frissítve (§37.10, §37.14); a teljes feature-to-endpoint/scope/quota/approval mátrix és élő integrációs acceptance még nyitott.
@@ -2688,6 +2688,20 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.13-07 | Future tenant/workspace/member/site hierarchy; server-side workspace/site permissions and package tiers based on evidence | TEAM-001–TEAM-006, SEC-002, SEC-003, OPS-004 | DEFER | 4.0+; tenant isolation is a baseline invariant | QA-003/008 |
 
 **Batch 7 státusz:** 24 követelménycsoport leképezve. A tervszintű megfeleltetés nem jelenti a custom domain, email marketing, Game Profile, export/import vagy SaaS modul implementáltságát.
+
+
+### 37.31. P0.2 — F.1–F.13 mapping validation summary and remaining provenance work
+
+**Validációs eredmények a jelenlegi MASTER commitból:**
+
+| Batch | Scope | Source rows | Unique keys | Unknown §24 feature IDs | Duplicate keys |
+|---|---|---:|---:|---:|---:|
+| §37.27 | F.1–F.4 | 28 | 28 | 0 | 0 |
+| §37.29 | F.5–F.8 | 21 | 21 | 0 | 0 |
+| §37.30 | F.9–F.13 | 24 | 24 | 0 | 0 |
+| **Total** | **F.1–F.13** | **73** | **73** | **0** | **0** |
+
+**Fontos korlát:** a 73 sor a részletes működési követelménycsoportokat fedi le, nem állítja, hogy az archivált fejezet minden felsorolási pontja önálló sorba került. A következő auditkörben az eredeti F.1–F.13 szöveg minden felsorolását soronként össze kell vetni e táblákkal, összevont sor esetén dokumentálni kell a csoportosítás indokát, majd el kell végezni a 00/A és C.23/C.24, illetve az E.1 bullet-szintű crosswalkját. A P0.2 csak kétirányú source-to-feature és feature-to-source coverage után zárható le.
 
 ## 38. Részletes Visual Editor képességkatalógus
 
