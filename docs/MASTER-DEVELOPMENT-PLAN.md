@@ -4187,14 +4187,16 @@ A felhasználó pontos követelménye: nem kizárólag a jelenlegi működő mod
 - [x] Az általános műveleti gombok, ikon-gombok, kis gombok, gyorsműveleti linkek és capability CTA-k inline-flex + align-items:center + justify-content:center szabályt kapnak; a navigáció és a sűrű listák balra igazítása szándékosan megmarad.
 - [x] A képességkártyák reszponzív gridben, sötét/világos témához illeszkedő felületekkel, fókuszállapottal és reduced-motion támogatással jelennek meg.
 - [x] A kártyákban elkerülendő az ugyanazon hosszú funkcióleírás bekezdésben és listában történő ismétlése; a részletes képességek egyszer szerepelnek.
-- [ ] Friss PR-HEAD-en helyi npm run test:admin-home, npm run typecheck és releváns regressziós tesztek.
+- [x] GitHub Actions friss PR-HEAD-en: `npm run typecheck`, `npm run test:editor`, `npm run test:schedule`, `npm run test:domain`, `npm run test:admin-home` sikeres; a Twitch Integration Check regressziós futása is sikeres (2026-10-13). A felhasználó helyi gépén végzett külön futtatás még hátravan.
 - [ ] Böngészős ellenőrzés desktop/tablet/mobil szélességen, mindkét témában; a kártyamagasságok, tördelés, keresés, gombközépre igazítás és túlcsordulás vizuális ellenőrzése.
-- [ ] Felhasználói vizuális elfogadás.
+- [x] Felhasználói vizuális elfogadás — 2026-10-13: a felhasználó elfogadta a jelenlegi Admin főoldal irányát azzal, hogy a fejlesztés közben felmerülő hiányzó képességeket később bővítjük.
 
 **Scope-garancia:** a 24 dashboard-kártya magas szintű felfedezési felület, nem helyettesíti és nem rövidíti le a MASTER 00.9.6.C / 00.9.6.D, E/F specifikációit, a 01–140 preservation matrixet vagy a H19–H34 történeti traceability-t. Ha a részletes MASTER olyan capability-t tartalmaz, amely nem kapott külön dashboard-kártyát, a követelmény attól még megmarad és a megfelelő munkaterület/fázis specifikációjában kötelező. A dashboardon látható tervezett képesség nem bizonyít runtime-implementációt.
 
-**Gate:** a vizuális irány felhasználói elfogadása megtörtént, de F0.1 továbbra sem PASS, amíg a helyi teszt/typecheck és a legfrissebb preview böngészős ellenőrzése nincs lezárva. PR #7 addig nyitott/piszkozat marad; merge csak az ellenőrzési kapuk teljesülése után.
+**Gate:** a vizuális irány felhasználói elfogadása és a friss PR-HEAD CI-ellenőrzése megtörtént. F0.1 továbbra sem PASS, amíg a felhasználó helyi ellenőrzése és a legfrissebb preview böngészős ellenőrzése nincs lezárva. PR #7 addig nyitott/piszkozat marad; merge csak az ellenőrzési kapuk teljesülése után.
 
 - [x] Külön képességkártyák lefedik a dinamikus adatbindinget, a formokat/interakciókat, a publishing/revision folyamatot és a bővíthető tartalommodelleket; ezek sem jelentenek automatikusan kész runtime-funkciót.
 
 - [x] A felhasználó elfogadta a jelenlegi Admin főoldal irányát; a később hiányzóként felismert funkciók fejlesztés közben, a MASTER scope megőrzésével bővíthetők. Ez nem tekintendő a még futtatandó lokális/böngészős ellenőrzések helyettesítésének.
+
+- [x] CI bővítve `test:domain` és `test:admin-home` futtatásával; a `97c3ea85b62991d878d1d63c8f821f41abcc3b02` HEAD-en mindkét GitHub Actions workflow sikeres. Az Admin home szerződéses teszt egy elavult `.panel` CSS-szelektor elvárása miatt először hibázott; az elvárás a tényleges közös `.panel, .module-card` stílushoz igazítva lett, majd az újrafuttatás sikeres volt.
