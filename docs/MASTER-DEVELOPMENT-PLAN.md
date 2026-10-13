@@ -4317,3 +4317,16 @@ F0.2 DoD:
 - [ ] Az F0.2 teljes DoD további részei — minden CTA/route/auth-role ellenőrzés, mobil/keyboard acceptance és production smoke — csak külön bizonyítékkal zárhatók le. A felhasználó által megerősített Admin működés az útvonal működését igazolja, de nem helyettesíti az összes F0.2 acceptance tételt.
 
 **Scope:** a korábbi `/admin/home` URL kompatibilitási alias marad a Workerben; a felület nem hivatkozik rá elsődleges célként. A korábban ismert Android Chrome tablet-login visszairányítási kockázatot ez a UI-only változtatás nem módosítja, ezért annak megoldását külön, bizonyítékokkal kell igazolni, mielőtt az ahhoz kötött korábbi PR vagy auth-módosítás élesül.
+
+## 2.77.9.K — F0.2 login session handoff hardening — 2026-10-13
+
+**Állapot: FEATURE BRANCHEN IMPLEMENTÁLVA; PR-CI ÉS TABLETES PRODUCTION ACCEPTANCE MÉG NINCS.**
+
+- [x] A login API sikeres válasza után a kliens ellenőrzi a `GET /api/auth/session` tényleges állapotát, mielőtt az Adminra navigálna.
+- [x] A munkamenet ellenőrzése `credentials: same-origin` és `cache: no-store` beállítással, legfeljebb három rövid próbálkozással történik.
+- [x] Ha a böngésző nem küldi vissza a sessiont, a login oldal nem indít újabb /admin → /admin/login átirányítási hurkot; helyette egyértelmű hibaüzenetet mutat.
+- [ ] Typecheck és teljes regressziós tesztkészlet PASS.
+- [ ] PR-CI PASS.
+- [ ] Éles acceptance Android Chrome tableten: sikeres belépés után az Admin maradjon nyitva; a `/api/auth/session` authenticated=true állapotú legyen. Ha a javított flow még mindig jelzi, hogy a munkamenet nem igazolható, a sütikezelés gyökérokát célzott böngészős diagnosztikával kell feltárni; ez a változtatás önmagában nem bizonyítja, hogy a tablet böngésző eltárolja a sütit.
+
+**Biztonság:** a session-cookie attribútumokat és a szerveroldali auth/RBAC logikát ez a szelet nem módosítja. Nincs automatikus élesítés pusztán a CI zöld állapota alapján; a tablet-login acceptance szükséges.

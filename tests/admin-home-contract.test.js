@@ -4,6 +4,16 @@ import test from "node:test";
 
 const worker = readFileSync(new URL("../src/index.ts", import.meta.url), "utf8");
 const dashboard = readFileSync(new URL("../public/admin-home.html", import.meta.url), "utf8");
+const loginPage = readFileSync(new URL("../public/admin-login.html", import.meta.url), "utf8");
+
+test("login confirms the new session before navigating to Admin and avoids a redirect loop", () => {
+  assert.match(loginPage, /async function waitForAuthenticatedSession\(\)/);
+  assert.match(loginPage, /fetch\("\/api\/auth\/session", \{[\s\S]*?credentials: "same-origin",[\s\S]*?cache: "no-store"/);
+  assert.match(loginPage, /attempt < 3/);
+  assert.match(loginPage, /payload\?\.data\?\.authenticated === true/);
+  assert.match(loginPage, /A belépés sikerült, de a munkamenet nem igazolható/);
+  assert.match(loginPage, /window\.location\.replace\("\/admin"\)/);
+});
 
 test("canonical Admin route is authenticated and serves the single dashboard asset", () => {
   assert.ok(worker.includes('if (pathname === "/admin") {'));
