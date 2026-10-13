@@ -4395,3 +4395,74 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 
 **Coverage count:** 84 E3/E4/E5 source items are now individually keyed from the archived roadmap (including the E3 goal, ten readiness gates and the E4 Core invariant). The remaining MASTER-FINAL-ROADMAP E6–E24 source items and its global 0/Foundation/Data Model/Core rules remain OPEN for the next batches. P0.2 remains **IN PROGRESS / NOT PASS**. This documentation-only batch did not change runtime code/data or run tests.
 
+### 41.3.26. P0.2 — MASTER-FINAL-ROADMAP source-key ledger: E6 Element Library (2026-10-13)
+
+**Source:** docs/archive/plans/MASTER-FINAL-ROADMAP.md, E6 Element Library, archive lines 174–237. Every original checklist item below is kept separately. These are candidate crosswalks to current Editor/Resource/domain IDs; the archived [ ] checkboxes are historical and do not indicate current status.
+
+| Source key | Archive line | Exact source item | Current E target | Candidate canonical IDs | Decision / phase / acceptance |
+|---|---:|---|---|---|---|
+| ROADMAP-E6-01 | 176 | - [ ] Section | E.3.6-03 | EDT-016 | KEEP — 1.0 section/container primitive; hierarchy/render tests OPEN; tests/acceptance evidence OPEN |
+| ROADMAP-E6-02 | 177 | - [ ] Container | E.3.6-03 | EDT-016 | KEEP — 1.0 container primitive; valid parent-child constraints OPEN; tests/acceptance evidence OPEN |
+| ROADMAP-E6-03 | 178 | - [ ] Stack | E.3.6-03 | EDT-016 | KEEP — 1.0 stack primitive; layout mode/serialization tests OPEN; tests/acceptance evidence OPEN |
+| ROADMAP-E6-04 | 179 | - [ ] Group | E.3.6-03; DSN-012/013 | EDT-002/011/016 | EXPAND — distinguish layout group from reusable component instance; phase/contract OPEN; tests/acceptance evidence OPEN |
+| ROADMAP-E6-05 | 180 | - [ ] Div/Box | E.3.6-03 | EDT-016/021/022 | KEEP — generic Box/Div; supported properties and public-render parity OPEN; tests/acceptance evidence OPEN |
+| ROADMAP-E6-06 | 181 | - [ ] Spacer | E.3.6-03 | EDT-016/017 | KEEP — spacer is a layout primitive; horizontal/vertical values remain independent; tests/acceptance evidence OPEN |
+| ROADMAP-E6-07 | 182 | - [ ] Heading | E.3.6-01 | EDT-017 | KEEP — heading semantic level and accessibility tests OPEN; tests/acceptance evidence OPEN |
+| ROADMAP-E6-08 | 183 | - [ ] Text | E.3.6-01 | EDT-017 | KEEP — plain Text is 1.0 baseline; content serialization/reload OPEN; tests/acceptance evidence OPEN |
+| ROADMAP-E6-09 | 184 | - [ ] Rich Text | E.3.6-01; F.3-09 | EDT-017/019 | DEFER — rich-text editor separately scoped; no parallel text model; tests/acceptance evidence OPEN |
+| ROADMAP-E6-10 | 185 | - [ ] Link | E.3.6-01 | EDT-017; WEB-013 | KEEP — Link element validates route/URL and target policy; tests/acceptance evidence OPEN |
+| ROADMAP-E6-11 | 186 | - [ ] Button | E.3.6-01 | EDT-017; EDT-039 | KEEP — Button is typed action/link, not arbitrary script; tests/acceptance evidence OPEN |
+| ROADMAP-E6-12 | 187 | - [ ] Icon | E.3.6-01 | EDT-017; RES-011/012 | KEEP — icon references canonical registry and safe SVG renderer; tests/acceptance evidence OPEN |
+| ROADMAP-E6-13 | 188 | - [ ] Divider | E.3.6-01 | EDT-017 | KEEP — divider primitive; semantics and styling acceptance OPEN; tests/acceptance evidence OPEN |
+| ROADMAP-E6-14 | 191 | - [ ] Flex | E.3.6-03 | EDT-016/021/022 | KEEP — Flex supported subset only; serialize/render/responsive tests OPEN; tests/acceptance evidence OPEN |
+| ROADMAP-E6-15 | 192 | - [ ] Grid | E.3.6-03 | EDT-016/021/022 | KEEP — Grid supported subset only; named areas/auto-flow only if explicitly validated; tests/acceptance evidence OPEN |
+| ROADMAP-E6-16 | 193 | - [ ] Row | E.3.6-03 | EDT-016/021/022 | KEEP — Row layout primitive; breakpoint/inheritance tests OPEN; tests/acceptance evidence OPEN |
+| ROADMAP-E6-17 | 194 | - [ ] Columns | E.3.6-03 | EDT-016/021/022 | KEEP — Columns layout primitive; no silent flex/grid→absolute conversion; tests/acceptance evidence OPEN |
+| ROADMAP-E6-18 | 195 | - [ ] Absolute | E.3.6-03; C.23.5 | EDT-009/016/021/022 | PHASE-GATED — absolute positioning only in supported subset; invalid values rejected; tests/acceptance evidence OPEN |
+| ROADMAP-E6-19 | 196 | - [ ] Sticky | E.3.6-03; C.23.5 | EDT-009/016/021/022 | PHASE-GATED — sticky behavior needs browser/overflow/stacking-context tests; tests/acceptance evidence OPEN |
+| ROADMAP-E6-20 | 197 | - [ ] Overlay | E.3.6-03 | EDT-016/021/022 | OPEN — clarify layout Overlay vs OBS/browser-source overlay; do not conflate with OBS feature; tests/acceptance evidence OPEN |
+| ROADMAP-E6-21 | 200 | - [ ] Image | E.3.6-02 | EDT-018; RES-001–015 | KEEP — image variant, alt, dimensions, owner and public/protected visibility tests OPEN; tests/acceptance evidence OPEN |
+| ROADMAP-E6-22 | 201 | - [ ] Gallery | E.3.6-02 | EDT-018/019; RES-001–015 | KEEP — gallery list/grid/carousel is typed; resource permissions and empty/error states OPEN; tests/acceptance evidence OPEN |
+| ROADMAP-E6-23 | 202 | - [ ] Video | E.3.6-02 | EDT-018; RES-001–015 | KEEP — video source/poster/duration/caption and provider/embed rules OPEN; tests/acceptance evidence OPEN |
+| ROADMAP-E6-24 | 203 | - [ ] Audio | E.3.6-02 | EDT-018; RES-007 | OPEN — audio player is not a named EDT registry capability; define supported sources, controls, caption/accessibility and phase; tests/acceptance evidence OPEN |
+| ROADMAP-E6-25 | 204 | - [ ] Embed | E.3.6-02 | EDT-018; SEC-005; WEB-032 | KEEP — embed only from approved hosts; CSP/sandbox/URL validation required; tests/acceptance evidence OPEN |
+| ROADMAP-E6-26 | 205 | - [ ] iframe | E.3.6-02 | EDT-018; SEC-005; WEB-032 | KEEP — iframe is not arbitrary HTML; allowlist, sandbox, permissions policy and negative tests; tests/acceptance evidence OPEN |
+| ROADMAP-E6-27 | 208 | - [ ] Accordion | E.3.6-02 | EDT-019 | KEEP — Accordion typed fields, keyboard and responsive/public-render tests OPEN; tests/acceptance evidence OPEN |
+| ROADMAP-E6-28 | 209 | - [ ] Tabs | E.3.6-02 | EDT-019 | KEEP — Tabs typed fields, keyboard/focus and deep-link/selection policy OPEN; tests/acceptance evidence OPEN |
+| ROADMAP-E6-29 | 210 | - [ ] Modal | E.3.6-02; C.23.8-03 | EDT-018/019; EDT-039 | OPEN — Modal/Dialog focus trap/return, escape, keyboard and stacking context require a specific contract; tests/acceptance evidence OPEN |
+| ROADMAP-E6-30 | 211 | - [ ] Carousel | E.3.6-06 | EDT-018/019; EDT-039 | KEEP — Carousel is a typed component; keyboard, reduced-motion, touch and accessibility tests OPEN; tests/acceptance evidence OPEN |
+| ROADMAP-E6-31 | 212 | - [ ] Tooltip | E.3.6-06 | EDT-039; QA-004/005 | OPEN — Tooltip semantics/focus/touch trigger need explicit component contract; tests/acceptance evidence OPEN |
+| ROADMAP-E6-32 | 213 | - [ ] Dropdown | E.3.6-06 | EDT-039; QA-004/005 | OPEN — Dropdown menu/listbox distinction, keyboard navigation and focus return need explicit contract; tests/acceptance evidence OPEN |
+| ROADMAP-E6-33 | 214 | - [ ] Form | E.3.6-02; C.23.8-07 | EDT-019; WEB-020; SEC-002/005/011 | KEEP — secure submit handler and server-side validation are separate from element schema; tests/acceptance evidence OPEN |
+| ROADMAP-E6-34 | 215 | - [ ] Input | E.3.6-02; C.23.8-07 | EDT-019; WEB-020; SEC-002/005/011 | KEEP — input field type/constraints/help/required/default are schema-validated; tests/acceptance evidence OPEN |
+| ROADMAP-E6-35 | 216 | - [ ] Select | E.3.6-02; C.23.8-07 | EDT-019; WEB-020; SEC-002/005/011 | KEEP — select options/permissions/server validation; no client-only trust; tests/acceptance evidence OPEN |
+| ROADMAP-E6-36 | 217 | - [ ] Checkbox | E.3.6-02; C.23.8-07 | EDT-019; WEB-020; SEC-002/005/011 | KEEP — checkbox consent/required state must be explicit and audited where needed; tests/acceptance evidence OPEN |
+| ROADMAP-E6-37 | 218 | - [ ] Textarea | E.3.6-02; C.23.8-07 | EDT-019; WEB-020; SEC-002/005/011 | KEEP — textarea size/request limits, sanitization and accessible labels OPEN; tests/acceptance evidence OPEN |
+| ROADMAP-E6-38 | 221 | - [ ] Twitch Live/Offline | E.3.6-04; C.23.8-09 | EDT-020; INT-001; LIV-001–004; WEB-015 | KEEP — live/offline state and player only from permitted, fresh provider data; tests/acceptance evidence OPEN |
+| ROADMAP-E6-39 | 222 | - [ ] Countdown | E.3.6-04; F.6-04 | EDT-020; SCH-003/009; WEB-016 | KEEP — countdown timezone/DST/cancelled/past state tests OPEN; tests/acceptance evidence OPEN |
+| ROADMAP-E6-40 | 223 | - [ ] Next Stream | E.3.6-04; F.6-02 | EDT-020; SCH-009; WEB-016 | KEEP — next stream resolves canonical Schedule and excludes cancelled/past items; tests/acceptance evidence OPEN |
+| ROADMAP-E6-41 | 224 | - [ ] Schedule | E.3.6-04; F.6 | EDT-020; SCH-001–015; WEB-016 | KEEP — Schedule block stores presentation config only, not Schedule domain rows; tests/acceptance evidence OPEN |
+| ROADMAP-E6-42 | 225 | - [ ] YouTube | E.3.6-04; F.5-04 | EDT-020; INT-013; CNT-002–004 | PHASE-GATED — YouTube static link/embed vs API adapter clearly separated; tests/acceptance evidence OPEN |
+| ROADMAP-E6-43 | 226 | - [ ] TikTok | E.3.6-04; F.5-05 | EDT-020; INT-014; CNT-002–004 | PHASE-GATED — TikTok link/embed/API capability gated; no unsupported metrics; tests/acceptance evidence OPEN |
+| ROADMAP-E6-44 | 227 | - [ ] Discord | E.3.6-04; C.23.18-02 | EDT-020; INT-015; COM-001/002 | PHASE-GATED — Discord link/basic embed distinct from bot/role/API integration; tests/acceptance evidence OPEN |
+| ROADMAP-E6-45 | 228 | - [ ] VOD | E.3.6-04; F.5-02 | EDT-020; CNT-002–004; WEB-017 | KEEP — VOD uses canonical content source and honest manual fallback; tests/acceptance evidence OPEN |
+| ROADMAP-E6-46 | 229 | - [ ] Shorts | E.3.6-04; F.5-02 | EDT-020; CNT-003/004 | PHASE-GATED — Shorts require provider capability and platform-specific metadata; tests/acceptance evidence OPEN |
+| ROADMAP-E6-47 | 230 | - [ ] Community | E.3.6-04; F.11-02 | EDT-020; COM-001–COM-007 | PHASE-GATED — community invite/link is baseline; posts/comments require separate moderation/privacy contract; tests/acceptance evidence OPEN |
+| ROADMAP-E6-48 | 231 | - [ ] Support | E.3.6-04; F.12-05 | EDT-020; SUP-001–SUP-003; COM-014 | KEEP — support CTA is a link/verified goal, not proof of payment integration; tests/acceptance evidence OPEN |
+| ROADMAP-E6-49 | 232 | - [ ] Stream Stats | E.3.6-04; F.8-02 | EDT-020; LIV-004–007; ANL-001–004 | OPEN — Stream Stats only show permitted verified metrics with source/freshness/missing-value rules; tests/acceptance evidence OPEN |
+| ROADMAP-E6-50 | 233 | - [ ] Game Card | E.3.6-04; F.12-02 | EDT-020; SCH-012–014 | KEEP — Game Card reads canonical Game Profile and uses safe media fallback; tests/acceptance evidence OPEN |
+| ROADMAP-E6-51 | 234 | - [ ] Social Links | E.3.6-04; F.4-05 | EDT-020; COM-001; WEB-022 | KEEP — social link row validates URL/visibility; no provider API assumed; tests/acceptance evidence OPEN |
+| ROADMAP-E6-52 | 235 | - [ ] Sponsor | E.3.6-04; F.4-05 | EDT-020; WEB-024; CAM-001/CAM-004 | PHASE-GATED — sponsor block/media kit, not a 1.0 sponsorship CRM; tests/acceptance evidence OPEN |
+| ROADMAP-E6-53 | 236 | - [ ] Business Contact | E.3.6-04; F.4-05 | EDT-020; WEB-020; CAM-001/CAM-004 | KEEP — business contact uses validated public contact route; no private deal fields; tests/acceptance evidence OPEN |
+| ROADMAP-E6-54 | 237 | - [ ] About Me | E.3.6-04; F.4-05 | EDT-020; WEB-001 | KEEP — About Me is a reusable content block/page binding, not a second page model; tests/acceptance evidence OPEN |
+
+**Semantic findings:**
+- The archive enumerates **54 individual element/component types** across base, layout, media, interactive and Sanci-specific blocks. They are not 54 separate backend domains: they must be typed variants in the single canonical Editor/Page Model and share the central Property Registry/action/persistence path.
+- Audio, Modal/Dialog, Tooltip and Dropdown are **OPEN** as named runtime capabilities. Their appearance in a historical checklist or a broad EDT-018/019 range is not enough; define supported schema, keyboard/focus behavior, responsive/public renderer, accessibility and phase before enabling them.
+- Rich Text remains separately scoped from the plain Text baseline. It must not create a second text model or delay the 1.0 Editor core.
+- YouTube/TikTok/Discord blocks must distinguish static links/basic approved embeds from API-backed adapters. A link is not an OAuth integration; no unverified metric may be shown.
+- Stream Stats must be source-backed, permission-safe and freshness-aware. Game Card must use the canonical Game Profile and resource fallback. Sponsor/Business Contact/About Me blocks must reuse canonical page/contact/press-kit data rather than create a parallel CMS or expose private business data.
+- The source checklist does not prove these elements are currently implemented. Every KEEP/PHASE-GATED row still requires exact supported-property contract, empty/loading/error states, permission checks, browser/device tests, save/reload and public-render acceptance in its phase.
+
+**Coverage count:** 54 E6 checklist items are now individually keyed. E7–E24, plus the archived roadmap's 0/Foundation/Data Model/Core items, remain OPEN. P0.2 remains **IN PROGRESS / NOT PASS**; no runtime code/data changed and no tests were run.
+
