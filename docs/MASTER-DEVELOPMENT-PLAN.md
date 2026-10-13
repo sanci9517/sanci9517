@@ -2395,3 +2395,7 @@ Every capability must define, where applicable:
 - A kiadási fázisokat a jelen terv 39. fejezete határozza meg. Az első kiadásból kimaradó képesség későbbi, explicit fázisban marad; nem törölhető.
 - Do not build every advanced feature before the basic editor is reliable. Prefer a complete, testable capability inventory and a single dependency-ordered implementation path over rushed parallel work.
 - This appendix adds no second editor, no second Page Model, no second Property Registry, no second Resource store, no second Schedule domain and no alternate save/publish route.
+
+## 39. Platform-életciklus
+
+A végső cél a teljes Brand & Creator Platform SANCI AI-val. A fázisok egymásra épülnek; a státusz csak teszt, runtime és felhasználói acceptance után lehet PASS.
