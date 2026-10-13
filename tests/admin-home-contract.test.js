@@ -54,6 +54,14 @@ test("dashboard keeps planned Creator OS areas discoverable", () => {
   }
 });
 
+test("mobile users can open and close the same capability search", () => {
+  assert.match(dashboard, /id="mobileSearch"[^>]*aria-expanded="false"[^>]*aria-controls="searchWrap"/);
+  assert.match(dashboard, /id="searchWrap"/);
+  assert.match(dashboard, /\.search-wrap\.mobile-search-open\s*\{[^}]*position:\s*absolute/);
+  assert.match(dashboard, /mobileSearch\.addEventListener\("click"/);
+  assert.match(dashboard, /if \(event\.key === "Escape"\)\s*\{\s*closeSidebar\(\);\s*closeMobileSearch\(\);/);
+});
+
 test("dashboard visually separates surfaces and navigation groups", () => {
   assert.match(dashboard, /\.nav-label\s*\{[^}]*border-top:\s*1px solid var\(--line\)/);
   assert.match(dashboard, /\.metric-card\s*\{\s*border-top:\s*3px solid var\(--accent-strong\)/);
