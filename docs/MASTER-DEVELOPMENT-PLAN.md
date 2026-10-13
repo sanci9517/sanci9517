@@ -3987,3 +3987,21 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 **Kötelező folytatási ellenőrzés:** (1) a teljes §24 registryben és a 00.9.6.C–F történeti anyagokban keressük meg a collaboration, multi-user editing, presence, locking, revision conflict, approval és activity feed külön követelményeit; (2) válasszuk szét a már létező revision conflict recovery-t, az approval/activity feedet és a tényleges egyidejű szerkesztést; (3) rögzítsünk KEEP/MERGE/EXPAND/ADD/DEFER döntést, tulajdonost, fázist, dependency-t, negatív concurrency tesztet és acceptance-t; (4) csak ezután módosítsuk a H34.08 cél-ID-t vagy a stabil ID registryt.
 
 **Korlát:** ez egy konkrét crosswalk-sor szemantikai kivételének azonosítása; nem állítja, hogy a többi H34 vagy H19–H33 sor már teljesen helyes. A jelen körben runtime kódot nem módosítottam, tesztet nem futtattam. H19–H34 ID-halmaz-egyezés továbbra is csak szűk ID-szintű PASS; a teljes szemantikai reconciliáció és P0.2 **IN PROGRESS / NOT PASS**.
+### 41.3.16. P0.2 — H28 security validation and H29 backup/revision mapping exceptions (2026-10-13)
+
+**Hatókör:** H28.01–H28.17 és H29.01–H29.10 történeti sorok; a cél-ID-k jelentése a §24 canonical registryből ellenőrizve.
+
+**H28 — security mapping:**
+- A H28.01–H28.04 sorok SEC-001 célja csak akkor fogadható el egyetlen összevont mappingként, ha a SEC-001 contract kifejezetten tartalmazza a cookie-flag és password-hash policy-t is; a registry címkéje „Authentication/session lifecycle”, ezért a mapping jelenleg **szemantikailag valószínű, de a részletek szintjén nincs bizonyítva**. A cookie flag-ek és a password hashing külön security acceptance esetként maradjanak láthatók.
+- A H28.12 „input validation” SEC-005-re mutat, amelynek registry-megnevezése XSS/sanitization/safe embeds; ez szűkebb, mint az általános bemeneti schema/type/range/ownership validation. A H28.13 „output validation” esetén SEC-005 releváns lehet a sanitization/output safety részére, de nem helyettesíti a route/domain-specifikus output contractot.
+- A H28.14 „file validation” → RES-003 célzás a feltöltés-validáció canonical ownerével összhangban van; a security crosswalknak ettől függetlenül meg kell őriznie az authorization, MIME/content inspection, méretlimit, object-key és veszélyes fájl esetek negatív tesztjeit.
+- **Döntés:** H28.01–04 részletes security acceptance **OPEN**; H28.12 cél-ID/owner **OPEN — valószínűleg túl szűk egyetlen SEC-005 célra**; H28.13 **OPEN — sanitization csak részhalmaz**; H28.14 **MAPPED, runtime acceptance nincs igazolva**. A SEC ID-k létezése önmagában nem bizonyítja a védelmek tényleges lefedettségét.
+
+**H29 — backup/revision mapping:**
+- A H29.02 „page backup” és H29.03 „revision backup” egyaránt WEB-008-ra mutat. A §24 registryben WEB-008 jelentése „Revision history és diff”; ez a history megtekintését/összehasonlítását lefedheti, de nem bizonyítja a tényleges backup/export/restore artifact, integritásellenőrzés és visszaállítási műveletet. A tényleges backup/restore canonical owner az OPS-005 („Backup/export/restore”), a recovery drill az OPS-006, a rollback az OPS-009.
+- **Döntés:** H29.02–03 **OPEN — partial mapping / owner mismatch risk**. A következő crosswalk-javításban külön kell ábrázolni a WEB-008 revision-history UI/metadata szerepét és az OPS-005 backup/restore műveletet; a két funkció nem olvasztható össze és a WEB-008 nem tekinthető a backup acceptance helyettesítőjének.
+- H29.04 RES-008 media reference map, H29.06 OPS-009 rollback, H29.08 OPS-004 migration compatibility és H29.10 OPS-006 recovery drill jelentése a registry címkéjével összhangban van, de a tényleges elfogadáshoz integritás-, visszaállítási és recovery-drill bizonyíték kell.
+
+**Kötelező javítási/ellenőrzési sorrend:** (1) H28.01–04 bontása külön pozitív és negatív acceptance esetekre; (2) H28.12 generic input validation céljának egyeztetése a domain-sémákkal és server-side validátorokkal; (3) H29.02–03 WEB-008 + OPS-005 szerepkülönbségének explicit rögzítése; (4) friss kétirányú crosswalk-ellenőrzés és a stabil ID-k lefedettségi számainak újraszámítása a módosítás után.
+
+**Korlát:** ez célzott mapping review, nem security audit, restore drill vagy runtime PASS. Ebben a körben kódot és adatot nem módosítottam, teszteket nem futtattam. P0.2 **IN PROGRESS / NOT PASS**.
