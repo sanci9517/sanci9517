@@ -5311,7 +5311,7 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 | SMP-043 | 43 | 2.1 Alapélmény | - [ ] Twitch Live állapot jól látható megjelenítése | INT-001–021; LIV-001–007; CNT-001–020; SEC-001–011; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-044 | 44 | 2.1 Alapélmény | - [ ] Következő adás visszaszámláló | WEB-001–032; EDT-001–042; ADM-001–010; QA-001–010 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-045 | 45 | 2.1 Alapélmény | - [ ] Dinamikus adatok automatikus frissítése | WEB-001–032; EDT-001–042; ADM-001–010; QA-001–010 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
-| SMP-046 | 46 | 2.1 Alapélmény | - [ ] Technikai fejlesztői megjegyzések nem jelennek meg a nézőknek | AI-001–018; AUT-001–014; ANL-001–010; QA-008/009 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
+| SMP-046 | 46 | 2.1 Alapélmény | - [ ] Technikai fejlesztői megjegyzések nem jelennek meg a nézőknek | WEB-014–032; SEC-002/005; QA-003/004 | KEEP — public-output leak prevention; verify source maps, error responses and rendered HTML do not expose internal notes/secrets |
 | SMP-052 | 52 | 2.2 Főoldal | - [ ] Hero / bemutatkozó blokk | WEB-001–032; EDT-001–042; ADM-001–010; QA-001–010 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-053 | 53 | 2.2 Főoldal | - [ ] Aktuális Twitch Live állapot | INT-001–021; LIV-001–007; CNT-001–020; SEC-001–011; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-054 | 54 | 2.2 Főoldal | - [ ] Következő stream | WEB-001–032; EDT-001–042; ADM-001–010; QA-001–010 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
@@ -5323,10 +5323,10 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 | SMP-060 | 60 | 2.2 Főoldal | - [ ] Támogatás lehetőség | SUP-001–012; COM-001–018; WEB-014–032; SEC-011; QA-003/008 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-064 | 64 | 2.3 Twitch oldal | - [ ] Twitch profil és élő állapot | INT-001–021; LIV-001–007; CNT-001–020; SEC-001–011; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-065 | 65 | 2.3 Twitch oldal | - [ ] Twitch player | INT-001–021; LIV-001–007; CNT-001–020; SEC-001–011; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
-| SMP-066 | 66 | 2.3 Twitch oldal | - [ ] Stream információk | WEB-001–032; EDT-001–042; ADM-001–010; QA-001–010 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
-| SMP-067 | 67 | 2.3 Twitch oldal | - [ ] Aktuális játék | WEB-001–032; EDT-001–042; ADM-001–010; QA-001–010 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
-| SMP-068 | 68 | 2.3 Twitch oldal | - [ ] Nézőszám / elérhető statisztikák | WEB-001–032; EDT-001–042; ADM-001–010; QA-001–010 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
-| SMP-069 | 69 | 2.3 Twitch oldal | - [ ] Következő adás | WEB-001–032; EDT-001–042; ADM-001–010; QA-001–010 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
+| SMP-066 | 66 | 2.3 Twitch oldal | - [ ] Stream információk | LIV-001–007; INT-001–012; WEB-015/016; QA-002/003/006 | KEEP — map live title/category/start/status to permitted provider fields; stale/error and offline states need tests |
+| SMP-067 | 67 | 2.3 Twitch oldal | - [ ] Aktuális játék | LIV-003/004; INT-001–012; SCH-004; QA-002/003/006 | KEEP — current game/category is provider data, not static Page Model truth; test stale/unavailable fallback |
+| SMP-068 | 68 | 2.3 Twitch oldal | - [ ] Nézőszám / elérhető statisztikák | LIV-005/006; ANL-001–010; SEC-011; QA-003/008 | EXPAND — only provider-permitted/available metrics; no fabricated values; privacy, retention and rate limits need explicit acceptance |
+| SMP-069 | 69 | 2.3 Twitch oldal | - [ ] Következő adás | SCH-001–011; LIV-007; WEB-015/016; QA-002/003/004 | KEEP — canonical Schedule owns the next scheduled event; live status and next event are distinct states |
 | SMP-070 | 70 | 2.3 Twitch oldal | - [ ] VOD / korábbi adások | CNT-001–020; INT-001–021; RES-001–015; WEB-014–032; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-071 | 71 | 2.3 Twitch oldal | - [ ] Twitch-re vezető CTA | INT-001–021; LIV-001–007; CNT-001–020; SEC-001–011; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-075 | 75 | 2.4 TikTok oldal | - [ ] TikTok profil | INT-001–021; LIV-001–007; CNT-001–020; SEC-001–011; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
@@ -5341,12 +5341,12 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 | SMP-087 | 87 | 2.5 YouTube oldal | - [ ] Kiemelt videó | WEB-001–032; EDT-001–042; ADM-001–010; QA-001–010 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-088 | 88 | 2.5 YouTube oldal | - [ ] YouTube statisztikák, ha elérhetők | INT-001–021; LIV-001–007; CNT-001–020; SEC-001–011; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-092 | 92 | 2.6 Menetrend / Schedule | - [ ] Heti menetrend | SCH-001–011; INT-001–021; WEB-014–032; QA-002/003/004 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
-| SMP-093 | 93 | 2.6 Menetrend / Schedule | - [ ] Következő adás | WEB-001–032; EDT-001–042; ADM-001–010; QA-001–010 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
-| SMP-094 | 94 | 2.6 Menetrend / Schedule | - [ ] Visszaszámláló | WEB-001–032; EDT-001–042; ADM-001–010; QA-001–010 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
-| SMP-095 | 95 | 2.6 Menetrend / Schedule | - [ ] Stream típus | WEB-001–032; EDT-001–042; ADM-001–010; QA-001–010 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
-| SMP-096 | 96 | 2.6 Menetrend / Schedule | - [ ] Játék | WEB-001–032; EDT-001–042; ADM-001–010; QA-001–010 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
-| SMP-097 | 97 | 2.6 Menetrend / Schedule | - [ ] Adás állapota | WEB-001–032; EDT-001–042; ADM-001–010; QA-001–010 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
-| SMP-098 | 98 | 2.6 Menetrend / Schedule | - [ ] Automatikusan frissülő időpontok | WEB-001–032; EDT-001–042; ADM-001–010; QA-001–010 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
+| SMP-093 | 93 | 2.6 Menetrend / Schedule | - [ ] Következő adás | SCH-001–011; WEB-015/016; QA-002/003/004 | KEEP — derive from canonical schedule query; test timezone, cancelled events, empty state and live-now distinction |
+| SMP-094 | 94 | 2.6 Menetrend / Schedule | - [ ] Visszaszámláló | SCH-003/004/008; WEB-018/019; QA-003/004 | EXPAND — client timer must use an explicit timezone/date contract, handle zero/past event and reduced-motion/accessibility |
+| SMP-095 | 95 | 2.6 Menetrend / Schedule | - [ ] Stream típus | SCH-002/004; LIV-003; EDT-021/022; QA-002/004 | KEEP — validate the supported schedule type enum; public display must not invent unknown types |
+| SMP-096 | 96 | 2.6 Menetrend / Schedule | - [ ] Játék | SCH-004/005; LIV-004; EDT-021/022; QA-002/004 | KEEP — scheduled game metadata is distinct from live provider game; validate enum/slug and fallback |
+| SMP-097 | 97 | 2.6 Menetrend / Schedule | - [ ] Adás állapota | SCH-004/006; LIV-001/002; EDT-021/022; QA-002/003/004 | KEEP — schedule status and provider live/offline state are separate fields with explicit precedence |
+| SMP-098 | 98 | 2.6 Menetrend / Schedule | - [ ] Automatikusan frissülő időpontok | SCH-003/008/009; INT-001–012; QA-002/003/006 | EXPAND — sync must be idempotent, timezone-correct, observable and safe on provider outage; canonical Schedule remains owner |
 | SMP-099 | 99 | 2.6 Menetrend / Schedule | - [ ] Mobil / desktop megfelelő megjelenítés | WEB-001–032; EDT-001–042; ADM-001–010; QA-001–010 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-103 | 103 | 2.7 VOD / videók | - [ ] VOD lista | CNT-001–020; INT-001–021; RES-001–015; WEB-014–032; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
 | SMP-104 | 104 | 2.7 VOD / videók | - [ ] Kiemelt VOD | CNT-001–020; INT-001–021; RES-001–015; WEB-014–032; QA-003/006 | KEEP — source requirement preserved; specific semantic mapping and acceptance OPEN |
@@ -5747,6 +5747,14 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 - No runtime code/data changed; no tests run in this documentation-only audit.
 
 **Status:** 438/438 list items have source keys. This establishes line-level inventory only. Full semantic reconciliation, owner/phase/dependency/permission/test/negative-test/acceptance completion remain OPEN. P0.2 **IN PROGRESS / NOT PASS**.
+
+
+
+**Targeted semantic correction batch (not a full audit):**
+- The former mappings for SMP-046 and SMP-066–SMP-069 / SMP-093–SMP-098 used generic WEB/EDT/ADM ranges for technical-note secrecy, live stream metadata, current game, viewer metrics, next event, countdown, schedule type/game/status and auto-refresh. Those are not semantically sufficient by themselves; they are now narrowed to public-output security, live-provider fields, canonical Schedule ownership and the relevant QA families.
+- **Data-source separation:** live game/title/status/viewer count comes from permitted Twitch provider data; the next scheduled event and planned game/type/status come from the canonical Schedule domain. Do not merge these into one ambiguous “stream status” field.
+- **Negative cases:** provider unavailable/stale/offline, missing/forbidden metric, empty/cancelled schedule, timezone/date boundary, past event, unknown schedule enum and sync retry must be tested. Values must never be fabricated to make the UI look populated.
+- This is a targeted correction of ten source rows only. The remaining broad candidates in the 438-row inventory are still open and must be reviewed section-by-section; do not treat this batch as the full SANCI-MASTER-PLAN semantic audit.
 
 
 ### 41.3.40. P0.2 — Visual Editor roadmap: item-level milestone and work-rule ledger (2026-10-13)
