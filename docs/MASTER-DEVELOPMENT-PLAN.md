@@ -1950,7 +1950,7 @@ PWA/offline/mobile; provider capabilities/Discord roles; email/CRM/consent; Stre
 ### 37.3. A P0 aktuális állapota
 
 - **P0.1:** IN PROGRESS — a branch/MASTER/archive baseline és a fő route-viselkedés ellenőrizve; az archív route-leírás javítva és a canonical Admin/Dashboard vs Editor v2 útvonal egyeztetve. A commit `a083cf879c3dd15e565cffeb7556dac6d4728faa` ellenőrzésekor a Cloudflare Workers Build, Editor Core Test és Twitch Integration Check mind SUCCESS lett. Az Editor Core workflow typecheck + Editor + Schedule + domain + Admin-home contract tesztet futtat; a Twitch workflow typecheck + Editor/Schedule + Twitch OAuth + site-ownership teszteket futtat. A gate azért marad nyitva, mert a teljes helyi working-tree állapot, a remote D1/schema integritás, valamint a save/reload/publish/mobile browser acceptance ebből a forráskód-auditból nem bizonyítható.
-- **P0.2:** IN PROGRESS — a 271 H19–H34 történeti kulcs MAPPED DRAFT crosswalkja (§41), az E.1–E.21 termékkatalógus első mappingje (§37.22–37.25, §37.32), az F.1–F.13 működési követelmények mappingje (§37.27, §37.29–37.31, §37.33), valamint a C.23.1–C.23.22 és C.24.1–C.24.7 csoportszintű leképezése (§37.32) elkészült. Az F.1–F.13 összesen 73 egyedi sor; az F.5–F.8 21 sora, az F.9–F.13 24 sora és a C.23/C.24/E.1 30 sora a §24 registry ellen szerkezetileg valid, ismeretlen ID nélkül. Még hátra van az archivált alpontok és belső bullet-ek teljes line-by-line egyeztetése, a 00/A és C.23/C.24 provenance mélyítése, a 359 feature ID kétirányú eredetbesorolása, a döntésindoklás és az ID-nkénti permission/dependency/acceptance contract. Ezért P0.2 továbbra sem PASS.
+- **P0.2:** IN PROGRESS — a 271 H19–H34 történeti kulcs MAPPED DRAFT crosswalkja (§41) megvan. A 00.9.6.E.2–E.21 és F.1–F.13 részletes crosswalkja §37.22–37.30 között halad; az eddig validált E/F táblák 323 mapping sort tartalmaznak, a hivatkozott feature/QA ID-k mind feloldhatók. A teljes E.1/C.23/C.24 és korábbi 00/A bullet-szintű provenance, a 359 feature ID kétirányú eredetbesorolása, a döntésindoklás és az ID-nkénti permission/dependency/acceptance contract még nyitott. Ezért P0.2 továbbra sem PASS.
 - **P0.3:** IN PROGRESS — a migrációk és Page Model runtime forrásának első összevetése elkészült (§37.15); nyitott a remote D1 alkalmazott migrációk/séma/index/FK ellenőrzése, a teljes tábla-consumer térkép, a site-scope döntések és az R2 binding/resource API hiánya.
 - **P0.4:** IN PROGRESS — a fő router, Admin placeholder-ek és Editor handler modulok első leltára megvan; a teljes surface/route/action acceptance még nyitott. A felhasználó által jelzett canvas-height/scroll-extent regresszió külön, reprodukálható acceptance-ként rögzítve (§37.21), de runtime PASS nincs.
 - **P0.5:** IN PROGRESS — Twitch/YouTube/TikTok/Discord/Kick hivatalos dokumentációs review és approval/quota/runtime korlátok frissítve (§37.10, §37.14); a teljes feature-to-endpoint/scope/quota/approval mátrix és élő integrációs acceptance még nyitott.
@@ -2710,6 +2710,28 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.13-21 | Future creator-made template/component/theme/overlay/OBS/digital asset marketplace with license/version/review/revenue share | DSN-014, DSN-015, OBS-001–OBS-010, STO-012, MKT-001–MKT-005, CAM-009 | DEFER | 3.0–6.0 | QA-002/003/008 |
 
 **Batch 7 result:** 42 egyedi source bullet F.9–F.13 között (7 F.9 + 35 F.10–F.13). A hivatkozások szerkezeti validációja külön gate; ez a mapping nem runtime PASS.
+
+
+### 37.32. P0.2 — Crosswalk szerkezeti validációs összesítő
+
+**Validált forrás-revízió:** v2/foundation commit 2513c71bdfa36ae30bd02c3c378f626221506bb8. A validáció a §24 feature registryt hasonlította össze a §37 crosswalk táblák explicit és tartományból kibontott ID-hivatkozásaival.
+
+| Crosswalk batch | Sorok | Különböző hivatkozott feature/QA ID-k | Feloldatlan ID |
+|---|---:|---:|---:|
+| §37.22 E.2–E.3 | 57 | 202 | 0 |
+| §37.23 E.4–E.9 | 66 | 282 | 0 |
+| §37.24 E.10–E.14 | 45 | 150 | 0 |
+| §37.25 E.15–E.21 + E.20 contract/negative tests | 59 | 345 | 0 |
+| §37.27 F.1–F.4 | 28 | 97 | 0 |
+| §37.29 F.5–F.8 | 26 | 168 | 0 |
+| §37.30 F.9–F.13 | 42 | 325 | 0 |
+| **Összesen** | **323** | *batchenként külön számolt* | **0** |
+
+A §24 registry 359 egyedi ID-t tartalmaz duplikáció nélkül; a H19–H34 ledger 271 egyedi történeti kulcsból és 271 sorból áll.
+
+**Mit bizonyít:** a felsorolt crosswalk sorok szerkezetileg léteznek, és a hivatkozott ID-k feloldhatók a registryben.
+
+**Mit nem bizonyít:** az eredeti source szöveg minden bulletjének teljes szemantikai megőrzését; az E.1/C.23/C.24/00-A teljes tételes leképezését; az összes 359 ID eredetbesorolását; a domain/service/permission/dependency contractok teljességét; vagy bármely funkció runtime PASS állapotát. P0.2 továbbra is IN PROGRESS.
 
 ## 38. Részletes Visual Editor képességkatalógus
 
