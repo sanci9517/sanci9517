@@ -4948,3 +4948,45 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 
 **Coverage count:** 43 global/Foundation/Data Model/Core/execution directives are individually keyed. Together with source ledgers 41.3.25–41.3.33, all **454 unordered checkbox/bullet items** in MASTER-FINAL-ROADMAP are represented by individual source keys; additional goal paragraphs, numbered gates, architecture prose and execution directives are keyed separately. The latest source scan found and closed two previously unkeyed material prose directives (lines 62 and 678). This is source-key coverage, not semantic PASS for every mapping. P0.2 **IN PROGRESS / NOT PASS**; documentation-only, no runtime code/data changed and no tests run.
 
+### 41.3.35. P0.2 — Visual Editor architecture archive: item-level rule reconciliation (2026-10-13)
+
+**Source:** `docs/archive/plans/VISUAL-EDITOR-ARCHITECTURE.md`. The 27 source bullets are individually keyed below; historical runtime-path statements are not current execution directives.
+
+| Source key | Source item / contract | Current target | Candidate IDs | Decision and acceptance still required |
+|---|---|---|---|---|
+| VEA-01 | Structured document tree is the single source of truth | E.3.2 / Page Model | EDT-001/002, WEB-032 | KEEP. Verify schema/version and that generated HTML is output, not editable source. |
+| VEA-02 | Nodes have stable id, type, children, content, layout, style and metadata | E.3.3–E.3.4 | EDT-002, EDT-021–026 | KEEP. Validate schema, unique IDs, supported fields and save/reload round-trip. |
+| VEA-03 | Canvas, Layers and Inspector view the same document state | E.3.2/E.5/E.7 | EDT-003/008/011/016/021 | KEEP. Browser evidence must prove selection/property/hierarchy parity and no parallel state. |
+| VEA-04 | Historical canonical runtime path was `public/editor/editor-core.js` | Historical runtime note | EDT-001/003, QA-002/006 | SUPERSEDED. Current canonical runtime is `public/editor-v2`; never revive a second core. |
+| VEA-05 | Historical `public/editor/app.js` handled load/save, definitions, normalization, Inspector and page management | Historical runtime note | EDT-001/003/034, WEB-004/008 | HISTORICAL ONLY. Current module ownership must be audited; old roles do not authorize legacy activation. |
+| VEA-06 | Application layer must not duplicate selection, hierarchy, layer order or rendering state | E.3.2 canonical state contract | EDT-003/004/008/011/034/039 | KEEP. Regression-test every editor entry point. |
+| VEA-07 | State flow: user/AI → action → validation → document state → history → views → D1 | E.3.2/E.3.5/E.13/E.19 | EDT-003/004/005/022/039, SEC-002/003 | KEEP. Prove validation-before-mutation, history consistency, authorized persistence and failed-save behavior. |
+| VEA-08 | Central selection operations: select, selectAdd, selectRemove, selectToggle, clearSelection | E.5 | EDT-003/008 | KEEP. Test additive/toggle/clear edge cases. |
+| VEA-09 | Canvas and Layers use the same stable node IDs | E.5 | EDT-002/008/011 | KEEP. Test nested nodes, duplicate/paste fresh IDs and selection after delete/reparent. |
+| VEA-10 | Hierarchy API: parentOf, hasDescendant, moveToParent, addChildren, moveOut | E.5 | EDT-011/012 | KEEP. Test parent/child invariants, order and persistence. |
+| VEA-11 | Reject circular relationships and self-ancestor assignments | E.5 validation | EDT-012/022, SEC-002 | KEEP. Negative tests for direct/indirect cycles and atomic rejection. |
+| VEA-12 | Layer order is defined among siblings | E.5 | EDT-013 | KEEP. Reorder must preserve hierarchy and sibling order after reload. |
+| VEA-13 | Canonical layer operations: forward, backward, front, back | E.5 | EDT-013 | KEEP. Test boundaries, nested siblings, undo/redo and public output. |
+| VEA-14 | Never flatten hierarchy to implement layer order | E.5 | EDT-011/013 | KEEP. Assert reorder does not alter parent IDs or descendants. |
+| VEA-15 | Mutations create history snapshot before change | E.13 | EDT-004/005 | KEEP. Test atomic batches, failed mutations and no-op behavior. |
+| VEA-16 | Undo/redo use the same document state as Canvas and Layers | E.13 | EDT-005, EDT-003/008/011 | KEEP. Verify UI, Inspector, document and saved state stay coherent. |
+| VEA-17 | Selection-only clicks must not create history | E.13 | EDT-005/008 | KEEP. Regression-test selection/focus/panel navigation without mutation. |
+| VEA-18 | Drag history starts only when actual move/resize begins | E.4/E.13 | EDT-004/005/009 | KEEP. Pointer-down without movement is a no-op; canceled drag rolls back; gesture grouping is tested. |
+| VEA-19 | AI must not directly manipulate arbitrary DOM/CSS | AI/Editor boundary | AI-001–006, EDT-039, SEC-002/003 | KEEP. Permission model must forbid arbitrary code/DOM write paths. |
+| VEA-20 | AI uses the same structured actions as human editing | AI/Editor boundary | AI-001–006, EDT-003/039 | KEEP. AI passes canonical command/validation and identical invariants. |
+| VEA-21 | Future action IDs, schemas, permissions, preview, approval, audit and rollback extend the model | AI roadmap | AI-002–006/016–018, OPS-006/009 | EXPAND/PHASED. Define typed schemas, scope permissions, approval thresholds, audit and rollback tests. |
+| VEA-22 | Stable IDs cover page, section, component, node, action, version, media and schedule | Identity contract | EDT-002, RES-001, SCH-001, DYN-001, OPS-005 | KEEP/EXPAND. Verify uniqueness, scope and retention across D1/R2/revisions/imports; identity domains remain distinct. |
+| VEA-23 | Extend canonical core/public actions; prohibit parallel selection/hierarchy/layer/rendering implementations | E.3.2/E.3.3 | EDT-001/003/034/039, QA-002/006 | KEEP. Audit and classify legacy paths; prevent accidental route activation. |
+| VEA-24 | Historical schema/API generation was `3 / 1` | Historical schema note | EDT-001/034 | VERIFY BEFORE REUSE. Current Page Model schema/version is authoritative. |
+| VEA-25 | AI-ready API is a foundation, not proof autonomous AI is complete | AI roadmap | AI-001–006/016–018 | KEEP. Do not represent architecture readiness as shipped AI capability. |
+| VEA-26 | Long-term stack: structured engine → action/validation → version/audit/permissions → orchestrator → specialist agents | Creator Platform architecture | EDT-001/003/039, AI-001–018, QA-008/009, OPS-005/006/009 | KEEP AS ROADMAP. Dependencies, ownership, privacy, evaluation and rollback required before implementation. |
+| VEA-27 | Editor remains usable without AI | 1.0 Editor acceptance invariant | EDT-001–042, QA-002/004/009 | KEEP. AI unavailable must not block manual edit, save, preview, publish, recovery or content access. |
+
+**Semantic exceptions:**
+1. `public/editor/editor-core.js` and schema/API generation `3 / 1` are historical facts, not present-day instructions. The current canonical runtime `public/editor-v2` and current schema are authoritative.
+2. The source flow Action → Validation → State → History → Views → D1 is an architecture contract, not proof that current save/conflict/rollback paths pass runtime tests.
+3. Stable IDs for page/node/action/version/media/schedule are separate identity domains; a general ID statement does not prove authorization, uniqueness or cross-site isolation.
+4. AI approval/audit/rollback and no-AI fallback remain requirements for phased future work, not evidence of an already shipped autonomous AI.
+
+**Status:** 27 source bullets individually keyed VEA-01–VEA-27. Item-level inventory for this file is complete; semantic acceptance evidence remains OPEN. P0.2 **IN PROGRESS / NOT PASS**. Documentation-only; no runtime code/data changed and no tests were run.
+
