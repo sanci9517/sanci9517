@@ -2288,6 +2288,25 @@ The short decision record must name the problem and acceptance criteria; existin
 
 **E/F source-level review status:** 35 headings mapped to canonical domains and current phases at section level. Still required before P0.2 PASS: extract every bullet and nested requirement under these headings into individual source-key rows (including explicit source text/heading), connect each to exact current feature IDs, and verify no requirement is represented only by a broad family label. C.23 Visual Editor additions are mapped to §38/EDT, and C.24 open-source-first policy is preserved in §37.19; their individual checklist items still need provenance/acceptance links where they change implementation scope.
 
+
+### 37.21. P0.4 — Konkrét Editor acceptance: canvas/scroll extent a tartalommal nő
+
+**Felhasználói megfigyelés:** 2026-10-13 — a resize/move, undo/redo működött, de egy elemet jóval lejjebb mozgatva a fehér canvas/vászon nem követte a dokumentum tartalmi kiterjedését.
+
+**Canonical követelmény:** §38.9, „Canvas height és scroll extent újraszámítása drag/resize/content growth közben, zoommal és transformmal korrigálva.” Ez jelenleg acceptance-követelmény; a tervben szereplés nem jelenti, hogy a runtime-hiba már javítva van.
+
+**Reprodukció és PASS:**
+1. Nyiss meg egy canonical Editor v2 oldalt, és hozz létre/kijelölj egy teszt-elemet.
+2. Mozgasd az elemet egyre lejjebb, a kezdeti canvas alja alá; majd resize-old úgy, hogy a magassága is növekedjen.
+3. A canvas fehér munkaterülete és a scroll extent automatikusan kövesse a tartalmi bounds-ot; az elem teljesen látható és elérhető maradjon, ne vágja le a canvas wrapper.
+4. Ismételd meg 50%, 100% és nagyított zoom mellett, valamint drag közben és drag után; a zoom/transform ne okozzon hibás scroll-méretet.
+5. Ellenőrizd desktop/tablet/mobile preview módokban és valódi viewporton; a preview mérete és az editor scroll-container mérete ne keveredjen össze.
+6. Undo/redo, Save Draft, reload és újranyitás után az elem pozíciója, dokumentum magassága és a scrollozhatóság maradjon konzisztens.
+7. A konzolban ne legyen ismétlődő resize loop vagy unbounded observer; nagy dokumentumnál is maradjon használható a szerkesztés.
+
+**Érintett canonical ID-k:** EDT-007, EDT-009, EDT-024/025, EDT-027/028, QA-002, QA-004, QA-006.  
+**Státusz:** OPEN — runtime/browser acceptance szükséges; a korábbi „resize + undo/redo működik” visszaigazolás nem zárja le a canvas height/scroll extent hibát.
+
 ## 38. Részletes Visual Editor képességkatalógus
 
 **Cél:** a vizuális szerkesztő teljes részletképességeinek önálló, tesztelhető katalógusa. A felsorolás a végleges platform követelményét rögzíti, nem a runtime készültségét. Minden elem a közös Page Model, command/history/validation/persistence és jogosultsági szerződésen keresztül működik.
