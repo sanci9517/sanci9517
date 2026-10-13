@@ -4296,3 +4296,102 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 
 **Status:** the eight secondary plans plus legacy manifest have been enumerated and their precedence recorded; this is inventory, not full semantic coverage. The missing 00/A and 00.9–00.9.6.B source gap remains OPEN, and the secondary-plan bullet-level reconciliations remain OPEN. P0.2 **IN PROGRESS / NOT PASS**. No runtime code/data changed and no tests were run.
 
+### 41.3.25. P0.2 — MASTER-FINAL-ROADMAP source-key ledger: E3–E5 (2026-10-13)
+
+**Source:** docs/archive/plans/MASTER-FINAL-ROADMAP.md, FINAL-1.0 dated 2026-09-17. The old E3 shell, E4 Canvas Engine and E5 Layers/Navigator bullets are retained below individually. The old [ ] status is historical, not the current runtime status. Each target is a candidate mapping into the current E crosswalk and §24 canonical ID registry; it is not evidence of implementation.
+
+| Source key | Archive line | Exact source item | Current E target | Candidate canonical IDs | Decision / phase / acceptance |
+|---|---:|---|---|---|---|
+| ROADMAP-E3-GOAL | 67 | Egy valódi, használható vizuális szerkesztő munkaasztal létrehozása. Ebben a pontban még nem építjük meg az összes szerkesztési funkciót; a teljes editor szerkezete és kezelési rendszere készül el. | E.3.1–E.3.7 | EDT-001–042; QA-002/004/006/009 | KEEP — goal retained; phase 1.0 core; acceptance OPEN; tests and acceptance evidence still required |
+| ROADMAP-E3.1-01 | 70 | - [ ] felső toolbar | E.3.1-01 | EDT-027/032/033; EDT-039 | MERGE — 1.0 toolbar; verify every action is live; tests and acceptance evidence still required |
+| ROADMAP-E3.1-02 | 71 | - [ ] bal oldali Elements panel | E.3.1-02 | EDT-015 | KEEP — 1.0 element library panel; search and insert acceptance OPEN; tests and acceptance evidence still required |
+| ROADMAP-E3.1-03 | 72 | - [ ] bal oldali Layers/Navigator panel | E.3.1-02 | EDT-012/014 | KEEP — 1.0 Layers/Navigator; hierarchy and visibility acceptance OPEN; tests and acceptance evidence still required |
+| ROADMAP-E3.1-04 | 73 | - [ ] középső Canvas | E.3.1-03 | EDT-007/008/034 | KEEP — 1.0 canvas; canonical render and viewport acceptance OPEN; tests and acceptance evidence still required |
+| ROADMAP-E3.1-05 | 74 | - [ ] jobb oldali Inspector | E.3.1-04 | EDT-021/022 | KEEP — 1.0 Inspector; registry/validation acceptance OPEN; tests and acceptance evidence still required |
+| ROADMAP-E3.1-06 | 75 | - [ ] alsó státusz/save sáv, ha szükséges | E.3.1-01; ADM-008 | EDT-027/028 | MERGE — optional status/save bar; must show truthful save state; tests and acceptance evidence still required |
+| ROADMAP-E3.1-07 | 76 | - [ ] egységes sötét Sanci design | E.6.1-01 | DSN-001/005/006 | KEEP — shared Sanci design tokens; responsive contrast/accessibility acceptance OPEN; tests and acceptance evidence still required |
+| ROADMAP-E3.2-01 | 79 | - [ ] panel megnyitás/zárás | E.3.1-05 | EDT-035/036 | KEEP — panels open/close; browser/device acceptance OPEN; tests and acceptance evidence still required |
+| ROADMAP-E3.2-02 | 80 | - [ ] panelek összecsukása | E.3.1-05 | EDT-035/036; EDT-012 | KEEP — collapsible panels and tree; state consistency OPEN; tests and acceptance evidence still required |
+| ROADMAP-E3.2-03 | 81 | - [ ] panel szélesség állítása | E.3.1-05 | EDT-035/036 | KEEP — resizable panel widths; min/max bounds and no canvas clipping tests OPEN; tests and acceptance evidence still required |
+| ROADMAP-E3.2-04 | 82 | - [ ] minimum/maximum panelméret | E.3.1-05 | EDT-035/036; QA-004 | KEEP — min/max panel sizing; responsive boundary tests OPEN; tests and acceptance evidence still required |
+| ROADMAP-E3.2-05 | 83 | - [ ] panel állapot megőrzése | E.3.1-05 | EDT-035/036 | OPEN — panel-state persistence has no dedicated canonical ID; define preference scope/storage and test reload; tests and acceptance evidence still required |
+| ROADMAP-E3.2-06 | 84 | - [ ] aktív panel jelölése | E.3.1-05 | EDT-013/036 | KEEP — active panel indication and shared selection state; acceptance OPEN; tests and acceptance evidence still required |
+| ROADMAP-E3.2-07 | 85 | - [ ] mobil admin/editor használhatóság | E.3.1-05; ADM-010 | EDT-035/036; QA-004 | KEEP — mobile/tablet editor usability; touch/safe-area and no-clipped-panel tests OPEN; tests and acceptance evidence still required |
+| ROADMAP-E3.3-01 | 88 | - [ ] oldal neve | E.3.1-01 | EDT-027/028 | KEEP — page name reflects canonical loaded page; stale route/page tests OPEN; tests and acceptance evidence still required |
+| ROADMAP-E3.3-02 | 89 | - [ ] mentés állapot | E.3.1-01 | EDT-027/028/030/031 | KEEP — save state must distinguish dirty/saving/success/error/retry/conflict; tests and acceptance evidence still required |
+| ROADMAP-E3.3-03 | 90 | - [ ] undo | E.3.7-01 | EDT-005 | KEEP — undo enabled only when history allows; command/history test OPEN; tests and acceptance evidence still required |
+| ROADMAP-E3.3-04 | 91 | - [ ] redo | E.3.7-01 | EDT-005 | KEEP — redo enabled only when redo history exists; command/history test OPEN; tests and acceptance evidence still required |
+| ROADMAP-E3.3-05 | 92 | - [ ] preview | E.4-03 | EDT-032/034 | KEEP — preview must not mutate published state; public-render parity OPEN; tests and acceptance evidence still required |
+| ROADMAP-E3.3-06 | 93 | - [ ] publish előkészítés | E.4-05 | EDT-033; WEB-005/006 | KEEP — publish preparation is not publish success; authorization/cache/failure tests OPEN; tests and acceptance evidence still required |
+| ROADMAP-E3.3-07 | 94 | - [ ] desktop/tablet/mobile választó | E.3.4-04 | EDT-024/025 | KEEP — desktop/tablet/mobile viewport selection; responsive inheritance tests OPEN; tests and acceptance evidence still required |
+| ROADMAP-E3.3-08 | 95 | - [ ] zoom | E.3.3-02 | EDT-007 | KEEP — zoom; no document mutation from viewport change; tests and acceptance evidence still required |
+| ROADMAP-E3.3-09 | 96 | - [ ] fit canvas | E.3.3-02 | EDT-007 | KEEP — fit canvas; bounds and large-document tests OPEN; tests and acceptance evidence still required |
+| ROADMAP-E3.3-10 | 97 | - [ ] editor menü | E.3.1-01 | EDT-039; ADM-001 | OPEN — editor menu actions must resolve to canonical handlers; no dead/placeholder actions; tests and acceptance evidence still required |
+| ROADMAP-E3.4-01 | 100 | - [ ] valódi központi munkafelület | E.3.3-02 | EDT-007/016 | KEEP — central work surface and layout bounds; browser acceptance OPEN; tests and acceptance evidence still required |
+| ROADMAP-E3.4-02 | 101 | - [ ] dokumentum betöltése a Core state-ből | E.3.2-01 | EDT-001/003/028 | KEEP — Canvas loads canonical Core state, never independent DOM state; tests and acceptance evidence still required |
+| ROADMAP-E3.4-03 | 102 | - [ ] viewport keret | E.3.3-02 | EDT-007 | KEEP — viewport frame matches selected device width; tests and acceptance evidence still required |
+| ROADMAP-E3.4-04 | 103 | - [ ] háttér/grid | E.3.3-02 | EDT-007/010 | KEEP — canvas background/grid are editor-only overlays, excluded from public render; tests and acceptance evidence still required |
+| ROADMAP-E3.4-05 | 104 | - [ ] zoom | E.3.3-02 | EDT-007 | KEEP — zoom changes viewport only; tests and acceptance evidence still required |
+| ROADMAP-E3.4-06 | 105 | - [ ] pan | E.3.3-02 | EDT-007 | KEEP — pan changes viewport only; tests and acceptance evidence still required |
+| ROADMAP-E3.4-07 | 106 | - [ ] device preview | E.3.4-04 | EDT-025 | KEEP — device preview; viewport/property overrides tested; tests and acceptance evidence still required |
+| ROADMAP-E3.4-08 | 107 | - [ ] canvas scroll | E.3.3-02 | EDT-007 | KEEP — canvas scroll does not lose selection or modify document; tests and acceptance evidence still required |
+| ROADMAP-E3.4-09 | 108 | - [ ] üres állapot | E.3.1-06 | EDT-041; ADM-008 | KEEP — empty-project onboarding and safe empty state; tests and acceptance evidence still required |
+| ROADMAP-E3.5-01 | 111 | - [ ] toolbar események | E.3.1-01 | EDT-039 | KEEP — toolbar events dispatch through canonical action registry; tests and acceptance evidence still required |
+| ROADMAP-E3.5-02 | 112 | - [ ] panel események | E.3.1-05 | EDT-039/035/036 | KEEP — panel events do not create independent state; tests and acceptance evidence still required |
+| ROADMAP-E3.5-03 | 113 | - [ ] selection események | E.3.3-01 | EDT-003/006/013 | KEEP — selection events share one canonical selected-node state; tests and acceptance evidence still required |
+| ROADMAP-E3.5-04 | 114 | - [ ] canvas click | E.3.3-01 | EDT-003/006 | KEEP — canvas click uses canonical selection action; tests and acceptance evidence still required |
+| ROADMAP-E3.5-05 | 115 | - [ ] tree click | E.3.3-01 | EDT-012/013 | KEEP — tree click and canvas selection remain synchronized; tests and acceptance evidence still required |
+| ROADMAP-E3.5-06 | 116 | - [ ] inspector change események | E.3.5-04 | EDT-003/021/022 | KEEP — Inspector edits use typed, validated canonical commands; tests and acceptance evidence still required |
+| ROADMAP-E3.5-07 | 117 | - [ ] event routing egyetlen editor state felé | E.3.2-01 | EDT-001/003/013 | KEEP — all events route to one editor state; no parallel source of truth; tests and acceptance evidence still required |
+| ROADMAP-E3.5-08 | 118 | - [ ] nincs párhuzamos state | E.3.2-01 | EDT-001/003/013 | KEEP — no duplicated hierarchy/selection state; tests and acceptance evidence still required |
+| ROADMAP-E3.5-09 | 119 | - [ ] nincs rejtett legacy listener | E.3.2-04 | EDT-003/039; QA-002/004 | KEEP — legacy listeners must not mutate state outside canonical actions; tests and acceptance evidence still required |
+| ROADMAP-E3-GATE-01 | 123 | 1. az editor ténylegesen megnyílik; | E.3.1-01; QA gate | QA-004/006 | GATE — editor opens in target environment; current runtime evidence required; tests and acceptance evidence still required |
+| ROADMAP-E3-GATE-02 | 124 | 2. a teljes shell látható; | E.3.1-01 | QA-004/006 | GATE — all shell regions visible at supported desktop viewport; tests and acceptance evidence still required |
+| ROADMAP-E3-GATE-03 | 125 | 3. minden fő panel nyitható/zárható; | E.3.1-05 | EDT-035/036; QA-004 | GATE — main panels open/close without stale selection or clipping; tests and acceptance evidence still required |
+| ROADMAP-E3-GATE-04 | 126 | 4. a canvas középen működik; | E.3.3-02 | EDT-007; QA-004 | GATE — canvas centered and usable at supported viewport sizes; tests and acceptance evidence still required |
+| ROADMAP-E3-GATE-05 | 127 | 5. device és zoom vezérlés működik; | E.3.4-04 | EDT-007/025; QA-004 | GATE — device and zoom controls produce expected viewport, no document mutation; tests and acceptance evidence still required |
+| ROADMAP-E3-GATE-06 | 128 | 6. toolbar gombok nem halottak; | E.3.1-01 | EDT-039; QA-002/004/006 | GATE — no dead toolbar actions; every visible action has tested handler; tests and acceptance evidence still required |
+| ROADMAP-E3-GATE-07 | 129 | 7. a Core state-hez kapcsolódik; | E.3.2-01 | EDT-001/003; QA-002 | GATE — shell is connected to canonical Core state and command path; tests and acceptance evidence still required |
+| ROADMAP-E3-GATE-08 | 130 | 8. nincs régi editor runtime-függőség; | E.3.2-04 | EDT-003/039; QA-002/006 | GATE — no dependency on old Editor runtime; current canonical public/editor-v2 path; tests and acceptance evidence still required |
+| ROADMAP-E3-GATE-09 | 131 | 9. desktop és mobil nézet ellenőrizve; | E.3.1-05 | QA-004 | GATE — desktop and mobile/device behavior tested in supported environments; tests and acceptance evidence still required |
+| ROADMAP-E3-GATE-10 | 132 | 10. a felhasználó azt mondja: **működik**. | E.3.1-01; QA gate | QA-009 | GATE — explicit user acceptance for this exact build/scope; automated tests do not replace it; tests and acceptance evidence still required |
+| ROADMAP-E4-01 | 139 | - [ ] Page Model → DOM render | E.3.2-01 | EDT-001/034 | KEEP — Page Model renders to DOM through canonical renderer; public parity acceptance OPEN; tests and acceptance evidence still required |
+| ROADMAP-E4-02 | 140 | - [ ] DOM node → element ID mapping | E.3.3-01 | EDT-001/003/006 | KEEP — every rendered node has stable source element ID mapping; tests and acceptance evidence still required |
+| ROADMAP-E4-03 | 141 | - [ ] click selection | E.3.3-01 | EDT-003/006 | KEEP — click selection goes through canonical selection action; tests and acceptance evidence still required |
+| ROADMAP-E4-04 | 142 | - [ ] hover | E.3.3-01 | EDT-003/006 | KEEP — hover state is transient and does not mutate persisted document; tests and acceptance evidence still required |
+| ROADMAP-E4-05 | 143 | - [ ] selected outline | E.3.3-01 | EDT-003/006 | KEEP — selected outline is editor-only, not public output; tests and acceptance evidence still required |
+| ROADMAP-E4-06 | 144 | - [ ] parent highlight | E.3.3-01 | EDT-002/006/013 | KEEP — parent highlight follows canonical hierarchy and selection; tests and acceptance evidence still required |
+| ROADMAP-E4-07 | 145 | - [ ] drop zones | E.3.3-02 | EDT-008/010 | KEEP — drop zones are derived from valid parent/child/layout rules; tests and acceptance evidence still required |
+| ROADMAP-E4-08 | 146 | - [ ] drag/drop | E.3.3-02 | EDT-008 | KEEP — drag/drop uses canonical command path and transaction boundaries; tests and acceptance evidence still required |
+| ROADMAP-E4-09 | 147 | - [ ] reparent | E.3.2-06 | EDT-002/008/011 | KEEP — reparent rejects cycles/invalid parents and preserves IDs; tests and acceptance evidence still required |
+| ROADMAP-E4-10 | 148 | - [ ] reorder | E.3.3-04 | EDT-011 | KEEP — reorder changes sibling order, not hierarchy flattening; tests and acceptance evidence still required |
+| ROADMAP-E4-11 | 149 | - [ ] resize handles | E.3.3-02 | EDT-009 | KEEP — resize handles enforce property/layout constraints; tests and acceptance evidence still required |
+| ROADMAP-E4-12 | 150 | - [ ] multi-select | E.3.3-04 | EDT-038/006 | KEEP — multi-select operations are explicit, permission-safe and undoable; tests and acceptance evidence still required |
+| ROADMAP-E4-13 | 151 | - [ ] keyboard navigation | E.3.3-05 | EDT-037 | KEEP — keyboard navigation has a complete accessible alternative; tests and acceptance evidence still required |
+| ROADMAP-E4-14 | 152 | - [ ] escape/parent navigation | E.3.3-05 | EDT-006/037 | KEEP — Escape/parent navigation has predictable focus/selection semantics; tests and acceptance evidence still required |
+| ROADMAP-E4-15 | 153 | - [ ] canvas/tree synchronization | E.3.3-01 | EDT-013 | KEEP — Canvas and tree stay synchronized after select/reparent/reorder; tests and acceptance evidence still required |
+| ROADMAP-E4-16 | 154 | - [ ] invalid drop prevention | E.3.2-05 | EDT-002/008; QA-002 | KEEP — invalid drop/reparent rejected without partial mutation; tests and acceptance evidence still required |
+| ROADMAP-E4-CORE-INVARIANT | 156 | **Kapcsolat:** minden módosítás a Core commandokon keresztül történik. | E.3.2-01 | EDT-003/004/039 | ARCHITECTURE INVARIANT — every mutation goes through canonical Core commands; tests and acceptance evidence still required |
+| ROADMAP-E5-01 | 159 | - [ ] teljes fa | E.3.3-01 | EDT-012/002 | KEEP — full hierarchy tree represents canonical Page Model; tests and acceptance evidence still required |
+| ROADMAP-E5-02 | 160 | - [ ] expand/collapse | E.3.3-01 | EDT-012 | KEEP — expand/collapse changes view state, not document hierarchy; tests and acceptance evidence still required |
+| ROADMAP-E5-03 | 161 | - [ ] drag reorder | E.3.3-04 | EDT-011 | KEEP — layer drag reorder uses canonical sibling-order command; tests and acceptance evidence still required |
+| ROADMAP-E5-04 | 162 | - [ ] drag reparent | E.3.2-06 | EDT-002/008/011 | KEEP — layer reparent obeys hierarchy/cycle constraints; tests and acceptance evidence still required |
+| ROADMAP-E5-05 | 163 | - [ ] hide | E.3.3-04 | EDT-014 | KEEP — hide is editor-layer visibility state, not public conditional visibility; tests and acceptance evidence still required |
+| ROADMAP-E5-06 | 164 | - [ ] lock | E.3.3-04 | EDT-014 | KEEP — lock prevents prohibited mutation; it is not a public hide; tests and acceptance evidence still required |
+| ROADMAP-E5-07 | 165 | - [ ] rename | E.3.3-04 | EDT-014 | KEEP — rename updates canonical node label only, not ID/parent; tests and acceptance evidence still required |
+| ROADMAP-E5-08 | 166 | - [ ] duplicate | E.3.3-04 | EDT-011 | KEEP — duplicate creates fresh IDs and valid resource references; tests and acceptance evidence still required |
+| ROADMAP-E5-09 | 167 | - [ ] delete | E.3.3-04 | EDT-011; RES-009 | KEEP — delete checks references/usage and follows safe delete/restore policy; tests and acceptance evidence still required |
+| ROADMAP-E5-10 | 168 | - [ ] search | E.3.3-01 | EDT-012/015 | KEEP — tree search filters view and does not mutate node data; tests and acceptance evidence still required |
+| ROADMAP-E5-11 | 169 | - [ ] expand-to-selection | E.3.3-01 | EDT-013/012 | KEEP — expand-to-selection reveals the selected canonical node; tests and acceptance evidence still required |
+| ROADMAP-E5-12 | 170 | - [ ] breadcrumbs | E.3.3-01 | EDT-013/006 | KEEP — breadcrumbs follow parent chain and clear correctly on selection changes; tests and acceptance evidence still required |
+| ROADMAP-E5-13 | 171 | - [ ] multi-selection | E.3.3-04 | EDT-012/038 | KEEP — multi-selection semantics explicit; unsupported bulk actions disabled; tests and acceptance evidence still required |
+| ROADMAP-E5-14 | 172 | - [ ] subtree szabályok | E.3.2-05 | EDT-002/011/014 | KEEP — subtree rules preserve valid parent/child and descendant constraints; tests and acceptance evidence still required |
+
+**Audit findings from this batch:**
+- E3.2-05 panel-state persistence has no dedicated canonical feature ID. It remains OPEN until its scope is decided (editor-only local preference vs user/site persisted preference), storage/retention is defined and reload behavior is tested.
+- The old E3 readiness gate is a release gate, not a product feature. All ten criteria are preserved individually; QA-009 user acceptance is required in addition to QA-001–008 automated/runtime evidence.
+- E4/E5 must share EDT-001–004 canonical document/command invariants. Selection/hover/outline/parent highlight are view state; only valid structural commands mutate the Page Model. Layer hide/lock must not silently change public conditional visibility.
+- Old E3/E4/E5 source mappings are candidate semantic links, not an implementation PASS. The current runtime path is public/editor-v2; no legacy runtime listener or parallel state may be reactivated to satisfy an archived checklist.
+
+**Coverage count:** 84 E3/E4/E5 source items are now individually keyed from the archived roadmap (including the E3 goal, ten readiness gates and the E4 Core invariant). The remaining MASTER-FINAL-ROADMAP E6–E24 source items and its global 0/Foundation/Data Model/Core rules remain OPEN for the next batches. P0.2 remains **IN PROGRESS / NOT PASS**. This documentation-only batch did not change runtime code/data or run tests.
+
