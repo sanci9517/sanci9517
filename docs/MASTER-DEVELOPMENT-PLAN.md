@@ -1951,6 +1951,92 @@ A roadmap ezen pontja után egyetlen funkció sem „veszhet el”: ha még nem 
 
 ---
 
+## 00.9.6.C.24 — OPEN-SOURCE-FIRST ENGINEERING POLICY
+
+**Státusz:** CANONICAL, PROJECT-WIDE ENGINEERING PRINCIPLE.  
+**Hatókör:** a Sanci9517 teljes kódbázisa, a Visual Editor, backend/API, UI, data model, tesztelés, build/deploy, admin/editor/public felületek és minden későbbi Creator OS funkció. Ez az elv a jelenlegi és a jövőbeli munkapontokra egyaránt érvényes.
+
+### C.24.1 — Alapelv
+
+Minden jelentős új funkció, technikai probléma vagy infrastruktúra-döntés előtt meg kell vizsgálni, hogy létezik-e megfelelő, aktívan karbantartott, bizonyítottan használható nyílt forráskódú könyvtár, komponens, szabványos megoldás, algoritmus vagy projekt, amely biztonságosan alapul vehető.
+
+**Elsődleges sorrend:**
+1. Meglévő, a Sanci9517-ben már helyesen használt canonical megoldás újrahasználata.
+2. Megfelelő szabványos, karbantartott és tesztelt nyílt forráskódú könyvtár vagy eszköz integrálása.
+3. Bevett szabvány és dokumentált, egyszerű saját adapter a meglévő rendszerhez.
+4. Saját implementáció akkor, ha nincs megfelelő megoldás, a meglévő megoldás nem felel meg a követelményeknek, vagy az integrációs/licenc/biztonsági kockázat nagyobb, mint a saját fejlesztésé.
+5. Fork csak indokolt esetben, dokumentált upstream-követési és biztonsági karbantartási tervvel.
+
+A cél nem a függőségek vagy a külső kód mennyiségének maximalizálása. A cél a legmegbízhatóbb, biztonságos, tesztelhető, karbantartható és a Sanci9517 architektúrájához illő megoldás.
+
+### C.24.2 — Kötelező előzetes felmérés
+
+Minden érdemi funkció előtt a fejlesztési feladatban vagy a MASTER megfelelő pontjában röviden dokumentálni kell:
+- milyen problémát és elfogadási feltételeket kell megoldani;
+- mely meglévő projektmodulok, canonical contractok és függőségek fedik már le a feladatot;
+- milyen nyílt forráskódú alternatívákat vizsgáltunk, és miért relevánsak;
+- a licencet, karbantartottságot, kiadási aktivitást, dokumentációt, ismert sérülékenységeket és kompatibilitást;
+- bundle/runtime hatást, browser/Worker/D1/R2 kompatibilitást, adatvédelmi és ellátásilánc-kockázatot;
+- a választás indokát: reuse, integrate, adapt, fork vagy build;
+- milyen tesztek és visszaállítási lehetőség igazolja az integrációt.
+
+Kis, egyértelmű módosításnál ez lehet rövid ellenőrzési megjegyzés; összetett vagy architektúrát érintő döntésnél összehasonlítás és írásos döntési rekord szükséges. Nem kell minden apró kódsorhoz külön kutatási dokumentumot készíteni.
+
+### C.24.3 — Elfogadási és kizárási feltételek
+
+Egy nyílt forráskódú megoldás csak akkor vehető át, ha:
+- a licence megengedett a projekt tervezett használatához és terjesztéséhez;
+- kompatibilis a jelenlegi futtatókörnyezettel, builddel, TypeScript- és böngészőkövetelményekkel;
+- a projekt eredete és karbantartási állapota ellenőrizhető;
+- nincs ismert, elfogadhatatlan biztonsági kockázata;
+- a szükséges funkciót a valós követelmények szerint lefedi, nem csupán hasonló nevű vagy látványú;
+- integrációja nem hoz létre második canonical adatmodellt, historyt, property registryt, Resource-tárat, schedule-domaint vagy mentési/publikálási útvonalat;
+- nem sérti a hozzáférés-vezérlést, a site ownershipot, a public/draft izolációt vagy a titkok kezelését;
+- tesztelhető, frissíthető, eltávolítható és szükség esetén visszaállítható.
+
+Népszerűség, GitHub-csillagok vagy egy demó önmagában nem bizonyíték. Ismeretlen eredetű, elhagyott, nem kompatibilis vagy nem megfelelő licencű csomagot nem szabad csak azért beemelni, mert gyorsabbnak tűnik.
+
+### C.24.4 — Integrációs szabályok
+
+- Előnyben részesítendő a kis, célzott dependency és a jól körülhatárolt adapter.
+- A könyvtár ne vegye át a domain logikát vagy az adatforrás tulajdonjogát, ha az már a Sanci9517 canonical rendszeréhez tartozik.
+- A külső könyvtár kimenetét és bemenetét validálni kell; a külső kód nem kap automatikusan jogosultságot titkokhoz vagy privilegizált műveletekhez.
+- A lockfile-t és a deklarált verziókat frissíteni kell; indokolatlanul mozgó verziókra nem szabad productiont építeni.
+- A függőségeket verziófrissítés, teszt, build és deploy ellenőrzés mellett kell frissíteni.
+- Licenc- és harmadikféltől származó attribúciós kötelezettségeket a repository megfelelő helyén meg kell őrizni.
+- Ha a könyvtár csak egy részfeladatot old meg, a Sanci9517 saját canonical contractja marad a külső integráció határa.
+- A külső megoldás nem kerülhet be automatikusan a production bundle-be, amíg a méret-, teljesítmény- és security-hatása nincs elfogadva.
+
+### C.24.5 — Saját fejlesztés és kivételek
+
+Saját kódot kell választani, ha nincs megfelelő nyílt megoldás, a szükséges viselkedés projekt-specifikus, a meglévő architektúrával való integráció túl kockázatos, vagy a dependency aránytalan terhet okozna.
+
+Ilyenkor a döntés rögzítse röviden:
+- milyen alternatívát kerestünk;
+- miért nem felelt meg;
+- mely szabványokat és bevett megoldásokat követi a saját implementáció;
+- hogyan teszteljük és tartjuk karban.
+
+Biztonsági vagy adatvédelmi szempontból nem megfelelő kódot nem veszünk át akkor sem, ha nyílt forráskódú. A saját fejlesztés nem automatikusan rosszabb; indokolt döntésként kell kezelni.
+
+### C.24.6 — Folyamatos felülvizsgálat
+
+- A lényeges dependency-ket és licenceket időszakosan felül kell vizsgálni.
+- Biztonsági frissítések és kompatibilitási problémák esetén a függőségi kockázatot priorizálni kell.
+- Egy meglévő jó megoldást nem cserélünk le pusztán divatból vagy esztétikai preferenciából.
+- Ha később jobb, biztonságosabb alternatíva jelenik meg, összehasonlítás után migrálható, de csak tesztekkel és visszaállítási tervvel.
+- A funkcióleltárban külön jelölendő, ha egy képesség meglévő dependency-vel, adapterrel, saját kóddal vagy még meg nem választott megoldással készül.
+
+### C.24.7 — Kapcsolat az aktív fejlesztéssel
+
+Ez a szabály azonnal érvényes, de nem indít párhuzamos munkát, nem írja felül az aktív munkapontot, és nem igazolja önmagában egyetlen funkció készre jelentését. A jelenlegi aktív pont és a MASTER sorrendje változatlan marad. Az aktuális Canvas drag/resize hibát a meglévő kód és megfelelő tesztelés alapján kell kijavítani; csak akkor kell új dependency, ha az összehasonlítás ténylegesen indokolja.
+
+**Kötelező döntési címkék:** REUSE EXISTING, ADOPT OPEN SOURCE, ADAPT VIA CANONICAL CONTRACT, BUILD IN-HOUSE — JUSTIFIED, FORK — MAINTENANCE PLAN REQUIRED.
+
+**Elfogadási szabály:** a feladat csak akkor tekinthető mérnökileg lezártnak, ha a választott megoldás indokolt, a licenc/kompatibilitás/kockázat elfogadott, és a releváns tesztek sikeresek. A dokumentálás nem helyettesíti a működő implementációt.
+
+---
+
 ## 00.9.6.C.23 — VISUAL EDITOR TELJES KÉPESSÉG- ÉS BENCHMARK-KIEGÉSZÍTÉS
 
 **Státusz:** CANONICAL PRODUCT REQUIREMENTS / CAPABILITY INVENTORY.  
