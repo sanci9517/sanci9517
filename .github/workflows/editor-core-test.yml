@@ -32,3 +32,9 @@ jobs:
 
       - name: Run canonical schedule tests
         run: npm run test:schedule
+
+      - name: Run domain contract tests
+        run: npm run test:domain
+
+      - name: Run Admin home contract tests
+        run: npm run test:admin-home
