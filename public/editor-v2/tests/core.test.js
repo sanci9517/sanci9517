@@ -646,3 +646,41 @@ test('schedule read config normalizes canonical query constraints', async () => 
   assert.throws(() => normalizeScheduleReadConfig({ statuses: ['cancelled'] }));
   assert.throws(() => normalizeScheduleReadConfig({ platforms: [''] }));
 });
+
+
+test('undo and redo restore selection with the corresponding Page Model snapshot', () => {
+  const state = createEditorState();
+  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.SECTION } });
+  const sectionId = state.selection.primaryId;
+
+  execute(state, { type: 'history.undo' });
+  assert.equal(activePage(state).nodes[sectionId], undefined);
+  assert.deepEqual(state.selection, { ids: [], primaryId: null });
+
+  execute(state, { type: 'history.redo' });
+  assert.ok(activePage(state).nodes[sectionId]);
+  assert.deepEqual(state.selection, { ids: [sectionId], primaryId: sectionId });
+
+  execute(state, { type: 'element.delete', payload: { nodeId: sectionId } });
+  assert.deepEqual(state.selection, { ids: [], primaryId: null });
+  execute(state, { type: 'history.undo' });
+  assert.ok(activePage(state).nodes[sectionId]);
+  assert.deepEqual(state.selection, { ids: [sectionId], primaryId: sectionId });
+  execute(state, { type: 'history.redo' });
+  assert.equal(activePage(state).nodes[sectionId], undefined);
+  assert.deepEqual(state.selection, { ids: [], primaryId: null });
+});
+
+test('transaction rollback restores selection as well as the document', () => {
+  const state = createEditorState();
+  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.SECTION } });
+  const sectionId = state.selection.primaryId;
+  const before = structuredClone(state.document);
+  beginTransaction(state, 'selection rollback');
+  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.TEXT, parentId: sectionId } });
+  assert.notEqual(state.selection.primaryId, sectionId);
+  rollbackTransaction(state);
+  assert.deepEqual(state.document, before);
+  assert.deepEqual(state.selection, { ids: [sectionId], primaryId: sectionId });
+  assertValidEditorDocument(state.document);
+});
