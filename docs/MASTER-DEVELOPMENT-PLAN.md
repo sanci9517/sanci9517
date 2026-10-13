@@ -8,7 +8,7 @@
 **PARALLEL_WORKSTREAMS:** `0`
 
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
-**Verzió:** MASTER-2.94 — E.1–E.22 crosswalk javítva; AREA-25 Creator Business canonical owner rögzítve.  
+**Verzió:** MASTER-2.95 — C.23.1–C.23.22 részletképesség-keresztmátrix; Visual Editor no-loss audit folytatásban.  
 **Frissítve:** 2026-10-13.  
 **Dokumentum státusza:** ez az egyetlen végrehajtási igazságforrás.
 **Audit / implementation baseline:** GitHub `v2/foundation`, commit `54daad2357ca576d9e333a052e7bcbb6c2e2d51a` (2026-10-13; F0.3 history-integrity, revision-conflict recovery és save/reload client hardening PR #18–#25 integrálva; production save/reload runtime acceptance továbbra is nyitott). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
@@ -1263,6 +1263,50 @@ A H34 sorai között folyamatlépések/javaslatok is vannak, nem mind önálló 
 - A UI-23 Sanci Button Registry globális definíciót birtokol; egy példány lokális override-ja explicit, visszaállítható és nem írja át csendben a globális definíciót.
 - UI-24 fordítási állapota, UI-25 import/export műveletei és UI-26 business rekordjai jogosultságot, auditot, error/empty/loading állapotot és tesztet igényelnek.
 - A UI-24/25/26 hozzáadása információ-architektúra-korrekció, nem implementáció és nem változtatja meg a F0.4 aktív pontot.
+
+---
+
+### F0.0.6 — C.23 VISUAL EDITOR RÉSZLETKÉPESSÉGEK KERESZTMÁTRIXA (2026-10-13)
+
+**Cél:** a benchmarkkal kiegészített, részletes Visual Editor-leltár minden alcímét explicit módon összekötni a UI- és canonical domain-térképpel. A C.23 az eredeti részletes követelményforrás marad; ez a táblázat nem rövidíti le, nem helyettesíti és nem jelenti a runtime megvalósítást.
+
+| C.23 követelménycsoport | Canonical owner / AREA | Admin belépési pont | Editor-csoport | Kötelező ellenőrzési pont |
+|---|---|---|---|---|
+| C.23.1 Benchmark- és no-copy szabály | AREA-06, AREA-24 | UI-06, UI-22 | E-01–E-16 | Releváns UX-képesség tanulmányozható; implementáció saját modellel és contracttal |
+| C.23.2 Preset/template/reusable fogalmak | AREA-06, AREA-05, AREA-04 | UI-05, UI-06, UI-03, UI-04 | E-06–E-09, E-12 | Property/style/layout/responsive/component/element/section/page/site/theme/CMS/stream/workspace preset külön típusként; apply/replace/merge/reset/fork/version/rollback ahol releváns |
+| C.23.3 Canvas/interakció | AREA-03 | UI-02 | E-02, E-03, E-04, E-13–E-15 | Zoom/pan/fit, rulers/guides/snapping, marquee/multiselect, drop-target, cancel/escape, pointer loss, canvas extent és transform-geometry |
+| C.23.4 Page Model/Layers/struktúra | AREA-03, AREA-06 | UI-02, UI-06 | E-01–E-04, E-13 | Group/ungroup, wrapper, multi-node alignment/distribution, mixed-property state, node state, stable ID és valid nesting |
+| C.23.5 Layout/geometry/CSS property | AREA-03, AREA-06 | UI-02, UI-05 | E-04, E-05, E-07 | Flex/Grid/flow, min/max/intrinsic sizing, supported units, positioning/z-index/overflow/transform, computed/inherited/override; unsupported value nem menthető |
+| C.23.6 Typography/color/design tokens | AREA-05, AREA-06 | UI-04, UI-05 | E-06, E-07, E-08 | Font fallback/license, semantic tokens, token usage/dependency search, convert/detach/reset, site-wide impact preview |
+| C.23.7 Inspector/Property Registry | AREA-03, AREA-06 | UI-02, UI-05, UI-06 | E-04, E-06, E-07, E-12, E-14 | Property search/favorites/help, mixed values, copy/paste/reset groups, schema version/deprecation/migration, command→validation→history→persistence round-trip |
+| C.23.8 Element/component catalog | AREA-03, AREA-04, AREA-05, AREA-06, AREA-07, AREA-13, AREA-15, AREA-20 | UI-02, UI-03, UI-04, UI-06–UI-12, UI-20, UI-23 | E-08–E-11 | Structure/content/navigation/action/cards/interactive/forms/media/social/CMS/commerce widgets; each type has schema, defaults, renderer, accessibility, responsive and test contract |
+| C.23.9 Responsive/device preview | AREA-03, AREA-06 | UI-02, UI-05 | E-04, E-05, E-15 | Custom viewport, presets, orientation, side-by-side preview, inheritance/reset, breakpoint diagnostics, clipping/overflow and real browser acceptance |
+| C.23.10 Motion/interaction/states | AREA-03, AREA-06, AREA-18 | UI-02, UI-05, UI-15 | E-04, E-07, E-11, E-15 | Hover/focus/active/loading/success/error states; motion tokens, reduced-motion, interaction trigger/action validation; no arbitrary script |
+| C.23.11 Site shell/navigation | AREA-02, AREA-04 | UI-02, UI-16, UI-15 | E-01, E-07, E-11, E-12 | Header/footer/global sections, navigation data vs. visual styling, route/slug/404/redirect and mobile menu |
+| C.23.12 CMS/dynamic data/bindings | AREA-04, AREA-07–AREA-14, AREA-20 | UI-03, UI-07, UI-09–UI-14, UI-20 | E-09, E-10, E-11, E-12 | Binding registry, allowed field/schema, relationship/list/filter/sort/pagination, fallback and loading/empty/error/stale state; domain data stays canonical |
+| C.23.13 Resource/media/icon/font | AREA-05 | UI-04 | E-08 | Single picker/registry, upload/replace/crop/variants, usage references, license/metadata, fallback and safe delete/restore |
+| C.23.14 Preview/save/publish/version/recovery | AREA-01, AREA-02, AREA-03, AREA-04 | UI-02, UI-17, UI-22 | E-01, E-13, E-14, E-16 | Draft/public separation, expected version, conflict/retry, revision diff/rollback, browser refresh/recovery, cache invalidation |
+| C.23.15 SEO/social/public quality | AREA-02, AREA-18 | UI-02, UI-15 | E-07, E-11, E-12, E-16 | Per-page/global metadata, Open Graph/social preview, canonical/sitemap/robots/structured data, redirects, public output tests |
+| C.23.16 Accessibility/privacy/security/consent | AREA-01, AREA-18, AREA-19, AREA-24 | UI-14, UI-15, UI-18, UI-22 | E-07, E-11, E-15, E-16 | Keyboard/focus/contrast/alt/reduced-motion, consent/privacy, secure embeds/forms, server-side permission and no secret exposure |
+| C.23.17 Editor workspace/usability/power-user | AREA-03, AREA-24 | UI-02, UI-22 | E-01–E-05, E-13–E-16 | Workspace layout preferences distinct from site data; command palette, keyboard shortcuts, recent/favorites, panel collapse, touch/tablet behavior |
+| C.23.18 Integrations/streamer blocks | AREA-07–AREA-16 | UI-07–UI-13, UI-20 | E-09, E-10 | Provider capability, freshness, ownership, error/fallback, allowed embed hosts and public renderer contract |
+| C.23.19 Site-wide/bulk operations | AREA-03, AREA-06, AREA-24 | UI-02, UI-05, UI-06, UI-17 | E-03, E-04, E-07, E-13, E-14 | Multi-select, bulk property changes, find usage, global token/component/preset change, impact preview, undo/rollback |
+| C.23.20 Extensibility/custom code/future AI | AREA-21, AREA-23, AREA-24 | UI-21, UI-25 | E-14, E-16 | Extension/API versioning and permissions; code sandbox only if explicitly approved; AI uses canonical action/validation/preview/approval/audit |
+| C.23.21 Quality/observability/acceptance | AREA-17, AREA-24 | UI-19, UI-22 | E-15, E-16 | Unit/domain/API/D1/browser/responsive/E2E/production smoke; telemetry separated from creator analytics; evidence required for PASS |
+| C.23.22 Phase assignment/no-loss | AREA-01–AREA-25 | UI-01–UI-26 | E-01–E-16 | Each capability has one canonical owner, phase, dependency, acceptance and status; duplicate/obsolete only with evidence and explicit decision |
+
+**Részletképességi hiányok, amelyeket a következő részletes auditban kötelező ellenőrizni**
+- Preset-rendszer 14 külön típusa és Apply/Replace/Merge/Reset/Fork/Restore/versioning műveletei ne olvadjanak össze egyetlen „Templates” funkcióba.
+- Canvas/geometry: pan/zoom/fit/minimap, rulers/guides/snapping, rotation/transform, pointer-cancel, multi-select, group/ungroup, align/distribute, keyboard nudge, copy/paste style/properties és z-index/stacking context.
+- Responsive: custom viewport, device preset, orientation, breakpoint override inheritance, reset/copy override, content-height/canvas extent és tablet/touch acceptance.
+- Inspector: mixed state, property registry schema/version/deprecation, inherited vs. literal/token value, dependency warnings és bulk edit.
+- Element catalog: gallery/audio/download/share/modal/dialog/tooltip/popover/search/filter/sort, form states, collection/list/carousel, conditional blocks és accessibility contract; minden elem fázis szerint maradjon.
+- Site/CMS: header/footer/global sections, redirects, locale fallback, dynamic binding schema, relationship, collection filter/sort/pagination, stale data és public cache invalidation.
+- Workspace-vs-site separation: Editor panel/zoom/guides preferences nem kerülhetnek a publikus Page Modelbe.
+- Motion/interactions: motion tokenek és reduced-motion; arbitrary JavaScript és nem validált action nem engedélyezhető.
+- Bulk/global changes: token/component/preset usage search, impact preview, Undo/rollback és migráció.
+
+**Zárási feltétel:** a C.23.1–C.23.22 mindegyikéhez legyen canonical owner, UI belépési pont, E-csoport, fázis és konkrét acceptance. Az összes felsorolt részletképességnek vagy közvetlen követelményben kell szerepelnie, vagy explicit, indokolt `DEFERRED`/superseded státuszt kell kapnia. A „túl részletes” önmagában nem elfogadható törlési indok. Az F0.4 aktív pont és végrehajtási sorrend változatlan.
 
 ---
 
