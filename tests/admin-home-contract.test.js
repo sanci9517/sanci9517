@@ -128,7 +128,7 @@ test("every enabled sidebar destination is a canonical, authenticated Admin rout
 
   const activeControls = [...nav.matchAll(/<a\b([^>]*)>/g)].map((match) => match[1]);
   assert.ok(activeControls.every((attrs) => /class="nav-item"/.test(attrs)));
-  assert.match(nav, /href="\\/admin\\/home"[^>]*aria-current="page"/);
+  assert.ok(nav.includes('href="/admin/home" aria-current="page"'));
   assert.match(nav, /href="\/admin\/editor"/);
   assert.match(nav, /<button\b[^>]*disabled[^>]*data-nav-label="Média erőforrások/);
   assert.doesNotMatch(nav, /<button\b(?![^>]*\bdisabled\b)[^>]*data-nav-label=/);
