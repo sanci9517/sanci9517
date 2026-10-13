@@ -4807,3 +4807,75 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 
 **Coverage count:** 30 A1–A6 source items are individually keyed. AI-1–AI-4, T1–T6 and the roadmap's global rules remain OPEN. P0.2 **IN PROGRESS / NOT PASS**; documentation-only, no runtime code/data changed and no tests run.
 
+### 41.3.33. P0.2 — MASTER-FINAL-ROADMAP source-key ledger: AI-1–AI-4 and T1–T6 tests/release gates (2026-10-13)
+
+**Source:** docs/archive/plans/MASTER-FINAL-ROADMAP.md, AI-1–AI-4 and T1–T6, archive lines 570–648. All 56 checklist items are retained individually. Historical [x] status is not current release evidence.
+
+| Source key | Archive line | Exact source item | Current E target | Candidate canonical IDs | Decision / phase / acceptance |
+|---|---:|---|---|---|---|
+| ROADMAP-AI1-01 | 571 | - [ ] AI uses the same command/action system | E.14; F.8-04 | AI-003/005/006/007/008/009 | KEEP — AI uses same canonical command/action path; no direct D1/R2 or arbitrary HTML mutation; acceptance evidence OPEN |
+| ROADMAP-AI1-02 | 572 | - [ ] no direct arbitrary HTML mutation | E.14; C.23.20-05 | AI-008/018/020; SEC-005 | KEEP — no arbitrary DOM/HTML mutation; untrusted content and safe fallback tests required; acceptance evidence OPEN |
+| ROADMAP-AI1-03 | 573 | - [ ] permission checks | E.14; F.8-04 | AI-006; SEC-002/003 | KEEP — permission checked server-side for each proposed and executed action; acceptance evidence OPEN |
+| ROADMAP-AI1-04 | 574 | - [ ] validation before execution | E.14; F.8-04 | AI-005/006/008 | KEEP — schema/permission/validation before execution; invalid action rejected without partial mutation; acceptance evidence OPEN |
+| ROADMAP-AI1-05 | 575 | - [ ] preview/diff before destructive actions | E.14; C.23.20-05 | AI-007/019; EDT-032/004 | KEEP — preview/diff and human approval before destructive or high-impact actions; acceptance evidence OPEN |
+| ROADMAP-AI1-06 | 576 | - [ ] audit log | E.14; F.8-08 | AI-009/017; SEC-010 | KEEP — audit records action/approval/result/version without secrets; acceptance evidence OPEN |
+| ROADMAP-AI2-01 | 579 | - [ ] live stream context | F.8-07; H32 | AI-004/015; LIV-001–007 | KEEP — live context requires permitted source, freshness, consent and graceful provider fallback; acceptance evidence OPEN |
+| ROADMAP-AI2-02 | 580 | - [ ] silence detection | F.8-07; H32 | AI-015; QA-010 | OPEN — silence detection requires explicit audio/stream source, thresholds, consent and false-positive evaluation; acceptance evidence OPEN |
+| ROADMAP-AI2-03 | 581 | - [ ] idea suggestions | F.8-07; H32 | AI-011/015; AI-004 | KEEP — suggestions are optional, context-filtered and never auto-publish; acceptance evidence OPEN |
+| ROADMAP-AI2-04 | 582 | - [ ] stream analysis | F.8-07; H32 | AI-015; ANL-003/006 | KEEP — stream analysis reports source/time/freshness and separates facts from inference; acceptance evidence OPEN |
+| ROADMAP-AI2-05 | 583 | - [ ] technical diagnostics | F.8-07; H32 | AI-015; OPS-003/008 | KEEP — diagnostics use observable metrics/logs and disclose unavailable signals; acceptance evidence OPEN |
+| ROADMAP-AI2-06 | 584 | - [ ] chat/context analysis | F.8-07; H32 | AI-004/015; SEC-011 | KEEP — chat/context analysis has consent, privacy filters, retention and opt-out; acceptance evidence OPEN |
+| ROADMAP-AI2-07 | 585 | - [ ] streamer profile/memory | F.8-07; H32 | AI-004/016; SEC-011 | OPEN — streamer profile/memory data model, retention, consent, export/delete and preferences need canonical owner; acceptance evidence OPEN |
+| ROADMAP-AI3-01 | 588 | - [ ] good moment detection | F.5-02; F.8-07 | AI-014; CNT-002–004 | KEEP — moment detection uses available signal and honest confidence/fallback; acceptance evidence OPEN |
+| ROADMAP-AI3-02 | 589 | - [ ] marker button | F.5-02 | AI-014; EDT-039 | KEEP — marker button writes canonical marker/event; dedupe and permissions tested; acceptance evidence OPEN |
+| ROADMAP-AI3-03 | 590 | - [ ] automatic clip preparation | F.5-02 | AI-014; CNT-003/004; INT-001–016 | PHASE-GATED — clip preparation requires source availability, timestamps and provider capability; acceptance evidence OPEN |
+| ROADMAP-AI3-04 | 591 | - [ ] short generation pipeline | F.5-02 | AI-014; CNT-003/004 | PHASE-GATED — Shorts pipeline has platform metadata, media validation and review before publish; acceptance evidence OPEN |
+| ROADMAP-AI3-05 | 592 | - [ ] save to media storage | F.5-02; E.19 | RES-001–003/007; CNT-003/004 | KEEP — generated media stored through canonical Resource Manager, never direct orphan R2 writes; acceptance evidence OPEN |
+| ROADMAP-AI3-06 | 593 | - [ ] review/edit/publish flow | F.5-02; E.4-05 | AI-007/008/009; CNT-003/004; WEB-006 | KEEP — review/edit/publish explicit; AI does not publish without approval and canonical publish validation; acceptance evidence OPEN |
+| ROADMAP-AI4-01 | 596 | - [ ] experience memory | F.8-07; H32 | AI-004/016; SEC-011 | OPEN — experience memory is consented/versioned, deletable and not an unbounded hidden profile; acceptance evidence OPEN |
+| ROADMAP-AI4-02 | 597 | - [ ] feedback | F.8-08; H32 | AI-017/019; QA-009 | KEEP — feedback is optional, attributable by purpose and supports opt-out/delete; acceptance evidence OPEN |
+| ROADMAP-AI4-03 | 598 | - [ ] outcome tracking | F.8-08; H32 | AI-015; ANL-010; QA-010 | OPEN — outcomes have defined metrics, baselines, attribution window and data-quality rules; acceptance evidence OPEN |
+| ROADMAP-AI4-04 | 599 | - [ ] evaluation cycles | F.8-08; H32 | AI-015/017; QA-010 | KEEP — evaluation cycles version prompts/models, test regressions and require human release approval; acceptance evidence OPEN |
+| ROADMAP-AI4-05 | 600 | - [ ] safe model/tool boundaries | F.8-04; C.23.20-05 | AI-004/006/018/019/020; SEC-002/008 | KEEP — tool boundaries, prompt injection, least privilege, approval, secret redaction and AI-free fallback tested; acceptance evidence OPEN |
+| ROADMAP-T1-01 | 607 | - [x] Editor Core 12/12 | QA gates; E.3.7 | QA-001/002; EDT-001/004/005 | HISTORICAL [x] — Editor Core 12/12 applies only to its exact historical commit; rerun current CI before release claim; acceptance evidence OPEN |
+| ROADMAP-T1-02 | 608 | - [ ] UI state tests | QA gates; E.3.1 | QA-002/004 | KEEP — UI state tests cover loading/empty/error/dirty/selection/panel state; acceptance evidence OPEN |
+| ROADMAP-T1-03 | 609 | - [ ] commands regression | QA gates; E.3.3 | QA-002; EDT-003/004/005/011 | KEEP — command regression covers invalid mutation, rollback, IDs, undo/redo and hierarchy; acceptance evidence OPEN |
+| ROADMAP-T1-04 | 610 | - [ ] validation regression | QA gates; E.3.5 | QA-002/003; EDT-021/022; SEC-002/005 | KEEP — validation regression rejects invalid units/properties/ownership/safe-embed violations; acceptance evidence OPEN |
+| ROADMAP-T2-01 | 613 | - [ ] editor ↔ API | QA gates; E.4 | QA-002; EDT-001/003/028; WEB-004/006 | KEEP — Editor↔API round-trip, authorization and error paths tested; acceptance evidence OPEN |
+| ROADMAP-T2-02 | 614 | - [ ] API ↔ D1 | QA gates; E.4/E.19 | QA-002/003; SEC-002/003; OPS-004 | KEEP — API↔D1 ownership, FK, migration and no-cross-site access tested; acceptance evidence OPEN |
+| ROADMAP-T2-03 | 615 | - [ ] R2 | QA gates; E.19 | QA-002/003; RES-002/003/009 | KEEP — R2 upload/read/replace/delete, metadata/reference integrity and protected access tested; acceptance evidence OPEN |
+| ROADMAP-T2-04 | 616 | - [ ] publish | QA gates; E.4-05 | QA-002/006; WEB-006; OPS-004/009 | KEEP — publish integration is atomic and public route/cache behavior verified; acceptance evidence OPEN |
+| ROADMAP-T2-05 | 617 | - [ ] auth | QA gates; E.19 | QA-002/003; SEC-001/002/004 | KEEP — auth/session/role/site scope negative tests; acceptance evidence OPEN |
+| ROADMAP-T3-01 | 620 | - [ ] create page → edit → save → reload → preview → publish | QA gates; E.4 | QA-006/009; WEB-001/004–006; EDT-028/032/033 | KEEP — create→edit→save→reload→preview→publish full journey, failure paths included; acceptance evidence OPEN |
+| ROADMAP-T3-02 | 621 | - [ ] mobile/desktop | QA gates; E.3.4 | QA-004 | KEEP — mobile/desktop E2E at defined supported viewport/device matrix; acceptance evidence OPEN |
+| ROADMAP-T3-03 | 622 | - [ ] recovery | QA gates; F.1-09 | QA-006; EDT-031/042; OPS-006 | KEEP — recovery E2E proves no lost edits and successful restore; acceptance evidence OPEN |
+| ROADMAP-T3-04 | 623 | - [ ] conflict | QA gates; F.1-10 | QA-002/006; EDT-029 | KEEP — conflict E2E rejects stale overwrite and verifies explicit recovery choice; acceptance evidence OPEN |
+| ROADMAP-T4-01 | 626 | - [ ] public pages | QA gates; F.4 | QA-004/006; WEB-014–032 | KEEP — public pages/routes/content/SEO/permissions regression; acceptance evidence OPEN |
+| ROADMAP-T4-02 | 627 | - [ ] redirects | QA gates; F.9-02 | QA-004/006; WEB-013; SEO-004/005 | KEEP — redirects, loops, 404 and broken links regression; acceptance evidence OPEN |
+| ROADMAP-T4-03 | 628 | - [ ] admin | QA gates; A1 | QA-004/006; ADM-001–010 | KEEP — Admin navigation/permissions/states regression; acceptance evidence OPEN |
+| ROADMAP-T4-04 | 629 | - [ ] editor | QA gates; E.3 | QA-002/004/006; EDT-001–042 | KEEP — Editor interactions/layout/responsive/save/recovery regression; acceptance evidence OPEN |
+| ROADMAP-T4-05 | 630 | - [ ] integrations | QA gates; E.21 | QA-002/003/006; INT-001–021 | KEEP — integration regression includes token expiry, quota, webhook replay, outage and disconnect; acceptance evidence OPEN |
+| ROADMAP-T5-01 | 633 | - [ ] editor load | QA gates; F.9-06 | QA-005/006; OPS-008 | KEEP — editor load baseline with declared device/network/cache conditions; acceptance evidence OPEN |
+| ROADMAP-T5-02 | 634 | - [ ] canvas performance | QA gates; E.4 | QA-005; EDT-007/009/016 | KEEP — canvas frame/interaction latency and layout calculations benchmarked; acceptance evidence OPEN |
+| ROADMAP-T5-03 | 635 | - [ ] large page | QA gates; C.23.21 | QA-005/010; EDT-001/016 | KEEP — large page fixture defines node/resource/viewport count and response thresholds; acceptance evidence OPEN |
+| ROADMAP-T5-04 | 636 | - [ ] many nodes | QA gates; C.23.21 | QA-005/010; EDT-001/012/016 | KEEP — many-node hierarchy selection/search/reorder latency benchmarked; acceptance evidence OPEN |
+| ROADMAP-T5-05 | 637 | - [ ] media | QA gates; E.19 | QA-005; RES-004/005; OPS-008 | KEEP — media search/preview/upload/variant latency and large assets measured; acceptance evidence OPEN |
+| ROADMAP-T6-01 | 640 | - [ ] no blocking errors | QA gates; release gate | QA-006; OPS-003 | KEEP — no unresolved blocking error; alert/error report reviewed; acceptance evidence OPEN |
+| ROADMAP-T6-02 | 641 | - [ ] build passes | QA gates; release gate | QA-001 | KEEP — typecheck/build/CI pass for exact release commit; acceptance evidence OPEN |
+| ROADMAP-T6-03 | 642 | - [ ] deploy passes | QA gates; release gate | QA-006; OPS-001/004 | KEEP — deployment/migrations pass and deployment version recorded; acceptance evidence OPEN |
+| ROADMAP-T6-04 | 643 | - [ ] API passes | QA gates; release gate | QA-002/006 | KEEP — API health/auth/permission/error paths verified; acceptance evidence OPEN |
+| ROADMAP-T6-05 | 644 | - [ ] D1 verified | QA gates; release gate | QA-002/003; OPS-004 | KEEP — D1 schema/quick_check/FK/ownership preflight evidence retained; acceptance evidence OPEN |
+| ROADMAP-T6-06 | 645 | - [ ] public verified | QA gates; release gate | QA-004/005/006; WEB-014–032 | KEEP — public routes/content/security/SEO/accessibility verified after deploy; acceptance evidence OPEN |
+| ROADMAP-T6-07 | 646 | - [ ] mobile verified | QA gates; release gate | QA-004 | KEEP — mobile viewport/device acceptance evidence retained; acceptance evidence OPEN |
+| ROADMAP-T6-08 | 647 | - [ ] desktop verified | QA gates; release gate | QA-004 | KEEP — desktop viewport/browser acceptance evidence retained; acceptance evidence OPEN |
+| ROADMAP-T6-09 | 648 | - [ ] user verification | QA gates; release gate | QA-009 | KEEP — user confirms exact release build; not inferred from automated test success; acceptance evidence OPEN |
+
+**Semantic findings:**
+- AI editing follows one canonical action path with context/privacy filtering, server-side permissions, validation, preview/diff, human approval, audit/version and AI-free fallback. No direct arbitrary HTML, D1 or R2 mutation.
+- Stream Assistant capabilities are separately consented and source-backed. Silence detection, stream diagnostics, ideas, chat/context analysis and profile/memory are not one generic “AI” feature; each needs data source, freshness, false-positive, consent, retention and opt-out rules.
+- Clip/Short generation remains phase-gated on actual provider capability and source media. Generated output goes through canonical Resource Manager, review/edit, validation and explicit publish.
+- Historical T1 Editor Core 12/12 is retained as old evidence only. It must not replace current CI for the exact release commit.
+- T1–T6 are separate release gates: unit, integration, E2E, regression, performance and user acceptance. A build/deploy pass does not prove public routes, D1 ownership, R2 references, mobile/desktop behavior or conflict recovery.
+
+**Coverage count:** 56 AI/test/release checklist items are individually keyed. The archived roadmap's global 0/Foundation/Data Model/Core rules and execution-order checklist remain OPEN. P0.2 **IN PROGRESS / NOT PASS**; documentation-only, no runtime code/data changed and no tests run.
+
