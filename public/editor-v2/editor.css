@@ -144,3 +144,14 @@
 .schedule-check-grid .inspector-toggle{margin:0}
 .schedule-inspector .field{border-bottom:1px solid var(--line)}
 @media(max-width:850px){.schedule-panel-intro{font-size:10px}.schedule-panel-status{font-size:10px}.schedule-check-grid{gap:3px}}
+
+
+/* F0.3 — explicit, recoverable save-conflict state */
+.revision-conflict{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 16px;border-bottom:1px solid #8d6b36;background:#2a2115;color:#f5e8cf}
+.revision-conflict[hidden]{display:none!important}
+.revision-conflict-copy{min-width:0;flex:1}
+.revision-conflict-copy strong{display:block;font-size:13px}
+.revision-conflict-copy p{margin:4px 0 0;font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+.revision-conflict-actions{display:flex;gap:8px;flex-wrap:wrap}
+.revision-conflict-actions button{white-space:normal}
+@media(max-width:700px){.revision-conflict{align-items:stretch;flex-direction:column;padding:10px}.revision-conflict-actions{display:grid;grid-template-columns:1fr}.revision-conflict-actions button{min-height:40px}}
