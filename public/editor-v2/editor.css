@@ -155,3 +155,8 @@
 .revision-conflict-actions{display:flex;gap:8px;flex-wrap:wrap}
 .revision-conflict-actions button{white-space:normal}
 @media(max-width:700px){.revision-conflict{align-items:stretch;flex-direction:column;padding:10px}.revision-conflict-actions{display:grid;grid-template-columns:1fr}.revision-conflict-actions button{min-height:40px}}
+
+/* F0.4 canvas resize affordance; geometry is committed through the canonical responsive command. */
+.canvas-resize-handle{position:absolute;right:-5px;bottom:-5px;z-index:20;width:12px;height:12px;min-width:12px;min-height:12px;padding:0;border:2px solid #fff;border-radius:3px;background:var(--accent);box-shadow:0 0 0 1px var(--accent);cursor:nwse-resize;touch-action:none;}
+.canvas-resize-handle:focus-visible{outline:2px solid #fff;outline-offset:3px;}
+.node:not(.selected)>.canvas-resize-handle{display:none}
