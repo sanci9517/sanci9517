@@ -2563,11 +2563,11 @@ The short decision record must name the problem and acceptance criteria; existin
 | E.20-N08 | Mobile cannot have critical overflow/inaccessible controls | ADM-010, EDT-035–EDT-037, QA-005 | KEEP | 1.0 release gate | QA-004/005 |
 | E.20-N09 | Secrets/tokens never appear in client code/URL/log/export | SEC-008, INT-019, OPS-002, OPS-005 | KEEP | 0.x–1.0 release gate | QA-003 |
 | E.20-N10 | After rollback/restore canonical data and public rendering remain consistent | WEB-007, WEB-008, OPS-005, OPS-009 | KEEP | 0.x–1.0 release gate | QA-002/006/007 |
-| E.21-01 | Historical F0.1–F0.13 Creator Website 1.0 program and feature set | §39.2, EDT, ADM, WEB, RES, DSN, SCH, INT, SEO, QA | REPLACE | Current §39 + P0/P1 sequence | QA-002/004/008 |
+| E.21-01 | Historical F0.1–F0.13 Creator Website 1.0 program and feature set | §39.2, EDT-001–EDT-042, ADM-001–ADM-010, WEB-001–WEB-032, RES-001–RES-016, DSN-001–DSN-018, SCH-001–SCH-015, INT-001–INT-021, SEO-001–SEO-005, QA-001–QA-010 | REPLACE | Current §39 + P0/P1 sequence | QA-002/004/008 |
 | E.21-02 | 1.x Creator Profile/Link Hub/Content Hub/VOD/Shorts/calendar/integrations/audience/basic analytics | WEB-022, CNT-002–CNT-020, INT-013–INT-021, COM-015, ANL-001–ANL-004 | MERGE | 1.5–2.0 | QA-002/004/008 |
-| E.21-03 | 1.5–1.9 monetization/community/automation foundations | STO-001–STO-020, SUP-001–SUP-012, COM, AUT | MERGE | 1.5–7.0 by domain | QA-002/003/008 |
-| E.21-04 | 2.x Creator OS dashboard/analytics/content/email/sponsorship/OBS/AI | ADM, ANL-001–ANL-010, CNT, COM-015–COM-017, CAM, OBS, AI | MERGE | §39.4–39.5 | QA-002/003/008 |
-| E.21-05 | 3.x business/marketplace and revenue share | STO, SUP, MKT-001–MKT-005, CAM, TEAM | MERGE | 5.0–6.0 | QA-002/003/008 |
+| E.21-03 | 1.5–1.9 monetization/community/automation foundations | STO-001–STO-020, SUP-001–SUP-012, COM-001–COM-018, AUT-001–AUT-014 | MERGE | 1.5–7.0 by domain | QA-002/003/008 |
+| E.21-04 | 2.x Creator OS dashboard/analytics/content/email/sponsorship/OBS/AI | ADM-001–ADM-010, ANL-001–ANL-010, CNT-001–CNT-020, COM-015–COM-017, CAM-001–CAM-009, OBS-001–OBS-010, AI-001–AI-020 | MERGE | §39.4–39.5 | QA-002/003/008 |
+| E.21-05 | 3.x business/marketplace and revenue share | STO-001–STO-020, SUP-001–SUP-012, MKT-001–MKT-005, CAM-001–CAM-009, TEAM-001–TEAM-006 | MERGE | 5.0–6.0 | QA-002/003/008 |
 | E.21-06 | 4.x multi-site/teams/workspaces/roles | TEAM-001–TEAM-006, SEC-003 | MERGE | 4.0 | QA-003/008 |
 | E.21-07 | 5.x SaaS/multi-tenant/packages/billing/usage/platform admin | TEAM-006, STO-019, CAM-009, SEC-003, OPS-008 | MERGE | 4.0–5.0 | QA-003/008 |
 | E.21-08 | 6.x–10.x global ecosystem/extensions/advanced automation/AI/localization | MKT-001–MKT-005, AUT-001–AUT-014, AI-001–AI-020, LOC-001–LOC-008, §39.8–39.12 | MERGE | 6.0–10.0 | QA-002/003/008 |
