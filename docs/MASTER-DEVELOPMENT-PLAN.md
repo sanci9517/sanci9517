@@ -2399,7 +2399,7 @@ upload; folders; search; filter; preview; metadata; alt text; crop; resize; repl
 D1 binding; site settings; schedule; Twitch; YouTube; TikTok; Discord; VOD; collections; API data source; loading state; empty state; error state; conditional rendering; data transforms; caching; stale-data handling; binding validation.
 
 ### 40.3. H21.01–H21.22 — INT (22)
-Twitch OAuth; Twitch live/offline; Twitch title; Twitch game; Twitch viewer statistics; Twitch followers/subscribers where available; Twitch VOD; Twitch clips; Twitch events/webhooks where applicable; YouTube channel; YouTube videos; YouTube Shorts; YouTube statistics where available; YouTube API quota/error handling; TikTok profile; TikTok supported content integration; TikTok API capability review; TikTok rate limits/fallback; Discord community link; Discord optional integration; Discord status where justified; Architecture constraint: keep secrets in Cloudflare Secrets; normalize external APIs behind services.
+Twitch OAuth; Twitch live/offline; Twitch title; Twitch game; Twitch viewer statistics; Twitch followers/subscribers where available; Twitch VOD; Twitch clips; Twitch events/webhooks where applicable; YouTube channel; YouTube videos; YouTube Shorts; YouTube statistics where available; YouTube API quota/error handling; TikTok profile; TikTok supported content integration; TikTok API capability review; TikTok rate limits/fallback; Discord community link; Discord optional integration; Discord status where justified; Architecture constraint: keep secrets in Cloudflare Secrets and normalize external APIs behind services.
 
 ### 40.4. H22.01–H22.19 — SCH/CNT (19)
 schedule CRUD; recurring schedule; timezone handling; next-stream calculation; countdown; live state; game/category; stream type; VOD ingestion; VOD categorization; VOD search/filter; Shorts management; clips management; content calendar; platform-specific variants; title/description/hashtag suggestions; thumbnail brief; publishing workflow; performance feedback loop.
@@ -2429,7 +2429,7 @@ full backup; page backup; revision backup; media references; restore validation;
 bundle review; lazy loading; image optimization; caching; cache invalidation; Core Web Vitals; rendering performance; large-page performance; large-tree editor performance; history memory limits; autosave efficiency; API latency monitoring; production smoke test; visual regression baseline.
 
 ### 40.13. H31.00–H31.13 — AI/EDT (14)
-AI editor must use the same canonical action system as manual Editor; pipeline: Intent -> Plan -> Actions -> Permission -> Validation -> Preview/Diff -> Approval -> Execute -> Verify -> Audit -> Version; AI page operations; AI element operations; AI style/layout operations; AI responsive operations; AI content generation; AI SEO assistance; AI accessibility QA; AI visual QA; action permissions; approval rules; rollback; audit; rate/cost controls.
+AI editor must use the same canonical action system as manual Editor, with pipeline: Intent -> Plan -> Actions -> Permission -> Validation -> Preview/Diff -> Approval -> Execute -> Verify -> Audit -> Version; AI page operations; AI element operations; AI style/layout operations; AI responsive operations; AI content generation; AI SEO assistance; AI accessibility QA; AI visual QA; action permissions; approval rules; rollback; audit; rate/cost controls.
 
 ### 40.14. H32.01–H32.25 — AI/LIV (25)
 live stream monitoring; silence/speech detection; chat activity analysis; technical issue detection; audio problem detection; stream quality checks; scene suggestions; context-aware ideas; interesting moment detection; post-stream summary; VOD analysis; clip candidates; Short candidates; title/description suggestions; platform variants; thumbnail briefs; publishing recommendations; content performance analysis; streamer profile; long-term memory; preferences; historical outcomes; experiment tracking; evaluation cycle; feedback loop.
@@ -2438,7 +2438,7 @@ live stream monitoring; silence/speech detection; chat activity analysis; techni
 Automation lifecycle contract: Trigger -> Condition -> Action -> Result -> Verify -> Audit; scheduled automations; event automations; content workflows; media workflows; stream workflows; notification workflows; retry policy; idempotency; failure handling; permissions; audit; Queues/Durable Objects only when justified by a real background-task or realtime requirement.
 
 ### 40.16. H34.00–H34.22 — QA/PLATFORM (23)
-Continuous feature discovery is never permanently closed; repeat the review before every significant Editor/platform extension; modern visual builder minták;; GrapesJS / Craft.js / Puck architekturális minták;; új responsive/layout megoldások;; accessibility;; performance;; reusable components;; design systems;; collaboration/conflict;; backup/recovery;; AI action safety;; stream/content intelligence.; azonosítás;; cél és felhasználási eset;; függőségek;; Page Model/adatmodell;; Command/Action;; Inspector/Canvas/UI;; persistence;; teszt;; MASTER-be felvétel;; implementáció;; felhasználói validáció..
+Continuous feature discovery is never permanently closed, with review repeated before every significant Editor/platform extension; modern visual builder minták;; GrapesJS / Craft.js / Puck architekturális minták;; új responsive/layout megoldások;; accessibility;; performance;; reusable components;; design systems;; collaboration/conflict;; backup/recovery;; AI action safety;; stream/content intelligence.; azonosítás;; cél és felhasználási eset;; függőségek;; Page Model/adatmodell;; Command/Action;; Inspector/Canvas/UI;; persistence;; teszt;; MASTER-be felvétel;; implementáció;; felhasználói validáció..
 
 ### 40.17. Zárási szabály
 Minden tételhez stabil funkció-ID, domain owner, user outcome, permission, dependency, lifecycle, pozitív/negatív teszt, runtime acceptance és evidence kell. KEEP/DEFERRED nem jelent implementáltságot; REPLACE/REJECT csak indokolt, auditált döntéssel lehetséges.
@@ -2698,7 +2698,7 @@ Minden tételhez stabil funkció-ID, domain owner, user outcome, permission, dep
 | H33.10 | permissions | AUT-004 | AUT | DEFER | 7.0 | QA-002/003 |
 | H33.11 | audit | AUT-008 | AUT | DEFER | 7.0 | QA-002/003 |
 | H33.12 | Queues/Durable Objects only when justified by a real background-task or realtime requirement | AUT-007 | AUT | DEFER | 7.0 | QA-002/003 |
-| H34.00 | Continuous feature discovery is never permanently closed; repeat the review before every significant Editor/platform extension | QA-010 | QA | EXPAND | all phases | QA-010 |
+| H34.00 | Continuous feature discovery is never permanently closed, with review repeated before every significant Editor/platform extension | QA-010 | QA | EXPAND | all phases | QA-010 |
 | H34.01 | modern visual builder minták | QA-010 | QA | EXPAND | all phases | QA-010 |
 | H34.02 | GrapesJS / Craft.js / Puck architekturális minták | QA-010 | QA | EXPAND | all phases | QA-010 |
 | H34.03 | új responsive/layout megoldások | EDT-024 | EDT | EXPAND | all phases | QA-010 |
