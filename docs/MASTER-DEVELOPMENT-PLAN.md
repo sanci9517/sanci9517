@@ -39,7 +39,7 @@ Ez a dokumentum egyszerre termékspecifikáció, architekturális szerződés, f
 
 ### 0.3. Ismert kiindulási állapot
 - Repo: sanci9517/sanci9517; fő fejlesztési ág: v2/foundation.
-- Runtime: Cloudflare Workers; TypeScript/JavaScript; Cloudflare D1 strukturált adatokhoz; Cloudflare R2 bináris objektumokhoz.
+- Runtime: Cloudflare Workers; TypeScript/JavaScript; Cloudflare D1 strukturált adatokhoz. Cloudflare R2 a tervezett bináris objektumtároló, de a jelenleg ellenőrzött `wrangler.jsonc` még nem deklarál R2 bindingot; R2 csak külön konfigurációs, jogosultsági és runtime-verifikációs kapu után tekinthető aktívnak.
 - Worker: sanci9517-streamer-brand; D1 binding: DB; a jelenlegi konfigurációban ASSETS binding is szerepel.
 - Kanonikus Editor runtime: public/editor-v2/.
 - Kanonikus backend Page Model, validáció, schedule domain és site ownership szerződés már létezik.
@@ -6391,4 +6391,12 @@ The canonical H crosswalk rows have been updated for 37 source keys. The main co
 - No runtime code/data changed; no tests run.
 
 **Status:** 140/140 historical IDs have individual candidate canonical mappings. Semantic reconciliation, source-to-current crosswalk links, owner/phase/dependency, DoD/test/acceptance remain OPEN. P0.2 **IN PROGRESS / NOT PASS**.
+
+### 41.3.55. P0.2 — Correct top-level runtime baseline: R2 is planned, not a configured binding (2026-10-13)
+
+The top-level §0.3 runtime baseline previously stated R2 as if it were already part of the configured runtime. The checked `wrangler.jsonc` declares only `ASSETS` and D1 `DB`; no R2 binding is present in that configuration. The top-level statement is corrected to distinguish target architecture from current configuration.
+
+**Acceptance gate before claiming R2 active:** declare the named binding and bucket in Wrangler; define server-side ownership, object-key, MIME/size validation, upload/delete/restore and metadata contract; add local/remote configuration verification and failure/retry tests; ensure no client-side direct object-store mutation; document migration/rollback. Do not implement this while P0.2 remains open.
+
+**Status:** documentation contradiction resolved; R2 implementation/configuration remains planned/open. No runtime code/configuration changed and no tests were run.
 
