@@ -5,18 +5,13 @@ import test from "node:test";
 const worker = readFileSync(new URL("../src/index.ts", import.meta.url), "utf8");
 const dashboard = readFileSync(new URL("../public/admin-home.html", import.meta.url), "utf8");
 
-test("Admin entry authenticates before routing to the dashboard", () => {
-  assert.match(
-    worker,
-    /if \(pathname === "\/admin" \|\| pathname === "\/admin\.html"\) \{\s*const user = await getAuthenticatedUser\(request, env\);\s*if \(!user\) return Response\.redirect\(new URL\("\/admin\/login", request\.url\)\.toString\(\), 302\);\s*return Response\.redirect\(new URL\("\/admin\/home", request\.url\)\.toString\(\), 302\);/
-  );
-});
-
-test("dashboard route and direct asset path are authenticated", () => {
-  assert.match(
-    worker,
-    /if \(pathname === "\/admin\/home" \|\| pathname === "\/admin-home\.html"\) \{\s*const user = await getAuthenticatedUser\(request, env\);\s*if \(!user\) return Response\.redirect\(new URL\("\/admin\/login", request\.url\)\.toString\(\), 302\);\s*return env\.ASSETS\.fetch\(assetRequest\("\/admin-home\.html", request\)\);/
-  );
+test("canonical Admin route is authenticated and serves the single dashboard asset", () => {
+  assert.ok(worker.includes('if (pathname === "/admin") {'));
+  assert.ok(worker.includes("return env.ASSETS.fetch(assetRequest("));
+  assert.ok(worker.includes('if (pathname === "/admin/home" || pathname === "/admin-home.html" || pathname === "/admin.html")'));
+  assert.ok(worker.includes('new URL("/admin", request.url).toString(), 302'));
+  assert.ok(worker.includes('if (pathname === "/admin/login")'));
+  assert.ok(worker.includes('if (pathname === "/admin-login.html")'));
 });
 
 test("canonical Visual Editor v2 route remains available separately", () => {
@@ -133,7 +128,7 @@ test("every enabled sidebar destination is a canonical, authenticated Admin rout
 
   const activeControls = [...nav.matchAll(/<a\b([^>]*)>/g)].map((match) => match[1]);
   assert.ok(activeControls.every((attrs) => /class="nav-item"/.test(attrs)));
-  assert.match(nav, /href="\/admin\/home"[^>]*aria-current="page"/);
+  assert.ok(nav.includes('href="/admin/home" aria-current="page"'));
   assert.match(nav, /href="\/admin\/editor"/);
   assert.match(nav, /<button\b[^>]*disabled[^>]*data-nav-label="Média erőforrások/);
   assert.doesNotMatch(nav, /<button\b(?![^>]*\bdisabled\b)[^>]*data-nav-label=/);

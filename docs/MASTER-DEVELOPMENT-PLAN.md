@@ -4287,3 +4287,17 @@ F0.2 DoD:
 - [ ] F0.2 teljes route/auth/navigation acceptance és felhasználói production acceptance; addig az aktív pont nem zárható le.
 
 **Kötelező értelmezés:** ez egy teljes főoldal-UI redesign, nem a jövőbeli Creator OS modulok implementációja. Az aktív pont továbbra is `F0.2-ADMIN-NAVIGATION-GLOBAL-SHELL-ACCEPTANCE`; az Editor fejlesztési pontjára csak az F0.2 teljes DoD és a production acceptance után lépünk tovább.
+
+## 2.77.9.I — Egyetlen canonical Admin felület és route — 2026-10-13
+
+**Állapot: IMPLEMENTÁCIÓ A FEATURE BRANCHEN; CI ÉS PRODUCTION ACCEPTANCE MÉG NEM IGAZOLT.** Ez a bejegyzés a korábbi Admin-route pillanatképeket a jelenlegi célra nézve felülírja; a történeti bejegyzések megmaradnak traceability célból.
+
+- **Egyetlen felhasználói Admin főútvonal:** `/admin`. Bejelentkezett felhasználónál a Worker a jelenlegi Creator Control Center dashboard assetet szolgálja ki; kijelentkezve `/admin/login` felé irányít.
+- **Egyetlen dashboard-implementáció:** a korábbi, újratervezett Creator Control Center marad az egyetlen dashboard; a régi, különálló `public/admin.html` dashboard eltávolítva.
+- **Régi dashboard útvonalak:** `/admin/home`, `/admin-home.html` és `/admin.html` a canonical `/admin` útvonalra irányítanak. Az aliasok nem szolgálnak ki külön dashboardot.
+- **Egyetlen bejelentkezési URL:** `/admin/login`; a `/admin-login.html` alias erre irányít.
+- **Az Editor nem második Admin:** a külön munkaterület canonical útvonala továbbra is `/admin/editor`, hitelesítés mögött, az Editor v2 assettel.
+- **Biztonsági és regressziós követelmény:** a Worker autentikációja marad a dashboard-kiszolgálás előtt; az API-k saját szerveroldali jogosultságellenőrzése nem helyettesíthető kliensoldali védelemmel. A route contract teszt ellenőrzi a canonical route-ot, az aliasokat és az Editor guardot.
+- **Lezárási kapu:** `npm run typecheck`, `npm run test:admin-home`, `npm run test:editor`, `npm run test:schedule`, `npm run test:domain`, friss GitHub Actions CI, majd deploy utáni éles smoke teszt: kijelentkezett és bejelentkezett `/admin`, login/logout, alias redirectek, Editor belépés, mobil/desktop. E pont nem tekinthető PASS-nak pusztán a fájlmódosítás miatt.
+
+**F0.2 scope-védelem:** ez a route-egységesítés nem jogosít fel más legacy Editor, tartalommodell vagy adat/API réteg törlésére; azokat csak bizonyított, külön függőségi vizsgálat után lehet megszüntetni. A korábbi route-leírások történeti bizonyítékok, nem az aktív route-kontraktus.
