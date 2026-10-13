@@ -4084,17 +4084,119 @@ A terméket nem egyetlen versenytárshoz igazítjuk. A következő hivatalos for
 
 Minden nagyobb domain fejlesztése előtt a benchmarkot újra kell ellenőrizni, mert a termékek, díjcsomagok és API-képességek változhatnak. A benchmarkból átvett ötlethez rögzíteni kell a user problem-et, canonical owner-t, függőséget, API/license korlátot, acceptance-tesztet és a döntést (adopt/adapt/reject). A benchmarkban látott funkció nem bizonyíték arra, hogy a Sanci platformon már létezik.
 
-## 2.77.8 — Merge-gate: PR #6 csak a végső konzisztenciaellenőrzés után
+## 2.77.8 — PR #6 lezárási bizonyíték
 
-A PR csak akkor olvasztható be, ha mindegyik feltétel igaz:
-- [ ] MASTER tetején MASTER-2.77, egyetlen aktív pont és a helyes Admin-first sorrend szerepel.
-- [ ] Régi E/F részletes követelmények, 01–140, H19–H34 és a 2.75/2.76 tartalom megmaradt; a régi roadmapek explicit historical/superseded címkéjűek.
-- [ ] A régi Editor-first F0 sorrend nem tudja felülírni a 2.77 sorrendet.
-- [ ] Az Admin kezdőoldal layoutja, navigációja, valós adatkontraktjai, responsive/accessibility és route acceptance le van írva.
-- [ ] Minden korábbi feature legalább egy canonical domainhez és egy implementációs fázishoz rendelhető; a mapping önmagában nem PASS.
-- [ ] A teljes core AI nélkül működik, az AI kizárólag F0.24.
-- [ ] A diff csak a MASTER dokumentumot változtatja; production code vagy migrations nem módosult.
-- [ ] A PR base a tényleges aktuális fejlesztési branch, nincs merge conflict, és a teljes diff review megtörtént.
-- [ ] A felhasználó által jóváhagyott Admin UI első verziója az F0.1 acceptance része; a merge nem jelenti a feature implementáltságát.
+**Állapot:** CLOSED / MERGED 2026-10-13.  
+**PR:** https://github.com/sanci9517/sanci9517/pull/6  
+**Merge commit:** 147eabfe417b1e57d40ae3783b207ff70f6b1713  
+**Scope:** kizárólag docs/MASTER-DEVELOPMENT-PLAN.md; production kód és migration nem változott.
+
+- [x] MASTER tetején MASTER-2.77, egyetlen aktív pont és Admin-first sorrend szerepel.
+- [x] A korábbi E/F specifikációk, a 01–140 mátrix, a H19–H34 ledger és a 2.75/2.76 tartalom megmaradt; a régi roadmapek történetiként jelöltek.
+- [x] A régi Editor-first F0 sorrend nem írhatja felül a MASTER-2.77-et.
+- [x] Az Admin kezdőoldal layoutja, navigációja, adatforrásai, responsive/accessibility és route acceptance le van írva.
+- [x] Mind a 140 történeti funkciósor és a 271 H19–H34 ledger sor célfázishoz van rendelve; a mapping nem runtime PASS.
+- [x] A teljes core AI nélkül működőként van specifikálva; az opcionális AI az F0.24 utolsó fő fázis.
+- [x] A PR egyetlen dokumentumot módosított, a base branch a v2/foundation volt, a GitHub a merge előtt mergeable állapotot jelzett.
+- [x] Az Admin UI F0.1 lett a következő aktív munkapont; a terv merge-je nem jelenti az Admin UI implementáltságát.
+
+## 2.77.9 — F0.1 Admin home shell: aktuális implementációs checkpoint
+
+**Állapot:** IMPLEMENTING — NOT PASS.  
+**Kód PR:** https://github.com/sanci9517/sanci9517/pull/7  
+**Branch:** feature/admin-home-shell  
+**Aktív scope:** a dashboard vizuális shell, az authenticated /admin belépési út, a valódi read-only dashboard adatforrások és a contract tesztek.
+
+Elkészült a munkapont első implementációs szelete:
+- [x] Új public/admin-home.html dashboard: bal navigációs sáv, felső sáv, overview kártyák, webhely/adasrend nézet, integrációs státusz és gyorsutak.
+- [x] /admin és /admin.html hitelesített esetben /admin/home felé irányít; hitelesítés nélkül /admin/login a cél.
+- [x] /admin/home és a közvetlen /admin-home.html asset kérés is auth guard mögött van.
+- [x] A canonical /admin/editor → public/editor-v2/index.html út külön megmaradt.
+- [x] A dashboard a meglévő session, site settings, page metadata, schedule és Twitch connection API-kból olvas; nincs kitalált follower/revenue/stream metrika.
+- [x] A még nem implementált modulok disabled / Tervezett jelzést kapnak.
+- [x] Hozzáadva a tests/admin-home-contract.test.js és az npm run test:admin-home script.
+- [x] Statikus ellenőrzés: route guard minták, API-források, egyedi HTML ID-k, beágyazott JavaScript syntax, responsive breakpoints, keyboard focus és reduced-motion ellenőrizve.
+- [ ] A helyi npm run test:admin-home, npm run typecheck és teljes releváns regression suite futtatása.
+- [ ] Hitelesített browser acceptance desktop/tablet/mobile nézetben.
+- [ ] Ellenőrizni kell a tényleges API-válaszokat és a Cloudflare branch preview viselkedését.
+- [ ] Felhasználói vizuális acceptance után lehet F0.1 PASS; addig a következő munkapont nem aktiválható.
+
+**Vizuális irány — 2026-10-13, felhasználói döntés:** sötét és világos téma közötti váltás; lila kiemelőszín; kiegyensúlyozott, nem túlzsúfolt dashboard; a teljes későbbi Creator OS modulrendszer maradjon felfedezhető, a még nem kész modulok jól látható „Tervezett” / AI esetén „Későbbi” státusszal. A téma választása helyi beállításként megmarad. A főoldal vizuális acceptance továbbra is nyitott; PR #7 nem merge-elhető és F0.1 nem jelölhető PASS-nak a felhasználó kifejezett vizuális elfogadása előtt.
+
+**2026-10-13 vizuális iteráció:** PR #7 dashboard színrendszere lila hangsúlyú lett, bekerült a világos/sötét téma kapcsoló és a navigációba a VOD/rövid videók, AI-asszisztens, lokalizáció és fejlesztői eszközök tervezett bejegyzése. A tesztkontraktus külön ellenőrzi a téma kapcsolót és a tervezett modulok láthatóságát. Ez kódmódosítás, nem browser acceptance; a Cloudflare preview új commitjának tényleges megjelenését és a mobil/tablet nézetet még ellenőrizni kell.
+
+**Megőrzési szabály:** a korábbi public/admin.html és a régi Admin panel nem törölhető ezen munkapontban. Csak a tényleges használati útvonal és a canonical dashboard shell változik; a legacy kód későbbi migrációs/archiválási döntésig megmarad.
 
 **A jelen fejezet a termékirány és a fejlesztési sorrend végleges specifikációja.** A terv a jövőbeli capability-k teljes katalógusa; a runtime készültség kizárólag az egyes aktív munkapontok tesztjeiből és elfogadásából következhet.
+
+**2026-10-13 felhasználói visszajelzés és második UI-iteráció — acceptance továbbra is NYITOTT:** a felhasználó jelezte, hogy a felületek túlzottan egybeolvadnak, és a modulok/funkciók felsorolása nem elég részletes. Ennek alapján a PR #7 dashboard újabb módosítást kapott; ez nem F0.1 PASS és nem merge-jóváhagyás.
+
+- [x] Erősebb felületi hierarchia: kontrasztosabb felületi határok, különálló panel- és kártyafelületek, lila szekciójelölők, kiemelt kártyatetők, elkülönülő navigációs csoportok.
+- [x] A „Teljes Creator OS modulrendszere” részletes, reszponzív katalógust kapott 17 külön kártyával: webhely/CMS; média; adásrend/streamerprofil; Stream Studio/OBS; cross-platform publikálás; integrációk; közösség/moderáció; analitika; commerce/tagság/szponzoráció; audience/CRM; automatizálás; fiók/biztonság/mentés; lokalizáció/hozzáférhetőség; fejlesztői eszközök/bővítmények; kézi Media Studio; csapatmunka; későbbi AI-asszisztens.
+- [x] A képességek konkrét alfunkciókra vannak bontva; a katalógus a MASTER funkcióleltárának felfedezhető navigációs nézete, nem a MASTER helyettesítője és nem a teljes scope új forrása.
+- [x] A készültségi címkék különválasztják a meglévő/ részben elérhető alapokat, a tervezett modulokat és a későbbi AI-fázist. A tervezett elemek nem működő funkciók, nem ígérnek nem létező API-képességet.
+- [x] Az Admin contract tesztek bővültek a vizuális elkülönítés, a 17 kategóriás katalógus és a státuszcímkék ellenőrzésével.
+- [ ] A helyi tesztek és typecheck újrafuttatása a friss PR-HEAD-en.
+- [ ] Böngészős vizuális ellenőrzés 1440 px desktop, tablet és mobil szélességen, világos és sötét témával; szükség esetén további finomítás.
+- [x] Felhasználói vizuális elfogadás — 2026-10-13: a felhasználó elfogadta a jelenlegi Admin főoldal irányát azzal, hogy a fejlesztés közben felmerülő hiányzó képességeket később bővítjük. Addig PR #7 nyitott/piszkozat marad; F0.1 nem PASS, merge tilos.
+
+**Korlát:** a katalógus a MASTER-2.77.7 teljességi kapujában felsorolt forrásokból és a 2.77.5 fázistervből következik. A teljes funkciókatalógus teljességét továbbra is a MASTER E/F fejezetei, a 01–140 mátrix és a H19–H34 történeti ledger igazolja; a dashboard kártyáinak száma önmagában nem bizonyít teljességet.
+
+
+
+## 2.77.9.A — F0.1 user feedback: Admin home must be a working Creator Platform dashboard
+
+**Állapot:** IMPLEMENTING / NOT PASS. Ez a kiegészítés a 2.77.9 checkpointot pontosítja, nem zárja le az F0.1-et.
+
+A felhasználó egyértelmű visszajelzése: az Admin főoldal ne vizuális fejlesztési terv vagy funkciókatalógus legyen, hanem valódi Creator Platform adminfelület.
+
+- A kezdőoldalon nem jelenhet meg a 17 kártyás, roadmap-szerű Creator OS katalógus. Ezt a nézetet el kell távolítani a fő dashboardról.
+- A kezdőoldal elsődleges feladata: aktuális rendszerállapotok, a webhely és adásrend tényleges adatai, valós integrációs állapot, gyakori napi műveletek és gyors belépés a megfelelő munkaterületre.
+- A teljes termék navigációja a bal oldali menüben és a canonical capability/domain registryben marad. A menü nem helyettesíti az E/F specifikációkat, és nem jelenti azt, hogy minden modul már működik.
+- A főoldal nem mutathat hamis analitikát, fiktív teendőt, kitalált streamállapotot vagy nem létező publikálási sikert. Az adatforrás nélküli widgetet ki kell hagyni vagy valós, egyértelmű üres/tervezett állapotot kell mutatni.
+- A napi munkafolyamatokhoz vezető gyorsműveleteknek valódi, létező útvonalra kell mutatniuk. A kanonikus Editor v2 továbbra is `/admin/editor`; a publikus webhely külön megnyitható.
+- A termékbenchmarkokat a megfelelő domain kialakításakor kell felhasználni: Twitch Creator Dashboard (stream/content/community/analytics), Streamlabs (streaming tools/overlays/creator site) és Webflow (visual builder/CMS/preview/publish). Ezek minták, nem automatikus scope-bővítések; a Sanci MASTER és a capability traceability marad a mérvadó.
+- A dashboard elrendezésének célja egy operatív munkaközpont; a funkciókészültségi címkék a navigációban és a modul saját képernyőjén jelenjenek meg, ne a kezdőoldal egészét uraló katalógusként.
+- Az új irányt külön vizuálisan kell ellenőrizni desktop/tablet/mobile méreteken, világos és sötét témában. A frissített contract teszteknek biztosítaniuk kell, hogy a kezdőoldal ne regresszáljon roadmap-katalógussá.
+- **Nincs merge és nincs F0.1 PASS** a helyi tesztek/typecheck, böngészős ellenőrzés és a felhasználó kifejezett vizuális elfogadása előtt.
+
+
+## 2.77.9.B — Dashboard copy hierarchy and capability completeness clarification
+
+**Állapot:** IMPLEMENTING / NOT PASS.
+
+- A felhasználó pontosította, hogy a Sanci9517 Creator Platform teljes funkciókészlete jóval több a mostani Admin menüben látható elemeknél. A menü rövid, első szintű navigáció; **nem a teljes capability inventory és nem a végleges termékscope**.
+- A teljes scope továbbra is a MASTER 00.9.6.C / 00.9.6.D, az E/F buildpontok, a 01–140 preservation matrix és a H19–H34 történeti traceability alapján vezetendő. A képességek nem hagyhatók el azért, mert a dashboardon vagy a menüben nincs mindegyik felsorolva. A történeti vagy tervezett tétel nem jelent kész runtime-funkciót.
+- A kezdőoldal szöveghierarchiája legyen rendezett és középre igazított: főcím és bevezető, szekciócímek, státuszkártyák és gyorsműveletek. A navigációs elemek, sűrű adatlisták és hosszabb munkafelületi tartalmak maradjanak balra igazítva, ahol ez gyorsabb olvashatóságot biztosít.
+- Kerülendő a fölösleges ismétlés: ne ismételje ugyanazt a magyarázatot a főcím, szekcióleírás, kártya és gombszöveg. A státuszjelölés, rövid leírás vagy ismétlés csak akkor maradhat, ha külön döntést segít, navigációs kontextust ad, vagy szükséges akadálymentességi/állapotjelzés.
+- A középre igazítás nem lehet minden elemre automatikusan ráhúzott szabály; a bal oldali navigáció és a listajellegű tartalom olvashatósága elsőbbséget élvez.
+- A PR ellenőrzése tartalmazza a sötét/világos témát, desktop/tablet/mobil töréspontokat, a szövegek túlcsordulását, valamint a fölösleges ismétlések vizuális felülvizsgálatát.
+- **Nincs merge és nincs F0.1 PASS** a helyi tesztek/typecheck, a böngészős vizuális ellenőrzés és a felhasználó kifejezett elfogadása előtt.
+
+
+## 2.77.9.C — Full Creator Platform Admin home and universal action alignment
+
+**Állapot:** IMPLEMENTING / NOT PASS — user visual acceptance and local/browser validation are still required.
+
+A felhasználó pontos követelménye: nem kizárólag a jelenlegi működő modulok listája kell, hanem a teljes, MASTER-ben rögzített Creator Platform termékirányának áttekinthető megjelenítése az Admin főoldalon, prémium kivitelezéssel. A gombok feliratának és ikonjának függőlegesen és vízszintesen középre kell kerülnie.
+
+- [x] A dashboard megőrzi a napi operatív területet (valós rendszeradatok, webhely, adásrend, integrációs állapot és meglévő belépési pontok).
+- [x] Hozzáadva egy külön, kereshető Creator Platform képességtérkép 24 fő munkaterülettel: Weboldal/CMS, Visual Editor v2, Design Studio, Resource Library, Schedule/Game Profiles, Stream Studio/OBS, VOD/Clips/Shorts, Publishing, Twitch, YouTube/TikTok/Discord, Community, Audience/Email/CRM, Analytics, AI Copilot, Commerce/Membership, Automation, Team/SaaS, Security/Recovery, Localization/Accessibility/SEO, Developer Tools/Marketplace, Dynamic Data Binding, Forms/Interactions, Publishing/Revision Control, Content Models/Reusable Blocks.
+- [x] A kártyák részletes capability-felsorolásokat és készültségi/fáziscímkéket adnak. A „Tervezett” és „Későbbi” képességek nem aktívként jelennek meg; ezek gombjai letiltott állapotúak, és nem színlelnek létező útvonalat.
+- [x] A kereső a navigációs elemek és a capability-kártyák között is keres.
+- [x] Az általános műveleti gombok, ikon-gombok, kis gombok, gyorsműveleti linkek és capability CTA-k inline-flex + align-items:center + justify-content:center szabályt kapnak; a navigáció és a sűrű listák balra igazítása szándékosan megmarad.
+- [x] A képességkártyák reszponzív gridben, sötét/világos témához illeszkedő felületekkel, fókuszállapottal és reduced-motion támogatással jelennek meg.
+- [x] A kártyákban elkerülendő az ugyanazon hosszú funkcióleírás bekezdésben és listában történő ismétlése; a részletes képességek egyszer szerepelnek.
+- [x] GitHub Actions friss PR-HEAD-en: `npm run typecheck`, `npm run test:editor`, `npm run test:schedule`, `npm run test:domain`, `npm run test:admin-home` sikeres; a Twitch Integration Check regressziós futása is sikeres (2026-10-13). A felhasználó helyi gépén végzett külön futtatás még hátravan.
+- [ ] Böngészős ellenőrzés desktop/tablet/mobil szélességen, mindkét témában; a kártyamagasságok, tördelés, keresés, gombközépre igazítás és túlcsordulás vizuális ellenőrzése.
+- [x] Felhasználói vizuális elfogadás — 2026-10-13: a felhasználó elfogadta a jelenlegi Admin főoldal irányát azzal, hogy a fejlesztés közben felmerülő hiányzó képességeket később bővítjük.
+
+**Scope-garancia:** a 24 dashboard-kártya magas szintű felfedezési felület, nem helyettesíti és nem rövidíti le a MASTER 00.9.6.C / 00.9.6.D, E/F specifikációit, a 01–140 preservation matrixet vagy a H19–H34 történeti traceability-t. Ha a részletes MASTER olyan capability-t tartalmaz, amely nem kapott külön dashboard-kártyát, a követelmény attól még megmarad és a megfelelő munkaterület/fázis specifikációjában kötelező. A dashboardon látható tervezett képesség nem bizonyít runtime-implementációt.
+
+**Gate:** a vizuális irány felhasználói elfogadása és a friss PR-HEAD CI-ellenőrzése megtörtént. F0.1 továbbra sem PASS, amíg a felhasználó helyi ellenőrzése és a legfrissebb preview böngészős ellenőrzése nincs lezárva. PR #7 addig nyitott/piszkozat marad; merge csak az ellenőrzési kapuk teljesülése után.
+
+- [x] Külön képességkártyák lefedik a dinamikus adatbindinget, a formokat/interakciókat, a publishing/revision folyamatot és a bővíthető tartalommodelleket; ezek sem jelentenek automatikusan kész runtime-funkciót.
+
+- [x] A felhasználó elfogadta a jelenlegi Admin főoldal irányát; a később hiányzóként felismert funkciók fejlesztés közben, a MASTER scope megőrzésével bővíthetők. Ez nem tekintendő a még futtatandó lokális/böngészős ellenőrzések helyettesítésének.
+
+- [x] CI bővítve `test:domain` és `test:admin-home` futtatásával; a `97c3ea85b62991d878d1d63c8f821f41abcc3b02` HEAD-en mindkét GitHub Actions workflow sikeres. Az Admin home szerződéses teszt egy elavult `.panel` CSS-szelektor elvárása miatt először hibázott; az elvárás a tényleges közös `.panel, .module-card` stílushoz igazítva lett, majd az újrafuttatás sikeres volt.
