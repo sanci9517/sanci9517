@@ -57,33 +57,19 @@ test("dashboard keeps planned Creator OS areas discoverable", () => {
 test("dashboard visually separates surfaces and navigation groups", () => {
   assert.match(dashboard, /\.nav-label\s*\{[^}]*border-top:\s*1px solid var\(--line\)/);
   assert.match(dashboard, /\.metric-card\s*\{\s*border-top:\s*3px solid var\(--accent-strong\)/);
-  assert.match(dashboard, /\.catalog-card\s*\{[^}]*border:\s*1px solid var\(--line-strong\)/);
-  assert.match(dashboard, /\.catalog-grid\s*\{[^}]*grid-template-columns:\s*repeat\(3/);
+  assert.match(dashboard, /\.panel\s*\{[^}]*border:\s*1px solid var\(--line-strong\)/);
+  assert.match(dashboard, /\.action-card\s*\{[^}]*border:\s*1px solid var\(--line\)/);
 });
 
-test("dashboard exposes a detailed, honestly labelled Creator OS capability catalog", () => {
-  assert.match(dashboard, /aria-label="Creator OS részletes funkciókatalógusa"/);
-  assert.equal((dashboard.match(/class="catalog-card"/g) || []).length, 17);
-  for (const capability of [
-    "Média- és erőforráskönyvtár",
-    "Stream Studio és OBS",
-    "Cross-platform publikálás",
-    "Közösség és moderáció",
-    "Analitika és riportok",
-    "Üzlet, tagság és szponzoráció",
-    "Közönség és CRM",
-    "Automatizálás és munkafolyamatok",
-    "Fiók, beállítások és biztonság",
-    "Lokalizáció és hozzáférhetőség",
-    "Fejlesztői eszközök és bővítmények",
-    "Kézi Media Studio",
-    "Csapatmunka és munkaterület",
-    "AI-asszisztens — utolsó főfázis"
-  ]) {
-    assert.ok(dashboard.includes(capability), `missing capability category: ${capability}`);
-  }
-  assert.match(dashboard, /AI-mentes alapfolyamatok után/);
-  assert.match(dashboard, /data-status="later"/);
+test("dashboard is an operational creator workspace, not a roadmap catalog", () => {
+  assert.match(dashboard, /<h2>Gyors műveletek<\/h2>/);
+  assert.match(dashboard, /aria-label="Gyors műveletek"/);
+  assert.match(dashboard, /Weboldal szerkesztése/);
+  assert.match(dashboard, /Adásrend kezelése/);
+  assert.match(dashboard, /Publikus webhely ellenőrzése/);
+  assert.doesNotMatch(dashboard, /Creator OS részletes funkciókatalógusa/);
+  assert.doesNotMatch(dashboard, /class="catalog-card"/);
+  assert.match(dashboard, /A teljes modulnavigáció a bal oldali menüben marad/);
 });
 
 test("dashboard includes responsive, keyboard and reduced-motion affordances", () => {
