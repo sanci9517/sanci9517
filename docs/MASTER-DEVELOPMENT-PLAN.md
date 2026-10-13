@@ -1328,6 +1328,7 @@ Az alábbi jegyzék a menüfunkciókat külön, stabil munkapontokra bontja. A s
 - ANL-007: Date range/comparison/filter/export.
 - ANL-008: Freshness/source/unit/missing-data state.
 - ANL-009: Consent/retention/bot filtering.
+- ANL-010: Anomaly detection, thresholds and explainable alerts.
 - CAM-001: Campaign CRUD/status/goals.
 - CAM-002: Campaign links/UTM/attribution.
 - CAM-003: Campaign asset/content/product relationships.
@@ -1398,6 +1399,7 @@ Az alábbi jegyzék a menüfunkciókat külön, stabil munkapontokra bontja. A s
 - OPS-008: Performance baseline/cache/query monitoring.
 - OPS-009: Rollback and incident procedure.
 - OPS-010: Dependency/license/CVE review.
+- OPS-011: Background-job/realtime runtime selection and lifecycle, only where justified.
 
 ### 24.17. Localization/team/marketplace/quality — LOC / TEAM / MKT / QA
 - LOC-001: Translation key/fallback.
@@ -2560,24 +2562,24 @@ Minden tételhez stabil funkció-ID, domain owner, user outcome, permission, dep
 | H21.10 | YouTube channel | INT-013 | INT | MERGE | 1.5 | QA-002/003 |
 | H21.11 | YouTube videos | INT-013 | INT | MERGE | 1.5 | QA-002/003 |
 | H21.12 | YouTube Shorts | CNT-003 | CNT | MERGE | 1.5 | QA-002/003 |
-| H21.13 | YouTube statistics where available | LIV-004 | LIV | MERGE | 1.5 | QA-002/003 |
+| H21.13 | YouTube statistics where available | ANL-004 | ANL | MERGE | 1.5 | QA-002/003 |
 | H21.14 | YouTube API quota/error handling | INT-009 | INT | MERGE | 1.5 | QA-002/003 |
 | H21.15 | TikTok profile | INT-014 | INT | MERGE | 1.5 | QA-002/003 |
 | H21.16 | TikTok supported content integration | INT-014 | INT | MERGE | 1.5 | QA-002/003 |
 | H21.17 | TikTok API capability review | INT-014 | INT | MERGE | 1.5 | QA-002/003 |
 | H21.18 | TikTok rate limits/fallback | INT-009 | INT | MERGE | 1.5 | QA-002/003 |
-| H21.19 | Discord community link | INT-015 | INT | MERGE | 1.5 | QA-002/003 |
+| H21.19 | Discord community link | COM-002 | COM | MERGE | 1.5 | QA-002/003 |
 | H21.20 | Discord optional integration | INT-015 | INT | MERGE | 1.5 | QA-002/003 |
 | H21.21 | Discord status where justified | INT-015 | INT | MERGE | 1.5 | QA-002/003 |
-| H21.22 | Architecture constraint: keep secrets in Cloudflare Secrets and normalize external APIs behind services | INT-019 | INT | MERGE | 1.5 | QA-002/003 |
+| H21.22 | Architecture constraint: keep secrets in Cloudflare Secrets and normalize external APIs behind services | INT-001, INT-019 | INT | MERGE | 1.5 | QA-002/003 |
 | H22.01 | schedule CRUD | SCH-001 | SCH | MERGE | 1.0 | QA-002/004 |
 | H22.02 | recurring schedule | SCH-004 | SCH | MERGE | 1.0 | QA-002/004 |
 | H22.03 | timezone handling | SCH-003 | SCH | MERGE | 1.0 | QA-002/004 |
-| H22.04 | next-stream calculation | SCH-009 | SCH | DEFER | 1.5–2.0 | QA-002/004 |
+| H22.04 | next-stream calculation | SCH-009 | SCH | MERGE | 1.0 | QA-002/004 |
 | H22.05 | countdown | SCH-009 | SCH | MERGE | 1.0 | QA-002/004 |
 | H22.06 | live state | LIV-001 | LIV | MERGE | 1.0 | QA-002/004 |
 | H22.07 | game/category | SCH-012 | SCH | MERGE | 1.0 | QA-002/004 |
-| H22.08 | stream type | SCH-001 | SCH | DEFER | 1.5–2.0 | QA-002/004 |
+| H22.08 | stream type | SCH-001 | SCH | MERGE | 1.0 | QA-002/004 |
 | H22.09 | VOD ingestion | CNT-002 | CNT | DEFER | 1.5–2.0 | QA-002/004 |
 | H22.10 | VOD categorization | CNT-002 | CNT | DEFER | 1.5–2.0 | QA-002/004 |
 | H22.11 | VOD search/filter | CNT-002 | CNT | DEFER | 1.5–2.0 | QA-002/004 |
@@ -2585,7 +2587,7 @@ Minden tételhez stabil funkció-ID, domain owner, user outcome, permission, dep
 | H22.13 | clips management | CNT-003 | CNT | DEFER | 1.5–2.0 | QA-002/004 |
 | H22.14 | content calendar | CNT-009 | CNT | DEFER | 1.5–2.0 | QA-002/004 |
 | H22.15 | platform-specific variants | CNT-011 | CNT | DEFER | 1.5–2.0 | QA-002/004 |
-| H22.16 | title/description/hashtag suggestions | AI-013 | AI | DEFER | 1.5–2.0 | QA-002/004 |
+| H22.16 | title/description/hashtag suggestions | AI-013 | AI | DEFER | 3.0 | QA-002/008 |
 | H22.17 | thumbnail brief | CNT-012 | CNT | DEFER | 1.5–2.0 | QA-002/004 |
 | H22.18 | publishing workflow | CNT-013 | CNT | DEFER | 1.5–2.0 | QA-002/004 |
 | H22.19 | performance feedback loop | ANL-004 | ANL | DEFER | 1.5–2.0 | QA-002/004 |
@@ -2645,7 +2647,7 @@ Minden tételhez stabil funkció-ID, domain owner, user outcome, permission, dep
 | H26.09 | editor/content performance | ANL-004 | ANL | DEFER | 2.0+ | QA-002 |
 | H26.10 | content performance | ANL-004 | ANL | DEFER | 2.0+ | QA-002 |
 | H26.11 | stream performance | ANL-003 | ANL | DEFER | 2.0+ | QA-002 |
-| H26.12 | anomaly detection later | ANL-008 | ANL | DEFER | 2.0+ | QA-002 |
+| H26.12 | anomaly detection later | ANL-010 | ANL | DEFER | 2.0+ | QA-002 |
 | H27.01 | dashboard | ADM-002 | ADM | MERGE | 1.0 | QA-008 |
 | H27.02 | navigation | ADM-001 | ADM | MERGE | 1.0 | QA-008 |
 | H27.03 | responsive admin | ADM-010 | ADM | MERGE | 1.0 | QA-008 |
@@ -2706,7 +2708,7 @@ Minden tételhez stabil funkció-ID, domain owner, user outcome, permission, dep
 | H30.12 | API latency monitoring | OPS-008 | OPS | MERGE | 0.x–1.0 | QA-001/005/006 |
 | H30.13 | production smoke test | QA-006 | QA | MERGE | 0.x–1.0 | QA-001/005/006 |
 | H30.14 | visual regression baseline | QA-004 | QA | MERGE | 0.x–1.0 | QA-001/005/006 |
-| H31.00 | AI editor must use the same canonical action system as manual Editor, with pipeline: Intent -> Plan -> Actions -> Permission -> Validation -> Preview/Diff -> Approval -> Execute -> Verify -> Audit -> Version | AI-008 | AI | DEFER | 3.0 | QA-002/003/008 |
+| H31.00 | AI editor must use the same canonical action system as manual Editor, with pipeline: Intent -> Plan -> Actions -> Permission -> Validation -> Preview/Diff -> Approval -> Execute -> Verify -> Audit -> Version | AI-003, AI-005, AI-006, AI-007, AI-008, AI-009 | AI | DEFER | 3.0 | QA-002/003/008 |
 | H31.01 | AI page operations | AI-011 | AI | DEFER | 3.0 | QA-002/003/008 |
 | H31.02 | AI element operations | AI-011 | AI | DEFER | 3.0 | QA-002/003/008 |
 | H31.03 | AI style/layout operations | AI-011 | AI | DEFER | 3.0 | QA-002/003/008 |
@@ -2757,7 +2759,7 @@ Minden tételhez stabil funkció-ID, domain owner, user outcome, permission, dep
 | H33.09 | failure handling | AUT-012 | AUT | DEFER | 7.0 | QA-002/003 |
 | H33.10 | permissions | AUT-004 | AUT | DEFER | 7.0 | QA-002/003 |
 | H33.11 | audit | AUT-008 | AUT | DEFER | 7.0 | QA-002/003 |
-| H33.12 | Queues/Durable Objects only when justified by a real background-task or realtime requirement | AUT-007 | AUT | DEFER | 7.0 | QA-002/003 |
+| H33.12 | Queues/Durable Objects only when justified by a real background-task or realtime requirement | OPS-011 | OPS | DEFER | 7.0 | QA-002/003 |
 | H34.00 | Continuous feature discovery is never permanently closed, with review repeated before every significant Editor/platform extension | QA-010 | QA | EXPAND | all phases | QA-010 |
 | H34.01 | modern visual builder minták | QA-010 | QA | EXPAND | all phases | QA-010 |
 | H34.02 | GrapesJS / Craft.js / Puck architekturális minták | QA-010 | QA | EXPAND | all phases | QA-010 |
@@ -2766,7 +2768,7 @@ Minden tételhez stabil funkció-ID, domain owner, user outcome, permission, dep
 | H34.05 | performance | OPS-008 | OPS | EXPAND | all phases | QA-010 |
 | H34.06 | reusable components | DSN-012 | DSN | EXPAND | all phases | QA-010 |
 | H34.07 | design systems | DSN-001 | DSN | EXPAND | all phases | QA-010 |
-| H34.08 | collaboration/conflict | TEAM-004 | TEAM | EXPAND | all phases | QA-010 |
+| H34.08 | collaboration/conflict | TEAM-004, EDT-029 | TEAM/EDT | EXPAND | all phases | QA-010 |
 | H34.09 | backup/recovery | OPS-005 | OPS | EXPAND | all phases | QA-010 |
 | H34.10 | AI action safety | AI-006 | AI | EXPAND | all phases | QA-010 |
 | H34.11 | stream/content intelligence | AI-015 | AI | EXPAND | all phases | QA-010 |
