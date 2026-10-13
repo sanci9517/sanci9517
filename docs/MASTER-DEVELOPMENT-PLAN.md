@@ -2184,6 +2184,370 @@ Minden nagyobb capability megvalósítása előtt külön research pass végezhe
 
 A kutatás eredménye a MASTER megfelelő pontjába kerülhet **reference / benchmark / edge-case evidence** formában. Más rendszerek zárt kódját nem másoljuk; saját canonical implementáció készül.
 
+
+
+# 00.9.6.E — MASTER-2.73 — ÖSSZEFÉSÜLT, KÖZVETLEN TERMÉKKÖVETELMÉNY-KATALÓGUS
+
+**Ez a szakasz a termék funkcionális igazságforrása.** A fejlesztéshez nem kell régi tervfájlokat, korábbi beszélgetéseket vagy történeti kivonatokat újra megnyitni. A régi anyagokból átvett és egységesített követelmények itt közvetlen, aktuális követelményként szerepelnek. A történeti ledger csak eredet- és nyomkövetési bizonyíték; nem külön specifikáció és nem végrehajtási függőség.
+
+**Megőrzési szabály:** minden alábbi capability megmarad a teljes termékútban. Az, hogy egy funkció nem része az 1.0-nak, nem törlést jelent: a funkció a megjelölt későbbi fázisban marad. A legfrissebb felhasználói döntés felülírja a korábbi ütemezést, de egy funkció csak explicit termékdöntéssel törölhető. Az azonos célú elemeket egy canonical modulba kell összevonni; ez nem funkcióvesztés.
+
+**Megvalósítási szabály:** a tervben való szereplés nem bizonyítja, hogy a funkció kész. Csak kóddal, teszttel, böngészős/éles ellenőrzéssel és az adott pont acceptance-eivel igazolt képesség kaphat PASS-t.
+
+## E.1 — Termékfelületek és határok
+
+A platform egy egységes creator-rendszer, amelynek felületei ugyanazokat a canonical domain-szolgáltatásokat használják:
+
+1. **Public Website:** látogatóknak szóló creator weboldal és minden publikált oldal.
+2. **Creator Center / Admin:** a teljes weboldal, tartalom, élő jelenlét, közösség és későbbi üzleti modulok kezelőfelülete.
+3. **Visual Editor:** a weboldal vizuális felépítésére szolgáló külön szerkesztői munkatér.
+4. **CMS / Content Center:** oldalak, bejegyzések, videók, VOD-ok, klipek, rövid videók és kampányok tartalmi kezelése.
+5. **Resource / Media Library:** képek, videók, fájlok, ikonok, betűkészletek, feltöltések és felhasználási hivatkozások.
+6. **Schedule / Calendar:** események, adások, megjelenési terv és a publikus adásrend.
+7. **Live / Integration Center:** Twitch és a későbbi YouTube, TikTok, Kick, Discord, OBS, e-mail, fizetési és kereskedelmi kapcsolatok.
+8. **Theme / Design System:** színek, tipográfia, térközök, komponensstílusok és reszponzív szabályok.
+9. **Template / Component / Symbol Library:** újrafelhasználható oldalak, szakaszok, komponensek és összekapcsolt példányok.
+10. **Stream / Overlay Studio:** streamelemek, overlayek, alert-ek, OBS browser source-ok és későbbi streamvezérlés.
+11. **Store / Monetization:** merch, digitális termékek, támogatás, tagság és kampányok.
+12. **Community / Audience:** közösségi funkciók, tagság, szerepkörök, moderáció és saját közönségkapcsolat.
+13. **Analytics / Automation / AI:** adatok, szabályalapú munkafolyamatok és jóváhagyás-köteles AI-segítség.
+14. **Platform Administration:** fiókok, workspace-ek, site-ok, csapatok, jogosultságok, előfizetések, integrációk, biztonság és üzemeltetés.
+15. **Developer / Extension surface:** későbbi integrációs API-k, bővítmények, marketplace és import/export.
+
+**Határszabály:** az Editor a tartalom szerkezetét és megjelenítését szerkeszti; a Schedule, Twitch, Store, Content, Analytics és más modulok a saját domainjük canonical adatait kezelik. Az Editor ezekhez konfigurálható dinamikus blokkokat biztosít, nem másolja le és nem birtokolja a domainadatokat.
+
+## E.2 — Public Website: teljes funkcionális követelmény
+
+A publikus oldal mobilon, tableten és asztali gépen is egységes, gyors és használható creator-márkaélményt adjon.
+
+### E.2.1 — Alapoldalak és navigáció
+- Kezdőlap, bemutatkozás / About, Schedule, Live, VOD / videók, Clips / Shorts, platformonkénti profil- vagy tartalomoldal, Community, Contact és későbbi Store, Membership, Events, Blog/News, Digital Products és Sponsor/Business oldalak.
+- Az oldalak és az útvonalak a Page/CMS rendszerből legyenek kezelhetők; ne legyen szükség kézi HTML-módosításra a normál tartalomfrissítéshez.
+- Közös fejléc, navigáció, lábléc, mobilmenü, aktív navigációs állapot, logó és közösségi linkek.
+- Navigációs elemek sorrendje, címkéje, célja, láthatósága és új ablakos viselkedése kezelhető legyen; a jogosultság és külső URL validációja szerveroldalon is történjen.
+- 404 oldal, üres állapotok, betöltés, API-hiba, offline állapot és karbantartási állapot kapjon tervezett felületet.
+- Nyelvenkénti oldalcím, slug, metaadat és tartalom; a hiányzó fordításnak legyen explicit fallback szabálya.
+
+### E.2.2 — Dinamikus creator állapot
+- Twitch/live állapot, platformlinkek, aktuális kategória/játék és csak akkor megjelenő élő elemek, ha az adat hiteles és friss.
+- Következő adás, időzóna, visszaszámlálás, adás állapota, elhalasztott vagy törölt esemény jelzése.
+- Legfrissebb VOD, klipek, Shorts és más tartalmak konfigurálható feedje; üres és integrációs hibaállapotok.
+- Közösségi CTA-k, feliratkozási/támogatási linkek és későbbi tagsági vagy termékblokkok.
+- A külső platform meghibásodása nem teheti használhatatlanná az egész oldalt; fallback, utolsó sikeres frissítés és retry szabály legyen meghatározva.
+
+### E.2.3 — Publikálás és tartalomminőség
+- Minden publikált oldalhoz canonical URL, title, description, Open Graph/Twitter social preview, favicon, robots policy, sitemap és strukturált adatok szükség szerint.
+- Megosztáskor helyes kép, cím és leírás; preview-változtatás publikálás előtt ellenőrizhető.
+- Billentyűzetes navigáció, látható fókusz, szemantikus heading-struktúra, megfelelő kontraszt, alt text, űrlapcímkék és reduced-motion támogatás.
+- Képek méretezése, modern formátumok, lazy loading és layout shift csökkentése; cache és invalidálás publikáláskor.
+- Analitika csak megfelelő adatvédelmi/hozzájárulási szabályok mellett; a személyes adatok gyűjtése minimalizált.
+
+## E.3 — Visual Editor: teljes, nem technikai felhasználónak szánt követelmény
+
+Az Editor önálló, professzionális, vizuális alkalmazás. Az alapvető oldalépítéshez a felhasználónak ne kelljen CSS-t, HTML-t, JSON-t vagy kódot írnia. A kódalapú escape hatch később csak biztonságos, korlátozott és külön jogosultsággal engedélyezhető.
+
+### E.3.1 — Munkatér
+- Felső eszközsor: oldal neve, mentési állapot, undo/redo, viewport-váltás, zoom, előnézet, publikálási műveletek és kontextuális műveletek.
+- Bal panel: Pages, Layers/Outline, Elements/Blocks és később Assets/Templates/Symbols lapok.
+- Középső canvas: valósághű oldal-előnézet, kijelölési keretek, drop-zónák, guide-ok és viewporthoz tartozó szélesség.
+- Jobb Inspector: kiválasztott oldal/elem tulajdonságai, kategóriák, keresés, mezőleírás, validáció és alapérték visszaállítása.
+- Panelméretek, összecsukás és elrendezés kezelhető legyen; kis kijelzőn a munkatér átalakuljon, ne legyen levágott kezelőfelület.
+- Üres projektben legyen egyértelmű első lépés, sablonválasztás és üres canvas; hibás állapotban legyen mentésvédelmi üzenet.
+
+### E.3.2 — Canonical Page Model és fa
+- Egyetlen canonical Page Model és egyetlen mentési/publikálási/revíziós út létezhet.
+- Alapstruktúra: Page → Section → Container/Box → Column/Stack → Element; szükség szerint Slot és reusable Component.
+- Stabil ID, típus, tulajdonságok, gyermekkapcsolat, sorrend, láthatóság, lock, responsive override, adatforrás és schema-verzió.
+- A DOM/canvas nem lehet az adatmodell forrása. Minden felhasználói művelet strukturált parancson keresztül módosítja a Page Modelt.
+- A fa nem engedhet ciklust, érvénytelen szülő-gyerek kapcsolatot vagy olyan node-típust, amely nem engedélyezett az adott konténerben.
+- Sorrendmódosítás, reparent, duplicate és delete atomikus, validált művelet legyen.
+
+### E.3.3 — Kijelölés és közvetlen manipuláció
+- Kijelölés canvasról és Layers fából; egyértelmű hover/selected/focus állapot és breadcrumb a szülőkhöz.
+- Elem mozgatása, átméretezése, drop-zónák, snapping, guide-ok, rács, zoom, pan és viewporthoz kötött határok.
+- Kijelölés, drag és resize csak olyan tulajdonságot változtasson, amely az adott layout módhoz tartozik; a flex/grid elemeket ne alakítsa véletlen abszolút pozícióvá.
+- Duplikálás, törlés, másolás/beillesztés, sorrend előre/hátra, lock/unlock, hide/show és többes kijelölés fokozatosan, tesztelt scope-ban.
+- Billentyűparancsok, context menu és akadálymentes alternatívák; touch eszközön használható interakciók.
+
+### E.3.4 — Layout és responsive
+- Felhasználóbarát layout-választók: Vertical/Stack, Horizontal/Row, két-/háromoszlopos és grid elrendezés; oszlopszám, töréspont és sorrend.
+- Igazítás, gap, padding, margin, szélesség/magasság, min/max, arány, pozicionálás, overflow, wrap és igazítási tengely.
+- Flex/Grid/flow előnyben részesítése a merev abszolút pozicionálással szemben.
+- Desktop/Tablet/Mobile viewport, viewport szélesség és külön responsive override-ok; az öröklési modell legyen látható.
+- Mobile-on elem elrejtése, sorrendváltás és oszlopszám csökkentése kontrolláltan; nem megengedett, hogy egy desktop-módosítás észrevétlenül tönkretegye a mobilnézetet.
+- Kontrasztos előnézeti állapot, overflow/wrapping figyelmeztetés és minimális viewport teszt.
+
+### E.3.5 — Inspector / Property Registry
+- Az Inspector mezői típusos, deklaratív Property Registryből származzanak, ne legyen minden elemhez külön ad hoc szerkesztési logika.
+- Szöveg, rich text, URL, image/resource, szám, mértékegység, szín, token, select, toggle, spacing, typography, responsive és domain-specifikus mezőtípusok.
+- Kategóriák, keresés, mezővalidáció, súgó, default/reset, dirty state, dependency, read-only és permission kezelés.
+- Az Inspector, a canvas és a Layers mindig ugyanazt a state-et jelenítse meg; az érvénytelen módosítás ne kerüljön mentésre.
+- Domain blokkoknál konfiguráció és adatforrás különüljön el: például Schedule blokk megjelenítési beállítása nem módosítja az események domainrekordjait.
+
+### E.3.6 — Elem- és blokk-könyvtár
+- Alapelemek: Heading, Text/Rich Text, Image, Video/Embed, Button, Link, Icon, Divider, Spacer, List, Quote, Card, Badge, Form és Container.
+- Layout elemek: Section, Box/Container, Stack, Row, Columns, Grid és reusable Slot.
+- Dinamikus Sanci blokkok: Live Status, Twitch Player/Channel, Next Stream, Schedule, VOD/Video Feed, Clips/Shorts, Social Links, Community CTA, Support, Merch/Product Collection és későbbi Membership/Events/Content/Analytics blokkok.
+- Minden elemnél típusos default config, validáció, renderer, responsive viselkedés, accessible output és hiba/üres állapot.
+- Új blokk hozzáadása kategóriával és kereséssel; preview a canvasban; kompatibilis drag-and-drop.
+- Külső embed csak engedélyezett hostokról, CSP/permission szabályok mellett.
+
+### E.3.7 — Undo/redo, autosave és helyreállítás
+- Undo/redo a strukturált parancsokra épül, nem DOM-pillanatképre.
+- Dirty state, mentés folyamatban/sikeres/hibás, retry és ütközésjelzés.
+- Autosave csak validált állapotot menthet; explicit mentés is legyen.
+- Expected-version/optimistic concurrency; párhuzamos változtatás esetén ne írja felül csendben a frissebb adatot.
+- Navigáció elhagyásakor figyelmeztetés, recovery/draft visszaállítás és tesztelt browser refresh út.
+- Minden művelet után a canvas, Layers, Inspector, undo/redo és a backend ugyanarra az állapotra jusson.
+
+## E.4 — Page, CMS és publikálási életciklus
+
+- Page CRUD, slug, státusz, nyelv, SEO, sablon, hozzáférés, menühöz rendelés, duplikálás és archiválás.
+- Tartalmi státuszok: draft, in review/ready, published, scheduled publication, archived; a megengedett átmenetek explicit szabályok szerint működnek.
+- Preview a publikált verzió módosítása nélkül; a draft nem szivároghat ki publikus útvonalon vagy cache-ben.
+- Revision history: ki/mikor/mit módosított, összehasonlítás, visszaállítás, published revision link és verziókonzisztencia.
+- Publish/rollback tranzakciós viselkedése, authorization, cache invalidation és sikertelen publikálás utáni visszaállás.
+- Content types későbbi bővíthetősége: posts/news, videos/VODs, clips, Shorts, playlists, campaigns, content calendar és platformonkénti metadata.
+- Tartalom újrahasznosítása feedekben és dinamikus blokkokban; a feedek lekérdezési és rendezési szabályai legyenek konfigurálhatók.
+
+## E.5 — Resource, Media, Icon, Font és fájlkezelés
+
+- Egy közös Resource Library legyen a canonical asset tulajdonos; az Editor, CMS, Schedule, Theme és későbbi Store erre hivatkozik.
+- Upload, progress, cancel, retry, file picker, preview, keresés, szűrés, mappák/collectionök, címkék és metadata.
+- Metadata: owner/site, MIME, méret, dimenzió, duration ahol releváns, alt text, caption, checksum, storage key, állapot, létrehozó és felhasználási hivatkozások.
+- D1 csak metadata/referencia; nagy bináris állomány R2-ben. Upload validáció, méretkorlát, content-type ellenőrzés és jogosultság.
+- Képekhez thumbnail/variant, fontokhoz license/metaadat, ikonokhoz név/csomag/keresés és egységes renderelési szerződés.
+- Replace/rename/archive/delete előtt usage check; használt assetet ne lehessen észrevétlenül eltörni. Soft delete/restore ahol indokolt.
+- Publikus és védett fájlok szétválasztása; digitális termékek védett letöltése későbbi commerce fázisban.
+
+## E.6 — Theme, Design System, Template, Component és Symbol
+
+- Design tokenek: colors, typography, font scale, spacing, sizing, breakpoints, radii, shadows, borders, button/card/form styles és focus states.
+- Theme Editorből módosított tokenek az összes kapcsolódó blokkra érvényesüljenek; lokális override csak explicit legyen.
+- Template Library: teljes site starter, page template, section template, block preset és későbbi creator-created template.
+- Kiinduló template-kategóriák: Gaming, Just Chatting, Esports, Variety, VTuber, Music, Podcast, Creator Business, Merch-first.
+- Component Library: reusable komponensek, variantok, slotok, alapértékek, belső struktúra és frissítési szabály.
+- Symbol/linked instance: közös forrás és hivatkozott példány; a közös módosítás hatóköre előre látható, detach csak explicit művelet.
+- Import/export, versioning, kompatibilitás, preview és rollback; későbbi marketplace licenc- és jogosultságkezeléssel.
+- Template/component változás nem ronthat el csendben már publikált oldalt; migráció/preview és revízió szükséges.
+
+## E.7 — Creator Center / Admin UX és modulok
+
+### E.7.1 — Dashboard
+- Áttekintés: Live/Offline, következő adás, legfrissebb tartalom, fontos feladatok, integrációs állapot, figyelmeztetések és későbbi audience/revenue/analytics kártyák.
+- A dashboard csak valódi adatot és működő műveletet mutathat; placeholder vagy fake action nem kaphat aktív státuszt.
+- Üres, loading, stale, partial failure, permission denied és error állapotokhoz külön UI.
+- Gyors műveletek: oldal szerkesztése, adás létrehozása, tartalom hozzáadása, integráció javítása és későbbi termék/kampány létrehozása.
+
+### E.7.2 — Navigáció és keresés
+- Modulonkénti bal oldali navigáció, breadcrumb, aktuális oldal megjelölése, mobilmenü, visszaút a publikus oldalra és Adminba való biztonságos visszalépés.
+- Globális keresés későbbi bővítéssel oldalakra, assetekre, schedule eseményekre, tartalmakra, termékekre és beállításokra.
+- Quick actions / command palette, billentyűzetes elérés és legutóbbi elemek.
+- Nem létező vagy még nem kész modul ne szerepeljen működőként; tervezett modul csak egyértelmű Planned/Coming later státusszal jelenhet meg.
+- A session/auth védelmet minden admin útvonal és API érvényesítse; adminból kilépés és session lejárat viselkedése legyen explicit és tesztelt.
+
+### E.7.3 — Közös UI-állapotok
+- Közös visszajelzési rendszer: success/error/warning/info, inline validation, toast ahol indokolt, confirm dialog destruktív művelethez.
+- Minden listában loading, empty, error, retry, pagination és permission state.
+- Formdirty state, mentésállapot, hibamegőrzés és accessible focus management.
+- Veszélyes műveletekhez egyértelmű hatásmagyarázat; törlés/leválasztás/rollback előtt confirmation.
+- UI ne mutasson sikeres műveletet a backend visszaigazolása előtt.
+
+### E.7.4 — Modulhatárok
+- Website Manager: pages, navigation, SEO, publish és theme beállítások.
+- Schedule Manager: eseményadatok, naptár, ismétlődés, időzóna és szinkronállapot.
+- Integration Manager: connect/disconnect/reconnect, scope, token állapot, utolsó sync, health és hibák.
+- Media Manager: fájlok, metadata, usage és storage állapot.
+- Content Manager: ötletek, draftok, médiatartalom, címek, leírások, tagek, naptár és publikálási queue.
+- Store Manager: termékek, variánsok, kollekciók, rendelések, kedvezmények és fulfillment adapter.
+- Community Manager: tagok, szerepek, események, pollok, moderáció, reports és későbbi reputation.
+- Analytics Manager: időszak, platform, weboldal, tartalom, community, commerce és export.
+- Automation Manager: trigger, feltétel, action, verzió, log, retry és enable/disable.
+- AI Manager: model/config, usage, prompt/template, generálási job, jóváhagyás, diff és rollback.
+- Business/Sponsorship Manager: media kit, statisztikák, sponsor lead, deal, deliverable, deadline és kampány.
+- Settings/Security: account, site, locale, domain, SEO defaults, roles, privacy, integrations, export/delete és audit log.
+- A fenti modulok a teljes Creator OS célfelületei; az 1.0-ban csak a hozzá tartozó fázisban megvalósított elemek jelenhetnek meg működő funkcióként.
+
+## E.8 — Schedule / Calendar
+
+- Canonical schedule item; az Editor csak a Schedule blokk lekérdezését és megjelenítését konfigurálja.
+- Mezők: cím, leírás, kezdés/vége, időzóna, platform, kategória/játék, thumbnail/artwork, stream link, visibility, státusz, featured, ismétlődési szabály, manuális override és külső platformazonosító.
+- Státuszok: planned, live/in progress, completed, cancelled, postponed; a publikus megjelenés és notification az állapotot követi.
+- Nézetek: list/calendar/upcoming/past, filter platform/státusz/kategória, keresés, pagination, esemény részletek.
+- Időzóna és DST kezelése; a tárolt időpont és a megjelenített helyi idő nem keverhető össze.
+- Ismétlődő esemény módosításánál választás: csak ez az esemény, ez és a jövőbeliek, vagy a teljes sorozat, amennyiben támogatott.
+- Twitch-szinkron és manuális override ütközésének szabálya; sync state, last sync, hiba, retry és forrásjelölés.
+- Oldaltulajdon, jogosultság, validáció, idempotencia és public API/render tesztek.
+- A jelenlegi Schedule CRUD csak kezdeti alap; a teljes fenti képességkör fokozatosan épül fel, nem tekinthető késznek.
+
+## E.9 — Platformintegrációk és Twitch
+
+- Közös integration lifecycle: not connected, connecting, connected, degraded, needs reauth, disconnected, error; permissions/scopes, token expiry, last success, health és diagnostics.
+- Connect/disconnect/reconnect, scope-változás, visszavonás, lejárt token, hálózati hiba, rate limit, provider downtime és hibás payload kezelése.
+- OAuth state/PKCE ahol releváns, tokenek biztonságos tárolása, state/nonce validáció és callback védelem.
+- Twitch 1.0 alap: connection ownership, hiteles live/offline állapot, channel/profile adat, aktuális kategória/játék ahol elérhető, schedule/live összekötés, last sync, hibajelzés és kézi retry.
+- Külső webhook/API adat normalizálása canonical StreamEvent/Integration state-be; a többi domain ne függjön Twitch-specifikus formátumtól.
+- Későbbi adapterek: YouTube, TikTok, Kick, Discord, OBS, e-mail, payment, commerce és egyéb szolgáltatások; minden adapternek külön scope, rate-limit, retry, sync és failure-path tesztje.
+- A provider nem elérhetősége nem okozhat teljes weboldal- vagy adminleállást.
+
+## E.10 — Content Factory és többplatformos tartalom
+
+- Tartalmi ötlet, draft, script, thumbnail, title, description, tags, státusz, csatorna/platform, publikálási idő és kampánykapcsolat.
+- Content calendar, queue, jóváhagyás, publikálási állapot és hibakezelés.
+- VOD, clip, short, highlight, video, playlist és bejegyzés külön tartalomtípusként, közös metadata-konvenciókkal.
+- Platformonként eltérő cím/leírás/thumbnail/tag és publikálási korlátozás.
+- Import/szinkron, duplikáció felismerése, külső ID-k és idempotens feldolgozás.
+- 1.x/2.x-ben cross-platform adaptation és publishing queue; a provider API-képességei és engedélyei alapján, nem feltételezett automatikus hozzáféréssel.
+
+## E.11 — Stream Studio, Overlay és OBS
+
+- Overlay/alert csomagok, stream frame-ek, scene/browser-source konfigurációk és reszponzív overlay renderelés.
+- OBS kapcsolatállapot, scene/stream/recording state, parancsok, stream marker és későbbi replay buffer, ahol az OBS API ezt lehetővé teszi.
+- Alert-ek: follow/sub/raid, donation/tip, merch purchase, membership és más események, csak ott, ahol provider vagy saját integráció ténylegesen biztosítja az eseményt.
+- Chatbot, commands, timers, loyalty/points, giveaways, polls, moderation és prediction csak a megfelelő fázisban és az adott platform szabályai szerint.
+- Macro Deck vagy hasonló külső vezérlés adapteren keresztül; nincs rejtett provider-függőség.
+- A stream eszközök ne kerüljenek bele az Editor core-ba; az Editor az overlay/stream blokkok megjelenítését és elrendezését szerkeszti.
+
+## E.12 — Shop, Merch, digitális termékek és monetizáció
+
+- Termékkatalógus: product, variant, category, collection, media, price, currency, stock abstraction, status és fulfillment state.
+- Terméktípusok: fizikai, digitális, bundle, limited edition, preorder és későbbi membership-linked product.
+- Storefront: listázás, részletező oldal, keresés/szűrés, cart, checkout provider integration és order confirmation.
+- Fulfillment adapterek: például Fourthwall, Printful, Shopify vagy későbbi provider; kezdetben integráció-alapú megoldás elfogadható.
+- Későbbi saját commerce: order management, refund, discount code, gift card, customer account, abandoned cart, shipping/tax/VAT és invoicing integration.
+- Digitális termékek: overlay/OBS/emote pack, wallpaper, preset, guide, ebook, course, download és license/access control.
+- Biztonságos purchase → entitlement → customer access lánc; védett fájl nem tehető publikus R2 URL-lel korlátlanul elérhetővé.
+- Monetizáció: tip/support, supporter goal, membership tiers, recurring payments, perks, members-only page/post/video, badge, supporter history, Discord role sync, Twitch subscriber benefits, discount, exclusive drops, poll és private event.
+- Creator revenue és platform revenue elkülönítése; több creator közötti pénzkezelés csak megfelelő payment platform, compliance és jogi felülvizsgálat után.
+
+## E.13 — Community és audience ownership
+
+- Kezdetben külső platformokhoz kapcsolt community entry points; később saját member/profile/follow/comment/reaction/post/poll/event/notification rendszer.
+- Moderation, report, ban, roles, submission, clip submission, badges, challenges és későbbi reputation/points.
+- Discord role sync és membership entitlement csak hitelesített, naplózott adapteren át.
+- Saját e-mail közönség: feliratkozási űrlap, consent, listák, segmentation, kampány, newsletter, automated/transactional e-mail és unsubscribe.
+- Hozzájárulás visszavonása, export/törlés és adatmegőrzési szabályok.
+- Későbbi member area és mobil/PWA funkciók: értesítések, schedule, live, community, store és creator dashboard.
+
+## E.14 — Analytics, Automation és AI
+
+### Analytics
+- Website: visitors, sessions, page views, device, referrer, conversion és csak megfelelő jogalappal kezelt aggregált földrajzi adatok.
+- Creator: Twitch/YouTube/TikTok/Kick metrics, provider- és időszakfüggő elérhetőséggel.
+- Commerce: sales, revenue, average order value, conversion, product és campaign performance.
+- Community: active members, engagement, retention és event participation.
+- Egységes metric modell, forrás, időszak, frissesség, hiányzó adat és provider limit jelölése; CSV/export és hozzáférés-szabályozás.
+
+### Automation
+- Event → trigger → condition → action, verziózott szabályokkal.
+- Példák: Twitch LIVE → website live state; Twitch LIVE → Discord alert; new video → content feed; purchase → stream alert; new member → Discord role; schedule changed → notification; new clip → social workflow.
+- Delay, retry, idempotency, rate limit, dead-letter/failed state, audit log, enable/disable és per-site rules.
+- Egy automation hibája ne indítsa el végtelenül ugyanazt a műveletet, és ne kerülje meg a domain permissionöket.
+
+### AI
+- AI website assistant strukturált szándékot alakítson validált Page Operations listává; közvetlen, korlátlan HTML/DB/kódmódosítás nem engedélyezett.
+- Folyamat: intent → structured operations → schema validation → draft revision → diff preview → human approval → publish.
+- AI-javaslatok: layout, content, SEO, title/description, localization, schedule/content workflow és később stream transcript, chapters, highlights, clip candidates, title/description és short-form scripts.
+- AI-generated változás mindig preview, jogosultságellenőrzés, validáció, rollback és usage tracking mellett fusson.
+- AI usage/permission, prompt templates, generation jobs, approval queue és hibák; provider-kulcs soha nem kerülhet böngészőbe.
+- AI nem publikálhat vagy küldhet ki visszafordíthatatlan üzleti műveletet emberi jóváhagyás nélkül, ha az adott művelet ezt megköveteli.
+
+## E.15 — Sponsorship / Creator Business Hub
+
+- Media kit, automatikusan frissülő creator statisztikák, audience overview, brand category, rate card és brand assets.
+- Sponsor lead, deal, campaign brief, deliverable, deadline, státusz, kampányanalitika és később invoice/payment status.
+- Dokumentum- és adat-hozzáférés csak megfelelő szerepkörnek; a publikus media kit csak kiválasztott adatokat tehet közzé.
+- A modul a Creator OS későbbi fázisában épül; nem akadályozza az 1.0 website/Editor befejezését.
+
+## E.16 — Localization és nemzetközi használat
+
+- Magyar az elsődleges induló nyelv; a modell és a UI legyen többnyelvű bővítésre alkalmas.
+- Fordítási kulcsok, locale fallback, dátum/időzóna, szám/pénznem és nyelvenkénti SEO metadata.
+- Fordítható Page/Content/Navigation/Theme/Template mezők; a fordítás ne írja felül a másik nyelv tartalmát.
+- Hiányos fordítás látható státusza, preview és publish szabály.
+- Később AI-assisted translation csak review és explicit elfogadás után.
+
+## E.17 — Accounts, multi-site, teams és SaaS
+
+- Későbbi tenant/workspace → users/members → sites → modules struktúra.
+- Több site egy workspace-ben: streamer site, esports/team, personal brand, merch brand, podcast vagy event site; közös workspace, külön site settings.
+- Szerepkörök: owner, admin, editor, designer, moderator, analyst, content manager, store manager, finance role; granular permissions modul- és site-szinten.
+- Free/Creator/Pro/Business/Team/Agency csomagok csak a tényleges költségek, használati adatok és üzleti modell igazolása után kerülnek véglegesítésre.
+- Billing, subscription, quota, usage, invoice, upgrade/downgrade/cancel és platform vs creator revenue határ.
+- Tenant isolation minden rekordnál és műveletnél; a kliens által küldött tenant/site/workspace ID soha nem bizonyít jogosultságot.
+- Ez hosszú távú cél, nem része automatikusan az 1.0 scope-nak.
+
+## E.18 — Import/export, backup, diagnostics és developer surface
+
+- Site/Page/Template/Component/Theme export/import verziózott, validált csomagformátumban; titkok és tokenek nem exportálhatók.
+- Backup/restore és publikált/draft állapot visszaállíthatósága; a restore dry-run és integrity check után hajtható végre.
+- Structured logs, request/correlation IDs, integration health, error codes, sync failures, queue/retry state, DB latency és cache hit/miss ahol elérhető.
+- Admin diagnostics: failed jobs/syncs, integration status, deployment/version és actionable error details; secret/token nem kerülhet logba.
+- Későbbi public API, webhook subscriptions, developer keys, extension/plugin contract és marketplace, scoped permissionökkel, rate limittel és verziózott API-val.
+
+## E.19 — Platform-architektúra és biztonsági invariánsok
+
+- D1 a relációs canonical domain adatokhoz; R2 nagy fájlokhoz; Queues retryzható aszinkron feladatokhoz; Workflows hosszú, több lépéses folyamatokhoz; Durable Objects csak tényleges stateful/realtime coordination igénynél.
+- Minden domainnek canonical schema, service layer, API contract, authorization, validation, audit, tests és dokumentált failure behavior kell.
+- Integrációs adapterek normalizálják a külső adatot; a domain nem támaszkodhat provider-specifikus payloadokra.
+- Kritikus webhook és sync: signature/state ellenőrzés, replay protection, idempotency, rate limit, retry és hibás feladatok diagnosztikája.
+- Biztonság: authentication, authorization, site ownership, tenant isolation, input validation, output encoding, XSS/CSRF védelem ahol releváns, secure cookies, secrets, OAuth state/PKCE, token protection, upload validation, least privilege és audit logging.
+- Adatvédelem: consent, privacy policy support, data access/export/deletion, retention, cookie controls, unsubscribe és auditability; tényleges jogi kötelezettséghez szakértői felülvizsgálat szükséges.
+- Cache invalidation eseményhez és publikáláshoz kötve; admin/editor state nem kaphat veszélyes stale cache-t.
+- Minden migration forward-only, visszaállítási és adatvesztési kockázatának dokumentálásával; production D1 művelet előtt preflight, dry-run és utóellenőrzés.
+
+## E.20 — Kötelező fejlesztési és elfogadási sablon minden funkcióhoz
+
+Minden fejlesztési pont az alábbiakat tartalmazza; ezek nélkül nincs PASS:
+
+1. **Felhasználói cél:** ki, mit, milyen eredménnyel végez el.
+2. **UI útvonal:** hol található, hogyan jut oda, hogyan tér vissza.
+3. **Funkcionális viselkedés:** normál, üres, loading, validation, error, retry és permission-denied eset.
+4. **Canonical domain és adatmodell:** tulajdonos, mezők, státuszok, kapcsolatok és invariánsok.
+5. **API/service:** contract, validation, authorization, error codes és idempotency ahol szükséges.
+6. **Megjelenítés:** Admin/Editor/Public felületek és responsive/accessibility követelmények.
+7. **Integráció és függőségek:** külső API, token/scope, rate limit, timeout és provider downtime.
+8. **Tesztcsomag:** unit/domain, API/integration, D1/migration, permission/ownership, browser desktop/tablet/mobile és regresszió, az adott funkcióhoz mérten.
+9. **Elfogadási forgatókönyv:** lépésről lépésre reprodukálható input → művelet → elvárt eredmény.
+10. **Bizonyíték:** parancsok, tesztkimenet, browser/live ellenőrzés, commit és ismert korlátok.
+11. **Státusz:** PLANNED / ACTIVE / BLOCKED / PASS / FAIL / DEFERRED; a PASS kizárólag minden releváns DoD teljesülése után.
+12. **MASTER checkpoint:** eredmény, módosított canonical contract, következő egyetlen aktív pont.
+
+### Kötelező negatív tesztek
+- jogosulatlan user nem olvashat/módosíthat idegen site adatot;
+- invalid input nem menthető;
+- ismételt webhook/sync nem hoz létre duplikált eseményt vagy tranzakciót;
+- provider outage nem teszi használhatatlanná a főoldalt vagy admin egészét;
+- failed save/publish nem jelölhet sikeres állapotot és nem törölheti el a draftot;
+- stale revision nem írhatja felül csendben a frissebb állapotot;
+- törlés nem hagyhat sérült hivatkozást vagy elérhetetlen, még használt assetet;
+- mobilnézetben nem lehet kritikus overflow vagy elérhetetlen kezelőelem;
+- titok/token nem jelenhet meg kliensoldali kódban, URL-ben, logban vagy exportban;
+- rollback/restore után a canonical adat és a publikus render konzisztens marad.
+
+## E.21 — Teljes termékfázisok és scope-határ
+
+- **F0.1–F0.13 — Creator Website 1.0 foundation:** a jelenleg aktív fejlesztési program. Editor első végig működő szelete, Admin dashboard, page/layer struktúra, canvas/Inspector, responsive layout, alap elem- és resource könyvtár, theme/template/component alap, Schedule-bővítés, Twitch UX és kapcsolat, draft/preview/publish/revision, public renderer, SEO/accessibility/performance és teljes E2E/regresszió.
+- **1.x — Creator Profile / Link Hub és Content Hub:** profil/linkgyűjtő, tartalomfeed, VOD/Clips/Shorts és tartalomnaptár, további integrációk, audience capture és alap analitika.
+- **1.5–1.9 — Monetization / Community / Automation foundations:** merch provider-integráció, digitális termékek, támogatás/tagság, community kapcsolatok, alert-ek és alap automatizáció.
+- **2.x — Creator OS:** bővített Creator Dashboard, analytics, Content Studio, email/audience ownership, Sponsorship/Business Hub, OBS/Stream Control, advanced stream tools, AI Website Assistant és Stream AI.
+- **3.x — Creator Business Platform / Marketplace:** commerce/membership/content/community/automation/AI integrációja; template, block, theme, overlay, OBS scene és digital asset marketplace, licencelés, rating/review és revenue share.
+- **4.x — Multi-site / Teams:** több brand/site, workspace, szerepkörök és csapatmunkafolyamatok.
+- **5.x — SaaS / Multi-tenant:** tenant/workspace isolation, csomagok, billing, usage/quota és platformadminisztráció.
+- **6.x–10.x — Global Creator Ecosystem:** skálázás, bővítmény/API ökoszisztéma, fejlettebb automation/AI, integrációk és globális lokalizáció a későbbi roadmap szerint.
+
+A fázisnév nem önmagában acceptance: minden fázis pontos végrehajtási pontokra bontandó, függőséggel, DoD-val és teszttel. Az 1.0 nem vállalja magára a teljes Creator OS megépítését, de a későbbi funkciók nem törlődhetnek és nem maradhatnak kizárólag címként megemlítve.
+
+## E.22 — Teljességi zár és tervkarbantartás
+
+- Ez a közvetlen termékkatalógus, a F0 végrehajtási sorrend és a hozzájuk tartozó domain/API/test szerződések alkotják a jelenlegi operatív tervet.
+- A történeti 01–140 és 19–34 azonosítók csak audit-eredet/nyomkövetési hivatkozások. Egy fejlesztési ponthoz nem kell visszamenni a régi dokumentumba ahhoz, hogy megértsük, mit kell építeni.
+- Minden régi követelmény a fenti canonical domainben és a megfelelő fázisban kap közvetlen leírást. Ha egy régi tétel nem térképezhető be egyértelműen, akkor **UNMAPPED REQUIREMENT** hibaként nyitott marad; nem lehet csendben törölni vagy késznek nyilvánítani.
+- Minden új, korábban nem rögzített felhasználói igény közvetlenül ebbe a MASTER-be kerül, és megkapja a canonical domain, fázis, függőség, DoD és teszt meghatározását.
+- A MASTER nem válhat ötletgyűjteménnyé: egyetlen ACTIVE engineering point lehet, a teljes jövőkép pedig PLANNED/QUEUED fázisokban marad.
+- A MASTER változtatása előtt a jelenlegi tartalmat be kell olvasni, a módosítás után pedig ellenőrizni kell az aktív pontot, a fázissorrendet, a megőrzött capability-ket, a duplikált canonical owneröket és a lezárt gate-eket.
+
+
 ### 00.9.6.D.5 — Végrehajtási szabály
 
 A teljes végső tervből egyszerre mindig csak **egy ACTIVE engineering point** nyílhat. A többi:
