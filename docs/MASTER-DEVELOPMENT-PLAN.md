@@ -2372,7 +2372,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | E.3.7-05 | Unsaved navigation warning, recovery and browser refresh recovery | EDT-031, EDT-042 | EXPAND | 1.0 | QA-002/004/006 |
 | E.3.7-06 | Canvas/Layers/Inspector/history/backend stay consistent after each operation | EDT-006, EDT-013, EDT-028, QA-002 | KEEP | 0.x–1.0 | QA-002/004 |
 
-**Batch 1 result:** 57 E.2/E.3 bullets mapped to canonical feature IDs, explicit decision, phase and QA family. The mapping is not runtime PASS. Before P0.2 closure, verify the source bullet count and text against the archive, validate every ID/QA anchor, and continue with E.4–E.22 and F.1–F.13 in further batches.
+**Batch 1 result:** 57 E.2/E.3 bullets mapped to canonical feature IDs, explicit decision, phase and QA family. Structural check on commit b1be3097cdbcfec570cc22da4bbe0d96c82dac72 confirmed 57 mapping rows and 125 distinct explicit/range-expanded feature/QA references, with no unresolved IDs. This validates references, not semantic correctness or runtime PASS. Continue with E.4–E.22 and F.1–F.13 in further batches.
 
 ## 38. Részletes Visual Editor képességkatalógus
 
