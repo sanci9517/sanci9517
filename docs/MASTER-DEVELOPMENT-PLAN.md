@@ -6053,3 +6053,25 @@ The historical H28/H29 rows were updated to reflect the canonical registry defin
 
 **Status:** F.8-04/08 mapping completeness improved; F.8-07 remains **OPEN / PARTIAL**. P0.2 **IN PROGRESS / NOT PASS**. Documentation-only; no runtime code/data changed and no tests were run.
 
+### 41.3.46. P0.2 — Repository documentation precedence and historical context files (2026-10-13)
+
+**Files checked:** `docs/SANCI-CONTINUOUS-CONTEXT.md`, `docs/DEVELOPMENT-LOG.md`, `docs/ARCHIVE-LEGACY-LAYERS.md`, `docs/CHANGELOG.md`, archive root and `docs/archive/2026-09-16/LEGACY-HTML-ARCHIVE.md`.
+
+| Source file | Source role | Reconciliation decision |
+|---|---|---|
+| `docs/SANCI-CONTINUOUS-CONTEXT.md` | Historical context snapshot containing older feature checks, Editor test state, next-test list and AI vision | KEEP AS HISTORICAL EVIDENCE. Its own banner says it is not current execution status. Old `[x]` entries apply only to the exact former scope/build and cannot supersede current P0/P0.2, current registry or current runtime evidence. |
+| `docs/DEVELOPMENT-LOG.md` | 2026-09 implementation notes, including hierarchy work and pending user verification | KEEP AS HISTORICAL EVIDENCE. Recorded commit/test status is not a current regression or release gate unless the affected behavior changes. |
+| `docs/ARCHIVE-LEGACY-LAYERS.md` | Legacy runtime classification and current canonical Admin/Editor routes | KEEP AS ARCHITECTURAL EVIDENCE; cross-check current `src/index.ts` and tests when route behavior changes. Preserve old `system_page_content` data until a separate migration/cleanup gate; do not revive the old editor/runtime. |
+| `docs/CHANGELOG.md` | Historical changes and old verification state | KEEP AS CHANGE HISTORY. The entry that once called `docs/CURRENT-DEVELOPMENT-PLAN.md` the ordered checklist is historical; it does not create a second active plan. |
+| `docs/archive/2026-09-16/LEGACY-HTML-ARCHIVE.md` | Legacy HTML/source preservation record | KEEP AS MIGRATION PROVENANCE. Reconcile every retained page/source against the route-by-route legacy manifest (§41.3.42), current D1 page records and public render; a manifest entry alone is not proof of migration or equivalence. |
+| `docs/archive/plans/*` | Historical product/architecture plans | Keep requirements and decisions, but their old current point, checked state, route names, table names and service assumptions are non-authoritative for execution. |
+
+**Conflicts and controls:**
+- The context snapshot's old “current Editor state” and next-test list conflict with current P0/P0.2 as execution instructions. Resolve by precedence, not by deleting historical content.
+- The continuous-context file describes historical plans under root-level names that are now archived or absent. The current repository archive inventory, not the old path string, determines what is actually available.
+- `docs/ARCHIVE-LEGACY-LAYERS.md` states `/admin` is the authenticated Admin Dashboard and `/admin/editor` is Editor v2; treat this as a current route claim only where backed by current router/tests. Old `public/admin.html`, `public/editor/`, and `system_page_content` paths must not be reactivated as parallel systems.
+- Old statements that the public site, AI, mobile Editor or full publish/recovery workflow was “ready” or “next” are not current acceptance evidence. Current status requires exact active commit, tests/deploy/browser behavior and user confirmation where the gate requires it.
+- The MASTER is the sole active plan; context/log/changelog/archive files may preserve evidence but cannot contain a competing active point or separate authoritative feature checklist.
+
+**Status:** repository-level documentation precedence checked for the named files and archive folders. This does not recover the missing original `00/A` and `00.9–00.9.6.B` source texts, and does not close route/page migration acceptance. P0.2 **IN PROGRESS / NOT PASS**. Documentation-only; no runtime code/data changed and no tests were run.
+
