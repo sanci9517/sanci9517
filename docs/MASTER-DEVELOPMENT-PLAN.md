@@ -2196,6 +2196,41 @@ A §24 registry és a §41 crosswalk újraszámolt kapcsolata:
 
 **Aktuális döntés:** a 271 történeti követelmény soronkénti megőrzése szerkezetileg PASS; a teljes történeti↔aktuális feature coverage nem PASS, amíg a 229 közvetlenül nem hivatkozott ID eredete és a tételenkénti feature contract nem dokumentált.
 
+
+### 37.18. P0.2 — Archived source inventory and precedence reconciliation
+
+**Rule:** the current MASTER's ACTIVE_POINT block and current canonical architecture govern execution. Archive documents preserve historical requirements and decisions; their former ACTIVE_POINT, queued sequence, checked boxes or “M0 superseded” statements must not override the current MASTER. The old snapshot's M0 wording records a historical state, not an instruction to skip the current P0 gate. Conversely, this current P0 audit is not permission to delete or silently discard any archived feature.
+
+| Archived source | Historical value to preserve | Current treatment / remaining crosswalk work |
+|---|---|---|
+| docs/archive/MASTER-DEVELOPMENT-PLAN-2026-10-13.md | Full previous MASTER snapshot, H19–H34 ledger, M0 findings, 00.9.6.C platform map and C.24 engineering policy | Primary historical baseline; H19–H34 has 271-row draft crosswalk. Other sections and open requirements (including 00/A, 00.9.6.E/F, C.18–C.24 and M0 findings) still need source-level mapping to current IDs/acceptance. Snapshot statuses are historical. |
+| docs/archive/plans/MASTER-CURRENT-STATUS.md | 2026-09-17 E2 completion evidence and former F0 checkpoint | Historical checkpoint only; do not restore its active point. Keep its test evidence only for the exact commit/scope it covers. |
+| docs/archive/plans/MASTER-FINAL-ROADMAP.md | E3–E24 editor, page, media, dynamic data, integration, accessibility, SEO, Admin, AI, testing and release gate breakdown | Preserve all capabilities; crosswalk E/A/AI/T items to current EDT/WEB/RES/DYN/INT/QA/AI/ADM/OPS IDs and explicit acceptance. |
+| docs/archive/plans/PLAN-AMENDMENT-EDITOR-UNIFICATION.md | One Page Model/renderer/save path; migrate real pages without data loss; old editor test pages distinguished from real pages | Architectural constraints retained. Current Editor v2 is canonical; historical paths and page migration acceptance must be checked against current code and data. |
+| docs/archive/plans/SANCI-MASTER-PLAN.md | Public site pages, brand design, Admin, media, SEO, analytics, security, Twitch/YouTube/TikTok/Discord and Stream Assistant | Product-source inventory; reconcile each capability and any missing public page/workflow with WEB/CNT/COM/INT/ANL/AI IDs. |
+| docs/archive/plans/ULTIMATE-PLATFORM-DIRECTION-2026-09-16.md | Creator Platform layering, stable IDs, canonical action system, validation/security, Content Engine, Stream Intelligence, AI Engineer and evaluation | Long-term architecture; crosswalk all requirements not already represented by H19–H34, especially action/permission/verification/evaluation. |
+| docs/archive/plans/V2-BLUEPRINT.md | Worker/D1/R2/KV/Queues/DO architecture, auth, cache, SEO, security and deployment sequence | Preserve as architecture evidence, not as proof that a binding/service is currently configured. Reconcile each planned Cloudflare capability with actual wrangler config and runtime consumers. |
+| docs/archive/plans/VISUAL-EDITOR-ARCHITECTURE.md | Canonical structured tree, shared Canvas/Layers/Inspector state, history and AI action boundaries | Preserve architecture rules; its old runtime path public/editor/editor-core.js is historical. Current canonical runtime is public/editor-v2; no second Editor core. |
+| docs/archive/plans/visual-editor-roadmap.md | Editor shell, canvas, element system, Sanci blocks, Inspector, Layers, design system and responsive work | Historical milestone labels are not active. Map every capability to current EDT/DSN/QA IDs and current responsive acceptance. |
+| docs/archive/2026-09-16/LEGACY-HTML-ARCHIVE.md | Legacy public page file-to-slug mapping and no-parallel-renderer rule | Route documentation has been reconciled to the current Worker router; keep redirects and data-preservation tests until explicitly retired. |
+
+**P0.2 gap:** the H19–H34 271-row crosswalk is not the whole archive audit. The current plan must also reconcile requirements and architecture constraints from the earlier 00/A and 00.9.6.C–F sections and the secondary archive plans above. A topic being represented in §38/§39 is not enough; record the exact source heading, current feature ID(s), KEEP/MERGE/EXPAND/DEFER/REPLACE/REJECT decision, phase, dependency and acceptance evidence.
+
+### 37.19. Cross-cutting policy recovered from archive — Open-source-first engineering
+
+**Scope:** all current and future product work, including Visual Editor, Worker/API, UI, data model, tests, build/deploy and Creator OS.
+
+Before a significant new feature, infrastructure decision or complex technical fix, compare in this order:
+1. Reuse the already-canonical Sanci9517 implementation when it meets the contract.
+2. Prefer a maintained, tested and license-compatible open-source library or standard solution.
+3. Use a narrow adapter around a proven standard when that preserves the canonical domain boundary.
+4. Build custom only when no suitable solution exists, the existing one fails the acceptance requirements, or its integration/license/security burden is greater.
+5. Fork only with a documented reason and upstream/security maintenance plan.
+
+The short decision record must name the problem and acceptance criteria; existing modules/contracts; candidate alternatives; license and maintenance state; runtime/Worker/browser compatibility; security, privacy, supply-chain and bundle impact; chosen reuse/integrate/adapt/fork/build decision; tests and rollback. This is not a requirement to add dependencies for every small task.
+
+**Non-negotiable exclusions:** no dependency may introduce a second Page Model, Editor history, Property Registry, Resource store, Schedule domain, or save/publish path; no external code gets implicit access to secrets or privileged actions; lockfile, license/attribution and update/rollback evidence are required. This policy is now preserved in the current MASTER rather than only in the archive.
+
 ## 38. Részletes Visual Editor képességkatalógus
 
 **Cél:** a vizuális szerkesztő teljes részletképességeinek önálló, tesztelhető katalógusa. A felsorolás a végleges platform követelményét rögzíti, nem a runtime készültségét. Minden elem a közös Page Model, command/history/validation/persistence és jogosultsági szerződésen keresztül működik.
