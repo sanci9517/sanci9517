@@ -2509,7 +2509,7 @@ Minden tételhez stabil funkció-ID, domain owner, user outcome, permission, dep
 | H21.19 | Discord community link | INT-015 | INT | MERGE | 1.5 | QA-002/003 |
 | H21.20 | Discord optional integration | INT-015 | INT | MERGE | 1.5 | QA-002/003 |
 | H21.21 | Discord status where justified | INT-015 | INT | MERGE | 1.5 | QA-002/003 |
-| H21.22 | Architecture constraint: keep secrets in Cloudflare Secrets; normalize external APIs behind services | INT-019 | INT | MERGE | 1.5 | QA-002/003 |
+| H21.22 | Architecture constraint: keep secrets in Cloudflare Secrets and normalize external APIs behind services | INT-019 | INT | MERGE | 1.5 | QA-002/003 |
 | H22.01 | schedule CRUD | SCH-001 | SCH | MERGE | 1.0 | QA-002/004 |
 | H22.02 | recurring schedule | SCH-004 | SCH | MERGE | 1.0 | QA-002/004 |
 | H22.03 | timezone handling | SCH-003 | SCH | MERGE | 1.0 | QA-002/004 |
@@ -2646,7 +2646,7 @@ Minden tételhez stabil funkció-ID, domain owner, user outcome, permission, dep
 | H30.12 | API latency monitoring | OPS-008 | OPS | MERGE | 0.x–1.0 | QA-001/005/006 |
 | H30.13 | production smoke test | QA-006 | QA | MERGE | 0.x–1.0 | QA-001/005/006 |
 | H30.14 | visual regression baseline | QA-004 | QA | MERGE | 0.x–1.0 | QA-001/005/006 |
-| H31.00 | AI editor must use the same canonical action system as manual Editor; pipeline: Intent -> Plan -> Actions -> Permission -> Validation -> Preview/Diff -> Approval -> Execute -> Verify -> Audit -> Version | AI-008 | AI | DEFER | 3.0 | QA-002/003/008 |
+| H31.00 | AI editor must use the same canonical action system as manual Editor, with pipeline: Intent -> Plan -> Actions -> Permission -> Validation -> Preview/Diff -> Approval -> Execute -> Verify -> Audit -> Version | AI-008 | AI | DEFER | 3.0 | QA-002/003/008 |
 | H31.01 | AI page operations | AI-011 | AI | DEFER | 3.0 | QA-002/003/008 |
 | H31.02 | AI element operations | AI-011 | AI | DEFER | 3.0 | QA-002/003/008 |
 | H31.03 | AI style/layout operations | AI-011 | AI | DEFER | 3.0 | QA-002/003/008 |
@@ -2729,3 +2729,16 @@ Minden tételhez stabil funkció-ID, domain owner, user outcome, permission, dep
 - A 271 sort össze kell vetni a teljes §24 ID-jegyzékkel és a régi forrásokkal; a hibásan tág vagy túl általános ID-mappingot pontosítani kell.
 - A funkciók végrehajtási státusza nem változik a crosswalk elkészítésétől. A kód, CI, runtime és user acceptance bizonyítéka külön marad.
 - P0.2 csak akkor PASS, ha nincs mapping nélküli vagy árva ID, a döntés és fázis indokolt, és minden tétel saját feature contract/acceptance mezői kitöltöttek.
+
+
+### 41.2. Crosswalk strukturális ellenőrzése — 2026-10-13
+
+A MASTER jelenlegi tartalmán végzett strukturális ellenőrzés eredménye:
+
+- Történeti katalógus: 271 címkézett követelmény, a §40.1–40.16 csoportok deklarált elemszámai egyeznek a címkelisták elemszámával.
+- Crosswalk: 271 sor; 271 egyedi történeti kulcs; nincs duplikált kulcs.
+- Funkciójegyzék: 355 stabil ID a §24.1–24.18 tartományban; a vizsgált ID-k egyediek, duplikációt az ellenőrzés nem talált.
+- A crosswalk minden cél-ID-ja feloldható a jelenlegi funkciójegyzékben; a QA-horgonyok szintaktikailag érvényes QA-ID-hivatkozások.
+- A §40 katalóguscímkéi és a §41 crosswalk címkéi kulcsonként egyeztetve vannak.
+
+**Amit ez az ellenőrzés nem bizonyít:** a leképezések teljes szemantikai helyességét, a döntések termékoldali indokoltságát, a részletes feature contractok meglétét, a tesztek lefutását vagy a runtime készültségét. Ezért P0.2 továbbra is IN PROGRESS; a következő munka a mapping tartalmi felülvizsgálata, az esetleges túl tág megfeleltetések pontosítása és minden sor acceptance/dependency/permission mezőinek kiegészítése.
