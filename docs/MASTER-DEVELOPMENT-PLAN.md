@@ -1407,6 +1407,8 @@ Az alábbi jegyzék a menüfunkciókat külön, stabil munkapontokra bontja. A s
 - LOC-002: Locale-aware dates/numbers/currency/timezone.
 - LOC-003: Page/content/navigation translation.
 - LOC-004: Localized SEO/hreflang/canonical.
+- LOC-005: Translation completeness status, locale preview and safe publish policy.
+- LOC-006: AI-assisted translation workflow with explicit human review/approval and audit.
 - TEAM-001: Workspace/site switcher.
 - TEAM-002: Invite/accept/revoke.
 - TEAM-003: Roles and granular permissions.
@@ -1948,7 +1950,7 @@ PWA/offline/mobile; provider capabilities/Discord roles; email/CRM/consent; Stre
 ### 37.3. A P0 aktuális állapota
 
 - **P0.1:** IN PROGRESS — a branch/MASTER/archive baseline és a fő route-viselkedés ellenőrizve; az archív route-leírás javítva és a canonical Admin/Dashboard vs Editor v2 útvonal egyeztetve. A commit `a083cf879c3dd15e565cffeb7556dac6d4728faa` ellenőrzésekor a Cloudflare Workers Build, Editor Core Test és Twitch Integration Check mind SUCCESS lett. Az Editor Core workflow typecheck + Editor + Schedule + domain + Admin-home contract tesztet futtat; a Twitch workflow typecheck + Editor/Schedule + Twitch OAuth + site-ownership teszteket futtat. A gate azért marad nyitva, mert a teljes helyi working-tree állapot, a remote D1/schema integritás, valamint a save/reload/publish/mobile browser acceptance ebből a forráskód-auditból nem bizonyítható.
-- **P0.2:** IN PROGRESS — a 271 H19–H34 történeti kulcs soronkénti MAPPED DRAFT crosswalkja (§41) megvan, és a 00.9.6.E/F 35 fő fejezete szintű crosswalkja elkészült (§37.20). A teljes bullet-szintű E/F és korábbi 00/A/C.23/C.24 provenance, a 357 feature ID teljes eredetbesorolása, a döntésindoklás és az ID-nkénti permission/dependency/acceptance contract még nincs lezárva.
+- **P0.2:** IN PROGRESS — a 271 H19–H34 történeti kulcs soronkénti MAPPED DRAFT crosswalkja (§41) megvan, és a 00.9.6.E/F 35 fő fejezete szintű crosswalkja elkészült (§37.20). A teljes bullet-szintű E/F és korábbi 00/A/C.23/C.24 provenance, a 359 feature ID teljes eredetbesorolása, a döntésindoklás és az ID-nkénti permission/dependency/acceptance contract még nincs lezárva.
 - **P0.3:** IN PROGRESS — a migrációk és Page Model runtime forrásának első összevetése elkészült (§37.15); nyitott a remote D1 alkalmazott migrációk/séma/index/FK ellenőrzése, a teljes tábla-consumer térkép, a site-scope döntések és az R2 binding/resource API hiánya.
 - **P0.4:** IN PROGRESS — a fő router, Admin placeholder-ek és Editor handler modulok első leltára megvan; a teljes surface/route/action acceptance még nyitott. A felhasználó által jelzett canvas-height/scroll-extent regresszió külön, reprodukálható acceptance-ként rögzítve (§37.21), de runtime PASS nincs.
 - **P0.5:** IN PROGRESS — Twitch/YouTube/TikTok/Discord/Kick hivatalos dokumentációs review és approval/quota/runtime korlátok frissítve (§37.10, §37.14); a teljes feature-to-endpoint/scope/quota/approval mátrix és élő integrációs acceptance még nyitott.
@@ -2200,13 +2202,13 @@ Ez a rész a 37.10 első áttekintésének frissített, endpoint- és approval-s
 
 A §24 registry és a §41 crosswalk újraszámolt kapcsolata:
 
-- §24: 357 egyedi stabil feature ID.
+- §24: 359 egyedi stabil feature ID (a P0.2 review során felvett LOC-005 és LOC-006 követelményekkel).
 - §41: 271 egyedi történeti követelménykulcs.
 - A történeti crosswalk 128 különböző aktuális feature ID-t hivatkozik közvetlenül; minden ilyen ID feloldható a registryben, és a crosswalkban használt QA-ID-k is feloldhatók.
-- A 357-ből fennmaradó 229 feature ID nem kap közvetlen történeti kulcsot a jelenlegi crosswalkban. Ez önmagában nem hiba: ezek között lehet újonnan hozzáadott termékigény, kibővített acceptance, biztonsági/üzemeltetési kapu vagy korábbi tervben nem szereplő képesség. **De mindegyikhez explicit eredetbesorolás kell**: NEW PRODUCT REQUIREMENT, EXPANDED ACCEPTANCE, CROSS-CUTTING CONTROL, PLATFORM/OPERATIONS, vagy HISTORICAL MAPPING GAP.
-- A P0.2 zárás előtt a 357 ID mindegyikéhez ki kell tölteni a provenance mezőt: historical key(s), new requirement source, domain owner, target phase, dependency IDs, acceptance/test IDs és státusz. Ha egy ID új, a forrás a MASTER döntési naplójában szerepeljen; ha történeti, a H-key legyen visszakövethető. Az üres provenance nem törlési ok, hanem nyitott auditfeladat.
+- A 359-ből fennmaradó 231 feature ID nem kap közvetlen történeti kulcsot a jelenlegi crosswalkban. Ez önmagában nem hiba: ezek között lehet újonnan hozzáadott termékigény, kibővített acceptance, biztonsági/üzemeltetési kapu vagy korábbi tervben nem szereplő képesség. **De mindegyikhez explicit eredetbesorolás kell**: NEW PRODUCT REQUIREMENT, EXPANDED ACCEPTANCE, CROSS-CUTTING CONTROL, PLATFORM/OPERATIONS, vagy HISTORICAL MAPPING GAP.
+- A P0.2 zárás előtt a 359 ID mindegyikéhez ki kell tölteni a provenance mezőt: historical key(s), new requirement source, domain owner, target phase, dependency IDs, acceptance/test IDs és státusz. Ha egy ID új, a forrás a MASTER döntési naplójában szerepeljen; ha történeti, a H-key legyen visszakövethető. Az üres provenance nem törlési ok, hanem nyitott auditfeladat.
 
-**Aktuális döntés:** a 271 történeti követelmény soronkénti megőrzése szerkezetileg PASS; a teljes történeti↔aktuális feature coverage nem PASS, amíg a 229 közvetlenül nem hivatkozott ID eredete és a tételenkénti feature contract nem dokumentált.
+**Aktuális döntés:** a 271 történeti követelmény soronkénti megőrzése szerkezetileg PASS; a teljes történeti↔aktuális feature coverage nem PASS, amíg a 231 közvetlenül nem hivatkozott ID eredete és a tételenkénti feature contract nem dokumentált.
 
 
 ### 37.18. P0.2 — Archived source inventory and precedence reconciliation
@@ -2546,7 +2548,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | E.20-03 | Normal/empty/loading/validation/error/retry/permission-denied behavior | ADM-008, QA-006 | KEEP | All phases | QA-004/006 |
 | E.20-04 | Canonical domain/data model/owner/fields/status/relations/invariants | §5, §29, SEC-002 | KEEP | All phases | QA-002/003 |
 | E.20-05 | API/service contract, validation/auth/error codes/idempotency | §26.1, SEC-002, INT-001, AUT-006 | KEEP | All phases | QA-002/003/006 |
-| E.20-06 | Admin/Editor/Public rendering and responsive/accessibility requirements | ADM, WEB, EDT, QA-005 | KEEP | All phases | QA-004/005 |
+| E.20-06 | Admin/Editor/Public rendering and responsive/accessibility requirements | ADM-001–ADM-010, WEB-001–WEB-032, EDT-001–EDT-042, QA-005 | KEEP | All phases | QA-004/005 |
 | E.20-07 | Integration/dependencies/scopes/rate limits/timeouts/provider downtime | INT-001–INT-009, OPS-011 | KEEP | Every provider-dependent phase | QA-003/006/008 |
 | E.20-08 | Unit/domain/API/D1/migration/permission/ownership/browser desktop-tablet-mobile/regression tests | QA-001–QA-010 | KEEP | All phases | QA-002–QA-010 |
 | E.20-09 | Reproducible acceptance scenario input→action→expected result | §26.1, QA-009 | KEEP | All phases | QA-009 |
@@ -3277,7 +3279,7 @@ A MASTER jelenlegi tartalmán végzett strukturális ellenőrzés eredménye:
 
 - Történeti katalógus: 271 címkézett követelmény, a §40.1–40.16 csoportok deklarált elemszámai egyeznek a címkelisták elemszámával.
 - Crosswalk: 271 sor; 271 egyedi történeti kulcs; nincs duplikált kulcs.
-- Funkciójegyzék: 357 stabil ID a §24.1–24.18 tartományban; a vizsgált ID-k egyediek, duplikációt az ellenőrzés nem talált.
+- Funkciójegyzék: 359 stabil ID a §24.1–24.18 tartományban; a LOC-005/LOC-006 bővítés után a registry- és crosswalk-hivatkozásokat újra ellenőrizendő.
 - A crosswalk minden cél-ID-ja feloldható a jelenlegi funkciójegyzékben; a QA-horgonyok szintaktikailag érvényes QA-ID-hivatkozások.
 - A §40 katalóguscímkéi és a §41 crosswalk címkéi kulcsonként egyeztetve vannak.
 
