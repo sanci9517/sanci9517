@@ -4181,7 +4181,7 @@ A felhasználó egyértelmű visszajelzése: az Admin főoldal ne vizuális fejl
 A felhasználó pontos követelménye: nem kizárólag a jelenlegi működő modulok listája kell, hanem a teljes, MASTER-ben rögzített Creator Platform termékirányának áttekinthető megjelenítése az Admin főoldalon, prémium kivitelezéssel. A gombok feliratának és ikonjának függőlegesen és vízszintesen középre kell kerülnie.
 
 - [x] A dashboard megőrzi a napi operatív területet (valós rendszeradatok, webhely, adásrend, integrációs állapot és meglévő belépési pontok).
-- [x] Hozzáadva egy külön, kereshető Creator Platform képességtérkép 20 fő munkaterülettel: Weboldal/CMS, Visual Editor v2, Design Studio, Resource Library, Schedule/Game Profiles, Stream Studio/OBS, VOD/Clips/Shorts, Publishing, Twitch, YouTube/TikTok/Discord, Community, Audience/Email/CRM, Analytics, AI Copilot, Commerce/Membership, Automation, Team/SaaS, Security/Recovery, Localization/Accessibility/SEO, Developer Tools/Marketplace.
+- [x] Hozzáadva egy külön, kereshető Creator Platform képességtérkép 24 fő munkaterülettel: Weboldal/CMS, Visual Editor v2, Design Studio, Resource Library, Schedule/Game Profiles, Stream Studio/OBS, VOD/Clips/Shorts, Publishing, Twitch, YouTube/TikTok/Discord, Community, Audience/Email/CRM, Analytics, AI Copilot, Commerce/Membership, Automation, Team/SaaS, Security/Recovery, Localization/Accessibility/SEO, Developer Tools/Marketplace, Dynamic Data Binding, Forms/Interactions, Publishing/Revision Control, Content Models/Reusable Blocks.
 - [x] A kártyák részletes capability-felsorolásokat és készültségi/fáziscímkéket adnak. A „Tervezett” és „Későbbi” képességek nem aktívként jelennek meg; ezek gombjai letiltott állapotúak, és nem színlelnek létező útvonalat.
 - [x] A kereső a navigációs elemek és a capability-kártyák között is keres.
 - [x] Az általános műveleti gombok, ikon-gombok, kis gombok, gyorsműveleti linkek és capability CTA-k inline-flex + align-items:center + justify-content:center szabályt kapnak; a navigáció és a sűrű listák balra igazítása szándékosan megmarad.
@@ -4191,6 +4191,8 @@ A felhasználó pontos követelménye: nem kizárólag a jelenlegi működő mod
 - [ ] Böngészős ellenőrzés desktop/tablet/mobil szélességen, mindkét témában; a kártyamagasságok, tördelés, keresés, gombközépre igazítás és túlcsordulás vizuális ellenőrzése.
 - [ ] Felhasználói vizuális elfogadás.
 
-**Scope-garancia:** a 20 dashboard-kártya magas szintű felfedezési felület, nem helyettesíti és nem rövidíti le a MASTER 00.9.6.C / 00.9.6.D, E/F specifikációit, a 01–140 preservation matrixet vagy a H19–H34 történeti traceability-t. Ha a részletes MASTER olyan capability-t tartalmaz, amely nem kapott külön dashboard-kártyát, a követelmény attól még megmarad és a megfelelő munkaterület/fázis specifikációjában kötelező. A dashboardon látható tervezett képesség nem bizonyít runtime-implementációt.
+**Scope-garancia:** a 24 dashboard-kártya magas szintű felfedezési felület, nem helyettesíti és nem rövidíti le a MASTER 00.9.6.C / 00.9.6.D, E/F specifikációit, a 01–140 preservation matrixet vagy a H19–H34 történeti traceability-t. Ha a részletes MASTER olyan capability-t tartalmaz, amely nem kapott külön dashboard-kártyát, a követelmény attól még megmarad és a megfelelő munkaterület/fázis specifikációjában kötelező. A dashboardon látható tervezett képesség nem bizonyít runtime-implementációt.
 
 **Gate:** F0.1 továbbra sem PASS. PR #7 nyitott/piszkozat marad; nincs merge a helyi tesztek, böngészős ellenőrzés és a felhasználó kifejezett vizuális elfogadása előtt.
+
+- [x] Külön képességkártyák lefedik a dinamikus adatbindinget, a formokat/interakciókat, a publishing/revision folyamatot és a bővíthető tartalommodelleket; ezek sem jelentenek automatikusan kész runtime-funkciót.
