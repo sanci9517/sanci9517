@@ -4466,3 +4466,76 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 
 **Coverage count:** 54 E6 checklist items are now individually keyed. E7–E24, plus the archived roadmap's 0/Foundation/Data Model/Core items, remain OPEN. P0.2 remains **IN PROGRESS / NOT PASS**; no runtime code/data changed and no tests were run.
 
+### 41.3.27. P0.2 — MASTER-FINAL-ROADMAP source-key ledger: E7 Inspector, E8 Layout, E9 Responsive (2026-10-13)
+
+**Source:** docs/archive/plans/MASTER-FINAL-ROADMAP.md, E7–E9, archive lines 243–307. Each checklist item is kept separately; the old [ ] status is historical. Candidate mappings do not establish that a control exists in the current Editor runtime.
+
+| Source key | Archive line | Exact source item | Current E target | Candidate canonical IDs | Decision / phase / acceptance |
+|---|---:|---|---|---|---|
+| ROADMAP-E7-01 | 244 | - [ ] Content | E.3.5-01 | EDT-021/022 | KEEP — Content category uses typed content schemas; no arbitrary raw HTML by default; acceptance evidence OPEN |
+| ROADMAP-E7-02 | 245 | - [ ] Layout | E.3.5-01; E.3.4 | EDT-016/021/022 | KEEP — Layout properties only for the active layout mode; acceptance evidence OPEN |
+| ROADMAP-E7-03 | 246 | - [ ] Size | E.3.5-02 | EDT-009/021/022 | KEEP — Size fields require unit/range/viewport validation; acceptance evidence OPEN |
+| ROADMAP-E7-04 | 247 | - [ ] Spacing | E.3.5-02 | EDT-016/021/022 | KEEP — Spacing fields remain independent; per-side controls validated; acceptance evidence OPEN |
+| ROADMAP-E7-05 | 248 | - [ ] Flex | E.3.4 | EDT-016/021/022 | PHASE-GATED — Flex properties only within the tested schema/render subset; acceptance evidence OPEN |
+| ROADMAP-E7-06 | 249 | - [ ] Grid | E.3.4 | EDT-016/021/022 | PHASE-GATED — Grid properties only within tested schema/render subset; acceptance evidence OPEN |
+| ROADMAP-E7-07 | 250 | - [ ] Position | E.3.4; C.23.5 | EDT-009/016/021/022 | PHASE-GATED — positioning values and containing-block behavior need browser acceptance; acceptance evidence OPEN |
+| ROADMAP-E7-08 | 251 | - [ ] Typography | E.3.6-01 | EDT-017/021/022 | KEEP — text style schema; semantic heading levels and contrast tested; acceptance evidence OPEN |
+| ROADMAP-E7-09 | 252 | - [ ] Background | E.3.5-02 | EDT-021/022; DSN-001/006 | KEEP — background values/assets/tokens validated; safe resource references; acceptance evidence OPEN |
+| ROADMAP-E7-10 | 253 | - [ ] Border | E.3.5-02 | EDT-021/022; DSN-001/006 | KEEP — border style/width/color schema and supported values; acceptance evidence OPEN |
+| ROADMAP-E7-11 | 254 | - [ ] Radius | E.3.5-02 | EDT-021/022; DSN-001/006 | KEEP — radius property supports only validated CSS units/tokens; acceptance evidence OPEN |
+| ROADMAP-E7-12 | 255 | - [ ] Shadow | E.3.5-02 | EDT-021/022; DSN-001/006 | KEEP — shadow values use safe structured schema, not arbitrary unbounded CSS; acceptance evidence OPEN |
+| ROADMAP-E7-13 | 256 | - [ ] Opacity | E.3.5-02 | EDT-021/022 | KEEP — opacity range and invalid-input rejection tests OPEN; acceptance evidence OPEN |
+| ROADMAP-E7-14 | 257 | - [ ] Transform | E.3.5-02; C.23.5 | EDT-009/021/022; EDT-040 | PHASE-GATED — transform/rotation/anchor only if explicitly supported and validated; acceptance evidence OPEN |
+| ROADMAP-E7-15 | 258 | - [ ] Filter | E.3.5-02; C.23.5 | EDT-021/022 | OPEN — CSS filter support is not a standalone registry ID; define allowed filter subset or mark unsupported; acceptance evidence OPEN |
+| ROADMAP-E7-16 | 259 | - [ ] Animation | E.3.5-02; C.23.10 | EDT-039/040 | PHASE-GATED — animation properties must honor reduced-motion, accessibility and performance limits; acceptance evidence OPEN |
+| ROADMAP-E7-17 | 260 | - [ ] Interaction | E.3.6-02; C.23.10 | EDT-019/039/040 | KEEP — interaction properties must use validated actions and avoid arbitrary script; acceptance evidence OPEN |
+| ROADMAP-E7-18 | 261 | - [ ] Responsive | E.3.4 | EDT-023–026 | KEEP — responsive properties distinguish inherited and explicit overrides; acceptance evidence OPEN |
+| ROADMAP-E7-19 | 262 | - [ ] Accessibility | C.23.16; F.9 | QA-004/005; EDT-021/022 | KEEP — accessibility checks are separate from Inspector category labels; keyboard/focus/contrast/labels tested; acceptance evidence OPEN |
+| ROADMAP-E7-20 | 263 | - [ ] SEO | F.9; E.2.3-01 | SEO-001–005; WEB-005/006 | OPEN — SEO is page-level metadata/workflow, not arbitrary element Inspector fields; define exact property ownership; acceptance evidence OPEN |
+| ROADMAP-E7-21 | 264 | - [ ] Data | F.2; C.23.12 | DYN-001–008; EDT-020/021/022 | KEEP — data-binding Inspector is schema/permission gated and cannot mutate domain rows; acceptance evidence OPEN |
+| ROADMAP-E7-22 | 265 | - [ ] Advanced | C.23.7 | EDT-021/022; SEC-002/005 | OPEN — Advanced category exposes only explicitly supported, permission-safe properties; no arbitrary CSS/JS; acceptance evidence OPEN |
+| ROADMAP-E7-COLLAPSIBLE-01 | 267 | Minden szekció összecsukható. | E.3.1-05 | EDT-021/022 | KEEP — Inspector groups collapse/expand without losing field state or causing accidental mutations; acceptance evidence OPEN |
+| ROADMAP-E7-23 | 270 | - [ ] property search | C.23.7-03 | EDT-021/022/023/024 | KEEP — property search/category filter and recent/favorite behaviors have explicit empty/no-match states; acceptance evidence OPEN |
+| ROADMAP-E7-24 | 271 | - [ ] reset | C.23.7-04 | EDT-021/022 | KEEP — reset uses typed default/inherited value and is undoable; acceptance evidence OPEN |
+| ROADMAP-E7-25 | 272 | - [ ] inherited value jelzés | C.23.7-03 | EDT-023/024 | KEEP — inherited-value indicator is accurate for the selected viewport; acceptance evidence OPEN |
+| ROADMAP-E7-26 | 273 | - [ ] override jelzés | C.23.7-03 | EDT-023/024 | KEEP — override indicator distinguishes explicit value from inherited default; acceptance evidence OPEN |
+| ROADMAP-E7-27 | 274 | - [ ] invalid value jelzés | C.23.7-05 | EDT-021/022 | KEEP — invalid value is visible and cannot silently persist; acceptance evidence OPEN |
+| ROADMAP-E7-28 | 275 | - [ ] unit selector | C.23.7-05 | EDT-021/022/023/024 | KEEP — unit selector only lists schema-allowed units and preserves value meaning; acceptance evidence OPEN |
+| ROADMAP-E7-29 | 276 | - [ ] color picker | C.23.7-06 | EDT-021/022; DSN-001/006 | KEEP — color picker uses tokens/literals per schema and contrast checks where required; acceptance evidence OPEN |
+| ROADMAP-E7-30 | 277 | - [ ] token selector | C.23.7-06 | EDT-021/022; DSN-001/006 | KEEP — token selector binds canonical token ID; no hidden literal overwrite; acceptance evidence OPEN |
+| ROADMAP-E7-31 | 278 | - [ ] multi-selection editing | C.23.7-08 | EDT-021/022; EDT-038 | OPEN — multi-selection editing only when properties are compatible; atomic/undoable mixed-selection tests; acceptance evidence OPEN |
+| ROADMAP-E8-01 | 281 | - [ ] width/height | E.3.4-02 | EDT-009/016/021/022 | KEEP — width/height values are schema-validated and viewport-aware; acceptance evidence OPEN |
+| ROADMAP-E8-02 | 282 | - [ ] min/max | E.3.4-02 | EDT-009/021/022 | KEEP — min/max constraints validated against active layout mode; acceptance evidence OPEN |
+| ROADMAP-E8-03 | 283 | - [ ] auto/fit/fill | E.3.4-02 | EDT-009/016/021/022 | KEEP — auto/fit/fill meanings defined per parent/layout; no invalid CSS string pass-through; acceptance evidence OPEN |
+| ROADMAP-E8-04 | 284 | - [ ] margin | E.3.4-02 | EDT-016/021/022 | KEEP — margin semantics, supported units and reset/override tested; acceptance evidence OPEN |
+| ROADMAP-E8-05 | 285 | - [ ] padding | E.3.4-02 | EDT-016/021/022 | KEEP — padding semantics and per-side independence tested; acceptance evidence OPEN |
+| ROADMAP-E8-06 | 286 | - [ ] gap | E.3.4-02 | EDT-016/021/022 | KEEP — gap semantics defined separately from margin/padding; acceptance evidence OPEN |
+| ROADMAP-E8-07 | 287 | - [ ] box model | C.23.5 | EDT-009/016/021/022 | KEEP — box model output must match editor preview and public renderer; acceptance evidence OPEN |
+| ROADMAP-E8-08 | 288 | - [ ] flex | E.3.4-03 | EDT-016/021/022 | PHASE-GATED — flex direction/wrap/align/gap only within tested subset; acceptance evidence OPEN |
+| ROADMAP-E8-09 | 289 | - [ ] grid | E.3.4-03 | EDT-016/021/022 | PHASE-GATED — Grid placement/auto-flow/named areas only if schema and renderer support them; acceptance evidence OPEN |
+| ROADMAP-E8-10 | 290 | - [ ] position | C.23.5 | EDT-009/016/021/022 | PHASE-GATED — position values must define containing block/stacking context and unsupported values are rejected; acceptance evidence OPEN |
+| ROADMAP-E8-11 | 291 | - [ ] z-index | C.23.5 | EDT-009/021/022 | KEEP — z-index/stacking context behavior tested; no arbitrary value pass-through; acceptance evidence OPEN |
+| ROADMAP-E8-12 | 292 | - [ ] overflow | C.23.5 | EDT-009/021/022 | KEEP — overflow/scroll container/sticky conflict warning and public parity tested; acceptance evidence OPEN |
+| ROADMAP-E8-13 | 293 | - [ ] aspect ratio | C.23.5 | EDT-009/021/022 | KEEP — aspect ratio valid range and interaction with width/height tested; acceptance evidence OPEN |
+| ROADMAP-E8-14 | 294 | - [ ] responsive layout | E.3.4-04 | EDT-023–026 | KEEP — responsive layout and inherited/override values tested across viewport matrix; acceptance evidence OPEN |
+| ROADMAP-E9-01 | 297 | - [ ] desktop | E.3.4-04 | EDT-025 | KEEP — desktop viewport preset; no change to persisted content; acceptance evidence OPEN |
+| ROADMAP-E9-02 | 298 | - [ ] tablet | E.3.4-04 | EDT-025 | KEEP — tablet viewport preset; supported device width and touch behavior tested; acceptance evidence OPEN |
+| ROADMAP-E9-03 | 299 | - [ ] mobile | E.3.4-04 | EDT-025 | KEEP — mobile viewport preset; no clipped canvas/panels; acceptance evidence OPEN |
+| ROADMAP-E9-04 | 300 | - [ ] breakpoint model | E.3.4-04 | EDT-023–025 | KEEP — breakpoint model is explicit, stable and versioned; acceptance evidence OPEN |
+| ROADMAP-E9-05 | 301 | - [ ] inheritance | E.3.4-04 | EDT-023/024 | KEEP — inheritance is deterministic desktop→tablet→mobile per property; acceptance evidence OPEN |
+| ROADMAP-E9-06 | 302 | - [ ] per-device overrides | E.3.4-04 | EDT-023/024 | KEEP — per-device overrides distinguish inherit/reset/explicit value; acceptance evidence OPEN |
+| ROADMAP-E9-07 | 303 | - [ ] visibility per device | E.3.4-05 | EDT-026 | KEEP — visibility per device is a supported override, not layer hide; acceptance evidence OPEN |
+| ROADMAP-E9-08 | 304 | - [ ] typography per device | E.3.4-04 | EDT-023/024 | KEEP — typography per device respects allowed property schema; acceptance evidence OPEN |
+| ROADMAP-E9-09 | 305 | - [ ] spacing per device | E.3.4-04 | EDT-023/024 | KEEP — spacing per device preserves horizontal/vertical and per-side independence; acceptance evidence OPEN |
+| ROADMAP-E9-10 | 306 | - [ ] custom breakpoint később | E.3.4-04 | EDT-023–026 | DEFER — custom breakpoint editing is later scope; do not expose unimplemented control; acceptance evidence OPEN |
+| ROADMAP-E9-11 | 307 | - [ ] responsive validation | E.3.4-06 | EDT-021–026; QA-004/005 | KEEP — responsive validation warns/rejects unsupported combinations and runs viewport tests; acceptance evidence OPEN |
+
+**Semantic findings:**
+- The Inspector's SEO and Accessibility categories are not evidence that the page-level SEO workflow or accessibility acceptance is implemented. Page metadata remains owned by SEO/WEB contracts; accessibility remains a separate QA requirement.
+- CSS Filter has no standalone canonical registry ID in the reviewed list. Keep it OPEN until a supported subset and test matrix are explicitly decided; do not silently accept arbitrary CSS strings.
+- Flex/Grid/position/transform/overflow remain supported-subset capabilities. A dropdown value must be schema-validated against the active layout mode, serialized, reloaded and rendered identically in preview/public output.
+- Custom breakpoint editing is DEFERRED. Desktop/tablet/mobile presets and responsive inheritance/overrides are separate baseline requirements; a custom-breakpoint UI must not appear active before implementation.
+- Multi-selection property editing is OPEN unless selected nodes share compatible property schema and the mutation is atomic, undoable and permission-safe.
+
+**Coverage count:** 57 E7–E9 source items are individually keyed. E10–E24 and the roadmap's global rules remain OPEN. P0.2 **IN PROGRESS / NOT PASS**; documentation-only, no runtime code/data changed and no tests run.
+
