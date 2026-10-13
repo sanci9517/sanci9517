@@ -6,7 +6,6 @@
 **PREVIOUS_GATE:** `F0.1 — CLOSED / PASS` (PR #7 squash merge: `047d66f78cc4bdd6c7b50ddd83140d3ddf4aae48`)
 **NEXT_GATE:** `F0.2 Admin navigation + global shell acceptance → F0.3 Editor foundation + first vertical slice → F0.4 Visual Builder/Layers/Inspector → további F0.x pontok szigorú sorrendben; M0 audit PASS nem előfeltétel`
 **PARALLEL_WORKSTREAMS:** `0`
-**PARALLEL_WORKSTREAMS:** `0`
 
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 **Verzió:** MASTER-2.77 — végleges termékleírás, Admin UI-specifikáció és egyetlen függőség-alapú fejlesztési sorrend; a 2.75–2.76 roadmapek történetiek.  
