@@ -1,14 +1,14 @@
-**ACTIVE_POINT_ID:** `F0.1-EDITOR-FOUNDATION-AND-FIRST-USABLE-SLICE`  
-**ACTIVE_POINT_STATUS:** `ACTIVE — az Editor tényleges fejlesztése indul; a régi UI/funkciók nem tekinthetők késznek bizonyítás nélkül`  
-**ACTIVE_POINT_TITLE:** Visual Editor újraépítése — működő alap, strukturált canvas és szerkesztési lánc  
-**ACTIVE_SUBPOINT_ID:** `F0.1-EDITOR-FOUNDATION-AND-FIRST-USABLE-SLICE`  
-**ACTIVE_SUBPOINT_STATUS:** `ACTIVE — az Editor shell és az első végig működő szerkesztési út építése; a funkciók csak tesztelt acceptance után kapnak PASS-t`  
+**ACTIVE_POINT_ID:** `F0.1-ADMIN-HOME-VISUAL-DESIGN-AND-SHELL`  
+**ACTIVE_POINT_STATUS:** `ACTIVE — először a Creator Center/Admin főoldal vizuális terve és valós navigációs shellje készül el; a modulok csak valós adatokkal és acceptance után tekinthetők késznek`  
+**ACTIVE_POINT_TITLE:** Creator Center/Admin főoldal — végleges UI/UX irány, dashboard shell és navigációs alap  
+**ACTIVE_SUBPOINT_ID:** `F0.1-ADMIN-HOME-VISUAL-DESIGN-AND-SHELL`  
+**ACTIVE_SUBPOINT_STATUS:** `ACTIVE — Admin főoldal layout/design system/responsive shell; valós modulállapot, jogosultság és linkek; nincs hamis metrika vagy működőnek látszó placeholder`  
 **PREVIOUS_GATE:** `E6` — CLOSED / PASS  
-**NEXT_GATE:** `F0.1 Editor foundation → F0.2 Admin dashboard shell → F0.3 Editor structure/layers → további F0 pontok sorrendben; nincs M0 audit előfeltétel`  
+**NEXT_GATE:** `F0.1 Admin főoldal vizuális terv + shell → F0.2 Admin navigáció és globális shell acceptance → F0.3 Editor foundation → F0.4 Layers/structure → további pontok szigorú sorrendben; nincs M0 audit előfeltétel`  
 **PARALLEL_WORKSTREAMS:** `0`
 
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
-**Verzió:** MASTER-2.76 — teljes Creator Platform képességkatalógus; a 2.75 szakasz történeti tervpillanatkép.  
+**Verzió:** MASTER-2.77 — végleges termékleírás, Admin UI-specifikáció és egyetlen függőség-alapú fejlesztési sorrend; a 2.75–2.76 roadmapek történetiek.  
 **Frissítve:** 2026-10-13.  
 **Dokumentum státusza:** ez az egyetlen végrehajtási igazságforrás.
 **Audit / implementation baseline:** GitHub `v2/foundation`, commit `aeba30d9` (2026-10-13). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
@@ -24,7 +24,7 @@ Ez a blokk kizárólag az E4/E5/E6 korábban bizonyított lezárt gate-jeit rög
 - [x] E5 teljes regression/live/user PASS lezárva.
 - [x] E6 closure PASS / lezárva.
 
-**F végrehajtási állapot:** ACTIVE. A felhasználó döntése alapján a M0 audit lezárult mint külön munkafázis, nem PASS-minősítéssel, hanem SUPERSEDED / CLOSED BY PRODUCT DECISION állapottal. A korábbi Editor UI és részleges funkciók nem számítanak késznek; a szükséges képességeket a F0 egymás után végrehajtott, tesztelt fejlesztési pontjai valósítják meg. A lezáratlan audit-tételek nem blokkolók: ahol termékkövetelményt őriznek, átkerülnek a megfelelő buildpont acceptance-ébe.
+**F végrehajtási állapot:** ACTIVE. A 2026-10-13-i MASTER-2.77 termékdöntés alapján az első implementációs pont az Admin főoldal vizuális terve és shellje; az Editor core a következő pont. A felhasználó döntése alapján a M0 audit lezárult mint külön munkafázis, nem PASS-minősítéssel, hanem SUPERSEDED / CLOSED BY PRODUCT DECISION állapottal. A korábbi Editor UI és részleges funkciók nem számítanak késznek; a szükséges képességeket a F0 egymás után végrehajtott, tesztelt fejlesztési pontjai valósítják meg. A lezáratlan audit-tételek nem blokkolók: ahol termékkövetelményt őriznek, átkerülnek a megfelelő buildpont acceptance-ébe.
 
 
 ## HISTORICAL / QUEUED — 00/A.2.2 — F — SCHEDULE CRUD + INSPECTOR / DOMAIN-DRIVEN EDITOR — DEFINITION OF DONE
@@ -1025,7 +1025,9 @@ Az F0 **a Visual Editor új UX/UI-koncepciójának újraalapozási és megvalós
 
 ---
 
-## F0.1 — EDITOR FOUNDATION ÉS ELSŐ VÉGIG MŰKÖDŐ SZERKESZTÉSI SZELET
+## HISTORICAL / QUEUED — korábbi F0.1 — EDITOR FOUNDATION ÉS ELSŐ VÉGIG MŰKÖDŐ SZERKESZTÉSI SZELET
+
+> A részletes Editor DoD megmarad, de az aktív sorrend MASTER-2.77 szerint előbb az Admin főoldal és shell. Az Editor foundation következő aktív fejlesztési pontja F0.3.
 
 **Cél:** az Editor új fejlesztési alapja: az új shell elindul, betölti a canonical Page Modelt, létrejön vagy kiválasztható egy elem, a változás a canonical command/validation/history láncon halad, a canvas és az Inspector ugyanazt az állapotot mutatja, a mentés/visszatöltés pedig bizonyíthatóan működik. Nem a régi Editor „készre jelölése”.
 
@@ -1038,7 +1040,9 @@ Az F0 **a Visual Editor új UX/UI-koncepciójának újraalapozási és megvalós
 - [ ] `npm run typecheck`, célzott unit/domain tesztek, browser desktop + mobile smoke, mentés-visszatöltés és user acceptance PASS.
 - [ ] MASTER checkpoint és a következő egyetlen aktív pont frissítve.
 
-### F0 végrehajtási sorrend — egyetlen aktív ponttal
+### HISTORICAL / SUPERSEDED — korábbi F0 végrehajtási sorrend
+
+> A táblázat a korábbi Editor-első sorrendet őrzi; nem operatív. A MASTER-2.77 végrehajtási táblája az irányadó.
 
 | Pont | Implementációs cél | Kötelező készültségi bizonyíték |
 |---|---|---|
@@ -3060,7 +3064,9 @@ Every implementation point must include, before coding:
 - A korábbi követelmények és történeti traceability táblák továbbra is megmaradnak. Ha egy követelmény több helyen szerepel, egy canonical implementációhoz kell kapcsolni, nem törölni.
 
 
-# MASTER-2.76 — TELJES CREATOR PLATFORM: TÉTELES KÉPESSÉGKATALÓGUS ÉS VÉGREHAJTÁSI TERV
+# HISTORICAL / SUPERSEDED — MASTER-2.76 — TELJES CREATOR PLATFORM: TÉTELES KÉPESSÉGKATALÓGUS ÉS VÉGREHAJTÁSI TERV
+
+> A 2.76 tartalmi leltára, 40 domainje és 411 történeti követelmény-leképezése megőrzendő. Az Admin/Editor sorrendet és a végleges képernyőspecifikációt a MASTER-2.77 váltja fel.
 
 **Ez a MASTER legfrissebb termék- és sorrenddöntése.** A régi követelmények megmaradnak; a lenti szakaszok a végrehajtás sorrendjét és a teljes lefedettség ellenőrzését teszik egyértelművé. A terv nem állítja, hogy a felsorolt funkciók már elkészültek.
 
@@ -3807,3 +3813,239 @@ Az alábbi táblázat minden meglévő H19–H34 ledger-sort felsorol. Az eredet
 | H34.22 | felhasználói validáció. | User acceptance / product validation for the proposed extension | Continuous governance; stage assigned by canonical owner before implementation |
 
 **Soronkénti leképezési szabály:** a táblázat egy követelmény sem töröl. A több domaint érintő vagy bizonytalan besorolásnál a célfázis előtt a munkapont acceptance-e rögzíti a pontos owner-t, adatkontraktust és tesztet. A történeti sor csak akkor tekinthető lezártnak, ha a hozzárendelt fázisban a funkció runtime-bizonyítéka megvan; a leképezés önmagában nem készültségi állapot.
+
+
+# MASTER-2.77 — VÉGLEGES TERMÉKLEÍRÁS, ADMIN UI-SPECIFIKÁCIÓ ÉS FEJLESZTÉSI SORREND
+
+**Státusz:** CANONICAL PRODUCT SPECIFICATION / IMPLEMENTATION ORDER  
+**Döntés:** a teljes termék AI nélkül is teljes értékű legyen; az AI a legutolsó, opcionális fő fázis.  
+**Egyetlen aktív pont:** F0.1-ADMIN-HOME-VISUAL-DESIGN-AND-SHELL.  
+**Ez a fejezet írja felül a 2.75/2.76 végrehajtási sorrendjét és a régi Editor-első F0 sorrendet.** A régi tartalom, az E/F közvetlen követelménykatalógus, a 01–140 funkciólista és a H19–H34 ledger nem törölhető, és továbbra is követelményforrás. Ha egy korábbi részlet és ez a sorrend ütközik, a 2.77 sorrendje irányadó, a korábbi funkciókövetelmény viszont megmarad.
+
+## 2.77.1 — A termék végleges meghatározása
+
+A Sanci9517 egy egységes, magyarul induló, globálisan bővíthető Creator Platform. Nem csak streamer portfólióoldal, nem csak website builder, nem csak OBS eszköz és nem AI-chatfelület. Egyetlen összefüggő rendszerben nyújtja a creator weboldalát, tartalomkezelését, médiaeszközeit, stream-infrastruktúráját, platformintegrációit, publikálását, közösségét, közönségkapcsolatát, analitikáját, üzleti funkcióit, szabályalapú automatizálását és később opcionális AI-asszisztenciáját.
+
+**Nem szűkítjük a terméket az aktuálisan használt funkciókra.** A funkció akkor is a teljes terv része marad, ha későbbi fázisban épül, API-függő, vagy az első használó számára nem azonnal szükséges. A megvalósítás viszont függőségi sorrendben, egy aktív ponttal halad.
+
+## 2.77.2 — A weboldal és az Admin vizuális iránya
+
+### Nyilvános oldal: cél és minőségi elvárás
+- Egyedi, professzionális creator márka; streamer/creator bemutatkozás, csatornák, tartalmak, schedule/live státusz, VOD/clips/Shorts, játékok/kategóriák, közösségi linkek, support/membership, később shop és kampányok.
+- Mobilról is első osztályú, gyors, hozzáférhető, keresőbarát, megosztásra optimalizált, többnyelvűvé bővíthető.
+- Az oldal vizuális elemei, szekciói, navigációja, tipográfiája, színei, responsive viselkedése és tartalmai a canonical Visual Editorral legyenek szerkeszthetők.
+- A publikus render kizárólag publikált snapshotot szolgálhat ki; draft vagy jogosulatlan adat nem szivároghat ki.
+- A site template kiindulópont, nem lezárt, nem szerkeszthető késztermék.
+
+### Admin főoldal: alapértelmezett képernyő-elrendezés
+A kezdőoldal egy valódi munkaközpont legyen, ne üres landing page és ne statikus statisztikakártya-demó.
+
+**Desktop szerkezet**
+1. **Bal oldali állandó navigációs sáv:** márka/site-váltó, keresés, modulcsoportok, aktív modul állapota, összecsukás, alsó beállítás/profil terület.
+2. **Felső fejléc:** aktuális site/workspace, breadcrumb vagy oldalcím, globális keresés, értesítések, segítség/dokumentáció, profil és kijelentkezés; csak a ténylegesen létező funkció jelenhet meg aktívként.
+3. **Fő tartalom:** üdvözlés és aktuális site állapot; elsődleges gyorsműveletek; valós státuszkártyák; következő stream/esemény; legutóbbi tartalom/módosítások; integrációs egészség; publikálási feladatok/figyelmeztetések.
+4. **Másodlagos panelek:** teendők, legutóbbi aktivitás és diagnosztika. Csak valós, lekérdezett adatokból számolhatók.
+5. **Üres állapotok:** első használatkor érthető útmutatás és következő lépés; nulla adat nem lehet kitalált metrika.
+
+**Mobil/tablet**
+- Oldalsáv drawer/bottom navigation vagy más, tesztelt kis-képernyős minta; nem egyszerűen összenyomott desktop.
+- Kártyák egy oszlopba rendeződnek; a fő műveletek elérhetők; táblázatok alternatív nézetet vagy kontrollált vízszintes görgetést kapnak.
+- Billentyűzet, fókusz, screen reader, kontraszt, zoom és reduced-motion támogatás.
+- Nincs takarás, vízszintes overflow vagy csak hoverrel elérhető lényeges művelet.
+
+**Vizuális nyelv**
+- Egységes design tokenek: szín, háttérfelületek, tipográfia, spacing, radius, border, elevation, focus, státuszok és motion.
+- Letisztult, professzionális creator/SaaS felület; jól elkülönülő hierarchia, levegős elrendezés, következetes ikonok, olvasható kontraszt.
+- A sötét/világos megjelenés csak akkor kerül aktív kapcsolóként a felületre, ha mindkettő konzisztensen implementált; különben a választott alap téma következetes.
+- Nincs pusztán dekoratív control, hamis számláló, fake online státusz, hamis „connected” badge vagy működőnek látszó disabled link.
+- A konkrét vizuális irányt az F0.1-ben képernyőterv/prototípus, tokenek és jóváhagyott shell formájában rögzítjük, mielőtt további modulok felületét építjük.
+
+### Admin főoldal — kártyák és tartalom
+- **Site állapot:** draft/published, aktuális publikus URL és utolsó publikálás időpontja, csak valós állapotból.
+- **Gyorsműveletek:** oldal szerkesztése, új oldal, média feltöltése, tartalom létrehozása, schedule esemény, preview/publish; jogosultság szerint.
+- **Stream és schedule:** live/offline/unknown elkülönítve; következő esemény, időzóna és sync frissesség.
+- **Tartalom:** legutóbbi módosítások, draft/review/scheduled/failed állapotok, folytatás linkje.
+- **Integrációk:** Twitch/YouTube/TikTok/Discord és későbbi adapterek kapcsolati állapota, token/sync hiba és újracsatlakoztatás.
+- **Media:** resource tárhely/feldolgozás állapota, sikertelen upload/job és teendő; költség csak akkor, ha mérhető.
+- **Analytics:** valós provider adatok, forrás és frissesség feltüntetésével; ismeretlen adat „nincs adat”, nem 0-nak álcázott eredmény.
+- **Rendszer/teendők:** mentési/publikálási hiba, hiányzó metaadat, jogosultság, domain/SSL ellenőrzés, sikertelen sync; csak ténylegesen detektált esemény.
+- A kezdőoldal testreszabhatósága későbbi képesség: kártyák átrendezése, elrejtése és saját gyorsművelet csak a dashboard layout persistence-szel együtt kerülhet be.
+
+## 2.77.3 — Teljes Admin navigáció és képernyőleltár
+
+Az alábbi menü a teljes termék navigációs célképe, nem azt jelenti, hogy minden modul az első buildben aktív. A navigáció modulonként fokozatosan kapcsolható be; a nem implementált modul nem mutathat hamis működő oldalt.
+
+1. **Kezdőlap:** áttekintés, gyorsműveletek, teendők, aktivitás és rendszerállapot.
+2. **Weboldal**
+   - Oldalak és oldalhierarchia
+   - Navigáció, header, footer, menük, breadcrumb
+   - Visual Editor / canvas
+   - Layers / struktúra
+   - Inspector / property-k
+   - Responsive preview
+   - Site settings, domain, publish/preview, revision/rollback
+   - SEO és megosztási metaadatok
+3. **Tartalom / CMS**
+   - Bejegyzések, hírek, cikkek, statikus oldalak
+   - VOD, videók, clips, Shorts, playlist és sorozatok
+   - Tartalomtípusok, kategóriák, tagek, collectionök
+   - Draft/review/approved/scheduled/published/failed/archived státuszok
+   - Tartalomnaptár, kampány, editorial checklist és jóváhagyás
+4. **Média és erőforrások**
+   - Képek, videók, audio, dokumentumok, fájlok
+   - Ikonok, fontok, brand assetek
+   - Search/filter/tag/collection, preview, metadata, alt/caption/license
+   - Variánsok, thumbnails, usage graph, replace, archive, restore
+   - Feltöltési/feldolgozási állapotok és hibaelhárítás
+5. **Design Studio**
+   - Theme, design tokenek, brand kit
+   - Site/page/section/component template-ek
+   - Komponensek, slots, variants, linked symbols/reusable instances
+   - Saját template-könyvtár, import/export, kompatibilitás
+6. **Schedule és streamer profil**
+   - Események, ismétlődés, időzóna, kivételek, emlékeztetők
+   - Streamer profil, játékok/kategóriák, platform linkek
+   - Live/offline állapot és szinkronállapot
+7. **Stream Studio**
+   - OBS csatlakozás és engedélyezés
+   - Overlayek, browser source, alerts, widgets
+   - Scene/source állapot, stream/recording kontroll csak explicit engedéllyel
+   - Stream markerek, kézi highlight-jelölés, tesztesemény
+8. **Media Studio**
+   - Projektek, timeline, trim/split/join/crop/resize/rotate
+   - Aspect ratio/safe zone, audio level/fade, export presets
+   - Felirat és transcript import/szerkesztés/export
+   - Forrás és származtatott fájlok kapcsolata
+9. **Publikálás**
+   - Platformonkénti composer, preview és validáció
+   - Variánsok, caption, cím/leírás, tagek, cover, CTA
+   - Queue, schedule, approval, publish result, retry és külső ID
+   - API-korlát esetén kézi publikálási checklist
+10. **Közösség**
+    - Unified inbox, comments/mentions ahol hivatalos API engedi
+    - Moderáció, saved replies, escalation és audit
+    - Discord bot, szerepkörök, csatornák és bejelentések
+11. **Analitika**
+    - Stream/video/social/site/store/email metrikák a ténylegesen elérhető forrásokból
+    - Idősávok, összehasonlítás, export, riport, célok és kísérletnapló
+    - Forrás/frissesség/mérési definíció és hiányzó adatok
+12. **Közönség és CRM**
+    - Kontaktok, consent, preference, tagek, szegmensek
+    - Formok, newsletter, kampányok, automatizált levelezési sorozatok
+    - Unsubscribe/suppression/bounce/deliverability
+13. **Üzlet**
+    - Termékek, variánsok, készlet, kollekciók, ár, kedvezmény, drop
+    - Checkout/payment adapter, rendelések, fulfillment, refunds
+    - Digitális termékek, entitlement, tagság, support/donation provider
+    - Sponsor CRM, media kit, deliverable és riport
+14. **Automatizálás**
+    - Trigger, condition, action, schedule, branch, delay
+    - Dry-run, jogosultság, végrehajtási napló, retry/replay/cancel
+    - Idempotency, loop protection, failure queue és audit
+15. **Integrációk**
+    - Twitch, YouTube, TikTok, Discord, OBS connector és későbbi providerek
+    - OAuth/scope/token expiry/quota/last sync/freshness
+    - Reconnect, disconnect/revoke, provider health és hibák
+16. **Csapat és workspace**
+    - Felhasználók, meghívók, szerepkörök, site transfer, offboarding
+    - Review/approval, kommentek, change history és konfliktuskezelés
+17. **Sablon- és bővítménytár**
+    - Saját/külső template, component, theme, overlay és workflow csomagok
+    - License, permission manifest, preview, install/update/rollback
+18. **Beállítások**
+    - Fiók, site, domain/DNS/SSL, locale, SEO defaults
+    - Jogosultságok, session, integrációs titkok, notification preference
+    - Data export/delete, retention, backup/recovery
+19. **Diagnosztika és súgó**
+    - Rendszerállapot, sync/job hibák, audit, dokumentáció
+    - Reprodukálható hibaadat, redacted logs, user-support context
+20. **Opcionális AI Center — kizárólag a végső fázis után**
+    - AI provider/model, usage/cost, privacy, context, permission, approvals
+    - AI-funkciók ki/be kapcsolása; a core platform AI nélkül működik.
+
+## 2.77.4 — Admin globális viselkedés és UX-szabályok
+
+- A site/workspace kontextus látható, és minden művelet ellenőrzi a szerveroldali ownershipet.
+- A globális keresés csak valóban indexelt, a felhasználó számára engedélyezett erőforrásokat mutatja; a találatok típussal, helyzettel és gyorsművelettel rendelkezhetnek.
+- A közös állapotok egységesek: loading, empty, success, validation error, permission denied, offline, stale data, quota/rate limit, partial success, retrying és failed.
+- Mentés/publikálás állapota mindig valós; unsaved changes figyelmeztetés és visszaállítás támogatott.
+- Destructive action megerősítést, megfelelő jogosultságot és szükség szerint undo/recovery útvonalat igényel.
+- Minden képernyőn működik a billentyűzetes navigáció, a fókusz látható, a formoknak címkéjük és hibaüzenetük van.
+- A dashboard és a modulok ugyanazt a canonical API/domain réteget használják; UI-nként nem keletkezik párhuzamos adatmodell.
+- A navigációból eltávolított vagy elrejtett funkció mögötti adat/domain nem törölhető automatikusan. Legacy surface esetén külön KEEP/FIX/MIGRATE/REMOVE/DISABLE/ARCHIVE döntés és bizonyíték szükséges.
+
+## 2.77.5 — Egyetlen végrehajtási sorrend
+
+| Sorrend | Aktív munkapont / fázis | Mi készül el | Kilépési bizonyíték |
+|---:|---|---|---|
+| 0 | Foundation invariants | E4/E5/E6 bizonyítékok, auth/ownership, migration safety, branch/deploy/test baseline | baseline reprodukálható; nincs új regresszió |
+| 1 | **F0.1 Admin home visual design + shell** | dashboard layout, design token alap, navigation shell, desktop/tablet/mobile wireframe és valódi shell | jóváhagyott képernyő, browser screenshot/smoke, accessibility/responsive acceptance; nincs fake data |
+| 2 | **F0.2 Admin navigation + global shell acceptance** | site context, menu/routes, active/disabled states, auth/role gating, global search placeholder csak ha valós, notifications/tasks contract | minden aktív link működik, disabled/queued egyértelmű, route/permission/browser teszt PASS |
+| 3 | **F0.3 Editor foundation + first vertical slice** | canonical Page Model, command/state/validation/history/persistence, első elem add/select/edit/delete/undo/redo/save/reload | end-to-end acceptance és runtime evidence PASS |
+| 4 | **F0.4 Visual Builder, Layers, Inspector, responsive** | hierarchy, canvas manipulation, property registry, layout primitives, responsive overrides | canvas/layers/Inspector ugyanazt a modellt mutatja; round-trip/regression PASS |
+| 5 | **F0.5 Resource/Asset/Media Library** | D1 metadata + R2 binary, upload/preview/search/usage/variants/delete/restore | ownership, upload validation, resource round-trip PASS |
+| 6 | **F0.6 Design System / templates / components / symbols** | tokenek, themes, template-ök, variants, shared instance, impact preview | compatibility/rollback and rendering tests PASS |
+| 7 | **F0.7 Website Builder + public renderer** | pages/nav/header/footer/forms, preview/publish/revisions, domain, SEO/AEO, public cache | draft leak nincs; publish/rollback/browser/SEO/a11y PASS |
+| 8 | **F0.8 CMS + content lifecycle** | content types, taxonomy, collections, editorial workflow, calendar, import/export | lifecycle/permissions/recovery tests PASS |
+| 9 | **F0.9 Schedule + streamer profile + integrations** | recurring schedule/timezones, Twitch, provider adapters, sync health, profile | token/site ownership, provider error and fallback tests PASS |
+| 10 | **F0.10 Stream Studio / Overlay / OBS** | secure local connector, overlay/widgets/alerts, explicit control permissions, manual markers | unauthorized local control impossible; pairing/revoke tests PASS |
+| 11 | **F0.11 Manual Media Studio** | timeline, editing, aspect ratios, audio, captions, export, derivative lineage | AI nélküli clip/edit/export journey PASS |
+| 12 | **F0.12 Cross-platform Publishing Center** | composer, variants, approvals, queue, scheduled publish, retry, partial success | idempotency, no duplicate/lost publish, real API capability tests PASS |
+| 13 | **F0.13 Community / moderation / notifications** | inbox where supported, Discord, moderation, notification preferences | scope/permission/retention tests PASS |
+| 14 | **F0.14 Analytics / reports** | provider metrics, definitions, freshness, comparisons, exports, manual goals | source/freshness/metric accuracy tests PASS |
+| 15 | **F0.15 Commerce / shop / merch / membership / sponsorship** | product, checkout adapter, orders, refunds, fulfillment, entitlements, sponsor workflows | verified webhooks, replay safety, refund/revoke tests PASS |
+| 16 | **F0.16 Audience / CRM / email** | consent, segments, newsletter, campaigns, unsubscribe/suppression | consent and suppression tests PASS |
+| 17 | **F0.17 Deterministic automation** | event registry, triggers, conditions, actions, schedule, retry, audit | dry-run, permission, idempotency, loop and replay tests PASS |
+| 18 | **F0.18 Teams / workspace / collaboration** | invites, roles, reviews, history, conflict handling, offboarding | cross-tenant negative tests PASS |
+| 19 | **F0.19 Extension ecosystem / marketplace** | SDK/API, package manifests, permissions, sandbox, review and rollback | untrusted package cannot escape permissions |
+| 20 | **F0.20 Portability / backup / restore** | export/import, asset manifest, integrity, restore drills, recovery | real restore rehearsal PASS |
+| 21 | **F0.21 Localization / accessibility / mobile / creator types** | locales, translations, accessible flows, mobile/tablet/desktop, broader creator use cases | representative persona/device acceptance PASS |
+| 22 | **F0.22 Production hardening / security / performance / cost** | threat model, rate limits, observability, SLOs, load, degraded modes, cost visibility | security/load/recovery/incident tests PASS |
+| 23 | **F0.23 Full AI-free end-to-end acceptance + non-AI gaps** | website, stream, manual editing, publishing, community, commerce, CRM, automation, export/recovery journeys | AI disabled; all required core journeys usable; no unresolved critical/high blocker |
+| 24 | **F0.24 Optional AI platform — last** | unified Tool Registry, scoped context, drafting, analysis, highlight candidates, assistive agents, approvals, evaluations and cost controls | disabling AI leaves all F0.23 journeys operational; no permission bypass |
+
+**Sorrendi szabály:** egy időben egyetlen aktív munkapont van. A fenti későbbi pontok nem engedélyeznek párhuzamos fejlesztést. Egy pont lezárása előtt a következő nem válhat aktívvá.
+
+## 2.77.6 — F0.1 Admin főoldal DoD: mit kell ténylegesen átadni
+
+1. Képernyőspecifikáció: desktop 1440 px, tablet és mobile layouts, nav expanded/collapsed, first-use/empty/error states.
+2. Design tokens és komponenskönyvtár alap: typography, spacing, surfaces, borders, status, buttons, cards, fields, menus, focus.
+3. Oldalsáv és topbar működő shell, active route, site/workspace context, permission-aware navigation.
+4. Dashboard widget-contract: minden kártyához canonical data source, loading/empty/stale/error állapot és refresh/freshness policy.
+5. A még nem implementált modulok nem jelenhetnek meg aktívnak. A későbbi menüpont lehet queued/disabled és egyértelműen jelzett, vagy fokozatosan kapcsolható be.
+6. A kezdeti dashboard kártyák csak az aktuálisan elérhető, bizonyított adatokat mutatják; nincs hardcoded fake stream, follower count, revenue, schedule vagy integration state.
+7. Keyboard-only, focus order, contrast, reduced motion, accessible labels és browser viewport regresszió.
+8. /admin routing döntés: a valódi dashboard belépési pontot a route-audit alapján kell kialakítani. A korábbi /admin → /admin/editor redirectet csak a szükséges route/auth tesztek és canonical Editor deep-link megőrzése után szabad megváltoztatni. /admin/editor marad a canonical Editor belépési pont.
+9. Screenshot/recorded evidence, teszteredmény, known limitations, commit és MASTER checkpoint.
+10. User acceptance: a felhasználó látja, hol találja a weboldalt, tartalmat, médiát, streamet, schedule-t, publikálást és beállításokat; a következő lépés egyértelmű.
+
+## 2.77.7 — Teljes funkcióleltár teljességi kapu
+
+A végleges funkciókatalógus több, egymást kiegészítő rétegből áll:
+- 27 eredeti product domain a 00.9.6.C.1-ben;
+- a 00.9.6.C.2–C.22 közvetlen termék-specifikációi;
+- a 00.9.6.E teljes közvetlen capability-katalógusa;
+- a 00.9.6.F működési részletei és coverage szabályai;
+- a történeti 01–140 funkciómátrix;
+- a H19–H34 teljes történeti ledger;
+- a MASTER-2.76 40 canonical domainje, benchmarkjai és 411 soros hozzárendelése;
+- a jelen 2.77 Admin képernyő- és végrehajtási szerződése.
+
+**Sem a 40 domain összefoglalója, sem a 411 soros mapping nem helyettesíti az E/F konkrét követelményeit.** Ha egy követelmény az E/F fejezetben szerepel, de nem jelenik meg az Admin menüben, attól még kötelező a megfelelő domainben. A menü IA, nem az adatmodell vagy a teljes scope határa.
+
+Funkciók csak az alábbi állapotok egyikével tarthatók nyilván: REQUIRED / QUEUED / IMPLEMENTING / PASS / BLOCKED / DEFERRED-BY-EXPLICIT-DECISION / SUPERSEDED-WITH-TRACEABILITY. Egyetlen képesség sem hagyható el csak azért, mert nincs most használatban. A DEFERRED döntéshez ok, owner, újranyitási feltétel és hivatkozás kell.
+
+## 2.77.8 — Merge-gate: PR #6 csak a végső konzisztenciaellenőrzés után
+
+A PR csak akkor olvasztható be, ha mindegyik feltétel igaz:
+- [ ] MASTER tetején MASTER-2.77, egyetlen aktív pont és a helyes Admin-first sorrend szerepel.
+- [ ] Régi E/F részletes követelmények, 01–140, H19–H34 és a 2.75/2.76 tartalom megmaradt; a régi roadmapek explicit historical/superseded címkéjűek.
+- [ ] A régi Editor-first F0 sorrend nem tudja felülírni a 2.77 sorrendet.
+- [ ] Az Admin kezdőoldal layoutja, navigációja, valós adatkontraktjai, responsive/accessibility és route acceptance le van írva.
+- [ ] Minden korábbi feature legalább egy canonical domainhez és egy implementációs fázishoz rendelhető; a mapping önmagában nem PASS.
+- [ ] A teljes core AI nélkül működik, az AI kizárólag F0.24.
+- [ ] A diff csak a MASTER dokumentumot változtatja; production code vagy migrations nem módosult.
+- [ ] A PR base a tényleges aktuális fejlesztési branch, nincs merge conflict, és a teljes diff review megtörtént.
+- [ ] A felhasználó által jóváhagyott Admin UI első verziója az F0.1 acceptance része; a merge nem jelenti a feature implementáltságát.
+
+**A jelen fejezet a termékirány és a fejlesztési sorrend végleges specifikációja.** A terv a jövőbeli capability-k teljes katalógusa; a runtime készültség kizárólag az egyes aktív munkapontok tesztjeiből és elfogadásából következhet.
