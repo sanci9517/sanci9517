@@ -4128,3 +4128,17 @@ Elkészült a munkapont első implementációs szelete:
 **Megőrzési szabály:** a korábbi public/admin.html és a régi Admin panel nem törölhető ezen munkapontban. Csak a tényleges használati útvonal és a canonical dashboard shell változik; a legacy kód későbbi migrációs/archiválási döntésig megmarad.
 
 **A jelen fejezet a termékirány és a fejlesztési sorrend végleges specifikációja.** A terv a jövőbeli capability-k teljes katalógusa; a runtime készültség kizárólag az egyes aktív munkapontok tesztjeiből és elfogadásából következhet.
+
+**2026-10-13 felhasználói visszajelzés és második UI-iteráció — acceptance továbbra is NYITOTT:** a felhasználó jelezte, hogy a felületek túlzottan egybeolvadnak, és a modulok/funkciók felsorolása nem elég részletes. Ennek alapján a PR #7 dashboard újabb módosítást kapott; ez nem F0.1 PASS és nem merge-jóváhagyás.
+
+- [x] Erősebb felületi hierarchia: kontrasztosabb felületi határok, különálló panel- és kártyafelületek, lila szekciójelölők, kiemelt kártyatetők, elkülönülő navigációs csoportok.
+- [x] A „Teljes Creator OS modulrendszere” részletes, reszponzív katalógust kapott 17 külön kártyával: webhely/CMS; média; adásrend/streamerprofil; Stream Studio/OBS; cross-platform publikálás; integrációk; közösség/moderáció; analitika; commerce/tagság/szponzoráció; audience/CRM; automatizálás; fiók/biztonság/mentés; lokalizáció/hozzáférhetőség; fejlesztői eszközök/bővítmények; kézi Media Studio; csapatmunka; későbbi AI-asszisztens.
+- [x] A képességek konkrét alfunkciókra vannak bontva; a katalógus a MASTER funkcióleltárának felfedezhető navigációs nézete, nem a MASTER helyettesítője és nem a teljes scope új forrása.
+- [x] A készültségi címkék különválasztják a meglévő/ részben elérhető alapokat, a tervezett modulokat és a későbbi AI-fázist. A tervezett elemek nem működő funkciók, nem ígérnek nem létező API-képességet.
+- [x] Az Admin contract tesztek bővültek a vizuális elkülönítés, a 17 kategóriás katalógus és a státuszcímkék ellenőrzésével.
+- [ ] A helyi tesztek és typecheck újrafuttatása a friss PR-HEAD-en.
+- [ ] Böngészős vizuális ellenőrzés 1440 px desktop, tablet és mobil szélességen, világos és sötét témával; szükség esetén további finomítás.
+- [ ] Felhasználói vizuális elfogadás. Addig PR #7 nyitott/piszkozat marad; F0.1 nem PASS, merge tilos.
+
+**Korlát:** a katalógus a MASTER-2.77.7 teljességi kapujában felsorolt forrásokból és a 2.77.5 fázistervből következik. A teljes funkciókatalógus teljességét továbbra is a MASTER E/F fejezetei, a 01–140 mátrix és a H19–H34 történeti ledger igazolja; a dashboard kártyáinak száma önmagában nem bizonyít teljességet.
+
