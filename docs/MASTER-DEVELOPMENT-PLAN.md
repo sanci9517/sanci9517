@@ -2184,7 +2184,12 @@ Minden nagyobb capability megvalósítása előtt külön research pass végezhe
 
 A kutatás eredménye a MASTER megfelelő pontjába kerülhet **reference / benchmark / edge-case evidence** formában. Más rendszerek zárt kódját nem másoljuk; saját canonical implementáció készül.
 
+### 00.9.6.D.5 — Végrehajtási szabály
 
+A teljes végső tervből egyszerre mindig csak **egy ACTIVE engineering point** nyílhat. A többi:
+**QUEUED / PLANNED / BLOCKED / CLOSED / ARCHIVED**.
+
+Ez biztosítja, hogy a teljes világvezető cél megmaradjon, miközben a tényleges fejlesztés továbbra is kontrollált, tesztelt és sorrendhelyes marad.
 
 # 00.9.6.E — MASTER-2.73 — ÖSSZEFÉSÜLT, KÖZVETLEN TERMÉKKÖVETELMÉNY-KATALÓGUS
 
@@ -2428,6 +2433,7 @@ Az Editor önálló, professzionális, vizuális alkalmazás. Az alapvető oldal
 - Saját e-mail közönség: feliratkozási űrlap, consent, listák, segmentation, kampány, newsletter, automated/transactional e-mail és unsubscribe.
 - Hozzájárulás visszavonása, export/törlés és adatmegőrzési szabályok.
 - Későbbi member area és mobil/PWA funkciók: értesítések, schedule, live, community, store és creator dashboard.
+- Founding Supporters oldal a támogatóknak; név megjelenítése kizárólag külön, önkéntes opt-in hozzájárulással, visszavonható módon. A támogatás ténye önmagában nem ad engedélyt a név publikálására.
 
 ## E.14 — Analytics, Automation és AI
 
@@ -2546,11 +2552,3 @@ A fázisnév nem önmagában acceptance: minden fázis pontos végrehajtási pon
 - Minden új, korábban nem rögzített felhasználói igény közvetlenül ebbe a MASTER-be kerül, és megkapja a canonical domain, fázis, függőség, DoD és teszt meghatározását.
 - A MASTER nem válhat ötletgyűjteménnyé: egyetlen ACTIVE engineering point lehet, a teljes jövőkép pedig PLANNED/QUEUED fázisokban marad.
 - A MASTER változtatása előtt a jelenlegi tartalmat be kell olvasni, a módosítás után pedig ellenőrizni kell az aktív pontot, a fázissorrendet, a megőrzött capability-ket, a duplikált canonical owneröket és a lezárt gate-eket.
-
-
-### 00.9.6.D.5 — Végrehajtási szabály
-
-A teljes végső tervből egyszerre mindig csak **egy ACTIVE engineering point** nyílhat. A többi:
-**QUEUED / PLANNED / BLOCKED / CLOSED / ARCHIVED**.
-
-Ez biztosítja, hogy a teljes világvezető cél megmaradjon, miközben a tényleges fejlesztés továbbra is kontrollált, tesztelt és sorrendhelyes marad.
