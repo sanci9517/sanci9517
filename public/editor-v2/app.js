@@ -3,7 +3,7 @@ import {createEditorState,activePage,selectedNodes,setSelection,markSaved} from 
 import {execute} from './core/commands.js';
 import {applyNodeStyle,getNodeGeometry} from './core/canvas-engine.js';
 import {computeCanvasMinHeight} from './core/canvas-extent.js';
-import {resolveResponsiveValue} from './core/responsive.js';
+import {hasResponsiveOverride,resolveResponsiveValue} from './core/responsive.js';
 import {diagnostics} from './diagnostics.js?v=20260918-2';
 import {plainTextToRichText,renderRichTextEditor,richTextEditorToDocument,setBlockType} from './core/richtext-engine.js';
 import {renderSchedulePreview} from './core/schedule-preview.js';
@@ -207,6 +207,7 @@ function renderScheduleInspector(node){
 }
 
 function renderRegistryInspector(node){
+  const device=state.viewport.device;
   const groups=listPropertyGroups();
   const root=document.createDocumentFragment();
   for(const group of groups){
@@ -218,24 +219,36 @@ function renderRegistryInspector(node){
     section.append(title);
     for(const property of properties){
       if(property.id==='content.text'||property.id==='content.href'||property.id==='advanced.nodeName')continue;
-      const current=property.id.startsWith('size.')?node.style?.[property.id.split('.')[1]]??'':node.style?.[property.id.split('.')[1]]??'';
+      const key=property.key||property.id.split('.')[1];
+      const resolved=property.responsive?resolveResponsiveValue(node.responsive,key,device):null;
+      const current=resolved?.value??node.style?.[key]??'';
+      const label=property.responsive&&resolved?.inherited?property.label+' · örökölt':property.label;
+      const apply=value=>{
+        if(property.responsive)command(property.command,{nodeId:node.id,device,patch:{[key]:value}});
+        else command(property.command,{nodeId:node.id,patch:{[key]:value}});
+      };
+      let control;
       if(property.type==='select'){
-        const wrap=document.createElement('label');wrap.className='field';const label=document.createElement('span');label.textContent=property.label;const select=document.createElement('select');
+        control=document.createElement('label');control.className='field';
+        const labelElement=document.createElement('span');labelElement.textContent=label;
+        const select=document.createElement('select');
         for(const optionValue of property.options||[]){const option=document.createElement('option');option.value=optionValue;option.textContent=optionValue;option.selected=String(current)===String(optionValue);select.append(option)}
-        select.onchange=()=>command(property.command,{nodeId:node.id,patch:{[property.id.split('.')[1]]:select.value}});
-        wrap.append(label,select);section.append(wrap);
+        select.onchange=()=>apply(select.value);
+        control.append(labelElement,select);
       }else{
-        section.append(field(property.label,current,v=>{
-          const key=property.id.split('.')[1];
-          command(property.command,{nodeId:node.id,patch:{[key]:v}});
-        }));
+        control=field(label,current,apply);
+      }
+      section.append(control);
+      if(property.responsive&&hasResponsiveOverride(node.responsive,key,device)){
+        const reset=document.createElement('button');reset.type='button';reset.className='property-reset';reset.textContent='Öröklés visszaállítása';reset.title=device+' nézet saját értékének törlése, a szélesebb nézet értékének öröklése';
+        reset.onclick=()=>command('responsive.set',{nodeId:node.id,device,patch:{[key]:undefined}});
+        section.append(reset);
       }
     }
     root.append(section);
   }
   return root;
 }
-
 function renderInspector(){
   inspector.replaceChildren();
   const nodes=state?selectedNodes(state):[];
