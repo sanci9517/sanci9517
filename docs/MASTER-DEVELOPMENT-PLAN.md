@@ -3880,3 +3880,16 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 **Újraellenőrzött strukturális eredmény:** 210 C.23 + 100 ARCH forrássor; 310 egyedi kulcs; 359 deklarált feature ID; mind a 359 legalább egy mappingben hivatkozott; 0 duplikált kulcs; 0 feloldhatatlan vagy unmapped/TBD ID-hivatkozás; 210/210 és 100/100 forrásszöveg-egyezés.
 
 **Korlát és kapu:** ez célzott, nem teljes körű szemantikai audit. A többi sor javasolt mappingjét továbbra is az eredeti követelmény és a canonical contract alapján kell egyenként felülvizsgálni. A teljes `00/A` és `00.9–00.9.6.B` forráscsomag még nincs teljesen visszanyerve/reconciliálva; a 359 ID teljes mapping-lefedettsége nem bizonyítja az összes követelmény szemantikai megőrzését. P0.2 továbbra is **IN PROGRESS / NOT PASS**.
+
+### 41.3.8. P0.2 — F archive crosswalk focused review (2026-10-13)
+
+**Célzott szemantikai pontosítások:**
+- `ARCH-3331`: a canonical dynamic-binding pipeline a `DYN` és safe public renderer (`WEB-032`) képességekhez került, nem a public contact/form oldalhoz.
+- `ARCH-3353`–`ARCH-3357`: a teljes publikus oldalportfólió és Creator-home/Stream/About/Link Hub követelményekhez hozzá lettek kötve az érintett canonical Content, Community, Support, Store és Campaign domainek is; ez fázis- és scope-besorolás, nem 1.0 release-ígéret.
+- `ARCH-3358`–`ARCH-3359`: az interaction/action és motion/reduced-motion követelmények az `EDT-039/040` registryhez igazítva.
+- `ARCH-3365`: a Twitch provider/live state követelményből eltávolítva a nem indokolt OBS-domain mapping; az integrációs/live/security szerződések maradtak.
+- `ARCH-3421`–`ARCH-3423`: a 1.0 Admin shell, 1.x Community, illetve Creator OS Community/Support részei explicit canonical mappinget kaptak.
+
+**Új strukturális újraellenőrzés a módosítások után:** 210 C.23 sor + 100 ARCH sor; 310 egyedi source key; 359/359 feature ID hivatkozott; 0 duplikált source key; 0 ismeretlen/érvénytelen ID-tartomány; 0 TBD mapping; 210/210 C.23 és 100/100 ARCH forrásszöveg-egyezés az archív MASTER-rel.
+
+**Korlát:** a strukturális ellenőrzés és a célzott szemantikai javítások nem jelentik mind a 310 mapping teljes szemantikai jóváhagyását. A soronkénti permission/owner/phase/dependency/test/negative-test/acceptance/evidence kitöltés, valamint a teljes `00/A` és `00.9–00.9.6.B` source recovery/reconciliation továbbra is nyitott. P0.2 **IN PROGRESS / NOT PASS**.
