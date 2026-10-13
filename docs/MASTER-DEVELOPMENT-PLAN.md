@@ -8,7 +8,7 @@
 **PARALLEL_WORKSTREAMS:** `0`
 
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
-**Verzió:** MASTER-2.91 — H19–H34 ledger teljes soronkénti Admin/Editor/AREA/fázis kereszt-hozzárendelése; archív capability-k megőrzése.  
+**Verzió:** MASTER-2.92 — 01–140 megfeleltetés és H19–H34 egyedi ID-számok ellenőrizve.  
 **Frissítve:** 2026-10-13.  
 **Dokumentum státusza:** ez az egyetlen végrehajtási igazságforrás.
 **Audit / implementation baseline:** GitHub `v2/foundation`, commit `54daad2357ca576d9e333a052e7bcbb6c2e2d51a` (2026-10-13; F0.3 history-integrity, revision-conflict recovery és save/reload client hardening PR #18–#25 integrálva; production save/reload runtime acceptance továbbra is nyitott). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
@@ -1194,22 +1194,22 @@ A végső, felhasználónak átadandó **teljes funkciókatalógus** csak a fent
 
 | Történeti fejezet | Különálló ID-k | Canonical témakör (tájékoztató, nem készültségi állapot) |
 |---|---:|---|
-| H19 | 40 | Resource / Asset Library |
-| H20 | 36 | Dynamic Data / binding |
-| H21 | 44 | Platform integrations |
-| H22 | 38 | Schedule / VOD / Clips / Shorts |
-| H23 | 40 | Templates / Components / Symbols |
-| H24 | 26 | Themes / Design System |
-| H25 | 24 | SEO / public quality |
-| H26 | 24 | Forms / communication |
-| H27 | 38 | Creator Center / Admin |
-| H28 | 34 | Visual Editor capabilities |
-| H29 | 20 | Shared actions / governance |
-| H30 | 28 | Security / permissions |
-| H31 | 28 | Analytics / operations |
-| H32 | 50 | SANCI AI / creator intelligence |
-| H33 | 26 | Test / release gates |
-| H34 | 46 | Historical extension proposals / validation |
+| H19 | 20 | Resource / Asset Library |
+| H20 | 18 | Dynamic Data / binding |
+| H21 | 22 | Platform integrations |
+| H22 | 19 | Schedule / VOD / Clips / Shorts |
+| H23 | 20 | Templates / Components / Symbols |
+| H24 | 13 | Themes / Design System |
+| H25 | 12 | SEO / public quality |
+| H26 | 12 | Forms / communication |
+| H27 | 19 | Creator Center / Admin |
+| H28 | 17 | Visual Editor capabilities |
+| H29 | 10 | Shared actions / governance |
+| H30 | 14 | Security / permissions |
+| H31 | 14 | Analytics / operations |
+| H32 | 25 | SANCI AI / creator intelligence |
+| H33 | 13 | Test / release gates |
+| H34 | 23 | Historical extension proposals / validation |
 | **Összesen** | **271 különálló ID** | **542 sor a két komplementer inventoryban; minden H19–H34 csoport jelen van** |
 
 A H34 sorai között folyamatlépések/javaslatok is vannak, nem mind önálló felhasználói funkció. Ezeket nem szabad termékfeature-ként megszámolni vagy eltávolítani: a megfelelő canonical ownerhez, roadmap-fázishoz és acceptance-hez kell rendelni, vagy külön nyitott döntésként megőrizni.
