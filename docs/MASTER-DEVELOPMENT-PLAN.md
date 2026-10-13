@@ -3905,3 +3905,10 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 - `C.23.6-03`: a globális színpaletta és kontraszt-előnézet mappingje összevonva a teljes token-sémára (`DSN-001–007`), és hozzáadva az explicit accessibility QA (`QA-005`).
 
 **Ellenőrzési korlát:** a módosítások a mappingek tartalmi illeszkedését pontosítják; nem igazolják, hogy ezek a funkciók implementálva vagy runtime-ban elfogadva vannak. A többi sor, az ID-szintű teljes permission/dependency/test/acceptance contract és a hiányzó eredeti `00/A` / `00.9–00.9.6.B` források reconciliációja továbbra is nyitott. P0.2 **IN PROGRESS / NOT PASS**.
+
+
+### 41.3.10. P0.2 — Original-source recovery attempt and evidence boundary (2026-10-13)
+
+**Végrehajtott keresési kör:** a `v2/foundation` ágon megkíséreltem beolvasni a `docs/MASTER-HISTORICAL-19-34-AUDIT.txt`, `docs/archive/MASTER-HISTORICAL-19-34-AUDIT.txt`, `docs/archive/00-A.md`, `docs/archive/00.9.6.B.md` és `docs/archive/plans/MASTER-DEVELOPMENT-PLAN.md` útvonalakat; ezek a jelenlegi ágon nem találhatók. A korábbi `aedb2ea` ref alatt a `docs/MASTER-DEVELOPMENT-PLAN.md` beolvasható, de az 30 944 karakteres, és nem tartalmazza a `00/A`, `00.9.6.B` vagy `00.9.6.*` marker/címsorokat. A kódtárkeresés az egzakt `00.9.6.B` és `MASTER-HISTORICAL-19-34-AUDIT` kifejezésekre nem adott találatot.
+
+**Következtetés:** ez a keresési kör bizonyítja, hogy a megadott útvonalakon és az ellenőrzött régi MASTER-refben a forrás nem állt rendelkezésre; nem bizonyítja, hogy a forrás soha nem létezett vagy más commitban/néven nem található. A teljes eredeti `00/A` és `00.9–00.9.6.B` szöveg ezért továbbra is **UNRECOVERED / OPEN**. Nem készítek helyettesítő tartalmat és nem következtetek a hiányzó bulletpontokra a C/D/E/F fejezetekből. P0.2 **IN PROGRESS / NOT PASS**.
