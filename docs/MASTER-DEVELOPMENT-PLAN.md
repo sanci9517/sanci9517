@@ -2134,6 +2134,18 @@ A 271 történeti követelmény teljes soronkénti munkatáblája a **41. fejeze
 **Admin home evidence:** public/admin-home.html calls the session, settings, pages, schedule and Twitch-connection endpoints and wires logout/mobile navigation/search/refresh/theme controls. The named capability cards marked “Tervezett” or “Későbbi” are disabled placeholders; they must remain PLANNED until the matching domain, API, permissions, tests and runtime evidence exist.
 
 
+### 37.13. Audit evidence log — 2026-10-13
+
+- Repository baseline for this audit: branch v2/foundation; recursive Git tree inventory counted 192 files at the time of inventory.
+- The current feature registry contains 357 unique stable IDs.
+- The historical H19–H34 catalogue/crosswalk contains 271 unique keys and 271 rows; all target feature IDs and referenced QA IDs resolve in the current registry. This is structural evidence only; semantic coverage and per-feature contracts remain open.
+- On commit a083cf879c3dd15e565cffeb7556dac6d4728faa, Cloudflare Workers Build, Editor Core Test and Twitch Integration Check all completed SUCCESS. The later documentation-only commits trigger fresh CI runs; their latest status must be checked independently.
+- Migration/source review found multiple historical Page Model shapes, global uniqueness/scope constraints, duplicate-equivalent revision indexes in migration 0017, multiple migration filenames sharing numeric prefixes, and an unconfigured R2 binding. These are documented findings requiring remote schema/config/runtime evidence before repair.
+- The canonical Admin route documentation was reconciled to src/index.ts and tests/admin-home-contract.test.js: /admin is Dashboard, /admin/editor is Editor v2; archive statuses are historical, not active instructions.
+- Provider source review is recorded in §37.10 and §37.14. Official documentation does not establish app approval or successful runtime integration.
+
+**Not proven by this log:** local working-tree cleanliness; remote D1 applied migration/schema/index/foreign-key state; R2 object storage operation; full browser/device save/reload/publish acceptance; full source-by-source archive crosswalk; all 357 feature contracts; production provider approvals. These remain explicit open gates.
+ 
 ### 37.14. P0.5 — 2026-10-13 hivatalos dokumentációs delta és provider acceptance
 
 Ez a rész a 37.10 első áttekintésének frissített, endpoint- és approval-szintű kiegészítése. A dokumentáció megnyitása nem egyenlő az alkalmazás jóváhagyásával vagy az adott Sanci9517 app jogosultságának bizonyításával.
