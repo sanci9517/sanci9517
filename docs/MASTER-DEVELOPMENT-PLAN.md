@@ -2651,7 +2651,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.5-05 | TikTok account-capability-gated profile/content with rate-limit/manual fallback | INT-014, CNT-002, CNT-003, INT-008, INT-009 | DEFER | 1.5+ provider-gated | QA-002/003/008 |
 | F.5-06 | Discord link baseline; bot/role/status and Kick/OBS/email/payment/commerce adapters have own contracts | INT-015, COM-001, SUP-006, OBS-001–OBS-010, STO-001–STO-020, INT-021 | DEFER/EXPAND | 1.0 links; integrations later | QA-002/003/008 |
 | F.5-07 | Normalize provider data; outage fallback; never invent missing metrics | INT-001, INT-018, INT-020, LIV-002, DYN-005, ANL-008 | KEEP | 0.x–1.0 baseline | QA-002/003/006 |
-| F.6-01 | Canonical Schedule fields, lifecycle, recurrence, source and external-ID mapping | SCH-001–SCH-015, RES-013 | EXPAND | 1.0 core; advanced recurrence phased | QA-002/004 |
+| F.6-01 | Canonical Schedule fields, lifecycle, recurrence, source and external-ID mapping | SCH-001–SCH-015 | EXPAND | 1.0 core; advanced recurrence phased | QA-002/004 |
 | F.6-02 | Schedule list/calendar/upcoming/past/search/filter/sort and lifecycle states | SCH-002, SCH-005, SCH-006, SCH-010 | EXPAND | 1.0 baseline | QA-002/004 |
 | F.6-03 | DST/timezone and recurrence edits scoped to one event/future events/series where supported | SCH-003, SCH-004 | EXPAND | 1.0 timezone; recurrence 1.5–2.0 if not accepted | QA-002/004 |
 | F.6-04 | Next stream/countdown uses canonical schedule/site timezone/authenticated live state and excludes cancelled/past events | SCH-009, SCH-003, SCH-005, LIV-001, WEB-016 | KEEP | 1.0 | QA-002/004 |
@@ -2659,7 +2659,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.7-01 | Admin shell navigation/breadcrumb/public return/profile/session/logout/help/notifications/mobile shell | ADM-001–ADM-010, SEC-001, WEB-011 | EXPAND | 1.0 | QA-003/004/005 |
 | F.7-02 | Shared loading/empty/error/success/disabled/unsaved states, validation/confirm/search/filter/pagination/keyboard/Hungarian UI | ADM-008, QA-005, EDT-027 | EXPAND | 1.0 | QA-004/005/006 |
 | F.7-03 | Session expiry/logout/inactivity/multi-tab/unsaved flow and server-side admin/API authorization | SEC-001, SEC-002, SEC-004, ADM-007, EDT-031 | KEEP | 0.x–1.0 | QA-003/004 |
-| F.7-04 | Public forms: schema/required labels/client+server validation/spam rate limit/success/error/privacy notice | WEB-027, SEC-007, SEC-011, QA-006 | EXPAND | 1.0 if form enabled | QA-003/004/006 |
+| F.7-04 | Public forms: schema/required labels/client+server validation/spam rate limit/success/error/privacy notice | WEB-020, SEC-002/007/011, QA-006 | EXPAND | 1.0 if form enabled | QA-003/004/006 |
 | F.7-05 | Store CRUD/variants/SKU/pricing/stock/order/payment/fulfillment/refund/provider errors | STO-001–STO-020 (including STO-002 variants/SKU/pricing and STO-003 categories/collections), STO-017, WEB-025 | DEFER | 5.0 | QA-002/003/008 |
 | F.7-06 | Merch/digital/bundle/preorder/limited drop/coupon/gift card/invoice/shipping/tax | STO-005–STO-020, CAM-009, SUP-004–SUP-006 | DEFER | 5.0 after legal/payment review | QA-002/003/008 |
 | F.8-01 | Consent-aware web/content/stream/commerce/community analytics only from real sources | ANL-001–ANL-006, ANL-009, SEC-011 | DEFER/EXPAND | 2.0+ by source | QA-003/008 |
@@ -2679,7 +2679,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | Forráskulcs | Megőrzött követelmény | Canonical current ID | Döntés | Célfázis | QA-horgony |
 |---|---|---|---|---|---|
 | F.9-01 | Published-page SEO metadata, canonical, Open Graph/social cards, sitemap/robots/schema; drafts and preview non-indexable | SEO-001–SEO-005, WEB-005, WEB-006 | KEEP/EXPAND | 1.0 release gate | QA-004/008 |
-| F.9-02 | Redirect/broken-link tooling only with preview and approval | SEO-004, SEO-005, WEB-008, SEC-002 | DEFER | 2.0+ | QA-003/008 |
+| F.9-02 | Redirect/broken-link tooling only with preview and approval | SEO-005, WEB-013, SEC-002/010 | DEFER | 2.0+ | QA-003/008 |
 | F.9-03 | Semantic HTML, heading hierarchy, alt, labels, ARIA, keyboard/focus, contrast, screen reader, reduced motion | QA-004, QA-005, EDT-040, WEB-031 | KEEP | 1.0 release gate | QA-004/005 |
 | F.9-04 | Secure session/cookies/password/auth rate limit/RBAC/CSRF/OAuth state/webhook replay/upload validation | SEC-001–SEC-010, RES-003, INT-003, INT-017 | KEEP | 0.x–1.0 release gate | QA-003 |
 | F.9-05 | Separate public/preview/admin permission boundaries; no draft or secret leakage in logs/export | SEC-002, SEC-008, WEB-005, WEB-006, OPS-002, OPS-005 | KEEP | 0.x–1.0 | QA-003/004 |
@@ -2694,14 +2694,14 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.11-03 | 2.x Creator OS: dashboard/analytics/content studio/email audience/sponsorship/OBS/advanced stream tools | ADM-001–ADM-010, ANL-001–ANL-010, CNT-001–CNT-020, COM-015–COM-017, CAM-001–CAM-009 (including CAM-006 deliverables/deadlines/reminders), OBS-001–OBS-010 | MERGE | 2.0+ | QA-002/003/008 |
 | F.11-04 | 3.x+: AI assistant/stream intelligence/business platform/marketplace/multi-site/SaaS/global ecosystem | AI-001–AI-020, MKT-001–MKT-005, TEAM-001–TEAM-006, LOC-001–LOC-006, §39.5–39.12 | MERGE | 3.0–10.0 | QA-002/003/008 |
 | F.12-01 | Hungarian-first launch, international-ready locale/date/time/UI-string model | LOC-001–LOC-006, SET-001, WEB-001 | EXPAND | 1.0 architecture-ready; full locale workflow later | QA-004/005 |
-| F.12-02 | Gaming streamer profile and games configurable from Admin, not hardcoded into product logic | SCH-012–SCH-014, WEB-022, RES-013, SET-001 | EXPAND | 1.0 configuration baseline; Game Profile domain phased | QA-002/004 |
+| F.12-02 | Gaming streamer profile and games configurable from Admin, not hardcoded into product logic | SCH-012–SCH-014, SET-001 | EXPAND | 1.0 configuration baseline; Game Profile domain phased | QA-002/004 |
 | F.12-03 | TikTok handle and 5,000-follower personal goal are editable profile data, not UI guarantee | INT-014, SET-001, WEB-010, ANL-004 | KEEP | Profile config 1.0; provider metrics gated | QA-002/003/004 |
 | F.12-04 | Weekly stream cadence is editable Schedule data, not a hardcoded product rule | SCH-001–SCH-003, SCH-009 | KEEP | 1.0 | QA-002/004 |
 | F.12-05 | Historical support goal/platforms are not active payment integration; recheck current target/platform/privacy/legal text before campaign | SUP-001, SUP-002, SUP-003 supporter goal/progress, WEB-023, COM-014, SEC-011 | KEEP | 1.0 external links only if confirmed; payments later | QA-003/004/008 |
 | F.12-06 | Project brand/profile/goal data remains configurable and changeable | SET-001–SET-003, WEB-001, SCH-001, INT-001 | KEEP | 1.0 | QA-002/004 |
 | F.13-01 | Game Profile stable ID/slug/name/provider mapping/resource refs/brand metadata/cover/status/description | SCH-012–SCH-014, RES-013, SET-001 | EXPAND | 1.5–2.0 | QA-002/004 |
 | F.13-02 | Schedule references Game Profile by stable ID, not copied fields or name matching | SCH-001, SCH-012, SCH-014 | KEEP | 1.5–2.0; 1.0 schedule stays canonical | QA-002/003 |
-| F.13-03 | Missing artwork/metadata must use explicit fallback; Inspector shows only valid fields | SCH-013, RES-013, DYN-005, EDT-022 | EXPAND | 1.5–2.0 | QA-002/004/006 |
+| F.13-03 | Missing artwork/metadata must use explicit fallback; Inspector shows only valid fields | SCH-013, RES-001/004/008/010/015, DYN-005, EDT-022 | EXPAND | 1.5–2.0 | QA-002/004/006 |
 | F.13-04 | Game Profile is a domain; Editor references it and must not create an editor-only data store | SCH-012–SCH-014, EDT-020, DYN-001 | KEEP | 1.5–2.0 | QA-002/003 |
 | F.13-05 | Custom domain lifecycle: add/verify ownership/DNS/primary/SSL/canonical URL/redirect/error states | SET-002, WEB-012, SEO-001, SEO-005, OPS-001, SEC-006 | DEFER | 4.0+ | QA-003/004/008 |
 | F.13-06 | Domain/primary change preview and explicit SEO/redirect warning; unverified domain cannot become primary | SET-002, WEB-003, SEO-001, SEO-005, SEC-006 | KEEP | 4.0+ safety gate | QA-003/004 |
@@ -2715,7 +2715,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.13-14 | Later tenant→workspace/account→members→sites→domain modules | TEAM-001–TEAM-006, SEC-003 | DEFER | 4.0+ | QA-003/008 |
 | F.13-15 | Role catalog for owner/admin/editor/designer/moderator/analyst/content/store/finance; every mutation checks server-side permission | TEAM-003, SEC-002, SEC-003 | KEEP | RBAC baseline 1.0; team roles 4.0+ | QA-003/008 |
 | F.13-16 | Workspace/site scope separated; client-provided tenant/site ID is not authorization | TEAM-005, SEC-002, SEC-003 | KEEP | 0.x–1.0 baseline; expand before multi-site | QA-003 |
-| F.13-17 | Free/Creator/Pro/Business/Team/Agency and billing/quota/invoice/change/cancel only after cost/usage evidence | TEAM-006, STO-019, CAM-009, OPS-008 | DEFER | 4.0–5.0 | QA-003/008 |
+| F.13-17 | Free/Creator/Pro/Business/Team/Agency and billing/quota/invoice/change/cancel only after cost/usage evidence | TEAM-006, STO-019, CAM-009 | DEFER | 4.0–5.0 | QA-003/008 |
 | F.13-18 | Public website responsive from 1.0; PWA/native app is a later option | WEB-014–WEB-032, ADM-010, QA-004, QA-005 | KEEP/DEFER | Responsive web 1.0; PWA later | QA-004/005 |
 | F.13-19 | Later creator app uses canonical APIs/permissions for live/alerts/schedule/analytics/moderation/content approval | ADM-001–ADM-010, INT-001–INT-021, SCH-001–SCH-015, LIV-001–LIV-007, COM-001–COM-018, SEC-002 | DEFER | 2.0+ | QA-002/003/008 |
 | F.13-20 | Starter template categories remain available as configurable library choices | DSN-008–DSN-010 | EXPAND | 1.0 starter templates; library later | QA-004 |
@@ -6013,4 +6013,16 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 - No runtime code/data changed; no tests run.
 
 **Status:** 135 V2 Blueprint list items and 9 ordered validation steps are individually keyed. Semantics, current runtime existence, owner/phase/dependency/permission/negative tests and acceptance remain OPEN. P0.2 **IN PROGRESS / NOT PASS**.
+
+### 41.3.43. P0.2 — Confirmed feature-ID semantic mismatches in F.6/F.7/F.9/F.12/F.13 (2026-10-13)
+
+**Confirmed corrections from the registry definitions (not guess-based ID replacement):**
+- F.6-01 canonical Schedule lifecycle/source/external-ID mapping no longer includes RES-013 because RES-013 is the font registry. The Schedule lifecycle remains SCH-001–SCH-015; phase-specific acceptance is still open.
+- F.7-04 public form mapping now uses WEB-020 (Public Contact page/form), not WEB-027 (Public Events/Blog/News/Digital Products routes). Server validation, spam/rate limiting and privacy remain separate security acceptance requirements.
+- F.9-02 redirect/broken-link tooling now uses WEB-013 (redirect manager) and SEO-005 (SEO preview/diagnostics); WEB-008 is revision history/diff and was not a suitable redirect owner. SEC-002 authorization and SEC-010 audit are included for preview/approval governance.
+- F.12-02 game profile configuration no longer includes WEB-022 (Public Link Hub) or RES-013 (font registry); canonical game profile IDs SCH-012–SCH-014 and SET-001 site settings remain.
+- F.13-03 game artwork fallback no longer treats RES-013 font registry as artwork. It now points to resource registry, variants, usage map, asset picker and diagnostics (RES-001/004/008/010/015), alongside SCH-013/DYN-005/EDT-022.
+- F.13-17 future SaaS billing/quota no longer includes OPS-008, which is performance/cache/query monitoring. TEAM-006, STO-019 and CAM-009 remain candidate billing/provider/legal IDs; usage ledger, metering, invoices and state transitions still require explicit DoD/tests.
+
+**Status:** six mapping rows corrected by checking the canonical registry descriptions. This does not close the broader F.5–F.13 audit; P0.2 remains **IN PROGRESS / NOT PASS**. Documentation-only; no runtime code/data changed and no tests were run.
 
