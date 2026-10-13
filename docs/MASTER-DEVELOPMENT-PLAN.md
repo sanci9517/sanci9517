@@ -999,6 +999,43 @@ Az F0 **a Visual Editor új UX/UI-koncepciójának újraalapozási és megvalós
 
 ---
 
+## F0.0.1 — CREATOR CENTER MODULHATÁROK ÉS RESZPONZÍV INFORMÁCIÓ-ARCHITEKTÚRA
+
+**Döntés rögzítve:** 2026-10-13 — a felhasználó jóváhagyta, hogy ne zsúfoljunk minden funkciót a Visual Editorba. A meglévő, jó Creator Center/Admin főoldal marad a központi belépési és áttekintő felület; a Visual Editor feladata a vizuális oldalépítés. A termék modulokra bontása nem jelent domain-, adatmodell-, API-, jogosultság- vagy persistence-duplikációt.
+
+**Megőrzési szabály:** ez a fejezet nem töröl, nem helyettesít és nem minősít késznek egyetlen korábbi MASTER-funkciót sem. A történeti 01–140 és H19–H34 azonosítók, az E/F követelmények, a későbbi Creator OS roadmap és minden még nem implementált capability megmarad. Az itt meghatározott modulok a követelmények navigációs/UI-tulajdonosai; a végrehajtás és készültség továbbra is a MASTER egyetlen aktív pontja és annak acceptance-e szerint halad. Meglévő funkció csak bizonyíték és kifejezett tervdöntés nélkül nem törölhető.
+
+### Felhasználói felület moduljai
+
+- **Creator Center / Áttekintés:** központi kezdőlap, gyorsműveletek, oldal/publikálási állapotok, integrációs és rendszerjelzések, a ténylegesen elérhető modulokra mutató navigáció. Nem válik a domain-funkciók második implementációjává.
+- **Oldalak és Visual Editor:** kizárólag \`public/editor-v2/\`; Page/Section/Box/element hierarchia, Layers, canvas, Inspector, desktop/tablet/mobile nézet, preview, mentés és publikálási munkafolyamat. A szerkesztő fejlécét nem szabad minden adminisztrációs funkcióval túlterhelni.
+- **Adásrend és tartalom:** schedule CRUD, naptár/nézetek, játékprofilok, később a roadmap szerint VOD/Clips/Shorts. Az Editor Schedule node-ja ugyanazt a canonical Schedule domaint fogyasztja; nincs második schedule adatforrás vagy CRUD API.
+- **Média / Resource Library:** feltöltés, böngészés, keresés, szűrés, metaadatok, alt text, erőforrás-választó. Az Editor csak a közös Resource contracton keresztül használja; R2 bináris + D1 metaadat-határ megmarad.
+- **Integrációk:** Twitch az 1.0-ben előírt scope szerint; YouTube/TikTok/Discord és további adapterek csak a meglévő D roadmap fázisai szerint. Közös integrációs domain/adapter, nem külön Editoron belüli OAuth-rendszer.
+- **Megjelenés és újrafelhasználás:** sablonok, témák, design tokenek és reusable komponensek; ugyanazt a canonical registry/resource/property modellt használják.
+- **Beállítások és rendszer:** oldal-/site-beállítások, jogosultságok, SEO és elérhetőségi/performance beállítások, diagnosztika és recovery az adott canonical domain szerint.
+- **Későbbi Creator OS modulok:** analitika, automatizálás/AI, közösség/támogatás, monetizáció és további platformok a MASTER roadmap szerinti fázisban. A navigációban nem jelenhetnek meg működőnek látszó, de még nem létező funkcióként.
+
+### Kötelező UX- és architekturális szabályok
+
+- Desktopon az Editor nagy munkaterületet kap: felső, feladatspecifikus toolbar; bal oldali Pages/Layers/elemtár panel; középen canvas; jobb oldalon Inspector. A panelek szükség szerint összecsukhatók/átméretezhetők, amennyiben ezt az adott acceptance rögzíti.
+- Mobilon nem a desktop toolbar apróra zsugorítása a cél. Rövid felső fejléc és elsődleges műveletek; a canvas marad a központi munkaterület; Pages/Layers/Inspector külön, egymást nem fedő, jól bezárható panelként/drawer-ként nyílik. A kezelőelemek célmérete és fókusz-/billentyűzetkezelése érintéses használatra alkalmas legyen.
+- A tablet külön breakpoint/elfogadási nézet; a tablet-login halasztása ettől független, nem blokkoló tétel.
+- A dashboard és a külön modulok közös navigációs/shell-rendszert használnak, de nem másolják egymás funkcióit. Az Editor csak a vizuális építéshez szükséges műveleteket tartalmazza.
+- A felület szétválasztása **nem** jelent külön mobil Editor-kódutat, második Page Modelt, Schedule domaint, Resource store-t, Property Registryt, API-t vagy save/publish útvonalat.
+- A modulonkénti navigációs elem csak akkor aktív, ha van valós célútvonal és a felhasználó jogosult rá; a még nem kész funkciót egyértelműen jelölni kell, vagy el kell rejteni.
+- A jelenlegi aktív F0.4 acceptance és az azt követő F0.x sorrend nem ugrik át emiatt. A modulhatárok a további pontok UI-/acceptance-tervezését irányítják; a MASTER eleji ACTIVE_POINT_ID változatlanul a végrehajtási igazságforrás.
+
+### Szekvenciális megvalósítás
+
+1. A jelenlegi F0.4 Layers/Inspector/responsive acceptance befejezése; a mostani, igazoltan működő canvas/undo/redo viselkedés megőrzése.
+2. A következő megfelelő F0.x pontban a Creator Center navigation és modul-útvonalak inventoryja: meglévő valós route-ok, jogosultságok, canonical owner, készültség, legacy/tiltott célok; semmit nem törlünk pusztán azért, mert új navigációba kerül.
+3. A Creator Center és az Editor közös desktop/tablet/mobile UI-kontraktjának kialakítása és browser acceptance-e.
+4. A modulokat a MASTER aktív sorrendjében, egyesével implementáljuk. Minden pont előtt rögzítjük a scope-ot és a megőrzendő képességeket; utána teszt, runtime smoke és felhasználói acceptance szükséges.
+5. Minden checkpoint frissíti a MASTER eleji aktív pontot, az adott pont állapotát, a bizonyítékokat és a következő egyetlen lépést. Történeti követelmény csak nyomkövetési hivatkozással kerülhet lezárásra; a tervből nem tűnhet el.
+
+---
+
 ## F0.0 — KIINDULÁSI BASELINE ÉS DUPLIKÁCIÓS ZÁR
 
 ### Canonical rendszer
