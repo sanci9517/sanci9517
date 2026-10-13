@@ -3975,3 +3975,15 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 **Következő bizonyítékigény:** (1) döntés, hogy `dataBindings` canonical konfigurációs metadata, tényleges runtime binding, vagy átmeneti/legacy mező; (2) ha runtime binding, explicit schema és szerveroldali allowlist/type/permission/site-scope/published-state validáció; (3) negatív tesztek másik site, draft/private adat, tiltott source/field és ismeretlen binding-version ellen; (4) save → publish → public-render end-to-end bizonyíték. A hiányzó contractot nem szabad pusztán a Schedule endpoint meglévő site-szűréséből lezártnak tekinteni.
 
 **Státusz:** a Schedule-specifikus olvasási validáció és site-scope útvonal **FORRÁSSZINTEN IGAZOLT**; a generic `dataBindings` contract és a renderer/schema közötti kanonikus szerep **OPEN**. P0.2 **IN PROGRESS / NOT PASS**. Nincs runtime kódmódosítás.
+
+### 41.3.15. P0.2 — H34 collaboration/conflict mapping semantic exception (2026-10-13)
+
+**Hatókör:** a 40.16 H34.00–H34.22 megőrzött követelménykatalógus és a 41. crosswalk H34.08 sora; a stabil ID-k definíciói a §24 registryben.
+
+**Konkrét szemantikai eltérés:** H34.08 történeti téma „collaboration/conflict”. A crosswalk célja jelenleg `TEAM-004, EDT-029`. A §24 registryben `TEAM-004` jelentése **Approval/review/activity feed**, míg `EDT-029` jelentése **Revision conflict recovery**. Az EDT-029 ezért részleges, konkrétan kapcsolódó leképezés; a TEAM-004 önmagában nem bizonyítja a kollaboratív szerkesztés, egyidejű módosítások, presence/locking vagy konfliktusfeloldás lefedettségét.
+
+**Döntés:** H34.08 **OPEN — részleges megfelelés / cél-ID felülvizsgálata szükséges**. A `TEAM-004` nem fogadható el a teljes collaboration capability canonical ownerjeként pusztán a review/activity feed miatt. Nem hozok létre automatikusan új stabil ID-t a 359-es registryben, mert a teljes kétirányú reconciliáció még folyamatban van; előbb azonosítani kell, hogy létezik-e más, már kanonikus collaboration/approval/concurrency ID, illetve a roadmap mely fázisában kell az önálló együttműködési képességet kezelni.
+
+**Kötelező folytatási ellenőrzés:** (1) a teljes §24 registryben és a 00.9.6.C–F történeti anyagokban keressük meg a collaboration, multi-user editing, presence, locking, revision conflict, approval és activity feed külön követelményeit; (2) válasszuk szét a már létező revision conflict recovery-t, az approval/activity feedet és a tényleges egyidejű szerkesztést; (3) rögzítsünk KEEP/MERGE/EXPAND/ADD/DEFER döntést, tulajdonost, fázist, dependency-t, negatív concurrency tesztet és acceptance-t; (4) csak ezután módosítsuk a H34.08 cél-ID-t vagy a stabil ID registryt.
+
+**Korlát:** ez egy konkrét crosswalk-sor szemantikai kivételének azonosítása; nem állítja, hogy a többi H34 vagy H19–H33 sor már teljesen helyes. A jelen körben runtime kódot nem módosítottam, tesztet nem futtattam. H19–H34 ID-halmaz-egyezés továbbra is csak szűk ID-szintű PASS; a teljes szemantikai reconciliáció és P0.2 **IN PROGRESS / NOT PASS**.
