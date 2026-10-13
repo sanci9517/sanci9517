@@ -2733,9 +2733,9 @@ The short decision record must name the problem and acceptance criteria; existin
 
 | Crosswalk batch | Sorok | Különböző hivatkozott feature/QA ID-k | Feloldatlan ID |
 |---|---:|---:|---:|
-| §37.22 E.2–E.3 | 57 | 202 | 0 |
-| §37.23 E.4–E.9 | 66 | 282 | 0 |
-| §37.24 E.10–E.14 | 45 | 150 | 0 |
+| §37.22 E.2–E.3 | 57 | 189 | 0 |
+| §37.23 E.4–E.9 | 66 | 283 | 0 |
+| §37.24 E.10–E.14 | 45 | 153 | 0 |
 | §37.25 E.15–E.21 + E.20 contract/negative tests | 59 | 345 | 0 |
 | §37.27 F.1–F.4 | 32 | 108 | 0 |
 | §37.29 F.5–F.8 | 27 | 171 | 0 |
@@ -7462,7 +7462,7 @@ The historical unified MASTER at commit aedb2eaab2440c29bd0c05959d5064f410de5966
 
 **Scope:** re-counted the current §37.22–§37.30 tables directly from the canonical MASTER and compared them with §37.32's older summary and the original F.1–F.13 bullet inventory in the archived MASTER snapshot.
 
-**Findings:** the §37.32 row counts were stale after the F.3 split and three separately added roadmap requirements. Current unique row keys are: E.2–E.3 = 57; E.4–E.9 = 66; E.10–E.14 = 45; E.15–E.21 plus the E.20 contract/negative-test rows = 59; F.1–F.4 = 32; F.5–F.8 = 27; F.9–F.13 = 44. The current total is **330 rows**, not 323. The current ID recount expands numeric ranges and slash shorthand in the canonical mapping and QA-anchor columns; all referenced IDs resolve to the 359-ID §24 registry, with zero unknown IDs in the seven checked batches.
+**Findings:** the §37.32 row counts were stale after the F.3 split and three separately added roadmap requirements. Current unique row keys are: E.2–E.3 = 57; E.4–E.9 = 66; E.10–E.14 = 45; E.15–E.21 plus the E.20 contract/negative-test rows = 59; F.1–F.4 = 32; F.5–F.8 = 27; F.9–F.13 = 44. The current total is **330 rows**, not 323. The current ID recount expands numeric ranges and slash shorthand in the canonical mapping and QA-anchor columns. Expanded unique reference counts by batch are 189, 283, 153, 345, 108, 171, and 325 respectively; all references resolve to the 359-ID §24 registry, with zero unknown IDs in the seven checked batches.
 
 The archived MASTER contains **100 original F.1–F.13 bullets**: F.1=10, F.2=6, F.3=9, F.4=7, F.5=7, F.6=5, F.7=6, F.8=8, F.9=7, F.10=4, F.11=4, F.12=6, F.13=21. The active crosswalk has 103 rows because three additional roadmap requirements had been assigned misleading historical-looking keys: abandoned cart, membership entitlement/access, and membership billing lifecycle. These are now labeled separately as **ADD-01, ADD-02, and ADD-03**. The original source-key inventory therefore remains 100 bullets; the three additions remain preserved but are not represented as recovered archive bullets.
 
