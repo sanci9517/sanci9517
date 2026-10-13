@@ -4305,14 +4305,15 @@ F0.2 DoD:
 
 ## 2.77.9.J — F0.2 canonical Admin navigation acceptance — 2026-10-13
 
-**Állapot: KÓD ÉS CONTRACT TESZT ELŐKÉSZÍTVE; PR-CI ÉS ÉLES ACCEPTANCE A MERGE UTÁN ELLENŐRIZENDŐ.**
+**Állapot: MERGED TO `v2/foundation`; PR-CI PASS. A felhasználó megerősítette, hogy az egységes `/admin` útvonal működik élesben; a PR #14 utáni friss navigációs build külön ellenőrzése még hátra van.**
 
 - [x] Az élesben felhasználó által visszaigazolt egységes Admin belépési pont: `/admin`; a `/admin/editor` továbbra is külön, hitelesített Editor v2 munkaterület.
 - [x] Az Admin márkalogója és az aktív „Kezdőlap” navigáció közvetlenül a canonical `/admin` útvonalra mutat; nincs szükség kerülő `/admin/home` átirányításra.
 - [x] A sidebar contract teszt kizárólag a canonical `/admin` és `/admin/editor` aktív célpontokat engedi; a jövőbeli munkaterületek disabled állapota változatlan.
 - [x] A Creator Control Center API-adatforrásai és meglévő API-oldali auth/role ellenőrzései változatlanok maradtak; ez a szelet nem módosít adatmodellt, migrációt, authot vagy üzleti logikát.
-- [ ] Friss CI PASS: typecheck, Admin contract, Editor, Schedule és domain regressziók.
-- [ ] Éles böngészős smoke: Admin home/logó navigáció, Editor megnyitása, desktop/tablet/mobil és billentyűzetes fókusz.
+- [x] PR #14 squash merge-elve: `fa00c96c796caac42c54c1bfae365b06fba88a2f`; `Editor Core Test` #987 és `Twitch Integration Check` #363 PASS, beleértve a typecheck, Admin contract, Editor, Schedule és domain regressziókat.
+- [x] A felhasználó élesben megerősítette az egységes `/admin` útvonal működését.
+- [ ] Az új, közvetlen `/admin` brand/sidebar link éles böngészős smoke-ja, Editor megnyitása, desktop/tablet/mobil és billentyűzetes fókusz.
 - [ ] Az F0.2 teljes DoD további részei — minden CTA/route/auth-role ellenőrzés, mobil/keyboard acceptance és production smoke — csak külön bizonyítékkal zárhatók le. A felhasználó által megerősített Admin működés az útvonal működését igazolja, de nem helyettesíti az összes F0.2 acceptance tételt.
 
 **Scope:** a korábbi `/admin/home` URL kompatibilitási alias marad a Workerben; a felület nem hivatkozik rá elsődleges célként. A korábban ismert Android Chrome tablet-login visszairányítási kockázatot ez a UI-only változtatás nem módosítja, ezért annak megoldását külön, bizonyítékokkal kell igazolni, mielőtt az ahhoz kötött korábbi PR vagy auth-módosítás élesül.
