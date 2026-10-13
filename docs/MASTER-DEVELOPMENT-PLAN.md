@@ -8,7 +8,7 @@
 **PARALLEL_WORKSTREAMS:** `0`
 
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
-**Verzió:** MASTER-2.87 — archivált tervek keresztellenőrzése; Sanci Buttons és Creator Resources explicit lefedése; egyetlen canonical owner.  
+**Verzió:** MASTER-2.88 — történeti capability-k pontosítása; streamer metrikák és Content Factory munkafolyamat.  
 **Frissítve:** 2026-10-13.  
 **Dokumentum státusza:** ez az egyetlen végrehajtási igazságforrás.
 **Audit / implementation baseline:** GitHub `v2/foundation`, commit `54daad2357ca576d9e333a052e7bcbb6c2e2d51a` (2026-10-13; F0.3 history-integrity, revision-conflict recovery és save/reload client hardening PR #18–#25 integrálva; production save/reload runtime acceptance továbbra is nyitott). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
@@ -1096,10 +1096,10 @@ A Twitch, YouTube, TikTok, Discord és minden későbbi provider külön fejlesz
 | UI-05 | **Témák és Design System** | Brand tokens, színek, tipográfia, spacing, theme, global styles, state-ek | Editorban látható/gyorsan szerkeszthető lehet, de ugyanazt a canonical theme/token registryt módosítja |
 | UI-06 | **Komponensek és sablonok** | Újrafelhasználható komponensek, blokkok, változatok, template-ek, későbbi linked instances/symbols | Editor elemtárból beszúrható és szükség szerint gyorsan megnyitható a manager; egyetlen canonical registry/instance-szabály |
 | UI-07 | **Adásrend és naptár** | Esemény CRUD, ismétlődés/időzóna, státusz, lemondás/áthelyezés, nézetek | Editor Schedule node csak elrendezést, szűrőt és megjelenítési beállítást szerkeszt; az eseményadatot a canonical Schedule Manager írja |
-| UI-08 | **Játékprofilok** | Játékok/kategóriák, artwork, címkék és a Schedule/stream profilhoz tartozó canonical metaadat | Editorból kiválasztás vagy gyors megnyitás; ugyanaz a Game Profile ID és domain |
+| UI-08 | **Játékprofilok** | Játéklista, kategóriák, game cardok, artwork, címkék és a Schedule/stream profilhoz tartozó canonical metaadat | Editorból kiválasztás vagy gyors megnyitás; ugyanaz a Game Profile ID és domain |
 | UI-09 | **Platformintegrációk** | Twitch, később YouTube, TikTok, Discord és további providerek connect/disconnect/reconnect, scope, sync, státusz és diagnosztika | Editor a provider adatait csak fogyasztja és megjelenítési bindingot állít; OAuth/secrets/adapter nem kerül az Editorba |
-| UI-10 | **Stream és Live állapot** | A hiteles providerből származó streamállapot, cím/kategória és elérhető metrikák; manuális mezők csak egyértelműen elkülönítve | Public/Editor blokkok ugyanazt a Streamer/Integration domain adatot használják; adatforrás és frissesség jelzett |
-| UI-11 | **VOD, Clips, Shorts és videótár** | Tartalomimport, külső ID-k, kategóriák/tagek, playlist/kiemelések, link/embed és elérhető metadata | Editorban videóblokkok választhatók; a tartalomkiválasztó és Content Manager ugyanazt a canonical tartalomrekordot használja |
+| UI-10 | **Stream és Live állapot** | Hiteles live/offline állapot, streamcím, kategória/játék, Twitch player/embed és provider által engedélyezett nézőszám-, követő- és feliratkozói metrikák; manuális érték csak egyértelműen megjelölve | Public/Editor blokkok ugyanazt a Streamer/Integration domain adatot használják; adatforrás, jogosultság és frissesség jelzett, nem elérhető adatot nem szabad kitalálni |
+| UI-11 | **VOD, Clips, Shorts és videótár** | Tartalomimport, külső ID-k, kategóriák/tagek, playlist/kiemelések, link/embed, elérhető metadata, kiemelt pillanatok és export-előkészítés | Editorban videóblokkok választhatók; a tartalomkiválasztó és Content Manager ugyanazt a canonical tartalomrekordot használja |
 | UI-12 | **Overlay Studio / Stream Studio** | Stream overlayek, alert-ek, widgetek, scene-/browser-source konfiguráció és későbbi OBS kapcsolat | Külön munkaterület, nem a website Editor második példánya; ahol Page Model/command/history használható, csak közös canonical engine/API útvonalon |
 | UI-13 | **Közösség és Discord** | Közösségi hivatkozások, elérhető Discord funkciók, később audience/moderation/engagement az engedélyezett scope szerint | Editorban link/widget lehet, de a közösségi adat és jogosultság a Community/Integration domainé |
 | UI-14 | **Űrlapok és kommunikáció** | Kapcsolati űrlap, későbbi audience/email/consent/unsubscribe/delivery állapot | Editor a mezők és megjelenés konfigurációját szerkeszti; beküldés, adatkezelés és küldési logika a biztonságos form/communication domainé |
@@ -2852,7 +2852,7 @@ A platform egy egységes creator-rendszer, amelynek felületei ugyanazokat a can
 A publikus oldal mobilon, tableten és asztali gépen is egységes, gyors és használható creator-márkaélményt adjon.
 
 ### E.2.1 — Alapoldalak és navigáció
-- Kezdőlap, bemutatkozás / About, Schedule, Live, VOD / videók, Clips / Shorts, platformonkénti profil- vagy tartalomoldal, Community, Contact és későbbi Store, Membership, Events, Blog/News, **Creator Resources / alkotói erőforrások**, Digital Products és Sponsor/Business oldalak. A Creator Resources önálló publikus oldalcél és CMS-tartalomkategória; a hozzá tartozó elemek a Page/CMS rendszerből kezelhetők, nem külön HTML-rétegben.
+- Kezdőlap, bemutatkozás / About, Schedule, Live, VOD / videók, Clips / Shorts, platformonkénti profil- vagy tartalomoldal, Community / Community Hub, Contact és későbbi Store, Membership, Events, Blog/News, **Creator Resources / alkotói erőforrások**, Digital Products és Sponsor/Business oldalak. A Creator Resources önálló publikus oldalcél és CMS-tartalomkategória; a hozzá tartozó elemek a Page/CMS rendszerből kezelhetők, nem külön HTML-rétegben.
 - Az oldalak és az útvonalak a Page/CMS rendszerből legyenek kezelhetők; ne legyen szükség kézi HTML-módosításra a normál tartalomfrissítéshez.
 - Közös fejléc, navigáció, lábléc, mobilmenü, aktív navigációs állapot, logó és közösségi linkek.
 - Navigációs elemek sorrendje, címkéje, célja, láthatósága és új ablakos viselkedése kezelhető legyen; a jogosultság és külső URL validációja szerveroldalon is történjen.
@@ -2860,7 +2860,7 @@ A publikus oldal mobilon, tableten és asztali gépen is egységes, gyors és ha
 - Nyelvenkénti oldalcím, slug, metaadat és tartalom; a hiányzó fordításnak legyen explicit fallback szabálya.
 
 ### E.2.2 — Dinamikus creator állapot
-- Twitch/live állapot, platformlinkek, aktuális kategória/játék és csak akkor megjelenő élő elemek, ha az adat hiteles és friss.
+- Twitch/live állapot, platformlinkek, aktuális kategória/játék, beágyazható Twitch player és csak akkor megjelenő élő elemek, ha az adat hiteles és friss. A nézőszám, követő-/feliratkozói számláló és egyéb metrika kizárólag a provider által ténylegesen biztosított, engedélyezett és friss adatból jelenhet meg.
 - Következő adás, időzóna, visszaszámlálás, adás állapota, elhalasztott vagy törölt esemény jelzése.
 - Legfrissebb VOD, klipek, Shorts és más tartalmak konfigurálható feedje; üres és integrációs hibaállapotok.
 - Közösségi CTA-k, feliratkozási/támogatási linkek és későbbi tagsági vagy termékblokkok.
@@ -3030,6 +3030,7 @@ Az Editor önálló, professzionális, vizuális alkalmazás. Az alapvető oldal
 - VOD, clip, short, highlight, video, playlist és bejegyzés külön tartalomtípusként, közös metadata-konvenciókkal.
 - Platformonként eltérő cím/leírás/thumbnail/tag és publikálási korlátozás.
 - Import/szinkron, duplikáció felismerése, külső ID-k és idempotens feldolgozás.
+- Későbbi vágó/short munkafolyamat: jó pillanat megjelölése vagy clip indítása, automatikus mentés ahol támogatott, vágási pontok előkészítése, vertical short formátum, felirat-előkészítés, cím/hook javaslat és TikTok/YouTube Shorts export-előkészítés. Az automatikus felismerés és platformra publikálás külön, későbbi fázis és provider-függő.
 - 1.x/2.x-ben cross-platform adaptation és publishing queue; a provider API-képességei és engedélyei alapján, nem feltételezett automatikus hozzáféréssel.
 
 ## E.11 — Stream Studio, Overlay és OBS
@@ -3067,7 +3068,8 @@ Az Editor önálló, professzionális, vizuális alkalmazás. Az alapvető oldal
 
 ### Analytics
 - Website: visitors, sessions, page views, device, referrer, conversion és csak megfelelő jogalappal kezelt aggregált földrajzi adatok.
-- Creator: Twitch/YouTube/TikTok/Kick metrics, provider- és időszakfüggő elérhetőséggel.
+- Creator: Twitch/YouTube/TikTok/Kick metrics, provider- és időszakfüggő elérhetőséggel; ahol jogosult és elérhető, live viewer count, follower/subscriber szám és változásuk.
+- Stream/content intelligence későbbi fázisban: beszédaktivitás és hosszú csend jelzése, chataktivitás, mikrofon/audio probléma és OBS scene/stream minőség állapotának megfigyelése, kiemelkedő pillanatok és heti összefoglaló. Ezek nem állíthatók késznek, és csak támogatott adatforrással, adatvédelmi határokkal és tesztelt diagnosztikával építhetők.
 - Commerce: sales, revenue, average order value, conversion, product és campaign performance.
 - Community: active members, engagement, retention és event participation.
 - Egységes metric modell, forrás, időszak, frissesség, hiányzó adat és provider limit jelölése; CSV/export és hozzáférés-szabályozás.
@@ -3081,7 +3083,6 @@ Az Editor önálló, professzionális, vizuális alkalmazás. Az alapvető oldal
 ### AI
 - AI website assistant / későbbi AI Engineer strukturált szándékot alakítson validált Page Operations vagy más engedélyezett action listává; közvetlen, korlátlan HTML/DOM/DB/kódmódosítás nem engedélyezett.
 - Kötelező pipeline: intent → strukturált terv/action lista → schema és jogosultság validáció → preview/diff → emberi jóváhagyás, ahol szükséges → végrehajtás a canonical command/API útvonalon → teszt/ellenőrzés → audit/version. Az AI nem kerülheti meg a Page Modelt, a command/history/persistence útvonalat, a domain permissionöket vagy a publish gate-et.
-- Folyamat: intent → structured operations → schema validation → draft revision → diff preview → human approval → publish.
 - AI-javaslatok: layout, content, SEO, title/description, localization, schedule/content workflow és később stream transcript, chapters, highlights, clip candidates, title/description és short-form scripts.
 - AI-generated változás mindig preview, jogosultságellenőrzés, validáció, rollback és usage tracking mellett fusson.
 - AI usage/permission, prompt templates, generation jobs, approval queue és hibák; provider-kulcs soha nem kerülhet böngészőbe.
