@@ -3901,7 +3901,7 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 
 **Javított mappingek:**
 - `C.23.3-01`: a hosszú vászon, scroll-extent, zoom és viewport-geometria acceptance-éhez a domain/API teszt mellett explicit browser/device és public SEO/accessibility/performance QA is hozzárendelve (`QA-002/004/005`). A konkrét canvas-height/scroll-extent runtime acceptance ettől továbbra sem tekinthető teljesítettnek.
-- `C.23.5-11`: a háttér image/video követelmény most explicit módon hivatkozik a canonical asset registry/binary storage/preview/usage-map szerződésekre (`RES-001/002/004/008)), a reduced-motion szerződésre (`EDT-040)) és a performance/accessibility auditkapura (`QA-005)); a biztonságos publikus renderer (`WEB-032)) megmaradt.
-- `C.23.6-03`: a globális színpaletta és kontraszt-előnézet mappingje összevonva a teljes token-sémára (`DSN-001–007)), és hozzáadva az explicit accessibility QA (`QA-005)).
+- `C.23.5-11`: a háttér image/video követelmény most explicit módon hivatkozik a canonical asset registry/binary storage/preview/usage-map szerződésekre (`RES-001/002/004/008`), a reduced-motion szerződésre (`EDT-040`) és a performance/accessibility auditkapura (`QA-005`); a biztonságos publikus renderer (`WEB-032)) megmaradt.
+- `C.23.6-03`: a globális színpaletta és kontraszt-előnézet mappingje összevonva a teljes token-sémára (`DSN-001–007`), és hozzáadva az explicit accessibility QA (`QA-005`).
 
 **Ellenőrzési korlát:** a módosítások a mappingek tartalmi illeszkedését pontosítják; nem igazolják, hogy ezek a funkciók implementálva vagy runtime-ban elfogadva vannak. A többi sor, az ID-szintű teljes permission/dependency/test/acceptance contract és a hiányzó eredeti `00/A` / `00.9–00.9.6.B` források reconciliációja továbbra is nyitott. P0.2 **IN PROGRESS / NOT PASS**.
