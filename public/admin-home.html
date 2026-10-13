@@ -226,6 +226,7 @@
       .breadcrumbs { min-width: 0; }
       .breadcrumbs small { font-size: 9px; }
       .breadcrumbs strong { font-size: 12px; }
+      .search-wrap { display: none; }
       .mobile-search { display: grid; flex: 0 0 auto; }
       .search-wrap.mobile-search-open { display: block; position: absolute; top: calc(100% + 6px); left: 12px; right: 12px; z-index: 50; width: auto; }
       .search-wrap.mobile-search-open .menu-search { height: 44px; }
@@ -768,11 +769,15 @@
     backdrop.addEventListener("click", closeSidebar);
     const searchWrap = $("searchWrap");
     const mobileSearch = $("mobileSearch");
-    function closeMobileSearch() {
+    function closeMobileSearch(restoreFocus = false) {
+      const wasOpen = searchWrap.classList.contains("mobile-search-open");
       searchWrap.classList.remove("mobile-search-open");
       mobileSearch.setAttribute("aria-expanded", "false");
       mobileSearch.setAttribute("aria-label", "Funkciókeresés megnyitása");
       mobileSearch.title = "Funkciókeresés";
+      if (restoreFocus && wasOpen && window.matchMedia("(max-width: 600px)").matches) {
+        mobileSearch.focus();
+      }
     }
     mobileSearch.addEventListener("click", () => {
       const open = !searchWrap.classList.contains("mobile-search-open");
@@ -781,11 +786,12 @@
       mobileSearch.setAttribute("aria-label", open ? "Funkciókeresés bezárása" : "Funkciókeresés megnyitása");
       mobileSearch.title = open ? "Keresés bezárása" : "Funkciókeresés";
       if (open) $("menuSearch").focus();
+      else mobileSearch.focus();
     });
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape") {
         closeSidebar();
-        closeMobileSearch();
+        closeMobileSearch(true);
       }
     });
     $("menuSearch").addEventListener("input", (event) => {
