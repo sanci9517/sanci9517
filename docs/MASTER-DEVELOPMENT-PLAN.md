@@ -8,7 +8,7 @@
 **PARALLEL_WORKSTREAMS:** `0`
 
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
-**Verzió:** MASTER-2.88 — történeti capability-k pontosítása; streamer metrikák és Content Factory munkafolyamat.  
+**Verzió:** MASTER-2.89 — teljesebb történeti capability-lefedettség; streamer metrikák és tartalom-újrahasznosítás.  
 **Frissítve:** 2026-10-13.  
 **Dokumentum státusza:** ez az egyetlen végrehajtási igazságforrás.
 **Audit / implementation baseline:** GitHub `v2/foundation`, commit `54daad2357ca576d9e333a052e7bcbb6c2e2d51a` (2026-10-13; F0.3 history-integrity, revision-conflict recovery és save/reload client hardening PR #18–#25 integrálva; production save/reload runtime acceptance továbbra is nyitott). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
@@ -1188,6 +1188,7 @@ A végső, felhasználónak átadandó **teljes funkciókatalógus** csak a fent
 3. A Creator Resources / alkotói erőforrások külön jövőbeli publikus oldal és CMS-tartalomcél; nem tűnhet el az általános „Content” megnevezésben.
 4. Az AI Engineer a SANCI AI/Automation munkaterület biztonságos action pipeline-jának része, nem külön canonical Editor, nem közvetlen DOM/DB író.
 5. Az archívumokban felsorolt lock/hide, copy/paste, multi-select, grouping, responsive, media upload/replace/archive, revision/restore, SEO, security, integrations, OBS, VOD/Clips/Shorts, analytics, automation, teams/SaaS és marketplace képességek a jelenlegi E/F katalógus megfelelő részeiben maradnak. A történeti checklist státusz önmagában nem jelent runtime készültséget.
+6. A streamer- és tartalomterv további explicit részletei is megmaradnak: hiteles Twitch player/live állapot, aktuális játék, provider által engedélyezett nézőszám/követő/feliratkozó metrikák; VOD/kiemelt tartalom és game-list/card; továbbá a későbbi clip/Short folyamat megjelöléssel, mentéssel, vágási pontokkal, vertical formátummal, felirat/cím/hook előkészítéssel és exporttal. A beszédaktivitás/csend, chat, mikrofon/audio, OBS/streamminőség és heti összefoglaló a későbbi Stream Intelligence scope-ja, nem 1.0-kész állapot.
 
 **Fennmaradó teljességi szabály:** a forrásdokumentumok áttekintése nem jogosít fel egyetlen tétel hallgatólagos elhagyására. A 01–140 preservation matrix és a H19–H34 ledger megőrzött nyomkövetési alap; ha a részletes, soronkénti kétirányú megfeleltetés során bármelyik tétel nem rendelhető egyértelmű UI-hoz, canonical ownerhez, fázishoz és acceptance-hez, azt `UNMAPPED REQUIREMENT` nyitott tételként kell rögzíteni. Ez a korrekciós munka nem módosítja a F0.4 aktív státuszát és nem enged párhuzamos implementációt.
 
