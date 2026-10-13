@@ -2,7 +2,7 @@
 **ACTIVE_POINT_STATUS:** `ACTIVE — az Admin/Creator Center globális navigációjának, site contextjének, route-jainak, jogosultsági és állapotjelzéseinek valós ellenőrzése és javítása`
 **ACTIVE_POINT_TITLE:** Admin navigáció és globális shell acceptance
 **ACTIVE_SUBPOINT_ID:** `F0.2-ADMIN-NAVIGATION-GLOBAL-SHELL-ACCEPTANCE`
-**ACTIVE_SUBPOINT_STATUS:** `ACTIVE — ellenőrizd az összes látható menülinket, aktív/tervezett/letiltott állapotot, site contextet, auth/role határokat és mobil navigációt; csak létező funkciót mutass működőként`
+**ACTIVE_SUBPOINT_STATUS:** `ACTIVE — a canonical Admin/navigation, dashboard-link és auth/role contract tesztek CI PASS; az éles friss builden a desktop/tablet/mobil billentyűzetes smoke, a valós 401/403 útvonalak és különösen az Android Chrome tablet-login elfogadása még nyitott. F0.3 csak ezek bizonyítékos lezárása után indítható.`
 **PREVIOUS_GATE:** `F0.1 — CLOSED / PASS` (PR #7 squash merge: `047d66f78cc4bdd6c7b50ddd83140d3ddf4aae48`)
 **NEXT_GATE:** `F0.2 Admin navigation + global shell acceptance → F0.3 Editor foundation + first vertical slice → F0.4 Visual Builder/Layers/Inspector → további F0.x pontok szigorú sorrendben; M0 audit PASS nem előfeltétel`
 **PARALLEL_WORKSTREAMS:** `0`
