@@ -2265,7 +2265,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | E.13 | Community/Audience ownership | COM-001–COM-018; SEC; LOC | DEFER/EXPAND — 1.0 external community links only; audience, consent, moderation and membership later. |
 | E.14 | Analytics, Automation and AI | ANL-001–ANL-009; AUT-001–AUT-014; AI-001–AI-020; QA | DEFER — roadmap phases 2.0–9.0, each capability requiring source, consent, permission, cost and acceptance. |
 | E.15 | Sponsorship/Creator Business Hub | CAM-001–CAM-008; ANL; STO; COM | DEFER — 5.0 business/commerce scope, not a 1.0 backend claim. |
-| E.16 | Localization/international use | LOC-001–LOC-008; WEB; SEO; DSN | DEFER/EXPAND — preserve language-ready content/metadata in the architecture; full localization workflow phased later. |
+| E.16 | Localization/international use | LOC-001–LOC-004; WEB; SEO; DSN | DEFER/EXPAND — preserve language-ready content/metadata in the architecture; full localization workflow phased later. |
 | E.17 | Accounts, multi-site, teams and SaaS | SEC; TEAM-001–TEAM-006; OPS; STO/SUP entitlements | DEFER — 4.0+; current global slug/settings/provider uniqueness constraints must be decided before multi-site. |
 | E.18 | Import/export, backup, diagnostics, developer surface | OPS-001–OPS-012; SEC; RES; WEB | EXPAND — 0.x/1.0 operational safety baseline; full developer/extensions surface later. |
 | E.19 | Architecture and security invariants | EDT-001–EDT-006; SEC-001–SEC-010; INT-001/019; OPS | KEEP/EXPAND — cross-cutting release gates, not optional future UI features. |
@@ -2516,11 +2516,11 @@ The short decision record must name the problem and acceptance criteria; existin
 | E.15-02 | Sponsor lead/deal/brief/deliverables/deadlines/status/analytics/invoice later | CAM-001, CAM-003, CAM-005–CAM-009 | DEFER | 5.0 | QA-002/003/008 |
 | E.15-03 | Role-based business-document access; public media kit only exposes selected data | CAM-004, CAM-008, SEC-002, SEC-011 | KEEP | 5.0 privacy gate | QA-003/008 |
 | E.15-04 | Sponsorship module later and must not block 1.0 website/editor | CAM-001–CAM-009, §39.7 | KEEP | 5.0 | QA-008 |
-| E.16-01 | Hungarian first; model/UI ready for multiple languages | LOC-001–LOC-008, WEB-001 | EXPAND | 1.0 architecture-ready; full workflow later | QA-004/005 |
-| E.16-02 | Translation keys/fallback/date-timezone/number-currency/locale SEO metadata | LOC-001–LOC-008, SEO-001, SCH-003 | EXPAND | 1.0 foundations; full locale workflow later | QA-004/005 |
-| E.16-03 | Translate Page/Content/Navigation/Theme/Template fields without overwriting another locale | LOC-002, LOC-003, WEB-001, CNT-001, DSN-008 | DEFER/EXPAND | 2.0 | QA-002/004 |
-| E.16-04 | Visible incomplete-translation status, preview and publish policy | LOC-004, LOC-005, WEB-005, WEB-006 | DEFER/EXPAND | 2.0 | QA-002/004 |
-| E.16-05 | AI-assisted translation only after review/explicit acceptance | LOC-006, AI-012, AI-007, AI-019 | DEFER | 3.0 | QA-003/004/008 |
+| E.16-01 | Hungarian first; model/UI ready for multiple languages | LOC-001–LOC-004, WEB-001 | EXPAND | 1.0 architecture-ready; full workflow later | QA-004/005 |
+| E.16-02 | Translation keys/fallback/date-timezone/number-currency/locale SEO metadata | LOC-001–LOC-004, SEO-001, SCH-003 | EXPAND | 1.0 foundations; full locale workflow later | QA-004/005 |
+| E.16-03 | Translate Page/Content/Navigation/Theme/Template fields without overwriting another locale | LOC-001, LOC-003, WEB-001, CNT-001, DSN-008 | DEFER/EXPAND | 2.0 | QA-002/004 |
+| E.16-04 | Visible incomplete-translation status, preview and publish policy | LOC-004, WEB-005, WEB-006 | DEFER/EXPAND | 2.0 | QA-002/004 |
+| E.16-05 | AI-assisted translation only after review/explicit acceptance | LOC-003, AI-012, AI-007, AI-019 | DEFER | 3.0 | QA-003/004/008 |
 | E.17-01 | Future tenant/workspace→users/members→sites→modules structure | TEAM-001–TEAM-006, SEC-003 | DEFER | 4.0+ | QA-003/008 |
 | E.17-02 | Multiple sites in workspace with separate settings | TEAM-001, TEAM-002, SET-001–SET-003, SEC-003 | DEFER | 4.0+; current global uniqueness constraints block unreviewed rollout | QA-003/008 |
 | E.17-03 | Owner/admin/editor/designer/moderator/analyst/content/store/finance roles with granular site/module permissions | TEAM-003, TEAM-005, SEC-002, SEC-003 | DEFER | 4.0+; 1.0 RBAC baseline still mandatory | QA-003/008 |
@@ -2570,9 +2570,19 @@ The short decision record must name the problem and acceptance criteria; existin
 | E.21-05 | 3.x business/marketplace and revenue share | STO-001–STO-020, SUP-001–SUP-012, MKT-001–MKT-005, CAM-001–CAM-009, TEAM-001–TEAM-006 | MERGE | 5.0–6.0 | QA-002/003/008 |
 | E.21-06 | 4.x multi-site/teams/workspaces/roles | TEAM-001–TEAM-006, SEC-003 | MERGE | 4.0 | QA-003/008 |
 | E.21-07 | 5.x SaaS/multi-tenant/packages/billing/usage/platform admin | TEAM-006, STO-019, CAM-009, SEC-003, OPS-008 | MERGE | 4.0–5.0 | QA-003/008 |
-| E.21-08 | 6.x–10.x global ecosystem/extensions/advanced automation/AI/localization | MKT-001–MKT-005, AUT-001–AUT-014, AI-001–AI-020, LOC-001–LOC-008, §39.8–39.12 | MERGE | 6.0–10.0 | QA-002/003/008 |
+| E.21-08 | 6.x–10.x global ecosystem/extensions/advanced automation/AI/localization | MKT-001–MKT-005, AUT-001–AUT-014, AI-001–AI-020, LOC-001–LOC-004, §39.8–39.12 | MERGE | 6.0–10.0 | QA-002/003/008 |
 
-**Batch 4 result:** 69 source requirements mapped (47 E.15–E.21 bullets, 12 feature-card fields, 10 negative-test requirements). The historical phase labels are preserved as provenance; only the current §39 roadmap controls execution. Structural validation is pending; no runtime PASS is implied.
+**Batch 4 result:** 69 source requirements mapped (47 E.15–E.21 bullets, 12 feature-card fields, 10 negative-test requirements). Structural validation of the batch table found 69 unique rows, no duplicate source keys, and the initial five nonexistent LOC IDs were corrected to the four IDs actually present in §24. The historical phase labels are preserved as provenance; only the current §39 roadmap controls execution. This is structural validation, not source-text completeness or runtime PASS.
+
+
+### 37.26. P0.2 — Bullet-szintű crosswalk, batch 4 szerkezeti validáció
+
+**Ellenőrzött scope:** §37.25 táblázat, E.15–E.21 követelmények, E.20 feature-card/negative-test mezők.
+
+- Tételsorok: 69; egyedi source key-k: 69; duplikált key: 0.
+- A §24 registryben ténylegesen nem létező lokalizációs ID-ket javítottam: a kanonikus lista LOC-001–LOC-004 azonosítókat tartalmaz, ezért a crosswalk nem hivatkozhat LOC-005–LOC-008-ra.
+- A crosswalk továbbra is tervszintű leképezés. Nem bizonyítja, hogy a hivatkozott feature contractok teljesek, a történeti forrás minden alpontja szó szerint lefedett, vagy a funkciók runtime PASS állapotúak.
+- Következő batch: a történeti F.1–F.13 forrásalpontok külön kulcsokra bontása, feature-ID-k validálása a §24 registry ellen, majd a forráskulcs-szám és a hivatkozások ellenőrzése. A régi F0.1–F0.13 fázisnevek provenance-adatok, nem aktív végrehajtási pontok.
 
 ## 38. Részletes Visual Editor képességkatalógus
 
