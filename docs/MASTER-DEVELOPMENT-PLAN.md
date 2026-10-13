@@ -2027,22 +2027,25 @@ P0 csak minden kapu bizonyítékalapú PASS-a után zárható.
 
 A migrációk kódja alapján az alábbi adatobjektumok jelen vannak a schema-történetben. Ez nem helyettesíti a távoli D1 aktuális sémájának lekérdezését, a foreign key ellenőrzést vagy az összes runtime consumer feltérképezését.
 
-| Tábla / objektum | Bizonyított szerep a migrációk alapján | Site-scope / életciklus státusz |
+| Tábla / objektum | Bizonyított szerep a migrációs lánc alapján | Végső állapot / nyitott ellenőrzés |
 |---|---|---|
-| users, sessions | Felhasználók és munkamenetek | Auth domain; session lejárat és revocation külön security acceptance. |
-| sites | Site ownership alap | A sites tábla és kapcsolódó ownership migrációk léteznek; teljes tenant-szintű runtime enforcement audit nyitott. |
-| pages | Canonical oldalak, draft JSON, published snapshot, sort order és site_id | 0017 migrációban site_id NOT NULL és sites FK szerepel; a korábbi állapot és éles D1 schema külön ellenőrzendő. |
-| editor_revisions | Oldalrevíziók, verzió, dokumentum, készítő és időbélyeg | pages-hez kapcsolódó FK/lifecycle; a migráció explicit módon kezeli a két tábla közötti FK-ciklust. |
-| schedule_items / schedule_items_v2 | Canonical adásrend és később site/source mezőkkel bővített változat | A 0017 migráció schedule_items_v2 objektumot hoz létre és átmozgat; a végső táblanév és a remote schema a migráció utáni állapotban ellenőrizendő. |
-| media / media_v2 | Média metaadat és site ownership | A migrációs lánc site_id indexet/ownership mezőt kezel; az R2 objektumok, upload route-ok, törlés és usage-map teljes leltára nyitott. |
-| social_accounts / social_accounts_v2 | Külső social account kapcsolatok | Site-scope migráció igazolt; teljes provider runtime adapter-lefedettség nem következik belőle. |
-| twitch_connections / twitch_connections_v2, twitch_oauth_states / twitch_oauth_states_v2 | Twitch kapcsolat és OAuth state | 0016 site ownership mezőt/indexet ad, 0017 NOT NULL hardeninget végez; teljes token/security/live provider acceptance külön bizonyítandó. |
-| site_settings | Webhely beállításai | Jelenlegi route key='site' rekordot használ; site_id scope hiánya nyitott multi-site döntés. |
-| design_tokens, editor_components, editor_preferences | Editor/platform bővítési táblák a korábbi migrationben | A schema jelenléte nem bizonyít teljes aktív consumer/API/UI-lifecycle-t; mindegyikhez külön consumer-leltár kell. |
-| social_accounts, media, audit_log | Integrációs metadata, media metadata, audit események | Az ownership és adatretention, hozzáférés, cleanup, audit-korlátozás és R2 egyezőség teljes ellenőrzése nyitott. |
-| __e44_*_snapshot_20261007 | 0017 migráció során létrehozott átmeneti snapshot táblák | **Kiemelt ellenőrzési feladat:** meg kell vizsgálni, hogy az éles migráció utáni schema tartalmazza-e ezeket; eltávolításról csak bizonyított adatmegőrzés és migrációs/recovery döntés után lehet dönteni. |
+| users, sessions | Felhasználók, szerepek és sessionök | Auth domain; session lejárat, revocation, cookie/security és cleanup acceptance nyitott. |
+| sites | Site ownership alap | A sites tábla létezik; minden tenant runtime enforcement és alapértelmezett site kiválasztása külön ellenőrzendő. |
+| pages | Canonical oldalak, content_json, published snapshot, is_published, sort_order, site_id | 0017 újraépíti, site_id NOT NULL és sites FK; az aktuális remote D1 schema külön lekérdezéssel igazolandó. |
+| editor_revisions | Oldalverziók, dokumentum JSON, szerző/időbélyeg és page FK | 0017 újraépíti a pages FK-ciklus kezelése mellett; a törlési/retention/rollback szerződés tesztelendő. |
+| schedule_items | Canonical adásrend; source, source_presence, recurring és site_id mezők | 0017 schedule_items_v2 táblából visszanevezi canonical schedule_items-re; a végső név nem schedule_items_v2. |
+| media | Metaadat, object_key, original_name, MIME, size, alt text, site_id | 0017 media_v2-ről visszanevezi media-re; R2 upload/download/delete és usage-map consumer audit nyitott. |
+| social_accounts | Külső social profil metadata és láthatóság/sorrend | 0017 social_accounts_v2-ről visszanevezi social_accounts-re; teljes provider adapter-képesség nem következik a táblából. |
+| twitch_connections | Titkosított tokenmezők, broadcaster, status, refresh lock, site_id | 0017 twitch_connections_v2-ről visszanevezi twitch_connections-re; token-életciklus és remote ownership acceptance nyitott. |
+| twitch_oauth_states | Hash-elt OAuth state, user, expiry és site_id | 0017 twitch_oauth_states_v2-ről visszanevezi twitch_oauth_states-re; lejárat/cleanup és replay-negative teszt nyitott. |
+| schedule_sync_state | Twitch/schedule sync státusz és utolsó futás/szinkron eredmény | 0013 hozza létre; minden mező fogyasztóját, retry-t és státuszváltást a sync service-szel egyeztetni kell. |
+| site_settings | Webhely-beállítások, jelenleg key='site' rekord | Jelenlegi route key-alapú singleton; site_id-scope hiánya nyitott multi-site döntés. |
+| design_tokens, editor_components, editor_preferences | Korábbi Editor/platform design és preference adatok | Migrációban jelen vannak; aktív API/UI consumer, canonical registry és lifecycle nincs ebből önmagában igazolva. |
+| system_page_content | Korábbi system-page tartalom | A migrációs láncban létrehozott legacy adatobjektum; a hozzá kapcsolódó route modulok nem regisztráltak a fő routerben. Törlés/migráció előtt adatmegőrzési döntés kell. |
+| audit_log | Audit események | Az alapmigráció hozza létre; teljes eseménytaxonómia, hozzáférés, retention és export acceptance nyitott. |
+| __e44_pages_snapshot_20261007, __e44_editor_revisions_snapshot_20261007 | 0017 átmeneti recovery snapshotok | A 0017 migráció a sikeres visszatöltés után explicit DROP TABLE utasítással törli őket; nem kezelhetők elvárt végleges táblaként. Remote ellenőrzés csak akkor szükséges, ha a migráció futása/eredménye kétséges. |
 
-**P0.3 következő technikai feladata:** migrációs sorrendből determinisztikusan rekonstruálni a végső schema-t, majd ezt összevetni a remote D1 schema-val; az összes SQL-ben előforduló tábla/mező/consumer listát ki kell nyerni, és domainenként rögzíteni az olvasókat, írókat, owner-t, site scope-ot, FK-kat, lifecycle-t és teszteket. A fenti snapshot-tábla megjegyzés nem állítja, hogy azok a remote D1-ben biztosan megmaradtak; csak azt jelzi, hogy a migráció létrehozza őket, ezért a végeredmény ellenőrzése szükséges.
+**P0.3 következő technikai feladata:** migrációs sorrendből determinisztikusan rekonstruálni a végső schema-t, majd ezt összevetni a remote D1 schema-val; az összes SQL-ben előforduló tábla/mező/consumer listát ki kell nyerni, és domainenként rögzíteni az olvasókat, írókat, owner-t, site scope-ot, FK-kat, lifecycle-t és teszteket. A 0017 migráció forrása szerint az átmeneti snapshotokat a sikeres adat-visszatöltés után explicit törli. A remote D1-ben fennmaradó snapshot csak sikertelen/részleges migráció vagy eltérő futási állapot gyanúja esetén vizsgálandó.
 
 
 ### 37.9. P0.2 — 271 soros történeti követelmény-crosswalk (első megfeleltetési kör)
