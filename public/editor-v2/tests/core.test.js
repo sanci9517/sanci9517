@@ -711,3 +711,31 @@ test('failed atomic batch restores selection, redo history, and persistence stat
   assert.deepEqual(state.persistence, persistenceBefore);
   assertValidEditorDocument(state.document);
 });
+
+
+test('non-atomic batch records its successful prefix as one undoable history entry', () => {
+  const state = createEditorState();
+  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.SECTION } });
+  const sectionId = state.selection.primaryId;
+  const historyBefore = state.history.past.length;
+
+  assert.throws(() => executeBatch(state, [
+    { type: 'element.add', payload: { type: NODE_TYPES.TEXT, parentId: sectionId } },
+    { type: 'hierarchy.reparent', payload: { nodeId: sectionId, parentId: 'missing-parent' } }
+  ], { label: 'keep successful prefix', atomic: false }));
+
+  const page = activePage(state);
+  assert.equal(page.nodes[sectionId].children.length, 1);
+  const textId = page.nodes[sectionId].children[0];
+  assert.equal(page.nodes[textId].type, NODE_TYPES.TEXT);
+  assert.equal(state.history.past.length, historyBefore + 1);
+  assert.equal(state.history.past.at(-1).action.type, 'transaction');
+  assert.equal(state.persistence.dirty, true);
+  execute(state, { type: 'history.undo' });
+  assert.deepEqual(activePage(state).nodes[sectionId].children, []);
+  assert.deepEqual(state.selection, { ids: [sectionId], primaryId: sectionId });
+  execute(state, { type: 'history.redo' });
+  assert.deepEqual(activePage(state).nodes[sectionId].children, [textId]);
+  assert.deepEqual(state.selection, { ids: [textId], primaryId: textId });
+  assertValidEditorDocument(state.document);
+});
