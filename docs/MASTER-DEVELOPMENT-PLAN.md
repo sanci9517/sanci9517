@@ -6120,7 +6120,7 @@ The historical H28/H29 rows were updated to reflect the canonical registry defin
 
 
   
-### 41.3.49. P0.2 — C.23 resource, security, data-binding and operations crosswalk narrowing (2026-10-13)
+### 41.3.50. P0.2 — C.23 resource, security, data-binding and operations crosswalk narrowing (2026-10-13)
 
 **Registry-based review:** narrowed broad domain ranges where the source bullet names a specific set of capabilities. This is not a removal of the broader product scope: every original source bullet remains intact, and unselected capabilities remain governed by their own canonical IDs/phase rows.
 
