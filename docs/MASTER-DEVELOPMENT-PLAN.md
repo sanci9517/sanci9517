@@ -3848,3 +3848,17 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 | ARCH-3468 | 3468 | - A későbbi creator app képességei: live status, alerts, schedule changes, analytics, moderation és content approval. Ez nem jelent külön Page Modelt vagy párhuzamos backend domaint; ugyanazokat a canonical API-kat és jogosultságokat használja. | WEB-001–WEB-032, TEAM-001–TEAM-006, SEC-002 | PROPOSED — semantic crosswalk to validate against the exact source and feature contracts; permissions, phase, dependency, tests, and acceptance evidence remain open |
 | ARCH-3471 | 3471 | - Starter template-kategóriák: Gaming, Just Chatting, Esports, Variety, VTuber, Music, Podcast, Creator Business és Merch-first. | DSN-001–DSN-018, EDT-024–EDT-025 | PROPOSED — semantic crosswalk to validate against the exact source and feature contracts; permissions, phase, dependency, tests, and acceptance evidence remain open |
 | ARCH-3472 | 3472 | - Később creator-created template, component/block/theme/overlay/OBS scene/digital asset marketplace, licenc, kompatibilitás, verzió, preview, rating/review és revenue share. A marketplace csak külön jogosultsági, moderációs, fizetési és licencelési scope után aktív. | MKT-001–MKT-005, DSN-001–DSN-018, OBS-001–OBS-010, STO-001–STO-020, CAM-009, SEC-002 | PROPOSED — semantic crosswalk to validate against the exact source and feature contracts; permissions, phase, dependency, tests, and acceptance evidence remain open |
+
+### 41.3.6. P0.2 — C.23 + F.1–F.13 crosswalk structural recheck (2026-10-13)
+
+**Scope checked:** the 210 C.23 source-bullet rows and 100 F.1–F.13 archive-bullet rows in §41.3.5, against the 359 IDs declared in §24.
+
+- C.23 rows: 210; F archive rows: 100; total source rows checked: 310.
+- Unique source keys: 310/310. F archive rows use `ARCH-<archive-line>` keys so they cannot collide with the separate F.1–F.13 capability crosswalk in §37.27.
+- Candidate feature coverage: all 359/359 declared feature IDs are referenced by at least one C.23/F archive row.
+- Structural validation: 0 duplicate source keys, 0 unmapped/TBD mapping cells in these 310 rows, and 0 references to undeclared feature IDs or invalid range endpoints.
+- Corrected nine C.23 SEO ranges from `SEO-001–010` to the actual declared range `SEO-001–005`.
+- **Interpretation limit:** this is structural validation of proposed crosswalks, not proof of semantic completeness. The mappings remain proposed until each is compared against the exact source meaning and canonical feature contract. In particular, F archive rows still require item-level permission, owner, phase, dependency, test, negative-test, acceptance, and evidence decisions.
+- The original `00/A` and `00.9–00.9.6.B` source set has not yet been fully recovered and reconciled. Coverage in this table does not substitute for that missing-source reconciliation or establish P0.2 PASS.
+
+**Current result:** P0.2 remains **IN PROGRESS / NOT PASS**. Continue source-by-source semantic review and contract completion; do not start parallel feature implementation or request the final user feature-list review yet.
