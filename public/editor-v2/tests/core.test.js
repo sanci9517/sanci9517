@@ -684,3 +684,30 @@ test('transaction rollback restores selection as well as the document', () => {
   assert.deepEqual(state.selection, { ids: [sectionId], primaryId: sectionId });
   assertValidEditorDocument(state.document);
 });
+
+
+test('failed atomic batch restores selection, redo history, and persistence state', () => {
+  const state = createEditorState();
+  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.SECTION } });
+  const sectionId = state.selection.primaryId;
+  execute(state, { type: 'element.add', payload: { type: NODE_TYPES.TEXT, parentId: sectionId } });
+  execute(state, { type: 'history.undo' });
+
+  const documentBefore = structuredClone(state.document);
+  const selectionBefore = structuredClone(state.selection);
+  const pastBefore = structuredClone(state.history.past);
+  const futureBefore = structuredClone(state.history.future);
+  const persistenceBefore = structuredClone(state.persistence);
+
+  assert.throws(() => executeBatch(state, [
+    { type: 'element.add', payload: { type: NODE_TYPES.BUTTON, parentId: sectionId } },
+    { type: 'hierarchy.reparent', payload: { nodeId: sectionId, parentId: 'missing-parent' } }
+  ], { label: 'must rollback atomically' }));
+
+  assert.deepEqual(state.document, documentBefore);
+  assert.deepEqual(state.selection, selectionBefore);
+  assert.deepEqual(state.history.past, pastBefore);
+  assert.deepEqual(state.history.future, futureBefore);
+  assert.deepEqual(state.persistence, persistenceBefore);
+  assertValidEditorDocument(state.document);
+});
