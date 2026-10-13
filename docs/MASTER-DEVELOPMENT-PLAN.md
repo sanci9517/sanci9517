@@ -1948,7 +1948,7 @@ PWA/offline/mobile; provider capabilities/Discord roles; email/CRM/consent; Stre
 - **P0.2:** IN PROGRESS — a 271 történeti kulcshoz elkészült a soronkénti MAPPED DRAFT crosswalk (§41), de a szemantikai megfeleltetés teljes felülvizsgálata, a döntések indoklása és a tételenkénti permission/dependency/acceptance contract még nincs lezárva.
 - **P0.3:** IN PROGRESS — az első kódalapú domain/adatforrás-leltár elkészült; a teljes tábla-, owner-, lifecycle- és consumer-térkép még hiányzik.
 - **P0.4:** IN PROGRESS — az első router/static surface-leltár elkészült; a teljes menü-/route-/block-lefedettség és legacy/placeholder besorolás még hiányzik.
-- **P0.5:** NOT STARTED — provider capability/benchmark bizonyítékok.
+- **P0.5:** IN PROGRESS — az első hivatalos provider-dokumentációs capability review rögzítve; a teljes feature-to-endpoint/scope/quota/approval matrix és élő integrációs acceptance még nyitott.
 - **P0.6:** NOT STARTED — dependency- és acceptance-freeze.
 
 P0 csak minden kapu bizonyítékalapú PASS-a után zárható.
@@ -2327,6 +2327,31 @@ A migrációk kódja alapján az alábbi adatobjektumok jelen vannak a schema-t�
 | H34.22 | user validation | QA-009 | QA | later phase / gated | PROVISIONAL |
 
 **P0.2 lezárási feltételei:** minden sor forráskulcsát vissza kell egyeztetni az eredeti 19–34 szakaszokkal; minden javasolt ID-nál ellenőrizni kell a feature contractot; több ID-t igénylő soroknál szét kell bontani az acceptance-eket; minden sorhoz user outcome, dependency, lifecycle, permission, pozitív/negatív teszt és runtime evidence szükséges. Ez az első tételes reconciliációs munkalap, nem a P0.2 PASS bizonyítéka.
+
+
+### 37.10. P0.5 — Hivatalos provider-capability review (első bizonyítékkör)
+
+**Ellenőrzés dátuma:** 2026-10-13. Ez dokumentációs előszűrés, nem provider app-approval, nem működő kapcsolat, nem production teszt, és nem végleges implementációs ígéret. A provider-képesség mindig az aktuális API-dokumentáció, a konkrét app jóváhagyása, engedélyezett scope, token típusa, rate limit és tesztelt endpoint alapján minősíthető.
+
+| Provider | Hivatalos forrás / igazolt képesség | Architekturális következmény | Jelenlegi besorolás |
+|---|---|---|---|
+| Twitch | API reference tartalmazza a stream/channel adatokat, a VOD/clip és a schedule műveleteket; a schedule olvasása app- vagy user-tokenhez kötött, schedule-módosítás user tokennel és \x60channel:manage:schedule\x60 scope-pal jár. Forrás: https://dev.twitch.tv/docs/api/reference és https://dev.twitch.tv/docs/api/schedule | Meglévő Twitch OAuth/schedule adaptert endpointonként kell capability registrybe leképezni. Az olvasás, írás, viewer/subscriber adat és VOD/clip jogosultság külön scope/approval acceptance. | KÓDBAN RÉSZBEN MEGLÉVŐ; feature-szintű runtime acceptance nyitott. |
+| YouTube | A Data API külön csatorna-, videó- és élő közvetítési erőforrásokat ad; kvótaalapú. A hivatalos leírás szerint az alapkvóta jellemzően 10 000 egység/nap a legtöbb végpontra, a search.list és videos.insert külön keretet kap; a kvóta változhat. Forrás: https://developers.google.com/youtube/v3/getting-started | Adapterben quota accounting, retry/backoff, pagination, API-error normalization és capability-level disabled states szükséges. Publikálás nem vállalható app- és quota-ellenőrzés nélkül. | PLANNED / CAPABILITY REVIEW REQUIRED. |
+| TikTok | A Display API profilt és nyilvános videómetaadatot szolgáltat; a Content Posting API külön jogosultságot és video.publish scope-ot igényel. Az auditálatlan kliens közvetlenül publikált tartalma privát megtekintésre korlátozódhat; a dokumentáció külön domain-verifikációs és rate-limit feltételeket is leír. Forrás: https://developers.tiktok.com/docs/en/display-api-overview és https://developers.tiktok.com/docs/en/content-posting-api-get-started | Read/display és publish két külön capability. Közvetlen publikálás csak jóváhagyás, UX-consent, scope, domain és status-polling után; fallback lehet export/hand-off, nem hamis „published” státusz. | PLANNED / CAPABILITY-GATED. |
+| Discord | Interactions érkezhetnek Gateway WebSocketen vagy HTTP endpointon; HTTP esetén PING handshake és Ed25519 aláírás-ellenőrzés szükséges. A Gateway valós idejű eseményekhez tartós kapcsolatot használ. Forrás: https://github.com/discord/discord-api-docs/blob/main/developers/platform/interactions.mdx és https://github.com/discord/discord-api-docs/blob/main/developers/events/gateway.mdx | Egyszerű slash-command/interactions endpoint kezelhető HTTP modellel; tartós Gateway event fogyasztást nem szabad stateless Worker route-nak feltételezni. Durable Objects/queue csak konkrét persistent/realtime igény esetén, security- és reconnect-tervvel. | PLANNED / MODE-DEPENDENT. |
+| Kick | Hivatalos Public API dokumentáció létezik, OAuth, csatorna- és kategória-végpontokkal, valamint bővülő API-val. Forrás: https://api.kick.com/swagger/index.html és https://docs.kick.com | A roadmap capability-gated adaptert tartalmaz; minden műveletet endpoint/scope/approval szerint kell validálni. A nyilvános API létezése nem bizonyítja, hogy minden Twitch-funkció megfelelője elérhető. | PLANNED / CAPABILITY REVIEW REQUIRED. |
+
+**Kötelező provider-mátrix minden INT/LIV/OBS/CNT/COM/AUT funkcióhoz:**
+1. Pontos user outcome és endpoint/művelet.
+2. Read/write capability, token típusa, OAuth scope és app-review/verification státusz.
+3. Rate limit/quota, pagination, retry/backoff, idempotency és provider error mapping.
+4. Webhook vagy polling mód, aláírás/replay defense, freshness/stale fallback.
+5. Személyes/adatvédelmi határ, token titkosítás/rotáció/redaction, site/user ownership.
+6. Provider sandbox/test account és pozitív/negatív teszt.
+7. Graceful fallback: kézi adat, külső link vagy export; a UI nem állíthat sikeres műveletet bizonyíték nélkül.
+8. Acceptance evidence és utolsó felülvizsgálat dátuma.
+
+**P0.5 nem PASS:** a fenti áttekintés csak a fő provider-korlátokat és architekturális döntéseket rögzíti. Az összes feature ID-t a konkrét endpointokkal, scope-okkal, approval feltételekkel, quota-val, rate limittel és teszttervvel összekötő mátrix még hátravan.
 
 ## 38. Részletes Visual Editor képességkatalógus
 
