@@ -1,17 +1,17 @@
-**ACTIVE_POINT_ID:** `F0.2-ADMIN-NAVIGATION-GLOBAL-SHELL-ACCEPTANCE`
-**ACTIVE_POINT_STATUS:** `ACTIVE — az Admin/Creator Center globális navigációjának, site contextjének, route-jainak, jogosultsági és állapotjelzéseinek valós ellenőrzése és javítása`
-**ACTIVE_POINT_TITLE:** Admin navigáció és globális shell acceptance
-**ACTIVE_SUBPOINT_ID:** `F0.2-ADMIN-NAVIGATION-GLOBAL-SHELL-ACCEPTANCE`
-**ACTIVE_SUBPOINT_STATUS:** `ACTIVE — a canonical Admin/navigation, dashboard-link és auth/role contract tesztek CI PASS; az éles friss builden a desktop/tablet/mobil billentyűzetes smoke, a valós 401/403 útvonalak és különösen az Android Chrome tablet-login elfogadása még nyitott. F0.3 csak ezek bizonyítékos lezárása után indítható.`
-**PREVIOUS_GATE:** `F0.1 — CLOSED / PASS` (PR #7 squash merge: `047d66f78cc4bdd6c7b50ddd83140d3ddf4aae48`)
-**NEXT_GATE:** `F0.2 Admin navigation + global shell acceptance → F0.3 Editor foundation + first vertical slice → F0.4 Visual Builder/Layers/Inspector → további F0.x pontok szigorú sorrendben; M0 audit PASS nem előfeltétel`
+**ACTIVE_POINT_ID:** `F0.3-EDITOR-FOUNDATION-FIRST-VERTICAL-SLICE`
+**ACTIVE_POINT_STATUS:** `ACTIVE — a canonical Editor v2 Page Model és command/history/persistence vertikális szeletének ellenőrzése és megbízhatósági javítása`
+**ACTIVE_POINT_TITLE:** Editor foundation és első végig működő szerkesztési szelet
+**ACTIVE_SUBPOINT_ID:** `F0.3-EDITOR-HISTORY-SELECTION-INTEGRITY`
+**ACTIVE_SUBPOINT_STATUS:** `ACTIVE — az undo/redo és tranzakció rollback a dokumentum mellett a kijelölési állapotot is determinisztikusan állítsa vissza; az Android Chrome tabletes Admin-belépés külön, nyitott, nem blokkoló ismert hibaként elhalasztva a felhasználó kérésére. F0.2 egyéb útvonal/navigációs elfogadását a felhasználó jelenleg megfelelőnek jelezte; a tabletes hiba nem állítható megoldottnak.`
+**PREVIOUS_GATE:** `F0.2 — USER-ACCEPTED WITH DEFERRED NON-BLOCKING ISSUE` (Android Chrome tablet-login külön követés alatt; nem igazoltan javított)
+**NEXT_GATE:** `F0.3 Editor foundation + first vertical slice → F0.4 Visual Builder/Layers/Inspector → további F0.x pontok szigorú sorrendben; a tablet-login hiba külön visszatérési tétel`
 **PARALLEL_WORKSTREAMS:** `0`
 
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 **Verzió:** MASTER-2.77 — végleges termékleírás, Admin UI-specifikáció és egyetlen függőség-alapú fejlesztési sorrend; a 2.75–2.76 roadmapek történetiek.  
 **Frissítve:** 2026-10-13.  
 **Dokumentum státusza:** ez az egyetlen végrehajtási igazságforrás.
-**Audit / implementation baseline:** GitHub `v2/foundation`, commit `bf19963b12b4abe34e5e4e56f0d21692e72be4b6` (2026-10-13; F0.2 canonical navigation, login-session handoff, dashboard link és auth/role contract tesztek integrálva; production acceptance nyitott). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
+**Audit / implementation baseline:** GitHub `v2/foundation`, commit `44f42403eca7f621920d880492ea439c4a4fae42` (2026-10-13; F0.2 navigation/login/role contract integrálva; a felhasználó a tabletes belépési hibát külön elhalasztotta, a többi acceptance-t jelenleg megfelelőnek jelezte). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
 
 ### Jelenlegi igazolt állapot
 Ez a blokk kizárólag az E4/E5/E6 korábban bizonyított lezárt gate-jeit rögzíti. Az M0 auditfázist a felhasználó döntése lezárta / superseded állapotba helyezte; ez nem runtime PASS.
@@ -4350,3 +4350,24 @@ F0.2 DoD:
 - [ ] A valós böngészős 401/403 jogosultsági útvonalak és közvetlen route-kérések production acceptance-e még a F0.2 végső kapujának része.
 - [ ] Éles Android Chrome tablet-login acceptance és teljes mobil/keyboard smoke.
 
+
+
+## 2.77.9.N — F0.2 user acceptance with deferred Android tablet-login issue and F0.3 activation — 2026-10-13
+
+**Állapot: F0.2 FELHASZNÁLÓI ELFOGADÁS A TABLETES BELÉPÉSI HIBA KIVÉTELÉVEL; F0.3 AKTÍV.**
+
+A felhasználó egyértelmű döntése: „A tablet belépés később a többi egyelőre jó aztán haladunk a funkciók fejlesztésével.” Ennek megfelelően:
+- [x] A felhasználó a többi jelenlegi Admin/navigációs működést elfogadta, és a funkciófejlesztés folytatását kérte.
+- [x] Az Android Chrome tabletes login-visszairányítás nyitott, külön követendő, nem blokkoló ismert hiba; a megoldottsága nincs állítva.
+- [x] A végrehajtás az F0.3 Editor foundation első funkcionális szeletére vált; ez nem törli a korábbi F0.2 acceptance bejegyzéseket és nem módosítja a szerveroldali auth/RBAC határokat.
+- [ ] A tabletes hibát később valós eszközön újra kell ellenőrizni; ha fennáll, célzott gyökérok-elemzés és regressziós teszt szükséges.
+
+## 2.77.9.O — F0.3 undo/redo selection integrity — IMPLEMENTING
+
+**Cél:** az Editor v2 központi command/history rétegében a dokumentum és a kijelölés állapota együtt, determinisztikusan álljon vissza undo, redo, transaction commit/rollback és atomic batch rollback esetén. Ez a meglévő canonical Page Model-t erősíti; nem vezet be második szerkesztőt vagy párhuzamos adatmodellt.
+
+**DoD:**
+- [ ] Undo/redo az adott történeti állapothoz tartozó kijelölést állítja vissza; nem maradhat kijelölés egy már nem létező node ID-ra.
+- [ ] Transaction rollback és atomic batch failure a dokumentum mellett az eredeti kijelölést is visszaállítja.
+- [ ] Az Editor Core tesztek, typecheck és releváns regression workflow-k PASS.
+- [ ] A módosítás kizárólag PR-on keresztül kerülhet a `v2/foundation` ágba; éles runtime acceptance külön marad.
