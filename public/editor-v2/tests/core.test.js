@@ -138,6 +138,10 @@ test('property registry exposes extensible inspector groups and properties', () 
   assert.ok(listPropertyGroups().some((group) => group.id === 'typography'));
   assert.ok(listPropertyGroups().some((group) => group.id === 'responsive'));
   assert.equal(getProperty('size.width').responsive, true);
+  assert.equal(getProperty('size.width').key, 'width');
+  assert.equal(getProperty('size.width').command, 'responsive.set');
+  assert.equal(getProperty('background.color').key, 'backgroundColor');
+  assert.equal(getProperty('radius.all').key, 'borderRadius');
   assert.equal(getProperty('content.text').command, 'element.update');
   assert.ok(listProperties({ group: 'size' }).some((property) => property.id === 'size.width'));
 });
@@ -301,6 +305,12 @@ test('content, style and responsive commands mutate only through the command eng
   assert.equal(node.props.content, 'Sanci');
   assert.equal(node.style.color, '#fff');
   assert.equal(node.responsive.mobile.fontSize, '18px');
+  assert.equal(hasResponsiveOverride(node.responsive, 'fontSize', 'mobile'), true);
+
+  execute(state, { type: 'responsive.set', payload: { nodeId: id, device: 'mobile', patch: { fontSize: undefined } } });
+  assert.equal(Object.hasOwn(node.responsive.mobile, 'fontSize'), false);
+  assert.equal(hasResponsiveOverride(node.responsive, 'fontSize', 'mobile'), false);
+  assert.equal(node.style.fontSize, '24px');
   assertValidEditorDocument(state.document);
 });
 
