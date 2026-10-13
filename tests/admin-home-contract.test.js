@@ -121,14 +121,14 @@ test("every enabled sidebar destination is a canonical, authenticated Admin rout
   assert.ok(destinations.length > 0, "sidebar must expose at least one active destination");
   for (const destination of destinations) {
     assert.ok(
-      ["/admin", "/admin/editor"].includes(destination),
+      ["/admin/home", "/admin/editor"].includes(destination),
       `unexpected active sidebar destination: ${destination}`
     );
   }
 
   const activeControls = [...nav.matchAll(/<a\b([^>]*)>/g)].map((match) => match[1]);
   assert.ok(activeControls.every((attrs) => /class="nav-item"/.test(attrs)));
-  assert.match(nav, /href="\\/admin"[^>]*aria-current="page"/);
+  assert.match(nav, /href="\\/admin\\/home"[^>]*aria-current="page"/);
   assert.match(nav, /href="\/admin\/editor"/);
   assert.match(nav, /<button\b[^>]*disabled[^>]*data-nav-label="Média erőforrások/);
   assert.doesNotMatch(nav, /<button\b(?![^>]*\bdisabled\b)[^>]*data-nav-label=/);
