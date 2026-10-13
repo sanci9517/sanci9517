@@ -1795,7 +1795,9 @@ Mielőtt P0 lezárul:
 
 ---
 
-## 33. Végrehajtási napló — kezdeti állapot
+## 33. Végrehajtási napló — kezdeti baseline (történeti snapshot)
+
+**Megjegyzés:** az alábbi táblázat a terv összeállításakor rögzített kezdeti állapotot őrzi. Nem írja felül az aktuális státuszt; a jelenlegi P0 státusz egyetlen mérvadó helye a 37.3. fejezet, a friss bizonyítékok pedig a 37.4–37.8. fejezetben vannak.
 
 | Pont | Állapot | Kötelező bizonyíték |
 |---|---|---|
