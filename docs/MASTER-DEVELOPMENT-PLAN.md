@@ -2574,15 +2574,15 @@ The short decision record must name the problem and acceptance criteria; existin
 | E.21-07 | 5.x SaaS/multi-tenant/packages/billing/usage/platform admin | TEAM-006, STO-019, CAM-009, SEC-003, OPS-008 | MERGE | 4.0–5.0 | QA-003/008 |
 | E.21-08 | 6.x–10.x global ecosystem/extensions/advanced automation/AI/localization | MKT-001–MKT-005, AUT-001–AUT-014, AI-001–AI-020, LOC-001–LOC-004, §39.8–39.12 | MERGE | 6.0–10.0 | QA-002/003/008 |
 
-**Batch 4 result:** 69 source requirements mapped (47 E.15–E.21 bullets, 12 feature-card fields, 10 negative-test requirements). Structural validation of the batch table found 69 unique rows, no duplicate source keys, and the initial five nonexistent LOC IDs were corrected to the four IDs actually present in §24. The historical phase labels are preserved as provenance; only the current §39 roadmap controls execution. This is structural validation, not source-text completeness or runtime PASS.
+**Batch 4 result:** 59 source requirements mapped (47 E.15–E.21 bullets, including the 10 negative-test requirements, plus 12 feature-card fields). The historical phase labels are preserved as provenance; only the current §39 roadmap controls execution. This is structural validation, not source-text completeness or runtime PASS.
 
 
 ### 37.26. P0.2 — Bullet-szintű crosswalk, batch 4 szerkezeti validáció
 
 **Ellenőrzött scope:** §37.25 táblázat, E.15–E.21 követelmények, E.20 feature-card/negative-test mezők.
 
-- Tételsorok: 69; egyedi source key-k: 69; duplikált key: 0.
-- A §24 registryben ténylegesen nem létező lokalizációs ID-ket javítottam: a kanonikus lista LOC-001–LOC-004 azonosítókat tartalmaz, ezért a crosswalk nem hivatkozhat LOC-005–LOC-008-ra.
+- Tételsorok: 59; egyedi source key-k: 59; duplikált key: 0.
+- A locale coverage audit két valódi követelményrést talált, ezért LOC-005 (translation completeness/preview/publish) és LOC-006 (AI-assisted translation review/approval) bekerült a §24 registrybe. LOC-007/LOC-008 nincs definiálva, és nem hivatkozható.
 - A crosswalk továbbra is tervszintű leképezés. Nem bizonyítja, hogy a hivatkozott feature contractok teljesek, a történeti forrás minden alpontja szó szerint lefedett, vagy a funkciók runtime PASS állapotúak.
 - Következő batch: a történeti F.1–F.13 forrásalpontok külön kulcsokra bontása, feature-ID-k validálása a §24 registry ellen, majd a forráskulcs-szám és a hivatkozások ellenőrzése. A régi F0.1–F0.13 fázisnevek provenance-adatok, nem aktív végrehajtási pontok.
 
