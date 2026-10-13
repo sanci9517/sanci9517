@@ -41,6 +41,19 @@ test("dashboard reads real canonical APIs instead of hard-coded creator metrics"
   assert.match(dashboard, /A provider állapota nem érhető el/);
 });
 
+test("dashboard offers a purple-accented light/dark theme toggle", () => {
+  assert.match(dashboard, /id="themeToggle"/);
+  assert.match(dashboard, /data-theme="light"/);
+  assert.match(dashboard, /sanci9517-admin-theme/);
+  assert.match(dashboard, /--accent: #c5a0ff/);
+});
+
+test("dashboard keeps planned Creator OS areas discoverable", () => {
+  for (const area of ["Design Studio", "Stream Studio", "Publikálás", "Közösség", "Analitika", "Üzlet és tagság", "Automatizálás", "VOD és rövid videók", "AI-asszisztens", "Nyelvek és lokalizáció", "Fejlesztői eszközök"]) {
+    assert.ok(dashboard.includes(area), `missing planned module: ${area}`);
+  }
+});
+
 test("dashboard includes responsive, keyboard and reduced-motion affordances", () => {
   assert.match(dashboard, /@media \(max-width: 900px\)/);
   assert.match(dashboard, /@media \(max-width: 600px\)/);
