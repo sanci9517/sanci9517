@@ -1190,6 +1190,30 @@ A végső, felhasználónak átadandó **teljes funkciókatalógus** csak a fent
 5. Az archívumokban felsorolt lock/hide, copy/paste, multi-select, grouping, responsive, media upload/replace/archive, revision/restore, SEO, security, integrations, OBS, VOD/Clips/Shorts, analytics, automation, teams/SaaS és marketplace képességek a jelenlegi E/F katalógus megfelelő részeiben maradnak. A történeti checklist státusz önmagában nem jelent runtime készültséget.
 6. A streamer- és tartalomterv további explicit részletei is megmaradnak: hiteles Twitch player/live állapot, aktuális játék, provider által engedélyezett nézőszám/követő/feliratkozó metrikák; VOD/kiemelt tartalom és game-list/card; továbbá a későbbi clip/Short folyamat megjelöléssel, mentéssel, vágási pontokkal, vertical formátummal, felirat/cím/hook előkészítéssel és exporttal. A beszédaktivitás/csend, chat, mikrofon/audio, OBS/streamminőség és heti összefoglaló a későbbi Stream Intelligence scope-ja, nem 1.0-kész állapot.
 
+**Történeti ledger lefedettségi ellenőrzés (2026-10-13):** a MASTER-ben a H19–H34 tartomány 16 fejezete alatt 271 különböző történeti azonosító található. Mindegyik ID két komplementer táblázati előfordulással rendelkezik: a régebbi, tömör történeti inventoryval és az újabb, részletes owner/surface/phase/contract/status/evidence ledgerrel. Ezért a 542 sor nem 542 külön feature-t jelent. A részletes ledger 271/271 sora minden mezőt kitölt; az azonosítók és fejezetek lefedettségét az alábbi számlálás ellenőrzi.
+
+| Történeti fejezet | Különálló ID-k | Canonical témakör (tájékoztató, nem készültségi állapot) |
+|---|---:|---|
+| H19 | 40 | Resource / Asset Library |
+| H20 | 36 | Dynamic Data / binding |
+| H21 | 44 | Platform integrations |
+| H22 | 38 | Schedule / VOD / Clips / Shorts |
+| H23 | 40 | Templates / Components / Symbols |
+| H24 | 26 | Themes / Design System |
+| H25 | 24 | SEO / public quality |
+| H26 | 24 | Forms / communication |
+| H27 | 38 | Creator Center / Admin |
+| H28 | 34 | Visual Editor capabilities |
+| H29 | 20 | Shared actions / governance |
+| H30 | 28 | Security / permissions |
+| H31 | 28 | Analytics / operations |
+| H32 | 50 | SANCI AI / creator intelligence |
+| H33 | 26 | Test / release gates |
+| H34 | 46 | Historical extension proposals / validation |
+| **Összesen** | **271 különálló ID** | **542 sor a két komplementer inventoryban; minden H19–H34 csoport jelen van** |
+
+A H34 sorai között folyamatlépések/javaslatok is vannak, nem mind önálló felhasználói funkció. Ezeket nem szabad termékfeature-ként megszámolni vagy eltávolítani: a megfelelő canonical ownerhez, roadmap-fázishoz és acceptance-hez kell rendelni, vagy külön nyitott döntésként megőrizni.
+
 **Fennmaradó teljességi szabály:** a forrásdokumentumok áttekintése nem jogosít fel egyetlen tétel hallgatólagos elhagyására. A 01–140 preservation matrix és a H19–H34 ledger megőrzött nyomkövetési alap; ha a részletes, soronkénti kétirányú megfeleltetés során bármelyik tétel nem rendelhető egyértelmű UI-hoz, canonical ownerhez, fázishoz és acceptance-hez, azt `UNMAPPED REQUIREMENT` nyitott tételként kell rögzíteni. Ez a korrekciós munka nem módosítja a F0.4 aktív státuszát és nem enged párhuzamos implementációt.
 
 ---
