@@ -3862,3 +3862,21 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 - Source-recovery check against `docs/archive/MASTER-DEVELOPMENT-PLAN-2026-10-13.md` found the preserved `00.9.6.C/D/E/F` chapters and a partial `00/A.2.2` historical DoD block, but not a complete original `00/A` source or a `00.9.6.B` chapter. The archive itself explicitly notes that earlier `00/A` and `00.9–00.9.6.B` titles are not present in the current MASTER form. The historical `aedb2ea` version of `docs/MASTER-DEVELOPMENT-PLAN.md` also does not contain those sections. The exact missing originals must therefore be located in repository history/archived files or marked as unrecovered; their contents must not be inferred from C/D/E/F. Coverage in this table does not substitute for that missing-source reconciliation or establish P0.2 PASS.
 
 **Current result:** P0.2 remains **IN PROGRESS / NOT PASS**. Continue source-by-source semantic review and contract completion; do not start parallel feature implementation or request the final user feature-list review yet.
+
+### 41.3.7. P0.2 — Source-text integrity and focused semantic corrections (2026-10-13)
+
+**Forrás-ellenőrzés:** a §41.3.5-ben szereplő 210 C.23 tétel szövege normalizált, whitespace/Markdown-formázás-független összevetésben mind a 210 esetben megtalálható a `docs/archive/MASTER-DEVELOPMENT-PLAN-2026-10-13.md` fájlban. A 100 `ARCH-<line>` tétel szövege ugyanezzel a módszerrel 100/100 esetben megtalálható az archív MASTER-ben. Ez a szöveg-provenance ellenőrzése; nem igazolja önmagában a mapping szemantikai helyességét.
+
+**A célzott szemantikai felülvizsgálatban javított megfeleltetések:**
+- `C.23.1-04`: a zoom/viewport funkcióhoz bekerült az `EDT-007`.
+- `C.23.2-08`: érvénytelen preset/schema hibakezelésnél a Resource ID-k helyett a `DSN-014`, `EDT-001/042` és QA contractok szerepelnek.
+- `C.23.8-05` és `C.23.8-11`: a product-card/commerce követelmények canonical `STO` domainre kerültek.
+- `C.23.11-03`: a jövőbeli commerce page type a `STO` domainre is vissza van kötve.
+- `C.23.12-09`: a domain-owned schedule/integration adatoknál a Resource domain helyett a `DYN`, `SCH`, `INT`, `EDT` és ownership/security határ szerepel.
+- `C.23.16-01` és `C.23.17-07`: az editor billentyűzetes hozzáférhetősége, illetve a személyes editor-preferenciák leválasztása a site-settings domainről pontosítva.
+- `C.23.16-03`, `C.23.18-04`, `C.23.18-05`: form, VOD/Content Hub, creator/profile/community/support block hivatkozások a megfelelő canonical felületekhez igazítva.
+- Az előző strukturális körben az SEO tartomány `SEO-001–005` értékre lett korrigálva; nincs többé hivatkozás nem deklarált `SEO-006–010` ID-kre.
+
+**Újraellenőrzött strukturális eredmény:** 210 C.23 + 100 ARCH forrássor; 310 egyedi kulcs; 359 deklarált feature ID; mind a 359 legalább egy mappingben hivatkozott; 0 duplikált kulcs; 0 feloldhatatlan vagy unmapped/TBD ID-hivatkozás; 210/210 és 100/100 forrásszöveg-egyezés.
+
+**Korlát és kapu:** ez célzott, nem teljes körű szemantikai audit. A többi sor javasolt mappingjét továbbra is az eredeti követelmény és a canonical contract alapján kell egyenként felülvizsgálni. A teljes `00/A` és `00.9–00.9.6.B` forráscsomag még nincs teljesen visszanyerve/reconciliálva; a 359 ID teljes mapping-lefedettsége nem bizonyítja az összes követelmény szemantikai megőrzését. P0.2 továbbra is **IN PROGRESS / NOT PASS**.
