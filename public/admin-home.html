@@ -472,10 +472,11 @@
       $("userName").textContent = name;
       $("userRole").textContent = user.role || "Felhasználó";
       $("userAvatar").textContent = Array.from(name.trim())[0]?.toLocaleUpperCase("hu-HU") || "S";
-      $("siteMetric").textContent = "Elérhető";
-      $("siteNote").textContent = "A hitelesített vezérlőpult betöltött.";
+      $("siteMetric").textContent = "—";
+      $("siteNote").textContent = "A webhely beállításainak ellenőrzése.";
       if (settingsResult.status === "fulfilled") {
         const settings = settingsResult.value || {};
+        $("siteMetric").textContent = "Beállítva";
         const siteName = settings.siteName || "Sanci9517";
         const tagline = settings.tagline || "Creator webhely";
         $("sidebarSiteName").textContent = siteName;
@@ -486,6 +487,7 @@
         $("sitePanelDescription").textContent = "A webhely adatai a canonical beállításokból származnak.";
         $("siteStatus").textContent = "A webhelybeállítások sikeresen betöltődtek.";
       } else {
+        $("siteMetric").textContent = "Nem elérhető";
         $("siteNote").textContent = "A webhelybeállításokhoz admin jogosultság szükséges.";
         $("sitePreviewTagline").textContent = "A beállítások nem érhetők el ezzel a szerepkörrel.";
         $("siteStatus").textContent = "A webhelyadatok nem tölthetők be. Ellenőrizd a jogosultságot.";
