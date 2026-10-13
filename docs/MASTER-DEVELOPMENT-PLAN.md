@@ -4097,7 +4097,7 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 
 **F.6 — Schedule / Game Profile:**
 - F.6-01 canonical Schedule fields/lifecycle/recurrence/source/external-ID mapping → SCH-001–SCH-015 és RES-013. A RES-013 registry-jelentése Font registry/weight/style/fallback; ez nem látszik relevánsnak a Schedule lifecycle és external-ID mapping követelményhez. **OPEN — RES-013 szemantikai eltérésgyanú.** Ne távolítsuk el vakon, amíg az eredeti bullet teljes szövegkörnyezete nincs ellenőrizve; ha nincs konkrét font/resource függőség, a crosswalkban superseded/incorrect target döntést kell rögzíteni.
-- F.6-02 schedule list/calendar/upcoming/past/search/filter/sort/lifecycle → SCH-002/005/006. Ezek a nézetek és lifecycle egy részét lefedik, de a keresés/filter/sort külön UI/domain acceptance-e és a publikus renderhez tartozó SCH-010/W​​EB-016 határ nincs külön megmutatva. **PARTIAL mapping**; az Admin CRUD és a public Schedule page nem olvasztható össze.
+- F.6-02 schedule list/calendar/upcoming/past/search/filter/sort/lifecycle → SCH-002/005/006. Ezek a nézetek és lifecycle egy részét lefedik, de a keresés/filter/sort külön UI/domain acceptance-e és a publikus renderhez tartozó SCH-010/WEB-016 határ nincs külön megmutatva. **PARTIAL mapping**; az Admin CRUD és a public Schedule page nem olvasztható össze.
 - F.6-04 next stream/countdown → SCH-009/003/005, LIV-001, WEB-016. A célok relevánsak; acceptance-ben explicit módon kell tesztelni a site timezone/DST, cancelled/past/completed kizárást, stale/offline provider állapotot, illetve a publikus Schedule oldal és a countdown parity-t.
 
 **F.7 — Admin shell, forms and permissions:**
