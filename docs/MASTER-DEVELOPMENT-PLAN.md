@@ -1913,11 +1913,62 @@ PWA/offline/mobile; provider capabilities/Discord roles; email/CRM/consent; Stre
  
 ### 37.3. A P0 aktuális állapota
 
-- **P0.1:** IN PROGRESS — baseline/tervintegritás még lezárandó.
-- **P0.2:** IN PROGRESS — minden 271 részletes követelménykulcs és teljes funkciójegyzék tételes összevetése kell.
-- **P0.3–P0.6:** NOT STARTED — domain/data map, route/surface audit, provider/benchmark evidence, dependency/acceptance freeze.
+- **P0.1:** IN PROGRESS — a repository-alapvonal több részlete ellenőrzött, de az aktív route és a dokumentáció közötti eltérés, a teljes baseline/tesztfuttatás és a folytatási pont integritása még nincs lezárva.
+- **P0.2:** IN PROGRESS — minden 271 részletes követelménykulcs és a teljes funkciójegyzék tételes, stabil ID-hoz rendelt reconciliációja még nincs kész.
+- **P0.3:** IN PROGRESS — az első kódalapú domain/adatforrás-leltár elkészült; a teljes tábla-, owner-, lifecycle- és consumer-térkép még hiányzik.
+- **P0.4:** IN PROGRESS — az első router/static surface-leltár elkészült; a teljes menü-/route-/block-lefedettség és legacy/placeholder besorolás még hiányzik.
+- **P0.5:** NOT STARTED — provider capability/benchmark bizonyítékok.
+- **P0.6:** NOT STARTED — dependency- és acceptance-freeze.
 
 P0 csak minden kapu bizonyítékalapú PASS-a után zárható.
+
+### 37.4. P0.3 — Első, kóddal igazolt domain- és adatforrás-leltár
+
+**Ellenőrzési forrás:** src/index.ts, src/routes/admin/pages.ts, src/routes/admin/editor.ts, src/routes/admin/schedule.ts, src/routes/admin/settings.ts, src/routes/public/pages.ts, src/routes/public/schedule.ts, src/routes/public/site-settings.ts, src/routes/integrations/twitch.ts, src/core/page-model.ts, src/core/schedule/types.ts, valamint a migrációk. Ez a repository-forrásból származó leltár, nem éles adatbázis-lekérdezés és nem teljes domain PASS.
+
+| Domain / funkció | Jelenleg igazolt canonical adatforrás | Owner / scope a kódban | Érintett útvonalak | Bizonyított korlát / nyitott feladat |
+|---|---|---|---|---|
+| Page / Editor dokumentum | D1 pages.content_json; publikált snapshot: pages.published_content_json; revision: editor_revisions | Page Model / Editor; page lekérdezések site_id szerint szűrnek | /api/admin/pages, /api/admin/editor, /api/public/pages, /p/*, / | A draft és published snapshot külön kezelése látható a kódban; teljes mentés/újratöltés/preview/publish/rollback acceptance még külön bizonyítandó. |
+| Adásrend | D1 schedule_items; Twitch sync típusok és source-adatok a schedule domainben | Schedule; admin olvasás/írás site_id szerint; public olvasás a readPublicSchedule szolgáltatáson át | /api/admin/schedule, /api/public/schedule, /api/admin/twitch/schedule-sync | A canonical kézi schedule CRUD és public read útvonal igazolt; minden recurrence, iCal és teljes edge-case acceptance nem igazolt. |
+| Site settings | D1 site_settings, jelenleg key='site' rekord | Admin settings csak admin szereppel; a jelenlegi olvasás/írás nem site_id-paraméteres | /api/admin/settings, /api/public/site-settings | **P0.3 nyitott döntés:** a jelenlegi singleton beállítás és a jövőbeli multi-site/site ownership modell közötti kapcsolatot explicit módon rögzíteni kell; nem szabad a több site-os működést késznek feltételezni. |
+| Twitch kapcsolat/OAuth | D1 Twitch connection/state táblák; OAuth állapot és connection site/user ownership-ellenőrzéssel | Integration adapter; site + user kapcsolatellenőrzés | /api/integrations/twitch/* | A Twitch útvonalak regisztrálva vannak; más provider adapterek nem következnek ebből, és nem jelölhetők implementáltnak pusztán a roadmap alapján. |
+| Authentication / role | Session/auth útvonalak és szerveroldali getAuthenticatedUser / hasRole ellenőrzések | Auth/session + role check | /api/auth/*, Admin API-k | A route-kód több Admin API-n szerveroldali szerepellenőrzést tartalmaz; teljes RBAC/CSRF/session/security audit még külön feladat. |
+| Asset / Resource | D1/R2 architekturális cél és meglévő asset/UI fájlok | Teljes canonical Resource API/registry ebből a route-listából nem igazolható | Editor asset UI; a felsorolt routerben nincs általános media CRUD route | **Nem tekinthető lezártnak:** a teljes Resource domain, feltöltés, usage map, törlésvédelem és R2 életciklus tényleges route/schema inventoryt igényel. |
+| Content / community / commerce / analytics / automation / SANCI AI | A tervben szereplő jövőbeli domainek | A jelenlegi Worker routerből nem igazolt teljes canonical backend | Nincs teljes domain-route készlet a jelenlegi regisztrált útvonalak között | Ezeket PLANNED/PHASED státuszban kell tartani, amíg kód, adatmodell, permission, teszt és runtime acceptance nem bizonyítja őket. |
+
+**P0.3 szabály:** a fájlnevek vagy UI-elemek nem bizonyítanak domainkészültséget. A következő leltári körnek az összes migrációt, D1-táblát/indexet/foreign key-t, D1-olvasó/író consumer-t, R2 object-key/metadata útvonalat és site ownership határt kell összekapcsolnia; az éles D1 állapotot csak külön élő lekérdezés bizonyíthatja.
+
+### 37.5. P0.4 — Első, kóddal igazolt route- és surface-leltár
+
+**Router-forrás:** src/index.ts a v2/foundation ágon. Ez a regisztrált Worker-útvonalak listája; a statikus HTML-en belüli minden menüelem és kattintható művelet teljes auditja még hátravan.
+
+| Surface / route | Jelenlegi cél | Besorolás | Bizonyíték / nyitott kérdés |
+|---|---|---|---|
+| /, /index.html | public/visual-page.html | Canonical public renderer entry | A publikus oldal dinamikus oldaltartalmat a public pages API-val olvas; a teljes public route/SEO/404 acceptance nyitott. |
+| /p/* | public/visual-page.html | Canonical public page route family | A Page Modelből renderel; a published-only API szabály és az egyes oldalak állapota külön tesztelendő. |
+| /admin/login | public/admin-login.html | Canonical login surface | /admin-login.html 302-vel ide irányít. |
+| /admin | public/admin-home.html, hitelesítés után | Admin home/dashboard surface | **Dokumentációs eltérés:** docs/ARCHIVE-LEGACY-LAYERS.md azt állítja, hogy /admin és /admin.html az Editor v2-re irányít, de a jelenlegi src/index.ts szerint /admin az admin-home.html-t szolgálja ki, /admin.html pedig /admin-ra irányít. Ezt P0.1/P0.4-ben fel kell oldani; a runtime router a route viselkedésének elsődleges kódbizonyítéka. |
+| /admin/editor | public/editor-v2/index.html, hitelesítés után | Canonical Visual Editor v2 entry | Egyetlen canonical Editor marad; a régi Editor nem aktiválható párhuzamosan. |
+| /admin/home, /admin-home.html, /admin.html | /admin | Compatibility redirect | A végső redirect-szerződés és teszt még a P0 része. |
+| /about.html, /community.html, /contact.html, /schedule.html, /tiktok.html, /twitch.html, /vod.html, /youtube.html | megfelelő /p/* slug | Legacy public redirects | Meg kell őrizni és regresszióval tesztelni, amíg a tervben lévő redirect/404 policy nincs lezárva. |
+| /api/auth/* | bootstrap/login/logout/session | Canonical auth API family | Módszer-, session-, CSRF- és rate-limit audit a security kapu része. |
+| /api/admin/pages, /api/admin/editor, /api/admin/schedule, /api/admin/settings, /api/admin/twitch/schedule-sync | Admin CRUD / Editor persistence / settings / sync | Registered admin API | A kódban szerep- és/vagy site-scope ellenőrzés látható; endpointonkénti permission/method/error teszt kell. |
+| /api/public/pages, /api/public/schedule, /api/public/site-settings | public data APIs | Registered public API | Draft leak, cache, stale/error és site scope teszt szükséges. |
+| /api/integrations/twitch/* | Twitch diagnostic/connect/callback/connection/validation/disconnect | Registered provider integration | Csak Twitch regisztrált; YouTube/TikTok/Discord/Kick/OBS capabilityt külön kell bizonyítani. |
+| /api/health, /api/db-health | health / D1 health | Operational endpoints | Éles státusz csak aktuális production probe-ból állítható. |
+| public/editor/ | régi Editor runtime | Legacy, nem canonical | Az archívum ezt külön rétegként nevezi meg; ne bővítsük, ne szolgáljon második Editor-alapként. |
+| public/assets/system-page-editor.js, public/assets/system-page-runtime.js, src/routes/admin/system-pages.ts, src/routes/public/system-pages.ts | korábbi system-page megoldás | Legacy/unregistered route modules per router/archive | A kapcsolódó adatot és migrációs történetet nem töröljük külön adatmegőrzési/migrációs kapu előtt. |
+
+**P0.4 még nem PASS:** a statikus route-ok és a legfontosabb backend API-k leltára nem fedi le automatikusan az Admin HTML minden menüpontját, a publikus dinamikus blokkokat, az Editor minden műveletét vagy a placeholder gombokat. A következő körnek a public/admin-home.html, public/editor-v2/index.html, public/editor-v2/app.js, public/visual-page.html és minden releváns script action/route hivatkozásait kell ellenőriznie.
+
+### 37.6. Következő bizonyítékhoz kötött feladatok
+
+1. P0.1: a route/dokumentáció eltérés feloldása a kanonikus tervben; a legacy dokumentum csak igazolt runtime-viselkedés után módosítható.
+2. P0.2: minden H19–H34 követelményhez külön crosswalk sor: eredeti kulcs + pontos címke + végleges funkció-ID + döntés (KEEP/MERGE/EXPAND/DEFER/REPLACE/REJECT) + domain owner + fázis + elfogadási bizonyíték vagy nyitott ok. A témacsoport-szintű megfeleltetés nem elég.
+3. P0.3: összes migráció és D1/R2 consumer leltára; minden domainhez canonical owner/source, scope, lifecycle, permission és consumer.
+4. P0.4: minden Admin menüpont, public route/block és Editor action/placeholder/legacy surface tételes ellenőrzése.
+5. P0.5–P0.6 csak az előző evidence körök után zárható.
+
 
 ## 38. Részletes Visual Editor képességkatalógus
 
