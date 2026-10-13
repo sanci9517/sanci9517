@@ -2,7 +2,7 @@
 **ACTIVE_POINT_STATUS:** `ACTIVE — a canonical Editor v2 Page Model és command/history/persistence vertikális szeletének ellenőrzése és megbízhatósági javítása`
 **ACTIVE_POINT_TITLE:** Editor foundation és első végig működő szerkesztési szelet
 **ACTIVE_SUBPOINT_ID:** `F0.3-EDITOR-HISTORY-SELECTION-INTEGRITY`
-**ACTIVE_SUBPOINT_STATUS:** `ACTIVE — az undo/redo és tranzakció rollback a dokumentum mellett a kijelölési állapotot is determinisztikusan állítsa vissza; az Android Chrome tabletes Admin-belépés külön, nyitott, nem blokkoló ismert hibaként elhalasztva a felhasználó kérésére. F0.2 egyéb útvonal/navigációs elfogadását a felhasználó jelenleg megfelelőnek jelezte; a tabletes hiba nem állítható megoldottnak.`
+**ACTIVE_SUBPOINT_STATUS:** `ACTIVE — undo/redo, tranzakció rollback és sikertelen atomic batch esetén a Page Model, kijelölés, redo history és persistence állapot együtt álljon vissza; az Android Chrome tabletes Admin-belépés külön, nyitott, nem blokkoló ismert hibaként elhalasztva a felhasználó kérésére. F0.2 egyéb útvonal/navigációs elfogadását a felhasználó jelenleg megfelelőnek jelezte; a tabletes hiba nem állítható megoldottnak.`
 **PREVIOUS_GATE:** `F0.2 — USER-ACCEPTED WITH DEFERRED NON-BLOCKING ISSUE` (Android Chrome tablet-login külön követés alatt; nem igazoltan javított)
 **NEXT_GATE:** `F0.3 Editor foundation + first vertical slice → F0.4 Visual Builder/Layers/Inspector → további F0.x pontok szigorú sorrendben; a tablet-login hiba külön visszatérési tétel`
 **PARALLEL_WORKSTREAMS:** `0`
@@ -11,7 +11,7 @@
 **Verzió:** MASTER-2.77 — végleges termékleírás, Admin UI-specifikáció és egyetlen függőség-alapú fejlesztési sorrend; a 2.75–2.76 roadmapek történetiek.  
 **Frissítve:** 2026-10-13.  
 **Dokumentum státusza:** ez az egyetlen végrehajtási igazságforrás.
-**Audit / implementation baseline:** GitHub `v2/foundation`, commit `44f42403eca7f621920d880492ea439c4a4fae42` (2026-10-13; F0.2 navigation/login/role contract integrálva; a felhasználó a tabletes belépési hibát külön elhalasztotta, a többi acceptance-t jelenleg megfelelőnek jelezte). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
+**Audit / implementation baseline:** GitHub `v2/foundation`, commit `f31f0ffe34265004affba98c039527da420bbaf6` (2026-10-13; F0.3 history-selection integrity javítás és regressziós tesztek integrálva; a tabletes belépési hiba továbbra is külön elhalasztva). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
 
 ### Jelenlegi igazolt állapot
 Ez a blokk kizárólag az E4/E5/E6 korábban bizonyított lezárt gate-jeit rögzíti. Az M0 auditfázist a felhasználó döntése lezárta / superseded állapotba helyezte; ez nem runtime PASS.
@@ -4371,3 +4371,14 @@ A felhasználó egyértelmű döntése: „A tablet belépés később a többi 
 - [ ] Transaction rollback és atomic batch failure a dokumentum mellett az eredeti kijelölést is visszaállítja.
 - [ ] Az Editor Core tesztek, typecheck és releváns regression workflow-k PASS.
 - [ ] A módosítás kizárólag PR-on keresztül kerülhet a `v2/foundation` ágba; éles runtime acceptance külön marad.
+
+
+## 2.77.9.P — F0.3 atomic batch failure must preserve redo and persistence state — IMPLEMENTING
+
+**Cél:** sikertelen, atomic `executeBatch` esetén a művelet kívülről valóban atomikus legyen: ne csak a Page Model és a kijelölés álljon vissza, hanem a redo history és a mentési/persistence állapot se változzon meg hibásan.
+
+**DoD:**
+- [ ] Sikertelen atomic batch visszaállítja a dokumentumot, kijelölést, undo/redo stackeket és a persistence state-et.
+- [ ] A sikertelen művelet nem semmisíti meg a korábbi redo lehetőséget.
+- [ ] Új regressziós teszt bizonyítja a teljes visszaállítást; Editor Core Test és Twitch Integration Check PASS.
+- [ ] A tablet-login továbbra is külön elhalasztott ismert hiba, és nem szerepel megoldottként.
