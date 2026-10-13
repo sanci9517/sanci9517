@@ -1949,6 +1949,335 @@ Nem a végcél.**
 A roadmap ezen pontja után egyetlen funkció sem „veszhet el”: ha még nem implementáljuk, a megfelelő későbbi PHASE-ben marad dokumentálva, canonical ownerrel és előfeltételekkel.
 
 
+---
+
+## 00.9.6.C.23 — VISUAL EDITOR TELJES KÉPESSÉG- ÉS BENCHMARK-KIEGÉSZÍTÉS
+
+**Státusz:** CANONICAL PRODUCT REQUIREMENTS / CAPABILITY INVENTORY.  
+**Cél:** a korábbi C.2–C.22 követelményeit nem lecseréli, hanem részletesen kibontja. Ez a szakasz nem jelenti a funkciók runtime elkészültét, és nem változtatja meg az aktív F0.4 sorrendet. Az itt szereplő képességek a megfelelő F0.x/1.0/post-1.0 fázisba kerülnek a 00.9.6.D szerint.
+
+### C.23.1 — Benchmark-források és alkalmazási szabály
+
+A funkcióleltárhoz reprezentatív, elsődleges dokumentációból vizsgált benchmarkok:
+- **Webflow Designer:** components, variables, cross-site libraries, breakpoint canvas.  
+  https://webflow.com/updates/libraries  
+  https://origin.webflow.com/updates/see-every-breakpoint-while-you-edit
+- **Wix Studio:** custom breakpoints, responsive behavior, design libraries, saved sections/assets, design kits, wireframes és gyors hozzáadás.  
+  https://support.wix.com/en/article/studio-editor-about-the-studio-editor  
+  https://support.wix.com/en/article/studio-editor-creating-and-managing-design-libraries  
+  https://support.wix.com/en/article/studio-editor-adding-elements-4240855
+- **Elementor:** központi Site Settings, global colors/fonts, theme styles, layout defaults, reusable website kits és responsive containers.  
+  https://elementor.com/help/site-settings/  
+  https://elementor.com/help/view-and-edit-global-colors/  
+  https://elementor.com/help/responsive-design-using-containers/  
+  https://elementor.com/help/customizing-an-elementor-site-kit/
+- **WordPress Site Editor / Gutenberg:** full-site editing, templates/template parts, patterns, synced vs. unsynced patterns, style variations, global styles, command palette, list view, zoom-out view és export.  
+  https://wordpress.org/documentation/article/site-editor/  
+  https://wordpress.org/documentation/article/site-editor-patterns/  
+  https://wordpress.org/documentation/article/styles-overview/  
+  https://wordpress.org/documentation/article/site-editor-command-palette/
+- **Framer:** visual canvas, reusable responsive components, CMS, breakpoint editing, localization, SEO, redirects és publishing workflow.  
+  https://www.framer.com/solutions/website-builder/  
+  https://www.framer.com/solutions/responsive-website-builder/  
+  https://www.framer.com/help/articles/guide-to-seo-features-and-tools/  
+  https://www.framer.com/help/localization/
+
+**Benchmark-szabály:** a fenti termékek funkcióit és nyilvános UX-mintáit kell összehasonlítani, nem a zárt kódjukat lemásolni. Ez reprezentatív benchmark, nem állítás arról, hogy a piacon létező minden szerkesztő minden funkciója már fel lett mérve. Új, releváns képesség később ugyanebbe a leltárba vehető fel, a canonical ownership és phase-besorolás megtartásával.
+
+### C.23.2 — Preset-, template- és reusable-rendszer: kötelező fogalmi szétválasztás
+
+A „preset” nem egyetlen funkció, hanem több külön, jól meghatározott művelet. Mindegyiknél látható legyen, hogy csak a kiválasztott elemre, az aktuális oldalra vagy globálisan hat-e.
+
+1. **Property preset:** egy vagy több property-csoport előre mentett értékei, pl. árnyék, border, radius, typography, spacing, button state.
+2. **Style preset:** egy elem teljes vizuális beállításcsomagja, tartalom nélkül vagy tartalommal jelölten.
+3. **Layout preset:** flex/grid/stack/columns, gap, alignment, sizing és flow konfiguráció.
+4. **Responsive preset:** breakpointokhoz és responsive behaviorhöz tartozó induló beállítások.
+5. **Component variant preset:** egy reusable component hivatalos variánsa (size, density, color, layout, state).
+6. **Element preset:** konfigurált, tovább szerkeszthető egyedi elem vagy elemcsoport.
+7. **Section preset:** teljes, reszponzív, tovább szerkeszthető szekció.
+8. **Page preset/template:** egy teljes oldal szerkezete és konfigurációja.
+9. **Site starter/template:** oldalstruktúra, navigáció, header/footer, theme, tokens, component library és SEO-defaultok kiinduló csomagja.
+10. **Theme/design-system preset:** színek, betűstílusok, spacing scale, radii, shadows, widths, breakpoints, motion és komponens-alapstílusok.
+11. **Content/CMS preset:** tartalomstruktúra, collection mezők, mezősorrend, content blockok és alapértelmezett üres/hiba állapotok.
+12. **Streamer preset:** creator-site szekciók, Twitch/stream állapotok, schedule, game/profile, social links és support megjelenítési változatok.
+13. **Editor workspace preset:** panel-láthatóság, canvas elrendezés, zoom, segédvonalak, snapping és szerkesztői preferenciák; ez nem public-site adat.
+14. **Importált/gyári preset és felhasználói preset:** az eredeti gyári elem védett marad; szerkesztéskor a felhasználó saját példányt/forkot készíthet.
+
+Minden presethez, ahol értelmezhető, kötelező:
+- stabil ID, név, leírás, kategória, címkék, preview/thumbnail, version és owner/site scope;
+- keresés, szűrés, rendezés, kedvencek, legutóbb használt és kategóriák;
+- alkalmazás előtt preview; alkalmazás után Undo; megerősítés romboló/globalis művelet előtt;
+- **Apply / Replace / Merge / Reset / Save as new / Duplicate / Rename / Archive / Restore** művelet, ahol a preset típusa alapján értelmezhető;
+- a felhasználói tartalom és resource reference-ek megtartásának világos szabálya;
+- preset frissítésekor meglévő instance-ok változásának explicit jelzése; nincs rejtett, váratlan tömeges átírás;
+- gyári, site-local, user-library és későbbi shared-library scope megkülönböztetése;
+- schema/version migráció és érvénytelen preset hibakezelése;
+- jogosultság, audit, export/backup és törlés előtti használatellenőrzés.
+
+**Fontos:** a template másolható/forkolható kiindulási állapot; a reusable component/symbol közös definíció; a preset értékcsomag. Ezek nem helyettesítik egymást, és egyetlen canonical registry/reference-modellre épülnek.
+
+### C.23.3 — Canvas és szerkesztési interakciók
+
+- Canvas automatikus szélesség/magasság, content-aware minimum size, hosszú oldal kezelése, scroll/zoom közbeni stabil geometria.
+- Zoom in/out, fit page, fit selection, 100%, pan/space-drag, minimap vagy overview, canvas reset.
+- Rács, baseline/grid, rulers, guides, smart guides, snapping to grid/edges/centers/spacing, snap toggle és snap threshold.
+- Kijelölőkeret, resize handles, rotation handle ahol támogatott, bounding box, anchor/origin és transform preview.
+- Egyszeres/többszörös kijelölés, Shift/Ctrl módosítás, marquee selection, parent/child kiválasztás, breadcrumb és „select parent/child”.
+- Drag-and-drop insert, reorder, reparent, drop-target preview, insertion marker és invalid-drop tiltás.
+- Billentyűzetes mozgatás, finom/nagy lépés, duplikálás, delete, undo/redo, copy/paste, duplicate, nudge, bring forward/back, bring to front/back.
+- Copy/paste style, paste properties, reset property, reset to inherited, clear override.
+- Kontextusmenü, command palette/quick actions, kereshető Add panel, recent/favorite elements, parancsok billentyűparancsai.
+- Drag/resize alatt élő Page Model/command állapot, pointer-capture, cancel/escape, pointer loss, scroll-container és zoom-korrekció kezelése.
+- Vászon overlay és editor selection decoration nem kerülhet a public renderer outputjába.
+- Canvas render és selection hit-testing ne a DOM-ot tegye source of truth-szá; a canonical Page Model a mérvadó.
+
+### C.23.4 — Oldalmodell, Layers és struktúra
+
+- Page → template/section → container/layout → element hierarchia, stabil node ID-val.
+- Layers fa: keresés, név, ikon/típus, collapse/expand, drag reorder, reparent, rename, duplicate, delete, hide, lock, unlock, multi-select.
+- Layer visibility és lock állapota külön kezelendő a public visibility/conditional rendering szabálytól.
+- Csoportosítás/felbontás; wrapper létrehozása; groupból kiemelés; több node együttes igazítása és elosztása.
+- Parent/child breadcrumb; hierarchy outline; node típus és megengedett gyermekek; invalid nesting és circular parent tiltása.
+- Üres container, section és page drop-target; üres állapotból elem hozzáadása.
+- Copy/cut/paste azonos oldalon és később oldalak között, ID-regenerálással és resource/binding reference-ek biztonságos rendezésével.
+- Node állapotok: selected, focused, hovered, locked, hidden-in-editor, hidden-on-breakpoint, inherited, overridden, invalid, data-bound.
+- Több node property-szerkesztése csak közös, kompatibilis property-kre; eltérő értékek mixed-state megjelenítése.
+- Reusable component instance és belső child szerkesztésének egyértelmű módja; instance override vs. main definition.
+
+### C.23.5 — Layout, geometry és CSS-szintű vizuális tulajdonságok
+
+- Display: block/inline/inline-block/flex/grid/none és a támogatott semantic layout primitive-ek.
+- Sizing: width/height/min/max, auto, fit-content, min-content, max-content, aspect ratio, intrinsic sizing.
+- Units: px, %, rem/em, vw/vh, svh/lvh/dvh és támogatott CSS clamp/min/max/calc-szerű értékek validált, UI-barát kezelése.
+- Position: static/relative/absolute/fixed/sticky; inset/top/right/bottom/left; z-index; containing block és stacking context jelzése.
+- Flex: direction, wrap, justify, align, gap, order, grow/shrink/basis, align-self.
+- Grid: template columns/rows, auto-fit/auto-fill, minmax, gap, alignment, placement, span, auto-flow és named areas ahol támogatott.
+- Stack/row/column, nested containers, responsive reorder és content flow.
+- Spacing: margin, padding, gap, logical properties, linked/unlinked sides, negative margin csak validált és indokolt esetben.
+- Overflow: visible/hidden/clip/auto/scroll; scroll container; sticky/overflow konfliktus diagnosztika.
+- Alignment/distribution: left/center/right, top/middle/bottom, space-between/around/evenly, equal-size, align-to-selection.
+- Box sizing, border, radius, outline, shadow, opacity, blend mode, background color/image/gradient/video (video háttér csak performance/accessibility korláttal).
+- Transform: translate/rotate/scale/skew, transform origin, 2D/3D csak biztonságos és tesztelt scope-ban.
+- Aspect ratio, object-fit/object-position, image focal point, crop/cover/contain.
+- Container width, full-bleed, boxed layout, content max-width, section inner width, viewport-aware spacing.
+- Inspectorben pontos értékbeírás és vásznon drag; mindkettő ugyanazt a command/property-registry útvonalat használja.
+- Computed/inherited/overridden értékek megkülönböztetése; invalid CSS vagy nem támogatott érték nem menthető csendben.
+
+### C.23.6 — Typography, colors és design tokens
+
+- Font family, font loading, fallback, size, weight, style, line-height, letter/word spacing, text transform, decoration, alignment, wrapping, hyphenation és text balance.
+- Heading level (H1–H6) a vizuális stílustól külön; link, emphasis, inline code, quote és rich-text struktúra.
+- Global color palette, semantic tokens (primary/surface/text/border/success/warning/error), gradients, transparency és contrast preview.
+- Global typography roles (display/headings/body/caption/label/code) és user-defined text styles.
+- Spacing scale, container widths, breakpoints, radius, border, shadow, z-index layers, motion duration/easing token.
+- Token létrehozás/átnevezés/használatkeresés/átállítás/törlés előtti dependency check.
+- Token vs. literal value: jelölés, „convert to token”, „detach from token”, token reset és site-wide impact preview.
+- Theme/style variations, light/dark/high-contrast theme előkészítés; a tényleges váltás csak explicit theme supporttal.
+- Font asset/license metadata, font display/performance és unavailable-font fallback.
+- Site-wide global style change előtt érintett oldalak/komponensek előnézete és undo/rollback.
+
+### C.23.7 — Inspector és Property Registry
+
+- Inspector kategóriák: Content, Layout, Size, Position, Spacing, Typography, Appearance, Background, Border/Shadow, Effects, Responsive, Interactions, Accessibility, SEO, Data/Bindings, Advanced.
+- Kontextusfüggő property-k csak az adott node type által támogatottan jelenhetnek meg.
+- Property search, kategóriafilter, recent properties, favorites, tooltip/help, default/inherited/override jelzés.
+- Reset property, reset group, reset to breakpoint parent, reset element to preset, copy/paste property group.
+- Input validation, unit validation, min/max, enum, required fields, invalid value, dependency/compatibility warnings.
+- Property change → command → validation → history → dirty state → save/reload round-trip.
+- Batch edit, mixed values, apply to all selected compatible nodes.
+- Property registry schema version, deprecation notice és migráció; új UI nem tarthat fenn második property store-t.
+- Advanced CSS/custom attributes csak későbbi, explicit sandbox/security contracttal; arbitrary script nem futtatható a szerkesztői jogosultság miatt.
+
+### C.23.8 — Elementek és tartalmi komponenskatalógus
+
+Az Add/Insert katalógus kereshető, kategorizált, preview-val és preset-változatokkal. Legalább az alábbi elemtípusok képességeit kell megőrizni a megfelelő phase-ben:
+
+- Structure: Section, Container, Row, Column, Stack, Flex, Grid, Spacer, Divider, Separator.
+- Content: Text, Heading, Rich Text, Quote, List, Numbered List, Table, Code, Badge, Icon, Image, Gallery, Video, Audio, Embed.
+- Navigation: Header, Footer, Navbar, Menu, Breadcrumbs, Tabs, Anchor, Pagination, Back-to-top.
+- Action: Button, Link, CTA, Icon Button, Download, Share.
+- Cards/collections: Card, Feature Card, Profile Card, Game Card, Stream Card, Product Card, List/Grid/Carousel/Slider.
+- Interactive: Accordion, Tabs, Modal/Dialog, Tooltip, Popover, Toggle, Disclosure, Search, Filter, Sort.
+- Form: Form shell, text/email/url/number/date/select/checkbox/radio/textarea fields, validation/help/success/error state; secure submit handler külön canonical domain.
+- Media: image/video/audio embeds, responsive source, poster, captions/transcript, aspect ratio, lazy loading.
+- Social/creator: Twitch live/status/player/chat where permitted, schedule, countdown, channel link, VOD/clip link, social icon row, community invite, support CTA.
+- CMS/data: collection list, item template, dynamic field, reference/relationship, empty/loading/error state, conditional block, pagination/filter.
+- Commerce future: product/collection/price/stock/CTA and external checkout boundary; order/payment state nem lehet egyszerű Page Model tartalom.
+- Future app slots/widgets: explicit capability and security boundary, not arbitrary injected code.
+- Minden elementhez type-specific schema, defaults, accessible output, responsive behavior, Inspector mapping, validation, preview, tests and public renderer support kell.
+
+### C.23.9 — Responsive design és device preview
+
+- Desktop/tablet/mobile előre definiált nézetek, egyedi breakpoints és custom viewport width/height.
+- Breakpointok egymás melletti preview-ja, single-breakpoint mode, rotate/portrait-landscape preview.
+- Resize drag handle és pontos viewport mező; common device presets, custom device preset.
+- Cascading/inherited style model: nagyobb breakpoint értékei öröklődnek; kisebb breakpoint override nem írhatja felül észrevétlenül a nagyobbat.
+- Property-level breakpoint overrides; reset inherited; copy breakpoint settings; clear all overrides with confirmation.
+- Responsive behavior: fluid, scale, fixed, min/max, wrap, stack, reorder, hide/show, overflow strategy, typography scaling.
+- Breakpoint-specifikus layout és visibility; tartalmi/strukturális változás közös modellben marad, ha nem indokolt valódi külön node.
+- Oldal-, section- és komponensszintű breakpointok összehangolása; konfliktus és nem használt breakpoint jelzése.
+- Minimum width/overflow/overlap/viewport clipping diagnostics; szélső méretek és zoom tesztek.
+- Canvas height és scroll extent újraszámítása drag/resize/content growth közben, zoommal és transformmal korrigálva.
+- Responsive preview nem külön mobil Page Model és nem külön save route.
+- Device presets nem helyettesítik a valódi browser/device tesztet.
+
+### C.23.10 — Motion, interaction és állapotok
+
+- Hover, focus, active, disabled, selected, expanded/collapsed, loading, success, error és empty states.
+- Link/action target, anchor, external/internal navigation, download, open-in-new-tab, safe rel policy.
+- Hover/focus transitions, entrance/exit, scroll-triggered motion és component interaction presets.
+- Duration/easing/delay, trigger, target, replay, reduced-motion alternative, animation conflict warning.
+- Interakciók explicit trigger/action modelben; preview-ban szimulálhatók, de szerkesztői műveletet nem hajthatnak végre.
+- Form success/error, media load failure, empty CMS collection, offline/unavailable integration állapotok.
+- Tab/focus order, keyboard operation, escape/cancel és focus return.
+- Motion és third-party embeds csak performance/privacy/accessibility guardrail mellett.
+
+### C.23.11 — Oldalak, site shell és navigáció vizuális kezelése
+
+- Oldallista: create, rename, duplicate, archive, delete, restore, search, filter, reorder, parent/child, draft/published state.
+- Slug/URL, canonical URL, trailing slash policy, redirects, duplicate slug detection, 404 handling.
+- Page type/template assignment: standard, landing, about, schedule, game/profile, blog/article, directory, contact, support, future commerce.
+- Site shell: global header/footer, announcement bar, sidebar, Navbar, mobile menu, shared navigation and reusable site sections.
+- Navigation tree, nested menus, active state, external links, accessibility labels, mobile collapse behavior.
+- Site-wide edit vs. page-local edit világos jelölése; shared template change impact list.
+- System pages: 404, search, archive/list/detail, privacy/terms, maintenance/offline and unavailable content states.
+- Page duplication/import must regenerate identifiers where required and preserve only valid canonical references.
+- Public renderer kizárólag published canonical Page Modelt használ; draft/preview route protected és noindex.
+
+### C.23.12 — CMS, dynamic content és data binding
+
+- Collection/schema designer: text, rich text, number, boolean, date/time/timezone, URL, image/file, enum, reference/relation, list, JSON with validation.
+- Field labels, help, required, default, validation, unique, search/filter/sort, display format and migration.
+- Static vs. dynamic property/binding indicator; choose source, field, transform/format and fallback.
+- Canonical sources: site settings, schedule domain, Twitch adapter, Resource metadata, CMS collections and future platform adapters.
+- Loading/empty/error/stale states; timeout, retry, caching, invalid/stale binding and deleted source handling.
+- Conditional visibility based on safe typed values, integration status or content presence; no arbitrary code evaluation.
+- Collection list/grid/repeater, item template, pagination, sorting, filtering and URL/query state where permitted.
+- Data preview with sample/real data toggle; secret fields and private data must never leak to public preview.
+- D1 domain records remain domain-owned; Page Model stores binding/reference/config only and does not duplicate schedule or integration data.
+
+### C.23.13 — Resource, media, icons, fonts és asset picker
+
+- Központi Resource Manager és Editor picker ugyanazon registryt használja.
+- Upload/drop, multi-upload, progress, cancel/retry, duplicate detection, type/size validation, safe object keys and ownership checks.
+- Search/filter by type/tag/usage/date/dimensions/owner; sort, folders/collections, favorites and recent.
+- Preview, metadata, alt text/caption/credit, crop/focal point, resize/replace, derivatives, optimization and thumbnail.
+- Usage references across pages/components/templates; before-delete impact list; unused asset detection; archive/restore.
+- SVG sanitization, allowed MIME validation, font file constraints, video/audio duration/poster/caption and file-download policy.
+- Image variants/responsive sources and cache invalidation; preserve old references safely when replacing.
+- Icon registry: searchable icons, categories, style/weight/size/color, custom approved SVG upload, icon accessibility mode.
+- Font library: family/weight/style metadata, fallback and license notes.
+- R2 stores binary data; D1 stores metadata/reference/ownership. No separate media/icon/font storage owner.
+
+### C.23.14 — Preview, saving, publishing, versioning és recovery
+
+- Explicit saved/dirty/saving/saved/error/offline/conflict state; no decorative save indicators.
+- Autosave with debounce, retry/backoff, cancellation safety and dirty state reconciliation.
+- Manual save, save status, save/reload round-trip, recovery after refresh/tab close where safe.
+- Preview draft, preview at viewport/breakpoint, preview as public visitor, protected preview token/route and noindex.
+- Publish/unpublish/republish, published snapshot, publish validation, changed-page summary and confirmation.
+- Revision timeline, author/time/reason, diff/compare, restore/rollback, conflict handling and optimistic concurrency.
+- Recovery after API/network failure; avoid lost changes, duplicate commands or stale overwrite.
+- Bulk publish only with explicit preview and permission; public renderer must never expose unpublished data.
+- Import/export/backup/restore schemas include versioning, validation, resource references, migration and rollback policy.
+- Save, preview, publish, revision and rollback use existing canonical persistence/command contracts, not separate Editor-specific persistence.
+
+### C.23.15 — SEO, social preview, discoverability és public quality
+
+- Per-site/page SEO title, meta description, canonical URL, index/follow controls, robots rules, sitemap and robots.txt.
+- Open Graph/Twitter/social image preview, title/description, fallback image and per-page override.
+- Structured data/schema where valid; canonical language/locale, hreflang where multilingual.
+- Heading structure, semantic landmarks, alt text, link purpose, descriptive labels and empty-alt handling.
+- Redirect manager and broken-link/404 diagnostics; duplicate title/description and missing metadata reports.
+- Public preview cards for social shares; validate image dimensions and external URL behavior.
+- AEO/search discoverability metadata is additive and must not generate misleading structured data.
+- SEO panel distinguishes warning from blocking error and reports the exact affected page/element.
+
+### C.23.16 — Accessibility, privacy, security és consent
+
+- Keyboard-only editor operation; visible focus; screen-reader labels; focus trap/return in modal UI.
+- Public semantic HTML, heading hierarchy, alt/caption/transcript, contrast checks, reduced motion and responsive zoom.
+- Forms have labels, instructions, error summary, validation announcements and accessible success state.
+- Embed/iframe allowlist, sandbox and permissions policy; CSP/URL validation; no arbitrary script execution in Editor.
+- External links, uploads, SVG, custom CSS and custom attributes require validation and safe output encoding.
+- Consent/privacy controls for analytics, embeds, cookies and future marketing integrations; no secrets in Page Model/client output.
+- Role/permission checks server-side for editing, publishing, resource access and global changes.
+- Every destructive/global mutation has confirmation as needed, audit evidence and recovery path.
+- Accessibility/security findings are testable; no compliance claim without automated plus manual evidence.
+
+### C.23.17 — Editor workspace, usability és power-user funkciók
+
+- Resizable/collapsible side panels, left/right panel state, canvas workspace, fullscreen/focus mode.
+- Quick Add, searchable command palette, keyboard shortcut map, shortcut conflict handling.
+- Selection breadcrumb, recent nodes, favorites, recent assets/templates and contextual actions.
+- Inspector pinning/favorites, property search, panel state persistence per user.
+- Inline text editing with clear exit/commit/cancel behavior and no accidental selection loss.
+- Empty-state onboarding, contextual help, non-blocking diagnostics, actionable error messages.
+- Editor preferences are separate from site content: zoom, panel layout, grid visibility and default viewport.
+- Tablet/touch support is separately acceptance-tested; tablet login remains a separate deferred item and is not silently conflated with Editor touch UX.
+- Localization-ready editor strings and accessible error/status announcements.
+
+### C.23.18 — Integrations and streamer-site block catalog
+
+- Twitch: connection status, live/offline, title/game/channel link, permitted live/player/embed, schedule binding, error/stale state and safe disconnect/reconnect UX.
+- YouTube/TikTok/Discord: 1.0 static link/basic embed only where explicitly scoped; API-backed integrations remain in their roadmap phases.
+- Schedule: domain-owned events, timezone, start/end, recurrence where approved, status, platform, game, artwork, URL, filters, views and sync provenance; no Page Model duplicate schedule records.
+- Stream content: VOD/clip/Short/highlight link/embed baseline; canonical media workflows in their planned phase.
+- Creator profile/game profiles, social links, community invite, support/funding/press kit blocks.
+- Future overlay/widget/alert/OBS browser-source blocks use a separate Stream Studio contract, not arbitrary Editor nodes that bypass it.
+- Integration block exposes connection/permission/availability states; secrets and tokens never become editable public properties.
+- Every provider block uses the canonical integration adapter and consistent loading/empty/error/offline handling.
+
+### C.23.19 — Site-wide tools and bulk operations
+
+- Find/replace content with preview and undo; page/node/resource search; usage/reference search.
+- Bulk apply style/token/preset to selected compatible nodes, with mixed-state handling and change summary.
+- Find broken links, missing images, orphaned assets, duplicate IDs/slugs, missing alt text and unsupported bindings.
+- Site health panel for unpublished changes, broken bindings, missing required fields, page-level warnings and failed integrations.
+- Bulk archive/restore/delete/publish only with permission, impact preview and recoverability.
+- Global change impact map: pages, shared components, templates, tokens and presets affected.
+- Page compare, revision compare, template diff and resource replacement impact preview.
+- Search and command operations are site-scoped and permission-aware.
+
+### C.23.20 — Extensibility, custom code and future AI
+
+- Canonical extension points: component schema/renderer, property registry, command API, resource type registry, template registry, integration adapter and diagnostics.
+- Future custom CSS, HTML/embed and third-party component support only through reviewed, sandboxed, permissioned contracts.
+- No direct client mutation of D1/R2 and no arbitrary privileged JavaScript.
+- AI may propose edits to Page Model/commands, generate content, map responsive layouts or suggest presets, but must use shared Action API.
+- AI changes require preview-before-apply, diff, validation, explicit approval where destructive/global, undo and audit.
+- AI must not silently publish, change auth/secrets, overwrite user content or execute arbitrary external code.
+- Future marketplace/shared libraries require license/source metadata, compatibility/version constraints, dependency inventory, safe import, sandbox and rollback.
+- Export/import packages need schema version, dependency manifest, media references and validation before applying.
+
+### C.23.21 — Quality, observability and acceptance matrix
+
+Every capability must define, where applicable:
+- unit tests for pure layout/geometry/preset/schema helpers;
+- command/history/undo/redo and Page Model round-trip tests;
+- property validation, invalid nesting and malformed import tests;
+- breakpoint inheritance/override/reset tests;
+- canvas geometry tests at zoom levels, long pages, negative/large Y movement and content growth;
+- preset apply/merge/replace/reset/fork/undo and shared-instance impact tests;
+- component/template/token migration and broken-reference tests;
+- save/reload, revision conflict, publish isolation and rollback tests;
+- keyboard/touch/browser accessibility tests;
+- public renderer, SEO, performance, reduced-motion and privacy tests;
+- production runtime acceptance for any behavior whose correctness cannot be established by unit tests alone.
+
+**Release labels:** IMPLEMENTED + TESTED, PLANNED / PHASE-X, DEFERRED, NOT APPLICABLE WITH REASON, BLOCKED. A checklist row must never be marked complete solely because a schema, UI placeholder, API route or documentation line exists.
+
+### C.23.22 — Phase assignment and no-loss rules
+
+- **Current active point remains F0.4-CANVAS-DRAG-RESIZE.** First finish the known canvas-height defect, CI, deploy and live acceptance. Do not start a parallel feature branch/workstream from this appendix.
+- The immediate F0.4 continuation is Layers + Inspector + responsive behavior using the existing Page Model, command/history/validation and property registry.
+- Foundational Editor interactions and the smallest useful set of element types are implemented before expanding the full component catalog.
+- Presets, tokens, templates and reusable components must be architecturally reserved now, but are implemented only when their canonical registries/contracts and dependency order are ready.
+- 1.0 vs. 1.x+ assignment follows 00.9.6.D and the current product scope. A capability omitted from 1.0 remains explicitly planned; it is not deleted.
+- Do not build every advanced feature before the basic editor is reliable. Prefer a complete, testable capability inventory and a single dependency-ordered implementation path over rushed parallel work.
+- This appendix adds no second editor, no second Page Model, no second Property Registry, no second Resource store, no second Schedule domain and no alternate save/publish route.
+
+
 ## 00.9.6.C/D — CANONICAL ROADMAP PRECEDENCE
 A **00.9.6.C** fejezet a teljes capability/product inventoryt rögzíti; nem önálló alternatív roadmap.
 A **00.9.6.D** fejezet a canonical lifecycle/fázis-sorrend, és az 0.x → 1.0 → 1.5 → 2.0 → 3.0 → 4.0 → 5.0 → 6.0 → 7.0 → 8.0 → 9.0 → 10.0 fejlődési ív elsődleges végrehajtási referenciája.
