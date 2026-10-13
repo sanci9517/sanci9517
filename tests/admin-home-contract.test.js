@@ -145,3 +145,28 @@ test("closing mobile navigation with Escape or backdrop restores toggle focus", 
   assert.match(dashboard, /backdrop\.addEventListener\("click", \(\) => closeSidebar\(true\)\)/);
   assert.match(dashboard, /if \(event\.key === "Escape"\)\s*\{\s*closeSidebar\(true\);\s*closeMobileSearch\(true\);/);
 });
+
+
+test("Admin home uses the full Creator Control Center redesign with operational and planned areas separated", () => {
+  for (const fragment of [
+    "hero-panel",
+    "Építs valami emlékezeteset.",
+    "Mai áttekintés",
+    "Indítsd el a munkát",
+    "Következő adás",
+    "Gyakori műveletek",
+    "id=\"welcomeName\"",
+    "id=\"heroSystemState\"",
+    "id=\"platformCapabilities\"",
+    "workspace-card-muted",
+    "F0.1 full Admin Home redesign",
+    "prefers-reduced-motion:reduce"
+  ]) {
+    assert.ok(dashboard.includes(fragment), "missing full Admin redesign feature: " + fragment);
+  }
+  assert.match(dashboard, /id="welcomeName"[\s\S]*?hero-gradient/);
+  assert.match(dashboard, /function loadDashboard\(\)[\s\S]*?Promise\.allSettled/);
+  assert.match(dashboard, /if \(\$\("welcomeName"\)\) \$\("welcomeName"\)\.textContent/);
+  assert.match(dashboard, /id="heroSystemState"/);
+  assert.equal((dashboard.match(/class="capability-card"/g) || []).length, 24);
+});
