@@ -76,8 +76,8 @@ test("dashboard is an operational workspace with the complete Creator Platform c
   assert.match(dashboard, /<h2>Gyors műveletek<\/h2>/);
   assert.match(dashboard, /aria-label="Gyors műveletek"/);
   assert.match(dashboard, /Weboldal szerkesztése/);
-  assert.match(dashboard, /Adásrend kezelése/);
-  assert.match(dashboard, /Publikus webhely ellenőrzése/);
+  assert.match(dashboard, /Adásrend frissítése/);
+  assert.match(dashboard, /Publikus oldal ellenőrzése/);
   assert.match(dashboard, /id="platformCapabilities"/);
   assert.match(dashboard, /href="#platformCapabilities">Teljes funkciótérkép<\/a>/);
   assert.match(dashboard, /Egy alkotói platform\. Minden munkafolyamat/);
