@@ -1946,7 +1946,7 @@ PWA/offline/mobile; provider capabilities/Discord roles; email/CRM/consent; Stre
  
 ### 37.3. A P0 aktuális állapota
 
-- **P0.1:** IN PROGRESS — a branch/MASTER/archive baseline és a fő route-viselkedés forráskódja ellenőrizve; a baseline commiton a Cloudflare Workers Build, Editor Core Test és Twitch Integration Check sikeres. A teljes tervintegritási gate még nyitott, mert a MASTER több korábbi fejezetében maradt státusz-/folytatási pont-ellentmondást és az archív route-leírás történeti eltérését egységesen reconciliálni kell. A tesztek sikere nem zárja le P0.1 önmagában.
+- **P0.1:** IN PROGRESS — a branch/MASTER/archive baseline és a fő route-viselkedés ellenőrizve; az archív route-leírás javítva és a canonical Admin/Dashboard vs Editor v2 útvonal egyeztetve. A baseline commiton a Cloudflare Workers Build, Editor Core Test és Twitch Integration Check sikeres. A gate azért marad nyitva, mert a teljes helyi working-tree állapot, a remote D1/schema integritás, valamint a save/reload/publish/mobile browser acceptance ebből a forráskód-auditból nem bizonyítható.
 - **P0.2:** IN PROGRESS — a 271 történeti kulcshoz elkészült a soronkénti MAPPED DRAFT crosswalk (§41), de a szemantikai megfeleltetés teljes felülvizsgálata, a döntések indoklása és a tételenkénti permission/dependency/acceptance contract még nincs lezárva.
 - **P0.3:** IN PROGRESS — az első kódalapú domain/adatforrás-leltár elkészült; a teljes tábla-, owner-, lifecycle- és consumer-térkép még hiányzik.
 - **P0.4:** IN PROGRESS — az első router/static surface-leltár elkészült; a teljes menü-/route-/block-lefedettség és legacy/placeholder besorolás még hiányzik.
@@ -1982,7 +1982,7 @@ P0 csak minden kapu bizonyítékalapú PASS-a után zárható.
 | /, /index.html | public/visual-page.html | Canonical public renderer entry | A publikus oldal dinamikus oldaltartalmat a public pages API-val olvas; a teljes public route/SEO/404 acceptance nyitott. |
 | /p/* | public/visual-page.html | Canonical public page route family | A Page Modelből renderel; a published-only API szabály és az egyes oldalak állapota külön tesztelendő. |
 | /admin/login | public/admin-login.html | Canonical login surface | /admin-login.html 302-vel ide irányít. |
-| /admin | public/admin-home.html, hitelesítés után | Admin home/dashboard surface | **Dokumentációs eltérés:** docs/ARCHIVE-LEGACY-LAYERS.md azt állítja, hogy /admin és /admin.html az Editor v2-re irányít, de a jelenlegi src/index.ts szerint /admin az admin-home.html-t szolgálja ki, /admin.html pedig /admin-ra irányít. Ezt P0.1/P0.4-ben fel kell oldani; a runtime router a route viselkedésének elsődleges kódbizonyítéka. |
+| /admin | public/admin-home.html, hitelesítés után | Canonical Admin home/dashboard | A korábbi eltérés feloldva: docs/ARCHIVE-LEGACY-LAYERS.md most a src/index.ts és tests/admin-home-contract.test.js által igazolt route-szerződést rögzíti. `/admin/editor` külön, autentikált Editor v2 belépés; a régi `/admin.html` kompatibilitási redirect `/admin`-ra. |
 | /admin/editor | public/editor-v2/index.html, hitelesítés után | Canonical Visual Editor v2 entry | Egyetlen canonical Editor marad; a régi Editor nem aktiválható párhuzamosan. |
 | /admin/home, /admin-home.html, /admin.html | /admin | Compatibility redirect | A végső redirect-szerződés és teszt még a P0 része. |
 | /about.html, /community.html, /contact.html, /schedule.html, /tiktok.html, /twitch.html, /vod.html, /youtube.html | megfelelő /p/* slug | Legacy public redirects | Meg kell őrizni és regresszióval tesztelni, amíg a tervben lévő redirect/404 policy nincs lezárva. |
@@ -1998,7 +1998,7 @@ P0 csak minden kapu bizonyítékalapú PASS-a után zárható.
 
 ### 37.6. Következő bizonyítékhoz kötött feladatok
 
-1. P0.1: a route/dokumentáció eltérés feloldása a kanonikus tervben; a legacy dokumentum csak igazolt runtime-viselkedés után módosítható.
+1. P0.1: a route/dokumentáció eltérés feloldva és az archív rétegdokumentum frissítve; még hátra van a local working-tree, remote D1 és browser save/reload/publish/mobile acceptance bizonyítása.
 2. P0.2: minden H19–H34 követelményhez külön crosswalk sor: eredeti kulcs + pontos címke + végleges funkció-ID + döntés (KEEP/MERGE/EXPAND/DEFER/REPLACE/REJECT) + domain owner + fázis + elfogadási bizonyíték vagy nyitott ok. A témacsoport-szintű megfeleltetés nem elég.
 3. P0.3: összes migráció és D1/R2 consumer leltára; minden domainhez canonical owner/source, scope, lifecycle, permission és consumer.
 4. P0.4: minden Admin menüpont, public route/block és Editor action/placeholder/legacy surface tételes ellenőrzése.
