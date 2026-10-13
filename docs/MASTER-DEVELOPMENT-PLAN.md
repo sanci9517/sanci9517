@@ -6103,3 +6103,18 @@ The historical H28/H29 rows were updated to reflect the canonical registry defin
 | H27.13 | ANL-007 → ANL-001–010 + ADM-002 | The Admin analytics surface must expose phased canonical analytics domains; ANL-007 is only range/filter/export. |
 
 **Status:** targeted source-key mappings corrected against the current §24 registry. This is not a PASS for the complete H19–H27 crosswalk; owner, phase/dependency, negative-test and runtime acceptance evidence remain OPEN. No runtime code/data changed and no tests were run.
+
+### 41.3.49. P0.2 — Current route and Cloudflare binding evidence versus historical blueprint (2026-10-13)
+
+**Current source evidence:** `src/index.ts` at the audited branch imports/registers `/api/admin/settings`, `/api/admin/schedule`, `/api/admin/twitch/schedule-sync`, `/api/admin/pages` and `/api/admin/editor`. The checked dispatcher does not register the blueprint's historical `/api/admin/sections`, `/api/admin/socials`, `/api/admin/media`, `/api/admin/seo`, `/api/admin/analytics`, `/api/admin/integrations`, `/api/ai/chat`, `/api/ai/analyze` or `/api/ai/site-change` paths. Their absence from this dispatcher is not a request to recreate them; each capability must map to the current canonical domain/route or remain phased/open.
+
+**Current Wrangler evidence:** `wrangler.jsonc` declares the Worker, `ASSETS` static assets and D1 binding `DB`. It does not declare R2, KV, Queues or Durable Objects bindings. Therefore the V2 Blueprint's R2/KV/Queues/DO descriptions are architectural intent only until configuration, runtime consumers, ownership, retry/idempotency, failure recovery and deployment verification are explicitly approved. Do not claim those bindings are active from the archived plan alone.
+
+**Required controls:**
+- `/admin` is the authenticated Admin Dashboard route and `/admin/editor` is the authenticated Editor v2 route according to the current router; historical `public/admin.html` and `public/editor/` are not canonical runtime paths.
+- `page_sections` is a historical table proposal and must not create a second hierarchy if the canonical Page Model stores the document tree.
+- Historical `integrations`, `seo_metadata`, `analytics_events` and `audit_logs` table names must be reconciled to current migrations and domain ownership before any new migration is considered.
+- API acceptance must be based on registered routes and route-specific tests, not the endpoint names in an old blueprint.
+
+**Status:** current route/binding comparison is source-level evidence only; this does not prove deployed binding parity or all endpoint behavior. P0.2 **IN PROGRESS / NOT PASS**. No runtime code/data changed and no tests were run.
+
