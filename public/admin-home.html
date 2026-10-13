@@ -772,3 +772,269 @@
 
         <footer class="footer-note"><span>Sanci9517 Creator Control Center</span><span>Adatfrissítés: <span id="footerUpdated">—</span></span></footer>
       </main>
+
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const root = document.documentElement;
+    function applyTheme(theme) {
+      const selected = theme === "light" ? "light" : "dark";
+      root.dataset.theme = selected;
+      $("themeToggle").setAttribute("aria-label", selected === "dark" ? "Világos téma bekapcsolása" : "Sötét téma bekapcsolása");
+      $("themeToggle").title = selected === "dark" ? "Világos téma bekapcsolása" : "Sötét téma bekapcsolása";
+      $("themeIcon").textContent = selected === "dark" ? "☼" : "☾";
+      $("themeLabel").textContent = selected === "dark" ? "Világos mód" : "Sötét mód";
+      $("themeColorMeta").content = selected === "dark" ? "#100d18" : "#f7f5fa";
+    }
+    let savedTheme = "dark";
+    try { savedTheme = localStorage.getItem("sanci9517-admin-theme") || "dark"; } catch {}
+    applyTheme(savedTheme);
+    $("themeToggle").addEventListener("click", () => {
+      const next = root.dataset.theme === "dark" ? "light" : "dark";
+      applyTheme(next);
+      try { localStorage.setItem("sanci9517-admin-theme", next); } catch {}
+    });
+
+    const toast = (message) => {
+      const node = $("toast");
+      node.textContent = message;
+      node.hidden = false;
+      window.clearTimeout(toast.timer);
+      toast.timer = window.setTimeout(() => { node.hidden = true; }, 4200);
+    };
+    async function api(path, options = {}) {
+      const response = await fetch(path, { credentials: "same-origin", cache: "no-store", ...options });
+      let payload;
+      try { payload = await response.json(); } catch { throw new Error("A szerver válasza nem olvasható."); }
+      if (!response.ok || payload?.ok === false) {
+        const code = payload?.error?.code;
+        if (response.status === 401 || code === "UNAUTHORIZED") {
+          window.location.replace("/admin/login");
+          throw new Error("A munkamenet lejárt.");
+        }
+        throw new Error(payload?.error?.message || "Az adat nem tölthető be.");
+      }
+      return payload?.data ?? payload;
+    }
+    function setStatusPill(node, kind, label) {
+      node.className = "status-pill" + (kind ? " " + kind : "");
+      node.replaceChildren();
+      const dot = document.createElement("span");
+      dot.className = "status-dot";
+      dot.setAttribute("aria-hidden", "true");
+      node.append(dot, document.createTextNode(label));
+    }
+    function safeDate(value, options = {}) {
+      const date = new Date(value);
+      if (!Number.isFinite(date.getTime())) return "Ismeretlen időpont";
+      return new Intl.DateTimeFormat("hu-HU", options).format(date);
+    }
+    function renderSchedule(items) {
+      const now = Date.now();
+      const upcoming = (Array.isArray(items) ? items : [])
+        .filter((item) => item?.status === "scheduled" && Number.isFinite(Date.parse(item.startsAt)) && Date.parse(item.startsAt) >= now)
+        .sort((a, b) => Date.parse(a.startsAt) - Date.parse(b.startsAt));
+      $("scheduleMetric").textContent = String(upcoming.length);
+      $("scheduleNote").textContent = upcoming.length ? "Jövőbeli, ütemezett esemény" : "Nincs jövőbeli, ütemezett esemény";
+      const host = $("nextSchedule");
+      host.replaceChildren();
+      if (!upcoming.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
+        const title = document.createElement("strong");
+        title.textContent = "Nincs közelgő adás";
+        const copy = document.createElement("p");
+        copy.textContent = "Hozz létre vagy frissíts egy eseményt az Editor adásrend felületén. A vezérlőpult nem talál ki időpontot.";
+        empty.append(title, copy);
+        host.append(empty);
+        return;
+      }
+      const item = upcoming[0];
+      const start = new Date(item.startsAt);
+      const row = document.createElement("div");
+      row.className = "schedule-row";
+      const tile = document.createElement("div");
+      tile.className = "date-tile";
+      const day = document.createElement("strong");
+      day.textContent = new Intl.DateTimeFormat("hu-HU", { day: "2-digit" }).format(start);
+      const month = document.createElement("span");
+      month.textContent = new Intl.DateTimeFormat("hu-HU", { month: "short" }).format(start).replace(".", "");
+      tile.append(day, month);
+      const copy = document.createElement("div");
+      copy.className = "schedule-copy";
+      const title = document.createElement("strong");
+      title.textContent = item.title || "Névtelen esemény";
+      const details = document.createElement("span");
+      const time = safeDate(item.startsAt, { dateStyle: "medium", timeStyle: "short" });
+      details.textContent = [time, item.platform || "Platform nincs megadva"].join(" · ");
+      copy.append(title, details);
+      const link = document.createElement("a");
+      link.className = "small-btn";
+      link.href = "/admin/editor";
+      link.textContent = "Megnyitás";
+      row.append(tile, copy, link);
+      host.append(row);
+    }
+    async function loadDashboard() {
+      $("refresh").disabled = true;
+      $("lastUpdated").textContent = "Frissítés…";
+      $("siteStatus").textContent = "A webhelyadatok betöltése folyamatban.";
+      const results = await Promise.allSettled([
+        api("/api/auth/session"),
+        api("/api/admin/settings"),
+        api("/api/admin/pages?meta=1"),
+        api("/api/admin/schedule"),
+        api("/api/integrations/twitch/connection")
+      ]);
+      const [sessionResult, settingsResult, pagesResult, scheduleResult, twitchResult] = results;
+      if (sessionResult.status === "rejected") {
+        $("refresh").disabled = false;
+        $("lastUpdated").textContent = "Nem frissült";
+        toast("A munkamenet vagy a vezérlőpult adatai nem tölthetők be.");
+        return;
+      }
+      const session = sessionResult.value;
+      if (!session?.authenticated) {
+        window.location.replace("/admin/login");
+        return;
+      }
+      const user = session.user || {};
+      const name = user.displayName || user.email || "Felhasználó";
+      $("userName").textContent = name;
+      if ($("welcomeName")) $("welcomeName").textContent = (user.displayName || "alkotó").split(/\\s+/)[0];
+      $("userRole").textContent = user.role || "Felhasználó";
+      $("userAvatar").textContent = Array.from(name.trim())[0]?.toLocaleUpperCase("hu-HU") || "S";
+      $("siteMetric").textContent = "—";
+      $("siteNote").textContent = "A webhely beállításainak ellenőrzése.";
+      if (settingsResult.status === "fulfilled") {
+        const settings = settingsResult.value || {};
+        $("siteMetric").textContent = "Beállítva";
+        $("heroSystemState").textContent = "Webhelyadatok betöltve";
+        const siteName = settings.siteName || "Sanci9517";
+        const tagline = settings.tagline || "Creator webhely";
+        $("sidebarSiteName").textContent = siteName;
+        $("sitePanelTitle").textContent = siteName;
+        $("sitePreviewName").textContent = siteName;
+        $("sitePreviewTagline").textContent = tagline;
+        $("siteNote").textContent = tagline;
+        $("sitePanelDescription").textContent = "A webhely adatai a canonical beállításokból származnak.";
+        $("siteStatus").textContent = "A webhelybeállítások sikeresen betöltődtek.";
+      } else {
+        $("siteMetric").textContent = "Nem elérhető";
+        $("heroSystemState").textContent = "Ellenőrzés szükséges";
+        $("siteNote").textContent = "A webhelybeállításokhoz admin jogosultság szükséges.";
+        $("sitePreviewTagline").textContent = "A beállítások nem érhetők el ezzel a szerepkörrel.";
+        $("siteStatus").textContent = "A webhelyadatok nem tölthetők be. Ellenőrizd a jogosultságot.";
+      }
+      if (pagesResult.status === "fulfilled" && Array.isArray(pagesResult.value)) {
+        const pages = pagesResult.value;
+        const published = pages.filter((page) => page.isPublished).length;
+        const drafts = pages.length - published;
+        $("pagesMetric").textContent = String(pages.length);
+        $("pagesNote").textContent = published + " publikált · " + drafts + " nem publikált";
+      } else {
+        $("pagesMetric").textContent = "—";
+        $("pagesNote").textContent = "Az oldallista nem érhető el ezzel a jogosultsággal.";
+      }
+      if (scheduleResult.status === "fulfilled") {
+        renderSchedule(scheduleResult.value);
+      } else {
+        $("scheduleMetric").textContent = "—";
+        $("scheduleNote").textContent = "Az adásrend nem tölthető be.";
+        $("nextSchedule").textContent = "Az adásrend lekérése sikertelen. Nyisd meg az Editort, vagy próbáld újra a frissítést.";
+      }
+      if (twitchResult.status === "fulfilled") {
+        const twitch = twitchResult.value || {};
+        if (twitch.connected) {
+          $("twitchMetric").textContent = "Kapcsolva";
+          $("twitchNote").textContent = twitch.broadcaster?.login ? "@" + twitch.broadcaster.login : "Kapcsolat igazolva";
+          $("twitchDetail").textContent = twitch.lastValidatedAt ? "Utoljára ellenőrizve: " + safeDate(twitch.lastValidatedAt, { dateStyle: "medium", timeStyle: "short" }) : "A kapcsolat aktívként van nyilvántartva.";
+          setStatusPill($("twitchPill"), "ok", "Kapcsolva");
+          $("integrationStatus").textContent = "A Twitch kapcsolat állapotát a szerver visszaigazolta.";
+        } else {
+          $("twitchMetric").textContent = "Nincs kapcsolat";
+          $("twitchNote").textContent = "Nincs aktív Twitch kapcsolat";
+          $("twitchDetail").textContent = "Nincs aktív kapcsolat ehhez a webhelyhez.";
+          setStatusPill($("twitchPill"), "warn", "Nincs kapcsolat");
+          $("integrationStatus").textContent = "A Twitch csatlakoztatása az Editor integrációs felületén kezelhető.";
+        }
+      } else {
+        $("twitchMetric").textContent = "Nem ellenőrizhető";
+        $("twitchNote").textContent = "A provider állapota nem érhető el.";
+        $("twitchDetail").textContent = "Az állapotlekérés sikertelen; ez nem bizonyítja, hogy a kapcsolat megszűnt.";
+        setStatusPill($("twitchPill"), "error", "Hiba");
+        $("integrationStatus").textContent = "A kapcsolat állapotát most nem sikerült ellenőrizni. Próbáld újra.";
+      }
+      const updated = safeDate(new Date(), { hour: "2-digit", minute: "2-digit" });
+      $("lastUpdated").textContent = "Frissítve " + updated;
+      $("footerUpdated").textContent = updated;
+      $("refresh").disabled = false;
+    }
+    $("refresh").addEventListener("click", loadDashboard);
+    $("logout").addEventListener("click", async () => {
+      $("logout").disabled = true;
+      try { await fetch("/api/auth/logout", { method: "POST", credentials: "same-origin", keepalive: true }); } catch {}
+      window.location.replace("/admin/login");
+    });
+    const sidebar = $("sidebar");
+    const backdrop = $("mobileBackdrop");
+    function closeSidebar(restoreFocus = false) {
+      const wasOpen = sidebar.classList.contains("open");
+      sidebar.classList.remove("open");
+      backdrop.classList.remove("visible");
+      $("mobileMenu").setAttribute("aria-expanded", "false");
+      if (restoreFocus && wasOpen && window.matchMedia("(max-width: 900px)").matches) {
+        $("mobileMenu").focus();
+      }
+    }
+    $("mobileMenu").addEventListener("click", () => {
+      const open = !sidebar.classList.contains("open");
+      sidebar.classList.toggle("open", open);
+      backdrop.classList.toggle("visible", open);
+      $("mobileMenu").setAttribute("aria-expanded", String(open));
+    });
+    backdrop.addEventListener("click", () => closeSidebar(true));
+    const searchWrap = $("searchWrap");
+    const mobileSearch = $("mobileSearch");
+    function closeMobileSearch(restoreFocus = false) {
+      const wasOpen = searchWrap.classList.contains("mobile-search-open");
+      searchWrap.classList.remove("mobile-search-open");
+      mobileSearch.setAttribute("aria-expanded", "false");
+      mobileSearch.setAttribute("aria-label", "Funkciókeresés megnyitása");
+      mobileSearch.title = "Funkciókeresés";
+      if (restoreFocus && wasOpen && window.matchMedia("(max-width: 600px)").matches) {
+        mobileSearch.focus();
+      }
+    }
+    mobileSearch.addEventListener("click", () => {
+      const open = !searchWrap.classList.contains("mobile-search-open");
+      searchWrap.classList.toggle("mobile-search-open", open);
+      mobileSearch.setAttribute("aria-expanded", String(open));
+      mobileSearch.setAttribute("aria-label", open ? "Funkciókeresés bezárása" : "Funkciókeresés megnyitása");
+      mobileSearch.title = open ? "Keresés bezárása" : "Funkciókeresés";
+      if (open) $("menuSearch").focus();
+      else mobileSearch.focus();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        closeSidebar(true);
+        closeMobileSearch(true);
+      }
+    });
+    $("menuSearch").addEventListener("input", (event) => {
+      const query = event.target.value.trim().toLocaleLowerCase("hu-HU");
+      document.querySelectorAll("[data-nav-label]").forEach((item) => {
+        const matches = !query || item.dataset.navLabel.toLocaleLowerCase("hu-HU").includes(query);
+        item.hidden = !matches;
+      });
+      document.querySelectorAll("[data-capability-search]").forEach((item) => {
+        const searchable = (item.dataset.capabilitySearch + " " + item.textContent).toLocaleLowerCase("hu-HU");
+        item.hidden = Boolean(query) && !searchable.includes(query);
+      });
+    });
+    loadDashboard();
+  </script>
+</body>
+</html>
