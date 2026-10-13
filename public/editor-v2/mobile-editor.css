@@ -137,3 +137,56 @@
 @media (min-width:851px){.mobile-bottom-bar,.mobile-backdrop{display:none}}
 
 @media (max-width:850px){.mobile-multiselect-bar{position:absolute;left:10px;right:10px;top:64px;z-index:110;display:flex;align-items:center;gap:8px;min-height:48px;padding:7px 8px;border:1px solid #31435d;border-radius:12px;background:#101925;box-shadow:0 12px 34px rgba(0,0,0,.45)}.mobile-multiselect-bar[hidden]{display:none}.mobile-multiselect-bar strong{flex:1;min-width:0;color:#edf2f8;font-size:11px}.mobile-multiselect-bar button{height:34px;padding:0 13px;border:1px solid #34465f;border-radius:8px;background:#182538;color:#dce7f7;font-size:10px;font-weight:700}.mobile-multiselect-bar button:last-child{background:#315b9d;border-color:#4774bd;color:#fff}.node,.layer-row{-webkit-touch-callout:none;user-select:none;touch-action:pan-x pan-y}.node.selected{outline-width:2px}}
+
+
+/* Mobile UX refinement: keep the header calm and move secondary actions to a dedicated bottom bar. */
+@media (max-width:850px){
+  .top-actions .twitch-connection-btn,
+  .top-actions #undo,
+  .top-actions #redo,
+  .top-actions #preview,
+  .top-actions #publish,
+  .top-actions #unpublish{display:none!important}
+
+  .top-actions{gap:6px}
+  .top-actions #save,
+  .top-actions #openInspector{width:40px;min-width:40px;height:40px;border-radius:11px}
+  .top-actions #save::after{font-size:16px}
+  .top-actions #openInspector{font-size:0;align-items:center;justify-content:center}
+  .top-actions #openInspector::after{content:'☷';font-size:18px;line-height:1}
+  .topbar{grid-template-columns:auto minmax(0,1fr) auto;gap:7px;padding-inline:8px}
+  .top-page-control select{height:40px;font-size:12px}
+  .brand-menu{width:40px;height:40px;min-width:40px}
+  .top-actions button{height:40px}
+
+  .mobile-bottom-bar{
+    display:flex!important;position:absolute;left:8px;right:8px;bottom:8px;z-index:70;
+    align-items:center;gap:6px;min-height:56px;padding:6px;
+    overflow-x:auto;overflow-y:hidden;white-space:nowrap;
+    border:1px solid #29384d;border-radius:14px;
+    background:rgba(13,19,29,.97);box-shadow:0 8px 28px rgba(0,0,0,.35);
+    scrollbar-width:none;overscroll-behavior-x:contain;
+  }
+  .mobile-bottom-bar::-webkit-scrollbar{display:none}
+  .mobile-bottom-bar #mobileSelection{flex:0 0 auto;max-width:105px;overflow:hidden;text-overflow:ellipsis;font-size:11px;color:#d7e0ef;padding-inline:5px}
+  .mobile-bottom-bar button{flex:0 0 auto;min-width:44px;height:44px;padding:0 11px;border-radius:10px;font-size:12px}
+  .mobile-bottom-bar #mobileFit{min-width:48px}
+  .mobile-bottom-bar #mobileZoom{min-width:38px;text-align:center;font-size:11px}
+  .mobile-bottom-bar #mobilePreview{background:#182438}
+  .mobile-bottom-bar #mobilePublish{background:#315b9d;border-color:#4774bd;color:#fff}
+  .mobile-bottom-bar #mobileUnpublish{background:#182438}
+  .canvas{padding-bottom:84px}
+  .left-dock:not(.closed),.right-dock:not(.closed){bottom:72px}
+  .mobile-backdrop{bottom:72px}
+  .workspace.left-open .mobile-backdrop,.workspace.right-open .mobile-backdrop{bottom:72px}
+}
+@media (max-width:380px){
+  .brand strong{display:none}
+  .top-page-control select{font-size:11px}
+  .mobile-bottom-bar #mobileSelection{max-width:72px}
+  .mobile-bottom-bar{left:5px;right:5px;gap:4px;padding:5px}
+}
+@media (prefers-reduced-motion:reduce){
+  .left-dock:not(.closed),.right-dock:not(.closed){animation:none!important}
+  .mobile-backdrop{transition:none!important}
+}
