@@ -2666,11 +2666,11 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.8-01 | Consent-aware web/content/stream/commerce/community analytics only from real sources | ANL-001–ANL-006, ANL-009, SEC-011 | DEFER/EXPAND | 2.0+ by source | QA-003/008 |
 | F.8-02 | Metrics source/period/freshness/missing values/API limits/retention/export/role; anomaly detection later | ANL-007–ANL-010, SEC-002 | EXPAND | 2.0+ | QA-002/003/008 |
 | F.8-03 | Automation event/schedule→trigger→condition→action→result→verify→audit with retry/idempotency/rate/dead-letter/version/site rules | AUT-001–AUT-014 (including AUT-003 condition/filter rules, AUT-010 enable/pause/version/clone lifecycle, and AUT-013 templates as separately phased), SEC-003, SEC-010 | DEFER | 7.0 | QA-002/003/006/008 |
-| F.8-04 | AI website edits use canonical Page Model/action pipeline, permission/schema validation, preview/diff/approval/verify/audit; no arbitrary DB/HTML | AI-003, AI-005–AI-009, AI-019, EDT-003, SEC-002 | DEFER | 3.0 safety gate | QA-002/003/008 |
+| F.8-04 | AI website edits use canonical Page Model/action pipeline, permission/schema validation, preview/diff/approval/verify/audit; no arbitrary DB/HTML | AI-003–AI-009, AI-018–AI-020, EDT-003/039, SEC-002/003/010 | DEFER | 3.0 safety gate | QA-002/003/008 |
 | F.8-05 | AI orchestrator/agent/tool/model registry, task planner/context selector, permission/approval, specialist agents and multi-model routing | AI-001–AI-006 (including AI-004 context selection/privacy filter), AI-016–AI-018 | DEFER | 3.0–8.0 | QA-002/003/008 |
 | F.8-06 | AI costs/quotas/approval/prompt versions/usage/errors/recovery/rollback; provider keys server-side | AI-001, AI-002, AI-010, AI-017, SEC-008 | DEFER | 3.0 | QA-003/008 |
 | F.8-07 | Stream Intelligence for live/silence/speech/chat/audio/OBS/highlights/VOD/clips/feedback/opt-in memory | AI-014–AI-016, ANL-003, ANL-006, OBS-003, LIV-006, SEC-011 | DEFER | 3.0–8.0 | QA-003/006/008 |
-| F.8-08 | Human-reviewed clip/export, stream setup assistant, AI Control Center, experience evaluation and E2E tests | AI-014, AI-015, AI-017–AI-020, OPS-007, QA-008 | DEFER | 3.0–8.0 | QA-002/003/008 |
+| F.8-08 | Human-reviewed clip/export, stream setup assistant, AI Control Center, experience evaluation and E2E tests | AI-014/015, AI-017–AI-020, OPS-007, QA-008 | DEFER | 3.0–8.0 | QA-002/003/008 |
 
 **Batch 6 result:** all 26 F.5–F.8 source bullets are individually represented. This does not establish provider approval, runtime capability, or acceptance PASS.
 ### 37.30. P0.2 — Bullet-szintű crosswalk, batch 7: F.9–F.13 (quality gates, recovery, context, Game Profile, domains)
@@ -6039,3 +6039,17 @@ The historical H28/H29 rows were updated to reflect the canonical registry defin
 - No runtime code/data changed; no tests run.
 
 **Status:** 135 V2 Blueprint list items and 9 ordered validation steps are individually keyed. Semantics, current runtime existence, owner/phase/dependency/permission/negative tests and acceptance remain OPEN. P0.2 **IN PROGRESS / NOT PASS**.
+
+### 41.3.45. P0.2 — AI safety crosswalk completeness and memory/evaluation boundary (2026-10-13)
+
+**Confirmed registry comparison:**
+- F.8-04 now explicitly includes AI-004 context/privacy filtering, AI-018 prompt-injection/untrusted-content tests, AI-019 human approval and AI-020 AI-free fallback, along with canonical Editor actions and server-side permissions. This is a mapping correction only; all controls remain deferred until a phase-specific security acceptance is passed.
+- F.8-08 retains the human-reviewed clip/export and AI Control Center scope. AI-018/019/020 remain distinct controls and cannot be collapsed into a generic “AI safety” checkbox.
+
+**Still-open semantic exception:**
+- F.8-07 groups live/silence/speech/chat/audio/OBS/highlights/VOD/clips/feedback/opt-in memory under AI-014–016. The registry defines AI-014 as transcript/chapter/highlight/clip candidates, AI-015 as stream diagnostics/summary, and AI-016 as specialist-agent roles. None alone proves streamer profile, long-term memory, preference management, evaluation history or feedback governance.
+- Keep F.8-07 as a high-level roadmap umbrella, but its implementation must be split into separate scoped capabilities before the 3.0–8.0 phases: (a) provider/source and live-monitoring capability; (b) transcript/clip generation; (c) opt-in profile/memory with retention/export/delete/consent; (d) evaluation/outcome/experiment tracking; (e) human-reviewed feedback/opt-out. Do not invent new stable IDs until the full 359-ID bidirectional reconciliation determines whether existing AI-004/010/012/015/016/017 and SEC-011/ANL IDs can cover the exact contract.
+- Acceptance must include provider unavailability/stale data, no microphone/chat ingestion without explicit permission/consent, memory opt-out/delete, prompt injection, false-positive handling, evaluation reproducibility, audit, rollback and an AI-free manual workflow.
+
+**Status:** F.8-04/08 mapping completeness improved; F.8-07 remains **OPEN / PARTIAL**. P0.2 **IN PROGRESS / NOT PASS**. Documentation-only; no runtime code/data changed and no tests were run.
+
