@@ -138,3 +138,10 @@ test("every enabled sidebar destination is a canonical, authenticated Admin rout
   assert.match(nav, /<button\b[^>]*disabled[^>]*data-nav-label="Média erőforrások/);
   assert.doesNotMatch(nav, /<button\b(?![^>]*\bdisabled\b)[^>]*data-nav-label=/);
 });
+
+test("closing mobile navigation with Escape or backdrop restores toggle focus", () => {
+  assert.match(dashboard, /function closeSidebar\(restoreFocus = false\)/);
+  assert.match(dashboard, /if \(restoreFocus && wasOpen && window\.matchMedia\("\(max-width: 900px\)"\)\.matches\)\s*\{\s*\$\("mobileMenu"\)\.focus\(\);/);
+  assert.match(dashboard, /backdrop\.addEventListener\("click", \(\) => closeSidebar\(true\)\)/);
+  assert.match(dashboard, /if \(event\.key === "Escape"\)\s*\{\s*closeSidebar\(true\);\s*closeMobileSearch\(true\);/);
+});
