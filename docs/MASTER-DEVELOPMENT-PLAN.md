@@ -1946,7 +1946,7 @@ PWA/offline/mobile; provider capabilities/Discord roles; email/CRM/consent; Stre
  
 ### 37.3. A P0 aktuális állapota
 
-- **P0.1:** IN PROGRESS — a repository-alapvonal több részlete ellenőrzött, de az aktív route és a dokumentáció közötti eltérés, a teljes baseline/tesztfuttatás és a folytatási pont integritása még nincs lezárva.
+- **P0.1:** PASS — a v2/foundation az aktív fejlesztési ág; a MASTER az egyetlen végrehajtási igazságforrás; a történeti archive snapshot és a folytatási pont dokumentált. Az /admin útvonal eltérése feloldva: a jelenlegi src/index.ts viselkedése az irányadó, a régi archív route-leírás történeti állapot. A baseline commiton a Cloudflare Workers Build, Editor Core Test és Twitch Integration Check sikeres; ezek a tesztek típusellenőrzést, Editor-, Schedule-, domain-, Admin home-, Twitch OAuth- és ownership-teszteket futtatnak. Ez nem zárja le P0.2–P0.6-ot.
 - **P0.2:** IN PROGRESS — a 271 történeti kulcshoz elkészült a soronkénti MAPPED DRAFT crosswalk (§41), de a szemantikai megfeleltetés teljes felülvizsgálata, a döntések indoklása és a tételenkénti permission/dependency/acceptance contract még nincs lezárva.
 - **P0.3:** IN PROGRESS — az első kódalapú domain/adatforrás-leltár elkészült; a teljes tábla-, owner-, lifecycle- és consumer-térkép még hiányzik.
 - **P0.4:** IN PROGRESS — az első router/static surface-leltár elkészült; a teljes menü-/route-/block-lefedettség és legacy/placeholder besorolás még hiányzik.
