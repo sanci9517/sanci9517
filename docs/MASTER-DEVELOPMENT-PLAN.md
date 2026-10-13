@@ -2530,18 +2530,18 @@ Minden tételhez stabil funkció-ID, domain owner, user outcome, permission, dep
 | H22.18 | publishing workflow | CNT-013 | CNT | DEFER | 1.5–2.0 | QA-002/004 |
 | H22.19 | performance feedback loop | ANL-004 | ANL | DEFER | 1.5–2.0 | QA-002/004 |
 | H23.01 | event model | EDT-039 | EDT | MERGE | 2.0 | QA-002/004 |
-| H23.02 | click | QA-010 | QA | MERGE | 1.0 | QA-002/004 |
-| H23.03 | hover | QA-010 | QA | MERGE | 1.0 | QA-002/004 |
-| H23.04 | focus | QA-010 | QA | MERGE | 1.0 | QA-002/004 |
-| H23.05 | active | QA-010 | QA | MERGE | 1.0 | QA-002/004 |
-| H23.06 | submit | QA-010 | QA | MERGE | 1.0 | QA-002/004 |
-| H23.07 | scroll | QA-010 | QA | MERGE | 2.0 | QA-002/004 |
-| H23.08 | load | QA-010 | QA | MERGE | 2.0 | QA-002/004 |
-| H23.09 | timer | QA-010 | QA | MERGE | 2.0 | QA-002/004 |
-| H23.10 | open/close | QA-010 | QA | MERGE | 2.0 | QA-002/004 |
-| H23.11 | navigation | QA-010 | QA | MERGE | 1.0 | QA-002/004 |
-| H23.12 | show/hide | QA-010 | QA | MERGE | 1.0 | QA-002/004 |
-| H23.13 | toggle | QA-010 | QA | MERGE | 1.0 | QA-002/004 |
+| H23.02 | click | EDT-039 | EDT | MERGE | 1.0 | QA-002/004 |
+| H23.03 | hover | EDT-039 | EDT | MERGE | 1.0 | QA-002/004 |
+| H23.04 | focus | EDT-039 | EDT | MERGE | 1.0 | QA-002/004 |
+| H23.05 | active | EDT-039 | EDT | MERGE | 1.0 | QA-002/004 |
+| H23.06 | submit | EDT-039 | EDT | MERGE | 1.0 | QA-002/004 |
+| H23.07 | scroll | EDT-039 | EDT | MERGE | 2.0 | QA-002/004 |
+| H23.08 | load | EDT-039 | EDT | MERGE | 2.0 | QA-002/004 |
+| H23.09 | timer | EDT-039 | EDT | MERGE | 2.0 | QA-002/004 |
+| H23.10 | open/close | EDT-039 | EDT | MERGE | 2.0 | QA-002/004 |
+| H23.11 | navigation | EDT-039 | EDT | MERGE | 1.0 | QA-002/004 |
+| H23.12 | show/hide | EDT-039 | EDT | MERGE | 1.0 | QA-002/004 |
+| H23.13 | toggle | EDT-039 | EDT | MERGE | 1.0 | QA-002/004 |
 | H23.14 | state machine | EDT-040 | EDT | MERGE | 2.0 | QA-002/004 |
 | H23.15 | transition | EDT-040 | EDT | MERGE | 2.0 | QA-002/004 |
 | H23.16 | animation timeline | EDT-040 | EDT | MERGE | 2.0 | QA-002/004 |
@@ -2572,8 +2572,8 @@ Minden tételhez stabil funkció-ID, domain owner, user outcome, permission, dep
 | H25.08 | robots | SEO-004 | SEO | MERGE | 1.0 | QA-005 |
 | H25.09 | per-page SEO | SEO-005 | SEO | MERGE | 1.0 | QA-005 |
 | H25.10 | SEO preview | SEO-005 | SEO | MERGE | 1.0 | QA-005 |
-| H25.11 | redirects | SEO-005 | SEO | MERGE | 1.0 | QA-005 |
-| H25.12 | broken-link detection | SEO-005 | SEO | MERGE | 1.0 | QA-005 |
+| H25.11 | redirects | WEB-013 | WEB | MERGE | 1.0 | QA-005 |
+| H25.12 | broken-link detection | WEB-013 | WEB | MERGE | 1.0 | QA-005 |
 | H26.01 | page views | ANL-001 | ANL | DEFER | 2.0+ | QA-002 |
 | H26.02 | button clicks | ANL-001 | ANL | DEFER | 2.0+ | QA-002 |
 | H26.03 | social clicks | ANL-001 | ANL | DEFER | 2.0+ | QA-002 |
