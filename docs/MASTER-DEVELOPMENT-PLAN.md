@@ -2,7 +2,7 @@
 **ACTIVE_POINT_STATUS:** `ACTIVE — a canonical Editor v2 Page Model és command/history/persistence vertikális szeletének ellenőrzése és megbízhatósági javítása`
 **ACTIVE_POINT_TITLE:** Editor foundation és első végig működő szerkesztési szelet
 **ACTIVE_SUBPOINT_ID:** `F0.3-PAGE-MODEL-PERSISTENCE-ROUNDTRIP`
-**ACTIVE_SUBPOINT_STATUS:** `ACTIVE — PR #18–#23 history-integritás és revision-conflict recovery UI merge-elve, CI PASS. F0.3 save/reload integrity hardening branch készül: a GET revision-lista a szerver aktuális verziójának forrása; hibás/hiányos mentési válasz nem jelölheti mentettnek a draftot; mentés közben létrejött további helyi módosítások dirty állapotban maradnak. Friss PR-CI és production round-trip acceptance még szükséges. Az Android Chrome tabletes Admin-belépés külön, nyitott, nem blokkoló ismert hiba, a felhasználó kérésére elhalasztva.`
+**ACTIVE_SUBPOINT_STATUS:** `ACTIVE — PR #18–#25 history-integritás, revision-conflict recovery és save/reload kliensoldali hardening merge-elve; PR #25 mindkét kötelező CI workflow-ja PASS. A GET revision-lista a szerver aktuális verziójának forrása; hibás/hiányos mentési válasz nem jelölheti mentettnek a draftot; mentés közben létrejött további helyi módosítások dirty állapotban maradnak. Production round-trip/stale-session acceptance még szükséges; deploy és éles runtime PASS nincs állítva. Az Android Chrome tabletes Admin-belépés külön, nyitott, nem blokkoló ismert hiba, a felhasználó kérésére elhalasztva.`
 **PREVIOUS_GATE:** `F0.2 — USER-ACCEPTED WITH DEFERRED NON-BLOCKING ISSUE` (Android Chrome tablet-login külön követés alatt; nem igazoltan javított)
 **NEXT_GATE:** `F0.3 Editor foundation + first vertical slice → F0.4 Visual Builder/Layers/Inspector → további F0.x pontok szigorú sorrendben; a tablet-login hiba külön visszatérési tétel`
 **PARALLEL_WORKSTREAMS:** `0`
@@ -11,7 +11,7 @@
 **Verzió:** MASTER-2.77 — végleges termékleírás, Admin UI-specifikáció és egyetlen függőség-alapú fejlesztési sorrend; a 2.75–2.76 roadmapek történetiek.  
 **Frissítve:** 2026-10-13.  
 **Dokumentum státusza:** ez az egyetlen végrehajtási igazságforrás.
-**Audit / implementation baseline:** GitHub `v2/foundation`, commit `c4d31f56075c2b29d30bda019022943085818167` (2026-10-13; F0.3 history-integrity és explicit revision-conflict recovery UI PR #18–#23 integrálva; save/reload runtime acceptance továbbra is nyitott). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
+**Audit / implementation baseline:** GitHub `v2/foundation`, commit `54daad2357ca576d9e333a052e7bcbb6c2e2d51a` (2026-10-13; F0.3 history-integrity, revision-conflict recovery és save/reload client hardening PR #18–#25 integrálva; production save/reload runtime acceptance továbbra is nyitott). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
 
 ### Jelenlegi igazolt állapot
 Ez a blokk kizárólag az E4/E5/E6 korábban bizonyított lezárt gate-jeit rögzíti. Az M0 auditfázist a felhasználó döntése lezárta / superseded állapotba helyezte; ez nem runtime PASS.
@@ -4399,12 +4399,12 @@ A felhasználó egyértelmű döntése: „A tablet belépés később a többi 
 
 **Cél:** az első szerkesztési vertikális szelet adatútjának lezárása: a canonical Page Model mentése, szerverről újratöltése, revision-számok konzisztenciája és a párhuzamos/stale mentés konfliktusának adatvesztés nélküli kezelése. A szerver POST válasza kötelezően tartalmazza a mentett oldalazonosítót és pozitív revisiont; a GET revision-listája az aktuális revision forrása. A mentési kérés alatt keletkező további helyi módosítások nem jelölhetők mentettnek.
 
-**Implementációs hardening — PR-CI előtt, még nem PASS:**
+**Implementációs hardening — MERGED / PR-CI PASS (PR #25); production acceptance NYITOTT:**
 - [x] A betöltés a GET revision-lista legfrissebb verzióját használja, nem egy esetleg elavult oldallistázási metaadatot; üres history esetén a szerver kontraktusának megfelelően 0-ról indul.
 - [x] A kliens a mentett snapshotot küldi a szervernek, és ellenőrzi a válasz oldalazonosítóját és pozitív egész revision-számát.
 - [x] Ha a felhasználó a hálózati mentés alatt tovább szerkeszt, a válasz csak a ténylegesen elküldött snapshotot igazolja mentettnek; az újabb helyi változtatások dirty állapotban maradnak.
 - [x] Új source-contract teszt rögzíti a revision-forrást, a hiányos válasz elutasítását és a mentés közbeni módosítás dirty állapotának megőrzését.
-- [ ] Friss PR-CI PASS: typecheck, Editor Core, Twitch Integration és releváns regressziók.
+- [x] PR #25 friss CI PASS: Editor Core Test run #1013 és Twitch Integration Check run #389; mindkettő tartalmazza a typechecket és a releváns regressziókat.
 - [ ] Production acceptance: egy módosítás mentése, Editor újratöltése, canonical struktúra/revision egyezése, két munkamenetből stale mentés próbája és konfliktus utáni draft-export/reload.
 - [ ] A tabletes login hiba ettől független, elhalasztott tétel.
 
