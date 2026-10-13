@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 
 const worker = readFileSync(new URL("../src/index.ts", import.meta.url), "utf8");
-const dashboard = readFileSync(new URL("../public/admin-home.html", import.meta.url), "utf8");
+const dashboard = readFileSync(new URL("../public/admin.html", import.meta.url), "utf8");
 
 test("Admin entry authenticates before routing to the dashboard", () => {
   assert.match(
