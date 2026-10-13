@@ -11,6 +11,14 @@
 
 ## 0. A terv kötelező értelmezése
 
+### 0.0. Új beszélgetés folytatási protokoll — kötelező
+- **Az egyetlen fejlesztési terv:** `docs/MASTER-DEVELOPMENT-PLAN.md` a `sanci9517/sanci9517` repository `v2/foundation` ágán. Ezt kell elsőként megnyitni minden új beszélgetésben.
+- **Aktív munkapont:** `P0-PRODUCT-BASELINE-AND-EXECUTION-CONTRACT` / `P0.2-ARCHIVE-RECONCILIATION-AND-BIDIRECTIONAL-FEATURE-TRACEABILITY`.
+- **Folytatási sorrend:** először a jelen fájl 0.2 aktív állapotát, a 37.3 P0-állapotot, a 37.9–37.32 auditjegyzeteket és a 41. fejezet crosswalkját kell elolvasni; utána a `docs/archive/MASTER-DEVELOPMENT-PLAN-2026-10-13.md` és a kapcsolódó archív tervek tételes összevetése következik.
+- **Az archívum nem második terv:** az `docs/archive/**`, `docs/archive/plans/**`, régi checkpointok, issue-k, PR-ek és korábbi beszélgetések történeti források/bizonyítékok. Nem állíthatnak be másik aktív pontot, nem írhatják felül a jelen fájl aktív állapotát. Követelményük viszont nem törölhető; ha még nincs reconciliálva, nyitott tételként kell felvenni ebbe a MASTER-be.
+- **Nincs külön audit- vagy funkciólista-terv:** az auditjegyzék, a forrásproveniencia, a funkciókatalógus, a döntések, a függőségek és az acceptance ugyanebben a fájlban él. Kiegészítő fájl csak nyers bizonyíték/kivonat lehet, végrehajtási igazságforrás nem.
+- **Új chatnek szánt rövid folytatási szöveg:** „A `docs/MASTER-DEVELOPMENT-PLAN.md` az egyetlen irányadó terv. Olvasd el a 0.0, 0.2, 37.3, 37.9–37.32 és 41. fejezetet. Az aktív pont P0.2; folytasd a C.23 és F.1–F.13 belső felsorolásainak, a korábbi 00/A és 00.9–00.9.6.B forrásoknak, majd mind a 359 funkció-ID kétirányú reconciliációját. Ne állíts PASS-t bizonyíték nélkül, ne indíts párhuzamos feature-fejlesztést, és a végső funkciólista közös ellenőrzését még ne kérd.”
+
 Ez a dokumentum egyszerre termékspecifikáció, architekturális szerződés, funkciókatalógus, tesztelési szabályzat és végrehajtási lista. Minden fejlesztési feladatot ebből kell kiválasztani és ide kell visszavezetni. Minden funkcióhoz tartozzon felhasználói cél, felület, domain-tulajdonos, adatforrás, jogosultság, függőség, teszt és elfogadási feltétel.
 
 ### 0.1. Egyetlen igazságforrás
@@ -24,10 +32,10 @@ Ez a dokumentum egyszerre termékspecifikáció, architekturális szerződés, f
 
 ### 0.2. Aktuális végrehajtási állapot
 **ACTIVE_POINT_ID:** P0-PRODUCT-BASELINE-AND-EXECUTION-CONTRACT  
-**ACTIVE_SUBPOINT_ID:** P0.1-PLAN-INTEGRITY-AND-BASELINE-VERIFICATION  
-**Állapot:** IN PROGRESS — az új tervet össze kell egyeztetni a repository és a futó termék valós állapotával.  
+**ACTIVE_SUBPOINT_ID:** P0.2-ARCHIVE-RECONCILIATION-AND-BIDIRECTIONAL-FEATURE-TRACEABILITY  
+**Állapot:** IN PROGRESS — az egységes MASTER belépési pontja rögzítve; a forrásonkénti reconciliáció és a kétirányú funkció-nyomkövetés aktív. A P0.1 marad nyitott, de nem párhuzamos munkaszál: csak új baseline-ellentmondás esetén nyitjuk újra aktív feladatként.  
 **PARALLEL_WORKSTREAMS:** 0  
-**Következő kapu:** P0 lezárása, majd P1 rendszer- és adatút-baseline, utána a függőségi sorrend szerinti implementáció.
+**Következő kapu:** P0.2 tételes reconciliáció → P0.3 → P0.4 → P0.5 → P0.6, kizárólag soros auditban; P0 csak minden kapu bizonyítékalapú PASS-a után zárható. Ezután P1 rendszer- és adatút-baseline, majd a függőségi sorrend szerinti implementáció.
 
 ### 0.3. Ismert kiindulási állapot
 - Repo: sanci9517/sanci9517; fő fejlesztési ág: v2/foundation.
@@ -1949,8 +1957,8 @@ PWA/offline/mobile; provider capabilities/Discord roles; email/CRM/consent; Stre
  
 ### 37.3. A P0 aktuális állapota
 
-- **P0.1:** IN PROGRESS — a branch/MASTER/archive baseline és a fő route-viselkedés ellenőrizve; az archív route-leírás javítva és a canonical Admin/Dashboard vs Editor v2 útvonal egyeztetve. A commit `a083cf879c3dd15e565cffeb7556dac6d4728faa` ellenőrzésekor a Cloudflare Workers Build, Editor Core Test és Twitch Integration Check mind SUCCESS lett. Az Editor Core workflow typecheck + Editor + Schedule + domain + Admin-home contract tesztet futtat; a Twitch workflow typecheck + Editor/Schedule + Twitch OAuth + site-ownership teszteket futtat. A gate azért marad nyitva, mert a teljes helyi working-tree állapot, a remote D1/schema integritás, valamint a save/reload/publish/mobile browser acceptance ebből a forráskód-auditból nem bizonyítható.
-- **P0.2:** IN PROGRESS — a 271 H19–H34 történeti kulcs MAPPED DRAFT crosswalkja (§41) megvan. A 00.9.6.E.2–E.21 és F.1–F.13 részletes crosswalkja §37.22–37.30 között halad; az eddig validált E/F táblák 323 mapping sort tartalmaznak, a hivatkozott feature/QA ID-k mind feloldhatók. A teljes E.1/C.23/C.24 és korábbi 00/A bullet-szintű provenance, a 359 feature ID kétirányú eredetbesorolása, a döntésindoklás és az ID-nkénti permission/dependency/acceptance contract még nyitott. Ezért P0.2 továbbra sem PASS.
+- **P0.1:** IN PROGRESS — nem PASS, de jelenleg nem aktív párhuzamos munkaszál; a branch/MASTER/archive baseline és a fő route-viselkedés ellenőrizve; az archív route-leírás javítva és a canonical Admin/Dashboard vs Editor v2 útvonal egyeztetve. A commit `a083cf879c3dd15e565cffeb7556dac6d4728faa` ellenőrzésekor a Cloudflare Workers Build, Editor Core Test és Twitch Integration Check mind SUCCESS lett. Az Editor Core workflow typecheck + Editor + Schedule + domain + Admin-home contract tesztet futtat; a Twitch workflow typecheck + Editor/Schedule + Twitch OAuth + site-ownership teszteket futtat. A gate azért marad nyitva, mert a teljes helyi working-tree állapot, a remote D1/schema integritás, valamint a save/reload/publish/mobile browser acceptance ebből a forráskód-auditból nem bizonyítható.
+- **P0.2:** IN PROGRESS — **AKTÍV**. A 271 H19–H34 történeti kulcs MAPPED DRAFT crosswalkja (§41) megvan. A 00.9.6.E.2–E.21 és F.1–F.13 részletes crosswalkja §37.22–37.30 között halad; az eddig validált E/F táblák 323 mapping sort tartalmaznak, a hivatkozott feature/QA ID-k mind feloldhatók. A teljes E.1/C.23/C.24 és korábbi 00/A bullet-szintű provenance, a 359 feature ID kétirányú eredetbesorolása, a döntésindoklás és az ID-nkénti permission/dependency/acceptance contract még nyitott. Ezért P0.2 továbbra sem PASS.
 - **P0.3:** IN PROGRESS — a migrációk és Page Model runtime forrásának első összevetése elkészült (§37.15); nyitott a remote D1 alkalmazott migrációk/séma/index/FK ellenőrzése, a teljes tábla-consumer térkép, a site-scope döntések és az R2 binding/resource API hiánya.
 - **P0.4:** IN PROGRESS — a fő router, Admin placeholder-ek és Editor handler modulok első leltára megvan; a teljes surface/route/action acceptance még nyitott. A felhasználó által jelzett canvas-height/scroll-extent regresszió külön, reprodukálható acceptance-ként rögzítve (§37.21), de runtime PASS nincs.
 - **P0.5:** IN PROGRESS — Twitch/YouTube/TikTok/Discord/Kick hivatalos dokumentációs review és approval/quota/runtime korlátok frissítve (§37.10, §37.14); a teljes feature-to-endpoint/scope/quota/approval mátrix és élő integrációs acceptance még nyitott.
@@ -3431,3 +3439,82 @@ A MASTER jelenlegi tartalmán végzett strukturális ellenőrzés eredménye:
 - A §40 katalóguscímkéi és a §41 crosswalk címkéi kulcsonként egyeztetve vannak.
 
 **Amit ez az ellenőrzés nem bizonyít:** a leképezések teljes szemantikai helyességét, a döntések termékoldali indokoltságát, a részletes feature contractok meglétét, a tesztek lefutását vagy a runtime készültségét. Ezért P0.2 továbbra is IN PROGRESS; a következő munka a mapping tartalmi felülvizsgálata, az esetleges túl tág megfeleltetések pontosítása és minden sor acceptance/dependency/permission mezőinek kiegészítése.
+
+
+### 41.3. Tételes forrás-reconciliációs napló — C.23, F.1–F.13 és korábbi 00/A
+
+**Állapot:** OPEN / IN PROGRESS. Ez a napló rögzíti a következő auditmunkát; nem állítja, hogy a források már teljesen át vannak vezetve. A forrássorok végső státusza csak a teljes belső bullet-lista összevetése után változhat.
+
+#### 41.3.1. C.23.1–C.23.22 — forrásonkénti bontás
+
+Forrás: `docs/archive/MASTER-DEVELOPMENT-PLAN-2026-10-13.md`, a C.23 fejezet 2361–2685. sorai. A §38 és a meglévő EDT/DSN/WEB/RES/DYN/QA ID-k csak jelöltek mindaddig, amíg az egyes forrás-bullet, edge case, permission és acceptance pontos megfelelése nincs ellenőrizve.
+
+| Forráskulcs | Archív sorok | Forráskör | Jelenlegi célterület / ellenőrzendő ID-család | Állapot |
+|---|---:|---|---|---|
+| C.23.1 | 2366–2393 | Benchmarkok és alkalmazási szabály | QA-010; §31; C.24 open-source-first policy | OPEN — forrás-bullet és döntési nyomvonal ellenőrzendő |
+| C.23.2 | 2394–2425 | Preset, template, reusable fogalmak | DSN; EDT; §24 design/template/resource ID-k | OPEN — fogalmi határok és duplikáció kizárása |
+| C.23.3 | 2426–2440 | Canvas és szerkesztési interakciók | EDT; command/history; canvas/viewport acceptance | OPEN — minden interakció és regressziós eset külön ellenőrzendő |
+| C.23.4 | 2441–2453 | Page Model, Layers és struktúra | EDT; canonical Page Model és Layers | OPEN — selection/reselection, hierarchy és persistence lefedettség ellenőrzendő |
+| C.23.5 | 2454–2472 | Layout, geometry, CSS-vizuális tulajdonságok | EDT; responsive/layout/property registry | OPEN — minden mező, egység, korlát és viewport-eset ellenőrzendő |
+| C.23.6 | 2473–2485 | Typography, colors, design tokens | DSN; EDT; Theme/Design Token owner | OPEN — globális és lokális értékek, fallback és inheritance ellenőrzendő |
+| C.23.7 | 2486–2497 | Inspector és Property Registry | EDT; canonical Property Registry | OPEN — mezőmetaadat, validáció, responsive set/reset és permission ellenőrzendő |
+| C.23.8 | 2498–2515 | Elem- és tartalmi komponenskatalógus | EDT; WEB; RES; komponens-registry | OPEN — elemtípusonkénti művelet, props és render parity ellenőrzendő |
+| C.23.9 | 2516–2530 | Responsive design és device preview | EDT; WEB; viewport/responsive contract | OPEN — breakpointok, preview és mentés/újratöltés ellenőrzendő |
+| C.23.10 | 2531–2541 | Motion, interaction és state | EDT; WEB; QA; accessibility/reduced-motion | OPEN — állapotok, prefers-reduced-motion és hibautak ellenőrzendők |
+| C.23.11 | 2542–2553 | Oldalak, site shell, vizuális navigáció | WEB; ADM; EDT | OPEN — canonical navigation/page owner és Admin/Editor határ ellenőrzendő |
+| C.23.12 | 2554–2565 | CMS, dynamic content, data binding | DYN; WEB; EDT; SEC | OPEN — schema, source, transform, authorization és loading/error state ellenőrzendő |
+| C.23.13 | 2566–2578 | Resource/media/icons/fonts/asset picker | RES; R2; EDT; DSN | OPEN — metadata/binary boundary, alt text, reuse és resource permission ellenőrzendő |
+| C.23.14 | 2579–2591 | Preview, save, publish, versioning, recovery | EDT; WEB; OPS; QA | OPEN — draft/published separation, revision conflict, recovery és no-loss tesztek ellenőrzendők |
+| C.23.15 | 2592–2602 | SEO, social preview, discoverability, public quality | WEB; QA | OPEN — title/meta, OG, sitemap, canonical, structured data és route acceptance ellenőrzendő |
+| C.23.16 | 2603–2614 | Accessibility, privacy, security, consent | SEC; QA; WEB; ADM | OPEN — szerveroldali permission, consent, keyboard/focus, privacy és negatív tesztek ellenőrzendők |
+| C.23.17 | 2615–2626 | Editor workspace, usability, power-user funkciók | EDT; ADM; QA | OPEN — shortcut, command/navigation, responsive workspace és usability acceptance ellenőrzendő |
+| C.23.18 | 2627–2637 | Integrációk és streamer-site blokkok | INT; DYN; WEB; EDT | OPEN — provider capability/scope, stale/error fallback és block-level acceptance ellenőrzendő |
+| C.23.19 | 2638–2648 | Site-wide tools és bulk operations | WEB; ADM; OPS; SEC | OPEN — tömeges művelet, preview, permission, rollback és audit trail ellenőrzendő |
+| C.23.20 | 2649–2659 | Extensibility, custom code, future AI | AI; SEC; EDT; C.24 | OPEN — sandbox, approval, shared action API és open-source review ellenőrzendő |
+| C.23.21 | 2660–2676 | Quality, observability, acceptance matrix | QA; OPS; SEC | OPEN — minden követelményhez pozitív/negatív teszt és bizonyíték szükséges |
+| C.23.22 | 2677–2685 | Fázisbesorolás és no-loss szabályok | §0; §24; §35; canonical roadmap | OPEN — phase/decision/owner/acceptance egyezés ellenőrzendő |
+
+**Kötelező eljárás C.23-hoz:** minden fenti forrástartományból a teljes bullet- és nested-bullet-listát ki kell nyerni; minden önálló viselkedés kapjon stabil source key-t (pl. `C.23.3-01`), pontos forrásszöveget vagy rövid, visszakereshető kivonatot, canonical feature ID-t, KEEP/MERGE/EXPAND/DEFER/REPLACE/REJECT döntést és indoklást, phase-t, owner-t, dependency-t, permission boundary-t, pozitív/negatív tesztet és acceptance-evidence mezőt. A fenti táblázat fejezetenkénti index, nem helyettesíti ezeket az egyedi sorokat.
+
+#### 41.3.2. F.1–F.13 — meglévő crosswalkok tételes auditja
+
+Forrás: ugyanazon archív MASTER F.1–F.13 fejezetei, a forrásban kb. 3309–3466. sorok. Jelenlegi táblák: §37.27 (F.1–F.4), §37.29 (F.5–F.8), §37.30 (F.9–F.13). A meglévő táblák sora és ID-hivatkozása nem jelenti a forrás-bullet szemantikai lefedésének igazolását.
+
+| Forráskulcs | Forrásfejezet / fő tartalom | Jelenlegi crosswalk | Auditfeladat | Állapot |
+|---|---|---|---|---|
+| F.1 | Editor stabil workflow, history, recovery | §37.27 | Minden bullet/nested bullet, history limit, transaction, save/reload, conflict és recovery külön ellenőrzése | OPEN |
+| F.2 | Dynamic blocks és data binding | §37.27 | Source/schema/transform/auth/loading/empty/error/stale és cache invalidation külön ellenőrzése | OPEN |
+| F.3 | Editor dropdownok és layout | §37.27 | Minden UI-kontroll, keyboard/touch viselkedés, state és responsive acceptance ellenőrzése | OPEN |
+| F.4 | Public content és interaction capabilities | §37.27 | Route, form, CTA, public render és accessibility bullet-szintű egyeztetése | OPEN |
+| F.5 | Content Factory és platformintegrációk | §37.29 | Tartalomtípus, provider capability, import/sync, approval/publish és failure path | OPEN |
+| F.6 | Schedule, idő és tartalomkapcsolatok | §37.29 | Canonical schedule/game profile, timezone, recurrence, resource refs és consumer parity | OPEN |
+| F.7 | Admin, forms, store és UI-szabályok | §37.29 | Admin surface, server-side permission, consent, validation és empty/error state | OPEN |
+| F.8 | Analytics, AI, automation, stream intelligence | §37.29 | Telemetry vs creator analytics, action approval, event retry/idempotency és AI safety | OPEN |
+| F.9 | SEO, accessibility, security, performance release gate | §37.30 | Minden minőségi követelményhez külön mérés, negatív teszt és release acceptance | OPEN |
+| F.10 | Backup, export/import, diagnostics, recovery | §37.30 | Export/restore integrity, permissions, retention, failure recovery és bizonyíték | OPEN |
+| F.11 | Coverage és no-loss policy | §37.30 | Minden forrás- és feature-ID kétirányú egyeztetése, nincs árva követelmény/ID | OPEN |
+| F.12 | Projekt- és indulási kontextus | §37.30 | Történeti személyre szabott elvárások elválasztása a konfigurálható termékkövetelménytől; hardcode tiltása | OPEN |
+| F.13 | Game Profile, custom domain, Link Hub, email audience, teams, mobile | §37.30 | Domain owner, phase, privacy, team permissions, fallback és minden nested bullet elfogadása | OPEN |
+
+**F-szabály:** a §37.27/29/30 meglévő sorait nem szabad újabb összesített táblával megkettőzni. Az eredeti forrássor és a jelenlegi sor párosát kell soronként ellenőrizni; eltérés esetén a kanonikus crosswalk javítandó, és a javítást itt a záró naplóban kell feljegyezni.
+
+#### 41.3.3. Korábbi 00/A és 00.9–00.9.6.B — eredet és jelenlegi hely
+
+| Forráscsoport | Jelenleg megtalált forrásnyom | Jelenlegi hely / lehetséges owner | Nyitott feladat |
+|---|---|---|---|
+| Korábbi 00/A index és végrehajtási követelmények | A 2026-10-13 archív MASTER 30. sorában megőrzött `00/A.2.2 — F — Schedule CRUD + Inspector / Domain-Driven Editor — Definition of Done`; további régi 00/A anyagok pontos eredeti verziója még nem teljesen visszaállított | A jelen MASTER 0.0/0.2 végrehajtási indexe, §24 feature registry, §35 no-loss policy, §37 P0 audit és a releváns domain acceptance pontok | Az eredeti commit/fájl/verzió megtalálása; minden 00/A alcím és bullet stabil source key-val; jelenlegi cél-ID, döntés, indok és acceptance rögzítése. A címek hiánya nem bizonyít törlést |
+| 00.9–00.9.6.B | Az archív MASTER-ből származó korábbi fejezetcsalád; a jelenlegi MASTER-ben nem minden eredeti címsor szerepel változatlanul | A követelmény jellegétől függően §2–§35, §24 feature registry, §37 audit és a kapcsolódó domain contracts | Minden eredeti alcím/bullet pontos forráshelyének visszakeresése, diff/crosswalk, KEEP/MERGE/EXPAND/DEFER/REPLACE/REJECT döntés és owner/phase/dependency/acceptance. A jelenlegi fejezetcím alapján történő automatikus megfeleltetés tilos |
+
+A 00/A és 00.9–00.9.6.B teljes forrásszövegének hiányzó részei **nyitott provenance-hiányok**. Ezt nem szabad a jelenlegi archív MASTER kivonatából kitalálni vagy teljesnek minősíteni. Következő lépésként a repository történetéből és az összes releváns `docs/archive/**` / `docs/archive/plans/**` forrásból kell visszakeresni a legrégebbi teljes példányt, majd a fenti táblát konkrét sorokkal kibővíteni.
+
+#### 41.3.4. 359 stabil funkció-ID — kétirányú nyomkövetés
+
+A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön ellenőrzés szükséges:
+
+1. **Régi forrás → új funkció:** minden történeti bullethez tartozzon egy vagy több pontos ID, vagy indokolt explicit disposition.
+2. **Új funkció → régi forrás/indoklás:** minden ID-hoz tartozzon konkrét eredeti forrás vagy dokumentált új követelmény/architekturális indok. A „modern platformhoz kell” önmagában nem elég részletes indok.
+3. Minden ID kapjon canonical owner/domain, admin/public/editor surface, phase/lifecycle, permission boundary, dependency ID-k, pozitív és negatív tesztek, elfogadási feltételek és bizonyítékmezőket.
+4. A folyamat-/governance-ID-ket külön kell választani a felhasználó által elérhető termékfunkcióktól; ne legyenek tévesen kész termékfunkcióként számolva.
+5. Az automatikus ellenőrzés csak strukturális hibát (hiányzó/duplikált ID, feloldhatatlan hivatkozás) jelezhet. A szemantikai helyességhez minden sor emberi tartalmi ellenőrzése szükséges.
+
+**P0.2 zárási feltétel:** a C.23 összes bulletje és nested bulletje, F.1–F.13 összes belső tétele, a 00/A és 00.9–00.9.6.B eredeti forrásai, mind a 359 ID kétirányú nyomkövetése és az ID-szintű contractok ellenőrzöttek; nincs megmagyarázatlan árva követelmény/ID, a döntések és phase-besorolások indokoltak, és a dokumentációs szerkezeti ellenőrzés megismételve. A P0.2 csak ezután lehet PASS; ez továbbra sem jelenti a runtime funkciók készültségét.
