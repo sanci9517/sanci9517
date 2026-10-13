@@ -1581,3 +1581,365 @@ Minden ID-hoz az alábbi mezők tartoznak a terv karbantartásakor:
 - Next action.
 
 A státuszt nem szabad pusztán a kód jelenléte alapján átállítani. Ha egy funkció több részre bontható, az al-ID-k saját DoD-t kapnak, és a szülő csak akkor PASS, ha minden kötelező al-ID PASS vagy az elhagyás explicit, indokolt és dokumentált scope döntés.
+
+
+
+## 26. Funkciószintű végrehajtási szerződés
+
+Ez a fejezet a menü- és funkciójegyzéket végrehajtható specifikációvá teszi. A katalógusban felsorolt minden stabil ID csak akkor aktiválható implementációra, ha az alábbi szerződés minden mezője kitöltött. A hiányzó adat nem feltételezhető: P0-ban fel kell tárni a repositoryból, vagy nyitott döntésként meg kell jelölni.
+
+### 26.1. Kötelező funkciókártya
+
+Minden funkcióhoz egy önálló kártya tartozik:
+1. **ID és név:** stabil, egyedi ID; megjelenített magyar név; esetleges belső technikai név.
+2. **Felhasználói eredmény:** mit tud a felhasználó elvégezni, és miért.
+3. **Belépési pont:** Admin menü/almenü, public route, Editor panel vagy rendszerfolyamat.
+4. **Műveletek:** listázás, részletezés, létrehozás, módosítás, archiválás/törlés, keresés, szűrés, export, visszaállítás; csak az értelmes műveletek.
+5. **Domain owner:** egyetlen szerveroldali üzleti domain, amely az adatot és a szabályokat birtokolja.
+6. **Kanonikus adatforrás:** D1 táblák/repository/API vagy R2 object reference; a tényleges implementációs vizsgálat után pontosítandó.
+7. **Séma és invariánsok:** kötelező mezők, validáció, egyediség, kapcsolatok, lifecycle, törlési/archiválási szabály.
+8. **Jogosultság:** anonim, tulajdonos, szerkesztő, moderátor, pénzügyi/admin szerep vagy rendszer; szerveroldali ellenőrzés és site ownership.
+9. **API/command szerződés:** request/response schema, hibakódok, idempotency, concurrency/revision policy, audit esemény.
+10. **Függőségek:** előfeltétel-ID-k; blokkoló és nem blokkoló függőség külön.
+11. **UI-állapotok:** loading, empty, partial, stale, validation, saving, success, error, retry, conflict, offline/permission denied.
+12. **Biztonsági és adatvédelmi határ:** PII, secret, consent, retention, export/delete, injection, abuse, rate limit.
+13. **Tesztcsomag:** unit/domain, API/integration, DB migration/integrity, authorization negative, browser/responsive, production smoke és user acceptance, ahol releváns.
+14. **Elfogadási forgatókönyv:** kiinduló állapot → művelet → elvárt adatváltozás → reload/re-entry → minden megjelenítési hely ellenőrzése → hibaút.
+15. **Bizonyíték:** commit, CI run, teszteredmény, runtime URL/ellenőrzés és felhasználói visszaigazolás; titkot nem tartalmazhat.
+16. **Visszaállítás:** rollback, revision restore, kompenzáló művelet vagy egyértelműen indokolt irreverzibilis állapot.
+17. **Státusz és következő lépés:** a 11. fejezet státuszaiból; egy aktív subpoint és explicit next point.
+
+### 26.2. CRUD nem elég — életciklus és állapotátmenetek
+
+A domainenkénti funkciók nem kezelhetők pusztán CRUD-ként. A funkciókártya sorolja fel a megengedett állapotátmeneteket, például:
+- Page: draft → previewed → published; published → draft/unpublished; revision → restored draft.
+- Connection: disconnected → authorization pending → connected → degraded/expired → reconnecting → connected; revoke/disconnect.
+- Scheduled content: draft → scheduled → publishing → published/failed/cancelled; retry idempotensen.
+- Product/order: draft → active/archived; order state csak a payment/order provider igazolt eseményéből változhat.
+- Membership/entitlement: pending → active → past due/cancelled/expired/revoked, provider webhook és helyi policy alapján.
+- Automation: draft → validated → enabled → paused/failed; minden run külön futási rekordot kap.
+- AI action: proposed → schema validated → approval pending → approved → executing → verified/failed/rolled back.
+- Asset: upload pending → validated/scanned → ready → referenced/archived/deleted; publikus URL csak kész, engedélyezett assetre mutathat.
+
+Érvénytelen állapotátmenetnél a szerver utasítsa el a műveletet, és az UI ne mutasson sikeres állapotot.
+
+### 26.3. Domainenkénti műveleti szerződések
+
+#### ADM — Dashboard és Admin shell
+- Művelet: valós domainállapotok összesítése, gyorslinkek, teendők, friss aktivitás.
+- Adatforrás: saját domain read API-k vagy egy összesítő read model; nem külön, kézzel szerkeszthető másolat.
+- Jogosultság: a felhasználó csak az általa kezelhető site adatait láthatja.
+- Teszt: nincs kapcsolat / stale sync / nincs schedule / API részleges hibája / unauthorized / mobile viewport.
+- PASS: minden kártya forrása és frissessége megállapítható; hibás alrendszer nem zöld; gyorsművelet a canonical modulhoz visz.
+
+#### WEB — Oldalak, navigáció, public renderer és publikálás
+- Művelet: page create/edit/duplicate/archive/delete, slug és hierarchy kezelés, navigation CRUD, preview, publish/unpublish, revision restore.
+- Adatforrás: canonical Page Model, navigation model, draft revision és külön published snapshot.
+- Jogosultság: server-side site ownership; public olvasás csak published állapotból.
+- Teszt: draft save → reload; preview vs published; publish → public route; unpublish; revision restore; invalid slug; cross-site ID.
+- PASS: draft mentés nem publikál; publish explicit; minden route canonical URL-t és megfelelő metadata-t ad; hibás/deleted reference biztonságos fallback.
+
+#### EDT — Visual Editor
+- Művelet: canvas selection/move/resize, hierarchy/layers, inspector, responsive viewport, undo/redo, clipboard/duplicate, preview, save/reload, publish handoff.
+- Adatforrás: canonical Page Model és command/validation/history/persistence API; Inspector a Property Registry metadata-t használja.
+- Jogosultság: page edit permission és site ownership minden mutationnél.
+- Teszt: move/resize, undo/redo, viewport override set/reset, inherited value, invalid property, save/reload round-trip, revision conflict, publish snapshot, keyboard/touch, mobile/desktop.
+- PASS: minden felület ugyanazt a page state-et módosítja; undo/redo és reset az adatot is helyreállítja; nincs elveszett mentés vagy automatikus publish.
+
+#### DSN — Design system, theme, template, reusable component
+- Művelet: design tokenek, theme variable, font, breakpoint, component definition, variant, template create/preview/apply/version/rollback.
+- Adatforrás: canonical Design System/Template/Component registry; page-local override explicit.
+- Teszt: token update több oldalon; component instance frissül; lokális override megmarad; template apply preview; rollback; invalid token/reference.
+- PASS: globális módosítás minden hivatkozó instance-ra hat; override precedence dokumentált; nincs duplikált style key.
+
+#### RES — Media/resource/icon/font/file registry
+- Művelet: upload, validation, preview, search/filter/tag, metadata/alt text, replace, reference lookup, archive/delete, safe download.
+- Adatforrás: D1 asset metadata + R2 object; stable asset ID; object key nem user által tetszőlegesen megadott path.
+- Jogosultság: upload/manage site permission; privát resource letöltésnél entitlement/auth check.
+- Teszt: MIME/size rejection, malformed file, duplicate, replace, referenced delete, R2 failure, unauthorized download, alt text and responsive images.
+- PASS: metadata és bináris objektum konzisztens; törlés előtt reference check; privát fájl nem érhető el publikus URL-lel.
+
+#### INT — Integrációs központ
+- Művelet: connect, callback, status, scopes, reconnect, revoke/disconnect, sync, retry, last sync/error display.
+- Adatforrás: egy canonical connection record/provider adapter; secrets encrypted/secret store; site-scoped ownership.
+- Jogosultság: site admin/owner; OAuth state egyszer használatos, site-hoz kötött, lejáró és CSRF-védett.
+- Teszt: valid/invalid/expired state, mismatched site, denied scopes, token refresh, provider outage, disconnect, retry, webhook replay.
+- PASS: kapcsolódás nem az Editorban történik; minden más modul ugyanazt a státuszt olvassa; secret nem kerül kliensre vagy logba.
+
+#### LIV/OBS — Live, stream és OBS
+- Művelet: live status, provider/channel info, stream setup, overlays, OBS connection status, scene/event triggers csak elérhető és engedélyezett API-val.
+- Adatforrás: connection domain + provider status/cache + overlay config; a cache frissessége jelölt.
+- Teszt: offline, online, stale response, missing scope, OBS unavailable, invalid overlay config, reconnect.
+- PASS: nem állít live állapotot régi adatból frissként; OBS-vezérlés csak explicit permission és jóváhagyás után; manuális fallback elérhető.
+
+#### SCH — Adásrend és Game Profile
+- Művelet: event CRUD/archive, timezone, recurrence, conflict detection, game selection, public display, countdown.
+- Adatforrás: canonical schedule domain; game profile stable ID; timezone explicit, UTC tárolás és locale display policy.
+- Teszt: DST transition, timezone change, recurrence edit-one/edit-series, overlap, past event, archived game reference, public cache invalidation.
+- PASS: Admin, Dashboard, Editor block és public schedule ugyanazt az eventet mutatja; Page Model nem másolja az event rekordot.
+
+#### CNT — Tartalom és Content Studio
+- Művelet: content item create/edit/organize, platform target, draft/review/schedule/publish, VOD/clip/short links, metadata and reuse.
+- Adatforrás: canonical content item + provider publishing job + external provider IDs.
+- Teszt: unsupported provider capability, expired auth, duplicate publish, retry, media missing, invalid platform length, cancel scheduled publish.
+- PASS: platformképesség ellenőrzött; retry nem dupláz; provider siker/hiba tényszerűen megjelenik; nincs állított publikálás provider confirmation nélkül.
+
+#### COM — Community és audience
+- Művelet: community links, posts/events, moderation, member roles where permitted, newsletter/audience subscription.
+- Adatforrás: community domain és consented audience; provider member data csak permissionnel és policy alapján.
+- Teszt: consent absent, unsubscribe, duplicate signup, abuse/rate limit, moderator vs admin, private member data, export/delete.
+- PASS: adatminimalizálás és opt-in bizonyítható; leiratkozás érvényesül; nyilvános supporter név külön hozzájárulást igényel.
+
+#### STO/SUP — Bolt, támogatás és tagság
+- Művelet: product/catalog CRUD, order status, digital delivery, support link, membership tiers, entitlement grants/revokes, refund/cancel handling.
+- Adatforrás: product/order/payment provider truth + canonical local mapping; entitlement domain adja a hozzáférés döntését.
+- Jogosultság: pénzügyi/admin művelet külön; secret/payment data soha nem jelenik meg normál Admin read modelben.
+- Teszt: duplicate webhook, payment pending/failed/refund, expired entitlement, unauthorized download, cancellation, provider outage.
+- PASS: nincs saját kézi payment-state kitalálás; webhook idempotens; entitlement a valós eseményből változik; digitális termék hozzáférése visszavonható.
+
+#### ANL/CAM — Analytics, kampány és szponzoráció
+- Művelet: date range/filter/compare/export, campaign create, UTM/link mapping, media kit, sponsor leads/deal deliverables.
+- Adatforrás: canonical event taxonomy, provider analytics adapter, campaign entity; minden mérőszám source/freshness/unit címkével.
+- Teszt: missing metrics, timezone boundaries, duplicate events, bot traffic, consent denied, provider API changes, export access.
+- PASS: becsült és mért adat külön; provider nélküli metric nem nullával vagy kitalált értékkel helyettesül; PII nem kerül aggregált riportba szükségtelenül.
+
+#### AUT — Automatizáció
+- Művelet: trigger/condition/action builder, dry-run, approve, enable/pause, version, run history, retry and dead-letter.
+- Adatforrás: event registry, action registry, durable job/run log.
+- Teszt: duplicate event, cycle, action permission removed, provider outage, timeout, retry exhaustion, timezone boundary, partial failure.
+- PASS: minden action explicit allowlist; idempotency key; retry limit/backoff; pause megállítja a következő futást; run logból hiba diagnosztizálható.
+
+#### AI — SANCI AI
+- Művelet: plan/proposal, preview diff, structured action, approve/reject, execute, verify, rollback.
+- Adatforrás: csak engedélyezett context; domain read APIs; változtatás canonical command/API útvonalon.
+- Jogosultság: AI nem adhat magának permissiont; destructive/public/financial/deploy action explicit emberi approvalt igényel.
+- Teszt: prompt injection, invalid schema, wrong site, stale context, quota exceeded, provider unavailable, action partial failure, rollback.
+- PASS: nincs arbitrary code execution vagy secret access; minden mutation auditált; AI kikapcsolásakor a core kézi folyamatok működnek.
+
+#### SEC/OPS — Biztonság, beállítások és üzemeltetés
+- Művelet: auth/session, role/ownership, audit, health/version, alerts, migration preflight, backup/restore, incident response.
+- Adatforrás: canonical identity/site ownership, structured logs and migration ledger; secrets külön kezelt.
+- Teszt: unauthorized, cross-site, session expiry/revocation, rate limit, log redaction, migration rollback, restore integrity.
+- PASS: least privilege; fail closed; migráció előre ellenőrzött; backup visszaállítható; incident/rollback dokumentált és próbált.
+
+#### LOC/TEAM/MKT — Localization, teams and extensions
+- Művelet: locale content, translation workflow, invites/roles, workspace switch, extension manifest/install/update/uninstall.
+- Adatforrás: canonical locale/page data, membership/role model, versioned extension manifest.
+- Teszt: fallback, missing translation, locale URL/SEO, revoked invite, cross-site permission, extension over-permission, failed update/uninstall.
+- PASS: locale nem keveri a tartalmat; role server-en ellenőrzött; extension explicit permissiont kér; eltávolítás után nem marad árva adat vagy executable hook.
+
+### 26.4. Általános negatív tesztkövetelmény
+Minden mutációs domain legalább az alábbi negatív eseteket teszteli:
+- hiányzó/hibás mező;
+- lejárt vagy elégtelen jogosultság;
+- másik site-hoz tartozó ID;
+- stale/revision conflict;
+- hálózati timeout és provider hiba;
+- ismételt kérés/webhook;
+- részleges mentési hiba;
+- törlés/archiválás hivatkozott rekorddal;
+- titok/PII nem kerül a válaszba vagy logba;
+- reload után a tényleges állapot egyezik a sikerüzenettel.
+
+---
+
+## 27. Felhasználói végponttól végpontig folyamatok
+
+A teljes platform csak akkor koherens, ha a modulok közötti folyamatok is működnek. Az alábbi journey-k külön end-to-end acceptance pontok.
+
+### 27.1. Weboldal készítés és publikálás
+1. Admin belépés és megfelelő site kiválasztása.
+2. Oldal létrehozása sablonból vagy üresen.
+3. Blokkok elhelyezése, rétegek és Inspector használata.
+4. Globális design token és lokális override ellenőrzése.
+5. Media asset kiválasztása és alt text megadása.
+6. Mobil/tablet/desktop viewport ellenőrzés.
+7. Undo/redo, mentés, reload, revision visszaállítás.
+8. Preview ellenőrzés külön a publikált oldaltól.
+9. SEO, canonical URL, Open Graph, internal link és accessibility check.
+10. Explicit publish; publikus route és snapshot ellenőrzése.
+11. Unpublish/rollback és cache invalidation ellenőrzése.
+12. PASS: nincs adatvesztés, draft-szivárgás, hamis siker vagy hibás mobil layout.
+
+### 27.2. Integráció és live státusz
+1. Admin Kapcsolatok → provider kiválasztása.
+2. Scope/permission magyarázat és OAuth indítás.
+3. State/redirect/callback ellenőrzés, token biztonságos tárolása.
+4. Kapcsolat állapota, last sync és provider account megjelenítése.
+5. Dashboard, Live és Editor live block ugyanazt az állapotot olvassa.
+6. Token expiry/provider outage esetén degraded state és reconnect.
+7. Disconnect után minden felület azonos állapotot mutat.
+8. PASS: nincs duplikált kapcsolat, cross-site bind vagy secret leakage.
+
+### 27.3. Adásrend és játékprofil
+1. Game profile kiválasztása vagy létrehozása.
+2. Event létrehozása explicit timezone/recurrence beállítással.
+3. Ütközés és DST ellenőrzés.
+4. Dashboard és public schedule ellenőrzése.
+5. Editor schedule block konfigurációja ugyanarra a domainre mutat.
+6. Event módosítása után minden felület frissül.
+7. PASS: nincs másolt event rekord, időzóna-hiba vagy stale publikus cache.
+
+### 27.4. Tartalomtervezés és publikálás
+1. Canonical content item létrehozása.
+2. Media asset és platform target hozzárendelése.
+3. Provider capability és mezőkorlát validáció.
+4. Draft/review/scheduled állapot.
+5. Publish job, provider response és external ID tárolása.
+6. Retry/cancel/failure handling.
+7. Public content center és analytics frissülése.
+8. PASS: duplikált publish nincs, nem támogatott platformművelet nincs hamis sikerrel elfogadva.
+
+### 27.5. Digitális termék és entitlement
+1. Product draft létrehozása és fájl/asset hozzárendelése.
+2. Ár, currency, tax/merchant-of-record és provider képesség döntése.
+3. Preview és explicit aktiválás.
+4. Teszt purchase/sandbox payment.
+5. Provider által megerősített payment event → entitlement grant.
+6. Biztonságos, jogosultság-ellenőrzött letöltés.
+7. Refund/cancel/chargeback → entitlement policy alkalmazása.
+8. PASS: secret nem szivárog; fizetési állapotot nem a kliens állítja; access visszavonható.
+
+### 27.6. Automatizáció és AI
+1. Trigger és action kiválasztása az engedélyezett registryből.
+2. Dry-run: célrekordok és side effectek megjelenítése.
+3. Permission, ownership, quota és cycle check.
+4. Approval, ha szükséges.
+5. Futtatás idempotencyvel és audit loggal.
+6. Result verification, retry vagy rollback.
+7. PASS: nincs nem engedélyezett művelet, rejtett side effect vagy meg nem erősített siker.
+
+---
+
+## 28. UI- és hibakezelési standard
+
+Minden képernyő és művelet a következő szabályoknak felel meg:
+- **Loading:** a felhasználó látja, hogy a rendszer dolgozik; duplikált submit tiltott.
+- **Empty:** magyarázat + releváns első lépés; nem üres fehér panel.
+- **Stale:** régi adat frissességi címkével; kritikus művelet előtt frissítés.
+- **Partial failure:** működő részek látszanak, hibás részek egyértelműen elkülönülnek.
+- **Validation:** mezőhöz kötött, magyarul érthető hiba; a megadott adat nem vész el.
+- **Conflict:** megmutatja, hogy a szerveroldali revision eltér; explicit reload/merge választás.
+- **Permission denied:** nincs részleges mutáció; megfelelő magyarázat.
+- **Offline/timeout:** retry biztonságos és idempotens; a rendszer nem állít sikert.
+- **Success:** csak a szerver/domain megerősítése után jelenhet meg.
+- **Destructive action:** hatás és célrekord megnevezése, confirmation, audit és recovery policy.
+- **Keyboard/touch:** minden fontos művelet fókuszolható, címkézett és elérhető.
+- **Reduced motion:** animáció és mozgás a felhasználói preferenciát tiszteletben tartja.
+- **Responsive:** kis mobil, nagy mobil, tablet, laptop és nagy desktop; horizontális overflow csak indokolt helyen.
+- **Localization:** nyelv, dátum, idő, szám, pénznem és időzóna külön kezelendő.
+
+---
+
+## 29. Adatmodell- és lifecycle katalógus
+
+A tényleges táblák neveit és meglévő migrációit P0/P1 alatt kell ellenőrizni; ez a logikai entitáskatalógus nem engedélyez új, párhuzamos táblák létrehozására.
+
+- **Site/Workspace:** tulajdonos, konfiguráció, domain, locale, status.
+- **Identity/Session/Role:** user, session, membership, permission, revocation.
+- **Page/PageRevision/PublishedSnapshot:** szerkeszthető állapot, változattörténet, publikus snapshot.
+- **Navigation/Menu:** sorrend, hierarchia, cél, visibility, locale.
+- **DesignToken/Theme/Font:** globális vizuális szerződés.
+- **Component/Template/ComponentInstance:** újrafelhasználható definíció és példány.
+- **Asset/Resource:** metadata, R2 key, checksum, dimensions, visibility, references.
+- **Integration/ProviderAccount/SyncRun/WebhookEvent:** connection, token reference, provider state, idempotency.
+- **ScheduleEvent/GameProfile:** canonical event és game identity.
+- **ContentItem/ContentTarget/PublishJob/ExternalContentRef:** tartalom és platformonkénti publikálás.
+- **CommunityPost/Audience/Consent/Subscription:** közösségi tartalom és hozzájárulási állapot.
+- **Product/Order/PaymentEvent/Entitlement/DownloadGrant:** commerce és hozzáférés.
+- **AnalyticsEvent/Aggregate/Campaign/SponsorDeal:** mérés és üzleti folyamat.
+- **AutomationDefinition/AutomationRun/ActionAudit:** workflow és futás.
+- **AIJob/AIProposal/Approval/ActionResult:** AI javaslat és kontrollált végrehajtás.
+- **Notification/EmailDelivery/SupportRequest:** üzenetküldés és delivery state.
+- **AuditEvent/BackupManifest/RestoreRun/Incident:** üzemeltetési bizonyíték és helyreállítás.
+- **ExtensionManifest/InstalledExtension/WorkspacePlan/UsageQuota:** későbbi bővíthetőség.
+
+Minden entitásnál tisztázandó: owner/site scope, ID, unique constraint, FK, lifecycle, delete/archive policy, PII/secret classification, index, migration, retention, export/restore és audit.
+
+---
+
+## 30. Külső szolgáltatók integrációs döntési kapuja
+
+Külső szolgáltató integrációja előtt egy provider kártya készül:
+- hivatalos API és OAuth dokumentáció;
+- aktuális scopes/permission és review requirements;
+- create/read/update/delete/publish/webhook capability matrix;
+- rate limits, quota, pagination, token expiry/refresh;
+- sandbox/test account elérhetőség;
+- data retention, privacy, export/delete;
+- API versioning, deprecation és outage policy;
+- region, latency, pricing, transaction fees és dependency lock-in;
+- licence, branding, attribution és platform policy;
+- retry/idempotency/webhook signature contract;
+- manual fallback és disconnect behavior;
+- acceptance teszt és bizonyíték.
+
+Provider funkciót nem szabad a marketingoldal alapján biztosan megvalósíthatónak tekinteni. A capability matrix csak hivatalos dokumentáció vagy működő teszt után jelölhető VERIFIED. Ha nincs API vagy engedély, a felület csak egyértelmű külső linket vagy manuális folyamatot adhat; nem szimulálhat natív integrációt.
+
+---
+
+## 31. Külső benchmark — konkrét tanulságok és korlátok
+
+A benchmark célja nem a konkurensek felületeinek másolása, hanem a felhasználói feladatok, minőségi elvárások és működő termékminták összevetése.
+
+### 31.1. Vizuális weboldalépítők
+- Framer mintája: canvas-központú tervezés, responsive layout, CMS, SEO, publikálás előtti ellenőrzés, staging/domain/redirect és lokalizáció.
+- Webflow mintája: vizuális felépítés és strukturált CMS összekapcsolása, illetve integrációs ökoszisztéma.
+- Átvétel a Sanci9517-ben: a canvas és CMS külön felelősség; reusable component és token; preview/publish gate; SEO/performance/accessibility ellenőrzés.
+- Nem vehető át vakon: szolgáltatóhoz kötött hosting, fizetős csomag, CMS limit vagy provider-specifikus API.
+
+### 31.2. Creator platformok és monetizáció
+- Beacons mintája: Link Hub, creator storefront, digitális termék, email marketing és media kit/creator analytics.
+- Fourthwall mintája: merch fulfillment, saját termék, digitális letöltés, tagság, támogatás és integrált creator homebase.
+- Átvétel: külön link/campaign, product, entitlement, membership, audience consent és sponsor/media kit domain; egyértelmű díj- és provider-függőség.
+- Nem vehető át vakon: díjszabás, payment flow, fulfillment, membership vagy platform entitlement; ezek jogi, pénzügyi és provider-függő döntések.
+
+### 31.3. Minőség, akadálymentesség és biztonság
+- W3C WAI/WCAG irányelvek: a hozzáférhetőség tervezési és tesztelési alap, nem utólagos kozmetika.
+- OWASP Top 10:2025: külön figyelmet igényel a broken access control, security misconfiguration, supply-chain, crypto, injection, insecure design, auth, integrity, logging/alerting és exceptional condition handling.
+- Átvétel: keyboard/focus/contrast/labels/reduced-motion, server-side authorization, input validation, secret redaction, dependency review, audit és negatív tesztek.
+- Minden külső benchmarkot a Sanci9517 céljaira, költségére, stackjére, jogi környezetére és valós API-képességére kell szűrni.
+
+### 31.4. Benchmark forrásnapló
+- Framer Website Builder: https://www.framer.com/solutions/website-builder/
+- Framer localization: https://www.framer.com/help/localization/
+- Webflow CMS: https://eu.webflow.com/feature/cms
+- Webflow integrations: https://webflow.com/integrations
+- Beacons creator store: https://beacons.bio/i/app-pages/store
+- Beacons updates/media kit: https://shop.beacons.ai/i/whats-new
+- Fourthwall creator platform: https://fourthwall.com/creators
+- Fourthwall memberships: https://fourthwall.com/memberships
+- W3C Web Accessibility Initiative: https://www.w3.org/WAI/
+- OWASP Top 10:2025: https://owasp.org/www-project-top-ten/
+
+Az oldalakat a pont implementációja előtt újra ellenőrizni kell, mert a termékfunkciók, díjak, API-k és feltételek változhatnak. A benchmark állítása nem jelenti, hogy a funkció már megvalósult vagy jogilag/API szinten megvalósítható.
+
+---
+
+## 32. Teljességi és ellentmondásfeloldási kapu
+
+Mielőtt P0 lezárul:
+1. A teljes repository és a korábbi tervanyagok minden egyedi képességét a 24. fejezet valamely stabil ID-jához kell rendelni.
+2. Minden korábbi funkcióról explicit döntés készül: megmarad, összevonás (azonos canonical domain mellett), későbbre ütemezés, vagy indokolt elutasítás. Az elutasítás oka, hatása és alternatívája rögzítendő.
+3. Két hasonló nevű funkciót nem szabad automatikusan duplikátumnak tekinteni: a felhasználói cél, domain owner, lifecycle és adatforrás összehasonlítása kötelező.
+4. A capability matrix és a menürendszer minden ID-ja kölcsönösen ellenőrizendő; árva ID és árva követelmény nem maradhat.
+5. A jelenlegi működő kód és tesztállapot a P0 baseline bizonyítéka; a tervben lévő jövőbeli funkció nem jelölhető késznek.
+6. A tényleges provider API hiánya nem törli a termékigényt: a capability státusza BLOCKED/EXTERNAL-DEPENDENCY, és manuális fallback tervezendő.
+7. A teljes audit után egyetlen aktív pont marad. A következő pontnak konkrét fájlok, parancsok, tesztek, scope és PASS feltétel kell.
+8. P0 lezárásakor a teljes terv tartalomjegyzéke, stabil ID-katalógusa és minden nyitott döntése validálva legyen; csak utána kezdődhet a következő fejlesztési pont.
+
+---
+
+## 33. Végrehajtási napló — kezdeti állapot
+
+| Pont | Állapot | Kötelező bizonyíték |
+|---|---|---|
+| P0.1 Tervintegritás és baseline | IN PROGRESS | Repo/branch/working tree, package scripts, valós tesztparancsok, aktív route, nyitott acceptance |
+| P0.2 Követelmény- és funkciólefedettség | NOT STARTED | Teljes feature ID cross-check és explicit döntések |
+| P0.3 Domain- és adatforrás-térkép | NOT STARTED | Canonical owner, source, site scope, lifecycle és dependency |
+| P0.4 Admin/public/Editor surface audit | NOT STARTED | Minden route/menu/block és legacy állapot besorolása |
+| P0.5 Provider/benchmark feasibility | NOT STARTED | Hivatalos API, capability, policy és cost kártyák |
+| P0.6 Függőségi sorrend és acceptance freeze | NOT STARTED | Aktív pont, next point, DoD, tesztparancsok, rollback |
+| P0 | NOT PASS | P0.1–P0.6 mind PASS; nincs elveszett capability vagy nyitott kritikus ellentmondás |
+
+A P0.x sorok dokumentációs/baseline feladatok, nem termékfeature-implementációk. A P0 lezárásáig a párhuzamos termékfejlesztés tiltott. A terv csak a tényleges ellenőrzés után frissítheti az állapotot.
