@@ -6161,3 +6161,61 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 
 **Status:** 438/438 list items have source keys. This establishes line-level inventory only. Full semantic reconciliation, owner/phase/dependency/permission/test/negative-test/acceptance completion remain OPEN. P0.2 **IN PROGRESS / NOT PASS**.
 
+
+### 41.3.40. P0.2 — Visual Editor roadmap: item-level milestone and work-rule ledger (2026-10-13)
+
+**Source:** `docs/archive/plans/visual-editor-roadmap.md`, source blob `082b4afbb40d4b4e3363f91691e546cf91ced32d`. The archived file is a compact milestone/work-rule source, not the active execution plan.
+
+**Inventory:** 38 individually keyed list items (38 bullets and 0 numbered steps).
+
+| Source key | Archive line | Source section | Exact source item | Candidate canonical IDs | Decision / acceptance |
+|---|---:|---|---|---|---|
+| VER-005 | 5 | Munkaszabály | - A régi Visual Editort nem javítjuk tovább; az új editor külön architektúrával készül. | EDT-001/003/039; QA-002/006 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-006 | 6 | Munkaszabály | - Minden fázis: fejlesztés → felhasználói teszt → visszajelzés → javítás → jóváhagyás. | EDT-001–042; DSN-001–018; QA-002/004/006/009 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-007 | 7 | Munkaszabály | - Következő fázis csak jóváhagyás után indul. | EDT-001–042; DSN-001–018; QA-002/004/006/009 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-008 | 8 | Munkaszabály | - Visszalépés bármelyik korábbi fázisra megengedett. | EDT-001–042; DSN-001–018; QA-002/004/006/009 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-009 | 9 | Munkaszabály | - A PC editor készül először; a mobil editor külön UX lesz. | EDT-001–042; DSN-001–018; QA-002/004/006/009 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-010 | 10 | Munkaszabály | - A nagy funkciómennyiség progressive disclosure elven jelenik meg: accordions, tabs, keresés, Beginner/Advanced/Pro réteg. | EDT-001–042; DSN-001–018; QA-002/004/006/009 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-014 | 14 | Fázisok | - [x] 00 Specifikáció | EDT-001–042; DSN-001–018; QA-002/004/006/009 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-015 | 15 | Fázisok | - [ ] 01 Editor Shell | EDT-001–042; DSN-001–018; QA-002/004/006/009 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-016 | 16 | Fázisok | - [ ] 02 Canvas Engine | EDT-007–009/016; QA-002/004/005 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-017 | 17 | Fázisok | - [ ] 03 Element System | EDT-015/018/019; DSN-011–018; QA-002/004 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-018 | 18 | Fázisok | - [ ] 04 Sanci9517 Blocks | EDT-015/018/019; DSN-011–018; QA-002/004 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-019 | 19 | Fázisok | - [ ] 05 Inspector | EDT-021–026; DSN-001–010; QA-002/004/005 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-020 | 20 | Fázisok | - [ ] 06 Layers | EDT-011–014; QA-002/004 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-021 | 21 | Fázisok | - [ ] 07 Design System | EDT-001–042; DSN-001–018; QA-002/004/006/009 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-022 | 22 | Fázisok | - [ ] 08 Drag & Drop | EDT-007–009/016; QA-002/004/005 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-023 | 23 | Fázisok | - [ ] 09 History / Autosave / Recovery | EDT-001–042; DSN-001–018; QA-002/004/006/009 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-024 | 24 | Fázisok | - [ ] 10 Preview | QA-001/002/004/006/009 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-025 | 25 | Fázisok | - [ ] 11 Twitch / YouTube / TikTok / Discord / Schedule / VOD integrációk | EDT-001–042; DSN-001–018; QA-002/004/006/009 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-026 | 26 | Fázisok | - [ ] 12 Animation / Interaction | EDT-001–042; DSN-001–018; QA-002/004/006/009 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-027 | 27 | Fázisok | - [ ] 13 Responsive | EDT-035/036; QA-004/005 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-028 | 28 | Fázisok | - [ ] 14 SEO / Accessibility | EDT-001–042; DSN-001–018; QA-002/004/006/009 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-029 | 29 | Fázisok | - [ ] 15 Reusable Components | EDT-015/018/019; DSN-011–018; QA-002/004 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-030 | 30 | Fázisok | - [ ] 16 Templates | EDT-001–042; DSN-001–018; QA-002/004/006/009 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-031 | 31 | Fázisok | - [ ] 17 PC Editor 1.0 | EDT-001–042; DSN-001–018; QA-002/004/006/009 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-032 | 32 | Fázisok | - [ ] 18 Mobile Editor | EDT-035/036; QA-004/005 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-038 | 38 | Phase 01 — Editor Shell teszt | - topbar és oldalválasztó | EDT-001–042; DSN-001–018; QA-002/004/006/009 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-039 | 39 | Phase 01 — Editor Shell teszt | - undo / redo gombok helye | EDT-001–042; DSN-001–018; QA-002/004/006/009 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-040 | 40 | Phase 01 — Editor Shell teszt | - bal oldali elem panel | EDT-001–042; DSN-001–018; QA-002/004/006/009 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-041 | 41 | Phase 01 — Editor Shell teszt | - kategóriák összecsukása / kinyitása | EDT-001–042; DSN-001–018; QA-002/004/006/009 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-042 | 42 | Phase 01 — Editor Shell teszt | - elemkereső | EDT-001–042; DSN-001–018; QA-002/004/006/009 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-043 | 43 | Phase 01 — Editor Shell teszt | - középső canvas | EDT-007–009/016; QA-002/004/005 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-044 | 44 | Phase 01 — Editor Shell teszt | - zoom / fit | EDT-007–009/016; QA-002/004/005 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-045 | 45 | Phase 01 — Editor Shell teszt | - grid / snap kapcsoló | EDT-001–042; DSN-001–018; QA-002/004/006/009 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-046 | 46 | Phase 01 — Editor Shell teszt | - Layers panel | EDT-011–014; QA-002/004 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-047 | 47 | Phase 01 — Editor Shell teszt | - jobb oldali Inspector | EDT-021–026; DSN-001–010; QA-002/004/005 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-048 | 48 | Phase 01 — Editor Shell teszt | - Inspector összecsukható csoportjai | EDT-021–026; DSN-001–010; QA-002/004/005 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-049 | 49 | Phase 01 — Editor Shell teszt | - alsó státuszsáv | EDT-001–042; DSN-001–018; QA-002/004/006/009 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+| VER-050 | 50 | Phase 01 — Editor Shell teszt | - PC-only működés | EDT-001–042; DSN-001–018; QA-002/004/006/009 | KEEP AS HISTORICAL ROADMAP — current phase and acceptance must be verified; P0.2 overrides old sequence |
+
+**Semantic exceptions:**
+- The source explicitly says the old Visual Editor is not patched further; this aligns with the current canonical `public/editor-v2/` boundary. Old runtime paths may be used as inventory/evidence only and cannot be reactivated.
+- Every milestone requires development, user test, feedback, fix and approval. A successful build or deployment does not replace the user's verification of the exact target behavior.
+- PC-first and a distinct mobile UX are historical product direction. Current responsive/mobile support still requires the current QA matrix; it must not be assumed complete merely because desktop controls render.
+- Progressive disclosure (accordion/tab/search and Beginner/Advanced/Pro levels) is a UX requirement, not permission to hide required functionality or to create duplicate Inspector/property state.
+- The source's old Phase 01 shell test is superseded as an active point by P0.2. Keep the sequence as historical scope, not current execution.
+- No runtime code/data changed; no tests run.
+
+**Status:** 38/38 source list items keyed; semantic acceptance, owner/phase/dependency and current UI evidence remain OPEN. P0.2 **IN PROGRESS / NOT PASS**.
+
