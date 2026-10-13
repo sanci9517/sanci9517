@@ -8,7 +8,7 @@
 **PARALLEL_WORKSTREAMS:** `0`
 
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
-**Verzió:** MASTER-2.92 — 01–140 megfeleltetés és H19–H34 egyedi ID-számok ellenőrizve.  
+**Verzió:** MASTER-2.93 — E.1–E.22 keresztmátrix; Admin IA hiányok rögzítve; feature-acceptance audit folyamatban.  
 **Frissítve:** 2026-10-13.  
 **Dokumentum státusza:** ez az egyetlen végrehajtási igazságforrás.
 **Audit / implementation baseline:** GitHub `v2/foundation`, commit `54daad2357ca576d9e333a052e7bcbb6c2e2d51a` (2026-10-13; F0.3 history-integrity, revision-conflict recovery és save/reload client hardening PR #18–#25 integrálva; production save/reload runtime acceptance továbbra is nyitott). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
@@ -1111,6 +1111,9 @@ A Twitch, YouTube, TikTok, Discord és minden későbbi provider külön fejlesz
 | UI-20 | **Támogatás, monetizáció és bolt** | Tip/support, kampányok, termékek, digitális termékek, merch, checkout, membership a fázis és provider szerint | Editorban termék-/support-blokk konfigurálható, de termékár, készlet, rendelés, fizetés és tagság nem az Editorban tárolódik |
 | UI-21 | **Automatizálás és SANCI AI** | Későbbi, opcionális automation/agent/workflow, engedélyezés, preview, jóváhagyás és audit | Későbbi fázis; az alap weboldal/Creator Center AI nélkül is teljesen használható marad |
 | UI-22 | **Rendszerállapot, diagnosztika és segítség** | Hibák, integrációs állapotok, utolsó sikeres szinkron, diagnosztika, dokumentált help és recovery | A canonical diagnosztikai forrásból olvas; titok/token/stack trace nem jelenhet meg felhasználói UI-ban |
+| UI-24 | **Nyelvek és fordítások** | Nyelvek engedélyezése, oldal- és tartalomfordítások, fordítási teljesség, fallback, locale-formátumok | A Page/CMS és locale registry közös szabályt használ; hiányzó fordítás nem eredményez üres/hibás publikus oldalt |
+| UI-25 | **Fejlesztői eszközök, import/export és bővítmények** | Validált import/export, adat- és konfigurációmentés, későbbi API/extension registry, verziókompatibilitás és marketplace eszközök | Csak engedélyezett, naplózott, verziózott contract; az import előnézetet/validációt és visszaállítási tervet igényel |
+| UI-26 | **Szponzoráció és Creator Business Hub** | Media kit, hiteles statisztikák, sponsor leadek, együttműködések, dealek, deliverable-ek, határidők és kampányok | Későbbi önálló üzleti domain; a publikus Sponsor oldal és a CMS csak a jóváhagyott megjelenítési/tartalmi adatot fogyasztja |
 | UI-23 | **Sanci Buttons / központi gomb- és CTA-kezelő** | A brandgombok stabil ID-ja, neve/leírása, ikonja, link/action típusa, láthatósága, sorrendje, variánsai és állapotai; globális és explicit oldal-/példányoverride | Ugyanazt a canonical Button Registryt használja az Editor, a komponenskönyvtár és a publikus oldal; egy gomb definíciójának frissítése minden kapcsolódó használatnál megjelenik, a lokális override pedig külön és látható
 
 **Navigációs szabály:** az Admin főoldalról a modulok logikus, egyértelmű nevekkel legyenek elérhetők. Csak a valós route-tal és jogosultsággal rendelkező, működő modul legyen aktív. A későbbi modulok a fázisnak megfelelően tervezési jegyzékben maradnak, nem lehetnek hamis működő linkek. A Dashboard adhat gyorsműveletet ugyanarra a funkcióra, de nem építhet második implementációt.
@@ -1215,6 +1218,50 @@ A végső, felhasználónak átadandó **teljes funkciókatalógus** csak a fent
 A H34 sorai között folyamatlépések/javaslatok is vannak, nem mind önálló felhasználói funkció. Ezeket nem szabad termékfeature-ként megszámolni vagy eltávolítani: a megfelelő canonical ownerhez, roadmap-fázishoz és acceptance-hez kell rendelni, vagy külön nyitott döntésként megőrizni.
 
 **Fennmaradó teljességi szabály:** a forrásdokumentumok áttekintése nem jogosít fel egyetlen tétel hallgatólagos elhagyására. A 01–140 preservation matrix és a H19–H34 ledger megőrzött nyomkövetési alap; ha a részletes, soronkénti kétirányú megfeleltetés során bármelyik tétel nem rendelhető egyértelmű UI-hoz, canonical ownerhez, fázishoz és acceptance-hez, azt `UNMAPPED REQUIREMENT` nyitott tételként kell rögzíteni. Ez a korrekciós munka nem módosítja a F0.4 aktív státuszát és nem enged párhuzamos implementációt.
+
+---
+
+### F0.0.5 — E.1–E.22 KÉPESSÉG-LEFEDETTSÉGI KERESZTMÁTRIX (2026-10-13)
+
+**Cél:** a közvetlen termékkövetelmények minden nagy fejezetét hozzárendelni a canonical termékterülethez és a Creator Centerben elérhető kezelőfelülethez. Ez a mátrix követelmény-lefedettséget dokumentál; önmagában nem bizonyít implementáltságot vagy acceptance PASS-t.
+
+| MASTER-követelmény | Canonical AREA | Elsődleges Admin munkaterület | Kapcsolódó Editor-csoport | Fázis-/elfogadási határ |
+|---|---|---|---|---|
+| E.1 Termékfelületek és határok | AREA-01, AREA-02, AREA-03, AREA-22 | UI-01, UI-02, UI-18, UI-22 | E-01, E-14, E-16 | Minden adatnak egy canonical owner; felület csak saját felelősségi körben írhat |
+| E.2 Public Website | AREA-02, AREA-18, AREA-23 | UI-02, UI-15, UI-16, UI-24 | E-05, E-07, E-11, E-15 | 1.0 publikus release-gate: responsive, SEO, accessibility, valódi adat, hibás/üres/offline állapot |
+| E.3 Visual Editor | AREA-03, AREA-05, AREA-06 | UI-02, UI-04, UI-05, UI-06, UI-17, UI-23 | E-01–E-16 | F0.4 aktív acceptance; canvas/Layers/Inspector/Responsive és shared command/history egyezése |
+| E.4 Page/CMS/publish lifecycle | AREA-02, AREA-04 | UI-02, UI-03, UI-16, UI-17 | E-01, E-11–E-14 | Draft/publication/revision/rollback és cache konzisztencia; publikus oldal nem olvashat draftot |
+| E.5 Resource/Media/Icon/Font | AREA-05 | UI-04 | E-08 | Közös Resource ID, metadata/R2 határ, usage check, jogosultság, replace/archive/restore |
+| E.6 Theme/Template/Component/Symbol/Button | AREA-06, AREA-05 | UI-05, UI-06, UI-23 | E-06–E-09 | Tokenek és linked instances; explicit local override; Sanci Button/ikon registry; preview és rollback |
+| E.7 Creator Center/Admin UX | AREA-01, AREA-22, AREA-24 | UI-01–UI-26, fázis szerint | E-14–E-16 | Csak működő funkció kap aktív státuszt; auth, empty/loading/error/stale/permission state és keyboard/mobile használat |
+| E.8 Schedule/Calendar | AREA-07 | UI-07, UI-08 | E-09, E-10 | Canonical event domain; időzóna/DST, ismétlődés, override, sync és public render teszt |
+| E.9 Platformintegrációk/Twitch | AREA-08–AREA-12 | UI-09, UI-10, UI-11, UI-13 | E-10 | Providerenként scope/ownership/secrets/rate-limit/retry/failure-path; nem létező adatot nem szabad szimulálni |
+| E.10 Content Factory | AREA-04, AREA-09, AREA-10, AREA-13, AREA-14 | UI-03, UI-09, UI-11, UI-14 | E-06, E-09–E-11 | Content type, external ID, dedup, platform-specific metadata és publish state külön acceptance |
+| E.11 Stream/Overlay/OBS | AREA-15, AREA-08, AREA-12 | UI-12, UI-09, UI-22 | E-09, E-10, E-16 | Külön Stream domain; OBS/provider capability igazolása; a Website Editor nem válik második Stream Editor-ré |
+| E.12 Store/Monetization | AREA-20, AREA-16, AREA-12 | UI-20 | E-09, E-10 | Fázis- és providerfüggő; purchase→entitlement→access, payment state, refund/security külön tesztelendő |
+| E.13 Community/Audience | AREA-16, AREA-19, AREA-11 | UI-13, UI-14 | E-09–E-11 | Consent, opt-out, role/permission, privacy, retention/export/delete acceptance |
+| E.14 Analytics/Automation/AI | AREA-17, AREA-21, AREA-24 | UI-19, UI-21, UI-22 | E-14, E-16 | Telemetry és creator analytics külön; AI action schema/permission/preview/approval/verification/audit |
+| E.15 Sponsorship/Creator Business | AREA-26 (nyitott ID), AREA-20, AREA-17 | UI-26, UI-19, UI-03 | E-09–E-11 | Későbbi üzleti domain; metrika csak hiteles forrásból; deal/deliverable és publikus media kit külön kezelve |
+| E.16 Localization | AREA-23 | UI-24, UI-02, UI-03, UI-18 | E-01, E-06, E-12 | Locale registry, translation status/fallback, URL/meta és dátum/idő formázás tesztelve |
+| E.17 Accounts/multi-site/teams/SaaS | AREA-01, AREA-22 | UI-18, UI-22 | E-14, E-16 | 1.0 site ownership nem jelenti a későbbi multi-tenant/SaaS készültséget; szerveroldali RBAC |
+| E.18 Import/export/backup/diagnostics/developer | AREA-01, AREA-24, AREA-23 | UI-17, UI-22, UI-25 | E-13, E-16 | Validáció, preview, integrity check, audit, rollback/restore; extension/API csak későbbi contract után |
+| E.19 Architecture/security invariants | AREA-01, AREA-24 | UI-18, UI-22, UI-25 | E-14, E-16 | Auth, ownership, secrets, CSP, rate-limit, migration, backup/recovery, privacy és release gate |
+| E.20 Feature acceptance template | AREA-24 | UI-22 | E-16 | Minden feature-hez owner, contract, permission, error/empty/loading, test, acceptance és rollback |
+| E.21 Product phases/scope | AREA-01–AREA-24 | Minden UI csak saját roadmap-fázisában | E-01–E-16 | Planned nem egyenlő implementálttal; minden scope-váltás MASTER-frissítést igényel |
+| E.22 Completeness and maintenance | AREA-24 | UI-22, UI-25 | E-16 | Történeti ID nem törölhető indokolt supersession/duplicate döntés és bizonyíték nélkül |
+
+**Lefedettségi audit során észlelt IA-hiányok és javítások**
+1. A lokalizáció korábban csak a Settings/Website modulokon keresztül volt elérhető; önálló UI-24 nyelv- és fordításkezelő munkaterületet kapott.
+2. Az import/export, backup, API és későbbi extension/marketplace korábban szétszórtan szerepelt; UI-25 külön kezelőfelületet kapott. Ez nem engedélyez veszélyes, validálatlan adatimportot vagy arbitrary code executiont.
+3. A Sponsorship/Creator Business korábban csak általános tartalom/monetizáció alatt jelent meg; UI-26 külön üzleti munkaterületet kapott.
+4. A 24 AREA-lista már nem tartalmazott külön AREA-26 azonosítót, ezért a fenti táblában szereplő `AREA-26 (nyitott ID)` nem tekinthető érvényes canonical ownernek. A következő korrekcióban a Creator Business/Sponsorship besorolását az AREA-17 és AREA-20 közé kell tenni vagy külön AREA-25-ként felvenni. **Ezt az azonosító-ütközést nyitott auditeltérésként rögzítjük; nem hagyjuk rejtve.**
+
+**Kanonikus viselkedés minden Editorból elérhető domain funkciónál**
+- Az Editor a megjelenést, layoutot, bindingot és engedélyezett megjelenítési konfigurációt írja; a domain rekordját a domain manager írja.
+- „Edit here” vagy gyorsszerkesztés csak ugyanarra a canonical service/command útvonalra mutathat; külön UI nem hozhat létre párhuzamos adatforrást.
+- A UI-23 Sanci Button Registry globális definíciót birtokol; egy példány lokális override-ja explicit, visszaállítható és nem írja át csendben a globális definíciót.
+- UI-24 fordítási állapota, UI-25 import/export műveletei és UI-26 business rekordjai jogosultságot, auditot, error/empty/loading állapotot és tesztet igényelnek.
+- A UI-24/25/26 hozzáadása információ-architektúra-korrekció, nem implementáció és nem változtatja meg a F0.4 aktív pontot.
 
 ---
 
