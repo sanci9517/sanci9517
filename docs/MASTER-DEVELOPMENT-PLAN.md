@@ -7,6 +7,10 @@
 **NEXT_GATE:** `M0.1 residual closure → M0.2 closure → M0.3 closure → M0.5 Resource contract freeze; F0 csak a teljes M0 PASS után nyitható`  
 **PARALLEL_WORKSTREAMS:** `0`
 
+# Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
+**Dokumentum státusza:** ez az egyetlen végrehajtási igazságforrás.
+**Audit baseline:** GitHub `v2/foundation`, commit `9a6ae12` (2026-10-13). A repository-snapshot nem helyettesíti a külön szükséges runtime-, teszt- és felhasználói bizonyítékokat.
+
 ### Jelenlegi igazolt állapot
 Ez a blokk kizárólag az M0 előtti lezárt gate-eket rögzíti; nem jelenti azt, hogy az M0 alatti részpontok lezárultak.
 - [x] E4.3.1–E4.3.8 lezárva.
@@ -49,9 +53,9 @@ Ez a blokk kizárólag az M0 előtti lezárt gate-eket rögzíti; nem jelenti az
 
 - [x] A 01–140 történeti funkciópont egyedi ID-val megőrizve és canonical capability/domain alá rendelve.
 - [x] A történeti státuszok a preservation matrixban történeti jelölésként vannak megmagyarázva; nem tekinthetők mai runtime készültségnek.
-- [ ] A 00/A és 00.9–00.9.6.B szakaszok teljes, pontról pontra történő egyeztetése a jelenlegi canonical product map-pel.
+- [ ] Az aktuális végrehajtási index (a dokumentum eleji ACTIVE_* blokk) és a canonical 00.9.6.C capability map + 00.9.6.D phase/lifecycle roadmap teljes, pontról pontra történő egyeztetése; a régi 00/A és 00.9–00.9.6.B változatokból származó követelményeket repository history/archive alapján vissza kell vezetni vagy indokolt superseded döntéssel lezárni.
 - [ ] A korábbi 19–34 backlog hiteles forrásának visszakeresése, teljes összevetése, és minden elemhez egyedi traceability-kapcsolat vagy indokolt superseded/duplicate döntés rögzítése.
-- [ ] A teljes capability inventoryban minden funkcióhoz domain, surface, owner, phase/scope és lifecycle státusz hozzárendelése.
+- [ ] A teljes capability inventory minden 001–140 és H19–H34 tételéhez domain, surface, canonical owner, a 00.9.6.D-vel egyeztetett phase/scope, dependency/boundary és lifecycle/döntés tartozzon; a még nem implementált tételeknél a phase-specifikus DoD/test/acceptance legyen megadva vagy explicit PLANNED/TBD állapotban maradjon.
 - [ ] A tényleges duplikátumok azonosítása és csak bizonyíték alapján történő összevonása; külön capability-k nem törölhetők puszta hasonlóság miatt.
 - [ ] Minden elveszett vagy implicit funkció visszavezetése a canonical mapbe vagy dokumentált, indokolt kizárása.
 
@@ -127,9 +131,9 @@ A korábbi MASTER 44f42403… állapotából visszaolvastuk a **140 számozott f
 | 054 | [ ] Button / link / CTA | Content / Media / Asset | 1.0 foundation + 1.x |
 | 055 | [ ] Card / list / table / accordion / tabs | Content / Media / Asset | 1.0 foundation + 1.x |
 | 056 | [ ] Social és streamer blokkok | Content / Media / Asset | 1.0 foundation + 1.x |
-| 057 | [ ] Twitch / YouTube / TikTok / Discord blokkok | Content / Media / Asset | 1.0 foundation + 1.x |
+| 057 | [ ] Twitch / YouTube / TikTok / Discord blokkok | Public social-link blocks + platform adapters | 1.0 simple links and explicitly scoped Twitch blocks; YouTube/TikTok/Discord API-backed integration blocks 1.x (00.9.6.D PHASE 2) |
 | 058 | [ ] Schedule / Live / Countdown / VOD blokkok | Content / Media / Asset | 1.0 foundation + 1.x |
-| 059 | [ ] Form / contact blokkok | Content / Media / Asset | 1.0 foundation + 1.x |
+| 059 | [ ] Form / contact blokkok | CMS / Form domain + secure submission boundary | 1.0 contact/content block only; secure form submission and backend actions 1.x (00.9.6.D PHASE 2) |
 | 060 | [ ] Media library / R2 | Content / Media / Asset | 1.0 foundation + 1.x |
 | 061 | [ ] Draft | Publishing / Revision / Import-Export | 1.0 + 1.x |
 | 062 | [ ] Preview | Publishing / Revision / Import-Export | 1.0 + 1.x |
@@ -141,16 +145,16 @@ A korábbi MASTER 44f42403… állapotából visszaolvastuk a **140 számozott f
 | 068 | [ ] Import / export | Publishing / Revision / Import-Export | 1.0 + 1.x |
 | 069 | [ ] Főoldal | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
 | 070 | [ ] Twitch | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
-| 071 | [ ] YouTube | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
-| 072 | [ ] TikTok | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
+| 071 | [ ] YouTube | Public Website / social-link presentation | 1.0 static channel/link presentation only; YouTube API integration 1.x (00.9.6.D PHASE 2) |
+| 072 | [ ] TikTok | Public Website / social-link presentation | 1.0 static channel/link presentation only; TikTok API integration 1.x (00.9.6.D PHASE 2) |
 | 073 | [ ] Adásrend | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
 | 074 | [ ] Következő adás / countdown | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
 | 075 | [ ] Élő / offline állapot | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
-| 076 | [ ] VOD / Shorts / Clips | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
+| 076 | [ ] VOD / Shorts / Clips | Public link/embed baseline + Stream Media/Content domain | 1.0 external links/basic embeds only if in release scope; canonical VOD/Clips/Shorts workflows 1.x (00.9.6.D PHASE 2) |
 | 077 | [ ] Rólam | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
-| 078 | [ ] Közösség / Discord | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
+| 078 | [ ] Közösség / Discord | Public community links + Community domain | 1.0 public community link/basic entry only; deeper integrations/community workflows 1.x (00.9.6.D PHASE 2); memberships 5.x where applicable |
 | 079 | [ ] Kapcsolat | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
-| 080 | [ ] Támogatás | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
+| 080 | [ ] Támogatás | Public support content/link + Support/Membership domain | 1.0 static support content/external link only; supporter programs and membership workflows 5.x (00.9.6.D PHASE 6) |
 | 081 | [ ] Szponzor / üzleti / Press Kit | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
 | 082 | [ ] 404 / loading / empty / error állapotok | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
 | 083 | [ ] Egységes mobil / tablet / desktop UX | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
@@ -159,13 +163,13 @@ A korábbi MASTER 44f42403… állapotából visszaolvastuk a **140 számozott f
 | 086 | [ ] Performance / caching | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
 | 087 | [ ] Schedule D1 rendszer | Streamer Domain / Integrations / Analytics | 1.0 + 1.x + future adapters |
 | 088 | [ ] Twitch API / live state | Streamer Domain / Integrations / Analytics | 1.0 + 1.x + future adapters |
-| 089 | [ ] YouTube API | Streamer Domain / Integrations / Analytics | 1.0 + 1.x + future adapters |
-| 090 | [ ] TikTok rendszer | Streamer Domain / Integrations / Analytics | 1.0 + 1.x + future adapters |
-| 091 | [ ] VOD rendszer | Streamer Domain / Integrations / Analytics | 1.0 + 1.x + future adapters |
-| 092 | [ ] Community / Discord | Streamer Domain / Integrations / Analytics | 1.0 + 1.x + future adapters |
-| 093 | [ ] Contact / collaboration | Streamer Domain / Integrations / Analytics | 1.0 + 1.x + future adapters |
+| 089 | [ ] YouTube API | YouTube platform adapter under Integration/Platform contract | 1.x (00.9.6.D PHASE 2); not a 1.0 API integration |
+| 090 | [ ] TikTok rendszer | TikTok platform adapter under Integration/Platform contract | 1.x (00.9.6.D PHASE 2); not a 1.0 API integration |
+| 091 | [ ] VOD rendszer | Stream Media/Content domain + provider adapters | 1.x canonical VOD/Clips workflows (00.9.6.D PHASE 2); simple links/embeds are a separate public-site scope |
+| 092 | [ ] Community / Discord | Community domain + Discord integration adapter | 1.0 public link baseline only if approved; deeper integration/community 1.x (PHASE 2); membership/support 5.x (PHASE 6) |
+| 093 | [ ] Contact / collaboration | Public contact entry + later collaboration/CRM domains | 1.0 contact entry only; team/collaboration workflows 4.x (PHASE 5); creator CRM/fan relationships 5.x (PHASE 6) |
 | 094 | [ ] Site settings | Streamer Domain / Integrations / Analytics | 1.0 + 1.x + future adapters |
-| 095 | [ ] Analytics | Streamer Domain / Integrations / Analytics | 1.0 + 1.x + future adapters |
+| 095 | [ ] Analytics | Release/operational telemetry + Creator Analytics domain | 1.0 release/operational telemetry only; Creator Analytics 2.x (PHASE 3); advanced analytics 4.x (PHASE 5) |
 | 096 | [ ] Unit tesztek | QA / Security / Production | 1.0 gates |
 | 097 | [ ] API / integration tesztek | QA / Security / Production | 1.0 gates |
 | 098 | [ ] D1 tesztek | QA / Security / Production | 1.0 gates |
@@ -215,6 +219,21 @@ A korábbi MASTER 44f42403… állapotából visszaolvastuk a **140 számozott f
 **M0.1 megállapítás:** a korábbi 01–140 backlog **nem veszett el**; minden pontnak van jelenlegi helye a rebaselined platform mapben. Ahol a régi pont több mai capability-re bomlik (pl. 60 Media library → Central Resource + Asset Manager + storage boundary; 55 Card/list/table/accordion/tabs → Component/Interaction system), ott nem összevonással töröljük, hanem egyedi feature-ként megőrizzük a traceabilityt.
 
 **M0.1 interim megállapítás — nem zárási döntés:** a 01–140 mátrix megőrzi a korábban visszaolvasott funkciópontokat, de ez önmagában nem bizonyítja a 19–34 backlog teljes egyeztetését vagy a teljes MASTER konzisztenciáját. M0.1 csak a fenti nyitott ellenőrzések bizonyíték-alapú lezárása után kaphat PASS.
+
+### M0.1 teljes MASTER-audit — szerkezeti bizonyíték és nyitott korrekciók (2026-10-13)
+
+**Ellenőrzött struktúra — a GitHub `v2/foundation` ág `9a6ae12` snapshotja alapján:**
+- A 01–140 preservation matrix 140 sort tartalmaz, azonosítói 001–140 között folytonosak, hiányzó vagy duplikált ID nélkül.
+- A H19–H34 ledger 271 egyedi sort tartalmaz: 267 történeti követelmény/procedure item és 4 kifejezetten kiegészítő architekturális/governance sor (`H21.22`, `H31.00`, `H33.00`, `H34.00`). A kiegészítő sorok nem számolhatók történeti checklist feature-ként.
+- A H19–H34 ledger egyedi ID-i nem duplikálódnak; a forrás szerinti sorok és a ledger számai szakaszonként egyeztethetők. Ez a strukturális egyezés még nem helyettesíti a teljes 00.9.6.C/D capability/phase crosswalket.
+
+**Nyitott, tényleges tartalmi eltérések:**
+- A 01–140 matrix négy oszlopos preservation crosswalk; nem tartalmaz minden tételhez külön surface, dependency/boundary, lifecycle/disposition és phase-specifikus DoD/test/acceptance hivatkozást. Ezért a 140 ID megléte önmagában nem teljes M0.1 closure evidence.
+- A történeti fázisnevek és a 00.9.6.D canonical lifecycle közötti különbséget capability-határonként kell értelmezni. A 059, 057, 071/072, 076, 078, 080, 089–093 és 095 sorok scope-szövege most különválasztja az 1.0-s egyszerű link/content/telemetry baseline-t a későbbi API-integrációktól, workflow-któl, membershiptől és creator analytics-től. Ez tervszintű besorolás, nem runtime completion.
+- A korábbi 00/A és 00.9–00.9.6.B címek nem találhatók meg jelen formában a jelenlegi MASTER-ben; az aktuális ACTIVE_* index és a 00.9.6.C/D roadmap az elsődleges jelenlegi nézet. A korábbi forrásokból esetleg még megőrzendő követelményeket history/archive alapon kell visszavezetni, nem feltételezni, hogy a cím hiánya önmagában funkciótörlést jelent.
+- A H19–H34 ledger generic DoD-szövege traceability-feladatot rögzít, nem az egyes jövőbeli implementációk kész DoD-ját. A konkrét engineering pointban kell majd capability-specifikus tesztet, failure case-t és acceptance-t definiálni.
+
+**M0.1 továbbra is IN PROGRESS.** Sem a 01–140, sem a H19–H34 szerkezeti egyezése nem zárja le a pontonkénti crosswalket, a duplikátum-döntéseket vagy a kimaradt capability-k bizonyítását.
 
 ### M0.1 historical traceability ledger — batch 1 (sections 19–22)
 
@@ -571,27 +590,36 @@ A korábbi MASTER 44f42403… állapotából visszaolvastuk a **140 számozott f
 ### M0.2.A — Cross-cutting platform domains, amelyek minden későbbi fázist lefednek
 A capability-lista önmagában nem elég: az alábbi keresztmetszeti domainek a teljes 0.x → 10.0 roadmap kötelező platformrétegei, és nem veszhetnek el egyetlen későbbi fázisban sem.
 
-| Domain | Canonical owner / source of truth | Storage / boundary | Scope |
-|---|---|---|---|
-| Search / Discovery | Platform Search / indexing contract | indexed metadata + D1/R2 refs | 1.0 foundation / 1.x+ |
-| Notifications / Messaging | Notification domain + integration adapters | D1 + provider boundary | 1.x+ |
-| Privacy / Consent / Compliance | Privacy & Policy domain | D1/config + legal/provider boundary | 1.0 foundation / SaaS+ |
-| Secrets / Integration Config | Secret/config boundary | Cloudflare secret/config layer; never Page Model | 1.0+ |
-| API / Webhook / Developer Surface | Integration/API contract | Worker routes + webhook boundary | 1.0 foundation / 1.x+ |
-| Deployment / Release / Environments | Release/Deployment domain | Worker/deploy config + environment state | 1.0 gates / SaaS+ |
-| Migration / Data Lifecycle | Migration contract | D1 migrations + import/export boundary | 0.x–10.0 |
-| Backup / Disaster Recovery | Backup/Recovery domain | D1/R2/export boundary | 1.0 gates / 1.x+ |
-| Testing / Quality Gates | QA/Verification contract | CI/test/live acceptance evidence | 0.x–10.0 |
-| Diagnostics / Observability | Diagnostics/Observability domain | logs/metrics/error boundary | 0.x–10.0 |
-| Performance / Caching / Edge | Performance platform contract | Worker/cache/CDN boundary | 1.0+ |
-| Accessibility | Accessibility contract | Editor + renderer + public UI | 1.0+ |
-| Billing / Entitlements | Billing/Subscription domain | D1 + payment-provider boundary | 4.0+ |
-| Audit / Governance | Audit + policy contract | D1/log boundary | 0.x–10.0 |
-| Data Portability | Import/Export/Portability contract | JSON/media/package boundary | 1.0+ |
-| Custom Code / HTML / Embed | Secure Embed/Custom-Code contract | sandboxed renderer boundary; never direct privileged persistence | 1.x+ |
-| Experimentation / Personalization | Experimentation domain | analytics/config/content boundary | 6.0–10.0 |
+| Domain | Canonical owner / source of truth | Storage / boundary | Scope | Decision / lifecycle |
+|---|---|---|---|---|
+| Search / Discovery | Platform Search / indexing contract | indexed metadata + D1/R2 refs | 1.0 foundation / 1.x+ | ADD / PLANNED |
+| Notifications / Messaging | Notification domain + integration adapters | D1 + provider boundary | 1.x+ | ADD / PLANNED |
+| Privacy / Consent / Compliance | Privacy & Policy domain | D1/config + legal/provider boundary | 1.0 foundation / SaaS+ | ADD / PLANNED; 1.0 policy baseline required |
+| Secrets / Integration Config | Secret/config boundary | Cloudflare secret/config layer; never Page Model | 1.0+ | KEEP / EXPAND existing secret/config boundary |
+| API / Webhook / Developer Surface | Integration/API contract | Worker routes + webhook boundary | 1.0 foundation / 1.x+ | KEEP / EXPAND Worker API; webhook/developer UI PLANNED |
+| Deployment / Release / Environments | Release/Deployment domain | Worker/deploy config + environment state | 1.0 gates / SaaS+ | KEEP / EXPAND deployment baseline; richer environments PLANNED |
+| Migration / Data Lifecycle | Migration contract | D1 migrations + import/export boundary | 0.x–10.0 | KEEP / EXPAND D1 migration baseline; broader lifecycle contract required |
+| Backup / Disaster Recovery | Backup/Recovery domain | D1/R2/export boundary | 1.0 gates / 1.x+ | KEEP / EXPAND; restore/recovery DoD remains release-gated |
+| Testing / Quality Gates | QA/Verification contract | CI/test/live acceptance evidence | 0.x–10.0 | KEEP / EXPAND; complete release matrix still required |
+| Diagnostics / Observability | Diagnostics/Observability domain | logs/metrics/error boundary | 0.x–10.0 | KEEP / EXPAND existing health/diagnostics; structured observability PLANNED |
+| Performance / Caching / Edge | Performance platform contract | Worker/cache/CDN boundary | 1.0+ | KEEP / EXPAND; measured budgets/cache contract required |
+| Accessibility | Accessibility contract | Editor + renderer + public UI | 1.0+ | KEEP / EXPAND; do not claim compliance without evidence |
+| Billing / Entitlements | Billing/Subscription domain | D1 + payment-provider boundary | 4.0+ | ADD / PLANNED |
+| Audit / Governance | Audit + policy contract | D1/log boundary | 0.x–10.0 | KEEP / EXPAND shared audit boundary |
+| Data Portability | Import/Export/Portability contract | JSON/media/package boundary | 1.0+ | ADD / PLANNED; contract before implementation |
+| Custom Code / HTML / Embed | Secure Embed/Custom-Code contract | sandboxed renderer boundary; never direct privileged persistence | 1.x+ | ADD / PLANNED; sandbox/security contract required |
+| Experimentation / Personalization | Experimentation domain | analytics/config/content boundary | 6.0–10.0 | ADD / PLANNED |
 
 **M0.2.A szabály:** ezek nem „extra funkciók”, hanem platform-szintű cross-cutting contracts. Ha egy későbbi capability ezekre támaszkodik, a capability saját domainje nem hozhat létre második auth, permission, audit, resource, search, analytics, notification, deployment, migration vagy persistence rendszert.
+
+**M0.2 canonical alias / parent-child szabályok — a PASS előtt bizonyítandó:**
+- A Media/Assets, Files/Documents, Fonts, Logo, Game/Stream artwork és derivatives a közös Resource domain típusai; D1 metadata + R2 binary boundaryt használnak. Az Icon Registry a keresés/kiválasztás/metadata registryje lehet, de nem hozhat létre második binary libraryt.
+- A Platform Integrations a közös adapter contract; Twitch, YouTube, TikTok és Discord adapterek. A Discord adapter nem azonos a Community termékdomainnel.
+- A Community domain, a Support/Membership termékfunkció és a platform-adapterek külön capabilityk maradnak; a közös link vagy embed nem bizonyít teljes integrációt.
+- Account/Tenant az identity/ownership boundary; Auth/RBAC/Permissions közös cross-cutting contract, nem külön domainenként ismételt auth store.
+- Backup/Disaster Recovery és Data Portability közös D1/R2/export primitíveket használhat, de külön workflow-k; egyik nem helyettesíti a másik acceptance-ét.
+- Analytics (termékhasználati/event adatok), Diagnostics/Observability (hibák/üzemeltetési állapot) és Automation (trigger/action workflow) külön felelősségek; közös infrastruktúra nem jelent azonos domaint.
+- Az M0.4 mátrix a jelenlegi implementált ownership bizonyítéka; egy M0.2 sorban szereplő PLANNED domain nem tekinthető implementáltnak csak azért, mert koncepcionális owner/boundary van megadva.
 
 **M0.2 closure checklist — PASS csak mindegyik teljesülése után:**
 - [ ] Minden core domain és minden cross-cutting domain szerepel a megfelelő inventoryban.
@@ -608,8 +636,8 @@ A capability-lista önmagában nem elég: az alábbi keresztmetszeti domainek a 
 |---|---|---|---|---|---|
 | Admin login | `/admin/login`, `/admin-login.html` | auth login | `src/index.ts` + `public/admin-login.html` | active | KEEP |
 | Admin root | `/admin`, `/admin.html` | redirect → `/admin/editor` | `src/index.ts` | `public/admin.html` is physically present but not canonical authenticated runtime | DISABLE/ARCHIVE legacy file after replacement-safe check |
-| Canonical Editor | `/admin/editor` | `public/editor-v2/index.html` | `src/index.ts` + editor-v2 | canonical | KEEP |
-| Legacy Editor | `public/editor/` | none | repository inventory | physically present; no canonical route | ARCHIVE/REMOVE after reference scan |
+| Canonical Editor | `/admin/editor`; direct static path `/editor-v2/index.html` also needs checking | `public/editor-v2/index.html` | `src/index.ts` auth-gated route + default `ASSETS.fetch(request)` fallback | `/admin/editor` is auth-gated; direct static URL may bypass that route-level gate and must be verified before claiming the shell itself is protected. | KEEP canonical UI; test unauthenticated direct access and redirect/protect it or document an explicit accepted exposure |
+| Legacy Editor | `/editor/*` static paths, including `public/editor/preview.html` | none canonical | `src/index.ts` default `ASSETS.fetch(request)` + repository inventory | No route registration does **not** prove unreachability; direct static assets may still be served. Authentication/redirect disposition is unverified. | Verify anonymous direct access; disable/redirect legacy paths, then ARCHIVE/REMOVE after reference scan in M0.9/M0.10 |
 | Legacy visual page | `public/visual-page.html` | public renderer shell | `src/index.ts` | active public shell | KEEP until renderer migration is explicitly completed |
 | Admin Settings | `/api/admin/settings` | D1 settings | admin settings route + admin.html | active API, but UI is legacy admin surface | MIGRATE UI to canonical Admin/Editor shell |
 | Admin Schedule | `/api/admin/schedule` | Schedule domain | `src/routes/admin/schedule.ts` | CRUD API exists and is site-scoped; admin.html has CRUD UI | KEEP domain; MIGRATE UI |
@@ -621,9 +649,20 @@ A capability-lista önmagában nem elég: az alábbi keresztmetszeti domainek a 
 | Public Schedule | `/api/public/schedule` | Schedule domain read | public schedule route | active | KEEP |
 | Legacy System Pages API | `src/routes/admin/system-pages.ts` | none registered in `src/index.ts` | route exists but import/registration absent | dead/unreachable backend surface | DISABLE/ARCHIVE |
 | Legacy Public System Pages API | `src/routes/public/system-pages.ts` | none registered in `src/index.ts` | route exists but import/registration absent | dead/unreachable backend surface | DISABLE/ARCHIVE |
-| Legacy system-page assets | `public/assets/system-page-editor.js`, `system-page-runtime.js` | none canonical | repository inventory | legacy | ARCHIVE/REMOVE after reference scan |
-| Social Admin panel | `public/admin.html` | none yet | placeholder only | labelled active-looking while backend is not implemented | RECLASSIFY as PLANNED |
+| Legacy system-page assets | `/assets/system-page-editor.js`, `/assets/system-page-runtime.js` | none canonical | repository inventory + default `ASSETS.fetch(request)` fallback | Legacy files exist; direct static reachability and references are not yet proven absent. | Verify direct access/reference graph; DISABLE/ARCHIVE/REMOVE according to M0.9/M0.10 disposition |
+| Legacy Social Admin source | `public/admin.html` file; `/admin.html` request is intercepted by the auth redirect | none canonical | `src/index.ts` admin-root handler + repository inventory | The physical source file is not the active authenticated Admin runtime; direct asset-file status must not be confused with the `/admin.html` route behavior. | RECLASSIFY its capabilities as PLANNED or MIGRATE; keep the file's final disposition under M0.9/M0.10 |
 | Future Admin features | product-map capability registry | future | M0 product map | allowed, but must show explicit PLANNED/BETA/FOUNDATION state | KEEP with feature-state contract |
+| Health / DB health | `/api/health`, `/api/db-health` | shared health/DB diagnostic routes | `src/index.ts` + `src/routes/health.ts`, `db-health.ts` | registered API routes omitted from the original surface table | KEEP; include in route inventory and release gates |
+| Auth API | `/api/auth/bootstrap`, `login`, `logout`, `session` | shared Auth/session boundary | `src/index.ts` + `src/routes/auth/*` | registered shared security routes omitted from the original surface table | KEEP; one shared auth boundary |
+| Twitch integration API | `/api/integrations/twitch/{diagnostic,connect,callback,connection,validation,disconnect}` | Twitch adapter / shared integration boundary | `src/index.ts` + `src/routes/integrations/twitch.ts` | six registered endpoint families were not explicitly listed in the surface inventory | KEEP; include auth/ownership/secret and callback failure cases in the integration evidence |
+| Public page shell | `/`, `/index.html`, `/p/*` | `public/visual-page.html` + canonical public renderer/data routes | `src/index.ts` + public pages/schedule routes | public entry/shell is canonical; direct static and API paths still need a complete disposition map | KEEP; verify published-state behavior and all public paths |
+| Direct Editor v2 static entry | `/editor-v2/index.html` and `/editor-v2/*` | canonical Editor v2 files; canonical admin entry remains `/admin/editor` | `src/index.ts` default `ASSETS.fetch(request)` fallback | direct static reachability may differ from the auth-gated route; not yet verified by this source audit | Test anonymous access; protect/redirect or explicitly document approved behavior before M0.3 PASS |
+
+**Repository inventory baseline — source-tree evidence at commit `9a6ae12` (not a runtime PASS):**
+- 157 tracked repository files; 17 route modules, of which 15 are imported/registered in `src/index.ts` and the two system-pages modules are not registered as API routes.
+- 21 SQL migration files.
+- 68 files under `public/`: 33 under legacy `public/editor/`, 25 under canonical `public/editor-v2/`, 7 under `public/assets/`, and 3 root HTML files. Five HTML files exist in total; the other two are `public/editor/preview.html` and `public/editor-v2/index.html` already counted in their directories.
+- The default `return env.ASSETS.fetch(request)` fallback means absence from the route registry is not proof that a static asset path is unreachable. Every direct Editor/legacy asset entry must be tested unauthenticated and given an explicit disposition.
 
 **Admin Schedule root-cause audit — source-level result:**
 - [x] `/api/admin/schedule` exists and performs site-scoped GET/POST/PUT/DELETE against `schedule_items`.
@@ -639,8 +678,9 @@ A capability-lista önmagában nem elég: az alábbi keresztmetszeti domainek a 
 
 **M0.3 closure checklist — PASS csak mindegyik teljesülése után:**
 - [x] Az Admin → canonical Editor → Schedule böngészős útvonalat ellenőriztük; a felhasználói acceptance rögzítve van.
-- [ ] A jelenlegi route-, navigation-, static asset- és public surface-leltár teljes; az ismeretlen/ellenőrizetlen felületek nem tekinthetők lezártnak.
-- [ ] Minden leltárelem besorolása canonical active / legacy unreachable / legacy reachable / placeholder-planned / disabled, bizonyítékkal.
+- [ ] A route-, navigation-, static asset- és public surface-leltár teljes; a 17 route-modul, a 68 public asset és a közvetlen statikus belépési útvonalak runtime szinten is ellenőrzöttek.
+- [ ] Minden leltárelem besorolása canonical active / legacy unreachable / legacy reachable / placeholder-planned / disabled, bizonyítékkal; a route-regisztráció hiánya önmagában nem bizonyít unreachable állapotot.
+- [ ] A `/editor-v2/*`, `/editor/*` és legacy system-page assetek anonymous direct-access viselkedése tesztelt, és auth/redirect/disable/archive döntés rögzítve.
 - [ ] Minden legacy elem ideiglenes dispositiont és későbbi végrehajtási pontot kap; az M0.9/M0.10 törlési/archiválási feladatait nem kell előre végrehajtani.
 - [ ] A Schedule UX jelenlegi acceptance-e és a későbbi termékmezők scope-ja különválasztva van; a hiányzó termékmezők nem minősülnek már elkészült funkciónak.
 - [ ] Felhasználói review és MASTER checkpoint rögzítve.
@@ -875,6 +915,8 @@ Minden legacy surface kap:
 
 ### M0.11 — Benchmark completion
 **Állapot:** `[ ] QUEUED — kizárólag M0.10 PASS után.`
+
+**Sorrendi pontosítás:** M0.11 a teljes benchmark-lefedettség végső összesítő kapuja; nem engedi a benchmarkot a későbbi fázisokra halasztani. Az M0.5/M0.6/M0.7 contract freeze során minden érintett domain célzott benchmarkját a contract lezárása előtt kell elvégezni és az adott pontban rögzíteni. M0.11 ezután azt ellenőrzi, hogy a teljes platform-scope releváns benchmarkjai megvannak-e, és nincs-e indokolatlanul kihagyott terület.
 
 A hivatalos benchmarkok releváns részei rögzítve:
 - Webflow;
