@@ -12,10 +12,10 @@ test("Admin entry authenticates before routing to the dashboard", () => {
   );
 });
 
-test("dashboard route is authenticated and serves the dedicated static asset", () => {
+test("dashboard route and direct asset path are authenticated", () => {
   assert.match(
     worker,
-    /if \(pathname === "\/admin\/home"\) \{\s*const user = await getAuthenticatedUser\(request, env\);\s*if \(!user\) return Response\.redirect\(new URL\("\/admin\/login", request\.url\)\.toString\(\), 302\);\s*return env\.ASSETS\.fetch\(assetRequest\("\/admin-home\.html", request\)\);/
+    /if \(pathname === "\/admin\/home" \|\| pathname === "\/admin-home\.html"\) \{\s*const user = await getAuthenticatedUser\(request, env\);\s*if \(!user\) return Response\.redirect\(new URL\("\/admin\/login", request\.url\)\.toString\(\), 302\);\s*return env\.ASSETS\.fetch\(assetRequest\("\/admin-home\.html", request\)\);/
   );
 });
 
