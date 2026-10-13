@@ -3379,3 +3379,431 @@ A benchmark rekordnak tartalmaznia kell: dátum, forrás, user problem, releván
 - A következő aktív pont: `F0.1-EDITOR-FOUNDATION-AND-FIRST-USABLE-SLICE`; a roadmap nem engedélyez párhuzamos workstreamet vagy fázisugrást.
 - A régi 2.75 stage-sorrend történeti; a 2.76 az irányadó: az AI a 24. és utolsó opcionális fő fázis.
 - A MASTER bővíthető a H34 szabály szerint, de minden új igénynek owner, dependency, DoD, teszt és fázis kell; a korábbi követelmények megőrzése kötelező.
+
+
+## 2.76.8 — Teljes, soronkénti visszakövethetőség: 01–140
+
+Az alábbi táblázat a MASTER eredeti 140 funkciósorát egyenként megőrzi, és hozzákapcsolja a 2.76 végrehajtási szakaszait. A régi státusz és scope történeti adat; nem runtime PASS. Ha egy sor több domaint érint, a legkorábbi szükséges függőség és a downstream modul is szerepel.
+
+| Historical ID | Megőrzött funkció | Eredeti canonical owner | MASTER-2.76 cél |
+|---|---|---|---|
+| 001 | GitHub + Cloudflare alapstruktúra működő branch/deploy útja | Platform foundation / persistence | Stage 0, 1, 19, 21 |
+| 002 | D1 séma és canonical oldalmodell teljes auditja | Platform foundation / persistence | Stage 24 (optional AI) |
+| 003 | Legacy → canonical migráció véglegesítése és ellenőrzése | Platform foundation / persistence | Stage 0, 1, 19, 21 |
+| 004 | Legacy HTML teljes leválasztása és archiválása | Platform foundation / persistence | Stage 0, 1, 19, 21 |
+| 005 | Canonical Page Model kizárólagos aktív használata | Platform foundation / persistence | Stage 1, 3 |
+| 006 | D1 draft / published snapshot / revision modell teljes validálása | Platform foundation / persistence | Stage 6, 11, 19 |
+| 007 | Revision rollback teljes tesztje | Platform foundation / persistence | Stage 6, 11, 19 |
+| 008 | Audit log teljes ellenőrzése | Platform foundation / persistence | Stage 0, 1, 19, 21 |
+| 009 | Autosave | Platform foundation / persistence | Stage 0, 1, 19, 21 |
+| 010 | Backup / restore | Platform foundation / persistence | Stage 19, 21 |
+| 011 | Auth / session alap | Auth + Pages/CMS | Stage 1, 2, 6, 7, 17 |
+| 012 | Editor jogosultság / RBAC alap | Auth + Pages/CMS | Stage 1, 3 |
+| 013 | Oldallista D1-ből | Auth + Pages/CMS | Stage 1, 2, 6, 7, 17 |
+| 014 | Egyedi oldal megnyitása D1-ből | Auth + Pages/CMS | Stage 1, 2, 6, 7, 17 |
+| 015 | Oldal létrehozása | Auth + Pages/CMS | Stage 1, 2, 6, 7, 17 |
+| 016 | Oldal átnevezése | Auth + Pages/CMS | Stage 1, 2, 6, 7, 17 |
+| 017 | Oldal törlése | Auth + Pages/CMS | Stage 1, 2, 6, 7, 17 |
+| 018 | Slug kezelés és ütközéskezelés teljes UI teszttel | Auth + Pages/CMS | Stage 1, 2, 6, 7, 17 |
+| 019 | CMS teljes regressziós teszt | Auth + Pages/CMS | Stage 1, 2, 6, 7, 17 |
+| 020 | Editor betöltés / boot diagnostics | Visual Editor Core | Stage 1, 3 |
+| 021 | Canonical Page Model betöltése | Visual Editor Core | Stage 1, 3 |
+| 022 | Node ID / parent / children modell | Visual Editor Core | Stage 1, 3 |
+| 023 | Selection alap | Visual Editor Core | Stage 1 |
+| 024 | Layer tree alap | Visual Editor Core | Stage 1, 3 |
+| 025 | Command API alap | Visual Editor Core | Stage 1 |
+| 026 | Undo / redo alap | Visual Editor Core | Stage 1, 3 |
+| 027 | Element update / add / delete / duplicate commandok alapja | Visual Editor Core | Stage 1 |
+| 028 | Hierarchy reparent / reorder command alapja | Visual Editor Core | Stage 14 |
+| 029 | Canvas Engine foundation | Visual Editor Core | Stage 1, 3 |
+| 030 | Responsive engine foundation | Visual Editor Core | Stage 1, 3 |
+| 031 | Property Registry foundation | Visual Editor Core | Stage 1 |
+| 032 | Canvas Engine tényleges bekötése az Editor rendererbe | Website Builder / Layout / Inspector | Stage 1, 3 |
+| 033 | Stabil DOM ↔ Page Model node binding | Website Builder / Layout / Inspector | Stage 1, 3 |
+| 034 | Geometry Inspector | Website Builder / Layout / Inspector | Stage 1, 3 |
+| 035 | Responsive geometry | Website Builder / Layout / Inspector | Stage 1, 3 |
+| 036 | Drag | Website Builder / Layout / Inspector | Stage 1, 3 |
+| 037 | Resize | Website Builder / Layout / Inspector | Stage 1, 3 |
+| 038 | Snap / guides / alignment | Website Builder / Layout / Inspector | Stage 3, 6 |
+| 039 | Layer / lock / hide / rename teljes editor UX | Website Builder / Layout / Inspector | Stage 1, 3 |
+| 040 | Multi-select / group / ungroup | Website Builder / Layout / Inspector | Stage 3, 6 |
+| 041 | Canvas zoom / fit / grid / viewport UX | Website Builder / Layout / Inspector | Stage 1, 3 |
+| 042 | Nested hierarchy teljes működése | Website Builder / Layout / Inspector | Stage 3, 6 |
+| 043 | Invalid nesting védelem | Website Builder / Layout / Inspector | Stage 3, 6 |
+| 044 | Section / container / row / columns / flex / grid / stack | Website Builder / Layout / Inspector | Stage 24 (optional AI) |
+| 045 | Layout sizing / spacing / alignment / distribution | Website Builder / Layout / Inspector | Stage 3, 6 |
+| 046 | Positioning / overflow | Website Builder / Layout / Inspector | Stage 3, 6 |
+| 047 | Responsive layout szabályok | Website Builder / Layout / Inspector | Stage 1, 3 |
+| 048 | Typography Inspector | Website Builder / Layout / Inspector | Stage 1, 3 |
+| 049 | Appearance Inspector | Website Builder / Layout / Inspector | Stage 1, 3 |
+| 050 | Interaction / accessibility / advanced properties | Website Builder / Layout / Inspector | Stage 20, 21, 22 |
+| 051 | Property search / reset / validation | Website Builder / Layout / Inspector | Stage 3, 6 |
+| 052 | Text / rich text | Content / Media / Asset | Stage 4, 7, 10 |
+| 053 | Image / video / embed | Content / Media / Asset | Stage 4, 7, 10 |
+| 054 | Button / link / CTA | Content / Media / Asset | Stage 4, 7, 10 |
+| 055 | Card / list / table / accordion / tabs | Content / Media / Asset | Stage 4, 7, 10 |
+| 056 | Social és streamer blokkok | Content / Media / Asset | Stage 8, 9 |
+| 057 | Twitch / YouTube / TikTok / Discord blokkok | Public social-link blocks + platform adapters | Stage 8, 9 |
+| 058 | Schedule / Live / Countdown / VOD blokkok | Content / Media / Asset | Stage 8, 9 |
+| 059 | Form / contact blokkok | CMS / Form domain + secure submission boundary | Stage 6, 15 |
+| 060 | Media library / R2 | Content / Media / Asset | Stage 4 |
+| 061 | Draft | Publishing / Revision / Import-Export | Stage 6, 11, 19 |
+| 062 | Preview | Publishing / Revision / Import-Export | Stage 6, 7, 11, 19 |
+| 063 | Publish | Publishing / Revision / Import-Export | Stage 6, 11, 19 |
+| 064 | Public renderer canonical published documentből | Publishing / Revision / Import-Export | Stage 6, 11, 19 |
+| 065 | Public / draft izoláció | Publishing / Revision / Import-Export | Stage 6, 11, 19 |
+| 066 | Revision history UI | Publishing / Revision / Import-Export | Stage 6, 11, 19 |
+| 067 | Rollback UI | Publishing / Revision / Import-Export | Stage 6, 11, 19 |
+| 068 | Import / export | Publishing / Revision / Import-Export | Stage 6, 7, 11, 19 |
+| 069 | Főoldal | Public Website / UX / SEO / Accessibility / Performance | Stage 6, 20, 21 |
+| 070 | Twitch | Public Website / UX / SEO / Accessibility / Performance | Stage 8, 9 |
+| 071 | YouTube | Public Website / social-link presentation | Stage 6, 8 |
+| 072 | TikTok | Public Website / social-link presentation | Stage 6, 8 |
+| 073 | Adásrend | Public Website / UX / SEO / Accessibility / Performance | Stage 6, 20, 21 |
+| 074 | Következő adás / countdown | Public Website / UX / SEO / Accessibility / Performance | Stage 6, 20, 21 |
+| 075 | Élő / offline állapot | Public Website / UX / SEO / Accessibility / Performance | Stage 6, 20, 21 |
+| 076 | VOD / Shorts / Clips | Public link/embed baseline + Stream Media/Content domain | Stage 6, 9, 10 |
+| 077 | Rólam | Public Website / UX / SEO / Accessibility / Performance | Stage 6, 20, 21 |
+| 078 | Közösség / Discord | Public community links + Community domain | Stage 6, 12 |
+| 079 | Kapcsolat | Public Website / UX / SEO / Accessibility / Performance | Stage 6, 20, 21 |
+| 080 | Támogatás | Public support content/link + Support/Membership domain | Stage 6, 14 |
+| 081 | Szponzor / üzleti / Press Kit | Public Website / UX / SEO / Accessibility / Performance | Stage 6, 20, 21 |
+| 082 | 404 / loading / empty / error állapotok | Public Website / UX / SEO / Accessibility / Performance | Stage 6, 20, 21 |
+| 083 | Egységes mobil / tablet / desktop UX | Public Website / UX / SEO / Accessibility / Performance | Stage 20, 21, 22 |
+| 084 | SEO / Open Graph / structured data | Public Website / UX / SEO / Accessibility / Performance | Stage 6 |
+| 085 | Accessibility | Public Website / UX / SEO / Accessibility / Performance | Stage 20, 21, 22 |
+| 086 | Performance / caching | Public Website / UX / SEO / Accessibility / Performance | Stage 6, 15 |
+| 087 | Schedule D1 rendszer | Streamer Domain / Integrations / Analytics | Stage 8, 9 |
+| 088 | Twitch API / live state | Streamer Domain / Integrations / Analytics | Stage 8, 9 |
+| 089 | YouTube API | YouTube platform adapter under Integration/Platform contract | Stage 8, 11 |
+| 090 | TikTok rendszer | TikTok platform adapter under Integration/Platform contract | Stage 8, 11 |
+| 091 | VOD rendszer | Stream Media/Content domain + provider adapters | Stage 7, 10, 11 |
+| 092 | Community / Discord | Community domain + Discord integration adapter | Stage 12 |
+| 093 | Contact / collaboration | Public contact entry + later collaboration/CRM domains | Stage 6, 15 |
+| 094 | Site settings | Streamer Domain / Integrations / Analytics | Stage 8, 13 |
+| 095 | Analytics | Release/operational telemetry + Creator Analytics domain | Stage 13 |
+| 096 | Unit tesztek | QA / Security / Production | Stage 0, 21, 22 |
+| 097 | API / integration tesztek | QA / Security / Production | Stage 0, 21, 22 |
+| 098 | D1 tesztek | QA / Security / Production | Stage 0, 21, 22 |
+| 099 | E2E / browser tesztek | QA / Security / Production | Stage 0, 21, 22 |
+| 100 | Regression tesztek | QA / Security / Production | Stage 20, 21, 22 |
+| 101 | Security hardening | QA / Security / Production | Stage 20, 21, 22 |
+| 102 | Observability / error reporting | QA / Security / Production | Stage 8, 9 |
+| 103 | Production backup / recovery teszt | QA / Security / Production | Stage 14 |
+| 104 | Production release checklist | QA / Security / Production | Stage 14 |
+| 105 | Stabil page / node / component / action / revision / media / schedule ID-k | Platform contracts / Governance / AI-ready actions | Stage 6, 11, 19 |
+| 106 | Strukturált page model teljes lezárása | Platform contracts / Governance / AI-ready actions | Stage 1, 3 |
+| 107 | Közös Action API az Editor és későbbi AI számára | Platform contracts / Governance / AI-ready actions | Stage 1, 3 |
+| 108 | Permission / approval / audit réteg | Platform contracts / Governance / AI-ready actions | Stage 0, 16, 24 |
+| 109 | Preview-before-apply / rollback mechanizmus | Platform contracts / Governance / AI-ready actions | Stage 6, 11, 19 |
+| 110 | AI Orchestrator | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
+| 111 | Agent / Tool / Model Registry | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
+| 112 | Task Planner / Context Selector | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
+| 113 | Permission Checker / Approval Flow | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
+| 114 | Execution / verification / recovery | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
+| 115 | Multi-model routing | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
+| 116 | Web Engineer Agent | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
+| 117 | Visual Editor Agent | SANCI AI / Creator Intelligence | Stage 1, 3 |
+| 118 | QA Agent | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
+| 119 | GitHub / Cloudflare Engineer Agent | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
+| 120 | Browser QA AI | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
+| 121 | Stream observation | SANCI AI / Creator Intelligence | Stage 8, 9 |
+| 122 | Silence / pacing detection | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
+| 123 | Chat / context analysis | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
+| 124 | Contextual live suggestions | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
+| 125 | Streamer profile / long-term memory | SANCI AI / Creator Intelligence | Stage 8, 9 |
+| 126 | Experience learning / evaluation cycles | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
+| 127 | One-click clip / Short creation | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
+| 128 | Stream setup diagnostics assistant | SANCI AI / Creator Intelligence | Stage 8, 9 |
+| 129 | AI control center | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
+| 130 | End-to-end AI platform test | SANCI AI / Creator Intelligence | Stage 6, 15 |
+| 131 | Teljes public website teszt | Final production QA / release gates | Stage 22 |
+| 132 | Teljes admin / CMS teszt | Final production QA / release gates | Stage 22 |
+| 133 | Teljes Visual Editor teszt | Final production QA / release gates | Stage 1, 3 |
+| 134 | D1 / R2 / integrations teszt | Final production QA / release gates | Stage 22 |
+| 135 | Mobile / tablet / desktop teszt | Final production QA / release gates | Stage 20, 21, 22 |
+| 136 | Security / permissions teszt | Final production QA / release gates | Stage 20, 21, 22 |
+| 137 | Performance / accessibility teszt | Final production QA / release gates | Stage 6, 15 |
+| 138 | Backup / restore / disaster recovery teszt | Final production QA / release gates | Stage 19, 21 |
+| 139 | Regression teszt | Final production QA / release gates | Stage 20, 21, 22 |
+| 140 | Production release jóváhagyás | Final production QA / release gates | Stage 14 |
+
+## 2.76.9 — Teljes, soronkénti visszakövethetőség: H19–H34
+
+Az alábbi táblázat minden meglévő H19–H34 ledger-sort felsorol. Az eredeti ledger teljes szövege a fenti történeti fejezetben változatlanul megmarad; ez a táblázat csak a jelenlegi végrehajtási hozzárendelést adja hozzá. A H31 és a modellezett H32 intelligenciafunkciók az opcionális AI-fázisba kerülnek. A determinisztikus stream metrikák, integration health, kézi markerek és a szabályalapú H33 automatizálás AI nélkül is megvalósítandók.
+
+| Historical ID | Megőrzött capability | Eredeti canonical owner | MASTER-2.76 cél |
+|---|---|---|---|
+| H19.01 | upload | Resource / Asset Library (C.4) | Stage 4; advanced editing/derivatives: Stage 10 |
+| H19.02 | folders | Resource / Asset Library (C.4) | Stage 4; advanced editing/derivatives: Stage 10 |
+| H19.03 | search | Resource / Asset Library (C.4) | Stage 4; advanced editing/derivatives: Stage 10 |
+| H19.04 | filter | Resource / Asset Library (C.4) | Stage 4; advanced editing/derivatives: Stage 10 |
+| H19.05 | preview | Resource / Asset Library (C.4) | Stage 4; advanced editing/derivatives: Stage 10 |
+| H19.06 | metadata | Resource / Asset Library (C.4) | Stage 4; advanced editing/derivatives: Stage 10 |
+| H19.07 | alt text | Resource / Asset Library (C.4) | Stage 4; advanced editing/derivatives: Stage 10 |
+| H19.08 | crop | Resource / Asset Library (C.4) | Stage 4; advanced editing/derivatives: Stage 10 |
+| H19.09 | resize | Resource / Asset Library (C.4) | Stage 4; advanced editing/derivatives: Stage 10 |
+| H19.10 | replace | Resource / Asset Library (C.4) | Stage 4; advanced editing/derivatives: Stage 10 |
+| H19.11 | archive/delete | Resource / Asset Library (C.4) | Stage 4; advanced editing/derivatives: Stage 10 |
+| H19.12 | usage tracking | Resource / Asset Library (C.4) | Stage 4; advanced editing/derivatives: Stage 10 |
+| H19.13 | unused media detection | Resource / Asset Library (C.4) | Stage 4; advanced editing/derivatives: Stage 10 |
+| H19.14 | MIME validation | Resource / Asset Library (C.4) | Stage 4; advanced editing/derivatives: Stage 10 |
+| H19.15 | file-size limits | Resource / Asset Library (C.4) | Stage 4; advanced editing/derivatives: Stage 10 |
+| H19.16 | secure object keys | Resource / Asset Library (C.4) | Stage 4; advanced editing/derivatives: Stage 10 |
+| H19.17 | image optimization | Resource / Asset Library (C.4) | Stage 4; advanced editing/derivatives: Stage 10 |
+| H19.18 | video/audio | Resource / Asset Library (C.4) | Stage 4; advanced editing/derivatives: Stage 10 |
+| H19.19 | clip/Short assets | Resource / Asset Library (C.4) | Stage 4; advanced editing/derivatives: Stage 10 |
+| H19.20 | cache policy | Resource / Asset Library (C.4) | Stage 4; advanced editing/derivatives: Stage 10 |
+| H20.01 | D1 binding | Page Model + CMS (C.5/C.6); integration and schedule domains (C.7/C.8) | Stage 3, 6, 8 |
+| H20.02 | site settings | Page Model + CMS (C.5/C.6); integration and schedule domains (C.7/C.8) | Stage 3, 6, 8 |
+| H20.03 | schedule | Page Model + CMS (C.5/C.6); integration and schedule domains (C.7/C.8) | Stage 3, 6, 8 |
+| H20.04 | Twitch | Page Model + CMS (C.5/C.6); integration and schedule domains (C.7/C.8) | Stage 3, 6, 8 |
+| H20.05 | YouTube | Page Model + CMS (C.5/C.6); integration and schedule domains (C.7/C.8) | Stage 3, 6, 8 |
+| H20.06 | TikTok | Page Model + CMS (C.5/C.6); integration and schedule domains (C.7/C.8) | Stage 3, 6, 8 |
+| H20.07 | Discord | Page Model + CMS (C.5/C.6); integration and schedule domains (C.7/C.8) | Stage 3, 6, 8 |
+| H20.08 | VOD | Page Model + CMS (C.5/C.6); integration and schedule domains (C.7/C.8) | Stage 3, 6, 8 |
+| H20.09 | collections | Page Model + CMS (C.5/C.6); integration and schedule domains (C.7/C.8) | Stage 3, 6, 8 |
+| H20.10 | API data source | Page Model + CMS (C.5/C.6); integration and schedule domains (C.7/C.8) | Stage 3, 6, 8 |
+| H20.11 | loading state | Page Model + CMS (C.5/C.6); integration and schedule domains (C.7/C.8) | Stage 3, 6, 8 |
+| H20.12 | empty state | Page Model + CMS (C.5/C.6); integration and schedule domains (C.7/C.8) | Stage 3, 6, 8 |
+| H20.13 | error state | Page Model + CMS (C.5/C.6); integration and schedule domains (C.7/C.8) | Stage 3, 6, 8 |
+| H20.14 | conditional rendering | Page Model + CMS (C.5/C.6); integration and schedule domains (C.7/C.8) | Stage 3, 6, 8 |
+| H20.15 | data transforms | Page Model + CMS (C.5/C.6); integration and schedule domains (C.7/C.8) | Stage 3, 6, 8 |
+| H20.16 | caching | Page Model + CMS (C.5/C.6); integration and schedule domains (C.7/C.8) | Stage 3, 6, 8 |
+| H20.17 | stale-data handling | Page Model + CMS (C.5/C.6); integration and schedule domains (C.7/C.8) | Stage 3, 6, 8 |
+| H20.18 | binding validation | Page Model + CMS (C.5/C.6); integration and schedule domains (C.7/C.8) | Stage 3, 6, 8 |
+| H21.01 | Twitch OAuth | Integration/Platform contract + Streamer domain (C.7) | Stage 8, with domain-specific downstream stage |
+| H21.02 | Twitch live/offline | Integration/Platform contract + Streamer domain (C.7) | Stage 8, with domain-specific downstream stage |
+| H21.03 | Twitch title | Integration/Platform contract + Streamer domain (C.7) | Stage 8, with domain-specific downstream stage |
+| H21.04 | Twitch game | Integration/Platform contract + Streamer domain (C.7) | Stage 8, with domain-specific downstream stage |
+| H21.05 | Twitch viewer statistics | Integration/Platform contract + Streamer domain (C.7) | Stage 8, with domain-specific downstream stage |
+| H21.06 | Twitch followers/subscribers where available | Integration/Platform contract + Streamer domain (C.7) | Stage 8, with domain-specific downstream stage |
+| H21.07 | Twitch VOD | Integration/Platform contract + Streamer domain (C.7) | Stage 8, with domain-specific downstream stage |
+| H21.08 | Twitch clips | Integration/Platform contract + Streamer domain (C.7) | Stage 8, with domain-specific downstream stage |
+| H21.09 | Twitch events/webhooks where applicable | Integration/Platform contract + Streamer domain (C.7) | Stage 8, with domain-specific downstream stage |
+| H21.10 | YouTube channel | Integration/Platform contract + Streamer domain (C.7) | Stage 8, 11 |
+| H21.11 | YouTube videos | Integration/Platform contract + Streamer domain (C.7) | Stage 8, 11 |
+| H21.12 | YouTube Shorts | Integration/Platform contract + Streamer domain (C.7) | Stage 8, 11 |
+| H21.13 | YouTube statistics where available | Integration/Platform contract + Streamer domain (C.7) | Stage 8, 11 |
+| H21.14 | YouTube API quota/error handling | Integration/Platform contract + Streamer domain (C.7) | Stage 8, 11 |
+| H21.15 | TikTok profile | Integration/Platform contract + Streamer domain (C.7) | Stage 8, 11 |
+| H21.16 | TikTok supported content integration | Integration/Platform contract + Streamer domain (C.7) | Stage 8, 11 |
+| H21.17 | TikTok API capability review | Integration/Platform contract + Streamer domain (C.7) | Stage 8, 11 |
+| H21.18 | TikTok rate limits/fallback | Integration/Platform contract + Streamer domain (C.7) | Stage 8, 11 |
+| H21.19 | Discord community link | Integration/Platform contract + Streamer domain (C.7) | Stage 8, 12 |
+| H21.20 | Discord optional integration | Integration/Platform contract + Streamer domain (C.7) | Stage 8, 12 |
+| H21.21 | Discord status where justified | Integration/Platform contract + Streamer domain (C.7) | Stage 8, 12 |
+| H21.22 | Architecture constraint: keep secrets in Cloudflare Secrets; normalize external APIs behind services | Integration/Platform contract + Streamer domain (C.7), aligned with Security/Auth (H28.10) | Stage 8, with domain-specific downstream stage |
+| H22.01 | schedule CRUD | Schedule domain (C.8) + CMS/Content Factory (C.6) + Streamer domain (C.7) | Stage 7, 10, 11 |
+| H22.02 | recurring schedule | Schedule domain (C.8) + CMS/Content Factory (C.6) + Streamer domain (C.7) | Stage 7, 10, 11 |
+| H22.03 | timezone handling | Schedule domain (C.8) + CMS/Content Factory (C.6) + Streamer domain (C.7) | Stage 7, 10, 11 |
+| H22.04 | next-stream calculation | Schedule domain (C.8) + CMS/Content Factory (C.6) + Streamer domain (C.7) | Stage 7, 10, 11 |
+| H22.05 | countdown | Schedule domain (C.8) + CMS/Content Factory (C.6) + Streamer domain (C.7) | Stage 7, 10, 11 |
+| H22.06 | live state | Schedule domain (C.8) + CMS/Content Factory (C.6) + Streamer domain (C.7) | Stage 7, 10, 11 |
+| H22.07 | game/category | Schedule domain (C.8) + CMS/Content Factory (C.6) + Streamer domain (C.7) | Stage 7, 10, 11 |
+| H22.08 | stream type | Schedule domain (C.8) + CMS/Content Factory (C.6) + Streamer domain (C.7) | Stage 7, 10, 11 |
+| H22.09 | VOD ingestion | Schedule domain (C.8) + CMS/Content Factory (C.6) + Streamer domain (C.7) | Stage 7, 10, 11 |
+| H22.10 | VOD categorization | Schedule domain (C.8) + CMS/Content Factory (C.6) + Streamer domain (C.7) | Stage 7, 10, 11 |
+| H22.11 | VOD search/filter | Schedule domain (C.8) + CMS/Content Factory (C.6) + Streamer domain (C.7) | Stage 7, 10, 11 |
+| H22.12 | Shorts management | Schedule domain (C.8) + CMS/Content Factory (C.6) + Streamer domain (C.7) | Stage 7, 10, 11 |
+| H22.13 | clips management | Schedule domain (C.8) + CMS/Content Factory (C.6) + Streamer domain (C.7) | Stage 7, 10, 11 |
+| H22.14 | content calendar | Schedule domain (C.8) + CMS/Content Factory (C.6) + Streamer domain (C.7) | Stage 7, 10, 11 |
+| H22.15 | platform-specific variants | Schedule domain (C.8) + CMS/Content Factory (C.6) + Streamer domain (C.7) | Stage 7, 10, 11 |
+| H22.16 | title/description/hashtag suggestions | Schedule domain (C.8) + CMS/Content Factory (C.6) + Streamer domain (C.7) | Stage 7, 10, 11 |
+| H22.17 | thumbnail brief | Schedule domain (C.8) + CMS/Content Factory (C.6) + Streamer domain (C.7) | Stage 7, 10, 11 |
+| H22.18 | publishing workflow | Schedule domain (C.8) + CMS/Content Factory (C.6) + Streamer domain (C.7) | Stage 7, 10, 11 |
+| H22.19 | performance feedback loop | Schedule domain (C.8) + CMS/Content Factory (C.6) + Streamer domain (C.7) | Stage 7, 10, 11 |
+| H23.01 | event model | Website Builder / Interaction & Animation (C.5) | Stage 3, 6 |
+| H23.02 | click | Website Builder / Interaction & Animation (C.5) | Stage 3, 6 |
+| H23.03 | hover | Website Builder / Interaction & Animation (C.5) | Stage 3, 6 |
+| H23.04 | focus | Website Builder / Interaction & Animation (C.5) | Stage 3, 6 |
+| H23.05 | active | Website Builder / Interaction & Animation (C.5) | Stage 3, 6 |
+| H23.06 | submit | Website Builder / Interaction & Animation (C.5) | Stage 3, 6 |
+| H23.07 | scroll | Website Builder / Interaction & Animation (C.5) | Stage 3, 6 |
+| H23.08 | load | Website Builder / Interaction & Animation (C.5) | Stage 3, 6 |
+| H23.09 | timer | Website Builder / Interaction & Animation (C.5) | Stage 3, 6 |
+| H23.10 | open/close | Website Builder / Interaction & Animation (C.5) | Stage 3, 6 |
+| H23.11 | navigation | Website Builder / Interaction & Animation (C.5) | Stage 3, 6 |
+| H23.12 | show/hide | Website Builder / Interaction & Animation (C.5) | Stage 3, 6 |
+| H23.13 | toggle | Website Builder / Interaction & Animation (C.5) | Stage 3, 6 |
+| H23.14 | state machine | Website Builder / Interaction & Animation (C.5) | Stage 3, 6 |
+| H23.15 | transition | Website Builder / Interaction & Animation (C.5) | Stage 3, 6 |
+| H23.16 | animation timeline | Website Builder / Interaction & Animation (C.5) | Stage 3, 6 |
+| H23.17 | keyframes | Website Builder / Interaction & Animation (C.5) | Stage 3, 6 |
+| H23.18 | reduced-motion | Website Builder / Interaction & Animation (C.5) | Stage 3, 6 |
+| H23.19 | interaction validation | Website Builder / Interaction & Animation (C.5) | Stage 3, 6 |
+| H23.20 | performance safeguards | Website Builder / Interaction & Animation (C.5) | Stage 3, 6 |
+| H24.01 | semantic HTML | Public Website / Accessibility (C.5 + C.13) | Stage 20 + the relevant component/public-renderer stage |
+| H24.02 | heading hierarchy | Public Website / Accessibility (C.5 + C.13) | Stage 20 + the relevant component/public-renderer stage |
+| H24.03 | alt text | Public Website / Accessibility (C.5 + C.13) | Stage 20 + the relevant component/public-renderer stage |
+| H24.04 | labels | Public Website / Accessibility (C.5 + C.13) | Stage 20 + the relevant component/public-renderer stage |
+| H24.05 | ARIA | Public Website / Accessibility (C.5 + C.13) | Stage 20 + the relevant component/public-renderer stage |
+| H24.06 | keyboard navigation | Public Website / Accessibility (C.5 + C.13) | Stage 20 + the relevant component/public-renderer stage |
+| H24.07 | focus order | Public Website / Accessibility (C.5 + C.13) | Stage 20 + the relevant component/public-renderer stage |
+| H24.08 | focus visibility | Public Website / Accessibility (C.5 + C.13) | Stage 20 + the relevant component/public-renderer stage |
+| H24.09 | contrast warnings | Public Website / Accessibility (C.5 + C.13) | Stage 20 + the relevant component/public-renderer stage |
+| H24.10 | screen-reader metadata | Public Website / Accessibility (C.5 + C.13) | Stage 20 + the relevant component/public-renderer stage |
+| H24.11 | form validation accessibility | Public Website / Accessibility (C.5 + C.13) | Stage 20 + the relevant component/public-renderer stage |
+| H24.12 | editor accessibility checks | Public Website / Accessibility (C.5 + C.13) | Stage 20 + the relevant component/public-renderer stage |
+| H24.13 | public accessibility audit | Public Website / Accessibility (C.5 + C.13) | Stage 20 + the relevant component/public-renderer stage |
+| H25.01 | title | Public Website / SEO & Discoverability (C.13) | Stage 6 |
+| H25.02 | description | Public Website / SEO & Discoverability (C.13) | Stage 6 |
+| H25.03 | canonical | Public Website / SEO & Discoverability (C.13) | Stage 6 |
+| H25.04 | Open Graph | Public Website / SEO & Discoverability (C.13) | Stage 6 |
+| H25.05 | X/Twitter card | Public Website / SEO & Discoverability (C.13) | Stage 6 |
+| H25.06 | structured data | Public Website / SEO & Discoverability (C.13) | Stage 6 |
+| H25.07 | sitemap | Public Website / SEO & Discoverability (C.13) | Stage 6 |
+| H25.08 | robots | Public Website / SEO & Discoverability (C.13) | Stage 6 |
+| H25.09 | per-page SEO | Public Website / SEO & Discoverability (C.13) | Stage 6 |
+| H25.10 | SEO preview | Public Website / SEO & Discoverability (C.13) | Stage 6 |
+| H25.11 | redirects | Public Website / SEO & Discoverability (C.13) | Stage 6 |
+| H25.12 | broken-link detection | Public Website / SEO & Discoverability (C.13) | Stage 6 |
+| H26.01 | page views | Analytics / Insights (C.16) | Stage 13 |
+| H26.02 | button clicks | Analytics / Insights (C.16) | Stage 13 |
+| H26.03 | social clicks | Analytics / Insights (C.16) | Stage 13 |
+| H26.04 | stream events | Analytics / Insights (C.16) | Stage 13 |
+| H26.05 | conversion events | Analytics / Insights (C.16) | Stage 13 |
+| H26.06 | privacy-aware analytics | Analytics / Insights (C.16) | Stage 13 |
+| H26.07 | retention policy | Analytics / Insights (C.16) | Stage 13 |
+| H26.08 | admin dashboard | Analytics / Insights (C.16) | Stage 13 |
+| H26.09 | editor/content performance | Analytics / Insights (C.16) | Stage 13 |
+| H26.10 | content performance | Analytics / Insights (C.16) | Stage 13 |
+| H26.11 | stream performance | Analytics / Insights (C.16) | Stage 13 |
+| H26.12 | anomaly detection later | Analytics / Insights (C.16) | Stage 13 |
+| H27.01 | dashboard | Admin Platform / Creator Center (C.6 + C.7 + C.8 + C.16) | Stage 2 + the owning module stage |
+| H27.02 | navigation | Admin Platform / Creator Center (C.6 + C.7 + C.8 + C.16) | Stage 2 + the owning module stage |
+| H27.03 | responsive admin | Admin Platform / Creator Center (C.6 + C.7 + C.8 + C.16) | Stage 2 + the owning module stage |
+| H27.04 | diagnostics | Admin Platform / Creator Center (C.6 + C.7 + C.8 + C.16) | Stage 2 + the owning module stage |
+| H27.05 | page list | Admin Platform / Creator Center (C.6 + C.7 + C.8 + C.16) | Stage 2 + the owning module stage |
+| H27.06 | content management | Admin Platform / Creator Center (C.6 + C.7 + C.8 + C.16) | Stage 2 + the owning module stage |
+| H27.07 | schedule | Admin Platform / Creator Center (C.6 + C.7 + C.8 + C.16) | Stage 2 + the owning module stage |
+| H27.08 | socials | Admin Platform / Creator Center (C.6 + C.7 + C.8 + C.16) | Stage 2 + the owning module stage |
+| H27.09 | VOD | Admin Platform / Creator Center (C.6 + C.7 + C.8 + C.16) | Stage 2 + the owning module stage |
+| H27.10 | media | Admin Platform / Creator Center (C.6 + C.7 + C.8 + C.16) | Stage 2 + the owning module stage |
+| H27.11 | settings | Admin Platform / Creator Center (C.6 + C.7 + C.8 + C.16) | Stage 2 + the owning module stage |
+| H27.12 | SEO | Admin Platform / Creator Center (C.6 + C.7 + C.8 + C.16) | Stage 2 + the owning module stage |
+| H27.13 | analytics | Admin Platform / Creator Center (C.6 + C.7 + C.8 + C.16) | Stage 2 + the owning module stage |
+| H27.14 | integrations | Admin Platform / Creator Center (C.6 + C.7 + C.8 + C.16) | Stage 2 + the owning module stage |
+| H27.15 | editor management | Admin Platform / Creator Center (C.6 + C.7 + C.8 + C.16) | Stage 2 + the owning module stage |
+| H27.16 | preview | Admin Platform / Creator Center (C.6 + C.7 + C.8 + C.16) | Stage 2 + the owning module stage |
+| H27.17 | recovery | Admin Platform / Creator Center (C.6 + C.7 + C.8 + C.16) | Stage 2 + the owning module stage |
+| H27.18 | history | Admin Platform / Creator Center (C.6 + C.7 + C.8 + C.16) | Stage 2 + the owning module stage |
+| H27.19 | permissions | Admin Platform / Creator Center (C.6 + C.7 + C.8 + C.16) | Stage 2 + the owning module stage |
+| H28.01 | HttpOnly | Security / Auth / Audit (cross-cutting) | Stage 0, 21 |
+| H28.02 | Secure cookie | Security / Auth / Audit (cross-cutting) | Stage 0, 21 |
+| H28.03 | SameSite | Security / Auth / Audit (cross-cutting) | Stage 0, 21 |
+| H28.04 | password hash | Security / Auth / Audit (cross-cutting) | Stage 0, 21 |
+| H28.05 | CSRF | Security / Auth / Audit (cross-cutting) | Stage 0, 21 |
+| H28.06 | rate limiting | Security / Auth / Audit (cross-cutting) | Stage 0, 21 |
+| H28.07 | RBAC | Security / Auth / Audit (cross-cutting) | Stage 0, 21 |
+| H28.08 | API authorization | Security / Auth / Audit (cross-cutting) | Stage 0, 21 |
+| H28.09 | public/admin separation | Security / Auth / Audit (cross-cutting) | Stage 0, 21 |
+| H28.10 | Cloudflare Secrets | Security / Auth / Audit (cross-cutting) | Stage 0, 21 |
+| H28.11 | audit log | Security / Auth / Audit (cross-cutting) | Stage 0, 21 |
+| H28.12 | input validation | Security / Auth / Audit (cross-cutting) | Stage 0, 21 |
+| H28.13 | output validation | Security / Auth / Audit (cross-cutting) | Stage 0, 21 |
+| H28.14 | file validation | Security / Auth / Audit (cross-cutting) | Stage 0, 21 |
+| H28.15 | replay protection where applicable | Security / Auth / Audit (cross-cutting) | Stage 0, 21 |
+| H28.16 | action permission `can()` checks | Security / Auth / Audit (cross-cutting) | Stage 0, 21 |
+| H28.17 | AI permission boundary | Security / Auth / Audit (cross-cutting) | Stage 0, 21 |
+| H29.01 | full backup | Persistence / Revision / Resource (C.4 + C.5 + C.6) | Stage 19, 21 |
+| H29.02 | page backup | Persistence / Revision / Resource (C.4 + C.5 + C.6) | Stage 19, 21 |
+| H29.03 | revision backup | Persistence / Revision / Resource (C.4 + C.5 + C.6) | Stage 19, 21 |
+| H29.04 | media references | Persistence / Revision / Resource (C.4 + C.5 + C.6) | Stage 19, 21 |
+| H29.05 | restore validation | Persistence / Revision / Resource (C.4 + C.5 + C.6) | Stage 19, 21 |
+| H29.06 | rollback | Persistence / Revision / Resource (C.4 + C.5 + C.6) | Stage 19, 21 |
+| H29.07 | import/export JSON | Persistence / Revision / Resource (C.4 + C.5 + C.6) | Stage 19, 21 |
+| H29.08 | migration compatibility | Persistence / Revision / Resource (C.4 + C.5 + C.6) | Stage 19, 21 |
+| H29.09 | backup integrity check | Persistence / Revision / Resource (C.4 + C.5 + C.6) | Stage 19, 21 |
+| H29.10 | recovery drill | Persistence / Revision / Resource (C.4 + C.5 + C.6) | Stage 19, 21 |
+| H30.01 | bundle review | Performance / Production QA (cross-cutting) | Stage 21, 22 |
+| H30.02 | lazy loading | Performance / Production QA (cross-cutting) | Stage 21, 22 |
+| H30.03 | image optimization | Performance / Production QA (cross-cutting) | Stage 21, 22 |
+| H30.04 | caching | Performance / Production QA (cross-cutting) | Stage 21, 22 |
+| H30.05 | cache invalidation | Performance / Production QA (cross-cutting) | Stage 21, 22 |
+| H30.06 | Core Web Vitals | Performance / Production QA (cross-cutting) | Stage 21, 22 |
+| H30.07 | rendering performance | Performance / Production QA (cross-cutting) | Stage 21, 22 |
+| H30.08 | large-page performance | Performance / Production QA (cross-cutting) | Stage 21, 22 |
+| H30.09 | large-tree editor performance | Performance / Production QA (cross-cutting) | Stage 21, 22 |
+| H30.10 | history memory limits | Performance / Production QA (cross-cutting) | Stage 21, 22 |
+| H30.11 | autosave efficiency | Performance / Production QA (cross-cutting) | Stage 21, 22 |
+| H30.12 | API latency monitoring | Performance / Production QA (cross-cutting) | Stage 21, 22 |
+| H30.13 | production smoke test | Performance / Production QA (cross-cutting) | Stage 21, 22 |
+| H30.14 | visual regression baseline | Performance / Production QA (cross-cutting) | Stage 21, 22 |
+| H31.00 | AI editor must use the same canonical action system as manual Editor; pipeline: Intent -> Plan -> Actions -> Permission -> Validation -> Preview/Diff -> Approval -> Execute -> Verify -> Audit -> Version | AI Platform / AI Editor (C.14) | Stage 24 (optional AI; canonical action prerequisites in Stages 1 and 16) |
+| H31.01 | AI page operations | AI Platform / AI Editor (C.14) | Stage 24 (optional AI; canonical action prerequisites in Stages 1 and 16) |
+| H31.02 | AI element operations | AI Platform / AI Editor (C.14) | Stage 24 (optional AI; canonical action prerequisites in Stages 1 and 16) |
+| H31.03 | AI style/layout operations | AI Platform / AI Editor (C.14) | Stage 24 (optional AI; canonical action prerequisites in Stages 1 and 16) |
+| H31.04 | AI responsive operations | AI Platform / AI Editor (C.14) | Stage 24 (optional AI; canonical action prerequisites in Stages 1 and 16) |
+| H31.05 | AI content generation | AI Platform / AI Editor (C.14) | Stage 24 (optional AI; canonical action prerequisites in Stages 1 and 16) |
+| H31.06 | AI SEO assistance | AI Platform / AI Editor (C.14) | Stage 24 (optional AI; canonical action prerequisites in Stages 1 and 16) |
+| H31.07 | AI accessibility QA | AI Platform / AI Editor (C.14) | Stage 24 (optional AI; canonical action prerequisites in Stages 1 and 16) |
+| H31.08 | AI visual QA | AI Platform / AI Editor (C.14) | Stage 24 (optional AI; canonical action prerequisites in Stages 1 and 16) |
+| H31.09 | action permissions | AI Platform / AI Editor (C.14) | Stage 24 (optional AI; canonical action prerequisites in Stages 1 and 16) |
+| H31.10 | approval rules | AI Platform / AI Editor (C.14) | Stage 24 (optional AI; canonical action prerequisites in Stages 1 and 16) |
+| H31.11 | rollback | AI Platform / AI Editor (C.14) | Stage 24 (optional AI; canonical action prerequisites in Stages 1 and 16) |
+| H31.12 | audit | AI Platform / AI Editor (C.14) | Stage 24 (optional AI; canonical action prerequisites in Stages 1 and 16) |
+| H31.13 | rate/cost controls | AI Platform / AI Editor (C.14) | Stage 24 (optional AI; canonical action prerequisites in Stages 1 and 16) |
+| H32.01 | live stream monitoring | Streamer Intelligence / Content Factory (C.6 + C.7 + C.16) | Stage 9, 21 for measurable non-AI telemetry; model interpretation stays Stage 24 |
+| H32.02 | silence/speech detection | Streamer Intelligence / Content Factory (C.6 + C.7 + C.16) | Stage 24 (optional AI intelligence) |
+| H32.03 | chat activity analysis | Streamer Intelligence / Content Factory (C.6 + C.7 + C.16) | Stage 24 (optional AI intelligence) |
+| H32.04 | technical issue detection | Streamer Intelligence / Content Factory (C.6 + C.7 + C.16) | Stage 9, 21 for measurable non-AI telemetry; model interpretation stays Stage 24 |
+| H32.05 | audio problem detection | Streamer Intelligence / Content Factory (C.6 + C.7 + C.16) | Stage 9, 21 for measurable non-AI telemetry; model interpretation stays Stage 24 |
+| H32.06 | stream quality checks | Streamer Intelligence / Content Factory (C.6 + C.7 + C.16) | Stage 9, 21 for measurable non-AI telemetry; model interpretation stays Stage 24 |
+| H32.07 | scene suggestions | Streamer Intelligence / Content Factory (C.6 + C.7 + C.16) | Stage 24 (optional AI intelligence) |
+| H32.08 | context-aware ideas | Streamer Intelligence / Content Factory (C.6 + C.7 + C.16) | Stage 24 (optional AI intelligence) |
+| H32.09 | interesting moment detection | Streamer Intelligence / Content Factory (C.6 + C.7 + C.16) | Stage 24 (optional AI intelligence) |
+| H32.10 | post-stream summary | Streamer Intelligence / Content Factory (C.6 + C.7 + C.16) | Stage 24 (optional AI intelligence) |
+| H32.11 | VOD analysis | Streamer Intelligence / Content Factory (C.6 + C.7 + C.16) | Stage 24 (optional AI intelligence) |
+| H32.12 | clip candidates | Streamer Intelligence / Content Factory (C.6 + C.7 + C.16) | Stage 24 (optional AI intelligence) |
+| H32.13 | Short candidates | Streamer Intelligence / Content Factory (C.6 + C.7 + C.16) | Stage 24 (optional AI intelligence) |
+| H32.14 | title/description suggestions | Streamer Intelligence / Content Factory (C.6 + C.7 + C.16) | Stage 24 (optional AI intelligence) |
+| H32.15 | platform variants | Streamer Intelligence / Content Factory (C.6 + C.7 + C.16) | Stage 24 (optional AI intelligence) |
+| H32.16 | thumbnail briefs | Streamer Intelligence / Content Factory (C.6 + C.7 + C.16) | Stage 24 (optional AI intelligence) |
+| H32.17 | publishing recommendations | Streamer Intelligence / Content Factory (C.6 + C.7 + C.16) | Stage 24 (optional AI intelligence) |
+| H32.18 | content performance analysis | Streamer Intelligence / Content Factory (C.6 + C.7 + C.16) | Stage 24 (optional AI intelligence) |
+| H32.19 | streamer profile | Streamer Intelligence / Content Factory (C.6 + C.7 + C.16) | Stage 8 |
+| H32.20 | long-term memory | Streamer Intelligence / Content Factory (C.6 + C.7 + C.16) | Stage 24 (optional AI intelligence) |
+| H32.21 | preferences | Streamer Intelligence / Content Factory (C.6 + C.7 + C.16) | Stage 8 |
+| H32.22 | historical outcomes | Streamer Intelligence / Content Factory (C.6 + C.7 + C.16) | Stage 24 (optional AI intelligence) |
+| H32.23 | experiment tracking | Streamer Intelligence / Content Factory (C.6 + C.7 + C.16) | Stage 24 (optional AI intelligence) |
+| H32.24 | evaluation cycle | Streamer Intelligence / Content Factory (C.6 + C.7 + C.16) | Stage 24 (optional AI intelligence) |
+| H32.25 | feedback loop | Streamer Intelligence / Content Factory (C.6 + C.7 + C.16) | Stage 24 (optional AI intelligence) |
+| H33.00 | Automation lifecycle contract: Trigger -> Condition -> Action -> Result -> Verify -> Audit | Automation / Event domain (C.16) | Stage 16 (deterministic, AI-free) |
+| H33.01 | scheduled automations | Automation / Event domain (C.16) | Stage 16 (deterministic, AI-free) |
+| H33.02 | event automations | Automation / Event domain (C.16) | Stage 16 (deterministic, AI-free) |
+| H33.03 | content workflows | Automation / Event domain (C.16) | Stage 16 (deterministic, AI-free) |
+| H33.04 | media workflows | Automation / Event domain (C.16) | Stage 16 (deterministic, AI-free) |
+| H33.05 | stream workflows | Automation / Event domain (C.16) | Stage 16 (deterministic, AI-free) |
+| H33.06 | notification workflows | Automation / Event domain (C.16) | Stage 16 (deterministic, AI-free) |
+| H33.07 | retry policy | Automation / Event domain (C.16) | Stage 16 (deterministic, AI-free) |
+| H33.08 | idempotency | Automation / Event domain (C.16) | Stage 16 (deterministic, AI-free) |
+| H33.09 | failure handling | Automation / Event domain (C.16) | Stage 16 (deterministic, AI-free) |
+| H33.10 | permissions | Automation / Event domain (C.16) | Stage 16 (deterministic, AI-free) |
+| H33.11 | audit | Automation / Event domain (C.16) | Stage 16 (deterministic, AI-free) |
+| H33.12 | Queues/Durable Objects only when justified by a real background-task or realtime requirement | Automation / Event domain (C.16) | Stage 16 (deterministic, AI-free) |
+| H34.00 | Continuous feature discovery is never permanently closed; repeat the review before every significant Editor/platform extension | Continuous product governance / benchmark process (C.18-C.20) | Continuous governance; stage assigned by canonical owner before implementation |
+| H34.01 | modern visual builder minták; | Visual Editor / builder architecture (C.9; C.18-C.20) | Stage 3, 6, 20 |
+| H34.02 | GrapesJS / Craft.js / Puck architekturális minták; | Visual Editor / architecture benchmark (C.9; C.18-C.20) | Continuous governance; stage assigned by canonical owner before implementation |
+| H34.03 | új responsive/layout megoldások; | Theme/Presentation + Visual Editor + public renderer | Stage 3, 6, 20 |
+| H34.04 | accessibility; | Accessibility domain (H24) + Editor + public renderer | Stage 20 |
+| H34.05 | performance; | Performance/Production domain (H30) | Stage 21 |
+| H34.06 | reusable components; | Component Registry / Symbols / Reusable Components | Stage 5, 18 |
+| H34.07 | design systems; | Theme/Design System / Design Tokens | Continuous governance; stage assigned by canonical owner before implementation |
+| H34.08 | collaboration/conflict; | Collaboration / concurrency / approvals / conflict handling | Continuous governance; stage assigned by canonical owner before implementation |
+| H34.09 | backup/recovery; | Backup/Restore domain (H29) + relevant Admin recovery flows | Stage 19, 21 |
+| H34.10 | AI action safety; | Security/permissions (H28) + AI Editor (H31) + Automation (H33) | Stage 24 |
+| H34.11 | stream/content intelligence. | Streamer Intelligence / Content Factory (H32; C.6/C.7/C.16) | Stage 24 |
+| H34.12 | azonosítás; | Continuous product governance / benchmark process (C.18-C.20) | Continuous governance; stage assigned by canonical owner before implementation |
+| H34.13 | cél és felhasználási eset; | Continuous product governance / benchmark process (C.18-C.20) | Continuous governance; stage assigned by canonical owner before implementation |
+| H34.14 | függőségek; | Continuous product governance / benchmark process (C.18-C.20) | Continuous governance; stage assigned by canonical owner before implementation |
+| H34.15 | Page Model/adatmodell; | Canonical Page Model/data-model owner for the proposed extension | Continuous governance; stage assigned by canonical owner before implementation |
+| H34.16 | Command/Action; | Canonical Command/Action owner for the proposed extension | Continuous governance; stage assigned by canonical owner before implementation |
+| H34.17 | Inspector/Canvas/UI; | Canonical Editor/UI owner for the proposed extension | Continuous governance; stage assigned by canonical owner before implementation |
+| H34.18 | persistence; | Canonical persistence/data owner for the proposed extension | Continuous governance; stage assigned by canonical owner before implementation |
+| H34.19 | teszt; | Canonical test/QA owner for the proposed extension | Continuous governance; stage assigned by canonical owner before implementation |
+| H34.20 | MASTER-be felvétel; | MASTER roadmap governance (C.18-C.20) | Continuous governance; stage assigned by canonical owner before implementation |
+| H34.21 | implementáció; | Canonical implementation owner approved by the D roadmap | Continuous governance; stage assigned by canonical owner before implementation |
+| H34.22 | felhasználói validáció. | User acceptance / product validation for the proposed extension | Continuous governance; stage assigned by canonical owner before implementation |
+
+**Soronkénti leképezési szabály:** a táblázat egy követelmény sem töröl. A több domaint érintő vagy bizonytalan besorolásnál a célfázis előtt a munkapont acceptance-e rögzíti a pontos owner-t, adatkontraktust és tesztet. A történeti sor csak akkor tekinthető lezártnak, ha a hozzárendelt fázisban a funkció runtime-bizonyítéka megvan; a leképezés önmagában nem készültségi állapot.
