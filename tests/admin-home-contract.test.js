@@ -67,9 +67,14 @@ test("dashboard is an operational creator workspace, not a roadmap catalog", () 
   assert.match(dashboard, /Weboldal szerkesztése/);
   assert.match(dashboard, /Adásrend kezelése/);
   assert.match(dashboard, /Publikus webhely ellenőrzése/);
-  assert.doesNotMatch(dashboard, /Creator OS részletes funkciókatalógusa/);
+  assert.match(dashboard, /id="platformCapabilities"/);
+  assert.match(dashboard, /Egy alkotói platform\. Minden munkafolyamat/);
+  assert.match(dashboard, /class="capability-card"/);
+  assert.match(dashboard, /Webshop, merch és tagság/);
+  assert.match(dashboard, /AI Creator Copilot/);
+  assert.match(dashboard, /Csapatok és több webhely/);
   assert.doesNotMatch(dashboard, /class="catalog-card"/);
-  assert.match(dashboard, /A teljes modulnavigáció a bal oldali menüben marad/);
+  assert.match(dashboard, /A „Tervezett” és „Későbbi” elemek nem aktív funkciók/);
 });
 
 test("dashboard uses centered copy hierarchy without centering navigation controls", () => {
