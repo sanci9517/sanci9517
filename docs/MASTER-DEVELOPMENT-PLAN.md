@@ -2597,7 +2597,7 @@ Minden tételhez stabil funkció-ID, domain owner, user outcome, permission, dep
 | H21.19 | Discord community link | COM-002 | COM | MERGE | 1.5 | QA-002/003 |
 | H21.20 | Discord optional integration | INT-015 | INT | MERGE | 1.5 | QA-002/003 |
 | H21.21 | Discord status where justified | INT-015 | INT | MERGE | 1.5 | QA-002/003 |
-| H21.22 | Architecture constraint: keep secrets in Cloudflare Secrets and normalize external APIs behind services | INT-001, INT-019 | INT | MERGE | 1.5 | QA-002/003 |
+| H21.22 | Architecture constraint: keep secrets in Cloudflare Secrets and normalize external APIs behind services | INT-001, INT-019 | INT | MERGE | 0.x–1.0 | QA-002/003 |
 | H22.01 | schedule CRUD | SCH-001 | SCH | MERGE | 1.0 | QA-002/004 |
 | H22.02 | recurring schedule | SCH-004 | SCH | MERGE | 1.0 | QA-002/004 |
 | H22.03 | timezone handling | SCH-003 | SCH | MERGE | 1.0 | QA-002/004 |
@@ -2634,7 +2634,7 @@ Minden tételhez stabil funkció-ID, domain owner, user outcome, permission, dep
 | H23.15 | transition | EDT-040 | EDT | MERGE | 2.0 | QA-002/004 |
 | H23.16 | animation timeline | EDT-040 | EDT | MERGE | 2.0 | QA-002/004 |
 | H23.17 | keyframes | EDT-040 | EDT | MERGE | 2.0 | QA-002/004 |
-| H23.18 | reduced-motion | EDT-040 | EDT | MERGE | 2.0 | QA-002/004 |
+| H23.18 | reduced-motion | QA-005, EDT-040 | QA/EDT | EXPAND | 1.0 baseline / 2.0 advanced motion | QA-002/004/005 |
 | H23.19 | interaction validation | EDT-022 | EDT | MERGE | 2.0 | QA-002/004 |
 | H23.20 | performance safeguards | QA-005 | QA | MERGE | 2.0 | QA-002/004 |
 | H24.01 | semantic HTML | QA-005 | QA | MERGE | 1.0 | QA-004/005 |
@@ -2677,22 +2677,22 @@ Minden tételhez stabil funkció-ID, domain owner, user outcome, permission, dep
 | H27.01 | dashboard | ADM-002 | ADM | MERGE | 1.0 | QA-008 |
 | H27.02 | navigation | ADM-001 | ADM | MERGE | 1.0 | QA-008 |
 | H27.03 | responsive admin | ADM-010 | ADM | MERGE | 1.0 | QA-008 |
-| H27.04 | diagnostics | OPS-007 | OPS | DEFER | phase-dependent | QA-008 |
+| H27.04 | diagnostics | OPS-007 | OPS | MERGE | 0.x–1.0 | QA-006/008 |
 | H27.05 | page list | WEB-001 | WEB | MERGE | 1.0 | QA-008 |
 | H27.06 | content management | CNT-001 | CNT | DEFER | phase-dependent | QA-008 |
 | H27.07 | schedule | SCH-001 | SCH | MERGE | 1.0 | QA-008 |
 | H27.08 | socials | INT-002 | INT | DEFER | phase-dependent | QA-008 |
 | H27.09 | VOD | CNT-002 | CNT | DEFER | phase-dependent | QA-008 |
-| H27.10 | media | RES-001 | RES | DEFER | phase-dependent | QA-008 |
+| H27.10 | media | RES-001 | RES | MERGE | 1.0 | QA-002/004/007/008 |
 | H27.11 | settings | SET-001 | SET | MERGE | 1.0 | QA-008 |
-| H27.12 | SEO | SEO-005 | SEO | DEFER | phase-dependent | QA-008 |
+| H27.12 | SEO | SEO-005 | SEO | MERGE | 1.0 | QA-005/008 |
 | H27.13 | analytics | ANL-007 | ANL | DEFER | phase-dependent | QA-008 |
 | H27.14 | integrations | INT-002 | INT | DEFER | phase-dependent | QA-008 |
 | H27.15 | editor management | EDT-001 | EDT | MERGE | 1.0 | QA-008 |
 | H27.16 | preview | WEB-005 | WEB | MERGE | 1.0 | QA-008 |
-| H27.17 | recovery | OPS-009 | OPS | DEFER | phase-dependent | QA-008 |
-| H27.18 | history | EDT-005 | EDT | DEFER | phase-dependent | QA-008 |
-| H27.19 | permissions | ADM-009 | ADM | DEFER | phase-dependent | QA-008 |
+| H27.17 | recovery | OPS-009 | OPS | MERGE | 0.x–1.0 | QA-006/007/008 |
+| H27.18 | history | EDT-005 | EDT | MERGE | 1.0 | QA-002/004/007/008 |
+| H27.19 | permissions | ADM-009, SEC-002 | ADM/SEC | MERGE | 0.x–1.0 | QA-003/008 |
 | H28.01 | HttpOnly | SEC-001 | SEC | MERGE | 0.x–1.0 | QA-003 |
 | H28.02 | Secure cookie | SEC-001 | SEC | MERGE | 0.x–1.0 | QA-003 |
 | H28.03 | SameSite | SEC-001 | SEC | MERGE | 0.x–1.0 | QA-003 |
