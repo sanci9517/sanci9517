@@ -88,6 +88,7 @@ test("dashboard centers all action controls on both axes and preserves readable 
   assert.match(dashboard, /\.btn,\.small-btn,\.logout,\.icon-action,\.theme-toggle,\.action-copy a,\.capability-cta \{ display:inline-flex; align-items:center; justify-content:center/);
   assert.match(dashboard, /\.nav-item \{ justify-content:flex-start; text-align:left; \}/);
   assert.match(dashboard, /document\.querySelectorAll\("\[data-capability-search\]"\)/);
+  assert.ok(dashboard.includes(".mobile-menu { place-items:center; text-align:center; }"));
 });
 
 test("dashboard includes responsive, keyboard and reduced-motion affordances", () => {
