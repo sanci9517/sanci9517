@@ -2562,12 +2562,12 @@ Minden tételhez stabil funkció-ID, domain owner, user outcome, permission, dep
 | H20.02 | site settings | SET-001 | SET | MERGE | 1.0 | QA-002 |
 | H20.03 | schedule | SCH-001 | SCH | MERGE | 1.0 | QA-002 |
 | H20.04 | Twitch | INT-011 | INT | MERGE | 1.0 | QA-002 |
-| H20.05 | YouTube | INT-013 | INT | MERGE | 1.0 | QA-002 |
-| H20.06 | TikTok | INT-014 | INT | MERGE | 1.0 | QA-002 |
-| H20.07 | Discord | INT-015 | INT | MERGE | 1.0 | QA-002 |
-| H20.08 | VOD | CNT-002 | CNT | MERGE | 1.0 | QA-002 |
-| H20.09 | collections | CNT-005 | CNT | MERGE | 1.0 | QA-002 |
-| H20.10 | API data source | DYN-001 | DYN | MERGE | 1.0 | QA-002 |
+| H20.05 | YouTube | INT-013 | INT | MERGE | 1.5 | QA-002/003 |
+| H20.06 | TikTok | INT-014 | INT | MERGE | 1.5 | QA-002/003 |
+| H20.07 | Discord | INT-015 | INT | MERGE | 1.5 | QA-002/003 |
+| H20.08 | VOD | CNT-002 | CNT | MERGE | 1.5–2.0 | QA-002/004 |
+| H20.09 | collections | CNT-005 | CNT | MERGE | 2.0 | QA-002/004 |
+| H20.10 | API data source | DYN-001 | DYN | MERGE | 2.0 | QA-002/003 |
 | H20.11 | loading state | DYN-005 | DYN | MERGE | 1.0 | QA-002 |
 | H20.12 | empty state | DYN-005 | DYN | MERGE | 1.0 | QA-002 |
 | H20.13 | error state | DYN-005 | DYN | MERGE | 1.0 | QA-002 |
@@ -2582,9 +2582,9 @@ Minden tételhez stabil funkció-ID, domain owner, user outcome, permission, dep
 | H21.04 | Twitch game | LIV-003 | LIV | MERGE | 1.0 | QA-002/003 |
 | H21.05 | Twitch viewer statistics | LIV-004 | LIV | MERGE | 1.0 | QA-002/003 |
 | H21.06 | Twitch followers/subscribers where available | LIV-004 | LIV | MERGE | 1.0 | QA-002/003 |
-| H21.07 | Twitch VOD | INT-012 | INT | MERGE | 1.0 | QA-002/003 |
-| H21.08 | Twitch clips | INT-012 | INT | MERGE | 1.0 | QA-002/003 |
-| H21.09 | Twitch events/webhooks where applicable | INT-017 | INT | MERGE | 1.0 | QA-002/003 |
+| H21.07 | Twitch VOD | INT-012 | INT | MERGE | 1.5 | QA-002/003 |
+| H21.08 | Twitch clips | INT-012 | INT | MERGE | 1.5 | QA-002/003 |
+| H21.09 | Twitch events/webhooks where applicable | INT-017 | INT | MERGE | 1.5 | QA-002/003 |
 | H21.10 | YouTube channel | INT-013 | INT | MERGE | 1.5 | QA-002/003 |
 | H21.11 | YouTube videos | INT-013 | INT | MERGE | 1.5 | QA-002/003 |
 | H21.12 | YouTube Shorts | CNT-003 | CNT | MERGE | 1.5 | QA-002/003 |
