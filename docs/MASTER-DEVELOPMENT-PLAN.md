@@ -1024,7 +1024,6 @@ A Sanci9517 akkor éri el a teljes Creator Operating Platform célját, ha:
 **Végső szabály:** nem attól kész a termék, hogy a tervben minden sor szerepel, és nem attól teljes, hogy sok menüpont látható. Akkor kész, ha a funkció valós adatokkal, jogosultságokkal, hibakezeléssel, tesztekkel és acceptance-szel működik. A teljes terv megőrzi az összes képességet; a végrehajtás egyesével, függőség szerint halad.
 
 
-
 ## 21. Kiegészítő, kötelezően megőrzendő képességek
 
 Ez a fejezet konkrét, önállóan ellenőrizhető képességekkel egészíti ki a fő menü- és végrehajtási katalógust. Ezek nem díszítő ötletek: a megfelelő domainhez és fázishoz kell őket rendelni, és nem maradhatnak elveszve az általános modulnevek alatt.
@@ -1180,7 +1179,6 @@ A terv véglegesítésének ellenőrzése:
 - [ ] A P0.1 valós repository/runtime ellenőrzése után a következő pont konkrét fájlokkal és tesztparancsokkal aktiválható.
 
 A P0.1 lezárásáig új product feature nem implementálható. A tervben szereplő jövőbeli képesség nem kész funkció; csak a saját pontjának PASS elfogadása után tekinthető megvalósítottnak.
-
 
 
 ## 24. Teljes funkcióazonosító-jegyzék
@@ -1581,7 +1579,6 @@ Minden ID-hoz az alábbi mezők tartoznak a terv karbantartásakor:
 - Next action.
 
 A státuszt nem szabad pusztán a kód jelenléte alapján átállítani. Ha egy funkció több részre bontható, az al-ID-k saját DoD-t kapnak, és a szülő csak akkor PASS, ha minden kötelező al-ID PASS vagy az elhagyás explicit, indokolt és dokumentált scope döntés.
-
 
 
 ## 26. Funkciószintű végrehajtási szerződés
@@ -2042,24 +2039,12 @@ Amíg ez nincs teljesítve, a terv **a végleges cél- és végrehajtási keret*
 
 Ez **leltárbizonyíték, nem történeti lefedettségi PASS**. A fájlok megtalálása és archiválása nem helyettesíti a tartalmi összehasonlítást. A P0.1 csak akkor zárható le, ha az aktív ág, a tervverzió, az archiválási állapot, a nyitott kérdések és a folytatási pont egyértelműek; a P0.2 csak a követelményenkénti leképezés után zárható le.
 
-### 37.2. A részletes összevetésben külön ellenőrizendő képességek
+### 37.2. Kiemelt képességcsoportok a teljes funkciójegyzék ellenőrzéséhez
 
-Az összevetés során az alábbiak önálló követelményként kapjanak döntést és stabil funkció-ID-t, akkor is, ha nagyobb domain alá tartoznak:
+Az összevetés során külön, stabil funkcióazonosítóval kell ellenőrizni: PWA/offline/mobilüzem; provider-képességek és Discord-szerepszinkron; e-mail/CRM és consent; Stream Deck/külső vezérlők; alert/chatbot/timer/poll/giveaway/loyalty/TTS/moderáció; VOD → clip → Shorts → jóváhagyás → publikálás → eredménymérés; médiafeldolgozás és folytatható feltöltés; event/queue/webhook retry, idempotencia, dead-letter és emergency stop; több creator-típus és brand kit; payment/refund/entitlement életciklus; import/export/backup/restore és dry-run; AI model routing/agent approval/verification/cost control; observability, accessibility, reduced motion, teljesítmény és release rollback.
 
-- **PWA és mobilüzem:** telepíthetőség, offline/gyenge hálózati állapotok, újracsatlakozás, megszakadt feltöltés/művelet folytatása, mobilos napi operáció és biztonságos munkamenet-kezelés.
-- **Külső csatornák és szerepkörök:** Discord szerepszinkron, YouTube/TikTok/Twitch capability- és rate-limit különbségek, lejárt/ visszavont OAuth-hozzáférés, részleges szolgáltatói kiesés és kézi újracsatlakoztatás.
-- **E-mail és audience CRM:** feliratkozás, megerősítés, leiratkozás, consent-bizonyíték, szegmentálás, kampány, kézbesítési állapot, bounce/complaint, export/törlés és szolgáltatófüggetlen adatmodell. Külső e-mail szolgáltató választása külön döntési kapu.
-- **Stream-vezérlés:** Stream Deck vagy más fizikai vezérlő csak támogatott integráció és capability alapján; események, hotkey/action mapping, permission, rate limit és vészleállítás.
-- **Interakciós widgetek:** alert, chat, chatbot, timer, poll, giveaway, loyalty/points, TTS, moderáció és overlay külön állapotokkal, forrásadatokkal, jogosultságokkal és stream közbeni hibakezeléssel.
-- **Creator tartalomgyártó pipeline:** VOD → clip → short → platformonkénti metaadat/preview → jóváhagyás → ütemezés/publikálás → eredmény-visszamérés; a pipeline nem feltételezheti, hogy minden platform ugyanazt az API-képességet nyújtja.
-- **Médiafeldolgozás:** thumbnail és preview, transzkódolás/átalakítás, méret- és formátumkorlát, folytatható feltöltés, checksum, duplikációkezelés, hozzáférés-védelem, R2-életciklus és törlés.
-- **Platformüzem:** event/queue feldolgozás, retry és idempotencia, dead-letter/hibasor, időzített feladatok, webhook aláírás/újrajátszás-védelem, diagnosztika, riasztás, költségkontroll és vészleállítás.
-- **Brand és több creator-típus:** streamer mellett más creator-típusok konfigurálható profiljai, brand kit, kampányidentitás, márkahang, csatornánkénti brandvariánsok és az AI által használt jóváhagyott brand-kontextus.
-- **Pénzügyi és hozzáférési életciklus:** fizetési események, refund/chargeback ahol a szolgáltató támogatja, subscription státusz, entitlement lejárat, hozzáférés-visszavonás, reconciliation és admin audit.
-- **Exportálhatóság és helyreállítás:** teljes adat- és médiakatalógus export, formátumverzió, import előtti dry-run, konfliktusfeloldás, mentésellenőrzés, visszaállítási próba, kompatibilitás és rollback.
-- **AI agentek:** model routing, tool registry, context minimization, prompt-injection védelem, eszközszintű jogosultság, jóváhagyás, végrehajtás utáni ellenőrzés, részleges hiba helyreállítása, költségkeret és szolgáltató kiesése.
-- **Megfigyelhetőség és minőség:** strukturált audit/operációs naplók, correlation ID, redaktált hibajelentés, accessibility/reduced-motion, billentyűzetes használat, reszponzív és tablet smoke, teljesítménybudget, biztonsági regresszió és éles rollback-próba.
-
+Ezek ellenőrzési kategóriák, nem készültségi állítások. A részletes művelet, canonical owner, permission, hibastátusz, függőség és acceptance a megfelelő funkciókártyán kötelező.
+ 
 ### 37.3. A P0 aktuális állapota
 
 - **P0.1 Tervintegritás és baseline:** IN PROGRESS — a repository-leltár és az új terv szerkezeti alapja dokumentálva; a teljes követelmény-lefedettség és az aktív feladatlista konzisztenciája még lezárandó.
@@ -2075,33 +2060,9 @@ Az összevetés során az alábbiak önálló követelményként kapjanak dönt�
 
 **Cél:** a vizuális szerkesztő teljes részletképességeinek önálló, tesztelhető katalógusa. A felsorolás a végleges platform követelményét rögzíti, nem a runtime készültségét. Minden elem a közös Page Model, command/history/validation/persistence és jogosultsági szerződésen keresztül működik.
 
-### 38.1 — Benchmark-források és alkalmazási szabály
+### 38.1 — Benchmark és képességbővítési szabály
 
-A funkcióleltárhoz reprezentatív, elsődleges dokumentációból vizsgált benchmarkok:
-- **Webflow Designer:** components, variables, cross-site libraries, breakpoint canvas.  
-  https://webflow.com/updates/libraries  
-  https://origin.webflow.com/updates/see-every-breakpoint-while-you-edit
-- **Wix Studio:** custom breakpoints, responsive behavior, design libraries, saved sections/assets, design kits, wireframes és gyors hozzáadás.  
-  https://support.wix.com/en/article/studio-editor-about-the-studio-editor  
-  https://support.wix.com/en/article/studio-editor-creating-and-managing-design-libraries  
-  https://support.wix.com/en/article/studio-editor-adding-elements-4240855
-- **Elementor:** központi Site Settings, global colors/fonts, theme styles, layout defaults, reusable website kits és responsive containers.  
-  https://elementor.com/help/site-settings/  
-  https://elementor.com/help/view-and-edit-global-colors/  
-  https://elementor.com/help/responsive-design-using-containers/  
-  https://elementor.com/help/customizing-an-elementor-site-kit/
-- **WordPress Site Editor / Gutenberg:** full-site editing, templates/template parts, patterns, synced vs. unsynced patterns, style variations, global styles, command palette, list view, zoom-out view és export.  
-  https://wordpress.org/documentation/article/site-editor/  
-  https://wordpress.org/documentation/article/site-editor-patterns/  
-  https://wordpress.org/documentation/article/styles-overview/  
-  https://wordpress.org/documentation/article/site-editor-command-palette/
-- **Framer:** visual canvas, reusable responsive components, CMS, breakpoint editing, localization, SEO, redirects és publishing workflow.  
-  https://www.framer.com/solutions/website-builder/  
-  https://www.framer.com/solutions/responsive-website-builder/  
-  https://www.framer.com/help/articles/guide-to-seo-features-and-tools/  
-  https://www.framer.com/help/localization/
-
-**Benchmark-szabály:** a fenti termékek funkcióit és nyilvános UX-mintáit kell összehasonlítani, nem a zárt kódjukat lemásolni. Ez reprezentatív benchmark, nem állítás arról, hogy a piacon létező minden szerkesztő minden funkciója már fel lett mérve. Új, releváns képesség később ugyanebbe a leltárba vehető fel, a canonical ownership és phase-besorolás megtartásával.
+A szerkesztői UX-et rendszeresen össze kell hasonlítani a Webflow, Wix Studio, Elementor, WordPress Site Editor/Gutenberg és Framer nyilvános funkcióival. Vizsgálandó: komponenskönyvtárak, breakpoints, canvas, design tokenek, templates/patterns, CMS, localization, SEO, redirect és publishing. A benchmark tanulságait át kell venni, nem a zárt kódot lemásolni. Ez reprezentatív kezdőlista, nem a teljes piac lefedettségének állítása.
 
 ### 38.2 — Preset-, template- és reusable-rendszer: kötelező fogalmi szétválasztás
 
@@ -2396,6 +2357,45 @@ Every capability must define, where applicable:
 - Do not build every advanced feature before the basic editor is reliable. Prefer a complete, testable capability inventory and a single dependency-ordered implementation path over rushed parallel work.
 - This appendix adds no second editor, no second Page Model, no second Property Registry, no second Resource store, no second Schedule domain and no alternate save/publish route.
 
-## 39. Platform-életciklus
+## 39. Teljes Brand & Creator Platform — végrehajtási életciklus
 
-A végső cél a teljes Brand & Creator Platform SANCI AI-val. A fázisok egymásra épülnek; a státusz csak teszt, runtime és felhasználói acceptance után lehet PASS.
+A végső cél egy egységes Brand & Creator Platform SANCI AI-val. A fázisok scope-ot és függőséget jelentenek, nem automatikus készültséget. PASS csak a saját DoD, teszt, runtime és felhasználói acceptance után adható.
+
+### 39.1. 0.x — Foundation
+Canonical architecture, Page Model, domain ownership, D1/R2 boundary, auth/RBAC/site ownership, command/validation/history, revisions/publish/rollback, migration/legacy isolation, diagnostics/audit, CI, security, accessibility, performance, observability és recovery.
+
+### 39.2. 1.0 — Professzionális Creator Website
+Magyar elsődleges publikus site; Creator Center/Admin; egyetlen Visual Editor; Pages/navigation/Layers/Inspector/responsive; core content/components; Resource/Media/Icon/Font Library; theme/template alapok; Schedule/Game Profiles; Twitch live/next-stream; draft/preview/publish/rollback; SEO/accessibility; E2E és production acceptance.
+
+### 39.3. 1.5 — Többplatformos creator
+YouTube/TikTok/Discord és további capability-gated provider adapterek; platform profile, scope, rate limit, token lifecycle, sync/error recovery; gazdagabb live state; VOD/clips/Shorts/highlights; cross-platform content planning és unified social/link system.
+
+### 39.4. 2.0 — Creator Operating System
+Advanced CMS/collections/relationships/bindings/search; advanced media processing; Site/Page/Section/Component/Symbol templates és variants; Theme Editor/design tokens/Sanci Button Registry; forms/backend actions; interactions/motion; calendar/reminders/export; Content Studio; Stream/Overlay Studio és OBS integration contract.
+
+### 39.5. 3.0 — SANCI AI Creator Platform
+Copilot weboldalra, komponensekre, szövegre, SEO/AEO, alt textre, fordításra, médiára, stream summaryra, VOD/clip/Short ötletekre, schedulingre, analytics értelmezésére és automation draftokra. Specialist agentek közös permission/action pipeline-t használnak. Model/provider registry, context minimization, approval, diff/preview, cost/quota, verification, audit és rollback kötelező. Nincs közvetlen DB/DOM írás vagy jóváhagyás nélküli kockázatos publikálás; a core funkciók AI nélkül is használhatók.
+
+### 39.6. 4.0 — Multi-creator, teams, SaaS és billing
+Több creator/site/brand, workspace isolation, team invitations, granular roles, collaboration/approval, concurrency, staging/production, custom domains, subscriptions, billing, entitlements, usage limits, quota és onboarding.
+
+### 39.7. 5.0 — Creator Business és commerce
+Shop/merch, products/variants/collections/inventory/fulfillment, digital products/bundles/coupons/cart/checkout, order/payment lifecycle, support/donations, memberships/perks/entitlements, Discord role sync, customer/order management, CRM/fan relationships, marketing automation és conversion analytics. Payment/tax/VAT/shipping/invoice provider külön legal/business review után.
+
+### 39.8. 6.0 — Creator ecosystem és marketplace
+Template/component/widget/theme/overlay/asset marketplace; creator libraries, sharing, ratings, moderation, license/attribution, compatibility/version, dependency manifest, secure import, extension install/update/uninstall/migration/rollback; arbitrary privileged code tilos.
+
+### 39.9. 7.0 — Advanced automation és AI operations
+Event registry, triggers/conditions/actions, webhooks, scheduled workflows, cross-platform/commerce/content/stream/notification automation, AI-generated workflow proposals, dry-run, approval, versioning, pause/disable, emergency stop, idempotency, deduplication, retry/backoff, dead-letter, cycle detection és recovery.
+
+### 39.10. 8.0 — Multimodal Creator Intelligence
+Text/image/video/audio understanding consent és permission mellett; content intelligence, media classification, semantic search, clip/highlight assistance, knowledge/context layer, cross-domain recommendations, multimodal analytics, creator knowledge base, source/freshness/confidence és model evaluation.
+
+### 39.11. 9.0 — Személyre szabott creator AI
+User-controlled creator context, adatkezelési beállítások, magyarázható proaktív javaslatok content strategy/website/commerce/stream/overlay területen, mérhető kísérletezés, opt-out, rollback és emberi döntési kontroll.
+
+### 39.12. 10.0 — Teljes Brand & Creator Operating Platform
+Brand OS, website builder, CMS, media/assets, templates/components/themes, Twitch/YouTube/TikTok és jövőbeli provider adapters, community, OBS/overlays, commerce/merch, membership, sponsorship, analytics, campaigns, automation, SANCI AI, multimodal intelligence, localization, multi-creator SaaS, marketplace, extensions és globális működés.
+
+### 39.13. Fázisok közötti megőrzési szabály
+Az 1.0-ból kimaradó funkció későbbi fázisba kerül, nem törlődik. Fázisváltás nem törölhet részletes acceptance-t. Minden nagyobb fázis előtt provider/license/security/privacy/cost/operations/benchmark review kell. Egy időben egyetlen dependency-ready, tesztelhető implementációs pont lehet aktív.
