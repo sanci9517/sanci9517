@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import test from 'node:test';
 
 import { createDocument, createNode, NODE_TYPES } from '../core/schema.js';
@@ -738,4 +739,17 @@ test('non-atomic batch records its successful prefix as one undoable history ent
   assert.deepEqual(activePage(state).nodes[sectionId].children, [textId]);
   assert.deepEqual(state.selection, { ids: [textId], primaryId: textId });
   assertValidEditorDocument(state.document);
+});
+
+
+test('Editor save conflict exposes recoverable local-draft export and explicit reload', () => {
+  const app = readFileSync(new URL('../app.js', import.meta.url), 'utf8');
+  const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+  assert.match(app, /error\.status=response\.status;error\.code=data\?\.error\?\.code/);
+  assert.match(app, /e\?\.status===409&&e\?\.code==='REVISION_CONFLICT'/);
+  assert.match(app, /function exportConflictDraft\(\)[\s\S]*?URL\.createObjectURL/);
+  assert.match(app, /function reloadLatestAfterConflict\(\)[\s\S]*?await loadPage\(conflict\.pageId\)/);
+  assert.match(html, /id="revisionConflict"[^>]*role="alert"[^>]*hidden/);
+  assert.match(html, /id="exportConflictDraft"/);
+  assert.match(html, /id="reloadConflictPage"/);
 });
