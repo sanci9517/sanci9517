@@ -898,39 +898,11 @@ Példák: INT-TWITCH-OAUTH, SCH-RECURRING-EVENT, EDT-RESPONSIVE-RESET, WEB-PUBLI
 
 ## 15. Folyamatos ellenőrzőlisták
 
-**Termék**
-- [ ] Minden Admin menü/almenü minden művelete felsorolva.
-- [ ] Minden public route és content block szerepel.
-- [ ] Minden domainnek egy canonical tulajdonosa van.
-- [ ] Többfelületes funkciók közös adatforrást használnak.
-- [ ] Integrációk provider capability matrix alapján készülnek.
-- [ ] Commerce/entitlement auditált.
-- [ ] AI strukturált/jóváhagyásos/visszavonható.
-- [ ] Minden későbbi modulnak dependency és acceptance van.
+**Termék:** minden Admin művelet/public route; egy canonical domain owner; közös adat több felületen; provider capability matrix; commerce/entitlement; AI approval/rollback; minden modulhoz dependency/acceptance.
 
-**Technikai**
-- [ ] Auth/permission/ownership/tenant isolation.
-- [ ] Validation/API errors/idempotency.
-- [ ] Migration/index/FK/integrity.
-- [ ] D1/R2 boundary.
-- [ ] Cache/invalidation.
-- [ ] Logs/redaction/monitoring.
-- [ ] Backup/export/restore.
-- [ ] Performance/accessibility/SEO/privacy.
-- [ ] Dependency/license/security.
-- [ ] Browser/device/production acceptance.
+**Technika:** auth/RBAC/ownership/tenant isolation; validation/API errors/idempotency; migration/index/FK/integrity; D1/R2 boundary; cache invalidation; redacted logs/monitoring; backup/export/restore; performance/accessibility/SEO/privacy; dependency/license/security; browser/device/production acceptance.
 
-**Felhasználói minőség**
-- [ ] Menünév a felhasználói feladatot nevezi meg.
-- [ ] Művelet eredménye egyértelmű.
-- [ ] Save és publish külön.
-- [ ] Hiba esetén érthető magyarázat és következő lépés.
-- [ ] Unsaved módosítás nem vész el.
-- [ ] Mobilon valóban használható.
-- [ ] Közös adat minden felületen konzisztens.
-- [ ] Nincs hamis adat vagy hamis sikerállapot.
-
----
+**Felhasználói minőség:** feladatot nevező menük; egyértelmű eredmény; save és publish külön; érthető hiba/következő lépés; unsaved changes védelem; mobilhasználhatóság; közös adatok konzisztenciája; nincs hamis adat/success.
 
 ## 16. Döntési napló és változáskezelés
 
@@ -968,41 +940,19 @@ Pont lezárásakor: DoD ellenőrzés; teszteredmény/commit rögzítése; nyitot
 
 ---
 
-## 18. Jelenleg nyitott elfogadási elemek
+## 18. Nyitott elfogadási elemek — nem automatikus PASS
+- **EDT-SAVE-RELOAD:** friss CI és production round-trip.
+- **EDT-PUBLISH-SNAPSHOT:** éles save→reload→public render.
+- **EDT-MOBILE-ACTION-BAR:** valós telefonos browser acceptance.
+- **EDT-LAYERS-INSPECTOR-RESPONSIVE:** teljes canvas/Layers/Inspector/responsive acceptance.
+- **ADM-TABLET-LOGIN:** külön, megőrzendő deferred issue.
+- **INT-TWITCH:** lezárt ownership/integration szerződés megmarad; nem kell feleslegesen újraírni.
 
-Ezek baseline megjegyzések; nem automatikus PASS:
-- EDT-SAVE-RELOAD: kódoldali hardening rögzítve, de friss CI és production round-trip acceptance szükséges.
-- EDT-PUBLISH-SNAPSHOT: draft mentés és publish szétválasztása javítva; éles save→reload→public oldal ellenőrzés kell.
-- EDT-MOBILE-ACTION-BAR: viewporthoz kötött, safe-area támogatású javítás rögzítve; valós telefon és browser ellenőrzés kell.
-- EDT-LAYERS-INSPECTOR-RESPONSIVE: property registry, resolved viewport value, reset útvonal implementálva; teljes canvas/layers/inspector/responsive acceptance szükséges.
-- ADM-TABLET-LOGIN: külön, nem blokkoló deferred issue; megőrzendő.
-- INT-TWITCH: korábban lezárt ownership/integration szerződés marad; Editor acceptance miatt nem kell feleslegesen újraírni.
+## 19. Első végrehajtási kapu — P0.1
 
----
+P0.1 ellenőrzi branch/HEAD/working tree, package scripts, typecheck és releváns tesztek, canonical Editor/Page Model/revision API, D1 migration/ownership integrity, save/reload/publish/mobile acceptance, ID-jegyzék és egyetlen aktív terv állapotát. Nem létező tesztparancsot nem szabad kitalálni.
 
-## 19. Első végrehajtási kapu
-
-### P0.1 — Tervintegritás és baseline ellenőrzés
-
-**Cél:** az új terv konzisztenciájának, a repository valós állapotának és a tényleges tesztparancsoknak a rögzítése.
-
-Lépések:
-1. [ ] Git branch, HEAD, working tree és legutóbbi commitok ellenőrzése.
-2. [ ] package scripts és tényleges tesztparancsok ellenőrzése; nem futtatható parancsot nem találunk ki.
-3. [ ] Typecheck és releváns domain/editor/integration tesztek futtatása.
-4. [ ] Aktív Editor route, canonical Page Model és revision API ellenőrzése.
-5. [ ] D1 migration status és ownership integrity read-only/preflight ellenőrzése.
-6. [ ] Save/reload, publish snapshot és mobile action bar nyitott acceptance ellenőrzése.
-7. [ ] Eredmények rögzítése; lezárt, nem érintett gate-et nem implementálunk újra.
-8. [ ] Domain/menu/feature egyedi ID-jegyzék véglegesítése.
-9. [ ] Kettős aktív terv és párhuzamos feature work kizárása.
-10. [ ] P0 PASS után a dependency alapján P1 vagy az első szükséges Editor/runtime acceptance pont következik.
-
-**PASS feltételek:** repository baseline bizonyított; valós tesztparancsok ismertek; runtime acceptance és kódállapot külön; nincs kettős canonical owner; következő pont scope/DoD pontos; egyetlen követelmény sem veszett el indoklás nélkül.
-
-**FAIL esetén:** új feature nem indul; csak a hiányzó baseline, tervellentmondás vagy tesztelhetőségi akadály rendezhető.
-
----
+**PASS:** baseline és tesztparancsok bizonyítottak; runtime és kódállapot külön jelölt; nincs kettős canonical owner; a következő pont scope/DoD pontos; nincs indoklás nélkül eldobott követelmény. **FAIL:** nincs új feature; csak a baseline vagy akadály javítható.
 
 ## 20. A termék végső állapota
 
@@ -1963,14 +1913,11 @@ PWA/offline/mobile; provider capabilities/Discord roles; email/CRM/consent; Stre
  
 ### 37.3. A P0 aktuális állapota
 
-- **P0.1 Tervintegritás és baseline:** IN PROGRESS — a repository-leltár és az új terv szerkezeti alapja dokumentálva; a teljes követelmény-lefedettség és az aktív feladatlista konzisztenciája még lezárandó.
-- **P0.2 Követelmény- és funkciólefedettség:** NOT STARTED / részletes reconciliáció szükséges — az összes archivált tervanyag és a nagy történeti MASTER tételes feldolgozása még nem igazolt.
-- **P0.3 Domain/adatforrás térkép:** NOT STARTED — a katalógust a tényleges repository-útvonalakkal és adatgazdákkal össze kell vetni.
-- **P0.4 Admin/Public/Editor felületleltár:** NOT STARTED — minden tényleges route, legacy/placeholder és elérhető felület kódalapú ellenőrzése szükséges.
-- **P0.5 Szolgáltatói és benchmark megvalósíthatóság:** NOT STARTED — az egyes integrációk hivatalos képességeit, limiteit és feltételeit tételesen igazolni kell.
-- **P0.6 Függőségi sorrend és acceptance freeze:** NOT STARTED — csak az előző kapuk bizonyítékalapú lezárása után.
+- **P0.1:** IN PROGRESS — baseline/tervintegritás még lezárandó.
+- **P0.2:** IN PROGRESS — minden 271 részletes követelménykulcs és teljes funkciójegyzék tételes összevetése kell.
+- **P0.3–P0.6:** NOT STARTED — domain/data map, route/surface audit, provider/benchmark evidence, dependency/acceptance freeze.
 
-**Tilos P0 PASS-t vagy teljes történeti lefedettséget állítani addig, amíg a fenti tételek mindegyikéhez ellenőrizhető bizonyíték nem tartozik.**
+P0 csak minden kapu bizonyítékalapú PASS-a után zárható.
 
 ## 38. Részletes Visual Editor képességkatalógus
 
@@ -2315,3 +2262,58 @@ Brand OS, website builder, CMS, media/assets, templates/components/themes, Twitc
 
 ### 39.13. Fázisok közötti megőrzési szabály
 Az 1.0-ból kimaradó funkció későbbi fázisba kerül, nem törlődik. Fázisváltás nem törölhet részletes acceptance-t. Minden nagyobb fázis előtt provider/license/security/privacy/cost/operations/benchmark review kell. Egy időben egyetlen dependency-ready, tesztelhető implementációs pont lehet aktív.
+
+## 40. Teljes megőrzött követelménykatalógus
+
+Az alábbi sorrendben felsorolt címkék lefedik a 271 részletes követelménykulcsot; a csoporton belüli sorrend az ID-k növekvő sorrendjét követi. Ezek a tervben megőrzött követelmények, nem külön modulok és nem készültségi jelölések. A végrehajtási szerződést a domain funkciókártya adja.
+
+### 40.1. H19.01–H19.20 — RES (20)
+upload; folders; search; filter; preview; metadata; alt text; crop; resize; replace; archive/delete; usage tracking; unused media detection; MIME validation; file-size limits; secure object keys; image optimization; video/audio; clip/Short assets; cache policy.
+
+### 40.2. H20.01–H20.18 — WEB/CNT/INT/SCH (18)
+D1 binding; site settings; schedule; Twitch; YouTube; TikTok; Discord; VOD; collections; API data source; loading state; empty state; error state; conditional rendering; data transforms; caching; stale-data handling; binding validation.
+
+### 40.3. H21.01–H21.22 — INT (22)
+Twitch OAuth; Twitch live/offline; Twitch title; Twitch game; Twitch viewer statistics; Twitch followers/subscribers where available; Twitch VOD; Twitch clips; Twitch events/webhooks where applicable; YouTube channel; YouTube videos; YouTube Shorts; YouTube statistics where available; YouTube API quota/error handling; TikTok profile; TikTok supported content integration; TikTok API capability review; TikTok rate limits/fallback; Discord community link; Discord optional integration; Discord status where justified; Architecture constraint: keep secrets in Cloudflare Secrets; normalize external APIs behind services.
+
+### 40.4. H22.01–H22.19 — SCH/CNT (19)
+schedule CRUD; recurring schedule; timezone handling; next-stream calculation; countdown; live state; game/category; stream type; VOD ingestion; VOD categorization; VOD search/filter; Shorts management; clips management; content calendar; platform-specific variants; title/description/hashtag suggestions; thumbnail brief; publishing workflow; performance feedback loop.
+
+### 40.5. H23.01–H23.20 — EDT/WEB (20)
+event model; click; hover; focus; active; submit; scroll; load; timer; open/close; navigation; show/hide; toggle; state machine; transition; animation timeline; keyframes; reduced-motion; interaction validation; performance safeguards.
+
+### 40.6. H24.01–H24.13 — EDT/QA (13)
+semantic HTML; heading hierarchy; alt text; labels; ARIA; keyboard navigation; focus order; focus visibility; contrast warnings; screen-reader metadata; form validation accessibility; editor accessibility checks; public accessibility audit.
+
+### 40.7. H25.01–H25.12 — WEB (12)
+title; description; canonical; Open Graph; X/Twitter card; structured data; sitemap; robots; per-page SEO; SEO preview; redirects; broken-link detection.
+
+### 40.8. H26.01–H26.12 — ANL (12)
+page views; button clicks; social clicks; stream events; conversion events; privacy-aware analytics; retention policy; admin dashboard; editor/content performance; content performance; stream performance; anomaly detection later.
+
+### 40.9. H27.01–H27.19 — ADM (19)
+dashboard; navigation; responsive admin; diagnostics; page list; content management; schedule; socials; VOD; media; settings; SEO; analytics; integrations; editor management; preview; recovery; history; permissions.
+
+### 40.10. H28.01–H28.17 — SEC (17)
+HttpOnly; Secure cookie; SameSite; password hash; CSRF; rate limiting; RBAC; API authorization; public/admin separation; Cloudflare Secrets; audit log; input validation; output validation; file validation; replay protection where applicable; action permission `can()` checks; AI permission boundary.
+
+### 40.11. H29.01–H29.10 — OPS (10)
+full backup; page backup; revision backup; media references; restore validation; rollback; import/export JSON; migration compatibility; backup integrity check; recovery drill.
+
+### 40.12. H30.01–H30.14 — OPS/QA (14)
+bundle review; lazy loading; image optimization; caching; cache invalidation; Core Web Vitals; rendering performance; large-page performance; large-tree editor performance; history memory limits; autosave efficiency; API latency monitoring; production smoke test; visual regression baseline.
+
+### 40.13. H31.00–H31.13 — AI/EDT (14)
+AI editor must use the same canonical action system as manual Editor; pipeline: Intent -> Plan -> Actions -> Permission -> Validation -> Preview/Diff -> Approval -> Execute -> Verify -> Audit -> Version; AI page operations; AI element operations; AI style/layout operations; AI responsive operations; AI content generation; AI SEO assistance; AI accessibility QA; AI visual QA; action permissions; approval rules; rollback; audit; rate/cost controls.
+
+### 40.14. H32.01–H32.25 — AI/LIV (25)
+live stream monitoring; silence/speech detection; chat activity analysis; technical issue detection; audio problem detection; stream quality checks; scene suggestions; context-aware ideas; interesting moment detection; post-stream summary; VOD analysis; clip candidates; Short candidates; title/description suggestions; platform variants; thumbnail briefs; publishing recommendations; content performance analysis; streamer profile; long-term memory; preferences; historical outcomes; experiment tracking; evaluation cycle; feedback loop.
+
+### 40.15. H33.00–H33.12 — AUT (13)
+Automation lifecycle contract: Trigger -> Condition -> Action -> Result -> Verify -> Audit; scheduled automations; event automations; content workflows; media workflows; stream workflows; notification workflows; retry policy; idempotency; failure handling; permissions; audit; Queues/Durable Objects only when justified by a real background-task or realtime requirement.
+
+### 40.16. H34.00–H34.22 — QA/PLATFORM (23)
+Continuous feature discovery is never permanently closed; repeat the review before every significant Editor/platform extension; modern visual builder minták;; GrapesJS / Craft.js / Puck architekturális minták;; új responsive/layout megoldások;; accessibility;; performance;; reusable components;; design systems;; collaboration/conflict;; backup/recovery;; AI action safety;; stream/content intelligence.; azonosítás;; cél és felhasználási eset;; függőségek;; Page Model/adatmodell;; Command/Action;; Inspector/Canvas/UI;; persistence;; teszt;; MASTER-be felvétel;; implementáció;; felhasználói validáció..
+
+### 40.17. Zárási szabály
+Minden tételhez stabil funkció-ID, domain owner, user outcome, permission, dependency, lifecycle, pozitív/negatív teszt, runtime acceptance és evidence kell. KEEP/DEFERRED nem jelent implementáltságot; REPLACE/REJECT csak indokolt, auditált döntéssel lehetséges.
