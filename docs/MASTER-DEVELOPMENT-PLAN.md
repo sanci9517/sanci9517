@@ -5483,3 +5483,63 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 
 **Status:** 51/51 source list items have stable keys. Paragraph-level provenance, source-specific owner/phase/dependency/negative-test/acceptance contracts remain OPEN. P0.2 **IN PROGRESS / NOT PASS**.
 
+### 41.3.38. P0.2 — Ultimate Platform Direction: 42 source bullets individually keyed (2026-10-13)
+
+**Source:** `docs/archive/plans/ULTIMATE-PLATFORM-DIRECTION-2026-09-16.md`. This is an architecture/product-direction source, not an implementation checklist. The mapping column is candidate-only and intentionally remains open for semantic review.
+
+| Source key | Archive line | Source section | Exact source item | Candidate canonical IDs | Disposition |
+|---|---:|---|---|---|---|
+| UPD-001 | 16 | 2. MI NEM VÁLTOZIK | GitHub + Cloudflare marad a projekt alapja. | P0.2, /, QA-009 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-002 | 17 | 2. MI NEM VÁLTOZIK | D1 marad az elsődleges strukturált tartalom-adatforrás. | RES-001–RES-015, DYN-001–DYN-007 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-003 | 18 | 2. MI NEM VÁLTOZIK | A részletes `DEVELOPMENT-PLAN.md` meglévő pontjai megmaradnak. | AI-001–AI-018 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-004 | 19 | 2. MI NEM VÁLTOZIK | A már ellenőrzött működéseket nem töröljük csak azért, mert az architektúrát újraépítjük. | P0.2, /, QA-009 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-005 | 20 | 2. MI NEM VÁLTOZIK | A mostani Visual Editor kódja referencia és funkcióleltár; nem tekintjük végleges architektúrának. | EDT-001–EDT-042 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-006 | 21 | 2. MI NEM VÁLTOZIK | Minden lényeges fejlesztés: terv → kód → GitHub → Cloudflare → API/D1 → böngésző → felhasználói teszt → visszaigazolás. | AI-001–AI-018, RES-001–RES-015, DYN-001–DYN-007 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-007 | 52 | 4. FUNKCIÓBŐVÍTÉSI ELV | site/page/section/container/element rendszer | AI-001–AI-018, EDT-001–EDT-042, DSN-001–DSN-018, WEB-001–WEB-032 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-008 | 53 | 4. FUNKCIÓBŐVÍTÉSI ELV | Flex, Grid és fejlett layout | EDT-001–EDT-042, DSN-001–DSN-018, WEB-001–WEB-032 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-009 | 54 | 4. FUNKCIÓBŐVÍTÉSI ELV | responsive szabályok | QA-001–QA-009, OPS-004–OPS-009 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-010 | 55 | 4. FUNKCIÓBŐVÍTÉSI ELV | typography, appearance, animation, interaction | EDT-001–EDT-042, DSN-001–DSN-018, WEB-001–WEB-032 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-011 | 56 | 4. FUNKCIÓBŐVÍTÉSI ELV | reusable component, template, global component | EDT-001–EDT-042, DSN-001–DSN-018, WEB-001–WEB-032 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-012 | 57 | 4. FUNKCIÓBŐVÍTÉSI ELV | design token és preset rendszer | EDT-001–EDT-042, DSN-001–DSN-018, WEB-001–WEB-032 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-013 | 58 | 4. FUNKCIÓBŐVÍTÉSI ELV | media library | RES-001–RES-015, DYN-001–DYN-007 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-014 | 59 | 4. FUNKCIÓBŐVÍTÉSI ELV | dynamic data és API data source | RES-001–RES-015, DYN-001–DYN-007 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-015 | 60 | 4. FUNKCIÓBŐVÍTÉSI ELV | Twitch, YouTube, TikTok, Discord | INT-001–INT-021, LIV-001–LIV-007, SCH-001–SCH-011, CNT-001–CNT-020 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-016 | 61 | 4. FUNKCIÓBŐVÍTÉSI ELV | schedule, VOD, Shorts, Clips | INT-001–INT-021, LIV-001–LIV-007, SCH-001–SCH-011, CNT-001–CNT-020 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-017 | 62 | 4. FUNKCIÓBŐVÍTÉSI ELV | analytics, SEO, accessibility | ANL-001–ANL-010, CNT-001–CNT-020, COM-001–COM-018, SUP-001–SUP-012, QA-001–QA-009, OPS-004–OPS-009 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-018 | 63 | 4. FUNKCIÓBŐVÍTÉSI ELV | forms, CTA, támogatás és későbbi kereskedelmi modulok | ANL-001–ANL-010, CNT-001–CNT-020, COM-001–COM-018, SUP-001–SUP-012 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-019 | 64 | 4. FUNKCIÓBŐVÍTÉSI ELV | import/export | P0.2, /, QA-009 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-020 | 65 | 4. FUNKCIÓBŐVÍTÉSI ELV | versioning, backup/restore, audit | SEC-001–SEC-011, OPS-005/006/009, QA-001–QA-009, OPS-004–OPS-009 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-021 | 66 | 4. FUNKCIÓBŐVÍTÉSI ELV | permissions és concurrency protection | SEC-001–SEC-011, OPS-005/006/009 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-022 | 67 | 4. FUNKCIÓBŐVÍTÉSI ELV | command palette, property search, fejlett canvas eszközök | EDT-001–EDT-042 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-023 | 68 | 4. FUNKCIÓBŐVÍTÉSI ELV | automation | P0.2, /, QA-009 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-024 | 69 | 4. FUNKCIÓBŐVÍTÉSI ELV | AI actions, approval, QA, content generation, engineering | EDT-001–EDT-042, AI-001–AI-018, ANL-001–ANL-010, CNT-001–CNT-020, COM-001–COM-018, SUP-001–SUP-012 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-025 | 70 | 4. FUNKCIÓBŐVÍTÉSI ELV | stream intelligence, research, analytics intelligence | AI-001–AI-018, INT-001–INT-021, LIV-001–LIV-007, SCH-001–SCH-011, CNT-001–CNT-020, ANL-001–ANL-010, COM-001–COM-018, SUP-001–SUP-012 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-026 | 190 | 14. TESZTELÉSI BŐVÍTÉS | unit | P0.2, /, QA-009 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-027 | 191 | 14. TESZTELÉSI BŐVÍTÉS | integration | P0.2, /, QA-009 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-028 | 192 | 14. TESZTELÉSI BŐVÍTÉS | API | P0.2, /, QA-009 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-029 | 193 | 14. TESZTELÉSI BŐVÍTÉS | D1/R2/KV | RES-001–RES-015, DYN-001–DYN-007 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-030 | 194 | 14. TESZTELÉSI BŐVÍTÉS | E2E/browser | P0.2, /, QA-009 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-031 | 195 | 14. TESZTELÉSI BŐVÍTÉS | smoke/regression | P0.2, /, QA-009 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-032 | 196 | 14. TESZTELÉSI BŐVÍTÉS | visual regression | QA-001–QA-009, OPS-004–OPS-009 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-033 | 197 | 14. TESZTELÉSI BŐVÍTÉS | responsive | QA-001–QA-009, OPS-004–OPS-009 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-034 | 198 | 14. TESZTELÉSI BŐVÍTÉS | accessibility | QA-001–QA-009, OPS-004–OPS-009 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-035 | 199 | 14. TESZTELÉSI BŐVÍTÉS | security | SEC-001–SEC-011, OPS-005/006/009 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-036 | 200 | 14. TESZTELÉSI BŐVÍTÉS | performance | ANL-001–ANL-010, CNT-001–CNT-020, COM-001–COM-018, SUP-001–SUP-012, QA-001–QA-009, OPS-004–OPS-009 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-037 | 201 | 14. TESZTELÉSI BŐVÍTÉS | backup/restore | SEC-001–SEC-011, OPS-005/006/009, QA-001–QA-009, OPS-004–OPS-009 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-038 | 202 | 14. TESZTELÉSI BŐVÍTÉS | migration | QA-001–QA-009, OPS-004–OPS-009 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-039 | 203 | 14. TESZTELÉSI BŐVÍTÉS | concurrency | SEC-001–SEC-011, OPS-005/006/009 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-040 | 204 | 14. TESZTELÉSI BŐVÍTÉS | AI action validation | EDT-001–EDT-042, SEC-001–SEC-011, OPS-005/006/009, AI-001–AI-018 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-041 | 205 | 14. TESZTELÉSI BŐVÍTÉS | AI rollback | SEC-001–SEC-011, OPS-005/006/009, AI-001–AI-018 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+| UPD-042 | 206 | 14. TESZTELÉSI BŐVÍTÉS | production deployment | P0.2, /, QA-009 | OPEN — candidate mapping; verify semantics, owner, phase, dependency, tests and acceptance |
+
+**Architecture-level reconciliation:**
+- **Platform scope:** preserve modular Creator Platform direction, but do not interpret “hundreds or thousands of features” as a commitment to implement all of them in 1.0. Current phase/acceptance gates govern execution.
+- **Single state/action pipeline:** UI, AI and automation must use one canonical command/action → validation/permission → state/history → renderer → authorized persistence path. No direct D1 writes from browser code and no AI direct DOM/CSS/JS mutation.
+- **Data services:** D1 is structured source of truth; R2 is for binary objects, KV/cache/Queues/Durable Objects only when an explicit workload contract, binding, ownership and failure behavior are defined. Historical architecture text does not prove those services are currently configured.
+- **Identity domains:** site/page/section/container/component/element/media/schedule/action/version/audit/task/automation/agent/template/token/data-source IDs must remain semantically distinct and scoped. A generic stable-ID requirement does not itself define uniqueness, foreign keys, retention or authorization.
+- **AI and automation:** intent/plan/validate/preview/approve/execute/verify/audit is the future safe path. Human editing must remain fully usable without AI; autonomy, specialist agents and stream intelligence are deferred until permission, evaluation, observability, cost, privacy and rollback contracts are approved.
+- **Streamer/content scope:** live state, schedule, VOD, Shorts/Clips, community metrics, sponsor/press, campaigns and content calendar are preserved as roadmap requirements. Each provider/API, content ingestion, publishing and analytics capability needs its own permission, rate-limit, stale-data and partial-failure contract.
+- **Testing:** unit/integration/API/D1-R2-KV/E2E/smoke/visual/responsive/accessibility/security/performance/backup-restore/migration/concurrency/AI rollback/production deployment are distinct test classes; none is proven by a generic “tests passed” statement.
+
+**Status:** 42 source bullets individually keyed UPD-001–UPD-042. Architecture constraints are retained; candidate mapping and phase/owner/dependency/DoD/test/acceptance remain OPEN. P0.2 **IN PROGRESS / NOT PASS**. Documentation-only; no runtime code/data changed and no tests were run.
+
