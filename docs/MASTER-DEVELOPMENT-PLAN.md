@@ -4329,3 +4329,13 @@ F0.2 DoD:
 - [ ] Éles acceptance Android Chrome tableten: sikeres belépés után az Admin maradjon nyitva; a `/api/auth/session` authenticated=true állapotú legyen. Ha a javított flow még mindig jelzi, hogy a munkamenet nem igazolható, a sütikezelés gyökérokát célzott böngészős diagnosztikával kell feltárni; ez a változtatás önmagában nem bizonyítja, hogy a tablet böngésző eltárolja a sütit.
 
 **Biztonság:** a session-cookie attribútumokat és a szerveroldali auth/RBAC logikát ez a szelet nem módosítja. Nincs automatikus élesítés pusztán a CI zöld állapota alapján; a tablet-login acceptance szükséges.
+
+## 2.77.9.L — F0.2 teljes dashboard-hivatkozás contract — 2026-10-13
+
+**Állapot: IMPLEMENTÁLVA A FEATURE BRANCHEN; CI ELLENŐRZÉS FOLYAMATBAN.**
+
+- [x] A valós dashboard összes statikus `href` célpontja leltározva: `/admin`, `/admin/editor`, `/` és a meglévő `#platformCapabilities` szekcióhorgony.
+- [x] Új contract teszt tiltja a nem jóváhagyott dashboard-link célokat, és ellenőrzi, hogy a felület nem linkel vissza a legacy `/admin/home` aliasra.
+- [x] Az oldalsávban csak a canonical Admin és Editor útvonal aktív; a későbbi modulok disabled/queued állapota megmarad.
+- [ ] A teljes F0.2 role/accessibility/responsive production acceptance és az Android Chrome tablet-login eredmény még nyitott.
+
