@@ -72,6 +72,15 @@ test("dashboard is an operational creator workspace, not a roadmap catalog", () 
   assert.match(dashboard, /A teljes modulnavigáció a bal oldali menüben marad/);
 });
 
+test("dashboard uses centered copy hierarchy without centering navigation controls", () => {
+  assert.match(dashboard, /\.welcome-row \{ flex-direction: column; align-items: center; text-align: center; \}/);
+  assert.match(dashboard, /\.section-heading \{ justify-content: center; text-align: center; \}/);
+  assert.match(dashboard, /\.metric-card \{ text-align: center; \}/);
+  assert.match(dashboard, /\.action-card \{ align-items: center; flex-direction: column; text-align: center; \}/);
+  assert.match(dashboard, /\.module-list \.module-card \{ text-align: left; \}/);
+  assert.match(dashboard, /\.module-copy \{ text-align: left; \}/);
+});
+
 test("dashboard includes responsive, keyboard and reduced-motion affordances", () => {
   assert.match(dashboard, /@media \(max-width: 900px\)/);
   assert.match(dashboard, /@media \(max-width: 600px\)/);
