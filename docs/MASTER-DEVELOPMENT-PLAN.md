@@ -4138,7 +4138,7 @@ Elkészült a munkapont első implementációs szelete:
 - [x] Az Admin contract tesztek bővültek a vizuális elkülönítés, a 17 kategóriás katalógus és a státuszcímkék ellenőrzésével.
 - [ ] A helyi tesztek és typecheck újrafuttatása a friss PR-HEAD-en.
 - [ ] Böngészős vizuális ellenőrzés 1440 px desktop, tablet és mobil szélességen, világos és sötét témával; szükség esetén további finomítás.
-- [ ] Felhasználói vizuális elfogadás. Addig PR #7 nyitott/piszkozat marad; F0.1 nem PASS, merge tilos.
+- [x] Felhasználói vizuális elfogadás — 2026-10-13: a felhasználó elfogadta a jelenlegi Admin főoldal irányát azzal, hogy a fejlesztés közben felmerülő hiányzó képességeket később bővítjük. Addig PR #7 nyitott/piszkozat marad; F0.1 nem PASS, merge tilos.
 
 **Korlát:** a katalógus a MASTER-2.77.7 teljességi kapujában felsorolt forrásokból és a 2.77.5 fázistervből következik. A teljes funkciókatalógus teljességét továbbra is a MASTER E/F fejezetei, a 01–140 mátrix és a H19–H34 történeti ledger igazolja; a dashboard kártyáinak száma önmagában nem bizonyít teljességet.
 
@@ -4193,6 +4193,8 @@ A felhasználó pontos követelménye: nem kizárólag a jelenlegi működő mod
 
 **Scope-garancia:** a 24 dashboard-kártya magas szintű felfedezési felület, nem helyettesíti és nem rövidíti le a MASTER 00.9.6.C / 00.9.6.D, E/F specifikációit, a 01–140 preservation matrixet vagy a H19–H34 történeti traceability-t. Ha a részletes MASTER olyan capability-t tartalmaz, amely nem kapott külön dashboard-kártyát, a követelmény attól még megmarad és a megfelelő munkaterület/fázis specifikációjában kötelező. A dashboardon látható tervezett képesség nem bizonyít runtime-implementációt.
 
-**Gate:** F0.1 továbbra sem PASS. PR #7 nyitott/piszkozat marad; nincs merge a helyi tesztek, böngészős ellenőrzés és a felhasználó kifejezett vizuális elfogadása előtt.
+**Gate:** a vizuális irány felhasználói elfogadása megtörtént, de F0.1 továbbra sem PASS, amíg a helyi teszt/typecheck és a legfrissebb preview böngészős ellenőrzése nincs lezárva. PR #7 addig nyitott/piszkozat marad; merge csak az ellenőrzési kapuk teljesülése után.
 
 - [x] Külön képességkártyák lefedik a dinamikus adatbindinget, a formokat/interakciókat, a publishing/revision folyamatot és a bővíthető tartalommodelleket; ezek sem jelentenek automatikusan kész runtime-funkciót.
+
+- [x] A felhasználó elfogadta a jelenlegi Admin főoldal irányát; a később hiányzóként felismert funkciók fejlesztés közben, a MASTER scope megőrzésével bővíthetők. Ez nem tekintendő a még futtatandó lokális/böngészős ellenőrzések helyettesítésének.
