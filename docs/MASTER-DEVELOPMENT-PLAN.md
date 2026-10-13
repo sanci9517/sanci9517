@@ -6268,3 +6268,38 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 
 **Status:** 30/30 source bullets keyed; historical test evidence and current runtime acceptance deliberately separated. P0.2 **IN PROGRESS / NOT PASS**.
 
+
+### 41.3.42. P0.2 — Legacy HTML archive manifest: route-by-route migration acceptance (2026-10-13)
+
+**Source:** `docs/archive/2026-09-16/LEGACY-HTML-ARCHIVE.md`, source blob `80002bf9fcfaf54f7f2d4a7ba6e493fbbba6e778`. This is a migration manifest, not proof that each page's content was preserved or that the public route currently works.
+
+**Inventory:** 8 legacy HTML page-to-slug mappings plus 3 archive/migration invariants are individually keyed.
+
+| Source key | Archive line | Exact source item | Current target | Candidate canonical IDs | Decision / acceptance |
+|---|---:|---|---|---|---|
+| LEGACY-007 | 7 | - `public/about.html` → canonical page slug `about` | `/about` and canonical D1 Page Model | WEB-012/014/032; EDT-001/034; OPS-004; QA-003/004/006 | KEEP — preserve content and slug; verify route, redirects, D1 record, Editor reopen, preview/publish, public parity and no active legacy source |
+| LEGACY-008 | 8 | - `public/community.html` → canonical page slug `community` | `/community` and canonical D1 Page Model | WEB-012/014/032; EDT-001/034; OPS-004; QA-003/004/006 | KEEP — preserve content and slug; verify route, redirects, D1 record, Editor reopen, preview/publish, public parity and no active legacy source |
+| LEGACY-009 | 9 | - `public/contact.html` → canonical page slug `contact` | `/contact` and canonical D1 Page Model | WEB-012/014/032; EDT-001/034; OPS-004; QA-003/004/006 | KEEP — preserve content and slug; verify route, redirects, D1 record, Editor reopen, preview/publish, public parity and no active legacy source |
+| LEGACY-010 | 10 | - `public/schedule.html` → canonical page slug `schedule` | `/schedule` and canonical D1 Page Model | WEB-012/014/032; EDT-001/034; OPS-004; QA-003/004/006 | KEEP — preserve content and slug; verify route, redirects, D1 record, Editor reopen, preview/publish, public parity and no active legacy source |
+| LEGACY-011 | 11 | - `public/tiktok.html` → canonical page slug `tiktok` | `/tiktok` and canonical D1 Page Model | WEB-012/014/032; EDT-001/034; OPS-004; QA-003/004/006 | KEEP — preserve content and slug; verify route, redirects, D1 record, Editor reopen, preview/publish, public parity and no active legacy source |
+| LEGACY-012 | 12 | - `public/twitch.html` → canonical page slug `twitch` | `/twitch` and canonical D1 Page Model | WEB-012/014/032; EDT-001/034; OPS-004; QA-003/004/006 | KEEP — preserve content and slug; verify route, redirects, D1 record, Editor reopen, preview/publish, public parity and no active legacy source |
+| LEGACY-013 | 13 | - `public/vod.html` → canonical page slug `vod` | `/vod` and canonical D1 Page Model | WEB-012/014/032; EDT-001/034; OPS-004; QA-003/004/006 | KEEP — preserve content and slug; verify route, redirects, D1 record, Editor reopen, preview/publish, public parity and no active legacy source |
+| LEGACY-014 | 14 | - `public/youtube.html` → canonical page slug `youtube` | `/youtube` and canonical D1 Page Model | WEB-012/014/032; EDT-001/034; OPS-004; QA-003/004/006 | KEEP — preserve content and slug; verify route, redirects, D1 record, Editor reopen, preview/publish, public parity and no active legacy source |
+| LEGACY-RULE-03 | 3 | These files belong to the pre-canonical static-page implementation. They must not be read by the Visual Editor or the public canonical renderer after migration. | Canonical public renderer and Editor source-of-truth rule | WEB-012/014/032; EDT-001/003/034; QA-002/004/006 | KEEP — legacy HTML must not be a second active data source; current runtime proof OPEN |
+| LEGACY-RULE-18 | 18 | The files are retained in Git history and will be moved to a dated archive after the canonical D1 migration and public URL verification succeed. They are not allowed to remain an active data source. | Canonical D1 migration / route acceptance gate | WEB-012/014; OPS-004/005; QA-003/004/006 | KEEP — archive only after route/content parity and migration verification; current evidence OPEN |
+| LEGACY-RULE-27 | 27 | Historical SQL migrations are not treated as active legacy code and must remain in `migrations/` because D1 migration history depends on them. | D1 migration history integrity | OPS-004/005; QA-002/006 | KEEP — historical SQL migration remains in migrations; never delete/rewrite applied migration history |
+
+**Per-page acceptance matrix (must be evidenced separately):**
+- [ ] `/about`: source HTML content captured; canonical D1 page exists; route/redirect/404 verified; Editor opens and saves; D1 reload stable; preview/publish and public renderer match the approved baseline; links/media/responsive/SEO checked; no legacy HTML read at runtime.
+- [ ] `/community`: source HTML content captured; canonical D1 page exists; route/redirect/404 verified; Editor opens and saves; D1 reload stable; preview/publish and public renderer match the approved baseline; links/media/responsive/SEO checked; no legacy HTML read at runtime.
+- [ ] `/contact`: source HTML content captured; canonical D1 page exists; route/redirect/404 verified; Editor opens and saves; D1 reload stable; preview/publish and public renderer match the approved baseline; links/media/responsive/SEO checked; no legacy HTML read at runtime.
+- [ ] `/schedule`: source HTML content captured; canonical D1 page exists; route/redirect/404 verified; Editor opens and saves; D1 reload stable; preview/publish and public renderer match the approved baseline; links/media/responsive/SEO checked; no legacy HTML read at runtime.
+- [ ] `/tiktok`: source HTML content captured; canonical D1 page exists; route/redirect/404 verified; Editor opens and saves; D1 reload stable; preview/publish and public renderer match the approved baseline; links/media/responsive/SEO checked; no legacy HTML read at runtime.
+- [ ] `/twitch`: source HTML content captured; canonical D1 page exists; route/redirect/404 verified; Editor opens and saves; D1 reload stable; preview/publish and public renderer match the approved baseline; links/media/responsive/SEO checked; no legacy HTML read at runtime.
+- [ ] `/vod`: source HTML content captured; canonical D1 page exists; route/redirect/404 verified; Editor opens and saves; D1 reload stable; preview/publish and public renderer match the approved baseline; links/media/responsive/SEO checked; no legacy HTML read at runtime.
+- [ ] `/youtube`: source HTML content captured; canonical D1 page exists; route/redirect/404 verified; Editor opens and saves; D1 reload stable; preview/publish and public renderer match the approved baseline; links/media/responsive/SEO checked; no legacy HTML read at runtime.
+
+**Critical distinction:** the historical `migrations/0006_canonicalize_legacy_pages.sql` is migration history, not a runtime legacy HTML file. Keep the applied SQL migration in `migrations/`; the old static HTML must not be reintroduced as a parallel source. A page is not marked migrated just because its slug appears in the manifest or the migration file exists.
+
+**Status:** all eight route mappings are individually keyed; route-by-route runtime/data acceptance remains OPEN. P0.2 **IN PROGRESS / NOT PASS**. Documentation-only; no runtime code/data changed and no tests run.
+
