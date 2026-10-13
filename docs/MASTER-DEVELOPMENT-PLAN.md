@@ -2243,6 +2243,51 @@ The short decision record must name the problem and acceptance criteria; existin
 
 **Non-negotiable exclusions:** no dependency may introduce a second Page Model, Editor history, Property Registry, Resource store, Schedule domain, or save/publish path; no external code gets implicit access to secrets or privileged actions; lockfile, license/attribution and update/rollback evidence are required. This policy is now preserved in the current MASTER rather than only in the archive.
 
+
+### 37.20. P0.2 — 00.9.6.E/F közvetlen termékkatalógus kereszttérkép
+
+**Forrás:** a történeti MASTER snapshot 00.9.6.E (E.1–E.22) és 00.9.6.F (F.1–F.13) fejezetei. Ez a fejezetszintű mapping az első összekapcsolás; nem helyettesíti az E/F alatti minden egyes bullet, állapotátmenet, teszt és acceptance tételes soronkénti crosswalkját.
+
+| Történeti forrás | Követelménycsoport | Jelenlegi canonical cél | Döntés / fázis |
+|---|---|---|---|
+| E.1 | Product surfaces and boundaries | §2–4; ADM, WEB, EDT, CNT, RES, SCH, INT, DSN, LIV/OBS, STO/SUP, COM, ANL/AUT/AI, OPS, LOC, TEAM, MKT | EXPAND — a modulhatárok a teljes roadmapon érvényesek; az Adminban csak ténylegesen működő munkaterület lehet aktív. |
+| E.2 | Public Website, dynamic creator state, publish quality | WEB-014–WEB-032; LIV; SCH; INT; SEO; QA | MERGE/EXPAND — 1.0 publikus site + accessibility/SEO baseline; provider-függő feed csak capability és freshness evidence mellett. |
+| E.3 | Visual Editor, Page Model, manipulation, layout, Inspector, blocks, history/recovery | §38; EDT-001–EDT-042; DSN; RES; QA | EXPAND — 1.0 core Editor; minden mutáció canonical Page Model/command/history/persistence útvonalon. |
+| E.4 | Page/CMS/publish lifecycle | WEB-001–WEB-008, WEB-012–WEB-013, CNT, EDT-027–EDT-034 | MERGE — 1.0 Page Model, draft/preview/publish/rollback; advanced CMS/content factory 2.0. |
+| E.5 | Resource/Media/Icon/Font/File | RES-001–RES-016 | EXPAND — 1.0 resource foundation; actual R2 binding és upload/download API P0.3/G3 blocker. |
+| E.6 | Theme, Design System, Template, Component, Symbol | DSN-001–DSN-018; EDT-021–EDT-026 | EXPAND — 1.0 theme/template baseline; advanced reusable registry/variants and marketplace phased later. |
+| E.7 | Creator Center/Admin UX and modules | ADM-001–ADM-010 plus each canonical module owner | MERGE — 1.0 shell, Dashboard and canonical Connections Center baseline; disabled planned modules stay PLANNED. |
+| E.8 | Schedule/Calendar | SCH-001–SCH-015; DYN-002/005/007; WEB-016 | EXPAND — 1.0 CRUD/public schedule/Editor block/Twitch sync; timezone, recurrence and source ownership acceptance required. |
+| E.9 | Integrations and Twitch | INT-001–INT-020; LIV-001–LIV-007; SCH-007–SCH-008 | EXPAND — Twitch Connections Center minimum in 1.0; other provider adapters 1.5+ and capability-gated. |
+| E.10 | Content Factory and multi-platform content | CNT-001–CNT-020; RES; INT; ANL | DEFER/EXPAND — 1.0 only the required public content/page foundations; VOD/Shorts workflow and cross-platform publishing staged 1.5–2.0. |
+| E.11 | Stream Studio/Overlay/OBS | OBS-001–OBS-010; LIV; INT; AUT | DEFER — Stream/Overlay Studio and persistent/realtime architecture follow 2.0/7.0 dependencies. |
+| E.12 | Shop/Merch/Digital Products/Monetization | STO-001–STO-020; SUP-001–SUP-012; SEC | DEFER — 5.0 business phase after payment/legal/provider review. |
+| E.13 | Community/Audience ownership | COM-001–COM-018; SEC; LOC | DEFER/EXPAND — 1.0 external community links only; audience, consent, moderation and membership later. |
+| E.14 | Analytics, Automation and AI | ANL-001–ANL-009; AUT-001–AUT-014; AI-001–AI-020; QA | DEFER — roadmap phases 2.0–9.0, each capability requiring source, consent, permission, cost and acceptance. |
+| E.15 | Sponsorship/Creator Business Hub | CAM-001–CAM-008; ANL; STO; COM | DEFER — 5.0 business/commerce scope, not a 1.0 backend claim. |
+| E.16 | Localization/international use | LOC-001–LOC-008; WEB; SEO; DSN | DEFER/EXPAND — preserve language-ready content/metadata in the architecture; full localization workflow phased later. |
+| E.17 | Accounts, multi-site, teams and SaaS | SEC; TEAM-001–TEAM-006; OPS; STO/SUP entitlements | DEFER — 4.0+; current global slug/settings/provider uniqueness constraints must be decided before multi-site. |
+| E.18 | Import/export, backup, diagnostics, developer surface | OPS-001–OPS-012; SEC; RES; WEB | EXPAND — 0.x/1.0 operational safety baseline; full developer/extensions surface later. |
+| E.19 | Architecture and security invariants | EDT-001–EDT-006; SEC-001–SEC-010; INT-001/019; OPS | KEEP/EXPAND — cross-cutting release gates, not optional future UI features. |
+| E.20 | Feature contract and negative tests | §25–26; QA-001–QA-010; every feature ID | KEEP — all features need their own data owner, permission, dependency, negative test and acceptance. |
+| E.21 | Product phases and scope boundaries | §39.1–39.13 | MERGE — current §39 is the canonical phase roadmap; archive phase labels are historical. |
+| E.22 | Completeness closure and plan maintenance | §0, §11, §16–18, §35–37 | KEEP/EXPAND — one active point, explicit provenance, decisions, tests and evidence. |
+| F.1 | Editor workflow/history/recovery | EDT-003–EDT-005, EDT-027–EDT-031, EDT-035–EDT-042; WEB; QA | EXPAND — 1.0 save/reload/conflict/recovery acceptance; no data loss. |
+| F.2 | Dynamic blocks/data binding | DYN-001–DYN-008; EDT-020; WEB-031–WEB-032; INT; SCH; RES | EXPAND — phased; schema validation, permission, freshness and published-only data required. |
+| F.3 | Dropdown controls/layout | EDT-009–EDT-010, EDT-016–EDT-026; DSN | EXPAND — 1.0 core controls/responsive baseline; no direct CSS/JSON requirement for ordinary editing. |
+| F.4 | Website content/interactions | WEB-014–WEB-032; EDT-017–EDT-020; COM; INT; SEO | EXPAND — public 1.0 baseline plus provider-gated dynamic blocks and later interaction features. |
+| F.5 | Content Factory/platform integrations | CNT-001–CNT-020; INT-001–INT-021; RES; ANL | DEFER/EXPAND — 1.5–2.0 and endpoint-level provider acceptance. |
+| F.6 | Schedule/time/content linkage | SCH-001–SCH-015; CNT; INT; DYN; WEB-016 | EXPAND — 1.0 schedule foundation, recurring/DST/source-identity/duplicate-sync acceptance. |
+| F.7 | Admin/forms/store/UI rules | ADM; WEB; COM; STO; SUP; SEC; QA | MERGE — Admin shell in 1.0; forms/backend actions and commerce in later phases; placeholder UI is not implementation. |
+| F.8 | Analytics/AI/automation/stream intelligence | ANL; AI; AUT; LIV; OBS; SEC | DEFER — roadmap 2.0–9.0 with explicit approval, privacy, cost, observability and rollback gates. |
+| F.9 | SEO/accessibility/security/performance release gate | SEO-001–SEO-005; QA-002–QA-010; SEC; OPS; EDT-040 | KEEP/EXPAND — baseline release gates in 1.0; advanced monitoring/optimization remains phased. |
+| F.10 | Backup/import/export/diagnostics/recovery | OPS-001–OPS-012; SEC; RES; WEB-007/008; EDT-031/042 | EXPAND — minimum safe recovery and evidence for 1.0; full self-service recovery tools only when accepted. |
+| F.11 | Coverage and preservation rule | §35–37; §40–41 | KEEP — historical requirements must map to current IDs or have explicit decision; listing is not completion. |
+| F.12 | Project/start context, configurable not hard-coded | SET-001–SET-003; LOC; WEB; SEC; OPS | EXPAND — remove environment/user-specific assumptions from reusable platform contracts; keep Sanci9517 branding/configuration intentional. |
+| F.13 | Game Profile, custom domain, Link Hub, email audience, teams, mobile | SCH-012–SCH-014; WEB-022/024; COM-015–COM-017; TEAM; LOC; OPS | DEFER/EXPAND — game profiles and required link hub are phased by §39; custom domain, audience, teams and advanced mobile workflow need their own contracts. |
+
+**E/F source-level review status:** 35 headings mapped to canonical domains and current phases at section level. Still required before P0.2 PASS: extract every bullet and nested requirement under these headings into individual source-key rows (including explicit source text/heading), connect each to exact current feature IDs, and verify no requirement is represented only by a broad family label. C.23 Visual Editor additions are mapped to §38/EDT, and C.24 open-source-first policy is preserved in §37.19; their individual checklist items still need provenance/acceptance links where they change implementation scope.
+
 ## 38. Részletes Visual Editor képességkatalógus
 
 **Cél:** a vizuális szerkesztő teljes részletképességeinek önálló, tesztelhető katalógusa. A felsorolás a végleges platform követelményét rögzíti, nem a runtime készültségét. Minden elem a közös Page Model, command/history/validation/persistence és jogosultsági szerződésen keresztül működik.
