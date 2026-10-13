@@ -4246,3 +4246,17 @@ F0.2 DoD:
 
 **Aktuális feature branch:** `feature/f0-2-admin-global-shell`. A változások még nem kerültek a `v2/foundation` ágba. A kizárólag UI/static szelet a friss zöld CI után a felhasználó által jóváhagyott solo-production-first szabály szerint integrálható; az éles oldali acceptance a deploy után történik, és F0.2 ettől még nyitva marad a teljes route/auth/navigation DoD-ig. A következő munka az F0.2 ugyanazon checkpointján belül folytatódik: minden navigációs cél és a jogosultsági határ teljes ellenőrzése, majd a szükséges javítások és tesztek. Nem készítünk külön tervezési dokumentumot.
 
+
+
+## 2.77.9.F — F0.2 navigációs route-contract — 2026-10-13
+
+**Állapot: IMPLEMENTING — NOT PASS.** Az F0.2 ugyanazon aktív munkapontján belüli következő ellenőrizhető kódszelet; nem új fázis.
+
+- [x] A friss v2/foundation kód alapján a tényleges Admin oldalsáv célpontjai leltározva: /admin/home és a kanonikus /admin/editor; a publikus oldalra mutató külön CTA célja /.
+- [x] A nem implementált Creator OS modulok oldalsáv-elemei jelenleg disabled gombok, nem hamis, működő linkek.
+- [x] Contract teszt készül annak kikényszerítésére, hogy az oldalsáv aktív linkjei csak a jóváhagyott Admin route-okra mutassanak, és a jövőbeli modulok letiltva maradjanak.
+- [ ] Friss PR-CI PASS: npm run typecheck, npm run test:admin-home, Editor/Schedule/domain regressziók.
+- [ ] Valós böngészős route/auth smoke a friss éles deployon; a /admin/home és /admin/editor közvetlen, kijelentkezett kérése /admin/login felé irányítson.
+- [ ] F0.2 további DoD-elemei — jogosultsági határok, minden CTA, reszponzív/keyboard állapotok és production acceptance — továbbra is nyitottak.
+
+**Biztonsági megjegyzés:** a statikus Editor asset közvetlen elérhetősége önmagában nem bizonyít jogosulatlan adathozzáférést; az adat/API route-ok szerveroldali auth/role ellenőrzése a lényegi határ. Az asset-route kezelését csak célzott vizsgálat és regressziós terv után szabad módosítani, hogy a CSS/JS betöltés és a bejelentkezett Editor működése ne törjön el.
