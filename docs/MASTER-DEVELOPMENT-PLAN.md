@@ -2292,7 +2292,7 @@ Az Editor önálló, professzionális, vizuális alkalmazás. Az alapvető oldal
 - Domain blokkoknál konfiguráció és adatforrás különüljön el: például Schedule blokk megjelenítési beállítása nem módosítja az események domainrekordjait.
 
 ### E.3.6 — Elem- és blokk-könyvtár
-- Alapelemek: Heading, Text/Rich Text, Image, Video/Embed, Button, Link, Icon, Divider, Spacer, List, Quote, Card, Badge, Form és Container.
+- Alapelemek: Heading, Text (az 1.0 stabil plain-text eleme), Image, Video/Embed, Button, Link, Icon, Divider, Spacer, List, Quote, Card, Badge, Form és Container. Az összetett Rich Text szerkesztő külön, későbbi scope; a korábbi döntés alapján nem nyithat párhuzamos alapirányt.
 - Layout elemek: Section, Box/Container, Stack, Row, Columns, Grid és reusable Slot.
 - Dinamikus Sanci blokkok: Live Status, Twitch Player/Channel, Next Stream, Schedule, VOD/Video Feed, Clips/Shorts, Social Links, Community CTA, Support, Merch/Product Collection és későbbi Membership/Events/Content/Analytics blokkok.
 - Minden elemnél típusos default config, validáció, renderer, responsive viselkedés, accessible output és hiba/üres állapot.
@@ -2684,6 +2684,46 @@ Fázis szerinti zár:
 - Heti három stream korábban lehetséges ritmusként merült fel; Schedule-ban szerkeszthető terv, nem kötelező vagy beégetett ütem.
 - Fejlesztési támogatás/kampány kontextus: korábban 1 000 000 Ft-os cél, Brancs/Ko-fi/Buy Me a Coffee jellegű online támogatás, fizikai jutalom nélkül merült fel. Ez nem automatikusan aktív fizetési modul: publikus kampány előtt aktuális cél, platformfeltételek, linkek és privacy/jogi információk újraellenőrzendők. Supporter nevek csak külön, önkéntes opt-in alapján jelenhetnek meg.
 - Ezek projektkontextusok és kezdeti tartalomadatok; a termékben konfigurációként kell szerepelniük, és később változtathatónak kell maradniuk.
+
+
+
+### F.13 — Game Profile, custom domain, Link Hub, email audience, teams és későbbi mobilélmény
+
+**Game Profile / canonical játékprofil:**
+- A Game Profile ne csupán név/kép pár legyen: stabil ID, canonical slug, megjelenített név, platform- és külsőazonosító-mapping, media/resource references, opcionális brand/presentation metadata, szín/hero/cover, lifecycle status és adminból szerkeszthető leírás.
+- Schedule item Game Profile-ra stabil referencia útján mutathat; ne másolja le a játékprofil egészét és ne az elnevezés alapján kapcsoljon rekordot.
+- Opcionális artwork vagy extra metadata hiánya nem eredményezhet hibás/üres layoutot. A publikus megjelenítés fallbackje legyen explicit, az Inspector pedig csak a létező, érvényes mezőket mutassa.
+- A Game Profile külön domain legyen, a Page Model a hozzá tartozó resource/domain reference-t használja. Ne készüljön párhuzamos, editor-only játék-adattár.
+
+**Custom domain és branding:**
+- A végtermék célja saját creator domain támogatása. A domainkezelés a megfelelő fázisban tartalmazza a domain hozzáadását, tulajdonjog-verifikációt, DNS-állapotot, primary domain kiválasztását, SSL provisioning/renewal state-et, canonical URL-t, redirecteket és hibaállapotokat.
+- Domaincsere vagy primary-domain módosítás előtt előnézet és explicit figyelmeztetés szükséges az URL-, SEO- és redirect-hatásokról. Nem ellenőrzött domain nem válhat automatikusan publikus primary domainné.
+- Brandbeállítások: creator név, logó, favicon, social link registry, színek, betűk, vizuális tokenek, cover/avatar és kapcsolódó médiaforrások. Ezek konfigurálható adatok legyenek, ne hardcode a rendererben.
+
+**Link Hub és kampánylinkek:**
+- Alapfunkció: platform/social linkek, CTA-k, linkek sorrendje és láthatósága, Schedule/Content/Community/Support célok és mobilbarát Link Hub oldal.
+- Későbbi bővítés: link-időzítés, campaign links, UTM paraméterek, QR-kódos megosztás, smart redirect és kattintásanalitika. Redirect/click analytics csak mérési és adatvédelmi szabályokkal.
+- Külső linkeknél validált URL, világos külső-link viselkedés, veszélyes scheme-ek tiltása és a publikus menü/CTA konzisztencia szükséges.
+
+**Email audience ownership:**
+- Signup/subscribe form csak célhoz kötött, átlátható hozzájárulással gyűjthet címet; tárolandó az időpont, a consent/purpose verzió és az unsubscribe státusz.
+- Későbbi funkciók: subscriber list, segmentation, campaigns/newsletters, automated és transactional email, email templates, opt-out/unsubscribe, bounce/failed delivery state, rate limits és consent history.
+- Marketing és tranzakciós levél különüljön el. Unsubscribe után marketingküldés nem indulhat újra automatikusan; export/törlés/retention a privacy szabályok szerint.
+
+**Workspace, team és permission model:**
+- Későbbi struktúra: tenant → workspace/creator account → workspace members → sites → domain modules. Egy workspace több site-ot tarthat, például streamer brand, esports team, personal brand, podcast, event vagy merch brand, külön site settingekkel.
+- Szerepkörök lehetnek owner, admin, editor, designer, moderator, analyst, content manager, store manager és finance role. A role ne csak navigációt rejtsen el: minden API/domain mutation szerveroldali permission checket kap.
+- Workspace- és site-szintű hozzáférés külön kezelendő; a kliens által küldött site/workspace/tenant ID önmagában nem jogosultsági bizonyíték.
+- A Free/Creator/Pro/Business/Team/Agency csomagok csak valós költség-, usage- és üzleti adatok alapján véglegesíthetők. Billing, quota, usage, invoice, upgrade/downgrade/cancel későbbi SaaS scope.
+
+**Mobil/PWA jövőkép:**
+- A publikus website 1.0-tól reszponzív web. A későbbi PWA vagy külön mobilalkalmazás lehetősége: notifications, schedule, live state, community, member area, store és Creator Dashboard.
+- A későbbi creator app képességei: live status, alerts, schedule changes, analytics, moderation és content approval. Ez nem jelent külön Page Modelt vagy párhuzamos backend domaint; ugyanazokat a canonical API-kat és jogosultságokat használja.
+
+**Template-kategóriák és későbbi marketplace:**
+- Starter template-kategóriák: Gaming, Just Chatting, Esports, Variety, VTuber, Music, Podcast, Creator Business és Merch-first.
+- Később creator-created template, component/block/theme/overlay/OBS scene/digital asset marketplace, licenc, kompatibilitás, verzió, preview, rating/review és revenue share. A marketplace csak külön jogosultsági, moderációs, fizetési és licencelési scope után aktív.
+
 
 **Végső operatív szabály:** egyetlen aktív pont van: F0.1. A dokumentum minden fenti követelménye megmarad a maga fázisában. Új igény csak canonical ownerrel, fázissal, függőséggel, DoD-val, teszttel és acceptance-szel vehető fel; korábbi funkció nem maradhat puszta névként specifikáció nélkül.
 
