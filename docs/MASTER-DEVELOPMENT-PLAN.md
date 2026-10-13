@@ -984,7 +984,7 @@ Az F0 **a Visual Editor új UX/UI-koncepciójának újraalapozási és megvalós
 - Új szerkesztői információ-architektúra és UI: Page → Section → Box → szerkeszthető elemek; nested Box.
 - Canvas + Layers/tree + jobb oldali Inspector + responsive breakpointok + preview; hétköznapi szerkesztés dropdown/vezérlő alapú, CSS/JSON írása nélkül.
 - Vertikális/horizontális és két-/háromoszlopos layout; position/alignment/size/spacing/order.
-- Heading, plain Text (1.0 alap), image, button, divider, spacer, icon, link, video/audio/embed/form/list/dynamic content és Sanci-specifikus blokkok; a teljes Rich Text szerkesztő külön, későbbi scope.
+- Heading, plain Text (1.0 alap), image, button, divider, spacer, icon, link, video/audio/embed/form/list/table/accordion/tabs/dynamic content és Sanci-specifikus blokkok; a teljes Rich Text szerkesztő külön, későbbi scope.
 - Reusable component/symbol/template, theme/design tokens, media/resource/icon pickerek.
 - Selection, Layers, add/delete/duplicate/reparent/reorder, undo/redo, validation, keyboard/touch, drag/resize, snapping/guides, multi-select, zoom/grid, nesting, property search/reset.
 - Inspector/Property Registry, responsive overrides, typography, appearance, interactions/accessibility.
@@ -2293,7 +2293,8 @@ Az Editor önálló, professzionális, vizuális alkalmazás. Az alapvető oldal
 - Domain blokkoknál konfiguráció és adatforrás különüljön el: például Schedule blokk megjelenítési beállítása nem módosítja az események domainrekordjait.
 
 ### E.3.6 — Elem- és blokk-könyvtár
-- Alapelemek: Heading, Text (az 1.0 stabil plain-text eleme), Image, Video/Embed, Button, Link, Icon, Divider, Spacer, List, Quote, Card, Badge, Form és Container. Az összetett Rich Text szerkesztő külön, későbbi scope; a korábbi döntés alapján nem nyithat párhuzamos alapirányt.
+- Alapelemek: Heading, Text (az 1.0 stabil plain-text eleme), Image, Video/Embed, Button, Link, Icon, Divider, Spacer, List, Table, Quote, Card, Badge, Accordion, Tabs, Form és Container. Az összetett Rich Text szerkesztő külön, későbbi scope; a korábbi döntés alapján nem nyithat párhuzamos alapirányt.
+- A Table/Accordion/Tabs elemeknek típusos tartalmi mezői, validációja, keyboard/focus kezelése, responsive viselkedése és publikus renderer-tesztje legyen; ha 1.0 előtt nincs kész és tesztelt acceptance-e, későbbi elemként maradnak, nem állítjuk késznek.
 - Layout elemek: Section, Box/Container, Stack, Row, Columns, Grid és reusable Slot.
 - Dinamikus Sanci blokkok: Live Status, Twitch Player/Channel, Next Stream, Schedule, VOD/Video Feed, Clips/Shorts, Social Links, Community CTA, Support, Merch/Product Collection és későbbi Membership/Events/Content/Analytics blokkok.
 - Minden elemnél típusos default config, validáció, renderer, responsive viselkedés, accessible output és hiba/üres állapot.
@@ -2646,9 +2647,11 @@ Az alap oldalépítéshez ne kelljen CSS-t vagy HTML-t írni. Az Inspector bizto
 - Web analytics: page views, sessions, device/referrer, CTA/button/social click és konverzió csak consent/privacy szabály szerint; content/stream/commerce/community metric kizárólag valós, hiteles adatokból.
 - Metricsnél forrás, időszak, frissesség, hiányzó érték, API limit és retention legyen jelölve; export és role-based access. Anomaly detection későbbi fázis.
 - Automation lifecycle: event/schedule → trigger → condition → action → result → verify → audit. Típusok: scheduled, event, content, media, stream, notification. Delay/retry/idempotency/rate limit/dead-letter/failure state, enable/disable, version és per-site rules.
-- AI Website Assistant ugyanazt a canonical Page Model command/action rendszert használja, mint a manuális Editor: intent → actions → permission → validation → preview/diff → approval → execute → verify → audit/version. Nincs arbitrary database write vagy közvetlen generált HTML-kód publikálás.
-- AI cost/rate limits, user/site quotas, approval queue, prompt-template versions, usage/error logs és rollback; provider key soha nem lehet browserben.
-- Későbbi Stream Intelligence: live/silence/speech/chat activity/technical/audio-quality analysis ahol engedélyezett; context/scene suggestions, interesting moments, post-stream summary, VOD analysis, clip/Short candidates, platform-variánsok, thumbnail briefs, publishing advice, performance-feedback loops és szerkeszthető opt-in memory/preferences. Ezek nem 1.0 release gate-ek.
+- AI Website Assistant ugyanazt a canonical Page Model command/action rendszert használja, mint a manuális Editor: intent → task plan → structured actions → permission → schema validation → preview/diff → approval → execute → verify → audit/version. Nincs arbitrary database write vagy közvetlen generált HTML-kód publikálás.
+- Későbbi AI Orchestrator, Agent/Tool/Model Registry, Task Planner/Context Selector, Permission Checker/Approval Flow és több-modelles routing egyetlen auditálható feladat-életciklust alkot. Specialist agentek lehetnek: Web Engineer Agent, Visual Editor Agent, QA Agent, GitHub/Cloudflare Engineer Agent és Browser QA AI; ezek nem kapnak automatikus, korlátlan jogosultságot és nem kerülhetik meg a canonical API/action rendszert.
+- AI cost/rate limits, user/site quotas, approval queue, prompt-template versions, usage/error logs, error recovery és rollback; provider key soha nem lehet browserben.
+- Későbbi Stream Intelligence: live/silence/speech/chat activity/technical/audio-quality analysis ahol engedélyezett; context/scene suggestions, interesting moments, post-stream summary, VOD analysis, clip/Short candidates, platform-variánsok, thumbnail briefs, publishing advice, performance-feedback loops és szerkeszthető opt-in memory/preferences.
+- További későbbi AI-eszközök: egykattintásos clip/Short jelölt- és exportfolyamat emberi ellenőrzéssel; stream setup diagnostics assistant; AI Control Center az engedélyek, használat/költség, feladatok, approval, provider állapot és audit áttekintésére; experience evaluation/experiment cycle. Ezek nem 1.0 release gate-ek, és minden végigfutó AI-workflow end-to-end tesztet kap.
 
 ### F.9 — SEO, accessibility, security és performance kiadási kapu
 
