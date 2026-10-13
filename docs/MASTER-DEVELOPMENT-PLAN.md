@@ -4270,3 +4270,19 @@ F0.2 DoD:
 - [x] Contract teszt fedi a fókusz-visszaállítási viselkedést és a meglévő mobil kereső fókuszkezelését.
 - [ ] Friss CI PASS a teljes kötelező tesztkészleten.
 - [ ] Éles deploy utáni mobilos, billentyűzetes elfogadás továbbra is szükséges; F0.2 nem zárható le pusztán statikus tesztek alapján.
+
+
+## 2.77.9.H — Admin főoldal teljes vizuális újratervezése — 2026-10-13
+
+**Állapot: IMPLEMENTED IN BRANCH — NOT PASS / NOT DEPLOYED.** Ez a bejegyzés az aktív F0.2 checkpointon belül végrehajtott, teljes Admin Home UI-újratervezést rögzíti. Nem állítja, hogy az éles Cloudflare Worker már ezt a verziót szolgálja ki.
+
+- [x] A korábbi, általános dashboard-elrendezés helyett új Creator Control Center hero, áttekintő metrikák, webhelypanel, következő adás, munkaterület-kártyák, integrációs állapotok és gyors műveletek készültek.
+- [x] A meglévő canonical adatforrások és session-kezelés megmaradtak: `/api/auth/session`, `/api/admin/settings`, `/api/admin/pages?meta=1`, `/api/admin/schedule`, `/api/integrations/twitch/connection`.
+- [x] A 24 elemes teljes Creator Platform képességtérkép megmaradt; a nem implementált modulok továbbra is egyértelműen tervezett/későbbi állapotúak.
+- [x] Mobil/tablet/desktop elrendezés, világos/sötét téma, billentyűzetes fókusz és reduced-motion szabályok a redesign részei.
+- [x] Új Admin Home contract teszt készült a fő vizuális és működési szerződésekre.
+- [ ] Friss PR-CI teljes tesztkészlettel PASS.
+- [ ] Preview- és éles böngészős ellenőrzés; az éles deployt külön igazolni kell.
+- [ ] F0.2 teljes route/auth/navigation acceptance és felhasználói production acceptance; addig az aktív pont nem zárható le.
+
+**Kötelező értelmezés:** ez egy teljes főoldal-UI redesign, nem a jövőbeli Creator OS modulok implementációja. Az aktív pont továbbra is `F0.2-ADMIN-NAVIGATION-GLOBAL-SHELL-ACCEPTANCE`; az Editor fejlesztési pontjára csak az F0.2 teljes DoD és a production acceptance után lépünk tovább.
