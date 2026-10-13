@@ -58,16 +58,15 @@ export default {
     if (pathname === "/api/integrations/twitch/validation") return twitchValidationRoute(request, env);
     if (pathname === "/api/integrations/twitch/disconnect") return twitchDisconnectRoute(request, env);
     if (pathname === "/api/public/pages") return publicPagesRoute(request, env);
-    if (pathname === "/admin/login" || pathname === "/admin-login.html") return env.ASSETS.fetch(assetRequest("/admin-login.html", request));
-    if (pathname === "/admin" || pathname === "/admin.html") {
-      const user = await getAuthenticatedUser(request, env);
-      if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302);
-      return Response.redirect(new URL("/admin/home", request.url).toString(), 302);
+    if (pathname === "/admin/login") return env.ASSETS.fetch(assetRequest("/admin-login.html", request));
+    if (pathname === "/admin-login.html") return Response.redirect(new URL("/admin/login", request.url).toString(), 302);
+    if (pathname === "/admin/home" || pathname === "/admin-home.html" || pathname === "/admin.html") {
+      return Response.redirect(new URL("/admin", request.url).toString(), 302);
     }
-    if (pathname === "/admin/home" || pathname === "/admin-home.html") {
+    if (pathname === "/admin") {
       const user = await getAuthenticatedUser(request, env);
       if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302);
-      return env.ASSETS.fetch(assetRequest("/admin-home.html", request));
+      return env.ASSETS.fetch(assetRequest("/admin.html", request));
     }
     if (pathname === "/admin/editor") {
       const user = await getAuthenticatedUser(request, env);
