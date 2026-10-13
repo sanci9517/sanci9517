@@ -14,10 +14,10 @@
 ### 0.0. Új beszélgetés folytatási protokoll — kötelező
 - **Az egyetlen fejlesztési terv:** `docs/MASTER-DEVELOPMENT-PLAN.md` a `sanci9517/sanci9517` repository `v2/foundation` ágán. Ezt kell elsőként megnyitni minden új beszélgetésben.
 - **Aktív munkapont:** `P0-PRODUCT-BASELINE-AND-EXECUTION-CONTRACT` / `P0.2-ARCHIVE-RECONCILIATION-AND-BIDIRECTIONAL-FEATURE-TRACEABILITY`.
-- **Folytatási sorrend:** először a jelen fájl 0.2 aktív állapotát és 37.3 P0-állapotát, majd a 37.9–37.32 auditjegyzeteket és a 41.3.24–41.3.71 közötti legfrissebb forrásleltárakat, szemantikai korrekciókat és státuszokat kell elolvasni; utána az archív források még nyitott sorait kell folytatni. A 41.3.51 szerkezeti újraszámlálás és a 41.3.53–41.3.71 korrekciók frissebbek a korábbi összefoglaló számlálásoknál.
+- **Folytatási sorrend:** először a jelen fájl 0.2 aktív állapotát és 37.3 P0-állapotát, majd a 37.9–37.32 auditjegyzeteket és a 41.3.24–41.3.72 közötti legfrissebb forrásleltárakat, szemantikai korrekciókat és státuszokat kell elolvasni; utána az archív források még nyitott sorait kell folytatni. A 41.3.51 szerkezeti újraszámlálás és a 41.3.53–41.3.72 korrekciók frissebbek a korábbi összefoglaló számlálásoknál.
 - **Az archívum nem második terv:** az `docs/archive/**`, `docs/archive/plans/**`, régi checkpointok, issue-k, PR-ek és korábbi beszélgetések történeti források/bizonyítékok. Nem állíthatnak be másik aktív pontot, nem írhatják felül a jelen fájl aktív állapotát. Követelményük viszont nem törölhető; ha még nincs reconciliálva, nyitott tételként kell felvenni ebbe a MASTER-be.
 - **Nincs külön audit- vagy funkciólista-terv:** az auditjegyzék, a forrásproveniencia, a funkciókatalógus, a döntések, a függőségek és az acceptance ugyanebben a fájlban él. Kiegészítő fájl csak nyers bizonyíték/kivonat lehet, végrehajtási igazságforrás nem.
-- **Új chatnek szánt rövid folytatási szöveg:** „A `docs/MASTER-DEVELOPMENT-PLAN.md` az egyetlen irányadó terv. Olvasd el a 0.0, 0.2, 37.3, 37.9–37.32 és 41.3.24–41.3.71 fejezeteket, különösen a legfrissebb auditjegyzeteket. Az aktív pont P0.2; folytasd a C.23/F.1–F.13 és a H19–H34, MASTER-FINAL-ROADMAP, SANCI-MASTER-PLAN, V2-BLUEPRINT források szemantikai reconciliációját, a hiányzó 00/A és 00.9–00.9.6.B források további keresését, majd mind a 359 funkció-ID owner/phase/dependency/DoD/test/acceptance szerződésének lezárását. Ne állíts PASS-t bizonyíték nélkül, ne indíts párhuzamos feature-fejlesztést, és a végső funkciólista közös ellenőrzését még ne kérd.”
+- **Új chatnek szánt rövid folytatási szöveg:** „A `docs/MASTER-DEVELOPMENT-PLAN.md` az egyetlen irányadó terv. Olvasd el a 0.0, 0.2, 37.3, 37.9–37.32 és 41.3.24–41.3.72 fejezeteket, különösen a legfrissebb auditjegyzeteket. Az aktív pont P0.2; folytasd a C.23/F.1–F.13 és a H19–H34, MASTER-FINAL-ROADMAP, SANCI-MASTER-PLAN, V2-BLUEPRINT források szemantikai reconciliációját, a hiányzó 00/A és 00.9–00.9.6.B források további keresését, majd mind a 359 funkció-ID owner/phase/dependency/DoD/test/acceptance szerződésének lezárását. Ne állíts PASS-t bizonyíték nélkül, ne indíts párhuzamos feature-fejlesztést, és a végső funkciólista közös ellenőrzését még ne kérd.”
 
 Ez a dokumentum egyszerre termékspecifikáció, architekturális szerződés, funkciókatalógus, tesztelési szabályzat és végrehajtási lista. Minden fejlesztési feladatot ebből kell kiválasztani és ide kell visszavezetni. Minden funkcióhoz tartozzon felhasználói cél, felület, domain-tulajdonos, adatforrás, jogosultság, függőség, teszt és elfogadási feltétel.
 
@@ -2640,9 +2640,9 @@ The short decision record must name the problem and acceptance criteria; existin
 
 ### 37.29. P0.2 — Bullet-szintű crosswalk, batch 6: F.5–F.8 (Content, Schedule, Admin, Analytics, Automation, AI)
 
-**Forrás:** archived MASTER snapshot, 00.9.6.F.5–F.8. Mind a 26 forrásbullet külön kulcsot kap; a provider-, pénzügyi és AI-műveletek csak a saját capability/security gate után aktiválhatók.
+**Forrás:** archived MASTER snapshot, 00.9.6.F.5–F.8. Mind a 26 eredeti F.5–F.8 forrásbullet külön kulcsot kap; az ADD-01 külön új roadmap-disposition, nem történeti forrásbullet. A provider-, pénzügyi és AI-műveletek csak a saját capability/security gate után aktiválhatók.
 
-| Forráskulcs | Megőrzött követelmény | Canonical current ID | Döntés | Célfázis | QA-horgony |
+| Forráskulcs / ADD-kulcs | Megőrzött követelmény | Canonical current ID | Döntés | Célfázis | QA-horgony |
 |---|---|---|---|---|---|
 | F.5-01 | Content Manager ideas/drafts/scripts/title/description/tags/thumbnail/platform/date/campaign/approval | CNT-009–CNT-016, CAM-001 | EXPAND | 1.5–2.0 | QA-002/004 |
 | F.5-02 | VOD ingestion/category, clips/Shorts, calendar, platform metadata variants, publish queue/external IDs/dedupe | CNT-001–CNT-007, CNT-009–CNT-015 (including CNT-014 publish status/retry/partial success), CNT-018 | DEFER/EXPAND | 1.5–2.0 | QA-002/003/006 |
@@ -2662,7 +2662,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.7-04 | Public forms: schema/required labels/client+server validation/spam rate limit/success/error/privacy notice | WEB-020, SEC-002/007/011, QA-006 | EXPAND | 1.0 if form enabled | QA-003/004/006 |
 | F.7-05 | Store CRUD/variants/SKU/pricing/stock/order/payment/fulfillment/refund/provider errors | STO-001–STO-020 (including STO-002 variants/SKU/pricing and STO-003 categories/collections), STO-017, WEB-025 | DEFER | 5.0 | QA-002/003/008 |
 | F.7-06 | Merch/digital/bundle/preorder/limited drop/coupon/gift card/invoice/shipping/tax | STO-005–STO-020, CAM-009, SUP-004–SUP-006 | DEFER | 5.0 after legal/payment review | QA-002/003/008 |
-| F.7-07 | Abandoned-cart lifecycle: cart state, expiry, consent-aware reminder eligibility, opt-out, dedupe and provider-safe recovery | STO-016, STO-001/004/007/010, CAM-002, COM-017, SEC-011, OPS-005 | ADD / DEFER | 5.0 after canonical cart/order/payment, consent and email-provider contracts | QA-002/003/006/008 |
+| ADD-01 | Abandoned-cart lifecycle: cart state, expiry, consent-aware reminder eligibility, opt-out, dedupe and provider-safe recovery | STO-016, STO-001/004/007/010, CAM-002, COM-017, SEC-011, OPS-005 | ADD / DEFER | 5.0 after canonical cart/order/payment, consent and email-provider contracts | QA-002/003/006/008 |
 | F.8-01 | Consent-aware web/content/stream/commerce/community analytics only from real sources | ANL-001–ANL-006, ANL-009, SEC-011 | DEFER/EXPAND | 2.0+ by source | QA-003/008 |
 | F.8-02 | Metrics source/period/freshness/missing values/API limits/retention/export/role; anomaly detection later | ANL-007–ANL-010, SEC-002 | EXPAND | 2.0+ | QA-002/003/008 |
 | F.8-03 | Automation event/schedule→trigger→condition→action→result→verify→audit with retry/idempotency/rate/dead-letter/version/site rules | AUT-001–AUT-014 (including AUT-003 condition/filter rules, AUT-010 enable/pause/version/clone lifecycle, and AUT-013 templates as separately phased), SEC-003, SEC-010 | DEFER | 7.0 | QA-002/003/006/008 |
@@ -2675,9 +2675,9 @@ The short decision record must name the problem and acceptance criteria; existin
 **Batch 6 result:** all 26 F.5–F.8 source bullets are individually represented. This does not establish provider approval, runtime capability, or acceptance PASS.
 ### 37.30. P0.2 — Bullet-szintű crosswalk, batch 7: F.9–F.13 (quality gates, recovery, context, Game Profile, domains)
 
-**Forrás:** archived MASTER snapshot, 00.9.6.F.9–F.13. A személyes/projektindulási kontextus konfigurációként marad meg; a custom domain, email audience és workspace/team későbbi, külön security/legal acceptance-t igénylő scope. A korábbi F.10–F.13 sorok külön detail mappingjét ebbe az egyetlen táblába vontam össze, hogy ne maradjon két párhuzamos crosswalk.
+**Forrás:** archived MASTER snapshot, 00.9.6.F.9–F.13. A személyes/projektindulási kontextus konfigurációként marad meg; a custom domain, email audience és workspace/team későbbi, külön security/legal acceptance-t igénylő scope. A korábbi F.10–F.13 sorok külön detail mappingjét ebbe az egyetlen táblába vontam össze, hogy ne maradjon két párhuzamos crosswalk. Az ADD-02 és ADD-03 külön új roadmap-disposition sorok, nem történeti forrásbulletök.
 
-| Forráskulcs | Megőrzött követelmény | Canonical current ID | Döntés | Célfázis | QA-horgony |
+| Forráskulcs / ADD-kulcs | Megőrzött követelmény | Canonical current ID | Döntés | Célfázis | QA-horgony |
 |---|---|---|---|---|---|
 | F.9-01 | Published-page SEO metadata, canonical, Open Graph/social cards, sitemap/robots/schema; drafts and preview non-indexable | SEO-001–SEO-005, WEB-005, WEB-006 | KEEP/EXPAND | 1.0 release gate | QA-004/008 |
 | F.9-02 | Redirect/broken-link tooling only with preview and approval | SEO-005, WEB-013, SEC-002/010 | DEFER | 2.0+ | QA-003/008 |
@@ -2700,8 +2700,8 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.12-04 | Weekly stream cadence is editable Schedule data, not a hardcoded product rule | SCH-001–SCH-003, SCH-009 | KEEP | 1.0 | QA-002/004 |
 | F.12-05 | Historical support goal/platforms are not active payment integration; recheck current target/platform/privacy/legal text before campaign | SUP-001, SUP-002, SUP-003 supporter goal/progress, WEB-023, COM-014, SEC-011 | KEEP | 1.0 external links only if confirmed; payments later | QA-003/004/008 |
 | F.12-06 | Project brand/profile/goal data remains configurable and changeable | SET-001–SET-003, WEB-001, SCH-001, INT-001 | KEEP | 1.0 | QA-002/004 |
-| F.12-07 | Membership entitlement and member-only content/event access; expiry/revocation enforced server-side, never by UI-only hiding | SUP-005, SUP-011, SEC-002/003/004, TEAM-003/005, WEB-004/008 | ADD / DEFER | 3.0+ after identity/entitlement contract and authorization tests | QA-002/003/008 |
-| F.12-08 | Membership billing lifecycle: renewal, cancellation, failed payment, refund and chargeback effects on entitlements with verified/idempotent provider events | SUP-007, SUP-008, SUP-005/011, SEC-003/010/011, OPS-005/006 | ADD / DEFER | 4.0+ after provider/legal decision, webhook verification and recovery contract | QA-002/003/006/008 |
+| ADD-02 | Membership entitlement and member-only content/event access; expiry/revocation enforced server-side, never by UI-only hiding | SUP-005, SUP-011, SEC-002/003/004, TEAM-003/005, WEB-004/008 | ADD / DEFER | 3.0+ after identity/entitlement contract and authorization tests | QA-002/003/008 |
+| ADD-03 | Membership billing lifecycle: renewal, cancellation, failed payment, refund and chargeback effects on entitlements with verified/idempotent provider events | SUP-007, SUP-008, SUP-005/011, SEC-003/010/011, OPS-005/006 | ADD / DEFER | 4.0+ after provider/legal decision, webhook verification and recovery contract | QA-002/003/006/008 |
 | F.13-01 | Game Profile stable ID/slug/name/provider mapping/resource refs/brand metadata/cover/status/description | SCH-012–SCH-014, RES-013, SET-001 | EXPAND | 1.5–2.0 | QA-002/004 |
 | F.13-02 | Schedule references Game Profile by stable ID, not copied fields or name matching | SCH-001, SCH-012, SCH-014 | KEEP | 1.5–2.0; 1.0 schedule stays canonical | QA-002/003 |
 | F.13-03 | Missing artwork/metadata must use explicit fallback; Inspector shows only valid fields | SCH-013, RES-001/004/008/010/015, DYN-005, EDT-022 | EXPAND | 1.5–2.0 | QA-002/004/006 |
@@ -2724,12 +2724,12 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.13-20 | Starter template categories remain available as configurable library choices | DSN-008–DSN-010 | EXPAND | 1.0 starter templates; library later | QA-004 |
 | F.13-21 | Future creator-made template/component/theme/overlay/OBS/digital asset marketplace with license/version/review/revenue share | DSN-014, DSN-015, OBS-001–OBS-010, STO-012, MKT-001, MKT-002, MKT-003, MKT-004, MKT-005, CAM-009 | DEFER | 3.0–6.0 | QA-002/003/008 |
 
-**Batch 7 result:** 42 egyedi source bullet F.9–F.13 között (7 F.9 + 35 F.10–F.13). A hivatkozások szerkezeti validációja külön gate; ez a mapping nem runtime PASS.
+**Batch 7 result:** 42 egyedi eredeti source bullet F.9–F.13 között (7 F.9 + 35 F.10–F.13), plusz az ADD-02 és ADD-03 külön roadmap-disposition sorok. A hivatkozások szerkezeti validációja külön gate; ez a mapping nem runtime PASS.
 
 
 ### 37.32. P0.2 — Crosswalk szerkezeti validációs összesítő
 
-**Validált forrás-revízió:** v2/foundation commit 2513c71bdfa36ae30bd02c3c378f626221506bb8. A validáció a §24 feature registryt hasonlította össze a §37 crosswalk táblák explicit és tartományból kibontott ID-hivatkozásaival.
+**Eredeti validált forrás-revízió:** v2/foundation commit 2513c71bdfa36ae30bd02c3c378f626221506bb8. A jelenlegi táblázatsor- és ID-számokat a 2026-10-13-i §41.3.72 újraszámolás frissíti.
 
 | Crosswalk batch | Sorok | Különböző hivatkozott feature/QA ID-k | Feloldatlan ID |
 |---|---:|---:|---:|
@@ -2737,10 +2737,10 @@ The short decision record must name the problem and acceptance criteria; existin
 | §37.23 E.4–E.9 | 66 | 282 | 0 |
 | §37.24 E.10–E.14 | 45 | 150 | 0 |
 | §37.25 E.15–E.21 + E.20 contract/negative tests | 59 | 345 | 0 |
-| §37.27 F.1–F.4 | 28 | 97 | 0 |
-| §37.29 F.5–F.8 | 26 | 168 | 0 |
-| §37.30 F.9–F.13 | 42 | 325 | 0 |
-| **Összesen** | **323** | *batchenként külön számolt* | **0** |
+| §37.27 F.1–F.4 | 32 | 108 | 0 |
+| §37.29 F.5–F.8 | 27 | 171 | 0 |
+| §37.30 F.9–F.13 | 44 | 325 | 0 |
+| **Összesen** | **330** | *batchenként külön számolt* | **0** |
 
 A §24 registry 359 egyedi ID-t tartalmaz duplikáció nélkül; a H19–H34 ledger 271 egyedi történeti kulcsból és 271 sorból áll.
 
@@ -4252,9 +4252,9 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 
 ### 41.3.23. P0.2 — Explicit feature-ID references versus range-only coverage (2026-10-13)
 
-**Structural recheck:** the §24 registry contains **359 unique stable IDs** with no duplicate definition. The C.23 source ledger contains **210 individual source rows**; the F.1–F.13 archive contains **100 original source bullets**. The active F crosswalk now contains **103 rows**: 100 source-level rows (including the nine one-to-one F.3 rows) plus three explicitly added roadmap-disposition rows (F.7-07 abandoned cart, F.12-07 entitlement/access and F.12-08 membership billing lifecycle). The H19–H34 ledger contains **271 rows**. These counts establish inventory cardinality only, not semantic correctness.
+**Structural recheck:** the §24 registry contains **359 unique stable IDs** with no duplicate definition. The C.23 source ledger contains **210 individual source rows**; the F.1–F.13 archive contains **100 original source bullets**. The active F crosswalk now contains **103 rows**: 100 source-level rows (including the nine one-to-one F.3 rows) plus three explicitly added roadmap-disposition rows (ADD-01 abandoned cart, ADD-02 entitlement/access and ADD-03 membership billing lifecycle). The H19–H34 ledger contains **271 rows**. These counts establish inventory cardinality only, not semantic correctness.
 
-**Range-only review:** before the explicit mapping refinements in the preceding commit, 22 registry IDs appeared after §24 only through a broad ID range and had no individual exact reference. The crosswalk has now been made explicit for the source-backed capabilities that can be safely tied to an existing source row (including WEB-015, RES-012, INT-004, CNT-008/CNT-014, STO-002/STO-003/STO-017, SUP-003, AUT-003, CAM-006 and MKT-002–MKT-004). Within the source crosswalk tables (excluding audit commentary), the five formerly range-only IDs are now explicit in F.7-07 and F.12-07/08. This resolves range-only reference coverage, but not historical provenance: STO-016, SUP-005, SUP-007, SUP-008 and SUP-011 are newly dispositioned roadmap requirements, not retroactively claimed as recovered historical bullets. AUT-010 and AI-004 are explicit in F.8; COM-003 and COM-007 are retained in F.11-02 with detailed contracts still open.
+**Range-only review:** before the explicit mapping refinements in the preceding commit, 22 registry IDs appeared after §24 only through a broad ID range and had no individual exact reference. The crosswalk has now been made explicit for the source-backed capabilities that can be safely tied to an existing source row (including WEB-015, RES-012, INT-004, CNT-008/CNT-014, STO-002/STO-003/STO-017, SUP-003, AUT-003, CAM-006 and MKT-002–MKT-004). Within the source crosswalk tables (excluding audit commentary), the five formerly range-only IDs are now explicit in ADD-01 and ADD-02/08. This resolves range-only reference coverage, but not historical provenance: STO-016, SUP-005, SUP-007, SUP-008 and SUP-011 are newly dispositioned roadmap requirements, not retroactively claimed as recovered historical bullets. AUT-010 and AI-004 are explicit in F.8; COM-003 and COM-007 are retained in F.11-02 with detailed contracts still open.
 
 - **COM-003 — Community posts:** F.11-02 now explicitly retains this as a planned community capability under the 1.x/2.0 community roadmap. It is not 1.0 runtime scope. **DEFER / phase-specific contract OPEN:** authoring/moderation roles, post visibility, abuse/spam controls, report/remove/audit, user privacy and negative authorization tests must be defined before implementation.
 - **COM-007 — Comments/reactions:** F.11-02 now explicitly retains this planned capability, but it must not be inferred from a generic community link or post feed. **DEFER / phase-specific contract OPEN:** who can comment/react, rate limits, moderation, block/report, deletion/retention and abuse tests are required.
@@ -7457,3 +7457,16 @@ The historical unified MASTER at commit aedb2eaab2440c29bd0c05959d5064f410de5966
 **Conclusion:** no primary-source recovery from the surviving documentation corpus. The original 00/A and 00.9–00.9.6.B remain **UNRECOVERED / OPEN**. Preserve all mapped requirements as candidates, but do not declare semantic reconciliation complete until primary source or equivalent user-approved authoritative evidence is recovered and every source item is dispositioned. P0.2 remains **IN PROGRESS / NOT PASS**.
 
 **Status:** 13 non-MASTER docs scanned plus the archived MASTER snapshot; one partial 00/A.2.2 heading found; no original 00.9.6.B chapter found. Documentation-only; no runtime code/data/configuration changed and no tests were run.
+
+### 41.3.72. P0.2 — Crosswalk row-count, source-key provenance and ID-reference recount (2026-10-13)
+
+**Scope:** re-counted the current §37.22–§37.30 tables directly from the canonical MASTER and compared them with §37.32's older summary and the original F.1–F.13 bullet inventory in the archived MASTER snapshot.
+
+**Findings:** the §37.32 row counts were stale after the F.3 split and three separately added roadmap requirements. Current unique row keys are: E.2–E.3 = 57; E.4–E.9 = 66; E.10–E.14 = 45; E.15–E.21 plus the E.20 contract/negative-test rows = 59; F.1–F.4 = 32; F.5–F.8 = 27; F.9–F.13 = 44. The current total is **330 rows**, not 323. The current ID recount expands numeric ranges and slash shorthand in the canonical mapping and QA-anchor columns; all referenced IDs resolve to the 359-ID §24 registry, with zero unknown IDs in the seven checked batches.
+
+The archived MASTER contains **100 original F.1–F.13 bullets**: F.1=10, F.2=6, F.3=9, F.4=7, F.5=7, F.6=5, F.7=6, F.8=8, F.9=7, F.10=4, F.11=4, F.12=6, F.13=21. The active crosswalk has 103 rows because three additional roadmap requirements had been assigned misleading historical-looking keys: abandoned cart, membership entitlement/access, and membership billing lifecycle. These are now labeled separately as **ADD-01, ADD-02, and ADD-03**. The original source-key inventory therefore remains 100 bullets; the three additions remain preserved but are not represented as recovered archive bullets.
+
+**Corrected summary:** §37.32 now reports 32/27/44 rows for the three F batches and 330 total rows. §37.29/§37.30 identify ADD keys separately, and §41.3.23 retains the distinction between 100 original F bullets and 103 active rows. This is structural/provenance correction only: it does not prove semantic completeness, contract acceptance, or runtime implementation.
+
+**Status:** stale counts corrected; all seven current E/F batches have zero unresolved feature/QA IDs under the documented recount method. P0.2 remains **IN PROGRESS / NOT PASS** because the original 00/A and 00.9–00.9.6.B sources and full bidirectional semantic reconciliation remain open. Documentation-only; no runtime code/data/configuration changed and no tests were run.
+
