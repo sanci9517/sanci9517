@@ -9,7 +9,7 @@
 
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 **Dokumentum státusza:** ez az egyetlen végrehajtási igazságforrás.
-**Audit baseline:** GitHub `v2/foundation`, commit `080a436` (2026-10-13; current audited snapshot). A repository-snapshot nem helyettesíti a külön szükséges runtime-, teszt- és felhasználói bizonyítékokat.
+**Audit baseline:** GitHub `v2/foundation`, commit `5430485a` (2026-10-13; audit-index and Visual Editor rebaseline update). A repository-snapshot nem helyettesíti a külön szükséges runtime-, teszt- és felhasználói bizonyítékokat.
 
 ### Jelenlegi igazolt állapot
 Ez a blokk kizárólag az M0 előtti lezárt gate-eket rögzíti; nem jelenti azt, hogy az M0 alatti részpontok lezárultak.
@@ -971,7 +971,7 @@ F0 után csak a teljes PASS lánc:
 **F0 státusz:** `[ ] QUEUED / PAUSED — M0 PASS-ig nincs F0 feature-implementáció. A korábbi audit/implementáció bizonyítékait M0 újraértékeli.`
 
 **F0 célja:**  
-A jelenlegi `public/editor-v2/` canonical Editor v2 teljes használhatósági alapjának helyreállítása és bizonyítása úgy, hogy az Editor **desktopon, tableten és mobilon ugyanazt a canonical Page Modelt szerkessze**, a bal oldali navigáció valóban használható legyen, az Inspector valódi szerkesztési felületként működjön, az Adásrend külön domain-szerkesztési felületként elérhető legyen, és egyetlen szerkesztési/mutation/persistence útvonal maradjon.
+A Visual Editor UX/UI-jának újraalapozása a korábban elfogadott strukturált-konténeres koncepció szerint, úgy, hogy desktopon, tableten és mobilon ugyanazt a canonical Page Modelt szerkessze. A régi UI csak akkor maradhat meg, ha a célkövetelményeknek bizonyíthatóan megfelel; egyébként a felületi réteg újraépítendő, miközben a bizonyított canonical domain-, mutation- és persistence alapokat megőrizzük. A bal oldali navigáció/Layers, a canvas, a jobb oldali Inspector, a responsive módok és az Adásrend szerkesztése egyetlen összefüggő felhasználói folyamat részei.
 
 Az F0 **a Visual Editor új UX/UI-koncepciójának újraalapozási és megvalósítási kapuja**: nem kötelező a régi felületet foltozgatni, és indokolt esetben a UI-réteg újraépíthető. A meglévő, bizonyítottan megfelelő domain- és platformalapokat újra kell használni. Nem készül második canonical Page Model, Editor core, Schedule domain, Property Registry vagy save/publish útvonal.
 
