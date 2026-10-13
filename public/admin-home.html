@@ -339,7 +339,235 @@
     @media(max-width:600px) { .capability-grid { grid-template-columns:1fr; } .capability-card { padding:16px; } .capability-hero h2 { font-size:28px; } .capability-group-heading { margin-top:30px; } .capability-card-top { align-items:flex-start; } .capability-card-top .capability-state { max-width:65%; } .footer-note { align-items:center; flex-direction:column; text-align:center; } }
     @media(prefers-reduced-motion:reduce) { .capability-card { transition:none; } .capability-card:hover { transform:none; } }
 
-</style>
+
+    /* F0.1 full Admin Home redesign: editorial creator dashboard */
+    :root {
+      --bg:#0c0a13;
+      --surface:#15121e;
+      --surface-raised:#201a2d;
+      --surface-soft:#100d18;
+      --line:#30283f;
+      --line-strong:#49385f;
+      --text:#fbf8ff;
+      --muted:#b8aec8;
+      --subtle:#8d819f;
+      --accent:#d3adff;
+      --accent-strong:#9256e8;
+      --accent-soft:rgba(174,126,245,.15);
+      --success:#78e0b6;
+      --warning:#f1c477;
+      --danger:#ff91a1;
+    }
+    body { background:radial-gradient(ellipse at 78% -20%,rgba(135,73,213,.18),transparent 40%),var(--bg); }
+    .sidebar { width:258px; padding:22px 13px 14px; background:rgba(12,10,19,.97); border-right-color:#292236; }
+    .brand { padding:3px 10px 20px; }
+    .brand-mark { border-radius:14px; background:linear-gradient(145deg,#a66af0,#6030a1); box-shadow:0 8px 24px rgba(146,86,232,.28); }
+    .brand-name { letter-spacing:.18em; }
+    .site-switcher { border-color:#3a2d4d; background:linear-gradient(120deg,rgba(146,86,232,.12),rgba(255,255,255,.015)); }
+    .nav-label { margin-top:16px; border:0; background:none; padding:8px 10px 4px; color:#9683b3; font-size:9px; letter-spacing:.16em; }
+    .nav-list { gap:3px; }
+    .nav-item { min-height:40px; border-radius:10px; }
+    .nav-item[aria-current="page"] { background:linear-gradient(95deg,rgba(146,86,232,.23),rgba(146,86,232,.06)); box-shadow:inset 3px 0 0 #b78aff; }
+    .main-shell { margin-left:258px; }
+    .topbar { min-height:70px; padding:0 clamp(18px,3vw,42px); background:rgba(12,10,19,.86); border-bottom-color:#282136; }
+    .breadcrumbs strong { font-size:13px; }
+    .search-wrap { width:min(330px,27vw); }
+    .menu-search { border-radius:13px; background:#15111f; }
+    .icon-action,.theme-toggle { border-radius:12px; }
+    .main-content { max-width:1540px; padding:30px clamp(18px,3.1vw,46px) 38px; }
+    .hero-panel { position:relative; display:grid; grid-template-columns:minmax(0,1.25fr) minmax(220px,.75fr); align-items:center; gap:22px; min-height:280px; overflow:hidden; padding:clamp(25px,3vw,43px); border:1px solid #49345f; border-radius:25px; background:radial-gradient(ellipse at 83% 18%,rgba(188,138,255,.22),transparent 34%),linear-gradient(118deg,#211631 0%,#181123 58%,#171020 100%); box-shadow:0 22px 55px rgba(0,0,0,.22); }
+    .hero-panel:after { position:absolute; right:0; bottom:0; left:0; height:3px; background:linear-gradient(90deg,#a875f0,#e0b8ff 38%,transparent 80%); content:""; opacity:.8; }
+    .hero-copy { position:relative; z-index:2; }
+    .hero-copy .eyebrow { display:flex; align-items:center; gap:9px; margin-bottom:17px; color:#c8a3f7; font-size:9px; letter-spacing:.17em; }
+    .live-indicator,.metric-foot-dot,.system-note-dot { width:7px; height:7px; border-radius:50%; background:#79e2b6; box-shadow:0 0 0 4px rgba(121,226,182,.1); }
+    .hero-date { margin-left:6px; color:#9180a7; font-weight:650; letter-spacing:.1em; }
+    .hero-panel h1 { max-width:760px; font-size:clamp(30px,3.5vw,48px); line-height:1.08; letter-spacing:-.055em; }
+    .hero-gradient { color:#d5b6ff; }
+    .hero-panel .intro { max-width:590px; margin-top:15px; color:#c3b5d2; font-size:13px; line-height:1.75; }
+    .hero-panel .welcome-actions { margin-top:23px; }
+    .hero-panel .btn { min-height:43px; padding:0 16px; border-radius:12px; }
+    .hero-panel .btn-primary { background:linear-gradient(120deg,#9c62ed,#7843c7); border-color:#a978f1; }
+    .hero-secondary { background:rgba(255,255,255,.035); border-color:#5a456f; }
+    .hero-art { position:relative; display:grid; min-height:215px; place-items:center; }
+    .hero-orbit { position:absolute; width:210px; height:210px; border:1px solid rgba(199,161,255,.25); border-radius:50%; transform:rotate(-25deg) scaleY(.72); }
+    .orbit-two { width:158px; height:250px; border-color:rgba(199,161,255,.18); transform:rotate(48deg) scaleY(.76); }
+    .hero-core { position:relative; display:grid; width:118px; height:118px; place-content:center; justify-items:center; border:1px solid rgba(220,191,255,.56); border-radius:34px; background:linear-gradient(145deg,rgba(169,111,240,.32),rgba(61,37,88,.65)); box-shadow:0 0 60px rgba(146,86,232,.25),inset 0 0 30px rgba(214,185,255,.08); transform:rotate(-7deg); }
+    .hero-core-mark { font-size:46px; font-weight:900; line-height:1; color:#f6eaff; }
+    .hero-core-caption { margin-top:7px; color:#c7addf; font-size:8px; font-weight:800; letter-spacing:.18em; text-align:center; }
+    .hero-float { position:absolute; display:flex; align-items:center; gap:9px; padding:10px 12px; border:1px solid rgba(205,175,241,.22); border-radius:13px; background:rgba(21,15,31,.92); box-shadow:0 10px 30px rgba(0,0,0,.2); }
+    .float-top { top:12px; right:0; }
+    .float-bottom { bottom:8px; left:0; }
+    .float-icon { display:grid; width:29px; height:29px; place-items:center; border-radius:9px; background:rgba(165,112,239,.18); color:#d6b4ff; }
+    .float-pulse { width:8px; height:8px; border-radius:50%; background:#79e2b6; box-shadow:0 0 0 5px rgba(121,226,182,.09); }
+    .hero-float strong,.hero-float small { display:block; }
+    .hero-float strong { color:#f3eafa; font-size:10px; }
+    .hero-float small { margin-top:4px; color:#a89ab8; font-size:9px; }
+    .section-heading { margin-top:29px; margin-bottom:13px; border-bottom:1px solid #332941; }
+    .section-heading h2 { font-size:15px; letter-spacing:-.025em; }
+    .section-heading h2:before { height:17px; border-radius:3px; background:linear-gradient(#bd91ff,#8050c8); }
+    .section-heading p { margin-top:5px; }
+    .overview-grid { gap:12px; }
+    .metric-card { position:relative; min-height:153px; overflow:hidden; padding:18px 18px 15px; border:1px solid #3b304a; border-top:1px solid #4b3a60; border-radius:17px; background:linear-gradient(150deg,#191422,#13101b); box-shadow:0 10px 25px rgba(0,0,0,.12); }
+    .metric-card:after { position:absolute; right:-30px; bottom:-52px; width:120px; height:120px; border:1px solid rgba(181,139,242,.08); border-radius:50%; content:""; box-shadow:0 0 0 16px rgba(181,139,242,.025),0 0 0 32px rgba(181,139,242,.018); }
+    .metric-site { border-top:2px solid #b080f2; }
+    .metric-pages { border-top:2px solid #72cdb0; }
+    .metric-schedule { border-top:2px solid #f0c477; }
+    .metric-twitch { border-top:2px solid #b99af7; }
+    .metric-icon { width:35px; height:35px; border-radius:11px; background:rgba(255,255,255,.035); border-color:#3b304a; }
+    .metric-value { margin-top:14px; font-size:25px; }
+    .metric-note { min-height:16px; }
+    .metric-foot { display:flex; align-items:center; gap:8px; margin-top:12px; color:#8d819f; font-size:9px; }
+    .metric-foot-dot { width:5px; height:5px; box-shadow:none; background:#9f78d6; }
+    .ops-grid,.lower-grid { display:grid; grid-template-columns:minmax(0,1.08fr) minmax(300px,.92fr); gap:14px; margin-top:15px; }
+    .panel { padding:21px; border:1px solid #392e49; border-radius:18px; background:linear-gradient(145deg,#191522,#14111c); box-shadow:0 12px 28px rgba(0,0,0,.12); }
+    .panel-header { align-items:center; margin-bottom:17px; }
+    .panel-header h2 { margin-top:5px; font-size:16px; }
+    .panel-header p { margin-top:6px; font-size:10px; }
+    .panel-kicker { color:#a68ac9; font-size:8px; font-weight:850; letter-spacing:.17em; }
+    .panel-mark,.integration-orb { display:grid; width:39px; height:39px; flex:0 0 auto; place-items:center; border:1px solid #514064; border-radius:13px; background:linear-gradient(145deg,rgba(162,105,231,.23),rgba(255,255,255,.02)); color:#d6b6ff; font-size:18px; font-weight:850; }
+    .site-preview { gap:12px; padding:14px; border-color:#3b304b; border-radius:14px; background:rgba(255,255,255,.025); }
+    .preview-icon { border-color:#5a4274; border-radius:13px; background:linear-gradient(145deg,rgba(159,99,229,.22),rgba(159,99,229,.06)); }
+    .preview-copy strong { font-size:12px; }
+    .preview-copy span { white-space:normal; line-height:1.45; }
+    .small-btn { display:inline-flex; align-items:center; justify-content:center; min-height:32px; border-radius:9px; }
+    .small-btn-accent { border-color:#7651a1; background:rgba(146,86,232,.14); }
+    .schedule-row { gap:13px; padding:15px 0; }
+    .date-tile { width:48px; height:51px; border-color:#483657; background:rgba(164,109,233,.09); }
+    .date-tile strong { color:#e3ceff; font-size:18px; }
+    .empty-state { border-color:#4b3a5f; border-radius:13px; background:rgba(255,255,255,.02); }
+    .workspace-section { margin-top:6px; }
+    .section-link { color:#c6a4f1; font-size:10px; font-weight:750; white-space:nowrap; }
+    .workspace-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
+    .workspace-card { position:relative; display:flex; min-height:207px; flex-direction:column; align-items:flex-start; padding:18px; overflow:hidden; border:1px solid #3a2f49; border-radius:17px; background:linear-gradient(155deg,#191522,#13101a); transition:transform .18s,border-color .18s,background .18s; }
+    .workspace-card:hover:not(.workspace-card-muted) { transform:translateY(-3px); border-color:#7854a1; background:linear-gradient(155deg,#21172e,#17121f); }
+    .workspace-card-primary { border-color:#61447e; background:radial-gradient(ellipse at 90% 0%,rgba(163,101,232,.16),transparent 45%),linear-gradient(155deg,#21172e,#15101e); }
+    .workspace-card-icon { display:grid; width:39px; height:39px; place-items:center; border:1px solid #4c3a60; border-radius:12px; background:rgba(167,111,235,.13); color:#d6b4ff; font-size:17px; }
+    .workspace-card-state { margin-top:15px; font-size:8px; font-weight:850; letter-spacing:.12em; }
+    .state-ready { color:#78dfb5; }
+    .state-planned { color:#a193b4; }
+    .workspace-card>strong { margin-top:7px; font-size:13px; line-height:1.35; }
+    .workspace-card p { margin:8px 0 15px; color:#a99db7; font-size:10px; line-height:1.6; }
+    .workspace-card-link { display:flex; align-items:center; justify-content:space-between; gap:8px; width:100%; margin-top:auto; padding-top:12px; border-top:1px solid #33283f; color:#d2b4f7; font-size:9px; font-weight:750; }
+    .workspace-card-link b { font-size:13px; }
+    .workspace-card-muted { opacity:.85; background:linear-gradient(155deg,#17131d,#121018); }
+    .integration-row { display:flex; align-items:center; gap:11px; padding:13px 0; border-bottom:1px solid #2f263a; }
+    .integration-row:last-of-type { border-bottom:0; }
+    .integration-logo { display:grid; width:34px; height:34px; flex:0 0 auto; place-items:center; border-radius:11px; font-size:14px; font-weight:850; }
+    .twitch-logo { background:rgba(155,103,238,.16); color:#c5a1ff; }
+    .youtube-logo { background:rgba(245,75,90,.11); color:#ff8a94; }
+    .tiktok-logo { background:rgba(111,201,206,.1); color:#8ddde0; }
+    .integration-copy { min-width:0; flex:1; }
+    .integration-copy strong,.integration-copy small { display:block; }
+    .integration-copy strong { font-size:11px; }
+    .integration-copy small { margin-top:4px; color:#a396b2; font-size:9px; line-height:1.4; }
+    .quick-link { display:flex; align-items:center; gap:11px; padding:12px 0; border-bottom:1px solid #30263b; }
+    .quick-link:last-of-type { border-bottom:0; }
+    .quick-link-icon { display:grid; width:34px; height:34px; flex:0 0 auto; place-items:center; border:1px solid #49365e; border-radius:11px; background:rgba(164,106,235,.1); color:#d2b0ff; }
+    .quick-link>span:nth-child(2) { min-width:0; flex:1; }
+    .quick-link strong,.quick-link small { display:block; }
+    .quick-link strong { font-size:10px; }
+    .quick-link small { margin-top:4px; color:#9488a2; font-size:9px; }
+    .quick-link>b { color:#bda0df; font-size:14px; }
+    .system-note { display:flex; align-items:flex-start; gap:10px; margin-top:14px; padding:12px; border:1px solid #3a3048; border-radius:12px; background:rgba(255,255,255,.02); }
+    .system-note-dot { margin-top:4px; flex:0 0 auto; }
+    .system-note strong,.system-note small { display:block; }
+    .system-note strong { font-size:10px; }
+    .system-note small { margin-top:4px; color:#9d91ac; font-size:9px; line-height:1.45; }
+    .platform-capabilities { margin-top:42px; padding-top:4px; }
+    .capability-hero { padding:27px; border:1px solid #443451; border-radius:20px; background:radial-gradient(ellipse at 88% 0%,rgba(152,97,220,.12),transparent 45%),#15111c; }
+    .capability-hero h2 { font-size:clamp(22px,2.5vw,32px); }
+    .capability-hero>p { max-width:780px; line-height:1.7; }
+    .capability-card { border-radius:15px; background:linear-gradient(150deg,#191522,#14111c); }
+    .capability-card:hover { border-color:#614879; }
+    .capability-disclaimer { padding:15px 17px; border:1px solid #3b3049; border-radius:12px; background:rgba(255,255,255,.025); }
+    .footer-note { margin-top:30px; padding-top:18px; }
+    :root[data-theme="light"] body { background:radial-gradient(ellipse at 78% -20%,rgba(147,88,218,.09),transparent 40%),var(--bg); }
+    :root[data-theme="light"] .sidebar { background:rgba(255,255,255,.97); }
+    :root[data-theme="light"] .hero-panel { background:radial-gradient(ellipse at 83% 18%,rgba(188,138,255,.2),transparent 34%),linear-gradient(118deg,#f1e7ff,#fbf8ff 62%,#f4edff); border-color:#ddc8f4; }
+    :root[data-theme="light"] .hero-panel .intro,:root[data-theme="light"] .hero-float small { color:#645571; }
+    :root[data-theme="light"] .hero-panel .eyebrow,:root[data-theme="light"] .hero-gradient { color:#7742b6; }
+    :root[data-theme="light"] .hero-float { background:rgba(255,255,255,.9); border-color:#e2d1f4; }
+    :root[data-theme="light"] .hero-float strong { color:#2c203a; }
+    :root[data-theme="light"] .hero-core { background:linear-gradient(145deg,#d9bafc,#a77be0); }
+    :root[data-theme="light"] .hero-core-mark,:root[data-theme="light"] .hero-core-caption { color:#3f225f; }
+    :root[data-theme="light"] .metric-card,:root[data-theme="light"] .panel,:root[data-theme="light"] .workspace-card,:root[data-theme="light"] .capability-card { background:var(--surface); }
+    :root[data-theme="light"] .workspace-card p,:root[data-theme="light"] .integration-copy small,:root[data-theme="light"] .quick-link small,:root[data-theme="light"] .system-note small { color:#6e617d; }
+    :root[data-theme="light"] .workspace-card-link,:root[data-theme="light"] .section-link { color:#7543b1; }
+    :root[data-theme="light"] .hero-secondary { background:rgba(255,255,255,.72); color:#39264c; border-color:#d3bde9; }
+    @media (max-width:1200px) {
+      .workspace-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .hero-panel { grid-template-columns:minmax(0,1fr) minmax(180px,.55fr); }
+      .hero-art { transform:scale(.9); }
+    }
+    @media (max-width:900px) {
+      .sidebar { transform:translateX(-105%); transition:transform .2s ease; }
+      .sidebar.open { transform:translateX(0); }
+      .main-shell { margin-left:0; }
+      .mobile-menu { display:grid; place-items:center; }
+      .topbar { gap:10px; padding:0 18px; }
+      .breadcrumbs { min-width:0; }
+      .search-wrap { width:min(250px,30vw); }
+      .main-content { padding:22px 18px 30px; }
+      .hero-panel { grid-template-columns:minmax(0,1fr) 200px; padding:27px; }
+      .hero-panel h1 { font-size:clamp(29px,5vw,42px); }
+      .overview-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .ops-grid,.lower-grid { grid-template-columns:1fr; }
+      .hero-art { transform:scale(.8); }
+    }
+    @media (max-width:600px) {
+      .topbar { min-height:62px; padding:0 12px; gap:8px; }
+      .breadcrumbs small { font-size:9px; }
+      .breadcrumbs strong { font-size:12px; }
+      .search-wrap { display:none; }
+      .search-wrap.mobile-search-open { display:block; position:absolute; top:66px; right:12px; left:12px; z-index:45; width:auto; padding:8px; border:1px solid var(--line-strong); border-radius:13px; background:var(--surface); box-shadow:0 14px 34px rgba(0,0,0,.32); }
+      .mobile-search { display:grid; }
+      .theme-toggle { width:38px; min-width:38px; padding:0; }
+      .theme-toggle-label { display:none; }
+      .top-actions { gap:6px; }
+      .icon-action { width:35px; height:35px; }
+      .main-content { padding:14px 12px 25px; }
+      .hero-panel { grid-template-columns:1fr; min-height:0; padding:24px 19px; border-radius:20px; }
+      .hero-copy .eyebrow { flex-wrap:wrap; font-size:8px; }
+      .hero-date { display:none; }
+      .hero-panel h1 { font-size:31px; }
+      .hero-panel .intro { font-size:12px; }
+      .hero-panel .welcome-actions { align-items:stretch; flex-direction:column; }
+      .hero-panel .btn { width:100%; }
+      .hero-art { min-height:145px; margin-top:0; transform:scale(.75); }
+      .float-top { right:2%; }
+      .float-bottom { left:1%; }
+      .section-heading { align-items:flex-start; flex-direction:column; gap:8px; margin-top:25px; }
+      .section-heading-tight { align-items:flex-start; }
+      .freshness { font-size:9px; }
+      .overview-grid { gap:9px; }
+      .metric-card { min-height:143px; padding:13px; border-radius:14px; }
+      .metric-label { font-size:10px; }
+      .metric-icon { width:30px; height:30px; }
+      .metric-value { font-size:21px; }
+      .metric-note { font-size:9px; }
+      .metric-foot { font-size:8px; }
+      .panel { padding:15px; border-radius:15px; }
+      .site-preview { flex-wrap:wrap; }
+      .preview-copy { min-width:calc(100% - 60px); }
+      .preview-actions { width:100%; }
+      .preview-actions .small-btn { flex:1; }
+      .workspace-grid { grid-template-columns:1fr; }
+      .workspace-card { min-height:170px; }
+      .integration-row { gap:8px; }
+      .integration-copy small { max-width:165px; }
+      .status-pill,.nav-tag { font-size:8px; }
+      .capability-grid { grid-template-columns:1fr; }
+      .capability-hero { padding:20px; }
+      .capability-group-heading { align-items:flex-start; flex-direction:column; gap:7px; }
+      .capability-legend { gap:7px; }
+      .footer-note { align-items:flex-start; flex-direction:column; }
+    }
+    @media (prefers-reduced-motion:reduce) {
+      .workspace-card,.sidebar { transition:none; }
+      .workspace-card:hover { transform:none; }
+    }
+
+  </style>
 </head>
 <body>
   <div class="app-shell">
@@ -398,66 +626,72 @@
         </div>
       </header>
       <main class="main-content">
-        <section class="welcome-row" aria-labelledby="pageTitle">
-          <div>
-            <div class="eyebrow">Creator Control Center</div>
-            <h1 id="pageTitle">A munkád egy helyen.</h1>
-            <p class="intro">Innen éred el a weboldal szerkesztését, az adásrendet és a platform további eszközeit. A vezérlőpult csak olyan állapotot mutat, amelyet a rendszer ténylegesen vissza tud igazolni.</p>
+        <section class="hero-panel" aria-labelledby="pageTitle">
+          <div class="hero-copy">
+            <div class="eyebrow"><span class="live-indicator"></span> CREATOR CONTROL CENTER <span class="hero-date">SANCI9517 · VEZÉRLŐPULT</span></div>
+            <h1 id="pageTitle">Szia, <span id="welcomeName">alkotó</span>.<br><span class="hero-gradient">Építs valami emlékezeteset.</span></h1>
+            <p class="intro">A webhelyed, a tartalmaid és a streammunkafolyamataid egy központból. Itt látod, mi működik most, és innen indíthatod a következő feladatot.</p>
+            <div class="welcome-actions">
+              <a class="btn btn-primary" href="/admin/editor"><span aria-hidden="true">✳</span> Megnyitom az Editort <span aria-hidden="true">↗</span></a>
+              <a class="btn hero-secondary" href="/" target="_blank" rel="noopener noreferrer">Publikus oldal megtekintése</a>
+            </div>
           </div>
-          <div class="welcome-actions">
-            <a class="btn" href="#platformCapabilities">Teljes funkciótérkép</a>
-            <a class="btn btn-primary" href="/admin/editor"><span aria-hidden="true">▧</span> Editor megnyitása</a>
-            <a class="btn" href="/" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Publikus oldal</a>
+          <div class="hero-art" aria-hidden="true">
+            <div class="hero-orbit orbit-one"></div><div class="hero-orbit orbit-two"></div>
+            <div class="hero-core"><span class="hero-core-mark">S</span><span class="hero-core-caption">CREATOR<br>MODE</span></div>
+            <div class="hero-float float-top"><span class="float-icon">✦</span><span><strong>Alkotói központ</strong><small>Minden egy helyen</small></span></div>
+            <div class="hero-float float-bottom"><span class="float-pulse"></span><span><strong>Rendszerállapot</strong><small id="heroSystemState">Adatok ellenőrzése…</small></span></div>
           </div>
         </section>
 
-        <div class="section-heading">
-          <div><h2>Áttekintés</h2><p>A jelenleg elérhető, valós rendszeradatokból.</p></div>
+        <div class="section-heading section-heading-tight">
+          <div><h2>Mai áttekintés</h2><p>A valódi rendszeradatokból — becsült számok nélkül.</p></div>
           <span class="freshness" id="lastUpdated">Adatok betöltése…</span>
         </div>
         <section class="overview-grid" aria-label="Webhely áttekintése">
-          <article class="metric-card">
-            <div class="metric-top"><span class="metric-label">Webhely</span><span class="metric-icon" aria-hidden="true">⌂</span></div>
+          <article class="metric-card metric-site">
+            <div class="metric-top"><span class="metric-label">Webhely állapota</span><span class="metric-icon" aria-hidden="true">⌂</span></div>
             <div class="metric-value" id="siteMetric">Betöltés…</div>
             <div class="metric-note" id="siteNote">A webhelybeállítások ellenőrzése.</div>
+            <div class="metric-foot"><span class="metric-foot-dot"></span> Canonical beállítások</div>
           </article>
-          <article class="metric-card">
-            <div class="metric-top"><span class="metric-label">Oldalak</span><span class="metric-icon" aria-hidden="true">▤</span></div>
+          <article class="metric-card metric-pages">
+            <div class="metric-top"><span class="metric-label">Oldalak összesen</span><span class="metric-icon" aria-hidden="true">▤</span></div>
             <div class="metric-value" id="pagesMetric">—</div>
             <div class="metric-note" id="pagesNote">Valós oldaladatokra vár.</div>
+            <div class="metric-foot"><span class="metric-foot-dot"></span> Oldalkezelés</div>
           </article>
-          <article class="metric-card">
-            <div class="metric-top"><span class="metric-label">Adásrend</span><span class="metric-icon" aria-hidden="true">◷</span></div>
+          <article class="metric-card metric-schedule">
+            <div class="metric-top"><span class="metric-label">Közelgő adások</span><span class="metric-icon" aria-hidden="true">◷</span></div>
             <div class="metric-value" id="scheduleMetric">—</div>
             <div class="metric-note" id="scheduleNote">A következő esemény lekérdezése.</div>
+            <div class="metric-foot"><span class="metric-foot-dot"></span> Canonical Schedule</div>
           </article>
-          <article class="metric-card">
+          <article class="metric-card metric-twitch">
             <div class="metric-top"><span class="metric-label">Twitch kapcsolat</span><span class="metric-icon" aria-hidden="true">◎</span></div>
             <div class="metric-value" id="twitchMetric">Ellenőrzés…</div>
             <div class="metric-note" id="twitchNote">Kapcsolati állapot lekérdezése.</div>
+            <div class="metric-foot"><span class="metric-foot-dot"></span> Provider visszaigazolás</div>
           </article>
         </section>
 
-        <div class="section-heading">
-          <div><h2>Webhely és közelgő adás</h2><p>A legfontosabb napi feladatok egy nézetben.</p></div>
-        </div>
-        <section class="content-grid">
-          <article class="panel">
+        <section class="ops-grid" aria-label="Munkaterület és következő adás">
+          <article class="panel site-panel">
             <div class="panel-header">
-              <div><h2 id="sitePanelTitle">Sanci9517 webhely</h2><p id="sitePanelDescription">A webhely állapotának és a szerkesztésnek a gyors elérése.</p></div>
-              <a class="panel-link" href="/admin/editor">Szerkesztés →</a>
+              <div><span class="panel-kicker">A TE WEBHELYED</span><h2 id="sitePanelTitle">Sanci9517 webhely</h2><p id="sitePanelDescription">A webhely állapotának és a szerkesztésnek a gyors elérése.</p></div>
+              <span class="panel-mark" aria-hidden="true">S</span>
             </div>
             <div class="site-preview">
-              <span class="preview-icon" aria-hidden="true">S</span>
+              <span class="preview-icon" aria-hidden="true">✳</span>
               <span class="preview-copy"><strong id="sitePreviewName">Sanci9517</strong><span id="sitePreviewTagline">Webhelyadatok betöltése…</span></span>
-              <div class="preview-actions"><a class="small-btn" href="/" target="_blank" rel="noopener noreferrer">Megnyitás ↗</a><a class="small-btn" href="/admin/editor">Szerkesztés</a></div>
+              <div class="preview-actions"><a class="small-btn" href="/" target="_blank" rel="noopener noreferrer">Élő oldal ↗</a><a class="small-btn small-btn-accent" href="/admin/editor">Szerkesztés</a></div>
             </div>
             <p class="status-message" id="siteStatus" role="status" aria-live="polite">A webhelyadatok betöltése folyamatban.</p>
           </article>
-          <article class="panel">
+          <article class="panel schedule-panel">
             <div class="panel-header">
-              <div><h2>Következő adás</h2><p>A canonical Schedule adatok alapján.</p></div>
-              <a class="panel-link" href="/admin/editor">Adásrend →</a>
+              <div><span class="panel-kicker">KÖVETKEZŐ A NAPTÁRBAN</span><h2>Következő adás</h2><p>Az ütemezett eseményekből, találgatás nélkül.</p></div>
+              <a class="panel-link" href="/admin/editor" aria-label="Adásrend megnyitása">Adásrend ↗</a>
             </div>
             <div id="nextSchedule">
               <div class="empty-state"><strong>Betöltés…</strong><p>A rendszer lekéri a következő eseményt.</p></div>
@@ -465,61 +699,48 @@
           </article>
         </section>
 
-        <div class="section-heading">
-          <div><h2>Modulok és kapcsolatok</h2><p>A kész modulok és a későbbi fejlesztési területek egyértelműen elkülönülnek.</p></div>
-        </div>
-        <section class="content-grid">
-          <article class="panel">
-            <div class="panel-header"><div><h2>Elérhető munkaterületek</h2><p>A működő útvonalak a jelenlegi rendszerhez vezetnek.</p></div></div>
-            <div class="module-list">
-              <div class="module-card"><span class="module-icon" aria-hidden="true">▧</span><span class="module-copy"><strong>Visual Editor v2</strong><span>Oldalak, vászon, rétegek, Inspector és szerkesztési munkafolyamat.</span></span><a class="small-btn module-status" href="/admin/editor">Megnyitás</a></div>
-              <div class="module-card"><span class="module-icon" aria-hidden="true">◷</span><span class="module-copy"><strong>Adásrend és oldalstruktúra</strong><span>A jelenlegi szerkesztőből érhető el; a külön modulnézet későbbi lépés.</span></span><a class="small-btn module-status" href="/admin/editor">Megnyitás</a></div>
-              <div class="module-card"><span class="module-icon" aria-hidden="true">↗</span><span class="module-copy"><strong>Publikus webhely</strong><span>A látogatók számára elérhető oldal megtekintése.</span></span><a class="small-btn module-status" href="/" target="_blank" rel="noopener noreferrer">Megnyitás</a></div>
-            </div>
-            <p class="status-message">A többi modul a MASTER-2.77 fejlesztési sorrendje szerint aktiválódik. A tervezett elemek nem jelentenek kész funkciót.</p>
+        <section class="workspace-section" aria-labelledby="workspaceTitle">
+          <div class="section-heading">
+            <div><h2 id="workspaceTitle">Indítsd el a munkát</h2><p>Az elérhető eszközök most, a következő lépések egyértelmű státusszal.</p></div>
+            <a class="section-link" href="#platformCapabilities">Teljes funkciótérkép <span aria-hidden="true">↗</span></a>
+          </div>
+          <div class="workspace-grid">
+            <a class="workspace-card workspace-card-primary" href="/admin/editor">
+              <span class="workspace-card-icon">✳</span><span class="workspace-card-state state-ready">ELÉRHETŐ</span>
+              <strong>Visual Editor v2</strong><p>Oldalak, rétegek, vászon és tartalmi struktúra egy szerkesztőben.</p><span class="workspace-card-link">Szerkesztő megnyitása <b>↗</b></span>
+            </a>
+            <a class="workspace-card" href="/admin/editor">
+              <span class="workspace-card-icon">◷</span><span class="workspace-card-state state-ready">ELÉRHETŐ</span>
+              <strong>Adásrend és oldalak</strong><p>Az adásrend és az oldalstruktúra a canonical Editor felületén kezelhető.</p><span class="workspace-card-link">Munkaterület megnyitása <b>↗</b></span>
+            </a>
+            <a class="workspace-card" href="/" target="_blank" rel="noopener noreferrer">
+              <span class="workspace-card-icon">↗</span><span class="workspace-card-state state-ready">ELÉRHETŐ</span>
+              <strong>Publikus webhely</strong><p>Ellenőrizd a látogatói nézetet a szerkesztőfelülettől külön.</p><span class="workspace-card-link">Webhely megtekintése <b>↗</b></span>
+            </a>
+            <article class="workspace-card workspace-card-muted">
+              <span class="workspace-card-icon">▤</span><span class="workspace-card-state state-planned">TERVEZETT</span>
+              <strong>Média- és erőforráskönyvtár</strong><p>Fájlok, képek és médiák központi kezelése — fejlesztés alatt álló termékterület.</p><span class="workspace-card-link">A fejlesztési sorrendben szerepel <b>→</b></span>
+            </article>
+          </div>
+        </section>
+
+        <section class="lower-grid" aria-label="Integráció és gyors műveletek">
+          <article class="panel integration-panel">
+            <div class="panel-header"><div><span class="panel-kicker">KAPCSOLATOK</span><h2>Integrációk</h2><p>Csak ellenőrzött provider állapot jelenik meg.</p></div><span class="integration-orb" aria-hidden="true">◎</span></div>
+            <div class="integration-row"><span class="integration-logo twitch-logo">T</span><span class="integration-copy"><strong>Twitch</strong><small id="twitchDetail">Kapcsolat ellenőrzése…</small></span><span class="status-pill" id="twitchPill"><span class="status-dot"></span>Ellenőrzés</span></div>
+            <div class="integration-row"><span class="integration-logo youtube-logo">▶</span><span class="integration-copy"><strong>YouTube</strong><small>Az integráció későbbi fejlesztési pont.</small></span><span class="nav-tag">Tervezett</span></div>
+            <div class="integration-row"><span class="integration-logo tiktok-logo">♪</span><span class="integration-copy"><strong>TikTok</strong><small>Hivatalos API és engedélyezett képességek szerint.</small></span><span class="nav-tag">Tervezett</span></div>
+            <p class="status-message" id="integrationStatus" role="status" aria-live="polite">Az integrációs állapotok ellenőrzése folyamatban.</p>
           </article>
-          <article class="panel">
-            <div class="panel-header"><div><h2>Integrációk</h2><p>Kapcsolati állapot csak a provider válasza alapján jelenik meg.</p></div></div>
-            <div class="module-list">
-              <div class="module-card"><span class="module-icon" aria-hidden="true">◎</span><span class="module-copy"><strong>Twitch</strong><span id="twitchDetail">Kapcsolat ellenőrzése…</span></span><span class="status-pill" id="twitchPill"><span class="status-dot"></span>Ellenőrzés</span></div>
-              <div class="module-card"><span class="module-icon" aria-hidden="true">▶</span><span class="module-copy"><strong>YouTube</strong><span>Az integrációs adapter későbbi fejlesztési pont.</span></span><span class="nav-tag">Tervezett</span></div>
-              <div class="module-card"><span class="module-icon" aria-hidden="true">♪</span><span class="module-copy"><strong>TikTok</strong><span>Csak az adott fiók és hivatalos API által engedett képességek.</span></span><span class="nav-tag">Tervezett</span></div>
-              <div class="module-card"><span class="module-icon" aria-hidden="true">◈</span><span class="module-copy"><strong>Discord</strong><span>Közösségi és botfunkciók külön jogosultsági szerződéssel.</span></span><span class="nav-tag">Tervezett</span></div>
-            </div>
-            <p class="status-message" id="integrationStatus" role="status">Az integrációs állapotok ellenőrzése folyamatban.</p>
+          <article class="panel quick-panel">
+            <div class="panel-header"><div><span class="panel-kicker">GYORS ELÉRÉS</span><h2>Gyakori műveletek</h2><p>Ugorj egyből a fontos feladatokhoz.</p></div></div>
+            <a class="quick-link" href="/admin/editor"><span class="quick-link-icon">✎</span><span><strong>Oldal szerkesztése</strong><small>Editor v2 · Oldalak és tartalom</small></span><b>↗</b></a>
+            <a class="quick-link" href="/admin/editor"><span class="quick-link-icon">◷</span><span><strong>Adásrend frissítése</strong><small>Editor v2 · Schedule</small></span><b>↗</b></a>
+            <a class="quick-link" href="/" target="_blank" rel="noopener noreferrer"><span class="quick-link-icon">◎</span><span><strong>Publikus oldal ellenőrzése</strong><small>Látogatói nézet új lapon</small></span><b>↗</b></a>
+            <div class="system-note"><span class="system-note-dot"></span><span><strong>Átlátható készültség</strong><small>A tervezett modulokat nem tüntetjük fel kész funkcióként.</small></span></div>
           </article>
         </section>
 
-                <div class="section-heading">
-          <div><h2>Gyors műveletek</h2><p>Gyakori feladatok közvetlen elérése — a kezdőoldal a munkát segíti, nem a fejlesztési tervet mutatja.</p></div>
-        </div>
-        <section class="bottom-grid" aria-label="Gyors műveletek">
-          <article class="action-card">
-            <span class="action-icon" aria-hidden="true">▧</span>
-            <div class="action-copy">
-              <strong>Weboldal szerkesztése</strong>
-              <p>Oldalak, navigáció és a webhely vizuális kialakítása a kanonikus Editor v2-ben.</p>
-              <a href="/admin/editor">Editor megnyitása →</a>
-            </div>
-          </article>
-          <article class="action-card">
-            <span class="action-icon" aria-hidden="true">◷</span>
-            <div class="action-copy">
-              <strong>Adásrend kezelése</strong>
-              <p>Ellenőrizd a következő eseményt, vagy nyisd meg az adásrend jelenlegi szerkesztési felületét.</p>
-              <a href="/admin/editor">Adásrend megnyitása →</a>
-            </div>
-          </article>
-          <article class="action-card">
-            <span class="action-icon" aria-hidden="true">↗</span>
-            <div class="action-copy">
-              <strong>Publikus webhely ellenőrzése</strong>
-              <p>Nézd meg a webhelyet látogatói nézetben, a szerkesztőfelülettől külön.</p>
-              <a href="/" target="_blank" rel="noopener noreferrer">Webhely megnyitása →</a>
-            </div>
-          </article>
-        </section>
-        <p class="status-message">Az áttekintés az aktuális működésre fókuszál; a teljes termékképesség az alábbi funkciótérképen böngészhető.</p>
         <section class="platform-capabilities" id="platformCapabilities" aria-labelledby="capabilityTitle"><div class="capability-hero"><div class="eyebrow">A teljes termék</div><h2 id="capabilityTitle">Egy alkotói platform. Minden munkafolyamat.</h2><p>A Sanci9517 célja egyetlen összefüggő rendszerben kezelni a weboldalt, a streamet, a tartalmat, a közösséget és az alkotói üzletet. Ez a funkciótérkép a MASTER termékirányát teszi áttekinthetővé, a valós készültségi állapotok elkülönítésével.</p><div class="capability-legend" aria-label="Készültségi jelmagyarázat"><span class="capability-state current"><i></i> Jelenlegi belépési pont</span><span class="capability-state foundation"><i></i> 1.0 alap / részben elérhető</span><span class="capability-state planned"><i></i> Tervezett fázis</span><span class="capability-state later"><i></i> Későbbi Creator OS</span></div></div><div class="capability-group-heading"><div><span class="eyebrow">TELJES KÉPESSÉGTÉRKÉP</span><h3>Creator Platform · 24 munkaterület</h3></div><span>Web · Stream · Közösség · Üzlet · Platform</span></div><div class="capability-grid"><article class="capability-card" data-capability-search="Weboldal és CMS Oldalak, slugok, navigáció, metaadatok, SEO, Open Graph, sitemap és reszponzív publikus oldalak. Weboldal CMS oldalak navigáció SEO Open Graph sitemap"><div class="capability-card-top"><span class="capability-icon" aria-hidden="true">▧</span><span class="capability-state current"><i></i>Aktív belépési pont</span></div><h3>Weboldal és CMS</h3><ul><li>Oldalak</li><li>slugok</li><li>navigáció</li><li>metaadatok</li><li>SEO</li><li>Open Graph</li><li>sitemap és reszponzív publikus oldalak</li></ul><a class="capability-cta" href="/admin/editor">Munkaterület megnyitása <span aria-hidden="true">↗</span></a></article>
 <article class="capability-card" data-capability-search="Visual Editor v2 Vászon, rétegek, Inspector, komponensek, responsive nézet, undo/redo, draft, preview, publish és rollback. Visual Editor vászon rétegek Inspector responsive draft publish rollback"><div class="capability-card-top"><span class="capability-icon" aria-hidden="true">✳</span><span class="capability-state foundation"><i></i>1.0 alap</span></div><h3>Visual Editor v2</h3><ul><li>Vászon</li><li>rétegek</li><li>Inspector</li><li>komponensek</li><li>responsive nézet</li><li>undo/redo</li><li>draft</li><li>preview</li><li>publish és rollback</li></ul><a class="capability-cta" href="/admin/editor">Munkaterület megnyitása <span aria-hidden="true">↗</span></a></article>
 <article class="capability-card" data-capability-search="Design Studio Design tokenek, színek, tipográfia, theme editor, sablonok, szekciókönyvtár és újrafelhasználható komponensek. Design Studio theme sablon komponens"><div class="capability-card-top"><span class="capability-icon" aria-hidden="true">◈</span><span class="capability-state planned"><i></i>Tervezett</span></div><h3>Design Studio</h3><ul><li>Design tokenek</li><li>színek</li><li>tipográfia</li><li>theme editor</li><li>sablonok</li><li>szekciókönyvtár és újrafelhasználható komponensek</li></ul><button class="capability-cta" type="button" disabled>Tervezett munkaterület</button></article>
@@ -551,265 +772,3 @@
 
         <footer class="footer-note"><span>Sanci9517 Creator Control Center</span><span>Adatfrissítés: <span id="footerUpdated">—</span></span></footer>
       </main>
-    </div>
-  </div>
-  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
-  <script>
-    const $ = (id) => document.getElementById(id);
-    const root = document.documentElement;
-    function applyTheme(theme) {
-      const selected = theme === "light" ? "light" : "dark";
-      root.dataset.theme = selected;
-      $("themeToggle").setAttribute("aria-label", selected === "dark" ? "Világos téma bekapcsolása" : "Sötét téma bekapcsolása");
-      $("themeToggle").title = selected === "dark" ? "Világos téma bekapcsolása" : "Sötét téma bekapcsolása";
-      $("themeIcon").textContent = selected === "dark" ? "☼" : "☾";
-      $("themeLabel").textContent = selected === "dark" ? "Világos mód" : "Sötét mód";
-      $("themeColorMeta").content = selected === "dark" ? "#100d18" : "#f7f5fa";
-    }
-    let savedTheme = "dark";
-    try { savedTheme = localStorage.getItem("sanci9517-admin-theme") || "dark"; } catch {}
-    applyTheme(savedTheme);
-    $("themeToggle").addEventListener("click", () => {
-      const next = root.dataset.theme === "dark" ? "light" : "dark";
-      applyTheme(next);
-      try { localStorage.setItem("sanci9517-admin-theme", next); } catch {}
-    });
-
-    const toast = (message) => {
-      const node = $("toast");
-      node.textContent = message;
-      node.hidden = false;
-      window.clearTimeout(toast.timer);
-      toast.timer = window.setTimeout(() => { node.hidden = true; }, 4200);
-    };
-    async function api(path, options = {}) {
-      const response = await fetch(path, { credentials: "same-origin", cache: "no-store", ...options });
-      let payload;
-      try { payload = await response.json(); } catch { throw new Error("A szerver válasza nem olvasható."); }
-      if (!response.ok || payload?.ok === false) {
-        const code = payload?.error?.code;
-        if (response.status === 401 || code === "UNAUTHORIZED") {
-          window.location.replace("/admin/login");
-          throw new Error("A munkamenet lejárt.");
-        }
-        throw new Error(payload?.error?.message || "Az adat nem tölthető be.");
-      }
-      return payload?.data ?? payload;
-    }
-    function setStatusPill(node, kind, label) {
-      node.className = "status-pill" + (kind ? " " + kind : "");
-      node.replaceChildren();
-      const dot = document.createElement("span");
-      dot.className = "status-dot";
-      dot.setAttribute("aria-hidden", "true");
-      node.append(dot, document.createTextNode(label));
-    }
-    function safeDate(value, options = {}) {
-      const date = new Date(value);
-      if (!Number.isFinite(date.getTime())) return "Ismeretlen időpont";
-      return new Intl.DateTimeFormat("hu-HU", options).format(date);
-    }
-    function renderSchedule(items) {
-      const now = Date.now();
-      const upcoming = (Array.isArray(items) ? items : [])
-        .filter((item) => item?.status === "scheduled" && Number.isFinite(Date.parse(item.startsAt)) && Date.parse(item.startsAt) >= now)
-        .sort((a, b) => Date.parse(a.startsAt) - Date.parse(b.startsAt));
-      $("scheduleMetric").textContent = String(upcoming.length);
-      $("scheduleNote").textContent = upcoming.length ? "Jövőbeli, ütemezett esemény" : "Nincs jövőbeli, ütemezett esemény";
-      const host = $("nextSchedule");
-      host.replaceChildren();
-      if (!upcoming.length) {
-        const empty = document.createElement("div");
-        empty.className = "empty-state";
-        const title = document.createElement("strong");
-        title.textContent = "Nincs közelgő adás";
-        const copy = document.createElement("p");
-        copy.textContent = "Hozz létre vagy frissíts egy eseményt az Editor adásrend felületén. A vezérlőpult nem talál ki időpontot.";
-        empty.append(title, copy);
-        host.append(empty);
-        return;
-      }
-      const item = upcoming[0];
-      const start = new Date(item.startsAt);
-      const row = document.createElement("div");
-      row.className = "schedule-row";
-      const tile = document.createElement("div");
-      tile.className = "date-tile";
-      const day = document.createElement("strong");
-      day.textContent = new Intl.DateTimeFormat("hu-HU", { day: "2-digit" }).format(start);
-      const month = document.createElement("span");
-      month.textContent = new Intl.DateTimeFormat("hu-HU", { month: "short" }).format(start).replace(".", "");
-      tile.append(day, month);
-      const copy = document.createElement("div");
-      copy.className = "schedule-copy";
-      const title = document.createElement("strong");
-      title.textContent = item.title || "Névtelen esemény";
-      const details = document.createElement("span");
-      const time = safeDate(item.startsAt, { dateStyle: "medium", timeStyle: "short" });
-      details.textContent = [time, item.platform || "Platform nincs megadva"].join(" · ");
-      copy.append(title, details);
-      const link = document.createElement("a");
-      link.className = "small-btn";
-      link.href = "/admin/editor";
-      link.textContent = "Megnyitás";
-      row.append(tile, copy, link);
-      host.append(row);
-    }
-    async function loadDashboard() {
-      $("refresh").disabled = true;
-      $("lastUpdated").textContent = "Frissítés…";
-      $("siteStatus").textContent = "A webhelyadatok betöltése folyamatban.";
-      const results = await Promise.allSettled([
-        api("/api/auth/session"),
-        api("/api/admin/settings"),
-        api("/api/admin/pages?meta=1"),
-        api("/api/admin/schedule"),
-        api("/api/integrations/twitch/connection")
-      ]);
-      const [sessionResult, settingsResult, pagesResult, scheduleResult, twitchResult] = results;
-      if (sessionResult.status === "rejected") {
-        $("refresh").disabled = false;
-        $("lastUpdated").textContent = "Nem frissült";
-        toast("A munkamenet vagy a vezérlőpult adatai nem tölthetők be.");
-        return;
-      }
-      const session = sessionResult.value;
-      if (!session?.authenticated) {
-        window.location.replace("/admin/login");
-        return;
-      }
-      const user = session.user || {};
-      const name = user.displayName || user.email || "Felhasználó";
-      $("userName").textContent = name;
-      $("userRole").textContent = user.role || "Felhasználó";
-      $("userAvatar").textContent = Array.from(name.trim())[0]?.toLocaleUpperCase("hu-HU") || "S";
-      $("siteMetric").textContent = "—";
-      $("siteNote").textContent = "A webhely beállításainak ellenőrzése.";
-      if (settingsResult.status === "fulfilled") {
-        const settings = settingsResult.value || {};
-        $("siteMetric").textContent = "Beállítva";
-        const siteName = settings.siteName || "Sanci9517";
-        const tagline = settings.tagline || "Creator webhely";
-        $("sidebarSiteName").textContent = siteName;
-        $("sitePanelTitle").textContent = siteName;
-        $("sitePreviewName").textContent = siteName;
-        $("sitePreviewTagline").textContent = tagline;
-        $("siteNote").textContent = tagline;
-        $("sitePanelDescription").textContent = "A webhely adatai a canonical beállításokból származnak.";
-        $("siteStatus").textContent = "A webhelybeállítások sikeresen betöltődtek.";
-      } else {
-        $("siteMetric").textContent = "Nem elérhető";
-        $("siteNote").textContent = "A webhelybeállításokhoz admin jogosultság szükséges.";
-        $("sitePreviewTagline").textContent = "A beállítások nem érhetők el ezzel a szerepkörrel.";
-        $("siteStatus").textContent = "A webhelyadatok nem tölthetők be. Ellenőrizd a jogosultságot.";
-      }
-      if (pagesResult.status === "fulfilled" && Array.isArray(pagesResult.value)) {
-        const pages = pagesResult.value;
-        const published = pages.filter((page) => page.isPublished).length;
-        const drafts = pages.length - published;
-        $("pagesMetric").textContent = String(pages.length);
-        $("pagesNote").textContent = published + " publikált · " + drafts + " nem publikált";
-      } else {
-        $("pagesMetric").textContent = "—";
-        $("pagesNote").textContent = "Az oldallista nem érhető el ezzel a jogosultsággal.";
-      }
-      if (scheduleResult.status === "fulfilled") {
-        renderSchedule(scheduleResult.value);
-      } else {
-        $("scheduleMetric").textContent = "—";
-        $("scheduleNote").textContent = "Az adásrend nem tölthető be.";
-        $("nextSchedule").textContent = "Az adásrend lekérése sikertelen. Nyisd meg az Editort, vagy próbáld újra a frissítést.";
-      }
-      if (twitchResult.status === "fulfilled") {
-        const twitch = twitchResult.value || {};
-        if (twitch.connected) {
-          $("twitchMetric").textContent = "Kapcsolva";
-          $("twitchNote").textContent = twitch.broadcaster?.login ? "@" + twitch.broadcaster.login : "Kapcsolat igazolva";
-          $("twitchDetail").textContent = twitch.lastValidatedAt ? "Utoljára ellenőrizve: " + safeDate(twitch.lastValidatedAt, { dateStyle: "medium", timeStyle: "short" }) : "A kapcsolat aktívként van nyilvántartva.";
-          setStatusPill($("twitchPill"), "ok", "Kapcsolva");
-          $("integrationStatus").textContent = "A Twitch kapcsolat állapotát a szerver visszaigazolta.";
-        } else {
-          $("twitchMetric").textContent = "Nincs kapcsolat";
-          $("twitchNote").textContent = "Nincs aktív Twitch kapcsolat";
-          $("twitchDetail").textContent = "Nincs aktív kapcsolat ehhez a webhelyhez.";
-          setStatusPill($("twitchPill"), "warn", "Nincs kapcsolat");
-          $("integrationStatus").textContent = "A Twitch csatlakoztatása az Editor integrációs felületén kezelhető.";
-        }
-      } else {
-        $("twitchMetric").textContent = "Nem ellenőrizhető";
-        $("twitchNote").textContent = "A provider állapota nem érhető el.";
-        $("twitchDetail").textContent = "Az állapotlekérés sikertelen; ez nem bizonyítja, hogy a kapcsolat megszűnt.";
-        setStatusPill($("twitchPill"), "error", "Hiba");
-        $("integrationStatus").textContent = "A kapcsolat állapotát most nem sikerült ellenőrizni. Próbáld újra.";
-      }
-      const updated = safeDate(new Date(), { hour: "2-digit", minute: "2-digit" });
-      $("lastUpdated").textContent = "Frissítve " + updated;
-      $("footerUpdated").textContent = updated;
-      $("refresh").disabled = false;
-    }
-    $("refresh").addEventListener("click", loadDashboard);
-    $("logout").addEventListener("click", async () => {
-      $("logout").disabled = true;
-      try { await fetch("/api/auth/logout", { method: "POST", credentials: "same-origin", keepalive: true }); } catch {}
-      window.location.replace("/admin/login");
-    });
-    const sidebar = $("sidebar");
-    const backdrop = $("mobileBackdrop");
-    function closeSidebar(restoreFocus = false) {
-      const wasOpen = sidebar.classList.contains("open");
-      sidebar.classList.remove("open");
-      backdrop.classList.remove("visible");
-      $("mobileMenu").setAttribute("aria-expanded", "false");
-      if (restoreFocus && wasOpen && window.matchMedia("(max-width: 900px)").matches) {
-        $("mobileMenu").focus();
-      }
-    }
-    $("mobileMenu").addEventListener("click", () => {
-      const open = !sidebar.classList.contains("open");
-      sidebar.classList.toggle("open", open);
-      backdrop.classList.toggle("visible", open);
-      $("mobileMenu").setAttribute("aria-expanded", String(open));
-    });
-    backdrop.addEventListener("click", () => closeSidebar(true));
-    const searchWrap = $("searchWrap");
-    const mobileSearch = $("mobileSearch");
-    function closeMobileSearch(restoreFocus = false) {
-      const wasOpen = searchWrap.classList.contains("mobile-search-open");
-      searchWrap.classList.remove("mobile-search-open");
-      mobileSearch.setAttribute("aria-expanded", "false");
-      mobileSearch.setAttribute("aria-label", "Funkciókeresés megnyitása");
-      mobileSearch.title = "Funkciókeresés";
-      if (restoreFocus && wasOpen && window.matchMedia("(max-width: 600px)").matches) {
-        mobileSearch.focus();
-      }
-    }
-    mobileSearch.addEventListener("click", () => {
-      const open = !searchWrap.classList.contains("mobile-search-open");
-      searchWrap.classList.toggle("mobile-search-open", open);
-      mobileSearch.setAttribute("aria-expanded", String(open));
-      mobileSearch.setAttribute("aria-label", open ? "Funkciókeresés bezárása" : "Funkciókeresés megnyitása");
-      mobileSearch.title = open ? "Keresés bezárása" : "Funkciókeresés";
-      if (open) $("menuSearch").focus();
-      else mobileSearch.focus();
-    });
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") {
-        closeSidebar(true);
-        closeMobileSearch(true);
-      }
-    });
-    $("menuSearch").addEventListener("input", (event) => {
-      const query = event.target.value.trim().toLocaleLowerCase("hu-HU");
-      document.querySelectorAll("[data-nav-label]").forEach((item) => {
-        const matches = !query || item.dataset.navLabel.toLocaleLowerCase("hu-HU").includes(query);
-        item.hidden = !matches;
-      });
-      document.querySelectorAll("[data-capability-search]").forEach((item) => {
-        const searchable = (item.dataset.capabilitySearch + " " + item.textContent).toLocaleLowerCase("hu-HU");
-        item.hidden = Boolean(query) && !searchable.includes(query);
-      });
-    });
-    loadDashboard();
-  </script>
-</body>
-</html>
