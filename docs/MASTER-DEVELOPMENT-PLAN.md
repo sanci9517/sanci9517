@@ -2188,14 +2188,14 @@ Ez a rész a 37.10 első áttekintésének frissített, endpoint- és approval-s
 **Ellenőrzési forrás:** a §24 stabil feature-ID registry és a §41 teljes, 17 oszlopos crosswalk; 2026-10-13.
 
 - 271 történeti kulcs → 271 sor, 271 egyedi kulcs.
-- 357 stabil feature ID a registryben; a crosswalk minden hivatkozott ID-ja feloldható.
+- 359 stabil feature ID a registryben; a H19–H34 crosswalk minden hivatkozott ID-ja feloldható.
 - A jelenlegi feature-ID prefix és a megadott canonical domain owner egyezik; a vegyes ownerű sorok explicit több-ID hozzárendelést használnak.
 - A kilenc több-ID hozzárendelés külön felülvizsgálva: architektúra+secret boundary; reduced-motion/QA; interaction validation/QA; performance/ops; content management/Page Model; integrations/Connections Center; permissions/security; AI Editor action pipeline; collaboration/conflict. A több-ID sor nem helyettesíti a kapcsolódó feature ID-k külön DoD-ját.
 - A korábbi általános phase-dependent célfázisok megszüntetve: a VOD-admin capability 1.5–2.0, az analytics reporting 2.0 célfázist kapott; a crosswalkban már nincs phase-dependent célfázis.
 - A történeti eljárási checklist H34 soraiban az „all phases” a folyamatos governance-kötelezettséget jelenti, nem azt, hogy az összes termékfunkció minden fázisban implementálandó.
 - A H27 Admin-capability soroknál a jelenlegi menüben látható placeholder nem runtime feature: a crosswalk csak a canonical owner/funkcióazonosítóhoz rendeli, és külön jelzi a későbbi fázist.
 
-**Továbbra is nyitott:** a sorok eredeti történeti forrásával való emberi, tartalmi összevetés; minden cél-ID feature contractjának (permission, data owner, dependency, negative tests, acceptance evidence) kitöltése; a 271 követelmény és a 357 feature ID közötti teljes lefedettségi mátrix. Ez a második review-kör sem P0.2 PASS, és nem változtat implementációs státuszt.
+**Továbbra is nyitott:** a sorok eredeti történeti forrásával való emberi, tartalmi összevetés; minden cél-ID feature contractjának (permission, data owner, dependency, negative tests, acceptance evidence) kitöltése; a 271 követelmény és a 359 feature ID közötti teljes lefedettségi mátrix. Ez a második review-kör sem P0.2 PASS, és nem változtat implementációs státuszt.
 
 
 ### 37.17. P0.2 — Történeti és új funkciók közti lefedettségi különbség
@@ -2205,10 +2205,10 @@ A §24 registry és a §41 crosswalk újraszámolt kapcsolata:
 - §24: 359 egyedi stabil feature ID (a P0.2 review során felvett LOC-005 és LOC-006 követelményekkel).
 - §41: 271 egyedi történeti követelménykulcs.
 - A történeti crosswalk 128 különböző aktuális feature ID-t hivatkozik közvetlenül; minden ilyen ID feloldható a registryben, és a crosswalkban használt QA-ID-k is feloldhatók.
-- A 359-ből fennmaradó 231 feature ID nem kap közvetlen történeti kulcsot a jelenlegi crosswalkban. Ez önmagában nem hiba: ezek között lehet újonnan hozzáadott termékigény, kibővített acceptance, biztonsági/üzemeltetési kapu vagy korábbi tervben nem szereplő képesség. **De mindegyikhez explicit eredetbesorolás kell**: NEW PRODUCT REQUIREMENT, EXPANDED ACCEPTANCE, CROSS-CUTTING CONTROL, PLATFORM/OPERATIONS, vagy HISTORICAL MAPPING GAP.
+- A H19–H34 crosswalk 128 különböző aktuális feature ID-t köt közvetlenül történeti kulcshoz; a 359-ből fennmaradó 231 ID-hoz ebből a ledgerből nem vezethető le közvetlen H-key. Ezek egy része a §37.22–37.25 E/F bullet-crosswalkjaiban már szerepelhet, ezért nem tekinthető automatikusan árva funkciónak. A teljes, összes archive source-ra kiterjedő eredetbesoroláshoz mindegyik ID-nél rögzíteni kell: NEW PRODUCT REQUIREMENT, EXPANDED ACCEPTANCE, CROSS-CUTTING CONTROL, PLATFORM/OPERATIONS, vagy HISTORICAL MAPPING GAP.
 - A P0.2 zárás előtt a 359 ID mindegyikéhez ki kell tölteni a provenance mezőt: historical key(s), new requirement source, domain owner, target phase, dependency IDs, acceptance/test IDs és státusz. Ha egy ID új, a forrás a MASTER döntési naplójában szerepeljen; ha történeti, a H-key legyen visszakövethető. Az üres provenance nem törlési ok, hanem nyitott auditfeladat.
 
-**Aktuális döntés:** a 271 történeti követelmény soronkénti megőrzése szerkezetileg PASS; a teljes történeti↔aktuális feature coverage nem PASS, amíg a 231 közvetlenül nem hivatkozott ID eredete és a tételenkénti feature contract nem dokumentált.
+**Aktuális döntés:** a 271 H19–H34 követelmény soronkénti megőrzése szerkezetileg PASS; az összes korábbi tervre kiterjedő történeti↔aktuális feature coverage nem PASS, amíg a 359 ID provenance-e és a tételenkénti feature contract nincs teljesen dokumentálva.
 
 
 ### 37.18. P0.2 — Archived source inventory and precedence reconciliation
