@@ -8,6 +8,8 @@
 **PARALLEL_WORKSTREAMS:** `0`
 
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
+**Verzió:** MASTER-2.74 — összevont termékkövetelmények, részletes funkciószerződések és végrehajtási sorrend.  
+**Frissítve:** 2026-10-13.  
 **Dokumentum státusza:** ez az egyetlen végrehajtási igazságforrás.
 **Audit / implementation baseline:** GitHub `v2/foundation`, commit `aeba30d9` (2026-10-13). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
 
@@ -2191,7 +2193,7 @@ A teljes végső tervből egyszerre mindig csak **egy ACTIVE engineering point**
 
 Ez biztosítja, hogy a teljes világvezető cél megmaradjon, miközben a tényleges fejlesztés továbbra is kontrollált, tesztelt és sorrendhelyes marad.
 
-# 00.9.6.E — MASTER-2.73 — ÖSSZEFÉSÜLT, KÖZVETLEN TERMÉKKÖVETELMÉNY-KATALÓGUS
+# 00.9.6.E — MASTER-2.74 — ÖSSZEFÉSÜLT, KÖZVETLEN TERMÉKKÖVETELMÉNY-KATALÓGUS
 
 **Ez a szakasz a termék funkcionális igazságforrása.** A fejlesztéshez nem kell régi tervfájlokat, korábbi beszélgetéseket vagy történeti kivonatokat újra megnyitni. A régi anyagokból átvett és egységesített követelmények itt közvetlen, aktuális követelményként szerepelnek. A történeti ledger csak eredet- és nyomkövetési bizonyíték; nem külön specifikáció és nem végrehajtási függőség.
 
@@ -2552,3 +2554,136 @@ A fázisnév nem önmagában acceptance: minden fázis pontos végrehajtási pon
 - Minden új, korábban nem rögzített felhasználói igény közvetlenül ebbe a MASTER-be kerül, és megkapja a canonical domain, fázis, függőség, DoD és teszt meghatározását.
 - A MASTER nem válhat ötletgyűjteménnyé: egyetlen ACTIVE engineering point lehet, a teljes jövőkép pedig PLANNED/QUEUED fázisokban marad.
 - A MASTER változtatása előtt a jelenlegi tartalmat be kell olvasni, a módosítás után pedig ellenőrizni kell az aktív pontot, a fázissorrendet, a megőrzött capability-ket, a duplikált canonical owneröket és a lezárt gate-eket.
+
+
+
+## 00.9.6.F — MASTER-2.74 — KÖZVETLEN MŰKÖDÉSI RÉSZLETEK ÉS TELJESSÉGI LEFEDETTSÉG
+
+Ez a fejezet a platform követelményeit közvetlen, végrehajtható viselkedéssé részletezi. A funkció értelmezéséhez nem kell külön történeti tervfájlt vagy régi beszélgetést újra megnyitni. Ha egy képesség későbbi fázisban esedékes, a részletes követelmény akkor is megmarad, de nem válik automatikusan az 1.0 kötelező implementációjává. Egyszerre csak egy aktív fejlesztési pont van: F0.1.
+
+### F.1 — Editor: stabil munkafolyamat, history és helyreállítás
+
+**Kötelező felhasználói útvonal:** Creator Center → Weboldal → Oldalak → oldal kiválasztása/létrehozása → Szerkesztés → elem hozzáadása → kijelölés → Inspector/canvas szerkesztés → undo/redo → Save Draft → Preview → publish külön, explicit művelettel. Reload/reopen után az elem újra kijelölhető és szerkeszthető; mentés után nem fordulhat elő, hogy csak a törlés működik.
+
+**Kötelező Editor regressziós forgatókönyv:** Box létrehozása → heading → text → button → divider → második text → második button; Layersben újra ki kell választani és szerkeszteni az első textet és headinget; módosítani kell a Box layoutját; menteni, újratölteni, minden elemet újra kijelölni; végül ellenőrizni kell a nyilvános renderben a gombok megjelenését, a sorrendet és a módosításokat. Ez a kritikus kijelölési, state-szinkron-, persistence- és render-regressziót fedi.
+
+**History-szerződés:**
+- Immutábilis history, legfeljebb 50 lépéses FIFO stack; az 51. lépésnél a legrégebbi bejegyzés kiesik.
+- Egy felhasználói szándék egy history transaction. Gépelés 800 ms inaktivitás után vagy blur-nél egyetlen history entry.
+- Slider/drag transaction a pointer down és pointer up között egy bejegyzés; add/delete/move/reparent/duplicate művelet önálló transaction.
+- Programozott, preset- és batch-változtatás explicit transaction boundary-t kap. Félbemaradt transaction nem kerülhet a historyba. Undo/redo nem hozhat létre önmagára mutató entry-t.
+- Undo/redo a canonical command/state modellre épül, nem DOM-pillanatképre; a canvas, Layers, Inspector és a mentett modell konzisztens marad.
+
+**Autosave és recovery:**
+- Debounced háttérmentés 2000 ms után az aktív draftba; az explicit Save Draft azonnal elérhető. Csak validált Page Model menthető.
+- Local crash recovery helyreállítási példányt készíthet a nem mentett állapotból, de nem helyettesíti a szerveroldali draftot, és nem tárolhat tokent vagy secretet. Konfliktusnál a felhasználó választhat helyreállítás, szerververzió vagy elvetés között.
+- Expected-version/optimistic concurrency; stale draft vagy párhuzamos szerkesztés nem írhatja felül csendben a frissebb revíziót.
+- Navigáció/refresh előtt unsaved-changes figyelmeztetés; mentési hiba, retry és visszaállítás valós legyen, ne dekoratív UI.
+- A history és autosave működését nagyobb Page Modellel is tesztelni kell; a számok nem indokolatlanul növelhetik a memória- vagy hálózati terhelést.
+
+### F.2 — Dinamikus blokkok és adatbinding
+
+- A canonical útvonal: Domain API/service → deklarált Data Source → schema-validált binding → engedélyezett transform → conditional rendering → renderer.
+- Támogatott források fázisonként: site settings, Schedule query, hitelesített Twitch/live state, elérhető YouTube/TikTok-content, VOD/clip/content collections, később Store/Community/Membership/Analytics. Minden platformnál csak a hivatalosan elérhető és az adott kapcsolat scope-jával engedélyezett képesség használható.
+- Query/filter/sort/limit beállítás csak deklarált schema szerint menthető. Arbitrary SQL, tetszőleges URL fetch, titkos API-kulcs vagy korlátlan JavaScript binding nem megengedett.
+- Külön loading, empty, error, stale-data és partial-provider-failure állapot kell; a hiba nem jeleníthet meg raw stack trace-t, DB mezőnevet, tokent vagy titkot.
+- Conditional visibility hiteles állapot alapján működhet, de nem kerülheti meg az authorizationt. A cache élettartam és invalidation publishhoz, Schedule-módosításhoz és integration synchez legyen kötve.
+- A dinamikus blokk csak a saját megjelenési konfigurációját mentheti az Editorban; például a Schedule blokk layoutja nem írhatja át a Schedule domainrekordjait.
+
+### F.3 — Editor legördülő kezelőelemek és elrendezés
+
+Az alap oldalépítéshez ne kelljen CSS-t vagy HTML-t írni. Az Inspector biztosítson hétköznapi választókat:
+- Box igazítás: Balra, Középre, Jobbra, Teljes szélesség.
+- Szövegigazítás: Balra, Középre, Jobbra, Sorkizárt.
+- Belső elrendezés: Egymás alatt, Egymás mellett, 2 oszlop, 3 oszlop, Grid.
+- Függőleges igazítás: Felül, Középen, Alul.
+- Méret: Automatikus, 25%, 50%, 75%, 100%, továbbá egyedi mértékegységes érték.
+- Térköz: függőleges és vízszintes Spacer külön; gap, padding és margin külön értékként és ahol indokolt oldalanként. A vízszintes térköz módosítása nem írhatja felül a függőlegest.
+- Méretezésnél szélesség/magasság, min/max, arány, overflow, wrap, order és reszponzív override csak az adott layout mód által megengedett módon működhet.
+- Az elem kiválasztása canvasról és Layers fából azonos canonical state-re mutasson. Drag/resize nem alakíthatja át véletlenül a flex/grid elrendezést abszolút pozicionálássá.
+- A 1.0 stabil alapeleme a plain Text. Az összetett Rich Text szerkesztő külön, tesztelt scope; a régi döntés szerint ne legyen új, párhuzamos rich-text irány, amely elhalasztja az alapszerkesztő lezárását.
+
+### F.4 — Weboldal tartalmi és interakciós capability-k
+
+- Publikus oldaltípusok: Home/Creator-home, Stream/Live, Schedule, VOD/Video Hub, Clips/Shorts, About/Creator, Community, Contact, Support, Link Hub és Sponsor/Press Kit. Store, Membership, Events, Blog/News és Digital Products a fázisroadmap szerint kapcsolódik be.
+- Creator-home: live/offline, játék/kategória, nézőszám és follower/subscriber érték csak hiteles adat és megfelelő jogosultság esetén; következő adás/countdown; kiemelt és legutóbbi VOD/clip/video; social links; community/Discord; support/tip; későbbi merch; e-mail feliratkozás; kampány/esemény.
+- Stream oldal: player/embed, stream állapot, cím/kategória, adás kezdete, következő adás, opcionális, biztonságos chat embed, support és közösségi linkek.
+- VOD/Content Hub: VOD, highlight, clip, Shorts, YouTube/TikTok videók; kategóriák/tagek, keresés/szűrés, playlist és kapcsolódó tartalom. Ha automatikus platformadat nem hozzáférhető, legyen egyértelmű fallback/kézi link/import út.
+- About/Creator: bemutatkozás, játékok, karrier, setup, FAQ, sponsor/partner és média-kit; Link Hub: platform/social linkek, fő CTA-k, Schedule, tartalom, Discord, merch/support, kampányok és email capture; későbbi smart redirect és link analytics a privacy policy szerint.
+- Interakciók 1.0 alapja: click, hover, focus, active, submit, scroll, load, timer, open/close, navigation, show/hide és toggle — csak validált, hozzáférhető actionökkel. State machine, advanced transitions, animation timeline és keyframes későbbi, külön scope-olt funkció.
+- Animation/interactions esetén reduced-motion, keyboard/focus, érvényes link/action, teljesítménykorlát és publikus renderer-teszt kötelező.
+
+### F.5 — Content Factory és platformintegrációk részletesen
+
+- Content Manager kezelje az ötletet, draftot, scriptet, címet, leírást, tageket/hashtageket, thumbnail briefet, platformot, publikálási időt, státuszt, kampánykapcsolatot és jóváhagyást.
+- VOD ingestion/import, VOD kategorizálás, clip/Short menedzsment, content calendar, platformonként eltérő title/description/thumbnail/tag, publishing queue, külső ID és duplikációvédelem szerepeljen a későbbi Content Factory-ban.
+- Twitch: OAuth/connection, live/offline, title/game/category, viewer/follower/subscriber statisztikák csak ahol az API és scope engedi, VOD, clips, webhook/event, sync state és hibadiagnosztika.
+- YouTube: channel, video, Shorts, rendelkezésre álló analytics; quota limit, API hiba, hiányzó scope és fallback.
+- TikTok: profile/content csak a hivatalosan és adott accountnál rendelkezésre álló API-képesség szerint; rate limit/fallback és kézi link/import.
+- Discord alapként közösségi link; bot/role/status funkció csak külön integrációs scope-pal. Kick, OBS, e-mail, payment és commerce adapterek saját contractot kapnak.
+- A provider-adatot canonical domain state-re kell normalizálni; egy külső API kiesése nem teheti használhatatlanná az oldalt. Hiányzó statisztikát nem szabad kitalált számmal pótolni.
+
+### F.6 — Schedule, idő és tartalom-összerendelés
+
+- Canonical Schedule item mezői: title, description, start/end, timezone, platform, game/category, artwork, stream link, visibility, featured, lifecycle status, recurrence, manual override és external ID.
+- List/calendar/upcoming/past nézetek, keresés, szűrés és rendezés; cancelled/postponed/completed/live/planned állapotok.
+- DST/időzóna helyes kezelése; recurrence szerkesztése csak esemény / ettől a jövőben / teljes sorozat scope szerint, amennyiben ez a funkció támogatott.
+- Next-stream és countdown a canonical schedule, site timezone és hiteles live state alapján számoljon; lemondott vagy múltbeli esemény ne maradjon hibásan következő adásként.
+- VOD/clip/Short összekapcsolható legyen az adott adással, kategorizálható legyen és bekerülhessen a content calendarba. Editorban a Schedule blokk megjelenítése konfigurálható, de a Schedule domainadat nem.
+
+### F.7 — Admin, forms, store és kezelőfelületi szabályok
+
+- Az Admin shellből mindig elérhető az Admin főoldal, az aktuális modul/breadcrumb, a publikus oldal megnyitása, profil/session állapot, logout, help és értesítések. Mobilon külön responsive shell kell.
+- Minden modulban loading/empty/error/success/disabled state, save/unsaved state, inline validation, veszélyes művelethez confirm, keresés/filter/sort/pagination és indokolt tömeges műveletek legyenek; billentyűzetes működés és egyértelmű magyar UI-szöveg az 1.0-ban.
+- Lejárt session kezelése szerveroldali policy szerint: logout/session invalidation, inactivity timeout, több tab és nem mentett változtatás figyelmeztetése; admin/API jogosultság nélkül nem használható.
+- Public form: field schema, required/optional, labels, kliens- és szervervalidáció, spam/rate-limit védelem, success/error state és privacy notice.
+- Store Manager: termék create/edit/duplicate/archive, variáns/SKU/ár/pénznem/kategória/collection/SEO/stock abstraction, order/payment/fulfillment status, refund/cancel/tracking és provider error. A storefront csak canonical product/collection adatot renderel.
+- Fizikai merch, digitális termék, bundle, preorder, limited drop, kupon/gift card, order/customer és invoice/shipping/tax funkciók a megfelelő későbbi commerce fázisban; a teljes saját checkout nem automatikus 1.0 scope.
+
+### F.8 — Analytics, AI, automation és stream intelligence
+
+- Web analytics: page views, sessions, device/referrer, CTA/button/social click és konverzió csak consent/privacy szabály szerint; content/stream/commerce/community metric kizárólag valós, hiteles adatokból.
+- Metricsnél forrás, időszak, frissesség, hiányzó érték, API limit és retention legyen jelölve; export és role-based access. Anomaly detection későbbi fázis.
+- Automation lifecycle: event/schedule → trigger → condition → action → result → verify → audit. Típusok: scheduled, event, content, media, stream, notification. Delay/retry/idempotency/rate limit/dead-letter/failure state, enable/disable, version és per-site rules.
+- AI Website Assistant ugyanazt a canonical Page Model command/action rendszert használja, mint a manuális Editor: intent → actions → permission → validation → preview/diff → approval → execute → verify → audit/version. Nincs arbitrary database write vagy közvetlen generált HTML-kód publikálás.
+- AI cost/rate limits, user/site quotas, approval queue, prompt-template versions, usage/error logs és rollback; provider key soha nem lehet browserben.
+- Későbbi Stream Intelligence: live/silence/speech/chat activity/technical/audio-quality analysis ahol engedélyezett; context/scene suggestions, interesting moments, post-stream summary, VOD analysis, clip/Short candidates, platform-variánsok, thumbnail briefs, publishing advice, performance-feedback loops és szerkeszthető opt-in memory/preferences. Ezek nem 1.0 release gate-ek.
+
+### F.9 — SEO, accessibility, security és performance kiadási kapu
+
+- Published/indexelhető oldalak: valid title/description/canonical, Open Graph és X/Twitter card, sitemap/robots, strukturált adatok ahol értelmes; draft/unpublished/preview nem indexelhető.
+- Későbbi SEO tooling: redirect-kezelés és broken-link detection előnézettel és jóváhagyással.
+- Public output: semantic HTML, helyes heading hierarchy, alt text, form labels, ARIA ahol szükséges, keyboard navigation, focus order/visibility, screen-reader metadata, kontrasztfigyelmeztetés, form accessibility és reduced-motion.
+- Session/cookie: HttpOnly, Secure, helyes SameSite; expiry, inactivity timeout, logout/session invalidation. Megfelelő password hash, auth rate limiting, RBAC, szerveroldali can permission check, CSRF/Origin protection a választott auth modellnek megfelelően, input/output validation, OAuth state/PKCE, webhook signature/replay defense és upload validation.
+- Minden publikus, preview és admin route-nak saját jogosultsági határa van; preview nem leakelhet draftot, log/export nem leakelhet tokent.
+- Performance: JS bundle, lazy loading, image dimensions/variants, cache invalidation, Core Web Vitals, nagy page/tree history-memória és autosave overhead, API latency és production smoke. Számszerű budget a mérési baseline után rögzítendő.
+- Visual regression baseline: publikus home/navigation/Schedule, Editor core state és desktop/tablet/mobile.
+
+### F.10 — Backup, export/import, diagnostics és recovery
+
+- Export csomag: verziózott Page Model/page revisions/theme/templates/components/media references és támogatott domainadatok; secrets és access tokenek nélkül.
+- Import dry-run: schema/version compatibility, missing asset, duplicate IDs, permission/owner és migrációs kompatibilitás ellenőrzése; részleges hibás publikálás nem történhet.
+- Recovery/restore: célverzió és ütközések előnézete, integrity check, backup-ellenőrzés, visszaállítás utáni Page Model/revision/public-render konzisztencia. Recovery drill fázisonként előírt.
+- Diagnostics: deploy/version ID, request/correlation ID, last sync, provider health, failed jobs/retry, D1/migration/cache állapot, API latency és actionable error; sem secret, sem szükségtelen személyes adat nem kerül logba.
+
+### F.11 — Teljességi lefedettség és megőrzési szabály
+
+A következő csoportok közvetlenül specifikálva vannak ebben a MASTER-ben: media/resource/fájlok; dinamikus data binding; Twitch/YouTube/TikTok/Discord integrációk; Schedule/recurrence/timezone/countdown; VOD/clip/Short/content calendar; Editor interakciók és animáció; accessibility/forms; SEO; analytics/privacy; Admin/navigation/diagnostics; auth/RBAC/site ownership/secrets; backup/import/export/recovery; performance/visual regression; AI Editor actions; Stream Intelligence; automation; continuous feature discovery.
+
+Fázis szerinti zár:
+- **1.0:** stabil saját Sanci9517 public website + Admin + működő Editor első teljes szelete és szükséges layere/Inspector/mentési lánca; responsive; alap Media/Resource; Schedule/Twitch; draft/preview/publish/revision; SEO/accessibility/security/performance és release tesztek.
+- **1.x:** profil/link hub, content hub, többplatformos integrációk, commerce alap, digitális termékek/membership/community, alerts/automation, email audience capture.
+- **2.x Creator OS:** creator dashboard 2.0, analytics, content studio, audience/email ownership, sponsorship/business hub, OBS/stream control, advanced stream tools.
+- **3.x+:** AI website assistant/stream intelligence, Creator Business Platform, Marketplace, multi-site/teams, SaaS/multi-tenant, billing és globális ökoszisztéma.
+
+### F.12 — Sanci9517 projekt- és indulási kontextus (konfigurálható, nem hardcode)
+
+- Indulási nyelv: magyar; nemzetközi bővítés később, ezért a dátum/idő, locale és UI-stringek nem hardcode-olhatók egyetlen nyelvre a domainmodellben.
+- Kiinduló brand/content profil: gaming streamer, többek között Fortnite, Hearthstone és roguelike/Hades-jellegű játékok. Kiemelt játék, streamcím, Schedule és platformlinkek Adminból módosíthatók.
+- Korábban megadott TikTok-azonosító: sanci9517twitch; az 5000 követő személyes cél, nem UI-garancia. A cél/link profilbeállításként legyen változtatható.
+- Heti három stream korábban lehetséges ritmusként merült fel; Schedule-ban szerkeszthető terv, nem kötelező vagy beégetett ütem.
+- Fejlesztési támogatás/kampány kontextus: korábban 1 000 000 Ft-os cél, Brancs/Ko-fi/Buy Me a Coffee jellegű online támogatás, fizikai jutalom nélkül merült fel. Ez nem automatikusan aktív fizetési modul: publikus kampány előtt aktuális cél, platformfeltételek, linkek és privacy/jogi információk újraellenőrzendők. Supporter nevek csak külön, önkéntes opt-in alapján jelenhetnek meg.
+- Ezek projektkontextusok és kezdeti tartalomadatok; a termékben konfigurációként kell szerepelniük, és később változtathatónak kell maradniuk.
+
+**Végső operatív szabály:** egyetlen aktív pont van: F0.1. A dokumentum minden fenti követelménye megmarad a maga fázisában. Új igény csak canonical ownerrel, fázissal, függőséggel, DoD-val, teszttel és acceptance-szel vehető fel; korábbi funkció nem maradhat puszta névként specifikáció nélkül.
+
