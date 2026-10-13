@@ -4035,6 +4035,55 @@ A végleges funkciókatalógus több, egymást kiegészítő rétegből áll:
 
 Funkciók csak az alábbi állapotok egyikével tarthatók nyilván: REQUIRED / QUEUED / IMPLEMENTING / PASS / BLOCKED / DEFERRED-BY-EXPLICIT-DECISION / SUPERSEDED-WITH-TRACEABILITY. Egyetlen képesség sem hagyható el csak azért, mert nincs most használatban. A DEFERRED döntéshez ok, owner, újranyitási feltétel és hivatkozás kell.
 
+## 2.77.8.A — Kiegészítő hivatalos benchmark és mit veszünk át
+
+A terméket nem egyetlen versenytárshoz igazítjuk. A következő hivatalos források a képesség- és UX-audit referenciái; a felsorolt funkciókat a megfelelő Sanci domainben kell megvalósítani, nem külön másolatként.
+
+| Referencia | Mit vizsgálunk | Mit építünk be a Sanci tervbe | Korlát / döntés |
+|---|---|---|---|
+| WordPress | page/content publishing, extensibility, themes/plugins, roles | tartalommodell, exportálhatóság, extension permission boundary | a bővítmények nem kaphatnak korlátlan runtime-hozzáférést |
+| Shopify | product, inventory, checkout, orders, fulfillment, analytics, automation | canonical Commerce domain és provider adapter | payment/checkout felelősség és compliance a provider szerződéséhez igazodik |
+| Squarespace | website, commerce, scheduling, email campaigns, memberships | integrált website+creator business flow, konzisztens márkázás | terv- és régiófüggő funkciót nem feltételezünk univerzálisnak |
+| StreamElements | overlays, alerts, widgets, browser source, chatbot, loyalty, sponsorship | Overlay/Stream Studio, widget event contract, moderation/loyalty extension points | csak engedélyezett platformesemény és hivatalos integráció |
+| YouTube Studio | video/Shorts management and performance analytics | content lifecycle, provider-metric dictionary, per-platform publishing/analytics | csak API/scope által engedett mező és művelet |
+| TikTok Studio | creator content workflow and analytics | platform-specific composer, status, metrics, manual fallback | nem ígérünk olyan automatikus publikálást, amit az adott API/account nem támogat |
+| Discord | roles, permissions, bot/integration and moderation model | least-privilege bot, scoped roles, community workflows | Discord role/permission és guild scope szerveroldalon ellenőrzendő |
+| Ghost | publishing, newsletters, memberships, custom domains | CMS + first-party audience/consent + membership boundaries | email deliverability, opt-in és unsubscribes kötelező |
+| Canva | brand kit, reusable design, video/content creation workflows | shared design tokens, reusable templates, manual media studio | nem keverjük a web Page Modelt a videós projektek adatmodelljével |
+| Webflow | visual CMS, responsive layout, localization and publish workflow | visual builder, content binding, responsive preview, staged publishing | canonical Page Model marad az egyetlen weboldal-állapot |
+| Wix | guided website creation and beginner-friendly setup | onboarding, empty states, sensible defaults, guided first site | a felhasználó minden automatikus defaultot kézzel módosíthasson |
+| OBS Studio | authenticated local remote control and developer integration | secure local connector, explicit pairing, revoke, audit and safe actions | a böngésző nem kap korlátlan hozzáférést a felhasználó gépéhez |
+| Restream | multi-platform live workflow, chat and analytics | integration center, cross-platform status, provider freshness | minden platform capability-jét külön szerződés írja le |
+| OpusClip / Descript | clip workflow, timeline, transcript, captions, repurposing | AI nélküli kézi Media Studio előbb; AI javaslatok csak F0.24-ben | AI nem lehet az alapvágás vagy export előfeltétele |
+| Metricool / Buffer | calendar, cross-platform scheduling, reporting and performance review | publishing queue, editorial calendar, source-aware analytics | nem szabad sikert állítani, amíg a provider nem igazolta |
+| Beacons / Fourthwall / Patreon | link hub, creator commerce, membership and digital products | Link Hub, Commerce, membership/entitlement provider adapters | provider terms, fees, availability, tax and region must be checked |
+
+### Hivatalos kiinduló források
+
+- WordPress: https://wordpress.org/documentation/
+- Shopify product/commerce capabilities: https://www.shopify.com/products
+- Squarespace feature index: https://www.squarespace.com/feature-index
+- StreamElements overlays and custom widgets: https://docs.streamelements.com/overlays
+- StreamElements creator tools: https://support.streamelements.com/hc/en-us/categories/10474377631762-Creator-Tools
+- YouTube Shorts analytics: https://support.google.com/youtube/answer/12942217
+- Discord developer/community permissions: https://github.com/discord/discord-api-docs
+- Ghost publishing and memberships: https://ghost.org/help/manual/
+- Ghost newsletters: https://ghost.org/help/delivering-emails/
+- Canva: https://www.canva.com/
+- Webflow CMS: https://webflow.com/feature/cms
+- Wix AI Website Builder: https://www.wix.com/ai-website-builder
+- OBS remote control: https://obsproject.com/kb/remote-control-guide
+- Restream Chat: https://restream.io/chat
+- OpusClip: https://www.opus.pro/
+- Descript: https://www.descript.com/features
+- Metricool Planner: https://metricool.com/planner/
+- Buffer Insights: https://support.buffer.com/en-us/articles/using-insights-in-buffer-x4gLauQU5a
+- Beacons creator tools: https://help.beacons.ai/en/articles/4695105
+- Fourthwall memberships: https://fourthwall.com/memberships
+- Patreon digital products: https://www.patreon.com/product/digital-products
+
+Minden nagyobb domain fejlesztése előtt a benchmarkot újra kell ellenőrizni, mert a termékek, díjcsomagok és API-képességek változhatnak. A benchmarkból átvett ötlethez rögzíteni kell a user problem-et, canonical owner-t, függőséget, API/license korlátot, acceptance-tesztet és a döntést (adopt/adapt/reject). A benchmarkban látott funkció nem bizonyíték arra, hogy a Sanci platformon már létezik.
+
 ## 2.77.8 — Merge-gate: PR #6 csak a végső konzisztenciaellenőrzés után
 
 A PR csak akkor olvasztható be, ha mindegyik feltétel igaz:
