@@ -29,7 +29,7 @@ Ez a blokk kizárólag az E4/E5/E6 korábban bizonyított lezárt gate-jeit rög
 
 ## HISTORICAL / QUEUED — 00/A.2.2 — F — SCHEDULE CRUD + INSPECTOR / DOMAIN-DRIVEN EDITOR — DEFINITION OF DONE
 
-**Állapot:** HISTORICAL SCOPE / QUEUED. Ez a korábbi F-terv megőrzött definíciója, nem aktív végrehajtási utasítás. A jelenlegi végrehajtási sorrendet kizárólag a dokumentum eleji ACTIVE_POINT_ID és az F0.x szekvenciális implementációs program határozza meg; M0 audit PASS nem előfeltétel.
+**Állapot:** HISTORICAL SCOPE / QUEUED. Ez a korábbi F-terv megőrzött definíciója, nem aktív végrehajtási utasítás. A jelenlegi végrehajtási sorrendet kizárólag a dokumentum eleji ACTIVE_POINT_ID és a MASTER-2.77 szekvenciális implementációs program határozza meg; M0 audit PASS nem előfeltétel.
 
 **Cél:** az új, felhasználó által elfogadott Visual Editor-koncepció megvalósítása a meglévő canonical platformra építve. A szerkesztő felülete és interakciós modellje jelentősen újratervezhető vagy újraépíthető; a meglévő UI nem élvez elsőbbséget pusztán azért, mert korábban elkészült. A canonical Page Model, domain ownership, command/history/validation, revision/save/publish és site-ownership boundary viszont megőrzendő, hacsak bizonyított architekturális ok és külön jóváhagyott tervmódosítás mást nem indokol. Ez nem jelent második canonical Editor core-t, Schedule domaint vagy persistence útvonalat.
 
@@ -1060,7 +1060,7 @@ Az F0 **a Visual Editor új UX/UI-koncepciójának újraalapozási és megvalós
 | F0.12 | Public renderer + SEO/accessibility/performance integration | published-only state, semantic output, keyboard/reduced motion, metadata, responsive/performance gates |
 | F0.13 | End-to-end production readiness for Editor/Admin/Schedule/Twitch | regression matrix, browser desktop/tablet/mobile, Worker/API/D1 checks, user acceptance; only then mark this release slice PASS |
 
-**Sorrendi szabály:** F0.1 az egyetlen aktív pont. A többi csak QUEUED; nem készül párhuzamosan. Minden következő pont előtt a MASTER `ACTIVE_POINT_ID`, DoD, tesztparancsok és acceptance legyen frissítve.
+**HISTORICAL SORRENDI SZABÁLY — SUPERSEDED:** ez a korábbi F0.1 Editor-első sorozatot írta le. Az aktuális aktív pontot és sorrendet kizárólag a dokumentum eleji ACTIVE_POINT_ID és a MASTER-2.77 2.77.5 táblája határozza meg.
 
 ---
 
@@ -2741,7 +2741,7 @@ Fázis szerinti zár:
 
 # HISTORICAL / SUPERSEDED — MASTER-2.75 — FULL CREATOR PLATFORM: DEPENDENCY-FIRST EXECUTION ROADMAP
 
-> **Történeti pillanatkép, nem aktuális végrehajtási sorrend.** A képességek és a benchmarkforrások megőrzendők, de a fázisok és különösen az AI sorrendjét a MASTER-2.76 szabályai váltják fel.
+ > **Történeti pillanatkép, nem aktuális végrehajtási sorrend.** A képességek és a benchmarkforrások megőrzendők. A végrehajtási sorrendet a MASTER-2.77 váltja fel.
 **Döntési státusz:** CANONICAL PRODUCT DIRECTION / LOGICAL ROADMAP  
 **Cél:** a teljes Sanci9517 Creator Platform és AI Creator OS felépítése; nincs előre kijelölt végső kiadás vagy olyan verzióhatár, amelynél a fejlesztésnek meg kell állnia.  
 **Végrehajtási szabály:** a dokumentum eleji `ACTIVE_POINT_ID` és `ACTIVE_SUBPOINT_ID` továbbra is kizárólagos az aktuális munkapont meghatározására. E fejezet a hosszú távú, függőség-alapú sorrendet teszi egyértelművé; nem indít párhuzamos munkát és nem írja felül az aktív F0.1-et.  
@@ -3383,7 +3383,7 @@ A benchmark rekordnak tartalmaznia kell: dátum, forrás, user problem, releván
 
 - A dokumentum elején szereplő egyetlen ACTIVE_POINT_ID továbbra is a végrehajtás kizárólagos belépési pontja.
 - A következő aktív pont: `F0.1-EDITOR-FOUNDATION-AND-FIRST-USABLE-SLICE`; a roadmap nem engedélyez párhuzamos workstreamet vagy fázisugrást.
-- A régi 2.75 stage-sorrend történeti; a 2.76 az irányadó: az AI a 24. és utolsó opcionális fő fázis.
+- A régi 2.75 és 2.76 stage-sorrend történeti; a MASTER-2.77 az irányadó: az AI a 24. és utolsó opcionális fő fázis.
 - A MASTER bővíthető a H34 szabály szerint, de minden új igénynek owner, dependency, DoD, teszt és fázis kell; a korábbi követelmények megőrzése kötelező.
 
 
