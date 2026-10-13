@@ -1946,7 +1946,7 @@ PWA/offline/mobile; provider capabilities/Discord roles; email/CRM/consent; Stre
  
 ### 37.3. A P0 aktuális állapota
 
-- **P0.1:** PASS — a v2/foundation az aktív fejlesztési ág; a MASTER az egyetlen végrehajtási igazságforrás; a történeti archive snapshot és a folytatási pont dokumentált. Az /admin útvonal eltérése feloldva: a jelenlegi src/index.ts viselkedése az irányadó, a régi archív route-leírás történeti állapot. A baseline commiton a Cloudflare Workers Build, Editor Core Test és Twitch Integration Check sikeres; ezek a tesztek típusellenőrzést, Editor-, Schedule-, domain-, Admin home-, Twitch OAuth- és ownership-teszteket futtatnak. Ez nem zárja le P0.2–P0.6-ot.
+- **P0.1:** IN PROGRESS — a branch/MASTER/archive baseline és a fő route-viselkedés forráskódja ellenőrizve; a baseline commiton a Cloudflare Workers Build, Editor Core Test és Twitch Integration Check sikeres. A teljes tervintegritási gate még nyitott, mert a MASTER több korábbi fejezetében maradt státusz-/folytatási pont-ellentmondást és az archív route-leírás történeti eltérését egységesen reconciliálni kell. A tesztek sikere nem zárja le P0.1 önmagában.
 - **P0.2:** IN PROGRESS — a 271 történeti kulcshoz elkészült a soronkénti MAPPED DRAFT crosswalk (§41), de a szemantikai megfeleltetés teljes felülvizsgálata, a döntések indoklása és a tételenkénti permission/dependency/acceptance contract még nincs lezárva.
 - **P0.3:** IN PROGRESS — az első kódalapú domain/adatforrás-leltár elkészült; a teljes tábla-, owner-, lifecycle- és consumer-térkép még hiányzik.
 - **P0.4:** IN PROGRESS — az első router/static surface-leltár elkészült; a teljes menü-/route-/block-lefedettség és legacy/placeholder besorolás még hiányzik.
@@ -2823,7 +2823,7 @@ A MASTER jelenlegi tartalmán végzett strukturális ellenőrzés eredménye:
 
 - Történeti katalógus: 271 címkézett követelmény, a §40.1–40.16 csoportok deklarált elemszámai egyeznek a címkelisták elemszámával.
 - Crosswalk: 271 sor; 271 egyedi történeti kulcs; nincs duplikált kulcs.
-- Funkciójegyzék: 355 stabil ID a §24.1–24.18 tartományban; a vizsgált ID-k egyediek, duplikációt az ellenőrzés nem talált.
+- Funkciójegyzék: 357 stabil ID a §24.1–24.18 tartományban; a vizsgált ID-k egyediek, duplikációt az ellenőrzés nem talált.
 - A crosswalk minden cél-ID-ja feloldható a jelenlegi funkciójegyzékben; a QA-horgonyok szintaktikailag érvényes QA-ID-hivatkozások.
 - A §40 katalóguscímkéi és a §41 crosswalk címkéi kulcsonként egyeztetve vannak.
 
