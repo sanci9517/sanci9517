@@ -1,8 +1,8 @@
 **ACTIVE_POINT_ID:** `F0.3-EDITOR-FOUNDATION-FIRST-VERTICAL-SLICE`
 **ACTIVE_POINT_STATUS:** `ACTIVE — a canonical Editor v2 Page Model és command/history/persistence vertikális szeletének ellenőrzése és megbízhatósági javítása`
 **ACTIVE_POINT_TITLE:** Editor foundation és első végig működő szerkesztési szelet
-**ACTIVE_SUBPOINT_ID:** `F0.3-EDITOR-HISTORY-SELECTION-INTEGRITY`
-**ACTIVE_SUBPOINT_STATUS:** `ACTIVE — undo/redo, tranzakció rollback és atomic/non-atomic batch hibák esetén a dokumentum, kijelölés és history determinisztikus; az Android Chrome tabletes Admin-belépés külön, nyitott, nem blokkoló ismert hibaként elhalasztva a felhasználó kérésére. F0.2 egyéb útvonal/navigációs elfogadását a felhasználó jelenleg megfelelőnek jelezte; a tabletes hiba nem állítható megoldottnak.`
+**ACTIVE_SUBPOINT_ID:** `F0.3-PAGE-MODEL-PERSISTENCE-ROUNDTRIP`
+**ACTIVE_SUBPOINT_STATUS:** `ACTIVE — az undo/redo, transaction rollback és atomic/non-atomic batch history-integritási javítások PR #18–#20 alatt merge-elve, CI PASS. Következő funkcionális szelet: canonical Page Model mentés/újratöltés és revision-conflict viselkedés ellenőrzése; az Android Chrome tabletes Admin-belépés külön, nyitott, nem blokkoló ismert hiba, a felhasználó kérésére elhalasztva.`
 **PREVIOUS_GATE:** `F0.2 — USER-ACCEPTED WITH DEFERRED NON-BLOCKING ISSUE` (Android Chrome tablet-login külön követés alatt; nem igazoltan javított)
 **NEXT_GATE:** `F0.3 Editor foundation + first vertical slice → F0.4 Visual Builder/Layers/Inspector → további F0.x pontok szigorú sorrendben; a tablet-login hiba külön visszatérési tétel`
 **PARALLEL_WORKSTREAMS:** `0`
@@ -11,7 +11,7 @@
 **Verzió:** MASTER-2.77 — végleges termékleírás, Admin UI-specifikáció és egyetlen függőség-alapú fejlesztési sorrend; a 2.75–2.76 roadmapek történetiek.  
 **Frissítve:** 2026-10-13.  
 **Dokumentum státusza:** ez az egyetlen végrehajtási igazságforrás.
-**Audit / implementation baseline:** GitHub `v2/foundation`, commit `ce7c054c4e522444d2dc5cb5171cd20c20c112dd` (2026-10-13; F0.3 history-selection és atomic batch rollback javítások integrálva; a tabletes belépési hiba továbbra is külön elhalasztva). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
+**Audit / implementation baseline:** GitHub `v2/foundation`, commit `d7bf73441a2a173c9011678beb1416a1c098400a` (2026-10-13; F0.3 history-selection, atomic rollback és non-atomic prefix-history javítások integrálva; a tabletes belépési hiba továbbra is külön elhalasztva). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
 
 ### Jelenlegi igazolt állapot
 Ez a blokk kizárólag az E4/E5/E6 korábban bizonyított lezárt gate-jeit rögzíti. Az M0 auditfázist a felhasználó döntése lezárta / superseded állapotba helyezte; ez nem runtime PASS.
@@ -4362,34 +4362,46 @@ A felhasználó egyértelmű döntése: „A tablet belépés később a többi 
 - [x] A végrehajtás az F0.3 Editor foundation első funkcionális szeletére vált; ez nem törli a korábbi F0.2 acceptance bejegyzéseket és nem módosítja a szerveroldali auth/RBAC határokat.
 - [ ] A tabletes hibát később valós eszközön újra kell ellenőrizni; ha fennáll, célzott gyökérok-elemzés és regressziós teszt szükséges.
 
-## 2.77.9.O — F0.3 undo/redo selection integrity — IMPLEMENTING
+## 2.77.9.O — F0.3 undo/redo selection integrity — MERGED / CI PASS (PR #18; merge commit `f31f0ffe34265004affba98c039527da420bbaf6`)
 
 **Cél:** az Editor v2 központi command/history rétegében a dokumentum és a kijelölés állapota együtt, determinisztikusan álljon vissza undo, redo, transaction commit/rollback és atomic batch rollback esetén. Ez a meglévő canonical Page Model-t erősíti; nem vezet be második szerkesztőt vagy párhuzamos adatmodellt.
 
 **DoD:**
-- [ ] Undo/redo az adott történeti állapothoz tartozó kijelölést állítja vissza; nem maradhat kijelölés egy már nem létező node ID-ra.
-- [ ] Transaction rollback és atomic batch failure a dokumentum mellett az eredeti kijelölést is visszaállítja.
-- [ ] Az Editor Core tesztek, typecheck és releváns regression workflow-k PASS.
-- [ ] A módosítás kizárólag PR-on keresztül kerülhet a `v2/foundation` ágba; éles runtime acceptance külön marad.
+- [x] Undo/redo az adott történeti állapothoz tartozó kijelölést állítja vissza; nem maradhat kijelölés egy már nem létező node ID-ra.
+- [x] Transaction rollback és atomic batch failure a dokumentum mellett az eredeti kijelölést is visszaállítja.
+- [x] Az Editor Core tesztek, typecheck és releváns regression workflow-k PASS (PR #18: Editor Core Test + Twitch Integration Check PASS).
+- [x] A módosítás PR-on keresztül került a `v2/foundation` ágba; éles runtime acceptance külön marad.
 
 
-## 2.77.9.P — F0.3 atomic batch failure must preserve redo and persistence state — IMPLEMENTING
+## 2.77.9.P — F0.3 atomic batch failure must preserve redo and persistence state — MERGED / CI PASS (PR #19; merge commit `ce7c054c4e522444d2dc5cb5171cd20c20c112dd`)
 
 **Cél:** sikertelen, atomic `executeBatch` esetén a művelet kívülről valóban atomikus legyen: ne csak a Page Model és a kijelölés álljon vissza, hanem a redo history és a mentési/persistence állapot se változzon meg hibásan.
 
 **DoD:**
-- [ ] Sikertelen atomic batch visszaállítja a dokumentumot, kijelölést, undo/redo stackeket és a persistence state-et.
-- [ ] A sikertelen művelet nem semmisíti meg a korábbi redo lehetőséget.
-- [ ] Új regressziós teszt bizonyítja a teljes visszaállítást; Editor Core Test és Twitch Integration Check PASS.
-- [ ] A tablet-login továbbra is külön elhalasztott ismert hiba, és nem szerepel megoldottként.
+- [x] Sikertelen atomic batch visszaállítja a dokumentumot, kijelölést, undo/redo stackeket és a persistence state-et.
+- [x] A sikertelen művelet nem semmisíti meg a korábbi redo lehetőséget.
+- [x] Új regressziós teszt bizonyítja a teljes visszaállítást; Editor Core Test és Twitch Integration Check PASS (PR #19).
+- [x] A tablet-login továbbra is külön elhalasztott ismert hiba, és nem szerepel megoldottként.
 
 
-## 2.77.9.Q — F0.3 non-atomic batch prefix must remain undoable — IMPLEMENTING
+## 2.77.9.Q — F0.3 non-atomic batch prefix must remain undoable — MERGED / CI PASS (PR #20; merge commit `d7bf73441a2a173c9011678beb1416a1c098400a`)
 
 **Cél:** ha `executeBatch(..., { atomic: false })` közben egy későbbi parancs hibázik, a sikeres prefix megmaradhat, de egyetlen undozható history tranzakcióként kell rögzíteni. A részleges állapot nem maradhat előzmény nélküli, visszavonhatatlan változtatás.
 
 **DoD:**
-- [ ] Sikertelen non-atomic batch a sikeres prefixet egyetlen tranzakcióként rögzíti.
-- [ ] Undo/redo visszaállítja a részleges tranzakció előtti/utáni dokumentumot és kijelölést.
-- [ ] Új Editor Core regressziós teszt és a teljes CI PASS.
-- [ ] A tablet-login hiba külön, elhalasztott ismert hiba marad.
+- [x] Sikertelen non-atomic batch a sikeres prefixet egyetlen tranzakcióként rögzíti.
+- [x] Undo/redo visszaállítja a részleges tranzakció előtti/utáni dokumentumot és kijelölést.
+- [x] Új Editor Core regressziós teszt és a teljes CI PASS (PR #20: Editor Core Test + Twitch Integration Check PASS).
+- [x] A tablet-login hiba külön, elhalasztott ismert hiba marad.
+
+
+## 2.77.9.R — F0.3 canonical Page Model save/reload and revision conflict — ACTIVE
+
+**Cél:** az első szerkesztési vertikális szelet adatútjának lezárása: a canonical Page Model mentése, szerverről újratöltése, revision-számok konzisztenciája és a párhuzamos/stale mentés konfliktusának adatvesztés nélküli kezelése. A jelenlegi API-ban a `REVISION_CONFLICT` 409 válasz létezik; a UI recovery flow és a round-trip bizonyíték ellenőrzendő.
+
+**DoD:**
+- [ ] A dokumentum mentés után ugyanazzal a canonical struktúrával és revisionnel újratölthető.
+- [ ] A mentés stale `expectedVersion` esetén nem írja felül a frissebb szerververziót.
+- [ ] A konfliktus világos, visszanyerhető felhasználói állapotot ad; az unsaved helyi változat nem vész el csendben.
+- [ ] A tesztek a save/reload, version conflict és publish validation útvonalakat fedik; Editor Core + Twitch Integration CI PASS.
+- [ ] Valós production acceptance külön szükséges; a tabletes login hiba ettől független, elhalasztott tétel.
