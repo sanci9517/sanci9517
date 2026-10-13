@@ -1,10 +1,10 @@
 # Sanci9517 V2 — FOLYAMATOS PROJEKTKONTEXTUS
 
-> Ez a dokumentum a projekt élő állapot- és döntési naplója. A célja, hogy a fejlesztés során ne vesszen el egyetlen fontos követelmény, döntés, hiba, teszt vagy felhasználói visszajelzés sem.
+> **HISTORICAL CONTEXT SNAPSHOT — nem aktuális végrehajtási státusz.** Ez a dokumentum a korábbi követelmények, döntések, hibák, tesztek és felhasználói visszajelzések megőrzésére szolgál; a benne lévő régi checkboxok és „következő pont” szövegek nem írhatják felül az aktuális MASTER-t.
 >
-> **Központi vízió:** `docs/SANCI-MASTER-PLAN.md`
-> **Részletes fejlesztési checklist:** `docs/DEVELOPMENT-PLAN.md`
-> **Aktuális állapot / döntések / tesztek / változások:** ez a dokumentum.
+> **Egyetlen aktuális végrehajtási igazságforrás:** `docs/MASTER-DEVELOPMENT-PLAN.md` (branch `v2/foundation`, eleji `ACTIVE_POINT_ID`).
+> **Korábbi tervhivatkozások:** a `docs/SANCI-MASTER-PLAN.md` és `docs/DEVELOPMENT-PLAN.md` korábbi állapotot képviselnek; az elérhető archív tervfájlok a `docs/archive/plans/` alatt találhatók.
+> **Használat:** történeti funkció vagy döntés keresésére szolgál; aktuális készültség, fázis vagy sorrend megállapítására nem.
 
 ## 1. Kötelező munkaszabály
 
