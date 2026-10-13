@@ -4762,3 +4762,48 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 
 **Coverage count:** 51 E20–E24 source items are individually keyed. The archived roadmap's A1–A? Admin, remaining platform domains, AI/automation, testing gates and global 0/Foundation/Data Model/Core rules remain OPEN. P0.2 **IN PROGRESS / NOT PASS**; documentation-only, no runtime code/data changed and no tests run.
 
+### 41.3.32. P0.2 — MASTER-FINAL-ROADMAP source-key ledger: A1–A6 Admin, security and recovery (2026-10-13)
+
+**Source:** docs/archive/plans/MASTER-FINAL-ROADMAP.md, A1–A6, archive lines 524–564. All 30 Admin/security/backup checklist items are retained individually; this is not an assertion that the historical checklist has been implemented.
+
+| Source key | Archive line | Exact source item | Current E target | Candidate canonical IDs | Decision / phase / acceptance |
+|---|---:|---|---|---|---|
+| ROADMAP-A1-01 | 525 | - [ ] dashboard | E.7.1; E.7.3 | ADM-002/004/008 | KEEP — dashboard only displays real data and actionable status; no fake active controls; acceptance evidence OPEN |
+| ROADMAP-A1-02 | 526 | - [ ] navigation | E.7.2 | ADM-001/003/009 | KEEP — navigation is permission-filtered and routes to canonical modules; acceptance evidence OPEN |
+| ROADMAP-A1-03 | 527 | - [ ] responsive admin | E.7.2; E.3.1-05 | ADM-010; QA-004 | KEEP — responsive Admin behavior tested on supported desktop/tablet/mobile; acceptance evidence OPEN |
+| ROADMAP-A1-04 | 528 | - [ ] diagnostics | E.7.1; E.18 | ADM-004/008; OPS-001–003/007 | KEEP — diagnostics use real health/log/error evidence, not placeholder status; acceptance evidence OPEN |
+| ROADMAP-A2-01 | 531 | - [ ] page list | E.4-01 | WEB-001/003 | KEEP — page list has loading/empty/error/permission/pagination and canonical route links; acceptance evidence OPEN |
+| ROADMAP-A2-02 | 532 | - [ ] create/delete/duplicate | E.4-01 | WEB-001/003; EDT-001/002; SEC-002 | KEEP — create/delete/duplicate are server-authorized and reference-safe; acceptance evidence OPEN |
+| ROADMAP-A2-03 | 533 | - [ ] status | E.4-02 | WEB-004/006 | KEEP — page status transitions validated and cannot leak drafts; acceptance evidence OPEN |
+| ROADMAP-A2-04 | 534 | - [ ] versions | E.4-04 | WEB-008; EDT-029 | KEEP — versions are server-authoritative, diffable and conflict-safe; acceptance evidence OPEN |
+| ROADMAP-A2-05 | 535 | - [ ] publish | E.4-05 | WEB-006/007/008; OPS-009 | KEEP — publish/unpublish/rollback atomicity and cache behavior tested; acceptance evidence OPEN |
+| ROADMAP-A3-01 | 538 | - [ ] open editor | E.3.1-01 | ADM-003; EDT-001/003 | KEEP — opens only canonical public/editor-v2 route; no legacy editor runtime; acceptance evidence OPEN |
+| ROADMAP-A3-02 | 539 | - [ ] preview | E.4-03 | EDT-032; WEB-005 | KEEP — preview access is scoped and does not change published content; acceptance evidence OPEN |
+| ROADMAP-A3-03 | 540 | - [ ] recovery | F.1-09 | EDT-031/042; OPS-006 | KEEP — recovery preserves edits and has explicit conflict/restore behavior; acceptance evidence OPEN |
+| ROADMAP-A3-04 | 541 | - [ ] history | E.3.7-01; E.4-04 | EDT-005; WEB-008 | KEEP — history panel mirrors canonical editor history/revisions; acceptance evidence OPEN |
+| ROADMAP-A3-05 | 542 | - [ ] permissions | E.19 | SEC-002/003/004; ADM-009 | KEEP — editor/page actions enforce server-side role and site ownership; acceptance evidence OPEN |
+| ROADMAP-A4-01 | 545 | - [ ] schedule | E.8 | SCH-001–015 | KEEP — Schedule domain has one canonical owner; Editor block only reads/presents; acceptance evidence OPEN |
+| ROADMAP-A4-02 | 546 | - [ ] social | E.9; E.13 | INT-001–021; COM-001/002 | KEEP — social links, OAuth integrations and community bot/status are separate capabilities; acceptance evidence OPEN |
+| ROADMAP-A4-03 | 547 | - [ ] VOD | E.10 | CNT-001–020; WEB-017 | KEEP — VOD/content hub uses canonical content records and provider/manual fallback; acceptance evidence OPEN |
+| ROADMAP-A4-04 | 548 | - [ ] media | E.5 | RES-001–016 | KEEP — Media Manager owns file metadata/usage and R2 binary references; acceptance evidence OPEN |
+| ROADMAP-A4-05 | 549 | - [ ] settings | E.7.4 | SET-001–003 | KEEP — settings are typed, site-scoped and public-safe; secrets excluded; acceptance evidence OPEN |
+| ROADMAP-A5-01 | 552 | - [ ] RBAC | E.19 | SEC-002/003 | KEEP — server-side RBAC and site/workspace isolation enforced on every mutation; acceptance evidence OPEN |
+| ROADMAP-A5-02 | 553 | - [ ] audit log | E.19; E.18 | SEC-010; OPS-002/003 | KEEP — audit records actor/action/target/outcome without secrets or unnecessary personal data; acceptance evidence OPEN |
+| ROADMAP-A5-03 | 554 | - [ ] session security | E.19 | SEC-001/004 | KEEP — session cookie/security/expiry/logout behavior tested; acceptance evidence OPEN |
+| ROADMAP-A5-04 | 555 | - [ ] CSRF/replay protection where applicable | E.19 | SEC-004/009 | KEEP — CSRF and webhook signature/replay protection tested per route; acceptance evidence OPEN |
+| ROADMAP-A5-05 | 556 | - [ ] mutation authorization | E.19 | SEC-002/003/010 | KEEP — authorization occurs server-side before mutation; deny-path tests required; acceptance evidence OPEN |
+| ROADMAP-A6-01 | 559 | - [ ] full backup | E.18-03 | OPS-005/006; OPS-004 | KEEP — full backup manifest, consistency check, retention and recovery drill defined; acceptance evidence OPEN |
+| ROADMAP-A6-02 | 560 | - [ ] page backup | E.18-03; E.4-04 | OPS-005; WEB-008 | KEEP — page backup/revision export are separate from full-site backup; acceptance evidence OPEN |
+| ROADMAP-A6-03 | 561 | - [ ] media references | E.18-03; E.5 | OPS-005; RES-001/002/008 | KEEP — media backup/export includes object keys/checksums/reference integrity, not only D1 rows; acceptance evidence OPEN |
+| ROADMAP-A6-04 | 562 | - [ ] restore validation | E.18-03 | OPS-004/005/006; SEC-002 | KEEP — restore preflight validates schema/owner/site/assets before mutation; acceptance evidence OPEN |
+| ROADMAP-A6-05 | 563 | - [ ] rollback | E.18-03; E.4-05 | OPS-009; WEB-007/008 | KEEP — rollback is authorized, audited and cache-safe; acceptance evidence OPEN |
+| ROADMAP-A6-06 | 564 | - [ ] import/export | E.18-01 | OPS-005; DSN-015; SEC-002/008/011 | KEEP — import/export dry-run, schema/version, permissions, secret exclusion and privacy semantics validated; acceptance evidence OPEN |
+
+**Semantic findings:**
+- Admin modules are projections over canonical domains; no revived legacy Admin page may become a second Schedule, Media, Social or Settings owner.
+- RBAC, site isolation, session security, CSRF, webhook replay protection and audit are independent controls. A generic SEC ID range is not proof that each mutation route has a deny-path test.
+- Full backup, page/revision backup, media-object/reference backup, import/export and incident rollback are distinct workflows. Each requires preflight, integrity/ownership validation, no-secret policy, recovery evidence and a tested failure path.
+- The old Admin roadmap's [ ] boxes are historical; current completion must be backed by current route/API, browser and data evidence.
+
+**Coverage count:** 30 A1–A6 source items are individually keyed. AI-1–AI-4, T1–T6 and the roadmap's global rules remain OPEN. P0.2 **IN PROGRESS / NOT PASS**; documentation-only, no runtime code/data changed and no tests run.
+
