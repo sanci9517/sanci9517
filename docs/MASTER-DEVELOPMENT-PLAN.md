@@ -1833,11 +1833,11 @@ Mielőtt P0 lezárul:
 | Pont | Állapot | Kötelező bizonyíték |
 |---|---|---|
 | P0.1 Tervintegritás és baseline | IN PROGRESS | Repo/branch/working tree, package scripts, valós tesztparancsok, aktív route, nyitott acceptance |
-| P0.2 Követelmény- és funkciólefedettség | NOT STARTED | Teljes feature ID cross-check és explicit döntések |
-| P0.3 Domain- és adatforrás-térkép | NOT STARTED | Canonical owner, source, site scope, lifecycle és dependency |
-| P0.4 Admin/public/Editor surface audit | NOT STARTED | Minden route/menu/block és legacy állapot besorolása |
-| P0.5 Provider/benchmark feasibility | NOT STARTED | Hivatalos API, capability, policy és cost kártyák |
-| P0.6 Függőségi sorrend és acceptance freeze | NOT STARTED | Aktív pont, next point, DoD, tesztparancsok, rollback |
+| P0.2 Követelmény- és funkciólefedettség | IN PROGRESS | 271 soros crosswalk elkészült; szemantikai felülvizsgálat és teljes feature contract még nyitott |
+| P0.3 Domain- és adatforrás-térkép | IN PROGRESS | Kódszintű schema/consumer leltár részleges; R2 binding hiányzik, site_settings singleton és consumer gap nyitott |
+| P0.4 Admin/public/Editor surface audit | IN PROGRESS | Fő route-ok, Admin placeholder-ek és Editor action-wiring első leltára megvan; minden surface acceptance még nyitott |
+| P0.5 Provider/benchmark feasibility | IN PROGRESS | Hivatalos Twitch/YouTube/TikTok/Discord/Kick capability előszűrés rögzítve; feature-to-endpoint/scope/quota matrix nyitott |
+| P0.6 Függőségi sorrend és acceptance freeze | IN PROGRESS | Domain-gate gerinc megvan; feature-ID szintű dependency/acceptance freeze nyitott |
 | P0 | NOT PASS | P0.1–P0.6 mind PASS; nincs elveszett capability vagy nyitott kritikus ellentmondás |
 
 A P0.x sorok dokumentációs/baseline feladatok, nem termékfeature-implementációk. A P0 lezárásáig a párhuzamos termékfejlesztés tiltott. A terv csak a tényleges ellenőrzés után frissítheti az állapotot.
