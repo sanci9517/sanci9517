@@ -4084,17 +4084,43 @@ A terméket nem egyetlen versenytárshoz igazítjuk. A következő hivatalos for
 
 Minden nagyobb domain fejlesztése előtt a benchmarkot újra kell ellenőrizni, mert a termékek, díjcsomagok és API-képességek változhatnak. A benchmarkból átvett ötlethez rögzíteni kell a user problem-et, canonical owner-t, függőséget, API/license korlátot, acceptance-tesztet és a döntést (adopt/adapt/reject). A benchmarkban látott funkció nem bizonyíték arra, hogy a Sanci platformon már létezik.
 
-## 2.77.8 — Merge-gate: PR #6 csak a végső konzisztenciaellenőrzés után
+## 2.77.8 — PR #6 lezárási bizonyíték
 
-A PR csak akkor olvasztható be, ha mindegyik feltétel igaz:
-- [ ] MASTER tetején MASTER-2.77, egyetlen aktív pont és a helyes Admin-first sorrend szerepel.
-- [ ] Régi E/F részletes követelmények, 01–140, H19–H34 és a 2.75/2.76 tartalom megmaradt; a régi roadmapek explicit historical/superseded címkéjűek.
-- [ ] A régi Editor-first F0 sorrend nem tudja felülírni a 2.77 sorrendet.
-- [ ] Az Admin kezdőoldal layoutja, navigációja, valós adatkontraktjai, responsive/accessibility és route acceptance le van írva.
-- [ ] Minden korábbi feature legalább egy canonical domainhez és egy implementációs fázishoz rendelhető; a mapping önmagában nem PASS.
-- [ ] A teljes core AI nélkül működik, az AI kizárólag F0.24.
-- [ ] A diff csak a MASTER dokumentumot változtatja; production code vagy migrations nem módosult.
-- [ ] A PR base a tényleges aktuális fejlesztési branch, nincs merge conflict, és a teljes diff review megtörtént.
-- [ ] A felhasználó által jóváhagyott Admin UI első verziója az F0.1 acceptance része; a merge nem jelenti a feature implementáltságát.
+**Állapot:** CLOSED / MERGED 2026-10-13.  
+**PR:** https://github.com/sanci9517/sanci9517/pull/6  
+**Merge commit:** 147eabfe417b1e57d40ae3783b207ff70f6b1713  
+**Scope:** kizárólag docs/MASTER-DEVELOPMENT-PLAN.md; production kód és migration nem változott.
+
+- [x] MASTER tetején MASTER-2.77, egyetlen aktív pont és Admin-first sorrend szerepel.
+- [x] A korábbi E/F specifikációk, a 01–140 mátrix, a H19–H34 ledger és a 2.75/2.76 tartalom megmaradt; a régi roadmapek történetiként jelöltek.
+- [x] A régi Editor-first F0 sorrend nem írhatja felül a MASTER-2.77-et.
+- [x] Az Admin kezdőoldal layoutja, navigációja, adatforrásai, responsive/accessibility és route acceptance le van írva.
+- [x] Mind a 140 történeti funkciósor és a 271 H19–H34 ledger sor célfázishoz van rendelve; a mapping nem runtime PASS.
+- [x] A teljes core AI nélkül működőként van specifikálva; az opcionális AI az F0.24 utolsó fő fázis.
+- [x] A PR egyetlen dokumentumot módosított, a base branch a v2/foundation volt, a GitHub a merge előtt mergeable állapotot jelzett.
+- [x] Az Admin UI F0.1 lett a következő aktív munkapont; a terv merge-je nem jelenti az Admin UI implementáltságát.
+
+## 2.77.9 — F0.1 Admin home shell: aktuális implementációs checkpoint
+
+**Állapot:** IMPLEMENTING — NOT PASS.  
+**Kód PR:** https://github.com/sanci9517/sanci9517/pull/7  
+**Branch:** feature/admin-home-shell  
+**Aktív scope:** a dashboard vizuális shell, az authenticated /admin belépési út, a valódi read-only dashboard adatforrások és a contract tesztek.
+
+Elkészült a munkapont első implementációs szelete:
+- [x] Új public/admin-home.html dashboard: bal navigációs sáv, felső sáv, overview kártyák, webhely/adasrend nézet, integrációs státusz és gyorsutak.
+- [x] /admin és /admin.html hitelesített esetben /admin/home felé irányít; hitelesítés nélkül /admin/login a cél.
+- [x] /admin/home és a közvetlen /admin-home.html asset kérés is auth guard mögött van.
+- [x] A canonical /admin/editor → public/editor-v2/index.html út külön megmaradt.
+- [x] A dashboard a meglévő session, site settings, page metadata, schedule és Twitch connection API-kból olvas; nincs kitalált follower/revenue/stream metrika.
+- [x] A még nem implementált modulok disabled / Tervezett jelzést kapnak.
+- [x] Hozzáadva a tests/admin-home-contract.test.js és az npm run test:admin-home script.
+- [x] Statikus ellenőrzés: route guard minták, API-források, egyedi HTML ID-k, beágyazott JavaScript syntax, responsive breakpoints, keyboard focus és reduced-motion ellenőrizve.
+- [ ] A helyi npm run test:admin-home, npm run typecheck és teljes releváns regression suite futtatása.
+- [ ] Hitelesített browser acceptance desktop/tablet/mobile nézetben.
+- [ ] Ellenőrizni kell a tényleges API-válaszokat és a Cloudflare branch preview viselkedését.
+- [ ] Felhasználói vizuális acceptance után lehet F0.1 PASS; addig a következő munkapont nem aktiválható.
+
+**Megőrzési szabály:** a korábbi public/admin.html és a régi Admin panel nem törölhető ezen munkapontban. Csak a tényleges használati útvonal és a canonical dashboard shell változik; a legacy kód későbbi migrációs/archiválási döntésig megmarad.
 
 **A jelen fejezet a termékirány és a fejlesztési sorrend végleges specifikációja.** A terv a jövőbeli capability-k teljes katalógusa; a runtime készültség kizárólag az egyes aktív munkapontok tesztjeiből és elfogadásából következhet.
