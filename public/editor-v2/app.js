@@ -119,7 +119,7 @@ function finishCanvasDrag(id,event,cancelled=false){
   canvasDrag=null;
   try{drag.element.releasePointerCapture(event.pointerId)}catch{}
   if(!cancelled&&drag.moved){
-    try{command('responsive.set',{nodeId:id,device:drag.device,patch:{x:`${drag.x}px`,y:`${drag.y}px`}})}catch(error){showError(error);return}
+    try{command('responsive.set',{nodeId:id,device:drag.device,patch:{x:`${drag.x}px`,y:`${drag.y}px`}},{render:false})}catch(error){showError(error);return}
   }
   render();
 }
