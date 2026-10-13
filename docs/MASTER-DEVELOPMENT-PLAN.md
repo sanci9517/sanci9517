@@ -2106,6 +2106,30 @@ A 271 történeti követelmény teljes soronkénti munkatáblája a **41. fejeze
 - Egy feature nem léphet át gate-et a blokkoló acceptance-ek megkerülésével; az 1.0-ból kimaradó tétel DEFERRED marad és a későbbi fázisban is megőrzendő.
 - P0.6 csak akkor PASS, ha minden stabil feature ID-hoz explicit prerequisite ID-k, blokkoló/nem blokkoló dependency, acceptance scenario és evidence location tartozik.
 
+
+### 37.12. P0.3/P0.4 — Runtime consumer és UI-action kapcsolótábla
+
+**Határ:** az alábbiak a forráskód olvasásából igazolt consumer-kapcsolatok; nem állítják, hogy minden endpointot a jelenlegi production verzióban élőben teszteltünk.
+
+| Canonical objektum | Igazolt olvasó/író vagy consumer | Route/UI evidence | Nyitott ellenőrzés |
+|---|---|---|---|
+| users / sessions | Auth bootstrap/login/logout, require-auth és session lifecycle | /api/auth/bootstrap, /api/auth/login, /api/auth/logout, /api/auth/session; src/routes/auth/*, src/core/auth/require-auth.ts | Session cookie, expiry/revocation, CSRF, rate limit, cross-site authorization negative tests. |
+| pages | Admin Page CRUD, Editor document/publish persistence, public page projection | /api/admin/pages, /api/admin/editor, /api/public/pages; src/routes/admin/pages.ts, src/routes/admin/editor.ts, src/routes/public/pages.ts | Method/schema/permission matrix; draft vs published snapshot; revision conflict; publish/unpublish/rollback and public leak tests. |
+| editor_revisions | Page CRUD revision read/write, Editor revision list/restore and audit lifecycle | src/routes/admin/pages.ts, src/routes/admin/editor.ts; editor_revisions SQL consumer | Revision ownership/site scope, version uniqueness, retention and rollback acceptance. |
+| schedule_items | Admin Schedule CRUD, public schedule read, Twitch schedule synchronization | /api/admin/schedule, /api/public/schedule, /api/admin/twitch/schedule-sync; src/routes/admin/schedule.ts, src/core/schedule-read.ts, src/core/schedule/sync.ts | DST/recurrence/series edit, source precedence, duplicate sync, public cache and site scope. |
+| schedule_sync_state | Sync service status and last-result tracking | src/core/schedule/sync.ts; table introduced by migration 0013 | Every field and status transition needs a consumer, retry and failure test; live DB state is separate evidence. |
+| site_settings | Admin read/update and public-safe settings projection | /api/admin/settings, /api/public/site-settings; src/routes/admin/settings.ts, src/routes/public/site-settings.ts | Current key='site' singleton is not site-scoped; define canonical multi-site policy before broader rollout. |
+| twitch_connections / twitch_oauth_states | Twitch OAuth callback/connect/connection/disconnect; site ownership helper; schedule adapter/sync | /api/integrations/twitch/*; src/core/twitch-oauth.ts, src/core/twitch-site-ownership.ts, src/core/schedule/twitch-sync.ts | Token refresh/revoke, least scopes, callback state reuse/expiry, provider outage and ownership mismatch tests. |
+| audit_log | Canonical audit statement used by domain mutations and Twitch integration paths | src/core/audit.ts, Admin route mutations, src/routes/integrations/twitch.ts | Event taxonomy, failure semantics, sensitive-data redaction, read/export permissions and retention. |
+| media / R2 object | D1 metadata schema exists; Env type declares MEDIA: R2Bucket | migrations/0017_site_ownership_not_null.sql, src/types/env.ts | wrangler.jsonc does not configure r2_buckets; main router has no Resource/media API route and no confirmed active env.MEDIA consumer. This is a hard blocker, not a completed integration. |
+| social_accounts | D1 metadata schema and site-ownership migration exist | migrations/0001_initial_schema.sql, migrations/0015_site_ownership_foundation.sql, migrations/0017_site_ownership_not_null.sql | No canonical admin CRUD or public read route is registered in src/index.ts; identify intended owner and either implement a canonical route later or explicitly defer. |
+| design_tokens / editor_components / editor_preferences | Schema objects exist from Editor platform migration | migrations/0002_editor_platform.sql | Need table-by-table consumer search and lifecycle decision; schema presence alone does not prove that current Editor reads/writes these tables. |
+| system_page_content | Legacy system-page schema and legacy route modules | migrations/0004_system_page_content.sql, src/routes/admin/system-pages.ts, src/routes/public/system-pages.ts | Main router does not register these modules. Preserve data and migration history; no deletion until explicit migration/retention decision. |
+
+**Editor action-to-handler evidence:** public/editor-v2/index.html declares Save, Publish, Unpublish, Preview, Undo/Redo, page selection, conflict export/reload, layers, element search, schedule tab, zoom/fit and mobile controls. public/editor-v2/app.js wires these through explicit click/change handlers; the app uses the command pipeline for editor mutations and /api/admin/pages + /api/admin/editor for persistence. This is evidence that the controls have source-level wiring, not a claim that every path passes browser/runtime acceptance.
+
+**Admin home evidence:** public/admin-home.html calls the session, settings, pages, schedule and Twitch-connection endpoints and wires logout/mobile navigation/search/refresh/theme controls. The named capability cards marked “Tervezett” or “Későbbi” are disabled placeholders; they must remain PLANNED until the matching domain, API, permissions, tests and runtime evidence exist.
+
 ## 38. Részletes Visual Editor képességkatalógus
 
 **Cél:** a vizuális szerkesztő teljes részletképességeinek önálló, tesztelhető katalógusa. A felsorolás a végleges platform követelményét rögzíti, nem a runtime készültségét. Minden elem a közös Page Model, command/history/validation/persistence és jogosultsági szerződésen keresztül működik.
