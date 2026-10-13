@@ -2743,6 +2743,51 @@ The short decision record must name the problem and acceptance criteria; existin
 
 **Batch 8 státusz:** 30 source-key sor felvéve (E.1: 1; C.23: 22; C.24: 7). Ez a C.23 kategóriák és C.24 policy-alpontok leképezése, nem a C.23 minden belső bulletjének teljes granularitású crosswalkja. A részletes C.23.1–C.23.22 archív alpontokkal való line-by-line összevetés még szükséges.
 
+
+### 37.31. P0.2 — Bullet-szintű crosswalk, batch 8: F.10–F.13 (recovery, scope, project context, Game Profile, domains, Link Hub, teams)
+
+**Forrás:** archived MASTER snapshot, 00.9.6.F.10–F.13. A projektkontextus személyes célokat és induló tartalmi adatokat is tartalmaz; ezek konfigurálható példák, nem hardcoded termékígéretek vagy aktív fizetési műveletek.
+
+| Forráskulcs | Megőrzött követelmény | Canonical current ID | Döntés | Célfázis | QA-horgony |
+|---|---|---|---|---|---|
+| F.10-01 | Versioned export of Page/revision/theme/template/component/media refs/domain data; never export secrets/tokens | OPS-005, WEB-008, DSN-015, RES-001, SEC-008 | EXPAND | 1.0 safe export foundation; full package later | QA-003/007 |
+| F.10-02 | Import dry-run validates schema/version/assets/duplicate IDs/owner/permissions/migration compatibility | OPS-004, OPS-005, WEB-008, DSN-015, SEC-002 | EXPAND | 2.0 full import/export | QA-002/003/007 |
+| F.10-03 | Recovery preview/conflicts/integrity/backup verification and post-restore Page Model/revision/public-render consistency | OPS-005, OPS-006, OPS-009, WEB-007, WEB-008, EDT-028 | KEEP | 0.x–1.0 safety baseline | QA-002/006/007 |
+| F.10-04 | Diagnostics for deploy/request/sync/provider/jobs/D1/cache/latency; no secrets or unnecessary personal data in logs | OPS-001–OPS-008, SEC-008, SEC-011 | EXPAND | 1.0 baseline; advanced operations later | QA-003/006/008 |
+| F.11-01 | 1.0 scope: own public site/Admin/working Editor slice/responsive/resource/Schedule/Twitch/publish/SEO/accessibility/security/performance | §39.2, WEB-001–WEB-032, ADM-001–ADM-010, EDT-001–EDT-042, RES-001–RES-016, SCH-001–SCH-015, INT-001–INT-021, SEO-001–SEO-005, QA-001–QA-010 | KEEP | 1.0 current release scope | QA-002–QA-009 |
+| F.11-02 | 1.x: Link Hub/Content Hub/multi-platform/VOD/Shorts/calendar/commerce foundations/community/alerts/audience capture | WEB-022, CNT-001–CNT-020, INT-013–INT-021, STO-001–STO-020, SUP-001–SUP-012, COM-001–COM-018, ANL-001–ANL-004 | MERGE | 1.5–2.0 by domain | QA-002/003/008 |
+| F.11-03 | 2.x Creator OS: dashboard/analytics/content studio/email audience/sponsorship/OBS/advanced stream tools | ADM-001–ADM-010, ANL-001–ANL-010, CNT-001–CNT-020, COM-015–COM-017, CAM-001–CAM-009, OBS-001–OBS-010 | MERGE | 2.0+ | QA-002/003/008 |
+| F.11-04 | 3.x+: AI assistant/stream intelligence/business platform/marketplace/multi-site/SaaS/global ecosystem | AI-001–AI-020, MKT-001–MKT-005, TEAM-001–TEAM-006, LOC-001–LOC-006, §39.5–39.12 | MERGE | 3.0–10.0 | QA-002/003/008 |
+| F.12-01 | Hungarian-first launch, international-ready locale/date/time/UI-string model | LOC-001–LOC-006, SET-001, WEB-001 | EXPAND | 1.0 architecture-ready; full locale workflow later | QA-004/005 |
+| F.12-02 | Gaming streamer profile and games configurable from Admin, not hardcoded into product logic | SCH-012–SCH-014, WEB-022, RES-013, SET-001 | EXPAND | 1.0 configuration baseline; Game Profile domain phased | QA-002/004 |
+| F.12-03 | TikTok handle and 5,000-follower personal goal are editable profile data, not UI guarantee | INT-014, SET-001, WEB-010, ANL-004 | KEEP | Profile config 1.0; provider metrics gated | QA-002/003/004 |
+| F.12-04 | Weekly stream cadence is editable Schedule data, not a hardcoded product rule | SCH-001–SCH-003, SCH-009 | KEEP | 1.0 | QA-002/004 |
+| F.12-05 | Historical support goal/platforms are not active payment integration; recheck current target/platform/privacy/legal text before campaign | SUP-001, SUP-002, WEB-023, COM-014, SEC-011 | KEEP | 1.0 external links only if confirmed; payments later | QA-003/004/008 |
+| F.12-06 | Project brand/profile/goal data remains configurable and changeable | SET-001–SET-003, WEB-001, SCH-001, INT-001 | KEEP | 1.0 | QA-002/004 |
+| F.13-01 | Game Profile stable ID/slug/name/provider mapping/resource refs/brand metadata/cover/status/description | SCH-012–SCH-014, RES-013, SET-001 | EXPAND | 1.5–2.0 | QA-002/004 |
+| F.13-02 | Schedule references Game Profile by stable ID, not copied fields or name matching | SCH-001, SCH-012, SCH-014 | KEEP | 1.5–2.0; 1.0 schedule stays canonical | QA-002/003 |
+| F.13-03 | Missing artwork/metadata must use explicit fallback; Inspector shows only valid fields | SCH-013, RES-013, DYN-005, EDT-022 | EXPAND | 1.5–2.0 | QA-002/004/006 |
+| F.13-04 | Game Profile is a domain; Editor references it and must not create an editor-only data store | SCH-012–SCH-014, EDT-020, DYN-001 | KEEP | 1.5–2.0 | QA-002/003 |
+| F.13-05 | Custom domain lifecycle: add/verify ownership/DNS/primary/SSL/canonical URL/redirect/error states | SET-002, WEB-012, SEO-001, SEO-005, OPS-001, SEC-006 | DEFER | 4.0+ | QA-003/004/008 |
+| F.13-06 | Domain/primary change preview and explicit SEO/redirect warning; unverified domain cannot become primary | SET-002, WEB-003, SEO-001, SEO-005, SEC-006 | KEEP | 4.0+ safety gate | QA-003/004 |
+| F.13-07 | Brand settings: creator name/logo/favicon/social registry/colors/fonts/tokens/avatar/cover/media refs are data, not renderer hardcode | SET-001, SET-003, DSN-001, RES-011–RES-013, WEB-010 | EXPAND | 1.0 baseline | QA-002/004 |
+| F.13-08 | Link Hub: platform/social links/CTA ordering/visibility and Schedule/Content/Community/Support targets, mobile-friendly | WEB-022, WEB-023, WEB-009, COM-001, SUP-001, QA-005 | EXPAND | 1.0 basic profile/links; richer hub later | QA-002/004/005 |
+| F.13-09 | Later link scheduling/campaign UTM/QR/smart redirect/click analytics with privacy controls | CAM-002, ANL-001, ANL-002, WEB-029, SEC-011 | DEFER | 1.5–2.0 | QA-003/008 |
+| F.13-10 | External URLs validated; dangerous schemes blocked; public menu/CTA behavior consistent | WEB-009, WEB-013, SEC-006 | KEEP | 1.0 | QA-003/004 |
+| F.13-11 | Signup/subscribe collects email only with clear purpose/consent; records time/purpose version/unsubscribe | COM-015, COM-017, SEC-011 | DEFER | 2.0+ | QA-003/008 |
+| F.13-12 | Subscriber list/segments/campaign/newsletter/transactional email/templates/opt-out/bounce/rate/consent history | COM-015–COM-018, CAM-002, SEC-011, INT-020 | DEFER | 2.0+ | QA-003/008 |
+| F.13-13 | Marketing vs transactional email separated; unsubscribe blocks future marketing; privacy export/delete/retention | COM-016, COM-017, SEC-011, OPS-005 | KEEP | 2.0+ privacy gate | QA-003/008 |
+| F.13-14 | Later tenant→workspace/account→members→sites→domain modules | TEAM-001–TEAM-006, SEC-003 | DEFER | 4.0+ | QA-003/008 |
+| F.13-15 | Role catalog for owner/admin/editor/designer/moderator/analyst/content/store/finance; every mutation checks server-side permission | TEAM-003, SEC-002, SEC-003 | KEEP | RBAC baseline 1.0; team roles 4.0+ | QA-003/008 |
+| F.13-16 | Workspace/site scope separated; client-provided tenant/site ID is not authorization | TEAM-005, SEC-002, SEC-003 | KEEP | 0.x–1.0 baseline; expand before multi-site | QA-003 |
+| F.13-17 | Free/Creator/Pro/Business/Team/Agency and billing/quota/invoice/change/cancel only after cost/usage evidence | TEAM-006, STO-019, CAM-009, OPS-008 | DEFER | 4.0–5.0 | QA-003/008 |
+| F.13-18 | Public website responsive from 1.0; PWA/native app is a later option | WEB-014–WEB-032, ADM-010, QA-004, QA-005 | KEEP/DEFER | Responsive web 1.0; PWA later | QA-004/005 |
+| F.13-19 | Later creator app uses canonical APIs/permissions for live/alerts/schedule/analytics/moderation/content approval | ADM-001–ADM-010, INT-001–INT-021, SCH-001–SCH-015, LIV-001–LIV-007, COM-001–COM-018, SEC-002 | DEFER | 2.0+ | QA-002/003/008 |
+| F.13-20 | Starter template categories remain available as configurable library choices | DSN-008–DSN-010 | EXPAND | 1.0 starter templates; library later | QA-004 |
+| F.13-21 | Future creator-made template/component/theme/overlay/OBS/digital asset marketplace with license/version/review/revenue share | DSN-014, DSN-015, OBS-001–OBS-010, STO-012, MKT-001–MKT-005, CAM-009 | DEFER | 3.0–6.0 | QA-002/003/008 |
+
+**Batch 8 result:** 35 F.10–F.13 requirements mapped individually. This completes the F.1–F.13 source-heading crosswalk at requirement level; source text/count validation and full provenance coverage across all earlier 00/A/C sections remain open.
+
 ## 38. Részletes Visual Editor képességkatalógus
 
 **Cél:** a vizuális szerkesztő teljes részletképességeinek önálló, tesztelhető katalógusa. A felsorolás a végleges platform követelményét rögzíti, nem a runtime készültségét. Minden elem a közös Page Model, command/history/validation/persistence és jogosultsági szerződésen keresztül működik.
