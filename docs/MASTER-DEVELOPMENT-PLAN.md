@@ -4290,13 +4290,14 @@ F0.2 DoD:
 
 ## 2.77.9.I — Egyetlen canonical Admin felület és route — 2026-10-13
 
-**Állapot: IMPLEMENTÁCIÓ A FEATURE BRANCHEN; CI ÉS PRODUCTION ACCEPTANCE MÉG NEM IGAZOLT.** Ez a bejegyzés a korábbi Admin-route pillanatképeket a jelenlegi célra nézve felülírja; a történeti bejegyzések megmaradnak traceability célból.
+**Állapot: MERGED TO `v2/foundation`; PR-CI PASS; PRODUCTION ACCEPTANCE MÉG NEM IGAZOLT.** Ez a bejegyzés a korábbi Admin-route pillanatképeket a jelenlegi célra nézve felülírja; a történeti bejegyzések megmaradnak traceability célból.
 
 - **Egyetlen felhasználói Admin főútvonal:** `/admin`. Bejelentkezett felhasználónál a Worker a jelenlegi Creator Control Center dashboard assetet szolgálja ki; kijelentkezve `/admin/login` felé irányít.
 - **Egyetlen dashboard-implementáció:** a korábbi, újratervezett Creator Control Center marad az egyetlen dashboard; a régi, különálló `public/admin.html` dashboard eltávolítva.
 - **Régi dashboard útvonalak:** `/admin/home`, `/admin-home.html` és `/admin.html` a canonical `/admin` útvonalra irányítanak. Az aliasok nem szolgálnak ki külön dashboardot.
 - **Egyetlen bejelentkezési URL:** `/admin/login`; a `/admin-login.html` alias erre irányít.
 - **Az Editor nem második Admin:** a külön munkaterület canonical útvonala továbbra is `/admin/editor`, hitelesítés mögött, az Editor v2 assettel.
+- **Merge/CI evidence:** PR #13 squash merge-elve; merge commit `19431261525d5a546109ebb2da2d02f3abcbab40`. PR HEAD `02c5dffb559a908774e3c1c63d72a5d8eb2a1785` alatt az `Editor Core Test` run #984 és a `Twitch Integration Check` run #360 sikeres; a TypeScript, Editor, Schedule, Domain és Admin contract tesztek mind PASS.
 - **Biztonsági és regressziós követelmény:** a Worker autentikációja marad a dashboard-kiszolgálás előtt; az API-k saját szerveroldali jogosultságellenőrzése nem helyettesíthető kliensoldali védelemmel. A route contract teszt ellenőrzi a canonical route-ot, az aliasokat és az Editor guardot.
 - **Lezárási kapu:** `npm run typecheck`, `npm run test:admin-home`, `npm run test:editor`, `npm run test:schedule`, `npm run test:domain`, friss GitHub Actions CI, majd deploy utáni éles smoke teszt: kijelentkezett és bejelentkezett `/admin`, login/logout, alias redirectek, Editor belépés, mobil/desktop. E pont nem tekinthető PASS-nak pusztán a fájlmódosítás miatt.
 
