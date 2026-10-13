@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 
 const worker = readFileSync(new URL("../src/index.ts", import.meta.url), "utf8");
-const dashboard = readFileSync(new URL("../public/admin.html", import.meta.url), "utf8");
+const dashboard = readFileSync(new URL("../public/admin-home.html", import.meta.url), "utf8");
 
 test("canonical Admin route is authenticated and serves the single dashboard asset", () => {
   assert.ok(worker.includes('if (pathname === "/admin") {'));
@@ -128,7 +128,7 @@ test("every enabled sidebar destination is a canonical, authenticated Admin rout
 
   const activeControls = [...nav.matchAll(/<a\b([^>]*)>/g)].map((match) => match[1]);
   assert.ok(activeControls.every((attrs) => /class="nav-item"/.test(attrs)));
-  assert.match(nav, /href="\/admin\/home"[^>]*aria-current="page"/);
+  assert.match(nav, /href="\\/admin"[^>]*aria-current="page"/);
   assert.match(nav, /href="\/admin\/editor"/);
   assert.match(nav, /<button\b[^>]*disabled[^>]*data-nav-label="Média erőforrások/);
   assert.doesNotMatch(nav, /<button\b(?![^>]*\bdisabled\b)[^>]*data-nav-label=/);
