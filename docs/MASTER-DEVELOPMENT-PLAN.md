@@ -1022,3 +1022,161 @@ A Sanci9517 akkor éri el a teljes Creator Operating Platform célját, ha:
 - a rendszer mobilon és desktopon gyors, hozzáférhető, biztonságos és megbízható.
 
 **Végső szabály:** nem attól kész a termék, hogy a tervben minden sor szerepel, és nem attól teljes, hogy sok menüpont látható. Akkor kész, ha a funkció valós adatokkal, jogosultságokkal, hibakezeléssel, tesztekkel és acceptance-szel működik. A teljes terv megőrzi az összes képességet; a végrehajtás egyesével, függőség szerint halad.
+
+
+
+## 21. Kiegészítő, kötelezően megőrzendő képességek
+
+Ez a fejezet konkrét, önállóan ellenőrizhető képességekkel egészíti ki a fő menü- és végrehajtási katalógust. Ezek nem díszítő ötletek: a megfelelő domainhez és fázishoz kell őket rendelni, és nem maradhatnak elveszve az általános modulnevek alatt.
+
+### 21.1. Website content types és creator resource oldal
+- Creator Resources / Alkotói erőforrások önálló publikus oldalcél és CMS-kategória.
+- Resources tartalomtípusok: útmutató, letölthető fájl, setup-lista, ajánlott eszköz, affiliate link csak megfelelő disclosure mellett, tutorial, FAQ, preset és külső erőforrás.
+- Resource mezők: cím, slug, leírás, cover, kategória, tag, fájl/link, verzió, közzétételi dátum, visibility, SEO, kapcsolódó tartalom.
+- Resource-oldal a canonical CMS/Page rendszerből kezelhető, nem külön hard-coded HTML-réteg.
+- A letölthető vagy fizetős asset access kontrollja a Resource/Entitlement domainen keresztül működik.
+- Oldaltípusok: Home, About, Live/Stream, Schedule, VOD/Content, Clips/Shorts, Community, Contact, Creator Resources, Link Hub, Support, Press/Sponsor, később Store, Membership, Events, Blog/News és Digital Products.
+- Minden oldaltípusnak van responsive layoutja, SEO metadata, üres/error fallbackje és publish acceptance-e.
+
+### 21.2. Sanci Button Registry és action registry
+- Központi button/action registry egyedi, stabil ID-val; név, leírás, ikon ID, action type, target, permission, visibility, order és állapot.
+- Action típusok: belső route, validált külső URL, scroll-to-section, dialog open/close, form submit, safe toggle és domain service által támogatott művelet.
+- Nem megengedett arbitrary JavaScript stringet actionként tárolni vagy futtatni.
+- Megjelenési mód: ikon és szöveg, csak ikon vagy csak szöveg; accessible label kötelező, ha csak ikon látszik.
+- Hover/focus/active/disabled/loading állapotok, reduced-motion és keyboard támogatás.
+- Gombok keresése, kategóriája, sorrendje, duplikálása, előnézete és törlés előtti használati hely ellenőrzése.
+- Globális button style módosítás előnézettel és rollbackkel; helyi override csak explicit.
+- Külső linknél valid URL, rel/target policy, open-redirect védelem és külső cél jelölése.
+- Ugyanaz a button definition minden felületen azonos action contractot használ.
+
+### 21.3. Forms és adatbeküldés
+- Form builder: mezőtípus, címke, súgó, required, default, validation, min/max, option list, consent, success/error message.
+- Field types: text, email, URL, textarea, select, checkbox, radio, date/time, file upload és későbbi conditional field.
+- Szerveroldali validáció, rate limit, bot/spam védelem, honeypot vagy megfelelő anti-abuse megoldás, request-size limit.
+- Submit action kizárólag regisztrált backend action lehet: contact request, newsletter opt-in, clip submission, event signup vagy más jóváhagyott domain action.
+- Consent version/time/source tárolása, unsubscribe/withdrawal és adatmegőrzés.
+- PII minimization, access control, export/delete és audit.
+- Form success nem jelenhet meg backend visszaigazolás előtt; duplikált submit idempotensen kezelendő.
+- Upload field csak validált file policyval, jogosultsággal és R2 lifecycle-lal.
+
+### 21.4. Site search és discoverability
+- Későbbi publikus site search a publikált oldalakra, resource-okra, tartalomra és termékekre, az aktív domain capability szerint.
+- Index kizárólag publikált és kereshető tartalmat tartalmazhat; draft/member-only/private tartalom nem szivároghat.
+- Search query normalizálás, pagination, no-results state, relevancia és canonical URL.
+- Search index invalidation publish/unpublish/delete/update esetén.
+- Későbbi sitemap- és broken-link report, redirect manager és indexelési problémák áttekintése.
+- AEO/structured data csak értelmes, validált schema típusokhoz; nem szabad irreleváns markupot automatikusan hozzáadni.
+- Social preview és OG image preview publikálás előtt ellenőrizhető.
+
+### 21.5. Domain lifecycle
+- Domain hozzáadása, verification challenge, DNS record instrukció, status polling és egyértelmű hibamagyarázat.
+- Primary domain kijelölés, alias/redirect, HTTPS/TLS állapot, domain leválasztás és visszaállítás.
+- DNS propagation miatt a pending állapot nem jelölhető hibásan késznek.
+- Domainváltáskor canonical URL, redirect, sitemap, social preview és cache invalidation ellenőrzés.
+- Domain detach/destructive action confirmation és audit.
+- Custom domain működéséhez szükséges platform/Cloudflare képességek és költségek implementáció előtt igazolandók.
+
+### 21.6. Game Profile és játékadatok
+- Game profile: canonical ID, megjelenített név, platform, artwork/icon, description, genre/category, official URL, creator-specific notes, tags és kapcsolódó content/schedule.
+- Játék létrehozása, szerkesztése, archiválása, keresése és használati helyei.
+- Schedule event, content item és public page ugyanarra a game profile ID-ra hivatkozik.
+- Külső játékadat csak provider/license policy alapján importálható.
+- Artwork asset a Resource Registryhez kapcsolódik.
+- Játék törlése előtt reference check; használt profil archiválása előnyben.
+
+### 21.7. Link Hub és kampánylinkek
+- Link item: title, destination, icon, description, visibility, order, active window, campaign, locale és status.
+- Link típus: internal route, external URL, schedule, content, product, support, Discord, newsletter és event.
+- Link health check, target validation, expired link warning és redirect/UTM policy.
+- Click analytics csak consent/privacy szabály szerint, aggregáltan és szükségtelen fingerprinting nélkül.
+- QR export és short link csak külön, biztonságos redirect contracttal.
+- Link schedule és kampányhoz kötött CTA ugyanazt a canonical link/campaign recordot használja.
+- Public link hub gyors, mobilbarát, akadálymentes és a creator brandjéhez illeszkedő.
+
+### 21.8. Audience ownership és Founding Supporters
+- Email audience: explicit consent, opt-in source, timestamp, consent version, language, status, suppression/unsubscribe.
+- Export/delete és retention; a leiratkozott cím nem kaphat marketing e-mailt újra explicit új hozzájárulás nélkül.
+- Newsletter, transactional email és automation notification külön kategória és jogosultsági szabály.
+- Founding Supporters / támogatói oldal csak külön, önkéntes, visszavonható opt-in engedéllyel jeleníthet meg nevet.
+- A támogatás ténye önmagában nem jelent hozzájárulást név vagy összeg nyilvánosságra hozatalához.
+- Email delivery provider adapter, bounce/complaint state és retry/idempotency.
+
+### 21.9. Stream diagnostics és Stream Intelligence
+- Későbbi opt-in diagnostics: stream live/offline, connection quality, audio/mic problem, hosszú csend/speech activity, chat activity és OBS scene/recording state, ha a forrás és permission elérhető.
+- A diagnosztika nem állíthat nem bizonyított okot tényként; confidence/source/freshness jelölés.
+- Post-stream summary, VOD chapter, highlight/clip candidates, title/description és short-form script javaslat.
+- A creator minden clipet/szöveget módosíthat; publikálás külön, jóváhagyott workflow.
+- Media retention, privacy, consent és platform policy a feldolgozás előtt tisztázandó.
+- Technikai stream assistant csak mért állapotból diagnosztizál; nem kér secretet és nem módosít OBS konfigurációt jóváhagyás nélkül.
+
+### 21.10. AI Orchestrator és specialist agentek
+- AI feladat lifecycle: intent → task plan → context selection → structured actions → permission check → schema validation → diff/preview → approval → execute through canonical APIs → verify → audit/version.
+- Specialist role-k később: Web Engineer, Visual Editor, QA, GitHub/Cloudflare Engineer, Browser QA. Ezek nem különálló, korlátlan agent runtime-ok; a közös permission/action/audit pipeline-t használják.
+- Model/provider registry, prompt-template version, task queue, usage/cost quota, timeout/retry, error handling és approval queue.
+- Agent nem commitolhat, deployolhat, módosíthat production secretet vagy futtathat veszélyes műveletet explicit permission és jóváhagyás nélkül.
+- AI output nem megbízható input: minden action schema- és permission-validációt kap.
+- AI Control Center: provider state, usage/cost, active jobs, approvals, error/retry és audit.
+
+### 21.11. Editor interakciók és mozgás
+- Interakciók: click, hover, focus, active, submit, scroll, load, timer, open/close, navigation, show/hide és toggle csak validált action registryvel.
+- Motion: duration, easing, delay, trigger, reduced-motion behavior és performance limit.
+- State machine, advanced transitions, timeline/keyframes és scroll-driven animation későbbi külön scope.
+- Motion preview nem módosíthatja a canonical data source-t és nem futtathat tetszőleges scriptet.
+- Minden interakció keyboard/touch útvonalon is elérhető vagy indokoltan nem interaktív dekorációként jelölt.
+
+### 21.12. Export, import és portability
+- Export csomag verziózott manifesttel, checksummal, schema versionnel és asset listával.
+- Secret/token export tilos; integrációt restore után újra kell hitelesíteni.
+- Import dry-run: missing asset, duplicate ID, schema incompatibility, owner/permission, reference és migration check.
+- Partial failure esetén nincs félig publikált állapot.
+- Restore után page model, revisions, theme, navigation, media references és public render integritását ellenőrizni kell.
+- A creator adatainak hordozhatósága nem lehet csak marketingállítás; tényleges export és restore teszt szükséges.
+
+---
+
+## 22. Benchmark alapvonal és forrásnapló
+
+A külső termékekből átvehető tanulságok: vizuális canvas és responsive szerkesztés; CMS és publikálás előtti minőségellenőrzés; integrációs állapot és provider hibák átláthatósága; creator link hub; merchandise/digital product/membership/support; email audience ownership; content feed és collections; analytics és campaign tracking; accessibility/performance; AI structured proposals és approval.
+
+Kutatási kezdőpontok, amelyeket implementáció előtt friss ellenőrizni kell:
+- Framer website builder: https://www.framer.com/solutions/website-builder/
+- Webflow platform/CMS: https://webflow.com/platform
+- Wix accessibility/SEO nyilvános anyagok: https://www.wix.com/
+- Twitch Creator Dashboard: https://help.twitch.tv/s/article/creator-dashboard?language=en_US
+- Fourthwall features: https://fourthwall.com/features
+- Fourthwall memberships: https://fourthwall.com/memberships
+- Beacons creator platform: https://beacons.ai/
+- Ko-fi features: https://ko-fi.com/features
+- Patreon digital products: https://www.patreon.com/product/digital-products
+- W3C accessibility guidance: https://www.w3.org/WAI/
+- Web performance/Core Web Vitals: https://web.dev/vitals/
+- OWASP web security guidance: https://owasp.org/www-project-top-ten/
+
+A forráslista nem jelenti azt, hogy minden szolgáltató minden funkciója közvetlenül megvalósítható. Minden provider API, price, scope, licence és policy aktuális állapotát az adott implementációs pont előtt ellenőrizni kell.
+
+---
+
+## 23. Teljességi zár — a végrehajtás előfeltétele
+
+A terv véglegesítésének ellenőrzése:
+- [ ] Admin menürendszer és minden fő modul lefedve.
+- [ ] Publikus oldaltípusok és dinamikus blokkok lefedve.
+- [ ] Editor canvas, Layers, Inspector, responsive, history, save/reload/publish lefedve.
+- [ ] Page/CMS, templates/components/symbols, theme/design tokens lefedve.
+- [ ] Resource/media/icon/font/file registry lefedve.
+- [ ] Connections/Twitch/YouTube/TikTok/Discord/Kick/OBS/provider contract lefedve.
+- [ ] Schedule/recurrence/timezone/game profile/countdown lefedve.
+- [ ] Content/VOD/clips/Shorts/Content Studio/publishing queue lefedve.
+- [ ] Community/moderation/email audience/consent lefedve.
+- [ ] Store/products/orders/digital delivery/membership/support/entitlement lefedve.
+- [ ] Analytics/campaign/sponsorship lefedve.
+- [ ] Automation/alerts/OBS/stream diagnostics lefedve.
+- [ ] AI website/content/stream/orchestrator/approval/rollback lefedve.
+- [ ] Security/privacy/ownership/migrations/observability/backup/restore lefedve.
+- [ ] Localization/custom domain/multi-site/teams/SaaS/marketplace lefedve.
+- [ ] Benchmark, accessibility, performance, SEO/AEO, release gates lefedve.
+- [ ] Minden funkció egyedi ID-t, domain ownert, függőséget, tesztet és acceptance-t kap.
+- [ ] Nincs párhuzamos canonical adatforrás és nincs rejtett, eldobott capability.
+- [ ] A P0.1 valós repository/runtime ellenőrzése után a következő pont konkrét fájlokkal és tesztparancsokkal aktiválható.
+
+A P0.1 lezárásáig új product feature nem implementálható. A tervben szereplő jövőbeli képesség nem kész funkció; csak a saját pontjának PASS elfogadása után tekinthető megvalósítottnak.
