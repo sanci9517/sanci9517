@@ -4142,3 +4142,20 @@ Elkészült a munkapont első implementációs szelete:
 
 **Korlát:** a katalógus a MASTER-2.77.7 teljességi kapujában felsorolt forrásokból és a 2.77.5 fázistervből következik. A teljes funkciókatalógus teljességét továbbra is a MASTER E/F fejezetei, a 01–140 mátrix és a H19–H34 történeti ledger igazolja; a dashboard kártyáinak száma önmagában nem bizonyít teljességet.
 
+
+
+## 2.77.9.A — F0.1 user feedback: Admin home must be a working Creator Platform dashboard
+
+**Állapot:** IMPLEMENTING / NOT PASS. Ez a kiegészítés a 2.77.9 checkpointot pontosítja, nem zárja le az F0.1-et.
+
+A felhasználó egyértelmű visszajelzése: az Admin főoldal ne vizuális fejlesztési terv vagy funkciókatalógus legyen, hanem valódi Creator Platform adminfelület.
+
+- A kezdőoldalon nem jelenhet meg a 17 kártyás, roadmap-szerű Creator OS katalógus. Ezt a nézetet el kell távolítani a fő dashboardról.
+- A kezdőoldal elsődleges feladata: aktuális rendszerállapotok, a webhely és adásrend tényleges adatai, valós integrációs állapot, gyakori napi műveletek és gyors belépés a megfelelő munkaterületre.
+- A teljes termék navigációja a bal oldali menüben és a canonical capability/domain registryben marad. A menü nem helyettesíti az E/F specifikációkat, és nem jelenti azt, hogy minden modul már működik.
+- A főoldal nem mutathat hamis analitikát, fiktív teendőt, kitalált streamállapotot vagy nem létező publikálási sikert. Az adatforrás nélküli widgetet ki kell hagyni vagy valós, egyértelmű üres/tervezett állapotot kell mutatni.
+- A napi munkafolyamatokhoz vezető gyorsműveleteknek valódi, létező útvonalra kell mutatniuk. A kanonikus Editor v2 továbbra is `/admin/editor`; a publikus webhely külön megnyitható.
+- A termékbenchmarkokat a megfelelő domain kialakításakor kell felhasználni: Twitch Creator Dashboard (stream/content/community/analytics), Streamlabs (streaming tools/overlays/creator site) és Webflow (visual builder/CMS/preview/publish). Ezek minták, nem automatikus scope-bővítések; a Sanci MASTER és a capability traceability marad a mérvadó.
+- A dashboard elrendezésének célja egy operatív munkaközpont; a funkciókészültségi címkék a navigációban és a modul saját képernyőjén jelenjenek meg, ne a kezdőoldal egészét uraló katalógusként.
+- Az új irányt külön vizuálisan kell ellenőrizni desktop/tablet/mobile méreteken, világos és sötét témában. A frissített contract teszteknek biztosítaniuk kell, hogy a kezdőoldal ne regresszáljon roadmap-katalógussá.
+- **Nincs merge és nincs F0.1 PASS** a helyi tesztek/typecheck, böngészős ellenőrzés és a felhasználó kifejezett vizuális elfogadása előtt.
