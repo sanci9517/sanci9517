@@ -4417,3 +4417,20 @@ A felhasználó egyértelmű döntése: „A tablet belépés később a többi 
 - [x] A szerververzió betöltése figyelmeztet a helyi módosítások felülírására, és explicit megerősítést kér.
 - [x] A konfliktuspanel reszponzív, billentyűzettel kezelhető, és nem módosítja a szerver auth/RBAC szabályait.
 - [x] Editor Core Test és Twitch Integration Check PASS; production smoke külön szükséges.
+
+
+## 2.77.9.T — F0.3 conflict recovery safety + persistence contract — IMPLEMENTED IN PR
+
+**Cél:** a szerverfriss verzió betöltése ne csak felhasználói ígéretre támaszkodjon: a helyi draft JSON-exportja legyen elindítva a helyi szerkesztés lecserélése előtt. Emellett legyen regressziós szerződésteszt a canonical Page Model, site ownership, editor-role és optimistic revision-conflict ellenőrzésekre.
+
+**Változások:**
+- A konfliktuskezelés eltárolja a helyi draft exportálásának időpontját.
+- Export nélkül a „friss szerververzió betöltése” művelet nem fut le; export után is megerősítés szükséges.
+- A regressziós tesztek a kliens export/reload guardot és a szerveroldali ownership/role/canonical/revision-conflict határokat ellenőrzik.
+- Ez contract-teszt és kliensvédelmi javítás; nem helyettesíti a valós D1 párhuzamos mentési tesztet vagy a production böngészős elfogadást.
+
+**DoD:**
+- [x] Export nélkül a helyi dokumentum lecserélése blokkolt.
+- [x] A szerveroldali Page Model mentési szerződés fő védelmi feltételei regressziós tesztben ellenőrzöttek.
+- [ ] Editor Core Test + Twitch Integration Check CI PASS.
+- [ ] Production save/reload/conflict smoke; külön Android Chrome tabletes belépési tétel továbbra is elhalasztva.
