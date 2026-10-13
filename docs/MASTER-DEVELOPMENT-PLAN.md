@@ -2655,6 +2655,40 @@ The short decision record must name the problem and acceptance criteria; existin
 
 **Batch 6 státusz:** 21 forráskövetelménycsoport leképezve. A hivatkozások szerkezeti validációja és a történeti alpontokkal való teljességi egyeztetés még külön lépés; ez nem runtime PASS.
 
+
+### 37.30. P0.2 — Bullet-szintű crosswalk, batch 7: F.9–F.13 (quality gates, recovery, context, Game Profile, domains)
+
+**Forrás:** archivált MASTER, 00.9.6.F.9–F.13. A személyes/projektindulási kontextus konfigurációként marad meg; nem lehet hardcoded domain- vagy UI-szabály. A custom domain, email audience és workspace/team későbbi, külön security/legal acceptance-t igénylő scope.
+
+| Forráskulcs | Megőrzött követelmény | Canonical current ID | Döntés | Célfázis | QA-horgony |
+|---|---|---|---|---|---|
+| F.9-01 | Published-page SEO metadata, canonical, Open Graph/social cards, sitemap/robots/schema; drafts and preview non-indexable | SEO-001–SEO-005, WEB-005, WEB-006 | KEEP/EXPAND | 1.0 release gate | QA-004/008 |
+| F.9-02 | Redirect/broken-link tooling only with preview and approval | SEO-004, SEO-005, WEB-008, SEC-002 | DEFER | 2.0+ | QA-003/008 |
+| F.9-03 | Semantic HTML, heading hierarchy, alt, labels, ARIA, keyboard/focus, contrast, screen reader, reduced motion | QA-004, QA-005, EDT-040, WEB-031 | KEEP | 1.0 release gate | QA-004/005 |
+| F.9-04 | Secure session/cookies/password/auth rate limit/RBAC/CSRF/OAuth state/webhook replay/upload validation | SEC-001–SEC-010, RES-003, INT-003, INT-017 | KEEP | 0.x–1.0 release gate | QA-003 |
+| F.9-05 | Separate public/preview/admin permission boundaries; no draft or secret leakage in logs/export | SEC-002, SEC-008, WEB-005, WEB-006, OPS-002, OPS-005 | KEEP | 0.x–1.0 | QA-003/004 |
+| F.9-06 | Performance budgets based on measured baseline; image variants/lazy load/cache invalidation/Core Web Vitals/large-tree tests | OPS-008, WEB-030, RES-004, QA-005 | EXPAND | 1.0 baseline; advanced optimization phased | QA-005/006 |
+| F.9-07 | Visual regression for public home/navigation/schedule, Editor state and desktop/tablet/mobile | QA-004, QA-005, EDT-035–EDT-037 | KEEP | 1.0 release gate | QA-004/005 |
+| F.10-01 | Versioned export of Page Model/revisions/theme/templates/components/media references without secrets | OPS-005, WEB-008, DSN-015, SEC-008, RES-002 | EXPAND | 1.0 recovery baseline; full package later | QA-003/007 |
+| F.10-02 | Import dry-run validates schema/version/assets/duplicate IDs/owner/permission/migration compatibility | OPS-005, OPS-006, OPS-009, SEC-002 | EXPAND | 1.0 recovery baseline | QA-003/006/007 |
+| F.10-03 | Restore previews target/conflicts, validates integrity and preserves Page Model/revision/public-render consistency | OPS-005, OPS-006, OPS-009, WEB-007, WEB-008 | KEEP | 0.x–1.0 release gate | QA-002/006/007 |
+| F.10-04 | Diagnostics show deploy/request IDs, sync/provider health, failed jobs, D1/migration/cache and latency without secrets/needless PII | OPS-001–OPS-008, SEC-008 | EXPAND | 1.0 operational baseline | QA-003/006/008 |
+| F.11-01 | Preserve explicit coverage for resource, data binding, providers, schedule, content, Editor interactions, accessibility, SEO, analytics, security, recovery, AI and automation | §21, §24, §38–§41, RES, DYN, INT, SCH, CNT, EDT, QA, SEC, OPS, AI, AUT | KEEP | All phases, according to §39 | QA-002/003/008 |
+| F.11-02 | 1.0 release gate remains public site + Admin + one Editor + resource foundation + Schedule/Twitch + draft/preview/publish/revision + responsive/security/SEO/accessibility/performance | §39.2, WEB, ADM, EDT, RES, SCH, INT, QA | KEEP | 1.0 | QA-002–QA-010 |
+| F.11-03 | 1.x and later Creator OS, commerce, teams/SaaS, marketplace and advanced AI are phased, not implicit 1.0 requirements | §39.3–§39.12, CNT, COM, STO, SUP, TEAM, MKT, AI, AUT | KEEP | Per §39 roadmap | QA-008 |
+| F.12-01 | Hungarian-first and internationalization-ready; dates/time/strings configurable rather than hardcoded | LOC-001–LOC-004, SCH-003, WEB-001 | KEEP | 1.0 architecture baseline | QA-004/005 |
+| F.12-02 | Initial streamer/game/platform/support context is editable configuration, not product hardcoding | SET-001–SET-003, WEB-021–WEB-026, SCH-001, INT-001 | KEEP | 1.0 | QA-002/004 |
+| F.12-03 | Personal growth/streaming/funding targets are not UI guarantees or automatic payment modules; public campaigns require current verification and voluntary opt-in | COM-014, SEC-011, SUP-001, WEB-026 | KEEP | Only if enabled; otherwise defer | QA-003/004/008 |
+| F.13-01 | Canonical Game Profile with stable ID/slug/external mappings/media references/status; Schedule links by stable reference | SCH-013, CNT-001, RES-002, WEB-024 | EXPAND | 1.0 basic profile; advanced domain phased | QA-002/004 |
+| F.13-02 | Missing artwork/metadata has explicit public fallback; no duplicate Editor-only game store | WEB-024, RES-002, EDT-018, SCH-013 | KEEP | 1.0 | QA-002/004 |
+| F.13-03 | Custom domain lifecycle: add/verify DNS/primary/SSL/canonical/redirect/error state; unverified domain cannot become primary | TEAM-002, SEO-001, SEO-004, SEC-002, OPS-008 | DEFER | 4.0+ | QA-003/008 |
+| F.13-04 | Brand registry: creator name/logo/favicon/social links/colors/fonts/tokens/media references configurable centrally | DSN-001–DSN-008, RES-002, SET-001 | EXPAND | 1.0 brand foundation | QA-002/004 |
+| F.13-05 | Link Hub links/CTA ordering/visibility and mobile layout; later scheduling/UTM/QR/smart redirect/analytics with privacy rules | WEB-025, WEB-026, SEO-004, ANL-001, SEC-011 | EXPAND | Basic links 1.0; analytics later | QA-002/004/008 |
+| F.13-06 | Email signup stores purpose/consent version/time/unsubscribe; marketing and transactional mail remain separate | COM-015–COM-017, SEC-011, OPS-005 | DEFER/EXPAND | Contact/privacy baseline 1.0; campaigns 2.0+ | QA-003/008 |
+| F.13-07 | Future tenant/workspace/member/site hierarchy; server-side workspace/site permissions and package tiers based on evidence | TEAM-001–TEAM-006, SEC-002, SEC-003, OPS-004 | DEFER | 4.0+; tenant isolation is a baseline invariant | QA-003/008 |
+
+**Batch 7 státusz:** 24 követelménycsoport leképezve. A tervszintű megfeleltetés nem jelenti a custom domain, email marketing, Game Profile, export/import vagy SaaS modul implementáltságát.
+
 ## 38. Részletes Visual Editor képességkatalógus
 
 **Cél:** a vizuális szerkesztő teljes részletképességeinek önálló, tesztelhető katalógusa. A felsorolás a végleges platform követelményét rögzíti, nem a runtime készültségét. Minden elem a közös Page Model, command/history/validation/persistence és jogosultsági szerződésen keresztül működik.
