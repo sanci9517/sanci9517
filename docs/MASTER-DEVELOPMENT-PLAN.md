@@ -3503,20 +3503,20 @@ Az alábbi táblázat a MASTER eredeti 140 funkciósorát egyenként megőrzi, �
 | 114 | Execution / verification / recovery | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
 | 115 | Multi-model routing | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
 | 116 | Web Engineer Agent | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
-| 117 | Visual Editor Agent | SANCI AI / Creator Intelligence | Stage 1, 3 |
+| 117 | Visual Editor Agent | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
 | 118 | QA Agent | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
 | 119 | GitHub / Cloudflare Engineer Agent | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
 | 120 | Browser QA AI | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
-| 121 | Stream observation | SANCI AI / Creator Intelligence | Stage 8, 9 |
+| 121 | Stream observation | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
 | 122 | Silence / pacing detection | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
 | 123 | Chat / context analysis | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
 | 124 | Contextual live suggestions | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
-| 125 | Streamer profile / long-term memory | SANCI AI / Creator Intelligence | Stage 8, 9 |
+| 125 | Streamer profile / long-term memory | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
 | 126 | Experience learning / evaluation cycles | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
 | 127 | One-click clip / Short creation | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
-| 128 | Stream setup diagnostics assistant | SANCI AI / Creator Intelligence | Stage 8, 9 |
+| 128 | Stream setup diagnostics assistant | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
 | 129 | AI control center | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
-| 130 | End-to-end AI platform test | SANCI AI / Creator Intelligence | Stage 6, 15 |
+| 130 | End-to-end AI platform test | SANCI AI / Creator Intelligence | Stage 24 (optional AI) |
 | 131 | Teljes public website teszt | Final production QA / release gates | Stage 22 |
 | 132 | Teljes admin / CMS teszt | Final production QA / release gates | Stage 22 |
 | 133 | Teljes Visual Editor teszt | Final production QA / release gates | Stage 1, 3 |
