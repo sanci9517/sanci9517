@@ -4695,3 +4695,70 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 
 **Coverage count:** 34 E17–E19 source items are individually keyed. E20–E24 and the roadmap's global rules remain OPEN. P0.2 **IN PROGRESS / NOT PASS**; documentation-only, no runtime code/data changed and no tests run.
 
+### 41.3.31. P0.2 — MASTER-FINAL-ROADMAP source-key ledger: E20 Data, E21 integrations, E22 interactions, E23 accessibility, E24 SEO (2026-10-13)
+
+**Source:** docs/archive/plans/MASTER-FINAL-ROADMAP.md, E20–E24, archive lines 455–518. All 51 source checklist items are preserved individually. Old [ ] status is historical; this mapping does not assert that integrations, accessibility or SEO runtime acceptance currently passes.
+
+| Source key | Archive line | Exact source item | Current E target | Candidate canonical IDs | Decision / phase / acceptance |
+|---|---:|---|---|---|---|
+| ROADMAP-E20-01 | 456 | - [ ] D1 bindings | F.2-01 | DYN-001–008; SEC-002 | KEEP — D1 accessed only through server-side domain service; never browser direct access; acceptance evidence OPEN |
+| ROADMAP-E20-02 | 457 | - [ ] site settings | F.2-01 | DYN-001; SET-001 | KEEP — site settings are a declared, typed source with site-scope checks; acceptance evidence OPEN |
+| ROADMAP-E20-03 | 458 | - [ ] schedule | F.2-01; F.2-06 | DYN-001; SCH-001–015; EDT-020 | KEEP — Schedule binding is read-only presentation; no domain-row mutation; acceptance evidence OPEN |
+| ROADMAP-E20-04 | 459 | - [ ] Twitch | F.2-02; F.5-03 | DYN-001; INT-001; LIV-001–007 | KEEP — Twitch data is normalized, permission-checked and freshness-aware; acceptance evidence OPEN |
+| ROADMAP-E20-05 | 460 | - [ ] YouTube | F.2-02; F.5-04 | DYN-001; INT-013; CNT-001–020 | PHASE-GATED — YouTube source only with actual scope/capability; no fabricated metrics; acceptance evidence OPEN |
+| ROADMAP-E20-06 | 461 | - [ ] TikTok | F.2-02; F.5-05 | DYN-001; INT-014/018; CNT-001–020 | PHASE-GATED — TikTok source is capability-gated; manual fallback when API unavailable; acceptance evidence OPEN |
+| ROADMAP-E20-07 | 462 | - [ ] Discord | F.2-02; C.23.18-02 | DYN-001; INT-015; COM-001/002 | PHASE-GATED — Discord link and API source are separate contracts; acceptance evidence OPEN |
+| ROADMAP-E20-08 | 463 | - [ ] VOD | F.2-01; F.5-02 | DYN-001/002; CNT-001–020 | KEEP — VOD source uses canonical content collection and allowed query schema; acceptance evidence OPEN |
+| ROADMAP-E20-09 | 464 | - [ ] collections | F.2-03 | DYN-002/003; CNT-001–020 | KEEP — collection query/filter/sort/limit schema and owner/site scope validated; acceptance evidence OPEN |
+| ROADMAP-E20-10 | 465 | - [ ] loading/empty/error states | F.2-04 | DYN-005/006; OPS-003; SEC-008 | KEEP — loading/empty/error/stale/partial states; redact internals and secrets; acceptance evidence OPEN |
+| ROADMAP-E20-11 | 466 | - [ ] conditional rendering | F.2-05 | DYN-004/006/007; WEB-030; SEC-002 | KEEP — conditional visibility cannot bypass authorization; cache invalidation tied to publish/sync; acceptance evidence OPEN |
+| ROADMAP-E21-01 | 469 | - [ ] Twitch API | F.5-03 | INT-001–012; LIV-001–007 | KEEP — Twitch adapter scope, OAuth, refresh/disconnect and permitted metrics tested; acceptance evidence OPEN |
+| ROADMAP-E21-02 | 470 | - [ ] YouTube API | F.5-04 | INT-013; INT-009/018/020 | PHASE-GATED — YouTube API quota/capability/error contract separate from public link; acceptance evidence OPEN |
+| ROADMAP-E21-03 | 471 | - [ ] TikTok integration | F.5-05 | INT-014; INT-009/018/020 | PHASE-GATED — TikTok integration only with available official capability/scope; acceptance evidence OPEN |
+| ROADMAP-E21-04 | 472 | - [ ] Discord integration | F.5-06; C.23.18-02 | INT-015; COM-001/002 | PHASE-GATED — Discord link vs bot/guild/role integration separate; acceptance evidence OPEN |
+| ROADMAP-E21-05 | 473 | - [ ] webhook/event handling | F.5-03; E.20 | INT-017/020; SEC-003/004/010 | KEEP — webhook signature/replay/idempotency, event ownership and audit tested; acceptance evidence OPEN |
+| ROADMAP-E21-06 | 474 | - [ ] secrets/permissions | F.5-03; E.19 | INT-019; SEC-001/002/008 | KEEP — tokens/secrets server-side only, least privilege, redaction and disconnect lifecycle; acceptance evidence OPEN |
+| ROADMAP-E21-07 | 475 | - [ ] cache policy | F.2-05; F.9-06 | OPS-008; WEB-030; DYN-006 | KEEP — cache scope/freshness/invalidation explicit; no stale cross-site data; acceptance evidence OPEN |
+| ROADMAP-E21-08 | 476 | - [ ] failure fallback | F.2-04; F.5-07 | INT-020; OPS-003; DYN-005/006 | KEEP — provider failure fallback is honest and exposes last-success/freshness where safe; acceptance evidence OPEN |
+| ROADMAP-E22-01 | 483 | - [ ] click | F.4-06; C.23.10 | EDT-039 | KEEP — click actions are validated, permission-filtered and route through canonical action registry; acceptance evidence OPEN |
+| ROADMAP-E22-02 | 484 | - [ ] hover | F.4-06; C.23.10 | EDT-039; QA-004 | KEEP — hover has keyboard/focus equivalent where functionally relevant; acceptance evidence OPEN |
+| ROADMAP-E22-03 | 485 | - [ ] focus | F.4-06; C.23.10 | EDT-039; EDT-037; QA-004 | KEEP — focus behavior is visible, predictable and keyboard-operable; acceptance evidence OPEN |
+| ROADMAP-E22-04 | 486 | - [ ] submit | F.4-06; C.23.8-07 | EDT-039; WEB-020; SEC-002/005/011 | KEEP — submit is server-validated, rate-limited and consent-aware where applicable; acceptance evidence OPEN |
+| ROADMAP-E22-05 | 487 | - [ ] scroll | F.4-06 | EDT-039; QA-004/005 | KEEP — scroll triggers respect reduced-motion/performance and do not trap keyboard focus; acceptance evidence OPEN |
+| ROADMAP-E22-06 | 488 | - [ ] load | F.4-06 | EDT-039; QA-004 | KEEP — load actions have deterministic timing and safe fallback; acceptance evidence OPEN |
+| ROADMAP-E22-07 | 489 | - [ ] timer | F.4-06 | EDT-039; QA-004 | KEEP — timer actions cancel/cleanup correctly and do not create duplicate mutations; acceptance evidence OPEN |
+| ROADMAP-E22-08 | 490 | - [ ] open/close | F.4-06 | EDT-039; QA-004 | KEEP — open/close state and focus return tested; acceptance evidence OPEN |
+| ROADMAP-E22-09 | 491 | - [ ] navigate | F.4-06 | EDT-039; WEB-013 | KEEP — navigation uses validated internal route or safe external URL; acceptance evidence OPEN |
+| ROADMAP-E22-10 | 492 | - [ ] show/hide | F.4-06; C.23.4-03 | EDT-039; DYN-004; EDT-014 | KEEP — public conditional visibility is separate from editor layer hide/lock; acceptance evidence OPEN |
+| ROADMAP-E22-11 | 493 | - [ ] toggle | F.4-06 | EDT-039; DYN-004 | KEEP — toggle is typed state, not arbitrary script or hidden mutation; acceptance evidence OPEN |
+| ROADMAP-E22-12 | 494 | - [ ] state | F.4-06; C.23.10 | EDT-039; AI-008 | OPEN — component interaction state vs page/domain state ownership must be explicit; acceptance evidence OPEN |
+| ROADMAP-E22-13 | 495 | - [ ] animation triggers | F.4-07; C.23.10 | EDT-039/040; QA-004/005 | PHASE-GATED — animation triggers obey reduced-motion, valid target/action and performance limits; acceptance evidence OPEN |
+| ROADMAP-E23-01 | 498 | - [ ] semantic HTML | F.9-03; C.23.16 | QA-004/005; WEB-032 | KEEP — semantic HTML landmarks and supported element semantics tested; acceptance evidence OPEN |
+| ROADMAP-E23-02 | 499 | - [ ] heading hierarchy | F.9-03; C.23.16 | QA-004/005 | KEEP — heading hierarchy and heading-level validation tested; acceptance evidence OPEN |
+| ROADMAP-E23-03 | 500 | - [ ] alt | E.5.1; C.23.13-06 | RES-007; QA-005 | KEEP — image alt policy distinguishes decorative vs informative assets; acceptance evidence OPEN |
+| ROADMAP-E23-04 | 501 | - [ ] labels | C.23.8-07; F.7-04 | QA-004/005; WEB-020 | KEEP — forms and controls have programmatic labels and error associations; acceptance evidence OPEN |
+| ROADMAP-E23-05 | 502 | - [ ] ARIA | F.9-03; C.23.16 | QA-004/005; WEB-032 | KEEP — ARIA only where needed; native semantic controls preferred; acceptance evidence OPEN |
+| ROADMAP-E23-06 | 503 | - [ ] keyboard navigation | E.3.3-05; C.23.3-07 | EDT-037; QA-004 | KEEP — all core Editor operations have keyboard alternative; acceptance evidence OPEN |
+| ROADMAP-E23-07 | 504 | - [ ] focus order | E.3.3-05; C.23.16 | EDT-037; QA-004 | KEEP — focus order follows UI hierarchy and returns after modal/overlay close; acceptance evidence OPEN |
+| ROADMAP-E23-08 | 505 | - [ ] contrast warnings | F.9-03 | QA-005; DSN-001/005 | KEEP — contrast warnings use measured colors/tokens and identify affected element; acceptance evidence OPEN |
+| ROADMAP-E23-09 | 506 | - [ ] screen-reader metadata | F.9-03; C.23.16 | QA-004/005 | KEEP — screen-reader names/status/errors are exposed without duplicate/confusing announcements; acceptance evidence OPEN |
+| ROADMAP-E23-10 | 507 | - [ ] editor validation | F.9-03; C.23.16 | EDT-021/022; QA-004/005 | KEEP — Inspector/public validation flags accessibility issues; not a substitute for final audit; acceptance evidence OPEN |
+| ROADMAP-E24-01 | 510 | - [ ] title | F.9-01 | SEO-001; WEB-001/014–027 | KEEP — title is page/locale-specific and validated before publish; acceptance evidence OPEN |
+| ROADMAP-E24-02 | 511 | - [ ] description | F.9-01 | SEO-002; WEB-001/014–027 | KEEP — description length/empty/fallback behavior tested; acceptance evidence OPEN |
+| ROADMAP-E24-03 | 512 | - [ ] canonical | F.9-01 | SEO-001; WEB-013 | KEEP — canonical URL normalized, unique and redirect-compatible; acceptance evidence OPEN |
+| ROADMAP-E24-04 | 513 | - [ ] Open Graph | F.9-01 | SEO-003; WEB-006/032 | KEEP — Open Graph image/metadata preview and safe public output tested; acceptance evidence OPEN |
+| ROADMAP-E24-05 | 514 | - [ ] Twitter metadata | F.9-01 | SEO-003; WEB-006 | KEEP — Twitter/X card metadata is separately validated in share preview; acceptance evidence OPEN |
+| ROADMAP-E24-06 | 515 | - [ ] structured data | F.9-01 | SEO-003; WEB-032 | KEEP — structured data is schema-valid, safe and reflects published content only; acceptance evidence OPEN |
+| ROADMAP-E24-07 | 516 | - [ ] sitemap | F.9-01 | SEO-004; WEB-012/030 | KEEP — sitemap includes only canonical published URLs and refreshes after publish/unpublish; acceptance evidence OPEN |
+| ROADMAP-E24-08 | 517 | - [ ] robots | F.9-01 | SEO-004; WEB-012/030 | KEEP — robots rules cannot accidentally index drafts/private routes; acceptance evidence OPEN |
+| ROADMAP-E24-09 | 518 | - [ ] per-page SEO | F.9-01 | SEO-001–005; WEB-005/006 | KEEP — per-page SEO metadata is editable and validated in preview/publish workflow; acceptance evidence OPEN |
+
+**Semantic findings:**
+- Dynamic bindings are declarative, typed and permission/site scoped. The Page Model stores binding/display configuration only; domain records remain owned by their canonical services. No arbitrary SQL, unrestricted fetch or unrestricted JS binding.
+- Provider links, approved embeds and API-backed integrations are separate. Every API-backed source needs official capability/scope, normalized DTO, quota/failure/freshness policy and honest fallback.
+- Interaction events route through EDT-039; animation/reduced-motion through EDT-040. A visible trigger is not proof of a safe or accessible action.
+- Accessibility is an independent acceptance gate; Inspector warnings do not replace keyboard/browser/screen-reader/contrast testing.
+- SEO metadata is page/locale-scoped and must reflect published content only. Sitemap/robots, Open Graph/Twitter cards, structured data, canonical redirects and preview/publish validation are separate requirements.
+
+**Coverage count:** 51 E20–E24 source items are individually keyed. The archived roadmap's A1–A? Admin, remaining platform domains, AI/automation, testing gates and global 0/Foundation/Data Model/Core rules remain OPEN. P0.2 **IN PROGRESS / NOT PASS**; documentation-only, no runtime code/data changed and no tests run.
+
