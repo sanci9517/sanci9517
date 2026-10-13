@@ -142,7 +142,7 @@ A korábbi MASTER 44f42403… állapotából visszaolvastuk a **140 számozott f
 | 065 | [ ] Public / draft izoláció | Publishing / Revision / Import-Export | 1.0 + 1.x |
 | 066 | [ ] Revision history UI | Publishing / Revision / Import-Export | 1.0 + 1.x |
 | 067 | [ ] Rollback UI | Publishing / Revision / Import-Export | 1.0 + 1.x |
-| 068 | [ ] Import / export | Publishing / Revision / Import-Export | 1.0 + 1.x |
+| 068 | [ ] Import / export | Publishing / Revision / Import-Export | 1.0 backup/recovery export only where required by the release gate; user-facing import/export workflow 1.x/2.x after contract freeze (00.9.6.D PHASE 2) |
 | 069 | [ ] Főoldal | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
 | 070 | [ ] Twitch | Public Website / UX / SEO / Accessibility / Performance | 1.0 |
 | 071 | [ ] YouTube | Public Website / social-link presentation | 1.0 static channel/link presentation only; YouTube API integration 1.x (00.9.6.D PHASE 2) |
@@ -229,7 +229,7 @@ A korábbi MASTER 44f42403… állapotából visszaolvastuk a **140 számozott f
 
 **Nyitott, tényleges tartalmi eltérések:**
 - A 01–140 matrix négy oszlopos preservation crosswalk; nem tartalmaz minden tételhez külön surface, dependency/boundary, lifecycle/disposition és phase-specifikus DoD/test/acceptance hivatkozást. Ezért a 140 ID megléte önmagában nem teljes M0.1 closure evidence.
-- A történeti fázisnevek és a 00.9.6.D canonical lifecycle közötti különbséget capability-határonként kell értelmezni. A 059, 057, 071/072, 076, 078, 080, 089–093 és 095 sorok scope-szövege most különválasztja az 1.0-s egyszerű link/content/telemetry baseline-t a későbbi API-integrációktól, workflow-któl, membershiptől és creator analytics-től. Ez tervszintű besorolás, nem runtime completion.
+- A történeti fázisnevek és a 00.9.6.D canonical lifecycle közötti különbséget capability-határonként kell értelmezni. A 057, 059, 068, 071/072, 076, 078, 080, 089–093 és 095 sorok scope-szövege most különválasztja az 1.0-s egyszerű link/content/telemetry baseline-t a későbbi API-integrációktól, workflow-któl, membershiptől és creator analytics-től. Ez tervszintű besorolás, nem runtime completion.
 - A korábbi 00/A és 00.9–00.9.6.B címek nem találhatók meg jelen formában a jelenlegi MASTER-ben; az aktuális ACTIVE_* index és a 00.9.6.C/D roadmap az elsődleges jelenlegi nézet. A korábbi forrásokból esetleg még megőrzendő követelményeket history/archive alapon kell visszavezetni, nem feltételezni, hogy a cím hiánya önmagában funkciótörlést jelent.
 - A H19–H34 ledger generic DoD-szövege traceability-feladatot rögzít, nem az egyes jövőbeli implementációk kész DoD-ját. A konkrét engineering pointban kell majd capability-specifikus tesztet, failure case-t és acceptance-t definiálni.
 
@@ -592,8 +592,8 @@ A capability-lista önmagában nem elég: az alábbi keresztmetszeti domainek a 
 
 | Domain | Canonical owner / source of truth | Storage / boundary | Scope | Decision / lifecycle |
 |---|---|---|---|---|
-| Search / Discovery | Platform Search / indexing contract | indexed metadata + D1/R2 refs | 1.0 foundation / 1.x+ | ADD / PLANNED |
-| Notifications / Messaging | Notification domain + integration adapters | D1 + provider boundary | 1.x+ | ADD / PLANNED |
+| Search / Discovery | Platform Search / indexing contract | indexed metadata + D1/R2 refs | 1.x basic search/indexing contract; semantic/multimodal search 8.x (00.9.6.D PHASE 8) | ADD / PLANNED |
+| Notifications / Messaging | Notification domain + integration adapters | D1 + provider boundary | 1.x+ notification foundation; automation-triggered notifications 7.x+ (00.9.6.D PHASE 7) | ADD / PLANNED |
 | Privacy / Consent / Compliance | Privacy & Policy domain | D1/config + legal/provider boundary | 1.0 foundation / SaaS+ | ADD / PLANNED; 1.0 policy baseline required |
 | Secrets / Integration Config | Secret/config boundary | Cloudflare secret/config layer; never Page Model | 1.0+ | KEEP / EXPAND existing secret/config boundary |
 | API / Webhook / Developer Surface | Integration/API contract | Worker routes + webhook boundary | 1.0 foundation / 1.x+ | KEEP / EXPAND Worker API; webhook/developer UI PLANNED |
@@ -606,9 +606,9 @@ A capability-lista önmagában nem elég: az alábbi keresztmetszeti domainek a 
 | Accessibility | Accessibility contract | Editor + renderer + public UI | 1.0+ | KEEP / EXPAND; do not claim compliance without evidence |
 | Billing / Entitlements | Billing/Subscription domain | D1 + payment-provider boundary | 4.0+ | ADD / PLANNED |
 | Audit / Governance | Audit + policy contract | D1/log boundary | 0.x–10.0 | KEEP / EXPAND shared audit boundary |
-| Data Portability | Import/Export/Portability contract | JSON/media/package boundary | 1.0+ | ADD / PLANNED; contract before implementation |
+| Data Portability | Import/Export/Portability contract | JSON/media/package boundary | 1.0 backup/recovery gate only; user-facing import/export 1.x/2.x after contract freeze | ADD / PLANNED; contract before implementation |
 | Custom Code / HTML / Embed | Secure Embed/Custom-Code contract | sandboxed renderer boundary; never direct privileged persistence | 1.x+ | ADD / PLANNED; sandbox/security contract required |
-| Experimentation / Personalization | Experimentation domain | analytics/config/content boundary | 6.0–10.0 | ADD / PLANNED |
+| Experimentation / Personalization | Experimentation domain | analytics/config/content boundary | 7.0–10.0; advanced personalization/experimentation 9.0 (00.9.6.D PHASE 7–9) | ADD / PLANNED |
 
 **M0.2.A szabály:** ezek nem „extra funkciók”, hanem platform-szintű cross-cutting contracts. Ha egy későbbi capability ezekre támaszkodik, a capability saját domainje nem hozhat létre második auth, permission, audit, resource, search, analytics, notification, deployment, migration vagy persistence rendszert.
 
