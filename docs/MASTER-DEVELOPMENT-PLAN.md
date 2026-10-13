@@ -4230,3 +4230,18 @@ F0.2 DoD:
 
 **Végrehajtási szabály:** nincs párhuzamos engineering stream; nincs új külön auditfázis; nincs funkciótörlés pusztán azért, mert a jelenlegi menüben nem látszik. A MASTER marad az egyetlen source of truth.
 
+## 2.77.9.E — F0.2 első implementációs szelet: mobil funkciókeresés — 2026-10-13
+
+**Állapot: IMPLEMENTING — NOT PASS.** Ez a bejegyzés az F0.2 első konkrét kódszeletét rögzíti; nem zárja le az F0.2-t, és nem indít külön tervezési/auditfázist.
+
+- [x] A valós route- és auth-kód áttekintése megkezdődött: `/admin`, `/admin/home`, `/admin/editor` és a közvetlen `/admin-home.html` útvonal auth-ellenőrzése a Workerben található.
+- [x] A kanonikus Editor útvonal `/admin/editor`; a Schedule és oldalstruktúra jelenleg ebből az Editor munkaterületből érhető el, ezért külön Schedule URL-t nem szabad kitalálni.
+- [x] A webhelybeállítások API admin szerepkört, az oldalak és adásrend API-k editor szerepkört igényelnek; a kezdőoldal valós session/role-adatot jelenít meg, az API-k pedig külön végzik a jogosultságellenőrzést.
+- [x] F0.2 első kódváltozás: a korábban legfeljebb 600 px szélességen teljesen eltűnő funkciókeresés mobilon külön, billentyűzetet fókuszáló keresőgombbal megnyitható és Escape-pel bezárható.
+- [x] A statikus webhely-kontekstuson szereplő, működő webhelyváltót sugalló chevron eltávolítva; nincs még több-webhelyes váltófunkció, ezért nem mutatjuk interaktívnak.
+- [x] Új Admin Home contract teszt készült a mobil kereső nyitására, bezárására és Escape-kezelésére.
+- [ ] A feature branch lokális TypeScript- és tesztfuttatásai még szükségesek.
+- [ ] PR-hez kötött friss CI, a mobil kereső böngészős ellenőrzése, auth/role/direct-route regresszióteszt és felhasználói acceptance még szükséges.
+
+**Aktuális feature branch:** `feature/f0-2-admin-global-shell`. A változások nem kerültek a `v2/foundation` ágba; csak a tesztek és Preview elfogadása után integrálhatók. A következő munka az F0.2 ugyanazon checkpointján belül folytatódik: minden navigációs cél és a jogosultsági határ teljes ellenőrzése, majd a szükséges javítások és tesztek. Nem készítünk külön tervezési dokumentumot.
+
