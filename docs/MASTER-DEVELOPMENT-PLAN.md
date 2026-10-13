@@ -12,7 +12,7 @@
 **Audit / implementation baseline:** GitHub `v2/foundation`, commit `aeba30d9` (2026-10-13). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
 
 ### Jelenlegi igazolt állapot
-Ez a blokk kizárólag az M0 előtti lezárt gate-eket rögzíti; nem jelenti azt, hogy az M0 alatti részpontok lezárultak.
+Ez a blokk kizárólag az E4/E5/E6 korábban bizonyított lezárt gate-jeit rögzíti. Az M0 auditfázist a felhasználó döntése lezárta / superseded állapotba helyezte; ez nem runtime PASS.
 - [x] E4.3.1–E4.3.8 lezárva.
 - [x] E4.4.1 final migration design + SQL audit lezárva.
 - [x] E4.4.2 implementation/dry-run/remote schema verification lezárva.
@@ -234,7 +234,7 @@ A korábbi MASTER 44f42403… állapotából visszaolvastuk a **140 számozott f
 - A korábbi 00/A és 00.9–00.9.6.B címek nem találhatók meg jelen formában a jelenlegi MASTER-ben; az aktuális ACTIVE_* index és a 00.9.6.C/D roadmap az elsődleges jelenlegi nézet. A korábbi forrásokból esetleg még megőrzendő követelményeket history/archive alapon kell visszavezetni, nem feltételezni, hogy a cím hiánya önmagában funkciótörlést jelent.
 - A H19–H34 ledger generic DoD-szövege traceability-feladatot rögzít, nem az egyes jövőbeli implementációk kész DoD-ját. A konkrét engineering pointban kell majd capability-specifikus tesztet, failure case-t és acceptance-t definiálni.
 
-**M0.1 továbbra is IN PROGRESS, de a már lezárt szerkezeti ellenőrzések nem ismétlendők.** A történeti forrás azonosítása, a 01–140 ID folytonossága és a H19–H34 ledger korábban vizsgált rekordazonosítóinak ellenőrzése nem nyitható újra új bizonyíték vagy konkrét ellentmondás nélkül. A fennmaradó munka a tartalmi capability/phase crosswalk, a `00/A` és `00.9–00.9.6.B` követelménymegőrzési döntései, valamint a hiányzó surface/dependency/lifecycle hivatkozások célzott pótlása.
+**Történeti auditjegyzet — nem aktív blokkoló:** az akkori M0.1 állapot IN PROGRESS volt. A felhasználó későbbi döntése a külön auditfázist megszüntette; a capability/phase crosswalk és a surface/dependency/lifecycle hiányok releváns követelményeit az F0.x buildpontok acceptance-ébe kell átvezetni. A lezárt szerkezeti ellenőrzéseket nem kell ismételni.
 
 ### M0.1 historical traceability ledger — batch 1 (sections 19–22)
 
@@ -324,7 +324,7 @@ A korábbi MASTER 44f42403… állapotából visszaolvastuk a **140 számozott f
 | H22.18 | publishing workflow | Schedule domain (C.8) + CMS/Content Factory (C.6) + Streamer domain (C.7) | Creator Center Schedule/Content Center + Editor widgets + public renderer | Schedule core and public next/live states 1.0; broader VOD/Shorts/content automation staged per D roadmap | Canonical schedule owner; timezone/date contract; platform adapters; Resource references; publishing/revision flow | Historical requirement retained; not runtime-complete by this mapping | M0.1 traceability check now; implementation DoD/test/acceptance must be defined and passed in the phase-specific engineering point |
 | H22.19 | performance feedback loop | Schedule domain (C.8) + CMS/Content Factory (C.6) + Streamer domain (C.7) | Creator Center Schedule/Content Center + Editor widgets + public renderer | Schedule core and public next/live states 1.0; broader VOD/Shorts/content automation staged per D roadmap | Canonical schedule owner; timezone/date contract; platform adapters; Resource references; publishing/revision flow | Historical requirement retained; not runtime-complete by this mapping | M0.1 traceability check now; implementation DoD/test/acceptance must be defined and passed in the phase-specific engineering point |
 
-**Batch 1 állapot:** a történeti 19–22 fejezet felsorolt követelményei egyedi traceability ID-t kaptak. Ez csak az első auditbatch; a 23–34. fejezetek, a teljes owner/scope ellenőrzés és az esetleges hiányok MASTER-be vezetése továbbra is nyitott. **M0.1 továbbra is IN PROGRESS; feature-implementáció továbbra is tiltott.**
+**Történeti batch 1 megjegyzés:** a 19–22 fejezet ledgerje megmarad traceability-forrásként. Az akkori hiányzó auditkörök nem blokkolják a buildet; az érintett képességek az F0.x és későbbi fázisok DoD-jában kapnak tesztelhető megvalósítási követelményt.
 
 ### M0.1 historical traceability ledger - batch 2 (sections 23-34)
 
@@ -631,7 +631,7 @@ A capability-lista önmagában nem elég: az alábbi keresztmetszeti domainek a 
 - [ ] Felhasználói áttekintés és MASTER checkpoint rögzítve.
 
 ### M0.3 — Admin / Editor / Public surface audit
-**Állapot:** `[~] IN PROGRESS — a canonical Admin → Editor → Schedule böngészős útvonal és felhasználói acceptance igazolt. Az Admin/Editor/Public surface-leltár és az egyes felületek canonical/legacy/placeholder besorolása még lezárandó. A végleges legacy eltávolítás/archiválás végrehajtása M0.9/M0.10 feladat, ezért nem lehet M0.3 előfeltétele; M0.3 a teljes leltár és az ideiglenes disposition rögzítése után zárható.`
+**Állapot:** `SUPERSEDED / CLOSED AS AUDIT WORK — a korábbi route/surface findings megőrzendők, de a teljes auditlista nem külön blokkoló. A legacy hozzáférés, auth és disposition kérdéseit az Admin/Editor buildpontok és a production readiness DoD-ja ellenőrzi.`
 
 | Surface | Current entry | Canonical runtime | Evidence | Current finding | M0 action |
 |---|---|---|---|---|---|
@@ -975,28 +975,21 @@ A Visual Editor UX/UI-jának újraalapozása a korábban elfogadott strukturált
 
 Az F0 **a Visual Editor új UX/UI-koncepciójának újraalapozási és megvalósítási kapuja**: nem kötelező a régi felületet foltozgatni, és indokolt esetben a UI-réteg újraépíthető. A meglévő, bizonyítottan megfelelő domain- és platformalapokat újra kell használni. Nem készül második canonical Page Model, Editor core, Schedule domain, Property Registry vagy save/publish útvonal.
 
-**F0 scope egyetlen ponton belül:**
-- Új szerkesztői információ-architektúra és UI a felhasználó által elfogadott koncepció szerint.
-- Strukturált hierarchia: Page → Section → Box → szerkeszthető elemek; a Box támogathat egymásba ágyazott Boxot.
-- Canvas + Layers/tree + jobb oldali Inspector + responsive breakpointok + preview.
-- Pozíció, igazítás, méret, spacing és layout dropdown/vezérlőkön keresztül; hétköznapi szerkesztéshez nem szükséges CSS- vagy JSON-kódot írni.
-- Belső vertikális/horizontális és két-/háromoszlopos Box-layout; elemek sorrendje és térköze szerkeszthető.
-- Alapelemek: heading, text, image, button, divider, spacer, nested box és Sanci-specifikus blokkok; összetett Schedule-kártyák szerkeszthető részekből épülnek, nem monolitikus HTML-ként.
-- Editor shell és panel lifecycle.
-- Desktop/tablet/mobile responsive shell.
-- Bal oldali navigáció / Pages / Elements / Layers.
-- Jobb oldali Inspector.
-- Selection → Inspector binding.
-- Property Registry → Inspector binding.
-- Schedule node → Schedule Inspector contract.
-- Schedule domain → Page Model boundary.
-- Canonical command/history/mutation útvonal.
-- Dirty/save/reload/recovery állapot.
-- Publish/republish kapcsolat.
-- Permission/site-scope/concurrency/audit.
-- Accessibility/keyboard/touch.
-- Diagnostics és regresszió.
-- Live browser acceptance.
+**F0 teljes scope-ja (nem egyetlen óriási feladat):** a teljes Builder/Creator Center/Schedule capability-lista megmarad a 00.9.6.C és a történeti ledger fejezetekben; az alábbi F0.x pontok ezt fokozatosan, egyetlen aktív ponttal építik fel. Az editorban a korábban kipipált alapok sem jelentenek automatikusan használható, kész felhasználói funkciót. Minden képességet az adott pontban újra kell validálni, és ha nem felel meg a célkoncepciónak, javítani vagy újraépíteni.
+
+- Új szerkesztői információ-architektúra és UI: Page → Section → Box → szerkeszthető elemek; nested Box.
+- Canvas + Layers/tree + jobb oldali Inspector + responsive breakpointok + preview; hétköznapi szerkesztés dropdown/vezérlő alapú, CSS/JSON írása nélkül.
+- Vertikális/horizontális és két-/háromoszlopos layout; position/alignment/size/spacing/order.
+- Heading, text/rich text, image, button, divider, spacer, icon, link, video/audio/embed/form/list/dynamic content és Sanci-specifikus blokkok.
+- Reusable component/symbol/template, theme/design tokens, media/resource/icon pickerek.
+- Selection, Layers, add/delete/duplicate/reparent/reorder, undo/redo, validation, keyboard/touch, drag/resize, snapping/guides, multi-select, zoom/grid, nesting, property search/reset.
+- Inspector/Property Registry, responsive overrides, typography, appearance, interactions/accessibility.
+- Dirty/save/reload/recovery, revisions/rollback, preview/publish/unpublish/republish.
+- Teljesen újratervezett Admin/Creator Center dashboard és navigation; a jelenlegi elavult admin kezdőoldal nem maradhat végső UI.
+- Schedule: a meglévő primitív CRUD csak kiindulópont; timezone, recurrence, game/category, platform, artwork/resource refs, status, visibility, featured, filtering/views, cancellation/reschedule, live linkage, Twitch sync/error state, public next/live/countdown és rich Editor block integráció szükséges.
+- Twitch: meglévő foundation megtartandó, de connect/callback/connection/live state/schedule sync/diagnostics/error/retry/ownership UX és acceptance teljesítendő; a jelenlegi alap nem tekintendő teljes streamer-integrációnak.
+- VOD/Clips/Shorts/content calendar és további platformadapterek a roadmap szerinti fázisban maradnak; nem minősülnek 1.0-késznek pusztán a tervbe kerüléstől.
+- Minden pont: unit/domain + API/contract + browser responsive + regression + production smoke ahol releváns + user acceptance.
 
 **F0 végrehajtási szabály:** a korábban egyetlen nagy kapuba zsúfolt Editor/Schedule munkát kisebb, sorrendben végrehajtott F0.x pontokra bontjuk. Minden pontnak saját scope-ja, fájl-/API-/adatmodell-változáslistája, tesztje, runtime acceptance-e és felhasználói ellenőrzése van. Egy pont PASS után a következő nyílik; az F1 és a következő termékfázisok csak a hozzájuk tartozó 1.0 release gate-ek után indulnak.
 
@@ -1916,7 +1909,7 @@ Ha egy capability valamelyik pontja későbbi fázis, azt explicit **PLANNED / P
 **Egy időben pontosan egy ACTIVE engineering point lehet.**
 
 Sorrend:
-**M0 → M0 PASS → F0 → F1... → 1.0 gates → Phase 2 → Phase 3 → Phase 4 → Phase 5 → Phase 6 → Phase 7 → Phase 8+**
+**E4/E5/E6 CLOSED/PASS → F0.1 → F0.2 → F0.3…F0.13 → 1.0 release gates → Phase 2 → Phase 3 → Phase 4 → Phase 5 → Phase 6 → Phase 7 → Phase 8+. M0 audit PASS nem előfeltétel.**
 
 Minden pont:
 - előfeltételekkel
