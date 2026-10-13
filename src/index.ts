@@ -66,7 +66,7 @@ export default {
     if (pathname === "/admin") {
       const user = await getAuthenticatedUser(request, env);
       if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302);
-      return env.ASSETS.fetch(assetRequest("/admin.html", request));
+      return env.ASSETS.fetch(assetRequest("/admin-home.html", request));
     }
     if (pathname === "/admin/editor") {
       const user = await getAuthenticatedUser(request, env);
