@@ -48,6 +48,8 @@ Ez a blokk kizárólag az E4/E5/E6 korábban bizonyított lezárt gate-jeit rög
 
 **Lezárási döntés:** a felhasználó 2026-10-13-án úgy döntött, hogy a további történeti/strukturális auditkörök helyett a MASTER teljes termékkövetelményeit meg kell őrizni, majd a megvalósítást egymás után végrehajtott, runtime- és felhasználói acceptance-szel lezárt fejlesztési pontokban kell elvégezni. Az M0 alatt nyitva maradt traceability, domain, surface és benchmark tételek nem maradnak külön blokkoló auditfeladatok: a releváns követelményeket a megfelelő implementációs pontok DoD-jába kell átvezetni.
 
+**Kötelező értelmezés a teljes M0.1–M0.13 fejezetre:** az alatta látható régi `[ ]`, `QUEUED`, `PASS előtt`, `csak M0.x PASS után` és korábbi következőlépés-szövegek történeti auditpillanatképek. Ezek nem aktuális fejlesztési utasítások, nem indíthatók újra, és nem blokkolják F0.1-et. Ez nem jelenti az auditpontok teljesítését vagy PASS-át: a külön audit munkafázis SUPERSEDED. A termék-követelmények operatív leírását a közvetlen E/F specifikáció és az egyetlen aktív F0.x pont adja.
+
 **Fontos különbség:** ez nem állítja, hogy a régi Editor/Admin/Schedule kész, biztonságos vagy hibamentes. Az Editor a termékfunkciók szempontjából új fejlesztésnek számít; a meglévő kód csak akkor használható fel, ha az adott buildpontban ténylegesen megfelel és teszttel bizonyítható. A lezárt E4/E5/E6 ownership/regression bizonyítékok érvényben maradnak, amíg konkrét új ellentmondás nem merül fel.
 
 ### M0.1 — MASTER teljes funkcióinventár
@@ -55,12 +57,12 @@ Ez a blokk kizárólag az E4/E5/E6 korábban bizonyított lezárt gate-jeit rög
 
 - [x] A 01–140 történeti funkciópont egyedi ID-val megőrizve és canonical capability/domain alá rendelve.
 - [x] A történeti státuszok a preservation matrixban történeti jelölésként vannak megmagyarázva; nem tekinthetők mai runtime készültségnek.
-- [ ] Az aktuális végrehajtási index (a dokumentum eleji ACTIVE_* blokk) és a canonical 00.9.6.C capability map + 00.9.6.D phase/lifecycle roadmap teljes, pontról pontra történő egyeztetése; a régi 00/A és 00.9–00.9.6.B változatokból származó követelményeket repository history/archive alapján vissza kell vezetni vagy indokolt superseded döntéssel lezárni.
+- [x] KÜLÖN AUDITFELADATKÉNT SUPERSEDED — a régi végrehajtási indexek és roadmap-állapotok nem blokkolók. Az aktív sorrendet a dokumentum eleji ACTIVE_* blokk és az F0.x program adja; a közvetlen követelményeket az E/F fejezet tartalmazza. Ez nem utólagos M0 PASS.
 - [x] A korábbi 19–34 backlog hiteles történeti forrása az `aedb2ea` revízióban azonosítva; a 19–34 szakaszok forráskivonata elkészült. A ledger azonosítóinak/rekordszerkezetének korábbi ellenőrzését lezártnak kell tekinteni, és nem szabad pusztán a darabszám-eltérés miatt újra lefuttatni.
-- [ ] Nyitott: minden történeti követelmény tartalmi crosswalkje a `00.9.6.C` canonical capability owneréhez és a `00.9.6.D` fázisához; az eltérő rekordok funkció-, architekturális vagy governance-jellegének indokolt dispositionje; a régi `00/A` és `00.9–00.9.6.B` követelményeinek history/archive alapú megőrzési döntése.
-- [ ] A teljes capability inventory minden 001–140 és H19–H34 tételéhez domain, surface, canonical owner, a 00.9.6.D-vel egyeztetett phase/scope, dependency/boundary és lifecycle/döntés tartozzon; a még nem implementált tételeknél a phase-specifikus DoD/test/acceptance legyen megadva vagy explicit PLANNED/TBD állapotban maradjon.
-- [ ] A tényleges duplikátumok azonosítása és csak bizonyíték alapján történő összevonása; külön capability-k nem törölhetők puszta hasonlóság miatt.
-- [ ] Minden elveszett vagy implicit funkció visszavezetése a canonical mapbe vagy dokumentált, indokolt kizárása.
+- [x] KÜLÖN AUDITFELADATKÉNT SUPERSEDED — a követelmények végrehajtható leírása a 00.9.6.E/F fejezetben található; a régi azonosítók csak forrás-nyomkövetésként maradnak meg. Az esetlegesen később előkerülő konkrét hiányzó capability-t a hozzá tartozó aktív buildpont DoD-jába kell felvenni, nem külön auditprojektet nyitni.
+- [x] A 001–140 és H19–H34 történeti azonosítók megőrizve. A közvetlen, fejlesztéshez használható capability-, scope-, fázis- és acceptance-specifikáció az E/F fejezetekben van. A régi táblázat státusza nem jelent mai implementáltságot.
+- [x] A duplikált canonical domain elkerülésének aktív szabálya az E.1/E.19 és F0.0 része; a régi auditként elvégzendő általános duplikátumkör SUPERSEDED. Külön capability nem törölhető puszta hasonlóság miatt.
+- [x] A termékkövetelmények közvetlen E/F specifikációba való integrálása megtörtént az elérhető források alapján; újonnan azonosított hiányt a pontos fázis DoD-jába kell emelni. A történeti visszaaudit nem blokkoló külön feladat.
 
 **M0.1 audit evidence snapshot — 2026-10-08:**
 - [x] `src/index.ts` jelenlegi canonical API/admin/public belépési pontjai ellenőrizve: auth, admin settings/schedule/twitch-schedule-sync/pages/editor, public site-settings/schedule/pages és Twitch integration route-ok regisztrálva.
@@ -982,7 +984,7 @@ Az F0 **a Visual Editor új UX/UI-koncepciójának újraalapozási és megvalós
 - Új szerkesztői információ-architektúra és UI: Page → Section → Box → szerkeszthető elemek; nested Box.
 - Canvas + Layers/tree + jobb oldali Inspector + responsive breakpointok + preview; hétköznapi szerkesztés dropdown/vezérlő alapú, CSS/JSON írása nélkül.
 - Vertikális/horizontális és két-/háromoszlopos layout; position/alignment/size/spacing/order.
-- Heading, text/rich text, image, button, divider, spacer, icon, link, video/audio/embed/form/list/dynamic content és Sanci-specifikus blokkok.
+- Heading, plain Text (1.0 alap), image, button, divider, spacer, icon, link, video/audio/embed/form/list/dynamic content és Sanci-specifikus blokkok; a teljes Rich Text szerkesztő külön, későbbi scope.
 - Reusable component/symbol/template, theme/design tokens, media/resource/icon pickerek.
 - Selection, Layers, add/delete/duplicate/reparent/reorder, undo/redo, validation, keyboard/touch, drag/resize, snapping/guides, multi-select, zoom/grid, nesting, property search/reset.
 - Inspector/Property Registry, responsive overrides, typography, appearance, interactions/accessibility.
@@ -1046,7 +1048,7 @@ Az F0 **a Visual Editor új UX/UI-koncepciójának újraalapozási és megvalós
 | F0.4 | Canvas selection és direct manipulation | hit-testing, drag/resize, guides/snap, zoom/grid, multi-select ahol scope; no DOM-as-source-of-truth |
 | F0.5 | Inspector + Property Registry | selection binding, category/search/reset, validation, undo/redo, responsive-aware properties |
 | F0.6 | Layout és responsive | stack/flex/grid/rows/columns, alignment/gap/padding/margin/size/position, desktop/tablet/mobile preview + overrides |
-| F0.7 | Element library + Resource/Media/Icon contract | text/rich text/image/button/icon/divider/spacer/link/media/embed/form/list; upload/picker/metadata/alt/usage/delete safety |
+| F0.7 | Element library + Resource/Media/Icon contract | plain text (Rich Text külön későbbi scope)/image/button/icon/divider/spacer/link/media/embed/form/list; upload/picker/metadata/alt/usage/delete safety |
 | F0.8 | Reusable components, templates, theme/design tokens | canonical registry/reference model; insert/edit/preview; no duplicate resource/property stores |
 | F0.9 | Schedule domain és Schedule Inspector bővítése | rich fields, timezone/recurrence, status/visibility/featured, filtering/views, artwork, cancel/reschedule, site ownership, API + Editor + public read tests |
 | F0.10 | Twitch integration UX és schedule/live linkage bővítése | OAuth/connection states, live/offline, schedule sync, errors/retry/diagnostics, ownership and failure-path tests |
@@ -2138,10 +2140,9 @@ Ha C és D bármely fáziscímkéje eltérően csoportosít egy capability-t, **
 
 ### 00.9.6.D.2 — Korábbi backlog megőrzési szabály
 
-A korábbi MASTER **19–34** szakaszai nem kerültek kivonásra vagy törlésre. Ezek archivált, de érvényes backlogként kezelendők. Ha egy funkció új domain alá került, az csak **canonical owner consolidation**, nem feature deletion.
+A korábbi MASTER **19–34** szakaszaiból származó történeti azonosítók és tartalmi nyomkövetés megmaradnak, de nem külön végrehajtási backlogként. A konkrét, aktuális funkciókövetelmények a MASTER **00.9.6.E/F** fejezeteiben vannak összefésülve és részletezve; fejlesztéskor ezeket és az egyetlen aktív F0.x pont DoD-ját kell követni. A történeti azonosító csak eredet-nyomkövetés, nem feltétel egy újabb térképezési körre.
 
-Minden korábbi funkciót a végrehajtás előtt újra kell térképezni:
-**historical ID → canonical domain → surface → phase → dependency → DoD → test → acceptance**.
+Új, valóban hiányzó funkció felmerülésekor a követelmény közvetlenül a canonical domain, fázis, függőség, DoD, teszt és acceptance alá kerül. Domain-összevonás csak azonos célú rendszereknél történhet bizonyítékkal; külön capability nem törölhető puszta hasonlóság miatt.
 
 ### 00.9.6.D.3 — Teljes termékfelület
 
@@ -2286,7 +2287,7 @@ Az Editor önálló, professzionális, vizuális alkalmazás. Az alapvető oldal
 
 ### E.3.5 — Inspector / Property Registry
 - Az Inspector mezői típusos, deklaratív Property Registryből származzanak, ne legyen minden elemhez külön ad hoc szerkesztési logika.
-- Szöveg, rich text, URL, image/resource, szám, mértékegység, szín, token, select, toggle, spacing, typography, responsive és domain-specifikus mezőtípusok.
+- Szöveg (1.0 plain text), későbbi Rich Text mező, URL, image/resource, szám, mértékegység, szín, token, select, toggle, spacing, typography, responsive és domain-specifikus mezőtípusok.
 - Kategóriák, keresés, mezővalidáció, súgó, default/reset, dirty state, dependency, read-only és permission kezelés.
 - Az Inspector, a canvas és a Layers mindig ugyanazt a state-et jelenítse meg; az érvénytelen módosítás ne kerüljön mentésre.
 - Domain blokkoknál konfiguráció és adatforrás különüljön el: például Schedule blokk megjelenítési beállítása nem módosítja az események domainrekordjait.
