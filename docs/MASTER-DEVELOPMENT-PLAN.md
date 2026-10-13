@@ -5873,7 +5873,7 @@ The historical H28/H29 rows were updated to reflect the canonical registry defin
 
 **Status:** four crosswalk rows narrowed; semantics and runtime acceptance remain OPEN until the source meaning is verified against the current recovery contract. P0.2 **IN PROGRESS / NOT PASS**. Documentation-only; no runtime code/data changed and no tests were run.
 
-### 41.3.40. P0.2 — V2 Blueprint full list ledger and Ultimate Platform validation chain (2026-10-13)
+### 41.3.45. P0.2 — V2 Blueprint full list ledger and Ultimate Platform validation chain (2026-10-13)
 
 **Sources:** `docs/archive/plans/V2-BLUEPRINT.md` (`66e9064e518cc0276555ea3f986074526b80ae82`) and the ordered validation steps in `docs/archive/plans/ULTIMATE-PLATFORM-DIRECTION-2026-09-16.md` (`2caecf3c1f4a5738a5a0a4bca69476875264df84`). Historical endpoint/table/binding names are not automatically current architecture.
 
