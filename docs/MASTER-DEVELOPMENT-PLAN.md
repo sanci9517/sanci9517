@@ -765,7 +765,7 @@ A capability-lista önmagában nem elég: az alábbi keresztmetszeti domainek a 
 - [x] Legacy `/schedule.html` verified `301` to `/p/schedule`.
 - [x] Admin runtime verified; Admin → canonical Visual Editor → Schedule navigation verified in browser.
 - [x] User acceptance: user confirmed the tested Admin/Editor/Schedule flow is working correctly.
-- [x] M0.4 closure conclusion: ownership is frozen; no duplicate canonical system was introduced; remaining M0 work continues only under the single M0 active point.
+- [x] M0.4 closure conclusion (historical evidence): ownership is frozen; no duplicate canonical system was introduced. The remaining M0.1–M0.13 checklist entries do not continue as an active M0 workstream; any concrete capability gap is handled only inside its relevant F0.x engineering point and acceptance.
 
 
 | Domain | Source of truth | Storage owner | Mutation boundary | UI owner | Public consumer | Revision / publish | Permission |
@@ -977,8 +977,8 @@ M0 csak akkor PASS:
 ### M0.13 — M0 utáni sorrend
 **Állapot:** `SUPERSEDED — F0 közvetlenül aktív; M0.12 PASS nem szükséges.`
 
-Az egyetlen aktív fejlesztési pont:
-**F0.1 — Editor foundation és első végig működő szerkesztési szelet.**
+A korábbi, történeti aktív fejlesztési pont:
+**F0.1 — Editor foundation és első végig működő szerkesztési szelet.** Ez a régi M0.13 pillanatkép része, nem aktuális utasítás; az aktuális aktív pontot a dokumentum eleji `ACTIVE_POINT_ID` adja meg.
 
 F0 után csak a teljes PASS lánc:
 **F0 → G → H → I → J → Early Public Website → további 1.0 production gates → 1.0 Production Gate.**
@@ -1059,7 +1059,7 @@ Az F0 **a Visual Editor új UX/UI-koncepciójának újraalapozási és megvalós
 
 | Pont | Implementációs cél | Kötelező készültségi bizonyíték |
 |---|---|---|
-| **F0.1 ACTIVE** | Editor foundation + első végig működő szerkesztési szelet | add/select/edit/delete → command/history/validation → save/reload; desktop/mobile smoke + user acceptance |
+| **F0.1 — akkori ACTIVE (HISTORICAL)** | Editor foundation + első végig működő szerkesztési szelet | add/select/edit/delete → command/history/validation → save/reload; desktop/mobile smoke + user acceptance |
 | F0.2 | Admin / Creator Center kezdőoldal és navigation teljes újratervezése | új dashboard, valós állapotok és linkek, nincs halott/hamis ACTIVE capability; auth/role + browser acceptance |
 | F0.3 | Page/Section/Box/element hierarchia + Layers tree | create/rename/duplicate/reparent/reorder/lock/hide/delete; Page Model round-trip |
 | F0.4 | Canvas selection és direct manipulation | hit-testing, drag/resize, guides/snap, zoom/grid, multi-select ahol scope; no DOM-as-source-of-truth |
