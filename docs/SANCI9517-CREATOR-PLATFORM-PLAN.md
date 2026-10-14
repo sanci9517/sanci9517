@@ -4951,3 +4951,61 @@ A jelenlegi repositoryban az Admin shell/home, auth és Editor v2 létezik; a de
 
 **Státusz: IN PROGRESS / NOT PASS.** Ezzel a 49. főmodulok nagy részéhez van kódleltárból származó, egyedi ID-s hiánylista; még hátra van a teljes feature ID-k függőségi/fázis keresztezése, a feature card kötelező mezőinek kitöltési ellenőrzése és a terv konzisztencia-gate-ek végső felülvizsgálata.
 
+### 63.38. A 396 funkció-ID kanonikus F0–F11 fázis-keresztmegfeleltetése
+
+Ez a mátrix a 24. fejezet stabil ID-jait köti a 41.2/63.5 roadmaphez. **Fázis-hozzárendelés nem készültségi státusz és nem implementációs engedély.** A korai fázisokban csak az ott szükséges core szelet készül; a későbbi funkciók a saját domainjükben megmaradnak. Ha egy ID több fázist érint, az ID-n belüli acceptance-et bontani kell, nem szabad az egész funkciót előrehozni.
+
+| Funkció-ID | Kanonikus fázis | Határ / függőség |
+|---|---|---|
+| ADM-001, ADM-003, ADM-008–010 | F1 | Közös Admin shell, route/UX és shared state; nem domain-adatgazda. |
+| ADM-002, ADM-004–007, ADM-011–013 | F1 alap + az adatforrás tulajdonosának fázisa | Csak olyan kártya jelenjen meg, amelynek canonical source, permission és freshness contractja létezik. |
+| WEB-001, WEB-004–008 | F0 core workflow; bővített CMS F3 | F0-ban save/reload/preview/publish/revision megbízhatóság; nav/SEO/CMS kiterjesztés csak F3-ban. |
+| WEB-002–003, WEB-009–014, WEB-018, WEB-020–024, WEB-028–032 | F3 | URL/nav/page lifecycle, form, public states, SEO/security és renderer; a F0 core mentési/publikálási contractjára épül. |
+| WEB-015 | F3 shell + F5 live provider data | Live page shell korábban készülhet, de valós adat csak LIV/INT capability után. |
+| WEB-016 | F0 meglévő schedule stabilitás + F3 public UX | A canonical SCH-010 projection marad egyetlen adatforrás. |
+| WEB-017, WEB-025–027 | F3 shell + F7/F8 owning domain | Content route a CNT-020-re, store/member routes a STO/SUP/ENTITLEMENT-re épülnek; nem épülnek másolatként WEB-ben. |
+| EDT-001–038, EDT-041–042, EDT-044 | F0 core Editor; közös shell elemek F1 | Page Model/commands/canvas/layers/Inspector/save/history/preview/publish; az existing v2 megőrzése és hibáinak lezárása. |
+| EDT-039–040 | F0 schema/accessible baseline + F3 teljes page interaction/motion UX | EDT-039 nem AUT-004; csak page-local allowlisted interaction. Reduced motion keresztmetszeti acceptance. |
+| EDT-043 | F3, külön rich-text gate | A jelenlegi structured schema megőrzendő, de a full Rich Text UX a plain-text/core workflow stabilizálása után. |
+| DSN-001–018 | F2; DSN-018 F11 marketplace | Token/template/component registry és versioning; site scope döntés F11 előtt. |
+| RES-001–002 | F0 minimális stabil asset reference/storage | Csak a core Editor/public flowhoz szükséges minimum, ne épüljön párhuzamos asset store. |
+| RES-003–016 | F2; RES-016 a STO/ENTITLEMENT F8 capabilitytől is függ | Teljes asset registry, processing, usage map, safe deletion and paid/private access. |
+| INT-001–010, INT-019–020 | F5, a Twitch meglévő alap F0-ban megőrzendő | Provider adapter/health/scope/token/security; a működő Twitch OAuth nem íródik újra. |
+| INT-011 | F5 + F6 live/stream surfaces | Normalized live state külön LIV domainben. |
+| INT-012–018 | F5; INT-017 security acceptance keresztmetszeti | Providerenként capability/permission/legal gate; nem minden provider ígérhető egyidejűleg. |
+| INT-021 | F5 adapter contract; valódi payment/email használat F8/F1 notification dependency szerint | Provider lifecycle contract nem azonos Store vagy Notification workflowval. |
+| LIV-001–007 | F5 live integration + F6 Stream Studio UX | Normalized state, freshness, player/blocks, dashboard and public read projection. |
+| LIV-008–010 | F6; retention/cost/security gates keresztmetszetiek | Multistream, unified chat, recording/replay csak provider-supported capabilityvel. |
+| OBS-001–010 | F6 | Pairing/commands/overlay/widget; RESOURCE és INT connectorok után. |
+| SCH-001 | F0 meglévő CRUD stabilitás + F3 bővített lifecycle | A jelenlegi canonical schedule_items megőrzendő. |
+| SCH-002–006, SCH-009, SCH-012–015 | F3 | Calendar, timezone/recurrence/conflict, game profile and export; DST correctness is release gate. |
+| SCH-007–008 | F5 | Twitch sync/provider error/retry, manual override contract. |
+| SCH-010–011 | F0 projection integrity + F3 public/Editor block parity | Egyetlen canonical projection; no duplicate event rows in Page Model. |
+| CNT-001–022 | F7 | Content schema/library/publishing/editing/rights; uses RESOURCE/INT and analytics later. |
+| COM-001–020 | F8 | Community and fan identity distinct from creator Admin identity; entitlement from SUP. |
+| STO-001–021, SUP-001–012 | F8, STO-014/019/021 before real transaction | Product/order/support/entitlement; provider, tax, VAT, legal and consumer-rights gates. |
+| ANL-001–010, CAM-001–009, AUT-001–014 | F9 | Event taxonomy, campaigns and automation are separate domains; workflow triggers are not analytics measurements. |
+| AI-001–021 | F10 | Must use F0/F1 canonical permission/command/approval/logging foundations; no direct domain writes. |
+| SEC-001–011 | Cross-cutting F0–F11 | Security and privacy gates apply to every feature; no late-only security phase. |
+| SEC-012 | F4/F11 staged | MFA/recovery for creator accounts and later SSO; don't enable open registration before isolation/recovery tests. |
+| OPS-001–004, OPS-007–010 | Cross-cutting F0–F11 | Health, migrations, logs, alerts, performance, dependency and incident readiness in each release. |
+| OPS-005–006, QA-007 | F0 minimum operational recovery + F11 expanded portability | Real restore/rollback drill required; QA-007 verifies it but does not implement it. |
+| QA-001–006, QA-008–010 | Cross-cutting each F release | Relevant tests, runtime smoke and user acceptance before each phase closes. |
+| LOC-001–002 | Cross-cutting from F0/F1 | Hungarian-first UI, locale-safe date/time/currency from the start. |
+| LOC-003–005 | F3 public-site localization | Localized page/content/navigation/SEO and publish completeness. |
+| LOC-006 | F10 AI-assisted flow + F3/F11 localization | Draft-only AI translation, human approval and audit. |
+| SET-001, SET-003 | F0 legacy settings stability + F1 contract | Public-safe projection; site-scope migration only after consumer audit. |
+| SET-002 | F1 ownership contract + F11 full multi-site | Every new endpoint must already use scope; full workspace model later. |
+| SET-004 | F3 custom-domain/public canonical URL | DNS/SSL verification, redirect and canonical metadata. |
+| DYN-001–008, SEO-001–005 | F3 | Domain read APIs and Page Model baseline first; public renderer/HTTP/crawler acceptance required. |
+| TEAM-001–005 | F4 account/workspace foundation, F11 full multi-site/agency | Basic identity/onboarding precedes agency/client workflows; SEC-003 isolation blocks release. |
+| TEAM-006–007 | F11 | SaaS billing/quota and agency/studio workflows. |
+| SEARCH-001–005 | F1 base navigation/command palette; per-domain index adapters staged with F3/F5/F7/F8/F9 | Derived index only, permission-aware, deletion propagated; don't index unavailable domains as if complete. |
+| NTF-001–005 | F1 shared UX contract; channel adapters staged with F5/F7/F8/F9 | Notification state/delivery separate from dashboard and automation. |
+| HELP-001–004 | F1 core onboarding/help entrypoint; domain-specific articles follow module delivery | Help references canonical feature IDs and never claims unavailable capabilities. |
+| DEV-001–006, MKT-001–005 | F11 | Developer/extension/marketplace trust boundary, license/security and legal gate. |
+
+**Konzisztencia-korlát:** a fázis-hozzárendelés a funkció katalógus minden ID-ját lefedi csoportos vagy egyedi sorral; a tényleges végrehajtás előtt a 25/26. fejezet szerinti kártyán belül meg kell jelölni a pontos al-fázist, blokkoló dependency-t, acceptance-t és bizonyítékot. A táblázat nem állítja, hogy a jelenlegi repo a későbbi fázisokat megvalósítja.
+
+**Státusz: IN PROGRESS / NOT PASS.** Következő: automatikus statikus ellenőrzés az ID-unikalitás, modul-lefedettség, active-point konfliktusok és a 63. fejezet lezárási checklistje ellen; utána csak bizonyított eltéréseket javítunk.
+
