@@ -1003,7 +1003,7 @@ Az egyes tételek státusza csak az adott ellenőrzés tényleges lefutása utá
 
 ## 19. Következő fejlesztési pont
 
-**Aktív fókusz: F0 — Admin → Visual Editor → mentés → előnézet → publikálás → publikus weboldal.**
+**Következő implementációs fókusz a tervlezárás UTÁN: F0 — Admin → Visual Editor → mentés → előnézet → publikálás → publikus weboldal.** A jelenlegi aktív munka nem F0 implementáció, hanem a MASTER teljességének, belső konzisztenciájának és fejlesztéskövetési szabályainak lezárása. F0 nem indulhat el a 63. fejezet lezárási feltételeinek teljesülése előtt.
 
 **Következő konkrét ellenőrzési pont: EDT-SAVE-RELOAD → EDT-PUBLISH-SNAPSHOT.** A repositoryban lévő Editor-tesztek között a mentési útvonal több ellenőrzése forrásszöveg-szerződést (statikus mintákat) vizsgál; ez önmagában nem bizonyít valódi böngészős, D1-es mentés/újratöltés/publikálás round-tripet. Először a meglévő teszteket és futó környezetet kell ellenőrizni, majd valódi draft mentés → újratöltés → preview → explicit publish → publikus oldal ellenőrzést végigvinni, a hibákat reprodukálhatóvá tenni és csak ezután módosítani a kódot. Új, nagyobb termékmodul nem kerülhet e core ellenőrzés elé.
 
@@ -2426,6 +2426,9 @@ A későbbi fázis nem jelenti a funkció kihagyását; a biztonságos és megb�
 Ezek a meglévő alapok nem jelentik azt, hogy minden kapcsolódó felhasználói folyamat teljesen kész. A valós státuszt a kód, tesztek, runtime és felhasználói elfogadás együtt határozza meg.
 
 ### 41.2. Következő megvalósítási sorrend
+
+**Fontos státuszkülönbség:** az alábbi F0–F11 lista a kanonikus végrehajtási sorrend, nem az aktuálisan futó munka állapotjelentése. Jelenleg a 0.5. fejezet szerinti `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY` aktív; F0 csak a MASTER lezárási feltételeinek teljesülése után válhat aktívvá.
+
 1. **F0 — Core megbízhatóság:** Admin → Visual Editor → mentés/újratöltés → preview → publish → publikus oldal; a meglévő runtime- és acceptance-hibák tényleges lezárása.
 2. **F1 — Alaprendszer és modulhatárok:** közös Admin shell, navigáció, routing, permission model, egységes loading/empty/error/stale state, szerveroldali domain-szerződések és közös API/command útvonal.
 3. **F2 — Brand, design system, Resource Registry és sablonok:** brand kit, tokenek, reusable komponensek, page/section/component/site template, assetek, verziózás, preview és rollback.
@@ -3613,7 +3616,7 @@ A fenti leképezés nem engedélyezi a függőségek átugrását. Ha egy munkac
 - [ ] A 19. fejezet F0 fókusza az aktuális implementációs cél, nem bizonyíték arra, hogy F0 minden acceptance-feladata nyitott vagy kész; a konkrét státuszt ellenőrzött teszt/runtime eredmény adja.
 - [ ] Korábbi checkpointok vagy elavult állapotjelzések nem írhatják felül automatikusan a jelenlegi termék-roadmapet. Csak az aktuális termékfunkcióhoz szükséges, bizonyítékkal alátámasztott hiány vagy regresszió határozhatja meg a következő munkát.
 - [ ] Ha egy státusz vagy roadmap-sorrend más fejezetben eltér, először ezt a kanonikus térképet és a legfrissebb igazolt repository/runtime állapotot kell alkalmazni; az eltérést a MASTER-ben egy helyen kell javítani.
-- [ ] A dokumentum végső konzisztencia-ellenőrzése után a következő munka nem további roadmap-átírás, hanem a 19. fejezet szerinti legkorábbi, reprodukálható F0 acceptance-feladat implementációja/ellenőrzése.
+- [ ] A dokumentum végső konzisztencia-ellenőrzése és a 63. fejezet lezárási kapujának PASS állapota UTÁN a következő munka a 19. fejezet szerinti legkorábbi, reprodukálható F0 acceptance-feladat ellenőrzése/implementációja. E feltételek teljesüléséig az aktív pont a terv teljességének és belső összhangjának lezárása.
 
 ### 63.7. Az eddigi dokumentumszerkezeti ellenőrzés eredménye — 2026-10-14
 Az ellenőrzés a MASTER aktuális repository-változatára vonatkozik; nem jelent teljes szemantikai, runtime- vagy funkcionális PASS-t.
@@ -3630,5 +3633,19 @@ Az ellenőrzés a MASTER aktuális repository-változatára vonatkozik; nem jele
 - [x] Ugyanezen a commiton a `Twitch Integration Check` is sikeres: TypeScript typecheck, Editor core regresszió, schedule source, Twitch OAuth és site ownership contract tesztek mind PASS. Futás: https://github.com/sanci9517/sanci9517/actions/runs/38602119661.
 - [ ] Valódi böngészős smoke, éles Worker/D1 mentés–újratöltés–preview–publish–publikus oldal end-to-end ellenőrzés továbbra sincs igazolva; a CI tesztek ezt nem helyettesítik.
 
-**Státusz:** a dokumentumszerkezet és a fő roadmap-ütközések részben rendezettek; a MASTER lezárása és a termékfejlesztés F0 PASS állapota még nincs kimondva. A korábbi P0/P0.2 checkpoint nem válik új aktív munkafolyamattá; a következő konkrét feladatot a jelenlegi F0 core workflow tényleges állapota határozza meg.
+**Státusz:** a dokumentumszerkezet és a fő roadmap-ütközések részben rendezettek; a MASTER lezárása még nincs kimondva, és az F0 PASS állapota sincs igazolva. **Aktív tervpont:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY` — a fennmaradó szemantikai, függőségi, forrásmegőrzési és követésbeli ellenőrzések lezárása. A korábbi P0/P0.2 checkpoint nem válik új aktív munkafolyamattá. F0 csak a MASTER lezárási kapujának bizonyított PASS állapota után következhet.
+
+### 63.8. Fejlesztéskövetési szerződés — egyetlen aktív pont
+
+A fejlesztés követése ugyanebben a MASTER-ben történik. Nem hozunk létre második roadmapet, párhuzamos státuszfájlt vagy új auditprojektet.
+
+- **Egyetlen aktív pont:** egyszerre csak egy elsődleges, végrehajtás alatt álló terv-/fejlesztési pont lehet. A következő pont csak az aktuális pont bizonyított lezárása után aktiválható.
+- **Kötelező feladatmezők:** stabil azonosító; cél és scope; modul/domain-gazda; függőségek és blokkolók; előzetes repository/runtime/provider ellenőrzés; változtatás és érintett felületek; elfogadási kritériumok; szükséges tesztek; kockázat és helyreállítás; státusz; bizonyíték; ismert korlát; lezárás dátuma/commitja, ha rendelkezésre áll.
+- **Egységes státuszok:** `NOT STARTED`, `IN PROGRESS`, `BLOCKED`, `PASS`, `FAIL`, `DEFERRED`. A `DEFERRED` nem törlést jelent; a funkció a teljes scope része marad, megjelölt függőségekkel.
+- **Bizonyíték szerinti készültség:** a tervbe írás nem implementáció; a forrásszöveg-egyezés nem runtime-bizonyíték; a unit/contract teszt nem helyettesíti az integrációs vagy böngészős tesztet; a CI nem bizonyítja önmagában az éles adatfolyamot vagy a felhasználói elfogadást.
+- **Lezárás:** `PASS` csak akkor adható, ha az előre rögzített elfogadási kritériumokhoz a megfelelő bizonyítékok rendelkezésre állnak, a regressziókat ellenőrizték, és az érintett dokumentáció/státusz frissült. Hiányzó bizonyíték esetén a státusz nyitott marad.
+- **Minden munkamenet végén:** ugyanebben a fejezetben vagy az aktív munkapontnál frissíteni kell az elvégzett részt, a bizonyítékot, a nyitott blokkolót, a következő konkrét lépést és az aktív pont azonosítóját. Nem állítható folyamatos háttérmunka vagy előrehaladás olyan lépésről, amely ténylegesen nem történt meg.
+- **Újrahasználat és kutatás:** a fejlesztés előtt ellenőrizni kell a meglévő saját implementációt és tesztjeit, majd az adott funkcióhoz releváns, működő referenciákat, hivatalos dokumentációt és — ha érdemes — karbantartott nyílt forrású megoldásokat. A döntés lehet `REUSE`, `ADAPT`, `BUILD`, `REJECT` vagy `DEFER`; indoklás, licenc/policy/security/karbantarthatósági ellenőrzés és acceptance-hatás szükséges. Nem másolunk vakon, és nem írunk újra működő saját kódot bizonyított ok nélkül.
+- **Felületek közötti követés:** ha egy kanonikus adat vagy művelet több modulban jelenik meg, az elfogadás során minden érintett Admin-, Editor-, API- és publikus útvonalat ellenőrizni kell; a közös változás hatása, cache-frissítés és jogosultság is része a feladatnak.
+- **Terv és termékállapot különválasztása:** a MASTER teljességének PASS állapota nem jelenti az összes funkció implementáltságát; egy fejlesztési fázis PASS állapota nem zárja le automatikusan a teljes tervet.
 
