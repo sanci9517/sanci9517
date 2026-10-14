@@ -2614,8 +2614,8 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.1-09 | Local crash recovery is separate from server draft and stores no secrets; conflict offers recovery/server/discard choices | EDT-029, EDT-031, WEB-007/008, OPS-009, SEC-008 | EXPAND | 1.0 recovery baseline | QA-003/006/007 |
 | F.1-10 | Optimistic concurrency, unsaved-change warning, real retry/restore; larger Page Model history/autosave performance tests | EDT-004, EDT-005, EDT-027–EDT-034, WEB-008, OPS-008 | KEEP | 1.0 release gate | QA-002/004/005/006 |
 | F.2-01 | Canonical dynamic data pipeline: domain service → declared source → schema-valid binding → allowed transform → conditional render | DYN-001–DYN-008, EDT-020, WEB-031, SEC-002 | KEEP | 2.0, with 1.0 safe core only | QA-002/003/004 |
-| F.2-02 | Provider sources enabled only by phase, official capability and connection scope | DYN-001, INT-001, INT-013–INT-016, SEC-002 | KEEP | Per-provider 1.5+ | QA-002/003/008 |
-| F.2-03 | Query/filter/sort/limit saved only against declared schema; prohibit arbitrary SQL, arbitrary fetch and unrestricted JS | DYN-002–DYN-004, SEC-002, SEC-007 | KEEP | 2.0 | QA-002/003 |
+| F.2-02 | Provider sources enabled only by phase, official capability and connection scope | DYN-001, DYN-007, INT-001, INT-005/006, INT-013–INT-016, SEC-002/003 | KEEP | Per-provider 1.5+ | QA-002/003/008 |
+| F.2-03 | Query/filter/sort/limit saved only against declared schema; prohibit arbitrary SQL, arbitrary fetch and unrestricted JS | DYN-002–DYN-004, SEC-002, SEC-005–SEC-007 | KEEP | 2.0 | QA-002/003 |
 | F.2-04 | Separate loading/empty/error/stale/partial-provider-failure states; redact internals and secrets | DYN-005, DYN-006, OPS-003, SEC-008 | KEEP | 1.0 baseline; full binding UI 2.0 | QA-003/004/006 |
 | F.2-05 | Conditional visibility never bypasses authorization; cache invalidates on publish/schedule/sync | DYN-004, DYN-006, DYN-007, WEB-030, OPS-008, SEC-002 | KEEP | 1.0–2.0 | QA-002/003/006 |
 | F.2-06 | Editor stores display configuration only; a Schedule block cannot mutate Schedule domain rows | EDT-020, SCH-001–SCH-015, DYN-001, DYN-007, SEC-002 | KEEP | 1.0 | QA-002/003/004 |
@@ -4581,3 +4581,10 @@ A C.23.22-01–07 mind a hét történeti sor megmaradt, és a célzott szerződ
 - **F.2-05 — conditional visibility/cache:** added DYN-004 (conditional rendering) and DYN-007 (permission/site/published-only boundary), because cache invalidation alone does not represent the authorization invariant.
 - **F.2-06 — Schedule block ownership:** replaced `EDT-018` with `EDT-020` and added DYN-007. The block configures display only; canonical Schedule records remain domain-owned and protected by site-scope/published-only checks.
 - **Evidence boundary:** this batch corrects nine F.1/F.2 mapping rows from the preserved source text and current registry descriptions. No runtime tests were run. F.1 remaining rows and F.2–F.13 still require complete semantic review; the original `00/A` and `00.9–00.9.6.B` source recovery remains open. P0.2 stays **IN PROGRESS / NOT PASS**.
+
+
+### 41.3.61. P0.2 — F.2 provider-scope and untrusted-query security mapping correction (2026-10-14)
+
+- **F.2-02 — provider capability and connection scope:** expanded the mapping with `DYN-007`, `INT-005/006` and `SEC-003`. A provider adapter/capability ID alone does not express site ownership binding, allowed scopes, or tenant isolation; these are explicit acceptance boundaries for enabling any source.
+- **F.2-03 — query/filter/transform safety:** expanded the mapping to `SEC-005–SEC-007` alongside `DYN-002–DYN-004` and `SEC-002`. The source prohibits arbitrary SQL, unrestricted fetch and JavaScript; server authorization alone does not cover injection/sanitization or abuse/rate limits.
+- **Evidence boundary:** this is a mapping correction based on current registry descriptions and the preserved F.2 source bullets. No query-engine/security runtime tests were executed. F.2 remains open for full semantic review; F.3–F.13 remain to be reconciled row by row, and the original `00/A` and `00.9–00.9.6.B` source recovery is still unresolved. P0.2 remains **IN PROGRESS / NOT PASS**.
