@@ -1,8 +1,8 @@
 # Sanci9517 V2 — FOLYAMATOS PROJEKTKONTEXTUS
 
-> Ez egy történeti/folytonossági jegyzet, nem végrehajtási terv és nem önálló igazságforrás. A jelenlegi termékterv, aktív pont, sorrend, scope és acceptance egyetlen forrása: `docs/MASTER-DEVELOPMENT-PLAN.md` a `feature/f0-2-admin-global-shell` ágon.
+> Ez egy történeti/folytonossági jegyzet, nem végrehajtási terv és nem önálló igazságforrás. A jelenlegi termékterv, aktív pont, sorrend, scope és acceptance egyetlen forrása: `docs/MASTER-DEVELOPMENT-PLAN.md` a `v2/foundation` ágon.
 >
-> **Canonical MASTER:** `docs/MASTER-DEVELOPMENT-PLAN.md`
+> **Canonical MASTER:** `v2/foundation:docs/MASTER-DEVELOPMENT-PLAN.md`
 > **Archivált történeti tervek:** `docs/archive/plans/` és a MASTER 2.77.7.C forrásreconciliációja
 > **Ez a dokumentum:** csak korábbi felhasználói visszajelzések és állapotpillanatképek kiegészítő kontextusa; ellentmondás esetén a MASTER és a friss kód/teszt bizonyíték az irányadó.
 
@@ -48,7 +48,7 @@ A Sanci9517 nem egyszerű statikus streamer-linkoldal. A végső rendszer egy pr
 ## 4. Infrastrukturális állapot
 
 - Repository: `sanci9517/sanci9517`
-- A korábbi infrastruktúra-evidence a `v2/foundation` ághoz tartozik; a jelenlegi F0.2 munkapont ága `feature/f0-2-admin-global-shell`. Az aktív státuszt mindig a MASTER eleji `ACTIVE_*` mezőkből kell venni.
+- A canonical végrehajtási ág `v2/foundation`; az aktív pont a MASTER szerint `P0.2-ARCHIVE-RECONCILIATION-AND-BIDIRECTIONAL-FEATURE-TRACEABILITY`. A `feature/f0-2-admin-global-shell` F0.2 snapshotja nem írhatja felül ezt az auditállapotot. Az aktív státuszt mindig a canonical MASTER eleji mezőkből kell venni.
 - Cloudflare Worker: `sanci9517-streamer-brand`
 - Cloudflare D1 létrehozva.
 - GitHub → Cloudflare kapcsolat létrehozva.
@@ -315,7 +315,7 @@ Minden jelentős változásnál rögzítendő:
 
 Az alábbi állapot a 2026-09-i korábbi beszélgetésből származik, és nem használható mai végrehajtási utasításként: Visual Editor stabilizálása; Preview Mobile stacking javítás; a `dfa5faf462496e2d3617810dafc28e72c540ee70` commit; oldalátnevezés tesztje; page delete hiánya.
 
-**Jelenlegi munkapont:** `F0.2-ADMIN-NAVIGATION-GLOBAL-SHELL-ACCEPTANCE` — lásd a canonical MASTER tetejét. Az ottani F0.2 DoD, friss CI, route/auth/navigation, böngészős és felhasználói acceptance feltételei irányadók. A régi snapshotban szereplő állapotok nem bizonyítják a mai kód készültségét.
+**Jelenlegi munkapont:** `P0.2-ARCHIVE-RECONCILIATION-AND-BIDIRECTIONAL-FEATURE-TRACEABILITY` — lásd a `v2/foundation:docs/MASTER-DEVELOPMENT-PLAN.md` 0.0, 0.2, 37.3, 37.9–37.32 és 41.3.24–41.3.76 részeit. Az F0.2 státusz a korábbi roadmap snapshotjához tartozik, és nem írhatja felül a P0.2 auditot. A hiányzó eredeti források és a kétirányú szemantikai reconciliáció lezárásáig ne induljon feature-implementáció vagy végső funkciólista-ellenőrzés.
 
 ## 16. Dokumentumok szerepe
 
@@ -388,4 +388,4 @@ A fejlesztés folytatásakor kötelező sorrend:
 4. ez a folytonossági dokumentum kizárólag történeti kontextusként;
 5. a `docs/archive/plans/` alatti régi tervek kizárólag a MASTER 2.77.7.C által megjelölt követelményreconciliációhoz.
 
-A `docs/SANCI-MASTER-PLAN.md`, `docs/DEVELOPMENT-PLAN.md` és a korábbi külön roadmapek nem aktív igazságforrások.
+A `docs/SANCI-MASTER-PLAN.md`, `docs/DEVELOPMENT-PLAN.md`, a MASTER-2.77/F0.2 snapshot és a korábbi külön roadmapek nem aktív igazságforrások.
