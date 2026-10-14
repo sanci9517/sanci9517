@@ -1433,7 +1433,7 @@ Az alábbi jegyzék a menüfunkciókat külön, stabil munkapontokra bontja. A s
 - QA-001: Typecheck/build/CI gates.
 - QA-002: Domain/API/integration tests.
 - QA-003: Ownership/security negative tests.
-- QA-004: Browser/device responsive acceptance.
+- QA-004: Browser/device responsive and visual-regression acceptance.
 - QA-005: Public SEO/accessibility/performance audit.
 - QA-006: Production smoke and runtime verification.
 - QA-007: Backup/restore/rollback acceptance.
@@ -2685,7 +2685,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.9-06 | Performance budgets based on measured baseline; image variants/lazy load/cache invalidation/Core Web Vitals/large-tree tests | OPS-008, WEB-030, RES-004 | EXPAND | 1.0 baseline; advanced optimization phased | QA-005/006 |
 | F.9-07 | Visual regression for public home/navigation/schedule, Editor state and desktop/tablet/mobile | WEB-009, WEB-011, WEB-014, WEB-016, EDT-035–EDT-037 | KEEP | 1.0 release gate | QA-004/005 |
 | F.10-01 | Versioned export of Page/revision/theme/template/component/media refs/domain data; never export secrets/tokens | OPS-005, WEB-008, DSN-014/015, RES-001/008, SET-003, SEC-008 | EXPAND | 1.0 safe export foundation; full package later | QA-003/007 |
-| F.10-02 | Import dry-run validates schema/version/assets/duplicate IDs/owner/permissions/migration compatibility | OPS-004/005, WEB-008, DSN-014/015, RES-008/009, SEC-002/003/008 | EXPAND | 2.0 full import/export | QA-002/003/007 |
+| F.10-02 | Import dry-run validates schema/version/assets/duplicate IDs/owner/permissions/migration compatibility | OPS-004/005, WEB-008, DSN-014/015, RES-008/009, SEC-002/003/008; generic package-import contract TBD in M0.2 | EXPAND | 2.0 full import/export | QA-002/003/007 |
 | F.10-03 | Recovery preview/conflicts/integrity/backup verification and post-restore Page Model/revision/public-render consistency | OPS-005/006/009, EDT-001, EDT-028, EDT-034, WEB-004, WEB-007/008 | KEEP | 0.x–1.0 safety baseline | QA-002/006/007 |
 | F.10-04 | Diagnostics for deploy/request/sync/provider/jobs/D1/cache/latency; no secrets or unnecessary personal data in logs | OPS-001–OPS-008, SEC-008, SEC-010/011 | EXPAND | 1.0 baseline; advanced operations later | QA-003/006/008 |
 | F.11-01 | 1.0 scope: own public site/Admin/working Editor slice/responsive/resource/Schedule/Twitch/publish/SEO/accessibility/security/performance | §39.2, WEB-001–WEB-032, ADM-001–ADM-010, EDT-001–EDT-042, RES-001–RES-016, SCH-001–SCH-015, INT-001–INT-021, SEO-001–SEO-005 | KEEP | 1.0 selected subset only; §39 per-domain gates override family ranges | QA-002–QA-009 |
@@ -2719,6 +2719,11 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.13-19 | Later creator app uses canonical APIs/permissions for live/alerts/schedule/analytics/moderation/content approval | ADM-001–ADM-010, INT-001–INT-021, SCH-001–SCH-015, LIV-001–LIV-007, CNT-015, ANL-001–ANL-010, OBS-006, COM-001–COM-018, SEC-002 | DEFER | 2.0+ | QA-002/003/008 |
 | F.13-20 | Starter template categories remain available as configurable library choices | DSN-008–DSN-010 | EXPAND | 1.0 starter templates; library later | QA-004 |
 | F.13-21 | Future creator-made template/component/theme/overlay/OBS/digital asset marketplace with license/version/review/revenue share | DSN-005, DSN-011–DSN-018, RES-001, OBS-001–OBS-010, STO-012, MKT-001–MKT-005 | DEFER | 3.0–6.0 | QA-002/003/008 |
+
+**További F.9/F.10 szemantikai ellenőrzés:**
+- Az F.9-07 vizuális regressziós baseline-t ír elő public home/navigation/Schedule és Editor állapotokhoz, desktop/tablet/mobile méreteken. A meglévő `QA-004` leírás korábban csak browser/device responsive acceptance-et mondott ki; pontosítottam úgy, hogy a visual-regression acceptance is kifejezett része legyen.
+- Az F.10-02 teljes package import dry-run követelményét nem szabad úgy értelmezni, hogy a `OPS-005` export/restore vagy a `DSN-015` template import/export önmagában lefedi a teljes Page Model/revision/resource/domain package importot. A sor most explicit nyitott generic package-import contractot jelöl. M0.2-ben kell kijelölni a canonical owner/ID-t, az import validation és permission/owner checks határát, a dry-run outputot és a rollback/partial-failure acceptance-t. Addig a teljes import-dry-run szemantikai lefedettsége OPEN.
+
 
 **Szemantikai ID-ellenőrzés — accessibility cross-cutting capability nyitott:** a korábbi F.9-03 sor a `WEB-032` ID-t használta, amelynek registry-definíciója **public content rendering security and safe embeds**, nem általános accessibility. Ez hibás szemantikai hozzárendelés volt, ezért kivettem a mappingből. A sor most a ténylegesen releváns rész-képességekre mutat (`EDT-017` alap-elemek, `EDT-037` keyboard-accessible canvas alternative, `EDT-040` reduced motion, `RES-007` alt text metadata, `WEB-011` navigation/keyboard behavior), de ezek nem bizonyítják önmagukban a teljes semantic HTML/labels/ARIA/focus/contrast/screen-reader/form accessibility lefedettségét. A hiányzó cross-cutting contract/domain besorolását M0.2-ben kell eldönteni; addig az F.9-03 szemantikai lefedettsége **OPEN**, noha a forráskövetelmény és az 1.0 release gate megmarad.
 
@@ -4787,3 +4792,12 @@ Az archív F.9-03 a teljes publikus accessibility követelményt sorolja fel: se
 **Következő döntés M0.2-ben:** a cross-cutting domain/capability inventory alapján kell eldönteni, hogy a teljes accessibility contract külön canonical capability/ID-t igényel-e, vagy mely már létező domain kapja a normatív ownershipet és acceptance checklistet. Addig F.9-03 szemantikai lefedettsége OPEN, a 1.0 accessibility release gate kötelező marad. Nem hoztam létre előre új ID-t, mert a domain- és prefix-ownership döntés még nem zárult le.
 
 Ez a javítás kizárólag a crosswalk szemantikai pontosságát érinti; a 362/362 strukturális ID-lefedettség továbbra is igaz az explicit/tartományos/perjeles feloldásra, de ez nem helyettesíti az újonnan rögzített szemantikai hiány rendezését. **P0.2 marad IN PROGRESS / NOT PASS.**
+
+
+### 41.3.78. P0.2 — F.9 visual-regression acceptance és F.10 package-import contract pontosítása (2026-10-14)
+
+**F.9-07 / QA-004:** a forrás külön vizuális regressziós baseline-t követel a publikus home/navigation/Schedule és Editor állapotokhoz desktop/tablet/mobile felbontásokon. A QA registry `QA-004` leírása csak browser/device responsive acceptance-et nevezett meg. Pontosítottam a definíciót „Browser/device responsive and visual-regression acceptance” alakra. Ez a contract pontosítása, nem azt jelenti, hogy a vizuális tesztek már megvalósultak vagy PASS állapotúak.
+
+**F.10-02 / package import:** a követelmény schema/version, assets, duplicate IDs, owner/permission és migration compatibility dry-run validációt ír elő. A jelenlegi `OPS-005` backup/export/restore és `DSN-015` template import/export nem bizonyítja a teljes Page Model/revision/resource/domain package importot. A crosswalk most explicit nyitott generic package-import contractot jelez. M0.2-ben kell meghatározni a canonical ownershipet/ID-t, az import scope-ot, a dry-run eredményformát, a részleges hibák viselkedését és a rollback/acceptance kritériumokat; nem szabad a template-importot teljes site-package importnak tekinteni.
+
+**Állapot:** a QA-004 fogalom pontosítva; az F.10-02 import contract továbbra is OPEN. Ez a két szemantikai részfeladat nem zárja le P0.2-t, amely **IN PROGRESS / NOT PASS** marad.
