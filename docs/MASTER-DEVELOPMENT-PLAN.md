@@ -5728,3 +5728,45 @@ A „MATCH candidate” csak a tervezett elemkategória jelenlétét jelenti; ne
 **Crosswalk-következtetés:** a 37.27 F.1-04–10 megőrzi az immutable history, 50-es limit, tranzakciócsoportosítás, 2000 ms draft autosave, crash recovery és optimistic concurrency követelményeket, de nem zárja le a history panelt, entry previewt, tetszőleges restore-t, internal-action osztályozást vagy history persistence policy-t. Ezek külön decision/acceptance pontok maradnak.
 
 **Státusz:** 15 pont tételesen leképezve; entry preview/restore és history persistence policy nyitott döntés. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.133. P0.2 — Régi 1/G Save contract: tételes mentési crosswalk (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, 1/G, 20 atomikus pont. **Canonical célpontok:** EDT-027–031, EDT-042, WEB-004–008, D1/Page Model revision owner, OPS recovery contract; kapcsolódó történeti kereszthivatkozás: 37.22 E.3.7-02–06, 37.27 F.1-08–10, E.20 negative tests. A registry-ID jelenléte nem runtime bizonyíték.
+
+| # | Régi Save contract követelmény | Canonical célpont | Státusz | Lezárási / acceptance feltétel |
+|---:|---|---|---|---|
+| 1 | Dirty state | EDT-027 | PLAN MATCH / VERIFY | Dirty csak dokumentumot érintő, nem nyugtázott módosításnál; mentés alatt érkező új edit nem tűnhet el a korábbi request sikerétől. |
+| 2 | Manual save | EDT-027/028; WEB-004 | PLAN MATCH | Explicit Save Draft azonnali művelet; pending/disabled állapot, szerver-acknowledgement és hiba esetén dirty megőrzése. |
+| 3 | Optional autosave | EDT-027/028/031 | PHASED / DECISION | Autosave csak külön elfogadott acceptance-szel; ne legyen implicit kötelező funkció, ha a runtime és recovery gate nincs kész. |
+| 4 | Autosave debounce | EDT-027/030; F.1-08 | PLAN MATCH / VERIFY | Történeti cél 2000 ms debounce; gyors módosításokat coalesce-ol, a legutolsó valid state-et menti, explicit save nem vár a debounce-ra. |
+| 5 | Save queue | EDT-028–030 | PARTIAL / VERIFY | Egy site/page/revision scope-on request ordering; régebbi mentés nem írhatja felül az újabbat; sorozatos edit közben stale payload kizárása, cancel/flush szabály. |
+| 6 | Duplicate save protection | EDT-027–030 | PARTIAL / VERIFY | Double click, retry és párhuzamos autosave nem okozhat dupla revisiont vagy sorrendfordulást; idempotency/expected-version contract és teszt szükséges. |
+| 7 | D1 update | EDT-001/028; canonical Page Model persistence owner | PARTIAL / OWNER VERIFY | Validált, tulajdonoshoz kötött Page Model mentés tranzakciós határa, schema/version, authorization és revision update explicit; UI nem kerülheti meg a canonical service-et. |
+| 8 | Optimistic/pessimistic stratégia dokumentálva | EDT-029/030; WEB-008 | PARTIAL / DECISION | A stratégia nincs bizonyítva pusztán a “revision conflict” címkével: expected-version/optimistic locking, conflict response és recovery UI szerződést kell rögzíteni; ha pessimistic lock nincs célban, ezt is ki kell mondani. |
+| 9 | Save success | EDT-027/028; WEB-004 | PLAN MATCH / VERIFY | Csak szerver-visszaigazolás után success; a mentett revision/acknowledged snapshot azonosítható, az utána keletkezett edit továbbra is dirty marad. |
+| 10 | Save failure | EDT-027/031/042 | PLAN MATCH / RELEASE GATE | Hibás mentésnél nincs hamis success, nincs dirty törlés és nincs draft-vesztés; hibaüzenet cselekvésre alkalmas, a felhasználói edit megmarad. |
+| 11 | Timeout | EDT-031; OPS-003 | PARTIAL / VERIFY | Timeout kimenetele lehet ismeretlen, ezért ne tekintsük automatikusan rollbacknek; idempotens retry/állapot-egyeztetés szükséges, mielőtt új revisiont hozunk létre. |
+| 12 | Retry | EDT-031 | PLAN MATCH / VERIFY | Retry ténylegesen újrapróbálja az adott műveletet; hálózati hiba után a payload/revision ellenőrzött, backoff és ismételt kattintás nem duplikál mentést. |
+| 13 | Reload | EDT-028; WEB-004 | PLAN MATCH / RELEASE GATE | Mentett Page Model újranyitáskor ugyanazzal a strukturált tartalommal és revisionnel tér vissza; unsaved edit esetén figyelmeztetés/recovery döntés, nem csendes eldobás. |
+| 14 | Adat megmarad | EDT-028/030/031; EDT-042 | PARTIAL / RELEASE GATE | Round-trip minden támogatott node/property/responsive override és resource reference esetén; mentés közbeni edit, reload, retry, conflict és recovery tesztek. |
+| 15 | Renderer ugyanazt az állapotot látja | EDT-028/032/034; WEB-004/006 | PARTIAL / RELEASE GATE | Editor preview a draftot, publikus renderer kizárólag a publikált canonical snapshotot használja; azonos revision azonos eredményt ad, kivéve szándékos draft/published különbséget. |
+| 16 | Revision frissül | EDT-028/029; WEB-008 | PARTIAL / VERIFY | Sikeres dokumentummentés revision/expected-version szerződés szerint növeli vagy újraazonosítja a revisiont; failed/no-op/retry viselkedés explicit és auditálható. |
+| 17 | Conflict felismerés | EDT-029/030; WEB-008 | PLAN MATCH / RELEASE GATE | Stale expected version szerveroldalon elutasítva; nincs silent overwrite; a UI megőrzi a lokális editet, megmutatja a konfliktust és választási/recovery útvonalat kínál. |
+| 18 | Recovery snapshot frissül | EDT-031/042; OPS-009 | PARTIAL / VERIFY | Recovery snapshot a legfrissebb helyreállítható editet tartalmazza, nem titkot; frissítés atomikus és verziózott, a sikeres mentés és a helyi recovery külön lifecycle. |
+| 19 | Mentett állapot és publish állapot különválik | EDT-027/028, WEB-004–008 | PLAN MATCH / RELEASE GATE | Save Draft nem publikál; preview nem publikál; csak explicit, jogosultság-ellenőrzött publish módosítja a publikus snapshotot; unpublish/rollback és cache invalidation külön tranzakció. |
+| 20 | Mentés közbeni új edit megőrzése | EDT-030; EDT-027/028 | PLAN MATCH / RELEASE GATE | Ha request A folyamatban, majd edit B történik, A sikeres ack-ja nem állíthatja B-t saved állapotba; B külön dirty marad és A utáni verzióval menthető. |
+
+#### Kötelező Save állapotgép és invariánsok
+
+1. **Állapotok:** clean/saved, dirty, saving, saved-with-newer-dirty-edits, failed, timeout/unknown outcome, offline/retryable, conflict és recovery-required legyen megkülönböztethető. A címkék tényleges server acknowledgementhez és revisionhez kötődjenek, ne díszítő UI-k legyenek.
+2. **Sorrend és verzió:** mentés expected revisionnel történik. Egy régi request nem írhat újabb Page Modelt; a save queue, duplicate protection, timeout és retry együtt tesztelendő.
+3. **Dirty megőrzése:** a mentés indításakor rögzített payload sikeres mentése csak annak a payloadnak a módosításait nyugtázza. Későbbi változás dirty marad.
+4. **Autosave és kézi mentés:** a történeti 2000 ms debounce célérték, nem igazolja a runtime működést. Explicit Save Draft azonnali; a pending autosave flush/cancel és navigation/close viselkedése meghatározandó.
+5. **Draft ≠ publish:** save, preview, publish, unpublish és rollback külön művelet és jogosultsági határ. A publikus route csak a canonical published snapshotot szolgálhatja ki; a cache invalidation része a publish contractnak.
+6. **Recovery:** helyi crash snapshot nem szerver draft és nem revision history. Titkot nem tárolhat; konfliktusban a lokális edit elvesztése nélkül kell recovery/server/discard lehetőséget adni.
+7. **Negative tests:** dupla kattintás, out-of-order response, timeout utáni ismeretlen commit, stale revision, hálózati kiesés, mentés közbeni edit, invalid Page Model, permission failure, reload dirty állapotban, publish hiba és cache-stale esetén nincs hamis siker vagy csendes adatvesztés.
+
+**Crosswalk-következtetés:** a jelenlegi tervben EDT-027–031 és WEB-004–008 megfelelő canonical horgonyok, de a queue/idempotency, timeout-ismeretlen kimenetel, exact revision acknowledgement és recovery snapshot frissítési sorrend külön acceptance-t igényel. A D1 update konkrét runtime megvalósítása ebből a tervleképezésből nem bizonyított.
+
+**Státusz:** 20 követelmény egyenként leképezve; a mentési állapotgép és a runtime release evidence nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
