@@ -3983,6 +3983,54 @@ Az alábbi **13/396 ID** leírását a 24.1, 49.1 és kapcsolódó 49.16–49.19
 - A 13 ID **fázisa, adat/API sémája, pozitív és negatív automatizált tesztje, runtime bizonyítéka és készültsége nincs tételesen igazolva**. Az ezekhez tartozó bizonyíték hiánya nyitott, nem PASS.
 - A következő szemantikai köteg `WEB-001–WEB-032`; a további 383 ID ugyanilyen részletességű auditja hátravan.
 
+### 63.0.3. Tételes szemantikai audit — WEB-001–WEB-032
+
+A 24.2, 49.2 és a kapcsolódó domainhatárok összevetése alapján a **32 webes képesség mindegyikéhez** külön felhasználói eredményt, kanonikus adatgazdát, negatív elfogadási feltételt és ellenőrzendő függőséget rögzítünk. Az alábbi elvárások **tervbeli audit-hipotézisek és szerződésminimumok**; nem állítják, hogy a runtime vagy tesztkód ezeket már teljesíti.
+
+| ID | Konkrét képesség / aloldal | Elsődleges owner | Pozitív elvárás | Kritikus negatív elvárás | Függőség |
+| --- | --- | --- | --- | --- | --- |
+| WEB-001 | Oldallista, létrehozás és szerkesztés | WEB page repository | oldal létrejön/listázható saját site-on | másik site oldalának módosítása tiltott | EDT-001, SEC-002 |
+| WEB-002 | Slug, hierarchia, URL-változás | WEB route registry | ütközésmentes canonical URL | ütköző slug és ciklikus hierarchia elutasítva | WEB-012, WEB-013 |
+| WEB-003 | Másolás, archiválás és törlés | WEB page lifecycle | másolat új ID-val, archív visszaállítható | használt oldal törlése függőségfigyelmeztetés nélkül tiltott | WEB-001, WEB-009 |
+| WEB-004 | Draft/published snapshot | WEB publication | piszkozat nem módosítja az éles snapshotot | nem publikált tartalom nem kerül publikus válaszba | WEB-031, EDT-033 |
+| WEB-005 | Preview link és hozzáférés | WEB preview authorization | jogosult felhasználó látja a draftot | lejárt/kiszivárgott preview link nem nyit privát adatot | SEC-002, WEB-031 |
+| WEB-006 | Publikálás előtti validáció | WEB publish pipeline | hibalista és publish report megjelenik | hibás schema/hiányzó asset nem ad hamis sikert | WEB-006, RES-008 |
+| WEB-007 | Publish/unpublish/rollback | WEB publication lifecycle | verziózott állapotváltás és visszaállítás | részleges hiba nem hagy inkonzisztens publikus snapshotot | WEB-004, QA-007 |
+| WEB-008 | Revízió és diff | WEB revisions | visszakereshető szerző és változás | idegen site revíziója nem olvasható | EDT-029, SEC-002 |
+| WEB-009 | Navigációs fa | WEB navigation | egy kanonikus menüfa renderelődik | ciklikus/hiányzó célú menüelem nem publikálható észrevétlenül | WEB-002, WEB-012 |
+| WEB-010 | Header/footer globális layout | WEB layout; DSN design token | közös layout minden kijelölt oldalon érvényesül | globális módosítás nem írja felül titokban az oldal override-ot | DSN-001, WEB-010 |
+| WEB-011 | Mobil menü és billentyűzet | WEB navigation UI | mobil/keyboard fókusz és menüzárás működik | csak hoverrel elérhető menüpont nem maradhat | QA-005, WEB-009 |
+| WEB-012 | Publikus route és 404 | WEB route registry | ismeretlen útvonal valódi 404-et ad | privát/admin útvonal nem jelenik meg publikus oldalként | WEB-002, WEB-031 |
+| WEB-013 | Redirect és broken-link | WEB redirect registry | átirányítás és hibás link riport | redirect loop és nyílt átirányítás blokkolt | WEB-012, SEO-001 |
+| WEB-014 | Nyilvános kezdőlap | WEB renderer | publikált kezdőlap megjelenik | draft moduladat nem szivárog | WEB-004, WEB-031 |
+| WEB-015 | Nyilvános live oldal | WEB renderer; LIV state | live/offline fallback és frissesség jelölve | stale adat nem látszik biztosan élőnek | LIV-001, LIV-002 |
+| WEB-016 | Nyilvános adásrend | WEB route; SCH adatgazda | SCH-010 projekcióból események | második schedule adatforrás nem készül | SCH-010, WEB-031 |
+| WEB-017 | Nyilvános VOD hub | WEB route; CNT adatgazda | CNT-020 publikált tartalmak megjelennek | draft/privát VOD nem listázódik | CNT-020, WEB-031 |
+| WEB-018 | Creator bemutatkozás | WEB renderer; creator profile | publikált profil megjelenik | privát fiók-/profiladat nem szivárog | WEB-031 |
+| WEB-019 | Közösségi oldal és CTA | WEB route; COM adatgazda | közösségi belépési pont a megfelelő modulhoz vezet | jogosultság nélküli közösségi tartalom nem látszik | COM-001, WEB-031 |
+| WEB-020 | Kapcsolat és űrlap | WEB forms; beküldés domain szerződés tisztázandó | validált beküldés és visszajelzés | spam/CSRF/PII-kiszivárgás blokkolt | SEC-009, WEB-032 |
+| WEB-021 | Creator Resources oldal | WEB route; RES asset owner | publikált erőforrások megjelennek | privát/lejárt asset nem tölthető le | RES-014, WEB-031 |
+| WEB-022 | Link Hub | WEB route; link registry | érvényes publikus linkek elérhetők | veszélyes javascript URL és open redirect tiltott | WEB-032 |
+| WEB-023 | Támogatási oldal | WEB route; SUP adatgazda | támogatási CTA a szolgáltatóhoz vezet | sikertelen fizetés nem jelölhető támogatásnak | SUP-001, INT-018 |
+| WEB-024 | Szponzor/Press Kit | WEB route; CAM adatgazda | jóváhagyott media kit publikált | bizalmas deal/rate card nem jelenik meg engedély nélkül | CAM-001, WEB-031 |
+| WEB-025 | Bolt/termékoldalak | WEB route; STO adatgazda | publikált termékadat és checkout link | nem elérhető termék vagy hibás ár nem vásárolható meg | STO-001, STO-005 |
+| WEB-026 | Tagsági felület | WEB route; SUP entitlement | taghoz kötött hozzáférés ellenőrzött | kliensoldali paywall megkerülése nem engedélyezett | SUP-006, SEC-002 |
+| WEB-027 | Esemény/blog/hírek/digitális termék | WEB routes; SCH/CNT/STO adatgazdák | publikált rekordok a saját útvonalon látszanak | nem készül párhuzamos üzleti tároló | SCH-010, CNT-020, STO-001 |
+| WEB-028 | Hiba/maintenance/offline | WEB public fallback | használható, biztonságos hibaképernyő | stack trace vagy titok nem kerül a válaszba | OPS-008, SEC-011 |
+| WEB-029 | Publikus keresés | WEB public search; SEARCH Admin index külön scope | csak publikus rekord kereshető | privát találat/snippet nem indexelhető | WEB-031, SEARCH-002 |
+| WEB-030 | Cache és invalidáció | WEB cache lifecycle | publikálás után friss snapshot szolgálódik ki | unpublish után régi privát snapshot nem marad cache-ben | WEB-004, WEB-031 |
+| WEB-031 | Published-only enforcement | WEB authorization/public projection | publikus API kizárólag publikált adatot ad | draft vagy másik site adata nem szivárog | SEC-002, WEB-004 |
+| WEB-032 | Biztonságos renderer/embed | WEB renderer security | engedélyezett embed működik | XSS, script URL és nem engedélyezett iframe tiltott | SEC-009, EDT-034 |
+
+**Keresztmodulú ütközések és nyitott döntések:**
+- A `WEB-020` űrlapbeküldések szerveroldali gazdája és adatmegőrzési szabálya külön pontosítandó; a 49.2 a webes űrlap-összeállítást, nem automatikusan a CRM-et vagy értesítési kézbesítést birtokolja.
+- A `WEB-029` publikus keresőindex és a `SEARCH` család Admin-keresője eltérő jogosultsági határt követel; közös infrastruktúra megengedett, de a privát rekordok publikus indexbe kerülése tiltott.
+- A `WEB-025` és `WEB-026` oldalak csak a `STO` és `SUP` domain kanonikus termék-/entitlement-rekordját használhatják; nincs párhuzamos checkout vagy tagsági státusz.
+- A `WEB-016` és `WEB-017` a `SCH-010`, illetve `CNT-020` publikált projekcióját fogyasztják; a Visual Editor csak elhelyezést és megjelenítést konfigurálhat.
+- A 32 ID tételes **fázisa, pontos request/response schema, teljes jogosultsági mátrixa, teszt- és éles bizonyítéka még nyitott**. További követelmény- és kódvizsgálat szükséges.
+
+**Haladás:** `ADM-001–013` és `WEB-001–032` = **45/396 ID** dokumentált, első körös tételes szemantikai elvárás-egyeztetés. **Nem** teljes feature-contract vagy implementációs PASS; a 351 további ID és a történeti forráshiány változatlanul nyitott.
+
 ### 63.1. A terv teljességének ellenőrzése
 - [ ] A teljes termékvízió minden képessége a megfelelő modulban szerepel; a régi forrásokból megőrzendő képesség nem tűnhet el pusztán átrendezés vagy fázisváltás miatt.
 - [ ] Minden funkció egyértelműen besorolt: core vagy későbbi, felhasználói felület/domain, függőség, státusz, elfogadási feltétel és szükséges teszt.
