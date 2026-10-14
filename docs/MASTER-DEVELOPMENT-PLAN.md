@@ -2720,6 +2720,9 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.13-20 | Starter template categories remain available as configurable library choices | DSN-008–DSN-010 | EXPAND | 1.0 starter templates; library later | QA-004 |
 | F.13-21 | Future creator-made template/component/theme/overlay/OBS/digital asset marketplace with license/version/review/revenue share | DSN-005, DSN-011–DSN-018, RES-001, OBS-001–OBS-010, STO-012, MKT-001–MKT-005 | DEFER | 3.0–6.0 | QA-002/003/008 |
 
+**Szemantikai surface-ellenőrzés — nyitott M0.3-függőség:** az archív F.12 követelménye kifejezetten azt mondja, hogy a creator profil és a játékok **Adminból legyenek konfigurálhatók**. A F.12-02/F.13-01 crosswalk helyesen hivatkozza a Game Profile domain CRUD-ját (`SCH-012`), a kapcsolati modellt (`SCH-014`) és a resource-megjelenítést, de ezek önmagukban nem neveznek meg egy konkrét Admin route-ot vagy Admin felületet. Az `ADM-001`–`ADM-010` jelenlegi registry-leírásai között nincs Game Profile-specifikus kezelőfelület-ID; nem szabad egy általános Admin-shell vagy permission ID-t tévesen CRUD-felületként feltüntetni. Ez **nem bizonyított hiányzó runtime-funkció**, hanem surface-traceability rés: M0.3-ban a tényleges Admin route/menu/action inventory alapján kell megnevezni a kanonikus felületet, és csak ezután dönteni, hogy meglévő ADM ID alá tartozik-e vagy új, indokolt capability ID szükséges. Addig F.12-02 és F.13-01 szemantikai/surface lezárása nyitott marad.
+
+
 **Batch 7 result:** 42 egyedi source bullet F.9–F.13 között (7 F.9 + 35 F.10–F.13). A hivatkozások szerkezeti validációja külön gate; ez a mapping nem runtime PASS.
 
 
@@ -4757,3 +4760,16 @@ The opening P0.2 summary now distinguishes the last verified 361-ID structural s
 - A §37.32 korábbi „359 ID” összesítő mondata frissítve lett 362-re, és rögzíti a jelenlegi ellenőrzést.
 
 **Hatókör és korlát:** ez a kör a registry-ID-k strukturális feloldását igazolja a §37 crosswalkban. Nem bizonyítja az összes történeti követelmény szemantikai megőrzését, a forrásbulletek kétirányú teljességét, a hiányzó archív források megtalálását, a domain/permission/dependency contractok teljességét vagy a runtime megvalósítást. A 271 H19–H34 történeti kulcs és a 310 C.23 + F.1–F.13 forrásbullet külön auditfeladat marad. **P0.2 továbbra is IN PROGRESS / NOT PASS**; ezzel csak a §24→§37 ID-feloldási strukturális részfeladat zárható le.
+
+
+### 41.3.76. P0.2 — Game Profile Admin surface traceability gap flagged for M0.3 (2026-10-14)
+
+Az archív `F.12` forrás kimondja, hogy a creator profil és a játékok Adminból legyenek konfigurálhatók. A jelenlegi `F.12-02` és `F.13-01` sorok a `SCH-012` Game Profile CRUD-t, `SCH-014` kapcsolatot, valamint a resource/profile adatokat leképezik, de nem neveznek meg explicit kanonikus Admin route-ot vagy felületet. Az `ADM-001`–`ADM-010` leírásai között nincs Game Profile-specifikus Admin CRUD felület-ID.
+
+**Döntés:** nem hozok létre találomra új ADM-ID-t, és nem állítom, hogy a runtime-funkció hiányzik. A crosswalkba bekerült a nyitott surface-traceability megjegyzés. M0.3-nak a tényleges Admin menü/route/action inventory alapján kell:
+1. megneveznie a Game Profile CRUD kanonikus Admin felületét és route-ját;
+2. rögzítenie az owner/domain, permission és CRUD action kapcsolatot;
+3. eldöntenie, hogy egy meglévő ADM capability pontosítása elég-e, vagy külön capability ID indokolt;
+4. ellenőriznie, hogy az Editor csak a canonical Game Profile domainre hivatkozik, és nincs editor-only párhuzamos adattár.
+
+**Állapot:** nyitott M0.3-függőség; ez nem zárja le F.12/F.13 szemantikai traceability-jét, és nem változtatja meg P0.2 **IN PROGRESS / NOT PASS** állapotát.
