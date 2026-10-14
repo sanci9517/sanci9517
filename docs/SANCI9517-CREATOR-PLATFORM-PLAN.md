@@ -141,7 +141,7 @@ Az Editor a weboldal felépítését, elrendezését, vizuális megjelenését, 
 
 ## 3. Részletes Admin-domainok és tételes funkciók
 
-A 3.1–3.18 alfejezetek **felelősségi/domain-katalógusok, nem külön főmenüpontok**. A kanonikus fő navigációt kizárólag a 49. fejezet határozza meg; a 46. fejezet csak a navigációs UX és elrendezés szabályait rögzíti. A 49. fejezet jelenleg 20 külön főmodult tartalmaz. Az alábbi megfeleltetés rögzíti a felelősséget, hogy az azonos funkciók ne kapjanak külön menüben külön implementációt:
+A 3.1–3.18 alfejezetek **felelősségi/domain-katalógusok, nem külön főmenüpontok**. A kanonikus fő navigációt kizárólag a 49. fejezet határozza meg; a 46. fejezet csak a navigációs UX és elrendezés szabályait rögzíti. A 49. fejezet jelenleg 22 külön főmodult tartalmaz. Az alábbi megfeleltetés rögzíti a felelősséget, hogy az azonos funkciók ne kapjanak külön menüben külön implementációt:
 
 - 3.1 Dashboard → 49.1 Kezdőlap és napi áttekintés.
 - 3.2 Weboldal → 49.2 Weboldal; a design/template tulajdonosa 49.3, a média/asset registry tulajdonosa 49.4.
@@ -154,10 +154,10 @@ A 3.1–3.18 alfejezetek **felelősségi/domain-katalógusok, nem külön főmen
 - 3.12 Tartalomtervező: tartalomnaptár/publikálási queue → 49.8; kampánytervezés és eredmény → 49.12.
 - 3.13 Automatizáció → 49.14 Automatizációk.
 - 3.14 SANCI AI → 49.15 SANCI AI.
-- Keresés/súgó/személyre szabás → 49.16.
-- 3.15 Szponzoráció és üzleti központ → külön 49.12 Szponzoráció és üzleti központ.
-- 3.16 Beállítások és hozzáférés + 3.18 Rendszerdiagnosztika → 49.17; érzékeny diagnosztika korlátozott jogosultságú.
-- Fejlesztői eszközök/API → 49.18; bővítmények/piactér → külön 49.19; 3.17 Csapat és munkaterület → 49.20.
+- Globális keresés/parancspaletta → 49.16; értesítési központ → külön 49.17; súgó/onboarding → külön 49.18.
+- 3.15 Szponzoráció és üzleti központ → 49.12 Szponzoráció és üzleti központ.
+- 3.16 Beállítások és hozzáférés + 3.18 Rendszerdiagnosztika → 49.19; érzékeny diagnosztika korlátozott jogosultságú.
+- Fejlesztői eszközök/API → 49.20; bővítmények/piactér → külön 49.21; 3.17 Csapat és munkaterület → 49.22.
 
 A több helyen megjelenő gyorsművelet csak a kanonikus modulba navigál vagy annak közös domain commandját hívja; nem hozhat létre második tulajdonost, adatforrást vagy jogosultsági útvonalat.
 
@@ -2776,7 +2776,7 @@ A „közös storage” nem egyetlen óriási, strukturálatlan JSON és nem egy
 
 A kanonikus modulnevek, modulhatárok és felhasználói főmenüpontok kizárólag a **49. fejezetben** szerepelnek. Ez az alfejezet nem tart fenn második, párhuzamos menülistát; itt csak a felület elrendezési szabályai vannak meghatározva.
 
-- A 49. fejezet 20 főmodulja nem azonos súlyú: a gyakori alapfeladatok kerülnek előre, a ritkább és későbbi platformfunkciók kereshető/összecsukható csoportokba.
+- A 49. fejezet 22 főmodulja nem azonos súlyú: a gyakori alapfeladatok kerülnek előre, a ritkább és későbbi platformfunkciók kereshető/összecsukható csoportokba.
 - A modul megjelenítése szerepkör, server-side permission, használati gyakoriság és kezdő/haladó mód szerint változhat; a UI nem helyettesíti az authorizationt.
 - A modulok saját kanonikus domain parancsát/API-ját használják. A Dashboard, Editor, kereső, értesítés vagy AI csak belépési pont, nem második üzleti logika.
 - A Weboldal/Visual Editor, Brand Kit, Média/Asset Registry, Integrációk, Live/Stream, OBS, Content Studio, Community, Store, Support/Membership, Sponsorship/Campaign, Analytics, Automation, AI, Search/Help, Settings, Developer API, Extensions/Marketplace és Team/SaaS határait a 49. fejezet és az 5. fejezet domain-térképe együtt rögzíti.
@@ -2971,14 +2971,28 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Multi-agent feladatok:** specialista feladatok összehangolása közös kontextussal, költségkorláttal és nyomon követhető eredménnyel.
 - **Action safety:** az AI minden változtatást a domain API-n keresztül készít elő; kockázat szerint preview, diff, jóváhagyás, végrehajtás és rollback.
 
-### 49.16. Keresés, súgó és személyre szabás
-- **Globális kereső:** oldalak, media assetek, tartalmak, termékek, kapcsolatok, workflow-k, beállítások.
-- **Command palette:** billentyűzetes műveletindítás, gyors navigáció és legutóbbi elemek.
-- **Súgó:** kontextuális útmutató, interaktív onboarding, fogalomtár, hibaelhárítás és dokumentált API-korlátok.
-- **Mentett nézetek:** szűrők, oszlopok, listanézetek, dashboard elrendezések és felhasználói preferenciák.
-- **Értesítések:** in-app/email/push, kategória, prioritás, csendes időszak, digest és leiratkozás.
+### 49.16. Globális keresés és parancspaletta
+**Tulajdonosi határ:** a SEARCH domain a jogosultság- és site-scope szerint szűrt keresési index gazdája; a találat mindig a kanonikus domainrekordra navigál.
+- **Globális kereső:** oldalak, assetek, tartalmak, termékek, kapcsolatok, workflow-k és beállítások keresése a felhasználó engedélyei szerint.
+- **Command palette:** billentyűzetes műveletindítás és gyors navigáció; minden parancs a célmodul kanonikus műveletét hívja.
+- **Mentett nézetek:** szűrők, oszlopok, listanézetek, kedvencek és legutóbbi elemek felhasználói preferenciával.
+- **Indexfrissesség:** permission/site-váltás, törlés és domainmódosítás után index/cache invalidálás; stale állapot látható.
 
-### 49.17. Beállítások, biztonság és adat
+### 49.17. Értesítési központ
+**Tulajdonosi határ:** a NOTIFICATION domain birtokolja az értesítést, kézbesítési próbálkozást és preferenciákat; a Dashboard csak összefoglalót jelenít meg.
+- **Központ:** in-app/email/push kategóriák, prioritás, olvasott/olvasatlan állapot és forrásmodulra mutató link.
+- **Preferenciák:** csatornánkénti opt-in/out, digest, csendes időszak, leiratkozás és adatvédelmi retention.
+- **Delivery lifecycle:** queued/sent/delivered/failed ahol igazolható, retry, deduplikáció, rate limit és kézbesítési diagnosztika.
+- **Domainkapcsolat:** stream, content, integration, automation, support és store eseményekből készül; nem saját üzleti eseményt talál ki.
+
+### 49.18. Súgó és onboarding
+**Tulajdonosi határ:** a HELP_CENTER domain birtokolja a súgócikkeket, fogalomtárat, onboarding progresszt és visszajelzést; az ADM shell kontextuális belépési pontot biztosít.
+- **Kontextuális súgó:** az aktuális modulhoz/mezőhöz illeszkedő rövid útmutató és dokumentált korlátok.
+- **Interaktív onboarding:** lépések, teljesítési állapot, kihagyás/újrakezdés és szerepkör/site-scope szerinti útvonal.
+- **Fogalomtár és dokumentáció:** kereshető, verziózott leírások és hivatkozás a kapcsolódó funkciószerződésre.
+- **Hibaelhárítás és feedback:** emberi nyelvű magyarázat, diagnosztikai azonosító, support/feedback út; érzékeny adatot automatikusan redaktálni kell.
+
+### 49.19. Beállítások, biztonság és adat
 - **Profil és workspace:** nyelv, időzóna, dátum/pénznem, preferenciák, site/domain és márka.
 - **Felhasználók és jogosultságok:** owner/admin/editor/moderator/analyst/commerce szerepek, modulonkénti és műveletenkénti engedély.
 - **Biztonság:** session, eszközök, jelszó/SSO későbbi támogatása, 2FA, rate limiting, secret rotation és gyanús aktivitás.
@@ -2987,7 +3001,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Állapot és naplók:** health, background job, queue, API-kvóta, hibák, események, auditálható adminműveletek.
 - **Díjcsomag és használat:** későbbi SaaS-plan, usage, billing, limit, számla és szolgáltatói költség.
 
-### 49.18. Fejlesztői platform és API — későbbi platformfázis
+### 49.20. Fejlesztői platform és API — későbbi platformfázis
 - **Dokumentált API:** verziózott endpointok, schema, hibakódok, auth és deprecation policy.
 - **Integrációs SDK:** OAuth adapterek, webhook/event contractok, klienskönyvtár és példakód.
 - **API key lifecycle:** létrehozás, scope, megjelenítés egyszer, rotáció, lejárat, visszavonás és audit.
@@ -2995,14 +3009,14 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Sandbox és developer tools:** elkülönített workspace, tesztadat, eseménynapló, API-kvóta és dokumentáció.
 - **Külső integrációk:** rate limit, tenant/site scope, minimum jogosultság és biztonsági felülvizsgálat.
 
-### 49.19. Bővítmények, widgetek és piactér — későbbi platformfázis
+### 49.21. Bővítmények, widgetek és piactér — későbbi platformfázis
 - **Extension registry:** manifest, verzió, scope, permission, kompatibilitás, aláírás/eredet, frissítés és eltávolítás.
 - **Widget/overlay SDK:** saját komponensek, konfigurációs séma, preview, események és verziózás.
 - **Template/component marketplace:** sablonok, komponensek, overlayek és workflow-k; licenc, szerző, értékelés, frissítés és visszavonás.
 - **Biztonságos bővítmény-életciklus:** permission review, izolált futtatás/sandbox, kompatibilitási teszt, supply-chain ellenőrzés, rollback és hozzáférés-visszavonás.
 - **Marketplace üzleti modell:** díjazás/revenue-share és szerzői jogi/licencfeltételek csak külön jogi és pénzügyi felülvizsgálat után.
 
-### 49.20. Csapat, több site és SaaS — későbbi fázis
+### 49.22. Csapat, több site és SaaS — későbbi fázis
 - Több creator/site/workspace kezelése egy fiókból, egyértelmű aktív workspace választással.
 - Meghívás, csapattagok, szerepek, projekt- és ügyfélhozzáférés, jóváhagyási folyamat.
 - Agency/studio mód több creatorhoz, közös sablonok és ügyfél-specifikus brand.
@@ -3872,7 +3886,7 @@ Az ellenőrzés a MASTER aktuális repository-változatára vonatkozik; nem jele
 
 - [x] A számozott főfejezetek 0–63 között folytonosak, hiányzó főfejezetszámot nem találtunk; a 62. fejezet a világszintű termékképességeket és minőségi szerződést egészíti ki.
 - [x] Az aktuális dokumentumellenőrzésben nem találtunk azonos című, duplikált Markdown-fejezetcímet.
-- [x] A 3. fejezet domain-felelősségeit a 49. fejezet 20 kanonikus főmoduljához rendeltük; a 46.1. alfejezetet második menülista helyett navigációs UX-szabályokra állítottuk át.
+- [x] A 3. fejezet domain-felelősségeit a 49. fejezet 22 kanonikus főmoduljához rendeltük; a 46.1. alfejezetet második menülista helyett navigációs UX-szabályokra állítottuk át.
 - [x] A 9. fejezet P1–P22 munkacsomagjait a 41.2. F0–F11 végrehajtási sorrendhez rendeltük a 63.5. leképezéssel.
 - [x] A F0 core media/resource feladat és az F2 teljes Resource Registry/Design System határát különválasztottuk.
 - [ ] A teljes termékfunkciók közötti szemantikai duplikáció- és függőségellenőrzés még nem teljes; a szerkezeti ellenőrzés nem helyettesíti.
@@ -3960,7 +3974,7 @@ A 54. fejezet 16 témacsoportja a jelenlegi ellenőrzésben 156 checkbox-tételt
 
 | 54. fejezet | Kanonikus tulajdonos a 49. fejezetben | Elsődleges funkció-ID tartomány | Keresztmodulú megjegyzés |
 |---|---|---|---|
-| 54.1 Admin és Dashboard | 49.1 Kezdőlap és napi áttekintés | ADM | Gyorsműveletek csak a tulajdonosmodul parancsát hívják. |
+| 54.1 Admin és Dashboard | 49.1 Kezdőlap és napi áttekintés | ADM, NTF | A Dashboard értesítési összesítőt mutat; a kézbesítés és preferencia a NOTIFICATION domain tulajdona. |
 | 54.2 Weboldal és Visual Editor | 49.2 Weboldal | WEB, EDT, SET, DYN, SEO | Az EDT kizárólag weboldalszerkesztési felelősség; design és asset tulajdonlás külön modul. |
 | 54.3 Brand Kit és Design Studio | 49.3 Márka és designrendszer | DSN | A többi modul hivatkozik a kanonikus tokenekre/brand assetekre. |
 | 54.4 Média és erőforrások | 49.4 Média- és erőforráskönyvtár | RES | A Content Studio és az Editor hivatkozik az asset registryre; nem saját médiatárat kezel. |
@@ -3973,9 +3987,9 @@ A 54. fejezet 16 témacsoportja a jelenlegi ellenőrzésben 156 checkbox-tételt
 | 54.11 Analitika és növekedés | 49.13 Analitika és növekedés | ANL, CAM | Kampány/szponzoráció kapcsolódik, de nem válik analitikai adattár-másolattá. |
 | 54.12 Automatizációk | 49.14 Automatizációk | AUT | Event/rule/run/retry/audit a workflow engine tulajdona. |
 | 54.13 SANCI AI | 49.15 SANCI AI | AI | Az AI javasolhat műveletet, de a végrehajtás a domain engedélyezett commandján megy. |
-| 54.14 Többnyelvűség és nemzetközi használat | 49.2 Weboldal lokalizált tartalma + 49.17 platformbeállítások | LOC, WEB, SEO, SEC | A site-tartalom locale-ja és az Admin felület nyelve külön, de összehangolt scope. |
-| 54.15 Beállítások, biztonság, adatvédelem és megbízhatóság | 49.17 Beállítások, biztonság és adat | SEC, OPS, QA | Biztonság, privacy és reliability keresztmetszeti elfogadási feltétel is. |
-| 54.16 Fejlesztői platform, bővítmények, csapat és SaaS | 49.18 Fejlesztői platform/API; 49.19 Bővítmények és piactér; 49.20 Csapat/több site/SaaS | DEV, MKT, TEAM, OPS, SEC | Későbbi fázis; tenant isolation, extension security és billing függőségek nem hagyhatók ki. |
+| 54.14 Többnyelvűség és nemzetközi használat | 49.2 Weboldal lokalizált tartalma + 49.19 platformbeállítások | LOC, WEB, SEO, SEC | A site-tartalom locale-ja és az Admin felület nyelve külön, de összehangolt scope. |
+| 54.15 Beállítások, biztonság, adatvédelem és megbízhatóság | 49.19 Beállítások, biztonság és adat; értesítési preferenciák: 49.17 | SEC, OPS, QA, NTF | Biztonság, privacy és reliability keresztmetszeti elfogadási feltétel is. |
+| 54.16 Fejlesztői platform, bővítmények, csapat és SaaS | 49.20 Fejlesztői platform/API; 49.21 Bővítmények és piactér; 49.22 Csapat/több site/SaaS | DEV, MKT, TEAM, OPS, SEC | Későbbi fázis; tenant isolation, extension security és billing függőségek nem hagyhatók ki. |
 
 **Auditállapot:** a 16 témacsoport tulajdonosmodulhoz rendelése dokumentálva van, és a 63.12–63.15. fejezet a 156 egyedi checklist-tétel mindegyikét stabil funkcióazonosítóhoz rendeli. Ez tervszintű megfeleltetés, nem runtime- vagy acceptance-PASS. A következő auditlépés a megfeleltetések szemantikai pontosságának, a hasonló megfogalmazású képességek tényleges duplikációinak, valamint a modulhatárok és a domain/adatgazdák összhangjának ellenőrzése. Azonos képesség több modulban csak közös szolgáltatásra mutató hivatkozásként szerepelhet; az esetleges eltéréseket nyitottként kell megőrizni a feloldásig.
 
@@ -4171,7 +4185,7 @@ Az ellenőrzés a kanonikus terv aktuális GitHub-változatán futott. Eredmény
 - A 54. fejezetben **156 checklist-tétel** van; a 63.12–63.15 táblázatokban **156/156** tételhez tartozik külön megfeleltetési sor.
 - A megfeleltetési sorokban használt stabil ID-k mind megtalálhatók a 24. fejezetben; a jelen ellenőrzésben nincs feloldatlan ID-hivatkozás.
 - A 24. fejezetben **382 stabil funkcióazonosító** szerepel, és az azonosítók egyediek.
-- A 49. fejezetben **20 egymást követő főmodul** szerepel 49.1–49.20 között; a média/erőforrás, fejlesztői API, bővítmény-piactér és csapat/SaaS külön főmodul.
+- A 49. fejezetben **22 egymást követő főmodul** szerepel 49.1–49.22 között; a média/erőforrás, fejlesztői API, bővítmény-piactér és csapat/SaaS külön főmodul.
 - A 54. fejezet normalizált, pontos szövegduplikáció-ellenőrzése korábban nem talált ismétlődő checklist-tételt.
 
 **Korlátok és nyitott munka:** ez strukturális/azonosító-keresztellenőrzés, nem bizonyítja, hogy minden hozzárendelés szemantikailag tökéletes, nincs-e két külön szöveg mögött ugyanaz a képesség, minden domain-szerződés teljes-e, vagy a runtime megvalósítja-e a tervet. Következő feladat a szemantikai duplikáció- és tulajdonosmodul-audit, majd a meglévő kód, API-k, adatmodellek, jogosultságok és tesztek összevetése. A fejlesztési fagyasztás és a tervlezárási kapu változatlanul érvényes; ez az ellenőrzőpont önmagában nem engedélyezi az F0 megkezdését.
@@ -4252,11 +4266,13 @@ Ez a mátrix összeköti a 49. fejezet felhasználói moduljait az 5. fejezet ka
 | 49.13 Analitika és növekedés | ANALYTICS | Metrikát normalizál/aggregál; nem írja át a forrásdomain üzleti rekordját. |
 | 49.14 Automatizációk | AUTOMATION | Workflow/runs/retry; domainmódosítás csak az engedélyezett domain command/API-n keresztül. |
 | 49.15 SANCI AI | AI_OPERATION | Javaslat, kontextus, approval és usage; üzleti módosítás a célmodul commandján keresztül. |
-| 49.16 Keresés, súgó és személyre szabás | SEARCH, NOTIFICATION | Keresés permission-aware projection; értesítés/delivery saját domain, a modul a felhasználói központot adja. |
-| 49.17 Beállítások, biztonság és adat | IDENTITY, SETTINGS, LOCALIZATION, AUDIT, BACKUP; SEC/OPS keresztmetszeti | A globális beállítások nem másolják a domain-specifikus konfigurációt; security policy minden modulra érvényes. |
-| 49.18 Fejlesztői platform és API | DEVELOPER_API | Creator által létrehozott API keys/outbound webhooks; provider inbound webhooks az INTEGRATION-ben. |
-| 49.19 Bővítmények, widgetek és piactér | EXTENSION | Manifest, install, permission, signature, compatibility és sandbox lifecycle. |
-| 49.20 Csapat, több site és SaaS | WORKSPACE, BILLING_PLAN | Workspace/team és SaaS plan/usage külön; nem azonos a Store ORDER vagy fan ENTITLEMENT állapottal. |
+| 49.16 Globális keresés és parancspaletta | SEARCH | Permission-aware derived index; a találat a kanonikus domain rekordjára navigál. |
+| 49.17 Értesítési központ | NOTIFICATION | Delivery/preference state saját domain; a Dashboard csak összesít. |
+| 49.18 Súgó és onboarding | HELP_CENTER | Help content és onboarding progress; ADM csak kontextuális belépési pont. |
+| 49.19 Beállítások, biztonság és adat | IDENTITY, SETTINGS, LOCALIZATION, AUDIT, BACKUP; SEC/OPS keresztmetszeti | A globális beállítások nem másolják a domain-specifikus konfigurációt; security policy minden modulra érvényes. |
+| 49.20 Fejlesztői platform és API | DEVELOPER_API | Creator által létrehozott API keys/outbound webhooks; provider inbound webhooks az INTEGRATION-ben. |
+| 49.21 Bővítmények, widgetek és piactér | EXTENSION | Manifest, install, permission, signature, compatibility és sandbox lifecycle. |
+| 49.22 Csapat, több site és SaaS | WORKSPACE, BILLING_PLAN | Workspace/team és SaaS plan/usage külön; nem azonos a Store ORDER vagy fan ENTITLEMENT állapottal. |
 
 **Ellenőrzés:** a jelenlegi 5. fejezet 37 domain-ID-ja mindegyikéhez kijelölhető a fenti főmodulok közül legalább egy kanonikus belépési pont. Ez a dokumentumon belüli felelősségi keresztmátrix; a tényleges kód, adatbázis, API és jogosultsági implementáció egyezését külön auditálni kell.
 
