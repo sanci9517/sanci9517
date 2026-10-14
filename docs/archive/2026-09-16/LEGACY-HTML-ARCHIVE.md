@@ -1,3 +1,5 @@
+**HISTORICAL MIGRATION MANIFEST — NOT AN ACTIVE PLAN.** The listed HTML-to-slug mapping is a historical input to the lossless page migration contract in `docs/MASTER-DEVELOPMENT-PLAN.md` (GAP-13). Do not archive/delete actual pages until canonical migration, public URL verification and acceptance succeed; SQL migration history remains immutable.
+
 # Legacy HTML archive manifest — 2026-09-16
 
 These files belong to the pre-canonical static-page implementation. They must not be read by the Visual Editor or the public canonical renderer after migration.
