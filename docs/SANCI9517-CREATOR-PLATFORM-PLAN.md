@@ -1811,6 +1811,116 @@ A teljes platform csak akkor koherens, ha a modulok közötti folyamatok is műk
 6. Result verification, retry vagy rollback.
 7. PASS: nincs nem engedélyezett művelet, rejtett side effect vagy meg nem erősített siker.
 
+### 27.7. Média/asset életciklus és biztonságos törlés
+1. Jogosult felhasználó kiválasztja az aktív site/workspace-t.
+2. Egy vagy több fájl feltöltése; progress/cancel/retry és megszakadt feltöltés helyreállítása.
+3. MIME, méret, checksum, fájlbiztonság és feldolgozási státusz ellenőrzése.
+4. Preview/thumbnail/variáns elkészül; az asset ID és metadata a kanonikus registrybe kerül.
+5. Asset használata a Brand Kitben, Content Studioban, Editorban vagy overlayben referenciával.
+6. Metadata módosítás után minden hivatkozási hely ugyanazt a kanonikus assetet mutatja.
+7. Törlés előtt usage map, függőségi figyelmeztetés, archive/replace/restore döntés.
+8. PASS: nincs site-scope átlépés, orphanolt publikus referencia, plaintext bináris D1-ben vagy engedély nélküli letöltés.
+
+### 27.8. Brand Kit, design token és reusable template
+1. Brand owner logó-, font-, szín- és licencelt assetet választ a Resource Registryből.
+2. Token/theme-variáns létrehozása, kontraszt- és responsive preview.
+3. Template vagy reusable component mentése a megfelelő szinten (site/page/section/component).
+4. Egy változtatás diffje és érintett használati helyei megjelennek.
+5. Preview és jóváhagyás után a globális token/template verzió frissül.
+6. Kompatibilitási figyelmeztetés, rollback vagy korábbi verzió visszaállítása tesztelendő.
+7. PASS: nincs duplikált token-master, rejtett breaking change vagy licenc nélküli asset export.
+
+### 27.9. OBS, overlay és stream-eszközök
+1. OBS párosítás dokumentált protokollal, biztonságos secret kezeléssel és explicit engedélyekkel.
+2. Scene/source/overlay konfiguráció lekérése csak a támogatott API-képességek szerint.
+3. Overlay/widget összeállítása a Brand Kit és Resource Registry referenciáival.
+4. Browser source URL, canvas/safe area, scene-variáns és verzió előnézete.
+5. Tesztmód/event replay/dry-run; külső parancs allowlist és permission check.
+6. Aktiválás, verziózott publikálás, rollback, reconnect és hibaállapot ellenőrzése.
+7. PASS: nincs nyílt vezérlővégpont, titok a logban vagy nem támogatott OBS-művelet hamis ígérete.
+
+### 27.10. Támogatás, tagság és entitlement
+1. Support/membership provider kiválasztása és tényleges capability/terms ellenőrzése.
+2. Tip vagy tagsági szint beállítása, ár/perk/access policy és lemondási szabály.
+3. Sandbox vagy igazolt tesztfizetés; a kliens nem állíthat sikeres fizetést.
+4. Provider-confirmed esemény → idempotens entitlement grant/update.
+5. Member-only tartalom/esemény ellenőrzése a public/community felületen szerveroldalon.
+6. Discord role sync, retry, revoke és audit a kanonikus entitlementből.
+7. Failed payment/refund/chargeback/cancel → policy szerinti hozzáférésfrissítés.
+8. PASS: nincs jogosulatlan hozzáférés, kettős entitlement vagy provider által nem igazolt támogatási státusz.
+
+### 27.11. Szponzorációs kampány és üzleti riport
+1. Lead/deal létrehozása megfelelő privát hozzáféréssel.
+2. Media kit/rate card és kampánycél/deliverable/határidő hozzárendelése.
+3. Landing page a Weboldal modulban készül; a kampány csak az oldalra hivatkozik.
+4. UTM/link/kód és tartalom/termék kapcsolat beállítása a megfelelő domain ID-k mentésével.
+5. Jóváhagyott content/publish feladatok és deliverable státusz követése.
+6. Analytics riport csak valós, forrásjelölt metrikából készül; hiányzó adat látható.
+7. Deal/dokumentum/ár emberi jóváhagyást igényel; AI csak javaslatot adhat.
+8. PASS: nincs B2B deal adat publikus szivárgása, hamis attribution vagy nem bizonyított teljesítményígéret.
+
+### 27.12. Lokalizáció és többnyelvű publikálás
+1. Admin UI-locale és a site publikus alapnyelve külön kerül beállításra.
+2. Nyelv/locale felvétele, oldal- és CMS-fordítási státusz, fallback és szószedet.
+3. Lokalizált slug, alt text, metadata, Open Graph és SEO mezők előnézete.
+4. RTL/keyboard/long-string/responsive ellenőrzés az érintett oldalon.
+5. AI-fordítás csak draft; emberi review és explicit publish szükséges.
+6. Hreflang/canonical/redirect és hiányos fordítás szabályainak validálása.
+7. PASS: nincs nyelvkeveredés, hibás canonical/hreflang vagy késznek jelölt hiányos locale.
+
+### 27.13. Fan account, közösség és moderáció
+1. Fan regisztráció/bejelentkezés a creator/Admin identitástól elkülönített policy szerint.
+2. Profil/preferenciák/consent és community visibility policy ellenőrzése.
+3. Poszt/poll/beküldés létrehozása; spam/rate limit és tartalombiztonság.
+4. Report → moderation queue → döntés → értesítés; appeal és audit megőrzése.
+5. Member-only tartalomhoz az entitlement service szerveroldali döntése szükséges.
+6. Export/delete kérelem a retention/consent policy és jogi megőrzési kivételek szerint fut.
+7. PASS: nincs cross-account/site hozzáférés, jogosulatlan moderáció vagy adatvédelmi kérés nyom nélküli elvesztése.
+
+### 27.14. Developer API key és webhook
+1. Jogosult developer sandboxot választ és dokumentált API-verziót használ.
+2. API key létrehozása minimális scope-pal; secret csak egyszer jelenik meg.
+3. Key rotáció/lejárat/visszavonás és quota/rate limit viselkedés tesztelése.
+4. Creator-defined outbound webhook endpoint létrehozása és tesztesemény küldése.
+5. Aláírás, delivery log, idempotency, retry és replay elleni védelem ellenőrzése.
+6. API és webhook csak a deklarált scope/site/workspace határon férhet hozzá adathoz.
+7. PASS: nincs secret leak, scope escalation, tenant-átlépés vagy nem auditált webhook delivery.
+
+### 27.15. Extension/widget install, update és eltávolítás
+1. Extension manifest, eredet/aláírás, licence, version és requested permissions ellenőrzése.
+2. Permission review és sandbox/compatibility check az install előtt.
+3. Telepítés elkülönített scope-pal; nincs implicit hozzáférés minden domainhez.
+4. Update/migration előtti backup vagy kompatibilitási ellenőrzés és diff.
+5. Hiba esetén rollback/quarantine; uninstallkor adat- és függőségi hatás látható.
+6. Visszavonás után tokenek/permissionök érvénytelenítése és audit.
+7. PASS: nincs csendes jogosultságbővítés, unsigned extension vagy adatvesztést okozó eltávolítás.
+
+### 27.16. Csapat, több site és SaaS workspace
+1. Owner létrehoz workspace-et/site-ot, és egyértelműen kiválasztja az aktív scope-ot.
+2. Meghívás elfogadása, szerep és modul/művelet permission kiosztása.
+3. Másik site-ra váltáskor minden lista, keresés, Editor, asset picker és API új scope-ot használ.
+4. Cross-site negatív teszt másik site ID-jának közvetlen beküldésével.
+5. Plan/usage/quota/billing státusz a BILLING_PLAN domainből érkezik; nem keveredik a Store orderrel.
+6. Workspace export/migráció/restore előnézete és auditja.
+7. PASS: nincs tenant-adatkeveredés, jogosultság nélküli meghívás vagy rossz workspace-en végrehajtott mutáció.
+
+### 27.17. Backup, export és restore
+1. Jogosult owner kiválasztja a scope-ot és az export/backup tartalmát.
+2. Manifest, verzió, checksum, asset referencia és kizárt secret mezők validálása.
+3. Backup/restore futás állapota, hibája és újrapróbálása megjelenik.
+4. Restore izolált célba vagy preview/dry-run környezetbe történik.
+5. Restore után ownership, referenciák, migrációk, public visibility és cache/index invalidation ellenőrzése.
+6. Recovery drill eredménye, eltérés és rollback út dokumentált.
+7. PASS: nincs secret export, sérült hivatkozás vagy igazolatlan restore-siker.
+
+### 27.18. Globális keresés és értesítési központ
+1. Keresés a jogosult modulokból származó oldal-, content-, asset-, termék- és beállítási projectionökben.
+2. Minden találat a kanonikus domain rekordjára navigál; keresési index nem írható vissza üzleti adatként.
+3. Permission/site/workspace változáskor az index és cache invalidálódik.
+4. Értesítés domain eventből készül, delivery státusszal, preferenciával és digest/silent-period szabállyal.
+5. Sikertelen kézbesítés retry/partial state-et mutat; duplikált eventből nem keletkezik duplikált értesítés.
+6. PASS: nincs jogosulatlan találat, elavult sensitive snippet, hamis kézbesítési státusz vagy duplikált értesítés.
+
 ---
 
 ---
