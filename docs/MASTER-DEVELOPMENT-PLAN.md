@@ -620,8 +620,6 @@ A benchmark célja a problémák és jó minták azonosítása, nem másolás. M
 
 ---
 
----
-
 ## 9. Részletes fejlesztési munkacsomagok és elfogadási szerződések
 
 **A kanonikus, legfelső szintű fejlesztési sorrend a 41.2. fejezet F0–F11 listája.** A 9. fejezet P1–P22 pontjai részletes munkacsomagok és elfogadási területek, nem egy második, párhuzamos roadmap. A munkacsomagok a megfelelő F-fázisokba kerülnek a 62.5. fejezet leképezése szerint. A 39. fejezet a fázisok rövid áttekintése; nem írhatja felül a 41.2. fejezet sorrendjét.
@@ -634,7 +632,7 @@ A fejlesztés függőségi sorrendben halad. A teljes termékcél végig megmara
 - Canvas, Layers, Inspector, responsive értékek és command/history.
 - Draft mentés, reload, revision conflict és hálózati helyreállítás.
 - Preview és publish külön életciklusa; a publikált snapshot ellenőrzése.
-- Resource/Media Registry, R2 objektumok és D1 metaadatok konzisztenciája.
+- A core workflow-hoz szükséges Resource/Media Registry-hivatkozások, R2 objektumok és D1 metaadatok konzisztenciája; a teljes asset-könyvtár, keresés, gyűjtemények, licenc- és használati térkép az F2/P4 megfelelő részében készül.
 - Publikus renderer, cache invalidation és valós oldalellenőrzés.
 - Telefonos/tabletes Admin és Editor alapvető használhatósága.
 - A már lezárt site ownership, D1 integrity és Twitch ownership szerződések megőrzése; csak regresszió esetén nyílnak újra.
@@ -3463,3 +3461,18 @@ A fenti leképezés nem engedélyezi a függőségek átugrását. Ha egy munkac
 - [ ] Korábbi checkpointok vagy elavult állapotjelzések nem írhatják felül automatikusan a jelenlegi termék-roadmapet. Csak az aktuális termékfunkcióhoz szükséges, bizonyítékkal alátámasztott hiány vagy regresszió határozhatja meg a következő munkát.
 - [ ] Ha egy státusz vagy roadmap-sorrend más fejezetben eltér, először ezt a kanonikus térképet és a legfrissebb igazolt repository/runtime állapotot kell alkalmazni; az eltérést a MASTER-ben egy helyen kell javítani.
 - [ ] A dokumentum végső konzisztencia-ellenőrzése után a következő munka nem további roadmap-átírás, hanem a 19. fejezet szerinti legkorábbi, reprodukálható F0 acceptance-feladat implementációja/ellenőrzése.
+
+### 62.7. Az eddigi dokumentumszerkezeti ellenőrzés eredménye — 2026-10-14
+Az ellenőrzés a MASTER aktuális repository-változatára vonatkozik; nem jelent teljes szemantikai, runtime- vagy funkcionális PASS-t.
+
+- [x] A számozott főfejezetek 0–62 között folytonosak, hiányzó főfejezetszámot nem találtunk.
+- [x] Az aktuális dokumentumellenőrzésben nem találtunk azonos című, duplikált Markdown-fejezetcímet.
+- [x] A 3. fejezet domain-felelősségeit a kanonikus 16 modulhoz rendeltük; a 46.1. menülistát a 49. fejezet modulstruktúrájához igazítottuk.
+- [x] A 9. fejezet P1–P22 munkacsomagjait a 41.2. F0–F11 végrehajtási sorrendhez rendeltük a 62.5. leképezéssel.
+- [x] A F0 core media/resource feladat és az F2 teljes Resource Registry/Design System határát különválasztottuk.
+- [ ] A teljes termékfunkciók közötti szemantikai duplikáció- és függőségellenőrzés még nem teljes; a szerkezeti ellenőrzés nem helyettesíti.
+- [ ] A történeti források minden követelményének megőrzése és a hiányzó források állapotának igazolása nem tekinthető teljesnek pusztán a jelenlegi dokumentum belső ellenőrzése alapján.
+- [ ] A valódi F0 mentés–újratöltés–preview–publish–publikus oldal end-to-end ellenőrzés még nem futott le ebben a dokumentumellenőrzésben; ez a következő implementációs/validációs feladat.
+- [ ] Typecheck, domain/editor tesztek, CI, valódi böngészős smoke és éles Worker/D1 ellenőrzés eredményeit külön kell rögzíteni, amikor ténylegesen lefutnak.
+
+**Státusz:** a dokumentumszerkezet és a fő roadmap-ütközések részben rendezettek; a MASTER lezárása és a termékfejlesztés F0 PASS állapota még nincs kimondva. A korábbi P0/P0.2 checkpoint nem válik új aktív munkafolyamattá; a következő konkrét feladatot a jelenlegi F0 core workflow tényleges állapota határozza meg.
