@@ -5214,3 +5214,20 @@ A §37.16, §37.17 és §41.2 egyes mondatai a 2026-10-13-i, 359-ID-s registry-s
 **Következtetés:** az eddig vizsgált közvetlen történeti lánc pontosítja a hiány jellegét: a B-fejezet hiánya már a C bevezetése előtti elérhető MASTER-snapshotban fennállt; ugyanakkor a régi checklistben maradt egy ellenőrizetlen állítás, amely a B korábbi „újrapontozását” említi. Nem bizonyított, hogy a B eredeti szövege soha nem létezett, de a jelenlegi forrásanyag alapján sem a tartalma, sem a C-vel való formális helyettesítése nem igazolható.
 
 **Kötelező kezelés:** a régi checklist állítása nem tekinthető lezárási bizonyítéknak. A további auditnak vagy meg kell találnia a B pontos forrását egy másik korábbi fájlban/commitban, vagy külön, kifejezett forrásdöntéssel kell meghatároznia a hiányzó történeti anyag kezelését; a második lehetőség sem engedélyezheti a történeti funkciók csendes elhagyását. Addig a B forrásrés **UNRECOVERED / OPEN**, P0.2 **IN PROGRESS / NOT PASS**, a fejlesztési fagyasztás változatlan.
+
+
+### 41.3.116. P0.2 — Korábbi MASTER-verziók és a dokumentumútvonal commit-történetének kiterjesztett ellenőrzése (2026-10-14)
+
+**Új vizsgálati kör:** a GitHub commit-history API alapján a `docs/MASTER-DEVELOPMENT-PLAN.md` útvonal régebbi pontjai is ellenőrzésre kerültek, beleértve a 2026-09-25 és 2026-09-28 közötti korai MASTER-verziókat. A vizsgált konkrét snapshotok:
+
+- `346ff9875ce9a26ff26bc4f3a016f33d0f2734a6` — blob `edf156d0b3ba0eacec0ed064b281c0e90ed96d9a`, 418 601 karakter;
+- `d76ed3c6e5fb91d0a9253c3ae84e5ace53362fc0` — blob `5c7d89efc362d82a9ede5405493a4fc810ef4bbf`, 402 868 karakter;
+- `db209b0418e46d34a9880cc8331356efa58d97b4` — blob `cf53eea22b971ed444d55b7f6ab6ba7eb9970edf`, 446 556 karakter.
+
+**Eredmény:** mindhárom korábbi, nagy terjedelmű MASTER-változatban szerepel a `00.9.6` és `00.9.6.A` fejezetcím, de nem található `00.9.6.B` fejezetcím, `00.9.6.B` szöveges előfordulás vagy `MASTER-2.70` jelölés. A korábban vizsgált 2026-09-28-i `8a4f296...` snapshotban szintén csak a `00.9.6` és `00.9.6.A` címsor igazolható. A 2026-10-08-i `0ebf7a9...` snapshot már a `00.9.6.C / MASTER-2.71` anyagot tartalmazza; ez a C-szöveg nem szolgáltatja a hiányzó B-fejezetet.
+
+**Mit bizonyít és mit nem:** a vizsgált MASTER-útvonal korai, elérhető változatai nem támasztják alá, hogy a B szövege ezekben a snapshotokban jelen lett volna. Ez nem bizonyítja, hogy más fájlban, törölt blobban, nem vizsgált commitban, PR-megbeszélésben vagy külső mentésben soha nem létezett. A path-history önmagában nem teljes Git-objektum-adatbázis- vagy minden PR-mellékletre kiterjedő bizonyítás.
+
+**Következő auditlépés:** a hiányzó B forrására vonatkozó keresést csak új bizonyítéktípusra érdemes kiterjeszteni: a korai MASTER-ekhez kapcsolódó régi fájlútvonalak/törlések, pull request diffek és review-kommentek, illetve külső vagy helyi archívumok. Ugyanazokat a jelenlegi fájlokat és azonos kifejezéseket változatlanul ismételni nem tekinthető új bizonyítéknak. Ha új forrás nem kerül elő, külön, nyomon követhető döntés szükséges a hiányzó történeti forrás kezelésére; a tartalom nem rekonstruálható találgatással, és a 19–34 történeti képességekből semmi nem hagyható el pusztán emiatt.
+
+**Státusz:** kiterjesztett korai MASTER-snapshot ellenőrzés dokumentálva; `00.9.6.B` forrása továbbra is **UNRECOVERED / OPEN**; teljes történeti szemantikai reconciliáció **OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
