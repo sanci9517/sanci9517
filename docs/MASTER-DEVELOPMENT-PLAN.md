@@ -7,7 +7,7 @@
 **HISTORICAL_NEXT_GATE:** `F0.1 Admin főoldal vizuális terv + shell → F0.2 Admin navigáció és globális shell acceptance → F0.3 Editor foundation → F0.4 Layers/structure → további pontok szigorú sorrendben; nincs M0 audit előfeltétel`  
 **HISTORICAL_PARALLEL_WORKSTREAMS:** `0`
 
-> **HISTORICAL / SUPERSEDED — DO NOT EXECUTE.** Ez a korábbi MASTER-2.77 snapshot, amely F0.1-et jelölte aktívnak. Az egyetlen aktuális végrehajtási terv a `feature/f0-2-admin-global-shell` ágon lévő `docs/MASTER-DEVELOPMENT-PLAN.md`; annak eleji `ACTIVE_*` mezői az irányadók. A történeti capability-ket a canonical MASTER 2.77.7.A–2.77.7.C és GAP-01–GAP-14 részei őrzik.
+> **HISTORICAL / SUPERSEDED — DO NOT EXECUTE.** Ez a korábbi MASTER-2.77 snapshot, amely F0.1-et jelölte aktívnak. Az egyetlen aktuális végrehajtási terv a `v2/foundation` ágon lévő `docs/MASTER-DEVELOPMENT-PLAN.md`; annak eleji `ACTIVE_*` mezői az irányadók. A történeti capability-ket a canonical MASTER 2.77.7.A–2.77.7.C és GAP-01–GAP-14 részei őrzik.
 
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 **Verzió:** MASTER-2.77 — végleges termékleírás, Admin UI-specifikáció és egyetlen függőség-alapú fejlesztési sorrend; a 2.75–2.76 roadmapek történetiek.  
