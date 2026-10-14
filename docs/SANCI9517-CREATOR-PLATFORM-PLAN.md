@@ -41,6 +41,21 @@ Ez az egyetlen irányadó termék- és fejlesztési terv. Tartalmazza az ellenő
 - **Következő felhasználói szakasz:** a terv teljességének lezárása után közösen átnézzük a funkciókatalógust; az implementáció csak a jóváhagyott sorrend, a meglévő kód ellenőrzése és az elfogadási tesztek alapján indul.
 - **Következő implementációs cél, későbbi kapuként:** az F0 meglévő Admin → Visual Editor → mentés/újratöltés → előnézet/publikálás → publikus oldal folyamatának valós végponttól végpontig ellenőrzése. Ez nem a jelenlegi tervpont helyettesítője, és nem tekinthető PASS-nak előzetes bizonyíték nélkül.
 
+### 0.6. Felhasználóbarát funkcióelhelyezés és bővítési szerződés
+
+**Kötelező termékdöntés:** a teljes funkciókészlet megőrzendő, és új képességekkel bővíthető; az Admin, a publikus weboldal és a Visual Editor azonban nem válhat egyetlen zsúfolt felületté. A funkciók számának növekedése nem jelenthet navigációs vagy kezelési bonyolultságot. A jelen fejezet a már meglévő katalógust kiegészíti, egyetlen korábbi képességet sem vezet ki.
+
+1. **Admin = feladatvégzés.** Az Admin kezdőlapja áttekintést és kontextusos gyorsműveleteket ad, nem teljes funkciólistát. A gyakori feladatok jól megnevezett főmodulokból, azon belül logikus aloldalakról érhetők el. A 49. fejezet marad a kanonikus navigációs forrás; új menüpontot csak indokolt felhasználói feladat és dokumentált modulhatár esetén szabad felvenni.
+2. **Publikus oldal = látogatói élmény.** A látogató tartalmat, streamet, adásrendet, közösségi és kereskedelmi lehetőségeket lát, kizárólag publikált, jogosult és releváns adatokkal. Adminisztrációs beállítások, OAuth-műveletek, belső diagnosztika és titkok nem jelenhetnek meg.
+3. **Visual Editor = oldalszerkesztés.** Vászon, oldalszerkezet, layout, responsive nézetek, vizuális komponensek, stílus, kötött dinamikus blokkok és előnézet/publikálás tartozik ide. Az Editorban egy tartalom, esemény, termék vagy kapcsolat kiválasztható és megjeleníthető, de annak teljes üzleti életciklusát a saját Admin-modulja kezeli.
+4. **Egy adatgazda, több belépési pont.** A gyorsszerkesztés, kártya, blokk, keresés vagy kontextusmenü ugyanazt a domain API-t, jogosultságot, validációt és auditot használja. Ha egy objektum több helyen módosítható, a változás a cache-invalidation, verziókezelés és konfliktusjelzés szabályai szerint minden érintett nézetben megjelenik.
+5. **Fokozatos felfedés.** Alapfeladatok elsődlegesek; ritka, haladó és veszélyes műveletek külön szekcióba kerülnek. Keresés, morzsamenü, következetes elnevezés, visszalépés, üres/töltés/hiba/siker állapot és művelet utáni visszajelzés kötelező. Nem helyettesíthető a navigáció kizárólag ikonokkal.
+6. **Reszponzív és akadálymentes működés.** Mobilon és tableten valódi feladatalapú elrendezés, billentyűzetes kezelés, látható fókusz, képernyőolvasó-támogatás, kontraszt, reduced-motion és hibák szöveges magyarázata szükséges. A drag-and-drop műveletekhez elérhető alternatíva kell.
+7. **Bővítés előtti döntési lap a MASTER-en belül.** Minden új képességnél rögzíteni kell: felhasználói cél; kanonikus tulajdonos; Admin-aloldal; publikus megjelenés (ha van); Editor-kapcsolódás (ha van); közös adatmodell és API; jogosultság; külső függőség; fázis; pozitív, negatív, mobil és regressziós elfogadási tesztek. Nem keletkezhet külön párhuzamos roadmap.
+8. **Újrahasznosítási döntési sorrend.** (a) meglévő saját működő kód, (b) karbantartott, biztonságos és licencben kompatibilis nyílt forrású komponens, (c) megfelelő külső szolgáltatás, (d) indokolt saját implementáció. Az alternatívákhoz karbantartási állapotot, licencet, költséget, adatvédelmet, függőségi kockázatot és kilépési lehetőséget kell vizsgálni; külső kód átvétele nem automatikus.
+9. **Nem törlés, hanem nyomon követhető besorolás.** Régi, tervezett vagy későbbi funkció csak explicit, indokolt döntéssel vonható össze vagy vezethető ki. Azonos képesség több megjelenési helye nem jelent több implementációt. A funkciókatalógus és a 49. fejezet közötti eltérés javítandó, nem újabb önálló listával elfedendő.
+10. **Bővítési kapu.** Új modul vagy nagyobb funkció csak akkor léphet implementációba, ha a tulajdonos, felhasználói út, adat- és jogosultsági szerződés, tesztek és függőségek tisztázottak. A jelenlegi tervteljességi kapu IN PROGRESS marad a teljes keresztellenőrzésig.
+
 ### 0.2. Változtatási szabály
 Új funkció a megfelelő modulba kerül. Meglévő képesség módosításakor meg kell őrizni az adatkapcsolatokat, jogosultságokat, hibaállapotokat és a korábbi használati eseteket. Funkciót csak kifejezett termékdöntéssel lehet kivezetni; a későbbre ütemezés nem törlést jelent.
 
@@ -176,9 +191,9 @@ Funkciók:
 Elfogadás: nincs hamis zöld állapot, nincs kitalált adat, minden gyorsművelet a saját modulhoz vezet.
 
 ### 3.2. Weboldal
-**Kanonikus felelősség:** oldalak, navigáció, CMS/Page Model, Visual Editor, SEO, publikálás és weboldal-/domainbeállítások. A fő navigációban a Brand Kit/designrendszer és a sablon-/komponenskönyvtár külön, a 49.3. modulban található; a médiafájlok és asset-regiszter a 49.8. modulhoz tartoznak. A Weboldal modulból ezek közvetlenül elérhetők lehetnek, de a gyorselérés nem változtatja meg az adat- és funkciótulajdonost.
+**Kanonikus felelősség:** oldalak, navigáció, CMS/Page Model, Visual Editor, SEO, publikálás és weboldal-/domainbeállítások. A fő navigációban a Brand Kit/designrendszer és a sablon-/komponenskönyvtár külön, a 49.3. modulban található; a médiafájlok és asset-regiszter a 49.4. modulhoz tartoznak. A Weboldal modulból ezek közvetlenül elérhetők lehetnek, de a gyorselérés nem változtatja meg az adat- és funkciótulajdonost.
 **Weboldal-almenük:** Oldalak; Navigáció; Visual Editor; CMS/tartalommodellek; SEO és publikálás; Domain és weboldalbeállítások.
-**Külön modulhoz vezető gyorselérések:** Brand Kit és Design Studio (49.3); Média és erőforráskönyvtár (49.8). Ezek nem a Visual Editor belső almenüi és nem külön Editor-adatforrások.
+**Külön modulhoz vezető gyorselérések:** Brand Kit és Design Studio (49.3); Média és erőforráskönyvtár (49.4). Ezek nem a Visual Editor belső almenüi és nem külön Editor-adatforrások.
 
 **Oldalak**
 - Lista: cím, slug, státusz, módosítás ideje, draft/published eltérés.
