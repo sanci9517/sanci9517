@@ -2693,15 +2693,15 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.11-03 | 2.x Creator OS: dashboard/analytics/content studio/email audience/sponsorship/OBS/advanced stream tools | ADM-001–ADM-010, ANL-001–ANL-010, CNT-001–CNT-020, COM-015–COM-017, CAM-001–CAM-009, OBS-001–OBS-010 | MERGE | 2.0+ | QA-002/003/008 |
 | F.11-04 | 3.x+: AI assistant/stream intelligence/business platform/marketplace/multi-site/SaaS/global ecosystem | AI-001–AI-020, MKT-001–MKT-005, TEAM-001–TEAM-006, LOC-001–LOC-006, §39.5–39.12 | MERGE | 3.0–10.0 | QA-002/003/008 |
 | F.12-01 | Hungarian-first launch, international-ready locale/date/time/UI-string model | LOC-001–LOC-006, SET-001, WEB-001 | EXPAND | 1.0 architecture-ready; full locale workflow later | QA-004/005 |
-| F.12-02 | Gaming streamer profile and games configurable from Admin, not hardcoded into product logic | SCH-012–SCH-014, WEB-018, RES-001/007, SET-001 | EXPAND | 1.0 configuration baseline; Game Profile domain phased | QA-002/004 |
+| F.12-02 | Gaming streamer profile and games configurable from Admin, not hardcoded into product logic | SCH-012–SCH-014, WEB-018, RES-001/007, SET-001 | EXPAND | 1.0 configurable creator profile and minimum Game Profile CRUD; extended profile metadata/provider mapping 1.5–2.0 | QA-002/004 |
 | F.12-03 | TikTok handle and 5,000-follower personal goal are editable profile data, not UI guarantee | INT-014, SET-001, WEB-018, ANL-004 | KEEP | Profile config 1.0; provider metrics gated | QA-002/003/004 |
 | F.12-04 | Weekly stream cadence is editable Schedule data, not a hardcoded product rule | SCH-001–SCH-003, SCH-009 | KEEP | 1.0 | QA-002/004 |
 | F.12-05 | Historical support goal/platforms are not active payment integration; recheck current target/platform/privacy/legal text before campaign | SUP-001, SUP-002, WEB-023, COM-014, SEC-011 | KEEP | 1.0 external links only if confirmed; payments later | QA-003/004/008 |
 | F.12-06 | Project brand/profile/goal data remains configurable and changeable | SET-001–SET-003, WEB-001, SCH-001, INT-001 | KEEP | 1.0 | QA-002/004 |
-| F.13-01 | Game Profile stable ID/slug/name/provider mapping/resource refs/brand metadata/cover/status/description | SCH-012–SCH-014, RES-001/007, SET-001 | EXPAND | 1.5–2.0 | QA-002/004 |
-| F.13-02 | Schedule references Game Profile by stable ID, not copied fields or name matching | SCH-001, SCH-012, SCH-014 | KEEP | 1.5–2.0; 1.0 schedule stays canonical | QA-002/003 |
+| F.13-01 | Game Profile stable ID/slug/name/provider mapping/resource refs/brand metadata/cover/status/description | SCH-012–SCH-014, RES-001/007, SET-001 | EXPAND | 1.0 minimum stable-ID profile CRUD, slug/name and Schedule reference; extended provider mapping/brand metadata/lifecycle fields 1.5–2.0 | QA-002/004 |
+| F.13-02 | Schedule references Game Profile by stable ID, not copied fields or name matching | SCH-001, SCH-012, SCH-014 | KEEP | 1.0 stable-ID reference and no copied game data; advanced Game Profile workflows 1.5–2.0 | QA-002/003 |
 | F.13-03 | Missing artwork/metadata must use explicit fallback; Inspector shows only valid fields | SCH-013, RES-001/004/007/015, DYN-005, EDT-022 | EXPAND | 1.5–2.0 | QA-002/004/006 |
-| F.13-04 | Game Profile is a domain; Editor references it and must not create an editor-only data store | SCH-012–SCH-014, EDT-020, DYN-001 | KEEP | 1.5–2.0 | QA-002/003 |
+| F.13-04 | Game Profile is a domain; Editor references it and must not create an editor-only data store | SCH-012–SCH-014, EDT-020, DYN-001 | KEEP | 1.0 domain-ownership invariant and minimum reference contract; advanced profile management 1.5–2.0 | QA-002/003 |
 | F.13-05 | Custom domain lifecycle: add/verify ownership/DNS/primary/SSL/canonical URL/redirect/error states | SET-002/004, WEB-012/013, SEO-001, SEO-005, OPS-001, SEC-006 | DEFER | 4.0+ | QA-003/004/008 |
 | F.13-06 | Domain/primary change preview and explicit SEO/redirect warning; unverified domain cannot become primary | SET-002/004, WEB-012/013, SEO-001, SEO-005, SEC-006 | KEEP | 4.0+ safety gate | QA-003/004 |
 | F.13-07 | Brand settings: creator name/logo/favicon/social registry/colors/fonts/tokens/avatar/cover/media refs are data, not renderer hardcode | SET-001/003, DSN-001, RES-001/004/007, RES-011–RES-013, WEB-010 | EXPAND | 1.0 baseline | QA-002/004 |
@@ -4723,3 +4723,16 @@ A structural scan of the 96 F.1–F.13 crosswalk rows found two remaining rows w
 - The former 361-ID baseline remains a historical snapshot. The current registry now contains 362 unique IDs. SET-004 is explicitly referenced in both F.13-05 and F.13-06; a fresh full registry-to-crosswalk structural reconciliation is required before claiming 362/362 coverage.
 - **Source recovery:** the historical `00/A.2.2` subsection remains only a partial recovery. Searches across the known `planning/ultimate-master-plan` archive snapshot and the three discovered archive branches did not locate separate `00-A.md` or `00.9.6.B.md` files. This only bounds the paths/refs searched; it does not prove the sources never existed elsewhere in history.
 - **Evidence boundary:** registry/mapping documentation only; no DNS, domain verification, SSL, redirect or runtime test was executed. P0.2 remains **IN PROGRESS / NOT PASS**.
+
+
+### 41.3.73. P0.2 — Game Profile phase reconciliation against the 1.0 release contract (2026-10-14)
+
+**Conflict found:** §39.2 explicitly includes Schedule/Game Profiles in the 1.0 professional creator website, while the F.13-01/02/04 crosswalk assigned the entire Game Profile domain to 1.5–2.0. F.12-02 also described the Game Profile domain as phased, leaving the minimum 1.0 commitment ambiguous. That would let the roadmap contradict its own release contract and could defer a capability that §39.2 promises.
+
+**Correction in the existing crosswalk:**
+- F.12-02 now defines the 1.0 minimum as configurable creator profile plus minimum Game Profile CRUD, with extended profile metadata/provider mapping staged later.
+- F.13-01 now separates the 1.0 stable-ID profile/slug/name and Schedule-reference baseline from advanced provider mapping, brand metadata and lifecycle fields in 1.5–2.0.
+- F.13-02 makes stable-ID Schedule references and the prohibition on copied game data a 1.0 invariant; advanced Game Profile workflows remain phased.
+- F.13-04 makes canonical domain ownership and the prohibition on an Editor-only game store a 1.0 architecture invariant, while advanced management remains later-phase.
+
+**Acceptance boundary:** this resolves a roadmap/crosswalk phase contradiction; it does not claim that Game Profile CRUD or Schedule references are implemented or runtime-accepted. The minimum 1.0 scope must still pass schema, site scope, CRUD, Schedule reference integrity, Editor read-only/reference behavior, save/reload and public-render tests. The richer Game Profile capability remains preserved for later expansion. P0.2 remains **IN PROGRESS / NOT PASS**; no feature implementation was started.
