@@ -5231,3 +5231,24 @@ A §37.16, §37.17 és §41.2 egyes mondatai a 2026-10-13-i, 359-ID-s registry-s
 **Következő auditlépés:** a hiányzó B forrására vonatkozó keresést csak új bizonyítéktípusra érdemes kiterjeszteni: a korai MASTER-ekhez kapcsolódó régi fájlútvonalak/törlések, pull request diffek és review-kommentek, illetve külső vagy helyi archívumok. Ugyanazokat a jelenlegi fájlokat és azonos kifejezéseket változatlanul ismételni nem tekinthető új bizonyítéknak. Ha új forrás nem kerül elő, külön, nyomon követhető döntés szükséges a hiányzó történeti forrás kezelésére; a tartalom nem rekonstruálható találgatással, és a 19–34 történeti képességekből semmi nem hagyható el pusztán emiatt.
 
 **Státusz:** kiterjesztett korai MASTER-snapshot ellenőrzés dokumentálva; `00.9.6.B` forrása továbbra is **UNRECOVERED / OPEN**; teljes történeti szemantikai reconciliáció **OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.116. P0.2 — PR #29 fájlmódosítási és megbeszélési bizonyítékai, valamint Library-keresés (2026-10-14)
+
+**Vizsgálati cél:** a 00.9.6.B hiányának további vizsgálata a MASTER lecserélését végrehajtó PR fájlmódosításain, PR-megbeszélésein/review-in és a ChatGPT Libraryben elérhető, releváns történeti anyagokon keresztül.
+
+**PR #29 — `docs: replace MASTER with unified ultimate product plan`:**
+- PR: https://github.com/sanci9517/sanci9517/pull/29; merge commit: `36b6ce5fb207b889ad48ce1dd36e9cda475bea93`; előd: `217f7d47107d6f1fe43b7b331fef71ce66d07443`.
+- A merge commit tényleges fájllistája két módosítást mutat: `docs/MASTER-DEVELOPMENT-PLAN.md` — módosítva, 1 477 hozzáadás / 5 054 törlés; `docs/archive/MASTER-DEVELOPMENT-PLAN-2026-10-13.md` — hozzáadva, 5 160 sor. Az archív fájl blobja `adc958b61e9c09d246989626c92066489d1d72f4`, 686 481 karakter.
+- Az archív MASTER és a PR előd-commitjában lévő MASTER ugyanazt a blob SHA-t adja; tehát a korábbi MASTER-t archiválták, nem pedig egy másik, ismeretlen változatot.
+- A vizsgált archív fájlban nincs önálló `00.9.6.B` vagy `MASTER-2.70` fejezetcím. A fejezetcímek hiánya és a korábbi auditban rögzített ellenőrzőlista-említés nem adja meg a B-fejezet tartalmát.
+- A PR issue-kommentjei között egyetlen Cloudflare deployment-bot megjegyzés található. A review-végpont üres listát adott vissza; a rendelkezésre álló PR-adatokban nincs emberi review, amely a B-fejezet törlését, átnevezését, összevonását vagy formális helyettesítését magyarázná. Ez csak a jelenleg visszaadott PR-adatokra vonatkozó megállapítás, nem bizonyíték arra, hogy más beszélgetés vagy külső forrás nem létezik.
+
+**Történeti útvonal- és Library-vizsgálat:**
+- A PR által megnevezett `docs/archive/MASTER-DEVELOPMENT-PLAN-2026-10-13.md` útvonal igazolható a merge commit fájllistájában. A GitHub útvonal-commit-lekérdezése az aktuális ágon nem adta vissza a történeti archív fájl teljes előzményét; ezért ezt nem értelmezem törlés vagy soha-nem-létezés bizonyítékaként. A konkrét merge commit fájllistája és blobja viszont ellenőrizhető.
+- A Library szemantikus keresése releváns korábbi, beillesztett terminálkimeneteket adott vissza, köztük egy 2026-10-14-i commit-/útvonal-audit kivonatot, de nem talált önálló, teljes eredeti B-fejezetet tartalmazó tervfájlt. A találatok logok és kivonatok; nem tekinthetők a hiányzó B forrásszövegének.
+- A PR #29 leírása szerint a két korábbi vNext terv és a kapcsolódó történeti audit-scriptek a ChatGPT Library `Archive/Sanci9517/Legacy-Planning` helyére kerültek. A mostani keresés nem igazolta ezek között a teljes B-szöveg jelenlétét; a találatok korlátozott volta miatt a teljes külső archívum tartalmáról nem teszek általános negatív állítást.
+
+**Következtetés:** a MASTER-csere PR és a közvetlen előd-blob bizonyítja, hogyan archiválták a régi MASTER-t és melyik fájlt rövidítették/cserélték le, de nem bizonyít B→C átnevezést, B-törlést vagy B-tartalmi helyettesítést. A PR megbeszélési adatai nem szolgáltattak további magyarázó forrást. A B-fejezet tartalma továbbra is **UNRECOVERED / OPEN**; a teljes történeti szemantikai megfeleltetés **OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+**Következő célzott lépés:** a PR #29 előtti, `217f7d4` elődöt megelőző dokumentum-commitok és a `docs/archive/plans/**` történeti állapotainak tartalmi összehasonlítása, majd a H19–H34 / 359 stabil ID-s registry kétirányú, tételes szemantikai leképezésének folytatása. A B-fejezetet nem szabad találgatásból rekonstruálni, és a C/D/E/F szöveg nem fogadható el automatikus helyettesítőként.
