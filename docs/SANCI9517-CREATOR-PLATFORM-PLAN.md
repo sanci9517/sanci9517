@@ -5382,3 +5382,105 @@ Az alábbi rövidített kártyák mindegyike név szerint lefedi a 26.1 kötelez
 
 **Szeletzárás:** EDT-015–020 kártyái a mezőket kitöltik, de az összetett komponensek, media API és provider blocks implementációja nem tekinthető késznek. Következő lépés: a 63.43 kártyáinak mező- és dependency-ellenőrzése, majd EDT-021–026.
 
+### 63.44. Funkciókártyák — EDT-021–026 (Property Registry, Inspector, responsive values, preview)
+
+**Forrásalap:** public/editor-v2/core/property-registry.js, core/responsive.js, core/commands.js, app.js és tests/core.test.js. A registryben felsorolt csoport önmagában nem jelent implementált propertyt vagy UI-controlt; ezt a korlátot a kártyák külön rögzítik.
+
+#### EDT-021 — Property Registry
+- **Felhasználói eredmény:** az elemtípusok tulajdonságai egységes, ellenőrizhető szerződés szerint jelennek meg.
+- **Belépési pont / műveletek:** Inspector/property definitions; node type, property group, type, responsive support és validation metadata.
+- **Kanonikus owner / adatforrás:** EDITOR / core/property-registry.js; Page Model és command engine marad az értékek adatforrása.
+- **Séma / invariánsok:** minden deklarált propertyhez konkrét node/type, value schema, default, responsive flag és command mapping kell.
+- **Jogosultság:** property metadata nem jogosultság; a mutáció csak aktív Editor/page scope-ban engedélyezett.
+- **API/command:** registry → Inspector renderer → canonical update command; teljes coverage nincs bizonyítva.
+- **Függőségek:** EDT-001–003/015–020/022–026/034/039–040/044.
+- **UI-állapotok:** supported/unsupported, empty/default/inherited/overridden/invalid, disabled.
+- **Biztonság/adatvédelem:** ismeretlen property ne legyen vakon elfogadva; style/content patch allowlist és validáció.
+- **Tesztcsomag:** core.test.js teszteli a registry csoportokat/properties létezését; teljes property↔control↔command↔renderer matrix hiányzik.
+- **Elfogadás:** minden registry entryhez control + schema validation + command + public renderer mapping vagy explicit unsupported státusz; invalid érték elutasítva.
+- **Bizonyíték:** property-registry.js, app.js, commands.js, core.test.js; teljes coverage report nincs rögzítve.
+- **Visszaállítás:** property change undo/redo; registry/schema verzióváltás migrációs szabálya nyitott.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; üres csoportok és hiányzó property definíciók tételes feltárása.
+
+#### EDT-022 — Type-specific Inspector controls és validation
+- **Felhasználói eredmény:** a felhasználó a property típusának megfelelő, érthető vezérlővel szerkeszt.
+- **Belépési pont / műveletek:** Inspector tabs/groups; input/select és type-specific box/font/color/asset/shadow controls.
+- **Kanonikus owner / adatforrás:** EDITOR / Property Registry + Page Model property schema.
+- **Séma / invariánsok:** input control típusa egyezzen a schema-val; box ne plain textként, asset ne szabad URL-ként, color/font/shadow ne validálatlan stringként legyen kezelve.
+- **Jogosultság:** Inspector nem kerülheti meg a domain owner permissionjét resource-backed vagy domain-block propertynél.
+- **API/command:** control input → schema validation → canonical command; a vizsgált generikus renderer a selecten kívül általános text inputot használ.
+- **Függőségek:** EDT-001–003/017–021/023–026/034.
+- **UI-állapotok:** valid/invalid, empty/default, disabled, inherited, saving/conflict, unsupported control.
+- **Biztonság/adatvédelem:** safe URL, allowed value enums, input bounds és injection prevention.
+- **Tesztcsomag:** registry teszt létezik, de type-specific controls és invalid-input UX teljes suite nem bizonyított.
+- **Elfogadás:** minden deklarált típus a megfelelő controlt mutatja; valid érték save/reload/render round-tripet teljesít; invalid érték nem módosítja a modellt.
+- **Bizonyíték:** property-registry.js és app.js; a hiányzó specialized controlok kódban ellenőrizendők, külön browser evidence nincs.
+- **Visszaállítás:** canonical command undo/redo; invalid inputnál előző érték marad.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; specialized controlok és field-level validation szükséges.
+
+#### EDT-023 — Responsive value resolver és inheritance
+- **Felhasználói eredmény:** az elem tulajdonsága a kiválasztott breakpointon a megfelelő örökölt vagy felülírt értéket használja.
+- **Belépési pont / műveletek:** Inspector és responsive preview; base value, override, inherited value megtekintése/szerkesztése.
+- **Kanonikus owner / adatforrás:** EDITOR / core/responsive.js + Page Model node responsive/style state.
+- **Séma / invariánsok:** breakpoint precedence, fallback és explicit override determinisztikus; nem létező viewport/property nem okozhat eltérő implicit értéket.
+- **Jogosultság:** lokális Page Model szerkesztés; backend scope gate mentésnél kötelező.
+- **API/command:** resolveResponsiveValue és responsive commands; minden Inspector property ténylegesen resolved értéket mutasson.
+- **Függőségek:** EDT-001/021–022/024–026/034.
+- **UI-állapotok:** base/inherited/overridden, breakpoint change, missing override, invalid value.
+- **Biztonság/adatvédelem:** invalid responsive object elutasítása; excessive nesting/property count limit nyitott.
+- **Tesztcsomag:** core.test.js inheritance/override/reset tesztet tartalmaz; minden property és public renderer parity nem bizonyított.
+- **Elfogadás:** base value → tablet override → mobile inheritance/override → reset → save/reload; Inspector jelzi, honnan jön az érték.
+- **Bizonyíték:** responsive.js és core.test.js; UI field-by-field evidence nincs.
+- **Visszaállítás:** override/reset command undo/redo; explicit base érték nem veszhet el.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; resolved/inherited indication és minden property parity.
+
+#### EDT-024 — Responsive override, inherit és reset
+- **Felhasználói eredmény:** breakpoint-specifikus változtatás biztonságosan beállítható, örökölhető vagy törölhető.
+- **Belépési pont / műveletek:** Inspector responsive control; override létrehozás, inherit és reset.
+- **Kanonikus owner / adatforrás:** EDITOR / Page Model responsive values és core/responsive.js.
+- **Séma / invariánsok:** override törlése nem állíthat be véletlen null/zero értéket; explicit érték és örökölt fallback megkülönböztetendő.
+- **Jogosultság:** Editor/page permission.
+- **API/command:** responsive override/reset command; minden property UI-ján való használat nyitott.
+- **Függőségek:** EDT-021–023/025–026/034/044.
+- **UI-állapotok:** inherited/overridden/reset confirmation/invalid breakpoint.
+- **Biztonság/adatvédelem:** malformed override és unsupported breakpoint elutasítása.
+- **Tesztcsomag:** helper tesztelt; teljes Inspector control coverage és save/reload nem bizonyított.
+- **Elfogadás:** override → reset/inherit → viewport switch → save/reload → ugyanaz a fallback és public output.
+- **Bizonyíték:** responsive.js és core.test.js; minden node/property UI evidence nincs.
+- **Visszaállítás:** override/reset undo/redo.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; property-level reset/inherit UI és persistence teszt.
+
+#### EDT-025 — Responsive preview és breakpoint switch
+- **Felhasználói eredmény:** desktop/tablet/mobile elrendezés külön-külön előnézhető, valósághű méretekkel.
+- **Belépési pont / műveletek:** Editor viewport controls; breakpoint switch, viewport dimension, zoom és preview.
+- **Kanonikus owner / adatforrás:** EDITOR / viewport state + responsive resolver; public renderer a megjelenítési parity referenciája.
+- **Séma / invariánsok:** breakpoint méretek és CSS/media query szabályok egyeznek; viewport váltás nem írhatja át véletlenül a base data-t.
+- **Jogosultság:** preview draft hozzáférése authenticated; public preview csak engedélyezett draft token/route útján.
+- **API/command:** lokális viewport selection; user preference persistence EDT-044-től függ.
+- **Függőségek:** EDT-007/021–024/026/034–036/044.
+- **UI-állapotok:** desktop/tablet/mobile, custom viewport, zoom, resize, draft/public preview.
+- **Biztonság/adatvédelem:** preview route authorization és noindex; viewport önmagában nem módosíthat publikált állapotot.
+- **Tesztcsomag:** core responsive helper tesztek léteznek; valódi browser/device visual regression nincs bizonyítva.
+- **Elfogadás:** ugyanaz a Page Model három breakpointon → viewport váltás → csak explicit override változik → public output összevetés.
+- **Bizonyíték:** responsive.js, app.js, mobile CSS; browser/device screenshot/visual regression evidence nincs rögzítve.
+- **Visszaállítás:** viewport reset; Page Model csak explicit property editkor változhat.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; viewport/preview parity és device E2E.
+
+#### EDT-026 — Responsive visibility/order/layout parity
+- **Felhasználói eredmény:** elem láthatósága és layoutja breakpointonként kiszámíthatóan működik.
+- **Belépési pont / műveletek:** Inspector responsive controls, layer tree, Editor preview és public renderer.
+- **Kanonikus owner / adatforrás:** EDITOR / Page Model responsive schema; PUBLIC_RENDERER csak megjeleníti a resolved modellt.
+- **Séma / invariánsok:** visibility/order/columns/gap/size breakpoint policy explicit; hide state nem keverhető a lock state-tel.
+- **Jogosultság:** public render csak publikált és public-safe tartalmat jelenít meg.
+- **API/command:** responsive property commands és public renderer resolver; teljes property mapping nem bizonyított.
+- **Függőségek:** EDT-021–025/034/037/040, RES/DSN ahol releváns.
+- **UI-állapotok:** visible/hidden, reordered, inherited/overridden, breakpoint switch, unsupported property.
+- **Biztonság/adatvédelem:** hidden UI nem jelent titkosítást vagy authorizationt; sensitive data soha nem kerülhet Page Model public outputba.
+- **Tesztcsomag:** responsive helper teszt van; visibility/order public renderer parity és mobile browser acceptance nincs.
+- **Elfogadás:** breakpointonként layout/visibility beállítása → save/reload → Editor preview és publikus output azonos; hidden private data nem kerül a HTML-be.
+- **Bizonyíték:** responsive.js, app.js, page-renderer.js; teljes parity suite nincs rögzítve.
+- **Visszaállítás:** responsive property undo/redo és revision restore.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; responsive visibility/order resolver, public renderer parity és mobile E2E.
+
+**Szeletzárás:** EDT-021–026 kártyái rögzítik a registry/Inspector/responsive hiányokat; nem jelentenek működő teljes property-rendszert. Következő lépés: a 63.44 mező- és dependency-ellenőrzése, majd EDT-027–033 mentés/publikálás/revision.
+
