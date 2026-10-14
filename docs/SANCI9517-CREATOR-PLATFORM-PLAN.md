@@ -6801,6 +6801,19 @@ A `0004_system_page_content.sql` történeti táblát hoz létre, míg a `0005_c
 
 **Státusz:** a régi Editor assetek besorolása **LEGACY / ARCHIVE CANDIDATE, NOT YET SAFE TO REMOVE**. A 396 funkcióazonosító és a kanonikus terv változatlan. Teljes kapu **IN PROGRESS / NOT PASS**.
 
+### 63.50.12. Editor v2 statikus importgráf és Admin navigációs eltérések (2026-10-14)
+
+**Forrás:** `v2/foundation` aktuális Editor v2 belépési pontok, core/ui modulok, tesztimportok, `src/index.ts`, `public/admin-home.html`. Ez statikus forrásvizsgálat; nem runtime-, böngésző- vagy CI-PASS.
+
+- A `/admin/editor` Worker route a `/editor-v2/index.html` shellt szolgálja. A shell külön `boot.js`, `app.js`, `ui/shell.js`, `ui/canvas-pan.js`, `ui/geometry-presets.js`, `ui/inspector-groups.js` belépési pontokat és három v2 CSS-fájlt tölt be.
+- Az `app.js` közvetlen importjai a v2 `core/` és `diagnostics.js` alatt maradnak; az ellenőrzött `core/` és `ui/` modulok importjai szintén v2-n belül maradnak. **Ellenőrzött részgráfban nincs `public/editor/` legacy import.** A teljes alkalmazás valamennyi szöveges/dinamikus hivatkozásának kizárása még nincs bizonyítva.
+- A v2 tesztek `src/core/editor-validation.ts` és `src/core/schedule-*` szerveroldali szerződéseket is érintenek: ezek a közös szerződések megőrzendők; a régi assetek archiválása nem érintheti őket.
+- Az Admin `public/admin-home.html` több külön feladatot (weboldal szerkesztése, oldalak/tartalom, adásrend) ugyanarra a `/admin/editor` URL-re irányít. Ez **UX/termékmodul-határ eltérés**, nem bizonyíték három elkészült külön munkaterületre. Kanonikus adat- és API-tulajdonos megtartásával külön, feladatalapú Admin belépési pontokat kell specifikálni és implementálni.
+- Az Admin képességtérképének „24 munkaterület” felirata és a MASTER 22 főmodulja eltérő taxonómiai szint lehet; kötelező a 24→22 megfeleltetés vagy a felirat helyesbítése, mielőtt egyezőnek minősítjük.
+- A `public/editor/preview.html` saját legacy rendererrel és `/admin-editor-v2.html` visszalinkkel rendelkezik: **LEGACY / ARCHIVE CANDIDATE**, de a publikus közvetlen URL-ek, visszahivatkozások, export/preview kompatibilitás és regresszióvizsgálat előtt nem törölhető.
+
+**Nyitott kapu:** teljes repo-hivatkozáskeresés, dinamikus import/URL-ellenőrzés, asset-manifest és közvetlen URL audit, typecheck + Editor/Admin/Schedule tesztek, böngésző- és publikálási regresszió. **IN PROGRESS / NOT PASS**. Nincs implementációs vagy archiválási engedély ebből a statikus vizsgálatból.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
