@@ -11,7 +11,7 @@
 
 ## 0. A terv használata
 
-Ez a dokumentum kizárólag a termék jelenlegi, ellenőrzött alapjait és a fejlesztendő képességeket írja le. Nem auditnapló, nem történeti megfeleltetési táblázat és nem archívumjegyzék.
+Ez a dokumentum kizárólag a termék jelenlegi, ellenőrzött alapjait, a teljes termékcélt és a fejlesztendő képességeket írja le.
 
 - **Egyetlen aktuális terv:** `docs/MASTER-DEVELOPMENT-PLAN.md`.
 - A régi tervek, checkpointok és auditanyagok nem törlődnek a Git-előzményekből vagy az archívumból, de nem irányítják a jelenlegi terméktervezést.
@@ -2385,4 +2385,4 @@ Ezek a meglévő alapok nem jelentik azt, hogy minden kapcsolódó felhasználó
 ### 41.3. Mi számít késznek?
 Egy funkció csak akkor kész, ha a megadott felhasználói cél a valós alkalmazásban végigvihető; az adatok helyesek és konzisztensen jelennek meg minden érintett felületen; a jogosultságok és hibás állapotok kezeltek; a releváns tesztek és szükséges valós böngészős/éles ellenőrzések sikeresek. A dokumentáció frissítése a megvalósítást követi, nem helyettesíti azt.
 
-**Ez a fejezet az aktuális termékfejlesztés irányát rögzíti. Nem történeti audit, nem archív források megfeleltetése és nem a teljes Creator Platform scope-jának szűkítése.**
+**Ez a fejezet az aktuális termékfejlesztés irányát rögzíti; a teljes Creator Platform célja és későbbi képességei változatlanul a terv részei.**
