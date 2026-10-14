@@ -4547,3 +4547,35 @@ A mátrix a `src/routes/admin/schedule.ts`, `src/core/schedule-read.ts`, `src/co
 
 **Státusz: IN PROGRESS / NOT PASS.** Következő ID-szelet: INT-001–021, a meglévő Twitch OAuth/site ownership megtartásával és a provider-capability határok pontosításával.
 
+### 63.29. INT-001–021 — integrációs központ és provider adapterek, egyedi-ID-s bizonyítékmátrix
+
+A mátrix a Twitch OAuth/crypto/site-ownership route-okat, Twitch schedule adaptert, `src/index.ts` route-regisztert és a Twitch/OAuth teszteket vizsgálja. A jelenlegi Twitch alap megőrzendő; a többi provider funkció nem tekinthető késznek pusztán konfigurációs kulcs vagy feature ID alapján.
+
+| ID | Owner / forrás | Látható alap | Nyitott acceptance / függőség |
+|---|---|---|---|
+| INT-001 | INTEGRATION / provider adapter contract | Twitch-specific adapterek léteznek; általános provider contract teljes végrehajtása nem bizonyított | Közös connect/status/capability/error/retry interface úgy, hogy a provider-specifikus OAuth és adatmodell ne mosódjon össze. |
+| INT-002 | INTEGRATION / overview | Twitch status/diagnostic endpoint létezik; általános integrations dashboard nem látható | Provider registry, connection health, stale/expired/permission state, action links and partial failure. |
+| INT-003 | INTEGRATION / Twitch OAuth state | Hashelt, rövid életű, user/site scoped, egyszer használatos OAuth state alap és tesztek léteznek | Callback error matrix, replay/expiry/race test, origin/redirect validation és audit. |
+| INT-004 | INTEGRATION / Twitch token lifecycle | Token encryption, validation, refresh lock, revoke logic és tests léteznek | Provider-generic lifecycle contract, rotation/revoke proof, concurrent refresh and outage recovery. |
+| INT-005 | INTEGRATION / site ownership | Twitch connection explicit user/site scoped; negative tests léteznek | Minden későbbi provider ugyanazt az ownership invariantot és cross-site negative testet alkalmazza. |
+| INT-006 | INTEGRATION / scopes | Twitch scopes kiolvasása és megjelenítése létezik | Capability-to-scope matrix, missing scope UX, minimum scope and re-consent flow. |
+| INT-007 | INTEGRATION / connect/reconnect/disconnect | Twitch connect/callback/validation/disconnect routes léteznek | Admin UX end-to-end, reconnect, revoke failure, disconnect idempotency and provider status truthfulness. |
+| INT-008 | INTEGRATION / sync history | Twitch schedule sync state/error mapping létezik | General provider sync history, retry controls, bounded retry, per-run diagnostics and audit. |
+| INT-009 | INTEGRATION / quotas | Explicit generalized quota/rate-limit service nem bizonyított | Provider 429/Retry-After policy, quota budget, backoff and UI freshness state. |
+| INT-010 | INTEGRATION / Twitch adapter | Twitch OAuth/channel binding and schedule API integration exists | End-to-end live smoke, scope changes, identity mismatch, rate limits, API schema drift and revoke. |
+| INT-011 | INTEGRATION → LIVE_STATE/SCHEDULE | Twitch schedule adapter exists; normalized live-state service not proven | Live/offline state, stream title/category/viewers, stale cache and public block must be a separate LIVE owner. |
+| INT-012 | INTEGRATION / Twitch VOD/clip metadata | VOD/clip API adapter/route not visible in route registry | API scopes, content IDs, allowed fields, paging/quota and CNT handoff; do not store canonical content inside INT. |
+| INT-013 | INTEGRATION / YouTube | Dedicated YouTube adapter/route/test not visible | OAuth/consent/scopes, live/video metadata, quota, revoke and capability tests. |
+| INT-014 | INTEGRATION / TikTok | Dedicated TikTok adapter/route/test not visible | Capability-gated product API availability, review/approval, limited scopes and honest unavailable state. |
+| INT-015 | INTEGRATION / Discord | Dedicated Discord bot/guild/role adapter not visible | Bot install, guild scope, role permissions, interaction/webhook verification and retry; role sync consumes SUP entitlement. |
+| INT-016 | INTEGRATION / Kick | Dedicated Kick adapter/route/test not visible | Provider API availability/terms, auth and capabilities; unsupported operations hidden/disabled truthfully. |
+| INT-017 | INTEGRATION / inbound provider webhook | Provider webhook registry/delivery route not visible | Signature/replay security follows SEC-009; idempotency, delivery log, retry and provider-specific signature tests. |
+| INT-018 | INTEGRATION / provider capability registry | General provider registry not proven | Per-provider capability manifest/version/permission/quota; excludes AI model/provider configuration (AI-001). |
+| INT-019 | INTEGRATION + SEC/AUDIT | Twitch audit records and encrypted tokens exist; redaction matrix not fully proven | No tokens/state/code in logs; structured secret redaction, retention and negative tests for errors/diagnostics. |
+| INT-020 | INTEGRATION / diagnostics | Twitch config diagnostic, connection status and validation endpoints exist | Safe diagnostic report, provider latency/rate-limit/error category, recovery instructions and no secret exposure. |
+| INT-021 | INTEGRATION / future payment/email adapters | Generic future intent only; no payment/email adapter route proven | Payment/email remain separate adapters with legal/provider gates; Store owns checkout/order workflow, NTF owns notification delivery. |
+
+**Biztonsági megőrzési szabály:** a meglévő Twitch OAuth state hashing/TTL/single-use, encrypted token storage, refresh lock és site ownership kódot újra kell használni és megőrizni. Ne készüljön párhuzamos token store vagy második OAuth flow. A közös provider adapter a lifecycle/capability határt egységesíti, nem teszi az összes szolgáltató OAuth- és adatmodelljét azonossá.
+
+**Státusz: IN PROGRESS / NOT PASS.** A Twitch alap kód- és tesztbizonyítéka létezik, de ebben a lépésben nem futott teszt és nem történt éles provider smoke. Következő ID-szelet: RES-001–016, a D1/R2 asset alap, upload/processing, reference safety és shared picker határ.
+
