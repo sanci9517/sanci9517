@@ -4892,3 +4892,62 @@ A jelenlegi forrásban auth/session/password/require-auth, site-context/ownershi
 
 **Státusz: IN PROGRESS / NOT PASS.** Következő ID-szelet: ADM/SEARCH/NTF/HELP/DEV/EXTENSION/MKT, majd a maradék LIV/OBS és a teljes feature ID-k fázis/dependency keresztellenőrzése.
 
+### 63.37. ADM-001–013, SEARCH-001–005, NTF-001–005, HELP-001–004, DEV-001–006, MKT-001–005, OBS-001–010
+
+A jelenlegi repositoryban az Admin shell/home, auth és Editor v2 létezik; a dedicated global search, notification delivery, help content/progress, developer API keys/outbound webhooks, extension registry/marketplace és OBS pairing/command API nem bizonyított a route-/schema-/test-leltárban. Az ADM csak felhasználói belépési pont és read projection, nem catch-all domain.
+
+| ID | Owner | Állapot és kötelező acceptance |
+|---|---|---|
+| ADM-001 | ADMIN SHELL | Admin shell exists; canonical routes, navigation, active scope and access denied states must be consistent. |
+| ADM-002 | ADMIN/DASHBOARD | Dashboard shell exists; every status card needs a canonical source, timestamp/freshness and partial-failure state. |
+| ADM-003 | ADMIN/DASHBOARD | Quick-action entrypoints exist in concept; each must route to the owning module's canonical action, not duplicate mutation logic. |
+| ADM-004 | ADMIN/DASHBOARD | Task/error aggregate is not proven; aggregate only permission-filtered domain items and link to owner module. |
+| ADM-005 | ADMIN/AUDIT | audit_log/helper exists; recent activity UI/source filtering, redaction and site scope remain to prove. |
+| ADM-006 | SEARCH | Global search/command palette entrypoint in menu map only; canonical search API/index and command routing not proven. |
+| ADM-007 | IDENTITY | Login/session/logout routes exist; profile/preferences UI and secure session controls need acceptance. |
+| ADM-008 | SHARED UI | Generic loading/empty/error/stale state standard not proven across all modules; presentation may be shared, domain state machine stays with owner. |
+| ADM-009 | SEC/ADMIN | Permission-based menu visibility not proven fully; it is UX only and cannot replace server authorization. |
+| ADM-010 | ADMIN SHELL | Mobile/tablet shell exists in some markup/CSS; real-device layout, focus, scroll and safe-area tests required. |
+| ADM-011 | HELP_CENTER | Contextual help/onboarding entrypoint in menu map; help article/progress service not proven. |
+| ADM-012 | NOTIFICATION | Dashboard notification entrypoint in menu map; canonical notification center/delivery/preferences not proven. |
+| ADM-013 | ADMIN/OBSERVABILITY | Freshness/stale/partial status aggregate not proven; every card must identify source, updatedAt and error state. |
+| SEARCH-001 | SEARCH | Permission-aware global index not proven; derived projection, tenant scope, permission filtering and deletion propagation. |
+| SEARCH-002 | SEARCH | Command palette not proven; actions call canonical module commands with permission re-check, never raw arbitrary command strings. |
+| SEARCH-003 | SEARCH | Saved views/favorites/recent list not proven; user-scoped preferences, deletion and scope switch behavior. |
+| SEARCH-004 | SEARCH | Index freshness/invalidation not proven; publish/update/delete/permission revoke must propagate. |
+| SEARCH-005 | SEARCH | Module filters/snippets not proven; snippets must not leak private fields and filters must be type/owner scoped. |
+| NTF-001 | NOTIFICATION | In-app notification center/read-unread not proven; source module link, ownership and read-state lifecycle. |
+| NTF-002 | NOTIFICATION | Delivery adapters/status not proven; distinguish queued/sent/delivered/failed only when provider evidence supports it. |
+| NTF-003 | NOTIFICATION | User preferences/digest/quiet hours/channel opt-in not proven; locale/timezone and consent controls. |
+| NTF-004 | NOTIFICATION | Event-to-notification idempotency/retry not proven; dedupe key, bounded retry and dead-letter review. |
+| NTF-005 | NOTIFICATION/SEC | Unsubscribe/retention/payload minimization not proven; no sensitive content in push/email preview. |
+| HELP-001 | HELP_CENTER | Contextual help map not proven; map by canonical module/feature ID and disclose limitations. |
+| HELP-002 | HELP_CENTER | Onboarding progress not proven; role/site scoped, skip/restart and privacy-safe progress. |
+| HELP-003 | HELP_CENTER | Versioned searchable docs/glossary not proven; canonical links, feature version and deprecation handling. |
+| HELP-004 | HELP_CENTER/SEC | Troubleshooting/feedback diagnostics not proven; diagnostic IDs with automatic secret/PII redaction. |
+| DEV-001 | DEVELOPER_API | Public API reference/version/deprecation not proven; generated schema, supported version and examples. |
+| DEV-002 | DEVELOPER_API/SEC | Scoped API key lifecycle not proven; one-time display, hash/storage policy, rotation, expiry/revoke and no plaintext logs. |
+| DEV-003 | DEVELOPER_API | Creator outbound webhook registry/tester not proven; separate from INT inbound provider webhooks, signature, retries and replay defense. |
+| DEV-004 | DEVELOPER_API | Sandbox fixtures/events not proven; isolated test workspace, no production secrets or real payment effects. |
+| DEV-005 | DEVELOPER_API | SDK/examples not proven; generated from versioned API schema, compatibility and safe auth handling. |
+| DEV-006 | DEVELOPER_API | Quotas/rate-limit visibility not proven; per-key and per-workspace limits, usage telemetry and actionable 429 state. |
+| MKT-001 | EXTENSION | Extension manifest/permissions not proven; explicit capabilities, origin, data access and review. |
+| MKT-002 | EXTENSION | Install/update/uninstall/migration not proven; staged rollout, rollback and orphan cleanup. |
+| MKT-003 | EXTENSION/MARKETPLACE | Theme/block/template/overlay marketplace not proven; signed/versioned artifacts and canonical DESIGN_SYSTEM/RESOURCE references. |
+| MKT-004 | EXTENSION/MARKETPLACE | License/attribution/version/review not proven; provenance, vulnerability scan and compatibility review. |
+| MKT-005 | EXTENSION/ORDER | Marketplace payment/revenue-share not proven; legal/provider/merchant-of-record gate and auditable settlement. |
+| OBS-001 | STREAM_TOOLS | Overlay asset/scene metadata not proven; canonical RESOURCE references and versioned scene manifest. |
+| OBS-002 | STREAM_TOOLS/SEC | OBS secure pairing/connection not proven; one-time pairing code, explicit trust, expiry/revoke and secret-safe storage. |
+| OBS-003 | STREAM_TOOLS | Scene/stream/recording state adapter not proven; provider-supported capabilities and freshness. |
+| OBS-004 | STREAM_TOOLS/SEC | Authorized commands/markers not proven; command allowlist, role/connection checks, confirmation for destructive action. |
+| OBS-005 | STREAM_TOOLS | Browser source config not proven; safe URLs, per-overlay secret isolation and preview. |
+| OBS-006 | STREAM_TOOLS/NTF | Provider-supported alerts not proven; event source, dedupe, rate limits and test mode. |
+| OBS-007 | STREAM_TOOLS | Chatbot/commands/timers/loyalty/giveaways not proven; permissioned event/action engine, moderation and legal/provider constraints. |
+| OBS-008 | STREAM_TOOLS | Test/replay/rate limit not proven; dry-run, event fixture replay and no unintended production actions. |
+| OBS-009 | STREAM_TOOLS | Macro Deck/external control adapter not proven; scoped pairing, signed commands and disconnect behavior. |
+| OBS-010 | STREAM_TOOLS/RESOURCE | Overlay preview/export/version not proven; canonical asset references, compatibility, export manifest and rollback. |
+
+**Module boundary rules:** (1) Dashboard aggregates and navigates; it never owns domain records. (2) Search index is derived, permission-aware and deletable; it is not a second source of truth. (3) Notifications are derived from domain events and own delivery/preferences only. (4) Help references canonical feature IDs. (5) Creator outbound webhooks/API keys belong to DEV; provider inbound webhooks belong to INT. (6) Extension artifacts never gain direct arbitrary D1 access. (7) OBS is a dedicated Stream Tools domain; Editor can place an overlay preview/block but cannot own pairing or commands.
+
+**Státusz: IN PROGRESS / NOT PASS.** Ezzel a 49. főmodulok nagy részéhez van kódleltárból származó, egyedi ID-s hiánylista; még hátra van a teljes feature ID-k függőségi/fázis keresztezése, a feature card kötelező mezőinek kitöltési ellenőrzése és a terv konzisztencia-gate-ek végső felülvizsgálata.
+
