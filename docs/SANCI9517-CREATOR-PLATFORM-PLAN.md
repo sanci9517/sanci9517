@@ -4374,3 +4374,25 @@ Ez a táblázat a 63.22 forráskód-olvasási auditot köti a stabil funkcióazo
 
 **Határ:** a fenti döntések kizárólag az első, core kódszeletet fedik le. Nem osztanak ki kitalált státuszt a többi ID-hoz. A következő audit a fennmaradó modulok route/UI/schema/test leltára, majd az egyedi feature cardok fázis/dependency/acceptance mezőinek bizonyíték alapú kitöltése.
 
+### 63.24. Legacy Editor → canonical Editor v2 képességmegőrzési audit
+
+A régi `public/editor/` modulok külön UX- és javítási kísérleteket tartalmaznak, de eltérő globális API-t/adatmodellt használnak. A `public/editor-v2/index.html` a v2 saját `app.js`/core/UI moduljait tölti be; a legacy scriptek nem részei a canonical v2 runtime-nak. Ezért a működő képességet kell megőrizni, nem a régi scriptet vakon bemásolni.
+
+| Legacy forrás / képesség | V2-ben látható megfelelő | Döntés | Nyitott acceptance |
+|---|---|---|---|
+| `public/editor/hierarchy.js`: rétegfa, nest/unnest, parent/child szabály | `commands.js` hierarchy.group/ungroup/reparent; v2 layer tree | **REUSE v2** | Container-szabály, locked node, cycle prevention, keyboard/touch reparent E2E. |
+| `public/editor/layer-order.js`: rétegsorrend előre/hátra/top/bottom | V2 `resolveLayerDrop` + drag/drop a layer tree-ben, hierarchy.reorder | **REUSE v2; UX gap ellenőrzés** | Drag-drop sorrend, mobile pointer és billentyűzetes alternatíva; ha a gyorsművelet hiányzik, v2 parancsra épülő UI-t adjunk hozzá. |
+| `public/editor/multi-select.js`: Ctrl/Cmd többes kijelölés | V2 selection.ids/primaryId és mobil multi-select bar | **REUSE v2** | Kijelölés, csoportosítás, fókusz és Escape minden pointer/touch/keyboard útvonalon. |
+| `public/editor/lock.js`: lock/unlock toolbar action | V2 Inspector lock checkbox + `element.lock.set` command | **REUSE v2** | Locked node nem mozgatható/szerkeszthető/reparentelhető; root lock és group edge case. |
+| `public/editor/group-properties.js`: több elem közös property/layout szerkesztése | V2 többes kijelölés létezik, de `renderInspector()` jelenleg a kiválasztott `nodes[0]` elemre épül | **ADAPT / BUILD** | Valódi multi-property Inspector hiányzik; legacy UX követelményét meg kell őrizni, v2 `executeBatch`/canonical commands használatával. |
+| `public/editor/margin-properties.js`, `minmax-properties.js`: margin és min/max width/height | V2 responsive X/Y/width/height/position controls léteznek; margin/min/max mezők a vizsgált `app.js`-ben nem találhatók | **ADAPT / BUILD** | Margin/padding és min/max constraint property schema, validation, responsive inheritance, public renderer parity és reset/inherit teszt. |
+| `public/editor/page-rename.js`: oldalnév átnevezése a PATCH title útvonalon | A szerver pages PATCH útvonala title-t kezel; v2 app.js-ben nem találtam rename UI actiont | **ADAPT v2 UI** | Átnevezés unsaved-change guarddal, szerveroldali validation/expectedVersion és slug/SEO hatás explicit szabállyal. |
+| `public/editor/selection-routing.js`: DOM event monkey patch a parent selection megakadályozására | V2 saját node pointer handlers és layer selection routing | **REJECT legacy patch / VERIFY v2** | A globális `Element.prototype.addEventListener` felülírást nem szabad átvenni; nested selection regressziós teszt kell. |
+| `public/editor/selection-clear-fix.js`: capture-phase blank-area clear | V2 state/selection/keyboard handlers | **REUSE v2 / VERIFY** | Canvas blank-area click, Escape, Inspector/panel click és touch esetek külön tesztelendők; globális capture hack nem portolható automatikusan. |
+| `public/editor/inspector-atomic.js`: atomic Apply, legacy content/layout/style mezőkkel | V2 canonical command engine, validation és `executeBatch` atomic transaction | **REUSE v2 architecture / ADAPT UX** | Ha a felhasználói folyamat explicit Apply-t kíván, v2-ben batch/transaction alapú legyen; régi direct mutation/schema nem használható. |
+| `public/editor/editor-stabilizer.js`: régi `s.doc`, `groupId`, window globals, direct mutation/history override | V2 izolált state, Page Model, command engine, revision/persistence | **REJECT direct port / extract requirements only** | Csak konkrét reprodukálható hiba és teszt alapján emeljünk át viselkedést; a legacy state/history nem keverhető a v2 Page Modellel. |
+
+**Kötelező szabály:** a régi script eltávolítása/archiválása csak akkor zárható le, ha a képesség a v2-ben vagy bizonyítottan felesleges explicit döntéssel. Az eltérő adatmodellek, globális event patch-ek és direct mutation miatt a legacy kód nem automatikusan újrahasználható; a működő UX-t és edge case-eket viszont nem szabad bizonyíték nélkül eldobni.
+
+**Státusz: IN PROGRESS / NOT PASS.** A táblázat első összehasonlítás; a v2-ben lévő képességeket interakciós és E2E teszttel kell igazolni, a hiányzó funkciókat a 396 ID feature contractjaiban kell rögzíteni.
+
