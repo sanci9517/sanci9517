@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés:** a terv strukturális és történeti teljesség-kapujának lezárása; utána a 396 ID-s teljes katalógus közös termék-review-ja, majd az F0 egyetlen aktív, teljesen specifikált és bizonyított munkapontja. A kód-/runtime-PASS mindig külön bizonyítandó.  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.39` — 54.1 első körös 8/8 ID- és owner-routing rögzítve; **következő: 54.2#1–#15**, majd 54.3–54.16 tételes review. A 156-ból 8 első körös routinggal rendelkezik, 148 még nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -7178,6 +7178,37 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 **Elsődleges review routing, a 49. kanonikus moduljai szerint:** 54.1 → 49.1 (keresés 49.16, notification 49.17, help 49.18); 54.2 → 49.2 (Editor belépési pont, design 49.3, resource 49.4); 54.3 → 49.3; 54.4 → 49.4; 54.5 → 49.7; 54.6 → 49.5 (connection 49.7); 54.7 → 49.6 (integration 49.7, automation 49.14); 54.8 → 49.8; 54.9 → 49.9 (entitlement 49.11); 54.10 → 49.10/49.11/49.12 (commerce, support, sponsorship **külön owner**, nincs közös pénzügyi CRUD); 54.11 → 49.13 (kampány 49.12); 54.12 → 49.14; 54.13 → 49.15; 54.14 → 49.19 lokalizáció, 49.2 locale-specifikus publikálás; 54.15 → 49.19 (cross-cutting security/ops); 54.16 → 49.20/49.21/49.22 (developer, extension, team külön owner).
 
 **Végrehajtandó tételes bizonyítás:** minden 54.x checkbox kapjon `54.x#N → 24.PREFIX-NNN → 49.N → 5.DOMAIN → F-phase → acceptance` láncot; az átfedéseknél primary vs consumer és a többmodulos jogosultsági határ legyen egyértelmű. A 54.10 és 54.16 egy-egy checklist-sorát tilos teljes egészében egyetlen tetszőleges modulhoz besorolni, ha külön commerce/support/sponsorship vagy developer/extension/team domaint érint. **REVIEW ROUTING / SECTION LEVEL DOCUMENTED; ITEM LEVEL NOT PASS.**
+
+### 63.50.39. 54.1 Admin alapélmény: nyolc checklist-tétel elsődleges és fogyasztói megfeleltetése (2026-10-14)
+
+**Módszer:** az 54.1 nyolc eredeti checkboxát változatlanul megtartva, soronként a 24. fejezet tényleges definícióihoz rendeltük. A 49.N a felhasználói főmodul, a felsorolt ID-k a kanonikus képességek; a másodlagos belépési pont nem válik új adatgazdává. **Ez tervszintű szemantikai routing, nem implementációs vagy runtime PASS.**
+
+| 54.1 tétel | Kanonikus ID és szerep | Elsődleges 49. modul | Kötelező pozitív / negatív elfogadási határ |
+| --- | --- | --- | --- |
+| #1 Egységes Admin shell, oldalsáv, almenük, breadcrumbs, mobil navigáció | ADM-001, ADM-010, ADM-009 | 49.1 Admin | A navigáció mobilon és jogosultsághoz igazítva működik; elrejtett menüpont nem jelent szerveroldali hozzáférést |
+| #2 Áttekintő kártyák: weboldal, live, adásrend, kapcsolatok, tartalom, feladatok | ADM-002, ADM-013; forrásadat a WEB/LIV/SCH/INT/CNT domainekből | 49.1 Admin (read-only aggregátor) | A kártya az eredeti domain állapotára navigál; hiányzó provider/adat nem jelenik meg sikeres élő állapotként |
+| #3 Gyorsműveletek és legutóbbi aktivitás | ADM-003, ADM-005, SEARCH-002 | 49.1 Admin; keresési/command routing 49.16 | A gyorsművelet canonical route/command felé mutat; audit eseményt nem ír saját Dashboard-tárolóba |
+| #4 Teendők, figyelmeztetések, hibák és elakadt folyamatok | ADM-004, OPS-003, ADM-013 | 49.1 Admin; forrásfolyamatok saját modulban | A felhasználó a tényleges hiba forrásához jut; a Dashboard nem hoz létre párhuzamos feladat-/értesítés-életciklust |
+| #5 Globális kereső, command palette, kedvencek, legutóbbi elemek | ADM-006 (belépési pont), SEARCH-001, SEARCH-002, SEARCH-003, SEARCH-004 | 49.16 Search; 49.1 Admin fogyasztó | Jogosultság- és site-szűrt találatok; törölt vagy visszavont jogosultságú elem nem maradhat látható |
+| #6 Kontextuális súgó, onboarding, üres állapotok és emberi nyelvű hibák | ADM-011 (belépési pont), HELP-001, HELP-002, HELP-004, ADM-008 | 49.18 Help; 49.1 Admin megjelenítés | A súgó kontextushoz és szerephez illeszkedik; hibaüzenet nem szivárogtat titkot/nyers belső diagnosztikát |
+| #7 Értesítési központ, prioritások, digest és csendes időszak | ADM-012 (belépési pont), NTF-001, NTF-003, NTF-004 | 49.17 Notifications; 49.1 Admin fogyasztó | A csendes időszak/preferencia érvényesül; deduplikált esemény nem eredményez duplikált értesítést |
+| #8 Valós adatfrissesség, loading/empty/error/stale/partial állapot | ADM-013, ADM-008, SEARCH-004; domain-saját frissességi szerződések | 49.1 Admin, keresésnél 49.16 | Stale/partial adat külön jelzett; sikertelen frissítés nem mutatható friss vagy sikeres állapotként |
+
+**Tételes haladás:** 54.1 **8/8** sorhoz van explicit meglévő ID, modul és pozitív/negatív szerződéshatár; a teljes 54. fejezetből **8/156 első körben feltérképezett**, **148/156 még nem tételesen feldolgozott**. A fázis, az 5./63.20 domain tulajdonosok tételes ellenőrzése és a tényleges implementációs bizonyíték külön nyitott; ezért a 8 sor sem teljes, minden mezőre kiterjedő audit-PASS. Az 54.2–54.16 további feldolgozása ugyanebben a MASTER-ben történik.
+
+### 63.50.40. Kötelező frissállapot-feloldás és beszélgetések közötti folytatási protokoll (2026-10-14)
+
+**Egyetlen kanonikus munkaforrás:** a `sanci9517/sanci9517` repository `v2/foundation` ágán a `docs/SANCI9517-CREATOR-PLATFORM-PLAN.md`. Régi MASTER, csevegés, memória, archivált checkpoint, korábbi commit és munkaközi összefoglaló **nem írhatja felül** az aktuális ág HEAD-jén található dokumentumot.
+
+**Minden új beszélgetés és minden új írás előtt kötelező:**
+1. Lekérni a `v2/foundation` ág aktuális HEAD commitját, majd a kanonikus fájlt **kifejezetten ezen az ágon**; nem elegendő a korábbi beszélgetésből ismert SHA, fájlnév vagy állapot.
+2. Kiolvasni a dokumentum elején az **aktív tervpontazonosítót és státuszt**, valamint a legutolsó, legmagasabb sorszámú **63.50.x** végrehajtási bejegyzést és a 63.54 történeti nyitott kapukat. A legutóbbi bejegyzés nem helyettesíti a fejlécet: eltérés esetén **STOP / CONSISTENCY CONFLICT**, nem visszaugrás.
+3. Ellenőrizni, hogy a tervezett új munka **nincs-e már végrehajtva** a HEAD-ben; csak ténylegesen hiányzó részre dolgozni. A korábbi bejegyzés tévesen „következő”-nek nevezett pontja nem élvez elsőbbséget a frissebb bizonyítékkal szemben.
+4. Íráskor a teljes fájl aktuális blob SHA-ját használni, ütközés esetén frissen olvasni és újraegyeztetni; **tilos régi fájlverzióval felülírni a későbbi módosításokat**.
+5. Minden sikeres audit-commit után a fejléc folytatási állapotát és a legutolsó bejegyzést egyeztetni; a következő munka **egyértelmű azonosítóval**, a még nyitott részhalmazzal és a PASS/NOT PASS határral legyen megadva. A commit SHA csak a GitHub által visszaadott tényleges eredmény alapján közölhető.
+6. Nem létező vagy nem visszanyert történeti forrást nem lehet rekonstruáltnak nevezni; a 396 ID, 22 modul, 156 review és 271 történeti H-ID számlálása nem runtime teszt. A fejlesztési fagyasztás az aktív kapu PASS-áig változatlan.
+
+**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.39 COMPLETE AS FIRST-PASS ROUTING / NEXT 54.2#1–#15`. A 54.1 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.2 után 54.3–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
