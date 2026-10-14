@@ -1,3 +1,5 @@
+**HISTORICAL / SUPERSEDED AS A SEPARATE MASTER PLAN.** Its product and feature requirements are preserved/reconciled in `docs/MASTER-DEVELOPMENT-PLAN.md` (C/E/F, 2.77.7.A–2.77.7.C, GAP-01–GAP-14). Do not use this file to determine current status or execution order.
+
 # Sanci9517 V2 — MASTER TERV
 
 > **A teljes Sanci9517 projekt központi terve.**
