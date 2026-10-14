@@ -1,3 +1,5 @@
+**HISTORICAL / SUPERSEDED AS AN INDEPENDENT ARCHITECTURAL ADDENDUM.** Its non-duplicated requirements are reconciled into `docs/MASTER-DEVELOPMENT-PLAN.md`, including GAP-02, GAP-09, GAP-10 and GAP-14. The current canonical runtime and execution order are defined only by the MASTER.
+
 # Sanci9517 — ULTIMATE PLATFORM DIRECTION
 
 **Dátum:** 2026-09-16
