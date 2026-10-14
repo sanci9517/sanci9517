@@ -56,6 +56,30 @@ Ez az egyetlen irányadó termék- és fejlesztési terv. Tartalmazza az ellenő
 9. **Nem törlés, hanem nyomon követhető besorolás.** Régi, tervezett vagy későbbi funkció csak explicit, indokolt döntéssel vonható össze vagy vezethető ki. Azonos képesség több megjelenési helye nem jelent több implementációt. A funkciókatalógus és a 49. fejezet közötti eltérés javítandó, nem újabb önálló listával elfedendő.
 10. **Bővítési kapu.** Új modul vagy nagyobb funkció csak akkor léphet implementációba, ha a tulajdonos, felhasználói út, adat- és jogosultsági szerződés, tesztek és függőségek tisztázottak. A jelenlegi tervteljességi kapu IN PROGRESS marad a teljes keresztellenőrzésig.
 
+### 0.7. Külső termékekből átvett, ellenőrizendő UX- és architektúraminták (2026-10-14)
+
+Az alábbi minták **terméktervezési jelöltek**, nem kész implementációk és nem bizonyított hiányok. A meglévő 49., 53–59. fejezeteket kiegészítik; a bevezetés előtt a kapcsolódó funkcióazonosítóval és tényleges kóddal egyeztetni kell. Nem hozható létre duplikált modul vagy adatforrás.
+
+**WordPress Site Editor / Patterns — közös megjelenés és újrafelhasználás.** Források: https://wordpress.org/documentation/article/site-editor/ ; https://wordpress.org/documentation/article/comparing-patterns-template-parts-and-reusable-blocks/
+- A 49.3 Márka és designrendszer / 49.2 Weboldal területén legyen kifejezetten elkülönítve a **globális sablonrész** (fejléc/lábléc), a **szinkronizált újrafelhasználható komponens** (minden példány együtt frissül) és a **független kiinduló minta** (másolatként testre szabható). A három típus megkülönböztetése legyen látható a UI-ban.
+- A Visual Editor kínáljon hierarchikus réteg/listanézetet, komponenskeresést, navigálható beszúrópanelt, gyorsparancsot, oldal- és eszközméret-előnézetet, valamint könnyen visszavonható műveleteket; a globális módosítás előtt jelenjen meg az érintett példányok hatóköre.
+- A sablon és komponens import/export esetén sémaverzió, biztonságos validáció, függőség-ellenőrzés és kompatibilitási figyelmeztetés szükséges. A harmadik féltől származó sablon nem kaphat automatikusan script- vagy titokhozzáférést.
+
+**Webflow lokalizált CMS — nyelvi tartalom nem pusztán felületfordítás.** Forrás: https://help.webflow.com/hc/en-us/articles/33961252209171-Localize-Collection-content
+- A 49.2 Weboldal és 49.8 Tartalomstúdió között közös, lokalizálható tartalommodell kell: nyelvenkénti cím, slug, SEO, média-alt, tartalommezők, fallback és publikálási állapot. A locale-specifikus tartalom nem jelent külön CMS-t.
+- Későbbi többnyelvű ütemezésnél nyelvenkénti előnézet, hiányzó fordítás jelzése, hreflang/canonical ellenőrzés és publikálás előtti validáció szerepeljen; a magyar-first működés maradjon elsőrangú.
+
+**Strapi Content Manager / Review Workflows — tartalomszerkesztés és jóváhagyás külön.** Források: https://docs.strapi.io/cms/features/content-type-builder ; https://docs.strapi.io/cms/features/review-workflows
+- A 49.8 Tartalomstúdió tulajdonolja a strukturált tartalomtípusok kezelését és az írási munkafolyamatot. Későbbi csapatfázisban külön jogosultsággal: szerző, szerkesztő, jóváhagyó; review-státusz, felelős, megjegyzés, változatelőzmény és publikálási kapu.
+- Az Editor csak a tartalom megjelenítését és kötését kezeli, nem másolja le a tartalmi jóváhagyási folyamatot. A Strapi vállalati funkciói összehasonlítási minták, nem automatikusan ingyenesen átvehető kódok.
+
+**Streamer.bot — esemény, trigger és művelet szétválasztása.** Forrás: https://docs.streamer.bot/get-started/introduction/ ; https://docs.streamer.bot/guide/core/actions
+- A 49.14 Automatizációk alatt külön, érthető képernyők: eseményforrások, triggerek, feltételek, műveletek, sorrend/queue, változók, próbafuttatás, futási napló, hiba/újrapróbálás és import/export.
+- A 49.7 Kapcsolatok adja az integrációs jogosultságot; a 49.6 OBS és stream eszközök a végrehajtható eszközműveleteket; a 49.14 csak szabályozott szerződésen keresztül kapcsolja össze őket. Éles adás közben veszélyes művelethez explicit engedély és biztonságos alapállapot kell.
+- A későbbi SANCI AI ugyanazt az engedélyezett action-rendszert használhatja, de nem kerülheti meg a jóváhagyást, auditot vagy jogosultságot.
+
+**Közös, minden mintára érvényes elfogadási kapu:** egyértelmű owner és Admin-belépési pont; valódi használati eset; működő/tervezett állapot megkülönböztetése; mobil, billentyűzet, hiba- és üres állapot; jogosultság és adatvédelem; pozitív/negatív teszt; migráció és visszaállítás; meglévő funkcióazonosítóhoz kapcsolás. Ha már létezik azonos képesség, annak szerződését kell bővíteni, nem másodikat létrehozni.
+
 ### 0.2. Változtatási szabály
 Új funkció a megfelelő modulba kerül. Meglévő képesség módosításakor meg kell őrizni az adatkapcsolatokat, jogosultságokat, hibaállapotokat és a korábbi használati eseteket. Funkciót csak kifejezett termékdöntéssel lehet kivezetni; a későbbre ütemezés nem törlést jelent.
 
