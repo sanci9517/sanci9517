@@ -5280,3 +5280,105 @@ Az alábbi rövidített kártyák mindegyike név szerint lefedi a 26.1 kötelez
 
 **Szeletzárás:** EDT-007–014 mindegyikéhez kitöltöttem a kártyamezőket, de a forráskód-olvasás nem helyettesíti a böngészős acceptance-t. Következő lépés: a 63.42 kártyák mező- és függőségkonzisztenciájának gépi ellenőrzése; csak ezután jöhet EDT-015–020.
 
+### 63.43. Funkciókártyák — EDT-015–020 (palette, layout nodes, content nodes, resources, advanced components, domain blocks)
+
+**Forrásalap:** public/editor-v2/app.js, core/schema.js, core/property-registry.js, core/validation.js, core/commands.js, public/assets/page-renderer.js és a jelenlegi public renderer. A node-típus létezése a schema-ban vagy palettában nem bizonyít teljes Inspector-, public renderer- vagy accessibility-paritást.
+
+#### EDT-015 — Node palette / elemkatalógus
+- **Felhasználói eredmény:** a felhasználó megtalálja és hozzáadja a megfelelő oldalelemeket.
+- **Belépési pont / műveletek:** Editor v2 Elements panel; kategóriabontás, szöveges szűrés, elem hozzáadása, súgóleírás.
+- **Kanonikus owner / adatforrás:** EDITOR / schema NODE_TYPES és app.js palette groups; a paletta nem üzleti adatgazda.
+- **Séma / invariánsok:** minden megjelenített elemhez létező, támogatott node type és canContain-szabály kell.
+- **Jogosultság:** csak az aktív, szerkeszthető oldal; provider-backed elemek a saját domain permissionjét követik.
+- **API/command:** palette action → element.add canonical command; a kategória/type registry egységesítése nyitott.
+- **Függőségek:** EDT-001–003/006/016–020/021–022.
+- **UI-állapotok:** loading, kategória zárt/nyitott, keresési találat/nincs találat, unsupported capability, add error.
+- **Biztonság/adatvédelem:** a palette leírás és label biztonságos textként jelenjen meg; unsupported elem ne hozzon létre hibás node-ot.
+- **Tesztcsomag:** core.test.js browser module parse és schema alap; minden palette entry/type coverage nincs bizonyítva.
+- **Elfogadás:** minden palettaelem hozzáadása → valid Page Model node → save/reload → preview/public renderer támogatás vagy egyértelmű unsupported jelzés.
+- **Bizonyíték:** app.js renderPalette/typeForElement, schema.js NODE_TYPES, core.test.js; teljes coverage riport nincs rögzítve.
+- **Visszaállítás:** element.add undo; hozzáadási hiba nem hagyhat részleges node-ot.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; teljes type↔palette↔Inspector↔renderer registry összevetés, keresés/favorite döntés.
+
+#### EDT-016 — Layout/container nodes
+- **Felhasználói eredmény:** szekciók, konténerek, sorok, oszlopok, grid és csoportok segítségével rendezett oldal építhető.
+- **Belépési pont / műveletek:** palette, canvas, layer tree és Inspector; add/nest/reorder/reparent/layout edit.
+- **Kanonikus owner / adatforrás:** EDITOR / Page Model node tree és style/layout properties.
+- **Séma / invariánsok:** canContain és leaf/container szabályok; nested layout, gap/columns, responsive override és overflow szabályok teljes szemantikája nyitott.
+- **Jogosultság:** Editor/page permission; layout node nem kerülhet át más site/page adatába.
+- **API/command:** element.add/update és hierarchy commands; type-specific layout schema/validation egységesítendő.
+- **Függőségek:** EDT-001–014/021–026/034.
+- **UI-állapotok:** empty container, nested content, invalid drop, breakpoint switch, overflow/validation error.
+- **Biztonság/adatvédelem:** depth/node-count limit és malformed nesting elutasítása; renderer ne dolgozzon fel korlátlan rekurziót.
+- **Tesztcsomag:** schema/commands core tests; teljes layout geometry és browser responsive suite nincs bizonyítva.
+- **Elfogadás:** section/row/grid nested layout → breakpoint override → save/reload → Editor preview és public renderer azonos hierarchiát és elrendezést ad.
+- **Bizonyíték:** schema.js, commands.js, responsive.js és public renderer; teljes node-level parity report nincs.
+- **Visszaállítás:** hierarchy/layout command undo/redo; invalid batch atomic rollback.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; layout semantics, nested constraints és public parity.
+
+#### EDT-017 — Alap tartalmi node-ok
+- **Felhasználói eredmény:** szöveg, címsor, gomb/link, ikon, divider és spacer szerkeszthető.
+- **Belépési pont / műveletek:** palette + Inspector + canvas; content/style/link/icon edit és preview.
+- **Kanonikus owner / adatforrás:** EDITOR / Page Model content/style; icon definitions az egyetlen canonical Icon Registryből jönnek.
+- **Séma / invariánsok:** type-specific content schema, heading level, valid URL, accessible name/semantics és style property validation.
+- **Jogosultság:** public output csak published Page Modelből; editor-only adatok nem kerülhetnek ki.
+- **API/command:** element.update és Rich Text command; type-specific Inspector command coverage nyitott.
+- **Függőségek:** EDT-001–003/015/021–024/034/037/043, RES/DSN ikon- és design-szolgáltatások.
+- **UI-állapotok:** empty content, invalid URL, missing icon, validation, preview/public mismatch.
+- **Biztonság/adatvédelem:** safe URL, text escaping, link rel/target policy, no unsafe HTML injection.
+- **Tesztcsomag:** Rich Text/schema alaptesztek vannak; minden alap node control, keyboard/ARIA és link safety suite nem bizonyított.
+- **Elfogadás:** minden node saját mezői → valid/invalid érték → save/reload → keyboard/accessibility és public output ellenőrzés.
+- **Bizonyíték:** schema.js, app.js, commands.js és page-renderer.js; node-by-node acceptance nincs rögzítve.
+- **Visszaállítás:** command undo/redo és revision restore; icon rename/deletion referenciakezelése nyitott.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; type-specific Inspector és accessibility/public parity.
+
+#### EDT-018 — Resource-backed nodes: image, video, embed, gallery, card, badge
+- **Felhasználói eredmény:** média és újrafelhasználható tartalmi blokkok biztonságosan elhelyezhetők az oldalon.
+- **Belépési pont / műveletek:** Editor palette/Inspector; asset kiválasztás, alt text, poster/fallback, embed konfiguráció.
+- **Kanonikus owner / adatforrás:** EDITOR a Page Model referencia tulajdonosa; RESOURCE a média/asset metadata és R2 object tulajdonosa.
+- **Séma / invariánsok:** stabil asset ID/object reference, MIME/variant, alt text, public/private visibility; URL-string másolása nem helyettesítheti a canonical asset reference-et.
+- **Jogosultság:** media picker és asset read site-scoped; private/paid asset public rendererben nem szivároghat ki.
+- **API/command:** Editor node config fogyasztja a RESOURCE API-t; a teljes media picker/upload/usage-map API nincs bizonyítva.
+- **Függőségek:** EDT-001/015/017/021–022/034, RES-001–016, DSN-001–018.
+- **UI-állapotok:** no asset, uploading/processing, ready, missing/deleted asset, private/unauthorized, embed blocked, fallback.
+- **Biztonság/adatvédelem:** safe embed allowlist/CSP, MIME validation, SVG safety, authorized download és alt text; mind nyitott acceptance.
+- **Tesztcsomag:** teljes media API/renderer suite nem látható a vizsgált tesztfában.
+- **Elfogadás:** asset kiválasztás → render → delete/reference warning → public/private access check → save/reload és broken-reference recovery.
+- **Bizonyíték:** Page Model/media metadata/R2 alap és renderer safeUrl; teljes registry/picker evidence nincs.
+- **Visszaállítás:** Page Model revision restore; asset törlés csak usage-map és safe-delete kapu után.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; canonical Media API, picker, safe embed és node renderer parity.
+
+#### EDT-019 — Interaktív/összetett komponensek: table, accordion, tabs, form és társai
+- **Felhasználói eredmény:** összetett komponensek használhatók, billentyűzettel és mobilon is.
+- **Belépési pont / műveletek:** palette/Inspector/public component; content/config edit, tabs/accordion interaction, form submit.
+- **Kanonikus owner / adatforrás:** EDITOR a megjelenítési konfigurációt birtokolja; form submission és tárolás külön FORM domain, komponenskönyvtár a DESIGN SYSTEM.
+- **Séma / invariánsok:** component-specific schema, interaction state, form field validation, submit endpoint, keyboard/ARIA semantics.
+- **Jogosultság:** form submission endpoint szerveroldali permission/consent/rate limit; a public renderer nem írhat közvetlenül privát táblába.
+- **API/command:** Page Model component config; form submit csak canonical FORM API-n keresztül. A teljes contract nem bizonyított.
+- **Függőségek:** EDT-001/015/017/021–022/034/037, DSN registry, FORM domain és SEC.
+- **UI-állapotok:** closed/open, active tab, validation, submitting/success/failure/retry, keyboard focus.
+- **Biztonság/adatvédelem:** CSRF/spam/rate limit, PII consent/retention, safe submission, XSS és ARIA; acceptance nyitott.
+- **Tesztcsomag:** teljes interaktív component/form browser suite nem látható.
+- **Elfogadás:** keyboard-only és touch interakció → invalid/valid form submit → server-side result → safe error/success → retention/delete policy ellenőrzése.
+- **Bizonyíték:** node schema/palette részleges; teljes component runtime/API/test evidence nincs rögzítve.
+- **Visszaállítás:** Editor config undo/revision restore; beküldött formot nem szabad hamisan „undo”-zhatónak mutatni.
+- **Státusz / ismert probléma / következő lépés:** OPEN / UNVERIFIED; component-specific schema, accessibility és canonical FORM API szükséges.
+
+#### EDT-020 — Domain-owned blocks: schedule és SANCI/provider blokkok
+- **Felhasználói eredmény:** a publikus oldalon élő domainadat jeleníthető meg a saját modulokból, duplikált üzleti adat nélkül.
+- **Belépési pont / műveletek:** Editor palette/Inspector; domain block hozzáadása, source/config beállítása, preview.
+- **Kanonikus owner / adatforrás:** EDITOR csak block placement/config; SCHEDULE, LIVE, CONTENT és INT a saját adataik és API-juk gazdái.
+- **Séma / invariánsok:** block type → explicit domain/API contract; published-only public projection, type validation, loading/empty/error/stale state.
+- **Jogosultság:** provider tokens csak backendben; public block kizárólag public-safe mezőt olvashat.
+- **API/command:** schedule block config/read projection alap létezik; több SANCI/provider block placeholder, általános block source registry nincs bizonyítva.
+- **Függőségek:** EDT-001/015/021–024/034, SCH-010–011, LIV, CNT, INT, SEC.
+- **UI-állapotok:** loading/empty/live/stale/provider unavailable/permission denied/fallback.
+- **Biztonság/adatvédelem:** secret redaction, published-only, rate/quota, provider error és cache freshness.
+- **Tesztcsomag:** schedule-source/core tesztalap létezik; minden domain blockra contract/test matrix nincs.
+- **Elfogadás:** owning domain adatának módosítása → Editor preview frissül → publish/public output egyezik; provider failure esetén nincs mock siker vagy secret leakage.
+- **Bizonyíték:** schedule schema/preview/source tests és page-renderer; minden provider block runtime evidence nincs.
+- **Visszaállítás:** Page Model revision rollback; provider state-ot nem másoljuk Page Modelbe eikä nem rollbackoljuk a külső szolgáltatást.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; blockonkénti owner/API/state/permission/parity acceptance.
+
+**Szeletzárás:** EDT-015–020 kártyái a mezőket kitöltik, de az összetett komponensek, media API és provider blocks implementációja nem tekinthető késznek. Következő lépés: a 63.43 kártyáinak mező- és dependency-ellenőrzése, majd EDT-021–026.
+
