@@ -2607,11 +2607,11 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.1-02 | Reload/reopen preserves selection/editability; saved elements are not delete-only | EDT-003, EDT-027–EDT-030, WEB-004 | KEEP | 1.0 release gate | QA-002/004 |
 | F.1-03 | Regression sequence: Box + heading/text/button/divider; Layers reselects earlier nodes; layout edit/save/reload/public render parity | EDT-003, EDT-004, EDT-022, EDT-027–EDT-034, WEB-004–WEB-006 | KEEP | 1.0 release gate | QA-002/004 |
 | F.1-04 | Immutable history, maximum 50 entries, FIFO overflow | EDT-005, EDT-006 | KEEP | 1.0 | QA-002 |
-| F.1-05 | One user intent per transaction; text debounce/blur groups edits; drag/slider groups pointer-down to pointer-up | EDT-005, EDT-006, EDT-007 | KEEP | 1.0 | QA-002/004 |
-| F.1-06 | Preset/batch explicit transaction boundaries; no partial or self-referential undo/redo entries | EDT-005–EDT-007, QA-002 | KEEP | 1.0 | QA-002 |
+| F.1-05 | One user intent per transaction; text debounce/blur groups edits; drag/slider groups pointer-down to pointer-up | EDT-004, EDT-005, EDT-008/009, EDT-022 | KEEP | 1.0 | QA-002/004 |
+| F.1-06 | Preset/batch explicit transaction boundaries; no partial or self-referential undo/redo entries | EDT-003–EDT-005, DSN-004 | KEEP | 1.0 | QA-002 |
 | F.1-07 | Canvas, Layers, Inspector and persisted model share canonical command/state, not DOM snapshots | EDT-003–EDT-007, EDT-027–EDT-030 | KEEP | 1.0 release gate | QA-002/004 |
-| F.1-08 | Debounced 2000 ms draft autosave; explicit Save Draft remains immediate; only validated Page Model persists | EDT-022, EDT-027, EDT-028, WEB-004 | KEEP | 1.0 | QA-002/004 |
-| F.1-09 | Local crash recovery is separate from server draft and stores no secrets; conflict offers recovery/server/discard choices | EDT-030, WEB-007, WEB-008, OPS-009, SEC-008 | EXPAND | 1.0 recovery baseline | QA-003/006/007 |
+| F.1-08 | Debounced 2000 ms draft autosave; explicit Save Draft remains immediate; only validated Page Model persists | EDT-001, EDT-022, EDT-027, EDT-028, WEB-004 | KEEP | 1.0 | QA-002/004 |
+| F.1-09 | Local crash recovery is separate from server draft and stores no secrets; conflict offers recovery/server/discard choices | EDT-029, EDT-031, WEB-007/008, OPS-009, SEC-008 | EXPAND | 1.0 recovery baseline | QA-003/006/007 |
 | F.1-10 | Optimistic concurrency, unsaved-change warning, real retry/restore; larger Page Model history/autosave performance tests | EDT-027–EDT-034, WEB-008, OPS-008, QA-005/006 | KEEP | 1.0 release gate | QA-002/004/006 |
 | F.2-01 | Canonical dynamic data pipeline: domain service → declared source → schema-valid binding → allowed transform → conditional render | DYN-001–DYN-008, WEB-020, EDT-018 | KEEP | 2.0, with 1.0 safe core only | QA-002/003/004 |
 | F.2-02 | Provider sources enabled only by phase, official capability and connection scope | DYN-001, INT-001, INT-013–INT-016, SEC-002 | KEEP | Per-provider 1.5+ | QA-002/003/008 |
@@ -4554,3 +4554,14 @@ A C.23.22-01–07 mind a hét történeti sor megmaradt, és a célzott szerződ
 - **Gate discipline:** these tests are required evidence, not claimed results. A contract row can only move to PASS after the matching evidence is collected, reviewed and traceably attached to the canonical plan.
 
 **Evidence boundary:** all 11 C.23.21 rows now have explicit test scope and acceptance outcomes. This is documentation-only work; no tests or production runtime checks were executed in this step. All C.23.13–C.23.21 contract batches are now documented, but this does not itself complete P0.2 archive reconciliation or prove the entire 01–140 traceability set. P0.2 remains **IN PROGRESS / NOT PASS**.
+
+
+### 41.3.59. P0.2 — F.1 Editor history, transaction and recovery crosswalk corrections (2026-10-14)
+
+**Források:** archived `00.9.6.F / F.1` history/autosave/recovery requirements; current `§24.3` EDT registry; `§37.27` F.1 crosswalk. The original source descriptions and stable F.1 keys remain unchanged.
+
+- **F.1-05 — user-intent transaction boundaries:** corrected the candidate mapping from `EDT-005, EDT-006, EDT-007` to `EDT-004, EDT-005, EDT-008/009, EDT-022`. The source requires text debounce/blur grouping and drag/slider pointer-down-to-pointer-up grouping. EDT-006 is selection synchronization and EDT-007 is viewport zoom/pan/fit, so neither directly owns history grouping; transaction/history, drag/resize, and Inspector control semantics are the appropriate candidate owners.
+- **F.1-06 — preset/batch transaction boundaries:** corrected `EDT-005–EDT-007, QA-002` to `EDT-003–EDT-005, DSN-004`. QA-002 is a QA anchor, not a feature-registry ID, and belongs in the QA column. The behavior is about canonical mutation, atomic transaction/rollback, history integrity and preset/global-change rollback; selection synchronization and viewport behavior are not the primary mapping.
+- **F.1-08 — validated Page Model autosave:** added `EDT-001` to the existing `EDT-022, EDT-027, EDT-028, WEB-004` mapping because the requirement explicitly restricts persistence to the validated canonical Page Model. EDT-022 covers property/schema validation; EDT-027/028 cover draft/save-reload and WEB-004 the server draft path.
+- **F.1-09 — crash recovery and conflict choices:** corrected the mapping to include `EDT-029` and `EDT-031`, replacing the misleading `EDT-030` as the primary local recovery reference. EDT-029 owns revision conflict recovery; EDT-031 explicitly owns network failure/retry/local recovery. WEB-007/008, OPS-009 and SEC-008 remain supporting revision/backup/secret-boundary references.
+- **Evidence limit:** this is a targeted semantic correction of four F.1 crosswalk rows, based on the preserved source bullet text and the current registry definitions. No implementation or runtime test was run. F.1 rows outside this correction batch and F.2–F.13 still require their own semantic review; the original `00/A` and `00.9–00.9.6.B` source recovery remains open. P0.2 stays **IN PROGRESS / NOT PASS**.
