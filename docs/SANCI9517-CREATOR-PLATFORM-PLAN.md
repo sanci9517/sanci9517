@@ -6939,6 +6939,17 @@ A `0004_system_page_content.sql` történeti táblát hoz létre, míg a `0005_c
 
 **Javasolt elfogadási feltételek:** publikált oldal → HTTP 200 + helyes cím/leírás/canonical/OG; nem publikált/nem létező oldal → valódi 404 és noindex; jogosult preview → draft, noindex/no-store; anonim preview → nincs draft-adat; slug változás → szabályozott 301/308 és canonical; sitemap csak publikus URL-ekkel, robots.txt és meta robots összehangolva; SSR/Worker/meta-kimenet architektúrája a meglévő asset-routinggal kompatibilisen kiválasztandó. **SEO/HTTP CONTRACT: IN PROGRESS / NOT PASS.** Kódot nem módosítottunk.
 
+### 63.50.24. Site settings tenant-scope és rendszerszintű oldalútvonal audit (2026-10-14)
+
+**Ellenőrzött ref:** `bb0897b`. Források: `src/core/site-context.ts`, `src/routes/public/site-settings.ts`, `src/routes/admin/settings.ts`, `src/routes/public/system-pages.ts`, `src/routes/public/schedule.ts`, `src/routes/admin/schedule.ts`, `src/index.ts`. Statikus forrásvizsgálat; új runtime-teszt nem történt.
+
+- **Jelenlegi single-site alap:** a `getCanonicalSiteContext()` konstans `site-default` azonosítót ad vissza. A publikus és Admin schedule útvonalak a `schedule_items.site_id` alapján szűrnek; ez megőrzendő ownership minta a későbbi multi-tenant platformhoz.
+- **Settings scope eltérés:** az Admin settings és a publikus site settings jelenleg kizárólag `site_settings.key = 'site'` szerint olvas/ír, nem a `site_id` szerint. Ez a jelenlegi egyoldalas modellben lehet tudatos globális beállítás, de a Creator Platform több különálló creator/site támogatására **nem tekinthető bizonyított tenant-szeparációnak**. Nem állítunk jelenlegi adatkiáramlást; a multi-tenant szerződés és migráció szükségessége OPEN.
+- **System pages legacy út:** a `publicSystemPagesRoute` külön `system_page_content` tárból, `path` alapján olvas, szintén explicit site-scope nélkül. A `src/index.ts` vizsgált routingja nem regisztrálja a `/api/public/system-pages` útvonalat, bár a route-modul létezik. Ez potenciálisan elárvult/legacy API; eltávolítás előtt teljes hivatkozás- és adatinventár kötelező.
+- **Felhasználói felület:** az Admin settings legalább `admin` szerepkört kér, a schedule szerkesztés legalább `editor` szerepkört; a publikus site settings anonim olvasható. Ezek a jogosultsági különbségek a moduláris Admin navigációban is megőrzendők.
+
+**Döntési/tesztkapuk:** global vs site-scoped vs account-scoped settings kulcsok tulajdonosi mátrixa; siteId-hoz kötött settings és system-page adatok migrációs tervvel, nem vak adatátírással; API és frontend fogyasztói hivatkozások tételes felderítése; 2 külön site fixture és kereszt-tenant negatív teszt; schedule/site-settings/sitemap/SEO consistency. **TENANT OWNERSHIP / LEGACY API: IN PROGRESS / NOT PASS.** A single-site működésből nem következtetünk működő multi-tenancyre. Nem történt runtime-kód módosítás.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
