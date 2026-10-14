@@ -4682,3 +4682,21 @@ A structural scan of the 96 F.1–F.13 crosswalk rows found two remaining rows w
 - **F.11-01:** removed `QA-001–QA-010` from the mapping cell. QA-002–QA-009 remain in the dedicated QA column. `§39.2` and the feature-family ranges remain scope references, not a claim that every referenced capability is scheduled for 1.0; the phase-cell qualifier added in §41.3.68 keeps §39 per-domain gates authoritative.
 - **Verification:** a fresh scan of all 96 F.1–F.13 crosswalk rows found no remaining `QA-###` IDs in the feature-mapping column. This is structural hygiene only; it does not prove semantic completeness or feature readiness.
 - **Evidence boundary:** no runtime tests were run. F.1–F.13 still need complete source-by-source semantic approval, and the original `00/A` / `00.9–00.9.6.B` recovery remains open. P0.2 remains **IN PROGRESS / NOT PASS**.
+
+
+### 41.3.70. P0.2 — Additional historical source recovered: 00/A.2.2 Schedule CRUD + Inspector / domain-driven Editor DoD (2026-10-14)
+
+**Source provenance:** read-only retrieval from the historical branch `planning/ultimate-master-plan`, file `docs/archive/MASTER-DEVELOPMENT-PLAN-2026-10-13.md`, blob SHA `adc958b61e9c09d246989626c92066489d1d72f4`, lines 30–44. This exact subsection was absent from the currently canonical archive snapshot on `v2/foundation`; its presence on the historical branch is now recorded here so the requirement is not lost. The archive file remains historical evidence, not a second active plan.
+
+**Recovered requirement/architecture content:**
+- The canonical Visual Editor runtime is exclusively `public/editor-v2/`; legacy Editor/Admin/Schedule layers must not be reactivated as competing canonical surfaces.
+- Schedule records remain canonical domain data in D1. The Page Model stores presentation/configuration and references, not duplicate Schedule domain records.
+- Inspector uses the existing canonical Property Registry/state contract; it must not create a parallel property or state system.
+- Every new data path is site-scoped and uses the established E4 site-ownership contract.
+- Every mutation uses the established command/history/validation/persistence/audit pattern. Preserve the canonical Page Model, domain ownership, command/history, validation, revision/save/publish and site-ownership boundaries unless a proven architectural reason and separately approved plan change justify otherwise.
+- The Editor may be redesigned or rebuilt at the UI level, but this does not authorize a second canonical Editor core, Schedule domain or persistence path.
+- The historical subsection's old F-active and M0-superseded execution statements are not current instructions. The current MASTER's `§0.2` active point and sequential P0.2 gate remain authoritative.
+
+**Recovery limit:** this recovers one historical subsection and its seven architecture invariants, not the full original `00/A` chapter. The complete original `00/A` and `00.9–00.9.6.B` source set remains **PARTIALLY RECOVERED / OPEN**. Do not infer missing bullets from this subsection or from E/F. Continue searching historical branches/commits and map each recovered requirement into the existing single MASTER.
+
+**Evidence boundary:** source presence was verified by fetching the named file on the named historical branch and reading the exact lines. No runtime implementation or acceptance is implied. P0.2 remains **IN PROGRESS / NOT PASS**.
