@@ -7041,6 +7041,26 @@ A `0004_system_page_content.sql` történeti táblát hoz létre, míg a `0005_c
 
 **Tervezett RBAC/UX kapu:** 22 főmodul × viewer/editor/admin × olvasás/írás/publish/connection/admin beállítás műveleti mátrix; külön 401/403, stale session, cross-site, direct URL és re-auth negatív tesztek; a Viewer Editor shell helyes read-only vagy tiltott viselkedésének termékdöntése; később workspace/site tagság és granular permission a rang fölött. **RBAC NAVIGATION: SOURCE-VERIFIED BASELINE / NOT PASS FOR FINAL MODULE IA.** Nem történt jogosultságmódosítás.
 
+### 63.50.29. Twitch integráció RBAC és OAuth-visszatérési útvonal: műveleti határ (2026-10-14)
+
+**Forrásref:** `03c13b2`; `src/routes/integrations/twitch.ts`, `src/routes/admin/twitch-schedule-sync.ts`, `src/core/twitch-site-ownership.ts`, `src/core/auth/require-auth.ts`, `src/index.ts`. Statikus forrásbizonyíték, nem futtatott exploit/HTTP teszt.
+
+| Twitch művelet | Jelenlegi minimum | Meglévő ownership / egyéb védelem | Tervezési kérdés |
+|---|---|---|---|
+| `GET /api/integrations/twitch/connect` | bejelentkezett viewer/editor/admin | OAuth state userId + canonical siteId | Ki indíthat új provider kapcsolatot? |
+| `GET /api/integrations/twitch/callback` | bejelentkezett viewer/editor/admin | hash-elt state, user_id, site_id, expiry, unused, kapcsolat ownership | OAuth-folyamat megszakítása/hiba/role-változás kezelése |
+| `GET /api/integrations/twitch/connection` | bejelentkezett viewer/editor/admin | owned userId + siteId connection | A kapcsolat metaadata kinek látható? |
+| `GET /api/integrations/twitch/validation` | bejelentkezett viewer/editor/admin | owned userId + siteId; token validation/refresh | A validálás provider-mellékhatása és rate-limitje |
+| `POST /api/integrations/twitch/disconnect` | bejelentkezett viewer/editor/admin | owned userId + siteId; revoke + audit | **Kiemelt RBAC rés:** viewer is leválaszthatja a saját kapcsolatát; a kívánt szerepkör nincs rögzítve |
+| `POST /api/admin/twitch/schedule-sync` | editor/admin | canonical siteId + connectionId, domain sync | Live/Integrációk közös action, nem Visual Editor API |
+| `GET /api/integrations/twitch/diagnostic` | bejelentkezett viewer/editor/admin | csak konfigurációs booleanok | Diagnosztika láthatósága admin/ops határ szerint |
+
+**Biztonsági értelmezés:** a felhasználó- és site-ownership ellenőrzése valós és megőrzendő, de **nem egyenértékű** a provider-account műveletek granular jogosultságával. A `viewer` leválasztási lehetősége forrásból igazolt policy-gap **jelölt**, nem bizonyított jogosulatlan hozzáférés vagy production incidens; jelenleg a kapcsolat a bejelentkezett felhasználóhoz kötött. Multi-user/team esetén külön `integration.view/connect/manage/disconnect` capability és workspace membership szerződés kell.
+
+**OAuth UX kötés:** a siker/denied/invalid/error callback `303` redirectje és a hiba `code` query paramétere a `/admin/editor?twitch=...` címre mutat. A kanonikus 49.7 Kapcsolatok és integrációk modulra történő átvezetéskor az összes siker-, megszakítás-, expired/used state-, refresh- és owner-mismatch állapotnak láthatóan meg kell maradnia; a `code` paraméterben nem kerülhet érzékeny token. Az Editor maradhat kontextuális gyorselérés, de nem lehet provider-connection owner.
+
+**Elfogadási kapu:** viewer/editor/admin × own/shared/site/workspace connection mátrix; OAuth start/callback/replay/expired/session-switch/role-change negatív tesztek; disconnect CSRF és confirmation vizsgálat; provider-revoke retry és audit; a live schedule sync és connect elkülönített permission; diagnosztikai láthatóság. **TWITCH RBAC/OAUTH: OPEN / NOT PASS.** Nem történt kód-, jogosultság- vagy provider-kapcsolat módosítás.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
