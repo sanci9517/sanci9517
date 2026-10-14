@@ -6765,6 +6765,22 @@ Ez a szakasz a 63.41 kártyáit kiegészíti a 25. fejezet hiányzó, különál
 
 **Bizonyíték státusza:** route-level statikus besorolás elvégezve; teljes repository dependency scan, D1 tartalom, runtime és migration PASS **OPEN**. A 63.50.7-ben jelzett kettős *storage* nem jelenti bizonyított kettős aktív UI-t. `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY` továbbra is **IN PROGRESS / NOT PASS**.
 
+### 63.50.9. Első tényleges legacy kódarchiválás — ellenőrzött végrehajtás (2026-10-14)
+
+**Felhasználói döntés:** a bizonyítottan használaton kívüli kód archiválható; történeti kód és adat nem veszhet el. Ez a döntés **nem** jogosít automatikus adatbázis-tábla/migráció törlésre vagy a még nem bizonyított fogyasztók eltávolítására.
+
+**Végrehajtott forrásművelet:**
+1. A `src/routes/admin/system-pages.ts` eredeti tartalmát megőriztük `archive/legacy-code/system-pages.ts` alatt, eredeti útvonallal és archív státuszfejléccel. Commit: `b44fc0e9696b5488865d25b733cbfb6ea1ce30bd`.
+2. Az archív példányból újraolvasással ellenőriztük az `adminSystemPagesRoute` függvény megőrzését.
+3. Az eredeti, a `src/index.ts` által nem importált/nem regisztrált route-fájlt eltávolítottuk az aktív `src/routes/admin` alól. Commit: `c51e8474ff89a26c683640cb5f02a9cc02449595`.
+4. **Nem történt** D1 `system_page_content` rekord/tábla törlés, migration átírás, deploy, CI vagy éles böngészőteszt.
+
+**Értelmezés:** a régi handler aktív belépési pontból elérhetetlen volt; archiválása a duplikált *kód* csökkentése, **nem** a régi adatmodell teljes migrációjának PASS-a. Az archív fájl történeti forrás; relatív importjai az archív helyen nem futtathatók közvetlenül. Visszaállítás a Git történetből vagy az archív másolat alapján lehetséges.
+
+**Következő archívum-gate:** minden további fájl esetén (a) teljes aktuális import/route/build hivatkozásellenőrzés, (b) történeti funkció/asset/adatmegőrzés, (c) archivált példány ellenőrzése, (d) célzott typecheck/teszt és regressziós ellenőrzés, (e) csak ezután aktív forrásból törlés. A mostani művelet utáni typecheck/teszt **NOT RUN**, ezért a kódarchiválás utóellenőrzése nyitott.
+
+**Állapot:** egy legacy route archiválva, a kanonikus oldalkezelés és a 396 capability ID megőrizve. A teljes tervkapu **IN PROGRESS / NOT PASS**.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
