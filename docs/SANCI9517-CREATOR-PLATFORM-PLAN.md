@@ -667,7 +667,7 @@ A benchmark célja a problémák és jó minták azonosítása, nem másolás. M
 
 ## 9. Részletes fejlesztési munkacsomagok és elfogadási szerződések
 
-**A kanonikus, legfelső szintű fejlesztési sorrend a 41.2. fejezet F0–F11 listája.** A 9. fejezet P1–P22 pontjai részletes munkacsomagok és elfogadási területek, nem egy második, párhuzamos roadmap. A munkacsomagok a megfelelő F-fázisokba kerülnek a 62.5. fejezet leképezése szerint. A 39. fejezet a fázisok rövid áttekintése; nem írhatja felül a 41.2. fejezet sorrendjét.
+**A kanonikus, legfelső szintű fejlesztési sorrend a 41.2. fejezet F0–F11 listája.** A 9. fejezet P1–P22 pontjai részletes munkacsomagok és elfogadási területek, nem egy második, párhuzamos roadmap. A munkacsomagok a megfelelő F-fázisokba kerülnek a 63.5. fejezet leképezése szerint. A 39. fejezet a fázisok rövid áttekintése; nem írhatja felül a 41.2. fejezet sorrendjét.
 
 A fejlesztés függőségi sorrendben halad. A teljes termékcél végig megmarad; egyszerre a következő, a meglévő alapokra építhető és ellenőrizhető fejlesztési pont készül el. Történeti terv-összehasonlítás nem előfeltétele a termékfejlesztésnek.
 
@@ -3427,11 +3427,120 @@ A hosszú távú cél lehet több alkotót kiszolgáló Creator Platform, de ezt
 
 ---
 
-## 62. MASTER-terv lezárási és fejlesztésindítási feltételek
+## 62. Világszintű termékképességek és minőségi szerződés
+
+Ez a fejezet a teljes termék hosszú távú, nemzetközi szintű képességeit egészíti ki. Nem külön terv és nem új, párhuzamos roadmap: a 54. fejezet funkciókatalógusát, az 50. fejezet keresztmodulú szabályait, valamint az 58–61. fejezet biztonsági, megbízhatósági, hozzáférhetőségi és platform-előfeltételeit egészíti ki. A képességek a függőségi sorrend szerint kerülnek megvalósításra; külső szolgáltatás, jog, költség vagy API-korlát miatt nem ígérhetünk nem igazolt funkciót.
+
+### 62.1. Creator onboarding, tanulás és önkiszolgáló segítség
+
+- [ ] Feladat-alapú első indítás: weboldal indítása, brand beállítása, integráció csatlakoztatása, első tartalom, első stream és publikálás.
+- [ ] Opcionális lépésenkénti útmutatók, kipipálható checklisták, kihagyás és későbbi folytatás; a felhasználót nem kényszeríthetjük egyetlen merev onboarding-folyamatba.
+- [ ] A felület az aktuális állapotból mutassa a következő hasznos lépést, de ne állítson késznek semmit pusztán azért, mert a checklistát kipipálták.
+- [ ] Kontextuális súgó, fogalomtár, kereshető dokumentáció, rövid útmutatók, hibaelhárítás, billentyűparancsok és Visual Editor-tutorialok.
+- [ ] Demo/tesztadatok elkülönített módban, egyértelmű megjelöléssel; a demoadatok nem kerülhetnek a valódi publikált oldalra vagy éles analitikába.
+- [ ] Súgó és felhasználói visszajelzés nyelv szerint, képernyő-/műveletkontextussal, érzékeny adatok automatikus kitakarásával.
+- [ ] A támogatási kérelemhez felhasználó által jóváhagyott diagnosztikai csomag készülhessen; titkok, tokenek, privát tartalom és szükségtelen személyes adatok nem kerülhetnek bele.
+
+### 62.2. Munkafolyamatok, együttműködés és jóváhagyás
+
+- [ ] Draft → review → approved → scheduled/published életciklus a tartalomhoz, oldalakhoz, kampányokhoz, sablonokhoz és automatizmusokhoz, ahol a modul ezt indokolja.
+- [ ] Megjegyzések, feladatkiosztás, felelős, határidő, említés és döntési előzmény a későbbi csapatmódban; a személyes, egyfelhasználós működés emiatt nem válhat bonyolultabbá.
+- [ ] Jóváhagyási szabályok szerepkör, tartalomtípus, kockázat és külső művelet alapján; a jóváhagyás mindig egy konkrét, verziózott változatra vonatkozzon.
+- [ ] Ütközésfeloldás párhuzamos szerkesztésnél, világos jelzés arról, hogy mi változott, ki módosította és mi marad meg; csendes felülírás tilos.
+- [ ] Verzió-diff, előnézet, visszaállítás és a publikált verzióhoz kapcsolódó bizonyíték; a restore ne írja át észrevétlenül a történeti auditot.
+- [ ] Megosztási linkeknél scope, lejárat, visszavonás, hozzáférési napló és a privát/draft tartalom szivárgásának megakadályozása.
+
+### 62.3. Minőségmérés, kísérletezés és fokozatos bevezetés
+
+- [ ] Központi, típusos feature/capability-flag szerződés a későbbi funkciók fokozatos bevezetéséhez; a flag nem helyettesíti az authorizationt.
+- [ ] Környezetenkénti konfiguráció, fokozatos rollout, gyors lekapcsolás és visszaállítási terv kockázatos változtatásokhoz.
+- [ ] Kísérletek és A/B-tesztek csak megfelelő forgalom, adatvédelmi jogalap, mérési terv és előre rögzített siker-/leállítási feltétel mellett.
+- [ ] A mérési eseményekhez név, cél, adatmezők, adatforrás, megőrzési idő és adatvédelmi besorolás tartozzon; ne gyűjtsünk „majd jó lesz valamire” jellegű adatot.
+- [ ] Termékminőségi mutatók: sikeresen befejezett alapfolyamatok, hibaarány, mentési/publikálási sikertelenség, idő a feladat befejezéséig, hozzáférhetőségi hibák és támogatási visszajelzés.
+- [ ] Az analitika ne használjon megtévesztő dark patternöket; a felhasználói beleegyezés, adatminimalizálás és kikapcsolási lehetőség megmarad.
+- [ ] Minden kísérlet legyen megszüntethető úgy, hogy az adatok, URL-ek és felhasználói tartalmak ne sérüljenek.
+
+### 62.4. Nemzetközi teljesítmény, SEO és tartalomminőség
+
+- [ ] Publikus weboldal teljesítménycéljai mérhetőek legyenek: Core Web Vitals, első tartalom megjelenése, kép-/fontbetöltés, cache-hatékonyság és mobil hálózati használhatóság.
+- [ ] CDN/cache invalidáció, domain- és locale-váltás, publikálás utáni frissülés és hiba esetén a legutolsó érvényes publikált állapot kezelése.
+- [ ] Képek, videók, fontok és embedek méret-/formátumválasztása, lazy loading, alt text, poster/fallback és költségkorlát.
+- [ ] SEO/AEO ellenőrzések: indexelhetőség, canonical, hreflang, structured data, OG-kép, sitemap, robots, redirect-lánc, broken link, duplikált metaadat és nem publikált tartalom kiszivárgása.
+- [ ] Tartalomminőségi ellenőrzés: üres címsor, hiányzó alt text, hibás link, lejárt kampány, rossz locale, mobilos overflow, alacsony kontraszt és nem működő CTA.
+- [ ] A figyelmeztetés és a publikálást blokkoló hiba legyen külön kezelve; a felhasználó értse, miért blokkol a rendszer és hogyan javíthatja.
+- [ ] A nyelvi és régiós megjelenítés ne feltételezzen országot vagy jogi szabályt pusztán az IP-címből; a locale és timezone legyen felhasználó által felülbírálható.
+
+### 62.5. Nyilvános API, webhooks és integrációs fejlesztői élmény
+
+- [ ] Verziózott API-kontraktus, hitelesítés, scope, rate limit, pagination, idempotency key, egységes hibaformátum és deprecation-szabály.
+- [ ] Interaktív API-dokumentáció, használható példák, sandbox/test credentials és webhook-eseménykatalógus csak akkor, amikor a nyilvános API valóban megvalósul.
+- [ ] Webhook kézbesítési előzmény, aláírás-ellenőrzés, replay-védelem, retry, dead-letter és biztonságos kézi újrajátszás.
+- [ ] API-kulcs létrehozás, scope-szűkítés, utolsó használat, rotáció, visszavonás és titok egyszeri megjelenítése.
+- [ ] Import/export és integrációs adaptereknél séma-/verzióellenőrzés, előzetes dry-run, hibaösszegzés, részleges siker kezelése és idempotens újrapróbálás.
+- [ ] Bővítményeknél képesség-alapú engedély, szűk sandbox, eredet/licenc, aláírás/ellenőrzés, kompatibilitás, felülvizsgálat, gyors visszavonás és a platform core-tól való izoláció.
+- [ ] A külső fejlesztői felület nem adhat közvetlen hozzáférést D1/R2-hez, titkokhoz vagy belső admin műveletekhez; a domain API és authorization minden esetben kötelező.
+
+### 62.6. Ügyféltámogatás, visszajelzés és incidenskommunikáció
+
+- [ ] Beépített hibajelzés/visszajelzés, kategória, súlyosság, reprodukciós lépések, opcionális képernyőkép és felhasználói jóváhagyás.
+- [ ] Nyomon követhető támogatási esetek, állapot, válasz, kapcsolódó verzió/hibaazonosító és felhasználó által látható következő lépés; személyes adatok megőrzése korlátozott.
+- [ ] Szolgáltatói vagy platformszintű incidensnél a rendszer különböztesse meg a helyi konfigurációs hibát, a külső provider kiesését és a platform saját hibáját.
+- [ ] Állapotoldal/karbantartási üzenet későbbi szolgáltatási fázisban; a kommunikáció legyen pontos, időbélyegzett és utólag frissíthető.
+- [ ] Incidenskezelés: súlyosság, felelős, idővonal, hatókör, mitigáció, helyreállítás, utóelemzés és megelőző intézkedések.
+- [ ] A support ne kérjen és ne jelenítsen meg jelszót, OAuth tokent, fizetési adatot vagy teljes privát tartalmat szükségtelenül.
+- [ ] Felhasználói javaslatok és hibajegyek csoportosíthatók legyenek, de a népszerűség nem helyettesíti a biztonsági és adatvesztési prioritást.
+
+### 62.7. Nemzetközi adatvédelem, bizalom és hordozhatóság
+
+- [ ] Adatleltár: adatmező, cél, jogalap/hozzájárulás ahol szükséges, adatforrás, címzett, megőrzés, törlés és export.
+- [ ] Adatfeldolgozói/provider-regiszter, adatátadási helyek és régiós korlátozások dokumentálása, ahol releváns és ellenőrizhető.
+- [ ] Consent-, cookie-, marketing-, analitika- és AI-feldolgozási beállítások külön kezelése; egy általános checkbox nem fedhet le minden eltérő célt.
+- [ ] Fiók-/workspace-/site-szintű adatexport és törlés, törlési folyamatállapot, jogszerű kivételek és a kapcsolódó külső szolgáltatók teendői.
+- [ ] Adathordozhatósági csomaghoz verziózott manifest, séma, asset-lista, hivatkozás-ellenőrzés, ellenőrzőösszeg és helyreállítási útmutató.
+- [ ] Export nem tartalmazhat titkot, sessiont, OAuth tokent vagy más felhasználó adatait; restore után a külső kapcsolatok újrahitelesítést igényelnek.
+- [ ] A platform ne ígérjen automatikus jogi megfelelést; a támogatott technikai kontrollok és a felhasználó/szolgáltató felelőssége külön legyen dokumentálva.
+
+### 62.8. SANCI AI minőségértékelés és irányítás
+
+- [ ] Feladattípusonkénti értékelési tesztkészlet a weboldal-, kód-, tartalom-, fordítás-, moderációs és elemzési feladatokhoz.
+- [ ] Mérni kell a strukturált kimenet érvényességét, tényhibát, forráskövetést, márkahangot, hozzáférhetőséget, költséget, késleltetést és biztonsági policy-követést.
+- [ ] Modell-/prompt-/tool-változás előtt regressziós értékelés; a magas kockázatú feladatoknál tiltott és adversarial tesztek.
+- [ ] AI-eredményhez eredetjelölés, verzió, használt források, bizonytalanság és a felhasználó által megtekinthető diff tartozzon, ahol ez értelmezhető.
+- [ ] Prompt injection, rosszindulatú dokumentum-/webtartalom, jogosultság-kiterjesztés, adatkilépés és eszközhasználati visszaélés elleni védelem.
+- [ ] A memória különíti el a felhasználó által megadott preferenciát, a megfigyelt adatot, a modell következtetését és a lejárt/érvénytelen információt.
+- [ ] A felhasználó megtekintheti, javíthatja és törölheti a megőrzött AI-kontextust; az AI nem tanulhat titokból vagy jogosulatlanul elérhető adatokból.
+- [ ] AI-kiesés vagy költséglimit esetén legyen világos fallback és a kritikus kézi folyamatok maradjanak működőképesek.
+
+### 62.9. Világszintű kiadási és elfogadási kritériumok
+
+Egy funkció csak a rá vonatkozó kritériumok bizonyítása után jelölhető késznek; a lista nem követeli meg, hogy minden későbbi platformképesség az első kiadás része legyen.
+
+- [ ] Funkció- és adatgazda, célfelhasználó, engedélyezett szerepkörök, állapotok, függőségek és kockázati besorolás dokumentált.
+- [ ] A fő sikeres folyamat, üres állapot, betöltés, részleges siker, hiba, újrapróbálás, visszavonás és törlés/archiválás tesztelt.
+- [ ] Domain-szintű teszt, integrációs teszt és authorization teszt a kockázatnak megfelelően lefutott.
+- [ ] UI-változtatásnál billentyűzet, screen reader-alapok, kontraszt, reduced motion, mobil/touch, keskeny viewport és hibaüzenetek ellenőrizve.
+- [ ] Megosztott adatoknál minden érintett felületen ellenőrizve a mentés, újratöltés, előnézet, publikált állapot és cache invalidáció.
+- [ ] Migrációnál előzetes állapotfelmérés, mentés, idempotencia, FK/ownership ellenőrzés és helyreállítási terv igazolt.
+- [ ] Külső szolgáltatónál scope, quota, timeout, retry, provider outage, revoke/reconnect és policy-korlát ellenőrizve.
+- [ ] Naplózás és metrikák hasznosak, de nem szivárogtatnak titkot vagy szükségtelen személyes adatot.
+- [ ] Dokumentáció, felhasználói súgó és változásnapló frissítve; ismert korlát és rollback útvonal leírva.
+- [ ] Éles/böngészős ellenőrzés csak ott jelölhető késznek, ahol ténylegesen lefutott; a CI nem helyettesíti a valódi felhasználói útvonalat.
+- [ ] A lezárás után egyetlen következő aktív pont marad a MASTER-ben; a funkciókatalógus nem válik második roadmap-példánnyá.
+
+### 62.10. A végső cél és a fázisok viszonya
+
+- [ ] A teljes platformcél minden funkcióját megőrizzük, de a korai kiadásba csak a stabil, értékes és függőségekkel alátámasztott részek kerülnek.
+- [ ] A nemzetközi szint nem jelent minden szolgáltató minden funkciójának vak utánzását: a termék a valós felhasználói érték, hozzáférhetőség, biztonság, fenntarthatóság és API-képesség alapján választ.
+- [ ] A platformnak fokozatosan kell skálázhatóvá válnia; a multi-tenant, marketplace, billing és külső fejlesztői platform csak a szükséges izolációs, jogi, üzemeltetési és támogatási előfeltételek után kapcsolható be.
+- [ ] A funkciók bővítése nem vezethet duplikált domainhez, második Visual Editorhoz, párhuzamos integrációs tokenrendszerhez vagy több, egymásnak ellentmondó tervhez.
+- [ ] A végső funkciókatalógust a felhasználóval közösen lehet részletesen rangsorolni, de addig sem veszhetnek el a korábban rögzített, még meg nem valósított képességek.
+
+
+## 63. MASTER-terv lezárási és fejlesztésindítási feltételek
 
 Ez a fejezet határozza meg, mikor mondható ki, hogy a MASTER-terv elég teljes és egységes a következő fejlesztési pont végrehajtásához. A terv lezárása nem jelenti a teljes termék implementációjának lezárását.
 
-### 62.1. A terv teljességének ellenőrzése
+### 63.1. A terv teljességének ellenőrzése
 - [ ] A teljes termékvízió minden képessége a megfelelő modulban szerepel; a régi forrásokból megőrzendő képesség nem tűnhet el pusztán átrendezés vagy fázisváltás miatt.
 - [ ] Minden funkció egyértelműen besorolt: core vagy későbbi, felhasználói felület/domain, függőség, státusz, elfogadási feltétel és szükséges teszt.
 - [ ] A hasonló vagy ismétlődő leírások össze vannak vetve; egy fogalomnak egy kanonikus definíciója van, a többi helyen hivatkozás vagy következetes összefoglaló szerepel.
@@ -3443,7 +3552,7 @@ Ez a fejezet határozza meg, mikor mondható ki, hogy a MASTER-terv elég teljes
 - [ ] A későbbi SaaS, csapat, marketplace, billing és AI-szolgáltatások megmaradnak a teljes célképben, de nem előzik meg a szükséges technikai és biztonsági alapokat.
 - [ ] A terv nem jelöl implementáltként olyan funkciót, amelyet csak leírtak; a bizonyítékok státusza külön marad a termékspecifikációtól.
 
-### 62.2. Kötelező konzisztencia-ellenőrzések
+### 63.2. Kötelező konzisztencia-ellenőrzések
 - [ ] Ismétlődő fejezetek és funkcióleírások egyeztetése, a korábbi részletek elvesztése nélkül.
 - [ ] Azonosítók, státuszok, fogalmak, elnevezések, útvonalak és fázishivatkozások ellenőrzése.
 - [ ] Függőségi sorrend és blokkoló feltételek ellenőrzése; nincs olyan későbbi funkció, amely nem létező előfeltételre épít.
@@ -3452,7 +3561,7 @@ Ez a fejezet határozza meg, mikor mondható ki, hogy a MASTER-terv elég teljes
 - [ ] A terv olvashatóságának ellenőrzése: modulonként jól elkülönülő fejezetek, követhető navigáció, fogalomtár és egyértelmű aktív pont.
 - [ ] Történeti forrásokból származó követelményeknél az eredet és a megőrzési döntés visszakövethető; hiányzó forrás nem nyilvánítható automatikusan egyeztetettnek.
 
-### 62.3. Fejlesztésindítási feltétel
+### 63.3. Fejlesztésindítási feltétel
 A következő fejlesztési pont csak akkor indítható, ha:
 1. az aktuális aktív pont és annak scope-ja a MASTER-ben egyértelmű;
 2. a szükséges függőségek és a tiltott mellékhatások rögzítettek;
@@ -3461,7 +3570,7 @@ A következő fejlesztési pont csak akkor indítható, ha:
 5. az adatvesztési, jogosultsági, migrációs és visszaállítási kockázatok kezelési módja dokumentált;
 6. a lezárás feltételei objektíven ellenőrizhetők, és a PASS csak a bizonyítékok után adható meg.
 
-### 62.4. Átadás a tervből a megvalósításba
+### 63.4. Átadás a tervből a megvalósításba
 - [ ] Először a MASTER belső egységességét és a szükséges történeti követelmények megőrzését kell ellenőrizni; ez nem külön termékterv és nem párhuzamos auditprojekt.
 - [ ] A nyitott tervbeli kérdéseket a megfelelő modulban kell megoldani; a kész specifikációt nem kell minden fázisnál újra feltalálni.
 - [ ] A terv lezárási kritériumainak teljesülése után az egyetlen aktív implementációs pont az F0 meglévő core workflow-ja marad, kivéve ha a repository aktuális, ellenőrzött állapota indokolt változtatást követel.
@@ -3469,7 +3578,7 @@ A következő fejlesztési pont csak akkor indítható, ha:
 - [ ] Minden lezárt pont után a MASTER státusza, a bizonyíték, az ismert korlát és a következő aktív pont frissül.
 - [ ] A terv lezárását és a kód készültségét külön kell kommunikálni: a terv lehet teljes, miközben a termék funkcióinak többsége még fejlesztésre vár.
 
-### 62.5. Kanonikus fázis- és munkacsomag-leképezés
+### 63.5. Kanonikus fázis- és munkacsomag-leképezés
 A következő táblázat feloldja a dokumentumban korábban párhuzamosnak tűnő P- és F-számozást. Az F-szám a legfelső szintű végrehajtási sorrend; a P-szám a részletes munkacsomag.
 
 | Részletes munkacsomag | Kanonikus F-fázis | Megjegyzés |
@@ -3499,20 +3608,20 @@ A következő táblázat feloldja a dokumentumban korábban párhuzamosnak tűn�
 
 A fenti leképezés nem engedélyezi a függőségek átugrását. Ha egy munkacsomag több fázist érint, csak az adott fázisra eső, bizonyítható rész zárható le; a teljes munkacsomag nem jelölhető késznek ettől.
 
-### 62.6. Roadmap- és státusz-konfliktusok kezelése
+### 63.6. Roadmap- és státusz-konfliktusok kezelése
 - [ ] A 41.2. fejezet F0–F11 listája a legfelső szintű roadmap egyetlen forrása; a 39. fejezet összefoglaló, a 9. fejezet részletes munkacsomag-katalógus.
 - [ ] A 19. fejezet F0 fókusza az aktuális implementációs cél, nem bizonyíték arra, hogy F0 minden acceptance-feladata nyitott vagy kész; a konkrét státuszt ellenőrzött teszt/runtime eredmény adja.
 - [ ] Korábbi checkpointok vagy elavult állapotjelzések nem írhatják felül automatikusan a jelenlegi termék-roadmapet. Csak az aktuális termékfunkcióhoz szükséges, bizonyítékkal alátámasztott hiány vagy regresszió határozhatja meg a következő munkát.
 - [ ] Ha egy státusz vagy roadmap-sorrend más fejezetben eltér, először ezt a kanonikus térképet és a legfrissebb igazolt repository/runtime állapotot kell alkalmazni; az eltérést a MASTER-ben egy helyen kell javítani.
 - [ ] A dokumentum végső konzisztencia-ellenőrzése után a következő munka nem további roadmap-átírás, hanem a 19. fejezet szerinti legkorábbi, reprodukálható F0 acceptance-feladat implementációja/ellenőrzése.
 
-### 62.7. Az eddigi dokumentumszerkezeti ellenőrzés eredménye — 2026-10-14
+### 63.7. Az eddigi dokumentumszerkezeti ellenőrzés eredménye — 2026-10-14
 Az ellenőrzés a MASTER aktuális repository-változatára vonatkozik; nem jelent teljes szemantikai, runtime- vagy funkcionális PASS-t.
 
-- [x] A számozott főfejezetek 0–63 között folytonosak, hiányzó főfejezetszámot nem találtunk; a 63. fejezet a világszintű termékképességeket és minőségi szerződést egészíti ki.
+- [x] A számozott főfejezetek 0–63 között folytonosak, hiányzó főfejezetszámot nem találtunk; a 62. fejezet a világszintű termékképességeket és minőségi szerződést egészíti ki.
 - [x] Az aktuális dokumentumellenőrzésben nem találtunk azonos című, duplikált Markdown-fejezetcímet.
 - [x] A 3. fejezet domain-felelősségeit a kanonikus 16 modulhoz rendeltük; a 46.1. menülistát a 49. fejezet modulstruktúrájához igazítottuk.
-- [x] A 9. fejezet P1–P22 munkacsomagjait a 41.2. F0–F11 végrehajtási sorrendhez rendeltük a 62.5. leképezéssel.
+- [x] A 9. fejezet P1–P22 munkacsomagjait a 41.2. F0–F11 végrehajtási sorrendhez rendeltük a 63.5. leképezéssel.
 - [x] A F0 core media/resource feladat és az F2 teljes Resource Registry/Design System határát különválasztottuk.
 - [ ] A teljes termékfunkciók közötti szemantikai duplikáció- és függőségellenőrzés még nem teljes; a szerkezeti ellenőrzés nem helyettesíti.
 - [ ] A történeti források minden követelményének megőrzése és a hiányzó források állapotának igazolása nem tekinthető teljesnek pusztán a jelenlegi dokumentum belső ellenőrzése alapján.
@@ -3523,111 +3632,3 @@ Az ellenőrzés a MASTER aktuális repository-változatára vonatkozik; nem jele
 
 **Státusz:** a dokumentumszerkezet és a fő roadmap-ütközések részben rendezettek; a MASTER lezárása és a termékfejlesztés F0 PASS állapota még nincs kimondva. A korábbi P0/P0.2 checkpoint nem válik új aktív munkafolyamattá; a következő konkrét feladatot a jelenlegi F0 core workflow tényleges állapota határozza meg.
 
-
-## 63. Világszintű termékképességek és minőségi szerződés
-
-Ez a fejezet a teljes termék hosszú távú, nemzetközi szintű képességeit egészíti ki. Nem külön terv és nem új, párhuzamos roadmap: a 54. fejezet funkciókatalógusát, az 50. fejezet keresztmodulú szabályait, valamint az 58–61. fejezet biztonsági, megbízhatósági, hozzáférhetőségi és platform-előfeltételeit egészíti ki. A képességek a függőségi sorrend szerint kerülnek megvalósításra; külső szolgáltatás, jog, költség vagy API-korlát miatt nem ígérhetünk nem igazolt funkciót.
-
-### 63.1. Creator onboarding, tanulás és önkiszolgáló segítség
-
-- [ ] Feladat-alapú első indítás: weboldal indítása, brand beállítása, integráció csatlakoztatása, első tartalom, első stream és publikálás.
-- [ ] Opcionális lépésenkénti útmutatók, kipipálható checklisták, kihagyás és későbbi folytatás; a felhasználót nem kényszeríthetjük egyetlen merev onboarding-folyamatba.
-- [ ] A felület az aktuális állapotból mutassa a következő hasznos lépést, de ne állítson késznek semmit pusztán azért, mert a checklistát kipipálták.
-- [ ] Kontextuális súgó, fogalomtár, kereshető dokumentáció, rövid útmutatók, hibaelhárítás, billentyűparancsok és Visual Editor-tutorialok.
-- [ ] Demo/tesztadatok elkülönített módban, egyértelmű megjelöléssel; a demoadatok nem kerülhetnek a valódi publikált oldalra vagy éles analitikába.
-- [ ] Súgó és felhasználói visszajelzés nyelv szerint, képernyő-/műveletkontextussal, érzékeny adatok automatikus kitakarásával.
-- [ ] A támogatási kérelemhez felhasználó által jóváhagyott diagnosztikai csomag készülhessen; titkok, tokenek, privát tartalom és szükségtelen személyes adatok nem kerülhetnek bele.
-
-### 63.2. Munkafolyamatok, együttműködés és jóváhagyás
-
-- [ ] Draft → review → approved → scheduled/published életciklus a tartalomhoz, oldalakhoz, kampányokhoz, sablonokhoz és automatizmusokhoz, ahol a modul ezt indokolja.
-- [ ] Megjegyzések, feladatkiosztás, felelős, határidő, említés és döntési előzmény a későbbi csapatmódban; a személyes, egyfelhasználós működés emiatt nem válhat bonyolultabbá.
-- [ ] Jóváhagyási szabályok szerepkör, tartalomtípus, kockázat és külső művelet alapján; a jóváhagyás mindig egy konkrét, verziózott változatra vonatkozzon.
-- [ ] Ütközésfeloldás párhuzamos szerkesztésnél, világos jelzés arról, hogy mi változott, ki módosította és mi marad meg; csendes felülírás tilos.
-- [ ] Verzió-diff, előnézet, visszaállítás és a publikált verzióhoz kapcsolódó bizonyíték; a restore ne írja át észrevétlenül a történeti auditot.
-- [ ] Megosztási linkeknél scope, lejárat, visszavonás, hozzáférési napló és a privát/draft tartalom szivárgásának megakadályozása.
-
-### 63.3. Minőségmérés, kísérletezés és fokozatos bevezetés
-
-- [ ] Központi, típusos feature/capability-flag szerződés a későbbi funkciók fokozatos bevezetéséhez; a flag nem helyettesíti az authorizationt.
-- [ ] Környezetenkénti konfiguráció, fokozatos rollout, gyors lekapcsolás és visszaállítási terv kockázatos változtatásokhoz.
-- [ ] Kísérletek és A/B-tesztek csak megfelelő forgalom, adatvédelmi jogalap, mérési terv és előre rögzített siker-/leállítási feltétel mellett.
-- [ ] A mérési eseményekhez név, cél, adatmezők, adatforrás, megőrzési idő és adatvédelmi besorolás tartozzon; ne gyűjtsünk „majd jó lesz valamire” jellegű adatot.
-- [ ] Termékminőségi mutatók: sikeresen befejezett alapfolyamatok, hibaarány, mentési/publikálási sikertelenség, idő a feladat befejezéséig, hozzáférhetőségi hibák és támogatási visszajelzés.
-- [ ] Az analitika ne használjon megtévesztő dark patternöket; a felhasználói beleegyezés, adatminimalizálás és kikapcsolási lehetőség megmarad.
-- [ ] Minden kísérlet legyen megszüntethető úgy, hogy az adatok, URL-ek és felhasználói tartalmak ne sérüljenek.
-
-### 63.4. Nemzetközi teljesítmény, SEO és tartalomminőség
-
-- [ ] Publikus weboldal teljesítménycéljai mérhetőek legyenek: Core Web Vitals, első tartalom megjelenése, kép-/fontbetöltés, cache-hatékonyság és mobil hálózati használhatóság.
-- [ ] CDN/cache invalidáció, domain- és locale-váltás, publikálás utáni frissülés és hiba esetén a legutolsó érvényes publikált állapot kezelése.
-- [ ] Képek, videók, fontok és embedek méret-/formátumválasztása, lazy loading, alt text, poster/fallback és költségkorlát.
-- [ ] SEO/AEO ellenőrzések: indexelhetőség, canonical, hreflang, structured data, OG-kép, sitemap, robots, redirect-lánc, broken link, duplikált metaadat és nem publikált tartalom kiszivárgása.
-- [ ] Tartalomminőségi ellenőrzés: üres címsor, hiányzó alt text, hibás link, lejárt kampány, rossz locale, mobilos overflow, alacsony kontraszt és nem működő CTA.
-- [ ] A figyelmeztetés és a publikálást blokkoló hiba legyen külön kezelve; a felhasználó értse, miért blokkol a rendszer és hogyan javíthatja.
-- [ ] A nyelvi és régiós megjelenítés ne feltételezzen országot vagy jogi szabályt pusztán az IP-címből; a locale és timezone legyen felhasználó által felülbírálható.
-
-### 63.5. Nyilvános API, webhooks és integrációs fejlesztői élmény
-
-- [ ] Verziózott API-kontraktus, hitelesítés, scope, rate limit, pagination, idempotency key, egységes hibaformátum és deprecation-szabály.
-- [ ] Interaktív API-dokumentáció, használható példák, sandbox/test credentials és webhook-eseménykatalógus csak akkor, amikor a nyilvános API valóban megvalósul.
-- [ ] Webhook kézbesítési előzmény, aláírás-ellenőrzés, replay-védelem, retry, dead-letter és biztonságos kézi újrajátszás.
-- [ ] API-kulcs létrehozás, scope-szűkítés, utolsó használat, rotáció, visszavonás és titok egyszeri megjelenítése.
-- [ ] Import/export és integrációs adaptereknél séma-/verzióellenőrzés, előzetes dry-run, hibaösszegzés, részleges siker kezelése és idempotens újrapróbálás.
-- [ ] Bővítményeknél képesség-alapú engedély, szűk sandbox, eredet/licenc, aláírás/ellenőrzés, kompatibilitás, felülvizsgálat, gyors visszavonás és a platform core-tól való izoláció.
-- [ ] A külső fejlesztői felület nem adhat közvetlen hozzáférést D1/R2-hez, titkokhoz vagy belső admin műveletekhez; a domain API és authorization minden esetben kötelező.
-
-### 63.6. Ügyféltámogatás, visszajelzés és incidenskommunikáció
-
-- [ ] Beépített hibajelzés/visszajelzés, kategória, súlyosság, reprodukciós lépések, opcionális képernyőkép és felhasználói jóváhagyás.
-- [ ] Nyomon követhető támogatási esetek, állapot, válasz, kapcsolódó verzió/hibaazonosító és felhasználó által látható következő lépés; személyes adatok megőrzése korlátozott.
-- [ ] Szolgáltatói vagy platformszintű incidensnél a rendszer különböztesse meg a helyi konfigurációs hibát, a külső provider kiesését és a platform saját hibáját.
-- [ ] Állapotoldal/karbantartási üzenet későbbi szolgáltatási fázisban; a kommunikáció legyen pontos, időbélyegzett és utólag frissíthető.
-- [ ] Incidenskezelés: súlyosság, felelős, idővonal, hatókör, mitigáció, helyreállítás, utóelemzés és megelőző intézkedések.
-- [ ] A support ne kérjen és ne jelenítsen meg jelszót, OAuth tokent, fizetési adatot vagy teljes privát tartalmat szükségtelenül.
-- [ ] Felhasználói javaslatok és hibajegyek csoportosíthatók legyenek, de a népszerűség nem helyettesíti a biztonsági és adatvesztési prioritást.
-
-### 63.7. Nemzetközi adatvédelem, bizalom és hordozhatóság
-
-- [ ] Adatleltár: adatmező, cél, jogalap/hozzájárulás ahol szükséges, adatforrás, címzett, megőrzés, törlés és export.
-- [ ] Adatfeldolgozói/provider-regiszter, adatátadási helyek és régiós korlátozások dokumentálása, ahol releváns és ellenőrizhető.
-- [ ] Consent-, cookie-, marketing-, analitika- és AI-feldolgozási beállítások külön kezelése; egy általános checkbox nem fedhet le minden eltérő célt.
-- [ ] Fiók-/workspace-/site-szintű adatexport és törlés, törlési folyamatállapot, jogszerű kivételek és a kapcsolódó külső szolgáltatók teendői.
-- [ ] Adathordozhatósági csomaghoz verziózott manifest, séma, asset-lista, hivatkozás-ellenőrzés, ellenőrzőösszeg és helyreállítási útmutató.
-- [ ] Export nem tartalmazhat titkot, sessiont, OAuth tokent vagy más felhasználó adatait; restore után a külső kapcsolatok újrahitelesítést igényelnek.
-- [ ] A platform ne ígérjen automatikus jogi megfelelést; a támogatott technikai kontrollok és a felhasználó/szolgáltató felelőssége külön legyen dokumentálva.
-
-### 63.8. SANCI AI minőségértékelés és irányítás
-
-- [ ] Feladattípusonkénti értékelési tesztkészlet a weboldal-, kód-, tartalom-, fordítás-, moderációs és elemzési feladatokhoz.
-- [ ] Mérni kell a strukturált kimenet érvényességét, tényhibát, forráskövetést, márkahangot, hozzáférhetőséget, költséget, késleltetést és biztonsági policy-követést.
-- [ ] Modell-/prompt-/tool-változás előtt regressziós értékelés; a magas kockázatú feladatoknál tiltott és adversarial tesztek.
-- [ ] AI-eredményhez eredetjelölés, verzió, használt források, bizonytalanság és a felhasználó által megtekinthető diff tartozzon, ahol ez értelmezhető.
-- [ ] Prompt injection, rosszindulatú dokumentum-/webtartalom, jogosultság-kiterjesztés, adatkilépés és eszközhasználati visszaélés elleni védelem.
-- [ ] A memória különíti el a felhasználó által megadott preferenciát, a megfigyelt adatot, a modell következtetését és a lejárt/érvénytelen információt.
-- [ ] A felhasználó megtekintheti, javíthatja és törölheti a megőrzött AI-kontextust; az AI nem tanulhat titokból vagy jogosulatlanul elérhető adatokból.
-- [ ] AI-kiesés vagy költséglimit esetén legyen világos fallback és a kritikus kézi folyamatok maradjanak működőképesek.
-
-### 63.9. Világszintű kiadási és elfogadási kritériumok
-
-Egy funkció csak a rá vonatkozó kritériumok bizonyítása után jelölhető késznek; a lista nem követeli meg, hogy minden későbbi platformképesség az első kiadás része legyen.
-
-- [ ] Funkció- és adatgazda, célfelhasználó, engedélyezett szerepkörök, állapotok, függőségek és kockázati besorolás dokumentált.
-- [ ] A fő sikeres folyamat, üres állapot, betöltés, részleges siker, hiba, újrapróbálás, visszavonás és törlés/archiválás tesztelt.
-- [ ] Domain-szintű teszt, integrációs teszt és authorization teszt a kockázatnak megfelelően lefutott.
-- [ ] UI-változtatásnál billentyűzet, screen reader-alapok, kontraszt, reduced motion, mobil/touch, keskeny viewport és hibaüzenetek ellenőrizve.
-- [ ] Megosztott adatoknál minden érintett felületen ellenőrizve a mentés, újratöltés, előnézet, publikált állapot és cache invalidáció.
-- [ ] Migrációnál előzetes állapotfelmérés, mentés, idempotencia, FK/ownership ellenőrzés és helyreállítási terv igazolt.
-- [ ] Külső szolgáltatónál scope, quota, timeout, retry, provider outage, revoke/reconnect és policy-korlát ellenőrizve.
-- [ ] Naplózás és metrikák hasznosak, de nem szivárogtatnak titkot vagy szükségtelen személyes adatot.
-- [ ] Dokumentáció, felhasználói súgó és változásnapló frissítve; ismert korlát és rollback útvonal leírva.
-- [ ] Éles/böngészős ellenőrzés csak ott jelölhető késznek, ahol ténylegesen lefutott; a CI nem helyettesíti a valódi felhasználói útvonalat.
-- [ ] A lezárás után egyetlen következő aktív pont marad a MASTER-ben; a funkciókatalógus nem válik második roadmap-példánnyá.
-
-### 63.10. A végső cél és a fázisok viszonya
-
-- [ ] A teljes platformcél minden funkcióját megőrizzük, de a korai kiadásba csak a stabil, értékes és függőségekkel alátámasztott részek kerülnek.
-- [ ] A nemzetközi szint nem jelent minden szolgáltató minden funkciójának vak utánzását: a termék a valós felhasználói érték, hozzáférhetőség, biztonság, fenntarthatóság és API-képesség alapján választ.
-- [ ] A platformnak fokozatosan kell skálázhatóvá válnia; a multi-tenant, marketplace, billing és külső fejlesztői platform csak a szükséges izolációs, jogi, üzemeltetési és támogatási előfeltételek után kapcsolható be.
-- [ ] A funkciók bővítése nem vezethet duplikált domainhez, második Visual Editorhoz, párhuzamos integrációs tokenrendszerhez vagy több, egymásnak ellentmondó tervhez.
-- [ ] A végső funkciókatalógust a felhasználóval közösen lehet részletesen rangsorolni, de addig sem veszhetnek el a korábban rögzített, még meg nem valósított képességek.
