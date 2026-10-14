@@ -4159,3 +4159,12 @@ A C.23.20-07 forrásbullet jövőbeli marketplace/shared-library képességeket 
 | C.24.7-P03 | policy text | A feladat csak indokolt választás, elfogadott licenc/kompatibilitás/kockázat és sikeres releváns tesztek után zárható le; dokumentálás nem helyettesíti a működő implementációt. | OPS-010, SEC-010, QA-001–010 | OPEN — acceptance rule |
 
 **Értelmezés:** ez teljes forrásszöveg-megőrzési és kezdeti mapping-ledger a C.24 szabályhoz. A hivatkozások elsődleges keresztvágó kontrollok, nem azt jelentik, hogy minden dependency-review lépés már megtörtént. Minden tényleges új dependency/upgrade/fork/build döntésnél a konkrét alternatívák, licenc, maintenance, CVE, runtime/bundle-hatás, teszt és rollback bizonyítékát az adott engineering taskban kell rögzíteni. A C.24 szemantikai/acceptance auditja és a hiányzó eredeti `00/A` / `00.9–00.9.6.B` források továbbra is nyitottak. P0.2 **IN PROGRESS / NOT PASS**.
+
+### 41.3.31. P0.2 — Final structural recheck after C.24 and marketplace mapping (2026-10-14)
+
+- Current §24 registry: **361 unique IDs**.
+- Current §37.22–§37.30 crosswalk: **323 rows** across 37.22=57, 37.23=66, 37.24=45, 37.25=59, 37.27=28, 37.29=26, 37.30=42.
+- Distinct IDs referenced by the checked crosswalk: **361/361**; unresolved references: **0**; unreferenced registry IDs: **0**.
+- The C.24 policy ledger in §41.3.30 contains **46 rows**: 37 original source bullets plus 9 separate policy/decision/acceptance rules.
+
+This confirms structural ID coverage and source-bullet ledger construction only. It does not close semantic mapping review, per-ID provenance/permission/dependency/acceptance contracts, or the unrecovered original `00/A` and `00.9–00.9.6.B` source texts. P0.2 remains **IN PROGRESS / NOT PASS**.
