@@ -5394,3 +5394,25 @@ A közvetlen előd-MASTER (`87b6f0bb71cd96646b6a501ab85c242386a1124e`) és a jel
 **Következő lépés:** 1/A követelményeit bontsuk atomikus tételekre és keressük meg a jelenlegi MASTER pontos szöveghelyeit; ezután 1/B, majd 1/C–1/H. A 30 pontos 1/H kapu minden pontja kapjon külön stabil hivatkozást vagy igazolt jelenlegi célpontot. Ezt követően folytatjuk a 2/A–2/J layout követelményekkel. A hiányzó `00.9.6.B` forrás továbbra sem rekonstruálható ebből az összevetésből.
 
 **Státusz:** az 1/A–1/H első megfeleltetési vázlata dokumentálva, teljes szemantikai audit még nyitott; `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.125. P0.2 — Editor Core crosswalk újraellenőrzése: meglévő EDT-azonosítók és történeti E/F leképezések (2026-10-14)
+
+**Korrekció a 41.3.124 megállapításához:** a MASTER teljes szövegének célzott keresése során további, korábban nem kellően figyelembe vett részletes tartalmat találtam. Ezért az előző táblázat `PARTIAL / VERIFY` státuszai továbbra is helyes óvatossági címkék, de nem szabad úgy értelmezni őket, mintha a jelenlegi MASTER-ben csak általános architekturális elvek lennének.
+
+**Konkrét jelenlegi bizonyítékok:**
+- Az Editor canonical feature-ID felsorolása külön azonosítja az `EDT-027` dirty state + explicit Save Draft, `EDT-028` save/reload round-trip, `EDT-029` revision conflict recovery, `EDT-030` mentés közbeni folyamatban lévő szerkesztés megőrzése, `EDT-031` hálózati hiba/retry/local recovery, `EDT-032` publish nélküli preview, `EDT-033` explicit publish/save szétválasztás és `EDT-034` public renderer–Editor preview paritás követelményeit. Az `EDT-035–EDT-042` további mobil/editor UX, accessibility, onboarding és recovery témákat fed le.
+- A történeti crosswalk `E.3.7-01–E.3.7-06` külön kezeli a strukturált parancsokra épülő undo/redo-t, save/error/retry/conflict állapotokat, validált autosave + explicit save viszonyát, expected-version concurrency-t, unsaved-navigation/browser-refresh recovery-t és a Canvas/Layers/Inspector/history/backend konzisztenciáját.
+- A `F.1-01–F.1-10` történeti csoport a szerkesztési/mentési folyamatokat tovább bontja, többek között újranyitás/reload utáni szerkeszthetőségre, regressziós sorrendre, immutable history/limitekre, tranzakciócsoportosításra, canonical command/state használatra, autosave-re és crash recovery-re.
+- A negatív tesztjegyzék `E.20-N05–N06` kifejezetten előírja, hogy a sikertelen save/publish ne jelezzen hamis sikert, és stale revision ne írja felül csendben az újabb állapotot.
+- A `37.22` crosswalk korábban már dokumentáltan 57 E.2/E.3 bullet-leképezést tartalmazott, 125 különböző explicit vagy kibontott feature/QA hivatkozással; ugyanott a dokumentum figyelmeztet, hogy a strukturális ellenőrzés nem bizonyít szemantikai helyességet vagy runtime PASS-t.
+
+**Frissített értékelés:**
+1. A régi 1/A save/recovery/conflict tartalmának több fontos eleme jelenleg is explicit canonical ID-val és történeti crosswalkban szerepel. Ez erősebb bizonyíték, mint a korábbi általános kulcsszókeresés.
+2. Ez még nem igazolja automatikusan, hogy a régi `87b6f0b` snapshot minden 1/A–1/H pontja pontosan és veszteség nélkül megfelelt a jelenlegi crosswalk forrássorainak. A régi 1/A–1/H lista és a történeti `00.9.6.E.3.7` / `F.1` forrás nem feltételezhető azonosnak; soronkénti egyezés kell.
+3. Az 1/B elemkészlet, 1/C selection/manipulation, 1/D bulk/tree műveletek, 1/E Inspector teljes mezőkészlete és 1/F history részletszabályai külön atomikus ellenőrzést igényelnek. A jelenlegi EDT ID-lista bizonyítja a tervezési lefedettség egy részét, nem a végrehajtott funkciókat.
+4. A 30 pontos régi `1/H` Core tesztkaput nem tekintem PASS-nak pusztán azért, mert a jelenlegi tervben léteznek QA-ID-k, acceptance- és negatív tesztek. A pontos régi próbák és a jelenlegi QA/EDT célpontok megfeleltetése, valamint a hozzájuk tartozó tényleges bizonyítékok külön szükségesek.
+
+**Következő munka:** először a régi `1/A` 21 bulletjét, majd az `1/H` 30 tesztjét kell a jelenlegi `EDT`/`WEB`/`OPS`/`QA` azonosítókhoz és a történeti crosswalk soraihoz párosítani. Ezután ugyanilyen eljárás az 1/B–1/G csoportokon. Minden sorban külön jelölendő: `PLAN MATCH`, `SEMANTIC MATCH`, `PARTIAL`, `UNMAPPED`, `SUPERSEDED WITH DECISION`; a tervezési egyezés nem runtime PASS.
+
+**Státusz:** a korábbi megfeleltetési vázlat pontosítva; meglévő crosswalkok azonosítva, de a régi snapshot tételes összevetése és a teljes szemantikai zárás nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
