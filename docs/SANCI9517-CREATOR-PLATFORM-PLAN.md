@@ -1525,13 +1525,13 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 
 Ezek a stabil ID-k azért szükségesek, mert a korábbi követelménykatalógus külön site settings, data source, binding-state és SEO-meta képességeket tartalmaz, amelyeket a korábbi WEB/EDT/INT ID-k nem fedtek le kellő pontossággal. Az ID-k a követelmény-nyilvántartás célpontjai; a létük nem jelent implementációs státuszt.
 
-**SET — Site settings**
+#### 24.18.1. Site settings — SET
 - SET-001: Canonical site settings schema és CRUD lifecycle.
 - SET-002: Site ownership/scope és multi-site kompatibilitás.
 - SET-003: Public-safe settings projection és secret/private mezők kizárása.
 - SET-004: Custom domain lifecycle, verification, DNS/SSL status, primary-domain transition and canonical URL.
 
-**DYN — Dinamikus adatforrás és binding**
+#### 24.18.2. Dinamikus adatforrás és binding — DYN
 - DYN-001: Canonical data source registry és provider/domain adapter.
 - DYN-002: Binding schema, type validation és resource/field compatibility.
 - DYN-003: Whitelisted filter/sort/transform/limit/pagination for bound data queries; not a replacement for module-specific library search.
@@ -1541,7 +1541,7 @@ Ezek a stabil ID-k azért szükségesek, mert a korábbi követelménykatalógus
 - DYN-007: Permission, site scope és published-only data boundary.
 - DYN-008: Binding diagnostics, preview, invalid-reference report és recovery.
 
-**SEO — Search/social metadata**
+#### 24.18.3. SEO és social metadata — SEO
 - SEO-001: Per-page title, description, canonical URL és robots policy.
 - SEO-002: Open Graph, X/Twitter card és social preview/image validation.
 - SEO-003: Validált structured data/schema.org, ahol releváns.
