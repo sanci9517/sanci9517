@@ -4476,3 +4476,48 @@ A 63.23 összesített ID-csoportjait ez a mátrix az EDT minden egyes stabil ID-
 
 **Státusz: IN PROGRESS / NOT PASS.** Ez az első teljes, egyedi-ID-s modul-szelet; a fenti nyitott acceptance pontok nem jelentenek automatikus BUILD döntést. A következő lépés a WEB-001–032 és a közös publish/revision contract ugyanezen szintű, egyedi ID-s bizonyítékmátrixa.
 
+### 63.27. WEB-001–032 — oldalak, publikálás és publikus felület, egyedi-ID-s bizonyítékmátrix
+
+A mátrix a `src/routes/admin/pages.ts`, `src/routes/admin/editor.ts`, `src/routes/public/pages.ts`, `src/core/page-model.ts`, `src/core/editor-validation.ts`, `public/assets/page-renderer.js` és `public/visual-page.html` aktuális forrásolvasására épül. Nem helyettesíti a HTTP/browser smoke tesztet. Ahol a repositoryban nincs bizonyíték, az állapot nyitott marad.
+
+| ID | Owner / forrás | Látható alap | Nyitott acceptance / függőség |
+|---|---|---|---|
+| WEB-001 | PAGE / admin pages CRUD | Site-scoped list/create/update route; slug/title/description validáció | Keresés/szűrés/pagináció, bulk actions, delete/archive és teljes lifecycle nem bizonyított; create útvonal publikált állapotot is elfogad. |
+| WEB-002 | PAGE / slug + schema | Slug validáció és egyediség constraint létezik | Slug change → canonical URL, old link/redirect, internal links, SEO metadata és site-scoped uniqueness viselkedés tesztelendő. |
+| WEB-003 | PAGE / page lifecycle | Duplicate/archive/delete/usage-map API nem látható a vizsgált admin route-ban | Reference/usage map, soft-delete/restore és safe delete; másik page/asset/form hivatkozásánál ne legyen árva rekord. |
+| WEB-004 | PAGE/REVISION / D1 published snapshot | Draft content, published_content_json, is_published és published_revision_id létezik | Minden write útvonalon draft/published invariants; create-time publish bypass megszüntetése vagy explicit validált policy. |
+| WEB-005 | PAGE/PREVIEW / public pages route | Preview query editor auth/role checkkel draftot olvas | Preview token/link expiry, page scope, noindex, unauthorized/cross-site és revision binding E2E. |
+| WEB-006 | PAGE/PUBLISH / editor-validation | Publish document validator létezik és Editor publish útvonal hívja | A teljes validációt minden publish belépési pontnak hívnia kell, beleértve pages create; validációs riport mezőnként és UI-szinten hiányzó. |
+| WEB-007 | PAGE/PUBLISH / editor route | Publish/unpublish/rollback műveletek és audit események léteznek | Állapotátmenetek, rollback published snapshotra, invalid transition, expectedVersion és idempotens ismétlés tesztelendő. |
+| WEB-008 | REVISION / editor route | Legutóbbi 30 revision metadata listázása és restore-to-new-revision létezik | Revision diff/compare UI, megjegyzés/actor/time, régi verzió safe preview és concurrency E2E. |
+| WEB-009 | NAVIGATION | Külön canonical navigation CRUD/schema route nem látható | Hierarchikus nav model, page reference validation, ordering, active state és publish atomikusság. |
+| WEB-010 | SITE/PAGE / header-footer/global layout | A public shellben statikus header/footer és menu placeholder található | Canonical layout/schema, Brand Kit linkage, page-level override és minden route-on konzisztens render. |
+| WEB-011 | NAVIGATION / accessibility | Statikus mobile menu markup és aria-label/expanded attribútum alap | Keyboard/focus/Escape, menu state, touch, reduced motion és real device/browser teszt. |
+| WEB-012 | ROUTING / Worker | `/p/:slug` shell és public page API létezik | Nem létezik bizonyított teljes route registry/404/redirect matrix; invalid/unpublished slug tényleges HTTP státusza és crawler viselkedése smoke tesztet igényel. |
+| WEB-013 | REDIRECT | Redirect manager/schema/route nem látható | 301/302/410 policy, loop detection, chain report, slug migration és canonical host. |
+| WEB-014 | PUBLIC HOME | Statikus shell és dynamic page shell létezik | Canonical Home route/page identity, published-only output, SEO/OG, nav/footer és mobile E2E. |
+| WEB-015 | PUBLIC LIVE | Live-state API/normalized live service nem bizonyított; Twitch connection önmagában nem elég | Offline/live/stale, player fallback, stream metadata, permission and provider failure. |
+| WEB-016 | PUBLIC SCHEDULE / SCH-010 | Public schedule read projection és schedule renderer létezik | Timezone/DST, cache/freshness, empty/error state, canonical schedule equality és Editor preview parity. |
+| WEB-017 | PUBLIC CONTENT HUB / CNT-020 | Content-domain feed/schema nincs bizonyítva | Csak canonical published-content projectionből rendereljen; page route/shell nem válhat content CRUD adatgazdává. |
+| WEB-018 | PUBLIC PROFILE | About/profile page CRUD or dedicated schema not proven | Canonical profile fields, public-safe settings, metadata/localization and publish lifecycle. |
+| WEB-019 | PUBLIC COMMUNITY / COM | Community domain/schema nincs bizonyítva | Member-only visibility, consent, moderation and entitlement contract. |
+| WEB-020 | FORM SUBMISSION | Form schema/submission API/storage/moderation route nem látható | Server-side validation, consent, spam/rate limit, notification integration, retention/export/delete and private-data boundary. |
+| WEB-021 | PUBLIC RESOURCES | Resource content/domain not proven | Canonical resource item type, visibility, download permission, asset references and SEO. |
+| WEB-022 | LINK HUB | Canonical link-hub model/editor not proven | Shared links registry or page content decision; analytics/redirect policy and link validation. |
+| WEB-023 | SUPPORT | Support domain/provider state not proven | External support link vs canonical SUP domain, truthful state, safe external navigation and member entitlement. |
+| WEB-024 | SPONSOR/PRESS KIT | CAM/SPONSORSHIP model and export route not proven | Public/private field separation, generated export, asset usage and expiry/version. |
+| WEB-025 | STORE/PRODUCT PAGES | Store product/order domain not proven | STO owns product projection; safe pricing/currency/availability and no mock checkout presented as live. |
+| WEB-026 | MEMBERSHIP AREA | Fan identity/entitlement/member route not proven | Server-side entitlement checks on every private read, session lifecycle and unauthorized fallback. |
+| WEB-027 | EVENTS/BLOG/NEWS/DIGITAL PRODUCTS | Separate event/content/product domain routes not proven | Each route consumes its owning domain projection; do not create one catch-all “page content” table. |
+| WEB-028 | PUBLIC ERROR/MAINTENANCE/OFFLINE | Renderer has client-side catch/404 presentation | Real HTTP status, static fallback, outage handling, stale content and no secret/error leakage. |
+| WEB-029 | SEARCH | Public search index/query API not proven | Published-only index, permission/consent filter, freshness/invalidation and safe snippets. |
+| WEB-030 | CACHE/INVALIDATION | Some requests use no-store; canonical invalidation service not proven | Explicit cache policy for public page/feed/assets, publish/unpublish/rollback invalidation and stale fallback. |
+| WEB-031 | PUBLISHED-ONLY BOUNDARY | Public page API filters `is_published=1`; preview is separately authenticated | All public content/feed/asset/form/member routes require explicit published/visibility gate and cross-site negative tests. |
+| WEB-032 | RENDER SECURITY / SAFE EMBEDS | Renderer escapes text and applies `safeUrl` to link/image/schedule URLs | Node-by-node sanitization, allowed embed provider/origin, unsafe schemes/HTML, CSP and malformed nested content tests. |
+
+**WEB kritikus kapu:** a public renderer nem lehet a teljes Editor Page Model másolata és nem birtokolhat üzleti adatokat. A publikált Page Modelt és domain-projectionöket biztonságosan kell megjelenítenie. A jelenlegi kód bizonyít néhány fontos alapot (site-scoped page read, preview authorization, revision/publish/unpublish/rollback), de a teljes nav/redirect/SEO/Content/Community/Store/Form route lifecycle nem igazolt.
+
+**Külön szerveroldali korrekciós követelmény, mielőtt WEB/PUBLISH PASS adható:** a vizsgált `admin/pages.ts` create útvonal az `isPublished=true` esetet elfogadja, miközben nem hívja a `validatePublishDocument`-et; az `admin/editor.ts` save/publish és rollback útvonalon az `expectedVersion` jelenleg opcionális. Ezeket nem szabad pusztán UI oldali guarddal lezárni. A változtatás előtt a meglévő teszteket és minden API consumer-t fel kell térképezni; utána valid/invalid create, publish, conflict és concurrent update negatív teszt kell.
+
+**Státusz: IN PROGRESS / NOT PASS.** Következő egyedi-ID-s modul-szelet: SCH-001–015, Game Profile és schedule sync/public projection, beleértve a timezone/DST és provider/manual override határokat.
+
