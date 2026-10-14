@@ -7171,6 +7171,14 @@ A `63.50.34` ellenőrzés **fordított irányú** kiegészítése: a 24. fejezet
 
 **Kapustátusz:** `38/38 DOMAIN NAME COVERAGE — STRUCTURAL PASS`; `156/156 CHECKLIST ITEM-TO-ID TRACEABILITY — OPEN`; a teljes aktív tervkapu továbbra is `IN PROGRESS / NOT PASS`.
 
+### 63.50.38. Az 54. review 156 sorának modulonkénti ellenőrzési kapui (2026-10-14)
+
+A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 8`, `54.2 15`, `54.3 7`, `54.4 7`, `54.5 8`, `54.6 11`, `54.7 12`, `54.8 12`, `54.9 9`, `54.10 12`, `54.11 7`, `54.12 7`, `54.13 12`, `54.14 8`, `54.15 13`, `54.16 8` = **156**. Ez a számlálás minden fejezetet lefed; nem azonos a sorok egyenkénti szemantikai megfeleltetésével.
+
+**Elsődleges review routing, a 49. kanonikus moduljai szerint:** 54.1 → 49.1 (keresés 49.16, notification 49.17, help 49.18); 54.2 → 49.2 (Editor belépési pont, design 49.3, resource 49.4); 54.3 → 49.3; 54.4 → 49.4; 54.5 → 49.7; 54.6 → 49.5 (connection 49.7); 54.7 → 49.6 (integration 49.7, automation 49.14); 54.8 → 49.8; 54.9 → 49.9 (entitlement 49.11); 54.10 → 49.10/49.11/49.12 (commerce, support, sponsorship **külön owner**, nincs közös pénzügyi CRUD); 54.11 → 49.13 (kampány 49.12); 54.12 → 49.14; 54.13 → 49.15; 54.14 → 49.19 lokalizáció, 49.2 locale-specifikus publikálás; 54.15 → 49.19 (cross-cutting security/ops); 54.16 → 49.20/49.21/49.22 (developer, extension, team külön owner).
+
+**Végrehajtandó tételes bizonyítás:** minden 54.x checkbox kapjon `54.x#N → 24.PREFIX-NNN → 49.N → 5.DOMAIN → F-phase → acceptance` láncot; az átfedéseknél primary vs consumer és a többmodulos jogosultsági határ legyen egyértelmű. A 54.10 és 54.16 egy-egy checklist-sorát tilos teljes egészében egyetlen tetszőleges modulhoz besorolni, ha külön commerce/support/sponsorship vagy developer/extension/team domaint érint. **REVIEW ROUTING / SECTION LEVEL DOCUMENTED; ITEM LEVEL NOT PASS.**
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
