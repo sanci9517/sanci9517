@@ -5961,3 +5961,93 @@ Ez a szakasz a 63.41 kártyáit kiegészíti a 25. fejezet hiányzó, különál
 8. **Jelenlegi egyetlen aktív pont:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY` — `IN PROGRESS / NOT PASS`. **Következő ellenőrizhető lépés:** a történeti források és a jelenlegi 396 ID megőrzését bizonyító nyitott tételek konkrét kezelése, majd az 54./49./24. fejezetek szemantikai egyeztetése; **csak** a tervkapu lezárása után az F0 következő legkorábbi hiányának kódbizonyítékos végrehajtása. A meglévő EDT-009-től folytatható kártya-normalizálás az F0 munkaindításakor végezhető, nem helyettesíti a mostani A kaput.
 
 **Megőrzési szabály:** a 396 stabil ID-ból egyetlen funkciót sem töröltünk vagy nyilvánítottunk késznek ebben a szerkezeti tisztázásban. A 63.41–63.50 meglévő kártyái történeti részletes evidenciaként megtartandók. A későbbi felhasználói döntés az adott kanonikus fejezetben frissül, és csak ott; a régebbi auditnapló változatlan bizonyítékláncként olvasható.
+
+### 63.52. Történeti megőrzés, első tételes szelet — H19–H22 → Creator Platform ID
+
+**Forrás:** archivált `docs/archive/MASTER-DEVELOPMENT-PLAN-2026-10-13.md` (2026-10-13), H19–H22 történeti ledger (a korábbi `aedb2ea` revízióból készített kivonat alapján). Ez **bizonyítékforrás**, nem második aktív terv. A forrást nem szabad automatikusan felülírni vagy elveszettként megjelölni; az eredeti 00/A és 00.9.6.B ettől még külön nyitott. Az alábbi sorok a meglévő 396 stabil ID alá sorolják a 79 történeti tételt, tulajdonosi átfedésnél több ID-val. **Nem állítják, hogy a funkció implementált vagy az eredeti forrás szemantikája minden részletében ellenőrzött.**
+
+| Történeti ID | Megőrzendő eredeti képesség | Jelenlegi kanonikus ID(k) |
+|---|---|---|
+| H19.01 | upload | RES-003, RES-001, RES-002 |
+| H19.02 | folders | RES-006 |
+| H19.03 | search | RES-005 |
+| H19.04 | filter | RES-005 |
+| H19.05 | preview | RES-004 |
+| H19.06 | metadata | RES-007 |
+| H19.07 | alt text | RES-007 |
+| H19.08 | crop | RES-004 |
+| H19.09 | resize | RES-004 |
+| H19.10 | replace | RES-009 |
+| H19.11 | archive/delete | RES-009 |
+| H19.12 | usage tracking | RES-008 |
+| H19.13 | unused media detection | RES-008, RES-015 |
+| H19.14 | MIME validation | RES-003 |
+| H19.15 | file-size limits | RES-003 |
+| H19.16 | secure object keys | RES-002, RES-014, SEC-009 |
+| H19.17 | image optimization | RES-004 |
+| H19.18 | video/audio | RES-002, RES-004 |
+| H19.19 | clip/Short assets | RES-001, CNT-003 |
+| H19.20 | cache policy | RES-004, DYN-006, WEB-030 |
+| H20.01 | D1 binding | DYN-001, DYN-002 |
+| H20.02 | site settings | DYN-001, SET-001 |
+| H20.03 | schedule | DYN-001, SCH-010, SCH-011 |
+| H20.04 | Twitch | DYN-001, INT-011, LIV-001 |
+| H20.05 | YouTube | DYN-001, INT-013 |
+| H20.06 | TikTok | DYN-001, INT-014 |
+| H20.07 | Discord | DYN-001, INT-015 |
+| H20.08 | VOD | DYN-001, CNT-020 |
+| H20.09 | collections | DYN-001, CNT-005 |
+| H20.10 | API data source | DYN-001, DYN-002 |
+| H20.11 | loading state | DYN-005 |
+| H20.12 | empty state | DYN-005 |
+| H20.13 | error state | DYN-005 |
+| H20.14 | conditional rendering | DYN-004 |
+| H20.15 | data transforms | DYN-003 |
+| H20.16 | caching | DYN-006 |
+| H20.17 | stale-data handling | DYN-005, DYN-006 |
+| H20.18 | binding validation | DYN-002, DYN-008 |
+| H21.01 | Twitch OAuth | INT-010, INT-003 |
+| H21.02 | Twitch live/offline | INT-011, LIV-001 |
+| H21.03 | Twitch title | LIV-003 |
+| H21.04 | Twitch game | LIV-003 |
+| H21.05 | Twitch viewer statistics | LIV-004 |
+| H21.06 | Twitch followers/subscribers where available | LIV-004 |
+| H21.07 | Twitch VOD | INT-012, CNT-002 |
+| H21.08 | Twitch clips | INT-012, CNT-003 |
+| H21.09 | Twitch events/webhooks where applicable | INT-017, LIV-006 |
+| H21.10 | YouTube channel | INT-013 |
+| H21.11 | YouTube videos | INT-013, CNT-004 |
+| H21.12 | YouTube Shorts | INT-013, CNT-003 |
+| H21.13 | YouTube statistics where available | INT-013, ANL-001 |
+| H21.14 | YouTube API quota/error handling | INT-009, INT-020 |
+| H21.15 | TikTok profile | INT-014 |
+| H21.16 | TikTok supported content integration | INT-014, CNT-004 |
+| H21.17 | TikTok API capability review | INT-014, INT-018 |
+| H21.18 | TikTok rate limits/fallback | INT-009, INT-014 |
+| H21.19 | Discord community link | INT-015, WEB-019 |
+| H21.20 | Discord optional integration | INT-015 |
+| H21.21 | Discord status where justified | INT-015, INT-020 |
+| H21.22 | Architecture constraint: keep secrets in Cloudflare Secrets; normalize external APIs behind services | INT-019, INT-001, SEC-009 |
+| H22.01 | schedule CRUD | SCH-001 |
+| H22.02 | recurring schedule | SCH-004 |
+| H22.03 | timezone handling | SCH-003 |
+| H22.04 | next-stream calculation | SCH-009 |
+| H22.05 | countdown | SCH-009 |
+| H22.06 | live state | LIV-001, SCH-005 |
+| H22.07 | game/category | SCH-012, SCH-014 |
+| H22.08 | stream type | SCH-001, SCH-005 |
+| H22.09 | VOD ingestion | CNT-002 |
+| H22.10 | VOD categorization | CNT-005 |
+| H22.11 | VOD search/filter | CNT-006 |
+| H22.12 | Shorts management | CNT-003 |
+| H22.13 | clips management | CNT-003 |
+| H22.14 | content calendar | CNT-009 |
+| H22.15 | platform-specific variants | CNT-011 |
+| H22.16 | title/description/hashtag suggestions | CNT-010, CNT-011, AI-014 |
+| H22.17 | thumbnail brief | CNT-012, CNT-010 |
+| H22.18 | publishing workflow | CNT-013, CNT-014 |
+| H22.19 | performance feedback loop | ANL-001, CNT-016 |
+
+**Tételes ellenőrzés:** H19: 20/20, H20: 18/18, H21: 22/22, H22: 19/19; összesen **79/79 forrássorhoz van legalább egy létező 24. fejezetbeli ID**. A tételek nem kerültek törlésre vagy implicit PASS-ra. Ahol a mapping több domainbe mutat (például H19.19 asset/content; H20.03 data binding/schedule; H22.16 content brief/AI), **csak a saját üzleti adatgazda végezhet módosítást**; a másik ID integráció vagy megjelenítés, nem második adatmodell.
+
+**Nyitott elfogadás:** forrásonkénti szemantikai visszaellenőrzés, konkrét domain/API/test és állapot; H23–H34 tételes átvezetése; 00/A és 00.9–00.9.6.B felkutatása, vagy igazolt hiányuk és a megfelelő no-loss döntések rögzítése. **Következő audit-szelet: H23–H34**, a 63.21 A kapujához kapcsolódóan. A terv lezárási státusza változatlanul IN PROGRESS / NOT PASS.
