@@ -6716,6 +6716,22 @@ Ez a szakasz a 63.41 kártyáit kiegészíti a 25. fejezet hiányzó, különál
 
 **Nyitott acceptance:** site-váltás és tenant-izoláció; hibás JSON és recovery; publikus site meta frissülése; showNotes=false mellett API-szintű adatminimalizálás döntése; schedule blokk előnézet/publish parity; invalid config negatív tesztek. **IN PROGRESS / NOT PASS**, nincs kódmódosítás.
 
+### 63.50.6. Tesztbizonyíték és tenant-jogosultság — negyedik forrásaudit (2026-10-14)
+
+**Ellenőrzött fájlok:** `tests/site-ownership-contract.test.js`, `tests/domain-contracts.test.js`, `src/core/auth/require-auth.ts`, `src/core/twitch-site-ownership.ts`. **Csak a tesztek forrását olvastuk; futtatott PASS nincs ebből a körből.**
+
+| Terület | Konkrét forrásbizonyíték | Bizonyíték korlátja / kötelező következő kapu |
+| --- | --- | --- |
+| `SEC/TEAM` auth | A session query a `sessions` és `users` táblából aktív, nem lejárt tokent és aktív felhasználót ellenőriz; szerepkörök: viewer/editor/admin, hierarchikus `hasRole` | A visszaadott `AuthUser` nem tartalmaz site/workspace membershipet; a `getCanonicalSiteContext` fix `site-default` alap. Több tenant esetén session→membership→site policy és negatív cross-tenant teszt nélkül **NOT PASS** |
+| `SEC/INT` Twitch kapcsolat | `assertTwitchConnectionOwnership` konkrét connection ID + user ID + site ID alapján ellenőriz; `getOwnedTwitchConnection` user+site szerint legfrissebb kapcsolatot olvas | A kapcsolatellenőrzés ténylegesen létezik, nem kell új adaptert kitalálni. Több fiók, scope/role és cross-site elutasítás route-szinten is tesztelendő |
+| `QA/SEC` site ownership teszt | Öt forrásszintű teszt: publikus page lista és lookup site-filter, OAuth state site ID írás, `validateSiteId` invalid input, Twitch Schedule connection identity site+user filter | Mockolt DB-hívásokat és SQL-stringet ellenőriznek, nem valós D1 isolationt, teljes Admin mutációt, browser flow-t vagy production működést. A meglévő teszteket meg kell tartani és integrációs/negatív tesztekkel bővíteni |
+| `QA/DYN/SCH/RES` domain contract teszt | Öt teszt asset ID hivatkozás, site-scoped game profile, ScheduleEvent game profile reference, érvénytelen időintervallum és site-scoped presentation revision | A TypeScript domain contract megléte nem egyenlő a runtime route/DB/API teljes megfelelésével. Hiányzó adatbinding, resource referential integrity és tenant negatív tesztek továbbra is nyitottak |
+| `QA` bizonyíték minősítés | A megnyitott tesztek `node:test` és `assert` alapján ellenőriznek konkrét invariánsokat | **TEST SOURCE REVIEWED ≠ TEST EXECUTED ≠ LIVE PASS.** Minden jövőbeli gate-nél commit SHA, parancs, futtatási eredmény, D1-migrációs állapot, browser bizonyíték és negatív eset kell |
+
+**Kötelező tenant-átmeneti szerződés:** `site_id` nem jöhet pusztán kliensinputból; hitelesített user, engedélyezett site membership, role és resource owner együtt határozza meg a szerveroldali kontextust. Minden privát olvasó/író és provider adapter ugyanazt a kanonikus site resolutiont használja. A jelenlegi single-site megoldás megtartható a korai fázisban, de nem címkézhető kész multi-site SaaS-ként.
+
+**Következő ellenőrzés:** tesztfuttatási evidencia; route-onkénti RBAC/ownership mátrix; publikus projection adatminimalizálás; migration FK/UNIQUE/NULL; Admin→Editor→Public browser út. Nincs új jogosultsági rendszer vagy feature implementáció ebben a tervkörben. **IN PROGRESS / NOT PASS**.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
