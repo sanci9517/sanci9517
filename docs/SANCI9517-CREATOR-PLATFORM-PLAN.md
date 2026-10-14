@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.41` — 54.1–54.2 első körös 23/23 ID- és owner-routing rögzítve; **következő: 54.3#1–#7**, majd 54.4–54.16 tételes review. A 156-ból 23 első körös routinggal rendelkezik, 133 még nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.43` — 54.1–54.4 első körös 37/37 ID- és owner-routing rögzítve; **következő: 54.5#1–#8**, majd 54.6–54.16 tételes review. A 156-ból 37 első körös routinggal rendelkezik, 119 még nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -7208,7 +7208,7 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 5. Minden sikeres audit-commit után a fejléc folytatási állapotát és a legutolsó bejegyzést egyeztetni; a következő munka **egyértelmű azonosítóval**, a még nyitott részhalmazzal és a PASS/NOT PASS határral legyen megadva. A commit SHA csak a GitHub által visszaadott tényleges eredmény alapján közölhető.
 6. Nem létező vagy nem visszanyert történeti forrást nem lehet rekonstruáltnak nevezni; a 396 ID, 22 modul, 156 review és 271 történeti H-ID számlálása nem runtime teszt. A fejlesztési fagyasztás az aktív kapu PASS-áig változatlan.
 
-**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.41 COMPLETE AS FIRST-PASS ROUTING / NEXT 54.3#1–#7`. A 54.1 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.2 után 54.3–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
+**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.43 COMPLETE AS FIRST-PASS ROUTING / NEXT 54.5#1–#8`. A 54.1–54.4 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.5–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
 
 ### 63.50.41. 54.2 Saját weboldal és Visual Editor: 15 checklist-tétel első körös routingja (2026-10-14)
 
@@ -7235,6 +7235,34 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 **Kiemelt hiányjelölés:** a #13 domain/DNS/HTTPS beállítások és a #14 beküldés-kezelési admin workflow nem tekinthető automatikusan lefedettnek a megadott közeli ID-k által. A megfelelő kanonikus owner és önálló képességigény szemantikai döntésre vár; azonosítót nem találunk ki és nem jelölünk implementáltnak.
 
 **Állapot:** 54.2 **15/15 sor első körös ID/modul/acceptance routing**, ebből **2 kifejezetten részleges képességlefedettségi jelölt** (#13, #14); 54.1–54.2 összesen **23/156 első körben feldolgozott**, **133/156 még nem feldolgozott**. A teljes `54.x#N → 5.DOMAIN → F-phase → evidence` lánc, a történeti forrás és a runtime bizonyítás továbbra is nyitott. **PLAN gate: IN PROGRESS / NOT PASS.**
+
+### 63.50.42. 54.3 Brand Kit és Design Studio: tételes első körös megfeleltetés (2026-10-14)
+
+| Review-tétel | Kanonikus cél-ID(k) | Elsődleges owner és fogyasztó | Elfogadási határ / nyitott rés |
+| --- | --- | --- | --- |
+| 54.3#1 Logóvariánsok, színek, betűk, ikonstílus és vizuális szabályok | DSN-001, DSN-005, DSN-007, DSN-017 | 49.3 | Brand Kit asset és stílus tulajdonos szétválasztandó; logóvariáns-kezelés részletes contract OPEN |
+| 54.3#2 Overlay/thumbnail/intro/outro/watermark/social/merch/email sablonok | DSN-008, DSN-009, DSN-010, DSN-011, DSN-015 | 49.3; 49.6/49.8/49.10 fogyasztók | A webes sablonkönyvtár önmagában nem bizonyítja az összes kreatív exportformátum és downstream sablont |
+| 54.3#3 Brand-safe színek/fontok és kontraszt | DSN-001, DSN-007, QA-005 | 49.3 | Automatikus kontrasztellenőrzés és tiltott kombinációk negatív tesztje szükséges |
+| 54.3#4 Globális/komponens token, theme, dark/light | DSN-001, DSN-002, DSN-005, DSN-012, DSN-013 | 49.3 | Token öröklés és override következetes; dark/light váltás nem veszíthet egyedi beállítást |
+| 54.3#5 SVG/PNG/WebP és exportméretek | DSN-015, RES-004, RES-012 | 49.3; 49.4 asset pipeline | SVG sanitization és megfelelő méret/format export részletes lefedése OPEN |
+| 54.3#6 Licenc/forrás/tulajdonos/verzió/asset-használat | RES-007, RES-008, DSN-014 | 49.4 asset owner; 49.3 design fogyasztó | Jogadat nem vész el template verzióváltáskor; usage warning nélkül nincs törlés |
+| 54.3#7 Brand consistency, AI-javaslat, kézi jóváhagyás | DSN-003, AI-012, AI-007 | 49.3; AI 49.15 | AI javaslat nem írhat éles brandet jóváhagyás nélkül; automatikus consistency checker contract OPEN |
+
+**Állapot:** 54.3 **7/7 első körös mapping**, a felsorolt részleges szerződések továbbra is OPEN. Nem runtime vagy teljes szemantikai PASS.
+
+### 63.50.43. 54.4 Média- és erőforráskönyvtár: tételes első körös megfeleltetés (2026-10-14)
+
+| Review-tétel | Kanonikus cél-ID(k) | Elsődleges owner és fogyasztó | Elfogadási határ / nyitott rés |
+| --- | --- | --- | --- |
+| 54.4#1 Egy asset registry/ID, R2 bináris, D1 meta | RES-001, RES-002 | 49.4 | Egy kanonikus asset ID; nincs második média-adattár |
+| 54.4#2 Kép, videó, hang, ikon, font, dokumentum, thumbnail, export | RES-001, RES-011, RES-013, RES-004 | 49.4 | Típusonként validált metadata/preview; támogatás nem állítható pusztán általános registry alapján |
+| 54.4#3 Single/bulk upload, progress/cancel/retry/resume | RES-003 | 49.4 | Megszakított upload nem hagy árván látszólag kész assetet; resumable/bulk contract OPEN |
+| 54.4#4 MIME/méret, processing, preview, security | RES-003, RES-004, RES-012, SEC-006 | 49.4; security 49.19 | Rosszindulatú SVG és hamis MIME nem válhat publikus aktív assetté |
+| 54.4#5 Tag, search, collection, alt, license, crop/focal | RES-005, RES-006, RES-007, RES-004 | 49.4 | Alt/license/usage nem veszhet el transzformáció után; focal point részletes acceptance OPEN |
+| 54.4#6 Usage references, warning, archive/delete | RES-008, RES-009 | 49.4 | Használt asset nem törölhető csendben; rollback/restore és dependency ellenőrzendő |
+| 54.4#7 Metadata módosítás minden hivatkozási helyen | RES-007, RES-008, DYN-006 | 49.4; fogyasztó domainnézetek | Stale cache nem mutathat tartósan régi metaadatot; publikált snapshot és változó metadata határ tisztázandó |
+
+**Állapot:** 54.4 **7/7 első körös mapping**, a felsorolt részleges szerződések továbbra is OPEN. Nem runtime vagy teljes szemantikai PASS.
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
