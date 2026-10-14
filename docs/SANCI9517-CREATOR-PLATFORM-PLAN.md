@@ -525,7 +525,17 @@ Product list/detail, price/variant/stock, checkout provider, digital entitlement
 | AUTOMATION | Workflow engine | rules, runs, retries, audit | Automation, system events |
 | AI_OPERATION | AI orchestration | structured proposal, approval, usage | SANCI AI, Editor, Content Studio |
 | SPONSORSHIP | Business domain | lead, deal, deliverable, media kit | Business, Campaigns |
-| SETTINGS | Scoped settings service | locale, notifications, privacy | Settings, modules |
+| LOCALIZATION | Localization service | translation keys, locale-specific content, glossary, completeness status | Website, Settings, Content Studio, public |
+| SEO_PUBLICATION | SEO/publication metadata service | per-page metadata, canonical/robots policy, redirects, sitemap jobs | Website, Editor, public renderer |
+| FORM_SUBMISSION | Form/submission service | form schema, submissions, consent evidence, spam/review state | Website, Settings, Community/marketing where enabled |
+| NOTIFICATION | Notification service | notification, delivery attempts, preferences, digest/silent-period policy | Dashboard, Settings, modules |
+| SEARCH | Permission-aware search/index service | derived searchable projections, index version and freshness | Admin global search, domain lists |
+| FAN_IDENTITY | Fan identity/community account service | fan profile, preferences, consent, export/delete lifecycle | Community, public/member areas |
+| STREAM_TOOLS | OBS/overlay service | pairing reference, overlay/widget config and version, authorized command history | OBS, Live Studio |
+| DEVELOPER_API | Developer platform/API service | API key metadata/scopes, API version/quotas, webhook registry/delivery | Developer platform |
+| EXTENSION | Extension registry/sandbox service | manifest, signature/provenance, permission, install/version lifecycle | Extensions/Marketplace, OBS/widget modules |
+| BILLING_PLAN | SaaS billing/plan service | subscription, plan entitlement, usage/quota, invoice state | Team/SaaS, Settings |
+| SETTINGS | Scoped settings service | locale preference, notification preferences, privacy settings | Settings, modules |
 | AUDIT | Audit service | actor, operation, resource, result | Settings, Diagnostics |
 | BACKUP | Export/recovery service | manifest, snapshots, restore jobs | Settings, Diagnostics |
 
@@ -538,6 +548,10 @@ Kötelező domain szabályok:
 6. Page Model dinamikus blokk konfigurációt/hivatkozást tárolhat, teljes üzleti rekordot nem másol.
 7. Ownership ellenőrzés szerveroldali minden kapcsolatnál, adatnál, médiánál és műveletnél.
 8. Domain változásakor minden olvasófelület konzisztens frissítést kap; stale állapot látható.
+9. A globális kereső és a dashboard csak permission-aware, származtatott nézet; nem hoz létre második domain-adatforrást.
+10. Az Admin/creator identity és a publikus fan identity külön életciklusú; összevezetésük csak explicit biztonsági és adatvédelmi döntéssel lehetséges.
+11. API key, OAuth token és webhook secret titkos kezelést kap; a domain-adatbázisban csak szükséges metadata/secret reference tárolható, plaintext secret nem.
+12. Minden új modulhoz meg kell nevezni a domain ownerét, a tartós adatforrást, a parancs/API határt, a jogosultsági scope-ot és a restore/törlési viselkedést.
 
 ---
 
@@ -4006,3 +4020,16 @@ A 382 stabil ID leírásának második, név/token alapú előszűrésében fenn
 Ezeket a párokat nem szabad pusztán szöveghasonlóság miatt összevonni. A tényleges összevonás csak akkor engedhető meg, ha a domainmodell, az adatforrás, a jogosultság, az életciklus és az elfogadási teszt is azonos, és az összevonás nem veszít el képességet.
 
 **Állapot:** a szöveghasonlósági előszűrés és az első körös határmagyarázat elkészült. Ez nem zárja le a teljes szemantikai auditot: a továbbiakban a domain/adatmodell/API/UI/test evidence alapján kell ellenőrizni, hogy a szándékolt határok a terv többi fejezetében is következetesek-e.
+
+### 63.19. Domain-térkép és felhasználói főmodulok egyeztetése
+
+A 49. fejezet felhasználói navigációs moduljai és az 5. fejezet domain/adatforrás-térképe eltérő nézőpontok: egy modul több domain szolgáltatást fogyaszthat, egy domain több felületet kiszolgálhat, de üzleti képességenként egyetlen kanonikus adatgazda marad. Az 5. fejezet ezért kiegészült a lokalizáció, SEO/publikációs metadata, form beküldések, értesítések, permission-aware keresés, fan identity, OBS/overlay, Developer API, extension registry és SaaS billing/plan domainekkel.
+
+Különösen fontos határok:
+- **SEARCH / Dashboard:** indexelt és összesített olvasási nézet; soha nem írhatja felül a forrásdomaint.
+- **FAN_IDENTITY / IDENTITY:** a creator/Admin session és a publikus rajongói fiók külön biztonsági határ.
+- **DEVELOPER_API / EXTENSION:** az API key/webhook/API lifecycle nem azonos a telepített extension manifest/sandbox lifecycle-jával.
+- **BILLING_PLAN / ORDER / ENTITLEMENT:** SaaS-előfizetés és platformcsomag nem azonos a creator boltjának rendelésével vagy a fan tagsági hozzáféréssel.
+- **STREAM_TOOLS / INTEGRATION / AUTOMATION:** OBS pairing/overlay konfiguráció, külső provider-auth és workflow execution külön domainfelelősség.
+
+**Állapot:** a domain-térkép szerkezeti teljessége bővült; a teljes schema/API/runtime egyezés továbbra is kód- és tesztbizonyítékot igényel.
