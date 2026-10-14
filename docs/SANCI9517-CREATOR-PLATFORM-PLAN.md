@@ -4635,3 +4635,31 @@ A forrásbizonyíték: `ThemeTokens`/ `SitePresentation` domain type-ok és norm
 
 **Státusz: IN PROGRESS / NOT PASS.** Next ID-slice: DYN-001–008 + SET-001–004 + SEO-001–005, because dynamic data, settings and publication metadata share important public-rendering boundaries.
 
+### 63.32. DYN-001–008, SET-001–004, SEO-001–005 — public data, settings és metadata contract
+
+A forrásbizonyíték: `src/routes/admin/settings.ts` és `src/routes/public/site-settings.ts` a globális `site_settings.key='site'` rekordból csak `siteName`/ `tagline` mezőket kezel; a Page Model normalizer előkészít `canonical` és `openGraph` metadata mezőket, de a publikus renderer csak `document.title` és látható cím/leírás értékét frissíti. Az Editor schedule blockja egy szűk, whitelistelt schedule bindingot használ, általános data-source registry nem bizonyított.
+
+| ID | Owner / forrás | Látható alap | Nyitott acceptance / függőség |
+|---|---|---|---|
+| DYN-001 | DYNAMIC_DATA / schedule binding | Schedule block binding `source: schedule_items` és public read query létezik | Általános source registry canonical domain API-kon, versioned schemas és permission-aware capability registry. |
+| DYN-002 | DYNAMIC_DATA / binding schema | Schedule config normalizer/type validation létezik | Minden source/field type compatibility, nullability, required fields, schema version and invalid-reference errors. |
+| DYN-003 | DYNAMIC_DATA / query contract | Schedule read limit/status/platform/order whitelistelt | Általános filter/sort/transform csak allowlistelt AST-n keresztül; arbitrary SQL/JS nem engedélyezett. |
+| DYN-004 | DYNAMIC_DATA / conditional rendering | Node visibility mező létezik; adatfeltétel engine nem bizonyított | Typed predicates, safe operators, missing-data fallback and no secret-dependent public leak. |
+| DYN-005 | DYNAMIC_DATA + ADM-008 | Schedule read hibát jelez; általános loading/empty/partial/stale/error state machine nincs bizonyítva | Közös UI-state contract, domain-specific data state és accessible retry. |
+| DYN-006 | DYNAMIC_DATA / cache | Néhány request no-store, általános cache/freshness/invalidation service nem látható | Source-specific TTL, publish/sync invalidation, stale fallback and race handling. |
+| DYN-007 | DYNAMIC_DATA + SEC/PAGE | Public page read szűri a published page-et; preview auth-olt | Source-level server permission, site scope, published-only and member-entitlement boundary. |
+| DYN-008 | DYNAMIC_DATA / diagnostics | Általános binding diagnostics nem bizonyított | Missing/invalid reference report, preview trace, safe error details and recovery path. |
+| SET-001 | SETTINGS / site_settings | Admin CRUD csak siteName/tagline és global key='site' rekord | Canonical settings schema/version, validation, lifecycle and settings domain split. |
+| SET-002 | SETTINGS + SEC / site ownership | Page/schedule/Twitch/media site scope több helyen létezik; settings global | Site-scoped migration csak minden read/write consumer auditja, backfill/rollback és cross-site negative tests után. |
+| SET-003 | SETTINGS / public projection | Public endpoint csak siteName/tagline mezőket ad vissza | Public-safe projection mezőlista és secret/private field exclusion tests; nincs full settings object kitéve. |
+| SET-004 | SITE_DOMAIN / custom domains | Domain verification/DNS/SSL lifecycle nem bizonyított | Ownership challenge, DNS/SSL state, primary domain switch, redirect/canonical URL and failure recovery. |
+| SEO-001 | SEO_PUBLICATION / Page Model | Metadata type előkészíti title/description/canonical mezőket; title/description client-side update | Server-rendered or crawler-compatible per-page metadata, canonical/robots validation and publish snapshot. |
+| SEO-002 | SEO_PUBLICATION / OG/X | `openGraph` placeholder van a Page Modelben; OG/X metadata/social preview nincs bizonyítva | og:title/description/image, X card, image validation/crop, preview and crawler acceptance. |
+| SEO-003 | SEO_PUBLICATION / structured data | Structured data/schema.org generation nem látható | Typed allowlisted schemas only when applicable, validation, escaping and no invented facts. |
+| SEO-004 | SEO_PUBLICATION / sitemap/robots | `visual-page.html` statikus `robots=index,follow`; dedicated sitemap/robots route/file nem látható | Per-site sitemap and robots policy, draft/preview exclusion, redirects, publish/cache invalidation and canonical host. |
+| SEO-005 | SEO_PUBLICATION / diagnostics | Dedicated SEO audit/preview not proven | Missing/duplicate metadata, invalid canonical, broken link, indexability and public HTTP status report. |
+
+**Public metadata acceptance:** a kliensoldali `document.title` módosítás nem bizonyítja, hogy a crawler a helyes title/description/OG/canonical adatot kapja. Minden publikált page-hez ellenőrizni kell a nyers HTTP HTML-t, status code-ot, canonical/robots/OG/X/structured data kimenetet és sitemap inclusiont; draft/preview nem indexelhető. Ezt browser/HTTP acceptance nélkül nem lehet PASS-nak jelölni.
+
+**Státusz: IN PROGRESS / NOT PASS.** Következő ID-szelet: CNT-001–022 és LIV-001–010, vagyis tartalom-adatgazda, provider metadata handoff és public projection.
+
