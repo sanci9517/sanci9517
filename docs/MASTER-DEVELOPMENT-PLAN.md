@@ -5233,7 +5233,7 @@ A §37.16, §37.17 és §41.2 egyes mondatai a 2026-10-13-i, 359-ID-s registry-s
 **Státusz:** kiterjesztett korai MASTER-snapshot ellenőrzés dokumentálva; `00.9.6.B` forrása továbbra is **UNRECOVERED / OPEN**; teljes történeti szemantikai reconciliáció **OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
 
 
-### 41.3.116. P0.2 — PR #29 fájlmódosítási és megbeszélési bizonyítékai, valamint Library-keresés (2026-10-14)
+### 41.3.117. P0.2 — PR #29 fájlmódosítási és megbeszélési bizonyítékai, valamint Library-keresés (2026-10-14)
 
 **Vizsgálati cél:** a 00.9.6.B hiányának további vizsgálata a MASTER lecserélését végrehajtó PR fájlmódosításain, PR-megbeszélésein/review-in és a ChatGPT Libraryben elérhető, releváns történeti anyagokon keresztül.
 
