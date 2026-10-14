@@ -2626,12 +2626,15 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.3-04 | Canvas and Layers selection target same canonical node; drag/resize does not unexpectedly convert flex/grid to absolute positioning | EDT-003, EDT-004, EDT-009–EDT-016 | KEEP | 1.0 release gate | QA-002/004 |
 | F.3-05 | Plain Text is 1.0 baseline; no parallel rich-text path delaying core editor closure | EDT-001–EDT-003, EDT-017, EDT-022, EDT-043 | KEEP | 1.0 plain text; EDT-043 rich text separately scoped and non-blocking | QA-002/004 |
 | F.4-01 | Explicit public page types: Creator Home, Stream, Schedule, VOD/Video Hub, Clips/Shorts, About, Community, Contact, Support, Link Hub and Press Kit | WEB-014–WEB-024, CNT-001–CNT-005 | EXPAND | 1.0 core pages; later pages phased | QA-002/004/008 |
+
+**Felhasználói felület szétválasztási szabály:** az F.4-01 **oldaltípus-leltár**, nem egyetlen „mindent tudó” publikus oldal vagy mega-funkció. A külön oldaltípusoknak saját WEB capability-je, route-ja, tartalommodellje, üres/hiba állapota és acceptance-e marad (pl. Home `WEB-014`, Stream `WEB-015`, Schedule `WEB-016`, Content Hub `WEB-017`, About `WEB-018`, Community `WEB-019`, Contact `WEB-020`, Resources `WEB-021`, Link Hub `WEB-022`, Support `WEB-023`, Press Kit `WEB-024`). Csak közös, valóban ismétlődő viselkedés kerülhet shared component/contract alá; a közös keret nem moshatja össze az oldalak külön szerkesztési, jogosultsági, adat- és publish-életciklusát.
+
 | F.4-02 | Creator Home uses authenticated provider data only, upcoming stream, content, social/community/support and phased merch/email/campaign | WEB-014–WEB-019, WEB-022–WEB-024, LIV-001–LIV-004, SCH-009, CNT-001–CNT-005, INT-001, COM-001, SUP-001 | EXPAND | 1.0 core; later capabilities phased | QA-002/003/004 |
 | F.4-03 | Stream page: player/embed, real status/title/category/start, next stream and safe optional embeds | WEB-015, WEB-032, LIV-001–LIV-005, SCH-009, SEC-005 | EXPAND | 1.0 Twitch baseline | QA-002/003/004 |
 | F.4-04 | VOD/content hub supports categories/tags/search/filter/playlists/related content and honest manual fallback when API unavailable | WEB-017, CNT-001–CNT-008, CNT-020, INT-012–INT-014 | EXPAND | 1.5–2.0 | QA-002/003/004 |
 | F.4-05 | About, Link Hub and press-kit content are configurable; no hardcoded creator-specific product behavior | WEB-018, WEB-022, WEB-024, CAM-004, DSN-001, LOC-001 | EXPAND | 1.0 basic profile/link; advanced kit later | QA-002/004 |
-| F.4-06 | Basic accessible interactions: click/hover/focus/active/submit/scroll/load/timer/open-close/navigation/show-hide/toggle | EDT-039, WEB-032, SEC-005 | KEEP | 1.0 baseline | QA-002/004/005 |
-| F.4-07 | Advanced state machines/timeline/keyframes remain separately scoped; reduced motion, keyboard/focus, valid actions and performance are required | EDT-039, EDT-040, WEB-032, SEC-005, OPS-008 | EXPAND | 1.0 reduced-motion baseline; advanced motion 2.0 | QA-004/005/008 |
+| F.4-06 | Basic interaction behavior: click/hover/focus/active/submit/scroll/load/timer/open-close/navigation/show-hide/toggle | EDT-039, WEB-011; cross-cutting accessibility contract TBD in M0.2 | KEEP | 1.0 baseline; interaction behavior and accessibility acceptance are separate contracts | QA-002/004/005 |
+| F.4-07 | Advanced state machines/timeline/keyframes remain separately scoped; reduced motion, keyboard/focus, valid actions and performance are required | EDT-039, EDT-040, WEB-011, OPS-008; action security and accessibility acceptance remain separate cross-cutting contracts | EXPAND | 1.0 reduced-motion baseline; advanced motion 2.0 | QA-004/005/008 |
 
 **Batch 5 result:** 28 source requirements mapped for F.1–F.4. Structural checks must confirm each referenced ID exists in §24; source-bullet completeness and runtime behavior remain separate gates.
 
@@ -4835,3 +4838,14 @@ A H24.01–H24.13 historical ledger semantic review found that most rows mapped 
 **Required M0.2 decision:** assign canonical ownership for semantic HTML/heading hierarchy, labels/ARIA, focus order/visibility, contrast, screen-reader support, form validation accessibility, Editor accessibility checks and public accessibility audit; define 1.0 acceptance evidence and tests; then decide whether an existing domain can own the full contract or a dedicated cross-cutting capability ID is needed. No new ID was created ahead of the domain-ownership decision.
 
 **State:** H24 remains MAPPED DRAFT and semantically open. This corrects misleading traceability, not implementation status. P0.2 remains **IN PROGRESS / NOT PASS**.
+
+
+### 41.3.82. P0.2 — F.4 interaction mapping cleaned; public page types explicitly remain separate capabilities (2026-10-14)
+
+A felhasználóbarát, jól elkülönített funkcióstruktúra érdekében az F.4 public-surface és interaction sorait ellenőriztem.
+
+- Az F.4-01-et explicit **oldaltípus-leltárként** jelöltem, nem egyetlen mega-oldalként. A `WEB-014`–`WEB-024` külön capability-k maradnak Home, Stream, Schedule, Content Hub, About, Community, Contact, Resources, Link Hub, Support és Press Kit célokra. Közös komponensek megengedettek, de nem olvaszthatják össze a külön route-, adat-, permission-, editor- és publish-életciklusokat.
+- Az F.4-06 korábban a `WEB-032` safe-embed/security ID-t és `SEC-005` sanitization ID-t általános interaction/accessibility mappingként használta. Ezek nem fedik le a teljes click/focus/navigation/submit UX-et. A mappinget `EDT-039` interaction registryre és részleges `WEB-011` keyboard/mobile navigationre javítottam; a teljes accessibility acceptance az M0.2 cross-cutting contract döntéséig nyitott.
+- Az F.4-07-ből kivettem a szintén nem megfelelő safe-embed/sanitization hozzárendeléseket. A motion, interaction, keyboard behavior és performance külön képességként marad; az action-security és accessibility contract nem rejtőzik az Editor interaction ID alatt.
+
+**Állapot:** dokumentációs/szemantikai javítás; nem runtime acceptance. F.4-06 teljes accessibility coverage OPEN; P0.2 továbbra is **IN PROGRESS / NOT PASS**.
