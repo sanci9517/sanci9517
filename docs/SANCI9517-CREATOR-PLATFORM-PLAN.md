@@ -7097,6 +7097,24 @@ A `0004_system_page_content.sql` történeti táblát hoz létre, míg a `0005_c
 
 **Következő bizonyítékkapu:** read-only `SELECT id,slug,site_id,is_published,published_revision_id,json_extract(content_json,'$.type'),json_extract(published_content_json,'$.type') FROM pages WHERE slug IN (...)` helyi+remote környezetben; egyediség, duplikált legacy/page ID, 9 URL, community/vod, snapshot/revision összevetés; DB backup és visszaállítás előfeltétel bármely adatmigráció előtt. **LEGACY URL/PAGE DATA: STATIC CROSSWALK COMPLETE / RUNTIME NOT PASS.** Nincs adatírás, archíválás vagy redirect módosítás.
 
+### 63.50.32. Legacy Page Model normalizálás és explicit publikálás: forrásalapú regressziós szerződés (2026-10-14)
+
+**Forrásref:** `8610086`; `src/core/page-model.ts`, `src/routes/public/pages.ts`, `src/routes/admin/pages.ts`, `src/routes/admin/editor.ts`, `migrations/0006_canonicalize_legacy_pages.sql`, `0008_restore_canonical_standard_pages.sql`. Csak statikus kódvizsgálat, nem élő adat- vagy teszt-PASS.
+
+**Normalizálás – két támogatott történeti dokumentumforma:**
+- A `normalizeEditorDocument` a `sanci-page-document` / `schemaVersion:1` formát csak akkor adja vissza, ha a kért `pages[pageId]` rekord, `rootId` és `nodes` megtalálható. A `sanci-document` / `pages:[]` formát runtime memóriában átalakítja, a root gyermekeket lapos `nodes` térképpé alakítja, a régi `layout` mezőt `metadata.legacyLayout` alatt őrzi meg. Ez **read-time compatibility**, nem perzisztens, tételes migráció.
+- `convertLegacyNode` hiányzó node ID esetén `crypto.randomUUID()` értéket készít. Ha történeti dokumentumban hiányzik ID, két egymást követő olvasás eltérő node ID-kat adhat; a hiányzó ID-val rendelkező legacy oldalakat külön determinisztikus normalizációs tesztnek kell alávetni. Nem állítható, hogy az összes valós rekord érintett.
+- A `publicPagesRoute` `mapPage` is normalizál, de nem ír vissza. A `/p/<slug>` shell HTTP-státusz és az API 404/409 közti eltérés külön §63.50.23, §63.50.31 nyitott feladat.
+
+**Publikálás – bizonyított kódútvonal-konfliktus:**
+- A `src/routes/admin/editor.ts` POST ágában a `publish===true` kapcsoló indít `validatePublishDocument` ellenőrzést és `published_content_json` + `published_revision_id` + `is_published=1` módosítást. A sima mentés csak draftot és új revíziót ír; a PUT rollback is draft-only. Ez a kívánt explicit publish alapminta.
+- **Ezzel ellentétben** a `src/routes/admin/pages.ts` PATCH ága cím/slug/leírás változásakor a jelenlegi `content_json` draftból új revíziót képez, és ha `existing.is_published`, `published_content_json` + `published_revision_id` mezőket is átírja. Így egy **már publikált, de közben módosított draft** oldalon egy egyszerű metaadat-PATCH publikálhatja a draft vászonváltozásait az Editor explicit publish ellenőrzése nélkül. Ez forrásból alátámasztott **kritikus regressziós jelölt**, reprodukció/teszt még nincs.
+- Ugyanezen PATCH közvetlenül módosítja a `pages.slug` mezőt, amelyből a publikus API feloldja az URL-t; a régi slug redirect/alias szerződés nincs igazolva. Külön draft vs published metadata/slug életciklus kell, mielőtt javítás történik.
+
+**Kötelező tesztkészlet a fejlesztési fagyasztás feloldása után:** (1) publish A, draft B, metaadat PATCH → publikus A marad és published revision ID változatlan; (2) draft B explicit publish → publikus B; (3) rollback B→A csak draftot változtat; (4) slug draft módosítás nem teszi elérhetetlenné a published URL-t; (5) legacy normalizálás idempotens, stabil node ID-val, a vizuális layout megőrzésével; (6) hibás JSON/hiányzó oldal/rossz site/role/expectedVersion negatív tesztek. Az adatjavítás előtt remote read-only D1 leltár és backup kell.
+
+**Döntés:** a canonical `pages` és `editor_revisions` adatmodell **KEEP/REPAIR**; a legacy normalizáló **KEEP TEMPORARILY / VERIFY**, nem szabad archíválni bizonyíték nélkül. **PUBLICATION INTEGRITY: SOURCE-IDENTIFIED CONFLICT / NOT PASS.** A runtime kód és az adat változatlan.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
