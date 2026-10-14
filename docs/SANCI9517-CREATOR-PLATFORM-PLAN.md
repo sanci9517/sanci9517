@@ -6649,7 +6649,7 @@ Ez a szakasz a 63.41 kártyáit kiegészíti a 25. fejezet hiányzó, különál
 | H19.13 | unused media detection | RES-008, RES-015 |
 | H19.14 | MIME validation | RES-003 |
 | H19.15 | file-size limits | RES-003 |
-| H19.16 | secure object keys | RES-002, RES-014, SEC-009 |
+| H19.16 | secure object keys | RES-002, RES-014, SEC-008 |
 | H19.17 | image optimization | RES-004 |
 | H19.18 | video/audio | RES-002, RES-004 |
 | H19.19 | clip/Short assets | RES-001, CNT-003 |
@@ -6684,7 +6684,7 @@ Ez a szakasz a 63.41 kártyáit kiegészíti a 25. fejezet hiányzó, különál
 | H21.10 | YouTube channel | INT-013 |
 | H21.11 | YouTube videos | INT-013, CNT-004 |
 | H21.12 | YouTube Shorts | INT-013, CNT-003 |
-| H21.13 | YouTube statistics where available | INT-013, ANL-001 |
+| H21.13 | YouTube statistics where available | INT-013, ANL-004, ANL-001 |
 | H21.14 | YouTube API quota/error handling | INT-009, INT-020 |
 | H21.15 | TikTok profile | INT-014 |
 | H21.16 | TikTok supported content integration | INT-014, CNT-004 |
@@ -6693,7 +6693,7 @@ Ez a szakasz a 63.41 kártyáit kiegészíti a 25. fejezet hiányzó, különál
 | H21.19 | Discord community link | INT-015, WEB-019 |
 | H21.20 | Discord optional integration | INT-015 |
 | H21.21 | Discord status where justified | INT-015, INT-020 |
-| H21.22 | Architecture constraint: keep secrets in Cloudflare Secrets; normalize external APIs behind services | INT-019, INT-001, SEC-009 |
+| H21.22 | Architecture constraint: keep secrets in Cloudflare Secrets; normalize external APIs behind services | INT-019, INT-001, SEC-008 |
 | H22.01 | schedule CRUD | SCH-001 |
 | H22.02 | recurring schedule | SCH-004 |
 | H22.03 | timezone handling | SCH-003 |
@@ -6709,15 +6709,29 @@ Ez a szakasz a 63.41 kártyáit kiegészíti a 25. fejezet hiányzó, különál
 | H22.13 | clips management | CNT-003 |
 | H22.14 | content calendar | CNT-009 |
 | H22.15 | platform-specific variants | CNT-011 |
-| H22.16 | title/description/hashtag suggestions | CNT-010, CNT-011, AI-014 |
+| H22.16 | title/description/hashtag suggestions | CNT-010, CNT-011, AI-013 |
 | H22.17 | thumbnail brief | CNT-012, CNT-010 |
 | H22.18 | publishing workflow | CNT-013, CNT-014 |
-| H22.19 | performance feedback loop | ANL-001, CNT-016 |
+| H22.19 | performance feedback loop | ANL-004, CNT-016, ANL-001 |
 
 **Tételes ellenőrzés:** H19: 20/20, H20: 18/18, H21: 22/22, H22: 19/19; összesen **79/79 forrássorhoz van legalább egy létező 24. fejezetbeli ID**. A tételek nem kerültek törlésre vagy implicit PASS-ra. Ahol a mapping több domainbe mutat (például H19.19 asset/content; H20.03 data binding/schedule; H22.16 content brief/AI), **csak a saját üzleti adatgazda végezhet módosítást**; a másik ID integráció vagy megjelenítés, nem második adatmodell.
 
 **Nyitott elfogadás:** forrásonkénti szemantikai visszaellenőrzés, konkrét domain/API/test és állapot; H23–H34 tételes átvezetése; 00/A és 00.9–00.9.6.B felkutatása, vagy igazolt hiányuk és a megfelelő no-loss döntések rögzítése. **Következő audit-szelet: H23–H34**, a 63.21 A kapujához kapcsolódóan. A terv lezárási státusza változatlanul IN PROGRESS / NOT PASS.
 
+
+### 63.52.1. H19–H22 cél-ID szemantikai javításai — ellenőrzött első hibaköteg
+
+A 63.52-ben az eredeti történeti címkéket a 24. fejezet **tényleges capability-definícióival** összevetve öt pontatlan célleképezést korrigáltunk, az eredeti H-ID-k és szövegek megőrzésével:
+
+| Történeti sor | Probléma | Javított értelmezés | Kockázat / további bizonyíték |
+| --- | --- | --- | --- |
+| H19.16 | `SEC-009` webhook signature/replay policy, nem R2 objektumkulcs-kezelés | `RES-002` R2/D1, `RES-014` download auth/expiry, `SEC-008` secret policy | R2 object key path, site-scope, nem publikus letöltés negatív tesztje még szükséges |
+| H21.13 | `ANL-001` csak mérési taxonómia, nem platform analytics | `INT-013` YouTube adapter + `ANL-004` platform analytics, `ANL-001` mérési definíció | Provider quota/availability és metrikaforrás még ellenőrizendő |
+| H21.22 | `SEC-009` webhook-biztonság, nem secret storage | `INT-019` integrációs redaction + `INT-001` adapter + `SEC-008` secret lifecycle | Cloudflare Secrets deployment/runtime ellenőrzés nyitott |
+| H22.16 | `AI-014` transcript/clip-javaslat, nem cím/leírás/hashtag | `CNT-010` brief + `CNT-011` platformváltozat + `AI-013` szövegjavaslat | Hashtag policy, emberi review és célplatform-korlátok nyitottak |
+| H22.19 | `ANL-001` taxonomy nem önmagában teljesítmény-visszacsatolás | `ANL-004` tartalom/platform metrikák + `CNT-016` attribúció + `ANL-001` mérési definíció | Dashboard/action feedback loop és freshness tesztje nyitott |
+
+**Auditmódszer:** itt a történeti sor szövege és a 24. fejezet cél-ID leírása közötti **szemantikai célillesztést** javítottuk, nem futó implementációt vagy API-szerződést bizonyítottunk. A 79/79 H19–H22 strukturális lefedés megmaradt. A további H19–H22 és H23–H34 sorok mélyebb review-ja, valamint a hiányzó 00/A és 00.9.6.B forrás továbbra is nyitott. **IN PROGRESS / NOT PASS.**
 
 ### 63.53. Történeti megőrzés, második tételes szelet — H23–H34 → Creator Platform ID
 
