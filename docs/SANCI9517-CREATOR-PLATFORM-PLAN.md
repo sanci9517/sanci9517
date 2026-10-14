@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.60` — 156/156 első routing; 16/16 domain/phase csoportkapu; **54.1–54.8 80/80 soronkénti specifikációs acceptance**, következő **54.9–54.12** (majd 54.13–54.16); forráskód/runtime evidence továbbra is külön nyitott, különös tekintettel a 63.50.46 HIGH publikálási konfliktusra. A 156 első körös routing kész, de szemantikai és történeti kapu továbbra is nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll és a 63.50.46 HIGH kódaudit-blokkoló ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.61` — 156/156 első routing; **54.1–54.12 115/115 soronkénti specifikációs acceptance**; következő **54.13–54.16 41 tétel**, majd teljes szemantikai/forrásbizonyíték audit, különös tekintettel a 63.50.46 HIGH publikálási konfliktusra. A 156 első körös routing kész, de szemantikai és történeti kapu továbbra is nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll és a 63.50.46 HIGH kódaudit-blokkoló ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -7208,7 +7208,7 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 5. Minden sikeres audit-commit után a fejléc folytatási állapotát és a legutolsó bejegyzést egyeztetni; a következő munka **egyértelmű azonosítóval**, a még nyitott részhalmazzal és a PASS/NOT PASS határral legyen megadva. A commit SHA csak a GitHub által visszaadott tényleges eredmény alapján közölhető.
 6. Nem létező vagy nem visszanyert történeti forrást nem lehet rekonstruáltnak nevezni; a 396 ID, 22 modul, 156 review és 271 történeti H-ID számlálása nem runtime teszt. A fejlesztési fagyasztás az aktív kapu PASS-áig változatlan.
 
-**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.60 80/156 ITEM ACCEPTANCE SPEC / NEXT 54.9–54.12`. A 54.1–54.4 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.7–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
+**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.61 115/156 ITEM ACCEPTANCE SPEC / NEXT 54.13–54.16`. A 54.1–54.4 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.7–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
 
 ### 63.50.41. 54.2 Saját weboldal és Visual Editor: 15 checklist-tétel első körös routingja (2026-10-14)
 
@@ -7689,6 +7689,69 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 **Összesen:** 43/43 új soronkénti specifikáció; 54.1–54.8 kumulált **80/156**. A Twitch/OAuth korábbi kódbizonyítékok csak a jelenlegi baseline-t igazolják, a jövőbeli platformintegrációkat nem. OBS native companion és Extension külön F11 döntés; Content Studio és AI nem kap azonos publikálási jogosultságot. **Runtime/CI/provider acceptance: UNVERIFIED; teljes kapu NOT PASS.**
 
 **Következő:** 54.9–54.12 (Community, Store/Support, Analytics, Automation), majd 54.13–54.16; ezután szemantikai hiányok és forráskód-gate priorizálása.
+
+### 63.50.61. Második kör V: 54.9–54.12 közösség/kereskedelem/analitika/automatizáció tételes acceptance (2026-10-15)
+
+**Forrás:** 54.9–54.12 checkbox, 5. domain, 49.9–49.14 UI-modulok, 63.38 fázis. A siker/tiltott eset *tesztterv*, nem runtime bizonyíték.
+
+#### 54.9 — 9 tétel
+
+| Checklist sor | Domain owner | Fázis | Pozitív acceptance (terv) | Negatív acceptance (terv) |
+| --- | --- | --- | --- | --- |
+| 54.9#1 Publikus fan regisztráció/bejelentkezés, profil, preferencia, adatletöltés/törlés. | FAN_IDENTITY | F8 | Fan identity export/delete működik | Admin identityvel nem vonható össze automatikusan |
+| 54.9#2 Posztok, kommentek, reakciók, pollok, kérdések, beküldések és események. | COMMUNITY | F8 | Post/reaction/poll consent és ownership | Spam/idegen rekord mutation tiltott |
+| 54.9#3 Követés, értesítés, jelvény, mérföldkő, kihívás és közösségi jutalom. | COMMUNITY, NOTIFICATION | F8 | Milestone/reward canonical eventből | Duplicate event nem dupláz jutalmat |
+| 54.9#4 Tagsági szintek, exkluzív poszt/video/audio, member-only stream és archívum. | ENTITLEMENT, COMMUNITY | F8 | Member content entitlement valid | Expired/refunded member hozzáférés tiltott |
+| 54.9#5 Discord szerver/csatorna/role mapping entitlement alapján. | ENTITLEMENT, INTEGRATION | F8 | Discord role sync idempotens | Revoke után régi role nem marad |
+| 54.9#6 Moderációs queue, report, appeal, korlátozás/tiltás, spamvédelem és audit. | COMMUNITY, AUDIT | F8 | Report/appeal és audit trail | Moderator saját döntését nem rejtheti el |
+| 54.9#7 AI moderációs javaslat, bizonytalanság és emberi felülvizsgálat. | AI_OPERATION, COMMUNITY | F10 | AI moderáció csak javaslat és confidence | AI automatikus végleges ban tiltott |
+| 54.9#8 Public/member-only/private hozzáférés szerveroldali ellenőrzése. | COMMUNITY, ENTITLEMENT | F8 | Server-side visibility és permission | Privát rekord public URL-en sem olvasható |
+| 54.9#9 Közösségi szabályzat, adatvédelmi és korhatár-/tartalmi szabályok. | COMMUNITY, FAN_IDENTITY | F8 | Policy/age/consent kontroll | Nem jogosult korosztály nem regisztrálható |
+
+#### 54.10 — 12 tétel
+
+| Checklist sor | Domain owner | Fázis | Pozitív acceptance (terv) | Negatív acceptance (terv) |
+| --- | --- | --- | --- | --- |
+| 54.10#1 Fizikai termék, merch, digitális termék, bundle, limited drop és preorder. | PRODUCT | F8 | Terméktípus, készlet és preorder lifecycle | Oversell és unsupported physical fulfilment tiltott |
+| 54.10#2 Variánsok, SKU, ár/pénznem, készlet, kategória, kollekció, media és SEO. | PRODUCT, RESOURCE | F8 | SKU/price/currency/asset konzisztens | Ár nem keverhető több pénznem között |
+| 54.10#3 Terméklista, termékoldal, keresés, kosár, checkout-integráció és rendelés-visszaigazolás. | PRODUCT, ORDER | F8 | Checkout/order confirmation providerrel | Sikertelen payment nem paid order |
+| 54.10#4 Rendelésállapot, fizetés, teljesítés, tracking, cancel, refund és support. | ORDER, INTEGRATION | F8 | Refund/tracking állapot visszaigazolt | Chargeback nem marad fulfilled entitlement |
+| 54.10#5 Kupon, ajándékkártya, promóció, kampány, bundle és lejárat. | PRODUCT, CAMPAIGN | F8/F9 | Coupon expiry és bundle eligibility | Lejárt coupon nem használható |
+| 54.10#6 Biztonságos digitális delivery, entitlement és visszavonás refund/chargeback esetén. | ENTITLEMENT, ORDER | F8 | Signed delivery és refund revoke | Lejárt link nem tölthet le |
+| 54.10#7 Egyszeri támogatás, visszatérő támogatás, célmérő és köszönőüzenet. | SUPPORT | F8 | Provider-confirmed tip/sub és goal | Spoofed support event nem emeli célt |
+| 54.10#8 Tagsági előnyök, kedvezmények, termékdrop és tagság–Discord összekapcsolás. | ENTITLEMENT, SUPPORT | F8 | Membership és Discord sync | Expired tier nem kap kedvezményt |
+| 54.10#9 Szponzorációs media kit, ajánlat, deliverable, határidő, kampánylink és riport. | SPONSORSHIP, CAMPAIGN | F9 | Deal/deliverable és riport nyomon követhető | Privát szerződés nem public |
+| 54.10#10 Affiliate link/kód, jutalék és konverzió csak mérhető/jogszerű keretben. | CAMPAIGN, ANALYTICS | F9 | Affiliate attribution forrással | Consent nélküli tracking tiltott |
+| 54.10#11 Bevételi források, platformdíjak, refundok és export; nem könyvelési/adótanácsadási helyettesítő. | ANALYTICS, ORDER, SUPPORT | F8/F9 | Refund/fees és export provenance | Riport nem állítja magát adóbevallásnak |
+| 54.10#12 Fizetési, adózási, számlázási, fogyasztóvédelmi és GDPR-követelmények ellenőrzése. | ORDER, IDENTITY, AUDIT | F8 | Legal/tax/VAT/GDPR checklist dokumentált | Compliance nélkül checkout nem indul |
+
+#### 54.11 — 7 tétel
+
+| Checklist sor | Domain owner | Fázis | Pozitív acceptance (terv) | Negatív acceptance (terv) |
+| --- | --- | --- | --- | --- |
+| 54.11#1 Platformonkénti követő-/nézettség-/engagement-/streamidő-mutatók, ha elérhetők. | ANALYTICS, INTEGRATION | F9 | Provider metric timestamp és source | Unsupported metric nem nullának álcázva |
+| 54.11#2 Tartalom- és csatorna-összehasonlítás, trendek, időszakok és célok. | ANALYTICS, CONTENT | F9 | Trend és időablak összehasonlítás | Eltérő mérési definíciók nem keverhetők |
+| 54.11#3 Adatforrás, időbélyeg, frissesség, becsült/valós adat és hiányzó metrika jelzése. | ANALYTICS | F9 | Freshness/estimate/missing UI | Becsült adat nem tényként jelölve |
+| 54.11#4 Webanalitika, UTM, konverzió, SEO és publikált oldalak teljesítménye. | ANALYTICS, SEO_PUBLICATION | F9 | Consent-aware web conversion | Consent nélküli tracking tiltott |
+| 54.11#5 Thumbnail/cím/időzítés kísérletek és mérhető eredmények, ha elég adat áll rendelkezésre. | ANALYTICS, CAMPAIGN | F9 | Kísérlet cohort és confidence | Elégtelen minta nem nyertes |
+| 54.11#6 Kampány-/szponzorriport, CSV/JSON export és időszakos jelentés. | ANALYTICS, SPONSORSHIP | F9 | Auditálható export/report | Cross-site riport adat nem szivárog |
+| 54.11#7 AI-elemzés hipotézisekkel, forrással és bizonytalansággal; nem garantált növekedési ígéret. | AI_OPERATION, ANALYTICS | F10 | AI hipotézis forrás és uncertainty | Garantált növekedés állítás tiltott |
+
+#### 54.12 — 7 tétel
+
+| Checklist sor | Domain owner | Fázis | Pozitív acceptance (terv) | Negatív acceptance (terv) |
+| --- | --- | --- | --- | --- |
+| 54.12#1 Vizuális trigger → condition → action → branch modell. | AUTOMATION | F9 | Trigger-condition-action schema valid | Ciklikus workflow nem aktiválható |
+| 54.12#2 Triggerek: stream, platformesemény, schedule, tartalom, rendelés, tagság, webhook, időzítés. | AUTOMATION, INTEGRATION | F9 | Webhook/event idempotens trigger | Replayed event nem dupláz actiont |
+| 54.12#3 Akciók: értesítés, draft, címke, export, overlay/OBS parancs, publikálási előkészítés. | AUTOMATION, PUBLISHING, STREAM_TOOLS | F9 | Action csak canonical command API-n | Jogosulatlan publish/OBS command tiltott |
+| 54.12#4 Sablonok, verziózás, aktiválás/leállítás és jogosultság. | AUTOMATION, IDENTITY | F9 | Verzió és scope aktiválás előtt ellenőrzött | Revoke után workflow nem fut tovább |
+| 54.12#5 Dry-run, preview, jóváhagyás, idempotency, rate limit, retry, timeout és napló. | AUTOMATION, AUDIT | F9 | Dry-run és retry idempotency | Dry-run nem okoz külső mellékhatást |
+| 54.12#6 Sikertelen ág, karantén, értesítés, kézi helyreállítás és rollback/kompenzáció. | AUTOMATION, NOTIFICATION | F9 | Quarantine és compensation naplózott | Infinite retry és néma hiba tiltott |
+| 54.12#7 AI-ból létrehozott workflow először draft/szimuláció; csak jóváhagyás után éles. | AI_OPERATION, AUTOMATION | F10 | AI workflow draft és human approval | AI nem aktivál éles workflowt magától |
+
+**Összesen:** 35/35 új specifikációs sor; kumulált **115/156**. Külön trust boundary: FAN_IDENTITY ≠ creator IDENTITY; ORDER ≠ SaaS BILLING_PLAN; ANALYTICS csak derived metric; AUTOMATION nem ír közvetlen idegen domain rekordot. Payment/tax/legal és AI provider/runtime acceptance **OPEN**.
+
+**Következő:** 54.13–54.16 soronkénti acceptance, utána 156 sor konzisztencia- és hiánylista; teljes tervkapu NOT PASS.
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
