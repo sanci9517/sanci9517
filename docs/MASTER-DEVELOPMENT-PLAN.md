@@ -4063,3 +4063,15 @@ A §24.1–§24.18 registry korábbi 359-ID baseline-ja 2026-10-14-én egy új, 
 **Registry impact:** unique feature IDs increased from 359 to 360. The current E/F crosswalk has 323 rows; the structural reference check must be rerun after this change. Historical audit snapshots dated before this entry retain their 359-ID count as historical evidence; they must not be interpreted as the current registry size.
 
 **Acceptance boundary:** EDT-043 is PLANNED, not implemented. P0.2 remains **IN PROGRESS / NOT PASS**.
+
+### 41.3.24. P0.2 — Registry/crosswalk structural recheck after EDT-043 addition (2026-10-14)
+
+**Recheck scope:** current §24 registry versus the seven E/F crosswalk batches in §37.22–§37.30, after adding `EDT-043` and updating its E/F mapping references.
+
+- [x] Registry IDs: **360 unique**, including `EDT-043`.
+- [x] Crosswalk rows: **323** across §37.22 (57), §37.23 (66), §37.24 (45), §37.25 (59), §37.27 (28), §37.29 (26), §37.30 (42).
+- [x] Unique registry IDs referenced by the crosswalk: **360/360**.
+- [x] Unresolved/unknown ID references: **0**.
+- [x] Registry IDs not referenced by any checked crosswalk mapping/QA column: **0**.
+
+**Interpretation:** this confirms current structural coverage of every registered ID by at least one checked crosswalk mapping or QA reference. It does not prove correct semantics for every mapping, bidirectional source provenance for every ID, complete permission/dependency/acceptance fields, or runtime implementation. The missing original `00/A` and `00.9–00.9.6.B` source texts remain `UNRECOVERED / OPEN`; P0.2 remains **IN PROGRESS / NOT PASS**.
