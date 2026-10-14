@@ -1,11 +1,11 @@
 **HISTORICAL_ACTIVE_POINT_ID:** `F0.1-ADMIN-HOME-VISUAL-DESIGN-AND-SHELL`  
 **HISTORICAL_ACTIVE_POINT_STATUS:** `ACTIVE volt a korábbi snapshotban; nem aktuális végrehajtási státusz`  
-**ACTIVE_POINT_TITLE:** Creator Center/Admin főoldal — végleges UI/UX irány, dashboard shell és navigációs alap  
+**HISTORICAL_ACTIVE_POINT_TITLE:** Creator Center/Admin főoldal — végleges UI/UX irány, dashboard shell és navigációs alap  
 **HISTORICAL_ACTIVE_SUBPOINT_ID:** `F0.1-ADMIN-HOME-VISUAL-DESIGN-AND-SHELL`  
-**ACTIVE_SUBPOINT_STATUS:** `ACTIVE — Admin főoldal layout/design system/responsive shell; valós modulállapot, jogosultság és linkek; nincs hamis metrika vagy működőnek látszó placeholder`  
-**PREVIOUS_GATE:** `E6` — CLOSED / PASS  
-**NEXT_GATE:** `F0.1 Admin főoldal vizuális terv + shell → F0.2 Admin navigáció és globális shell acceptance → F0.3 Editor foundation → F0.4 Layers/structure → további pontok szigorú sorrendben; nincs M0 audit előfeltétel`  
-**PARALLEL_WORKSTREAMS:** `0`
+**HISTORICAL_ACTIVE_SUBPOINT_STATUS:** `ACTIVE — Admin főoldal layout/design system/responsive shell; valós modulállapot, jogosultság és linkek; nincs hamis metrika vagy működőnek látszó placeholder`  
+**HISTORICAL_PREVIOUS_GATE:** `E6` — CLOSED / PASS  
+**HISTORICAL_NEXT_GATE:** `F0.1 Admin főoldal vizuális terv + shell → F0.2 Admin navigáció és globális shell acceptance → F0.3 Editor foundation → F0.4 Layers/structure → további pontok szigorú sorrendben; nincs M0 audit előfeltétel`  
+**HISTORICAL_PARALLEL_WORKSTREAMS:** `0`
 
 > **HISTORICAL / SUPERSEDED — DO NOT EXECUTE.** Ez a korábbi MASTER-2.77 snapshot, amely F0.1-et jelölte aktívnak. Az egyetlen aktuális végrehajtási terv a `feature/f0-2-admin-global-shell` ágon lévő `docs/MASTER-DEVELOPMENT-PLAN.md`; annak eleji `ACTIVE_*` mezői az irányadók. A történeti capability-ket a canonical MASTER 2.77.7.A–2.77.7.C és GAP-01–GAP-14 részei őrzik.
 
