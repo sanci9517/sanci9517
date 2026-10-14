@@ -14,10 +14,10 @@
 ### 0.0. Új beszélgetés folytatási protokoll — kötelező
 - **Az egyetlen fejlesztési terv:** `docs/MASTER-DEVELOPMENT-PLAN.md` a `sanci9517/sanci9517` repository `v2/foundation` ágán. Ezt kell elsőként megnyitni minden új beszélgetésben.
 - **Aktív munkapont:** `P0-PRODUCT-BASELINE-AND-EXECUTION-CONTRACT` / `P0.2-ARCHIVE-RECONCILIATION-AND-BIDIRECTIONAL-FEATURE-TRACEABILITY`.
-- **Folytatási sorrend:** először a jelen fájl 0.2 aktív állapotát és 37.3 P0-állapotát, majd a 37.9–37.32 auditjegyzeteket és a 41.3.24–41.3.78 közötti legfrissebb forrásleltárakat, szemantikai korrekciókat és státuszokat kell elolvasni; utána az archív források még nyitott sorait kell folytatni. A 41.3.51 szerkezeti újraszámlálás és a 41.3.53–41.3.76 korrekciók frissebbek a korábbi összefoglaló számlálásoknál.
+- **Folytatási sorrend:** először a jelen fájl 0.2 aktív állapotát és 37.3 P0-állapotát, majd a 37.9–37.32 auditjegyzeteket és a 41.3.24–41.3.79 közötti legfrissebb forrásleltárakat, szemantikai korrekciókat és státuszokat kell elolvasni; utána az archív források még nyitott sorait kell folytatni. A 41.3.51 szerkezeti újraszámlálás és a 41.3.53–41.3.76 korrekciók frissebbek a korábbi összefoglaló számlálásoknál.
 - **Az archívum nem második terv:** az `docs/archive/**`, `docs/archive/plans/**`, régi checkpointok, issue-k, PR-ek és korábbi beszélgetések történeti források/bizonyítékok. Nem állíthatnak be másik aktív pontot, nem írhatják felül a jelen fájl aktív állapotát. Követelményük viszont nem törölhető; ha még nincs reconciliálva, nyitott tételként kell felvenni ebbe a MASTER-be.
 - **Nincs külön audit- vagy funkciólista-terv:** az auditjegyzék, a forrásproveniencia, a funkciókatalógus, a döntések, a függőségek és az acceptance ugyanebben a fájlban él. Kiegészítő fájl csak nyers bizonyíték/kivonat lehet, végrehajtási igazságforrás nem.
-- **Új chatnek szánt rövid folytatási szöveg:** „A `docs/MASTER-DEVELOPMENT-PLAN.md` az egyetlen irányadó terv. Olvasd el a 0.0, 0.2, 37.3, 37.9–37.32 és 41.3.24–41.3.78 fejezeteket, különösen a legfrissebb auditjegyzeteket. Az aktív pont P0.2; folytasd a C.23/F.1–F.13 és a H19–H34, MASTER-FINAL-ROADMAP, SANCI-MASTER-PLAN, V2-BLUEPRINT források szemantikai reconciliációját, a hiányzó 00/A és 00.9–00.9.6.B források további keresését, majd mind a 359 funkció-ID owner/phase/dependency/DoD/test/acceptance szerződésének lezárását. Ne állíts PASS-t bizonyíték nélkül, ne indíts párhuzamos feature-fejlesztést, és a végső funkciólista közös ellenőrzését még ne kérd.”
+- **Új chatnek szánt rövid folytatási szöveg:** „A `docs/MASTER-DEVELOPMENT-PLAN.md` az egyetlen irányadó terv. Olvasd el a 0.0, 0.2, 37.3, 37.9–37.32 és 41.3.24–41.3.79 fejezeteket, különösen a legfrissebb auditjegyzeteket. Az aktív pont P0.2; folytasd a C.23/F.1–F.13 és a H19–H34, MASTER-FINAL-ROADMAP, SANCI-MASTER-PLAN, V2-BLUEPRINT források szemantikai reconciliációját, a hiányzó 00/A és 00.9–00.9.6.B források további keresését, majd mind a 359 funkció-ID owner/phase/dependency/DoD/test/acceptance szerződésének lezárását. Ne állíts PASS-t bizonyíték nélkül, ne indíts párhuzamos feature-fejlesztést, és a végső funkciólista közös ellenőrzését még ne kérd.”
 
 Ez a dokumentum egyszerre termékspecifikáció, architekturális szerződés, funkciókatalógus, tesztelési szabályzat és végrehajtási lista. Minden fejlesztési feladatot ebből kell kiválasztani és ide kell visszavezetni. Minden funkcióhoz tartozzon felhasználói cél, felület, domain-tulajdonos, adatforrás, jogosultság, függőség, teszt és elfogadási feltétel.
 
@@ -7553,7 +7553,7 @@ The archived MASTER contains **100 original F.1–F.13 bullets**: F.1=10, F.2=6,
 
 | Source path / branch evidence | Size / structure | Source-recovery result | P0.2 disposition |
 |---|---|---|---|
-| `docs/MASTER-1.2-VISUAL-EDITOR-SPEC.md` on `archive/pre-editor-v2-ui-cutover-2026-09-17`, blob `4ae2480e8e112a5c8e451750bbec16ed098f7262` | 805 lines / 13,929 characters; 23 numbered sections; 529 list bullets; 56 explicit implementation-order checkboxes. | No exact `00/A`, `A.2.2`, `00.9.6.B`, `00.9.6`, `Schedule CRUD` or `Domain-Driven Editor` marker. It is a separate historical Visual Editor specification, not the missing original source. | **NEW SOURCE-RECONCILIATION GAP:** item-level semantic crosswalk to the §24 stable IDs and §37.22–§37.30 E/F source crosswalks is not yet recorded in the current MASTER. Preserve all requirements; do not revive its historical E0–E10 execution order. |
+| `docs/MASTER-1.2-VISUAL-EDITOR-SPEC.md` on `archive/pre-editor-v2-ui-cutover-2026-09-17`, blob `4ae2480e8e112a5c8e451750bbec16ed098f7262` | 805 lines / 13,929 characters; 23 numbered sections; 529 list bullets; 56 explicit implementation-order checkboxes. | No exact `00/A`, `A.2.2`, `00.9.6.B`, `00.9.6`, `Schedule CRUD` or `Domain-Driven Editor` marker. It is a separate historical Visual Editor specification, not the missing original source. | **NEW SOURCE-RECONCILIATION GAP (discovery-time state):** item-level semantic crosswalk was not yet recorded at discovery. A keyed candidate crosswalk is now in §41.3.79; semantic validation and final disposition remain open. Preserve all requirements; do not revive its historical E0–E10 execution order. |
 | `docs/DEVELOPMENT-PLAN-EXTRAS.md` on `archive/pre-canonical-public-2026-09-16` and other archive/backup branch heads, blob `52839f3b09aacf9026f4d21ca885f5dd79abfec6` | 280 lines / 7,590 characters. | No exact missing-source marker. It is a historical add-on to the older DEVELOPMENT-PLAN, not an original 00/A/00.9.6.B source. | Add to the historical source inventory and verify its individual requirements against the canonical crosswalk; do not restore it as a separate plan. |
 | `docs/DEVELOPMENT-PLAN-ADDENDUM.md` on the same archive/backup branch family, blob `5c2c6d335a6c59a7a18a7861bc375abe3e032374` | 18 lines / 568 characters. | No missing-source marker; contains a short dated Editor UX/Gap update. | Preserve as historical evidence; map any non-duplicate requirement to the owning current ID, not as a new execution point. |
 | `docs/EDITOR-UX-PLAN.md` on the same archive/backup branch family, blob `7cdf22a671f9dcb86df7c0f8ab6bb749898fc065` | 55 lines / 1,991 characters. | No missing-source marker; describes Hungarian naming and Editor usability expectations. | Check against the canonical element registry, Inspector labels, keyboard/accessibility and user-facing terminology requirements; record explicit disposition. |
@@ -7562,6 +7562,936 @@ The archived MASTER contains **100 original F.1–F.13 bullets**: F.1=10, F.2=6,
 
 **Source boundary:** these four files do not recover the missing original `00/A` or `00.9–00.9.6.B` bodies. Their historical status and branch location do not permit reconstructing those missing chapters. The 56 checkboxes in the MASTER-1.2 spec are an old implementation-order snapshot, not current PASS evidence.
 
-**Next action:** add a source-keyed, item-level ledger for MASTER-1.2 and then the three smaller historical UX/plan addenda; each source item must resolve to one or more existing §24 IDs or receive an explicit KEEP/MERGE/EXPAND/DEFER/REPLACE/REJECT decision with owner, phase, dependency, DoD and test/acceptance boundary. Do not add new stable IDs merely because a historical source uses different wording. P0.2 remains **IN PROGRESS / NOT PASS**; no feature implementation or final shared feature-list review is authorized.
+**Next action:** validate the §41.3.79 candidate crosswalk item-by-item; then reconcile the three smaller historical UX/plan addenda. Each source item must resolve to one or more existing §24 IDs or receive an explicit KEEP/MERGE/EXPAND/DEFER/REPLACE/REJECT decision with owner, phase, dependency, DoD and test/acceptance boundary. Do not add new stable IDs merely because a historical source uses different wording. P0.2 remains **IN PROGRESS / NOT PASS**; no feature implementation or final shared feature-list review is authorized.
 
 **Status:** 4 additional historical source files discovered and content-scanned; original missing 00/A and 00.9–00.9.6.B text remains UNRECOVERED / OPEN. Documentation-only; no runtime code/data/configuration changed and no tests were run.
+
+
+### 41.3.79. P0.2 — MASTER-1.2 Visual Editor spec: source-keyed candidate crosswalk (2026-10-14)
+
+**Primary source:** `docs/MASTER-1.2-VISUAL-EDITOR-SPEC.md`, archive branch `archive/pre-editor-v2-ui-cutover-2026-09-17`, blob `4ae2480e8e112a5c8e451750bbec16ed098f7262`. This immutable source has 805 lines, 23 numbered sections, 529 bullet/checklist lines (including 56 old E0–E10 checkboxes) and 61 numbered test steps. The 61 numbered steps include the 25 minimum test categories and the 36-step manual Editor Core Gate.
+
+**Purpose and status:** preserve each source list item with a stable source key and a candidate mapping to the existing §24 IDs. This is a **DRAFT CANDIDATE CROSSWALK**, not a semantic PASS. A candidate ID is not proof that the exact behavior, constraint, UI state, negative test or acceptance evidence is present. Every row remains open until verified against the detailed C/E/F contracts and the existing §37 crosswalk. The old E0–E10 order is historical and must not replace the current P0.2-first execution order.
+
+**Source key rule:** `M12-Lnnnn` is the original immutable source line number in the blob above. `M12-Pnnnn` keys the critical prose constraints listed after the bullet ledger. Source text is preserved verbatim except for escaping a literal Markdown table separator.
+
+
+#### Source section: 1. Kötelező architektúra
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0019` / 19 | egyetlen Page Model; | `EDT-001`, `EDT-002` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0020` / 20 | egyetlen editor state; | `EDT-006`, `EDT-027`, `EDT-030` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0021` / 21 | egyetlen mutation/command rendszer; | `EDT-003`, `EDT-004`, `AI-005`, `AI-008` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0022` / 22 | egyetlen hierarchy modell (`parentId + children/order`); | `EDT-002`, `EDT-011`, `EDT-014` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0023` / 23 | nincs legacy stabilizer; | `EDT-001`, `WEB-012`, `OPS-005` | VERIFY legacy-isolation constraint; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0024` / 24 | nincs párhuzamos `state.doc`/`state.document` modell; | `EDT-001`, `EDT-002`, `EDT-006`, `EDT-027`, `EDT-030` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0025` / 25 | nincs külön groupId-alapú hierarchy; | `EDT-002`, `EDT-011`, `EDT-014` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0026` / 26 | UI nem ír közvetlenül D1/R2/KV-t; | `EDT-003`, `RES-002`, `OPS-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0027` / 27 | AI később ugyanazokat a commandokat használja, mint a UI. | `EDT-003`, `EDT-004`, `AI-005`, `AI-008` | DRAFT CANDIDATE MAP — semantic validation open |
+
+#### Source section: 2. Dokumentum- és oldalrendszer
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0033` / 33 | több oldal kezelése; | `WEB-001`, `WEB-002`, `WEB-003` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0034` / 34 | oldal létrehozás, másolás, duplikálás, törlés; | `WEB-001`, `WEB-002`, `WEB-003` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0035` / 35 | slug, title, státusz és metaadatok; | `WEB-002`, `SEO-001` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0036` / 36 | draft/preview/publish; | `WEB-004`, `WEB-005`, `WEB-006` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0037` / 37 | verziózás; | `WEB-007`, `WEB-008`, `EDT-029` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0038` / 38 | rollback; | `WEB-007`, `WEB-008`, `EDT-029` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0039` / 39 | változás-összehasonlítás; | `WEB-007`, `WEB-008`, `EDT-029` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0040` / 40 | oldalzárolás; | `WEB-001`, `WEB-002`, `WEB-003`, `WEB-008`, `EDT-029` | VERIFY page-level editing lock versus layer lock; DRAFT CANDIDATE MAP — semantic validation open; Potential detail gap: page-level edit lock must be distinguished from layer lock. |
+| `M12-L0041` / 41 | jogosultság; | `SEC-002`, `WEB-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0042` / 42 | sablonból oldal létrehozás; | `WEB-001`, `WEB-002`, `WEB-003`, `DSN-009`, `DSN-010` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0043` / 43 | page template; | `WEB-001`, `WEB-002`, `WEB-003`, `DSN-009`, `DSN-010` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0044` / 44 | section template; | `DSN-009`, `DSN-010`, `DSN-011` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0045` / 45 | component template; | `DSN-009`, `DSN-010`, `DSN-011` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0046` / 46 | import/export; | `DSN-015`, `OPS-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0047` / 47 | strukturált JSON Page Model; | `WEB-001`, `WEB-002`, `WEB-003`, `EDT-001`, `OPS-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0048` / 48 | schema migration; | `EDT-001`, `OPS-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0049` / 49 | invalid/orphan/circular node védelem. | `EDT-002`, `EDT-022`, `SEC-005` | DRAFT CANDIDATE MAP — semantic validation open |
+
+#### Source section: 3. Hierarchy / Layers
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0055` / 55 | valódi parent-child kapcsolat; | `EDT-002`, `EDT-012` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0056` / 56 | root/section/container/slot; | `EDT-002`, `EDT-012` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0057` / 57 | nested nesting; | `EDT-002`, `EDT-012` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0058` / 58 | multi-level tree; | `EDT-002`, `EDT-012` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0059` / 59 | drag & drop; | `EDT-008`, `EDT-011` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0060` / 60 | drop zone; | `EDT-008`, `EDT-011` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0061` / 61 | insertion before/after/inside; | `EDT-008`, `EDT-011` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0062` / 62 | reparent; | `EDT-002`, `EDT-012`, `EDT-011`, `EDT-003`, `AI-005` | VERIFY group/ungroup command schema; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0063` / 63 | unnest; | `EDT-011`, `EDT-003`, `AI-005` | VERIFY group/ungroup command schema; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0064` / 64 | multi-select; | `EDT-002`, `EDT-012` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0065` / 65 | bulk move/delete/duplicate; | `EDT-002`, `EDT-012` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0066` / 66 | group/ungroup; | `EDT-011`, `EDT-003`, `AI-005` | VERIFY group/ungroup command schema; DRAFT CANDIDATE MAP — semantic validation open; Verify explicit group/ungroup commands and command-schema IDs. |
+| `M12-L0067` / 67 | nested groups; | `EDT-002`, `EDT-012`, `EDT-011`, `EDT-003`, `AI-005` | VERIFY group/ungroup command schema; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0068` / 68 | lock/hide; | `EDT-014` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0069` / 69 | rename; | `EDT-014` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0070` / 70 | z-index/layer order; | `EDT-002`, `EDT-012` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0071` / 71 | tree search; | `EDT-002`, `EDT-012`, `EDT-015`, `WEB-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0072` / 72 | collapse/expand; | `EDT-002`, `EDT-012` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0073` / 73 | expand-to-selected; | `EDT-002`, `EDT-012` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0074` / 74 | breadcrumbs; | `EDT-012`, `EDT-015`, `WEB-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0075` / 75 | parent selection; | `EDT-002`, `EDT-012` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0076` / 76 | invalid nesting tiltás; | `EDT-002`, `EDT-012` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0077` / 77 | allowed-child és slot/capacity szabályok. | `EDT-002`, `EDT-012` | DRAFT CANDIDATE MAP — semantic validation open; Verify supported-child/slot/capacity validation. |
+
+#### Source section: 4. Alapelemek és tartalom
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0084` / 84 | root; | `EDT-016`, `EDT-002` | VERIFY supported-child/slot-capacity contract; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0085` / 85 | container; | `EDT-016`, `EDT-002` | VERIFY supported-child/slot-capacity contract; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0086` / 86 | section; | `EDT-016`, `EDT-002` | VERIFY supported-child/slot-capacity contract; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0087` / 87 | row/columns; | `EDT-016`, `EDT-002` | VERIFY supported-child/slot-capacity contract; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0088` / 88 | flex; | `EDT-016`, `EDT-002` | VERIFY supported-child/slot-capacity contract; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0089` / 89 | grid; | `EDT-016`, `EDT-002` | VERIFY supported-child/slot-capacity contract; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0090` / 90 | stack; | `EDT-016`, `EDT-002` | VERIFY supported-child/slot-capacity contract; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0091` / 91 | group; | `EDT-015`, `EDT-016` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0092` / 92 | heading; | `EDT-017`, `EDT-021` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0093` / 93 | text/paragraph; | `EDT-017`, `EDT-021` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0094` / 94 | rich text; | `EDT-017`, `EDT-021` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0095` / 95 | link; | `EDT-017`, `EDT-021` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0096` / 96 | button; | `EDT-017`, `EDT-021` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0097` / 97 | image; | `EDT-018`, `RES-004`, `RES-010` | VERIFY exact media/gallery/audio element registry coverage; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0098` / 98 | video; | `EDT-018`, `RES-004`, `RES-010` | VERIFY exact media/gallery/audio element registry coverage; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0099` / 99 | audio; | `EDT-018`, `RES-004`, `RES-010` | VERIFY exact media/gallery/audio element registry coverage; DRAFT CANDIDATE MAP — semantic validation open; Verify Audio is an explicit canonical Editor block, not only a generic media mention. |
+| `M12-L0100` / 100 | icon/SVG; | `EDT-017`, `EDT-021` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0101` / 101 | divider; | `EDT-017`, `EDT-021` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0102` / 102 | spacer; | `EDT-017`, `EDT-021` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0103` / 103 | badge/avatar/card; | `EDT-015`, `EDT-016` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0104` / 104 | list/table; | `EDT-019`, `EDT-022`, `WEB-020` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0105` / 105 | tabs/accordion/dropdown; | `EDT-019`, `EDT-022`, `WEB-020` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0106` / 106 | breadcrumb/pagination/search; | `EDT-019`, `EDT-039`, `WEB-009`, `WEB-010`, `COM-011` | VERIFY component-vs-layout-vs-interaction ownership; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0107` / 107 | countdown/progress/notification; | `EDT-019`, `EDT-039`, `WEB-009`, `WEB-010`, `COM-011` | VERIFY component-vs-layout-vs-interaction ownership; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0108` / 108 | modal/popup; | `EDT-019`, `EDT-039`, `WEB-009`, `WEB-010`, `COM-011` | VERIFY component-vs-layout-vs-interaction ownership; DRAFT CANDIDATE MAP — semantic validation open; Verify modal/popup/popover component ownership versus interaction service. |
+| `M12-L0109` / 109 | navbar/menu/footer/sidebar; | `EDT-019`, `EDT-039`, `WEB-009`, `WEB-010`, `COM-011` | VERIFY component-vs-layout-vs-interaction ownership; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0110` / 110 | form/input/textarea/checkbox/radio/select/slider/file/submit; | `EDT-017`, `EDT-021`, `EDT-019`, `EDT-022`, `WEB-020` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0111` / 111 | gallery/carousel; | `EDT-018`, `RES-004`, `RES-010` | VERIFY exact media/gallery/audio element registry coverage; DRAFT CANDIDATE MAP — semantic validation open; Verify Gallery/Carousel block and data/empty/loading states. |
+| `M12-L0112` / 112 | iframe/embed/map/code; | `EDT-018`, `RES-004`, `RES-010` | VERIFY exact media/gallery/audio element registry coverage; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0113` / 113 | social embed; | `EDT-018`, `RES-004`, `RES-010` | VERIFY exact media/gallery/audio element registry coverage; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0114` / 114 | dynamic/custom component slot. | `EDT-016`, `EDT-002` | VERIFY supported-child/slot-capacity contract; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0117` / 117 | Twitch; | `EDT-020`, `DYN-001`, `INT-010`, `LIV-001`, `SCH-011` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0118` / 118 | YouTube; | `EDT-020`, `DYN-001`, `INT-010`, `LIV-001`, `SCH-011` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0119` / 119 | TikTok; | `EDT-020`, `DYN-001`, `INT-010`, `LIV-001`, `SCH-011` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0120` / 120 | Discord; | `EDT-020`, `DYN-001`, `INT-010`, `LIV-001`, `SCH-011` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0121` / 121 | Live status; | `EDT-020`, `DYN-001`, `INT-010`, `LIV-001`, `SCH-011` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0122` / 122 | Schedule; | `EDT-020`, `DYN-001`, `INT-010`, `LIV-001`, `SCH-011` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0123` / 123 | Stream count; | `EDT-020`, `DYN-001`, `INT-010`, `LIV-001`, `SCH-011` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0124` / 124 | Followers/Subs; | `EDT-020`, `DYN-001`, `INT-010`, `LIV-001`, `SCH-011` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0125` / 125 | VOD; | `EDT-020`, `DYN-001`, `INT-010`, `LIV-001`, `SCH-011` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0126` / 126 | Support; | `EDT-020`, `DYN-001`, `INT-010`, `LIV-001`, `SCH-011` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0127` / 127 | Community; | `EDT-020`, `DYN-001`, `INT-010`, `LIV-001`, `SCH-011` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0128` / 128 | Game card/list. | `EDT-020`, `DYN-001`, `INT-010`, `LIV-001`, `SCH-011` | DRAFT CANDIDATE MAP — semantic validation open |
+
+#### Source section: 5. Inspector / property system
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0135` / 135 | schema; | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0136` / 136 | default érték; | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0137` / 137 | típusellenőrzés; | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0138` / 138 | validáció; | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0139` / 139 | reset; | `EDT-023`, `EDT-024`, `EDT-025` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0140` / 140 | inherited állapot; | `EDT-023`, `EDT-024`, `EDT-025` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0141` / 141 | explicit override állapot; | `EDT-023`, `EDT-024`, `EDT-025` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0142` / 142 | responsive override; | `EDT-023`, `EDT-024`, `EDT-025` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0143` / 143 | token kapcsolat ahol releváns; | `DSN-001`, `DSN-003`, `DSN-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0144` / 144 | undo/redo támogatás. | `EDT-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0147` / 147 | content; | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0148` / 148 | rich text; | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0149` / 149 | typography; | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0150` / 150 | dimensions; | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0151` / 151 | spacing; | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0152` / 152 | flex; | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0153` / 153 | grid; | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0154` / 154 | position; | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0155` / 155 | appearance; | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0156` / 156 | background; | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0157` / 157 | border; | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0158` / 158 | radius; | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0159` / 159 | shadow; | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0160` / 160 | media; | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0161` / 161 | responsive; | `EDT-023`, `EDT-024`, `EDT-025` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0162` / 162 | states; | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0163` / 163 | interaction; | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0164` / 164 | navigation; | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0165` / 165 | accessibility; | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0166` / 166 | data binding; | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0167` / 167 | visibility; | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0168` / 168 | advanced. | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0171` / 171 | property search; | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0172` / 172 | color picker; | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0173` / 173 | unit selector; | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0174` / 174 | linked/unlinked spacing sides; | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0175` / 175 | token selector; | `DSN-001`, `DSN-003`, `DSN-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0176` / 176 | inherited/overridden jelzés; | `EDT-023`, `EDT-024`, `EDT-025` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0177` / 177 | invalid value jelzés; | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0178` / 178 | property reset; | `EDT-021`, `EDT-022`, `EDT-023`, `EDT-024`, `EDT-025` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0179` / 179 | shorthand/expanded editing. | `EDT-021`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open; Verify shorthand/expanded property editing behavior. |
+
+#### Source section: 6. Layout engine
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0186` / 186 | fixed; | `EDT-009`, `EDT-016`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0187` / 187 | auto; | `EDT-009`, `EDT-016`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0188` / 188 | fit-content; | `EDT-009`, `EDT-016`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0189` / 189 | fill; | `EDT-009`, `EDT-016`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0190` / 190 | min/max; | `EDT-009`, `EDT-016`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0191` / 191 | percentage; | `EDT-009`, `EDT-016`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0192` / 192 | viewport units; | `EDT-009`, `EDT-016`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0193` / 193 | intrinsic; | `EDT-009`, `EDT-016`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0194` / 194 | fluid; | `EDT-009`, `EDT-016`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0195` / 195 | clamp; | `EDT-009`, `EDT-016`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0196` / 196 | aspect ratio. | `EDT-009`, `EDT-016`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0199` / 199 | margin; | `EDT-009`, `EDT-016`, `EDT-021` | VERIFY complete box-model property/control coverage; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0200` / 200 | padding; | `EDT-009`, `EDT-016`, `EDT-021` | VERIFY complete box-model property/control coverage; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0201` / 201 | gap; | `EDT-009`, `EDT-016`, `EDT-021` | VERIFY complete box-model property/control coverage; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0202` / 202 | negative margin ahol engedélyezett; | `EDT-009`, `EDT-016`, `EDT-021` | VERIFY complete box-model property/control coverage; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0203` / 203 | responsive spacing; | `EDT-009`, `EDT-016` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0204` / 204 | visual box-model editor. | `EDT-009`, `EDT-016`, `EDT-021` | VERIFY complete box-model property/control coverage; DRAFT CANDIDATE MAP — semantic validation open; Verify spacing/box-model visualizer behavior and acceptance. |
+| `M12-L0207` / 207 | row/column; | `EDT-016`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0208` / 208 | reverse; | `EDT-016`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0209` / 209 | wrap; | `EDT-016`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0210` / 210 | justify; | `EDT-016`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0211` / 211 | align; | `EDT-016`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0212` / 212 | align-content; | `EDT-016`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0213` / 213 | order; | `EDT-009`, `EDT-016` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0214` / 214 | grow/shrink/basis; | `EDT-016`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0215` / 215 | self; | `EDT-016`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0216` / 216 | gap. | `EDT-009`, `EDT-016`, `EDT-021` | VERIFY complete box-model property/control coverage; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0219` / 219 | rows/columns; | `EDT-016`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0220` / 220 | fixed/fractional/auto; | `EDT-009`, `EDT-016`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0221` / 221 | minmax; | `EDT-016`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0222` / 222 | auto-fit/auto-fill; | `EDT-009`, `EDT-016`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0223` / 223 | areas; | `EDT-016`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0224` / 224 | placement; | `EDT-016`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0225` / 225 | alignment; | `EDT-016`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0226` / 226 | explicit/implicit validation. | `EDT-016`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0229` / 229 | static; | `EDT-009`, `EDT-022` | VERIFY supported position/stacking values; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0230` / 230 | relative; | `EDT-009`, `EDT-022` | VERIFY supported position/stacking values; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0231` / 231 | absolute; | `EDT-009`, `EDT-022` | VERIFY supported position/stacking values; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0232` / 232 | fixed; | `EDT-009`, `EDT-016`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0233` / 233 | sticky; | `EDT-009`, `EDT-022` | VERIFY supported position/stacking values; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0234` / 234 | inset; | `EDT-009`, `EDT-022` | VERIFY supported position/stacking values; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0235` / 235 | z-index; | `EDT-009`, `EDT-022` | VERIFY supported position/stacking values; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0236` / 236 | stacking context validation. | `EDT-009`, `EDT-022` | VERIFY supported position/stacking values; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0239` / 239 | visible; | `EDT-009`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0240` / 240 | hidden; | `EDT-009`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0241` / 241 | auto; | `EDT-009`, `EDT-016`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0242` / 242 | scroll; | `EDT-009`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0243` / 243 | x/y; | `EDT-009`, `EDT-016` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0244` / 244 | clip; | `EDT-009`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0245` / 245 | text overflow. | `EDT-009`, `EDT-022` | DRAFT CANDIDATE MAP — semantic validation open |
+
+#### Source section: 7. Styling / Design System
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0251` / 251 | color; | `DSN-001`, `DSN-002`, `DSN-005`, `DSN-007`, `EDT-040` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0252` / 252 | gradient; | `DSN-001`, `DSN-002`, `DSN-005`, `DSN-007`, `EDT-040` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0253` / 253 | typography; | `DSN-001`, `DSN-002`, `DSN-005`, `DSN-007`, `EDT-040` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0254` / 254 | font family/size/weight/line-height/letter-spacing; | `DSN-001`, `DSN-002`, `DSN-005`, `DSN-007`, `EDT-040` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0255` / 255 | text alignment/transform; | `DSN-001`, `DSN-002`, `DSN-005`, `DSN-007`, `EDT-040` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0256` / 256 | background; | `DSN-001`, `DSN-002`, `DSN-005`, `DSN-007`, `EDT-040` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0257` / 257 | border; | `DSN-001`, `DSN-002`, `DSN-005`, `DSN-007`, `EDT-040` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0258` / 258 | radius; | `DSN-001`, `DSN-002`, `DSN-005`, `DSN-007`, `EDT-040` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0259` / 259 | shadow; | `DSN-001`, `DSN-002`, `DSN-005`, `DSN-007`, `EDT-040` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0260` / 260 | opacity; | `DSN-001`, `DSN-002`, `DSN-005`, `DSN-007`, `EDT-040` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0261` / 261 | transform; | `DSN-001`, `DSN-002`, `DSN-005`, `DSN-007`, `EDT-040` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0262` / 262 | filter; | `DSN-001`, `DSN-002`, `DSN-005`, `DSN-007`, `EDT-040` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0263` / 263 | transition; | `DSN-001`, `DSN-002`, `DSN-005`, `DSN-007`, `EDT-040` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0264` / 264 | animation. | `DSN-001`, `DSN-002`, `DSN-005`, `DSN-007`, `EDT-040` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0267` / 267 | colors; | `DSN-001`, `DSN-002`, `DSN-005`, `DSN-007`, `EDT-040` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0268` / 268 | typography; | `DSN-001`, `DSN-002`, `DSN-005`, `DSN-007`, `EDT-040` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0269` / 269 | spacing; | `DSN-001`, `DSN-002` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0270` / 270 | radius; | `DSN-001`, `DSN-002`, `DSN-005`, `DSN-007`, `EDT-040` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0271` / 271 | shadow; | `DSN-001`, `DSN-002`, `DSN-005`, `DSN-007`, `EDT-040` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0272` / 272 | breakpoints; | `DSN-001`, `DSN-002` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0273` / 273 | reusable style presets; | `DSN-001`, `DSN-002` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0274` / 274 | CSS variables; | `DSN-001`, `DSN-003`, `DSN-004` | VERIFY unused-token detection and token dependency map; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0275` / 275 | token override; | `DSN-001`, `DSN-003`, `DSN-004` | VERIFY unused-token detection and token dependency map; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0276` / 276 | token usage search; | `DSN-001`, `DSN-003`, `DSN-004` | VERIFY unused-token detection and token dependency map; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0277` / 277 | unused-token detection későbbi ellenőrzésként. | `DSN-001`, `DSN-003`, `DSN-004` | VERIFY unused-token detection and token dependency map; DRAFT CANDIDATE MAP — semantic validation open; Verify unused-token detection is assigned to DSN owner or explicitly deferred. |
+| `M12-L0280` / 280 | default; | `DSN-001`, `DSN-002` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0281` / 281 | hover; | `DSN-013`, `EDT-039`, `EDT-040` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0282` / 282 | focus; | `DSN-013`, `EDT-039`, `EDT-040` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0283` / 283 | active; | `DSN-013`, `EDT-039`, `EDT-040` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0284` / 284 | disabled; | `DSN-013`, `EDT-039`, `EDT-040` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0285` / 285 | selected/current; | `DSN-013`, `EDT-039`, `EDT-040` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0286` / 286 | variants; | `DSN-013`, `EDT-039`, `EDT-040` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0287` / 287 | variant props. | `DSN-013`, `EDT-039`, `EDT-040` | DRAFT CANDIDATE MAP — semantic validation open |
+
+#### Source section: 8. Canvas / UX
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0293` / 293 | zoom 25/50/75/100/150/200%; | `EDT-007`, `EDT-010`, `EDT-025` | VERIFY device frame and spacing visualizer details; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0294` / 294 | fit screen; | `EDT-007`, `EDT-010`, `EDT-025` | VERIFY device frame and spacing visualizer details; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0295` / 295 | grid; | `EDT-007`, `EDT-010`, `EDT-025` | VERIFY device frame and spacing visualizer details; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0296` / 296 | guides; | `EDT-007`, `EDT-010`, `EDT-025` | VERIFY device frame and spacing visualizer details; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0297` / 297 | snap; | `EDT-007`, `EDT-010`, `EDT-025` | VERIFY device frame and spacing visualizer details; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0298` / 298 | rulers; | `EDT-007`, `EDT-010`, `EDT-025` | VERIFY device frame and spacing visualizer details; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0299` / 299 | safe area; | `EDT-007`, `EDT-010`, `EDT-025` | VERIFY device frame and spacing visualizer details; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0300` / 300 | device frame; | `EDT-007`, `EDT-010`, `EDT-025` | VERIFY device frame and spacing visualizer details; DRAFT CANDIDATE MAP — semantic validation open; Verify device-frame preview as distinct from responsive viewport preview. |
+| `M12-L0301` / 301 | full-page mode; | `EDT-007`, `EDT-010`, `EDT-025` | VERIFY device frame and spacing visualizer details; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0302` / 302 | focus selected; | `EDT-007`, `EDT-010`, `EDT-025` | VERIFY device frame and spacing visualizer details; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0303` / 303 | selection/hover/parent outline; | `EDT-007`, `EDT-010`, `EDT-025` | VERIFY device frame and spacing visualizer details; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0304` / 304 | spacing visualizer; | `EDT-007`, `EDT-010`, `EDT-025` | VERIFY device frame and spacing visualizer details; DRAFT CANDIDATE MAP — semantic validation open; Verify spacing/box-model visualizer behavior and acceptance. |
+| `M12-L0305` / 305 | breakpoint indicator; | `EDT-007`, `EDT-010`, `EDT-025` | VERIFY device frame and spacing visualizer details; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0306` / 306 | scroll preservation; | `EDT-007`, `EDT-010`, `EDT-025` | VERIFY device frame and spacing visualizer details; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0307` / 307 | alignment tools; | `EDT-010`, `EDT-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0308` / 308 | distribute; | `EDT-010`, `EDT-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0309` / 309 | match size; | `EDT-010`, `EDT-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0310` / 310 | distance indicators; | `EDT-010`, `EDT-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0311` / 311 | smart guides; | `EDT-007`, `EDT-010`, `EDT-025`, `EDT-009` | VERIFY device frame and spacing visualizer details; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0312` / 312 | snap to siblings/container. | `EDT-007`, `EDT-010`, `EDT-025`, `EDT-009` | VERIFY device frame and spacing visualizer details; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0315` / 315 | layers; | `EDT-012`, `EDT-021`, `EDT-036`, `ADM-008` | VERIFY panel state persistence and resizable/collapsible panels; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0316` / 316 | inspector; | `EDT-012`, `EDT-021`, `EDT-036`, `ADM-008` | VERIFY panel state persistence and resizable/collapsible panels; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0317` / 317 | components; | `EDT-012`, `EDT-021`, `EDT-036`, `ADM-008` | VERIFY panel state persistence and resizable/collapsible panels; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0318` / 318 | assets; | `EDT-012`, `EDT-021`, `EDT-036`, `ADM-008` | VERIFY panel state persistence and resizable/collapsible panels; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0319` / 319 | pages; | `EDT-012`, `EDT-021`, `EDT-036`, `ADM-008` | VERIFY panel state persistence and resizable/collapsible panels; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0320` / 320 | history; | `EDT-012`, `EDT-021`, `EDT-036`, `ADM-008` | VERIFY panel state persistence and resizable/collapsible panels; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0321` / 321 | preview/publish; | `EDT-012`, `EDT-021`, `EDT-036`, `ADM-008` | VERIFY panel state persistence and resizable/collapsible panels; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0322` / 322 | command palette; | `EDT-012`, `EDT-021`, `EDT-036`, `ADM-008` | VERIFY panel state persistence and resizable/collapsible panels; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0323` / 323 | notifications; | `EDT-012`, `EDT-021`, `EDT-036`, `ADM-008` | VERIFY panel state persistence and resizable/collapsible panels; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0324` / 324 | modal system; | `EDT-012`, `EDT-021`, `EDT-036`, `ADM-008` | VERIFY panel state persistence and resizable/collapsible panels; DRAFT CANDIDATE MAP — semantic validation open; Verify modal/popup/popover component ownership versus interaction service. |
+| `M12-L0325` / 325 | resizable/collapsible panels; | `EDT-012`, `EDT-021`, `EDT-036`, `ADM-008` | VERIFY panel state persistence and resizable/collapsible panels; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0326` / 326 | persisted panel state. | `EDT-012`, `EDT-021`, `EDT-036`, `ADM-008` | VERIFY panel state persistence and resizable/collapsible panels; DRAFT CANDIDATE MAP — semantic validation open |
+
+#### Source section: 9. Clipboard / bulk editing
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0332` / 332 | copy; | `EDT-038`, `EDT-011` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0333` / 333 | cut; | `EDT-038`, `EDT-011` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0334` / 334 | paste; | `EDT-038`, `EDT-011` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0335` / 335 | duplicate; | `EDT-038`, `EDT-011` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0336` / 336 | cross-page paste; | `EDT-038`, `EDT-011`, `EDT-001`, `EDT-022` | VERIFY cross-page paste, paste preview and safe fallback; DRAFT CANDIDATE MAP — semantic validation open; Verify cross-page paste, structure/style-only modes, preview, and safe fallback. |
+| `M12-L0337` / 337 | duplicate ID regeneration; | `EDT-038`, `EDT-011` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0338` / 338 | paste into selected parent; | `EDT-038`, `EDT-011`, `EDT-001`, `EDT-022` | VERIFY cross-page paste, paste preview and safe fallback; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0339` / 339 | paste structure; | `EDT-038`, `EDT-011`, `EDT-001`, `EDT-022` | VERIFY cross-page paste, paste preview and safe fallback; DRAFT CANDIDATE MAP — semantic validation open; Verify cross-page paste, structure/style-only modes, preview, and safe fallback. |
+| `M12-L0340` / 340 | paste style only; | `EDT-038`, `EDT-011`, `EDT-001`, `EDT-022` | VERIFY cross-page paste, paste preview and safe fallback; DRAFT CANDIDATE MAP — semantic validation open; Verify cross-page paste, structure/style-only modes, preview, and safe fallback. |
+| `M12-L0341` / 341 | internal clipboard; | `EDT-038`, `EDT-011` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0342` / 342 | sanitized external structured paste; | `EDT-038`, `EDT-011`, `EDT-001`, `EDT-022` | VERIFY cross-page paste, paste preview and safe fallback; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0343` / 343 | paste preview; | `EDT-038`, `EDT-011`, `EDT-001`, `EDT-022` | VERIFY cross-page paste, paste preview and safe fallback; DRAFT CANDIDATE MAP — semantic validation open; Verify cross-page paste, structure/style-only modes, preview, and safe fallback. |
+| `M12-L0344` / 344 | unsupported-element fallback; | `EDT-038`, `EDT-001`, `EDT-022` | VERIFY cross-page paste, paste preview and safe fallback; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0345` / 345 | bulk style change; | `EDT-011`, `EDT-038` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0346` / 346 | bulk delete; | `EDT-011`, `EDT-038` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0347` / 347 | bulk move; | `EDT-011`, `EDT-038` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0348` / 348 | bulk duplicate. | `EDT-038`, `EDT-011` | DRAFT CANDIDATE MAP — semantic validation open |
+
+#### Source section: 10. History / Recovery / Save
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0355` / 355 | undo; | `EDT-005`, `EDT-004` | VERIFY branch history and exclusion of internal actions; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0356` / 356 | redo; | `EDT-005`, `EDT-004` | VERIFY branch history and exclusion of internal actions; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0357` / 357 | grouped transactions; | `EDT-005`, `EDT-004` | VERIFY branch history and exclusion of internal actions; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0358` / 358 | drag/resize throttling; | `EDT-004`, `EDT-005` | VERIFY typing grouping and history flood prevention; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0359` / 359 | typing throttling; | `EDT-004`, `EDT-005` | VERIFY typing grouping and history flood prevention; DRAFT CANDIDATE MAP — semantic validation open; Verify typing history grouping and history-flood prevention. |
+| `M12-L0360` / 360 | entry preview; | `EDT-005`, `EDT-004` | VERIFY branch history and exclusion of internal actions; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0361` / 361 | restore entry; | `EDT-005`, `EDT-004` | VERIFY branch history and exclusion of internal actions; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0362` / 362 | branch history kezelése; | `EDT-005`, `EDT-004` | VERIFY branch history and exclusion of internal actions; DRAFT CANDIDATE MAP — semantic validation open; Verify branch-history semantics versus ordinary undo/redo. |
+| `M12-L0363` / 363 | history limit; | `EDT-005`, `EDT-004` | VERIFY branch history and exclusion of internal actions; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0364` / 364 | internal action exclusion. | `EDT-005`, `EDT-004` | VERIFY branch history and exclusion of internal actions; DRAFT CANDIDATE MAP — semantic validation open; Verify non-user/internal actions are excluded from user-visible undo history. |
+| `M12-L0367` / 367 | manual save; | `EDT-027`, `EDT-028`, `EDT-029`, `EDT-030`, `EDT-031` | VERIFY complete persistence/recovery edge-case contract; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0368` / 368 | autosave; | `EDT-027`, `EDT-028`, `EDT-029`, `EDT-030`, `EDT-031` | VERIFY complete persistence/recovery edge-case contract; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0369` / 369 | debounce; | `EDT-004`, `EDT-005` | VERIFY typing grouping and history flood prevention; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0370` / 370 | save queue; | `EDT-027`, `EDT-028`, `EDT-029`, `EDT-030`, `EDT-031` | VERIFY complete persistence/recovery edge-case contract; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0371` / 371 | duplicate-save protection; | `EDT-027`, `EDT-028`, `EDT-029`, `EDT-030`, `EDT-031` | VERIFY complete persistence/recovery edge-case contract; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0372` / 372 | retry; | `EDT-027`, `EDT-028`, `EDT-029`, `EDT-030`, `EDT-031` | VERIFY complete persistence/recovery edge-case contract; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0373` / 373 | timeout handling; | `EDT-027`, `EDT-028`, `EDT-029`, `EDT-030`, `EDT-031` | VERIFY complete persistence/recovery edge-case contract; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0374` / 374 | revision/ETag conflict detection; | `EDT-027`, `EDT-028`, `EDT-029`, `EDT-030`, `EDT-031` | VERIFY complete persistence/recovery edge-case contract; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0375` / 375 | merge/reload/overwrite policy; | `EDT-027`, `EDT-028`, `EDT-029`, `EDT-030`, `EDT-031` | VERIFY complete persistence/recovery edge-case contract; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0376` / 376 | local recovery snapshot; | `EDT-027`, `EDT-028`, `EDT-029`, `EDT-030`, `EDT-031` | VERIFY complete persistence/recovery edge-case contract; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0377` / 377 | crash recovery; | `EDT-027`, `EDT-028`, `EDT-029`, `EDT-030`, `EDT-031` | VERIFY complete persistence/recovery edge-case contract; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0378` / 378 | recovery cleanup; | `EDT-027`, `EDT-028`, `EDT-029`, `EDT-030`, `EDT-031` | VERIFY complete persistence/recovery edge-case contract; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0379` / 379 | multi-tab detection. | `EDT-027`, `EDT-028`, `EDT-029`, `EDT-030`, `EDT-031` | VERIFY complete persistence/recovery edge-case contract; DRAFT CANDIDATE MAP — semantic validation open |
+
+#### Source section: 11. Responsive rendszer
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0385` / 385 | desktop; | `EDT-025`, `EDT-026`, `QA-004` | VERIFY orientation-specific preview; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0386` / 386 | tablet; | `EDT-025`, `EDT-026`, `QA-004` | VERIFY orientation-specific preview; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0387` / 387 | mobile; | `EDT-025`, `EDT-026`, `QA-004` | VERIFY orientation-specific preview; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0388` / 388 | custom viewport; | `EDT-025`, `EDT-026`, `QA-004` | VERIFY orientation-specific preview; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0389` / 389 | orientation; | `EDT-025`, `EDT-026`, `QA-004` | VERIFY orientation-specific preview; DRAFT CANDIDATE MAP — semantic validation open; Verify orientation-specific viewport acceptance. |
+| `M12-L0390` / 390 | custom breakpoint; | `EDT-025`, `EDT-026`, `QA-004` | VERIFY orientation-specific preview; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0391` / 391 | inherited values; | `EDT-023`, `EDT-024`, `EDT-026` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0392` / 392 | explicit override; | `EDT-023`, `EDT-024`, `EDT-026` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0393` / 393 | reset override; | `EDT-023`, `EDT-024`, `EDT-026` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0394` / 394 | width/height/padding/margin/gap; | `EDT-023`, `EDT-024`, `EDT-026` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0395` / 395 | typography; | `EDT-023`, `EDT-024`, `EDT-026` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0396` / 396 | display; | `EDT-023`, `EDT-024`, `EDT-026` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0397` / 397 | position; | `EDT-023`, `EDT-024`, `EDT-026` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0398` / 398 | alignment; | `EDT-023`, `EDT-024`, `EDT-026` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0399` / 399 | visibility; | `EDT-023`, `EDT-024`, `EDT-026` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0400` / 400 | order; | `EDT-023`, `EDT-024`, `EDT-026` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0401` / 401 | flex/grid; | `EDT-023`, `EDT-024`, `EDT-026` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0402` / 402 | image crop; | `EDT-023`, `EDT-024`, `EDT-026` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0403` / 403 | container/max-width. | `EDT-023`, `EDT-024`, `EDT-026` | DRAFT CANDIDATE MAP — semantic validation open |
+
+#### Source section: 12. Interaction system
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0411` / 411 | click; | `EDT-039`, `AUT-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0412` / 412 | hover; | `EDT-039`, `AUT-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0413` / 413 | focus; | `EDT-039`, `AUT-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0414` / 414 | enter/leave; | `EDT-039`, `AUT-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0415` / 415 | submit; | `EDT-039`, `AUT-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0416` / 416 | scroll; | `EDT-039`, `AUT-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0417` / 417 | load; | `EDT-039`, `AUT-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0418` / 418 | timer; | `EDT-039`, `AUT-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0419` / 419 | open/close modal; | `EDT-039`, `AUT-004` | DRAFT CANDIDATE MAP — semantic validation open; Verify modal/popup/popover component ownership versus interaction service. |
+| `M12-L0420` / 420 | navigation; | `EDT-039`, `AUT-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0421` / 421 | anchor; | `EDT-039`, `AUT-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0422` / 422 | show/hide; | `EDT-039`, `AUT-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0423` / 423 | toggle; | `EDT-039`, `AUT-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0424` / 424 | state change; | `EDT-039`, `AUT-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0425` / 425 | animation trigger; | `EDT-039`, `EDT-040`, `AUT-003`, `AUT-006` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0426` / 426 | event validation; | `EDT-039`, `EDT-040`, `AUT-003`, `AUT-006` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0427` / 427 | action chaining; | `EDT-039`, `EDT-040`, `AUT-003`, `AUT-006` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0428` / 428 | cooldown/debounce ahol releváns. | `EDT-039`, `EDT-040`, `AUT-003`, `AUT-006` | DRAFT CANDIDATE MAP — semantic validation open |
+
+#### Source section: 13. Data binding / dynamic content
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0435` / 435 | D1 domain data; | `DYN-001`, `DYN-002`, `DYN-007`, `EDT-020`, `INT-010` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0436` / 436 | API data; | `DYN-001`, `DYN-002`, `DYN-007`, `EDT-020`, `INT-010` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0437` / 437 | Twitch; | `DYN-001`, `DYN-002`, `DYN-007`, `EDT-020`, `INT-010` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0438` / 438 | YouTube; | `DYN-001`, `DYN-002`, `DYN-007`, `EDT-020`, `INT-010` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0439` / 439 | TikTok, ha API engedi; | `DYN-001`, `DYN-002`, `DYN-007`, `EDT-020`, `INT-010` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0440` / 440 | Discord/integration data; | `DYN-001`, `DYN-002`, `DYN-007`, `EDT-020`, `INT-010` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0441` / 441 | schedule; | `DYN-001`, `DYN-002`, `DYN-007`, `EDT-020`, `INT-010` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0442` / 442 | site settings; | `DYN-001`, `DYN-002`, `DYN-007`, `EDT-020`, `INT-010` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0443` / 443 | dynamic collections. | `DYN-001`, `DYN-002`, `DYN-007`, `EDT-020`, `INT-010` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0446` / 446 | loading; | `DYN-004`, `DYN-005`, `DYN-006` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0447` / 447 | success; | `DYN-004`, `DYN-005`, `DYN-006` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0448` / 448 | empty; | `DYN-004`, `DYN-005`, `DYN-006` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0449` / 449 | error; | `DYN-004`, `DYN-005`, `DYN-006` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0450` / 450 | conditional rendering; | `DYN-004`, `DYN-005`, `DYN-006` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0451` / 451 | fallback value. | `DYN-004`, `DYN-005`, `DYN-006` | DRAFT CANDIDATE MAP — semantic validation open |
+
+#### Source section: 14. Reusable Components / Variants
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0459` / 459 | component definition; | `DSN-012`, `DSN-013`, `DSN-018` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0460` / 460 | component instance; | `DSN-012`, `DSN-013`, `DSN-018` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0461` / 461 | master/instance kapcsolat; | `DSN-012`, `DSN-013`, `DSN-018` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0462` / 462 | instance override; | `DSN-012`, `DSN-013`, `DSN-018` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0463` / 463 | component update; | `DSN-012`, `DSN-013`, `DSN-018` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0464` / 464 | detach; | `DSN-012`, `DSN-013`, `DSN-018` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0465` / 465 | variants; | `DSN-012`, `DSN-013`, `DSN-018` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0466` / 466 | state variants; | `DSN-012`, `DSN-013`, `DSN-018` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0467` / 467 | reusable sections; | `DSN-012`, `DSN-013`, `DSN-018` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0468` / 468 | reusable header/footer/card/CTA; | `DSN-012`, `DSN-013`, `DSN-018` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0469` / 469 | Sanci komponenskönyvtár; | `DSN-012`, `DSN-013` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0470` / 470 | component versioning; | `DSN-014`, `DSN-018` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0471` / 471 | compatibility validation; | `DSN-014`, `DSN-018` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0472` / 472 | component documentation. | `DSN-014`, `DSN-018` | DRAFT CANDIDATE MAP — semantic validation open |
+
+#### Source section: 15. Media
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0479` / 479 | upload; | `RES-003` | VERIFY resumable upload requirement; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0480` / 480 | progress; | `RES-003` | VERIFY resumable upload requirement; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0481` / 481 | cancellation; | `RES-003` | VERIFY resumable upload requirement; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0482` / 482 | retry; | `RES-003` | VERIFY resumable upload requirement; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0483` / 483 | resumable strategy ahol szükséges; | `RES-003` | VERIFY resumable upload requirement; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0484` / 484 | folders; | `RES-005`, `RES-006` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0485` / 485 | search/filter/sort; | `RES-005`, `RES-006` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0486` / 486 | preview; | `RES-004`, `RES-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0487` / 487 | image metadata; | `RES-004`, `RES-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0488` / 488 | dimensions; | `RES-004`, `RES-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0489` / 489 | duration; | `RES-004`, `RES-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0490` / 490 | crop/focal point; | `RES-004`, `RES-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0491` / 491 | alt text; | `RES-007`, `RES-008`, `RES-009`, `RES-014`, `RES-015` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0492` / 492 | replace; | `RES-007`, `RES-008`, `RES-009`, `RES-014`, `RES-015` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0493` / 493 | delete; | `RES-007`, `RES-008`, `RES-009`, `RES-014`, `RES-015` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0494` / 494 | usage detection; | `RES-007`, `RES-008`, `RES-009`, `RES-014`, `RES-015` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0495` / 495 | orphan detection; | `RES-007`, `RES-008`, `RES-009`, `RES-014`, `RES-015` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0496` / 496 | cleanup; | `RES-007`, `RES-008`, `RES-009`, `RES-014`, `RES-015` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0497` / 497 | bulk operations; | `RES-007`, `RES-008`, `RES-009`, `RES-014`, `RES-015` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0498` / 498 | media variants; | `RES-004`, `RES-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0499` / 499 | secure object access. | `RES-007`, `RES-008`, `RES-009`, `RES-014`, `RES-015` | DRAFT CANDIDATE MAP — semantic validation open |
+
+#### Source section: 16. Accessibility / SEO
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0506` / 506 | semantic element mapping; | `QA-005`, `EDT-037`, `RES-007` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0507` / 507 | ARIA; | `QA-005`, `EDT-037`, `RES-007` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0508` / 508 | labels; | `QA-005`, `EDT-037`, `RES-007` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0509` / 509 | alt; | `QA-005`, `EDT-037`, `RES-007` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0510` / 510 | keyboard navigation; | `QA-005`, `EDT-037`, `RES-007` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0511` / 511 | focus order; | `QA-005`, `EDT-037`, `RES-007` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0512` / 512 | contrast warnings; | `QA-005`, `EDT-037`, `RES-007` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0513` / 513 | reduced motion; | `QA-005`, `EDT-037`, `RES-007` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0514` / 514 | heading hierarchy; | `QA-005`, `EDT-037`, `RES-007` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0515` / 515 | form error accessibility; | `QA-005`, `EDT-037`, `RES-007` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0516` / 516 | screen-reader metadata. | `QA-005`, `EDT-037`, `RES-007` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0519` / 519 | title; | `SEO-001`, `SEO-002`, `SEO-003`, `SEO-004`, `SEO-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0520` / 520 | description; | `SEO-001`, `SEO-002`, `SEO-003`, `SEO-004`, `SEO-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0521` / 521 | canonical; | `SEO-001`, `SEO-002`, `SEO-003`, `SEO-004`, `SEO-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0522` / 522 | Open Graph; | `SEO-001`, `SEO-002`, `SEO-003`, `SEO-004`, `SEO-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0523` / 523 | Twitter/X metadata; | `SEO-001`, `SEO-002`, `SEO-003`, `SEO-004`, `SEO-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0524` / 524 | robots; | `SEO-001`, `SEO-002`, `SEO-003`, `SEO-004`, `SEO-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0525` / 525 | structured data; | `SEO-001`, `SEO-002`, `SEO-003`, `SEO-004`, `SEO-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0526` / 526 | sitemap connection; | `SEO-001`, `SEO-002`, `SEO-003`, `SEO-004`, `SEO-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0527` / 527 | noindex draft/preview. | `SEO-001`, `SEO-002`, `SEO-003`, `SEO-004`, `SEO-005` | DRAFT CANDIDATE MAP — semantic validation open |
+
+#### Source section: 17. Templates / Import / Export
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0533` / 533 | blank page; | `DSN-008`, `DSN-009`, `DSN-010`, `SCH-010`, `WEB-014` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0534` / 534 | streamer home; | `DSN-008`, `DSN-009`, `DSN-010`, `SCH-010`, `WEB-014` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0535` / 535 | schedule; | `DSN-008`, `DSN-009`, `DSN-010`, `SCH-010`, `WEB-014` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0536` / 536 | about; | `DSN-008`, `DSN-009`, `DSN-010`, `SCH-010`, `WEB-014` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0537` / 537 | contact; | `DSN-008`, `DSN-009`, `DSN-010`, `SCH-010`, `WEB-014` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0538` / 538 | community; | `DSN-008`, `DSN-009`, `DSN-010`, `SCH-010`, `WEB-014` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0539` / 539 | VOD; | `DSN-008`, `DSN-009`, `DSN-010`, `SCH-010`, `WEB-014` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0540` / 540 | support; | `DSN-008`, `DSN-009`, `DSN-010`, `SCH-010`, `WEB-014` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0541` / 541 | custom template; | `DSN-008`, `DSN-009`, `DSN-010`, `SCH-010`, `WEB-014` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0542` / 542 | saved template; | `DSN-008`, `DSN-009`, `DSN-010`, `SCH-010`, `WEB-014` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0543` / 543 | page JSON export/import; | `DSN-014`, `DSN-015`, `OPS-005`, `OPS-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0544` / 544 | component export/import; | `DSN-014`, `DSN-015`, `OPS-005`, `OPS-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0545` / 545 | site backup/export; | `DSN-014`, `DSN-015`, `OPS-005`, `OPS-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0546` / 546 | schema version migration; | `DSN-014`, `DSN-015`, `OPS-005`, `OPS-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0547` / 547 | dry-run validation; | `DSN-014`, `DSN-015`, `OPS-005`, `OPS-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0548` / 548 | conflict handling. | `DSN-014`, `DSN-015`, `OPS-005`, `OPS-004` | DRAFT CANDIDATE MAP — semantic validation open |
+
+#### Source section: 18. Validation / Security
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0557` / 557 | duplicate ID; | `EDT-001`, `EDT-002`, `EDT-022`, `DYN-002` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0558` / 558 | orphan node; | `EDT-001`, `EDT-002`, `EDT-022`, `DYN-002` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0559` / 559 | circular parent; | `EDT-001`, `EDT-002`, `EDT-022`, `DYN-002` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0560` / 560 | invalid nesting; | `EDT-001`, `EDT-002`, `EDT-022`, `DYN-002` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0561` / 561 | invalid component reference; | `EDT-001`, `EDT-002`, `EDT-022`, `DYN-002` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0562` / 562 | invalid binding; | `EDT-001`, `EDT-002`, `EDT-022`, `DYN-002` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0563` / 563 | invalid responsive value; | `EDT-001`, `EDT-002`, `EDT-022`, `DYN-002` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0564` / 564 | invalid style value; | `EDT-001`, `EDT-002`, `EDT-022`, `DYN-002` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0565` / 565 | unsafe HTML; | `SEC-002`, `SEC-005`, `SEC-006`, `SEC-007`, `SEC-010` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0566` / 566 | size limits; | `SEC-002`, `SEC-005`, `SEC-006`, `SEC-007`, `SEC-010` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0567` / 567 | permission/RBAC; | `SEC-002`, `SEC-005`, `SEC-006`, `SEC-007`, `SEC-010` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0568` / 568 | mutation authorization; | `SEC-002`, `SEC-005`, `SEC-006`, `SEC-007`, `SEC-010` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0569` / 569 | XSS/input filtering; | `SEC-002`, `SEC-005`, `SEC-006`, `SEC-007`, `SEC-010` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0570` / 570 | audit event. | `SEC-002`, `SEC-005`, `SEC-006`, `SEC-007`, `SEC-010` | DRAFT CANDIDATE MAP — semantic validation open |
+
+#### Source section: 19. AI-ready command contract
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0579` / 579 | `element.add` | `AI-005`, `AI-008`, `EDT-003`, `EDT-011` | VERIFY explicit group.create/group.ungroup command schemas; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0580` / 580 | `element.update` | `AI-005`, `AI-008`, `EDT-003`, `EDT-011` | VERIFY explicit group.create/group.ungroup command schemas; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0581` / 581 | `element.delete` | `AI-005`, `AI-008`, `EDT-003`, `EDT-011` | VERIFY explicit group.create/group.ungroup command schemas; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0582` / 582 | `element.duplicate` | `AI-005`, `AI-008`, `EDT-003`, `EDT-011` | VERIFY explicit group.create/group.ungroup command schemas; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0583` / 583 | `element.copy` | `AI-005`, `AI-008`, `EDT-003`, `EDT-011` | VERIFY explicit group.create/group.ungroup command schemas; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0584` / 584 | `element.paste` | `AI-005`, `AI-008`, `EDT-003`, `EDT-011` | VERIFY explicit group.create/group.ungroup command schemas; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0585` / 585 | `hierarchy.reparent` | `AI-005`, `AI-008`, `EDT-003`, `EDT-011` | VERIFY explicit group.create/group.ungroup command schemas; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0586` / 586 | `hierarchy.reorder` | `AI-005`, `AI-008`, `EDT-003`, `EDT-011` | VERIFY explicit group.create/group.ungroup command schemas; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0587` / 587 | `group.create` | `AI-005`, `AI-008`, `EDT-003`, `EDT-011` | VERIFY explicit group.create/group.ungroup command schemas; DRAFT CANDIDATE MAP — semantic validation open; Verify explicit group/ungroup commands and command-schema IDs. |
+| `M12-L0588` / 588 | `group.ungroup` | `AI-005`, `AI-008`, `EDT-003`, `EDT-011` | VERIFY explicit group.create/group.ungroup command schemas; DRAFT CANDIDATE MAP — semantic validation open; Verify explicit group/ungroup commands and command-schema IDs. |
+| `M12-L0589` / 589 | `style.set` | `AI-005`, `AI-008`, `EDT-003`, `EDT-011` | VERIFY explicit group.create/group.ungroup command schemas; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0590` / 590 | `responsive.set` | `AI-005`, `AI-008`, `EDT-003`, `EDT-011` | VERIFY explicit group.create/group.ungroup command schemas; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0591` / 591 | `binding.set` | `AI-005`, `AI-008`, `EDT-003`, `EDT-011` | VERIFY explicit group.create/group.ungroup command schemas; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0592` / 592 | `interaction.set` | `AI-005`, `AI-008`, `EDT-003`, `EDT-011` | VERIFY explicit group.create/group.ungroup command schemas; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0593` / 593 | `component.create` | `AI-005`, `AI-008`, `EDT-003`, `EDT-011` | VERIFY explicit group.create/group.ungroup command schemas; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0594` / 594 | `component.update` | `AI-005`, `AI-008`, `EDT-003`, `EDT-011` | VERIFY explicit group.create/group.ungroup command schemas; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0595` / 595 | `page.create` | `AI-005`, `AI-008`, `EDT-003`, `EDT-011` | VERIFY explicit group.create/group.ungroup command schemas; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0596` / 596 | `page.update` | `AI-005`, `AI-008`, `EDT-003`, `EDT-011` | VERIFY explicit group.create/group.ungroup command schemas; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0597` / 597 | `page.publish` | `AI-005`, `AI-008`, `EDT-003`, `EDT-011` | VERIFY explicit group.create/group.ungroup command schemas; DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0600` / 600 | action ID; | `AI-005`, `AI-006`, `AI-008`, `AI-009`, `EDT-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0601` / 601 | schema; | `AI-005`, `AI-006`, `AI-008`, `AI-009`, `EDT-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0602` / 602 | permission check; | `AI-005`, `AI-006`, `AI-008`, `AI-009`, `EDT-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0603` / 603 | target validation; | `AI-005`, `AI-006`, `AI-008`, `AI-009`, `EDT-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0604` / 604 | before/after state; | `AI-005`, `AI-006`, `AI-008`, `AI-009`, `EDT-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0605` / 605 | audit metadata; | `AI-005`, `AI-006`, `AI-008`, `AI-009`, `EDT-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0606` / 606 | undo/redo lehetőség; | `AI-005`, `AI-006`, `AI-008`, `AI-009`, `EDT-004` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0607` / 607 | idempotencia ahol szükséges. | `AI-005`, `AI-006`, `AI-008`, `AI-009`, `EDT-004` | DRAFT CANDIDATE MAP — semantic validation open |
+
+#### Source section: 20. Tesztelési kötelezettség
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0618` / 618 | schema; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0619` / 619 | validation; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0620` / 620 | command; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0621` / 621 | hierarchy; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0622` / 622 | selection; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0623` / 623 | inspector; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0624` / 624 | layout; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0625` / 625 | responsive; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0626` / 626 | history; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0627` / 627 | persistence; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0628` / 628 | recovery; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0629` / 629 | conflict; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0630` / 630 | preview; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0631` / 631 | publish; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0632` / 632 | public renderer; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0633` / 633 | media; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0634` / 634 | accessibility; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0635` / 635 | permissions; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0636` / 636 | mobile; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0637` / 637 | tablet; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0638` / 638 | desktop; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0639` / 639 | regression; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0640` / 640 | performance; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0641` / 641 | large document; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0642` / 642 | invalid document recovery. | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+
+#### Source section: 20. Editor Core Gate — kötelező kézi teszt
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0646` / 646 | megnyitás; | `QA-004`, `QA-006`, `QA-008`, `QA-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0647` / 647 | oldalbetöltés; | `QA-004`, `QA-006`, `QA-008`, `QA-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0648` / 648 | container létrehozás; | `QA-004`, `QA-006`, `QA-008`, `QA-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0649` / 649 | heading létrehozás; | `QA-004`, `QA-006`, `QA-008`, `QA-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0650` / 650 | text létrehozás; | `QA-004`, `QA-006`, `QA-008`, `QA-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0651` / 651 | text tényleges módosítása; | `QA-004`, `QA-006`, `QA-008`, `QA-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0652` / 652 | button létrehozás; | `QA-004`, `QA-006`, `QA-008`, `QA-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0653` / 653 | selection; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0654` / 654 | re-selection; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0655` / 655 | multi-select; | `QA-004`, `QA-006`, `QA-008`, `QA-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0656` / 656 | group; | `QA-004`, `QA-006`, `QA-008`, `QA-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0657` / 657 | ungroup; | `QA-004`, `QA-006`, `QA-008`, `QA-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0658` / 658 | parent-child kapcsolat; | `QA-004`, `QA-006`, `QA-008`, `QA-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0659` / 659 | reparent; | `QA-004`, `QA-006`, `QA-008`, `QA-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0660` / 660 | drag/drop; | `QA-004`, `QA-006`, `QA-008`, `QA-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0661` / 661 | inspector módosítás; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0662` / 662 | responsive módosítás; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0663` / 663 | copy/paste; | `QA-004`, `QA-006`, `QA-008`, `QA-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0664` / 664 | duplicate; | `QA-004`, `QA-006`, `QA-008`, `QA-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0665` / 665 | delete; | `QA-004`, `QA-006`, `QA-008`, `QA-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0666` / 666 | undo; | `QA-004`, `QA-006`, `QA-008`, `QA-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0667` / 667 | redo; | `QA-004`, `QA-006`, `QA-008`, `QA-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0668` / 668 | save; | `QA-004`, `QA-006`, `QA-008`, `QA-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0669` / 669 | reload; | `QA-004`, `QA-006`, `QA-008`, `QA-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0670` / 670 | D1 ellenőrzés; | `QA-004`, `QA-006`, `QA-008`, `QA-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0671` / 671 | preview; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0672` / 672 | publish; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0673` / 673 | public renderer; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0674` / 674 | recovery; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0675` / 675 | save retry; | `QA-004`, `QA-006`, `QA-008`, `QA-009` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0676` / 676 | conflict detection; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0677` / 677 | permission rejection; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0678` / 678 | invalid schema rejection; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0679` / 679 | mobile; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0680` / 680 | tablet; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+| `M12-L0681` / 681 | desktop. | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-005` | DRAFT CANDIDATE MAP — semantic validation open |
+
+#### Source section: 21. E0 — Archive / isolation
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0690` / 690 | [ ] jelenlegi editor archiválva; | `EDT-001`, `WEB-012`, `OPS-005`, `QA-006` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0691` / 691 | [ ] archive branch ellenőrizve; | `EDT-001`, `WEB-012`, `OPS-005`, `QA-006` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0692` / 692 | [ ] régi editor nem kerülhet az új runtime-ba. | `EDT-001`, `WEB-012`, `OPS-005`, `QA-006` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+
+#### Source section: 21. E1 — Page Model + schema
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0695` / 695 | [ ] végleges node/page schema; | `EDT-001`, `EDT-002`, `OPS-004` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0696` / 696 | [ ] migration/versioning; | `EDT-001`, `EDT-002`, `OPS-004` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0697` / 697 | [ ] validation; | `EDT-001`, `EDT-002`, `OPS-004` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0698` / 698 | [ ] test fixtures. | `EDT-001`, `EDT-002`, `OPS-004` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+
+#### Source section: 21. E2 — State + Command Engine
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0701` / 701 | [ ] egyetlen state; | `EDT-003`, `EDT-004`, `EDT-005`, `EDT-006` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0702` / 702 | [ ] command registry; | `EDT-003`, `EDT-004`, `EDT-005`, `EDT-006` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0703` / 703 | [ ] validation; | `EDT-003`, `EDT-004`, `EDT-005`, `EDT-006` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0704` / 704 | [ ] history transaction; | `EDT-003`, `EDT-004`, `EDT-005`, `EDT-006` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0705` / 705 | [ ] selection; | `EDT-003`, `EDT-004`, `EDT-005`, `EDT-006` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0706` / 706 | [ ] undo/redo. | `EDT-003`, `EDT-004`, `EDT-005`, `EDT-006` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+
+#### Source section: 21. E3 — Hierarchy + Layers
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0709` / 709 | [ ] parent/children; | `EDT-002`, `EDT-011`, `EDT-012`, `EDT-014` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0710` / 710 | [ ] tree; | `EDT-002`, `EDT-011`, `EDT-012`, `EDT-014` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0711` / 711 | [ ] group; | `EDT-002`, `EDT-011`, `EDT-012`, `EDT-014` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0712` / 712 | [ ] reparent; | `EDT-002`, `EDT-011`, `EDT-012`, `EDT-014` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0713` / 713 | [ ] drag/drop; | `EDT-002`, `EDT-011`, `EDT-012`, `EDT-014` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0714` / 714 | [ ] multi-select. | `EDT-002`, `EDT-011`, `EDT-012`, `EDT-014` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+
+#### Source section: 21. E4 — Canvas
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0717` / 717 | [ ] render; | `EDT-007`, `EDT-008`, `EDT-009`, `EDT-010` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0718` / 718 | [ ] selection overlay; | `EDT-007`, `EDT-008`, `EDT-009`, `EDT-010` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0719` / 719 | [ ] resize; | `EDT-007`, `EDT-008`, `EDT-009`, `EDT-010` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0720` / 720 | [ ] move; | `EDT-007`, `EDT-008`, `EDT-009`, `EDT-010` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0721` / 721 | [ ] snap; | `EDT-007`, `EDT-008`, `EDT-009`, `EDT-010` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0722` / 722 | [ ] zoom. | `EDT-007`, `EDT-008`, `EDT-009`, `EDT-010` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+
+#### Source section: 21. E5 — Inspector
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0725` / 725 | [ ] content; | `EDT-021`, `EDT-022`, `EDT-023`, `EDT-024` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0726` / 726 | [ ] layout; | `EDT-021`, `EDT-022`, `EDT-023`, `EDT-024` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0727` / 727 | [ ] style; | `EDT-021`, `EDT-022`, `EDT-023`, `EDT-024` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0728` / 728 | [ ] responsive; | `EDT-021`, `EDT-022`, `EDT-023`, `EDT-024` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0729` / 729 | [ ] states; | `EDT-021`, `EDT-022`, `EDT-023`, `EDT-024` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0730` / 730 | [ ] accessibility; | `EDT-021`, `EDT-022`, `EDT-023`, `EDT-024` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0731` / 731 | [ ] bindings. | `EDT-021`, `EDT-022`, `EDT-023`, `EDT-024` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+
+#### Source section: 21. E6 — Persistence
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0734` / 734 | [ ] D1; | `EDT-027`, `EDT-028`, `EDT-029`, `EDT-030`, `EDT-031` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0735` / 735 | [ ] save; | `EDT-027`, `EDT-028`, `EDT-029`, `EDT-030`, `EDT-031` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0736` / 736 | [ ] autosave; | `EDT-027`, `EDT-028`, `EDT-029`, `EDT-030`, `EDT-031` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0737` / 737 | [ ] recovery; | `EDT-027`, `EDT-028`, `EDT-029`, `EDT-030`, `EDT-031` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0738` / 738 | [ ] conflict. | `EDT-027`, `EDT-028`, `EDT-029`, `EDT-030`, `EDT-031` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+
+#### Source section: 21. E7 — Preview/Publish
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0741` / 741 | [ ] draft; | `WEB-004`, `WEB-005`, `WEB-006`, `WEB-007`, `EDT-034` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0742` / 742 | [ ] preview; | `WEB-004`, `WEB-005`, `WEB-006`, `WEB-007`, `EDT-034` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0743` / 743 | [ ] publish; | `WEB-004`, `WEB-005`, `WEB-006`, `WEB-007`, `EDT-034` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0744` / 744 | [ ] renderer; | `WEB-004`, `WEB-005`, `WEB-006`, `WEB-007`, `EDT-034` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0745` / 745 | [ ] version. | `WEB-004`, `WEB-005`, `WEB-006`, `WEB-007`, `EDT-034` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+
+#### Source section: 21. E8 — Components/Media
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0748` / 748 | [ ] reusable components; | `DSN-012`, `DSN-013`, `DSN-014`, `RES-001`, `RES-003` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0749` / 749 | [ ] variants; | `DSN-012`, `DSN-013`, `DSN-014`, `RES-001`, `RES-003` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0750` / 750 | [ ] templates; | `DSN-012`, `DSN-013`, `DSN-014`, `RES-001`, `RES-003` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0751` / 751 | [ ] R2 media. | `DSN-012`, `DSN-013`, `DSN-014`, `RES-001`, `RES-003` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+
+#### Source section: 21. E9 — Advanced editor UX
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0754` / 754 | [ ] command palette; | `EDT-007`, `EDT-010`, `EDT-038`, `EDT-039`, `EDT-040` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0755` / 755 | [ ] alignment; | `EDT-007`, `EDT-010`, `EDT-038`, `EDT-039`, `EDT-040` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0756` / 756 | [ ] smart guides; | `EDT-007`, `EDT-010`, `EDT-038`, `EDT-039`, `EDT-040` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0757` / 757 | [ ] clipboard; | `EDT-007`, `EDT-010`, `EDT-038`, `EDT-039`, `EDT-040` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0758` / 758 | [ ] import/export; | `EDT-007`, `EDT-010`, `EDT-038`, `EDT-039`, `EDT-040` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0759` / 759 | [ ] performance. | `EDT-007`, `EDT-010`, `EDT-038`, `EDT-039`, `EDT-040` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+
+#### Source section: 21. E10 — Core Gate
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0762` / 762 | [ ] teljes 36 pontos kézi teszt; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-006` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0763` / 763 | [ ] automatikus tesztek; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-006` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0764` / 764 | [ ] regression; | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-006` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+| `M12-L0765` / 765 | [ ] user verification. | `QA-001`, `QA-002`, `QA-003`, `QA-004`, `QA-006` | HISTORICAL ORDER SUPERSEDED; underlying requirement retained |
+
+#### Source section: 22. Régi editor kezelése
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0776` / 776 | részfunkcióit visszakötni az új editorba; | `EDT-001`, `EDT-002`, `WEB-012`, `OPS-005` | KEEP LEGACY-ISOLATION CONSTRAINT |
+| `M12-L0777` / 777 | legacy stabilizert használni; | `EDT-001`, `EDT-002`, `WEB-012`, `OPS-005` | KEEP LEGACY-ISOLATION CONSTRAINT |
+| `M12-L0778` / 778 | régi groupId hierarchy-t használni; | `EDT-001`, `EDT-002`, `WEB-012`, `OPS-005` | KEEP LEGACY-ISOLATION CONSTRAINT |
+| `M12-L0779` / 779 | régi globális `window.*` editor API-t újra feléleszteni; | `EDT-001`, `EDT-002`, `WEB-012`, `OPS-005` | KEEP LEGACY-ISOLATION CONSTRAINT |
+| `M12-L0780` / 780 | két külön state modellt fenntartani; | `EDT-001`, `EDT-002`, `WEB-012`, `OPS-005` | KEEP LEGACY-ISOLATION CONSTRAINT |
+| `M12-L0781` / 781 | a régi editor hibáit az új editorban foltozni. | `EDT-001`, `EDT-002`, `WEB-012`, `OPS-005` | KEEP LEGACY-ISOLATION CONSTRAINT |
+
+#### Source section: 23. Definition of Done — új Visual Editor
+
+| Source key / line | Original source item | Candidate §24 ID(s) | Disposition / review flag |
+|---|---|---|---|
+| `M12-L0790` / 790 | a Page Model stabil; | `EDT-001`, `EDT-002`, `EDT-003`, `EDT-011`, `EDT-021` | ACCEPTANCE REQUIREMENT |
+| `M12-L0791` / 791 | minden mutation commandon keresztül történik; | `EDT-001`, `EDT-002`, `EDT-003`, `EDT-011`, `EDT-021` | ACCEPTANCE REQUIREMENT |
+| `M12-L0792` / 792 | nincs párhuzamos hierarchy/state; | `EDT-001`, `EDT-002`, `EDT-003`, `EDT-011`, `EDT-021` | ACCEPTANCE REQUIREMENT |
+| `M12-L0793` / 793 | az inspector valóban módosítja a Page Modelt; | `EDT-001`, `EDT-002`, `EDT-003`, `EDT-011`, `EDT-021` | ACCEPTANCE REQUIREMENT |
+| `M12-L0794` / 794 | a parent-child kapcsolat ténylegesen működik; | `EDT-001`, `EDT-002`, `EDT-003`, `EDT-011`, `EDT-021` | ACCEPTANCE REQUIREMENT |
+| `M12-L0795` / 795 | group/ungroup/reparent működik; | `EDT-001`, `EDT-002`, `EDT-003`, `EDT-011`, `EDT-021` | ACCEPTANCE REQUIREMENT; Verify explicit group/ungroup commands and command-schema IDs. |
+| `M12-L0796` / 796 | save/reload D1-ből működik; | `EDT-027`, `EDT-028`, `OPS-004` | ACCEPTANCE REQUIREMENT |
+| `M12-L0797` / 797 | preview/publish/public ugyanabból a modellből működik; | `WEB-004`, `WEB-005`, `WEB-006` | ACCEPTANCE REQUIREMENT |
+| `M12-L0798` / 798 | recovery működik; | `EDT-029`, `EDT-031`, `OPS-005`, `OPS-006` | ACCEPTANCE REQUIREMENT |
+| `M12-L0799` / 799 | conflict handling működik; | `EDT-029`, `EDT-031`, `OPS-005`, `OPS-006` | ACCEPTANCE REQUIREMENT |
+| `M12-L0800` / 800 | responsive működik; | `EDT-024`, `EDT-025`, `EDT-026` | ACCEPTANCE REQUIREMENT |
+| `M12-L0801` / 801 | Core Gate 36/36 sikeres; | `QA-001`, `QA-004`, `QA-006`, `QA-008`, `QA-009` | ACCEPTANCE REQUIREMENT; Preserve the full 36-step manual Editor Core Gate; old E0–E10 order is superseded. |
+| `M12-L0802` / 802 | regression sikeres; | `QA-001`, `QA-004`, `QA-006`, `QA-008`, `QA-009` | ACCEPTANCE REQUIREMENT |
+| `M12-L0803` / 803 | user ellenőrizte; | `QA-001`, `QA-004`, `QA-006`, `QA-008`, `QA-009` | ACCEPTANCE REQUIREMENT |
+| `M12-L0804` / 804 | MASTER megfelelő pontjai `[x]` státuszúak. | `QA-001`, `QA-004`, `QA-006`, `QA-008`, `QA-009` | ACCEPTANCE REQUIREMENT |
+
+#### Critical prose constraints from the same source
+
+| Source key / line | Original constraint | Candidate owner / ID | Disposition |
+|---|---|---|---|
+| `M12-P0014` / 14 | A kanonikus adatfolyam: |  | PROSE CONSTRAINT — exact contract and acceptance check open |
+| `M12-P0405` / 405 | A Page Model tárolja az alapértéket és a breakpointonkénti override-okat. A renderer ugyanebből az adatból dolgozik. | `EDT-001`, `EDT-024`, `EDT-034` | PROSE CONSTRAINT — exact contract and acceptance check open |
+| `M12-P0434` / 434 | A statikus szöveg mellett támogatni kell strukturált adatforrást: | `DYN-001`, `DYN-002`, `DYN-007` | PROSE CONSTRAINT — exact contract and acceptance check open |
+| `M12-P0453` / 453 | Példa logikai bindingre: `stream.next.title`, `schedule.next.start`, `twitch.viewerCount`. | `DYN-001`, `EDT-020`, `LIV-003`, `SCH-009` | PROSE CONSTRAINT — exact contract and acceptance check open |
+| `M12-P0554` / 554 | A command csak valid Page Model állapotot hozhat létre. | `EDT-001`, `EDT-003`, `EDT-022` | PROSE CONSTRAINT — exact contract and acceptance check open |
+| `M12-P0576` / 576 | Minden UI mutationnak legyen strukturált command megfelelője. | `EDT-003`, `AI-008` | PROSE CONSTRAINT — exact contract and acceptance check open |
+| `M12-P0609` / 609 | Az AI később ugyanazt a command engine-t használja, nem külön editor logikát. | `AI-008`, `EDT-003` | PROSE CONSTRAINT — exact contract and acceptance check open |
+| `M12-P0615` / 615 | Az új editor nem tekinthető késznek attól, hogy a UI megjelenik. | `QA-001`, `QA-006`, `QA-009` | PROSE CONSTRAINT — exact contract and acceptance check open |
+| `M12-P0683` / 683 | **Egyetlen pont hibája esetén a Core Gate nem teljes.** | `QA-004`, `QA-008`, `QA-009` | PROSE CONSTRAINT — exact contract and acceptance check open |
+| `M12-P0773` / 773 | A jelenlegi editor kizárólag referencia/archive állapotban maradhat. | `EDT-001`, `WEB-012`, `OPS-005` | PROSE CONSTRAINT — exact contract and acceptance check open |
+| `M12-P0783` / 783 | Az új editor külön, tiszta modulstruktúrában készül. | `EDT-001`, `EDT-003`, `OPS-010` | PROSE CONSTRAINT — exact contract and acceptance check open |
+| `M12-P0789` / 789 | A Visual Editor csak akkor `[x]`, ha: | `QA-001`, `QA-004`, `QA-006`, `QA-008`, `QA-009` | PROSE CONSTRAINT — exact contract and acceptance check open |
+
+#### Explicit detail-review queue from this source
+
+The following rows were flagged because they express behavior that must be explicitly verified against the canonical contract; this is not a declaration that every item is missing. If the existing §24/C/E/F/§37 contract covers the exact behavior, record that evidence; otherwise expand the existing ID's contract or create a new ID only when the capability is genuinely distinct.
+
+| Source key | Source item | Review question |
+|---|---|---|
+| `M12-L0023` | nincs legacy stabilizer; | VERIFY legacy-isolation constraint |
+| `M12-L0040` | oldalzárolás; | VERIFY page-level editing lock versus layer lock |
+| `M12-L0062` | reparent; | VERIFY group/ungroup command schema |
+| `M12-L0063` | unnest; | VERIFY group/ungroup command schema |
+| `M12-L0066` | group/ungroup; | VERIFY group/ungroup command schema |
+| `M12-L0067` | nested groups; | VERIFY group/ungroup command schema |
+| `M12-L0077` | allowed-child és slot/capacity szabályok. | Verify supported-child/slot/capacity validation. |
+| `M12-L0084` | root; | VERIFY supported-child/slot-capacity contract |
+| `M12-L0085` | container; | VERIFY supported-child/slot-capacity contract |
+| `M12-L0086` | section; | VERIFY supported-child/slot-capacity contract |
+| `M12-L0087` | row/columns; | VERIFY supported-child/slot-capacity contract |
+| `M12-L0088` | flex; | VERIFY supported-child/slot-capacity contract |
+| `M12-L0089` | grid; | VERIFY supported-child/slot-capacity contract |
+| `M12-L0090` | stack; | VERIFY supported-child/slot-capacity contract |
+| `M12-L0097` | image; | VERIFY exact media/gallery/audio element registry coverage |
+| `M12-L0098` | video; | VERIFY exact media/gallery/audio element registry coverage |
+| `M12-L0099` | audio; | VERIFY exact media/gallery/audio element registry coverage |
+| `M12-L0106` | breadcrumb/pagination/search; | VERIFY component-vs-layout-vs-interaction ownership |
+| `M12-L0107` | countdown/progress/notification; | VERIFY component-vs-layout-vs-interaction ownership |
+| `M12-L0108` | modal/popup; | VERIFY component-vs-layout-vs-interaction ownership |
+| `M12-L0109` | navbar/menu/footer/sidebar; | VERIFY component-vs-layout-vs-interaction ownership |
+| `M12-L0111` | gallery/carousel; | VERIFY exact media/gallery/audio element registry coverage |
+| `M12-L0112` | iframe/embed/map/code; | VERIFY exact media/gallery/audio element registry coverage |
+| `M12-L0113` | social embed; | VERIFY exact media/gallery/audio element registry coverage |
+| `M12-L0114` | dynamic/custom component slot. | VERIFY supported-child/slot-capacity contract |
+| `M12-L0179` | shorthand/expanded editing. | Verify shorthand/expanded property editing behavior. |
+| `M12-L0199` | margin; | VERIFY complete box-model property/control coverage |
+| `M12-L0200` | padding; | VERIFY complete box-model property/control coverage |
+| `M12-L0201` | gap; | VERIFY complete box-model property/control coverage |
+| `M12-L0202` | negative margin ahol engedélyezett; | VERIFY complete box-model property/control coverage |
+| `M12-L0204` | visual box-model editor. | VERIFY complete box-model property/control coverage |
+| `M12-L0216` | gap. | VERIFY complete box-model property/control coverage |
+| `M12-L0229` | static; | VERIFY supported position/stacking values |
+| `M12-L0230` | relative; | VERIFY supported position/stacking values |
+| `M12-L0231` | absolute; | VERIFY supported position/stacking values |
+| `M12-L0233` | sticky; | VERIFY supported position/stacking values |
+| `M12-L0234` | inset; | VERIFY supported position/stacking values |
+| `M12-L0235` | z-index; | VERIFY supported position/stacking values |
+| `M12-L0236` | stacking context validation. | VERIFY supported position/stacking values |
+| `M12-L0274` | CSS variables; | VERIFY unused-token detection and token dependency map |
+| `M12-L0275` | token override; | VERIFY unused-token detection and token dependency map |
+| `M12-L0276` | token usage search; | VERIFY unused-token detection and token dependency map |
+| `M12-L0277` | unused-token detection későbbi ellenőrzésként. | VERIFY unused-token detection and token dependency map |
+| `M12-L0293` | zoom 25/50/75/100/150/200%; | VERIFY device frame and spacing visualizer details |
+| `M12-L0294` | fit screen; | VERIFY device frame and spacing visualizer details |
+| `M12-L0295` | grid; | VERIFY device frame and spacing visualizer details |
+| `M12-L0296` | guides; | VERIFY device frame and spacing visualizer details |
+| `M12-L0297` | snap; | VERIFY device frame and spacing visualizer details |
+| `M12-L0298` | rulers; | VERIFY device frame and spacing visualizer details |
+| `M12-L0299` | safe area; | VERIFY device frame and spacing visualizer details |
+| `M12-L0300` | device frame; | VERIFY device frame and spacing visualizer details |
+| `M12-L0301` | full-page mode; | VERIFY device frame and spacing visualizer details |
+| `M12-L0302` | focus selected; | VERIFY device frame and spacing visualizer details |
+| `M12-L0303` | selection/hover/parent outline; | VERIFY device frame and spacing visualizer details |
+| `M12-L0304` | spacing visualizer; | VERIFY device frame and spacing visualizer details |
+| `M12-L0305` | breakpoint indicator; | VERIFY device frame and spacing visualizer details |
+| `M12-L0306` | scroll preservation; | VERIFY device frame and spacing visualizer details |
+| `M12-L0311` | smart guides; | VERIFY device frame and spacing visualizer details |
+| `M12-L0312` | snap to siblings/container. | VERIFY device frame and spacing visualizer details |
+| `M12-L0315` | layers; | VERIFY panel state persistence and resizable/collapsible panels |
+| `M12-L0316` | inspector; | VERIFY panel state persistence and resizable/collapsible panels |
+| `M12-L0317` | components; | VERIFY panel state persistence and resizable/collapsible panels |
+| `M12-L0318` | assets; | VERIFY panel state persistence and resizable/collapsible panels |
+| `M12-L0319` | pages; | VERIFY panel state persistence and resizable/collapsible panels |
+| `M12-L0320` | history; | VERIFY panel state persistence and resizable/collapsible panels |
+| `M12-L0321` | preview/publish; | VERIFY panel state persistence and resizable/collapsible panels |
+| `M12-L0322` | command palette; | VERIFY panel state persistence and resizable/collapsible panels |
+| `M12-L0323` | notifications; | VERIFY panel state persistence and resizable/collapsible panels |
+| `M12-L0324` | modal system; | VERIFY panel state persistence and resizable/collapsible panels |
+| `M12-L0325` | resizable/collapsible panels; | VERIFY panel state persistence and resizable/collapsible panels |
+| `M12-L0326` | persisted panel state. | VERIFY panel state persistence and resizable/collapsible panels |
+| `M12-L0336` | cross-page paste; | VERIFY cross-page paste, paste preview and safe fallback |
+| `M12-L0338` | paste into selected parent; | VERIFY cross-page paste, paste preview and safe fallback |
+| `M12-L0339` | paste structure; | VERIFY cross-page paste, paste preview and safe fallback |
+| `M12-L0340` | paste style only; | VERIFY cross-page paste, paste preview and safe fallback |
+| `M12-L0342` | sanitized external structured paste; | VERIFY cross-page paste, paste preview and safe fallback |
+| `M12-L0343` | paste preview; | VERIFY cross-page paste, paste preview and safe fallback |
+| `M12-L0344` | unsupported-element fallback; | VERIFY cross-page paste, paste preview and safe fallback |
+| `M12-L0355` | undo; | VERIFY branch history and exclusion of internal actions |
+| `M12-L0356` | redo; | VERIFY branch history and exclusion of internal actions |
+| `M12-L0357` | grouped transactions; | VERIFY branch history and exclusion of internal actions |
+| `M12-L0358` | drag/resize throttling; | VERIFY typing grouping and history flood prevention |
+| `M12-L0359` | typing throttling; | VERIFY typing grouping and history flood prevention |
+| `M12-L0360` | entry preview; | VERIFY branch history and exclusion of internal actions |
+| `M12-L0361` | restore entry; | VERIFY branch history and exclusion of internal actions |
+| `M12-L0362` | branch history kezelése; | VERIFY branch history and exclusion of internal actions |
+| `M12-L0363` | history limit; | VERIFY branch history and exclusion of internal actions |
+| `M12-L0364` | internal action exclusion. | VERIFY branch history and exclusion of internal actions |
+| `M12-L0367` | manual save; | VERIFY complete persistence/recovery edge-case contract |
+| `M12-L0368` | autosave; | VERIFY complete persistence/recovery edge-case contract |
+| `M12-L0369` | debounce; | VERIFY typing grouping and history flood prevention |
+| `M12-L0370` | save queue; | VERIFY complete persistence/recovery edge-case contract |
+| `M12-L0371` | duplicate-save protection; | VERIFY complete persistence/recovery edge-case contract |
+| `M12-L0372` | retry; | VERIFY complete persistence/recovery edge-case contract |
+| `M12-L0373` | timeout handling; | VERIFY complete persistence/recovery edge-case contract |
+| `M12-L0374` | revision/ETag conflict detection; | VERIFY complete persistence/recovery edge-case contract |
+| `M12-L0375` | merge/reload/overwrite policy; | VERIFY complete persistence/recovery edge-case contract |
+| `M12-L0376` | local recovery snapshot; | VERIFY complete persistence/recovery edge-case contract |
+| `M12-L0377` | crash recovery; | VERIFY complete persistence/recovery edge-case contract |
+| `M12-L0378` | recovery cleanup; | VERIFY complete persistence/recovery edge-case contract |
+| `M12-L0379` | multi-tab detection. | VERIFY complete persistence/recovery edge-case contract |
+| `M12-L0385` | desktop; | VERIFY orientation-specific preview |
+| `M12-L0386` | tablet; | VERIFY orientation-specific preview |
+| `M12-L0387` | mobile; | VERIFY orientation-specific preview |
+| `M12-L0388` | custom viewport; | VERIFY orientation-specific preview |
+| `M12-L0389` | orientation; | VERIFY orientation-specific preview |
+| `M12-L0390` | custom breakpoint; | VERIFY orientation-specific preview |
+| `M12-L0419` | open/close modal; | Verify modal/popup/popover component ownership versus interaction service. |
+| `M12-L0479` | upload; | VERIFY resumable upload requirement |
+| `M12-L0480` | progress; | VERIFY resumable upload requirement |
+| `M12-L0481` | cancellation; | VERIFY resumable upload requirement |
+| `M12-L0482` | retry; | VERIFY resumable upload requirement |
+| `M12-L0483` | resumable strategy ahol szükséges; | VERIFY resumable upload requirement |
+| `M12-L0579` | `element.add` | VERIFY explicit group.create/group.ungroup command schemas |
+| `M12-L0580` | `element.update` | VERIFY explicit group.create/group.ungroup command schemas |
+| `M12-L0581` | `element.delete` | VERIFY explicit group.create/group.ungroup command schemas |
+| `M12-L0582` | `element.duplicate` | VERIFY explicit group.create/group.ungroup command schemas |
+| `M12-L0583` | `element.copy` | VERIFY explicit group.create/group.ungroup command schemas |
+| `M12-L0584` | `element.paste` | VERIFY explicit group.create/group.ungroup command schemas |
+| `M12-L0585` | `hierarchy.reparent` | VERIFY explicit group.create/group.ungroup command schemas |
+| `M12-L0586` | `hierarchy.reorder` | VERIFY explicit group.create/group.ungroup command schemas |
+| `M12-L0587` | `group.create` | VERIFY explicit group.create/group.ungroup command schemas |
+| `M12-L0588` | `group.ungroup` | VERIFY explicit group.create/group.ungroup command schemas |
+| `M12-L0589` | `style.set` | VERIFY explicit group.create/group.ungroup command schemas |
+| `M12-L0590` | `responsive.set` | VERIFY explicit group.create/group.ungroup command schemas |
+| `M12-L0591` | `binding.set` | VERIFY explicit group.create/group.ungroup command schemas |
+| `M12-L0592` | `interaction.set` | VERIFY explicit group.create/group.ungroup command schemas |
+| `M12-L0593` | `component.create` | VERIFY explicit group.create/group.ungroup command schemas |
+| `M12-L0594` | `component.update` | VERIFY explicit group.create/group.ungroup command schemas |
+| `M12-L0595` | `page.create` | VERIFY explicit group.create/group.ungroup command schemas |
+| `M12-L0596` | `page.update` | VERIFY explicit group.create/group.ungroup command schemas |
+| `M12-L0597` | `page.publish` | VERIFY explicit group.create/group.ungroup command schemas |
+| `M12-L0795` | group/ungroup/reparent működik; | Verify explicit group/ungroup commands and command-schema IDs. |
+| `M12-L0801` | Core Gate 36/36 sikeres; | Preserve the full 36-step manual Editor Core Gate; old E0–E10 order is superseded. |
+
+**Ledger statistics:** 590 source list/test items keyed; 12 critical prose constraints keyed. The rows deliberately use candidate mappings only. P0.2 remains **IN PROGRESS / NOT PASS** until every row has an evidence-backed final disposition, all genuine gaps are added to the canonical scope, and no source item is left unowned.
