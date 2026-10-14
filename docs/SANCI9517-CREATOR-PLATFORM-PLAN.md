@@ -4606,3 +4606,32 @@ A jelenlegi alap: `Env.MEDIA: R2Bucket`, `media` D1 tábla (id, object_key, orig
 
 **Státusz: IN PROGRESS / NOT PASS.** A meglévő táblát, bindingot és type-okat meg kell tartani és bővíteni; upload/pipeline/usage-map/safe-delete előtt nincs engedély párhuzamos asset rendszer vagy teljes funkció PASS jelölésére. Következő ID-szelet: DSN-001–018, token/template/component registry és site-scoping.
 
+### 63.31. DSN-001–018 — Brand Kit, design tokens, template és component registry
+
+A forrásbizonyíték: `ThemeTokens`/ `SitePresentation` domain type-ok és normalizálók; a `migrations/0002_editor_platform.sql` létrehozza a `design_tokens` és `editor_components` táblákat, de egyik sem tartalmaz `site_id`-t. A vizsgált route-regiszterben nincs dedikált design-system/template/component CRUD API, és a canonical Editor UI-ban nem bizonyított teljes token/template szerkesztő.
+
+| ID | Owner / forrás | Látható alap | Nyitott acceptance / függőség |
+|---|---|---|---|
+| DSN-001 | DESIGN_SYSTEM / ThemeTokens + `design_tokens` | Token type/table alap létezik | Token schema/version, allowed token keys/types, responsive token and site scope. |
+| DSN-002 | DESIGN_SYSTEM / token editor | Dedikált token editor/live preview nem bizonyított | CRUD UI/API, token preview across pages, validation and atomic apply. |
+| DSN-003 | DESIGN_SYSTEM / dependency map | Token usage/dependency scanner nem látható | Page/component/template reference index, affected-item preview and delete/update guards. |
+| DSN-004 | DESIGN_SYSTEM / version/rollback | Token version/diff/rollback route/schema nem látható | Immutable versions, diff, rollback as new version and renderer cache invalidation. |
+| DSN-005 | DESIGN_SYSTEM / brand presets | Type-level presentation/token base only | Brand preset create/apply/duplicate/import/export, preview and safe override precedence. |
+| DSN-006 | DESIGN_SYSTEM → EDT | Responsive helper exists in Editor | Shared breakpoint tokens and precedence across Editor, templates and public renderer. |
+| DSN-007 | RESOURCE ↔ DESIGN_SYSTEM / fonts | Font node/type exists, canonical font registry not proven | Font metadata/license, weights, fallbacks, preload, accessible typography and performance. |
+| DSN-008 | DESIGN_SYSTEM / site template | Site template registry/import flow not proven | Template manifest, schema version, asset dependencies, site-level apply/rollback and safe defaults. |
+| DSN-009 | DESIGN_SYSTEM / page templates | No page-template registry API/UI proven | Page template CRUD, compatibility, preview, apply-to-new-page and non-destructive update. |
+| DSN-010 | DESIGN_SYSTEM / section templates | Section template registry not proven | Reusable sections, responsive variants, token/asset refs and versioned update policy. |
+| DSN-011 | DESIGN_SYSTEM / component templates | `editor_components` table exists but has no site scope or dedicated API | Canonical component schema, ownership, variants, slots, permissions and schema migrations. |
+| DSN-012 | DESIGN_SYSTEM / master-instance | Master/instance propagation not proven | Stable master ID, instance references, explicit detach/override and dependency map. |
+| DSN-013 | DESIGN_SYSTEM / variants/slots | Component variant/slot/override lifecycle not proven | Defined precedence, invalid slot fallback, accessibility and template compatibility. |
+| DSN-014 | DESIGN_SYSTEM / versioning | Versioned design/component schema not proven | Version compatibility, migration preview, rollback and separate AI prompt versioning (AI-002). |
+| DSN-015 | DESIGN_SYSTEM / import/export | Template import/export route not proven | Signed/validated manifest, asset dependency resolution, safe JSON/schema validation and license attribution. |
+| DSN-016 | DESIGN_SYSTEM / Button Registry | Editor has button node and style props; global Button Registry not proven | Shared variants/styles across pages, token references and compatibility without copying domain logic. |
+| DSN-017 | DESIGN_SYSTEM ↔ RESOURCE/INT | Icon node and link/button node exist; shared action/icon registry not proven | Icon IDs and action contract, allowlisted targets, safe URLs and no arbitrary page code. |
+| DSN-018 | EXTENSION/MKT ↔ DESIGN_SYSTEM | Marketplace is roadmap-only; no marketplace route/schema proven | Review/license/signature/version/compatibility and legal gate; never load untrusted template code directly. |
+
+**Site-scoping decision gate:** `design_tokens.name` is globally UNIQUE and `editor_components` has no `site_id`. These may be legacy single-site constraints; they must not be changed blindly. Before multi-site/agency SaaS, define whether each record is global, workspace-scoped or site-scoped; migrate existing rows safely and add cross-site negative tests. Design-system APIs must reuse one canonical registry, not create a second theme/template database.
+
+**Státusz: IN PROGRESS / NOT PASS.** Next ID-slice: DYN-001–008 + SET-001–004 + SEO-001–005, because dynamic data, settings and publication metadata share important public-rendering boundaries.
+
