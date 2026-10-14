@@ -4,6 +4,9 @@
 **Verzió:** 3.0.0  
 **Dátum:** 2026-10-14  
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
+**Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
+**Aktív tervpont státusza:** IN PROGRESS — a teljes funkciókatalógus bővítése és az egyetlen terv belső összhangjának lezárása folyamatban; új funkció implementálása még nem indulhat pusztán a tervbeli felsorolás alapján.  
+**Következő közös lépés:** a terv teljességének és konzisztenciájának lezárása után a funkciókatalógus közös felülvizsgálata; csak ezután következik a függőségek szerinti implementációs kapu.  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -27,6 +30,15 @@ Ez a dokumentum kizárólag a termék jelenlegi, ellenőrzött alapjait, a telje
 2. **A következő fejlesztési fókusz:** a meglévő Admin–Visual Editor–mentés/előnézet/publikálás–publikus weboldal folyamat teljes, megbízható lezárása.
 3. **A teljes Creator Platform:** integrációk, tartalomgyártás, közösség, commerce, OBS/streaming eszközök, analitika, automatizáció és SANCI AI fokozatos megvalósítása.
 4. **Későbbi platformosodás:** több creator/site, csapatmunka, billing, marketplace és kiterjesztések; ezek a végső terv részei, de nem előzik meg a stabil alapokat.
+
+### 0.5. Aktív tervpont és a továbblépés rendje
+
+- **Aktív tervpont:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`.
+- **Cél:** a teljes, korábban egyeztetett és a most kibővített képességkészlet egyetlen dokumentumban, logikus modulhatárokkal, egyértelmű függőségekkel és ellenőrizhető elfogadási feltételekkel legyen megőrizve.
+- **Jelenlegi státusz:** IN PROGRESS. A szerkezeti ellenőrzés és a modulhatárok javítása nem bizonyítja önmagában a teljes szemantikai megfelelést, ezért a terv nem jelölhető véglegesnek addig, amíg a fennmaradó követelmény- és függőségellentmondások nincsenek feloldva.
+- **Nem aktív külön munkafolyamat:** a korábbi P0/P0.2 checkpoint nem kerül vissza külön auditprojektté. A hiányzó történeti források és követelmények megőrzése a jelen terv teljességének része, nem második terv vagy külön roadmap.
+- **Következő felhasználói szakasz:** a terv teljességének lezárása után közösen átnézzük a funkciókatalógust; az implementáció csak a jóváhagyott sorrend, a meglévő kód ellenőrzése és az elfogadási tesztek alapján indul.
+- **Következő implementációs cél, későbbi kapuként:** az F0 meglévő Admin → Visual Editor → mentés/újratöltés → előnézet/publikálás → publikus oldal folyamatának valós végponttól végpontig ellenőrzése. Ez nem a jelenlegi tervpont helyettesítője, és nem tekinthető PASS-nak előzetes bizonyíték nélkül.
 
 ### 0.2. Változtatási szabály
 Új funkció a megfelelő modulba kerül. Meglévő képesség módosításakor meg kell őrizni az adatkapcsolatokat, jogosultságokat, hibaállapotokat és a korábbi használati eseteket. Funkciót csak kifejezett termékdöntéssel lehet kivezetni; a későbbre ütemezés nem törlést jelent.
