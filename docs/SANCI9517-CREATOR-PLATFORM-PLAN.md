@@ -6980,6 +6980,46 @@ A `0004_system_page_content.sql` történeti táblát hoz létre, míg a `0005_c
 
 **Következő kapu:** 24→22 tételes domain- és surface-crosswalk, aktív HTML/import gráf teljesítése a többi `public/` és `src/` fogyasztóra, `system_page_content` történeti adatséma ellenőrzése, kanonikus/legacy/archive döntések negatív tesztekkel. **ASSET/IA AUDIT: PARTIAL EVIDENCE / NOT PASS.** Nincs törlés, runtime-módosítás vagy teszt-PASS állítás.
 
+### 63.50.27. Dashboard 24 képesség → kanonikus 49.1–49.22 modul megfeleltetés (2026-10-14)
+
+**Forrás:** `public/admin-home.html` 24 `<article class="capability-card">` elemének sorrendi címkéi; MASTER §3.2, §46.1–46.2, §49, §63.19–63.20. Ez **tervbeli IA/ownership megfeleltetés**, nem annak bizonyítása, hogy a tervezett menü/route már működik. A dashboard 24 bemutató kártyája nem azonos a 22 kanonikus főmenüvel.
+
+| # | Dashboard képesség | Elsődleges 49.x főmodul | Domain-adatgazda | UX / ownership határ |
+|---:|---|---|---|---|
+| 1 | Weboldal és CMS | 49.2 | SITE/PAGE/NAVIGATION | Oldalak, CMS, SEO; Editor csak almenü |
+| 2 | Visual Editor v2 | 49.2 | PAGE/REVISION | Vizuális vászon, Inspector; önálló Editor belépés |
+| 3 | Design Studio | 49.3 | DESIGN_SYSTEM | Brand Kit, token, sablon, komponens |
+| 4 | Média- és erőforráskönyvtár | 49.4 | RESOURCE | Közös D1/R2 asset registry |
+| 5 | Adásrend és játékprofilok | 49.5 | SCHEDULE/GAME_PROFILE | Külön Live almenü, Editor schedule blokk csak fogyasztó |
+| 6 | Stream Studio és OBS | 49.5 + 49.6 | LIVE_STATE / STREAM_TOOLS | Live irányítás és OBS külön tulajdonos |
+| 7 | VOD, klipek és Shorts | 49.8 | CONTENT/PUBLISHING | Média bináris 49.4, videótartalom 49.8 |
+| 8 | Publikálási központ | 49.8 | PUBLISHING | Cross-platform tartalom queue; nem weboldal-revízió |
+| 9 | Twitch-integráció | 49.7 | INTEGRATION | Twitch provider adapter; Live csak fogyasztó |
+| 10 | YouTube, TikTok és Discord | 49.7 | INTEGRATION | Provider adapterek, community funkció 49.9 |
+| 11 | Közösségi központ | 49.9 | COMMUNITY/FAN_IDENTITY | Moderáció és rajongói identitás külön |
+| 12 | Közönség és e-mail | 49.9 + 49.8 | FAN_IDENTITY / CONTENT | Audience/consent és kampányüzenet ownership külön tisztázandó |
+| 13 | Analitika és riportok | 49.13 | ANALYTICS | Csak aggregált olvasási modellek |
+| 14 | AI Creator Copilot | 49.15 | AI_OPERATION | Jóváhagyott domain commandokat hív |
+| 15 | Webshop, merch és tagság | 49.10 + 49.11 | PRODUCT/ORDER / ENTITLEMENT | Bolt és tagsági hozzáférés külön |
+| 16 | Automatizálás és workflow | 49.14 | AUTOMATION | Domain command és permission kötelező |
+| 17 | Csapatok és több webhely | 49.22 | WORKSPACE/BILLING_PLAN | Tenant és SaaS külön domain |
+| 18 | Biztonság és helyreállítás | 49.19 | IDENTITY/AUDIT/BACKUP | Keresztmetszeti SEC/OPS |
+| 19 | Nyelvek, SEO és hozzáférhetőség | 49.19 + 49.2 | LOCALIZATION / SEO_PUBLICATION | Lokalizációs beállítás vs weboldal SEO; A11Y minden felületen |
+| 20 | Fejlesztői eszközök és piactér | 49.20 + 49.21 | DEVELOPER_API / EXTENSION | API kulcs/webhook és extension sandbox külön |
+| 21 | Dinamikus adatok és adatbinding | 49.2 + domainforrások | PAGE / source-domain | Editor kötés, forrásrekordot nem másol |
+| 22 | Űrlapok és interakciók | 49.2 | FORM_SUBMISSION/PAGE | Beküldés külön domain; UI Editor node |
+| 23 | Publikálás és verziókezelés | 49.2 | REVISION/SEO_PUBLICATION | Weboldal explicit publish; nem 49.8 cross-platform queue |
+| 24 | Tartalommodellek és bővíthető blokkok | 49.2 | PAGE/CMS | Tartalommodellek külön Weboldal almenü |
+
+**Kiemelt ütközések és kötelező döntések:**
+- A `Publikálási központ` (49.8 platformközi content queue) és a `Publikálás és verziókezelés` (49.2 weboldal REVISION/SEO_PUBLICATION) külön lifecycle; azonos „publikálás” szó nem indokol összevont táblát.
+- A `Stream Studio és OBS` kártya **két** kanonikus főmodult takar: 49.5 Live és 49.6 OBS; a kártya navigációja külön célokat/kontextuális választást kapjon.
+- A `Webshop, merch és tagság` szintén két külön tulajdonos: 49.10 kereskedelem és 49.11 támogatás/tagság. A `Fejlesztői eszközök és piactér` 49.20/49.21 kettős határát is meg kell tartani.
+- `Közönség és e-mail` konkrét consent, fan identity, email delivery és kampánytartalom tulajdonosi bontása még **OPEN**; nem szabad egyetlen „misc” adattáblába kényszeríteni.
+- A 49.1 Dashboard, 49.12 szponzoráció, 49.16 globális keresés, 49.17 értesítés és 49.18 súgó **nem kapnak önálló bemutatókártyát** a 24-es listában, ettől még a kanonikus menüben és termékscope-ban megmaradnak.
+
+**Következő elfogadási kapu:** minden kártyához egyértelmű elsődleges navigációs cél + jogosultság + planned/active státusz; a 22 főmodul menüjének felhasználói jóváhagyása; a régi Admin tesztek frissítése; domain-adatgazdák és 396 funkció-ID szemantikai ellenőrzése. **CROSSWALK: DOCUMENTED / NOT YET APPROVED OR IMPLEMENTED.** A működő kód változatlan.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
