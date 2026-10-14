@@ -3011,7 +3011,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Kontextuális súgó:** az aktuális modulhoz/mezőhöz illeszkedő rövid útmutató és dokumentált korlátok.
 - **Interaktív onboarding:** lépések, teljesítési állapot, kihagyás/újrakezdés és szerepkör/site-scope szerinti útvonal.
 - **Fogalomtár és dokumentáció:** kereshető, verziózott leírások és hivatkozás a kapcsolódó funkciószerződésre.
-- **Hibaelhárítás és feedback:** emberi nyelvű magyarázat, diagnosztikai azonosító, support/feedback út; érzékeny adatot automatikusan redaktálni kell.
+- **Hibaelhárítás és technikai feedback:** emberi nyelvű magyarázat, diagnosztikai azonosító, hibajelentés/terméktámogatási kérés; ez nem a 49.11 fan-támogatási/tagsági pénzügyi domainje. Érzékeny adatot automatikusan redaktálni kell.
 
 ### 49.19. Beállítások, biztonság és adat
 - **Profil és személyes preferenciák:** nyelv, időzóna, dátum/pénznem, accessibility és privacy preferenciák; aktív workspace/csapatkezelés a 49.22 modulhoz tartozik.
