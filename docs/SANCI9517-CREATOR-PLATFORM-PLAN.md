@@ -5894,3 +5894,29 @@ Ez a szakasz a 63.41 kártyáit kiegészíti a 25. fejezet hiányzó, különál
 
 **Normalizálási kapu:** EDT-001–006 esetén a 25. fejezet eddig hiányzó mezői külön rögzítve vannak; ez még nem igazolja a kártyák minden 26.1 mezőjének teljes runtime acceptance-ét. Következő lépés: EDT-007–014 ugyanilyen külön mezős normalizálása, mielőtt a 44 kártyát teljesen lezártnak tekintenénk.
 
+### 63.49. Teljes mezős normalizálás — EDT-007
+
+**Hatókör:** egyetlen funkciókártya, EDT-007. Ez a lépés a 26.1 szerinti 17 külön mezőt rögzíti; a forráskód-olvasásból nem következtet böngészős PASS-ra.
+
+#### EDT-007 — külön mezők
+
+- **ID és név:** EDT-007 — Canvas viewport, zoom, pan és content extent.
+- **Felhasználói eredmény:** a felhasználó nagyíthatja, mozgathatja és a teljes tartalomhoz igazíthatja a vásznat úgy, hogy az oldal szerkeszthető részei ne váljanak elérhetetlenné.
+- **Belépési pont:** Admin → Editor v2 → canvas viewport; zoom/pan/fit vezérlők és viewport-resize események.
+- **Műveletek:** zoom növelése/csökkentése, pan, fit-to-content, viewport átméretezése, üres/rövid/hosszú dokumentum megjelenítése. A vezérlők pontos billentyűparancsai és érintéses gesztusai még ellenőrizendők.
+- **Domain owner:** EDITOR / viewport és canvas interaction; a Page Model szerkezeti adatainak kanonikus gazdája továbbra is az Editor Page Model.
+- **Kanonikus adatforrás:** Editor v2 lokális viewport state; content extent a Page Modelből számított tartomány. A viewport állapot dokumentumba mentése nem feltételezhető, amíg külön nincs igazolva.
+- **Séma és invariánsok:** a zoom véges és pozitív; a pan/extent számítás nem eredményezhet NaN/Infinity értéket; a content extent vegye figyelembe a dokumentum tartalmát és a szükséges paddinget. Nagy dokumentum és extrém zoom erőforráskorlátja nyitott.
+- **Jogosultság:** az Editor csak az aktuális, jogosult oldal kontextusát jelenítheti meg; a viewport állítása nem kerülheti meg a page/site ownership ellenőrzést.
+- **API/command szerződés:** a vizsgált forrásban a `computeCanvasMinHeight` és a canvas extent/viewport logika található; a fit/pan/zoom teljes command-szerződése, persistence és hiba-visszajelzés nincs teljesen igazolva. Nincs külön backend mutation elvárás pusztán a viewport mozgatásához.
+- **Függőségek:** EDT-001 (Page Model), EDT-006 (selection/fókusz), EDT-025 (preview/viewport kapcsolat), EDT-035–036 (billentyűzet és mobil/accessibility); blokkolóként a viewport geometry stabilitása, nem blokkolóként a személyre szabott viewport-preferencia.
+- **UI-állapotok:** kezdeti betöltés, üres oldal, rövid és magas tartalom, zoomolt nézet, pan folyamatban, viewport resize, mobil safe-area, hibás/extreme geometry és visszaállítás/fit. A loading/error state külön UI-jelzése ellenőrizendő.
+- **Biztonsági és adatvédelmi határ:** nincs önálló PII/secret domain; a szélsőséges zoom, túl nagy node-szám és koordináta-tartomány ellenőrzése stabilitási követelmény. A viewport nem hozhat létre backend oldali hozzáférést.
+- **Tesztcsomag:** meglévő `public/editor-v2/core/canvas-extent.js` és kapcsolódó `tests/core.test.js` vizsgálata alapján van unit tesztalap; teljes browser/responsive, pointer/touch/keyboard és production smoke eredmény ehhez a kártyához nincs rögzítve.
+- **Elfogadási forgatókönyv:** üres, normál és hosszú oldal megnyitása → zoom/pan/fit → viewport átméretezése → kiválasztott elem elérhetőségének és koordináta-helyességének ellenőrzése → billentyűzetes és érintéses útvonal → oldal újranyitása. Elvárt: nincs eltűnő/elérhetetlen tartalom, hibás geometria vagy téves sikerjelzés.
+- **Bizonyíték:** forrásvizsgálat: `public/editor-v2/app.js`, `public/editor-v2/core/canvas-engine.js`, `public/editor-v2/core/canvas-extent.js`, `public/editor-v2/core/state.js`, `tests/core.test.js`. A jelen kártyához konkrét CI-run, böngészős E2E vagy felhasználói elfogadás nincs hozzárendelve; ezért PASS nem állítható.
+- **Visszaállítás:** viewport-fit/reset a helyreállítási út; ha a viewport lokális state, nincs dokumentummódosítás, amit undo-val kellene visszavonni. A viewport-preferencia mentése esetén reset/default fallback és hibás preference recovery külön acceptance-t igényel.
+- **Státusz és következő lépés:** **IN PROGRESS / UNVERIFIED**. Következő lépés: a kártyához tartozó browser/device acceptance-mátrix pontosítása és bizonyíték rögzítése; utána EDT-008 normalizálása ugyanilyen 17 mezővel.
+
+**Szeletállapot:** EDT-007 kártyája mezőszinten részletezve; a funkció runtime acceptance-e nyitott. Ez nem zárja le az EDT-007-et, az EDT modult vagy a tervlezárási kaput.
+
