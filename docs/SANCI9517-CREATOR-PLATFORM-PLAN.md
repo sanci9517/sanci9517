@@ -3916,6 +3916,47 @@ A kanonikus `v2/foundation` terv teljes szövegén végzett, a 24. fejezetet for
 
 **Megismételhető ellenőrzési elv:** a 24. fejezet elsődleges sorait a `^- ([A-Z][A-Z0-9_]*-\\d{3}):` mintával számolni, egyediséget ellenőrizni; a teljes dokumentum `\\b[A-Z][A-Z0-9_]*-\\d{3}\\b` hivatkozásait a 24. fejezet halmazához hasonlítani; a 49. fejezet 49.1–49.22 címeit tételesen ellenőrizni. Új ID-k felvételekor ezt az ellenőrzést meg kell ismételni.
 
+### 63.0.1. Funkcióazonosító-családok → kanonikus Admin-modulok — ellenőrzött besorolási alap
+
+A 24. fejezet aktuális **396 egyedi ID-jának mind a 30 prefixcsaládját** a 49. fejezet megfelelő tulajdonosi moduljához vagy indokolt keresztmodulú minőségkapuhoz rendeztük. Ez **prefixcsalád-szintű navigációs besorolás**, nem a 396 egyedi sor szemantikai, fázis-, acceptance- vagy implementációs igazolása.
+
+| ID-család | ID-k száma | Elsődleges Admin-modul / indokolt határ |
+| --- | ---: | --- |
+| ADM | 13 | 49.1 (Admin shell; keresés 49.16, értesítés 49.17, súgó 49.18 és beállítások 49.19 csak belépési pontként) |
+| WEB | 32 | 49.2 |
+| EDT | 44 | 49.2 / Visual Editor aloldal |
+| DSN | 18 | 49.3 |
+| RES | 16 | 49.4 |
+| INT | 21 | 49.7 |
+| LIV | 10 | 49.5 |
+| OBS | 10 | 49.6 |
+| SCH | 15 | 49.5 / Stream Planner és adásrend aloldal |
+| CNT | 22 | 49.8 |
+| COM | 20 | 49.9 |
+| STO | 21 | 49.10 |
+| SUP | 12 | 49.11 |
+| ANL | 10 | 49.13 |
+| CAM | 9 | 49.12 |
+| AUT | 14 | 49.14 |
+| AI | 21 | 49.15 |
+| SEC | 12 | 49.19 |
+| OPS | 11 | 49.19 / üzemeltetés és diagnosztika, technikai háttérszerződéssel |
+| LOC | 6 | 49.19 / nyelvbeállítás; 49.2 és 49.8 lokalizált tartalmi belépési pontok |
+| TEAM | 7 | 49.22 |
+| MKT | 5 | 49.21 |
+| QA | 10 | keresztmodulú minőségkapu, nem önálló Admin-főmodul |
+| SET | 4 | 49.19 |
+| DYN | 8 | 49.2 / webes CMS és dinamikus adatkapcsolatok |
+| SEO | 5 | 49.2 / SEO és publikálás |
+| DEV | 6 | 49.20 |
+| SEARCH | 5 | 49.16 |
+| NTF | 5 | 49.17 |
+| HELP | 4 | 49.18 |
+
+**Kötelező ellenőrzendő határok:** `SCH` nem a Visual Editorban, hanem a 49.5 Stream Plannerben szerkeszthető; `DYN` és `SEO` a 49.2 Weboldalhoz tartozik, nem a 49.8 videó-/posztgyártó Tartalomstúdióhoz; `CAM` a 49.12 szponzorációs üzleti munkafolyamat, `ANL` a 49.13 analitika; `LOC` keresztmodulú, nyelvi tartalmak külön tulajdonosi referenciával; `QA` nem külön zsúfoló menüpont, hanem minden releváns modulra érvényes kapu.
+
+**Következő, még nyitott ellenőrzés:** minden egyes ID-hoz konkrét aloldal, owner, adat/API, jogosultság, fázis, függőség, pozitív/negatív teszt és bizonyíték tételes egyeztetése; az eltérő besorolású egyedi kivételek dokumentálása. A 00/A és 00.9.6.B forráshiány továbbra is nyitott; nincs audit-PASS.
+
 ### 63.1. A terv teljességének ellenőrzése
 - [ ] A teljes termékvízió minden képessége a megfelelő modulban szerepel; a régi forrásokból megőrzendő képesség nem tűnhet el pusztán átrendezés vagy fázisváltás miatt.
 - [ ] Minden funkció egyértelműen besorolt: core vagy későbbi, felhasználói felület/domain, függőség, státusz, elfogadási feltétel és szükséges teszt.
