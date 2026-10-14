@@ -4960,7 +4960,7 @@ Ez a mátrix a 24. fejezet stabil ID-jait köti a 41.2/63.5 roadmaphez. **Fázis
 | ADM-001, ADM-003, ADM-008–010 | F1 | Közös Admin shell, route/UX és shared state; nem domain-adatgazda. |
 | ADM-002, ADM-004–007, ADM-011–013 | F1 alap + az adatforrás tulajdonosának fázisa | Csak olyan kártya jelenjen meg, amelynek canonical source, permission és freshness contractja létezik. |
 | WEB-001, WEB-004–008 | F0 core workflow; bővített CMS F3 | F0-ban save/reload/preview/publish/revision megbízhatóság; nav/SEO/CMS kiterjesztés csak F3-ban. |
-| WEB-002–003, WEB-009–014, WEB-018, WEB-020–024, WEB-028–032 | F3 | URL/nav/page lifecycle, form, public states, SEO/security és renderer; a F0 core mentési/publikálási contractjára épül. |
+| WEB-002–003, WEB-009–014, WEB-018–024, WEB-028–032 | F3 | URL/nav/page lifecycle, form, public states, SEO/security és renderer; a F0 core mentési/publikálási contractjára épül. |
 | WEB-015 | F3 shell + F5 live provider data | Live page shell korábban készülhet, de valós adat csak LIV/INT capability után. |
 | WEB-016 | F0 meglévő schedule stabilitás + F3 public UX | A canonical SCH-010 projection marad egyetlen adatforrás. |
 | WEB-017, WEB-025–027 | F3 shell + F7/F8 owning domain | Content route a CNT-020-re, store/member routes a STO/SUP/ENTITLEMENT-re épülnek; nem épülnek másolatként WEB-ben. |
@@ -4988,7 +4988,7 @@ Ez a mátrix a 24. fejezet stabil ID-jait köti a 41.2/63.5 roadmaphez. **Fázis
 | AI-001–021 | F10 | Must use F0/F1 canonical permission/command/approval/logging foundations; no direct domain writes. |
 | SEC-001–011 | Cross-cutting F0–F11 | Security and privacy gates apply to every feature; no late-only security phase. |
 | SEC-012 | F4/F11 staged | MFA/recovery for creator accounts and later SSO; don't enable open registration before isolation/recovery tests. |
-| OPS-001–004, OPS-007–010 | Cross-cutting F0–F11 | Health, migrations, logs, alerts, performance, dependency and incident readiness in each release. |
+| OPS-001–004, OPS-007–011 | Cross-cutting F0–F11 | Health, migrations, logs, alerts, performance, dependency, background-job/realtime runtime selection and incident readiness in each release; choose a job runtime only when a justified feature needs it. |
 | OPS-005–006, QA-007 | F0 minimum operational recovery + F11 expanded portability | Real restore/rollback drill required; QA-007 verifies it but does not implement it. |
 | QA-001–006, QA-008–010 | Cross-cutting each F release | Relevant tests, runtime smoke and user acceptance before each phase closes. |
 | LOC-001–002 | Cross-cutting from F0/F1 | Hungarian-first UI, locale-safe date/time/currency from the start. |
@@ -5008,4 +5008,25 @@ Ez a mátrix a 24. fejezet stabil ID-jait köti a 41.2/63.5 roadmaphez. **Fázis
 **Konzisztencia-korlát:** a fázis-hozzárendelés a funkció katalógus minden ID-ját lefedi csoportos vagy egyedi sorral; a tényleges végrehajtás előtt a 25/26. fejezet szerinti kártyán belül meg kell jelölni a pontos al-fázist, blokkoló dependency-t, acceptance-t és bizonyítékot. A táblázat nem állítja, hogy a jelenlegi repo a későbbi fázisokat megvalósítja.
 
 **Státusz: IN PROGRESS / NOT PASS.** Az ID-unikalitás, csoportlefedettség és aktív pont statikus ellenőrzését a 63.39 rögzíti; a végső checklist és feature-card mezőellenőrzés még nyitott. Az aktuális következő pontot a legutolsó 63.x fejezet tartalmazza.
+
+### 63.39. Statikus tervkonzisztencia-ellenőrzés — eredmény és maradó blokkolók
+
+A kanonikus terv legutóbbi GitHub-változatán végzett statikus szöveg-/azonosító-ellenőrzés eredménye:
+
+| Ellenőrzés | Eredmény | Jelentés |
+|---|---|---|
+| 24. fejezet stabil funkció-ID-k | **396 / 396 egyedi** | Nincs duplikált ID a 24. fejezet jegyzékében. |
+| 49. fejezet főmoduljai | **22 / 22** | 49.1–49.22 folyamatos, duplikáció nélkül. |
+| 54. fejezet review checklist | **156 tétel** | A 63.12–63.15 mátrixokban **156 / 156** tételhez tartozik megfeleltetési sor. |
+| 54. checklist ID-hivatkozások | **nincs feloldatlan hivatkozás** | A korábbi 63.16 ellenőrzés szerint a mapping ID-k a 24. fejezetben léteznek. |
+| 24. fejezet ID-k → 63.38 fázis-mátrix | **396 / 396 lefedve** | Az ellenőrzés először két hiányt talált: WEB-019 és OPS-011; a 63.38 táblázat javítva lett, majd az ellenőrzés mind a 396 ID-t lefedettnek találta. |
+| Főfejezetek számozása | **64 főfejezet, duplikált szám nélkül** | A főfejezet-címek egyediek. |
+| 63. alfejezetek számozása | **39 alfejezet, duplikált ID nélkül** | A 63.1–63.39 címek egyediek. |
+| Aktív tervpont | **egy kanonikus azonosító** | A fő aktív pont minden irányadó helyen PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY; F0 nincs aktívként megjelölve. |
+
+**Mit nem bizonyít ez az ellenőrzés:** nem igazolja a 396 funkció teljes szemantikai specifikációját, az egyes dependency-k technikai helyességét, a teljes történeti források egyeztetését, a valódi böngészős/Worker runtime viselkedést vagy bármelyik funkció PASS állapotát. A 63.38 csoportos fázis-hozzárendelést ad; a 25/26. fejezet szerinti, minden ID-ra kiterjedő kártya mezőszintű kitöltése továbbra sincs kész. A funkciókártyákban külön meg kell adni a pontos al-fázist, blokkoló függőségeket, permission/scope, API/schema, pozitív és negatív teszteket, rollbacket és bizonyítékot.
+
+**Aktuális aktív pont:** PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY.
+
+**Állapot: IN PROGRESS / NOT PASS.** A következő konkrét munka a 25/26. fejezet kötelező kártyamezőinek gépi lefedettség-ellenőrzése, majd a hiányzó mezők explicit UNVERIFIED/nyitott döntésként való feltárása — nem az implementáció elindítása. A végső PASS csak a teljes történeti és szemantikai audit, a funkciókártya-kapu és a 63.1–63.3 feltételek bizonyítása után adható meg.
 
