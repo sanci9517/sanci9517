@@ -5330,3 +5330,32 @@ A nyolc fájl teljes szövegén végzett célzott szó szerinti keresés nem tal
 **Bizonyítéki érték:** az archiválás nem módosította e nyolc fájl tartalmát, így az eredeti elődútvonalak és a mostani archív példányok tartalmi bizonyítékként egymással felcserélhetők. Ez nem jelenti azt, hogy a B-fejezet ezekben volt; a közvetlen előd-MASTERben sem szerepeltek a keresett B/2.70 kifejezések. A következő munka ezért a régi MASTER törzsének tényleges diffjére és a történeti funkciók névfüggetlen összehasonlítására irányul.
 
 **Státusz:** nyolc tervfájl rename- és blobazonosságának ellenőrzése kész; szemantikai funkcióegyeztetés nyitott; `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.122. P0.2 — Közvetlen előd-MASTER és jelenlegi MASTER szerkezeti eltérésének első összevetése (2026-10-14)
+
+**Források és módszer**
+- Közvetlen előd-MASTER: `87b6f0bb71cd96646b6a501ab85c242386a1124e`, `docs/MASTER-DEVELOPMENT-PLAN.md`, blob `235165980be8a522860ae442e79a705b26127429`, 1 792 sor, 154 Markdown-címsor.
+- Jelenlegi MASTER a vizsgálatkor: `v2/foundation`, blob `dafaa4173d6fc992d70593e473a48222d11b54c9`, 5 333 sor, 394 Markdown-címsor.
+- Az `aedb2eaab244` összehasonlítás 1 114 hozzáadást és 1 568 törlést jelez a MASTER fájlban, a nyolc másik tervfájl pedig tartalomváltozás nélküli rename.
+
+**Megállapítás**
+A régi MASTER 00–30 fejezetszerkezete a jelenlegi tervben más, 0–21-es termékbaseline- és P0–P22 végrehajtási szerkezetre változott. A korábbi dokumentum önállóan tartalmazott többek között:
+- G0–G8 fejlesztési kapuk;
+- 0/A–0/D Foundation ellenőrzések;
+- 1/A–1/H Editor Core és tesztkapu;
+- 2/A–2/J Hierarchy/Layout;
+- 3/A–3/E Canvas/Editor UX;
+- 4/A–4/D Responsive;
+- 5/A–5/G Page Model és publishing;
+- 6/A–6/J konkrét Sanci publikus oldalak;
+- média/R2, schedule/social/VOD, Twitch/YouTube/TikTok/Discord;
+- SEO/analytics/accessibility, backup/restore/audit/import-export, security;
+- SANCI AI Editor, Stream Assistant, tanulási/értékelési rendszer, tesztelés és release/üzemeltetés;
+- A/2.1–A/2.12 Visual Editor auditpontok, valamint hivatkozási és tervmódosítási szabályok.
+
+A jelenlegi MASTER más címek alatt sok hasonló tartalmat őriz, és további Creator Platform-doméneket is kifejt. A címsorok eltérése ezért önmagában nem jelent funkcióvesztést. Ugyanakkor a fejezetszintű átstrukturálás miatt **a régi MASTER minden követelményét külön, szemantikailag kell megfeleltetni**; a puszta címsor-egyezés nem használható teljesítési bizonyítékként. A jelenlegi címsor-összevetés nem bizonyítja, hogy bármely felsorolt képesség elveszett vagy teljesen megőrződött.
+
+**Következő részfeladat:** a régi MASTER 1/A–5/G editor/page-model követelményeinek és a jelenlegi MASTER 2.3, 6, 9, 10, 14, 15 fejezeteinek soronkénti/állításonkénti leképezése; minden régi követelmény kapjon canonical célpontot, bizonyítékot, státuszt, és szükség esetén `MISSING / PARTIAL / DUPLICATE / SUPERSEDED` döntést. Ezt külön kell folytatni a publikus oldalak, integrációk, média, AI, tesztelés és release tartományaival. A hiányzó B-fejezet tartalma nem rekonstruálható ebből a struktúra-összevetésből.
+
+**Státusz:** első szerkezeti összevetés dokumentálva; szemantikai leképezés még nincs lezárva; `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
