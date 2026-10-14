@@ -2655,7 +2655,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.6-04 | Next stream/countdown uses canonical schedule/site timezone/authenticated live state and excludes cancelled/past events | SCH-009, SCH-003, SCH-005, LIV-001, WEB-016 | KEEP | 1.0 | QA-002/004 |
 | F.6-05 | Link VOD/clip/Short to stream and calendar; Editor Schedule block changes presentation only | SCH-014, CNT-002–CNT-004, EDT-020, SCH-011 | EXPAND | 1.0 Schedule; richer content later | QA-002/003/004 |
 | F.7-01 | Admin shell navigation/breadcrumb/public return/profile/session/logout/help/notifications/mobile shell | ADM-001–ADM-010, SEC-001, WEB-011 | EXPAND | 1.0 | QA-003/004/005 |
-| F.7-02 | Shared loading/empty/error/success/disabled/unsaved states, validation/confirm/search/filter/pagination/keyboard/Hungarian UI | ADM-008, EDT-027, OPS-003 | EXPAND | 1.0 | QA-004/005/006 |
+| F.7-02 | Shared loading/empty/error/success/disabled/unsaved states, validation/confirm/search/filter/pagination/keyboard/Hungarian UI | ADM-001, ADM-006–ADM-010, EDT-027, LOC-001, OPS-003, WEB-011 | EXPAND | 1.0 | QA-004/005/006 |
 | F.7-03 | Session expiry/logout/inactivity/multi-tab/unsaved flow and server-side admin/API authorization | SEC-001, SEC-002, SEC-004, ADM-007, EDT-031 | KEEP | 0.x–1.0 | QA-003/004 |
 | F.7-04 | Public forms: schema/required labels/client+server validation/spam rate limit/success/error/privacy notice | WEB-020, SEC-005, SEC-007, SEC-011 | EXPAND | 1.0 if form enabled | QA-003/004/006 |
 | F.7-05 | Store CRUD/variants/SKU/pricing/stock/order/payment/fulfillment/refund/provider errors | STO-001–STO-020, WEB-025 | DEFER | 5.0 | QA-002/003/008 |
@@ -2664,9 +2664,9 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.8-02 | Metrics source/period/freshness/missing values/API limits/retention/export/role; anomaly detection later | ANL-007–ANL-010, SEC-002 | EXPAND | 2.0+ | QA-002/003/008 |
 | F.8-03 | Automation event/schedule→trigger→condition→action→result→verify→audit with retry/idempotency/rate/dead-letter/version/site rules | AUT-001–AUT-014, SEC-003, SEC-010 | DEFER | 7.0 | QA-002/003/006/008 |
 | F.8-04 | AI website edits use canonical Page Model/action pipeline, permission/schema validation, preview/diff/approval/verify/audit; no arbitrary DB/HTML | AI-003, AI-005–AI-009, AI-019, EDT-003, SEC-002 | DEFER | 3.0 safety gate | QA-002/003/008 |
-| F.8-05 | AI orchestrator/agent/tool/model registry, task planner/context selector, permission/approval, specialist agents and multi-model routing | AI-001–AI-006, AI-016–AI-018 | DEFER | 3.0–8.0 | QA-002/003/008 |
-| F.8-06 | AI costs/quotas/approval/prompt versions/usage/errors/recovery/rollback; provider keys server-side | AI-001, AI-002, AI-010, AI-017, SEC-008 | DEFER | 3.0 | QA-003/008 |
-| F.8-07 | Stream Intelligence for live/silence/speech/chat/audio/OBS/highlights/VOD/clips/feedback/opt-in memory | AI-014–AI-016, ANL-003, ANL-006, OBS-003, LIV-006, SEC-011 | DEFER | 3.0–8.0 | QA-003/006/008 |
+| F.8-05 | AI orchestrator/agent/tool/model registry, task planner/context selector, permission/approval, specialist agents and multi-model routing | AI-001–AI-009, AI-016–AI-019 | DEFER | 3.0–8.0 | QA-002/003/008 |
+| F.8-06 | AI costs/quotas/approval/prompt versions/usage/errors/recovery/rollback; provider keys server-side | AI-001, AI-002, AI-007, AI-009, AI-010, AI-017, SEC-008 | DEFER | 3.0 | QA-003/008 |
+| F.8-07 | Stream Intelligence for live/silence/speech/chat/audio/OBS/highlights/VOD/clips/feedback/opt-in memory | AI-004, AI-014–AI-016, ANL-003, ANL-006, OBS-003, LIV-006, SEC-011 | DEFER | 3.0–8.0 | QA-003/006/008 |
 | F.8-08 | Human-reviewed clip/export, stream setup assistant, AI Control Center, experience evaluation and E2E tests | AI-014, AI-015, AI-017–AI-020, OPS-007, QA-008 | DEFER | 3.0–8.0 | QA-002/003/008 |
 
 **Batch 6 result:** all 26 F.5–F.8 source bullets are individually represented. This does not establish provider approval, runtime capability, or acceptance PASS.
@@ -2684,9 +2684,9 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.9-06 | Performance budgets based on measured baseline; image variants/lazy load/cache invalidation/Core Web Vitals/large-tree tests | OPS-008, WEB-030, RES-004 | EXPAND | 1.0 baseline; advanced optimization phased | QA-005/006 |
 | F.9-07 | Visual regression for public home/navigation/schedule, Editor state and desktop/tablet/mobile | WEB-009, WEB-011, WEB-014, WEB-016, EDT-035–EDT-037 | KEEP | 1.0 release gate | QA-004/005 |
 | F.10-01 | Versioned export of Page/revision/theme/template/component/media refs/domain data; never export secrets/tokens | OPS-005, WEB-008, DSN-015, RES-001, SEC-008 | EXPAND | 1.0 safe export foundation; full package later | QA-003/007 |
-| F.10-02 | Import dry-run validates schema/version/assets/duplicate IDs/owner/permissions/migration compatibility | OPS-004, OPS-005, WEB-008, DSN-015, SEC-002 | EXPAND | 2.0 full import/export | QA-002/003/007 |
+| F.10-02 | Import dry-run validates schema/version/assets/duplicate IDs/owner/permissions/migration compatibility | OPS-004/005, WEB-008, DSN-015, RES-008/009, SEC-002/003 | EXPAND | 2.0 full import/export | QA-002/003/007 |
 | F.10-03 | Recovery preview/conflicts/integrity/backup verification and post-restore Page Model/revision/public-render consistency | OPS-005, OPS-006, OPS-009, WEB-007, WEB-008, EDT-028 | KEEP | 0.x–1.0 safety baseline | QA-002/006/007 |
-| F.10-04 | Diagnostics for deploy/request/sync/provider/jobs/D1/cache/latency; no secrets or unnecessary personal data in logs | OPS-001–OPS-008, SEC-008, SEC-011 | EXPAND | 1.0 baseline; advanced operations later | QA-003/006/008 |
+| F.10-04 | Diagnostics for deploy/request/sync/provider/jobs/D1/cache/latency; no secrets or unnecessary personal data in logs | OPS-001–OPS-008, SEC-008, SEC-010/011 | EXPAND | 1.0 baseline; advanced operations later | QA-003/006/008 |
 | F.11-01 | 1.0 scope: own public site/Admin/working Editor slice/responsive/resource/Schedule/Twitch/publish/SEO/accessibility/security/performance | §39.2, WEB-001–WEB-032, ADM-001–ADM-010, EDT-001–EDT-042, RES-001–RES-016, SCH-001–SCH-015, INT-001–INT-021, SEO-001–SEO-005, QA-001–QA-010 | KEEP | 1.0 current release scope | QA-002–QA-009 |
 | F.11-02 | 1.x: Link Hub/Content Hub/multi-platform/VOD/Shorts/calendar/commerce foundations/community/alerts/audience capture | WEB-022, CNT-001–CNT-020, INT-013–INT-021, STO-001–STO-020, SUP-001–SUP-012, COM-001–COM-018, ANL-001–ANL-004 | MERGE | 1.5–2.0 by domain | QA-002/003/008 |
 | F.11-03 | 2.x Creator OS: dashboard/analytics/content studio/email audience/sponsorship/OBS/advanced stream tools | ADM-001–ADM-010, ANL-001–ANL-010, CNT-001–CNT-020, COM-015–COM-017, CAM-001–CAM-009, OBS-001–OBS-010 | MERGE | 2.0+ | QA-002/003/008 |
@@ -4645,3 +4645,14 @@ A C.23.22-01–07 mind a hét történeti sor megmaradt, és a célzott szerződ
 - **F.9-06 — performance gate:** removed `QA-005` from the feature-ID cell; performance QA remains in the dedicated QA column.
 - **F.9-07 — visual regression:** moved QA IDs out of the feature-ID cell and added the canonical navigation, mobile-navigation, Creator Home and Schedule page IDs to the Editor mobile-action/Layers/Inspector test scope.
 - **Evidence boundary:** eight mapping rows were corrected against the archived F.7/F.9 requirements and current registry. No forms, crawl, accessibility, security or visual-regression tests were executed. F.7/F.9 remain open for full semantic review; F.8 and F.10–F.13 remain open, as does original-source recovery. P0.2 stays **IN PROGRESS / NOT PASS**.
+
+
+### 41.3.67. P0.2 — F.7 Admin state ownership, F.8 AI safety lifecycle and F.10 import/operations mapping review (2026-10-14)
+
+- **F.7-02 — shared Admin usability contract:** expanded from a single shared-state ID to Admin shell/search/session/state/mobile, Editor dirty-state, localization and error-observability owners. The source combines several cross-cutting behaviors; ADM-008 alone does not represent search, keyboard/mobile, localization and unsaved state.
+- **F.8-05 — AI orchestration lifecycle:** added AI-007–AI-009 and AI-019 for preview/approval, canonical execution, verification/audit/rollback and human approval of public/destructive/financial actions. A registry/task-planner mapping alone is insufficient to cover safe execution.
+- **F.8-06 — AI cost and recovery:** added AI-007 approval and AI-009 audit/rollback to cost/quota/prompt/usage/error tracking. Secret handling remains server-side under SEC-008.
+- **F.8-07 — Stream Intelligence and opt-in memory:** added AI-004 context selection/privacy filtering; opt-in memory must be explicitly privacy-filtered and consent/retention-controlled, not inferred from analytics or agent IDs.
+- **F.10-02 — import integrity:** added RES-008/009 reference/lifecycle validation and SEC-003 tenant isolation. Schema validation alone does not prove that imported assets have valid usage references or that ownership cannot cross site boundaries.
+- **F.10-04 — operational diagnostics:** added SEC-010 audit/privacy logging alongside secret redaction and retention. Logs must support diagnosis without exposing secrets or unnecessary personal data.
+- **Evidence boundary:** six F.7/F.8/F.10 mapping rows were refined from source requirements and registry definitions. No AI, import/export, logging or Admin runtime tests were executed. F.7–F.10 remain open for complete semantic review; F.11–F.13 and original-source recovery remain open. P0.2 stays **IN PROGRESS / NOT PASS**.
