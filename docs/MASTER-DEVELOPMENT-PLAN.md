@@ -2679,7 +2679,7 @@ The short decision record must name the problem and acceptance criteria; existin
 |---|---|---|---|---|---|
 | F.9-01 | Published-page SEO metadata, canonical, Open Graph/social cards, sitemap/robots/schema; drafts and preview non-indexable | SEO-001–SEO-005, WEB-005, WEB-006, WEB-031 | KEEP/EXPAND | 1.0 release gate | QA-004/008 |
 | F.9-02 | Redirect/broken-link tooling only with preview and approval | SEO-004, SEO-005, WEB-013, SEC-002 | DEFER | 2.0+ | QA-003/008 |
-| F.9-03 | Semantic HTML, heading hierarchy, alt, labels, ARIA, keyboard/focus, contrast, screen reader, reduced motion | EDT-017, EDT-039, EDT-040, RES-007, WEB-032 | KEEP | 1.0 release gate | QA-004/005 |
+| F.9-03 | Semantic HTML, heading hierarchy, alt, labels, ARIA, keyboard/focus, contrast, screen reader, reduced motion | EDT-017, EDT-037, EDT-040, RES-007, WEB-011; cross-cutting accessibility contract TBD in M0.2 | KEEP | 1.0 release gate | QA-004/005 |
 | F.9-04 | Secure session/cookies/password/auth rate limit/RBAC/CSRF/OAuth state/webhook replay/upload validation | SEC-001–SEC-010, RES-003, INT-003, INT-017 | KEEP | 0.x–1.0 release gate | QA-003 |
 | F.9-05 | Separate public/preview/admin permission boundaries; no draft or secret leakage in logs/export | SEC-002, SEC-008, WEB-005, WEB-006, WEB-031, OPS-002, OPS-005 | KEEP | 0.x–1.0 | QA-003/004 |
 | F.9-06 | Performance budgets based on measured baseline; image variants/lazy load/cache invalidation/Core Web Vitals/large-tree tests | OPS-008, WEB-030, RES-004 | EXPAND | 1.0 baseline; advanced optimization phased | QA-005/006 |
@@ -2719,6 +2719,9 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.13-19 | Later creator app uses canonical APIs/permissions for live/alerts/schedule/analytics/moderation/content approval | ADM-001–ADM-010, INT-001–INT-021, SCH-001–SCH-015, LIV-001–LIV-007, CNT-015, ANL-001–ANL-010, OBS-006, COM-001–COM-018, SEC-002 | DEFER | 2.0+ | QA-002/003/008 |
 | F.13-20 | Starter template categories remain available as configurable library choices | DSN-008–DSN-010 | EXPAND | 1.0 starter templates; library later | QA-004 |
 | F.13-21 | Future creator-made template/component/theme/overlay/OBS/digital asset marketplace with license/version/review/revenue share | DSN-005, DSN-011–DSN-018, RES-001, OBS-001–OBS-010, STO-012, MKT-001–MKT-005 | DEFER | 3.0–6.0 | QA-002/003/008 |
+
+**Szemantikai ID-ellenőrzés — accessibility cross-cutting capability nyitott:** a korábbi F.9-03 sor a `WEB-032` ID-t használta, amelynek registry-definíciója **public content rendering security and safe embeds**, nem általános accessibility. Ez hibás szemantikai hozzárendelés volt, ezért kivettem a mappingből. A sor most a ténylegesen releváns rész-képességekre mutat (`EDT-017` alap-elemek, `EDT-037` keyboard-accessible canvas alternative, `EDT-040` reduced motion, `RES-007` alt text metadata, `WEB-011` navigation/keyboard behavior), de ezek nem bizonyítják önmagukban a teljes semantic HTML/labels/ARIA/focus/contrast/screen-reader/form accessibility lefedettségét. A hiányzó cross-cutting contract/domain besorolását M0.2-ben kell eldönteni; addig az F.9-03 szemantikai lefedettsége **OPEN**, noha a forráskövetelmény és az 1.0 release gate megmarad.
+
 
 **Szemantikai surface-ellenőrzés — nyitott M0.3-függőség:** az archív F.12 követelménye kifejezetten azt mondja, hogy a creator profil és a játékok **Adminból legyenek konfigurálhatók**. A F.12-02/F.13-01 crosswalk helyesen hivatkozza a Game Profile domain CRUD-ját (`SCH-012`), a kapcsolati modellt (`SCH-014`) és a resource-megjelenítést, de ezek önmagukban nem neveznek meg egy konkrét Admin route-ot vagy Admin felületet. Az `ADM-001`–`ADM-010` jelenlegi registry-leírásai között nincs Game Profile-specifikus kezelőfelület-ID; nem szabad egy általános Admin-shell vagy permission ID-t tévesen CRUD-felületként feltüntetni. Ez **nem bizonyított hiányzó runtime-funkció**, hanem surface-traceability rés: M0.3-ban a tényleges Admin route/menu/action inventory alapján kell megnevezni a kanonikus felületet, és csak ezután dönteni, hogy meglévő ADM ID alá tartozik-e vagy új, indokolt capability ID szükséges. Addig F.12-02 és F.13-01 szemantikai/surface lezárása nyitott marad.
 
@@ -4773,3 +4776,14 @@ Az archív `F.12` forrás kimondja, hogy a creator profil és a játékok Adminb
 4. ellenőriznie, hogy az Editor csak a canonical Game Profile domainre hivatkozik, és nincs editor-only párhuzamos adattár.
 
 **Állapot:** nyitott M0.3-függőség; ez nem zárja le F.12/F.13 szemantikai traceability-jét, és nem változtatja meg P0.2 **IN PROGRESS / NOT PASS** állapotát.
+
+
+### 41.3.77. P0.2 — F.9-03 hibás accessibility ID-hozzárendelés javítva; cross-cutting contract nyitott (2026-10-14)
+
+Az archív F.9-03 a teljes publikus accessibility követelményt sorolja fel: semantic HTML/heading hierarchy, alt, form labels, ARIA, keyboard/focus, contrast, screen-reader support és reduced motion. A korábbi crosswalk ezt részben a `WEB-032` ID-hez rendelte, miközben a §24 registry `WEB-032` leírása „Public content rendering security and safe embeds”; ez nem megfelelő szemantikai egyezés.
+
+**Korrekció:** a `WEB-032` kikerült az F.9-03 accessibility-hozzárendelésből. A megmaradt rész-azonosítók: `EDT-017`, `EDT-037`, `EDT-040`, `RES-007`, `WEB-011`. Ezek konkrét rész-képességeket fednek le, de nem állítom, hogy együtt bizonyítottan lefedik a teljes accessibility szerződést.
+
+**Következő döntés M0.2-ben:** a cross-cutting domain/capability inventory alapján kell eldönteni, hogy a teljes accessibility contract külön canonical capability/ID-t igényel-e, vagy mely már létező domain kapja a normatív ownershipet és acceptance checklistet. Addig F.9-03 szemantikai lefedettsége OPEN, a 1.0 accessibility release gate kötelező marad. Nem hoztam létre előre új ID-t, mert a domain- és prefix-ownership döntés még nem zárult le.
+
+Ez a javítás kizárólag a crosswalk szemantikai pontosságát érinti; a 362/362 strukturális ID-lefedettség továbbra is igaz az explicit/tartományos/perjeles feloldásra, de ez nem helyettesíti az újonnan rögzített szemantikai hiány rendezését. **P0.2 marad IN PROGRESS / NOT PASS.**
