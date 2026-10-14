@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.56` — a 54.1–54.16 mind a 156 checklist-tétele első körös ID/owner-routingot kapott (156/156); **következő: teljes második körös domain/fázis/függőség/pozitív-negatív teszt/forrásbizonyíték audit**, különös tekintettel a 63.50.46 HIGH publikálási konfliktusra. A 156 első körös routing kész, de szemantikai és történeti kapu továbbra is nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll és a 63.50.46 HIGH kódaudit-blokkoló ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.57` — a 156/156 első körös ID-routing megvan; a második körben a téves 49.x modulhivatkozások javítva és mind a 16 review-blokk kanonikus domainje ellenőrizve; **következő: soronkénti F-fázis/függőség/pozitív-negatív teszt/forrásbizonyíték audit**, különös tekintettel a 63.50.46 HIGH publikálási konfliktusra. A 156 első körös routing kész, de szemantikai és történeti kapu továbbra is nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll és a 63.50.46 HIGH kódaudit-blokkoló ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -7208,7 +7208,7 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 5. Minden sikeres audit-commit után a fejléc folytatási állapotát és a legutolsó bejegyzést egyeztetni; a következő munka **egyértelmű azonosítóval**, a még nyitott részhalmazzal és a PASS/NOT PASS határral legyen megadva. A commit SHA csak a GitHub által visszaadott tényleges eredmény alapján közölhető.
 6. Nem létező vagy nem visszanyert történeti forrást nem lehet rekonstruáltnak nevezni; a 396 ID, 22 modul, 156 review és 271 történeti H-ID számlálása nem runtime teszt. A fejlesztési fagyasztás az aktív kapu PASS-áig változatlan.
 
-**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.56 FIRST-PASS 156/156 / NEXT SECOND-PASS SEMANTIC AND EVIDENCE AUDIT`. A 54.1–54.4 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.7–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
+**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.57 MODULE-DOMAIN CROSSWALK / NEXT ITEM-LEVEL PHASE AND EVIDENCE`. A 54.1–54.4 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.7–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
 
 ### 63.50.41. 54.2 Saját weboldal és Visual Editor: 15 checklist-tétel első körös routingja (2026-10-14)
 
@@ -7320,18 +7320,18 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 
 | Tétel | Stabil capability ID | Elsődleges modul | Negatív teszt / nyitott szerződés |
 | --- | --- | --- | --- |
-| 54.7#1 OBS-párosítás, hitelesítés, kapcsolatstátusz, reconnect és diagnosztika. | OBS-002, OBS-003 | 49.8 OBS/overlay; szükség szerint Integrations/Community | Disconnected OBS esetén vezérlés tiltott; reconnect/diagnosztika OPEN |
-| 54.7#2 Scene/source lista, állapot, scene-váltás, visibility, audio mute/volume a támogatott műveletek szerint. | OBS-003, OBS-004 | 49.8 OBS/overlay; szükség szerint Integrations/Community | Nem támogatott scene/source/audio parancs tiltott |
-| 54.7#3 Overlay Studio, browser source, canvas, safe area, méret, pozíció, scene-variáns. | OBS-001, OBS-005, OBS-010 | 49.8 OBS/overlay; szükség szerint Integrations/Community | Safe-area és scene-variáns részletes teszt OPEN |
-| 54.7#4 Alert box és eseményvariánsok follow/sub/gift/cheer/raid/tip/purchase eseményekre, ha elérhetők. | OBS-006, OBS-008 | 49.8 OBS/overlay; szükség szerint Integrations/Community | Csak hitelesített provider-esemény; replay/dedup kötelező |
-| 54.7#5 Event list, chat box, goal/progress, countdown/timer, now-playing, sponsor/QR/link widget. | OBS-001, OBS-005, OBS-010 | 49.8 OBS/overlay; szükség szerint Integrations/Community | Widgettípusok és registry részletezése OPEN |
-| 54.7#6 Poll, giveaway, loyalty/points, viewer queue és media request csak jogosultsággal és szabályokkal. | OBS-007, COM-009 | 49.8 OBS/overlay; szükség szerint Integrations/Community | Giveaway/loyalty és queue jogosultsági szabályok OPEN |
-| 54.7#7 Widgetteszt, preview, verziózás, rollback és megosztható overlay URL. | OBS-008, OBS-010 | 49.8 OBS/overlay; szükség szerint Integrations/Community | Publikus overlay URL nem fedhet fel vezérlési titkot |
-| 54.7#8 Chatbot parancsok, aliasok, változók, timerek, quote/counter, shoutout és FAQ. | OBS-007 | 49.8 OBS/overlay; szükség szerint Integrations/Community | Bot parancs/alias/timer rate limit OPEN |
-| 54.7#9 Spam/linkvédelem, slow/follower/sub-only policy ahol a platform engedi, moderációs napló. | OBS-007, COM-009, COM-012 | 49.8 OBS/overlay; szükség szerint Integrations/Community | Platform-policy és moderációs audit szükséges |
-| 54.7#10 Hotkey, Stream Deck/Macro Deck/MIDI/webhook adapter, allowlist, dry-run és végrehajtási eredmény. | OBS-004, OBS-009, AUT-004 | 49.8 OBS/overlay; szükség szerint Integrations/Community | Dry-run nem küldhet élő parancsot |
-| 54.7#11 Plugin/widget registry, verzió, kompatibilitás, permission, eredet, frissítés és eltávolítás. | OBS-010, DEV-002 | 49.8 OBS/overlay; szükség szerint Integrations/Community | Extension permission és kompatibilitás kötelező |
-| 54.7#12 Natív OBS plugin vagy desktop companion csak külön, dokumentált biztonsági tervvel. | OBS-002, SEC-009 | 49.8 OBS/overlay; szükség szerint Integrations/Community | Desktop companion külön threat model és döntés |
+| 54.7#1 OBS-párosítás, hitelesítés, kapcsolatstátusz, reconnect és diagnosztika. | OBS-002, OBS-003 | 49.6 OBS/overlay; provider 49.7; Community 49.9 | Disconnected OBS esetén vezérlés tiltott; reconnect/diagnosztika OPEN |
+| 54.7#2 Scene/source lista, állapot, scene-váltás, visibility, audio mute/volume a támogatott műveletek szerint. | OBS-003, OBS-004 | 49.6 OBS/overlay; provider 49.7; Community 49.9 | Nem támogatott scene/source/audio parancs tiltott |
+| 54.7#3 Overlay Studio, browser source, canvas, safe area, méret, pozíció, scene-variáns. | OBS-001, OBS-005, OBS-010 | 49.6 OBS/overlay; provider 49.7; Community 49.9 | Safe-area és scene-variáns részletes teszt OPEN |
+| 54.7#4 Alert box és eseményvariánsok follow/sub/gift/cheer/raid/tip/purchase eseményekre, ha elérhetők. | OBS-006, OBS-008 | 49.6 OBS/overlay; provider 49.7; Community 49.9 | Csak hitelesített provider-esemény; replay/dedup kötelező |
+| 54.7#5 Event list, chat box, goal/progress, countdown/timer, now-playing, sponsor/QR/link widget. | OBS-001, OBS-005, OBS-010 | 49.6 OBS/overlay; provider 49.7; Community 49.9 | Widgettípusok és registry részletezése OPEN |
+| 54.7#6 Poll, giveaway, loyalty/points, viewer queue és media request csak jogosultsággal és szabályokkal. | OBS-007, COM-009 | 49.6 OBS/overlay; provider 49.7; Community 49.9 | Giveaway/loyalty és queue jogosultsági szabályok OPEN |
+| 54.7#7 Widgetteszt, preview, verziózás, rollback és megosztható overlay URL. | OBS-008, OBS-010 | 49.6 OBS/overlay; provider 49.7; Community 49.9 | Publikus overlay URL nem fedhet fel vezérlési titkot |
+| 54.7#8 Chatbot parancsok, aliasok, változók, timerek, quote/counter, shoutout és FAQ. | OBS-007 | 49.6 OBS/overlay; provider 49.7; Community 49.9 | Bot parancs/alias/timer rate limit OPEN |
+| 54.7#9 Spam/linkvédelem, slow/follower/sub-only policy ahol a platform engedi, moderációs napló. | OBS-007, COM-009, COM-012 | 49.6 OBS/overlay; provider 49.7; Community 49.9 | Platform-policy és moderációs audit szükséges |
+| 54.7#10 Hotkey, Stream Deck/Macro Deck/MIDI/webhook adapter, allowlist, dry-run és végrehajtási eredmény. | OBS-004, OBS-009, AUT-004 | 49.6 OBS/overlay; provider 49.7; Community 49.9 | Dry-run nem küldhet élő parancsot |
+| 54.7#11 Plugin/widget registry, verzió, kompatibilitás, permission, eredet, frissítés és eltávolítás. | OBS-010, MKT-001, MKT-002, MKT-004 | 49.6 OBS/overlay; provider 49.7; Community 49.9 | Extension permission és kompatibilitás kötelező |
+| 54.7#12 Natív OBS plugin vagy desktop companion csak külön, dokumentált biztonsági tervvel. | OBS-002, SEC-009 | 49.6 OBS/overlay; provider 49.7; Community 49.9 | Desktop companion külön threat model és döntés |
 
 **Státusz:** 12/12 első körös routing; sem domain/fázis/evidence, sem runtime PASS nem bizonyított. Hiányzó rész csak GAP CANDIDATE.
 
@@ -7339,18 +7339,18 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 
 | Tétel | Stabil capability ID | Elsődleges modul | Negatív teszt / nyitott szerződés |
 | --- | --- | --- | --- |
-| 54.8#1 VOD, clip, highlight, long-form, Short/Reel, post, image, audio, podcast és replay. | CNT-001, CNT-002, CNT-003, CNT-004 | 49.9 Content; szükség szerint AI/Integrations/Public | Nem támogatott formátum nem ígérhető publikálhatónak |
-| 54.8#2 Közös content ID, platform ID, cím, leírás, thumbnail, időtartam, URL, státusz és jogadat. | CNT-001, CNT-007, CNT-022 | 49.9 Content; szükség szerint AI/Integrations/Public | Külső ID ütközés és lejárt jog kezelendő |
-| 54.8#3 Keresés, szűrés, rendezés, bulk action, duplikáció-észlelés és gyűjtemények. | CNT-005, CNT-006, CNT-007 | 49.9 Content; szükség szerint AI/Integrations/Public | Bulk művelet nem írhat felül idegen site-ot |
-| 54.8#4 Tartalomnaptár és státuszfolyam: idea/draft/review/ready/scheduled/publishing/published/failed. | CNT-009, CNT-010, CNT-013, CNT-014, CNT-015 | 49.9 Content; szükség szerint AI/Integrations/Public | Approval nélkül nincs éles publikálás |
-| 54.8#5 Transcript, időbélyeg, speaker/fejezet, felirat, SRT/VTT, fordítás és export. | CNT-018, AI-014 | 49.9 Content; szükség szerint AI/Integrations/Public | Transcript nem automatikusan jóváhagyott tartalom |
-| 54.8#6 AI highlight/clip-javaslat forrás-időbélyeggel, indoklással és emberi választással. | CNT-018, AI-014 | 49.9 Content; szükség szerint AI/Integrations/Public | AI-javaslat időbélyeg és emberi döntés nélkül nem éles |
-| 54.8#7 Videóvágás: trim/split/crop/reframe/aspect ratio, felirat, hang, átmenet és brand overlay. | CNT-021, CNT-022 | 49.9 Content; szükség szerint AI/Integrations/Public | Export előtt média- és zenejog ellenőrzendő |
-| 54.8#8 Thumbnail/grafika-sablon, variánsok, platformméretek és preview. | CNT-012 | 49.9 Content; szükség szerint AI/Integrations/Public | Platformméret/preview és export validálás OPEN |
-| 54.8#9 Platformonkénti cím, leírás, hashtag, CTA, képarány és publikálási státusz. | CNT-011, CNT-013, CNT-014 | 49.9 Content; szükség szerint AI/Integrations/Public | Platformonként külön partial failure |
-| 54.8#10 API-publikálás ahol engedélyezett; egyébként export és kézi közzétételi útmutató. | CNT-013, CNT-014, INT-018 | 49.9 Content; szükség szerint AI/Integrations/Public | Unsupported write API esetén kézi fallback |
-| 54.8#11 Zene-/videójog, vendéghozzájárulás, lejárat, forrás és eltávolítási kérés. | CNT-022 | 49.9 Content; szükség szerint AI/Integrations/Public | Takedown/expiry után publikus megjelenés tiltott |
-| 54.8#12 Tartalomból weboldali feed, social poszt és analitika ugyanazon canonical rekord alapján. | CNT-020, CNT-019, ANL-004 | 49.9 Content; szükség szerint AI/Integrations/Public | Közös canonical content ID; nincs második tartalomtár |
+| 54.8#1 VOD, clip, highlight, long-form, Short/Reel, post, image, audio, podcast és replay. | CNT-001, CNT-002, CNT-003, CNT-004 | 49.8 Content Studio; AI 49.15; Integrations 49.7; public 49.2 | Nem támogatott formátum nem ígérhető publikálhatónak |
+| 54.8#2 Közös content ID, platform ID, cím, leírás, thumbnail, időtartam, URL, státusz és jogadat. | CNT-001, CNT-007, CNT-022 | 49.8 Content Studio; AI 49.15; Integrations 49.7; public 49.2 | Külső ID ütközés és lejárt jog kezelendő |
+| 54.8#3 Keresés, szűrés, rendezés, bulk action, duplikáció-észlelés és gyűjtemények. | CNT-005, CNT-006, CNT-007 | 49.8 Content Studio; AI 49.15; Integrations 49.7; public 49.2 | Bulk művelet nem írhat felül idegen site-ot |
+| 54.8#4 Tartalomnaptár és státuszfolyam: idea/draft/review/ready/scheduled/publishing/published/failed. | CNT-009, CNT-010, CNT-013, CNT-014, CNT-015 | 49.8 Content Studio; AI 49.15; Integrations 49.7; public 49.2 | Approval nélkül nincs éles publikálás |
+| 54.8#5 Transcript, időbélyeg, speaker/fejezet, felirat, SRT/VTT, fordítás és export. | CNT-018, AI-014 | 49.8 Content Studio; AI 49.15; Integrations 49.7; public 49.2 | Transcript nem automatikusan jóváhagyott tartalom |
+| 54.8#6 AI highlight/clip-javaslat forrás-időbélyeggel, indoklással és emberi választással. | CNT-018, AI-014 | 49.8 Content Studio; AI 49.15; Integrations 49.7; public 49.2 | AI-javaslat időbélyeg és emberi döntés nélkül nem éles |
+| 54.8#7 Videóvágás: trim/split/crop/reframe/aspect ratio, felirat, hang, átmenet és brand overlay. | CNT-021, CNT-022 | 49.8 Content Studio; AI 49.15; Integrations 49.7; public 49.2 | Export előtt média- és zenejog ellenőrzendő |
+| 54.8#8 Thumbnail/grafika-sablon, variánsok, platformméretek és preview. | CNT-012 | 49.8 Content Studio; AI 49.15; Integrations 49.7; public 49.2 | Platformméret/preview és export validálás OPEN |
+| 54.8#9 Platformonkénti cím, leírás, hashtag, CTA, képarány és publikálási státusz. | CNT-011, CNT-013, CNT-014 | 49.8 Content Studio; AI 49.15; Integrations 49.7; public 49.2 | Platformonként külön partial failure |
+| 54.8#10 API-publikálás ahol engedélyezett; egyébként export és kézi közzétételi útmutató. | CNT-013, CNT-014, INT-018 | 49.8 Content Studio; AI 49.15; Integrations 49.7; public 49.2 | Unsupported write API esetén kézi fallback |
+| 54.8#11 Zene-/videójog, vendéghozzájárulás, lejárat, forrás és eltávolítási kérés. | CNT-022 | 49.8 Content Studio; AI 49.15; Integrations 49.7; public 49.2 | Takedown/expiry után publikus megjelenés tiltott |
+| 54.8#12 Tartalomból weboldali feed, social poszt és analitika ugyanazon canonical rekord alapján. | CNT-020, CNT-019, ANL-004 | 49.8 Content Studio; AI 49.15; Integrations 49.7; public 49.2 | Közös canonical content ID; nincs második tartalomtár |
 
 **Státusz:** 12/12 első körös routing; sem domain/fázis/evidence, sem runtime PASS nem bizonyított. Hiányzó rész csak GAP CANDIDATE.
 
@@ -7358,15 +7358,15 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 
 | Tétel | Kapcsolódó meglévő ID-k | Elsődleges felelősségi kör | Ellenőrzendő negatív határ |
 | --- | --- | --- | --- |
-| 54.9#1 Publikus fan regisztráció/bejelentkezés, profil, preferencia, adatletöltés/törlés. | COM-019, SEC-011 | Community 49.10; Support 49.12 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.9#2 Posztok, kommentek, reakciók, pollok, kérdések, beküldések és események. | COM-003, COM-004, COM-005, COM-007, COM-008 | Community 49.10; Support 49.12 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.9#3 Követés, értesítés, jelvény, mérföldkő, kihívás és közösségi jutalom. | COM-006, COM-010, COM-011 | Community 49.10; Support 49.12 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.9#4 Tagsági szintek, exkluzív poszt/video/audio, member-only stream és archívum. | SUP-004, SUP-011, COM-013 | Community 49.10; Support 49.12 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.9#5 Discord szerver/csatorna/role mapping entitlement alapján. | SUP-009, COM-002 | Community 49.10; Support 49.12 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.9#6 Moderációs queue, report, appeal, korlátozás/tiltás, spamvédelem és audit. | COM-009, COM-012 | Community 49.10; Support 49.12 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.9#7 AI moderációs javaslat, bizonytalanság és emberi felülvizsgálat. | AI-016, COM-009, AI-019 | Community 49.10; Support 49.12 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.9#8 Public/member-only/private hozzáférés szerveroldali ellenőrzése. | COM-013, COM-018, SUP-006 | Community 49.10; Support 49.12 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.9#9 Közösségi szabályzat, adatvédelmi és korhatár-/tartalmi szabályok. | COM-020, SEC-011 | Community 49.10; Support 49.12 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.9#1 Publikus fan regisztráció/bejelentkezés, profil, preferencia, adatletöltés/törlés. | COM-019, SEC-011 | Community 49.9; Support 49.11 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.9#2 Posztok, kommentek, reakciók, pollok, kérdések, beküldések és események. | COM-003, COM-004, COM-005, COM-007, COM-008 | Community 49.9; Support 49.11 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.9#3 Követés, értesítés, jelvény, mérföldkő, kihívás és közösségi jutalom. | COM-006, COM-010, COM-011 | Community 49.9; Support 49.11 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.9#4 Tagsági szintek, exkluzív poszt/video/audio, member-only stream és archívum. | SUP-004, SUP-011, COM-013 | Community 49.9; Support 49.11 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.9#5 Discord szerver/csatorna/role mapping entitlement alapján. | SUP-009, COM-002 | Community 49.9; Support 49.11 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.9#6 Moderációs queue, report, appeal, korlátozás/tiltás, spamvédelem és audit. | COM-009, COM-012 | Community 49.9; Support 49.11 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.9#7 AI moderációs javaslat, bizonytalanság és emberi felülvizsgálat. | AI-016, COM-009, AI-019 | Community 49.9; Support 49.11 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.9#8 Public/member-only/private hozzáférés szerveroldali ellenőrzése. | COM-013, COM-018, SUP-006 | Community 49.9; Support 49.11 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.9#9 Közösségi szabályzat, adatvédelmi és korhatár-/tartalmi szabályok. | COM-020, SEC-011 | Community 49.9; Support 49.11 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
 
 **Státusz:** 9/9 első körös, *nem* teljes szemantikai igazolás. Az ID-k léteznek, de részletes scope, acceptance, dependency és evidence továbbra is ellenőrizendő.
 
@@ -7374,18 +7374,18 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 
 | Tétel | Kapcsolódó meglévő ID-k | Elsődleges felelősségi kör | Ellenőrzendő negatív határ |
 | --- | --- | --- | --- |
-| 54.10#1 Fizikai termék, merch, digitális termék, bundle, limited drop és preorder. | STO-001, STO-005 | Store 49.11; Support/Campaigns | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.10#2 Variánsok, SKU, ár/pénznem, készlet, kategória, kollekció, media és SEO. | STO-002, STO-003, STO-004, STO-006 | Store 49.11; Support/Campaigns | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.10#3 Terméklista, termékoldal, keresés, kosár, checkout-integráció és rendelés-visszaigazolás. | STO-007, STO-008, STO-009 | Store 49.11; Support/Campaigns | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.10#4 Rendelésállapot, fizetés, teljesítés, tracking, cancel, refund és support. | STO-009, STO-010, STO-015 | Store 49.11; Support/Campaigns | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.10#5 Kupon, ajándékkártya, promóció, kampány, bundle és lejárat. | STO-011 | Store 49.11; Support/Campaigns | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.10#6 Biztonságos digitális delivery, entitlement és visszavonás refund/chargeback esetén. | STO-012, STO-013, SUP-008 | Store 49.11; Support/Campaigns | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.10#7 Egyszeri támogatás, visszatérő támogatás, célmérő és köszönőüzenet. | SUP-001, SUP-002, SUP-003 | Store 49.11; Support/Campaigns | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.10#8 Tagsági előnyök, kedvezmények, termékdrop és tagság–Discord összekapcsolás. | SUP-004, SUP-005, SUP-009, SUP-012 | Store 49.11; Support/Campaigns | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.10#9 Szponzorációs media kit, ajánlat, deliverable, határidő, kampánylink és riport. | CAM-004, CAM-005, CAM-006, CAM-007 | Store 49.11; Support/Campaigns | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.10#10 Affiliate link/kód, jutalék és konverzió csak mérhető/jogszerű keretben. | CAM-002, CAM-007 | Store 49.11; Support/Campaigns | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.10#11 Bevételi források, platformdíjak, refundok és export; nem könyvelési/adótanácsadási helyettesítő. | ANL-005, STO-020 | Store 49.11; Support/Campaigns | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.10#12 Fizetési, adózási, számlázási, fogyasztóvédelmi és GDPR-követelmények ellenőrzése. | STO-014, STO-019, STO-021 | Store 49.11; Support/Campaigns | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.10#1 Fizikai termék, merch, digitális termék, bundle, limited drop és preorder. | STO-001, STO-005 | Store 49.10; Support 49.11; Campaigns 49.12 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.10#2 Variánsok, SKU, ár/pénznem, készlet, kategória, kollekció, media és SEO. | STO-002, STO-003, STO-004, STO-006 | Store 49.10; Support 49.11; Campaigns 49.12 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.10#3 Terméklista, termékoldal, keresés, kosár, checkout-integráció és rendelés-visszaigazolás. | STO-007, STO-008, STO-009 | Store 49.10; Support 49.11; Campaigns 49.12 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.10#4 Rendelésállapot, fizetés, teljesítés, tracking, cancel, refund és support. | STO-009, STO-010, STO-015 | Store 49.10; Support 49.11; Campaigns 49.12 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.10#5 Kupon, ajándékkártya, promóció, kampány, bundle és lejárat. | STO-011 | Store 49.10; Support 49.11; Campaigns 49.12 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.10#6 Biztonságos digitális delivery, entitlement és visszavonás refund/chargeback esetén. | STO-012, STO-013, SUP-008 | Store 49.10; Support 49.11; Campaigns 49.12 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.10#7 Egyszeri támogatás, visszatérő támogatás, célmérő és köszönőüzenet. | SUP-001, SUP-002, SUP-003 | Store 49.10; Support 49.11; Campaigns 49.12 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.10#8 Tagsági előnyök, kedvezmények, termékdrop és tagság–Discord összekapcsolás. | SUP-004, SUP-005, SUP-009, SUP-012 | Store 49.10; Support 49.11; Campaigns 49.12 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.10#9 Szponzorációs media kit, ajánlat, deliverable, határidő, kampánylink és riport. | CAM-004, CAM-005, CAM-006, CAM-007 | Store 49.10; Support 49.11; Campaigns 49.12 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.10#10 Affiliate link/kód, jutalék és konverzió csak mérhető/jogszerű keretben. | CAM-002, CAM-007 | Store 49.10; Support 49.11; Campaigns 49.12 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.10#11 Bevételi források, platformdíjak, refundok és export; nem könyvelési/adótanácsadási helyettesítő. | ANL-005, STO-020 | Store 49.10; Support 49.11; Campaigns 49.12 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.10#12 Fizetési, adózási, számlázási, fogyasztóvédelmi és GDPR-követelmények ellenőrzése. | STO-014, STO-019, STO-021 | Store 49.10; Support 49.11; Campaigns 49.12 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
 
 **Státusz:** 12/12 első körös, *nem* teljes szemantikai igazolás. Az ID-k léteznek, de részletes scope, acceptance, dependency és evidence továbbra is ellenőrizendő.
 
@@ -7440,14 +7440,14 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 
 | Tétel | Kapcsolódó meglévő ID-k | Elsődleges felelősségi kör | Ellenőrzendő negatív határ |
 | --- | --- | --- | --- |
-| 54.14#1 Admin és publikus web külön nyelvi beállítással. | LOC-001, LOC-003 | Localization 49.16 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.14#2 Magyar elsődleges nyelv, további nyelvek fokozatos bevezetése. | LOC-001 | Localization 49.16 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.14#3 Locale-onkénti oldal-/CMS-tartalom, menü, média, alt text, SEO és Open Graph. | LOC-003, LOC-005 | Localization 49.16 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.14#4 Lokalizált slug/URL, hreflang/canonical szabályok és nyelvi fallback. | LOC-004 | Localization 49.16 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.14#5 Dátum/idő/pénznem/szám lokalizáció, időzóna és nyári időszámítás. | LOC-002 | Localization 49.16 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.14#6 RTL layout, billentyűzet, font fallback és hosszabb fordítások tesztje. | LOC-001, LOC-005 | Localization 49.16 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.14#7 Fordítási memória/szószedet és AI-fordítás emberi jóváhagyással. | LOC-006 | Localization 49.16 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.14#8 Nyelvváltó, automatikus nyelvajánlás és felhasználói választás megőrzése. | LOC-001, LOC-005 | Localization 49.16 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.14#1 Admin és publikus web külön nyelvi beállítással. | LOC-001, LOC-003 | LOCALIZATION cross-cutting; Settings 49.19; Website 49.2 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.14#2 Magyar elsődleges nyelv, további nyelvek fokozatos bevezetése. | LOC-001 | LOCALIZATION cross-cutting; Settings 49.19; Website 49.2 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.14#3 Locale-onkénti oldal-/CMS-tartalom, menü, média, alt text, SEO és Open Graph. | LOC-003, LOC-005 | LOCALIZATION cross-cutting; Settings 49.19; Website 49.2 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.14#4 Lokalizált slug/URL, hreflang/canonical szabályok és nyelvi fallback. | LOC-004 | LOCALIZATION cross-cutting; Settings 49.19; Website 49.2 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.14#5 Dátum/idő/pénznem/szám lokalizáció, időzóna és nyári időszámítás. | LOC-002 | LOCALIZATION cross-cutting; Settings 49.19; Website 49.2 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.14#6 RTL layout, billentyűzet, font fallback és hosszabb fordítások tesztje. | LOC-001, LOC-005 | LOCALIZATION cross-cutting; Settings 49.19; Website 49.2 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.14#7 Fordítási memória/szószedet és AI-fordítás emberi jóváhagyással. | LOC-006 | LOCALIZATION cross-cutting; Settings 49.19; Website 49.2 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.14#8 Nyelvváltó, automatikus nyelvajánlás és felhasználói választás megőrzése. | LOC-001, LOC-005 | LOCALIZATION cross-cutting; Settings 49.19; Website 49.2 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
 
 **Státusz:** 8/8 első körös, *nem* teljes szemantikai igazolás. Az ID-k léteznek, de részletes scope, acceptance, dependency és evidence továbbra is ellenőrizendő.
 
@@ -7475,16 +7475,49 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 
 | Tétel | Kapcsolódó meglévő ID-k | Elsődleges felelősségi kör | Ellenőrzendő negatív határ |
 | --- | --- | --- | --- |
-| 54.16#1 Dokumentált API, webhook registry, API-key kezelés, tesztelő és sandbox. | DEV-001, DEV-002, DEV-003, DEV-004 | Developer 49.22; Team | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.16#2 Extension/widget/overlay manifest, schema, permission, verzió és kompatibilitás. | DEV-001, DEV-005 | Developer 49.22; Team | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.16#3 Eredet/licenc/aláírás, sandbox, felülvizsgálat, frissítés, eltávolítás és visszavonás. | DEV-002, OPS-010 | Developer 49.22; Team | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.16#4 Template/component/overlay/workflow marketplace későbbi fázisban. | TEAM-007, DEV-005 | Developer 49.22; Team | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.16#5 Több site/workspace, aktív workspace választó, csapatmeghívás és szerepek. | TEAM-001, TEAM-002, TEAM-003, TEAM-005 | Developer 49.22; Team | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.16#6 Agency/studio mód, ügyfélhozzáférés, közös sablonok és jóváhagyás. | TEAM-007, TEAM-004 | Developer 49.22; Team | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.16#7 Későbbi SaaS billing, csomag, használati limit, számla, lemondás és adat-export. | TEAM-006 | Developer 49.22; Team | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
-| 54.16#8 Tenant izoláció, migráció, skálázás, adatrezidencia és költségfelügyelet. | SEC-003, OPS-004, OPS-008 | Developer 49.22; Team | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.16#1 Dokumentált API, webhook registry, API-key kezelés, tesztelő és sandbox. | DEV-001, DEV-002, DEV-003, DEV-004 | Developer 49.20; Extensions 49.21; Team 49.22 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.16#2 Extension/widget/overlay manifest, schema, permission, verzió és kompatibilitás. | DEV-001, DEV-005 | Developer 49.20; Extensions 49.21; Team 49.22 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.16#3 Eredet/licenc/aláírás, sandbox, felülvizsgálat, frissítés, eltávolítás és visszavonás. | DEV-002, OPS-010 | Developer 49.20; Extensions 49.21; Team 49.22 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.16#4 Template/component/overlay/workflow marketplace későbbi fázisban. | TEAM-007, DEV-005 | Developer 49.20; Extensions 49.21; Team 49.22 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.16#5 Több site/workspace, aktív workspace választó, csapatmeghívás és szerepek. | TEAM-001, TEAM-002, TEAM-003, TEAM-005 | Developer 49.20; Extensions 49.21; Team 49.22 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.16#6 Agency/studio mód, ügyfélhozzáférés, közös sablonok és jóváhagyás. | TEAM-007, TEAM-004 | Developer 49.20; Extensions 49.21; Team 49.22 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.16#7 Későbbi SaaS billing, csomag, használati limit, számla, lemondás és adat-export. | TEAM-006 | Developer 49.20; Extensions 49.21; Team 49.22 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
+| 54.16#8 Tenant izoláció, migráció, skálázás, adatrezidencia és költségfelügyelet. | SEC-003, OPS-004, OPS-008 | Developer 49.20; Extensions 49.21; Team 49.22 | Nincs automatikus működési vagy provider-képesség állítás; külön jogosultság, adatgazda, negatív teszt és fázis bizonyítandó |
 
 **Státusz:** 8/8 első körös, *nem* teljes szemantikai igazolás. Az ID-k léteznek, de részletes scope, acceptance, dependency és evidence továbbra is ellenőrizendő.
+
+### 63.50.57. Második kör I: modulazonosító-eltolódás és adatgazda-határok tételes korrekciója (2026-10-15)
+
+**Forrás:** az aktuális 5. domain-tábla, a 49.1–49.22 kanonikus menütérkép, a 63.20 tulajdonosi keresztmátrix és az 54.7–54.16 első körös sorai. Ez a kör a korábban létrejött *téves hivatkozásokat* javítja, nem hoz létre új menüstruktúrát.
+
+**Bizonyított hiba az első körben:** a 54.7 és 54.8 routingjában a modulok számozása eggyel elcsúszott: 49.6 = OBS, 49.7 = Integrations, 49.8 = Content Studio, 49.9 = Community, 49.10 = Store, 49.11 = Support, 49.12 = Sponsorship, 49.13 = Analytics, 49.14 = Automation, 49.15 = AI. A 49.16 **globális keresés**, nem Localization; a Localization keresztmetszeti domain, UI-ja Settings 49.19 / Website 49.2. A 49.20 = Developer, 49.21 = Extensions, 49.22 = Team/SaaS. A hibás routing **nem bizonyíthat helyes tulajdonost**, még ha a capability ID maga létezik is.
+
+**Javítás a korábbi sorokban:** 54.7#1–#12 → 49.6 OBS; 54.8#1–#12 → 49.8 Content; 54.9#1–#9 → 49.9 Community; 54.10#1–#12 → 49.10 Store; 54.14#1–#8 → LOCALIZATION domain, Settings/Website; 54.16#1–#8 → Developer/Extensions/Team 49.20/49.21/49.22. Az OBS plugin-registry sorának `DEV-002` (API-key management) hivatkozását `MKT-001/002/004` extension manifest/install/license képességekre javítottuk; az OBS-010 a saját overlay preview/version tulajdonosa marad.
+
+**Második körös domain/owner crosswalk a 16 checklist-blokkra** — a 49. fejezet modulja a *belépési pont*, az 5. fejezet domainje az *adat és életciklus tulajdonosa*. A táblázat nem jelenti minden összetett checkbox teljes szemantikai lezárását.
+
+| 54 blokk | Elsődleges kanonikus UI | 5. fejezet domain tulajdonos(ok) | Kiemelt külön fogyasztó / tilos duplikáció |
+| --- | --- | --- | --- |
+| 54.1 | 49.1 Dashboard | SEARCH, NOTIFICATION, HELP_CENTER, AUDIT; ADM read projection | Nem saját task/notification store |
+| 54.2 | 49.2 Website/Editor | SITE, PAGE, REVISION, NAVIGATION, SEO_PUBLICATION, FORM_SUBMISSION | Dinamikus blokk nem másol schedule/content rekordot |
+| 54.3 | 49.3 Brand/Design | DESIGN_SYSTEM | RESOURCE bináris és asset registry külön |
+| 54.4 | 49.4 Assets | RESOURCE | D1 metadata és R2 binary, minden felület közös asset ID |
+| 54.5 | 49.7 Integrations | INTEGRATION | Provider inbound webhook ≠ creator outbound webhook |
+| 54.6 | 49.5 Live/Schedule | LIVE_STATE, SCHEDULE, GAME_PROFILE | Provider state INTEGRATION, content CONTENT |
+| 54.7 | 49.6 OBS/Overlay | STREAM_TOOLS | OBS auth/scope INTEGRATION, plugin install EXTENSION |
+| 54.8 | 49.8 Content Studio | CONTENT, PUBLISHING | AI javaslat AI_OPERATION, asset RESOURCE |
+| 54.9 | 49.9 Community | COMMUNITY, FAN_IDENTITY | Membership ENTITLEMENT; Discord INTEGRATION |
+| 54.10 | 49.10 Store; 49.11 Support; 49.12 Sponsorship | PRODUCT, ORDER, SUPPORT, ENTITLEMENT, CAMPAIGN, SPONSORSHIP | Payment provider INTEGRATION, metrics ANALYTICS |
+| 54.11 | 49.13 Analytics | ANALYTICS | Kísérlet/kampány forrás CAMPAIGN, AI javaslat AI_OPERATION |
+| 54.12 | 49.14 Automation | AUTOMATION | Minden write domain API/command, nem közvetlen idegen tábla |
+| 54.13 | 49.15 SANCI AI | AI_OPERATION | AI nem a cél domain adatait birtokolja |
+| 54.14 | 49.19 Settings; 49.2 Website | LOCALIZATION | Locale-onkénti page/SEO publikálás PAGE és SEO_PUBLICATION |
+| 54.15 | 49.19 Settings/Security | IDENTITY, SETTINGS, AUDIT, BACKUP, WORKSPACE; SEC/OPS cross-cutting | Site/tenant RBAC minden domainben |
+| 54.16 | 49.20 Developer; 49.21 Extensions; 49.22 Team | DEVELOPER_API, EXTENSION, WORKSPACE, BILLING_PLAN | SaaS billing ≠ Store ORDER; provider inbound ≠ outbound webhook |
+
+**Kötelező negatív ellenőrzési lánc minden sorhoz:** owner-domain record → permission/site-scope → mutációs API/command → másodlagos UI read projection → pozitív és tiltott hozzáférési eset → F0–F11 phase → source/test/runtime evidence. Ebből most az **54-blokk szintű domain és modul** rész igazolt dokumentumszerkezet alapján; az **egyedi 156 sor phase/evidence és 271 történeti sor szemantikája továbbra is OPEN**.
+
+**Kiemelt release blocker:** 63.50.46 explicit-publish/snapshot/slug kódkonfliktus; a korábbi routing korrekciója ezt nem oldja meg. **SECOND PASS: MODULE/DOMAIN GROUP CROSSWALK DOCUMENTED; ITEM-LEVEL PHASE/EVIDENCE NOT PASS.**
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
