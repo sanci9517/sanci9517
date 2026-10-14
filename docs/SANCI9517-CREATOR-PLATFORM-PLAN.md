@@ -3610,7 +3610,7 @@ Egy funkció csak a rá vonatkozó kritériumok bizonyítása után jelölhető 
 - [ ] Naplózás és metrikák hasznosak, de nem szivárogtatnak titkot vagy szükségtelen személyes adatot.
 - [ ] Dokumentáció, felhasználói súgó és változásnapló frissítve; ismert korlát és rollback útvonal leírva.
 - [ ] Éles/böngészős ellenőrzés csak ott jelölhető késznek, ahol ténylegesen lefutott; a CI nem helyettesíti a valódi felhasználói útvonalat.
-- [ ] A lezárás után egyetlen következő aktív pont marad a MASTER-ben; a funkciókatalógus nem válik második roadmap-pé.
+- [ ] A lezárás után egyetlen következő aktív pont marad a MASTER-ben; a funkciókatalógus nem válik második roadmap-példánnyá.
 
 ### 63.10. A végső cél és a fázisok viszonya
 
