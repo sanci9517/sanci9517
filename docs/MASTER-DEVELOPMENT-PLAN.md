@@ -6428,3 +6428,101 @@ A „MATCH candidate” csak a tervezett elemkategória jelenlétét jelenti; ne
 
 **Státusz:** 14/14 validation-tétel explicit crosswalk-sort kapott; size limits, unknown-node policy, migration, bindings és security runtime acceptance nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
 
+### 41.3.156. P0.2 — Régi 5/D Draft/Preview/Publish: 14 atomikus követelmény crosswalkja (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, `5/D Draft/Preview/Publish`. **Canonical célpontok:** `EDT-027–034`, `WEB-004–008`, `SEC`, `OPS`, `QA-002/003/004/006`.
+
+| # | Követelmény | Canonical célpont | Státusz | Kötelező acceptance |
+|---:|---|---|---|---|
+| 1 | draft state | EDT-027/028, WEB-004 | PARTIAL / RELEASE GATE | Draft identity/lifecycle explicit; draft nem azonos a published snapshot-tal. |
+| 2 | save draft | EDT-027/028, WEB-004 | PARTIAL / RELEASE GATE | Explicit save azonnali, szerver-authoritative; success csak domain confirmation után. |
+| 3 | preview draft | EDT-032, WEB-007 | PARTIAL / RELEASE GATE | Preview a draft/revisiont mutatja; nem módosítja a publikus oldalt. |
+| 4 | isolated preview URL/token | EDT-032, WEB-007, SEC | OPEN / RELEASE GATE | Token/route scope, expiry, access control, noindex/no-cache policy és revocation explicit. |
+| 5 | published snapshot | EDT-033/034, WEB-005/006 | PARTIAL / RELEASE GATE | Publikált snapshot immutable és atomikus; public renderer nem olvas félkész draftot. |
+| 6 | publish | EDT-033, WEB-005 | PARTIAL / RELEASE GATE | Explicit user intent, validation, permission és szerver confirmation; save nem jelent publish-t. |
+| 7 | unpublish | EDT-033, WEB-005/006 | OPEN / RELEASE GATE | Unpublish permission, cache invalidation, public route/SEO behavior és rollback policy explicit. |
+| 8 | preview nem ír publicot | EDT-032–034, WEB-004–008 | PARTIAL / RELEASE GATE | Negatív teszt bizonyítja, hogy preview/save nem módosít published snapshotot vagy public cache-t. |
+| 9 | publish atomic | EDT-033, WEB-005/006 | OPEN / RELEASE GATE | Snapshot switch all-or-nothing; failure esetén a korábbi public snapshot változatlan. |
+| 10 | publish audit | WEB-005, SEC/OPS | OPEN / RELEASE GATE | Actor, page, source revision, result, timestamp és reason/correlation rögzítve; secrets nem logolhatók. |
+| 11 | publish validation gate | EDT-022/033, WEB-005 | PARTIAL / RELEASE GATE | Schema, links/assets, permissions, SEO/accessibility és renderer validation publish előtt fut. |
+| 12 | publish failure rollback | EDT-033, WEB-005/OPS | OPEN / RELEASE GATE | Hiba után nincs részleges public state; retry idempotens és az előző snapshot visszaállítható. |
+| 13 | cache invalidation | WEB-005/006, OPS | OPEN / RELEASE GATE | Csak sikeres publish/unpublish után; cache keys, propagation és stale behavior tesztelt. |
+| 14 | stale public snapshot detection | EDT-028/033/034, WEB-005/006 | OPEN / VERIFY | Public revision és current published revision külön ellenőrizhető; UI/telemetry jelzi a tényleges stale állapotot. |
+
+**Kontraktus:** draft, preview, published snapshot és public cache négy külön állapot. Preview URL/token nem helyettesíti a permission checket; publish/unpublish atomic snapshot operation, audit és cache behavior együtt zárható.
+
+**Tesztminimum:** draft save; preview isolation; token expiry/unauthorized access; publish/unpublish; invalid publish; partial failure/rollback; idempotent retry; cache invalidation; stale snapshot; concurrent revision; audit record; public/draft isolation.
+
+**Státusz:** 14/14 tétel explicit crosswalk-sort kapott; preview-token security, atomic publish, audit, rollback és cache runtime acceptance nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.157. P0.2 — Régi 5/E Versioning: 12 atomikus követelmény crosswalkja (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, `5/E Versioning`. **Canonical célpontok:** `EDT-004/005/028/029/042`, `WEB-005/008`, `OPS`, `SEC`, `QA-002/003/004/006`.
+
+| # | Követelmény | Canonical célpont | Státusz | Kötelező acceptance |
+|---:|---|---|---|---|
+| 1 | version number | EDT-028, WEB-005 | PARTIAL / VERIFY | Content/schema version és revision sequence nem keverhető; version monotonic policy explicit. |
+| 2 | revision number | EDT-028/029 | PARTIAL / RELEASE GATE | Optimistic concurrency revisionhez kötött; stale save nem írhat felül. |
+| 3 | created by | EDT-005, SEC | OPEN / VERIFY | Immutable authenticated actor identity; client-supplied author nem trusted. |
+| 4 | timestamp | EDT-005/028, OPS | PARTIAL / VERIFY | Server-authored timestamp, timezone/ordering és clock-skew policy explicit. |
+| 5 | change summary | EDT-005/028 | OPEN / VERIFY | Human-readable és machine-readable summary; secret/PII leak kerülendő. |
+| 6 | diff | EDT-005/028 | OPEN / VERIFY | Typed Page Model diff, nem puszta DOM diff; resource/binding changes és reorder szemantika látszik. |
+| 7 | restore | EDT-005/028/042 | OPEN / RELEASE GATE | Restore új, auditált revisiont hoz létre; nem törli a későbbi historyt. |
+| 8 | rollback | EDT-028/042, WEB-005 | OPEN / RELEASE GATE | Published rollback és draft restore külön művelet; permission, snapshot/cache és audit explicit. |
+| 9 | rollback audit | SEC/OPS, EDT-005 | OPEN / RELEASE GATE | Actor, target/source revision, reason, outcome and correlation logged without secrets. |
+| 10 | version compare | EDT-005/028 | OPEN / VERIFY | Bármely két támogatott revision compare; strukturált, hozzáférhető diff. |
+| 11 | version preview | EDT-032, EDT-005/028 | OPEN / VERIFY | Historical preview izolált, nem publishol; resource references és permissions revalidated. |
+| 12 | version retention policy | EDT-005/028, OPS | OPEN / DECISION | Retention, quota, immutability, pruning and legal/security requirements explicit; rollback-critical revisions protected. |
+
+**Kontraktus:** undo history, persistent revision history, draft recovery és published rollback külön réteg. Restore nem history-destructive; a visszaállítás új revision és audit event. Version retention nem törölhet csendben olyan revisiont, amely recovery/rollback célból szükséges.
+
+**Tesztminimum:** monotonic revisions; stale conflict; actor/timestamp; structured diff; restore/rollback; audit; historical preview; retention boundary; concurrent changes; resource references; access control; save/reload/public snapshot parity.
+
+**Státusz:** 12/12 tétel explicit crosswalk-sort kapott; restore/rollback/retention runtime acceptance nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.158. P0.2 — Régi 5/F Autosave és recovery: 9 atomikus követelmény crosswalkja (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, `5/F Autosave és recovery`. **Canonical célpontok:** `EDT-027–031/042`, `WEB-004/008`, `OPS-008/009`, `SEC`, `QA-002/003/004/006`.
+
+| # | Követelmény | Canonical célpont | Státusz | Kötelező acceptance |
+|---:|---|---|---|---|
+| 1 | autosave policy | EDT-027/028 | PARTIAL / VERIFY | Dirty-state, debounce, cancellation, retry, explicit save és lifecycle policy együtt definiált. |
+| 2 | debounce | EDT-027/031 | PARTIAL / VERIFY | Debounce csak a kérést csoportosítja; nem dobhat el in-flight utáni módosítást. |
+| 3 | save queue | EDT-027–031 | OPEN / RELEASE GATE | Queue ordering, in-flight reconciliation, cancellation és duplicate prevention explicit. |
+| 4 | retry queue | EDT-031, OPS-008 | OPEN / RELEASE GATE | Backoff, idempotency, timeout uncertainty és terminal error state tesztelt. |
+| 5 | local recovery | EDT-031/042 | PARTIAL / RELEASE GATE | Local recovery külön szerver draft/history; secrets kizárva; user választási lehetősége explicit. |
+| 6 | crash recovery | EDT-031/042 | OPEN / RELEASE GATE | Tab/browser crash után recovery candidate visszaolvasható, összevethető a server drafttal és nem vész el. |
+| 7 | conflict detection | EDT-029/030, WEB-008 | PARTIAL / RELEASE GATE | Revision/ETag-equivalent stale detection; multi-tab and server-side concurrent edits. |
+| 8 | conflict resolution | EDT-029/030, WEB-008 | OPEN / RELEASE GATE | Reload/merge/keep-local/discard/overwrite policy permission-checked; no silent overwrite. |
+| 9 | recovery cleanup | EDT-031/042 | OPEN / RELEASE GATE | Local recovery csak a megfelelő revision sikeres mentése után törölhető; újabb módosítás védett. |
+
+**Kontraktus:** szerver draft, local recovery, undo history és published state nem cserélhető fel. Save success csak server/domain confirmation után; timeout nem bizonyít sikert. Recovery cleanup a mentett revisionhez és a dirty generationhez kötött.
+
+**Tesztminimum:** debounce; save queue ordering; edit during in-flight save; network failure; timeout uncertain outcome; idempotent retry; multi-tab conflict; crash/reload; local/server recovery compare; successful save cleanup; no secrets; undo/redo; public draft isolation.
+
+**Státusz:** 9/9 tétel explicit crosswalk-sort kapott; queue ordering, crash recovery, conflict matrix és cleanup runtime acceptance nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.159. P0.2 — Régi 5/G Templates és reusable sections: 8 atomikus követelmény crosswalkja (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, `5/G Templates és reusable sections`. **Canonical célpontok:** `DSN-009–013`, `EDT-001/002/021/022`, `EDT-003/004/005`, `QA-002/003/004/006`.
+
+| # | Követelmény | Canonical célpont | Státusz | Kötelező acceptance |
+|---:|---|---|---|---|
+| 1 | page template | DSN-009–013, EDT-001/002 | PARTIAL / VERIFY | Template ID/version, initial content and page metadata mapping explicit; page creation atomic. |
+| 2 | section template | DSN-009–013, EDT-016 | OPEN / VERIFY | Section template node/slot compatibility and resource refs validated. |
+| 3 | component template | DSN-009–013, EDT-015/021 | PARTIAL / VERIFY | Component definition, variants and typed properties canonical; no duplicate component registry. |
+| 4 | template clone | DSN-009–013, EDT-001/002/004 | OPEN / RELEASE GATE | Clone regenerates IDs/references and preserves allowed assets/bindings; operation undoable. |
+| 5 | detach from template | DSN-009–013, EDT-002/004 | OPEN / DECISION | Detach makes an independent instance without losing content/style/resource refs; explicit confirmation and undo. |
+| 6 | template update policy | DSN-009–013 | OPEN / DECISION | Existing instance auto-update/manual update/pinned version policy explicit; impact preview and conflict handling. |
+| 7 | instance override | DSN-012/013, EDT-021/022 | OPEN / RELEASE GATE | Override vs master definition separate; reset scope explicit; master edit cannot silently mutate instance overrides. |
+| 8 | template versioning | DSN-009–013, EDT-028 | OPEN / VERIFY | Immutable definition versions, migration/compatibility and rollback; existing instances have predictable pin/update behavior. |
+
+**Kontraktus:** reusable component definition, template instance, instance override, detached copy and page content are distinct entities. Definition updates require consumer inventory/impact preview and atomic propagation or explicit opt-in; no silent mass rewrite.
+
+**Tesztminimum:** page/section/component template create/clone; ID/reference integrity; detach; master update; instance override/reset; pinned version; compatibility/migration; undo/redo; save/reload; published parity and permission checks.
+
+**Státusz:** 8/8 tétel explicit crosswalk-sort kapott; detach/update policy, instance override and template version runtime acceptance open. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
