@@ -2753,3 +2753,334 @@ A visszajelzés feldolgozási szabályai:
 - **Nem megvalósítható közvetlenül:** adapter, exportos alternatíva vagy korlátozás dokumentálása szükséges.
 - A menü nem azonos a fázissal: egy későbbi fázis funkciója már most is szerepelhet a végleges menütérképen.
 
+
+
+---
+
+## 53. Külső platformok összehasonlító elemzése és SANCI-döntések
+
+**Cél:** a külső szolgáltatások ismert képességeiből követelményeket vezetünk le. Ez funkcionális benchmark, nem teljes körű jogi, biztonsági vagy API-audit, és nem állítja, hogy bármely felsorolt képesség már megvalósult a SANCI rendszerben.
+
+### 53.1. Weboldalépítők: Webflow, Framer, Elementor
+
+**Megfigyelt minták**
+- Vizuális canvas, drag-and-drop, elem-/widget-könyvtár, rétegek/navigátor és kontextusfüggő tulajdonságok.
+- Újrahasználható komponensek, globális stílusok/tokens, sablonok, dinamikus CMS-gyűjtemények és mezőkapcsolatok.
+- Reszponzív breakpointok, előnézet, draft/staging és külön publikálás.
+- Lokalizált tartalom, képek/alt szövegek, locale-specifikus SEO és közösségi metaadatok.
+- AI-segítség a létrehozásban, de a szerkesztőnek továbbra is átlátható, kézzel javítható struktúrát kell adnia.
+
+**SANCI-követelmény**
+- Valódi Visual Editor: Element Library + Canvas + Layers/Outline + Inspector + breakpoint-váltó + preview.
+- Egy Property Registry és egy Page Model; nincs párhuzamos régi szerkesztő.
+- Külön fogalom legyen a site template, page template, section template, reusable component, symbol/instance és design token.
+- A globális változtatás előtt mutassuk meg az érintett komponenseket; legyen diff és visszaállítás.
+- A CMS/dinamikus blokkok kanonikus domainrekordokat jelenítsenek meg, ne másolják azokat a Page Modelbe.
+- Lokalizáció locale-onkénti tartalom-, kép-, alt-text-, slug-, SEO- és Open Graph-értékekkel.
+
+**Ne másoljuk át:** egy teljes külső builder belső architektúráját vagy annak licencelt komponenseit. A funkcionális mintát és a használhatósági elvet vesszük át.
+
+### 53.2. OBS, Streamlabs, StreamElements és Stream Deck
+
+**Megfigyelt minták**
+- OBS scene/source vezérlés és állapot; WebSocket-alapú külső vezérlés.
+- Browser source-ra épülő overlayek és widgetek; alert, event list, chat, célmérő, timer, címke és egyedi widget.
+- Chatbot parancsok, változók, időzítők, spamvédelem, moderáció és interaktív modulok.
+- Eseményfüggő alert-variánsok, hangeffektek, vizuális témák, hotkeyek és külső vezérlők.
+
+**SANCI-követelmény**
+- Külön OBS/Stream Tools modul; párosítás, kapcsolatdiagnosztika, scene/source állapot, csak támogatott vezérlési műveletek.
+- Overlay Studio külön vászonnal, safe area-val, méret-/pozíciókezeléssel, browser-source URL-lel, előnézettel és verziózással.
+- Widgetkönyvtár: alerts, event list, chat, goals, countdown/timer, now playing, sponsor panel, QR/link panel, poll, giveaway, viewer queue.
+- Eseményszabályok: eseménytípus + feltétel + widget/akció + cooldown + teszt + napló.
+- Chatbot: parancsok, aliasok, role/permission, változók, timer, spam/link filter, shoutout, FAQ, quote/counter és moderátori kontroll.
+- Macro/shortcut/Stream Deck/MIDI/HTTP-webhook adapterek engedélyezett műveletlistával, dry-run-nal és visszajelzéssel.
+- A weboldal ne állítsa, hogy közvetlenül irányít bármely OBS plugint. A dokumentált OBS WebSocket és browser source az alap; natív plugin vagy desktop companion külön projekt- és biztonsági döntés.
+
+**Kritikus biztonsági döntés:** az OBS vezérlő ne legyen nyitott internetes végpont. A kapcsolatot hitelesíteni kell, a titkot védeni kell, veszélyes műveleteket pedig jogosultsághoz és explicit jóváhagyáshoz kell kötni.
+
+### 53.3. Multistream és közös chat: Restream és hasonló szolgáltatások
+
+**Megfigyelt minták**
+- Több célplatform egy adásból, platformonkénti cím/leírás és célállapot.
+- Egyesített chat és közös streamirányító felület.
+- Analitika, felvétel/visszajátszás és tartalék stream, ha a szolgáltatás és a csomag támogatja.
+
+**SANCI-követelmény**
+- Platformonkénti capability-mátrix: streamelés, chat olvasás/írás, események, publikálás, analitika, jogosultság és limit.
+- Multistream csak igazolt technikai útvonalon: külső szolgáltató adapterrel vagy későbbi, külön infrastruktúrával. A Cloudflare Worker önmagában nem videótranszkóder vagy RTMP-relay.
+- Unified Chatban minden üzenethez forrásplatform, idő, author, moderációs státusz és küldési lehetőség jelölése.
+- A válasz csak akkor küldhető ki, ha a platform és az engedélyezett scope támogatja; platformonkénti hibák és részleges siker látszódjanak.
+- A tartalék stream/felvétel legyen opcionális, költség- és adatmegőrzési szabályokkal.
+
+### 53.4. Tartalomgyártás: Descript és Canva
+
+**Megfigyelt minták**
+- Transcript-alapú videó-/hangvágás, automatikus átirat és felirat, zajcsökkentés, kiemelés- és klipjavaslat.
+- Többrétegű timeline, sablonok, képarány-átalakítás, feliratstílusok, thumbnail/grafika és platformhoz igazított export.
+- AI-műveletek természetes nyelvű instrukcióval, de visszavonható vagy ellenőrizhető eredménnyel.
+
+**SANCI-követelmény**
+- Tartalomkönyvtár és média-nyilvántartás; VOD/clip/Short/Reel/post/audio/podcast/campaign asset.
+- Transcript, időbélyeg, speaker/fejezet, SRT/VTT, fordítás és kézzel javítható felirat.
+- Highlight-kereső, amely időbélyeget, okot és forráseseményt ad; az AI-javaslat nem publikál automatikusan.
+- Első vágóeszközök: trim, split, crop/reframe, képarány, felirat, hangszint, egyszerű átmenet, brand overlay, export preset.
+- Komplex renderelésnél külön feldolgozó infrastruktúra/szolgáltató kell; a Worker nem hosszú videórenderelő.
+- Minden generált fájlhoz forrás, licencek, generálási státusz, verzió és felhasználási jogok.
+
+### 53.5. Monetizáció és közösség: Fourthwall, Patreon
+
+**Megfigyelt minták**
+- Többféle tagsági szint, havi/éves előfizetés, tagsági előnyök és exkluzív tartalom.
+- Fizikai és digitális termékek, kuponok, promóciók, támogatás, termék- és tagsági analitika.
+- Rajongói profilok, posztok, kommentek, pollok, csoportos chat/DM és Discord-szerepkapcsolás.
+
+**SANCI-követelmény**
+- Saját közösségi/fan fiók elkülönített jogosultsági és adatvédelmi határral.
+- Termék-, rendelés-, payment-, entitlement- és tagság-domain külön; a vásárlás/tagság ad jogosultságot, nem a kliens által küldött állapot.
+- Fizikai termék, digitális letöltés, bundle, kupon, támogatás, tagsági szint, exkluzív tartalom és Discord-role mapping.
+- Fizetéshez külső, erre alkalmas szolgáltató és webhook-ellenőrzés kell; kártyaadatot a SANCI nem tárol.
+- Refund, lemondás, sikertelen megújítás és chargeback következetesen frissítse a jogosultságot.
+- Rajongói közösség nem válhat az Admin belső felületévé; külön publikus/member UI és moderációs felület szükséges.
+
+### 53.6. Integrációs platformok: Zapier, Buffer és Hootsuite
+
+**Megfigyelt minták**
+- Trigger → feltétel → akció workflow, újrapróbálás, futási előzmény és külső webhook.
+- Központi tartalomnaptár, csatornánként testreszabott poszt, időzítés, draft/approval és teljesítményadat.
+- Közösségi említések/trendek figyelése és riportálás, ahol az API és a szolgáltatási hozzáférés ezt lehetővé teszi.
+
+**SANCI-követelmény**
+- Visual Workflow Builder: trigger, condition, action, branch, delay, approval, retry, timeout, dry-run, run log, disable és rollback/compensation ahol lehetséges.
+- Triggerként csak hitelesített, deduplikált esemény; minden futás kapjon azonosítót.
+- Tartalomnaptár csatornánkénti változattal, időzónával, preview-val, státuszokkal, jóváhagyással és sikertelen publikálás utáni újrapróbálással.
+- A közvetlen publikálás szolgáltatónkénti képesség- és app-review-függő; ahol nincs engedély, export/kézi publikálási útvonal szükséges.
+- Social listening és trendfigyelés csak jogszerű, ténylegesen elérhető API-adatból; ne ígérjünk teljes internetes megfigyelést.
+
+### 53.7. Platform API-k: Twitch, YouTube, TikTok, Discord és Kick
+
+**Kötelező szabály:** a szolgáltatónevek nem egyenértékű képességeket jelentenek. Minden adapterhez dokumentált capability-nyilvántartás szükséges, amely tartalmazza: olvasás, írás, publikálás, live/chat, analytics, webhook/event, engedély/scope, kvóta, review, region/account restrictions és fallback.
+
+- **Twitch:** OAuth, EventSub, chat, live státusz, adásrend, elérhető videó/clip/analitika. Scope-minimalizálás, tokenvédelem és webhook-/WebSocket-kezelés szükséges.
+- **YouTube:** csatorna, videó/playlist, live broadcast, feltöltés, metaadat és elérhető analitika. API-kvóta, OAuth, feltöltési állapot és projekt-ellenőrzési követelmények kezelendők.
+- **TikTok:** profil és videó megjelenítése; Content Posting API külön engedélyezési és domain-/app-feltételekkel. A közvetlen publikálást és a draft-feltöltést külön képességként kell kezelni.
+- **Discord:** OAuth, bot, guild/channel/role, webhook, események és tagság-jogosultság; minimális botjogosultság és szerveroldali ellenőrzés szükséges.
+- **Kick:** csak a mindenkori hivatalos API és hozzáférési feltételek által igazolt funkciók. Hiányzó API-képességet nem szabad szimulálni.
+
+### 53.8. Megkülönböztető SANCI-érték
+
+A platform ereje nem az, hogy mindenből legyen egy gyengébb másolat. A közös munkafolyamat a lényeg:
+1. Egy Brand Kit szolgálja a weboldalt, overlayt, thumbnailt, posztot és terméket.
+2. Egy tartalomrekord kapcsolja össze a VOD-ot, klipet, publikálási tervet, fordításokat és analitikát.
+3. Egy adásrend táplálja a weboldalt, Dashboardot, emlékeztetőt és tartalomtervezést.
+4. Egy jogosultsági/entitlement domain kapcsolja össze a vásárlást, tagságot, exkluzív tartalmat és Discord-szerepet.
+5. Az automatizáció és az AI ugyanazokat a hitelesített domainműveleteket hívja, mint a kézi Admin.
+6. Minden külső adatnál látszik a forrás, frissesség, jogosultság és hiba.
+7. Minden kockázatos AI-/automatizációs műveletnél van preview, diff, jóváhagyás és napló.
+
+---
+
+## 54. Teljes, felülvizsgálatra szánt SANCI9517 funkciókatalógus
+
+Ez a lista a végső termékcél funkcionális ellenőrzőlistája. Nem jelenti, hogy minden elem az első kiadásba kerül, vagy hogy már implementált. A fázis a megvalósítás sorrendjét szabja meg, nem töröl funkciót a végső célból.
+
+### 54.1. Admin alapélmény és Dashboard
+- [ ] Egységes Admin shell, oldalsáv, almenük, breadcrumbs, mobil navigáció.
+- [ ] Áttekintő kártyák: weboldal, live, adásrend, kapcsolatok, tartalom, feladatok.
+- [ ] Gyorsműveletek és legutóbbi aktivitás.
+- [ ] Teendők, figyelmeztetések, hibák és elakadt folyamatok.
+- [ ] Globális kereső, command palette, kedvencek, legutóbbi elemek.
+- [ ] Kontextuális súgó, onboarding, üres állapotok és emberi nyelvű hibák.
+- [ ] Értesítési központ, prioritások, digest és csendes időszak.
+- [ ] Valós adatfrissesség, loading/empty/error/stale/partial állapot.
+
+### 54.2. Saját weboldal és Visual Editor
+- [ ] Oldal CRUD, hierarchia, slug, átnevezés, duplikálás, archiválás és törlés.
+- [ ] Navigáció, dropdown/nested menü, footer, mobilmenü, belső/külső link.
+- [ ] Egyetlen Visual Editor: elemkönyvtár, canvas, Layers/Outline, Inspector.
+- [ ] Drag/drop, kijelölés, átrendezés, csoportosítás, duplicate, törlés, zoom/pan.
+- [ ] Undo/redo, mentési állapot, konfliktusfeloldás, revision history és restore.
+- [ ] Szöveg, heading, kép, videó/embed, gomb, link, ikon, lista, kártya, űrlap, divider, spacer, grid/flex/section/container.
+- [ ] Dinamikus SANCI blokkok: live, következő stream, adásrend, játékprofil, videó/clip feed, social links, termék, tagság, támogatás és közösségi CTA.
+- [ ] Desktop/tablet/mobile preview, breakpointonkénti override, öröklés és portrait/landscape.
+- [ ] Globális design tokens: színek, fontok, tipográfia, spacing, border, radius, shadow, layout.
+- [ ] Site/page/section/component sablonok, reusable komponensek, instance/override/detach, verziózás és rollback.
+- [ ] Előnézet, draft, validálás, publikálás, visszavonás és publikált snapshot megőrzése.
+- [ ] SEO: title, description, canonical, robots, Open Graph, social image, sitemap, robots.txt, structured data, redirect, 404.
+- [ ] Domain/DNS/HTTPS státusz, favicon, brand assets, coming-soon/maintenance.
+- [ ] Űrlapok, validáció, spamvédelem, adatkezelési hozzájárulás és beküldés-kezelés.
+- [ ] Webes teljesítmény, képméretezés, lazy loading, cache és Core Web Vitals.
+
+### 54.3. Brand Kit és Design Studio
+- [ ] Logóvariánsok, színek, betűcsaládok, ikonstílus, vizuális szabályok.
+- [ ] Overlay, thumbnail, intro/outro, watermark, social post, merch és email sablonok.
+- [ ] Brand-safe színek/fontok és kontrasztellenőrzés.
+- [ ] Globális és komponensszintű tokenek, theme-változatok és dark/light.
+- [ ] SVG/PNG/WebP és megfelelő exportméretek.
+- [ ] Licenc, forrás, tulajdonos, verzió és asset-használati helyek.
+- [ ] Brand consistency ellenőrzés, AI-javaslat és kézi jóváhagyás.
+
+### 54.4. Média- és erőforráskönyvtár
+- [ ] Egy asset registry és asset ID, R2 bináris tárolással, D1 metaadattal.
+- [ ] Képek, videók, hangok, ikonok, fontok, dokumentumok, thumbnailök és exportok.
+- [ ] Egyenkénti/tömeges feltöltés, progress, cancel, retry és megszakadt feltöltés helyreállítása.
+- [ ] MIME-/méretellenőrzés, feldolgozási státusz, preview/thumbnail és biztonsági ellenőrzés.
+- [ ] Címke, keresés, gyűjtemény, alt text, licenc, forrás és crop/focal point.
+- [ ] Használati helyek, függőségi figyelmeztetés és biztonságos archiválás/törlés.
+- [ ] Metaadatmódosítások megjelenése minden hivatkozási helyen.
+
+### 54.5. Kapcsolatok és integrációk
+- [ ] Integrációs központ: Twitch, YouTube, TikTok, Discord, Kick és későbbi szolgáltatók.
+- [ ] Connect/disconnect/reconnect, fiók-/csatornaválasztás, scope és lejárat.
+- [ ] Tokenfrissítés, revoke, titkos tárolás, CSRF/state és site ownership.
+- [ ] Capability/scope mátrix, API-kvóta, provider health és diagnosztika.
+- [ ] Webhook aláírásellenőrzés, replay-védelem, deduplikáció, retry és dead-letter.
+- [ ] Szinkronnapló, utolsó siker/hiba, kézi újraszinkron és konfliktusfeloldás.
+- [ ] Későbbi email, naptár, fizetés, affiliate, CRM és cloud-storage adapterek.
+- [ ] Nem támogatott funkció egyértelmű jelölése és alternatív folyamat.
+
+### 54.6. Live, Stream Studio és adásrend
+- [ ] Live/offline állapot és adatfrissesség platformonként.
+- [ ] Cím, kategória/játék, kezdés, nézőszám és elérhető streammetrikák.
+- [ ] Stream player/embed és offline fallback.
+- [ ] Egyetlen adásrend-domain: események, ismétlődések, időzóna, ütközések.
+- [ ] Draft/scheduled/confirmed/postponed/cancelled/completed állapot.
+- [ ] Twitch/YouTube sync, irány/prioritás, konfliktuskezelés és szinkronelőzmény.
+- [ ] Játékprofilok, kapcsolódó tartalom, publikus naptár, countdown és későbbi iCal.
+- [ ] Stream előtti checklist, technikai próba, jegyzetek, markerek és highlight-pontok.
+- [ ] Multistream célok és platformonkénti metadata csak igazolt capability szerint.
+- [ ] Unified Chat, platformjelölés, moderációs státusz, küldési engedély és részleges hiba.
+- [ ] Felvétel/backup/replay csak tényleges technikai lehetőség és tisztázott tárolási költség mellett.
+
+### 54.7. OBS, overlayek, chatbot és stream-eszközök
+- [ ] OBS-párosítás, hitelesítés, kapcsolatstátusz, reconnect és diagnosztika.
+- [ ] Scene/source lista, állapot, scene-váltás, visibility, audio mute/volume a támogatott műveletek szerint.
+- [ ] Overlay Studio, browser source, canvas, safe area, méret, pozíció, scene-variáns.
+- [ ] Alert box és eseményvariánsok follow/sub/gift/cheer/raid/tip/purchase eseményekre, ha elérhetők.
+- [ ] Event list, chat box, goal/progress, countdown/timer, now-playing, sponsor/QR/link widget.
+- [ ] Poll, giveaway, loyalty/points, viewer queue és media request csak jogosultsággal és szabályokkal.
+- [ ] Widgetteszt, preview, verziózás, rollback és megosztható overlay URL.
+- [ ] Chatbot parancsok, aliasok, változók, timerek, quote/counter, shoutout és FAQ.
+- [ ] Spam/linkvédelem, slow/follower/sub-only policy ahol a platform engedi, moderációs napló.
+- [ ] Hotkey, Stream Deck/Macro Deck/MIDI/webhook adapter, allowlist, dry-run és végrehajtási eredmény.
+- [ ] Plugin/widget registry, verzió, kompatibilitás, permission, eredet, frissítés és eltávolítás.
+- [ ] Natív OBS plugin vagy desktop companion csak külön, dokumentált biztonsági tervvel.
+
+### 54.8. Tartalomkönyvtár és Content Studio
+- [ ] VOD, clip, highlight, long-form, Short/Reel, post, image, audio, podcast és replay.
+- [ ] Közös content ID, platform ID, cím, leírás, thumbnail, időtartam, URL, státusz és jogadat.
+- [ ] Keresés, szűrés, rendezés, bulk action, duplikáció-észlelés és gyűjtemények.
+- [ ] Tartalomnaptár és státuszfolyam: idea/draft/review/ready/scheduled/publishing/published/failed.
+- [ ] Transcript, időbélyeg, speaker/fejezet, felirat, SRT/VTT, fordítás és export.
+- [ ] AI highlight/clip-javaslat forrás-időbélyeggel, indoklással és emberi választással.
+- [ ] Videóvágás: trim/split/crop/reframe/aspect ratio, felirat, hang, átmenet és brand overlay.
+- [ ] Thumbnail/grafika-sablon, variánsok, platformméretek és preview.
+- [ ] Platformonkénti cím, leírás, hashtag, CTA, képarány és publikálási státusz.
+- [ ] API-publikálás ahol engedélyezett; egyébként export és kézi közzétételi útmutató.
+- [ ] Zene-/videójog, vendéghozzájárulás, lejárat, forrás és eltávolítási kérés.
+- [ ] Tartalomból weboldali feed, social poszt és analitika ugyanazon canonical rekord alapján.
+
+### 54.9. Közösség és rajongói fiókok
+- [ ] Publikus fan regisztráció/bejelentkezés, profil, preferencia, adatletöltés/törlés.
+- [ ] Posztok, kommentek, reakciók, pollok, kérdések, beküldések és események.
+- [ ] Követés, értesítés, jelvény, mérföldkő, kihívás és közösségi jutalom.
+- [ ] Tagsági szintek, exkluzív poszt/video/audio, member-only stream és archívum.
+- [ ] Discord szerver/csatorna/role mapping entitlement alapján.
+- [ ] Moderációs queue, report, appeal, korlátozás/tiltás, spamvédelem és audit.
+- [ ] AI moderációs javaslat, bizonytalanság és emberi felülvizsgálat.
+- [ ] Public/member-only/private hozzáférés szerveroldali ellenőrzése.
+- [ ] Közösségi szabályzat, adatvédelmi és korhatár-/tartalmi szabályok.
+
+### 54.10. Bolt, támogatás és bevétel
+- [ ] Fizikai termék, merch, digitális termék, bundle, limited drop és preorder.
+- [ ] Variánsok, SKU, ár/pénznem, készlet, kategória, kollekció, media és SEO.
+- [ ] Terméklista, termékoldal, keresés, kosár, checkout-integráció és rendelés-visszaigazolás.
+- [ ] Rendelésállapot, fizetés, teljesítés, tracking, cancel, refund és support.
+- [ ] Kupon, ajándékkártya, promóció, kampány, bundle és lejárat.
+- [ ] Biztonságos digitális delivery, entitlement és visszavonás refund/chargeback esetén.
+- [ ] Egyszeri támogatás, visszatérő támogatás, célmérő és köszönőüzenet.
+- [ ] Tagsági előnyök, kedvezmények, termékdrop és tagság–Discord összekapcsolás.
+- [ ] Szponzorációs media kit, ajánlat, deliverable, határidő, kampánylink és riport.
+- [ ] Affiliate link/kód, jutalék és konverzió csak mérhető/jogszerű keretben.
+- [ ] Bevételi források, platformdíjak, refundok és export; nem könyvelési/adótanácsadási helyettesítő.
+- [ ] Fizetési, adózási, számlázási, fogyasztóvédelmi és GDPR-követelmények ellenőrzése.
+
+### 54.11. Analitika és növekedés
+- [ ] Platformonkénti követő-/nézettség-/engagement-/streamidő-mutatók, ha elérhetők.
+- [ ] Tartalom- és csatorna-összehasonlítás, trendek, időszakok és célok.
+- [ ] Adatforrás, időbélyeg, frissesség, becsült/valós adat és hiányzó metrika jelzése.
+- [ ] Webanalitika, UTM, konverzió, SEO és publikált oldalak teljesítménye.
+- [ ] Thumbnail/cím/időzítés kísérletek és mérhető eredmények, ha elég adat áll rendelkezésre.
+- [ ] Kampány-/szponzorriport, CSV/JSON export és időszakos jelentés.
+- [ ] AI-elemzés hipotézisekkel, forrással és bizonytalansággal; nem garantált növekedési ígéret.
+
+### 54.12. Automatizációk és workflow-k
+- [ ] Vizuális trigger → condition → action → branch modell.
+- [ ] Triggerek: stream, platformesemény, schedule, tartalom, rendelés, tagság, webhook, időzítés.
+- [ ] Akciók: értesítés, draft, címke, export, overlay/OBS parancs, publikálási előkészítés.
+- [ ] Sablonok, verziózás, aktiválás/leállítás és jogosultság.
+- [ ] Dry-run, preview, jóváhagyás, idempotency, rate limit, retry, timeout és napló.
+- [ ] Sikertelen ág, karantén, értesítés, kézi helyreállítás és rollback/kompenzáció.
+- [ ] AI-ból létrehozott workflow először draft/szimuláció; csak jóváhagyás után éles.
+
+### 54.13. SANCI AI és multimodális asszisztensek
+- [ ] AI Control Center: provider/model, költségkeret, kvóta, retention, adatforrás és stop switch.
+- [ ] Projekt-/brandkontextus jogosultsággal és megtekinthető forrásokkal.
+- [ ] Website Designer: oldal/komponens/dizájn/responsive/SEO/accessibility javaslat.
+- [ ] Live Coach: opt-in technikai jelzések, pillanatjelölés és stream-/chat-összegzés.
+- [ ] Content Producer: transcript, clip, felirat, fordítás, thumbnail, cím és platformvariáns.
+- [ ] Community Assistant: FAQ, összegzés, moderációs javaslat és tagsági művelet-előkészítés.
+- [ ] Business Analyst: tartalom/kampány elemzés, hipotézis, mérhető teszt.
+- [ ] Automation Builder: természetes nyelvből workflow-draft, szimuláció és diff.
+- [ ] Kép-/grafika-/hang-/videógenerálás megfelelő külső modellel/szolgáltatóval, licenc- és költségkorláttal.
+- [ ] AI-művelet domain API-n át; kockázati szint, preview, jóváhagyás, napló és visszaállítás.
+- [ ] Generált tartalom jelölése, forrás és bizonytalanság, felhasználói visszajelzés.
+- [ ] Manuális, AI nélküli út minden alapvető termékfolyamathoz.
+
+### 54.14. Többnyelvűség és nemzetközi használat
+- [ ] Admin és publikus web külön nyelvi beállítással.
+- [ ] Magyar elsődleges nyelv, további nyelvek fokozatos bevezetése.
+- [ ] Locale-onkénti oldal-/CMS-tartalom, menü, média, alt text, SEO és Open Graph.
+- [ ] Lokalizált slug/URL, hreflang/canonical szabályok és nyelvi fallback.
+- [ ] Dátum/idő/pénznem/szám lokalizáció, időzóna és nyári időszámítás.
+- [ ] RTL layout, billentyűzet, font fallback és hosszabb fordítások tesztje.
+- [ ] Fordítási memória/szószedet és AI-fordítás emberi jóváhagyással.
+- [ ] Nyelvváltó, automatikus nyelvajánlás és felhasználói választás megőrzése.
+
+### 54.15. Beállítások, biztonság, adatvédelem és megbízhatóság
+- [ ] Profil, site/workspace, locale, timezone, dátum/pénznem és preferenciák.
+- [ ] Szerepek: owner/admin/editor/moderator/analyst/commerce és modulonkénti engedély.
+- [ ] Szerveroldali authorization, site/tenant izoláció és minimális jogosultság.
+- [ ] Session, 2FA/SSO később, secret rotation, rate limit és gyanús aktivitás.
+- [ ] Titok/token/payment adat redakció; titkosított token storage.
+- [ ] Consent, cookie/privacy, retention, export/delete és adatfeldolgozók.
+- [ ] Backup, restore próba, verziózott mentés, import/export és disaster recovery.
+- [ ] Health, job queue, webhook, API-quota, error log és audit log.
+- [ ] Idempotencia, retry, timeout, cache invalidation, stale-data és partial-failure kezelés.
+- [ ] Undo/redo, revision diff, restore és törlés előtti függőségi vizsgálat.
+- [ ] WCAG 2.2 AA cél, reduced motion, screen reader, kontraszt, fókusz és touch target.
+- [ ] Mobil/tablet/desktop, gyenge hálózat, offline-jelzés és adatvesztés elleni védelem.
+- [ ] Tesztek: domain, integration, authorization, migration, UI, accessibility, responsive, E2E és smoke.
+
+### 54.16. Fejlesztői platform, bővítmények, csapat és SaaS
+- [ ] Dokumentált API, webhook registry, API-key kezelés, tesztelő és sandbox.
+- [ ] Extension/widget/overlay manifest, schema, permission, verzió és kompatibilitás.
+- [ ] Eredet/licenc/aláírás, sandbox, felülvizsgálat, frissítés, eltávolítás és visszavonás.
+- [ ] Template/component/overlay/workflow marketplace későbbi fázisban.
+- [ ] Több site/workspace, aktív workspace választó, csapatmeghívás és szerepek.
+- [ ] Agency/studio mód, ügyfélhozzáférés, közös sablonok és jóváhagyás.
+- [ ] Későbbi SaaS billing, csomag, használati limit, számla, lemondás és adat-export.
+- [ ] Tenant izoláció, migráció, skálázás, adatrezidencia és költségfelügyelet.
+
+---
+
+## 55. A teljes funkciólista értékelési szabályai
+
+A felhasználói áttekintéskor minden egyes funkciót az alábbi döntések egyikével kell ellátni:
+- **Kell az első használható kiadásba:** szükséges a teljes alapmunkafolyamathoz.
+- **Kell, de későbbi fázisban:** a végső termék része, de függősége van.
+- **Opcionális/integrációfüggő:** szolgáltatói API, hozzáférés, költség vagy technikai lehetőség határozza meg.
+- **Nem kell:** csak explicit döntés után távolítható el a végső célból.
+- **Másik modulba tartozik:** a felelősség szerinti egyetlen modulhoz kerül, a többi hely hivatkozik rá.
+
+A megvalósítás sorrendjét a meglévő, működő kód, a felhasználói élmény, a biztonság és a függőségek alapján kell meghatározni. Minden képességhez később hozzá kell rendelni: canonical domain, adatmodell, API/command, jogosultság, UI-hely, külső függőség, teszt, státusz és elfogadási feltétel. A funkcióterv nem helyettesíti a kód és az éles működés igazolását.
