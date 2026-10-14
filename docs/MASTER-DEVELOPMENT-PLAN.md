@@ -5275,3 +5275,20 @@ A §37.16, §37.17 és §41.2 egyes mondatai a 2026-10-13-i, 359-ID-s registry-s
 **Megőrzési szabály:** az archivált fájlok nem válnak második aktív tervvé. Bizonyítékként használhatók történeti funkciók visszakeresésére és eredetük igazolására; a végrehajtási sorrend és az aktuális státusz továbbra is a `docs/MASTER-DEVELOPMENT-PLAN.md` irányadó blokkjából származik.
 
 **Státusz:** a jelenlegi `docs/archive/plans/` nyolc fájljának szó szerinti B-/2.70-keresése dokumentálva; a B-fejezet eredeti forrása továbbra is **UNRECOVERED / OPEN**; teljes történeti szemantikai reconciliáció **OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.119. P0.2 — Archivált tervútvonalak eredet-commitjának ellenőrzése (2026-10-14)
+
+A korábbi, különálló útvonal-commit-lekérdezések első futása nem adott eredményt, mert a GitHub API hívás nem tartalmazta explicit módon a `v2/foundation` ágat. A helyes, ágra szűkített lekérdezés mind a négy vizsgált fő tervnél ugyanazt az első elérhető útvonal-commitot adta vissza: `aedb2eaab244` — `docs: unify project plans into single master plan`, 2026-09-17.
+
+Az `aedb2eaab244` commit fa-struktúrájában a következő utak már jelen vannak:
+- `docs/MASTER-DEVELOPMENT-PLAN.md`;
+- `docs/archive/plans/MASTER-FINAL-ROADMAP.md`;
+- `docs/archive/plans/SANCI-MASTER-PLAN.md`;
+- `docs/archive/plans/V2-BLUEPRINT.md`;
+- `docs/archive/plans/visual-editor-roadmap.md`;
+- `docs/archive/2026-09-16/LEGACY-HTML-ARCHIVE.md`.
+
+**Értelmezési korlát:** ez azt igazolja, hogy az archivált tervfájlok a 2026-09-17-i egységesítési commitban már jelen voltak. A megadott útvonalakhoz a vizsgált ágon a lekérdezés csak ezt az egy commitot adta vissza; ezért az API útvonal-előzménye önmagában nem rekonstruálja a fájlok esetleges korábbi, más néven vagy más útvonalon tárolt eredetét. A commit szülőjének teljes fájafáját és az elődcommit diffjét kell tovább ellenőrizni, különösen az esetleges régi útvonalak, törlések és átnevezések miatt. A B forrásának meglétéről vagy nemlétéről ebből még nem vonok le következtetést.
+
+**Státusz:** a helyes ágparaméterrel végzett útvonal-előzmény ellenőrzés dokumentálva; további régi útvonalak keresése nyitott; `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
