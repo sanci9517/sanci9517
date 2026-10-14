@@ -1105,7 +1105,7 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - ADM-005: Legutóbbi aktivitás és audit összefoglaló.
 - ADM-006: Globális keresés és command palette.
 - ADM-007: Profil/session/logout és lejáratkezelés.
-- ADM-008: Közös loading/empty/error/stale/success state-ek.
+- ADM-008: Shared Admin UI components for loading/empty/error/stale/success states; does not own domain-specific data-binding state machines.
 - ADM-009: Permission-alapú menü- és action-visibility.
 - ADM-010: Mobil/tablet Admin shell.
 - ADM-011: Kontextuális súgó, interaktív onboarding és hibaelhárítás.
@@ -1119,7 +1119,7 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - WEB-004: Draft/published state és published snapshot.
 - WEB-005: Preview link és preview authorization.
 - WEB-006: Publish validation és publish report.
-- WEB-007: Unpublish/restore/rollback.
+- WEB-007: Page publish/unpublish/restore/rollback operations and state transitions; QA-007 is the separate test gate.
 - WEB-008: Revision history és diff.
 - WEB-009: Canonical navigation tree.
 - WEB-010: Header/footer és global layout.
@@ -1128,8 +1128,8 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - WEB-013: Redirect manager és broken-link report.
 - WEB-014: Public Home/Creator-home.
 - WEB-015: Public Live/Stream page.
-- WEB-016: Public Schedule page.
-- WEB-017: Public VOD/Content Hub.
+- WEB-016: Public schedule route/page shell; consumes the canonical schedule projection owned by SCH-010.
+- WEB-017: Public VOD/Content Hub route and page shell; consumes the published content projection owned by CNT-020.
 - WEB-018: Public About/Creator profile.
 - WEB-019: Public Community page/CTA.
 - WEB-020: Public Contact page/form.
@@ -1185,7 +1185,7 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - EDT-036: Mobile Layers/Inspector panel switching.
 - EDT-037: Keyboard-accessible canvas alternatives.
 - EDT-038: Copy/paste and multi-select where enabled.
-- EDT-039: Interactions and action registry.
+- EDT-039: Page-level interaction/action schema registry for Editor-configured page behavior; not the automation engine action catalog.
 - EDT-040: Motion/reduced-motion behavior.
 - EDT-041: Empty-project onboarding and template start.
 - EDT-042: Editor error recovery and no-data-loss guard.
@@ -1206,7 +1206,7 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - DSN-011: Component template library.
 - DSN-012: Reusable component/symbol master-instance.
 - DSN-013: Variants, slots and explicit overrides.
-- DSN-014: Template versioning/compatibility/migration.
+- DSN-014: Design/template/component versioning, compatibility and migration; excludes AI prompt/template versioning.
 - DSN-015: Template import/export.
 - DSN-016: Button Registry and global button styles.
 - DSN-017: Icon/action registry linkage.
@@ -1217,8 +1217,8 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - RES-002: R2 binary storage and D1 metadata.
 - RES-003: Upload validation/progress/cancel/retry.
 - RES-004: Image preview/thumbnail/variant, crop/resize and optimization pipeline.
-- RES-005: Media search/filter/sort/pagination.
-- RES-006: Collections/tags/folders.
+- RES-005: Search/filter/sort/pagination over the canonical asset registry only.
+- RES-006: Asset-library collections/tags/folders; excludes content and product taxonomies.
 - RES-007: Alt text/caption/license/source metadata.
 - RES-008: Asset usage/reference map.
 - RES-009: Replace/archive/delete/restore safety.
@@ -1231,7 +1231,7 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - RES-016: Paid/private asset access integration.
 
 ### 24.6. Connections/integrations — INT
-- INT-001: Canonical provider adapter contract.
+- INT-001: Shared external-provider adapter contract; domain modules such as Store implement their specific workflows through this contract.
 - INT-002: Integration overview and health.
 - INT-003: OAuth state/callback/CSRF protection.
 - INT-004: Token lifecycle/refresh/revoke.
@@ -1247,8 +1247,8 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - INT-014: TikTok capability-gated adapter.
 - INT-015: Discord bot/guild/channel/role integration.
 - INT-016: Kick capability-gated adapter.
-- INT-017: Webhook subscription/signature/replay defense.
-- INT-018: Provider capability registry.
+- INT-017: Provider webhook subscription/delivery lifecycle and integration of signature/replay defenses; shared security requirements are defined by SEC-009.
+- INT-018: External integration/provider capability registry for social, streaming and commerce adapters; excludes AI model/provider configuration.
 - INT-019: Integration secret redaction and audit.
 - INT-020: Integration diagnostics and recovery.
 - INT-021: Future payment/email/commerce adapters.
@@ -1285,8 +1285,8 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - SCH-007: Twitch schedule sync/manual override.
 - SCH-008: Sync status/retry/audit.
 - SCH-009: Next stream/countdown.
-- SCH-010: Public schedule rendering.
-- SCH-011: Editor Schedule block.
+- SCH-010: Canonical public schedule data projection/rendering contract consumed by WEB-016 and Editor schedule blocks.
+- SCH-011: Editor block binding/configuration for the canonical schedule projection; schedule data and lifecycle remain owned by SCH-001–010.
 - SCH-012: Game Profile CRUD.
 - SCH-013: Game artwork/resource linkage.
 - SCH-014: Game/content/schedule relationship.
@@ -1297,8 +1297,8 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - CNT-002: VOD import and metadata.
 - CNT-003: Clip/highlight/Short management.
 - CNT-004: YouTube/TikTok video feed.
-- CNT-005: Tags/categories/collections/playlists.
-- CNT-006: Search/filter/sort/pagination/bulk actions.
+- CNT-005: Content-library tags/categories/collections/playlists; excludes product-catalog taxonomy and asset-library folders.
+- CNT-006: Search/filter/sort/pagination/bulk actions over canonical content records only.
 - CNT-007: Duplicate detection and external IDs.
 - CNT-008: Featured/related content.
 - CNT-009: Content calendar.
@@ -1310,9 +1310,9 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - CNT-015: Approval workflow and public publish gate.
 - CNT-016: Campaign linkage and content attribution.
 - CNT-017: Short-form export preparation.
-- CNT-018: Transcript/chapter/highlight suggestions later.
-- CNT-019: Editor content feed block.
-- CNT-020: Content public hub.
+- CNT-018: Content-domain transcript/chapter/highlight artifact metadata and review lifecycle; AI suggestions originate in AI-014 and are stored through the content API.
+- CNT-019: Editor block binding/configuration for the canonical content feed; content records and publishing lifecycle remain owned by CNT-001–018/020–022.
+- CNT-020: Canonical published-content public feed/projection and query contract; WEB-017 owns the public page route/shell.
 - CNT-021: Timeline-based content editing/render pipeline: trim/split/crop/reframe, aspect ratio, audio, captions, transitions, brand overlay and export.
 - CNT-022: Content rights/consent/expiry/takedown lifecycle for music, video, guests and third-party assets.
 
@@ -1329,7 +1329,7 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - COM-010: Badges/reputation/challenges later.
 - COM-011: Notifications and delivery status.
 - COM-012: Abuse/spam/rate-limit controls.
-- COM-013: Member-only content access.
+- COM-013: Community/public-surface member-only visibility gate; consumes entitlement decisions owned by SUP-006.
 - COM-014: Founding Supporters opt-in listing.
 - COM-015: Email signup/consent/subscriber list.
 - COM-016: Segmentation/newsletter/automation.
@@ -1341,12 +1341,12 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 ### 24.11. Store/commerce — STO
 - STO-001: Product catalog.
 - STO-002: Product variants/SKU/price/currency.
-- STO-003: Categories/collections/tags.
+- STO-003: Product-catalog categories/collections/tags; excludes content-library and asset-library taxonomies.
 - STO-004: Product media and SEO.
 - STO-005: Physical/digital/bundle/preorder/limited drop.
 - STO-006: Inventory/fulfillment abstraction.
 - STO-007: Storefront listing/detail/search/filter.
-- STO-008: Cart and checkout provider adapter.
+- STO-008: Store-specific cart/checkout provider adapter; owns checkout workflow integration, while generic provider lifecycle is defined by INT-001.
 - STO-009: Order lifecycle/payment status.
 - STO-010: Fulfillment/tracking/cancellation/refund.
 - STO-011: Coupons/promotions/gift cards.
@@ -1366,13 +1366,13 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - SUP-002: Donation/tip state where available.
 - SUP-003: Supporter goals and progress.
 - SUP-004: Membership tiers and billing period.
-- SUP-005: Perks and member-only access.
+- SUP-005: Membership perk/entitlement definition; community and public surfaces enforce access through COM-013/COM-018.
 - SUP-006: Entitlement lifecycle.
 - SUP-007: Membership renewal/cancel/failed payment.
 - SUP-008: Refund/chargeback entitlement handling.
 - SUP-009: Discord role sync from entitlement.
 - SUP-010: Supporter history and opt-in public listing.
-- SUP-011: Membership content and event access.
+- SUP-011: Membership entitlement rules for content/events; COM and WEB surfaces consume these rules without duplicating entitlement state.
 - SUP-012: Member discount/exclusive drop.
 
 ### 24.13. Analytics/campaign/business — ANL / CAM
@@ -1400,11 +1400,11 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - AUT-001: Canonical event registry.
 - AUT-002: Trigger catalogue.
 - AUT-003: Condition/filter rules.
-- AUT-004: Action registry and permission checks.
+- AUT-004: Automation action catalog and server-side permission checks for workflow execution; page interaction schemas remain in EDT-039.
 - AUT-005: Delay/schedule and timezone.
 - AUT-006: Idempotency/deduplication.
 - AUT-007: Retry/backoff/dead-letter.
-- AUT-008: Run log and audit.
+- AUT-008: Automation execution/run history and workflow-specific diagnostics; security/privacy audit events are owned by SEC-010.
 - AUT-009: Dry-run/preview/approval.
 - AUT-010: Enable/pause/version/clone.
 - AUT-011: Cycle detection and rate limits.
@@ -1413,8 +1413,8 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - AUT-014: Safe cross-domain actions.
 
 ### 24.15. SANCI AI — AI
-- AI-001: Provider/model registry.
-- AI-002: Prompt/template versioning.
+- AI-001: AI model/provider registry, model capabilities and lifecycle; excludes external social/streaming integration capabilities in INT-018.
+- AI-002: AI prompt/instruction template versioning and evaluation; excludes visual design and page-template lifecycle in DSN-014.
 - AI-003: Intent and task planner.
 - AI-004: Context selection and privacy filter.
 - AI-005: Structured action schema.
@@ -1426,7 +1426,7 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - AI-011: Website structure/content assistant.
 - AI-012: SEO/accessibility/localization suggestions.
 - AI-013: Content title/script/description/thumbnail brief.
-- AI-014: Transcript/chapter/highlight/clip candidates.
+- AI-014: AI-generated transcript/chapter/highlight/clip candidates with source timestamps and confidence; does not own canonical content records or rights metadata.
 - AI-015: Stream diagnostics/summary where supported.
 - AI-016: Specialist agent roles under shared permissions.
 - AI-017: AI Control Center and approval queue.
@@ -1438,21 +1438,21 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 ### 24.16. Settings/security/operations — SEC / OPS
 - SEC-001: Authentication/session lifecycle.
 - SEC-002: Server-side RBAC and ownership.
-- SEC-003: Site/workspace/tenant isolation.
+- SEC-003: Cross-domain server-side site/workspace/tenant isolation invariant; TEAM-001/TEAM-005 provide workspace selection and multi-site workflows but do not replace authorization.
 - SEC-004: OAuth/CSRF/session security.
 - SEC-005: XSS/sanitization/safe embeds.
 - SEC-006: SSRF/open redirect/injection defenses.
 - SEC-007: Rate limiting and abuse protection.
 - SEC-008: Secret storage/redaction/rotation.
-- SEC-009: Webhook signature/replay defense.
-- SEC-010: Audit log and privacy.
+- SEC-009: Cross-domain webhook signature/replay security requirement and negative-test contract; provider-specific implementation is owned by INT-017.
+- SEC-010: Cross-domain security/privacy audit events and redaction/retention controls; workflow execution detail remains in AUT-008.
 - SEC-011: Consent/retention/export/delete.
 - SEC-012: MFA/2FA and future SSO lifecycle, recovery and suspicious-authentication controls.
 - OPS-001: Health/deploy version.
 - OPS-002: Structured logs/correlation IDs.
 - OPS-003: Error tracking/alerting.
 - OPS-004: Migration preflight/integrity.
-- OPS-005: Backup/export/restore.
+- OPS-005: Operational backup/export/restore capability and runbook; QA-007 only verifies it through tests/evidence.
 - OPS-006: Recovery drill and runbook.
 - OPS-007: Diagnostics report.
 - OPS-008: Performance baseline/cache/query monitoring.
@@ -1467,11 +1467,11 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - LOC-004: Localized SEO/hreflang/canonical.
 - LOC-005: Translation completeness status, locale preview and safe publish policy.
 - LOC-006: AI-assisted translation workflow with explicit human review/approval and audit.
-- TEAM-001: Workspace/site switcher.
+- TEAM-001: Workspace/site switcher UI and active-scope selection; server-side isolation and authorization remain owned by SEC-002–003.
 - TEAM-002: Invite/accept/revoke.
 - TEAM-003: Roles and granular permissions.
 - TEAM-004: Approval/review/activity feed.
-- TEAM-005: Multi-site isolation.
+- TEAM-005: Multi-site workspace/product workflows; isolation enforcement is a security invariant owned by SEC-003.
 - TEAM-006: SaaS billing/plan entitlements/quota.
 - TEAM-007: Agency/studio client workspaces, shared templates, client-scoped brand and approval workflow.
 - MKT-001: Extension manifest/permissions.
@@ -1491,7 +1491,7 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - QA-004: Browser/device responsive and visual-regression acceptance.
 - QA-005: Public SEO/accessibility/performance audit.
 - QA-006: Production smoke and runtime verification.
-- QA-007: Backup/restore/rollback acceptance.
+- QA-007: Test/acceptance gate and evidence for backup/restore/rollback; does not implement backup operations.
 - QA-008: End-to-end creator journey.
 - QA-009: User acceptance and evidence log.
 - QA-010: Continuous benchmark and feature-discovery review.
@@ -1512,9 +1512,9 @@ Ezek a stabil ID-k azért szükségesek, mert a korábbi követelménykatalógus
 **DYN — Dinamikus adatforrás és binding**
 - DYN-001: Canonical data source registry és provider/domain adapter.
 - DYN-002: Binding schema, type validation és resource/field compatibility.
-- DYN-003: Whitelisted transforms, filter, sort, limit és pagination.
+- DYN-003: Whitelisted filter/sort/transform/limit/pagination for bound data queries; not a replacement for module-specific library search.
 - DYN-004: Feltételes rendering és adatfüggő visibility.
-- DYN-005: Loading/empty/error/partial/stale állapotgép.
+- DYN-005: Runtime state machine for dynamic data bindings (loading/empty/error/partial/stale); shared visual presentation may use ADM-008.
 - DYN-006: Cache policy, freshness, invalidation és stale fallback.
 - DYN-007: Permission, site scope és published-only data boundary.
 - DYN-008: Binding diagnostics, preview, invalid-reference report és recovery.
@@ -3964,3 +3964,27 @@ Az ellenőrzés a kanonikus terv aktuális GitHub-változatán futott. Eredmény
 - A 54. fejezet normalizált, pontos szövegduplikáció-ellenőrzése korábban nem talált ismétlődő checklist-tételt.
 
 **Korlátok és nyitott munka:** ez strukturális/azonosító-keresztellenőrzés, nem bizonyítja, hogy minden hozzárendelés szemantikailag tökéletes, nincs-e két külön szöveg mögött ugyanaz a képesség, minden domain-szerződés teljes-e, vagy a runtime megvalósítja-e a tervet. Következő feladat a szemantikai duplikáció- és tulajdonosmodul-audit, majd a meglévő kód, API-k, adatmodellek, jogosultságok és tesztek összevetése. A fejlesztési fagyasztás és a tervlezárási kapu változatlanul érvényes; ez az ellenőrzőpont önmagában nem engedélyezi az F0 megkezdését.
+
+### 63.17. Szemantikai duplikáció- és határvizsgálat — első kör
+
+A 24. fejezet 382 funkcióleírásán tokenhasonlósági előszűrés futott. Ez nem dönt automatikusan a duplikációról; a hasonló elnevezések kézi tulajdonosmodul-vizsgálatot indítanak. Az első körben az alábbi hasonlóságokat explicit határleírással oldottuk fel a stabil ID-k definíciójában:
+
+- **INT-017 ↔ SEC-009:** provider webhook delivery/integráció vs. keresztmodulú biztonsági követelmény és negatív teszt.
+- **WEB-017 ↔ CNT-020; WEB-016 ↔ SCH-010:** publikus oldal/route-shell vs. kanonikus tartalom-/schedule projection.
+- **CNT-005 ↔ STO-003 ↔ RES-006:** content taxonómia vs. termékkatalógus taxonómia vs. asset library taxonómia.
+- **ADM-008 ↔ DYN-005:** közös Admin UI-állapot komponensek vs. dinamikus binding runtime állapotgép.
+- **RES-005 ↔ CNT-006 ↔ DYN-003:** asset könyvtár keresése vs. content könyvtár keresése vs. whitelistelt dinamikus lekérdezési műveletek.
+- **INT-018 ↔ AI-001:** külső integrációk provider-capability katalógusa vs. AI modell/provider registry.
+- **CNT-018 ↔ AI-014:** content-domain artifact/review lifecycle vs. AI által javasolt jelölt.
+- **COM-013 ↔ SUP-005/SUP-011:** közösségi felületi hozzáférés-ellenőrzés vs. tagsági entitlement definíció.
+- **AUT-008 ↔ SEC-010:** workflow run history vs. keresztmodulú security/privacy audit.
+- **EDT-039 ↔ AUT-004:** oldalelem-interakciós séma vs. automation action catalog és szerveroldali engedélyezés.
+- **DSN-014 ↔ AI-002:** vizuális template lifecycle vs. AI prompt-template lifecycle.
+- **INT-001 ↔ STO-008:** általános provider adapter contract vs. Store checkout workflow adapter.
+- **SCH-011 ↔ CNT-019:** két külön Editor-blokk; az egyik schedule, a másik content feed adatforrását fogyasztja.
+- **SEC-003 ↔ TEAM-001/TEAM-005:** security isolation invariant vs. workspace selector/multi-site termékfolyamat.
+- **OPS-005 ↔ QA-007; WEB-007 ↔ QA-007:** működési képesség vs. az azt bizonyító tesztkapu.
+
+A hasonló prefixű provider adapterek (például TikTok/Kick), különböző template-típusok, valamint a publikus oldalak különböző route-jai önmagukban nem duplikációk: külön képességek vagy külön domain-típusok. Az explicit határleírások megőrzik a szükséges funkciókat, miközben megakadályozzák a párhuzamos adatgazdák létrehozását.
+
+**Állapot:** az első körös, névszintű hasonlósági jelzések közül a fő modulhatár-ütközések definíciója tisztázva lett. A teljes szemantikai audit továbbra is IN PROGRESS: az ID-k és a 54. fejezet tételes megfeleltetésének véglegesítéséhez a domain-katalógus, API-k, adatmodellek, tényleges UI és tesztek összevetése szükséges.
