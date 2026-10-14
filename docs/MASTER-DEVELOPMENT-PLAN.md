@@ -3084,3 +3084,108 @@ A felhasználói áttekintéskor minden egyes funkciót az alábbi döntések eg
 - **Másik modulba tartozik:** a felelősség szerinti egyetlen modulhoz kerül, a többi hely hivatkozik rá.
 
 A megvalósítás sorrendjét a meglévő, működő kód, a felhasználói élmény, a biztonság és a függőségek alapján kell meghatározni. Minden képességhez később hozzá kell rendelni: canonical domain, adatmodell, API/command, jogosultság, UI-hely, külső függőség, teszt, státusz és elfogadási feltétel. A funkcióterv nem helyettesíti a kód és az éles működés igazolását.
+
+
+---
+
+## 56. Közös sablon-, ikon-, preset- és teljes személyre szabási rendszer
+
+**Alapelv:** a SANCI9517-et a készítője saját brandjével is használhassa, de egy új felhasználó is teljesen a sajátjává alakíthassa. Ne legyen kötelező SANCI-logó, színvilág, előre eldöntött elrendezés vagy egyetlen munkamód. A közös infrastruktúra egységes; a felhasználó által látott megjelenés és a választható munkafolyamat testreszabható.
+
+### 56.1. Közös design system és témarendszer
+- [ ] Központi design tokenek: színek, fontok, tipográfiai skála, térközök, rácsok, szélességek, border, radius, shadow, elevation, animáció és fókuszstílus.
+- [ ] Több theme-változat: világos, sötét, automatikus rendszerkövető, nagy kontrasztú és felhasználó által létrehozott témák.
+- [ ] Teljes theme editor: színpaletta, háttér, felület, szöveg, állapotok, linkek, gombok, mezők, grafikonok és overlay-színek szerkesztése.
+- [ ] Témaváltozatok mentése, duplikálása, átnevezése, exportja/importja, előnézete és visszaállítása.
+- [ ] Token-szintű öröklés: alap-téma → workspace/site téma → oldal/komponens override; feloldás/override-törlés egyértelmű művelettel.
+- [ ] Kontraszt- és olvashatósági ellenőrzés; hibás kombinációra javaslat, de ne írja felül csendben a felhasználó döntését.
+- [ ] Fontfeltöltés és fontlicenc nyilvántartás; biztonságos formátum- és fájlméret-ellenőrzés.
+- [ ] A téma a weboldalon, Adminban, overlayeken, widgeteken, tartalomsablonokon és későbbi storefronton ott alkalmazható, ahol értelmes; külön felületek külön theme scope-ot kaphatnak.
+- [ ] Téma importálásakor verzió-/kompatibilitásellenőrzés, ismeretlen tokenek kezelése és ütközés előnézete.
+
+### 56.2. Saját márka és white-label használat
+- [ ] Első indítási Brand Setup Wizard: márkanév, creator-/cégnév, rövid leírás, logó, favicon, profilkép, borítókép, fő színek, fontok, nyelv és időzóna.
+- [ ] Saját logó feltöltése több változattal: teljes logó, ikon/jel, világos/sötét háttérhez való variáns, monokróm, favicon és social avatar.
+- [ ] Saját domain és aldomain; DNS/HTTPS ellenőrzés és domainenkénti site beállítás, ahol a hosting modell támogatja.
+- [ ] Saját márkanevek, szövegek, linkek, közösségi fiókok, CTA-k, footer, email-sablonok és megosztási kép.
+- [ ] SANCI-brand megjelenítése konfigurálható legyen ott, ahol technikailag/jogilag eltávolítható; platformos biztonsági, jogi és szolgáltatói jelzéseket nem lehet megtévesztő módon elrejteni.
+- [ ] Saját favikon, böngészőcím, metaadat, OG-kép, loading/empty/error állapotok és felhasználói értesítések brandelése.
+- [ ] Brand Kit export/import és teljes brand preset, amely a témát, logókat, fontokat, ikonstílust és használati szabályokat együtt viheti át.
+- [ ] Több márka/site egy workspace-ben későbbi fázisban, külön brand- és domainhatárokkal.
+- [ ] Új felhasználónak semmit nem kell kézzel nulláról építenie: választhat sablont/presetet, majd minden elem módosítható.
+
+### 56.3. Közös ikonrendszer
+- [ ] Egyetlen kanonikus Icon Registry és Icon Picker az egész termékben.
+- [ ] Kategóriák: navigáció, szerkesztés, média, streaming, platformok, közösség, bevétel, analitika, AI, állapotok, műveletek és akadálymentesség.
+- [ ] Egységes ikonméret-, stroke-, kitöltés- és igazítási szabályok; opcionális outline/solid/duotone stílusok, ha az ikonforrás licenc és vizuális minőség szerint támogatja.
+- [ ] Keresés név, kulcsszó, kategória és szinonima alapján; billentyűzetes navigáció és akadálymentes címkék.
+- [ ] Saját SVG ikon importálása ellenőrzött SVG-szabályokkal; ne engedjünk futtatható/veszélyes SVG-tartalmat.
+- [ ] Egyedi ikonok elnevezése, címkézése, cseréje, archiválása, exportja és workspace/site scope-ja.
+- [ ] Az ikon választása minden támogatott helyen ugyanazt az Icon Picker komponenst használja: Admin, Visual Editor, gombok, menük, overlayek és widgetek.
+- [ ] Ikonfallback és migráció, ha egy régi preset ikonja megszűnik; ne jelenjen meg üres/hibás jelölő.
+- [ ] Ikon használati helyeinek keresése és biztonságos cseréje.
+
+### 56.4. Közös sablonrendszer
+- [ ] Egy Template Registry, stabil azonosítóval, verzióval, kompatibilitással, kategóriával, címkékkel, előnézeti képpel és licenc/eredet mezővel.
+- [ ] Sablontípusok: teljes weboldal, oldal, szekció, komponens, navigáció, dashboard layout, stream overlay, widget, alert, chatbot parancscsomag, workflow, content post, thumbnail, video preset, email, termékoldal, közösségi oldal és Brand Kit.
+- [ ] Sablon használat előtti preview és kipróbálás; ne írja felül a meglévő adatokat előzetes diff/figyelmeztetés nélkül.
+- [ ] Sablon létrehozása meglévő felhasználói tartalomból, megosztás, duplikálás, átnevezés, export/import, archiválás és verziózás.
+- [ ] Sablonfrissítési stratégia: eredeti követése, helyi másolat, kiválasztott módosítások átvétele; ne vesszen el a személyre szabás.
+- [ ] Sablonok jelölése: hivatalos, közösségi, saját, importált, ellenőrzött, kompatibilitási problémás.
+- [ ] Külső sablonhoz licenc, attribúció és felhasználási feltételek tárolása; más termék sablonjának/assetjének jogosulatlan másolása tilos.
+- [ ] Keresés és szűrés cél, stílus, platform, nyelv, képarány, kategória, kompatibilitás és akadálymentesség szerint.
+- [ ] Marketplace később; elsőként lokális/saját sablonkönyvtár és biztonságos import/export.
+
+### 56.5. Preset rendszer – ne legyen összekeverve a sablonnal
+- [ ] **Preset:** egy adott funkció gyors konfigurációja, pl. overlay méret/színek/animáció, export beállítás, editor layout, chatbot válaszkészlet vagy workflow-induló beállítás.
+- [ ] **Template:** teljesebb kiinduló szerkezet/tartalom, amelyet a felhasználó tovább alakít.
+- [ ] **Theme:** a vizuális megjelenés tokenjeinek és szabályainak csomagja.
+- [ ] **Brand Kit:** a márkaelemek, logók, fontok, assetek és használati szabályok csomagja.
+- [ ] **Component:** újrahasználható működő UI-/oldalelem; **icon** egy vizuális jel; **workflow** végrehajtható lépésekből álló folyamat.
+- [ ] Preset mentése aktuális beállításból, alkalmazás, duplikálás, diff, visszaállítás, import/export és kompatibilitási jelölés.
+- [ ] Preset-könyvtár kategóriánként: Visual Editor, responsive, overlay, alerts, chatbot, streaming, content export, subtitle, thumbnail, analytics, automation, AI, accessibility és performance.
+- [ ] Preset paraméterezhető változókkal és validációval; a felhasználó alkalmazás előtt látja, mit fog módosítani.
+- [ ] Preset nem tartalmazhat éles titkot, access tokent, privát URL-t vagy más workspace személyes adatát.
+- [ ] Preset verzióváltásakor megmaradjon a korábban alkalmazott beállítás; legyen migráció vagy kézi javítási út.
+
+### 56.6. Teljes személyre szabás – a platform legyen mindenkié
+- [ ] Modulok és navigáció személyre szabása: sorrend, kedvencek, elrejtés/megmutatás és szerepkör szerinti láthatóság; kritikus biztonsági menük jogosultság alapján maradnak védettek.
+- [ ] Dashboard widgetek hozzáadása/eltávolítása/átrendezése, mentett nézetek és több dashboard preset.
+- [ ] Szerkesztői layout: panelek mérete, elhelyezése, dock/undock ahol támogatott, billentyűparancsok és compact/comfortable sűrűség.
+- [ ] Oldal- és komponensszintű vizuális override-ok, öröklés és „visszaállítás a témára”.
+- [ ] Saját gyorsműveletek, kedvencek, parancspaletta és workflow-indítók.
+- [ ] Felhasználói preferenciák és workspace/site alapértelmezések külön kezelése.
+- [ ] Minden felhasználói override megőrzése frissítéskor; frissítés nem nullázhatja le csendben a beállításokat.
+- [ ] Kezdő/haladó mód: az alapélmény ne legyen túlzsúfolt, de a fejlett funkciók ne vesszenek el.
+- [ ] Visszafordítható beállítások, élő preview, visszaállítás, exportálható profil és könnyű „reset to defaults”.
+- [ ] Mobilon a fontos beállítások kezelhetők legyenek; az összetett szerkesztő reszponzív kezelőfelületet vagy célzott mobilmódot kapjon.
+
+### 56.7. Onboarding és kezdőélmény
+- [ ] Célválasztó: streamer, videókészítő, podcaster, közösségépítő, zenész, oktató, kisvállalkozás/brand vagy vegyes használat.
+- [ ] A választás csak kezdőajánlásokat módosít; semmilyen funkciót nem töröl a rendszerből.
+- [ ] Induló csomag: brand preset + weboldalsablon + dashboard layout + releváns integrációk + ajánlott workflow-k.
+- [ ] Importálható saját brand/logó/szín és meglévő tartalom; később platformimport, ahol API engedi.
+- [ ] Lépésenkénti ellenőrzőlista, haladásmentés, kihagyás és későbbi folytatás.
+- [ ] Demóadatok és safe preview egyértelmű jelöléssel; demó soha ne keveredjen éles adatokkal.
+- [ ] Kezdő mód mellett „haladó eszközök megjelenítése” lehetőség.
+- [ ] Segítség és dokumentáció kontextushoz kötve; ne csak egy hosszú, egyszeri útmutató legyen.
+
+### 56.8. Megosztás, import/export és biztonság
+- [ ] Brand Kit, theme, icon pack, template, preset, editor layout és workflow export/import.
+- [ ] Verzió, schema, kompatibilitás, dependency és licencek az exportcsomagban.
+- [ ] Import előnézet: létrejövő/módosuló elemek, ütközések, hiányzó assetek és ismeretlen mezők.
+- [ ] Import előtt validáció és méretkorlát; sikertelen import ne hagyjon félkész adatot.
+- [ ] Megosztáskor a titkok, személyes adatok és privát tartalmak alapértelmezésben kimaradnak.
+- [ ] Nyilvános megosztási link visszavonható; jogosultság, lejárat és hozzáférési napló opcionális.
+- [ ] Harmadik féltől importált sablon/ikon/widget csak biztonsági, licenc- és kompatibilitási ellenőrzés után aktiválható.
+
+### 56.9. Elfogadási kritériumok
+A rendszer akkor tekinthető megfelelően személyre szabhatónak, ha:
+1. Új felhasználó választhat teljes induló presetet, majd minden nem biztonságkritikus elemet módosíthat.
+2. Saját logót, színeket, fontokat, témát, ikonkészletet és domaint tud beállítani az adott hosting-/csomagképességek szerint.
+3. Ugyanaz a téma/brand konzisztensen használható a támogatott webes, szerkesztői és streames felületeken.
+4. A sablonok, ikonok és presetek központi regiszterből, verzióval és kompatibilitással működnek.
+5. Egy preset vagy sablon alkalmazása előtt látszik a változás, és van helyreállítás.
+6. Frissítés nem írja felül csendben a felhasználó saját beállításait.
+7. A kezdő egyszerű élményt kap, a haladó felhasználó pedig eléri a mély testreszabást.
+8. Az export/import licencet, biztonságot és személyes adatokat figyelembe véve működik.
