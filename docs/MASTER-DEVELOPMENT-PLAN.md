@@ -2629,7 +2629,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.4-03 | Stream page: player/embed, real status/title/category/start, next stream and safe optional embeds | WEB-015, WEB-032, LIV-001–LIV-005, SCH-009, SEC-005 | EXPAND | 1.0 Twitch baseline | QA-002/003/004 |
 | F.4-04 | VOD/content hub supports categories/tags/search/filter/playlists/related content and honest manual fallback when API unavailable | WEB-017, CNT-001–CNT-008, CNT-020, INT-012–INT-014 | EXPAND | 1.5–2.0 | QA-002/003/004 |
 | F.4-05 | About, Link Hub and press-kit content are configurable; no hardcoded creator-specific product behavior | WEB-018, WEB-022, WEB-024, CAM-004, DSN-001, LOC-001 | EXPAND | 1.0 basic profile/link; advanced kit later | QA-002/004 |
-| F.4-06 | Basic accessible interactions: click/hover/focus/active/submit/scroll/load/timer/open-close/navigation/show-hide/toggle | EDT-039, EDT-021, EDT-022 | KEEP | 1.0 baseline | QA-002/004/005 |
+| F.4-06 | Basic accessible interactions: click/hover/focus/active/submit/scroll/load/timer/open-close/navigation/show-hide/toggle | EDT-039, WEB-032, SEC-005 | KEEP | 1.0 baseline | QA-002/004/005 |
 | F.4-07 | Advanced state machines/timeline/keyframes remain separately scoped; reduced motion, keyboard/focus, valid actions and performance are required | EDT-039, EDT-040, WEB-032, SEC-005, OPS-008 | EXPAND | 1.0 reduced-motion baseline; advanced motion 2.0 | QA-004/005/008 |
 
 **Batch 5 result:** 28 source requirements mapped for F.1–F.4. Structural checks must confirm each referenced ID exists in §24; source-bullet completeness and runtime behavior remain separate gates.
@@ -2643,11 +2643,11 @@ The short decision record must name the problem and acceptance criteria; existin
 | Forráskulcs | Megőrzött követelmény | Canonical current ID | Döntés | Célfázis | QA-horgony |
 |---|---|---|---|---|---|
 | F.5-01 | Content Manager ideas/drafts/scripts/title/description/tags/thumbnail/platform/date/campaign/approval | CNT-009–CNT-016, CAM-001 | EXPAND | 1.5–2.0 | QA-002/004 |
-| F.5-02 | VOD ingestion/category, clips/Shorts, calendar, platform metadata variants, publish queue/external IDs/dedupe | CNT-001–CNT-007, CNT-009–CNT-015, CNT-018 | DEFER/EXPAND | 1.5–2.0 | QA-002/003/006 |
-| F.5-03 | Twitch OAuth/live/channel/game/permitted metrics/VOD/clips/events/sync diagnostics | INT-003–INT-012, INT-017, INT-020, LIV-001–LIV-007, CNT-002–CNT-004 | KEEP/EXPAND | 1.0 core; advanced content later | QA-002/003/006 |
-| F.5-04 | YouTube channel/video/Shorts/available analytics/quota/scope/fallback | INT-013, ANL-004, CNT-002, CNT-003 | DEFER | 1.5+ provider-gated | QA-002/003/008 |
-| F.5-05 | TikTok account-capability-gated profile/content with rate-limit/manual fallback | INT-014, CNT-002, CNT-003, INT-008, INT-009 | DEFER | 1.5+ provider-gated | QA-002/003/008 |
-| F.5-06 | Discord link baseline; bot/role/status and Kick/OBS/email/payment/commerce adapters have own contracts | INT-015, COM-001, SUP-006, OBS-001–OBS-010, STO-001–STO-020, INT-021 | DEFER/EXPAND | 1.0 links; integrations later | QA-002/003/008 |
+| F.5-02 | VOD ingestion/category, clips/Shorts, calendar, platform metadata variants, publish queue/external IDs/dedupe | CNT-001–CNT-007, CNT-009–CNT-017 | DEFER/EXPAND | 1.5–2.0 | QA-002/003/006 |
+| F.5-03 | Twitch OAuth/live/channel/game/permitted metrics/VOD/clips/events/sync diagnostics | INT-001, INT-003–INT-012, INT-017–INT-020, LIV-001–LIV-007, CNT-002–CNT-004 | KEEP/EXPAND | 1.0 core; advanced content later | QA-002/003/006 |
+| F.5-04 | YouTube channel/video/Shorts/available analytics/quota/scope/fallback | INT-001, INT-006, INT-008/009, INT-013, INT-018, INT-020, ANL-004, CNT-002/003 | DEFER | 1.5+ provider-gated | QA-002/003/008 |
+| F.5-05 | TikTok account-capability-gated profile/content with rate-limit/manual fallback | INT-006, INT-008/009, INT-014, INT-018, INT-020, CNT-002/003 | DEFER | 1.5+ provider-gated | QA-002/003/008 |
+| F.5-06 | Discord link baseline; bot/role/status and Kick/OBS/email/payment/commerce adapters have own contracts | INT-015/016, INT-018, INT-021, COM-001, OBS-001–OBS-010, STO-001–STO-020 | DEFER/EXPAND | 1.0 links; integrations later | QA-002/003/008 |
 | F.5-07 | Normalize provider data; outage fallback; never invent missing metrics | INT-001, INT-018, INT-020, LIV-002, DYN-005, ANL-008 | KEEP | 0.x–1.0 baseline | QA-002/003/006 |
 | F.6-01 | Canonical Schedule fields, lifecycle, recurrence, source and external-ID mapping | SCH-001–SCH-015, RES-013 | EXPAND | 1.0 core; advanced recurrence phased | QA-002/004 |
 | F.6-02 | Schedule list/calendar/upcoming/past/search/filter/sort and lifecycle states | SCH-002, SCH-005, SCH-006, SCH-010 | EXPAND | 1.0 baseline | QA-002/004 |
@@ -4611,3 +4611,15 @@ A C.23.22-01–07 mind a hét történeti sor megmaradt, és a célzott szerződ
 - **F.4-06 — basic interactions:** removed QA-004/005 from the feature-ID cell and added `EDT-039` for the canonical action registry. QA references remain solely in the QA-anchor column.
 - **F.4-07 — advanced interaction/motion gate:** removed `QA-005` from the feature-ID cell; mapped valid actions/safe output to `EDT-039`, `WEB-032` and `SEC-005`, with `EDT-040` for motion and `OPS-008` for performance.
 - **Evidence boundary:** seven F.4 mapping rows were corrected using the preserved source bullet and registry definitions. No public runtime or provider tests were run. F.4 remains open for full semantic review; F.5–F.13 and original-source recovery remain open. P0.2 stays **IN PROGRESS / NOT PASS**.
+
+
+### 41.3.64. P0.2 — F.4 interaction ownership and F.5 content/provider capability mapping review (2026-10-14)
+
+- **F.4-06 — basic accessible interactions:** narrowed the feature mapping to `EDT-039` (canonical interaction/action registry), `WEB-032` (safe public rendering) and `SEC-005` (sanitization/safe embeds). Inspector property/schema IDs did not directly own the public interaction lifecycle; QA-004/005 remain in the QA column.
+- **F.5-02 — content production lifecycle:** added `CNT-017` short-form export preparation and removed `CNT-018` transcript/chapter/highlight suggestions, which is a separate later capability and not a direct owner of the listed ingestion/calendar/publish-queue workflow.
+- **F.5-03 — Twitch integration:** added the canonical adapter, capability registry and secret-redaction/audit contracts alongside OAuth, token, site binding, scope, event, live/schedule, VOD/clip and diagnostic IDs. Provider data is not enabled merely because a UI block exists.
+- **F.5-04 — YouTube:** expanded the mapping to include connection-scope, retry/quota, capability and diagnostic contracts; the prior mapping named the adapter and analytics/content but omitted the source bullet's quota/scope/fallback behavior.
+- **F.5-05 — TikTok:** added scope, capability-registry and diagnostics coverage to the existing rate-limit/retry/content references; TikTok support remains capability- and account-scope-gated.
+- **F.5-06 — Discord/Kick/OBS/email/payment/commerce:** added the explicit Kick adapter and shared capability registry, removed the unrelated entitlement-lifecycle ID as a proxy for general adapter support, and retained dedicated OBS/store contracts plus the canonical community-link baseline.
+- **F.5-07 — provider normalization/fallback:** confirmed the mapping already covers adapter contract, capability registry, diagnostics, freshness, shared state handling and analytics missing-data semantics; no ID change was required.
+- **Evidence boundary:** the source text and historical keys remain intact. This is a mapping/registry review, not evidence that YouTube, TikTok, Discord, Kick, OBS, email or commerce integrations are implemented or authorized. No provider runtime tests were run. F.5 remains open; F.6–F.13 and original-source recovery remain open. P0.2 stays **IN PROGRESS / NOT PASS**.
