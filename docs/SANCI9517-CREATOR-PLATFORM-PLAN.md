@@ -6814,6 +6814,18 @@ A `0004_system_page_content.sql` történeti táblát hoz létre, míg a `0005_c
 
 **Nyitott kapu:** teljes repo-hivatkozáskeresés, dinamikus import/URL-ellenőrzés, asset-manifest és közvetlen URL audit, typecheck + Editor/Admin/Schedule tesztek, böngésző- és publikálási regresszió. **IN PROGRESS / NOT PASS**. Nincs implementációs vagy archiválási engedély ebből a statikus vizsgálatból.
 
+### 63.50.13. Legacy Editor hivatkozáskeresés — aktív belépési pontok (2026-10-14)
+
+**Vizsgált:** `v2/foundation` `0b3c38c` fa (194 bejegyzés), `src/index.ts`, `public/admin-home.html`, `public/visual-page.html`, `public/assets/{page-builder,system-page-editor,site,page-renderer,system-page-runtime}.js`, `package.json`, `tests/admin-home-contract.test.js` és a korábbi 63.50.12 Editor v2 import-részgráf. **Mintavételes, célzott szöveges ellenőrzés**, nem teljes repo-szintű, minden bájtra kiterjedő keresés.
+
+- Az ellenőrzött Worker-route `/admin/editor` → `/editor-v2/index.html`; a `tests/admin-home-contract.test.js` ezt forrásszöveg-szinten ellenőrzi, de ebben a körben nem futott.
+- A `package.json` `test:editor` és `test:schedule` parancsai v2 tesztfájlokra mutatnak; nem bizonyítanak böngésző-regressziót.
+- A célzottan megvizsgált nem-legacy aktív forrásokban nem azonosítottunk `/editor/`, `admin-editor-v2` vagy legacy `preview.html` függést. Ez **nem** bizonyítja, hogy minden repo-fájl, történeti bookmark, mentett adat vagy dinamikus hivatkozás mentes ezektől.
+- A `public/editor/preview.html` továbbra is saját legacy renderert és régi visszalinket tartalmaz; a teljes `public/editor/` könyvtár archiválása **nem engedélyezett** további függőségi, publikus URL-, kompatibilitási és futó regressziós bizonyíték nélkül.
+- A `public/assets/page-builder.js`, `system-page-editor.js` és kapcsolódó assetek külön osztályozást igényelnek: pusztán a legacy Editor útvonalra mutató direkt hivatkozás hiánya nem teszi őket használaton kívülivé.
+
+**Következő kapu:** teljes szöveges/AST referenciaindex a repository összes aktív forrásán, közvetlen statikus URL-ek és kompatibilitás ellenőrzése, typecheck, tesztek, Worker build, böngészőben draft/preview/publish/rollback és Schedule regresszió. **IN PROGRESS / NOT PASS; sem törlés, sem runtime-módosítás nem történt.**
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
