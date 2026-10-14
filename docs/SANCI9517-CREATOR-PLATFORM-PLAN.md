@@ -2970,7 +2970,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Adatminőség:** forrás, utolsó frissítés, becslés/valós adat, hiányzó és nem összehasonlítható metrikák jelzése.
 - **Tartalomelemzés:** videó/clip összehasonlítás, megtartás és elérhető watch-time, publikálási idők, tesztelt variánsok.
 - **Célok és kísérletek:** célkitűzés, mérföldkő, kísérlet, eredmény és következő javaslat.
-- **SEO/AEO és webanalitika:** keresési láthatóság, oldalmegtekintés, konverzió, kampány-UTM, adatvédelmi beállítások.
+- **SEO/AEO és webanalitika:** SEO teljesítménymutatók, keresési láthatóság, oldalmegtekintés, konverzió és kampány-UTM; canonical/robots/redirect metadata a WEB/SEO_PUBLICATION domain tulajdona.
 - **Export és jelentés:** CSV/JSON, időszakos riport, forrásmegjelölés és csapatnak megosztható összefoglaló.
 
 ### 49.14. Automatizációk
@@ -2996,7 +2996,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 **Tulajdonosi határ:** a SEARCH domain a jogosultság- és site-scope szerint szűrt keresési index gazdája; a találat mindig a kanonikus domainrekordra navigál.
 - **Globális kereső:** oldalak, assetek, tartalmak, termékek, kapcsolatok, workflow-k és beállítások keresése a felhasználó engedélyei szerint.
 - **Command palette:** billentyűzetes műveletindítás és gyors navigáció; minden parancs a célmodul kanonikus műveletét hívja.
-- **Mentett nézetek:** szűrők, oszlopok, listanézetek, kedvencek és legutóbbi elemek felhasználói preferenciával.
+- **Mentett keresési/listanézetek:** szűrők, oszlopok, kedvencek és legutóbbi elemek; dashboard elrendezési preferenciái a SETTINGS domainben maradnak.
 - **Indexfrissesség:** permission/site-váltás, törlés és domainmódosítás után index/cache invalidálás; stale állapot látható.
 
 ### 49.17. Értesítési központ
@@ -3014,13 +3014,13 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Hibaelhárítás és feedback:** emberi nyelvű magyarázat, diagnosztikai azonosító, support/feedback út; érzékeny adatot automatikusan redaktálni kell.
 
 ### 49.19. Beállítások, biztonság és adat
-- **Profil és workspace:** nyelv, időzóna, dátum/pénznem, preferenciák, site/domain és márka.
-- **Felhasználók és jogosultságok:** owner/admin/editor/moderator/analyst/commerce szerepek, modulonkénti és műveletenkénti engedély.
+- **Profil és személyes preferenciák:** nyelv, időzóna, dátum/pénznem, accessibility és privacy preferenciák; aktív workspace/csapatkezelés a 49.22 modulhoz tartozik.
+- **Jogosultsági policy és audit:** szerep-/műveletjogok szerveroldali szabályai; csapattag-meghívás és szerepkiosztás a 49.22 modulban történik.
 - **Biztonság:** session, eszközök, jelszó/SSO későbbi támogatása, 2FA, rate limiting, secret rotation és gyanús aktivitás.
 - **Adatkezelés:** export, törlés, retention, consent, cookie/adatvédelmi beállítások, adatfeldolgozók.
 - **Biztonsági mentés:** konfiguráció és tartalom export, visszaállítási próba, verziózott backup és disaster recovery.
 - **Állapot és naplók:** health, background job, queue, API-kvóta, hibák, események, auditálható adminműveletek.
-- **Díjcsomag és használat:** későbbi SaaS-plan, usage, billing, limit, számla és szolgáltatói költség.
+- **SaaS csomag és használat:** csak összefoglaló/hivatkozás; a plan, usage, quota, billing és számla lifecycle kanonikus tulajdonosa a 49.22 modul.
 
 ### 49.20. Fejlesztői platform és API — későbbi platformfázis
 - **Dokumentált API:** verziózott endpointok, schema, hibakódok, auth és deprecation policy.
@@ -4023,7 +4023,7 @@ Az alábbi táblázat a 54. fejezet első négy témacsoportjának minden checkb
 | 54.1 | Egységes Admin shell, oldalsáv, almenük, breadcrumbs, mobil navigáció | ADM-001, ADM-010 | Navigációs keret és mobil viselkedés. |
 | 54.1 | Áttekintő kártyák: weboldal, live, adásrend, kapcsolatok, tartalom, feladatok | ADM-002; LIV-007, SCH-009, INT-002, CNT-013 hivatkozás | Dashboard összesít; az egyes domainállapotok tulajdonosa változatlan. |
 | 54.1 | Gyorsműveletek és legutóbbi aktivitás | ADM-003, ADM-005 | A gyorsművelet a kanonikus domain-parancsot hívja. |
-| 54.1 | Teendők, figyelmeztetések, hibák és elakadt folyamatok | ADM-004, ADM-012, INT-008, AUT-008, OPS-003 hivatkozás | Egységes felszín, forrásonkénti tulajdonos. |
+| 54.1 | Teendők, figyelmeztetések, hibák és elakadt folyamatok | ADM-004, NTF-001–005, INT-008, AUT-008, OPS-003 hivatkozás | Egységes felszín, forrásonkénti tulajdonos. |
 | 54.1 | Globális kereső, command palette, kedvencek, legutóbbi elemek | SEARCH-001–005, ADM-006 | A keresési index nem válhat új domain-adatforrássá. |
 | 54.1 | Kontextuális súgó, onboarding, üres állapotok és emberi nyelvű hibák | ADM-008, ADM-011, HELP-001–004 | A hibaállapotot a közös komponens mutatja, a súgó és onboarding tartalma a HELP_CENTER tulajdona. |
 | 54.1 | Értesítési központ, prioritások, digest és csendes időszak | NTF-001–005, ADM-012 | Közös értesítési preferenciák és kézbesítési állapot. |
