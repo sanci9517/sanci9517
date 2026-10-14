@@ -342,7 +342,7 @@ Közös funkciók:
 - Inventory, fulfillment provider, shipping/tax abstraction.
 - Product listing/detail/search/filter/cart/checkout integration/order confirmation.
 - Order list/detail, payment/fulfillment state, cancel/refund/tracking.
-- Coupon, gift card, campaign, bundle, promotion and expiry.
+- Kupon, ajándékkártya, bundle, árpromóció és lejárat; a B2B kampány és affiliate-attribúció a 3.12/3.15 üzleti kampányfolyamataival kapcsolódik össze, de nem a Store tulajdonolja.
 - Purchase → entitlement → secure digital delivery/download.
 - Külső fulfillment adapter; provider és saját készlet nem írhatja felül egymást tisztázatlan szabállyal.
 - Pénzügyi művelet idempotens és auditált.
@@ -3681,7 +3681,7 @@ Az ellenőrzés a MASTER aktuális repository-változatára vonatkozik; nem jele
 
 - [x] A számozott főfejezetek 0–63 között folytonosak, hiányzó főfejezetszámot nem találtunk; a 62. fejezet a világszintű termékképességeket és minőségi szerződést egészíti ki.
 - [x] Az aktuális dokumentumellenőrzésben nem találtunk azonos című, duplikált Markdown-fejezetcímet.
-- [x] A 3. fejezet domain-felelősségeit a kanonikus 16 modulhoz rendeltük; a 46.1. menülistát a 49. fejezet modulstruktúrájához igazítottuk.
+- [x] A 3. fejezet domain-felelősségeit a 49. fejezet 20 kanonikus főmoduljához rendeltük; a 46.1. alfejezetet második menülista helyett navigációs UX-szabályokra állítottuk át.
 - [x] A 9. fejezet P1–P22 munkacsomagjait a 41.2. F0–F11 végrehajtási sorrendhez rendeltük a 63.5. leképezéssel.
 - [x] A F0 core media/resource feladat és az F2 teljes Resource Registry/Design System határát különválasztottuk.
 - [ ] A teljes termékfunkciók közötti szemantikai duplikáció- és függőségellenőrzés még nem teljes; a szerkezeti ellenőrzés nem helyettesíti.
