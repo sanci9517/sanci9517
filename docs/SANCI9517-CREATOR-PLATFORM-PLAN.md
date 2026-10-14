@@ -5028,7 +5028,7 @@ A kanonikus terv legutóbbi GitHub-változatán végzett statikus szöveg-/azono
 
 **Aktuális aktív pont:** PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY.
 
-**Állapot: IN PROGRESS / NOT PASS.** A 63.40 gépi lefedettségi auditja megállapította: a 396/396 ID szerepel egyedi-ID-s bizonyítékmátrixban, de ez nem helyettesíti a 26.1 szerinti teljes funkciókártyát. A kártyák fokozatos, bizonyíték-alapú kitöltése folyik; az első pilotot a 63.41 rögzíti. Ez dokumentációs munka, nem implementációindítás. A végső PASS csak a teljes történeti és szemantikai audit, a funkciókártya-kapu és a 63.1–63.3 feltételek bizonyítása után adható meg.
+**Állapot: IN PROGRESS / NOT PASS.** A 63.40 gépi lefedettségi auditja megállapította, hogy a 396/396 ID-s mátrix nem helyettesíti a 26.1 szerinti teljes funkciókártyát. Az EDT-001–044 első bővített kártyavázlatai a 63.41–63.46 fejezetben elkészültek; a 63.47 mezőminőségi audit szerint még nem teljesítik a 25. fejezet minden státuszmezőjét és a 26.1 minden külön mezőjét. Következő lépés: a 44 EDT-kártya teljes mezőnormalizálása, utána azonos eljárás a WEB ID-kkal. Ez dokumentációs munka, nem implementációindítás. A végső PASS csak a teljes történeti és szemantikai audit, a funkciókártya-kapu és a 63.1–63.3 feltételek bizonyítása után adható meg.
 
 ### 63.40. Funkciókártya-mezők gépi lefedettségi auditja — 396 ID, 2026-10-14
 
@@ -5783,4 +5783,24 @@ Az alábbi rövidített kártyák mindegyike név szerint lefedi a 26.1 kötelez
 - **Státusz / ismert probléma / következő lépés:** OPEN / UNVERIFIED; owner/scope/API és preference lifecycle döntés.
 
 **Szeletzárás:** EDT-034–044 mezőszintű szerződései elkészültek, de több acceptance blokkoló maradt, különösen public renderer parity, keyboard/accessibility, page-local interaction, reduced motion, templates és preferences. Következő lépés: a 63.46 mező-/dependency-ellenőrzése, majd az EDT modul teljes kártyáinak konszolidált állapotellenőrzése; ezután térünk át a WEB modulra.
+
+### 63.47. EDT-001–044 kártyaminőségi ellenőrzés — bővített vázlat, nem teljes kártya
+
+A 63.41–63.46 fejezetekben elkészült 44 Editor-kártyán gépi ellenőrzés futott. Minden kártyán megvan a felhasználói eredmény, belépési pont/művelet, owner/adatforrás, schema/invariants, permission, API/command, dependencies, UI state, security/privacy, tests, acceptance, evidence, rollback és status/issue/next action összefoglaló. Az ID-hivatkozások feloldhatók a 396-os kanonikus ID-jegyzékben.
+
+**Ez azonban még nem teljes 25/26.1 megfelelés.** A kártyák több mezőt összevont címke alatt tartalmaznak, ezért az alábbiak nem minden ID-nál külön, strukturált mezőként vannak kitöltve:
+
+- A 25. fejezetből: **Phase/priority, Menu/surface, Implementation point, Negative tests, Live/user acceptance, Known issues**.
+- A 26.1-ből: **ID és név** külön kártyamezőként; **Belépési pont** és **Műveletek** külön; **Domain owner** és **Kanonikus adatforrás** külön; továbbá a különálló státusz, ismert probléma és következő lépés.
+- A negatív teszt és a live/user acceptance nem helyettesíthető az általános elfogadási forgatókönyvvel. Ha nincs bizonyíték, az érték explicit **UNVERIFIED / OPEN** legyen, ne üres és ne feltételezett PASS.
+
+| Minőségellenőrzés | Eredmény | Döntés |
+|---|---|---|
+| EDT-001–044 részletes vázlat létezik | 44/44 | A vázlatok megtartandók, nem kell újraírni őket a semmiből. |
+| Alap mezőcsoportok és ID-hivatkozások | 44/44 gépileg ellenőrzött | Nincs feloldatlan funkció-ID hivatkozás a vizsgált kártyákban. |
+| 25. fejezet összes státuszmezője külön kitöltve | NEM IGAZOLT | Teljes mezőnormalizálás szükséges. |
+| 26.1 összes mezője külön kitöltve | NEM IGAZOLT | A mezőket szét kell választani és ID-nként explicit módon rögzíteni. |
+| Teljes funkciókártya PASS | 0/44 bizonyított | Minden kártya IN PROGRESS / UNVERIFIED marad a szükséges evidence-ig. |
+
+**Kötelező következő lépés:** előbb normalizálni kell a meglévő 44 EDT-kártyát a teljes, külön mezős sablonra, és csak utána bővíteni a WEB modult. Ez elkerüli, hogy 396 funkción keresztül ugyanazt a mezőhiányt másoljuk tovább. A kanonikus aktív pont továbbra is PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY; F0 implementációs kapu nem nyílt meg.
 
