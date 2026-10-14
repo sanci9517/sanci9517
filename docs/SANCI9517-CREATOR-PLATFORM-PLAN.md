@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.62` — **156/156 soronkénti domain/fázis/pozitív-negatív specifikációs acceptance** rögzítve (63.50.59–62); **következő: teljes szemantikai gap/duplikált owner/fázis és HIGH publish/slug forráskód-tesztkapu audit**; történeti és runtime evidence továbbra is nyitott, különös tekintettel a 63.50.46 HIGH publikálási konfliktusra. A 156 első körös routing kész, de szemantikai és történeti kapu továbbra is nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll és a 63.50.46 HIGH kódaudit-blokkoló ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.64` — **156/156 specifikációs acceptance**, 63.50.63–64: publikálási/HTTP/SEO 10 tételes forráskód-eltérés és 15 UNRUN regressziós teszt, valamint site/role/ownership 8 tételes forráskód-audit; **következő: crosswalk szemantikai gap-ek, public render és admin navigation kódfogyasztók, történeti hiányzó források**; történeti és runtime evidence továbbra is nyitott, különös tekintettel a 63.50.46 HIGH publikálási konfliktusra. A 156 első körös routing kész, de szemantikai és történeti kapu továbbra is nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll és a 63.50.46 HIGH kódaudit-blokkoló ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -7208,7 +7208,7 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 5. Minden sikeres audit-commit után a fejléc folytatási állapotát és a legutolsó bejegyzést egyeztetni; a következő munka **egyértelmű azonosítóval**, a még nyitott részhalmazzal és a PASS/NOT PASS határral legyen megadva. A commit SHA csak a GitHub által visszaadott tényleges eredmény alapján közölhető.
 6. Nem létező vagy nem visszanyert történeti forrást nem lehet rekonstruáltnak nevezni; a 396 ID, 22 modul, 156 review és 271 történeti H-ID számlálása nem runtime teszt. A fejlesztési fagyasztás az aktív kapu PASS-áig változatlan.
 
-**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.62 156/156 ITEM ACCEPTANCE SPEC / NEXT SEMANTIC GAP AND CODE GATE`. A 54.1–54.4 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.7–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
+**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.64 SOURCE VERIFIED PUB/OWN / NEXT CROSSWALK AND CONSUMERS`. A 54.1–54.4 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.7–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
 
 ### 63.50.41. 54.2 Saját weboldal és Visual Editor: 15 checklist-tétel első körös routingja (2026-10-14)
 
@@ -7821,6 +7821,74 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 **Összesen:** 41/41 új sor; 54.1–54.16 **156/156 sor** most tételes domain, F-fázis, pozitív és negatív *specifikációs* acceptance mezővel szerepel a 63.50.59–62 fejezetben. A 63.50.39–56 ID-routing külön megőrzött; a 63.12–15 eredeti tételes megfeleltetés továbbra is irányadó a meglévő ID-k szempontjából. A forráskód, test, browser, CI, éles runtime bizonyíték **nem** keletkezett ettől a dokumentálástól. A 271 történeti H-ID szemantikai auditja és 00/A / 00.9.6.B forrás **OPEN**.
 
 **Következő audit:** a 156 tétel között *bizonyítható szemantikai gap*, duplikált owner, elcsúszott F-fázis és a HIGH publish/slug kódblokk konkrét forráskód/test gate ellenőrzése. A teljes terv továbbra is IN PROGRESS / NOT PASS; a fejlesztés fagyasztott.
+
+### 63.50.63. Második kör VII: publikálási állapotgép és HTTP/SEO szerződés — forráskód-újraellenőrzés (2026-10-15)
+
+**Auditált HEAD:** `290fa1a823d8513f7100829b2f128436e7a5274e`. **Konkrét forrás:** `src/routes/admin/pages.ts`, `src/routes/admin/editor.ts`, `src/routes/public/pages.ts`, `src/index.ts`, `src/core/editor-validation.ts`, `src/core/page-model.ts`, `public/visual-page.html`, `public/assets/page-renderer.js`, `migrations/0005_canonical_page_storage.sql`, `migrations/0017_site_ownership_not_null.sql`. **Bizonyítékszint:** STATIC SOURCE VERIFIED; nincs helyi/CI/browser/D1 runtime teszt, sem új migráció vagy éles módosítás.
+
+| Azonosító | Forrásból ellenőrzött tény | Következmény / negatív journey | Kapu |
+| --- | --- | --- | --- |
+| PUB-01 HIGH | `pages.ts` PATCH `contentChanged && existing.is_published` esetén `published_content_json` és `published_revision_id` értékét azonnal átírja; nincs `validatePublishDocument` és explicit publish action | Publikált v1 + mentetlen/draft v2 + CMS cím/slug módosítás → v2 váratlanul élesbe kerülhet | BLOCK |
+| PUB-02 HIGH | `pages.ts` POST `isPublished: true` esetén azonnal publikálja az initial JSON-t; csak `canonical()` shape-check van, `validatePublishDocument()` nincs | Új, strukturálisan hibás dokumentum validált publish gate nélkül kerülhet publikus snapshotba | BLOCK |
+| PUB-03 HIGH | `pages.slug/title/description` közös draft/public mező; `publicPagesRoute.mapPage()` ezekből képezi a publikus metaadatokat, nem a publikált snapshot metaadataiból | Draft slug/title módosítás publikált URL-t és címkéket változtathat explicit publish nélkül | BLOCK |
+| PUB-04 HIGH | `src/index.ts` minden `/p/<slug>` kérést `visual-page.html` assetre továbbít, az API 404 csak később a böngésző JS-ben látható | Nem létező/unpublished slug HTTP 200 shellt adhat; kereső/crawler státusz hibás | BLOCK |
+| PUB-05 HIGH | `visual-page.html` fix `robots=index,follow`, statikus title; `page-renderer.js` a title-t kliensoldalon állítja; `preview=1` azonos shellt kap | Preview/crawler noindex és server-visible canonical/OG/description nincs bizonyítva | BLOCK |
+| PUB-06 MEDIUM | `adminEditorRoute` POST csak `publish=true` esetén futtatja a `validatePublishDocument` ellenőrzést, de `pages.ts` POST/PATCH nem ugyanazt a kaput használja | Több publish belépési út eltérő validációval; közös domain command hiányzik | BLOCK |
+| PUB-07 MEDIUM | `adminEditorRoute` POST/PATCH revision `expectedVersion` opcionális; hiányában `null` és konfliktusvédelem kimarad | Két editor kliens felülírhatja egymást, ha nem ad expectedVersion-t | OPEN |
+| PUB-08 MEDIUM | `pages.ts` DELETE fizikai `DELETE FROM pages` + sorrend-átrendezés; nincs archív/tombstone/redirect/dependency check | Publikált oldal törlése megtöri hivatkozásokat és FK cascade revision historyt | OPEN |
+| PUB-09 MEDIUM | `0017` `pages.slug TEXT NOT NULL UNIQUE` globális; `site_id` külön FK, de nincs `UNIQUE(site_id,slug)` | Több-site esetén azonos slug ütközik; tenant scope követelménnyel eltérés | OPEN |
+| PUB-10 MEDIUM | `publicPagesRoute` preview editor szerephez kötött, de a preview API válaszán és HTML shellen nincs önálló no-store/noindex/vary szerződés igazolva | Preview cache/index leak elleni HTTP acceptance hiányzik | OPEN |
+
+**Kötelező kanonikus döntés F0 implementáció előtt (nem eldöntött migráció):**
+1. **Egyetlen publication domain command:** saveDraft, publishValidatedRevision, unpublish, rollbackToDraft, archive; az Admin Pages és Editor ugyanazt hívja. `isPublished=true` CREATE sem kerülheti meg a validációt.
+2. **Published snapshot nem változhat draft mentéskor:** title, description, slug és SEO mezők draft/published elválasztása, publikált revision metadata alapján történő public read; published URL reservation és collision policy.
+3. **Migrációs terv:** előbb read-only D1 schema/adat előellenőrzés (published revision linkek, JSON canonical, slug uniqueness, site ownership), backup/restore próba; additív schema/backfill és dual-read kompatibilitás; FK ciklus miatt migration sorrend és rollback terv; utána route átállítás. **Nincs most DB write.**
+4. **HTTP/SEO:** szerveroldali slug feloldás az asset shell előtt, valódi 404/410, 301/308 redirect vagy explicit policy; preview 401/403/noindex/no-store; publikus 200 csak valóban publikált rekordnál; canonical, title, description, OG, sitemap, robots és cache invalidation publikált snapshotból.
+5. **Konkurencia:** kötelező expectedVersion vagy szerveroldali CAS, külön draft/published revision id; race/duplicate slug/permission/site-scope negatív tesztek.
+6. **Törlés:** archive/unpublish/redirect/dependency map; hard delete csak külön jóváhagyott recovery/retention szabállyal.
+
+**Minimális regressziós tesztmátrix (mind UNRUN):**
+
+| Teszt | Kiindulás / akció | Kötelező eredmény |
+| --- | --- | --- |
+| T01 | v1 published; v2 draft save | Public v1, editor v2 |
+| T02 | v1 published; v2 draft; CMS title PATCH | Public v1 title és content; preview v2 |
+| T03 | v1 published; CMS slug PATCH | Régi published URL v1, új draft URL nem public |
+| T04 | Invalid Page Model + admin pages create `isPublished=true` | 4xx, nincs public snapshot |
+| T05 | Invalid draft + Admin Pages PATCH published | 4xx vagy draft-only, semmi implicit publish |
+| T06 | Explicit publish valid v2 | Public v2, snapshot és published revision együtt |
+| T07 | Explicit publish invalid schedule/hierarchy | 409, published v1 megmarad |
+| T08 | Editor rollback v1 | Draft v1, public v2 marad amíg explicit publish |
+| T09 | Unpublish + `/p/slug` GET | Valódi HTTP 404/410 és noindex policy |
+| T10 | Nem létező slug, malformed URL, legacy redirect | HTTP 404/redirect, nem 200 shell |
+| T11 | Preview authenticated/unauthenticated, cache, robots | Csak editor 200; más 401/403; no-store/noindex |
+| T12 | Concurrent PATCH/POST stale revision | 409, nincs lost update |
+| T13 | Két site azonos slug; idegen site request | Site scoped slug; idegen rekord 404/403 |
+| T14 | Published page archive/delete linked nav/assets | Dependency warning és recovery; nincs silent cascade |
+| T15 | Public page SEO/crawler fetch és sitemap | SSR-visible metadata/canonical/OG, unpublished kizárva |
+
+**Különbség a 63.50.46-hoz képest:** PUB-02 (CREATE bypass), PUB-07 (opcionális CAS), PUB-08 (hard delete) és PUB-09 (globális slug unique) új, konkrétan ellenőrzött forráskód-határok; PUB-01/03/04/05 megerősített korábbi release blokkolók. Semmi nem lett implementáltnak jelölve. **F0 CODE/PUBLICATION GATE: FAIL / IMPLEMENTATION FROZEN.**
+
+### 63.50.64. Második kör VIII: site, szerep, adatforrás és domain-határ — forráskód-eltérésjegyzék (2026-10-15)
+
+**Forrás:** `src/core/site-context.ts`, `src/core/auth/require-auth.ts`, `src/routes/admin/settings.ts`, `src/routes/public/site-settings.ts`, `src/routes/admin/pages.ts`, `src/routes/public/pages.ts`, `migrations/0001_initial_schema.sql`, `migrations/0017_site_ownership_not_null.sql`, valamint 5. és 63.20 domain/owner tábla. A jövőbeli F11 workspace nem követel teljes SaaS megvalósítást F0-ban; viszont a ma aktív műveletek scope-jának helyesnek kell lennie.
+
+| Azonosító | Tény | Tervbeli következmény | Kapu |
+| --- | --- | --- | --- |
+| OWN-01 | `getCanonicalSiteContext()` állandó `site-default`-ot ad; nincs request/session alapú site választás | Egy site jelenleg tudatos baseline; több-site switching és tenant isolation nem igazolt | OPEN F4/F11 |
+| OWN-02 | `require-auth.ts` user role csak `admin/editor/viewer`; nincs owner/moderator/analyst/commerce vagy per-site membership | 54.15#2 célmodell későbbi; nem szabad F0 késznek állítani | OPEN F4/F11 |
+| OWN-03 | `site_settings` kulcs `site` globális, `adminSettingsRoute` és `publicSiteSettingsRoute` ugyanazt olvassa | Site scope migráció szükséges multi-site előtt, public-safe projection maradjon | OPEN F1/F11 |
+| OWN-04 | `0017` pages/media/schedule/social/twitch site_id NOT NULL FK; több aktuális pages lekérdezés `WHERE site_id=?` | Strukturális ownership baseline **létezik**, nem állítható, hogy nincs site_id | SOURCE VERIFIED BASELINE |
+| OWN-05 | `pages.ts` `editor_revisions` max(version) lekérdezése csak `page_id` szerint történik, előtte oldal site-scope ellenőrzött; `pages.ts` reorder neighbor `site_id` szerint | Nem bizonyított cross-site adatolvasás e konkrét útvonalon; konkurencia és reordering invariáns teszt szükséges | TEST OPEN |
+| OWN-06 | `pages.ts` `UPDATE pages SET sort_order=? WHERE id=?` reorder második statementje nem tartalmaz `site_id` feltételt | A page id globális PK és előzetes site-scope ellenőrzés mellett közvetlen exploit nem bizonyított; defense-in-depth site predicate javasolt | HARDENING OPEN |
+| OWN-07 | `publicPagesRoute` draft preview authenticated editor; public normál ág published snapshotot olvas | A preview role baseline létezik; noindex/cache és publikált metaadat eltérés külön HIGH hiba | PARTIAL |
+| OWN-08 | `0017` slug globális UNIQUE, `site_id` külön oszlop | F11 multi-site URL namespace döntés kell: site-domain+slug, unique(site_id,slug), redirect/canonical | OPEN |
+
+**Keresztmetszeti döntési sorrend:** (a) F0 single-site publikálás helyessége, (b) F1 site-scoped settings és permission contract, (c) F4 team/membership alap, (d) F11 több-site workspace/SaaS; sem `site-default` eltávolítása, sem teljes role modell előrehozása nem megengedett a fogyasztók és migráció auditja nélkül.
+
+**Külön tesztcsomag:** `owner/admin/editor/viewer` jelenlegi szerepek valós képességét a meglévő `admin/editor/viewer` baseline szerint kell tesztelni; jövőbeli szerepek **PLANNED**. Site ownership negatív route tesztek, settings public projection, OAuth token redaction, asset reference, revision site-scope, slug collision, multi-tab concurrency; a tesztek **UNRUN**.
+
+**Jelen állapot:** a 38 domain és 22 UI-modul szerkezete megvan a tervben, de ez nem 38 implementált domain. A 156 acceptance tervkártya nem bizonyít működő terméket. A 271 történeti tétel strukturális megfeleltetése sem zárja le a hiányzó eredeti forrásokat. **SEMANTIC/EVIDENCE GATE: NOT PASS.**
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
