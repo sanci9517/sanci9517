@@ -530,7 +530,8 @@ Product list/detail, price/variant/stock, checkout provider, digital entitlement
 | LOCALIZATION | Localization service | translation keys, locale-specific content, glossary, completeness status | Website, Settings, Content Studio, public |
 | SEO_PUBLICATION | SEO/publication metadata service | per-page metadata, canonical/robots policy, redirects, sitemap jobs | Website, Editor, public renderer |
 | FORM_SUBMISSION | Form/submission service | form schema, submissions, consent evidence, spam/review state | Website, Settings, Community/marketing where enabled |
-| NOTIFICATION | Notification service | notification, delivery attempts, preferences, digest/silent-period policy | Dashboard, Settings, modules |
+| NOTIFICATION | Notification service | notification, delivery attempts, preferences, digest/silent-period policy | Notification center, Dashboard, Settings |
+| HELP_CENTER | Help/onboarding service | help articles, glossary, onboarding progress, troubleshooting and feedback | Help center, Admin modules |
 | SEARCH | Permission-aware search/index service | derived searchable projections, index version and freshness | Admin global search, domain lists |
 | FAN_IDENTITY | Fan identity/community account service | fan profile, preferences, consent, export/delete lifecycle | Community, public/member areas |
 | STREAM_TOOLS | OBS/overlay service | pairing reference, overlay/widget config and version, authorized command history | OBS, Live Studio |
@@ -1559,6 +1560,26 @@ A Developer Platform az API-felhasználás, kulcsok, sandbox és creator által 
 - DEV-004: Sandbox workspace and safe test fixtures/events.
 - DEV-005: SDK/client libraries, integration examples and version compatibility.
 - DEV-006: Developer quotas, rate-limit visibility and API usage diagnostics.
+
+### 24.20. Globális keresés — SEARCH
+- SEARCH-001: Permission-aware global search over canonical domain projections.
+- SEARCH-002: Command palette and quick-action routing to canonical module commands.
+- SEARCH-003: Saved views, favorites, recent items and per-user list preferences.
+- SEARCH-004: Index freshness, permission/site invalidation and deletion propagation.
+- SEARCH-005: Module-scoped search filters and safe result snippets.
+
+### 24.21. Értesítési központ — NTF
+- NTF-001: In-app notification center, read/unread and source-module navigation.
+- NTF-002: Delivery channel adapters and truthful sent/delivered/failed states.
+- NTF-003: User preferences, digest, quiet hours and channel opt-in/out.
+- NTF-004: Idempotent event-to-notification mapping, deduplication and bounded retry.
+- NTF-005: Unsubscribe, retention and privacy-safe notification payload.
+
+### 24.22. Súgó és onboarding — HELP
+- HELP-001: Contextual help mapping to module/field and current feature limitations.
+- HELP-002: Interactive onboarding progress, skip/restart and role/site-scoped steps.
+- HELP-003: Searchable glossary, versioned documentation and canonical feature references.
+- HELP-004: Troubleshooting/feedback flow with diagnostic IDs and automatic sensitive-data redaction.
 
 ---
 
@@ -4003,9 +4024,9 @@ Az alábbi táblázat a 54. fejezet első négy témacsoportjának minden checkb
 | 54.1 | Áttekintő kártyák: weboldal, live, adásrend, kapcsolatok, tartalom, feladatok | ADM-002; LIV-007, SCH-009, INT-002, CNT-013 hivatkozás | Dashboard összesít; az egyes domainállapotok tulajdonosa változatlan. |
 | 54.1 | Gyorsműveletek és legutóbbi aktivitás | ADM-003, ADM-005 | A gyorsművelet a kanonikus domain-parancsot hívja. |
 | 54.1 | Teendők, figyelmeztetések, hibák és elakadt folyamatok | ADM-004, ADM-012, INT-008, AUT-008, OPS-003 hivatkozás | Egységes felszín, forrásonkénti tulajdonos. |
-| 54.1 | Globális kereső, command palette, kedvencek, legutóbbi elemek | ADM-006, ADM-011 | A keresési index nem válhat új domain-adatforrássá. |
-| 54.1 | Kontextuális súgó, onboarding, üres állapotok és emberi nyelvű hibák | ADM-008, ADM-011 | A hibaállapotot a közös komponens mutatja, a magyarázat a funkcióhoz kötött. |
-| 54.1 | Értesítési központ, prioritások, digest és csendes időszak | ADM-012 | Közös értesítési preferenciák és kézbesítési állapot. |
+| 54.1 | Globális kereső, command palette, kedvencek, legutóbbi elemek | SEARCH-001–005, ADM-006 | A keresési index nem válhat új domain-adatforrássá. |
+| 54.1 | Kontextuális súgó, onboarding, üres állapotok és emberi nyelvű hibák | ADM-008, ADM-011, HELP-001–004 | A hibaállapotot a közös komponens mutatja, a súgó és onboarding tartalma a HELP_CENTER tulajdona. |
+| 54.1 | Értesítési központ, prioritások, digest és csendes időszak | NTF-001–005, ADM-012 | Közös értesítési preferenciák és kézbesítési állapot. |
 | 54.1 | Valós adatfrissesség, loading/empty/error/stale/partial állapot | ADM-008, ADM-013 | UI-állapot és adatfrissesség külön is látható. |
 | 54.2 | Oldal CRUD, hierarchia, slug, átnevezés, duplikálás, archiválás és törlés | WEB-001, WEB-002, WEB-003 | Oldal-életciklus; függőségi figyelmeztetés kötelező. |
 | 54.2 | Navigáció, dropdown/nested menü, footer, mobilmenü, belső/külső link | WEB-009, WEB-010, WEB-011 | Kanonikus navigációs fa és globális layout. |
@@ -4123,7 +4144,7 @@ Az alábbi táblázat a 54. fejezet első négy témacsoportjának minden checkb
 | 54.11 | AI-elemzés hipotézisekkel, forrással és bizonytalansággal; nem garantált növekedési ígéret | AI-004, AI-012–013, AI-015–016, AI-018; ANL-008 | A javaslat forrásolt és nem garantál üzleti eredményt. |
 | 54.12 | Vizuális trigger → condition → action → branch modell | AUT-001–004, AUT-013 | A vizuális builder a workflow engine sémáját szerkeszti, nem saját runtime-ot. |
 | 54.12 | Triggerek: stream, platformesemény, schedule, tartalom, rendelés, tagság, webhook, időzítés | AUT-001–002, INT-017, LIV-006, SCH-001, CNT-001, STO-018, SUP-006 | Triggerforrások kanonikus domain eventjeiből; nem polling-másolatokból, ahol elkerülhető. |
-| 54.12 | Akciók: értesítés, draft, címke, export, overlay/OBS parancs, publikálási előkészítés | AUT-004, AUT-014, OBS-004, CNT-013, ADM-012 | Csak engedélyezett domain-command és scope alapján fut. |
+| 54.12 | Akciók: értesítés, draft, címke, export, overlay/OBS parancs, publikálási előkészítés | AUT-004, AUT-014, OBS-004, CNT-013, NTF-001–005 | Csak engedélyezett domain-command és scope alapján fut. |
 | 54.12 | Sablonok, verziózás, aktiválás/leállítás és jogosultság | AUT-010, AUT-013, SEC-002–003 | Változtatáskor verzió és audit; owner kontrollálja az aktiválást. |
 | 54.12 | Dry-run, preview, jóváhagyás, idempotency, rate limit, retry, timeout és napló | AUT-006–009, AUT-011, SEC-007 | Végrehajtás előtt szimuláció és permission check. |
 | 54.12 | Sikertelen ág, karantén, értesítés, kézi helyreállítás és rollback/kompenzáció | AUT-007–008, AUT-012, OPS-003, OPS-009 | Helyreállítható és auditált futási életciklus. |
@@ -4184,7 +4205,7 @@ Az alábbi táblázat a 54. fejezet első négy témacsoportjának minden checkb
 Az ellenőrzés a kanonikus terv aktuális GitHub-változatán futott. Eredmény:
 - A 54. fejezetben **156 checklist-tétel** van; a 63.12–63.15 táblázatokban **156/156** tételhez tartozik külön megfeleltetési sor.
 - A megfeleltetési sorokban használt stabil ID-k mind megtalálhatók a 24. fejezetben; a jelen ellenőrzésben nincs feloldatlan ID-hivatkozás.
-- A 24. fejezetben **382 stabil funkcióazonosító** szerepel, és az azonosítók egyediek.
+- A 24. fejezetben **396 stabil funkcióazonosító** szerepel, és az azonosítók egyediek.
 - A 49. fejezetben **22 egymást követő főmodul** szerepel 49.1–49.22 között; a média/erőforrás, fejlesztői API, bővítmény-piactér és csapat/SaaS külön főmodul.
 - A 54. fejezet normalizált, pontos szövegduplikáció-ellenőrzése korábban nem talált ismétlődő checklist-tételt.
 
@@ -4192,7 +4213,7 @@ Az ellenőrzés a kanonikus terv aktuális GitHub-változatán futott. Eredmény
 
 ### 63.17. Szemantikai duplikáció- és határvizsgálat — első kör
 
-A 24. fejezet 382 funkcióleírásán tokenhasonlósági előszűrés futott. Ez nem dönt automatikusan a duplikációról; a hasonló elnevezések kézi tulajdonosmodul-vizsgálatot indítanak. Az első körben az alábbi hasonlóságokat explicit határleírással oldottuk fel a stabil ID-k definíciójában:
+A 24. fejezet 396 funkcióleírásán tokenhasonlósági előszűrés futott. Ez nem dönt automatikusan a duplikációról; a hasonló elnevezések kézi tulajdonosmodul-vizsgálatot indítanak. Az első körben az alábbi hasonlóságokat explicit határleírással oldottuk fel a stabil ID-k definíciójában:
 
 - **INT-017 ↔ SEC-009:** provider webhook delivery/integráció vs. keresztmodulú biztonsági követelmény és negatív teszt.
 - **WEB-017 ↔ CNT-020; WEB-016 ↔ SCH-010:** publikus oldal/route-shell vs. kanonikus tartalom-/schedule projection.
@@ -4216,7 +4237,7 @@ A hasonló prefixű provider adapterek (például TikTok/Kick), különböző te
 
 ### 63.18. Hasonlósági előszűrés — fennmaradó külön képességek
 
-A 382 stabil ID leírásának második, név/token alapú előszűrésében fennmaradt magas hasonlóságok kézi osztályozása:
+A 396 stabil ID leírásának második, név/token alapú előszűrésében fennmaradt magas hasonlóságok kézi osztályozása:
 
 - **RES-006 / CNT-005 / STO-003:** hasonló taxonómiai műveletek, de eltérő kanonikus adattípusok (asset, content, product); az egyes definíciók kifejezetten kizárják a másik domain taxonómiájának birtoklását.
 - **DSN-008–DSN-011:** site-, page-, section- és component-template könyvtárak; külön alkalmazási szint, közös design/template infrastruktúra.
@@ -4274,11 +4295,11 @@ Ez a mátrix összeköti a 49. fejezet felhasználói moduljait az 5. fejezet ka
 | 49.21 Bővítmények, widgetek és piactér | EXTENSION | Manifest, install, permission, signature, compatibility és sandbox lifecycle. |
 | 49.22 Csapat, több site és SaaS | WORKSPACE, BILLING_PLAN | Workspace/team és SaaS plan/usage külön; nem azonos a Store ORDER vagy fan ENTITLEMENT állapottal. |
 
-**Ellenőrzés:** a jelenlegi 5. fejezet 37 domain-ID-ja mindegyikéhez kijelölhető a fenti főmodulok közül legalább egy kanonikus belépési pont. Ez a dokumentumon belüli felelősségi keresztmátrix; a tényleges kód, adatbázis, API és jogosultsági implementáció egyezését külön auditálni kell.
+**Ellenőrzés:** a jelenlegi 5. fejezet 38 domain-ID-ja mindegyikéhez kijelölhető a fenti főmodulok közül legalább egy kanonikus belépési pont. Ez a dokumentumon belüli felelősségi keresztmátrix; a tényleges kód, adatbázis, API és jogosultsági implementáció egyezését külön auditálni kell.
 
 ### 63.21. Funkciószintű készültségi szerződések — nyitott lezárási kapu
 
-A 24. fejezet jelenleg 382 egyedi funkcióazonosítót tartalmaz, a 54. fejezet 156/156 checklist-tétele a 63.12–63.15 táblázatokban azonosítóhoz van rendelve, és a 49. fejezet 20 főmodulját a 63.20 mátrix domain/adatgazdához köti. **Ezek a terv szerkezetét és keresztmegfeleltetését bizonyítják, nem a 382 funkció teljes specifikációját.**
+A 24. fejezet jelenleg 396 egyedi funkcióazonosítót tartalmaz, a 54. fejezet 156/156 checklist-tétele a 63.12–63.15 táblázatokban azonosítóhoz van rendelve, és a 49. fejezet 22 főmodulját a 63.20 mátrix domain/adatgazdához köti. **Ezek a terv szerkezetét és keresztmegfeleltetését bizonyítják, nem a 396 funkció teljes specifikációját.**
 
 A 25. és 26. fejezet szerinti teljes, funkciószintű kártya kitöltése még nyitott. Minden ID-hoz — az implementációs státusz kitalálása nélkül — rögzíteni kell:
 - Status és fázis/prioritás: a repository és a roadmap bizonyítékai alapján; ismeretlen állapot nyitott marad.
@@ -4288,15 +4309,15 @@ A 25. és 26. fejezet szerinti teljes, funkciószintű kártya kitöltése még 
 - Kód-/teszt-/CI/runtime bizonyíték, ismert hiba, rollback és következő munkapont.
 - Új funkciónál kötelező döntés: REUSE / ADAPT / BUILD / REJECT / DEFER; a döntés előtt meglévő működő kódot és megfelelő, licencelt referenciát kell vizsgálni.
 
-**Kötelező feldolgozási sorrend:** (1) a 382 ID csoportosítása a kanonikus modulok szerint; (2) meglévő route/domain helper/migration/UI/adapter/teszt vizsgálata; (3) már működő képesség és hiány megkülönböztetése; (4) függőségi sorrend és kiadási fázis megállapítása; (5) egyedi feature contract és acceptance; (6) teszt/runtime bizonyíték; (7) státuszfrissítés. Egy kódleírás, egy tervsor vagy egy CI job neve önmagában nem PASS-bizonyíték.
+**Kötelező feldolgozási sorrend:** (1) a 396 ID csoportosítása a kanonikus modulok szerint; (2) meglévő route/domain helper/migration/UI/adapter/teszt vizsgálata; (3) már működő képesség és hiány megkülönböztetése; (4) függőségi sorrend és kiadási fázis megállapítása; (5) egyedi feature contract és acceptance; (6) teszt/runtime bizonyíték; (7) státuszfrissítés. Egy kódleírás, egy tervsor vagy egy CI job neve önmagában nem PASS-bizonyíték.
 
-- [ ] A 382 ID mindegyikéhez a 25./26. fejezet szerinti teljes kártya kitöltve vagy explicit, indokolt DEFER/REJECT döntés rögzítve.
+- [ ] A 396 ID mindegyikéhez a 25./26. fejezet szerinti teljes kártya kitöltve vagy explicit, indokolt DEFER/REJECT döntés rögzítve.
 - [ ] Minden ID fázisa és dependency-je összhangban van a 41.2. és 63.5. kanonikus végrehajtási sorrenddel.
 - [ ] A meglévő működő kódhoz tartozó REUSE/ADAPT döntés bizonyítékkal rendelkezik; nincs indokolatlan újraírás vagy párhuzamos domain.
 - [ ] Az acceptance és tesztlista minden fő felhasználói journey-t és releváns hibautat lefed.
 - [ ] A funkciószintű audit lezárása előtt nincs F0-implementációs engedély.
 
-**Állapot: IN PROGRESS / NOT PASS.** A következő munka továbbra is a kanonikus terv lezárása, nem a feature implementáció megkezdése. A 382 ID készültségi kártyáját a tényleges repository-kód, migrációk, API-k, UI és tesztek alapján kell feltölteni; hiányzó bizonyítékot nem szabad feltételezéssel pótolni.
+**Állapot: IN PROGRESS / NOT PASS.** A következő munka továbbra is a kanonikus terv lezárása, nem a feature implementáció megkezdése. A 396 ID készültségi kártyáját a tényleges repository-kód, migrációk, API-k, UI és tesztek alapján kell feltölteni; hiányzó bizonyítékot nem szabad feltételezéssel pótolni.
 
 ### 63.22. Meglévő kód újrahasználati audit — első core szelet, 2026-10-14
 
@@ -4314,6 +4335,6 @@ A 25. és 26. fejezet szerinti teljes, funkciószintű kártya kitöltése még 
 | Site settings — SITE/SETTINGS | `src/routes/admin/settings.ts`, `src/routes/public/site-settings.ts`, `migrations/0015` megjegyzése | **REUSE + ADAPT, migráció csak audit után** | A `site_settings` route a globális `key='site'` rekordot olvassa/írja, és a jelenlegi útvonal nem site-scoped. A migration kommentje ezt tudatosan legacy/global állapotként tartja fenn, amíg a fogyasztók nincsenek auditálva. Nem szabad vakon új site-scoped settings táblát vagy második settings rendszert bevezetni; előbb az összes read/write consumer feltárása szükséges. |
 | Canonical Editor entrypoint és legacy UI | `src/index.ts` az `/admin/editor` útvonalat a `/editor-v2/index.html` fájlra irányítja; a régi `public/editor/` könyvtár még jelen van | **REUSE v2 + legacy besorolás** | A működő v2 marad az egyetlen kanonikus Editor. A régi fájlok elérhetőségét, hivatkozásait és eltávolítási/archiválási döntését külön kell bizonyítani; nem készülhet második Editor. |
 
-**Fontos korlát:** a táblázat csak a felsorolt fájlokban és route-regiszterben látható bizonyítékot rögzíti. Nem bizonyítja, hogy egy funkció élőben hibátlan, és nem zárja ki, hogy egy nem vizsgált fájlban van részleges implementáció. A következő audit a mentési/renderer boundary-k és az asset/site-settings fogyasztók mélyebb vizsgálata, majd a 382 ID-hoz tartozó REUSE/ADAPT/BUILD/REJECT/DEFER döntések bizonyítékokkal való feltöltése.
+**Fontos korlát:** a táblázat csak a felsorolt fájlokban és route-regiszterben látható bizonyítékot rögzíti. Nem bizonyítja, hogy egy funkció élőben hibátlan, és nem zárja ki, hogy egy nem vizsgált fájlban van részleges implementáció. A következő audit a mentési/renderer boundary-k és az asset/site-settings fogyasztók mélyebb vizsgálata, majd a 396 ID-hoz tartozó REUSE/ADAPT/BUILD/REJECT/DEFER döntések bizonyítékokkal való feltöltése.
 
 **Státusz: IN PROGRESS / NOT PASS.**
