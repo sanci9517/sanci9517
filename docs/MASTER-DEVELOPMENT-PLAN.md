@@ -6030,3 +6030,62 @@ A „MATCH candidate” csak a tervezett elemkategória jelenlétét jelenti; ne
 
 **Státusz:** 8/8 történeti checklist-tétel explicit crosswalk-sort kapott; clip/text-overflow döntések, accessibility/scroll interakciók és runtime/browser acceptance OPEN/DECISION. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
 
+### 41.3.142. P0.2 — Régi 2/I Design system / CSS abstraction: 12 követelmény tételes crosswalkja (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, `2/I Design system / CSS abstraction`, 12 checklist-tétel. **Canonical célpontok:** `DSN-001–DSN-013` design tokens/components; `EDT-021/022` property registry/schema; `EDT-024` responsive override; `QA-002/004/005/006`. A tokenrendszer a stílusok canonical forrása; a token nem azonos a konkrét property-értékkel, és a token törlése/átnevezése nem törheti el a fogyasztókat.
+
+| # | Régi követelmény | Canonical célpont | Státusz | Kötelező acceptance |
+|---:|---|---|---|---|
+| 1 | CSS variable/token model | DSN-001/002 | PARTIAL / VERIFY | Verziózott canonical token schema, típus, scope, fallback és serializer szabály explicit. |
+| 2 | color tokens | DSN-001/002 | PARTIAL / VERIFY | Színértékek validált formátumúak; kontraszt és theme-scope ellenőrizhető; tokenreferencia és raw value nem keveredik. |
+| 3 | typography tokens | DSN-001/002 | PARTIAL / VERIFY | Font family/size/weight/line-height/letter-spacing typed mezők és fallbackok; font betöltés és preview/public parity tesztelt. |
+| 4 | spacing tokens | DSN-001/002, DSN-006 | PARTIAL / VERIFY | Spacing scale és raw values precedenciája, logical property és reset semantics explicit. |
+| 5 | radius tokens | DSN-001/002 | OPEN / VERIFY | Validált radius scale és komponens/property scope; tokenfrissítés nem ír át raw override-ot. |
+| 6 | shadow tokens | DSN-001/002 | OPEN / VERIFY | Típusos shadow token és safe value; unsupported filter/CSS nem kerülhet be szabad szövegként. |
+| 7 | breakpoint tokens | DSN-001/006, EDT-023–026 | PARTIAL / VERIFY | Egyetlen canonical breakpoint registry; preview, override és publish ugyanazt a határt használja. |
+| 8 | reusable style presets | DSN-002/004/005 | OPEN / VERIFY | Preset alkalmazása egyetlen visszavonható tranzakció; előnézet és conflict/overwrite szabály explicit. |
+| 9 | class/style strategy dokumentálása | DSN, EDT-016/021, WEB-032 | OPEN / RELEASE GATE | Canonical style serialization, class naming, inline/custom style policy, specificity és renderer parity dokumentált; ad hoc DOM style nem source of truth. |
+| 10 | token override | DSN-001/002/006 | OPEN / VERIFY | Global/theme/component/instance override precedence, reset és öröklés explicit; tokenfrissítés hatása előre jelezhető. |
+| 11 | token usage search | DSN-007/008 | OPEN / VERIFY | Használati keresés a canonical resource/reference indexből dolgozik, minden fogyasztót és scope-ot megmutat. |
+| 12 | unused token detection későbbi pont | DSN-007/008, H34 discovery | PLANNED / PRESERVE | Későbbi képességként megőrzendő; törlés csak teljes usage scan, impact preview és restore lehetőség után. |
+
+#### Design-system kontraktus
+
+1. **Tokenek és nyers értékek különválasztása:** tokenreferencia, explicit raw value és inherited value külön állapot; reset-to-token nem azonos az érték törlésével.
+2. **Precedence:** global/theme/component/instance és responsive override sorrendje egyértelmű, géppel tesztelhető.
+3. **Hatásvizsgálat:** token módosítás/átnevezés/törlés mutassa a fogyasztókat, és ne okozzon silent breakage-et.
+4. **CSS/style source of truth:** DOM class/style csak renderelt kimenet; canonical model/registry a menthető igazságforrás.
+5. **Tesztminimum:** token create/edit/rename/delete/restore; usage search; unused-token report; raw↔token; theme switch; breakpoint token; preset apply/undo; save/reload/preview/public parity; contrast/accessibility.
+6. **Státuszszabály:** a crosswalk nem igazolja, hogy az összes token CRUD vagy usage search már implementált. A hiányzó konkrét szerződés és runtime acceptance OPEN marad.
+
+**Státusz:** 12/12 követelmény explicit crosswalk-sort kapott; style/class stratégia, override precedence és token usage/unused detection acceptance nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.143. P0.2 — Régi 2/J Component states és variants: 10 követelmény tételes crosswalkja (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, `2/J Component states és variants`, 10 checklist-tétel. **Canonical célpontok:** `DSN-009–DSN-013` component/variant contracts; `EDT-021/022` Inspector registry/validation; `EDT-024–026` responsive behavior; `EDT-039/040` interaction/motion; `QA-002/003/005/006`.
+
+| # | Régi követelmény | Canonical célpont | Státusz | Kötelező acceptance |
+|---:|---|---|---|---|
+| 1 | default | DSN-009/010, EDT-021/022 | PARTIAL / VERIFY | Minden támogatott komponensnek deklarált default state-je van; hiányzó érték determinisztikus fallbackot kap. |
+| 2 | hover | DSN-009/010, EDT-039/040 | OPEN / VERIFY | Hover csak pointer-képes interakcióra; touch és keyboard equivalent nincs kizárva; reduced-motion tiszteletben tartva. |
+| 3 | focus | DSN-009/010, EDT-039/040 | OPEN / RELEASE GATE | Látható, megfelelő kontrasztú fókuszállapot; billentyűzetes navigáció és focus-visible tesztelt. |
+| 4 | active | DSN-009/010, EDT-039 | OPEN / VERIFY | Pressed/active feedback nem keveredik a selected/current állapottal; pointer, keyboard és touch viselkedés konzisztens. |
+| 5 | disabled | DSN-009/010, EDT-039 | OPEN / RELEASE GATE | Disabled és aria-disabled/inert viselkedés a komponens szemantikájának megfelelő; tiltott művelet nem hajtható végre. |
+| 6 | selected/current | DSN-009/010, EDT-039 | OPEN / VERIFY | Kiválasztott elem, aktuális navigációs útvonal és aktív vezérlő külön szemantika, ahol szükséges; állapot szemantikusan jelölve. |
+| 7 | component variants | DSN-009–013 | PARTIAL / VERIFY | Variantok deklaráltak és verziózottak; master/instance override szabály és impact preview explicit. |
+| 8 | variant props | DSN-009–013, EDT-021/022 | OPEN / VERIFY | Variant property-k typed registryből jönnek; unsupported prop elutasítva, instance override és reset stabil. |
+| 9 | state validation | DSN-009/010, EDT-022 | OPEN / RELEASE GATE | Csak a komponens által támogatott state/variant kombináció menthető; invalid kombináció érthető hibát ad. |
+| 10 | responsive + state kombináció kezelése | DSN-009/010, EDT-023–026 | OPEN / VERIFY | State × variant × breakpoint kombináció precedence, öröklés és reset explicit; véletlen combinatorial explosion nem hoz létre implicit támogatást. |
+
+#### Component-state kontraktus
+
+1. **State ≠ variant ≠ responsive override:** külön adatmodell és UI-jelzés szükséges; egyik réteg nem írhatja felül csendben a másikat.
+2. **Accessible interaction:** focus, disabled, selected/current és active állapotok szemantikai és billentyűzetes viselkedése a komponens szerződésének része.
+3. **Declarative support matrix:** komponensenként explicit, mely state/variant kombinációk támogatottak; nincs általános, minden elemre automatikusan érvényes CSS-ígéret.
+4. **Atomic edit/undo:** több property-t érintő variantváltás egy tranzakció; undo az összes érintett értéket visszaállítja.
+5. **Tesztminimum:** state × variant × breakpoint matrix; pointer/keyboard/touch; focus visibility; disabled activation block; save/reload; undo/redo; preview/public parity; reduced motion.
+6. **Státuszszabály:** ez a crosswalk nem bizonyít komponensenkénti runtime készültséget; a pontos support matrix és acceptance OPEN marad.
+
+**Státusz:** 10/10 történeti követelmény explicit crosswalk-sort kapott; a komponensenkénti state/variant support matrix és runtime acceptance nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
