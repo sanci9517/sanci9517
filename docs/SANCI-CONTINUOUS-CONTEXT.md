@@ -1,10 +1,10 @@
 # Sanci9517 V2 — FOLYAMATOS PROJEKTKONTEXTUS
 
-> Ez a dokumentum a projekt élő állapot- és döntési naplója. A célja, hogy a fejlesztés során ne vesszen el egyetlen fontos követelmény, döntés, hiba, teszt vagy felhasználói visszajelzés sem.
+> Ez egy történeti/folytonossági jegyzet, nem végrehajtási terv és nem önálló igazságforrás. A jelenlegi termékterv, aktív pont, sorrend, scope és acceptance egyetlen forrása: `docs/MASTER-DEVELOPMENT-PLAN.md` a `feature/f0-2-admin-global-shell` ágon.
 >
-> **Központi vízió:** `docs/SANCI-MASTER-PLAN.md`
-> **Részletes fejlesztési checklist:** `docs/DEVELOPMENT-PLAN.md`
-> **Aktuális állapot / döntések / tesztek / változások:** ez a dokumentum.
+> **Canonical MASTER:** `docs/MASTER-DEVELOPMENT-PLAN.md`
+> **Archivált történeti tervek:** `docs/archive/plans/` és a MASTER 2.77.7.C forrásreconciliációja
+> **Ez a dokumentum:** csak korábbi felhasználói visszajelzések és állapotpillanatképek kiegészítő kontextusa; ellentmondás esetén a MASTER és a friss kód/teszt bizonyíték az irányadó.
 
 ## 1. Kötelező munkaszabály
 
@@ -48,7 +48,7 @@ A Sanci9517 nem egyszerű statikus streamer-linkoldal. A végső rendszer egy pr
 ## 4. Infrastrukturális állapot
 
 - Repository: `sanci9517/sanci9517`
-- Aktív fejlesztési branch: `v2/foundation`
+- A korábbi infrastruktúra-evidence a `v2/foundation` ághoz tartozik; a jelenlegi F0.2 munkapont ága `feature/f0-2-admin-global-shell`. Az aktív státuszt mindig a MASTER eleji `ACTIVE_*` mezőkből kell venni.
 - Cloudflare Worker: `sanci9517-streamer-brand`
 - Cloudflare D1 létrehozva.
 - GitHub → Cloudflare kapcsolat létrehozva.
@@ -311,28 +311,19 @@ Minden jelentős változásnál rögzítendő:
 - felhasználói eredmény
 - következő lépés
 
-## 15. Aktuális munkamenet
+## 15. Történeti munkamenet — nem aktuális státusz
 
-**Aktív állapot:** Visual Editor stabilizálása.
+Az alábbi állapot a 2026-09-i korábbi beszélgetésből származik, és nem használható mai végrehajtási utasításként: Visual Editor stabilizálása; Preview Mobile stacking javítás; a `dfa5faf462496e2d3617810dafc28e72c540ee70` commit; oldalátnevezés tesztje; page delete hiánya.
 
-**Legutóbbi lezárt teszt:** Preview Mobile stacking javítása.
-
-**Legutóbbi releváns commit:** `dfa5faf462496e2d3617810dafc28e72c540ee70`.
-
-**Következő kijelölt teszt:** oldal átnevezése, amennyiben a jelenlegi editorban elérhető; ha nincs ilyen funkció, azt `[ ]` állapotban kell rögzíteni és nem szabad úgy tenni, mintha létezne.
-
-**Fontos:** Page delete jelenleg nincs implementálva.
+**Jelenlegi munkapont:** `F0.2-ADMIN-NAVIGATION-GLOBAL-SHELL-ACCEPTANCE` — lásd a canonical MASTER tetejét. Az ottani F0.2 DoD, friss CI, route/auth/navigation, böngészős és felhasználói acceptance feltételei irányadók. A régi snapshotban szereplő állapotok nem bizonyítják a mai kód készültségét.
 
 ## 16. Dokumentumok szerepe
 
-### `docs/SANCI-MASTER-PLAN.md`
-A teljes jövőkép: milyen weboldalt, editort, admin rendszert, infrastruktúrát, integrációkat és AI rendszert akarunk.
+### `docs/MASTER-DEVELOPMENT-PLAN.md` — az egyetlen aktív terv
+A teljes termékvízió, canonical domain-ek, minden megőrzött capability, egyetlen aktív pont, sorrend, DoD és acceptance. Ez felülírja a régi `SANCI-MASTER-PLAN.md` és `DEVELOPMENT-PLAN.md` szerepét; a régi anyagok a `docs/archive/plans/` alatt történeti források.
 
-### `docs/DEVELOPMENT-PLAN.md`
-A részletes fejlesztési checklist és végrehajtási sorrend.
-
-### `docs/SANCI-CONTINUOUS-CONTEXT.md`
-Az élő állapot: mi működik ténylegesen, mi nincs kész, milyen döntések születtek, mit tesztelt a felhasználó, mi a következő teszt és milyen változás történt.
+### `docs/SANCI-CONTINUOUS-CONTEXT.md` — kiegészítő történeti kontextus
+Csak korábbi döntések, teszteredmények és felhasználói visszajelzések kontextusa. Nem választhat aktív pontot, nem módosíthat sorrendet és nem állíthat runtime PASS-t a MASTER bizonyítékai nélkül.
 
 ## 17. Információvesztés elleni szabály
 
@@ -389,10 +380,12 @@ Ez a rendszer csak az alap weboldal/editor stabilizálása után következik.
 
 A projektben végzett további munkánál az asszisztens feladata, hogy a megfelelő státuszokat és döntéseket folyamatosan karbantartsa. A felhasználónak nem kell külön azt mondania, hogy „frissítsd a tervet”.
 
-A fejlesztés folytatásakor elsődleges állapotforrás:
+A fejlesztés folytatásakor kötelező sorrend:
 
-1. GitHub aktuális branch és kód,
-2. `SANCI-MASTER-PLAN.md`,
-3. `DEVELOPMENT-PLAN.md`,
-4. `SANCI-CONTINUOUS-CONTEXT.md`,
-5. a felhasználó legutóbbi tényleges teszteredménye.
+1. `docs/MASTER-DEVELOPMENT-PLAN.md` eleji `ACTIVE_*` index és a canonical F0.x sorrend;
+2. az aktuális GitHub branch/commit és a hozzá tartozó diff/CI;
+3. a legfrissebb tényleges runtime/production/browser teszt és felhasználói acceptance;
+4. ez a folytonossági dokumentum kizárólag történeti kontextusként;
+5. a `docs/archive/plans/` alatti régi tervek kizárólag a MASTER 2.77.7.C által megjelölt követelményreconciliációhoz.
+
+A `docs/SANCI-MASTER-PLAN.md`, `docs/DEVELOPMENT-PLAN.md` és a korábbi külön roadmapek nem aktív igazságforrások.
