@@ -2935,6 +2935,16 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Külön modulokból elérhető közös képességek:** Brand Kit, témák, design tokenek, ikonok, sablonok, blokkkönyvtár és presetek → **49.3. Márka és designrendszer**; feltöltés, asset-regiszter, média-metaadatok és használati helyek → **49.4. Média- és erőforráskönyvtár**. Az Editor ezek kiválasztására/használatára adhat felületet, de a kanonikus kezelésük nem ide tartozik.
 
 ### 49.3. Márka és designrendszer
+**Tulajdonosi határ:** a Brand Kit, vizuális identitás, design tokenek, témák, újrahasznosítható sablonok, presetek és komponensváltozatok központi szerződésének gazdája. A fájlok bináris tárolása és asset-életciklusa a 49.4 modulé; a 49.3 az asset ID-kat és a brandhasználat szabályait kezeli. A Visual Editor a közös elemeket alkalmazza, nem tart fenn külön Brand Kitet.
+- **Témák és variánsok:** light/dark, platform- és kampányvariáns, publikált verzió, kompatibilitás, előnézet és visszaállítás.
+- **Komponens- és mintakönyvtár:** globálisan szinkronizált komponens, globális sablonrész és önállóan testreszabható minta külön kezelése; hatókör és függőségek megjelenítése.
+- **Ikonok és presetek:** egységes ikonregiszter, stílusváltozatok, hozzáférhetőség, keresés és komponensszintű presetek.
+- **Brand Kit:** logóváltozatok, színek, betűk, ikonok, grafikai elemek, hangnem, írásmód, tiltott/előnyben részesített megoldások.
+- **Brand assetek:** stream overlay, thumbnail, intro/outro, social post, merch design, watermark, email sablon.
+- **Közös design tokenek:** globális és komponensszintű értékek, theme-variánsok, kontrasztellenőrzés, sötét/világos mód.
+- **Brand consistency:** automatikus ellenőrzés és javítási javaslat weboldalon, videón, képen, poszton és overlayen.
+- **Export:** SVG/PNG/WebP és más támogatott formátumok, szín-/méretváltozatok, licenc- és eredetadatok.
+
 ### 49.4. Média- és erőforráskönyvtár
 **Tulajdonosi határ:** ez a modul a fájlok, médiatartalmak, ikonok, fontok, asset-metaadatok, feldolgozási állapotok, használati hivatkozások és törlési/archiválási életciklus kanonikus gazdája. A bináris tartalom R2-ben, a kereshető metaadat és asset ID D1-ben marad; más modulok az asset registryt hivatkozzák, nem saját médiatárat építenek.
 - **Asset registry:** stabil asset ID, site/workspace scope, tulajdonos, típus, méret, MIME, checksum, verzió, feldolgozási és biztonsági státusz.
@@ -2944,12 +2954,6 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Használati helyek:** oldalak, blokkok, tartalmak, overlayek, brand elemek és termékek asset-referenciáinak visszakeresése; módosítási propagáció és függőségi figyelmeztetés.
 - **Biztonságos életciklus:** MIME-/méretellenőrzés, SVG-szűrés, letöltési jogosultság/lejárat, archiválás, restore, törlés előtti függőségvizsgálat és hibás hivatkozások diagnosztikája.
 - **Közös felhasználás:** Visual Editor, Brand Kit, Content Studio, OBS/overlay, Store és AI az asset pickert és kanonikus asset ID-t használja; a saját moduljukban csak a használatukhoz tartozó beállítások élnek.
-
-- **Brand Kit:** logóváltozatok, színek, betűk, ikonok, grafikai elemek, hangnem, írásmód, tiltott/előnyben részesített megoldások.
-- **Brand assetek:** stream overlay, thumbnail, intro/outro, social post, merch design, watermark, email sablon.
-- **Közös design tokenek:** globális és komponensszintű értékek, theme-variánsok, kontrasztellenőrzés, sötét/világos mód.
-- **Brand consistency:** automatikus ellenőrzés és javítási javaslat weboldalon, videón, képen, poszton és overlayen.
-- **Export:** SVG/PNG/WebP és más támogatott formátumok, szín-/méretváltozatok, licenc- és eredetadatok.
 
 ### 49.5. Élő adás és Stream Studio
 - **Stream Planner:** adásrend, ismétlődő események, game/kategória, cím, leírás, vendégek, emlékeztetők.
