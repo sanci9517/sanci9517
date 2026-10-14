@@ -2681,7 +2681,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | Forráskulcs | Megőrzött követelmény | Canonical current ID | Döntés | Célfázis | QA-horgony |
 |---|---|---|---|---|---|
 | F.9-01 | Published-page SEO metadata, canonical, Open Graph/social cards, sitemap/robots/schema; drafts and preview non-indexable | SEO-001–SEO-005, WEB-005, WEB-006, WEB-031 | KEEP/EXPAND | 1.0 release gate | QA-004/008 |
-| F.9-02 | Redirect/broken-link tooling only with preview and approval | SEO-004, SEO-005, WEB-013, SEC-002 | DEFER | 2.0+ | QA-003/008 |
+| F.9-02 | Redirect/broken-link tooling only with preview and approval | SEO-005, WEB-013, SEC-002; redirect lifecycle and broken-link detection remain distinct actions | DEFER | 2.0+ | QA-003/008 |
 | F.9-03 | Semantic HTML, heading hierarchy, alt, labels, ARIA, keyboard/focus, contrast, screen reader, reduced motion | EDT-017, EDT-037, EDT-040, RES-007, WEB-011; cross-cutting accessibility contract TBD in M0.2 | KEEP | 1.0 release gate | QA-004/005 |
 | F.9-04 | Secure session/cookies/password/auth rate limit/RBAC/CSRF/OAuth state/webhook replay/upload validation | SEC-001–SEC-010, RES-003, INT-003, INT-017 | KEEP | 0.x–1.0 release gate | QA-003 |
 | F.9-05 | Separate public/preview/admin permission boundaries; no draft or secret leakage in logs/export | SEC-002, SEC-008, WEB-005, WEB-006, WEB-031, OPS-002, OPS-005 | KEEP | 0.x–1.0 | QA-003/004 |
@@ -4862,3 +4862,12 @@ A H30.06–H30.09 sorok korábban `QA-005` vagy `QA-004` ID-t mutattak feature c
 - **H30.09 large-tree Editor performance:** külön Editor-specifikus capability és acceptance kell; a public rendering budget nem helyettesíti.
 
 Nem hoztam létre előre új ID-t és nem állítottam, hogy a runtime funkció hiányzik. M0.2-ben kell lezárni a canonical cross-cutting/Editor ownershipet, a mérhető budgeteket, a mérési környezetet és a release acceptance-et. A QA-004/005 audit szerepe változatlan; a H30.06–H30.09 szemantikai ownership **OPEN** marad. P0.2 **IN PROGRESS / NOT PASS**.
+
+
+### 41.3.84. P0.2 — F.9-02 redirect/broken-link mapping separated from sitemap/robots lifecycle (2026-10-14)
+
+Az F.9-02 redirects és broken-link tooling követelmény korábban `SEO-004`-et is tartalmazott, amelynek canonical registry-definíciója a sitemap és robots.txt lifecycle, publish és cache invalidation; ez nem a redirect/broken-link műveletek tulajdonosa. A mappingből eltávolítottam a `SEO-004`-et, és meghagytam a page-level SEO diagnostics `SEO-005`, a redirect/link lifecycle `WEB-013` és az authorization/approval boundary `SEC-002` hivatkozásokat.
+
+A két művelet külön acceptance-t igényel: a redirect create/update/preview/approval/loop protection nem azonos a broken-link scan/report/fix flow-val. Ezeket a későbbi 2.0+ pontban külön actionként kell bontani, nem egy általános SEO gombba sűríteni. A jelenlegi sor ezt a különbséget rögzíti; a runtime megvalósítás nincs ezzel igazolva.
+
+**Állapot:** F.9-02 mapping javítva, a részletes 2.0+ action DoD későbbi engineering point feladata. P0.2 **IN PROGRESS / NOT PASS**.
