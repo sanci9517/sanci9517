@@ -2221,7 +2221,7 @@ Every capability must define, where applicable:
 - A Layers, Inspector és responsive működés a meglévő Page Modelt, command/history/validation láncot és Property Registryt használja.
 - Foundational Editor interactions and the smallest useful set of element types are implemented before expanding the full component catalog.
 - Presets, tokens, templates and reusable components must be architecturally reserved now, but are implemented only when their canonical registries/contracts and dependency order are ready.
-- A kiadási fázisokat a jelen terv 39. fejezete határozza meg. Az első kiadásból kimaradó képesség későbbi, explicit fázisban marad; nem törölhető.
+- A legfelső szintű kiadási fázisok kanonikus sorrendjét a 41.2. fejezet határozza meg; a 39. fejezet összefoglaló. Az első kiadásból kimaradó képesség későbbi, explicit fázisban marad; nem törölhető.
 - Do not build every advanced feature before the basic editor is reliable. Prefer a complete, testable capability inventory and a single dependency-ordered implementation path over rushed parallel work.
 - This appendix adds no second editor, no second Page Model, no second Property Registry, no second Resource store, no second Schedule domain and no alternate save/publish route.
 
@@ -2232,7 +2232,7 @@ Every capability must define, where applicable:
 Ez a fejezet a teljes termék fejlesztési függőségeit rendezi sorba. A termékcél végig a teljes Creator Platform; a fázisok a biztonságos és tesztelhető szállítás sorrendjét jelölik, nem a funkciók végleges kizárását. A konkrét következő pontot a 41. fejezet és a repository aktuális állapota határozza meg.
 
 ### 39.1. F0 — Meglévő technikai alap és core workflow
-Cloudflare Worker, D1/R2, auth/session, site ownership, domain validation, canonical Page Model, Editor command/history, draft/revision/publish, Resource Registry és Twitch ownership alapok megőrzése. A meglévő Admin → Editor → save/reload → preview/publish → public oldal folyamat hibáinak lezárása.
+Cloudflare Worker, D1/R2, auth/session, site ownership, domain validation, canonical Page Model, Editor command/history, draft/revision/publish, a core folyamathoz szükséges Resource/Media Registry-alapok és Twitch ownership szerződések megőrzése. A meglévő Admin → Editor → save/reload → preview/publish → public oldal folyamat hibáinak lezárása. A teljes erőforrás-könyvtár, bővített Brand Kit és sablonregiszter az F2-ben készül.
 
 ### 39.2. F1 — Közös Admin és modulhatárok
 Egységes app shell, menürendszer, routing, permission-aware navigation, közös UI állapotok, domain API/command szerződések, szerveroldali jogosultság és diagnosztika. Minden modul külön feladatot kezel, de közös infrastruktúrát használ.
@@ -2240,8 +2240,8 @@ Egységes app shell, menürendszer, routing, permission-aware navigation, közö
 ### 39.3. F2 — Brand Kit, Resource Registry és sablonrendszer
 Kanonikus brand identity, design tokens, média/ikon/font library, site/page/section/component/theme template-ek, reusable component/symbol, preview/diff/version/rollback. A változtatások hatása követhető és visszavonható.
 
-### 39.4. F3 — Weboldal és Visual Editor
-Oldalak, navigáció, canvas/Layers/Inspector, reszponzív elrendezés, dinamikus blokkok, CMS/data binding, SEO, accessibility, preview, draft/publish, custom domain és publikált renderer. A kézi alapfolyamat stabil és AI nélkül is teljes.
+### 39.4. F3 — Publikus weboldal, CMS és a Visual Editor bővítése
+Az F0-ban stabilizált kanonikus Visual Editor továbbfejlesztése a teljes oldalépítési élményhez: oldalak, navigáció, dinamikus blokkok, CMS/data binding, SEO, accessibility, custom domain és publikált renderer. Az F3 nem hoz létre második Editort, Page Modelt, mentési vagy publikálási útvonalat; a canvas/Layers/Inspector core az F0-ban marad, a designrendszer és reusable komponensek az F2-re épülnek.
 
 ### 39.5. F4 — Creator account, workspace és onboarding
 Külön tervezett creator-regisztráció, email/identity verification, recovery, workspace/site setup, szerepkörök és permissionök. A jelenlegi admin-auth nem válik nyílt regisztrációvá addig, amíg a tenant/site izoláció és account lifecycle tesztelt. Fan account és membership külön publikus felhasználói réteg.
