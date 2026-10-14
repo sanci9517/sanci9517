@@ -1,3 +1,5 @@
+**HISTORICAL / SUPERSEDED RUNTIME REFERENCE.** The old runtime path named below is not the current canonical runtime. Current Editor runtime is `public/editor-v2/`; shared model, selection, hierarchy, layer-order and history requirements are reconciled in `docs/MASTER-DEVELOPMENT-PLAN.md` (GAP-14). Do not reactivate a legacy editor path from this document.
+
 # Sanci9517 Visual Editor – Canonical Architecture
 
 ## Purpose
