@@ -1119,15 +1119,15 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - ADM-001: Admin shell és globális navigáció.
 - ADM-002: Dashboard állapotkártyák.
 - ADM-003: Gyorsműveletek és canonical route-ok.
-- ADM-004: Teendők és hibajelzések.
-- ADM-005: Legutóbbi aktivitás és audit összefoglaló.
-- ADM-006: Globális keresés és command palette.
-- ADM-007: Profil/session/logout és lejáratkezelés.
+- ADM-004: Dashboard teendő-/hibaösszesítő és navigáció a forrásmodulhoz; nem saját workflow- vagy notification-adatgazda.
+- ADM-005: Legutóbbi aktivitás és audit összefoglaló olvasási nézete; a canonical audit események tulajdonosa az AUDIT domain.
+- ADM-006: Admin shell belépési pont a globális keresőhöz és command palette-hez; a keresési index és találat a SEARCH domain tulajdona.
+- ADM-007: Profil/session/logout UI-belépési pont; identitás, session és authorization a canonical IDENTITY/SEC szerződés alatt.
 - ADM-008: Shared Admin UI components for loading/empty/error/stale/success states; does not own domain-specific data-binding state machines.
-- ADM-009: Permission-alapú menü- és action-visibility.
+- ADM-009: Permission-alapú menü-/action-visibility UX; nem helyettesíti a szerveroldali authorizationt.
 - ADM-010: Mobil/tablet Admin shell.
-- ADM-011: Kontextuális súgó, interaktív onboarding és hibaelhárítás.
-- ADM-012: Központi értesítések, prioritások, digest, preferenciák és csendes időszak.
+- ADM-011: Kontextuális súgó/onboarding belépési pont; a cikkek és onboarding progress a HELP_CENTER domain tulajdona.
+- ADM-012: Dashboard értesítési összesítő és Notification Center belépési pont; delivery/preference lifecycle az NTF domain tulajdona.
 - ADM-013: Dashboard- és Admin-adatok frissessége, stale/partial jelzés és adatforrás-státusz.
 
 ### 24.2. Weboldal és publikus renderer — WEB
