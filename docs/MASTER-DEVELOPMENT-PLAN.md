@@ -130,7 +130,9 @@ Funkciók:
 Elfogadás: nincs hamis zöld állapot, nincs kitalált adat, minden gyorsművelet a saját modulhoz vezet.
 
 ### 3.2. Weboldal
-**Almenük:** Oldalak; Navigáció; Weboldal szerkesztő; Megjelenés és design rendszer; Sablonok és komponensek; SEO és publikálás; Domain és weboldalbeállítások.
+**Kanonikus felelősség:** oldalak, navigáció, CMS/Page Model, Visual Editor, SEO, publikálás és weboldal-/domainbeállítások. A fő navigációban a Brand Kit/designrendszer és a sablon-/komponenskönyvtár külön, a 49.3. modulban található; a médiafájlok és asset-regiszter a 49.7. modulhoz tartoznak. A Weboldal modulból ezek közvetlenül elérhetők lehetnek, de a gyorselérés nem változtatja meg az adat- és funkciótulajdonost.
+**Weboldal-almenük:** Oldalak; Navigáció; Visual Editor; CMS/tartalommodellek; SEO és publikálás; Domain és weboldalbeállítások.
+**Külön modulhoz vezető gyorselérések:** Brand Kit és Design Studio (49.3); Média és erőforráskönyvtár (49.7). Ezek nem a Visual Editor belső almenüi és nem külön Editor-adatforrások.
 
 **Oldalak**
 - Lista: cím, slug, státusz, módosítás ideje, draft/published eltérés.
@@ -2579,17 +2581,16 @@ Ez a menütérkép a végső termék navigációs célját rögzíti, nem azt á
 - **Személyre szabás:** átrendezhető dashboard-kártyák, szerepkör szerinti nézetek, widget-beállítások.
 
 ### 49.2. Weboldal
+**Tulajdonosi határ:** ez a modul a weboldal oldalstruktúráját, tartalmi modelljét, szerkesztését, SEO-ját és publikálását kezeli. Nem a teljes Creator Center funkcióinak gyűjtőhelye.
 - **Oldalak:** létrehozás, másolás, archiválás, útvonal/slug, státusz, verzió, hozzáférés, átirányítás.
 - **Navigáció:** menük, almenük, mobil menü, footer, breadcrumbs, külső és belső hivatkozások.
-- **Visual Editor:** vászon, rétegek, komponensek, inspector, responsive preview, undo/redo, billentyűparancsok, keresés.
-- **Témák és Brand Kit:** logók, színpaletták, tipográfia, design tokenek, spacing, ikonok, képek, brand szabályok.
-- **Sablonok és blokkok:** teljes site starter, oldalsablon, szekció, reusable komponens, variáns, preset, import/export.
+- **Visual Editor:** vászon, rétegek, komponensek, inspector, responsive preview, undo/redo, billentyűparancsok, keresés. Az Editor az oldal szerkezetét és a blokkok megjelenítési konfigurációját szerkeszti; nem veszi át a kapcsolatok, adásrend, média, bevétel vagy analitika üzleti kezelését.
 - **Tartalom/CMS:** kollekciók, mezők, referenciák, szűrők, keresés, rendezés, ütemezett publikálás, draft/preview.
-- **Média:** feltöltés, könyvtár, címke, alt text, átalakítás, vágás, képméretek, asset-variánsok, felhasználási helyek.
 - **SEO és megosztás:** meta cím/leírás, canonical URL, sitemap, robots, Open Graph, social preview, strukturált adatok, redirectek.
 - **Lokalizáció:** nyelvek, fordítási státusz, locale-öröklés és felülírás, lokalizált slug/meta/kép/alt text, RTL, nyelvváltó.
 - **Űrlapok és interakciók:** kapcsolat, feliratkozás, leadek, spamvédelem, siker/hiba állapotok, hozzájárulás.
 - **Publikálás:** preview, staging, diff, jóváhagyás, publish/unpublish, verzió és rollback, domain és DNS állapot.
+- **Külön modulokból elérhető közös képességek:** Brand Kit, témák, design tokenek, ikonok, sablonok, blokkkönyvtár és presetek → **49.3. Márka és designrendszer**; feltöltés, asset-regiszter, média-metaadatok és használati helyek → **49.7. Tartalomstúdió**. Az Editor ezek kiválasztására/használatára adhat felületet, de a kanonikus kezelésük nem ide tartozik.
 
 ### 49.3. Márka és designrendszer
 - **Brand Kit:** logóváltozatok, színek, betűk, ikonok, grafikai elemek, hangnem, írásmód, tiltott/előnyben részesített megoldások.
