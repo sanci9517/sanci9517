@@ -155,7 +155,7 @@ A 3.1–3.18 alfejezetek **felelősségi/domain-katalógusok, nem 18 külön fő
 - 3.14 SANCI AI → 49.13 SANCI AI.
 - Keresés/súgó/személyre szabás → 49.14.
 - 3.16 Beállítások és hozzáférés + 3.18 Rendszerdiagnosztika → 49.15 Beállítások, biztonság és adat; a diagnosztika érzékeny nézetei korlátozott jogosultságúak.
-- Fejlesztői eszközök és bővítmények → 49.16; 3.17 Csapat és munkaterület → 49.17.
+- Fejlesztői eszközök és bővítmények → 49.16; 3.17 Csapat és munkaterület → 49.18.
 
 A több helyen megjelenő gyorsművelet csak a kanonikus modulba navigál vagy annak közös domain commandját hívja; nem hozhat létre második tulajdonost, adatforrást vagy jogosultsági útvonalat.
 
@@ -1433,6 +1433,7 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - AI-018: Prompt injection and untrusted content tests.
 - AI-019: Human approval for public/destructive/financial action.
 - AI-020: AI-free fallback for all critical manual workflows.
+- AI-021: Multimodal image/audio/video generation provider adapters, rights/safety checks, cost controls and human review.
 
 ### 24.16. Settings/security/operations — SEC / OPS
 - SEC-001: Authentication/session lifecycle.
@@ -1446,6 +1447,7 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - SEC-009: Webhook signature/replay defense.
 - SEC-010: Audit log and privacy.
 - SEC-011: Consent/retention/export/delete.
+- SEC-012: MFA/2FA and future SSO lifecycle, recovery and suspicious-authentication controls.
 - OPS-001: Health/deploy version.
 - OPS-002: Structured logs/correlation IDs.
 - OPS-003: Error tracking/alerting.
@@ -1471,11 +1473,18 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - TEAM-004: Approval/review/activity feed.
 - TEAM-005: Multi-site isolation.
 - TEAM-006: SaaS billing/plan entitlements/quota.
+- TEAM-007: Agency/studio client workspaces, shared templates, client-scoped brand and approval workflow.
 - MKT-001: Extension manifest/permissions.
 - MKT-002: Extension install/update/uninstall/migration.
 - MKT-003: Theme/block/template/overlay marketplace.
 - MKT-004: License/attribution/version/review.
 - MKT-005: Marketplace payment/revenue-share after legal review.
+- DEV-001: Public API reference, versioning, schema and deprecation policy.
+- DEV-002: API key creation, scoped permissions, one-time display, rotation, expiry and revocation.
+- DEV-003: Webhook registry/tester, delivery log, signature validation and replay/retry diagnostics.
+- DEV-004: Sandbox workspace and safe test fixtures/events.
+- DEV-005: SDK/client libraries, integration examples and version compatibility.
+- DEV-006: Developer quotas, rate-limit visibility and API usage diagnostics.
 - QA-001: Typecheck/build/CI gates.
 - QA-002: Domain/API/integration tests.
 - QA-003: Ownership/security negative tests.
@@ -2767,15 +2776,22 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Állapot és naplók:** health, background job, queue, API-kvóta, hibák, események, auditálható adminműveletek.
 - **Díjcsomag és használat:** későbbi SaaS-plan, usage, billing, limit, számla és szolgáltatói költség.
 
-### 49.16. Fejlesztői és bővítményközpont — későbbi platformfázis
-- **Extension registry:** manifest, verzió, scope, permission, kompatibilitás, aláírás/eredet, frissítés és eltávolítás.
-- **Integrációs SDK/API:** dokumentált endpointok, webhooks, OAuth adapterek, sandbox és rate limit.
-- **Widget/overlay SDK:** saját komponensek, konfigurációs séma, preview, események és verziózás.
-- **Template/component marketplace:** sablonok, komponensek, overlayek és workflow-k; licenc, szerző, értékelés és frissítés.
-- **Developer tools:** API kulcsok, webhook tester, eseménynapló, sandbox workspace és API dokumentáció.
-- **Külső bővítmények:** alapértelmezésben legkisebb jogosultság, izolált futtatás, felülvizsgálat és visszavonható hozzáférés.
+### 49.16. Fejlesztői platform és API — későbbi platformfázis
+- **Dokumentált API:** verziózott endpointok, schema, hibakódok, auth és deprecation policy.
+- **Integrációs SDK:** OAuth adapterek, webhook/event contractok, klienskönyvtár és példakód.
+- **API key lifecycle:** létrehozás, scope, megjelenítés egyszer, rotáció, lejárat, visszavonás és audit.
+- **Webhook registry/tester:** aláírás, retry, replay/delivery napló, tesztesemények és dead-letter diagnosztika.
+- **Sandbox és developer tools:** elkülönített workspace, tesztadat, eseménynapló, API-kvóta és dokumentáció.
+- **Külső integrációk:** rate limit, tenant/site scope, minimum jogosultság és biztonsági felülvizsgálat.
 
-### 49.17. Csapat, több site és SaaS — későbbi fázis
+### 49.17. Bővítmények, widgetek és piactér — későbbi platformfázis
+- **Extension registry:** manifest, verzió, scope, permission, kompatibilitás, aláírás/eredet, frissítés és eltávolítás.
+- **Widget/overlay SDK:** saját komponensek, konfigurációs séma, preview, események és verziózás.
+- **Template/component marketplace:** sablonok, komponensek, overlayek és workflow-k; licenc, szerző, értékelés, frissítés és visszavonás.
+- **Biztonságos bővítmény-életciklus:** permission review, izolált futtatás/sandbox, kompatibilitási teszt, supply-chain ellenőrzés, rollback és hozzáférés-visszavonás.
+- **Marketplace üzleti modell:** díjazás/revenue-share és szerzői jogi/licencfeltételek csak külön jogi és pénzügyi felülvizsgálat után.
+
+### 49.18. Csapat, több site és SaaS — későbbi fázis
 - Több creator/site/workspace kezelése egy fiókból, egyértelmű aktív workspace választással.
 - Meghívás, csapattagok, szerepek, projekt- és ügyfélhozzáférés, jóváhagyási folyamat.
 - Agency/studio mód több creatorhoz, közös sablonok és ügyfél-specifikus brand.
@@ -3748,7 +3764,7 @@ A 54. fejezet 16 témacsoportja a jelenlegi ellenőrzésben 156 checkbox-tételt
 | 54.13 SANCI AI | 49.13 SANCI AI | AI | Az AI javasolhat műveletet, de a végrehajtás a domain engedélyezett commandján megy. |
 | 54.14 Többnyelvűség és nemzetközi használat | 49.2 Weboldal lokalizált tartalma + 49.15 platformbeállítások | LOC, WEB, SEO, SEC | A site-tartalom locale-ja és az Admin felület nyelve külön, de összehangolt scope. |
 | 54.15 Beállítások, biztonság, adatvédelem és megbízhatóság | 49.15 Beállítások, biztonság és adat | SEC, OPS, QA | Biztonság, privacy és reliability keresztmetszeti elfogadási feltétel is. |
-| 54.16 Fejlesztői platform, bővítmények, csapat és SaaS | 49.16 Fejlesztői és bővítményközpont; 49.17 Csapat/több site/SaaS | MKT, TEAM, OPS, SEC | Későbbi fázis; tenant isolation, extension security és billing függőségek nem hagyhatók ki. |
+| 54.16 Fejlesztői platform, bővítmények, csapat és SaaS | 49.16 Fejlesztői platform/API; 49.17 Bővítmények és piactér; 49.18 Csapat/több site/SaaS | DEV, MKT, TEAM, OPS, SEC | Későbbi fázis; tenant isolation, extension security és billing függőségek nem hagyhatók ki. |
 
 **Auditállapot:** a 16 témacsoport tulajdonosmodulhoz rendelése dokumentálva van; ez kategóriaszintű megfeleltetés, nem a 156 egyedi checkbox szemantikai PASS-a. A következő részletes auditlépés a 54. fejezet minden checkboxának megfeleltetése a 24. fejezet stabil ID-jéhez, vagy — ha még nincs ID — a hiányzó ID rögzítése a megfelelő modul alatt. Azonos képesség több modulban csak közös szolgáltatásra mutató hivatkozásként szerepelhet; az esetleges eltéréseket nyitottként kell megőrizni a feloldásig.
 
