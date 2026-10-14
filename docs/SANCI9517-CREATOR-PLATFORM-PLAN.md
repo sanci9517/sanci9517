@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.57` — a 156/156 első körös ID-routing megvan; a második körben a téves 49.x modulhivatkozások javítva és mind a 16 review-blokk kanonikus domainje ellenőrizve; **következő: soronkénti F-fázis/függőség/pozitív-negatív teszt/forrásbizonyíték audit**, különös tekintettel a 63.50.46 HIGH publikálási konfliktusra. A 156 első körös routing kész, de szemantikai és történeti kapu továbbra is nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll és a 63.50.46 HIGH kódaudit-blokkoló ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.58` — 156/156 első routing; 16/16 második körös domain/owner és fázis/dependency csoportkapu rögzítve; **következő: 54.1–54.4, majd 54.5–54.16 soronkénti acceptance/evidence audit**, különös tekintettel a 63.50.46 HIGH publikálási konfliktusra. A 156 első körös routing kész, de szemantikai és történeti kapu továbbra is nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll és a 63.50.46 HIGH kódaudit-blokkoló ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -7208,7 +7208,7 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 5. Minden sikeres audit-commit után a fejléc folytatási állapotát és a legutolsó bejegyzést egyeztetni; a következő munka **egyértelmű azonosítóval**, a még nyitott részhalmazzal és a PASS/NOT PASS határral legyen megadva. A commit SHA csak a GitHub által visszaadott tényleges eredmény alapján közölhető.
 6. Nem létező vagy nem visszanyert történeti forrást nem lehet rekonstruáltnak nevezni; a 396 ID, 22 modul, 156 review és 271 történeti H-ID számlálása nem runtime teszt. A fejlesztési fagyasztás az aktív kapu PASS-áig változatlan.
 
-**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.57 MODULE-DOMAIN CROSSWALK / NEXT ITEM-LEVEL PHASE AND EVIDENCE`. A 54.1–54.4 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.7–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
+**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.58 16-GROUP PHASE CROSSWALK / NEXT 54.1–54.4 ITEM EVIDENCE`. A 54.1–54.4 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.7–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
 
 ### 63.50.41. 54.2 Saját weboldal és Visual Editor: 15 checklist-tétel első körös routingja (2026-10-14)
 
@@ -7518,6 +7518,41 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 **Kötelező negatív ellenőrzési lánc minden sorhoz:** owner-domain record → permission/site-scope → mutációs API/command → másodlagos UI read projection → pozitív és tiltott hozzáférési eset → F0–F11 phase → source/test/runtime evidence. Ebből most az **54-blokk szintű domain és modul** rész igazolt dokumentumszerkezet alapján; az **egyedi 156 sor phase/evidence és 271 történeti sor szemantikája továbbra is OPEN**.
 
 **Kiemelt release blocker:** 63.50.46 explicit-publish/snapshot/slug kódkonfliktus; a korábbi routing korrekciója ezt nem oldja meg. **SECOND PASS: MODULE/DOMAIN GROUP CROSSWALK DOCUMENTED; ITEM-LEVEL PHASE/EVIDENCE NOT PASS.**
+
+### 63.50.58. Második kör II: mind a 16 review-blokk fázis- és release-függőségi ellenőrzése (2026-10-15)
+
+**Forrás:** a 41.2 és 63.38 kanonikus F0–F11 crosswalk, a 24. ID-jegyzék és a 63.50.39–57 routing. A checkbox egyetlen mondata több fejlesztési fázist is érinthet: a *minimum működő szelet* és a *teljes célképesség* külön elfogadási kapu. Nem lehet az összes későbbi funkciót F0-ba húzni.
+
+| Review-blokk | Indulási / teljes fázis | Függőségi szerződés | Elsődleges negatív teszt |
+| --- | --- | --- | --- |
+| 54.1 | F1 + forrásdomain későbbi fázisa | SEARCH/NTF/HELP core F1; nem létező forrásdomain kártyája nem élő | Dashboard read-only; stale/error és role |
+| 54.2 | F0 core; F2 design; F3 CMS/SEO/forms; F5+ dinamikus provider | PAGE/REVISION snapshot F0; DSN F2; SEO/DYN/SET-004 F3 | Publikált v1 nem változhat draft PATCH miatt; slug/404 |
+| 54.3 | F2; marketplace F11 | DSN-001–017 F2; DSN-018 F11 | Globális token override/instance nem szivároghat át másik site-ra |
+| 54.4 | F0 asset reference minimum; F2 teljes könyvtár; F8 paid access | RES-001–002 F0; RES-003–015 F2; RES-016 F8 | Törölt/privát assetre hivatkozás nem válhat publikussá |
+| 54.5 | F0 meglévő Twitch megőrzés; F5 integrációs központ; F8 payment adapter | INT-001–021 F5, scope és provider capability szerint | Expired/revoked/wrong-site token nem engedélyezhet parancsot |
+| 54.6 | F0 schedule integrity; F3 schedule UX; F5 live; F6 studio | SCH-001/010 F0; SCH-002–006 F3; INT F5; LIV F5/F6 | DST ütközés, stale live, unsupported multistream |
+| 54.7 | F6; F11 extension registry | OBS-001–010 F6; MKT-001/002/004 F11 | Disconnected OBS parancs tiltott; plugin permission/secret |
+| 54.8 | F7; F10 AI clip javaslat | CNT-001–022 F7; AI-014 F10 | Publish approval és rights/takedown; unsupported API fallback |
+| 54.9 | F8; AI moderáció F10 | COM-001–020 F8; AI-016/019 F10 | Member-only szerveroldali entitlement; abuse/appeal |
+| 54.10 | F8 store/support; F9 campaigns/analytics; F11 SaaS billing külön | STO/SUP F8; CAM/ANL F9; TEAM-006 F11 | Refund/chargeback entitlement revoke; VAT/provider gate |
+| 54.11 | F9; AI hipotézis F10 | ANL-001–010 F9; CAM-007 F9; AI-016 F10 | Hiányzó metrika nem nullának és nem ténynek mutatva |
+| 54.12 | F9; AI workflow draft F10 | AUT-001–014 F9; AI-003/007 F10 | Dry-run nem futtathat éles akciót; retry idempotens |
+| 54.13 | F10; F0/F1 security előfeltétel | AI-001–021 F10; SEC-002/003 F0+ | AI nem írhat domain-adatot approval és audit nélkül |
+| 54.14 | F0/F1 locale alap; F3 web SEO/translation; F10 AI translation | LOC-001/002 F0/F1; LOC-003–005 F3; LOC-006 F10 | Locale fallback nem írhatja felül publikált eredeti tartalmat |
+| 54.15 | F0–F11 cross-cutting; F4 account; F11 multi-site | SEC/OPS/QA folyamatos; SEC-012 F4/F11; TEAM F4/F11 | Cross-tenant access és restore failure negatív teszt |
+| 54.16 | F4 team alap; F11 Developer/Extension/SaaS | TEAM-001–005 F4/F11; DEV/MKT/TEAM-006–007 F11 | API key/revoke, tenant isolation, marketplace trust boundary |
+
+**Részletes következtetések és prioritási sorrend:**
+
+1. **P0 — F0 blokkoló forráskód-szerződés:** `pages.content_json` draft vs `published_content_json` explicit snapshot; Admin Pages PATCH automatikus snapshot-felülírás és közös slug oszlop (63.50.21–23, 63.50.46). A javítás tervezésekor külön published metadata/URL lifecycle, migration, redirect, 404, canonical/OG/robots és read-only D1 preflight szükséges. **NOT FIXED**.
+2. **P1 — site/tenant és permission:** `site_settings.key='site'` single-site scope, `system_page_content` legacy útvonal és aktív fogyasztók, OAuth ownership, API/route/role matrix (63.50.24–26). Jelenlegi single-site nem bizonyít multi-tenant izolációt. **NOT PASS**.
+3. **P1 — egyetlen Admin és Editor:** 24 dashboard-kártya ≠ 22 főmodul; a kanonikus navigáció külön module entrypointokat igényel, miközben a domain-adat csak egy helyen létezik. Legacy assetek archiválása csak dependency inventory után. **NOT PASS**.
+4. **P2 — Resource/Design/Template:** F0 csak minimális asset reference; teljes registry és master-instance/override F2. A sablon, komponens, ikon és gomb globális változásának hatása diff/rollback nélkül nem zárható. **NOT PASS**.
+5. **P2 — külső integráció és későbbi AI:** provider capability és quota/scope/terms szerződés nélkül nincs éles action. AI először draft/preview, domain API-n át, human approval, AI-free fallback. **F5–F10, NOT IMPLEMENTED BY THIS AUDIT**.
+
+**Bizonyítékhatár:** a fenti 16 sor a 63.38 csoportszintű fázis-szabályainak *második körös átvezetése*; az összes 156 checkbox külön ID-nkénti acceptance és 271 H-történeti sor szemantikai helyessége még nem bizonyított. A már meglevő 63.12–63.15 tételes crosswalkot meg kell őrizni; az első körös 63.50.39–56 táblák nem helyettesítik és nem teszik feleslegessé.
+
+**Következő konkrét audit:** `63.50.59` — 54.1–54.4 soronkénti pozitív/negatív acceptance, domain és fázis, bizonyíték-állapot megkülönböztetése; majd 54.5–54.16; történeti 00/A / 00.9.6.B célzott forrásvizsgálat külön nyitott kapu. **SECOND PASS GROUP PHASES RECORDED / INDIVIDUAL EVIDENCE NOT PASS.**
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
