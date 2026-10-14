@@ -3905,3 +3905,51 @@ Az alábbi táblázat a 54. fejezet első négy témacsoportjának minden checkb
 | 54.12 | AI-ból létrehozott workflow először draft/szimuláció; csak jóváhagyás után éles | AI-005–009, AI-019, AUT-009–010 | AI workflow-draftot ad; élesítés külön jóváhagyási pont. |
 
 **Állapot:** a 54.9–54.12 tételek stabil ID-khez vannak rendelve. A hozzájuk tartozó runtime, jogosultsági és acceptance bizonyíték külön ellenőrzendő; a 54.13–54.16 tételes megfeleltetése nyitott.
+
+### 63.15. Tételes checklist-megfeleltetés — 54.13–54.16
+
+| Forrás | Ellenőrzőpont | Stabil ID / kanonikus modul | Megfeleltetés megjegyzése |
+|---|---|---|---|
+| 54.13 | AI Control Center: provider/model, költségkeret, kvóta, retention, adatforrás és stop switch | AI-001, AI-004, AI-010, AI-017, SEC-008, OPS-007 | Provider, usage és adatkezelési korlátok közös vezérlőfelülete. |
+| 54.13 | Projekt-/brandkontextus jogosultsággal és megtekinthető forrásokkal | AI-004, AI-006, AI-018, DSN-003 hivatkozás | Kontextus csak engedélyezett domainből; források és kizárt mezők megtekinthetők. |
+| 54.13 | Website Designer: oldal/komponens/dizájn/responsive/SEO/accessibility javaslat | AI-011–012, AI-007–009, EDT-001–026, DSN-001–007 hivatkozás | Az AI a kanonikus Editor/API szerződéseken dolgozik; nem épít második editort. |
+| 54.13 | Live Coach: opt-in technikai jelzések, pillanatjelölés és stream-/chat-összegzés | AI-015, AI-004, LIV-006, OBS-003, OBS-008, SEC-011 | Opt-in és adatforrás-korlát; jelölés/javaslat nem egyenlő automatikus végrehajtással. |
+| 54.13 | Content Producer: transcript, clip, felirat, fordítás, thumbnail, cím és platformvariáns | AI-013–014, AI-021, CNT-011–012, CNT-018–022, LOC-006 | A Content Studio a tartalom és a renderelt assetek kanonikus gazdája. |
+| 54.13 | Community Assistant: FAQ, összegzés, moderációs javaslat és tagsági művelet-előkészítés | AI-016, AI-018–019, COM-009, COM-011, SUP-006 | AI javaslatot készít; moderációs, tagsági és hozzáférési döntés a domain policy szerint. |
+| 54.13 | Business Analyst: tartalom/kampány elemzés, hipotézis, mérhető teszt | AI-013, AI-015–016, ANL-004, ANL-007–010, CAM-007 | Forrás, minta, bizonytalanság és mérhető validáció kötelező. |
+| 54.13 | Automation Builder: természetes nyelvből workflow-draft, szimuláció és diff | AI-003, AI-005, AI-007–009, AUT-009–010 | Az első eredmény draft; aktiválás külön jóváhagyás. |
+| 54.13 | Kép-/grafika-/hang-/videógenerálás megfelelő külső modellel/szolgáltatóval, licenc- és költségkorláttal | AI-001, AI-010, AI-021, RES-007, OPS-010 | Provider capability, licenc, költség, biztonság és eredet ellenőrzendő. |
+| 54.13 | AI-művelet domain API-n át; kockázati szint, preview, jóváhagyás, napló és visszaállítás | AI-005–009, AI-019, SEC-002–003, OPS-009 | Nincs közvetlen, ellenőrizetlen adatbázis- vagy UI-módosítás. |
+| 54.13 | Generált tartalom jelölése, forrás és bizonytalanság, felhasználói visszajelzés | AI-002, AI-007, AI-010, AI-018, AI-021 | Modell/verzió, forrás és felhasználói feedback rögzítendő. |
+| 54.13 | Manuális, AI nélküli út minden alapvető termékfolyamathoz | AI-020, QA-008–009 | Az AI nem lehet kritikus funkció egyetlen elérési útja. |
+| 54.14 | Admin és publikus web külön nyelvi beállítással | LOC-001–003, SET-001 | Admin UI-locale és publikus tartalom locale külön konfiguráció. |
+| 54.14 | Magyar elsődleges nyelv, további nyelvek fokozatos bevezetése | LOC-001, LOC-003, LOC-005, SET-001 | Magyar az alapértelmezés; további locale nem jelenhet meg késznek hiányos fordítással. |
+| 54.14 | Locale-onkénti oldal-/CMS-tartalom, menü, média, alt text, SEO és Open Graph | LOC-003–005, WEB-009, SEO-001–005, RES-007 | Locale-specifikus tartalom és metaadat; hiány esetén explicit fallback. |
+| 54.14 | Lokalizált slug/URL, hreflang/canonical szabályok és nyelvi fallback | LOC-004, SEO-001, SEO-004, WEB-002, WEB-013 | URL és SEO-konfliktusok validálása publikálás előtt. |
+| 54.14 | Dátum/idő/pénznem/szám lokalizáció, időzóna és nyári időszámítás | LOC-002, SCH-003, STO-002, SET-001 | Domainérték tárolása és locale szerinti megjelenítés nem keverhető. |
+| 54.14 | RTL layout, billentyűzet, font fallback és hosszabb fordítások tesztje | LOC-002, LOC-005, QA-004–005, DSN-007 | Valós RTL és hosszú szöveg teszt szükséges, nem csak fordítási string. |
+| 54.14 | Fordítási memória/szószedet és AI-fordítás emberi jóváhagyással | LOC-006, AI-007, AI-019 | Automatikus fordítás draft; publikálás előtt review. |
+| 54.14 | Nyelvváltó, automatikus nyelvajánlás és felhasználói választás megőrzése | LOC-001, LOC-003, LOC-005, WEB-009 | Választás tiszteletben tartása; automatikus ajánlás nem kényszeríthet nyelvváltást. |
+| 54.15 | Profil, site/workspace, locale, timezone, dátum/pénznem és preferenciák | SET-001–002, TEAM-001, LOC-001–002 | User preference és site setting külön scope. |
+| 54.15 | Szerepek: owner/admin/editor/moderator/analyst/commerce és modulonkénti engedély | SEC-002–003, TEAM-002–004 | RBAC szerveroldali, modul- és műveletszintű ellenőrzéssel. |
+| 54.15 | Szerveroldali authorization, site/tenant izoláció és minimális jogosultság | SEC-002–003, SEC-006–008, QA-003 | Negatív cross-site tesztek kötelezők. |
+| 54.15 | Session, 2FA/SSO később, secret rotation, rate limit és gyanús aktivitás | SEC-001, SEC-007–008, SEC-012, OPS-003 | 2FA/SSO státusz és ütemezés külön kezelendő; secret soha nem kerül logba. |
+| 54.15 | Titok/token/payment adat redakció; titkosított token storage | INT-004, INT-019, SEC-008, SEC-010 | Secret lifecycle és redaction mind a logban, mind diagnosztikai exportban. |
+| 54.15 | Consent, cookie/privacy, retention, export/delete és adatfeldolgozók | SEC-010–011, COM-017, ANL-009, AI-004 | Domainonkénti retention/consent és ellenőrzött export/delete. |
+| 54.15 | Backup, restore próba, verziózott mentés, import/export és disaster recovery | OPS-005–006, OPS-009, QA-007 | Restore drill bizonyíték nélkül nincs PASS. |
+| 54.15 | Health, job queue, webhook, API-quota, error log és audit log | OPS-001–003, OPS-007, OPS-011, INT-008, AUT-008 | Egységes diagnosztika, korrelációs azonosítók és secret-redaction. |
+| 54.15 | Idempotencia, retry, timeout, cache invalidation, stale-data és partial-failure kezelés | AUT-006–008, INT-008–009, DYN-005–006, WEB-030, OPS-011 | Domainonkénti retry és közös megfigyelhetőség; nincs végtelen újrapróbálás. |
+| 54.15 | Undo/redo, revision diff, restore és törlés előtti függőségi vizsgálat | EDT-005, EDT-029–031, WEB-007–008, RES-008–009, OPS-005 | A visszaállítás a megfelelő domain saját verziómodelljén fut. |
+| 54.15 | WCAG 2.2 AA cél, reduced motion, screen reader, kontraszt, fókusz és touch target | QA-004–005, EDT-037, EDT-040, DSN-003 | Akadálymentességi acceptance minden fő UI-útvonalon. |
+| 54.15 | Mobil/tablet/desktop, gyenge hálózat, offline-jelzés és adatvesztés elleni védelem | QA-004, EDT-035–036, EDT-031, EDT-042, ADM-008, OPS-003 | Responsive és hálózati hibateszt külön acceptance. |
+| 54.15 | Tesztek: domain, integration, authorization, migration, UI, accessibility, responsive, E2E és smoke | QA-001–009 | A tesztkatalógus nem puszta felsorolás: futási eredmény és evidence szükséges. |
+| 54.16 | Dokumentált API, webhook registry, API-key kezelés, tesztelő és sandbox | DEV-001–004, DEV-006, INT-017, SEC-008 | Developer Platform/API modul; scope, expiry, rate limit és audit. |
+| 54.16 | Extension/widget/overlay manifest, schema, permission, verzió és kompatibilitás | MKT-001–002, MKT-004, OBS-010, DEV-005 | Extension manifest és SDK külön szerződés; kompatibilitás tesztelendő. |
+| 54.16 | Eredet/licenc/aláírás, sandbox, felülvizsgálat, frissítés, eltávolítás és visszavonás | MKT-001–004, OPS-010, SEC-002–008 | Bővítmény és dependency supply-chain kockázat kezelendő. |
+| 54.16 | Template/component/overlay/workflow marketplace későbbi fázisban | MKT-003–005, DSN-018, AUT-013 | Marketplace későbbi fázis, jogi/licenc és fizetési kapuval. |
+| 54.16 | Több site/workspace, aktív workspace választó, csapatmeghívás és szerepek | TEAM-001–004, TEAM-005, SEC-003 | Aktív scope explicit; minden kérés szerveroldalon ellenőrzött. |
+| 54.16 | Agency/studio mód, ügyfélhozzáférés, közös sablonok és jóváhagyás | TEAM-007, TEAM-003–004, DSN-008–015 | Kliensenkénti brand, adat és jóváhagyás izolált. |
+| 54.16 | Későbbi SaaS billing, csomag, használati limit, számla, lemondás és adat-export | TEAM-006, STO-021, OPS-007 | Billing és plan entitlement nem keverhető a store-rendelés domainnel. |
+| 54.16 | Tenant izoláció, migráció, skálázás, adatrezidencia és költségfelügyelet | SEC-003, OPS-004–006, OPS-008–011, TEAM-005–006 | Későbbi SaaS-kapu; migráció/restore és költségmodell bizonyítékkal. |
+
+**Állapot:** a 54.13–54.16 tételek stabil ID-khez vannak rendelve. A 54.1–54.16 teljes checklistének tervszintű megfeleltetése most elkészült; a következő audit a 156 sorhoz rendelt ID-k létezését, szemantikai pontosságát, valódi duplikációit és a 49. fejezet modulhatáraival való összhangját ellenőrzi. Ez még nem igazolja a runtime implementációt vagy az acceptance-tesztek PASS állapotát.
