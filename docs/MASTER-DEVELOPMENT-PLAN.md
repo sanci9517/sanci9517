@@ -1178,7 +1178,7 @@ Az alábbi jegyzék a menüfunkciókat külön, stabil munkapontokra bontja. A s
 - RES-001: Canonical asset registry and IDs.
 - RES-002: R2 binary storage and D1 metadata.
 - RES-003: Upload validation/progress/cancel/retry.
-- RES-004: Image preview/thumbnail/variant.
+- RES-004: Image preview/thumbnail/variant, crop/resize and optimization pipeline.
 - RES-005: Media search/filter/sort/pagination.
 - RES-006: Collections/tags/folders.
 - RES-007: Alt text/caption/license/source metadata.
@@ -4803,10 +4803,11 @@ Ez a javítás kizárólag a crosswalk szemantikai pontosságát érinti; a 362/
 **Állapot:** a QA-004 fogalom pontosítva; az F.10-02 import contract továbbra is OPEN. Ez a két szemantikai részfeladat nem zárja le P0.2-t, amely **IN PROGRESS / NOT PASS** marad.
 
 
-### 41.3.79. P0.2 — H19 Resource historical mapping: video/audio, clip assets and cache policy (2026-10-14)
+### 41.3.79. P0.2 — H19 Resource historical mapping: image processing, video/audio, clip assets and cache policy (2026-10-14)
 
-A H19.01–H19.20 Resource/Asset Library ledger szemantikai ellenőrzése három egymáshoz közeli, de külön ownershipű sort pontosított:
+A H19.01–H19.20 Resource/Asset Library ledger szemantikai ellenőrzése a RES-004 media-processing contractot pontosította, és három további, külön ownershipű sort rendezett:
 
+- **H19.08 crop, H19.09 resize és H19.17 image optimization:** a korábbi RES-004 leírás csak preview/thumbnail/variant volt, ezért a három történeti képesség nem volt explicit a registryben. A RES-004 definíciója bővült crop/resize és optimization pipeline-nal; a konkrét supported format, output variants, quality/size budget és phase-specific acceptance továbbra is a Resource contract része, nem runtime PASS.
 - **H19.18 video/audio:** a korábbi `RES-004` mapping hibásan image preview/thumbnail/variant capabilityre támaszkodott. Javítva `RES-001/002/003` alapokra (canonical asset registry, R2/D1 boundary, upload lifecycle); az explicit támogatott media type, preview/playback és elfogadott formátumok contractja M0.2-ben nyitott. Ez nem állítja, hogy a teljes video/audio processing 1.0 része.
 - **H19.19 clip/Short assets:** a korábbi csak `CNT-003` mapping a content item managementet fedte le, de az eredeti Resource / Asset Library ownerből következő binary asset ownershipet nem tette láthatóvá. Javítva `RES-001/002 + CNT-003` leképezésre: az asset binary/resource és a clip/Short canonical content item külön felelősség, az advanced workflow 1.x+ marad.
 - **H19.20 cache policy:** az `OPS-008` önmagában általános performance/cache/query monitoring; nem specifikálja az asset cache policyt és invalidationt. A mapping `WEB-030 + OPS-008` lett, és az asset-specific owner/policy/invalidation contract M0.2 nyitott pontként szerepel.
