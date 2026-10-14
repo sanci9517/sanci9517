@@ -7153,6 +7153,16 @@ A `63.50.34` ellenőrzés **fordított irányú** kiegészítése: a 24. fejezet
 
 **Következő szemantikai review szabály:** minden kanonikus ID-t a saját termékigényével, 49. moduljával, 54. ellenőrzőlistájával és fázisával kell igazolni; történeti H19–H34 kapcsolat csak akkor kötelező, ha valóban abból származik. A hiányzó `00/A` és `00.9.6.B` miatt a 224 ID történeti eredetét nem szabad önkényesen teljesnek vagy hiányzónak minősíteni. **REVERSE COVERAGE COUNT: VERIFIED / PROVENANCE SEMANTICS OPEN.** A teljes tervkapu NOT PASS.
 
+### 63.50.36. Három kanonikus nézet strukturális számlálása: 24. / 49. / 54. (2026-10-14)
+
+**Ellenőrzött hatókör:** a `v2/foundation` MASTER jelenlegi 24., 49. és 54. fejezeteinek teljes szöveges, formai leltára. A 24. fejezetben a `- PREFIX-NNN:` formájú definíciókat, a 49. fejezetben a `### 49.N.` főmodulokat, az 54. fejezetben a `- [ ]` review-elemeket számoltuk. **Eredmény:** 396/396 egyedi capability-definíció, duplikált definíciós ID **0**; **22/22** kanonikus főmodul; **156** checklist sor az 54. fejezetben. A 156 checklist nem 156 új ID, hanem összetett felhasználói ellenőrzési eset; a sorok automatikus 1:1 ID-megfeleltetése tilos.
+
+**396 ID megoszlása, a 24. fejezet definíciói alapján:** ADM 13, WEB 32, EDT 44, DSN 18, RES 16, INT 21, LIV 10, OBS 10, SCH 15, CNT 22, COM 20, STO 21, SUP 12, ANL 10, CAM 9, AUT 14, AI 21, SEC 12, OPS 11, LOC 6, TEAM 7, MKT 5, QA 10, SET 4, DYN 8, SEO 5, DEV 6, SEARCH 5, NTF 5, HELP 4. Összeg: **396**.
+
+**Főmodul–képességcsalád kanonikus UX-owner, nem külön adattár:** 49.1 ADM; 49.2 WEB+EDT+SEO+DYN; 49.3 DSN; 49.4 RES; 49.5 LIV+SCH; 49.6 OBS; 49.7 INT; 49.8 CNT; 49.9 COM; 49.10 STO; 49.11 SUP; 49.12 CAM; 49.13 ANL; 49.14 AUT; 49.15 AI; 49.16 SEARCH; 49.17 NTF; 49.18 HELP; 49.19 SEC+OPS+SET+LOC; 49.20 DEV; 49.21 MKT; 49.22 TEAM. QA az összes modulon átívelő bizonyítási funkciócsalád, nem 23. Admin-főmodul. A 63.20 domain/adatgazda mátrix az egyetlen owner-szerződés; az itt megadott prefix-kapcsolat navigációs besorolás.
+
+**Nyitott szemantikai kapu:** az 54. fejezet mind a 156 összetett ellenőrzési sorának tartalmi lefedése a megfelelő 24. ID-val, 49. modullal, pozitív/negatív acceptance-szel és fázissal **még nem bizonyított**. A strukturális számlálás **PASS**, a teljes tartalmi kapu **IN PROGRESS / NOT PASS**.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
