@@ -5136,3 +5136,21 @@ A §37.16, §37.17 és §41.2 egyes mondatai a 2026-10-13-i, 359-ID-s registry-s
 **Ami továbbra sincs lezárva:** a számlálási egyezés önmagában nem bizonyítja, hogy minden egyes H-ID szemantikailag pontos, teljes, nem összevont, megfelelő canonical ownerhez rendelt vagy a teljes történeti változatok között konzisztens. A következő audit továbbra is minden forrásmondat ↔ ledger sor kétirányú megfeleltetését, a kiegészítő sorok explicit `supplemental governance/architecture` jelölésének ellenőrzését, és az alternatív történeti snapshotok összevetését igényli. A `00.9.6.B` teljes eredeti szövegét ebben a körben sem sikerült visszanyerni; a vizsgált snapshotban a `00.9.6` általános térkép és a `00.9.6.A` fejezet szerepel, de külön `00.9.6.B` heading nem.
 
 **Státusz:** a 271-es darabszám strukturális magyarázata **RECONCILED — STRUCTURAL ONLY**. A teljes szemantikai reconciliáció és P0.2 továbbra is **IN PROGRESS / NOT PASS**; a fejlesztési fagyasztás változatlan.
+
+### 41.3.111. P0.2 — H19–H33 címke- és kontextus-összevetés: a normalizálási kivételek rögzítve (2026-10-14)
+
+**Ellenőrzött összevetés:** a történeti `8a4f296b8c87643a3199e5787541e8eefb17f930` snapshot 19–33. fejezeteit a jelenlegi H19–H33 ledgerrel szakaszonként összevetettem. Az összevetés nem egyszerű teljes sorcím-egyezés: a forrásban a csoportcímek (például Twitch/YouTube/TikTok/Discord) adják a kontextust, a ledgerben ez a platformnév a sorcímkébe is bekerül.
+
+**Kifejezetten ellenőrzött kivételek:**
+- **H19:** a forrásban az `alt text` és `crop` két checkboxa ugyanabba a fizikai sorba fűződött. A ledger ezeket helyesen két külön ID-ként tartja meg: H19.07 és H19.08. A normalizálás két külön követelményt számol, nem egyet.
+- **H20:** a 18 forráskövetelmény 18 ledger-sornak felel meg.
+- **H21:** a forrás 21 integrációs követelményt tartalmaz: Twitch 9, YouTube 5, TikTok 4, Discord 3. Ezek a ledger H21.01–H21.21 soraival platformkontextussal egyeznek. H21.22 külön architekturális kiegészítés (Cloudflare Secrets + külső API-k szolgáltatásrétegen keresztüli normalizálása), nem 22. forrás-checkbox; külön `supplemental architecture` jelölést igényel.
+- **H22:** a forrás egy `search/filter` követelményt tartalmaz, a ledger H22.11 ezt `VOD search/filter` címkével őrzi meg. Ez a VOD fejezet kontextusával konzisztens, nem két külön követelmény.
+- **H23–H30:** a forráscímkék és a ledger-címkék szakaszonként megfelelnek; H23 20, H24 13, H25 12, H26 12, H27 19, H28 17, H29 10, H30 14 sor.
+- **H31:** a 13 forráskövetelményhez 13 funkciósor tartozik; H31.00 a közös AI Editor action pipeline külön architekturális kiegészítése.
+- **H32:** a 25 forráskövetelmény 25 ledger-sornak felel meg.
+- **H33:** a 11 forráskövetelmény 11 funkciósornak felel meg; H33.00 az automatizálás életciklus-szabálya, H33.12 pedig a Queues/Durable Objects feltételes használatának architekturális korlátja. Mindkettő kiegészítő szabály, nem külön forrás-checkbox.
+
+**Eredmény:** a 19–33. fejezeteknél az azonosított számlálási eltérések a H19 formázási összevonására és a H21/H31/H33 négy külön kiegészítő szabályára vezethetők vissza. Ez támogatja a **strukturális reconciliációt**, de még nem igazolja a minden követelményhez tartozó teljes leírás, canonical owner, lifecycle, fázis, függőség, elfogadási feltétel és teszt szemantikai helyességét. H34 külön folyamat/témakör leképezése továbbra is önálló, tételes ellenőrzést igényel.
+
+**Státusz:** H19–H33 címke- és darabszám-összevetés **STRUCTURAL REVIEW COMPLETE WITH EXPLICIT EXCEPTIONS**; teljes szemantikai reconciliáció **OPEN**. `00.9.6.B` teljes eredeti forrása továbbra is **UNRECOVERED / OPEN**. P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
