@@ -3497,7 +3497,7 @@ A fenti leképezés nem engedélyezi a függőségek átugrását. Ha egy munkac
 ### 62.7. Az eddigi dokumentumszerkezeti ellenőrzés eredménye — 2026-10-14
 Az ellenőrzés a MASTER aktuális repository-változatára vonatkozik; nem jelent teljes szemantikai, runtime- vagy funkcionális PASS-t.
 
-- [x] A számozott főfejezetek 0–62 között folytonosak, hiányzó főfejezetszámot nem találtunk.
+- [x] A számozott főfejezetek 0–63 között folytonosak, hiányzó főfejezetszámot nem találtunk; a 63. fejezet a világszintű termékképességeket és minőségi szerződést egészíti ki.
 - [x] Az aktuális dokumentumellenőrzésben nem találtunk azonos című, duplikált Markdown-fejezetcímet.
 - [x] A 3. fejezet domain-felelősségeit a kanonikus 16 modulhoz rendeltük; a 46.1. menülistát a 49. fejezet modulstruktúrájához igazítottuk.
 - [x] A 9. fejezet P1–P22 munkacsomagjait a 41.2. F0–F11 végrehajtási sorrendhez rendeltük a 62.5. leképezéssel.
