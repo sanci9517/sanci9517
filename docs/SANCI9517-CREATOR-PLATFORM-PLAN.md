@@ -23,6 +23,7 @@ Ez a dokumentum kizárólag a termék jelenlegi, ellenőrzött alapjait, a telje
 - Egy funkció tervben szereplése nem bizonyítja, hogy elkészült. Késznek csak működő implementáció, releváns tesztek és szükséges éles/felhasználói ellenőrzés alapján nevezhető.
 - Nincs külön második termékterv vagy párhuzamos, új auditprojekt.
 - A felhasználói élmény az első: a creator az Adminban a feladatának megfelelő, jól elkülönített modult találja meg; a közös adatok és műveletek minden érintett felületen következetesen frissülnek.
+- **Modulhatár-alapelv:** a funkciók főmodul → funkciócsoport → alfunkció → elfogadási feltétel hierarchiában szerepelnek. Egy modul nem válhat minden más funkció gyűjtőhelyévé. Minden üzleti képességnek egy kanonikus tulajdonosmodulja van; más modulok csak szabályozott kapcsolódási ponton keresztül használhatják.
 - A kézi alapfolyamatok AI nélkül is használhatók. Az AI bővíti és gyorsítja a platformot, de nem rejtheti el a működés állapotát, és nem végezhet korlátlan, jóváhagyás nélküli műveleteket.
 
 ### 0.1. Termékkategóriák
@@ -3648,4 +3649,36 @@ A fejlesztés követése ugyanebben a MASTER-ben történik. Nem hozunk létre m
 - **Újrahasználat és kutatás:** a fejlesztés előtt ellenőrizni kell a meglévő saját implementációt és tesztjeit, majd az adott funkcióhoz releváns, működő referenciákat, hivatalos dokumentációt és — ha érdemes — karbantartott nyílt forrású megoldásokat. A döntés lehet `REUSE`, `ADAPT`, `BUILD`, `REJECT` vagy `DEFER`; indoklás, licenc/policy/security/karbantarthatósági ellenőrzés és acceptance-hatás szükséges. Nem másolunk vakon, és nem írunk újra működő saját kódot bizonyított ok nélkül.
 - **Felületek közötti követés:** ha egy kanonikus adat vagy művelet több modulban jelenik meg, az elfogadás során minden érintett Admin-, Editor-, API- és publikus útvonalat ellenőrizni kell; a közös változás hatása, cache-frissítés és jogosultság is része a feladatnak.
 - **Terv és termékállapot különválasztása:** a MASTER teljességének PASS állapota nem jelenti az összes funkció implementáltságát; egy fejlesztési fázis PASS állapota nem zárja le automatikusan a teljes tervet.
+
+### 63.9. Funkcióhierarchia és modulhatárok — kötelező tervminőségi kapu
+
+A Creator Platformot nem egyetlen nagy szerkesztőbe vagy általános Admin-modulba sűrítjük. A felhasználói élmény egységes lehet, de a funkciók felelőssége, adata, jogosultsága és üzleti logikája külön, érthető modulokban marad.
+
+**Kötelező hierarchia minden képességhez:**
+1. **Főmodul:** a felhasználó által érthető, önálló feladatkör (például Weboldal, Brand Kit, Stream Studio, Kapcsolatok, Tartalomstúdió, Közösség, Commerce, Analitika, Automatizáció, SANCI AI, Fiók és biztonság, Platformbeállítások).
+2. **Funkciócsoport:** a főmodulon belül egy összetartozó munkafolyamat (például Weboldal → Oldalak; Navigáció; CMS; Visual Editor; SEO; Publikálás).
+3. **Alfunkció:** egy konkrét, külön megérthető művelet vagy képesség, saját állapotokkal, jogosultságokkal és hibakezeléssel, ahol szükséges.
+4. **Elfogadási feltétel:** ellenőrizhető viselkedés, teszt és bizonyíték, amely megmutatja, mikor tekinthető az alfunkció késznek.
+
+**Egy funkció — egy tulajdonos:**
+- Minden üzleti képességhez egyetlen kanonikus tulajdonosmodult és adat-/API-szerződést kell kijelölni. Más modulban megjelenhet gyorselérés, összefoglaló vagy beágyazott vezérlő, de ez nem hozhat létre második adatforrást vagy párhuzamos üzleti logikát.
+- A keresztmodulos funkciókapcsolatot explicit módon kell dokumentálni: ki birtokolja az adatot, ki végezheti a műveletet, milyen engedéllyel, milyen API/command vagy esemény útján, és hogyan frissül a többi felület.
+- A közös, általános UI-komponensek (például ikonválasztó, média-picker, assetválasztó, dátum/idő választó, színválasztó, megerősítő dialógus) újrahasználhatók; ez nem jelenthet duplikált domain-szolgáltatást.
+
+**A Visual Editor pontos határa:**
+- **Ide tartozik:** oldalvászon és struktúra, rétegek, kiválasztás, drag-and-drop, Inspector, reszponzív breakpointok, stílus-/layout-beállítások, oldalkomponensek és blokkok elhelyezése, undo/redo, billentyűparancsok, preview, szerkesztői validáció és a kanonikus mentési/publikálási folyamat használata.
+- **Nem ide tartozik tulajdonosként:** Twitch/YouTube/TikTok/Discord fiókok és tokenek; stream-adásrend és provider-szinkron; médiafájlok és R2 assetek kanonikus kezelése; Brand Kit/design tokenek és sablonkönyvtár tulajdonosi kezelése; analitika adattára és riportlogikája; közösség/moderáció; fizetés, shop, számlázás; automatizációs motor; AI-szolgáltató konfigurációja; csapat-/tenant-jogosultságok.
+- Az Editor ezekhez kaphat kontextuális választót, adatblokkot, konfigurációs panelt vagy előnézetet, de a beállításokat a saját tulajdonosmodulból és szerződésből olvassa/írja. Az Editor nem másolhatja le ezeket saját, külön adatmodellbe.
+- A publikált oldal renderere a Page Model megjelenítéséért felel; nem válhat a külső integrációk, analitika, jogosultságok vagy üzleti folyamatok második backendjévé.
+
+**A terv szerkezeti auditjának ellenőrzőlistája:**
+- [ ] Minden funkció a megfelelő főmodul és funkciócsoport alatt szerepel; az általános, túlterhelt gyűjtőfejezetek fel vannak bontva.
+- [ ] Minden funkcióhoz egyértelmű kanonikus tulajdonos, adatforrás, felület és kapcsolódási pont tartozik.
+- [ ] A Visual Editor, Brand Kit, Media/Asset Library, Integrations, Stream Studio, Analytics, Community, Commerce, Automation és SANCI AI határai külön-külön ellenőrizve vannak.
+- [ ] Az Admin-menü, a terv modulhierarchiája, a domain-szerződések és a fázisok közötti megfeleltetés nem mond ellent egymásnak.
+- [ ] A közös képességek keresztlinkként vagy közös szolgáltatásként szerepelnek, nem egymástól független másolatokként.
+- [ ] Minden alfunkciónak van státusza, függősége, elfogadási feltétele és szükséges tesztje; a tervbeli említés nem számít kész implementációnak.
+- [ ] A felhasználói útvonalak végigkövetik a főfolyamatot az Admin/Editor felülettől a backend/adattáron át a publikus kimenetig, ahol releváns.
+
+**Státusz:** IN PROGRESS. A jelen fejezet meghatározza a kötelező struktúrát; a teljes termékfunkció-katalógus tételes ellenőrzése után lehet a kaput PASS-ra állítani. A már létező, logikus modulbontást meg kell őrizni és következetesen alkalmazni; nem kell mindent újraszervezni, ha az audit igazolja, hogy a funkció a megfelelő helyen van.
 
