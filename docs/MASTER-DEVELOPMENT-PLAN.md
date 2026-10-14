@@ -5638,3 +5638,58 @@ A „MATCH candidate” csak a tervezett elemkategória jelenlétét jelenti; ne
 **Crosswalk-megállapítás:** az EDT-011 név szerint összevonja a reorder/reparent/duplicate/delete műveleteket, az EDT-012 a tree expand/collapse-t, de ezek a rövid címkék nem zárják le a veszélyes törlés, bulk műveletek, drop preview, invalid-drop, nesting rule, tree search és expand-to-selected külön elfogadási kritériumait. Ezek explicit acceptance-ként megmaradnak; új feature ID csak akkor szükséges, ha a meglévő EDT-szerződések bővítése nem teszi a külön felelősséget egyértelművé.
 
 **Státusz:** 19 pont tételesen leképezve; több pont részleges acceptance-t igényel. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.131. P0.2 — Régi 1/E Inspector: tételes property-szemantikai crosswalk (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, 1/E, 27 atomikus pont. **Canonical célpont:** 24.3 EDT-021–026, EDT-017–020, EDT-039, EDT-043; kapcsolódó crosswalk: 37.22 E.3.5-01–05, E.3.6-01–07, E.3.2-03, E.3.3-01, valamint a typed Design System / Resource / Accessibility szerződések. A rövid EDT címkék és a történeti crosswalk nem helyettesítik a property-level acceptance feltételeket.
+
+| # | Régi Inspector követelmény | Jelenlegi célpont | Státusz | Szükséges explicit acceptance |
+|---:|---|---|---|---|
+| 1 | Content | EDT-021/022; EDT-017–020 | PARTIAL | Típusonként deklarált content property, default, validation, safe render, empty/error állapot; tartalom és display label ne keveredjen. |
+| 2 | Rich text | EDT-043 | DECISION RECORDED / PHASED | Advanced structured rich text a terv szerint 1.0 után; 1.0 plain-text baseline nem tekinthető rich-text editor megvalósításnak. Markup sanitization, inline/block schema, paste és round-trip kapu kell. |
+| 3 | Typography | EDT-021/022; DSN-001–007 | PARTIAL | Font family/size/weight/line-height/letter spacing, token vs custom érték, font loading/fallback, locale és responsive inheritance. |
+| 4 | Layout | EDT-016, EDT-021/022 | PARTIAL | Flow/Flex/Grid/Stack/Row/Columns közötti típusos beállítások; layout-mode váltás ne veszítse el csendben a tartalmat vagy geometryt. |
+| 5 | Spacing | EDT-009, EDT-016, EDT-021/022 | PARTIAL | Margin/padding/gap/unit, shorthand/side values, min/max, reset/inheritance és invalid/negative range policy. |
+| 6 | Appearance | EDT-021/022; DSN-001–007 | PARTIAL | Typed visual properties, token-first, contrast/accessibility warning és public renderer parity. |
+| 7 | Border | EDT-021/022; DSN-007 | PARTIAL | Side/style/width/color/radius kapcsolatok, valid range, token support és box-model következmény. |
+| 8 | Radius | EDT-021/022; DSN-007 | PARTIAL | Typed corner values, linked/unlinked corners, unit/range és responsive inheritance. |
+| 9 | Shadow | EDT-021/022; DSN-007 | PARTIAL | Token/preset vagy korlátozott typed shadow schema; arbitrary CSS tiltása, reduced-motion nem releváns, de contrast/visibility ellenőrzés. |
+| 10 | Background | EDT-021/022; DSN-001–007 | PARTIAL | Color/token/asset/gradient (csak ha támogatott) union type; fallback, overlay/contrast, image loading és responsive semantics. |
+| 11 | Image/media | EDT-018; RES-010/013 | PARTIAL | Asset picker/reference, alt/decorative, focal point/crop, ratio/sizing, missing/unauthorized asset és video/embed policy. |
+| 12 | Responsive | EDT-023–026 | PLAN MATCH / VERIFY | Resolved value és source viewport látható; inheritance/override/reset, breakpoint order és desktop regresszióteszt. |
+| 13 | Interaction | EDT-039; SEC-005/006 | PARTIAL | Typed action/trigger/target, hover/focus/active/disabled states, allowed destinations, permission és no arbitrary script. |
+| 14 | Link/navigation | EDT-017, EDT-039, WEB-013 | PARTIAL | Internal route vs external URL, target/rel, safe scheme allowlist, broken route and preview/public parity. |
+| 15 | Accessibility | EDT-022/037, QA-005, WEB-032 | PARTIAL | Per-element accessible name/label/alt/role rules, keyboard/focus, contrast and errors; save/publish validation boundary must be explicit. |
+| 16 | Data binding | EDT-020, DYN-001–008, SEC-002 | PHASED / PARTIAL | 1.0 safe declared sources vs later full binding UI; schema/type validation, allowed transforms, permission, loading/empty/error/stale and no arbitrary SQL/JS/fetch. |
+| 17 | Visibility | EDT-014, EDT-026 | PARTIAL | Editor-only hide, responsive visibility, condition-based visibility and authorization are distinct concepts; hidden public content must not be treated as protected. |
+| 18 | States/pseudo-states | EDT-039; EDT-021/022; DSN | UNMAPPED / VERIFY | Hover/focus/active/visited/disabled/loading/error states, supported properties per state, touch/keyboard equivalence and conflict precedence require a dedicated explicit matrix. |
+| 19 | Advanced | EDT-021/022; EDT-043; EDT-039 | UNMAPPED / SCOPE DECISION | “Advanced” is not a valid catch-all feature. List each advanced property/control, owner, 1.0/later phase and acceptance; keep Rich Text separate. |
+| 20 | Property search | EDT-021; EDT-015 is block-library search, not equivalent | PARTIAL / VERIFY | Search the selected node’s Inspector properties, category, keyboard access, no false positives and stable filtered focus. |
+| 21 | Property reset | EDT-022–024 | PARTIAL | Per-field reset to schema default vs inherited value vs token default must be distinguishable; responsive override reset must not reset other breakpoints accidentally. |
+| 22 | Inherited value indicator | EDT-023/024 | PARTIAL | Show inherited source (base/breakpoint/token/parent where relevant), resolved value and explicit-vs-inherited state; inheritance chain test. |
+| 23 | Overridden value indicator | EDT-023/024 | PARTIAL | Mark explicit override, allow reset to inherited, expose source breakpoint and preserve values across viewport switching. |
+| 24 | Invalid value indicator | EDT-022, QA-006 | PARTIAL | Inline actionable validation, keyboard/screen-reader announcement, block persistence for invalid schema, preserve last valid state and explain correction. |
+| 25 | Unit selection | EDT-022; DSN-007 | PARTIAL | Unit allowlist per property (px/%/rem/vw/etc only where supported), conversion/rounding, invalid combination and responsive values. |
+| 26 | Color picker | EDT-022; DSN-007 | PARTIAL | Keyboard-accessible picker, hex/RGB/HSL policy, alpha support, token selection, contrast warning, invalid color and typed storage. |
+| 27 | Token selection | EDT-021/022; DSN-001–007 | PARTIAL | Canonical token registry, search/category, live preview, deleted/renamed token migration, fallback and distinguish token reference from literal color/value. |
+
+#### Kötelező Inspector-kontraktus a lezáráshoz
+
+1. **Declarative Property Registry:** minden element type/property esetén egyetlen schema adja a control type-ot, value type-ot, defaultot, validációt, read-only/permission szabályt, responsive támogatást, token/resource reference-et és renderer mappinget. Per-element ad hoc Inspector-ágak nem lehetnek a második forrás.
+2. **Egyetlen canonical state:** Canvas, Layers, Inspector és Page Model ugyanazt a typed command/state rendszert használja. Invalid edit nem írhat részlegesen a modelbe, nem menthető és nem jelenhet meg sikeres mentésként.
+3. **Default/inherited/override/token elkülönítés:** a UI ne mutasson azonosnak látszó értéket eltérő eredettel; a reset művelet célját a felhasználó előre értse.
+4. **Viewport-resolved érték:** az Inspector mutassa, melyik breakpoint értéke aktív, honnan öröklődik, és mi történik viewportváltáskor. A responsive override reset ne törölje a base értéket.
+5. **Property search és fókusz:** a block library kereső nem helyettesíti az Inspector property keresőjét. A szűrés, billentyűzetes navigáció és validation error fókusz kezelése külön acceptance.
+6. **Biztonságos interakció és binding:** link/action/binding property csak deklarált, engedélyezett típust és célt fogadhat el; arbitrary JS, unrestricted fetch vagy arbitrary SQL nem lehet property érték.
+7. **Mentés és renderer:** valid érték round-trip után ugyanazt jelenti az Editor previewban és a publikus rendererben; asset/token eltűnés vagy ismeretlen schema verzió explicit fallback/error állapotot ad.
+8. **Negative tests:** invalid type/range/unit/color, unauthorized resource, stale token, missing asset, unsupported pseudo-state, conflicting responsive override és malformed binding; egyik sem okozhat csendes data loss-t.
+
+#### Crosswalk-következtetés
+
+- A jelenlegi terv erős alapot nevez meg: EDT-021 Property Registry, EDT-022 schema validation/control types, EDT-023 resolved viewport value, EDT-024 inheritance/reset és EDT-039 action registry.
+- A régi 27 pontból a nagy rész csak **részlegesen** bizonyított a terv szövegében, mert a konkrét property schema és acceptance mátrix nincs minden tulajdonságra külön felbontva. Ezt nem szabad 27/27 késznek vagy runtime PASS-nak állítani.
+- A “rich text” explicit későbbi fázis; az “advanced” külön bontást igényel; az Inspector property search nem azonos az Element/Block Library keresőjével.
+- A régi 1/E nem zárható le pusztán azzal, hogy EDT-021/022 létezik. Lezáráshoz a property registry és a negatív/round-trip tesztek ténylegesen hivatkozott acceptance sora szükséges.
+
+**Státusz:** 27 követelmény egyenként leképezve; a property-level szerződés és runtime bizonyíték nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
