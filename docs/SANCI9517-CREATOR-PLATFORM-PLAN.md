@@ -7115,6 +7115,20 @@ A `0004_system_page_content.sql` történeti táblát hoz létre, míg a `0005_c
 
 **Döntés:** a canonical `pages` és `editor_revisions` adatmodell **KEEP/REPAIR**; a legacy normalizáló **KEEP TEMPORARILY / VERIFY**, nem szabad archíválni bizonyíték nélkül. **PUBLICATION INTEGRITY: SOURCE-IDENTIFIED CONFLICT / NOT PASS.** A runtime kód és az adat változatlan.
 
+### 63.50.33. Publikus oldalmetaadat, slug és draft/published szerződés: pontosított határok (2026-10-14)
+
+**Forrásref:** `e6f365c`; `src/routes/admin/pages.ts`, `src/routes/admin/editor.ts`, `src/routes/public/pages.ts`, `src/index.ts`, `src/core/editor-validation.ts`. Statikus audit, runtime reprodukció nélkül.
+
+**A jelenlegi séma négy, egymástól függetlenül viselkedő adatkört használ:** (1) `pages.content_json` szerkesztési draft; (2) `pages.published_content_json` éles snapshot; (3) `pages.published_revision_id` éles revízióhivatkozás; (4) `pages.slug/title/description` **közös**, nem verziózott oszlopok. A publikus API az éles tartalmat olvassa, de az oldalcímet, leírást és slugot a közös oszlopokból adja vissza; ezért az éles tartalom és az éles metaadatok nem atomi, verzióhoz kötött egységet alkotnak.
+
+**PATCH konkrét mellékhatásai:** `src/routes/admin/pages.ts` módosítja a draft `page.name/slug/metadata` mezőit, revíziót hoz létre, és **már publikált oldalnál** a teljes frissített draftot `published_content_json` mezőbe is másolja. Nem hívja a `validatePublishDocument` ellenőrzést, miközben `src/routes/admin/editor.ts` explicit `publish===true` útja igen. A sortOrder-only PATCH nem másol teljes draftot, de a public listában a `sort_order` változás azonnal látható; ennek termékszerződése külön meghatározandó.
+
+**Slug és URL:** a `src/routes/public/pages.ts` kizárólag az aktuális `pages.slug` értékből oldja fel a publikus oldalt. A `src/index.ts` csak a nyolc rögzített történeti `.html` útvonalhoz ad 301 redirectet, **nem** kezeli a később átnevezett `/p/old-slug` aliasokat. Ezért a metaadat-PATCH azonnal elmozdíthatja az élő URL-t, akár az explicit publish előtt; SEO/link kompatibilitás kockázat. A Worker `/p/*` útvonala statikus shellt szolgál ki, nem végez slug-validációt az asset fetch előtt.
+
+**Javasolt kanonikus szerződés (nem megvalósított döntési terv):** `draft_metadata` vs `published_metadata` és `draft_slug` vs `published_slug`, explicit publish tranzakció, stabil page ID és site-scoped `page_slug_aliases` (source slug → canonical page ID, redirect status, timestamps) történet; az admin sortOrder draft/instant-live döntést dokumentálni kell. Egyetlen Page Model/Revision owner marad; nem hozunk létre második Editor backendet. Külön migrációs előfeltétel: meglévő published snapshotok, metaadatok és aliasok read-only leltára, backup, site isolation és unique index ellenőrzés.
+
+**Kötelező regressziós tesztek:** (A) publish v1 → draft v2 → metadata PATCH → public v1 változatlan; (B) invalid draft + metadata PATCH → semmi nem kerül élesbe; (C) draft slug módosítás → korábbi public URL él; (D) explicit publish slugváltással → régi URL 301/308 új kanonikusra, query megőrzés és loop-tiltás; (E) unpublished/missing slug valódi HTTP 404; (F) public meta, canonical, OG, sitemap, robots és cache a published snapshotot követi; (G) expectedVersion ütközés, több-site azonos slug, sortOrder és rollback. **PUBLISH/METADATA CONTRACT: SOURCE-CONFLICT CONFIRMED / TEST AND DESIGN NOT PASS.** Runtime kód és DB nem változott.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
