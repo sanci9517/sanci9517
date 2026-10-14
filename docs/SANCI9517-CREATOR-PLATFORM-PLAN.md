@@ -1335,6 +1335,8 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - COM-016: Segmentation/newsletter/automation.
 - COM-017: Unsubscribe/suppression/export/delete.
 - COM-018: Public/member/private visibility policy.
+- COM-019: Fan account identity, profile/preferences and account export/delete lifecycle.
+- COM-020: Community rules, age/content policy and enforcement lifecycle.
 
 ### 24.11. Store/commerce — STO
 - STO-001: Product catalog.
@@ -1357,6 +1359,7 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - STO-018: Provider webhook idempotency and audit.
 - STO-019: Merchant-of-record/provider decision.
 - STO-020: Store analytics.
+- STO-021: Payment/tax/VAT/invoicing/consumer-rights compliance decision and provider integration gate.
 
 ### 24.12. Support/membership — SUP
 - SUP-001: Support/tip links and provider.
@@ -3844,3 +3847,45 @@ Az alábbi táblázat a 54. fejezet első négy témacsoportjának minden checkb
 | 54.8 | Tartalomból weboldali feed, social poszt és analitika ugyanazon canonical rekord alapján | CNT-001, CNT-016, CNT-019–020, ANL-001, ANL-004 | A feed és analytics ugyanarra a content ID-ra hivatkozik. |
 
 **Állapot:** a 54.5–54.8 tételek stabil ID-khez rendelése tervszinten megtörtént; a runtime meglétét és acceptance-teszteket ez nem igazolja. A 54.9–54.16 tételes megfeleltetése továbbra is nyitott.
+
+### 63.14. Tételes checklist-megfeleltetés — 54.9–54.12
+
+| Forrás | Ellenőrzőpont | Stabil ID / kanonikus modul | Megfeleltetés megjegyzése |
+|---|---|---|---|
+| 54.9 | Publikus fan regisztráció/bejelentkezés, profil, preferencia, adatletöltés/törlés | COM-019, SEC-001, SEC-011 | Külön fan identity; nem keverhető az Admin/workspace accounttal. |
+| 54.9 | Posztok, kommentek, reakciók, pollok, kérdések, beküldések és események | COM-003–005, COM-007–008 | Közösségi tartalomtípusok és publikus láthatóság. |
+| 54.9 | Követés, értesítés, jelvény, mérföldkő, kihívás és közösségi jutalom | COM-006, COM-010–011 | A későbbi képességek külön státusszal és consent/notification policyvel. |
+| 54.9 | Tagsági szintek, exkluzív poszt/video/audio, member-only stream és archívum | SUP-004–006, SUP-010–011, COM-013, COM-018 | Entitlement az SUP tulajdona; a COM csak a közösségi felületet és hozzáférési policyt használja. |
+| 54.9 | Discord szerver/csatorna/role mapping entitlement alapján | SUP-009, INT-015, INT-018 | A tagsági entitlement a forrás; Discord role sync csak engedélyezett provider-képességgel. |
+| 54.9 | Moderációs queue, report, appeal, korlátozás/tiltás, spamvédelem és audit | COM-009, COM-012, COM-020, SEC-007, SEC-010 | Moderációs művelet naplózott, jogosultság- és rate-limit-védett. |
+| 54.9 | AI moderációs javaslat, bizonytalanság és emberi felülvizsgálat | AI-006, AI-007, AI-016, AI-018–019, COM-009 | AI nem hozhat automatikusan visszafordíthatatlan vagy vitatott szankciót emberi felülvizsgálat nélkül. |
+| 54.9 | Public/member-only/private hozzáférés szerveroldali ellenőrzése | COM-013, COM-018, SUP-006, SEC-002–003 | Kliensoldali elrejtés önmagában nem authorization. |
+| 54.9 | Közösségi szabályzat, adatvédelmi és korhatár-/tartalmi szabályok | COM-020, COM-012, SEC-010–011 | Közzététel előtt jogi/termékdöntés, jelentési és fellebbezési folyamat. |
+| 54.10 | Fizikai termék, merch, digitális termék, bundle, limited drop és preorder | STO-001, STO-005–006 | Terméktípus és fulfillment modell egyértelmű. |
+| 54.10 | Variánsok, SKU, ár/pénznem, készlet, kategória, kollekció, media és SEO | STO-002–004, STO-006, RES-001, SEO-001–005 hivatkozás | Termékadat a Store-ban; média és SEO a saját kanonikus szerződését használja. |
+| 54.10 | Terméklista, termékoldal, keresés, kosár, checkout-integráció és rendelés-visszaigazolás | STO-007–009, STO-019, INT-021 | Checkout provider adapteren át; a siker csak ellenőrzött provider állapot után állítható. |
+| 54.10 | Rendelésállapot, fizetés, teljesítés, tracking, cancel, refund és support | STO-009–010, STO-018, SUP-001, OPS-003 | Webhook idempotens; rendelés és entitlement összehangoltan frissül. |
+| 54.10 | Kupon, ajándékkártya, promóció, kampány, bundle és lejárat | STO-003, STO-011, STO-019; CAM-001–003 | Promóciós adat és campaign-attribution összekapcsolódik, de nem duplikálódik. |
+| 54.10 | Biztonságos digitális delivery, entitlement és visszavonás refund/chargeback esetén | STO-012–013, STO-018, SUP-006, SUP-008, SEC-002–003 | Minden letöltés jogosultság-ellenőrzött és visszavonható. |
+| 54.10 | Egyszeri támogatás, visszatérő támogatás, célmérő és köszönőüzenet | SUP-001–003, SUP-010 | Provider státuszától függő támogatási folyamat; ne állítson nem igazolt fizetést. |
+| 54.10 | Tagsági előnyök, kedvezmények, termékdrop és tagság–Discord összekapcsolás | SUP-004–012, STO-011, INT-015 | Entitlement és Discord role sync az SUP/INT domain szerződésein keresztül. |
+| 54.10 | Szponzorációs media kit, ajánlat, deliverable, határidő, kampánylink és riport | CAM-004–009 | Kampány- és üzleti dokumentumok külön scope és hozzáférés alatt. |
+| 54.10 | Affiliate link/kód, jutalék és konverzió csak mérhető/jogszerű keretben | CAM-002, CAM-007, STO-011, ANL-001, ANL-009 | Attribution és consent szükséges; csak igazolt mérésből készül riport. |
+| 54.10 | Bevételi források, platformdíjak, refundok és export; nem könyvelési/adótanácsadási helyettesítő | STO-020, SUP-010, CAM-007–009, ANL-005, OPS-007 | Összesítő riport, nem hivatalos könyvelési főkönyv. |
+| 54.10 | Fizetési, adózási, számlázási, fogyasztóvédelmi és GDPR-követelmények ellenőrzése | STO-014, STO-019, STO-021, SEC-010–011, OPS-010 | Integráció és kereskedelmi indulás előtt kötelező jogi/adózási felülvizsgálati kapu. |
+| 54.11 | Platformonkénti követő-/nézettség-/engagement-/streamidő-mutatók, ha elérhetők | ANL-001, ANL-003–004, INT-018 | Csak provider által ténylegesen elérhető metrikák; egység és frissesség megjelenítése. |
+| 54.11 | Tartalom- és csatorna-összehasonlítás, trendek, időszakok és célok | ANL-004, ANL-007, ANL-010, CAM-007 | Összehasonlítható metrikák; hiányzó vagy eltérő definíciók jelzése. |
+| 54.11 | Adatforrás, időbélyeg, frissesség, becsült/valós adat és hiányzó metrika jelzése | ANL-008, ANL-009 | Minden chart/report a forrást és adatminőséget közli. |
+| 54.11 | Webanalitika, UTM, konverzió, SEO és publikált oldalak teljesítménye | ANL-002, ANL-007, ANL-009; CAM-002; SEO-005 | Consent és retention policy, plusz SEO- és webes forrásadat. |
+| 54.11 | Thumbnail/cím/időzítés kísérletek és mérhető eredmények, ha elég adat áll rendelkezésre | ANL-004, ANL-010, CAM-001–003, CNT-011–012 | A/B teszt csak megfelelő mintánál; bizonytalanságot közölni kell. |
+| 54.11 | Kampány-/szponzorriport, CSV/JSON export és időszakos jelentés | CAM-007–009, ANL-007, OPS-007 | Export a forrást, időszakot és definíciót is tartalmazza. |
+| 54.11 | AI-elemzés hipotézisekkel, forrással és bizonytalansággal; nem garantált növekedési ígéret | AI-004, AI-012–013, AI-015–016, AI-018; ANL-008 | A javaslat forrásolt és nem garantál üzleti eredményt. |
+| 54.12 | Vizuális trigger → condition → action → branch modell | AUT-001–004, AUT-013 | A vizuális builder a workflow engine sémáját szerkeszti, nem saját runtime-ot. |
+| 54.12 | Triggerek: stream, platformesemény, schedule, tartalom, rendelés, tagság, webhook, időzítés | AUT-001–002, INT-017, LIV-006, SCH-001, CNT-001, STO-018, SUP-006 | Triggerforrások kanonikus domain eventjeiből; nem polling-másolatokból, ahol elkerülhető. |
+| 54.12 | Akciók: értesítés, draft, címke, export, overlay/OBS parancs, publikálási előkészítés | AUT-004, AUT-014, OBS-004, CNT-013, ADM-012 | Csak engedélyezett domain-command és scope alapján fut. |
+| 54.12 | Sablonok, verziózás, aktiválás/leállítás és jogosultság | AUT-010, AUT-013, SEC-002–003 | Változtatáskor verzió és audit; owner kontrollálja az aktiválást. |
+| 54.12 | Dry-run, preview, jóváhagyás, idempotency, rate limit, retry, timeout és napló | AUT-006–009, AUT-011, SEC-007 | Végrehajtás előtt szimuláció és permission check. |
+| 54.12 | Sikertelen ág, karantén, értesítés, kézi helyreállítás és rollback/kompenzáció | AUT-007–008, AUT-012, OPS-003, OPS-009 | Helyreállítható és auditált futási életciklus. |
+| 54.12 | AI-ból létrehozott workflow először draft/szimuláció; csak jóváhagyás után éles | AI-005–009, AI-019, AUT-009–010 | AI workflow-draftot ad; élesítés külön jóváhagyási pont. |
+
+**Állapot:** a 54.9–54.12 tételek stabil ID-khez vannak rendelve. A hozzájuk tartozó runtime, jogosultsági és acceptance bizonyíték külön ellenőrzendő; a 54.13–54.16 tételes megfeleltetése nyitott.
