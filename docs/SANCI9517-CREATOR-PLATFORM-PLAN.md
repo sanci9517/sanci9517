@@ -6781,6 +6781,14 @@ Ez a szakasz a 63.41 kártyáit kiegészíti a 25. fejezet hiányzó, különál
 
 **Állapot:** egy legacy route archiválva, a kanonikus oldalkezelés és a 396 capability ID megőrizve. A teljes tervkapu **IN PROGRESS / NOT PASS**.
 
+### 63.50.10. Archívum utóellenőrzés — teszt- és migrációs leltár (2026-10-14)
+
+A `tsconfig.json` csak a `src/**/*.ts` és `src/**/*.d.ts` forrásokat veszi fel; az `archive/legacy-code/system-pages.ts` ezen kívül található. A `package.json` külön typecheck, Editor, Schedule, Domain és Admin tesztparancsokat definiál. A Schedule tesztfájl 10, az Admin főoldal tesztfájl 18 tesztesetet tartalmaz. A tesztek forrásának ellenőrzése nem egyenlő a futtatott PASS-szal.
+
+A `0004_system_page_content.sql` történeti táblát hoz létre, míg a `0005_canonical_page_storage.sql` a `pages` draft és published snapshot modelljét vezeti be. A migrációk és az esetleges régi rekordok megőrzendők.
+
+**Nyitott ellenőrzések:** typecheck, Editor/Schedule/Domain/Admin tesztek, site-ownership tesztek és Worker dry-run build; ezek eredménye ebben a körben nem ismert. **NOT PASS.**
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
