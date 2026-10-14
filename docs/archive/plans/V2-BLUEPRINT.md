@@ -1,3 +1,5 @@
+**HISTORICAL / SUPERSEDED AS AN EXECUTION SOURCE.** Technology and architecture constraints retained from this blueprint are governed by `docs/MASTER-DEVELOPMENT-PLAN.md`; this archived file does not authorize a separate implementation order or a second canonical domain/runtime.
+
 # Sanci9517 V2 — Architecture Blueprint
 
 ## 1. Cél
