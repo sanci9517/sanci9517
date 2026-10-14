@@ -512,16 +512,16 @@ Product list/detail, price/variant/stock, checkout provider, digital entitlement
 | DESIGN_SYSTEM | Theme/token service | tokens/theme/components | Website, Editor, public |
 | RESOURCE | Asset registry | asset metadata/reference | Media, Editor, public |
 | INTEGRATION | Integration service | provider, connection, scopes, token ref, health | Connections, Dashboard, Live, blocks |
-| LIVE_STATE | Normalized live service/cache | live/offline/stream data | Dashboard, Live, public blocks |
+| LIVE_STATE | Live-state normalization service; cache is derived | normalized live/offline/stream state and freshness metadata | Dashboard, Live, public blocks |
 | SCHEDULE | Schedule domain | events, recurrence, overrides | Schedule, Dashboard, Editor, public |
 | GAME_PROFILE | Game/profile domain | game metadata/links/related content | Schedule, Content, public |
 | CONTENT | Content domain | VOD/clip/post/video metadata | Content, Calendar, Editor, public |
 | PUBLISHING | Publishing service | queue, attempts, provider results | Content Studio, Automation |
-| COMMUNITY | Community/integration service | posts, events, moderation | Community, public |
+| COMMUNITY | Community domain; external provider adapters remain in INTEGRATION | posts, events, moderation, reports and community visibility policy | Community, public |
 | PRODUCT | Commerce catalog | product, variant, collection, price | Store, Editor, public |
-| ORDER | Commerce/provider adapter | order, payment/fulfillment state | Store, Dashboard, Analytics |
+| ORDER | Order domain with payment/fulfillment provider adapters | order lifecycle, payment and fulfillment state | Store, Dashboard, Analytics |
 | ENTITLEMENT | Access service | member access, digital delivery | Membership, Content, Store, public |
-| SUPPORT | Support domain/provider | tip, goal, support link | Support, Dashboard, public |
+| SUPPORT | Support domain; payment/support provider adapters remain in INTEGRATION | tip, goal, support link and provider-confirmed support state | Support, Dashboard, public |
 | ANALYTICS | Metrics pipeline | normalized events/aggregates | Analytics, Dashboard |
 | CAMPAIGN | Campaign domain | campaign, links, assets, goals | Content Studio, Business, public |
 | AUTOMATION | Workflow engine | rules, runs, retries, audit | Automation, system events |
@@ -534,7 +534,7 @@ Product list/detail, price/variant/stock, checkout provider, digital entitlement
 | SEARCH | Permission-aware search/index service | derived searchable projections, index version and freshness | Admin global search, domain lists |
 | FAN_IDENTITY | Fan identity/community account service | fan profile, preferences, consent, export/delete lifecycle | Community, public/member areas |
 | STREAM_TOOLS | OBS/overlay service | pairing reference, overlay/widget config and version, authorized command history | OBS, Live Studio |
-| DEVELOPER_API | Developer platform/API service | API key metadata/scopes, API version/quotas, webhook registry/delivery | Developer platform |
+| DEVELOPER_API | Developer platform/API service | API key metadata/scopes, API version/quotas, creator-defined outbound webhook registry/delivery | Developer platform |
 | EXTENSION | Extension registry/sandbox service | manifest, signature/provenance, permission, install/version lifecycle | Extensions/Marketplace, OBS/widget modules |
 | BILLING_PLAN | SaaS billing/plan service | subscription, plan entitlement, usage/quota, invoice state | Team/SaaS, Settings |
 | SETTINGS | Scoped settings service | locale preference, notification preferences, privacy settings | Settings, modules |
@@ -554,6 +554,7 @@ Kötelező domain szabályok:
 10. Az Admin/creator identity és a publikus fan identity külön életciklusú; összevezetésük csak explicit biztonsági és adatvédelmi döntéssel lehetséges.
 11. API key, OAuth token és webhook secret titkos kezelést kap; a domain-adatbázisban csak szükséges metadata/secret reference tárolható, plaintext secret nem.
 12. Minden új modulhoz meg kell nevezni a domain ownerét, a tartós adatforrást, a parancs/API határt, a jogosultsági scope-ot és a restore/törlési viselkedést.
+13. Külső provider inbound webhook (INT-017) és a creator által konfigurált outbound webhook (DEV-003) külön irányú szerződés, secret- és retry-életciklus; egyik sem helyettesíti a másikat.
 
 ---
 
@@ -4038,4 +4039,4 @@ Különösen fontos határok:
 - **BILLING_PLAN / ORDER / ENTITLEMENT:** SaaS-előfizetés és platformcsomag nem azonos a creator boltjának rendelésével vagy a fan tagsági hozzáféréssel.
 - **STREAM_TOOLS / INTEGRATION / AUTOMATION:** OBS pairing/overlay konfiguráció, külső provider-auth és workflow execution külön domainfelelősség.
 
-**Állapot:** a domain-térkép szerkezeti teljessége bővült; a teljes schema/API/runtime egyezés továbbra is kód- és tesztbizonyítékot igényel.
+**Állapot:** a domain-térkép szerkezeti teljessége bővült, és a provider-adapter, derived cache, creator webhook, fan identity, order és support owner határai egyértelműbbek lettek; a teljes schema/API/runtime egyezés továbbra is kód- és tesztbizonyítékot igényel.
