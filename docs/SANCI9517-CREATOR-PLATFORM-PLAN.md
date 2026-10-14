@@ -6917,6 +6917,17 @@ A `0004_system_page_content.sql` történeti táblát hoz létre, míg a `0005_c
 
 **Prioritás: HIGH / CONTRACT DECISION REQUIRED / NOT PASS.** Ez a bizonyíték nem igazol runtime hibát, de az archiválási és publikálási kaput blokkolja. Ebben a körben csak a MASTER módosult; működő kódhoz és adathoz nem nyúltunk.
 
+### 63.50.22. Publikált URL és snapshot szerződés: migrációs forrásbizonyíték (2026-10-14)
+
+**Ellenőrzött ref:** `771f193`. Források: `migrations/0005_canonical_page_storage.sql`, `migrations/0009_page_sort_order.sql`, `src/routes/admin/pages.ts`, `src/routes/public/pages.ts`, `src/index.ts`, `public/assets/page-renderer.js`, `public/assets/site.js`, `public/visual-page.html`. Új tesztfuttatás nem történt.
+
+- **Kifejezett történeti szerződés:** `0005_canonical_page_storage.sql` megjegyzése szerint `pages.content_json` az aktuális draft/kanonikus dokumentum, `pages.published_content_json` az **utoljára kifejezetten publikált** pillanatkép. A migráció kezdeti backfillje az akkor már publikált oldalakhoz a korábbi `content_json` értéket használta; ez adatátvezetés, nem általános felhatalmazás későbbi automatikus publikálásra.
+- **Ellenőrzött eltérés megerősítve:** `src/routes/admin/pages.ts` PATCH ága `contentChanged && existing.is_published` esetén a teljes módosított draft dokumentumot a `published_content_json` mezőbe másolja és a `published_revision_id` értékét átállítja. Ez ütközik a `0005` dokumentált „last explicitly published snapshot” szerződésével. **HIGH PRIORITY CONTRACT DEFECT CANDIDATE**, még nem futtatott regresszió.
+- **URL-szerződés:** a publikus `/p/<slug>` route ugyanazt a `visual-page.html` shellt szolgálja ki, a `/api/public/pages?slug=...` pedig az aktuális `pages.slug` mezővel keres. A CMS PATCH `slug` átírása ezért azonnal megváltoztathatja a publikus feloldást, még ha a tartalom pillanatképe később draft-only modellre áll is át. A `src/index.ts` explicit redirectjei csak a nyolc korábbi fix `.html` útvonalat kezelik; tetszőleges régi `/p/<slug>` címekhez a vizsgált kódban nincs történeti alias/redirect szerződés.
+- **Adatmodell- és UX-következmény:** a draft `slug/title/description` és a publikált URL/metaadat **nem lehet azonos, azonnal átírt egyetlen állapot** úgy, hogy közben explicit publish és stabil régi linkek az elvárás. A tervben külön publikált URL-feloldási forrás, redirect history és SEO canonical/sitemap kezelés megtervezése szükséges; konkrét adatbázis-séma és migráció csak döntés/tesztek után.
+
+**Kötelező elfogadási tesztek:** published v1 + draft v2 + PATCH metaadat → publikus v1 és korábbi URL változatlan; preview v2; explicit publish → v2 publikus és régi URL szabályozott 301/308; slug ütközés; unpublish → publikus hozzáférés megszűnik; rollback → csak draft változik; sitemap/canonical/OG egyezés; site-ownership és jogosultság; cache. **STATUS: CONTRACT CONFLICT CONFIRMED IN SOURCE / RUNTIME AND DESIGN CLOSURE NOT PASS.** Nem történt kódmódosítás vagy adatbázis-migráció.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
