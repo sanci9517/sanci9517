@@ -3,7 +3,7 @@
 **Tervazonosító:** S9517-CREATOR-PLATFORM  
 **Verzió:** 2.0.0  
 **Dátum:** 2026-10-14  
-**Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv  
+**Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -944,9 +944,9 @@ Az egyes tételek státusza csak az adott ellenőrzés tényleges lefutása utá
 
 **Aktív fókusz: F0 — Admin → Visual Editor → mentés → előnézet → publikálás → publikus weboldal.**
 
-A következő implementációs feladatot a repository tényleges állapotából kell kiválasztani: a nyitott core acceptance-elemek közül a legkorábbi függőségű, konkrétan reprodukálható feladat következik. Az elsődleges cél a meglévő alapfolyamat megbízhatósága; új, nagyobb termékmodul nem kerülhet elé, ha a core adatvesztés- vagy publikálási hibát tartalmaz.
+**Következő konkrét ellenőrzési pont: EDT-SAVE-RELOAD → EDT-PUBLISH-SNAPSHOT.** A repositoryban lévő Editor-tesztek között a mentési útvonal több ellenőrzése forrásszöveg-szerződést (statikus mintákat) vizsgál; ez önmagában nem bizonyít valódi böngészős, D1-es mentés/újratöltés/publikálás round-tripet. Először a meglévő teszteket és futó környezetet kell ellenőrizni, majd valódi draft mentés → újratöltés → preview → explicit publish → publikus oldal ellenőrzést végigvinni, a hibákat reprodukálhatóvá tenni és csak ezután módosítani a kódot. Új, nagyobb termékmodul nem kerülhet e core ellenőrzés elé.
 
-Ez a fókusz nem a teljes Creator Platform scope-jának szűkítése: csak a végrehajtás sorrendjét határozza meg.
+Ez a fókusz nem a teljes Creator Platform scope-jának szűkítése: csak a végrehajtás sorrendjét határozza meg. A statikus teszt, a valódi runtime/böngészős ellenőrzés és a felhasználói elfogadás külön bizonyítéktípus; egyik nem helyettesíti automatikusan a másikat.
 
 ---
 
