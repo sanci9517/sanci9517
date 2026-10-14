@@ -14,10 +14,10 @@
 ### 0.0. Új beszélgetés folytatási protokoll — kötelező
 - **Az egyetlen fejlesztési terv:** `docs/MASTER-DEVELOPMENT-PLAN.md` a `sanci9517/sanci9517` repository `v2/foundation` ágán. Ezt kell elsőként megnyitni minden új beszélgetésben.
 - **Aktív munkapont:** `P0-PRODUCT-BASELINE-AND-EXECUTION-CONTRACT` / `P0.2-ARCHIVE-RECONCILIATION-AND-BIDIRECTIONAL-FEATURE-TRACEABILITY`.
-- **Folytatási sorrend:** először a jelen fájl 0.2 aktív állapotát és 37.3 P0-állapotát, majd a 37.9–37.32 auditjegyzeteket és a 41.3.24–41.3.76 közötti legfrissebb forrásleltárakat, szemantikai korrekciókat és státuszokat kell elolvasni; utána az archív források még nyitott sorait kell folytatni. A 41.3.51 szerkezeti újraszámlálás és a 41.3.53–41.3.76 korrekciók frissebbek a korábbi összefoglaló számlálásoknál.
+- **Folytatási sorrend:** először a jelen fájl 0.2 aktív állapotát és 37.3 P0-állapotát, majd a 37.9–37.32 auditjegyzeteket és a 41.3.24–41.3.77 közötti legfrissebb forrásleltárakat, szemantikai korrekciókat és státuszokat kell elolvasni; utána az archív források még nyitott sorait kell folytatni. A 41.3.51 szerkezeti újraszámlálás és a 41.3.53–41.3.76 korrekciók frissebbek a korábbi összefoglaló számlálásoknál.
 - **Az archívum nem második terv:** az `docs/archive/**`, `docs/archive/plans/**`, régi checkpointok, issue-k, PR-ek és korábbi beszélgetések történeti források/bizonyítékok. Nem állíthatnak be másik aktív pontot, nem írhatják felül a jelen fájl aktív állapotát. Követelményük viszont nem törölhető; ha még nincs reconciliálva, nyitott tételként kell felvenni ebbe a MASTER-be.
 - **Nincs külön audit- vagy funkciólista-terv:** az auditjegyzék, a forrásproveniencia, a funkciókatalógus, a döntések, a függőségek és az acceptance ugyanebben a fájlban él. Kiegészítő fájl csak nyers bizonyíték/kivonat lehet, végrehajtási igazságforrás nem.
-- **Új chatnek szánt rövid folytatási szöveg:** „A `docs/MASTER-DEVELOPMENT-PLAN.md` az egyetlen irányadó terv. Olvasd el a 0.0, 0.2, 37.3, 37.9–37.32 és 41.3.24–41.3.76 fejezeteket, különösen a legfrissebb auditjegyzeteket. Az aktív pont P0.2; folytasd a C.23/F.1–F.13 és a H19–H34, MASTER-FINAL-ROADMAP, SANCI-MASTER-PLAN, V2-BLUEPRINT források szemantikai reconciliációját, a hiányzó 00/A és 00.9–00.9.6.B források további keresését, majd mind a 359 funkció-ID owner/phase/dependency/DoD/test/acceptance szerződésének lezárását. Ne állíts PASS-t bizonyíték nélkül, ne indíts párhuzamos feature-fejlesztést, és a végső funkciólista közös ellenőrzését még ne kérd.”
+- **Új chatnek szánt rövid folytatási szöveg:** „A `docs/MASTER-DEVELOPMENT-PLAN.md` az egyetlen irányadó terv. Olvasd el a 0.0, 0.2, 37.3, 37.9–37.32 és 41.3.24–41.3.77 fejezeteket, különösen a legfrissebb auditjegyzeteket. Az aktív pont P0.2; folytasd a C.23/F.1–F.13 és a H19–H34, MASTER-FINAL-ROADMAP, SANCI-MASTER-PLAN, V2-BLUEPRINT források szemantikai reconciliációját, a hiányzó 00/A és 00.9–00.9.6.B források további keresését, majd mind a 359 funkció-ID owner/phase/dependency/DoD/test/acceptance szerződésének lezárását. Ne állíts PASS-t bizonyíték nélkül, ne indíts párhuzamos feature-fejlesztést, és a végső funkciólista közös ellenőrzését még ne kérd.”
 
 Ez a dokumentum egyszerre termékspecifikáció, architekturális szerződés, funkciókatalógus, tesztelési szabályzat és végrehajtási lista. Minden fejlesztési feladatot ebből kell kiválasztani és ide kell visszavezetni. Minden funkcióhoz tartozzon felhasználói cél, felület, domain-tulajdonos, adatforrás, jogosultság, függőség, teszt és elfogadási feltétel.
 
@@ -7518,3 +7518,28 @@ The archived MASTER contains **100 original F.1–F.13 bullets**: F.1=10, F.2=6,
 **Required acceptance before closure:** inventory every state-changing API/domain route; identify its canonical schema and validator; test valid and invalid types/ranges/required fields/cross-field combinations; test unauthorized and cross-site IDs; verify rejection is atomic and does not partially mutate D1/R2; and prove validation is enforced server-side rather than only in the UI. File uploads, safe embeds/output sanitization and CSRF/replay checks remain separate security cases.
 
 **Status:** one over-broad implication in the historical crosswalk was narrowed; generic domain/API validation remains OPEN and must be proven by route-level evidence. Documentation-only; no runtime code/data/configuration changed and no tests were run. P0.2 remains **IN PROGRESS / NOT PASS**.
+
+
+### 41.3.77. P0.2 — Historical alternate-plan path and content search (2026-10-14)
+
+**Purpose:** continue the §41.3.69–§41.3.71 source-recovery search beyond the current MASTER path and the exact standalone source filenames. This is a historical-path/content check, not a semantic substitution for the missing primary source.
+
+**Commit-history evidence:** the GitHub path history was enumerated for the following pre-consolidation planning files, and the cited substantive historical versions were read and searched for the original source markers and distinctive labels:
+
+| Historical path | Inspected historical revision(s) | Result |
+|---|---|---|
+| `docs/DEVELOPMENT-PLAN.md` | `ef46343aebd54ba378bb78e5a56d879a2b4dfab1` (39,611 chars / 1,979 lines); `15b0d81f7dc17cc39d0dc662feba77eec1005ad5` (28,601 chars / 1,313 lines); `c767ab76b201f5a9f172b48051eafda5e7ada7e3` (15,543 chars / 562 lines). Path history: 8 commits from 2026-09-12 through 2026-09-17. | No `00/A`, `A.2.2`, `00.9`, `00.9.6`, `00.9.6.B`, `Schedule CRUD` or `Domain-Driven Editor` source marker in the inspected versions. Generic `Inspector` mentions exist, but do not establish original-source provenance. |
+| `docs/CURRENT-DEVELOPMENT-PLAN.md` | `146dfb473e85736706aba25859ad27dc3b3c2ec0` (4,941 chars / 131 lines); path history: 2 commits. | No original source marker found. |
+| `docs/FINAL-DEVELOPMENT-ROADMAP.md` | `b1951fe428afcb2a67d63bbbd23c9f5fca9989c3` (15,921 chars / 697 lines); path history: 2 commits. | No original source marker found. |
+| `docs/FINAL-MASTER-PLAN.md` | `8b3c7fff9b44414e8ba2eec9ca8b48e891ea13f1` (17,133 chars / 914 lines); path history: 2 commits. | No original source marker found. |
+| `docs/MASTER-FINAL-ROADMAP.md` | `b3309e640e54427ad0ff693bfcbe348caff7ff28` (13,883 chars / 679 lines); path history: 2 commits. | No original source marker found. |
+| `docs/SANCI-MASTER-PLAN.md` | `bf857473afc4c5c0c3c5f30fcd1fc68b8d1ec328` (14,325 chars / 683 lines); path history: 2 commits. | No original source marker found. |
+| `docs/V2-BLUEPRINT.md` | `b138b3c2b4f0a51989346f9bcf8e925a143eda21` (7,887 chars / 349 lines); path history: 4 commits. | No original source marker found. |
+
+**Finding:** the inspected alternate historical planning files are real historical product/architecture documents, but none contains the missing original `00/A` or `00.9–00.9.6.B` source body or a source-keyed equivalent that can be proven to be that original. They may support domain understanding, but cannot be promoted to the missing primary source or used to close source provenance.
+
+**Evidence boundary:** the search covers the listed GitHub path histories and inspected revisions, in addition to the current branch-head trees, the previously selected MASTER revisions, the current documentation corpus and the six exact source paths recorded in §41.3.68–§41.3.71. It does not access the user's local filesystem, local-only unreachable Git objects, deleted/unindexed PR attachments/comments or external backups. A GitHub search miss is not proof that such content never existed.
+
+**Conclusion / next action:** the original `00/A` and `00.9–00.9.6.B` bodies remain **UNRECOVERED / OPEN**. Do not synthesize or reconstruct them from these secondary plans. Continue targeted historical commit/diff searches and alternate-name searches; if primary source text is recovered, record its exact blob/commit provenance and reconcile each source item bidirectionally against the existing crosswalk. P0.2 remains **IN PROGRESS / NOT PASS**; no feature implementation and no final shared feature-list review are authorized by this search result.
+
+**Status:** 7 alternate historical plan paths checked, including 3 substantive `DEVELOPMENT-PLAN.md` revisions; no missing primary source recovered. Documentation-only; no runtime code/data/configuration changed and no tests were run.
