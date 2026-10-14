@@ -6749,6 +6749,22 @@ Ez a szakasz a 63.41 kártyáit kiegészíti a 25. fejezet hiányzó, különál
 
 **Bizonyítékhiány:** a legacy system page publikus fogyasztói, konkrét UI assetek és redirect E2E, valamint a Twitch provider live capability ebben a körben nem lettek tesztelve. `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`: **IN PROGRESS / NOT PASS**.
 
+### 63.50.8. Legacy system pages tényleges route-reachability — pontosított bizonyíték (2026-10-14)
+
+**Kiegészítő forrásvizsgálat:** `src/index.ts`, `public/visual-page.html`, `public/admin-home.html`, `src/routes/admin/system-pages.ts`. Ez a bejegyzés **pontosítja a 63.50.7 megfogalmazását**: a két tárolási modell forráskódban létezik, de **nem bizonyított, hogy két aktív, elérhető oldalkezelő működik**.
+
+| Ellenőrzés | Bizonyított forrástény | Következmény |
+| --- | --- | --- |
+| Worker route registry | `src/index.ts` nem importálja és nem regisztrálja az `adminSystemPagesRoute` handlert, és nincs `/api/admin/system-pages` dispatch | A megnyitott Worker belépési pontból ez a legacy API **nem érhető el**; önmagában a route-fájl létezése nem aktív szolgáltatás |
+| Kanonikus page útvonalak | `/api/admin/pages`, `/api/admin/editor`, `/api/public/pages` regisztráltak; `/p/*` a `visual-page.html` assetet szolgálja | A jelenlegi kanonikus weboldal-útvonal a `pages` + Editor Page Model köré épül |
+| Régi URL-ek | `about/community/contact/schedule/tiktok/twitch/vod/youtube.html` → megfelelő `/p/slug` 301 redirect; `/admin/home`, `/admin-home.html`, `/admin.html` → `/admin` 302 redirect | A redirect logika létezik, de HTTP/browser és SEO canonical/sitemap eredmény külön tesztelendő |
+| Aktuális Admin shell | `public/admin-home.html` látható API-hivatkozásai között `/api/admin/pages`, `/api/admin/schedule`, `/api/admin/settings`, Twitch connection szerepel; `/api/admin/system-pages` nem | Az ellenőrzött shell nem bizonyít aktív legacy system-page szerkesztőt |
+| Legacy adat | A `system_page_content` handler továbbra is a forrásfában van, de nincs ebben a körben éles D1 sor-/fogyasztó-/migrációbizonyíték | **DEPRECATED / UNREACHABLE FROM CURRENT WORKER ROUTER (STATIC)** címke; ne töröljük addig, amíg az esetleges történeti tartalom exportja és hivatkozáskeresése nincs lezárva |
+
+**Kötelező lezárási sorrend:** (1) repository-wide import/reference keresés és migration schema audit; (2) éles/staging D1 `system_page_content` sor- és tartalomtípus leltár megfelelő adatvédelmi korlátokkal; (3) ha vannak megőrzendő rekordok, Page Model migráció + preview + visszaállítás; (4) legacy route és storage eltávolítás csak bizonyított nulla fogyasztó és visszaállítható migráció után. A már kanonikus oldalak és redirectek nem helyettesíthetők egy második Editorral.
+
+**Bizonyíték státusza:** route-level statikus besorolás elvégezve; teljes repository dependency scan, D1 tartalom, runtime és migration PASS **OPEN**. A 63.50.7-ben jelzett kettős *storage* nem jelenti bizonyított kettős aktív UI-t. `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY` továbbra is **IN PROGRESS / NOT PASS**.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
