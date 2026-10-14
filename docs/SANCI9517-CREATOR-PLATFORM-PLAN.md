@@ -6860,6 +6860,16 @@ A `0004_system_page_content.sql` történeti táblát hoz létre, míg a `0005_c
 
 **Döntés:** Twitch OAuth navigáció = **KEEP NOW / MOVE WITH CONTRACT LATER**; legacy Editor UI = **ARCHIVE CANDIDATE / NOT SAFE TO REMOVE**. A teljes repo- és runtime-regressziós kapu **IN PROGRESS / NOT PASS**; sem futtatott teszt, sem kódmódosítás nem történt ebben a körben.
 
+### 63.50.17. CI-futásbizonyíték és kliensoldali belépési pontok (2026-10-14)
+
+**GitHub Actions, `bdcffa5d1768eff08b5ee84a228617352ec8ab61`:** [Editor Core Test — SUCCESS](https://github.com/sanci9517/sanci9517/actions/runs/38637849271); [Twitch Integration Check — SUCCESS](https://github.com/sanci9517/sanci9517/actions/runs/38637849143). Mindkét run `completed / success` a GitHub API szerint; ez a commit a dokumentációs audit előző állapota, nem az alábbi új dokumentációs commit.
+
+- Az Editor Core workflow `npm run typecheck`, `npm run test:editor`, `npm run test:schedule`, `npm run test:domain`, `npm run test:admin-home` lépéseket definiál. A Twitch Integration workflow typechecket, Editor/Schedule teszteket, `tests/twitch-oauth.test.js` és site ownership szerződést futtat. A SUCCESS a definiált jobok sikeres lefutására bizonyíték, nem minden lehetséges runtime forgatókönyvre.
+- A vizsgált kliens belépési pontok: `public/editor-v2/index.html`, `boot.js`, `ui/{shell,canvas-pan,geometry-presets,inspector-groups}.js`, `public/visual-page.html`, `public/admin-home.html`. Az ellenőrzött v2 shell assetei `/editor-v2/` útvonalon maradnak; ezekben a célzott fájlokban nem azonosítottunk `/editor/` vagy `admin-editor-v2` direkt hivatkozást.
+- A `package.json` `test:editor` és `test:schedule` a v2 tesztjeire mutat. A sikeres CI **nem** tartalmaz dokumentált teljes böngészős draft/preview/publish/rollback tesztet vagy régi statikus URL 404/redirect szerződést.
+
+**Részleges bizonyítás:** `TYPECHECK + EDITOR/SCHEDULE/DOMAIN/ADMIN/TWITCH/OWNERSHIP CI — PASS` a fenti SHA-n. **Archiválási és böngésző-kapu — IN PROGRESS / NOT PASS.** Régi Editor/Builder assetet továbbra sem szabad eltávolítani pusztán a CI zöld állapota miatt. A teljes aktív forráskészlet hivatkozásainak indexelése és a közvetlen URL-ek ellenőrzése továbbra is nyitott.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
