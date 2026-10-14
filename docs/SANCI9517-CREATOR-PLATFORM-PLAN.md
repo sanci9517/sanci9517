@@ -6881,6 +6881,17 @@ A `0004_system_page_content.sql` történeti táblát hoz létre, míg a `0005_c
 
 **Döntés:** ne töröljük a legacy fájlokat, ne adjunk vakon redirectet az összes legacy URL-re, és ne jelöljük a runtime/böngésző-kaput PASS-nak. Szükséges: éles GET/HEAD státusz + redirect + auth ellenőrzés, legacy preview mentett `pageId` és adatkompatibilitás, Editor v2 böngészős draft/preview/publish/rollback, közvetlen statikus asset biztonsági szerződés. **URL/BROWSER GATE: IN PROGRESS / NOT PASS.**
 
+### 63.50.19. Asset-hitelesítési határ és éles URL-próba diagnózisa (2026-10-14)
+
+**Ellenőrzött ref:** `0b7bf83`. Statikus forrásvizsgálat: `src/index.ts`, `src/core/auth/require-auth.ts`, `src/routes/admin/editor.ts`, `public/editor/preview.html`, `public/editor-v2/index.html`, `public/admin-home.html`, `wrangler.jsonc`. Külön HTTP-próba: `/api/health`, `/admin/editor`, `/editor/preview.html`, `/admin-editor-v2.html`, `/editor-v2/index.html`, `/assets/page-builder.js` a Worker production hoston.
+
+- Az összes éles HTTP-próba `curl` **000 / Could not resolve host** eredménnyel végződött; **DNS-feloldási hiba** miatt egyik kérés sem jutott HTTP-státuszig. Ez nem 404, nem 401, nem üzemzavar- vagy sérülékenységbizonyíték. A környezet hálózati korlátja miatt élő útvonal-bizonyíték **UNVERIFIED**.
+- `src/index.ts` az explicit `/admin/editor` útvonalon `getAuthenticatedUser` ellenőrzést végez és csak utána szolgálja ki az Editor v2 HTML-t; autentikálatlan kérésnél `/admin/login` 302. `src/routes/admin/editor.ts` külön ellenőrzi a hitelesítést és a szerepkört az API-kéréseken.
+- A `public/editor-v2/index.html` a `/editor-v2/*.js` és CSS asseteket közvetlen statikus URL-ekről tölti; `wrangler.jsonc` az egész `./public` könyvtárat assets-ként konfigurálja, és a Worker ismeretlen útvonalakon `env.ASSETS.fetch(request)` fallbackot használ. **A HTML route auth-védelme nem bizonyítja, hogy a közvetlen asset URL-ek is auth-védettek.** Az assetek esetleges publikus elérhetősége önmagában nem bizonyít adat-hozzáférési hibát; a tényleges API-határ és érzékeny adat kiszivárgásának vizsgálata külön kötelező.
+- A régi `public/editor/preview.html` a `/api/admin/editor` API-t `credentials: 'include'` és `cache: 'no-store'` beállítással hívja. Az asset közvetlen kiszolgálása és az API-val történő sikeres adatelérés két külön teszteset.
+
+**Kötelező elfogadási mátrix:** anonim/authentikált GET és redirect a `/admin/editor`, `/editor-v2/index.html`, `/editor/preview.html`, `/admin-editor-v2.html` URL-eken; anonim API GET/POST/PUT 401/403, jogosult Editor műveletek, role-változatok; publikus assetek érzékeny tartalmának ellenőrzése; preview mentett adatok és visszalinkek; draft/publish/rollback böngészőteszt; cache- és jogosultságváltási regresszió. **SECURITY/URL/BROWSER GATE: IN PROGRESS / NOT PASS.** Nem történt runtime-kód módosítás.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
