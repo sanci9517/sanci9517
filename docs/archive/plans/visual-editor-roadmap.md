@@ -1,3 +1,5 @@
+**HISTORICAL / SUPERSEDED EDITOR-ONLY ROADMAP.** Its requirements remain in `docs/MASTER-DEVELOPMENT-PLAN.md`; current execution order is Admin-first, with only the MASTER's ACTIVE index determining the active point.
+
 # Sanci9517 Visual Editor — fejlesztési terv
 
 ## Munkaszabály
