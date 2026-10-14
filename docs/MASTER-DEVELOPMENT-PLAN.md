@@ -6526,3 +6526,75 @@ A „MATCH candidate” csak a tervezett elemkategória jelenlétét jelenti; ne
 
 **Státusz:** 8/8 tétel explicit crosswalk-sort kapott; detach/update policy, instance override and template version runtime acceptance open. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
 
+### 41.3.160. P0.2 — Régi 6/A–6/J publikus oldalak: 10 oldalcsalád szemantikai crosswalkja (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, Phase 6, `6/A–6/J`. Minden oldalra ugyanaz a kötelező kapu: `Create → Edit → Save → D1 → Reload → Preview → Publish → Public → Mobile → Tablet → Desktop → Regression`. **Canonical célpontok:** `WEB-004–008`, `EDT-001–034`, `SCH`, `TWI`, `YTB`, `TTK`, `DSN`, `QA-002/003/004/005/006`.
+
+| # | Régi oldalcsalád és kötelező funkciók | Canonical célpont | Státusz | Kötelező acceptance |
+|---:|---|---|---|---|
+| 1 | **6/A Home:** alap home működés megőrzése, streamer branding, Twitch állapot, következő adás, fő CTA | WEB, TWI, SCH, DSN | PARTIAL / VERIFY | Meglévő publikus tartalom/route nem vész el; live/offline/unknown state, következő adás és CTA üres/error/loading állapotokkal; mobil/tablet/desktop parity. |
+| 2 | **6/B Rólam:** bemutatkozás, streamer profil, social links | WEB, DSN | PARTIAL / VERIFY | Profilmezők validáltak, social URL biztonságos, hiányzó mező nem tör el layoutot; SEO/accessibility. |
+| 3 | **6/C Adásrend:** heti schedule, időpontok, játék, platform, következő adás, countdown, múltbeli adások | SCH, TWI, WEB | PARTIAL / RELEASE GATE | Canonical schedule data; timezone/DST, canceled/rescheduled, past/upcoming, countdown boundary, stale provider data és empty/error states. |
+| 4 | **6/D Twitch:** live, channel, stream metadata, link | TWI, WEB | PARTIAL / VERIFY | OAuth/provider error és disconnected/live/offline/unknown külön; API cache/stale, safe external link és channel ownership. |
+| 5 | **6/E YouTube:** channel, videos, live, Shorts | YTB, WEB | PLANNED / PRESERVE | Channel identity, provider API/quota/permissions, unsupported data behavior és empty/loading/error; Shorts/video type nem veszhet el. |
+| 6 | **6/F TikTok:** profil, videók/linkek ahol API engedi, statisztika ahol API engedi | TTK, WEB | PLANNED / PRESERVE | API elérhetőség és policy alapján explicit capability; nem ígérünk nem hozzáférhető adatot; profil/link fallback biztonságos. |
+| 7 | **6/G Community:** Discord, közösségi linkek, közösségi tartalom | DIS/COMMUNITY, WEB | PARTIAL / VERIFY | Invite/link safety, embed permission/privacy, unavailable/offline states; social community content külön provider state. |
+| 8 | **6/H Contact:** kapcsolat, üzleti kapcsolat, spamvédelem | WEB, FORM, SEC | PARTIAL / RELEASE GATE | Server-side validation/rate limit/anti-spam, privacy and error/success states; contact form nem jelez hamis sikerállapotot. |
+| 9 | **6/I Support:** támogatási lehetőségek, külső szolgáltatások, biztonságos linkkezelés | WEB, SUPPORT, SEC | PARTIAL / VERIFY | External provider URLs allowlisted/validated, redirect/open behavior safe, unavailable provider fallback; payment/donation claims accurate. |
+| 10 | **6/J VOD/Shorts:** lista, kategória, kiemelt tartalom, külső link, későbbi automatikus pipeline slot | VOD, YTB, TTK, MEDIA | PARTIAL / PRESERVE | VOD/Shorts/Clips type, category, featured flag, provider URL and manual/automatic ingestion boundary explicit; future pipeline slot preserved. |
+
+#### Publikusoldal-kontraktus
+
+1. **Canonical data:** minden oldal a saját domain/source contractjából olvas; Page Model csak a page-specific configuration/layoutot tárolja, nem másolja át a schedule/provider event source of truth-t.
+2. **Állapotkezelés:** loading/empty/error/offline/stale/permission-denied state oldalanként explicit; hiányzó adat nem jelent csendes funkciótörlést.
+3. **External links és provider limits:** biztonságos URL kezelés; API capability/quota/policy alapján jelzett fallback; unsupported adatot nem szabad kitalálni.
+4. **SEO/accessibility/performance:** title/description/Open Graph/canonical/structured data, semantic heading/keyboard/focus, reduced motion, responsive overflow és cache behavior oldalanként tesztelt.
+5. **Release gate:** minden oldal create/edit/save/reload/preview/publish/public és három viewport körben regressziótesztelt.
+6. **Státuszszabály:** a page crosswalk nem bizonyítja, hogy minden oldal/funkció runtime kész; a provider és UI acceptance külön bizonyítékot igényel.
+
+**Státusz:** 10/10 oldalcsalád és a benne felsorolt képességek explicit crosswalkot kaptak; a provider/API és per-page runtime acceptance nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.161. P0.2 — Régi Phase 7 SánciBrand component library: 26 komponens megőrzési és acceptance crosswalkja (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, Phase 7, 26 komponensnév. **Canonical célpontok:** `EDT-015–022`, `EDT-039`, `DSN-009–013`, `WEB-004–008`, `QA-002/003/004/005/006`.
+
+| # | Történeti komponens | Canonical felelősség | Státusz / acceptance |
+|---:|---|---|---|
+| 1 | LiveIndicator | Twitch/provider status component | KEEP; live/offline/unknown/stale/connecting state, accessible text and no false live claim. |
+| 2 | NextStream | Schedule domain + public presentation | KEEP; timezone/DST, no upcoming event and stale schedule states. |
+| 3 | Countdown | Schedule/time utility presentation | KEEP; exact zero/past boundary, timezone, reduced-motion and no negative countdown drift. |
+| 4 | ScheduleCard | Canonical schedule item presentation | KEEP; time/game/platform/cancelled/rescheduled and accessible responsive layout. |
+| 5 | StreamCard | Live/recent stream summary | KEEP; provider state, safe link and unavailable metadata fallback. |
+| 6 | SocialCard | Social link/provider presentation | KEEP; safe external URL, icon/label/accessibility and unavailable provider state. |
+| 7 | VideoCard | Generic video item | KEEP; type/provider/thumbnail/duration metadata, loading/empty/error. |
+| 8 | VODCard | VOD domain-specific presentation | KEEP; VOD lifecycle, category, safe provider link and distinction from Shorts/Clips. |
+| 9 | ShortCard | Short-form content | KEEP; vertical media aspect, provider fallback, caption/accessibility and category. |
+| 10 | DiscordCard | Community/Discord | KEEP; invite availability, safe link, no unauthorized private content. |
+| 11 | SupportCard | Support/donation links | KEEP; safe provider URL, accurate CTA, no fabricated transaction state. |
+| 12 | CTA | Reusable action component | KEEP; action registry, keyboard/touch, disabled/loading and analytics policy. |
+| 13 | StatsCard | Creator/provider statistics | KEEP; source/time/staleness disclosure, unavailable state and privacy boundary. |
+| 14 | MediaGallery | Media library/presentation | KEEP; pagination/loading/empty/error, alt text, R2 resource references. |
+| 15 | Section | Canonical layout primitive | KEEP; semantic section, allowed children, responsive and heading/accessibility contract. |
+| 16 | Container | Canonical layout primitive | KEEP; max-width, width/fill, nested constraints and responsive parity. |
+| 17 | Hero | Page-level composition | KEEP; optional media, responsive crop, heading/CTA and empty fallback. |
+| 18 | ProfileCard | Streamer/profile content | KEEP; typed profile fields, avatar alt/fallback and safe links. |
+| 19 | GameCard | Game metadata/presentation | KEEP; game identity, image fallback, schedule/category linkage. |
+| 20 | LinkCard | Generic external/internal link | KEEP; route vs external URL, safe target/rel and accessible label. |
+| 21 | SponsorCard | Sponsors/partnerships | KEEP; approved logo/link, disclosure and empty state. |
+| 22 | PressKitBlock | Business/press resources | KEEP; downloadable/media resource permissions, safe URLs and metadata. |
+| 23 | FAQ | Structured Q&A | KEEP; semantic heading/accordion keyboard behavior and schema-safe content. |
+| 24 | ContactForm | Contact workflow | KEEP; server validation, anti-spam/rate limit, privacy and confirmed delivery state. |
+| 25 | SocialFeed | Social provider content | KEEP; API/caching/quota states, source attribution and no unsupported embed. |
+| 26 | FeaturedContent | Curated featured item | KEEP; reference integrity, ordering, empty state and responsive layout. |
+
+#### Component registry contract
+
+- Every component must declare schema, default props, Editor preview, public renderer, responsive behavior, accessibility, validation, stable ID/type, documentation, empty/loading/error states, and analytics hooks only where relevant.
+- All components use the same canonical Element/Block Registry and command pipeline; there is no separate one-off component editor or duplicate definitions.
+- Component variants and reusable instances require explicit master/instance/override/version semantics.
+- Provider-specific components may only expose capabilities supported by the source contract; unsupported API data must produce a truthful fallback.
+- Required tests: insert/edit/save/reload/preview/publish/public render, invalid props/parent, keyboard/accessibility, all supported viewports, empty/loading/error, references and undo/redo.
+
+**Státusz:** 26/26 történeti komponensnév explicit KEEP/crosswalk bejegyzést kapott; a konkrét komponensenkénti runtime acceptance továbbra is külön release gate. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
