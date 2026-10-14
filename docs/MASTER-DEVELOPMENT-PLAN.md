@@ -5183,3 +5183,21 @@ A §37.16, §37.17 és §41.2 egyes mondatai a 2026-10-13-i, 359-ID-s registry-s
 **Következő vizsgálat:** a teljes commit-történetben a `docs/MASTER-DEVELOPMENT-PLAN.md` és a `docs/archive/**` útvonalak korábbi állapotait kell tovább vizsgálni, különös tekintettel a C/D/E/F első megjelenése előtti commitokra és azokra a commitokra, amelyek a `00.9.6` szakaszcsaládot átrendezték vagy lecserélték. A már rögzített 44 egyedi branch-head fa útvonal-ellenőrzését nem ismétlem meg; a következő körnek commit-/blob-szintű tartalmi vizsgálatnak kell lennie.
 
 **Státusz:** a második archív fájlkör ellenőrizve; eredeti `00.9.6.B` tartalom továbbra is **UNRECOVERED / OPEN**. P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.114. P0.2 — MASTER commit- és előd-snapshot vizsgálat a 00.9.6.C/D bevezetése körül (2026-10-14)
+
+**Vizsgálati cél:** a fájl-/verziókeresés után azonosítani a roadmap-családot érintő konkrét commitokat, megnézni a C/D fejezetek bevezetésének közvetlen előzményeit, és ellenőrizni, hogy az elérhető előd-snapshotokban megtalálható-e a hiányzó B eredeti szövege.
+
+**Ellenőrzött commit- és snapshot-lánc:**
+- 36b6ce5fb207b889ad48ce1dd36e9cda475bea93 — „docs: establish unified ultimate Sanci9517 master plan”; a commit üzenete szerint a tervet önálló, egységes MASTER-re cserélte, és a korábbi MASTER-t archívumba mentette. Közvetlen szülője: 217f7d47107d6f1fe43b7b331fef71ce66d07443.
+- A szülő commiton olvasott docs/MASTER-DEVELOPMENT-PLAN.md blob: adc958b61e9c09d246989626c92066489d1d72f4, 686 481 karakter. A vizsgált fejezetcsaládban C/D/E/F jelen van, de külön 00.9.6.B címsor vagy MASTER-2.70 verziójelölés nem azonosítható.
+- 4321d333214eaf8dbb8978620fd0b10222478ecc — „docs: restore full historical roadmap and endgame stages”; a megtekinthető diff a 00.9.6.D — MASTER-2.72 blokkot adja hozzá a meglévő 00.9.6.C után, a 19–34 történeti backlog megőrzésére és a későbbi 0.x–10.0 fejlődési ívre hivatkozva. Ez a diff a D bevezetését igazolja, nem a B szövegét.
+- A közvetlenül vizsgált régebbi 0ebf7a9d2fb8f13040513c412d2ff98698c94b54 MASTER-snapshot blobja 211ca4475c901b102b068ea39d8a1746a299b04e, 55 646 karakter; a dokumentum fejezetcímei között csak 00.9.6.C található. A 00.9.6.B szövegrészre utaló szórványos említés nem B-fejezet, és nem használható a hiányzó fejezet rekonstruálására.
+- A 36b6ce5 előtti szülő-snapshot, a 4321d333-hoz kapcsolódó előd, valamint a korábban azonosított 8a4f296b8c87643a3199e5787541e8eefb17f930 történeti snapshot ellenőrzése sem szolgáltatta a teljes B-fejezetet. Az utóbbi snapshotban a 00.9.6 és 00.9.6.A megvan, külön B-címsor nincs.
+
+**Következtetés:** a vizsgált, közvetlenül elérhető commit-elődök és snapshotok a C/D roadmap kialakulásának egy részét megvilágítják, de nem fedik fel a 00.9.6.B eredeti tartalmát. Ez nem bizonyítja, hogy a B soha nem létezett; a vizsgálat nem terjed ki minden törölt blobra, PR-mellékletre, kommentre vagy külső mentésre. Nem készítek helyettesítő B-fejezetet találgatásból, és a C/D tartalmat nem minősítem B-vel egyenértékűnek.
+
+**Következő célzott lépés:** a docs/MASTER-DEVELOPMENT-PLAN.md és az archív MASTER útvonalak további korábbi commitjainak, illetve a releváns commitok teljes patch-/blobtörténetének vizsgálata; különösen olyan régi fájlútvonalak és törlések keresése, amelyek a jelenlegi útvonalon nem jelennek meg. Ha ez a kör sem adja elő a B szöveget, a hiányt explicit unresolved source gapként kell fenntartani, és a P0.2 záráshoz alternatív, dokumentált forrásdöntés szükséges — nem automatikus rekonstrukció.
+
+**Státusz:** commit-/előd-snapshot vizsgálat dokumentálva; 00.9.6.B teljes forrása továbbra is UNRECOVERED / OPEN; teljes történeti szemantikai reconciliáció OPEN; P0.2 IN PROGRESS / NOT PASS; fejlesztési fagyasztás változatlan.
