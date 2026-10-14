@@ -5974,3 +5974,59 @@ A „MATCH candidate” csak a tervezett elemkategória jelenlétét jelenti; ne
 
 **Státusz:** 15/15 történeti checklist-tétel explicit crosswalk-sort kapott; több részfeladat OPEN/PARTIAL/DECISION marad a property-szerződés és acceptance bizonyítékáig. `00.9.6.B` továbbra is **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
 
+### 41.3.140. P0.2 — Régi 2/G Position: 11 atomikus követelmény tételes crosswalkja (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, `2/G Position`, 11 checklist-tétel. **Canonical célpontok:** `EDT-009/016` geometry és layout; `EDT-021/022` typed property/schema validation; `EDT-023–026` responsive behavior; `EDT-034` public renderer parity; `WEB-004–008`; `QA-002/004/005/006`. A pozicionálás nem egyszerű CSS-lista: a containing block, stacking context, scroll root, parent layout és responsive precedence együttesen határozza meg a szemantikát.
+
+| # | Régi Position-követelmény | Canonical célpont | Státusz | Kötelező acceptance |
+|---:|---|---|---|---|
+| 1 | static | EDT-009/016, EDT-021/022 | PARTIAL / VERIFY | Normál flow az alap; a geometry Inspector nem sugall abszolút koordinátát, ha a node normál flow-ban van. |
+| 2 | relative | EDT-009/016, EDT-021/022 | OPEN / VERIFY | Saját eltolás és eredeti flow-hely különbözik; containing block és stacking hatás tesztelt. |
+| 3 | absolute | EDT-009/016, EDT-021/022 | OPEN / RELEASE GATE | Csak definiált containing block mellett engedélyezhető; parent/layout váltás nem eredményezhet koordináta- vagy méretvesztést. |
+| 4 | fixed | EDT-009/016, EDT-021/022, EDT-034 | OPEN / DECISION | Viewporthoz kötött pozíció, mobil safe-area, scroll, preview/public paritás és támogatott scope explicit. |
+| 5 | sticky | EDT-009/016, EDT-021/022 | OPEN / DECISION | Scroll-container, top/bottom offset, overflow/transform konfliktus és böngészőviselkedés tesztelt; unsupported kombináció nem választható. |
+| 6 | top/right/bottom/left | EDT-009, EDT-021/022 | PARTIAL / VERIFY | Inset mezők csak a kompatibilis position mode-ban aktívak; egységek és ellentmondó oldalpárok validáltak. |
+| 7 | inset | EDT-009, EDT-021/022 | OPEN / VERIFY | Shorthand és oldalspecifikus értékek precedence/reset szabálya explicit; mentés és Inspector round-trip nem változtat jelentést. |
+| 8 | z-index | EDT-009/016, EDT-021/022 | OPEN / RELEASE GATE | Érték a tényleges stacking contextben értelmezett; nem ígér globális sorrendet nested context felett. |
+| 9 | stacking context | EDT-009/016, EDT-021/022, EDT-034 | OPEN / VERIFY | Létrehozó tulajdonságok és hatókör dokumentált; canvas overlay és public render nem mutat eltérő rétegsorrendet. |
+| 10 | conflict handling | EDT-009/016, EDT-021/022, EDT-034 | OPEN / RELEASE GATE | Position/layout/overflow/transform konfliktusokra érthető diagnosztika vagy letiltott kombináció; nincs csendes CSS-váltás vagy layout-konverzió. |
+| 11 | containing-block validation | EDT-009/016, EDT-021/022 | OPEN / RELEASE GATE | A validáció a tényleges canonical parent/positioning contextet használja; hiányzó vagy instabil referencia esetén mentés blokkolt vagy explicit safe fallback. |
+
+#### Position-kontraktus és lezárási szabályok
+
+1. **Typed position enum és függőségek:** static/relative/absolute/fixed/sticky csak deklarált támogatással választható; inset és z-index mezők csak érvényes kontextusban aktívak.
+2. **Layout megőrzése:** Flex/Grid drag/resize nem konvertálhat véletlenül absolute positioningre; bármely szándékos konverzió előnézetet/egyértelmű műveletet és visszavonhatóságot igényel.
+3. **Containing block és stacking:** a felületnek nem szabad félrevezető, globális koordináta- vagy z-index-garanciát adnia nested kontextusokban.
+4. **Responsive izoláció:** position/inset/z-index override csak támogatott breakpointon; reset kizárólag az adott override-ot törli.
+5. **Tesztminimum:** minden position mode; nested parent; Flex/Grid child; transform/overflow/scroll; z-index és nested stacking; fixed/sticky mobil viewport; breakpoint override/reset; drag/resize; undo/redo; save/reload; preview/public parity.
+6. **Státuszszabály:** a crosswalk nem igazol runtime támogatást; fixed/sticky scope, conflict matrix és browser acceptance nyitott, amíg konkrét bizonyíték nem zárja le.
+
+**Státusz:** 11/11 történeti checklist-tétel explicit crosswalk-sort kapott; fixed/sticky scope, conflict matrix, containing-block validation és runtime/browser acceptance továbbra is OPEN/DECISION. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.141. P0.2 — Régi 2/H Overflow: 8 atomikus követelmény tételes crosswalkja (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, `2/H Overflow`, 8 checklist-tétel. **Canonical célpontok:** `EDT-009/016` geometry/layout; `EDT-021/022` typed property registry/validation; `EDT-034` public renderer parity; `QA-002/004/005/006`. Az overflow-tengelyek, a scroll-container, a szöveg törése és a szöveg levágása külön viselkedés, nem egyetlen összevont beállítás.
+
+| # | Régi Overflow-követelmény | Canonical célpont | Státusz | Kötelező acceptance |
+|---:|---|---|---|---|
+| 1 | visible | EDT-016, EDT-021/022 | PARTIAL / VERIFY | A kilógó tartalom látható marad; nem teszi elérhetetlenné az Inspector vagy canvas interakciókat. |
+| 2 | hidden | EDT-016, EDT-021/022 | PARTIAL / VERIFY | Levágás és fókuszálható tartalom viszonya tesztelt; rejtett tartalom nem okoz láthatatlan billentyűzet-fókuszt. |
+| 3 | auto | EDT-016, EDT-021/022 | OPEN / VERIFY | Scrollbar megjelenése a tényleges tengelytartalomtól függ; canvas és publikus oldal viselkedése egyezik. |
+| 4 | scroll | EDT-016, EDT-021/022 | OPEN / VERIFY | Scroll-container, fókusz, touch/keyboard navigáció és nested scroll viselkedése definiált. |
+| 5 | x/y | EDT-016, EDT-021/022 | OPEN / RELEASE GATE | X és Y tengely külön konfigurálható; az egyik tengely értéke nem változtatja meg észrevétlenül a másikat. |
+| 6 | clip | EDT-016, EDT-021/022 | OPEN / DECISION | Támogatott browser baseline és clip-edge/margin szemantika explicit; unsupported kombináció nem ajánlható. |
+| 7 | overflow-wrap | EDT-017/018, EDT-021/022 | OPEN / VERIFY | Hosszú szavak/URL-ek törése typed text property; különbözik a container overflowtól és a line-break policy-tól. |
+| 8 | text overflow | EDT-017/018, EDT-021/022 | OPEN / DECISION | Ellipsis/clip/nowrap és több soros truncation scope explicit; levágott tartalom hozzáférhető és teljes szöveg szerkeszthető marad. |
+
+#### Overflow-kontraktus és lezárási szabályok
+
+1. **Külön fogalmak:** overflow-x/y, scroll behavior, overflow-wrap, white-space/nowrap és text-overflow nem egy közös mezőben kezelendő.
+2. **Typed scope:** container overflow a layout/box tulajdonságcsoporthoz, szöveg-törés és truncation a text/typography csoporthoz tartozik; a registry ezt kényszerítse ki.
+3. **Scroll és accessibility:** fókusz, billentyűzet, touch, nested scroll és sticky/overflow kölcsönhatás nem teheti elérhetetlenné a tartalmat vagy vezérlőket.
+4. **Explicit döntések:** clip és text-overflow/truncation csak meghatározott 1.0 scope és browser-tested support mellett kerülhet a felületre.
+5. **Tesztminimum:** x/y külön érték; visible/hidden/auto/scroll/clip; nested scroll; hosszú URL/szó; ellipsis és teljes szöveg; sticky/overflow; responsive; keyboard/touch; save/reload; preview/public parity.
+6. **Státuszszabály:** a crosswalk nem runtime PASS; clip/truncation scope és böngészőnkénti acceptance bizonyíték nyitott marad.
+
+**Státusz:** 8/8 történeti checklist-tétel explicit crosswalk-sort kapott; clip/text-overflow döntések, accessibility/scroll interakciók és runtime/browser acceptance OPEN/DECISION. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
