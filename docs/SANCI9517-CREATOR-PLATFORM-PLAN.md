@@ -6700,6 +6700,22 @@ Ez a szakasz a 63.41 kártyáit kiegészíti a 25. fejezet hiányzó, különál
 
 **Állapot:** `WEB/EDT` részletes statikus forrásellenőrzés elkészült e fájlokra; runtime és végleges szemantikai kapu **NOT PASS**.
 
+### 63.50.5. Site Settings, public settings és Schedule Editor blokk — harmadik forrásaudit (2026-10-14)
+
+**Megnyitott források:** `src/routes/admin/settings.ts`, `src/routes/public/site-settings.ts`, `src/core/editor-validation.ts`, továbbá a korábban ellenőrzött `src/core/schedule-read.ts` és `src/routes/public/schedule.ts`. Az alábbi megállapítások kizárólag statikus kódolvasással bizonyítottak.
+
+| ID és határ | Ellenőrzött tény | Követelmény / további teendő |
+| --- | --- | --- |
+| `SET/TEAM/SEC` beállítások | Admin GET/PUT `site_settings` táblából `key='site'` alapján, admin szerepkörrel; `siteName` és `tagline` validáció, audit | A route nem használ `site_id`-t; a 0015 migráció is legacy/global site_settings szerződést jelez. A több-site modellhez **nem szabad** a jelenlegi globális rekordot változtatás nélkül tenant-specifikusnak tekinteni. Kanonikus site-scoped settings migration/readers/writers audit szükséges |
+| `WEB/SET` publikus beállítás | `/api/public/site-settings` a `site` rekordból siteName/tagline allowlistet ad, `Cache-Control: no-store`; hibás JSON esetén alapérték | Az Admin hibás JSON-nál 500-at, a publikus útvonal fallbacket ad: a hiba/diagnosztika/monitoring eltérő viselkedését dokumentálni és tesztelni kell |
+| `EDT-020/SCH-011` schedule block publish | `validatePublishDocument` a `schedule` node `props.schedule` configját ellenőrzi: `version=1`, upcoming/all/next, 1–50 limit, status/platform/order, showTitle/showPlatform/showTime/showEndTime/showStatus/showNotes/showLink, emptyText | Ez **konkrét Schedule Editor blokk konfigurációs szerződés**: a korábbi 63.50.2 „Editor runtime nem ellenőrzött” megállapítás mellett immár a publikálási validátor bizonyított. A tényleges DOM/runtime rendering és API-hívás még külön nyitott |
+| `SCH/WEB/SEC` notes láthatóság | A schedule config tartalmaz `showNotes` kapcsolót, de a publikus schedule API válaszában a `notes` mező ettől függetlenül szerepel | A megjelenítési kapcsoló **nem adatvédelmi jogosultság**. A notes domain-osztályozását és szerveroldali public allowlistet külön el kell dönteni és negatív tesztelni |
+| `EDT/QA` publish validáció | A validátor ellenőrzi a Page Model root/node/parent-child gráfot, elérhetőséget és a schedule konfiguráció alakját | Nem bizonyít teljes hozzáférhetőségi, biztonsági, embed-sanitization, WCAG vagy minden blokktípus szemantikai megfelelőséget; a `QA-005` és `SEC` kapuk külön nyitottak |
+
+**Rögzített architektúradöntés:** a `site_settings` jövőbeli site-scoped változata is **egyetlen** beállítási erőforrás legyen, nem új párhuzamos globális/tenant adatforrás. A migráció előtt a meglévő fogyasztókat, fallbackeket, cache-t, authot és publish-hatást fel kell térképezni. Az Editor Schedule blokk csak megjelenítési konfigurációt tárol; nem kap külön esemény-CRUD tulajdonjogot.
+
+**Nyitott acceptance:** site-váltás és tenant-izoláció; hibás JSON és recovery; publikus site meta frissülése; showNotes=false mellett API-szintű adatminimalizálás döntése; schedule blokk előnézet/publish parity; invalid config negatív tesztek. **IN PROGRESS / NOT PASS**, nincs kódmódosítás.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
