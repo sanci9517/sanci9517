@@ -2917,6 +2917,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 **Ez a terv egyetlen kanonikus felhasználói főmodul-/navigációs térképe.** A modulok és almodulok helyét itt kell meghatározni; a 3. fejezet domain-katalógusa, a 24. fejezet ID-jegyzéke és az 54. fejezet lefedettségi ellenőrzőlistája ezt nem írhatja felül. A menü csoportosítható, kereshető és szerepkör szerint szűrhető; a ritkán használt funkciók nem zsúfolják tele az alapnézetet. A menüpontok ugyanazokat a kanonikus domain szolgáltatásokat használják, nem külön miniappok.
 
 ### 49.1. Kezdőlap és napi áttekintés
+**Tulajdonosi határ:** Az Admin kezdőlap csak összesített, jogosultságszűrt nézet és gyorsműveleti belépési pont; nem hoz létre saját adás-, tartalom-, értesítés-, bevétel- vagy feladatrekordokat. Minden kártya a kanonikus forrásmodulhoz vezet.
 - **Áttekintés:** élő állapot, következő adás, feladatok, publikálási queue, figyelmeztetések, bevételi és közösségi összefoglaló.
 - **Gyors műveletek:** stream indítás előtti ellenőrzőlista, új tartalom, új oldal, új kampány, overlay teszt.
 - **Teendők:** sikertelen szinkronok, lejárt kapcsolatok, jóváhagyásra váró AI-módosítások, sikertelen publikálások.
@@ -2956,6 +2957,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Közös felhasználás:** Visual Editor, Brand Kit, Content Studio, OBS/overlay, Store és AI az asset pickert és kanonikus asset ID-t használja; a saját moduljukban csak a használatukhoz tartozó beállítások élnek.
 
 ### 49.5. Élő adás és Stream Studio
+**Tulajdonosi határ:** A Stream Studio a műsor/adásrend, stream-session, live vezérlőnézet és adáshoz kötött események felhasználói munkaterülete. Provider-hitelesítés a 49.7, OBS-eszközművelet a 49.6, VOD-utómunka a 49.8, workflow a 49.14 modulban marad; az élő nézet ezek állapotát olvassa és engedélyezett actionöket indít.
 - **Stream Planner:** adásrend, ismétlődő események, game/kategória, cím, leírás, vendégek, emlékeztetők.
 - **Live Control Room:** stream állapot, platformonkénti státusz, késleltetett/elavult adat jelzése, eseményfolyam.
 - **Multistream:** több célplatform, platformonkénti cím/leírás/kategória, capability-mátrix, előzetes ellenőrzés.
@@ -2965,6 +2967,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Stream replay/backup:** rögzítési állapot, lokális felvétel állapota, támogatott tartalék stream, hibaértesítés; a platform/API korlátai szerint.
 
 ### 49.6. OBS és stream eszközök
+**Tulajdonosi határ:** Ez a modul a stream-eszközök, OBS-kapcsolat működtetésének és overlay-runtime konfigurációjának kezelőfelülete. A külső fiókok OAuth-/provider-kapcsolatának központi nyilvántartása a 49.7-ben, az eseményautomatizálás a 49.14-ben, az overlayben felhasznált assetek a 49.4-ben maradnak.
 - **OBS kapcsolat:** párosítás, hitelesítés, kapcsolat állapota, engedélyek, reconnect, hibakeresés; jelszó és token soha nem jelenhet meg logban.
 - **Scene/source áttekintés:** scene-váltás, source státusz, source visibility, audio mute/volume és egyéb csak támogatott API-műveletek.
 - **Overlay Studio:** browser source URL, méret, safe area, canvas, scene-enkénti variáns, teszt/preview, verzió és rollback.
@@ -2977,6 +2980,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Fontos határ:** a webes platform nem feltételezi, hogy minden OBS plugin böngészőből vezérelhető. Elsődleges a dokumentált OBS WebSocket/browser source; natív plugin vagy desktop companion külön, biztonsági és telepítési döntéssel készül.
 
 ### 49.7. Kapcsolatok és integrációk
+**Tulajdonosi határ:** A 49.7 birtokolja a külső szolgáltatói kapcsolatok, tokenek, scope-ok, webhook-állapotok és adapter-képességek kanonikus életciklusát. A szolgáltató által elérhető üzleti funkciók a saját moduljukban maradnak (adás 49.5, tartalom 49.8, közösség 49.9, analitika 49.13); kapcsolati állapotuk ide vezet vissza.
 - **Kapcsolatok:** Twitch, YouTube, TikTok, Discord, Kick és további provider-adapterek.
 - **Fiókállapot:** connect/disconnect, scope, lejárat, újracsatlakozás, account/channel választás, jogosultságok.
 - **Provider-képességek:** olvasás/írás/publikálás/chat/analitika külön jelölése; nem támogatott műveletet a UI nem ígérhet.
@@ -2985,6 +2989,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Későbbi bővítések:** email, naptár, felhőtárhely, fizetés, affiliate, CRM, streaming hardware és automatizációs szolgáltatók.
 
 ### 49.8. Tartalomstúdió
+**Tulajdonosi határ:** A Tartalomstúdió a creator médiaprodukciós munkafolyamatainak, szerkesztési projektjeinek, tartalomnaptárának, csatornavariánsainak és közzétételi feladatainak gazdája. A bináris asset-regiszter a 49.4, a weboldal oldal-/navigációmodellje a 49.2, a provider-credential a 49.7 modulban marad. A 49.2-ben szereplő webes CMS-kollekciók strukturált webtartalmi modellje a WEB/DYN szerződéshez tartozik; a 49.8-ból kapcsolódó tartalom csak referenciával jelenhet meg az oldalon.
 - **Tartalomkönyvtár:** videó, VOD, clip, Short/Reel, kép, hang, podcast, stream replay, szöveg és kampányanyag.
 - **Szerkesztés:** timeline, vágás, trim, crop, aspect ratio, reframing, scene, B-roll, átmenet, hang, szín és brand overlay.
 - **Felirat és transcript:** beszédfelismerés, speaker/fejezet, időzítés, felirat-stílus, fordítás, SRT/VTT és szerkeszthető szöveg.
@@ -2996,6 +3001,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Média- és jogkezelés:** felhasználási jog, zene, vendég-hozzájárulás, lejárat, forrás és eltávolítási kérés.
 
 ### 49.9. Közösség és rajongók
+**Tulajdonosi határ:** A közösségi interakciók, moderációs ügyek és rajongói profilok felhasználói kezelőfelülete. A közös identitás és hitelesítés a 49.19 szerződését használja, a tagsági entitlement a 49.11-ből érkezik, a provider-összeköttetés a 49.7-ben marad; egyik sem másolható külön közösségi adattárolóba.
 - **Fan account:** regisztráció, bejelentkezés, profil, preferenciák, adatletöltés/törlés és biztonsági beállítások.
 - **Közösségi aktivitás:** kommentek, reakciók, szavazások, kérdések, beküldések, közösségi posztok.
 - **Tagsági közösségi nézet:** a szintek, jogosultságok és entitlement a **49.11. Támogatás és tagság** modulból érkezik; itt a közösségi megjelenítés és hozzáférés-ellenőrzés marad.
@@ -3029,6 +3035,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Üzleti adatvédelem:** lead/deal dokumentumok külön jogosultsággal, hozzáférésnaplóval és retention policyvel.
 
 ### 49.13. Analitika és növekedés
+**Tulajdonosi határ:** Az Analytics a mérési események, riportok, attribúció és aggregált olvasási modellek tulajdonosa; az eredeti rendelés, adás, tartalom, támogatás és kampány rekordja a saját domainjében marad. Nem elérhető vagy nem összehasonlítható provider-metrikából nem számolható tényként megjelenített összesítés.
 - **Összesített dashboard:** platformonkénti nézettség, követők, engagement, streamidő, tartalomtípus és bevétel.
 - **Adatminőség:** forrás, utolsó frissítés, becslés/valós adat, hiányzó és nem összehasonlítható metrikák jelzése.
 - **Tartalomelemzés:** videó/clip összehasonlítás, megtartás és elérhető watch-time, publikálási idők, tesztelt variánsok.
@@ -3037,6 +3044,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Export és jelentés:** CSV/JSON, időszakos riport, forrásmegjelölés és csapatnak megosztható összefoglaló.
 
 ### 49.14. Automatizációk
+**Tulajdonosi határ:** Az Automatizációk a workflow-definíció, trigger–feltétel–művelet kapcsolás, futási állapot és napló gazdája. Nem birtokolja az OBS-eszközt, külső accountot, tartalmat vagy rendelést; csak verziózott, jogosultságellenőrzött domain-actionökön keresztül működhet.
 - **Workflow builder:** trigger → feltétel → művelet → eredmény/hibaág; vizuális építés és sablonok.
 - **Triggerek:** stream online/offline, új follower/sub/event, tartalom státusz, időpont, rendelés, tagság, webhook és kézi indítás.
 - **Akciók:** értesítés, draft készítés, címke, export, engedélyezett overlay/OBS művelet, publikálási előkészítés.
@@ -3044,6 +3052,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Hibakezelés:** időtúllépés, leállítás, újrapróbálás, hibás workflow karantén, értesítés és manuális helyreállítás.
 
 ### 49.15. SANCI AI
+**Tulajdonosi határ:** A SANCI AI a modellkonfiguráció, költségkeret, memória-/adatengedély, javaslat, jóváhagyás és AI-futás kezelőfelülete. Az AI nem válik a weboldal, média, integráció, stream vagy kereskedelem párhuzamos adatgazdájává; az elfogadott műveletek ugyanazon domain API-kon és auditon mennek át.
 - **AI Control Center:** modell/provider, költségkeret, kvóta, adatforrás, retention, memória, engedélyek és leállító kapcsoló.
 - **AI chat és projektkontextus:** weboldal, brand, stream, tartalom, közösség és célok kontextusa jogosultság szerint.
 - **Website Designer:** oldal/szekció/komponens létrehozás, design és responsive javítás, SEO/accessibility ellenőrzés.
@@ -3077,6 +3086,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Hibaelhárítás és technikai feedback:** emberi nyelvű magyarázat, diagnosztikai azonosító, hibajelentés/terméktámogatási kérés; ez nem a 49.11 fan-támogatási/tagsági pénzügyi domainje. Érzékeny adatot automatikusan redaktálni kell.
 
 ### 49.19. Beállítások, biztonság és adat
+**Tulajdonosi határ:** A Beállítások a személyes és site-szintű konfiguráció, biztonsági policy, adatkezelési műveletek és naplók felülete. A csapatmeghívás/workspace-életciklus a 49.22, provider OAuth a 49.7, AI adat-/modellpreferenciák szakmai kezelése a 49.15 modulhoz tartozik, egységes jogosultsági ellenőrzéssel.
 - **Profil és személyes preferenciák:** nyelv, időzóna, dátum/pénznem, accessibility és privacy preferenciák; aktív workspace/csapatkezelés a 49.22 modulhoz tartozik.
 - **Jogosultsági policy és audit:** szerep-/műveletjogok szerveroldali szabályai; csapattag-meghívás és szerepkiosztás a 49.22 modulban történik.
 - **Biztonság:** session, eszközök, jelszó/SSO későbbi támogatása, 2FA, rate limiting, secret rotation és gyanús aktivitás.
@@ -3086,6 +3096,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **SaaS csomag és használat:** csak összefoglaló/hivatkozás; a plan, usage, quota, billing és számla lifecycle kanonikus tulajdonosa a 49.22 modul.
 
 ### 49.20. Fejlesztői platform és API — későbbi platformfázis
+**Tulajdonosi határ:** A fejlesztői platform a publikus fejlesztői API/SDK, kulcsok, kvóták és kompatibilitási szerződések gazdája. Nem váltja ki a belső domain API-kat; a provider-összeköttetések a 49.7, a külső bővítmények életciklusa a 49.21 modulban marad.
 - **Dokumentált API:** verziózott endpointok, schema, hibakódok, auth és deprecation policy.
 - **Integrációs SDK:** OAuth adapterek, webhook/event contractok, klienskönyvtár és példakód.
 - **API key lifecycle:** létrehozás, scope, megjelenítés egyszer, rotáció, lejárat, visszavonás és audit.
@@ -3094,6 +3105,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Külső integrációk:** rate limit, tenant/site scope, minimum jogosultság és biztonsági felülvizsgálat.
 
 ### 49.21. Bővítmények, widgetek és piactér — későbbi platformfázis
+**Tulajdonosi határ:** A piactér és bővítménykezelő a harmadik féltől származó extension-manifest, telepítés, engedély, kompatibilitás és eltávolítás gazdája. A telepített kiegészítő nem hozhat létre jogosulatlan, párhuzamos tartalom-/fiók-/asset-tárolót; az eredeti domain- és API-szerződésekhez kapcsolódik.
 - **Extension registry:** manifest, verzió, scope, permission, kompatibilitás, aláírás/eredet, frissítés és eltávolítás.
 - **Widget/overlay SDK:** saját komponensek, konfigurációs séma, preview, események és verziózás.
 - **Template/component marketplace:** sablonok, komponensek, overlayek és workflow-k; licenc, szerző, értékelés, frissítés és visszavonás.
@@ -3101,6 +3113,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Marketplace üzleti modell:** díjazás/revenue-share és szerzői jogi/licencfeltételek csak külön jogi és pénzügyi felülvizsgálat után.
 
 ### 49.22. Csapat, több site és SaaS — későbbi fázis
+**Tulajdonosi határ:** A csapat és SaaS modul a workspace/site, tagság, meghívás, tenant-elválasztás, csomag és szervezeti jogosultság életciklusának gazdája. A felhasználói identitás, session és alapbiztonsági policy a 49.19-ben marad; a modul csak az ezekhez kötött workspace-hozzáférést kezeli.
 - Több creator/site/workspace kezelése egy fiókból, egyértelmű aktív workspace választással.
 - Meghívás, csapattagok, szerepek, projekt- és ügyfélhozzáférés, jóváhagyási folyamat.
 - Agency/studio mód több creatorhoz, közös sablonok és ügyfél-specifikus brand.
