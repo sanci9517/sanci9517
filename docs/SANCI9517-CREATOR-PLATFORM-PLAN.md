@@ -6928,6 +6928,17 @@ A `0004_system_page_content.sql` történeti táblát hoz létre, míg a `0005_c
 
 **Kötelező elfogadási tesztek:** published v1 + draft v2 + PATCH metaadat → publikus v1 és korábbi URL változatlan; preview v2; explicit publish → v2 publikus és régi URL szabályozott 301/308; slug ütközés; unpublish → publikus hozzáférés megszűnik; rollback → csak draft változik; sitemap/canonical/OG egyezés; site-ownership és jogosultság; cache. **STATUS: CONTRACT CONFLICT CONFIRMED IN SOURCE / RUNTIME AND DESIGN CLOSURE NOT PASS.** Nem történt kódmódosítás vagy adatbázis-migráció.
 
+### 63.50.23. Publikus SEO/404 és előnézeti indexelés szerződésaudit (2026-10-14)
+
+**Forrásref:** `c94c944`; `public/visual-page.html`, `public/assets/page-renderer.js`, `public/assets/site.js`, `src/routes/public/pages.ts`, `src/routes/admin/pages.ts`, `src/core/page-model.ts`. Statikus kódaudit, élő HTTP vagy keresőrobot ellenőrzés nélkül.
+
+- **Kliensoldali tartalomfeloldás:** a Worker a `/p/<slug>` URL-re a közös `visual-page.html` shellt adja; a `page-renderer.js` a pathname alapján számított sluggal `/api/public/pages?slug=...` API-t hív. A publikus API hiányzó oldalra 404-et ad, de a renderer ezt a kliensoldalon egy „404” hibaüzenetté alakítja a már betöltött HTML shellen belül. **Potenciális SEO/HTTP-státusz eltérés:** az oldal URL-jének tényleges HTTP 404 státusza nincs igazolva, és a Worker forrásából a shell kiszolgálása következik. Külön HTTP-integrációs teszt szükséges.
+- **Statikus metaadat:** a közös HTML shell kezdő `<title>` értéke `Sanci9517`, a `robots` meta `index,follow`. A renderer az API válasza után kliensoldalon állítja a `document.title` értékét, de a vizsgált `loadPage` ág nem hoz létre oldalankénti canonical, meta description, Open Graph vagy robots szabályt. A `page-model.ts` sémájában lévő `metadata.canonical` és `metadata.openGraph` értékek létezése nem bizonyítja azok publikus HTML-kimenetét.
+- **Preview:** `?preview=1` ugyanazon `visual-page.html` shellben fut, és a renderer a queryt továbbítja a jogosultságvédett publikus API felé. A shell `index,follow` metaadata mellett nincs a vizsgált belépési ponton bizonyított `noindex` preview-szabály. **SEO/indexelési kockázat**; a tényleges keresőindexelés nem bizonyított.
+- **URL/404 szerződés:** az explicit publish, átnevezés, unpublish és törlés után a `/p/<slug>` HTTP-státusz, canonical, redirect, sitemap és metaadatok konzisztens, szerveroldalon tesztelhető viselkedése szükséges. A kliensoldali „404” felirat nem helyettesíti a HTTP 404-et.
+
+**Javasolt elfogadási feltételek:** publikált oldal → HTTP 200 + helyes cím/leírás/canonical/OG; nem publikált/nem létező oldal → valódi 404 és noindex; jogosult preview → draft, noindex/no-store; anonim preview → nincs draft-adat; slug változás → szabályozott 301/308 és canonical; sitemap csak publikus URL-ekkel, robots.txt és meta robots összehangolva; SSR/Worker/meta-kimenet architektúrája a meglévő asset-routinggal kompatibilisen kiválasztandó. **SEO/HTTP CONTRACT: IN PROGRESS / NOT PASS.** Kódot nem módosítottunk.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
