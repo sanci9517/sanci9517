@@ -6789,6 +6789,18 @@ A `0004_system_page_content.sql` történeti táblát hoz létre, míg a `0005_c
 
 **Nyitott ellenőrzések:** typecheck, Editor/Schedule/Domain/Admin tesztek, site-ownership tesztek és Worker dry-run build; ezek eredménye ebben a körben nem ismert. **NOT PASS.**
 
+### 63.50.11. Régi Editor-assetek és az aktív Editor v2 szétválasztása (2026-10-14)
+
+**Ellenőrzött:** `src/index.ts`, `public/editor-v2/index.html`, `public/editor-v2/boot.js`, `public/editor/preview.html`, `public/editor/` és `public/editor-v2/` könyvtárlista. Statikus audit, nincs böngésző/CI bizonyíték.
+
+- Az aktív, hitelesített `/admin/editor` route `/editor-v2/index.html` assetet szolgálja. A v2 shell saját `editor.css`, `schedule-preview.css`, `mobile-editor.css` fájlokat használ, és rendelkezik oldal-, elem-, réteg-, adásrend-, mentés-, publikálás- és verzióütközés-UI-val.
+- A régi `public/editor/` könyvtárban több külön régi Editor modul és `preview.html` maradt. A megnyitott legacy preview `/admin-editor-v2.html` visszalinket és saját, korábbi renderelési logikát tartalmaz; ez nem a kanonikus v2 shell.
+- A Worker fallbackje `env.ASSETS.fetch(request)`; ezért a régi statikus assetek **közvetlen URL-en még elérhetők lehetnek**, akkor is, ha az Admin nem linkel rájuk. A route-regisztráció hiánya önmagában nem elegendő a teljes `public/editor/` könyvtár azonnali archiválásához.
+- **Következő bizonyítékkapu:** a teljes v2 modulimport-gráf, legacy assetekre mutató hivatkozások, publikus URL/asset manifest, esetleges felhasználói adat/export kompatibilitás, tesztek és böngésző regresszió ellenőrzése. Utána a bizonyítottan nem használt régi fájlok archiválhatók, a v2 egyetlen szerkesztő marad.
+- **Termékhatár:** a v2 Editorban látható adásrend és Twitch kapcsolati UI jelenléte nem teszi a Visual Editort az adásrend vagy integráció domain tulajdonosává; ezek a Creator Center külön moduljaiban kezelendők, közös API-val.
+
+**Státusz:** a régi Editor assetek besorolása **LEGACY / ARCHIVE CANDIDATE, NOT YET SAFE TO REMOVE**. A 396 funkcióazonosító és a kanonikus terv változatlan. Teljes kapu **IN PROGRESS / NOT PASS**.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
