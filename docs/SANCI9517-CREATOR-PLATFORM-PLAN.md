@@ -4421,3 +4421,58 @@ A régi `public/editor/` modulok külön UX- és javítási kísérleteket tarta
 
 **Státusz: IN PROGRESS / NOT PASS.** A leltár a fájlfán és route-regiszteren alapul. A hiányzó képességek végleges BUILD döntéséhez szükséges a teljes route consumer/search, schema/migration és runtime acceptance kör; az „UNVERIFIED” státusz addig nem alakítható PASS-szá.
 
+### 63.26. EDT-001–044 — funkciónkénti bizonyítékmátrix, első teljes modul-szelet
+
+A 63.23 összesített ID-csoportjait ez a mátrix az EDT minden egyes stabil ID-jára bontja. A „részleges alap” a forráskód/tests fájlokban látható alapot jelenti, nem a teljes acceptance PASS-t. Az egyes fázis/prioritás végleges kiosztása a kanonikus 41.2/63.5 roadmap-keresztezés után zárható; ahol a repository-bizonyíték nem elég, az állapot **UNVERIFIED / OPEN**, nem kitalált státusz.
+
+| ID | Kanonikus owner / forrás | Bizonyíték alapján látható állapot | Nyitott acceptance / függőség |
+|---|---|---|---|
+| EDT-001 | EDITOR / `core/schema.js`, Page Model | Részleges alap | Verziómigráció, backward compatibility és invalid schema reject E2E. |
+| EDT-002 | EDITOR / schema + validation | Részleges alap; core tesztek parent/child invariants-t fednek | Duplicate ID, orphan node, cycle, root és nested container negatív mátrix. |
+| EDT-003 | EDITOR / `commands.js` | Részleges alap; mutációs parancsok központosítottak | Minden UI mutation csak commandon át; nincs direct state mutation. |
+| EDT-004 | EDITOR / `executeBatch`, transaction API | Részleges alap; atomic/non-atomic tesztek léteznek | Minden összetett UI műveletnél explicit atomic policy és failure recovery. |
+| EDT-005 | EDITOR / history undo/redo | Részleges alap; snapshot round-trip teszt van | History limit, nagy dokumentum, selection és failed transaction edge case. |
+| EDT-006 | EDITOR / state selection | Részleges alap; history selection restore teszt van | Canvas/layer/Inspector/multi-select fókuszszinkron minden inputmóddal. |
+| EDT-007 | EDITOR / canvas engine, pan/extent | Részleges alap | Zoom/pan/fit/resize és viewport state browser/mobile acceptance. |
+| EDT-008 | EDITOR / canvas pointer handlers | Részleges UI-alap | Drag/drop, pointer cancel, touch, locked node, nested target és save round-trip E2E. |
+| EDT-009 | EDITOR / geometry/resize | Részleges UI-alap | Min/max constraints, aspect ratio, keyboard resize és responsive overrides. |
+| EDT-010 | EDITOR / canvas geometry | Nincs teljes snap/grid acceptance bizonyíték | Alignment guides, snap thresholds, grid toggle és keyboard alternative. |
+| EDT-011 | EDITOR / commands reorder/reparent/duplicate/delete | Core command/test alap létezik | UI-műveletek, törlés megerősítése/undo, cross-parent rules és subtree edge case. |
+| EDT-012 | EDITOR / layer tree | Részleges UI-alap | Expand/collapse persistence, empty container és deep hierarchy. |
+| EDT-013 | EDITOR / selection state + canvas/layers | Részleges UI-alap | Canvas↔layer↔Inspector sync, stale selection és deleted node recovery. |
+| EDT-014 | EDITOR / lock command + Inspector | Lock command/checkbox alap; hide/show külön nem bizonyított | Layer rename, visibility state, lock behavior, keyboard/touch és renderer visibility parity. |
+| EDT-015 | EDITOR / node palette | Részleges elemkatalógus | Keresés/kategória/favorite, unsupported capability label és minden NODE_TYPE coverage. |
+| EDT-016 | EDITOR / container/section/row/grid node types | Schema/render alap részleges | Layout semantics, nested constraints, gap/columns, breakpoint change és public parity. |
+| EDT-017 | EDITOR / text/heading/button/icon/divider/spacer | Részleges node/render alap | Minden node saját Inspector control, link safety, icon registry és accessible semantics. |
+| EDT-018 | EDITOR + RESOURCE / image/video/embed/list/card/badge | Részleges/vegyes | Media picker, authorized asset reference, safe embed, video fallback, alt text és renderer parity. |
+| EDT-019 | EDITOR / table/accordion/tabs/form | Teljes implementáció nem bizonyított | Minden komponens interakciós schema, keyboard/ARIA, validation, safe form submission és acceptance. |
+| EDT-020 | EDITOR → owning domain blocks | Schedule block alap létezik; több SANCI provider blokk placeholder | Blockonként canonical source, owner/API, loading/empty/error/stale, permission és preview/public parity. |
+| EDT-021 | EDITOR / Property Registry | Registry és property csoportok léteznek | Minden tervezett property tényleges definíciója, owner node, type, responsive flag és command. |
+| EDT-022 | EDITOR / Inspector controls + validation | Általános input és select alap | Type-specific controls (box/font/color/asset/shadow), min/max, schema validation és invalid input UX. |
+| EDT-023 | EDITOR / responsive resolver | Core inheritance/resolve tesztek léteznek | Az Inspector ténylegesen resolved értéket mutat-e minden property-nél; source/inherited jelzés. |
+| EDT-024 | EDITOR / responsive helpers | Override/inherit/reset helper tesztelt | Minden property és viewport UI-ja reset/inherit állapotot mentés után is megőriz. |
+| EDT-025 | EDITOR / responsive preview | Desktop/tablet/mobile UI-alap létezik | Breakpoint switch, viewport dimensions, zoom és visual regression. |
+| EDT-026 | EDITOR / responsive visibility/layout | Visibility state részleges | Order/columns/visibility override minden breakpointon, publikus rendererrel egyezően. |
+| EDT-027 | EDITOR / save dirty state | Save/dirty state kód és tesztlétezés | Explicit draft save, beforeunload guard és mentés közbeni további edit. |
+| EDT-028 | EDITOR + PAGE API / save/reload | Revision alap és round-trip ellenőrzések részlegesek | Teljes node/property/data binding round-trip D1 → reload → render. |
+| EDT-029 | EDITOR + REVISION / expectedVersion | 409 conflict handling és draft export/reload teszt van | expectedVersion szerveroldali kötelezővé tétele minden mutation/save útvonalon. |
+| EDT-030 | EDITOR / in-flight save snapshot | Save kód a beküldött snapshotot külön kezeli | Race test: módosítás save közben, válasz sorrendcsere és dirty-state helyesség. |
+| EDT-031 | EDITOR / network recovery | Conflict export és explicit reload alap van | Timeout/offline/retry és local draft retention; nincs silent data loss. |
+| EDT-032 | EDITOR/PREVIEW / preview authorization | Preview route alap létezik | Draft preview link expiry, unauthorized, noindex, current revision és public shell parity. |
+| EDT-033 | EDITOR/PUBLISH / publish flow | Publish action/validation alap létezik | Minden publish entrypoint ugyanazt a server-side validationt futtassa; save ≠ publish. |
+| EDT-034 | PUBLIC_RENDERER / `page-renderer.js` | Paritás nem bizonyított; responsive override hiányos | Node-by-node Editor preview/public render parity, SEO/asset/safe embed/accessibility. |
+| EDT-035 | EDITOR mobile shell | Mobil CSS és action-bar alap vizsgálandó | Safe-area, viewport keyboard, scroll/zoom és small-screen interaction E2E. |
+| EDT-036 | EDITOR mobile panels | Mobil panel CSS/UI részleges | Layers/Inspector váltás, back/escape, focus restore és viewport state. |
+| EDT-037 | EDITOR accessibility | Teljes keyboard canvas alternatíva nem bizonyított | Minden canvas művelet keyboard elérhető, focus order és screen-reader announcements. |
+| EDT-038 | EDITOR / multi-select + duplicate | Multi-select/duplicate alap létezik; clipboard UI nem bizonyított | Copy/paste, ID remap, multi-selection batch, cross-page rules és undo/redo. |
+| EDT-039 | EDITOR / page interaction schema | Property group létezik, teljes interaction property/runtime nem bizonyított | Whitelistelt action schema, URL/form safety, runtime policy; nem AUT action registry. |
+| EDT-040 | EDITOR / motion | Reduced-motion csoport említve, property/runtime nem bizonyított | `prefers-reduced-motion`, motion disable policy, keyboard/vestibular-safe defaults. |
+| EDT-041 | EDITOR / onboarding/templates | Template-start/onboarding teljes UI nem bizonyított | Empty state, template apply, no destructive overwrite, undo/rollback és sample content cleanup. |
+| EDT-042 | EDITOR / error recovery | Conflict recovery alap van | Minden failure state, retry/reload/export, malformed Page Model és recovery telemetry. |
+| EDT-043 | EDITOR / Rich Text | Structured Rich Text schema/command/tests léteznek | A funkciótervben plain-text baseline utáni gate; full editor toolbar, paste sanitization, accessibility és renderer parity. |
+| EDT-044 | EDITOR / `editor_preferences` table | User-scope schema létezik, route/UI usage nem bizonyított | Per-user preferences API, permission, defaults, migration és Page Modeltől való elkülönítés. |
+
+**EDT-függőségi gerinc (tervezett gate, nem kész státusz):** EDT-001/002 → EDT-003/004/005/006 → EDT-007–020 → EDT-021/022 → EDT-023–026 → EDT-027–033 → EDT-034; az EDT-035–044 hozzáférhetőség, mobil, rich text, interakció és személyes beállítás acceptance-e a kapcsolódó alapok után zárható. Ez a függőségi sorrend nem engedélyez implementációt a teljes terv lezárása előtt.
+
+**Státusz: IN PROGRESS / NOT PASS.** Ez az első teljes, egyedi-ID-s modul-szelet; a fenti nyitott acceptance pontok nem jelentenek automatikus BUILD döntést. A következő lépés a WEB-001–032 és a közös publish/revision contract ugyanezen szintű, egyedi ID-s bizonyítékmátrixa.
+
