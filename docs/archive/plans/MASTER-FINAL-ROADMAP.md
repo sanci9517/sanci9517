@@ -1,3 +1,5 @@
+**HISTORICAL / SUPERSEDED ROADMAP — DO NOT EXECUTE AS CURRENT ORDER.** The Editor-first sequence in this archived roadmap was replaced by the canonical Admin-first MASTER order. Its feature requirements remain traceable in `docs/MASTER-DEVELOPMENT-PLAN.md`, especially 2.77.5, E/F, and 2.77.7.C.
+
 # Sanci9517 — VÉGLEGES MASTER FEJLESZTÉSI ÚTVONAL
 
 **Verzió:** FINAL-1.0  
