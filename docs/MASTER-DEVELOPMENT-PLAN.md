@@ -5905,3 +5905,72 @@ A „MATCH candidate” csak a tervezett elemkategória jelenlétét jelenti; ne
 **Crosswalk-következtetés:** az EDT-016 megfelelő canonical horgony a layout primitívekhez, de nem bizonyítja önmagában az inline-block/none konkrét támogatását vagy a négyféle elrejtés/hozzáférés közötti viselkedést. Az inline-block és CSS none külön scope/acceptance döntést igényel; visibility és authorization soha nem vonható össze.
 
 **Státusz:** 8 követelmény tételesen leképezve; inline-block/none scope és display/visibility/accessibility acceptance nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+### 41.3.138. P0.2 — Régi 2/E Flex: 16 atomikus követelmény tételes crosswalkja (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, `2/E Flex`, 16 checklist-tétel. **Canonical célpontok:** `EDT-016` layout primitives; `EDT-021/022` Inspector Property Registry és schema validation; `EDT-023–026` responsive state; `EDT-027/028` mentés és round-trip; `EDT-032–034` preview/publish/public renderer parity; `QA-002/004/005/006`. Az ID-hivatkozás nem implementation proof; a követelmény akkor zárható le, ha az értékek, tulajdonosi scope, perzisztencia és acceptance mind explicit.
+
+| # | Régi Flex-követelmény | Canonical célpont | Státusz | Kötelező acceptance |
+|---:|---|---|---|---|
+| 1 | row | EDT-016, EDT-021/022 | PARTIAL / VERIFY | Csak Flex-containeren állítható; vízszintes főtengely, gyermekméret és preview/public viselkedés egyezik. |
+| 2 | column | EDT-016, EDT-021/022 | PARTIAL / VERIFY | Csak Flex-containeren állítható; függőleges főtengely és tengelyfüggő méretezés tesztelt. |
+| 3 | reverse | EDT-016, EDT-021/022 | OPEN / VERIFY | Vizuális sorrend és DOM/olvasási/fókuszsorrend külön szerződés; nem rendezheti át csendben a canonical tree-t. |
+| 4 | wrap | EDT-016, EDT-021/022 | PARTIAL / VERIFY | Többsoros törés, sor-/oszlopköz, min/max méretek és keskeny viewport tesztelt. |
+| 5 | no-wrap | EDT-016, EDT-021/022 | PARTIAL / VERIFY | Nem keverhető a wrap-pal; túlcsordulás és keskeny nézet viselkedése determinisztikus és hozzáférhető. |
+| 6 | justify | EDT-016, EDT-021/022 | PARTIAL / VERIFY | Deklarált enum és főtengelyhez kötött jelentés; unsupported érték nem menthető. |
+| 7 | align | EDT-016, EDT-021/022 | PARTIAL / VERIFY | Kereszttengelyi igazítás, tengely és wrap-kontextus külön kezelendő a justify-tól. |
+| 8 | align-content | EDT-016, EDT-021/022 | OPEN / VERIFY | Csak a szemantikailag releváns több soros Flex-helyzetben elérhető; hatása különbözik az item-aligntól. |
+| 9 | order | EDT-016, EDT-021/022, EDT-013 | OPEN / RELEASE GATE | Vizuális sorrend nem írhatja át a canonical node-sorrendet vagy a hozzáférhető olvasási/fókuszsorrendet észrevétlenül. |
+| 10 | grow | EDT-016, EDT-021/022 | OPEN / VERIFY | Flex-item-only typed, validált érték; szülő mérete, testvér-elemek és min/max korlátok mellett tesztelt. |
+| 11 | shrink | EDT-016, EDT-021/022 | OPEN / VERIFY | Flex-item-only typed, validált érték; túl szűk konténerben és min-size interakcióval tesztelt. |
+| 12 | basis | EDT-016, EDT-021/022 | OPEN / VERIFY | Flex-item-only typed value; támogatott egységek és auto/intrinsic viselkedés mátrixa explicit, round-trip stabil. |
+| 13 | self | EDT-016, EDT-021/022 | OPEN / VERIFY | Gyermekelem saját kereszttengelyi igazítása külön property; az inherited parent érték felülírása és reset tesztelt. |
+| 14 | gap | EDT-016, EDT-021/022, DSN-001/006 | PARTIAL / VERIFY | Flex gap nem azonos margin/padding értékekkel; támogatott egységek, token/raw precedence és responsive reset definiált. |
+| 15 | responsive preview | EDT-023–026, EDT-032 | PARTIAL / VERIFY | Desktop/tablet/mobile előnézet; base/inherited/override látható; breakpoint-módosítás nem írja át a desktop state-et. |
+| 16 | persistence | EDT-027/028, EDT-032–034, WEB-004–008 | OPEN / RELEASE GATE | Minden támogatott Flex-property save→reload→preview→publish útvonalon megőrzi szemantikáját; stale/conflict mentés nem írhat felül csendben. |
+
+#### Flex-kontraktus és lezárási szabályok
+
+1. **Container/item szétválasztás:** direction, wrap, justify, align, align-content és gap container-scope; order, grow, shrink, basis és align-self item-scope. A registrynek ezt kifejezetten ki kell kényszerítenie.
+2. **Típusos értékek:** csak deklarált enumok és validált typed values menthetők; arbitrary CSS-szöveg nem kerülhet a canonical Page Modelbe.
+3. **Sorrend és hozzáférhetőség:** a vizuális order/reverse nem változtathatja meg észrevétlenül a DOM-, billentyűzet- vagy olvasási sorrendet.
+4. **Layoutváltás:** Flexből más layoutba váltás előtt a megőrzött, inaktívvá váló és migrálandó értékeket meg kell különböztetni; csendes adatvesztés tilos.
+5. **Tesztminimum:** row/column × wrap/no-wrap; justify/align/align-content; order/reverse; grow/shrink/basis; align-self; gap/token; nested Flex; breakpoint override/reset; undo/redo; save/reload; preview/public parity; keyboard/focus/reading order.
+6. **Státuszszabály:** a jelen crosswalk tervszintű megfeleltetés. Futásidejű teszt vagy implementációs PASS nincs e bejegyzéssel igazolva.
+
+**Státusz:** 16/16 történeti checklist-tétel explicit crosswalk-sort kapott; több részfeladat OPEN/PARTIAL marad a konkrét property-szerződés és acceptance bizonyítékáig. `00.9.6.B` továbbra is **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.139. P0.2 — Régi 2/F Grid: 15 atomikus követelmény tételes crosswalkja (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, `2/F Grid`, 15 checklist-tétel. **Canonical célpontok:** `EDT-016` layout primitives; `EDT-021/022` typed Property Registry/schema validation; `EDT-023–026` responsive behavior; `EDT-027/028` persistence/round-trip; `EDT-032–034` preview/public parity; `QA-002/004/005/006`. A Grid-scope egy explicit, tesztelt subset; nem jelent tetszőleges CSS Grid-szintaxis támogatást.
+
+| # | Régi Grid-követelmény | Canonical célpont | Státusz | Kötelező acceptance |
+|---:|---|---|---|---|
+| 1 | columns | EDT-016, EDT-021/022 | PARTIAL / VERIFY | Típusos track-lista, támogatott egységmátrix, hibás definíció elutasítása és renderer-parity. |
+| 2 | rows | EDT-016, EDT-021/022 | PARTIAL / VERIFY | Típusos row-track modell; implicit/explicit sorok és tartalom miatti növekedés determinisztikus. |
+| 3 | fixed | EDT-016, EDT-021/022 | OPEN / VERIFY | Fix track-méret csak validált egységgel; overflow, min/max és breakpoint behavior tesztelt. |
+| 4 | fractional | EDT-016, EDT-021/022 | OPEN / VERIFY | `fr` csak érvényes Grid-track kontextusban; szülőméret és maradék hely számítása egyezik a böngészővel. |
+| 5 | auto | EDT-016, EDT-021/022 | OPEN / VERIFY | Auto sizing és intrinsic content viselkedés támogatott subsetje dokumentált; szélső méret nem okoz elérhetetlen canvas-tartalmat. |
+| 6 | minmax | EDT-016, EDT-021/022 | OPEN / VERIFY | Min/max track-szemantika típusosan validált; hibás vagy ellentmondó határok mentés előtt elutasítva. |
+| 7 | auto-fit | EDT-016, EDT-021/022 | OPEN / DECISION | Explicit 1.0 scope-döntés; ha támogatott, reszponzív track-összevonás és üres track viselkedés tesztelendő. |
+| 8 | auto-fill | EDT-016, EDT-021/022 | OPEN / DECISION | Explicit 1.0 scope-döntés; a kitöltetlen trackek viselkedése nem feltételezhető az auto-fitből. |
+| 9 | areas | EDT-016, EDT-021/022 | OPEN / DECISION | Named-area schema, egyedi nevek, téglalap alakú terület és gyermek-hozzárendelés validációja; unsupported eset UI-ban letiltva. |
+| 10 | placement | EDT-016, EDT-021/022 | PARTIAL / VERIFY | Row/column start/end/span typed modell; tartományon kívüli vagy konfliktusos placement determinisztikus kezelése. |
+| 11 | alignment | EDT-016, EDT-021/022 | PARTIAL / VERIFY | Container- és item-alignment külön scope; tengelyenkénti jelentés és baseline/unsupported értékek definiáltak. |
+| 12 | responsive | EDT-023–026, EDT-032 | PARTIAL / VERIFY | Breakpointonkénti track/placement override és reset; mobil változás nem módosíthatja a desktop alapértéket. |
+| 13 | persistence | EDT-027/028, EDT-032–034, WEB-004–008 | OPEN / RELEASE GATE | Grid-template, placement, gap és responsive értékek save→reload→preview→publish alatt stabilak. |
+| 14 | row/column gap | EDT-016, EDT-021/022, DSN-001/006 | PARTIAL / VERIFY | Row-gap és column-gap külön szerkeszthető, typed és responsive; token/raw precedence és reset tesztelt. |
+| 15 | explicit/implicit grid validation | EDT-016, EDT-021/022 | OPEN / RELEASE GATE | Explicit track definíció, implicit track létrejötte és auto-placement közötti szabály dokumentált; invalid/conflicting layout nem menthető csendben. |
+
+#### Grid-kontraktus és lezárási szabályok
+
+1. **Grid container és item külön szerződés:** template/track/auto-flow/areas a konténerhez; placement/span/alignment a gyermekelemhez tartozik.
+2. **Korlátozott, deklarált subset:** `fr`, `minmax`, `auto-fit`, `auto-fill`, named areas és auto-placement csak akkor jelenhet meg az Inspectorban, ha a canonical parser, serializer és renderer ugyanazt a szemantikát támogatja.
+3. **Determinista validáció:** hibás track-lista, out-of-range placement, inkompatibilis parent/node kombináció és hibás area-definíció mentés előtt blokkolandó, érthető hibával.
+4. **Responsive izoláció:** a base/inherited/override értékek explicit; a breakpoint reset az adott override-ot távolítja el, nem más viewport értékeit.
+5. **Tesztminimum:** fixed/fr/auto/minmax; auto-fit vs auto-fill; explicit/implicit tracks; named areas döntés; placement/span; row/column gap; nested Grid; content overflow; breakpoint override/reset; undo/redo; save/reload; preview/public parity és accessibility/reading order.
+6. **Státuszszabály:** a crosswalk nem runtime PASS; az auto-fit/auto-fill/areas scope-döntése és a teljes typed-value/round-trip bizonyíték nyitott marad, amíg külön acceptance nem igazolja.
+
+**Státusz:** 15/15 történeti checklist-tétel explicit crosswalk-sort kapott; több részfeladat OPEN/PARTIAL/DECISION marad a property-szerződés és acceptance bizonyítékáig. `00.9.6.B` továbbra is **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
