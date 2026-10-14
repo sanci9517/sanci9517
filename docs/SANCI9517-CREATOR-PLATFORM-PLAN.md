@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.59` — 156/156 első routing; 16/16 domain/phase csoportkapu; **54.1–54.4 37/37 soronkénti specifikációs acceptance**, következő **54.5–54.8** (majd 54.9–54.16) soronkénti domain/fázis/pozitív-negatív teszt; forráskód/runtime evidence továbbra is külön nyitott, különös tekintettel a 63.50.46 HIGH publikálási konfliktusra. A 156 első körös routing kész, de szemantikai és történeti kapu továbbra is nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll és a 63.50.46 HIGH kódaudit-blokkoló ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.60` — 156/156 első routing; 16/16 domain/phase csoportkapu; **54.1–54.8 80/80 soronkénti specifikációs acceptance**, következő **54.9–54.12** (majd 54.13–54.16); forráskód/runtime evidence továbbra is külön nyitott, különös tekintettel a 63.50.46 HIGH publikálási konfliktusra. A 156 első körös routing kész, de szemantikai és történeti kapu továbbra is nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll és a 63.50.46 HIGH kódaudit-blokkoló ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -7208,7 +7208,7 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 5. Minden sikeres audit-commit után a fejléc folytatási állapotát és a legutolsó bejegyzést egyeztetni; a következő munka **egyértelmű azonosítóval**, a még nyitott részhalmazzal és a PASS/NOT PASS határral legyen megadva. A commit SHA csak a GitHub által visszaadott tényleges eredmény alapján közölhető.
 6. Nem létező vagy nem visszanyert történeti forrást nem lehet rekonstruáltnak nevezni; a 396 ID, 22 modul, 156 review és 271 történeti H-ID számlálása nem runtime teszt. A fejlesztési fagyasztás az aktív kapu PASS-áig változatlan.
 
-**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.59 37/156 ITEM ACCEPTANCE SPEC / NEXT 54.5–54.8`. A 54.1–54.4 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.7–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
+**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.60 80/156 ITEM ACCEPTANCE SPEC / NEXT 54.9–54.12`. A 54.1–54.4 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.7–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
 
 ### 63.50.41. 54.2 Saját weboldal és Visual Editor: 15 checklist-tétel első körös routingja (2026-10-14)
 
@@ -7618,6 +7618,77 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 **Eredmény:** 37/37 tétel (54.1–54.4) tételes *specifikációs* domain/fázis/pozitív-negatív acceptance rögzítve. **Forráskód/test/runtime evidence:** nincs itt újonnan igazolva; az érintett korábbi 63.50.21–26 forráskód-audit tények és 63.26–37 feature-mátrixok csak korlátozott, külön bizonyítékok. A 54.2#1/#11/#12 **HIGH P0** explicit publish/slug/HTTP/SEO blokk; 54.2#13 domain/DNS és #14 submission admin lifecycle részleges képességlefedettség-jelölt, nem automatikus PASS.
 
 **Következő:** 54.5–54.8 (Integrations, Live, OBS, Content) ugyanezzel az acceptance sémával; aztán 54.9–54.16. 00/A és 00.9.6.B eredeti forrása továbbra is OPEN. **GATE: NOT PASS.**
+
+### 63.50.60. Második kör IV: 54.5–54.8 tételes integration/live/OBS/content acceptance (2026-10-15)
+
+**Forrás:** az 54.5–54.8 eredeti checklist, az 5. domain-tábla, 49.5–49.8 kanonikus modulok és 63.38 F-fázis crosswalk. Ezek *teszttervek*, nem teszteredmények.
+
+#### 54.5 — 8 tétel
+
+| Checklist sor | Domain owner | Fázis | Pozitív acceptance (terv) | Negatív acceptance (terv) |
+| --- | --- | --- | --- | --- |
+| 54.5#1 Integrációs központ: Twitch, YouTube, TikTok, Discord, Kick és későbbi szolgáltatók. | INTEGRATION | F5 | Provider adapterek explicit támogatottsági mátrixa | Nem támogatott platformfunkció nem ígérhető |
+| 54.5#2 Connect/disconnect/reconnect, fiók-/csatornaválasztás, scope és lejárat. | INTEGRATION, IDENTITY | F5 | Connect/reconnect és scope változás nyomon követhető | Idegen site account nem csatlakoztatható |
+| 54.5#3 Tokenfrissítés, revoke, titkos tárolás, CSRF/state és site ownership. | INTEGRATION, AUDIT | F0 Twitch baseline/F5 | OAuth state egyszer használható, revoke invalidál | CSRF, lejárt state és plaintext token tiltott |
+| 54.5#4 Capability/scope mátrix, API-kvóta, provider health és diagnosztika. | INTEGRATION | F5 | Health/quota/capability UI forrásfrissességgel | Kvótatúllépés nem végtelen retry |
+| 54.5#5 Webhook aláírásellenőrzés, replay-védelem, deduplikáció, retry és dead-letter. | INTEGRATION, AUDIT | F5 | Aláírt webhook idempotens esemény-feldolgozás | Unsigned/replayed webhook nem változtat adatot |
+| 54.5#6 Szinkronnapló, utolsó siker/hiba, kézi újraszinkron és konfliktusfeloldás. | INTEGRATION | F5 | Sync history és kézi retry ütközésjelzéssel | Manual override nem íródik felül észrevétlenül |
+| 54.5#7 Későbbi email, naptár, fizetés, affiliate, CRM és cloud-storage adapterek. | INTEGRATION | F5 adapter/F8 fizetés | Adapter csak valós scope és compliance mellett aktív | Provider nélküli fake success tiltott |
+| 54.5#8 Nem támogatott funkció egyértelmű jelölése és alternatív folyamat. | INTEGRATION | F5 | Unsupported action látható fallbackkal | Hiányzó capability nem válik látszólag kész funkcióvá |
+
+#### 54.6 — 11 tétel
+
+| Checklist sor | Domain owner | Fázis | Pozitív acceptance (terv) | Negatív acceptance (terv) |
+| --- | --- | --- | --- | --- |
+| 54.6#1 Live/offline állapot és adatfrissesség platformonként. | LIVE_STATE, INTEGRATION | F5/F6 | Live/offline frissesség és platform ID ellenőrizhető | Stale stream nem jelenik meg live-nak |
+| 54.6#2 Cím, kategória/játék, kezdés, nézőszám és elérhető streammetrikák. | LIVE_STATE | F5/F6 | Provider mezők elérhetőség szerint normalizáltak | Hiányzó viewer count nem 0-ként állítva |
+| 54.6#3 Stream player/embed és offline fallback. | LIVE_STATE, PAGE | F6 | Embed és offline fallback valós platform-szabály szerint | Privát/tiltott embed nem kerül publicba |
+| 54.6#4 Egyetlen adásrend-domain: események, ismétlődések, időzóna, ütközések. | SCHEDULE | F0 alap/F3 | Egy canonical schedule_items, timezone/DST teszt | Recurrence ütközés és duplikáció tiltott |
+| 54.6#5 Draft/scheduled/confirmed/postponed/cancelled/completed állapot. | SCHEDULE | F3 | Állapotváltások szabályozottak és auditáltak | Cancelled esemény nem jelenik meg upcomingként |
+| 54.6#6 Twitch/YouTube sync, irány/prioritás, konfliktuskezelés és szinkronelőzmény. | SCHEDULE, INTEGRATION | F5 | Sync irány és conflict policy explicit | Kézi módosítást nem ír felül sync |
+| 54.6#7 Játékprofilok, kapcsolódó tartalom, publikus naptár, countdown és későbbi iCal. | GAME_PROFILE, SCHEDULE, CONTENT | F3/F7 | Game profil és naptár canonical referenciákból | Külső calendar export nem ad privát eventet |
+| 54.6#8 Stream előtti checklist, technikai próba, jegyzetek, markerek és highlight-pontok. | SCHEDULE, STREAM_TOOLS | F6 | Checklist és marker explicit owner és session ID | Lezárt streamre új marker nem kerül hibásan |
+| 54.6#9 Multistream célok és platformonkénti metadata csak igazolt capability szerint. | LIVE_STATE, INTEGRATION | F6 | Csak támogatott multistream cél aktiválható | Nem támogatott stream target blokkolva |
+| 54.6#10 Unified Chat, platformjelölés, moderációs státusz, küldési engedély és részleges hiba. | LIVE_STATE, INTEGRATION, COMMUNITY | F6 | Chat küldés scope alapján platformonként | Egy provider hibája nem jelöl közös sikert |
+| 54.6#11 Felvétel/backup/replay csak tényleges technikai lehetőség és tisztázott tárolási költség mellett. | RESOURCE, STREAM_TOOLS | F6 | Record/replay csak storage cost és consent után | Rögzítés tiltva ha permission/cost gate hiányzik |
+
+#### 54.7 — 12 tétel
+
+| Checklist sor | Domain owner | Fázis | Pozitív acceptance (terv) | Negatív acceptance (terv) |
+| --- | --- | --- | --- | --- |
+| 54.7#1 OBS-párosítás, hitelesítés, kapcsolatstátusz, reconnect és diagnosztika. | STREAM_TOOLS, INTEGRATION | F6 | OBS pairing/reconnect és állapotváltozás | Lejárt pairing nem ad parancsjogot |
+| 54.7#2 Scene/source lista, állapot, scene-váltás, visibility, audio mute/volume a támogatott műveletek szerint. | STREAM_TOOLS | F6 | Scene/source/audio parancs eredménye igazolt | Disconnected vagy unsupported command tiltott |
+| 54.7#3 Overlay Studio, browser source, canvas, safe area, méret, pozíció, scene-variáns. | STREAM_TOOLS, DESIGN_SYSTEM | F6 | Overlay canvas és scene-variáns méret/preview | Safe-area overflow nem láthatatlanul publish |
+| 54.7#4 Alert box és eseményvariánsok follow/sub/gift/cheer/raid/tip/purchase eseményekre, ha elérhetők. | STREAM_TOOLS, INTEGRATION | F6 | Event adapter signature/dedup és alert mapping | Replay/purchase spoof nem indít alertet |
+| 54.7#5 Event list, chat box, goal/progress, countdown/timer, now-playing, sponsor/QR/link widget. | STREAM_TOOLS, LIVE_STATE | F6 | Widget registry állapot/frissesség szerint | Privát esemény nem szivárog overlay URL-en |
+| 54.7#6 Poll, giveaway, loyalty/points, viewer queue és media request csak jogosultsággal és szabályokkal. | STREAM_TOOLS, COMMUNITY | F6/F8 | Giveaway/poll entitlement és szabály ellenőrzés | Jogosulatlan viewer action elutasítva |
+| 54.7#7 Widgetteszt, preview, verziózás, rollback és megosztható overlay URL. | STREAM_TOOLS | F6 | Preview és rollback visszaállítható | Overlay token nem vezérlő secret |
+| 54.7#8 Chatbot parancsok, aliasok, változók, timerek, quote/counter, shoutout és FAQ. | STREAM_TOOLS, COMMUNITY | F6/F8 | Bot command rate limit és audit | Spam és privilege escalation tiltott |
+| 54.7#9 Spam/linkvédelem, slow/follower/sub-only policy ahol a platform engedi, moderációs napló. | COMMUNITY, STREAM_TOOLS | F6/F8 | Moderation policy és provider capability | Unsupported moderation API nem hívható |
+| 54.7#10 Hotkey, Stream Deck/Macro Deck/MIDI/webhook adapter, allowlist, dry-run és végrehajtási eredmény. | STREAM_TOOLS, AUTOMATION | F6/F9 | Dry-run eredménynapló és allowlist | Dry-run nem küld élő OBS parancsot |
+| 54.7#11 Plugin/widget registry, verzió, kompatibilitás, permission, eredet, frissítés és eltávolítás. | EXTENSION, STREAM_TOOLS | F11 | Manifest/signature/permission és verzió | Untrusted plugin nem telepíthető |
+| 54.7#12 Natív OBS plugin vagy desktop companion csak külön, dokumentált biztonsági tervvel. | STREAM_TOOLS, EXTENSION | F11 külön döntés | Desktop threat model és explicit opt-in | Web scope nem ad helyi gép admin jogot |
+
+#### 54.8 — 12 tétel
+
+| Checklist sor | Domain owner | Fázis | Pozitív acceptance (terv) | Negatív acceptance (terv) |
+| --- | --- | --- | --- | --- |
+| 54.8#1 VOD, clip, highlight, long-form, Short/Reel, post, image, audio, podcast és replay. | CONTENT | F7 | Content type schema és platform support | Unsupported format nem publikálható |
+| 54.8#2 Közös content ID, platform ID, cím, leírás, thumbnail, időtartam, URL, státusz és jogadat. | CONTENT, RESOURCE | F7 | Canonical content ID és provider IDs | External ID collision nem ír felül más rekordot |
+| 54.8#3 Keresés, szűrés, rendezés, bulk action, duplikáció-észlelés és gyűjtemények. | CONTENT | F7 | Search/bulk és dedup site scope alatt | Bulk action nem érint idegen site-ot |
+| 54.8#4 Tartalomnaptár és státuszfolyam: idea/draft/review/ready/scheduled/publishing/published/failed. | CONTENT, PUBLISHING | F7 | Review/approval és queue lifecycle | Draft nem publikál approval nélkül |
+| 54.8#5 Transcript, időbélyeg, speaker/fejezet, felirat, SRT/VTT, fordítás és export. | CONTENT, RESOURCE | F7 | Transcript és caption export provenance | Transcript nem egyenlő publikált tartalommal |
+| 54.8#6 AI highlight/clip-javaslat forrás-időbélyeggel, indoklással és emberi választással. | AI_OPERATION, CONTENT | F10 | AI clip javaslat forrás-időbélyeggel | Emberi approval nélkül nem publikál |
+| 54.8#7 Videóvágás: trim/split/crop/reframe/aspect ratio, felirat, hang, átmenet és brand overlay. | CONTENT, RESOURCE | F7 | Video export jog/codec/processing validation | Nincs export ha rights vagy render fail |
+| 54.8#8 Thumbnail/grafika-sablon, variánsok, platformméretek és preview. | DESIGN_SYSTEM, RESOURCE | F2/F7 | Thumbnail variáns és platformméret preview | Preview nem helyettesíti export validálást |
+| 54.8#9 Platformonkénti cím, leírás, hashtag, CTA, képarány és publikálási státusz. | CONTENT, PUBLISHING, INTEGRATION | F7 | Per-provider metadata és részleges publish eredmény | Egy platform sikere nem jelöl mindent sikeresnek |
+| 54.8#10 API-publikálás ahol engedélyezett; egyébként export és kézi közzétételi útmutató. | PUBLISHING, INTEGRATION | F7 | Capability alapján API publish vagy manual fallback | Unsupported write API nem hívható |
+| 54.8#11 Zene-/videójog, vendéghozzájárulás, lejárat, forrás és eltávolítási kérés. | CONTENT, RESOURCE | F7 | Rights/expiry/takedown audit és eltávolítás | Lejárt jogú média nem marad public |
+| 54.8#12 Tartalomból weboldali feed, social poszt és analitika ugyanazon canonical rekord alapján. | CONTENT, ANALYTICS, PAGE | F7/F9 | Public feed ugyanazt a canonical content ID-t használja | Weboldal nem tart fenn második content store-t |
+
+**Összesen:** 43/43 új soronkénti specifikáció; 54.1–54.8 kumulált **80/156**. A Twitch/OAuth korábbi kódbizonyítékok csak a jelenlegi baseline-t igazolják, a jövőbeli platformintegrációkat nem. OBS native companion és Extension külön F11 döntés; Content Studio és AI nem kap azonos publikálási jogosultságot. **Runtime/CI/provider acceptance: UNVERIFIED; teljes kapu NOT PASS.**
+
+**Következő:** 54.9–54.12 (Community, Store/Support, Analytics, Automation), majd 54.13–54.16; ezután szemantikai hiányok és forráskód-gate priorizálása.
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
