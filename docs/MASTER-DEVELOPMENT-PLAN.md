@@ -3363,3 +3363,48 @@ A hosszú távú cél lehet több alkotót kiszolgáló Creator Platform, de ezt
 - [ ] SaaS, piactér, csapatkezelés és fizetős csomagok a teljes célkép részei, de csak a függőségek, üzleti döntések és tesztek teljesülésekor aktiválhatók.
 - [ ] Minden funkció kapjon állapotot, függőséget, hatókört és elfogadási feltételt; a „tervben szerepel” nem azonos a „kész” állapottal.
 - [ ] Minden új funkció illeszkedjen a közös design-, adat-, jogosultság-, naplózási-, lokalizációs- és tesztelési alapokhoz.
+
+
+---
+
+## 62. MASTER-terv lezárási és fejlesztésindítási feltételek
+
+Ez a fejezet határozza meg, mikor mondható ki, hogy a MASTER-terv elég teljes és egységes a következő fejlesztési pont végrehajtásához. A terv lezárása nem jelenti a teljes termék implementációjának lezárását.
+
+### 62.1. A terv teljességének ellenőrzése
+- [ ] A teljes termékvízió minden képessége a megfelelő modulban szerepel; a régi forrásokból megőrzendő képesség nem tűnhet el pusztán átrendezés vagy fázisváltás miatt.
+- [ ] Minden funkció egyértelműen besorolt: core vagy későbbi, felhasználói felület/domain, függőség, státusz, elfogadási feltétel és szükséges teszt.
+- [ ] A hasonló vagy ismétlődő leírások össze vannak vetve; egy fogalomnak egy kanonikus definíciója van, a többi helyen hivatkozás vagy következetes összefoglaló szerepel.
+- [ ] Az Admin-menü, a modulhatárok, a funkcióazonosítók, a domain/adatforrás-térkép és a fejlesztési fázisok kölcsönösen összhangban vannak.
+- [ ] A közös funkciók — Brand Kit, design tokenek, ikonok, sablonok, presetek, erőforrások, jogosultságok, audit, lokalizáció, értesítések és keresés — egyetlen megosztott szerződéshez kötődnek.
+- [ ] A külső szolgáltatókhoz kötött képességek megkülönböztetik a terméktervet, az API-technikai lehetőséget, a szükséges engedélyt/policyt és a ténylegesen igazolt működést.
+- [ ] Minden felhasználói végponttól végpontig folyamatnak van sikeres útja, hibautakra vonatkozó elvárása, jogosultsági határa és elfogadási kritériuma.
+- [ ] A biztonság, adatvédelem, akadálymentesség, mobilhasználat, teljesítmény, költség, mentés/visszaállítás és működtetés nem utólagos feladatként, hanem a megfelelő funkciók részeként szerepel.
+- [ ] A későbbi SaaS, csapat, marketplace, billing és AI-szolgáltatások megmaradnak a teljes célképben, de nem előzik meg a szükséges technikai és biztonsági alapokat.
+- [ ] A terv nem jelöl implementáltként olyan funkciót, amelyet csak leírtak; a bizonyítékok státusza külön marad a termékspecifikációtól.
+
+### 62.2. Kötelező konzisztencia-ellenőrzések
+- [ ] Ismétlődő fejezetek és funkcióleírások egyeztetése, a korábbi részletek elvesztése nélkül.
+- [ ] Azonosítók, státuszok, fogalmak, elnevezések, útvonalak és fázishivatkozások ellenőrzése.
+- [ ] Függőségi sorrend és blokkoló feltételek ellenőrzése; nincs olyan későbbi funkció, amely nem létező előfeltételre épít.
+- [ ] Kanonikus adatforrások és egyetlen üzleti logika ellenőrzése minden többfelületes folyamatnál.
+- [ ] A meglévő kódra vonatkozó állítások ellenőrzése repository-, teszt-, runtime- vagy felhasználói bizonyíték alapján; bizonyíték nélkül a státusz nyitott marad.
+- [ ] A terv olvashatóságának ellenőrzése: modulonként jól elkülönülő fejezetek, követhető navigáció, fogalomtár és egyértelmű aktív pont.
+- [ ] Történeti forrásokból származó követelményeknél az eredet és a megőrzési döntés visszakövethető; hiányzó forrás nem nyilvánítható automatikusan egyeztetettnek.
+
+### 62.3. Fejlesztésindítási feltétel
+A következő fejlesztési pont csak akkor indítható, ha:
+1. az aktuális aktív pont és annak scope-ja a MASTER-ben egyértelmű;
+2. a szükséges függőségek és a tiltott mellékhatások rögzítettek;
+3. a változtatás előtt szükséges repository/runtime/DB/provider ellenőrzések elvégezhetők;
+4. az elfogadási és regressziós tesztek előre meghatározottak;
+5. az adatvesztési, jogosultsági, migrációs és visszaállítási kockázatok kezelési módja dokumentált;
+6. a lezárás feltételei objektíven ellenőrizhetők, és a PASS csak a bizonyítékok után adható meg.
+
+### 62.4. Átadás a tervből a megvalósításba
+- [ ] Először a MASTER belső egységességét és a szükséges történeti követelmények megőrzését kell ellenőrizni; ez nem külön termékterv és nem párhuzamos auditprojekt.
+- [ ] A nyitott tervbeli kérdéseket a megfelelő modulban kell megoldani; a kész specifikációt nem kell minden fázisnál újra feltalálni.
+- [ ] A terv lezárási kritériumainak teljesülése után az egyetlen aktív implementációs pont az F0 meglévő core workflow-ja marad, kivéve ha a repository aktuális, ellenőrzött állapota indokolt változtatást követel.
+- [ ] F0 után kizárólag az elfogadott függőségi sorrendben haladunk; párhuzamos, egymástól független feature-szálak nem indulnak.
+- [ ] Minden lezárt pont után a MASTER státusza, a bizonyíték, az ismert korlát és a következő aktív pont frissül.
+- [ ] A terv lezárását és a kód készültségét külön kell kommunikálni: a terv lehet teljes, miközben a termék funkcióinak többsége még fejlesztésre vár.
