@@ -935,7 +935,7 @@ A pont célja működő termékfunkció szállítása, nem dokumentum-audit vég
 
 ## 18. Ismert core acceptance-feladatok
 
-Ezek meglévő termékfunkciókhoz tartozó ellenőrzési feladatok, nem történeti auditkapuk:
+Ezek meglévő termékfunkciókhoz tartozó ellenőrzési feladatok:
 - **EDT-SAVE-RELOAD:** mentés és újratöltés utáni teljes round-trip.
 - **EDT-PUBLISH-SNAPSHOT:** save → reload → publish → publikus render.
 - **EDT-MOBILE-ACTION-BAR:** valódi mobilböngészős ellenőrzés.
