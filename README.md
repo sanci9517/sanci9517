@@ -4,9 +4,9 @@
 
 **Minden termékdöntés és fejlesztési lépés kiindulópontja:**
 
-- [MASTER-DEVELOPMENT-PLAN.md](docs/MASTER-DEVELOPMENT-PLAN.md) — a teljes Creator Platform termékvíziója, moduljai, közös adat- és storage-architektúrája, Brand Kitje, sablonrendszere, integrációi, regisztrációs modellje, SANCI AI-ja és lépésenkénti fejlesztési sorrendje.
+- [SANCI9517-CREATOR-PLATFORM-PLAN.md](docs/SANCI9517-CREATOR-PLATFORM-PLAN.md) — a teljes Creator Platform termékvíziója, moduljai, közös adat- és storage-architektúrája, Brand Kitje, sablonrendszere, integrációi, regisztrációs modellje, SANCI AI-ja és lépésenkénti fejlesztési sorrendje.
 
-A régi tervek és történeti anyagok a Git-előzményekben/archívumban megmaradhatnak, de nem helyettesítik és nem írják felül az aktuális MASTER-t. A fő fejlesztési terv nem auditnapló: a meglévő, igazolt technikai alapokat és a ténylegesen fejlesztendő termékfunkciókat tartalmazza.
+A korábbi tervek kizárólag történeti archívumok; nem aktív fejlesztési tervek, és nem írhatják felül az új nevű, egyetlen kanonikus tervet. A fő fejlesztési terv nem auditnapló: a meglévő, igazolt technikai alapokat és a ténylegesen fejlesztendő termékfunkciókat tartalmazza.
 
 ## Termékcél
 
@@ -28,7 +28,7 @@ A projekt Cloudflare Workers + TypeScript környezetet, D1-et strukturált adato
 
 ## Következő munkapont
 
-A [MASTER 41. fejezete](docs/MASTER-DEVELOPMENT-PLAN.md#41-aktuális-termékállapot-és-következő-lépések) rögzíti a jelenlegi sorrendet: először a meglévő Admin → Editor → mentés/újratöltés → előnézet/publikálás → publikus oldal alapfolyamatot kell megbízhatóvá tenni, majd a MASTER fázisai szerint haladni. Ez a végrehajtás sorrendje, nem a teljes termékcél szűkítése.
+A [MASTER 41. fejezete](docs/SANCI9517-CREATOR-PLATFORM-PLAN.md#41-aktuális-termékállapot-és-következő-lépések) rögzíti a jelenlegi sorrendet: először a meglévő Admin → Editor → mentés/újratöltés → előnézet/publikálás → publikus oldal alapfolyamatot kell megbízhatóvá tenni, majd a MASTER fázisai szerint haladni. Ez a végrehajtás sorrendje, nem a teljes termékcél szűkítése.
 
 ## Fejlesztési szabályok
 
