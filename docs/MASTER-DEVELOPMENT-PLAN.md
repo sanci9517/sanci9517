@@ -4652,8 +4652,37 @@ Funkciók csak az alábbi állapotok egyikével tarthatók nyilván: REQUIRED / 
 - Partial failure nem hagyhat félig publikált állapotot. Restore után Page Model, revisions, theme, navigation, media references és public render integritása ellenőrzendő.
 - A portability csak tényleges export- és restore-próbával tekinthető késznek, nem marketingállítás alapján.
 
+#### GAP-13 — Valódi Sanci Brand oldalak veszteségmentes Page Model migrációja
+**Canonical owner:** Page Model + Revision/Publishing + Public Renderer + Resource. **Fázis:** F0.3/F0.4 alapstabilitás után, a F0.7 public renderer/publish kapuval összehangolva; oldalanként külön acceptance.
+- A valódi, meglévő Brand-oldalak tartalma és megjelenése nem veszhet el: Főoldal, Twitch, YouTube, TikTok, Menetrend/Schedule, VOD, Közösség, Rólam/About, Kapcsolat, Támogatás és bármely további ténylegesen létező Brand-oldal.
+- A migráció az Editor core stabil, mentés/visszatöltésre és publish/revision működésre bizonyított állapota előtt nem kezdődhet el. A teljes oldalkatalógust előbb tényleges repository/D1/public-route inventoryval kell megerősíteni; a tervben felsorolt név önmagában nem bizonyítja, hogy az oldal jelenleg létezik.
+- Minden oldal migrációja egyenként halad: eredeti tartalom és vizuális állapot biztonsági megőrzése → HTML/CSS és assetek feltérképezése → felismerhető tartalom Page Model node-okra bontása → hierarchy és Sanci-specifikus/dinamikus blokkok leképezése → a nem felismerhető részek ideiglenes, biztonságos fallbackja → D1 mentés → Editor újranyitás és újraszerkesztés → Save/Reload round-trip → Preview → Publish → publikus oldal összehasonlítása az eredetivel.
+- Minden oldalnál külön kell ellenőrizni a szövegeket, képeket, linkeket, gombokat, Sanci-specifikus elemeket, responsive viselkedést, publikus URL-t, SEO/metadata-t, dinamikus adatot és a szerkeszthetőséget. Csak sikeres bizonyíték után jelölhető migráltnak.
+- A régi editor tesztoldalai nem a végleges tartalomforrások; azonosításuk, export/backupjuk, referencia- és D1-ellenőrzésük után külön takarítási döntést kapnak. Valódi oldal vagy legacy fájl nem törölhető a migráció és a public URL verification előtt.
+- A 2026-09-16-i `docs/archive/2026-09-16/LEGACY-HTML-ARCHIVE.md` szerinti `about/community/contact/schedule/tiktok/twitch/vod/youtube` mapping történeti kiindulópont. A `migrations/0006_canonicalize_legacy_pages.sql` történeti migráció marad; SQL migration-history fájl nem törölhető a legacy HTML takarítás részeként.
+- A public renderer kizárólag a végleges canonical Page Model/published snapshotot fogyasztja; nem függhet attól, hogy az oldal eredetileg legacy HTML-ből származott-e.
+
 **Gap-closure szabály:** a fenti pontok beemelése tervszintű scope-megőrzés. A megvalósítási fázisban a canonical ownernek konkrét DoD-t, pozitív/negatív tesztet, adat-/API-szerződést, permission határt és acceptance-evidence-t kell adnia; az általános követelménylista önmagában nem PASS.
 
+
+### 2.77.7.C — Archivált tervforrások reconciliálása: egyetlen élő MASTER
+
+Az alábbi dokumentumok és branch-tervek történeti források. Megőrzik az eredeti döntések/igények nyomát, de egyik sem adhat alternatív aktív pontot, eltérő státuszt vagy második végrehajtási sorrendet. Az esetleges egyedi követelményt a fenti C/E/F specifikációba, a capability-ID katalógusba vagy az érintett F0.x acceptance-be kell átvezetni.
+
+| Történeti forrás | Aktuális döntés | Megőrzött követelmény / canonical hely |
+|---|---|---|
+| `planning/ultimate-master-plan` — `S9517-ULTIMATE-PLAN 1.0.0` | **SUPERSEDED AS SEPARATE PLAN**; a 339 ID most a 2.77.7.A katalógusban van. | Teljes domain- és menükatalógus; 2.77.7.A/B, E/F és 2.77.5. |
+| `docs/archive/plans/MASTER-CURRENT-STATUS.md` | 2026-09-17-i státuszpillanatkép; nem aktuális folytatási pont. | Csak a történeti E2/Editor állapot és lezárt gate-ek nyoma; aktuális státusz a fájl eleji ACTIVE indexből. |
+| `docs/archive/plans/MASTER-FINAL-ROADMAP.md` | Korábbi Editor-first sorrend **SUPERSEDED**. | Canvas, Layers, Inspector, Layout, responsive, history, publishing, media, integrations, SEO/a11y/QA scope a F0.3–F0.7 és E/F fejezetekhez rendelve. |
+| `docs/archive/plans/PLAN-AMENDMENT-EDITOR-UNIFICATION.md` | Korábbi editor/page migration amendment; aktív tervként superseded. | Egyetlen Page Model/renderer, valódi oldalak tartalom- és designmegőrző, oldalankénti migrációja, Save→D1→Reload→Preview→Publish→Public ellenőrzés: GAP-13, F.1/F.4/F.9 és F0.3/F0.7. |
+| `docs/archive/plans/SANCI-MASTER-PLAN.md` | Korábbi termékvízió és részletes funkciókatalógus; nem aktív roadmap. | Publikus Brand-oldalak, Sanci gomb/action rendszer, media, integrations, SEO, security, AI és release gate-ek: C/E/F, 2.77.7.A/B. |
+| `docs/archive/plans/ULTIMATE-PLATFORM-DIRECTION-2026-09-16.md` | Architektúra-irányelvként történeti; ahol részletesebb, a követelmény beolvasztva. | Action→validation/permission→state→history→persistence flow, rétegzett platform, stream/content intelligence és AI safety: E.19/E.20, F.1/F.2, GAP-02/GAP-09/GAP-10, F0.24. |
+| `docs/archive/plans/V2-BLUEPRINT.md` | Korábbi technológiai blueprint; nem külön végrehajtási terv. | Worker/TypeScript, D1/R2, API-first, auth/ownership, cache, provider adapters és csak indokolt Queue/DO: E.19, H21.22/H33.12 és F0.x gate-ek. |
+| `docs/archive/plans/VISUAL-EDITOR-ARCHITECTURE.md` | Régi canonical-runtime név (a dokumentumban `public/editor/editor-core.js`) **SUPERSEDED**; a mai canonical runtime `public/editor-v2/`. | Egyetlen Page Model, közös selection/hierarchy/layer order/history, action/validation/persistence lánc és stabil ID elv: F.1/F.3, 2.77.5, GAP-02. Régi runtime útvonal nem aktiválható vissza. |
+| `docs/archive/plans/visual-editor-roadmap.md` | Korábbi Editor-only roadmap; **SUPERSEDED**. | Shell, canvas, layers, Inspector, save/reload és user acceptance a F0.3/F0.4 és az érintett E/F DoD-kban. |
+| `docs/archive/2026-09-16/LEGACY-HTML-ARCHIVE.md` | Migrációs manifest, nem önálló termékterv. | Legacy slug mapping, eredeti HTML megőrzése, public URL ellenőrzés, és a történeti `0006_canonicalize_legacy_pages.sql` megtartása: GAP-13. |
+
+**Teljességi szabály:** a táblázat forrásleltár, nem azt állítja, hogy minden régi funkció implementált. A régi dokumentumok egyedi képességeit csak akkor tekintjük reconciliáltnak, ha a megfelelő canonical követelmény vagy azonosított GAP szerepel a MASTER-ben; a source listán való megjelenés önmagában nem coverage-bizonyíték.
 
 ## 2.77.8.A — Kiegészítő hivatalos benchmark és mit veszünk át
 
