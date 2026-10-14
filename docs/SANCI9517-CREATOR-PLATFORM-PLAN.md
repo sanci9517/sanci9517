@@ -145,17 +145,17 @@ A 3.1–3.18 alfejezetek **felelősségi/domain-katalógusok, nem 18 külön fő
 
 - 3.1 Dashboard → 49.1 Áttekintés.
 - 3.2 Weboldal → 49.2 Weboldal és Visual Editor; a Brand Kit/design/template felelősség a 49.3 modulhoz tartozik.
-- 3.3 Kapcsolatok → 49.6 Kapcsolatok és integrációk.
-- 3.4 Live és Stream + 3.5 Adásrend → 49.4 Live és Stream Studio; az OBS-vezérlés és overlay eszközök a 49.5 modulhoz tartoznak.
-- 3.6 Tartalom + 3.7 Média és erőforráskönyvtár → 49.7 Tartalomkönyvtár és Content Studio, közös asset registryvel.
-- 3.8 Közösség → 49.8 Közösség és rajongók.
-- 3.9 Bolt és kereskedelem + 3.10 Támogatás és tagság → 49.9 Bolt, támogatás és bevétel.
-- 3.11 Analytics + 3.12 Tartalomtervező és kampányok + 3.15 Szponzoráció és üzleti központ → 49.10 Analitika és növekedés; a szponzorációs deal/lead/deliverable adatok kanonikus tulajdonosa ez a modul.
-- 3.13 Automatizáció → 49.11 Automatizációk.
-- 3.14 SANCI AI → 49.12 SANCI AI.
-- Keresés/súgó/személyre szabás → 49.13.
-- 3.16 Beállítások és hozzáférés + 3.18 Rendszerdiagnosztika → 49.14 Beállítások, biztonság és adat; a diagnosztika érzékeny nézetei korlátozott jogosultságúak.
-- Fejlesztői eszközök és bővítmények → 49.15; 3.17 Csapat és munkaterület → 49.16.
+- 3.3 Kapcsolatok → 49.7 Kapcsolatok és integrációk.
+- 3.4 Live és Stream + 3.5 Adásrend → 49.5 Live és Stream Studio; az OBS-vezérlés és overlay eszközök a 49.6 modulhoz tartoznak.
+- 3.6 Tartalom + 3.7 Média és erőforráskönyvtár → 49.8 Tartalomkönyvtár és Content Studio, közös asset registryvel.
+- 3.8 Közösség → 49.9 Közösség és rajongók.
+- 3.9 Bolt és kereskedelem + 3.10 Támogatás és tagság → 49.10 Bolt, támogatás és bevétel.
+- 3.11 Analytics + 3.12 Tartalomtervező és kampányok + 3.15 Szponzoráció és üzleti központ → 49.11 Analitika és növekedés; a szponzorációs deal/lead/deliverable adatok kanonikus tulajdonosa ez a modul.
+- 3.13 Automatizáció → 49.12 Automatizációk.
+- 3.14 SANCI AI → 49.13 SANCI AI.
+- Keresés/súgó/személyre szabás → 49.14.
+- 3.16 Beállítások és hozzáférés + 3.18 Rendszerdiagnosztika → 49.15 Beállítások, biztonság és adat; a diagnosztika érzékeny nézetei korlátozott jogosultságúak.
+- Fejlesztői eszközök és bővítmények → 49.16; 3.17 Csapat és munkaterület → 49.17.
 
 A több helyen megjelenő gyorsművelet csak a kanonikus modulba navigál vagy annak közös domain commandját hívja; nem hozhat létre második tulajdonost, adatforrást vagy jogosultsági útvonalat.
 
@@ -174,9 +174,9 @@ Funkciók:
 Elfogadás: nincs hamis zöld állapot, nincs kitalált adat, minden gyorsművelet a saját modulhoz vezet.
 
 ### 3.2. Weboldal
-**Kanonikus felelősség:** oldalak, navigáció, CMS/Page Model, Visual Editor, SEO, publikálás és weboldal-/domainbeállítások. A fő navigációban a Brand Kit/designrendszer és a sablon-/komponenskönyvtár külön, a 49.3. modulban található; a médiafájlok és asset-regiszter a 49.7. modulhoz tartoznak. A Weboldal modulból ezek közvetlenül elérhetők lehetnek, de a gyorselérés nem változtatja meg az adat- és funkciótulajdonost.
+**Kanonikus felelősség:** oldalak, navigáció, CMS/Page Model, Visual Editor, SEO, publikálás és weboldal-/domainbeállítások. A fő navigációban a Brand Kit/designrendszer és a sablon-/komponenskönyvtár külön, a 49.3. modulban található; a médiafájlok és asset-regiszter a 49.8. modulhoz tartoznak. A Weboldal modulból ezek közvetlenül elérhetők lehetnek, de a gyorselérés nem változtatja meg az adat- és funkciótulajdonost.
 **Weboldal-almenük:** Oldalak; Navigáció; Visual Editor; CMS/tartalommodellek; SEO és publikálás; Domain és weboldalbeállítások.
-**Külön modulhoz vezető gyorselérések:** Brand Kit és Design Studio (49.3); Média és erőforráskönyvtár (49.7). Ezek nem a Visual Editor belső almenüi és nem külön Editor-adatforrások.
+**Külön modulhoz vezető gyorselérések:** Brand Kit és Design Studio (49.3); Média és erőforráskönyvtár (49.8). Ezek nem a Visual Editor belső almenüi és nem külön Editor-adatforrások.
 
 **Oldalak**
 - Lista: cím, slug, státusz, módosítás ideje, draft/published eltérés.
@@ -2637,16 +2637,26 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Lokalizáció:** nyelvek, fordítási státusz, locale-öröklés és felülírás, lokalizált slug/meta/kép/alt text, RTL, nyelvváltó.
 - **Űrlapok és interakciók:** kapcsolat, feliratkozás, leadek, spamvédelem, siker/hiba állapotok, hozzájárulás.
 - **Publikálás:** preview, staging, diff, jóváhagyás, publish/unpublish, verzió és rollback, domain és DNS állapot.
-- **Külön modulokból elérhető közös képességek:** Brand Kit, témák, design tokenek, ikonok, sablonok, blokkkönyvtár és presetek → **49.3. Márka és designrendszer**; feltöltés, asset-regiszter, média-metaadatok és használati helyek → **49.7. Tartalomstúdió**. Az Editor ezek kiválasztására/használatára adhat felületet, de a kanonikus kezelésük nem ide tartozik.
+- **Külön modulokból elérhető közös képességek:** Brand Kit, témák, design tokenek, ikonok, sablonok, blokkkönyvtár és presetek → **49.3. Márka és designrendszer**; feltöltés, asset-regiszter, média-metaadatok és használati helyek → **49.8. Tartalomstúdió**. Az Editor ezek kiválasztására/használatára adhat felületet, de a kanonikus kezelésük nem ide tartozik.
 
 ### 49.3. Márka és designrendszer
+### 49.4. Média- és erőforráskönyvtár
+**Tulajdonosi határ:** ez a modul a fájlok, médiatartalmak, ikonok, fontok, asset-metaadatok, feldolgozási állapotok, használati hivatkozások és törlési/archiválási életciklus kanonikus gazdája. A bináris tartalom R2-ben, a kereshető metaadat és asset ID D1-ben marad; más modulok az asset registryt hivatkozzák, nem saját médiatárat építenek.
+- **Asset registry:** stabil asset ID, site/workspace scope, tulajdonos, típus, méret, MIME, checksum, verzió, feldolgozási és biztonsági státusz.
+- **Könyvtár és megtalálhatóság:** képek, videók, hangok, ikonok, fontok, dokumentumok, thumbnailök és exportok; keresés, szűrés, rendezés, címkék, gyűjtemények és lapozás.
+- **Feltöltés és feldolgozás:** egyenkénti/tömeges feltöltés, progress, cancel, retry, megszakadt feltöltés helyreállítása, preview, thumbnail, variánsok és optimalizálás.
+- **Metaadat és jogok:** alt text, caption, crop/focal point, forrás, licenc, hozzájárulás, lejárat és privát asset-hozzáférés.
+- **Használati helyek:** oldalak, blokkok, tartalmak, overlayek, brand elemek és termékek asset-referenciáinak visszakeresése; módosítási propagáció és függőségi figyelmeztetés.
+- **Biztonságos életciklus:** MIME-/méretellenőrzés, SVG-szűrés, letöltési jogosultság/lejárat, archiválás, restore, törlés előtti függőségvizsgálat és hibás hivatkozások diagnosztikája.
+- **Közös felhasználás:** Visual Editor, Brand Kit, Content Studio, OBS/overlay, Store és AI az asset pickert és kanonikus asset ID-t használja; a saját moduljukban csak a használatukhoz tartozó beállítások élnek.
+
 - **Brand Kit:** logóváltozatok, színek, betűk, ikonok, grafikai elemek, hangnem, írásmód, tiltott/előnyben részesített megoldások.
 - **Brand assetek:** stream overlay, thumbnail, intro/outro, social post, merch design, watermark, email sablon.
 - **Közös design tokenek:** globális és komponensszintű értékek, theme-variánsok, kontrasztellenőrzés, sötét/világos mód.
 - **Brand consistency:** automatikus ellenőrzés és javítási javaslat weboldalon, videón, képen, poszton és overlayen.
 - **Export:** SVG/PNG/WebP és más támogatott formátumok, szín-/méretváltozatok, licenc- és eredetadatok.
 
-### 49.4. Élő adás és Stream Studio
+### 49.5. Élő adás és Stream Studio
 - **Stream Planner:** adásrend, ismétlődő események, game/kategória, cím, leírás, vendégek, emlékeztetők.
 - **Live Control Room:** stream állapot, platformonkénti státusz, késleltetett/elavult adat jelzése, eseményfolyam.
 - **Multistream:** több célplatform, platformonkénti cím/leírás/kategória, capability-mátrix, előzetes ellenőrzés.
@@ -2655,7 +2665,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Stream notes/markers:** időbélyegek, highlight-jelöltek, jegyzetek, fontos események és későbbi vágási pontok.
 - **Stream replay/backup:** rögzítési állapot, lokális felvétel állapota, támogatott tartalék stream, hibaértesítés; a platform/API korlátai szerint.
 
-### 49.5. OBS és stream eszközök
+### 49.6. OBS és stream eszközök
 - **OBS kapcsolat:** párosítás, hitelesítés, kapcsolat állapota, engedélyek, reconnect, hibakeresés; jelszó és token soha nem jelenhet meg logban.
 - **Scene/source áttekintés:** scene-váltás, source státusz, source visibility, audio mute/volume és egyéb csak támogatott API-műveletek.
 - **Overlay Studio:** browser source URL, méret, safe area, canvas, scene-enkénti variáns, teszt/preview, verzió és rollback.
@@ -2667,7 +2677,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Plugin- és widget-központ:** telepített/engedélyezett bővítmények, kompatibilitás, verzió, permission scope, aláírás/eredet, frissítés, eltávolítás és sandbox.
 - **Fontos határ:** a webes platform nem feltételezi, hogy minden OBS plugin böngészőből vezérelhető. Elsődleges a dokumentált OBS WebSocket/browser source; natív plugin vagy desktop companion külön, biztonsági és telepítési döntéssel készül.
 
-### 49.6. Kapcsolatok és integrációk
+### 49.7. Kapcsolatok és integrációk
 - **Kapcsolatok:** Twitch, YouTube, TikTok, Discord, Kick és további provider-adapterek.
 - **Fiókállapot:** connect/disconnect, scope, lejárat, újracsatlakozás, account/channel választás, jogosultságok.
 - **Provider-képességek:** olvasás/írás/publikálás/chat/analitika külön jelölése; nem támogatott műveletet a UI nem ígérhet.
@@ -2675,7 +2685,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Integrációs napló:** utolsó siker, utolsó hiba, rate limit, API-kvóta, szinkron és helyreállítás.
 - **Későbbi bővítések:** email, naptár, felhőtárhely, fizetés, affiliate, CRM, streaming hardware és automatizációs szolgáltatók.
 
-### 49.7. Tartalomstúdió
+### 49.8. Tartalomstúdió
 - **Tartalomkönyvtár:** videó, VOD, clip, Short/Reel, kép, hang, podcast, stream replay, szöveg és kampányanyag.
 - **Szerkesztés:** timeline, vágás, trim, crop, aspect ratio, reframing, scene, B-roll, átmenet, hang, szín és brand overlay.
 - **Felirat és transcript:** beszédfelismerés, speaker/fejezet, időzítés, felirat-stílus, fordítás, SRT/VTT és szerkeszthető szöveg.
@@ -2686,7 +2696,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Közzététel:** közvetlen API-publikálás, ha engedélyezett; különben export és kézi publikálási útmutató.
 - **Média- és jogkezelés:** felhasználási jog, zene, vendég-hozzájárulás, lejárat, forrás és eltávolítási kérés.
 
-### 49.8. Közösség és rajongók
+### 49.9. Közösség és rajongók
 - **Fan account:** regisztráció, bejelentkezés, profil, preferenciák, adatletöltés/törlés és biztonsági beállítások.
 - **Közösségi aktivitás:** kommentek, reakciók, szavazások, kérdések, beküldések, közösségi posztok.
 - **Tagság:** szintek, jogosultságok, exkluzív tartalom, előnyök, megújítás, lemondás és tagsági státusz.
@@ -2694,7 +2704,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Discord összekötés:** szerepkiosztás és visszavonás tagsági státusz alapján, botengedélyekkel és naplóval.
 - **Moderáció:** szabályok, report queue, tiltás/korlátozás, fellebbezés, spamvédelem, AI-javaslat és emberi felülvizsgálat.
 
-### 49.9. Bolt, bevétel és üzlet
+### 49.10. Bolt, bevétel és üzlet
 - **Bolt:** fizikai termék, merch, digitális letöltés, csomag, variáns, készlet, ár, adó/szállítási szabályok.
 - **Rendelések:** fizetési státusz, teljesítés, szállítás, visszatérítés, lemondás, számlázási integráció és ügyfélszolgálat.
 - **Támogatás:** egyszeri támogatás, recurring support, célok, kampányok, köszönőoldal/üzenet.
@@ -2703,7 +2713,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Digitális hozzáférés:** vásárlás utáni biztonságos letöltés, hozzáférés-visszavonás és visszatérítéshez kötött jogosultság.
 - **Pénzügyi áttekintés:** bevételi források elkülönítése, platformdíjak, visszatérítések és export; nem helyettesít könyvelőt/adótanácsadót.
 
-### 49.10. Analitika és növekedés
+### 49.11. Analitika és növekedés
 - **Összesített dashboard:** platformonkénti nézettség, követők, engagement, streamidő, tartalomtípus és bevétel.
 - **Adatminőség:** forrás, utolsó frissítés, becslés/valós adat, hiányzó és nem összehasonlítható metrikák jelzése.
 - **Tartalomelemzés:** videó/clip összehasonlítás, megtartás és elérhető watch-time, publikálási idők, tesztelt variánsok.
@@ -2711,14 +2721,14 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **SEO/AEO és webanalitika:** keresési láthatóság, oldalmegtekintés, konverzió, kampány-UTM, adatvédelmi beállítások.
 - **Export és jelentés:** CSV/JSON, időszakos riport, forrásmegjelölés és csapatnak megosztható összefoglaló.
 
-### 49.11. Automatizációk
+### 49.12. Automatizációk
 - **Workflow builder:** trigger → feltétel → művelet → eredmény/hibaág; vizuális építés és sablonok.
 - **Triggerek:** stream online/offline, új follower/sub/event, tartalom státusz, időpont, rendelés, tagság, webhook és kézi indítás.
 - **Akciók:** értesítés, draft készítés, címke, export, engedélyezett overlay/OBS művelet, publikálási előkészítés.
 - **Biztonsági korlátok:** dry-run, idempotency, rate limit, jóváhagyás, retry, rollback és futási napló.
 - **Hibakezelés:** időtúllépés, leállítás, újrapróbálás, hibás workflow karantén, értesítés és manuális helyreállítás.
 
-### 49.12. SANCI AI
+### 49.13. SANCI AI
 - **AI Control Center:** modell/provider, költségkeret, kvóta, adatforrás, retention, memória, engedélyek és leállító kapcsoló.
 - **AI chat és projektkontextus:** weboldal, brand, stream, tartalom, közösség és célok kontextusa jogosultság szerint.
 - **Website Designer:** oldal/szekció/komponens létrehozás, design és responsive javítás, SEO/accessibility ellenőrzés.
@@ -2730,14 +2740,14 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Multi-agent feladatok:** specialista feladatok összehangolása közös kontextussal, költségkorláttal és nyomon követhető eredménnyel.
 - **Action safety:** az AI minden változtatást a domain API-n keresztül készít elő; kockázat szerint preview, diff, jóváhagyás, végrehajtás és rollback.
 
-### 49.13. Keresés, súgó és személyre szabás
+### 49.14. Keresés, súgó és személyre szabás
 - **Globális kereső:** oldalak, media assetek, tartalmak, termékek, kapcsolatok, workflow-k, beállítások.
 - **Command palette:** billentyűzetes műveletindítás, gyors navigáció és legutóbbi elemek.
 - **Súgó:** kontextuális útmutató, interaktív onboarding, fogalomtár, hibaelhárítás és dokumentált API-korlátok.
 - **Mentett nézetek:** szűrők, oszlopok, listanézetek, dashboard elrendezések és felhasználói preferenciák.
 - **Értesítések:** in-app/email/push, kategória, prioritás, csendes időszak, digest és leiratkozás.
 
-### 49.14. Beállítások, biztonság és adat
+### 49.15. Beállítások, biztonság és adat
 - **Profil és workspace:** nyelv, időzóna, dátum/pénznem, preferenciák, site/domain és márka.
 - **Felhasználók és jogosultságok:** owner/admin/editor/moderator/analyst/commerce szerepek, modulonkénti és műveletenkénti engedély.
 - **Biztonság:** session, eszközök, jelszó/SSO későbbi támogatása, 2FA, rate limiting, secret rotation és gyanús aktivitás.
@@ -2746,7 +2756,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Állapot és naplók:** health, background job, queue, API-kvóta, hibák, események, auditálható adminműveletek.
 - **Díjcsomag és használat:** későbbi SaaS-plan, usage, billing, limit, számla és szolgáltatói költség.
 
-### 49.15. Fejlesztői és bővítményközpont — későbbi platformfázis
+### 49.16. Fejlesztői és bővítményközpont — későbbi platformfázis
 - **Extension registry:** manifest, verzió, scope, permission, kompatibilitás, aláírás/eredet, frissítés és eltávolítás.
 - **Integrációs SDK/API:** dokumentált endpointok, webhooks, OAuth adapterek, sandbox és rate limit.
 - **Widget/overlay SDK:** saját komponensek, konfigurációs séma, preview, események és verziózás.
@@ -2754,7 +2764,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Developer tools:** API kulcsok, webhook tester, eseménynapló, sandbox workspace és API dokumentáció.
 - **Külső bővítmények:** alapértelmezésben legkisebb jogosultság, izolált futtatás, felülvizsgálat és visszavonható hozzáférés.
 
-### 49.16. Csapat, több site és SaaS — későbbi fázis
+### 49.17. Csapat, több site és SaaS — későbbi fázis
 - Több creator/site/workspace kezelése egy fiókból, egyértelmű aktív workspace választással.
 - Meghívás, csapattagok, szerepek, projekt- és ügyfélhozzáférés, jóváhagyási folyamat.
 - Agency/studio mód több creatorhoz, közös sablonok és ügyfél-specifikus brand.
@@ -3715,19 +3725,19 @@ A 54. fejezet 16 témacsoportja a jelenlegi ellenőrzésben 156 checkbox-tételt
 | 54.1 Admin és Dashboard | 49.1 Kezdőlap és napi áttekintés | ADM | Gyorsműveletek csak a tulajdonosmodul parancsát hívják. |
 | 54.2 Weboldal és Visual Editor | 49.2 Weboldal | WEB, EDT, SET, DYN, SEO | Az EDT kizárólag weboldalszerkesztési felelősség; design és asset tulajdonlás külön modul. |
 | 54.3 Brand Kit és Design Studio | 49.3 Márka és designrendszer | DSN | A többi modul hivatkozik a kanonikus tokenekre/brand assetekre. |
-| 54.4 Média és erőforrások | 49.7 Tartalomstúdió / tartalomkönyvtár és asset registry | RES | Az Editor picker csak a registryt használja. |
-| 54.5 Kapcsolatok és integrációk | 49.6 Kapcsolatok és integrációk | INT | Provider token/scope/connection state egyetlen integrációs gazda alatt. |
-| 54.6 Live, Stream Studio és adásrend | 49.4 Élő adás és Stream Studio | LIV, SCH | A streamállapot, schedule és game profile kanonikus adatai külön domain-szerződések. |
-| 54.7 OBS, overlay, chatbot és stream-eszközök | 49.5 OBS és stream eszközök | OBS, LIV, AUT | A provider/integration auth és automatizációs motor nem másolódik az OBS modulba. |
-| 54.8 Tartalom és Content Studio | 49.7 Tartalomstúdió | CNT, RES | A publikálási queue és provider-kapcsolat külön domain-szerződés marad. |
-| 54.9 Közösség és rajongói fiókok | 49.8 Közösség és rajongók | COM | Fan identity, moderation és entitlement határát külön kell megőrizni. |
-| 54.10 Bolt, támogatás és bevétel | 49.9 Bolt, bevétel és üzlet | STO, SUP | Fizetés, rendelés, entitlement és támogatás külön domainjei, közös UX-szel. |
-| 54.11 Analitika és növekedés | 49.10 Analitika és növekedés | ANL, CAM | Kampány/szponzoráció kapcsolódik, de nem válik analitikai adattár-másolattá. |
-| 54.12 Automatizációk | 49.11 Automatizációk | AUT | Event/rule/run/retry/audit a workflow engine tulajdona. |
-| 54.13 SANCI AI | 49.12 SANCI AI | AI | Az AI javasolhat műveletet, de a végrehajtás a domain engedélyezett commandján megy. |
-| 54.14 Többnyelvűség és nemzetközi használat | 49.2 Weboldal lokalizált tartalma + 49.14 platformbeállítások | LOC, WEB, SEO, SEC | A site-tartalom locale-ja és az Admin felület nyelve külön, de összehangolt scope. |
-| 54.15 Beállítások, biztonság, adatvédelem és megbízhatóság | 49.14 Beállítások, biztonság és adat | SEC, OPS, QA | Biztonság, privacy és reliability keresztmetszeti elfogadási feltétel is. |
-| 54.16 Fejlesztői platform, bővítmények, csapat és SaaS | 49.15 Fejlesztői és bővítményközpont; 49.16 Csapat/több site/SaaS | MKT, TEAM, OPS, SEC | Későbbi fázis; tenant isolation, extension security és billing függőségek nem hagyhatók ki. |
+| 54.4 Média és erőforrások | 49.4 Média- és erőforráskönyvtár | RES | A Content Studio és az Editor hivatkozik az asset registryre; nem saját médiatárat kezel. |
+| 54.5 Kapcsolatok és integrációk | 49.7 Kapcsolatok és integrációk | INT | Provider token/scope/connection state egyetlen integrációs gazda alatt. |
+| 54.6 Live, Stream Studio és adásrend | 49.5 Élő adás és Stream Studio | LIV, SCH | A streamállapot, schedule és game profile kanonikus adatai külön domain-szerződések. |
+| 54.7 OBS, overlay, chatbot és stream-eszközök | 49.6 OBS és stream eszközök | OBS, LIV, AUT | A provider/integration auth és automatizációs motor nem másolódik az OBS modulba. |
+| 54.8 Tartalom és Content Studio | 49.8 Tartalomstúdió | CNT, RES | A publikálási queue és provider-kapcsolat külön domain-szerződés marad. |
+| 54.9 Közösség és rajongói fiókok | 49.9 Közösség és rajongók | COM | Fan identity, moderation és entitlement határát külön kell megőrizni. |
+| 54.10 Bolt, támogatás és bevétel | 49.10 Bolt, bevétel és üzlet | STO, SUP | Fizetés, rendelés, entitlement és támogatás külön domainjei, közös UX-szel. |
+| 54.11 Analitika és növekedés | 49.11 Analitika és növekedés | ANL, CAM | Kampány/szponzoráció kapcsolódik, de nem válik analitikai adattár-másolattá. |
+| 54.12 Automatizációk | 49.12 Automatizációk | AUT | Event/rule/run/retry/audit a workflow engine tulajdona. |
+| 54.13 SANCI AI | 49.13 SANCI AI | AI | Az AI javasolhat műveletet, de a végrehajtás a domain engedélyezett commandján megy. |
+| 54.14 Többnyelvűség és nemzetközi használat | 49.2 Weboldal lokalizált tartalma + 49.15 platformbeállítások | LOC, WEB, SEO, SEC | A site-tartalom locale-ja és az Admin felület nyelve külön, de összehangolt scope. |
+| 54.15 Beállítások, biztonság, adatvédelem és megbízhatóság | 49.15 Beállítások, biztonság és adat | SEC, OPS, QA | Biztonság, privacy és reliability keresztmetszeti elfogadási feltétel is. |
+| 54.16 Fejlesztői platform, bővítmények, csapat és SaaS | 49.16 Fejlesztői és bővítményközpont; 49.17 Csapat/több site/SaaS | MKT, TEAM, OPS, SEC | Későbbi fázis; tenant isolation, extension security és billing függőségek nem hagyhatók ki. |
 
 **Auditállapot:** a 16 témacsoport tulajdonosmodulhoz rendelése dokumentálva van; ez kategóriaszintű megfeleltetés, nem a 156 egyedi checkbox szemantikai PASS-a. A következő részletes auditlépés a 54. fejezet minden checkboxának megfeleltetése a 24. fejezet stabil ID-jéhez, vagy — ha még nincs ID — a hiányzó ID rögzítése a megfelelő modul alatt. Azonos képesség több modulban csak közös szolgáltatásra mutató hivatkozásként szerepelhet; az esetleges eltéréseket nyitottként kell megőrizni a feloldásig.
 
