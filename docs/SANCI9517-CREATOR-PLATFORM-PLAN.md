@@ -3957,6 +3957,32 @@ A 24. fejezet aktuális **396 egyedi ID-jának mind a 30 prefixcsaládját** a 4
 
 **Következő, még nyitott ellenőrzés:** minden egyes ID-hoz konkrét aloldal, owner, adat/API, jogosultság, fázis, függőség, pozitív/negatív teszt és bizonyíték tételes egyeztetése; az eltérő besorolású egyedi kivételek dokumentálása. A 00/A és 00.9.6.B forráshiány továbbra is nyitott; nincs audit-PASS.
 
+### 63.0.2. Tételes szemantikai audit — első lezárt ellenőrzési köteg: ADM-001–ADM-013
+
+Az alábbi **13/396 ID** leírását a 24.1, 49.1 és kapcsolódó 49.16–49.19 fejezetekkel összevetve rögzítjük az első tételes **tervbeli szerep- és negatívteszt-elvárás** egyeztetését. Ez **nem implementációs PASS**, és nem bizonyítja az egyes ID-k 10. fejezet szerinti teljes feature contractját.
+
+| ID | Konkrét Admin-belépés | Kanonikus tulajdonos | Pozitív elvárás | Kritikus negatív elvárás | Függőség |
+| --- | --- | --- | --- | --- | --- |
+| ADM-001 | 49.1 / Admin shell | ADM | navigáció jogosultság szerint, kanonikus route | jogosulatlan menü/action szerveroldalon is tiltott | SEC-002, ADM-009 |
+| ADM-002 | 49.1 / Áttekintés | ADM olvasási aggregáció | forrásmodulok állapotkártyái és frissessége | hibás/hiányzó forrás részleges állapot, nem kitalált érték | ADM-013 |
+| ADM-003 | 49.1 / Gyorsműveletek | ADM navigáció; művelet a cél-domainben | gyorsművelet a megfelelő felületre vagy domain-actionre vezet | nincs párhuzamos CRUD vagy jogosultságkerülés | ADM-001, SEC-002 |
+| ADM-004 | 49.1 / Teendők | ADM aggregált olvasási nézet | hibák és teendők a kanonikus forrásukra mutatnak | nem duplikált workflow-/notification-rekord | NTF-001, AUT-008 |
+| ADM-005 | 49.1 / Aktivitás | audit-esemény gazdája SEC; ADM csak nézet | auditösszefoglaló idővel és forráshivatkozással | érzékeny auditadat nem látszik jogosulatlannak | SEC-010 |
+| ADM-006 | 49.1 / Fejléc keresés | SEARCH | globális kereső/command palette belépési pont | keresési találat nem kerülhet jogosultságon kívülre | SEARCH-001, SEARCH-002 |
+| ADM-007 | 49.1 / Profil és kijelentkezés | IDENTITY/SEC | session-profil és logout a kanonikus auth szolgáltatáson | lejárt session és jogosulatlan művelet blokkolt | SEC-001, SEC-002 |
+| ADM-008 | 49.1 / Közös UI állapotok | ADM megosztott prezentáció | loading/empty/error/stale/success következetes | hiba nem látszik hamis sikernek; domain-adat nem duplikált | ADM-013 |
+| ADM-009 | 49.1 / Navigáció és műveletek | ADM megjelenítés; SEC enforcement | menü/action láthatóság szerep szerint | kliensoldali elrejtés nem jogosít fel API-hívásra | SEC-002 |
+| ADM-010 | 49.1 / Mobil Admin shell | ADM | mobil/tablet navigáció és fókuszkezelés használható | keskeny nézetben nincs elveszett főművelet | QA-005 |
+| ADM-011 | 49.1 / Kontextuális súgó | HELP | súgó a megfelelő HELP rekordot nyitja | nem készül második onboarding-progress tároló | HELP-001, HELP-002 |
+| ADM-012 | 49.1 / Értesítés belépési pont | NTF | összesítőből kanonikus értesítésre navigál | nincs külön Dashboard-értesítés-életciklus | NTF-001, NTF-002 |
+| ADM-013 | 49.1 / Adatfrissesség | ADM megjelenítés; forrás domain | adat időbélyege, stale/partial és forrás státusz látható | elavult/hiányzó provideradat nem jelölhető frissnek | ADM-002 |
+
+**Nyitott pontosítások a kötegen belül:**
+- Az `ADM-005` leírásában szereplő `AUDIT` domain nem önálló, 24. fejezetbeli `AUDIT-NNN` ID-család; a tényleges audit esemény tulajdonosi szerződését a SEC-010 és az 5. fejezet között kell egyértelműsíteni. Ez **nem automatikusan új Admin-modul**.
+- Az `ADM-007` IDENTITY/SEC hivatkozása külön domainnevet használ; a session és a profil egyértelmű forrását a kóddal, tárolóval és 49.19 beállítási felülettel még ellenőrizni kell.
+- A 13 ID **fázisa, adat/API sémája, pozitív és negatív automatizált tesztje, runtime bizonyítéka és készültsége nincs tételesen igazolva**. Az ezekhez tartozó bizonyíték hiánya nyitott, nem PASS.
+- A következő szemantikai köteg `WEB-001–WEB-032`; a további 383 ID ugyanilyen részletességű auditja hátravan.
+
 ### 63.1. A terv teljességének ellenőrzése
 - [ ] A teljes termékvízió minden képessége a megfelelő modulban szerepel; a régi forrásokból megőrzendő képesség nem tűnhet el pusztán átrendezés vagy fázisváltás miatt.
 - [ ] Minden funkció egyértelműen besorolt: core vagy későbbi, felhasználói felület/domain, függőség, státusz, elfogadási feltétel és szükséges teszt.
