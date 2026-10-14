@@ -9,12 +9,25 @@
 
 # Sanci9517 — EGYSÉGES MASTER FEJLESZTÉSI, TESZTELÉSI ÉS FUNKCIÓBŐVÍTÉSI TERV
 **Verzió:** MASTER-2.77 — végleges termékleírás, Admin UI-specifikáció és egyetlen függőség-alapú fejlesztési sorrend; a 2.75–2.76 roadmapek történetiek.  
-**Frissítve:** 2026-10-13.  
-**Dokumentum státusza:** ez az egyetlen végrehajtási igazságforrás.
-**Audit / implementation baseline:** GitHub `v2/foundation`, commit `aeba30d9` (2026-10-13). A tervben szereplő régi kód- és tesztállapot nem jelent kész Editor-funkciót; minden F0 képességet a build pont saját acceptance-e igazol.
+**Frissítve:** 2026-10-14.  
+**Dokumentum státusza:** ez az egyetlen végrehajtási igazságforrás. A MASTER-2.77 termék- és scope-döntéseit megőrzi; ez a 2026-10-14-i egységes státusz- és konzisztencia-revízió, nem külön terv.
+**Dokumentum-revízió alapja:** a `feature/f0-2-admin-global-shell` ág 2026-10-14-i állapota; a termék- és végrehajtási státuszokat a dokumentum eleji `ACTIVE_*` mezők és a 2.77.5 sorrend határozza meg. A korábbi `v2/foundation` commitok csak az ott rögzített E4/E5/E6 bizonyítékok történeti alapjai. A kód vagy terv említése önmagában nem bizonyít runtime-készültséget; minden buildpontot saját CI-, teszt-, Preview- és felhasználói acceptance-evidence zár le.
 
 ### Jelenlegi igazolt állapot
 Ez a blokk kizárólag az E4/E5/E6 korábban bizonyított lezárt gate-jeit rögzíti. Az M0 auditfázist a felhasználó döntése lezárta / superseded állapotba helyezte; ez nem runtime PASS.
+
+### Egyetlen terv — kötelező státusz- és precedenciaszabály
+- Ez a `docs/MASTER-DEVELOPMENT-PLAN.md` az egyetlen élő fejlesztési terv. Nincs második, párhuzamos aktív roadmap vagy külön auditdokumentum, amely felülírhatja.
+- Az aktuális végrehajtási állapotot kizárólag a fájl eleji `ACTIVE_POINT_ID`, `ACTIVE_POINT_STATUS`, `ACTIVE_SUBPOINT_ID`, `ACTIVE_SUBPOINT_STATUS`, `PREVIOUS_GATE`, `NEXT_GATE` és `PARALLEL_WORKSTREAMS` mezők adják. A későbbi roadmap-táblázatok a függőségi sorrendet írják le, nem aktiválnak önállóan munkapontot.
+- A jelenlegi pont F0.2. F0.1 lezárt; F0.3 nem kezdhető meg, amíg F0.2 összes kilépési feltétele nincs bizonyítva és a MASTER aktív indexe nincs frissítve.
+- A MASTER-2.77 termékterjedelme, a 00.9.6.C–F követelménykatalógus, a 001–140 preservation matrix és a H19–H34 ledger együtt őrzik a teljes scope-ot. A régi azonosító vagy összefoglaló táblázat önmagában nem helyettesíti a közvetlen viselkedési követelményeket.
+- A 2.75, 2.76, korábbi Editor-first sorrendek, valamint az M0.1–M0.13 checklist-ek történeti/archivált állapotok. A régi `[ ]`, `QUEUED`, `IN PROGRESS`, `PASS előtt` és régi aktívpont-megjelölések nem mai feladatok és nem blokkolók; nem töröljük őket, de nem is kezeljük aktív utasításként.
+- A H19–H34 mapping megőrzi a forrásokat. A `M0.1:` szövegek a történeti auditpillanatképhez tartoznak; az érintett képesség aktuális buildpontját és acceptance-ét a 00.9.6.E/F és a F0.2–F0.24 sorrend határozza meg. Ez nem jelenti a capability-k implementáltságát.
+- Követelmény csak akkor jelölhető `PASS`-nak, ha megvan a megfelelő runtime-viselkedés, célzott pozitív és negatív teszt, typecheck/CI, böngészős vagy integrációs ellenőrzés, és ahol szükséges, felhasználói acceptance. Dokumentációs mapping, kód jelenléte, route neve vagy tesztváz önmagában nem elég.
+- Új vagy módosított igény csak ebben a fájlban rögzíthető: canonical owner, user problem, scope, függőség, lifecycle/disposition, phase, DoD, pozitív/negatív teszt és acceptance bizonyíték megadásával. Korábbi capability nem törölhető pusztán hasonlóság vagy jelenlegi UI-hiány miatt.
+- Minden módosítás után kötelező ellenőrizni: egyetlen aktív pont; előző/következő gate konzisztencia; F0.1–F0.24 sorrend; AI csak F0.24; történeti követelmények megőrzése; canonical owner- és adatmodell-duplikáció hiánya; állítások bizonyítottsága; git diff/check és a megfelelő tesztek.
+
+### Korábban bizonyított, változatlanul lezárt gate-ek
 - [x] E4.3.1–E4.3.8 lezárva.
 - [x] E4.4.1 final migration design + SQL audit lezárva.
 - [x] E4.4.2 implementation/dry-run/remote schema verification lezárva.
@@ -24,7 +37,7 @@ Ez a blokk kizárólag az E4/E5/E6 korábban bizonyított lezárt gate-jeit rög
 - [x] E5 teljes regression/live/user PASS lezárva.
 - [x] E6 closure PASS / lezárva.
 
-**F végrehajtási állapot:** ACTIVE. A 2026-10-13-i MASTER-2.77 termékdöntés alapján az első implementációs pont az Admin főoldal vizuális terve és shellje; az Editor core a következő pont. A felhasználó döntése alapján a M0 audit lezárult mint külön munkafázis, nem PASS-minősítéssel, hanem SUPERSEDED / CLOSED BY PRODUCT DECISION állapottal. A korábbi Editor UI és részleges funkciók nem számítanak késznek; a szükséges képességeket a F0 egymás után végrehajtott, tesztelt fejlesztési pontjai valósítják meg. A lezáratlan audit-tételek nem blokkolók: ahol termékkövetelményt őriznek, átkerülnek a megfelelő buildpont acceptance-ébe.
+**Aktuális végrehajtási állapot:** F0.1 Admin home shell `CLOSED / PASS`; F0.2 Admin navigation + global shell acceptance `ACTIVE — NOT PASS`. Az Editor core és az összes további F0.x pont csak az előző pont bizonyítékokon alapuló lezárása után aktiválható. A külön M0 auditfázis `SUPERSEDED / CLOSED BY PRODUCT DECISION`, nem PASS auditminősítéssel. A korábbi Editor UI és részleges funkciók nem számítanak automatikusan késznek; minden képesség a megfelelő buildpont runtime-, CI-, teszt-, Preview- és acceptance-bizonyítékával válik késznek.
 
 
 ## HISTORICAL / QUEUED — 00/A.2.2 — F — SCHEDULE CRUD + INSPECTOR / DOMAIN-DRIVEN EDITOR — DEFINITION OF DONE
@@ -2565,7 +2578,7 @@ A fázisnév nem önmagában acceptance: minden fázis pontos végrehajtási pon
 
 ## 00.9.6.F — MASTER-2.74 — KÖZVETLEN MŰKÖDÉSI RÉSZLETEK ÉS TELJESSÉGI LEFEDETTSÉG
 
-Ez a fejezet a platform követelményeit közvetlen, végrehajtható viselkedéssé részletezi. A funkció értelmezéséhez nem kell külön történeti tervfájlt vagy régi beszélgetést újra megnyitni. Ha egy képesség későbbi fázisban esedékes, a részletes követelmény akkor is megmarad, de nem válik automatikusan az 1.0 kötelező implementációjává. Egyszerre csak egy aktív fejlesztési pont van: F0.1.
+Ez a fejezet a platform követelményeit közvetlen, végrehajtható viselkedéssé részletezi. A funkció értelmezéséhez nem kell külön történeti tervfájlt vagy régi beszélgetést újra megnyitni. Ha egy képesség későbbi fázisban esedékes, a részletes követelmény akkor is megmarad, de nem válik automatikusan az 1.0 kötelező implementációjává. Egyszerre csak egy aktív fejlesztési pont van: F0.2; a dokumentum eleji `ACTIVE_*` index az irányadó.
 
 ### F.1 — Editor: stabil munkafolyamat, history és helyreállítás
 
@@ -2733,7 +2746,7 @@ Fázis szerinti zár:
 - Később creator-created template, component/block/theme/overlay/OBS scene/digital asset marketplace, licenc, kompatibilitás, verzió, preview, rating/review és revenue share. A marketplace csak külön jogosultsági, moderációs, fizetési és licencelési scope után aktív.
 
 
-**Végső operatív szabály:** egyetlen aktív pont van: F0.1. A dokumentum minden fenti követelménye megmarad a maga fázisában. Új igény csak canonical ownerrel, fázissal, függőséggel, DoD-val, teszttel és acceptance-szel vehető fel; korábbi funkció nem maradhat puszta névként specifikáció nélkül.
+**Végső operatív szabály (az aktuális MASTER-index szerint):** egyetlen aktív pont van: F0.2. A dokumentum minden fenti követelménye megmarad a maga fázisában; ez a követelménykatalógus nem hoz létre párhuzamos aktív munkapontot. Új igény csak canonical ownerrel, fázissal, függőséggel, DoD-val, teszttel és acceptance-szel vehető fel; korábbi funkció nem maradhat puszta névként specifikáció nélkül.
 
 
 
@@ -3382,7 +3395,7 @@ A benchmark rekordnak tartalmaznia kell: dátum, forrás, user problem, releván
 ## 2.76.7 — Végrehajtási zár
 
 - A dokumentum elején szereplő egyetlen ACTIVE_POINT_ID továbbra is a végrehajtás kizárólagos belépési pontja.
-- A következő aktív pont: `F0.1-EDITOR-FOUNDATION-AND-FIRST-USABLE-SLICE`; a roadmap nem engedélyez párhuzamos workstreamet vagy fázisugrást.
+- Történeti akkori következő pont: `F0.1-EDITOR-FOUNDATION-AND-FIRST-USABLE-SLICE`; ez a sor a korábbi 2.76-os pillanatképet őrzi, nem a jelenlegi végrehajtási utasítás.
 - A régi 2.75 és 2.76 stage-sorrend történeti; a MASTER-2.77 az irányadó: az AI a 24. és utolsó opcionális fő fázis.
 - A MASTER bővíthető a H34 szabály szerint, de minden új igénynek owner, dependency, DoD, teszt és fázis kell; a korábbi követelmények megőrzése kötelező.
 
@@ -3819,7 +3832,7 @@ Az alábbi táblázat minden meglévő H19–H34 ledger-sort felsorol. Az eredet
 
 **Státusz:** CANONICAL PRODUCT SPECIFICATION / IMPLEMENTATION ORDER  
 **Döntés:** a teljes termék AI nélkül is teljes értékű legyen; az AI a legutolsó, opcionális fő fázis.  
-**Egyetlen aktív pont:** F0.1-ADMIN-HOME-VISUAL-DESIGN-AND-SHELL.  
+**Aktuális aktív pont:** F0.2-ADMIN-NAVIGATION-GLOBAL-SHELL-ACCEPTANCE. F0.1 lezárt checkpoint; ez a dokumentumrész a termékterjedelmet és a végrehajtási sorrendet őrzi, az aktív index a tényleges állapotot adja.  
 **Ez a fejezet írja felül a 2.75/2.76 végrehajtási sorrendjét és a régi Editor-első F0 sorrendet.** A régi tartalom, az E/F közvetlen követelménykatalógus, a 01–140 funkciólista és a H19–H34 ledger nem törölhető, és továbbra is követelményforrás. Ha egy korábbi részlet és ez a sorrend ütközik, a 2.77 sorrendje irányadó, a korábbi funkciókövetelmény viszont megmarad.
 
 ## 2.77.1 — A termék végleges meghatározása
