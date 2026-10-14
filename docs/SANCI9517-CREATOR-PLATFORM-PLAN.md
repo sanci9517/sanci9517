@@ -1376,7 +1376,7 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - SUP-012: Member discount/exclusive drop.
 
 ### 24.13. Analytics/campaign/business — ANL / CAM
-- ANL-001: Canonical event taxonomy.
+- ANL-001: Analytics event taxonomy/naming/schema governance for measurement and reporting; excludes workflow trigger execution.
 - ANL-002: Privacy-safe web analytics.
 - ANL-003: Stream analytics.
 - ANL-004: Content/platform analytics.
@@ -1397,7 +1397,7 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - CAM-009: Invoice/payment status only after business/legal review.
 
 ### 24.14. Automation — AUT
-- AUT-001: Canonical event registry.
+- AUT-001: Automation trigger-event catalog and event-to-workflow routing contract; consumes domain events and does not define analytics measurement taxonomy.
 - AUT-002: Trigger catalogue.
 - AUT-003: Condition/filter rules.
 - AUT-004: Automation action catalog and server-side permission checks for workflow execution; page interaction schemas remain in EDT-039.
@@ -3988,3 +3988,21 @@ A 24. fejezet 382 funkcióleírásán tokenhasonlósági előszűrés futott. Ez
 A hasonló prefixű provider adapterek (például TikTok/Kick), különböző template-típusok, valamint a publikus oldalak különböző route-jai önmagukban nem duplikációk: külön képességek vagy külön domain-típusok. Az explicit határleírások megőrzik a szükséges funkciókat, miközben megakadályozzák a párhuzamos adatgazdák létrehozását.
 
 **Állapot:** az első körös, névszintű hasonlósági jelzések közül a fő modulhatár-ütközések definíciója tisztázva lett. A teljes szemantikai audit továbbra is IN PROGRESS: az ID-k és a 54. fejezet tételes megfeleltetésének véglegesítéséhez a domain-katalógus, API-k, adatmodellek, tényleges UI és tesztek összevetése szükséges.
+
+### 63.18. Hasonlósági előszűrés — fennmaradó külön képességek
+
+A 382 stabil ID leírásának második, név/token alapú előszűrésében fennmaradt magas hasonlóságok kézi osztályozása:
+
+- **RES-006 / CNT-005 / STO-003:** hasonló taxonómiai műveletek, de eltérő kanonikus adattípusok (asset, content, product); az egyes definíciók kifejezetten kizárják a másik domain taxonómiájának birtoklását.
+- **DSN-008–DSN-011:** site-, page-, section- és component-template könyvtárak; külön alkalmazási szint, közös design/template infrastruktúra.
+- **INT-014 / INT-016:** TikTok- és Kick-adapterek; külön provider és külön capability/engedély.
+- **RES-005 / CNT-006:** asset registry vs. content library keresés; közös UI-minta, eltérő domain query.
+- **ANL-001 / AUT-001:** analytics eseménynév-/mérési taxonómia vs. workflow trigger-katalógus; az eseményforrás közös lehet, de az analitikai jelentés és a workflow végrehajtás külön szerződés.
+- **WEB-016 / WEB-017, WEB-014 / WEB-018, WEB-015 / WEB-023 és a többi publikus route-pár:** külön publikus oldaltípusok; hasonló oldalszerkezet nem jelent azonos tartalmi célt.
+- **SCH-011 / CNT-019:** két Editor-blokk, két eltérő domain-adatforrással.
+- **DSN-014 / AI-002:** vizuális sablonverziózás vs. AI prompt/instruction verziózás.
+- **INT-018 / AI-001:** külső integrációs capability vs. AI modell/provider capability.
+
+Ezeket a párokat nem szabad pusztán szöveghasonlóság miatt összevonni. A tényleges összevonás csak akkor engedhető meg, ha a domainmodell, az adatforrás, a jogosultság, az életciklus és az elfogadási teszt is azonos, és az összevonás nem veszít el képességet.
+
+**Állapot:** a szöveghasonlósági előszűrés és az első körös határmagyarázat elkészült. Ez nem zárja le a teljes szemantikai auditot: a továbbiakban a domain/adatmodell/API/UI/test evidence alapján kell ellenőrizni, hogy a szándékolt határok a terv többi fejezetében is következetesek-e.
