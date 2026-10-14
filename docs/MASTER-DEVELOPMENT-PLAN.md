@@ -5311,3 +5311,22 @@ A közvetlen előd `docs/MASTER-DEVELOPMENT-PLAN.md` fájlja 1 792 soros, blob S
 **Következtetés:** most már igazolható, hogy a korábbi roadmapek és editor-tervek nem törlésként tűntek el az egységesítési commitban, hanem Git által felismert átnevezéssel kerültek az `docs/archive/plans/` alá. A MASTER maga jelentősen módosult (1 114 hozzáadás, 1 568 törlés). A diff nem bizonyítja, hogy a hiányzó B-fejezet tartalma ezek valamelyikében volt; csak a megnevezett nyolc fájl útvonalváltozását bizonyítja. A következő célzott feladat a közvetlen előd és az archív tervfájlok tartalmi diffje, majd a H19–H34 funkciók tételes szemantikai megfeleltetése a jelenlegi stabil ID-registryvel.
 
 **Státusz:** nyolc történeti tervfájl rename-diffje dokumentálva; `00.9.6.B` forrása továbbra is **UNRECOVERED / OPEN**; teljes történeti szemantikai reconciliáció **OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.121. P0.2 — Nyolc átnevezett tervfájl blobazonosságának ellenőrzése (2026-10-14)
+
+A nyolc rename-pár mindegyikét külön beolvastam a közvetlen előd-commitból (`87b6f0bb71cd96646b6a501ab85c242386a1124e`) és a jelenlegi `v2/foundation` archív útvonaláról. Mind a nyolc párnál a régi és az új útvonal SHA/blob-azonosítója egyezik, és a visszaadott teljes szöveg is bájtszinten egyező volt:
+- `MASTER-CURRENT-STATUS.md`: `d3e9b171d601f93b09c4fe0c3038d208c8766163`;
+- `MASTER-FINAL-ROADMAP.md`: `c7c68a8cc8342751875f90fe2e9ca1d5657e0534`;
+- `PLAN-AMENDMENT-EDITOR-UNIFICATION.md`: `6407f90379a480ae037b7609efc335f3623691e0`;
+- `SANCI-MASTER-PLAN.md`: `bb6378b1803c6e3564a81b28327f3aa109b55881`;
+- `ULTIMATE-PLATFORM-DIRECTION-2026-09-16.md`: `2caecf3c1f4a5738a5a0a4bca69476875264df84`;
+- `V2-BLUEPRINT.md`: `66e9064e518cc0276555ea3f986074526b80ae82`;
+- `VISUAL-EDITOR-ARCHITECTURE.md`: `e4d21bac4b3d72d96c335b3697724b4f991229eb`;
+- `visual-editor-roadmap.md`: `082b4afbb40d4b4e3363f91691e546cf91ced32d`.
+
+A nyolc fájl teljes szövegén végzett célzott szó szerinti keresés nem talált `00.9.6.B`, `MASTER-2.70`, `00/A), illetve H19–H34 azonosítókat. Ez kizárólag a megadott szó szerinti jelölések hiányát állapítja meg ezekben a fájlokban; a funkciók más megnevezéssel való jelenlétét nem dönti el.
+
+**Bizonyítéki érték:** az archiválás nem módosította e nyolc fájl tartalmát, így az eredeti elődútvonalak és a mostani archív példányok tartalmi bizonyítékként egymással felcserélhetők. Ez nem jelenti azt, hogy a B-fejezet ezekben volt; a közvetlen előd-MASTERben sem szerepeltek a keresett B/2.70 kifejezések. A következő munka ezért a régi MASTER törzsének tényleges diffjére és a történeti funkciók névfüggetlen összehasonlítására irányul.
+
+**Státusz:** nyolc tervfájl rename- és blobazonosságának ellenőrzése kész; szemantikai funkcióegyeztetés nyitott; `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
