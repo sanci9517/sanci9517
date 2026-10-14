@@ -3613,7 +3613,7 @@ A fenti leképezés nem engedélyezi a függőségek átugrását. Ha egy munkac
 
 ### 63.6. Roadmap- és státusz-konfliktusok kezelése
 - [ ] A 41.2. fejezet F0–F11 listája a legfelső szintű roadmap egyetlen forrása; a 39. fejezet összefoglaló, a 9. fejezet részletes munkacsomag-katalógus.
-- [ ] A 19. fejezet F0 fókusza az aktuális implementációs cél, nem bizonyíték arra, hogy F0 minden acceptance-feladata nyitott vagy kész; a konkrét státuszt ellenőrzött teszt/runtime eredmény adja.
+- [ ] A 19. fejezet F0 fókusza a terv lezárása UTÁNI implementációs cél, nem a jelenlegi aktív pont. Nem bizonyíték arra, hogy F0 minden acceptance-feladata nyitott vagy kész; a konkrét státuszt ellenőrzött teszt/runtime eredmény adja.
 - [ ] Korábbi checkpointok vagy elavult állapotjelzések nem írhatják felül automatikusan a jelenlegi termék-roadmapet. Csak az aktuális termékfunkcióhoz szükséges, bizonyítékkal alátámasztott hiány vagy regresszió határozhatja meg a következő munkát.
 - [ ] Ha egy státusz vagy roadmap-sorrend más fejezetben eltér, először ezt a kanonikus térképet és a legfrissebb igazolt repository/runtime állapotot kell alkalmazni; az eltérést a MASTER-ben egy helyen kell javítani.
 - [ ] A dokumentum végső konzisztencia-ellenőrzése és a 63. fejezet lezárási kapujának PASS állapota UTÁN a következő munka a 19. fejezet szerinti legkorábbi, reprodukálható F0 acceptance-feladat ellenőrzése/implementációja. E feltételek teljesüléséig az aktív pont a terv teljességének és belső összhangjának lezárása.
@@ -3628,7 +3628,7 @@ Az ellenőrzés a MASTER aktuális repository-változatára vonatkozik; nem jele
 - [x] A F0 core media/resource feladat és az F2 teljes Resource Registry/Design System határát különválasztottuk.
 - [ ] A teljes termékfunkciók közötti szemantikai duplikáció- és függőségellenőrzés még nem teljes; a szerkezeti ellenőrzés nem helyettesíti.
 - [ ] A történeti források minden követelményének megőrzése és a hiányzó források állapotának igazolása nem tekinthető teljesnek pusztán a jelenlegi dokumentum belső ellenőrzése alapján.
-- [ ] A valódi F0 mentés–újratöltés–preview–publish–publikus oldal end-to-end ellenőrzés még nem futott le ebben a dokumentumellenőrzésben; ez a következő implementációs/validációs feladat.
+- [ ] A valódi F0 mentés–újratöltés–preview–publish–publikus oldal end-to-end ellenőrzés még nincs bizonyítva; ez a MASTER lezárási kapujának PASS állapota UTÁN következő F0 validációs feladat, nem a jelenlegi aktív tervpont.
 - [x] A `52b4dc53f98d19bfb79dc06d0d69f8fe5dff21d8` commiton futó GitHub Actions `Editor Core Test` sikeres: TypeScript typecheck, Editor core, canonical schedule, domain contract és Admin home contract tesztek mind PASS. Futás: https://github.com/sanci9517/sanci9517/actions/runs/38602119822.
 - [x] Ugyanezen a commiton a `Twitch Integration Check` is sikeres: TypeScript typecheck, Editor core regresszió, schedule source, Twitch OAuth és site ownership contract tesztek mind PASS. Futás: https://github.com/sanci9517/sanci9517/actions/runs/38602119661.
 - [ ] Valódi böngészős smoke, éles Worker/D1 mentés–újratöltés–preview–publish–publikus oldal end-to-end ellenőrzés továbbra sincs igazolva; a CI tesztek ezt nem helyettesítik.
