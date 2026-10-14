@@ -4081,3 +4081,7 @@ A §24.1–§24.18 registry korábbi 359-ID baseline-ja 2026-10-14-én egy új, 
 A C.23.9-01–03 responsive viewport mappingből eltávolítva az EDT-035 hivatkozás, mert az a mobil Editor action bar/safe-area képesség, nem viewport preset/preview. A C.23.9-02 sorból az EDT-026 is eltávolítva, mert az breakpoint visibility/order/column mutation, nem side-by-side/single/rotation preview. A releváns mappingek: EDT-007 viewport controls, EDT-024/025 responsive override/device preview, és C.23.9-03 esetén EDT-009 geometry constraints.
 
 Ez mapping-pontosítás, nem runtime acceptance. P0.2 **IN PROGRESS / NOT PASS**.
+
+### 41.3.26. P0.2 — Structural recheck after targeted semantic mapping corrections (2026-10-14)
+
+A C.23.6, C.23.7, C.23.9 és C.23.12 mappingjavítások után ismét lefuttatva a §24 registry és a §37.22–§37.30 crosswalk strukturális összevetése: 360 egyedi registry ID, 323 crosswalk sor, 360 hivatkozott ID, 0 feloldatlan hivatkozás, 0 hivatkozatlan registry ID. A hét batch sorszámai változatlanok (57/66/45/59/28/26/42). Ez csak strukturális ellenőrzés; a szemantikai és ID-nkénti contract-audit továbbra is nyitott. P0.2 **IN PROGRESS / NOT PASS**.
