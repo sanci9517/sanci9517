@@ -6199,3 +6199,57 @@ A „MATCH candidate” csak a tervezett elemkategória jelenlétét jelenti; ne
 
 **Státusz:** 17/17 történeti paneltétel explicit crosswalk-sort kapott; panel/workspace, command palette, page/assets panel és mentési UI runtime acceptance nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
 
+### 41.3.147. P0.2 — Régi 3/D Component insertion UX: 10 atomikus követelmény tételes crosswalkja (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, `3/D Component insertion UX`, 10 checklist-tétel. **Canonical célpontok:** `EDT-015` Element/Block Library; `EDT-001–006` Page Model/command/transaction; `EDT-016–020` node/block registry; `EDT-021/022` property schema; `DSN-009–013` components/variants; `QA-002/004/006`.
+
+| # | Régi követelmény | Canonical célpont | Státusz | Kötelező acceptance |
+|---:|---|---|---|---|
+| 1 | drag component from library | EDT-008, EDT-015, EDT-003/004 | PARTIAL / VERIFY | Drag-drop és target parent/slot validált; insert egyetlen command, invalid drop nem módosít state-et. |
+| 2 | click-to-add | EDT-015, EDT-003/004 | OPEN / VERIFY | Elem kiválasztása és beszúrási helye egyértelmű; keyboard alternative, undo és fókuszkezelés. |
+| 3 | insert before/after | EDT-011/015 | OPEN / VERIFY | Sibling/parent scope és canonical order explicit; unsupported node placement magyarázott. |
+| 4 | insert into container | EDT-002/011/015/016 | PARTIAL / VERIFY | Allowed-child/slot matrix validál; invalid nesting/cycle/capacity reject; megfelelő insertion anchor. |
+| 5 | favorite components | EDT-044, DSN-009/010 | OPEN / VERIFY | Per-user workspace preference; nem site content és nem publikus Page Model adat. |
+| 6 | recently used | EDT-044, EDT-015 | OPEN / VERIFY | Per-user és permission-aware; üres állapot, törlés/retention és privacy scope definiált. |
+| 7 | search components | EDT-015 | PARTIAL / VERIFY | Canonical registryből keres; alias, category, supported status és compatibility eredmények következetesek. |
+| 8 | categories | EDT-015, DSN-009–013 | PARTIAL / VERIFY | Stabil taxonómia; egy komponens nem duplikálódik külön, eltérő szemantikájú listákban. |
+| 9 | component documentation/help text | EDT-015, DSN-009–013 | OPEN / VERIFY | Rövid, lokalizálható leírás, properties/slots/limitations/permissions; unsupported behavior előre jelzett. |
+| 10 | component compatibility warning | EDT-015/016, EDT-022 | OPEN / RELEASE GATE | Warning a parent/slot, responsive, provider, permission vagy renderer inkompatibilitás előtt; nincs csendes invalid insert. |
+
+#### Insertion UX-kontraktus
+
+1. A Library registry az egyetlen canonical komponensjegyzék; külön listák nem tarthatnak fenn eltérő definíciót ugyanarról a komponensről.
+2. Drag, click, before/after, insert-into, quick action és paste ugyanazt az allowed-child/slot/permission validációt és command pipeline-t használja.
+3. Beszúrás előtt a célpont és a várható eredmény érthető; invalid művelet nem módosítja részlegesen a Page Modelt.
+4. Favorites/recently-used a workspace preference réteghez tartozik; nem a site contenthez.
+5. Tesztminimum: drag/click, keyboard insert, nested container, invalid parent/slot, favorites/recent, search/category, compatibility warning, undo/redo, save/reload és renderer parity.
+6. Runtime acceptance nincs e crosswalkkal igazolva.
+
+**Státusz:** 10/10 követelmény explicit crosswalk-sort kapott; insertion UX, favorites/recent és compatibility warnings runtime acceptance nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.148. P0.2 — Régi 3/E Clipboard és import: 7 atomikus követelmény tételes crosswalkja (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, `3/E Clipboard és import`, 7 checklist-tétel. **Canonical célpontok:** `EDT-003/004/005` command/transaction/undo; `EDT-011/038` tree/clipboard operations; `EDT-001/002` Page Model/IDs; `SEC` sanitization/security; `QA-002/003/004/006`.
+
+| # | Régi követelmény | Canonical célpont | Státusz | Kötelező acceptance |
+|---:|---|---|---|---|
+| 1 | internal clipboard | EDT-038, EDT-003/004 | PARTIAL / VERIFY | Copy/cut/paste canonical node data alapján; references/resources validálása; clipboard nem DOM snapshot. |
+| 2 | cross-page copy/paste | EDT-038, EDT-001/002 | OPEN / VERIFY | Destination schema/permissions/resource references ellenőrzött; oldalhatár és conflict kezelése explicit. |
+| 3 | duplicate IDs regenerálása | EDT-001/002, EDT-038 | OPEN / RELEASE GATE | Új node ID-k ütközésmentesek; belső parent/child és binding/resource references konzisztensen átíródnak. |
+| 4 | external structured paste policy | EDT-038, SEC | OPEN / DECISION | Külső JSON/HTML vagy structured paste formátumok explicit allowlistje; nem támogatott input egyértelműen elutasítva. |
+| 5 | sanitization | SEC, EDT-001/022, WEB-032 | OPEN / RELEASE GATE | Context-appropriate sanitization/encoding; XSS/unsafe URL/HTML tesztek public, preview és Admin render kontextusokban. |
+| 6 | paste preview | EDT-038, EDT-003/004 | OPEN / VERIFY | A beillesztendő tartalom és célpont preview-ja mutatja a kihagyott/átalakított elemeket; confirm előtt nincs mutáció. |
+| 7 | unsupported element fallback | EDT-015/018/019, EDT-038 | OPEN / DECISION | Ismeretlen node nem válik csendben üres/veszélyes DOM-má; explicit reject vagy veszteségjelző safe placeholder és round-trip policy. |
+
+#### Clipboard/import-kontraktus
+
+1. A canonical Page Model és schema verzió az alap; DOM/HTML önmagában nem authoritative content.
+2. ID-regenerálás és belső reference-rewrite atomikus művelet; partial paste rollbackel vagy pontos hibát közöl.
+3. External paste policy, sanitization és unsupported-node fallback explicit biztonsági döntés; nincs implicit arbitrary HTML execution.
+4. Preview/confirmation előzi meg a veszteséges átalakítást; minden paste undo-zható egy commandként.
+5. Tesztminimum: nested tree, cross-page resource references, duplicate ID, invalid schema, hostile HTML/URL, unsupported node, partial failure/rollback, undo/redo, save/reload és public renderer parity.
+6. Runtime/security acceptance nincs e crosswalkkal igazolva.
+
+**Státusz:** 7/7 történeti clipboard/import-tétel explicit crosswalk-sort kapott; külső paste policy, fallback és sanitization acceptance nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
