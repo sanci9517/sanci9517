@@ -6253,3 +6253,72 @@ A „MATCH candidate” csak a tervezett elemkategória jelenlétét jelenti; ne
 
 **Státusz:** 7/7 történeti clipboard/import-tétel explicit crosswalk-sort kapott; külső paste policy, fallback és sanitization acceptance nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
 
+### 41.3.149. P0.2 — Régi 4/A Devices: 7 atomikus követelmény tételes crosswalkja (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, `4/A Devices`, 7 checklist-tétel. **Canonical célpontok:** `EDT-023–026` responsive preview/override; `EDT-035/036` mobile Editor; `EDT-044` workspace preferences; `QA-002/004/005/006`.
+
+| # | Régi eszköz/viewport-követelmény | Canonical célpont | Státusz | Kötelező acceptance |
+|---:|---|---|---|---|
+| 1 | desktop | EDT-023/025 | PARTIAL / VERIFY | Canonical desktop breakpoint/viewport explicit; preview és public render azonos szabályt használ. |
+| 2 | tablet | EDT-023/025 | PARTIAL / VERIFY | Tablet tartomány és preset dokumentált; határértékeken nincs breakpoint-flapping. |
+| 3 | mobile | EDT-023/025, EDT-035/036 | PARTIAL / RELEASE GATE | Mobil viewport és editor chrome külön; safe area, touch és panel behavior tesztelt. |
+| 4 | custom viewport preview | EDT-025, EDT-044 | OPEN / VERIFY | Egyéni viewport csak preview/workspace state; nem hoz létre implicit persistent breakpointot. |
+| 5 | orientation | EDT-025 | OPEN / VERIFY | Portrait/landscape váltás viewport-méretezés; content override csak explicit breakpoint szabály szerint változhat. |
+| 6 | viewport presets | EDT-025, EDT-044 | PARTIAL / VERIFY | Preset név, width/height és device semantics deklarált; user-defined preset workspace-scope. |
+| 7 | min/max viewport validation | EDT-022/025 | OPEN / RELEASE GATE | Min/max, invalid/zero viewport és unsupported size validált; canvas nem mutat megtévesztő render outputot. |
+
+**Kontraktus:** a viewport a preview bemenete, nem önmagában tartalmi property. A preset nem bizonyít valódi fizikai eszköz emulációt; csak a deklarált viewport/safe-area/browser capability scope garantálható. Tesztminimum: desktop/tablet/mobile határok, custom viewport, orientation, min/max, save state izoláció és preview/public parity.
+
+**Státusz:** 7/7 tétel explicit crosswalk-sort kapott; pontos breakpoint/preset mátrix és runtime acceptance nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.150. P0.2 — Régi 4/B Responsive properties: 16 atomikus követelmény tételes crosswalkja (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, `4/B Responsive properties`, 16 checklist-tétel. **Canonical célpontok:** `EDT-021–026` property registry, resolved viewport, overrides/inheritance/preview; `EDT-027/028` persistence; `QA-002/004/005/006`.
+
+| # | Régi responsive property | Canonical célpont | Státusz | Kötelező acceptance |
+|---:|---|---|---|---|
+| 1 | width | EDT-021–026 | PARTIAL / VERIFY | Typed unit/range, parent context, base/override/reset és round-trip explicit. |
+| 2 | height | EDT-021–026 | PARTIAL / VERIFY | Intrinsic/content height és viewport height külön; min/max és overflow tested. |
+| 3 | padding | EDT-021–026 | PARTIAL / VERIFY | Four-side/logical values, linked controls és token precedence; breakpoint override/reset. |
+| 4 | margin | EDT-021–026 | PARTIAL / VERIFY | Margin vs gap, auto/negative policy és logical properties explicit. |
+| 5 | gap | EDT-021–026 | PARTIAL / VERIFY | Csak kompatibilis layoutban; row/column gap és token/raw value precedence. |
+| 6 | font size | EDT-021–026 | PARTIAL / VERIFY | Typed units and line scaling; responsive typography preserves readable minimums and parity. |
+| 7 | line height | EDT-021–026 | OPEN / VERIFY | Unitless/length semantics explicit; wrapping and vertical layout tested. |
+| 8 | letter spacing | EDT-021–026 | OPEN / VERIFY | Typed supported units/range; language/script and overflow cases tested. |
+| 9 | display | EDT-021–026 | PARTIAL / RELEASE GATE | Typed display subset; distinct from editor hide, CSS visibility and authorization. |
+| 10 | position | EDT-021–026 | PARTIAL / RELEASE GATE | Only supported modes; containing-block/stacking/scroll constraints validated per viewport. |
+| 11 | alignment | EDT-021–026 | PARTIAL / VERIFY | Parent layout and axis-specific semantics; invalid Flex/Grid combinations unavailable. |
+| 12 | visibility | EDT-021–026 | PARTIAL / RELEASE GATE | Responsive visibility not security; hidden content/focus/accessibility behavior explicit. |
+| 13 | order | EDT-021–026 | OPEN / RELEASE GATE | Visual reorder does not silently change canonical tree or semantic reading/focus order. |
+| 14 | grid/flex overrides | EDT-016, EDT-021–026 | OPEN / VERIFY | Container/item schema and responsive override model; desktop values preserved on mobile edits. |
+| 15 | image sizing/crop | EDT-018, EDT-021–026 | OPEN / VERIFY | Object-fit/crop/focal point typed; intrinsic ratio, alt/accessibility and viewport behavior tested. |
+| 16 | max-width/container rules | EDT-016, EDT-021–026 | OPEN / VERIFY | Container max-width, fluid width and viewport context distinct; no silent horizontal overflow. |
+
+**Kontraktus:** minden property-nél legyen property × unit × node-type × parent-layout × breakpoint support matrix. A responsive editor nem menthet unsupported/invalid kombinációt, és minden override-nak explicit resetje kell legyen. Tesztminimum: minden felsorolt property base→override→reset; desktop/tablet/mobile; nested Flex/Grid; image crop; typography/wrap; save/reload/preview/public parity; accessibility.
+
+**Státusz:** 16/16 tétel explicit crosswalk-sort kapott; property-specifikus support matrix és runtime acceptance nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.151. P0.2 — Régi 4/C Inheritance: 9 atomikus követelmény tételes crosswalkja (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, `4/C Inheritance`, 9 checklist-tétel. **Canonical célpontok:** `EDT-021–026` registry/resolved viewport/overrides; `EDT-027/028` persistence; `QA-002/004/005/006`.
+
+| # | Régi inheritance-követelmény | Canonical célpont | Státusz | Kötelező acceptance |
+|---:|---|---|---|---|
+| 1 | desktop default | EDT-023/024 | PARTIAL / VERIFY | Egyetlen base value; fallback és schema default megkülönböztetett. |
+| 2 | tablet override | EDT-024/026 | PARTIAL / VERIFY | Csak tablet override változik; desktop/mobile más értéke érintetlen. |
+| 3 | mobile override | EDT-024/026 | PARTIAL / VERIFY | Mobile override explicit; nem másolja be a desktop értéket csendes, független értékként. |
+| 4 | reset override | EDT-024/026 | OPEN / RELEASE GATE | Reset csak az adott breakpoint override-ját törli, és a feloldott inherited érték azonnal látszik. |
+| 5 | inherited value display | EDT-023/024 | PARTIAL / VERIFY | Inspector jelzi a resolved értéket és annak forrását (base, breakpoint, token/default) egyértelműen. |
+| 6 | breakpoint validation | EDT-022–026 | OPEN / RELEASE GATE | Csak canonical breakpoint registry és támogatott sorrend; invalid/overlapping breakpoint nem menthető. |
+| 7 | explicit vs inherited distinction | EDT-023/024 | PARTIAL / RELEASE GATE | Explicit value, inherited value és absent/default külön state; azonos numerikus érték sem tünteti el a különbséget. |
+| 8 | cascade conflict detection | EDT-022–026 | OPEN / VERIFY | Több forrású precedence és konfliktus diagnosztikája deterministic; nincs browser-dependent silent cascade. |
+| 9 | override cleanup | EDT-024/026, EDT-027/028 | OPEN / VERIFY | Elavult/üres override csak impact preview és explicit cleanup után távolítható el; nem töröl más breakpoint adatot. |
+
+**Kontraktus:** a resolved value és a stored override két külön fogalom. A UI mutassa az értéket és a forrását; reset az override-ot távolítsa el, ne az örökölt eredményt. A precedence sorrend egyetlen canonical algoritmusból jöjjön, és a renderer ugyanazt a resolved state-et használja.
+
+**Tesztminimum:** base + tablet + mobile kombináció; same-value explicit override; reset; conflicting overrides; token/base/default precedence; schema migration; cleanup; undo/redo; save/reload; preview/public parity.
+
+**Státusz:** 9/9 tétel explicit crosswalk-sort kapott; cascade precedence, cleanup és runtime acceptance nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
