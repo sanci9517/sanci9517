@@ -1108,6 +1108,9 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - ADM-008: Közös loading/empty/error/stale/success state-ek.
 - ADM-009: Permission-alapú menü- és action-visibility.
 - ADM-010: Mobil/tablet Admin shell.
+- ADM-011: Kontextuális súgó, interaktív onboarding és hibaelhárítás.
+- ADM-012: Központi értesítések, prioritások, digest, preferenciák és csendes időszak.
+- ADM-013: Dashboard- és Admin-adatok frissessége, stale/partial jelzés és adatforrás-státusz.
 
 ### 24.2. Weboldal és publikus renderer — WEB
 - WEB-001: Page CRUD és listanézet.
@@ -2637,7 +2640,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Lokalizáció:** nyelvek, fordítási státusz, locale-öröklés és felülírás, lokalizált slug/meta/kép/alt text, RTL, nyelvváltó.
 - **Űrlapok és interakciók:** kapcsolat, feliratkozás, leadek, spamvédelem, siker/hiba állapotok, hozzájárulás.
 - **Publikálás:** preview, staging, diff, jóváhagyás, publish/unpublish, verzió és rollback, domain és DNS állapot.
-- **Külön modulokból elérhető közös képességek:** Brand Kit, témák, design tokenek, ikonok, sablonok, blokkkönyvtár és presetek → **49.3. Márka és designrendszer**; feltöltés, asset-regiszter, média-metaadatok és használati helyek → **49.8. Tartalomstúdió**. Az Editor ezek kiválasztására/használatára adhat felületet, de a kanonikus kezelésük nem ide tartozik.
+- **Külön modulokból elérhető közös képességek:** Brand Kit, témák, design tokenek, ikonok, sablonok, blokkkönyvtár és presetek → **49.3. Márka és designrendszer**; feltöltés, asset-regiszter, média-metaadatok és használati helyek → **49.4. Média- és erőforráskönyvtár**. Az Editor ezek kiválasztására/használatára adhat felületet, de a kanonikus kezelésük nem ide tartozik.
 
 ### 49.3. Márka és designrendszer
 ### 49.4. Média- és erőforráskönyvtár
@@ -3741,3 +3744,48 @@ A 54. fejezet 16 témacsoportja a jelenlegi ellenőrzésben 156 checkbox-tételt
 
 **Auditállapot:** a 16 témacsoport tulajdonosmodulhoz rendelése dokumentálva van; ez kategóriaszintű megfeleltetés, nem a 156 egyedi checkbox szemantikai PASS-a. A következő részletes auditlépés a 54. fejezet minden checkboxának megfeleltetése a 24. fejezet stabil ID-jéhez, vagy — ha még nincs ID — a hiányzó ID rögzítése a megfelelő modul alatt. Azonos képesség több modulban csak közös szolgáltatásra mutató hivatkozásként szerepelhet; az esetleges eltéréseket nyitottként kell megőrizni a feloldásig.
 
+### 63.12. Tételes checklist-megfeleltetés — 54.1–54.4
+
+Az alábbi táblázat a 54. fejezet első négy témacsoportjának minden checkboxát a 24. fejezet stabil ID-jéhez rendeli. Több ID használata azt jelenti, hogy a követelmény több együttműködő képességet érint; nem engedélyez párhuzamos adatgazdát. A „Hivatkozás” jelölésű domainblokkok az adott modul adatait fogyasztják, nem másolják.
+
+| Forrás | Ellenőrzőpont | Stabil ID / kanonikus modul | Megfeleltetés megjegyzése |
+|---|---|---|---|
+| 54.1 | Egységes Admin shell, oldalsáv, almenük, breadcrumbs, mobil navigáció | ADM-001, ADM-010 | Navigációs keret és mobil viselkedés. |
+| 54.1 | Áttekintő kártyák: weboldal, live, adásrend, kapcsolatok, tartalom, feladatok | ADM-002; LIV-007, SCH-009, INT-002, CNT-013 hivatkozás | Dashboard összesít; az egyes domainállapotok tulajdonosa változatlan. |
+| 54.1 | Gyorsműveletek és legutóbbi aktivitás | ADM-003, ADM-005 | A gyorsművelet a kanonikus domain-parancsot hívja. |
+| 54.1 | Teendők, figyelmeztetések, hibák és elakadt folyamatok | ADM-004, ADM-012, INT-008, AUT-008, OPS-003 hivatkozás | Egységes felszín, forrásonkénti tulajdonos. |
+| 54.1 | Globális kereső, command palette, kedvencek, legutóbbi elemek | ADM-006, ADM-011 | A keresési index nem válhat új domain-adatforrássá. |
+| 54.1 | Kontextuális súgó, onboarding, üres állapotok és emberi nyelvű hibák | ADM-008, ADM-011 | A hibaállapotot a közös komponens mutatja, a magyarázat a funkcióhoz kötött. |
+| 54.1 | Értesítési központ, prioritások, digest és csendes időszak | ADM-012 | Közös értesítési preferenciák és kézbesítési állapot. |
+| 54.1 | Valós adatfrissesség, loading/empty/error/stale/partial állapot | ADM-008, ADM-013 | UI-állapot és adatfrissesség külön is látható. |
+| 54.2 | Oldal CRUD, hierarchia, slug, átnevezés, duplikálás, archiválás és törlés | WEB-001, WEB-002, WEB-003 | Oldal-életciklus; függőségi figyelmeztetés kötelező. |
+| 54.2 | Navigáció, dropdown/nested menü, footer, mobilmenü, belső/külső link | WEB-009, WEB-010, WEB-011 | Kanonikus navigációs fa és globális layout. |
+| 54.2 | Egyetlen Visual Editor: elemkönyvtár, canvas, Layers/Outline, Inspector | EDT-015, EDT-007, EDT-012, EDT-013, EDT-021 | Az EDT a weboldal Page Modelt szerkeszti. |
+| 54.2 | Drag/drop, kijelölés, átrendezés, csoportosítás, duplicate, törlés, zoom/pan | EDT-006–014, EDT-038 | A command pipeline tartja fenn az invariánsokat; csak támogatott csoportművelet aktiválható. |
+| 54.2 | Undo/redo, mentési állapot, konfliktusfeloldás, revision history és restore | EDT-005, EDT-027–031, WEB-007, WEB-008 | Szerkesztési history és publikált verzió együttműködik, de nem ugyanaz az állapot. |
+| 54.2 | Szöveg, heading, kép, videó/embed, gomb, link, ikon, lista, kártya, űrlap, divider, spacer, grid/flex/section/container | EDT-016–019; RES-010, RES-011 hivatkozás | Elemkönyvtár és layout-primitive-ok; média/ikon forrása a RES modul. |
+| 54.2 | Dinamikus SANCI blokkok: live, következő stream, adásrend, játékprofil, videó/clip feed, social links, termék, tagság, támogatás és közösségi CTA | EDT-020; LIV-007, SCH-009–014, CNT-019, INT-018, STO-017, SUP-005, COM-018 hivatkozás | Az Editor konfigurál és megjelenít; a domainadatok a tulajdonosmodulból jönnek. |
+| 54.2 | Desktop/tablet/mobile preview, breakpointonkénti override, öröklés és portrait/landscape | EDT-023–026, EDT-035–036 | A valódi mobil szerkesztési út külön acceptance-t igényel. |
+| 54.2 | Globális design tokens: színek, fontok, tipográfia, spacing, border, radius, shadow, layout | DSN-001–007; EDT-021–024 fogyasztói kapcsolat | A tokenek kanonikus gazdája a DSN, nem az Editor. |
+| 54.2 | Site/page/section/component sablonok, reusable komponensek, instance/override/detach, verziózás és rollback | DSN-008–015, EDT-041 | A sablonkönyvtár és a komponens master-instance a DSN modul tulajdona. |
+| 54.2 | Előnézet, draft, validálás, publikálás, visszavonás és publikált snapshot megőrzése | EDT-027–034, WEB-004–008 | Mentés, preview és publish külön művelet. |
+| 54.2 | SEO: title, description, canonical, robots, Open Graph, social image, sitemap, robots.txt, structured data, redirect, 404 | SEO-001–005, WEB-012–013 | A SEO-szerződés a publikus rendererre és útvonalkezelésre is kiterjed. |
+| 54.2 | Domain/DNS/HTTPS státusz, favicon, brand assets, coming-soon/maintenance | SET-004, WEB-028; RES-001, DSN-005 hivatkozás | Domain lifecycle a SET, asset és brand a saját moduljában marad. |
+| 54.2 | Űrlapok, validáció, spamvédelem, adatkezelési hozzájárulás és beküldés-kezelés | EDT-019, WEB-020, SEC-007, SEC-011, COM-015 ahol feliratkozásról van szó | Az Editor a formot konfigurálja; a submission és consent domainfüggő. |
+| 54.2 | Webes teljesítmény, képméretezés, lazy loading, cache és Core Web Vitals | WEB-030, RES-004, QA-005, QA-006 | Publikus render, asset pipeline és mérés együttes acceptance-e. |
+| 54.3 | Logóvariánsok, színek, betűcsaládok, ikonstílus, vizuális szabályok | DSN-001, DSN-005, DSN-007, DSN-017; RES-011, RES-013 hivatkozás | A vizuális szabály és a fájl/ikon/font registry külön felelősség. |
+| 54.3 | Overlay, thumbnail, intro/outro, watermark, social post, merch és email sablonok | DSN-008–015, DSN-018; RES-001 hivatkozás | Sablon/design master a DSN-ben; asset bináris a RES-ben. |
+| 54.3 | Brand-safe színek/fontok és kontrasztellenőrzés | DSN-001, DSN-007, QA-005 | Automatikus ellenőrzés és emberi felülvizsgálat. |
+| 54.3 | Globális és komponensszintű tokenek, theme-változatok és dark/light | DSN-001–006, DSN-016 | A tokeneknek és komponensvariánsoknak egyetlen definíciója van. |
+| 54.3 | SVG/PNG/WebP és megfelelő exportméretek | DSN-015; RES-004, RES-012 hivatkozás | Exportpresets és biztonságos asset-feldolgozás. |
+| 54.3 | Licenc, forrás, tulajdonos, verzió és asset-használati helyek | RES-007–009; DSN-003, DSN-014 | A brand UI összesít, a licenc/usage rekord a RES-ben marad. |
+| 54.3 | Brand consistency ellenőrzés, AI-javaslat és kézi jóváhagyás | DSN-003, DSN-005, AI-007, AI-012, AI-019 | Az AI csak javaslatot készít; jóváhagyás és kanonikus végrehajtás szükséges. |
+| 54.4 | Egy asset registry és asset ID, R2 bináris tárolással, D1 metaadattal | RES-001, RES-002 | Egyetlen kanonikus asset registry. |
+| 54.4 | Képek, videók, hangok, ikonok, fontok, dokumentumok, thumbnailök és exportok | RES-001, RES-004, RES-011–013 | Típusonkénti feldolgozás, közös ID- és metadata-szerződés. |
+| 54.4 | Egyenkénti/tömeges feltöltés, progress, cancel, retry és megszakadt feltöltés helyreállítása | RES-003 | Feltöltési életciklus és hibatűrés. |
+| 54.4 | MIME-/méretellenőrzés, feldolgozási státusz, preview/thumbnail és biztonsági ellenőrzés | RES-003, RES-004, RES-012, OPS-007 | Nem megbízható fájlok nem kerülhetnek közvetlenül publikált kimenetbe. |
+| 54.4 | Címke, keresés, gyűjtemény, alt text, licenc, forrás és crop/focal point | RES-005–007 | Kereshető metadata és jogi/akadálymentességi adatok. |
+| 54.4 | Használati helyek, függőségi figyelmeztetés és biztonságos archiválás/törlés | RES-008, RES-009 | Törlés előtt az összes hivatkozás és publikus hatás ellenőrzendő. |
+| 54.4 | Metaadatmódosítások megjelenése minden hivatkozási helyen | RES-001, RES-008, RES-015 | Referencia alapján történő feloldás; nincs másolt asset-metaadat-forrás. |
+
+**Állapot:** a 54.1–54.4 ellenőrzőpontjai stabil ID-khez és tulajdonosmodulokhoz vannak rendelve. Ez tervszintű szemantikai megfeleltetés; a hozzá tartozó runtime kód, UI, adatmodell, jogosultság és tesztek meglétét még külön kell bizonyítani. A 54.5–54.16 csoportok tételes megfeleltetése nyitott.
