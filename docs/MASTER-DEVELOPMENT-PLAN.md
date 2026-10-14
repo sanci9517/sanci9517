@@ -5201,3 +5201,16 @@ A §37.16, §37.17 és §41.2 egyes mondatai a 2026-10-13-i, 359-ID-s registry-s
 **Következő célzott lépés:** a docs/MASTER-DEVELOPMENT-PLAN.md és az archív MASTER útvonalak további korábbi commitjainak, illetve a releváns commitok teljes patch-/blobtörténetének vizsgálata; különösen olyan régi fájlútvonalak és törlések keresése, amelyek a jelenlegi útvonalon nem jelennek meg. Ha ez a kör sem adja elő a B szöveget, a hiányt explicit unresolved source gapként kell fenntartani, és a P0.2 záráshoz alternatív, dokumentált forrásdöntés szükséges — nem automatikus rekonstrukció.
 
 **Státusz:** commit-/előd-snapshot vizsgálat dokumentálva; 00.9.6.B teljes forrása továbbra is UNRECOVERED / OPEN; teljes történeti szemantikai reconciliáció OPEN; P0.2 IN PROGRESS / NOT PASS; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.115. P0.2 — A 00.9.6.C első megjelenése előtti commit közvetlen ellenőrzése (2026-10-14)
+
+**Újonnan vizsgált bizonyíték:** a `0ebf7a9d2fb8f13040513c412d2ff98698c94b54` commit teljes elérhető diffje, közvetlen szülője (`cfb2de5f1590c767eae86296bc58f0e8d02592d1`) és a szülő MASTER-blob (`ea1c9b14c0b3a98a5a284703f6df3a1ef02b3e46`). A szülő blob 36 379 karakteres; a következő commit 893 soros `00.9.6.C — MASTER-2.71` fejezetet fűzött a dokumentum végére.
+
+**Közvetlen előd állapota:** a szülő MASTER-ben az eredeti `00.9.6` és `00.9.6.A` címsorok megtalálhatók, de `00.9.6.B` vagy `00.9.6.C` fejezetcím még nincs. A szülő egyetlen `00.9.6.B` előfordulása egy régi ellenőrzőlista-állításban szerepel: azt állítja, hogy a 00/A és 00.9–00.9.6.B „újrapontozása megtörtént”. Ez az állítás önmagában nem tartalmazza a B-fejezetet, nem ad forráshivatkozást, és ellentmond a szülőben ténylegesen jelen lévő fejezetcímeknek. Emiatt ezt **státusz-/proveniencia-ellentmondásként** kell kezelni, nem a B létezésének vagy tartalmának bizonyítékaként.
+
+**A C bevezetésének diffje:** a `0ebf7a9` diff a `00.9.6.C — ULTIMATE CREATOR PLATFORM — MASTER-2.71` új fejezetet adja hozzá, a teljes Creator Platform capability-scope-pal. A diffben nem jelenik meg a B-fejezet szövege, nem látszik B→C átnevezési vagy összevonási művelet, és nincs olyan kifejezett döntés sem, amely a B tartalmát a C által teljesen kiváltottnak nyilvánítaná. A C szövege ezért csak a C saját scope-jának bizonyítéka.
+
+**Következtetés:** az eddig vizsgált közvetlen történeti lánc pontosítja a hiány jellegét: a B-fejezet hiánya már a C bevezetése előtti elérhető MASTER-snapshotban fennállt; ugyanakkor a régi checklistben maradt egy ellenőrizetlen állítás, amely a B korábbi „újrapontozását” említi. Nem bizonyított, hogy a B eredeti szövege soha nem létezett, de a jelenlegi forrásanyag alapján sem a tartalma, sem a C-vel való formális helyettesítése nem igazolható.
+
+**Kötelező kezelés:** a régi checklist állítása nem tekinthető lezárási bizonyítéknak. A további auditnak vagy meg kell találnia a B pontos forrását egy másik korábbi fájlban/commitban, vagy külön, kifejezett forrásdöntéssel kell meghatároznia a hiányzó történeti anyag kezelését; a második lehetőség sem engedélyezheti a történeti funkciók csendes elhagyását. Addig a B forrásrés **UNRECOVERED / OPEN**, P0.2 **IN PROGRESS / NOT PASS**, a fejlesztési fagyasztás változatlan.
