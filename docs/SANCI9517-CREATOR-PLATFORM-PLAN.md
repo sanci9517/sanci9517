@@ -6642,6 +6642,25 @@ Ez a szakasz a 63.41 kártyáit kiegészíti a 25. fejezet hiányzó, különál
 
 **Nyitott döntések:** (a) Twitch kézi override mezőnkénti precedence; (b) recurrence exceptions és DST normalizálás konkrét sémája; (c) expected-version/ETag mechanizmus; (d) publikus projection mező-allowlist; (e) soft delete/retention; (f) provider capability hiányának fallbackje. Ezeket bizonyíték nélkül nem jelöljük megoldottnak.
 
+### 63.50.2. Schedule szerződés ↔ GitHub-forráskód — bizonyított eltérésjegyzék (2026-10-14)
+
+**Vizsgálati határ:** a `v2/foundation` ágon ténylegesen megnyitott `src/index.ts`, `src/routes/admin/schedule.ts`, `src/routes/admin/twitch-schedule-sync.ts`, `src/routes/public/schedule.ts`, `src/core/schedule-read.ts`, `src/core/schedule/twitch-sync.ts`, `src/core/site-context.ts`, `src/core/domain/contracts.ts` fájlok. **Ez statikus kódolvasás, nem futtatott CI/browser/production teszt.** A nem megnyitott fájlokról nem állítunk sem hiányt, sem működést.
+
+| Funkció / határ | Kódban igazolt tény | Tervkövetelményhez viszonyított eltérés / ellenőrzés |
+| --- | --- | --- |
+| `SCH-001` Admin CRUD | `/api/admin/schedule` GET/POST/PUT/DELETE; a műveletek `schedule_items` rekordot olvasnak/írnak; `site_id` feltétel; `editor` szerepkör; create/update/delete audit statement | A PUT előtt van `id + site_id` lookup, de nincs megfigyelt `expected-version` vagy compare-and-swap; párhuzamos írás elvesztésének negatív tesztje és megoldása **OPEN** |
+| `SCH-001/003/005` validáció | cím/platform/időpont/status/url/notes ellenőrzés; megengedett státuszok: scheduled/live/completed/cancelled; Date.parse start/end és end>start | A jelenlegi Admin request nem fogad külön IANA időzónát, recurrence exceptiont vagy postponed státuszt; `SCH-003–005` teljes körű implementációja **NOT VERIFIED** |
+| `SCH-007/008` Twitch sync | `/api/admin/twitch/schedule-sync` POST; connectionId/startAt/endAt; hitelesítés+editor role; `syncTwitchSchedule` a `twitch_connections` rekordot `id,user_id,site_id` alapján ellenőrzi; hibakódok 409/404/401/429/502 és `source_empty` válasz | A provider sync magja a `src/core/schedule/sync.ts` és adapter fájlokban van; azok részletes konfliktus/override/idempotencia bizonyítéka **még külön ellenőrzendő** |
+| `SCH-010` publikus projekció | `/api/public/schedule` → `readPublicSchedule`; site-filter, status-filter, platform-filter, order, 1–50 limit, upcoming/all/next; cancelled kizárás; response id/title/platform/start/end/status/url/notes | A publikus allowlist jelenleg `notes` mezőt is visszaad. **Adatvédelmi termékdöntés szükséges:** a notes publikus mező vagy belső szerkesztői megjegyzés? Amíg nincs eldöntve, a publikus adatminimalizálás **OPEN** |
+| `SCH-009` következő stream | `mode=next` limit=1, alapértelmezésben scheduled/live és `starts_at >= datetime('now')` | A már elkezdődött `live` esemény a múltbeli start miatt kimaradhat a next/upcoming lekérdezésből. Külön live-first/ongoing időablak acceptance és teszt **szükséges** |
+| `SEC-003/TEAM` site context | `getCanonicalSiteContext()` jelenleg a `DEFAULT_SITE_ID = "site-default"` konstansra épül; az Admin és public schedule ezt használja | Ez **single-site alap**, nem bizonyított dinamikus workspace/tenant választás. Multi-site izolációra külön szerveroldali identity→site authorization szükséges; kliens által beküldött site ID nem elfogadható |
+| `SCH` domain contract | `ScheduleEvent` típus tartalmaz `gameProfileId`, `source`, `sourcePresence`, recurrence jelzőt és sync-metaadatot; `normalizeScheduleEvent` dátumot normalizál | A publikus/Admin route által kezelt mezők ennél szűkebbek; a típusszerződés **nem bizonyítja**, hogy a UI/API minden domaintulajdonságot írni és olvasni tud |
+| `WEB-016/EDT-020/SCH-011` felületek | Az API-projekció létezik, a Worker `/p/*` oldalshellt szolgál ki | A konkrét Schedule Editor block runtime és Admin→Editor→public E2E útvonal **nem volt ebben a kódkörben megnyitva**, ezért nem PASS |
+
+**Elsődleges, végrehajtás előtti tervdöntések:** (1) publikus `notes` jelentése és adatminimalizálás; (2) folyamatban lévő live események elsőbbsége a next/upcoming nézetben; (3) optimista konkurenciavédelem és 409; (4) timezone/recurrence modellezés; (5) single-site → multi-site átmenet hitelesítési szerződése. Mindegyik az eredeti `SCH`/`SEC`/`WEB`/`EDT` azonosítók alá tartozik, **nem új párhuzamos funkció**.
+
+**Következő forrásellenőrzés:** `src/core/schedule/sync.ts`, `src/core/schedule/twitch-adapter.ts`, releváns `migrations/*.sql`, a tényleges Editor schedule blokk és a schedule-specifikus tesztek. A meglévő kódot előbb értékelni kell, nem szabad automatikusan újraírni. A jelen kapu **IN PROGRESS / NOT PASS**; nincs implementációs módosítás vagy deploy.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
