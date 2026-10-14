@@ -1,24 +1,40 @@
-# Sanci9517
+# Sanci9517 — Brand & Creator Platform
 
-## Egyetlen fejlesztési terv
+## Egyetlen aktuális fejlesztési terv
 
-**Minden fejlesztési és auditfeladat egyetlen irányadó dokumentumból indul:**
+**Minden termékdöntés és fejlesztési lépés kiindulópontja:**
 
-- [MASTER-DEVELOPMENT-PLAN.md](docs/MASTER-DEVELOPMENT-PLAN.md) — aktuális termékterv, architektúra, funkciókatalógus, auditnapló, végrehajtási sorrend és acceptance-kapuk.
+- [MASTER-DEVELOPMENT-PLAN.md](docs/MASTER-DEVELOPMENT-PLAN.md) — a teljes Creator Platform termékvíziója, moduljai, közös adat- és storage-architektúrája, Brand Kitje, sablonrendszere, integrációi, regisztrációs modellje, SANCI AI-ja és lépésenkénti fejlesztési sorrendje.
 
-**Aktív munkapont:** `P0.2 — ARCHIVE RECONCILIATION AND BIDIRECTIONAL FEATURE TRACEABILITY`  
-**Állapot:** `IN PROGRESS` — nincs PASS bizonyíték nélkül; párhuzamos feature-fejlesztés nincs engedélyezve.
+A régi tervek és történeti anyagok a Git-előzményekben/archívumban megmaradhatnak, de nem helyettesítik és nem írják felül az aktuális MASTER-t. A fő fejlesztési terv nem auditnapló: a meglévő, igazolt technikai alapokat és a ténylegesen fejlesztendő termékfunkciókat tartalmazza.
 
-### Új beszélgetésben innen folytasd
+## Termékcél
 
-1. Nyisd meg a [MASTER tervet](docs/MASTER-DEVELOPMENT-PLAN.md) a `v2/foundation` ágon.
-2. Olvasd el a 0.0–0.2, 37.3, 37.9–37.32, 41. fejezeteket, különösen a 41.3.5 tételes forrás-bullet ledgert.
-3. Folytasd a C.23, F.1–F.13, a régi 00/A és 00.9–00.9.6.B források reconciliációját, majd mind a 359 stabil funkció-ID kétirányú ellenőrzését.
-4. A P0.2 marad `IN PROGRESS`, amíg minden forrástételhez igazolt mapping/disposition, canonical owner, fázis, permission boundary, dependency, teszt és elfogadási bizonyíték nem tartozik.
-5. Ne használj más archív vagy checkpoint dokumentumot aktív tervként, ne indíts párhuzamos feature-fejlesztést, és ne kérd a végső funkciólista közös ellenőrzését az audit befejezése előtt.
+Egy bővíthető, egy Admin felületről kezelhető Brand & Creator Operating Platform, amelynek részei:
 
-### Archívumkezelési szabály
+- saját márkájú publikus weboldal és valódi Visual Editor;
+- közös Brand Kit, design tokenek, site/page/section/component sablonok és reusable blokkok;
+- külön Integrációk menü Twitch, YouTube, TikTok, Discord, Kick és további szolgáltatók számára;
+- Stream Studio és OBS, overlayek, alert-ek, widgetek;
+- adásrend, játékprofilok, VOD, klipek, Shorts és Content Studio;
+- közösség, fan accountok, tagság, támogatás, merch/shop és digitális termékek;
+- analitika, kampányok, szponzoráció és automatizáció;
+- SANCI AI: élő streamfigyelés, visszajelzés, VOD-elemzés, klip- és videógyártás, brand-/weboldal-asszisztens;
+- később csapat, több workspace/site, SaaS-csomagok és marketplace.
 
-A `docs/archive/**` és `docs/archive/plans/**` történeti forrásokat, régi döntéseket és bizonyítékokat tartalmaznak. Nem alternatív fejlesztési tervek. A régi követelmények nem veszhetnek el: a canonical MASTER-ben kell őket megőrizni, leképezni vagy indokoltan superseded/duplicate/deferred döntéssel ellátni.
+## Aktuális technikai alap
 
-A forrásban szereplő tervezett funkció nem bizonyítja, hogy a runtime implementáció elkészült. PASS kizárólag a kapuhoz előírt tesztek, futási/éles ellenőrzések és elfogadási bizonyítékok alapján adható.
+A projekt Cloudflare Workers + TypeScript környezetet, D1-et strukturált adatokhoz, R2-t bináris objektumokhoz és a kanonikus Visual Editor v2-t használja. A meglévő működő kódot, route-okat, domain-szerződéseket, adatbázis-migrationöket és teszteket kell elsőként újrahasználni. Új könyvtár csak valós technikai és licencellenőrzés után kerülhet be.
+
+## Következő munkapont
+
+A [MASTER 41. fejezete](docs/MASTER-DEVELOPMENT-PLAN.md#41-aktuális-termékállapot-és-következő-lépések) rögzíti a jelenlegi sorrendet: először a meglévő Admin → Editor → mentés/újratöltés → előnézet/publikálás → publikus oldal alapfolyamatot kell megbízhatóvá tenni, majd a MASTER fázisai szerint haladni. Ez a végrehajtás sorrendje, nem a teljes termékcél szűkítése.
+
+## Fejlesztési szabályok
+
+1. Egy funkcióhoz egy kanonikus domain/adatforrás tartozik; a több helyen látható UI ugyanazt a szerződést használja.
+2. A Page Model nem másolja le a Schedule, Media, Product, Membership vagy Integration üzleti rekordokat.
+3. Az Admin moduljai feladat szerint elkülönülnek, de közös jogosultságot, állapotkezelést és domain/API-réteget használnak.
+4. A provider-képességeket az aktuális hivatalos API, scope, jóváhagyás és policy határozza meg; hiányzó képességet nem szimulálunk.
+5. A tervezett funkció nem egyenlő a kész implementációval. Késznek csak releváns teszt és szükséges valós ellenőrzés után jelölhető.
+6. Minden fejlesztési pont kis, végigellenőrizhető felhasználói eredményre épül, és a következő pontot a tényleges repository állapota határozza meg.
