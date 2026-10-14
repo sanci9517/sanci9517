@@ -2480,20 +2480,27 @@ A „közös storage” nem egyetlen óriási, strukturálatlan JSON és nem egy
 
 ## 46. Admin információs architektúra és felhasználói élmény
 
-### 46.1. Fő navigáció
-A fő menü a felhasználó feladatai szerint, stabil csoportokban jelenjen meg:
-1. **Áttekintés:** Dashboard, teendők, státuszok.
-2. **Arculat és weboldal:** Brand Kit, Oldalak, Visual Editor, Navigáció, Design rendszer, Sablonok, SEO/Domain.
-3. **Kapcsolatok:** Twitch, YouTube, TikTok, Discord, Kick, egyéb provider, API/webhook, sync állapot.
-4. **Stream Studio:** Live/stream állapot, OBS, scene/source, overlay, alerts, widgetek, stream automation.
-5. **Tartalom:** könyvtár, VOD, klipek, Shorts, Content Studio, tartalomnaptár, publikálási queue.
-6. **Adásrend:** naptár, ismétlődések, események, játékprofilok és platformszinkron.
-7. **Közösség:** Discord, fanok/tagok, posztok, szavazások, események, moderáció és értesítések.
-8. **Bolt és bevétel:** termékek, merch, digitális termékek, rendelés, kupon, tagság, támogatás, vásárlók.
-9. **Növekedés:** analitika, kampányok, szponzoráció, SEO teljesítmény és kísérletek.
-10. **Automatizáció:** trigger, feltétel, action, workflow, futási napló és hibakezelés.
-11. **SANCI AI:** Control Center, Live Coach, Content Factory, AI-asszisztensek, jóváhagyások és költség/adatkezelés.
-12. **Beállítások:** profil, workspace/site, nyelvek, időzóna, csapat, szerepkörök, értesítés, biztonság, adatkezelés, export/backup.
+### 46.1. Kanonikus fő navigáció és modulcsoportok
+A 49. fejezet 16 modulja a kanonikus, funkció szerint elkülönített Creator Center-menütérkép. Ez a lista határozza meg a fő modulok nevét és felelősségét; a 3. fejezet ezek részletes domain- és almenüfunkcióit írja le. A menü nem jeleníti meg egyszerre az összes belső műveletet: a gyakori feladatok a modul kezdőlapján, a ritkábbak kereshető almenükben jelennek meg.
+
+1. **Dashboard / Áttekintés:** valós státuszok, teendők, gyorsműveletek.
+2. **Weboldal és Visual Editor:** oldalak, navigáció, CMS, publikálás, domain és publikus renderer.
+3. **Brand Kit és Design Studio:** logók, témák, design tokenek, ikonok, presetek, sablonok és reusable komponensek.
+4. **Live és Stream Studio:** live állapot, stream planner, stream események és adás előtti ellenőrzések.
+5. **OBS és stream eszközök:** OBS-kapcsolat, overlayek, widgetek, chatbot és engedélyezett vezérlés.
+6. **Kapcsolatok és integrációk:** provider-kapcsolatok, scope-ok, tokenállapot, webhookok és szinkronnapló.
+7. **Adásrend és játékprofilok:** naptár, ismétlődések, események, game profile és platformszinkron.
+8. **Tartalomkönyvtár és Content Studio:** VOD, klipek, Shorts, médiafeldolgozás, tartalomnaptár és publikálási queue.
+9. **Média és erőforrások:** asset registry, képek, videók, fájlok, ikonok, fontok, licencek és használati helyek.
+10. **Közösség és rajongók:** Discord, fan account, posztok, szavazások, moderáció és értesítések.
+11. **Bolt, támogatás és bevétel:** termékek, rendelések, digitális hozzáférés, támogatás, tagság és szponzorációs kapcsolódások.
+12. **Analitika és növekedés:** forrásmegjelölt metrikák, kampányok, szponzoráció, SEO-teljesítmény és kísérletek.
+13. **Automatizációk:** workflow builder, trigger, condition, action, futási előzmények és hibakezelés.
+14. **SANCI AI:** AI Control Center, Live Coach, Content Factory, specialisták, jóváhagyások és költség/adatkezelés.
+15. **Keresés, súgó és személyre szabás:** globális kereső, command palette, onboarding, mentett nézetek és felhasználói UI-preferenciák.
+16. **Beállítások, fejlesztői eszközök és platformkezelés:** biztonság, adat, export/backup, diagnosztika; a fejlesztői központ, csapat, több site, SaaS és marketplace almodulként jelenik meg a megfelelő jogosultsággal és csak az adott fázisban aktiválva.
+
+**Megjelenítési szabály:** a 16 modul a kanonikus funkciótérkép, nem 16 egyforma súlyú, mindig nyitva tartott menücsoport. A felület szerepkör, jogosultság, használati gyakoriság és kezdő/haladó mód szerint rendezheti a hozzáférést, de nem rejthet el jogosultsággal elérhető adatot úgy, hogy az kereséssel vagy dokumentált útvonallal se legyen megtalálható. Mobilon csoportosított, összecsukható navigáció szükséges.
 
 ### 46.2. Több helyen látható művelet, egyetlen üzleti logika
 Ugyanaz a művelet megjelenhet Dashboardon, Editorban, tartalomkártyán vagy AI-javaslatként, de minden entrypoint ugyanazt a domain command/API-t hívja. A közös action meghatározza a jogosultságot, validációt, státuszátmenetet, idempotenciát, naplózást és hibakezelést. Az entrypoint csak a kontextust és a felhasználói felületet adja.
