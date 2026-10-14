@@ -6089,3 +6089,113 @@ A „MATCH candidate” csak a tervezett elemkategória jelenlétét jelenti; ne
 
 **Státusz:** 10/10 történeti követelmény explicit crosswalk-sort kapott; a komponensenkénti state/variant support matrix és runtime acceptance nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
 
+### 41.3.144. P0.2 — Régi 3/A Canvas: 22 atomikus követelmény tételes crosswalkja (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, `3/A Canvas`, 22 checklist-tétel. **Canonical célpontok:** `EDT-007/008/009/010/013` viewport, drag/resize, guides és selection sync; `EDT-023–026` responsive preview; `EDT-032` preview; `EDT-035–038` mobile/keyboard/clipboard; `QA-002/004/005/006`.
+
+| # | Régi Canvas-követelmény | Canonical célpont | Státusz | Kötelező acceptance |
+|---:|---|---|---|---|
+| 1 | center | EDT-007 | PARTIAL / VERIFY | Canvas viewport középre igazítása nem változtatja meg a page geometryt vagy scroll state-et. |
+| 2 | zoom in/out | EDT-007 | PARTIAL / VERIFY | Zoom anchor és pointer/selection viselkedés stabil; zoom nem változtatja a mentett layoutot. |
+| 3 | 25/50/75/100/150/200% preset | EDT-007, EDT-044 | PARTIAL / VERIFY | Előre megadott értékek és tetszőleges zoom scope explicit; UI-jelzés a tényleges zoomot mutatja. |
+| 4 | fit screen | EDT-007 | PARTIAL / VERIFY | A teljes oldal a canvas viewportba illeszkedik; minimum/maximum zoom és üres/óriás oldal kezelése determinisztikus. |
+| 5 | grid | EDT-007/010, EDT-044 | PARTIAL / VERIFY | Grid vizuális segéd, nem publikált tartalom; be-/kikapcsolás nem módosítja a Page Modelt. |
+| 6 | guides | EDT-010 | PARTIAL / VERIFY | Guide-ok pontos pozícióval, viewport zoomtól független helyes megjelenítéssel; guide nem keveredik tartalomnode-dal. |
+| 7 | snap | EDT-010, EDT-008/009 | PARTIAL / VERIFY | Snap célok, tolerancia és ki-/bekapcsolás egyértelmű; nem módosítja váratlanul a layout módot. |
+| 8 | grid size | EDT-007/010, EDT-044 | OPEN / VERIFY | Grid spacing beállítás UI/workspace state; site contenttől külön tárolt és visszaállítható. |
+| 9 | snap strength | EDT-010 | OPEN / VERIFY | Snap tolerance typed és használható; nagy zoom/kis zoom mellett következetes, szükség esetén módosítható. |
+| 10 | safe area | EDT-007, EDT-025 | OPEN / DECISION | Safe-area overlay pontos definíciója és cél-eszköz scope-ja explicit; nem része a publikált oldalnak. |
+| 11 | ruler | EDT-007/010 | OPEN / VERIFY | Ruler mértékegysége és zoom-konverziója helyes; billentyűzet/touch használhatóság megmarad. |
+| 12 | device frame | EDT-025, EDT-035 | OPEN / VERIFY | Device frame preview overlay, nem DOM/Page Model; viewport dimenzió és safe-area megfeleltetés dokumentált. |
+| 13 | full-page mode | EDT-007, EDT-025 | OPEN / VERIFY | Teljes oldalnézet és normál viewport külön; scroll, zoom és selection nem vész el indokolatlanul. |
+| 14 | focus selected | EDT-007, EDT-013 | PARTIAL / VERIFY | Kijelölt node a viewportba kerül, de selection és layout state nem változik; locked/hidden/invalid node kezelése egyértelmű. |
+| 15 | preview overlay | EDT-032, EDT-025 | PARTIAL / VERIFY | Preview overlay és edit mode vizuálisan elkülönül; preview-ban nincs véletlen szerkesztői mutáció. |
+| 16 | canvas background | EDT-007, DSN-001/002 | OPEN / VERIFY | Workspace/canvas háttér nem kerül a publikus oldalba; theme/token és page background külön. |
+| 17 | selection outline | EDT-006/013 | PARTIAL / VERIFY | Outline editor-only; nem befolyásolja geometryt, click targetet vagy public render outputot. |
+| 18 | hover outline | EDT-006/013 | OPEN / VERIFY | Hover csak transient UI state; nem kerül mentésbe és nem írja felül a selected/focused állapotot. |
+| 19 | parent outline | EDT-002/012/013 | OPEN / VERIFY | Parent/child vizuális jelölés a canonical tree-t követi; nested node esetén a megfelelő szülő azonosítható. |
+| 20 | spacing/margin visualizer | EDT-009, EDT-021/022 | OPEN / VERIFY | Margin/padding/gap vizualizáció külön szemantikát mutat; zoomolt canvasnál és nested layoutban pontos. |
+| 21 | breakpoint indicator | EDT-023–026 | PARTIAL / VERIFY | Aktív breakpoint és öröklött/felülírt értékek láthatók; viewportváltás nem írja át az adatot. |
+| 22 | scroll position preservation | EDT-007, EDT-027/028 | OPEN / VERIFY | Selection, Inspector action, save/reload és panelváltás nem ugráltatja váratlanul a canvas scrollját; restore csak érvényes viewport esetén. |
+
+#### Canvas-kontraktus
+
+1. **Viewport ≠ content:** zoom, pan, grid, ruler, device frame, safe-area, outlines és workspace background nem kerülhetnek a canonical Page Modelbe, kivéve a külön deklarált, valódi oldaltulajdonságokat.
+2. **Egyetlen selection source:** Canvas, Layers és Inspector ugyanarra a canonical node/selection state-re mutat; outline/hover nem önálló tartalomállapot.
+3. **Layout-aware manipuláció:** snap/drag/resize nem alakíthat Flex/Grid/flow layoutot absolute positioninggé észrevétlenül.
+4. **Viewport-state megőrzés:** selection, Inspector, save/reload és breakpointváltás során a scroll/zoom viselkedése definiált, de a workspace preference külön marad a site contenttől.
+5. **Tesztminimum:** zoom presets/fit; grid/guides/snap; selection/hover/parent outlines; nested node; layout-aware drag; breakpoint switch; device/full-page preview; scroll preservation; keyboard/touch; save/reload és public output izoláció.
+6. **Státuszszabály:** crosswalk-terv, nem runtime PASS; a grid/guides/snap és workspace-state részletes acceptance nyitott.
+
+**Státusz:** 22/22 történeti Canvas-tétel explicit crosswalk-sort kapott; több vizuális/workspace viselkedés és runtime acceptance OPEN/PARTIAL. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.145. P0.2 — Régi 3/B Alignment: 14 atomikus követelmény tételes crosswalkja (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, `3/B Alignment`, 14 checklist-tétel. **Canonical célpontok:** `EDT-010` guides/snap; `EDT-009/016` geometry/layout; `EDT-013` selection sync; `EDT-021/022` property validation; `QA-002/004/005`.
+
+| # | Régi Alignment-követelmény | Canonical célpont | Státusz | Kötelező acceptance |
+|---:|---|---|---|---|
+| 1 | left/center/right | EDT-010, EDT-016 | PARTIAL / VERIFY | Igazítási referencia (selection/parent/canvas) explicit; flow layoutban csak kompatibilis művelet aktív. |
+| 2 | top/middle/bottom | EDT-010, EDT-016 | PARTIAL / VERIFY | Függőleges tengely és referencia explicit; baseline/unsupported layout esetén nincs félrevezető vezérlő. |
+| 3 | distribute horizontal | EDT-010, EDT-009 | OPEN / VERIFY | Több node, legalább három kiválasztott elem és rögzített anchor mellett determinisztikus; egy tranzakcióként undo-zható. |
+| 4 | distribute vertical | EDT-010, EDT-009 | OPEN / VERIFY | Függőleges elosztás, anchor és spacing kerekítési szabály explicit; responsive/layout constraints megőrzött. |
+| 5 | match width | EDT-009/010, EDT-021/022 | OPEN / VERIFY | Méretillesztés nem sérti min/max, aspect ratio, intrinsic vagy parent layout korlátot; eltérés előre jelezhető. |
+| 6 | match height | EDT-009/010, EDT-021/022 | OPEN / VERIFY | Magasságillesztés szöveg/image intrinsic mérettel és min/max értékekkel tesztelt. |
+| 7 | match size | EDT-009/010 | OPEN / VERIFY | Width+height atomic action; constraints konfliktus esetén explicit reject/normalization, nem csendes torzítás. |
+| 8 | align parent | EDT-010, EDT-016 | OPEN / VERIFY | Parent inner box és padding referenciája explicit; layout flow-ban csak szemantikailag megengedett igazítás. |
+| 9 | align canvas | EDT-007/010 | OPEN / VERIFY | Canvas alignment csak viewport/workspace vagy deklarált absolute canvas scope-ban; nem változtatja csendben a page flow-t. |
+| 10 | distance indicators | EDT-010, EDT-009 | OPEN / VERIFY | Távolságok a helyes geometry/zoom basisből számolva; margin/gap/padding nem téveszthető össze. |
+| 11 | equal spacing indicators | EDT-010 | OPEN / VERIFY | Egyenlő térköz felismerése és kerekítési toleranciája explicit; nem jelent automatikus módosítást. |
+| 12 | smart guides | EDT-010 | PARTIAL / VERIFY | Guide target/priority/tolerance és disable behavior explicit; nem akadályozza a pontos billentyűzetes alternatívát. |
+| 13 | snap to siblings | EDT-010, EDT-013 | PARTIAL / VERIFY | Csak kompatibilis testvér-node-ok; sibling order és nested context nem keveredik. |
+| 14 | snap to container | EDT-010, EDT-016 | PARTIAL / VERIFY | Container content box/edge és padding kontextus explicit; nem konvertál layout mode-ot. |
+
+#### Alignment-kontraktus
+
+1. A művelet referencia-síkja és anchorja mindig egyértelmű: kijelölés, parent inner box vagy canvas.
+2. Több node-ot módosító művelet egy atomic command és egy undo-egység; sikertelen részleges művelet rollbackel vagy explicit hibát jelez.
+3. A geometriai segédvonal nem jelent automatikus mentett property-t; a snap eredménye a canonical layout modellbe illeszkedik.
+4. Flex/Grid/flow gyermekeknél az alignment control csak támogatott, szemantikailag érvényes műveletet kínál.
+5. Tesztminimum: 2/3+ node, nested parent, eltérő méretek, min/max/aspect ratio, Flex/Grid/absolute scope, zoom, snap tolerance, undo/redo és save/reload.
+6. Runtime acceptance nincs e crosswalkkal igazolva.
+
+**Státusz:** 14/14 történeti Alignment-tétel explicit crosswalk-sort kapott; több művelet anchor/constraint acceptance-e OPEN. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.146. P0.2 — Régi 3/C Editor panels: 17 atomikus követelmény tételes crosswalkja (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, `3/C Editor panels`, 17 checklist-tétel. **Canonical célpontok:** `EDT-012/013/021/022` Layers/selection/Inspector; `EDT-027–034` save/preview/publish; `EDT-035/036` mobile Editor; `EDT-044` workspace preferences; `QA-002/003/004/005/006`.
+
+| # | Régi panel-követelmény | Canonical célpont | Státusz | Kötelező acceptance |
+|---:|---|---|---|---|
+| 1 | layer panel | EDT-012/013/014 | PARTIAL / VERIFY | Canonical tree-t mutatja; expand/collapse és selection sync nem változtatja a tartalmat. |
+| 2 | inspector | EDT-021/022/023 | PARTIAL / VERIFY | Property registryből épül; typed controls, validation, inherited/override state és error feedback. |
+| 3 | resizable panels | EDT-044, EDT-035/036 | OPEN / VERIFY | Panel resize elérhető egérrel és billentyűzettel/touch alternatívával; min/max szélesség. |
+| 4 | collapse/reopen | EDT-044, EDT-036 | OPEN / VERIFY | Panel állapota visszaállítható; collapse nem dobja el a selectiont vagy szerkesztési állapotot. |
+| 5 | width persistence | EDT-044 | OPEN / VERIFY | Per-user workspace preference-ként tárolt; nem a site Page Modelben és nem publikus contentként. |
+| 6 | keyboard shortcuts | EDT-037/039 | PARTIAL / VERIFY | Shortcut map dokumentált, konfliktusmentes, remap/disable szabály és focus-context tiszta. |
+| 7 | command palette | EDT-039, EDT-044 | OPEN / VERIFY | Kereshető műveletek, permission-aware command availability, keyboard navigation és nem támogatott művelet magyarázata. |
+| 8 | quick actions | EDT-039, EDT-015 | OPEN / VERIFY | Kontextusfüggő, engedélyezett műveletek; command pipeline-on keresztül és undo/permission ellenőrzéssel. |
+| 9 | property search | EDT-021/022 | PARTIAL / VERIFY | Csak aktuális node/kompatibilis property; találat a megfelelő panel/property helyre navigál. |
+| 10 | component library/panel | EDT-015, DSN-009–013 | PARTIAL / VERIFY | Registry-alapú keresés, category, permission, supported parent-child és preview; insert atomic command. |
+| 11 | assets panel | EDT-018, Media/R2 contract | PARTIAL / VERIFY | Asset metadata/permissions, upload status, alt text és reference integrity; bináris R2 és strukturált D1 külön. |
+| 12 | page panel | WEB-004–008, EDT-001/002 | OPEN / VERIFY | Oldalválasztás/létrehozás/route és page-level settings; page identity és dirty-state korrekt. |
+| 13 | history panel | EDT-004/005 | PARTIAL / VERIFY | History entry preview/restore scope és server revision history különválasztva; undo stack nem keveredik a tartós verziótörténettel. |
+| 14 | preview/publish controls | EDT-032/033, WEB-004–008 | PARTIAL / RELEASE GATE | Preview nem publikál; Save Draft nem publish; explicit publish confirmation és szerver-visszaigazolás. |
+| 15 | unsaved indicator | EDT-027/028 | PARTIAL / RELEASE GATE | Dirty/saving/saved/error/offline/conflict valós állapotból jön; dekoratív hamis success tilos. |
+| 16 | save status | EDT-027/028/031 | PARTIAL / RELEASE GATE | Status szerver/domain visszaigazolásra épül; retry/timeout/conflict és in-flight edit preservation. |
+| 17 | notifications/toasts, modal system | EDT-039/042, shared UI shell | OPEN / VERIFY | Accessible focus/escape behavior, deduplication, actionable error, no silent dismiss of destructive/conflict decisions; toast nem helyettesít tartós hibajelzést. |
+
+#### Editor-panel kontraktus
+
+1. **Külön felelősségek:** Layers a hierarchiáért, Inspector a typed property-kért, Assets a médiaerőforrásokért, Pages az oldalhatárokért, History a módosítások/revíziók megfelelő rétegéért.
+2. **Egy canonical command pipeline:** quick action, command palette, context menu, keyboard shortcut és canvas gesture ugyanazon validáció/permission/undo szabályokon keresztül fut.
+3. **Workspace preference izoláció:** panelméret, nyitottság, viewport, grid és kedvencek per-user workspace state; nem kerülhet a publikus Page Modelbe.
+4. **Mentési állapotgép:** dirty/saving/saved/error/offline/conflict tényleges állapot; success csak szerver/domain megerősítés után.
+5. **Accessibility és mobil:** panelváltás, modal, toast, command palette és resize keyboard/touch támogatással; focus trap/restore helyes.
+6. **Tesztminimum:** panel resize/collapse/reopen/reload; selection megőrzés; property search; command permission; asset upload error; history restore; preview≠publish; dirty/conflict/offline; mobile panels; keyboard/focus.
+7. **Státuszszabály:** crosswalk-terv, nem runtime PASS; a panelek konkrét működését acceptance evidence igazolja.
+
+**Státusz:** 17/17 történeti paneltétel explicit crosswalk-sort kapott; panel/workspace, command palette, page/assets panel és mentési UI runtime acceptance nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
