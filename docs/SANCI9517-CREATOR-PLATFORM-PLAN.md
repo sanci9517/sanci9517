@@ -6870,6 +6870,17 @@ A `0004_system_page_content.sql` történeti táblát hoz létre, míg a `0005_c
 
 **Részleges bizonyítás:** `TYPECHECK + EDITOR/SCHEDULE/DOMAIN/ADMIN/TWITCH/OWNERSHIP CI — PASS` a fenti SHA-n. **Archiválási és böngésző-kapu — IN PROGRESS / NOT PASS.** Régi Editor/Builder assetet továbbra sem szabad eltávolítani pusztán a CI zöld állapota miatt. A teljes aktív forráskészlet hivatkozásainak indexelése és a közvetlen URL-ek ellenőrzése továbbra is nyitott.
 
+### 63.50.18. Legacy statikus URL útvonal-kapu — forrásból igazolt, élő HTTP még nyitott (2026-10-14)
+
+**Forrás:** `7c29894` ref, `src/index.ts`, `wrangler.jsonc`, `public/editor/preview.html`, `public/editor-v2/index.html`. A production `/editor/preview.html`, `/admin-editor-v2.html`, `/admin/editor` URL-ek HTTP-ellenőrzési kísérlete a rendelkezésre álló webes hozzáféréssel nem adott elérhető választ; **sem 200, sem 404, sem redirect státusz nem bizonyított**. Böngészős interakció sem történt.
+
+- Az aktív Worker explicit autentikált `/admin/editor` útvonala a `/editor-v2/index.html` assetet szolgálja ki; az autentikálatlan felhasználót `/admin/login` címre irányítja (302).
+- Az explicit `LEGACY_REDIRECTS` csak a régi publikus tartalmi `.html` útvonalakat kezeli (`about`, `community`, `contact`, `schedule`, `tiktok`, `twitch`, `vod`, `youtube`). **Nincs explicit `/editor/preview.html` vagy `/admin-editor-v2.html` átirányítás.**
+- Az ismeretlen útvonalak `env.ASSETS.fetch(request)` fallbackra kerülnek, az assets könyvtár `./public`. A `public/editor/preview.html` ténylegesen szerepel a forrásfában, így az asset-kiszolgálási konfiguráció alapján potenciálisan közvetlenül elérhető; ezt éles HTTP-válasz és jogosultsági vizsgálat nélkül nem szabad bizonyított tényként kezelni.
+- A legacy preview visszalinkje `/admin-editor-v2.html`, amelyre a Worker nem definiál külön útvonalat; a tényleges 404/redirect viselkedés **OPEN**. Az Editor v2 saját assetjeinek `/editor-v2/` közvetlen URL-elérése és a hitelesítés határa külön security/UX tesztet igényel.
+
+**Döntés:** ne töröljük a legacy fájlokat, ne adjunk vakon redirectet az összes legacy URL-re, és ne jelöljük a runtime/böngésző-kaput PASS-nak. Szükséges: éles GET/HEAD státusz + redirect + auth ellenőrzés, legacy preview mentett `pageId` és adatkompatibilitás, Editor v2 böngészős draft/preview/publish/rollback, közvetlen statikus asset biztonsági szerződés. **URL/BROWSER GATE: IN PROGRESS / NOT PASS.**
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
