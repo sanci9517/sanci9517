@@ -2372,17 +2372,181 @@ A későbbi fázis nem jelenti a funkció kihagyását; a biztonságos és megb�
 Ezek a meglévő alapok nem jelentik azt, hogy minden kapcsolódó felhasználói folyamat teljesen kész. A valós státuszt a kód, tesztek, runtime és felhasználói elfogadás együtt határozza meg.
 
 ### 41.2. Következő megvalósítási sorrend
-1. A meglévő Admin → Editor → save/reload → preview/publish → public workflow nyitott hibáinak lezárása.
-2. Admin shell, navigáció, modulok és közös státusz-/hibaélmény konzisztenciája.
-3. Resource/Media Registry, design system, templates, components és public page renderer teljes workflow-ja.
-4. Twitch/live/schedule és további provider adapterek capability matrix szerint.
-5. Content Studio, VOD/Clips/Shorts, platformvariánsok és publikálási queue.
-6. Discord/community, support/membership és shop/merch.
-7. Analytics, campaigns/sponsorship, automation és OBS/overlays.
-8. SANCI AI a 40. fejezet megvalósítási sorrendje szerint.
-9. Localization, team/multi-site/SaaS és marketplace.
+1. **F0 — Core megbízhatóság:** Admin → Visual Editor → mentés/újratöltés → preview → publish → publikus oldal; a meglévő runtime- és acceptance-hibák tényleges lezárása.
+2. **F1 — Alaprendszer és modulhatárok:** közös Admin shell, navigáció, routing, permission model, egységes loading/empty/error/stale state, szerveroldali domain-szerződések és közös API/command útvonal.
+3. **F2 — Brand, design system, Resource Registry és sablonok:** brand kit, tokenek, reusable komponensek, page/section/component/site template, assetek, verziózás, preview és rollback.
+4. **F3 — Publikus site builder és CMS:** oldalak, navigáció, dinamikus adatblokkok, SEO, accessibility, publikálás, domainbeállítás és mobilos végponttól végpontig elfogadás.
+5. **F4 — Creator-fiók és onboarding alapjai:** a jelenlegi admin-auth megőrzése mellett külön megtervezett creator registration, workspace/site létrehozás, onboarding, szerepkörök és account recovery; csak a tenant-scope és biztonsági modell jóváhagyása után élesítve.
+6. **F5 — Integrációs központ:** Twitch meglévő alapjának stabilizálása, majd YouTube, TikTok, Discord, Kick és további adapterek; providerenként külön képességmátrix, scope és éles engedély.
+7. **F6 — Stream Studio és OBS:** overlay/alert/widget template-ek, OBS pairing, browser source, stream események, scene/source vezérlés és engedélyezett automatizációk.
+8. **F7 — Content Studio:** VOD, klipek, highlightok, Shorts, metaadatok, többplatformos naptár, media processing, queue és publikálás provider-korlátokkal.
+9. **F8 — Közösség és bevétel:** fan account/membership, támogatás, merch/shop, digitális termék, kupon, rendelés, fulfillment és jogosultságalapú közösségi funkciók.
+10. **F9 — Analitika, kampány és automatizáció:** forrásmegjelölt metrikák, szponzoráció, kampányok, workflow builder, események, retry és dry-run.
+11. **F10 — SANCI AI:** a 40. fejezet szerinti AI Control Center, admin/brand-asszisztens, VOD/clip factory, live coach és biztonságos specialist orchestration.
+12. **F11 — Platformosodás:** csapatok, több site, billing/usage, localization, theme/component/overlay marketplace, külső extension API és tenant-onboarding.
+
+A fázisok között kötelező függőségek vannak; a számok nem ígérnek határidőt. A teljes végső funkcióscope minden fázisban megmarad. Egy későbbi modul nem épülhet úgy, hogy saját, párhuzamos storage-t, jogosultsági rendszert vagy duplikált üzleti logikát hoz létre.
 
 ### 41.3. Mi számít késznek?
 Egy funkció csak akkor kész, ha a megadott felhasználói cél a valós alkalmazásban végigvihető; az adatok helyesek és konzisztensen jelennek meg minden érintett felületen; a jogosultságok és hibás állapotok kezeltek; a releváns tesztek és szükséges valós böngészős/éles ellenőrzések sikeresek. A dokumentáció frissítése a megvalósítást követi, nem helyettesíti azt.
 
 **Ez a fejezet az aktuális termékfejlesztés irányát rögzíti; a teljes Creator Platform célja és későbbi képességei változatlanul a terv részei.**
+
+---
+
+## 42. Brand Kit és vizuális identitásrendszer
+
+A platform nem pusztán weboldal-sablonokat ad: a creator márkája minden kapcsolódó felület közös, verziózott rendszeréből épül fel.
+
+### 42.1. Kanonikus Brand Kit
+- Brand profil: név, leírás, hangnem, nyelvek, célközönség, közösségi linkek, kapcsolat és press/business információ.
+- Logo family: primary, compact, monochrome, icon/mark, light/dark változat, clear-space és minimális méret.
+- Színpaletták és szemantikus design tokenek: primary/secondary/accent, background/surface, text, border, success/warning/error, contrast metadata.
+- Typography system: display, headings, body, caption, UI, font fallback, licenc és betöltési stratégia.
+- Spacing, grid, container, breakpoint, radius, shadow, border, z-index, motion és accessibility tokenek.
+- Brand assetek: avatar, banner, offline image, thumbnail, emote/badge, panel, favicon, social preview, watermark csak az adott platform szabályai szerint.
+- Brand voice: megengedett hangnemek, preferált kifejezések, névírás, tiltott állítások és nyelvi stílus.
+- Brand kit verziózás, változásnapló, preview, dependency map és rollback.
+
+### 42.2. Egyszeri változtatás, közös hatás
+A brand-adat nem másolható minden modul saját beállításaiba. A publikus weboldal, Visual Editor, Stream Studio, overlayek, Content Studio, thumbnail presetek, AI-generált szövegek és shop ugyanazokat a Brand Kit referenciákat használják. Modul-specifikus eltérés csak explicit override lehet, látható scope-pal és reset/restore művelettel.
+
+A központi brand-változás előtt a rendszer megmutatja az érintett oldalakat, sablonokat, komponenseket és generálási preseteket. A változtatás nem írja át észrevétlenül a már publikált tartalmakat vagy a felhasználó által jóváhagyott kész videókat.
+
+## 43. Sablonok, témák és újrahasznosítható blokkok
+
+### 43.1. Sablonrétegek
+- **Starter/site template:** teljes kezdő weboldal és kezdeti konfiguráció.
+- **Page template:** Home, About, Live, Schedule, Games, Videos, Clips, Community, Support, Shop, Membership, Contact, Press Kit, Legal és egyedi landing.
+- **Section template:** hero, live banner, next stream, schedule, featured video, social grid, community CTA, merch spotlight, membership CTA, sponsor strip, FAQ, footer.
+- **Component template:** gombok, kártyák, stream állapot, játékprofil, videólista, termékkártya, CTA és adatállapotok.
+- **Design/theme preset:** színek, tipográfia, spacing, shape, motion, háttér és vizuális stílus.
+- **Stream overlay template:** gameplay, Just Chatting, starting soon, BRB, ending, vertical stream, alertbox, goals, chat, lower-third, webcam frame.
+- **Content template:** thumbnail, Shorts/Reels/TikTok frame, caption style, title/description, intro/outro és export preset.
+- **Automation template:** stream-start, stream-end, új videó, új tagság, merch order és hibaértesítés.
+- **AI workflow template:** VOD analysis, clip selection, subtitles, weekly review, stream prep és brand-aware copy.
+
+### 43.2. Sablon-életciklus
+Minden sablonnak van stabil azonosítója, típusa, verziója, schema-verziója, preview, kompatibilitási feltétele, asset-/token-függősége, jogosultsága, szerzője/forrása és státusza. Műveletek: create, duplicate, preview, apply, save as, update, deprecate, archive, export/import és rollback.
+
+Sablon alkalmazása alapértelmezetten független példányt hoz létre; csak az explicit reusable/linked component marad közösen hivatkozott. Frissítés előtt diff és impact preview szükséges. Schema-migráció nem változtathat meg csendben meglévő oldalakat. A marketplace későbbi fázis, de a belső sablonrendszert már eleve verziózhatóra kell tervezni.
+
+### 43.3. Bővíthető komponenskönyvtár
+A komponens egységes szerződése tartalmazza a type ID-t, schema-t, defaultokat, property registryt, editor renderer-t, public renderer-t, validációt, accessibility követelményeket, adatbindingokat, permissionöket, teszteket és migrációt. Új komponens hozzáadása nem igényelhet minden modulban külön, kézzel írt eltérő implementációt.
+
+## 44. Regisztráció, creator workspace és közösségi felhasználók
+
+A jelenlegi, meglévő admin-hitelesítés nem alakítható át észrevétlenül nyílt regisztrációvá. A regisztráció külön, biztonságosan megtervezett termékfunkció.
+
+### 44.1. Creator regisztráció és első beállítás
+- Email-/jelszó vagy jóváhagyott identity provider, email-ellenőrzés, biztonságos bejelentkezés és kijelentkezés.
+- Elfelejtett jelszó, session kezelés, fiókzárás, fiók-helyreállítás és szükséges biztonsági értesítések.
+- Creator workspace létrehozása, site/brand alapadatok, időzóna, locale, kezdeti template választás, domain és első publikálási útmutató.
+- Lépésenkénti onboarding checklist, kihagyható és később folytatható lépésekkel.
+- Integrációk csatlakoztatása külön, opcionális lépésként; a platform alapfunkciói nem feltételezhetnek minden szolgáltatóhoz adott engedélyt.
+- Seed/demo tartalom egyértelműen jelölt, teljesen eltávolítható és soha nem keverhető össze valódi adatokkal.
+
+### 44.2. Szerepkörök és workspace
+- Tulajdonos, admin, editor/designer, content manager, moderator, analyst, shop manager és read-only szerepkörök a termékfázisnak megfelelően.
+- Least-privilege, domain/action-szintű permissionök, server-side enforcement és workspace/site scope.
+- Meghívás, elfogadás, visszavonás, szerepkörváltás, kiléptetés és tulajdonosváltás naplózott műveletekkel.
+- Egy creator több workspace/site-ot is kezelhessen, ha a több-site fázis elkészült; az adat, token, media és domain izoláció kötelező.
+- A publikus weboldal látogatói, regisztrált fanok, fizető tagok és creator-admin felhasználók eltérő identitás- és jogosultsági réteget alkotnak.
+
+### 44.3. Fan account és tagság
+- Opcionális regisztráció a creator publikus oldalán; a nyilvános tartalom megtekintéséhez ne legyen automatikusan kötelező account.
+- Profil, preferenciák, értesítések, kedvencek/követés, komment/poll/event interakciók a megfelelő modulokban.
+- Ingyenes és fizetős tagsági szintek, entitlement, lejárat, lemondás, számlázási állapot és hozzáférés-visszavonás.
+- A fizetési adatokat és kártyaadatokat jóváhagyott fizetési szolgáltató kezeli; saját rendszer csak a szükséges provider reference és állapot tárolását végzi.
+- Adatletöltés/törlés, hozzájárulások, adatmegőrzés és értesítési beállítások.
+- Creator által konfigurálható, hogy mely nyilvános interakciók igényelnek regisztrációt, tagságot vagy moderátori jóváhagyást.
+
+## 45. Közös adat-, erőforrás- és eseményarchitektúra
+
+### 45.1. Kanonikus domain és közös storage
+A „közös storage” nem egyetlen óriási, strukturálatlan JSON és nem egy közös tábla mindenhez. Közös platform-infrastruktúrát jelent, külön tulajdonolt, típusos domain-adatokkal.
+
+- D1: strukturált rekordok, kapcsolatok, állapotok, jogosultságok, konfigurációk és indexelt metaadatok.
+- R2: médiafájlok, generált videók, thumbnail-ek, exportok és nagy objektumok.
+- Resource Registry: egységes asset ID, ownership, site/workspace scope, metadata, storage key, checksum, lifecycle és használati hivatkozások.
+- Page Model: elrendezés, tartalomkonfiguráció és kanonikus domain rekordokra mutató referenciák; nem tárolhat másolatot a schedule, termék, rendelés, integration vagy membership rekordról.
+- Domain-owned storage: Schedule, Content, Product/Order, Membership, Integration, Analytics, Automation és AI job külön szerződés szerint, közös auth/validation/observability infrastruktúrával.
+- Secret/token storage: külön védett szerveroldali szerződés, soha nem public Page Modelben, resource metadata-ban vagy kliensoldali konfigurációban.
+- Search index, cache és analytics projection újraépíthető származtatott adat; nem válhat a kanonikus adatforrás helyettesítőjévé.
+
+### 45.2. Közös esemény- és szinkronmodell
+- Domain event envelope: event ID, tenant/site scope, event type/version, occurred-at, actor/source, correlation ID és idempotency key.
+- Retry/backoff, deduplication, dead-letter/failed state, reprocess, sync watermark és last-success jelzés.
+- Külső webhook aláírásellenőrzés, replay protection és provider event ID deduplikáció.
+- A kapcsolódó modulok eseményre vagy kanonikus API-ra támaszkodnak; nem írnak egymás tábláiba közvetlenül.
+- A cache és search index invalidálása explicit; sikertelen feldolgozás látható és újrapróbálható.
+- A felhasználói művelet státusza megkülönbözteti a kérés elfogadását a külső szolgáltató által visszaigazolt eredménytől.
+
+### 45.3. Bővíthetőségi szerződések
+Új funkció a megfelelő registryn keresztül illeszkedik be: domain/API, admin navigation, permission, event, resource type, template/component, editor property, provider adapter, automation action vagy AI tool. Egy extension nem kap automatikusan korlátlan DB-, hálózati vagy fájlrendszer-hozzáférést. Az extension manifest deklarálja a szükséges capabilityket, schema-verziót, scope-okat, migrációt, költséget, UI-entrypointot és eltávolítási/rollback viselkedést.
+
+## 46. Admin információs architektúra és felhasználói élmény
+
+### 46.1. Fő navigáció
+A fő menü a felhasználó feladatai szerint, stabil csoportokban jelenjen meg:
+1. **Áttekintés:** Dashboard, teendők, státuszok.
+2. **Arculat és weboldal:** Brand Kit, Oldalak, Visual Editor, Navigáció, Design rendszer, Sablonok, SEO/Domain.
+3. **Kapcsolatok:** Twitch, YouTube, TikTok, Discord, Kick, egyéb provider, API/webhook, sync állapot.
+4. **Stream Studio:** Live/stream állapot, OBS, scene/source, overlay, alerts, widgetek, stream automation.
+5. **Tartalom:** könyvtár, VOD, klipek, Shorts, Content Studio, tartalomnaptár, publikálási queue.
+6. **Adásrend:** naptár, ismétlődések, események, játékprofilok és platformszinkron.
+7. **Közösség:** Discord, fanok/tagok, posztok, szavazások, események, moderáció és értesítések.
+8. **Bolt és bevétel:** termékek, merch, digitális termékek, rendelés, kupon, tagság, támogatás, vásárlók.
+9. **Növekedés:** analitika, kampányok, szponzoráció, SEO teljesítmény és kísérletek.
+10. **Automatizáció:** trigger, feltétel, action, workflow, futási napló és hibakezelés.
+11. **SANCI AI:** Control Center, Live Coach, Content Factory, AI-asszisztensek, jóváhagyások és költség/adatkezelés.
+12. **Beállítások:** profil, workspace/site, nyelvek, időzóna, csapat, szerepkörök, értesítés, biztonság, adatkezelés, export/backup.
+
+### 46.2. Több helyen látható művelet, egyetlen üzleti logika
+Ugyanaz a művelet megjelenhet Dashboardon, Editorban, tartalomkártyán vagy AI-javaslatként, de minden entrypoint ugyanazt a domain command/API-t hívja. A közös action meghatározza a jogosultságot, validációt, státuszátmenetet, idempotenciát, naplózást és hibakezelést. Az entrypoint csak a kontextust és a felhasználói felületet adja.
+
+### 46.3. Könnyű kezelhetőség
+- Kezdő és haladó útvonal; alapértelmezett értékek és fokozatosan felfedett haladó beállítások.
+- Kereshető menü/command palette, globális keresés, breadcrumbs és következetes elnevezések.
+- Kontextusfüggő súgó, minták, preview, undo, visszaállítás és megerősítés kockázatos műveleteknél.
+- Egyértelmű empty state „mit tegyek most?” útmutatóval; nincs üres, magyarázat nélküli modul.
+- Billentyűzet, screen reader, touch/tablet, reszponzív layout és lokalizáció.
+- A Dashboard összefoglalhat, de a domain funkciót mindig a saját modul kezeli.
+
+## 47. Meglévő kód és nyílt forrású komponensek újrahasználata
+
+A gyors fejlesztés elsődleges módja a már működő saját kód, bevált szerződések és megfelelően licencelt, karbantartott nyílt forrású csomagok újrahasználata. Nem írunk újra olyat, ami a projektben már megbízhatóan működik, és nem építünk be csomagot csak azért, mert népszerű.
+
+### 47.1. Kötelező reuse döntés minden új funkciónál
+1. Először ellenőrizni kell a meglévő route-okat, domain helper-eket, DB migrationöket, UI-komponenseket, editor commandokat, teszteket és adaptereket.
+2. A meglévő implementációt bővítsük, ha a felelőssége helyes és a szerződése tesztelhető.
+3. Nyílt forrású csomag csak akkor kerül be, ha érdemi előnyt ad, kompatibilis a Cloudflare Workers/TypeScript környezettel, aktívan karbantartott, megfelelő licencű, méretben és függőségekben elfogadható, és van rá tesztelhető adapter.
+4. Új dependency előtt rövid döntés: saját kód / meglévő csomag / új csomag / külső szolgáltatás, indoklás, licenc, biztonság, runtime kompatibilitás, lockfile és frissítési felelősség.
+5. Nem másolunk be teljes másik terméket vagy nagy UI-rendszert pusztán a fejlesztés gyorsítása miatt; csak a szükséges, licencelt, elszigetelt és karbantartható részeket használjuk.
+6. Külső mintakódot a saját auth, tenant-scope, domain validation, logging és tesztek megkerülése nélkül integrálunk.
+
+### 47.2. Első technikai realitás
+A jelenlegi `package.json` minimális függőségi felületet mutat, és a frontend jelentős része natív HTML/CSS/JavaScript; ezért nem feltételezünk automatikusan már telepített nagy frontend frameworköt vagy UI libraryt. A valós kódbázis és bundle-korlátok vizsgálata után modulonként döntünk arról, hogy a meglévő mintát bővítjük vagy célzott könyvtárat vezetünk be. A már működő Worker, D1, R2, Editor command/history és tesztstruktúra megőrzendő.
+
+### 47.3. Benchmark-tanulságok
+- StreamElements: vizuális overlay builder, alerts, chatbot/moderáció, custom widget és stream event alapú működés — hivatalos dokumentáció: https://docs.streamelements.com/overlays és https://docs.streamelements.com/chatbot/modules.
+- Fourthwall: brandelt shop, merch, tagság, digitális termék, kupon és külső platform-integrációk — https://fourthwall.com/features és https://fourthwall.com/memberships.
+- OBS Studio: az OBS WebSocket a 28-as verziótól beépített; távoli vezérlésnél jelszavas védelem kötelező — https://obsproject.com/kb/remote-control-guide.
+- TikTok Content Posting API: app approval, scope, creator consent, content preview, posting status és korlátozások szükségesek; nem tekinthető univerzális automatikus publikálási API-nak — https://developers.tiktok.com/docs/en/content-posting-api-get-started és https://developers.tiktok.com/docs/en/content-sharing-guidelines.
+- Discord: OAuth scope és bot permission külön kezelendő; botot nem szabad felhasználói önműködő fiókkal helyettesíteni — https://discord.com/developers/docs/topics/oauth2.
+
+Ezekből a termékekből képességmintát és bevált UX-t tanulunk, nem teljes rendszert másolunk. A SANCI9517 saját előnye a közös Brand Kit, a canonical domain/storage, az Editor, a provider-adapterek, a Stream Studio, a shop/community és a SANCI AI összekapcsolása.
+
+## 48. Fejlesztési pontok kiválasztásának szabálya
+
+A következő munka mindig a repository tényleges állapotából indul:
+1. Megnézzük az érintett route-ot, domain-szerződést, adatmodellt, UI-t, migrationt és tesztet.
+2. Megállapítjuk, mi működik már és mit lehet közvetlenül újrahasználni.
+3. Egyetlen, kicsi, felhasználói eredményt célzó fejlesztési pontot választunk.
+4. Megírjuk a változtatást és a szükséges teszteket; nem csak dokumentációt frissítünk.
+5. Lefuttatjuk a valós repositoryban elérhető releváns teszteket, typechecket és szükséges runtime/acceptance ellenőrzést.
+6. Rögzítjük a tényleges eredményt, a még nyitott hibát és a következő függő fejlesztési pontot.
+7. Nem állítunk PASS-t vagy készültséget futtatás/ellenőrzés nélkül.
+
+A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó sorrend szerint haladjon, miközben a teljes bővíthető Creator Platform célja megmarad.
+
