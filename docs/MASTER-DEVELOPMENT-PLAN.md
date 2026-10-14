@@ -1,6 +1,6 @@
 # HISTORICAL / SUPERSEDED — S9517-ULTIMATE-PLAN 1.0.0 — DO NOT EXECUTE
 
-> **Ez nem aktív fejlesztési terv.** 2026-10-14-től az egyetlen élő igazságforrás a `feature/f0-2-admin-global-shell` ágon található `docs/MASTER-DEVELOPMENT-PLAN.md`. Ennek a korábbi tervnek a 339 stabil capability-ID-je és a hiányzó részletes követelményei átvezetésre kerültek a canonical MASTER 2.77.7.A–2.77.7.C és GAP-01–GAP-14 részeibe. E dokumentum aktívpont- és státuszmezői történetiek, nem végrehajtási utasítások.
+> **Ez nem aktív fejlesztési terv.** 2026-10-14-től az egyetlen élő igazságforrás a `v2/foundation` ágon található `docs/MASTER-DEVELOPMENT-PLAN.md`. Ennek a korábbi tervnek a 339 stabil capability-ID-je és a hiányzó részletes követelményei átvezetésre kerültek a canonical MASTER 2.77.7.A–2.77.7.C és GAP-01–GAP-14 részeibe. E dokumentum aktívpont- és státuszmezői történetiek, nem végrehajtási utasítások.
 
 # S9517-ULTIMATE-PLAN — történeti termék-, architektúra- és végrehajtási terv
 
