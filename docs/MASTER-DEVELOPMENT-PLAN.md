@@ -5876,3 +5876,32 @@ A „MATCH candidate” csak a tervezett elemkategória jelenlétét jelenti; ne
 **Crosswalk-következtetés:** az E.3.4-02 és F.3-02 a spacing kategóriákat megtartja, de a negatív margin, shorthand-normalizálás, linked/unlinked oldalak és a külön vizuális box-model editor nincs egyértelműen lezárva. A vizuális box-model editor külön scope-döntés; nem tekinthető megvalósítottnak attól, hogy négy számmező létezik.
 
 **Státusz:** 9 követelmény tételesen leképezve; negative margin policy, shorthand semantics és visual box-model editor scope nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.137. P0.2 — Régi 2/D Display: tételes display-crosswalk (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, 2/D, 8 atomikus pont. **Canonical célpontok:** EDT-016 layout primitives; EDT-021/022 Property Registry/schema validation; EDT-023–026 responsive rules; EDT-034 renderer parity; WEB-004–008 draft/publish boundary; QA-005 accessibility. A CSS display érték, a visibility flag és a szerkesztőben elrejtett node három külön szemantika.
+
+| # | Régi display követelmény | Canonical célpont | Státusz | Lezárási / acceptance feltétel |
+|---:|---|---|---|---|
+| 1 | block | EDT-016, EDT-021/022 | PARTIAL | Csak olyan node-típuson választható, amelynél a display property része a schema-nak; a block formatting context és width behavior preview/public parity tesztelt. |
+| 2 | inline-block | EDT-016, EDT-021/022 | UNMAPPED / VERIFY | Külön typed optionként nincs egyértelműen bizonyítva; dönteni kell a támogatásról. Ha támogatott, baseline alignment, intrinsic width/height és inline flow interaction tesztelendő. |
+| 3 | inline | EDT-016, EDT-021/022 | PARTIAL / VERIFY | Inline flow csak kompatibilis elementeknél; width/height, margin/padding és nested content korlátozások megjelennek a UI-ban, invalid kombináció nem menthető. |
+| 4 | flex | EDT-016 | PLAN MATCH / VERIFY | Flex container vs flex item property külön schema; direction, wrap, gap, alignment, grow/shrink/basis és child order egymással konzisztens; layout-váltás nem veszít el beállításokat csendben. |
+| 5 | grid | EDT-016 | PLAN MATCH / VERIFY | Grid container vs grid item szerep különválasztva; tracks, gap, placement és responsive rules typed schema; unsupported CSS expression nem fogadható el szabad szövegként. |
+| 6 | none | EDT-021/022, EDT-026 | PARTIAL / DECISION | CSS display:none nem azonos az editor hide vagy responsive visibility flaggel. Dönteni kell, hogy 1.0-ban elérhető-e; ha igen, accessibility tree, layout collapse és responsive inheritance tesztelendő. |
+| 7 | display validation | EDT-022, EDT-016 | PARTIAL / RELEASE GATE | Display mode és node type/parent layout kompatibilitás schema-ban validált; flex/grid container-only és item-only mezők nem keverhetők; invalid mode nem kerülhet mentésbe. |
+| 8 | visibility/display különválasztás | EDT-014, EDT-021/022, EDT-026 | PARTIAL / RELEASE GATE | Legalább négy fogalom külön: editor-only hide, responsive visibility, CSS display/visibility és authorization/access control. A rejtett public elem nem válik ettől védetté; public renderer és accessibility tree viselkedés explicit. |
+
+#### Kötelező display-kontraktus
+
+1. **Typed display schema:** display mód csak deklarált enum lehet; arbitrary CSS string nem fogadható el. A container és item szerep külön property-csoport.
+2. **Display ≠ visibility ≠ authorization:** editor hide a szerkesztői munkafelületre, responsive visibility a viewportra, CSS display/visibility a layout/render tree-re, authorization a hozzáférésre vonatkozik. Egyik nem helyettesíti a másikat.
+3. **Layout-mode váltás:** block/inline/flex/grid közötti váltás előtt/után a felhasználó számára érthető, mely tulajdonságok maradnak meg, melyek válnak inaktívvá és melyek igényelnek explicit migrációt; silent data loss tilos.
+4. **Responsive behavior:** display override csak támogatott breakpointokon, explicit base/inherited/override indicatorrel és resettel. Egy mobil display változás nem írhatja át a desktop state-et.
+5. **Accessibility:** display:none és visibility változás esetén a focusability, tab order és accessibility tree szinkronban van a látható UI-val; editor-only overlay nem szivároghat a public rendererbe.
+6. **Tesztminimum:** block/inline/inline-block scope, flex/grid container/item, none vs editor hide vs responsive hide, invalid parent/node combination, breakpoint reset, save/reload, undo/redo és public renderer parity.
+
+**Crosswalk-következtetés:** az EDT-016 megfelelő canonical horgony a layout primitívekhez, de nem bizonyítja önmagában az inline-block/none konkrét támogatását vagy a négyféle elrejtés/hozzáférés közötti viselkedést. Az inline-block és CSS none külön scope/acceptance döntést igényel; visibility és authorization soha nem vonható össze.
+
+**Státusz:** 8 követelmény tételesen leképezve; inline-block/none scope és display/visibility/accessibility acceptance nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
