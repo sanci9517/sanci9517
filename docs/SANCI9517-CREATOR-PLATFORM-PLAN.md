@@ -7061,6 +7061,20 @@ A `0004_system_page_content.sql` történeti táblát hoz létre, míg a `0005_c
 
 **Elfogadási kapu:** viewer/editor/admin × own/shared/site/workspace connection mátrix; OAuth start/callback/replay/expired/session-switch/role-change negatív tesztek; disconnect CSRF és confirmation vizsgálat; provider-revoke retry és audit; a live schedule sync és connect elkülönített permission; diagnosztikai láthatóság. **TWITCH RBAC/OAUTH: OPEN / NOT PASS.** Nem történt kód-, jogosultság- vagy provider-kapcsolat módosítás.
 
+### 63.50.30. Történeti system-page adatmodell és kanonikus Page Model ütközés (2026-10-14)
+
+**Forrásref:** `936115a`; `migrations/0004_system_page_content.sql`, `0005_canonical_page_storage.sql`, `0006_canonicalize_legacy_pages.sql`, `0008_restore_canonical_standard_pages.sql`, `src/routes/public/system-pages.ts`, `public/assets/page-builder.js`, korábbi §63.50.25–26 HTML/API hivatkozási bizonyíték. Csak forrásolvasás; **nem** D1 adatlekérdezés, runtime teszt vagy bizonyított adatüresség.
+
+**Két eltérő, történetileg létező tárolási szerződés:**
+- A `0004_system_page_content.sql` létrehozza a `system_page_content(path PRIMARY KEY, content_json, updated_at)` táblát. **Nincs `site_id` és nincs draft/published revision szétválasztás**. A `publicSystemPagesRoute` kilenc whitelisted útvonalat kezel és ebből olvas, de a korábbi `src/index.ts` regisztrációs auditban nincs `/api/public/system-pages` útvonal; a jelenlegi publikus oldal a kanonikus `/api/public/pages` Page Modelt használja.
+- A `0005_canonical_page_storage.sql` kifejezetten különválasztja a `pages.content_json` aktuális draftot és a `pages.published_content_json` explicit publikált snapshotot. Ez a megtartandó 49.2 PAGE/REVISION szerződés; a §63.50.22 PATCH-publish jelölt eltérését továbbra is külön tesztelni kell.
+- A `0006_canonicalize_legacy_pages.sql` `legacy-%` azonosítójú `pages` rekordokat alakít át `sanci-document` struktúrára és publikált snapshotra, míg a `0008_restore_canonical_standard_pages.sql` `INSERT OR IGNORE` elven hét alapoldalt állít vissza `sanci-page-document` szerkezettel. A két történeti séma/verzió **nem** bizonyít egységes, migráció utáni runtime-állapotot; meglévő rekordokat a `0008` nem ír felül.
+- A `public/assets/page-builder.js` külön `SYSTEM` útvonallistát tartalmaz kilenc régi `.html` és gyökér URL-lel; ez a legacy URL-kompatibilitás vizsgálatánál releváns, **nem** bizonyít aktív betöltést.
+
+**Megőrzési/archiválási döntés: BLOCKED, amíg nincs adatbizonyíték.** A `system_page_content` tábla és a régi JS fájlok nem törölhetők pusztán azért, mert jelenleg nincs regisztrált API/fogyasztó: előbb helyi és remote D1 sor-, path- és tartalomleltár, esetleges eltérő oldaltartalom összevetése a kanonikus `pages` rekordokkal, ownership/migration/rollback terv, backup és negatív tesztek szükségesek. Külön vizsgálandó a `/twitch.html` → `/p/twitch` stb. redirect és az oldalslug változásainak SEO-kompatibilitása.
+
+**Következő kapu:** `system_page_content` és `pages` valós adatok összehasonlítása csak biztonságos read-only lekérdezéssel, valamint a 0006/0008 migrációk idempotencia és schema-version kompatibilitás tesztje; 9 régi URL → kanonikus cél tételes crosswalk. **LEGACY DATA RECONCILIATION: OPEN / NOT PASS.** Nem történt adat- vagy runtime-módosítás.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
