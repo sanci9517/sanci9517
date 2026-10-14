@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.61` — 156/156 első routing; **54.1–54.12 115/115 soronkénti specifikációs acceptance**; következő **54.13–54.16 41 tétel**, majd teljes szemantikai/forrásbizonyíték audit, különös tekintettel a 63.50.46 HIGH publikálási konfliktusra. A 156 első körös routing kész, de szemantikai és történeti kapu továbbra is nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll és a 63.50.46 HIGH kódaudit-blokkoló ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.62` — **156/156 soronkénti domain/fázis/pozitív-negatív specifikációs acceptance** rögzítve (63.50.59–62); **következő: teljes szemantikai gap/duplikált owner/fázis és HIGH publish/slug forráskód-tesztkapu audit**; történeti és runtime evidence továbbra is nyitott, különös tekintettel a 63.50.46 HIGH publikálási konfliktusra. A 156 első körös routing kész, de szemantikai és történeti kapu továbbra is nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll és a 63.50.46 HIGH kódaudit-blokkoló ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -7208,7 +7208,7 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 5. Minden sikeres audit-commit után a fejléc folytatási állapotát és a legutolsó bejegyzést egyeztetni; a következő munka **egyértelmű azonosítóval**, a még nyitott részhalmazzal és a PASS/NOT PASS határral legyen megadva. A commit SHA csak a GitHub által visszaadott tényleges eredmény alapján közölhető.
 6. Nem létező vagy nem visszanyert történeti forrást nem lehet rekonstruáltnak nevezni; a 396 ID, 22 modul, 156 review és 271 történeti H-ID számlálása nem runtime teszt. A fejlesztési fagyasztás az aktív kapu PASS-áig változatlan.
 
-**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.61 115/156 ITEM ACCEPTANCE SPEC / NEXT 54.13–54.16`. A 54.1–54.4 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.7–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
+**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.62 156/156 ITEM ACCEPTANCE SPEC / NEXT SEMANTIC GAP AND CODE GATE`. A 54.1–54.4 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.7–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
 
 ### 63.50.41. 54.2 Saját weboldal és Visual Editor: 15 checklist-tétel első körös routingja (2026-10-14)
 
@@ -7752,6 +7752,75 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 **Összesen:** 35/35 új specifikációs sor; kumulált **115/156**. Külön trust boundary: FAN_IDENTITY ≠ creator IDENTITY; ORDER ≠ SaaS BILLING_PLAN; ANALYTICS csak derived metric; AUTOMATION nem ír közvetlen idegen domain rekordot. Payment/tax/legal és AI provider/runtime acceptance **OPEN**.
 
 **Következő:** 54.13–54.16 soronkénti acceptance, utána 156 sor konzisztencia- és hiánylista; teljes tervkapu NOT PASS.
+
+### 63.50.62. Második kör VI: 54.13–54.16 AI/localization/security/developer tételes acceptance (2026-10-15)
+
+**Forrás:** 54.13–54.16 checklist, 5. domain, 49.15/49.19/49.20–22 modul, 63.38 roadmap. Minden acceptance tervezett és **nem** runtime PASS.
+
+#### 54.13 — 12 tétel
+
+| Checklist sor | Domain owner | Fázis | Pozitív acceptance (terv) | Negatív acceptance (terv) |
+| --- | --- | --- | --- | --- |
+| 54.13#1 AI Control Center: provider/model, költségkeret, kvóta, retention, adatforrás és stop switch. | AI_OPERATION | F10 | Provider/quota/stop switch auditálható | Budget limit után nincs AI call |
+| 54.13#2 Projekt-/brandkontextus jogosultsággal és megtekinthető forrásokkal. | AI_OPERATION, IDENTITY | F10 | Permission-aware context provenance | Cross-site context leak tiltott |
+| 54.13#3 Website Designer: oldal/komponens/dizájn/responsive/SEO/accessibility javaslat. | AI_OPERATION, PAGE, DESIGN_SYSTEM | F10 | Javaslat diff/preview az Editorban | AI nem publikál magától |
+| 54.13#4 Live Coach: opt-in technikai jelzések, pillanatjelölés és stream-/chat-összegzés. | AI_OPERATION, LIVE_STATE | F10 | Opt-in és forrás-időbélyeg | Consent nélkül nincs stream/chat ingest |
+| 54.13#5 Content Producer: transcript, clip, felirat, fordítás, thumbnail, cím és platformvariáns. | AI_OPERATION, CONTENT | F10 | Transcript/clip draft provenance | Nem publikál rights approval nélkül |
+| 54.13#6 Community Assistant: FAQ, összegzés, moderációs javaslat és tagsági művelet-előkészítés. | AI_OPERATION, COMMUNITY | F10 | FAQ/moderation javaslat és emberi review | AI nem bannol automatikusan |
+| 54.13#7 Business Analyst: tartalom/kampány elemzés, hipotézis, mérhető teszt. | AI_OPERATION, ANALYTICS | F10 | Hipotézis forrás és confidence | Bizonyítatlan növekedési ígéret tiltott |
+| 54.13#8 Automation Builder: természetes nyelvből workflow-draft, szimuláció és diff. | AI_OPERATION, AUTOMATION | F10 | Workflow draft/simulation/diff | AI nem aktivál éles workflowt |
+| 54.13#9 Kép-/grafika-/hang-/videógenerálás megfelelő külső modellel/szolgáltatóval, licenc- és költségkorláttal. | AI_OPERATION, RESOURCE | F10 | Generation license és quota megőrzött | Jog nélküli generált asset nem public |
+| 54.13#10 AI-művelet domain API-n át; kockázati szint, preview, jóváhagyás, napló és visszaállítás. | AI_OPERATION, AUDIT | F10 | Domain command approval/rollback audit | AI közvetlen D1 write tiltott |
+| 54.13#11 Generált tartalom jelölése, forrás és bizonytalanság, felhasználói visszajelzés. | AI_OPERATION, CONTENT | F10 | AI output provenance és user feedback | Becsült adat nem állítható biztosnak |
+| 54.13#12 Manuális, AI nélküli út minden alapvető termékfolyamathoz. | AI_OPERATION + minden owner | F10 | Manual fallback végigjárható | AI outage nem blokkol alapfunkciót |
+
+#### 54.14 — 8 tétel
+
+| Checklist sor | Domain owner | Fázis | Pozitív acceptance (terv) | Negatív acceptance (terv) |
+| --- | --- | --- | --- | --- |
+| 54.14#1 Admin és publikus web külön nyelvi beállítással. | LOCALIZATION, SETTINGS | F0/F1 | Admin és public locale független | Admin nyelvváltás nem ír public tartalmat |
+| 54.14#2 Magyar elsődleges nyelv, további nyelvek fokozatos bevezetése. | LOCALIZATION | F0/F1 | HU fallback és locale preference | Hiányzó fordítás nem blank UI |
+| 54.14#3 Locale-onkénti oldal-/CMS-tartalom, menü, média, alt text, SEO és Open Graph. | LOCALIZATION, PAGE, RESOURCE, SEO_PUBLICATION | F3 | Locale-specific content és SEO preview | Más nyelv draftja nem public |
+| 54.14#4 Lokalizált slug/URL, hreflang/canonical szabályok és nyelvi fallback. | LOCALIZATION, SEO_PUBLICATION | F3 | hreflang/canonical/slug valid | Cross-locale redirect loop tiltott |
+| 54.14#5 Dátum/idő/pénznem/szám lokalizáció, időzóna és nyári időszámítás. | LOCALIZATION, SCHEDULE | F0/F3 | Timezone/DST és pénznem helyes | DST ambiguity nem ír hibás időpontot |
+| 54.14#6 RTL layout, billentyűzet, font fallback és hosszabb fordítások tesztje. | LOCALIZATION, DESIGN_SYSTEM | F3 | RTL és hosszú szöveg responsive | RTL fókuszsorrend nem hibás |
+| 54.14#7 Fordítási memória/szószedet és AI-fordítás emberi jóváhagyással. | LOCALIZATION, AI_OPERATION | F3/F10 | Glossary és human approval | AI fordítás nem implicit publish |
+| 54.14#8 Nyelvváltó, automatikus nyelvajánlás és felhasználói választás megőrzése. | LOCALIZATION, SETTINGS | F3 | Language switch preference perzisztens | Automatikus ajánlás nem írja felül választást |
+
+#### 54.15 — 13 tétel
+
+| Checklist sor | Domain owner | Fázis | Pozitív acceptance (terv) | Negatív acceptance (terv) |
+| --- | --- | --- | --- | --- |
+| 54.15#1 Profil, site/workspace, locale, timezone, dátum/pénznem és preferenciák. | IDENTITY, SITE, WORKSPACE, SETTINGS | F0/F1/F4 | Scoped settings read/write | Más site preference nem írható |
+| 54.15#2 Szerepek: owner/admin/editor/moderator/analyst/commerce és modulonkénti engedély. | IDENTITY, WORKSPACE | F1/F4 | Role permission matrix szerveroldalon | UI hidden ≠ authorization |
+| 54.15#3 Szerveroldali authorization, site/tenant izoláció és minimális jogosultság. | IDENTITY, SITE | F0–F11 | Tenant ownership minden API-n | Cross-tenant read/write tiltott |
+| 54.15#4 Session, 2FA/SSO később, secret rotation, rate limit és gyanús aktivitás. | IDENTITY, AUDIT | F0/F4/F11 | Session revoke és MFA recovery | Lejárt session nem módosíthat |
+| 54.15#5 Titok/token/payment adat redakció; titkosított token storage. | INTEGRATION, IDENTITY | F0–F11 | Secret redaction és rotation | Token plaintext logban tiltott |
+| 54.15#6 Consent, cookie/privacy, retention, export/delete és adatfeldolgozók. | SETTINGS, FAN_IDENTITY | F4/F8 | Consent/retention/export/delete | Törlés után derived index nem őriz PII-t |
+| 54.15#7 Backup, restore próba, verziózott mentés, import/export és disaster recovery. | BACKUP, AUDIT | F0 minimum/F11 | Restore drill és snapshot integrity | Hibás backup nem jelölhető sikeresnek |
+| 54.15#8 Health, job queue, webhook, API-quota, error log és audit log. | AUDIT, INTEGRATION, AUTOMATION | F0–F11 | Health/quota/log diagnosztika | PII/token log leak tiltott |
+| 54.15#9 Idempotencia, retry, timeout, cache invalidation, stale-data és partial-failure kezelés. | AUTOMATION, INTEGRATION | F0–F11 | Retry idempotency/cache freshness | Duplicate webhook nem dupla side effect |
+| 54.15#10 Undo/redo, revision diff, restore és törlés előtti függőségi vizsgálat. | PAGE, REVISION, RESOURCE | F0/F2 | Undo/restore és usage warning | Restore nem implicit publish |
+| 54.15#11 WCAG 2.2 AA cél, reduced motion, screen reader, kontraszt, fókusz és touch target. | DESIGN_SYSTEM, PAGE | F0–F11 | WCAG és reduced motion teszt | Keyboard trap és inaccessible control tiltott |
+| 54.15#12 Mobil/tablet/desktop, gyenge hálózat, offline-jelzés és adatvesztés elleni védelem. | PAGE, IDENTITY | F0–F11 | Mobile/slow network save recovery | Offline után silent overwrite tiltott |
+| 54.15#13 Tesztek: domain, integration, authorization, migration, UI, accessibility, responsive, E2E és smoke. | AUDIT + minden owner | F0–F11 | CI/E2E/smoke evidence per release | Teszt nélküli PASS tiltott |
+
+#### 54.16 — 8 tétel
+
+| Checklist sor | Domain owner | Fázis | Pozitív acceptance (terv) | Negatív acceptance (terv) |
+| --- | --- | --- | --- | --- |
+| 54.16#1 Dokumentált API, webhook registry, API-key kezelés, tesztelő és sandbox. | DEVELOPER_API | F11 | API keys scoped revoke és sandbox | Revoked key nem működik |
+| 54.16#2 Extension/widget/overlay manifest, schema, permission, verzió és kompatibilitás. | EXTENSION, STREAM_TOOLS | F11 | Manifest permission és compatibility | Unsigned/unsafe plugin nem települ |
+| 54.16#3 Eredet/licenc/aláírás, sandbox, felülvizsgálat, frissítés, eltávolítás és visszavonás. | EXTENSION, AUDIT | F11 | Provenance/license/rollback | Visszavont extension nem fut |
+| 54.16#4 Template/component/overlay/workflow marketplace későbbi fázisban. | EXTENSION, DESIGN_SYSTEM | F11 | Marketplace moderation és license | Unreviewed paid asset nem listázott |
+| 54.16#5 Több site/workspace, aktív workspace választó, csapatmeghívás és szerepek. | WORKSPACE, IDENTITY | F4 alap/F11 | Invite/role/site switch | Cross-site membership escalation tiltott |
+| 54.16#6 Agency/studio mód, ügyfélhozzáférés, közös sablonok és jóváhagyás. | WORKSPACE, DESIGN_SYSTEM | F11 | Agency approval és shared template scope | Ügyfél privát asset nem látszik másiknak |
+| 54.16#7 Későbbi SaaS billing, csomag, használati limit, számla, lemondás és adat-export. | BILLING_PLAN, WORKSPACE | F11 | Plan quota/cancel/export lifecycle | SaaS billing nem Store ORDER |
+| 54.16#8 Tenant izoláció, migráció, skálázás, adatrezidencia és költségfelügyelet. | WORKSPACE, AUDIT, BACKUP | F11 | Tenant isolation, restore, residency audit | Cross-tenant backup restore tiltott |
+
+**Összesen:** 41/41 új sor; 54.1–54.16 **156/156 sor** most tételes domain, F-fázis, pozitív és negatív *specifikációs* acceptance mezővel szerepel a 63.50.59–62 fejezetben. A 63.50.39–56 ID-routing külön megőrzött; a 63.12–15 eredeti tételes megfeleltetés továbbra is irányadó a meglévő ID-k szempontjából. A forráskód, test, browser, CI, éles runtime bizonyíték **nem** keletkezett ettől a dokumentálástól. A 271 történeti H-ID szemantikai auditja és 00/A / 00.9.6.B forrás **OPEN**.
+
+**Következő audit:** a 156 tétel között *bizonyítható szemantikai gap*, duplikált owner, elcsúszott F-fázis és a HIGH publish/slug kódblokk konkrét forráskód/test gate ellenőrzése. A teljes terv továbbra is IN PROGRESS / NOT PASS; a fejlesztés fagyasztott.
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
