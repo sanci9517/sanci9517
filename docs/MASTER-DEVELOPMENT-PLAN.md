@@ -5171,3 +5171,15 @@ A §37.16, §37.17 és §41.2 egyes mondatai a 2026-10-13-i, 359-ID-s registry-s
 **00.9.6.B forráskeresés:** a GitHub fájlkeresésben a `00.9.6.B` és `00.9.6` keresőkifejezések, valamint a commitkeresésben ugyanezek és a történeti ledgerre vonatkozó keresőkifejezés nem adtak találatot. Ez kizárólag a jelenleg elérhető keresési index eredménye; **nem** bizonyítja, hogy a szakasz nem létezett, vagy nincs meg egy nem indexelt commitban, archivált fájlban vagy másik ágon. A teljes eredeti `00.9.6.B` szöveg ezért továbbra is **UNRECOVERED / OPEN**, és további commit-/snapshot-szintű vizsgálat szükséges.
 
 **Státusz:** H34 strukturális, kétirányú lefedettségi ellenőrzése **PASS a megnevezett történeti snapshotra**; teljes történeti szemantikai reconciliáció **OPEN**; `00.9.6.B` forrás-visszakeresés **OPEN**. P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+### 41.3.113. P0.2 — Második körös archív tervfájl- és verziónév-keresés a hiányzó 00.9.6.B forráshoz (2026-10-14)
+
+**Vizsgált források:** a `docs/archive/MASTER-DEVELOPMENT-PLAN-2026-10-13.md` teljes szövege, valamint a `docs/archive/plans/` alatt jelenleg elérhető mind a nyolc tervfájl: `MASTER-CURRENT-STATUS.md`, `MASTER-FINAL-ROADMAP.md`, `PLAN-AMENDMENT-EDITOR-UNIFICATION.md`, `SANCI-MASTER-PLAN.md`, `ULTIMATE-PLATFORM-DIRECTION-2026-09-16.md`, `V2-BLUEPRINT.md`, `VISUAL-EDITOR-ARCHITECTURE.md` és `visual-editor-roadmap.md`. A GitHub repository fájlkeresését és commitkeresését is futtattam a `00.9.6.B`, `00.9.6.A`, `00.9.6.C` és `MASTER-2.70` kifejezésekre.
+
+**Eredmény:** az archív MASTER-ben a teljes `00.9.6.C` (MASTER-2.71), `00.9.6.D` (MASTER-2.72), valamint `00.9.6.E/F` (MASTER-2.74) szakaszok szerepelnek, de külön `00.9.6.B` fejezetcím vagy `MASTER-2.70` jelölés nem található. A nyolc kapcsolódó tervfájlban sem találtam explicit `00.9.6.B`, `00.9.6.A` vagy `MASTER-2.70` hivatkozást. A GitHub keresője a fenti verzió-/fejezetkifejezésekre nem adott találatot.
+
+**Következtetés és korlát:** a keresés leszűkíti az ellenőrzött, jelenleg elérhető archív tervanyagok körét, de nem zárja ki, hogy a hiányzó szöveg más nevű régi commitban, törölt fájlban, pull request mellékletében/kommentjében vagy külső mentésben szerepel. A C/D/E/F fejezetek nem tekinthetők a B fejezet helyettesítőjének, és a MASTER-2.70 tartalma nem rekonstruálható megbízhatóan pusztán a szomszédos verziószámokból.
+
+**Következő vizsgálat:** a teljes commit-történetben a `docs/MASTER-DEVELOPMENT-PLAN.md` és a `docs/archive/**` útvonalak korábbi állapotait kell tovább vizsgálni, különös tekintettel a C/D/E/F első megjelenése előtti commitokra és azokra a commitokra, amelyek a `00.9.6` szakaszcsaládot átrendezték vagy lecserélték. A már rögzített 44 egyedi branch-head fa útvonal-ellenőrzését nem ismétlem meg; a következő körnek commit-/blob-szintű tartalmi vizsgálatnak kell lennie.
+
+**Státusz:** a második archív fájlkör ellenőrizve; eredeti `00.9.6.B` tartalom továbbra is **UNRECOVERED / OPEN**. P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
