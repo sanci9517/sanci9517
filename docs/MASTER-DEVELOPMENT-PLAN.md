@@ -5292,3 +5292,22 @@ Az `aedb2eaab244` commit fa-struktúrájában a következő utak már jelen vann
 **Értelmezési korlát:** ez azt igazolja, hogy az archivált tervfájlok a 2026-09-17-i egységesítési commitban már jelen voltak. A megadott útvonalakhoz a vizsgált ágon a lekérdezés csak ezt az egy commitot adta vissza; ezért az API útvonal-előzménye önmagában nem rekonstruálja a fájlok esetleges korábbi, más néven vagy más útvonalon tárolt eredetét. A commit szülőjének teljes fájafáját és az elődcommit diffjét kell tovább ellenőrizni, különösen az esetleges régi útvonalak, törlések és átnevezések miatt. A B forrásának meglétéről vagy nemlétéről ebből még nem vonok le következtetést.
 
 **Státusz:** a helyes ágparaméterrel végzett útvonal-előzmény ellenőrzés dokumentálva; további régi útvonalak keresése nyitott; `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.120. P0.2 — Az egységesítési commit tényleges rename-diffje és közvetlen előd-MASTER (2026-10-14)
+
+**Új, konkrét fájltörténeti bizonyíték:** a `aedb2eaab244` (`docs: unify project plans into single master plan`) commitot a közvetlen szülőjével (`87b6f0bb71cd96646b6a501ab85c242386a1124e`) összehasonlítottam. A GitHub compare eredménye szerint a MASTER módosítása mellett nyolc tervfájl útvonala **rename** státusszal került az archívumba, tartalmi hozzáadás/törlés nélkül a rename-sorokban:
+- `docs/MASTER-CURRENT-STATUS.md` → `docs/archive/plans/MASTER-CURRENT-STATUS.md`;
+- `docs/MASTER-FINAL-ROADMAP.md` → `docs/archive/plans/MASTER-FINAL-ROADMAP.md`;
+- `docs/PLAN-AMENDMENT-EDITOR-UNIFICATION.md` → `docs/archive/plans/PLAN-AMENDMENT-EDITOR-UNIFICATION.md`;
+- `docs/SANCI-MASTER-PLAN.md` → `docs/archive/plans/SANCI-MASTER-PLAN.md`;
+- `docs/ULTIMATE-PLATFORM-DIRECTION-2026-09-16.md` → `docs/archive/plans/ULTIMATE-PLATFORM-DIRECTION-2026-09-16.md`;
+- `docs/V2-BLUEPRINT.md` → `docs/archive/plans/V2-BLUEPRINT.md`;
+- `docs/VISUAL-EDITOR-ARCHITECTURE.md` → `docs/archive/plans/VISUAL-EDITOR-ARCHITECTURE.md`;
+- `docs/visual-editor-roadmap.md` → `docs/archive/plans/visual-editor-roadmap.md`.
+
+A közvetlen előd `docs/MASTER-DEVELOPMENT-PLAN.md` fájlja 1 792 soros, blob SHA-ja `235165980be8a522860ae442e79a705b26127429`. Ebben a snapshotban a szó szerinti `00.9.6.B`, `MASTER-2.70`, `00/A`, `H19` és `00.9.6.C` kifejezésekre végzett célzott keresés nem adott találatot. Ez a konkrét, 2026-09-17 előtti közvetlen előd snapshotjára vonatkozik; nem zárja ki más fájlban, más elnevezéssel vagy másik történeti forrásban lévő funkciótartalom létezését.
+
+**Következtetés:** most már igazolható, hogy a korábbi roadmapek és editor-tervek nem törlésként tűntek el az egységesítési commitban, hanem Git által felismert átnevezéssel kerültek az `docs/archive/plans/` alá. A MASTER maga jelentősen módosult (1 114 hozzáadás, 1 568 törlés). A diff nem bizonyítja, hogy a hiányzó B-fejezet tartalma ezek valamelyikében volt; csak a megnevezett nyolc fájl útvonalváltozását bizonyítja. A következő célzott feladat a közvetlen előd és az archív tervfájlok tartalmi diffje, majd a H19–H34 funkciók tételes szemantikai megfeleltetése a jelenlegi stabil ID-registryvel.
+
+**Státusz:** nyolc történeti tervfájl rename-diffje dokumentálva; `00.9.6.B` forrása továbbra is **UNRECOVERED / OPEN**; teljes történeti szemantikai reconciliáció **OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
