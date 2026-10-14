@@ -4770,3 +4770,68 @@ A route-/schema-leltárban nem látható dedikált Community/Fan Identity, Produ
 
 **Státusz: IN PROGRESS / NOT PASS.** A következő ID-szelet: ANL-001–010, CAM-001–009, AUT-001–014 és AI-001–021, külön mérési esemény, kampány, workflow és AI action boundaries.
 
+### 63.35. ANL-001–010, CAM-001–009, AUT-001–014, AI-001–021 — Analytics, Campaigns, Automation és SANCI AI
+
+A jelenlegi route-/migration-/test-leltárban nem látható dedikált analytics event/read model, campaign/deal, automation workflow/run engine vagy AI provider/action/approval API. Ez a mátrix a tervezett szerződéseket rögzíti, nem állít meglévő implementációt.
+
+| ID | Owner | Státusz és kötelező acceptance |
+|---|---|---|
+| ANL-001 | ANALYTICS | Event taxonomy/schema registry nem bizonyított; versioned names/units/source/consent és deprecation policy kell, trigger routing AUT-001-től külön. |
+| ANL-002 | ANALYTICS | Privacy-safe web analytics nincs bizonyítva; consent, IP/PII minimization, retention, bot filtering and export authorization. |
+| ANL-003 | ANALYTICS | Stream analytics read model nincs bizonyítva; provider permissions, metric unit/window/source/freshness and missing-data state. |
+| ANL-004 | ANALYTICS | Content analytics nincs bizonyítva; provider metrics join canonical CNT IDs, never mutate content records. |
+| ANL-005 | ANALYTICS | Commerce analytics nincs bizonyítva; derive from confirmed order events, refund/currency normalization and privacy policy. |
+| ANL-006 | ANALYTICS | Community analytics nincs bizonyítva; aggregate/minimize member data, consent and abuse/bot filtering. |
+| ANL-007 | ANALYTICS | Date compare/filter/export API nincs bizonyítva; timezone boundaries, CSV/format safety, scoped exports. |
+| ANL-008 | ANALYTICS | Source/freshness/unit/missing state nincs bizonyítva; unknown is not zero, stale/estimated data explicitly labelled. |
+| ANL-009 | ANALYTICS + SEC | Consent/retention/bot filtering service nincs bizonyítva; opt-out, deletion propagation and retention enforcement. |
+| ANL-010 | ANALYTICS | Anomaly detection/alerts nincs bizonyítva; explainable threshold, false-positive handling and human-readable source. |
+| CAM-001 | CAMPAIGN | Campaign CRUD/status/goals schema/API nincs bizonyítva; state machine, owner, dates and permissions. |
+| CAM-002 | CAMPAIGN + ANALYTICS | UTM/attribution service nincs bizonyítva; canonical campaign IDs, attribution window and consent policy. |
+| CAM-003 | CAMPAIGN | Asset/content/product relationship model nincs bizonyítva; references only, no duplicated domain records. |
+| CAM-004 | CAMPAIGN/RESOURCE | Media-kit generator/export nincs bizonyítva; public/private field separation, asset rights, version and expiry. |
+| CAM-005 | SPONSORSHIP | Lead/deal/rate-card model nincs bizonyítva; private access, approval and no AI-generated binding offer without review. |
+| CAM-006 | SPONSORSHIP | Deliverable/deadline/reminder workflow nincs bizonyítva; timezone, reminder idempotency and completion audit. |
+| CAM-007 | ANALYTICS/CAMPAIGN | Sponsor campaign report nincs bizonyítva; source-labelled metrics, access control and export. |
+| CAM-008 | SPONSORSHIP/SEC | Private business documents/permission not proven; scoped access, download expiry, audit and deletion. |
+| CAM-009 | SPONSORSHIP/ORDER | Invoice/payment status unresolved; only after legal/accounting/provider decision, never as a fabricated local payment state. |
+| AUT-001 | AUTOMATION | Trigger-event catalog/routing contract not proven; consume versioned domain events, separate from ANL measurement taxonomy. |
+| AUT-002 | AUTOMATION | Trigger catalogue/UI not proven; typed events, source ownership and supported trigger capability. |
+| AUT-003 | AUTOMATION | Condition/filter engine not proven; safe typed expression tree, limits and no arbitrary code execution. |
+| AUT-004 | AUTOMATION | Action catalog/execution API not proven; allowlisted canonical domain commands, server permission re-check per run. |
+| AUT-005 | AUTOMATION | Delay/schedule/timezone engine not proven; durable jobs, DST, cancellation and bounded scheduling horizon. |
+| AUT-006 | AUTOMATION | Idempotency/deduplication not proven; stable event/run/action keys and duplicate delivery tests. |
+| AUT-007 | AUTOMATION | Retry/backoff/dead-letter not proven; bounded retry, jitter, provider Retry-After, dead-letter review. |
+| AUT-008 | AUTOMATION | Run history/diagnostics not proven; input/output redaction, correlation ID and safe recovery; SEC-010 owns security audit events. |
+| AUT-009 | AUTOMATION | Dry-run/preview/approval not proven; show exact planned actions/side effects before execution. |
+| AUT-010 | AUTOMATION | Enable/pause/version/clone lifecycle not proven; immutable published versions and pause stops future runs. |
+| AUT-011 | AUTOMATION | Cycle detection/rate limit not proven; bounded graph traversal, per-tenant quotas and runaway-loop kill switch. |
+| AUT-012 | AUTOMATION | Provider outage/recovery not proven; circuit breaker, retry policy, partial failure and manual fallback. |
+| AUT-013 | AUTOMATION | Automation template library not proven; versioned template schema, safe import and explicit review. |
+| AUT-014 | AUTOMATION/SEC | Safe cross-domain actions not proven; owner API/command only, least privilege, idempotency and audit. |
+| AI-001 | AI_OPERATION | AI provider/model registry not proven; capability/region/data handling/cost/lifecycle, separate from INT-018 social providers. |
+| AI-002 | AI_OPERATION | Prompt/instruction version/evaluation not proven; versioned prompt, regression corpus, rollback and safety review; separate from DSN-014. |
+| AI-003 | AI_OPERATION | Intent/task planner not proven; typed plan, bounded steps, cancellation and transparent uncertainty. |
+| AI-004 | AI_OPERATION/SEC | Context selection/privacy filter not proven; minimum required data, site/permission filter and PII redaction. |
+| AI-005 | AI_OPERATION | Structured action schema not proven; strict schema validation, allowlisted actions and reject unknown fields. |
+| AI-006 | AI_OPERATION/SEC | Permission/ownership checker not proven; server-side authorization re-run immediately before each action. |
+| AI-007 | AI_OPERATION | Diff/preview/approval workflow not proven; exact changes, affected pages/records, risks and approve/reject. |
+| AI-008 | AI_OPERATION | Canonical API/command execution not proven; never direct-write business tables or bypass domain validation. |
+| AI-009 | AI_OPERATION | Verify/audit/version/rollback not proven; read-after-write checks and compensating action when safe. |
+| AI-010 | AI_OPERATION | Cost/quota/usage/error tracking not proven; provider/token cost, limits, failure states and user-visible usage. |
+| AI-011 | AI_OPERATION → PAGE/CONTENT | Website assistant not proven; suggestions/drafts by default, diff and approval before public changes. |
+| AI-012 | AI_OPERATION → SEO/SEC/LOC | SEO/accessibility/localization suggestions not proven; source evidence, no guaranteed ranking claims, human review. |
+| AI-013 | AI_OPERATION → CONTENT | Content title/script/description/thumbnail brief not proven; draft artifacts, platform limits and rights review. |
+| AI-014 | AI_OPERATION → CONTENT | Transcript/chapter/highlight candidates not proven; timestamps/confidence, human review and content API storage. |
+| AI-015 | AI_OPERATION → LIVE_STATE | Stream diagnostics/summary not proven; only supported provider data, source/freshness and privacy controls. |
+| AI-016 | AI_OPERATION | Specialist agent roles not proven; shared policy/permission/cost caps, no independent authority escalation. |
+| AI-017 | AI_OPERATION | AI Control Center/approval queue not proven; queue state, actor, expiration, approve/reject and audit. |
+| AI-018 | AI_OPERATION/SEC | Prompt injection/untrusted-content tests not proven; hostile webpage/chat/content corpus and tool-output isolation. |
+| AI-019 | AI_OPERATION/SEC | Human approval policy not proven; public/destructive/financial actions always require explicit approval and revalidation. |
+| AI-020 | PRODUCT/QA | AI-free fallback not proven; every critical manual workflow must work with AI disabled/provider outage. |
+| AI-021 | AI_OPERATION/RESOURCE | Multimodal generation adapters not proven; provider capability, rights/safety checks, cost limit, asset provenance and human review. |
+
+**Kanonikus végrehajtási lánc:** ANALYTICS mérési eseményt és riportot birtokol; CAMPAIGN üzleti kampányt/dealt birtokol; AUTOMATION eseményből engedélyezett actiont hajt végre; AI tervet/javaslatot készít és jóváhagyott canonical commandokat kér. Ezek között explicit versioned event/API contract legyen. Egy analytics event nem automatikusan workflow trigger, egy AI-javaslat nem domain state, és egy workflow-run nem helyettesíti a security audit logot.
+
+**Státusz: IN PROGRESS / NOT PASS.** Következő ID-szelet: SEC-001–012, OPS-001–011, QA-001–010, LOC-001–006 és TEAM-001–007.
+
