@@ -1,3 +1,5 @@
+**HISTORICAL / SUPERSEDED STATUS SNAPSHOT — NOT AN ACTIVE PLAN.** A 2026-09-17 state record only. The sole active execution source is `feature/f0-2-admin-global-shell:docs/MASTER-DEVELOPMENT-PLAN.md`; historical capability and gate references must be interpreted through that file's current ACTIVE index and 2.77.7.C source reconciliation.
+
 # Sanci9517 — MASTER CURRENT STATUS
 
 **Dátum:** 2026-09-17  
