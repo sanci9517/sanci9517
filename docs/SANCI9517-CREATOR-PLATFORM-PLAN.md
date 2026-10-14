@@ -5804,3 +5804,93 @@ A 63.41–63.46 fejezetekben elkészült 44 Editor-kártyán gépi ellenőrzés 
 
 **Kötelező következő lépés:** előbb normalizálni kell a meglévő 44 EDT-kártyát a teljes, külön mezős sablonra, és csak utána bővíteni a WEB modult. Ez elkerüli, hogy 396 funkción keresztül ugyanazt a mezőhiányt másoljuk tovább. A kanonikus aktív pont továbbra is PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY; F0 implementációs kapu nem nyílt meg.
 
+### 63.48. Teljes mezős normalizálás — EDT-001–006 első szelet
+
+Ez a szakasz a 63.41 kártyáit kiegészíti a 25. fejezet hiányzó, különálló mezőivel. Az itt megadott mezők az adott ID kártyájának normatív kiegészítései; a korábbi összevont címkék nem jelentenek külön, teljes mezőt. A fázis azonos a 63.38 szerinti F0 core besorolással; külön priority érték nincs bizonyítva, ezért azt nem találom ki.
+
+#### EDT-001 — külön mezők
+- **ID és név:** EDT-001 — Verziózott Page Model / document schema.
+- **Belépési pont:** Editor v2 document lifecycle.
+- **Műveletek:** létrehozás, validálás, szerkesztés, save, reload és schema-version reject.
+- **Domain owner:** EDITOR / Page Model.
+- **Kanonikus adatforrás:** Page Model document + pages.content_json/editor_revisions; API round-trip még nyitott.
+- **Phase/priority:** F0 core; priority külön kiosztása OPEN.
+- **Menu/surface:** Admin → Editor v2; backend page/revision API.
+- **Implementation point:** public/editor-v2/core/schema.js; src/core/page-model.ts; src/routes/admin/editor.ts.
+- **Negative tests:** unsupported schema version, invalid root, orphan/cycle, cross-site page ID, oversized document.
+- **Live/user acceptance:** UNVERIFIED — valódi mentés/reload és böngészős acceptance nincs rögzítve.
+- **Known issues:** schema migration/backward compatibility és teljes DB-backed round-trip nincs bizonyítva.
+- **Next action:** teljes persistence round-trip és schema compatibility tesztek specifikálása.
+
+#### EDT-002 — külön mezők
+- **ID és név:** EDT-002 — Page Model hierarchia és szerkezeti invariánsok.
+- **Belépési pont:** Editor v2 canvas, Layers és schema validation.
+- **Műveletek:** node add, group/ungroup, duplicate, reparent, reorder, delete és validálás.
+- **Domain owner:** EDITOR / Page Model validation.
+- **Kanonikus adatforrás:** Page Model rootId/nodes/parentId/children.
+- **Phase/priority:** F0 core; priority külön kiosztása OPEN.
+- **Menu/surface:** Admin → Editor v2 canvas/Layers; save/publish API boundary.
+- **Implementation point:** public/editor-v2/core/schema.js; core/validation.js; core/commands.js.
+- **Negative tests:** duplicate ID, orphan, missing child, parent mismatch, cycle, invalid container, root delete/reparent, cross-site page.
+- **Live/user acceptance:** UNVERIFIED — a core tesztek nem fedik le az összes UI/API negatív utat.
+- **Known issues:** teljes negatív mátrix és server-side save/publish validation parity nincs lezárva.
+- **Next action:** invariánsok minden save/publish belépési ponton és a teljes negatív tesztmátrix.
+
+#### EDT-003 — külön mezők
+- **ID és név:** EDT-003 — Canonical command-only mutation.
+- **Belépési pont:** Editor v2 canvas, Inspector, Layers és toolbar actions.
+- **Műveletek:** dokumentummódosítások command registry-n keresztül, validálás, history és dirty-state frissítés.
+- **Domain owner:** EDITOR / command engine.
+- **Kanonikus adatforrás:** Editor state + Page Model; UI nem birtokol külön dokumentummodellt.
+- **Phase/priority:** F0 core; priority külön kiosztása OPEN.
+- **Menu/surface:** Admin → Editor v2; public renderer csak olvas.
+- **Implementation point:** public/editor-v2/core/commands.js; core/state.js; app.js.
+- **Negative tests:** direct mutation megkerülése, tiltott ID/parent/children patch, invalid command payload, locked node, failure utáni állapoteltérés.
+- **Live/user acceptance:** UNVERIFIED — minden UI write-handler command coverage nincs bizonyítva.
+- **Known issues:** teljes UI handler→command térkép hiányzik.
+- **Next action:** direct mutation audit és handlerenkénti command coverage.
+
+#### EDT-004 — külön mezők
+- **ID és név:** EDT-004 — Atomic batch és history transaction.
+- **Belépési pont:** Editor v2 composite actions/command engine.
+- **Műveletek:** batch indítás, atomic/non-atomic végrehajtás, commit és rollback.
+- **Domain owner:** EDITOR / transaction + history engine.
+- **Kanonikus adatforrás:** Page Model snapshot, selection, history és persistence state.
+- **Phase/priority:** F0 core; priority külön kiosztása OPEN.
+- **Menu/surface:** Editor v2 belső command layer; UI-ból összetett műveletek.
+- **Implementation point:** public/editor-v2/core/commands.js; tests/core.test.js.
+- **Negative tests:** középső batch lépés hibája, nested transaction, rollback selection/history/persistence eltérés, túl nagy batch.
+- **Live/user acceptance:** UNVERIFIED — composite UI workflow acceptance nincs rögzítve.
+- **Known issues:** minden összetett UI művelet atomic policy-ja nincs dokumentálva.
+- **Next action:** composite action lista és atomic/non-atomic failure tests.
+
+#### EDT-005 — külön mezők
+- **ID és név:** EDT-005 — Undo/redo history.
+- **Belépési pont:** Editor v2 history controls és keyboard shortcuts.
+- **Műveletek:** undo, redo, history limit, selection snapshot restore.
+- **Domain owner:** EDITOR / history state.
+- **Kanonikus adatforrás:** state.history + Page Model before/after snapshots.
+- **Phase/priority:** F0 core; priority külön kiosztása OPEN.
+- **Menu/surface:** Editor v2 canvas/toolbar/keyboard.
+- **Implementation point:** public/editor-v2/core/state.js; core/commands.js; tests/core.test.js.
+- **Negative tests:** üres history, limit túllépése, invalid transaction, redo ág törlése új mutation után, nagy dokumentum.
+- **Live/user acceptance:** UNVERIFIED — toolbar/keyboard és browser acceptance nincs rögzítve.
+- **Known issues:** memóriahasználat, save/reload history policy és minden inputútvonal paritása nyitott.
+- **Next action:** history edge-case matrix és UI/keyboard tests.
+
+#### EDT-006 — külön mezők
+- **ID és név:** EDT-006 — Selection state és fókuszszinkron.
+- **Belépési pont:** Editor v2 canvas, Layers, Inspector és keyboard/touch controls.
+- **Műveletek:** set/clear selection, multi-select, panelváltás, delete/undo utáni helyreállítás.
+- **Domain owner:** EDITOR / selection state.
+- **Kanonikus adatforrás:** state.selection ids/primaryId és selectedNodes().
+- **Phase/priority:** F0 core; priority külön kiosztása OPEN.
+- **Menu/surface:** Editor v2 canvas/Layers/Inspector; mobile action bar.
+- **Implementation point:** public/editor-v2/core/state.js; core/commands.js; app.js.
+- **Negative tests:** stale/deleted node, primaryId nincs az ids listában, cross-page selection, locked/root selection edge cases.
+- **Live/user acceptance:** UNVERIFIED — canvas↔Layers↔Inspector/touch/keyboard E2E nincs rögzítve.
+- **Known issues:** panel fókusz-visszaállítás és minden inputmód selection parity nem bizonyított.
+- **Next action:** teljes selection/focus E2E matrix keyboard, pointer és touch esetekkel.
+
+**Normalizálási kapu:** EDT-001–006 esetén a 25. fejezet eddig hiányzó mezői külön rögzítve vannak; ez még nem igazolja a kártyák minden 26.1 mezőjének teljes runtime acceptance-ét. Következő lépés: EDT-007–014 ugyanilyen külön mezős normalizálása, mielőtt a 44 kártyát teljesen lezártnak tekintenénk.
+
