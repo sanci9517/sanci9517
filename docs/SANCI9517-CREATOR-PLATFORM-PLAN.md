@@ -5,7 +5,7 @@
 **Dátum:** 2026-10-14  
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
-**Aktív tervpont státusza:** IN PROGRESS — a teljes funkciókatalógus bővítése és az egyetlen terv belső összhangjának lezárása folyamatban; új funkció implementálása még nem indulhat pusztán a tervbeli felsorolás alapján.  
+**Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
 **Következő közös lépés:** a terv strukturális és történeti teljesség-kapujának lezárása; utána a 396 ID-s teljes katalógus közös termék-review-ja, majd az F0 egyetlen aktív, teljesen specifikált és bizonyított munkapontja. A kód-/runtime-PASS mindig külön bizonyítandó.  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
@@ -5022,7 +5022,7 @@ A kanonikus terv legutóbbi GitHub-változatán végzett statikus szöveg-/azono
 | 54. checklist ID-hivatkozások | **nincs feloldatlan hivatkozás** | A korábbi 63.16 ellenőrzés szerint a mapping ID-k a 24. fejezetben léteznek. |
 | 24. fejezet ID-k → 63.38 fázis-mátrix | **396 / 396 lefedve** | Az ellenőrzés először két hiányt talált: WEB-019 és OPS-011; a 63.38 táblázat javítva lett, majd az ellenőrzés mind a 396 ID-t lefedettnek találta. |
 | Főfejezetek számozása | **64 főfejezet, duplikált szám nélkül** | A főfejezet-címek egyediek. |
-| 63. alfejezetek számozása | **39 alfejezet, duplikált ID nélkül** | A 63.1–63.39 címek egyediek. |
+| 63. alfejezetek számozása az akkori ellenőrzéskor | **39 alfejezet, duplikált ID nélkül** | Ez történeti pillanatkép; az újabb 63.40+ szakaszok később kerültek hozzá. |
 | Aktív tervpont | **egy kanonikus azonosító** | A fő aktív pont minden irányadó helyen PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY; F0 nincs aktívként megjelölve. |
 
 **Mit nem bizonyít ez az ellenőrzés:** nem igazolja a 396 funkció teljes szemantikai specifikációját, az egyes dependency-k technikai helyességét, a teljes történeti források egyeztetését, a valódi böngészős/Worker runtime viselkedést vagy bármelyik funkció PASS állapotát. A 63.38 csoportos fázis-hozzárendelést ad; a 25/26. fejezet szerinti, minden ID-ra kiterjedő kártya mezőszintű kitöltése továbbra sincs kész. A funkciókártyákban külön meg kell adni a pontos al-fázist, blokkoló függőségeket, permission/scope, API/schema, pozitív és negatív teszteket, rollbacket és bizonyítékot.
@@ -5893,7 +5893,7 @@ Ez a szakasz a 63.41 kártyáit kiegészíti a 25. fejezet hiányzó, különál
 - **Known issues:** panel fókusz-visszaállítás és minden inputmód selection parity nem bizonyított.
 - **Next action:** teljes selection/focus E2E matrix keyboard, pointer és touch esetekkel.
 
-**Normalizálási kapu:** EDT-001–006 esetén a 25. fejezet státuszmezői külön rögzítve vannak, de a 26.1 szerinti 17 mező nem volt teljesen lefedve. EDT-007 teljes 17 mezős kártyája a 63.49-ben szerepel; runtime acceptance továbbra is nyitott. **Következő egyetlen tétel:** EDT-008 teljes 17 mezős normalizálása, majd külön ellenőrzés. A 44 kártya egyike sem tekinthető automatikusan PASS-nak pusztán a dokumentálás miatt.
+**Az eredeti ellenőrzés pillanatképe:** EDT-001–006 kiegészítő státuszmezői elkészültek, de a 26.1 szerinti 17 mező nem volt teljesen lefedve. Azóta EDT-007 teljes kártyája a 63.49-ben, EDT-008 teljes kártyája a 63.50-ben szerepel; runtime acceptance továbbra is nyitott. A további kártyamunka csak az adott aktív, implementálandó funkció 63.21 szerinti B kapujához kötelező, nem a teljes termékscope előzetes újraírása. A 44 kártya egyike sem tekinthető automatikusan PASS-nak a dokumentálás miatt.
 
 ### 63.49. Teljes mezős normalizálás — EDT-007
 
@@ -6255,3 +6255,14 @@ Ez a szakasz a 63.41 kártyáit kiegészíti a 25. fejezet hiányzó, különál
 **Strukturális ellenőrzés:** a H23–H34 forrásjegyzékből az itt rögzített **192/192 egyedi történeti ID** mindegyikéhez legalább egy létező 24. fejezetbeli cél-ID tartozik. A 63.52 H19–H22 79 tételével együtt **271/271 történeti H19–H34 ID** tételes célja létezik. Ez **strukturális megfeleltetés és no-loss alap**, nem forrásonként validált szemantikai teljesülés, nem kódteszt, nem provider capability, és nem bizonyítja a hiányzó 00/A vagy 00.9–00.9.6.B fejezet tartalmát.
 
 **Kötelező szemantikai review:** (1) az egyes több-ID-s sorok valódi domain ownerének megerősítése; (2) a korábban külön kiemelt részképességek (különösen keyboard/reduced motion, SEO/indexing, AI approval/audit, backup/restore, automation lifecycle és continuous discovery) egyedi negatív acceptance-ének ellenőrzése; (3) a régi forrásjelölések és új fázisok közötti döntések rögzítése; (4) a külön nyitott 00/A / 00.9.6.B forráshiány kezelése. **Állapot: IN PROGRESS / NOT PASS**; a termék- és kód-készültség nem változott automatikusan.
+
+### 63.54. Történeti forrás-visszakeresési bizonyíték és lezáratlan hiány — 2026-10-14
+
+**Konkrét GitHub-vizsgálat ebben a dokumentációs körben:**
+- A `docs/MASTER-DEVELOPMENT-PLAN.md` fájl `aedb2ea` refjén ellenőrzött, **1338 soros** állományában nem fordult elő a szó szerinti `00/A` vagy `00.9.6.B` jelölés. Ez **csak ezt a refet** zárja ki a megnevezett cím forrásaként; nem bizonyítja, hogy a követelmény nem létezett más revízióban vagy más dokumentumban.
+- A `docs/archive/MASTER-DEVELOPMENT-PLAN-2026-10-13.md` archivált MASTER tartalmazza a H19–H34 követelmény-ledgert; annak 271 egyedi H-ID-ját a 63.52–63.53 a jelenlegi stabil ID-khez rendeli. Az archívumban ugyanakkor a `00/A` és `00.9.6.B` jelölések **hivatkozásként/nyitott feladatként** szerepelnek, nem bizonyított teljes eredeti fejezetként.
+- A `docs/archive/plans/` nyolc meglévő tervfájljának, továbbá a `docs/ARCHIVE-LEGACY-LAYERS.md` és `docs/SANCI-CONTINUOUS-CONTEXT.md` fájl szó szerinti címkeresése nem adott találatot ezekre a jelölésekre. A negatív szövegkeresés nem egyenértékű a teljes Git-előzmény, törölt fájlok, PR-threadek és minden történeti szövegváltozat vizsgálatával.
+
+**Rögzített döntés:** `00/A` és `00.9–00.9.6.B` állapota **SOURCE NOT RECOVERED / OPEN**. Nem találunk ki eredeti szöveget, nem mondjuk ki a C-ről, hogy automatikusan lefedi a B-t, és nem nyilvánítunk minden történeti követelményt szemantikailag egyeztetettnek. A H19–H34 ténylegesen hozzáférhető 271 tételét megőrizzük a jelenlegi kanonikus ID-k alatt, míg a hiányzó forrás célzott Git-előzmény/PR/törölt-útvonal vizsgálata folytatható.
+
+**Tervhasználati következmény:** a termék 396 ID-s scope-ja és a 22 főmodul szerinti felépítése egyetlen dokumentumban rendelkezésre áll; a dokumentum **még nem minősül teljesen bizonyított, hibamentes történeti/specifikációs PASS-nak**. Az A kapu nyitott, F0 nem nyílt meg. Következő aktív ellenőrizhető alpont: a történeti 00/A és 00.9.6.B forrás nyitott állapotának lezárási döntése, valamint a 271 mapping célzott szemantikai eltéréseinek ellenőrzése; csak utána közös funkciólista-review és F0 gate.
