@@ -4096,3 +4096,7 @@ A C.23.6, C.23.7, C.23.9 és C.23.12 mappingjavítások után ismét lefuttatva 
 **Registry impact:** 361 egyedi ID. EDT-044 planned capability; ez nem implementációs vagy runtime acceptance bizonyíték. P0.2 **IN PROGRESS / NOT PASS**.
 
 Az EDT-044 crosswalk-kapcsolatának lezárásához az E.3.1-05 sor is explicit EDT-044 hivatkozást kapott: a resizable/collapsible workspace paneljeinek felhasználói preferenciái nem kerülhetnek a site Page Modelbe. A C.23.17-01/04/07 sorok továbbra is részletes történeti forrásleképezések; a közvetlen E/F crosswalk most már ugyanezt a képességet is lefedi.
+
+### 41.3.28. P0.2 — Registry/crosswalk structural recheck after EDT-044 addition (2026-10-14)
+
+A per-user Editor workspace preferences capability hozzáadása és az E.3.1-05 crosswalk-kapcsolat után végzett friss ellenőrzés: 361 egyedi registry ID; 323 crosswalk sor; 361/361 ID hivatkozott; 0 feloldatlan és 0 hivatkozatlan ID. A hét batch sorszámai változatlanok (57/66/45/59/28/26/42). Ez kizárólag strukturális coverage; a szemantikai mapping, kétirányú provenance és ID-nkénti contract audit továbbra is nyitott. P0.2 **IN PROGRESS / NOT PASS**.
