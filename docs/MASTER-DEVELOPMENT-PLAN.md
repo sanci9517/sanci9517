@@ -5416,3 +5416,36 @@ A közvetlen előd-MASTER (`87b6f0bb71cd96646b6a501ab85c242386a1124e`) és a jel
 **Következő munka:** először a régi `1/A` 21 bulletjét, majd az `1/H` 30 tesztjét kell a jelenlegi `EDT`/`WEB`/`OPS`/`QA` azonosítókhoz és a történeti crosswalk soraihoz párosítani. Ezután ugyanilyen eljárás az 1/B–1/G csoportokon. Minden sorban külön jelölendő: `PLAN MATCH`, `SEMANTIC MATCH`, `PARTIAL`, `UNMAPPED`, `SUPERSEDED WITH DECISION`; a tervezési egyezés nem runtime PASS.
 
 **Státusz:** a korábbi megfeleltetési vázlat pontosítva; meglévő crosswalkok azonosítva, de a régi snapshot tételes összevetése és a teljes szemantikai zárás nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.126. P0.2 — Régi 1/A Editor lifecycle: 21 atomikus követelmény előzetes ID-leképezése (2026-10-14)
+
+**Forrás:** előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, 1/A, 21 bullet. **Jelenlegi azonosító-definíciók:** MASTER 14. fejezet EDT registry; történeti kereszthivatkozások: 37.22 (E.3 Editor Core crosswalk), 37.23 és F.1 workflow/history/recovery. Az alábbi célpontok tervszintű jelöltek; a státusz nem runtime bizonyíték.
+
+| # | Régi 1/A követelmény | Jelenlegi jelölt célpont | Előzetes státusz / hiány |
+|---:|---|---|---|
+| 1 | Editor megnyitása | EDT-035 (Editor action bar) + ADM/WEB belépési útvonalak; pontos Editor entry ID még azonosítandó | PARTIAL — a konkrét belépési/route szerződés nincs e tételnél véglegesen rögzítve |
+| 2 | Oldal kiválasztása | EDT-001/002, WEB-004; F.1-02 | PARTIAL — a page-picker UI és a canonical oldal kiválasztás pontos kapcsolata ellenőrzendő |
+| 3 | Oldal betöltése D1-ből | EDT-001/002, WEB-004; Page Model/domain szerződés | PARTIAL — D1-betöltés, validáció és hiba utáni állapot konkrét acceptance bizonyítéka kell |
+| 4 | Loading state | ADM-008, QA-006; E.2.1-05 általános loading/error baseline | PLAN MATCH — Editor saját loading állapota külön QA-val igazolandó |
+| 5 | Empty state | EDT-041 (empty-project onboarding/template start), QA-006 | PLAN MATCH — különbséget kell tartani üres projekt és betöltési hiba között |
+| 6 | API error state | EDT-031/042, ADM-008, QA-006 | PLAN MATCH — Editor-specifikus hibaüzenet és recovery próbája nyitott |
+| 7 | Save error state | EDT-027/031/042; E.3.7-02; E.20-N05 | PLAN MATCH — sikertelen mentéskor dirty state/adatmegőrzés tesztje szükséges |
+| 8 | Retry | EDT-031/042; E.3.7-02 | PLAN MATCH — retry valódi újrapróbálkozás és idempotencia tesztelendő |
+| 9 | Offline/kapcsolati hiba | EDT-031/042; QA-006 | PARTIAL — offline/online átmenet és mentési eredmény utáni recovery konkrét próbája kell |
+| 10 | Draft/workspace azonosítás | WEB-004, workspace/site ownership szabályok, EDT-027 | NEEDS DECISION — a régi „draft/workspace” jelentését és a jelenlegi Page Model/site scope viszonyát pontosítani kell; nem szabad azonosnak feltételezni |
+| 11 | Working state és persisted state különválasztása | EDT-027/028/030; E.3.7-02/06; F.1-07/08 | PLAN MATCH — state invariant és mentés közbeni módosítás tesztelendő |
+| 12 | Dirty state pontos követése | EDT-027; E.3.7-02 | PLAN MATCH — minden művelet utáni dirty/clean átmenet regressziója kell |
+| 13 | Unsaved changes jelzés | EDT-027/031/042; E.3.7-05 | PLAN MATCH — navigáció, refresh és close esetekre külön acceptance kell |
+| 14 | Navigáció előtti unsaved-change védelem | EDT-031/042; E.3.7-05; ARCH-3326 | PLAN MATCH — minden navigációs útvonal lefedettsége nyitott |
+| 15 | Tab/browser close recovery | EDT-031/042; F.1-09 | PARTIAL — a browser refresh recovery szerepel; a valódi tab/window close lifecycle és böngészőkorlátok külön igazolandók |
+| 16 | Local recovery snapshot | EDT-031/042; F.1-09 | PLAN MATCH — tárolási séma, verziózás és secret kizárás ellenőrzendő |
+| 17 | Recovery visszaállítás | EDT-031/042; F.1-09/10 | PLAN MATCH — recovery/server/discard döntési út és konfliktusos restore tesztelendő |
+| 18 | Recovery törlése sikeres mentés után | EDT-031/042; F.1-09 | PARTIAL — a törlési feltétel és az adatvesztést kizáró sorrend külön explicit acceptance-t igényel |
+| 19 | Editor újranyitása ugyanarra az oldalra | EDT-002/003/013/027–030; F.1-02 | PLAN MATCH — a F.1-02 már kimondja a reload/reopen selection/editability követelményt; runtime bizonyíték külön kell |
+| 20 | Több editor-tab felismerése | Nincs még egyértelműen azonosított canonical EDT ID a mostani célzott keresésben | UNMAPPED / VERIFY — keresés és döntés szükséges; ne tekintsük automatikusan lefedettnek |
+| 21 | Revision/conflict ellenőrzés | EDT-029/030; E.3.7-04; E.20-N06 | PLAN MATCH — stale revision ne írjon felül csendben; párhuzamos mentési acceptance szükséges |
+
+**Batch eredménye:** 21 régi tételhez előzetes célpontot vagy kifejezett nyitott kérdést rendeltem. Ez tervszintű crosswalk-vázlat; nem jelent 21/21 szemantikai PASS-t. Különösen a #10 (draft/workspace fogalmak), #15 (tab/window close), #18 (snapshot törlési feltétel) és #20 (multi-tab felismerés) marad nyitott. Az `EDT-031` vagy `EDT-042` puszta megnevezése nem helyettesíti a konkrét viselkedési és tesztfeltételt.
+
+**Következő lépés:** a régi 1/H 30 Core tesztpont tételes párosítása a jelenlegi EDT/WEB/QA ID-khoz és a 37.22/F.1 crosswalk soraihoz; ezt követően 1/B alapelemek. `00.9.6.B` továbbra is **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
