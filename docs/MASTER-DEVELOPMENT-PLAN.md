@@ -5104,3 +5104,19 @@ A §37.16, §37.17 és §41.2 egyes mondatai a 2026-10-13-i, 359-ID-s registry-s
 
 **Bizonyítékhatár:** ez a kör egy forráshivatkozási eltérést azonosít; nem töröl és nem módosít történeti követelményt, nem állítja, hogy a forrás sehol nem létezik, és nem bizonyít runtime készültséget. Az eredeti `00/A` és `00.9–00.9.6.B` források továbbra is **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS** marad, a fejlesztési fagyasztás érvényben marad.
 
+### 41.3.109. P0.2 — A 00/A és a 19–34 forrás egy régebbi MASTER-snapshotban visszanyerve; tételszám-eltérés nyitva (2026-10-14)
+
+**Visszanyert forrásjelölt:** a repository docs/MASTER-DEVELOPMENT-PLAN.md fájljának 8a4f296b8c87643a3199e5787541e8eefb17f930 commiton rögzített változata (blob SHA: 6e02a804325eadd9296f02a5d830440b63744c8c, 434 800 karakter) tartalmazza a # 00/A — MASTER VÉGREHAJTÁSI INDEX fejezetet, valamint a teljes, számozott # 19–# 34 fejezetcsoportot. Ez konkrét történeti forrásbizonyíték a korábban nem visszakeresett 00/A és a 19–34 szakaszok legalább egy változatához. Ez a snapshot nem az aktuális végrehajtási terv, ezért régi aktív pontjai nem írhatják felül a jelenlegi MASTER aktív indexét.
+
+**Tételes strukturális összevetés:** a visszanyert snapshot 19–33 fejezeteiben 244 checkbox-tétel szerepel; a 19. fejezetben az alt text és crop egy fizikai sorba tapadt, de két külön checkboxként olvasható, ezért a normalizált checklist-összeg 255-re adódik, ha a 34. fejezet 11 számozott folyamatlépését is beleszámítjuk. A jelenlegi H19–H34 ledger 271 egyedi ID-t tartalmaz. A különbség **16 sor**, amelyet nem szabad automatikusan hiányzó történeti követelménynek vagy duplikációnak minősíteni.
+
+**Lokalizált eltérés a szakaszok között:**
+- H21: a forrássnapshotban 21 checkbox-tétel, a ledgerben 22 sor;
+- H31: 13 forrás-checkbox, 14 ledger-sor;
+- H33: 11 forrás-checkbox, 13 ledger-sor;
+- H34: 11 számozott folyamatlépés, 23 ledger-sor (a ledgerben H34.00 és további részletes sorok is vannak).
+- H19-ben a forrásformázás két checkboxot egy sorba fűzött; ezt külön formázási anomáliaként kell megőrizni a normalizálásban.
+
+**Döntés:** a visszanyert snapshot igazolja, hogy a korábbi aedb2ea hivatkozás önmagában nem volt elegendő, ugyanakkor a forrás-visszakeresés most részlegesen előrelépett. A 271 sor teljes történeti provenienciája még nem igazolt. A következő körben a forrás és ledger minden H-ID-ját két irányban kell összevetni, és minden többletsort source item, split/expanded mapping, supplemental governance vagy unresolved kategóriába kell sorolni; ehhez további időbélyegzett snapshotokat is keresni kell, különösen H34 és 00.9.6.B esetében.
+
+**Bizonyítékhatár:** 00/A és a 19–34 fejezetek egy történeti változata most visszanyert, de nem állítom, hogy ez az egyetlen vagy a legteljesebb változat. Az eredeti 00.9.6.B teljes szövege továbbra is **UNRECOVERED / OPEN**. A történeti active-index nem aktiválható. P0.2 **IN PROGRESS / NOT PASS** marad, és a fejlesztési fagyasztás nem változik.
