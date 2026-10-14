@@ -1095,7 +1095,7 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 
 ## 24. Teljes funkcióazonosító-jegyzék
 
-Az alábbi jegyzék a menüfunkciókat külön, stabil munkapontokra bontja. A státusz minden ID-nál külön vezetendő; az, hogy egy képesség szerepel a tervben, nem jelenti a megvalósítását. Az egyes ID-k csak a 10. fejezet szerinti feature contracttal és saját acceptance-szel zárhatók le.
+**Szerepe:** stabil, egyedi funkcióazonosítók és munkapontok nyilvántartása; ez a fejezet nem külön navigáció és nem második termékkatalógus. A modulhelyet a 49. fejezet, a domain/adatgazdát az 5. fejezet, a funkció részletes szerződését a 10. és 26. fejezet határozza meg. A státusz minden ID-nál külön vezetendő; az, hogy egy képesség szerepel a tervben, nem jelenti a megvalósítását. Az egyes ID-k csak a 10. fejezet szerinti feature contracttal és saját acceptance-szel zárhatók le.
 
 ### 24.1. Dashboard és Admin shell — ADM
 - ADM-001: Admin shell és globális navigáció.
@@ -1988,7 +1988,7 @@ Ahol hivatalosan támogatott, legyen közös chat/üzenetkezelés, streamcélok 
 
 ## 38. Részletes Visual Editor képességkatalógus
 
-**Cél:** a vizuális szerkesztő teljes részletképességeinek önálló, tesztelhető katalógusa. A felsorolás a végleges platform követelményét rögzíti, nem a runtime készültségét. Minden elem a közös Page Model, command/history/validation/persistence és jogosultsági szerződésen keresztül működik.
+**Szerepe:** kizárólag a WEB modulhoz tartozó Visual Editor (EDT) részletes képesség- és tesztkatalógusa. Nem jelenti azt, hogy az Editor a teljes platformot magába foglalja; a Brand Kit, erőforrások, kapcsolatok, adásrend, analitika, commerce, automatizáció és AI a saját kanonikus moduljuk tulajdonában marad. A felsorolás a végleges platform követelményét rögzíti, nem a runtime készültségét. Minden elem a közös Page Model, command/history/validation/persistence és jogosultsági szerződésen keresztül működik.
 
 ### 38.1 — Benchmark és képességbővítési szabály
 
@@ -2619,7 +2619,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 
 ## 49. Teljes Creator Center menütérkép — felhasználói funkciók szerint
 
-Ez a menütérkép a végső termék navigációs célját rögzíti, nem azt állítja, hogy minden funkció már elkészült. A menü csoportosítható, kereshető és szerepkör szerint szűrhető; a ritkán használt funkciók nem zsúfolják tele az alapnézetet. A menüpontok ugyanazokat a kanonikus domain szolgáltatásokat használják, nem külön miniappok.
+**Ez a terv egyetlen kanonikus felhasználói főmodul-/navigációs térképe.** A modulok és almodulok helyét itt kell meghatározni; a 3. fejezet domain-katalógusa, a 24. fejezet ID-jegyzéke és az 54. fejezet lefedettségi ellenőrzőlistája ezt nem írhatja felül. A menü csoportosítható, kereshető és szerepkör szerint szűrhető; a ritkán használt funkciók nem zsúfolják tele az alapnézetet. A menüpontok ugyanazokat a kanonikus domain szolgáltatásokat használják, nem külön miniappok.
 
 ### 49.1. Kezdőlap és napi áttekintés
 - **Áttekintés:** élő állapot, következő adás, feladatok, publikálási queue, figyelmeztetések, bevételi és közösségi összefoglaló.
@@ -2946,7 +2946,7 @@ A platform ereje nem az, hogy mindenből legyen egy gyengébb másolat. A közö
 
 ## 54. Teljes, felülvizsgálatra szánt SANCI9517 funkciókatalógus
 
-Ez a lista a végső termékcél funkcionális ellenőrzőlistája. Nem jelenti, hogy minden elem az első kiadásba kerül, vagy hogy már implementált. A fázis a megvalósítás sorrendjét szabja meg, nem töröl funkciót a végső célból.
+**Szerepe:** teljes lefedettségi/review checklist, nem önálló modulhierarchia és nem külön, második kanonikus funkciólista. Minden tételét a szemantikai audit során hozzá kell rendelni a 49. fejezet megfelelő tulajdonosmoduljához és — ahol már kiosztott — a 24. fejezet stabil funkcióazonosítójához. Ha itt önállóan szerepel egy képesség, de a kanonikus modulban nincs megfelelője, azt hiányként kell kezelni és a tulajdonosmodul alatt rögzíteni; ha ugyanaz a képesség több helyen szerepel, a többi előfordulás ellenőrző hivatkozás, nem külön implementáció. Nem jelenti, hogy minden elem az első kiadásba kerül, vagy hogy már implementált. A fázis a megvalósítás sorrendjét szabja meg, nem töröl funkciót a végső célból.
 
 ### 54.1. Admin alapélmény és Dashboard
 - [ ] Egységes Admin shell, oldalsáv, almenük, breadcrumbs, mobil navigáció.
@@ -3681,4 +3681,28 @@ A Creator Platformot nem egyetlen nagy szerkesztőbe vagy általános Admin-modu
 - [ ] A felhasználói útvonalak végigkövetik a főfolyamatot az Admin/Editor felülettől a backend/adattáron át a publikus kimenetig, ahol releváns.
 
 **Státusz:** IN PROGRESS. A jelen fejezet meghatározza a kötelező struktúrát; a teljes termékfunkció-katalógus tételes ellenőrzése után lehet a kaput PASS-ra állítani. A már létező, logikus modulbontást meg kell őrizni és következetesen alkalmazni; nem kell mindent újraszervezni, ha az audit igazolja, hogy a funkció a megfelelő helyen van.
+
+### 63.10. A funkciófejezetek kanonikus szerepe és feloldási sorrendje
+
+A dokumentum hosszú, mert egyszerre őrzi a felhasználói funkciókat, a részletes műszaki szerződéseket, a tesztelési követelményeket és a végrehajtási sorrendet. Ezek a nézőpontok nem jelenthetnek több, egymással versengő funkcióhierarchiát. Az alábbi szereposztás kötelező:
+
+| Fejezet | Kanonikus szerep | Nem használható erre |
+|---|---|---|
+| 3. | Domain-felelősségek és Admin-képességek részletezése | Önálló navigációs térkép vagy külön adatgazda létrehozása |
+| 4. | Publikus weboldal oldal-/tartalmi felületei és minőségi követelményei | Admin üzleti modulok átvétele |
+| 5. | Kanonikus domain- és adatforrás-térkép | UI-menü vagy implementációs sorrend meghatározása |
+| 9., 39., 41.2., 63.5. | Munkacsomagok és fázisok: részletezés, összefoglalás és kanonikus végrehajtási sorrend | Új, egymástól független roadmapok |
+| 10., 26., 27., 28., 29. | Funkciószerződések, életciklus, E2E folyamatok, UI/hibaállapotok és adatmodell | Új felhasználói főmodulok definiálása a navigációtól függetlenül |
+| 14., 24., 25., 26. | Stabil ID-k, státuszmezők és funkciószintű követés | A funkciók többszörös, külön státuszú megvalósításának engedélyezése |
+| 38. | Visual Editor EDT részletes specifikációja és tesztkatalógusa | A platform minden funkciójának Editorba zsúfolása |
+| 46. és 49. | Admin információs architektúra, majd a kanonikus felhasználói modul-/menütérkép | Domain/adatgazda megváltoztatása pusztán a UI elhelyezése miatt |
+| 24. | Stabil funkcióazonosító-jegyzék | A felhasználói menü második példányának fenntartása |
+| 50., 58.–62. | Keresztmodulú minőségi, biztonsági, üzemeltetési és platformkövetelmények | Ugyanazon képesség önálló második implementációja |
+| 54. | Teljes termékcél lefedettségi/review checklist | A 49. fejezetet felülíró második modulhierarchia vagy önálló státuszforrás |
+| 55. | A funkciók felhasználói prioritási döntési szabályai | Funkció törlése explicit döntés nélkül |
+| 63. | A terv lezárási kapuja és az audit eredménye | A termék implementációs készültségének állítása |
+
+**Eltérésfeloldási sorrend:** (1) felhasználói főmodul/hely: 49.; (2) adat- és domaingazda: 5.; (3) stabil funkcióazonosító és státusz: 14./24./25.; (4) részletes működés és elfogadás: 10./26./27. és az adott modul saját részletes specifikációja; (5) végrehajtási sorrend: 41.2., a 63.5. megfeleltetés szerint; (6) a teljes cél lefedettségének ellenőrzése: 54. és a 63.1–63.2. kapu. Ha az audit során eltérés marad, nem választunk hallgatólagosan: a konfliktust nyitottként rögzítjük és a megfelelő kanonikus helyen javítjuk.
+
+**Aktuális auditállapot:** a fejezetek szerepe most rögzítve van, de a teljes tételes keresztmegfeleltetés még `IN PROGRESS`. A 54. fejezet valamennyi checklist-tételének a 49. fejezet szerinti tulajdonosmodulhoz és a 24. fejezet ID-jegyzékéhez rendelése, valamint a valódi hiányok/duplikációk eldöntése továbbra is nyitott lezárási feltétel.
 
