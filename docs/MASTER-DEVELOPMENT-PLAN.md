@@ -4140,14 +4140,14 @@ A C.23.20-07 forrásbullet jövőbeli marketplace/shared-library képességeket 
 | C.24.2-05 | 2306 | - bundle/runtime hatást, browser/Worker/D1/R2 kompatibilitást, adatvédelmi és ellátásilánc-kockázatot; | OPS-010, OPS-008, SEC-010, QA-009 | OPEN — initial traceability only; OPS owner; permission/dependency/test/acceptance decision remains to be validated |
 | C.24.2-06 | 2307 | - a választás indokát: reuse, integrate, adapt, fork vagy build; | OPS-010, OPS-008, SEC-010, QA-009 | OPEN — initial traceability only; OPS owner; permission/dependency/test/acceptance decision remains to be validated |
 | C.24.2-07 | 2308 | - milyen tesztek és visszaállítási lehetőség igazolja az integrációt. | OPS-010, OPS-008, SEC-010, QA-009 | OPEN — initial traceability only; OPS owner; permission/dependency/test/acceptance decision remains to be validated |
-| C.24.3-01 | 2315 | - a licence megengedett a projekt tervezett használatához és terjesztéséhez; | OPS-010, SEC-001–011, QA-001–010 | OPEN — initial traceability only; OPS owner; permission/dependency/test/acceptance decision remains to be validated |
-| C.24.3-02 | 2316 | - kompatibilis a jelenlegi futtatókörnyezettel, builddel, TypeScript- és böngészőkövetelményekkel; | OPS-010, SEC-001–011, QA-001–010 | OPEN — initial traceability only; OPS owner; permission/dependency/test/acceptance decision remains to be validated |
-| C.24.3-03 | 2317 | - a projekt eredete és karbantartási állapota ellenőrizhető; | OPS-010, SEC-001–011, QA-001–010 | OPEN — initial traceability only; OPS owner; permission/dependency/test/acceptance decision remains to be validated |
-| C.24.3-04 | 2318 | - nincs ismert, elfogadhatatlan biztonsági kockázata; | OPS-010, SEC-001–011, QA-001–010 | OPEN — initial traceability only; OPS owner; permission/dependency/test/acceptance decision remains to be validated |
-| C.24.3-05 | 2319 | - a szükséges funkciót a valós követelmények szerint lefedi, nem csupán hasonló nevű vagy látványú; | OPS-010, SEC-001–011, QA-001–010 | OPEN — initial traceability only; OPS owner; permission/dependency/test/acceptance decision remains to be validated |
-| C.24.3-06 | 2320 | - integrációja nem hoz létre második canonical adatmodellt, historyt, property registryt, Resource-tárat, schedule-domaint vagy mentési/publikálási útvonalat; | OPS-010, SEC-001–011, QA-001–010 | OPEN — initial traceability only; OPS owner; permission/dependency/test/acceptance decision remains to be validated |
-| C.24.3-07 | 2321 | - nem sérti a hozzáférés-vezérlést, a site ownershipot, a public/draft izolációt vagy a titkok kezelését; | OPS-010, SEC-001–011, QA-001–010 | OPEN — initial traceability only; OPS owner; permission/dependency/test/acceptance decision remains to be validated |
-| C.24.3-08 | 2322 | - tesztelhető, frissíthető, eltávolítható és szükség esetén visszaállítható. | OPS-010, SEC-001–011, QA-001–010 | OPEN — initial traceability only; OPS owner; permission/dependency/test/acceptance decision remains to be validated |
+| C.24.3-01 | 2315 | - a licence megengedett a projekt tervezett használatához és terjesztéséhez; | OPS-010, QA-009 | OPEN — license/use-scope evidence; legal/redistribution review where applicable; acceptance remains task-specific |
+| C.24.3-02 | 2316 | - kompatibilis a jelenlegi futtatókörnyezettel, builddel, TypeScript- és böngészőkövetelményekkel; | OPS-008, OPS-010, QA-001, QA-004, QA-006 | OPEN — build/typecheck plus target-runtime/browser compatibility evidence; acceptance remains task-specific |
+| C.24.3-03 | 2317 | - a projekt eredete és karbantartási állapota ellenőrizhető; | OPS-010, QA-009 | OPEN — verify upstream provenance, maintenance/release activity and record the evidence; acceptance remains task-specific |
+| C.24.3-04 | 2318 | - nincs ismert, elfogadhatatlan biztonsági kockázata; | OPS-010, SEC-008, SEC-010, QA-003, QA-006 | OPEN — review advisories/CVEs and project-specific exposure; do not treat absence of known CVEs as proof of safety |
+| C.24.3-05 | 2319 | - a szükséges funkciót a valós követelmények szerint lefedi, nem csupán hasonló nevű vagy látványú; | OPS-010, QA-002, QA-009 | OPEN — compare against the task's explicit acceptance cases and canonical owner; attach domain-specific IDs per actual use |
+| C.24.3-06 | 2320 | - integrációja nem hoz létre második canonical adatmodellt, historyt, property registryt, Resource-tárat, schedule-domaint vagy mentési/publikálási útvonalat; | OPS-010, QA-002, QA-008 | OPEN — architecture invariant; add the affected canonical domain IDs per integration; verify no parallel source of truth or write path |
+| C.24.3-07 | 2321 | - nem sérti a hozzáférés-vezérlést, a site ownershipot, a public/draft izolációt vagy a titkok kezelését; | SEC-002, SEC-003, SEC-008, QA-003 | OPEN — run authorization/ownership/isolation negative tests for the actual integration boundary; acceptance remains task-specific |
+| C.24.3-08 | 2322 | - tesztelhető, frissíthető, eltávolítható és szükség esetén visszaállítható. | OPS-009, OPS-010, QA-001, QA-006, QA-007 | OPEN — require upgrade/removal/rollback procedure and relevant CI/live/recovery evidence; acceptance remains task-specific |
 | C.24.4-01 | 2328 | - Előnyben részesítendő a kis, célzott dependency és a jól körülhatárolt adapter. | OPS-010/011, SEC-001–011, INT-001, QA-003/006 | OPEN — initial traceability only; OPS owner; permission/dependency/test/acceptance decision remains to be validated |
 | C.24.4-02 | 2329 | - A könyvtár ne vegye át a domain logikát vagy az adatforrás tulajdonjogát, ha az már a Sanci9517 canonical rendszeréhez tartozik. | OPS-010/011, SEC-001–011, INT-001, QA-003/006 | OPEN — initial traceability only; OPS owner; permission/dependency/test/acceptance decision remains to be validated |
 | C.24.4-03 | 2330 | - A külső könyvtár kimenetét és bemenetét validálni kell; a külső kód nem kap automatikusan jogosultságot titkokhoz vagy privilegizált műveletekhez. | OPS-010/011, SEC-001–011, INT-001, QA-003/006 | OPEN — initial traceability only; OPS owner; permission/dependency/test/acceptance decision remains to be validated |
@@ -4901,3 +4901,20 @@ Az F.9-02 redirects és broken-link tooling követelmény korábban `SEO-004`-et
 A két művelet külön acceptance-t igényel: a redirect create/update/preview/approval/loop protection nem azonos a broken-link scan/report/fix flow-val. Ezeket a későbbi 2.0+ pontban külön actionként kell bontani, nem egy általános SEO gombba sűríteni. A jelenlegi sor ezt a különbséget rögzíti; a runtime megvalósítás nincs ezzel igazolva.
 
 **Állapot:** F.9-02 mapping javítva, a részletes 2.0+ action DoD későbbi engineering point feladata. P0.2 **IN PROGRESS / NOT PASS**.
+
+
+### 41.3.33. P0.2 — C.24.3 dependency qualification mapping narrowed (2026-10-14)
+
+**Audit target:** the eight C.24.3 qualification bullets in the C.24 source ledger. The initial mapping assigned every bullet the full `SEC-001–011` and `QA-001–010` ranges. Those ranges were structurally valid but semantically overbroad: they implied unrelated controls (for example, webhook replay defense or consent deletion) applied to every package qualification check, while obscuring the actual acceptance evidence.
+
+**Corrections made in the C.24.3 ledger:**
+- License suitability → `OPS-010, QA-009`; retain task-specific legal/distribution review where applicable.
+- Runtime/build/browser compatibility → `OPS-008/010, QA-001/004/006`.
+- Provenance and maintenance → `OPS-010, QA-009`.
+- Known security risk → `OPS-010, SEC-008/010, QA-003/006`; a clean known-CVE result is not treated as proof of safety.
+- Real requirement coverage → `OPS-010, QA-002/009`, plus the actual task's domain IDs.
+- No parallel canonical model/history/registry/storage/write path → `OPS-010, QA-002/008`, plus affected canonical domain IDs.
+- Access, ownership, public/draft isolation and secret handling → `SEC-002/003/008, QA-003`.
+- Testability, upgrade/removal and recovery → `OPS-009/010, QA-001/006/007`.
+
+**Boundary:** this narrows the source-ledger cross-references and makes the evidence expected for each qualification rule clearer. It does not certify any particular dependency, complete a package review, or mark C.24/P0.2 PASS. Every concrete dependency decision still needs its own named candidate, license/provenance/maintenance/CVE assessment, compatibility and bundle impact, canonical-boundary check, tests, and rollback evidence. The missing original `00/A` and `00.9–00.9.6.B` source texts remain `UNRECOVERED / OPEN`. P0.2 **IN PROGRESS / NOT PASS**.
