@@ -5598,3 +5598,43 @@ A „MATCH candidate” csak a tervezett elemkategória jelenlétét jelenti; ne
 - A 37.22 E.3.3-04 összefoglaló sor a duplicate/delete/copy/paste/order/lock/hide/multi-select témákat összevonja. Ez a sor nem váltja ki a jelen 26 történeti pont egyenkénti bizonyítását.
 
 **Státusz:** 26 pont kapott explicit crosswalk-sort; 6 egyértelműen döntés/ellenőrzésigényes terület (group/ungroup, cut, style-only paste, structure paste, Escape jelentése; továbbá multi-select részletei és több részleges acceptance). Ez dokumentációs előrelépés, nem runtime PASS. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.130. P0.2 — Régi 1/D CRUD és tree műveletek: tételes crosswalk (2026-10-14)
+
+**Forrás:** előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, 1/D, 19 atomikus pont. **Canonical célpontok:** EDT-002–005, EDT-008/011/012/014/015/016/038; történeti kereszthivatkozások: 37.22 E.3.2-05/06, E.3.3-02/04, E.3.6-06, valamint 24.3 EDT registry. A jelen táblázat tervszintű szemantikai mapping; nem állítja, hogy a műveletek runtime készültek vagy teszt PASS-t kaptak.
+
+| # | Történeti követelmény | Canonical célpont | Státusz | Lezárási feltétel |
+|---:|---|---|---|---|
+| 1 | Create | EDT-003/004, EDT-015–020 | PARTIAL | Minden regisztrált elem létrehozása típushelyes defaultokkal, allowed parent/slot validációval és undo-val; az üres/hibás create nem hagy részleges node-ot. |
+| 2 | Duplicate | EDT-011, EDT-002–004, EDT-038 | PARTIAL | Új ID-k az egész subtree-ban, hivatkozások/assetek szabályozott kezelése, sorrend/offset és egyetlen undo transaction. |
+| 3 | Delete | EDT-011, EDT-003/004 | PLAN MATCH | Subtree delete, referenciák, selection, undo/redo és canonical persistence következményeinek tesztje. |
+| 4 | Veszélyes törlés megerősítése | EDT-011, EDT-042; ADM-009 | PARTIAL | Csak valóban destruktív/nagy hatású műveletnél, előzetes érthető scope/hatásszöveggel; undo lehetőség nem helyettesíti az egyértelmű megerősítést ott, ahol szükséges. |
+| 5 | Reorder | EDT-011, EDT-016, EDT-004 | PLAN MATCH | Sibling order determinisztikus, atomic és layout-aware; mentés/reload után ugyanaz a sorrend. |
+| 6 | Parenthez adás | EDT-002, EDT-011, EDT-016 | PLAN MATCH | Parent-child allowlist és cycle prevention; node csak valid parent alá kerülhet. |
+| 7 | Parentből kivétel | EDT-002, EDT-011 | PARTIAL | A kivétel cél-parent nélküli/root-árvát nem hozhat létre; pontos root/unwrap jelentés és elutasítási viselkedés szükséges. |
+| 8 | Másik parentbe helyezés | EDT-002, EDT-011, EDT-004 | PLAN MATCH | Atomic reparent, descendant/cycle tiltás, target permission és layout/slot kompatibilitás ellenőrzése. |
+| 9 | Drag/drop insertion | EDT-008, EDT-011, EDT-016 | PLAN MATCH | Pointer/touch/keyboard insertion ugyanazt a canonical commandot használja; hit target, index és pointer-cancel viselkedés definiált. |
+| 10 | Drop-zone preview | EDT-008, EDT-010 | PARTIAL | Preview megmutatja a tényleges parent/index/layout eredményt; a preview nem mutálja a Page Modelt. |
+| 11 | Invalid drop tiltása | EDT-002/003, EDT-008, EDT-022 | PLAN MATCH | Invalid parent/type/cycle/permission esetén nincs részleges state; UI magyarázza az okot, API ugyanazt újraellenőrzi. |
+| 12 | Nesting rule ellenőrzés | EDT-002, EDT-016/019/020, EDT-022 | PARTIAL | Központi, verziózott allowed-child/slot szabályok minden create/paste/reparent/import/API úton; nem csak drag UI-védelem. |
+| 13 | Bulk delete | EDT-003/004/011 | PARTIAL | Előnézet és jogosultság-ellenőrzés, részleges hibák explicit jelentése, atomicitás/rollback szabály, selection és undo-scope. |
+| 14 | Bulk duplicate | EDT-003/004/011, EDT-038 | PARTIAL | Teljes kiválasztott halmaz validációja a módosítás előtt; ID regenerálás, belső hivatkozások és sorrend megőrzése, egyértelmű transaction-határ. |
+| 15 | Bulk move | EDT-003/004/011, EDT-038 | PARTIAL | Minden target parent/slot kompatibilitásának előzetes validálása; nincs csendes részleges mozgatás, a felhasználó látja a kihagyott elemek okát. |
+| 16 | Tree search | EDT-012, EDT-015 | PARTIAL | A Layers fa keresése node label/content/type szerint, találati útvonal és ancestor auto-expand; a library search ne legyen összetévesztve a tree search-csel. |
+| 17 | Collapse/expand tree | EDT-012 | PLAN MATCH | Expand/collapse nem változtatja meg a Page Modelt vagy a selectiont; keyboard és nagy fák esetén stabil viselkedés. |
+| 18 | Expand to selected | EDT-012/013 | PARTIAL | Kijelölt node összes ancestor-a kinyílik, scroll/focus meghatározott; törölt vagy reparentelt node esetén stale selection kezelése. |
+| 19 | Általános CRUD/tree konzisztencia | EDT-001–004, EDT-011–014, EDT-028 | PARTIAL / RELEASE GATE | Create/duplicate/delete/reorder/reparent/bulk műveletek Canvas, Layers, Inspector, history, save/reload és public renderer konzisztenciatesztje. |
+
+#### Kötelező közös műveleti szerződés
+
+- **Egy canonical mutációs út:** a UI, keyboard shortcut, context menu, bulk művelet és API ugyanazon typed command/validation rétegen keresztül módosítsa a Page Modelt; a DOM/Canvas nem lehet adatforrás.
+- **Elővalidáció és atomicitás:** parent-child szabály, cycle, node-típus, site permission, slot, responsive/layout constraint és referenciák ellenőrzése a commit előtt. Hiba esetén nincs félig módosított tree.
+- **Undo/redo:** a user intent szerinti transaction boundary explicit; bulk művelet egy logikai tranzakció, ha a felhasználó egyetlen műveletként indította.
+- **Destruktív és tömeges műveletek:** mutáció előtt mutassa a hatókört és a várható hatást; részleges eredményt csak előre meghatározott, látható és visszafordítható szabály szerint engedjen.
+- **Accessibility:** ugyanazok a műveletek elérhetők legyenek keyboarddal és érthető fókusz/állapot-visszajelzéssel; drag/drop ne legyen az egyetlen reparent/reorder mód.
+- **Release evidence:** pozitív és negatív tesztek érvénytelen parent, cycle, permission mismatch, bulk részhiba, undo/redo, reload, konkurens revision és hiányzó asset/reference esetén.
+
+**Crosswalk-megállapítás:** az EDT-011 név szerint összevonja a reorder/reparent/duplicate/delete műveleteket, az EDT-012 a tree expand/collapse-t, de ezek a rövid címkék nem zárják le a veszélyes törlés, bulk műveletek, drop preview, invalid-drop, nesting rule, tree search és expand-to-selected külön elfogadási kritériumait. Ezek explicit acceptance-ként megmaradnak; új feature ID csak akkor szükséges, ha a meglévő EDT-szerződések bővítése nem teszi a külön felelősséget egyértelművé.
+
+**Státusz:** 19 pont tételesen leképezve; több pont részleges acceptance-t igényel. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
