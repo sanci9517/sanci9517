@@ -5602,3 +5602,185 @@ Az alábbi rövidített kártyák mindegyike név szerint lefedi a 26.1 kötelez
 
 **Szeletzárás:** EDT-027–033 kártyák dokumentálják a meglévő save/revision alapot és a konkrét szerveroldali blokkolókat. Ezeket a dokumentációs audit nem javította ki. Következő lépés: 63.45 mező-/dependency-ellenőrzés, majd EDT-034–044 renderer, mobil, accessibility és recovery.
 
+### 63.46. Funkciókártyák — EDT-034–044 (renderer, mobile, accessibility, clipboard, interaction, motion, onboarding, recovery, Rich Text, preferences)
+
+**Forrásalap:** public/assets/page-renderer.js, public/editor-v2/app.js, editor-v2 core/UI/CSS/tests, src/core/editor-validation.ts, editor_preferences migration. Ezek a kártyák a meglevő alapokat és a nem bizonyított végponttól végpontig viselkedést választják szét.
+
+#### EDT-034 — Editor preview és public renderer paritás
+- **Felhasználói eredmény:** a szerkesztőben látott publikálható oldal a nyilvános oldalon is ugyanúgy jelenik meg.
+- **Belépési pont / műveletek:** Editor canvas/preview és public page renderer; minden node/property megjelenítése.
+- **Kanonikus owner / adatforrás:** PAGE/EDITOR a Page Model tulajdonosa; PUBLIC_RENDERER csak megjelenít és owning domain projectiont olvas.
+- **Séma / invariánsok:** node/property/responsive/resource/data-binding mapping explicit; unsupported node nem tűnhet el csendben.
+- **Jogosultság:** preview draft authenticated; public output csak published snapshot és public-safe projection.
+- **API/command:** public/assets/page-renderer.js a public pages API-ból olvas; teljes node-level mapping nincs bizonyítva.
+- **Függőségek:** EDT-001–033, WEB-004–032, RES/DSN/DYN/SEO/SEC.
+- **UI-állapotok:** loading/empty/error/stale/unsupported node/missing asset/provider unavailable.
+- **Biztonság/adatvédelem:** HTML escaping, safe URL/embed allowlist, published-only, no secret leakage.
+- **Tesztcsomag:** teljes renderer parity/visual regression suite nincs bizonyítva.
+- **Elfogadás:** minden támogatott node és property preview → publish → real HTTP public route; strukturális és vizuális egyezés desktop/tablet/mobile.
+- **Bizonyíték:** page-renderer.js, visual-page shell, Editor app.js; teljes parity report nincs rögzítve.
+- **Visszaállítás:** published revision rollback; renderer hiba esetén safe fallback, nem mock success.
+- **Státusz / ismert probléma / következő lépés:** BLOCKED / NOT PASS; node-by-node parity és real HTTP/browser acceptance.
+
+#### EDT-035 — Mobil Editor shell
+- **Felhasználói eredmény:** a szerkesztő telefonon is használható, a vezérlők nem lógnak ki és nem takarják a canvas lényegét.
+- **Belépési pont / műveletek:** mobile Editor shell, toolbar/action bar, viewport, canvas gestures.
+- **Kanonikus owner / adatforrás:** EDITOR UI/CSS; Page Modeltől különálló viewport state.
+- **Séma / invariánsok:** safe-area, viewport height, virtual keyboard és zoom policy; mobilon sem lehet más Page Model mutáció.
+- **Jogosultság:** ugyanaz az authenticated Editor/page scope.
+- **API/command:** ugyanaz a canonical command/state API, mint desktopon.
+- **Függőségek:** EDT-007–014/025/026/035–037/044.
+- **UI-állapotok:** portrait/landscape, keyboard open, safe-area, scrolling, canvas pan/zoom, offline/conflict.
+- **Biztonság/adatvédelem:** mobil UI nem rejthet el permission/error állapotot; auth/session behavior változatlan.
+- **Tesztcsomag:** mobile CSS/UI alap vizsgálandó; valódi device browser E2E nincs bizonyítva.
+- **Elfogadás:** kis viewporton minden fő action elérhető → keyboard fel/le → canvas/panel használható → save/conflict/recovery.
+- **Bizonyíték:** mobile-editor.css, editor.css, app.js; device matrix evidence nincs.
+- **Visszaállítás:** viewport/panel reset; dokumentum csak canonical commandokon változik.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; safe-area, virtual keyboard és device E2E.
+
+#### EDT-036 — Mobil Layers/Inspector panelek
+- **Felhasználói eredmény:** layers és Inspector kis képernyőn váltható, a fókusz és kijelölés elvesztése nélkül.
+- **Belépési pont / műveletek:** mobile panel switch, back/Escape, selected-node Inspector.
+- **Kanonikus owner / adatforrás:** EDITOR / state.selection és UI panel state.
+- **Séma / invariánsok:** panelváltás nem változtathatja meg a selectiont vagy a Page Modelt.
+- **Jogosultság:** az aktív page/site scope.
+- **API/command:** panel state lokális; node mutation a canonical commandon át.
+- **Függőségek:** EDT-006/012–014/035/037/044.
+- **UI-állapotok:** layers open, Inspector open, panel closed, selection restored, Escape/back.
+- **Biztonság/adatvédelem:** focus trap és keyboard route ne engedjen nem látható/tiltott műveletet.
+- **Tesztcsomag:** mobil panel CSS/UI alap; focus restore és back/Escape browser teszt nem bizonyított.
+- **Elfogadás:** node kiválasztása → Layers↔Inspector váltás → ugyanaz a selection és input focus helyreáll → save.
+- **Bizonyíték:** app.js, mobile-editor.css és editor.css; browser/device evidence nincs.
+- **Visszaállítás:** panel state reset; document history változatlan marad.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; panel/focus/touch acceptance.
+
+#### EDT-037 — Editor accessibility és keyboard operation
+- **Felhasználói eredmény:** a canvas fő műveletei egér nélkül, billentyűzettel és képernyőolvasóval is használhatók.
+- **Belépési pont / műveletek:** toolbar, palette, layer tree, Inspector, canvas selection/move/resize/group.
+- **Kanonikus owner / adatforrás:** EDITOR UI accessibility contract; közös state/commands.
+- **Séma / invariánsok:** minden műveletnek legyen keyboard alternatívája, látható focus, megfelelő role/name/state és screen-reader announcement.
+- **Jogosultság:** accessibility nem változtatja meg authorizationt.
+- **API/command:** ugyanazok a canonical commands, amelyeket pointer/touch is használ.
+- **Függőségek:** EDT-006–026/035–036/038–040, SEC.
+- **UI-állapotok:** focus order, selected/locked/disabled, error announcement, dialog/panel focus return.
+- **Biztonság/adatvédelem:** accessible error message ne fedjen fel secret/PII adatot.
+- **Tesztcsomag:** teljes keyboard-only, screen-reader és automated accessibility suite nincs bizonyítva.
+- **Elfogadás:** teljes Editor workflow keyboard-only → focus order/announce ellenőrzés → screen-reader teszt → reduced-motion.
+- **Bizonyíték:** semantic buttons/labels részben jelen vannak az app.js-ben; teljes WCAG audit nincs.
+- **Visszaállítás:** keyboard undo/redo; accessibility regresszió kiadásblokkoló.
+- **Státusz / ismert probléma / következő lépés:** BLOCKED / NOT PASS; keyboard canvas alternative, focus management és screen-reader E2E.
+
+#### EDT-038 — Multi-select, duplicate és clipboard
+- **Felhasználói eredmény:** több elem együtt kijelölhető, csoportosan kezelhető és biztonságosan másolható.
+- **Belépési pont / műveletek:** canvas/layer tree, mobile multi-select bar, duplicate/copy/paste.
+- **Kanonikus owner / adatforrás:** EDITOR / selection.ids + Page Model subtree; clipboard nem lehet második dokumentum-adatforrás.
+- **Séma / invariánsok:** subtree paste új node ID-kat és parent/child mappinget kap; multi-select batch sorrendje és parent-szabálya explicit.
+- **Jogosultság:** csak aktív page/site scope; cross-page paste policy explicit és asset permissionnel egyezik.
+- **API/command:** element.duplicate és hierarchy.group létezik; clipboard copy/paste UI/handler nem bizonyított.
+- **Függőségek:** EDT-001–006/011–014/021–024/035–037.
+- **UI-állapotok:** none/single/multiple, clipboard empty/ready, invalid paste target, locked selection.
+- **Biztonság/adatvédelem:** pasted URL/asset references újraellenőrzendők; cross-site reference nem vihető át engedély nélkül.
+- **Tesztcsomag:** multi-select/duplicate core alap; clipboard/ID remap/cross-page E2E hiányzik.
+- **Elfogadás:** nested subtree copy/paste → új ID-k → asset refs validálása → undo/redo → save/reload.
+- **Bizonyíték:** commands.js duplicate/group és app.js selection; clipboard route/UI evidence nincs.
+- **Visszaállítás:** egy batch undo; sikertelen paste atomic rollback.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; copy/paste scope és UI implementációs döntés.
+
+#### EDT-039 — Page-local interaction schema
+- **Felhasználói eredmény:** a page komponensek biztonságos, korlátozott interakciót konfigurálhatnak.
+- **Belépési pont / műveletek:** Inspector interaction group; allowed action, target, trigger és validation.
+- **Kanonikus owner / adatforrás:** EDITOR a page-local interaction schema tulajdonosa; AUT automation action registry külön domain.
+- **Séma / invariánsok:** allowlisted trigger/action schema, no arbitrary JS/eval, URL/form safety, explicit target scope.
+- **Jogosultság:** public runtime csak validált, publikált interactiont futtathat.
+- **API/command:** Property Registry group említése mellett teljes property/runtime nem bizonyított.
+- **Függőségek:** EDT-021/022/034/037/040, SEC, AUT külön adapterkapu.
+- **UI-állapotok:** configured/invalid/unsupported/preview/runtime failure.
+- **Biztonság/adatvédelem:** arbitrary code tiltott; CSP, safe URL, event abuse és permission boundary kötelező.
+- **Tesztcsomag:** interaction schema/runtime acceptance nincs bizonyítva.
+- **Elfogadás:** valid allowlisted action preview/publish/runtime; arbitrary script, invalid target és unsafe URL elutasítva.
+- **Bizonyíték:** jelenlegi registry group nem bizonyít működő runtime-ot; teljes implementation evidence nincs.
+- **Visszaállítás:** config undo/revision restore; runtime side effect csak idempotens/safe policy szerint.
+- **Státusz / ismert probléma / következő lépés:** OPEN / UNVERIFIED; interaction schema és runtime security contract.
+
+#### EDT-040 — Motion és reduced-motion
+- **Felhasználói eredmény:** az animációk kontrollálhatók, és a csökkentett mozgást kérő felhasználók megfelelő élményt kapnak.
+- **Belépési pont / műveletek:** Inspector motion controls és public renderer.
+- **Kanonikus owner / adatforrás:** EDITOR a page-local motion configot kezeli; public renderer a preference-aware viselkedést.
+- **Séma / invariánsok:** duration/easing/action allowlist, motion defaults és prefers-reduced-motion policy.
+- **Jogosultság:** motion config nem fér hozzá domain permissionökhöz.
+- **API/command:** registryben motion/accessibility csoport említett, konkrét property/runtime nem bizonyított.
+- **Függőségek:** EDT-021/022/034/037/039, LOC, SEC.
+- **UI-állapotok:** default/reduced/disabled/unsupported.
+- **Biztonság/adatvédelem:** ne legyen autoplay/flashing vagy vestibularis kockázat; user preference legyen tiszteletben tartva.
+- **Tesztcsomag:** prefers-reduced-motion runtime teszt nincs bizonyítva.
+- **Elfogadás:** motion beállítása → normal/reduced preference mellett public render → animáció kikapcsolt vagy csökkentett, tartalom hozzáférhető.
+- **Bizonyíték:** property group említés; működő motion implementation evidence nincs.
+- **Visszaállítás:** motion config undo/revision restore.
+- **Státusz / ismert probléma / következő lépés:** OPEN / UNVERIFIED; reduced-motion policy és browser tests.
+
+#### EDT-041 — Editor onboarding és template start
+- **Felhasználói eredmény:** új oldal kész sablonból vagy segített üres állapotból indulhat, meglévő munka elvesztése nélkül.
+- **Belépési pont / műveletek:** create page/onboarding/template chooser; apply/preview/cancel.
+- **Kanonikus owner / adatforrás:** EDITOR onboarding UX; a template catalog a DESIGN SYSTEM domain tulajdona.
+- **Séma / invariánsok:** template version/compatibility, safe merge/replace policy és sample content cleanup.
+- **Jogosultság:** csak jogosult site editor; template install a scope-hoz kötött.
+- **API/command:** template-start UI és teljes template registry/apply API nem bizonyított.
+- **Függőségek:** EDT-001–005/015–020/027–034, DSN, SITE/SEC.
+- **UI-állapotok:** empty/new, template loading/preview, apply confirmation, incompatible template, failure.
+- **Biztonság/adatvédelem:** destructive overwrite előtt explicit confirm; sample secrets/private data tilos.
+- **Tesztcsomag:** teljes onboarding/template E2E nincs bizonyítva.
+- **Elfogadás:** template preview → new page apply → all node IDs remapped → undo/rollback → sample content removed.
+- **Bizonyíték:** template UI/registry teljes evidence nincs rögzítve.
+- **Visszaállítás:** transaction undo és page revision; destructive replace nélkül preview/confirm.
+- **Státusz / ismert probléma / következő lépés:** OPEN / UNVERIFIED; template owner/API és onboarding UX.
+
+#### EDT-042 — Editor error recovery és diagnostics
+- **Felhasználói eredmény:** hiba esetén a felhasználó érthető magyarázatot és adatvesztés nélküli következő lépést kap.
+- **Belépési pont / műveletek:** Editor diagnostics, save/conflict/error panels, retry/export/reload.
+- **Kanonikus owner / adatforrás:** EDITOR recovery UX; server errors és diagnostics source moduljukban maradnak.
+- **Séma / invariánsok:** stable error code, redacted context, local draft retention, recovery action and telemetry correlation.
+- **Jogosultság:** diagnosztika nem tartalmazhat secretet, tokeneket vagy szükségtelen PII-t.
+- **API/command:** conflict export/reload és diagnostics alap létezik; minden hibaállapot/telemetry contract nincs bizonyítva.
+- **Függőségek:** EDT-027–033, SEC, OPS, QA.
+- **UI-állapotok:** validation/network/conflict/permission/renderer/malformed document/retry.
+- **Biztonság/adatvédelem:** redaction és safe logging kötelező; JSON draft export érzékenységét jelezni kell.
+- **Tesztcsomag:** conflict recovery source test van; malformed document és teljes error matrix hiányzik.
+- **Elfogadás:** szándékosan kiváltott hiba → diagnosztikai ID és biztonságos üzenet → retry/export/restore → nincs silent data loss.
+- **Bizonyíték:** app.js conflict functions, diagnostics module, core.test.js source test.
+- **Visszaállítás:** export, reload latest, revision restore; recovery action auditálandó.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; teljes error taxonomy és recovery E2E.
+
+#### EDT-043 — Rich Text editing
+- **Felhasználói eredmény:** formázott szöveg, listák, idézetek és linkek strukturált, biztonságos tartalomként szerkeszthetők.
+- **Belépési pont / műveletek:** Rich Text Inspector/editor toolbar; input, normalize, save, undo/redo, render.
+- **Kanonikus owner / adatforrás:** EDITOR / Rich Text schema/commands; Page Model strukturált Rich Text dokumentum.
+- **Séma / invariánsok:** schemaVersion, block/inline allowlist, mark/link safety, normalize és unsupported version reject.
+- **Jogosultság:** authenticated draft editing; public output csak published rich text.
+- **API/command:** richtext.content.set + normalizeRichText; teljes toolbar/paste sanitizer/public renderer parity nyitott.
+- **Függőségek:** EDT-001–005/017/021–022/027–034/037, SEC.
+- **UI-állapotok:** empty/editing/invalid/paste sanitized/saving/conflict.
+- **Biztonság/adatvédelem:** paste sanitization, unsafe URL rejection, no raw HTML execution.
+- **Tesztcsomag:** schema, valid/invalid Rich Text és undo/redo tesztek léteznek; keyboard/paste/browser suite nincs bizonyítva.
+- **Elfogadás:** format/list/link/paste → sanitize → save/reload → public render/accessibility parity; unsupported schema elutasítva.
+- **Bizonyíték:** schema.js, commands.js, richtext engine és core.test.js.
+- **Visszaállítás:** undo/redo és revision restore.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; toolbar, paste sanitizer, a11y és renderer parity.
+
+#### EDT-044 — Per-user Editor preferences
+- **Felhasználói eredmény:** a szerkesztő személyes UI-beállításai visszatérnek, de nem módosítják az oldal tartalmát.
+- **Belépési pont / műveletek:** Editor preferences; viewport/panel/default controls/favorites, reset.
+- **Kanonikus owner / adatforrás:** IDENTITY/USER preference domain; editor_preferences tábla user-scope; Page Modeltől elkülönül.
+- **Séma / invariánsok:** user/site scope explicit, defaults/version migration és schema allowlist; secret/domain data nem kerül preference mezőbe.
+- **Jogosultság:** csak az aktuális user saját preference-e olvasható/írható.
+- **API/command:** schema létezik, dedikált route/UI használat nem bizonyított.
+- **Függőségek:** EDT-007/010/012/015/025/035–036, IDENTITY/SEC, TEAM/SITE scope.
+- **UI-állapotok:** default/saved/reset/error, stale preference schema.
+- **Biztonság/adatvédelem:** user isolation, size limit, no secret storage, logout/account deletion lifecycle.
+- **Tesztcsomag:** preference API/UI/authorization/migration teszt nincs bizonyítva.
+- **Elfogadás:** preference módosítása → reload/login → visszaáll; más user nem olvashatja; Page Model JSON változatlan.
+- **Bizonyíték:** editor_preferences migration/schema; route/UI runtime evidence nincs rögzítve.
+- **Visszaállítás:** reset defaults és preference schema migration rollback.
+- **Státusz / ismert probléma / következő lépés:** OPEN / UNVERIFIED; owner/scope/API és preference lifecycle döntés.
+
+**Szeletzárás:** EDT-034–044 mezőszintű szerződései elkészültek, de több acceptance blokkoló maradt, különösen public renderer parity, keyboard/accessibility, page-local interaction, reduced motion, templates és preferences. Következő lépés: a 63.46 mező-/dependency-ellenőrzése, majd az EDT modul teljes kártyáinak konszolidált állapotellenőrzése; ezután térünk át a WEB modulra.
+
