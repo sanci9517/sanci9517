@@ -2199,27 +2199,27 @@ Ez a rész a 37.10 első áttekintésének frissített, endpoint- és approval-s
 **Ellenőrzési forrás:** a §24 stabil feature-ID registry és a §41 teljes, 17 oszlopos crosswalk; 2026-10-13.
 
 - 271 történeti kulcs → 271 sor, 271 egyedi kulcs.
-- 359 stabil feature ID a registryben; a H19–H34 crosswalk minden hivatkozott ID-ja feloldható.
+- **Történeti snapshot (2026-10-13):** 359 stabil feature ID volt a registryben; a H19–H34 crosswalkban hivatkozott ID-k feloldhatók voltak. Ez a darabszám nem a jelenlegi registry állapota.
 - A jelenlegi feature-ID prefix és a megadott canonical domain owner egyezik; a vegyes ownerű sorok explicit több-ID hozzárendelést használnak.
 - A kilenc több-ID hozzárendelés külön felülvizsgálva: architektúra+secret boundary; reduced-motion/QA; interaction validation/QA; performance/ops; content management/Page Model; integrations/Connections Center; permissions/security; AI Editor action pipeline; collaboration/conflict. A több-ID sor nem helyettesíti a kapcsolódó feature ID-k külön DoD-ját.
 - A korábbi általános phase-dependent célfázisok megszüntetve: a VOD-admin capability 1.5–2.0, az analytics reporting 2.0 célfázist kapott; a crosswalkban már nincs phase-dependent célfázis.
 - A történeti eljárási checklist H34 soraiban az „all phases” a folyamatos governance-kötelezettséget jelenti, nem azt, hogy az összes termékfunkció minden fázisban implementálandó.
 - A H27 Admin-capability soroknál a jelenlegi menüben látható placeholder nem runtime feature: a crosswalk csak a canonical owner/funkcióazonosítóhoz rendeli, és külön jelzi a későbbi fázist.
 
-**Továbbra is nyitott:** a sorok eredeti történeti forrásával való emberi, tartalmi összevetés; minden cél-ID feature contractjának (permission, data owner, dependency, negative tests, acceptance evidence) kitöltése; a 271 követelmény és a 359 feature ID közötti teljes lefedettségi mátrix. Ez a második review-kör sem P0.2 PASS, és nem változtat implementációs státuszt.
+**Továbbra is nyitott:** a sorok eredeti történeti forrásával való emberi, tartalmi összevetés; minden cél-ID feature contractjának (permission, data owner, dependency, negative tests, acceptance evidence) kitöltése; a teljes történeti↔aktuális provenance. A 359-es registry-szám a 2026-10-13-i review snapshotja; a jelenlegi registry 362 egyedi ID-jának strukturális crosswalk-lefedettségét a §37.32 és §41.3.75 később 362/362-re igazolta. Ez a későbbi strukturális PASS sem zárja le a szemantikai review-t vagy P0.2-t.
 
 
 ### 37.17. P0.2 — Történeti és új funkciók közti lefedettségi különbség
 
 A §24 registry és a §41 crosswalk újraszámolt kapcsolata:
 
-- §24: 359 egyedi stabil feature ID (a P0.2 review során felvett LOC-005 és LOC-006 követelményekkel).
+- **Történeti snapshot (2026-10-13):** §24: 359 egyedi stabil feature ID (az akkori registry-állapot szerint). A jelenlegi registry 362 egyedi ID-t tartalmaz; lásd §37.32 és §41.3.75.
 - §41: 271 egyedi történeti követelménykulcs.
 - A történeti crosswalk 128 különböző aktuális feature ID-t hivatkozik közvetlenül; minden ilyen ID feloldható a registryben, és a crosswalkban használt QA-ID-k is feloldhatók.
-- A H19–H34 crosswalk 128 különböző aktuális feature ID-t köt közvetlenül történeti kulcshoz; a 359-ből fennmaradó 231 ID-hoz ebből a ledgerből nem vezethető le közvetlen H-key. Ezek egy része a §37.22–37.25 E/F bullet-crosswalkjaiban már szerepelhet, ezért nem tekinthető automatikusan árva funkciónak. A teljes, összes archive source-ra kiterjedő eredetbesoroláshoz mindegyik ID-nél rögzíteni kell: NEW PRODUCT REQUIREMENT, EXPANDED ACCEPTANCE, CROSS-CUTTING CONTROL, PLATFORM/OPERATIONS, vagy HISTORICAL MAPPING GAP.
-- A P0.2 zárás előtt a 359 ID mindegyikéhez ki kell tölteni a provenance mezőt: historical key(s), new requirement source, domain owner, target phase, dependency IDs, acceptance/test IDs és státusz. Ha egy ID új, a forrás a MASTER döntési naplójában szerepeljen; ha történeti, a H-key legyen visszakövethető. Az üres provenance nem törlési ok, hanem nyitott auditfeladat.
+- **Történeti snapshot (2026-10-13):** a H19–H34 crosswalk akkor 128 különböző feature ID-t kötött közvetlenül történeti kulcshoz. Ez az akkori 359-ID-s állapotból számolt különbség, nem jelenlegi registry-számlálás. A teljes, összes archive source-ra kiterjedő eredetbesoroláshoz minden jelenlegi ID-nél rögzíteni kell: NEW PRODUCT REQUIREMENT, EXPANDED ACCEPTANCE, CROSS-CUTTING CONTROL, PLATFORM/OPERATIONS vagy HISTORICAL MAPPING GAP. Az ID strukturális hivatkozása önmagában nem bizonyít történeti eredetet.
+- A P0.2 zárás előtt a **jelenlegi 362 registry-ID mindegyikéhez** ki kell tölteni és ellenőrizni a provenance mezőket: historical key(s), new requirement source, domain owner, target phase, dependency IDs, acceptance/test IDs és státusz. Ha egy ID új, a forrás a MASTER döntési naplójában szerepeljen; ha történeti, a H-key legyen visszakövethető. Az üres provenance nem törlési ok, hanem nyitott auditfeladat.
 
-**Aktuális döntés:** a 271 H19–H34 követelmény soronkénti megőrzése szerkezetileg PASS; az összes korábbi tervre kiterjedő történeti↔aktuális feature coverage nem PASS, amíg a 359 ID provenance-e és a tételenkénti feature contract nincs teljesen dokumentálva.
+**Aktuális döntés:** a 271 H19–H34 kulcs és a jelenlegi 362 registry-ID közötti teljes történeti↔aktuális feature coverage továbbra sem PASS, amíg az összes ID provenance-e és a tételenkénti feature contract nincs teljesen dokumentálva. A 362/362 strukturális crosswalk-ellenőrzés csak ID-feloldást igazol.
 
 
 ### 37.18. P0.2 — Archived source inventory and precedence reconciliation
@@ -3453,7 +3453,7 @@ A MASTER jelenlegi tartalmán végzett strukturális ellenőrzés eredménye:
 
 - Történeti katalógus: 271 címkézett követelmény, a §40.1–40.16 csoportok deklarált elemszámai egyeznek a címkelisták elemszámával.
 - Crosswalk: 271 sor; 271 egyedi történeti kulcs; nincs duplikált kulcs.
-- Funkciójegyzék: 359 stabil ID a §24.1–24.18 tartományban; a LOC-005/LOC-006 bővítés után a registry- és crosswalk-hivatkozásokat újra ellenőrizendő.
+- **Történeti snapshot (2026-10-13):** funkciójegyzék 359 stabil ID a §24.1–24.18 tartományban; a LOC-005/LOC-006 bővítés utáni registry- és crosswalk-hivatkozások akkor még újraellenőrzésre vártak. A későbbi, aktuális strukturális ellenőrzést a §41.3.75 rögzíti (362/362).
 - A crosswalk minden cél-ID-ja feloldható a jelenlegi funkciójegyzékben; a QA-horgonyok szintaktikailag érvényes QA-ID-hivatkozások.
 - A §40 katalóguscímkéi és a §41 crosswalk címkéi kulcsonként egyeztetve vannak.
 
@@ -5086,3 +5086,10 @@ The H34.12–H34.22 process rows now define the evidence required for candidate 
 A §37.3 P0.2 összefoglaló még nyitott feladatként írta le a 362 registry-ID strukturális újraellenőrzését, miközben a későbbi §37.32 és §41.3.75 már dokumentálta a 362/362 eredményt. Az összefoglaló most a későbbi, konkrét ellenőrzési bizonyítékhoz igazodik; a régi 361/361 állapotot történeti eredményként kezeli. A §37.32 korábbi „359 ID” caveatje szintén a jelenlegi 362 ID kétirányú eredetbesorolására lett pontosítva.
 
 **Bizonyított határ:** ez a javítás a belső státuszellentmondást és az elavult számszerű hivatkozást rendezi. A 362/362 eredmény csak registry→crosswalk strukturális feloldást igazol; nem bizonyít szemantikai megfelelést, teljes kétirányú provenance-t, hiányzó archív források visszakeresését vagy runtime acceptance-t. Az eredeti `00/A` és `00.9–00.9.6.B` továbbra is UNRECOVERED / OPEN. **P0.2 IN PROGRESS / NOT PASS marad.**
+
+
+### 41.3.107. P0.2 — 359-ID-s történeti snapshotok és a jelenlegi 362-ID-s állapot megkülönböztetése (2026-10-14)
+
+A §37.16, §37.17 és §41.2 egyes mondatai a 2026-10-13-i, 359-ID-s registry-snapshotot aktuális állapotként fogalmazták meg. A régi számokat történeti bizonyítékként megtartottam, de egyértelműen snapshotként jelöltem; a jelenlegi provenance-követelmény már mind a 362 registry-ID-re vonatkozik. A jelenlegi strukturális crosswalk-ellenőrzés helyes hivatkozása §37.32 és §41.3.75.
+
+**Bizonyított határ:** a 362/362 a registry→crosswalk strukturális feloldás eredménye, nem a történeti eredet kétirányú bizonyítéka. A 271 H19–H34 kulcs szemantikai reconciliációja, a teljes E.1/C.23/C.24 forrásleképezés, az ID-szintű contractok és az eredeti `00/A`, `00.9–00.9.6.B` források továbbra is nyitottak. **P0.2 IN PROGRESS / NOT PASS marad.**
