@@ -6837,6 +6837,18 @@ A `0004_system_page_content.sql` történeti táblát hoz létre, míg a `0005_c
 
 **Nyitott bizonyítás:** minden aktív forrás, generált/inline URL és dinamikus hivatkozás teljes keresése; API- és mentettadat-kompatibilitás; asset közvetlen elérhetősége; typecheck/CI, Editor/Admin/Schedule tesztek; böngésző és éles publikálási regresszió. **IN PROGRESS / NOT PASS**. Nem történt kódtörlés vagy runtime-módosítás.
 
+### 63.50.15. Legacy Builder API-függőségek és archiválási határ (2026-10-14)
+
+**Forrás:** `2b47dd5` fa; célzott statikus keresés a `public/assets/page-builder.js`, `system-page-editor.js`, `system-page-runtime.js`, `page-renderer.js`, `site.js`, `public/visual-page.html`, `src/index.ts`, `src/routes/admin/editor.ts`, `src/routes/public/system-pages.ts`, `public/editor-v2/app.js` fájlokban. A teljes, 85 aktív forrásfájlra tervezett tömeges keresés eszközkorlát miatt **nem fejeződött be**, így teljes-repo negatív bizonyíték nincs.
+
+- `page-builder.js` a `/api/admin/pages` és `/api/auth/session` végpontokat hívja: a UI archiválása nem jelenti a Page/CMS API vagy mentett adatok eltávolítását.
+- `system-page-editor.js` a `/api/admin/system-pages` végpontot hívja; `system-page-runtime.js` a `/api/public/system-pages` végpontot hívja. **Külön szerkesztő- és runtime-kompatibilitási szerződés** szükséges. Nem szabad összekeverni a v2 Editor és a kanonikus publikus `page-renderer.js` életciklusával.
+- `page-renderer.js` a `/api/public/pages` és `/api/public/schedule` adatokat olvassa; `site.js` a publikus oldalak/beállítások API-ját is használja. **KEEP / PUBLIC RUNTIME**, regressziós bizonyítékig.
+- Az `editor-v2/app.js` saját Editor/Page API-k mellett Twitch integrációs API-hívásokat is tartalmaz. Ez **tényleges, ellenőrzött határátlépés** a külön Integrációk munkaterület jövőbeni kialakításához: a közös Twitch szolgáltatást meg kell őrizni, a felhasználói kezelés helyét a modulhatár-terv szerint kell rendezni, párhuzamos integrációs állapot nélkül.
+- A fenti célzott forrásokban nem találtunk közvetlen `/editor/` vagy `admin-editor-v2` hivatkozást. Ez nem teljes-repo bizonyíték, és nem igazolja a régi assetek közvetlen URL-elérhetetlenségét.
+
+**Döntés:** a legacy Editor/Builder UI továbbra is **ARCHIVE CANDIDATE / NOT SAFE TO REMOVE**; a kanonikus Page, Schedule, Twitch és publikus renderelési API-k megőrzendők. **Nyitott:** fennmaradó aktív fájlok hivatkozásai, közvetlen URL-ek, import/export/mentett adat kompatibilitás, futtatott CI/tesztek, böngésző és publikálási regresszió. **IN PROGRESS / NOT PASS**.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
