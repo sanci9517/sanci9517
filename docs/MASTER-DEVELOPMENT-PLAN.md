@@ -5154,3 +5154,20 @@ A §37.16, §37.17 és §41.2 egyes mondatai a 2026-10-13-i, 359-ID-s registry-s
 **Eredmény:** a 19–33. fejezeteknél az azonosított számlálási eltérések a H19 formázási összevonására és a H21/H31/H33 négy külön kiegészítő szabályára vezethetők vissza. Ez támogatja a **strukturális reconciliációt**, de még nem igazolja a minden követelményhez tartozó teljes leírás, canonical owner, lifecycle, fázis, függőség, elfogadási feltétel és teszt szemantikai helyességét. H34 külön folyamat/témakör leképezése továbbra is önálló, tételes ellenőrzést igényel.
 
 **Státusz:** H19–H33 címke- és darabszám-összevetés **STRUCTURAL REVIEW COMPLETE WITH EXPLICIT EXCEPTIONS**; teljes szemantikai reconciliáció **OPEN**. `00.9.6.B` teljes eredeti forrása továbbra is **UNRECOVERED / OPEN**. P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+### 41.3.112. P0.2 — H34 kétirányú forrás–ledger megfeleltetés és a 00.9.6.B keresésének eredménye (2026-10-14)
+
+**Forrás:** a történeti `8a4f296b8c87643a3199e5787541e8eefb17f930` MASTER-snapshot `# 34 — FOLYAMATOS FUNKCIÓFELFEDEZÉS` szakasza; ellenőrzött forrás-blokk: 3046. sortól, a következő `# 35` fejezetig. **Cél:** a H34 ledger szakaszának forrás→ledger és ledger→forrás lefedettségi vizsgálata, a funkciók és a folyamatlépések külön kezelésével.
+
+**Forrásból ledgerbe:**
+- A folyamatos felfedezés el nem zárható alapelve: H34.00.
+- A 11 ismétlődő vizsgálati téma: H34.01–H34.11 (modern visual builder; GrapesJS/Craft.js/Puck; responsive/layout; accessibility; performance; reusable components; design systems; collaboration/conflict; backup/recovery; AI action safety; stream/content intelligence).
+- A 11 új funkció felvételére vonatkozó eljárási lépés: H34.12–H34.22 (azonosítás; cél/use case; függőségek; Page Model/adatmodell; Command/Action; Inspector/Canvas/UI; persistence; teszt; MASTER-be felvétel; implementáció; felhasználói validáció).
+
+**Ledgerből forrásba:** a H34.00–H34.22 sorok mindegyikének azonosítható forrásmegfelelője van a fenti alapelvben, a 11 témában vagy a 11 számozott folyamatlépésben. A 23 ledger-sor bontása így 1 alapelv + 11 témakör + 11 eljárási lépés; a szakaszban nincs további önálló termékfunkcióként szereplő checkbox. A ledger H34.01–H34.11 címkéiben a magyar írásjelek (pontosvessző, záró pont) megőrzése nem funkcionális eltérés.
+
+**Értelmezési korlát:** ez a megfeleltetés a történeti forrás e snapshotjára bizonyítja a H34 strukturális lefedettségét, nem bizonyítja, hogy minden témához már létezik implementált funkció, megfelelő canonical owner, elfogadási feltétel vagy sikeres teszt. A H34 folyamat ismétlődő governance-kötelezettség; a H34-sorok nem kész termékfunkciók.
+
+**00.9.6.B forráskeresés:** a GitHub fájlkeresésben a `00.9.6.B` és `00.9.6` keresőkifejezések, valamint a commitkeresésben ugyanezek és a történeti ledgerre vonatkozó keresőkifejezés nem adtak találatot. Ez kizárólag a jelenleg elérhető keresési index eredménye; **nem** bizonyítja, hogy a szakasz nem létezett, vagy nincs meg egy nem indexelt commitban, archivált fájlban vagy másik ágon. A teljes eredeti `00.9.6.B` szöveg ezért továbbra is **UNRECOVERED / OPEN**, és további commit-/snapshot-szintű vizsgálat szükséges.
+
+**Státusz:** H34 strukturális, kétirányú lefedettségi ellenőrzése **PASS a megnevezett történeti snapshotra**; teljes történeti szemantikai reconciliáció **OPEN**; `00.9.6.B` forrás-visszakeresés **OPEN**. P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
