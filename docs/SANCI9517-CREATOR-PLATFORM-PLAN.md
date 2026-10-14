@@ -80,6 +80,26 @@ Az alábbi minták **terméktervezési jelöltek**, nem kész implementációk �
 
 **Közös, minden mintára érvényes elfogadási kapu:** egyértelmű owner és Admin-belépési pont; valódi használati eset; működő/tervezett állapot megkülönböztetése; mobil, billentyűzet, hiba- és üres állapot; jogosultság és adatvédelem; pozitív/negatív teszt; migráció és visszaállítás; meglévő funkcióazonosítóhoz kapcsolás. Ha már létezik azonos képesség, annak szerződését kell bővíteni, nem másodikat létrehozni.
 
+### 0.8. Tartós bővíthetőség — új funkciók felvétele a kész MASTER-be
+
+**Alapelv:** a terv elfogadása nem zárja le a termék bővítését. A MASTER az egyetlen élő, verziózott forrás; minden későbbi funkció ugyanitt kap stabil azonosítót, felelőst, helyet és ellenőrizhető fejlesztési pontot. Nem szükséges a 22 főmodult vagy az architektúrát újrakezdeni egy új ötlet miatt.
+
+**Kötelező felvételi eljárás (FEATURE-INTAKE):**
+1. **Igény és érték:** ki használja, milyen konkrét feladatot old meg, milyen publikus/Admin/Editor felületen találkozik vele; kötelező-e, opcionális vagy későbbi fázisú.
+2. **Duplikációellenőrzés:** a 24. és 54. fejezet stabil ID-i, a 49. menütérkép, a történeti mapping és a tényleges repo-kód ellenőrzése. Ha már van megfelelő capability, azt bővítjük; azonos domainhez nem építünk párhuzamos CRUD-ot vagy tárolót.
+3. **Elhelyezés:** meglévő 49.x főmodul → feladat szerinti aloldal → kontextusos művelet. Új főmodul csak akkor indokolt, ha a felhasználói cél és az önálló domain-owner valóban különbözik, és az egyszerűbb aloldal nem elég. A publikus felület és a Visual Editor csak a saját felelősségi körét kapja.
+4. **Egyetlen domain-szerződés:** kanonikus tulajdonos, objektum-életciklus, D1/R2/egyéb adattárolási döntés, API/action/event, cache és szinkron, jogosultság, site/workspace-scope, audit, export/törlés, migráció és visszaállítás.
+5. **Újrahasznosítás és külső kutatás:** saját kód, releváns létező projekt, nyílt forrású komponens és szolgáltatás összevetése; licenc, biztonság, karbantartás, teljesítmény, akadálymentesség, adatvédelem, Cloudflare-kompatibilitás és teljes birtoklási költség dokumentálása. Az összehasonlítás nem jelent automatikus függőségbeemelést.
+6. **UX-szerződés:** elsődleges feladatút és visszatérési pont, kereshetőség, jogosultságfüggő láthatóság, mobil/tablet/asztali kezelés, billentyűzet és képernyőolvasó, üres/töltés/hiba/siker állapot, súgó és biztonságos alapbeállítás.
+7. **Szállítási szeletek:** egy nagy képesség több önálló, tesztelhető alpontra bontható: adatmodell → backend → Admin-kezelés → szükség szerinti Editor-integráció → publikus megjelenés → integrációk → tesztek → üzemeltetés. Nem kell minden részét egyetlen Visual Editor-feladatba sűríteni.
+8. **Két külön státusz:** tervbeli specifikációs állapot és tényleges implementációs/teszt/éles működési bizonyíték. A dokumentáció készültsége soha nem jelent automatikusan működő funkciót.
+9. **Változáskezelés:** stabil ID-kat nem számozunk át; átnevezésnél alias, összevonásnál előd–utód hivatkozás, kivezetésnél indok és migráció. A funkciólista, menütérkép, tulajdonosi szerződés, függőségek, tesztek és aktív pont ugyanabban a commitban vagy bizonyítottan összekapcsolt lépésekben frissül.
+10. **Egyetlen aktív végrehajtási pont:** új ötlet a backlogba kerülhet bármikor, de nem szakítja meg automatikusan az aktuális kaput. Sürgős biztonsági/üzemi kivételhez dokumentált döntés és visszatérési pont szükséges.
+
+**Felvételi rekord minimális sablonja a megfelelő meglévő fejezetben** (nem új tervfájl): `ID | felhasználói cél | owner | Admin-modul/aloldal | publikus szerep | Editor-szerep | adat/API | jogosultság | függőségek | fázis | acceptance | tesztbizonyíték | státusz`.
+
+**Minőségvédő szabály:** a katalógus bővülése önmagában nem javítja a terméket. Minden új elemnek meg kell őriznie az egyszerű navigációt, a közös adatgazdát, a biztonságot és a mérhető felhasználói értéket. A még nyitott 63. fejezetbeli történeti és szemantikai kapukat ez a bővítési eljárás nem zárja le.
+
 ### 0.2. Változtatási szabály
 Új funkció a megfelelő modulba kerül. Meglévő képesség módosításakor meg kell őrizni az adatkapcsolatokat, jogosultságokat, hibaállapotokat és a korábbi használati eseteket. Funkciót csak kifejezett termékdöntéssel lehet kivezetni; a későbbre ütemezés nem törlést jelent.
 
