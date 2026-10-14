@@ -4043,6 +4043,7 @@ A végleges funkciókatalógus több, egymást kiegészítő rétegből áll:
 - a H19–H34 teljes történeti ledger;
 - a MASTER-2.76 40 canonical domainje, benchmarkjai és 411 soros hozzárendelése;
 - a jelen 2.77 Admin képernyő- és végrehajtási szerződése.
+- a korábbi `planning/ultimate-master-plan` tervből beemelt 339 stabil capability-ID és az alábbi gap-closure követelmények; az eredeti külön terv aktív státusza superseded.
 
 **Sem a 40 domain összefoglalója, sem a 411 soros mapping nem helyettesíti az E/F konkrét követelményeit.** Ha egy követelmény az E/F fejezetben szerepel, de nem jelenik meg az Admin menüben, attól még kötelező a megfelelő domainben. A menü IA, nem az adatmodell vagy a teljes scope határa.
 
@@ -4555,6 +4556,103 @@ Funkciók csak az alábbi állapotok egyikével tarthatók nyilván: REQUIRED / 
 | `QA-008` | End-to-end creator journey. |
 | `QA-009` | User acceptance and evidence log. |
 | `QA-010` | Continuous benchmark and feature-discovery review. |
+
+
+### 2.77.7.B — További részletes követelmények a korábbi S9517-ULTIMATE-PLAN összevetéséből
+
+**Forrásdöntés:** az alábbi pontok a korábbi `planning/ultimate-master-plan` terv 21. fejezetének részletes követelményei. Ahol a C/E/F fejezetek már lefedik őket, ez a szakasz kiegészítő acceptance-kritériumot pontosít; ahol korábban nem szerepeltek elég egyértelműen, most kötelező scope-ként megőrzi őket. Nem hoz létre külön tervet vagy új párhuzamos workstreamet. A pontos buildfázist a megnevezett canonical owner és a 2.77.5 sorrend adja. Az itt szereplő követelmények **nem runtime PASS-ok**.
+
+#### GAP-01 — Creator Resources / Alkotói erőforrások
+**Canonical owner:** CMS/Content Factory + Resource/Entitlement. **Fázis:** E.4/E.5, majd a megfelelő későbbi tartalomfázis.
+- Önálló publikus Creator Resources oldal és CMS-kategória; a tartalom a canonical Page/CMS rendszeren keresztül kezelendő, nem hard-coded HTML-ként.
+- Tartalomtípusok: útmutató, letölthető fájl, setup-lista, ajánlott eszköz, affiliate link megfelelő disclosure-rel, tutorial, FAQ, preset és külső erőforrás.
+- Mezők: cím, slug, leírás, cover, kategória, tagek, fájl/link, verzió, közzétételi dátum, visibility, SEO és kapcsolódó tartalom.
+- A fizetős vagy privát letöltés hozzáférését a canonical Resource/Entitlement jogosultság ellenőrzi; a bináris objektum nem válhat publikus puszta URL birtokában.
+
+#### GAP-02 — Canonical Button Registry és Action Registry
+**Canonical owner:** Component/Interaction + Security/Permissions. **Fázis:** F0.4/F0.6, a publikus render és interakciós fázisban bekötve.
+- Egyedi stabil ID; név, leírás, ikon ID, action type, target, permission, visibility, sorrend és állapot.
+- Engedélyezett actiontípusok: belső route, validált külső URL, scroll-to-section, dialog open/close, form submit, safe toggle és canonical domain service által támogatott művelet.
+- Arbitrary JavaScript string nem tárolható és nem futtatható actionként. Külső linknél URL-validáció, rel/target policy és open-redirect védelem kötelező.
+- Ikon+szöveg / csak ikon / csak szöveg módok; ikon-only esetben accessible label. Hover/focus/active/disabled/loading, keyboard és reduced-motion állapotok egységesek.
+- Keresés/kategorizálás, sorrend, duplikálás, preview, használati helyek és törlés előtti referenciavizsgálat; globális style-változtatás preview-val és rollbackkel, helyi override csak explicit.
+- Ugyanaz a button definition minden felületen ugyanazt az action contractot használja.
+
+#### GAP-03 — Form Builder és adatbeküldés
+**Canonical owner:** Forms/Submission domain + Security/Privacy. **Fázis:** E.2/E.7 és a Website Builder megfelelő implementációs pontja.
+- Mezőtípusok: text, email, URL, textarea, select, checkbox, radio, date/time, file upload; conditional field későbbi bővítésként.
+- Required/default/help text, min/max, option list, consent, success/error message és szerveroldali validáció.
+- Rate limit, bot/spam és anti-abuse védelem, honeypot vagy indokolt alternatíva, request-size limit.
+- Submit kizárólag regisztrált backend actiont hívhat (pl. contact request, newsletter opt-in, clip submission, event signup); arbitrary script nem lehet submit handler.
+- Consent version/time/source, unsubscribe/withdrawal, retention, PII-minimalizálás, access control, export/delete és audit.
+- Success csak backend visszaigazolás után jelenhet meg; duplikált submit idempotens. Upload mező validált file policyt, permissiont és R2 lifecycle-t követ.
+
+#### GAP-04 — Publikus Site Search és discoverability
+**Canonical owner:** Public Website/SEO + CMS/Content. **Fázis:** E.2/E.4 és F0.7, a tartalomtípusok bővülésével.
+- Kereshető tartalom a publikált oldalakra, Creator Resources elemekre, tartalomra és termékekre, a capability tényleges aktiváltsága szerint.
+- Draft, member-only vagy private tartalom nem kerülhet keresési indexbe. Query-normalizálás, pagination, relevancia, no-results state és canonical URL szükséges.
+- Publish/unpublish/update/delete esetén az index és cache konzisztensen invalidálódik.
+- Sitemap, broken-link report, redirect manager, indexelési hibák, social preview és OG image preview a tényleges publish/SEO workflow része.
+- AEO/structured data csak releváns, validált schema típushoz adható; irreleváns markup automatikus hozzáadása tilos.
+
+#### GAP-05 — Custom Domain lifecycle
+**Canonical owner:** Site/Domain Settings + Public Hosting/Operations. **Fázis:** E.2/E.19 és a public production-readiness kapu.
+- Domain hozzáadása, verification challenge, DNS rekord instrukció, status polling és érthető hibaállapot.
+- Primary domain, alias/redirect, HTTPS/TLS állapot, detach és visszaállítás; a pending DNS propagation nem jelezhető késznek.
+- Domainváltáskor canonical URL, redirect, sitemap, social preview és cache invalidation ellenőrzése kötelező.
+- Destructive detach megerősítést és auditot igényel. A szükséges Cloudflare/platform képességeket és költségeket implementáció előtt igazolni kell; nem feltételezhető, hogy a szolgáltatás automatikusan elérhető.
+
+#### GAP-06 — Canonical Game Profile
+**Canonical owner:** Game Profile domain + Schedule/Content consumers. **Fázis:** E.8/F0.9 és a kapcsolódó későbbi tartalomfázis.
+- Stabil belső ID, név, platform, artwork/icon, leírás, genre/category, official URL, creator-specific notes, tagek és kapcsolódó content/schedule.
+- Create/edit/archive/search és usage map. Schedule event, content item és publikus oldal ugyanarra a canonical Game Profile ID-ra hivatkozik.
+- Külső játékadat csak provider/license policy alapján importálható; artwork a Resource Registryhez tartozik.
+- Törlés előtt reference check; használt profilnál az archiválás előnyben.
+
+#### GAP-07 — Link Hub és kampánylinkek
+**Canonical owner:** Navigation/Link Hub + Campaign + Analytics. **Fázis:** E.2/E.15 és a releváns 1.x/content/analytics pontok.
+- Link item: title, destination, icon, description, visibility, order, active window, campaign, locale és status.
+- Linktípusok: internal route, external URL, schedule, content, product, support, Discord, newsletter és event.
+- Link health check, target validation, expired-link warning, redirect/UTM policy; campaign CTA ugyanazt a canonical link/campaign rekordot használja.
+- Click analytics csak privacy/consent szabály szerint, aggregáltan és szükségtelen fingerprinting nélkül. QR export és short link csak külön biztonságos redirect contract után aktiválható.
+- A publikus Link Hub mobilbarát, hozzáférhető, gyors és a creator brandhez illeszkedő.
+
+#### GAP-08 — Audience ownership és Founding Supporters
+**Canonical owner:** Audience/CRM + Consent/Privacy + Support. **Fázis:** E.13/E.16 és F0.15/F0.16 megfelelő részei.
+- Email audience consent source/timestamp/version/language/status mezőkkel, suppression/unsubscribe, export/delete és retention.
+- Leiratkozott cím nem kaphat újra marketing emailt új, explicit hozzájárulás nélkül. Newsletter, transactional email és automation notification külön kategória/jogosultság.
+- Founding Supporters/támogatói névlista kizárólag önkéntes, explicit, visszavonható opt-innel jeleníthet nevet; a támogatás ténye vagy összege önmagában nem publikus hozzájárulás.
+- Email provider adapter: bounce/complaint állapot, retry és idempotency.
+
+#### GAP-09 — Stream diagnostics és Stream Intelligence
+**Canonical owner:** Streamer/Integration + Diagnostics/Operations; az intelligencia később AI ownerhez kerülhet. **Fázis:** F0.9/F0.10 az alapadatokhoz; a fejlett intelligence csak a megfelelő későbbi fázisban.
+- Opt-in diagnosztika: live/offline, connection quality, audio/mic probléma, hosszú csend/speech activity, chat activity és OBS scene/recording state, ha a forrás és permission elérhető.
+- Diagnózis csak mérhető adatból állíthat okot; confidence/source/freshness jelölés kötelező.
+- Post-stream summary, VOD chapter, highlight/clip candidate, title/description és short-form script javaslat későbbi képesség; creator szerkesztheti, publikálás külön jóváhagyott workflow.
+- Retention, privacy, consent és platform policy feldolgozás előtt tisztázandó. Technikai assistant nem kérhet secretet és nem módosíthat OBS konfigurációt jóváhagyás nélkül.
+
+#### GAP-10 — AI Orchestrator és specialist agentek
+**Canonical owner:** AI platform + Security/Permissions + Audit. **Fázis:** kizárólag opcionális F0.24.
+- Lifecycle: intent → task plan → context selection → structured actions → permission check → schema validation → diff/preview → approval → canonical API execution → verification → audit/version.
+- Későbbi specialist szerepek: Web Engineer, Visual Editor, QA, GitHub/Cloudflare Engineer, Browser QA. Ezek nem korlátlan, külön agent-runtime-ok; a közös permission/action/audit pipeline-t használják.
+- Provider/model registry, prompt-template versioning, task queue, usage/cost quota, timeout/retry, error handling és approval queue.
+- Agent nem commitolhat, deployolhat, production secretet módosíthat vagy veszélyes műveletet végezhet explicit permission és jóváhagyás nélkül. Minden output untrusted inputként schema- és permission-validálást kap.
+- AI Control Center: provider state, usage/cost, active jobs, approvals, error/retry és audit. Az AI kikapcsolása nem törheti a core user journey-kat.
+
+#### GAP-11 — Editor interaction/motion contract
+**Canonical owner:** Interaction/Action Registry + Visual Editor + Public Renderer. **Fázis:** F0.4/F0.6/F0.7 és a későbbi motion bővítések.
+- Click, hover, focus, active, submit, scroll, load, timer, open/close, navigation, show/hide és toggle csak validált Action Registry útvonalon.
+- Motion duration/easing/delay/trigger, reduced-motion és performance limit; advanced state machine, transitions, timeline/keyframes és scroll-driven animation külön későbbi scope.
+- Motion preview nem módosíthat canonical data source-t és nem futtathat tetszőleges scriptet. Minden interakciónak legyen keyboard/touch útvonala, vagy legyen indokoltan dekoratívként jelölve.
+
+#### GAP-12 — Export/import/portability és helyreállítás
+**Canonical owner:** Backup/Recovery + Resource + Page/Revision. **Fázis:** E.18 és F0.20.
+- Verziózott export manifest schema versionnel, checksummal és asset listával; secret/token export tilos, integrációt restore után újra kell hitelesíteni.
+- Import dry-run: hiányzó asset, duplicate ID, schema incompatibility, owner/permission, reference és migration check.
+- Partial failure nem hagyhat félig publikált állapotot. Restore után Page Model, revisions, theme, navigation, media references és public render integritása ellenőrzendő.
+- A portability csak tényleges export- és restore-próbával tekinthető késznek, nem marketingállítás alapján.
+
+**Gap-closure szabály:** a fenti pontok beemelése tervszintű scope-megőrzés. A megvalósítási fázisban a canonical ownernek konkrét DoD-t, pozitív/negatív tesztet, adat-/API-szerződést, permission határt és acceptance-evidence-t kell adnia; az általános követelménylista önmagában nem PASS.
 
 
 ## 2.77.8.A — Kiegészítő hivatalos benchmark és mit veszünk át
