@@ -150,12 +150,12 @@ A 3.1–3.18 alfejezetek **felelősségi/domain-katalógusok, nem 18 külön fő
 - 3.6 Tartalom + 3.7 Média és erőforráskönyvtár → 49.8 Tartalomkönyvtár és Content Studio, közös asset registryvel.
 - 3.8 Közösség → 49.9 Közösség és rajongók.
 - 3.9 Bolt és kereskedelem + 3.10 Támogatás és tagság → 49.10 Bolt, támogatás és bevétel.
-- 3.11 Analytics + 3.12 Tartalomtervező és kampányok + 3.15 Szponzoráció és üzleti központ → 49.11 Analitika és növekedés; a szponzorációs deal/lead/deliverable adatok kanonikus tulajdonosa ez a modul.
-- 3.13 Automatizáció → 49.12 Automatizációk.
-- 3.14 SANCI AI → 49.13 SANCI AI.
-- Keresés/súgó/személyre szabás → 49.14.
-- 3.16 Beállítások és hozzáférés + 3.18 Rendszerdiagnosztika → 49.15 Beállítások, biztonság és adat; a diagnosztika érzékeny nézetei korlátozott jogosultságúak.
-- Fejlesztői eszközök és bővítmények → 49.16; 3.17 Csapat és munkaterület → 49.18.
+- 3.11 Analytics + 3.12 Tartalomtervező és kampányok + 3.15 Szponzoráció és üzleti központ → 49.13 Analitika és növekedés; a szponzorációs deal/lead/deliverable adatok kanonikus tulajdonosa ez a modul.
+- 3.13 Automatizáció → 49.14 Automatizációk.
+- 3.14 SANCI AI → 49.15 SANCI AI.
+- Keresés/súgó/személyre szabás → 49.16.
+- 3.16 Beállítások és hozzáférés + 3.18 Rendszerdiagnosztika → 49.17 Beállítások, biztonság és adat; a diagnosztika érzékeny nézetei korlátozott jogosultságúak.
+- Fejlesztői eszközök és bővítmények → 49.18; 3.17 Csapat és munkaterület → 49.20.
 
 A több helyen megjelenő gyorsművelet csak a kanonikus modulba navigál vagy annak közös domain commandját hívja; nem hozhat létre második tulajdonost, adatforrást vagy jogosultsági útvonalat.
 
@@ -2733,21 +2733,37 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 ### 49.9. Közösség és rajongók
 - **Fan account:** regisztráció, bejelentkezés, profil, preferenciák, adatletöltés/törlés és biztonsági beállítások.
 - **Közösségi aktivitás:** kommentek, reakciók, szavazások, kérdések, beküldések, közösségi posztok.
-- **Tagság:** szintek, jogosultságok, exkluzív tartalom, előnyök, megújítás, lemondás és tagsági státusz.
+- **Tagsági közösségi nézet:** a szintek, jogosultságok és entitlement a **49.11. Támogatás és tagság** modulból érkezik; itt a közösségi megjelenítés és hozzáférés-ellenőrzés marad.
 - **Közösségi jutalmak:** jelvények, mérföldkövek, hűségpontok, kihívások és giveaway-szabályok.
 - **Discord összekötés:** szerepkiosztás és visszavonás tagsági státusz alapján, botengedélyekkel és naplóval.
 - **Moderáció:** szabályok, report queue, tiltás/korlátozás, fellebbezés, spamvédelem, AI-javaslat és emberi felülvizsgálat.
 
-### 49.10. Bolt, bevétel és üzlet
-- **Bolt:** fizikai termék, merch, digitális letöltés, csomag, variáns, készlet, ár, adó/szállítási szabályok.
-- **Rendelések:** fizetési státusz, teljesítés, szállítás, visszatérítés, lemondás, számlázási integráció és ügyfélszolgálat.
-- **Támogatás:** egyszeri támogatás, recurring support, célok, kampányok, köszönőoldal/üzenet.
-- **Szponzoráció:** media kit, ajánlat, kampány, deliverable, határidő, link/kód, eredményriport.
-- **Affiliate és kupon:** partnerlinkek, kuponkódok, jutalék és konverzió, ahol jogszerű és mérhető.
-- **Digitális hozzáférés:** vásárlás utáni biztonságos letöltés, hozzáférés-visszavonás és visszatérítéshez kötött jogosultság.
-- **Pénzügyi áttekintés:** bevételi források elkülönítése, platformdíjak, visszatérítések és export; nem helyettesít könyvelőt/adótanácsadót.
+### 49.10. Bolt és kereskedelem
+**Tulajdonosi határ:** ez a modul a creator saját termékkatalógusának, checkoutjának, rendelésének és digitális termékdeliveryjének gazdája. Tagság/előfizetés a 49.11, szponzoráció/affiliate üzleti folyamat a 49.12, összesített metrika a 49.13 modulhoz tartozik.
+- **Termékkatalógus:** fizikai termék, merch, digitális letöltés, bundle, variáns, készlet, ár, adó- és szállítási szabályok.
+- **Rendelések:** checkout, fizetési státusz, teljesítés, szállítás, visszatérítés, lemondás és rendeléshez kötött ügyfélszolgálat.
+- **Promóciók:** kupon, ajándékkártya, árengedmény, termékcsomag és lejárat.
+- **Digitális termékdelivery:** biztonságos letöltés, vásárlási entitlement és hozzáférés-visszavonás refund/chargeback esetén.
+- **Termékoldalak:** lista, keresés, termékadat, média, SEO és Editor blokk; a termékadat a Store domainben marad.
+- **Kereskedelmi megfelelőség:** payment/tax/VAT/invoicing/consumer-rights ellenőrzés a provider és jogi felülvizsgálat szerint.
 
-### 49.11. Analitika és növekedés
+### 49.11. Támogatás és tagság
+**Tulajdonosi határ:** ez a modul a tip/support provider státusz, tagsági szintek, megújítás, perks és entitlement szabályok kanonikus gazdája. A Store termékrendelése és a Community felületi megjelenítése külön marad.
+- **Támogatás:** egyszeri és visszatérő támogatás, célok, kampányhoz kötött support CTA, köszönőoldal/üzenet, provider-státusz.
+- **Tagság:** szintek, billing period, előnyök, megújítás, lemondás, failed payment, refund/chargeback és entitlement lifecycle.
+- **Member-only hozzáférés:** exkluzív tartalom/esemény és digitális hozzáférés; a COM/WEB felületek a kanonikus entitlementet fogyasztják.
+- **Discord szerepszinkron:** tagsági entitlement alapján kiosztás/visszavonás, botengedélyekkel, retryval és auditnaplóval.
+- **Supporter history:** privát támogatási előzmény, opt-in publikus felsorolás és adatvédelmi beállítások.
+
+### 49.12. Szponzoráció és üzleti központ
+**Tulajdonosi határ:** ez a modul a creator B2B üzleti kapcsolatainak, kampányainak, affiliate attribúciójának és szponzorációs deliverable-jeinek gazdája. Nem a Store rendelési adatforrása és nem az Analytics metrikatárolója.
+- **Media kit és ajánlat:** exportálható press/media kit, rate card, üzleti dokumentum és ajánlat.
+- **Kampánykezelés:** campaign cél, státusz, partner, deliverable, határidő, link/kód, jóváhagyás és eredményriport.
+- **Affiliate:** partnerlink/kód, jutalék és konverzió kizárólag mérhető és jogszerű keretben.
+- **Szponzori eszközök:** brand-safe assetek, kampányhoz rendelt tartalom/termék, linkek, UTM és riport.
+- **Üzleti adatvédelem:** lead/deal dokumentumok külön jogosultsággal, hozzáférésnaplóval és retention policyvel.
+
+### 49.13. Analitika és növekedés
 - **Összesített dashboard:** platformonkénti nézettség, követők, engagement, streamidő, tartalomtípus és bevétel.
 - **Adatminőség:** forrás, utolsó frissítés, becslés/valós adat, hiányzó és nem összehasonlítható metrikák jelzése.
 - **Tartalomelemzés:** videó/clip összehasonlítás, megtartás és elérhető watch-time, publikálási idők, tesztelt variánsok.
@@ -2755,14 +2771,14 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **SEO/AEO és webanalitika:** keresési láthatóság, oldalmegtekintés, konverzió, kampány-UTM, adatvédelmi beállítások.
 - **Export és jelentés:** CSV/JSON, időszakos riport, forrásmegjelölés és csapatnak megosztható összefoglaló.
 
-### 49.12. Automatizációk
+### 49.14. Automatizációk
 - **Workflow builder:** trigger → feltétel → művelet → eredmény/hibaág; vizuális építés és sablonok.
 - **Triggerek:** stream online/offline, új follower/sub/event, tartalom státusz, időpont, rendelés, tagság, webhook és kézi indítás.
 - **Akciók:** értesítés, draft készítés, címke, export, engedélyezett overlay/OBS művelet, publikálási előkészítés.
 - **Biztonsági korlátok:** dry-run, idempotency, rate limit, jóváhagyás, retry, rollback és futási napló.
 - **Hibakezelés:** időtúllépés, leállítás, újrapróbálás, hibás workflow karantén, értesítés és manuális helyreállítás.
 
-### 49.13. SANCI AI
+### 49.15. SANCI AI
 - **AI Control Center:** modell/provider, költségkeret, kvóta, adatforrás, retention, memória, engedélyek és leállító kapcsoló.
 - **AI chat és projektkontextus:** weboldal, brand, stream, tartalom, közösség és célok kontextusa jogosultság szerint.
 - **Website Designer:** oldal/szekció/komponens létrehozás, design és responsive javítás, SEO/accessibility ellenőrzés.
@@ -2774,14 +2790,14 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Multi-agent feladatok:** specialista feladatok összehangolása közös kontextussal, költségkorláttal és nyomon követhető eredménnyel.
 - **Action safety:** az AI minden változtatást a domain API-n keresztül készít elő; kockázat szerint preview, diff, jóváhagyás, végrehajtás és rollback.
 
-### 49.14. Keresés, súgó és személyre szabás
+### 49.16. Keresés, súgó és személyre szabás
 - **Globális kereső:** oldalak, media assetek, tartalmak, termékek, kapcsolatok, workflow-k, beállítások.
 - **Command palette:** billentyűzetes műveletindítás, gyors navigáció és legutóbbi elemek.
 - **Súgó:** kontextuális útmutató, interaktív onboarding, fogalomtár, hibaelhárítás és dokumentált API-korlátok.
 - **Mentett nézetek:** szűrők, oszlopok, listanézetek, dashboard elrendezések és felhasználói preferenciák.
 - **Értesítések:** in-app/email/push, kategória, prioritás, csendes időszak, digest és leiratkozás.
 
-### 49.15. Beállítások, biztonság és adat
+### 49.17. Beállítások, biztonság és adat
 - **Profil és workspace:** nyelv, időzóna, dátum/pénznem, preferenciák, site/domain és márka.
 - **Felhasználók és jogosultságok:** owner/admin/editor/moderator/analyst/commerce szerepek, modulonkénti és műveletenkénti engedély.
 - **Biztonság:** session, eszközök, jelszó/SSO későbbi támogatása, 2FA, rate limiting, secret rotation és gyanús aktivitás.
@@ -2790,7 +2806,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Állapot és naplók:** health, background job, queue, API-kvóta, hibák, események, auditálható adminműveletek.
 - **Díjcsomag és használat:** későbbi SaaS-plan, usage, billing, limit, számla és szolgáltatói költség.
 
-### 49.16. Fejlesztői platform és API — későbbi platformfázis
+### 49.18. Fejlesztői platform és API — későbbi platformfázis
 - **Dokumentált API:** verziózott endpointok, schema, hibakódok, auth és deprecation policy.
 - **Integrációs SDK:** OAuth adapterek, webhook/event contractok, klienskönyvtár és példakód.
 - **API key lifecycle:** létrehozás, scope, megjelenítés egyszer, rotáció, lejárat, visszavonás és audit.
@@ -2798,14 +2814,14 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **Sandbox és developer tools:** elkülönített workspace, tesztadat, eseménynapló, API-kvóta és dokumentáció.
 - **Külső integrációk:** rate limit, tenant/site scope, minimum jogosultság és biztonsági felülvizsgálat.
 
-### 49.17. Bővítmények, widgetek és piactér — későbbi platformfázis
+### 49.19. Bővítmények, widgetek és piactér — későbbi platformfázis
 - **Extension registry:** manifest, verzió, scope, permission, kompatibilitás, aláírás/eredet, frissítés és eltávolítás.
 - **Widget/overlay SDK:** saját komponensek, konfigurációs séma, preview, események és verziózás.
 - **Template/component marketplace:** sablonok, komponensek, overlayek és workflow-k; licenc, szerző, értékelés, frissítés és visszavonás.
 - **Biztonságos bővítmény-életciklus:** permission review, izolált futtatás/sandbox, kompatibilitási teszt, supply-chain ellenőrzés, rollback és hozzáférés-visszavonás.
 - **Marketplace üzleti modell:** díjazás/revenue-share és szerzői jogi/licencfeltételek csak külön jogi és pénzügyi felülvizsgálat után.
 
-### 49.18. Csapat, több site és SaaS — későbbi fázis
+### 49.20. Csapat, több site és SaaS — későbbi fázis
 - Több creator/site/workspace kezelése egy fiókból, egyértelmű aktív workspace választással.
 - Meghívás, csapattagok, szerepek, projekt- és ügyfélhozzáférés, jóváhagyási folyamat.
 - Agency/studio mód több creatorhoz, közös sablonok és ügyfél-specifikus brand.
@@ -3772,13 +3788,13 @@ A 54. fejezet 16 témacsoportja a jelenlegi ellenőrzésben 156 checkbox-tételt
 | 54.7 OBS, overlay, chatbot és stream-eszközök | 49.6 OBS és stream eszközök | OBS, LIV, AUT | A provider/integration auth és automatizációs motor nem másolódik az OBS modulba. |
 | 54.8 Tartalom és Content Studio | 49.8 Tartalomstúdió | CNT, RES | A publikálási queue és provider-kapcsolat külön domain-szerződés marad. |
 | 54.9 Közösség és rajongói fiókok | 49.9 Közösség és rajongók | COM | Fan identity, moderation és entitlement határát külön kell megőrizni. |
-| 54.10 Bolt, támogatás és bevétel | 49.10 Bolt, bevétel és üzlet | STO, SUP | Fizetés, rendelés, entitlement és támogatás külön domainjei, közös UX-szel. |
-| 54.11 Analitika és növekedés | 49.11 Analitika és növekedés | ANL, CAM | Kampány/szponzoráció kapcsolódik, de nem válik analitikai adattár-másolattá. |
-| 54.12 Automatizációk | 49.12 Automatizációk | AUT | Event/rule/run/retry/audit a workflow engine tulajdona. |
-| 54.13 SANCI AI | 49.13 SANCI AI | AI | Az AI javasolhat műveletet, de a végrehajtás a domain engedélyezett commandján megy. |
-| 54.14 Többnyelvűség és nemzetközi használat | 49.2 Weboldal lokalizált tartalma + 49.15 platformbeállítások | LOC, WEB, SEO, SEC | A site-tartalom locale-ja és az Admin felület nyelve külön, de összehangolt scope. |
-| 54.15 Beállítások, biztonság, adatvédelem és megbízhatóság | 49.15 Beállítások, biztonság és adat | SEC, OPS, QA | Biztonság, privacy és reliability keresztmetszeti elfogadási feltétel is. |
-| 54.16 Fejlesztői platform, bővítmények, csapat és SaaS | 49.16 Fejlesztői platform/API; 49.17 Bővítmények és piactér; 49.18 Csapat/több site/SaaS | DEV, MKT, TEAM, OPS, SEC | Későbbi fázis; tenant isolation, extension security és billing függőségek nem hagyhatók ki. |
+| 54.10 Bolt, támogatás és bevétel | 49.10 Bolt és kereskedelem; 49.11 Támogatás és tagság; 49.12 Szponzoráció és üzleti központ | STO, SUP, CAM | Store order, member entitlement, B2B campaign és analytics külön domaingazda. |
+| 54.11 Analitika és növekedés | 49.13 Analitika és növekedés | ANL, CAM | Kampány/szponzoráció kapcsolódik, de nem válik analitikai adattár-másolattá. |
+| 54.12 Automatizációk | 49.14 Automatizációk | AUT | Event/rule/run/retry/audit a workflow engine tulajdona. |
+| 54.13 SANCI AI | 49.15 SANCI AI | AI | Az AI javasolhat műveletet, de a végrehajtás a domain engedélyezett commandján megy. |
+| 54.14 Többnyelvűség és nemzetközi használat | 49.2 Weboldal lokalizált tartalma + 49.17 platformbeállítások | LOC, WEB, SEO, SEC | A site-tartalom locale-ja és az Admin felület nyelve külön, de összehangolt scope. |
+| 54.15 Beállítások, biztonság, adatvédelem és megbízhatóság | 49.17 Beállítások, biztonság és adat | SEC, OPS, QA | Biztonság, privacy és reliability keresztmetszeti elfogadási feltétel is. |
+| 54.16 Fejlesztői platform, bővítmények, csapat és SaaS | 49.18 Fejlesztői platform/API; 49.19 Bővítmények és piactér; 49.20 Csapat/több site/SaaS | DEV, MKT, TEAM, OPS, SEC | Későbbi fázis; tenant isolation, extension security és billing függőségek nem hagyhatók ki. |
 
 **Auditállapot:** a 16 témacsoport tulajdonosmodulhoz rendelése dokumentálva van, és a 63.12–63.15. fejezet a 156 egyedi checklist-tétel mindegyikét stabil funkcióazonosítóhoz rendeli. Ez tervszintű megfeleltetés, nem runtime- vagy acceptance-PASS. A következő auditlépés a megfeleltetések szemantikai pontosságának, a hasonló megfogalmazású képességek tényleges duplikációinak, valamint a modulhatárok és a domain/adatgazdák összhangjának ellenőrzése. Azonos képesség több modulban csak közös szolgáltatásra mutató hivatkozásként szerepelhet; az esetleges eltéréseket nyitottként kell megőrizni a feloldásig.
 
@@ -3974,7 +3990,7 @@ Az ellenőrzés a kanonikus terv aktuális GitHub-változatán futott. Eredmény
 - A 54. fejezetben **156 checklist-tétel** van; a 63.12–63.15 táblázatokban **156/156** tételhez tartozik külön megfeleltetési sor.
 - A megfeleltetési sorokban használt stabil ID-k mind megtalálhatók a 24. fejezetben; a jelen ellenőrzésben nincs feloldatlan ID-hivatkozás.
 - A 24. fejezetben **382 stabil funkcióazonosító** szerepel, és az azonosítók egyediek.
-- A 49. fejezetben **18 egymást követő főmodul** szerepel 49.1–49.18 között; a média/erőforrás, fejlesztői API, bővítmény-piactér és csapat/SaaS külön főmodul.
+- A 49. fejezetben **18 egymást követő főmodul** szerepel 49.1–49.20 között; a média/erőforrás, fejlesztői API, bővítmény-piactér és csapat/SaaS külön főmodul.
 - A 54. fejezet normalizált, pontos szövegduplikáció-ellenőrzése korábban nem talált ismétlődő checklist-tételt.
 
 **Korlátok és nyitott munka:** ez strukturális/azonosító-keresztellenőrzés, nem bizonyítja, hogy minden hozzárendelés szemantikailag tökéletes, nincs-e két külön szöveg mögött ugyanaz a képesség, minden domain-szerződés teljes-e, vagy a runtime megvalósítja-e a tervet. Következő feladat a szemantikai duplikáció- és tulajdonosmodul-audit, majd a meglévő kód, API-k, adatmodellek, jogosultságok és tesztek összevetése. A fejlesztési fagyasztás és a tervlezárási kapu változatlanul érvényes; ez az ellenőrzőpont önmagában nem engedélyezi az F0 megkezdését.
