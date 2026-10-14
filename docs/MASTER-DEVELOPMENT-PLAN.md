@@ -4747,7 +4747,7 @@ Minden nagyobb domain fejlesztése előtt a benchmarkot újra kell ellenőrizni,
 - [x] Mind a 140 történeti funkciósor és a 271 H19–H34 ledger sor célfázishoz van rendelve; a mapping nem runtime PASS.
 - [x] A teljes core AI nélkül működőként van specifikálva; az opcionális AI az F0.24 utolsó fő fázis.
 - [x] A PR egyetlen dokumentumot módosított, a base branch a v2/foundation volt, a GitHub a merge előtt mergeable állapotot jelzett.
-- [x] Az Admin UI F0.1 lett a következő aktív munkapont; a terv merge-je nem jelenti az Admin UI implementáltságát.
+- [x] A PR #6 lezárásakor az Admin UI F0.1 lett a következő aktív munkapont; ezt a későbbi 2.77.9.D closure record lezárta, és a jelenlegi fájl eleji index F0.2-t jelöli aktívnak. A terv merge-je önmagában nem bizonyít runtime-implementáltságot.
 
 ## 2.77.9 — F0.1 Admin home shell: lezárt implementációs checkpoint
 
@@ -4874,14 +4874,16 @@ F0.2 DoD:
 - [ ] Desktop/tablet/mobil navigáció, billentyűzetes fókusz, kontraszt, téma, túlcsordulás és reduced-motion ellenőrizve.
 - [ ] Keresés, értesítés és feladatjelzés csak akkor működőként látható, ha valós adat-/viselkedési szerződés támasztja alá; egyébként egyértelmű disabled/queued állapot.
 - [ ] Célzott contract/domain/API és regressziós tesztek PASS; `npm run typecheck` PASS.
-- [ ] A friss éles deploy után a tényleges production URL-en desktop/mobil/keyboard smoke és felhasználói acceptance PASS; a F0.2 teljes lezárásához a teljes route/auth/navigation DoD is kötelező.
+- [ ] A friss éles deploy után a tényleges production URL-en desktop/mobil/keyboard smoke és felhasználói acceptance PASS; a F0.2 teljes lezárásához a teljes route/auth/navigation DoD is kötelező. Az Android Chrome tabletes belépési/session-hiba külön, explicit halasztott feladat, nem tekinthető megoldottnak és nem keverhető össze a többi tablet navigációs acceptance-szel.
 - [ ] E checkpoint végén a MASTER aktív pontja csak bizonyítékokkal frissíthető F0.3-ra.
 
 **Végrehajtási szabály:** nincs párhuzamos engineering stream; nincs új külön auditfázis; nincs funkciótörlés pusztán azért, mert a jelenlegi menüben nem látszik. Amíg a terméket kizárólag a tulajdonos használja, alacsony kockázatú, kizárólag UI/static változás a teljes zöld CI után a meglévő `v2/foundation` → Cloudflare production folyamatba integrálható, majd az éles URL-en történik a vizuális/keyboard acceptance. Adatbázis-migráció, auth/RBAC, titokkezelés, adatvesztési vagy visszafordíthatatlan művelet nem kap automatikus élesítési kivételt. A MASTER marad az egyetlen source of truth.
 
 ## 2.77.9.E — F0.2 első implementációs szelet: mobil funkciókeresés — 2026-10-13
 
-**Állapot: IMPLEMENTING — NOT PASS.** Ez a bejegyzés az F0.2 első konkrét kódszeletét rögzíti; nem zárja le az F0.2-t, és nem indít külön tervezési/auditfázist.
+**Állapot: IMPLEMENTING — NOT PASS.**
+
+**Külön, későbbre halasztott ismert probléma:** az Android Chrome tableten történő belépés/session-kezelés a felhasználó korábbi döntése alapján külön, nem blokkoló későbbi feladat. Ezt nem szabad megoldottnak jelölni; külön eszközös auth/session acceptance-ben kell visszavenni. Ez a halasztás nem mentesít az F0.2 többi route-, auth/role-, keyboard- és tablet navigációs tesztje alól. Ez a bejegyzés az F0.2 első konkrét kódszeletét rögzíti; nem zárja le az F0.2-t, és nem indít külön tervezési/auditfázist.
 
 - [x] A valós route- és auth-kód áttekintése megkezdődött: `/admin`, `/admin/home`, `/admin/editor` és a közvetlen `/admin-home.html` útvonal auth-ellenőrzése a Workerben található.
 - [x] A kanonikus Editor útvonal `/admin/editor`; a Schedule és oldalstruktúra jelenleg ebből az Editor munkaterületből érhető el, ezért külön Schedule URL-t nem szabad kitalálni.
