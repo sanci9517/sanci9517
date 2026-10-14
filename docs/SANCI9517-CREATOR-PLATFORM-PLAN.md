@@ -1477,13 +1477,15 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - OPS-010: Dependency/license/CVE review.
 - OPS-011: Background-job/realtime runtime selection and lifecycle, only where justified.
 
-### 24.17. Localization/team/marketplace/quality — LOC / TEAM / MKT / QA
+### 24.17. Kiegészítő modulok és minőség — LOC / TEAM / MKT / QA
+#### 24.17.1. Localization — LOC
 - LOC-001: Translation key/fallback.
 - LOC-002: Locale-aware dates/numbers/currency/timezone.
 - LOC-003: Page/content/navigation translation.
 - LOC-004: Localized SEO/hreflang/canonical.
 - LOC-005: Translation completeness status, locale preview and safe publish policy.
 - LOC-006: AI-assisted translation workflow with explicit human review/approval and audit.
+#### 24.17.2. Team and workspace — TEAM
 - TEAM-001: Workspace/site switcher UI and active-scope selection; server-side isolation and authorization remain owned by SEC-002–003.
 - TEAM-002: Invite/accept/revoke.
 - TEAM-003: Roles and granular permissions.
@@ -1491,17 +1493,13 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - TEAM-005: Multi-site workspace/product workflows; isolation enforcement is a security invariant owned by SEC-003.
 - TEAM-006: SaaS billing/plan entitlements/quota.
 - TEAM-007: Agency/studio client workspaces, shared templates, client-scoped brand and approval workflow.
+#### 24.17.3. Extensions and marketplace — MKT
 - MKT-001: Extension manifest/permissions.
 - MKT-002: Extension install/update/uninstall/migration.
 - MKT-003: Theme/block/template/overlay marketplace.
 - MKT-004: License/attribution/version/review.
 - MKT-005: Marketplace payment/revenue-share after legal review.
-- DEV-001: Public API reference, versioning, schema and deprecation policy.
-- DEV-002: API key creation, scoped permissions, one-time display, rotation, expiry and revocation.
-- DEV-003: Webhook registry/tester, delivery log, signature validation and replay/retry diagnostics.
-- DEV-004: Sandbox workspace and safe test fixtures/events.
-- DEV-005: SDK/client libraries, integration examples and version compatibility.
-- DEV-006: Developer quotas, rate-limit visibility and API usage diagnostics.
+#### 24.17.4. Quality and acceptance — QA
 - QA-001: Typecheck/build/CI gates.
 - QA-002: Domain/API/integration tests.
 - QA-003: Ownership/security negative tests.
@@ -1544,6 +1542,17 @@ Ezek a stabil ID-k azért szükségesek, mert a korábbi követelménykatalógus
 - SEO-005: SEO preview/diagnostics, duplicate/missing metadata és page-level audit.
 
 **Függőségi szabály:** SET/DYN/SEO csak a canonical Page Model, Resource, domain ownership és publish contracton keresztül működhet. Ezek nem adhatnak alternatív persistence vagy publikálási útvonalat. A korábbi ID-k megmaradnak; a crosswalk az eredeti követelményt a legpontosabb új vagy meglévő ID-hoz rendeli.
+
+### 24.19. Developer platform és API — DEV
+
+A Developer Platform az API-felhasználás, kulcsok, sandbox és creator által definiált outbound webhookok gazdája. A külső provider inbound webhook és OAuth integráció továbbra is az INT modulban marad.
+
+- DEV-001: Public API reference, versioning, schema and deprecation policy.
+- DEV-002: API key creation, scoped permissions, one-time display, rotation, expiry and revocation.
+- DEV-003: Webhook registry/tester, delivery log, signature validation and replay/retry diagnostics.
+- DEV-004: Sandbox workspace and safe test fixtures/events.
+- DEV-005: SDK/client libraries, integration examples and version compatibility.
+- DEV-006: Developer quotas, rate-limit visibility and API usage diagnostics.
 
 ---
 
