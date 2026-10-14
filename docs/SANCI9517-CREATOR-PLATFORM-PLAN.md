@@ -7020,6 +7020,27 @@ A `0004_system_page_content.sql` történeti táblát hoz létre, míg a `0005_c
 
 **Következő elfogadási kapu:** minden kártyához egyértelmű elsődleges navigációs cél + jogosultság + planned/active státusz; a 22 főmodul menüjének felhasználói jóváhagyása; a régi Admin tesztek frissítése; domain-adatgazdák és 396 funkció-ID szemantikai ellenőrzése. **CROSSWALK: DOCUMENTED / NOT YET APPROVED OR IMPLEMENTED.** A működő kód változatlan.
 
+### 63.50.28. Admin RBAC és kanonikus modulútvonalak: tényleges API-szerződés (2026-10-14)
+
+**Forrásref:** `795d79a`; `src/core/auth/require-auth.ts`, `src/index.ts`, `src/routes/admin/editor.ts`, `src/routes/admin/pages.ts`, `src/routes/admin/schedule.ts`, `src/routes/admin/settings.ts`, `src/routes/admin/twitch-schedule-sync.ts`, `src/routes/integrations/twitch.ts`, `src/routes/auth/session.ts`. Statikus kódolvasás, új role-mátrix runtime-teszt nélkül.
+
+**Jelenleg ellenőrzött szerephierarchia:** `viewer=1 < editor=2 < admin=3`, `hasRole(user, minimumRole)` rang-összehasonlítással. `getAuthenticatedUser` a nem lejárt session tokenhez kapcsolt, aktív felhasználót olvassa. Ez **minimum-role RBAC**, nem granular capability/scope permission és nem tenant tagság bizonyítéka.
+
+| Művelet / útvonal | Forrás szerinti hozzáférés | HTTP / szerződés | Moduláris következmény |
+|---|---|---|---|
+| `/admin` | bármely bejelentkezett viewer/editor/admin | nincs session → 302 login | Dashboard 49.1; kártyák action-jogosultsága külön kezelendő |
+| `/admin/editor` | bármely bejelentkezett viewer/editor/admin a HTML shellhez | nincs session → 302 login | **Eltérés:** editor API minimum editor; viewer shellhez hozzáfér, de API-tól 403-at kap; UI-ban read-only/tiltás tisztázandó |
+| `/api/admin/editor` | editor vagy admin | GET/POST/PUT ágon auth/role check | 49.2 Editor: a shell nem jelent írásjogot |
+| `/api/admin/pages` | editor vagy admin | GET/POST/PATCH/DELETE auth/role check | 49.2 CMS, külön oldalak belépési ponttal |
+| `/api/admin/schedule` | editor vagy admin | GET/POST/PUT/DELETE auth/role check | 49.5 Adásrend; külön menüpont, közös schedule domain |
+| `/api/admin/twitch/schedule-sync` | editor vagy admin | POST auth/role check | 49.5/49.7 közös domainparancs, nem Editor tulajdon |
+| `/api/admin/settings` | csak admin | GET/PUT auth/role check | 49.19; editor/viewer számára nem aktív szerkesztő link |
+| `/api/auth/session` | session függő | szerepkört is visszaad | UI jogosultságalapú állapota ebből származhat, de szerveroldali check kötelező |
+
+**Routing tény:** a `src/index.ts` jelenleg csak `/admin` és `/admin/editor` HTML-workspace belépési pontokat szolgál ki. Az Admin settings/schedule/pages API létezik, **önálló `/admin/settings`, `/admin/schedule`, `/admin/pages` HTML route még nincs regisztrálva**. A Twitch OAuth flow-ban két `/admin/editor` célhivatkozás található; a 49.7 Integrációk saját munkaterületére átvezetéskor ezeket is át kell vizsgálni, és az OAuth callback/hiba állapotát megőrizni.
+
+**Tervezett RBAC/UX kapu:** 22 főmodul × viewer/editor/admin × olvasás/írás/publish/connection/admin beállítás műveleti mátrix; külön 401/403, stale session, cross-site, direct URL és re-auth negatív tesztek; a Viewer Editor shell helyes read-only vagy tiltott viselkedésének termékdöntése; később workspace/site tagság és granular permission a rang fölött. **RBAC NAVIGATION: SOURCE-VERIFIED BASELINE / NOT PASS FOR FINAL MODULE IA.** Nem történt jogosultságmódosítás.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
