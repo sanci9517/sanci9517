@@ -5846,3 +5846,33 @@ A „MATCH candidate” csak a tervezett elemkategória jelenlétét jelenti; ne
 **Crosswalk-következtetés:** az EDT-009 resize és EDT-016 layout primitives a canvas manipulációt/layoutot horgonyozza, de a történeti sizing értékekhez property-szintű schema és parent-aware semantics szükséges. A 13 pontból több csak részlegesen vagy döntésre váróan fedett; a tervben szereplő általános sizing szó nem bizonyítja a CSS sizing model implementáltságát.
 
 **Státusz:** 13 követelmény tételesen leképezve; fill/fluid/fit-content scope, typed unit/range matrix és runtime round-trip tesztek nyitottak. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.136. P0.2 — Régi 2/C Spacing: tételes spacing-crosswalk (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, 2/C, 9 atomikus pont. **Canonical célpontok:** EDT-009/016, EDT-021/022, EDT-023–026, DSN-001/004/007; kapcsolódó crosswalk: E.3.4-02, E.3.5-02, F.3-02/03. A spacing token vagy általános Inspector-mező jelenléte nem bizonyítja az összes per-side, responsive és box-model szemantikát.
+
+| # | Régi spacing követelmény | Canonical célpont | Státusz | Lezárási / acceptance feltétel |
+|---:|---|---|---|---|
+| 1 | Padding top/right/bottom/left | EDT-021/022, EDT-016, DSN-001/004 | PARTIAL | Négy oldal külön szerkeszthető; token/literal és unit típusos; CSS box-modelben a content box tényleges mérete és overflow viselkedése tesztelt. |
+| 2 | Margin top/right/bottom/left | EDT-021/022, EDT-016 | PARTIAL | Négy oldal külön értéke, auto margin és layout-mode korlátozás; margin collapse és inline/flex/grid eltérések ne legyenek rejtettek. |
+| 3 | Gap | EDT-016, EDT-021/022, DSN-004 | PARTIAL | Row/column gap csak az azt támogató layout típusban; wrap/grid row-gap/column-gap, zero és responsive override; ne helyettesítse automatikusan a marginokat. |
+| 4 | Negative margin | EDT-021/022, EDT-016 | UNMAPPED / DECISION | Biztonságos és layoutonkénti policy kell: engedélyezett-e, milyen tartományban és mely node/property típusoknál. Ha nincs explicit 1.0 support, Inspector ne fogadjon el negatív értéket, és a döntés legyen dokumentálva. |
+| 5 | Shorthand | EDT-021/022 | PARTIAL / DECISION | 1–4 értékes CSS shorthandot nem szabad összetéveszteni a négy explicit oldali mezővel. A felhasználóbarát editor tárolhat normalizált per-side értéket; round-trip és precedence szabály szükséges. |
+| 6 | Responsive spacing | EDT-023–026 | PARTIAL / RELEASE GATE | Base/inherited/override érték és aktív breakpoint látható; reset csak az adott breakpoint override-ot törli; mobile change nem módosítja csendben a desktopot. |
+| 7 | Spacing tokens | DSN-001/004/007; EDT-021/022 | PARTIAL | Egy canonical token registry; token kiválasztása referenciát tárol, nem csak aktuális literal értéket; rename/delete/missing-token fallback és keresés tesztelendő. |
+| 8 | Linked/unlinked sides | EDT-021/022 | PARTIAL / VERIFY | Link állapot egyértelmű, keyboard accessible; linked mód egyetlen szerkesztésre az összes oldalra hat, unlink után az értékek függetlenek; relink policy explicit és nem veszít értéket. |
+| 9 | Visual box-model editor | EDT-009, EDT-016, EDT-021/022 | UNMAPPED / DECISION | A régi forrás külön vizuális box-model szerkesztőt kér. A numerikus per-side Inspector mező nem egyenértékű vele; scope döntés, diagram hit-target, fókusz/keyboard, unit, hover/selection és live preview acceptance szükséges. |
+
+#### Kötelező spacing-kontraktus
+
+1. **Normalizált per-side modell:** padding/margin/gap typed property-ként tárolódik; ha a UI shorthandot mutat, a canonical reprezentáció és a feloldási sorrend explicit. Két külön forrás nem írhatja ugyanazt az értéket.
+2. **Box-model láthatóság:** a felhasználó meg tudja különböztetni a content, padding, border és margin réteget; a vizuális diagram és az Inspector számai ugyanazt a canonical state-et tükrözik.
+3. **Layout-aware korlátok:** gap csak támogatott layoutban; negatív margin és auto margin policy explicit; a resize/drag nem konvertálhat flex/grid elrendezést abszolút pozicionálásra.
+4. **Token vs literal:** a tokenreferencia és az egyedi érték külön állapot; token hiányakor nincs csendes, nem visszaállítható literalizálás. A token feloldása a previewban és a publikus renderben azonos.
+5. **Responsive inheritance:** oldalanként és breakpointonként öröklés/override/reset külön tesztelendő; a linked/unlinked állapot hatóköre a megfelelő viewporton belül marad.
+6. **Tesztminimum:** négyoldalas padding/margin, linked→unlink→edit→relink, shorthand round-trip, gap flex/grid/wrap, negative margin policy, token rename/delete, mobile-only override, zoomolt box-model diagram és save/reload/public parity.
+
+**Crosswalk-következtetés:** az E.3.4-02 és F.3-02 a spacing kategóriákat megtartja, de a negatív margin, shorthand-normalizálás, linked/unlinked oldalak és a külön vizuális box-model editor nincs egyértelműen lezárva. A vizuális box-model editor külön scope-döntés; nem tekinthető megvalósítottnak attól, hogy négy számmező létezik.
+
+**Státusz:** 9 követelmény tételesen leképezve; negative margin policy, shorthand semantics és visual box-model editor scope nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
