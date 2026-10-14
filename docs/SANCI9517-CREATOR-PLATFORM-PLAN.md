@@ -6849,6 +6849,17 @@ A `0004_system_page_content.sql` történeti táblát hoz létre, míg a `0005_c
 
 **Döntés:** a legacy Editor/Builder UI továbbra is **ARCHIVE CANDIDATE / NOT SAFE TO REMOVE**; a kanonikus Page, Schedule, Twitch és publikus renderelési API-k megőrzendők. **Nyitott:** fennmaradó aktív fájlok hivatkozásai, közvetlen URL-ek, import/export/mentett adat kompatibilitás, futtatott CI/tesztek, böngésző és publikálási regresszió. **IN PROGRESS / NOT PASS**.
 
+### 63.50.16. Szerveroldali legacy hivatkozások és Twitch OAuth visszatérés (2026-10-14)
+
+**Ellenőrzött ref:** `8c1ee7a`. Célzott statikus keresés: `src/routes/admin/{pages,schedule,settings,twitch-schedule-sync}.ts`, `src/routes/public/{pages,schedule,site-settings,system-pages}.ts`, `src/routes/integrations/twitch.ts`, `src/core/{page-model,router,editor-validation}.ts`, `src/index.ts`, `public/editor-v2/app.js`, `public/editor/preview.html`. Keresett legacy minták: `/editor/`, `admin-editor-v2`, Builder/System Page assetnevek; aktív Editor belépési pont: `/admin/editor`.
+
+- A vizsgált oldalkezelési, adásrend-, beállítási és publikus szerveroldali útvonalakban nem azonosítottunk direkt legacy Editor-asset hivatkozást. **Ez csak a felsorolt fájlokra vonatkozó negatív bizonyíték.**
+- **Konkrét, aktív integrációs függés:** `src/routes/integrations/twitch.ts` két helyen `new URL("/admin/editor", request.url)` visszatérési célt használ. A Twitch OAuth callback és hibakezelési navigáció áttervezése az Integrációk modul saját munkaterületére kötelező; a jelenlegi működő visszatérést nem szabad előzetes regressziós bizonyítás nélkül átírni.
+- A `public/editor-v2/app.js` az `/api/admin/editor` végponton mentési, publikálási, visszavonási és revíziókezelési műveleteket végez; ezek nem azonosak a régi `public/editor/` assetekkel, és archiváláskor megőrzendők.
+- A `public/editor/preview.html` régi `/admin-editor-v2.html` visszalinkje továbbra is valós legacy hivatkozás, de az ellenőrzött aktív szerveroldali útvonalak nem mutatnak rá. Közvetlen statikus URL és mentett könyvjelző kompatibilitás továbbra is OPEN.
+
+**Döntés:** Twitch OAuth navigáció = **KEEP NOW / MOVE WITH CONTRACT LATER**; legacy Editor UI = **ARCHIVE CANDIDATE / NOT SAFE TO REMOVE**. A teljes repo- és runtime-regressziós kapu **IN PROGRESS / NOT PASS**; sem futtatott teszt, sem kódmódosítás nem történt ebben a körben.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
