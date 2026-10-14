@@ -3886,6 +3886,19 @@ Egy funkció csak a rá vonatkozó kritériumok bizonyítása után jelölhető 
 
 Ez a fejezet határozza meg, mikor mondható ki, hogy a MASTER-terv elég teljes és egységes a következő fejlesztési pont végrehajtásához. A terv lezárása nem jelenti a teljes termék implementációjának lezárását.
 
+### 63.0. Automatizált szerkezeti pillanatkép — 2026-10-14
+
+A kanonikus `v2/foundation` terv teljes szövegén végzett, a 24. fejezetet forrásként kezelő determinisztikus ellenőrzés eredménye:
+
+- A 24. fejezet `- PREFIX-NNN:` alakú elsődleges sorainak száma **396**, egyedi azonosítóinak száma **396**; a vizsgált sorok között nincs ismétlődő ID.
+- A dokumentum egészében előforduló `PREFIX-NNN` alakú hivatkozások között **0 olyan azonosító** található, amely hiányzik a 24. fejezetből. Ez a vizsgálat csak erre a névformátumra és a teljes aktuális szövegre érvényes; más jelölésű történeti ID-ket külön kell ellenőrizni.
+- A 49. fejezetben **22 számozott főmodul-cím** található (49.1–49.22). A menücímek száma nem bizonyítja, hogy minden capability megfelelő aloldalra van besorolva.
+- A 63.52–63.54 történeti ledgerben jelzett 271/271 H19–H34 strukturális megfeleltetés továbbra is **külön, korábbi ellenőrzés eredménye**, nem jelen pillanatképben újraigazolt szemantikai PASS.
+
+**Következtetés:** a fenti három aktuálisan vizsgált strukturális invariáns teljesül; ez nem helyettesíti a 396 képesség owner/UX/fázis/függőség/acceptance ellenőrzését, a forráshiány rendezését, a repo-kód vizsgálatát vagy a futó teszteket. Az A kapu **IN PROGRESS / NOT PASS** marad.
+
+**Megismételhető ellenőrzési elv:** a 24. fejezet elsődleges sorait a `^- ([A-Z][A-Z0-9_]*-\\d{3}):` mintával számolni, egyediséget ellenőrizni; a teljes dokumentum `\\b[A-Z][A-Z0-9_]*-\\d{3}\\b` hivatkozásait a 24. fejezet halmazához hasonlítani; a 49. fejezet 49.1–49.22 címeit tételesen ellenőrizni. Új ID-k felvételekor ezt az ellenőrzést meg kell ismételni.
+
 ### 63.1. A terv teljességének ellenőrzése
 - [ ] A teljes termékvízió minden képessége a megfelelő modulban szerepel; a régi forrásokból megőrzendő képesség nem tűnhet el pusztán átrendezés vagy fázisváltás miatt.
 - [ ] Minden funkció egyértelműen besorolt: core vagy későbbi, felhasználói felület/domain, függőség, státusz, elfogadási feltétel és szükséges teszt.
