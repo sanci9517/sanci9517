@@ -2346,7 +2346,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | E.3.1-02 | Pages/Layers/Elements panels; later assets/templates/symbols | EDT-012, EDT-015, RES-010, DSN-008–DSN-012 | EXPAND | Core panels 1.0; library tabs phased | QA-002/004 |
 | E.3.1-03 | Canvas with selection frame/drop zones/guides/viewport width | EDT-007–EDT-010, EDT-025 | EXPAND | 1.0 | QA-002/004/005 |
 | E.3.1-04 | Inspector categories/search/help/validation/default reset | EDT-021–EDT-023 | EXPAND | 1.0 | QA-002/004 |
-| E.3.1-05 | Resizable/collapsible panels and no clipped small-screen workspace | ADM-010, EDT-035, EDT-036, QA-005 | EXPAND | 1.0 desktop/mobile baseline; tablet acceptance explicitly required | QA-004/005 |
+| E.3.1-05 | Resizable/collapsible panels and no clipped small-screen workspace | ADM-010, EDT-035, EDT-036, EDT-044, QA-005 | EXPAND | 1.0 desktop/mobile baseline; per-user panel preferences must stay outside Page Model; tablet acceptance explicitly required | QA-004/005 |
 | E.3.1-06 | Empty-project onboarding/template start and save-protection messaging | EDT-041, EDT-042, DSN-008, DSN-009 | EXPAND | 1.0 | QA-002/004/006 |
 | E.3.2-01 | One canonical Page Model and one save/publish/revision path | EDT-001, EDT-003–EDT-005, WEB-004–WEB-008 | KEEP | 0.x–1.0 | QA-002/003/004 |
 | E.3.2-02 | Page→Section→Container/Box→Column/Stack→Element with reusable slots | EDT-002, EDT-016–EDT-019, DSN-012, DSN-013 | EXPAND | 1.0 core; reusable components phased | QA-002/004 |
@@ -4094,3 +4094,5 @@ A C.23.6, C.23.7, C.23.9 és C.23.12 mappingjavítások után ismét lefuttatva 
 **Új canonical ID:** `EDT-044 — Per-user Editor workspace preferences (viewport, panel layout, grid and favorites) stored outside the site Page Model`. A C.23.17-01, C.23.17-04 és C.23.17-07 mappingjei EDT-044-re hivatkoznak. A preferenciák felhasználónként menthetők; nem jelölhetik dirty-nek a weboldalt, nem szivároghatnak másik user/site között, és nem írhatják át a canonical Page Modelt.
 
 **Registry impact:** 361 egyedi ID. EDT-044 planned capability; ez nem implementációs vagy runtime acceptance bizonyíték. P0.2 **IN PROGRESS / NOT PASS**.
+
+Az EDT-044 crosswalk-kapcsolatának lezárásához az E.3.1-05 sor is explicit EDT-044 hivatkozást kapott: a resizable/collapsible workspace paneljeinek felhasználói preferenciái nem kerülhetnek a site Page Modelbe. A C.23.17-01/04/07 sorok továbbra is részletes történeti forrásleképezések; a közvetlen E/F crosswalk most már ugyanezt a képességet is lefedi.
