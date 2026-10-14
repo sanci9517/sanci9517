@@ -5252,3 +5252,26 @@ A §37.16, §37.17 és §41.2 egyes mondatai a 2026-10-13-i, 359-ID-s registry-s
 **Következtetés:** a MASTER-csere PR és a közvetlen előd-blob bizonyítja, hogyan archiválták a régi MASTER-t és melyik fájlt rövidítették/cserélték le, de nem bizonyít B→C átnevezést, B-törlést vagy B-tartalmi helyettesítést. A PR megbeszélési adatai nem szolgáltattak további magyarázó forrást. A B-fejezet tartalma továbbra is **UNRECOVERED / OPEN**; a teljes történeti szemantikai megfeleltetés **OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
 
 **Következő célzott lépés:** a PR #29 előtti, `217f7d4` elődöt megelőző dokumentum-commitok és a `docs/archive/plans/**` történeti állapotainak tartalmi összehasonlítása, majd a H19–H34 / 359 stabil ID-s registry kétirányú, tételes szemantikai leképezésének folytatása. A B-fejezetet nem szabad találgatásból rekonstruálni, és a C/D/E/F szöveg nem fogadható el automatikus helyettesítőként.
+
+
+### 41.3.118. P0.2 — Régi tervfájlok és archivált útvonalak célzott vizsgálata (2026-10-14)
+
+**Vizsgálati cél:** a PR #29 leírásában említett történeti tervanyagok és a repository jelenlegi `docs/archive/plans/` könyvtárának ellenőrzése a `00.9.6.B` forrás, illetve a korábbi roadmapekből fennmaradt képességbizonyítékok szempontjából.
+
+**Ellenőrzött repository-útvonalak a `v2/foundation` ágon:**
+- `docs/archive/plans/MASTER-CURRENT-STATUS.md` — 82 sor;
+- `docs/archive/plans/MASTER-FINAL-ROADMAP.md` — 679 sor;
+- `docs/archive/plans/PLAN-AMENDMENT-EDITOR-UNIFICATION.md` — 311 sor;
+- `docs/archive/plans/SANCI-MASTER-PLAN.md` — 683 sor;
+- `docs/archive/plans/ULTIMATE-PLATFORM-DIRECTION-2026-09-16.md` — 277 sor;
+- `docs/archive/plans/V2-BLUEPRINT.md` — 375 sor;
+- `docs/archive/plans/VISUAL-EDITOR-ARCHITECTURE.md` — 160 sor;
+- `docs/archive/plans/visual-editor-roadmap.md` — 53 sor.
+
+**Szó szerinti forráskeresés eredménye:** a fenti nyolc fájl egyikében sem találtam szó szerinti `00.9.6.B`, `MASTER-2.70`, `00/A`, `H19` vagy `00.9.6.C` egyezést. Ez a pontos kifejezésekre és a jelenlegi ágon elérhető nyolc fájlra korlátozott eredmény; nem jelent teljes szemantikai auditot, és nem bizonyítja, hogy a B-hez tartozó funkciók nem szerepelnek más néven vagy más történeti forrásban.
+
+**Útvonal-megállapítás:** a `docs/archive/plans/` könyvtár jelenleg több korábbi tervet őriz, de a könyvtár útvonalának commit-history API-lekérdezése nem adott vissza külön commitlistát. Ebből nem következtetek arra, hogy a fájloknak nincs korábbi történetük. A következő történeti lépés a fájlok konkrét hozzáadási/módosítási commitjainak, korábbi neveinek és esetleges törlési/átnevezési diffjeinek lekérése, majd az eredeti tervszövegek funkciószintű összevetése a jelenlegi MASTER capability registryjével.
+
+**Megőrzési szabály:** az archivált fájlok nem válnak második aktív tervvé. Bizonyítékként használhatók történeti funkciók visszakeresésére és eredetük igazolására; a végrehajtási sorrend és az aktuális státusz továbbra is a `docs/MASTER-DEVELOPMENT-PLAN.md` irányadó blokkjából származik.
+
+**Státusz:** a jelenlegi `docs/archive/plans/` nyolc fájljának szó szerinti B-/2.70-keresése dokumentálva; a B-fejezet eredeti forrása továbbra is **UNRECOVERED / OPEN**; teljes történeti szemantikai reconciliáció **OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
