@@ -2557,7 +2557,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | E.20-04 | Canonical domain/data model/owner/fields/status/relations/invariants | §5, §29, SEC-002 | KEEP | All phases | QA-002/003 |
 | E.20-05 | API/service contract, validation/auth/error codes/idempotency | §26.1, SEC-002, INT-001, AUT-006 | KEEP | All phases | QA-002/003/006 |
 | E.20-06 | Admin/Editor/Public rendering and responsive/accessibility requirements | ADM-001–ADM-010, WEB-001–WEB-032, EDT-001–EDT-042, QA-005 | KEEP | All phases | QA-004/005 |
-| E.20-07 | Integration/dependencies/scopes/rate limits/timeouts/provider downtime | INT-001–INT-009, OPS-011 | KEEP | Every provider-dependent phase | QA-003/006/008 |
+| E.20-07 | Integration/dependencies/scopes/rate limits/timeouts/provider downtime, including dependency/license/CVE review | INT-001–INT-009, OPS-010/011 | KEEP | Every provider-dependent phase; dependency/license/CVE review before adding or upgrading packages | QA-003/006/008 |
 | E.20-08 | Unit/domain/API/D1/migration/permission/ownership/browser desktop-tablet-mobile/regression tests | QA-001–QA-010 | KEEP | All phases | QA-002–QA-010 |
 | E.20-09 | Reproducible acceptance scenario input→action→expected result | §26.1, QA-009 | KEEP | All phases | QA-009 |
 | E.20-10 | Evidence: commands/test output/browser/live check/commit/known limitations | §16–18, QA-009, OPS-001 | KEEP | All phases | QA-009 |
@@ -4034,3 +4034,11 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 **Javítás:** a Property Registry schema-version/deprecation/migration követelmény korábbi `DSN-014` hivatkozása eltávolítva, mert az a template versioning/compatibility/migration képességhez tartozik, nem a Property Registryhez. A canonical mapping `EDT-001` (Page Model schema/version) és `EDT-021/022` (Property Registry + schema-validált controlok); a sor acceptance mezője megtartja a QA-002/004/006 tesztelési kaput.
 
 **Bizonyítékhatár:** a mapping javítása nem bizonyítja, hogy a property-schema migráció implementált vagy elfogadott. P0.2 **IN PROGRESS / NOT PASS**.
+
+### 41.3.21. P0.2 — Final unreferenced registry ID OPS-010 mapped into E.20 dependency gate (2026-10-14)
+
+**Elvégzett ellenőrzés:** a `§24` registry 359 egyedi feature/quality ID-ját összevetettem a `§37.22–§37.30` E/F crosswalk soraiban szereplő explicit és tartományból kibontott hivatkozásokkal. Az aktuális crosswalkban 323 sor található; a mappingekben 358 különböző registry ID volt hivatkozva, feloldatlan/érvénytelen hivatkozás nélkül. Egy registry ID nem szerepelt a crosswalk mapping oszlopaiban: `OPS-010 — Dependency/license/CVE review`.
+
+**Javítás:** az `E.20-07` integrációs/dependency követelmény most explicit tartalmazza a dependency/license/CVE review-t, és a mapping `OPS-010/011` hivatkozást. Ez a függőségek hozzáadása/frissítése előtti felülvizsgálatot a közös fejlesztési szerződéshez kapcsolja.
+
+**Ellenőrzési korlát:** ez megszünteti az egyetlen olyan registry-ID-t, amelyet a gépi ellenőrzés a §37.22–§37.30 crosswalk mapping oszlopaiban nem talált. Nem bizonyítja a 359 ID mindegyikének teljes szemantikai megfelelését, és nem helyettesíti a 00/A / 00.9–00.9.6.B forrás-visszakeresését. P0.2 **IN PROGRESS / NOT PASS**.
