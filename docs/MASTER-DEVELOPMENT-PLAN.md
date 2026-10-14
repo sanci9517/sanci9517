@@ -5093,3 +5093,14 @@ A §37.3 P0.2 összefoglaló még nyitott feladatként írta le a 362 registry-I
 A §37.16, §37.17 és §41.2 egyes mondatai a 2026-10-13-i, 359-ID-s registry-snapshotot aktuális állapotként fogalmazták meg. A régi számokat történeti bizonyítékként megtartottam, de egyértelműen snapshotként jelöltem; a jelenlegi provenance-követelmény már mind a 362 registry-ID-re vonatkozik. A jelenlegi strukturális crosswalk-ellenőrzés helyes hivatkozása §37.32 és §41.3.75.
 
 **Bizonyított határ:** a 362/362 a registry→crosswalk strukturális feloldás eredménye, nem a történeti eredet kétirányú bizonyítéka. A 271 H19–H34 kulcs szemantikai reconciliációja, a teljes E.1/C.23/C.24 forrásleképezés, az ID-szintű contractok és az eredeti `00/A`, `00.9–00.9.6.B` források továbbra is nyitottak. **P0.2 IN PROGRESS / NOT PASS marad.**
+
+### 41.3.108. P0.2 — A H19–H34 ledger forrás-hivatkozásának ellenőrizhetőségi eltérése (2026-10-14)
+
+**Ellenőrzött eltérés:** az archivált MASTER §M0.1 ledgerének forrásmondata a korábbi MASTER `aedb2ea` revízióját nevezi meg a 19–34 történeti szakaszok kinyerési forrásaként. A `docs/MASTER-DEVELOPMENT-PLAN.md` fájlt közvetlenül az `aedb2ea` commiton is visszaolvastam: a GitHub által visszaadott blob SHA `e5fc71d24a561eb4ed0f7da1e70d051543853431`, a tartalom 30 944 karakter; ebben a fájlpéldányban nem található `00/A`, `00.9.6.B`, illetve a H19–H34 ledger forrásfejezetként megjelölt szövege. Ez a fájl ezért önmagában nem támasztja alá a ledger jelenlegi forrásmegjelölését.
+
+**Következtetés:** a ledger 271 sora a jelenlegi MASTER-ben létezik, egyedi azonosítókkal, de a forrásproveniencia nem tekinthető bizonyítottnak pusztán az `aedb2ea` hivatkozással. Lehetséges, hogy az eredeti forrás más fájlban, más branch-en, más commitban vagy a lokális auditkivonatban volt; ezt további bizonyíték nélkül nem választom ki találomra.
+
+**Szükséges feloldás:** a 19–34 eredeti forrásfájl vagy a teljes, ellenőrizhető blob/commit azonosítása; az auditkivonat pontos útvonalának és hashének visszakeresése; ezt követően tételes source→ledger és ledger→source összevetés, hiányzó/összevont/duplikált/superseded tételek explicit döntésével. Addig a 271 sor szerkezeti megléte nem jelent teljes történeti reconciliációt.
+
+**Bizonyítékhatár:** ez a kör egy forráshivatkozási eltérést azonosít; nem töröl és nem módosít történeti követelményt, nem állítja, hogy a forrás sehol nem létezik, és nem bizonyít runtime készültséget. Az eredeti `00/A` és `00.9–00.9.6.B` források továbbra is **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS** marad, a fejlesztési fagyasztás érvényben marad.
+
