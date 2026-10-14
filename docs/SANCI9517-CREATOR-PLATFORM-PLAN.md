@@ -141,21 +141,23 @@ Az Editor a weboldal felépítését, elrendezését, vizuális megjelenését, 
 
 ## 3. Részletes Admin-domainok és tételes funkciók
 
-A 3.1–3.18 alfejezetek **felelősségi/domain-katalógusok, nem 18 külön főmenüpont**. A tényleges fő navigációt a 46.1. és 49. fejezet 16 modulja határozza meg. Az alábbi megfeleltetés a felelősséget rögzíti, hogy az azonos funkciók ne kapjanak külön menüben külön implementációt:
+A 3.1–3.18 alfejezetek **felelősségi/domain-katalógusok, nem külön főmenüpontok**. A kanonikus fő navigációt kizárólag a 49. fejezet határozza meg; a 46. fejezet csak a navigációs UX és elrendezés szabályait rögzíti. A 49. fejezet jelenleg 20 külön főmodult tartalmaz. Az alábbi megfeleltetés rögzíti a felelősséget, hogy az azonos funkciók ne kapjanak külön menüben külön implementációt:
 
-- 3.1 Dashboard → 49.1 Áttekintés.
-- 3.2 Weboldal → 49.2 Weboldal és Visual Editor; a Brand Kit/design/template felelősség a 49.3 modulhoz tartozik.
+- 3.1 Dashboard → 49.1 Kezdőlap és napi áttekintés.
+- 3.2 Weboldal → 49.2 Weboldal; a design/template tulajdonosa 49.3, a média/asset registry tulajdonosa 49.4.
 - 3.3 Kapcsolatok → 49.7 Kapcsolatok és integrációk.
-- 3.4 Live és Stream + 3.5 Adásrend → 49.5 Live és Stream Studio; az OBS-vezérlés és overlay eszközök a 49.6 modulhoz tartoznak.
-- 3.6 Tartalom + 3.7 Média és erőforráskönyvtár → 49.8 Tartalomkönyvtár és Content Studio, közös asset registryvel.
-- 3.8 Közösség → 49.9 Közösség és rajongók.
-- 3.9 Bolt és kereskedelem + 3.10 Támogatás és tagság → 49.10 Bolt, támogatás és bevétel.
-- 3.11 Analytics + 3.12 Tartalomtervező és kampányok + 3.15 Szponzoráció és üzleti központ → 49.13 Analitika és növekedés; a szponzorációs deal/lead/deliverable adatok kanonikus tulajdonosa ez a modul.
+- 3.4 Live és Stream + 3.5 Adásrend → 49.5 Élő adás és Stream Studio; az OBS/overlay eszközök 49.6.
+- 3.6 Tartalom → 49.8 Tartalomstúdió; 3.7 Média és erőforráskönyvtár → külön 49.4 Média- és erőforráskönyvtár.
+- 3.8 Közösség → 49.9 Közösség és rajongók; a fan identity saját domain-szerződés alatt marad.
+- 3.9 Bolt és kereskedelem → 49.10 Bolt és kereskedelem; 3.10 Támogatás és tagság → külön 49.11.
+- 3.11 Analytics → 49.13 Analitika és növekedés.
+- 3.12 Tartalomtervező: tartalomnaptár/publikálási queue → 49.8; kampánytervezés és eredmény → 49.12.
 - 3.13 Automatizáció → 49.14 Automatizációk.
 - 3.14 SANCI AI → 49.15 SANCI AI.
 - Keresés/súgó/személyre szabás → 49.16.
-- 3.16 Beállítások és hozzáférés + 3.18 Rendszerdiagnosztika → 49.17 Beállítások, biztonság és adat; a diagnosztika érzékeny nézetei korlátozott jogosultságúak.
-- Fejlesztői eszközök és bővítmények → 49.18; 3.17 Csapat és munkaterület → 49.20.
+- 3.15 Szponzoráció és üzleti központ → külön 49.12 Szponzoráció és üzleti központ.
+- 3.16 Beállítások és hozzáférés + 3.18 Rendszerdiagnosztika → 49.17; érzékeny diagnosztika korlátozott jogosultságú.
+- Fejlesztői eszközök/API → 49.18; bővítmények/piactér → külön 49.19; 3.17 Csapat és munkaterület → 49.20.
 
 A több helyen megjelenő gyorsművelet csak a kanonikus modulba navigál vagy annak közös domain commandját hívja; nem hozhat létre második tulajdonost, adatforrást vagy jogosultsági útvonalat.
 
@@ -2579,27 +2581,15 @@ A „közös storage” nem egyetlen óriási, strukturálatlan JSON és nem egy
 
 ## 46. Admin információs architektúra és felhasználói élmény
 
-### 46.1. Kanonikus fő navigáció és modulcsoportok
-A 49. fejezet 16 főmodulja a kanonikus, funkció szerint elkülönített Creator Center-menütérkép. Ez a lista határozza meg a fő modulok nevét és felelősségét; a 3. fejezet ezek részletes domain- és almenüfunkcióit írja le. A menü nem jeleníti meg egyszerre az összes belső műveletet: a gyakori feladatok a modul kezdőlapján, a ritkábbak kereshető almenükben jelennek meg.
+### 46.1. Navigációs hierarchia és főmodulok forrása
 
-1. **Dashboard / Áttekintés:** valós státuszok, teendők, gyorsműveletek.
-2. **Weboldal és Visual Editor:** oldalak, navigáció, CMS, publikálás, domain és publikus renderer.
-3. **Brand Kit és Design Studio:** logók, témák, design tokenek, ikonok, presetek, sablonok és reusable komponensek.
-4. **Live és Stream Studio:** live állapot, stream planner, adásrend, ismétlődések, játékprofilok, stream események és adás előtti ellenőrzések.
-5. **OBS és stream eszközök:** OBS-kapcsolat, overlayek, widgetek, chatbot és engedélyezett vezérlés.
-6. **Kapcsolatok és integrációk:** provider-kapcsolatok, scope-ok, tokenállapot, webhookok és szinkronnapló.
-7. **Tartalomkönyvtár és Content Studio:** VOD, klipek, Shorts, tartalomnaptár, publikálási queue és közös média-/erőforráskönyvtár (asset registry, képek, videók, fájlok, ikonok, fontok, licencek, használati helyek).
-8. **Közösség és rajongók:** Discord, fan account, posztok, szavazások, moderáció és értesítések.
-9. **Bolt, támogatás és bevétel:** termékek, rendelések, digitális hozzáférés, támogatás, tagság és szponzorációs kapcsolódások.
-10. **Analitika és növekedés:** forrásmegjelölt metrikák, kampányok, szponzoráció, SEO-teljesítmény és kísérletek.
-11. **Automatizációk:** workflow builder, trigger, condition, action, futási előzmények és hibakezelés.
-12. **SANCI AI:** AI Control Center, Live Coach, Content Factory, specialisták, jóváhagyások és költség/adatkezelés.
-13. **Keresés, súgó és személyre szabás:** globális kereső, command palette, onboarding, mentett nézetek és felhasználói UI-preferenciák.
-14. **Beállítások, biztonság és adat:** profil, site, nyelvek, időzóna, jogosultságok, értesítések, export/backup, adatkezelés és diagnosztika.
-15. **Fejlesztői központ és bővítmények:** API/SDK, webhook tester, extension registry, marketplace és sandbox; csak a későbbi platformfázisban.
-16. **Csapat, több site és SaaS:** workspace, meghívások, szerepek, több creator/site, billing és usage; csak a szükséges tenant-izolációs alapok után.
+A kanonikus modulnevek, modulhatárok és felhasználói főmenüpontok kizárólag a **49. fejezetben** szerepelnek. Ez az alfejezet nem tart fenn második, párhuzamos menülistát; itt csak a felület elrendezési szabályai vannak meghatározva.
 
-**Megjelenítési szabály:** a 16 modul a kanonikus funkciótérkép, nem 16 egyforma súlyú, mindig nyitva tartott menücsoport. A felület szerepkör, jogosultság, használati gyakoriság és kezdő/haladó mód szerint rendezheti a hozzáférést, de nem rejthet el jogosultsággal elérhető adatot úgy, hogy az kereséssel vagy dokumentált útvonallal se legyen megtalálható. Mobilon csoportosított, összecsukható navigáció szükséges.
+- A 49. fejezet 20 főmodulja nem azonos súlyú: a gyakori alapfeladatok kerülnek előre, a ritkább és későbbi platformfunkciók kereshető/összecsukható csoportokba.
+- A modul megjelenítése szerepkör, server-side permission, használati gyakoriság és kezdő/haladó mód szerint változhat; a UI nem helyettesíti az authorizationt.
+- A modulok saját kanonikus domain parancsát/API-ját használják. A Dashboard, Editor, kereső, értesítés vagy AI csak belépési pont, nem második üzleti logika.
+- A Weboldal/Visual Editor, Brand Kit, Média/Asset Registry, Integrációk, Live/Stream, OBS, Content Studio, Community, Store, Support/Membership, Sponsorship/Campaign, Analytics, Automation, AI, Search/Help, Settings, Developer API, Extensions/Marketplace és Team/SaaS határait a 49. fejezet és az 5. fejezet domain-térképe együtt rögzíti.
+- Mobilon csoportosított, összecsukható navigáció, egyértelmű aktív hely, breadcrumbs és kereshető almenük szükségesek; egyetlen modul sem lehet „minden egyéb” gyűjtőhely.
 
 ### 46.2. Több helyen látható művelet, egyetlen üzleti logika
 Ugyanaz a művelet megjelenhet Dashboardon, Editorban, tartalomkártyán vagy AI-javaslatként, de minden entrypoint ugyanazt a domain command/API-t hívja. A közös action meghatározza a jogosultságot, validációt, státuszátmenetet, idempotenciát, naplózást és hibakezelést. Az entrypoint csak a kontextust és a felhasználói felületet adja.
@@ -3990,7 +3980,7 @@ Az ellenőrzés a kanonikus terv aktuális GitHub-változatán futott. Eredmény
 - A 54. fejezetben **156 checklist-tétel** van; a 63.12–63.15 táblázatokban **156/156** tételhez tartozik külön megfeleltetési sor.
 - A megfeleltetési sorokban használt stabil ID-k mind megtalálhatók a 24. fejezetben; a jelen ellenőrzésben nincs feloldatlan ID-hivatkozás.
 - A 24. fejezetben **382 stabil funkcióazonosító** szerepel, és az azonosítók egyediek.
-- A 49. fejezetben **18 egymást követő főmodul** szerepel 49.1–49.20 között; a média/erőforrás, fejlesztői API, bővítmény-piactér és csapat/SaaS külön főmodul.
+- A 49. fejezetben **20 egymást követő főmodul** szerepel 49.1–49.20 között; a média/erőforrás, fejlesztői API, bővítmény-piactér és csapat/SaaS külön főmodul.
 - A 54. fejezet normalizált, pontos szövegduplikáció-ellenőrzése korábban nem talált ismétlődő checklist-tételt.
 
 **Korlátok és nyitott munka:** ez strukturális/azonosító-keresztellenőrzés, nem bizonyítja, hogy minden hozzárendelés szemantikailag tökéletes, nincs-e két külön szöveg mögött ugyanaz a képesség, minden domain-szerződés teljes-e, vagy a runtime megvalósítja-e a tervet. Következő feladat a szemantikai duplikáció- és tulajdonosmodul-audit, majd a meglévő kód, API-k, adatmodellek, jogosultságok és tesztek összevetése. A fejlesztési fagyasztás és a tervlezárási kapu változatlanul érvényes; ez az ellenőrzőpont önmagában nem engedélyezi az F0 megkezdését.
