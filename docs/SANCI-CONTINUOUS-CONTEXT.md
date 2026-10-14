@@ -315,7 +315,7 @@ Minden jelentős változásnál rögzítendő:
 
 Az alábbi állapot a 2026-09-i korábbi beszélgetésből származik, és nem használható mai végrehajtási utasításként: Visual Editor stabilizálása; Preview Mobile stacking javítás; a `dfa5faf462496e2d3617810dafc28e72c540ee70` commit; oldalátnevezés tesztje; page delete hiánya.
 
-**Jelenlegi munkapont:** `P0.2-ARCHIVE-RECONCILIATION-AND-BIDIRECTIONAL-FEATURE-TRACEABILITY` — lásd a `v2/foundation:docs/MASTER-DEVELOPMENT-PLAN.md` 0.0, 0.2, 37.3, 37.9–37.32 és 41.3.24–41.3.76 részeit. Az F0.2 státusz a korábbi roadmap snapshotjához tartozik, és nem írhatja felül a P0.2 auditot. A hiányzó eredeti források és a kétirányú szemantikai reconciliáció lezárásáig ne induljon feature-implementáció vagy végső funkciólista-ellenőrzés.
+**Jelenlegi munkapont:** `P0.2-ARCHIVE-RECONCILIATION-AND-BIDIRECTIONAL-FEATURE-TRACEABILITY` — lásd a `v2/foundation:docs/MASTER-DEVELOPMENT-PLAN.md` 0.0, 0.2, 37.3, 37.9–37.32 és 41.3.24–41.3.80 részeit. Az F0.2 státusz a korábbi roadmap snapshotjához tartozik, és nem írhatja felül a P0.2 auditot. A hiányzó eredeti források és a kétirányú szemantikai reconciliáció lezárásáig ne induljon feature-implementáció vagy végső funkciólista-ellenőrzés.
 
 ## 16. Dokumentumok szerepe
 
