@@ -4706,3 +4706,67 @@ A jelenlegi route-regiszterben a Twitch adapter és schedule sync látható, de 
 
 **Státusz: IN PROGRESS / NOT PASS.** A következő ID-szelet: COM-001–020, STO-001–021 és SUP-001–012, külön közösségi identitás, termék/rendelés és entitlement lifecycle határokkal.
 
+### 63.34. COM-001–020, STO-001–021, SUP-001–012 — Community, Store és Support/Entitlement
+
+A route-/schema-leltárban nem látható dedikált Community/Fan Identity, Product/Order/Payment vagy Support/Membership/Entitlement domain route és migration/test suite. Ezeket **nem kész funkcióként**, hanem tervezett domainként kezeljük. A meglévő Twitch auth, Page Model és RESOURCE alapokat csak explicit connectorokon keresztül szabad fogyasztani.
+
+| ID | Owner / forrás | Állapot és kötelező acceptance |
+|---|---|---|
+| COM-001 | COMMUNITY / external links | Statikus linkek lehetnek, de canonical link registry nem bizonyított; URL safety, visibility és broken-link check kell. |
+| COM-002 | COMMUNITY ↔ INT / Discord entry | Discord adapter nem bizonyított; install/guild permissions és honest unavailable state szükséges. |
+| COM-003 | COMMUNITY / posts | Canonical post schema/API nincs bizonyítva; draft/publish/edit/archive, author/site scope és moderation audit kell. |
+| COM-004 | COMMUNITY / polls | Poll/vote schema nincs bizonyítva; open/close, one-vote policy, rate-limit és tamper-resistant tally kell. |
+| COM-005 | COMMUNITY / events & RSVP | Event domain külön a stream schedule-től; RSVP consent/capacity/cancel and timezone handling kell. |
+| COM-006 | FAN_IDENTITY / profiles/follows | Fan account lifecycle nincs bizonyítva; profile privacy, block/unfollow, export/delete és account isolation kell. |
+| COM-007 | COMMUNITY / comments/reactions | Comment/reaction API nincs bizonyítva; abuse/rate-limit, moderation, delete and permission checks kell. |
+| COM-008 | COMMUNITY / clip submission | Content intake workflow nincs bizonyítva; upload asset reference, consent/rights, review and takedown kell. |
+| COM-009 | COMMUNITY / moderation | Report/ban/role lifecycle nincs bizonyítva; least privilege, reason, appeal, audit and expiry kell. |
+| COM-010 | COMMUNITY / reputation/challenges | Badge/reputation engine nincs bizonyítva; anti-abuse rules, explainable scoring and privacy controls kell. |
+| COM-011 | NTF / notifications | Notification delivery domain nincs bizonyítva; community eventből idempotens notification event és truthful delivery state kell. |
+| COM-012 | COMMUNITY / abuse | General rate-limit/spam controls nem bizonyítottak; per-account/IP/action limits, abuse reports and fail-safe policy kell. |
+| COM-013 | COMMUNITY ↔ ENTITLEMENT | Member-only visibility gate nincs bizonyítva; minden server read ellenőrizze a canonical entitlementet, UI hide nem elég. |
+| COM-014 | COMMUNITY / Founding Supporters | Opt-in listing model nincs bizonyítva; consent receipt, revoke, display-name policy and delete propagation kell. |
+| COM-015 | FAN_IDENTITY/NTF / email signup | Consent/subscriber API nincs bizonyítva; double opt-in policy, consent timestamp/source and provider contract kell. |
+| COM-016 | NTF/AUT / newsletter automation | Segmentation/automation engine nincs bizonyítva; audience consent, suppression, safe trigger and audit kell. |
+| COM-017 | FAN_IDENTITY/NTF / unsubscribe | Suppression/export/delete workflow nincs bizonyítva; unsubscribe idempotency, retention and provider propagation kell. |
+| COM-018 | COMMUNITY/WEB / visibility | Public/member/private policy nincs bizonyítva; single canonical visibility rule consumed by all surfaces. |
+| COM-019 | FAN_IDENTITY / account lifecycle | Fan identity distinct from creator/Admin users; session, preferences, export/delete, consent withdrawal and cross-account negative tests. |
+| COM-020 | COMMUNITY / rules and enforcement | Rules/age/content policy engine not proven; versioned rules, acknowledgement, enforcement reason, appeal and legal review. |
+| STO-001 | PRODUCT / catalog | Product table/API/UI not visible; canonical product IDs and lifecycle needed. |
+| STO-002 | PRODUCT / variants/SKU/price | Variant/SKU/currency schema not proven; currency precision, SKU uniqueness, price history and availability rules needed. |
+| STO-003 | PRODUCT / taxonomy | Product categories/collections separate from CNT and RESOURCE taxonomies; relation and migration policy needed. |
+| STO-004 | PRODUCT → RESOURCE/SEO | Product media/SEO not proven; canonical asset references, public-safe fields and SEO projection. |
+| STO-005 | PRODUCT / type | Physical/digital/bundle/preorder/limited-drop support not proven; type-specific fulfillment and availability rules. |
+| STO-006 | PRODUCT/ORDER / inventory | Inventory/fulfillment abstraction not proven; reserve/release, oversell policy and reconciliation. |
+| STO-007 | STOREFRONT / listing/search | Public product listing/detail/search/filter not proven; published/active products only and correct currency. |
+| STO-008 | ORDER / checkout provider | Checkout workflow/provider not proven; payment provider chosen after security/legal review, no DIY card storage. |
+| STO-009 | ORDER / lifecycle | Canonical order/payment status schema not proven; provider-confirmed state transitions and idempotency. |
+| STO-010 | ORDER / fulfillment | Shipping/tracking/cancel/refund lifecycle not proven; partial fulfillment and compensation workflow. |
+| STO-011 | PRODUCT/ORDER / promotions | Coupon/promo/gift-card engine not proven; expiry, usage caps, stacking and abuse controls. |
+| STO-012 | ENTITLEMENT / digital purchase | Purchase entitlement not proven; grant/revoke based on confirmed order/refund state, not UI. |
+| STO-013 | RESOURCE/ENTITLEMENT / secure delivery | Secure download access not proven; short-lived signed URL, entitlement re-check and revoke/expiry. |
+| STO-014 | ORDER / tax/shipping/VAT | Compliance integration not proven; provider and jurisdiction decision required before launch. |
+| STO-015 | FAN_IDENTITY/ORDER / customer history | Customer account/history not proven; private order authorization, export/delete and minimum PII. |
+| STO-016 | ORDER/AUT / abandoned cart | Abandoned-cart lifecycle not proven; deferred feature, consent/marketing policy and idempotent reminders. |
+| STO-017 | EDITOR → PRODUCT projection | Product block not proven; Editor only configures view/query, PRODUCT owns catalog. |
+| STO-018 | INT/ORDER / webhook idempotency | Payment webhook route/registry not proven; SEC-009 signature/replay, dedupe key, retry and audit. |
+| STO-019 | PRODUCT/ORDER / merchant of record | Provider/merchant-of-record decision unresolved; explicit legal, tax, refund and consumer-rights gate. |
+| STO-020 | ANALYTICS / store metrics | Store analytics read model not proven; derive from canonical order/product events, privacy-safe and source-labelled. |
+| STO-021 | ORDER / legal compliance | VAT/invoice/consumer rights gate unresolved; must be decided before real transactions, not after implementation. |
+| SUP-001 | SUPPORT / tip links | External links possible but support provider registry/state not proven; canonical URL and privacy/safety check. |
+| SUP-002 | SUPPORT / tip status | Provider-confirmed donation/tip state not proven; never fabricate successful payment/receipt. |
+| SUP-003 | SUPPORT / goals | Support goal/progress model not proven; event source, currency, date range and public opt-in policy. |
+| SUP-004 | SUPPORT / membership tiers | Membership tier/billing period schema not proven; provider mapping and lifecycle. |
+| SUP-005 | ENTITLEMENT / perks | Perk definition not proven; access policy separated from community/page UI and billing state. |
+| SUP-006 | ENTITLEMENT / canonical access | Entitlement service/schema not proven; canonical grant/revoke/expiry decisions with audit. |
+| SUP-007 | SUPPORT/ENTITLEMENT / renewal/cancel | Renewal/failed-payment lifecycle not proven; webhook-confirmed state and grace-period policy. |
+| SUP-008 | ENTITLEMENT / refund/chargeback | Refund/chargeback handling not proven; revoke/restore semantics and reconciliation. |
+| SUP-009 | ENTITLEMENT → INT/Discord | Discord role sync not proven; role changes derive from entitlement and retry idempotently. |
+| SUP-010 | SUPPORT / supporter history | Supporter history/opt-in public listing not proven; consent, retention, export and revoke. |
+| SUP-011 | ENTITLEMENT → WEB/COM | Content/event membership entitlement not proven; all surfaces consume same decision and deny by default. |
+| SUP-012 | PRODUCT/ENTITLEMENT / member discount | Member discount/exclusive drop not proven; price eligibility server-side, anti-abuse and order snapshot. |
+
+**Kötelező életciklus-szabály:** a Store Order, provider Payment state, Support event és Entitlement nem egyetlen státusz. A payment provider megerősített eseménye frissíti az ORDER állapotot; az ENTITLEMENT policy ebből dönt hozzáférésről; COMMUNITY/WEB/RESOURCE csak ezt olvassa. Refund/chargeback/cancel esetén a hozzáférés változását idempotensen és auditáltan kell végrehajtani. Semmilyen UI vagy AI nem állíthat be közvetlenül fizetési vagy tagsági állapotot.
+
+**Státusz: IN PROGRESS / NOT PASS.** A következő ID-szelet: ANL-001–010, CAM-001–009, AUT-001–014 és AI-001–021, külön mérési esemény, kampány, workflow és AI action boundaries.
+
