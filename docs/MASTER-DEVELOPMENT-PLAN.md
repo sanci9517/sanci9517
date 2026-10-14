@@ -3975,3 +3975,15 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 | E.22-B06 | Minden módosítás előtt beolvasás, utána aktív pont/fázissorrend/capability/owner/gate ellenőrzés kell | §0.0 continuation protocol; §0.1 single source; §41.3.11–§41.3.14 verification notes | MAPPED — change-control rule |
 
 **Ellenőrzési korlát:** ez a tábla mind a hat E.22 tervkarbantartási szabályhoz explicit MASTER-hivatkozást ad. Nem jelenti az E.2–E.21 funkcionális crosswalk szemantikai PASS-át, nem oldja fel a hiányzó eredeti `00/A` / `00.9–00.9.6.B` forrásokat, és nem zárja le a C.23/C.24 teljes bullet-szintű leképezését. P0.2 **IN PROGRESS / NOT PASS**.
+
+### 41.3.15. P0.2 — C.23 + F.1–F.13 exact source-bullet text reconciliation (2026-10-14)
+
+**Ellenőrzött források:** az archivált `00.9.6.C.23` és `00.9.6.F` bulletjei, valamint a MASTER `§41.3.5` egyedi forrás-bullet ledgerje. Az összevetés a bullet szövegét whitespace/Markdown-formázás normalizálása után, multisetként vizsgálta; a forrásban ismétlődő szövegek számossága is számít.
+
+| Tartomány | Forrásbullet | Ledger-sor | Szövegeltérés | Hiányzó / többlet |
+|---|---:|---:|---:|---:|
+| C.23.1–C.23.22 | 210 | 210 | 0 | 0 / 0 |
+| F.1–F.13 | 100 | 100 | 0 | 0 / 0 |
+| **Összesen** | **310** | **310** | **0** | **0 / 0** |
+
+**Következtetés:** a ledger a jelenleg elérhető archív MASTER-ben szereplő C.23 és F.1–F.13 bullet-szövegeket teljes darabszámban és szövegszinten megőrzi. Ez erősebb bizonyíték a puszta ID-jelenlétnél, de továbbra is **source-text integrity**, nem teljes szemantikai megfelelőség: nem bizonyítja, hogy a canonical feature-mappingek helyesek, a permission/owner/phase/dependency/test/acceptance minden sorban teljes, a benchmarkforrások aktuálisak, vagy a funkciók runtime PASS állapotúak. A `00/A` és `00.9–00.9.6.B` hiányzó eredeti szövegét ez nem pótolja. P0.2 **IN PROGRESS / NOT PASS**.
