@@ -186,7 +186,7 @@ Közös funkciók:
 - Funkció csak akkor aktív, ha a provider API és a megadott scope valóban támogatja.
 - Token nem kerül logba, frontend bundle-be vagy API response-ba.
 - Dashboard, Live, Schedule, Content és Editor block ugyanazt az integration state-et használja.
-- **1.0 minimum:** külön Admin Kapcsolatok belépési pont a Twitch-kapcsolat kezelésére; a provider-lista bővítése csak a 1.5 capability gate után. Az Editor nem lesz második connection manager.
+- **Első működő szállítás:** a meglévő Twitch-kapcsolat stabil, teljesen kezelhető Admin modulja. A YouTube, TikTok, Discord, Kick és további provider-adapterek a teljes termékcél részei, külön, függőség szerint ütemezett fázisban. Az Editor nem lesz második connection manager; minden providernek külön capability/scope/policy ellenőrzése van.
 
 **Twitch:** OAuth; broadcaster azonosítás; live/offline, cím, kategória/játék, kezdés, nézőszám ha elérhető; schedule sync; EventSub/webhook ahol indokolt; VOD/clip metadata a scope és policy szerint.
 
@@ -2236,46 +2236,46 @@ Every capability must define, where applicable:
 
 ## 39. Teljes Brand & Creator Platform — végrehajtási életciklus
 
-A végső cél egy egységes Brand & Creator Platform SANCI AI-val. A fázisok scope-ot és függőséget jelentenek, nem automatikus készültséget. PASS csak a saját DoD, teszt, runtime és felhasználói acceptance után adható.
+Ez a fejezet a teljes termék fejlesztési függőségeit rendezi sorba. A termékcél végig a teljes Creator Platform; a fázisok a biztonságos és tesztelhető szállítás sorrendjét jelölik, nem a funkciók végleges kizárását. A konkrét következő pontot a 41. fejezet és a repository aktuális állapota határozza meg.
 
-### 39.1. 0.x — Foundation
-Canonical architecture, Page Model, domain ownership, D1/R2 boundary, auth/RBAC/site ownership, command/validation/history, revisions/publish/rollback, migration/legacy isolation, diagnostics/audit, CI, security, accessibility, performance, observability és recovery.
+### 39.1. F0 — Meglévő technikai alap és core workflow
+Cloudflare Worker, D1/R2, auth/session, site ownership, domain validation, canonical Page Model, Editor command/history, draft/revision/publish, Resource Registry és Twitch ownership alapok megőrzése. A meglévő Admin → Editor → save/reload → preview/publish → public oldal folyamat hibáinak lezárása.
 
-### 39.2. 1.0 — Professzionális Creator Website
-Magyar elsődleges publikus site; Creator Center/Admin; egyetlen Visual Editor; Pages/navigation/Layers/Inspector/responsive; core content/components; Resource/Media/Icon/Font Library; theme/template alapok; Schedule/Game Profiles; Twitch live/next-stream; **Kapcsolatok Admin modul minimuma Twitchre** (connection status, scopes, health/last success, reconnect/disconnect, audit; Dashboard, Live, Schedule és Editor ugyanazt a canonical connection state-et olvassa); draft/preview/publish/rollback; SEO/accessibility; E2E és production acceptance. A YouTube/TikTok/Discord/Kick és a további provider-adapterek 1.5-ben capability-gated scope.
+### 39.2. F1 — Közös Admin és modulhatárok
+Egységes app shell, menürendszer, routing, permission-aware navigation, közös UI állapotok, domain API/command szerződések, szerveroldali jogosultság és diagnosztika. Minden modul külön feladatot kezel, de közös infrastruktúrát használ.
 
-### 39.3. 1.5 — Többplatformos creator
-YouTube/TikTok/Discord és további capability-gated provider adapterek; platform profile, scope, rate limit, token lifecycle, sync/error recovery; gazdagabb live state; VOD/clips/Shorts/highlights; cross-platform content planning és unified social/link system.
+### 39.3. F2 — Brand Kit, Resource Registry és sablonrendszer
+Kanonikus brand identity, design tokens, média/ikon/font library, site/page/section/component/theme template-ek, reusable component/symbol, preview/diff/version/rollback. A változtatások hatása követhető és visszavonható.
 
-### 39.4. 2.0 — Creator Operating System
-Advanced CMS/collections/relationships/bindings/search; advanced media processing; Site/Page/Section/Component/Symbol templates és variants; Theme Editor/design tokens/Sanci Button Registry; forms/backend actions; interactions/motion; calendar/reminders/export; Content Studio; Stream/Overlay Studio és OBS integration contract.
+### 39.4. F3 — Weboldal és Visual Editor
+Oldalak, navigáció, canvas/Layers/Inspector, reszponzív elrendezés, dinamikus blokkok, CMS/data binding, SEO, accessibility, preview, draft/publish, custom domain és publikált renderer. A kézi alapfolyamat stabil és AI nélkül is teljes.
 
-### 39.5. 3.0 — SANCI AI Creator Platform
-Copilot weboldalra, komponensekre, szövegre, SEO/AEO, alt textre, fordításra, médiára, stream summaryra, VOD/clip/Short ötletekre, schedulingre, analytics értelmezésére és automation draftokra. Specialist agentek közös permission/action pipeline-t használnak. Model/provider registry, context minimization, approval, diff/preview, cost/quota, verification, audit és rollback kötelező. Nincs közvetlen DB/DOM írás vagy jóváhagyás nélküli kockázatos publikálás; a core funkciók AI nélkül is használhatók.
+### 39.5. F4 — Creator account, workspace és onboarding
+Külön tervezett creator-regisztráció, email/identity verification, recovery, workspace/site setup, szerepkörök és permissionök. A jelenlegi admin-auth nem válik nyílt regisztrációvá addig, amíg a tenant/site izoláció és account lifecycle tesztelt. Fan account és membership külön publikus felhasználói réteg.
 
-### 39.6. 4.0 — Multi-creator, teams, SaaS és billing
-Több creator/site/brand, workspace isolation, team invitations, granular roles, collaboration/approval, concurrency, staging/production, custom domains, subscriptions, billing, entitlements, usage limits, quota és onboarding.
+### 39.6. F5 — Integrációs központ és provider adapterek
+Twitch meglévő kapcsolatának stabilizálása, majd YouTube, TikTok, Discord, Kick és további integrációk. Providerenként OAuth/scope, capability matrix, quota, token lifecycle, webhook verification, sync, error/retry, reconnect/disconnect és valós provider acceptance.
 
-### 39.7. 5.0 — Creator Business és commerce
-Shop/merch, products/variants/collections/inventory/fulfillment, digital products/bundles/coupons/cart/checkout, order/payment lifecycle, support/donations, memberships/perks/entitlements, Discord role sync, customer/order management, CRM/fan relationships, marketing automation és conversion analytics. Payment/tax/VAT/shipping/invoice provider külön legal/business review után.
+### 39.7. F6 — Stream Studio és OBS
+Overlayek, alerts, widgets, stream scene/source állapot, biztonságos OBS pairing, browser source, stream eventek, stream vezérlés és permission-vezérelt automatizáció. Minden template ugyanazt a Brand Kitet és asset registryt használja.
 
-### 39.8. 6.0 — Creator ecosystem és marketplace
-Template/component/widget/theme/overlay/asset marketplace; creator libraries, sharing, ratings, moderation, license/attribution, compatibility/version, dependency manifest, secure import, extension install/update/uninstall/migration/rollback; arbitrary privileged code tilos.
+### 39.8. F7 — Content Studio és többplatformos publikálás
+VOD, clip, highlight, Shorts, transcript, thumbnail, platformvariáns, content calendar, edit/export pipeline, queue, jóváhagyás és provider státusz. A publikálás a hivatalos API, account scope, consent és policy korlátai szerint működik.
 
-### 39.9. 7.0 — Advanced automation és AI operations
-Event registry, triggers/conditions/actions, webhooks, scheduled workflows, cross-platform/commerce/content/stream/notification automation, AI-generated workflow proposals, dry-run, approval, versioning, pause/disable, emergency stop, idempotency, deduplication, retry/backoff, dead-letter, cycle detection és recovery.
+### 39.9. F8 — Közösség, támogatás, tagság és commerce
+Fan account, publikus közösségi funkciók, Discord role sync, támogatás, merch/shop, digitális termékek, tagsági szintek, kupon, checkout, order/payment/fulfillment lifecycle, entitlement és vásárlói támogatás. Fizetési/adózási/fulfillment szolgáltatók külön üzleti és jogi ellenőrzésen mennek át.
 
-### 39.10. 8.0 — Multimodal Creator Intelligence
-Text/image/video/audio understanding consent és permission mellett; content intelligence, media classification, semantic search, clip/highlight assistance, knowledge/context layer, cross-domain recommendations, multimodal analytics, creator knowledge base, source/freshness/confidence és model evaluation.
+### 39.10. F9 — Analitika, kampány és automatizáció
+Forrás- és frissességjelölt analitika, stream/content/shop/web teljesítmény, kampányok, szponzoráció, workflow builder, event triggers, retry, dry-run, approval és recovery.
 
-### 39.11. 9.0 — Személyre szabott creator AI
-User-controlled creator context, adatkezelési beállítások, magyarázható proaktív javaslatok content strategy/website/commerce/stream/overlay területen, mérhető kísérletezés, opt-out, rollback és emberi döntési kontroll.
+### 39.11. F10 — SANCI AI és multimodális Creator Intelligence
+AI Control Center, model/provider registry, weboldal/Admin-asszisztens, élő stream coach, stream/VOD-elemzés, klip- és videógyártás, feliratozás, content strategy, moderációs javaslatok és specialist orchestration. Minden AI-művelet ugyanazt a permission/validation/command/history/approval útvonalat használja, mint a kézi művelet.
 
-### 39.12. 10.0 — Teljes Brand & Creator Operating Platform
-Brand OS, website builder, CMS, media/assets, templates/components/themes, Twitch/YouTube/TikTok és jövőbeli provider adapters, community, OBS/overlays, commerce/merch, membership, sponsorship, analytics, campaigns, automation, SANCI AI, multimodal intelligence, localization, multi-creator SaaS, marketplace, extensions és globális működés.
+### 39.12. F11 — Platformosodás és bővíthető ökoszisztéma
+Több workspace/site, csapat és szerepkör, előfizetés/usage, lokalizáció, theme/component/overlay/automation/AI workflow marketplace, külső extension manifest és biztonságos install/update/uninstall/migration/rollback.
 
 ### 39.13. Fázisok közötti megőrzési szabály
-Az 1.0-ból kimaradó funkció későbbi fázisba kerül, nem törlődik. Fázisváltás nem törölhet részletes acceptance-t. Minden nagyobb fázis előtt provider/license/security/privacy/cost/operations/benchmark review kell. Egy időben egyetlen dependency-ready, tesztelhető implementációs pont lehet aktív.
+A későbbi fázisba ütemezés nem törlést jelent. Minden képesség a saját moduljában és stabil funkcióazonosítóval marad a tervben. Egy fázis csak a saját acceptance feltételei után tekinthető késznek. Új funkció nem kerülhet be párhuzamos miniappként, második storage-ként vagy külön jogosultsági rendszerként.
 
 ---
 
