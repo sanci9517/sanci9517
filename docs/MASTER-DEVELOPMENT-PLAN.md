@@ -5493,3 +5493,65 @@ A közvetlen előd-MASTER (`87b6f0bb71cd96646b6a501ab85c242386a1124e`) és a jel
 **Következő lépés:** régi 1/B alapelemek és kötelező node mezők tételes összevetése EDT-001/002/015–020 és az E.3 crosswalk soraival; külön ellenőrizendő a form/custom component slot, interaction/data binding, accessibility metadata és schema version, mert a jelenlegi elemkatalógusban hasonló név nem feltétlenül jelent azonos scope-ot.
 
 **Státusz:** 1/H 30 pontos tervszintű megfeleltetés dokumentálva; végrehajtott acceptance nincs e bejegyzéssel igazolva. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.128. P0.2 — Régi 1/B Alapelemek és kötelező node-mezők: tételes crosswalk (2026-10-14)
+
+**Forrás:** előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, 1/B (21 elem-/slot-típus és 14 közös mező). **Canonical célpontok:** EDT-001/002, EDT-015–020, EDT-021/022/024; történeti crosswalk: 37.22, különösen E.3.2-02/03/05 és E.3.6-01–07; azonosítók a 24.3 registryben.
+
+#### A) Régi elemkészlet
+
+| Régi elem | Jelenlegi célpont | Tervszintű megfeleltetés | Nyitott ellenőrzés |
+|---|---|---|---|
+| root | EDT-001/002 | PARTIAL | A Page root és a node-tree root pontos schema/invariant kapcsolatát meg kell nevezni. |
+| container/box | EDT-016 | MATCH candidate | Box/container szerepkör, layout props, gyermekengedélyezés és renderer. |
+| section | EDT-016 | MATCH candidate | Section semantikája, landmark/accessibility és nesting. |
+| heading | EDT-017 | MATCH | Szint/hierarchia, accessible name és render. |
+| paragraph/text | EDT-017; EDT-043 nem helyettesíti a plain-text baseline-t | MATCH | Text props, safe rendering, empty/error behavior. |
+| rich text | EDT-043 (kifejezetten 1.0 utáni advanced) | SUPERSEDED WITH DECISION candidate | A régi „rich text” scope és az új plain-text baseline + későbbi structured rich text közti döntést és kompatibilitási határt rögzíteni kell; ne számítsuk 1.0-s rich-text editor funkciónak. |
+| button | EDT-017, EDT-039 | MATCH candidate | Action registry, URL validation, disabled/loading/accessibility state. |
+| link | EDT-017, EDT-039; WEB-013 | MATCH candidate | Internal/external route, target, rel, validation és permission. |
+| image | EDT-018, RES-010/013 | MATCH candidate | Asset reference, alt/decorative semantics, responsive sizing, missing asset. |
+| video/embed | EDT-018, WEB-032, SEC-005/006 | PARTIAL | Approved-host allowlist, CSP, provider error/fallback és privacy. |
+| icon | EDT-017 | MATCH candidate | Canonical icon registry, accessible label/decoration, invalid icon fallback. |
+| divider | EDT-017 | MATCH | Semantic separator vs decorative line, orientation és accessibility. |
+| spacer | EDT-017, EDT-016 | MATCH candidate | Layout-aware gap/space; no arbitrary absolute-position fallback. |
+| list | EDT-018 | MATCH candidate | Ordered/unordered, nested content, item identity and semantics. |
+| quote | EDT-017–020 között nincs külön explicit EDT-azonosító | UNMAPPED / VERIFY | Quote/blockquote elem vagy typed variant szükségességét dönteni kell; ne tekintsük a Text név alapján automatikusan lefedettnek. |
+| badge/tag | EDT-018 | MATCH candidate | Meaning vs decorative badge, color contrast and semantics. |
+| columns | EDT-016 | MATCH | Breakpoint/column count/order, overflow, child constraints. |
+| form field | EDT-019, SEC/WEB form validation | PARTIAL | Field types, labels, required/error/help state, server validation, spam/security és data retention. |
+| form/container slot | EDT-019, DSN-012/013 | PARTIAL | Slot contract, allowed children, form-domain boundary és nesting validation. |
+| custom component slot | DSN-013; EDT-015/020 | PARTIAL | Custom component schema/version, props, child slots, compatibility/migration és permission boundary. |
+
+A „MATCH candidate” csak a tervezett elemkategória jelenlétét jelenti; nem igazolja, hogy a régi összes property, edge case és runtime viselkedés is megmaradt.
+
+#### B) Minden elem kötelező mezői
+
+| Régi mező | Canonical célpont | Előzetes státusz | Szükséges bizonyíték / nyitott pont |
+|---|---|---|---|
+| stabil ID | EDT-001/002 | PLAN MATCH | Uniqueness, persistence, clone/paste ID regeneration és reload identity teszt. |
+| type | EDT-001/002/015–020 | PLAN MATCH | Typed registry, unsupported type handling és schema validation. |
+| parent ID | EDT-002 | PLAN MATCH | Parent existence, allowed-child relation, cycle prevention, root constraints. |
+| order | EDT-002/011/016 | PLAN MATCH | Determinisztikus sibling order és concurrent reorder behavior. |
+| props | EDT-001/021/022 | PLAN MATCH | Typed props, defaults, validation, unknown-field migration. |
+| style | EDT-021/022; DSN-001–007 | PARTIAL | Tokenized styles vs inline/legacy style, allowed property registry és renderer mapping. |
+| responsive overrides | EDT-023–026 | PLAN MATCH | Breakpoint inheritance, reset, ordering/visibility and viewport resolution. |
+| visibility | EDT-014/026 | PARTIAL | Explicit display/visibility semantics, conditional visibility vs authorization; hidden content security. |
+| locked state | EDT-014 | PARTIAL | Editor lock vs permission/immutability különválasztása; locked node child/mutation behavior. |
+| metadata | EDT-001/002; domain-specific metadata | PARTIAL | A mező schema, ownership, unknown metadata, migration és user/site scoping nincs egyetlen explicit contractként tételesítve. |
+| accessibility metadata | EDT-022/037, QA-005, WEB-032 | PARTIAL | Per-type required/optional metadata, accessible name/alt/label, keyboard/focus and validation policy. |
+| data bindings | EDT-020, DYN-001–008, SEC-002 | PARTIAL | Binding schema, typed source, allowed transforms, permission checks, loading/empty/stale/error state; 1.0 vs later-phase scope. |
+| interaction bindings | EDT-039, SEC-005/006 | PARTIAL | Typed action registry, trigger/target schema, navigation validation, safe allowlist, authorization and no arbitrary JS. |
+| schema version | EDT-001 | PLAN MATCH | Versioned migration, forward/backward compatibility, unknown version rejection and persisted round-trip. |
+
+#### C) Crosswalk-következtetés
+
+- A jelenlegi MASTER explicit módon tartalmazza a canonical Page Model/schema-version, stable node IDs/parent-child invariants, a fő layout és elemkatalógus, typed Inspector, responsive overrides, safe embeds, dynamic data pipeline és interaction registry témáit.
+- A régi 1/B nem zárható le pusztán a registry felsorolása alapján: a régi `metadata`, `visibility`, `locked`, `data bindings`, `interaction bindings` és custom slot mezők pontos adattípusát, határát és migrációját még contractszinten kell összepárosítani.
+- Két konkrét szemantikai figyelmeztetés: (1) a rich textet a jelenlegi terv tudatosan későbbi, külön kapuhoz köti; (2) a quote/blockquote elemhez nem találtam külön explicit EDT-azonosítót. Ezek döntést/ellenőrzést igényelnek, de önmagukban nem bizonyítják, hogy a funkció hiányzik a teljes terméktervből.
+- A 37.22 E.3.2-03 régi source bulletje a node `source` mezőt is említi; az előd 1/B 14 mezős listájában nincs külön source mező. Ez külön történeti forrásból származó követelmény, ezért az 1/B-től elkülönítve kell továbbvezetni, nem szabad csendben összevonni.
+
+**Következő lépés:** régi 1/C selection/manipulation minden bulletjét megfeleltetni EDT-006–014/038 és a 37.22 E.3.3 sorokhoz; külön döntés kell a group/ungroup, cut, paste-into-parent, paste-style-only, paste-structure, breadcrumb/parent selection és focus-selected viselkedésre.
+
+**Státusz:** 1/B elemkészlet és 14 mező crosswalkja rögzítve; tételes szemantikai és runtime bizonyítás nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
