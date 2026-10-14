@@ -1270,7 +1270,8 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - INT-020: Integration diagnostics and recovery.
 - INT-021: Future payment/email/commerce adapters.
 
-### 24.7. Live/Stream/OBS — LIV / OBS
+### 24.7. Live state and Stream Studio — LIV / OBS
+#### 24.7.1. Live domain — LIV
 - LIV-001: Normalized live/offline state.
 - LIV-002: Live data freshness/stale indicator.
 - LIV-003: Stream title/category/game/start time.
@@ -1281,6 +1282,7 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - LIV-008: Capability-gated multistream destinations and per-provider metadata.
 - LIV-009: Unified Chat read/send permissions, provider labels, moderation state and partial-failure handling.
 - LIV-010: Recording/replay/backup status and retention/cost policy, only where technically supported.
+#### 24.7.2. OBS, overlays and stream tools — OBS
 - OBS-001: Overlay asset and scene metadata.
 - OBS-002: OBS secure pairing/connection.
 - OBS-003: Scene/stream/recording state where supported.
@@ -1392,7 +1394,8 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - SUP-011: Membership entitlement rules for content/events; COM and WEB surfaces consume these rules without duplicating entitlement state.
 - SUP-012: Member discount/exclusive drop.
 
-### 24.13. Analytics/campaign/business — ANL / CAM
+### 24.13. Analytics and business campaigns
+#### 24.13.1. Analytics — ANL
 - ANL-001: Analytics event taxonomy/naming/schema governance for measurement and reporting; excludes workflow trigger execution.
 - ANL-002: Privacy-safe web analytics.
 - ANL-003: Stream analytics.
@@ -1403,6 +1406,7 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - ANL-008: Freshness/source/unit/missing-data state.
 - ANL-009: Consent/retention/bot filtering.
 - ANL-010: Anomaly detection, thresholds and explainable alerts.
+#### 24.13.2. Campaign and sponsorship business — CAM
 - CAM-001: Campaign CRUD/status/goals.
 - CAM-002: Campaign links/UTM/attribution.
 - CAM-003: Campaign asset/content/product relationships.
@@ -1452,7 +1456,8 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - AI-020: AI-free fallback for all critical manual workflows.
 - AI-021: Multimodal image/audio/video generation provider adapters, rights/safety checks, cost controls and human review.
 
-### 24.16. Settings/security/operations — SEC / OPS
+### 24.16. Security and operations — SEC / OPS
+#### 24.16.1. Security and authorization — SEC
 - SEC-001: Authentication/session lifecycle.
 - SEC-002: Server-side RBAC and ownership.
 - SEC-003: Cross-domain server-side site/workspace/tenant isolation invariant; TEAM-001/TEAM-005 provide workspace selection and multi-site workflows but do not replace authorization.
@@ -1465,6 +1470,7 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - SEC-010: Cross-domain security/privacy audit events and redaction/retention controls; workflow execution detail remains in AUT-008.
 - SEC-011: Consent/retention/export/delete.
 - SEC-012: MFA/2FA and future SSO lifecycle, recovery and suspicious-authentication controls.
+#### 24.16.2. Operations and reliability — OPS
 - OPS-001: Health/deploy version.
 - OPS-002: Structured logs/correlation IDs.
 - OPS-003: Error tracking/alerting.
