@@ -95,7 +95,25 @@ Az Editor a weboldal felépítését, elrendezését, vizuális megjelenését, 
 
 ---
 
-## 3. Végleges Admin menürendszer és tételes funkciók
+## 3. Részletes Admin-domainok és tételes funkciók
+
+A 3.1–3.18 alfejezetek **felelősségi/domain-katalógusok, nem 18 külön főmenüpont**. A tényleges fő navigációt a 46.1. és 49. fejezet 16 modulja határozza meg. Az alábbi megfeleltetés a felelősséget rögzíti, hogy az azonos funkciók ne kapjanak külön menüben külön implementációt:
+
+- 3.1 Dashboard → 49.1 Áttekintés.
+- 3.2 Weboldal → 49.2 Weboldal és Visual Editor; a Brand Kit/design/template felelősség a 49.3 modulhoz tartozik.
+- 3.3 Kapcsolatok → 49.6 Kapcsolatok és integrációk.
+- 3.4 Live és Stream + 3.5 Adásrend → 49.4 Live és Stream Studio; az OBS-vezérlés és overlay eszközök a 49.5 modulhoz tartoznak.
+- 3.6 Tartalom + 3.7 Média és erőforráskönyvtár → 49.7 Tartalomkönyvtár és Content Studio, közös asset registryvel.
+- 3.8 Közösség → 49.8 Közösség és rajongók.
+- 3.9 Bolt és kereskedelem + 3.10 Támogatás és tagság → 49.9 Bolt, támogatás és bevétel.
+- 3.11 Analytics + 3.12 Tartalomtervező és kampányok + 3.15 Szponzoráció és üzleti központ → 49.10 Analitika és növekedés; a szponzorációs deal/lead/deliverable adatok kanonikus tulajdonosa ez a modul.
+- 3.13 Automatizáció → 49.11 Automatizációk.
+- 3.14 SANCI AI → 49.12 SANCI AI.
+- Keresés/súgó/személyre szabás → 49.13.
+- 3.16 Beállítások és hozzáférés + 3.18 Rendszerdiagnosztika → 49.14 Beállítások, biztonság és adat; a diagnosztika érzékeny nézetei korlátozott jogosultságúak.
+- Fejlesztői eszközök és bővítmények → 49.15; 3.17 Csapat és munkaterület → 49.16.
+
+A több helyen megjelenő gyorsművelet csak a kanonikus modulba navigál vagy annak közös domain commandját hívja; nem hozhat létre második tulajdonost, adatforrást vagy jogosultsági útvonalat.
 
 ### 3.1. Dashboard — Áttekintés
 **Cél:** egyetlen kezdőképernyő, amely megmutatja a rendszer valós állapotát és a következő hasznos feladatot.
