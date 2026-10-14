@@ -6680,6 +6680,26 @@ Ez a szakasz a 63.41 kártyáit kiegészíti a 25. fejezet hiányzó, különál
 
 **Bizonyítékhiány:** CI/test/browser/live/production ellenőrzés nem futott ebben a körben; a migrációs fájlok létezése nem bizonyítja az éles D1 sémát. A 63.50.1 specifikáció **SPECIFICATION DRAFT / NOT PASS** marad, a teljes tervkapu **IN PROGRESS / NOT PASS**.
 
+### 63.50.4. Website / Editor v2 / publish: második domainhatár forrásaudit (2026-10-14)
+
+**Statikus forrásbizonyíték:** `src/routes/admin/editor.ts`, `src/routes/admin/pages.ts`, `src/routes/public/pages.ts`, `src/index.ts`. A dokumentált tények nem jelentenek runtime/CI/browser PASS-t.
+
+| Érintett domain | Bizonyított meglévő alap | Konkrét eltérés / regressziós követelmény |
+| --- | --- | --- |
+| `WEB` oldalak | `/api/admin/pages` list/create/metadata update/delete; site-scope, editor role, slug validáció; utolsó oldal törlésének védelme; audit | A `PATCH` sort-order csere csak a legközelebbi szomszédot keresi, nem általános tetszőleges pozícióra mozgatást; sorrend invariáns, párhuzamos módosítás és UI expectation tesztelendő |
+| `EDT` Editor v2 | `/api/admin/editor` GET/POST/PUT, kanonikus Page Model validáció, revíziók és rollback; `/admin/editor` v2 asset | A revízióütközés ellenőrzése opcionális `expectedVersion` paraméterhez kötött. Ha hiányzik, nincs látható 409 védelem; kötelező vagy explicit legacy-compatible write policy és konkurenciateszt szükséges |
+| `EDT/WEB` mentés–publikálás | Editor POST menti `content_json` draftot; `publish=true` esetén `published_content_json` snapshotot és revision ID-t ír; `unpublish` külön akció | `pages.ts PATCH` metadata változtatáskor a már publikált oldal `published_content_json` snapshotját is frissíti. A „publikált snapshot csak explicit publish után változik” invariánssal ez **ütközhet**; dönteni kell, mely metadata változás publikálódhat automatikusan |
+| `WEB` publikus read | `/api/public/pages` publikált oldalt alapból `published_content_json` alapján olvas, `preview=1` editor-auth mellett draftot | A response `title/slug/description` mezői a `pages` aktuális sorából származnak, miközben a `content` a publikált snapshotból jön. Draft metadata változás esetén publikus meta/content eltérés lehetséges; publikált metaadat projekció és regressziós teszt szükséges |
+| `EDT` restore | Editor PUT a régi revízióból új revíziót készít, auditál és a draft `content_json` mezőt módosítja | A restore nem módosítja automatikusan a publikált snapshotot: ez **helyes draft/publish határ lehet**, de UI-ban és acceptance-ben explicit megkülönböztetés kell |
+| `WEB/EDT` ownership | Oldal és Editor route-ok a `getCanonicalSiteContext()` fix `site-default` site azonosítót használják; DB-lekérdezéseknél site-filter van | Multi-site tenant selection és jogosultsági mapping nem bizonyított; `editor_revisions` olvasás page ID-hez kötött, előtte site-scoped oldalellenőrzéssel; site-identity tervkapu marad nyitott |
+| `WEB` publikus URL | Worker `/p/*` oldalshell és régi `*.html` útvonalak redirectje; `/admin/home` → `/admin`; `/admin/editor` a v2 UI | A tényleges canonical/redirect, sitemap, robots és SEO teljes elfogadása külön browser/HTTP evidence-et igényel, a routerkód önmagában nem elég |
+
+**Kötelező termékdöntés a végső tervhez:** egyetlen kanonikus page domain maradjon. A `page` draft és a `published` projekció elkülönítése legyen következetes **a metaadatokra is** (title, slug, description, SEO, navigation). A Visual Editor kizárólag a vizuális Page Modelt és megengedett komponensbeállításokat kezelje; a globális brand, média, adásrend és integráció saját tulajdonosmoduljában maradjon. A másik UI belépési pont ugyanarra a kanonikus resource-ra mutasson.
+
+**Konkrét nyitott acceptance:** (1) draft cím/slug/description változás nem szivárog-e a publikált oldalra; (2) metadata PATCH és Editor POST között revízióütközés; (3) rollback nem publikál véletlenül; (4) oldalsorrend tetszőleges mozgatása; (5) publikált snapshot és publikus meta konzisztencia; (6) régi URL-ek 301/302 és canonical; (7) cross-site negatív tesztek. A forráskódot meg kell őrizni és szükség esetén célzottan bővíteni; **a terv auditja nem jogosít automatikus kód-átírásra**.
+
+**Állapot:** `WEB/EDT` részletes statikus forrásellenőrzés elkészült e fájlokra; runtime és végleges szemantikai kapu **NOT PASS**.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
