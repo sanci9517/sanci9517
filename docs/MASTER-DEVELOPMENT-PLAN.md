@@ -604,9 +604,11 @@ A benchmark célja a problémák és jó minták azonosítása, nem másolás. M
 
 ---
 
-## 9. Fejlesztési program — auditkapuk helyett termékfázisok
+## 9. Részletes fejlesztési munkacsomagok és elfogadási szerződések
 
-A fejlesztés függőségi sorrendben halad. A teljes termékcél végig megmarad; egyszerre a következő, a meglévő alapokra építhető és ellenőrizhető fejlesztési pont készül el. Nem végzünk történeti terv-összehasonlítást a termékfejlesztés előfeltételeként.
+**A kanonikus, legfelső szintű fejlesztési sorrend a 41.2. fejezet F0–F11 listája.** A 9. fejezet P1–P22 pontjai részletes munkacsomagok és elfogadási területek, nem egy második, párhuzamos roadmap. A munkacsomagok a megfelelő F-fázisokba kerülnek a 62.5. fejezet leképezése szerint. A 39. fejezet a fázisok rövid áttekintése; nem írhatja felül a 41.2. fejezet sorrendjét.
+
+A fejlesztés függőségi sorrendben halad. A teljes termékcél végig megmarad; egyszerre a következő, a meglévő alapokra építhető és ellenőrizhető fejlesztési pont készül el. Történeti terv-összehasonlítás nem előfeltétele a termékfejlesztésnek.
 
 ### F0 — A meglévő core workflow megbízható lezárása
 - Admin bejelentkezés és jogosultságok.
@@ -748,20 +750,11 @@ A fejlesztés függőségi sorrendben halad. A teljes termékcél végig megmara
 
 ---
 
-### F23 — SANCI AI és Creator Intelligence
-- AI Control Center, modell-/szolgáltató-adapterek, feladatok, költségkeretek, adatkezelés és creator-kontrollok.
-- AI által javasolt Admin/Editor-módosítások a kanonikus command/API útvonalon, diff/preview/jóváhagyás/ellenőrzés/visszaállítás mellett.
-- Élő streamdiagnosztika és visszajelzés a rendelkezésre álló OBS/provider/chat/audio/video jelekből.
-- VOD- és stream-elemzés, transcript, fejezetek, highlight/clip jelöltek és rövid videók előállítása.
-- Cím-, leírás-, hashtag-, felirat-, thumbnail- és platformvariáns-javaslatok; publikálás csak a jogosultságok és a választott jóváhagyási szabályok szerint.
-- Hosszú távú creator-context, analitikai visszacsatolás és mérhető tartalomkísérletek.
-
-### F24 — Több creator, csapat, SaaS és marketplace
-- Workspace/site izoláció, szerepkörök, meghívások, együttműködés és jóváhagyás.
-- Előfizetés, jogosultsági csomagok, usage metering és költségkontroll.
-- Biztonságos theme/component/template/overlay/extension marketplace, verziózás és visszaállítás.
-
-**Fázisszabály:** a fejlesztési fázis nem töröl funkciót a termékcélból. A tényleges provider/API-képességet, költséget, jogi feltételeket és jogosultságokat az adott integráció aktiválásakor ellenőrizzük.
+### A részletes munkacsomagok határa
+- A P1–P22 munkacsomagok a kanonikus F0–F11 fázisokon belül vagy azokat keresztmetszetben szolgálják ki; önmagukban nem hoznak létre külön, párhuzamos ütemtervet.
+- A SANCI AI részletes képességeinek kanonikus termékfejezete a 40. fejezet, végrehajtási fázisa az F10.
+- A multi-site/team/SaaS/marketplace részletes képességeinek kanonikus termékfejezete a 61. fejezet, végrehajtási fázisa az F11.
+- **Fázisszabály:** a fázis nem töröl funkciót a termékcélból. A tényleges provider/API-képességet, költséget, jogi feltételeket és jogosultságokat az adott integráció aktiválásakor ellenőrizzük.
 
 ---
 
@@ -3408,3 +3401,40 @@ A következő fejlesztési pont csak akkor indítható, ha:
 - [ ] F0 után kizárólag az elfogadott függőségi sorrendben haladunk; párhuzamos, egymástól független feature-szálak nem indulnak.
 - [ ] Minden lezárt pont után a MASTER státusza, a bizonyíték, az ismert korlát és a következő aktív pont frissül.
 - [ ] A terv lezárását és a kód készültségét külön kell kommunikálni: a terv lehet teljes, miközben a termék funkcióinak többsége még fejlesztésre vár.
+
+### 62.5. Kanonikus fázis- és munkacsomag-leképezés
+A következő táblázat feloldja a dokumentumban korábban párhuzamosnak tűnő P- és F-számozást. Az F-szám a legfelső szintű végrehajtási sorrend; a P-szám a részletes munkacsomag.
+
+| Részletes munkacsomag | Kanonikus F-fázis | Megjegyzés |
+|---|---|---|
+| P1 Platformbaseline | F0–F1 | Az aktuális core állapotot és az Admin-shell alapját szolgálja; csak a szükséges baseline feladatokat kell megismételni. |
+| P2 Admin shell | F1 | Közös navigáció, állapotok és mobilos Admin. |
+| P3 Editor core | F0 | Mentés, history, canvas, layers, inspector és responsive core. |
+| P4 Resource/media | F0–F2 | Az F0-ban csak a core workflow-hoz szükséges stabilitás; teljes registry és könyvtár F2. |
+| P5 Design system | F2 | Brand Kit, tokenek, témák, ikonok, presetek, sablonok és reusable komponensek. |
+| P6 Pages and renderer | F3 | Oldal-életciklus, renderer, navigáció és publikus minőség. |
+| P7 Integrations | F5 | Provider-adapterek és engedélyezett kapcsolatok. |
+| P8 Creator profile, schedule and blocks | F3–F5 | Publikus blokkok F3; provider- és schedule-függő integrációk F5-höz igazítva. |
+| P9 Content and publishing | F7 | Tartalommodell, könyvtár, naptár és provider-publikálás. |
+| P10 Community/audience | F8 | Közösség, audience és consent. |
+| P11 Commerce/support/membership | F8 | Fizetési szolgáltató, termék, rendelés és entitlement. |
+| P12 Analytics | F9 | Forrás- és frissességjelölt analitika. |
+| P13 Campaign/sponsorship | F9 | Kampány- és üzleti funkciók. |
+| P14 Automation | F9 | Eseményvezérelt, idempotens workflow-k. |
+| P15 Stream Studio/Overlay/OBS | F6 | OBS-kapcsolat, overlayek és stream-eszközök. |
+| P16 Backup/portability/diagnostics | F0 és F11 | A core mentési/visszaállítási alap F0; felhasználói export és platformos diagnosztika bővítése a függőségek szerint. |
+| P17 Security/accessibility/performance/reliability | Keresztmetszeti, minden F-fázis | Nem különálló késői fázis; minden érintett változtatás része. |
+| P18 Localization | Keresztmetszeti; többnyelvű site F3, platformos lokalizáció F11 | A magyar elsődleges nyelv már az alapfelületeknél kötelező. |
+| P19 Multi-site/team/SaaS | F11 | Csak a tenant-izolációs és biztonsági előfeltételek után. |
+| P20 Extension marketplace | F11 | Biztonságos extension-contract és review után. |
+| P21 AI and creator intelligence | F10 | A 40. fejezet részletes AI-szerződése szerint. |
+| P22 End-to-end acceptance | Keresztmetszeti, minden release előtt | A release elfogadása az érintett fázisok bizonyítékai alapján történik. |
+
+A fenti leképezés nem engedélyezi a függőségek átugrását. Ha egy munkacsomag több fázist érint, csak az adott fázisra eső, bizonyítható rész zárható le; a teljes munkacsomag nem jelölhető késznek ettől.
+
+### 62.6. Roadmap- és státusz-konfliktusok kezelése
+- [ ] A 41.2. fejezet F0–F11 listája a legfelső szintű roadmap egyetlen forrása; a 39. fejezet összefoglaló, a 9. fejezet részletes munkacsomag-katalógus.
+- [ ] A 19. fejezet F0 fókusza az aktuális implementációs cél, nem bizonyíték arra, hogy F0 minden acceptance-feladata nyitott vagy kész; a konkrét státuszt ellenőrzött teszt/runtime eredmény adja.
+- [ ] Az olyan régi P0/P0.2 auditállapot nem aktiválódik automatikusan a jelenlegi termék-roadmap részeként. Csak az aktuális termékfunkcióhoz szükséges konkrét hiány vagy regresszió nyitható meg.
+- [ ] Ha egy státusz vagy roadmap-sorrend más fejezetben eltér, először ezt a kanonikus térképet és a legfrissebb igazolt repository/runtime állapotot kell alkalmazni; az eltérést a MASTER-ben egy helyen kell javítani.
+- [ ] A dokumentum végső konzisztencia-ellenőrzése után a következő munka nem további roadmap-átírás, hanem a 19. fejezet szerinti legkorábbi, reprodukálható F0 acceptance-feladat implementációja/ellenőrzése.
