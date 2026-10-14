@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS — a teljes funkciókatalógus bővítése és az egyetlen terv belső összhangjának lezárása folyamatban; új funkció implementálása még nem indulhat pusztán a tervbeli felsorolás alapján.  
-**Következő közös lépés:** a terv teljességének és konzisztenciájának lezárása után a funkciókatalógus közös felülvizsgálata; csak ezután következik a függőségek szerinti implementációs kapu.  
+**Következő közös lépés:** a terv strukturális és történeti teljesség-kapujának lezárása; utána a 396 ID-s teljes katalógus közös termék-review-ja, majd az F0 egyetlen aktív, teljesen specifikált és bizonyított munkapontja. A kód-/runtime-PASS mindig külön bizonyítandó.  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -14,7 +14,7 @@
 
 ## 0. A terv használata
 
-Ez a dokumentum kizárólag a termék jelenlegi, ellenőrzött alapjait, a teljes termékcélt és a fejlesztendő képességeket írja le.
+Ez az egyetlen irányadó termék- és fejlesztési terv. Tartalmazza az ellenőrzött műszaki alapokat, a teljes termékcélt, a 396 stabil funkcióazonosítót, a 22 felhasználói főmodult, a megvalósítási fázisokat és a bizonyítékhoz kötött átadási szabályokat. A dokumentum szerkezeti teljessége és egy funkció futó implementációjának minősítése **két külön kapu**; egyik sem jelent automatikus PASS-t a másiknál.
 
 - **Egyetlen aktuális terv:** `docs/SANCI9517-CREATOR-PLATFORM-PLAN.md`.
 - A régi tervek, checkpointok és auditanyagok nem törlődnek a Git-előzményekből vagy az archívumból, de nem irányítják a jelenlegi terméktervezést.
@@ -4297,27 +4297,28 @@ Ez a mátrix összeköti a 49. fejezet felhasználói moduljait az 5. fejezet ka
 
 **Ellenőrzés:** a jelenlegi 5. fejezet 38 domain-ID-ja mindegyikéhez kijelölhető a fenti főmodulok közül legalább egy kanonikus belépési pont. Ez a dokumentumon belüli felelősségi keresztmátrix; a tényleges kód, adatbázis, API és jogosultsági implementáció egyezését külön auditálni kell.
 
-### 63.21. Funkciószintű készültségi szerződések — nyitott lezárási kapu
+### 63.21. Termékterv-teljesség és funkcióindítás: két külön bizonyítékkapu
 
-A 24. fejezet jelenleg 396 egyedi funkcióazonosítót tartalmaz, a 54. fejezet 156/156 checklist-tétele a 63.12–63.15 táblázatokban azonosítóhoz van rendelve, és a 49. fejezet 22 főmodulját a 63.20 mátrix domain/adatgazdához köti. **Ezek a terv szerkezetét és keresztmegfeleltetését bizonyítják, nem a 396 funkció teljes specifikációját.**
+A 24. fejezetben **396 egyedi funkció-ID** szerepel; a 49. fejezet **22 főmodult** definiál. A 54. fejezet 156 elemű felhasználói felülvizsgálati listájának ID-megfeleltetését a 63.12–63.15, a 396 ID egyedi evidenciakiindulását a 63.26–63.37, a fázishoz rendelést a 63.38 tartalmazza. **Ezek együtt a teljes termékterv ellenőrizhető katalógusát alkotják, de nem jelentik, hogy a 396 képesség kész vagy minden implementációs részlet végleges.**
 
-A 25. és 26. fejezet szerinti teljes, funkciószintű kártya kitöltése még nyitott. Minden ID-hoz — az implementációs státusz kitalálása nélkül — rögzíteni kell:
-- Status és fázis/prioritás: a repository és a roadmap bizonyítékai alapján; ismeretlen állapot nyitott marad.
-- Kanonikus modul/domain owner, adatforrás, UI/surface és szerveroldali permission/scope.
-- Blokkoló/nem blokkoló dependency-k és a szükséges schema/API/command contract.
-- Elfogadási forgatókönyv, pozitív/negatív tesztek, browser/responsive/accessibility és E2E igény.
-- Kód-/teszt-/CI/runtime bizonyíték, ismert hiba, rollback és következő munkapont.
-- Új funkciónál kötelező döntés: REUSE / ADAPT / BUILD / REJECT / DEFER; a döntés előtt meglévő működő kódot és megfelelő, licencelt referenciát kell vizsgálni.
+**A kapu — véglegesíthető termékscope / tervkonzisztencia, jelenleg IN PROGRESS:**
+- [x] Egyetlen jelenlegi MASTER-fájl, egyetlen aktív tervpont, 396 egyedi ID, 22 főmodul és F0–F11 kanonikus fázisrendszer szerepel.
+- [x] A 156 review checklist-elem és a 396 ID előzetes, visszakereshető modul-/fázis-/bizonyítékmátrixba van rendelve (63.12–63.38); ez statikus lefedettség, nem a jelentés teljes helyességének bizonyítása.
+- [ ] A korábbi követelmények történeti megőrzése és a hiányzó források kezelése tételesen megvizsgált; „nem sikerült visszanyerni” **nem** egyenlő a „nem volt funkció” állítással.
+- [ ] Valamennyi kanonikus modul és cross-module owner, felhasználói belépési pont, közös erőforrás, függőség és fontos negatív journey közötti szemantikai konfliktus feloldva vagy indokolt, lokalizált nyitott döntésként rögzítve.
+- [ ] A menü-/modultérkép és a teljes, felhasználóval közösen áttekintett funkciólista jóváhagyott; a későbbi fázisok nem vesznek el a mostani 1.0-scope mögött.
+- [ ] A 63.1–63.2 teljes checklisten minden PASS-állításnak konkrét bizonyítéka van; nincs nyitott, release-t blokkoló konzisztenciahiba.
 
-**Kötelező feldolgozási sorrend:** (1) a 396 ID csoportosítása a kanonikus modulok szerint; (2) meglévő route/domain helper/migration/UI/adapter/teszt vizsgálata; (3) már működő képesség és hiány megkülönböztetése; (4) függőségi sorrend és kiadási fázis megállapítása; (5) egyedi feature contract és acceptance; (6) teszt/runtime bizonyíték; (7) státuszfrissítés. Egy kódleírás, egy tervsor vagy egy CI job neve önmagában nem PASS-bizonyíték.
+**B kapu — egyetlen munkapont implementációs készsége (26.1 szerinti 17 mező és 25. szerinti státuszmezők):**
+- Az adott **következő aktív** funkcióhoz/sub-ID-hoz a 26.1 teljes kártyája kitöltött, a kódolvasásból igazolható tény, az OPEN döntés és a későbbi teszt külön látszik.
+- Meglévő route/domain/schema/UI/teszt áttekintése után kötelező a **REUSE / ADAPT / BUILD / DEFER / REJECT** döntés, feltüntetve a megfelelő jogosultságot és a nem kívánt duplikáció elkerülését.
+- Pozitív, negatív, authorization, mentés/reload, mobil/accessibility, rollback és provider-failure acceptance csak ott követelhető, ahol releváns; hiányzó bizonyítéknál UNVERIFIED.
+- Implementációs PASS csak tényleges teszt/CI/runtime/felhasználói elfogadás alapján. Dokumentációs PASS nem helyettesíti.
+- Következő függő munkapont csak az előző lezárása és a MASTER státuszfrissítése után aktív.
 
-- [ ] A 396 ID mindegyikéhez a 25./26. fejezet szerinti teljes kártya kitöltve vagy explicit, indokolt DEFER/REJECT döntés rögzítve.
-- [ ] Minden ID fázisa és dependency-je összhangban van a 41.2. és 63.5. kanonikus végrehajtási sorrenddel.
-- [ ] A meglévő működő kódhoz tartozó REUSE/ADAPT döntés bizonyítékkal rendelkezik; nincs indokolatlan újraírás vagy párhuzamos domain.
-- [ ] Az acceptance és tesztlista minden fő felhasználói journey-t és releváns hibautat lefed.
-- [ ] A funkciószintű audit lezárása előtt nincs F0-implementációs engedély.
+**Kritikus különbség:** mind a 396 ID specifikációja, roadmapja és megőrzése a kész *termékterv* része; a 396 ID teljes, különálló végrehajtási kártyájának előzetes, azonos mélységű kidolgozása **nem** teszi automatikusan biztonságosabbá az F0 indulását. A teljes 17 mezős kártya **kötelező az érintett munka aktiválásakor**, nem kell a F10/F11 jövőbeli API-ját úgy előre részletezni, mintha ma ismert lenne. A már meglévő EDT-vázlatok és mély kártyák bizonyítékai megőrzendők, nem törölhetők. A 63.39–63.50 régebbi számadatai és „következő lépései” az adott ellenőrzés történeti pillanatképét jelentik; a **jelenlegi** végrehajtási szabály a 0., 25.–26. és e 63.21 szakasz együttese.
 
-**Állapot: IN PROGRESS / NOT PASS.** A következő munka továbbra is a kanonikus terv lezárása, nem a feature implementáció megkezdése. A 396 ID készültségi kártyáját a tényleges repository-kód, migrációk, API-k, UI és tesztek alapján kell feltölteni; hiányzó bizonyítékot nem szabad feltételezéssel pótolni.
+**Állapot:** A kapu IN PROGRESS / NOT PASS (elsősorban történeti forrás- és szemantikai audit); B kapu csak a konkrét aktív funkciónál, külön bizonyítható. F0 még nem aktív. A meglevő kód újraírása tilos igazolt hiány/hiba nélkül.
 
 ### 63.22. Meglévő kód újrahasználati audit — első core szelet, 2026-10-14
 
@@ -5030,7 +5031,7 @@ A kanonikus terv legutóbbi GitHub-változatán végzett statikus szöveg-/azono
 
 **Állapot: IN PROGRESS / NOT PASS.** A 63.40 gépi lefedettségi auditja megállapította, hogy a 396/396 ID-s mátrix nem helyettesíti a 26.1 szerinti teljes funkciókártyát. Az EDT-001–044 első bővített kártyavázlatai a 63.41–63.46 fejezetben elkészültek; a 63.47 mezőminőségi audit szerint még nem teljesítik a 25. fejezet minden státuszmezőjét és a 26.1 minden külön mezőjét. Következő lépés: a 44 EDT-kártya teljes mezőnormalizálása, utána azonos eljárás a WEB ID-kkal. Ez dokumentációs munka, nem implementációindítás. A végső PASS csak a teljes történeti és szemantikai audit, a funkciókártya-kapu és a 63.1–63.3 feltételek bizonyítása után adható meg.
 
-### 63.40. Funkciókártya-mezők gépi lefedettségi auditja — 396 ID, 2026-10-14
+### 63.40. Funkciókártya-mezők gépi lefedettségi auditja — 396 ID, 2026-10-14 (történeti pillanatkép)
 
 **Hatókör:** 24. fejezet stabil ID-jegyzéke, 25. fejezet státuszmezői, 26.1 funkciókártya-szerződése és 63.26–63.37 egyedi-ID-s mátrixai. Ez statikus dokumentumellenőrzés, nem kódteszt, runtime- vagy szemantikai PASS.
 
@@ -5038,11 +5039,11 @@ A kanonikus terv legutóbbi GitHub-változatán végzett statikus szöveg-/azono
 |---|---:|---|
 | Egyedi ID a 24. fejezetben | 396/396 | Stabil azonosító nincs duplikálva. |
 | ID szerepel egyedi-ID-s bizonyítékmátrixban | 396/396 | Minden ID-hoz van legalább egy mátrixsor nyitott acceptance-szel vagy kódbizonyítékkal. |
-| 26.1 szerinti önálló, teljes kártya | 0/396 bizonyított | A mátrixsor nem egyenértékű a teljes kártyával. |
+| 26.1 szerinti önálló, teljes kártya az ellenőrzés időpontjában | 0/396 bizonyított | A későbbi 63.49–63.50 már tartalmaz részletes EDT-007 és EDT-008 kártyát; ez a sor korábbi pillanatkép, nem a jelenlegi teljeskártya-darabszám. |
 | Státuszmezők ID-nként | NEM LEZÁRT | Status, Phase/priority, Permission, Dependencies, Tests, Negative tests, Live/user acceptance, Evidence, Known issues és Next action nem szerepel egységes, strukturált mezőként minden ID-nál. |
 | Funkciószerződés mezői ID-nként | NEM LEZÁRT | Felhasználói eredmény, belépési pont, műveletek, domain owner, adatforrás/séma, API/command, UI-állapotok, security/privacy, teszt, E2E acceptance, evidence, rollback és next action kitöltése hátra van. |
 
-**Következtetés:** a korábbi „396/396 lefedve” csak az ID- és mátrix-/fázislefedettséget jelentette, nem azt, hogy a 396 funkció végrehajthatóan specifikált. Nem szabad üres sablonokat késznek jelölni: minden mezőt meglévő kódból/tesztből kell kitölteni, vagy explicit UNVERIFIED / OPEN / DECISION REQUIRED jelölést kell adni. A következő munka stabil ID-sorrendben, kis modulonkénti szeletekben készül; az EDT-001–006 pilotot a 63.41 tartalmazza.
+**Következtetés:** a korábbi „396/396 lefedve” ID- és mátrix-/fázislefedettséget jelentett, nem 396 kész implementációs kártyát. Nem szabad üres sablonokat késznek jelölni: tényt kód-/tesztbizonyítékkal, hiányzó adatot explicit UNVERIFIED / OPEN / DECISION REQUIRED jelzéssel kell vezetni. A **termékscope lezárása** és az **adott funkció aktiválásához szükséges teljes kártya** külön kapu a 63.21 szerint. A jelenlegi aktív ellenőrzés nem egy évekig tartó, előzetes 396-kártyás adminisztrációs követelmény; a meglévő EDT-kártya-szeletek a B kapu felhasználható alapjai.
 
 ### 63.41. Funkciókártya-pilot — EDT-001–006
 
@@ -5945,3 +5946,18 @@ Ez a szakasz a 63.41 kártyáit kiegészíti a 25. fejezet hiányzó, különál
 - **Státusz és következő lépés:** **IN PROGRESS / UNVERIFIED**. Következő lépés: a drag acceptance-mátrix rögzítése pointer/mouse, touch, zoom, breakpoint, lock, cancel és save/reload dimenziókra; a hiányzó touch/keyboard útvonalat explicit gapként meg kell tartani. Ezután következhet EDT-009 teljes mezős normalizálása.
 
 **Szeletállapot:** EDT-008 17 külön mezője dokumentálva és a jelenlegi kódhoz kötve; runtime acceptance nyitott. Ez nem zárja le az EDT-008-at, az Editor modult vagy a teljes tervlezárási kaput.
+
+### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
+
+**Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
+
+1. **Mit tekintünk egyetlen irányadó helynek?** Termékvízió: 1.; felhasználói főmodul és menü: 49.; domain és adatgazda: 5. és 63.20; funkció-ID és név: 24.; feature contract: 10., 25.–26. és az ID egyedi mátrixa (63.26–63.37); teljes review checklist: 54.; F0–F11 sorrend: 41.2 és 63.38; aktuális munka: a dokumentum fejlécében szereplő egyetlen aktív pont. Az archívum nem alternatív irányító dokumentum.
+2. **Mit jelent az „elkészült terv”?** Végleges, teljes termékscope és stabil modul-/adatgazda-határok; minden megőrzendő követelmény megtalálható az ID-katalógusban vagy önálló, indokolt nyitott tételként. Ez **nem** jelenti a teljes Creator Platform elkészültét, a provider-hozzáférések létét, sem 396 futó feature PASS-át.
+3. **Miért nem gyártunk 396 feltételezett API-kártyát most?** A fázisok későbbi technikai döntései (SaaS, AI, marketplace, fizetés, provider-permission) csak az adott munka aktiválásakor, a friss kód/externális feltételek alapján specifikálhatók pontosan. A termékcél, acceptance-feltétel, domain-owner, sorrend és dependency addig is kötelezően megmarad a MASTER-ben. A részletes 17 mezős kártyát nem lehet megkerülni: **egyenként, a tényleges implementáció előtt** kerül teljesítésre.
+4. **Felhasználói működés:** logikus, feladatközpontú Admin-modulok; a Visual Editor kizárólag oldal-megjelenítést és összerakást szerkeszt, az Integrations/Brand Kit/Assets/Schedule/Content/OBS/Commerce/Analytics/Automation/AI saját domainje egyetlen adatforrásként működik. Ugyanaz a domain több nézetből vezérelhető, de a változás minden felületen ugyanarra a kanonikus állapotra hat.
+5. **Technikai döntés:** mindig aktuális repo, migráció, route, teszt és production evidence alapján döntünk: előbb REUSE, szükség esetén ADAPT, BUILD csak igazolt hiányra; nincs második Visual Editor, második media registry, második schedule CRUD, rejtett AI write, vagy önkényes DB-domén tulajdonosváltás.
+6. **Minőségi és kockázati korlát:** ownership/auth, revision/concurrency, hibás hálózat, undo/rollback, accessibility, mobil, i18n, privacy/security, deployment/restore, provider limits és költség csak releváns, igazolt acceptance-tel PASS. A dokumentációs ellenőrzés soha nem futtatott teszt.
+7. **Nyitott blokkoló:** a történeti forrásmegfeleltetés (különösen a korábban jelzett 00/A és 00.9–00.9.6.B hiány) **nincs ebben a jelenlegi MASTER-ben forrásonként bizonyítva**; visszanyerés vagy explicit nem-visszanyerhető, hatáskörrel és megőrzési döntéssel rögzített átvezetés szükséges. Nem tekintjük automatikusan lezártnak attól, hogy 396 aktuális ID létezik. Emellett a 63.1–63.2 szemantikai konfliktusai és a felhasználóval történő végső funkció-review nyitott.
+8. **Jelenlegi egyetlen aktív pont:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY` — `IN PROGRESS / NOT PASS`. **Következő ellenőrizhető lépés:** a történeti források és a jelenlegi 396 ID megőrzését bizonyító nyitott tételek konkrét kezelése, majd az 54./49./24. fejezetek szemantikai egyeztetése; **csak** a tervkapu lezárása után az F0 következő legkorábbi hiányának kódbizonyítékos végrehajtása. A meglévő EDT-009-től folytatható kártya-normalizálás az F0 munkaindításakor végezhető, nem helyettesíti a mostani A kaput.
+
+**Megőrzési szabály:** a 396 stabil ID-ból egyetlen funkciót sem töröltünk vagy nyilvánítottunk késznek ebben a szerkezeti tisztázásban. A 63.41–63.50 meglévő kártyái történeti részletes evidenciaként megtartandók. A későbbi felhasználói döntés az adott kanonikus fejezetben frissül, és csak ott; a régebbi auditnapló változatlan bizonyítékláncként olvasható.
