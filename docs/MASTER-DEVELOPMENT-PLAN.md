@@ -8638,3 +8638,19 @@ The following rows were flagged because they express behavior that must be expli
 **Batch result:** these source requirements have explicit canonical meaning and phase-gated acceptance conditions in §38.23 / §24. The source-to-ID mappings are no longer ambiguous for this batch. They remain **implementation acceptance OPEN**; mapping completeness is not a runtime PASS. The page-lock exception is handled separately in §41.3.81. No feature ID was added or removed; the §24 stable-ID registry remains unchanged.
 
 **Next source-order batch:** continue the flagged rows after `M12-L0114`, especially shorthand/property controls, box-model/layout values, canvas/device-frame behavior and persisted panel state. P0.2 remains **IN PROGRESS / NOT PASS**.
+
+
+### 41.3.83. P0.2 — MASTER-1.2 source-order semantic review, batch B: Inspector, layout and canvas detail (2026-10-14)
+
+**Reviewed source range:** §41.3.79 flags `M12-L0179`, `M12-L0185`–`M12-L0245`, `M12-L0293`–`M12-L0312`, and `M12-L0326`. These rows are checked against §24 and the expanded behavior contract in §38.23. This is requirement reconciliation, not runtime verification.
+
+| Source key(s) | Semantic decision | Canonical owner / contract | Acceptance that must remain explicit |
+|---|---|---|---|
+| `M12-L0179` shorthand/expanded property editing | KEEP/EXPAND under the canonical Inspector Property Registry; no parallel CSS/property model. | `EDT-021/022` and canonical Property Registry | Only expose shorthand/expanded editing for property types with defined schema; linked values, inheritance, explicit override, responsive override, reset and undo must round-trip without changing unrelated values. |
+| `M12-L0185`–`M12-L0245` sizing, box model, flex/grid, position and overflow | KEEP/EXPAND under the canonical layout/property schema. | `EDT-009/016/021/022/024`; §38.5/38.23 | Define an allowed-value matrix per property, unit and breakpoint; reject malformed/out-of-range values; verify min/max, intrinsic/fluid sizing, clamp, aspect ratio, spacing, flex, grid, position, stacking and overflow in Inspector, canvas and public render. Negative margin is allowed only for explicitly supported properties. |
+| `M12-L0293`–`M12-L0312` canvas zoom, guides, device frame and spacing visualizer | KEEP/EXPAND as canvas presentation and measurement tools, not a second page state. | `EDT-007/010/025`; §38.3/38.9/38.23 | Zoom presets, fit, grid/guides/snap, rulers, safe area, device frame, full-page/focus-selected, outlines, spacing visualization, breakpoint indicator and scroll preservation need browser acceptance at desktop/tablet/mobile widths. Canvas-only tools must not dirty or mutate the Page Model unless they represent a true document change. |
+| `M12-L0326` persisted panel state | COVERED as planned Editor-workspace preference state; not a new canonical domain or runtime PASS. | `EDT-036`, `ADM-008`; §38.17/38.23 | Persist only permitted UI preferences (panel visibility/size/selection as scoped); recover sane defaults on invalid/stale state; verify resize/collapse and viewport changes without leaking one site's state into another site/user. |
+
+**Batch result:** the flagged source rows now have a concrete owner, behavior boundary and acceptance expectation. The existing §38.23 contract is sufficient for scope preservation; no new feature ID is justified by this batch. Implementation acceptance remains OPEN until the owning Editor build point runs positive/negative, round-trip and browser tests.
+
+**Next source-order batch:** clipboard/bulk operations, history semantics, save/recovery and multi-tab behavior (`M12-L0336` onward). P0.2 remains **IN PROGRESS / NOT PASS**.
