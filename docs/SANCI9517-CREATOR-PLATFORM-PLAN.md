@@ -4663,3 +4663,46 @@ A forrásbizonyíték: `src/routes/admin/settings.ts` és `src/routes/public/sit
 
 **Státusz: IN PROGRESS / NOT PASS.** Következő ID-szelet: CNT-001–022 és LIV-001–010, vagyis tartalom-adatgazda, provider metadata handoff és public projection.
 
+### 63.33. CNT-001–022 és LIV-001–010 — Content Studio és Live State domainhatár
+
+A jelenlegi route-regiszterben a Twitch adapter és schedule sync látható, de nincs dedikált Content Studio CRUD/publishing route, content-domain migration/schema vagy live-state API. Az Editor node palette tartalmaz media node-típusokat és schedule blokkot; ez nem bizonyít canonical content libraryt vagy live domain-t.
+
+| ID | Owner / forrás | Látható alap | Nyitott acceptance / függőség |
+|---|---|---|---|
+| CNT-001 | CONTENT / canonical content schema | Content item D1 schema/service nem látható | Canonical ID, provider IDs, type/status/visibility, owner/site, lifecycle and rights references. |
+| CNT-002 | CONTENT + INT / VOD import | Twitch VOD adapter/route nem látható | Supported provider import, pagination/quota, dedupe, metadata mapping and manual import fallback. |
+| CNT-003 | CONTENT / clips/highlights/Shorts | Clip/Short management route/schema nem látható | Source video/timecode, crop/aspect, provider URL/ID, rights and lifecycle. |
+| CNT-004 | CONTENT + INT / YouTube/TikTok feed | Dedicated adapters/routes not proven | Capability-gated read/publish permissions, per-provider limits and truthful unsupported states. |
+| CNT-005 | CONTENT / taxonomy | Content tags/categories/collections/playlists schema not proven | Content-specific taxonomy, not shared with Store product taxonomy or RESOURCE folders. |
+| CNT-006 | CONTENT / library query | Canonical content query API/UI not proven | Site-scoped search/filter/sort/pagination/bulk action, stable sort and authorization. |
+| CNT-007 | CONTENT / dedupe | External IDs in a canonical content model not proven | Unique provider+account+external ID, duplicate merge/review and import idempotency. |
+| CNT-008 | CONTENT / featured/related | Relationship model not proven | Stable content references, deleted/unpublished fallback and public projection. |
+| CNT-009 | CONTENT / content calendar | Schedule domain exists, content calendar does not | Separate content publishing jobs linked to schedule; do not treat every content post as a stream event. |
+| CNT-010 | CONTENT / ideas/drafts/scripts | Draft/brief schema not proven | Draft/review lifecycle, owner/permissions, autosave and version history. |
+| CNT-011 | CONTENT / platform variants | Platform-specific metadata schema not proven | Per-provider length/format validation, locale variants and preview. |
+| CNT-012 | CONTENT → RESOURCE | Editor image/media nodes and asset reference type exist | Canonical asset ID workflow, thumbnail selection, rights and missing-asset state. |
+| CNT-013 | CONTENT / publishing queue | Queue/job schema/worker not proven | Durable scheduled jobs, timezone, cancel/retry, idempotency and provider confirmation. |
+| CNT-014 | CONTENT / publish result | Partial-success model not proven | Per-provider result, retry failed destinations only, no false “published” status. |
+| CNT-015 | CONTENT / approval | Approval workflow not proven | Author/reviewer role, approval state, immutable reviewed snapshot and publish gate. |
+| CNT-016 | CONTENT ↔ CAMPAIGN | Campaign/content relationship not proven | Canonical references and attribution contract; analytics consumes events without owning content. |
+| CNT-017 | CONTENT / short export | Export-preparation pipeline not proven | Aspect ratios, crop/reframe, captions/audio, codec/size constraints and progress/retry. |
+| CNT-018 | CONTENT / transcript artifacts | AI transcript/chapter/highlight artifact lifecycle not proven | Source timestamps/confidence, human review, rights checks; AI-014 suggests but CONTENT owns approved artifacts. |
+| CNT-019 | EDITOR → CONTENT projection | General content-feed block not proven; schedule block exists | Block binds canonical content projection, not copies content records into Page Model. |
+| CNT-020 | CONTENT / public feed | Canonical published-content projection not proven | Published-only API, query/filter contract, stable IDs, cache invalidation and WEB-017 route consumption. |
+| CNT-021 | CONTENT / timeline editor | Timeline-based video editing/render pipeline not proven | Separate media pipeline/worker feasibility, source asset retention, export status/cost and legal review. |
+| CNT-022 | CONTENT / rights and takedown | Rights/consent/expiry schema not proven | Music/video/guest permission, expiry, takedown SLA, propagation to all public feeds and audit. |
+| LIV-001 | LIVE_STATE / normalized state | Twitch connection exists; canonical live/offline service not proven | Provider-neutral state machine, online/offline transitions, event time and account binding. |
+| LIV-002 | LIVE_STATE / freshness | Twitch connection validation time exists, but live-data freshness model not proven | Last fetched/observed timestamps, TTL, stale fallback and UI stale indicator. |
+| LIV-003 | LIVE_STATE / stream metadata | Schedule includes title/platform/time; current live title/category data route not proven | Live stream title/category/game/start time from provider with normalized fields. |
+| LIV-004 | LIVE_STATE / metrics | Viewer/follower/subscriber metrics API/read model not proven | Permission and provider availability, units/window/freshness, privacy and quota. |
+| LIV-005 | LIVE_STATE / player | Static page shell exists; live player/offline fallback not proven | Safe provider embed, responsive sizing, autoplay policy, offline card and unsupported provider fallback. |
+| LIV-006 | LIVE_STATE / event normalization | Normalized live event bus not proven | Start/end/title/category/provider events, dedupe and event time semantics. |
+| LIV-007 | LIVE_STATE → ADM/PUBLIC/EDT | Admin and public live-status projection not proven | Dashboard and public blocks consume same normalized read model and truthful stale/error state. |
+| LIV-008 | LIVE_STATE + INT / multistream | Multistream destination orchestration not proven | Capability matrix, platform-specific metadata, policy/legal review and per-destination partial failure. |
+| LIV-009 | LIVE_STATE / unified chat | Unified chat read/send/moderation service not proven | Per-provider read vs send scopes, provider labels, moderation, rate limits and partial-failure handling. |
+| LIV-010 | LIVE_STATE / recording/replay | Recording/replay status/retention/cost lifecycle not proven | Supported provider capabilities, retention/cost policy, authorized access and no unsupported promise. |
+
+**Határszabály:** a `schedule_items` az adásrend kanonikus rekordja, nem a content library. A Twitch adapter connection metadata-t és schedule segmentet adhat; a Content Studio canonical content itemeket birtokolja, a Live State pedig a pillanatnyi stream állapotot. A public page és Editor blokk csak ezeket a read projectionöket fogyasztja. Sem a Page Model, sem az Integrations modul nem válhat content/live catch-all adattárrá.
+
+**Státusz: IN PROGRESS / NOT PASS.** A következő ID-szelet: COM-001–020, STO-001–021 és SUP-001–012, külön közösségi identitás, termék/rendelés és entitlement lifecycle határokkal.
+
