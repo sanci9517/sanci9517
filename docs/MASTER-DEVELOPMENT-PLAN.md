@@ -3253,3 +3253,113 @@ Ez a fejezet a 56. fejezet szabályait pontosítja. A személyre szabás nem kü
 - [ ] Egy importált csomag nem tud titkot/hozzáférési tokent exportálni vagy szerveroldali jogosultságot megváltoztatni.
 - [ ] Ismeretlen/hibás ikon vagy komponens helyén értelmes fallback és javítási lehetőség látszik.
 - [ ] A teljes könyvtár billentyűzettel, képernyőolvasóval és mobil nézetben is használható a támogatott feladatokhoz.
+
+
+---
+
+## 58. Biztonság, adatvédelem és jogosultságok alapból
+
+A személyre szabhatóság nem gyengítheti a biztonsági határokat; a platform személyes adatokat, médiát, integrációs tokeneket és később bevételi adatokat is kezelhet.
+
+### 58.1. Identitás és hozzáférés
+- [ ] Külön identitás és scope a felhasználói fióknak, workspace-nek, site-nak, publikus látogatónak és szolgáltatói adminnak.
+- [ ] Indokolt szerepkörök: tulajdonos, admin, szerkesztő, tartalomkezelő, moderátor, elemző és csak olvasó; csak a szükséges szerepek kerüljenek az adott kiadásba.
+- [ ] Szerveroldali jogosultság-ellenőrzés minden műveletnél és erőforrásnál; a rejtett UI-elem nem hozzáférés-védelem.
+- [ ] Legkisebb szükséges jogosultság, visszavonható meghívók, lejáró megosztási linkek és biztonságos munkamenet-kezelés.
+- [ ] Integrációs tokenek biztonságos tárolása, maszkolása, scope-korlátozása és visszavonása; titok nem kerülhet logba, exportba vagy kliensoldali payloadba.
+- [ ] Külső szolgáltatói kapcsolat csak a jóváhagyott engedélyekhez adjon hozzáférést; egy integráció nem jelenthet általános hozzáférést a felhasználó minden adatához.
+
+### 58.2. Audit és biztonsági események
+- [ ] Naplózni kell a lényeges bejelentkezési, jogosultsági, integrációs, publikálási, exportálási, törlési és konfigurációs eseményeket.
+- [ ] A napló rögzítse, ki, mikor, mely scope-ban, milyen műveletet végzett és mi lett az eredmény; titkokat és szükségtelen személyes adatot ne tároljon.
+- [ ] Legyenek korrelálható hibajelzések, rate limit és visszaélésészlelési alapok.
+- [ ] A hibaválasz ne fedjen fel belső stack trace-t, tokent, SQL-részletet vagy érzékeny rendszeradatot.
+- [ ] A felhasználó számára érthető biztonsági események és aktív integrációk áttekintése legyen elérhető.
+
+### 58.3. Feltöltés, import és bővítmények
+- [ ] Fájloknál típus-, tartalom-, méret- és jogosultság-ellenőrzés; a fájlnév és MIME-header önmagában nem megbízható.
+- [ ] Importcsomagok és külső bővítmények validálása, méretkorlát, függőségi ellenőrzés és hiba esetén atomikus visszagörgetés.
+- [ ] Ismeretlen vagy aktív tartalom ne futhasson automatikusan; egyedi kód csak későbbi sandbox, explicit engedély és szűk képességek mellett.
+- [ ] Minden publikus adat és felhasználói bemenet nem megbízható forrás; XSS, CSRF, jogosultság-megkerülés és adatok közötti szivárgás ellen tervezni és tesztelni kell.
+- [ ] A biztonsági tesztek a többfelhasználós és több-site-os határokat is vizsgálják.
+
+---
+
+## 59. Megbízhatóság, mentés, visszaállítás és működtetés
+
+A mentés nem tekinthető bizonyítottnak, amíg a visszaállítást nem teszteltük.
+
+### 59.1. Adatok és helyreállítás
+- [ ] Külön kezelendő a strukturált adat, a bináris média, a konfiguráció, a titok és a regenerálható gyorsítótár.
+- [ ] Dokumentált mentési gyakoriság, megőrzési idő, felelős, valamint a valós képességekhez igazított RPO/RTO-cél.
+- [ ] Visszaállítási próba külön környezetben és ellenőrzött adatintegritással; a „backup sikeres” üzenet önmagában nem elég.
+- [ ] Felhasználói export és szolgáltatói katasztrófa-helyreállítás külön folyamat.
+- [ ] Törlés előtt figyelmeztetés, függőségi áttekintés és ahol indokolt helyreállítási időablak; a jogi/adatvédelmi törlési kötelezettség ettől független.
+- [ ] Migrációknál előzetes ellenőrzés, mentés és ahol lehetséges visszagörgetési terv szükséges.
+
+### 59.2. Üzemeltetés és hibakezelés
+- [ ] Egységes health/readiness ellenőrzések, strukturált hibák, korrelációs azonosítók és adatvédelmi szempontból biztonságos logolás.
+- [ ] Követni kell a kritikus API-k hibaarányát, késleltetését, kvótáit, külső szolgáltatói hibáit és a tárhely-/feldolgozási fogyasztást.
+- [ ] Érthető állapotok: mentve, mentés folyamatban, publikálva, szinkronizálás alatt, sikertelen és újrapróbálható.
+- [ ] Kezelni kell a hálózati megszakítást, lejárt tokent, kvótakorlátot, duplikált webhookot, részleges importot és sikertelen publikálást.
+- [ ] Idempotencia és deduplikáció szükséges ott, ahol az ismétlés dupla posztot, eseményt, fizetést vagy adatot okozhat.
+- [ ] Kritikus rendszerekhez üzemeltetési runbook és incidenskezelési eljárás szükséges.
+
+### 59.3. Teljesítmény és költség
+- [ ] A publikus weboldal és a Creator Center teljesítménycéljai külön legyenek meghatározva.
+- [ ] Médiaoptimalizálás, képméretek, lazy loading, cache-szabályok és mobil hálózat figyelembevétele.
+- [ ] Külső API-, AI-, médiafeldolgozási és tárolási költségek mérhetők legyenek; költségkeret és figyelmeztetés nélkül ne induljon végtelen vagy meglepően drága automatizmus.
+- [ ] Kvóták, háttérfeladat-sorok, újrapróbálási szabályok és túlterhelés esetén érthető, korlátozott működés.
+- [ ] Minden teljesítmény- és költségállítást mérés igazoljon, ne feltételezés.
+
+---
+
+## 60. Hozzáférhetőség, mobilhasználat és lokalizáció
+
+A vizuális szerkesztő és a személyre szabás akkor is használható maradjon, ha valaki billentyűzettel, képernyőolvasóval, nagyítással vagy kis kijelzőn dolgozik.
+
+### 60.1. Hozzáférhetőség
+- [ ] Cél a WCAG 2.2 AA követelményeinek figyelembevétele és ellenőrzése; megfelelőség nem állítható tesztelés nélkül.
+- [ ] Billentyűzetes navigáció, látható fókusz, megfelelő kontraszt, szemantikus címsorok, címkézett vezérlők és érthető hibaüzenetek.
+- [ ] Csökkentett mozgás preferencia; animációk és mozgó effektek kikapcsolása vagy mérséklése.
+- [ ] A szín önmagában ne közvetítsen státuszt; ikonokhoz és nem szöveges vezérlőkhöz hozzáférhető név szükséges.
+- [ ] Visual Editor: réteglista, fókuszkezelés, drag-and-drop alternatívák és billentyűzetes átrendezés.
+- [ ] A publikus oldalakhoz hozzáférhetőségi ellenőrző és javítási javaslat; automatikus tökéletességet nem szabad ígérni.
+
+### 60.2. Mobil és adaptív élmény
+- [ ] A publikus weboldalak mobil-first és reszponzív módon készüljenek; különböző töréspontokon előnézet legyen.
+- [ ] Az Admin és a Visual Editor összetett műveletei kapjanak célzott mobilkezelést; ne csak az asztali felület zsugorított változata legyen.
+- [ ] Érintési célok, görgetés, modális ablakok és keskeny nézetek tesztelése.
+- [ ] Lassú hálózat és kisebb teljesítményű eszköz esetén a legfontosabb feladatok maradjanak használhatók.
+
+### 60.3. Nyelv, formátum és tartalom
+- [ ] Magyar az elsődleges nyelv, de a felületi szövegek legyenek központilag fordíthatók, ne szétszórt kódliterálok.
+- [ ] Külön kezelendő a felület nyelve, a publikus tartalom nyelve, a csatorna nyelve, a fordítás és az AI-kimenet nyelve.
+- [ ] Dátum, időzóna, szám, pénznem, többes szám és időpont lokalizált legyen; az ütemezésben a helyi idő és UTC ne keveredjen.
+- [ ] Fordítási hiány, fallback nyelv és fordítási státusz legyen felismerhető.
+- [ ] Többnyelvű SEO (hreflang, canonical, metaadatok és oldalkapcsolatok) csak ellenőrzött konfigurációval publikálható.
+
+---
+
+## 61. Termékcsomagok, korlátok és későbbi többfelhasználós szolgáltatás
+
+A hosszú távú cél lehet több alkotót kiszolgáló Creator Platform, de ezt fokozatosan, világos csomag- és adat-határokkal kell bevezetni.
+
+### 61.1. Csomagok és funkciókorlátok
+- [ ] A későbbi csomagokhoz mérhető korlátok tartozzanak: site-ok, tárhely, médiafeldolgozás, AI-használat, integrációk, csapattagok és automatizmusok.
+- [ ] A funkcióelérhetőséget központi capability/entitlement réteg kezelje; ne legyen szétszórt, ellentmondásos csomagellenőrzés.
+- [ ] A korlát elérésekor a felhasználó érthető tájékoztatást, fogyasztási adatot és szabályos alternatívát kapjon.
+- [ ] Fizetős funkcióknál előre tervezendő a csomagváltás, lemondás, sikertelen fizetés, visszatérítés és adatmegőrzés.
+- [ ] Ne kerüljön ki fizetési vagy előfizetési ígéret, amelyet a rendszer még nem tud megbízhatóan teljesíteni.
+
+### 61.2. Workspace, csapat és szolgáltatói admin
+- [ ] A személyes fiók, workspace, site, csapat és későbbi előfizetés kapcsolata explicit adatmodellben szerepeljen.
+- [ ] A szolgáltatói admin ne kapjon automatikus, korlátlan betekintést a privát tartalmakba; a támogatási hozzáférés legyen indokolt, korlátozott és naplózott.
+- [ ] Meghívás, szerepváltozás, tulajdonosváltás, kilépés, fióktörlés és workspace-megszüntetés külön folyamatot kapjon.
+- [ ] Egy felhasználó több site-ja csak explicit megosztással használjon közös erőforrásokat.
+- [ ] A több-bérlős (multi-tenant) modell előtt külön biztonsági és adatizolációs tesztek szükségesek.
+
+### 61.3. Megvalósítási elv
+- [ ] SaaS, piactér, csapatkezelés és fizetős csomagok a teljes célkép részei, de csak a függőségek, üzleti döntések és tesztek teljesülésekor aktiválhatók.
+- [ ] Minden funkció kapjon állapotot, függőséget, hatókört és elfogadási feltételt; a „tervben szerepel” nem azonos a „kész” állapottal.
+- [ ] Minden új funkció illeszkedjen a közös design-, adat-, jogosultság-, naplózási-, lokalizációs- és tesztelési alapokhoz.
