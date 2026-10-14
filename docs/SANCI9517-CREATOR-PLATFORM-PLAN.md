@@ -5484,3 +5484,121 @@ Az alábbi rövidített kártyák mindegyike név szerint lefedi a 26.1 kötelez
 
 **Szeletzárás:** EDT-021–026 kártyái rögzítik a registry/Inspector/responsive hiányokat; nem jelentenek működő teljes property-rendszert. Következő lépés: a 63.44 mező- és dependency-ellenőrzése, majd EDT-027–033 mentés/publikálás/revision.
 
+### 63.45. Funkciókártyák — EDT-027–033 (save, reload, concurrency, recovery, preview, publish)
+
+**Forrásalap:** public/editor-v2/app.js, src/routes/admin/editor.ts, src/routes/admin/pages.ts, src/core/editor-validation.ts és public/editor-v2/tests/core.test.js. A save conflict recovery alap és publish validator létezik; a szerveroldali expectedVersion több útvonalon opcionális, a pages create pedig isPublished=true esetén nem hívja a publish validátort. Ezek nyitott szerveroldali kapuk, nem UI-val lezárható hiányok.
+
+#### EDT-027 — Draft save és dirty state
+- **Felhasználói eredmény:** a felhasználó megbízhatóan mentheti a draftot anélkül, hogy azt véletlenül publikálná.
+- **Belépési pont / műveletek:** Editor v2 Save/keyboard shortcut; document snapshot, POST save, dirty/saved state.
+- **Kanonikus owner / adatforrás:** EDITOR/PAGE API; pages.content_json + editor_revisions, a publikus snapshot külön.
+- **Séma / invariánsok:** mentés a beküldött snapshotot rögzíti; későbbi lokális edit nem jelölhető tévesen mentettnek; save nem egyenlő publish.
+- **Jogosultság:** authenticated page/site ownership; minden write endpointon szerveroldali scope.
+- **API/command:** POST /api/admin/editor pageId/document/publish/expectedVersion; expectedVersion szerveroldali kötelezővé tétele nyitott.
+- **Függőségek:** EDT-001–006/028–031, WEB-004/006/007, SEC.
+- **UI-állapotok:** dirty/saving/saved/error/conflict, edit-during-save.
+- **Biztonság/adatvédelem:** dokumentumméret-limit és invalid schema rejection; conflict nem írhat felül csendben másik verziót.
+- **Tesztcsomag:** core.test.js save/reload/conflict source-level teszteket tartalmaz; teljes API concurrency E2E nyitott.
+- **Elfogadás:** edit → save → reload → adat egyezik; save közben új edit → csak beküldött snapshot jelölt mentettnek.
+- **Bizonyíték:** app.js save() és admin/editor.ts revision persistence; külön CI/runtime run nincs a kártyához csatolva.
+- **Visszaállítás:** editor_revisions és draft export; mentési hiba esetén local draft megmarad.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; expectedVersion kötelező server-side contract és concurrency teszt.
+
+#### EDT-028 — Save/reload teljes Page Model round-trip
+- **Felhasználói eredmény:** a teljes szerkesztett dokumentum mentés után változatlanul visszatölthető.
+- **Belépési pont / műveletek:** Editor loadPage/save; admin pages/editor API és D1 revision.
+- **Kanonikus owner / adatforrás:** PAGE/EDITOR; content_json, editor_revisions.document_json és Page Model.
+- **Séma / invariánsok:** pageId/activePageId/root/node properties/responsive/rich text/domain blocks/revision round-trip; normalize nem dobhat el érvényes mezőt.
+- **Jogosultság:** minden SELECT/UPDATE page ID és site_id alapján; cross-site negatív teszt kötelező.
+- **API/command:** GET /api/admin/editor?pageId=... és POST mentés; minden property/node teljes round-trip coverage nyitott.
+- **Függőségek:** EDT-001–027/029–034, WEB-004–008, RES/DSN/DYN.
+- **UI-állapotok:** load/empty/invalid document/saving/reload/conflict/partial API error.
+- **Biztonság/adatvédelem:** draft tartalom csak authorized Editor/preview útvonalon; méretlimit és schema validation.
+- **Tesztcsomag:** core.test.js save/reload source checks; D1-integrációs teljes node/property round-trip nincs bizonyítva.
+- **Elfogadás:** minden támogatott node/property mentése → unload/reload → mély strukturális egyezés → preview/public render egyezés.
+- **Bizonyíték:** app.js loadPage/save, admin/editor.ts, admin/pages.ts; teljes DB-backed round-trip CI evidence nincs.
+- **Visszaállítás:** revision restore új revisionként; sérült dokumentum esetén export és korábbi revision.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; teljes D1 round-trip és renderer paritás.
+
+#### EDT-029 — expectedVersion és concurrency conflict
+- **Felhasználói eredmény:** két szerkesztő vagy több tab nem írja felül csendben egymás módosítását.
+- **Belépési pont / műveletek:** save, page metadata PATCH és revision rollback.
+- **Kanonikus owner / adatforrás:** PAGE/REVISION API; editor_revisions max(version) és expectedVersion.
+- **Séma / invariánsok:** a kliens által várt verzió egyezzen a szerver aktuális verziójával; mismatch 409, nincs write.
+- **Jogosultság:** page/site ownership az összehasonlítás előtt; a conflict válasz nem fedhet fel más site adatot.
+- **API/command:** POST editor és pages PATCH ellenőrzi, ha expectedVersion jelen van; hiányzó expectedVersion jelenleg elfogadott, ezért a concurrency gate nem teljes.
+- **Függőségek:** EDT-027–028/030–031, WEB-002/007/008, SEC.
+- **UI-állapotok:** current/conflict/local draft/export/reload/retry.
+- **Biztonság/adatvédelem:** lost update megelőzése; minden write pathnál kötelező version precondition.
+- **Tesztcsomag:** conflict source-level test van; két párhuzamos klienssel és hiányzó expectedVersionnel API negatív teszt kell.
+- **Elfogadás:** kliens A és B ugyanarról a verzióról indul → A ment → B mentése 409, nincs overwrite; missing expectedVersion elutasítva.
+- **Bizonyíték:** admin/editor.ts és pages.ts opcionális checkjei, core.test.js conflict test; endpoint matrix nincs lezárva.
+- **Visszaállítás:** conflict draft export, reload latest, revision restore.
+- **Státusz / ismert probléma / következő lépés:** BLOCKED / NOT PASS; server-side required expectedVersion és race tests szükségesek.
+
+#### EDT-030 — In-flight save snapshot és race safety
+- **Felhasználói eredmény:** mentés közben végzett új módosítás nem vész el és nem kap hamis saved állapotot.
+- **Belépési pont / műveletek:** Editor save; submitted snapshot és current state összevetése.
+- **Kanonikus owner / adatforrás:** EDITOR state.persistence + Page Model; szerver a snapshot revisionjét tárolja.
+- **Séma / invariánsok:** csak unchanged snapshot jelölhető cleannek; későbbi edit dirty marad és következő mentést igényel.
+- **Jogosultság:** normál page/site save permission.
+- **API/command:** save() külön submittedDocument/submittedJson snapshotot tart; response-order és multi-save viselkedés teljesen nem bizonyított.
+- **Függőségek:** EDT-027–029/031.
+- **UI-állapotok:** saving + continued editing, duplicate submit, reordered responses, conflict.
+- **Biztonság/adatvédelem:** nincs silent data loss; duplicate request és concurrency policy explicit.
+- **Tesztcsomag:** source test ellenőrzi a snapshotkezelést; deferred/race response test nincs bizonyítva.
+- **Elfogadás:** save A indul → user edit B → A válasza megérkezik → B dirty marad → második save után B reloadolható.
+- **Bizonyíték:** app.js save() snapshot comparison; browser/network race evidence nincs.
+- **Visszaállítás:** local state és conflict export; hibás response nem jelölheti cleannek.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; race/in-flight save E2E és duplicate-submit policy.
+
+#### EDT-031 — Network recovery és local draft retention
+- **Felhasználói eredmény:** hálózati hiba vagy verzióütközés esetén a helyi munka visszanyerhető.
+- **Belépési pont / műveletek:** Editor save error/conflict panel; draft JSON export, explicit reload latest, retry.
+- **Kanonikus owner / adatforrás:** EDITOR local state és server revision; a conflict draft export nem canonical page record.
+- **Séma / invariánsok:** local draft export tartalmazza a page ID/slug/revision/document azonosítókat; reload latest csak kifejezett megerősítéssel írhatja felül a memóriabeli state-et.
+- **Jogosultság:** export csak az aktuálisan authorized user saját draftját tartalmazza; letöltött fájl érzékeny tartalmú lehet.
+- **API/command:** exportConflictDraft és reloadLatestAfterConflict; automatikus offline local persistence és retry policy nem bizonyított.
+- **Függőségek:** EDT-027–030/032, SEC, OPS.
+- **UI-állapotok:** network error, timeout, 409 conflict, export started/failed, reload confirm/failure.
+- **Biztonság/adatvédelem:** ne logoljon vagy küldjön draftot külső szolgáltatásba; figyelmeztetés az export fájl bizalmas tartalmáról.
+- **Tesztcsomag:** core.test.js ellenőrzi a conflict export és explicit reload forrásútját; valódi offline/browser download teszt nyitott.
+- **Elfogadás:** offline/409 → local draft megmarad → export → latest betöltése csak megerősítés után → nincs silent overwrite.
+- **Bizonyíték:** app.js exportConflictDraft/reloadLatestAfterConflict, core.test.js source checks.
+- **Visszaállítás:** JSON draft export + korábbi revision; automatikus crash recovery nyitott.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; offline/retry/browser download és crash recovery policy.
+
+#### EDT-032 — Draft preview authorization és revision binding
+- **Felhasználói eredmény:** a szerkesztő ellenőrizheti a draftot publikálás előtt, de illetéktelen nem láthatja.
+- **Belépési pont / műveletek:** Editor preview/public page shell; draft preview, current revision és noindex.
+- **Kanonikus owner / adatforrás:** PAGE/PREVIEW API és canonical Page Model; draft nem olvasható nyilvános endpointból.
+- **Séma / invariánsok:** preview konkrét page/site/revisionhez kötött; expiry, noindex és unauthorized/cross-site viselkedés explicit.
+- **Jogosultság:** server-side auth + role + site ownership; preview URL önmagában nem adhat hozzáférést, kivéve explicit lejáró token policy esetén.
+- **API/command:** admin editor route auth-gated; minden preview link/token lifecycle és revision binding nincs bizonyítva.
+- **Függőségek:** EDT-027–031/033–034, WEB-005/012/031, SEC.
+- **UI-állapotok:** authorized draft, expired, unauthorized, not found, stale revision, noindex.
+- **Biztonság/adatvédelem:** noindex, no-store where needed, token redaction, cross-site negative test.
+- **Tesztcsomag:** route auth alap látható; expiry/token/real crawler/browser suite nincs bizonyítva.
+- **Elfogadás:** draft preview → unauthorized session/cross-site/expired token elutasítva → public visitor csak published snapshotot lát.
+- **Bizonyíték:** admin/editor.ts és public pages route; preview-token E2E nincs rögzítve.
+- **Visszaállítás:** preview access visszavonása/lejárata; published snapshot változatlan.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; token/revision/noindex/browser acceptance.
+
+#### EDT-033 — Publish/unpublish/rollback workflow
+- **Felhasználói eredmény:** validált draft publikálható, visszavonható és korábbi revisionból biztonságosan helyreállítható.
+- **Belépési pont / műveletek:** Editor Publish/Unpublish, revision panel restore; page create/update API.
+- **Kanonikus owner / adatforrás:** PAGE/PUBLISH/REVISION; content_json draft, published_content_json snapshot, published_revision_id és editor_revisions.
+- **Séma / invariánsok:** save ≠ publish; publish validálja a Page Modelt; unpublish leállítja a public readet; rollback új revisionként történik.
+- **Jogosultság:** szerveroldali page/site scope + publish role policy; minden entrypoint ugyanazt a validationt használja.
+- **API/command:** editor POST publish validál; pages create isPublished=true útvonal nem hívja validatePublishDocumentet; expectedVersion editor/rollback útvonalon opcionális.
+- **Függőségek:** EDT-027–032, WEB-004/006–008/012/031, SEC/OPS.
+- **UI-állapotok:** draft/published/dirty/draft-ahead, validation failure, conflict, unpublish confirm, rollback confirmation.
+- **Biztonság/adatvédelem:** invalid Page Model nem kerülhet publikus snapshotba; create/publish bypass és race condition szerveroldalon blokkolandó.
+- **Tesztcsomag:** editor-validation és core.test.js publish validator tests; API entrypoint matrix, invalid create publish és concurrency negatív tesztek nyitottak.
+- **Elfogadás:** invalid draft minden publish entrypointon elutasítva → valid draft publish → public snapshot ellenőrzés → unpublish → rollback új revision → public state egyezés.
+- **Bizonyíték:** admin/editor.ts, admin/pages.ts, editor-validation.ts, core.test.js; teljes endpoint E2E evidence nincs.
+- **Visszaállítás:** published revision snapshot, unpublish és rollback-as-new-revision; minden művelet audit eventtel.
+- **Státusz / ismert probléma / következő lépés:** BLOCKED / NOT PASS; publish validation minden entrypointra, required expectedVersion és API race tests.
+
+**Szeletzárás:** EDT-027–033 kártyák dokumentálják a meglévő save/revision alapot és a konkrét szerveroldali blokkolókat. Ezeket a dokumentációs audit nem javította ki. Következő lépés: 63.45 mező-/dependency-ellenőrzés, majd EDT-034–044 renderer, mobil, accessibility és recovery.
+
