@@ -4176,3 +4176,7 @@ A C.23.22-02 és C.23.22-04–07 soroknál a történeti követelmény megmaradt
 **Bizonyítékhatár:** dokumentációs contract-pontosítás; nem runtime bizonyíték, nem jelenti a hiányzó források helyreállítását és nem zárja le a P0.2-t. P0.2 **IN PROGRESS / NOT PASS**.
 
 C.23.22-01 és C.23.22-03 kiegészítése: a canvas drag/resize korábbi felhasználói visszaigazolása történeti jelzésként marad meg, de a jelenlegi regression suite külön igazolja a drag, resize, canvas-height recalculation, undo/redo és viewport viselkedést. A minimális Editor elemkészlet minden tagja csak explicit schema + safe renderer + edit/undo + regression evidence után engedhető a komponenskatalógus bővítése elé.
+
+### 41.3.33. P0.2 — C.23.22 acceptance-contract recheck (2026-10-14)
+
+A C.23.22-01–07 mind a hét történeti sor megmaradt, és a célzott szerződés-ellenőrzés most mind a hét soron explicit tulajdonosi felelősséget talál. A drag/resize sor elfogadása külön kezeli a korábbi user confirmationt és a jelenlegi regression evidence-et; a minimális elemkészlet schema/safe-renderer/edit-undo/test kapuhoz kötött; a régi F0.4 folytatási szándék nem írhatja felül a P0.2 aktív pontot; a canonical registry/store és a phase-allocation függőségek meg vannak nevezve. Strukturális újraellenőrzés: 361 egyedi registry ID, 210 C.23 mapping sor, a C.23.22 blokk 7/7 sora megtalálható, hiányzó tulajdonosi/acceptance contract sor 0. A forrásbullet szövegét a javítások nem módosították. Ez dokumentációs szerződés-ellenőrzés, nem runtime PASS; a P0.2 **IN PROGRESS / NOT PASS** marad.
