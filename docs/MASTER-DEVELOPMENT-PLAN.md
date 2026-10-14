@@ -5555,3 +5555,46 @@ A „MATCH candidate” csak a tervezett elemkategória jelenlétét jelenti; ne
 **Következő lépés:** régi 1/C selection/manipulation minden bulletjét megfeleltetni EDT-006–014/038 és a 37.22 E.3.3 sorokhoz; külön döntés kell a group/ungroup, cut, paste-into-parent, paste-style-only, paste-structure, breadcrumb/parent selection és focus-selected viselkedésre.
 
 **Státusz:** 1/B elemkészlet és 14 mező crosswalkja rögzítve; tételes szemantikai és runtime bizonyítás nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.129. P0.2 — Régi 1/C Selection és manipulation: tételes szemantikai crosswalk (2026-10-14)
+
+**Forrás:** előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, 1/C, 26 atomikus pont (a listában click select, újrakijelölés, kétirányú Canvas/Tree sync, multi-select/modifier, group/ungroup, lock/hide/rename, drag/resize, keyboard move, duplicate offset, clipboard és kontextus/fókusz navigáció). **Canonical registry:** 24.3 EDT-006–014, EDT-037/038; kapcsolódó történeti crosswalk: 37.22 E.3.3-01–05, E.3.2-06, F.1-02/03/07. Ez tervszintű megfeleltetés, nem futtatott teszt.
+
+| # | Történeti követelmény | Jelenlegi célpont | Státusz | Pontos lezárási feltétel |
+|---:|---|---|---|---|
+| 1 | Click select | EDT-006, EDT-013 | PLAN MATCH | Canvas click egyetlen canonical node-ot jelöl; selection ID és Inspector/Layers ugyanazt mutatja. |
+| 2 | Újrakijelölés | EDT-006, EDT-013; F.1-02 | PARTIAL | Mentés/reload, panelváltás és másik node kijelölése után a régi node újra kijelölhető, ha még létezik és jogosult. |
+| 3 | Canvas → Tree sync | EDT-006, EDT-013 | PLAN MATCH | Canvas selection a Layers/Tree megfelelő sorát kijelöli és szükség szerint láthatóvá/expanded állapotúvá teszi. |
+| 4 | Tree → Canvas sync | EDT-006, EDT-012/013 | PLAN MATCH | Tree sor kiválasztása ugyanazt a node-ot aktiválja a Canvasban; offscreen node esetén definiált scroll/focus viselkedés. |
+| 5 | Multi-select | EDT-038, EDT-006 | PARTIAL / ACCEPTANCE GATED | Csak az elfogadott node-típusoknál/operációknál engedélyezett; mixed values, selection order, delete/move/copy és undo atomikus viselkedése definiálandó. |
+| 6 | Shift/Ctrl selection | EDT-038, EDT-037 | PARTIAL | Platformfüggetlen modifier-mapping, macOS/Windows viselkedés, touch fallback és billentyűzetes accessibility teszt. |
+| 7 | Group | EDT-016, EDT-011, EDT-038 | UNMAPPED / DECISION | Nincs külön explicit Group/ungroup capability ID. Dönteni kell, hogy a group egy új canonical container létrehozása, layout wrapper vagy külön node-típus; az eredeti geometry és sorrend megőrzésével. |
+| 8 | Ungroup | EDT-016, EDT-011 | UNMAPPED / DECISION | Group döntéshez kötött; child sorrend, parent, layout és responsive override megőrzése, üres group kezelés. |
+| 9 | Lock | EDT-014 | PARTIAL | A node lock megakadályozza a véletlen drag/resize/edit/delete műveletet, de nem keverhető össze authorization/permission-nel; unlock és parent/child szabályok. |
+| 10 | Hide | EDT-014, EDT-026 | PARTIAL | Editor-only hide vs public visibility és responsive visibility különválasztása; hidden állapot nem lehet authorization bypass. |
+| 11 | Rename | EDT-014 | PARTIAL | A Layers label/alias átnevezése nem módosíthatja véletlenül a publikus szöveget vagy canonical node ID-t; külön kell kezelni a node display name-et és a tartalmat. |
+| 12 | Drag selection | EDT-008/009, EDT-038 | PARTIAL | Drag/box selection vagy kiválasztott elemek mozgatása pontosan definiálandó; ne mosódjon össze a Canvas drag/drop-pal. |
+| 13 | Resize handles | EDT-009, EDT-016, EDT-022 | PLAN MATCH | Handle geometry, min/max/aspect constraints, layout-aware resize és undo tranzakcióteszt; flex/grid ne váltson észrevétlen absolute pozícióra. |
+| 14 | Keyboard move | EDT-037, EDT-009, EDT-003/004 | PARTIAL | Fókuszmodell, nyíl-/modifier-lépésköz, layout-kompatibilis mozgatás, screen reader announcement és undo/redo. |
+| 15 | Duplicate with offset | EDT-011, EDT-038, EDT-002 | PARTIAL | Új ID-k, parent/child identity, offset szabály, z-order és responsive/interaction binding másolási szabályok; duplikált action ne hajtódjon végre váratlanul. |
+| 16 | Copy | EDT-038, EDT-002 | PARTIAL | Canonical strukturált clipboard payload; belső ID-k újragenerálása paste-kor, asset/binding hivatkozások ellenőrzése. |
+| 17 | Cut | EDT-038, EDT-003/004 | UNMAPPED / VERIFY | A registry copy/paste-ot említ, de a cut külön nincs kimondva. Döntés szükséges a clipboard sikeres rögzítése és a törlő tranzakció sorrendjéről; sikertelen cut ne veszítsen adatot. |
+| 18 | Paste | EDT-038, EDT-002/003 | PARTIAL | Belső/külső clipboard formátum, validáció, ID regenerálás, asset elérhetőség, permission és undo/redo. |
+| 19 | Paste into selected parent | EDT-038, EDT-002/016 | PARTIAL | Kiválasztott cél-parent allowed-child/nesting szabályának ellenőrzése; invalid parent esetén explicit hiba, ne legyen csendes áthelyezés másik helyre. |
+| 20 | Paste style only | EDT-038, EDT-021/022, DSN-001–007 | UNMAPPED / VERIFY | Nincs explicit style-only paste ID. Definiálni kell a kompatibilis typed property-ket, token vs literal értékeket, responsive override-okat és a kihagyott/incompatible mezők jelentését. |
+| 21 | Paste structure | EDT-038, EDT-002/016–019 | UNMAPPED / VERIFY | A struktúra másolása és a content/asset/binding/action másolása külön szabályt igényel; child slot, ID, domain reference és biztonsági határok explicit módon. |
+| 22 | Context menu | EDT-037/038; EDT-011/014 | PARTIAL | Kontextusfüggő műveletlista, keyboard invocation, touch elérés, disabled okok, permission és destructive confirmation. |
+| 23 | Breadcrumb selection | EDT-013, EDT-016 | PARTIAL | Ancestor breadcrumb útvonal, truncation és választás; mindig a canonical parent chainből épüljön, ne párhuzamos hierarchiából. |
+| 24 | Parent selection | EDT-002, EDT-006/013 | PARTIAL | Parent kiválasztása a tényleges tree parenthez navigál; root boundary és nested slot viselkedés explicit. |
+| 25 | Focus selected | EDT-007, EDT-006/013, EDT-037 | PARTIAL | A kijelölt node a viewportban láthatóvá válik anélkül, hogy a kiválasztás vagy dokumentum layoutja váratlanul megváltozna; keyboard focus és viewport scroll különálló állapot. |
+| 26 | Escape to parent / clear selection | EDT-006, EDT-013, EDT-037 | UNMAPPED / VERIFY | A régi lista két alternatív viselkedést említ. Dönteni kell kontextus szerint: Escape clear selection, kilépés a nested selectionből vagy parentre lépés; ne legyen meglepetésszerű kettős jelentés. |
+
+#### Kiemelt szemantikai különbségek
+
+- A jelenlegi EDT-038 „Copy/paste and multi-select where enabled” nem bizonyítja önmagában a **cut**, **paste style only**, **paste structure**, **group/ungroup** vagy **modifier selection** teljes viselkedését. Ezeket külön elfogadási sorokként kell megőrizni.
+- A régi „hide” nem vonható össze a responsive hide-dal vagy publikációs jogosultsággal; a „lock” nem authorization. A „rename” sem azonos a publikus szöveg szerkesztésével.
+- A drag selection, drag/drop és resize három külön interakció, külön pointer-cancel/undo/layout tesztekkel.
+- A 37.22 E.3.3-04 összefoglaló sor a duplicate/delete/copy/paste/order/lock/hide/multi-select témákat összevonja. Ez a sor nem váltja ki a jelen 26 történeti pont egyenkénti bizonyítását.
+
+**Státusz:** 26 pont kapott explicit crosswalk-sort; 6 egyértelműen döntés/ellenőrzésigényes terület (group/ungroup, cut, style-only paste, structure paste, Escape jelentése; továbbá multi-select részletei és több részleges acceptance). Ez dokumentációs előrelépés, nem runtime PASS. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
