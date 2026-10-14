@@ -4259,3 +4259,26 @@ Ez a mátrix összeköti a 49. fejezet felhasználói moduljait az 5. fejezet ka
 | 49.20 Csapat, több site és SaaS | WORKSPACE, BILLING_PLAN | Workspace/team és SaaS plan/usage külön; nem azonos a Store ORDER vagy fan ENTITLEMENT állapottal. |
 
 **Ellenőrzés:** a jelenlegi 5. fejezet 37 domain-ID-ja mindegyikéhez kijelölhető a fenti főmodulok közül legalább egy kanonikus belépési pont. Ez a dokumentumon belüli felelősségi keresztmátrix; a tényleges kód, adatbázis, API és jogosultsági implementáció egyezését külön auditálni kell.
+
+### 63.21. Funkciószintű készültségi szerződések — nyitott lezárási kapu
+
+A 24. fejezet jelenleg 382 egyedi funkcióazonosítót tartalmaz, a 54. fejezet 156/156 checklist-tétele a 63.12–63.15 táblázatokban azonosítóhoz van rendelve, és a 49. fejezet 20 főmodulját a 63.20 mátrix domain/adatgazdához köti. **Ezek a terv szerkezetét és keresztmegfeleltetését bizonyítják, nem a 382 funkció teljes specifikációját.**
+
+A 25. és 26. fejezet szerinti teljes, funkciószintű kártya kitöltése még nyitott. Minden ID-hoz — az implementációs státusz kitalálása nélkül — rögzíteni kell:
+- Status és fázis/prioritás: a repository és a roadmap bizonyítékai alapján; ismeretlen állapot nyitott marad.
+- Kanonikus modul/domain owner, adatforrás, UI/surface és szerveroldali permission/scope.
+- Blokkoló/nem blokkoló dependency-k és a szükséges schema/API/command contract.
+- Elfogadási forgatókönyv, pozitív/negatív tesztek, browser/responsive/accessibility és E2E igény.
+- Kód-/teszt-/CI/runtime bizonyíték, ismert hiba, rollback és következő munkapont.
+- Új funkciónál kötelező döntés: REUSE / ADAPT / BUILD / REJECT / DEFER; a döntés előtt meglévő működő kódot és megfelelő, licencelt referenciát kell vizsgálni.
+
+**Kötelező feldolgozási sorrend:** (1) a 382 ID csoportosítása a kanonikus modulok szerint; (2) meglévő route/domain helper/migration/UI/adapter/teszt vizsgálata; (3) már működő képesség és hiány megkülönböztetése; (4) függőségi sorrend és kiadási fázis megállapítása; (5) egyedi feature contract és acceptance; (6) teszt/runtime bizonyíték; (7) státuszfrissítés. Egy kódleírás, egy tervsor vagy egy CI job neve önmagában nem PASS-bizonyíték.
+
+- [ ] A 382 ID mindegyikéhez a 25./26. fejezet szerinti teljes kártya kitöltve vagy explicit, indokolt DEFER/REJECT döntés rögzítve.
+- [ ] Minden ID fázisa és dependency-je összhangban van a 41.2. és 63.5. kanonikus végrehajtási sorrenddel.
+- [ ] A meglévő működő kódhoz tartozó REUSE/ADAPT döntés bizonyítékkal rendelkezik; nincs indokolatlan újraírás vagy párhuzamos domain.
+- [ ] Az acceptance és tesztlista minden fő felhasználói journey-t és releváns hibautat lefed.
+- [ ] A funkciószintű audit lezárása előtt nincs F0-implementációs engedély.
+
+**Állapot: IN PROGRESS / NOT PASS.** A következő munka továbbra is a kanonikus terv lezárása, nem a feature implementáció megkezdése. A 382 ID készültségi kártyáját a tényleges repository-kód, migrációk, API-k, UI és tesztek alapján kell feltölteni; hiányzó bizonyítékot nem szabad feltételezéssel pótolni.
+
