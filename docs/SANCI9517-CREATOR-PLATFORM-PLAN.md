@@ -6892,6 +6892,18 @@ A `0004_system_page_content.sql` történeti táblát hoz létre, míg a `0005_c
 
 **Kötelező elfogadási mátrix:** anonim/authentikált GET és redirect a `/admin/editor`, `/editor-v2/index.html`, `/editor/preview.html`, `/admin-editor-v2.html` URL-eken; anonim API GET/POST/PUT 401/403, jogosult Editor műveletek, role-változatok; publikus assetek érzékeny tartalmának ellenőrzése; preview mentett adatok és visszalinkek; draft/publish/rollback böngészőteszt; cache- és jogosultságváltási regresszió. **SECURITY/URL/BROWSER GATE: IN PROGRESS / NOT PASS.** Nem történt runtime-kód módosítás.
 
+### 63.50.20. Editor API jogosultsági és revíziós invariánsok (2026-10-14)
+
+**Ellenőrzött ref:** `ac312b0`. Statikus forrásellenőrzés: `src/routes/admin/editor.ts`, `src/routes/admin/pages.ts`, `src/core/auth/require-auth.ts`, `src/core/response.ts`, `src/routes/auth/session.ts`. Futtatott új API-integrációs teszt nincs; az előző, külön azonosított GitHub Actions CI-PASS változatlanul csak a lefedett tesztekre érvényes.
+
+- **Auth/role:** mindkét Admin Editor/Page API `getAuthenticatedUser` ellenőrzést és legalább `editor` szerepkört követel: hiányzó session → 401, elégtelen szerepkör → 403. A `hasRole` rangsort használ (`viewer`, `editor`, `admin`); a `/api/auth/session` publikus állapotválasza nem helyettesíti a szerveroldali jogosultságellenőrzést.
+- **Cache:** a közös `ok/error` válaszgyártó `Cache-Control: no-store` fejlécet ad az API-válaszokhoz. Ez a szerkesztő HTML és a statikus JS assetek cache-szabályát **nem** bizonyítja.
+- **Site ownership:** az Editor és Pages műveletek a kanonikus `siteId` alapján keresnek/módosítanak `pages` sorokat. A visszaállításnál az oldal előzetes `site_id` ellenőrzése külön megvan; a revízió lekérdezés `page_id` alapján történik, az oldal ownership előellenőrzése után.
+- **Mentés:** az Editor POST kanonikus `sanci-page-document` sémát követel, méretkorlátot alkalmaz, új revíziót rögzít, opcionális `expectedVersion` konfliktusnál 409-et ad; publikáláskor további dokumentumvalidáció és `published_content_json` snapshot-frissítés történik. `unpublish` külön POST-művelet.
+- **Rollback:** a PUT egy korábbi revízió dokumentumából **új revíziót** hoz létre, nem írja felül a történetet. A forrásban a rollback a `content_json` draftot frissíti; a `published_content_json` közvetlen módosítása nem szerepel ebben az ágban. A felhasználói UX-nek világosan külön kell kezelnie a draft visszaállítását és a publikált állapotot.
+
+**Nyitott tesztkapuk:** anonim/viewer/editor/admin GET/POST/PUT szerepkörmátrix; különböző site-hoz tartozó pageId; hibás vagy ütköző `expectedVersion`; rollback utáni publikus snapshot változatlansága; publish/unpublish idempotencia; cache; böngészős regresszió. **AUTH/API CONTRACT: STATICALLY VERIFIED / RUNTIME NOT PASS**. Nem történt kód- vagy adatbázis-módosítás.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
