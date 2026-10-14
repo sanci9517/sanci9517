@@ -5693,3 +5693,38 @@ A „MATCH candidate” csak a tervezett elemkategória jelenlétét jelenti; ne
 - A régi 1/E nem zárható le pusztán azzal, hogy EDT-021/022 létezik. Lezáráshoz a property registry és a negatív/round-trip tesztek ténylegesen hivatkozott acceptance sora szükséges.
 
 **Státusz:** 27 követelmény egyenként leképezve; a property-level szerződés és runtime bizonyíték nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.132. P0.2 — Régi 1/F History: tételes history-szemantikai crosswalk (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, 1/F, 15 atomikus pont. **Canonical célpont:** EDT-003–005, EDT-008/009, EDT-027–031, EDT-042; történeti szerződés: 37.22 E.3.7-01–06 és 37.27 F.1-04–10. A jelenlegi EDT-005 címkéje önmagában nem bizonyítja az alábbi teljes history-panel és persistence policy viselkedést.
+
+| # | Régi history követelmény | Canonical célpont | Státusz | Lezárási feltétel |
+|---:|---|---|---|---|
+| 1 | Undo | EDT-003–005 | PLAN MATCH | Typed commandból visszafordítható változás, canonical state helyreáll, UI/history/backend szinkronban marad. |
+| 2 | Redo | EDT-003–005 | PLAN MATCH | Undo után az eredeti változás visszaállítható; új edit után a korábbi redo branch törlése/érvénytelenítése explicit. |
+| 3 | History model | EDT-003–005 | PARTIAL | Immutable entry/command, before/after vagy invertible operation, transaction ID, label, timestamp és schema/version policy explicit; DOM snapshot nem source of truth. |
+| 4 | History panel | EDT-005, EDT-044 | PARTIAL / VERIFY | Nincs külön canonical history-panel ID. A panel/nézet, hozzáférhetőség, üres állapot, soronkénti állapot és viewport/workspace preference felelőssége explicit legyen. |
+| 5 | Entry preview | EDT-005, EDT-007 | UNMAPPED / DECISION | A régi lista kifejezetten előírja, de a jelenlegi registryben nincs explicit entry-preview. Dönteni kell: előnézet csak read-only snapshotból vagy history-entry renderből; semmiképp se mutálja a jelenlegi modellt. |
+| 6 | Restore history entry | EDT-003–005, EDT-028–030 | UNMAPPED / DECISION | Az undo/redo nem feltétlenül jelent tetszőleges régi entryre ugrást. Dönteni kell, hogy támogatott-e a közvetlen restore; restore esetén új canonical command/revision, conflict és recovery szabály kell. |
+| 7 | History grouping | EDT-004/005 | PLAN MATCH / VERIFY | Egy user intent egy tranzakció; text debounce/blur és drag/slider pointer-down→pointer-up csoportosítás; preset/bulk művelet explicit határ. |
+| 8 | Drag/resize history throttling | EDT-004/005, EDT-008/009 | PARTIAL | Ne keletkezzen minden pointer-mozdulatra külön undo entry; preview közben ne legyen persistence, a művelet végén egyetlen logikai commit. Cancel/escape visszaállít. |
+| 9 | Typing history throttling | EDT-004/005, EDT-017/043 | PARTIAL | Gépelés debounced/grouped history; caret/selection megőrzése, IME/composition támogatás, blur/undo határ és Rich Text fáziskülönbség. |
+| 10 | Ignored/internal action | EDT-003–005 | UNMAPPED / VERIFY | A selection, hover, focus, panel toggle és viewport mozgatás ne hozzon létre dokumentum-history entryt; dokumentummódosító command viszont ne maradjon ki. Explicit action classification kell. |
+| 11 | History limit | EDT-004/005; F.1-04 | PLAN MATCH | Történeti forrás 50 entry és FIFO overflow policy-t rögzít; a limit és az eviction determinisztikusan tesztelendő, nyitott dirty transaction nem dobható el. |
+| 12 | History persistence policy | EDT-005, EDT-027/028, WEB-004–008 | PARTIAL / DECISION | History a szerverre kerül-e, session/workspace között megmarad-e, reload után mi történik: explicit policy. Ne tévesszük össze a Page Model draft/publish állapotával vagy crash recovery snapshotjával. |
+| 13 | History ne sértse a szerver állapotát | EDT-003–005, EDT-027–030 | PLAN MATCH / RELEASE GATE | Undo/redo lokális parancs-visszafordításból csak revision-aware mentéssel válhat server state-té; konfliktus esetén nincs silent overwrite vagy hamis siker. |
+| 14 | Undo után új változás: branch history kezelése | EDT-004/005 | PARTIAL | Undo után új command esetén a redo branch szabálya explicit (lineáris history esetén régi redo branch eldobása); nem szabad régi entryt új state-re tévesen alkalmazni. |
+| 15 | History és canonical UI state konzisztencia | EDT-001–006, EDT-013, EDT-028 | PARTIAL / RELEASE GATE | Canvas, Layers, Inspector, selected node, persisted Page Model és history cursor minden undo/redo/restore/reload/conflict után konzisztens; integrációs regression sequence. |
+
+#### History-kontraktus és biztonsági határ
+
+- **Document history ≠ UI workspace history:** viewport, panel-layout, grid/favorites és selection nem kerülhet automatikusan a site Page Model dokumentum-historyjába. EDT-044 külön per-user workspace preference területet jelöl; a history panel megjelenítése még ettől is külön UI-felelősség.
+- **Undo/redo ≠ tetszőleges restore:** a 1/F külön felsorolja az entry previewt és restore-t. Amíg a termékdöntés nem rögzíti, ezek nem tekinthetők az undo/redo név alatt teljesítettnek.
+- **Drag/resize és typing throttling:** history csoportosítás nem jelenthet adatvesztést, túl nagy vagy minden inputra létrejövő historyt; a tranzakcióhatárok mérhető acceptance feltételek.
+- **Server safety:** a history műveletek nem írhatják felül a frissebb revisiont; recovery, undo/redo és autosave külön állapotgépeit össze kell hangolni, de nem szabad összemosni.
+- **Tesztminimum:** undo→redo round-trip, undo→új edit branch, 50 entry overflow, drag/resize egyetlen entry, typing/IME, selection-only ignored action, invalid command rollback, reload policy, concurrent revision conflict, history panel keyboard access és recovery utáni konzisztencia.
+
+**Crosswalk-következtetés:** a 37.27 F.1-04–10 megőrzi az immutable history, 50-es limit, tranzakciócsoportosítás, 2000 ms draft autosave, crash recovery és optimistic concurrency követelményeket, de nem zárja le a history panelt, entry previewt, tetszőleges restore-t, internal-action osztályozást vagy history persistence policy-t. Ezek külön decision/acceptance pontok maradnak.
+
+**Státusz:** 15 pont tételesen leképezve; entry preview/restore és history persistence policy nyitott döntés. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
