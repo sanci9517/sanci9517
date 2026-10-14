@@ -1625,109 +1625,174 @@ A domainenkénti funkciók nem kezelhetők pusztán CRUD-ként. A funkciókárty
 
 ### 26.3. Domainenkénti műveleti szerződések
 
-#### ADM — Dashboard és Admin shell
-- Művelet: valós domainállapotok összesítése, gyorslinkek, teendők, friss aktivitás.
-- Adatforrás: saját domain read API-k vagy egy összesítő read model; nem külön, kézzel szerkeszthető másolat.
-- Jogosultság: a felhasználó csak az általa kezelhető site adatait láthatja.
-- Teszt: nincs kapcsolat / stale sync / nincs schedule / API részleges hibája / unauthorized / mobile viewport.
-- PASS: minden kártya forrása és frissessége megállapítható; hibás alrendszer nem zöld; gyorsművelet a canonical modulhoz visz.
+Az alábbi szerződések a funkciójegyzék logikai modulhatárait követik. A közös infrastruktúra (auth, site scope, validation, logging, retry, test harness) újrahasználható; ettől az üzleti adatgazdák nem olvadnak össze.
 
-#### WEB — Oldalak, navigáció, public renderer és publikálás
-- Művelet: page create/edit/duplicate/archive/delete, slug és hierarchy kezelés, navigation CRUD, preview, publish/unpublish, revision restore.
-- Adatforrás: canonical Page Model, navigation model, draft revision és külön published snapshot.
-- Jogosultság: server-side site ownership; public olvasás csak published állapotból.
-- Teszt: draft save → reload; preview vs published; publish → public route; unpublish; revision restore; invalid slug; cross-site ID.
-- PASS: draft mentés nem publikál; publish explicit; minden route canonical URL-t és megfelelő metadata-t ad; hibás/deleted reference biztonságos fallback.
+#### ADM — Dashboard és Admin shell
+- Művelet: valós domainállapotok összesítése, gyorslinkek, teendők, friss aktivitás és modulonkénti notification summary.
+- Adatforrás: saját domain read API-k vagy permission-aware read model; nem külön, kézzel szerkeszthető másolat.
+- Jogosultság/teszt: site scope, unauthorized, stale sync, hiányzó schedule, részleges API-hiba, mobil viewport.
+- PASS feltétel: minden kártya forrása és frissessége megállapítható; hibás alrendszer nem zöld; gyorsművelet a kanonikus modulhoz visz.
+
+#### WEB — Oldalak, navigáció és publikus renderer
+- Művelet: page CRUD, slug/hierarchy, navigation, preview, publish/unpublish, revision restore és publikus route lifecycle.
+- Adatforrás: canonical Page Model, navigation model, draft revision, published snapshot; dinamikus üzleti rekord nem másolható a Page Modelbe.
+- Jogosultság/teszt: server-side site ownership, published-only public read, draft preview auth, invalid slug, deleted reference, cross-site ID.
+- PASS feltétel: draft mentés nem publikál; publish explicit; a public renderer canonical URL/metadata policyt alkalmaz; biztonságos fallback hibás/deleted referenciánál.
 
 #### EDT — Visual Editor
-- Művelet: canvas selection/move/resize, hierarchy/layers, inspector, responsive viewport, undo/redo, clipboard/duplicate, preview, save/reload, publish handoff.
+- Művelet: canvas selection/move/resize, layers, Inspector, responsive viewport, undo/redo, clipboard, preview, save/reload és publish handoff.
 - Adatforrás: canonical Page Model és command/validation/history/persistence API; Inspector a Property Registry metadata-t használja.
-- Jogosultság: page edit permission és site ownership minden mutationnél.
-- Teszt: move/resize, undo/redo, viewport override set/reset, inherited value, invalid property, save/reload round-trip, revision conflict, publish snapshot, keyboard/touch, mobile/desktop.
-- PASS: minden felület ugyanazt a page state-et módosítja; undo/redo és reset az adatot is helyreállítja; nincs elveszett mentés vagy automatikus publish.
+- Jogosultság/teszt: page edit permission, ownership, invalid property, round-trip, revision conflict, viewport inheritance/reset, keyboard/touch és mobil.
+- PASS feltétel: minden Editor-felület ugyanazt a page state-et módosítja; nincs elveszett mentés vagy automatikus publish; Editor nem veszi át a média/brand/integráció/commerce domain adatait.
 
-#### DSN — Design system, theme, template, reusable component
-- Művelet: design tokenek, theme variable, font, breakpoint, component definition, variant, template create/preview/apply/version/rollback.
-- Adatforrás: canonical Design System/Template/Component registry; page-local override explicit.
-- Teszt: token update több oldalon; component instance frissül; lokális override megmarad; template apply preview; rollback; invalid token/reference.
-- PASS: globális módosítás minden hivatkozó instance-ra hat; override precedence dokumentált; nincs duplikált style key.
+#### DSN — Brand Kit, design system és template
+- Művelet: token/theme/font/breakpoint, component definition/variant, template create/preview/apply/version/rollback.
+- Adatforrás: canonical Design System/Template/Component registry; page-local override explicit; bináris asset a RESOURCE-ban.
+- Teszt: token update több oldalon, instance refresh, override megőrzése, template preview, rollback, invalid token/reference és kontraszt.
+- PASS feltétel: globális módosítás minden hivatkozó instance-ra hat; override precedence dokumentált; nincs duplikált token-master.
 
-#### RES — Media/resource/icon/font/file registry
-- Művelet: upload, validation, preview, search/filter/tag, metadata/alt text, replace, reference lookup, archive/delete, safe download.
+#### RES — Média-, asset-, ikon- és font-registry
+- Művelet: upload/validation/preview/search/filter/tag/metadata/alt text/replace/reference lookup/archive/delete/safe download.
 - Adatforrás: D1 asset metadata + R2 object; stable asset ID; object key nem user által tetszőlegesen megadott path.
-- Jogosultság: upload/manage site permission; privát resource letöltésnél entitlement/auth check.
-- Teszt: MIME/size rejection, malformed file, duplicate, replace, referenced delete, R2 failure, unauthorized download, alt text and responsive images.
-- PASS: metadata és bináris objektum konzisztens; törlés előtt reference check; privát fájl nem érhető el publikus URL-lel.
+- Jogosultság/teszt: site ownership, MIME/size rejection, malformed file, duplicate, replace, referenced delete, R2 failure, unauthorized download, SVG/font safety.
+- PASS feltétel: metadata és bináris objektum konzisztens; törlés előtt reference check; privát fájl nem érhető el publikus URL-lel; más modul nem tart fenn saját asset-registryt.
 
-#### INT — Integrációs központ
-- Művelet: connect, callback, status, scopes, reconnect, revoke/disconnect, sync, retry, last sync/error display.
-- Adatforrás: egy canonical connection record/provider adapter; secrets encrypted/secret store; site-scoped ownership.
-- Jogosultság: site admin/owner; OAuth state egyszer használatos, site-hoz kötött, lejáró és CSRF-védett.
-- Teszt: valid/invalid/expired state, mismatched site, denied scopes, token refresh, provider outage, disconnect, retry, webhook replay.
-- PASS: kapcsolódás nem az Editorban történik; minden más modul ugyanazt a státuszt olvassa; secret nem kerül kliensre vagy logba.
+#### INT — Külső integrációk és provider adapterek
+- Művelet: connect/callback/status/scope/reconnect/revoke/disconnect/sync/retry, provider capability és inbound webhook.
+- Adatforrás: canonical connection record/provider adapter; secret store/secret reference; site-scoped ownership.
+- Jogosultság/teszt: egyszer használatos, lejáró OAuth state; mismatched site, denied scopes, token refresh, provider outage, disconnect, retry és webhook replay.
+- PASS feltétel: kapcsolódás nem az Editorban történik; más modulok ugyanazt a státuszt olvassák; secret nem kerül kliensre vagy logba; nem támogatott provider action nem jelenik meg működőként.
 
-#### LIV/OBS — Live, stream és OBS
-- Művelet: live status, provider/channel info, stream setup, overlays, OBS connection status, scene/event triggers csak elérhető és engedélyezett API-val.
-- Adatforrás: connection domain + provider status/cache + overlay config; a cache frissessége jelölt.
-- Teszt: offline, online, stale response, missing scope, OBS unavailable, invalid overlay config, reconnect.
-- PASS: nem állít live állapotot régi adatból frissként; OBS-vezérlés csak explicit permission és jóváhagyás után; manuális fallback elérhető.
+#### LIV — Live state és Stream Studio
+- Művelet: normalized live status, provider/channel info, freshness, stream setup, multistream/unified chat csak igazolt capabilityvel, stream marker és checklist.
+- Adatforrás: INTEGRATION connection + normalizált live state; cache származtatott, frissességjelölt.
+- Teszt: offline/online/stale, missing scope, provider partial failure, send permission denied, multistream capability hiánya.
+- PASS feltétel: régi adat nem jelenik meg frissként; Unified Chat olvasás/küldés külön engedélyezett; recording/replay nem ígérhető runtime bizonyíték nélkül.
+
+#### OBS — OBS kapcsolat, overlay és stream tools
+- Művelet: secure pairing, scene/source állapot, authorized commands, overlay/widget config, preview/version/rollback, event replay és external-control adapter.
+- Adatforrás: STREAM_TOOLS overlay/widget config + INTEGRATION kapcsolat és engedélyezett OBS adapter; nincs böngészőből feltételezett natív hozzáférés.
+- Jogosultság/teszt: pairing/reconnect, OBS unavailable, command allowlist, invalid overlay, dry-run, event replay, external adapter timeout.
+- PASS feltétel: nincs nyílt vezérlővégpont vagy secret a logban; minden művelet explicit permission/allowlist szerint fut; manuális fallback elérhető.
 
 #### SCH — Adásrend és Game Profile
-- Művelet: event CRUD/archive, timezone, recurrence, conflict detection, game selection, public display, countdown.
-- Adatforrás: canonical schedule domain; game profile stable ID; timezone explicit, UTC tárolás és locale display policy.
-- Teszt: DST transition, timezone change, recurrence edit-one/edit-series, overlap, past event, archived game reference, public cache invalidation.
-- PASS: Admin, Dashboard, Editor block és public schedule ugyanazt az eventet mutatja; Page Model nem másolja az event rekordot.
+- Művelet: event CRUD/archive, timezone, recurrence, conflict detection, game selection, public display/countdown/export.
+- Adatforrás: canonical schedule domain és stable game profile ID; timezone explicit, UTC tárolás és locale display policy.
+- Teszt: DST, timezone change, recurrence edit-one/edit-series, overlap, past event, archived game reference, public cache invalidation.
+- PASS feltétel: Admin, Dashboard, Editor block és public schedule ugyanazt az eventet mutatja; Page Model nem másolja az event rekordot.
 
 #### CNT — Tartalom és Content Studio
-- Művelet: content item create/edit/organize, platform target, draft/review/schedule/publish, VOD/clip/short links, metadata and reuse.
-- Adatforrás: canonical content item + provider publishing job + external provider IDs.
-- Teszt: unsupported provider capability, expired auth, duplicate publish, retry, media missing, invalid platform length, cancel scheduled publish.
-- PASS: platformképesség ellenőrzött; retry nem dupláz; provider siker/hiba tényszerűen megjelenik; nincs állított publikálás provider confirmation nélkül.
+- Művelet: content item create/edit/organize, metadata/platform variant, calendar, review/publish queue, transcript/clip/edit/export lifecycle.
+- Adatforrás: canonical content item + publishing job + external provider IDs; bináris media a RESOURCE-ban, rights/consent a content lifecycle policy szerint.
+- Jogosultság/teszt: unsupported capability, expired auth, duplicate publish, retry, media missing, invalid platform length, cancel scheduled publish, rights expiry/takedown.
+- PASS feltétel: retry nem dupláz; provider siker/hiba tényszerű; nincs állított publikálás provider confirmation nélkül; content feed ugyanazt a canonical ID-t olvassa.
 
-#### COM — Community és audience
-- Művelet: community links, posts/events, moderation, member roles where permitted, newsletter/audience subscription.
-- Adatforrás: community domain és consented audience; provider member data csak permissionnel és policy alapján.
-- Teszt: consent absent, unsubscribe, duplicate signup, abuse/rate limit, moderator vs admin, private member data, export/delete.
-- PASS: adatminimalizálás és opt-in bizonyítható; leiratkozás érvényesül; nyilvános supporter név külön hozzájárulást igényel.
+#### COM — Közösség és moderáció
+- Művelet: community posts/polls/events/submissions/comments/reports/moderation/appeal/visibility policy.
+- Adatforrás: COMMUNITY domain; fan account identity és membership entitlement külön domain.
+- Jogosultság/teszt: consent absent, abuse/rate limit, moderator vs admin, private member data, report/appeal, export/delete és unsafe content.
+- PASS feltétel: opt-in bizonyítható; moderation auditált; publikus supporter/fan adat külön hozzájárulás nélkül nem jelenik meg.
 
-#### STO/SUP — Bolt, támogatás és tagság
-- Művelet: product/catalog CRUD, order status, digital delivery, support link, membership tiers, entitlement grants/revokes, refund/cancel handling.
-- Adatforrás: product/order/payment provider truth + canonical local mapping; entitlement domain adja a hozzáférés döntését.
-- Jogosultság: pénzügyi/admin művelet külön; secret/payment data soha nem jelenik meg normál Admin read modelben.
-- Teszt: duplicate webhook, payment pending/failed/refund, expired entitlement, unauthorized download, cancellation, provider outage.
-- PASS: nincs saját kézi payment-state kitalálás; webhook idempotens; entitlement a valós eseményből változik; digitális termék hozzáférése visszavonható.
+#### FAN_IDENTITY — Publikus rajongói fiók
+- Művelet: regisztráció/bejelentkezés, profil/preferences, consent, export/delete és account security.
+- Adatforrás: fan identity store; creator/Admin identitytől elkülönített lifecycle.
+- Jogosultság/teszt: cross-account/site access, session expiry, duplicate signup, account export/delete, consent withdrawal.
+- PASS feltétel: nincs Admin-sessionnel való hallgatólagos összevonás, cross-account adatkiolvasás vagy nyom nélküli privacy request.
 
-#### ANL/CAM — Analytics, kampány és szponzoráció
-- Művelet: date range/filter/compare/export, campaign create, UTM/link mapping, media kit, sponsor leads/deal deliverables.
-- Adatforrás: canonical event taxonomy, provider analytics adapter, campaign entity; minden mérőszám source/freshness/unit címkével.
-- Teszt: missing metrics, timezone boundaries, duplicate events, bot traffic, consent denied, provider API changes, export access.
-- PASS: becsült és mért adat külön; provider nélküli metric nem nullával vagy kitalált értékkel helyettesül; PII nem kerül aggregált riportba szükségtelenül.
+#### STO — Bolt és kereskedelem
+- Művelet: product catalog/variants/price, cart/checkout, order lifecycle, fulfillment/refund, coupon/promotion és digital delivery.
+- Adatforrás: PRODUCT + ORDER; payment provider adapter az INTEGRATION szerződését használja; entitlement döntés külön domainben.
+- Jogosultság/teszt: duplicate webhook, pending/failed/refund, unauthorized download, cancellation, provider outage, VAT/merchant-of-record döntés.
+- PASS feltétel: nincs kézzel kitalált payment state; webhook idempotens; digitális hozzáférés visszavonható; a Store nem birtokol membership entitlementet.
+
+#### SUP/ENTITLEMENT — Támogatás, tagság és hozzáférési jogosultság
+- Művelet: tip/support state, membership tiers, perks, renewal/cancel/failed payment, entitlement grant/revoke és Discord role sync.
+- Adatforrás: SUPPORT provider-confirmed state + ENTITLEMENT canonical access decisions; Discord role az entitlementből származik.
+- Jogosultság/teszt: duplicate event, failed payment, refund/chargeback, expiry, role-sync retry, member-only content access.
+- PASS feltétel: UI nem adhat hozzáférést saját döntésből; entitlement csak valós, idempotens domain eseményből változik.
+
+#### CAM/SPONSORSHIP — Szponzoráció és üzleti kampányok
+- Művelet: campaign, lead/deal, media kit, deliverable/deadline, UTM/affiliate, private business documents és sponsor reporting.
+- Adatforrás: CAMPAIGN + SPONSORSHIP; landing page a WEB domainben, content a CNT domainben, metrika az ANALYTICS domainben.
+- Jogosultság/teszt: private-document authorization, consent/attribution, missing metric, deal approval, export scope.
+- PASS feltétel: üzleti dokumentum nem szivárog publikus felületre; AI nem vállal árat/szerződést; campaign nem másolja a content/order/analytics rekordokat.
+
+#### ANL — Analytics és növekedés
+- Művelet: date range/compare/filter/export, normalized event metrics, anomaly alerts és source/freshness/quality display.
+- Adatforrás: ANALYTICS read model, canonical event taxonomy és provider analytics; forrás-domain rekordot nem módosít.
+- Teszt: missing metrics, timezone boundaries, duplicate events, bot traffic, consent denied, provider API change, export authorization.
+- PASS feltétel: becsült/mért adat külön; hiányzó adat nem hamis nulla; metrika forrása/unit/window/freshness jelölt.
 
 #### AUT — Automatizáció
-- Művelet: trigger/condition/action builder, dry-run, approve, enable/pause, version, run history, retry and dead-letter.
-- Adatforrás: event registry, action registry, durable job/run log.
-- Teszt: duplicate event, cycle, action permission removed, provider outage, timeout, retry exhaustion, timezone boundary, partial failure.
-- PASS: minden action explicit allowlist; idempotency key; retry limit/backoff; pause megállítja a következő futást; run logból hiba diagnosztizálható.
+- Művelet: trigger/condition/action builder, dry-run/approval, enable/pause/version, run history, retry/dead-letter/recovery.
+- Adatforrás: automation trigger catalog, action registry, durable job/run log; domainmódosítás csak canonical command/API-n keresztül.
+- Teszt: duplicate event, cycle, permission removed, provider outage, timeout, retry exhaustion, timezone boundary, partial failure.
+- PASS feltétel: explicit allowlist, idempotency key, bounded retry/backoff; pause megállítja a következő futást; run logból hiba diagnosztizálható.
 
 #### AI — SANCI AI
-- Művelet: plan/proposal, preview diff, structured action, approve/reject, execute, verify, rollback.
-- Adatforrás: csak engedélyezett context; domain read APIs; változtatás canonical command/API útvonalon.
-- Jogosultság: AI nem adhat magának permissiont; destructive/public/financial/deploy action explicit emberi approvalt igényel.
-- Teszt: prompt injection, invalid schema, wrong site, stale context, quota exceeded, provider unavailable, action partial failure, rollback.
-- PASS: nincs arbitrary code execution vagy secret access; minden mutation auditált; AI kikapcsolásakor a core kézi folyamatok működnek.
+- Művelet: plan/proposal, context selection, preview diff, structured action, approve/reject, execute/verify/rollback.
+- Adatforrás: permission-filtered context és domain read APIs; mutáció canonical command/API útvonalon.
+- Jogosultság/teszt: prompt injection, invalid schema, wrong site, stale context, quota, provider unavailable, partial failure, rollback.
+- PASS feltétel: AI nem adhat magának permissiont; nincs arbitrary code execution vagy secret access; public/destructive/financial action explicit approvalt igényel; AI nélkül a core manuális folyamatok működnek.
 
-#### SEC/OPS — Biztonság, beállítások és üzemeltetés
-- Művelet: auth/session, role/ownership, audit, health/version, alerts, migration preflight, backup/restore, incident response.
-- Adatforrás: canonical identity/site ownership, structured logs and migration ledger; secrets külön kezelt.
-- Teszt: unauthorized, cross-site, session expiry/revocation, rate limit, log redaction, migration rollback, restore integrity.
-- PASS: least privilege; fail closed; migráció előre ellenőrzött; backup visszaállítható; incident/rollback dokumentált és próbált.
+#### SEC — Biztonság, identitás és adatvédelem
+- Művelet: auth/session, RBAC/ownership, tenant isolation, CSRF/OAuth, XSS/SSRF/injection, secret lifecycle, audit/privacy/consent.
+- Adatforrás: IDENTITY/SITE/SETTINGS/AUDIT és secret store; fan identity külön policy.
+- Teszt: unauthorized, cross-site, session expiry/revocation, rate limit, log redaction, webhook replay, export/delete.
+- PASS feltétel: least privilege, fail closed, server-side authorization minden domainműveletnél, titok nem kerül kliensre/logba.
 
-#### LOC/TEAM/MKT — Localization, teams and extensions
-- Művelet: locale content, translation workflow, invites/roles, workspace switch, extension manifest/install/update/uninstall.
-- Adatforrás: canonical locale/page data, membership/role model, versioned extension manifest.
-- Teszt: fallback, missing translation, locale URL/SEO, revoked invite, cross-site permission, extension over-permission, failed update/uninstall.
-- PASS: locale nem keveri a tartalmat; role server-en ellenőrzött; extension explicit permissiont kér; eltávolítás után nem marad árva adat vagy executable hook.
+#### OPS/BACKUP — Üzemeltetés, diagnosztika és recovery
+- Művelet: health/version, structured logs/correlation, alerting, migration preflight, backup/restore, incident/rollback, dependency review.
+- Adatforrás: OPS telemetry, migration ledger és BACKUP manifest/snapshots/restore jobs.
+- Teszt: migration integrity, failed job, restore drill, rollback, secret redaction, performance/query baseline.
+- PASS feltétel: backup visszaállítható és próbált; hiba látható; incident/recovery runbook és rollback bizonyított.
 
+#### LOC — Lokalizáció
+- Művelet: translation keys/fallback, locale-specific page/content/navigation, glossary, completeness, AI-assisted translation review.
+- Adatforrás: LOCALIZATION service + PAGE/CONTENT locale variants; Admin UI locale külön a public content locale-tól.
+- Teszt: missing translation, fallback, localized slug/SEO, RTL, long strings, DST/currency formats.
+- PASS feltétel: nincs nyelvkeveredés; hiányos fordítás nem jelölhető késznek; AI fordítás draft és emberi review szükséges.
+
+#### SET/SEO/FORM — Site settings, SEO/publication és form submission
+- Művelet: scoped settings, custom domain, SEO metadata/redirect/sitemap, form schema/submission/consent/spam review.
+- Adatforrás: SITE/SETTINGS/SEO_PUBLICATION/FORM_SUBMISSION; public-safe projection külön a privát mezőktől.
+- Teszt: invalid domain, canonical/robots conflict, sitemap invalidation, form spam, consent absent, submission export/delete.
+- PASS feltétel: secret/private mező nem kerül public outputba; SEO csak validált publikált állapotot követ; form submission site-scoped és consent-aware.
+
+#### DYN — Dinamikus adatbinding
+- Művelet: source registry, binding schema, type/field validation, whitelist transforms, conditional visibility, state machine and diagnostics.
+- Adatforrás: canonical domain read APIs; binding csak referenciát és megjelenítési konfigurációt tárol.
+- Teszt: invalid reference, wrong field type, unauthorized source, stale/partial data, missing source, cache invalidation.
+- PASS feltétel: nincs arbitrary query/code execution; published-only/permission boundary szerveroldali; source hiba látható.
+
+#### SEARCH/NOTIFICATION — Keresés és értesítések
+- Művelet: permission-aware global search, module search, in-app/email/push notification, preferences, digest/silent period and delivery retry.
+- Adatforrás: SEARCH derived index + NOTIFICATION delivery/preference state; canonical domain record az eredeti forrás marad.
+- Teszt: permission revoke, stale index, hidden private record, duplicate event, delivery failure, unsubscribe/silent period.
+- PASS feltétel: nincs jogosulatlan találat vagy snippet; az értesítés nem jelez kézbesítést provider confirmation nélkül; duplikált event deduplikált.
+
+#### DEV — Developer platform/API
+- Művelet: API docs/versioning, scoped key lifecycle, creator-defined outbound webhook registry/tester, sandbox, SDK and quota.
+- Adatforrás: DEVELOPER_API; secrets one-time display/secret store; outbound webhooks külön az INT inbound provider webhooktól.
+- Teszt: key rotation/revoke, scope escalation, tenant crossing, signature failure, replay, retry exhaustion and quota.
+- PASS feltétel: nincs secret leak, scope escalation vagy nem auditált delivery; csak dokumentált API-version és scope használható.
+
+#### EXTENSION/MKT — Bővítmények és piactér
+- Művelet: manifest/permission review, install/update/uninstall/migration, signature/provenance, sandbox, compatibility and marketplace listing.
+- Adatforrás: EXTENSION registry és versioned manifest; bővítmény nem írhat közvetlenül idegen domain táblába.
+- Teszt: over-permission, unsigned package, failed update, migration rollback, orphaned hook/data, revoked permission.
+- PASS feltétel: minimum privilege, reviewed origin, reversible install lifecycle; uninstall után nincs executable hook vagy árva jogosultság.
+
+#### TEAM/WORKSPACE/BILLING_PLAN — Csapat, több site és SaaS
+- Művelet: workspace/site switch, invite/revoke, roles, client workspace, plan/usage/quota/billing lifecycle.
+- Adatforrás: WORKSPACE + BILLING_PLAN; Store ORDER és fan ENTITLEMENT külön marad.
+- Teszt: invite expiry/revoke, active-scope switch, cross-site negative test, quota exceeded, plan downgrade, export/migration.
+- PASS feltétel: minden kérés aktív server-side scope-ban fut; nincs tenant data mixing; billing/plan állapot nem állítható kliensből.
+
+#### QA — Minőség és acceptance evidence
+- Művelet: typecheck/build/CI, domain/API/integration, authorization negative, migration, browser/responsive/accessibility, E2E and production smoke.
+- Adatforrás: test run, CI artifact, commit, runtime evidence and user acceptance log.
+- PASS feltétel: csak tényleges futási eredmény jelölhető PASS-nak; a specifikáció vagy a létező tesztfájl önmagában nem bizonyítja a funkciót.
 ### 26.4. Általános negatív tesztkövetelmény
 Minden mutációs domain legalább az alábbi negatív eseteket teszteli:
 - hiányzó/hibás mező;
