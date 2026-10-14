@@ -1,3 +1,5 @@
+**HISTORICAL / SUPERSEDED AS A SEPARATE PLAN.** Its single-Page-Model and lossless real-page migration requirements remain mandatory in `docs/MASTER-DEVELOPMENT-PLAN.md` (GAP-13/GAP-14 and F0.3–F0.7). This file must not create a second active Editor roadmap.
+
 # Sanci9517 V2 — TERVMÓDOSÍTÁS: EGYSÉGES PAGE MODEL ÉS SÁNCI BRAND EDITOR
 
 > Ez a dokumentum a `docs/DEVELOPMENT-PLAN.md` és `docs/V2-BLUEPRINT.md` kiegészítése. Az itt szereplő döntések az Editor és a publikus oldalak tekintetében elsőbbséget élveznek a korábbi, egymással ütköző editor/legacy átmeneti megoldásokkal szemben.
