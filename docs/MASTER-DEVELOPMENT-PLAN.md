@@ -14,10 +14,10 @@
 ### 0.0. Új beszélgetés folytatási protokoll — kötelező
 - **Az egyetlen fejlesztési terv:** `docs/MASTER-DEVELOPMENT-PLAN.md` a `sanci9517/sanci9517` repository `v2/foundation` ágán. Ezt kell elsőként megnyitni minden új beszélgetésben.
 - **Aktív munkapont:** `P0-PRODUCT-BASELINE-AND-EXECUTION-CONTRACT` / `P0.2-ARCHIVE-RECONCILIATION-AND-BIDIRECTIONAL-FEATURE-TRACEABILITY`.
-- **Folytatási sorrend:** először a jelen fájl 0.2 aktív állapotát és 37.3 P0-állapotát, majd a 37.9–37.32 auditjegyzeteket és a 41.3.24–41.3.79 közötti legfrissebb forrásleltárakat, szemantikai korrekciókat és státuszokat kell elolvasni; utána az archív források még nyitott sorait kell folytatni. A 41.3.51 szerkezeti újraszámlálás és a 41.3.53–41.3.76 korrekciók frissebbek a korábbi összefoglaló számlálásoknál.
+- **Folytatási sorrend:** először a jelen fájl 0.2 aktív állapotát és 37.3 P0-állapotát, majd a 37.9–37.32 auditjegyzeteket és a 41.3.24–41.3.80 közötti legfrissebb forrásleltárakat, szemantikai korrekciókat és státuszokat kell elolvasni; utána az archív források még nyitott sorait kell folytatni. A 41.3.51 szerkezeti újraszámlálás és a 41.3.53–41.3.76 korrekciók frissebbek a korábbi összefoglaló számlálásoknál.
 - **Az archívum nem második terv:** az `docs/archive/**`, `docs/archive/plans/**`, régi checkpointok, issue-k, PR-ek és korábbi beszélgetések történeti források/bizonyítékok. Nem állíthatnak be másik aktív pontot, nem írhatják felül a jelen fájl aktív állapotát. Követelményük viszont nem törölhető; ha még nincs reconciliálva, nyitott tételként kell felvenni ebbe a MASTER-be.
 - **Nincs külön audit- vagy funkciólista-terv:** az auditjegyzék, a forrásproveniencia, a funkciókatalógus, a döntések, a függőségek és az acceptance ugyanebben a fájlban él. Kiegészítő fájl csak nyers bizonyíték/kivonat lehet, végrehajtási igazságforrás nem.
-- **Új chatnek szánt rövid folytatási szöveg:** „A `docs/MASTER-DEVELOPMENT-PLAN.md` az egyetlen irányadó terv. Olvasd el a 0.0, 0.2, 37.3, 37.9–37.32 és 41.3.24–41.3.79 fejezeteket, különösen a legfrissebb auditjegyzeteket. Az aktív pont P0.2; folytasd a C.23/F.1–F.13 és a H19–H34, MASTER-FINAL-ROADMAP, SANCI-MASTER-PLAN, V2-BLUEPRINT források szemantikai reconciliációját, a hiányzó 00/A és 00.9–00.9.6.B források további keresését, majd mind a 359 funkció-ID owner/phase/dependency/DoD/test/acceptance szerződésének lezárását. Ne állíts PASS-t bizonyíték nélkül, ne indíts párhuzamos feature-fejlesztést, és a végső funkciólista közös ellenőrzését még ne kérd.”
+- **Új chatnek szánt rövid folytatási szöveg:** „A `docs/MASTER-DEVELOPMENT-PLAN.md` az egyetlen irányadó terv. Olvasd el a 0.0, 0.2, 37.3, 37.9–37.32 és 41.3.24–41.3.80 fejezeteket, különösen a legfrissebb auditjegyzeteket. Az aktív pont P0.2; folytasd a C.23/F.1–F.13 és a H19–H34, MASTER-FINAL-ROADMAP, SANCI-MASTER-PLAN, V2-BLUEPRINT források szemantikai reconciliációját, a hiányzó 00/A és 00.9–00.9.6.B források további keresését, majd mind a 359 funkció-ID owner/phase/dependency/DoD/test/acceptance szerződésének lezárását. Ne állíts PASS-t bizonyíték nélkül, ne indíts párhuzamos feature-fejlesztést, és a végső funkciólista közös ellenőrzését még ne kérd.”
 
 Ez a dokumentum egyszerre termékspecifikáció, architekturális szerződés, funkciókatalógus, tesztelési szabályzat és végrehajtási lista. Minden fejlesztési feladatot ebből kell kiválasztani és ide kell visszavezetni. Minden funkcióhoz tartozzon felhasználói cél, felület, domain-tulajdonos, adatforrás, jogosultság, függőség, teszt és elfogadási feltétel.
 
@@ -1112,41 +1112,41 @@ Az alábbi jegyzék a menüfunkciókat külön, stabil munkapontokra bontja. A s
 - EDT-001: Canonical Page Model schema/version.
 - EDT-002: Node IDs and parent/child invariants.
 - EDT-003: Command mutation pipeline.
-- EDT-004: Transaction/batch/rollback semantics.
-- EDT-005: Undo/redo history integrity.
+- EDT-004: Transaction/batch/rollback semantics, including grouped drag/resize/typing changes.
+- EDT-005: Undo/redo history integrity and internal-action exclusion; advanced branch history is phase-gated.
 - EDT-006: Selection state synchronization.
-- EDT-007: Canvas viewport, zoom, pan and fit.
+- EDT-007: Canvas viewport, zoom, pan, fit, rulers, safe area and device-frame preview where approved.
 - EDT-008: Canvas drag/drop.
 - EDT-009: Canvas resize/geometry constraints.
-- EDT-010: Alignment guides/snap/grid.
-- EDT-011: Reorder/reparent/duplicate/delete.
+- EDT-010: Alignment guides/snap/grid and spacing/box-model visualization.
+- EDT-011: Reorder/reparent/group/ungroup/duplicate/delete.
 - EDT-012: Layers tree expand/collapse.
 - EDT-013: Layers/canvas/Inspector selection sync.
 - EDT-014: Layer rename/hide/lock and hierarchy.
 - EDT-015: Element/Block Library and search.
-- EDT-016: Section/Container/Stack/Row/Columns/Grid.
+- EDT-016: Section/Container/Stack/Row/Columns/Grid with allowed-child and slot/capacity validation.
 - EDT-017: Text/Heading/Link/Button/Icon/Divider/Spacer.
-- EDT-018: Image/Video/Embed/List/Card/Badge.
-- EDT-019: Table/Accordion/Tabs/Form capability.
+- EDT-018: Image/Video/Audio/Gallery/Carousel/Embed/List/Card/Badge.
+- EDT-019: Table/Accordion/Tabs/Dropdown/Modal/Dialog/Tooltip/Popover/Toggle/Disclosure/Form capability.
 - EDT-020: Dynamic Sanci block configuration.
-- EDT-021: Inspector Property Registry.
-- EDT-022: Inspector schema validation and control types.
+- EDT-021: Inspector Property Registry, property search and advanced property controls.
+- EDT-022: Inspector schema validation, control types, unit/spacing controls and shorthand/expanded editing.
 - EDT-023: Inspector resolved viewport value.
 - EDT-024: Responsive override/inheritance/reset.
-- EDT-025: Responsive desktop/tablet/mobile preview.
+- EDT-025: Responsive desktop/tablet/mobile/orientation preview and device frame.
 - EDT-026: Responsive visibility/order/column changes.
 - EDT-027: Dirty state and explicit Save Draft.
 - EDT-028: Save/reload round-trip.
 - EDT-029: Revision conflict recovery.
 - EDT-030: In-flight edit preservation during save.
-- EDT-031: Network failure/retry/local recovery.
+- EDT-031: Network failure/retry/local recovery and multi-tab detection.
 - EDT-032: Preview without publishing.
 - EDT-033: Explicit publish separate from save.
 - EDT-034: Public renderer parity with Editor preview.
 - EDT-035: Mobile Editor action bar/safe area.
 - EDT-036: Mobile Layers/Inspector panel switching.
 - EDT-037: Keyboard-accessible canvas alternatives.
-- EDT-038: Copy/paste and multi-select where enabled.
+- EDT-038: Copy/paste, cross-page paste preview, structure/style-only paste and multi-select where enabled.
 - EDT-039: Interactions and action registry.
 - EDT-040: Motion/reduced-motion behavior.
 - EDT-041: Empty-project onboarding and template start.
@@ -1155,7 +1155,7 @@ Az alábbi jegyzék a menüfunkciókat külön, stabil munkapontokra bontja. A s
 ### 24.4. Design system, templates and components — DSN
 - DSN-001: Global design token schema.
 - DSN-002: Token editor and live preview.
-- DSN-003: Token usage/dependency map.
+- DSN-003: Token usage/dependency map and unused-token detection when phase-approved.
 - DSN-004: Global change diff and rollback.
 - DSN-005: Theme and brand presets.
 - DSN-006: Responsive defaults and breakpoint tokens.
@@ -1170,12 +1170,12 @@ Az alábbi jegyzék a menüfunkciókat külön, stabil munkapontokra bontja. A s
 - DSN-015: Template import/export.
 - DSN-016: Button Registry and global button styles.
 - DSN-017: Icon/action registry linkage.
-- DSN-018: Future community/marketplace templates.
+- DSN-018: Future community/marketplace templates and component documentation.
 
 ### 24.5. Resource/media/icons/fonts — RES
 - RES-001: Canonical asset registry and IDs.
 - RES-002: R2 binary storage and D1 metadata.
-- RES-003: Upload validation/progress/cancel/retry.
+- RES-003: Upload validation/progress/cancel/retry and resumable strategy where needed.
 - RES-004: Image preview/thumbnail/variant.
 - RES-005: Media search/filter/sort/pagination.
 - RES-006: Collections/tags/folders.
@@ -1465,7 +1465,7 @@ Ezek a stabil ID-k azért szükségesek, mert a korábbi követelménykatalógus
 - SEO-001: Per-page title, description, canonical URL és robots policy.
 - SEO-002: Open Graph, X/Twitter card és social preview/image validation.
 - SEO-003: Validált structured data/schema.org, ahol releváns.
-- SEO-004: Sitemap és robots.txt lifecycle, publish/cache invalidation.
+- SEO-004: Sitemap és robots.txt lifecycle, publish/cache invalidation és noindex draft/preview policy.
 - SEO-005: SEO preview/diagnostics, duplicate/missing metadata és page-level audit.
 
 **Függőségi szabály:** SET/DYN/SEO csak a canonical Page Model, Resource, domain ownership és publish contracton keresztül működhet. Ezek nem adhatnak alternatív persistence vagy publikálási útvonalat. A korábbi ID-k megmaradnak; a crosswalk az eredeti követelményt a legpontosabb új vagy meglévő ID-hoz rendeli.
@@ -3048,6 +3048,81 @@ Every capability must define, where applicable:
 - A kiadási fázisokat a jelen terv 39. fejezete határozza meg. Az első kiadásból kimaradó képesség későbbi, explicit fázisban marad; nem törölhető.
 - Do not build every advanced feature before the basic editor is reliable. Prefer a complete, testable capability inventory and a single dependency-ordered implementation path over rushed parallel work.
 - This appendix adds no second editor, no second Page Model, no second Property Registry, no second Resource store, no second Schedule domain and no alternate save/publish route.
+
+
+### 38.23 — MASTER-1.2 source-driven editor contract expansions and Core Gate
+
+**Authority:** this section resolves selected detail-review flags from the historical `MASTER-1.2-VISUAL-EDITOR-SPEC.md` source ledger (§41.3.79). It does not activate the old E0–E10 sequence and does not close P0.2. These are canonical requirements for the owning future build point; no runtime PASS is implied.
+
+#### Canonical element and action coverage
+- The canonical element catalog must account for Text/Rich Text, Quote, List/Numbered List, Table, Code, Badge, Icon, Image, Gallery, Video, Audio, Embed, Modal/Dialog, Tooltip, Popover, Toggle, Disclosure, Search, Filter, Sort, Form controls, Breadcrumbs, Pagination, Countdown, Progress and Notification where supported by the owning component/action contracts.
+- Sanci-specific dynamic blocks must remain mapped to the same canonical provider/domain owners: Twitch/live, YouTube, TikTok only when supported by provider capability, Discord/integration data, Schedule, VOD, Support, Community, Game Card/List and follower/subscriber/stream metrics where permitted.
+- `group.create` and `group.ungroup` are explicit structured command names under the canonical Editor command pipeline; both require schema validation, target/hierarchy validation, permission checks, before/after state, history transaction, idempotency where needed and undo/redo coverage. They are not arbitrary DOM operations.
+- Component child/slot/capacity rules are validated at Page Model/schema time and during command execution. Invalid child type, invalid slot, capacity overflow, circular parent and unsupported nesting are rejected before persistence.
+
+#### Layout, Inspector and design-system detail
+- Layout/Inspector acceptance covers fixed/auto/fit-content/fill, min/max, percentages, viewport units, intrinsic/fluid sizing, clamp, aspect ratio; margin/padding/gap and permitted negative margin; flex direction/reverse/wrap/justify/align/align-content/order/grow/shrink/basis/self; grid tracks/minmax/auto-fit/auto-fill/areas/placement; static/relative/absolute/fixed/sticky positioning, inset/z-index/stacking context; overflow visible/hidden/auto/scroll/x/y/clip/text-overflow.
+- Property controls must expose schema/default/type validation/reset/inheritance/explicit override/responsive override/token link/undo behavior, property search, color and unit selectors, linked/unlinked spacing sides, inherited/overridden and invalid-value indicators, and shorthand/expanded editing where the property supports it.
+- Design-token diagnostics include token usage/dependency lookup; unused-token detection remains a phase-gated diagnostic under DSN-003, not a separate design-token system.
+- Canvas acceptance includes zoom presets, fit, grid/guides/snap, rulers, safe area, device frame, full-page/focus-selected views, selection/hover/parent outline, spacing/box-model visualization, breakpoint indicator, scroll preservation, alignment/distribute/match-size/distance/smart-guides and snap-to-sibling/container behavior.
+- Editor panels must support the scoped resizable/collapsible behavior and persisted panel state already listed in §38.17; panel persistence is not a second state store.
+
+#### Clipboard, history, persistence and responsive detail
+- Clipboard coverage includes copy/cut/paste/duplicate, cross-page paste, duplicate-ID regeneration, paste into selected parent, structure-only/style-only paste, internal clipboard, sanitized external structured paste, paste preview, unsupported-element fallback, and bulk style/delete/move/duplicate. Every pasted node receives valid IDs and schema validation before mutation.
+- History must group drag/resize and typing changes into meaningful transactions, support undo/redo and entry preview/restore where scoped, enforce history limits and exclude internal/non-user actions from user-visible undo history. Branch history is a **DEFERRED advanced capability** unless explicitly activated by a later phase; it is not a blocker for the first usable Editor slice.
+- Save/recovery coverage includes manual save, autosave, debounce, save queue, duplicate-save protection, retry/timeout, revision/ETag conflict detection, merge/reload/overwrite policy, local/crash recovery snapshots and cleanup, plus multi-tab detection. The existing EDT-027–EDT-031 contracts remain the owners.
+- Responsive acceptance includes desktop/tablet/mobile/custom viewport, orientation, custom breakpoints, inheritance/explicit override/reset, width/height/padding/margin/gap/typography/display/position/alignment/visibility/order/flex/grid/image crop/container max-width. The renderer and Editor must consume the same base values and breakpoint overrides.
+- Media coverage includes resumable upload where needed, folders/search/filter/sort, preview/metadata/dimensions/duration/crop/focal point/alt text/replace/delete/usage/orphan detection/cleanup/bulk operations/variants and secure object access.
+- SEO coverage includes draft/preview noindex policy as well as title/description/canonical/robots, Open Graph/social preview, structured data, sitemap and publish/cache invalidation.
+
+#### Explicit future disposition, not a silent omission
+- **Page-level editing lock:** retain as a future collaboration/concurrency requirement. It is distinct from the existing layer lock (EDT-014) and must not be claimed as covered by layer locking. The canonical owner/ID decision remains open between the future TEAM/concurrency contract and EDT revision-conflict handling; no new stable ID is added before P0.2 finishes its source/ID reconciliation.
+- **Branch history:** DEFERRED under EDT-005; ordinary undo/redo and revision history remain required.
+- **Unused-token detection:** retain as a phase-gated DSN-003 diagnostic.
+- **Device frame, spacing visualizer, orientation-specific preview, paste preview, shorthand/expanded property controls and component documentation:** retained under the existing EDT/DSN owners above; acceptance must be defined when the owning build point becomes active.
+- **Old editor E0–E10 labels and unchecked boxes:** historical sequence only. The requirements survive; the phase order does not.
+
+#### Editor Core Gate — 36/36 manual acceptance
+The old spec's 36-step manual gate is retained as a future Editor acceptance artifact under QA-004/QA-006/QA-008/QA-009 and the owning EDT IDs. It is not active while P0.2 is open. **Every step must pass; one failure means the Core Gate fails.**
+
+1. Open the Editor.
+2. Load a page.
+3. Create a container.
+4. Create a heading.
+5. Create text.
+6. Edit the text and verify the change.
+7. Create a button.
+8. Select an element.
+9. Reselect an element.
+10. Multi-select.
+11. Group.
+12. Ungroup.
+13. Verify parent-child structure.
+14. Reparent.
+15. Drag/drop.
+16. Change a property in Inspector.
+17. Change a responsive property.
+18. Copy/paste.
+19. Duplicate.
+20. Delete.
+21. Undo.
+22. Redo.
+23. Save.
+24. Reload.
+25. Verify D1 persistence.
+26. Preview.
+27. Publish.
+28. Verify the public renderer.
+29. Verify recovery.
+30. Verify save retry.
+31. Verify conflict detection.
+32. Verify permission rejection.
+33. Verify invalid-schema rejection.
+34. Verify mobile.
+35. Verify tablet.
+36. Verify desktop.
+
+The separate 25-category minimum test matrix in source keys `M12-L0618`–`M12-L0642` also remains required: schema, validation, command, hierarchy, selection, Inspector, layout, responsive, history, persistence, recovery, conflict, preview, publish, public renderer, media, accessibility, permissions, mobile, tablet, desktop, regression, performance, large document and invalid-document recovery.
 
 ## 39. Teljes Brand & Creator Platform — végrehajtási életciklus
 
@@ -8495,3 +8570,36 @@ The following rows were flagged because they express behavior that must be expli
 | `M12-L0801` | Core Gate 36/36 sikeres; | Preserve the full 36-step manual Editor Core Gate; old E0–E10 order is superseded. |
 
 **Ledger statistics:** 590 source list/test items keyed; 12 critical prose constraints keyed. The rows deliberately use candidate mappings only. P0.2 remains **IN PROGRESS / NOT PASS** until every row has an evidence-backed final disposition, all genuine gaps are added to the canonical scope, and no source item is left unowned.
+
+
+### 41.3.80. P0.2 — MASTER-1.2 flagged-detail review and explicit dispositions (2026-10-14)
+
+**Scope:** review the 134 rows flagged by the draft candidate crosswalk in §41.3.79. These flags were generated to prevent quiet omission; they are not 134 confirmed missing features. The canonical detailed contract is now expanded in §38.23, with the following decisions.
+
+| Source keys / detail group | Decision | Canonical owner / mapping | Remaining condition |
+|---|---|---|---|
+| `M12-L0023` legacy stabilizer; `M12-L0776`–`M12-L0781` old runtime/groupId/window API prohibitions | KEEP — hard legacy-isolation constraint. | EDT-001/002, WEB-012, OPS-005; §38.4 and §38.23. | Never reactivate legacy runtime; verify against actual code only at the owning implementation gate. |
+| `M12-L0040` page-level lock | DEFER / KEEP; **not covered by layer lock**. | Future TEAM/concurrency owner; candidate relation to EDT-029. | Final owner/ID and phase decision remains open; do not claim this capability is implemented or included in 1.0 core. |
+| `M12-L0062`–`M12-L0067`, `M12-L0585`–`M12-L0588`, `M12-L0795` group/ungroup | EXPAND existing contract; no new ID yet. | EDT-003/011, AI-005/008; §38.23. | Explicit `group.create` / `group.ungroup` command schemas, history and negative tests required. |
+| `M12-L0077`, `M12-L0114` supported child/slot/capacity | KEEP/EXPAND existing schema contract. | EDT-001/002/016/022; §38.23. | Invalid child/slot/capacity rejection must be part of acceptance. |
+| `M12-L0084`–`M12-L0114` base elements and Sanci blocks | KEEP under the existing canonical element/component and provider domains; no duplicate element registry. | EDT-015–020, RES, WEB-009/010/020, INT/LIV/SCH/COM; §38.8, §38.18 and §38.23. | Verify actual per-element schema, states, responsive behavior, permissions and public renderer parity when the Editor catalog is implemented. |
+| `M12-L0179` shorthand/expanded property editing | KEEP/EXPAND. | EDT-021/022; §38.23. | Define supported property types and positive/negative tests. |
+| `M12-L0185`–`M12-L0245` sizing, spacing, flex, grid, position and overflow | KEEP/EXPAND existing layout/Inspector contracts. | EDT-009/016/021/022/024; §38.5 and §38.23. | Exact allowed-value matrix and invalid-value rejection must be testable. |
+| `M12-L0293`–`M12-L0312` canvas, rulers, safe area, device frame and spacing visualization | KEEP/EXPAND existing canvas/responsive owners. | EDT-007/010/025; §38.3, §38.9 and §38.23. | Include explicit device-frame/spacing-visualizer acceptance; not a second canvas state. |
+| `M12-L0326` persisted panel state | COVERED as a planned Editor-workspace behavior; not runtime PASS. | EDT-036/ADM-008; §38.17 and §38.23. | Acceptance remains with the owning Editor build point. |
+| `M12-L0336`–`M12-L0348` clipboard/bulk operations | KEEP/EXPAND. | EDT-038/011, EDT-001/022; §38.23. | Cross-page paste, paste preview, structure/style-only modes, ID regeneration, safe fallback and bulk-operation tests required. |
+| `M12-L0355`–`M12-L0364` history details | KEEP/EXPAND internal-action exclusion and grouped transactions; DEFER branch history. | EDT-004/005; §38.14 and §38.23. | User-visible undo history must not be polluted by internal actions; branch history remains explicitly deferred. |
+| `M12-L0367`–`M12-L0379` save/recovery/multi-tab | KEEP under existing persistence IDs. | EDT-027–031; §38.14 and §38.23. | Retry, timeout, ETag conflict, local/crash recovery, cleanup and multi-tab tests required. |
+| `M12-L0385`–`M12-L0403` responsive/orientation | KEEP/EXPAND. | EDT-023–026, QA-004; §38.9 and §38.23. | Orientation/custom viewport and override/reset acceptance required. |
+| `M12-L0472` component documentation; `M12-L0483` resumable upload | KEEP under existing component/media contracts. | DSN-018, RES-003; §38.2/38.13/38.23. | Resumable strategy only where needed; documentation belongs to the canonical component definition. |
+| `M12-L0527` draft/preview noindex | COVERED in the public SEO/publish contract; no separate ID. | SEO-004, WEB-004/005/031; §38.15 and §38.23. | Must be verified in published runtime/SEO tests, not inferred from plan presence. |
+| `M12-L0587`–`M12-L0607` structured AI command contract | KEEP/EXPAND. | AI-005–009, EDT-003/004, SEC-002; §38.20 and §38.23. | Schema, permission, target validation, before/after, audit, undo/redo and idempotency tests required. |
+| `M12-L0618`–`M12-L0642` minimum test categories | KEEP as minimum Editor QA coverage. | QA-001–009; §38.21 and §38.23. | All 25 categories must have explicit test evidence. |
+| `M12-L0646`–`M12-L0681` 36-step manual Core Gate; `M12-L0683` all-or-nothing rule | KEEP as Editor Core Gate 36/36. | QA-004/006/008/009 and owning EDT IDs; §38.23. | Gate is future-phase only and cannot pass with any failed/missing step. |
+| `M12-L0789`–`M12-L0804` Definition of Done | KEEP and align with §38.23 plus owning F0.x DoD. | EDT/WEB/QA; §38.23. | Old E0–E10 order is superseded; the behavior and acceptance requirements remain. |
+
+**Coverage result:** all 590 source list/test items and 12 critical prose constraints now have stable source keys in §41.3.79 and candidate IDs; the 134 draft review flags have explicit disposition categories above. This is a substantial traceability improvement, **not final semantic PASS**: the source-to-ID mapping still requires row-level evidence verification, and the original `00/A` and `00.9–00.9.6.B` primary source bodies remain unrecovered.
+
+**Next action:** validate the remaining §41.3.79 rows in source order, confirm every candidate against the exact detailed C/E/F/§38 contract, close the page-lock owner/phase decision, then continue the original missing-source search. P0.2 remains **IN PROGRESS / NOT PASS**; no feature implementation or final shared feature-list review is authorized.
+
+**Status:** canonical Editor detail requirements expanded without adding or deleting stable IDs; the 359-ID count remains unchanged. Documentation-only; no runtime code/data/configuration changed and no tests were run.
