@@ -2683,9 +2683,9 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.9-05 | Separate public/preview/admin permission boundaries; no draft or secret leakage in logs/export | SEC-002, SEC-008, WEB-005, WEB-006, WEB-031, OPS-002, OPS-005 | KEEP | 0.x–1.0 | QA-003/004 |
 | F.9-06 | Performance budgets based on measured baseline; image variants/lazy load/cache invalidation/Core Web Vitals/large-tree tests | OPS-008, WEB-030, RES-004 | EXPAND | 1.0 baseline; advanced optimization phased | QA-005/006 |
 | F.9-07 | Visual regression for public home/navigation/schedule, Editor state and desktop/tablet/mobile | WEB-009, WEB-011, WEB-014, WEB-016, EDT-035–EDT-037 | KEEP | 1.0 release gate | QA-004/005 |
-| F.10-01 | Versioned export of Page/revision/theme/template/component/media refs/domain data; never export secrets/tokens | OPS-005, WEB-008, DSN-015, RES-001, SEC-008 | EXPAND | 1.0 safe export foundation; full package later | QA-003/007 |
-| F.10-02 | Import dry-run validates schema/version/assets/duplicate IDs/owner/permissions/migration compatibility | OPS-004/005, WEB-008, DSN-015, RES-008/009, SEC-002/003 | EXPAND | 2.0 full import/export | QA-002/003/007 |
-| F.10-03 | Recovery preview/conflicts/integrity/backup verification and post-restore Page Model/revision/public-render consistency | OPS-005, OPS-006, OPS-009, WEB-007, WEB-008, EDT-028 | KEEP | 0.x–1.0 safety baseline | QA-002/006/007 |
+| F.10-01 | Versioned export of Page/revision/theme/template/component/media refs/domain data; never export secrets/tokens | OPS-005, WEB-008, DSN-014/015, RES-001/008, SET-003, SEC-008 | EXPAND | 1.0 safe export foundation; full package later | QA-003/007 |
+| F.10-02 | Import dry-run validates schema/version/assets/duplicate IDs/owner/permissions/migration compatibility | OPS-004/005, WEB-008, DSN-014/015, RES-008/009, SEC-002/003/008 | EXPAND | 2.0 full import/export | QA-002/003/007 |
+| F.10-03 | Recovery preview/conflicts/integrity/backup verification and post-restore Page Model/revision/public-render consistency | OPS-005/006/009, EDT-001, EDT-028, EDT-034, WEB-004, WEB-007/008 | KEEP | 0.x–1.0 safety baseline | QA-002/006/007 |
 | F.10-04 | Diagnostics for deploy/request/sync/provider/jobs/D1/cache/latency; no secrets or unnecessary personal data in logs | OPS-001–OPS-008, SEC-008, SEC-010/011 | EXPAND | 1.0 baseline; advanced operations later | QA-003/006/008 |
 | F.11-01 | 1.0 scope: own public site/Admin/working Editor slice/responsive/resource/Schedule/Twitch/publish/SEO/accessibility/security/performance | §39.2, WEB-001–WEB-032, ADM-001–ADM-010, EDT-001–EDT-042, RES-001–RES-016, SCH-001–SCH-015, INT-001–INT-021, SEO-001–SEO-005 | KEEP | 1.0 selected subset only; §39 per-domain gates override family ranges | QA-002–QA-009 |
 | F.11-02 | 1.x: Link Hub/Content Hub/multi-platform/VOD/Shorts/calendar/commerce foundations/community/alerts/audience capture | WEB-022, CNT-001–CNT-020, INT-013–INT-021, STO-001–STO-020, SUP-001–SUP-012, COM-001–COM-018, ANL-001–ANL-004 | MERGE | 1.5–2.0 by domain | QA-002/003/008 |
@@ -2703,7 +2703,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.13-04 | Game Profile is a domain; Editor references it and must not create an editor-only data store | SCH-012–SCH-014, EDT-020, DYN-001 | KEEP | 1.5–2.0 | QA-002/003 |
 | F.13-05 | Custom domain lifecycle: add/verify ownership/DNS/primary/SSL/canonical URL/redirect/error states | SET-002, WEB-012, SEO-001, SEO-005, OPS-001, SEC-006 | DEFER | 4.0+ | QA-003/004/008 |
 | F.13-06 | Domain/primary change preview and explicit SEO/redirect warning; unverified domain cannot become primary | SET-002, WEB-012/013, SEO-001, SEO-005, SEC-006 | KEEP | 4.0+ safety gate | QA-003/004 |
-| F.13-07 | Brand settings: creator name/logo/favicon/social registry/colors/fonts/tokens/avatar/cover/media refs are data, not renderer hardcode | SET-001, SET-003, DSN-001, RES-011–RES-013, WEB-010 | EXPAND | 1.0 baseline | QA-002/004 |
+| F.13-07 | Brand settings: creator name/logo/favicon/social registry/colors/fonts/tokens/avatar/cover/media refs are data, not renderer hardcode | SET-001/003, DSN-001, RES-001/004/007, RES-011–RES-013, WEB-010 | EXPAND | 1.0 baseline | QA-002/004 |
 | F.13-08 | Link Hub: platform/social links/CTA ordering/visibility and Schedule/Content/Community/Support targets, mobile-friendly | WEB-009, WEB-011, WEB-016, WEB-019, WEB-022/023, CNT-020, COM-001, SUP-001 | EXPAND | 1.0 basic profile/links; richer hub later | QA-002/004/005 |
 | F.13-09 | Later link scheduling/campaign UTM/QR/smart redirect/click analytics with privacy controls | CAM-002, ANL-001/002, WEB-013, SEC-011 | DEFER | 1.5–2.0 | QA-003/008 |
 | F.13-10 | External URLs validated; dangerous schemes blocked; public menu/CTA behavior consistent | WEB-009, WEB-013, WEB-032, SEC-006 | KEEP | 1.0 | QA-003/004 |
@@ -2715,9 +2715,9 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.13-16 | Workspace/site scope separated; client-provided tenant/site ID is not authorization | TEAM-005, SEC-002, SEC-003 | KEEP | 0.x–1.0 baseline; expand before multi-site | QA-003 |
 | F.13-17 | Free/Creator/Pro/Business/Team/Agency and billing/quota/invoice/change/cancel only after cost/usage evidence | TEAM-006, STO-019, CAM-009, OPS-008 | DEFER | 4.0–5.0 | QA-003/008 |
 | F.13-18 | Public website responsive from 1.0; PWA/native app is a later option | WEB-011, WEB-014–WEB-032, ADM-010, EDT-025 | KEEP/DEFER | Responsive web 1.0; PWA later | QA-004/005 |
-| F.13-19 | Later creator app uses canonical APIs/permissions for live/alerts/schedule/analytics/moderation/content approval | ADM-001–ADM-010, INT-001–INT-021, SCH-001–SCH-015, LIV-001–LIV-007, COM-001–COM-018, SEC-002 | DEFER | 2.0+ | QA-002/003/008 |
+| F.13-19 | Later creator app uses canonical APIs/permissions for live/alerts/schedule/analytics/moderation/content approval | ADM-001–ADM-010, INT-001–INT-021, SCH-001–SCH-015, LIV-001–LIV-007, CNT-015, ANL-001–ANL-010, OBS-006, COM-001–COM-018, SEC-002 | DEFER | 2.0+ | QA-002/003/008 |
 | F.13-20 | Starter template categories remain available as configurable library choices | DSN-008–DSN-010 | EXPAND | 1.0 starter templates; library later | QA-004 |
-| F.13-21 | Future creator-made template/component/theme/overlay/OBS/digital asset marketplace with license/version/review/revenue share | DSN-014/015, RES-001, OBS-001–OBS-010, STO-012, MKT-001–MKT-005 | DEFER | 3.0–6.0 | QA-002/003/008 |
+| F.13-21 | Future creator-made template/component/theme/overlay/OBS/digital asset marketplace with license/version/review/revenue share | DSN-005, DSN-011–DSN-018, RES-001, OBS-001–OBS-010, STO-012, MKT-001–MKT-005 | DEFER | 3.0–6.0 | QA-002/003/008 |
 
 **Batch 7 result:** 42 egyedi source bullet F.9–F.13 között (7 F.9 + 35 F.10–F.13). A hivatkozások szerkezeti validációja külön gate; ez a mapping nem runtime PASS.
 
@@ -4700,3 +4700,14 @@ A structural scan of the 96 F.1–F.13 crosswalk rows found two remaining rows w
 **Recovery limit:** this recovers one historical subsection and its seven architecture invariants, not the full original `00/A` chapter. The complete original `00/A` and `00.9–00.9.6.B` source set remains **PARTIALLY RECOVERED / OPEN**. Do not infer missing bullets from this subsection or from E/F. Continue searching historical branches/commits and map each recovered requirement into the existing single MASTER.
 
 **Evidence boundary:** source presence was verified by fetching the named file on the named historical branch and reading the exact lines. No runtime implementation or acceptance is implied. P0.2 remains **IN PROGRESS / NOT PASS**.
+
+
+### 41.3.71. P0.2 — F.10 recovery-package integrity and F.13 creator-app/marketplace capability mapping (2026-10-14)
+
+- **F.10-01 — versioned export:** added template schema/version compatibility, resource usage/reference integrity and public-safe settings projection. A secret-free export contract must cover not only media IDs but also resource references and settings fields that are excluded from public output.
+- **F.10-02 — import dry-run:** added DSN-014 schema migration/compatibility and SEC-008 secret handling to the existing package, ownership and reference validation mapping. Import must reject or explicitly migrate incompatible versions before any mutation.
+- **F.10-03 — restore verification:** added canonical Page Model identity and public-render parity plus draft/published state to the recovery mapping. A successful backup restore is not accepted until revision, draft/published boundary and rendered output are checked.
+- **F.13-07 — brand settings:** added canonical media identity, variants and accessible media/license metadata for logo/avatar/cover references; icon/SVG/font registries remain separate typed resource capabilities.
+- **F.13-19 — future creator app:** added analytics, content approval and OBS alert-event references because the source explicitly includes analytics, moderation and content approval in addition to live, alerts and schedule. Reuse of canonical APIs/permissions remains mandatory.
+- **F.13-21 — creator marketplace:** expanded the design-system mapping to include themes, reusable component/master-instance/variants and later community/marketplace capabilities. The future marketplace must not be represented only by template export IDs.
+- **Evidence boundary:** six mapping rows were refined from source text and canonical registry descriptions. No import/restore, mobile-app, marketplace or creator-profile runtime tests were executed. F.10 and F.13 remain open for full semantic review, as do remaining F sections and original-source recovery. P0.2 remains **IN PROGRESS / NOT PASS**.
