@@ -14,10 +14,10 @@
 ### 0.0. Új beszélgetés folytatási protokoll — kötelező
 - **Az egyetlen fejlesztési terv:** `docs/MASTER-DEVELOPMENT-PLAN.md` a `sanci9517/sanci9517` repository `v2/foundation` ágán. Ezt kell elsőként megnyitni minden új beszélgetésben.
 - **Aktív munkapont:** `P0-PRODUCT-BASELINE-AND-EXECUTION-CONTRACT` / `P0.2-ARCHIVE-RECONCILIATION-AND-BIDIRECTIONAL-FEATURE-TRACEABILITY`.
-- **Folytatási sorrend:** először a jelen fájl 0.2 aktív állapotát és 37.3 P0-állapotát, majd a 37.9–37.32 auditjegyzeteket és a 41.3.24–41.3.94 közötti legfrissebb forrásleltárakat, szemantikai korrekciókat és státuszokat kell elolvasni; utána az archív források még nyitott sorait kell folytatni. A 41.3.51 szerkezeti újraszámlálás és a 41.3.53–41.3.76 korrekciók frissebbek a korábbi összefoglaló számlálásoknál.
+- **Folytatási sorrend:** először a jelen fájl 0.2 aktív állapotát és 37.3 P0-állapotát, majd a 37.9–37.32 auditjegyzeteket és a 41.3.24–41.3.95 közötti legfrissebb forrásleltárakat, szemantikai korrekciókat és státuszokat kell elolvasni; utána az archív források még nyitott sorait kell folytatni. A 41.3.51 szerkezeti újraszámlálás és a 41.3.53–41.3.76 korrekciók frissebbek a korábbi összefoglaló számlálásoknál.
 - **Az archívum nem második terv:** az `docs/archive/**`, `docs/archive/plans/**`, régi checkpointok, issue-k, PR-ek és korábbi beszélgetések történeti források/bizonyítékok. Nem állíthatnak be másik aktív pontot, nem írhatják felül a jelen fájl aktív állapotát. Követelményük viszont nem törölhető; ha még nincs reconciliálva, nyitott tételként kell felvenni ebbe a MASTER-be.
 - **Nincs külön audit- vagy funkciólista-terv:** az auditjegyzék, a forrásproveniencia, a funkciókatalógus, a döntések, a függőségek és az acceptance ugyanebben a fájlban él. Kiegészítő fájl csak nyers bizonyíték/kivonat lehet, végrehajtási igazságforrás nem.
-- **Új chatnek szánt rövid folytatási szöveg:** „A `docs/MASTER-DEVELOPMENT-PLAN.md` az egyetlen irányadó terv. Olvasd el a 0.0, 0.2, 37.3, 37.9–37.32 és 41.3.24–41.3.94 fejezeteket, különösen a legfrissebb auditjegyzeteket. Az aktív pont P0.2; folytasd a C.23/F.1–F.13 és a H19–H34, MASTER-FINAL-ROADMAP, SANCI-MASTER-PLAN, V2-BLUEPRINT források szemantikai reconciliációját, a hiányzó 00/A és 00.9–00.9.6.B források további keresését, majd mind a 359 funkció-ID owner/phase/dependency/DoD/test/acceptance szerződésének lezárását. Ne állíts PASS-t bizonyíték nélkül, ne indíts párhuzamos feature-fejlesztést, és a végső funkciólista közös ellenőrzését még ne kérd.”
+- **Új chatnek szánt rövid folytatási szöveg:** „A `docs/MASTER-DEVELOPMENT-PLAN.md` az egyetlen irányadó terv. Olvasd el a 0.0, 0.2, 37.3, 37.9–37.32 és 41.3.24–41.3.95 fejezeteket, különösen a legfrissebb auditjegyzeteket. Az aktív pont P0.2; folytasd a C.23/F.1–F.13 és a H19–H34, MASTER-FINAL-ROADMAP, SANCI-MASTER-PLAN, V2-BLUEPRINT források szemantikai reconciliációját, a hiányzó 00/A és 00.9–00.9.6.B források további keresését, majd mind a 359 funkció-ID owner/phase/dependency/DoD/test/acceptance szerződésének lezárását. Ne állíts PASS-t bizonyíték nélkül, ne indíts párhuzamos feature-fejlesztést, és a végső funkciólista közös ellenőrzését még ne kérd.”
 
 Ez a dokumentum egyszerre termékspecifikáció, architekturális szerződés, funkciókatalógus, tesztelési szabályzat és végrehajtási lista. Minden fejlesztési feladatot ebből kell kiválasztani és ide kell visszavezetni. Minden funkcióhoz tartozzon felhasználói cél, felület, domain-tulajdonos, adatforrás, jogosultság, függőség, teszt és elfogadási feltétel.
 
@@ -1958,7 +1958,7 @@ PWA/offline/mobile; provider capabilities/Discord roles; email/CRM/consent; Stre
 ### 37.3. A P0 aktuális állapota
 
 - **P0.1:** IN PROGRESS — nem PASS, de jelenleg nem aktív párhuzamos munkaszál; a branch/MASTER/archive baseline és a fő route-viselkedés ellenőrizve; az archív route-leírás javítva és a canonical Admin/Dashboard vs Editor v2 útvonal egyeztetve. A commit `a083cf879c3dd15e565cffeb7556dac6d4728faa` ellenőrzésekor a Cloudflare Workers Build, Editor Core Test és Twitch Integration Check mind SUCCESS lett. Az Editor Core workflow typecheck + Editor + Schedule + domain + Admin-home contract tesztet futtat; a Twitch workflow typecheck + Editor/Schedule + Twitch OAuth + site-ownership teszteket futtat. A gate azért marad nyitva, mert a teljes helyi working-tree állapot, a remote D1/schema integritás, valamint a save/reload/publish/mobile browser acceptance ebből a forráskód-auditból nem bizonyítható.
-- **P0.2:** IN PROGRESS — **AKTÍV**. A 271 egyedi H19–H34 történeti kulcs MAPPED DRAFT crosswalkja megvan; a C.23 táblában 210 egyedi forráskulcs van, a F.1–F.13 keresztleképezés 103 soros (100 eredeti forrásbullet + 3 explicit ADD/DEFER roadmap sor), az E crosswalk 251 sort tartalmaz, összesen 354 E/F mapping sorral az E.18-06 supply-chain és E.18-07 frontend-bundle ADD sorok beemelése után. A §24 mind a 359 egyedi feature ID-jához van explicit crosswalk-hivatkozás (0 range-only / 0 hiányzó ID), de ez nem bizonyít szemantikai megfelelést vagy runtime-készültséget. Öt ID (STO-016, SUP-005, SUP-007, SUP-008, SUP-011) explicit ADD/DEFER roadmap tétel, közvetlen történeti forrás nélkül. A teljes E.1/C.23/C.24 és korábbi 00/A bullet-szintű provenance, a hiányzó 00/A és 00.9–00.9.6.B források visszanyerése, valamint az ID-nkénti owner/phase/dependency/DoD/permission/negative-test/acceptance contract még nyitott. Ezért P0.2 továbbra sem PASS.
+- **P0.2:** IN PROGRESS — **AKTÍV**. A 271 egyedi H19–H34 történeti kulcs MAPPED DRAFT crosswalkja megvan; a C.23 táblában 210 egyedi forráskulcs van, a F.1–F.13 keresztleképezés 103 soros (100 eredeti forrásbullet + 3 explicit ADD/DEFER roadmap sor), az E crosswalk 260 sort tartalmaz, összesen 363 E/F mapping sorral az E.18-06/07 és a kilenc explicit ID-owner ADD sor beemelése után. A §24 mind a 359 egyedi feature ID-jához van explicit crosswalk-hivatkozás (0 range-only / 0 hiányzó ID), de ez nem bizonyít szemantikai megfelelést vagy runtime-készültséget. Öt ID (STO-016, SUP-005, SUP-007, SUP-008, SUP-011) explicit ADD/DEFER roadmap tétel, közvetlen történeti forrás nélkül. A teljes E.1/C.23/C.24 és korábbi 00/A bullet-szintű provenance, a hiányzó 00/A és 00.9–00.9.6.B források visszanyerése, valamint az ID-nkénti owner/phase/dependency/DoD/permission/negative-test/acceptance contract még nyitott. Ezért P0.2 továbbra sem PASS.
 - **P0.3:** IN PROGRESS — a migrációk és Page Model runtime forrásának első összevetése elkészült (§37.15); nyitott a remote D1 alkalmazott migrációk/séma/index/FK ellenőrzése, a teljes tábla-consumer térkép, a site-scope döntések és az R2 binding/resource API hiánya.
 - **P0.4:** IN PROGRESS — a fő router, Admin placeholder-ek és Editor handler modulok első leltára megvan; a teljes surface/route/action acceptance még nyitott. A felhasználó által jelzett canvas-height/scroll-extent regresszió külön, reprodukálható acceptance-ként rögzítve (§37.21), de runtime PASS nincs.
 - **P0.5:** IN PROGRESS — Twitch/YouTube/TikTok/Discord/Kick hivatalos dokumentációs review és approval/quota/runtime korlátok frissítve (§37.10, §37.14); a teljes feature-to-endpoint/scope/quota/approval mátrix és élő integrációs acceptance még nyitott.
@@ -2335,11 +2335,13 @@ The short decision record must name the problem and acceptance criteria; existin
 | E.2.2-03 | Configurable VOD/clip/Short feed and empty/provider-error states | CNT-002–CNT-004, CNT-019, DYN-005 | DEFER/EXPAND | 1.5–2.0 | QA-002/004/006 |
 | E.2.2-04 | Community/support CTA and later membership/product blocks | COM-001, SUP-001, WEB-019, WEB-023 | MERGE | 1.0 external links; membership/product later | QA-004/008 |
 | E.2.2-05 | Provider outage fallback, last success/freshness and retry | INT-008, INT-009, INT-020, LIV-002, DYN-005, OPS-008 | EXPAND | 1.0 baseline; provider-specific later | QA-003/006/008 |
+| E.2.2-06 | Explicit Twitch stream title/category/game/start-time fields and freshness/error fallback | LIV-003, INT-010/011 | ADD — explicit row for an existing capability previously referenced only through the LIV-001–007 range | 1.0 Twitch baseline; provider-specific fields only when permitted | QA-002/003/004/006 |
 | E.2.3-01 | Canonical URL/title/description/OG/Twitter/favicon/robots/sitemap/structured data | SEO-001–SEO-004 | EXPAND | 1.0 | QA-004/005 |
 | E.2.3-02 | Correct share preview and pre-publish metadata preview | SEO-002, WEB-005, WEB-006 | MERGE | 1.0 | QA-004/005 |
 | E.2.3-03 | Keyboard/focus/heading/contrast/alt/forms/reduced motion | QA-005, EDT-037, EDT-040, RES-007 | EXPAND | 1.0 baseline; advanced interaction QA later | QA-004/005 |
 | E.2.3-04 | Image optimization/lazy loading/layout shift/cache invalidation | RES-004, WEB-030, OPS-008, QA-006 | EXPAND | 1.0 baseline | QA-004/006 |
 | E.2.3-05 | Consent-aware analytics and data minimization | ANL-002, COM-015, COM-017, SEC-011 | DEFER/EXPAND | Privacy baseline 1.0; audience analytics later | QA-003/008 |
+| E.2.3-06 | Validated schema.org/structured data generated only from published, authorized canonical content | SEO-003, WEB-032, QA-005 | ADD — explicit structured-data contract previously included only in the SEO-001–004 range | 1.0 public SEO baseline | QA-004/005/006 |
 | E.3.1-01 | Editor toolbar with page/save/history/viewport/zoom/preview/publish actions | EDT-005, EDT-007, EDT-027, EDT-032, EDT-033 | EXPAND | 1.0 | QA-002/004 |
 | E.3.1-02 | Pages/Layers/Elements panels; later assets/templates/symbols | EDT-012, EDT-015, RES-010, DSN-008–DSN-012 | EXPAND | Core panels 1.0; library tabs phased | QA-002/004 |
 | E.3.1-03 | Canvas with selection frame/drop zones/guides/viewport width | EDT-007–EDT-010, EDT-025 | EXPAND | 1.0 | QA-002/004/005 |
@@ -2405,6 +2407,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | E.5-05 | Image variants; font license/metadata; icon registry/search/rendering | RES-004, RES-011–RES-013 | EXPAND | 1.0 baseline; advanced transforms phased | QA-002/004/005 |
 | E.5-06 | Usage checks before replace/rename/archive/delete; soft delete/restore where appropriate | RES-008, RES-009, RES-015 | EXPAND | 1.0 | QA-002/004/007 |
 | E.5-07 | Public vs protected files; protected digital downloads later | RES-014, RES-016, STO-012, STO-013, SEC-002 | DEFER/EXPAND | Public resource 1.0; protected commerce 5.0 | QA-003/004/008 |
+| E.5-08 | Explicit folder/collection/tag organization, search and filter behavior in the Resource Library | RES-006, RES-005 | ADD — direct owner row for resource organization; no separate asset store | 1.0 Resource Library foundation | QA-002/004/007 |
 | E.6-01 | Design tokens for colors/type/spacing/size/breakpoints/radius/shadow/border/button/card/form/focus | DSN-001, DSN-005–DSN-007, DSN-016, QA-005 | EXPAND | 1.0 baseline | QA-002/004/005 |
 | E.6-02 | Theme token changes propagate; local override must be explicit | DSN-002–DSN-004, DSN-013 | EXPAND | 2.0 full Theme Editor; 1.0 preset baseline | QA-002/004 |
 | E.6-03 | Site/page/section/block presets and later creator templates | DSN-008–DSN-011 | EXPAND | 1.0 starter templates; library growth later | QA-002/004 |
@@ -2474,6 +2477,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | E.10-05 | Import/sync, duplicate detection, external IDs and idempotency | CNT-002, CNT-007, INT-008, INT-009 | EXPAND | 1.5–2.0 | QA-002/003/006 |
 | E.10-06 | Clip/Short workflow, cut points, vertical format, captions, hooks and export preparation | CNT-003, CNT-017, CNT-018, AI-014, RES-004 | DEFER/EXPAND | 2.0–3.0 | QA-002/004/008 |
 | E.10-07 | Cross-platform adaptation/publishing queue only when provider APIs/scopes allow it | CNT-011, CNT-013–CNT-015, INT-013–INT-016 | DEFER | 1.5–2.0 by provider | QA-002/003/008 |
+| E.10-08 | Whitelisted dynamic-data transforms, filter/sort/limit/pagination with deterministic typed output | DYN-003, DYN-001/002/007 | ADD — explicit transform contract; never arbitrary code or unrestricted query execution | 1.0 minimum allowlisted transforms; broader binding/query tools 2.0+ | QA-002/003/004/006 |
 | E.11-01 | Overlay/alert packs, stream frames, scenes/browser sources and responsive rendering | OBS-001, OBS-005, OBS-010, LIV-005 | DEFER/EXPAND | 2.0 | QA-002/004/005 |
 | E.11-02 | OBS connection, scene/stream/recording state, commands/markers/replay buffer where supported | OBS-002–OBS-004, INT-001, INT-018 | DEFER | 2.0+ OBS capability-gated | QA-002/003/008 |
 | E.11-03 | Follow/sub/raid/tip/purchase/membership alerts only from real supported events | OBS-006, OBS-008, AUT-001, INT-017, SUP-002, STO-018 | DEFER | 2.0–7.0 by event source | QA-002/003/008 |
@@ -2489,6 +2493,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | E.12-07 | Purchase→entitlement→customer access; protected files never exposed through unrestricted public R2 URL | STO-012, STO-013, SUP-006, RES-014, RES-016, SEC-002 | KEEP | 5.0 security gate | QA-003/008 |
 | E.12-08 | Tips/supporter goals/membership/perks/private content/Discord role/sub benefits/discounts/exclusive events | SUP-001–SUP-012, COM-013, STO-011, INT-015 | DEFER | 5.0 provider/policy-gated | QA-002/003/008 |
 | E.12-09 | Separate creator revenue from platform revenue; multi-creator funds only after payment/compliance/legal review | STO-019, CAM-009, SEC-003, TEAM-001 | KEEP | 4.0–5.0 legal gate | QA-003/008 |
+| E.12-10 | Persistent supporter history and opt-in public supporter listing, separate from a simple external donation link | SUP-010, SEC-011, OPS-005 | ADD — explicit lifecycle/privacy owner; public names require voluntary revocable opt-in | 5.0 support/commerce domain; external support links may exist earlier without storing supporter history | QA-002/003/007/008 |
 | E.13-01 | External community entry points first; later member/profile/follow/comment/reaction/post/poll/event/notification | COM-001–COM-008, COM-011, COM-018 | DEFER/EXPAND | 1.0 links; full community later | QA-002/004/008 |
 | E.13-02 | Moderation/report/ban/roles/submissions/badges/challenges/reputation | COM-008–COM-012 | DEFER | 2.0+ | QA-002/003/008 |
 | E.13-03 | Discord role sync and membership entitlement through authenticated audited adapter | INT-015, SUP-006, SUP-009, COM-009, SEC-010 | DEFER | 1.5–5.0 | QA-002/003/008 |
@@ -2496,6 +2501,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | E.13-05 | Consent revoke, export/delete and retention | SEC-011, COM-017, OPS-005 | KEEP | Privacy baseline 1.0; audience workflows later | QA-003/008 |
 | E.13-06 | Future member area/PWA/mobile notifications/schedule/live/community/store/dashboard | WEB-026, COM-006–COM-018, SCH-002, LIV-007, STO-007, ADM-010 | DEFER | 2.0+ | QA-004/005/008 |
 | E.13-07 | Founding Supporters list requires separate voluntary revocable opt-in | COM-014, SEC-011, COM-018 | KEEP | 1.0 only if enabled; otherwise later | QA-003/004/008 |
+| E.13-08 | Discord community entry point and link state; distinguish external link from authenticated provider integration/role sync | COM-002, INT-015 | ADD — explicit Discord community ID mapping; link-only behavior does not imply OAuth or role sync | 1.5 provider-gated; generic social-link field may be used earlier if enabled | QA-002/003/004/008 |
 | E.14-01 | Website analytics: visitors/sessions/pageviews/device/referrer/conversion/legally permitted aggregate geography | ANL-001, ANL-002, ANL-009 | DEFER/EXPAND | 2.0 privacy-gated | QA-003/008 |
 | E.14-02 | Provider creator metrics only when provider/time period/scope permits | ANL-003, ANL-004, LIV-004, INT-013–INT-016 | DEFER | 1.5–2.0 by provider | QA-002/003/008 |
 | E.14-03 | Stream intelligence: silence/chat/audio/OBS quality/highlights/weekly summary only with supported sources and consent | ANL-003, ANL-006, AI-014, AI-015, OBS-003, OPS-007 | DEFER | 3.0–8.0 | QA-003/006/008 |
@@ -2512,6 +2518,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | E.14-14 | AI changes require preview/permission/validation/rollback/usage tracking | AI-006–AI-010, AI-019 | KEEP | 3.0 safety gate | QA-002/003/008 |
 | E.14-15 | AI usage/permission/prompt templates/jobs/approval/errors; provider keys never in browser | AI-001, AI-002, AI-010, AI-017, SEC-008 | DEFER | 3.0 | QA-003/008 |
 | E.14-16 | No irreversible public/business action without required human approval | AI-007, AI-019, STO-018, AUT-009, SEC-002 | KEEP | 3.0+ safety gate | QA-003/008 |
+| E.14-17 | Canonical automation trigger catalogue with typed event names and declared source/permission boundaries | AUT-002, AUT-001/003/004 | ADD — explicit trigger-catalogue owner previously referenced only through AUT-001–005 range | 7.0 automation phase; no arbitrary triggers before source contracts exist | QA-002/003/006/008 |
 
 **Batch 3 result:** 45 E.10–E.14 source bullets mapped. Structural validation on commit 107e7a46628d290067631d0b32063bdd31538611 confirmed 45 rows, 150 distinct explicit/range-expanded feature/QA references and no unresolved IDs. Provider access, financial operations, member data and AI remain explicitly phase-/permission-gated. Mapping is not runtime PASS.
 
@@ -2531,6 +2538,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | E.16-03 | Translate Page/Content/Navigation/Theme/Template fields without overwriting another locale | LOC-001, LOC-003, WEB-001, CNT-001, DSN-008 | DEFER/EXPAND | 2.0 | QA-002/004 |
 | E.16-04 | Visible incomplete-translation status, preview and publish policy | LOC-004, LOC-005, WEB-005, WEB-006 | DEFER/EXPAND | 2.0 | QA-002/004 |
 | E.16-05 | AI-assisted translation only after review/explicit acceptance | LOC-003, LOC-006, AI-012, AI-007, AI-019 | DEFER | 3.0 | QA-003/004/008 |
+| E.16-06 | Locale-aware date/time, timezone/DST, number and currency formatting with explicit fallback rules | LOC-002, SCH-003, WEB-016 | ADD — explicit locale-formatting owner previously referenced only through LOC-001–004 range | 1.0 formatting foundation; full translated-content workflow 2.0+ | QA-002/004/005 |
 | E.17-01 | Future tenant/workspace→users/members→sites→modules structure | TEAM-001–TEAM-006, SEC-003 | DEFER | 4.0+ | QA-003/008 |
 | E.17-02 | Multiple sites in workspace with separate settings | TEAM-001, TEAM-002, SET-001–SET-003, SEC-003 | DEFER | 4.0+; current global uniqueness constraints block unreviewed rollout | QA-003/008 |
 | E.17-03 | Owner/admin/editor/designer/moderator/analyst/content/store/finance roles with granular site/module permissions | TEAM-003, TEAM-005, SEC-002, SEC-003 | DEFER | 4.0+; 1.0 RBAC baseline still mandatory | QA-003/008 |
@@ -2538,6 +2546,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | E.17-05 | Billing/subscription/quota/usage/invoice/upgrade/downgrade/cancel and revenue boundaries | TEAM-006, STO-008–STO-010, STO-014, STO-019, CAM-009 | DEFER | 4.0–5.0 | QA-002/003/008 |
 | E.17-06 | Tenant isolation on every record/action; client-supplied site ID is not authorization | SEC-002, SEC-003, TEAM-001, OPS-004 | KEEP | 0.x–1.0 baseline; expand before 4.0 | QA-003/008 |
 | E.17-07 | Multi-site/team/SaaS is long-term and not automatic 1.0 scope | TEAM-001–TEAM-006, §39.6 | KEEP | 4.0+ | QA-008 |
+| E.17-08 | Team approval/review/activity feed with actor, target, timestamp, permission boundary and audit trail | TEAM-004, SEC-002/010, OPS-002/003 | ADD — explicit future collaboration/approval owner; not a live-editing lock or revision-conflict implementation | 4.0 collaboration/team phase | QA-002/003/006/008 |
 | E.18-01 | Versioned validated import/export for Site/Page/Template/Component/Theme; no secrets/tokens | OPS-005, DSN-015, WEB-008, SEC-008 | EXPAND | 1.0 recovery/export baseline; broad packages later | QA-003/007 |
 | E.18-02 | Backup/restore for published/draft states with dry-run and integrity check | OPS-005, OPS-006, OPS-009, WEB-007, WEB-008 | EXPAND | 0.x–1.0 baseline | QA-002/006/007 |
 | E.18-03 | Structured logs/correlation IDs/integration health/errors/sync/queue/DB/cache metrics | OPS-002, OPS-003, OPS-008, INT-008, AUT-008 | EXPAND | 0.x–1.0 baseline; advanced operations later | QA-006/008 |
@@ -2735,14 +2744,14 @@ The short decision record must name the problem and acceptance criteria; existin
 
 | Crosswalk batch | Sorok | Különböző hivatkozott feature/QA ID-k | Feloldatlan ID |
 |---|---:|---:|---:|
-| §37.22 E.2–E.3 | 57 | 189 | 0 |
-| §37.23 E.4–E.9 | 66 | 283 | 0 |
-| §37.24 E.10–E.14 | 45 | 153 | 0 |
-| §37.25 E.15–E.21 + E.20 contract/negative tests | 61 | 345 | 0 |
+| §37.22 E.2–E.3 | 59 | 189 | 0 |
+| §37.23 E.4–E.9 | 67 | 283 | 0 |
+| §37.24 E.10–E.14 | 49 | 153 | 0 |
+| §37.25 E.15–E.21 + E.20 contract/negative tests | 63 | 345 | 0 |
 | §37.27 F.1–F.4 | 32 | 108 | 0 |
 | §37.29 F.5–F.8 | 27 | 171 | 0 |
 | §37.30 F.9–F.13 | 44 | 325 | 0 |
-| **Összesen** | **332** | *batchenként külön számolt* | **0** |
+| **Összesen** | **341** | *batchenként külön számolt* | **0** |
 
 A §24 registry 359 egyedi ID-t tartalmaz duplikáció nélkül; a H19–H34 ledger 271 egyedi történeti kulcsból és 271 sorból áll.
 
@@ -8785,8 +8794,8 @@ The following rows were flagged because they express behavior that must be expli
 
 **Reproducible structural results from the current MASTER blob:**
 - §24 declares 359 unique stable IDs.
-- The explicit E/F source-key rows in the §37 crosswalk reference all 359 IDs after expanding same-prefix numeric ranges; 0 registry IDs are missing from those source rows.
-- The seven counted crosswalk batches in §37.32 total 332 rows after E.18-06 and E.18-07; the full E/F summary in §37.3 is 251 E rows + 103 F rows = 354 rows. These totals describe different scopes and must not be compared as if they were the same table: §37.32 lists the seven detailed batches, while §37.3 includes additional E rows outside those seven batches.
+- The explicit E/F source-key rows in the §37 crosswalk now contain a literal, non-range-only reference for all 359 IDs; 0 registry IDs are range-only or missing from those rows after the nine explicit owner rows were added.
+- The seven counted crosswalk batches in §37.32 total 341 rows after the nine explicit owner rows; the full E/F summary in §37.3 is 260 E rows + 103 F rows = 363 rows. These totals describe different scopes and must not be compared as if they were the same table: §37.32 lists the seven detailed batches, while §37.3 includes additional E rows outside those seven batches.
 - The MASTER-1.2 flagged-detail queue contains 134 unique source keys; every key is covered by a disposition row or an explicit source-key range in §41.3.80–§41.3.87. This is disposition bookkeeping, not semantic or runtime PASS.
 
 **Still open and explicitly not hidden by the structural PASS results:**
@@ -8797,3 +8806,12 @@ The following rows were flagged because they express behavior that must be expli
 - H29.03 backup/restore runtime acceptance, H28.12 generic server-side validation coverage and other source-to-ID semantic exceptions remain open until phase-specific contract/test evidence exists.
 
 **Gate decision:** structural source-key/ID coverage has improved and the 134 flagged items have dispositions, but P0.2 is still **IN PROGRESS / NOT PASS**. The remaining work is semantic evidence and source recovery, not another recount of already verified IDs. Do not start implementation or ask for the final shared feature-list review before these open items are resolved.
+### 41.3.95. P0.2 — Repair nine range-only registry references with explicit source-key rows (2026-10-14)
+
+**Finding:** the first literal-only reverse scan showed 9 registry IDs that appeared in E/F source rows only as members of numeric ranges, even though they had historical references elsewhere. This contradicted the §37.3 claim of zero range-only IDs and made the exact canonical owner less auditable.
+
+**Correction:** added explicit owner rows for `LIV-003` (stream title/category/game/start time), `SEO-003` (structured data), `RES-006` (resource folders/collections/tags), `DYN-003` (allowlisted transforms/filter/sort/limit/pagination), `SUP-010` (supporter history and opt-in public listing), `COM-002` (Discord community entry point), `AUT-002` (trigger catalogue), `LOC-002` (locale-aware formatting), and `TEAM-004` (approval/review/activity feed). These are direct source-key rows for existing IDs, not new stable IDs. Their phase boundaries are explicit: 1.0 only for required foundations/links, 1.5 for provider-gated Discord entry/integration, 5.0 for persistent supporter history, 7.0 for automation triggers, 8.0/9.0 for advanced collaboration/memory where applicable.
+
+**Count correction:** §37.22 57→59; §37.23 66→67; §37.24 45→49; §37.25 61→63; seven-batch total 332→341; full E crosswalk 251→260; E/F total 354→363. §24 remains 359 stable IDs.
+
+**Verification boundary:** these rows close the literal source-reference gap, not feature implementation. The reverse scan now finds 359/359 stable IDs explicitly referenced in the source-key crosswalk with no range-only IDs. Semantic equivalence, source recovery and runtime acceptance remain subject to the separate open items in §41.3.94. P0.2 remains **IN PROGRESS / NOT PASS**.
