@@ -4835,3 +4835,60 @@ A jelenlegi route-/migration-/test-leltárban nem látható dedikált analytics 
 
 **Státusz: IN PROGRESS / NOT PASS.** Következő ID-szelet: SEC-001–012, OPS-001–011, QA-001–010, LOC-001–006 és TEAM-001–007.
 
+### 63.36. SEC-001–012, OPS-001–011, QA-001–010, LOC-001–006, TEAM-001–007 — cross-cutting acceptance contract
+
+A jelenlegi forrásban auth/session/password/require-auth, site-context/ownership, audit helper, health/db-health, migrations és célzott tesztek léteznek. Nem bizonyított teljes MFA/SSO, RBAC permission matrix, backup/restore service, structured observability, locale workflow, workspace/team/billing implementation. A keresztmetszeti szerződések minden modulra kötelezők, de nem helyettesítik az egyes modulok adatgazdáját.
+
+| ID | Owner | Állapot és kötelező acceptance |
+|---|---|---|
+| SEC-001 | IDENTITY | Login/logout/session/bootstrap route létezik; expiry/revocation/rotation and browser session matrix must be verified. |
+| SEC-002 | SECURITY | require-auth/site ownership helpers exist; complete role/action permission matrix and server-side negative tests for every mutating route required. |
+| SEC-003 | SECURITY / tenant isolation | Several routes are site-scoped, but global settings/design tables and global unique constraints remain; cross-site negative test for every domain/API and multi-site migration decision required. |
+| SEC-004 | SECURITY / OAuth/CSRF | Twitch OAuth state protections exist; global CSRF/session-cookie policy, origin checks and every mutation route need audit. |
+| SEC-005 | SECURITY / XSS/sanitization | Renderer escapes text and safeUrl handles some links; complete HTML/URL/embed/SVG/form sanitization and CSP acceptance not proven. |
+| SEC-006 | SECURITY / SSRF/open redirect | General outbound URL policy not proven; allowlist outbound fetch, redirect target validation and DNS/IP/private-address defense for any server-side fetch. |
+| SEC-007 | SECURITY / rate limit | General API/login/OAuth/submit rate limiter not proven; per-route/IP/account/provider limits, abuse alerts and retry policy. |
+| SEC-008 | SECURITY / secret lifecycle | Twitch tokens encrypted and secret env keys used; secret rotation, redaction coverage, incident revoke and non-Twitch secret store not proven. |
+| SEC-009 | SECURITY / webhooks | No generic webhook registry/receiver proven; provider signature verification, timestamp/replay defense, idempotency and negative tests. |
+| SEC-010 | SECURITY/AUDIT | audit_log and helper exist; redaction/retention/export policy and complete security event coverage not proven. |
+| SEC-011 | SECURITY/PRIVACY | Consent/retention/export/delete framework not proven; domain-by-domain PII inventory, consent withdrawal, deletion propagation and legal hold. |
+| SEC-012 | IDENTITY/SECURITY | MFA/2FA/SSO/recovery/suspicious-login controls not proven; staged roadmap, recovery codes, session revoke and anti-lockout acceptance. |
+| OPS-001 | OPERATIONS | Health and DB-health endpoints exist; deploy version/runtime commit visibility and public/private diagnostics boundary must be verified. |
+| OPS-002 | OPERATIONS | Structured logs/correlation IDs not proven; request ID propagation, redaction and traceable API→provider flow. |
+| OPS-003 | OPERATIONS | Error tracking/alerting service not proven; alert thresholds, ownership, dedupe and runbook. |
+| OPS-004 | OPERATIONS / migrations | Migration directory and migration commands exist; every migration needs preflight, integrity/foreign-key check, backup and rollback plan. |
+| OPS-005 | BACKUP | Backup/export/restore service not proven; encrypted backup, manifest, retention, ownership and restore acceptance. |
+| OPS-006 | BACKUP/OPS | Recovery drill/runbook not proven; tested RTO/RPO targets, clean restore environment and evidence log. |
+| OPS-007 | OPERATIONS | Unified diagnostics report not proven; safe environment/schema/provider/migration status without secrets. |
+| OPS-008 | OPERATIONS | Performance/query/cache monitoring not proven; public route budgets, D1 query/index review, payload size and concurrency. |
+| OPS-009 | OPERATIONS | Incident/rollback procedure not proven; deployment rollback, migration compatibility, incident roles and data recovery. |
+| OPS-010 | OPERATIONS/SEC | Dependency/license/CVE review not proven as automated gate; SBOM/dependency inventory, license compatibility and remediation SLA. |
+| OPS-011 | OPERATIONS | Durable background job/realtime runtime not proven; select only when a justified feature needs it, with retry/idempotency/observability. |
+| QA-001 | QA/CI | Typecheck/test scripts exist from prior project evidence; current CI workflow and build gate evidence must be rechecked before PASS. |
+| QA-002 | QA | Domain/Twitch/Editor tests exist; missing media/public SEO/community/commerce/automation/AI suites remain separate acceptance work. |
+| QA-003 | QA/SEC | Site-ownership/Twitch negative tests exist; every endpoint needs unauthorized, cross-site and stale-version negative coverage. |
+| QA-004 | QA/UI | Dedicated browser/device visual regression suite not proven; desktop/tablet/mobile, touch, keyboard and real-browser tests required. |
+| QA-005 | QA/PUBLIC | SEO/accessibility/performance audit not proven; HTTP HTML metadata, WCAG keyboard/contrast/reduced-motion, performance budgets. |
+| QA-006 | QA/RELEASE | Health checks exist; deploy smoke, real provider smoke, route status and production version evidence required. |
+| QA-007 | QA/BACKUP | Test/acceptance gate only; actual OPS-005/006 backup and restore operations must exist first. |
+| QA-008 | QA/E2E | Full creator journey suite not proven; setup→connect→create→preview→publish→public read→rollback, with failures. |
+| QA-009 | QA/PRODUCT | User acceptance/evidence log not proven as complete; record actual test run, result, environment and unresolved issues. |
+| QA-010 | QA/PRODUCT | Continuous benchmark/feature discovery not proven as executable workflow; periodic evidence-based review, license/security and decision log. |
+| LOC-001 | LOCALIZATION | Translation key/fallback service not proven; no hardcoded critical UI strings in supported locales and missing-key report. |
+| LOC-002 | LOCALIZATION | Locale-aware dates/numbers/currency/timezone service not proven; DST/currency/format tests. |
+| LOC-003 | LOCALIZATION | Page/content/navigation translation workflow not proven; localized variants, fallback and publish completeness. |
+| LOC-004 | SEO/LOCALIZATION | hreflang/canonical localization not proven; localized slug map, reciprocal hreflang, canonical policy and sitemap entries. |
+| LOC-005 | LOCALIZATION | Translation completeness/locale preview not proven; status per field/locale and safe publish policy. |
+| LOC-006 | AI/LOCALIZATION | AI translation review flow not proven; draft only, human approval, glossary, source/target diff and audit. |
+| TEAM-001 | WORKSPACE | Workspace/site switcher not proven; active scope shown clearly, server-side scope independent of client state. |
+| TEAM-002 | WORKSPACE/IDENTITY | Invite/accept/revoke route/schema not proven; expiring single-use invitation, scope binding and revoke. |
+| TEAM-003 | WORKSPACE/SEC | Granular roles/permissions not proven end-to-end; deny by default and route-level tests. |
+| TEAM-004 | WORKSPACE | Approval/review/activity feed not proven; source-domain ownership, reviewer permissions and audit. |
+| TEAM-005 | WORKSPACE | Multi-site workspace workflows not proven; scoped resources, cross-site isolation, migration/backfill and negative tests. |
+| TEAM-006 | BILLING_PLAN | SaaS billing/plan entitlement/quota not proven; separate from store orders and fan membership, provider-confirmed state. |
+| TEAM-007 | WORKSPACE/AGENCY | Agency/client workspaces, shared templates and client approvals not proven; client isolation, scoped brand/template ownership and access revoke. |
+
+**Cross-cutting closure rule:** a shared security/operations feature may provide a reusable helper/service, but each domain still needs to prove it uses that service correctly. For example, the existence of `requireAuth` does not prove every route has the right role check; the existence of `audit_log` does not prove all sensitive actions are audited; the existence of a migration command does not prove backup/restore works.
+
+**Státusz: IN PROGRESS / NOT PASS.** Következő ID-szelet: ADM/SEARCH/NTF/HELP/DEV/EXTENSION/MKT, majd a maradék LIV/OBS és a teljes feature ID-k fázis/dependency keresztellenőrzése.
+
