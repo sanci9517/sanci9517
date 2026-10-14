@@ -3934,3 +3934,29 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 **Mit bizonyít és mit nem:** ez az eredmény a H19–H34 ledger sorazonosságát és a történeti címkék megőrzését bizonyítja az elérhető archív ledgerhez képest. Nem bizonyítja, hogy az egyes sorok teljes leírása szemantikailag változatlan, hogy minden capability-owner/surface/phase/dependency helyes, vagy hogy bármely képesség implementálva és elfogadva van. Nem helyettesíti a hiányzó eredeti `00/A` és `00.9–00.9.6.B` forrásokat, a teljes `00.9.6.E/F` bullet-szintű szemantikai auditot vagy a 359 funkció-ID teljes kétirányú reconciliációját.
 
 **Következő lépés:** a P0.2 következő ellenőrzése a §37.22–§37.30 crosswalk és az archív `00.9.6.E/F` követelménybulletjeinek tételes, szemantikai egyeztetése; az eredményeket ugyanebben a MASTER-ben kell rögzíteni. P0.2 **IN PROGRESS / NOT PASS**.
+
+### 41.3.13. P0.2 — E.1 product-surface boundary crosswalk gap and provisional closure (2026-10-14)
+
+**Forrás:** archivált `00.9.6.E / E.1 — Termékfelületek és határok` (15 felsorolt platformfelület), összevetve a kanonikus `§37.22–§37.30` E/F bullet-crosswalkjaival.
+
+**Auditmegállapítás:** a crosswalkban az E.2–E.22 és F.1–F.13 közvetlen hivatkozásai szerepelnek, de az E.1 szakasz és annak 15 felsorolt felülete nem rendelkezik saját, közvetlen sorazonosítóval. A felületek sok képessége más E-sorokon keresztül már szerepel; ezért ezt nem elveszett termékterületként, hanem a felület-/határszintű nyomkövetés explicit hiányaként kell kezelni. Az alábbi E.1-S01–E.1-S15 az auditban létrehozott belső traceability-alazonosító, nem az archív forrás eredeti azonosítója.
+
+| Audit ID | E.1 történeti felület | Canonical owner / képességcsoport | Kötelező határ / egyeztetési pont | Állapot |
+|---|---|---|---|---|
+| E.1-S01 | Public Website | WEB / SEO / QA | Publikus renderer és publikált snapshot; draft/admin adatok nem szivároghatnak a publikus oldalra | PROVISIONAL MAP |
+| E.1-S02 | Creator Center / Admin | ADM / SEC / OPS | Egyetlen canonical admin shell; auth/RBAC minden admin route-on és API-n | PROVISIONAL MAP |
+| E.1-S03 | Visual Editor | EDT | Egyetlen Editor v2; Page Model/command/history/persistence közös útvonal | PROVISIONAL MAP |
+| E.1-S04 | CMS / Content Center | CNT / WEB | Tartalmi lifecycle külön a Page Modeltől; platform-specifikus content típusok megőrzése | PROVISIONAL MAP |
+| E.1-S05 | Resource / Media Library | RES | D1 metadata és R2 binary külön; asset registry, usage map, MIME/size/security ellenőrzés | PROVISIONAL MAP |
+| E.1-S06 | Schedule / Calendar | SCH | `schedule_items` canonical domain; Editor node nem másolja le az eseményrekordokat | PROVISIONAL MAP |
+| E.1-S07 | Live / Integration Center | INT / LIV / OBS | Provider capability/scope-gated adapterek; site-scoped ownership és tokenbiztonság | PROVISIONAL MAP |
+| E.1-S08 | Theme / Design System | DSN | Canonical design token, theme és responsive property szerződés; nincs párhuzamos style state | PROVISIONAL MAP |
+| E.1-S09 | Template / Component / Symbol Library | DSN / EDT | Reusable template/component/symbol fogalmak külön; verziózás és instance-link megőrzése | PROVISIONAL MAP |
+| E.1-S10 | Stream / Overlay Studio | OBS / LIV | Editor csak konfigurálja a megjelenítést; stream runtime és OBS-műveletek külön domain | PROVISIONAL MAP |
+| E.1-S11 | Store / Monetization | STO / SUP / SEC | Fizetés, entitlement, refund és creator/platform bevétel elkülönítése; jogi/provider gate | PROVISIONAL MAP |
+| E.1-S12 | Community / Audience | COM / SUP / SEC | Consent, moderation, role/entitlement és export/delete szabályok | PROVISIONAL MAP |
+| E.1-S13 | Analytics / Automation / AI | ANL / AUT / AI / QA | Külön domain contractok; auditálhatóság, jóváhagyás, retry/idempotency és forrásfrissesség | PROVISIONAL MAP |
+| E.1-S14 | Platform Administration | SEC / OPS / TEAM | Account/workspace/site/team határok, tenant/site isolation, lifecycle és audit | PROVISIONAL MAP |
+| E.1-S15 | Developer / Extension surface | INT / MKT / OPS / SEC | Későbbi API/SDK/marketplace; permission declaration, sandbox, provenance és rollback | PROVISIONAL MAP |
+
+**Korlát:** a táblázat lezárja az E.1 felületnevek explicit nyomkövetési hiányát, de a hozzárendelések szemantikai felülvizsgálata és a célképességek részletes acceptance-e még nyitott. A `PROVISIONAL MAP` nem implementációs státusz és nem PASS. Következőként az E.2–E.22 és F.1–F.13 crosswalk sorainak egyedi source-bullet és canonical capability szintű ellenőrzése folytatandó. P0.2 **IN PROGRESS / NOT PASS**.
