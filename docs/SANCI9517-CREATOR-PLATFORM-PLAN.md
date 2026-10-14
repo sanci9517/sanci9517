@@ -6661,6 +6661,25 @@ Ez a szakasz a 63.41 kártyáit kiegészíti a 25. fejezet hiányzó, különál
 
 **Következő forrásellenőrzés:** `src/core/schedule/sync.ts`, `src/core/schedule/twitch-adapter.ts`, releváns `migrations/*.sql`, a tényleges Editor schedule blokk és a schedule-specifikus tesztek. A meglévő kódot előbb értékelni kell, nem szabad automatikusan újraírni. A jelen kapu **IN PROGRESS / NOT PASS**; nincs implementációs módosítás vagy deploy.
 
+### 63.50.3. Twitch schedule sync, adatmodell és migráció — második kódellenőrzési köteg (2026-10-14)
+
+**Ellenőrzött konkrét fájlok:** `src/core/schedule/sync.ts`, `twitch-adapter.ts`, `mapper.ts`, `types.ts`, `migrations/0013_schedule_source_sync.sql`, `migrations/0015_site_ownership_foundation.sql`. Ez **statikus forrásbizonyíték**, nem éles működés vagy tesztfutás.
+
+| Kapcsolódó ID | Kód alapján bizonyított működés | Kockázat, eltérés, kötelező további acceptance |
+| --- | --- | --- |
+| `SCH-007/008` sync lock | `beginSync` a `schedule_sync_state` rekordot `running` állapotba teszi csak ha még nem running; ütközésnél `SCHEDULE_SYNC_ALREADY_RUNNING`; `finishSync` állapotot, számosságot és hibakódot rögzít | A látható locknak nincs lejárata/lease-e; megszakadt Worker után a `running` beragadhat. Timeout/recovery és párhuzamos próbák tesztje szükséges |
+| `SCH-007` import idempotencia | `idx_schedule_source_identity` UNIQUE (`source,source_account_id,source_id`); `ON CONFLICT` upsert | Ugyanazt a rekordot nem duplikálja normál esetben; de a konfliktusfrissítés `title/platform/starts_at/ends_at/status/url` mezőket felülírja. **Kézi override elsőbbség nincs bizonyítva**; a provider és kézi változtatások tulajdonosi szabályát explicit rögzíteni kell |
+| `SCH-007/008` részleges sync | A `syncCanonicalTwitchSchedule` egyenként upsertel, majd missing reconciliationt végez; a provider-felvétel után hiba esetén `failed` státusz kerülhet a sync state-be | A teljes import+reconcile nem egyetlen atomikus tranzakció; részleges import maradhat. Retry/idempotencia, checkpoint és részleges állapot UI acceptance kell |
+| `SCH-007/008` hiányzó provider event | `reconcileMissing` az adott site/account/window jelen lévő, de a snapshotból hiányzó source ID-kat `source_presence='missing'`-re jelöli, nem törli | A publikus `readPublicSchedule` lekérdezésben nincs `source_presence` szűrő. A missing jelölésű, de scheduled státuszú esemény továbbra is megjelenhet; kötelező termékdöntés és negatív teszt |
+| `INT-011/SCH-007` provider adapter | Helix schedule API, token+Client-Id, lapozás 25-ös mérettel, maxPages korlát, időablakra szűrés, input parse és HTTP hibamapping | `parseSegment` a `canceled_until`, `category`, `is_recurring` mezőket a jelenlegi formában típusellenőrzi; a hiányzó opcionális mezők `undefined` értéke elutasítást okozhat. Valós provider fixture és optional-field contract teszt szükséges |
+| `SCH-004` recurrence | A mapper és D1 `is_recurring` jelzőt megőriz; a Twitch `canceled_until` alapján cancelled státuszt képez | A recurrence sorozat/exception, „csak ez az alkalom” vs „teljes sorozat” szerkesztés **nem igazolt** a jelzőtől; nem PASS |
+| `SEC-003/SCH-001` site identity | A 0015 migráció `site_id` mezőt ad és `site-default` backfillt végez; a sync identity ellenőrzés site-hoz kötött | A 0013 UNIQUE kulcsa nem tartalmaz `site_id`-t, a `schedule_sync_state` sem site-scoped oszlopot használ. Multi-site bevezetés előtt source account ownership/uniqueness invariánst és migrációs tervet bizonyítani kell; nem állítjuk, hogy jelenleg cross-site exploit bizonyított |
+| `SCH-008` sync állapot | 0013 migration `schedule_sync_state` státusz, window, timestamps, seen count, error fields tárolását létrehozza | A `source_empty` kivétel ágon a sync state rögzíti a státuszt, de a hiányzó események kezelése nem ugyanaz, mint a sikeres üres snapshot. Empty vs provider error biztonságos döntés és UI visszajelzés külön tesztelendő |
+
+**Kötelező következő döntési sorrend a meglévő ID-k alatt:** (1) publikus `source_presence` és `notes` szabály; (2) live-first `next` lekérdezés; (3) manual/provider mező-override policy; (4) lease és részleges import recovery; (5) recurrence és DST; (6) multi-site source identity; (7) provider optional-field fixture tesztek. Minden esetben a már működő kód javítása/bővítése az első lehetőség; nincs második schedule rendszer, nincs implementáció a nyitott tervkapu alatt.
+
+**Bizonyítékhiány:** CI/test/browser/live/production ellenőrzés nem futott ebben a körben; a migrációs fájlok létezése nem bizonyítja az éles D1 sémát. A 63.50.1 specifikáció **SPECIFICATION DRAFT / NOT PASS** marad, a teljes tervkapu **IN PROGRESS / NOT PASS**.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
