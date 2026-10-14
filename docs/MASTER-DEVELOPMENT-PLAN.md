@@ -5120,3 +5120,19 @@ A §37.16, §37.17 és §41.2 egyes mondatai a 2026-10-13-i, 359-ID-s registry-s
 **Döntés:** a visszanyert snapshot igazolja, hogy a korábbi aedb2ea hivatkozás önmagában nem volt elegendő, ugyanakkor a forrás-visszakeresés most részlegesen előrelépett. A 271 sor teljes történeti provenienciája még nem igazolt. A következő körben a forrás és ledger minden H-ID-ját két irányban kell összevetni, és minden többletsort source item, split/expanded mapping, supplemental governance vagy unresolved kategóriába kell sorolni; ehhez további időbélyegzett snapshotokat is keresni kell, különösen H34 és 00.9.6.B esetében.
 
 **Bizonyítékhatár:** 00/A és a 19–34 fejezetek egy történeti változata most visszanyert, de nem állítom, hogy ez az egyetlen vagy a legteljesebb változat. Az eredeti 00.9.6.B teljes szövege továbbra is **UNRECOVERED / OPEN**. A történeti active-index nem aktiválható. P0.2 **IN PROGRESS / NOT PASS** marad, és a fejlesztési fagyasztás nem változik.
+
+### 41.3.110. P0.2 — A 16 soros eltérés szerkezeti felbontása; a számlálási különbség magyarázható, a szemantikai PASS még nem (2026-10-14)
+
+**Közvetlen forrás–ledger újraszámlálás:** a 8a4f296b8c87643a3199e5787541e8eefb17f930 snapshot 19–33. fejezeteiben 244 külön checkbox-követelmény található. A 19. fejezetben az `alt text` és `crop` ugyanazon fizikai sorba tapadt, de két külön checkbox, ezért két külön követelményként kell számolni. A 34. fejezet további 11 felfedezési témát és 11 eljárási lépést sorol fel, valamint kimondja a folyamatos felfedezés átfogó szabályát.
+
+**A 271 ledger-ID számlálási felbontása:**
+- 244 tétel: a 19–33. fejezetek checkbox-követelményei;
+- 4 kiegészítő sor a 19–33 tartományban: H21.22 (titokkezelési/API-adapter architekturális korlát), H31.00 (AI Editor közös action pipeline), H33.00 (automatizálási életciklus-korlát), H33.12 (Queues/Durable Objects csak indokolt háttérfeladat/realtime esetén);
+- 23 H34 sor: 11 felfedezési témakör + 11 eljárási lépés + 1 átfogó, ismétlődő felfedezési szabály.
+- Összesen: 244 + 4 + 23 = 271 egyedi ID; duplikált H-ID nem található.
+
+**Mit old fel ez:** a korábban jelzett 16-os darabszámkülönbség szerkezetileg megmagyarázható: a 19–33. fejezetek 244 checklist-sorához képest négy kiegészítő korlát/szabály került explicit ID-val a ledgerbe, a 34. fejezet pedig nem csupán 11 számozott eljárási lépésből áll, hanem 11 felfedezési témát és egy átfogó szabályt is tartalmaz. Ezeket nem szabad automatikusan duplikátumnak vagy hiányzó forrástételnek nevezni.
+
+**Ami továbbra sincs lezárva:** a számlálási egyezés önmagában nem bizonyítja, hogy minden egyes H-ID szemantikailag pontos, teljes, nem összevont, megfelelő canonical ownerhez rendelt vagy a teljes történeti változatok között konzisztens. A következő audit továbbra is minden forrásmondat ↔ ledger sor kétirányú megfeleltetését, a kiegészítő sorok explicit `supplemental governance/architecture` jelölésének ellenőrzését, és az alternatív történeti snapshotok összevetését igényli. A `00.9.6.B` teljes eredeti szövegét ebben a körben sem sikerült visszanyerni; a vizsgált snapshotban a `00.9.6` általános térkép és a `00.9.6.A` fejezet szerepel, de külön `00.9.6.B` heading nem.
+
+**Státusz:** a 271-es darabszám strukturális magyarázata **RECONCILED — STRUCTURAL ONLY**. A teljes szemantikai reconciliáció és P0.2 továbbra is **IN PROGRESS / NOT PASS**; a fejlesztési fagyasztás változatlan.
