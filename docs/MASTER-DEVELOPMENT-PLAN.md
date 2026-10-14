@@ -4662,6 +4662,17 @@ Funkciók csak az alábbi állapotok egyikével tarthatók nyilván: REQUIRED / 
 - A 2026-09-16-i `docs/archive/2026-09-16/LEGACY-HTML-ARCHIVE.md` szerinti `about/community/contact/schedule/tiktok/twitch/vod/youtube` mapping történeti kiindulópont. A `migrations/0006_canonicalize_legacy_pages.sql` történeti migráció marad; SQL migration-history fájl nem törölhető a legacy HTML takarítás részeként.
 - A public renderer kizárólag a végleges canonical Page Model/published snapshotot fogyasztja; nem függhet attól, hogy az oldal eredetileg legacy HTML-ből származott-e.
 
+#### GAP-14 — Visual Editor canonical state, selection, hierarchy, layer order és history contract
+**Canonical owner:** Editor Core / Page Model / Command-Action / History. **Fázis:** F0.3–F0.4; AI ugyanennek a contractnak a fogyasztója marad F0.24-ben.
+- A strukturált document tree a source of truth. Minden node stabil `id`, `type`, `children`, content, layout, style és metadata mezőkkel; a Canvas, Layers és Inspector ugyanannak az állapotnak a nézetei, nem tarthatnak saját, egymástól független hierarchiát.
+- Minden mutáció az Action/Command → Validation/Permission → canonical document state → History → Canvas/Layers/Inspector → persistence útvonalon halad. A generált DOM/HTML nem válhat szerkesztési source of truth-vá.
+- A selection központi műveletei: `select`, `selectAdd`, `selectRemove`, `selectToggle`, `clearSelection`. Canvas és Layers ugyanazokat a node ID-ket használja.
+- A hierarchia canonical műveletei: `parentOf`, `hasDescendant`, `moveToParent`, `addChildren`, `moveOut`. A körkörös parent/child kapcsolat és az önmaga ősévé váló node elutasítandó.
+- A layer order csak sibling node-ok között értelmezhető; canonical műveletei: `forward`, `backward`, `front`, `back`. A hierarchy nem lapítható ki a z-index/layer sorrend megvalósításához.
+- Egyszerű selection click nem hoz létre history entry-t. Undo/redo ugyanazt a document state-et kezeli, amelyet a Canvas és Layers használ. Drag/resize csak tényleges mozgás vagy átméretezés megkezdésekor/lezárásakor hoz létre egy megfelelő transactiont, nem minden pointer eventre.
+- Az AI és minden későbbi agent nem módosíthat arbitrary DOM/CSS-t közvetlenül; ugyanazokat a strukturált editor actionöket használja, mint a felhasználó, és ugyanazt a validation/permission/history/audit/persistence láncot követi.
+- Stabil ID szükséges page, section, component, element/node, action, version, media és schedule entitásokhoz. A korábbi architecture dokumentumban szereplő runtime-név nem engedélyez régi editor runtime visszakapcsolását; a canonical runtime továbbra is `public/editor-v2/`.
+
 **Gap-closure szabály:** a fenti pontok beemelése tervszintű scope-megőrzés. A megvalósítási fázisban a canonical ownernek konkrét DoD-t, pozitív/negatív tesztet, adat-/API-szerződést, permission határt és acceptance-evidence-t kell adnia; az általános követelménylista önmagában nem PASS.
 
 
