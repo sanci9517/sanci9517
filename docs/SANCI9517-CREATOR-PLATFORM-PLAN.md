@@ -7145,6 +7145,14 @@ A `0004_system_page_content.sql` történeti táblát hoz létre, míg a `0005_c
 
 **Továbbra is OPEN:** a `00/A` és `00.9–00.9.6.B` történeti források visszakeresése / bizonyítékos nem-visszanyerhetőség kezelése; H19–H34 egyedi acceptance és domain owner szemantikai validálása; 49. modul és 54. review szerződés egyeztetése; felhasználói végső feature-review. **A teljes aktív PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY kapu IN PROGRESS / NOT PASS marad.**
 
+### 63.50.35. Kétirányú történeti ID-lefedettség: új platformképességek nem tévesztendők össze hiánnyal (2026-10-14)
+
+A `63.50.34` ellenőrzés **fordított irányú** kiegészítése: a 24. fejezet 396 egyedi ID-jából **172** szerepel legalább egy H19–H34 elsődleges mapping céljaként, **224** nem szerepel ezekben a céloszlopokban. A 224 nem automatikusan elveszett, hibás vagy fölösleges: az aktuális Creator Platform-scope történeti H19–H34-en túli új, kibővített vagy más forrásból megőrzött képességeit is tartalmazza. A 271 történeti sor több cél-ID-t is hivatkozhat; ezért a 271, 172 és 396 számok nem összeadandók.
+
+**Példák a 24. fejezet teljes prefix-csoportjaiból (összes ID / H19–H34 által hivatkozott ID):** `EDT 44/19`, `WEB 32/10`, `DSN 18/3`, `OBS 10/1`, `COM 20/0`, `SUP 12/0`, `STO 21/0`, `LOC 6/0`, `SEARCH 5/0`, `HELP 4/0`, `AI 21/17`, `SEO 5/5`. A nulla történeti hivatkozás **nem** kivezetési engedély, és **nem** bizonyítja, hogy a modul újonnan kitalált vagy értéktelen.
+
+**Következő szemantikai review szabály:** minden kanonikus ID-t a saját termékigényével, 49. moduljával, 54. ellenőrzőlistájával és fázisával kell igazolni; történeti H19–H34 kapcsolat csak akkor kötelező, ha valóban abból származik. A hiányzó `00/A` és `00.9.6.B` miatt a 224 ID történeti eredetét nem szabad önkényesen teljesnek vagy hiányzónak minősíteni. **REVERSE COVERAGE COUNT: VERIFIED / PROVENANCE SEMANTICS OPEN.** A teljes tervkapu NOT PASS.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
