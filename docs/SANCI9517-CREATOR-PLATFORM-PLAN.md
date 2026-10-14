@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.46` — a korábbi forráskód-audit HIGH publikálási szerződésütközése újraellenőrizve; 54.1–54.6 első körös 56/56 ID- és owner-routing rögzítve; **következő: 54.7#1–#12**, majd 54.8–54.16 tételes review. A 156-ból 56 első körös routinggal rendelkezik, 100 még nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll és a 63.50.46 HIGH kódaudit-blokkoló ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.48` — a HIGH publikálási szerződésütközés nyitott; 54.1–54.8 első körös 80/80 ID- és owner-routing rögzítve; **következő: 54.9#1–#9**, majd 54.10–54.16 tételes review. A 156-ból 80 első körös routinggal rendelkezik, 76 még nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll és a 63.50.46 HIGH kódaudit-blokkoló ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -7208,7 +7208,7 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 5. Minden sikeres audit-commit után a fejléc folytatási állapotát és a legutolsó bejegyzést egyeztetni; a következő munka **egyértelmű azonosítóval**, a még nyitott részhalmazzal és a PASS/NOT PASS határral legyen megadva. A commit SHA csak a GitHub által visszaadott tényleges eredmény alapján közölhető.
 6. Nem létező vagy nem visszanyert történeti forrást nem lehet rekonstruáltnak nevezni; a 396 ID, 22 modul, 156 review és 271 történeti H-ID számlálása nem runtime teszt. A fejlesztési fagyasztás az aktív kapu PASS-áig változatlan.
 
-**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.46 SOURCE-CONFLICT RECONFIRMED / NEXT 54.7#1–#12`. A 54.1–54.4 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.7–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
+**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.48 FIRST-PASS 80/156 / NEXT 54.9#1–#9`. A 54.1–54.4 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.7–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
 
 ### 63.50.41. 54.2 Saját weboldal és Visual Editor: 15 checklist-tétel első körös routingja (2026-10-14)
 
@@ -7315,6 +7315,44 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 - **D — a kódjavítás után:** célzott typecheck/test/CI/böngésző/production evidence külön naplózva. **Ezeket ebben a körben nem futtattuk**, ezért nincs runtime PASS.
 
 **Aktuális tényállás:** `PUBLICATION CONTRACT CONFLICT / SOURCE CONFIRMED / NOT FIXED`; `54.1–54.6 FIRST-PASS ROUTING 56/156`; `HISTORICAL SEMANTICS OPEN`; `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY IN PROGRESS / NOT PASS`. Következő dokumentációs auditpont: **54.7#1–#12**, majd 54.8–54.16; a publikálási konfliktus **HIGH blokkoló**, nem archiválható és nem tekinthető javítottnak a routing előrehaladásával.
+
+### 63.50.47. 54.7 checklist-szintű első routing (2026-10-14)
+
+| Tétel | Stabil capability ID | Elsődleges modul | Negatív teszt / nyitott szerződés |
+| --- | --- | --- | --- |
+| 54.7#1 OBS-párosítás, hitelesítés, kapcsolatstátusz, reconnect és diagnosztika. | OBS-002, OBS-003 | 49.8 OBS/overlay; szükség szerint Integrations/Community | Disconnected OBS esetén vezérlés tiltott; reconnect/diagnosztika OPEN |
+| 54.7#2 Scene/source lista, állapot, scene-váltás, visibility, audio mute/volume a támogatott műveletek szerint. | OBS-003, OBS-004 | 49.8 OBS/overlay; szükség szerint Integrations/Community | Nem támogatott scene/source/audio parancs tiltott |
+| 54.7#3 Overlay Studio, browser source, canvas, safe area, méret, pozíció, scene-variáns. | OBS-001, OBS-005, OBS-010 | 49.8 OBS/overlay; szükség szerint Integrations/Community | Safe-area és scene-variáns részletes teszt OPEN |
+| 54.7#4 Alert box és eseményvariánsok follow/sub/gift/cheer/raid/tip/purchase eseményekre, ha elérhetők. | OBS-006, OBS-008 | 49.8 OBS/overlay; szükség szerint Integrations/Community | Csak hitelesített provider-esemény; replay/dedup kötelező |
+| 54.7#5 Event list, chat box, goal/progress, countdown/timer, now-playing, sponsor/QR/link widget. | OBS-001, OBS-005, OBS-010 | 49.8 OBS/overlay; szükség szerint Integrations/Community | Widgettípusok és registry részletezése OPEN |
+| 54.7#6 Poll, giveaway, loyalty/points, viewer queue és media request csak jogosultsággal és szabályokkal. | OBS-007, COM-009 | 49.8 OBS/overlay; szükség szerint Integrations/Community | Giveaway/loyalty és queue jogosultsági szabályok OPEN |
+| 54.7#7 Widgetteszt, preview, verziózás, rollback és megosztható overlay URL. | OBS-008, OBS-010 | 49.8 OBS/overlay; szükség szerint Integrations/Community | Publikus overlay URL nem fedhet fel vezérlési titkot |
+| 54.7#8 Chatbot parancsok, aliasok, változók, timerek, quote/counter, shoutout és FAQ. | OBS-007 | 49.8 OBS/overlay; szükség szerint Integrations/Community | Bot parancs/alias/timer rate limit OPEN |
+| 54.7#9 Spam/linkvédelem, slow/follower/sub-only policy ahol a platform engedi, moderációs napló. | OBS-007, COM-009, COM-012 | 49.8 OBS/overlay; szükség szerint Integrations/Community | Platform-policy és moderációs audit szükséges |
+| 54.7#10 Hotkey, Stream Deck/Macro Deck/MIDI/webhook adapter, allowlist, dry-run és végrehajtási eredmény. | OBS-004, OBS-009, AUT-004 | 49.8 OBS/overlay; szükség szerint Integrations/Community | Dry-run nem küldhet élő parancsot |
+| 54.7#11 Plugin/widget registry, verzió, kompatibilitás, permission, eredet, frissítés és eltávolítás. | OBS-010, DEV-002 | 49.8 OBS/overlay; szükség szerint Integrations/Community | Extension permission és kompatibilitás kötelező |
+| 54.7#12 Natív OBS plugin vagy desktop companion csak külön, dokumentált biztonsági tervvel. | OBS-002, SEC-009 | 49.8 OBS/overlay; szükség szerint Integrations/Community | Desktop companion külön threat model és döntés |
+
+**Státusz:** 12/12 első körös routing; sem domain/fázis/evidence, sem runtime PASS nem bizonyított. Hiányzó rész csak GAP CANDIDATE.
+
+### 63.50.48. 54.8 checklist-szintű első routing (2026-10-14)
+
+| Tétel | Stabil capability ID | Elsődleges modul | Negatív teszt / nyitott szerződés |
+| --- | --- | --- | --- |
+| 54.8#1 VOD, clip, highlight, long-form, Short/Reel, post, image, audio, podcast és replay. | CNT-001, CNT-002, CNT-003, CNT-004 | 49.9 Content; szükség szerint AI/Integrations/Public | Nem támogatott formátum nem ígérhető publikálhatónak |
+| 54.8#2 Közös content ID, platform ID, cím, leírás, thumbnail, időtartam, URL, státusz és jogadat. | CNT-001, CNT-007, CNT-022 | 49.9 Content; szükség szerint AI/Integrations/Public | Külső ID ütközés és lejárt jog kezelendő |
+| 54.8#3 Keresés, szűrés, rendezés, bulk action, duplikáció-észlelés és gyűjtemények. | CNT-005, CNT-006, CNT-007 | 49.9 Content; szükség szerint AI/Integrations/Public | Bulk művelet nem írhat felül idegen site-ot |
+| 54.8#4 Tartalomnaptár és státuszfolyam: idea/draft/review/ready/scheduled/publishing/published/failed. | CNT-009, CNT-010, CNT-013, CNT-014, CNT-015 | 49.9 Content; szükség szerint AI/Integrations/Public | Approval nélkül nincs éles publikálás |
+| 54.8#5 Transcript, időbélyeg, speaker/fejezet, felirat, SRT/VTT, fordítás és export. | CNT-018, AI-014 | 49.9 Content; szükség szerint AI/Integrations/Public | Transcript nem automatikusan jóváhagyott tartalom |
+| 54.8#6 AI highlight/clip-javaslat forrás-időbélyeggel, indoklással és emberi választással. | CNT-018, AI-014 | 49.9 Content; szükség szerint AI/Integrations/Public | AI-javaslat időbélyeg és emberi döntés nélkül nem éles |
+| 54.8#7 Videóvágás: trim/split/crop/reframe/aspect ratio, felirat, hang, átmenet és brand overlay. | CNT-021, CNT-022 | 49.9 Content; szükség szerint AI/Integrations/Public | Export előtt média- és zenejog ellenőrzendő |
+| 54.8#8 Thumbnail/grafika-sablon, variánsok, platformméretek és preview. | CNT-012 | 49.9 Content; szükség szerint AI/Integrations/Public | Platformméret/preview és export validálás OPEN |
+| 54.8#9 Platformonkénti cím, leírás, hashtag, CTA, képarány és publikálási státusz. | CNT-011, CNT-013, CNT-014 | 49.9 Content; szükség szerint AI/Integrations/Public | Platformonként külön partial failure |
+| 54.8#10 API-publikálás ahol engedélyezett; egyébként export és kézi közzétételi útmutató. | CNT-013, CNT-014, INT-018 | 49.9 Content; szükség szerint AI/Integrations/Public | Unsupported write API esetén kézi fallback |
+| 54.8#11 Zene-/videójog, vendéghozzájárulás, lejárat, forrás és eltávolítási kérés. | CNT-022 | 49.9 Content; szükség szerint AI/Integrations/Public | Takedown/expiry után publikus megjelenés tiltott |
+| 54.8#12 Tartalomból weboldali feed, social poszt és analitika ugyanazon canonical rekord alapján. | CNT-020, CNT-019, ANL-004 | 49.9 Content; szükség szerint AI/Integrations/Public | Közös canonical content ID; nincs második tartalomtár |
+
+**Státusz:** 12/12 első körös routing; sem domain/fázis/evidence, sem runtime PASS nem bizonyított. Hiányzó rész csak GAP CANDIDATE.
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
