@@ -3189,3 +3189,67 @@ A rendszer akkor tekinthető megfelelően személyre szabhatónak, ha:
 6. Frissítés nem írja felül csendben a felhasználó saját beállításait.
 7. A kezdő egyszerű élményt kap, a haladó felhasználó pedig eléri a mély testreszabást.
 8. Az export/import licencet, biztonságot és személyes adatokat figyelembe véve működik.
+
+
+---
+
+## 57. Személyre szabhatósági architektúra: közös rendszer, saját identitás
+
+Ez a fejezet a 56. fejezet szabályait pontosítja. A személyre szabás nem különálló, egymástól független beállítások gyűjteménye, hanem közös, verziózott és rétegezett konfigurációs rendszer.
+
+### 57.1. Kanonikus erőforrás-típusok és határok
+- [ ] **Design tokens/theme:** vizuális alapértékek és téma-variánsok.
+- [ ] **Brand Kit:** logó, márkanév, színek, betűk, márkaeszközök és használati szabályok.
+- [ ] **Icon Registry/Icon Pack:** ikonazonosítók, kategóriák, keresési címkék, stílusok és licenc.
+- [ ] **Component Registry:** működő, újrahasználható UI-/Visual Editor komponensek, sémák, variánsok és instance properties.
+- [ ] **Template Registry:** oldalak, szekciók, widget-összeállítások, dashboardok, overlayek, posztok és más tartalmi kiinduló struktúrák.
+- [ ] **Preset Registry:** egy funkció beállításcsomagja, például export, overlay, chatbot, workflow vagy editor layout.
+- [ ] **Workspace/User Preferences:** személyes munkafelület és preferenciák; nem módosítják automatikusan más felhasználók nézetét.
+- [ ] **Site Configuration:** egy adott webhely domainje, publikus arculata, nyelvei és publikálási beállításai.
+- [ ] **Extension Registry:** külső bővítmény manifestje, engedélyei, verziója, eredete és kompatibilitása.
+- [ ] Az erőforrások stabil ID-t, owner/scope mezőt, verziót, sémát, létrehozási/frissítési adatot és életciklus-státuszt kapnak; a megjelenített név nem azonosító.
+
+### 57.2. Hatókör és öröklési sorrend
+- [ ] Legyen egy dokumentált konfigurációs feloldási sorrend, például: rendszer alapértéke → hivatalos preset/theme → workspace/site konfiguráció → oldal/komponens override → személyes UI-preferencia ott, ahol releváns.
+- [ ] Az öröklés típusonként szabályozott legyen: a személyes Admin-sűrűség ne írja felül a publikus weboldal témáját; egy site logója ne változtassa meg egy másik site arculatát.
+- [ ] Minden beállításnál látszódjon, hogy örökölt, helyileg beállított vagy felülírt érték-e.
+- [ ] Legyen egy kattintásos „visszaállítás az örökölt értékre” és „visszaállítás alapértékre”, egyértelmű különbséggel.
+- [ ] Több site/workspace esetén minden erőforrás a megfelelő scope-hoz kötődjön; a másik site adata nem szivároghat át.
+
+### 57.3. Sablonfrissítés és felhasználói változtatások megőrzése
+- [ ] A sablon/preset alkalmazása hozzon létre változás-előnézetet: új, módosított, eltávolított és ütköző elemek.
+- [ ] A felhasználói változtatás és a sablon eredeti értéke külön követhető legyen.
+- [ ] Frissítéskor legyen „minden elfogadása”, „kiválasztott módosítások”, „kihagyás” és konfliktusonkénti feloldás, ahol a struktúra ezt lehetővé teszi.
+- [ ] Ha automatikus merge nem biztonságos, ne találgasson a rendszer: álljon meg, őrizze meg a meglévő állapotot és kérjen döntést.
+- [ ] Törlés vagy schema-váltás előtt függőségi vizsgálat és mentés szükséges.
+- [ ] A verzióváltás visszafordítható, naplózott és tesztelhető legyen.
+
+### 57.4. Központi kereső és választó
+- [ ] Egy egységes keresési élményben legyenek elérhetők a sablonok, presetek, ikonok, komponensek, témák és Brand Kitek, megfelelő szűrőkkel.
+- [ ] Az adott szerkesztési kontextus csak releváns elemeket emeljen ki, de a teljes könyvtár kereshető maradjon.
+- [ ] Minden elemhez előnézet, leírás, szerző/eredet, verzió, kompatibilitás, licenc és használati hely tartozzon.
+- [ ] Legyen „saját”, „workspace”, „hivatalos” és később „közösségi/marketplace” könyvtár.
+- [ ] A könyvtár ne terhelje túl az alapfelületet: kezdő nézetben ajánlott elemek, haladó nézetben részletes metaadatok és paraméterek.
+
+### 57.5. Saját arculat és platformfüggetlen identitás
+- [ ] A felhasználó ne legyen rákényszerítve a SANCI márkanévre a saját publikus weboldalán, overlayein, közösségi tartalmain vagy saját exportjain ott, ahol a termékfeltételek ezt megengedik.
+- [ ] A SANCI saját belső Admin- és rendszerfelületei, valamint a felhasználó publikus brandje külön konfigurációs scope-ot kapnak.
+- [ ] Legyen saját logó-/favicon-/social-avatar készlet, betűk, színpaletta, háttér, mozgásstílus, ikonstílus, gombstílus és hangulatpreset.
+- [ ] A rendszernek legyen semleges, minimális márkájú induló megjelenése, amit a felhasználó saját márkájára alakíthat.
+- [ ] White-label csak a technikai és üzleti feltételek szerint ígérhető; a szolgáltatói/jogi/security jelölések és harmadik fél kötelező attribúciói nem rejthetők el megtévesztően.
+
+### 57.6. Egyediség a funkciókban, nem csak a színekben
+- [ ] A felhasználó választhasson különböző navigációs modellek, oldalelrendezések, widget-kombinációk, tartalmi struktúrák és munkafolyamatok közül.
+- [ ] A komponensek ne csak színezhetők legyenek: legyenek szerkeszthető tulajdonságaik, variánsaik, slotjaik és adatkapcsolataik.
+- [ ] Legyen „gyors személyre szabás” (logó, színek, font, sablon) és „teljes testreszabás” (komponens-, layout-, adatmegjelenítési és workflow-beállítások).
+- [ ] Egyedi CSS/JS vagy külső kód csak későbbi, explicit engedélyezési/sandbox terv mellett; ne kerülje meg a jogosultságokat, CSP-t vagy biztonsági határokat.
+- [ ] A teljes személyre szabhatóság nem jelentheti a szerveroldali auth, adatvalidáció, audit, fizetési szabályok vagy adatvédelmi korlátok kikapcsolását.
+
+### 57.7. Validáció és elfogadási tesztek
+- [ ] Egy új felhasználó induló sablonból saját logós, saját témájú weboldalt és stream-asseteket tud készíteni anélkül, hogy a rendszer kódját módosítaná.
+- [ ] A téma vagy Brand Kit változtatása minden hozzárendelt, támogatott helyen következetesen jelenik meg.
+- [ ] A felhasználó által felülírt értékek egy hivatalos sablonfrissítés után megmaradnak.
+- [ ] Egy site témájának/logójának módosítása nem érint más site-ot vagy másik felhasználót.
+- [ ] Egy importált csomag nem tud titkot/hozzáférési tokent exportálni vagy szerveroldali jogosultságot megváltoztatni.
+- [ ] Ismeretlen/hibás ikon vagy komponens helyén értelmes fallback és javítási lehetőség látszik.
+- [ ] A teljes könyvtár billentyűzettel, képernyőolvasóval és mobil nézetben is használható a támogatott feladatokhoz.
