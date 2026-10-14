@@ -3766,7 +3766,7 @@ A 54. fejezet 16 témacsoportja a jelenlegi ellenőrzésben 156 checkbox-tételt
 | 54.15 Beállítások, biztonság, adatvédelem és megbízhatóság | 49.15 Beállítások, biztonság és adat | SEC, OPS, QA | Biztonság, privacy és reliability keresztmetszeti elfogadási feltétel is. |
 | 54.16 Fejlesztői platform, bővítmények, csapat és SaaS | 49.16 Fejlesztői platform/API; 49.17 Bővítmények és piactér; 49.18 Csapat/több site/SaaS | DEV, MKT, TEAM, OPS, SEC | Későbbi fázis; tenant isolation, extension security és billing függőségek nem hagyhatók ki. |
 
-**Auditállapot:** a 16 témacsoport tulajdonosmodulhoz rendelése dokumentálva van; ez kategóriaszintű megfeleltetés, nem a 156 egyedi checkbox szemantikai PASS-a. A következő részletes auditlépés a 54. fejezet minden checkboxának megfeleltetése a 24. fejezet stabil ID-jéhez, vagy — ha még nincs ID — a hiányzó ID rögzítése a megfelelő modul alatt. Azonos képesség több modulban csak közös szolgáltatásra mutató hivatkozásként szerepelhet; az esetleges eltéréseket nyitottként kell megőrizni a feloldásig.
+**Auditállapot:** a 16 témacsoport tulajdonosmodulhoz rendelése dokumentálva van, és a 63.12–63.15. fejezet a 156 egyedi checklist-tétel mindegyikét stabil funkcióazonosítóhoz rendeli. Ez tervszintű megfeleltetés, nem runtime- vagy acceptance-PASS. A következő auditlépés a megfeleltetések szemantikai pontosságának, a hasonló megfogalmazású képességek tényleges duplikációinak, valamint a modulhatárok és a domain/adatgazdák összhangjának ellenőrzése. Azonos képesség több modulban csak közös szolgáltatásra mutató hivatkozásként szerepelhet; az esetleges eltéréseket nyitottként kell megőrizni a feloldásig.
 
 ### 63.12. Tételes checklist-megfeleltetés — 54.1–54.4
 
@@ -3953,3 +3953,14 @@ Az alábbi táblázat a 54. fejezet első négy témacsoportjának minden checkb
 | 54.16 | Tenant izoláció, migráció, skálázás, adatrezidencia és költségfelügyelet | SEC-003, OPS-004–006, OPS-008–011, TEAM-005–006 | Későbbi SaaS-kapu; migráció/restore és költségmodell bizonyítékkal. |
 
 **Állapot:** a 54.13–54.16 tételek stabil ID-khez vannak rendelve. A 54.1–54.16 teljes checklistének tervszintű megfeleltetése most elkészült; a következő audit a 156 sorhoz rendelt ID-k létezését, szemantikai pontosságát, valódi duplikációit és a 49. fejezet modulhatáraival való összhangját ellenőrzi. Ez még nem igazolja a runtime implementációt vagy az acceptance-tesztek PASS állapotát.
+
+### 63.16. Tervszintű keresztmegfeleltetési ellenőrzőpont — 2026-10-14
+
+Az ellenőrzés a kanonikus terv aktuális GitHub-változatán futott. Eredmény:
+- A 54. fejezetben **156 checklist-tétel** van; a 63.12–63.15 táblázatokban **156/156** tételhez tartozik külön megfeleltetési sor.
+- A megfeleltetési sorokban használt stabil ID-k mind megtalálhatók a 24. fejezetben; a jelen ellenőrzésben nincs feloldatlan ID-hivatkozás.
+- A 24. fejezetben **382 stabil funkcióazonosító** szerepel, és az azonosítók egyediek.
+- A 49. fejezetben **18 egymást követő főmodul** szerepel 49.1–49.18 között; a média/erőforrás, fejlesztői API, bővítmény-piactér és csapat/SaaS külön főmodul.
+- A 54. fejezet normalizált, pontos szövegduplikáció-ellenőrzése korábban nem talált ismétlődő checklist-tételt.
+
+**Korlátok és nyitott munka:** ez strukturális/azonosító-keresztellenőrzés, nem bizonyítja, hogy minden hozzárendelés szemantikailag tökéletes, nincs-e két külön szöveg mögött ugyanaz a képesség, minden domain-szerződés teljes-e, vagy a runtime megvalósítja-e a tervet. Következő feladat a szemantikai duplikáció- és tulajdonosmodul-audit, majd a meglévő kód, API-k, adatmodellek, jogosultságok és tesztek összevetése. A fejlesztési fagyasztás és a tervlezárási kapu változatlanul érvényes; ez az ellenőrzőpont önmagában nem engedélyezi az F0 megkezdését.
