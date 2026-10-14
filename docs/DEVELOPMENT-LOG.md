@@ -1,6 +1,6 @@
 # Sanci9517 V2 — Development Log
 
-> **HISTORICAL DEVELOPMENT LOG — 2026-09 snapshot.** The current implementation point and next action are defined only by `docs/MASTER-DEVELOPMENT-PLAN.md` at the top-level `ACTIVE_POINT_ID` on `v2/foundation`. Entries below preserve historical implementation and verification evidence; they do not override the current MASTER.
+> **HISTORICAL DEVELOPMENT LOG — 2026-09 snapshot.** The current implementation point and next action are defined only by `docs/SANCI9517-CREATOR-PLATFORM-PLAN.md` at the top-level `ACTIVE_POINT_ID` on `v2/foundation`. Entries below preserve historical implementation and verification evidence; they do not override the current MASTER.
 
 ## Historical development point (2026-09-15)
 - Visual Editor stabilization/testing
