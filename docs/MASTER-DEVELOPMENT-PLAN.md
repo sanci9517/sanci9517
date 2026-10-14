@@ -5449,3 +5449,47 @@ A közvetlen előd-MASTER (`87b6f0bb71cd96646b6a501ab85c242386a1124e`) és a jel
 **Batch eredménye:** 21 régi tételhez előzetes célpontot vagy kifejezett nyitott kérdést rendeltem. Ez tervszintű crosswalk-vázlat; nem jelent 21/21 szemantikai PASS-t. Különösen a #10 (draft/workspace fogalmak), #15 (tab/window close), #18 (snapshot törlési feltétel) és #20 (multi-tab felismerés) marad nyitott. Az `EDT-031` vagy `EDT-042` puszta megnevezése nem helyettesíti a konkrét viselkedési és tesztfeltételt.
 
 **Következő lépés:** a régi 1/H 30 Core tesztpont tételes párosítása a jelenlegi EDT/WEB/QA ID-khoz és a 37.22/F.1 crosswalk soraihoz; ezt követően 1/B alapelemek. `00.9.6.B` továbbra is **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.127. P0.2 — Régi 1/H Editor Core tesztkapu: 30 elfogadási pont előzetes megfeleltetése (2026-10-14)
+
+**Forrás:** előd-MASTER 1/H, 30 számozott Core elfogadási pont. **Jelenlegi célpontok:** EDT registry a 24.3. fejezetben; történeti E.3.7 és F.1 crosswalk a 37.22–37.23 környezetében; általános acceptance/negatív teszt szabályok a 10–11. fejezetben. Az alábbi tábla tervszintű leképezés, nem végrehajtott teszteredmény.
+
+| # | Régi Core elfogadási pont | Jelenlegi célpont | Tervszintű státusz |
+|---:|---|---|---|
+| 1 | Editor megnyílik | EDT-035; ADM/WEB belépési útvonal, QA-004/005 | PARTIAL — pontos route és browser acceptance |
+| 2 | Oldal betöltődik | EDT-001/002, WEB-004, F.1-02 | PLAN MATCH — D1/runtime bizonyíték külön |
+| 3 | Container létrejön | EDT-002/003/016 | PLAN MATCH — create command + node invariant teszt |
+| 4 | Heading létrejön | EDT-017 | PLAN MATCH — elemkatalógus és renderer acceptance |
+| 5 | Text létrejön | EDT-017; EDT-043 csak advanced rich textre | PLAN MATCH — a régi plain text és rich text scope nem keverhető |
+| 6 | Button létrejön | EDT-017 | PLAN MATCH |
+| 7 | Elem kijelölhető | EDT-006/013 | PLAN MATCH |
+| 8 | Elem újrakijelölhető | EDT-006/013; F.1-02 | PLAN MATCH |
+| 9 | Elem szerkeszthető | EDT-021/022; EDT-017–020 elemfüggően | PLAN MATCH — property schema/validation acceptance |
+| 10 | Elem törölhető | EDT-003/004/011; QA-007 | PLAN MATCH — referenciák és rollback negatív teszt |
+| 11 | Elem duplikálható | EDT-003/004/011 | PLAN MATCH — stabil ID-k és child/reference semantics teszt |
+| 12 | Sorrend működik | EDT-008/011/016 | PLAN MATCH — layout módot nem szabad csendben megváltoztatni |
+| 13 | Mentés működik | EDT-027/028; WEB-004 | PLAN MATCH — save success és DB postcondition kell |
+| 14 | Reload után megmarad | EDT-028; F.1-02 | PLAN MATCH — tényleges round-trip teszt kell |
+| 15 | Reload után újra kijelölhető | EDT-006/013/028; F.1-02 | PLAN MATCH — identity/selection round-trip |
+| 16 | Preview helyes | EDT-032/034, WEB-005 | PLAN MATCH — draft preview vs public külön |
+| 17 | Public renderer helyes | EDT-034, WEB-004–008 | PLAN MATCH — browser/runtime paritás kell |
+| 18 | D1-ben ténylegesen megjelent | EDT-028, WEB-004, QA-002/003 | PARTIAL — adatbázis-postcondition explicit futtatott bizonyítéka kell |
+| 19 | Hibás input nem töri el | EDT-022, QA-006, 10.1 negative tests | PLAN MATCH — konkrét invalid-schema esetek szükségesek |
+| 20 | Mobil/desktop nem romlik | EDT-024–026, EDT-035–037, QA-005 | PLAN MATCH — viewport/browser acceptance kell |
+| 21 | Undo működik | EDT-003–005; E.3.7-01; F.1 history | PLAN MATCH — history integrity/command semantics |
+| 22 | Redo működik | EDT-003–005; E.3.7-01; F.1 history | PLAN MATCH — új ág és határhelyzet teszt |
+| 23 | Copy/paste működik | EDT-038 | PLAN MATCH — clipboard scope/ID rebinding és permission ellenőrzendő |
+| 24 | Reparent működik | EDT-002/003/004/011; QA-002 | PLAN MATCH — cycle/nesting/parent invariant negatív teszt |
+| 25 | Save hiba után adatvesztés nélküli retry | EDT-027/030/031/042; E.3.7-02; E.20-N05 | PLAN MATCH — dirty state és in-flight edit preservation külön teszt |
+| 26 | Recovery működik | EDT-031/042; F.1-09/10 | PLAN MATCH — crash/refresh/network failure külön forgatókönyvek |
+| 27 | Konfliktus nem ír felül csendben | EDT-029/030; E.3.7-04; E.20-N06 | PLAN MATCH — stale expected-version teszt |
+| 28 | Jogosulatlan mutation elutasítva | 10.1 ownership/permission negatív tesztek; SEC/EDT domain command | PARTIAL — Editor mutation konkrét cross-site/user negatív próbája kell |
+| 29 | Accessibility alapmezők nem hagyhatók hibásan | EDT-022, EDT-037, QA-004/005; RES/WEB ahol releváns | PARTIAL — kötelező mezők és schema-szintű reject/fix flow konkrét elfogadása kell |
+| 30 | Editor újranyitása ugyanazt a strukturált állapotot adja | EDT-001/002/028/034; F.1-02/07 | PLAN MATCH — Page Model round-trip + renderer paritás, runtime bizonyítékkal |
+
+**Eredmény:** mind a 30 régi elfogadási ponthoz találtam ésszerű jelenlegi EDT/WEB/QA célpontot vagy explicit további acceptance-feladatot. Ez a **tervlefedettség előzetes megfeleltetése**, nem 30/30 végrehajtott teszt és nem kapu-PASS. Külön runtime/evidence ellenőrzést igényel legalább a #1, #18, #28, #29, továbbá minden olyan pont, amelyhez a jelenlegi terv csak ID-t és elfogadási elvet ad.
+
+**Következő lépés:** régi 1/B alapelemek és kötelező node mezők tételes összevetése EDT-001/002/015–020 és az E.3 crosswalk soraival; külön ellenőrizendő a form/custom component slot, interaction/data binding, accessibility metadata és schema version, mert a jelenlegi elemkatalógusban hasonló név nem feltétlenül jelent azonos scope-ot.
+
+**Státusz:** 1/H 30 pontos tervszintű megfeleltetés dokumentálva; végrehajtott acceptance nincs e bejegyzéssel igazolva. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
