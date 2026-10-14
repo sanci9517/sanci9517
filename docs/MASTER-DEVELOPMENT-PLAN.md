@@ -2550,3 +2550,206 @@ A következő munka mindig a repository tényleges állapotából indul:
 
 A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó sorrend szerint haladjon, miközben a teljes bővíthető Creator Platform célja megmarad.
 
+---
+
+## 49. Teljes Creator Center menütérkép — felhasználói funkciók szerint
+
+Ez a menütérkép a végső termék navigációs célját rögzíti, nem azt állítja, hogy minden funkció már elkészült. A menü csoportosítható, kereshető és szerepkör szerint szűrhető; a ritkán használt funkciók nem zsúfolják tele az alapnézetet. A menüpontok ugyanazokat a kanonikus domain szolgáltatásokat használják, nem külön miniappok.
+
+### 49.1. Kezdőlap és napi áttekintés
+- **Áttekintés:** élő állapot, következő adás, feladatok, publikálási queue, figyelmeztetések, bevételi és közösségi összefoglaló.
+- **Gyors műveletek:** stream indítás előtti ellenőrzőlista, új tartalom, új oldal, új kampány, overlay teszt.
+- **Teendők:** sikertelen szinkronok, lejárt kapcsolatok, jóváhagyásra váró AI-módosítások, sikertelen publikálások.
+- **Személyre szabás:** átrendezhető dashboard-kártyák, szerepkör szerinti nézetek, widget-beállítások.
+
+### 49.2. Weboldal
+- **Oldalak:** létrehozás, másolás, archiválás, útvonal/slug, státusz, verzió, hozzáférés, átirányítás.
+- **Navigáció:** menük, almenük, mobil menü, footer, breadcrumbs, külső és belső hivatkozások.
+- **Visual Editor:** vászon, rétegek, komponensek, inspector, responsive preview, undo/redo, billentyűparancsok, keresés.
+- **Témák és Brand Kit:** logók, színpaletták, tipográfia, design tokenek, spacing, ikonok, képek, brand szabályok.
+- **Sablonok és blokkok:** teljes site starter, oldalsablon, szekció, reusable komponens, variáns, preset, import/export.
+- **Tartalom/CMS:** kollekciók, mezők, referenciák, szűrők, keresés, rendezés, ütemezett publikálás, draft/preview.
+- **Média:** feltöltés, könyvtár, címke, alt text, átalakítás, vágás, képméretek, asset-variánsok, felhasználási helyek.
+- **SEO és megosztás:** meta cím/leírás, canonical URL, sitemap, robots, Open Graph, social preview, strukturált adatok, redirectek.
+- **Lokalizáció:** nyelvek, fordítási státusz, locale-öröklés és felülírás, lokalizált slug/meta/kép/alt text, RTL, nyelvváltó.
+- **Űrlapok és interakciók:** kapcsolat, feliratkozás, leadek, spamvédelem, siker/hiba állapotok, hozzájárulás.
+- **Publikálás:** preview, staging, diff, jóváhagyás, publish/unpublish, verzió és rollback, domain és DNS állapot.
+
+### 49.3. Márka és designrendszer
+- **Brand Kit:** logóváltozatok, színek, betűk, ikonok, grafikai elemek, hangnem, írásmód, tiltott/előnyben részesített megoldások.
+- **Brand assetek:** stream overlay, thumbnail, intro/outro, social post, merch design, watermark, email sablon.
+- **Közös design tokenek:** globális és komponensszintű értékek, theme-variánsok, kontrasztellenőrzés, sötét/világos mód.
+- **Brand consistency:** automatikus ellenőrzés és javítási javaslat weboldalon, videón, képen, poszton és overlayen.
+- **Export:** SVG/PNG/WebP és más támogatott formátumok, szín-/méretváltozatok, licenc- és eredetadatok.
+
+### 49.4. Élő adás és Stream Studio
+- **Stream Planner:** adásrend, ismétlődő események, game/kategória, cím, leírás, vendégek, emlékeztetők.
+- **Live Control Room:** stream állapot, platformonkénti státusz, késleltetett/elavult adat jelzése, eseményfolyam.
+- **Multistream:** több célplatform, platformonkénti cím/leírás/kategória, capability-mátrix, előzetes ellenőrzés.
+- **Unified Chat:** támogatott platformok üzeneteinek egy nézetben olvasása, válasz, platformonkénti küldési korlát, export.
+- **Stream Checklist:** mikrofon/kamera/scene/bitrate/kapcsolat/overlay/alert ellenőrzések, tesztmód és adás előtti próba.
+- **Stream notes/markers:** időbélyegek, highlight-jelöltek, jegyzetek, fontos események és későbbi vágási pontok.
+- **Stream replay/backup:** rögzítési állapot, lokális felvétel állapota, támogatott tartalék stream, hibaértesítés; a platform/API korlátai szerint.
+
+### 49.5. OBS és stream eszközök
+- **OBS kapcsolat:** párosítás, hitelesítés, kapcsolat állapota, engedélyek, reconnect, hibakeresés; jelszó és token soha nem jelenhet meg logban.
+- **Scene/source áttekintés:** scene-váltás, source státusz, source visibility, audio mute/volume és egyéb csak támogatott API-műveletek.
+- **Overlay Studio:** browser source URL, méret, safe area, canvas, scene-enkénti variáns, teszt/preview, verzió és rollback.
+- **Overlay/widget könyvtár:** alert box, event list, chat box, goal/progress bar, timer, countdown, now-playing, recent events, sponsor panel, QR/link panel.
+- **Interakciók:** follow/sub/donation/cheer/raid/redeem események, media share, szavazás, wheel, giveaway, loyalty/points, csak megfelelő platform- és szolgáltatói jogosultsággal.
+- **Chatbot:** parancsok, aliasok, változók, időzítők, spam- és linkvédelem, moderációs szabályok, shoutout, FAQ és jogosultsági szintek.
+- **Automatizált scene/macro:** hotkey, stream deck / Macro Deck / MIDI / HTTP webhook / külső vezérlő adapterek, dry-run, visszajelzés és engedélyezett parancslista.
+- **Audio/video segédletek:** hangszint-figyelés, némítás- és clipping-jelzés, scene/source checklist, virtuális kamera/portrait output integráció, ahol elérhető.
+- **Plugin- és widget-központ:** telepített/engedélyezett bővítmények, kompatibilitás, verzió, permission scope, aláírás/eredet, frissítés, eltávolítás és sandbox.
+- **Fontos határ:** a webes platform nem feltételezi, hogy minden OBS plugin böngészőből vezérelhető. Elsődleges a dokumentált OBS WebSocket/browser source; natív plugin vagy desktop companion külön, biztonsági és telepítési döntéssel készül.
+
+### 49.6. Kapcsolatok és integrációk
+- **Kapcsolatok:** Twitch, YouTube, TikTok, Discord, Kick és további provider-adapterek.
+- **Fiókállapot:** connect/disconnect, scope, lejárat, újracsatlakozás, account/channel választás, jogosultságok.
+- **Provider-képességek:** olvasás/írás/publikálás/chat/analitika külön jelölése; nem támogatott műveletet a UI nem ígérhet.
+- **Webhookok és események:** aláírás-ellenőrzés, replay-védelem, deduplikáció, retry, dead-letter és diagnosztika.
+- **Integrációs napló:** utolsó siker, utolsó hiba, rate limit, API-kvóta, szinkron és helyreállítás.
+- **Későbbi bővítések:** email, naptár, felhőtárhely, fizetés, affiliate, CRM, streaming hardware és automatizációs szolgáltatók.
+
+### 49.7. Tartalomstúdió
+- **Tartalomkönyvtár:** videó, VOD, clip, Short/Reel, kép, hang, podcast, stream replay, szöveg és kampányanyag.
+- **Szerkesztés:** timeline, vágás, trim, crop, aspect ratio, reframing, scene, B-roll, átmenet, hang, szín és brand overlay.
+- **Felirat és transcript:** beszédfelismerés, speaker/fejezet, időzítés, felirat-stílus, fordítás, SRT/VTT és szerkeszthető szöveg.
+- **AI clip finder:** highlight-javaslatok, kontextus és időbélyeg, chat/stream események összekapcsolása, manuális kiválasztás.
+- **Thumbnail és grafika:** sablonok, variánsok, cím-/képkombinációk, platformonkénti méretek és preview.
+- **Platformverziók:** hossz, képarány, cím, leírás, hashtag, thumbnail és CTA csatornánként.
+- **Tartalomnaptár:** ötlet → draft → review → scheduled → published/failed, kampány és ismétlődő sorozat.
+- **Közzététel:** közvetlen API-publikálás, ha engedélyezett; különben export és kézi publikálási útmutató.
+- **Média- és jogkezelés:** felhasználási jog, zene, vendég-hozzájárulás, lejárat, forrás és eltávolítási kérés.
+
+### 49.8. Közösség és rajongók
+- **Fan account:** regisztráció, bejelentkezés, profil, preferenciák, adatletöltés/törlés és biztonsági beállítások.
+- **Közösségi aktivitás:** kommentek, reakciók, szavazások, kérdések, beküldések, közösségi posztok.
+- **Tagság:** szintek, jogosultságok, exkluzív tartalom, előnyök, megújítás, lemondás és tagsági státusz.
+- **Közösségi jutalmak:** jelvények, mérföldkövek, hűségpontok, kihívások és giveaway-szabályok.
+- **Discord összekötés:** szerepkiosztás és visszavonás tagsági státusz alapján, botengedélyekkel és naplóval.
+- **Moderáció:** szabályok, report queue, tiltás/korlátozás, fellebbezés, spamvédelem, AI-javaslat és emberi felülvizsgálat.
+
+### 49.9. Bolt, bevétel és üzlet
+- **Bolt:** fizikai termék, merch, digitális letöltés, csomag, variáns, készlet, ár, adó/szállítási szabályok.
+- **Rendelések:** fizetési státusz, teljesítés, szállítás, visszatérítés, lemondás, számlázási integráció és ügyfélszolgálat.
+- **Támogatás:** egyszeri támogatás, recurring support, célok, kampányok, köszönőoldal/üzenet.
+- **Szponzoráció:** media kit, ajánlat, kampány, deliverable, határidő, link/kód, eredményriport.
+- **Affiliate és kupon:** partnerlinkek, kuponkódok, jutalék és konverzió, ahol jogszerű és mérhető.
+- **Digitális hozzáférés:** vásárlás utáni biztonságos letöltés, hozzáférés-visszavonás és visszatérítéshez kötött jogosultság.
+- **Pénzügyi áttekintés:** bevételi források elkülönítése, platformdíjak, visszatérítések és export; nem helyettesít könyvelőt/adótanácsadót.
+
+### 49.10. Analitika és növekedés
+- **Összesített dashboard:** platformonkénti nézettség, követők, engagement, streamidő, tartalomtípus és bevétel.
+- **Adatminőség:** forrás, utolsó frissítés, becslés/valós adat, hiányzó és nem összehasonlítható metrikák jelzése.
+- **Tartalomelemzés:** videó/clip összehasonlítás, megtartás és elérhető watch-time, publikálási idők, tesztelt variánsok.
+- **Célok és kísérletek:** célkitűzés, mérföldkő, kísérlet, eredmény és következő javaslat.
+- **SEO/AEO és webanalitika:** keresési láthatóság, oldalmegtekintés, konverzió, kampány-UTM, adatvédelmi beállítások.
+- **Export és jelentés:** CSV/JSON, időszakos riport, forrásmegjelölés és csapatnak megosztható összefoglaló.
+
+### 49.11. Automatizációk
+- **Workflow builder:** trigger → feltétel → művelet → eredmény/hibaág; vizuális építés és sablonok.
+- **Triggerek:** stream online/offline, új follower/sub/event, tartalom státusz, időpont, rendelés, tagság, webhook és kézi indítás.
+- **Akciók:** értesítés, draft készítés, címke, export, engedélyezett overlay/OBS művelet, publikálási előkészítés.
+- **Biztonsági korlátok:** dry-run, idempotency, rate limit, jóváhagyás, retry, rollback és futási napló.
+- **Hibakezelés:** időtúllépés, leállítás, újrapróbálás, hibás workflow karantén, értesítés és manuális helyreállítás.
+
+### 49.12. SANCI AI
+- **AI Control Center:** modell/provider, költségkeret, kvóta, adatforrás, retention, memória, engedélyek és leállító kapcsoló.
+- **AI chat és projektkontextus:** weboldal, brand, stream, tartalom, közösség és célok kontextusa jogosultság szerint.
+- **Website Designer:** oldal/szekció/komponens létrehozás, design és responsive javítás, SEO/accessibility ellenőrzés.
+- **Live Coach:** opt-in stream-/chat-/OBS-adatokból technikai figyelés, pillanatjelölés, javaslat és bizonytalanság jelzése.
+- **Content Producer:** transcript, clip, vágás, felirat, fordítás, thumbnail, leírás, platformvariáns és export.
+- **Community Assistant:** kérdések összegzése, moderációs javaslat, FAQ és tagsági/Discord művelet-előkészítés.
+- **Business Analyst:** tartalom- és kampányteljesítmény, trendek, hipotézisek és mérhető kísérletek.
+- **Automation Builder:** természetes nyelvből workflow draft, szimuláció, diff és jóváhagyás.
+- **Multi-agent feladatok:** specialista feladatok összehangolása közös kontextussal, költségkorláttal és nyomon követhető eredménnyel.
+- **Action safety:** az AI minden változtatást a domain API-n keresztül készít elő; kockázat szerint preview, diff, jóváhagyás, végrehajtás és rollback.
+
+### 49.13. Keresés, súgó és személyre szabás
+- **Globális kereső:** oldalak, media assetek, tartalmak, termékek, kapcsolatok, workflow-k, beállítások.
+- **Command palette:** billentyűzetes műveletindítás, gyors navigáció és legutóbbi elemek.
+- **Súgó:** kontextuális útmutató, interaktív onboarding, fogalomtár, hibaelhárítás és dokumentált API-korlátok.
+- **Mentett nézetek:** szűrők, oszlopok, listanézetek, dashboard elrendezések és felhasználói preferenciák.
+- **Értesítések:** in-app/email/push, kategória, prioritás, csendes időszak, digest és leiratkozás.
+
+### 49.14. Beállítások, biztonság és adat
+- **Profil és workspace:** nyelv, időzóna, dátum/pénznem, preferenciák, site/domain és márka.
+- **Felhasználók és jogosultságok:** owner/admin/editor/moderator/analyst/commerce szerepek, modulonkénti és műveletenkénti engedély.
+- **Biztonság:** session, eszközök, jelszó/SSO későbbi támogatása, 2FA, rate limiting, secret rotation és gyanús aktivitás.
+- **Adatkezelés:** export, törlés, retention, consent, cookie/adatvédelmi beállítások, adatfeldolgozók.
+- **Biztonsági mentés:** konfiguráció és tartalom export, visszaállítási próba, verziózott backup és disaster recovery.
+- **Állapot és naplók:** health, background job, queue, API-kvóta, hibák, események, auditálható adminműveletek.
+- **Díjcsomag és használat:** későbbi SaaS-plan, usage, billing, limit, számla és szolgáltatói költség.
+
+### 49.15. Fejlesztői és bővítményközpont — későbbi platformfázis
+- **Extension registry:** manifest, verzió, scope, permission, kompatibilitás, aláírás/eredet, frissítés és eltávolítás.
+- **Integrációs SDK/API:** dokumentált endpointok, webhooks, OAuth adapterek, sandbox és rate limit.
+- **Widget/overlay SDK:** saját komponensek, konfigurációs séma, preview, események és verziózás.
+- **Template/component marketplace:** sablonok, komponensek, overlayek és workflow-k; licenc, szerző, értékelés és frissítés.
+- **Developer tools:** API kulcsok, webhook tester, eseménynapló, sandbox workspace és API dokumentáció.
+- **Külső bővítmények:** alapértelmezésben legkisebb jogosultság, izolált futtatás, felülvizsgálat és visszavonható hozzáférés.
+
+### 49.16. Csapat, több site és SaaS — későbbi fázis
+- Több creator/site/workspace kezelése egy fiókból, egyértelmű aktív workspace választással.
+- Meghívás, csapattagok, szerepek, projekt- és ügyfélhozzáférés, jóváhagyási folyamat.
+- Agency/studio mód több creatorhoz, közös sablonok és ügyfél-specifikus brand.
+- Előfizetés, csomagok, usage/kvóta, billing, számlázás, lemondás és adat-export.
+- Tenant-izoláció, migráció, adatrezidencia és skálázási stratégia; csak az egyfelhasználós alapok stabilizálása után.
+
+---
+
+## 50. Keresztmodulú, kötelező termékképességek
+
+Ezek nem különálló menük: minden érintett modul közös követelményei.
+
+1. **Többnyelvűség és nemzetköziesítés:** Admin és publikus web külön nyelve; locale-aware tartalom, dátum/időzóna/pénznem/számformátum; RTL; fordítási memória/szószedet; AI-fordítás emberi felülvizsgálattal; lokalizált SEO, Open Graph, alt text és URL; nyelvenkénti fallback.
+2. **Akadálymentesség:** WCAG 2.2 AA cél; billentyűzet, fókusz, screen reader, kontraszt, reduced motion, felirat/átirat, érthető hibák, nagyítás és touch célterület.
+3. **Reszponzivitás:** mobil, tablet, desktop, széles canvas és portrait/landscape; valódi mobil szerkesztési folyamat, nem csak összenyomott desktop.
+4. **Megbízhatóság:** autosave státusz, offline/gyenge kapcsolat jelzése, konfliktusfeloldás, idempotens műveletek, retry, background job státusz és adatvesztés elleni védelem.
+5. **Visszaállíthatóság:** undo/redo, verzióelőzmény, diff, restore, export/backup és törlés előtti függőségi ellenőrzés.
+6. **Adat- és jogosultsági konzisztencia:** közös domain command, szerveroldali authorization, tenant/site scope, érzékeny adatok redakciója és követhető műveletnapló.
+7. **Kereshetőség és felfedezhetőség:** globális keresés, modulon belüli keresés, szűrés, rendezés, címkék, kedvencek, recent items és üres állapotokból induló útmutatás.
+8. **Értesítések:** egységes notification center, kategória, súlyosság, preferencia, digest és csendes időszak; ne legyen duplikált vagy félrevezető értesítés.
+9. **Adatvédelem és tartalmi jogok:** consent, retention, export/delete, vendég-hozzájárulás, copyright, zenei licencek, személyes adatok és AI-feldolgozás szabályai.
+10. **Teljesítmény és üzemeltetés:** Core Web Vitals, cache, image optimization, queue/worker limitek, observability, költség- és kvótafigyelés, backup/restore próba.
+11. **Import/export és hordozhatóság:** oldal/content/media/brand/workflow export, CSV/JSON és támogatott szabványos formátumok; külső szolgáltatóhoz kötöttség csökkentése.
+12. **Tesztelhetőség:** domain unit/integration, API authorization, migration, UI interaction, responsive/accessibility, end-to-end és éles smoke tesztek.
+13. **AI átláthatóság:** generált tartalom jelölése, forrás és bizonytalanság, modell- és költséginformáció, jóváhagyás, módosítási diff és felhasználói visszajelzés.
+14. **Felhasználóbarát hibaállapotok:** emberi nyelvű magyarázat, teendő, újrapróbálás és support/export lehetőség; technikai részletek a diagnosztikában maradnak.
+
+---
+
+## 51. Külső termékekből vizsgálandó funkcióminták
+
+Az alábbiak kutatási alapok, nem automatikus implementációs döntések. A fejlesztés előtt az aktuális hivatalos dokumentációt, licenceket, API-korlátokat, biztonságot és kompatibilitást ellenőrizni kell.
+
+- **OBS Studio:** scenes/sources, frontend API, plugin API, Python/Lua scripting, browser sources és WebSocket-vezérlés. Forrás: https://docs.obsproject.com/ és https://obsproject.com/kb/remote-control-guide.
+- **Streamlabs:** alert box, chat box, event list, goals, tip jar, loyalty, media share, hotkeys, collab/dual output és widget témák. Forrás: https://support.streamlabs.com/hc/en-us/articles/14698267028379-New-to-Streamlabs-Start-Here és https://streamlabs.com/stream-widgets.
+- **StreamElements:** overlay builder, custom widgets, alerts, chatbot commands/variables/timers/spam filters. Forrás: https://docs.streamelements.com/.
+- **Restream:** többplatformos stream, unified chat, platformonkénti capability, analytics, replay/transcript és tartalék stream. Forrás: https://restream.io/live/multistreaming és https://support.restream.io/en/articles/2379624-what-is-restream-chat.
+- **Webflow:** vizuális canvas, shared components/libraries, CMS, interakciók, staging/publishing, locale-onkénti tartalom és SEO. Forrás: https://webflow.com/feature/cms és https://help.webflow.com/hc/en-us/articles/33961240752147-Webflow-Localize-overview.
+- **Framer:** AI segítségével létrehozott CMS-collectionök, draft/publish, lokalizáció, locale-onkénti meta és RTL. Forrás: https://www.framer.com/cms/ és https://www.framer.com/help/localization/.
+- **Elementor:** kereshető widget-panel, globális widgetek, responsive beállítások, globális brand settings és theme builder. Forrás: https://developers.elementor.com/docs/editor/widgets-panel.html és https://elementor.com/products/website-builder/.
+- **Descript:** transcript-alapú vágás, filler-word eltávolítás, zajjavítás, felirat, AI co-editor, remote recording és klipkészítés. Forrás: https://www.descript.com/features.
+- **Fourthwall:** saját márkájú shop, tagsági szintek, digitális tartalom, tagsági analitika, Discord-integráció, kuponok és merchandise. Forrás: https://fourthwall.com/features és https://fourthwall.com/memberships.
+- **Twitch Developer Platform:** EventSub, chat, extensions, API, authentication és platformonkénti engedélyek. Forrás: https://dev.twitch.tv/docs/ és https://dev.twitch.tv/docs/eventsub/.
+- **W3C/WCAG:** akadálymentességi kritériumok és lokalizáció. Forrás: https://www.w3.org/WAI/standards-guidelines/wcag/.
+
+### 51.1. A SANCI platform megkülönböztető értéke
+Nem az a cél, hogy minden külső termék teljes másolata készüljön el. A cél az, hogy a creator egy közös Brand Kit, kanonikus adatok, Visual Editor, OBS/Stream Studio, tartalomgyártás, integrációk, közösség, commerce, automatizáció és AI segítségével egy összefüggő munkafolyamatot kapjon. A külső termékben talált jó funkció csak akkor kerül át, ha valódi felhasználói problémát old meg, jogszerűen megvalósítható és fenntartható.
+
+---
+
+## 52. Menütérkép felülvizsgálata a felhasználóval
+
+A 49. fejezet a teljes javasolt menütérkép és funkciókatalógus. Ez az áttekintés nem lezárás: a felhasználói visszajelzés alapján új funkciót a megfelelő menüpont alá kell illeszteni, majd a kanonikus domain-, adat-, jogosultság-, teszt- és fázisleírást is frissíteni kell. Azonos képességet nem szabad párhuzamos menüben másik implementációként létrehozni.
+
+A visszajelzés feldolgozási szabályai:
+- **Kell:** bekerül a megfelelő menübe és a részletes funkciókatalógusba.
+- **Máshova kell:** a felelősség szerinti modulba kerül, az eredeti helyről hivatkozással.
+- **Nem kell:** csak explicit termékdöntéssel hagyható el; meg kell vizsgálni, érint-e más funkciót.
+- **Később kell:** a teljes termékcél része marad, függőségekkel és fázissal.
+- **Nem megvalósítható közvetlenül:** adapter, exportos alternatíva vagy korlátozás dokumentálása szükséges.
+- A menü nem azonos a fázissal: egy későbbi fázis funkciója már most is szerepelhet a végleges menütérképen.
+
