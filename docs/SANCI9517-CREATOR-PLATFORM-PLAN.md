@@ -7075,6 +7075,28 @@ A `0004_system_page_content.sql` történeti táblát hoz létre, míg a `0005_c
 
 **Következő kapu:** `system_page_content` és `pages` valós adatok összehasonlítása csak biztonságos read-only lekérdezéssel, valamint a 0006/0008 migrációk idempotencia és schema-version kompatibilitás tesztje; 9 régi URL → kanonikus cél tételes crosswalk. **LEGACY DATA RECONCILIATION: OPEN / NOT PASS.** Nem történt adat- vagy runtime-módosítás.
 
+### 63.50.31. Kilenc történeti URL és hét helyreállított alapoldal: migrációs lefedettség (2026-10-14)
+
+**Forrásref:** `92a4247`; `src/index.ts`, `migrations/0003_legacy_pages.sql`, `0006_canonicalize_legacy_pages.sql`, `0007_sync_published_canonical_pages.sql`, `0008_restore_canonical_standard_pages.sql`, `0010_canonical_revision_contract.sql`, `src/routes/public/pages.ts`. Statikus forrásaudit, remote D1 tartalom nem ellenőrzött.
+
+| Történeti URL | Canonical slug | 0003 legacy seed | 0008 repair alapoldal | Worker útvonal |
+|---|---|---|---|---|
+| `/index.html` és `/` | `home` | `legacy-home` | `page-home` | `/` publikus shell; `/index.html` ugyanaz |
+| `/about.html` | `about` | `legacy-about` | `page-about` | 301 → `/p/about` |
+| `/community.html` | `community` | `legacy-community` | **nincs** | 301 → `/p/community` |
+| `/contact.html` | `contact` | `legacy-contact` | `page-contact` | 301 → `/p/contact` |
+| `/schedule.html` | `schedule` | `legacy-schedule` | `page-schedule` | 301 → `/p/schedule` |
+| `/tiktok.html` | `tiktok` | `legacy-tiktok` | `page-tiktok` | 301 → `/p/tiktok` |
+| `/twitch.html` | `twitch` | `legacy-twitch` | `page-twitch` | 301 → `/p/twitch` |
+| `/vod.html` | `vod` | `legacy-vod` | **nincs** | 301 → `/p/vod` |
+| `/youtube.html` | `youtube` | `legacy-youtube` | `page-youtube` | 301 → `/p/youtube` |
+
+**Lényegi eredmény:** a `0003` kilenc történeti `legacy-*` oldalrekordot vet fel; a `0008` hét `page-*` alapoldalt tartalmaz, a `community` és `vod` nélkül. A `0008` `INSERT OR IGNORE`, így az elhagyott kettőből **nem következik automatikus törlés**, viszont a tényleges sor-/slug-/published-state megőrzés csak D1 lekérdezéssel igazolható. A `0006` `legacy-%` dokumentumkonverziót, a `0007` az `sanci-document` típusú oldalak published snapshot szinkronját célozza; a `0008` már `sanci-page-document` alakú alapdokumentumot készít. A `0010` csak akkor köti a published revision ID-t, ha azonos snapshotú editor revision létezik. Eltérő verziók és esetleges hiányzó revíziólinkek ellenőrzendők.
+
+**Public runtime ellenőrzési határ:** a `src/routes/public/pages.ts` `site_id` és `is_published` szerint szűr, `normalizeEditorDocument` segítségével olvas; hibás kanonikus dokumentumra 409 API választ ad. A `/p/<slug>` Worker HTML-shell és a 301 redirect **nem bizonyítja**, hogy az adott slughoz létezik érvényes publikált oldal vagy hogy a HTML-válasz valódi 404. Külön 9 útvonalas 301→200/404, canonical/meta/robots és unpublished teszt kell.
+
+**Következő bizonyítékkapu:** read-only `SELECT id,slug,site_id,is_published,published_revision_id,json_extract(content_json,'$.type'),json_extract(published_content_json,'$.type') FROM pages WHERE slug IN (...)` helyi+remote környezetben; egyediség, duplikált legacy/page ID, 9 URL, community/vod, snapshot/revision összevetés; DB backup és visszaállítás előfeltétel bármely adatmigráció előtt. **LEGACY URL/PAGE DATA: STATIC CROSSWALK COMPLETE / RUNTIME NOT PASS.** Nincs adatírás, archíválás vagy redirect módosítás.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
