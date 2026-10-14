@@ -15,7 +15,7 @@
 
 ## 0. A terv kötelező értelmezése
 
-Ez a dokumentum egyszerre termékspecifikáció, architekturális szerződés, funkciókatalógus, tesztelési szabályzat és végrehajtási lista. Minden fejlesztési feladatot ebből kell kiválasztani és ide kell visszavezetni. Minden funkcióhoz tartozzon felhasználói cél, felület, domain-tulajdonos, adatforrás, jogosultság, függőség, teszt és elfogadási feltétel.
+A dokumentum eredeti állapotában termékspecifikációt, architekturális szerződést, funkciókatalógust, tesztelési szabályzatot és végrehajtási listát egyesített. Ez a szabály történeti; a feladatok kiválasztása és az aktuális státusz kizárólag a canonical `feature/f0-2-admin-global-shell` ágon lévő `docs/MASTER-DEVELOPMENT-PLAN.md` alapján történhet. A funkciókhoz tartozó felhasználói cél, felület, domain-tulajdonos, adatforrás, jogosultság, függőség, teszt és acceptance követelményeit a canonical MASTER őrzi.
 
 ### 0.1. Egyetlen igazságforrás
 - A végrehajtási sorrendet a dokumentum elején lévő aktív pont és az alábbi pontok határozzák meg.
