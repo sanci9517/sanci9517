@@ -2617,9 +2617,9 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.2-04 | Separate loading/empty/error/stale/partial-provider-failure states; redact internals and secrets | DYN-005, DYN-006, OPS-003, SEC-008 | KEEP | 1.0 baseline; full binding UI 2.0 | QA-003/004/006 |
 | F.2-05 | Conditional visibility never bypasses authorization; cache invalidates on publish/schedule/sync | DYN-006, WEB-030, OPS-008, SEC-002 | KEEP | 1.0–2.0 | QA-002/003/006 |
 | F.2-06 | Editor stores display configuration only; a Schedule block cannot mutate Schedule domain rows | EDT-018, SCH-001–SCH-015, DYN-001, SEC-002 | KEEP | 1.0 | QA-002/003/004 |
-| F.3-01 | No-code Inspector choices for alignment, text alignment, stack/columns/grid and vertical alignment | EDT-009–EDT-016, EDT-022 | EXPAND | 1.0 core; advanced layout phased | QA-002/004 |
-| F.3-02 | Width/height/units, independent horizontal/vertical spacing, gap/padding/margin and per-side values | EDT-010–EDT-016, DSN-004 | EXPAND | 1.0 | QA-002/004/005 |
-| F.3-03 | Min/max, aspect ratio, overflow, wrap, order and responsive overrides validated against layout mode | EDT-009–EDT-016, EDT-036, QA-005 | KEEP | 1.0 core; advanced responsive later | QA-002/004/005 |
+| F.3-01 | No-code Inspector choices for alignment, text alignment, stack/columns/grid and vertical alignment | EDT-009–EDT-016, EDT-021, EDT-022 | EXPAND | 1.0 core; advanced layout phased | QA-002/004 |
+| F.3-02 | Width/height/units, independent horizontal/vertical spacing, gap/padding/margin and per-side values | EDT-009–EDT-016, EDT-021, EDT-022, DSN-004 | EXPAND | 1.0 | QA-002/004/005 |
+| F.3-03 | Min/max, aspect ratio, overflow, wrap, order and responsive overrides validated against layout mode | EDT-009, EDT-016, EDT-021–EDT-026, QA-005 | KEEP | 1.0 core; advanced responsive later | QA-002/004/005 |
 | F.3-04 | Canvas and Layers selection target same canonical node; drag/resize does not unexpectedly convert flex/grid to absolute positioning | EDT-003, EDT-004, EDT-009–EDT-016 | KEEP | 1.0 release gate | QA-002/004 |
 | F.3-05 | Plain Text is 1.0 baseline; no parallel rich-text path delaying core editor closure | EDT-001–EDT-003, EDT-017, EDT-019, EDT-022 | KEEP | 1.0 plain text; rich text separately scoped | QA-002/004 |
 | F.4-01 | Explicit public page types: Creator Home, Stream, Schedule, VOD/Video Hub, Clips/Shorts, About, Community, Contact, Support, Link Hub and Press Kit | WEB-001, WEB-021–WEB-026, CNT-001–CNT-005 | EXPAND | 1.0 core pages; later pages phased | QA-002/004/008 |
@@ -3997,3 +3997,14 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 **Javítás:** a F.3-05 mapping most `EDT-001–EDT-003, EDT-017, EDT-019, EDT-022`; ez a canonical Page Model/command alapot, a plain Text elemet és a schema-validált Inspector kontrollokat köti össze. A rich-text bővítés továbbra is külön scope, nem kerül vissza a 1.0 alapszerkesztőbe.
 
 **Bizonyítékhatár:** ez egy konkrét mapping korrekciója, nem a teljes F.3 vagy F.1–F.13 szemantikai PASS-a. A F.3 további sorai, a teljes permission/dependency/acceptance szerződés és a többi 309 forrásbullet szemantikai review-ja nyitott. P0.2 **IN PROGRESS / NOT PASS**.
+
+### 41.3.17. P0.2 — F.3 Inspector/property/responsive mapping corrections (2026-10-14)
+
+**Forrás:** az archivált `00.9.6.F / F.3` választó-, méretezés-, térköz- és responsive-követelményei, a `§37.27` F.3 crosswalk, valamint a `§24.3` EDT registry.
+
+**Javítások:**
+- `F.3-01`: hozzáadva `EDT-021` (Inspector Property Registry), mert az alapvető layout/alignment vezérlőknek a canonical property-registry útvonalon kell működniük.
+- `F.3-02`: a szélesség/magasság és spacing mapping kiegészült `EDT-009` geometriai korlátokkal, `EDT-021` registryvel és `EDT-022` schema-validált controlokkal.
+- `F.3-03`: az irreleváns `EDT-036` (mobil Layers/Inspector panelváltás) helyett a responsive override/preview/visibility/order szerződés `EDT-021–EDT-026` került be, az adott layout által engedélyezett geometry/layout ID-kkel.
+
+**Ellenőrzési korlát:** ezek célzott mapping-helyesbítések. Nem bizonyítják az Editor implementáció runtime acceptance-ét, a teljes F.3 bulletjeinek szemantikai lezárását vagy a teljes F.1–F.13 acceptance szerződés teljességét. P0.2 **IN PROGRESS / NOT PASS**.
