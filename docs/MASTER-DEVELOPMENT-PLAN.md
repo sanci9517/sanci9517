@@ -1,9 +1,13 @@
-# SANCI9517 — VÉGLEGES TERMÉK-, ARCHITEKTÚRA- ÉS VÉGREHAJTÁSI TERV
+# HISTORICAL / SUPERSEDED — S9517-ULTIMATE-PLAN 1.0.0 — DO NOT EXECUTE
+
+> **Ez nem aktív fejlesztési terv.** 2026-10-14-től az egyetlen élő igazságforrás a `feature/f0-2-admin-global-shell` ágon található `docs/MASTER-DEVELOPMENT-PLAN.md`. Ennek a korábbi tervnek a 339 stabil capability-ID-je és a hiányzó részletes követelményei átvezetésre kerültek a canonical MASTER 2.77.7.A–2.77.7.C és GAP-01–GAP-14 részeibe. E dokumentum aktívpont- és státuszmezői történetiek, nem végrehajtási utasítások.
+
+# S9517-ULTIMATE-PLAN — történeti termék-, architektúra- és végrehajtási terv
 
 **Tervazonosító:** S9517-ULTIMATE-PLAN  
 **Verzió:** 1.0.0 — teljesen új, egységes termékterv  
 **Dátum:** 2026-10-13  
-**Állapot:** AKTÍV — ez az egyetlen fejlesztési igazságforrás  
+**Történeti státusz:** SUPERSEDED — nem aktív igazságforrás  
 **Végrehajtás:** egy aktív pont, szigorú függőségi sorrend, bizonyítékalapú lezárás  
 **Termékcél:** professzionális streamer weboldalból teljes, bővíthető Creator Operating Platform
 
@@ -23,9 +27,9 @@ Ez a dokumentum egyszerre termékspecifikáció, architekturális szerződés, f
 - Egyszerre egy aktív végrehajtási pont fut. Nincs párhuzamos termékfeature-fejlesztés.
 
 ### 0.2. Aktuális végrehajtási állapot
-**ACTIVE_POINT_ID:** P0-PRODUCT-BASELINE-AND-EXECUTION-CONTRACT  
-**ACTIVE_SUBPOINT_ID:** P0.1-PLAN-INTEGRITY-AND-BASELINE-VERIFICATION  
-**Állapot:** IN PROGRESS — az új tervet össze kell egyeztetni a repository és a futó termék valós állapotával.  
+**HISTORICAL_ACTIVE_POINT_ID:** P0-PRODUCT-BASELINE-AND-EXECUTION-CONTRACT  
+**HISTORICAL_ACTIVE_SUBPOINT_ID:** P0.1-PLAN-INTEGRITY-AND-BASELINE-VERIFICATION  
+**Történeti állapot:** IN PROGRESS volt a terv létrehozásakor; nem mai státusz.  
 **PARALLEL_WORKSTREAMS:** 0  
 **Következő kapu:** P0 lezárása, majd P1 rendszer- és adatút-baseline, utána a függőségi sorrend szerinti implementáció.
 
