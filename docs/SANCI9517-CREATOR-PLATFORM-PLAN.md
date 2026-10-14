@@ -7163,6 +7163,14 @@ A `63.50.34` ellenőrzés **fordított irányú** kiegészítése: a 24. fejezet
 
 **Nyitott szemantikai kapu:** az 54. fejezet mind a 156 összetett ellenőrzési sorának tartalmi lefedése a megfelelő 24. ID-val, 49. modullal, pozitív/negatív acceptance-szel és fázissal **még nem bizonyított**. A strukturális számlálás **PASS**, a teljes tartalmi kapu **IN PROGRESS / NOT PASS**.
 
+### 63.50.37. Domain-lefedettség és 54. review → 24. ID hivatkozási hiány (2026-10-14)
+
+**Teljes dokumentumon belüli leltár:** az 5. fejezet kanonikus domain-táblájában **38 egyedi domain ID** szerepel; mind a 38 neve megtalálható a 63.20 főmodul → domain/adatgazda keresztmátrixban, tehát **38/38 név szerinti strukturális lefedettség**. Ez nem bizonyítja a tárolási, permission- vagy runtime-kapcsolatok helyességét. Az 54. fejezet **156** review-checkboxából **0** tartalmaz szó szerinti `PREFIX-NNN` capability ID-t; a 49. fejezet menütérképe szintén **0** ilyen explicit ID-t tartalmaz. A három fejezet közti megfelelést jelenleg a fogalmi leírás és a 63.20 domain-térkép hordozza, nem géppel ellenőrizhető, checklist-soronkénti ID-link.
+
+**Kockázat:** a 396/22/156 strukturális PASS nem elegendő annak kimondásához, hogy az 54. fejezet minden összetett felhasználói igényének megvan a konkrét capability owner, dependency és negatív acceptance. A következő review-nak az 54.1–54.16 összes sorát a 24. fejezet legalább egy meglévő ID-jához, a 49. fejezet pontos tulajdonosmoduljához és a 63.20 domainhez kell rendelnie. Ha egy sor több domainből áll, a kanonikus owner és fogyasztókat külön kell megadni; **nem** kell minden checklist sorból új feature-ID-t létrehozni. Hiány csak szemantikai bizonyíték alapján minősíthető.
+
+**Kapustátusz:** `38/38 DOMAIN NAME COVERAGE — STRUCTURAL PASS`; `156/156 CHECKLIST ITEM-TO-ID TRACEABILITY — OPEN`; a teljes aktív tervkapu továbbra is `IN PROGRESS / NOT PASS`.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
