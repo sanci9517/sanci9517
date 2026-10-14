@@ -3693,10 +3693,10 @@ A dokumentum hosszú, mert egyszerre őrzi a felhasználói funkciókat, a rész
 | 5. | Kanonikus domain- és adatforrás-térkép | UI-menü vagy implementációs sorrend meghatározása |
 | 9., 39., 41.2., 63.5. | Munkacsomagok és fázisok: részletezés, összefoglalás és kanonikus végrehajtási sorrend | Új, egymástól független roadmapok |
 | 10., 26., 27., 28., 29. | Funkciószerződések, életciklus, E2E folyamatok, UI/hibaállapotok és adatmodell | Új felhasználói főmodulok definiálása a navigációtól függetlenül |
-| 14., 24., 25., 26. | Stabil ID-k, státuszmezők és funkciószintű követés | A funkciók többszörös, külön státuszú megvalósításának engedélyezése |
+| 14., 25., 26. | Stabil ID-khez tartozó státuszmezők és funkciószintű követés | A funkciók többszörös, külön státuszú megvalósításának engedélyezése |
+| 24. | Stabil funkcióazonosító-jegyzék; minden azonosító egyszer szerepel, a modulhelyét a 49. fejezet határozza meg | A felhasználói menü második példányának fenntartása |
 | 38. | Visual Editor EDT részletes specifikációja és tesztkatalógusa | A platform minden funkciójának Editorba zsúfolása |
 | 46. és 49. | Admin információs architektúra, majd a kanonikus felhasználói modul-/menütérkép | Domain/adatgazda megváltoztatása pusztán a UI elhelyezése miatt |
-| 24. | Stabil funkcióazonosító-jegyzék | A felhasználói menü második példányának fenntartása |
 | 50., 58.–62. | Keresztmodulú minőségi, biztonsági, üzemeltetési és platformkövetelmények | Ugyanazon képesség önálló második implementációja |
 | 54. | Teljes termékcél lefedettségi/review checklist | A 49. fejezetet felülíró második modulhierarchia vagy önálló státuszforrás |
 | 55. | A funkciók felhasználói prioritási döntési szabályai | Funkció törlése explicit döntés nélkül |
@@ -3705,4 +3705,29 @@ A dokumentum hosszú, mert egyszerre őrzi a felhasználói funkciókat, a rész
 **Eltérésfeloldási sorrend:** (1) felhasználói főmodul/hely: 49.; (2) adat- és domaingazda: 5.; (3) stabil funkcióazonosító és státusz: 14./24./25.; (4) részletes működés és elfogadás: 10./26./27. és az adott modul saját részletes specifikációja; (5) végrehajtási sorrend: 41.2., a 63.5. megfeleltetés szerint; (6) a teljes cél lefedettségének ellenőrzése: 54. és a 63.1–63.2. kapu. Ha az audit során eltérés marad, nem választunk hallgatólagosan: a konfliktust nyitottként rögzítjük és a megfelelő kanonikus helyen javítjuk.
 
 **Aktuális auditállapot:** a fejezetek szerepe most rögzítve van, de a teljes tételes keresztmegfeleltetés még `IN PROGRESS`. A 54. fejezet valamennyi checklist-tételének a 49. fejezet szerinti tulajdonosmodulhoz és a 24. fejezet ID-jegyzékéhez rendelése, valamint a valódi hiányok/duplikációk eldöntése továbbra is nyitott lezárási feltétel.
+
+### 63.11. Lefedettségi keresztmegfeleltetés — 54. fejezet → kanonikus modulok
+
+A 54. fejezet 16 témacsoportja a jelenlegi ellenőrzésben 156 checkbox-tételt tartalmaz. Ezek a végső cél lefedettségi ellenőrzőpontjai, nem 156 külön, önálló modult vagy implementációt jelentenek. A tulajdonosmodulok a következők:
+
+| 54. fejezet | Kanonikus tulajdonos a 49. fejezetben | Elsődleges funkció-ID tartomány | Keresztmodulú megjegyzés |
+|---|---|---|---|
+| 54.1 Admin és Dashboard | 49.1 Kezdőlap és napi áttekintés | ADM | Gyorsműveletek csak a tulajdonosmodul parancsát hívják. |
+| 54.2 Weboldal és Visual Editor | 49.2 Weboldal | WEB, EDT, SET, DYN, SEO | Az EDT kizárólag weboldalszerkesztési felelősség; design és asset tulajdonlás külön modul. |
+| 54.3 Brand Kit és Design Studio | 49.3 Márka és designrendszer | DSN | A többi modul hivatkozik a kanonikus tokenekre/brand assetekre. |
+| 54.4 Média és erőforrások | 49.7 Tartalomstúdió / tartalomkönyvtár és asset registry | RES | Az Editor picker csak a registryt használja. |
+| 54.5 Kapcsolatok és integrációk | 49.6 Kapcsolatok és integrációk | INT | Provider token/scope/connection state egyetlen integrációs gazda alatt. |
+| 54.6 Live, Stream Studio és adásrend | 49.4 Élő adás és Stream Studio | LIV, SCH | A streamállapot, schedule és game profile kanonikus adatai külön domain-szerződések. |
+| 54.7 OBS, overlay, chatbot és stream-eszközök | 49.5 OBS és stream eszközök | OBS, LIV, AUT | A provider/integration auth és automatizációs motor nem másolódik az OBS modulba. |
+| 54.8 Tartalom és Content Studio | 49.7 Tartalomstúdió | CNT, RES | A publikálási queue és provider-kapcsolat külön domain-szerződés marad. |
+| 54.9 Közösség és rajongói fiókok | 49.8 Közösség és rajongók | COM | Fan identity, moderation és entitlement határát külön kell megőrizni. |
+| 54.10 Bolt, támogatás és bevétel | 49.9 Bolt, bevétel és üzlet | STO, SUP | Fizetés, rendelés, entitlement és támogatás külön domainjei, közös UX-szel. |
+| 54.11 Analitika és növekedés | 49.10 Analitika és növekedés | ANL, CAM | Kampány/szponzoráció kapcsolódik, de nem válik analitikai adattár-másolattá. |
+| 54.12 Automatizációk | 49.11 Automatizációk | AUT | Event/rule/run/retry/audit a workflow engine tulajdona. |
+| 54.13 SANCI AI | 49.12 SANCI AI | AI | Az AI javasolhat műveletet, de a végrehajtás a domain engedélyezett commandján megy. |
+| 54.14 Többnyelvűség és nemzetközi használat | 49.2 Weboldal lokalizált tartalma + 49.14 platformbeállítások | LOC, WEB, SEO, SEC | A site-tartalom locale-ja és az Admin felület nyelve külön, de összehangolt scope. |
+| 54.15 Beállítások, biztonság, adatvédelem és megbízhatóság | 49.14 Beállítások, biztonság és adat | SEC, OPS, QA | Biztonság, privacy és reliability keresztmetszeti elfogadási feltétel is. |
+| 54.16 Fejlesztői platform, bővítmények, csapat és SaaS | 49.15 Fejlesztői és bővítményközpont; 49.16 Csapat/több site/SaaS | MKT, TEAM, OPS, SEC | Későbbi fázis; tenant isolation, extension security és billing függőségek nem hagyhatók ki. |
+
+**Auditállapot:** a 16 témacsoport tulajdonosmodulhoz rendelése dokumentálva van; ez kategóriaszintű megfeleltetés, nem a 156 egyedi checkbox szemantikai PASS-a. A következő részletes auditlépés a 54. fejezet minden checkboxának megfeleltetése a 24. fejezet stabil ID-jéhez, vagy — ha még nincs ID — a hiányzó ID rögzítése a megfelelő modul alatt. Azonos képesség több modulban csak közös szolgáltatásra mutató hivatkozásként szerepelhet; az esetleges eltéréseket nyitottként kell megőrizni a feloldásig.
 
