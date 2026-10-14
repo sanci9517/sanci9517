@@ -2603,22 +2603,22 @@ The short decision record must name the problem and acceptance criteria; existin
 
 | Forráskulcs | Megőrzött követelmény | Canonical current ID | Döntés | Célfázis | QA-horgony |
 |---|---|---|---|---|---|
-| F.1-01 | Editor full user flow: select/create page, add/select element, Inspector/canvas edit, undo/redo, save draft, preview, explicit publish | EDT-001, EDT-005, EDT-027–EDT-034, WEB-004–WEB-008 | KEEP | 1.0 | QA-002/004 |
-| F.1-02 | Reload/reopen preserves selection/editability; saved elements are not delete-only | EDT-003, EDT-027–EDT-030, WEB-004 | KEEP | 1.0 release gate | QA-002/004 |
-| F.1-03 | Regression sequence: Box + heading/text/button/divider; Layers reselects earlier nodes; layout edit/save/reload/public render parity | EDT-003, EDT-004, EDT-022, EDT-027–EDT-034, WEB-004–WEB-006 | KEEP | 1.0 release gate | QA-002/004 |
-| F.1-04 | Immutable history, maximum 50 entries, FIFO overflow | EDT-005, EDT-006 | KEEP | 1.0 | QA-002 |
+| F.1-01 | Editor full user flow: select/create page, add/select element, Inspector/canvas edit, undo/redo, save draft, preview, explicit publish | EDT-001, EDT-003, EDT-015–EDT-017, EDT-005, EDT-027–EDT-034, WEB-004–WEB-008 | KEEP | 1.0 | QA-002/004 |
+| F.1-02 | Reload/reopen preserves selection/editability; saved elements are not delete-only | EDT-002, EDT-003, EDT-013, EDT-027–EDT-030, WEB-004 | KEEP | 1.0 release gate | QA-002/004 |
+| F.1-03 | Regression sequence: Box + heading/text/button/divider; Layers reselects earlier nodes; layout edit/save/reload/public render parity | EDT-003, EDT-004, EDT-013, EDT-015–EDT-017, EDT-022, EDT-027–EDT-034, WEB-004–WEB-006 | KEEP | 1.0 release gate | QA-002/004 |
+| F.1-04 | Immutable history, maximum 50 entries, FIFO overflow | EDT-004, EDT-005 | KEEP | 1.0 | QA-002 |
 | F.1-05 | One user intent per transaction; text debounce/blur groups edits; drag/slider groups pointer-down to pointer-up | EDT-004, EDT-005, EDT-008/009, EDT-022 | KEEP | 1.0 | QA-002/004 |
 | F.1-06 | Preset/batch explicit transaction boundaries; no partial or self-referential undo/redo entries | EDT-003–EDT-005, DSN-004 | KEEP | 1.0 | QA-002 |
-| F.1-07 | Canvas, Layers, Inspector and persisted model share canonical command/state, not DOM snapshots | EDT-003–EDT-007, EDT-027–EDT-030 | KEEP | 1.0 release gate | QA-002/004 |
+| F.1-07 | Canvas, Layers, Inspector and persisted model share canonical command/state, not DOM snapshots | EDT-001–EDT-006, EDT-013, EDT-027–EDT-030 | KEEP | 1.0 release gate | QA-002/004 |
 | F.1-08 | Debounced 2000 ms draft autosave; explicit Save Draft remains immediate; only validated Page Model persists | EDT-001, EDT-022, EDT-027, EDT-028, WEB-004 | KEEP | 1.0 | QA-002/004 |
 | F.1-09 | Local crash recovery is separate from server draft and stores no secrets; conflict offers recovery/server/discard choices | EDT-029, EDT-031, WEB-007/008, OPS-009, SEC-008 | EXPAND | 1.0 recovery baseline | QA-003/006/007 |
-| F.1-10 | Optimistic concurrency, unsaved-change warning, real retry/restore; larger Page Model history/autosave performance tests | EDT-027–EDT-034, WEB-008, OPS-008, QA-005/006 | KEEP | 1.0 release gate | QA-002/004/006 |
-| F.2-01 | Canonical dynamic data pipeline: domain service → declared source → schema-valid binding → allowed transform → conditional render | DYN-001–DYN-008, WEB-020, EDT-018 | KEEP | 2.0, with 1.0 safe core only | QA-002/003/004 |
+| F.1-10 | Optimistic concurrency, unsaved-change warning, real retry/restore; larger Page Model history/autosave performance tests | EDT-004, EDT-005, EDT-027–EDT-034, WEB-008, OPS-008 | KEEP | 1.0 release gate | QA-002/004/005/006 |
+| F.2-01 | Canonical dynamic data pipeline: domain service → declared source → schema-valid binding → allowed transform → conditional render | DYN-001–DYN-008, EDT-020, WEB-031, SEC-002 | KEEP | 2.0, with 1.0 safe core only | QA-002/003/004 |
 | F.2-02 | Provider sources enabled only by phase, official capability and connection scope | DYN-001, INT-001, INT-013–INT-016, SEC-002 | KEEP | Per-provider 1.5+ | QA-002/003/008 |
 | F.2-03 | Query/filter/sort/limit saved only against declared schema; prohibit arbitrary SQL, arbitrary fetch and unrestricted JS | DYN-002–DYN-004, SEC-002, SEC-007 | KEEP | 2.0 | QA-002/003 |
 | F.2-04 | Separate loading/empty/error/stale/partial-provider-failure states; redact internals and secrets | DYN-005, DYN-006, OPS-003, SEC-008 | KEEP | 1.0 baseline; full binding UI 2.0 | QA-003/004/006 |
-| F.2-05 | Conditional visibility never bypasses authorization; cache invalidates on publish/schedule/sync | DYN-006, WEB-030, OPS-008, SEC-002 | KEEP | 1.0–2.0 | QA-002/003/006 |
-| F.2-06 | Editor stores display configuration only; a Schedule block cannot mutate Schedule domain rows | EDT-018, SCH-001–SCH-015, DYN-001, SEC-002 | KEEP | 1.0 | QA-002/003/004 |
+| F.2-05 | Conditional visibility never bypasses authorization; cache invalidates on publish/schedule/sync | DYN-004, DYN-006, DYN-007, WEB-030, OPS-008, SEC-002 | KEEP | 1.0–2.0 | QA-002/003/006 |
+| F.2-06 | Editor stores display configuration only; a Schedule block cannot mutate Schedule domain rows | EDT-020, SCH-001–SCH-015, DYN-001, DYN-007, SEC-002 | KEEP | 1.0 | QA-002/003/004 |
 | F.3-01 | No-code Inspector choices for alignment, text alignment, stack/columns/grid and vertical alignment | EDT-009–EDT-016, EDT-021, EDT-022 | EXPAND | 1.0 core; advanced layout phased | QA-002/004 |
 | F.3-02 | Width/height/units, independent horizontal/vertical spacing, gap/padding/margin and per-side values | EDT-009–EDT-016, EDT-021, EDT-022, DSN-004 | EXPAND | 1.0 | QA-002/004/005 |
 | F.3-03 | Min/max, aspect ratio, overflow, wrap, order and responsive overrides validated against layout mode | EDT-009, EDT-016, EDT-021–EDT-026, QA-005 | KEEP | 1.0 core; advanced responsive later | QA-002/004/005 |
@@ -4565,3 +4565,19 @@ A C.23.22-01–07 mind a hét történeti sor megmaradt, és a célzott szerződ
 - **F.1-08 — validated Page Model autosave:** added `EDT-001` to the existing `EDT-022, EDT-027, EDT-028, WEB-004` mapping because the requirement explicitly restricts persistence to the validated canonical Page Model. EDT-022 covers property/schema validation; EDT-027/028 cover draft/save-reload and WEB-004 the server draft path.
 - **F.1-09 — crash recovery and conflict choices:** corrected the mapping to include `EDT-029` and `EDT-031`, replacing the misleading `EDT-030` as the primary local recovery reference. EDT-029 owns revision conflict recovery; EDT-031 explicitly owns network failure/retry/local recovery. WEB-007/008, OPS-009 and SEC-008 remain supporting revision/backup/secret-boundary references.
 - **Evidence limit:** this is a targeted semantic correction of four F.1 crosswalk rows, based on the preserved source bullet text and the current registry definitions. No implementation or runtime test was run. F.1 rows outside this correction batch and F.2–F.13 still require their own semantic review; the original `00/A` and `00.9–00.9.6.B` source recovery remains open. P0.2 stays **IN PROGRESS / NOT PASS**.
+
+
+### 41.3.60. P0.2 — F.1 end-to-end workflow and F.2 dynamic-data source mapping review (2026-10-14)
+
+**Sources:** archived `00.9.6.F / F.1–F.2`, canonical `§24.3` EDT, `§24` DYN/WEB/SEC/OPS registries, and `§37.27` crosswalk. Source-key names and preserved requirement descriptions are unchanged; only candidate current-ID mappings and one QA anchor were corrected.
+
+- **F.1-01 — complete editor workflow:** expanded coverage to the canonical Page Model/mutation path, element library and baseline element types, undo/redo, save/reload, preview, publish and renderer parity. A full user path cannot be represented by history and save IDs alone.
+- **F.1-02 — reload/reopen/editability:** added stable node identity and the canonical Canvas/Layers/Inspector selection-sync contract; save/reload and selection/editability are distinct outcomes.
+- **F.1-03 — required regression sequence:** added the element-library, container/layout and baseline element-type IDs plus selection synchronization. The source explicitly tests adding Box/heading/text/button/divider, reselecting earlier nodes in Layers, editing layout, save/reload and public-render parity; those capabilities must be represented rather than inferred from persistence IDs.
+- **F.1-04 — immutable 50-entry FIFO history:** removed `EDT-006` (selection synchronization) from the primary mapping and retained transaction/history owners `EDT-004/005`. The FIFO capacity is preserved as a source requirement and still requires a direct boundary test at entry 51.
+- **F.1-07 — one canonical model, no DOM snapshots:** broadened to Page Model and node invariants, mutation/transaction/history, plus selection synchronization; removed `EDT-007` as a primary mapping because viewport zoom/pan/fit does not own canonical mutation state.
+- **F.1-10 — concurrency/retry/performance:** added transaction/history owners and moved QA-005 from the feature-ID cell to the QA-anchor cell. QA IDs are verification references, not feature-registry capabilities.
+- **F.2-01 — dynamic pipeline:** removed `WEB-020` (public Contact page/form) and `EDT-018` (media/content block types) as misleading primary mappings. Added `EDT-020` for Dynamic Sanci block configuration and `WEB-031` for the published-only data boundary; DYN-001–008 remain the canonical pipeline contract.
+- **F.2-05 — conditional visibility/cache:** added DYN-004 (conditional rendering) and DYN-007 (permission/site/published-only boundary), because cache invalidation alone does not represent the authorization invariant.
+- **F.2-06 — Schedule block ownership:** replaced `EDT-018` with `EDT-020` and added DYN-007. The block configures display only; canonical Schedule records remain domain-owned and protected by site-scope/published-only checks.
+- **Evidence boundary:** this batch corrects nine F.1/F.2 mapping rows from the preserved source text and current registry descriptions. No runtime tests were run. F.1 remaining rows and F.2–F.13 still require complete semantic review; the original `00/A` and `00.9–00.9.6.B` source recovery remains open. P0.2 stays **IN PROGRESS / NOT PASS**.
