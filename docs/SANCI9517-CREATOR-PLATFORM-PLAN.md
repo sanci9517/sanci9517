@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.45` — 54.1–54.6 első körös 56/56 ID- és owner-routing rögzítve; **következő: 54.7#1–#12**, majd 54.8–54.16 tételes review. A 156-ból 56 első körös routinggal rendelkezik, 100 még nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.46` — a korábbi forráskód-audit HIGH publikálási szerződésütközése újraellenőrizve; 54.1–54.6 első körös 56/56 ID- és owner-routing rögzítve; **következő: 54.7#1–#12**, majd 54.8–54.16 tételes review. A 156-ból 56 első körös routinggal rendelkezik, 100 még nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll és a 63.50.46 HIGH kódaudit-blokkoló ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -7208,7 +7208,7 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 5. Minden sikeres audit-commit után a fejléc folytatási állapotát és a legutolsó bejegyzést egyeztetni; a következő munka **egyértelmű azonosítóval**, a még nyitott részhalmazzal és a PASS/NOT PASS határral legyen megadva. A commit SHA csak a GitHub által visszaadott tényleges eredmény alapján közölhető.
 6. Nem létező vagy nem visszanyert történeti forrást nem lehet rekonstruáltnak nevezni; a 396 ID, 22 modul, 156 review és 271 történeti H-ID számlálása nem runtime teszt. A fejlesztési fagyasztás az aktív kapu PASS-áig változatlan.
 
-**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.45 COMPLETE AS FIRST-PASS ROUTING / NEXT 54.7#1–#12`. A 54.1–54.4 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.7–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
+**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.46 SOURCE-CONFLICT RECONFIRMED / NEXT 54.7#1–#12`. A 54.1–54.4 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.7–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
 
 ### 63.50.41. 54.2 Saját weboldal és Visual Editor: 15 checklist-tétel első körös routingja (2026-10-14)
 
@@ -7296,6 +7296,25 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 | 54.6#11 Recording/backup/replay technikai és költségkorláttal | LIV-010 | 49.5; operations 49.19 | Tényleges recording támogatás/retention nélkül nem mutatható késznek |
 
 **Státusz:** 11/11 első körös routing, nem domain/fázis/evidence vagy runtime PASS; a megjelölt GAP CANDIDATE nem automatikusan új ID.
+
+### 63.50.46. Forráskód-audit: ellenőrzött prioritás és végrehajtási zárolás (2026-10-14)
+
+**Miért ez a következő döntési kapu:** a 63.50.20–63.50.33 már valódi forráskód-auditot tartalmaz; a 63.50.39–63.50.45 később hozzáadott 56 checklist-routing sora nem bizonyít kódjavítást és nem írhatja felül a korábban azonosított HIGH publikálási kockázatot. Ez a bejegyzés **nem új auditkezdés**, hanem az eddigi eredmények összeolvasása az aktuális HEAD-del.
+
+**Frissen újraolvasott, tényleges források a `v2/foundation` ágon:** `src/routes/admin/pages.ts`, `src/routes/admin/editor.ts`, `migrations/0005_canonical_page_storage.sql`.
+
+1. A `0005` migráció kifejezetten az **utolsó explicit publikált snapshotként** definiálja a `pages.published_content_json` mezőt. Az Editor POST csak `body.publish===true` mellett hívja a `validatePublishDocument` függvényt és módosítja a published snapshotot; a PUT rollback draft-only. **Szerződés: EXPLICIT PUBLISH.**
+2. Az Admin Pages PATCH `contentChanged && existing.is_published` ágában viszont `UPDATE pages SET published_content_json=?,published_revision_id=?` fut a frissen módosított `contentJson` értékkel, **explicit publish és `validatePublishDocument` nélkül**. A PATCH egyszerre írja a közös `title/slug/description` oszlopokat is. **A forráskódbeli szerződésütközés az aktuális HEAD-ben továbbra is fennáll.**
+3. A PATCH válasz `serialize(...)` része `published_revision_id` értékét szintén az új revízióra állítja publikált oldal esetén, így a kliens számára is publikálásként látszhat a metaadat-művelet. Az Editor explicit publish API-val azonos szemantika **nem bizonyított**.
+4. A jelenlegi publikus URL-feloldás a közös `pages.slug` mezőt használja (lásd 63.50.22–63.50.33). A teljes megoldás ezért nem lehet kizárólag a fenti egy SQL-sor törlése: azzal a draft/published **metaadat és URL** még mindig összekeveredhetne. A meglévő `pages` / `editor_revisions` ownership és revision history megtartandó.
+
+**Döntés / szigorú munkasorrend:**
+- **A — tervkapu:** a történeti 00/A és 00.9.6.B forráshiány, a H19–H34 szemantikai megfelelés, a 54.7–54.16 első körös review és az összes 156 sor owner/domain/fázis/acceptance hiányának rendezése. A teljes PASS csak bizonyíték alapján.
+- **B — fejlesztésindítás előtti biztonsági szerződés:** published metadata/slug/snapshot atomi modell, redirect/404/SEO határ, migráció és rollback, ownership, permission és régi URL megőrzés specifikációja; `WEB-002/004/006/007/013`, `EDT-027/033`, `SEO-001/004` érintett. A jelenlegi HIGH kockázat nem veszhet el az általános checklist mögött.
+- **C — a tervkapu PASS és felhasználói funkció-review után:** minimális, tesztekkel védett kódjavítás; published v1 → draft v2 → PATCH metadata → public v1; explicit publish → v2; slug redirect és valódi HTTP 404; preview noindex; rollback draft-only; role/site/revision negatív tesztek. Remote D1 módosítás előtt read-only leltár és backup.
+- **D — a kódjavítás után:** célzott typecheck/test/CI/böngésző/production evidence külön naplózva. **Ezeket ebben a körben nem futtattuk**, ezért nincs runtime PASS.
+
+**Aktuális tényállás:** `PUBLICATION CONTRACT CONFLICT / SOURCE CONFIRMED / NOT FIXED`; `54.1–54.6 FIRST-PASS ROUTING 56/156`; `HISTORICAL SEMANTICS OPEN`; `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY IN PROGRESS / NOT PASS`. Következő dokumentációs auditpont: **54.7#1–#12**, majd 54.8–54.16; a publikálási konfliktus **HIGH blokkoló**, nem archiválható és nem tekinthető javítottnak a routing előrehaladásával.
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
