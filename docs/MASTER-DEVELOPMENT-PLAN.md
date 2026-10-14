@@ -1236,7 +1236,7 @@ Az alábbi jegyzék a menüfunkciókat külön, stabil munkapontokra bontja. A s
 
 ### 24.8. Schedule/game profiles — SCH
 - SCH-001: Schedule item CRUD.
-- SCH-002: Calendar/list/upcoming/past views.
+- SCH-002: Calendar/list/upcoming/past views with site-scoped search/filter/sort/pagination.
 - SCH-003: Timezone and daylight-saving correctness.
 - SCH-004: Recurrence and series edit scopes.
 - SCH-005: Postponed/cancelled/completed/live states.
@@ -2649,11 +2649,11 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.5-05 | TikTok account-capability-gated profile/content with rate-limit/manual fallback | INT-006, INT-008/009, INT-014, INT-018, INT-020, CNT-002/003 | DEFER | 1.5+ provider-gated | QA-002/003/008 |
 | F.5-06 | Discord link baseline; bot/role/status and Kick/OBS/email/payment/commerce adapters have own contracts | INT-015/016, INT-018, INT-021, COM-001, OBS-001–OBS-010, STO-001–STO-020 | DEFER/EXPAND | 1.0 links; integrations later | QA-002/003/008 |
 | F.5-07 | Normalize provider data; outage fallback; never invent missing metrics | INT-001, INT-018, INT-020, LIV-002, DYN-005, ANL-008 | KEEP | 0.x–1.0 baseline | QA-002/003/006 |
-| F.6-01 | Canonical Schedule fields, lifecycle, recurrence, source and external-ID mapping | SCH-001–SCH-015, RES-013 | EXPAND | 1.0 core; advanced recurrence phased | QA-002/004 |
-| F.6-02 | Schedule list/calendar/upcoming/past/search/filter/sort and lifecycle states | SCH-002, SCH-005, SCH-006, SCH-010 | EXPAND | 1.0 baseline | QA-002/004 |
+| F.6-01 | Canonical Schedule fields, lifecycle, recurrence, source and external-ID mapping | SCH-001–SCH-015, RES-001, RES-007 | EXPAND | 1.0 core; advanced recurrence phased | QA-002/004 |
+| F.6-02 | Schedule list/calendar/upcoming/past/search/filter/sort and lifecycle states | SCH-001, SCH-002, SCH-005, SCH-010 | EXPAND | 1.0 baseline | QA-002/004 |
 | F.6-03 | DST/timezone and recurrence edits scoped to one event/future events/series where supported | SCH-003, SCH-004 | EXPAND | 1.0 timezone; recurrence 1.5–2.0 if not accepted | QA-002/004 |
 | F.6-04 | Next stream/countdown uses canonical schedule/site timezone/authenticated live state and excludes cancelled/past events | SCH-009, SCH-003, SCH-005, LIV-001, WEB-016 | KEEP | 1.0 | QA-002/004 |
-| F.6-05 | Link VOD/clip/Short to stream and calendar; Editor Schedule block changes presentation only | SCH-015, CNT-002–CNT-004, EDT-020, SCH-011 | EXPAND | 1.0 Schedule; richer content later | QA-002/003/004 |
+| F.6-05 | Link VOD/clip/Short to stream and calendar; Editor Schedule block changes presentation only | SCH-014, CNT-002–CNT-004, EDT-020, SCH-011 | EXPAND | 1.0 Schedule; richer content later | QA-002/003/004 |
 | F.7-01 | Admin shell navigation/breadcrumb/public return/profile/session/logout/help/notifications/mobile shell | ADM-001–ADM-010, SEC-001, WEB-011 | EXPAND | 1.0 | QA-003/004/005 |
 | F.7-02 | Shared loading/empty/error/success/disabled/unsaved states, validation/confirm/search/filter/pagination/keyboard/Hungarian UI | ADM-008, QA-005, EDT-027 | EXPAND | 1.0 | QA-004/005/006 |
 | F.7-03 | Session expiry/logout/inactivity/multi-tab/unsaved flow and server-side admin/API authorization | SEC-001, SEC-002, SEC-004, ADM-007, EDT-031 | KEEP | 0.x–1.0 | QA-003/004 |
@@ -4623,3 +4623,12 @@ A C.23.22-01–07 mind a hét történeti sor megmaradt, és a célzott szerződ
 - **F.5-06 — Discord/Kick/OBS/email/payment/commerce:** added the explicit Kick adapter and shared capability registry, removed the unrelated entitlement-lifecycle ID as a proxy for general adapter support, and retained dedicated OBS/store contracts plus the canonical community-link baseline.
 - **F.5-07 — provider normalization/fallback:** confirmed the mapping already covers adapter contract, capability registry, diagnostics, freshness, shared state handling and analytics missing-data semantics; no ID change was required.
 - **Evidence boundary:** the source text and historical keys remain intact. This is a mapping/registry review, not evidence that YouTube, TikTok, Discord, Kick, OBS, email or commerce integrations are implemented or authorized. No provider runtime tests were run. F.5 remains open; F.6–F.13 and original-source recovery remain open. P0.2 stays **IN PROGRESS / NOT PASS**.
+
+
+### 41.3.65. P0.2 — F.6 Schedule ownership, query semantics and content relationship mapping (2026-10-14)
+
+- **F.6-01 — canonical Schedule record:** replaced `RES-013` (font registry) with `RES-001/007` for canonical resource identity and artwork metadata. Schedule fields, lifecycle and external-ID provenance remain owned by SCH-001–015.
+- **F.6-02 — schedule views and queries:** removed `SCH-006` (conflict detection) as the proxy for search/filter/sort. Clarified the existing `SCH-002` registry description to explicitly own site-scoped search/filter/sort/pagination for schedule list/calendar/upcoming/past views; this is an expansion of the existing capability, not a new feature ID.
+- **F.6-05 — content-to-schedule relationship:** replaced `SCH-015` (iCal/export and later notifications) with `SCH-014` (game/content/schedule relationship). The canonical Schedule block remains `SCH-011` plus Editor display configuration; content ingestion/clip IDs describe the content records being linked, not ownership of the relationship itself.
+- **F.4-06 — interaction mapping finalization:** the feature cell now contains only `EDT-039`, `WEB-032` and `SEC-005`; Inspector property IDs were not direct owners of the public interaction lifecycle. QA-004/005 remain in the dedicated QA-anchor column.
+- **Evidence boundary:** four crosswalk/registry changes were verified in the canonical MASTER. No schedule query, timezone, content-link or public-render runtime tests were executed. F.6 remains open for full semantic review; F.7–F.13 and original-source recovery remain open. P0.2 stays **IN PROGRESS / NOT PASS**.
