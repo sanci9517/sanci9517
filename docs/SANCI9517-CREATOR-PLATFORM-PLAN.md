@@ -6962,6 +6962,24 @@ A `0004_system_page_content.sql` történeti táblát hoz létre, míg a `0005_c
 
 **Következő kötelező audit:** minden HTML/script-tag/import és CSS asset fogyasztó tételes keresése; `system_page_content` adatok és migrációk; dashboard 24 képességkártya vs 22 domain taxonómia; navigációs route+role mátrix; meglévő CI szerződés frissítési terve. **ADMIN IA / LEGACY DEPENDENCIES: IN PROGRESS / NOT PASS.** Nem történt kódváltozás vagy archívumba mozgatás.
 
+### 63.50.26. HTML asset-fogyasztók és dashboard 24 képességkártya tételes leltára (2026-10-14)
+
+**Forrásref:** `148d7fd`; `public/admin-home.html`, `public/admin-login.html`, `public/editor-v2/index.html`, `public/visual-page.html`, `public/editor-v2/boot.js`, `public/editor-v2/ui/shell.js`, `public/assets/page-builder.js`, `public/assets/system-page-editor.js`, `public/assets/system-page-runtime.js`. A GitHub fa teljes `public/` JS/HTML útvonalait listáztuk; a tartalmi betöltések e körben a felsorolt aktív belépési pontokra korlátozódtak, tehát ez **nem** teljes repós importgráf.
+
+**Aktív HTML asset-útvonalak (statikus):**
+- `public/editor-v2/index.html` betölti az `editor.css`, `schedule-preview.css`, `mobile-editor.css`, `boot.js`, `app.js`, `ui/shell.js`, `ui/canvas-pan.js`, `ui/geometry-presets.js`, `ui/inspector-groups.js` fájlokat. A `ui/shell.js` további `./events.js` és `./registry.js` importot tartalmaz. Ezeket nem szabad legacyként archiválni.
+- `public/visual-page.html` betölti a `/assets/site.css`, `/assets/site.js`, `/assets/page-renderer.js` fájlokat; ezek az aktív publikus shell függőségei.
+- A vizsgált `admin-home.html` inline `<script>` blokkot használ; a vizsgált `admin-login.html` nem tartalmaz külső JS script taget. A fenti aktív HTML-fájlokban **nem találtunk** közvetlen `system-page-editor.js`, `system-page-runtime.js`, `page-builder.js` betöltést. Ez önmagában nem zárja ki más importáló/HTML vagy közvetlen URL fogyasztók létezését.
+
+**A dashboard tényleges 24 képességkártyájának neve, forrássorrendben:**
+1. Weboldal és CMS; 2. Visual Editor v2; 3. Design Studio; 4. Média- és erőforráskönyvtár; 5. Adásrend és játékprofilok; 6. Stream Studio és OBS; 7. VOD, klipek és Shorts; 8. Publikálási központ.
+9. Twitch-integráció; 10. YouTube, TikTok és Discord; 11. Közösségi központ; 12. Közönség és e-mail; 13. Analitika és riportok; 14. AI Creator Copilot; 15. Webshop, merch és tagság; 16. Automatizálás és workflow.
+17. Csapatok és több webhely; 18. Biztonság és helyreállítás; 19. Nyelvek, SEO és hozzáférhetőség; 20. Fejlesztői eszközök és piactér; 21. Dinamikus adatok és adatbinding; 22. Űrlapok és interakciók; 23. Publikálás és verziókezelés; 24. Tartalommodellek és bővíthető blokkok.
+
+**Taxonómiai értelmezés:** a 24 dashboardkártya **képességbemutató egység**, nem bizonyítottan 24 önálló felső szintű modul; a MASTER 22 főmoduljával való eltérés ezért nem önmagában hiba. Különösen a `Publikálási központ` vs `Publikálás és verziókezelés`, `Weboldal és CMS` vs `Tartalommodellek`, `Design Studio` vs `Dinamikus adatok` és `Twitch-integráció` vs többi platformadapter esetén **tulajdonos + elsődleges menühely + megosztott felület** szerződés kell. Nem szabad pusztán a 24-es számot 22-re kozmetikázni vagy két külön backend képességet létrehozni.
+
+**Következő kapu:** 24→22 tételes domain- és surface-crosswalk, aktív HTML/import gráf teljesítése a többi `public/` és `src/` fogyasztóra, `system_page_content` történeti adatséma ellenőrzése, kanonikus/legacy/archive döntések negatív tesztekkel. **ASSET/IA AUDIT: PARTIAL EVIDENCE / NOT PASS.** Nincs törlés, runtime-módosítás vagy teszt-PASS állítás.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
