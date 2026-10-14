@@ -6613,6 +6613,35 @@ Ez a szakasz a 63.41 kártyáit kiegészíti a 25. fejezet hiányzó, különál
 
 **Szeletállapot:** EDT-008 17 külön mezője dokumentálva és a jelenlegi kódhoz kötve; runtime acceptance nyitott. Ez nem zárja le az EDT-008-at, az Editor modult vagy a teljes tervlezárási kaput.
 
+### 63.50.1. Kanonikus Schedule szerződés — SCH-001, SCH-007–011, WEB-016, EDT-020
+
+**Státusz: SPECIFICATION DRAFT / NOT PASS.** Ez a kártya a 10. fejezet 22 mezőjét alkalmazza egy többfelületű, különösen hibaveszélyes domainhatárra. A konkrét route-, D1-séma- és provider-válaszmezőket csak forráskód-vizsgálat után szabad véglegesíteni; itt nem állítunk ellenőrzött implementációt.
+
+1. **ID és név:** `SCH-001` Schedule CRUD, `SCH-007` Twitch sync/manual override, `SCH-008` sync status/retry/audit, `SCH-009` next-stream/countdown, `SCH-010` canonical public projection, `SCH-011` Editor block binding, `WEB-016` public route, `EDT-020` dynamic block configuration.
+2. **Felhasználói cél:** a creator egy helyen szerkeszti az adásrendet; a Dashboard, a publikus oldal és az Editor ugyanazt az érvényes, site-hoz kötött adatot jeleníti meg.
+3. **Belépési hely:** Creator Center → Stream Studio → Adásrend; Website → Visual Editor → Schedule block; publikus schedule oldal. Az Editor csak blokkbeállítást kezel.
+4. **Működés és eredmény:** create/update/cancel/delete → kanonikus domain validáció → D1 tranzakció → publikus projekció és cache frissítése; provider import → deduplikáció és konfliktus/override döntés → audit; next-stream csak a megfelelő állapotú és időzónában normalizált rekordokból.
+5. **Kanonikus tulajdonos:** `SCH` a schedule események és életciklus gazdája; `INT` az OAuth/provider adapter és scope; `WEB` az oldal shell; `EDT` a blokk konfiguráció; `DYN` a megengedett adatbinding; `SEC` a cross-site jogosultsági invariáns.
+6. **Adatforrás:** `schedule_items` kanonikus D1 eseménytábla; a provider adat külső, nem második szerkeszthető adatbázis; a publikus/cache adat csak származtatott, érvényességi jelzővel ellátott projekció. A pontos oszloplista **CODE VERIFICATION REQUIRED**.
+7. **Olvasó/író felületek:** író kizárólag az engedélyezett SCH domain API és ellenőrzött INT sync adapter; olvasó Admin naptár, Dashboard, WEB-016 és Editor preview a kanonikus projekción keresztül. Az Editor nem ír közvetlenül `schedule_items` rekordot.
+8. **Jogosultság/scope/ownership:** minden módosító és privát lekérdezés hitelesített, szerepkör- és site-scope-ellenőrzött; a publikus projekció csak publikálható mezőket és rekordokat ad; kliensoldali `site_id` nem bizalmi forrás.
+9. **Request/response/schema/status/error contract:** javasolt domainműveletek `list/get/create/update/cancel/delete/previewProjection/syncStatus/retrySync`; kötelező `site`, `id`, időzóna, start/end, lifecycle, expected-version és provider-link validáció; 400 schema, 401 unauthenticated, 403 forbidden, 404 not found vagy maszkolt cross-site, 409 revision/provider conflict, 429 throttled, 5xx retryable outage. **Ezek logikai szerződéscélok, nem ellenőrzött HTTP endpointok.**
+10. **Függőségek:** `SCH-002–006` listák/DST/recurrence/state/conflict, `INT-010–011` Twitch kapcsolat, `SEC-002–003` ownership, `DYN-005–007` runtime és published-only, `WEB-016`, `EDT-020`, `OPS-002` auditkorreláció.
+11. **Hibamódok:** provider outage, stale sync, duplikált provider event, lejárt token, DST gap/fold, ismétlődő esemény egyedi módosítása, párhuzamos szerkesztés, törölt game reference, cache-invalidation késése.
+12. **Security/privacy/secret/retention:** provider token csak secret/INT tárolóban; publikus output allowlist; privát creator-metaadat nem publikálható; audit retention és provider payload-redaction külön döntendő.
+13. **UI-állapotok:** loading/empty/error/stale/offline/partial sync, pending edit, conflict, cancelled/postponed/live/completed, permission denied, save succeeded but projection refreshing; minden állapotnak szöveges visszajelzés kell.
+14. **Automatizált pozitív tesztek:** site-scope CRUD, időzóna/DST, recurrence edit scope, next-stream számítás, kézi override és provider update, publikus projection parity, Editor block config és read-only data boundary.
+15. **Negatív tesztek:** idegen site rekord olvasás/írás, tokenhiány, lejárt scope, duplikált webhook, 409 stale version, provider retry utáni duplikáció, DST-ambiguitás, draft/private mezőszivárgás, Editor közvetlen eseményírás, cache stale fallback félrevezető státusz.
+16. **Live acceptance:** staging/production D1 migration és FK/ownership preflight; Twitch sandbox/valós capability; mentés→frissítés→publikus projekció ellenőrzése; éles adatot érintő teszt csak megfelelő védelemmel.
+17. **User acceptance:** Creator Centerben esemény létrehozása/módosítása → Editor blokkba kötés → előnézet → publikus megjelenítés; telefon/tablet, billentyűzet, timezone és hibaüzenetek külön ellenőrzése.
+18. **Rollback/recovery:** migrációs rollback/restore terv; import auditból ismételhető idempotens sync; cache visszaállítás/invalidation; mentés előtti revízió visszaállítása adatvesztés nélkül.
+19. **Státusz:** `SPECIFICATION DRAFT / NOT PASS`; a teljes feature-család futó implementációját nem igazoltuk.
+20. **Bizonyíték:** a 24., 49., 63.0.6 és jelen 63.50.1 fejezet követelményei dokumentáltak; **nincs ide csatolt konkrét route-, DB-, CI-, browser-, runtime- vagy provider-bizonyíték**.
+21. **Tervfrissítés és next point:** forráskód alapján rögzítendő a tényleges `schedule_items` séma, route, provider sync/override precedence, fázis és feature-specifikus tesztazonosító; eltérés esetén ugyanitt javítandó, nem külön roadmapben.
+22. **Regressziós hatás:** Admin schedule, Dashboard live/next-stream, publikus schedule, Editor block, Twitch sync, localization/timezone, permissions, cache és SEO/indexing.
+
+**Nyitott döntések:** (a) Twitch kézi override mezőnkénti precedence; (b) recurrence exceptions és DST normalizálás konkrét sémája; (c) expected-version/ETag mechanizmus; (d) publikus projection mező-allowlist; (e) soft delete/retention; (f) provider capability hiányának fallbackje. Ezeket bizonyíték nélkül nem jelöljük megoldottnak.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
