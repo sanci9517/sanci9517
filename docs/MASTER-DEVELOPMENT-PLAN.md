@@ -6322,3 +6322,109 @@ A „MATCH candidate” csak a tervezett elemkategória jelenlétét jelenti; ne
 
 **Státusz:** 9/9 tétel explicit crosswalk-sort kapott; cascade precedence, cleanup és runtime acceptance nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
 
+### 41.3.152. P0.2 — Régi 4/D Responsive gate: 10 atomikus elfogadási feltétel (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, `4/D Responsive gate`. Az eredeti checklist egyetlen oldal teljes ellenőrzését írja elő editor desktop/tablet/mobile, public desktop/tablet/mobile, reload minden nézetben, preview, publish és layout-regression ellenőrzéssel. **Canonical célpontok:** `EDT-023–034`, `WEB-004–008`, `QA-002/004/005/006`.
+
+| # | Régi gate-követelmény | Canonical célpont | Státusz | Kötelező acceptance |
+|---:|---|---|---|---|
+| 1 | editor desktop | EDT-023/025 | OPEN / RELEASE GATE | Desktop viewportban minden támogatott responsive property és resolved value ellenőrzött. |
+| 2 | editor tablet | EDT-023/025 | OPEN / RELEASE GATE | Tablet viewport és breakpoint-határok; base/inherited/override jelzések helyesek. |
+| 3 | editor mobile | EDT-023/025, EDT-035/036 | OPEN / RELEASE GATE | Mobile layout és Editor UI/safe-area külön tesztelt; touch/keyboard útvonalak megmaradnak. |
+| 4 | public desktop | EDT-034, WEB-004–008 | OPEN / RELEASE GATE | Published snapshot és Editor preview szemantikája egyezik desktopon; editor overlay nem szivárog. |
+| 5 | public tablet | EDT-034, WEB-004–008 | OPEN / RELEASE GATE | Tablet publikus render és breakpoint resolve egyezik az elfogadott Editor modellel. |
+| 6 | public mobile | EDT-034, WEB-004–008 | OPEN / RELEASE GATE | Mobil public render, overflow, typography, focus/reading order és image crop tesztelt. |
+| 7 | reload mindegyiken | EDT-028, EDT-034 | OPEN / RELEASE GATE | Reload után a mentett model és a resolved responsive state mindhárom nézetben változatlan. |
+| 8 | preview | EDT-032 | OPEN / RELEASE GATE | Preview draftot renderel; nem publikál és nem írja át a published snapshotot. |
+| 9 | publish | EDT-033, WEB-004–008 | OPEN / RELEASE GATE | Validáció, explicit confirmation, atomic snapshot és cache invalidation; siker csak szerver/domain confirmation után. |
+| 10 | nincs layout regression | EDT-034, QA-002/004/005/006 | OPEN / RELEASE GATE | Regression screenshot/DOM/accessibility checks a támogatott viewport-mátrixon; nincs rejtett desktop/mobile adatvesztés. |
+
+**Gate-szabály:** egyetlen responsive gate sem PASS pusztán azért, mert a responsive property-k a tervben szerepelnek. Minden viewporton a model, Inspector resolved value, draft preview, reload és published output közti paritást bizonyítani kell.
+
+**Státusz:** a 10 elfogadási feltétel explicit crosswalkot kapott; runtime/browser acceptance nincs igazolva. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.153. P0.2 — Régi 5/A Page schema: 15 atomikus követelmény tételes crosswalkja (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, `5/A Page schema`. **Canonical célpontok:** `EDT-001/002` Page Model/node identity; `WEB-004–008` draft/publish/public rendering; `SEC`; `DSN`; `QA-002/003/004/006`.
+
+| # | Régi Page-schema mező | Canonical célpont | Státusz | Kötelező acceptance |
+|---:|---|---|---|---|
+| 1 | page ID | EDT-001/002, WEB | PARTIAL / RELEASE GATE | Stabil, egyedi page identity; URL/slug változás nem hoz létre véletlen második oldalt. |
+| 2 | slug | WEB-004–008 | PARTIAL / VERIFY | Canonical route slug normalization, uniqueness, redirect/404 policy és reserved-slug validation. |
+| 3 | title | WEB-004–008, SEO | PARTIAL / VERIFY | User-facing title és document/SEO title precedence explicit; escaping/localization támogatott. |
+| 4 | status | WEB-004–008 | PARTIAL / VERIFY | Draft/published/archived/disabled lifecycle explicit; status nem keveredik permissionnel vagy visibilityvel. |
+| 5 | content schema | EDT-001 | PARTIAL / RELEASE GATE | Versioned canonical Page Model schema; runtime validator/serializer ugyanazt a schema-t használja. |
+| 6 | metadata | WEB-004–008, DSN | OPEN / VERIFY | Metadata namespace és allowed fields explicit; arbitrary secrets/internal data nem kerül public outputba. |
+| 7 | version | EDT-001, EDT-028 | PARTIAL / VERIFY | Schema/content version fogalmak elkülönülnek; migráció és optimistic concurrency nem használ felcserélhető számot. |
+| 8 | revision | EDT-028/029 | PARTIAL / RELEASE GATE | Revision az immutable snapshot/change history és conflict detection szerződéséhez kötött. |
+| 9 | updated timestamp | WEB-004–008, OPS | PARTIAL / VERIFY | Server-authored UTC timestamp; nem kliensóra alapján hiteles. |
+| 10 | published timestamp | WEB-004–008 | PARTIAL / VERIFY | Csak sikeres publish confirmation után változik; draft save nem módosítja. |
+| 11 | schema version | EDT-001 | PARTIAL / RELEASE GATE | Schema migration path, compatibility window, reject/upgrade policy és rollback explicit. |
+| 12 | author/owner | SEC, WEB-004–008 | PARTIAL / RELEASE GATE | Author/owner immutable audit identity és site ownership/permission checks; client-supplied owner nem trusted. |
+| 13 | template ID ahol releváns | DSN-009–013, EDT-001/002 | OPEN / VERIFY | Template reference/version és detached instance semantics explicit; template update nem ír át csendben page contentet. |
+| 14 | SEO data | H25/SEO, WEB-004–008 | PARTIAL / VERIFY | Canonical SEO schema, validation, output escaping, canonical URL/robots/Open Graph ownership. |
+| 15 | access/visibility policy | SEC, WEB-004–008 | OPEN / RELEASE GATE | Public visibility, route protection, preview token and authorization are separate; hidden is not private. |
+
+**Kontraktus:** page identity, route, schema version, content revision, ownership, publish lifecycle és access policy külön fogalom és külön validation boundary. Public renderer kizárólag validált, publikált snapshotot szolgálhat ki; preview nem válhat publikált állapottá.
+
+**Tesztminimum:** create/edit/slug change; duplicate/reserved slug; schema migration/rollback; revision conflict; server timestamps; owner spoofing; template update; SEO metadata escaping; access policy vs visibility; draft/preview/publish isolation.
+
+**Státusz:** 15/15 mező explicit crosswalk-sort kapott; page schema ownership és runtime acceptance nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.154. P0.2 — Régi 5/B Element schema: 14 atomikus követelmény tételes crosswalkja (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, `5/B Element schema`. **Canonical célpontok:** `EDT-001/002`, `EDT-016–022`, `EDT-024–026`, `EDT-039`, `SEC`, `QA-002/003/004/006`.
+
+| # | Régi Element-schema mező | Canonical célpont | Státusz | Kötelező acceptance |
+|---:|---|---|---|---|
+| 1 | element ID | EDT-001/002 | PARTIAL / RELEASE GATE | Unique stable node ID; clone/import regenerate ID and all internal references. |
+| 2 | type | EDT-001/016–020 | PARTIAL / RELEASE GATE | Type comes from canonical registry; unknown type policy explicit and safe. |
+| 3 | parent | EDT-002/016 | PARTIAL / RELEASE GATE | Allowed-child/slot and cycle validation; orphan node reject or explicit migration handling. |
+| 4 | order | EDT-002/011 | PARTIAL / VERIFY | Canonical sibling order distinct from visual Flex/Grid order; deterministic reorder transactions. |
+| 5 | props | EDT-021/022 | PARTIAL / VERIFY | Typed property registry, node-type scope, defaults, migration and validation. |
+| 6 | style | EDT-016/021/022, DSN | PARTIAL / VERIFY | Typed styles/tokens, no arbitrary unvalidated CSS; parent/layout context respected. |
+| 7 | responsive overrides | EDT-023–026 | PARTIAL / RELEASE GATE | Explicit base/inherited/override state, breakpoint registry, reset and serializer parity. |
+| 8 | visibility | EDT-014, EDT-021/022, EDT-026 | PARTIAL / RELEASE GATE | Editor hide, responsive visibility, CSS display/visibility and access control distinct. |
+| 9 | lock | EDT-014, SEC | PARTIAL / VERIFY | Editor lock is an authoring guard, not authorization; command pipeline enforces permission separately. |
+| 10 | data bindings | EDT-020/039, data contracts | OPEN / RELEASE GATE | Typed binding registry, allowed source/path, schema and permission validation; no arbitrary executable expression. |
+| 11 | interaction bindings | EDT-039, SEC | OPEN / RELEASE GATE | Declarative action registry, allowlisted action/target and parameter schema; no arbitrary script execution. |
+| 12 | component/variant reference | DSN-009–013, EDT-001/002 | PARTIAL / VERIFY | Versioned reference, instance override and detach semantics; dangling reference detected. |
+| 13 | accessibility metadata | QA-005, EDT-017–020 | OPEN / RELEASE GATE | Semantic roles, accessible name/alt/label/state validated in context; not all nodes accept same fields. |
+| 14 | schema version | EDT-001 | PARTIAL / RELEASE GATE | Per-model/node schema compatibility and migration strategy explicit; unknown future version fails safely. |
+
+**Kontraktus:** az element schema a canonical Page Model része; a DOM, editor selection, workspace UI és published HTML nem önálló adatforrás. A type/parent/property/binding/accessibility szerződéseknek együtt kell validálniuk, hogy az érvényesnek jelölt node ténylegesen renderelhető és hozzáférhető legyen.
+
+**Tesztminimum:** create/clone/import IDs; nested parent/cycle/orphan; canonical vs visual order; typed property/style; responsive override/reset; visibility/lock/access separation; invalid data/interaction binding; component reference deletion/update; accessibility metadata; schema migration; save/reload/public parity.
+
+**Státusz:** 14/14 mező explicit crosswalk-sort kapott; bindings, interactions, accessibility és runtime acceptance nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.155. P0.2 — Régi 5/C Validation: 14 atomikus követelmény tételes crosswalkja (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, `5/C Validation`. **Canonical célpontok:** `EDT-001/002/022`, `SEC`, `WEB-004–008`, `QA-002/003/004/006`.
+
+| # | Régi validation-követelmény | Canonical célpont | Státusz | Kötelező acceptance |
+|---:|---|---|---|---|
+| 1 | schema validation | EDT-001/022 | PARTIAL / RELEASE GATE | Client and server validate the same versioned canonical schema; server is authoritative. |
+| 2 | required fields | EDT-001/022 | PARTIAL / VERIFY | Required fields are type/scope dependent; missing fields reject or migrate explicitly. |
+| 3 | type validation | EDT-001/022 | PARTIAL / RELEASE GATE | Node/field enum and value types validated before persistence and publish. |
+| 4 | max sizes | EDT-001/022, SEC | OPEN / RELEASE GATE | Payload, nesting, string, array, asset and request limits explicit; resource exhaustion tests. |
+| 5 | unsafe HTML filtering | SEC, WEB-032 | OPEN / RELEASE GATE | Context-appropriate sanitize/encode; hostile HTML/URL tests in public, preview and Admin contexts. |
+| 6 | invalid nesting | EDT-002/016/022 | PARTIAL / RELEASE GATE | Parent-child/slot/cycle rules validated; invalid nesting cannot be saved. |
+| 7 | unknown element handling | EDT-001/015/022 | OPEN / DECISION | Unknown node reject or safe placeholder policy versioned; never silently execute or destructively drop. |
+| 8 | migration compatibility | EDT-001, DSN | OPEN / RELEASE GATE | Old supported schemas migrate deterministically with backup/rollback; unknown future schema fails safe. |
+| 9 | circular reference detection | EDT-002, EDT-020/039 | PARTIAL / RELEASE GATE | Parent and binding/reference cycles detected in the correct graph; bounded execution. |
+| 10 | orphan node detection | EDT-002 | PARTIAL / RELEASE GATE | Orphan nodes rejected or handled by an explicit, audited migration; no silent content loss. |
+| 11 | duplicate ID detection | EDT-001/002 | PARTIAL / RELEASE GATE | Duplicate node/resource IDs reject before mutation; clone/import regenerate IDs and references. |
+| 12 | invalid style validation | EDT-021/022, DSN | PARTIAL / RELEASE GATE | Typed CSS/layout/style schema rejects unsupported values and parent-incompatible combinations. |
+| 13 | invalid binding validation | EDT-020/039, SEC | OPEN / RELEASE GATE | Binding source, path, output type and permissions checked; no arbitrary code/eval semantics. |
+| 14 | permission validation | SEC, WEB-004–008 | PARTIAL / RELEASE GATE | Authorization rechecked server-side for read/write/publish/resource access; client role/UI is not trusted. |
+
+**Kontraktus:** validation fail-closed, deterministic and shared at schema level; UI feedback may be client-side, but persistence/publish boundary is server-authoritative. Sanitization, authorization, schema validation and renderer output encoding are separate controls.
+
+**Tesztminimum:** missing/wrong fields, oversize/deep payload, hostile HTML/URL, invalid nesting/cycles/orphans/duplicate IDs, old/new schema migration, invalid styles/bindings, permission spoofing, rollback and public output safety.
+
+**Státusz:** 14/14 validation-tétel explicit crosswalk-sort kapott; size limits, unknown-node policy, migration, bindings és security runtime acceptance nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
