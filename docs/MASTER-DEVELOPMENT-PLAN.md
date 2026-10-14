@@ -1472,7 +1472,7 @@ A státuszt nem szabad pusztán a kód jelenléte alapján átállítani. Ha egy
 
 ## 26. Funkciószintű végrehajtási szerződés
 
-Ez a fejezet a menü- és funkciójegyzéket végrehajtható specifikációvá teszi. A katalógusban felsorolt minden stabil ID csak akkor aktiválható implementációra, ha az alábbi szerződés minden mezője kitöltött. A hiányzó adat nem feltételezhető: P0-ban fel kell tárni a repositoryból, vagy nyitott döntésként meg kell jelölni.
+Ez a fejezet a menü- és funkciójegyzéket végrehajtható specifikációvá teszi. A katalógusban felsorolt minden stabil ID csak akkor aktiválható implementációra, ha az alábbi szerződés minden mezője kitöltött. A hiányzó adat nem feltételezhető: az implementáció előtt a repositoryból kell feltárni, vagy nyitott döntésként kell megjelölni.
 
 ### 26.1. Kötelező funkciókártya
 
@@ -1725,7 +1725,7 @@ Minden képernyő és művelet a következő szabályoknak felel meg:
 
 ## 29. Adatmodell- és lifecycle katalógus
 
-A tényleges táblák neveit és meglévő migrációit P0/P1 alatt kell ellenőrizni; ez a logikai entitáskatalógus nem engedélyez új, párhuzamos táblák létrehozására.
+A tényleges táblák neveit és meglévő migrációit az implementáció előtt, az F0 platformbaseline részeként kell ellenőrizni; ez a logikai entitáskatalógus nem engedélyez új, párhuzamos táblák létrehozására.
 
 - **Site/Workspace:** tulajdonos, konfiguráció, domain, locale, status.
 - **Identity/Session/Role:** user, session, membership, permission, revocation.
@@ -3435,6 +3435,6 @@ A fenti leképezés nem engedélyezi a függőségek átugrását. Ha egy munkac
 ### 62.6. Roadmap- és státusz-konfliktusok kezelése
 - [ ] A 41.2. fejezet F0–F11 listája a legfelső szintű roadmap egyetlen forrása; a 39. fejezet összefoglaló, a 9. fejezet részletes munkacsomag-katalógus.
 - [ ] A 19. fejezet F0 fókusza az aktuális implementációs cél, nem bizonyíték arra, hogy F0 minden acceptance-feladata nyitott vagy kész; a konkrét státuszt ellenőrzött teszt/runtime eredmény adja.
-- [ ] Az olyan régi P0/P0.2 auditállapot nem aktiválódik automatikusan a jelenlegi termék-roadmap részeként. Csak az aktuális termékfunkcióhoz szükséges konkrét hiány vagy regresszió nyitható meg.
+- [ ] Korábbi checkpointok vagy elavult állapotjelzések nem írhatják felül automatikusan a jelenlegi termék-roadmapet. Csak az aktuális termékfunkcióhoz szükséges, bizonyítékkal alátámasztott hiány vagy regresszió határozhatja meg a következő munkát.
 - [ ] Ha egy státusz vagy roadmap-sorrend más fejezetben eltér, először ezt a kanonikus térképet és a legfrissebb igazolt repository/runtime állapotot kell alkalmazni; az eltérést a MASTER-ben egy helyen kell javítani.
 - [ ] A dokumentum végső konzisztencia-ellenőrzése után a következő munka nem további roadmap-átírás, hanem a 19. fejezet szerinti legkorábbi, reprodukálható F0 acceptance-feladat implementációja/ellenőrzése.
