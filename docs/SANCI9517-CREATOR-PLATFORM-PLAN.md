@@ -5028,5 +5028,121 @@ A kanonikus terv legutóbbi GitHub-változatán végzett statikus szöveg-/azono
 
 **Aktuális aktív pont:** PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY.
 
-**Állapot: IN PROGRESS / NOT PASS.** A következő konkrét munka a 25/26. fejezet kötelező kártyamezőinek gépi lefedettség-ellenőrzése, majd a hiányzó mezők explicit UNVERIFIED/nyitott döntésként való feltárása — nem az implementáció elindítása. A végső PASS csak a teljes történeti és szemantikai audit, a funkciókártya-kapu és a 63.1–63.3 feltételek bizonyítása után adható meg.
+**Állapot: IN PROGRESS / NOT PASS.** A 63.40 gépi lefedettségi auditja megállapította: a 396/396 ID szerepel egyedi-ID-s bizonyítékmátrixban, de ez nem helyettesíti a 26.1 szerinti teljes funkciókártyát. A kártyák fokozatos, bizonyíték-alapú kitöltése folyik; az első pilotot a 63.41 rögzíti. Ez dokumentációs munka, nem implementációindítás. A végső PASS csak a teljes történeti és szemantikai audit, a funkciókártya-kapu és a 63.1–63.3 feltételek bizonyítása után adható meg.
+
+### 63.40. Funkciókártya-mezők gépi lefedettségi auditja — 396 ID, 2026-10-14
+
+**Hatókör:** 24. fejezet stabil ID-jegyzéke, 25. fejezet státuszmezői, 26.1 funkciókártya-szerződése és 63.26–63.37 egyedi-ID-s mátrixai. Ez statikus dokumentumellenőrzés, nem kódteszt, runtime- vagy szemantikai PASS.
+
+| Ellenőrzés | Eredmény | Helyes értelmezés |
+|---|---:|---|
+| Egyedi ID a 24. fejezetben | 396/396 | Stabil azonosító nincs duplikálva. |
+| ID szerepel egyedi-ID-s bizonyítékmátrixban | 396/396 | Minden ID-hoz van legalább egy mátrixsor nyitott acceptance-szel vagy kódbizonyítékkal. |
+| 26.1 szerinti önálló, teljes kártya | 0/396 bizonyított | A mátrixsor nem egyenértékű a teljes kártyával. |
+| Státuszmezők ID-nként | NEM LEZÁRT | Status, Phase/priority, Permission, Dependencies, Tests, Negative tests, Live/user acceptance, Evidence, Known issues és Next action nem szerepel egységes, strukturált mezőként minden ID-nál. |
+| Funkciószerződés mezői ID-nként | NEM LEZÁRT | Felhasználói eredmény, belépési pont, műveletek, domain owner, adatforrás/séma, API/command, UI-állapotok, security/privacy, teszt, E2E acceptance, evidence, rollback és next action kitöltése hátra van. |
+
+**Következtetés:** a korábbi „396/396 lefedve” csak az ID- és mátrix-/fázislefedettséget jelentette, nem azt, hogy a 396 funkció végrehajthatóan specifikált. Nem szabad üres sablonokat késznek jelölni: minden mezőt meglévő kódból/tesztből kell kitölteni, vagy explicit UNVERIFIED / OPEN / DECISION REQUIRED jelölést kell adni. A következő munka stabil ID-sorrendben, kis modulonkénti szeletekben készül; az EDT-001–006 pilotot a 63.41 tartalmazza.
+
+### 63.41. Funkciókártya-pilot — EDT-001–006
+
+Az alábbi rövidített kártyák mindegyike név szerint lefedi a 26.1 kötelező mezőit. A „részleges alap” nem PASS. A forrásfájlok vizsgálata megtörtént, de ebben a dokumentációs lépésben tesztet és runtime-ot nem futtattam.
+
+#### EDT-001 — Verziózott Page Model / document schema
+- **Felhasználói eredmény:** az oldal stabil, verziózott modellben szerkeszthető és újratölthető.
+- **Belépési pont / műveletek:** Editor v2 document lifecycle; létrehozás, validálás, mentés és reload.
+- **Kanonikus owner / adatforrás:** EDITOR / public/editor-v2/core/schema.js, src/core/page-model.ts és canonical page/revision API; a teljes API→schema round-trip nyitott.
+- **Séma / invariánsok:** sanci-page-document, schemaVersion=1, page/node ID, root, parent/children; schema migration és backward compatibility nyitott.
+- **Jogosultság:** authenticated page API + site ownership; cross-site negatív teszt szükséges.
+- **API/command:** Page Model + canonical command/state; request/response és DB mapping nincs teljesen lezárva.
+- **Függőségek:** SITE/IDENTITY/SEC, EDT-002/003/027–032, WEB-004–008.
+- **UI-állapotok:** loading/new/valid-invalid/saving/conflict/error/reload; teljes acceptance nyitott.
+- **Biztonság/adatvédelem:** schema allowlist, malformed/oversized document rejection, site scope; méretlimit nyitott.
+- **Tesztcsomag:** public/editor-v2/tests/core.test.js és page-model kapcsolódó tesztek; migration/API round-trip nem bizonyított.
+- **Elfogadás:** valid dokumentum módosítása → save → reload → azonos modell; unsupported schema/invalid root elutasítása adatvesztés nélkül.
+- **Bizonyíték:** schema.js, page-model.ts, core.test.js; CI/run link nincs rögzítve.
+- **Visszaállítás:** revision restore/snapshot alap létezik; schema migration rollback nyitott.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; persistence round-trip és schema compatibility bizonyítása szükséges.
+
+#### EDT-002 — Page Model hierarchia és szerkezeti invariánsok
+- **Felhasználói eredmény:** a canvas/layer tree csak érvényes node-hierarchiát hoz létre.
+- **Belépési pont / műveletek:** Editor v2 schema/validation/commands; add, move, group/ungroup, duplicate, delete.
+- **Kanonikus owner / adatforrás:** EDITOR / public/editor-v2/core/schema.js, validation.js, commands.js; rootId/nodes/parentId/children.
+- **Séma / invariánsok:** egy root; root parent nélkül; minden más node-nak parent; child-parent egyezés; nincs cycle/orphan/hiányzó child; container type rule.
+- **Jogosultság:** a domain invariant nem helyettesíti a szerveroldali auth/site ownershipet.
+- **API/command:** validateHierarchy, assertValidEditorDocument, canContain és canonical commands; minden server save/publish útvonalon való lefedettség nyitott.
+- **Függőségek:** EDT-001/003/004/008/011–013/016/028–034.
+- **UI-állapotok:** invalid drop/reparent/group, locked node, empty container, validation error.
+- **Biztonság/adatvédelem:** malformed nested data, cycle és túl mély hierarchia; resource-limit és server parity nyitott.
+- **Tesztcsomag:** public/editor-v2/tests/core.test.js; teljes negatív mátrix nem bizonyított.
+- **Elfogadás:** nested műveletek → save/reload → invariánsok megmaradnak; cycle/orphan/invalid parent esetén rollback és olvasható hiba.
+- **Bizonyíték:** schema.js, validation.js, commands.js, core.test.js; külön CI/runtime evidence nincs rögzítve.
+- **Visszaállítás:** command snapshot/undo/atomic transaction alap; minden UI failure rollback nyitott.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; negatív invariáns- és API-boundary tesztek szükségesek.
+
+#### EDT-003 — Canonical command-only mutation
+- **Felhasználói eredmény:** minden módosítás validált, követhető és visszavonható úton történik.
+- **Belépési pont / műveletek:** Editor v2 UI → public/editor-v2/core/commands.js; add/update/delete/duplicate/reparent/reorder/lock.
+- **Kanonikus owner / adatforrás:** EDITOR / canonical state + Page Model; nincs második UI dokumentummodell.
+- **Séma / invariánsok:** command payload validation, minden mutáció commandon át, document validation/history/dirty consistency.
+- **Jogosultság:** a command engine nem auth boundary; backend save/publish saját scope gate-et igényel.
+- **API/command:** execute(state, action), commands registry; az összes UI write-path lefedettsége nyitott.
+- **Függőségek:** EDT-001/002/004–006/027–031.
+- **UI-állapotok:** invalid action, locked/unsupported target, batch failure, dirty/saved/error és undo/redo.
+- **Biztonság/adatvédelem:** nincs direct mutation validation/history megkerülésével; tiltott ID/parent/children patch elutasítandó.
+- **Tesztcsomag:** core.test.js; teljes UI handler→command coverage nyitott.
+- **Elfogadás:** UI-módosítás → command → valid modell → undo → redo → save/reload egyezés.
+- **Bizonyíték:** commands.js commit/execute és assertValidEditorDocument; minden handler runtime lefedettsége nincs rögzítve.
+- **Visszaállítás:** undo/redo és snapshot; command failure state-egyezés tesztelendő.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; direct mutation keresés és teljes UI coverage.
+
+#### EDT-004 — Atomic batch és history transaction
+- **Felhasználói eredmény:** összetett szerkesztés egy visszavonható egység, hibánál meghatározott rollbackkel.
+- **Belépési pont / műveletek:** Editor v2 composite actions; executeBatch, beginTransaction, commitTransaction, rollbackTransaction.
+- **Kanonikus owner / adatforrás:** EDITOR / state.history és Page Model snapshot.
+- **Séma / invariánsok:** explicit atomic/non-atomic policy; nested transaction tiltása; atomic failure visszaállítja document/selection/history/persistence state-et.
+- **Jogosultság:** lokális tranzakció nem jogosultsági boundary; backend write külön auth/version gate.
+- **API/command:** executeBatch(actions,{label,atomic}) és transaction API; minden összetett UI action policy-ja nyitott.
+- **Függőségek:** EDT-001–003/005–006/011/038.
+- **UI-állapotok:** progress/success/rolled-back/error; nagy batch és megszakítás tesztelendő.
+- **Biztonság/adatvédelem:** atomic hiba után nincs észrevétlen részállapot; batch resource limit nyitott.
+- **Tesztcsomag:** core.test.js atomic/non-atomic transaction tesztekkel; composite UI workflow coverage nyitott.
+- **Elfogadás:** több parancs egy history entry; középső hiba atomic módban teljes rollbacket ad.
+- **Bizonyíték:** commands.js executeBatch/transaction implementáció; CI/UI evidence nincs rögzítve.
+- **Visszaállítás:** rollbackTransaction és atomic snapshot; interruption/nested edge case nyitott.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; minden composite UI művelet policy-ja tesztelendő.
+
+#### EDT-005 — Undo/redo history
+- **Felhasználói eredmény:** szerkesztési művelet visszavonható és újraalkalmazható.
+- **Belépési pont / műveletek:** Editor v2 history controls/keyboard shortcuts; history.undo/history.redo.
+- **Kanonikus owner / adatforrás:** EDITOR / state.history, Page Model snapshot és selection snapshot.
+- **Séma / invariánsok:** before/after document + selection; history limit jelenleg 100; új mutation üríti a redo ágat; undo/redo dirty state-et állít.
+- **Jogosultság:** lokális history nem helyettesíti a backend save/publish authorizationt vagy revision concurrencyt.
+- **API/command:** history.undo/history.redo; toolbar/keyboard paritás nyitott.
+- **Függőségek:** EDT-001–004/006/027–031.
+- **UI-állapotok:** empty history, undo/redo, unsaved changes, conflict, save/reload history policy.
+- **Biztonság/adatvédelem:** history nem keveredhet más page/site adataival; memória/érzékeny snapshot policy nyitott.
+- **Tesztcsomag:** core.test.js history/selection round-trip alap; limit/nagy dokumentum/failure/UI coverage nyitott.
+- **Elfogadás:** edit→undo→eredeti modell+selection→redo→módosított modell; új mutation törli a redo ágat.
+- **Bizonyíték:** state.js, commands.js, core.test.js; CI/run link nincs rögzítve.
+- **Visszaállítás:** local undo/redo; szerveroldali rollback külön revision restore.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; UI/keyboard parity, memory limit és save/reload policy.
+
+#### EDT-006 — Selection state és fókuszszinkron
+- **Felhasználói eredmény:** canvas, layer tree és Inspector ugyanazt a node-ot vagy node-halmazt mutatja.
+- **Belépési pont / műveletek:** canvas pointer/touch, layer tree, Inspector, keyboard; set/clear/multi-select/delete recovery.
+- **Kanonikus owner / adatforrás:** EDITOR / state.selection (ids, primaryId), selectedNodes(); UI csak ezt fogyasztja.
+- **Séma / invariánsok:** selected ID aktív Page Model node-ra mutat; primaryId a selection része; delete/undo/redo után nincs stale selection.
+- **Jogosultság:** selection UI-state, nem authorization; page/site permission a backendnél marad.
+- **API/command:** selection.set/clear, setSelection/clearSelection; minden UI event routing ugyanazt a state-et használja.
+- **Függőségek:** EDT-001–005/008/012–014/035–038.
+- **UI-állapotok:** none/single/multiple, stale node, keyboard focus, mobile action bar, panel switch, Escape.
+- **Biztonság/adatvédelem:** csak aktuális Page Model node választható; UI selection nem jogosít hozzáférésre.
+- **Tesztcsomag:** core.test.js selection/history restore alap; canvas/layer/Inspector/touch/keyboard E2E nincs bizonyítva.
+- **Elfogadás:** canvas selection → layer/Inspector egyezés → delete/undo helyes recovery → Escape/blank canvas clear.
+- **Bizonyíték:** state.js, commands.js, app.js, core.test.js; browser/device E2E evidence nincs rögzítve.
+- **Visszaállítás:** history selection snapshot; törölt node-ra mutató selection és panel state recovery tesztelendő.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; teljes canvas↔layer↔Inspector, keyboard/touch E2E.
+
+**Pilot-kapu:** a hat kártya a mezőszintű szerződés mintája, de nem jelenti az EDT modul vagy a teljes terv PASS állapotát. A következő szelet EDT-007–014 csak a pilot mezőinek konzisztencia-ellenőrzése után készülhet el.
 
