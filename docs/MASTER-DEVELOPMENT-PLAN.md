@@ -5811,3 +5811,38 @@ A „MATCH candidate” csak a tervezett elemkategória jelenlétét jelenti; ne
 **Crosswalk-következtetés:** az EDT-002/008/011/012/016 jó canonical horgonyok, de a történeti “X-Ray”, tree search és slot/capacity/locked-subtree edge case-ek nem tekinthetők teljesítettnek a registry-címkék alapján. Az X-Ray külön scope döntést igényel. A hierarchia persistence és publish csak az általános Page Model/revision/publish contracttal együtt zárható le.
 
 **Státusz:** 20 követelmény tételesen leképezve; X-Ray scope, allowed-child/capacity matrix és runtime acceptance nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.135. P0.2 — Régi 2/B Sizing: tételes méretezési crosswalk (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, 2/B, 13 atomikus pont. **Canonical célpontok:** EDT-009 resize; EDT-016 layout primitives; EDT-021/022 property registry/schema validation; EDT-023–026 responsive value/inheritance; DSN-007 typed design values; EDT-034 renderer parity. A generic Inspector “size” property vagy a resize handle nem igazolja önmagában a CSS sizing semantics teljes lefedését.
+
+| # | Régi sizing követelmény | Canonical célpont | Státusz | Lezárási / acceptance feltétel |
+|---:|---|---|---|---|
+| 1 | Fixed | EDT-021/022, EDT-023–026 | PARTIAL | Typed fixed length és explicit unit; breakpoint override és min/max kapcsolat; a fixed méret ne váljon észrevétlenül más layout mode-ban auto/fill értékké. |
+| 2 | Auto | EDT-016, EDT-021/022 | PARTIAL | Auto a tartalom/layout által meghatározott méretet jelenti, nem hiányzó vagy null értéket; intrinsic sizing és parent layout hatása dokumentált. |
+| 3 | Fit-content | EDT-016, EDT-021/022 | UNMAPPED / VERIFY | Explicit property/value support és browser fallback kell; ha nem támogatott 1.0-ban, UI-ból nem választható és a scope döntést rögzíteni kell. |
+| 4 | Fill | EDT-016, EDT-021/022 | PARTIAL / DECISION | Fill jelentése a szülő layouttól függ (flex/grid/stack); egységesen definiált, hogy fr/flex-grow/100% vagy más typed semantics-e, és ne adjon hibás eredményt más parentben. |
+| 5 | Min | EDT-021/022, EDT-023–026 | PARTIAL | Min-width/min-height (és ahol indokolt min-inline/block-size) typed érték; min ≤ max invariáns, unit és breakpoint override validation. |
+| 6 | Max | EDT-021/022, EDT-023–026 | PARTIAL | Max-width/max-height typed érték; min/max konfliktus explicit hibával vagy dokumentált normalizálással, soha ne csendes értékvesztéssel. |
+| 7 | Aspect ratio | EDT-021/022, EDT-016 | PARTIAL / VERIFY | Ratio pozitív, véges érték; width/height és intrinsic media ratio interakció; unsupported browser/resource esetén fallback, no zero/NaN. |
+| 8 | Fluid | EDT-021/022, EDT-023–026, DSN-007 | PARTIAL / DECISION | Fluid range és interpolation semantics deklarált; fluid ne legyen összekeverve a sima percentage vagy breakpoint switch jelentésével; clamp-alapú implementáció csak ha a schema kifejezetten ezt mondja. |
+| 9 | Clamp | EDT-021/022, EDT-023–026 | PARTIAL / VERIFY | min/preferred/max sorrend validálva, typed unit compatibility, responsive preview és public renderer azonos értelmezés; invalid clamp nem menthető. |
+| 10 | Viewport units | EDT-021/022, EDT-023–026, DSN-007 | PARTIAL / VERIFY | Engedélyezett unitok listája (pl. vw/vh és csak explicit támogatás esetén svh/lvh/dvh); mobil viewport, zoom, browser chrome és fallback viselkedés dokumentált. |
+| 11 | Percentage | EDT-021/022, EDT-016 | PARTIAL | A referencia-box egyértelmű (parent content box, width/height vagy property-specifikus referencia); percent height auto-height parentben és nested layoutban külön tesztelendő. |
+| 12 | Intrinsic sizing | EDT-016, EDT-018, EDT-021/022 | PARTIAL | min-content/max-content/fit-content és media intrinsic dimensions csak explicit supported setből; long unbreakable text, missing asset, loading state és overflow behavior tesztelendő. |
+| 13 | Conflict handling | EDT-022–026, EDT-029/030 | PARTIAL / RELEASE GATE | Invalid min/max, incompatible units, aspect ratio plus fixed dimensions, parent fill constraints és breakpoint overrides ütközése determinisztikus validationt ad; no silent CSS fallback/data loss. |
+
+#### Kötelező sizing-kontraktus
+
+1. **Typed sizing model:** a méretezési érték ne legyen szabad CSS-sztring. Property schema határozza meg a value type-ot, megengedett unitot, range-et, defaultot, responsive supportot és renderer mappinget.
+2. **Parent-aware semantics:** a fill/percentage/intrinsic/flex/grid méret csak a szülő layout kontextusában értelmezhető. Az Inspector jelezze a nem kompatibilis kombinációt, és ne kínáljon érvénytelen választást.
+3. **Constraint validation:** min/max, ratio és unit konfliktus már szerkesztéskor jelezhető, szerveroldalon is validált; invalid érték nem válhat mentett canonical state-té.
+4. **Responsive inheritance:** a felhasználó lássa a base/inherited/override értéket és az aktív breakpointot. Reset az örökölt értékre térjen vissza, ne törölje a base méretet.
+5. **Preview/public parity:** azonos Page Model + viewport + resource state ugyanazt a sizing eredményt adja az editor previewban és a public rendererben; editor overlay nem módosíthatja a layoutot.
+6. **Round-trip és regression:** fixed/auto/fill, min/max, aspect ratio, fluid/clamp, viewport unit, percentage, intrinsic image/text és nested flex/grid kombináció save→reload után is megőrzi a szemantikát.
+7. **Negative tests:** null/NaN/infinite/negative méret, unit nélküli length, incompatible units, min > max, zero/negative ratio, nem támogatott unit, hiányzó parent context, stale breakpoint override és renderer discrepancy.
+
+**Crosswalk-következtetés:** az EDT-009 resize és EDT-016 layout primitives a canvas manipulációt/layoutot horgonyozza, de a történeti sizing értékekhez property-szintű schema és parent-aware semantics szükséges. A 13 pontból több csak részlegesen vagy döntésre váróan fedett; a tervben szereplő általános sizing szó nem bizonyítja a CSS sizing model implementáltságát.
+
+**Státusz:** 13 követelmény tételesen leképezve; fill/fluid/fit-content scope, typed unit/range matrix és runtime round-trip tesztek nyitottak. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
