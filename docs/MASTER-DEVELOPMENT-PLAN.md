@@ -2738,7 +2738,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | §37.30 F.9–F.13 | 42 | 325 | 0 |
 | **Összesen** | **323** | *batchenként külön számolt* | **0** |
 
-A §24 registry 359 egyedi ID-t tartalmaz duplikáció nélkül; a H19–H34 ledger 271 egyedi történeti kulcsból és 271 sorból áll.
+A §24 registry a jelenlegi állapotban 362 egyedi ID-t tartalmaz duplikáció nélkül; a H19–H34 ledger 271 egyedi történeti kulcsból és 271 sorból áll. A 2026-10-14-i újraellenőrzés a §37.22–§37.30 crosswalkban mind a 362 registry-ID-t feloldotta, beleértve a perjeles rövidítéseket (például SET-002/004) és a tartományokat. A `LOC-007`/`LOC-008` kizárólag a §37.26-ban szereplő, nem hivatkozható ID-ket tiltó magyarázó szövegben jelenik meg; nem aktív feature-hivatkozások.
 
 **Mit bizonyít:** a felsorolt crosswalk sorok szerkezetileg léteznek, és a hivatkozott ID-k feloldhatók a registryben.
 
@@ -4743,3 +4743,17 @@ A structural scan of the 96 F.1–F.13 crosswalk rows found two remaining rows w
 The opening P0.2 summary now distinguishes the last verified 361-ID structural snapshot from the current 362-ID registry after SET-004. The former 361/361 result is historical evidence only; it is not promoted to 362/362 by inference. The current summary also records the Game Profile phase reconciliation at §41.3.73 and keeps the archive/source-provenance and per-ID semantic contract work explicitly open.
 
 **Evidence boundary:** this is a consistency correction to the active status summary. It does not constitute the pending 362-ID structural recheck, does not recover the missing original source set, and does not change P0.2 from **IN PROGRESS / NOT PASS**.
+
+
+### 41.3.75. P0.2 — Friss teljes registry→crosswalk strukturális újraellenőrzés (2026-10-14)
+
+**Vizsgált állapot:** a jelenlegi `v2/foundation` MASTER teljes tartalma; §24.1 registry és a §37.22–§37.30 crosswalk, beleértve a §37.32 összesítőt.
+
+**Eredmény — strukturális lefedettség PASS, kizárólag erre a szűk ellenőrzésre:**
+- A §24 registryben **362 egyedi ID** található; a registry-szeletben nem találtam duplikált ID-t.
+- A crosswalk explicit ID-ket, azonos prefixű tartományokat és perjeles rövidítéseket együtt kezelő újraellenőrzése **362/362 registry-ID lefedettséget** talált.
+- A korábbi egyszerű parser a `SET-002/004` alakból csak a `SET-002` ID-t olvasta ki; a helyes rövidítésfeloldás `SET-004`-et is lefedett. Ezért a korábbi 361/362 jelzés parserkorlát volt, nem tényleges crosswalk-hiány.
+- `LOC-007` és `LOC-008` csak a §37.26-ban található tiltó/magyarázó mondatban fordul elő, amely kimondja, hogy nincsenek definiálva és nem hivatkozhatók; nem szerepelnek aktív crosswalk-hozzárendelésként.
+- A §37.32 korábbi „359 ID” összesítő mondata frissítve lett 362-re, és rögzíti a jelenlegi ellenőrzést.
+
+**Hatókör és korlát:** ez a kör a registry-ID-k strukturális feloldását igazolja a §37 crosswalkban. Nem bizonyítja az összes történeti követelmény szemantikai megőrzését, a forrásbulletek kétirányú teljességét, a hiányzó archív források megtalálását, a domain/permission/dependency contractok teljességét vagy a runtime megvalósítást. A 271 H19–H34 történeti kulcs és a 310 C.23 + F.1–F.13 forrásbullet külön auditfeladat marad. **P0.2 továbbra is IN PROGRESS / NOT PASS**; ezzel csak a §24→§37 ID-feloldási strukturális részfeladat zárható le.
