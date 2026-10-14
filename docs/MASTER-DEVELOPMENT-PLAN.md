@@ -2621,7 +2621,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.3-02 | Width/height/units, independent horizontal/vertical spacing, gap/padding/margin and per-side values | EDT-010–EDT-016, DSN-004 | EXPAND | 1.0 | QA-002/004/005 |
 | F.3-03 | Min/max, aspect ratio, overflow, wrap, order and responsive overrides validated against layout mode | EDT-009–EDT-016, EDT-036, QA-005 | KEEP | 1.0 core; advanced responsive later | QA-002/004/005 |
 | F.3-04 | Canvas and Layers selection target same canonical node; drag/resize does not unexpectedly convert flex/grid to absolute positioning | EDT-003, EDT-004, EDT-009–EDT-016 | KEEP | 1.0 release gate | QA-002/004 |
-| F.3-05 | Plain Text is 1.0 baseline; no parallel rich-text path delaying core editor closure | EDT-019, EDT-020, EDT-022 | KEEP | 1.0 plain text; rich text separately scoped | QA-002/004 |
+| F.3-05 | Plain Text is 1.0 baseline; no parallel rich-text path delaying core editor closure | EDT-001–EDT-003, EDT-017, EDT-019, EDT-022 | KEEP | 1.0 plain text; rich text separately scoped | QA-002/004 |
 | F.4-01 | Explicit public page types: Creator Home, Stream, Schedule, VOD/Video Hub, Clips/Shorts, About, Community, Contact, Support, Link Hub and Press Kit | WEB-001, WEB-021–WEB-026, CNT-001–CNT-005 | EXPAND | 1.0 core pages; later pages phased | QA-002/004/008 |
 | F.4-02 | Creator Home uses authenticated provider data only, upcoming stream, content, social/community/support and phased merch/email/campaign | WEB-021–WEB-026, LIV-001–LIV-004, SCH-009, INT-001, COM-001, SUP-001 | EXPAND | 1.0 core; later capabilities phased | QA-002/003/004 |
 | F.4-03 | Stream page: player/embed, real status/title/category/start, next stream and safe optional embeds | WEB-022, LIV-001–LIV-004, SCH-009, SEC-007 | EXPAND | 1.0 Twitch baseline | QA-002/003/004 |
@@ -3987,3 +3987,13 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 | **Összesen** | **310** | **310** | **0** | **0 / 0** |
 
 **Következtetés:** a ledger a jelenleg elérhető archív MASTER-ben szereplő C.23 és F.1–F.13 bullet-szövegeket teljes darabszámban és szövegszinten megőrzi. Ez erősebb bizonyíték a puszta ID-jelenlétnél, de továbbra is **source-text integrity**, nem teljes szemantikai megfelelőség: nem bizonyítja, hogy a canonical feature-mappingek helyesek, a permission/owner/phase/dependency/test/acceptance minden sorban teljes, a benchmarkforrások aktuálisak, vagy a funkciók runtime PASS állapotúak. A `00/A` és `00.9–00.9.6.B` hiányzó eredeti szövegét ez nem pótolja. P0.2 **IN PROGRESS / NOT PASS**.
+
+### 41.3.16. P0.2 — F.3 Plain Text capability mapping correction (2026-10-14)
+
+**Forrás:** archivált `00.9.6.F / F.3` utolsó bulletje, `§37.27` `F.3-05` crosswalk sora és a `§24.3` EDT feature registry.
+
+**Talált eltérés:** a F.3-05 sor a plain Text alapfunkciót `EDT-019/020/022` ID-khez kötötte, miközben a registryben a Text/Heading/Link/Button/Icon/Divider/Spacer elemkészlet `EDT-017`. Az `EDT-020` a dinamikus Sanci blokk konfigurációja, ezért nem megfelelő elsődleges mapping a plain Text követelményhez.
+
+**Javítás:** a F.3-05 mapping most `EDT-001–EDT-003, EDT-017, EDT-019, EDT-022`; ez a canonical Page Model/command alapot, a plain Text elemet és a schema-validált Inspector kontrollokat köti össze. A rich-text bővítés továbbra is külön scope, nem kerül vissza a 1.0 alapszerkesztőbe.
+
+**Bizonyítékhatár:** ez egy konkrét mapping korrekciója, nem a teljes F.3 vagy F.1–F.13 szemantikai PASS-a. A F.3 további sorai, a teljes permission/dependency/acceptance szerződés és a többi 309 forrásbullet szemantikai review-ja nyitott. P0.2 **IN PROGRESS / NOT PASS**.
