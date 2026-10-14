@@ -6828,7 +6828,7 @@ A 63.52-ben az eredeti történeti címkéket a 24. fejezet **tényleges capabil
 | H28.11 | audit log | SEC-010 |
 | H28.12 | input validation | SEC-006, SEC-005 |
 | H28.13 | output validation | SEC-005 |
-| H28.14 | file validation | RES-003, SEC-005 |
+| H28.14 | file validation | RES-003, SEC-006 |
 | H28.15 | replay protection where applicable | SEC-009 |
 | H28.16 | action permission 'can()' checks | SEC-002, AUT-004 |
 | H28.17 | AI permission boundary | AI-006, AI-019 |
@@ -6887,7 +6887,7 @@ A 63.52-ben az eredeti történeti címkéket a 24. fejezet **tényleges capabil
 | H32.15 | platform variants | AI-013, CNT-011 |
 | H32.16 | thumbnail briefs | AI-013 |
 | H32.17 | publishing recommendations | AI-013, CNT-013 |
-| H32.18 | content performance analysis | AI-015, ANL-004 |
+| H32.18 | content performance analysis | ANL-004, AI-004, AI-013 |
 | H32.19 | streamer profile | AI-004 |
 | H32.20 | long-term memory | AI-004 |
 | H32.21 | preferences | AI-004 |
@@ -6929,12 +6929,31 @@ A 63.52-ben az eredeti történeti címkéket a 24. fejezet **tényleges capabil
 | H34.18 | persistence; | EDT-028, QA-010 |
 | H34.19 | teszt; | QA-001, QA-002 |
 | H34.20 | MASTER-be felvétel; | QA-010 |
-| H34.21 | implementáció; | QA-002, QA-008 |
+| H34.21 | implementáció; | DEV-001, QA-002, QA-008 |
 | H34.22 | felhasználói validáció. | QA-009 |
 
 **Strukturális ellenőrzés:** a H23–H34 forrásjegyzékből az itt rögzített **192/192 egyedi történeti ID** mindegyikéhez legalább egy létező 24. fejezetbeli cél-ID tartozik. A 63.52 H19–H22 79 tételével együtt **271/271 történeti H19–H34 ID** tételes célja létezik. Ez **strukturális megfeleltetés és no-loss alap**, nem forrásonként validált szemantikai teljesülés, nem kódteszt, nem provider capability, és nem bizonyítja a hiányzó 00/A vagy 00.9–00.9.6.B fejezet tartalmát.
 
 **Kötelező szemantikai review:** (1) az egyes több-ID-s sorok valódi domain ownerének megerősítése; (2) a korábban külön kiemelt részképességek (különösen keyboard/reduced motion, SEO/indexing, AI approval/audit, backup/restore, automation lifecycle és continuous discovery) egyedi negatív acceptance-ének ellenőrzése; (3) a régi forrásjelölések és új fázisok közötti döntések rögzítése; (4) a külön nyitott 00/A / 00.9.6.B forráshiány kezelése. **Állapot: IN PROGRESS / NOT PASS**; a termék- és kód-készültség nem változott automatikusan.
+
+### 63.53.1. H23–H34 cél-ID szemantikai javítások és nyitott képességhiányok
+
+A 63.53 sorait a 24. fejezet stabil definícióival összevetve az alábbi **három cél-ID pontatlanságot** javítottuk. A történeti sorok és az összes eredeti H-ID megmaradt:
+
+| Sor | Probléma | Javított besorolás | Nyitott bizonyíték |
+| --- | --- | --- | --- |
+| H28.14 | `SEC-005` XSS/sanitization/embeds; a fájlvalidálás támadási felülete inkább `SEC-006` injection defense és `RES-003` MIME/size validation | `RES-003, SEC-006` | magic-byte ellenőrzés, karantén, vírusvizsgálati döntés, rosszindulatú fájl negatív tesztje |
+| H32.18 | `AI-015` stream diagnostics/summary, nem tartalomteljesítmény-elemzés | `ANL-004` tartalommetrika, `AI-004` adatvédett kontextus, `AI-013` tartalomjavaslat | magyarázható insight, metrika-frissesség, AI-hallucináció és jogosultság tesztje |
+| H34.21 | kizárólag QA-tesztekhez rendelt „implementáció” nem fedi le a fejlesztői/API lifecycle kapcsolódását | `DEV-001` verziózott API-contract + `QA-002/008` ellenőrzés | konkrét feature domain owner és implementációs work item továbbra is egyedileg kijelölendő |
+
+**További, bizonyíték nélkül nem zárható szemantikai rések:**
+- `H32.02–H32.06` valós idejű silence/speech, chat-aktivitás, audio/stream quality monitorozás: az `AI-015` általános diagnosztikai leírása nem bizonyítja a bemeneti jelcsatornákat, audiohozzáférést, latency-t, adatmegőrzést és platformjogosultságot. A cél-ID megőrzött, de a képességenkénti technikai megvalósíthatóság **OPEN**.
+- `H34.12–H34.22` feature discovery → implementáció → felhasználói validáció: a `QA-010` folyamatgazda és `QA-002/008/009` tesztkapu **nem helyettesíti** az új képesség tényleges domain ownerét, fázisát, API-ját és release-evidence-ét.
+- `H23.18` reduced-motion és `H24.06–H24.08` billentyűzet/fókusz: külön accessibility acceptance szükséges az Editor és a publikus nézet számára; a `QA-005` audit nem implementáció.
+- `H29.01–H29.10`: az `OPS-005` backup/restore és `QA-007` tesztkapu külön felelősség; nincs recovery-PASS tényleges visszaállítási próba nélkül.
+- `H25.01–H25.12`: canonical/redirect/sitemap/indexing pozitív és negatív tesztek, staging/noindex és locale URL-korlátok külön vizsgálandók.
+
+A 192/192 H23–H34 sor **strukturális megfeleltetése** megmaradt. A három javítás nem teljes történeti szemantikai PASS; a hiányzó 00/A és 00.9.6.B forrás továbbra is **SOURCE NOT RECOVERED / OPEN**. A kapu **IN PROGRESS / NOT PASS**.
 
 ### 63.54. Történeti forrás-visszakeresési bizonyíték és lezáratlan hiány — 2026-10-14
 
