@@ -5144,5 +5144,139 @@ Az alábbi rövidített kártyák mindegyike név szerint lefedi a 26.1 kötelez
 - **Visszaállítás:** history selection snapshot; törölt node-ra mutató selection és panel state recovery tesztelendő.
 - **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; teljes canvas↔layer↔Inspector, keyboard/touch E2E.
 
-**Pilot-kapu:** a hat kártya a mezőszintű szerződés mintája, de nem jelenti az EDT modul vagy a teljes terv PASS állapotát. A következő szelet EDT-007–014 csak a pilot mezőinek konzisztencia-ellenőrzése után készülhet el.
+**Pilot-kapu:** a hat kártya mezőlefedettségét statikusan ellenőriztem; a 63.42 az EDT-007–014 következő szeletét rögzíti. Ez nem jelenti az EDT modul vagy a teljes terv PASS állapotát.
+
+### 63.42. Funkciókártyák — EDT-007–014 (canvas, drag/resize, hierarchy, layers, selection, lock)
+
+**Forrásalap:** public/editor-v2/app.js, core/canvas-engine.js, core/canvas-extent.js, core/commands.js, core/state.js és tests/core.test.js. A forrásban lévő logika és unit teszt nem bizonyítja a teljes browser/device acceptance-t. Minden kártya a 26.1 kötelező mezőit tartalmazza.
+
+#### EDT-007 — Canvas viewport, zoom, pan és content extent
+- **Felhasználói eredmény:** az oldal nagyítása, mozgatása és teljes tartalmának áttekintése kényelmesen használható.
+- **Belépési pont / műveletek:** Editor canvas viewport; zoom/pan/fit és content extent frissítés.
+- **Kanonikus owner / adatforrás:** EDITOR / viewport state, app.js és core/canvas-extent.js; dokumentumtartalom a Page Modelből jön.
+- **Séma / invariánsok:** pozitív, véges zoom; canvas extent a tartalom alsó határát és paddinget figyelembe veszi.
+- **Jogosultság:** csak authenticated Editor/page context; viewport nem ad hozzáférést más oldalhoz.
+- **API/command:** lokális viewport state és computeCanvasMinHeight; fit/pan/zoom teljes interaction contract nyitott.
+- **Függőségek:** EDT-001/006/025/035–036.
+- **UI-állapotok:** initial viewport, zoomed, panning, empty/tall page, viewport resize, mobile safe-area.
+- **Biztonság/adatvédelem:** nincs külön domain adat; extrém zoom/extent és túl nagy dokumentum resource limitje nyitott.
+- **Tesztcsomag:** core.test.js canvas extent tesztet tartalmaz; browser zoom/pan/resize és touch acceptance nincs bizonyítva.
+- **Elfogadás:** rövid és hosszú oldalon zoom/pan/fit → viewport resize → tartalom nem válik elérhetetlenné, a canvas és selection helyes marad.
+- **Bizonyíték:** app.js, canvas-extent.js, canvas-engine.js, core.test.js; CI/browser run nincs ehhez a kártyához rögzítve.
+- **Visszaállítás:** viewport reset/fit; viewport state mentésének policy-ja nyitott.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; keyboard, touch és valódi mobil viewport teszt.
+
+#### EDT-008 — Canvas drag/drop mozgatás
+- **Felhasználói eredmény:** az elem közvetlenül a canvasról pozicionálható.
+- **Belépési pont / műveletek:** canvas pointer handlers; select tool, drag, pointer capture és position command.
+- **Kanonikus owner / adatforrás:** EDITOR / Page Model node style + command engine.
+- **Séma / invariánsok:** root és locked node nem mozgatható; koordináták a zoomhoz igazodnak; csak érvényes node/parent szerkezet menthető.
+- **Jogosultság:** backend page/site ownership változatlanul kötelező.
+- **API/command:** UI drag state → canonical update command; a teljes drag minden útvonalon command-only-e, auditálandó.
+- **Függőségek:** EDT-001–007/009/013/014/023–026/028.
+- **UI-állapotok:** idle/dragging/cancelled/locked/invalid target/saving/conflict.
+- **Biztonság/adatvédelem:** malformed coordinates, pointer cancellation és invalid target nem okozhat sérült modellt.
+- **Tesztcsomag:** core.test.js reparent/reorder teszteket tartalmaz; pointer drag E2E, touch cancel és save round-trip nem bizonyított.
+- **Elfogadás:** elem mozgatása különböző zoomnál → pointer cancel és locked elem ellenőrzése → save/reload → ugyanaz a helyzet és modell.
+- **Bizonyíték:** app.js canvas drag handlers, canvas-engine.js, commands.js; browser/device run nincs rögzítve.
+- **Visszaállítás:** history undo/redo; félbeszakadt drag nem hagyhat részleges mutationt.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; drag/pointer/touch és keyboard alternatíva acceptance.
+
+#### EDT-009 — Geometry és resize
+- **Felhasználói eredmény:** az elem mérete és pozíciója kiszámíthatóan módosítható.
+- **Belépési pont / műveletek:** canvas resize handles és Inspector geometry controls.
+- **Kanonikus owner / adatforrás:** EDITOR / node style, responsive resolver és command engine.
+- **Séma / invariánsok:** véges X/Y/width/height; pozitív méret; aspect ratio és min/max constraint kezelése még nem teljesen bizonyított.
+- **Jogosultság:** page/site ownership a mentési API-ban.
+- **API/command:** geometry update a canonical commandon keresztül; minden resize handler command coverage nyitott.
+- **Függőségek:** EDT-001/003/007–008/021–026/034.
+- **UI-állapotok:** resize start/move/end/cancel, invalid value, responsive override, save conflict.
+- **Biztonság/adatvédelem:** extrém vagy NaN/Infinity méretet el kell utasítani; overflow/resource-limit acceptance nyitott.
+- **Tesztcsomag:** geometry UI tesztje nem bizonyított; schema/command tesztek csak részleges alapot adnak.
+- **Elfogadás:** resize több viewporton → min/max és aspect ratio szabály → undo/redo → save/reload → public renderer parity.
+- **Bizonyíték:** app.js, canvas-engine.js, responsive.js, commands.js; külön E2E evidence nincs rögzítve.
+- **Visszaállítás:** history snapshot és undo; invalid resize atomic rejection tesztelendő.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; min/max schema, keyboard resize és renderer parity.
+
+#### EDT-010 — Alignment guides, snap és grid
+- **Felhasználói eredmény:** az elemek egymáshoz és a layout-rácshoz pontosan igazíthatók.
+- **Belépési pont / műveletek:** canvas drag/geometry interaction; grid toggle, snap és alignment guide.
+- **Kanonikus owner / adatforrás:** EDITOR / canvas interaction state; a teljes snap/grid funkció a vizsgált forrásban nem bizonyított.
+- **Séma / invariánsok:** snap threshold, grid spacing, zoomtól független viselkedés és guide priority explicit szabályt igényel.
+- **Jogosultság:** Editor/page permission.
+- **API/command:** viewport/editor preference + geometry command; a preference persistence és parancsszerződés nyitott.
+- **Függőségek:** EDT-007–009/021–025/044.
+- **UI-állapotok:** snap on/off, guide visible/hidden, grid on/off, keyboard alternative.
+- **Biztonság/adatvédelem:** nincs külön domain adat; nagy node számnál teljesítménybudget szükséges.
+- **Tesztcsomag:** dedikált snap/grid acceptance nem található a vizsgált core tesztben.
+- **Elfogadás:** snap/grid kapcsolás → drag/resize több zoomnál → guide helyesség → billentyűzetes alternatíva → save/reload.
+- **Bizonyíték:** jelenleg csak a canvas geometry alap; teljes implementációs bizonyíték hiányzik.
+- **Visszaállítás:** geometry undo/redo; grid preference reset.
+- **Státusz / ismert probléma / következő lépés:** OPEN / UNVERIFIED; pontos UX/spec és implementációs döntés szükséges.
+
+#### EDT-011 — Hierarchy operations: duplicate, delete, reorder, reparent
+- **Felhasználói eredmény:** az elemek és teljes al-fáik biztonságosan átrendezhetők, másolhatók és törölhetők.
+- **Belépési pont / műveletek:** layer tree/canvas context actions; duplicate, delete, reorder, reparent.
+- **Kanonikus owner / adatforrás:** EDITOR / commands.js Page Model node tree.
+- **Séma / invariánsok:** duplicate minden subtree ID-t újraoszt; root nem törölhető/reparentelhető; cycle és invalid container tiltott.
+- **Jogosultság:** UI command nem jogosít backend adatokra; page/site scope mentéskor kötelező.
+- **API/command:** element.duplicate/delete, hierarchy.reorder/reparent; UI action coverage és destructive confirmation nyitott.
+- **Függőségek:** EDT-001–006/008/012–014/028–031.
+- **UI-állapotok:** valid/invalid target, locked/root, delete confirm, undo/redo, save conflict.
+- **Biztonság/adatvédelem:** subtree törlés, hivatkozott assetek és invalid nested model; usage map és safe delete külön nyitott.
+- **Tesztcsomag:** core.test.js reparent/reorder/duplicate teszteket tartalmaz; UI confirmation és full subtree edge matrix nincs bizonyítva.
+- **Elfogadás:** subtree duplicate új ID-kkel → reorder/reparent → delete → undo/redo → save/reload és invariáns ellenőrzés.
+- **Bizonyíték:** commands.js és core.test.js; browser/E2E evidence nincs rögzítve.
+- **Visszaállítás:** undo/redo snapshot; törlés utáni external asset cleanup nem történhet ellenőrizetlenül.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; UI coverage, confirm, lock/cycle/asset-reference edge cases.
+
+#### EDT-012 — Layer tree és hierarchianavigáció
+- **Felhasználói eredmény:** a felhasználó áttekintheti a nested elemeket és kiválaszthatja a megfelelő réteget.
+- **Belépési pont / műveletek:** Editor v2 layer panel; expand/collapse, select, reorder és reparent.
+- **Kanonikus owner / adatforrás:** EDITOR / Page Model tree + canonical selection state.
+- **Séma / invariánsok:** a layer tree a nodes/children szerkezet vetülete; nem tarthat saját, eltérő hierarchiát.
+- **Jogosultság:** az aktív page/site scope-on belüli node-ok.
+- **API/command:** selection.set és hierarchy commands; expand/collapse preference per-user persistence nyitott.
+- **Függőségek:** EDT-001–006/011/013/014/035–036/044.
+- **UI-állapotok:** empty/deep tree, expanded/collapsed, selected/locked, mobile panel switch.
+- **Biztonság/adatvédelem:** mély/nagy hierarchia teljesítmény- és keyboard-accessibility korlátai nyitottak.
+- **Tesztcsomag:** külön layer-tree browser acceptance nem bizonyított; core hierarchia teszt nem igazolja a panel UX-et.
+- **Elfogadás:** nested tree → canvas selection sync → reorder/reparent → collapse/reopen → undo/reload és tree consistency.
+- **Bizonyíték:** app.js layer rendering/commands; külön E2E run nincs rögzítve.
+- **Visszaállítás:** document history; tree expand state reset/persistence policy nyitott.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; deep hierarchy, keyboard/touch és expand-state acceptance.
+
+#### EDT-013 — Canvas, layers és Inspector selection sync
+- **Felhasználói eredmény:** minden szerkesztői felület ugyanazt a kiválasztott elemet vagy csoportot kezeli.
+- **Belépési pont / műveletek:** canvas selection, layer tree, Inspector, keyboard/multi-select.
+- **Kanonikus owner / adatforrás:** EDITOR / state.selection ids + primaryId; selectedNodes() vetület.
+- **Séma / invariánsok:** primary selection a kijelölt ID-k közé tartozik; törölt node nem marad kijelölve; aktív page váltáskor nincs cross-page stale ID.
+- **Jogosultság:** selection nem authorization; a backend page/site scope változatlan.
+- **API/command:** selection.set/clear és setSelection; minden event path közös state-et használjon.
+- **Függőségek:** EDT-001/006/008/012/014/035–038.
+- **UI-állapotok:** none/single/multiple, stale selection, keyboard focus, mobile multi-select, panel switch.
+- **Biztonság/adatvédelem:** csak az aktív Page Model node-jai; cross-page selection tiltása.
+- **Tesztcsomag:** core.test.js state/history selection alap; panel/canvas/touch/keyboard E2E nincs bizonyítva.
+- **Elfogadás:** canvas → layer → Inspector ugyanazt jelzi; delete/undo, page switch és Escape után state konzisztens.
+- **Bizonyíték:** state.js, app.js, commands.js, core.test.js; device/browser run nincs rögzítve.
+- **Visszaállítás:** selection snapshot az undo/redo historyban; stale ID-k tisztítása tesztelendő.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; teljes selection/focus E2E.
+
+#### EDT-014 — Lock/unlock és layer visibility
+- **Felhasználói eredmény:** egy réteg szerkesztése letiltható, illetve szükség esetén elrejthető.
+- **Belépési pont / műveletek:** Inspector lock checkbox és layer controls; lock/unlock, hide/show.
+- **Kanonikus owner / adatforrás:** EDITOR / node.locked és Page Model visibility property; a visibility toggle a vizsgált v2-ben nem bizonyított.
+- **Séma / invariánsok:** locked node drag/update/reparent/group/ungroup szabálya explicit; visibility állapotnak a preview és public renderer felé is konzisztensnek kell lennie.
+- **Jogosultság:** lock csak szerkesztési UX-szabály, nem hozzáférés-védelem.
+- **API/command:** element.lock.set létezik; hide/show command/property és renderer parity nincs igazolva.
+- **Függőségek:** EDT-001–003/008/011–013/021–026/034.
+- **UI-állapotok:** locked/unlocked, hidden/visible, disabled action, group/root edge case.
+- **Biztonság/adatvédelem:** locked állapot nem helyettesítheti a backend permissiont; rejtett tartalom public output policy-ja külön rögzítendő.
+- **Tesztcsomag:** core.test.js locked-node acceptance teljes mátrixa nem bizonyított; public renderer visibility test hiányzó/ellenőrizendő.
+- **Elfogadás:** lock → tiltott mozgatás/módosítás → unlock → működés; hide/show esetén preview és public output egyezése, mentés/reload után is.
+- **Bizonyíték:** commands.js element.lock.set és app.js Inspector; visibility implementációs bizonyíték nincs rögzítve.
+- **Visszaállítás:** lock/visibility command undo/redo; hidden state publish/rollback policy nyitott.
+- **Státusz / ismert probléma / következő lépés:** IN PROGRESS / UNVERIFIED; locked interaction matrix és visibility feature döntés/megvalósítás.
+
+**Szeletzárás:** EDT-007–014 mindegyikéhez kitöltöttem a kártyamezőket, de a forráskód-olvasás nem helyettesíti a böngészős acceptance-t. Következő lépés: a 63.42 kártyák mező- és függőségkonzisztenciájának gépi ellenőrzése; csak ezután jöhet EDT-015–020.
 
