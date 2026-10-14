@@ -2655,9 +2655,9 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.6-04 | Next stream/countdown uses canonical schedule/site timezone/authenticated live state and excludes cancelled/past events | SCH-009, SCH-003, SCH-005, LIV-001, WEB-016 | KEEP | 1.0 | QA-002/004 |
 | F.6-05 | Link VOD/clip/Short to stream and calendar; Editor Schedule block changes presentation only | SCH-014, CNT-002–CNT-004, EDT-020, SCH-011 | EXPAND | 1.0 Schedule; richer content later | QA-002/003/004 |
 | F.7-01 | Admin shell navigation/breadcrumb/public return/profile/session/logout/help/notifications/mobile shell | ADM-001–ADM-010, SEC-001, WEB-011 | EXPAND | 1.0 | QA-003/004/005 |
-| F.7-02 | Shared loading/empty/error/success/disabled/unsaved states, validation/confirm/search/filter/pagination/keyboard/Hungarian UI | ADM-008, QA-005, EDT-027 | EXPAND | 1.0 | QA-004/005/006 |
+| F.7-02 | Shared loading/empty/error/success/disabled/unsaved states, validation/confirm/search/filter/pagination/keyboard/Hungarian UI | ADM-008, EDT-027, OPS-003 | EXPAND | 1.0 | QA-004/005/006 |
 | F.7-03 | Session expiry/logout/inactivity/multi-tab/unsaved flow and server-side admin/API authorization | SEC-001, SEC-002, SEC-004, ADM-007, EDT-031 | KEEP | 0.x–1.0 | QA-003/004 |
-| F.7-04 | Public forms: schema/required labels/client+server validation/spam rate limit/success/error/privacy notice | WEB-027, SEC-007, SEC-011, QA-006 | EXPAND | 1.0 if form enabled | QA-003/004/006 |
+| F.7-04 | Public forms: schema/required labels/client+server validation/spam rate limit/success/error/privacy notice | WEB-020, SEC-005, SEC-007, SEC-011 | EXPAND | 1.0 if form enabled | QA-003/004/006 |
 | F.7-05 | Store CRUD/variants/SKU/pricing/stock/order/payment/fulfillment/refund/provider errors | STO-001–STO-020, WEB-025 | DEFER | 5.0 | QA-002/003/008 |
 | F.7-06 | Merch/digital/bundle/preorder/limited drop/coupon/gift card/invoice/shipping/tax | STO-005–STO-020, CAM-009, SUP-004–SUP-006 | DEFER | 5.0 after legal/payment review | QA-002/003/008 |
 | F.8-01 | Consent-aware web/content/stream/commerce/community analytics only from real sources | ANL-001–ANL-006, ANL-009, SEC-011 | DEFER/EXPAND | 2.0+ by source | QA-003/008 |
@@ -2676,13 +2676,13 @@ The short decision record must name the problem and acceptance criteria; existin
 
 | Forráskulcs | Megőrzött követelmény | Canonical current ID | Döntés | Célfázis | QA-horgony |
 |---|---|---|---|---|---|
-| F.9-01 | Published-page SEO metadata, canonical, Open Graph/social cards, sitemap/robots/schema; drafts and preview non-indexable | SEO-001–SEO-005, WEB-005, WEB-006 | KEEP/EXPAND | 1.0 release gate | QA-004/008 |
-| F.9-02 | Redirect/broken-link tooling only with preview and approval | SEO-004, SEO-005, WEB-008, SEC-002 | DEFER | 2.0+ | QA-003/008 |
-| F.9-03 | Semantic HTML, heading hierarchy, alt, labels, ARIA, keyboard/focus, contrast, screen reader, reduced motion | QA-004, QA-005, EDT-040, WEB-031 | KEEP | 1.0 release gate | QA-004/005 |
+| F.9-01 | Published-page SEO metadata, canonical, Open Graph/social cards, sitemap/robots/schema; drafts and preview non-indexable | SEO-001–SEO-005, WEB-005, WEB-006, WEB-031 | KEEP/EXPAND | 1.0 release gate | QA-004/008 |
+| F.9-02 | Redirect/broken-link tooling only with preview and approval | SEO-004, SEO-005, WEB-013, SEC-002 | DEFER | 2.0+ | QA-003/008 |
+| F.9-03 | Semantic HTML, heading hierarchy, alt, labels, ARIA, keyboard/focus, contrast, screen reader, reduced motion | EDT-017, EDT-039, EDT-040, RES-007, WEB-032 | KEEP | 1.0 release gate | QA-004/005 |
 | F.9-04 | Secure session/cookies/password/auth rate limit/RBAC/CSRF/OAuth state/webhook replay/upload validation | SEC-001–SEC-010, RES-003, INT-003, INT-017 | KEEP | 0.x–1.0 release gate | QA-003 |
-| F.9-05 | Separate public/preview/admin permission boundaries; no draft or secret leakage in logs/export | SEC-002, SEC-008, WEB-005, WEB-006, OPS-002, OPS-005 | KEEP | 0.x–1.0 | QA-003/004 |
-| F.9-06 | Performance budgets based on measured baseline; image variants/lazy load/cache invalidation/Core Web Vitals/large-tree tests | OPS-008, WEB-030, RES-004, QA-005 | EXPAND | 1.0 baseline; advanced optimization phased | QA-005/006 |
-| F.9-07 | Visual regression for public home/navigation/schedule, Editor state and desktop/tablet/mobile | QA-004, QA-005, EDT-035–EDT-037 | KEEP | 1.0 release gate | QA-004/005 |
+| F.9-05 | Separate public/preview/admin permission boundaries; no draft or secret leakage in logs/export | SEC-002, SEC-008, WEB-005, WEB-006, WEB-031, OPS-002, OPS-005 | KEEP | 0.x–1.0 | QA-003/004 |
+| F.9-06 | Performance budgets based on measured baseline; image variants/lazy load/cache invalidation/Core Web Vitals/large-tree tests | OPS-008, WEB-030, RES-004 | EXPAND | 1.0 baseline; advanced optimization phased | QA-005/006 |
+| F.9-07 | Visual regression for public home/navigation/schedule, Editor state and desktop/tablet/mobile | WEB-009, WEB-011, WEB-014, WEB-016, EDT-035–EDT-037 | KEEP | 1.0 release gate | QA-004/005 |
 | F.10-01 | Versioned export of Page/revision/theme/template/component/media refs/domain data; never export secrets/tokens | OPS-005, WEB-008, DSN-015, RES-001, SEC-008 | EXPAND | 1.0 safe export foundation; full package later | QA-003/007 |
 | F.10-02 | Import dry-run validates schema/version/assets/duplicate IDs/owner/permissions/migration compatibility | OPS-004, OPS-005, WEB-008, DSN-015, SEC-002 | EXPAND | 2.0 full import/export | QA-002/003/007 |
 | F.10-03 | Recovery preview/conflicts/integrity/backup verification and post-restore Page Model/revision/public-render consistency | OPS-005, OPS-006, OPS-009, WEB-007, WEB-008, EDT-028 | KEEP | 0.x–1.0 safety baseline | QA-002/006/007 |
@@ -4632,3 +4632,16 @@ A C.23.22-01–07 mind a hét történeti sor megmaradt, és a célzott szerződ
 - **F.6-05 — content-to-schedule relationship:** replaced `SCH-015` (iCal/export and later notifications) with `SCH-014` (game/content/schedule relationship). The canonical Schedule block remains `SCH-011` plus Editor display configuration; content ingestion/clip IDs describe the content records being linked, not ownership of the relationship itself.
 - **F.4-06 — interaction mapping finalization:** the feature cell now contains only `EDT-039`, `WEB-032` and `SEC-005`; Inspector property IDs were not direct owners of the public interaction lifecycle. QA-004/005 remain in the dedicated QA-anchor column.
 - **Evidence boundary:** four crosswalk/registry changes were verified in the canonical MASTER. No schedule query, timezone, content-link or public-render runtime tests were executed. F.6 remains open for full semantic review; F.7–F.13 and original-source recovery remain open. P0.2 stays **IN PROGRESS / NOT PASS**.
+
+
+### 41.3.66. P0.2 — F.7 Admin/forms and F.9 SEO, accessibility, privacy and visual-regression mapping corrections (2026-10-14)
+
+- **F.7-02 — shared Admin states:** removed `QA-005` from the feature-ID cell and retained it in the dedicated QA column. Added `OPS-003` as the error-observability support reference; QA anchors are evidence requirements, not product feature IDs.
+- **F.7-04 — public forms:** corrected `WEB-027` (Events/Blog/News/Digital Products routes) to `WEB-020` (Contact page/form), and added safe validation, rate-limit and consent/privacy references. QA-006 remains in the QA column.
+- **F.9-01 — published SEO/indexing:** added `WEB-031` for the published-only data boundary; preview/publish IDs alone do not fully express the no-draft/no-private indexing rule.
+- **F.9-02 — redirects/broken links:** replaced `WEB-008` (revision history/diff) with `WEB-013` (redirect manager and broken-link report).
+- **F.9-03 — public accessibility:** removed QA-004/005 from the feature-ID cell and replaced the misleading published-only visibility reference with semantic text/action, media-alternative, motion and safe public-renderer capabilities. QA-004/005 remain in the QA column.
+- **F.9-05 — public/preview/admin boundaries:** added `WEB-031` so published-only visibility is explicit alongside preview authorization, publish validation, server permissions, logging and secret-safe export.
+- **F.9-06 — performance gate:** removed `QA-005` from the feature-ID cell; performance QA remains in the dedicated QA column.
+- **F.9-07 — visual regression:** moved QA IDs out of the feature-ID cell and added the canonical navigation, mobile-navigation, Creator Home and Schedule page IDs to the Editor mobile-action/Layers/Inspector test scope.
+- **Evidence boundary:** eight mapping rows were corrected against the archived F.7/F.9 requirements and current registry. No forms, crawl, accessibility, security or visual-regression tests were executed. F.7/F.9 remain open for full semantic review; F.8 and F.10–F.13 remain open, as does original-source recovery. P0.2 stays **IN PROGRESS / NOT PASS**.
