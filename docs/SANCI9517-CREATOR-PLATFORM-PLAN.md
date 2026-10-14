@@ -4055,3 +4055,32 @@ Különösen fontos határok:
 - **STREAM_TOOLS / INTEGRATION / AUTOMATION:** OBS pairing/overlay konfiguráció, külső provider-auth és workflow execution külön domainfelelősség.
 
 **Állapot:** a domain-térkép szerkezeti teljessége bővült, és a provider-adapter, derived cache, creator webhook, fan identity, order és support owner határai egyértelműbbek lettek; a teljes schema/API/runtime egyezés továbbra is kód- és tesztbizonyítékot igényel.
+
+### 63.20. Kanonikus főmodul → domain/adatgazda keresztmátrix
+
+Ez a mátrix összeköti a 49. fejezet felhasználói moduljait az 5. fejezet kanonikus domainjeivel. A modul a felhasználói belépési pont; a domain az üzleti adat és lifecycle gazdája. Ha egy sor több domaint sorol fel, mindegyik külön szerződése megmarad, nem olvad össze egyetlen közös adattárrá.
+
+| Kanonikus főmodul | Elsődleges domain/adatgazda | Határszabály |
+|---|---|---|
+| 49.1 Kezdőlap és napi áttekintés | ADM UI contract; permission-aware read projections | Aggregál és navigál; nem birtokolja a schedule, content, integration, order vagy analytics rekordokat. |
+| 49.2 Weboldal | SITE, PAGE, REVISION, NAVIGATION, SEO_PUBLICATION, FORM_SUBMISSION | Page Model a megjelenítést/configot birtokolja; domainblokkok csak hivatkoznak más domainek adataira. |
+| 49.3 Márka és designrendszer | DESIGN_SYSTEM | Tokenek, témák és template-masterek; bináris assetek a RESOURCE-ban. |
+| 49.4 Média- és erőforráskönyvtár | RESOURCE | Egy asset registry, asset ID, D1 metadata és R2 bináris; a többi modul csak referenciát használ. |
+| 49.5 Élő adás és Stream Studio | LIVE_STATE, SCHEDULE, GAME_PROFILE | Live state, adásrend és játékprofil külön domain; egy felület nem jelent közös rekordmodellt. |
+| 49.6 OBS és stream eszközök | STREAM_TOOLS | Overlay/widget/pairing konfiguráció; OBS/provider auth és scope az INTEGRATION szerződését használja. |
+| 49.7 Kapcsolatok és integrációk | INTEGRATION | Külső fiók, OAuth/token reference, scope, provider capability és inbound webhook. |
+| 49.8 Tartalomstúdió | CONTENT, PUBLISHING | Tartalomrekord és publikálási queue; asset a RESOURCE, kampány a CAMPAIGN, provider connection az INTEGRATION tulajdona. |
+| 49.9 Közösség és rajongók | COMMUNITY, FAN_IDENTITY | Community post/moderation és fan identity külön; membership entitlementet az ENTITLEMENT szolgáltatja. |
+| 49.10 Bolt és kereskedelem | PRODUCT, ORDER | Termékkatalógus és rendelés külön; payment provider adapter az INTEGRATION-szerződést követi. |
+| 49.11 Támogatás és tagság | SUPPORT, ENTITLEMENT | Support provider state és tagsági hozzáférés külön domain; Discord role sync az entitlementből indul. |
+| 49.12 Szponzoráció és üzleti központ | CAMPAIGN, SPONSORSHIP | Lead/deal/deliverable és B2B kampány; a riport az ANALYTICS read-modelt fogyasztja. |
+| 49.13 Analitika és növekedés | ANALYTICS | Metrikát normalizál/aggregál; nem írja át a forrásdomain üzleti rekordját. |
+| 49.14 Automatizációk | AUTOMATION | Workflow/runs/retry; domainmódosítás csak az engedélyezett domain command/API-n keresztül. |
+| 49.15 SANCI AI | AI_OPERATION | Javaslat, kontextus, approval és usage; üzleti módosítás a célmodul commandján keresztül. |
+| 49.16 Keresés, súgó és személyre szabás | SEARCH, NOTIFICATION | Keresés permission-aware projection; értesítés/delivery saját domain, a modul a felhasználói központot adja. |
+| 49.17 Beállítások, biztonság és adat | IDENTITY, SETTINGS, LOCALIZATION, AUDIT, BACKUP; SEC/OPS keresztmetszeti | A globális beállítások nem másolják a domain-specifikus konfigurációt; security policy minden modulra érvényes. |
+| 49.18 Fejlesztői platform és API | DEVELOPER_API | Creator által létrehozott API keys/outbound webhooks; provider inbound webhooks az INTEGRATION-ben. |
+| 49.19 Bővítmények, widgetek és piactér | EXTENSION | Manifest, install, permission, signature, compatibility és sandbox lifecycle. |
+| 49.20 Csapat, több site és SaaS | WORKSPACE, BILLING_PLAN | Workspace/team és SaaS plan/usage külön; nem azonos a Store ORDER vagy fan ENTITLEMENT állapottal. |
+
+**Ellenőrzés:** a jelenlegi 5. fejezet 37 domain-ID-ja mindegyikéhez kijelölhető a fenti főmodulok közül legalább egy kanonikus belépési pont. Ez a dokumentumon belüli felelősségi keresztmátrix; a tényleges kód, adatbázis, API és jogosultsági implementáció egyezését külön auditálni kell.
