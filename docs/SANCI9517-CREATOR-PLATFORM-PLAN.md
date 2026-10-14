@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.64` — **156/156 specifikációs acceptance**, 63.50.63–64: publikálási/HTTP/SEO 10 tételes forráskód-eltérés és 15 UNRUN regressziós teszt, valamint site/role/ownership 8 tételes forráskód-audit; **következő: crosswalk szemantikai gap-ek, public render és admin navigation kódfogyasztók, történeti hiányzó források**; történeti és runtime evidence továbbra is nyitott, különös tekintettel a 63.50.46 HIGH publikálási konfliktusra. A 156 első körös routing kész, de szemantikai és történeti kapu továbbra is nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll és a 63.50.46 HIGH kódaudit-blokkoló ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.66` — **156/156 acceptance specifikáció**, 63.50.63–65 source-verified publish/ownership/renderer/admin consumer audit és 63.50.66 priorizált kapusorrend; **következő: 00/A / 00.9.6.B Git-history és H19–H34 szemantikai történeti bizonyíték-vizsgálat**; runtime/CI és user review OPEN; történeti és runtime evidence továbbra is nyitott, különös tekintettel a 63.50.46 HIGH publikálási konfliktusra. A 156 első körös routing kész, de szemantikai és történeti kapu továbbra is nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll és a 63.50.46 HIGH kódaudit-blokkoló ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -7208,7 +7208,7 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 5. Minden sikeres audit-commit után a fejléc folytatási állapotát és a legutolsó bejegyzést egyeztetni; a következő munka **egyértelmű azonosítóval**, a még nyitott részhalmazzal és a PASS/NOT PASS határral legyen megadva. A commit SHA csak a GitHub által visszaadott tényleges eredmény alapján közölhető.
 6. Nem létező vagy nem visszanyert történeti forrást nem lehet rekonstruáltnak nevezni; a 396 ID, 22 modul, 156 review és 271 történeti H-ID számlálása nem runtime teszt. A fejlesztési fagyasztás az aktív kapu PASS-áig változatlan.
 
-**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.64 SOURCE VERIFIED PUB/OWN / NEXT CROSSWALK AND CONSUMERS`. A 54.1–54.4 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.7–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
+**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.66 SOURCE VERIFIED RENDER/NAV / NEXT HISTORICAL SEMANTIC AUDIT`. A 54.1–54.4 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.7–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
 
 ### 63.50.41. 54.2 Saját weboldal és Visual Editor: 15 checklist-tétel első körös routingja (2026-10-14)
 
@@ -7889,6 +7889,49 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 **Külön tesztcsomag:** `owner/admin/editor/viewer` jelenlegi szerepek valós képességét a meglévő `admin/editor/viewer` baseline szerint kell tesztelni; jövőbeli szerepek **PLANNED**. Site ownership negatív route tesztek, settings public projection, OAuth token redaction, asset reference, revision site-scope, slug collision, multi-tab concurrency; a tesztek **UNRUN**.
 
 **Jelen állapot:** a 38 domain és 22 UI-modul szerkezete megvan a tervben, de ez nem 38 implementált domain. A 156 acceptance tervkártya nem bizonyít működő terméket. A 271 történeti tétel strukturális megfeleltetése sem zárja le a hiányzó eredeti forrásokat. **SEMANTIC/EVIDENCE GATE: NOT PASS.**
+
+### 63.50.65. Második kör IX: Public renderer, Admin navigáció és valódi fogyasztók forráskód-auditja (2026-10-15)
+
+**Auditált fájlok:** `src/index.ts`, `public/visual-page.html`, `public/assets/page-renderer.js`, `public/assets/site.js`, `public/admin-home.html`, `src/routes/public/pages.ts`. **Bizonyítékszint: SOURCE VERIFIED; browser/network/performance tests UNRUN.**
+
+| ID | Kódbeli tény | Hatás / 54.x megfeleltetés | Kötelező lezárás |
+| --- | --- | --- | --- |
+| RND-01 | `page-renderer.js` `sanci` blokk-listája Twitch/YouTube/TikTok/Discord/VOD/support/followers/stb. típusokat placeholder szöveggel jelenít meg; valós provider fetch csak a `schedule` blokkhoz látható | 54.2#7 dinamikus SANCI blokkok: a típus jelenléte **nem** jelent működő domain-adatkapcsolatot | DYN-001–008 blokkonként owner API, permission, loading/stale/error, public/preview parity |
+| RND-02 | `page-renderer.js` `nodeHtml()` a `heading/text/richtext/button/link/image/divider/spacer/schedule` típusokra speciális renderert ad; a többi fallback `section` | 54.2#6: a teljes elemkönyvtár render-szemantikája nem bizonyított | Node registry → Inspector → serializer → public renderer → keyboard/ARIA teszt minden támogatott típusra |
+| RND-03 | `page-renderer.js` `safeUrl` http/https protokollt enged; HTML text escape látható; `style()` CSS értékeket stringből épít | Van URL/HTML safety baseline, de style allowlist/CSS sanitization és browser CSP nincs itt bizonyítva | Security teszt: style injection, invalid CSS, URL, embeds, asset access |
+| RND-04 | `page-renderer.js` schedule blokk `/api/public/schedule` projectiont fogyaszt; cache csak oldalbetöltésen belüli Map | Pozitív: schedule nem második Page Model event store; negatív: provider/network failure a `loadPage` teljes try/catch ágába eshet | Schedule hiba esetén izolált block error/stale/empty, ne váljon teljes oldal 404-vé |
+| RND-05 | `loadPage()` közös `catch` ága `Az oldal nem található` és 404 üzenetet rajzol API-hibánál, invalid dokumentumnál és schedule fetch hibánál is | Valós 404 és átmeneti 5xx/timeout összekeveredik, a HTTP shell ettől nem változik | 404 vs 401/403 vs 5xx vs provider partial error külön HTTP és UI állapot |
+| RND-06 | `visual-page.html` head statikus `index,follow`, nincs szerveroldali per-page title/OG/canonical; `site.js` és `page-renderer.js` kliens fetch-et használ | SEO-001–005 és 54.2#12 crawler gate FAIL/UNVERIFIED; ismételt PUB-04/05 | Server-resolved published snapshot meta és HTTP status, sitemap/robots/redirect |
+| NAV-01 | `src/index.ts` autentikált `/admin` → `admin-home.html`, `/admin/editor` → Editor v2; legacy `/admin/home` redirect `/admin` | Pozitív: egyetlen fő Admin URL és egyetlen canonical Editor útvonal létezik | A route-szintű konszolidációt meg kell őrizni, nem szabad második Editort létrehozni |
+| NAV-02 | `admin-home.html` több különálló „Adásrend”, „Oldalak”, „Szerkesztés” navigációs elemének célja ugyanaz a `/admin/editor` | 54.1#1, 54.6: Admin UX túlterheli az Editort és elrejti a domain funkciók saját belépési pontját | 49.1–49.22 menü/route map: valódi modul URL vagy egyértelmű `PLANNED`/disabled; ne legyen hamis működő link |
+| NAV-03 | `admin-home.html` `Promise.allSettled`-del session/settings/pages/schedule/Twitch connection adatot olvas | Pozitív: dashboard több canonical API-t aggregál; nincs bizonyíték önálló domain write-ra | Per-widget partial failure, stale és permission-aware empty; valódi E2E |
+| NAV-04 | `src/index.ts` a `/admin/editor` HTML route-nál bejelentkezést vizsgál, az API route saját `editor` minimum role-t ellenőriz | HTML viewer is kaphat Editor shellt, de API mutation tiltott; UI access és backend RBAC nem azonos | Viewer 403/readonly UX policy; API marad authoritative |
+| NAV-05 | `public/assets/site.js` a publikus menüt `/api/public/pages` lista alapján építi | Jelenleg published-only projection, de draft metadata/slug PUB-03 hibája miatt navigáció is érintett | Public menu published slug/visibility/ordering snapshot alapján; redirect és invalid link teszt |
+
+**Szemantikai hiányok külön kezelése:** `RND-01` nem jelenti, hogy a tervezett live/social/commerce blokkokat el kell hagyni; `NAV-02` nem jogosít fel a legacy kód törlésére; `RND-04` nem jogosít második schedule store létrehozására. A 54.2 és 54.6 képességmegőrzés marad, a domain owner pedig az 5. fejezet szerinti.
+
+**E2E acceptance, nem lefuttatott:** (a) home, published slug, unpublished slug, unknown slug valódi HTTP status; (b) schedule API 500 mellett a többi blokk tovább működik; (c) role=viewer admin shell/Editor UI és API eltérő hozzáférése dokumentált; (d) minden Admin menüpont valós modulba vagy egyértelmű PLANNED állapotba vezet; (e) Page Model és domainblokkok a canonical API-n keresztül, cross-site szivárgás nélkül jelennek meg; (f) HTML head crawler snapshot és WCAG/keyboard/mobil. **RUNTIME UNVERIFIED.**
+
+### 63.50.66. Második kör X: priorizált döntésjegyzék, kapusorrend és a review előfeltétele (2026-10-15)
+
+A 63.50.59–62 szerinti 156/156 pozitív-negatív *specifikáció* elkészült; a 63.50.63–65 **nem** 156/156 kódtesztet jelent. A meglevő 396 capability ID és 271 történeti H-sor megőrzendő.
+
+| Prioritás | Szemantikai vagy kódblokkoló | Kapcsolódó stabil képesség | Lezárási bizonyíték |
+| --- | --- | --- | --- |
+| P0 | Implicit publish PATCH és CREATE validáció-bypass; draft/published slug/metadata; HTTP 200 shell/SEO | WEB-004–008, WEB-012–013, EDT-032–034, SEO-001–005 | 63.50.63 T01–T15 regresszió, migration+rollback, crawler/browser |
+| P0 | A published/draft/revision/site URL lifecycle döntése és kompatibilis D1 migration | PAGE, REVISION, SEO_PUBLICATION, SITE | Read-only schema/data preflight, additív migration, restore drill, public snapshot parity |
+| P1 | Oldal archív/törlés, dependency/redirect, revision conflict CAS | WEB-001–003, WEB-007–008, RES-008–009 | DELETE/rollback/race/linked menu negative E2E |
+| P1 | Domain owner és több-site settings/role scope | SET-001–004, SEC-001–004, TEAM-001–005 | Permission matrix, site scoped settings, cross-site negative tests |
+| P1 | Public renderer blokk-paritás és partial failure | EDT-016–020, DYN-001–008, SCH-010–011 | Block registry contract, provider fallback, accessibility, preview/public |
+| P1 | Admin főmodulok valódi navigációja, egy Editor, canonical domain CRUD | ADM-001–013, WEB, SCH, CNT, INT | 22-module route matrix, planned vs live state, user journey |
+| P2 | Design/resource/template master-instance és safe asset deletion | DSN-001–018, RES-001–016 | F2 lifecycle/version/usage/rollback, reuse decision |
+| P2 | Integrációk/OBS/AI provider scope és trust boundary | INT, OBS, AUT, AI, MKT | Provider capability, permissions, human approval, retry/idempotency |
+| BLOCKING HISTORY | Hiányzó 00/A és 00.9.6.B eredeti forrás és H19–H34 271 sor szemantikai igazolása | 63.52–63.53 | Visszanyert forrás vagy indokolt UNRECOVERED, kétirányú szemantikai audit |
+| USER REVIEW | A 396 ID és 22 főmodul felhasználói közös áttekintése | 24., 49., 54. | Hiány/bővítés/deduplikáció/fázis döntés feljegyezve |
+
+**Végrehajtási kapuk:** (1) a fenti forráskód-szemantikai hiányok és a történeti megőrzés ellenőrzése dokumentálva; (2) 396 ID/22 modul közös termék-review; (3) csak ezután F0 munkapont kártya 26.1 szerinti 17 mezővel, REUSE/ADAPT/BUILD döntéssel; (4) teszt/CI/browser/live PASS nélkül nincs release PASS. A jelenlegi kódhibák **nem** javultak meg az auditbejegyzéstől. A kapu **IN PROGRESS / NOT PASS**.
+
+**Következő tényleges feladat:** 00/A / 00.9.6.B célzott Git-history és archív forrásbizonyíték-vizsgálat; 63.52–53 H19–H34 mintavétel helyett szemantikai csoportos ellenőrzés, a 63.50.63–65 forráskódhibák nyitva tartásával. Ha eredeti forrás nincs, a tény `UNRECOVERED`, nem kitalált tartalom és nem PASS.
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
