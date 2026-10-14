@@ -5892,7 +5892,7 @@ Ez a szakasz a 63.41 kártyáit kiegészíti a 25. fejezet hiányzó, különál
 - **Known issues:** panel fókusz-visszaállítás és minden inputmód selection parity nem bizonyított.
 - **Next action:** teljes selection/focus E2E matrix keyboard, pointer és touch esetekkel.
 
-**Normalizálási kapu:** EDT-001–006 esetén a 25. fejezet eddig hiányzó mezői külön rögzítve vannak; ez még nem igazolja a kártyák minden 26.1 mezőjének teljes runtime acceptance-ét. Következő lépés: EDT-007–014 ugyanilyen külön mezős normalizálása, mielőtt a 44 kártyát teljesen lezártnak tekintenénk.
+**Normalizálási kapu:** EDT-001–006 esetén a 25. fejezet státuszmezői külön rögzítve vannak, de a 26.1 szerinti 17 mező nem volt teljesen lefedve. EDT-007 teljes 17 mezős kártyája a 63.49-ben szerepel; runtime acceptance továbbra is nyitott. **Következő egyetlen tétel:** EDT-008 teljes 17 mezős normalizálása, majd külön ellenőrzés. A 44 kártya egyike sem tekinthető automatikusan PASS-nak pusztán a dokumentálás miatt.
 
 ### 63.49. Teljes mezős normalizálás — EDT-007
 
