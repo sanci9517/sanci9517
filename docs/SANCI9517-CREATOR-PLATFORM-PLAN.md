@@ -6904,6 +6904,19 @@ A `0004_system_page_content.sql` történeti táblát hoz létre, míg a `0005_c
 
 **Nyitott tesztkapuk:** anonim/viewer/editor/admin GET/POST/PUT szerepkörmátrix; különböző site-hoz tartozó pageId; hibás vagy ütköző `expectedVersion`; rollback utáni publikus snapshot változatlansága; publish/unpublish idempotencia; cache; böngészős regresszió. **AUTH/API CONTRACT: STATICALLY VERIFIED / RUNTIME NOT PASS**. Nem történt kód- vagy adatbázis-módosítás.
 
+### 63.50.21. Publikus snapshot és Admin metaadat-frissítés: kiemelt szerződésütközés (2026-10-14)
+
+**Forrásref:** `8588fc9`; `src/routes/public/pages.ts`, `src/routes/admin/pages.ts`, `src/routes/admin/editor.ts`, `src/core/page-model.ts`, `public/assets/page-renderer.js`. Forráskód alapján igazolt ágak, futtatott új integrációs teszt nélkül.
+
+- **Publikus vs preview:** `/api/public/pages` alaphelyzetben `is_published=1` rekordok `published_content_json` pillanatképét adja. `preview=1` esetén `content_json` draftot olvas, előtte sessiont és legalább `editor` szerepkört ellenőriz (401/403). A publikus `page-renderer.js` a `preview=1` queryt továbbítja az API felé; az API dönt a hozzáférésről.
+- **Kiemelt eltérés:** a `src/routes/admin/pages.ts` metaadat-frissítési ágában `contentChanged` (cím/slug/leírás) esetén új revízió készül, és **ha `existing.is_published`**, az SQL `UPDATE pages SET published_content_json=?,published_revision_id=?` automatikusan az aktuális, módosított **draft** dokumentumot teszi publikált snapshotnak. Ez az Editor v2 POST draft mentési / explicit publish modelljétől eltérő publikálási út.
+- **Kockázati forgatókönyv:** publikált oldal + még nem publikált vászonmódosítás a `content_json` mezőben → cím/slug/leírás módosítása a Pages API-n → a teljes draft `published_content_json` mezőbe másolódhat. A korábban nem publikált vászontartalom így explicit Editor Publish nélkül válhat publikussá. **A kódból levezethető kockázat, éles reprodukció még nem történt.**
+- **Kanonikus adatmodell:** a `normalizeEditorDocument` a v2 `sanci-page-document` sémát elfogadja, a legacy `sanci-document` típust szükség esetén konvertálja. A régi adatok törlése vagy az átalakító eltávolítása kompatibilitási bizonyítás nélkül tilos.
+
+**Javasolt végleges szerződés (döntés és teszt előtt nem implementálandó):** Admin CMS metaadat-szerkesztés draft-only legyen alapértelmezésben; a publikus SEO/canonical/slug megváltoztatása explicit publikálási tranzakcióhoz és URL-redirect szerződéshez kötődjön. Külön kezelendő a listázási metaadat és a publikált dokumentum metaadata, hogy ne keletkezzen vegyes állapot. **Kötelező regresszió:** published v1 + draft v2 + CMS cím/slug/leírás változtatás → a publikus snapshot és publikus URL maradjon változatlan explicit publishig; preview v2 mutassa a draftot; publish után váltson a snapshot és a redirect. Vizsgálni kell a korábbi szerződések és UI elvárások esetleges szándékos eltérését.
+
+**Prioritás: HIGH / CONTRACT DECISION REQUIRED / NOT PASS.** Ez a bizonyíték nem igazol runtime hibát, de az archiválási és publikálási kaput blokkolja. Ebben a körben csak a MASTER módosult; működő kódhoz és adathoz nem nyúltunk.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
