@@ -6732,6 +6732,23 @@ Ez a szakasz a 63.41 kártyáit kiegészíti a 25. fejezet hiányzó, különál
 
 **Következő ellenőrzés:** tesztfuttatási evidencia; route-onkénti RBAC/ownership mátrix; publikus projection adatminimalizálás; migration FK/UNIQUE/NULL; Admin→Editor→Public browser út. Nincs új jogosultsági rendszer vagy feature implementáció ebben a tervkörben. **IN PROGRESS / NOT PASS**.
 
+### 63.50.7. Legacy system pages és Twitch integrációs UX — ötödik forrásaudit (2026-10-14)
+
+**Forrás:** `src/routes/admin/system-pages.ts`, `src/routes/integrations/twitch.ts`, `src/core/router.ts`. Statikus kódolvasás; nincs CI/live/browser PASS.
+
+| Domain | Meglévő kód / bizonyíték | Szükséges tervbeli rendezés |
+| --- | --- | --- |
+| `WEB/EDT` system pages | `/api/admin/system-pages` külön `system_page_content` táblába ír `path,content_json` értékeket; csak kilenc fix útvonal engedélyezett, max. 100k JSON, editor role és audit | **Két eltérő oldal-content erőforrás létezik:** a kanonikus `pages` + `editor_revisions` Page Model és a legacy `system_page_content`. A cél egyetlen kanonikus Page Model; az összes fogyasztót, publikus renderert és régi útvonalat fel kell térképezni, migrációs/redirect döntéssel. A legacy route-ot bizonyíték nélkül nem szabad törölni vagy kanonikusnak nyilvánítani |
+| `WEB/SEC` system page ownership | A `system_page_content` lekérdezések `path` szerint működnek, látható `site_id` nélkül | A single-site legacy tárolót multi-site környezetben nem szabad tenant-izoláltnak tekinteni; migration/authorization terv és cross-site teszt kell |
+| `INT/ADM` Twitch connect UX | OAuth connect/callback és token status/validate/disconnect végpontok léteznek; a callback és hibastátusz `/admin/editor?twitch=...` címre irányít | **UX-tulajdonosi eltérés:** az integráció kezelése nem a Visual Editor felelőssége. Kanonikus belépési hely: Creator Center → Integrációk → Twitch; az Editor csak kapcsolati státuszt és releváns beágyazási konfigurációt mutathat. A redirectet és korábbi deep linkeket kompatibilis módon kell átvezetni |
+| `INT/SEC` Twitch OAuth ownership | Callback ellenőrzi a state hash + user + site + expiry + unused feltételeket; token exchange után explicit connection ownership; connection/validation/disconnect user+site scoped | A meglévő OAuth/ownership védelmek megőrzendők. A connect route hitelesített usert ellenőriz, de explicit editor/admin role gate nem látható; Integrations write-policy és szerepkörteszt szükséges |
+| `INT/SEC` konfigurációs diagnosztika | Authenticated `twitchConfigDiagnosticRoute` a secret környezeti változók **létezését** jelzi boolean értékekkel, nem adja vissza a titkokat | Diagnosztikai hozzáférés jogosultsági és rate-limit szabálya, biztonságos redaction és naplózás a `SEC/OPS` acceptance része; ne kerüljön Editorba |
+| `INT` többfiókos jövő | `getOwnedTwitchConnection` a user+site szerint legfrissebb kapcsolatot adja, a route-ok ezt használják | A jövőbeli több Twitch-csatorna/fiók választás és site-hoz rendelés explicit `connectionId` alapján legyen kezelhető; a „legfrissebb” nem kanonikus multi-account selection |
+
+**Kötelező konvergencia-döntések:** (1) legacy `system_page_content` fogyasztóinak és tartalmának auditja, átvezetés a Page Modelre veszteség nélkül; (2) régi `*.html` route-ok canonical/redirect szabálya; (3) Twitch OAuth visszairányítás Integrációk modulba, Editor-beli használat csak közös API-referenciával; (4) Integrations connect/disconnect RBAC és explicit account selection; (5) minden legacy storage site ownership lezárása. **Nem készül második Visual Editor, külön Twitch settings adatforrás vagy párhuzamos Page Model.**
+
+**Bizonyítékhiány:** a legacy system page publikus fogyasztói, konkrét UI assetek és redirect E2E, valamint a Twitch provider live capability ebben a körben nem lettek tesztelve. `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`: **IN PROGRESS / NOT PASS**.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
