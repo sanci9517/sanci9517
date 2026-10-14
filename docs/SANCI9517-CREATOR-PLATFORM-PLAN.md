@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.58` — 156/156 első routing; 16/16 második körös domain/owner és fázis/dependency csoportkapu rögzítve; **következő: 54.1–54.4, majd 54.5–54.16 soronkénti acceptance/evidence audit**, különös tekintettel a 63.50.46 HIGH publikálási konfliktusra. A 156 első körös routing kész, de szemantikai és történeti kapu továbbra is nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll és a 63.50.46 HIGH kódaudit-blokkoló ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.59` — 156/156 első routing; 16/16 domain/phase csoportkapu; **54.1–54.4 37/37 soronkénti specifikációs acceptance**, következő **54.5–54.8** (majd 54.9–54.16) soronkénti domain/fázis/pozitív-negatív teszt; forráskód/runtime evidence továbbra is külön nyitott, különös tekintettel a 63.50.46 HIGH publikálási konfliktusra. A 156 első körös routing kész, de szemantikai és történeti kapu továbbra is nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll és a 63.50.46 HIGH kódaudit-blokkoló ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -7208,7 +7208,7 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 5. Minden sikeres audit-commit után a fejléc folytatási állapotát és a legutolsó bejegyzést egyeztetni; a következő munka **egyértelmű azonosítóval**, a még nyitott részhalmazzal és a PASS/NOT PASS határral legyen megadva. A commit SHA csak a GitHub által visszaadott tényleges eredmény alapján közölhető.
 6. Nem létező vagy nem visszanyert történeti forrást nem lehet rekonstruáltnak nevezni; a 396 ID, 22 modul, 156 review és 271 történeti H-ID számlálása nem runtime teszt. A fejlesztési fagyasztás az aktív kapu PASS-áig változatlan.
 
-**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.58 16-GROUP PHASE CROSSWALK / NEXT 54.1–54.4 ITEM EVIDENCE`. A 54.1–54.4 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.7–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
+**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.59 37/156 ITEM ACCEPTANCE SPEC / NEXT 54.5–54.8`. A 54.1–54.4 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.7–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
 
 ### 63.50.41. 54.2 Saját weboldal és Visual Editor: 15 checklist-tétel első körös routingja (2026-10-14)
 
@@ -7553,6 +7553,71 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 **Bizonyítékhatár:** a fenti 16 sor a 63.38 csoportszintű fázis-szabályainak *második körös átvezetése*; az összes 156 checkbox külön ID-nkénti acceptance és 271 H-történeti sor szemantikai helyessége még nem bizonyított. A már meglevő 63.12–63.15 tételes crosswalkot meg kell őrizni; az első körös 63.50.39–56 táblák nem helyettesítik és nem teszik feleslegessé.
 
 **Következő konkrét audit:** `63.50.59` — 54.1–54.4 soronkénti pozitív/negatív acceptance, domain és fázis, bizonyíték-állapot megkülönböztetése; majd 54.5–54.16; történeti 00/A / 00.9.6.B célzott forrásvizsgálat külön nyitott kapu. **SECOND PASS GROUP PHASES RECORDED / INDIVIDUAL EVIDENCE NOT PASS.**
+
+### 63.50.59. Második kör III: 54.1–54.4 tételes domain, fázis, pozitív/negatív acceptance (2026-10-15)
+
+**Módszer:** az eredeti 54.x checkbox-szöveg, az 5. domain-tábla, a 63.38 F-fázisok és a 63.50.39–43 capability routing soronkénti összevetése. Az itt írt acceptance **tervezett teszt**, nem lefuttatott teszt. Az ID-linkeket a korábbi routing tartalmazza, itt a domain/phase/test hiányzó dimenzióit tesszük visszakereshetővé.
+
+#### 54.1 — 8 sor
+
+| Checklist sor | Domain owner | Fázis | Pozitív acceptance (terv) | Negatív acceptance (terv) |
+| --- | --- | --- | --- | --- |
+| 54.1#1 Egységes Admin shell, oldalsáv, almenük, breadcrumbs, mobil navigáció. | IDENTITY, SETTINGS | F1 | Admin route/shell és mobil navigáció ugyanazon jogosultságszűrt menüből | Jogosulatlan menü/route nem érhető el |
+| 54.1#2 Áttekintő kártyák: weboldal, live, adásrend, kapcsolatok, tartalom, feladatok. | LIVE_STATE, SCHEDULE, INTEGRATION, CONTENT | F1 + forrásfázis | Dashboard read projection megnyitja a canonical rekordot | Stale/offline kártya nem látszik élőnek |
+| 54.1#3 Gyorsműveletek és legutóbbi aktivitás. | AUDIT + forrásdomain | F1 | Gyorsművelet canonical domain commandra visz, audit csak olvasás | Dashboard nem hoz létre külön activity store-t |
+| 54.1#4 Teendők, figyelmeztetések, hibák és elakadt folyamatok. | NOTIFICATION, AUDIT, INTEGRATION | F1 + forrásfázis | Hiba és elakadás forrásmodulhoz navigál | Sikertelen művelet nem jelenik meg sikeresnek |
+| 54.1#5 Globális kereső, command palette, kedvencek, legutóbbi elemek. | SEARCH | F1 + indexadapter később | Permission-aware keresés és billentyűs navigáció | Idegen site/role találat nem látható |
+| 54.1#6 Kontextuális súgó, onboarding, üres állapotok és emberi nyelvű hibák. | HELP_CENTER | F1 | Contextual help és érthető empty/error | Nem létező feature nem szerepel késznek |
+| 54.1#7 Értesítési központ, prioritások, digest és csendes időszak. | NOTIFICATION | F1 + delivery később | Digest/quiet hours preferenciák megmaradnak | Tiltott csatorna nem küld üzenetet |
+| 54.1#8 Valós adatfrissesség, loading/empty/error/stale/partial állapot. | IDENTITY, SEARCH + forrásdomain | F1 | Loading/empty/error/stale/partial elkülönül | Cache adat nem jelenik meg frissnek |
+
+#### 54.2 — 15 sor
+
+| Checklist sor | Domain owner | Fázis | Pozitív acceptance (terv) | Negatív acceptance (terv) |
+| --- | --- | --- | --- | --- |
+| 54.2#1 Oldal CRUD, hierarchia, slug, átnevezés, duplikálás, archiválás és törlés. | PAGE, REVISION, SEO_PUBLICATION | F0 core/F3 | CRUD és draft/published slug külön lifecycle | Metadata PATCH nem publikál draftot; régi URL nem 404 redirect nélkül |
+| 54.2#2 Navigáció, dropdown/nested menü, footer, mobilmenü, belső/külső link. | NAVIGATION, PAGE | F3 | Nested navigáció és belső link cél feloldható | Archivált/privát cél nem szivárog public menübe |
+| 54.2#3 Egyetlen Visual Editor: elemkönyvtár, canvas, Layers/Outline, Inspector. | PAGE, REVISION | F0 | Canvas, layers, Inspector egyetlen Page Modelt használ | Inspector nem írja át domain üzleti rekordját |
+| 54.2#4 Drag/drop, kijelölés, átrendezés, csoportosítás, duplicate, törlés, zoom/pan. | PAGE, REVISION | F0 | Minden canvas command mentés/újratöltés után konzisztens | Tiltott reparent/ciklus/locked mutation elutasítva |
+| 54.2#5 Undo/redo, mentési állapot, konfliktusfeloldás, revision history és restore. | REVISION, PAGE | F0 | Undo/redo, restore és optimistic conflict kezelés | Restore nem implicit publish; konfliktus nem ír felül |
+| 54.2#6 Szöveg, heading, kép, videó/embed, gomb, link, ikon, lista, kártya, űrlap, divider, spacer, grid/flex/section/container. | PAGE, RESOURCE, FORM_SUBMISSION | F0 core/F3 bővítés | Támogatott node validálva renderel | Unsafe embed/form és ismeretlen node elutasítva |
+| 54.2#7 Dinamikus SANCI blokkok: live, következő stream, adásrend, játékprofil, videó/clip feed, social links, termék, tagság, támogatás és közösségi CTA. | PAGE + LIVE_STATE/SCHEDULE/CONTENT/PRODUCT/SUPPORT | F3 shell; F5–F8 adatok | Blokk canonical domain projectiont mutat | Draft/private rekord nem látható public blokkban |
+| 54.2#8 Desktop/tablet/mobile preview, breakpointonkénti override, öröklés és portrait/landscape. | PAGE, DESIGN_SYSTEM | F0/F2 | Responsive override és inherit roundtrip | Breakpoint-váltás nem töröl másik viewport értéket |
+| 54.2#9 Globális design tokens: színek, fontok, tipográfia, spacing, border, radius, shadow, layout. | DESIGN_SYSTEM | F2 | Token változás követhető usage/diff nézeten | Global token nem ír felül explicit local override-ot |
+| 54.2#10 Site/page/section/component sablonok, reusable komponensek, instance/override/detach, verziózás és rollback. | DESIGN_SYSTEM, RESOURCE | F2 | Master-instance és verzióváltás explicit | Detach nem módosít mastert |
+| 54.2#11 Előnézet, draft, validálás, publikálás, visszavonás és publikált snapshot megőrzése. | PAGE, REVISION, SEO_PUBLICATION | F0 | Preview draft; publish explicit snapshot | CMS PATCH nem publikál; preview nem indexelhető |
+| 54.2#12 SEO: title, description, canonical, robots, Open Graph, social image, sitemap, robots.txt, structured data, redirect, 404. | SEO_PUBLICATION, PAGE | F3; F0 URL biztonság | HTTP status, canonical/OG/robots/redirect crawler ellenőrizhető | 404 shell nem adhat 200-at; preview noindex |
+| 54.2#13 Domain/DNS/HTTPS státusz, favicon, brand assets, coming-soon/maintenance. | SITE, SETTINGS, RESOURCE | F3 | DNS/HTTPS domain státusz és site favicon valid | Nem igazolt domain nem válhat canonical-lá |
+| 54.2#14 Űrlapok, validáció, spamvédelem, adatkezelési hozzájárulás és beküldés-kezelés. | FORM_SUBMISSION, PAGE | F3 | Form validation, consent és submission lifecycle | Spam, invalid consent és cross-site beküldés elutasítva |
+| 54.2#15 Webes teljesítmény, képméretezés, lazy loading, cache és Core Web Vitals. | RESOURCE, PAGE, SEO_PUBLICATION | F3 | Valós CWV és cache invalidation mérhető | Draft/privát asset nem kerül public cache-be |
+
+#### 54.3 — 7 sor
+
+| Checklist sor | Domain owner | Fázis | Pozitív acceptance (terv) | Negatív acceptance (terv) |
+| --- | --- | --- | --- | --- |
+| 54.3#1 Logóvariánsok, színek, betűcsaládok, ikonstílus, vizuális szabályok. | DESIGN_SYSTEM, RESOURCE | F2 | Brand preset és asset hivatkozás konzisztens | Másik site brand asset nem örökölhető jogosulatlanul |
+| 54.3#2 Overlay, thumbnail, intro/outro, watermark, social post, merch és email sablonok. | DESIGN_SYSTEM, RESOURCE | F2; marketplace F11 | Sablonváltozat és licenc/asset referenciák | Template export nem tartalmazhat privát assetet |
+| 54.3#3 Brand-safe színek/fontok és kontrasztellenőrzés. | DESIGN_SYSTEM | F2 | Kontraszt és font fallback ellenőrizhető | AA kontrasztot sértő preset nem jelölhető késznek |
+| 54.3#4 Globális és komponensszintű tokenek, theme-változatok és dark/light. | DESIGN_SYSTEM | F2 | Token cascade és dark/light preview | Explicit override nem vész el theme váltáskor |
+| 54.3#5 SVG/PNG/WebP és megfelelő exportméretek. | DESIGN_SYSTEM, RESOURCE | F2 | Export pipeline valós formátum és méret | Hibás SVG/script nem jut át |
+| 54.3#6 Licenc, forrás, tulajdonos, verzió és asset-használati helyek. | RESOURCE, AUDIT | F2 | Licenc/source/version és usage map egyezik | Jog nélküli asset nem exportálható publicba |
+| 54.3#7 Brand consistency ellenőrzés, AI-javaslat és kézi jóváhagyás. | DESIGN_SYSTEM, AI_OPERATION | F2; AI F10 | AI javaslat draft, emberi approval | AI nem módosít automatikusan global brandet |
+
+#### 54.4 — 7 sor
+
+| Checklist sor | Domain owner | Fázis | Pozitív acceptance (terv) | Negatív acceptance (terv) |
+| --- | --- | --- | --- | --- |
+| 54.4#1 Egy asset registry és asset ID, R2 bináris tárolással, D1 metaadattal. | RESOURCE | F0 minimum/F2 | Canonical asset ID D1 metadata és R2 binary | Nincs második médiatár vagy orphan blob |
+| 54.4#2 Képek, videók, hangok, ikonok, fontok, dokumentumok, thumbnailök és exportok. | RESOURCE | F2 | MIME típusonként feldolgozás/fallback | Nem támogatott media nem jelenik meg késznek |
+| 54.4#3 Egyenkénti/tömeges feltöltés, progress, cancel, retry és megszakadt feltöltés helyreállítása. | RESOURCE | F2 | Upload progress/cancel/retry idempotens | Megszakadt upload nem duplikál vagy árva blob |
+| 54.4#4 MIME-/méretellenőrzés, feldolgozási státusz, preview/thumbnail és biztonsági ellenőrzés. | RESOURCE | F2 | Server-side MIME/size/sanitize és processing state | Álcázott MIME vagy unsafe SVG elutasítva |
+| 54.4#5 Címke, keresés, gyűjtemény, alt text, licenc, forrás és crop/focal point. | RESOURCE | F2 | Search/filter/alt/license/crop ugyanazon registry | Alt/licenc módosítás nem veszhet el |
+| 54.4#6 Használati helyek, függőségi figyelmeztetés és biztonságos archiválás/törlés. | RESOURCE | F2 | Usage map, safe archive/delete és restore | Használt asset nem törölhető csendben |
+| 54.4#7 Metaadatmódosítások megjelenése minden hivatkozási helyen. | RESOURCE, PAGE, DESIGN_SYSTEM | F2 | Metadata update minden consumeren követhető | Cache stale vagy cross-site megjelenés tiltott |
+
+**Eredmény:** 37/37 tétel (54.1–54.4) tételes *specifikációs* domain/fázis/pozitív-negatív acceptance rögzítve. **Forráskód/test/runtime evidence:** nincs itt újonnan igazolva; az érintett korábbi 63.50.21–26 forráskód-audit tények és 63.26–37 feature-mátrixok csak korlátozott, külön bizonyítékok. A 54.2#1/#11/#12 **HIGH P0** explicit publish/slug/HTTP/SEO blokk; 54.2#13 domain/DNS és #14 submission admin lifecycle részleges képességlefedettség-jelölt, nem automatikus PASS.
+
+**Következő:** 54.5–54.8 (Integrations, Live, OBS, Content) ugyanezzel az acceptance sémával; aztán 54.9–54.16. 00/A és 00.9.6.B eredeti forrása továbbra is OPEN. **GATE: NOT PASS.**
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
