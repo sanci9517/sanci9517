@@ -2667,7 +2667,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.8-05 | AI orchestrator/agent/tool/model registry, task planner/context selector, permission/approval, specialist agents and multi-model routing | AI-001–AI-009, AI-016–AI-019 | DEFER | 3.0–8.0 | QA-002/003/008 |
 | F.8-06 | AI costs/quotas/approval/prompt versions/usage/errors/recovery/rollback; provider keys server-side | AI-001, AI-002, AI-007, AI-009, AI-010, AI-017, SEC-008 | DEFER | 3.0 | QA-003/008 |
 | F.8-07 | Stream Intelligence for live/silence/speech/chat/audio/OBS/highlights/VOD/clips/feedback/opt-in memory | AI-004, AI-014–AI-016, ANL-003, ANL-006, OBS-003, LIV-006, SEC-011 | DEFER | 3.0–8.0 | QA-003/006/008 |
-| F.8-08 | Human-reviewed clip/export, stream setup assistant, AI Control Center, experience evaluation and E2E tests | AI-014, AI-015, AI-017–AI-020, OPS-007, QA-008 | DEFER | 3.0–8.0 | QA-002/003/008 |
+| F.8-08 | Human-reviewed clip/export, stream setup assistant, AI Control Center, experience evaluation and E2E tests | AI-014, AI-015, AI-017–AI-020, OPS-007 | DEFER | 3.0–8.0 | QA-002/003/008 |
 
 **Batch 6 result:** all 26 F.5–F.8 source bullets are individually represented. This does not establish provider approval, runtime capability, or acceptance PASS.
 ### 37.30. P0.2 — Bullet-szintű crosswalk, batch 7: F.9–F.13 (quality gates, recovery, context, Game Profile, domains)
@@ -2687,7 +2687,7 @@ The short decision record must name the problem and acceptance criteria; existin
 | F.10-02 | Import dry-run validates schema/version/assets/duplicate IDs/owner/permissions/migration compatibility | OPS-004/005, WEB-008, DSN-015, RES-008/009, SEC-002/003 | EXPAND | 2.0 full import/export | QA-002/003/007 |
 | F.10-03 | Recovery preview/conflicts/integrity/backup verification and post-restore Page Model/revision/public-render consistency | OPS-005, OPS-006, OPS-009, WEB-007, WEB-008, EDT-028 | KEEP | 0.x–1.0 safety baseline | QA-002/006/007 |
 | F.10-04 | Diagnostics for deploy/request/sync/provider/jobs/D1/cache/latency; no secrets or unnecessary personal data in logs | OPS-001–OPS-008, SEC-008, SEC-010/011 | EXPAND | 1.0 baseline; advanced operations later | QA-003/006/008 |
-| F.11-01 | 1.0 scope: own public site/Admin/working Editor slice/responsive/resource/Schedule/Twitch/publish/SEO/accessibility/security/performance | §39.2, WEB-001–WEB-032, ADM-001–ADM-010, EDT-001–EDT-042, RES-001–RES-016, SCH-001–SCH-015, INT-001–INT-021, SEO-001–SEO-005, QA-001–QA-010 | KEEP | 1.0 selected subset only; §39 per-domain gates override family ranges | QA-002–QA-009 |
+| F.11-01 | 1.0 scope: own public site/Admin/working Editor slice/responsive/resource/Schedule/Twitch/publish/SEO/accessibility/security/performance | §39.2, WEB-001–WEB-032, ADM-001–ADM-010, EDT-001–EDT-042, RES-001–RES-016, SCH-001–SCH-015, INT-001–INT-021, SEO-001–SEO-005 | KEEP | 1.0 selected subset only; §39 per-domain gates override family ranges | QA-002–QA-009 |
 | F.11-02 | 1.x: Link Hub/Content Hub/multi-platform/VOD/Shorts/calendar/commerce foundations/community/alerts/audience capture | WEB-022, CNT-001–CNT-020, INT-013–INT-021, STO-001–STO-020, SUP-001–SUP-012, COM-001–COM-018, ANL-001–ANL-004 | MERGE | 1.5–2.0 by domain | QA-002/003/008 |
 | F.11-03 | 2.x Creator OS: dashboard/analytics/content studio/email audience/sponsorship/OBS/advanced stream tools | ADM-001–ADM-010, ANL-001–ANL-010, CNT-001–CNT-020, COM-015–COM-017, CAM-001–CAM-009, OBS-001–OBS-010 | MERGE | 2.0+ | QA-002/003/008 |
 | F.11-04 | 3.x+: AI assistant/stream intelligence/business platform/marketplace/multi-site/SaaS/global ecosystem | AI-001–AI-020, MKT-001–MKT-005, TEAM-001–TEAM-006, LOC-001–LOC-006, §39.5–39.12 | MERGE | 3.0–10.0 | QA-002/003/008 |
@@ -4672,3 +4672,13 @@ A C.23.22-01–07 mind a hét történeti sor megmaradt, és a célzott szerződ
 - **F.13-18 — responsive web/PWA boundary:** removed QA IDs from the feature mapping cell, added the mobile-navigation and responsive-preview contracts, and retained QA-004/005 only as evidence anchors. Responsive web is 1.0; PWA/native remains deferred.
 - **F.13-21 — creator marketplace:** removed `CAM-009` invoice/payment status as a proxy for marketplace revenue share and added canonical resource provenance alongside template/component, OBS, digital entitlement and marketplace contracts. License/review and revenue share are owned by MKT-004/005.
 - **Evidence boundary:** eleven F.11/F.12/F.13 mapping/phase cells were reviewed and corrected. No custom-domain, analytics, email, game-profile or marketplace runtime tests were executed. F.11–F.13 remain open for full semantic review, and original-source recovery remains unresolved. P0.2 stays **IN PROGRESS / NOT PASS**.
+
+
+### 41.3.69. P0.2 — F-crosswalk separation of feature mappings from QA evidence anchors (2026-10-14)
+
+A structural scan of the 96 F.1–F.13 crosswalk rows found two remaining rows where QA IDs were mixed into the canonical feature-mapping cell:
+
+- **F.8-08:** removed `QA-008` from the mapping cell; AI/operations feature references remain there and QA-002/003/008 remain in the dedicated QA column.
+- **F.11-01:** removed `QA-001–QA-010` from the mapping cell. QA-002–QA-009 remain in the dedicated QA column. `§39.2` and the feature-family ranges remain scope references, not a claim that every referenced capability is scheduled for 1.0; the phase-cell qualifier added in §41.3.68 keeps §39 per-domain gates authoritative.
+- **Verification:** a fresh scan of all 96 F.1–F.13 crosswalk rows found no remaining `QA-###` IDs in the feature-mapping column. This is structural hygiene only; it does not prove semantic completeness or feature readiness.
+- **Evidence boundary:** no runtime tests were run. F.1–F.13 still need complete source-by-source semantic approval, and the original `00/A` / `00.9–00.9.6.B` recovery remains open. P0.2 remains **IN PROGRESS / NOT PASS**.
