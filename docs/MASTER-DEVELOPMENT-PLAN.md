@@ -5359,3 +5359,16 @@ A jelenlegi MASTER más címek alatt sok hasonló tartalmat őriz, és további 
 **Következő részfeladat:** a régi MASTER 1/A–5/G editor/page-model követelményeinek és a jelenlegi MASTER 2.3, 6, 9, 10, 14, 15 fejezeteinek soronkénti/állításonkénti leképezése; minden régi követelmény kapjon canonical célpontot, bizonyítékot, státuszt, és szükség esetén `MISSING / PARTIAL / DUPLICATE / SUPERSEDED` döntést. Ezt külön kell folytatni a publikus oldalak, integrációk, média, AI, tesztelés és release tartományaival. A hiányzó B-fejezet tartalma nem rekonstruálható ebből a struktúra-összevetésből.
 
 **Státusz:** első szerkezeti összevetés dokumentálva; szemantikai leképezés még nincs lezárva; `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.123. P0.2 — Régi MASTER képességcsoportok előzetes névfüggetlen keresése (2026-10-14)
+
+A közvetlen előd-MASTER (`87b6f0bb71cd96646b6a501ab85c242386a1124e`) és a jelenlegi MASTER teljes szövegén előzetes, névfüggetlen kulcsszókeresést végeztem a korábbi 1/A–5/G, 6/A–6/J, média/integráció, minőség és SANCI AI képességcsoportokhoz.
+
+**Keresési eredmény:** a jelenlegi MASTER-ben megtalálhatók kifejezések mind a következő csoportokhoz: editor lifecycle/CRUD, selection és manipulation, Inspector, undo/redo/history, save/reload/conflict, hierarchy/layout, responsive/inheritance, Page Model/publish/version/rollback, templates/reusable sections, média/R2, Twitch/YouTube/TikTok/Discord/OAuth, SEO/accessibility/analytics, backup/restore/security, AI/Stream Assistant, tesztelés és release/operations. A publikus oldalaknál a Home, Adásrend, Twitch, YouTube, TikTok, VOD és Shorts szó szerinti előfordulása megvan; a régi `Rólam` megnevezésre az adott keresés nem adott találatot.
+
+**Kritikus korlátozás:** ez kulcsszó-jelenléti vizsgálat, nem követelményenkénti megfeleltetés. Egy szó említése nem bizonyítja a régi viselkedés, adatfolyam, UX, hibakezelés vagy elfogadási teszt megőrzését; a keresési találat hiánya pedig nem bizonyít hiányzó funkciót, mert lehet eltérő megnevezés. Ezért sem PASS, sem MISSING döntést nem adok ki kizárólag e keresés alapján.
+
+**Következő konkrét bontás:** a régi MASTER 1/A–1/H Editor Core követelményeit tételenként kell kivonni és mindegyikhez megadni: (1) régi követelmény rövid, hű leírása, (2) jelenlegi MASTER pontos célfejezete, (3) megőrzésre vonatkozó konkrét szövegbizonyíték, (4) státusz `MATCH / PARTIAL / MISSING / DUPLICATE / SUPERSEDED / NEEDS DECISION`, (5) nyitott elfogadási feltétel. Ezt követően a 2/A–2/J, majd 3/A–5/G csoport következik. A leképezést a MASTER-ben kell folytatni; nem hozok létre második aktív tervet.
+
+**Státusz:** előzetes kulcsszókeresés dokumentálva; tételes szemantikai megfeleltetés nyitott; `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
