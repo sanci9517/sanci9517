@@ -3960,3 +3960,18 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 | E.1-S15 | Developer / Extension surface | INT / MKT / OPS / SEC | Későbbi API/SDK/marketplace; permission declaration, sandbox, provenance és rollback | PROVISIONAL MAP |
 
 **Korlát:** a táblázat lezárja az E.1 felületnevek explicit nyomkövetési hiányát, de a hozzárendelések szemantikai felülvizsgálata és a célképességek részletes acceptance-e még nyitott. A `PROVISIONAL MAP` nem implementációs státusz és nem PASS. Következőként az E.2–E.22 és F.1–F.13 crosswalk sorainak egyedi source-bullet és canonical capability szintű ellenőrzése folytatandó. P0.2 **IN PROGRESS / NOT PASS**.
+
+### 41.3.14. P0.2 — E.22 plan-maintenance requirements mapped to canonical execution controls (2026-10-14)
+
+**Forrás:** az archív `00.9.6.E / E.22 — Teljességi zár és tervkarbantartás` hat kötelező szabálya. Ezek nem termékfeature-ök, hanem a MASTER karbantartására és a végrehajtás fegyelmére vonatkozó követelmények; ezért nem szabad őket mesterségesen runtime feature ID-vé alakítani.
+
+| Source bullet | Követelmény röviden | Canonical végrehajtási kontroll | Eredmény |
+|---|---|---|---|
+| E.22-B01 | A közvetlen termékkatalógus, a végrehajtási sorrend és a domain/API/test szerződések alkotják az operatív tervet | §0.0–§0.2; §37.3; §37.9–§37.32; §41 auditnapló | MAPPED — governance |
+| E.22-B02 | A történeti ID-k csak audit/traceability hivatkozások; a munkapontot a MASTER-ből kell megérteni | §0.0 precedence rule; §40 H19–H34 ledger; §41.3.12 | MAPPED — historical traceability |
+| E.22-B03 | Minden régi követelménynek canonical domain/fázis kell; a nem térképezhető tétel UNMAPPED REQUIREMENT marad | §37.17–§37.18; §37.22–§37.30; §41.3.10–§41.3.13 | MAPPED — unresolved items remain open |
+| E.22-B04 | Új felhasználói igény ugyanebbe a MASTER-be kerül domain/fázis/függőség/DoD/teszt mezőkkel | §0.1; §25–§26; §41.3.14 | MAPPED — maintenance rule |
+| E.22-B05 | Egyszerre egy ACTIVE engineering point lehet; a későbbi képességek PLANNED/QUEUED állapotban maradnak | §0.2 ACTIVE_POINT; PARALLEL_WORKSTREAMS=0; §37.3 P0 status | MAPPED — execution invariant |
+| E.22-B06 | Minden módosítás előtt beolvasás, utána aktív pont/fázissorrend/capability/owner/gate ellenőrzés kell | §0.0 continuation protocol; §0.1 single source; §41.3.11–§41.3.14 verification notes | MAPPED — change-control rule |
+
+**Ellenőrzési korlát:** ez a tábla mind a hat E.22 tervkarbantartási szabályhoz explicit MASTER-hivatkozást ad. Nem jelenti az E.2–E.21 funkcionális crosswalk szemantikai PASS-át, nem oldja fel a hiányzó eredeti `00/A` / `00.9–00.9.6.B` forrásokat, és nem zárja le a C.23/C.24 teljes bullet-szintű leképezését. P0.2 **IN PROGRESS / NOT PASS**.
