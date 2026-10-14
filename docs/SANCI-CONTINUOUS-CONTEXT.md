@@ -2,7 +2,7 @@
 
 > **HISTORICAL CONTEXT SNAPSHOT — nem aktuális végrehajtási státusz.** Ez a dokumentum a korábbi követelmények, döntések, hibák, tesztek és felhasználói visszajelzések megőrzésére szolgál; a benne lévő régi checkboxok és „következő pont” szövegek nem írhatják felül az aktuális MASTER-t.
 >
-> **Egyetlen aktuális végrehajtási igazságforrás:** `docs/MASTER-DEVELOPMENT-PLAN.md` (branch `v2/foundation`, eleji `ACTIVE_POINT_ID`).
+> **Egyetlen aktuális termék- és végrehajtási igazságforrás:** `docs/SANCI9517-CREATOR-PLATFORM-PLAN.md` (branch `v2/foundation`, eleji aktív pont és roadmap).
 > **Korábbi tervhivatkozások:** a `docs/SANCI-MASTER-PLAN.md` és `docs/DEVELOPMENT-PLAN.md` korábbi állapotot képviselnek; az elérhető archív tervfájlok a `docs/archive/plans/` alatt találhatók.
 > **Használat:** történeti funkció vagy döntés keresésére szolgál; aktuális készültség, fázis vagy sorrend megállapítására nem.
 
