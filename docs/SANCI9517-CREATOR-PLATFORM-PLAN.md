@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.39` — 54.1 első körös 8/8 ID- és owner-routing rögzítve; **következő: 54.2#1–#15**, majd 54.3–54.16 tételes review. A 156-ból 8 első körös routinggal rendelkezik, 148 még nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.41` — 54.1–54.2 első körös 23/23 ID- és owner-routing rögzítve; **következő: 54.3#1–#7**, majd 54.4–54.16 tételes review. A 156-ból 23 első körös routinggal rendelkezik, 133 még nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -7208,7 +7208,33 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 5. Minden sikeres audit-commit után a fejléc folytatási állapotát és a legutolsó bejegyzést egyeztetni; a következő munka **egyértelmű azonosítóval**, a még nyitott részhalmazzal és a PASS/NOT PASS határral legyen megadva. A commit SHA csak a GitHub által visszaadott tényleges eredmény alapján közölhető.
 6. Nem létező vagy nem visszanyert történeti forrást nem lehet rekonstruáltnak nevezni; a 396 ID, 22 modul, 156 review és 271 történeti H-ID számlálása nem runtime teszt. A fejlesztési fagyasztás az aktív kapu PASS-áig változatlan.
 
-**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.39 COMPLETE AS FIRST-PASS ROUTING / NEXT 54.2#1–#15`. A 54.1 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.2 után 54.3–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
+**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.41 COMPLETE AS FIRST-PASS ROUTING / NEXT 54.3#1–#7`. A 54.1 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.2 után 54.3–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
+
+### 63.50.41. 54.2 Saját weboldal és Visual Editor: 15 checklist-tétel első körös routingja (2026-10-14)
+
+**Forrás:** az 54.2 mind a 15 eredeti sora és a 24. fejezet aktuális definíciói. A főmodul a 49. fejezet szerint értendő; a másodlagos domain-fogyasztók nem kapnak új CRUD-ot. A pozitív/negatív határok a későbbi acceptance-tesztek kiindulópontjai, **nem teszteredmények**.
+
+| 54.2 tétel | Meglévő capability ID(k) | Modul / owner-határ | Pozitív és negatív acceptance / nyitott rés |
+| --- | --- | --- | --- |
+| #1 Oldal CRUD, hierarchia, slug, duplikálás, archív/törlés | WEB-001, WEB-002, WEB-003 | 49.2 | A draft/published slug külön kezelendő; archiválás nem szakíthat el hivatkozást figyelmeztetés nélkül |
+| #2 Navigáció, nested menü, footer, mobilmenü, linkek | WEB-009, WEB-010, WEB-011, EDT-017 | 49.2 | Kanonikus navigáció és linkfeloldás; hibás/belső jogosulatlan link nem kerülhet csendben élesbe |
+| #3 Egyetlen Visual Editor: könyvtár, canvas, Layers, Inspector | EDT-015, EDT-007, EDT-012, EDT-013, EDT-021 | 49.2 | Egy Page Model és command pipeline; az Inspector nem duplikál üzleti domain CRUD-ot |
+| #4 Drag/drop, kijelölés, átrendezés, csoport, duplicate, törlés, zoom/pan | EDT-006, EDT-007, EDT-008, EDT-011, EDT-016 | 49.2 | Minden művelet érvényes node-fát hagy; tiltott reparent/ciklus nem menthető |
+| #5 Undo/redo, mentés, konfliktus, revision history, restore | EDT-005, EDT-027, EDT-028, EDT-029, EDT-030, EDT-031, WEB-008, WEB-007 | 49.2 | Konfliktus és hálózati hiba nem írhat felül csendben módosítást; restore nem implicit publish |
+| #6 Alapelemek: text, média, link, form, layout | EDT-016, EDT-017, EDT-018, EDT-019, EDT-043 | 49.2 | Biztonságos render és validált schema; a rich text EDT-043 későbbi fázis, nem 1.0 készültség |
+| #7 Dinamikus SANCI blokkok és kapcsolódó domainek | EDT-020, DYN-001, DYN-002, DYN-007, WEB-031 | 49.2 (Editor fogyasztó), domain-adatgazdák saját modulban | Live/schedule/content/commerce adat canonical forrásból; publikus nézetben privát vagy draft rekord nem szivároghat |
+| #8 Desktop/tablet/mobile, override, inheritance, orientáció | EDT-023, EDT-024, EDT-025, EDT-026, DSN-006 | 49.2; design token owner 49.3 | Breakpoint-váltás nem törli a másik viewport értékét; orientation viselkedés külön igazolandó |
+| #9 Globális design tokenek | DSN-001, DSN-002, DSN-003, DSN-006, DSN-007 | 49.3 Brand/Design; 49.2 fogyasztó | Globális módosítás diff/usage hatással követhető; oldal override nem íródik felül rejtetten |
+| #10 Site/page/section/component sablon, instance/override/detach | DSN-008, DSN-009, DSN-010, DSN-011, DSN-012, DSN-013, DSN-014 | 49.3; 49.2 felhasználó | Master/instance kapcsolatok és verziók stabilak; detach nem módosítja visszamenőleg a mastert |
+| #11 Preview, draft, validálás, publish/unpublish, snapshot | WEB-004, WEB-005, WEB-006, WEB-007, EDT-032, EDT-033, EDT-034 | 49.2 | Draft mentése nem implicit publish; hibás draft nem írhatja felül az éles snapshotot |
+| #12 SEO metadata, canonical, OG, sitemap, redirects, 404 | SEO-001, SEO-002, SEO-003, SEO-004, SEO-005, WEB-012, WEB-013 | 49.2; SEO szakági owner | Unpublished/staging nem indexelhető; régi slug nem vezet redirect loophoz |
+| #13 Domain/DNS/HTTPS, favicon, brand assets, maintenance | WEB-028, RES-001, DSN-001, OPS-001 | 49.2; asset 49.4, ops 49.19 | Domain/DNS/HTTPS kezelő capability és tulajdonos külön részletesen ellenőrzendő: a felsorolt ID-k önmagukban nem bizonyítják teljes lefedését |
+| #14 Űrlap, validáció, spam, consent, submission kezelés | WEB-020, EDT-019, SEC-005, SEC-006 | 49.2 public form; submissions owner NYITOTT | A publikus form és beküldés admin-életciklusa nem összemosható; szerveroldali consent/spam/retention bizonyítás nyitott |
+| #15 Web performance, image resize, lazy loading, cache, Core Web Vitals | WEB-030, RES-004, OPS-008 | 49.2; asset 49.4, ops 49.19 | Éles cache és asset variáns nem szivárogtathat draftot; mérés nélküli Core Web Vitals PASS tilos |
+
+**Kiemelt hiányjelölés:** a #13 domain/DNS/HTTPS beállítások és a #14 beküldés-kezelési admin workflow nem tekinthető automatikusan lefedettnek a megadott közeli ID-k által. A megfelelő kanonikus owner és önálló képességigény szemantikai döntésre vár; azonosítót nem találunk ki és nem jelölünk implementáltnak.
+
+**Állapot:** 54.2 **15/15 sor első körös ID/modul/acceptance routing**, ebből **2 kifejezetten részleges képességlefedettségi jelölt** (#13, #14); 54.1–54.2 összesen **23/156 első körben feldolgozott**, **133/156 még nem feldolgozott**. A teljes `54.x#N → 5.DOMAIN → F-phase → evidence` lánc, a történeti forrás és a runtime bizonyítás továbbra is nyitott. **PLAN gate: IN PROGRESS / NOT PASS.**
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
