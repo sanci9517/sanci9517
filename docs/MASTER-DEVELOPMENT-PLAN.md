@@ -3920,3 +3920,17 @@ A jelenlegi §24.1–§24.18 registry 359 stabil ID-ja esetében két külön el
 **Végrehajtott helyreállítás:** a teljes, ellenőrzött `c21997f` forrástartalom visszaállítva ugyanarra a kanonikus útvonalra a `v2/foundation` ágon. Helyreállítási commit: `91c776490bb9a24d22ac6c0ff13887277f918ce3`. A visszaolvasás megerősítette: 658 992 karakter, 3 915 sor; a P0.2 aktív pont, a 41.3.10 forrás-visszakeresési bizonyítékhatár és a `P0.2 IN PROGRESS / NOT PASS` státusz megmaradt.
 
 **Hatókör és korlát:** ez dokumentum-integritási javítás, nem feature-implementáció és nem P0.2 lezárás. A hiányzó eredeti `00/A` és `00.9–00.9.6.B` források továbbra is `UNRECOVERED / OPEN`; a teljes 359 funkció-ID kétirányú reconciliációja, a mappingek szemantikai ellenőrzése és az ID-szintű acceptance/permission/dependency/evidence kitöltés nem tekinthető teljesítettnek. A következő munka továbbra is kizárólag P0.2 forrás-visszakeresés és tételes reconciliáció, párhuzamos feature-fejlesztés nélkül. P0.2 **IN PROGRESS / NOT PASS**.
+
+### 41.3.12. P0.2 — H19–H34 archive ledger row-by-row structural reconciliation (2026-10-14)
+
+**Források:** a jelen MASTER `§40.1–§40.16` H19–H34 ledgerje és az archivált `docs/archive/MASTER-DEVELOPMENT-PLAN-2026-10-13.md` `M0.1 historical traceability ledger` táblái (batch 1: H19–H22; batch 2: H23–H34). A két fájl a `v2/foundation` ágon online visszaolvasással ellenőrizve.
+
+**Elvégzett ellenőrzés és eredmény:**
+- [x] Az archív ledgerben 271 egyedi H19–H34 azonosító található; a kanonikus MASTER §40.1–§40.16 tábláiban ugyanez a 271 azonosító szerepel.
+- [x] Hiányzó ID: 0. A MASTER-ben az archív ledgerhez képest többlet vagy hiányzó ledger-sor: 0.
+- [x] Az azonosítóhoz tartozó történeti követelménycímke mind a 271 sorban karakterpontosan egyezik az archív és a kanonikus ledger között.
+- [x] Csoportonkénti darabszám: H19=20; H20=18; H21=22; H22=19; H23=20; H24=13; H25=12; H26=12; H27=19; H28=17; H29=10; H30=14; H31=14; H32=25; H33=13; H34=23. Összesen: 271.
+
+**Mit bizonyít és mit nem:** ez az eredmény a H19–H34 ledger sorazonosságát és a történeti címkék megőrzését bizonyítja az elérhető archív ledgerhez képest. Nem bizonyítja, hogy az egyes sorok teljes leírása szemantikailag változatlan, hogy minden capability-owner/surface/phase/dependency helyes, vagy hogy bármely képesség implementálva és elfogadva van. Nem helyettesíti a hiányzó eredeti `00/A` és `00.9–00.9.6.B` forrásokat, a teljes `00.9.6.E/F` bullet-szintű szemantikai auditot vagy a 359 funkció-ID teljes kétirányú reconciliációját.
+
+**Következő lépés:** a P0.2 következő ellenőrzése a §37.22–§37.30 crosswalk és az archív `00.9.6.E/F` követelménybulletjeinek tételes, szemantikai egyeztetése; az eredményeket ugyanebben a MASTER-ben kell rögzíteni. P0.2 **IN PROGRESS / NOT PASS**.
