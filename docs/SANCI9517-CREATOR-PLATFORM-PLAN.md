@@ -6826,6 +6826,17 @@ A `0004_system_page_content.sql` történeti táblát hoz létre, míg a `0005_c
 
 **Következő kapu:** teljes szöveges/AST referenciaindex a repository összes aktív forrásán, közvetlen statikus URL-ek és kompatibilitás ellenőrzése, typecheck, tesztek, Worker build, böngészőben draft/preview/publish/rollback és Schedule regresszió. **IN PROGRESS / NOT PASS; sem törlés, sem runtime-módosítás nem történt.**
 
+### 63.50.14. Publikus Page Model és korábbi Builder assetek elkülönítése (2026-10-14)
+
+**Ellenőrzött `e910f50` refen:** repository fa (194 bejegyzés); `src/index.ts`, `public/visual-page.html`, `public/admin-home.html`, `public/admin-login.html`, `public/editor-v2/index.html`, `public/assets/page-builder.js`, `system-page-editor.js`, `page-renderer.js`, `system-page-runtime.js`, `site.js`, `src/routes/public/pages.ts`, `src/routes/public/system-pages.ts`. Statikus, célzott vizsgálat, tesztfuttatás nélkül.
+
+- A Worker `/`, `/index.html` és `/p/*` kéréseket a `/visual-page.html` assetre irányítja. A HTML tényleges scriptjei `/assets/site.js` és `/assets/page-renderer.js`; az utóbbi fejlécében kanonikus publikus Page Model renderernek, Editor v2-kompatibilisnek jelölt. **KEEP / PUBLIC RUNTIME**, tényleges kompatibilitás regressziós teszttel még igazolandó.
+- A vizsgált `visual-page.html` és `editor-v2/index.html` HTML assethivatkozásai nem töltik be a `/assets/page-builder.js`, `/assets/system-page-editor.js` vagy a `/editor/` régi szerkesztő fájlokat. Ez csak a vizsgált HTML belépési pontokra bizonyított negatív állítás.
+- A `page-builder.js` és `system-page-editor.js` önálló szerkesztőlogikát tartalmaz: **LEGACY / REUSE-REVIEW / ARCHIVE CANDIDATE**, nem bizonyítottan elhagyható. A `system-page-runtime.js` szintén külön runtime-kompatibilitási vizsgálatot igényel. Nem vonható össze a publikus `page-renderer.js` fájllal pusztán elnevezés alapján.
+- A `public/admin-home.html` továbbra is több külön üzleti művelethez ugyanazt a `/admin/editor` címet kínálja. A 22 főmodulhoz rendelt feladatalapú Admin navigációs szerződés szükséges, külön adatforrások duplikálása nélkül.
+
+**Nyitott bizonyítás:** minden aktív forrás, generált/inline URL és dinamikus hivatkozás teljes keresése; API- és mentettadat-kompatibilitás; asset közvetlen elérhetősége; typecheck/CI, Editor/Admin/Schedule tesztek; böngésző és éles publikálási regresszió. **IN PROGRESS / NOT PASS**. Nem történt kódtörlés vagy runtime-módosítás.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
