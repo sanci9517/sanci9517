@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.43` — 54.1–54.4 első körös 37/37 ID- és owner-routing rögzítve; **következő: 54.5#1–#8**, majd 54.6–54.16 tételes review. A 156-ból 37 első körös routinggal rendelkezik, 119 még nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.45` — 54.1–54.6 első körös 56/56 ID- és owner-routing rögzítve; **következő: 54.7#1–#12**, majd 54.8–54.16 tételes review. A 156-ból 56 első körös routinggal rendelkezik, 100 még nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -7208,7 +7208,7 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 5. Minden sikeres audit-commit után a fejléc folytatási állapotát és a legutolsó bejegyzést egyeztetni; a következő munka **egyértelmű azonosítóval**, a még nyitott részhalmazzal és a PASS/NOT PASS határral legyen megadva. A commit SHA csak a GitHub által visszaadott tényleges eredmény alapján közölhető.
 6. Nem létező vagy nem visszanyert történeti forrást nem lehet rekonstruáltnak nevezni; a 396 ID, 22 modul, 156 review és 271 történeti H-ID számlálása nem runtime teszt. A fejlesztési fagyasztás az aktív kapu PASS-áig változatlan.
 
-**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.43 COMPLETE AS FIRST-PASS ROUTING / NEXT 54.5#1–#8`. A 54.1–54.4 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.5–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
+**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.45 COMPLETE AS FIRST-PASS ROUTING / NEXT 54.7#1–#12`. A 54.1–54.4 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.7–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
 
 ### 63.50.41. 54.2 Saját weboldal és Visual Editor: 15 checklist-tétel első körös routingja (2026-10-14)
 
@@ -7263,6 +7263,39 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 | 54.4#7 Metadata módosítás minden hivatkozási helyen | RES-007, RES-008, DYN-006 | 49.4; fogyasztó domainnézetek | Stale cache nem mutathat tartósan régi metaadatot; publikált snapshot és változó metadata határ tisztázandó |
 
 **Állapot:** 54.4 **7/7 első körös mapping**, a felsorolt részleges szerződések továbbra is OPEN. Nem runtime vagy teljes szemantikai PASS.
+
+### 63.50.44. 54.5 Kapcsolatok és integrációk: checklist-szintű capability routing (2026-10-14)
+
+| Tétel | Stabil ID-k | Elsődleges modul / fogyasztó | Pozitív-negatív határ és nyitott gap |
+| --- | --- | --- | --- |
+| 54.5#1 Integrációs központ Twitch/YouTube/TikTok/Discord/Kick | INT-001, INT-002, INT-010, INT-013, INT-014, INT-015, INT-016 | 49.7 | A provider megléte nem jelent teljes API capability-t; unsupported művelet nem jelenhet meg elérhetőként |
+| 54.5#2 Connect/disconnect/reconnect, fiók/channel, scope/expiry | INT-007, INT-005, INT-006, INT-004 | 49.7 | Wrong-site account nem köthető; revoke után a UI nem mutathat aktív kapcsolatot |
+| 54.5#3 Token refresh/revoke, secure storage, CSRF/state, site ownership | INT-003, INT-004, INT-005, INT-019, SEC-009 | 49.7; security 49.19 | OAuth callback állapot és site kötelező; token/secret nem szivároghat logba |
+| 54.5#4 Capability/scope, quota, provider health, diagnostics | INT-018, INT-006, INT-009, INT-002, INT-020 | 49.7 | Hiányzó scope vagy quota esetén korlátozott/hibás állapotot kell jelezni |
+| 54.5#5 Webhook signature, replay, dedup, retry, dead-letter | INT-017, SEC-009, INT-008 | 49.7; security 49.19 | Érvénytelen aláírás/replay nem dolgozható fel; dead-letter részletes implementációs contract OPEN |
+| 54.5#6 Sync log, last success/failure, manual resync, conflict | INT-008, INT-020 | 49.7; domain sync owner | Sync sikertelen esetben nem jelenthet friss adatot; konfliktus feloldás nem írhat felül kézi döntést |
+| 54.5#7 Későbbi email/calendar/payment/affiliate/CRM/cloud adapterek | INT-001, INT-021, INT-018 | 49.7; domain workflow owner saját modul | Adapter registry nem jelent provider capability-t; calendar/CRM/cloud részletes scope OPEN |
+| 54.5#8 Unsupported capability jelölés, alternatív út | INT-018, INT-020, INT-006 | 49.7 | Nem támogatott API-funkció nem ajánlható működő automatizálásként |
+
+**Státusz:** 8/8 első körös routing, nem domain/fázis/evidence vagy runtime PASS; a megjelölt GAP CANDIDATE nem automatikusan új ID.
+
+### 63.50.45. 54.6 Live, Stream Studio és adásrend: checklist-szintű capability routing (2026-10-14)
+
+| Tétel | Stabil ID-k | Elsődleges modul / fogyasztó | Pozitív-negatív határ és nyitott gap |
+| --- | --- | --- | --- |
+| 54.6#1 Live/offline státusz és frissesség platformonként | LIV-001, LIV-002, LIV-007 | 49.5; provider 49.7 | Stale provider adat nem állítható biztos live állapotnak |
+| 54.6#2 Cím, kategória, játék, kezdés, nézőszám, metrikák | LIV-003, LIV-004 | 49.5 | Nem engedélyezett provider-metrika nem szimulálható |
+| 54.6#3 Player/embed és offline fallback | LIV-005, WEB-015 | 49.5; public shell 49.2 | Tiltott embed/offline helyzet nem eredményez üres vagy hibás public oldalt |
+| 54.6#4 Egy schedule-domain, recurrence, timezone, collision | SCH-001, SCH-003, SCH-004, SCH-006 | 49.5 | DST és ismétlődő esemény ütközés nem írhatja felül csendben a sorozatot |
+| 54.6#5 Draft/scheduled/confirmed/postponed/cancelled/completed | SCH-005, SCH-001 | 49.5 | Állapotátmenet és confirmed/draft részletezettsége további acceptance OPEN |
+| 54.6#6 Twitch/YouTube sync, priority, conflicts, history | SCH-007, SCH-008, INT-011, INT-013 | 49.5; 49.7 provider adapter | YouTube schedule write capability nem feltételezhető; manual override védendő |
+| 54.6#7 Game profile, content link, public calendar, countdown, iCal | SCH-012, SCH-013, SCH-014, SCH-010, SCH-009, SCH-015 | 49.5; public fogyasztó 49.2 | Editor blokk nem tartalmaz második schedule CRUD-ot; iCal későbbi scope |
+| 54.6#8 Prestream checklist, tech rehearsal, notes, markers, highlights | LIV-006, SCH-001 | 49.5 | Önálló checklist/marker workflow nincs igazolva e két általános ID-val: capability GAP CANDIDATE |
+| 54.6#9 Multistream destinations, per-provider metadata | LIV-008, INT-018 | 49.5; provider 49.7 | Nem engedélyezett multistream destination nem állítható elérhetőnek |
+| 54.6#10 Unified Chat, provider labels, moderation, send permission, partial failure | LIV-009 | 49.5; provider 49.7 | Read-only providerbe küldés tiltott; partial failure nem globális siker |
+| 54.6#11 Recording/backup/replay technikai és költségkorláttal | LIV-010 | 49.5; operations 49.19 | Tényleges recording támogatás/retention nélkül nem mutatható késznek |
+
+**Státusz:** 11/11 első körös routing, nem domain/fázis/evidence vagy runtime PASS; a megjelölt GAP CANDIDATE nem automatikusan új ID.
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
