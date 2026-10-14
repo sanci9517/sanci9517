@@ -7129,6 +7129,22 @@ A `0004_system_page_content.sql` történeti táblát hoz létre, míg a `0005_c
 
 **Kötelező regressziós tesztek:** (A) publish v1 → draft v2 → metadata PATCH → public v1 változatlan; (B) invalid draft + metadata PATCH → semmi nem kerül élesbe; (C) draft slug módosítás → korábbi public URL él; (D) explicit publish slugváltással → régi URL 301/308 új kanonikusra, query megőrzés és loop-tiltás; (E) unpublished/missing slug valódi HTTP 404; (F) public meta, canonical, OG, sitemap, robots és cache a published snapshotot követi; (G) expectedVersion ütközés, több-site azonos slug, sortOrder és rollback. **PUBLISH/METADATA CONTRACT: SOURCE-CONFLICT CONFIRMED / TEST AND DESIGN NOT PASS.** Runtime kód és DB nem változott.
 
+### 63.50.34. Teljes H19–H34 cél-ID referenciaintegritás ellenőrzése (2026-10-14)
+
+**Vizsgálat:** a jelenlegi `v2/foundation` kanonikus MASTER `24.` fejezetéből reguláris kifejezéssel kigyűjtött `[A-Z]{2,6}-NNN` capability ID-k halmazát összevetettük a `63.52–63.53` fejezet elsődleges, pontosan három oszlopos `HNN.NN | történeti funkció | cél-ID(k)` tábláinak minden sorával. Ez a **teljes strukturális cél-ID halmazellenőrzése**, nem a leírások szemantikai vagy runtime bizonyítása.
+
+| Ellenőrzési mérőszám | Eredmény |
+| --- | --- |
+| Egyedi kanonikus ID a 24. fejezetben | **396** |
+| Elsődleges H19–H34 történeti mapping sor | **271** |
+| H19–H34 cél-ID hivatkozás, amely nincs a 24. fejezetben | **0** |
+| Történeti azonosító ismétlés az elsődleges mapping sorok között | **0** |
+| Ugyanazon H-ID ismétlése későbbi javítási táblákban | **8**, tudatos korrekciós/indoklási sor: H19.16, H21.13, H21.22, H22.16, H22.19, H28.14, H32.18, H34.21 |
+
+**Döntés:** a `271 → 396` célazonosító-hivatkozások **REFERENTIAL INTEGRITY / STRUCTURAL PASS** részkapuja lezárható; nem állítható, hogy mind a 271 követelmény szemantikailag helyes helyen van, minden részfunkció lefedett, vagy a 396 képesség implementált. A nyolc későbbi korrekciós sor nem nyolc új funkció, és nem írhatja felül észrevétlenül az eredeti forrást; a végső review-ban a javított cél-ID a döntés, az eredeti sor a provenance.
+
+**Továbbra is OPEN:** a `00/A` és `00.9–00.9.6.B` történeti források visszakeresése / bizonyítékos nem-visszanyerhetőség kezelése; H19–H34 egyedi acceptance és domain owner szemantikai validálása; 49. modul és 54. review szerződés egyeztetése; felhasználói végső feature-review. **A teljes aktív PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY kapu IN PROGRESS / NOT PASS marad.**
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
