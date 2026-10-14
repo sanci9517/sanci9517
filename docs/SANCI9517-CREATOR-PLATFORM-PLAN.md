@@ -4521,3 +4521,29 @@ A mátrix a `src/routes/admin/pages.ts`, `src/routes/admin/editor.ts`, `src/rout
 
 **Státusz: IN PROGRESS / NOT PASS.** Következő egyedi-ID-s modul-szelet: SCH-001–015, Game Profile és schedule sync/public projection, beleértve a timezone/DST és provider/manual override határokat.
 
+### 63.28. SCH-001–015 — schedule és Game Profile, egyedi-ID-s bizonyítékmátrix
+
+A mátrix a `src/routes/admin/schedule.ts`, `src/core/schedule-read.ts`, `src/core/schedule/sync.ts`, `src/core/schedule/twitch-adapter.ts`, `src/routes/admin/twitch-schedule-sync.ts`, `src/routes/public/schedule.ts`, domain contracts és a kapcsolódó tesztek forrásolvasására épül.
+
+| ID | Owner / forrás | Látható alap | Nyitott acceptance / függőség |
+|---|---|---|---|
+| SCH-001 | SCHEDULE / admin schedule route + `schedule_items` | Site-scoped GET/POST/PUT/DELETE és title/platform/start/end/status/url/notes validáció | UI mezőmodell, archived state, audit completeness, invalid transition, idempotency és safe delete/restore. |
+| SCH-002 | SCHEDULE / calendar UI | Admin route listát ad, dedikált naptár/lista UI nem bizonyított | Month/week/list/upcoming/past, keresés/szűrés/sorrend/pagináció és mobile calendar. |
+| SCH-003 | SCHEDULE / date contract | ISO timestamp és UTC-alapú összehasonlítás látható | Explicit IANA timezone, DST gaps/folds, creator timezone change, locale display és recurring events. |
+| SCH-004 | SCHEDULE / recurrence | Sync domain a Twitch `is_recurring` adatot rögzíti; saját recurrence editor nincs bizonyítva | Canonical recurrence rule, occurrence exceptions, edit-one/edit-series, DST and cancellation semantics. |
+| SCH-005 | SCHEDULE / status | scheduled/live/completed/cancelled státuszok vannak; néhány időbeli validáció létezik | Állapotátmenet-mátrix, postpone/cancel reasons, stale live state, past event and restore. |
+| SCH-006 | SCHEDULE / conflict detection | Overlap/conflict service/UI nem látható | Same-channel overlap, timezone-normalized intervals, warning vs hard block and override audit. |
+| SCH-007 | SCHEDULE + INT / Twitch sync | Twitch adapter, sync endpoint, source mapping és connection identity létezik | Éles API smoke, missing/deleted source handling, partial response, rate-limit, expired auth and retry. |
+| SCH-008 | SCHEDULE / sync state | `schedule_sync_state` status/count/error/time mezőkkel és audit route error mappinggel létezik | Admin sync history/diagnostics/retry UI, last successful sync/freshness and alerting. |
+| SCH-009 | SCHEDULE / public projection | Public read config támogat next/upcoming/all lekérdezést | Dashboard countdown/live state, timezone correctness, stale/empty/error state and invalidation. |
+| SCH-010 | SCHEDULE / `readPublicSchedule` | Site-scoped public projection filters statuses, orders and limits | Published/public policy, stable sort for equal times, pagination/limits and freshness/cache contract. |
+| SCH-011 | EDITOR → SCHEDULE projection | Editor schedule config, defaults, preview helper és tests léteznek | Configured preview és public render azonos query/config eredményt adjon; error/empty/stale states. |
+| SCH-012 | GAME_PROFILE / domain contracts | `GameProfile` type/normalizer és domain test létezik | Canonical persistence table/service/API, CRUD UI, uniqueness/site scope and lifecycle nem bizonyított. |
+| SCH-013 | GAME_PROFILE → RESOURCE | Domain contract támogat asset reference-t | Artwork asset picker/usage map, replacement/delete safety, fallback and public rendering. |
+| SCH-014 | SCHEDULE → GAME_PROFILE | ScheduleEvent contract `gameProfileId` referenciát támogat; teszt bizonyítja, hogy nem másolja a game name-et | DB/API foreign-key/ownership validation, archived/deleted profile behavior, relationship UI and migration. |
+| SCH-015 | SCHEDULE / export | iCal/export/notification route nem látható | Correct timezone/UID/DTSTAMP/updated/cancelled event behavior, privacy, cache and later notification contract. |
+
+**Kritikus sync-konfliktus:** a jelenlegi `sync.ts` upsertje `ON CONFLICT(source,source_account_id,source_id)` esetén frissíti a címet, platformot, időpontot, státuszt, URL-t és megjegyzést. A vizsgált mezőmodellben nincs külön, bizonyított manual-override mező/policy. Emiatt a „Twitch sync + kézi felülbírálás” teljes viselkedését nem szabad késznek jelölni: explicit mező-/prioritás-szabály és teszt kell arra, hogy mely mezőket birtokolja a provider, melyeket a creator, és hogyan kezeljük a provider által törölt/eltűnt eseményt. A source identity index site scope-ja szintén külön multi-site gate a 63.23-ban.
+
+**Státusz: IN PROGRESS / NOT PASS.** Következő ID-szelet: INT-001–021, a meglévő Twitch OAuth/site ownership megtartásával és a provider-capability határok pontosításával.
+
