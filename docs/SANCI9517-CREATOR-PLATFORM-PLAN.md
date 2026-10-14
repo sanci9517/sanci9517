@@ -3925,7 +3925,7 @@ A fejlesztés követése ugyanebben a MASTER-ben történik. Nem hozunk létre m
 
 - **Egyetlen aktív pont:** egyszerre csak egy elsődleges, végrehajtás alatt álló terv-/fejlesztési pont lehet. A következő pont csak az aktuális pont bizonyított lezárása után aktiválható.
 - **Kötelező feladatmezők:** stabil azonosító; cél és scope; modul/domain-gazda; függőségek és blokkolók; előzetes repository/runtime/provider ellenőrzés; változtatás és érintett felületek; elfogadási kritériumok; szükséges tesztek; kockázat és helyreállítás; státusz; bizonyíték; ismert korlát; lezárás dátuma/commitja, ha rendelkezésre áll.
-- **Egységes státuszok:** `NOT STARTED`, `IN PROGRESS`, `BLOCKED`, `PASS`, `FAIL`, `DEFERRED`. A `DEFERRED` nem törlést jelent; a funkció a teljes scope része marad, megjelölt függőségekkel.
+- **Egységes státuszok:** `NOT STARTED`, `IN PROGRESS`, `BLOCKED`, `UNVERIFIED`, `PASS`, `FAIL`, `DEFERRED`. A `UNVERIFIED` azt jelenti, hogy az implementációs/runtime bizonyíték nem elegendő a készültség megállapításához; ez nem `PASS`. A `DEFERRED` nem törlést jelent; a funkció a teljes scope része marad, megjelölt függőségekkel. Az `OPEN` probléma-/acceptance-jelző, nem külön készültségi státusz; a `NOT PASS` kapuállapotot jelöl.
 - **Bizonyíték szerinti készültség:** a tervbe írás nem implementáció; a forrásszöveg-egyezés nem runtime-bizonyíték; a unit/contract teszt nem helyettesíti az integrációs vagy böngészős tesztet; a CI nem bizonyítja önmagában az éles adatfolyamot vagy a felhasználói elfogadást.
 - **Lezárás:** `PASS` csak akkor adható, ha az előre rögzített elfogadási kritériumokhoz a megfelelő bizonyítékok rendelkezésre állnak, a regressziókat ellenőrizték, és az érintett dokumentáció/státusz frissült. Hiányzó bizonyíték esetén a státusz nyitott marad.
 - **Minden munkamenet végén:** ugyanebben a fejezetben vagy az aktív munkapontnál frissíteni kell az elvégzett részt, a bizonyítékot, a nyitott blokkolót, a következő konkrét lépést és az aktív pont azonosítóját. Nem állítható folyamatos háttérmunka vagy előrehaladás olyan lépésről, amely ténylegesen nem történt meg.
@@ -4372,7 +4372,7 @@ Ez a táblázat a 63.22 forráskód-olvasási auditot köti a stabil funkcióazo
 | DYN-001–008 | Editor schedule data binding és schedule read query létezik; általános binding registry nem bizonyított | **ADAPT + BUILD hiányokra** | Whitelistelt source registry, type validation, permission/published-only boundary, state machine, cache/freshness és diagnostics szükséges. |
 | SEO-001–005 | Statikus robots meta és kliensoldali document.title/visible title-description update | **BUILD/UNVERIFIED** | Canonical, OG/X cards, structured data, redirects, sitemap/robots, preview/diagnostics és crawler/HTTP acceptance hiányzó. |
 
-**Határ:** a fenti döntések kizárólag az első, core kódszeletet fedik le. Nem osztanak ki kitalált státuszt a többi ID-hoz. A következő audit a fennmaradó modulok route/UI/schema/test leltára, majd az egyedi feature cardok fázis/dependency/acceptance mezőinek bizonyíték alapú kitöltése.
+**Határ:** a fenti döntések kizárólag az első, core kódszeletet fedik le. Nem osztanak ki kitalált státuszt a többi ID-hoz. Az akkori következő lépést a 63.25 és a 63.26–63.37 fejezetek azóta részletesen feldolgozták; az aktuális következő lépést kizárólag a legutolsó 63.x fejezet rögzíti.
 
 ### 63.24. Legacy Editor → canonical Editor v2 képességmegőrzési audit
 
@@ -4395,7 +4395,7 @@ A régi `public/editor/` modulok külön UX- és javítási kísérleteket tarta
 
 **Kötelező szabály:** a régi script eltávolítása/archiválása csak akkor zárható le, ha a képesség a v2-ben vagy bizonyítottan felesleges explicit döntéssel. Az eltérő adatmodellek, globális event patch-ek és direct mutation miatt a legacy kód nem automatikusan újrahasználható; a működő UX-t és edge case-eket viszont nem szabad bizonyíték nélkül eldobni.
 
-**Státusz: IN PROGRESS / NOT PASS.** A táblázat első összehasonlítás; a v2-ben lévő képességeket interakciós és E2E teszttel kell igazolni, a hiányzó funkciókat a 396 ID feature contractjaiban kell rögzíteni.
+**Státusz: IN PROGRESS / NOT PASS.** A táblázat első összehasonlítás; a v2-ben lévő képességeket interakciós és E2E teszttel kell igazolni, a hiányzó funkciókat a 396 ID feature contractjaiban kell rögzíteni. Az itt kijelölt következő lépések történeti auditjegyzetek; az aktuális következő pontot a legutolsó 63.x fejezet tartalmazza.
 
 ### 63.25. Nem-Editor termékmodulok — route/UI/schema/test bizonyíték és megvalósítási határ
 
@@ -4419,7 +4419,7 @@ A régi `public/editor/` modulok külön UX- és javítási kísérleteket tarta
 
 **Következtetés:** a repository jelenlegi technikai alapja valós, de főként auth/site ownership, Editor/Page Model, schedule/Twitch és settings köré koncentrálódik. A táblázatban felsorolt további Creator OS domainek célzott, önálló modulok; jelen állapotban nem jelölhetők késznek. Ez nem ok a terv szűkítésére: a helyes megoldás a modulonkénti implementációs szerződés és fázis, nem az összes funkció Editorba vagy egyetlen admin route-ba zsúfolása.
 
-**Státusz: IN PROGRESS / NOT PASS.** A leltár a fájlfán és route-regiszteren alapul. A hiányzó képességek végleges BUILD döntéséhez szükséges a teljes route consumer/search, schema/migration és runtime acceptance kör; az „UNVERIFIED” státusz addig nem alakítható PASS-szá.
+**Státusz: IN PROGRESS / NOT PASS.** A leltár a fájlfán és route-regiszteren alapul. A hiányzó képességek végleges BUILD döntéséhez szükséges a teljes route consumer/search, schema/migration és runtime acceptance kör; az „UNVERIFIED” státusz addig nem alakítható PASS-szá. Az itt kijelölt következő lépések történeti auditjegyzetek; az aktuális következő pontot a legutolsó 63.x fejezet tartalmazza.
 
 ### 63.26. EDT-001–044 — funkciónkénti bizonyítékmátrix, első teljes modul-szelet
 
@@ -4474,7 +4474,7 @@ A 63.23 összesített ID-csoportjait ez a mátrix az EDT minden egyes stabil ID-
 
 **EDT-függőségi gerinc (tervezett gate, nem kész státusz):** EDT-001/002 → EDT-003/004/005/006 → EDT-007–020 → EDT-021/022 → EDT-023–026 → EDT-027–033 → EDT-034; az EDT-035–044 hozzáférhetőség, mobil, rich text, interakció és személyes beállítás acceptance-e a kapcsolódó alapok után zárható. Ez a függőségi sorrend nem engedélyez implementációt a teljes terv lezárása előtt.
 
-**Státusz: IN PROGRESS / NOT PASS.** Ez az első teljes, egyedi-ID-s modul-szelet; a fenti nyitott acceptance pontok nem jelentenek automatikus BUILD döntést. A következő lépés a WEB-001–032 és a közös publish/revision contract ugyanezen szintű, egyedi ID-s bizonyítékmátrixa.
+**Státusz: IN PROGRESS / NOT PASS.** Ez az első teljes, egyedi-ID-s modul-szelet; a fenti nyitott acceptance pontok nem jelentenek automatikus BUILD döntést. A WEB-001–032 mátrixot a 63.27 azóta rögzíti; az aktuális következő pontot a legutolsó 63.x fejezet tartalmazza.
 
 ### 63.27. WEB-001–032 — oldalak, publikálás és publikus felület, egyedi-ID-s bizonyítékmátrix
 
@@ -4519,7 +4519,7 @@ A mátrix a `src/routes/admin/pages.ts`, `src/routes/admin/editor.ts`, `src/rout
 
 **Külön szerveroldali korrekciós követelmény, mielőtt WEB/PUBLISH PASS adható:** a vizsgált `admin/pages.ts` create útvonal az `isPublished=true` esetet elfogadja, miközben nem hívja a `validatePublishDocument`-et; az `admin/editor.ts` save/publish és rollback útvonalon az `expectedVersion` jelenleg opcionális. Ezeket nem szabad pusztán UI oldali guarddal lezárni. A változtatás előtt a meglévő teszteket és minden API consumer-t fel kell térképezni; utána valid/invalid create, publish, conflict és concurrent update negatív teszt kell.
 
-**Státusz: IN PROGRESS / NOT PASS.** Következő egyedi-ID-s modul-szelet: SCH-001–015, Game Profile és schedule sync/public projection, beleértve a timezone/DST és provider/manual override határokat.
+**Státusz: IN PROGRESS / NOT PASS.** A SCH-001–015 egyedi-ID-s mátrixot a 63.28 azóta rögzíti; az aktuális következő pontot a legutolsó 63.x fejezet tartalmazza.
 
 ### 63.28. SCH-001–015 — schedule és Game Profile, egyedi-ID-s bizonyítékmátrix
 
@@ -4545,7 +4545,7 @@ A mátrix a `src/routes/admin/schedule.ts`, `src/core/schedule-read.ts`, `src/co
 
 **Kritikus sync-konfliktus:** a jelenlegi `sync.ts` upsertje `ON CONFLICT(source,source_account_id,source_id)` esetén frissíti a címet, platformot, időpontot, státuszt, URL-t és megjegyzést. A vizsgált mezőmodellben nincs külön, bizonyított manual-override mező/policy. Emiatt a „Twitch sync + kézi felülbírálás” teljes viselkedését nem szabad késznek jelölni: explicit mező-/prioritás-szabály és teszt kell arra, hogy mely mezőket birtokolja a provider, melyeket a creator, és hogyan kezeljük a provider által törölt/eltűnt eseményt. A source identity index site scope-ja szintén külön multi-site gate a 63.23-ban.
 
-**Státusz: IN PROGRESS / NOT PASS.** Következő ID-szelet: INT-001–021, a meglévő Twitch OAuth/site ownership megtartásával és a provider-capability határok pontosításával.
+**Státusz: IN PROGRESS / NOT PASS.** Az INT-001–021 egyedi-ID-s mátrixot a 63.29 azóta rögzíti; az aktuális következő pontot a legutolsó 63.x fejezet tartalmazza.
 
 ### 63.29. INT-001–021 — integrációs központ és provider adapterek, egyedi-ID-s bizonyítékmátrix
 
@@ -4577,7 +4577,7 @@ A mátrix a Twitch OAuth/crypto/site-ownership route-okat, Twitch schedule adapt
 
 **Biztonsági megőrzési szabály:** a meglévő Twitch OAuth state hashing/TTL/single-use, encrypted token storage, refresh lock és site ownership kódot újra kell használni és megőrizni. Ne készüljön párhuzamos token store vagy második OAuth flow. A közös provider adapter a lifecycle/capability határt egységesíti, nem teszi az összes szolgáltató OAuth- és adatmodelljét azonossá.
 
-**Státusz: IN PROGRESS / NOT PASS.** A Twitch alap kód- és tesztbizonyítéka létezik, de ebben a lépésben nem futott teszt és nem történt éles provider smoke. Következő ID-szelet: RES-001–016, a D1/R2 asset alap, upload/processing, reference safety és shared picker határ.
+**Státusz: IN PROGRESS / NOT PASS.** A Twitch alap kód- és tesztbizonyítéka létezik, de ebben a lépésben nem futott teszt és nem történt éles provider smoke. A RES-001–016 mátrixot a 63.30 azóta rögzíti; az aktuális következő pontot a legutolsó 63.x fejezet tartalmazza.
 
 ### 63.30. RES-001–016 — canonical Media/Asset/Font/Icon Registry, egyedi-ID-s bizonyítékmátrix
 
@@ -4604,7 +4604,7 @@ A jelenlegi alap: `Env.MEDIA: R2Bucket`, `media` D1 tábla (id, object_key, orig
 
 **Shared UI boundary:** az Editor, Content Studio, Store, Brand Kit és public renderer ugyanazt a canonical Asset ID-t/reference-et fogyasztja. A picker lehet újrahasználható UI, de nem külön media API, külön metadata store vagy második R2 naming system. Font/icon library szintén a RESOURCE domain része, a design token/font usage pedig a DESIGN_SYSTEM domainből hivatkozik rá.
 
-**Státusz: IN PROGRESS / NOT PASS.** A meglévő táblát, bindingot és type-okat meg kell tartani és bővíteni; upload/pipeline/usage-map/safe-delete előtt nincs engedély párhuzamos asset rendszer vagy teljes funkció PASS jelölésére. Következő ID-szelet: DSN-001–018, token/template/component registry és site-scoping.
+**Státusz: IN PROGRESS / NOT PASS.** A meglévő táblát, bindingot és type-okat meg kell tartani és bővíteni; upload/pipeline/usage-map/safe-delete előtt nincs engedély párhuzamos asset rendszer vagy teljes funkció PASS jelölésére. A DSN-001–018 mátrixot a 63.31 azóta rögzíti; az aktuális következő pontot a legutolsó 63.x fejezet tartalmazza.
 
 ### 63.31. DSN-001–018 — Brand Kit, design tokens, template és component registry
 
@@ -4633,7 +4633,7 @@ A forrásbizonyíték: `ThemeTokens`/ `SitePresentation` domain type-ok és norm
 
 **Site-scoping decision gate:** `design_tokens.name` is globally UNIQUE and `editor_components` has no `site_id`. These may be legacy single-site constraints; they must not be changed blindly. Before multi-site/agency SaaS, define whether each record is global, workspace-scoped or site-scoped; migrate existing rows safely and add cross-site negative tests. Design-system APIs must reuse one canonical registry, not create a second theme/template database.
 
-**Státusz: IN PROGRESS / NOT PASS.** Next ID-slice: DYN-001–008 + SET-001–004 + SEO-001–005, because dynamic data, settings and publication metadata share important public-rendering boundaries.
+**Státusz: IN PROGRESS / NOT PASS.** A DYN/SET/SEO mátrixot a 63.32 azóta rögzíti; az aktuális következő pontot a legutolsó 63.x fejezet tartalmazza.
 
 ### 63.32. DYN-001–008, SET-001–004, SEO-001–005 — public data, settings és metadata contract
 
@@ -4661,7 +4661,7 @@ A forrásbizonyíték: `src/routes/admin/settings.ts` és `src/routes/public/sit
 
 **Public metadata acceptance:** a kliensoldali `document.title` módosítás nem bizonyítja, hogy a crawler a helyes title/description/OG/canonical adatot kapja. Minden publikált page-hez ellenőrizni kell a nyers HTTP HTML-t, status code-ot, canonical/robots/OG/X/structured data kimenetet és sitemap inclusiont; draft/preview nem indexelhető. Ezt browser/HTTP acceptance nélkül nem lehet PASS-nak jelölni.
 
-**Státusz: IN PROGRESS / NOT PASS.** Következő ID-szelet: CNT-001–022 és LIV-001–010, vagyis tartalom-adatgazda, provider metadata handoff és public projection.
+**Státusz: IN PROGRESS / NOT PASS.** A CNT/LIV mátrixot a 63.33 azóta rögzíti; az aktuális következő pontot a legutolsó 63.x fejezet tartalmazza.
 
 ### 63.33. CNT-001–022 és LIV-001–010 — Content Studio és Live State domainhatár
 
@@ -4704,7 +4704,7 @@ A jelenlegi route-regiszterben a Twitch adapter és schedule sync látható, de 
 
 **Határszabály:** a `schedule_items` az adásrend kanonikus rekordja, nem a content library. A Twitch adapter connection metadata-t és schedule segmentet adhat; a Content Studio canonical content itemeket birtokolja, a Live State pedig a pillanatnyi stream állapotot. A public page és Editor blokk csak ezeket a read projectionöket fogyasztja. Sem a Page Model, sem az Integrations modul nem válhat content/live catch-all adattárrá.
 
-**Státusz: IN PROGRESS / NOT PASS.** A következő ID-szelet: COM-001–020, STO-001–021 és SUP-001–012, külön közösségi identitás, termék/rendelés és entitlement lifecycle határokkal.
+**Státusz: IN PROGRESS / NOT PASS.** A COM/STO/SUP mátrixot a 63.34 azóta rögzíti; az aktuális következő pontot a legutolsó 63.x fejezet tartalmazza.
 
 ### 63.34. COM-001–020, STO-001–021, SUP-001–012 — Community, Store és Support/Entitlement
 
@@ -4768,7 +4768,7 @@ A route-/schema-leltárban nem látható dedikált Community/Fan Identity, Produ
 
 **Kötelező életciklus-szabály:** a Store Order, provider Payment state, Support event és Entitlement nem egyetlen státusz. A payment provider megerősített eseménye frissíti az ORDER állapotot; az ENTITLEMENT policy ebből dönt hozzáférésről; COMMUNITY/WEB/RESOURCE csak ezt olvassa. Refund/chargeback/cancel esetén a hozzáférés változását idempotensen és auditáltan kell végrehajtani. Semmilyen UI vagy AI nem állíthat be közvetlenül fizetési vagy tagsági állapotot.
 
-**Státusz: IN PROGRESS / NOT PASS.** A következő ID-szelet: ANL-001–010, CAM-001–009, AUT-001–014 és AI-001–021, külön mérési esemény, kampány, workflow és AI action boundaries.
+**Státusz: IN PROGRESS / NOT PASS.** Az ANL/CAM/AUT/AI mátrixot a 63.35 azóta rögzíti; az aktuális következő pontot a legutolsó 63.x fejezet tartalmazza.
 
 ### 63.35. ANL-001–010, CAM-001–009, AUT-001–014, AI-001–021 — Analytics, Campaigns, Automation és SANCI AI
 
@@ -4833,7 +4833,7 @@ A jelenlegi route-/migration-/test-leltárban nem látható dedikált analytics 
 
 **Kanonikus végrehajtási lánc:** ANALYTICS mérési eseményt és riportot birtokol; CAMPAIGN üzleti kampányt/dealt birtokol; AUTOMATION eseményből engedélyezett actiont hajt végre; AI tervet/javaslatot készít és jóváhagyott canonical commandokat kér. Ezek között explicit versioned event/API contract legyen. Egy analytics event nem automatikusan workflow trigger, egy AI-javaslat nem domain state, és egy workflow-run nem helyettesíti a security audit logot.
 
-**Státusz: IN PROGRESS / NOT PASS.** Következő ID-szelet: SEC-001–012, OPS-001–011, QA-001–010, LOC-001–006 és TEAM-001–007.
+**Státusz: IN PROGRESS / NOT PASS.** A SEC/OPS/QA/LOC/TEAM mátrixot a 63.36 azóta rögzíti; az aktuális következő pontot a legutolsó 63.x fejezet tartalmazza.
 
 ### 63.36. SEC-001–012, OPS-001–011, QA-001–010, LOC-001–006, TEAM-001–007 — cross-cutting acceptance contract
 
@@ -4890,7 +4890,7 @@ A jelenlegi forrásban auth/session/password/require-auth, site-context/ownershi
 
 **Cross-cutting closure rule:** a shared security/operations feature may provide a reusable helper/service, but each domain still needs to prove it uses that service correctly. For example, the existence of `requireAuth` does not prove every route has the right role check; the existence of `audit_log` does not prove all sensitive actions are audited; the existence of a migration command does not prove backup/restore works.
 
-**Státusz: IN PROGRESS / NOT PASS.** Következő ID-szelet: ADM/SEARCH/NTF/HELP/DEV/EXTENSION/MKT, majd a maradék LIV/OBS és a teljes feature ID-k fázis/dependency keresztellenőrzése.
+**Státusz: IN PROGRESS / NOT PASS.** Az ADM/SEARCH/NTF/HELP/DEV/MKT/OBS mátrixot a 63.37, a teljes ID-fázis keresztmegfeleltetést a 63.38 azóta rögzíti; az aktuális következő pontot a legutolsó 63.x fejezet tartalmazza.
 
 ### 63.37. ADM-001–013, SEARCH-001–005, NTF-001–005, HELP-001–004, DEV-001–006, MKT-001–005, OBS-001–010
 
@@ -4949,7 +4949,7 @@ A jelenlegi repositoryban az Admin shell/home, auth és Editor v2 létezik; a de
 
 **Module boundary rules:** (1) Dashboard aggregates and navigates; it never owns domain records. (2) Search index is derived, permission-aware and deletable; it is not a second source of truth. (3) Notifications are derived from domain events and own delivery/preferences only. (4) Help references canonical feature IDs. (5) Creator outbound webhooks/API keys belong to DEV; provider inbound webhooks belong to INT. (6) Extension artifacts never gain direct arbitrary D1 access. (7) OBS is a dedicated Stream Tools domain; Editor can place an overlay preview/block but cannot own pairing or commands.
 
-**Státusz: IN PROGRESS / NOT PASS.** Ezzel a 49. főmodulok nagy részéhez van kódleltárból származó, egyedi ID-s hiánylista; még hátra van a teljes feature ID-k függőségi/fázis keresztezése, a feature card kötelező mezőinek kitöltési ellenőrzése és a terv konzisztencia-gate-ek végső felülvizsgálata.
+**Státusz: IN PROGRESS / NOT PASS.** Az egyedi-ID-s hiánymátrixok elkészültek, a fázis-keresztmegfeleltetést a 63.38 rögzíti; továbbra is nyitott a funkciókártyák kötelező mezőinek és a végső konzisztencia-gate-ek ellenőrzése. Az aktuális következő pontot a legutolsó 63.x fejezet tartalmazza.
 
 ### 63.38. A 396 funkció-ID kanonikus F0–F11 fázis-keresztmegfeleltetése
 
@@ -5007,5 +5007,5 @@ Ez a mátrix a 24. fejezet stabil ID-jait köti a 41.2/63.5 roadmaphez. **Fázis
 
 **Konzisztencia-korlát:** a fázis-hozzárendelés a funkció katalógus minden ID-ját lefedi csoportos vagy egyedi sorral; a tényleges végrehajtás előtt a 25/26. fejezet szerinti kártyán belül meg kell jelölni a pontos al-fázist, blokkoló dependency-t, acceptance-t és bizonyítékot. A táblázat nem állítja, hogy a jelenlegi repo a későbbi fázisokat megvalósítja.
 
-**Státusz: IN PROGRESS / NOT PASS.** Következő: automatikus statikus ellenőrzés az ID-unikalitás, modul-lefedettség, active-point konfliktusok és a 63. fejezet lezárási checklistje ellen; utána csak bizonyított eltéréseket javítunk.
+**Státusz: IN PROGRESS / NOT PASS.** Az ID-unikalitás, csoportlefedettség és aktív pont statikus ellenőrzését a 63.39 rögzíti; a végső checklist és feature-card mezőellenőrzés még nyitott. Az aktuális következő pontot a legutolsó 63.x fejezet tartalmazza.
 
