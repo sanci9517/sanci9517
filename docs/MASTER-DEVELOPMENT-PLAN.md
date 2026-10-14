@@ -5770,3 +5770,44 @@ A „MATCH candidate” csak a tervezett elemkategória jelenlétét jelenti; ne
 **Crosswalk-következtetés:** a jelenlegi tervben EDT-027–031 és WEB-004–008 megfelelő canonical horgonyok, de a queue/idempotency, timeout-ismeretlen kimenetel, exact revision acknowledgement és recovery snapshot frissítési sorrend külön acceptance-t igényel. A D1 update konkrét runtime megvalósítása ebből a tervleképezésből nem bizonyított.
 
 **Státusz:** 20 követelmény egyenként leképezve; a mentési állapotgép és a runtime release evidence nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
+
+
+### 41.3.134. P0.2 — Régi 2/A Hierarchy: tételes hierarchia-crosswalk (2026-10-14)
+
+**Forrás:** közvetlen előd-MASTER `87b6f0bb71cd96646b6a501ab85c242386a1124e`, 2/A, 20 atomikus pont. **Canonical célpontok:** EDT-001–004, EDT-008/011–014, EDT-016, EDT-023–026, EDT-028/032–034; DSN reusable slot/structure rules; WEB-004–008 persistence/publish. A jelenlegi EDT-002 “Node IDs and parent/child invariants” címke nem bizonyítja automatikusan az összes történeti hierarchy funkciót.
+
+| # | Régi hierarchia-követelmény | Canonical célpont | Státusz | Lezárási / acceptance feltétel |
+|---:|---|---|---|---|
+| 1 | Root container | EDT-001/002, EDT-016 | PARTIAL / VERIFY | Page Model root és megengedett gyökér-node típus explicit; root törlése/duplikálása/reparentje tiltott vagy definiált; üres oldal determinisztikus. |
+| 2 | Section | EDT-016, DSN-013 | PLAN MATCH / VERIFY | Section node typed schema-val, allowed children és responsive/render semantics-szel; ne legyen puszta DOM wrapper, ha a Page Modelben külön node. |
+| 3 | Parent/child | EDT-002 | PLAN MATCH / RELEASE GATE | Minden node egy canonical parenttel rendelkezik (kivéve explicit root szabály), a children sorrend stabil; ciklus és duplikált node ID tiltott. |
+| 4 | Nested nesting | EDT-002, EDT-016 | PARTIAL | Megengedett mélység és típusonkénti nesting matrix; túl mély vagy tiltott beágyazás UI és szerver oldalon is elutasítva. |
+| 5 | Empty container | EDT-016/041 | PARTIAL | Üres container/section támogatott és szerkeszthető; empty state, drop target, preview és publikus render nem omlik össze, szükség esetén onboarding hint. |
+| 6 | Reparent | EDT-003/004/008/011 | PLAN MATCH / RELEASE GATE | Egyetlen atomic command; cycle prevention, source/target validation, sibling order és rollback; failed operation nem változtat részlegesen fát. |
+| 7 | Invalid nesting tiltás | EDT-002/022, DSN-013 | PARTIAL / RELEASE GATE | Canonical allowed-child schema a kliens és szerver számára; drag preview is jelzi a tiltást, API mutation nem tudja megkerülni. |
+| 8 | Breadcrumb | EDT-006/013; EDT-037 | PARTIAL / VERIFY | Kiválasztott node ancestry útvonala a canonical tree-ből származik; parentre navigálás helyes, stale selection és törölt ancestor kezelve; keyboard accessible. |
+| 9 | X-Ray | EDT-007/009/010; EDT-013 | UNMAPPED / DECISION | A régi forrás külön nevesíti, de a jelenlegi registryben nincs X-Ray/structure-overlay funkció-ID. Döntés kell: 1.0 része-e; ha igen, külön célpont és overlay geometry/zoom/accessibility acceptance. |
+| 10 | Drop zone | EDT-008/010/011 | PARTIAL | Valid insertion target, before/inside/after placement és hover preview; drop-zone hit testing zoom/scroll alatt pontos, invalid cél nem engedi a commitot. |
+| 11 | Hierarchy D1 persistence | EDT-001/002/028; WEB-004 | PARTIAL / RELEASE GATE | Parent-child sorrend a canonical Page Model részeként mentődik, újratöltés után azonos fa; külön hierarchy tároló nem válhat második source of truth-szá. |
+| 12 | Hierarchy preview | EDT-032/034; EDT-013 | PARTIAL | Preview ugyanazt a canonical node tree-t rendereli; selection/overlay editor-only, publikus kimenetben nem jelenhet meg. |
+| 13 | Hierarchy publish | EDT-033; WEB-004–008 | PARTIAL / RELEASE GATE | Publish a validált, mentett canonical revisiont teszi publikussá; hierarchy draft módosítás nem szivároghat a public rendererbe publish előtt. |
+| 14 | Hierarchy undo/redo | EDT-003–005, EDT-011 | PLAN MATCH / RELEASE GATE | Reparent/reorder/create/delete/duplicate egy tranzakcióban visszafordítható; tree, selection, history és persisted model konzisztens marad. |
+| 15 | Tree search | EDT-012; EDT-015 is csak library search, nem bizonyíték | PARTIAL / VERIFY | Layers tree kereső külön acceptance: ancestor context, clear/reset, keyboard navigation, no-results state és találat kijelölése; a block library search nem helyettesíti. |
+| 16 | Collapse/expand | EDT-012 | PLAN MATCH / VERIFY | Node ág összecsukása/kinyitása nem módosítja a Page Modelt; selected descendant viselkedése explicit, tree state preference policy külön az editor documenttől. |
+| 17 | Multi-level drag/drop | EDT-008/011 | PARTIAL / RELEASE GATE | Többszintű reparent, nested target, scroll, zoom, pointer cancel/loss, Escape és invalid drop teszt; commit legfeljebb egyszer, transient state mindig felszabadul. |
+| 18 | Allowed-child rules | EDT-002/016, DSN-013 | PARTIAL | Node type → allowed child types és slot constraints verziózott registry; minden create/paste/duplicate/import/reparent útvonal ugyanazt a validátort használja. |
+| 19 | Slot/capacity rules | EDT-016, DSN-013/014 | PARTIAL / DECISION | Slot minimum/maximum child count, required slots, default insertion és reusable component slot semantics explicit; túltöltés vagy hiányzó required slot validációja definiált. |
+| 20 | Locked subtree szabály | EDT-014, EDT-011 | PARTIAL / VERIFY | Locked node/subtree alatt mutáció, reparent, delete, bulk action és keyboard shortcut viselkedése explicit; csak engedélyezett unlock után módosítható, parent lock öröklési policy dokumentált. |
+
+#### Kötelező hierarchia-kontraktus
+
+1. **Egy canonical tree:** Page Model node IDs, parent/children, order, node type és props az egyetlen szerződött dokumentumállapot. Canvas DOM, Layers tree, preview és D1 nem alkothat párhuzamos hierarchia-forrást.
+2. **Egy validátor minden mutációs útvonalra:** create, paste, duplicate, import, drag/drop, reparent és bulk operation ugyanazt az allowed-child/capacity/cycle szabályt használja kliensen és szerveren.
+3. **Atomicity és rollback:** reparent/reorder/multi-level drop vagy teljesen megtörténik, vagy semmi sem változik; history és dirty state csak sikeres canonical command után frissül.
+4. **Megjelenítés és tartósság különválasztása:** breadcrumb, search, collapse/expand és X-Ray/overlay nem írhatja át a dokumentumfát; hierarchy save nem publish, preview nem publish.
+5. **Lock policy:** a subtree lock öröklése, kivételei és admin override-ja explicit; a UI tiltás önmagában nem authorization.
+6. **Tesztminimum:** empty root/section, legal/illegal nesting, cycle attempt, slot capacity boundary, multi-level reparent, invalid drop, cancel/escape, locked ancestor, search/expand/select, undo/redo, save/reload, preview/public parity és stale revision conflict.
+
+**Crosswalk-következtetés:** az EDT-002/008/011/012/016 jó canonical horgonyok, de a történeti “X-Ray”, tree search és slot/capacity/locked-subtree edge case-ek nem tekinthetők teljesítettnek a registry-címkék alapján. Az X-Ray külön scope döntést igényel. A hierarchia persistence és publish csak az általános Page Model/revision/publish contracttal együtt zárható le.
+
+**Státusz:** 20 követelmény tételesen leképezve; X-Ray scope, allowed-child/capacity matrix és runtime acceptance nyitott. `00.9.6.B` **UNRECOVERED / OPEN**; P0.2 **IN PROGRESS / NOT PASS**; fejlesztési fagyasztás változatlan.
