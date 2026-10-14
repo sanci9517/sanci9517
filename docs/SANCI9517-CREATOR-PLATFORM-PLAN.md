@@ -4579,3 +4579,30 @@ A mátrix a Twitch OAuth/crypto/site-ownership route-okat, Twitch schedule adapt
 
 **Státusz: IN PROGRESS / NOT PASS.** A Twitch alap kód- és tesztbizonyítéka létezik, de ebben a lépésben nem futott teszt és nem történt éles provider smoke. Következő ID-szelet: RES-001–016, a D1/R2 asset alap, upload/processing, reference safety és shared picker határ.
 
+### 63.30. RES-001–016 — canonical Media/Asset/Font/Icon Registry, egyedi-ID-s bizonyítékmátrix
+
+A jelenlegi alap: `Env.MEDIA: R2Bucket`, `media` D1 tábla (id, object_key, original_name, mime_type, size_bytes, alt_text, created_at, site_id), `MediaAsset`/AssetReference type és normalizer a `src/core/domain/contracts.ts` fájlban, valamint Editor node-típusok/palette. A vizsgált Worker route-regiszterben nincs dedikált media API. Ebből a tárolási alap létezése bizonyítható; a teljes asset lifecycle nem.
+
+| ID | Owner / forrás | Látható alap | Nyitott acceptance / függőség |
+|---|---|---|---|
+| RES-001 | RESOURCE / MediaAsset type + D1 media | Canonical type/ID és metadata table alap létezik | Nincs bizonyított registry service/API, list/detail lifecycle vagy asset uniqueness policy; egyetlen registry legyen. |
+| RES-002 | RESOURCE / D1 + R2 binding | D1 metadata és R2 binding létezik | Upload/delete/replace consistency, object-key generation, orphan scan, transaction/compensation and restore. |
+| RES-003 | RESOURCE / upload API | Upload/progress/cancel/retry endpoint/UI nem látható | MIME sniffing, size cap, filename normalization, authorization, streaming upload, progress/cancel/retry and partial R2 failure. |
+| RES-004 | RESOURCE / image processing | Thumbnail/variant/resize/crop/optimization pipeline nem bizonyított | Processing job/state, original retention, variant references, metadata stripping, dimension caps and retry. |
+| RES-005 | RESOURCE / asset query | Registry search/filter/sort/pagination API nem látható | Server-side query over canonical assets only, site scope, stable sort, pagination and permission-aware UI. |
+| RES-006 | RESOURCE / collections | Asset collection/tag/folder schema/API nem látható | Asset-only taxonomy, nested folder semantics, bulk move, delete/restore and no overlap with CNT/STORE taxonomy. |
+| RES-007 | RESOURCE / metadata | Alt text field exists; license/source/caption/rights metadata not in the observed media schema | Required metadata policy by asset kind, rights/expiry/consent, provenance, accessibility warnings and import path. |
+| RES-008 | RESOURCE / usage map | Asset reference normalizer exists; reference scanner/usage map not proven | Index every Page Model/domain reference, update on save/publish/delete, cross-site protection and “in use” report. |
+| RES-009 | RESOURCE / safe lifecycle | Safe replace/archive/delete/restore service not visible | Referenced-delete block/replace, soft delete or recoverable tombstone, R2 failure compensation and audit. |
+| RES-010 | EDITOR → RESOURCE | Editor has image/video/audio/icon/embed node types | Shared picker must consume the canonical registry and return asset ID/reference; Editor must not own upload metadata. |
+| RES-011 | RESOURCE / icon registry | Icon node type exists; canonical icon catalog/search/category/preview not proven | License/provenance, searchable icons, stable ID, size/color semantics, keyboard accessible picker. |
+| RES-012 | RESOURCE / SVG security | Sanitizer/upload gate not proven | SVG active-content sanitization, external reference rejection, CSP/content-type and malicious-file negative tests. |
+| RES-013 | RESOURCE / font registry | Font node/type category exists; font registry/API/weight/style metadata not proven | Source/license, weight/style variants, fallback stack, preload/performance and public-safe delivery. |
+| RES-014 | RESOURCE / private download | Authorized expiring download URL/service not visible | Signed URL expiry, site scope, one-time/limited access if needed, cache headers and no direct private R2 exposure. |
+| RES-015 | RESOURCE / diagnostics | Broken-asset/metadata/orphan scan not proven | Scheduled/manual diagnostics, missing object and stale DB record report, repair workflow and safe retry. |
+| RES-016 | RESOURCE + ENTITLEMENT | Paid/private asset access policy not implemented/proven | Server-side entitlement/access gate, revocation and expiry; public asset URLs cannot bypass private authorization. |
+
+**Shared UI boundary:** az Editor, Content Studio, Store, Brand Kit és public renderer ugyanazt a canonical Asset ID-t/reference-et fogyasztja. A picker lehet újrahasználható UI, de nem külön media API, külön metadata store vagy második R2 naming system. Font/icon library szintén a RESOURCE domain része, a design token/font usage pedig a DESIGN_SYSTEM domainből hivatkozik rá.
+
+**Státusz: IN PROGRESS / NOT PASS.** A meglévő táblát, bindingot és type-okat meg kell tartani és bővíteni; upload/pipeline/usage-map/safe-delete előtt nincs engedély párhuzamos asset rendszer vagy teljes funkció PASS jelölésére. Következő ID-szelet: DSN-001–018, token/template/component registry és site-scoping.
+
