@@ -3473,6 +3473,8 @@ Az ellenőrzés a MASTER aktuális repository-változatára vonatkozik; nem jele
 - [ ] A teljes termékfunkciók közötti szemantikai duplikáció- és függőségellenőrzés még nem teljes; a szerkezeti ellenőrzés nem helyettesíti.
 - [ ] A történeti források minden követelményének megőrzése és a hiányzó források állapotának igazolása nem tekinthető teljesnek pusztán a jelenlegi dokumentum belső ellenőrzése alapján.
 - [ ] A valódi F0 mentés–újratöltés–preview–publish–publikus oldal end-to-end ellenőrzés még nem futott le ebben a dokumentumellenőrzésben; ez a következő implementációs/validációs feladat.
-- [ ] Typecheck, domain/editor tesztek, CI, valódi böngészős smoke és éles Worker/D1 ellenőrzés eredményeit külön kell rögzíteni, amikor ténylegesen lefutnak.
+- [x] A `52b4dc53f98d19bfb79dc06d0d69f8fe5dff21d8` commiton futó GitHub Actions `Editor Core Test` sikeres: TypeScript typecheck, Editor core, canonical schedule, domain contract és Admin home contract tesztek mind PASS. Futás: https://github.com/sanci9517/sanci9517/actions/runs/38602119822.
+- [x] Ugyanezen a commiton a `Twitch Integration Check` is sikeres: TypeScript typecheck, Editor core regresszió, schedule source, Twitch OAuth és site ownership contract tesztek mind PASS. Futás: https://github.com/sanci9517/sanci9517/actions/runs/38602119661.
+- [ ] Valódi böngészős smoke, éles Worker/D1 mentés–újratöltés–preview–publish–publikus oldal end-to-end ellenőrzés továbbra sincs igazolva; a CI tesztek ezt nem helyettesítik.
 
 **Státusz:** a dokumentumszerkezet és a fő roadmap-ütközések részben rendezettek; a MASTER lezárása és a termékfejlesztés F0 PASS állapota még nincs kimondva. A korábbi P0/P0.2 checkpoint nem válik új aktív munkafolyamattá; a következő konkrét feladatot a jelenlegi F0 core workflow tényleges állapota határozza meg.
