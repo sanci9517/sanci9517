@@ -1261,6 +1261,9 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - LIV-005: Player/embed and offline fallback.
 - LIV-006: Stream event normalization.
 - LIV-007: Stream status in Dashboard and public blocks.
+- LIV-008: Capability-gated multistream destinations and per-provider metadata.
+- LIV-009: Unified Chat read/send permissions, provider labels, moderation state and partial-failure handling.
+- LIV-010: Recording/replay/backup status and retention/cost policy, only where technically supported.
 - OBS-001: Overlay asset and scene metadata.
 - OBS-002: OBS secure pairing/connection.
 - OBS-003: Scene/stream/recording state where supported.
@@ -1310,6 +1313,8 @@ A teljes terméknek ki kell terjednie a weboldalra és Visual Editorra, integrá
 - CNT-018: Transcript/chapter/highlight suggestions later.
 - CNT-019: Editor content feed block.
 - CNT-020: Content public hub.
+- CNT-021: Timeline-based content editing/render pipeline: trim/split/crop/reframe, aspect ratio, audio, captions, transitions, brand overlay and export.
+- CNT-022: Content rights/consent/expiry/takedown lifecycle for music, video, guests and third-party assets.
 
 ### 24.10. Community/audience — COM
 - COM-001: External community links.
@@ -3789,3 +3794,53 @@ Az alábbi táblázat a 54. fejezet első négy témacsoportjának minden checkb
 | 54.4 | Metaadatmódosítások megjelenése minden hivatkozási helyen | RES-001, RES-008, RES-015 | Referencia alapján történő feloldás; nincs másolt asset-metaadat-forrás. |
 
 **Állapot:** a 54.1–54.4 ellenőrzőpontjai stabil ID-khez és tulajdonosmodulokhoz vannak rendelve. Ez tervszintű szemantikai megfeleltetés; a hozzá tartozó runtime kód, UI, adatmodell, jogosultság és tesztek meglétét még külön kell bizonyítani. A 54.5–54.16 csoportok tételes megfeleltetése nyitott.
+
+### 63.13. Tételes checklist-megfeleltetés — 54.5–54.8
+
+| Forrás | Ellenőrzőpont | Stabil ID / kanonikus modul | Megfeleltetés megjegyzése |
+|---|---|---|---|
+| 54.5 | Integrációs központ: Twitch, YouTube, TikTok, Discord, Kick és későbbi szolgáltatók | INT-001, INT-002, INT-010, INT-013–016, INT-021 | Közös adapter- és capability-szerződés; a szolgáltatók tényleges API-jogai korlátozzák a funkciókat. |
+| 54.5 | Connect/disconnect/reconnect, fiók-/csatornaválasztás, scope és lejárat | INT-006, INT-007, INT-010, INT-013–016 | Kapcsolat-életciklus, scope és channel identity. |
+| 54.5 | Tokenfrissítés, revoke, titkos tárolás, CSRF/state és site ownership | INT-003–005, INT-019; SEC-002–004, SEC-008 | Site-scope és secret kezelés szerveroldali kötelezettség. |
+| 54.5 | Capability/scope mátrix, API-kvóta, provider health és diagnosztika | INT-002, INT-006, INT-009, INT-018, INT-020 | Nem támogatott provider-műveletet nem szabad elérhetőként megjeleníteni. |
+| 54.5 | Webhook aláírásellenőrzés, replay-védelem, deduplikáció, retry és dead-letter | INT-017, INT-008; AUT-006–008, SEC-009 | Provider esemény beérkezése és workflow-futtatás külön felelősség. |
+| 54.5 | Szinkronnapló, utolsó siker/hiba, kézi újraszinkron és konfliktusfeloldás | INT-008, INT-020, OPS-002–003 | A domain-adat forrását és sync irányát naplózni kell. |
+| 54.5 | Későbbi email, naptár, fizetés, affiliate, CRM és cloud-storage adapterek | INT-021; MKT-001, MKT-004 ahol bővítményről van szó | Későbbi fázis; adapter-szerződés és jogosultság kell, nem ad hoc integráció. |
+| 54.5 | Nem támogatott funkció egyértelmű jelölése és alternatív folyamat | INT-018, INT-020, ADM-008 | Capability-gated UI és érthető fallback. |
+| 54.6 | Live/offline állapot és adatfrissesség platformonként | LIV-001, LIV-002, LIV-007; INT-011, INT-013, INT-014, INT-016 | A provider adatát a normalizált Live domain szolgáltatja. |
+| 54.6 | Cím, kategória/játék, kezdés, nézőszám és elérhető streammetrikák | LIV-003, LIV-004; SCH-012–014 hivatkozás | Csak az adott provider által engedélyezett és elérhető mezők jelennek meg. |
+| 54.6 | Stream player/embed és offline fallback | LIV-005, LIV-007; WEB-015 | A publikus oldal a Live domain és biztonságos embed-szerződés fogyasztója. |
+| 54.6 | Egyetlen adásrend-domain: események, ismétlődések, időzóna, ütközések | SCH-001–006 | A schedule_items az egyetlen kanonikus adásrend-forrás. |
+| 54.6 | Draft/scheduled/confirmed/postponed/cancelled/completed állapot | SCH-001, SCH-005 | Állapotátmenetek és validáció az adásrend-domainben. |
+| 54.6 | Twitch/YouTube sync, irány/prioritás, konfliktuskezelés és szinkronelőzmény | SCH-007, SCH-008; INT-008, INT-011, INT-013 | Provider sync nem hoz létre második helyi schedule rekordforrást. |
+| 54.6 | Játékprofilok, kapcsolódó tartalom, publikus naptár, countdown és későbbi iCal | SCH-009–015, WEB-016 | Játékprofil és naptár domainkapcsolat; export a SCH tulajdona. |
+| 54.6 | Stream előtti checklist, technikai próba, jegyzetek, markerek és highlight-pontok | LIV-006, OBS-008, CNT-018, CNT-021 | A stream-esemény és a tartalomszerkesztési munkafolyamat összekapcsolódik. |
+| 54.6 | Multistream célok és platformonkénti metadata csak igazolt capability szerint | LIV-008, INT-018 | Capability-mátrix nélkül nincs garantált multistream támogatás. |
+| 54.6 | Unified Chat, platformjelölés, moderációs státusz, küldési engedély és részleges hiba | LIV-009, INT-006, INT-018, COM-009, OBS-007 | Olvasási/küldési jog és moderációs képesség providerenként eltérhet. |
+| 54.6 | Felvétel/backup/replay csak tényleges technikai lehetőség és tisztázott tárolási költség mellett | LIV-010, OBS-003, OPS-005–006 | Nincs olyan rögzítési ígéret, amelyet a runtime nem tud igazolni. |
+| 54.7 | OBS-párosítás, hitelesítés, kapcsolatstátusz, reconnect és diagnosztika | OBS-002, INT-003–005, OPS-007 | A kapcsolat- és jogosultsági biztonság külön is tesztelendő. |
+| 54.7 | Scene/source lista, állapot, scene-váltás, visibility, audio mute/volume a támogatott műveletek szerint | OBS-003, OBS-004 | Csak dokumentált OBS WebSocket-képességek és engedélyezett parancsok. |
+| 54.7 | Overlay Studio, browser source, canvas, safe area, méret, pozíció, scene-variáns | OBS-001, OBS-005, OBS-010, DSN-001–006, RES-001 hivatkozás | Overlay-konfiguráció az OBS modulban; brand és média közös forrásból. |
+| 54.7 | Alert box és eseményvariánsok follow/sub/gift/cheer/raid/tip/purchase eseményekre, ha elérhetők | OBS-006, INT-018, AUT-001 | Eseményforrás és művelet csak provider capability szerint. |
+| 54.7 | Event list, chat box, goal/progress, countdown/timer, now-playing, sponsor/QR/link widget | OBS-001, OBS-006, OBS-010; SCH-009, CAM-003, RES-001 hivatkozás | Widgetek konfigurációja nem másolja az üzleti adatot. |
+| 54.7 | Poll, giveaway, loyalty/points, viewer queue és media request csak jogosultsággal és szabályokkal | OBS-007, COM-004, COM-009, COM-012, SEC-007 | Jogosultság, rate limit, moderáció és szolgáltatói korlát szükséges. |
+| 54.7 | Widgetteszt, preview, verziózás, rollback és megosztható overlay URL | OBS-008, OBS-010, WEB-004, WEB-007 | Preview és publikus/OBS-kimenet külön ellenőrzendő. |
+| 54.7 | Chatbot parancsok, aliasok, változók, timerek, quote/counter, shoutout és FAQ | OBS-007, AUT-004, AUT-008 | A parancs-regiszter és az automatizációs engine együttműködik, de nem duplikálódik. |
+| 54.7 | Spam/linkvédelem, slow/follower/sub-only policy ahol a platform engedi, moderációs napló | OBS-007, COM-009, COM-012, SEC-007 | Csak az adott platformon elérhető policy kapcsolható be. |
+| 54.7 | Hotkey, Stream Deck/Macro Deck/MIDI/webhook adapter, allowlist, dry-run és végrehajtási eredmény | OBS-009, AUT-004, AUT-009, AUT-014, SEC-007 | Külső vezérlés csak allowlistelt és naplózott műveleteket indíthat. |
+| 54.7 | Plugin/widget registry, verzió, kompatibilitás, permission, eredet, frissítés és eltávolítás | MKT-001–004, OBS-010, SEC-002–008, OPS-010 | Későbbi bővítmény-ökoszisztéma külön sandbox- és supply-chain kapuval. |
+| 54.7 | Natív OBS plugin vagy desktop companion csak külön, dokumentált biztonsági tervvel | OBS-002, MKT-001, OPS-009–010, SEC-002–008 | Nincs automatikus feltételezés böngészőből elérhető natív funkciókról. |
+| 54.8 | VOD, clip, highlight, long-form, Short/Reel, post, image, audio, podcast és replay | CNT-001–005, CNT-020; RES-001 hivatkozás | Közös content rekord, asset ID-referencia és típusonkénti metadata. |
+| 54.8 | Közös content ID, platform ID, cím, leírás, thumbnail, időtartam, URL, státusz és jogadat | CNT-001, CNT-007, CNT-011, CNT-022; RES-007 hivatkozás | Platform ID nem helyettesíti a kanonikus belső content ID-t. |
+| 54.8 | Keresés, szűrés, rendezés, bulk action, duplikáció-észlelés és gyűjtemények | CNT-005–007 | Lista és bulk műveletek jogosultság- és site-scope szerint. |
+| 54.8 | Tartalomnaptár és státuszfolyam: idea/draft/review/ready/scheduled/publishing/published/failed | CNT-009, CNT-010, CNT-013–015 | Állapotgép és publikálási queue a Content Studio tulajdona. |
+| 54.8 | Transcript, időbélyeg, speaker/fejezet, felirat, SRT/VTT, fordítás és export | CNT-018, CNT-021, AI-014, LOC-006 | AI-generált anyag jelölése, forrás és emberi review szükséges. |
+| 54.8 | AI highlight/clip-javaslat forrás-időbélyeggel, indoklással és emberi választással | CNT-018, AI-014, AI-007, AI-019 | A modell javasol, a creator választ és hagy jóvá. |
+| 54.8 | Videóvágás: trim/split/crop/reframe/aspect ratio, felirat, hang, átmenet és brand overlay | CNT-021, RES-004, DSN-005 | Külön render/export pipeline, verzió és asset-hivatkozás. |
+| 54.8 | Thumbnail/grafika-sablon, variánsok, platformméretek és preview | CNT-012, DSN-009–015, RES-004 | A sablon/design a DSN-ben, bináris és variant a RES-ben. |
+| 54.8 | Platformonkénti cím, leírás, hashtag, CTA, képarány és publikálási státusz | CNT-011, CNT-013–014, INT-018 | Provider-specifikus mezők capability-gated. |
+| 54.8 | API-publikálás ahol engedélyezett; egyébként export és kézi közzétételi útmutató | CNT-013–014, INT-018, INT-020, RES-014 | A fallback a szolgáltató által ténylegesen engedett útra vezet. |
+| 54.8 | Zene-/videójog, vendéghozzájárulás, lejárat, forrás és eltávolítási kérés | CNT-022, RES-007, SEC-010–011 | Jogadat és takedown életciklus nyomon követhető. |
+| 54.8 | Tartalomból weboldali feed, social poszt és analitika ugyanazon canonical rekord alapján | CNT-001, CNT-016, CNT-019–020, ANL-001, ANL-004 | A feed és analytics ugyanarra a content ID-ra hivatkozik. |
+
+**Állapot:** a 54.5–54.8 tételek stabil ID-khez rendelése tervszinten megtörtént; a runtime meglétét és acceptance-teszteket ez nem igazolja. A 54.9–54.16 tételes megfeleltetése továbbra is nyitott.
