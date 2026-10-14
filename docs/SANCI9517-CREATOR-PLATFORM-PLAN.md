@@ -6950,6 +6950,18 @@ A `0004_system_page_content.sql` történeti táblát hoz létre, míg a `0005_c
 
 **Döntési/tesztkapuk:** global vs site-scoped vs account-scoped settings kulcsok tulajdonosi mátrixa; siteId-hoz kötött settings és system-page adatok migrációs tervvel, nem vak adatátírással; API és frontend fogyasztói hivatkozások tételes felderítése; 2 külön site fixture és kereszt-tenant negatív teszt; schedule/site-settings/sitemap/SEO consistency. **TENANT OWNERSHIP / LEGACY API: IN PROGRESS / NOT PASS.** A single-site működésből nem következtetünk működő multi-tenancyre. Nem történt runtime-kód módosítás.
 
+### 63.50.25. Admin navigáció és legacy system-page fogyasztói hivatkozások (2026-10-14)
+
+**Forrásref:** `46e8a4f`; `public/admin-home.html`, `public/assets/system-page-editor.js`, `public/assets/system-page-runtime.js`, `public/assets/site.js`, `public/editor-v2/app.js`, `src/index.ts`, `tests/admin-home-contract.test.js`. Forrásbeli fogyasztói hivatkozások és útvonalregisztráció összevetése; böngészős/futó teszt ebben a körben nem volt.
+
+- **Valós Admin fogyasztók:** az `admin-home.html` lekéri a `/api/auth/session`, `/api/admin/settings`, `/api/admin/pages?meta=1`, `/api/admin/schedule`, `/api/integrations/twitch/connection` adatokat. Ezek a dashboard élő adatkapcsolatai; modulokra bontáskor a dashboard aggregáló szerepét meg kell őrizni.
+- **Kanonikus UI kontra tervezett modulok:** a dashboardon a „Weboldal szerkesztése”, „Adásrend” és „Oldalak és tartalom” navigációs linkek ugyanarra a `/admin/editor` címre mutatnak. A gyorsműveletek és több képességkártya szintén az Editorba vezet. A `24 munkaterület` felirat és a MASTER 22 felső szintű modulja között fogalmi egyeztetés szükséges; nem szabad automatikusan azonos számosságot feltételezni.
+- **Tesztbe kódolt átmeneti szerződés:** a `tests/admin-home-contract.test.js` jelenleg explicit elvárja a `/admin/editor` linket, és a sidebar aktív céljait `/admin`, `/admin/editor` címekre korlátozza. Ez **nem** a végső moduláris IA bizonyítéka; új, jogosultságvédett kanonikus modul-útvonalak bevezetésekor a tesztet a terv szerinti navigációs szerződéssel együtt kell módosítani, nem pusztán kikapcsolni.
+- **Legacy API-fogyasztók:** a `public/assets/system-page-editor.js` GET/PUT `/api/admin/system-pages` útvonalat használ; a `public/assets/system-page-runtime.js` a `/api/public/system-pages` útvonalat hívja. A vizsgált `src/index.ts` nem regisztrálja ezeket. A `public/assets/site.js` ezzel szemben a tényleges `/api/public/pages` és `/api/public/site-settings` végpontokra támaszkodik. A két legacy fájl **archiválási jelölt**, de script-tag/import hivatkozás és adatreferencia teljes felderítéséig nem törölhető.
+- **Editor v2 aktív szerződés:** a `public/editor-v2/app.js` közvetlenül használja a `/api/admin/pages` PATCH/POST/DELETE/GET és `/api/admin/editor` GET/POST/PUT végpontokat. Oldalsorrend, név/slug, mentés, publikálás, rollback és törlés áthelyezésekor ugyanazokat a kanonikus adatokat és revíziószabályokat kell megosztani; nem épülhet második független Editor vagy adatbázis.
+
+**Következő kötelező audit:** minden HTML/script-tag/import és CSS asset fogyasztó tételes keresése; `system_page_content` adatok és migrációk; dashboard 24 képességkártya vs 22 domain taxonómia; navigációs route+role mátrix; meglévő CI szerződés frissítési terve. **ADMIN IA / LEGACY DEPENDENCIES: IN PROGRESS / NOT PASS.** Nem történt kódváltozás vagy archívumba mozgatás.
+
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
 **Ez a rész a korábbi 63.x auditnapló egészének aktuális értelmezése; nem második terv és nem új funkciókatalógus.**
