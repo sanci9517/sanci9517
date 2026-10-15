@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.113` — **396/396 egyedi routing crosswalk és történeti követelménymezők konzisztenciaauditja**; stable-ID döntések, 63.50.46 HIGH publish conflict, 00/A/00.9.6.B és runtime bizonyítás OPEN; **PLAN IN PROGRESS / NOT PASS.**  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.114` — a 63.50.113-ban igazolt 396/396 routing és 271/271 történeti ID strukturális PASS után célzott szemantikai acceptance/owner hiányok, 63.50.46 HIGH publish conflict és 00/A/00.9.6.B source gate; **PLAN IN PROGRESS / NOT PASS.**  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -11713,6 +11713,38 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 **Kötelező negatív acceptance:** cross-tenant URL/ID, revoked token, unsafe API key, webhook replay, restore data mismatch, wrong locale canonical, DNS takeover, draft in sitemap, private binding result, stale search after permission revoke, notification after unsubscribe, prompt-injected help/diagnostic payload, inaccessible keyboard-only flow. Minden teszt OPEN amíg tényleges evidence nincs.
 
 **Következő kurzor 63.50.113:** a 63.50.109–112 négy táblájának determinisztikus 396/396 halmaz/duplikáció és family coverage auditja, 24/49/54/63 crosswalk és történeti 271 H-ID követelménymezők szemantikai eltéréseinek priorizálása. 63.50.46 HIGH publish conflict és 00/A/00.9.6.B source gap OPEN; PLAN IN PROGRESS / NOT PASS.
+
+### 63.50.113. Összevont routing és történeti ID integritása (2026-10-15)
+
+**DETERMINISTIC STRUCTURAL PASS / SEMANTIC REVIEW OPEN.** A jelenlegi `v2/foundation` kanonikus MASTER teljes szövegén a 24. fejezet `- PREFIX-NNN:` registry-sorait és a 63.50.109–112 négy tételes routing táblájának első oszlopát külön feldolgozva:
+
+| Vizsgálat | Mért eredmény | Státusz |
+| --- | --- | --- |
+| 24. fejezet egyedi stabil ID | 396 sor / 396 külön ID, 30 család | STRUCTURAL PASS |
+| 63.50.109 ADM/WEB/EDT routing | 89 sor | STRUCTURAL PASS |
+| 63.50.110 DSN/RES/INT/LIV/OBS/SCH routing | 90 sor | STRUCTURAL PASS |
+| 63.50.111 CNT/COM/STO/SUP/ANL/CAM/AUT/AI routing | 129 sor | STRUCTURAL PASS |
+| 63.50.112 SEC/OPS/LOC/TEAM/MKT/QA/SET/DYN/SEO/DEV/SEARCH/NTF/HELP routing | 88 sor | STRUCTURAL PASS |
+| Négy routing tábla összesen | 396 sor / 396 külön ID; 0 duplikált, 0 hiányzó és 0 idegen ID | STRUCTURAL PASS |
+| Routing tábla kötelező 5 oszlopa | 396/396 kitöltött, 0 üres mező | FORMAT PASS; NOT SEMANTIC PASS |
+| Minimum acceptance szövegek | 55 különböző szöveg a 396 sorban | FAMILY-LEVEL TEMPLATE REUSE; PER-ID PROOF OPEN |
+| 63.52 H19–H22 történeti ledger | 79 sor / 79 egyedi H-ID | STRUCTURAL PASS |
+| 63.53 H23–H34 történeti ledger | 192 sor / 192 egyedi H-ID | STRUCTURAL PASS |
+| Történeti ledger összesen | 271 sor / 271 külön H-ID, 0 duplikáció; minden sor legalább egy létező 24. fejezetbeli ID-ra mutat | STRUCTURAL PASS |
+
+**Fontos korlát:** az oszlopok kitöltése és az 55 ismétlődő acceptance-sablon nem igazolja a 396 egyedi képesség pozitív/negatív tesztjét, runtime állapotát vagy történeti szemantikai azonosságát. A 22 Admin-főmodul és az egyetlen MASTER megmarad; sem a Visual Editor, sem a Dashboard nem válik második domain-adatgazdává.
+
+**Tételesen azonosított, célzott szemantikai bizonyításra váró csoportok (nem új funkció-ID-k):**
+1. `H23.18` reduced-motion és `H24.06–08` keyboard/focus: Editor canvas és publikus renderer külön pozitív/negatív accessibility acceptance; `EDT-037/040` + `QA-004/005` nem helyettesítik a browser-evidence-et.
+2. `H25.01–12` SEO: `SEO-001–005`, `WEB-013`, `SET-004` között egyetlen canonical URL és published-only sitemap/robots szerződés, locale/staging/noindex/redirect negatív teszttel. A `63.50.46` HIGH publish konfliktus miatt OPEN.
+3. `H29.01–10` backup/recovery: `OPS-005/006/009` implementációs owner és `QA-007` bizonyíték külön; D1/R2/revision/site-scope konzisztencia és tényleges recovery drill OPEN.
+4. `H32.02–06` AI live diagnostics: `AI-015` cél-ID megvan, de silence/speech, chat, audio, quality források, provider-jogok, késleltetés és retention még nem bizonyított.
+5. `H34.20–22` continuous discovery → terv → implementáció → user validation: `QA-010` folyamat, `DEV-001` API governance és `QA-002/008/009` bizonyíték nem helyettesíti az adott új feature konkrét domain-ownerét és release gate-jét.
+6. `H31.00` AI canonical action pipeline és `H33.00` automation lifecycle: több cél-ID megengedett, de végrehajtás csak közös permission/approval/audit/rollback szerződésen keresztül; negatív authorization és replay evidence OPEN.
+
+**Külön blokkolók:** `63.50.46` HIGH publish/metadata storage konfliktus **OPEN / NOT FIXED**; a történeti `00/A` és `00.9–00.9.6.B` **SOURCE NOT RECOVERED / OPEN**. A 271/271 ID-lefedettség nem bizonyítja az eredeti forrásszöveg teljes visszanyerését. Nincs funkcióimplementáció, migráció, deploy vagy runtime PASS.
+
+**Következő aktív alpont: `63.50.114`** — a fenti szemantikai kockázati csoportok konkrét feature-contract/acceptance hiányainak soronkénti rögzítése, majd `63.50.46` publish döntés és hiányzó történeti források lezárási szabályainak vizsgálata. A közös 22-modulos funkciólista-review csak bizonyított tervkapu után következhet. **PLAN IN PROGRESS / NOT PASS.**
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
