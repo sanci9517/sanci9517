@@ -2,11 +2,11 @@
 
 **Tervazonosító:** S9517-CREATOR-PLATFORM-MASTER  
 **Verzió:** 3.0.0  
-**Dátum:** 2026-10-14  
-**Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
-**Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
-**Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.123` — a 22 főmodul közös funkció-review összefoglalója és a valódi nyitott termékdöntések; HIGH publish conflict OPEN; **PLAN IN PROGRESS / NOT PASS.**  
+**Dátum:** 2026-10-15  
+**Állapot:** AKTÍV — egyetlen aktuális termék-, architektúra- és fejlesztési terv; termékfunkció-review és jelenlegi kódalap-felmérés folyamatban. A történeti audit nem ismétlődő fejlesztésindítási előfeltétel.  
+**Aktív tervpontazonosító:** `PLAN-PRODUCT-REVIEW-AND-IMPLEMENTATION-BASELINE`  
+**Aktív tervpont státusza:** IN PROGRESS — 22 főmodul termék-review előkészítve; meglévő kód funkciónkénti működése még bizonyítandó. Történeti forráshiányok archív/proveniencia-jegyzetek, nem blokkolják önmagukban a termékfejlesztést. A valódi HIGH publikálási és jogosultsági kockázatok érintett kiadási kapui nyitottak.  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.124` — a 63.50.123-ban előkészített 22 modulos funkciólista közös áttekintése, kiegészítése és a megvalósítási baseline jóváhagyása; ezután funkciónkénti kód-felmérés, tesztek és fejlesztés. HIGH publish conflict továbbra is OPEN az érintett kiadásnál.  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -11961,7 +11961,46 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 - A 49.3 Brand Kit és a 49.4 Media registry külön owner; Editor csak közös picker/binding, nem saját ikon-/theme-/asset-adatbázis.
 - Az egyes domainok működő funkcióinak elfogadása nem következik a 396/396 routing vagy a 22/22 menücím strukturális ellenőrzéséből.
 
-**Következő aktív alpont: `63.50.123`** — 22 modulos felhasználói funkció-review-hoz rövid, de teljes főmodul-összefoglaló és nyitott termékdöntések összeállítása ugyanebben a MASTER-ben; az audit további részleteit csak konkrét hiány vagy ütközés esetén folytatjuk. **PLAN IN PROGRESS / NOT PASS.**
+### 63.50.123. Termékfunkció-review és fejlesztési alapállapot — 2026-10-15
+
+**Felhasználói döntés:** kizárólag ez a MASTER a jelenlegi terv. A korábbi tervek archív bizonyítékok, nem kötelező újraolvasandó vagy újraauditálandó specifikációk. A történeti 00/A, 00.9.6.B és H19–H34 megfeleltetések lezáratlansága **nem önálló fejlesztési stop**. Ha egy mai funkciónál konkrét, releváns hiány vagy ütközés derül ki, azt a jelenlegi 49./24./54. fejezet megfelelő helyén javítjuk; nem indítunk új történeti auditciklust. A régi jegyzetek nem írhatják felül ezt a döntést.
+
+**A 22 modul közös áttekintési sorrendje és határa:** az alábbi lista a 49. fejezetre mutató, felhasználóbarát review-index; **nem párhuzamos funkciókatalógus**. A részletes elfogadott scope kizárólag a 49. és 54. fejezetben, az azonosítók a 24. fejezetben élnek.
+
+| # | Modul | Ellenőrizendő felhasználói képességek | Fő határ |
+| --- | --- | --- | --- |
+| 1 | Kezdőlap | állapot, feladatok, figyelmeztetések, gyorsműveletek, dashboard | csak összesített nézet |
+| 2 | Weboldal | oldalak, navigáció, Visual Editor, CMS, SEO, lokalizáció, űrlapok, publikálás | oldal- és megjelenítési szerkesztés |
+| 3 | Márka és designrendszer | Brand Kit, témák, tokenek, ikonok, sablonok, komponensek | design-definíciók |
+| 4 | Média- és erőforráskönyvtár | upload, asset registry, keresés, variánsok, licencek, használati helyek | egyetlen médiatár |
+| 5 | Élő adás és Stream Studio | műsor, naptár, live control, multistream, chat, checklist, markerek | adás/session |
+| 6 | OBS és streameszközök | OBS, scene, overlay, widget, chatbot, makró, plugin adapter | eszköz- és overlay-runtime |
+| 7 | Kapcsolatok és integrációk | OAuth, scope, provider capability, webhook, reconnect, napló | egyetlen provider-kapcsolatgazda |
+| 8 | Tartalomstúdió | VOD, clip, Shorts, timeline, felirat, thumbnail, naptár, közzététel | médiaprodukció |
+| 9 | Közösség és rajongók | fan profil, interakciók, moderáció, jutalmak, Discord szerepek | közösségi műveletek |
+| 10 | Bolt és kereskedelem | termékek, checkout, rendelések, digitális delivery, refund | kereskedelmi rekordok |
+| 11 | Támogatás és tagság | tip, tagság, perks, megújítás, entitlement | támogatási/tagsági jog |
+| 12 | Szponzoráció és üzleti központ | partner, kampány, affiliate, deliverable | B2B üzleti folyamat |
+| 13 | Analitika és növekedés | események, dashboard, riport, attribúció, insight | mérési/aggregált modell |
+| 14 | Automatizációk | trigger, feltétel, action, workflow, retry, napló | workflow orchestration |
+| 15 | SANCI AI | asszisztens, multimodális javaslat, memória, költség, jóváhagyás | AI nem önálló domain-író |
+| 16 | Globális keresés | keresés, szűrők, parancspaletta | jogosultságszűrt index |
+| 17 | Értesítési központ | inbox, preferenciák, csatornák, kézbesítés | értesítési életciklus |
+| 18 | Súgó és onboarding | útmutató, kontextuális segítség, első lépések | súgó és haladás |
+| 19 | Beállítások, biztonság és adat | fiók, hozzáférés, adatvédelem, audit, konfiguráció | identitás és policy |
+| 20 | Fejlesztői platform és API | API, SDK, kulcsok, kvóták, dokumentáció | külső fejlesztői contract |
+| 21 | Bővítmények és piactér | extension, widget, telepítés, permission, kompatibilitás | extension lifecycle |
+| 22 | Csapat, több site és SaaS | workspace, szerepkör, meghívás, tenant, csomag | szervezeti hozzáférés |
+
+**Közös review protokoll:** minden modulnál felhasználói szavakkal áttekintjük a funkciókat, az elvárt működést, a fontos hiányokat és a modulhatárt. Az elfogadott módosítást azonnal a 49. fejezetbe és szükség esetén a 24./54./fázisfejezetbe vezetjük át. Nem kérünk újra teljes történeti egyeztetést. A review akkor kész, ha a felhasználó mind a 22 modult jóváhagyta vagy a konkrét módosításokat rögzítettük; ezt előre nem állítjuk.
+
+**Kódalaphoz kötött végrehajtás:** a jelenlegi repositoryban vannak Worker/D1 migrációk, Admin felületek, Twitch-alapok, Editor v2 és tesztek. A fájl jelenléte **nem** működési PASS. A review után az egyes funkciókat `WORKING + VERIFIED`, `PARTIAL/REBUILD`, `MISSING`, `BLOCKED BY PROVIDER` állapotba soroljuk; bizonyíték: konkrét fájl/route, automatizált teszt, böngészős viselkedés, szükség szerint éles ellenőrzés. Elsőként auth/site-isolation, Admin navigáció, WEB draft/published snapshot és Editor mentési alapok; majd Brand Kit/Media/Integrations/Stream és a többi függőség szerint. Új tesztbaseline megengedett; a bizonyítottan jó kódot megtartjuk, a hibásat célzottan javítjuk, a duplikált legacy felületet kontrolláltan archiváljuk.
+
+**Kiadási szabály:** a történeti audit nem blokkoló; **valós** security, adatvesztés, site-scope, publish/rollback konfliktus vagy provider-jogosultsági hiba viszont az érintett funkció fejlesztési/élesítési kapuján kötelezően javítandó. Különösen a 49.2 published snapshot HIGH konfliktus **OPEN**, nem minősül megoldottnak. A későbbi AI/SaaS/marketplace részletek a megfelelő fázisban konkretizálhatók, a termékképességek nem vesznek el.
+
+**Következő aktív alpont: `63.50.124`** — a 22 modul felhasználói review-ja, a hiányok beépítése, majd kódalap baseline és tesztvezérelt fejlesztés. Nem újabb teljes történeti audit.
+
+
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
@@ -11974,7 +12013,7 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 5. **Technikai döntés:** mindig aktuális repo, migráció, route, teszt és production evidence alapján döntünk: előbb REUSE, szükség esetén ADAPT, BUILD csak igazolt hiányra; nincs második Visual Editor, második media registry, második schedule CRUD, rejtett AI write, vagy önkényes DB-domén tulajdonosváltás.
 6. **Minőségi és kockázati korlát:** ownership/auth, revision/concurrency, hibás hálózat, undo/rollback, accessibility, mobil, i18n, privacy/security, deployment/restore, provider limits és költség csak releváns, igazolt acceptance-tel PASS. A dokumentációs ellenőrzés soha nem futtatott teszt.
 7. **Nyitott blokkoló:** a történeti forrásmegfeleltetés (különösen a korábban jelzett 00/A és 00.9–00.9.6.B hiány) **nincs ebben a jelenlegi MASTER-ben forrásonként bizonyítva**; visszanyerés vagy explicit nem-visszanyerhető, hatáskörrel és megőrzési döntéssel rögzített átvezetés szükséges. Nem tekintjük automatikusan lezártnak attól, hogy 396 aktuális ID létezik. Emellett a 63.1–63.2 szemantikai konfliktusai és a felhasználóval történő végső funkció-review nyitott.
-8. **Jelenlegi egyetlen aktív pont:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY` — `IN PROGRESS / NOT PASS`. **Következő ellenőrizhető lépés:** a történeti források és a jelenlegi 396 ID megőrzését bizonyító nyitott tételek konkrét kezelése, majd az 54./49./24. fejezetek szemantikai egyeztetése; **csak** a tervkapu lezárása után az F0 következő legkorábbi hiányának kódbizonyítékos végrehajtása. A meglévő EDT-009-től folytatható kártya-normalizálás az F0 munkaindításakor végezhető, nem helyettesíti a mostani A kaput.
+8. **Jelenlegi egyetlen aktív pont:** `PLAN-PRODUCT-REVIEW-AND-IMPLEMENTATION-BASELINE` — `IN PROGRESS`. **Következő ellenőrizhető lépés:** a 63.50.123 szerinti 22 modul közös funkció-review-ja és konkrét hiányainak átvezetése a 49./24./54. fejezetekbe; utána a jelenlegi kód működési baseline-ja és tesztvezérelt fejlesztése. Történeti forráskeresés nem automatikus fejlesztési kapu; tényleges security/publish hibát az érintett release előtt javítani kell.
 
 **Megőrzési szabály:** a 396 stabil ID-ból egyetlen funkciót sem töröltünk vagy nyilvánítottunk késznek ebben a szerkezeti tisztázásban. A 63.41–63.50 meglévő kártyái történeti részletes evidenciaként megtartandók. A későbbi felhasználói döntés az adott kanonikus fejezetben frissül, és csak ott; a régebbi auditnapló változatlan bizonyítékláncként olvasható.
 
