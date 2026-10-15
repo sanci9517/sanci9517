@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.76` — **16/16 H19–H34 csoport source-vs-canonical GAP/UNPROVEN/REPHASED triage rögzítve; 271/271 soronkénti szemantikai lezárás még OPEN**; következő: `63.50.77` H19–H22 soronkénti ellenőrzött köteg és 00.9.6.B visszakeresés; runtime/CI/user review OPEN; runtime/CI/user review OPEN; runtime/CI/user review OPEN; runtime/CI/user review OPEN; runtime/CI és user review OPEN; történeti és runtime evidence továbbra is nyitott, különös tekintettel a 63.50.46 HIGH publikálási konfliktusra. A 156 első körös routing kész, de szemantikai és történeti kapu továbbra is nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll és a 63.50.46 HIGH kódaudit-blokkoló ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.77` — **H19–H22 79/79 első körös soronkénti szemantikai triage rögzítve; teljes archív mező-egyeztetés és runtime evidence OPEN**; következő: `63.50.78` H23–H34 további 192 sor és 00.9.6.B visszakeresés; runtime/CI/user review OPEN; runtime/CI/user review OPEN; runtime/CI/user review OPEN; runtime/CI/user review OPEN; runtime/CI és user review OPEN; történeti és runtime evidence továbbra is nyitott, különös tekintettel a 63.50.46 HIGH publikálási konfliktusra. A 156 első körös routing kész, de szemantikai és történeti kapu továbbra is nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll és a 63.50.46 HIGH kódaudit-blokkoló ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -8431,6 +8431,99 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 **Soronkénti lezárási tábla kötelező mezői (következő auditkör):** `H-ID | archív követelményszöveg | archív owner/surface/scope/dependency/acceptance | stabil cél-ID + konkrét célképesség | jelenlegi domain-owner + UI-surface | 1.0 vagy későbbi fázis és indok | RETAINED/ADAPTED/REPHASED/GAP/UNPROVEN | pozitív teszt | negatív teszt | forrásbizonyíték | nyitott döntés`. A 63.50.75 csoportos értékei **nem** tölthetők automatikusan minden egyedi sorba, ha az archívban különböznek. A 271/271 tétel soronkénti kitöltése és ellenőrzése még **OPEN**.
 
 **Forráshiány:** `00/A` és `00.9–00.9.6.B` továbbra is `SOURCE NOT RECOVERED / OPEN`; a C nem tekinthető automatikus helyettesítőnek. **Gate:** `GROUP-LEVEL GAP TRIAGE RECORDED / ROW-LEVEL SEMANTICS OPEN / HIGH PUBLICATION BLOCKER OPEN / RUNTIME UNRUN / GLOBAL NOT PASS`. Következő aktív kurzor: `63.50.77` — a 271 H-ID soronkénti döntési tábla első ellenőrzött kötege, elsőként H19–H22, majd H23–H34; párhuzamosan a hiányzó történeti forrás célzott Git/PR vizsgálata. A közös 396-ID termék-review és F0 csak bizonyított kapuzárás után indulhat.
+
+### 63.50.77. H19–H22 79/79 történeti sor célzott szemantikai triage — nem implementációs PASS (2026-10-15)
+
+**Ellenőrzött bemenet:** a 63.50.72 fejezet 79 egyedi H19.01–H22.19 auditkártyája, a 63.52.1 dokumentált javításai és a 63.50.75 archív mezők csoportos kivonata. A 79 sort egyenként besoroltuk; **ez nem bizonyítja** a teljes archív owner/surface/scope/dependency/acceptance mezők 79 soros, szó szerinti egyeztetését, a runtime implementációt vagy a végleges fázisjóváhagyást. Az alábbi `UNPROVEN` minden sorban kötelező és megmarad, amíg a bizonyíték hiányzik. A H19.16/H21.13/H21.22/H22.16/H22.19 soroknál a korábbi szemantikai célkorrekció elsőbbséget élvez a 63.50.72 rövidített céloszlopával szemben.
+
+| H-ID | Archív képesség | 63.50.72 cél-ID / korábbi hibajelzés | Triage | Specifikus nyitott acceptance / rés |
+| --- | --- | --- | --- | --- |
+| H19.01 | upload | RES-003, RES-001, RES-002 | RETAINED + UNPROVEN | Resource Manager + picker share asset ID; reject unauthorized site/file operation |
+| H19.02 | folders | RES-006 | RETAINED + UNPROVEN | Resource Manager + picker share asset ID; reject unauthorized site/file operation |
+| H19.03 | search | RES-005 | RETAINED + UNPROVEN | Resource Manager + picker share asset ID; reject unauthorized site/file operation |
+| H19.04 | filter | RES-005 | RETAINED + UNPROVEN | Resource Manager + picker share asset ID; reject unauthorized site/file operation |
+| H19.05 | preview | RES-004 | RETAINED + UNPROVEN | Resource Manager + picker share asset ID; reject unauthorized site/file operation |
+| H19.06 | metadata | RES-007 | RETAINED + UNPROVEN | Resource Manager + picker share asset ID; reject unauthorized site/file operation |
+| H19.07 | alt text | RES-007 | RETAINED + UNPROVEN | Resource Manager + picker share asset ID; reject unauthorized site/file operation |
+| H19.08 | crop | RES-004 | REPHASED + UNPROVEN | Crop non-destructive output, original preservation and permissions must be tested |
+| H19.09 | resize | RES-004 | REPHASED + UNPROVEN | Resize derivatives, originals and variant reference stability must be tested |
+| H19.10 | replace | RES-009 | GAP + UNPROVEN | Replace must preserve existing references or explicitly migrate them |
+| H19.11 | archive/delete | RES-009 | GAP + UNPROVEN | Archive versus permanent delete, in-use media refusal and rollback differ |
+| H19.12 | usage tracking | RES-008 | RETAINED + UNPROVEN | Resource Manager + picker share asset ID; reject unauthorized site/file operation |
+| H19.13 | unused media detection | RES-008, RES-015 | RETAINED + UNPROVEN | Resource Manager + picker share asset ID; reject unauthorized site/file operation |
+| H19.14 | MIME validation | RES-003 | RETAINED + UNPROVEN | Resource Manager + picker share asset ID; reject unauthorized site/file operation |
+| H19.15 | file-size limits | RES-003 | RETAINED + UNPROVEN | Resource Manager + picker share asset ID; reject unauthorized site/file operation |
+| H19.16 | secure object keys | R2 object key nem SEC-009 webhook signature | GAP + UNPROVEN | RES-002 + RES-014 + SEC-008; site-bound object keys, signed download and expiry; not SEC-009 |
+| H19.17 | image optimization | RES-004 | RETAINED + UNPROVEN | Resource Manager + picker share asset ID; reject unauthorized site/file operation |
+| H19.18 | video/audio | RES-002, RES-004 | REPHASED + UNPROVEN | Audio/video formats, processing limits and safe preview need explicit scope |
+| H19.19 | clip/Short assets | RES-001, CNT-003 | RETAINED + UNPROVEN | Resource Manager + picker share asset ID; reject unauthorized site/file operation |
+| H19.20 | cache policy | RES-004, DYN-006, WEB-030 | GAP + UNPROVEN | Asset cache invalidation/versioning and public vs private headers not implied by image optimization |
+| H20.01 | D1 binding | DYN-001, DYN-002 | ADAPTED + UNPROVEN | Resolve typed D1 binding binding in preview/public; reject unauthorized source and handle empty/error |
+| H20.02 | site settings | DYN-001, SET-001 | ADAPTED + UNPROVEN | Resolve typed site settings binding in preview/public; reject unauthorized source and handle empty/error |
+| H20.03 | schedule | DYN-001, SCH-010, SCH-011 | ADAPTED + UNPROVEN | Resolve typed schedule binding in preview/public; reject unauthorized source and handle empty/error |
+| H20.04 | Twitch | DYN-001, INT-011, LIV-001 | ADAPTED + UNPROVEN | Resolve typed Twitch binding in preview/public; reject unauthorized source and handle empty/error |
+| H20.05 | YouTube | DYN-001, INT-013 | REPHASED + UNPROVEN | YouTube provider binding staged; API scope/quota and fallback needed |
+| H20.06 | TikTok | DYN-001, INT-014 | REPHASED + UNPROVEN | TikTok provider binding staged; supported APIs and fallback needed |
+| H20.07 | Discord | DYN-001, INT-015 | REPHASED + UNPROVEN | Discord binding staged; permission and capability gate needed |
+| H20.08 | VOD | DYN-001, CNT-020 | REPHASED + UNPROVEN | VOD source/content owner, publish visibility and empty state required |
+| H20.09 | collections | DYN-001, CNT-005 | ADAPTED + UNPROVEN | Resolve typed collections binding in preview/public; reject unauthorized source and handle empty/error |
+| H20.10 | API data source | DYN-001, DYN-002 | GAP + UNPROVEN | External API data-source allowlist, SSRF prevention, secrets and quotas needed |
+| H20.11 | loading state | DYN-005 | ADAPTED + UNPROVEN | Resolve typed loading state binding in preview/public; reject unauthorized source and handle empty/error |
+| H20.12 | empty state | DYN-005 | ADAPTED + UNPROVEN | Resolve typed empty state binding in preview/public; reject unauthorized source and handle empty/error |
+| H20.13 | error state | DYN-005 | ADAPTED + UNPROVEN | Resolve typed error state binding in preview/public; reject unauthorized source and handle empty/error |
+| H20.14 | conditional rendering | DYN-004 | ADAPTED + UNPROVEN | Resolve typed conditional rendering binding in preview/public; reject unauthorized source and handle empty/error |
+| H20.15 | data transforms | DYN-003 | ADAPTED + UNPROVEN | Resolve typed data transforms binding in preview/public; reject unauthorized source and handle empty/error |
+| H20.16 | caching | DYN-006 | GAP + UNPROVEN | Cache TTL/invalidation must isolate draft/public and site scope |
+| H20.17 | stale-data handling | DYN-005, DYN-006 | GAP + UNPROVEN | Stale policy must distinguish last-known-good from misleading live status |
+| H20.18 | binding validation | DYN-002, DYN-008 | GAP + UNPROVEN | Binding schema validation plus unauthorized source and invalid path tests |
+| H21.01 | Twitch OAuth | INT-010, INT-003 | ADAPTED + REPHASED + UNPROVEN | Provider adapter supplies Twitch OAuth only when authorized; deny revoked scopes and handle quota/outage |
+| H21.02 | Twitch live/offline | INT-011, LIV-001 | ADAPTED + REPHASED + UNPROVEN | Provider adapter supplies Twitch live/offline only when authorized; deny revoked scopes and handle quota/outage |
+| H21.03 | Twitch title | LIV-003 | ADAPTED + REPHASED + UNPROVEN | Provider adapter supplies Twitch title only when authorized; deny revoked scopes and handle quota/outage |
+| H21.04 | Twitch game | LIV-003 | ADAPTED + REPHASED + UNPROVEN | Provider adapter supplies Twitch game only when authorized; deny revoked scopes and handle quota/outage |
+| H21.05 | Twitch viewer statistics | LIV-004 | ADAPTED + REPHASED + UNPROVEN | Provider adapter supplies Twitch viewer statistics only when authorized; deny revoked scopes and handle quota/outage |
+| H21.06 | Twitch followers/subscribers where available | LIV-004 | GAP + UNPROVEN | Followers/subscribers depend on provider scopes and availability; no invented metrics |
+| H21.07 | Twitch VOD | INT-012, CNT-002 | ADAPTED + REPHASED + UNPROVEN | Provider adapter supplies Twitch VOD only when authorized; deny revoked scopes and handle quota/outage |
+| H21.08 | Twitch clips | INT-012, CNT-003 | ADAPTED + REPHASED + UNPROVEN | Provider adapter supplies Twitch clips only when authorized; deny revoked scopes and handle quota/outage |
+| H21.09 | Twitch events/webhooks where applicable | INT-017, LIV-006 | GAP + UNPROVEN | Webhook signature, replay/idempotency, site ownership and retry |
+| H21.10 | YouTube channel | INT-013 | ADAPTED + REPHASED + UNPROVEN | Provider adapter supplies YouTube channel only when authorized; deny revoked scopes and handle quota/outage |
+| H21.11 | YouTube videos | INT-013, CNT-004 | ADAPTED + REPHASED + UNPROVEN | Provider adapter supplies YouTube videos only when authorized; deny revoked scopes and handle quota/outage |
+| H21.12 | YouTube Shorts | INT-013, CNT-003 | ADAPTED + REPHASED + UNPROVEN | Provider adapter supplies YouTube Shorts only when authorized; deny revoked scopes and handle quota/outage |
+| H21.13 | YouTube statistics where available | taxonomy nem platformmetrika-implementáció | GAP + UNPROVEN | INT-013 + ANL-004 + ANL-001; taxonomy alone does not implement platform metrics |
+| H21.14 | YouTube API quota/error handling | INT-009, INT-020 | GAP + UNPROVEN | Quota exhaustion, exponential backoff and user-visible stale fallback |
+| H21.15 | TikTok profile | INT-014 | ADAPTED + REPHASED + UNPROVEN | Provider adapter supplies TikTok profile only when authorized; deny revoked scopes and handle quota/outage |
+| H21.16 | TikTok supported content integration | INT-014, CNT-004 | ADAPTED + REPHASED + UNPROVEN | Provider adapter supplies TikTok supported content integration only when authorized; deny revoked scopes and handle quota/outage |
+| H21.17 | TikTok API capability review | INT-014, INT-018 | REPHASED + UNPROVEN | TikTok API capability assessment before implementation commitment |
+| H21.18 | TikTok rate limits/fallback | INT-009, INT-014 | ADAPTED + REPHASED + UNPROVEN | Provider adapter supplies TikTok rate limits/fallback only when authorized; deny revoked scopes and handle quota/outage |
+| H21.19 | Discord community link | INT-015, WEB-019 | ADAPTED + REPHASED + UNPROVEN | Provider adapter supplies Discord community link only when authorized; deny revoked scopes and handle quota/outage |
+| H21.20 | Discord optional integration | INT-015 | ADAPTED + REPHASED + UNPROVEN | Provider adapter supplies Discord optional integration only when authorized; deny revoked scopes and handle quota/outage |
+| H21.21 | Discord status where justified | INT-015, INT-020 | REPHASED + UNPROVEN | Discord status only if provider capability and user benefit verified |
+| H21.22 | Architecture constraint: keep secrets in Cloudflare Secrets; normalize external APIs behind services | webhook security nem secret storage | GAP + UNPROVEN | INT-019 + INT-001 + SEC-008; Cloudflare Secrets lifecycle and redaction; not SEC-009 |
+| H22.01 | schedule CRUD | SCH-001 | ADAPTED + REPHASED + UNPROVEN | Canonical schedule/content schedule CRUD reflected in public view; reject unauthorized edits and invalid publish |
+| H22.02 | recurring schedule | SCH-004 | GAP + UNPROVEN | Recurrence DST, cancellation and exception occurrence contract |
+| H22.03 | timezone handling | SCH-003 | GAP + UNPROVEN | Timezone conversion DST ambiguous/nonexistent local time |
+| H22.04 | next-stream calculation | SCH-009 | GAP + UNPROVEN | Next event respects cancellations and timezone |
+| H22.05 | countdown | SCH-009 | GAP + UNPROVEN | Countdown clock skew, elapsed transition and timezone |
+| H22.06 | live state | LIV-001, SCH-005 | ADAPTED + REPHASED + UNPROVEN | Canonical schedule/content live state reflected in public view; reject unauthorized edits and invalid publish |
+| H22.07 | game/category | SCH-012, SCH-014 | ADAPTED + REPHASED + UNPROVEN | Canonical schedule/content game/category reflected in public view; reject unauthorized edits and invalid publish |
+| H22.08 | stream type | SCH-001, SCH-005 | ADAPTED + REPHASED + UNPROVEN | Canonical schedule/content stream type reflected in public view; reject unauthorized edits and invalid publish |
+| H22.09 | VOD ingestion | CNT-002 | REPHASED + UNPROVEN | VOD ingestion provider rights, dedup and canonical content ID |
+| H22.10 | VOD categorization | CNT-005 | ADAPTED + REPHASED + UNPROVEN | Canonical schedule/content VOD categorization reflected in public view; reject unauthorized edits and invalid publish |
+| H22.11 | VOD search/filter | CNT-006 | ADAPTED + REPHASED + UNPROVEN | Canonical schedule/content VOD search/filter reflected in public view; reject unauthorized edits and invalid publish |
+| H22.12 | Shorts management | CNT-003 | REPHASED + UNPROVEN | Shorts management source asset, rights and publish state |
+| H22.13 | clips management | CNT-003 | ADAPTED + REPHASED + UNPROVEN | Canonical schedule/content clips management reflected in public view; reject unauthorized edits and invalid publish |
+| H22.14 | content calendar | CNT-009 | ADAPTED + REPHASED + UNPROVEN | Canonical schedule/content content calendar reflected in public view; reject unauthorized edits and invalid publish |
+| H22.15 | platform-specific variants | CNT-011 | ADAPTED + REPHASED + UNPROVEN | Canonical schedule/content platform-specific variants reflected in public view; reject unauthorized edits and invalid publish |
+| H22.16 | title/description/hashtag suggestions | AI-014 clip nem szövegjavaslat | GAP + UNPROVEN | CNT-010 + CNT-011 + AI-013; not AI-014 transcript/clip; human review and hashtag policy |
+| H22.17 | thumbnail brief | CNT-012, CNT-010 | ADAPTED + REPHASED + UNPROVEN | Canonical schedule/content thumbnail brief reflected in public view; reject unauthorized edits and invalid publish |
+| H22.18 | publishing workflow | CNT-013, CNT-014 | GAP + UNPROVEN | Draft/review/approve/publish state and provider failure handling |
+| H22.19 | performance feedback loop | taxonomy nem teljes feedback loop | GAP + UNPROVEN | ANL-004 + CNT-016 + ANL-001; measured feedback/action loop, freshness and attribution |
+
+**Döntési elv:** a `RETAINED` itt csak a követelmény megőrzését jelenti, **nem** azt, hogy az implementáció bizonyított. `ADAPTED` esetén az Editor nem veszi át a Resource/Integration/Schedule/Content canonical owner szerepét; `REPHASED` esetén a 1.0 kontra 1.x+/F0–F11 ütemezés továbbra is tételes jóváhagyást igényel. A fenti acceptance rövidítések célzott ellenőrzési irányok, nem teljes pozitív/negatív tesztesetek.
+
+**Kritikus tételes céljavítások változatlanul nyitott evidence-szel:** H19.16 → `RES-002/RES-014/SEC-008`; H21.13 → `INT-013/ANL-004/ANL-001`; H21.22 → `INT-019/INT-001/SEC-008`; H22.16 → `CNT-010/CNT-011/AI-013`; H22.19 → `ANL-004/CNT-016/ANL-001`. Az archív követelményszöveg és az eredeti mezők nem törlődnek.
+
+**Fennmaradó kapuk:** (1) 79 sor tényleges archív mezőinek és cél-definícióinak mély egyeztetése, (2) H23–H34 további 192 sorának egyedi triage-a, (3) `00/A` és `00.9–00.9.6.B` `SOURCE NOT RECOVERED / OPEN`, (4) 63.50.46 `PUBLICATION CONTRACT CONFLICT / HIGH / NOT FIXED`, (5) CI/runtime/user-review `UNRUN`. **Állapot:** `79/79 FIRST-PASS ROW TRIAGE / SEMANTIC PASS NOT CLAIMED / GLOBAL NOT PASS`. Következő kurzor: `63.50.78` — H23–H34 tételes triage, majd archív mező/acceptance mélyellenőrzés.
+
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
