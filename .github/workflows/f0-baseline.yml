@@ -24,4 +24,5 @@ jobs:
       - run: npm run test:admin-access
       - run: npm run test:domain
       - run: npm run test:editor
+      - run: node --test tests/editor-sqlite-concurrency.test.js
       - run: npm run test:schedule
