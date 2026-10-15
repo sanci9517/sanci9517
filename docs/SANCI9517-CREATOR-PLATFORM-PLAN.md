@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.116` — a több-ID-s történeti követelmények további owner/consumer review-ja és a 00/A/00.9.6.B eredeti források Git/PR keresése; 63.50.46 HIGH publish conflict OPEN; **PLAN IN PROGRESS / NOT PASS.**  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.117` — AI visual QA és experiment tracking szemantikai rések acceptance-szerződése, további történeti crosswalk és forráskeresés; 63.50.46 HIGH publish conflict OPEN; **PLAN IN PROGRESS / NOT PASS.**  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -11793,6 +11793,29 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 **Auditkorlát:** a fenti táblázat célzott, kockázatalapú ownership-felbontás a 100 cross-family sor jellemző és korábban problémás mintáiból; **nem** állítja, hogy mind a 145 sorhoz külön bizonyított runtime API/owner/acceptance tartozik. A 45 same-family több-ID-s esetben is szükséges canonical writer vs supporting capability különbségtétel az implementációs feature-contractban. A 24. fejezet és a 63.50.109–112 owner mezői nem írhatják felül a domain tényleges ownership szerződését.
 
 **Következő aktív alpont: `63.50.116`** — a fennmaradó több-ID-s H-sorok célzott ownership review-ja, valamint `00/A` és `00.9–00.9.6.B` történeti források célzott Git/PR keresése. A `63.50.46` HIGH publish conflict és a source gate **OPEN**; PLAN **IN PROGRESS / NOT PASS**.
+
+### 63.50.116. Több-ID-s szemantikai ütközések: további célzott döntések (2026-10-15)
+
+**RISK-BASED ROLE REVIEW / NO IMPLEMENTATION PASS.** A 63.50.115-ben mért 145 több-ID-s történeti sor (100 cross-family, 45 same-family) megőrzött. Az alábbi soroknál a 24. fejezet tényleges capability-szövege alapján különválasztjuk a valódi üzleti adatgazdát, az adaptert, a megjelenítést és a QA bizonyítékot; ez **nem** a 145/145 runtime auditja.
+
+| Történeti sorok | Egyetlen írási/üzleti határ | Megengedett további szerep | Nyitott bizonyítás |
+| --- | --- | --- | --- |
+| H24.04–11 accessibility | EDT form/canvas + WEB public renderer + DSN tokens saját komponensükben | QA-004/005 browser/axe/manual verification, nem runtime implementáció | Screen reader, form label, focus trap, contrast, keyboard-only és reduced-motion negatív eset |
+| H26.07–08 analytics retention/dashboard | ANL metrika, retention és aggregation; SEC consent/deletion policy | ADM read-only dashboard projection | Opt-out után tracking tiltás, site/role leak, stale dashboard |
+| H27.15–19 Editor management/history/permissions | WEB Page CRUD/published revisions; EDT draft canvas undo és preview; SEC authorization | ADM route/visibility; OPS backup/recovery | Editor undo nem ír published state-et; UI elrejtés nem elég a deny API-hoz |
+| H30.02–08 performance/cache | WEB public renderer/cache; DYN datasource cache; OPS monitoring | QA-004/005 load, Web Vitals és regression evidence | Draft cache leak, stale published URL, nagy oldal performance és budget |
+| H31.08/10/12 AI QA/approval/audit | AI suggestion/action orchestration; az érintett domain canonical write command | QA vizuális bizonyíték; SEC privacy/security audit | Approval nélküli destruktív művelet, audit nélküli execute, cross-site suggestion |
+| H32.07–18 live/content AI | LIV/OBS élő állapot, CNT tartalomrekord, ANL hiteles metrika | AI diagnosztika/javaslat, nem második live/content/metric store | Provider scope, latency, provenance, consent, human review, no hallucinated analytics |
+| H32.22–25 historical outcomes/experiments | ANL történeti metrika; AI prompt/eval verzió és feedback | AI Control Center megjelenítés és döntés | Hiányzó source timestamp, privacy leak, téves kísérlet-attribúció |
+| H33.02–11 automations | AUT trigger/condition/run lifecycle; üzleti írás a CNT/RES/LIV/NTF canonical domain API-ján | SEC RBAC/security audit, NTF dedup delivery | Retry/idempotency, dead-letter, provider outage, permission revoke, recursive event |
+| H34.01–19 benchmarking és fejlesztési módszertan | QA-010 feature discovery process; EDT/DSN/OPS/TEAM/AI a tényleges saját képességeik gazdái | OPS-010 license/CVE review, QA evidence | Külső kód licenc és karbantartás ellenőrzése, no duplicate visual editor, feature owner/phase gate |
+| H34.20–22 master/implementation/validation | QA-010 proposal-to-MASTER; egyedi feature domain owner végrehajtás; QA-009 user acceptance | DEV-001 csak API verziózás, QA-002/008 tesztkapu | Owner és acceptance nélküli release, téves „QA implementálja” besorolás |
+
+**Újonnan kiemelt tervezési kockázat:** `H31.08` AI visual QA jelenlegi `AI-012` célja „SEO/accessibility/localization suggestions”, `QA-004` browser visual regression; a generatív vizuális minőségellenőrzés teljes, bizonyítható lefedése **nem következik automatikusan** e kettőből. `H32.23` experiment tracking esetén `AI-002` prompt/template evaluation és `ANL-007` date-range analytics nem feltétlenül teljes kísérlet-hozzárendelési modell. Ezeket **SEMANTIC SPEC GAP / OPEN** jelöléssel kell kezelni a megfelelő AI/Analytics feature contractban, nem új párhuzamos rendszert építeni.
+
+**Forrás-visszakeresési állapot:** a repository commitkeresés `00/A` és `00.9.6.B` szó szerinti keresése nem adott találatot; a releváns korábbi PR #29/#30 leírása megőrzött archívumot és egyetlen MASTER-irányítást támaszt alá, nem adja vissza az eredeti hiányzó fejezeteket. A negatív keresés nem teljes bizonyíték a Git összes törölt fájljára vagy PR-kommentjére. **SOURCE NOT RECOVERED / OPEN**.
+
+**Következő aktív alpont: `63.50.117`** — a két most megnevezett semantic spec gap pontos acceptance-szerződésének rögzítése, a fennmaradó H crosswalk magas kockázatú sorainak ellenőrzése és az eredeti források további célzott keresése. A `63.50.46` HIGH publish conflict **OPEN**; nincs F0 vagy runtime PASS.
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
