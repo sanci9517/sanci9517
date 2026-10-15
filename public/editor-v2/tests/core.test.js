@@ -795,3 +795,25 @@ test('Editor save/reload uses server revision and fails closed on incomplete sav
   assert.match(save, /stateAtStart\.persistence\.dirty=true/);
   assert.match(save, /további helyi módosítások még nincsenek mentve/);
 });
+
+
+test('Editor save and rollback require revision preconditions on the server', () => {
+  const route = readFileSync(new URL('../../../src/routes/admin/editor.ts', import.meta.url), 'utf8');
+  const save = route.slice(route.indexOf("if(request.method==='POST')"), route.indexOf("if(request.method==='PUT')"));
+  const rollback = route.slice(route.indexOf("if(request.method==='PUT')"));
+  assert.match(save, /EXPECTED_VERSION_REQUIRED/);
+  assert.match(rollback, /EXPECTED_VERSION_REQUIRED/);
+  assert.match(save, /REVISION_CONFLICT/);
+  assert.match(rollback, /REVISION_CONFLICT/);
+  assert.match(save, /pageId&&pageId!==id/);
+  assert.match(rollback, /pageId&&pageId!==id/);
+});
+
+test('Editor UI submits revision preconditions and prevents overlapping local saves', () => {
+  const app = readFileSync(new URL('../app.js', import.meta.url), 'utf8');
+  const save = app.slice(app.indexOf('async function save('), app.indexOf('async function unpublishPage('));
+  const rollback = app.slice(app.indexOf('async function rollbackToRevision('), app.indexOf('async function createNew('));
+  assert.match(save, /state\?\.persistence\?\.saving/);
+  assert.match(save, /expectedVersion/);
+  assert.match(rollback, /expectedVersion:latest/);
+});
