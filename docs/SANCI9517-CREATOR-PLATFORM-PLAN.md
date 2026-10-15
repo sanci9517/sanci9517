@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.90` — **54.x 156/156 review checklist-sor domain és P-alpont első routingja rögzítve; exact stable ID szemantikai megfelelés OPEN**; következő: `63.50.91` 54.x per-row stable ID audit és egyetlen P00–P10 végrehajtási backlog. Kötelező 1.0 cél nincs; `63.50.46` HIGH publish conflict NOT FIXED; 00/A/00.9.6.B OPEN; **PLAN IN PROGRESS / NOT PASS.**  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.91` — **54.x 156/156 sor lexikai stable-ID jelölt-triage, semmilyen automatikus szemantikai PASS nincs**; következő: `63.50.92` per-row kézi semantic review, a nulla és többértelmű találatoktól. Kötelező 1.0 cél nincs; `63.50.46` HIGH publish conflict NOT FIXED; 00/A/00.9.6.B OPEN; **PLAN IN PROGRESS / NOT PASS.**  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -10810,6 +10810,174 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 6. **Kódblokk:** 63.50.46 HIGH publikálási konfliktus változatlanul NOT FIXED, a 14 high-risk tesztcsomag a 63.50.89 alatt tervezett, nem futtatott.
 
 **Audit-kontroll:** `156/156 54.x ROWS ROUTED TO DOMAIN FAMILY AND P-WORK PACKAGE`; `0 EXACT PER-ROW STABLE ID PASS CLAIMED`; `0 RUNTIME PASS CLAIMED`. Következő kurzor: `63.50.91` — 54.x egyedi stable ID megfeleltetés és szemantikai hiányok, valamint a P00–P10 aktív egyetlen végrehajtási backlog kiépítése. **PLAN IN PROGRESS / NOT PASS.**
+
+
+### 63.50.91. 54.x checklist → stable ID: 156 sor konzervatív jelölt-ellenőrzése (2026-10-15)
+
+**Módszer:** a 63.50.90 156 review sorának szavai és a 49. fejezet **396 létező stable ID rövid capability címkéje** között az előzetesen kijelölt domain-családokon belül **lexikai egyezést** kerestem. Ez nem szemantikai NLP-bizonyítás: különösen a magyar review szöveg és az angol capability címkék között sok a téves negatív és hamis pozitív találat. A score csak szószintű egyezések száma; **egyetlen ID sem minősül véglegesen megfeleltetettnek pusztán e pontszám alapján**. Az alábbi tábla kifejezetten az egyedi szakmai review prioritását adja meg.
+
+| Review ID | Eredeti checklist-szöveg | Legfeljebb három lehetséges stable ID (lexikai pontszám) | Automatikus triage | Kötelező következő bizonyíték |
+| --- | --- | --- | --- | --- |
+| 54.1.01 | Egységes Admin shell, oldalsáv, almenük, breadcrumbs, mobil navigáció. | ADM-010 (3), ADM-001 (2), ADM-009 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.1.02 | Áttekintő kártyák: weboldal, live, adásrend, kapcsolatok, tartalom, feladatok. | NTF-002 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.1.03 | Gyorsműveletek és legutóbbi aktivitás. | ADM-003 (1), ADM-005 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.1.04 | Teendők, figyelmeztetések, hibák és elakadt folyamatok. | ADM-004 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.1.05 | Globális kereső, command palette, kedvencek, legutóbbi elemek. | SEARCH-002 (2) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.1.06 | Kontextuális súgó, onboarding, üres állapotok és emberi nyelvű hibák. | ADM-011 (2), ADM-008 (1), HELP-002 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.1.07 | Értesítési központ, prioritások, digest és csendes időszak. | NTF-003 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.1.08 | Valós adatfrissesség, loading/empty/error/stale/partial állapot. | ADM-008 (1), ADM-013 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.2.01 | Oldal CRUD, hierarchia, slug, átnevezés, duplikálás, archiválás és törlés. | WEB-002 (2), WEB-003 (2), WEB-001 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.2.02 | Navigáció, dropdown/nested menü, footer, mobilmenü, belső/külső link. | WEB-005 (1), WEB-009 (1), WEB-010 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.2.03 | Egyetlen Visual Editor: elemkönyvtár, canvas, Layers/Outline, Inspector. | EDT-013 (3), EDT-036 (2), EDT-007 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.2.04 | Drag/drop, kijelölés, átrendezés, csoportosítás, duplicate, törlés, zoom/pan. | EDT-008 (2), WEB-003 (1), EDT-007 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.2.05 | Undo/redo, mentési állapot, konfliktusfeloldás, revision history és restore. | EDT-005 (3), EDT-029 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.2.06 | Szöveg, heading, kép, videó/embed, gomb, link, ikon, lista, kártya, űrlap, divider, spacer, grid/flex/section/container. | EDT-017 (4), EDT-016 (3), WEB-001 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.2.07 | Dinamikus SANCI blokkok: live, következő stream, adásrend, játékprofil, videó/clip feed, social links, termék, tagság, támogatás és közösségi CTA. | WEB-015 (1), WEB-016 (1), WEB-019 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.2.08 | Desktop/tablet/mobile preview, breakpointonkénti override, öröklés és portrait/landscape. | EDT-025 (4), WEB-005 (1), EDT-024 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.2.09 | Globális design tokens: színek, fontok, tipográfia, spacing, border, radius, shadow, layout. | WEB-010 (2), EDT-044 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.2.10 | Site/page/section/component sablonok, reusable komponensek, instance/override/detach, verziózás és rollback. | EDT-044 (2), WEB-007 (1), EDT-001 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.2.11 | Előnézet, draft, validálás, publikálás, visszavonás és publikált snapshot megőrzése. | WEB-004 (2), WEB-006 (1), EDT-027 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.2.12 | SEO: title, description, canonical, robots, Open Graph, social image, sitemap, robots.txt, structured data, redirect, 404. | SEO-001 (5), SEO-002 (4), SEO-004 (3) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.2.13 | Domain/DNS/HTTPS státusz, favicon, brand assets, coming-soon/maintenance. | WEB-028 (1), DYN-001 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.2.14 | Űrlapok, validáció, spamvédelem, adatkezelési hozzájárulás és beküldés-kezelés. | WEB-006 (1), WEB-030 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.2.15 | Webes teljesítmény, képméretezés, lazy loading, cache és Core Web Vitals. | WEB-030 (1), DYN-005 (1), DYN-006 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.3.01 | Logóvariánsok, színek, betűcsaládok, ikonstílus, vizuális szabályok. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.3.02 | Overlay, thumbnail, intro/outro, watermark, social post, merch és email sablonok. | RES-004 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.3.03 | Brand-safe színek/fontok és kontrasztellenőrzés. | DSN-005 (1), RES-009 (1), RES-012 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.3.04 | Globális és komponensszintű tokenek, theme-változatok és dark/light. | DSN-005 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.3.05 | SVG/PNG/WebP és megfelelő exportméretek. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.3.06 | Licenc, forrás, tulajdonos, verzió és asset-használati helyek. | RES-001 (1), RES-005 (1), RES-006 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.3.07 | Brand consistency ellenőrzés, AI-javaslat és kézi jóváhagyás. | DSN-005 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.4.01 | Egy asset registry és asset ID, R2 bináris tárolással, D1 metaadattal. | RES-001 (3), RES-005 (3), RES-006 (2) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.4.02 | Képek, videók, hangok, ikonok, fontok, dokumentumok, thumbnailök és exportok. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.4.03 | Egyenkénti/tömeges feltöltés, progress, cancel, retry és megszakadt feltöltés helyreállítása. | RES-003 (3) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.4.04 | MIME-/méretellenőrzés, feldolgozási státusz, preview/thumbnail és biztonsági ellenőrzés. | RES-004 (2), RES-011 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.4.05 | Címke, keresés, gyűjtemény, alt text, licenc, forrás és crop/focal point. | RES-004 (1), RES-007 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.4.06 | Használati helyek, függőségi figyelmeztetés és biztonságos archiválás/törlés. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.4.07 | Metaadatmódosítások megjelenése minden hivatkozási helyen. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.5.01 | Integrációs központ: Twitch, YouTube, TikTok, Discord, Kick és későbbi szolgáltatók. | INT-010 (1), INT-011 (1), INT-012 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.5.02 | Connect/disconnect/reconnect, fiók-/csatornaválasztás, scope és lejárat. | INT-007 (3), INT-005 (1), INT-006 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.5.03 | Tokenfrissítés, revoke, titkos tárolás, CSRF/state és site ownership. | INT-003 (2), INT-005 (2), INT-004 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.5.04 | Capability/scope mátrix, API-kvóta, provider health és diagnosztika. | INT-018 (2), INT-001 (1), INT-002 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.5.05 | Webhook aláírásellenőrzés, replay-védelem, deduplikáció, retry és dead-letter. | INT-017 (2), SEC-009 (2), INT-008 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.5.06 | Szinkronnapló, utolsó siker/hiba, kézi újraszinkron és konfliktusfeloldás. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.5.07 | Későbbi email, naptár, fizetés, affiliate, CRM és cloud-storage adapterek. | INT-021 (1), SEC-008 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.5.08 | Nem támogatott funkció egyértelmű jelölése és alternatív folyamat. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.6.01 | Live/offline állapot és adatfrissesség platformonként. | LIV-001 (2), LIV-002 (1), LIV-005 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.6.02 | Cím, kategória/játék, kezdés, nézőszám és elérhető streammetrikák. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.6.03 | Stream player/embed és offline fallback. | LIV-005 (4), LIV-001 (1), LIV-003 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.6.04 | Egyetlen adásrend-domain: események, ismétlődések, időzóna, ütközések. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.6.05 | Draft/scheduled/confirmed/postponed/cancelled/completed állapot. | SCH-005 (3) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.6.06 | Twitch/YouTube sync, irány/prioritás, konfliktuskezelés és szinkronelőzmény. | SCH-007 (2), SCH-008 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.6.07 | Játékprofilok, kapcsolódó tartalom, publikus naptár, countdown és későbbi iCal. | LIV-010 (1), SCH-009 (1), SCH-010 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.6.08 | Stream előtti checklist, technikai próba, jegyzetek, markerek és highlight-pontok. | LIV-003 (1), LIV-006 (1), LIV-007 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.6.09 | Multistream célok és platformonkénti metadata csak igazolt capability szerint. | LIV-008 (3) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.6.10 | Unified Chat, platformjelölés, moderációs státusz, küldési engedély és részleges hiba. | LIV-009 (2) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.6.11 | Felvétel/backup/replay csak tényleges technikai lehetőség és tisztázott tárolási költség mellett. | LIV-010 (2) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.7.01 | OBS-párosítás, hitelesítés, kapcsolatstátusz, reconnect és diagnosztika. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.7.02 | Scene/source lista, állapot, scene-váltás, visibility, audio mute/volume a támogatott műveletek szerint. | OBS-001 (2), OBS-003 (2), OBS-005 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.7.03 | Overlay Studio, browser source, canvas, safe area, méret, pozíció, scene-variáns. | OBS-001 (2), OBS-005 (2), OBS-003 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.7.04 | Alert box és eseményvariánsok follow/sub/gift/cheer/raid/tip/purchase eseményekre, ha elérhetők. | OBS-006 (1), COM-006 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.7.05 | Event list, chat box, goal/progress, countdown/timer, now-playing, sponsor/QR/link widget. | OBS-007 (2), OBS-006 (1), OBS-008 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.7.06 | Poll, giveaway, loyalty/points, viewer queue és media request csak jogosultsággal és szabályokkal. | OBS-007 (2), COM-004 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.7.07 | Widgetteszt, preview, verziózás, rollback és megosztható overlay URL. | OBS-010 (2), OBS-001 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.7.08 | Chatbot parancsok, aliasok, változók, timerek, quote/counter, shoutout és FAQ. | OBS-007 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.7.09 | Spam/linkvédelem, slow/follower/sub-only policy ahol a platform engedi, moderációs napló. | COM-012 (1), COM-013 (1), COM-018 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.7.10 | Hotkey, Stream Deck/Macro Deck/MIDI/webhook adapter, allowlist, dry-run és végrehajtási eredmény. | OBS-009 (4), OBS-003 (1), OBS-004 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.7.11 | Plugin/widget registry, verzió, kompatibilitás, permission, eredet, frissítés és eltávolítás. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.7.12 | Natív OBS plugin vagy desktop companion csak külön, dokumentált biztonsági tervvel. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.8.01 | VOD, clip, highlight, long-form, Short/Reel, post, image, audio, podcast és replay. | CNT-003 (3), CNT-017 (2), RES-004 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.8.02 | Közös content ID, platform ID, cím, leírás, thumbnail, időtartam, URL, státusz és jogadat. | RES-004 (1), RES-006 (1), CNT-001 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.8.03 | Keresés, szűrés, rendezés, bulk action, duplikáció-észlelés és gyűjtemények. | CNT-006 (2) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.8.04 | Tartalomnaptár és státuszfolyam: idea/draft/review/ready/scheduled/publishing/published/failed. | CNT-010 (2), RES-004 (1), RES-011 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.8.05 | Transcript, időbélyeg, speaker/fejezet, felirat, SRT/VTT, fordítás és export. | CNT-017 (1), CNT-018 (1), CNT-021 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.8.06 | AI highlight/clip-javaslat forrás-időbélyeggel, indoklással és emberi választással. | CNT-003 (2), CNT-018 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.8.07 | Videóvágás: trim/split/crop/reframe/aspect ratio, felirat, hang, átmenet és brand overlay. | CNT-021 (8), RES-004 (1), RES-016 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.8.08 | Thumbnail/grafika-sablon, variánsok, platformméretek és preview. | RES-004 (2), RES-011 (1), CNT-012 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.8.09 | Platformonkénti cím, leírás, hashtag, CTA, képarány és publikálási státusz. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.8.10 | API-publikálás ahol engedélyezett; egyébként export és kézi közzétételi útmutató. | CNT-017 (1), CNT-021 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.8.11 | Zene-/videójog, vendéghozzájárulás, lejárat, forrás és eltávolítási kérés. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.8.12 | Tartalomból weboldali feed, social poszt és analitika ugyanazon canonical rekord alapján. | CNT-019 (2), CNT-020 (2), RES-001 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.9.01 | Publikus fan regisztráció/bejelentkezés, profil, preferencia, adatletöltés/törlés. | COM-006 (1), COM-019 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.9.02 | Posztok, kommentek, reakciók, pollok, kérdések, beküldések és események. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.9.03 | Követés, értesítés, jelvény, mérföldkő, kihívás és közösségi jutalom. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.9.04 | Tagsági szintek, exkluzív poszt/video/audio, member-only stream és archívum. | COM-013 (2), COM-006 (1), COM-018 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.9.05 | Discord szerver/csatorna/role mapping entitlement alapján. | COM-002 (1), COM-009 (1), COM-013 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.9.06 | Moderációs queue, report, appeal, korlátozás/tiltás, spamvédelem és audit. | COM-009 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.9.07 | AI moderációs javaslat, bizonytalanság és emberi felülvizsgálat. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.9.08 | Public/member-only/private hozzáférés szerveroldali ellenőrzése. | COM-013 (3), COM-018 (3), COM-006 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.9.09 | Közösségi szabályzat, adatvédelmi és korhatár-/tartalmi szabályok. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.10.01 | Fizikai termék, merch, digitális termék, bundle, limited drop és preorder. | STO-005 (4), STO-019 (1), SUP-012 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.10.02 | Variánsok, SKU, ár/pénznem, készlet, kategória, kollekció, media és SEO. | STO-004 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.10.03 | Terméklista, termékoldal, keresés, kosár, checkout-integráció és rendelés-visszaigazolás. | STO-008 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.10.04 | Rendelésállapot, fizetés, teljesítés, tracking, cancel, refund és support. | STO-010 (3), SUP-001 (1), SUP-003 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.10.05 | Kupon, ajándékkártya, promóció, kampány, bundle és lejárat. | STO-005 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.10.06 | Biztonságos digitális delivery, entitlement és visszavonás refund/chargeback esetén. | SUP-008 (3), STO-010 (1), STO-012 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.10.07 | Egyszeri támogatás, visszatérő támogatás, célmérő és köszönőüzenet. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.10.08 | Tagsági előnyök, kedvezmények, termékdrop és tagság–Discord összekapcsolás. | SUP-009 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.10.09 | Szponzorációs media kit, ajánlat, deliverable, határidő, kampánylink és riport. | STO-004 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.10.10 | Affiliate link/kód, jutalék és konverzió csak mérhető/jogszerű keretben. | SUP-001 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.10.11 | Bevételi források, platformdíjak, refundok és export; nem könyvelési/adótanácsadási helyettesítő. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.10.12 | Fizetési, adózási, számlázási, fogyasztóvédelmi és GDPR-követelmények ellenőrzése. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.11.01 | Platformonkénti követő-/nézettség-/engagement-/streamidő-mutatók, ha elérhetők. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.11.02 | Tartalom- és csatorna-összehasonlítás, trendek, időszakok és célok. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.11.03 | Adatforrás, időbélyeg, frissesség, becsült/valós adat és hiányzó metrika jelzése. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.11.04 | Webanalitika, UTM, konverzió, SEO és publikált oldalak teljesítménye. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.11.05 | Thumbnail/cím/időzítés kísérletek és mérhető eredmények, ha elég adat áll rendelkezésre. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.11.06 | Kampány-/szponzorriport, CSV/JSON export és időszakos jelentés. | ANL-007 (1), CAM-004 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.11.07 | AI-elemzés hipotézisekkel, forrással és bizonytalansággal; nem garantált növekedési ígéret. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.12.01 | Vizuális trigger → condition → action → branch modell. | AUT-001 (1), AUT-002 (1), AUT-003 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.12.02 | Triggerek: stream, platformesemény, schedule, tartalom, rendelés, tagság, webhook, időzítés. | AUT-005 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.12.03 | Akciók: értesítés, draft, címke, export, overlay/OBS parancs, publikálási előkészítés. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.12.04 | Sablonok, verziózás, aktiválás/leállítás és jogosultság. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.12.05 | Dry-run, preview, jóváhagyás, idempotency, rate limit, retry, timeout és napló. | AUT-011 (2), AUT-006 (1), AUT-007 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.12.06 | Sikertelen ág, karantén, értesítés, kézi helyreállítás és rollback/kompenzáció. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.12.07 | AI-ból létrehozott workflow először draft/szimuláció; csak jóváhagyás után éles. | AUT-001 (1), AUT-004 (1), AUT-008 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.13.01 | AI Control Center: provider/model, költségkeret, kvóta, retention, adatforrás és stop switch. | AI-001 (2), AI-017 (2), AI-021 (2) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.13.02 | Projekt-/brandkontextus jogosultsággal és megtekinthető forrásokkal. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.13.03 | Website Designer: oldal/komponens/dizájn/responsive/SEO/accessibility javaslat. | AI-011 (1), AI-012 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.13.04 | Live Coach: opt-in technikai jelzések, pillanatjelölés és stream-/chat-összegzés. | AI-001 (1), AI-015 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.13.05 | Content Producer: transcript, clip, felirat, fordítás, thumbnail, cím és platformvariáns. | AI-014 (3), AI-013 (2), AI-011 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.13.06 | Community Assistant: FAQ, összegzés, moderációs javaslat és tagsági művelet-előkészítés. | AI-011 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.13.07 | Business Analyst: tartalom/kampány elemzés, hipotézis, mérhető teszt. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.13.08 | Automation Builder: természetes nyelvből workflow-draft, szimuláció és diff. | AUT-001 (2), AUT-004 (2), AUT-008 (2) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.13.09 | Kép-/grafika-/hang-/videógenerálás megfelelő külső modellel/szolgáltatóval, licenc- és költségkorláttal. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.13.10 | AI-művelet domain API-n át; kockázati szint, preview, jóváhagyás, napló és visszaállítás. | AUT-001 (1), AUT-009 (1), AUT-014 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.13.11 | Generált tartalom jelölése, forrás és bizonytalanság, felhasználói visszajelzés. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.13.12 | Manuális, AI nélküli út minden alapvető termékfolyamathoz. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.14.01 | Admin és publikus web külön nyelvi beállítással. | WEB-012 (1), WEB-029 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.14.02 | Magyar elsődleges nyelv, további nyelvek fokozatos bevezetése. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.14.03 | Locale-onkénti oldal-/CMS-tartalom, menü, média, alt text, SEO és Open Graph. | WEB-001 (1), WEB-011 (1), WEB-015 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.14.04 | Lokalizált slug/URL, hreflang/canonical szabályok és nyelvi fallback. | LOC-004 (2), WEB-002 (1), LOC-001 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.14.05 | Dátum/idő/pénznem/szám lokalizáció, időzóna és nyári időszámítás. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.14.06 | RTL layout, billentyűzet, font fallback és hosszabb fordítások tesztje. | WEB-010 (1), WEB-011 (1), LOC-001 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.14.07 | Fordítási memória/szószedet és AI-fordítás emberi jóváhagyással. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.14.08 | Nyelvváltó, automatikus nyelvajánlás és felhasználói választás megőrzése. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.15.01 | Profil, site/workspace, locale, timezone, dátum/pénznem és preferenciák. | SEC-003 (2), SET-001 (1), SET-002 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.15.02 | Szerepek: owner/admin/editor/moderator/analyst/commerce és modulonkénti engedély. | SEC-002 (1), QA-003 (1), SET-002 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.15.03 | Szerveroldali authorization, site/tenant izoláció és minimális jogosultság. | SEC-003 (3), SET-001 (1), SET-002 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.15.04 | Session, 2FA/SSO később, secret rotation, rate limit és gyanús aktivitás. | SEC-007 (2), SEC-008 (2), SEC-001 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.15.05 | Titok/token/payment adat redakció; titkosított token storage. | SEC-008 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.15.06 | Consent, cookie/privacy, retention, export/delete és adatfeldolgozók. | SEC-011 (4), SEC-010 (2), OPS-005 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.15.07 | Backup, restore próba, verziózott mentés, import/export és disaster recovery. | OPS-005 (3), QA-007 (2), SEC-011 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.15.08 | Health, job queue, webhook, API-quota, error log és audit log. | SEC-009 (1), SEC-010 (1), OPS-001 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.15.09 | Idempotencia, retry, timeout, cache invalidation, stale-data és partial-failure kezelés. | OPS-008 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.15.10 | Undo/redo, revision diff, restore és törlés előtti függőségi vizsgálat. | OPS-005 (1), QA-007 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.15.11 | WCAG 2.2 AA cél, reduced motion, screen reader, kontraszt, fókusz és touch target. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.15.12 | Mobil/tablet/desktop, gyenge hálózat, offline-jelzés és adatvesztés elleni védelem. | none | NO LEXICAL EVIDENCE | Human semantic owner/edge-case review required |
+| 54.15.13 | Tesztek: domain, integration, authorization, migration, UI, accessibility, responsive, E2E és smoke. | SEC-003 (2), QA-002 (2), SEC-009 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.16.01 | Dokumentált API, webhook registry, API-key kezelés, tesztelő és sandbox. | DEV-003 (2), SEC-009 (1), DEV-004 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.16.02 | Extension/widget/overlay manifest, schema, permission, verzió és kompatibilitás. | TEAM-003 (1), DEV-001 (1), DEV-002 (1) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.16.03 | Eredet/licenc/aláírás, sandbox, felülvizsgálat, frissítés, eltávolítás és visszavonás. | DEV-004 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.16.04 | Template/component/overlay/workflow marketplace későbbi fázisban. | TEAM-007 (2), SEC-003 (1), SEC-010 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.16.05 | Több site/workspace, aktív workspace választó, csapatmeghívás és szerepek. | SEC-003 (3), TEAM-001 (3), TEAM-005 (3) | AMBIGUOUS CANDIDATES | Human semantic owner/edge-case review required |
+| 54.16.06 | Agency/studio mód, ügyfélhozzáférés, közös sablonok és jóváhagyás. | TEAM-007 (2) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.16.07 | Későbbi SaaS billing, csomag, használati limit, számla, lemondás és adat-export. | TEAM-006 (2), SEC-007 (1), SEC-011 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+| 54.16.08 | Tenant izoláció, migráció, skálázás, adatrezidencia és költségfelügyelet. | SEC-003 (1) | CANDIDATE ONLY | Human semantic owner/edge-case review required |
+
+**Eredmény:** `156/156 TRIAGED`; `68 CANDIDATE ONLY`; `47 AMBIGUOUS CANDIDATES`; `41 NO LEXICAL EVIDENCE`; **`0 EXACT SEMANTIC PASS`**. A `NO LEXICAL EVIDENCE` **nem** jelent funkcióhiányt; a `CANDIDATE ONLY` **nem** jelent tényleges szemantikai lefedést. A következő ellenőrzéshez a 49. fejezet részletes leírása, a 24. fejezet ID, az 54.x teljes sor, az owner/surface, a 63.50.79–80 H19–H34 archív elfogadási mezői és a negatív acceptance szükséges.
+
+**A sorrend továbbra is P00–P10**, nem 1.0/1.x+; az azonos domain külön UI-elérései ugyanazt a kanonikus adatot módosítják. A 63.50.46 HIGH publish conflict, a hiányzó 00/A és 00.9–00.9.6.B források és a runtime tesztek OPEN. Következő kurzor: `63.50.92` — kézi, bizonyítékalapú per-row szemantikai review, a 41 lexikai nulla és többértelmű találatokkal kezdve. **PLAN IN PROGRESS / NOT PASS.**
 
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
