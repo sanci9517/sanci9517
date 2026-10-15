@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.72` — **H19–H22 79/79 soronkénti történeti ID/owner/phase/acceptance auditkártya**, H23–H34 192 sor következik; 00.9.6.B továbbra is UNRECOVERED; runtime/CI/user review OPEN; runtime/CI/user review OPEN; runtime/CI/user review OPEN; runtime/CI és user review OPEN; történeti és runtime evidence továbbra is nyitott, különös tekintettel a 63.50.46 HIGH publikálási konfliktusra. A 156 első körös routing kész, de szemantikai és történeti kapu továbbra is nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll és a 63.50.46 HIGH kódaudit-blokkoló ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.73` — **H19–H28 172/172 soronkénti történeti ID/owner/phase/acceptance auditkártya**, H29–H34 99 sor következik; 00.9.6.B UNRECOVERED; runtime/CI/user review OPEN; runtime/CI/user review OPEN; runtime/CI/user review OPEN; runtime/CI és user review OPEN; történeti és runtime evidence továbbra is nyitott, különös tekintettel a 63.50.46 HIGH publikálási konfliktusra. A 156 első körös routing kész, de szemantikai és történeti kapu továbbra is nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll és a 63.50.46 HIGH kódaudit-blokkoló ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -7208,7 +7208,7 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 5. Minden sikeres audit-commit után a fejléc folytatási állapotát és a legutolsó bejegyzést egyeztetni; a következő munka **egyértelmű azonosítóval**, a még nyitott részhalmazzal és a PASS/NOT PASS határral legyen megadva. A commit SHA csak a GitHub által visszaadott tényleges eredmény alapján közölhető.
 6. Nem létező vagy nem visszanyert történeti forrást nem lehet rekonstruáltnak nevezni; a 396 ID, 22 modul, 156 review és 271 történeti H-ID számlálása nem runtime teszt. A fejlesztési fagyasztás az aktív kapu PASS-áig változatlan.
 
-**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.72 H19-H22 79 ITEM HISTORICAL AUDIT / NEXT H23-H34`. A 54.1–54.4 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.7–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
+**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.73 H19-H28 172 ITEM HISTORICAL AUDIT / NEXT H29-H34`. A 54.1–54.4 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.7–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
 
 ### 63.50.41. 54.2 Saját weboldal és Visual Editor: 15 checklist-tétel első körös routingja (2026-10-14)
 
@@ -8151,6 +8151,112 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 **Kiemelt eltérés / negatív teszt:** H19.16 R2 object-key policy nem webhook signature; H21.13 YouTube statisztika nem mérési taxonómia; H21.22 Cloudflare Secrets nem webhook signature; H22.16 title/hashtag javaslat nem clip/transcript; H22.19 analytics feedback nem taxonomy. A 63.50.69 második sorai az elsődleges source- és acceptance sor mellett megmaradnak.
 
 **Következő:** H23–H28 93/93 soros mély audit, majd H29–H34 99/99; végül mind a 271 H-ID és az eredeti archív owner/surface/dependency/acceptance külön soronkénti consistency gap ellenőrzése. **GATE: NOT PASS.**
+
+### 63.50.73. H23–H28 93/93 soronkénti interaction, accessibility, SEO, analytics, Admin és security audit (2026-10-15)
+
+**Forrás:** `docs/archive/MASTER-DEVELOPMENT-PLAN-2026-10-13.md` H23–H28 elsődleges történeti tábla, szemben a kanonikus MASTER 63.52–63.53 és 5./49./F0–F11 fejezeteivel. A fázis, domain és tesztoszlop **audit-terv**, nem futtatott bizonyíték.
+
+| H-ID | Eredeti képesség | Mai stabil ID | Domain owner | Új fázisértelmezés | Kötelező pozitív és negatív acceptance | Evidence |
+| --- | --- | --- | --- | --- | --- | --- |
+| H23.01 | event model | EDT-039 | PAGE + REVISION + DESIGN_SYSTEM | F0 safe baseline → F2 motion | event/state validation; reduced motion; keyboard; XSS/performance | SOURCE / UNRUN |
+| H23.02 | click | EDT-039 | PAGE + REVISION + DESIGN_SYSTEM | F0 safe baseline → F2 motion | event/state validation; reduced motion; keyboard; XSS/performance | SOURCE / UNRUN |
+| H23.03 | hover | EDT-039 | PAGE + REVISION + DESIGN_SYSTEM | F0 safe baseline → F2 motion | event/state validation; reduced motion; keyboard; XSS/performance | SOURCE / UNRUN |
+| H23.04 | focus | EDT-039, EDT-037 | PAGE + REVISION + DESIGN_SYSTEM | F0 safe baseline → F2 motion | event/state validation; reduced motion; keyboard; XSS/performance | SOURCE / UNRUN |
+| H23.05 | active | EDT-039 | PAGE + REVISION + DESIGN_SYSTEM | F0 safe baseline → F2 motion | event/state validation; reduced motion; keyboard; XSS/performance | SOURCE / UNRUN |
+| H23.06 | submit | EDT-039, EDT-019 | PAGE + REVISION + DESIGN_SYSTEM | F0 safe baseline → F2 motion | event/state validation; reduced motion; keyboard; XSS/performance | SOURCE / UNRUN |
+| H23.07 | scroll | EDT-039 | PAGE + REVISION + DESIGN_SYSTEM | F0 safe baseline → F2 motion | event/state validation; reduced motion; keyboard; XSS/performance | SOURCE / UNRUN |
+| H23.08 | load | EDT-039 | PAGE + REVISION + DESIGN_SYSTEM | F0 safe baseline → F2 motion | event/state validation; reduced motion; keyboard; XSS/performance | SOURCE / UNRUN |
+| H23.09 | timer | EDT-039 | PAGE + REVISION + DESIGN_SYSTEM | F0 safe baseline → F2 motion | event/state validation; reduced motion; keyboard; XSS/performance | SOURCE / UNRUN |
+| H23.10 | open/close | EDT-039 | PAGE + REVISION + DESIGN_SYSTEM | F0 safe baseline → F2 motion | event/state validation; reduced motion; keyboard; XSS/performance | SOURCE / UNRUN |
+| H23.11 | navigation | EDT-039, WEB-009 | PAGE + REVISION + DESIGN_SYSTEM | F0 safe baseline → F2 motion | event/state validation; reduced motion; keyboard; XSS/performance | SOURCE / UNRUN |
+| H23.12 | show/hide | EDT-039 | PAGE + REVISION + DESIGN_SYSTEM | F0 safe baseline → F2 motion | event/state validation; reduced motion; keyboard; XSS/performance | SOURCE / UNRUN |
+| H23.13 | toggle | EDT-039 | PAGE + REVISION + DESIGN_SYSTEM | F0 safe baseline → F2 motion | event/state validation; reduced motion; keyboard; XSS/performance | SOURCE / UNRUN |
+| H23.14 | state machine | EDT-039 | PAGE + REVISION + DESIGN_SYSTEM | F0 safe baseline → F2 motion | event/state validation; reduced motion; keyboard; XSS/performance | SOURCE / UNRUN |
+| H23.15 | transition | EDT-040 | PAGE + REVISION + DESIGN_SYSTEM | F0 safe baseline → F2 motion | event/state validation; reduced motion; keyboard; XSS/performance | SOURCE / UNRUN |
+| H23.16 | animation timeline | EDT-040 | PAGE + REVISION + DESIGN_SYSTEM | F0 safe baseline → F2 motion | event/state validation; reduced motion; keyboard; XSS/performance | SOURCE / UNRUN |
+| H23.17 | keyframes | EDT-040 | PAGE + REVISION + DESIGN_SYSTEM | F0 safe baseline → F2 motion | event/state validation; reduced motion; keyboard; XSS/performance | SOURCE / UNRUN |
+| H23.18 | reduced-motion | EDT-040, QA-005 | PAGE + REVISION + DESIGN_SYSTEM | F0 safe baseline → F2 motion | event/state validation; reduced motion; keyboard; XSS/performance | SOURCE / UNRUN |
+| H23.19 | interaction validation | EDT-039, EDT-022 | PAGE + REVISION + DESIGN_SYSTEM | F0 safe baseline → F2 motion | event/state validation; reduced motion; keyboard; XSS/performance | SOURCE / UNRUN |
+| H23.20 | performance safeguards | OPS-008, QA-004 | PAGE + REVISION + DESIGN_SYSTEM | F0 safe baseline → F2 motion | event/state validation; reduced motion; keyboard; XSS/performance | SOURCE / UNRUN |
+| H24.01 | semantic HTML | WEB-032, QA-005 | PAGE + QA + ACCESSIBILITY | F0 accessibility gate → F3 components | semantic/ARIA/keyboard/focus; screen-reader; negative WCAG | SOURCE / UNRUN |
+| H24.02 | heading hierarchy | EDT-017, QA-005 | PAGE + QA + ACCESSIBILITY | F0 accessibility gate → F3 components | semantic/ARIA/keyboard/focus; screen-reader; negative WCAG | SOURCE / UNRUN |
+| H24.03 | alt text | RES-007, QA-005 | PAGE + QA + ACCESSIBILITY | F0 accessibility gate → F3 components | semantic/ARIA/keyboard/focus; screen-reader; negative WCAG | SOURCE / UNRUN |
+| H24.04 | labels | EDT-019, QA-005 | PAGE + QA + ACCESSIBILITY | F0 accessibility gate → F3 components | semantic/ARIA/keyboard/focus; screen-reader; negative WCAG | SOURCE / UNRUN |
+| H24.05 | ARIA | QA-005, EDT-037 | PAGE + QA + ACCESSIBILITY | F0 accessibility gate → F3 components | semantic/ARIA/keyboard/focus; screen-reader; negative WCAG | SOURCE / UNRUN |
+| H24.06 | keyboard navigation | EDT-037, QA-004 | PAGE + QA + ACCESSIBILITY | F0 accessibility gate → F3 components | semantic/ARIA/keyboard/focus; screen-reader; negative WCAG | SOURCE / UNRUN |
+| H24.07 | focus order | EDT-037, QA-005 | PAGE + QA + ACCESSIBILITY | F0 accessibility gate → F3 components | semantic/ARIA/keyboard/focus; screen-reader; negative WCAG | SOURCE / UNRUN |
+| H24.08 | focus visibility | EDT-037, QA-005 | PAGE + QA + ACCESSIBILITY | F0 accessibility gate → F3 components | semantic/ARIA/keyboard/focus; screen-reader; negative WCAG | SOURCE / UNRUN |
+| H24.09 | contrast warnings | DSN-002, QA-005 | PAGE + QA + ACCESSIBILITY | F0 accessibility gate → F3 components | semantic/ARIA/keyboard/focus; screen-reader; negative WCAG | SOURCE / UNRUN |
+| H24.10 | screen-reader metadata | WEB-032, QA-005 | PAGE + QA + ACCESSIBILITY | F0 accessibility gate → F3 components | semantic/ARIA/keyboard/focus; screen-reader; negative WCAG | SOURCE / UNRUN |
+| H24.11 | form validation accessibility | EDT-019, QA-005 | PAGE + QA + ACCESSIBILITY | F0 accessibility gate → F3 components | semantic/ARIA/keyboard/focus; screen-reader; negative WCAG | SOURCE / UNRUN |
+| H24.12 | editor accessibility checks | EDT-022, EDT-037 | PAGE + QA + ACCESSIBILITY | F0 accessibility gate → F3 components | semantic/ARIA/keyboard/focus; screen-reader; negative WCAG | SOURCE / UNRUN |
+| H24.13 | public accessibility audit | QA-005, QA-009 | PAGE + QA + ACCESSIBILITY | F0 accessibility gate → F3 components | semantic/ARIA/keyboard/focus; screen-reader; negative WCAG | SOURCE / UNRUN |
+| H25.01 | title | SEO-001 | SEO_PUBLICATION + PAGE | F0 publish/HTTP gate → F3 SEO | published-only SSR/HTTP 404; canonical/OG; no draft index | SOURCE / UNRUN |
+| H25.02 | description | SEO-001 | SEO_PUBLICATION + PAGE | F0 publish/HTTP gate → F3 SEO | published-only SSR/HTTP 404; canonical/OG; no draft index | SOURCE / UNRUN |
+| H25.03 | canonical | SEO-001, SET-004 | SEO_PUBLICATION + PAGE | F0 publish/HTTP gate → F3 SEO | published-only SSR/HTTP 404; canonical/OG; no draft index | SOURCE / UNRUN |
+| H25.04 | Open Graph | SEO-002 | SEO_PUBLICATION + PAGE | F0 publish/HTTP gate → F3 SEO | published-only SSR/HTTP 404; canonical/OG; no draft index | SOURCE / UNRUN |
+| H25.05 | X/Twitter card | SEO-002 | SEO_PUBLICATION + PAGE | F0 publish/HTTP gate → F3 SEO | published-only SSR/HTTP 404; canonical/OG; no draft index | SOURCE / UNRUN |
+| H25.06 | structured data | SEO-003 | SEO_PUBLICATION + PAGE | F0 publish/HTTP gate → F3 SEO | published-only SSR/HTTP 404; canonical/OG; no draft index | SOURCE / UNRUN |
+| H25.07 | sitemap | SEO-004 | SEO_PUBLICATION + PAGE | F0 publish/HTTP gate → F3 SEO | published-only SSR/HTTP 404; canonical/OG; no draft index | SOURCE / UNRUN |
+| H25.08 | robots | SEO-004 | SEO_PUBLICATION + PAGE | F0 publish/HTTP gate → F3 SEO | published-only SSR/HTTP 404; canonical/OG; no draft index | SOURCE / UNRUN |
+| H25.09 | per-page SEO | SEO-001 | SEO_PUBLICATION + PAGE | F0 publish/HTTP gate → F3 SEO | published-only SSR/HTTP 404; canonical/OG; no draft index | SOURCE / UNRUN |
+| H25.10 | SEO preview | SEO-005 | SEO_PUBLICATION + PAGE | F0 publish/HTTP gate → F3 SEO | published-only SSR/HTTP 404; canonical/OG; no draft index | SOURCE / UNRUN |
+| H25.11 | redirects | WEB-013 | SEO_PUBLICATION + PAGE | F0 publish/HTTP gate → F3 SEO | published-only SSR/HTTP 404; canonical/OG; no draft index | SOURCE / UNRUN |
+| H25.12 | broken-link detection | WEB-013, SEO-005 | SEO_PUBLICATION + PAGE | F0 publish/HTTP gate → F3 SEO | published-only SSR/HTTP 404; canonical/OG; no draft index | SOURCE / UNRUN |
+| H26.01 | page views | ANL-001, ANL-002 | ANALYTICS + PRIVACY | F9 analytics | consent/source/retention; no tracking without consent; stale data | SOURCE / UNRUN |
+| H26.02 | button clicks | ANL-001, ANL-002 | ANALYTICS + PRIVACY | F9 analytics | consent/source/retention; no tracking without consent; stale data | SOURCE / UNRUN |
+| H26.03 | social clicks | ANL-001, ANL-002 | ANALYTICS + PRIVACY | F9 analytics | consent/source/retention; no tracking without consent; stale data | SOURCE / UNRUN |
+| H26.04 | stream events | ANL-001, ANL-003 | ANALYTICS + PRIVACY | F9 analytics | consent/source/retention; no tracking without consent; stale data | SOURCE / UNRUN |
+| H26.05 | conversion events | ANL-001, ANL-005 | ANALYTICS + PRIVACY | F9 analytics | consent/source/retention; no tracking without consent; stale data | SOURCE / UNRUN |
+| H26.06 | privacy-aware analytics | ANL-002, ANL-009 | ANALYTICS + PRIVACY | F9 analytics | consent/source/retention; no tracking without consent; stale data | SOURCE / UNRUN |
+| H26.07 | retention policy | ANL-009, SEC-011 | ANALYTICS + PRIVACY | F9 analytics | consent/source/retention; no tracking without consent; stale data | SOURCE / UNRUN |
+| H26.08 | admin dashboard | ANL-007, ADM-002 | ANALYTICS + PRIVACY | F9 analytics | consent/source/retention; no tracking without consent; stale data | SOURCE / UNRUN |
+| H26.09 | editor/content performance | ANL-004 | ANALYTICS + PRIVACY | F9 analytics | consent/source/retention; no tracking without consent; stale data | SOURCE / UNRUN |
+| H26.10 | content performance | ANL-004 | ANALYTICS + PRIVACY | F9 analytics | consent/source/retention; no tracking without consent; stale data | SOURCE / UNRUN |
+| H26.11 | stream performance | ANL-003 | ANALYTICS + PRIVACY | F9 analytics | consent/source/retention; no tracking without consent; stale data | SOURCE / UNRUN |
+| H26.12 | anomaly detection later | ANL-010 | ANALYTICS + PRIVACY | F9 analytics | consent/source/retention; no tracking without consent; stale data | SOURCE / UNRUN |
+| H27.01 | dashboard | ADM-001, ADM-002 | ADMIN + source domain owner | F1 Admin shell → source module phase | real module route+permission; no Editor placeholder; viewer denied writes | SOURCE / UNRUN |
+| H27.02 | navigation | ADM-001 | ADMIN + source domain owner | F1 Admin shell → source module phase | real module route+permission; no Editor placeholder; viewer denied writes | SOURCE / UNRUN |
+| H27.03 | responsive admin | ADM-010 | ADMIN + source domain owner | F1 Admin shell → source module phase | real module route+permission; no Editor placeholder; viewer denied writes | SOURCE / UNRUN |
+| H27.04 | diagnostics | OPS-007, ADM-004 | ADMIN + source domain owner | F1 Admin shell → source module phase | real module route+permission; no Editor placeholder; viewer denied writes | SOURCE / UNRUN |
+| H27.05 | page list | WEB-001 | ADMIN + source domain owner | F1 Admin shell → source module phase | real module route+permission; no Editor placeholder; viewer denied writes | SOURCE / UNRUN |
+| H27.06 | content management | CNT-001, CNT-006 | ADMIN + source domain owner | F1 Admin shell → source module phase | real module route+permission; no Editor placeholder; viewer denied writes | SOURCE / UNRUN |
+| H27.07 | schedule | SCH-001 | ADMIN + source domain owner | F1 Admin shell → source module phase | real module route+permission; no Editor placeholder; viewer denied writes | SOURCE / UNRUN |
+| H27.08 | socials | INT-002, ADM-003 | ADMIN + source domain owner | F1 Admin shell → source module phase | real module route+permission; no Editor placeholder; viewer denied writes | SOURCE / UNRUN |
+| H27.09 | VOD | CNT-002 | ADMIN + source domain owner | F1 Admin shell → source module phase | real module route+permission; no Editor placeholder; viewer denied writes | SOURCE / UNRUN |
+| H27.10 | media | RES-001 | ADMIN + source domain owner | F1 Admin shell → source module phase | real module route+permission; no Editor placeholder; viewer denied writes | SOURCE / UNRUN |
+| H27.11 | settings | SET-001 | ADMIN + source domain owner | F1 Admin shell → source module phase | real module route+permission; no Editor placeholder; viewer denied writes | SOURCE / UNRUN |
+| H27.12 | SEO | SEO-005 | ADMIN + source domain owner | F1 Admin shell → source module phase | real module route+permission; no Editor placeholder; viewer denied writes | SOURCE / UNRUN |
+| H27.13 | analytics | ANL-007 | ADMIN + source domain owner | F1 Admin shell → source module phase | real module route+permission; no Editor placeholder; viewer denied writes | SOURCE / UNRUN |
+| H27.14 | integrations | INT-002 | ADMIN + source domain owner | F1 Admin shell → source module phase | real module route+permission; no Editor placeholder; viewer denied writes | SOURCE / UNRUN |
+| H27.15 | editor management | EDT-001, WEB-001 | ADMIN + source domain owner | F1 Admin shell → source module phase | real module route+permission; no Editor placeholder; viewer denied writes | SOURCE / UNRUN |
+| H27.16 | preview | EDT-032, WEB-005 | ADMIN + source domain owner | F1 Admin shell → source module phase | real module route+permission; no Editor placeholder; viewer denied writes | SOURCE / UNRUN |
+| H27.17 | recovery | EDT-042, OPS-005 | ADMIN + source domain owner | F1 Admin shell → source module phase | real module route+permission; no Editor placeholder; viewer denied writes | SOURCE / UNRUN |
+| H27.18 | history | WEB-008, EDT-005 | ADMIN + source domain owner | F1 Admin shell → source module phase | real module route+permission; no Editor placeholder; viewer denied writes | SOURCE / UNRUN |
+| H27.19 | permissions | SEC-002, ADM-009 | ADMIN + source domain owner | F1 Admin shell → source module phase | real module route+permission; no Editor placeholder; viewer denied writes | SOURCE / UNRUN |
+| H28.01 | HttpOnly | SEC-001 | IDENTITY + SECURITY + AUDIT | F0 security gate → F4/F11 role expansion | server-side permission; CSRF/replay/secrets; cross-site negative | SOURCE / UNRUN |
+| H28.02 | Secure cookie | SEC-001 | IDENTITY + SECURITY + AUDIT | F0 security gate → F4/F11 role expansion | server-side permission; CSRF/replay/secrets; cross-site negative | SOURCE / UNRUN |
+| H28.03 | SameSite | SEC-001 | IDENTITY + SECURITY + AUDIT | F0 security gate → F4/F11 role expansion | server-side permission; CSRF/replay/secrets; cross-site negative | SOURCE / UNRUN |
+| H28.04 | password hash | SEC-001 | IDENTITY + SECURITY + AUDIT | F0 security gate → F4/F11 role expansion | server-side permission; CSRF/replay/secrets; cross-site negative | SOURCE / UNRUN |
+| H28.05 | CSRF | SEC-004 | IDENTITY + SECURITY + AUDIT | F0 security gate → F4/F11 role expansion | server-side permission; CSRF/replay/secrets; cross-site negative | SOURCE / UNRUN |
+| H28.06 | rate limiting | SEC-007 | IDENTITY + SECURITY + AUDIT | F0 security gate → F4/F11 role expansion | server-side permission; CSRF/replay/secrets; cross-site negative | SOURCE / UNRUN |
+| H28.07 | RBAC | SEC-002 | IDENTITY + SECURITY + AUDIT | F0 security gate → F4/F11 role expansion | server-side permission; CSRF/replay/secrets; cross-site negative | SOURCE / UNRUN |
+| H28.08 | API authorization | SEC-002, SEC-003 | IDENTITY + SECURITY + AUDIT | F0 security gate → F4/F11 role expansion | server-side permission; CSRF/replay/secrets; cross-site negative | SOURCE / UNRUN |
+| H28.09 | public/admin separation | SEC-002, WEB-031 | IDENTITY + SECURITY + AUDIT | F0 security gate → F4/F11 role expansion | server-side permission; CSRF/replay/secrets; cross-site negative | SOURCE / UNRUN |
+| H28.10 | Cloudflare Secrets | SEC-008 | IDENTITY + SECURITY + AUDIT | F0 security gate → F4/F11 role expansion | server-side permission; CSRF/replay/secrets; cross-site negative | SOURCE / UNRUN |
+| H28.11 | audit log | SEC-010 | IDENTITY + SECURITY + AUDIT | F0 security gate → F4/F11 role expansion | server-side permission; CSRF/replay/secrets; cross-site negative | SOURCE / UNRUN |
+| H28.12 | input validation | SEC-006, SEC-005 | IDENTITY + SECURITY + AUDIT | F0 security gate → F4/F11 role expansion | server-side permission; CSRF/replay/secrets; cross-site negative | SOURCE / UNRUN |
+| H28.13 | output validation | SEC-005 | IDENTITY + SECURITY + AUDIT | F0 security gate → F4/F11 role expansion | server-side permission; CSRF/replay/secrets; cross-site negative | SOURCE / UNRUN |
+| H28.14 | file validation | XSS sanitization nem teljes MIME/size/magic-byte | IDENTITY + SECURITY + AUDIT | F0 security gate → F4/F11 role expansion | server-side permission; CSRF/replay/secrets; cross-site negative | SOURCE / UNRUN |
+| H28.15 | replay protection where applicable | SEC-009 | IDENTITY + SECURITY + AUDIT | F0 security gate → F4/F11 role expansion | server-side permission; CSRF/replay/secrets; cross-site negative | SOURCE / UNRUN |
+| H28.16 | action permission `can()` checks |  | IDENTITY + SECURITY + AUDIT | F0 security gate → F4/F11 role expansion | server-side permission; CSRF/replay/secrets; cross-site negative | SOURCE / UNRUN |
+| H28.17 | AI permission boundary | AI-006, AI-019 | IDENTITY + SECURITY + AUDIT | F0 security gate → F4/F11 role expansion | server-side permission; CSRF/replay/secrets; cross-site negative | SOURCE / UNRUN |
+
+**Ellenőrzött:** 93/93 H-ID megtalálható a történeti és aktuális táblában, stabil ID-hoz rendelve. **Nem bizonyított:** 93 működő funkció, 93 lefuttatott teszt, minden archív owner/surface/dependency elfogadása.
+
+**Release-kritikus metszet:** H23 interaction és H24 a11y nem kizárólag Inspector-funkció; a public renderer és keyboard/screen-reader fogyasztó is kötelező. H25 SEO a 63.50.63 PUB-03–05 szerint P0 nyitott. H27 Admin nem egyenlő az Editor menüjével. H28 `can()` szerveroldali policy minden domain mutationt véd, AI permission későbbi fázis. H28.14 fájlvalidálásnál MIME/size/magic-byte és quarantine döntés nem helyettesíthető XSS-only szabállyal.
+
+**Következő:** H29–H34 99/99 tétel; utána 271 sor source→owner/surface/dependency gap minősítés. **GATE: NOT PASS.**
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
