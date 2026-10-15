@@ -99,3 +99,27 @@ print('PASS')
 `;
   assert.match(execFileSync('python3', ['-c', script], { encoding: 'utf8' }), /PASS/);
 });
+
+
+test('draft metadata stays private until explicit publish, including slug changes', () => {
+  const script = `
+import sqlite3
+db=sqlite3.connect(':memory:')
+db.executescript("""
+CREATE TABLE pages(id TEXT PRIMARY KEY,site_id TEXT,slug TEXT,title TEXT,description TEXT,content_json TEXT,published_slug TEXT,published_title TEXT,published_description TEXT,published_content_json TEXT,is_published INTEGER,published_revision_id TEXT);
+CREATE TABLE editor_revisions(id TEXT PRIMARY KEY,page_id TEXT,version INTEGER,document_json TEXT,UNIQUE(page_id,version));
+INSERT INTO pages VALUES ('p','site','old','Old','Old description','v1','old','Old','Old description','v1',1,'r1');
+INSERT INTO editor_revisions VALUES ('r1','p',1,'v1');
+""")
+db.execute("UPDATE pages SET slug='new',title='New',description='Draft only',content_json='v2' WHERE id='p'")
+assert db.execute("SELECT published_slug,published_title,published_description,published_content_json FROM pages").fetchone()==('old','Old','Old description','v1')
+assert db.execute("SELECT id FROM pages WHERE site_id='site' AND published_slug='new' AND is_published=1").fetchone() is None
+assert db.execute("SELECT id FROM pages WHERE site_id='site' AND published_slug='old' AND is_published=1").fetchone()==('p',)
+db.execute("INSERT INTO editor_revisions VALUES ('r2','p',2,'v2')")
+db.execute("""UPDATE pages SET published_slug=slug,published_title=title,published_description=description,published_content_json=content_json,published_revision_id='r2' WHERE id='p' AND site_id='site' AND EXISTS(SELECT 1 FROM editor_revisions WHERE id='r2')""")
+assert db.execute("SELECT published_slug,published_title,published_description,published_content_json,published_revision_id FROM pages").fetchone()==('new','New','Draft only','v2','r2')
+assert db.execute("SELECT id FROM pages WHERE site_id='site' AND published_slug='old' AND is_published=1").fetchone() is None
+print('PASS')
+`;
+  assert.match(execFileSync('python3', ['-c', script], { encoding: 'utf8' }), /PASS/);
+});
