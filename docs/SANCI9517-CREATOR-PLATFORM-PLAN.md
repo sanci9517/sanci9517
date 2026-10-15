@@ -2932,7 +2932,9 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - **SEO és megosztás:** meta cím/leírás, canonical URL, sitemap, robots, Open Graph, social preview, strukturált adatok, redirectek.
 - **Lokalizáció:** nyelvek, fordítási státusz, locale-öröklés és felülírás, lokalizált slug/meta/kép/alt text, RTL, nyelvváltó.
 - **Űrlapok és interakciók:** kapcsolat, feliratkozás, leadek, spamvédelem, siker/hiba állapotok, hozzájárulás.
+  - **49.2.Forms — űrlap-életciklus (P03.1/P03.2/P03.5; 54.2.14):** külön kezelhető űrlapok, verziózott mezőséma és validáció, consent-szöveg/verzió, szerveroldali spam/rate-limit, beküldés státusz, admin inbox/keresés, retention és törlés. Public űrlapblokk és Editor form-binding ugyanazt a Forms submission service-t használja; a Visual Editor nem kezel önálló beküldés-adatbázist. Owner: WEB public route + elkülönített FORMS submission domain-szerződés (végleges stabil ID döntés nyitott). Negatív acceptance: consent nélküli vagy idegen site-ból olvasott beküldés tiltott.
 - **Publikálás:** preview, staging, diff, jóváhagyás, publish/unpublish, verzió és rollback, domain és DNS állapot.
+  - **49.2.Published snapshot safety (HIGH; 63.50.46):** a public URL/slug/meta és content snapshot csak explicit, validált publish művelettel válhat láthatóvá; admin metadata PATCH és draft rollback nem változtathatja meg a published revisiont vagy public URL-t. Published/draft slug külön állapot és redirect/404/SEO migrációs terv szükséges. WEB-002/004/006/007/013, EDT-027/033, SEO-001/004; kódjavítás és teszt bizonyítás előtt NOT FIXED.
 - **Külön modulokból elérhető közös képességek:** Brand Kit, témák, design tokenek, ikonok, sablonok, blokkkönyvtár és presetek → **49.3. Márka és designrendszer**; feltöltés, asset-regiszter, média-metaadatok és használati helyek → **49.4. Média- és erőforráskönyvtár**. Az Editor ezek kiválasztására/használatára adhat felületet, de a kanonikus kezelésük nem ide tartozik.
 
 ### 49.3. Márka és designrendszer
@@ -3088,6 +3090,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 ### 49.19. Beállítások, biztonság és adat
 **Tulajdonosi határ:** A Beállítások a személyes és site-szintű konfiguráció, biztonsági policy, adatkezelési műveletek és naplók felülete. A csapatmeghívás/workspace-életciklus a 49.22, provider OAuth a 49.7, AI adat-/modellpreferenciák szakmai kezelése a 49.15 modulhoz tartozik, egységes jogosultsági ellenőrzéssel.
 - **Profil és személyes preferenciák:** nyelv, időzóna, dátum/pénznem, accessibility és privacy preferenciák; aktív workspace/csapatkezelés a 49.22 modulhoz tartozik.
+  - **49.19.Locale preferences (P09.5; 54.14.01):** Admin UI nyelve felhasználóhoz kötött preference, publikus oldal alapértelmezett és engedélyezett nyelve site-scoped; kérés-/látogatóválasztás felülírásának és fallback sorrendjét explicit szerződés szabályozza. LOC-001/003/004 csak fordítási és SEO-fogyasztó; nyelvváltás nem írhatja át a canonical tartalmat vagy a másik felület nyelvét. Negatív acceptance: Admin locale változás nem módosíthat public locale-t.
 - **Jogosultsági policy és audit:** szerep-/műveletjogok szerveroldali szabályai; csapattag-meghívás és szerepkiosztás a 49.22 modulban történik.
 - **Biztonság:** session, eszközök, jelszó/SSO későbbi támogatása, 2FA, rate limiting, secret rotation és gyanús aktivitás.
 - **Adatkezelés:** export, törlés, retention, consent, cookie/adatvédelmi beállítások, adatfeldolgozók.
@@ -3107,6 +3110,7 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 ### 49.21. Bővítmények, widgetek és piactér — későbbi platformfázis
 **Tulajdonosi határ:** A piactér és bővítménykezelő a harmadik féltől származó extension-manifest, telepítés, engedély, kompatibilitás és eltávolítás gazdája. A telepített kiegészítő nem hozhat létre jogosulatlan, párhuzamos tartalom-/fiók-/asset-tárolót; az eredeti domain- és API-szerződésekhez kapcsolódik.
 - **Extension registry:** manifest, verzió, scope, permission, kompatibilitás, aláírás/eredet, frissítés és eltávolítás.
+  - **49.21.Extension lifecycle (P06.1/P06.3/P09.1/P09.3; 54.7.11/54.16.02):** egyetlen közös manifest schema és provenance/signature ellenőrzés, install → activation → update/rollback → revoke/remove állapotgép, explicit capability/permission prompt, sandbox és kompatibilitási ellenőrzés. OBS/widget és Editor csak engedélyezett extensiont fogyaszt; provider OAuth marad 49.7-ben, API/SDK szerződés 49.20-ban. Negatív acceptance: manipulált manifest, revoked signer, jogosultság-eszkaláció, inkompatibilis verzió tiltása; stabil ID gap ellenőrzendő.
 - **Widget/overlay SDK:** saját komponensek, konfigurációs séma, preview, események és verziózás.
 - **Template/component marketplace:** sablonok, komponensek, overlayek és workflow-k; licenc, szerző, értékelés, frissítés és visszavonás.
 - **Biztonságos bővítmény-életciklus:** permission review, izolált futtatás/sandbox, kompatibilitási teszt, supply-chain ellenőrzés, rollback és hozzáférés-visszavonás.
