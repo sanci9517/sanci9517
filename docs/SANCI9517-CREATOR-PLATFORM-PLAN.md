@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.108` — **396 ID tételes owner/surface/dependency/acceptance hiányleltára**; stable-ID döntések, 63.50.46 HIGH publish conflict, 00/A/00.9.6.B és runtime bizonyítás OPEN; **PLAN IN PROGRESS / NOT PASS.**  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.109` — **ADM/WEB/EDT egyedi ID-k owner/surface/dependency/acceptance auditja**; stable-ID döntések, 63.50.46 HIGH publish conflict, 00/A/00.9.6.B és runtime bizonyítás OPEN; **PLAN IN PROGRESS / NOT PASS.**  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -11248,6 +11248,25 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 **A strukturális PASS pontos határa:** az ID-k száma, egyedisége, családeloszlása és a 22 modulcím létezése igazolt a jelenlegi dokumentumon. Ez **nem** igazolja a 396 sor egyenkénti owner, surface, lifecycle, dependency, phase, acceptance, positive/negative test, történeti megfeleltetés és implementációs készültség mezőit. A 63.50.104–106 publikálási függőségeket a WEB/EDT/SEO/SEC/OPS/QA családokhoz rögzítettük; a többi családra ugyanezt a tételes szemantikai módszert kell alkalmazni.
 
 **Következő sorrend: 63.50.108** — 396 ID egyedi owner/surface/dependency/acceptance mezőinek tételes gépi leltára, hiánylista és célzott kézi szemantikai audit; utána H19–H34 271 sor és 00/A/00.9.6.B forráskapuk. Nincs funkcióimplementáció, nincs D1/deploy; PLAN IN PROGRESS / NOT PASS.
+
+### 63.50.108. A 396 stabil ID kötelező mezőinek első gépi hiányleltára (2026-10-15)
+
+**REGISTRY-SCOPE STRUCTURAL AUDIT / FIELD-LEVEL SEMANTICS OPEN.** A 24. fejezet 396 elsődleges sorát egyenként beolvasva mindegyik tartalmaz stabil ID-t és nem üres, emberi nyelvű rövid képességmegnevezést. A sorok mind egysoros capability-címkék: **egyik sem önálló 22 mezős teljes specifikáció**, ahogy a 10. fejezet megköveteli. Ez a 24. fejezet önmagában vett formátumának megállapítása, nem állítás arról, hogy a teljes MASTER más fejezeteiben nincs megfelelő részlet.
+
+| Kötelező mező (10. fejezet) | 24. fejezet elsődleges sorainak leltára | Audit-következtetés |
+| --- | --- | --- |
+| ID és képességnév | 396/396 nem üres | STRUCTURAL PASS |
+| Canonical owner | Nem önálló, egységes owner mező az elsődleges sorokban; több sor szövegesen nevez meg tulajdonost | CROSS-CHAPTER VERIFICATION REQUIRED |
+| Belépési surface és olvasó/író felület | Nem egységes strukturált mező a 24. fejezet sorain | CROSS-CHAPTER VERIFICATION REQUIRED |
+| Függőség, sorrend, fázis | Nem egységes strukturált mező a 24. fejezet sorain | CROSS-CHAPTER VERIFICATION REQUIRED |
+| Positive/negative acceptance és evidence | Nem egységes strukturált mező a 24. fejezet sorain | CROSS-CHAPTER VERIFICATION REQUIRED |
+| Permission/site scope, storage, lifecycle, rollback | Nem egységes strukturált mező a 24. fejezet sorain | CROSS-CHAPTER VERIFICATION REQUIRED |
+
+**Kritikus értelmezés:** a 396 rövid címke nem tekinthető 396 lezárt specifikációnak; a 49. fejezet modul-owner határai, a 63.x crosswalkok és a 9/10/54. fejezetek általános acceptance szerződései léteznek, de egyedi ID-ra történő tételes bizonyítást igényelnek. A hiányzó mezőket nem szabad automatikusan NOT IMPLEMENTED vagy MISSING FEATURE státuszra fordítani.
+
+**Keresztfejezet-hivatkozási pillanatkép:** a 396 elsődleges ID közül 0 ID a teljes dokumentum jelenlegi szövegében csak egyszer, a registryben fordul elő: nincs ilyen. Az egyedi említésszám önmagában nem acceptance- vagy owner-bizonyíték; csak célzott auditprioritás.
+
+**Tételes következő munkamenet (63.50.109):** ID-családonként, először ADM/WEB/EDT, majd DSN/RES/INT/LIV/OBS/SCH és további családok: mindegyikhez explicit primary owner, surface, canonical storage, phase/dependency, pozitív/negatív acceptance és történeti forrás; ahol nincs bizonyíték, OPEN, nem kitalált PASS. A 271 H19–H34 történeti mapping és 00/A/00.9.6.B továbbra is nyitott szemantikai/source gate. 63.50.46 HIGH publish conflict OPEN/NOT FIXED; PLAN IN PROGRESS / NOT PASS.
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
