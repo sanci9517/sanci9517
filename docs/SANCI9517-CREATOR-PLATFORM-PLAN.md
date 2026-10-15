@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.85` — **FELHASZNÁLÓI DÖNTÉS: kötelező 1.0 célkiadás elengedve; P00–P10 függőségi fő-/alpontstruktúra az új végrehajtási elv**; következő: `63.50.86` mind a 396 stable ID részletes fő-/alpont-leképezése és függőségi sorrend. A történeti 1.0/1.x+ besorolás csak proveniencia, nem ütemezési kötelezettség. `63.50.46` HIGH publication conflict NOT FIXED; 00/A/00.9.6.B OPEN; **PLAN AUDIT IN PROGRESS / NOT PASS.**  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.86` — **396/396 stable ID függőségi fő-/alpont-munkacsomaghoz rendelve; kötelező 1.0 célverzió nincs**. Következő: `63.50.87` per-ID acceptance és 54.x/H19–H34 végső konzisztencia. `63.50.46` HIGH publish conflict NOT FIXED; 00/A és 00.9.6.B OPEN. **PLAN IN PROGRESS / NOT PASS.**  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -9754,6 +9754,418 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 **Nem kizárólag lineáris végrehajtás:** a P01–P09 pontoknál az alpontok konkrét dependency-je számít; pl. a P03 publikus weboldal nem vár a P08 AI-ra, míg a P08 tartalomgenerálás P05 Content és P01 Security szerződésére épül. Az azonos modult használó funkciókat nem duplikáljuk. A részletes végrehajtási soronkénti backlogot a 396 stable ID, 54.x és a történeti crosswalk alapján **még fel kell tölteni**: a fenti táblázat **struktúra- és sorrenddöntés, nem teljes 396 soros végrehajtási bizonyíték**.
 
 **Audit és fejlesztés elkülönítése:** a régi 1.0 kiadási kapuk nem kötelező release-célok; ugyanakkor a security, adatkonzisztencia, explicit publish, recovery és teszt **nem halasztható el ott, ahol az adott funkció működésének feltétele**. A 63.50.46 HIGH publikálási hiba változatlanul `NOT FIXED`. A 00/A és 00.9.6.B hiány változatlanul `OPEN`. Az aktuális auditpont után következő: `63.50.86` — a 396 stable ID részletes P00–P10 fő-/alpont- és dependency-leképezése, a régi 1.0 kényszer nélkül. **PLAN AUDIT IN PROGRESS / NOT PASS.**
+
+
+### 63.50.86. Mind a 396 stable capability végrehajtási fő-/alpont-leképezése — első teljes dependency registry (2026-10-15)
+
+**Felhasználói döntés alapján:** nincs kötelező 1.0 kiadási cél. A P00–P10 pontok **fejlesztési munkacsomagok**, nem kiadási verziók. A 49. fejezet stable capability tábláinak első, egyedi `ID | képesség` sorait felhasználva **396/396 ID** kapott fő-/alpontot, elsődleges domain-owner munkacsomagot és előfeltételt. A `HTTP-404` tesztgate-címke nem stable feature ID, ezért nem része a 396-nak. A 63.50.85 felhasználói döntés az összes régi 1.0/1.x+ címkét felülírja végrehajtási sorrendként.
+
+**Sorrendi szabály:** előbb az adott capability központi adatgazdája és hozzáférésvédelme, majd a kanonikus szolgáltatás, végül az Admin/Editor/Public többfelületes integrációja és tesztje. A QA és Security keresztmodulú követelményeket **az érintett fejlesztés közben** kell teljesíteni, nem kizárólag P10 végén. Az alábbi csoportos dependency első körös útvonal, a per-ID részletes szerződés még szükséges. A 49. fejezet továbbra is az egyetlen navigációs/owner térkép; ez **nem új Admin menü**.
+
+| Stable ID | Funkció (49. fejezet) | Elsődleges végrehajtási alpont | Munkacsomag / kanonikus owner | Előfeltétel-csoport | Állapot |
+| --- | --- | --- | --- | --- | --- |
+| ADM-001 | 49.1 / Admin shell | P01.6 | Admin shell, dashboard és navigáció | P01.1, P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| ADM-002 | 49.1 / Áttekintés | P01.6 | Admin shell, dashboard és navigáció | P01.1, P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| ADM-003 | 49.1 / Gyorsműveletek | P01.6 | Admin shell, dashboard és navigáció | P01.1, P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| ADM-004 | 49.1 / Teendők | P01.6 | Admin shell, dashboard és navigáció | P01.1, P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| ADM-005 | 49.1 / Aktivitás | P01.6 | Admin shell, dashboard és navigáció | P01.1, P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| ADM-006 | 49.1 / Fejléc keresés | P01.6 | Admin shell, dashboard és navigáció | P01.1, P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| ADM-007 | 49.1 / Profil és kijelentkezés | P01.6 | Admin shell, dashboard és navigáció | P01.1, P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| ADM-008 | 49.1 / Közös UI állapotok | P01.6 | Admin shell, dashboard és navigáció | P01.1, P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| ADM-009 | 49.1 / Navigáció és műveletek | P01.6 | Admin shell, dashboard és navigáció | P01.1, P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| ADM-010 | 49.1 / Mobil Admin shell | P01.6 | Admin shell, dashboard és navigáció | P01.1, P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| ADM-011 | 49.1 / Kontextuális súgó | P01.6 | Admin shell, dashboard és navigáció | P01.1, P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| ADM-012 | 49.1 / Értesítés belépési pont | P01.6 | Admin shell, dashboard és navigáció | P01.1, P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| ADM-013 | 49.1 / Adatfrissesség | P01.6 | Admin shell, dashboard és navigáció | P01.1, P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-001 | Oldallista, létrehozás és szerkesztés | P03.1 | Weboldalmodell, útvonalak és publikus renderer | P01.1, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-002 | Slug, hierarchia, URL-változás | P03.5 | Weboldalmodell, útvonalak és publikus renderer | P03.4, P03.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-003 | Másolás, archiválás és törlés | P03.1 | Weboldalmodell, útvonalak és publikus renderer | P01.1, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-004 | Draft/published snapshot | P03.4 | Weboldalmodell, útvonalak és publikus renderer | P01.1, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-005 | Preview link és hozzáférés | P03.1 | Weboldalmodell, útvonalak és publikus renderer | P01.1, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-006 | Publikálás előtti validáció | P03.5 | Weboldalmodell, útvonalak és publikus renderer | P03.4, P03.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-007 | Publish/unpublish/rollback | P03.5 | Weboldalmodell, útvonalak és publikus renderer | P03.4, P03.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-008 | Revízió és diff | P03.1 | Weboldalmodell, útvonalak és publikus renderer | P01.1, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-009 | Navigációs fa | P03.1 | Weboldalmodell, útvonalak és publikus renderer | P01.1, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-010 | Header/footer globális layout | P03.1 | Weboldalmodell, útvonalak és publikus renderer | P01.1, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-011 | Mobil menü és billentyűzet | P03.1 | Weboldalmodell, útvonalak és publikus renderer | P01.1, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-012 | Publikus route és 404 | P03.1 | Weboldalmodell, útvonalak és publikus renderer | P01.1, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-013 | Redirect és broken-link | P03.5 | Weboldalmodell, útvonalak és publikus renderer | P03.4, P03.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-014 | Nyilvános kezdőlap | P03.1 | Weboldalmodell, útvonalak és publikus renderer | P01.1, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-015 | Nyilvános live oldal | P03.1 | Weboldalmodell, útvonalak és publikus renderer | P01.1, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-016 | Nyilvános adásrend | P03.1 | Weboldalmodell, útvonalak és publikus renderer | P01.1, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-017 | Nyilvános VOD hub | P03.1 | Weboldalmodell, útvonalak és publikus renderer | P01.1, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-018 | Creator bemutatkozás | P03.1 | Weboldalmodell, útvonalak és publikus renderer | P01.1, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-019 | Közösségi oldal és CTA | P03.1 | Weboldalmodell, útvonalak és publikus renderer | P01.1, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-020 | Kapcsolat és űrlap | P03.1 | Weboldalmodell, útvonalak és publikus renderer | P01.1, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-021 | Creator Resources oldal | P03.1 | Weboldalmodell, útvonalak és publikus renderer | P01.1, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-022 | Link Hub | P03.1 | Weboldalmodell, útvonalak és publikus renderer | P01.1, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-023 | Támogatási oldal | P03.1 | Weboldalmodell, útvonalak és publikus renderer | P01.1, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-024 | Szponzor/Press Kit | P03.1 | Weboldalmodell, útvonalak és publikus renderer | P01.1, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-025 | Bolt/termékoldalak | P03.1 | Weboldalmodell, útvonalak és publikus renderer | P01.1, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-026 | Tagsági felület | P03.1 | Weboldalmodell, útvonalak és publikus renderer | P01.1, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-027 | Esemény/blog/hírek/digitális termék | P03.1 | Weboldalmodell, útvonalak és publikus renderer | P01.1, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-028 | Hiba/maintenance/offline | P03.1 | Weboldalmodell, útvonalak és publikus renderer | P01.1, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-029 | Publikus keresés | P03.1 | Weboldalmodell, útvonalak és publikus renderer | P01.1, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-030 | Cache és invalidáció | P03.1 | Weboldalmodell, útvonalak és publikus renderer | P01.1, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-031 | Published-only enforcement | P03.1 | Weboldalmodell, útvonalak és publikus renderer | P01.1, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| WEB-032 | Biztonságos renderer/embed | P03.1 | Weboldalmodell, útvonalak és publikus renderer | P01.1, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-001 | Canonical Page Model schema/version. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-002 | Node IDs and parent/child invariants. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-003 | Command mutation pipeline. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-004 | Transaction/batch/rollback semantics. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-005 | Undo/redo history integrity. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-006 | Selection state synchronization. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-007 | Canvas viewport, zoom, pan and fit. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-008 | Canvas drag/drop. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-009 | Canvas resize/geometry constraints. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-010 | Alignment guides/snap/grid. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-011 | Reorder/reparent/duplicate/delete. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-012 | Layers tree expand/collapse. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-013 | Layers/canvas/Inspector selection sync. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-014 | Layer rename/hide/lock and hierarchy. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-015 | Element/Block Library and search. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-016 | Section/Container/Stack/Row/Columns/Grid. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-017 | Text/Heading/Link/Button/Icon/Divider/Spacer. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-018 | Image/Video/Embed/List/Card/Badge. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-019 | Table/Accordion/Tabs/Form capability. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-020 | Dynamic Sanci block configuration. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-021 | Inspector Property Registry. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-022 | Inspector schema validation and control types. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-023 | Inspector resolved viewport value. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-024 | Responsive override/inheritance/reset. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-025 | Responsive desktop/tablet/mobile preview. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-026 | Responsive visibility/order/column changes. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-027 | Dirty state and explicit Save Draft. | P03.4 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-028 | Save/reload round-trip. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-029 | Revision conflict recovery. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-030 | In-flight edit preservation during save. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-031 | Network failure/retry/local recovery. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-032 | Preview without publishing. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-033 | Explicit publish separate from save. | P03.5 | Visual Editor Canvas, Layers, Inspector, preview | P03.4, P03.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-034 | Public renderer parity with Editor preview. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-035 | Mobile Editor action bar/safe area. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-036 | Mobile Layers/Inspector panel switching. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-037 | Keyboard-accessible canvas alternatives. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-038 | Copy/paste and multi-select where enabled. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-039 | Page-level interaction/action schema registry for Editor-configured page behavior; not the automation engine action catalog. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-040 | Motion/reduced-motion behavior. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-041 | Empty-project onboarding and template start. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-042 | Editor error recovery and no-data-loss guard. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-043 | Advanced Rich Text editor and structured inline/block content; planned after the 1.0 plain-text baseline, gated by schema, safe renderer, accessibility and round-trip tests. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| EDT-044 | Per-user Editor workspace preferences (viewport, panel layout, grid and favorites) stored outside the site Page Model. | P03.2 | Visual Editor Canvas, Layers, Inspector, preview | P03.1, P02.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DSN-001 | Global design token schema. | P02.3 | Design system, themes, templates, components | P02.1, P02.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DSN-002 | Token editor and live preview. | P02.3 | Design system, themes, templates, components | P02.1, P02.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DSN-003 | Token usage/dependency map. | P02.3 | Design system, themes, templates, components | P02.1, P02.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DSN-004 | Global change diff and rollback. | P02.3 | Design system, themes, templates, components | P02.1, P02.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DSN-005 | Theme and brand presets. | P02.3 | Design system, themes, templates, components | P02.1, P02.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DSN-006 | Responsive defaults and breakpoint tokens. | P02.3 | Design system, themes, templates, components | P02.1, P02.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DSN-007 | Typography/font registry. | P02.3 | Design system, themes, templates, components | P02.1, P02.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DSN-008 | Site template library. | P02.3 | Design system, themes, templates, components | P02.1, P02.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DSN-009 | Page template library. | P02.3 | Design system, themes, templates, components | P02.1, P02.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DSN-010 | Section template library. | P02.3 | Design system, themes, templates, components | P02.1, P02.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DSN-011 | Component template library. | P02.3 | Design system, themes, templates, components | P02.1, P02.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DSN-012 | Reusable component/symbol master-instance. | P02.3 | Design system, themes, templates, components | P02.1, P02.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DSN-013 | Variants, slots and explicit overrides. | P02.3 | Design system, themes, templates, components | P02.1, P02.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DSN-014 | Design/template/component versioning, compatibility and migration; excludes AI prompt/template versioning. | P02.3 | Design system, themes, templates, components | P02.1, P02.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DSN-015 | Template import/export. | P02.3 | Design system, themes, templates, components | P02.1, P02.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DSN-016 | Button Registry and global button styles. | P02.3 | Design system, themes, templates, components | P02.1, P02.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DSN-017 | Icon/action registry linkage. | P02.3 | Design system, themes, templates, components | P02.1, P02.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DSN-018 | Future community/marketplace templates. | P02.3 | Design system, themes, templates, components | P02.1, P02.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| RES-001 | Canonical asset registry and IDs. | P02.1 | Kanonikus Resource/Asset és média | P01.1, P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| RES-002 | R2 binary storage and D1 metadata. | P02.1 | Kanonikus Resource/Asset és média | P01.1, P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| RES-003 | Upload validation/progress/cancel/retry. | P02.1 | Kanonikus Resource/Asset és média | P01.1, P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| RES-004 | Image preview/thumbnail/variant, crop/resize and optimization pipeline. | P02.1 | Kanonikus Resource/Asset és média | P01.1, P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| RES-005 | Search/filter/sort/pagination over the canonical asset registry only. | P02.1 | Kanonikus Resource/Asset és média | P01.1, P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| RES-006 | Asset-library collections/tags/folders; excludes content and product taxonomies. | P02.1 | Kanonikus Resource/Asset és média | P01.1, P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| RES-007 | Alt text/caption/license/source metadata. | P02.1 | Kanonikus Resource/Asset és média | P01.1, P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| RES-008 | Asset usage/reference map. | P02.1 | Kanonikus Resource/Asset és média | P01.1, P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| RES-009 | Replace/archive/delete/restore safety. | P02.1 | Kanonikus Resource/Asset és média | P01.1, P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| RES-010 | Editor asset picker. | P02.1 | Kanonikus Resource/Asset és média | P01.1, P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| RES-011 | Icon registry/search/category/preview. | P02.1 | Kanonikus Resource/Asset és média | P01.1, P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| RES-012 | SVG safety and sanitization. | P02.1 | Kanonikus Resource/Asset és média | P01.1, P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| RES-013 | Font registry/weight/style/fallback. | P02.1 | Kanonikus Resource/Asset és média | P01.1, P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| RES-014 | File download authorization/expiry. | P02.1 | Kanonikus Resource/Asset és média | P01.1, P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| RES-015 | Media diagnostics and broken asset scan. | P02.1 | Kanonikus Resource/Asset és média | P01.1, P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| RES-016 | Paid/private asset access integration. | P02.1 | Kanonikus Resource/Asset és média | P01.1, P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| INT-001 | Shared external-provider adapter contract; domain modules such as Store implement their specific workflows through this contract. | P04.1 | Provider registry és adapterek | P01.3, P01.4 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| INT-002 | Integration overview and health. | P04.1 | Provider registry és adapterek | P01.3, P01.4 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| INT-003 | OAuth state/callback/CSRF protection. | P04.1 | Provider registry és adapterek | P01.3, P01.4 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| INT-004 | Token lifecycle/refresh/revoke. | P04.1 | Provider registry és adapterek | P01.3, P01.4 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| INT-005 | Site ownership and connection binding. | P04.1 | Provider registry és adapterek | P01.3, P01.4 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| INT-006 | Scope/permission visibility. | P04.1 | Provider registry és adapterek | P01.3, P01.4 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| INT-007 | Connect/reconnect/disconnect flow. | P04.1 | Provider registry és adapterek | P01.3, P01.4 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| INT-008 | Sync history, retry and provider errors. | P04.1 | Provider registry és adapterek | P01.3, P01.4 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| INT-009 | Rate-limit/quota handling. | P04.1 | Provider registry és adapterek | P01.3, P01.4 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| INT-010 | Twitch OAuth and channel binding. | P04.2 | Provider registry és adapterek | P01.3, P01.4 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| INT-011 | Twitch live/schedule data. | P04.1 | Provider registry és adapterek | P01.3, P01.4 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| INT-012 | Twitch VOD/clip metadata where allowed. | P04.1 | Provider registry és adapterek | P01.3, P01.4 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| INT-013 | YouTube channel/video/live adapter. | P04.3 | Provider registry és adapterek | P01.3, P01.4 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| INT-014 | TikTok capability-gated adapter. | P04.4 | Provider registry és adapterek | P01.3, P01.4 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| INT-015 | Discord bot/guild/channel/role integration. | P04.5 | Provider registry és adapterek | P01.3, P01.4 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| INT-016 | Kick capability-gated adapter. | P04.1 | Provider registry és adapterek | P01.3, P01.4 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| INT-017 | Provider webhook subscription/delivery lifecycle and integration of signature/replay defenses; shared security requirements are defined by SEC-009. | P04.1 | Provider registry és adapterek | P01.3, P01.4 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| INT-018 | External integration/provider capability registry for social, streaming and commerce adapters; excludes AI model/provider configuration. | P04.1 | Provider registry és adapterek | P01.3, P01.4 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| INT-019 | Integration secret redaction and audit. | P04.1 | Provider registry és adapterek | P01.3, P01.4 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| INT-020 | Integration diagnostics and recovery. | P04.1 | Provider registry és adapterek | P01.3, P01.4 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| INT-021 | Future payment/email/commerce adapters. | P04.1 | Provider registry és adapterek | P01.3, P01.4 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| LIV-001 | Normalized live/offline state. | P04.2 | Streamer live-state és provider állapot | P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| LIV-002 | Live data freshness/stale indicator. | P04.2 | Streamer live-state és provider állapot | P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| LIV-003 | Stream title/category/game/start time. | P04.2 | Streamer live-state és provider állapot | P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| LIV-004 | Viewer/follower/subscriber metrics where permitted. | P04.2 | Streamer live-state és provider állapot | P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| LIV-005 | Player/embed and offline fallback. | P04.2 | Streamer live-state és provider állapot | P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| LIV-006 | Stream event normalization. | P04.2 | Streamer live-state és provider állapot | P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| LIV-007 | Stream status in Dashboard and public blocks. | P04.2 | Streamer live-state és provider állapot | P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| LIV-008 | Capability-gated multistream destinations and per-provider metadata. | P04.2 | Streamer live-state és provider állapot | P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| LIV-009 | Unified Chat read/send permissions, provider labels, moderation state and partial-failure handling. | P04.2 | Streamer live-state és provider állapot | P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| LIV-010 | Recording/replay/backup status and retention/cost policy, only where technically supported. | P04.2 | Streamer live-state és provider állapot | P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| OBS-001 | Overlay asset and scene metadata. | P06.1 | OBS, overlay és stream-vezérlés | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| OBS-002 | OBS secure pairing/connection. | P06.1 | OBS, overlay és stream-vezérlés | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| OBS-003 | Scene/stream/recording state where supported. | P06.1 | OBS, overlay és stream-vezérlés | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| OBS-004 | Authorized commands and stream markers. | P06.1 | OBS, overlay és stream-vezérlés | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| OBS-005 | Browser source configuration. | P06.1 | OBS, overlay és stream-vezérlés | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| OBS-006 | Alerts for provider-supported events. | P06.1 | OBS, overlay és stream-vezérlés | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| OBS-007 | Chatbot/commands/timers/loyalty/giveaways. | P06.1 | OBS, overlay és stream-vezérlés | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| OBS-008 | Test mode, event replay and rate limit. | P06.1 | OBS, overlay és stream-vezérlés | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| OBS-009 | Macro Deck or external control adapter. | P06.1 | OBS, overlay és stream-vezérlés | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| OBS-010 | Overlay preview/export/version. | P06.1 | OBS, overlay és stream-vezérlés | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SCH-001 | Schedule item CRUD. | P05.1 | Schedule, timezone, game profiles | P01.2, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SCH-002 | Calendar/list/upcoming/past views with site-scoped search/filter/sort/pagination. | P05.1 | Schedule, timezone, game profiles | P01.2, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SCH-003 | Timezone and daylight-saving correctness. | P05.1 | Schedule, timezone, game profiles | P01.2, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SCH-004 | Recurrence and series edit scopes. | P05.1 | Schedule, timezone, game profiles | P01.2, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SCH-005 | Postponed/cancelled/completed/live states. | P05.1 | Schedule, timezone, game profiles | P01.2, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SCH-006 | Schedule conflict detection. | P05.1 | Schedule, timezone, game profiles | P01.2, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SCH-007 | Twitch schedule sync/manual override. | P05.1 | Schedule, timezone, game profiles | P01.2, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SCH-008 | Sync status/retry/audit. | P05.1 | Schedule, timezone, game profiles | P01.2, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SCH-009 | Next stream/countdown. | P05.1 | Schedule, timezone, game profiles | P01.2, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SCH-010 | Canonical public schedule data projection/rendering contract consumed by WEB-016 and Editor schedule blocks. | P05.1 | Schedule, timezone, game profiles | P01.2, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SCH-011 | Editor block binding/configuration for the canonical schedule projection; schedule data and lifecycle remain owned by SCH-001–010. | P05.1 | Schedule, timezone, game profiles | P01.2, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SCH-012 | Game Profile CRUD. | P05.1 | Schedule, timezone, game profiles | P01.2, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SCH-013 | Game artwork/resource linkage. | P05.1 | Schedule, timezone, game profiles | P01.2, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SCH-014 | Game/content/schedule relationship. | P05.1 | Schedule, timezone, game profiles | P01.2, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SCH-015 | iCal/export and later notifications. | P05.1 | Schedule, timezone, game profiles | P01.2, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CNT-001 | Canonical content item schema. | P05.2 | Content Factory, VOD/Shorts és publishing | P02.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CNT-002 | VOD import and metadata. | P05.2 | Content Factory, VOD/Shorts és publishing | P02.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CNT-003 | Clip/highlight/Short management. | P05.2 | Content Factory, VOD/Shorts és publishing | P02.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CNT-004 | YouTube/TikTok video feed. | P05.2 | Content Factory, VOD/Shorts és publishing | P02.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CNT-005 | Content-library tags/categories/collections/playlists; excludes product-catalog taxonomy and asset-library folders. | P05.2 | Content Factory, VOD/Shorts és publishing | P02.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CNT-006 | Search/filter/sort/pagination/bulk actions over canonical content records only. | P05.2 | Content Factory, VOD/Shorts és publishing | P02.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CNT-007 | Duplicate detection and external IDs. | P05.2 | Content Factory, VOD/Shorts és publishing | P02.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CNT-008 | Featured/related content. | P05.2 | Content Factory, VOD/Shorts és publishing | P02.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CNT-009 | Content calendar. | P05.2 | Content Factory, VOD/Shorts és publishing | P02.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CNT-010 | Ideas/drafts/scripts/briefs. | P05.2 | Content Factory, VOD/Shorts és publishing | P02.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CNT-011 | Platform-specific title/description/tag variants. | P05.2 | Content Factory, VOD/Shorts és publishing | P02.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CNT-012 | Thumbnail and media asset workflow. | P05.2 | Content Factory, VOD/Shorts és publishing | P02.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CNT-013 | Publishing queue and schedule. | P05.2 | Content Factory, VOD/Shorts és publishing | P02.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CNT-014 | Publish status/retry/partial success. | P05.2 | Content Factory, VOD/Shorts és publishing | P02.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CNT-015 | Approval workflow and public publish gate. | P05.2 | Content Factory, VOD/Shorts és publishing | P02.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CNT-016 | Campaign linkage and content attribution. | P05.2 | Content Factory, VOD/Shorts és publishing | P02.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CNT-017 | Short-form export preparation. | P05.2 | Content Factory, VOD/Shorts és publishing | P02.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CNT-018 | Content-domain transcript/chapter/highlight artifact metadata and review lifecycle; AI suggestions originate in AI-014 and are stored through the content API. | P05.2 | Content Factory, VOD/Shorts és publishing | P02.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CNT-019 | Editor block binding/configuration for the canonical content feed; content records and publishing lifecycle remain owned by CNT-001–018/020–022. | P05.2 | Content Factory, VOD/Shorts és publishing | P02.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CNT-020 | Canonical published-content public feed/projection and query contract; WEB-017 owns the public page route/shell. | P05.2 | Content Factory, VOD/Shorts és publishing | P02.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CNT-021 | Timeline-based content editing/render pipeline: trim/split/crop/reframe, aspect ratio, audio, captions, transitions, brand overlay and export. | P05.2 | Content Factory, VOD/Shorts és publishing | P02.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CNT-022 | Content rights/consent/expiry/takedown lifecycle for music, video, guests and third-party assets. | P05.2 | Content Factory, VOD/Shorts és publishing | P02.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| COM-001 | External community links. | P06.3 | Community, moderáció, audience | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| COM-002 | Discord community entry point. | P06.3 | Community, moderáció, audience | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| COM-003 | Community posts. | P06.3 | Community, moderáció, audience | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| COM-004 | Polls and voting. | P06.3 | Community, moderáció, audience | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| COM-005 | Events and RSVP. | P06.3 | Community, moderáció, audience | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| COM-006 | Member profiles and follows later. | P06.3 | Community, moderáció, audience | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| COM-007 | Comments/reactions later. | P06.3 | Community, moderáció, audience | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| COM-008 | Clip submission. | P06.3 | Community, moderáció, audience | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| COM-009 | Moderation/report/ban/role. | P06.3 | Community, moderáció, audience | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| COM-010 | Badges/reputation/challenges later. | P06.3 | Community, moderáció, audience | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| COM-011 | Notifications and delivery status. | P06.3 | Community, moderáció, audience | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| COM-012 | Abuse/spam/rate-limit controls. | P06.3 | Community, moderáció, audience | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| COM-013 | Community/public-surface member-only visibility gate; consumes entitlement decisions owned by SUP-006. | P06.3 | Community, moderáció, audience | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| COM-014 | Founding Supporters opt-in listing. | P06.3 | Community, moderáció, audience | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| COM-015 | Email signup/consent/subscriber list. | P06.3 | Community, moderáció, audience | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| COM-016 | Segmentation/newsletter/automation. | P06.3 | Community, moderáció, audience | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| COM-017 | Unsubscribe/suppression/export/delete. | P06.3 | Community, moderáció, audience | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| COM-018 | Public/member/private visibility policy. | P06.3 | Community, moderáció, audience | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| COM-019 | Fan account identity, profile/preferences and account export/delete lifecycle. | P06.3 | Community, moderáció, audience | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| COM-020 | Community rules, age/content policy and enforcement lifecycle. | P06.3 | Community, moderáció, audience | P04.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| STO-001 | Product catalog. | P07.3 | Store, merch, rendelés és fizetés | P01.3, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| STO-002 | Product variants/SKU/price/currency. | P07.3 | Store, merch, rendelés és fizetés | P01.3, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| STO-003 | Product-catalog categories/collections/tags; excludes content-library and asset-library taxonomies. | P07.3 | Store, merch, rendelés és fizetés | P01.3, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| STO-004 | Product media and SEO. | P07.3 | Store, merch, rendelés és fizetés | P01.3, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| STO-005 | Physical/digital/bundle/preorder/limited drop. | P07.3 | Store, merch, rendelés és fizetés | P01.3, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| STO-006 | Inventory/fulfillment abstraction. | P07.3 | Store, merch, rendelés és fizetés | P01.3, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| STO-007 | Storefront listing/detail/search/filter. | P07.3 | Store, merch, rendelés és fizetés | P01.3, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| STO-008 | Store-specific cart/checkout provider adapter; owns checkout workflow integration, while generic provider lifecycle is defined by INT-001. | P07.3 | Store, merch, rendelés és fizetés | P01.3, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| STO-009 | Order lifecycle/payment status. | P07.3 | Store, merch, rendelés és fizetés | P01.3, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| STO-010 | Fulfillment/tracking/cancellation/refund. | P07.3 | Store, merch, rendelés és fizetés | P01.3, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| STO-011 | Coupons/promotions/gift cards. | P07.3 | Store, merch, rendelés és fizetés | P01.3, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| STO-012 | Digital purchase entitlement. | P07.3 | Store, merch, rendelés és fizetés | P01.3, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| STO-013 | Secure download/access delivery. | P07.3 | Store, merch, rendelés és fizetés | P01.3, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| STO-014 | Tax/shipping/VAT/invoice integration review. | P07.3 | Store, merch, rendelés és fizetés | P01.3, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| STO-015 | Customer account/history where needed. | P07.3 | Store, merch, rendelés és fizetés | P01.3, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| STO-016 | Abandoned cart later. | P07.3 | Store, merch, rendelés és fizetés | P01.3, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| STO-017 | Product/collection Editor blocks. | P07.3 | Store, merch, rendelés és fizetés | P01.3, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| STO-018 | Provider webhook idempotency and audit. | P07.3 | Store, merch, rendelés és fizetés | P01.3, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| STO-019 | Merchant-of-record/provider decision. | P07.3 | Store, merch, rendelés és fizetés | P01.3, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| STO-020 | Store analytics. | P07.3 | Store, merch, rendelés és fizetés | P01.3, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| STO-021 | Payment/tax/VAT/invoicing/consumer-rights compliance decision and provider integration gate. | P07.3 | Store, merch, rendelés és fizetés | P01.3, P02.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SUP-001 | Support/tip links and provider. | P07.4 | Support és membership | P07.3, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SUP-002 | Donation/tip state where available. | P07.4 | Support és membership | P07.3, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SUP-003 | Supporter goals and progress. | P07.4 | Support és membership | P07.3, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SUP-004 | Membership tiers and billing period. | P07.4 | Support és membership | P07.3, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SUP-005 | Membership perk/entitlement definition; community and public surfaces enforce access through COM-013/COM-018. | P07.4 | Support és membership | P07.3, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SUP-006 | Entitlement lifecycle. | P07.4 | Support és membership | P07.3, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SUP-007 | Membership renewal/cancel/failed payment. | P07.4 | Support és membership | P07.3, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SUP-008 | Refund/chargeback entitlement handling. | P07.4 | Support és membership | P07.3, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SUP-009 | Discord role sync from entitlement. | P07.4 | Support és membership | P07.3, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SUP-010 | Supporter history and opt-in public listing. | P07.4 | Support és membership | P07.3, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SUP-011 | Membership entitlement rules for content/events; COM and WEB surfaces consume these rules without duplicating entitlement state. | P07.4 | Support és membership | P07.3, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SUP-012 | Member discount/exclusive drop. | P07.4 | Support és membership | P07.3, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| ANL-001 | Analytics event taxonomy/naming/schema governance for measurement and reporting; excludes workflow trigger execution. | P07.1 | Analytics, mérési adat és attribution | P01.2, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| ANL-002 | Privacy-safe web analytics. | P07.1 | Analytics, mérési adat és attribution | P01.2, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| ANL-003 | Stream analytics. | P07.1 | Analytics, mérési adat és attribution | P01.2, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| ANL-004 | Content/platform analytics. | P07.1 | Analytics, mérési adat és attribution | P01.2, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| ANL-005 | Commerce analytics. | P07.1 | Analytics, mérési adat és attribution | P01.2, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| ANL-006 | Community analytics. | P07.1 | Analytics, mérési adat és attribution | P01.2, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| ANL-007 | Date range/comparison/filter/export. | P07.1 | Analytics, mérési adat és attribution | P01.2, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| ANL-008 | Freshness/source/unit/missing-data state. | P07.1 | Analytics, mérési adat és attribution | P01.2, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| ANL-009 | Consent/retention/bot filtering. | P07.1 | Analytics, mérési adat és attribution | P01.2, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| ANL-010 | Anomaly detection, thresholds and explainable alerts. | P07.1 | Analytics, mérési adat és attribution | P01.2, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CAM-001 | Campaign CRUD/status/goals. | P07.2 | Kampány és sponsor | P07.1, P05.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CAM-002 | Campaign links/UTM/attribution. | P07.2 | Kampány és sponsor | P07.1, P05.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CAM-003 | Campaign asset/content/product relationships. | P07.2 | Kampány és sponsor | P07.1, P05.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CAM-004 | Media kit generation/export. | P07.2 | Kampány és sponsor | P07.1, P05.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CAM-005 | Brand lead/deal/rate card. | P07.2 | Kampány és sponsor | P07.1, P05.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CAM-006 | Deliverables/deadlines/reminders. | P07.2 | Kampány és sponsor | P07.1, P05.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CAM-007 | Sponsor campaign analytics. | P07.2 | Kampány és sponsor | P07.1, P05.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CAM-008 | Private business documents and permission. | P07.2 | Kampány és sponsor | P07.1, P05.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| CAM-009 | Invoice/payment status only after business/legal review. | P07.2 | Kampány és sponsor | P07.1, P05.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AUT-001 | Automation trigger-event catalog and event-to-workflow routing contract; consumes domain events and does not define analytics measurement taxonomy. | P08.1 | Workflow engine, trigger és action | P01.4, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AUT-002 | Trigger catalogue. | P08.1 | Workflow engine, trigger és action | P01.4, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AUT-003 | Condition/filter rules. | P08.1 | Workflow engine, trigger és action | P01.4, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AUT-004 | Automation action catalog and server-side permission checks for workflow execution; page interaction schemas remain in EDT-039. | P08.1 | Workflow engine, trigger és action | P01.4, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AUT-005 | Delay/schedule and timezone. | P08.1 | Workflow engine, trigger és action | P01.4, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AUT-006 | Idempotency/deduplication. | P08.1 | Workflow engine, trigger és action | P01.4, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AUT-007 | Retry/backoff/dead-letter. | P08.1 | Workflow engine, trigger és action | P01.4, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AUT-008 | Automation execution/run history and workflow-specific diagnostics; security/privacy audit events are owned by SEC-010. | P08.1 | Workflow engine, trigger és action | P01.4, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AUT-009 | Dry-run/preview/approval. | P08.1 | Workflow engine, trigger és action | P01.4, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AUT-010 | Enable/pause/version/clone. | P08.1 | Workflow engine, trigger és action | P01.4, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AUT-011 | Cycle detection and rate limits. | P08.1 | Workflow engine, trigger és action | P01.4, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AUT-012 | Provider outage and recovery. | P08.1 | Workflow engine, trigger és action | P01.4, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AUT-013 | Automation templates. | P08.1 | Workflow engine, trigger és action | P01.4, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AUT-014 | Safe cross-domain actions. | P08.1 | Workflow engine, trigger és action | P01.4, P04.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AI-001 | AI model/provider registry, model capabilities and lifecycle; excludes external social/streaming integration capabilities in INT-018. | P08.2 | SANCI AI model, context és agents | P08.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AI-002 | AI prompt/instruction template versioning and evaluation; excludes visual design and page-template lifecycle in DSN-014. | P08.2 | SANCI AI model, context és agents | P08.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AI-003 | Intent and task planner. | P08.2 | SANCI AI model, context és agents | P08.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AI-004 | Context selection and privacy filter. | P08.3 | SANCI AI model, context és agents | P08.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AI-005 | Structured action schema. | P08.2 | SANCI AI model, context és agents | P08.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AI-006 | Permission/ownership checker. | P08.2 | SANCI AI model, context és agents | P08.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AI-007 | Diff/preview/approval workflow. | P08.2 | SANCI AI model, context és agents | P08.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AI-008 | Execute through canonical API/commands. | P08.2 | SANCI AI model, context és agents | P08.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AI-009 | Verification/audit/version/rollback. | P08.2 | SANCI AI model, context és agents | P08.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AI-010 | Cost/quota/usage/error tracking. | P08.2 | SANCI AI model, context és agents | P08.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AI-011 | Website structure/content assistant. | P08.2 | SANCI AI model, context és agents | P08.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AI-012 | SEO/accessibility/localization suggestions. | P08.2 | SANCI AI model, context és agents | P08.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AI-013 | Content title/script/description/thumbnail brief. | P08.4 | SANCI AI model, context és agents | P08.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AI-014 | AI-generated transcript/chapter/highlight/clip candidates with source timestamps and confidence; does not own canonical content records or rights metadata. | P08.2 | SANCI AI model, context és agents | P08.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AI-015 | Stream diagnostics/summary where supported. | P08.2 | SANCI AI model, context és agents | P08.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AI-016 | Specialist agent roles under shared permissions. | P08.2 | SANCI AI model, context és agents | P08.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AI-017 | AI Control Center and approval queue. | P08.2 | SANCI AI model, context és agents | P08.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AI-018 | Prompt injection and untrusted content tests. | P08.2 | SANCI AI model, context és agents | P08.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AI-019 | Human approval for public/destructive/financial action. | P08.5 | SANCI AI model, context és agents | P08.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AI-020 | AI-free fallback for all critical manual workflows. | P08.2 | SANCI AI model, context és agents | P08.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| AI-021 | Multimodal image/audio/video generation provider adapters, rights/safety checks, cost controls and human review. | P08.2 | SANCI AI model, context és agents | P08.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SEC-001 | Authentication/session lifecycle. | P01.3 | Security, privacy, RBAC és secrets | P01.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SEC-002 | Server-side RBAC and ownership. | P01.3 | Security, privacy, RBAC és secrets | P01.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SEC-003 | Cross-domain server-side site/workspace/tenant isolation invariant; TEAM-001/TEAM-005 provide workspace selection and multi-site workflows but do not replace authorization. | P01.3 | Security, privacy, RBAC és secrets | P01.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SEC-004 | OAuth/CSRF/session security. | P01.3 | Security, privacy, RBAC és secrets | P01.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SEC-005 | XSS/sanitization/safe embeds. | P01.3 | Security, privacy, RBAC és secrets | P01.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SEC-006 | SSRF/open redirect/injection defenses. | P01.3 | Security, privacy, RBAC és secrets | P01.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SEC-007 | Rate limiting and abuse protection. | P01.3 | Security, privacy, RBAC és secrets | P01.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SEC-008 | Secret storage/redaction/rotation. | P01.3 | Security, privacy, RBAC és secrets | P01.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SEC-009 | Cross-domain webhook signature/replay security requirement and negative-test contract; provider-specific implementation is owned by INT-017. | P01.3 | Security, privacy, RBAC és secrets | P01.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SEC-010 | Cross-domain security/privacy audit events and redaction/retention controls; workflow execution detail remains in AUT-008. | P01.3 | Security, privacy, RBAC és secrets | P01.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SEC-011 | Consent/retention/export/delete. | P01.3 | Security, privacy, RBAC és secrets | P01.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SEC-012 | MFA/2FA and future SSO lifecycle, recovery and suspicious-authentication controls. | P01.3 | Security, privacy, RBAC és secrets | P01.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| OPS-001 | Health/deploy version. | P01.5 | Operations, backup, recovery | P01.2, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| OPS-002 | Structured logs/correlation IDs. | P01.5 | Operations, backup, recovery | P01.2, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| OPS-003 | Error tracking/alerting. | P01.5 | Operations, backup, recovery | P01.2, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| OPS-004 | Migration preflight/integrity. | P01.5 | Operations, backup, recovery | P01.2, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| OPS-005 | Operational backup/export/restore capability and runbook; QA-007 only verifies it through tests/evidence. | P01.5 | Operations, backup, recovery | P01.2, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| OPS-006 | Recovery drill and runbook. | P01.5 | Operations, backup, recovery | P01.2, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| OPS-007 | Diagnostics report. | P01.5 | Operations, backup, recovery | P01.2, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| OPS-008 | Performance baseline/cache/query monitoring. | P01.5 | Operations, backup, recovery | P01.2, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| OPS-009 | Rollback and incident procedure. | P01.5 | Operations, backup, recovery | P01.2, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| OPS-010 | Dependency/license/CVE review. | P01.5 | Operations, backup, recovery | P01.2, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| OPS-011 | Background-job/realtime runtime selection and lifecycle, only where justified. | P01.5 | Operations, backup, recovery | P01.2, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| LOC-001 | Translation key/fallback. | P09.5 | Lokalizáció és hozzáférhetőség | P03.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| LOC-002 | Locale-aware dates/numbers/currency/timezone. | P09.5 | Lokalizáció és hozzáférhetőség | P03.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| LOC-003 | Page/content/navigation translation. | P09.5 | Lokalizáció és hozzáférhetőség | P03.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| LOC-004 | Localized SEO/hreflang/canonical. | P09.5 | Lokalizáció és hozzáférhetőség | P03.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| LOC-005 | Translation completeness status, locale preview and safe publish policy. | P09.5 | Lokalizáció és hozzáférhetőség | P03.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| LOC-006 | AI-assisted translation workflow with explicit human review/approval and audit. | P09.5 | Lokalizáció és hozzáférhetőség | P03.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| TEAM-001 | Workspace/site switcher UI and active-scope selection; server-side isolation and authorization remain owned by SEC-002–003. | P09.3 | Csapat, collaboration és tenant | P01.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| TEAM-002 | Invite/accept/revoke. | P09.3 | Csapat, collaboration és tenant | P01.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| TEAM-003 | Roles and granular permissions. | P09.3 | Csapat, collaboration és tenant | P01.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| TEAM-004 | Approval/review/activity feed. | P09.3 | Csapat, collaboration és tenant | P01.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| TEAM-005 | Multi-site workspace/product workflows; isolation enforcement is a security invariant owned by SEC-003. | P09.3 | Csapat, collaboration és tenant | P01.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| TEAM-006 | SaaS billing/plan entitlements/quota. | P09.3 | Csapat, collaboration és tenant | P01.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| TEAM-007 | Agency/studio client workspaces, shared templates, client-scoped brand and approval workflow. | P09.3 | Csapat, collaboration és tenant | P01.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| MKT-001 | Extension manifest/permissions. | P07.5 | Marketing és növekedés | P07.1, P05.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| MKT-002 | Extension install/update/uninstall/migration. | P07.5 | Marketing és növekedés | P07.1, P05.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| MKT-003 | Theme/block/template/overlay marketplace. | P07.5 | Marketing és növekedés | P07.1, P05.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| MKT-004 | License/attribution/version/review. | P07.5 | Marketing és növekedés | P07.1, P05.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| MKT-005 | Marketplace payment/revenue-share after legal review. | P07.5 | Marketing és növekedés | P07.1, P05.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| QA-001 | Typecheck/build/CI gates. | P10.1 | Teszt és evidence gates (keresztmodul) | P01.5 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| QA-002 | Domain/API/integration tests. | P10.1 | Teszt és evidence gates (keresztmodul) | P01.5 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| QA-003 | Ownership/security negative tests. | P10.1 | Teszt és evidence gates (keresztmodul) | P01.5 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| QA-004 | Browser/device responsive and visual-regression acceptance. | P10.1 | Teszt és evidence gates (keresztmodul) | P01.5 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| QA-005 | Public SEO/accessibility/performance audit. | P10.1 | Teszt és evidence gates (keresztmodul) | P01.5 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| QA-006 | Production smoke and runtime verification. | P10.1 | Teszt és evidence gates (keresztmodul) | P01.5 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| QA-007 | Test/acceptance gate and evidence for backup/restore/rollback; does not implement backup operations. | P10.1 | Teszt és evidence gates (keresztmodul) | P01.5 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| QA-008 | End-to-end creator journey. | P10.2 | Teszt és evidence gates (keresztmodul) | P01.5 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| QA-009 | User acceptance and evidence log. | P10.5 | Teszt és evidence gates (keresztmodul) | P01.5 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| QA-010 | Continuous benchmark and feature-discovery review. | P10.1 | Teszt és evidence gates (keresztmodul) | P01.5 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SET-001 | Canonical site settings schema és CRUD lifecycle. | P01.1 | Workspace/site settings és alapadat | P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SET-002 | Site ownership/scope és multi-site kompatibilitás. | P01.1 | Workspace/site settings és alapadat | P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SET-003 | Public-safe settings projection és secret/private mezők kizárása. | P01.1 | Workspace/site settings és alapadat | P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SET-004 | Custom domain lifecycle, verification, DNS/SSL status, primary-domain transition and canonical URL. | P01.1 | Workspace/site settings és alapadat | P01.2 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DYN-001 | Canonical data source registry és provider/domain adapter. | P03.3 | Dinamikus binding és cache | P03.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DYN-002 | Binding schema, type validation és resource/field compatibility. | P03.3 | Dinamikus binding és cache | P03.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DYN-003 | Whitelisted filter/sort/transform/limit/pagination for bound data queries; not a replacement for module-specific library search. | P03.3 | Dinamikus binding és cache | P03.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DYN-004 | Feltételes rendering és adatfüggő visibility. | P03.3 | Dinamikus binding és cache | P03.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DYN-005 | Runtime state machine for dynamic data bindings (loading/empty/error/partial/stale); shared visual presentation may use ADM-008. | P03.3 | Dinamikus binding és cache | P03.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DYN-006 | Cache policy, freshness, invalidation és stale fallback. | P03.3 | Dinamikus binding és cache | P03.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DYN-007 | Permission, site scope és published-only data boundary. | P03.3 | Dinamikus binding és cache | P03.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DYN-008 | Binding diagnostics, preview, invalid-reference report és recovery. | P03.3 | Dinamikus binding és cache | P03.1, P05.1 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SEO-001 | Per-page title, description, canonical URL és robots policy. | P03.5 | SEO, canonical, sitemap, robots | P03.4, P03.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SEO-002 | Open Graph, X/Twitter card és social preview/image validation. | P03.5 | SEO, canonical, sitemap, robots | P03.4, P03.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SEO-003 | Validált structured data/schema.org, ahol releváns. | P03.5 | SEO, canonical, sitemap, robots | P03.4, P03.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SEO-004 | Sitemap és robots.txt lifecycle, publish/cache invalidation. | P03.5 | SEO, canonical, sitemap, robots | P03.4, P03.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SEO-005 | SEO preview/diagnostics, duplicate/missing metadata és page-level audit. | P03.5 | SEO, canonical, sitemap, robots | P03.4, P03.1, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DEV-001 | Public API reference, versioning, schema and deprecation policy. | P09.1 | Developer API, schema, webhook | P01.4, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DEV-002 | API key creation, scoped permissions, one-time display, rotation, expiry and revocation. | P09.1 | Developer API, schema, webhook | P01.4, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DEV-003 | Webhook registry/tester, delivery log, signature validation and replay/retry diagnostics. | P09.1 | Developer API, schema, webhook | P01.4, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DEV-004 | Sandbox workspace and safe test fixtures/events. | P09.1 | Developer API, schema, webhook | P01.4, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DEV-005 | SDK/client libraries, integration examples and version compatibility. | P09.1 | Developer API, schema, webhook | P01.4, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| DEV-006 | Developer quotas, rate-limit visibility and API usage diagnostics. | P09.1 | Developer API, schema, webhook | P01.4, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SEARCH-001 | Permission-aware global search over canonical domain projections. | P09.6 | Globális keresés és index | P01.2, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SEARCH-002 | Command palette and quick-action routing to canonical module commands. | P09.6 | Globális keresés és index | P01.2, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SEARCH-003 | Saved views, favorites, recent items and per-user list preferences. | P09.6 | Globális keresés és index | P01.2, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SEARCH-004 | Index freshness, permission/site invalidation and deletion propagation. | P09.6 | Globális keresés és index | P01.2, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| SEARCH-005 | Module-scoped search filters and safe result snippets. | P09.6 | Globális keresés és index | P01.2, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| NTF-001 | In-app notification center, read/unread and source-module navigation. | P09.7 | Értesítés és feladatjelzés | P01.4, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| NTF-002 | Delivery channel adapters and truthful sent/delivered/failed states. | P09.7 | Értesítés és feladatjelzés | P01.4, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| NTF-003 | User preferences, digest, quiet hours and channel opt-in/out. | P09.7 | Értesítés és feladatjelzés | P01.4, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| NTF-004 | Idempotent event-to-notification mapping, deduplication and bounded retry. | P09.7 | Értesítés és feladatjelzés | P01.4, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| NTF-005 | Unsubscribe, retention and privacy-safe notification payload. | P09.7 | Értesítés és feladatjelzés | P01.4, P01.3 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| HELP-001 | Contextual help mapping to module/field and current feature limitations. | P09.8 | Onboarding és súgó | P01.6 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| HELP-002 | Interactive onboarding progress, skip/restart and role/site-scoped steps. | P09.8 | Onboarding és súgó | P01.6 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| HELP-003 | Searchable glossary, versioned documentation and canonical feature references. | P09.8 | Onboarding és súgó | P01.6 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+| HELP-004 | Troubleshooting/feedback flow with diagnostic IDs and automatic sensitive-data redaction. | P09.8 | Onboarding és súgó | P01.6 | SPEC/IMPLEMENTATION/TEST evidence OPEN — check per ID |
+
+**Kritikus külön alpontok:** P03.4 draft/preview, P03.5 explicit publish/slug/SEO, P03.6 public renderer; a `63.50.46` HIGH publikálási konfliktus kijavítása P03.5 tényleges implementációs blokkolója. A P04.2–P04.5 provider-specifikus integrációk, P08.3 privacy és P08.5 human approval, P10.2 cross-module E2E és P10.5 felhasználói acceptance elkülönülnek a gyűjtőmoduloktól. A Visual Editor nem válik más domainek adatgazdájává.
+
+**Minőségkapu:** `396/396 PRIMARY WORK PACKAGE ASSIGNED`, `0 UNMAPPED STABLE IDs`. Ez **strukturális mapping**, nem 396 darab implementációs PASS. A 271 történeti H-ID forráshű mezői és 436 target linkje továbbra is a 63.50.79–84/63.50.83 alatt ellenőrizhető. A `00/A`, `00.9–00.9.6.B` eredeti források hiánya és a `63.50.46` HIGH konfliktus továbbra is OPEN.
+
+**Következő kurzor:** `63.50.87` — a gyűjtő alpontok finom bontása és minden ID konkrét pozitív/negatív acceptance + függőségi gráfja, a 54.x katalógus és H19–H34 egyeztetésével. **PLAN IN PROGRESS / NOT PASS.**
 
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
