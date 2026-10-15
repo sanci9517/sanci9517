@@ -23,17 +23,6 @@ import { publicPagesRoute } from "./routes/public/pages";
 import { getAuthenticatedUser } from "./core/auth/require-auth";
 import type { Env } from "./types/env";
 
-const LEGACY_REDIRECTS: Record<string, string> = {
-  "/about.html": "/p/about",
-  "/community.html": "/p/community",
-  "/contact.html": "/p/contact",
-  "/schedule.html": "/p/schedule",
-  "/tiktok.html": "/p/tiktok",
-  "/twitch.html": "/p/twitch",
-  "/vod.html": "/p/vod",
-  "/youtube.html": "/p/youtube",
-};
-
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
@@ -59,10 +48,6 @@ export default {
     if (pathname === "/api/integrations/twitch/disconnect") return twitchDisconnectRoute(request, env);
     if (pathname === "/api/public/pages") return publicPagesRoute(request, env);
     if (pathname === "/admin/login") return env.ASSETS.fetch(assetRequest("/admin-login.html", request));
-    if (pathname === "/admin-login.html") return Response.redirect(new URL("/admin/login", request.url).toString(), 302);
-    if (pathname === "/admin/home" || pathname === "/admin-home.html" || pathname === "/admin.html") {
-      return Response.redirect(new URL("/admin", request.url).toString(), 302);
-    }
     if (pathname === "/admin") {
       const user = await getAuthenticatedUser(request, env);
       if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302);
@@ -73,12 +58,10 @@ export default {
       if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302);
       return env.ASSETS.fetch(assetRequest("/editor-v2/index.html", request));
     }
-    // Public asset URLs must not bypass the authenticated canonical Admin/Editor routes.
-    if (pathname === "/editor-v2" || pathname === "/editor-v2/index.html" || pathname === "/editor-v2/") {
-      return Response.redirect(new URL("/admin/editor", request.url).toString(), 302);
+    // Retired entry points must not expose the backing HTML assets directly.
+    if (["/admin-login.html", "/admin-home.html", "/admin.html", "/admin/home", "/editor-v2", "/editor-v2/index.html", "/about.html", "/community.html", "/contact.html", "/schedule.html", "/tiktok.html", "/twitch.html", "/vod.html", "/youtube.html"].includes(pathname)) {
+      return new Response("Gone", { status: 410 });
     }
-    const legacyTarget = LEGACY_REDIRECTS[pathname];
-    if (legacyTarget) return Response.redirect(new URL(legacyTarget, request.url).toString(), 301);
     if (pathname === "/" || pathname === "/index.html") return env.ASSETS.fetch(assetRequest("/visual-page.html", request));
     if (pathname.startsWith("/p/") && pathname.length > 3) return env.ASSETS.fetch(assetRequest("/visual-page.html", request));
     return env.ASSETS.fetch(request);
