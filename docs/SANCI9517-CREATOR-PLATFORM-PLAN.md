@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.117` — AI visual QA és experiment tracking szemantikai rések acceptance-szerződése, további történeti crosswalk és forráskeresés; 63.50.46 HIGH publish conflict OPEN; **PLAN IN PROGRESS / NOT PASS.**  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.118` — a történeti forráshiány és a HIGH publikálási döntés fennmaradó blokkolóinak ellenőrzése, a terv-review és runtime PASS kapuk elválasztása; **PLAN IN PROGRESS / NOT PASS.**  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -11816,6 +11816,29 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 **Forrás-visszakeresési állapot:** a repository commitkeresés `00/A` és `00.9.6.B` szó szerinti keresése nem adott találatot; a releváns korábbi PR #29/#30 leírása megőrzött archívumot és egyetlen MASTER-irányítást támaszt alá, nem adja vissza az eredeti hiányzó fejezeteket. A negatív keresés nem teljes bizonyíték a Git összes törölt fájljára vagy PR-kommentjére. **SOURCE NOT RECOVERED / OPEN**.
 
 **Következő aktív alpont: `63.50.117`** — a két most megnevezett semantic spec gap pontos acceptance-szerződésének rögzítése, a fennmaradó H crosswalk magas kockázatú sorainak ellenőrzése és az eredeti források további célzott keresése. A `63.50.46` HIGH publish conflict **OPEN**; nincs F0 vagy runtime PASS.
+
+### 63.50.117. AI vizuális QA és kísérletkövetés — hiányzó acceptance szerződések (2026-10-15)
+
+**FEATURE-CONTRACT GAP RESOLUTION AT PLAN LEVEL / RUNTIME OPEN.** A `H31.08` és `H32.23` eredeti történeti képesség megőrzött. A 24. fejezet stabil ID-it nem szaporítjuk pusztán a crosswalk kedvéért; az alábbi szerződések a megfelelő kanonikus domain feature-contractjához tartoznak.
+
+**H31.08 — AI visual QA (`AI-012` javaslat + `QA-004` bizonyíték, `EDT-032` preview, `AI-007/019` approval):**
+- Bemenet: explicit site/page/revision, viewport/device, publikus vagy autorizált preview screenshot, design token és accessibility policy verzió. A kép és a modell válasza nem megbízható utasításforrás.
+- Kimenet: típusozott, visszakereshető megfigyelés (probléma kategória, severity, bounding region/element reference, reprodukciós viewport, confidence, evidence link); javaslat és bizonyíték külön mező.
+- Írási határ: AI csak ajánlást ad; Editor változtatás kizárólag canonical EDT command → permission → preview/diff → explicit approval → version/audit útvonalon. QA-004 az összehasonlító teszt bizonyítéka, nem új Page Model.
+- Pozitív acceptance: reszponzív törés, overflow, kontraszt/fókusz vagy design token eltérés reprodukálható jelzése; ugyanaz a revision és viewport újrafuttatva összehasonlítható.
+- Negatív acceptance: másik site preview, privát asset, prompt injection a képen, hallucinated selector, téves pozitív találat, AI nélkül működő manuális vizuális QA, jóváhagyás nélküli módosítás elutasítása.
+- Fázis: AI funkció élesítésekor kötelező contract és provider/evaluation evidence; a jelenlegi audit nem jelent működő AI visual QA-t.
+
+**H32.23 — experiment tracking (`AI-002` prompt/evaluation + `ANL-007` report; szükség esetén `ANL-001/004` event/provenance):**
+- Egyedi experiment ID, site/owner, cél és hipotézis, variant assignment, mérési időablak, metrikadefiníció és forrás, attribution/consent, verziózott AI prompt/model vagy content variant, kontroll és kísérleti csoport.
+- ANL az események, mérési eredmények, időszeletek és hozzárendelés adatgazdája; AI-002 az AI prompt/evaluation változat és értékelés gazdája; CNT/WEB az érintett tartalom/oldal kanonikus gazdája. Egyetlen experiment workflow, nem párhuzamos AI és Analytics kísérleti adatbázis.
+- Pozitív acceptance: kontroll és variáns összehasonlítása azonos mérési definícióval; sample size, hiányzó adatok, időzóna, késő event és bizonytalanság látható; exportból ugyanaz az eredmény újraszámolható.
+- Negatív acceptance: cross-site cohort leak, consent nélküli követés, variáns-váltás miatti duplaszámolás, stale/hiányzó provider metrika, kitalált uplift vagy nem igazolt statisztikai szignifikancia; rollback és opt-out kezelése.
+- Fázis: az Analytics/AI experiment workflow tervezésekor egyértelmű canonical storage/API és jogosultság döntés szükséges; jelenleg `DESIGN REQUIREMENT RECORDED / NOT IMPLEMENTED OR TESTED`.
+
+**Közös no-duplication döntés:** `AI-012` nem lesz második Visual Editor; `QA-004` nem lesz AI business logic owner; `ANL-007` nem helyettesíti az experiment assignment modellt; `AI-002` nem birtokolhat önálló platform-metrika adatot. A részletes API/storage/permission/retention megvalósítás a megfelelő fejlesztési fázis előtti 10. fejezet szerinti feature-contractban kötelező.
+
+**Következő aktív alpont: `63.50.118`** — hiányzó történeti források és publikálási döntés fennmaradó blokkolóinak ellenőrzése, majd a terv-review kapu pontos szétválasztása a runtime feature-PASS-tól. **PLAN IN PROGRESS / NOT PASS; HIGH publish conflict OPEN.**
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
