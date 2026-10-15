@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.93` — **a 63.50.92-ben 12 PARTIAL stable-ID crosswalk, a 63.50.93-ban 6 kritikus owner/szerződéshatár ellenőrizve**; a 41 NO LEXICAL és 47 AMBIGUOUS első triage-ja megvan, teljes semantic PASS nincs. Következő: 17 mezős per-row acceptance, történeti H19–H34 és 63.50.46 publish conflict. 00/A/00.9.6.B OPEN; **PLAN IN PROGRESS / NOT PASS.**  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.94` — **12 részleges stable-ID crosswalk (63.50.92), 6 owner/szerződéshatár (63.50.93), 6 pozitív-negatív acceptance-tervezet (63.50.94)**; teljes történeti és runtime semantic PASS nincs. Következő: 54.x ↔ H19–H34 tételes proveniencia, stabil ID gap döntések és 63.50.46 HIGH publish conflict. 00/A/00.9.6.B OPEN; **PLAN IN PROGRESS / NOT PASS.**  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -11019,6 +11019,23 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 **Döntési szabály:** új stable ID-t csak az owner/surface/phase/dependency/acceptance mátrix és a 63.50.79–80 történeti acceptance összevetése után szabad létrehozni. A jelen körben **nem** bővült a 396 ID, nem történt implementáció. Az INT-001 adapter contract és CNT-013/014 publish lifecycle külön owner-réteg, közös provider capability registry INT-018; nem duplikálandó.
 
 **Blokkolók:** 63.50.46 HIGH publish conflict; 00/A és 00.9.6.B történeti forrás; runtime/negatív tesztek OPEN. Következő: 54.2.14, 54.7.11, 54.8.10, 54.14.01, 54.6.08, 54.16.02 teljes, 17 mezős acceptance és H19–H34 eredet-egyeztetés.
+
+### 63.50.94. Hat kritikus követelmény: owner, surface, függőség és negatív acceptance (2026-10-15)
+
+**Állapot: IN PROGRESS / NOT PASS.** Az alábbiak **új, kötelező elfogadási kritériumok a már meglévő 54.x követelményekhez**, nem implementált teszteredmények és nem az eredeti H19–H34 történeti mezők bizonyított azonosságai. A 63.50.79–80 történeti táblák külön megmaradnak; nincs automatikus történeti sor-hozzárendelés.
+
+| 54.x / fázis | Domain owner → felület / közös állapot | Pozitív acceptance (tervezett) | Negatív acceptance (tervezett) | Nyitott függőség |
+|---|---|---|---|---|
+| 54.2.14 / P03.1–P03.5 | WEB public form render → közös, jogosultságkezelt Forms submission domain (dedikált ID ellenőrizendő); Admin submission inbox, Editor form block | Sikeres validált beküldés, explicit consent verzió, adminból visszakereshető submission és státusz | Hibás mező, spam/rate-limit, consent nélküli adatkezelés, cross-site olvasás/módosítás tiltott | WEB-020 csak Contact; domain owner és retention policy tisztázandó |
+| 54.7.11 / P06.1–P06.3 | EXTENSION registry/sandbox → Admin Extensions, OBS/widget consumer, közös manifest/version/permission | Aláírt/eredet-ellenőrzött kompatibilis extension telepíthető, frissíthető, eltávolítható, dependency látható | Ismeretlen eredet, tiltott permission, inkompatibilis verzió, rollback nélküli hibás upgrade elutasítva | EXTENSION stable ID és trust model nincs bizonyítva |
+| 54.8.10 / P05.2 | CONTENT publishing queue → PUBLISHING attempt/result → INTEGRATION provider adapter; Content Studio és státusz | Provider capability szerint API publish vagy export/manual fallback; részleges eredmény per platform naplózva | Nem engedélyezett API-hívás, duplikált retry, lejárt token, jogosulatlan publikálás, elhallgatott partial failure tiltott | INT-001, INT-018, CNT-013/014/017; 63.50.46 HIGH publish conflict |
+| 54.14.01 / P09.5 | SETTINGS scoped locale preference → Admin shell / Public shell külön; LOC-001/003 translation | Admin és Public eltérő locale választása egymástól független, fallback dokumentált | Admin locale váltása nem írja át public locale-t vagy canonical contentet; hiányzó fordítás nem blank UI | Preference scope (user/site/device) és priority még tisztázandó |
+| 54.6.08 / P04.2–P05.1 | LIVE stream preparation → Creator Center Live; OBS-004 authorized marker adapter, SCH stream event linkage | Mikrofon/kamera/scene/bitrate/connection preflight rögzítve; marker/jegyzet streamhez és highlight-hoz kapcsolható | Hiányzó jogosultság, offline OBS, sikertelen teszt, idegen stream marker nem jelenthető sikeresnek | LIVE preflight stable ID és OBS capability matrix |
+| 54.16.02 / P09.1/P09.3 | EXTENSION manifest/schema owner → Extensions/Marketplace; DEV API és SEC auth csak kapcsolódó szolgáltatás | Manifest verzió, schema, kompatibilitás, capability, provenance, permission install előtt ellenőrizhető | Manipulált manifest, privilege escalation, inkompatibilis widget, revoked signer nem aktiválható | 54.7.11 közös registry, sandbox boundary, stable ID |
+
+**Kötelező következő ellenőrzés:** a hat sorhoz az eredeti 54.x szöveg és 63.50.79–80 H19–H34 rekordok **tényleges, tételes** összeolvasása (source ID, owner, surface, phase, dependency, lifecycle, DoD, positive/negative acceptance), majd a 24. fejezetben hiányzó stabil ID-kre döntés: létező ID bővítése vagy új ID indokolt-e. A fenti kritériumok **proposed acceptance**, nem történeti idézetek és nem PASS.
+
+**Nyitott:** 63.50.46 HIGH publish conflict NOT FIXED; 00/A és 00.9.6.B SOURCE NOT RECOVERED; runtime/CI és user review UNRUN; feature implementation frozen.
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
