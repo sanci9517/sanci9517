@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.115` — a 145 több-ID-s történeti követelmény owner/consumer/QA szerepeinek célzott szemantikai auditja és 00/A/00.9.6.B forráskeresés; 63.50.46 HIGH publish conflict OPEN; **PLAN IN PROGRESS / NOT PASS.**  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.116` — a több-ID-s történeti követelmények további owner/consumer review-ja és a 00/A/00.9.6.B eredeti források Git/PR keresése; 63.50.46 HIGH publish conflict OPEN; **PLAN IN PROGRESS / NOT PASS.**  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -11765,6 +11765,34 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 **00/A és 00.9–00.9.6.B:** `SOURCE NOT RECOVERED / OPEN`; nem írható át `SEMANTIC PASS`-ra pusztán azzal, hogy a 271 elérhető történeti sor megtalálható. A lezárás feltétele dokumentált, kellően széles történeti Git/PR/archív keresés és a fel nem kutatható eredeti forrás explicit no-loss kockázati döntése; eredeti tartalom kitalálása tilos.
 
 **Következő alpont: `63.50.115`** — a 145 több-ID-s történeti sor primary owner/consumer/QA szerepének részletes, kockázatalapú egyeztetése és a hiányzó források további bizonyítékkeresése. Ezután dönthető el a tervkapu és a közös funkciólista-review időpontja. **PLAN IN PROGRESS / NOT PASS; implementation freeze remains.**
+
+### 63.50.115. Több-ID-s történeti követelmények ownership-szétválasztása (2026-10-15)
+
+**CROSSWALK ROLE AUDIT / SEMANTIC EVIDENCE OPEN.** A 63.52 és 63.53 elsődleges H-ledger sorainak újraszámolása: **271 történeti sor**, ebből **145 több stabil ID-ra mutat**, **126 egy ID-ra**. A 145 több-ID-s sorból **45 ugyanazon ID-családon belüli**, **100 több családot érintő**. Ez fontosabb, mint az ID-k puszta megléte: az egymás mellé írt cél-ID-k nem jelentenek közös írási jogot vagy azonos lifecycle-t.
+
+| Történeti képesség és cél-ID | Kanonikus író / primary owner | Másodlagos fogyasztó, adapter vagy bizonyíték | Kötelező negatív acceptance |
+| --- | --- | --- | --- |
+| H19.01 upload — RES-003/001/002 | RES asset registry és upload workflow; R2 bináris, D1 metadata | RES-003 validation, RES-002 storage adapter | Hibás MIME/magic bytes, másik site asset ID, megszakadt upload, orphan R2 objektum |
+| H19.16 secure object keys — RES-002/014, SEC-008 | RES tárolási/object key és letöltési hozzáférés | SEC-008 secret lifecycle közös szabály; nem asset registry | Másik site objektumkulcs, lejárt signed URL, véletlen publikus hozzáférés |
+| H19.19 clip/Short assets — RES-001, CNT-003 | RES asset azonosító/bináris; CNT a clip/Short tartalom rekord gazdája | CNT csak asset reference-t tárol, nem duplikálja az R2 objektumot | Asset törlés/lejárat mellett hibás clip referencia és permission leak |
+| H20.03 schedule — DYN-001, SCH-010/011 | SCH események és publikált schedule projection | DYN csak datasource adapter; Editor schedule blokk csak binding | Draft schedule kiszivárgása, nem friss projection, cross-site binding |
+| H20.04 Twitch — DYN-001, INT-011, LIV-001 | INT Twitch provider auth/adat adapter; LIV normalized live state | DYN datasource és public read projection | Lejárt OAuth, offline állapot, hibás provider quota, másik site kapcsolat |
+| H21.13 YouTube statistics — INT-013, ANL-004/001 | ANL metrika/taxonómia és attribúció; INT provider ingestion | Dashboard és Content csak aggregált olvasó | Hiányzó scope, késő metrika, dupla event, jogosulatlan statisztika |
+| H22.16 title/description/hashtag — CNT-010/011, AI-013 | CNT szerkesztett brief és platformvariáns | AI javaslat, kizárólag emberi jóváhagyással menthető/publikálható | AI output automatikus publikálása, platformkorlát megsértése |
+| H23.18/H24.06–08 reduced motion és keyboard/focus — EDT/QA | EDT Editor canvas interakció, WEB publikus renderer külön runtime owner | QA audit és browser evidence, nem accessibility implementáció | Keyboard trap, láthatatlan fókusz, reduced-motion figyelmen kívül hagyása |
+| H25.03 canonical — SEO-001, SET-004 | Publishing published URL projection; SET custom domain állapot | SEO canonical published-only consumer | Draft canonical, staging indexelés, domain takeover, hibás locale URL |
+| H27.19 permissions — SEC-002, ADM-009 | SEC szerveroldali authorization | ADM csak jogosultságfüggő láthatóság | UI elrejtés mellett közvetlen API-n végrehajtható tiltott művelet |
+| H28.14 file validation — RES-003, SEC-006 | RES upload validation pipeline | SEC közös injection/SSRF védelmi szabály | Átnevezett végrehajtható fájl, rosszindulatú URL fetch |
+| H29.02–10 backup/restore — OPS/WEB/RES/QA | OPS backup/restore/recovery; WEB revisions és RES references saját domain | QA-007 kizárólag bizonyíték és drill acceptance | Hiányos D1/R2 restore, FK hiba, cross-site adatkeveredés |
+| H30.04–05 cache — WEB-030, DYN-006, OPS-008 | WEB published HTTP cache; DYN datasource cache a saját határán | OPS teljesítménymérés/observability | Publish után régi URL/metadata, permission revoke után stale private response |
+| H31.00 AI action pipeline — AI-003/005/006/007/008/009 | AI orchestration és action planner; tényleges írás csak az érintett domain canonical commandján | Approval/permission/audit közös kötelező gate | Prompt injection, approval nélküli action, rollback nélkül részleges írás |
+| H32.18 content performance — ANL-004, AI-004/013 | ANL hiteles metrika és időbélyeg | AI privát kontextus és javaslat, nem második metrika store | Másik site adat, stale insight, AI által kitalált metrika |
+| H33.00 automation lifecycle — AUT-001/002/003/004/008 | AUT workflow orchestration és run history; tényleges üzleti írás a domain API-n | SEC authorization, audit event és idempotency | Replay/duplikált végrehajtás, permission revoke, recursion loop |
+| H34.21 implementáció — DEV-001, QA-002/008 | Az adott feature domain ownerét **minden új work itemnél külön kell kijelölni** | DEV API contract, QA tesztkapu; önmagukban nem feature implementáció | Owner nélküli release vagy teszt nélküli publikus feature |
+
+**Auditkorlát:** a fenti táblázat célzott, kockázatalapú ownership-felbontás a 100 cross-family sor jellemző és korábban problémás mintáiból; **nem** állítja, hogy mind a 145 sorhoz külön bizonyított runtime API/owner/acceptance tartozik. A 45 same-family több-ID-s esetben is szükséges canonical writer vs supporting capability különbségtétel az implementációs feature-contractban. A 24. fejezet és a 63.50.109–112 owner mezői nem írhatják felül a domain tényleges ownership szerződését.
+
+**Következő aktív alpont: `63.50.116`** — a fennmaradó több-ID-s H-sorok célzott ownership review-ja, valamint `00/A` és `00.9–00.9.6.B` történeti források célzott Git/PR keresése. A `63.50.46` HIGH publish conflict és a source gate **OPEN**; PLAN **IN PROGRESS / NOT PASS**.
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
