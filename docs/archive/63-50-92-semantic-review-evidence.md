@@ -248,3 +248,25 @@ A teljes MASTER 63.51. pontja szerint a kötelező összeolvasási rend: 1. term
 **Példa — 54.7.02 / OBS-004:** a korábbi OBS-001/003/005 lexikai jelöltek mellé a 24. fejezetből bizonyított OBS-004 authorized commands and stream markers szükséges; **SPLIT / PARTIAL**, amíg a támogatott scene/source/mute/volume parancsok, permission, WebSocket reconnect és sikertelen műveletek acceptance-e nincs rögzítve.
 
 **Konzisztenciakapu:** a 63.50.46 HIGH publish conflict NOT FIXED, 00/A és 00.9.6.B források OPEN, runtime tesztek OPEN. A terv megvalósítási fagyasztása változatlan.
+
+
+## Kanonikus 63.50.92 átvezetési blokk — előkészített, ellenőrizhető rekordok
+
+A MASTER 63.50.91 szakasza 156 lexikai jelöltet tartalmaz; a fejléc továbbra is 63.50.91 → 63.50.92. Az alábbi rekordok az első tényleges, 24. fejezetben visszaellenőrzött átvezetési tételek. Az owner/phase/acceptance teljes eredeti bizonyítása továbbra is hiányzik, ezért egyik sem PASS.
+
+| 54.x source | 24. fejezetből igazolt stabil ID | Igazolt tartalom | Státusz / hiányzó acceptance |
+|---|---|---|---|
+| 54.2.02 | WEB-009, WEB-010, WEB-011 | Navigációs fa, header/footer, mobil/keyboard | PARTIAL: nested, linktípus, authorization |
+| 54.2.14 | WEB-020 | Publikus contact page/form | PARTIAL: általános Forms, spam/consent/submissions |
+| 54.3.06 | RES-007, RES-008 | Asset license/source és usage/reference | PARTIAL: owner, version, deletion safeguards |
+| 54.4.01 | RES-001, RES-002 | Canonical ID, R2 binary, D1 metadata | PARTIAL: site ownership, migration, restore |
+| 54.5.01 | INT-018 | Külső provider capability registry | PARTIAL: provider coverage/permissions/sync |
+| 54.6.07 | SCH-009, SCH-010 | Countdown és canonical schedule projection | PARTIAL: játékprofil és iCal |
+| 54.7.02 | OBS-003, OBS-004 | Scene/stream state, authorized commands/markers | PARTIAL: source, mute/volume, reconnect, deny |
+| 54.8.11 | CNT-022, RES-007 | Rights/consent/expiry/takedown és asset source | PARTIAL: provenance, revocation, blocking publish |
+| 54.8.12 | CNT-019, CNT-020 | Editor feed binding, public content projection | PARTIAL: social post/analytics linkage |
+| 54.12.07 | AUT-009 | Dry-run, preview, approval | PARTIAL: AI draft and explicit activation |
+| 54.14.03 | LOC-003 | Page/content/navigation translation | PARTIAL: locale media alt, OG/SEO |
+| 54.14.05 | LOC-002 | Locale dates/numbers/currency/timezone | PARTIAL: DST/rounding and negative tests |
+
+**Átvezetési döntés:** a kanonikus tervbe kizárólag a 63.50.92 alatti auditrekordok kerülhetnek, a 63.50.91 lexikai tábla és a 24. fejezet ID-definíciói felülírása nélkül. A MASTER átvezetése még nem történt meg; ez a blokk a konkrét patch tartalmi alapja. Nincs kapuzárás, nincs fejlesztési fagyasztás feloldása.
