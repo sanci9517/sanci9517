@@ -24,5 +24,6 @@ test("legacy dashboard HTML paths redirect to the canonical Admin entry", () => 
 
 test("editor HTML direct access redirects to authenticated entry", () => {
   assert.ok(worker.includes('pathname === "/editor-v2/index.html"'));
+  assert.ok(worker.includes('pathname === "/editor-v2/"'));
   assert.ok(worker.includes('new URL("/admin/editor", request.url)'));
 });
