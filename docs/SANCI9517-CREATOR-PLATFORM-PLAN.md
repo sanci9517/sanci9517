@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.82` — **12 Publish/SEO/Resource/Security 1.0 release-gate csomag pozitív/negatív szerződése rögzítve; HIGH publication conflict NOT FIXED, runtime PASS nincs**; következő: `63.50.83` H19–H34 cél-ID/fázis mélyaudit és 00.9.6.B visszakeresés; runtime/CI/user review OPEN; runtime/CI/user review OPEN; runtime/CI/user review OPEN; runtime/CI/user review OPEN; runtime/CI és user review OPEN; történeti és runtime evidence továbbra is nyitott, különös tekintettel a 63.50.46 HIGH publikálási konfliktusra. A 156 első körös routing kész, de szemantikai és történeti kapu továbbra is nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll és a 63.50.46 HIGH kódaudit-blokkoló ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.83` — **271/271 H19–H34 történeti sor 436/436 stable cél-ID hivatkozása a tényleges 49. fejezet capability definícióira feloldva; 0 hiányzó cél-ID, de szemantikai/phase/acceptance PASS továbbra is OPEN**; következő: `63.50.84` 1.0 vs 1.x+ archív fázisok és GAP/UNPROVEN mélyaudit, 00/A és 00.9.6.B forráskeresés. 63.50.46 HIGH publikálási konfliktus NOT FIXED; CI/runtime/user review UNRUN. **GLOBAL NOT PASS; feature implementation frozen.**  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -9082,6 +9082,366 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 **H19–H34 visszacsatolás:** H19.01/.14/.15/.16 a MEDIA gate-ekhez; H20.01/.18 a draft/published binding+schema-hoz; H23.01–.03 az Editor event és public renderer határához; H25 SEO sorok a PUBLISH/SEO gate-ekhez; H28 security sorok a SEC gate-ekhez kapcsolódnak. Ezek cross-reference-ek, **nem automatikus semantic PASS**.
 
 **Következő kurzor:** `63.50.83` — a fennmaradó H19–H34 stable cél-ID-k forrásdefiníció és archív fázis összevetése, valamint a `00/A` és `00.9–00.9.6.B` eredeti forrás további keresése. **GLOBAL NOT PASS / FEATURE IMPLEMENTATION FROZEN.**
+
+
+### 63.50.83. H19–H34 271/271 történeti sor stable cél-ID definícióellenőrzése (2026-10-15)
+
+**Forrás:** a 63.52–63.53 tételes canonical crosswalk (az ott rögzített 63.52.1/63.53.1 javításokkal), a 49. fejezet tényleges `ID | képesség | ...` definíciói, a 63.50.79–80 eredeti archív owner/surface/phase/dependency/acceptance kivonatai. A 271 egyedi történeti H-ID-hez **436 cél-ID hivatkozást** oldottam fel a dokumentum létező stable capability definíciójára; **hiányzó stable cél-ID: 0**. Ez definíciólétezési és szó szerinti capability-összeolvasási bizonyíték, **nem** a 436 kapcsolat teljes szemantikai PASS-a vagy az implementáció igazolása.
+
+#### H19 — 20 sor, stable cél-definíciók ellenőrzése
+
+| H-ID | Történeti képesség | Stable cél-ID(k) | A 49. fejezet tényleges capability definíciói |
+| --- | --- | --- | --- |
+| H19.01 | upload | RES-003, RES-001, RES-002 | RES-003: Upload validation/progress/cancel/retry.; RES-001: Canonical asset registry and IDs.; RES-002: R2 binary storage and D1 metadata. |
+| H19.02 | folders | RES-006 | RES-006: Asset-library collections/tags/folders; excludes content and product taxonomies. |
+| H19.03 | search | RES-005 | RES-005: Search/filter/sort/pagination over the canonical asset registry only. |
+| H19.04 | filter | RES-005 | RES-005: Search/filter/sort/pagination over the canonical asset registry only. |
+| H19.05 | preview | RES-004 | RES-004: Image preview/thumbnail/variant, crop/resize and optimization pipeline. |
+| H19.06 | metadata | RES-007 | RES-007: Alt text/caption/license/source metadata. |
+| H19.07 | alt text | RES-007 | RES-007: Alt text/caption/license/source metadata. |
+| H19.08 | crop | RES-004 | RES-004: Image preview/thumbnail/variant, crop/resize and optimization pipeline. |
+| H19.09 | resize | RES-004 | RES-004: Image preview/thumbnail/variant, crop/resize and optimization pipeline. |
+| H19.10 | replace | RES-009 | RES-009: Replace/archive/delete/restore safety. |
+| H19.11 | archive/delete | RES-009 | RES-009: Replace/archive/delete/restore safety. |
+| H19.12 | usage tracking | RES-008 | RES-008: Asset usage/reference map. |
+| H19.13 | unused media detection | RES-008, RES-015 | RES-008: Asset usage/reference map.; RES-015: Media diagnostics and broken asset scan. |
+| H19.14 | MIME validation | RES-003 | RES-003: Upload validation/progress/cancel/retry. |
+| H19.15 | file-size limits | RES-003 | RES-003: Upload validation/progress/cancel/retry. |
+| H19.16 | secure object keys | RES-002, RES-014, SEC-008 | RES-002: R2 binary storage and D1 metadata.; RES-014: File download authorization/expiry.; SEC-008: Secret storage/redaction/rotation. |
+| H19.17 | image optimization | RES-004 | RES-004: Image preview/thumbnail/variant, crop/resize and optimization pipeline. |
+| H19.18 | video/audio | RES-002, RES-004 | RES-002: R2 binary storage and D1 metadata.; RES-004: Image preview/thumbnail/variant, crop/resize and optimization pipeline. |
+| H19.19 | clip/Short assets | RES-001, CNT-003 | RES-001: Canonical asset registry and IDs.; CNT-003: Clip/highlight/Short management. |
+| H19.20 | cache policy | RES-004, DYN-006, WEB-030 | RES-004: Image preview/thumbnail/variant, crop/resize and optimization pipeline.; DYN-006: Cache policy, freshness, invalidation és stale fallback.; WEB-030: Cache és invalidáció |
+
+#### H20 — 18 sor, stable cél-definíciók ellenőrzése
+
+| H-ID | Történeti képesség | Stable cél-ID(k) | A 49. fejezet tényleges capability definíciói |
+| --- | --- | --- | --- |
+| H20.01 | D1 binding | DYN-001, DYN-002 | DYN-001: Canonical data source registry és provider/domain adapter.; DYN-002: Binding schema, type validation és resource/field compatibility. |
+| H20.02 | site settings | DYN-001, SET-001 | DYN-001: Canonical data source registry és provider/domain adapter.; SET-001: Canonical site settings schema és CRUD lifecycle. |
+| H20.03 | schedule | DYN-001, SCH-010, SCH-011 | DYN-001: Canonical data source registry és provider/domain adapter.; SCH-010: Canonical public schedule data projection/rendering contract consumed by WEB-016 and Editor schedule blocks.; SCH-011: Editor block binding/configuration for the canonical schedule projection; schedule data and lifecycle remain owned by SCH-001–010. |
+| H20.04 | Twitch | DYN-001, INT-011, LIV-001 | DYN-001: Canonical data source registry és provider/domain adapter.; INT-011: Twitch live/schedule data.; LIV-001: Normalized live/offline state. |
+| H20.05 | YouTube | DYN-001, INT-013 | DYN-001: Canonical data source registry és provider/domain adapter.; INT-013: YouTube channel/video/live adapter. |
+| H20.06 | TikTok | DYN-001, INT-014 | DYN-001: Canonical data source registry és provider/domain adapter.; INT-014: TikTok capability-gated adapter. |
+| H20.07 | Discord | DYN-001, INT-015 | DYN-001: Canonical data source registry és provider/domain adapter.; INT-015: Discord bot/guild/channel/role integration. |
+| H20.08 | VOD | DYN-001, CNT-020 | DYN-001: Canonical data source registry és provider/domain adapter.; CNT-020: Canonical published-content public feed/projection and query contract; WEB-017 owns the public page route/shell. |
+| H20.09 | collections | DYN-001, CNT-005 | DYN-001: Canonical data source registry és provider/domain adapter.; CNT-005: Content-library tags/categories/collections/playlists; excludes product-catalog taxonomy and asset-library folders. |
+| H20.10 | API data source | DYN-001, DYN-002 | DYN-001: Canonical data source registry és provider/domain adapter.; DYN-002: Binding schema, type validation és resource/field compatibility. |
+| H20.11 | loading state | DYN-005 | DYN-005: Runtime state machine for dynamic data bindings (loading/empty/error/partial/stale); shared visual presentation may use ADM-008. |
+| H20.12 | empty state | DYN-005 | DYN-005: Runtime state machine for dynamic data bindings (loading/empty/error/partial/stale); shared visual presentation may use ADM-008. |
+| H20.13 | error state | DYN-005 | DYN-005: Runtime state machine for dynamic data bindings (loading/empty/error/partial/stale); shared visual presentation may use ADM-008. |
+| H20.14 | conditional rendering | DYN-004 | DYN-004: Feltételes rendering és adatfüggő visibility. |
+| H20.15 | data transforms | DYN-003 | DYN-003: Whitelisted filter/sort/transform/limit/pagination for bound data queries; not a replacement for module-specific library search. |
+| H20.16 | caching | DYN-006 | DYN-006: Cache policy, freshness, invalidation és stale fallback. |
+| H20.17 | stale-data handling | DYN-005, DYN-006 | DYN-005: Runtime state machine for dynamic data bindings (loading/empty/error/partial/stale); shared visual presentation may use ADM-008.; DYN-006: Cache policy, freshness, invalidation és stale fallback. |
+| H20.18 | binding validation | DYN-002, DYN-008 | DYN-002: Binding schema, type validation és resource/field compatibility.; DYN-008: Binding diagnostics, preview, invalid-reference report és recovery. |
+
+#### H21 — 22 sor, stable cél-definíciók ellenőrzése
+
+| H-ID | Történeti képesség | Stable cél-ID(k) | A 49. fejezet tényleges capability definíciói |
+| --- | --- | --- | --- |
+| H21.01 | Twitch OAuth | INT-010, INT-003 | INT-010: Twitch OAuth and channel binding.; INT-003: OAuth state/callback/CSRF protection. |
+| H21.02 | Twitch live/offline | INT-011, LIV-001 | INT-011: Twitch live/schedule data.; LIV-001: Normalized live/offline state. |
+| H21.03 | Twitch title | LIV-003 | LIV-003: Stream title/category/game/start time. |
+| H21.04 | Twitch game | LIV-003 | LIV-003: Stream title/category/game/start time. |
+| H21.05 | Twitch viewer statistics | LIV-004 | LIV-004: Viewer/follower/subscriber metrics where permitted. |
+| H21.06 | Twitch followers/subscribers where available | LIV-004 | LIV-004: Viewer/follower/subscriber metrics where permitted. |
+| H21.07 | Twitch VOD | INT-012, CNT-002 | INT-012: Twitch VOD/clip metadata where allowed.; CNT-002: VOD import and metadata. |
+| H21.08 | Twitch clips | INT-012, CNT-003 | INT-012: Twitch VOD/clip metadata where allowed.; CNT-003: Clip/highlight/Short management. |
+| H21.09 | Twitch events/webhooks where applicable | INT-017, LIV-006 | INT-017: Provider webhook subscription/delivery lifecycle and integration of signature/replay defenses; shared security requirements are defined by SEC-009.; LIV-006: Stream event normalization. |
+| H21.10 | YouTube channel | INT-013 | INT-013: YouTube channel/video/live adapter. |
+| H21.11 | YouTube videos | INT-013, CNT-004 | INT-013: YouTube channel/video/live adapter.; CNT-004: YouTube/TikTok video feed. |
+| H21.12 | YouTube Shorts | INT-013, CNT-003 | INT-013: YouTube channel/video/live adapter.; CNT-003: Clip/highlight/Short management. |
+| H21.13 | YouTube statistics where available | INT-013, ANL-004, ANL-001 | INT-013: YouTube channel/video/live adapter.; ANL-004: Content/platform analytics.; ANL-001: Analytics event taxonomy/naming/schema governance for measurement and reporting; excludes workflow trigger execution. |
+| H21.14 | YouTube API quota/error handling | INT-009, INT-020 | INT-009: Rate-limit/quota handling.; INT-020: Integration diagnostics and recovery. |
+| H21.15 | TikTok profile | INT-014 | INT-014: TikTok capability-gated adapter. |
+| H21.16 | TikTok supported content integration | INT-014, CNT-004 | INT-014: TikTok capability-gated adapter.; CNT-004: YouTube/TikTok video feed. |
+| H21.17 | TikTok API capability review | INT-014, INT-018 | INT-014: TikTok capability-gated adapter.; INT-018: External integration/provider capability registry for social, streaming and commerce adapters; excludes AI model/provider configuration. |
+| H21.18 | TikTok rate limits/fallback | INT-009, INT-014 | INT-009: Rate-limit/quota handling.; INT-014: TikTok capability-gated adapter. |
+| H21.19 | Discord community link | INT-015, WEB-019 | INT-015: Discord bot/guild/channel/role integration.; WEB-019: Közösségi oldal és CTA |
+| H21.20 | Discord optional integration | INT-015 | INT-015: Discord bot/guild/channel/role integration. |
+| H21.21 | Discord status where justified | INT-015, INT-020 | INT-015: Discord bot/guild/channel/role integration.; INT-020: Integration diagnostics and recovery. |
+| H21.22 | Architecture constraint: keep secrets in Cloudflare Secrets; normalize external APIs behind services | INT-019, INT-001, SEC-008 | INT-019: Integration secret redaction and audit.; INT-001: Shared external-provider adapter contract; domain modules such as Store implement their specific workflows through this contract.; SEC-008: Secret storage/redaction/rotation. |
+
+#### H22 — 19 sor, stable cél-definíciók ellenőrzése
+
+| H-ID | Történeti képesség | Stable cél-ID(k) | A 49. fejezet tényleges capability definíciói |
+| --- | --- | --- | --- |
+| H22.01 | schedule CRUD | SCH-001 | SCH-001: Schedule item CRUD. |
+| H22.02 | recurring schedule | SCH-004 | SCH-004: Recurrence and series edit scopes. |
+| H22.03 | timezone handling | SCH-003 | SCH-003: Timezone and daylight-saving correctness. |
+| H22.04 | next-stream calculation | SCH-009 | SCH-009: Next stream/countdown. |
+| H22.05 | countdown | SCH-009 | SCH-009: Next stream/countdown. |
+| H22.06 | live state | LIV-001, SCH-005 | LIV-001: Normalized live/offline state.; SCH-005: Postponed/cancelled/completed/live states. |
+| H22.07 | game/category | SCH-012, SCH-014 | SCH-012: Game Profile CRUD.; SCH-014: Game/content/schedule relationship. |
+| H22.08 | stream type | SCH-001, SCH-005 | SCH-001: Schedule item CRUD.; SCH-005: Postponed/cancelled/completed/live states. |
+| H22.09 | VOD ingestion | CNT-002 | CNT-002: VOD import and metadata. |
+| H22.10 | VOD categorization | CNT-005 | CNT-005: Content-library tags/categories/collections/playlists; excludes product-catalog taxonomy and asset-library folders. |
+| H22.11 | VOD search/filter | CNT-006 | CNT-006: Search/filter/sort/pagination/bulk actions over canonical content records only. |
+| H22.12 | Shorts management | CNT-003 | CNT-003: Clip/highlight/Short management. |
+| H22.13 | clips management | CNT-003 | CNT-003: Clip/highlight/Short management. |
+| H22.14 | content calendar | CNT-009 | CNT-009: Content calendar. |
+| H22.15 | platform-specific variants | CNT-011 | CNT-011: Platform-specific title/description/tag variants. |
+| H22.16 | title/description/hashtag suggestions | CNT-010, CNT-011, AI-013 | CNT-010: Ideas/drafts/scripts/briefs.; CNT-011: Platform-specific title/description/tag variants.; AI-013: Content title/script/description/thumbnail brief. |
+| H22.17 | thumbnail brief | CNT-012, CNT-010 | CNT-012: Thumbnail and media asset workflow.; CNT-010: Ideas/drafts/scripts/briefs. |
+| H22.18 | publishing workflow | CNT-013, CNT-014 | CNT-013: Publishing queue and schedule.; CNT-014: Publish status/retry/partial success. |
+| H22.19 | performance feedback loop | ANL-004, CNT-016, ANL-001 | ANL-004: Content/platform analytics.; CNT-016: Campaign linkage and content attribution.; ANL-001: Analytics event taxonomy/naming/schema governance for measurement and reporting; excludes workflow trigger execution. |
+
+#### H23 — 20 sor, stable cél-definíciók ellenőrzése
+
+| H-ID | Történeti képesség | Stable cél-ID(k) | A 49. fejezet tényleges capability definíciói |
+| --- | --- | --- | --- |
+| H23.01 | event model | EDT-039 | EDT-039: Page-level interaction/action schema registry for Editor-configured page behavior; not the automation engine action catalog. |
+| H23.02 | click | EDT-039 | EDT-039: Page-level interaction/action schema registry for Editor-configured page behavior; not the automation engine action catalog. |
+| H23.03 | hover | EDT-039 | EDT-039: Page-level interaction/action schema registry for Editor-configured page behavior; not the automation engine action catalog. |
+| H23.04 | focus | EDT-039, EDT-037 | EDT-039: Page-level interaction/action schema registry for Editor-configured page behavior; not the automation engine action catalog.; EDT-037: Keyboard-accessible canvas alternatives. |
+| H23.05 | active | EDT-039 | EDT-039: Page-level interaction/action schema registry for Editor-configured page behavior; not the automation engine action catalog. |
+| H23.06 | submit | EDT-039, EDT-019 | EDT-039: Page-level interaction/action schema registry for Editor-configured page behavior; not the automation engine action catalog.; EDT-019: Table/Accordion/Tabs/Form capability. |
+| H23.07 | scroll | EDT-039 | EDT-039: Page-level interaction/action schema registry for Editor-configured page behavior; not the automation engine action catalog. |
+| H23.08 | load | EDT-039 | EDT-039: Page-level interaction/action schema registry for Editor-configured page behavior; not the automation engine action catalog. |
+| H23.09 | timer | EDT-039 | EDT-039: Page-level interaction/action schema registry for Editor-configured page behavior; not the automation engine action catalog. |
+| H23.10 | open/close | EDT-039 | EDT-039: Page-level interaction/action schema registry for Editor-configured page behavior; not the automation engine action catalog. |
+| H23.11 | navigation | EDT-039, WEB-009 | EDT-039: Page-level interaction/action schema registry for Editor-configured page behavior; not the automation engine action catalog.; WEB-009: Navigációs fa |
+| H23.12 | show/hide | EDT-039 | EDT-039: Page-level interaction/action schema registry for Editor-configured page behavior; not the automation engine action catalog. |
+| H23.13 | toggle | EDT-039 | EDT-039: Page-level interaction/action schema registry for Editor-configured page behavior; not the automation engine action catalog. |
+| H23.14 | state machine | EDT-039 | EDT-039: Page-level interaction/action schema registry for Editor-configured page behavior; not the automation engine action catalog. |
+| H23.15 | transition | EDT-040 | EDT-040: Motion/reduced-motion behavior. |
+| H23.16 | animation timeline | EDT-040 | EDT-040: Motion/reduced-motion behavior. |
+| H23.17 | keyframes | EDT-040 | EDT-040: Motion/reduced-motion behavior. |
+| H23.18 | reduced-motion | EDT-040, QA-005 | EDT-040: Motion/reduced-motion behavior.; QA-005: Public SEO/accessibility/performance audit. |
+| H23.19 | interaction validation | EDT-039, EDT-022 | EDT-039: Page-level interaction/action schema registry for Editor-configured page behavior; not the automation engine action catalog.; EDT-022: Inspector schema validation and control types. |
+| H23.20 | performance safeguards | OPS-008, QA-004 | OPS-008: Performance baseline/cache/query monitoring.; QA-004: Browser/device responsive and visual-regression acceptance. |
+
+#### H24 — 13 sor, stable cél-definíciók ellenőrzése
+
+| H-ID | Történeti képesség | Stable cél-ID(k) | A 49. fejezet tényleges capability definíciói |
+| --- | --- | --- | --- |
+| H24.01 | semantic HTML | WEB-032, QA-005 | WEB-032: Biztonságos renderer/embed; QA-005: Public SEO/accessibility/performance audit. |
+| H24.02 | heading hierarchy | EDT-017, QA-005 | EDT-017: Text/Heading/Link/Button/Icon/Divider/Spacer.; QA-005: Public SEO/accessibility/performance audit. |
+| H24.03 | alt text | RES-007, QA-005 | RES-007: Alt text/caption/license/source metadata.; QA-005: Public SEO/accessibility/performance audit. |
+| H24.04 | labels | EDT-019, QA-005 | EDT-019: Table/Accordion/Tabs/Form capability.; QA-005: Public SEO/accessibility/performance audit. |
+| H24.05 | ARIA | QA-005, EDT-037 | QA-005: Public SEO/accessibility/performance audit.; EDT-037: Keyboard-accessible canvas alternatives. |
+| H24.06 | keyboard navigation | EDT-037, QA-004 | EDT-037: Keyboard-accessible canvas alternatives.; QA-004: Browser/device responsive and visual-regression acceptance. |
+| H24.07 | focus order | EDT-037, QA-005 | EDT-037: Keyboard-accessible canvas alternatives.; QA-005: Public SEO/accessibility/performance audit. |
+| H24.08 | focus visibility | EDT-037, QA-005 | EDT-037: Keyboard-accessible canvas alternatives.; QA-005: Public SEO/accessibility/performance audit. |
+| H24.09 | contrast warnings | DSN-002, QA-005 | DSN-002: Token editor and live preview.; QA-005: Public SEO/accessibility/performance audit. |
+| H24.10 | screen-reader metadata | WEB-032, QA-005 | WEB-032: Biztonságos renderer/embed; QA-005: Public SEO/accessibility/performance audit. |
+| H24.11 | form validation accessibility | EDT-019, QA-005 | EDT-019: Table/Accordion/Tabs/Form capability.; QA-005: Public SEO/accessibility/performance audit. |
+| H24.12 | editor accessibility checks | EDT-022, EDT-037 | EDT-022: Inspector schema validation and control types.; EDT-037: Keyboard-accessible canvas alternatives. |
+| H24.13 | public accessibility audit | QA-005, QA-009 | QA-005: Public SEO/accessibility/performance audit.; QA-009: User acceptance and evidence log. |
+
+#### H25 — 12 sor, stable cél-definíciók ellenőrzése
+
+| H-ID | Történeti képesség | Stable cél-ID(k) | A 49. fejezet tényleges capability definíciói |
+| --- | --- | --- | --- |
+| H25.01 | title | SEO-001 | SEO-001: Per-page title, description, canonical URL és robots policy. |
+| H25.02 | description | SEO-001 | SEO-001: Per-page title, description, canonical URL és robots policy. |
+| H25.03 | canonical | SEO-001, SET-004 | SEO-001: Per-page title, description, canonical URL és robots policy.; SET-004: Custom domain lifecycle, verification, DNS/SSL status, primary-domain transition and canonical URL. |
+| H25.04 | Open Graph | SEO-002 | SEO-002: Open Graph, X/Twitter card és social preview/image validation. |
+| H25.05 | X/Twitter card | SEO-002 | SEO-002: Open Graph, X/Twitter card és social preview/image validation. |
+| H25.06 | structured data | SEO-003 | SEO-003: Validált structured data/schema.org, ahol releváns. |
+| H25.07 | sitemap | SEO-004 | SEO-004: Sitemap és robots.txt lifecycle, publish/cache invalidation. |
+| H25.08 | robots | SEO-004 | SEO-004: Sitemap és robots.txt lifecycle, publish/cache invalidation. |
+| H25.09 | per-page SEO | SEO-001 | SEO-001: Per-page title, description, canonical URL és robots policy. |
+| H25.10 | SEO preview | SEO-005 | SEO-005: SEO preview/diagnostics, duplicate/missing metadata és page-level audit. |
+| H25.11 | redirects | WEB-013 | WEB-013: Redirect és broken-link |
+| H25.12 | broken-link detection | WEB-013, SEO-005 | WEB-013: Redirect és broken-link; SEO-005: SEO preview/diagnostics, duplicate/missing metadata és page-level audit. |
+
+#### H26 — 12 sor, stable cél-definíciók ellenőrzése
+
+| H-ID | Történeti képesség | Stable cél-ID(k) | A 49. fejezet tényleges capability definíciói |
+| --- | --- | --- | --- |
+| H26.01 | page views | ANL-001, ANL-002 | ANL-001: Analytics event taxonomy/naming/schema governance for measurement and reporting; excludes workflow trigger execution.; ANL-002: Privacy-safe web analytics. |
+| H26.02 | button clicks | ANL-001, ANL-002 | ANL-001: Analytics event taxonomy/naming/schema governance for measurement and reporting; excludes workflow trigger execution.; ANL-002: Privacy-safe web analytics. |
+| H26.03 | social clicks | ANL-001, ANL-002 | ANL-001: Analytics event taxonomy/naming/schema governance for measurement and reporting; excludes workflow trigger execution.; ANL-002: Privacy-safe web analytics. |
+| H26.04 | stream events | ANL-001, ANL-003 | ANL-001: Analytics event taxonomy/naming/schema governance for measurement and reporting; excludes workflow trigger execution.; ANL-003: Stream analytics. |
+| H26.05 | conversion events | ANL-001, ANL-005 | ANL-001: Analytics event taxonomy/naming/schema governance for measurement and reporting; excludes workflow trigger execution.; ANL-005: Commerce analytics. |
+| H26.06 | privacy-aware analytics | ANL-002, ANL-009 | ANL-002: Privacy-safe web analytics.; ANL-009: Consent/retention/bot filtering. |
+| H26.07 | retention policy | ANL-009, SEC-011 | ANL-009: Consent/retention/bot filtering.; SEC-011: Consent/retention/export/delete. |
+| H26.08 | admin dashboard | ANL-007, ADM-002 | ANL-007: Date range/comparison/filter/export.; ADM-002: 49.1 / Áttekintés |
+| H26.09 | editor/content performance | ANL-004 | ANL-004: Content/platform analytics. |
+| H26.10 | content performance | ANL-004 | ANL-004: Content/platform analytics. |
+| H26.11 | stream performance | ANL-003 | ANL-003: Stream analytics. |
+| H26.12 | anomaly detection later | ANL-010 | ANL-010: Anomaly detection, thresholds and explainable alerts. |
+
+#### H27 — 19 sor, stable cél-definíciók ellenőrzése
+
+| H-ID | Történeti képesség | Stable cél-ID(k) | A 49. fejezet tényleges capability definíciói |
+| --- | --- | --- | --- |
+| H27.01 | dashboard | ADM-001, ADM-002 | ADM-001: 49.1 / Admin shell; ADM-002: 49.1 / Áttekintés |
+| H27.02 | navigation | ADM-001 | ADM-001: 49.1 / Admin shell |
+| H27.03 | responsive admin | ADM-010 | ADM-010: 49.1 / Mobil Admin shell |
+| H27.04 | diagnostics | OPS-007, ADM-004 | OPS-007: Diagnostics report.; ADM-004: 49.1 / Teendők |
+| H27.05 | page list | WEB-001 | WEB-001: Oldallista, létrehozás és szerkesztés |
+| H27.06 | content management | CNT-001, CNT-006 | CNT-001: Canonical content item schema.; CNT-006: Search/filter/sort/pagination/bulk actions over canonical content records only. |
+| H27.07 | schedule | SCH-001 | SCH-001: Schedule item CRUD. |
+| H27.08 | socials | INT-002, ADM-003 | INT-002: Integration overview and health.; ADM-003: 49.1 / Gyorsműveletek |
+| H27.09 | VOD | CNT-002 | CNT-002: VOD import and metadata. |
+| H27.10 | media | RES-001 | RES-001: Canonical asset registry and IDs. |
+| H27.11 | settings | SET-001 | SET-001: Canonical site settings schema és CRUD lifecycle. |
+| H27.12 | SEO | SEO-005 | SEO-005: SEO preview/diagnostics, duplicate/missing metadata és page-level audit. |
+| H27.13 | analytics | ANL-007 | ANL-007: Date range/comparison/filter/export. |
+| H27.14 | integrations | INT-002 | INT-002: Integration overview and health. |
+| H27.15 | editor management | EDT-001, WEB-001 | EDT-001: Canonical Page Model schema/version.; WEB-001: Oldallista, létrehozás és szerkesztés |
+| H27.16 | preview | EDT-032, WEB-005 | EDT-032: Preview without publishing.; WEB-005: Preview link és hozzáférés |
+| H27.17 | recovery | EDT-042, OPS-005 | EDT-042: Editor error recovery and no-data-loss guard.; OPS-005: Operational backup/export/restore capability and runbook; QA-007 only verifies it through tests/evidence. |
+| H27.18 | history | WEB-008, EDT-005 | WEB-008: Revízió és diff; EDT-005: Undo/redo history integrity. |
+| H27.19 | permissions | SEC-002, ADM-009 | SEC-002: Server-side RBAC and ownership.; ADM-009: 49.1 / Navigáció és műveletek |
+
+#### H28 — 17 sor, stable cél-definíciók ellenőrzése
+
+| H-ID | Történeti képesség | Stable cél-ID(k) | A 49. fejezet tényleges capability definíciói |
+| --- | --- | --- | --- |
+| H28.01 | HttpOnly | SEC-001 | SEC-001: Authentication/session lifecycle. |
+| H28.02 | Secure cookie | SEC-001 | SEC-001: Authentication/session lifecycle. |
+| H28.03 | SameSite | SEC-001 | SEC-001: Authentication/session lifecycle. |
+| H28.04 | password hash | SEC-001 | SEC-001: Authentication/session lifecycle. |
+| H28.05 | CSRF | SEC-004 | SEC-004: OAuth/CSRF/session security. |
+| H28.06 | rate limiting | SEC-007 | SEC-007: Rate limiting and abuse protection. |
+| H28.07 | RBAC | SEC-002 | SEC-002: Server-side RBAC and ownership. |
+| H28.08 | API authorization | SEC-002, SEC-003 | SEC-002: Server-side RBAC and ownership.; SEC-003: Cross-domain server-side site/workspace/tenant isolation invariant; TEAM-001/TEAM-005 provide workspace selection and multi-site workflows but do not replace authorization. |
+| H28.09 | public/admin separation | SEC-002, WEB-031 | SEC-002: Server-side RBAC and ownership.; WEB-031: Published-only enforcement |
+| H28.10 | Cloudflare Secrets | SEC-008 | SEC-008: Secret storage/redaction/rotation. |
+| H28.11 | audit log | SEC-010 | SEC-010: Cross-domain security/privacy audit events and redaction/retention controls; workflow execution detail remains in AUT-008. |
+| H28.12 | input validation | SEC-006, SEC-005 | SEC-006: SSRF/open redirect/injection defenses.; SEC-005: XSS/sanitization/safe embeds. |
+| H28.13 | output validation | SEC-005 | SEC-005: XSS/sanitization/safe embeds. |
+| H28.14 | file validation | RES-003, SEC-006 | RES-003: Upload validation/progress/cancel/retry.; SEC-006: SSRF/open redirect/injection defenses. |
+| H28.15 | replay protection where applicable | SEC-009 | SEC-009: Cross-domain webhook signature/replay security requirement and negative-test contract; provider-specific implementation is owned by INT-017. |
+| H28.16 | action permission 'can()' checks | SEC-002, AUT-004 | SEC-002: Server-side RBAC and ownership.; AUT-004: Automation action catalog and server-side permission checks for workflow execution; page interaction schemas remain in EDT-039. |
+| H28.17 | AI permission boundary | AI-006, AI-019 | AI-006: Permission/ownership checker.; AI-019: Human approval for public/destructive/financial action. |
+
+#### H29 — 10 sor, stable cél-definíciók ellenőrzése
+
+| H-ID | Történeti képesség | Stable cél-ID(k) | A 49. fejezet tényleges capability definíciói |
+| --- | --- | --- | --- |
+| H29.01 | full backup | OPS-005 | OPS-005: Operational backup/export/restore capability and runbook; QA-007 only verifies it through tests/evidence. |
+| H29.02 | page backup | OPS-005, WEB-007 | OPS-005: Operational backup/export/restore capability and runbook; QA-007 only verifies it through tests/evidence.; WEB-007: Publish/unpublish/rollback |
+| H29.03 | revision backup | OPS-005, WEB-008 | OPS-005: Operational backup/export/restore capability and runbook; QA-007 only verifies it through tests/evidence.; WEB-008: Revízió és diff |
+| H29.04 | media references | OPS-005, RES-008 | OPS-005: Operational backup/export/restore capability and runbook; QA-007 only verifies it through tests/evidence.; RES-008: Asset usage/reference map. |
+| H29.05 | restore validation | OPS-006, QA-007 | OPS-006: Recovery drill and runbook.; QA-007: Test/acceptance gate and evidence for backup/restore/rollback; does not implement backup operations. |
+| H29.06 | rollback | OPS-009, QA-007 | OPS-009: Rollback and incident procedure.; QA-007: Test/acceptance gate and evidence for backup/restore/rollback; does not implement backup operations. |
+| H29.07 | import/export JSON | OPS-005 | OPS-005: Operational backup/export/restore capability and runbook; QA-007 only verifies it through tests/evidence. |
+| H29.08 | migration compatibility | OPS-004 | OPS-004: Migration preflight/integrity. |
+| H29.09 | backup integrity check | OPS-005, QA-007 | OPS-005: Operational backup/export/restore capability and runbook; QA-007 only verifies it through tests/evidence.; QA-007: Test/acceptance gate and evidence for backup/restore/rollback; does not implement backup operations. |
+| H29.10 | recovery drill | OPS-006, QA-007 | OPS-006: Recovery drill and runbook.; QA-007: Test/acceptance gate and evidence for backup/restore/rollback; does not implement backup operations. |
+
+#### H30 — 14 sor, stable cél-definíciók ellenőrzése
+
+| H-ID | Történeti képesség | Stable cél-ID(k) | A 49. fejezet tényleges capability definíciói |
+| --- | --- | --- | --- |
+| H30.01 | bundle review | OPS-008 | OPS-008: Performance baseline/cache/query monitoring. |
+| H30.02 | lazy loading | OPS-008, WEB-032 | OPS-008: Performance baseline/cache/query monitoring.; WEB-032: Biztonságos renderer/embed |
+| H30.03 | image optimization | RES-004 | RES-004: Image preview/thumbnail/variant, crop/resize and optimization pipeline. |
+| H30.04 | caching | WEB-030, OPS-008 | WEB-030: Cache és invalidáció; OPS-008: Performance baseline/cache/query monitoring. |
+| H30.05 | cache invalidation | WEB-030, DYN-006 | WEB-030: Cache és invalidáció; DYN-006: Cache policy, freshness, invalidation és stale fallback. |
+| H30.06 | Core Web Vitals | OPS-008, QA-005 | OPS-008: Performance baseline/cache/query monitoring.; QA-005: Public SEO/accessibility/performance audit. |
+| H30.07 | rendering performance | OPS-008, QA-004 | OPS-008: Performance baseline/cache/query monitoring.; QA-004: Browser/device responsive and visual-regression acceptance. |
+| H30.08 | large-page performance | OPS-008, QA-004 | OPS-008: Performance baseline/cache/query monitoring.; QA-004: Browser/device responsive and visual-regression acceptance. |
+| H30.09 | large-tree editor performance | OPS-008, EDT-012 | OPS-008: Performance baseline/cache/query monitoring.; EDT-012: Layers tree expand/collapse. |
+| H30.10 | history memory limits | EDT-005, OPS-008 | EDT-005: Undo/redo history integrity.; OPS-008: Performance baseline/cache/query monitoring. |
+| H30.11 | autosave efficiency | EDT-030, OPS-008 | EDT-030: In-flight edit preservation during save.; OPS-008: Performance baseline/cache/query monitoring. |
+| H30.12 | API latency monitoring | OPS-008 | OPS-008: Performance baseline/cache/query monitoring. |
+| H30.13 | production smoke test | QA-006 | QA-006: Production smoke and runtime verification. |
+| H30.14 | visual regression baseline | QA-004 | QA-004: Browser/device responsive and visual-regression acceptance. |
+
+#### H31 — 14 sor, stable cél-definíciók ellenőrzése
+
+| H-ID | Történeti képesség | Stable cél-ID(k) | A 49. fejezet tényleges capability definíciói |
+| --- | --- | --- | --- |
+| H31.00 | AI editor must use the same canonical action system as manual Editor; pipeline: Intent -> Plan -> Actions -> Permission -> Validation -> Preview/Diff -> Approval -> Execute -> Verify -> Audit -> Version | AI-003, AI-005, AI-006, AI-007, AI-008, AI-009 | AI-003: Intent and task planner.; AI-005: Structured action schema.; AI-006: Permission/ownership checker.; AI-007: Diff/preview/approval workflow.; AI-008: Execute through canonical API/commands.; AI-009: Verification/audit/version/rollback. |
+| H31.01 | AI page operations | AI-011 | AI-011: Website structure/content assistant. |
+| H31.02 | AI element operations | AI-011, AI-008 | AI-011: Website structure/content assistant.; AI-008: Execute through canonical API/commands. |
+| H31.03 | AI style/layout operations | AI-011, AI-008 | AI-011: Website structure/content assistant.; AI-008: Execute through canonical API/commands. |
+| H31.04 | AI responsive operations | AI-011, EDT-024 | AI-011: Website structure/content assistant.; EDT-024: Responsive override/inheritance/reset. |
+| H31.05 | AI content generation | AI-011, AI-013 | AI-011: Website structure/content assistant.; AI-013: Content title/script/description/thumbnail brief. |
+| H31.06 | AI SEO assistance | AI-012 | AI-012: SEO/accessibility/localization suggestions. |
+| H31.07 | AI accessibility QA | AI-012 | AI-012: SEO/accessibility/localization suggestions. |
+| H31.08 | AI visual QA | AI-012, QA-004 | AI-012: SEO/accessibility/localization suggestions.; QA-004: Browser/device responsive and visual-regression acceptance. |
+| H31.09 | action permissions | AI-006 | AI-006: Permission/ownership checker. |
+| H31.10 | approval rules | AI-007, AI-019 | AI-007: Diff/preview/approval workflow.; AI-019: Human approval for public/destructive/financial action. |
+| H31.11 | rollback | AI-009 | AI-009: Verification/audit/version/rollback. |
+| H31.12 | audit | AI-009, SEC-010 | AI-009: Verification/audit/version/rollback.; SEC-010: Cross-domain security/privacy audit events and redaction/retention controls; workflow execution detail remains in AUT-008. |
+| H31.13 | rate/cost controls | AI-010 | AI-010: Cost/quota/usage/error tracking. |
+
+#### H32 — 25 sor, stable cél-definíciók ellenőrzése
+
+| H-ID | Történeti képesség | Stable cél-ID(k) | A 49. fejezet tényleges capability definíciói |
+| --- | --- | --- | --- |
+| H32.01 | live stream monitoring | AI-015 | AI-015: Stream diagnostics/summary where supported. |
+| H32.02 | silence/speech detection | AI-015 | AI-015: Stream diagnostics/summary where supported. |
+| H32.03 | chat activity analysis | AI-015 | AI-015: Stream diagnostics/summary where supported. |
+| H32.04 | technical issue detection | AI-015 | AI-015: Stream diagnostics/summary where supported. |
+| H32.05 | audio problem detection | AI-015 | AI-015: Stream diagnostics/summary where supported. |
+| H32.06 | stream quality checks | AI-015 | AI-015: Stream diagnostics/summary where supported. |
+| H32.07 | scene suggestions | AI-015, OBS-003 | AI-015: Stream diagnostics/summary where supported.; OBS-003: Scene/stream/recording state where supported. |
+| H32.08 | context-aware ideas | AI-015, AI-013 | AI-015: Stream diagnostics/summary where supported.; AI-013: Content title/script/description/thumbnail brief. |
+| H32.09 | interesting moment detection | AI-014, AI-015 | AI-014: AI-generated transcript/chapter/highlight/clip candidates with source timestamps and confidence; does not own canonical content records or rights metadata.; AI-015: Stream diagnostics/summary where supported. |
+| H32.10 | post-stream summary | AI-015 | AI-015: Stream diagnostics/summary where supported. |
+| H32.11 | VOD analysis | AI-014, CNT-018 | AI-014: AI-generated transcript/chapter/highlight/clip candidates with source timestamps and confidence; does not own canonical content records or rights metadata.; CNT-018: Content-domain transcript/chapter/highlight artifact metadata and review lifecycle; AI suggestions originate in AI-014 and are stored through the content API. |
+| H32.12 | clip candidates | AI-014 | AI-014: AI-generated transcript/chapter/highlight/clip candidates with source timestamps and confidence; does not own canonical content records or rights metadata. |
+| H32.13 | Short candidates | AI-014, CNT-003 | AI-014: AI-generated transcript/chapter/highlight/clip candidates with source timestamps and confidence; does not own canonical content records or rights metadata.; CNT-003: Clip/highlight/Short management. |
+| H32.14 | title/description suggestions | AI-013 | AI-013: Content title/script/description/thumbnail brief. |
+| H32.15 | platform variants | AI-013, CNT-011 | AI-013: Content title/script/description/thumbnail brief.; CNT-011: Platform-specific title/description/tag variants. |
+| H32.16 | thumbnail briefs | AI-013 | AI-013: Content title/script/description/thumbnail brief. |
+| H32.17 | publishing recommendations | AI-013, CNT-013 | AI-013: Content title/script/description/thumbnail brief.; CNT-013: Publishing queue and schedule. |
+| H32.18 | content performance analysis | ANL-004, AI-004, AI-013 | ANL-004: Content/platform analytics.; AI-004: Context selection and privacy filter.; AI-013: Content title/script/description/thumbnail brief. |
+| H32.19 | streamer profile | AI-004 | AI-004: Context selection and privacy filter. |
+| H32.20 | long-term memory | AI-004 | AI-004: Context selection and privacy filter. |
+| H32.21 | preferences | AI-004 | AI-004: Context selection and privacy filter. |
+| H32.22 | historical outcomes | AI-004, ANL-007 | AI-004: Context selection and privacy filter.; ANL-007: Date range/comparison/filter/export. |
+| H32.23 | experiment tracking | AI-002, ANL-007 | AI-002: AI prompt/instruction template versioning and evaluation; excludes visual design and page-template lifecycle in DSN-014.; ANL-007: Date range/comparison/filter/export. |
+| H32.24 | evaluation cycle | AI-002 | AI-002: AI prompt/instruction template versioning and evaluation; excludes visual design and page-template lifecycle in DSN-014. |
+| H32.25 | feedback loop | AI-002, AI-017 | AI-002: AI prompt/instruction template versioning and evaluation; excludes visual design and page-template lifecycle in DSN-014.; AI-017: AI Control Center and approval queue. |
+
+#### H33 — 13 sor, stable cél-definíciók ellenőrzése
+
+| H-ID | Történeti képesség | Stable cél-ID(k) | A 49. fejezet tényleges capability definíciói |
+| --- | --- | --- | --- |
+| H33.00 | Automation lifecycle contract: Trigger -> Condition -> Action -> Result -> Verify -> Audit | AUT-001, AUT-002, AUT-003, AUT-004, AUT-008 | AUT-001: Automation trigger-event catalog and event-to-workflow routing contract; consumes domain events and does not define analytics measurement taxonomy.; AUT-002: Trigger catalogue.; AUT-003: Condition/filter rules.; AUT-004: Automation action catalog and server-side permission checks for workflow execution; page interaction schemas remain in EDT-039.; AUT-008: Automation execution/run history and workflow-specific diagnostics; security/privacy audit events are owned by SEC-010. |
+| H33.01 | scheduled automations | AUT-005 | AUT-005: Delay/schedule and timezone. |
+| H33.02 | event automations | AUT-001, AUT-002 | AUT-001: Automation trigger-event catalog and event-to-workflow routing contract; consumes domain events and does not define analytics measurement taxonomy.; AUT-002: Trigger catalogue. |
+| H33.03 | content workflows | AUT-014, CNT-013 | AUT-014: Safe cross-domain actions.; CNT-013: Publishing queue and schedule. |
+| H33.04 | media workflows | AUT-014, RES-001 | AUT-014: Safe cross-domain actions.; RES-001: Canonical asset registry and IDs. |
+| H33.05 | stream workflows | AUT-014, LIV-006 | AUT-014: Safe cross-domain actions.; LIV-006: Stream event normalization. |
+| H33.06 | notification workflows | AUT-014, NTF-004 | AUT-014: Safe cross-domain actions.; NTF-004: Idempotent event-to-notification mapping, deduplication and bounded retry. |
+| H33.07 | retry policy | AUT-007 | AUT-007: Retry/backoff/dead-letter. |
+| H33.08 | idempotency | AUT-006 | AUT-006: Idempotency/deduplication. |
+| H33.09 | failure handling | AUT-007, AUT-012 | AUT-007: Retry/backoff/dead-letter.; AUT-012: Provider outage and recovery. |
+| H33.10 | permissions | AUT-004, SEC-002 | AUT-004: Automation action catalog and server-side permission checks for workflow execution; page interaction schemas remain in EDT-039.; SEC-002: Server-side RBAC and ownership. |
+| H33.11 | audit | AUT-008, SEC-010 | AUT-008: Automation execution/run history and workflow-specific diagnostics; security/privacy audit events are owned by SEC-010.; SEC-010: Cross-domain security/privacy audit events and redaction/retention controls; workflow execution detail remains in AUT-008. |
+| H33.12 | Queues/Durable Objects only when justified by a real background-task or realtime requirement | OPS-011 | OPS-011: Background-job/realtime runtime selection and lifecycle, only where justified. |
+
+#### H34 — 23 sor, stable cél-definíciók ellenőrzése
+
+| H-ID | Történeti képesség | Stable cél-ID(k) | A 49. fejezet tényleges capability definíciói |
+| --- | --- | --- | --- |
+| H34.00 | Continuous feature discovery is never permanently closed; repeat the review before every significant Editor/platform extension | QA-010 | QA-010: Continuous benchmark and feature-discovery review. |
+| H34.01 | modern visual builder minták; | QA-010, EDT-021 | QA-010: Continuous benchmark and feature-discovery review.; EDT-021: Inspector Property Registry. |
+| H34.02 | GrapesJS / Craft.js / Puck architekturális minták; | QA-010, OPS-010 | QA-010: Continuous benchmark and feature-discovery review.; OPS-010: Dependency/license/CVE review. |
+| H34.03 | új responsive/layout megoldások; | EDT-023, EDT-026, QA-010 | EDT-023: Inspector resolved viewport value.; EDT-026: Responsive visibility/order/column changes.; QA-010: Continuous benchmark and feature-discovery review. |
+| H34.04 | accessibility; | QA-005, QA-010 | QA-005: Public SEO/accessibility/performance audit.; QA-010: Continuous benchmark and feature-discovery review. |
+| H34.05 | performance; | OPS-008, QA-010 | OPS-008: Performance baseline/cache/query monitoring.; QA-010: Continuous benchmark and feature-discovery review. |
+| H34.06 | reusable components; | DSN-012, QA-010 | DSN-012: Reusable component/symbol master-instance.; QA-010: Continuous benchmark and feature-discovery review. |
+| H34.07 | design systems; | DSN-001, QA-010 | DSN-001: Global design token schema.; QA-010: Continuous benchmark and feature-discovery review. |
+| H34.08 | collaboration/conflict; | TEAM-004, EDT-029, QA-010 | TEAM-004: Approval/review/activity feed.; EDT-029: Revision conflict recovery.; QA-010: Continuous benchmark and feature-discovery review. |
+| H34.09 | backup/recovery; | OPS-005, QA-007 | OPS-005: Operational backup/export/restore capability and runbook; QA-007 only verifies it through tests/evidence.; QA-007: Test/acceptance gate and evidence for backup/restore/rollback; does not implement backup operations. |
+| H34.10 | AI action safety; | AI-018, QA-010 | AI-018: Prompt injection and untrusted content tests.; QA-010: Continuous benchmark and feature-discovery review. |
+| H34.11 | stream/content intelligence. | AI-015, QA-010 | AI-015: Stream diagnostics/summary where supported.; QA-010: Continuous benchmark and feature-discovery review. |
+| H34.12 | azonosítás; | QA-010 | QA-010: Continuous benchmark and feature-discovery review. |
+| H34.13 | cél és felhasználási eset; | QA-010 | QA-010: Continuous benchmark and feature-discovery review. |
+| H34.14 | függőségek; | QA-010 | QA-010: Continuous benchmark and feature-discovery review. |
+| H34.15 | Page Model/adatmodell; | EDT-001, QA-010 | EDT-001: Canonical Page Model schema/version.; QA-010: Continuous benchmark and feature-discovery review. |
+| H34.16 | Command/Action; | EDT-003, QA-010 | EDT-003: Command mutation pipeline.; QA-010: Continuous benchmark and feature-discovery review. |
+| H34.17 | Inspector/Canvas/UI; | EDT-021, QA-010 | EDT-021: Inspector Property Registry.; QA-010: Continuous benchmark and feature-discovery review. |
+| H34.18 | persistence; | EDT-028, QA-010 | EDT-028: Save/reload round-trip.; QA-010: Continuous benchmark and feature-discovery review. |
+| H34.19 | teszt; | QA-001, QA-002 | QA-001: Typecheck/build/CI gates.; QA-002: Domain/API/integration tests. |
+| H34.20 | MASTER-be felvétel; | QA-010 | QA-010: Continuous benchmark and feature-discovery review. |
+| H34.21 | implementáció; | DEV-001, QA-002, QA-008 | DEV-001: Public API reference, versioning, schema and deprecation policy.; QA-002: Domain/API/integration tests.; QA-008: End-to-end creator journey. |
+| H34.22 | felhasználói validáció. | QA-009 | QA-009: User acceptance and evidence log. |
+
+**Kritikus ellenőrzési korlát:** a cél-definíció megléte nem bizonyítja, hogy az eredeti történeti követelmény minden edge case-e, surface-e, dependency-je és release phase-e lefedett. A 63.50.77–78 `GAP/UNPROVEN/REPHASED` besorolások érvényben maradnak. A H34.21 governance „implementáció” sor például a `DEV-001` API lifecycle + `QA-002/008` tesztekhez kötött, **nem önálló implementált feature**; a H21.22 secrets/adapter architektúra nem pusztán integrációs UI. A H25 SEO/publish crosswalk nem oldja fel a 63.50.46 HIGH publikálási konfliktust.
+
+**Mérési pont:** `271/271 HISTORICAL ROWS HAVE EXISTING STABLE TARGET DEFINITIONS`; `436/436 TARGET REFERENCES RESOLVED`; `0 MISSING TARGET ID`; `0 RUNTIME TESTS RUN IN THIS AUDIT`. **A fázis/owner/acceptance teljes szemantikai egyenértékűsége továbbra is NOT PASS**, és a 00/A, 00.9–00.9.6.B forráshiány nyitott. Következő kurzor: `63.50.84` — explicit 1.0 vs 1.x+ archív fáziskülönbségek és GAP/UNPROVEN sorok célzott bizonyíték-kapui, valamint hiányzó forráskeresés. **GLOBAL NOT PASS / FEATURE IMPLEMENTATION FROZEN.**
 
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
