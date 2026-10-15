@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.122` — a 49.22 SaaS részletezés integrálása és a korai fázisok függőségi ütközésellenőrzése; 22 modulos közös review előkészítése; HIGH publish conflict OPEN; **PLAN IN PROGRESS / NOT PASS.**  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.123` — a 22 főmodul közös funkció-review összefoglalója és a valódi nyitott termékdöntések; HIGH publish conflict OPEN; **PLAN IN PROGRESS / NOT PASS.**  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -3123,6 +3123,13 @@ A terv célja az, hogy a fejlesztés végre lépésenként, egyetlen irányadó 
 - Agency/studio mód több creatorhoz, közös sablonok és ügyfél-specifikus brand.
 - Előfizetés, csomagok, usage/kvóta, billing, számlázás, lemondás és adat-export.
 - Tenant-izoláció, migráció, adatrezidencia és skálázási stratégia; csak az egyfelhasználós alapok stabilizálása után.
+- **Munkaterület- és site-életciklus:** workspace/site választó, tulajdonos, alapértelmezett site, archiválás, átadás, domainhez kötött public URL és visszaállítás.
+- **Csapattagság és biztonság:** meghívó lejárat/visszavonás, szerepkör és egyedi hozzáférés, aktivitásnapló, időszakos permission review; a session/auth továbbra is a 49.19 biztonsági szolgáltatása.
+- **Kollaboráció:** revision conflict, szerkesztési jelenlét, review/approval, feladatok és értesítések ugyanazon Page Model és workflow domain fölött.
+- **SaaS-csomagok:** entitlement, usage meter, quota, fair-use, billing webhook idempotencia, trial, upgrade/downgrade, szüneteltetés, lemondás, export és törlés; nincs második fizetési ledger.
+- **Tenant isolation és support:** site-scoped D1/R2/cache/background job/webhook/export/restore, auditált és időben korlátozott support hozzáférés, adatrezidencia és migrációs stratégia.
+- **Negatív acceptance:** cross-tenant ID/cache leak, role revoke, lejárt invite, billing replay, quota bypass, hibás site transfer, hiányos restore és audit nélküli admin hozzáférés.
+
 
 ---
 
@@ -11940,6 +11947,21 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 **Minden szelet Definition of Done:** (a) canonical owner és storage, (b) permission/site scope, (c) pozitív és negatív unit/integration, (d) browser/responsive/accessibility, (e) migráció/rollback/backup ahol érintett, (f) dokumentált UX acceptance, (g) éles user smoke ahol szükséges. A korai szeletek **terv**, nem végrehajtott munka.
 
 **Következő aktív alpont: `63.50.122`** — a 49.22 almodulok 49. fejezetbe integrálása, korai fázisok és jelenlegi P/F függőségek ütközésellenőrzése, majd a 22 modul részletes felhasználói review-ja. **PLAN IN PROGRESS / NOT PASS.**
+
+### 63.50.122. SaaS modul integrálása és fejlesztési fázisok ütközésellenőrzése (2026-10-15)
+
+**INTEGRATED PLAN / REVIEW PREPARATION / NO RUNTIME CLAIM.** A 63.50.121 részletes 49.22 csapat/site/SaaS almoduljai **a kanonikus 49.22 menüfejezetbe is bekerültek**, nem csak auditjegyzetben szerepelnek. A 22 főmodul címe és sorszáma változatlan, új párhuzamos modul nem keletkezett.
+
+**Fázis- és függőségi döntés:** a 63.50.121 nyolc korai szelete **ajánlott függőségi csoport**, nem írja felül a 9., 39. és 48. fejezet végrehajtási munkacsomagjait vagy a 19. fejezet egyetlen aktív munkapont szabályát. Az első valódi fejlesztési pont megnyitásakor ezekhez kell rendelni a konkrét P/F azonosítót, feature owner-t, kódútvonalat, tesztet és DoD-t. Az Admin shell és Integrációk/Twitch UI önmagában előkészíthető a HIGH publish konfliktustól függetlenül; a Page publish/metadata/URL író műveletek viszont csak a publishing szerződés és migrációs kapu után release-elhetők.
+
+**Kritikus ellentmondások elkerülése:**
+- A 49.2 Editor „újraépítés” **nem** jelenti a tesztelt auth/site ownership/Worker/D1 API eldobását. Megőrzés vagy kivezetés minden érintett komponensnél bizonyíték alapján.
+- A Twitch kezelőfelületet át kell helyezni a 49.7 modulba; a kapcsolat rekordja, OAuth flow és provider token kezelése **nem duplikálható**. A 49.1/49.5/49.2 csak consumer.
+- A 49.22 SaaS/tenant funkciók későbbi fázisúak, de a korai domain API-kat már most site-scoped módon kell kialakítani. A későbbi SaaS nem lehet ürügy a jelenlegi site-isolation megkerülésére.
+- A 49.3 Brand Kit és a 49.4 Media registry külön owner; Editor csak közös picker/binding, nem saját ikon-/theme-/asset-adatbázis.
+- Az egyes domainok működő funkcióinak elfogadása nem következik a 396/396 routing vagy a 22/22 menücím strukturális ellenőrzéséből.
+
+**Következő aktív alpont: `63.50.123`** — 22 modulos felhasználói funkció-review-hoz rövid, de teljes főmodul-összefoglaló és nyitott termékdöntések összeállítása ugyanebben a MASTER-ben; az audit további részleteit csak konkrét hiány vagy ütközés esetén folytatjuk. **PLAN IN PROGRESS / NOT PASS.**
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
