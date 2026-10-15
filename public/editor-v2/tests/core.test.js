@@ -835,3 +835,14 @@ test('Editor publish update requires the successful save revision', () => {
   assert.match(save, /UPDATE pages SET published_content_json=[^\x60]*EXISTS \(SELECT 1 FROM editor_revisions WHERE id=\?\)/);
   assert.match(save, /bind\(json,revId,id,siteId,revId\)/);
 });
+
+test('Editor audit entries are conditional on a successfully inserted revision', () => {
+  const route = readFileSync(new URL('../../../src/routes/admin/editor.ts', import.meta.url), 'utf8');
+  const save = route.slice(route.indexOf("if(request.method==='POST')"), route.indexOf("if(request.method==='PUT')"));
+  const rollback = route.slice(route.indexOf("if(request.method==='PUT')"));
+  for (const block of [save, rollback]) {
+    assert.match(block, /INSERT INTO audit_log[^\x27]*SELECT \?,\?,\?,\?,\?,\? WHERE EXISTS \(SELECT 1 FROM editor_revisions WHERE id=\?\)/);
+  }
+  assert.match(save, /'page.publish'/);
+  assert.match(rollback, /'page.rollback'/);
+});
