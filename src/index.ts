@@ -74,7 +74,7 @@ export default {
       return env.ASSETS.fetch(assetRequest("/editor-v2/index.html", request));
     }
     // Public asset URLs must not bypass the authenticated canonical Admin/Editor routes.
-    if (pathname === "/editor-v2" || pathname === "/editor-v2/index.html") {
+    if (pathname === "/editor-v2" || pathname === "/editor-v2/index.html" || pathname === "/editor-v2/") {
       return Response.redirect(new URL("/admin/editor", request.url).toString(), 302);
     }
     const legacyTarget = LEGACY_REDIRECTS[pathname];
