@@ -5,8 +5,8 @@
 **Dátum:** 2026-10-15  
 **Állapot:** KANONIKUS TERMÉK- ÉS FEJLESZTÉSI MASTER — a tervezett termékkör rögzítve, feltöltés után F0.1 kódbaseline indul. A tervezési teljesség nem bizonyít sem kész implementációt, sem teljes körű tételes szemantikai auditot.  
 **Aktív tervpontazonosító:** `F0.3-PREVIEW-PUBLISH-PUBLIC`  
-**Aktív tervpont státusza:** IN PROGRESS — F0.2 mentés/újratöltés, rollback és stale revision böngészős teszt PASS felhasználói visszajelzés alapján; hálózati hiba/abort, mentés közbeni módosítás, mobil ellenőrzés és teljes elfogadási kapu még nyitott. F0.3 külön fejlesztési kapu; HIGH publish conflict továbbra is OPEN.
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `F0.2-EDITOR-SAVE-RELOAD` — hálózati megszakítás, mentés közbeni új változtatás és mobil save/reload negatív teszt; bizonyított PASS után F0.3 preview/publish/public teljes kapu. A 63.x történeti státuszok nem aktív kurzorok.
+**Aktív tervpont státusza:** IN PROGRESS — F0.3 preview/publish/public. F0.2 lezárva a sikeres mentés/újratöltés, konfliktus, hálózati helyreállítás, mobil és in-flight edit tesztek alapján. HIGH publish conflict OPEN, amíg az F0.3 negatív tesztek nem PASS.
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `F0.3-PREVIEW-PUBLISH-PUBLIC` — preview jogosultság és draft izoláció; atomikus publish és HIGH konfliktus; cache, rollback és publikus smoke. F0.2 CLOSED / PASS (2026-10-15).
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** világszintű, önálló márka- és weboldalépítő, streamelési, tartalomgyártási, közösségi, kereskedelmi, analitikai, automatizációs és AI-rendszer egyetlen logikusan tagolt Creator & Brand Operating Platformon. Elsődleges célcsoport: streamerek és digitális tartalomkészítők, akik egyedi publikus brandoldalukat és teljes tevékenységüket innen kezelik. A többfelhasználós, önkiszolgáló, előfizetéses SaaS és a működés/AI-költség fenntartható finanszírozása a teljes termékcél lényegi része; a funkciókat függőség szerint, fokozatosan építjük meg. Más célcsoportok támogatása későbbi bővíthetőség, nem az elsődleges piac.
 
