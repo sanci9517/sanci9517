@@ -189,3 +189,28 @@ Az alábbi soroknál a lexikai jelöltek **valódi, a kanonikus 24. fejezetben s
 | 54.3.06 | RES-001 asset ID registry; RES-005 asset search; RES-006 tags/collections | **WRONG+PARTIAL:** licenc/forrás inkább RES-007, usage RES-008; owner és verzió tovább ellenőrzendő |
 
 **Most 47/47 többértelmű sorhoz elkészült a jelölt ID-k tényleges 24. fejezetbeli definícióinak első összevetése.** Ez nem végleges szemantikai PASS. A teljes 17 mezős contract, a 49. fejezet és történeti elfogadási feltételek bizonyítása továbbra is nyitott.
+
+
+## Téves jelöltek javított stabil ID-jelöltjei — forrásszöveg alapján
+
+Ezek a párok a kanonikus terv 24. fejezetében szereplő **valódi definíciók** alapján javított *jelöltek*, nem automatikus teljes lefedési döntések.
+
+| Követelmény | Elvetendő / félrevezető jelölt | Jobb, tényleges definícióval alátámasztott jelölt | Még hiányzó rész |
+|---|---|---|---|
+| 54.2.02 navigáció | WEB-005 (preview auth) | WEB-009 canonical navigation tree; WEB-010 header/footer; WEB-011 mobile/keyboard | Nested/dropdown és belső/külső link elfogadási teszt |
+| 54.2.14 űrlap | WEB-006 (publish validation); WEB-030 (cache) | WEB-020 public Contact page/form **csak részlegesen** | Általános Forms domain, spam, consent, submission admin lifecycle |
+| 54.3.03 brand kontraszt/font | RES-009 (delete); RES-012 (SVG sanitize) | DSN-001 global tokens; DSN-007 typography; RES-013 font registry | Kontrasztmérés, brand-safe enforcement |
+| 54.3.06 asset provenance | RES-005 (search); RES-006 (collections) | RES-007 alt/license/source; RES-008 usage/reference map | Owner, version, dependency enforcement |
+| 54.4.01 D1/R2 asset | RES-005/006 (search/collections) | RES-001 canonical asset ID + RES-002 R2 binary/D1 metadata | Ownership and restore tests |
+| 54.5.01 többprovideres integráció | INT-010/011/012 (mind Twitch) | INT-018 external provider capability registry | Minden provider külön OAuth, sync, quota, permissions |
+| 54.6.07 publikus schedule | LIV-010 (recording retention) | SCH-009 countdown + SCH-010 public schedule projection | Game profiles and iCal separately |
+| 54.8.12 content feed | RES-001 (binary assets) | CNT-020 published content projection + CNT-019 editor feed binding | Social posting and Analytics event linkage |
+| 54.12.07 AI-workflow jóváhagyás | AUT-001/004/008 (trigger/action/history) | AUT-009 dry-run/preview/approval **részlegesen** | AI-generated draft, diff, explicit activation |
+| 54.14.01 nyelvbeállítás | WEB-012 (routes); WEB-029 (search) | LOC-001 translation key/fallback **csak technikai alap** | Admin és Public külön locale preference |
+| 54.14.03 lokalizált CMS | WEB-001/011/015 (CRUD/mobile/live route) | LOC-003 page/content/navigation translation | Locale-specific media alt, SEO/OG |
+| 54.14.05 locale format | korábbi lexikai nulla | LOC-002 dates/numbers/currency/timezone | DST and rounding test matrix |
+| 54.15.02 modul-RBAC | QA-003 (test), SET-002 (site scope) | SEC-002 server-side RBAC/ownership | Role/module matrix, negative authorization tests |
+
+**Szemantikai GAP-jelöltek:** az általános űrlap-feldolgozás, külön Admin/Public locale-beállítás, provider-független OBS vezérlőparancsok, stream-előkészítési checklist/marker, extension manifest és plugin életciklus, tartalomjog-takedown, valamint a provider publikálási adapterek külön ellenőrzést igényelnek. A GAP-jelölt **nem bizonyított hiány**: előbb a 49. és 63.x szerződésekben is keresni kell.
+
+**Kapustátusz:** OPEN / NOT PASS. Nem módosult a kanonikus MASTER 396 stabil ID-s katalógusa; a következő körben a valóban nem lefedett részfunkciókat kell igazolni, majd ugyanabba a MASTER-be integrálni.
