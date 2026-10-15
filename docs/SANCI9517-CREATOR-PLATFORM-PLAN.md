@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.121` — a 22 modul review-ready funkcióleltára, az Editorba kevert domain funkciók áthelyezési sorrendje és a korai fejlesztési szeletek acceptance-e; HIGH publish conflict OPEN; **PLAN IN PROGRESS / NOT PASS.**  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.122` — a 49.22 SaaS részletezés integrálása és a korai fázisok függőségi ütközésellenőrzése; 22 modulos közös review előkészítése; HIGH publish conflict OPEN; **PLAN IN PROGRESS / NOT PASS.**  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -11897,6 +11897,49 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 **Terv-review előtti modul- és ID-lefedettség:** a 49. fejezet `49.1–49.22` címei **22/22 egyediek**; a 24. fejezet **396 egyedi ID**, a 63.50.109–112 **396/396 routing**, a 63.52–53 **271/271 H-ID** ellenőrzése megőrzött. Ez strukturális, nem implementációs PASS.
 
 **Következő aktív alpont: `63.50.121`** — a 22 modul konkrét menü- és funkciófelosztásának review-ready leltára, a jelenlegi Editorban rossz helyre tett domain funkciók migrációs sorrendje, és a korai fejlesztési szeletek elfogadási feltételei. **PLAN IN PROGRESS / NOT PASS.**
+
+### 63.50.121. Creator Center IA és megvalósítási szeletek — senior tervezői kiegészítés (2026-10-15)
+
+**TARGET ARCHITECTURE / REVIEW-READY DRAFT / NOT IMPLEMENTED.** A felhasználó jóváhagyta a fő elvet: az aktuális szerver/Twitch/Admin/Editor kezdetleges kódja nem diktálja a termékstruktúrát; az egyetlen MASTER teljes Creator Platformot céloz, 22 logikus modullal. A 49. fejezet **22/22 egyedi főmodult** tartalmaz, közülük **21 modulban legalább 4 explicit funkciócsoport** szerepel; a 49.22 több-site/SaaS modul későbbi, részletes alábontása most következik. A 396 stabil capability ID és 271 történeti H-ID továbbra is strukturálisan nyomon követett, nem runtime készültség.
+
+**UX/navigációs szerződés (nem 22 állandó felső szintű menüpont):** elsődleges navigáció funkciócsoportokra bontható: **Alapmunka** (Kezdőlap, Weboldal, Márka, Média), **Creator Studio** (Live, OBS, Integrációk, Tartalom, Közösség), **Üzlet és növekedés** (Bolt, Támogatás, Szponzoráció, Analitika), **Munkafolyamatok** (Automatizációk, SANCI AI), **Platform** (Keresés, Értesítések, Súgó, Beállítások; később API, Bővítmények, Csapat/SaaS). A ritka és még nem kész modulok nem terhelik a napi navigációt: feature flag/permission/lifecycle alapján jelennek meg, de a teljes cél a 49. fejezetben megmarad. Desktopon oldalsáv + breadcrumb + gyorskeresés; mobilon/táblagépen reszponzív, billentyűzet- és képernyőolvasó-barát menü, egyértelmű aktív állapot.
+
+**49.22 Csapat / több-site / SaaS későbbi almodulok (részletezés, nem új párhuzamos domain):**
+- **Munkaterületek és site-ok:** workspace/site választó, tulajdonos, alapértelmezett site, archiválás, átadás, domainhez kötött public URL.
+- **Csapattagok:** meghívás, szerepkörök, egyedi jogosultság, lejárat, visszavonás, aktivitásnapló, hozzáférés-felülvizsgálat.
+- **Közös munka:** szerkesztési jelenlét, revision conflict, review/approval, feladatok, értesítések, audit.
+- **Csomagok és korlátok:** entitlement, usage meter, kvóta, fair-use, billing webhook és fizetési állapot; egyetlen számlázási domain.
+- **Tenant isolation:** site-scoped API, R2 objektumkulcs, D1 FK, background job, export/restore, cache és webhook; idegen site adataihoz sem direkt, sem kereséses hozzáférés.
+- **SaaS üzemeltetés:** onboarding, trial, upgrade/downgrade, felfüggesztés, adat-export, törlés, support/admin impersonation csak kifejezett auditált kontrollal.
+- **Kötelező tesztek:** másik site ID, role revoke, lejárt meghívás, kvótatúllépés, billing replay, cross-tenant cache leak, sikertelen site transfer és rollback.
+
+**Editor-ból kivezetendő üzleti funkciók — canonical target:**
+| Jelenlegi Editorba keverhető funkció | Célmodul | Editorban maradó funkció |
+| --- | --- | --- |
+| Twitch OAuth, token, sync, connection | 49.7 Integrációk | Twitch/live blokk adatforrás kiválasztása, preview |
+| Live státusz, stream esemény | 49.5 Live | Live widget megjelenés/binding |
+| Adásrend események CRUD | 49.5 Live/Adásrend domain, SCH canonical | Schedule blokk stílus és read-only data binding |
+| Fájl feltöltés/asset életciklus | 49.4 Média | Asset picker és image/video blokk layout |
+| Témák, ikonok, globális design token | 49.3 Márka/design | Token alkalmazás, komponens property |
+| Tartalomgyártás/VOD/Shorts queue | 49.8 Tartalomstúdió | Content collection blokk és preview |
+| Analytics, követő/metrika, export | 49.13 Analitika | Mérési komponens konfiguráció, nem analytics store |
+| OBS scene, stream control | 49.6 OBS | Overlay/widget vizuális layout |
+| AI agent/workflow/approval | 49.15 SANCI AI / 49.14 Automatizációk | AI javaslat alkalmazása csak diff + jóváhagyás után |
+| Fizetés, tagság, bolt, támogatás | 49.10–12 saját üzleti modulok | Kártya/CTA/blokk megjelenés és canonical checkout link |
+
+**Javasolt korai fejlesztési dependency-szeletek, a meglévő P/F fázistervvel összehangolandók:**
+1. **Baseline és szerződés:** branch, CI, Worker/D1/R2/auth, site ownership, jelenlegi API/Editor/Twitch runtime leltár; keep/refactor/archive döntés; semmilyen kezdetleges funkciót nem minősítünk automatikusan PASS-nak.
+2. **Creator Center shell:** egységes `/admin` canonical routing, 22 modul csoportosított IA, role/feature gating, állapot- és hibajelzések, reszponzív UI, működő modulnavigáció. Nem késznek látszó üres panelek.
+3. **Integrációk/Twitch:** canonical OAuth connection/settings/sync/health a 49.7-ben; 49.1 dashboard és 49.5 Live csak API consumer; Editorból domain CRUD kivezetése, regression teszt.
+4. **Weboldal alap és Editor v2 újraépítés:** Page Model és command/history/validation contract; canvas/layers/inspector, layout, responsive, undo/redo, save/reload, media picker, theme binding; nincs második Editor vagy saját domainadat.
+5. **Publishing HIGH fix:** 63.50.46/106/114 D1 read-only preflight → storage döntés → migráció/rollback → explicit atomic publish → URL/SEO/cache/redirect és negatív acceptance; **a publish release előtt blokkoló**.
+6. **Közös design/média és public UX:** 49.3/49.4 központi registry, design token, icon/template/component, responsive/a11y, public page, forms/CMS/SEO a saját domainnel.
+7. **Creator munkafolyamatok:** Schedule, Content, Live, OBS, Community, analytics és integrations egymás függősége szerint, majd Commerce/Support/Sponsorship.
+8. **Bővítés:** Automation, SANCI AI, search/notifications, developer API, plugin marketplace, team/multisite/SaaS, csak az alap security/observability/recovery gate után.
+
+**Minden szelet Definition of Done:** (a) canonical owner és storage, (b) permission/site scope, (c) pozitív és negatív unit/integration, (d) browser/responsive/accessibility, (e) migráció/rollback/backup ahol érintett, (f) dokumentált UX acceptance, (g) éles user smoke ahol szükséges. A korai szeletek **terv**, nem végrehajtott munka.
+
+**Következő aktív alpont: `63.50.122`** — a 49.22 almodulok 49. fejezetbe integrálása, korai fázisok és jelenlegi P/F függőségek ütközésellenőrzése, majd a 22 modul részletes felhasználói review-ja. **PLAN IN PROGRESS / NOT PASS.**
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
