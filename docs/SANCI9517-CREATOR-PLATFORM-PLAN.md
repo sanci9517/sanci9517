@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.88` — **396/396 stable ID owner/state és pozitív/negatív acceptance első mátrixa rögzítve, runtime teszt nem futott**; következő: `63.50.89` high-risk cross-domain konkrét tesztek és 54.x/H19–H34 mélyellenőrzés. Kötelező 1.0 cél nincs; `63.50.46` HIGH publish conflict NOT FIXED; 00/A/00.9.6.B OPEN; **PLAN IN PROGRESS / NOT PASS.**  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.89` — **396/396 alap acceptance + 14 HIGH cross-module pozitív/negatív tesztszerződés dokumentálva**; következő: `63.50.90` 54.x/H19–H34 szemantikai döntéslista és hiányzó források vizsgálata. Kötelező 1.0 cél nincs; `63.50.46` HIGH publish conflict NOT FIXED; 00/A/00.9.6.B OPEN; **PLAN IN PROGRESS / NOT PASS.**  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -10608,6 +10608,34 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 **Nyitott mélyaudit:** a 396 capability egyedi, paraméterezett tesztesetei és a 54.x katalógus 156 sorának szemantikai DoD-je; 271 H-ID eredeti owner/surface/phase/dependency/acceptance összevetése; 00/A és 00.9–00.9.6.B eredeti forrás; tényleges kód/CI/böngésző ellenőrzés. A terv **nem PASS** pusztán attól, hogy a mátrix teljes.
 
 **Következő kurzor:** `63.50.89` — a legmagasabb kockázatú cross-domain szerződések (publish, Resource, Integration, AI approval, commerce) konkrét per-ID tesztjeinek finomítása és a végső funkció-review előkészítése. **PLAN IN PROGRESS / NOT PASS.**
+
+
+### 63.50.89. Keresztmodulú HIGH kockázatú elfogadási esetek és sorrendi kapuk (2026-10-15)
+
+**Tervdöntés:** a 396-os általános acceptance mátrixból az alábbi **14 konkrét integrációs tesztszerződést** különítettük el. A Pxx.y sorrend függőségi irány, **nem kiadási verzió**. A tesztek tervezettek, nem futtatottak.
+
+| Stable capability / kapcsolódás | Tesztcsomag | Kiinduló állapot | Pozitív acceptance | Negatív acceptance | Kötelező függőségi sorrend |
+| --- | --- | --- | --- | --- | --- |
+| WEB-004/EDT-027 | Draft save | Published v1, draft v2, Admin Pages PATCH | Save v2 as draft, public remains v1 and published_revision_id unchanged | PATCH cannot implicitly publish v2 or expose draft slug/title/description | P03.4→P03.5 |
+| WEB-006/WEB-007/EDT-033 | Explicit publish | Draft v2 and validated page schema | One authorized publish transaction switches snapshot, revision, published metadata and route to v2 | Invalid schema, concurrent revision, wrong role/site leaves v1 unchanged | P01.3→P03.5 |
+| WEB-002/WEB-013/SEO-001/SEO-004 | URL+SEO | Published slug old→new, preview draft | New public canonical, old redirect, sitemap excludes old/draft | Open redirect, private preview indexing and 200 on missing page rejected | P03.5→P03.6 |
+| RES-001/RES-002/RES-003 | Upload | R2 binary + D1 metadata with site ID | Upload authorized file, finalize only after bytes and metadata consistent | Oversize, forged MIME, partial upload, cross-site ID cannot become ready | P01.2→P02.1 |
+| RES-009/RES-014/SEC-003 | Asset replace/download | Asset references and signed access | Replace creates safe version; references follow declared policy; signed URL expires | Deleted in-use asset, expired signature, foreign site object denied | P02.1→P03.3 |
+| INT-001/INT-009/INT-019 | Provider adapter | Connected provider, scoped secret | Normalize provider result and persist audit without secret | Revoked token, quota, retries, log leaks handled without duplicate writes | P01.3→P04.1 |
+| INT-017/SEC-009 | Webhooks | Signed provider event with delivery ID | Verify signature/time/site, process once | Replay, forged signature, stale timestamp and wrong-site payload rejected | P04.1→P04.6 |
+| SCH-001/SCH-003/DYN-002 | Schedule binding | Canonical schedule item and timezone | Editor widget, dashboard and public view resolve same schedule ID | DST ambiguity and missing/cross-site schedule rejected safely | P05.1→P03.3 |
+| CNT-010/CNT-011/AI-013 | Content AI draft | Idea/script and platform variants | AI produces a draft proposal in canonical Content module | Generated content cannot overwrite approved/published variant without review | P05.2→P08.4 |
+| AI-004/AI-013/SEC-008 | AI context | Scoped user consent and secret store | Context selection filters by site/permission before model invocation | Cross-tenant private data, secret in prompt/log, unconsented source denied | P01.3→P08.3 |
+| AI-019/AUT-004 | AI approval and automation | Versioned workflow/action with reviewer | Approved action executes once with audit | Unapproved publish, duplicate event, infinite loop or stale approval rejected | P08.1→P08.5 |
+| STO-001/STO-011/SUP-001 | Commerce and membership | Product/order/payment/subscription ledger | Provider-confirmed payment transitions order and entitlement exactly once | Forged callback, double charge, refund not revoked, wrong-site order denied | P01.3→P07.3→P07.4 |
+| TEAM-001/TEAM-005/SEC-002/SEC-003 | Tenant isolation | Site/workspace membership and role | Authorized actor can access only assigned workspace records | Cross-site IDs, role escalation, revoked member denied on server | P01.1→P09.3 |
+| OPS-001/OPS-003/QA-008 | Recovery and E2E | Backup/snapshot and migration log | Restore drill reconstructs consistent linked domain state | Partial restore, FK corruption and unverified rollback cannot be marked PASS | P01.5→P10.2 |
+
+**Kritikus végrehajtási szabályok:** az explicit publish és a published metadata/slug egysége a 63.50.46 szerinti HIGH blocker; az Admin Pages PATCH nem lehet rejtett publish. Resource/Asset egyetlen D1/R2 állapotgazdával dolgozik, nem külön Editor-másolattal. Provider webhooknak aláírás/replay/tenant validáció kell; SANCI AI kizárólag jóváhagyott műveletet hajthat végre. Payment callback nem jogosultság önmagában, az entitlement a kanonikus fizetési állapotból származik.
+
+**Hiányzó evidence:** nincs itt lefuttatott kódteszt, CI, D1 migráció vagy production ellenőrzés. A 00/A és 00.9–00.9.6.B források és a 54.x/H19–H34 egyedi edge-case auditja OPEN. A `396/396` általános szerződés nem teszi automatikusan PASS-szá ezeket a konkrét eseteket.
+
+**Következő kurzor:** `63.50.90` — a 54.x 156 sor, H19–H34 271 sor és 396 stable capability crosswalkból a még bizonyítatlan szemantikai döntések lezárási listája; majd csak a teljes tervkapu után közös funkció-review. **PLAN IN PROGRESS / NOT PASS.**
 
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
