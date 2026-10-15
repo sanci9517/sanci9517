@@ -150,3 +150,28 @@ test('Twitch Schedule connection identity is site-and-user scoped', async () => 
   );
   assert.equal(calls.length, 2);
 });
+
+
+test('public lookup excludes unpublished draft slugs and disables caching', async () => {
+  const DB = emptyPagesDb();
+  const response = await publicPagesRoute(
+    new Request('https://example.test/api/public/pages?slug=about'),
+    { DB }
+  );
+  assert.equal(response.status, 404);
+  assert.match(DB.calls[0].sql, /published_slug=\\?2/);
+  assert.match(DB.calls[0].sql, /is_published=1/);
+  assert.equal(response.headers.get('Cache-Control'), 'private, no-store, max-age=0');
+  assert.equal(response.headers.get('Vary'), 'Cookie');
+});
+
+test('public page list only selects published pages', async () => {
+  const DB = emptyPagesDb();
+  const response = await publicPagesRoute(
+    new Request('https://example.test/api/public/pages'),
+    { DB }
+  );
+  assert.equal(response.status, 200);
+  assert.match(DB.calls[0].sql, /is_published=1/);
+  assert.equal(response.headers.get('Cache-Control'), 'private, no-store, max-age=0');
+});
