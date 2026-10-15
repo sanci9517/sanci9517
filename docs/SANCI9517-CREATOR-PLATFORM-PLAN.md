@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.95` — **12 PARTIAL stable-ID crosswalk, 6 owner/szerződéshatár, 6 acceptance-tervezet és 6 H19–H34 történeti csoporthatár-ellenőrzés**. Egyedi H-ID szemantikai bizonyítás, 63.50.46 HIGH publish conflict, 00/A/00.9.6.B és runtime tesztek OPEN; **PLAN IN PROGRESS / NOT PASS.**  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.96` — **eredeti H19–H34 szöveg alapján 5 modulhelyre rendezett, hiányos részfunkciós contract és egységes MASTER-beépítési szabály**; stable-ID döntések, 63.50.46 HIGH publish conflict, 00/A/00.9.6.B és runtime bizonyítás OPEN; **PLAN IN PROGRESS / NOT PASS.**  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -11053,6 +11053,24 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 **Forráshűségi döntés:** a H19–H34 történeti phase mezőket **nem írjuk át** a mai P00–P10 fázisokra. A modern ütemezés külön mapping, az eredeti fázis külön provenance. A 63.50.94 acceptance-tervezeteket nem tüntetjük fel eredeti történeti DoD-ként. A 271 H-sor megőrzött, de az egyedi kapcsolatok bizonyításához az archív eredeti követelményoszlop tételes visszaolvasása szükséges.
 
 **Következő:** archív H19–H34 eredeti szövegoszloponként azonosítani a hat 54.x követelmény konkrét H-ID-it; ha nincs pontos egyezés, rögzíteni MODERN-ONLY / GAP / NEW SUBCAPABILITY döntést. Külön ellenőrizni a 63.50.46 HIGH publish conflictot. 00/A és 00.9.6.B SOURCE NOT RECOVERED; PLAN NOT PASS.
+
+### 63.50.96. Eredeti történeti szöveg és hiányzó részfunkciók beépítési szabálya (2026-10-15)
+
+**Kanonikus döntés:** az egyetlen MASTER a végrehajtási forrás. Ha audit során új vagy hiányosan részletezett képesség bizonyul szükségesnek, a megfelelő domain/főmodul és P00–P10 alpont kapja meg; az audit csak provenienciát és bizonyítékot ad. A történeti archívum nem válhat párhuzamos végrehajtási tervvé. Nem készül külön új funkciólista vagy második Visual Editor. Közös erőforrás és canonical állapot egyetlen ownerhez tartozik; több Admin/Editor/Public felület ugyanazt a domain operationt hívja.
+
+**Eredeti H19–H34 szöveg szerinti tételes részleges megfeleltetés:** H24.04 `labels` és H24.11 `form validation accessibility` csak az 54.2.14 Forms accessibility részét igazolják; H22.18 `publishing workflow`, H22.15 `platform-specific variants`, H21.14 `YouTube API quota/error handling`, H21.17 `TikTok API capability review`, H21.18 `TikTok rate limits/fallback` az 54.8.10 publish capability részleges előzményei. H32.04 `technical issue detection`, H32.05 `audio problem detection`, H32.06 `stream quality checks`, H33.05 `stream workflows` kapcsolódnak az 54.6.08 stream-preflight követelményhez, de **nem azonosak** kézi checklisttel. A 271 egyedi történeti követelményszöveg között 54.7.11 extension registry, 54.14.01 külön Admin/Public locale és 54.16.02 extension manifest pontos megfelelője nem bizonyított. Ezeket a már meglévő modern követelményeket meg kell őrizni, nem törölni.
+
+**Beépítendő alpontok és kanonikus helyük:**
+
+| Modul/owner | Szükséges részfunkció (PLANNED, NOT IMPLEMENTED) | Felületek és egységes állapot | Elfogadási kapu |
+|---|---|---|---|
+| WEB + dedikált FORMS domain döntés / P03 | Többféle űrlap, mezőséma, szerveroldali validáció, spam/rate-limit, verziózott consent, submission inbox, retention és törlés | Editor form block csak megjelenítési/binding; Admin Forms kezelés; Public submit; egy submission lifecycle | Tiltott cross-site olvasás, spam és consent nélküli submit; pozitív beküldés és státusz |
+| EXTENSION / P06, P09 | Plugin/widget registry, manifest schema/signature/provenance, sandbox, permissions, install/upgrade/rollback/remove, kompatibilitás | Admin Extensions, OBS/widget fogyasztók; egy registry és permission model | Manipulált/inkompatibilis manifest, privilege escalation és visszavont signer tiltása |
+| CONTENT + PUBLISHING + INTEGRATION / P05 | Provider capability alapján API publish, export/manual fallback, platformonkénti queue/status/retry, idempotency, audit | Content Studio és Automation ugyanazt a publish attempt/result állapotot olvassa | Lejárt token, duplikált retry, nem támogatott API, részleges hiba korrekt kezelése |
+| SETTINGS + LOCALIZATION / P09 | Admin és Public külön nyelvi preferencia, scope és fallback, tartalomfordítási jogosultság | Admin shell és Public shell külön preference, canonical content változatlan | Admin nyelvváltás nem írja át a Public nyelvét vagy az eredeti tartalmat |
+| LIVE + OBS / P04–P05 | Stream preflight mikrofon/kamera/scene/bitrate/connection teszt, jegyzet, marker és highlight-kapcsolat | Creator Center Live; OBS parancsadapter; schedule event ID és marker referenciák | Offline OBS, sikertelen próba és idegen stream marker nem minősül sikeresnek |
+
+**ID és függőség döntés:** ezek a 54.x követelményekben részben már szerepelnek, ezért új stable ID-t csak akkor szabad kiadni, ha a 24. fejezet 396 meglévő ID-jának tényleges szerződése nem bővíthető helyesen, és az owner/permission/surface/dependency/positive-negative acceptance bizonyíték elkészült. E fejezet a logikus funkcióbontást rögzíti, nem bizonyít runtime készültséget. A korábbi 1.0 történeti phase nem aktuális határidő. A 63.50.46 HIGH publish conflict, 00/A/00.9.6.B eredeti forrás és runtime acceptance továbbra is OPEN. **PLAN IN PROGRESS / NOT PASS.**
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
