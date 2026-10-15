@@ -47,7 +47,7 @@ test("canonical Admin route is authenticated and serves the single dashboard ass
 });
 
 test("direct editor HTML URL redirects through authenticated canonical entry", () => {
-  assert.match(worker, /pathname === "\/editor-v2" \|\| pathname === "\/editor-v2\/index\\.html"/);
+  assert.ok(worker.includes('pathname === "/editor-v2" || pathname === "/editor-v2/index.html"'));
   assert.ok(worker.includes('new URL("/admin/editor", request.url).toString(), 302'));
 });
 
