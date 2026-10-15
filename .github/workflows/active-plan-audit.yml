@@ -1,0 +1,22 @@
+name: Canonical Plan Active Point Audit
+on:
+  push:
+    branches: [v2/foundation]
+    paths:
+      - 'docs/SANCI9517-CREATOR-PLATFORM-PLAN.md'
+      - 'scripts/audit-active-plan-point.py'
+      - '.github/workflows/active-plan-audit.yml'
+  workflow_dispatch:
+jobs:
+  source-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract actual 63.50.92 source and review signals
+        run: python3 scripts/audit-active-plan-point.py | tee active-plan-audit.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: canonical-active-point-source
+          path: active-plan-audit.txt
+          retention-days: 30
