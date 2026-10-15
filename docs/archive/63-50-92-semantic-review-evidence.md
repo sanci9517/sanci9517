@@ -116,3 +116,23 @@ Az alábbi jelölt ID-k a 63.50.91 táblából származnak. Nem igazolt szemanti
 | 54.16.05 | SEC-003, TEAM-001, TEAM-005 | Workspace/tenant and team membership | Site switch, invite, roles, isolation and authorization |
 
 **Státusz:** 47/47 AMBIGUOUS sor tulajdonosi/acceptance-hipotézise dokumentálva; 0/47 szemantikai PASS. A 24. fejezet stabil ID-definícióinak, a 49. fejezet modulhatárainak és az eredeti történeti acceptance/owner/surface mezőknek a teljes összevetése hiányzik. Nincs automatikus összevonás vagy követelménytörlés.
+
+
+## Első forrásszöveg-összevetés: 24. fejezet vs. 54.x (2026-10-15)
+
+Az alábbi megállapítások a **tényleges** kanonikus terv 24. fejezetének stabil ID-definícióin alapulnak, nem kizárólag a lexikai pontszámon. A státusz csak a vizsgált *jelöltpárokra* vonatkozik, nem az egész követelmény hiányára vagy készültségére.
+
+| 54.x | Jelölt(ek) tényleges 24. fejezetbeli jelentése | Bizonyítékalapú megállapítás | Következő feladat |
+|---|---|---|---|
+| 54.1.03 | ADM-003 gyorsművelet; ADM-005 legutóbbi aktivitás/audit olvasónézet | **SPLIT / PARTIAL**: a két jelölt külön részfunkció, nem egymás helyettesítője | Két külön acceptance és jogosultság/frissesség teszt |
+| 54.1.08 | ADM-008 shared loading/empty/error/stale/success UI; ADM-013 dashboard adatfrissesség/stale/partial | **SPLIT / PARTIAL**: UI állapot és domain-adatfrissesség külön szerződés | Error, empty, stale, partial és adatforrás státusz külön negatív teszt |
+| 54.2.01 | WEB-001 Page CRUD; WEB-002 slug/hierarchy/URL; WEB-003 duplicate/archive/delete | **SPLIT / PARTIAL**: három külön, releváns alfunkció | Restore, deletion dependencies, permissions és slug konfliktusok ellenőrzése |
+| 54.2.02 | WEB-005 preview authorization; WEB-009 canonical navigation tree; WEB-010 header/footer/global layout | **WRONG CANDIDATE + PARTIAL**: WEB-005 nem navigáció; WEB-009/010 releváns, de a mobilmenü/keyboard a WEB-011 szerződésben szerepel | WEB-005 jelölt elutasítása; WEB-009/010/011 és linktípusok ellenőrzése |
+| 54.2.14 | WEB-006 publish validation/report; WEB-030 public cache/invalidation | **WRONG CANDIDATES**: egyik sem webes űrlap, spamvédelem, consent vagy submission lifecycle | A WEB-020 Contact form mellett külön általános Forms-domain/ID lefedés keresése; GAP, ha nincs |
+| 54.3.03 | DSN-005 theme/brand presets; RES-009 asset delete safety; RES-012 SVG sanitization | **WRONG CANDIDATES + PARTIAL**: RES-009/012 nem kontraszt vagy font; DSN-005 csak részleges brand kapcsolódás | DSN-001/002, DSN-007, RES-013 és accessibility contract keresése |
+| 54.4.01 | RES-001 canonical asset registry; RES-005 search/filter; RES-006 collection/tags | **WRONG CANDIDATES + PARTIAL**: RES-005/006 nem D1/R2 tárolási szerződés; RES-002 kifejezetten R2 binary + D1 metadata | RES-001 + RES-002; ID ownership és reference graph negatív teszt |
+| 54.5.01 | INT-010 Twitch OAuth; INT-011 Twitch live/schedule; INT-012 Twitch VOD/clip | **WRONG SCOPE**: mindhárom Twitch-specifikus; nem bizonyítják a YouTube/TikTok/Discord/Kick provider registryt | Provider-mátrix és külön integration hub/adapter ID keresése |
+| 54.5.03 | INT-003 OAuth state/CSRF; INT-005 site binding; INT-004 token lifecycle | **SPLIT / PARTIAL**: három külön releváns szerződés; titkos tárolás önálló ellenőrzés | Security secret storage, revoke, rotation, negative auth tests |
+| 54.5.05 | INT-017 provider webhook lifecycle; SEC-009 shared signature/replay negative tests; INT-008 sync history/retry/provider errors | **SPLIT / PARTIAL**: INT-017 és SEC-009 releváns; INT-008 sync history nem bizonyít webhook dedupe/dead-letter viselkedést | Signature, replay, dedupe, retry, DLQ és idempotencia per-provider |
+
+**Korlát:** a jelöltpárok valódi definícióinak ellenőrzése nem teljes 17 mezős feature-contract audit. A fenti WRONG CANDIDATE nem jelenti, hogy a képesség a MASTER más pontjában biztosan hiányzik. Nem jár szemantikai PASS, amíg minden részfunkció és acceptance nincs tételesen igazolva. A kanonikus terv továbbra is IN PROGRESS / NOT PASS.
