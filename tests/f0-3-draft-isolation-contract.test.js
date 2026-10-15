@@ -31,3 +31,9 @@ test('public slug and metadata come from the published snapshot', () => {
   assert.match(publicRoute, /published_description/);
   assert.match(publicRoute, /useDraft\?'slug':'published_slug'/);
 });
+
+test('published response must never fall back to draft identity', () => {
+  assert.doesNotMatch(publicRoute, /published_title\s*\?\?\s*row\.title/);
+  assert.doesNotMatch(publicRoute, /published_slug\s*\?\?\s*row\.slug/);
+  assert.doesNotMatch(publicRoute, /published_description\s*\?\?\s*row\.description/);
+});
