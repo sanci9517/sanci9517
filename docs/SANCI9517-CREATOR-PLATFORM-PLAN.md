@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.120` — a 22 modulos review előtti hivatkozás- és modullefedettség-ellenőrzés, kritikus ownership/acceptance triage; HIGH publish conflict OPEN; **PLAN IN PROGRESS / NOT PASS.**  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.121` — a 22 modul review-ready funkcióleltára, az Editorba kevert domain funkciók áthelyezési sorrendje és a korai fejlesztési szeletek acceptance-e; HIGH publish conflict OPEN; **PLAN IN PROGRESS / NOT PASS.**  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -11874,6 +11874,29 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 **Tervkapu döntés:** a dokumentációban azonosított hiányokból nem következik, hogy a teljes projekt minden független fejlesztése tiltott örökre; ugyanakkor a jelenlegi `PLAN IN PROGRESS / NOT PASS` státuszt nem lehet pusztán a fenti táblázattól PASS-ra állítani. A 22 modulos felhasználói review megkezdhető mint **terméktervezési ellenőrzés**, a `63.50.46` érintett runtime író útvonalak release-ének tiltása megmarad. A hiányzó történeti források `PARTIAL / REMAINDER OPEN` státusza megmarad; a review sem helyettesíti őket.
 
 **Következő aktív alpont: `63.50.120`** — a felhasználói 22 modulos funkció-review előtti automatikus hivatkozás-/modullefedettségi ellenőrzés és a fennmaradó magas kockázatú owner/acceptance eltérések végső triage-ja. A közös review az előkészítés után külön termékdöntési kapu, nem runtime PASS. **PLAN IN PROGRESS / NOT PASS.**
+
+### 63.50.120. Felhasználói valóságellenőrzés — kezdetleges runtime és célarchitektúra elkülönítése (2026-10-15)
+
+**USER-CONFIRMED PRODUCT BASELINE / NO FEATURE COMPLETION INFERRED.** A felhasználó egyértelmű helyzetjelentése: a jelenlegi termék **kezdetleges**; a szerveroldali kapcsolat/alapok, a Twitch kapcsolat és egy kezdetleges Admin főoldal áll rendelkezésre. A Visual Editort **érdemben újra kell építeni**. A jelenlegi kódban a Twitch és sok más kezelés az Editorhoz kötődik; **ez nem elfogadott célarchitektúra**, hanem rendezendő örökölt állapot. A korábbi kódszintű E4/E5/E6 és egyedi Editor teszt-PASS nem jelent teljes Creator Center, Visual Editor vagy Twitch-integráció **termékfunkció PASS-t**.
+
+| Terület | Jelenlegi, felhasználó által megerősített helyzet | Kötelező célhely / fejlesztési megközelítés |
+| --- | --- | --- |
+| Cloudflare Worker/D1/R2/auth/site-ownership alap | Részben működő szerveroldali alap; részletek csak forrás/runtime teszttel igazolhatók | Közös platform infrastruktúra, site-scoped canonical API; újrahasznosítás csak kódaudit és teszt után |
+| Twitch kapcsolat | Kapcsolat létezik, de kezelése a kezdetleges Editorhoz keveredik | **49.7 Integrációk**: OAuth, kapcsolat, scope, token lifecycle, szinkron, hibák; **49.5 Live**: live/offline állapot és stream-műveletek; **49.1 Dashboard**: csak státuszkártya/gyorslink; **49.2 Editor**: kizárólag read-only adatbinding/blokk konfiguráció |
+| Admin főoldal | Kezdetleges shell/dashboard | **49.1** jól használható kezdőlap, jogosultságfüggő navigáció, állapotkártyák és külön főmodulok; nem minden funkció gyűjtőhelye |
+| Visual Editor | Kezdetleges; érdemi újratervezés és újraépítés szükséges | **49.2 Weboldal / Visual Editor**: Page Model, vászon, layers, inspector, responsive, komponensek, undo/redo, preview, save/reload; domainadat kezelés a saját modulban |
+| Schedule, média, brand, content, analytics, AI, OBS, store stb. | A teljes funkciókészültség **nem igazolt**; nem szabad „késznek” számítani a tervbeli létezésből | A **49. fejezet 22 önálló, logikus főmodulja** és a megfelelő stabil ID/phase szerinti fejlesztés; mindenhol egy canonical writer és közös megjelenítés |
+
+**Végrehajtási elvek:**
+1. **A célterv az elsődleges, nem a meglévő UI.** A jelenlegi Editorból a rossz helyre került funkciók a helyes főmodulba kerülnek; csak a tesztelt, hasznos API/domain/command/persistence részek maradnak. A hibás UI szerkezetet nem őrizzük meg pusztán a kód újrahasznosítása miatt.
+2. **Nincs második Editor, Twitch kapcsolat, médiaregiszter vagy Schedule adatmodell.** Több belépési pont megengedett, de azonos domain state és API; változás minden fogyasztóban konzisztensen jelenik meg.
+3. **Előbb logikus modulhatárok és navigáció, utána fokozatos megvalósítás.** Első fejlesztési szelet: infrastruktúra és jogosultságok ellenőrzése → 22 modulos Admin IA/shell → integrációk/Twitch canonical kezelőnézet → Page Model/Editor core újraépítés → published/draft szerződés HIGH konfliktusának javítása és tesztje. Az egyes függőségek és release-kapuk a részletes fázisterv szerint felülvizsgálandók; a felsorolás nem helyettesíti a teljes sorrendet.
+4. **A 396 ID megőrzendő célkatalógus, nem 396 kész funkció.** Státuszok csak bizonyítékkal emelhetők. A felhasználóval történő 22 modulos funkciólista-review a termékcél pontosítását szolgálja, nem jelenti a runtime készültséget.
+5. **Kritikus blokk:** a `63.50.46` HIGH published/draft konfliktus nem kerülhet az új Editorba vagy az Admin Page UI-ba. Az érintett publish/metadata/URL műveletek csak a `63.50.114` szerződés és saját tesztjeik teljesülésével élesíthetők.
+
+**Terv-review előtti modul- és ID-lefedettség:** a 49. fejezet `49.1–49.22` címei **22/22 egyediek**; a 24. fejezet **396 egyedi ID**, a 63.50.109–112 **396/396 routing**, a 63.52–53 **271/271 H-ID** ellenőrzése megőrzött. Ez strukturális, nem implementációs PASS.
+
+**Következő aktív alpont: `63.50.121`** — a 22 modul konkrét menü- és funkciófelosztásának review-ready leltára, a jelenlegi Editorban rossz helyre tett domain funkciók migrációs sorrendje, és a korai fejlesztési szeletek elfogadási feltételei. **PLAN IN PROGRESS / NOT PASS.**
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
