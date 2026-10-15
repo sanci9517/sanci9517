@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.96` — **eredeti H19–H34 szöveg alapján 5 modulhelyre rendezett, hiányos részfunkciós contract és egységes MASTER-beépítési szabály**; stable-ID döntések, 63.50.46 HIGH publish conflict, 00/A/00.9.6.B és runtime bizonyítás OPEN; **PLAN IN PROGRESS / NOT PASS.**  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.97` — **központi publikálási contract és cross-surface konzisztencia ellenőrzése**; stable-ID döntések, 63.50.46 HIGH publish conflict, 00/A/00.9.6.B és runtime bizonyítás OPEN; **PLAN IN PROGRESS / NOT PASS.**  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -11075,6 +11075,27 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 | LIVE + OBS / P04–P05 | Stream preflight mikrofon/kamera/scene/bitrate/connection teszt, jegyzet, marker és highlight-kapcsolat | Creator Center Live; OBS parancsadapter; schedule event ID és marker referenciák | Offline OBS, sikertelen próba és idegen stream marker nem minősül sikeresnek |
 
 **ID és függőség döntés:** ezek a 54.x követelményekben részben már szerepelnek, ezért új stable ID-t csak akkor szabad kiadni, ha a 24. fejezet 396 meglévő ID-jának tényleges szerződése nem bővíthető helyesen, és az owner/permission/surface/dependency/positive-negative acceptance bizonyíték elkészült. E fejezet a logikus funkcióbontást rögzíti, nem bizonyít runtime készültséget. A korábbi 1.0 történeti phase nem aktuális határidő. A 63.50.46 HIGH publish conflict, 00/A/00.9.6.B eredeti forrás és runtime acceptance továbbra is OPEN. **PLAN IN PROGRESS / NOT PASS.**
+
+### 63.50.97. Központi publikálási contract és cross-surface konzisztencia (2026-10-15)
+
+**Státusz: SPECIFICATION RECONCILIATION / NOT PASS.** Ez a 63.50.46 HIGH publish conflict és a 63.50.96 CONTENT + PUBLISHING + INTEGRATION részfunkcióinak követelmény-ellenőrzése, nem új, párhuzamos publikálási rendszer és nem runtime PASS. A 24. fejezet stabil ID-it megőrizzük; új ID csak külön bizonyított hiányra, domain owner döntéssel adható ki.
+
+**Kanonikus tulajdonosi határ:** a Content/Publishing domain birtokolja a publikálási szándékot, célcsatornát, publikációs revíziót és az attempt/result lifecycle-t. A Visual Editor oldalösszeállítást és előnézetet szerkeszt, nem saját publish engine-t. A provider adapter (Integration) capability/permission/token/quota feltételeket ellenőriz és a tényleges külső műveletet végzi. Az Automation kizárólag ugyanazon engedélyezett domain operationt hívhatja. Admin, Editor, Public és külső csatorna nem tarthat külön, egymástól független „publikált” igazságot.
+
+| Alpont | Contract / owner | Pozitív acceptance | Kötelező negatív acceptance |
+| --- | --- | --- | --- |
+| 63.50.97.1 | Publishing: draft → review/approval (ha szabály előírja) → scheduled/publishing → published/failed/revoked; auditált, jogosultsághoz kötött állapotátmenetek | Engedélyezett szerep pontosan egyszer érvényes átmenetet indít | Viewer/idegen site/AI approval nélküli write és érvénytelen átmenet tiltott |
+| 63.50.97.2 | Revision/Concurrency: az élesített tartalom explicit immutable revisionre mutat; szerkesztés közbeni változás nem írja felül csendben | Preview és published revision külön azonosítható | Stale revision, versenyhelyzet és két editor ütközése conflictot ad, nincs silent overwrite |
+| 63.50.97.3 | Dependency validation: komponens, sablon, média, dinamikus binding, URL, jogosultság, locale és site ownership publikálás előtt ellenőrzött | Teljes dependency gráf valid állapotban élesíthető | Hiányzó/idegen/archivált asset, érvénytelen binding vagy jogosulatlan dependency blokkol |
+| 63.50.97.4 | First-party publish consistency: kanonikus published pointer atomikus váltása és ellenőrzött cache invalidation | Siker után Public pontosan a kiválasztott revíziót szolgálja ki | Félbemaradt tranzakció nem ad vegyes oldalállapotot; cache-hiba nem hamis siker |
+| 63.50.97.5 | External provider: capability-mátrix alapján API publish vagy export/manual fallback, célonként attempt/result, idempotency és rate-limit kezelés | Támogatott provider sikeres publikálását ellenőrzött remote result bizonyítja | Lejárt token, quota, unsupported API, retry és partial failure nem jelenhet meg hamis publishedként |
+| 63.50.97.6 | Scheduling/Automation: időzített feladat ugyanazon publish operationt használja, timezone és revízió rögzített | Egy ütemezett művelet egyszer fut, és auditálható | Duplikált event, visszavont jogosultság vagy közben törölt cél nem publikál |
+| 63.50.97.7 | Rollback/Unpublish: korábbi revízióra új, auditált publikációs művelet mutat; külső provider esetén visszavonási képesség külön ellenőrzendő | Visszaállítás után a Public konzisztens revíziót mutat | Nem visszavonható provider-műveletre nem állítunk teljes rollback-sikert |
+| 63.50.97.8 | Observability: actor, site, resource, revision, channel, attempt, idempotency key, result, timestamp és hibaok korlátozott adatmegőrzéssel naplózva | Admin és Content Studio ugyanazt a publikálási státuszt mutatja | Titok/token/PII nem kerül publikus logba; idegen tenant auditja nem olvasható |
+
+**Kötelező kapcsolás a meglévő tervhez:** a 24. fejezet publishing/content, editor revision, integrations, automation, security és QA stabil ID-ihez tételes crosswalk szükséges, továbbá a 54.8.10 és 63.50.46 HIGH conflict konkrét szövegével összevetés. A táblázat a szerződést pontosítja, de önmagában nem bizonyítja a 396 ID teljes szemantikai egyezését. Fázis/owner/permission/függőség és tesztek véglegesítését a megfelelő kanonikus modulfejezetben kell elvégezni, nem második roadmapben.
+
+**Nyitott kapuk:** 63.50.46 HIGH publish conflict; 00/A és 00.9.6.B forráshiány; teljes historical semantic review; tényleges D1/Worker/Editor/Public/provider pozitív és negatív futási tesztek. **PLAN IN PROGRESS / NOT PASS; F0 továbbra sem nyitott.**
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
