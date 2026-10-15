@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.101` — **Public renderer, navigáció és Editor preview fogyasztók forrásauditja**; stable-ID döntések, 63.50.46 HIGH publish conflict, 00/A/00.9.6.B és runtime bizonyítás OPEN; **PLAN IN PROGRESS / NOT PASS.**  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.102` — **Editor műveletkezelők és published metadata storage döntési mátrix**; stable-ID döntések, 63.50.46 HIGH publish conflict, 00/A/00.9.6.B és runtime bizonyítás OPEN; **PLAN IN PROGRESS / NOT PASS.**  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -11174,6 +11174,24 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 **Új, kódalapú függőség:** a published metadata szétválasztás nem zárható le pusztán a pages PATCH vagy a Public Pages API módosításával. Ugyanazon kanonikus published title/slug/description állapotot kell fogyasztania a Public API listának, a navigációnak, a Page renderernek, a HTML head/SEO-nak és a route resolvernek. A preview ugyanazon Page domain draft revisiont olvassa, de auth, noindex és cache izoláció mellett. Második renderer/publish state nem készül.
 
 **Következő ellenőrizhető lépés — 63.50.102:** az Editor Preview/Save/Publish handler pontos forrásútvonalának felkutatása, a publikus HTML HTTP response és a sitemap/robots fogyasztók leltára, majd a két metadata storage alternatíva döntési mátrixa. A 63.50.46 HIGH konfliktus OPEN/NOT FIXED. A 00/A, 00.9.6.B és történeti szemantikai audit OPEN; PLAN IN PROGRESS / NOT PASS; F0 nem indult.
+
+### 63.50.102. Editor műveletkezelők és published metadata storage döntési mátrix (2026-10-15)
+
+**SOURCE VERIFIED / DESIGN NOT FROZEN / HIGH OPEN.** Az Editor tényleges handler-fájlja a v2/foundation ágon public/editor-v2/app.js, nem editor.js. A forrásban a Save a POST /api/admin/editor publish=false, a Publish ugyanaz a POST publish=true, a Unpublish action=unpublish; a revision rollback PUT expectedVersionnel. A Preview a jelenlegi page.slug alapján /p/slug?preview=1 URL-t nyit. Az editPageMeta a /api/admin/pages PATCH-hez expectedVersiont ad. A jelenlegi Save/Publish gombok valóban külön handlerekre kapcsolódnak, de a backend 63.50.46 HIGH konfliktusát ez nem oldja meg.
+
+**További kódalapú eltérések:** (1) Az Editor save(publish=true) helyi pages metaadataiban a previous.isPublished értéket őrzi meg, nem állítja true-ra; emiatt a UI publish után újratöltésig tévesen DRAFT/LIVE állapotot jelezhet, miközben a backend publikált. (2) A Preview az aktuális page.slug útvonalat használja; ha a draft slug eltér a published slugtól, a szerveroldali keresés pages.slug mezője és a későbbi külön published slug feloldás eltérő viselkedést igényel. (3) A Preview gomb megnyitja a már mentett draft API-nézetét; mentetlen lokális változtatások previewba kerülése nem bizonyított. (4) Az Editor metaadat-PATCH expectedVersiont küld, de minden Admin/API belépési ponton a kötelező szerveroldali concurrency ellenőrzés külön tesztelendő.
+
+| Adatmodell alternatíva | Előny | Kockázat / kötelező döntés |
+| --- | --- | --- |
+| A — pages külön draft és published metadata mezők | Kisebb változás a jelenlegi pages/public SQL lekérdezésekhez; published slug indexelhető | Sok duplikált mező; több írási útvonal; published metadata/snapshot/revision atomi invariáns és backfill szükséges |
+| B — immutable published revision + explicit published metadata/URL snapshot | Revízióhoz kötött, egyetlen publikálási snapshot; rollback/audit tisztább | Route és navigation join/feloldás, migráció, index, history/redirect és kompatibilitási réteg összetettebb |
+| C — draft Page Model metadata kiolvasása published JSON-ból, published slug külön | Meglévő snapshot részben újrahasznosítható | Régi snapshotok metaadatainak teljessége és normalizálása nem bizonyított; slug routing/redirect továbbra is külön adatmodell |
+
+**Választási feltétel:** a jelenlegi pages schema és indexek, 0010 published_revision_id backfill épsége, az összes slug fogyasztó, a sitemap/robots tényleges implementációja, a redirect registry, a D1 tranzakciós képesség és az adatvesztésmentes migráció/rollback bizonyítéka alapján dönthető el. A három opció nem párhuzamos rendszer: pontosan egy canonical published state lehet. Addig sem A, sem B, sem C nem APPROVED.
+
+**Kötelező UI regressziók:** első publikálás után a LIVE címke és gombok helyesek újratöltés nélkül; draft-only mentés nem jelöl LIVE változást; Preview mentetlen módosításra világos jelzést ad; draft slug preview nem szivárogtat publikus URL-t; stale version 409; publish failure nem mutat sikeres állapotot; mobile és desktop ugyanazon műveletet hívja.
+
+**Következő kurzor: 63.50.103** — pages schema/index és sitemap/robots/redirect implementáció bizonyítékainak feltárása, majd a storage modell kiválasztási döntésének előkészítése. A 63.50.46 HIGH továbbra is SOURCE CONFIRMED / NOT FIXED; 00/A, 00.9.6.B és történeti szemantika OPEN. PLAN IN PROGRESS / NOT PASS; F0 nem indult.
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
