@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.94` — **12 részleges stable-ID crosswalk (63.50.92), 6 owner/szerződéshatár (63.50.93), 6 pozitív-negatív acceptance-tervezet (63.50.94)**; teljes történeti és runtime semantic PASS nincs. Következő: 54.x ↔ H19–H34 tételes proveniencia, stabil ID gap döntések és 63.50.46 HIGH publish conflict. 00/A/00.9.6.B OPEN; **PLAN IN PROGRESS / NOT PASS.**  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.95` — **12 PARTIAL stable-ID crosswalk, 6 owner/szerződéshatár, 6 acceptance-tervezet és 6 H19–H34 történeti csoporthatár-ellenőrzés**. Egyedi H-ID szemantikai bizonyítás, 63.50.46 HIGH publish conflict, 00/A/00.9.6.B és runtime tesztek OPEN; **PLAN IN PROGRESS / NOT PASS.**  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -11036,6 +11036,23 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 **Kötelező következő ellenőrzés:** a hat sorhoz az eredeti 54.x szöveg és 63.50.79–80 H19–H34 rekordok **tényleges, tételes** összeolvasása (source ID, owner, surface, phase, dependency, lifecycle, DoD, positive/negative acceptance), majd a 24. fejezetben hiányzó stabil ID-kre döntés: létező ID bővítése vagy új ID indokolt-e. A fenti kritériumok **proposed acceptance**, nem történeti idézetek és nem PASS.
 
 **Nyitott:** 63.50.46 HIGH publish conflict NOT FIXED; 00/A és 00.9.6.B SOURCE NOT RECOVERED; runtime/CI és user review UNRUN; feature implementation frozen.
+
+### 63.50.95. H19–H34 történeti forrásmezők kontra hat kritikus 54.x szerződés — bizonyítékszint (2026-10-15)
+
+**Forrás:** a MASTER 63.50.79–80 tábláinak 271 egyedi H19–H34 rekordja. Ezekben az owner/surface/phase/dependency/DoD mezők forráshűek, de **nem szerepel bennük az eredeti tétel teljes követelményszövege**, és több DoD mező maga mondja ki: „Historical traceability only; implementation DoD/test/acceptance must be defined and passed ...”. Emiatt a következő tábla csak **csoportszintű történeti határ-összevetés**, nem egyedi H-ID ↔ 54.x szemantikai PASS.
+
+| 54.x | Releváns H-csoport és hiteles történeti owner/surface/dependency | Fázisütközés vagy feloldandó döntés | Bizonyítékszint |
+|---|---|---|---|
+| 54.2.14 Forms | H24 (13 sor): Public Website / Accessibility; Editor accessibility checks + public site + forms; semantic renderer, form labels és keyboard/focus. H28 (17 sor): Security/Auth/Audit és server validation | P03.1–P03.5 új ütemezés; az eredeti 1.0/1.x+ jelölések történeti provenance, nem aktuális kötelező deadline | GROUP-LEVEL ONLY; form submissions, consent és anti-spam konkrét H-ID nem igazolt |
+| 54.7.11 plugin registry | H21 (22 sor): Integration/Platform contract, Creator Center integrations/server adapters; secrets, normalized adapters, quota policy. H34 (23 sor): continuous product governance | P06.1/P06.3; plugin lifecycle nem azonos provider OAuth adapterrel | GROUP-LEVEL ONLY; extension manifest egyedi H-ID nem igazolt |
+| 54.8.10 API publish | H22 (19 sor): Schedule + CMS/Content Factory + Streamer, Creator Center Content + Editor widgets + public; platform adapters, Resource references, publishing/revision flow | P05.2; a H22 eredeti schedule-core/advanced content fázisokból nem következik automatikus API-jogosultság | GROUP-LEVEL ONLY; publish provider capability, fallback és 63.50.46 conflict OPEN |
+| 54.14.01 külön Admin/Public locale | H27 (19 sor): Admin Platform / Creator Center, domain-specific management screens; canonical owner, persistence, permissions. H24 (13 sor): public accessibility | P09.5; H27 eredeti 1.0-scope nem bizonyít két külön locale preference rekordot | GROUP-LEVEL ONLY; pontos történeti H-ID és preference scope OPEN |
+| 54.6.08 preflight | H21 (22 sor): streamer integrations, server adapters, public widgets; H22 (19 sor): schedule/content/streamer, canonical schedule owner és platform adapters | P04.2/P05.1; az eredeti Twitch-first fázis nem jelent általános OBS preflight implementációt | GROUP-LEVEL ONLY; checklist/marker egyedi H-ID OPEN |
+| 54.16.02 extension manifest | H21 (22 sor): platform adapter boundary; H28 (17 sor): server authorization/validation/audit; H34 (23 sor): extension előtti architecture/QA review | P09.1/P09.3; a H34 mindig aktív governance, nem egyszeri plugin-delivery | GROUP-LEVEL ONLY; schema, sandbox és signature eredeti H-ID OPEN |
+
+**Forráshűségi döntés:** a H19–H34 történeti phase mezőket **nem írjuk át** a mai P00–P10 fázisokra. A modern ütemezés külön mapping, az eredeti fázis külön provenance. A 63.50.94 acceptance-tervezeteket nem tüntetjük fel eredeti történeti DoD-ként. A 271 H-sor megőrzött, de az egyedi kapcsolatok bizonyításához az archív eredeti követelményoszlop tételes visszaolvasása szükséges.
+
+**Következő:** archív H19–H34 eredeti szövegoszloponként azonosítani a hat 54.x követelmény konkrét H-ID-it; ha nincs pontos egyezés, rögzíteni MODERN-ONLY / GAP / NEW SUBCAPABILITY döntést. Külön ellenőrizni a 63.50.46 HIGH publish conflictot. 00/A és 00.9.6.B SOURCE NOT RECOVERED; PLAN NOT PASS.
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
