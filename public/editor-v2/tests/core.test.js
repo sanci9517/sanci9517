@@ -846,3 +846,12 @@ test('Editor audit entries are conditional on a successfully inserted revision',
   assert.match(save, /'page.publish'/);
   assert.match(rollback, /'page.rollback'/);
 });
+
+test('Editor failed save retains dirty state and does not mark changes saved', () => {
+  const app = readFileSync(new URL('../app.js', import.meta.url), 'utf8');
+  const save = app.slice(app.indexOf('async function save('), app.indexOf('async function unpublishPage('));
+  const failure = save.slice(save.indexOf('}catch(e){'));
+  assert.match(failure, /stateAtStart\.persistence\.saving=false;stateAtStart\.persistence\.dirty=true/);
+  assert.doesNotMatch(failure, /markSaved\(/);
+  assert.match(failure, /stateAtStart\.persistence\.error=/);
+});
