@@ -828,3 +828,10 @@ test('Editor save and rollback use database-level conditional revision inserts',
     assert.match(block, /EXISTS \(SELECT 1 FROM editor_revisions WHERE id=\?\)/);
   }
 });
+
+test('Editor publish update requires the successful save revision', () => {
+  const route = readFileSync(new URL('../../../src/routes/admin/editor.ts', import.meta.url), 'utf8');
+  const save = route.slice(route.indexOf("if(request.method==='POST')"), route.indexOf("if(request.method==='PUT')"));
+  assert.match(save, /UPDATE pages SET published_content_json=[^\x60]*EXISTS \(SELECT 1 FROM editor_revisions WHERE id=\?\)/);
+  assert.match(save, /bind\(json,revId,id,siteId,revId\)/);
+});
