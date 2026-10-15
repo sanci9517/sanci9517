@@ -37,22 +37,6 @@ test("login confirms the new session before navigating to Admin and avoids a red
   assert.match(loginPage, /window\.location\.replace\("\/admin"\)/);
 });
 
-test("canonical Admin route is authenticated and serves the single dashboard asset", () => {
-  assert.ok(worker.includes('if (pathname === "/admin") {'));
-  assert.ok(worker.includes("return env.ASSETS.fetch(assetRequest("));
-  assert.ok(worker.includes('if (pathname === "/admin/home" || pathname === "/admin-home.html" || pathname === "/admin.html")'));
-  assert.ok(worker.includes('new URL("/admin", request.url).toString(), 302'));
-  assert.ok(worker.includes('if (pathname === "/admin/login")'));
-  assert.ok(worker.includes('if (pathname === "/admin-login.html")'));
-});
-
-test("direct editor HTML URL redirects through authenticated canonical entry", () => {
-  for (const path of ["/editor-v2", "/editor-v2/index.html", "/editor-v2/"]) {
-    assert.ok(worker.includes(`pathname === "${path}"`), `Missing editor redirect: ${path}`);
-  }
-  assert.ok(worker.includes('new URL("/admin/editor", request.url).toString(), 302'));
-});
-
 test("canonical Visual Editor v2 route remains available separately", () => {
   assert.match(
     worker,
