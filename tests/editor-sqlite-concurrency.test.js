@@ -45,3 +45,30 @@ print('PASS')
   const result = execFileSync('python3', ['-c', script], { encoding: 'utf8' });
   assert.match(result, /PASS/);
 });
+
+
+test('stale concurrent publish cannot replace the winning public snapshot', () => {
+  const script = `
+import sqlite3
+c=sqlite3.connect(':memory:')
+c.executescript("""
+CREATE TABLE pages(id TEXT PRIMARY KEY,site_id TEXT,content_json TEXT,published_content_json TEXT,published_revision_id TEXT,is_published INTEGER);
+CREATE TABLE editor_revisions(id TEXT PRIMARY KEY,page_id TEXT,version INTEGER,document_json TEXT,UNIQUE(page_id,version));
+INSERT INTO pages VALUES ('p','site','initial','initial','old',1);
+INSERT INTO editor_revisions VALUES ('old','p',1,'initial');
+""")
+insert="INSERT INTO editor_revisions(id,page_id,version,document_json) SELECT ?,?,?,? WHERE (SELECT COALESCE(MAX(version),0) FROM editor_revisions WHERE page_id=?)=?"
+update="UPDATE pages SET content_json=?,published_content_json=?,published_revision_id=? WHERE id=? AND site_id=? AND EXISTS (SELECT 1 FROM editor_revisions WHERE id=?)"
+results=[]
+for rev,content in [('winner','published-v2'),('stale','must-not-publish')]:
+    with c:
+        inserted=c.execute(insert,(rev,'p',2,content,'p',1)).rowcount
+        c.execute(update,(content,content,rev,'p','site',rev))
+    results.append(inserted)
+assert results==[1,0],results
+assert c.execute('SELECT content_json,published_content_json,published_revision_id FROM pages').fetchone()==('published-v2','published-v2','winner')
+assert c.execute('SELECT COUNT(*) FROM editor_revisions').fetchone()[0]==2
+print('PASS')
+`;
+  assert.match(execFileSync('python3', ['-c', script], { encoding: 'utf8' }), /PASS/);
+});
