@@ -23,3 +23,11 @@ test('preview requires authenticated editor and responses cannot be cached', () 
   assert.match(publicRoute, /headers\.set\('Cache-Control','private, no-store, max-age=0'\)/);
   assert.match(publicRoute, /headers\.set\('Vary','Cookie'\)/);
 });
+
+
+test('public slug and metadata come from the published snapshot', () => {
+  assert.match(publicRoute, /published_slug/);
+  assert.match(publicRoute, /published_title/);
+  assert.match(publicRoute, /published_description/);
+  assert.match(publicRoute, /useDraft\?'slug':'published_slug'/);
+});
