@@ -214,3 +214,22 @@ Ezek a párok a kanonikus terv 24. fejezetében szereplő **valódi definíciók
 **Szemantikai GAP-jelöltek:** az általános űrlap-feldolgozás, külön Admin/Public locale-beállítás, provider-független OBS vezérlőparancsok, stream-előkészítési checklist/marker, extension manifest és plugin életciklus, tartalomjog-takedown, valamint a provider publikálási adapterek külön ellenőrzést igényelnek. A GAP-jelölt **nem bizonyított hiány**: előbb a 49. és 63.x szerződésekben is keresni kell.
 
 **Kapustátusz:** OPEN / NOT PASS. Nem módosult a kanonikus MASTER 396 stabil ID-s katalógusa; a következő körben a valóban nem lefedett részfunkciókat kell igazolni, majd ugyanabba a MASTER-be integrálni.
+
+
+## GAP-hipotézisek ellenőrzése a teljes kanonikus MASTER további részeiben
+
+Ez a kör a korábbi, 24. fejezetre szorítkozó következtetéseket **helyesbíti**, ahol a teljes MASTER további bizonyítékot tartalmaz. A követelmény másutt való előfordulása nem jelenti a teljes acceptance bizonyítását.
+
+| GAP-hipotézis | Újonnan ellenőrzött kanonikus bizonyíték | Következtetés |
+|---|---|---|
+| OBS scene/control/marker | OBS-004: **Authorized commands and stream markers**; 54.x másik sorában OBS-003/004 dokumentált WebSocket-képességhez kötve | **NEM TELJES GAP**: parancs és marker ID létezik; konkrét scene/source/mute/volume mátrix és negatív teszt OPEN |
+| Tartalomjogok/takedown | CNT-022: **Content rights/consent/expiry/takedown lifecycle**; külön 54.x mapping CNT-022 + RES-007 + SEC-010–011 | **NEM GAP** a kanonikus jogéletciklus szintjén; guest consent, takedown, lejárat tesztje OPEN |
+| Általános űrlapok | 54.2.14 szövegben explicit validáció/spam/consent/submission; WEB-020 public Contact page/form | **KÖVETELMÉNY MEGVAN, STABIL ID-LEFEDETTSÉG NYITOTT**: ne jelentsünk funkcióhiányt, de a WEB-020 nem igazolja az általános Forms admin lifecycle-t |
+| Extension/plugin registry | 54.7.11 explicit manifest-közeli registry/permission/version/update/remove; MASTER domain-tábla EXTENSION registry/sandbox manifest/signature/permission/install lifecycle | **NEM TERMÉKKÖVETELMÉNY-GAP**; 24. fejezetbeli dedikált stabil ID és acceptance egyeztetés OPEN |
+| Admin/Public locale | MASTER SETTINGS domain locale preference; 54.14.01 külön Admin/Public beállítás, 54.14.02 HU fallback | **KÖVETELMÉNY MEGVAN**, külön preferencia-perzisztencia/permission és stable-ID crosswalk OPEN |
+| Stream előtti checklist | MASTER Stream Checklist: mikrofon/kamera/scene/bitrate/kapcsolat/overlay/alert és próba; 54.6.08 checklist/marker | **KÖVETELMÉNY MEGVAN**, 24. fejezetbeli stabil ID és acceptance OPEN |
+| Provider API publikálás/fallback | 54.8.10 explicit API-publikálás ha engedélyezett, egyébként export/kézi útmutató | **KÖVETELMÉNY MEGVAN**, Content Studio és Integrations capability contract / stable ID crosswalk OPEN |
+
+**Auditkorrekció:** a korábbi „GAP-jelölt” címke nem azonos a „hiányzó funkció” állítással. Legalább négy korábban aggályos területen (OBS command, tartalomjog, extension, stream checklist) a MASTER-ben tényleges, célzott követelményszöveg van. A valódi probléma sok helyen a **24. fejezet stabil ID-je és a 54.x részletes acceptance közötti bizonyítható kapcsolat**, nem a funkció ötletének hiánya. Az 54.2.14 / 54.7.11 / 54.8.10 stable-ID hiányosságokat nem szabad sem automatikusan lezárni, sem duplikált fejlesztési modulként újra felvenni.
+
+**Állapot:** IN PROGRESS / NOT PASS; hiányzó 00/A és 00.9.6.B történeti forrás OPEN; 63.50.46 HIGH publish conflict NOT FIXED.
