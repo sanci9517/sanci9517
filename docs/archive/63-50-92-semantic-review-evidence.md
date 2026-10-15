@@ -137,7 +137,7 @@ Az alábbi megállapítások a **tényleges** kanonikus terv 24. fejezetének st
 
 **Korlát:** a jelöltpárok valódi definícióinak ellenőrzése nem teljes 17 mezős feature-contract audit. A fenti WRONG CANDIDATE nem jelenti, hogy a képesség a MASTER más pontjában biztosan hiányzik. Nem jár szemantikai PASS, amíg minden részfunkció és acceptance nincs tételesen igazolva. A kanonikus terv továbbra is IN PROGRESS / NOT PASS.
 
-## Tényleges 24. fejezetbeli ID-definíciók összevetése — fennmaradó 37 többértelmű sor
+## Tényleges 24. fejezetbeli ID-definíciók összevetése — további 33 többértelmű sor
 
 Az alábbi soroknál a lexikai jelöltek **valódi, a kanonikus 24. fejezetben szereplő meghatározásait** olvastuk el. A PARTIAL és WRONG minősítés kizárólag a jelöltpárra vonatkozik, nem a teljes platform képességhiányára.
 
@@ -177,4 +177,4 @@ Az alábbi soroknál a lexikai jelöltek **valódi, a kanonikus 24. fejezetben s
 | 54.16.02 | TEAM-003 role grants; DEV-001 API docs; DEV-002 API keys | WRONG: no extension/widget manifest lifecycle |
 | 54.16.05 | SEC-003 isolation; TEAM-001 switcher; TEAM-005 multi-site workflows | PARTIAL: invitations and role lifecycle require distinct proof |
 
-**Eredmény:** mind a 47 AMBIGUOUS CANDIDATES sor lexikai jelöltjeinek első, 24. fejezetbeli definíció-alapú összevetése dokumentált (10 korábban + 37 itt). **0 teljes szemantikai PASS**: a 49. fejezet, feature contractok, eredeti történeti owner/surface/phase/dependency/acceptance és negatív tesztek tételes ellenőrzése még nyitott. WRONG jelölteket nem szabad automatikusan átvezetni vagy törölni. A következő fázis a hibás jelöltek helyett tényleges stabil ID-k keresése és az igazolt GAP-ek kanonikus tervbe vezetése.
+**Eredmény:** 43/47 AMBIGUOUS CANDIDATES sor lexikai jelöltjeinek első, 24. fejezetbeli definíció-alapú összevetése dokumentált (10 korábban + 33 itt). **0 teljes szemantikai PASS**: a 49. fejezet, feature contractok, eredeti történeti owner/surface/phase/dependency/acceptance és negatív tesztek tételes ellenőrzése még nyitott. WRONG jelölteket nem szabad automatikusan átvezetni vagy törölni. A következő fázis a hibás jelöltek helyett tényleges stabil ID-k keresése és az igazolt GAP-ek kanonikus tervbe vezetése.
