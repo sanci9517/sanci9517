@@ -817,3 +817,14 @@ test('Editor UI submits revision preconditions and prevents overlapping local sa
   assert.match(save, /expectedVersion/);
   assert.match(rollback, /expectedVersion:latest/);
 });
+
+test('Editor save and rollback use database-level conditional revision inserts', () => {
+  const route = readFileSync(new URL('../../../src/routes/admin/editor.ts', import.meta.url), 'utf8');
+  const save = route.slice(route.indexOf("if(request.method==='POST')"), route.indexOf("if(request.method==='PUT')"));
+  const rollback = route.slice(route.indexOf("if(request.method==='PUT')"));
+  for (const block of [save, rollback]) {
+    assert.match(block, /INSERT INTO editor_revisions[^\x60]*SELECT \?,\?,\?,\?,\?,\? WHERE \(SELECT COALESCE\(MAX\(version\),0\) FROM editor_revisions WHERE page_id=\?\)=\?/);
+    assert.match(block, /results\[0\]\?\.meta\?\.changes/);
+    assert.match(block, /EXISTS \(SELECT 1 FROM editor_revisions WHERE id=\?\)/);
+  }
+});
