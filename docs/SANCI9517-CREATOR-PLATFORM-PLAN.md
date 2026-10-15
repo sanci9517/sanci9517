@@ -3,7 +3,7 @@
 **Tervazonosító:** S9517-CREATOR-PLATFORM-MASTER  
 **Verzió:** 4.3.0 — konszolidált, feltöltésre előkészített fejlesztési MASTER  
 **Dátum:** 2026-10-15  
-**Állapot:** KANONIKUS TERMÉK- ÉS FEJLESZTÉSI MASTER — a tervezett termékkör rögzítve, feltöltés után F0.1 kódbaseline indul. A tervezési teljesség nem bizonyít sem kész implementációt, sem teljes körű tételes szemantikai auditot.  
+**Állapot:** KANONIKUS TERMÉK- ÉS FEJLESZTÉSI MASTER — a tervezett termékkör rögzítve; F0.2 CLOSED / PASS, F0.3 ellenőrzés folyamatban. A tervezési teljesség nem bizonyít sem kész implementációt, sem teljes körű tételes szemantikai auditot.
 **Aktív tervpontazonosító:** `F0.3-PREVIEW-PUBLISH-PUBLIC`  
 **Aktív tervpont státusza:** IN PROGRESS — F0.3 preview/publish/public. F0.2 lezárva a sikeres mentés/újratöltés, konfliktus, hálózati helyreállítás, mobil és in-flight edit tesztek alapján. HIGH publish conflict OPEN, amíg az F0.3 negatív tesztek nem PASS.
 **Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `F0.3-PREVIEW-PUBLISH-PUBLIC` — preview jogosultság és draft izoláció; atomikus publish és HIGH konfliktus; cache, rollback és publikus smoke. F0.2 CLOSED / PASS (2026-10-15).
@@ -70,7 +70,7 @@ E munkamenet nem jelent minden feladatnál felesleges adminisztrációt: a dokum
 
 ### 0.5. Aktív tervpont és a továbblépés rendje
 
-- **Kanonikus aktív pont:** `F0.1-VERIFIED-BASELINE`, kizárólag a dokumentum fejlécében és a 71. fejezetben meghatározott sorrend szerint. A régi 63.x/termék-review kurzorok történeti jegyzetek, nem munkautasítások.
+- **Kanonikus aktív pont:** `F0.3-PREVIEW-PUBLISH-PUBLIC`, a dokumentum fejlécével és a 77.6–77.8. fejezet aktuális bizonyítékaival összhangban. A régi 63.x/termék-review kurzorok történeti jegyzetek, nem munkautasítások.
 - **Termékirány:** univerzális brandwebhely, választható streamer/creator/commerce/szolgáltatói és egyéb modulok. A 22 főmenü és 396 stabil ID megőrzött korábbi alap; a 64–71. fejezet részletei kötelező kiegészítések, nem külön termékterv.
 - **Specifikációs státusz:** integrált célarchitektúra rögzítve; specifikációs teljesség nem jelent minden külső API, jogi előírás vagy üzleti igény végleges jóváhagyását.
 - **Implementációs státusz:** minden pont csak repository-, teszt-, böngésző- és szükség szerinti éles bizonyítékkal léptethető. A magas kockázatú publikálási konfliktus ellenőrizendő.
@@ -13465,3 +13465,20 @@ A már részletezett 24/49/54/56/64–76. fejezet tartalmát **nem kell másodsz
 3. `git diff --check`, `git diff --stat`, kritikus fejezetszám-/ID-check, majd csak a dokumentum stagingje, commit, `git push origin v2/foundation`.
 4. Push után remote commit és nyers tervfájl ellenőrzés. **Csak ezután** F0.1: kód-, migráció-, Auth-, ownership- és testbaseline; F0.2–F0.3 csak a kapuk szerinti bizonyíték után.
 5. Az éles telepítés és a D1 migráció külön kockázatos művelet; a puszta dokumentumfeltöltés sem deployt, sem migrációt nem indítson el tudatos jóváhagyás nélkül.
+
+### 77.8. F0.3 tényleges route-integráció és éles olvasásos ellenőrzés — 2026-10-15
+
+**Kiinduló GitHub HEAD:** `dbab7e73f6272700101e50fd8cf49879eea59c85`, `v2/foundation`. **Aktív pont változatlan:** `F0.3-PREVIEW-PUBLISH-PUBLIC`, **IN PROGRESS / NOT YET PASS**. A HIGH publish conflict éles E2E bizonyítékig OPEN.
+
+**Igazolt hiány és változtatás:** a korábbi statikus contract- és külön bemásolt SQL-tesztek nem futtatták a tényleges TypeScript route-okat. Az új `tests/f0-3-route-integration.test.js` a production `adminEditorRoute` és `publicPagesRoute`, valamint a valódi session-hash/jogosultságkezelés kódját hívja, SQLite-adapterrel. A batch adapter tranzakciót használ; a versenyhelyzet determinisztikusan a route előellenőrzése és batch végrehajtása közé illeszti a másik valódi route-hívást. Ez automatizált teszt, nem külön telepített tesztkörnyezet. Runtime kód-, séma-, migráció- és éles adatváltoztatás ebben a lépésben nem történt.
+
+**Helyi eredmények:**
+- Új route-integráció: **8/8 PASS**. Anon/viewer preview és írás tiltása; draft–publish–rollback–újrapublish izoláció; konkurens publish nyertes/409; audit SQL-hibánál teljes batch visszagörgetés; unpublish/publish verseny és idempotens unpublish audit; idegen site olvasás/írás kizárása; rollback/publish verseny; hiányzó/elavult revision és hibás hierarchia elutasítása mutáció nélkül.
+- Meglévő F0 baseline: **94/94 PASS** (Admin home/access, domain, Editor core, schedule, SQLite-konkurencia és F0.3 contract tesztek).
+- `npm run typecheck`: **PASS**. `python3 scripts/check-canonical-plan.py`: **PASS**.
+- Az új integrációs teszt bekerült a `.github/workflows/f0-baseline.yml` folyamatba. Helyi futtatás: `node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/f0-3-route-integration.test.js`. A helyi Node verzió 24.19.0; a CI Node 22-t használ, ezért a helyi PASS önmagában nem CI PASS.
+- D1 batch-szerződés ellenőrzött forrása: https://developers.cloudflare.com/d1/worker-api/d1-database/#batch — a batch hibájára az egész műveletsor visszagörgetendő. A SQLite-adapter ezt modellezi; nem bizonyítja a telepített Worker/D1 futását.
+
+**Éles, kizárólag olvasásos HTTP-ellenőrzés:** a meglévő `sanci9517-streamer-brand.sandor-bogadi95.workers.dev` környezet `/api/health` végpontja **200**, `ok:true`; `/api/public/pages?preview=1` bejelentkezés nélkül **401 UNAUTHORIZED**; `/api/public/pages` **200**, `ok:true`, 9 oldal. A két public API-válaszban `Cache-Control: private, no-store, max-age=0` és `Vary: Cookie` szerepelt. Ez a hozzáférési/cache-fejléc smoke eredménye, nem teljes vizuális vagy éles konkurencia-elfogadás, és a health verziószáma nem bizonyít telepített commitazonosságot.
+
+**Következő szükséges bizonyíték:** hitelesített éles Editor/D1 E2E ugyanazon tesztoldalon: oldal-ID, draft revision és published pointer rögzítése; két azonos revisionből induló publish közül pontosan egy siker és egy 409; egyetlen új revision/audit; a nyertes publikus snapshot és metadata; rollback után változatlan public, majd explicit újrapublish után visszaállított public. A tesztoldal tartalma szabadon cserélhető, de az előállapotot rögzíteni kell. Ebben a munkamenetben hitelesített éles felhasználói session nem állt rendelkezésre; auth megkerülés vagy új session létrehozása nem történt. E bizonyíték nélkül F1 nem aktiválható.
