@@ -136,3 +136,45 @@ Az alábbi megállapítások a **tényleges** kanonikus terv 24. fejezetének st
 | 54.5.05 | INT-017 provider webhook lifecycle; SEC-009 shared signature/replay negative tests; INT-008 sync history/retry/provider errors | **SPLIT / PARTIAL**: INT-017 és SEC-009 releváns; INT-008 sync history nem bizonyít webhook dedupe/dead-letter viselkedést | Signature, replay, dedupe, retry, DLQ és idempotencia per-provider |
 
 **Korlát:** a jelöltpárok valódi definícióinak ellenőrzése nem teljes 17 mezős feature-contract audit. A fenti WRONG CANDIDATE nem jelenti, hogy a képesség a MASTER más pontjában biztosan hiányzik. Nem jár szemantikai PASS, amíg minden részfunkció és acceptance nincs tételesen igazolva. A kanonikus terv továbbra is IN PROGRESS / NOT PASS.
+
+## Tényleges 24. fejezetbeli ID-definíciók összevetése — fennmaradó 37 többértelmű sor
+
+Az alábbi soroknál a lexikai jelöltek **valódi, a kanonikus 24. fejezetben szereplő meghatározásait** olvastuk el. A PARTIAL és WRONG minősítés kizárólag a jelöltpárra vonatkozik, nem a teljes platform képességhiányára.
+
+| 54.x | A jelölt ID-k tényleges jelentése | Eltérés / kötelező további ellenőrzés |
+|---|---|---|
+| 54.4.05 | RES-004 image variants; RES-007 alt/license | PARTIAL: search/collection not covered by these IDs |
+| 54.5.07 | INT-021 future payment/email/commerce; SEC-008 secret storage | PARTIAL: calendar/CRM/cloud storage not demonstrated |
+| 54.6.07 | LIV-010 recording retention; SCH-009 countdown; SCH-010 public schedule projection | WRONG+PARTIAL: LIV-010 not game profiles; SCH IDs only calendar/countdown |
+| 54.6.08 | LIV-003 stream metadata; LIV-006 event normalization; LIV-007 status display | WRONG: none establishes preparation checklist, markers or technical test |
+| 54.7.02 | OBS-001 overlay metadata; OBS-003 scene/stream state; OBS-005 browser source | PARTIAL: scene commands/mute/volume not established |
+| 54.7.03 | OBS-001 overlay metadata; OBS-005 browser source; OBS-003 scene state | PARTIAL: overlay editing canvas, safe area, variants not established |
+| 54.7.04 | OBS-006 provider-supported alerts; COM-006 member profiles/follows | WRONG+PARTIAL: COM-006 not event alert lifecycle |
+| 54.7.09 | COM-012 abuse/spam; COM-013 membership gate; COM-018 visibility policy | WRONG+PARTIAL: member visibility not provider chat moderation |
+| 54.8.02 | RES-004 image pipeline; RES-006 asset taxonomy; CNT-001 canonical content schema | WRONG+PARTIAL: content metadata belongs CNT-001; RES-006 excludes content taxonomy |
+| 54.8.05 | CNT-017 short-form export; CNT-018 transcript/chapter metadata; CNT-021 timeline editing | PARTIAL: transcript review metadata yes; SRT/VTT/speaker translation export not proven |
+| 54.8.10 | CNT-017 short-form export; CNT-021 timeline editing | WRONG: neither is provider publishing API or manual release guidance |
+| 54.8.12 | CNT-019 editor feed binding; CNT-020 public feed projection; RES-001 asset registry | PARTIAL: RES-001 is binary assets, not social post publishing/analytics |
+| 54.9.01 | COM-006 member profile/follows; COM-019 fan account identity/export/delete | PARTIAL: COM-019 relevant; login/auth lifecycle still requires verification |
+| 54.9.05 | COM-002 Discord entry; COM-009 moderation/role; COM-013 membership visibility | PARTIAL: entitlement-to-Discord role mapping/revocation not demonstrated |
+| 54.9.08 | COM-013 member visibility; COM-018 visibility policy; COM-006 profiles | PARTIAL: COM-006 irrelevant; server-side auth needs SEC |
+| 54.11.06 | ANL-007 date/filter/export; CAM-004 media kit export | WRONG+PARTIAL: CAM-004 not sponsor reporting |
+| 54.12.01 | AUT-001 trigger routing; AUT-002 trigger catalogue; AUT-003 condition rules | PARTIAL: action/branch/visual graph not covered by these three |
+| 54.12.07 | AUT-001 trigger; AUT-004 action; AUT-008 run history | WRONG: AI-generated draft approval/simulation not proven; AUT-009 approval candidate |
+| 54.13.01 | AI-001 model registry; AI-017 Control Center/approval; AI-021 generation costs | PARTIAL: retention/stop switch/quotas need separate verification |
+| 54.13.03 | AI-011 website assistant; AI-012 SEO/a11y/localization suggestions | PARTIAL: component/responsive proposal approval remains unproven |
+| 54.13.04 | AI-001 model registry; AI-015 stream diagnostics/summary | PARTIAL: opt-in and live markers not established |
+| 54.13.08 | AUT-001 trigger; AUT-004 action; AUT-008 run history | WRONG: no natural-language draft/typed diff in these definitions |
+| 54.13.10 | AUT-001 trigger; AUT-009 dry-run/preview/approval; AUT-014 safe cross-domain actions | PARTIAL: AI risk tier, audit and undo not proven |
+| 54.14.01 | WEB-012 public routes/404; WEB-029 public search | WRONG: neither is Admin/public locale preference |
+| 54.14.03 | WEB-001 page CRUD; WEB-011 mobile navigation; WEB-015 public live page | WRONG: none specifies locale-specific content/OG/alt variants |
+| 54.14.06 | WEB-010 header/footer; WEB-011 mobile keyboard; LOC-001 translation fallback | PARTIAL: RTL/font fallback/long copy not proven |
+| 54.15.02 | SEC-002 server RBAC; QA-003 negative tests; SET-002 site scope | PARTIAL: role matrix/modular grants need separate acceptance |
+| 54.15.04 | SEC-007 rate limit; SEC-008 secrets; SEC-001 session | PARTIAL: 2FA/SSO planned; anomaly detection not demonstrated |
+| 54.15.08 | SEC-009 webhook security; SEC-010 security audit; OPS-001 health | PARTIAL: queues, quota, error logs not established |
+| 54.15.10 | OPS-005 operational backup/restore; QA-007 evidence gate | WRONG: undo/redo and revision diff are not backup/restore |
+| 54.15.13 | SEC-003 tenant isolation; QA-002 domain/API tests; SEC-009 webhook security | WRONG+PARTIAL: SEC-003/009 not generic test-suite catalog |
+| 54.16.02 | TEAM-003 role grants; DEV-001 API docs; DEV-002 API keys | WRONG: no extension/widget manifest lifecycle |
+| 54.16.05 | SEC-003 isolation; TEAM-001 switcher; TEAM-005 multi-site workflows | PARTIAL: invitations and role lifecycle require distinct proof |
+
+**Eredmény:** mind a 47 AMBIGUOUS CANDIDATES sor lexikai jelöltjeinek első, 24. fejezetbeli definíció-alapú összevetése dokumentált (10 korábban + 37 itt). **0 teljes szemantikai PASS**: a 49. fejezet, feature contractok, eredeti történeti owner/surface/phase/dependency/acceptance és negatív tesztek tételes ellenőrzése még nyitott. WRONG jelölteket nem szabad automatikusan átvezetni vagy törölni. A következő fázis a hibás jelöltek helyett tényleges stabil ID-k keresése és az igazolt GAP-ek kanonikus tervbe vezetése.
