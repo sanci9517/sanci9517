@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.102` — **Editor műveletkezelők és published metadata storage döntési mátrix**; stable-ID döntések, 63.50.46 HIGH publish conflict, 00/A/00.9.6.B és runtime bizonyítás OPEN; **PLAN IN PROGRESS / NOT PASS.**  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.103` — **D1 Page schema/index és robots/sitemap/redirect leltár**; stable-ID döntések, 63.50.46 HIGH publish conflict, 00/A/00.9.6.B és runtime bizonyítás OPEN; **PLAN IN PROGRESS / NOT PASS.**  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -11192,6 +11192,26 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 **Kötelező UI regressziók:** első publikálás után a LIVE címke és gombok helyesek újratöltés nélkül; draft-only mentés nem jelöl LIVE változást; Preview mentetlen módosításra világos jelzést ad; draft slug preview nem szivárogtat publikus URL-t; stale version 409; publish failure nem mutat sikeres állapotot; mobile és desktop ugyanazon műveletet hívja.
 
 **Következő kurzor: 63.50.103** — pages schema/index és sitemap/robots/redirect implementáció bizonyítékainak feltárása, majd a storage modell kiválasztási döntésének előkészítése. A 63.50.46 HIGH továbbra is SOURCE CONFIRMED / NOT FIXED; 00/A, 00.9.6.B és történeti szemantika OPEN. PLAN IN PROGRESS / NOT PASS; F0 nem indult.
+
+### 63.50.103. D1 Page schema/index és robots/sitemap/redirect leltár (2026-10-15)
+
+**SOURCE VERIFIED / DESIGN GATE OPEN / NO RUNTIME PASS.** Ellenőrzött forrás: migrations/0001_initial_schema.sql, 0002_editor_platform.sql, 0003_v2_initial_schema.sql, 0015_site_ownership_foundation.sql, 0017_site_ownership_not_null.sql, src/index.ts, valamint public/ és public/assets/ könyvtárak aktuális listája. Ez repository-source leltár, nem élő D1 PRAGMA eredmény.
+
+**A jelenlegi 0017 rebuild Page-séma tényei:** pages.id PK; pages.slug TEXT NOT NULL UNIQUE (globális egyediség, nem site_id+slug kompozit); közös title/description; draft content_json; published_content_json; published_revision_id FK editor_revisions(id) ON DELETE SET NULL; is_published; sort_order; site_id NOT NULL FK sites(id) ON DELETE RESTRICT. Az editor_revisions page_id FK pages(id) ON DELETE CASCADE és UNIQUE(page_id,version). Az indexek között idx_pages_sort_order, idx_pages_published_revision, idx_pages_site_id és revision page/version indexek szerepelnek. A 0017 migráció defer_foreign_keys és mindkét tábla snapshotolásával kezeli a ciklikus FK-kapcsolatot.
+
+**Architekturális következmények:** (1) A pages.slug globális UNIQUE jelenleg nem tenant-szintű URL uniqueness: későbbi több-site modellnél site_id+published_slug és redirect namespace külön döntés. (2) A published_revision_id SET NULL FK miatt a published pointer és a snapshot eltérését/nullját explicit invariant ellenőrzéssel kell kezelni. (3) A Page és Revision FK-ciklus miatt minden új metadata/publish migráció adatmentés, FK-check, defer policy és restore terv nélkül blokkolt. (4) A külön draft/published slughoz egyedi index és legacy URL backfill szükséges, nem elég egy új oszlop.
+
+**Robots/sitemap/redirect leltár:** a vizsgált src/index.ts nem tartalmaz explicit /robots.txt vagy /sitemap.xml route-ot; a public gyökérben nincs robots.txt, sitemap.xml vagy redirect nevű fájl; a public/assets gyökérben sincs ilyen név. A src/index.ts LEGACY_REDIRECTS létezik, de az Admin legacy route-okra vonatkozik, nem bizonyít Page slug history/redirect registry-t. Ezek a leltározott útvonalak nem bizonyítják, hogy a teljes repository minden részén hiányzik SEO implementáció; teljes keresés és HTTP evidence még kell. WEB-013, SEO-004 nem PASS.
+
+| Döntési kapu | Meglévő ID-k | Elfogadási feltétel |
+| --- | --- | --- |
+| Tenant URL key | WEB-002, WEB-013, SEC-010 | site_id + published slug egyediség; draft slug és redirect foglalás konfliktuskezelése; nem törhetnek meg meglévő URL-ek |
+| Published revision integrity | WEB-004, WEB-008, QA-007 | FK/NULL/backfill audit; published snapshot és revision egyezése; sikertelen migráció után helyreállítható |
+| SEO delivery | SEO-001, SEO-004, WEB-012 | Published URL-hez konzisztens robots/sitemap/canonical és HTML 404/redirect, preview noindex |
+| Legacy redirects | WEB-013 | Admin route alias nem helyettesíti a Page URL redirect registry-t; redirect lánc/hurok és 301/308 szabályok |
+| Migration safety | OPS-005, QA-008 | Remote D1 read-only PRAGMA/index/FK preflight, backup, rollback/restore próba, tenant-aware uniqueness ütközések kezelése |
+
+**További sorrend 63.50.104:** az index.ts LEGACY_REDIRECTS pontos határainak, a teljes repository SEO/robots/sitemap forrásainak és a pages.slug használatának keresése; majd a metadata storage modell egyetlen választásának megalapozása. Nincs új migráció vagy production változás. 63.50.46 HIGH OPEN/NOT FIXED; PLAN IN PROGRESS/NOT PASS; 00/A, 00.9.6.B és történeti szemantika OPEN.
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
