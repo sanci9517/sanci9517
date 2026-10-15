@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.118` — a történeti forráshiány és a HIGH publikálási döntés fennmaradó blokkolóinak ellenőrzése, a terv-review és runtime PASS kapuk elválasztása; **PLAN IN PROGRESS / NOT PASS.**  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.119` — source-gap és high-risk döntési mátrix, a 22 modulos közös funkciólista-review előkészítése; HIGH publish conflict továbbra is OPEN; **PLAN IN PROGRESS / NOT PASS.**  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -11839,6 +11839,22 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 **Közös no-duplication döntés:** `AI-012` nem lesz második Visual Editor; `QA-004` nem lesz AI business logic owner; `ANL-007` nem helyettesíti az experiment assignment modellt; `AI-002` nem birtokolhat önálló platform-metrika adatot. A részletes API/storage/permission/retention megvalósítás a megfelelő fejlesztési fázis előtti 10. fejezet szerinti feature-contractban kötelező.
 
 **Következő aktív alpont: `63.50.118`** — hiányzó történeti források és publikálási döntés fennmaradó blokkolóinak ellenőrzése, majd a terv-review kapu pontos szétválasztása a runtime feature-PASS-tól. **PLAN IN PROGRESS / NOT PASS; HIGH publish conflict OPEN.**
+
+### 63.50.118. Forrásproveniencia, tervkapu és fejlesztésindítási határ (2026-10-15)
+
+**EVIDENCE REVIEW / HISTORICAL SOURCE STILL PARTIAL / PLAN NOT PASS.** A repository `v2/foundation` Git-tree leltára **200 bejegyzés, `truncated=false`**; a `docs/archive/MASTER-DEVELOPMENT-PLAN-2026-10-13.md` fájl SHA `bcd8b3d9dc1ef424c7e05ced2623e29eebf5543b`, tehát a történeti archívum ténylegesen jelen van. Az archívum teljes szövegében öt szó szerinti `00/A` vagy `00.9.6.B` említés volt. **Új, konkrét részleges forrásbizonyíték:** az archívum 36. sora alatt `## HISTORICAL / QUEUED — 00/A.2.2 — F — SCHEDULE CRUD + INSPECTOR / DOMAIN-DRIVEN EDITOR — DEFINITION OF DONE` fejezet kezdődik, megőrzött szabályokkal: egyetlen `public/editor-v2/` canonical Editor, Schedule D1 domainadat, Page Model csak presentation, Inspector nem külön state, site-scope és közös command/history/validation/persistence. Ez a **00/A.2.2 részleges, hitelesen megőrzött szövege**, nem az eredeti teljes `00/A` vagy `00.9.6.B` visszanyerése. Az archívum külön állítja, hogy a korábbi címek teljes formában nem találhatók meg.
+
+**PR/commit vizsgálat:** a `00/A` és `00.9.6.B` GitHub commit-szövegkeresése 0 találat; a #29 és #30 PR közös issue/review/inline kommentfolyama PR-enként 1 elemet adott, egyik sem tartalmazza e két címke szövegét. A PR #29 az új terv és archívum létrehozását, #30 az egyetlen aktív terv elsőbbségét rögzíti. A keresés negatív eredménye **nem** bizonyítja a teljes Git history minden blobja vagy törölt fájlja hiányát.
+
+**Lényeges történeti döntés:** a 2026-10-13-i archív MASTER kifejezetten `M0 CLOSED BY USER PRODUCT DECISION — nem PASS` állapotot és azt az elvet tartalmazza, hogy a fennmaradó történeti traceability tételek a releváns **implementációs feature-DoD-be** kerüljenek, ne végtelen, önálló auditmunkává váljanak. Ez történeti termékdöntés, **nem** írhatja felül az aktuális MASTER mostani `PLAN IN PROGRESS / NOT PASS` státuszát. Ugyanakkor a jelenlegi terv lezárásának értelmezésekor kötelező elkerülni a hibát, hogy minden jövőbeli AI/OBS/provider képesség runtime bizonyítékát **a fejlesztés megkezdése előtt** követeljük.
+
+**Két, különböző kapu — végrehajtási javaslat:**
+- **PLAN READY FOR USER FEATURE REVIEW:** a 396/396 ID és 271/271 H-ID strukturális integritás igazolt; a 22 modul és ownership-szabályok ellenőrzöttek; minden ismert high-risk konfliktus, hiányzó történeti forrás és szemantikai bizonytalanság explicit kockázat/owner/fázis/feature-DoD döntést kap. A teljes történeti `00/A` és `00.9.6.B` hiányát nem szabad hamis `SOURCE RECOVERED`-ként kezelni, de dokumentált **source gap / risk accepted for planning only** döntés mellett a funkciólista közös áttekintése elindítható. Ez nem feature runtime PASS.
+- **FEATURE IMPLEMENTATION / RELEASE PASS:** minden konkrét fejlesztési pont saját permission, D1/R2, migration, rollback, browser/CI, provider, negative tests és user acceptance bizonyítékot kap. A `63.50.46` HIGH publish konfliktus **nem blokkolhatja az összes független UI/spec munkát**, de **blokkolja az érintett publish/metadata/URL író útvonalak release-ét**, amíg a canonical publishing contract és a szükséges migráció tesztjei nem PASS-ok.
+
+**Jelenlegi szigorú állapot:** a fenti kapuszétválasztás **javasolt értelmezés**, nem felhasználói jóváhagyás és nem automatikus terv-PASS. A teljes eredeti 00/A és 00.9.6.B forrás `PARTIALLY RECOVERED / REMAINDER OPEN`; `00/A.2.2` archív részlet igazolt. A HIGH publish conflict `SOURCE CONFIRMED / NOT FIXED`. Nem futott migráció, runtime teszt vagy deploy.
+
+**Következő aktív alpont: `63.50.119`** — a fennmaradó kritikus szemantikai és source-gap sorok lezárási döntési mátrixa, 22 modulos funkciólista-review előkészítése, a valóban blokkoló és feature-fázisba vihető tételek szétválasztása. **PLAN IN PROGRESS / NOT PASS.**
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
