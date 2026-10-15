@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.97` — **központi publikálási contract és cross-surface konzisztencia ellenőrzése**; stable-ID döntések, 63.50.46 HIGH publish conflict, 00/A/00.9.6.B és runtime bizonyítás OPEN; **PLAN IN PROGRESS / NOT PASS.**  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.98` — **HIGH publish conflict draft/published metadata döntése és stabil ID-crosswalk**; stable-ID döntések, 63.50.46 HIGH publish conflict, 00/A/00.9.6.B és runtime bizonyítás OPEN; **PLAN IN PROGRESS / NOT PASS.**  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -11096,6 +11096,26 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 **Kötelező kapcsolás a meglévő tervhez:** a 24. fejezet publishing/content, editor revision, integrations, automation, security és QA stabil ID-ihez tételes crosswalk szükséges, továbbá a 54.8.10 és 63.50.46 HIGH conflict konkrét szövegével összevetés. A táblázat a szerződést pontosítja, de önmagában nem bizonyítja a 396 ID teljes szemantikai egyezését. Fázis/owner/permission/függőség és tesztek véglegesítését a megfelelő kanonikus modulfejezetben kell elvégezni, nem második roadmapben.
 
 **Nyitott kapuk:** 63.50.46 HIGH publish conflict; 00/A és 00.9.6.B forráshiány; teljes historical semantic review; tényleges D1/Worker/Editor/Public/provider pozitív és negatív futási tesztek. **PLAN IN PROGRESS / NOT PASS; F0 továbbra sem nyitott.**
+
+### 63.50.98. HIGH publish conflict — draft/published metadata és stabil ID-crosswalk (2026-10-15)
+
+**SPEC DECISION / SOURCE CONFLICT OPEN / RUNTIME NOT FIXED.** A 63.50.46 bizonyította, hogy az Admin Pages PATCH explicit publish nélkül módosíthatja a published snapshotot, és a közös slug/title/description draft/published összemosódást okozhat. A 63.50.97 contractot a Page domainre konkretizáljuk.
+
+**Kanonikus döntés:** Admin Pages PATCH és Editor Save Draft kizárólag draftot ír. A Publishing operation az egyetlen jogosult published revision, snapshot és published metadata/URL állapotot atomikusan váltani. A Public mindig a legutóbbi explicit publikált revízióhoz tartozó tartalmat, címet, leírást, slugot és SEO adatot szolgálja ki. A pontos D1 migrációs modellt csak aktuális séma, route, FK és backup vizsgálat után lehet kiválasztani.
+
+| Vizsgálat | Meglévő stabil ID-k | Kötelező pozitív és negatív acceptance |
+| --- | --- | --- |
+| Draft-only PATCH | WEB-001, WEB-004, EDT-027, EDT-033 | Published v1 → draft v2 PATCH: Public v1 marad; published revision és metadata nem változhat |
+| Explicit publish | WEB-004, WEB-006, WEB-007, EDT-033 | Validált, jogosult publish atomikusan v2-re vált; hibás vagy stale revision nem publikál |
+| Slug és redirect | WEB-002, WEB-012, WEB-013, SEO-001, SEO-004 | Draft slug nem töri el az élő URL-t; publish után redirect/404/sitemap/canonical konzisztens |
+| Preview izoláció | WEB-005, EDT-032, SEO-001 | Jogosult preview draft v2-t mutat noindex mellett; Public nem lát draft SEO metadata-t |
+| History/rollback | WEB-007, WEB-008, EDT-029 | Draft rollback nem publikál; published rollback külön auditált explicit művelet |
+| Ownership/security | WEB-001, WEB-007, SEC-002, SEC-010 | Idegen site, viewer, lejárt session, jogosulatlan művelet és stale write tiltott |
+| Recovery/test | QA-002, QA-007, QA-008, OPS-005 | Migráció előtt read-only D1 leltár és backup; restore próba, CI, browser és production bizonyíték szükséges |
+
+**Végrehajtási sorrend csak a tervkapu után:** (1) aktuális Page/Editor route és D1 schema read-only audit; (2) migráció/rollback design; (3) reprodukáló regressziós tesztek; (4) minimális domain-javítás; (5) preview/URL/SEO/cache ellenőrzés; (6) role/site/concurrency/restore teszt; (7) browser/production evidence. Nincs második Editor, Page CRUD vagy publish engine.
+
+**Crosswalk döntés:** az ismert stabil ID-k alatt a követelmény elhelyezhető, új stable ID jelenleg nem indokolt. A 63.50.46 HIGH hiba továbbra is OPEN/NOT FIXED; a 00/A és 00.9.6.B, történeti szemantika és végső review szintén OPEN. PLAN IN PROGRESS / NOT PASS; F0 nem indult.
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
