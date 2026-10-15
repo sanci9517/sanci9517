@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.114` — a 63.50.113-ban igazolt 396/396 routing és 271/271 történeti ID strukturális PASS után célzott szemantikai acceptance/owner hiányok, 63.50.46 HIGH publish conflict és 00/A/00.9.6.B source gate; **PLAN IN PROGRESS / NOT PASS.**  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.115` — a 145 több-ID-s történeti követelmény owner/consumer/QA szerepeinek célzott szemantikai auditja és 00/A/00.9.6.B forráskeresés; 63.50.46 HIGH publish conflict OPEN; **PLAN IN PROGRESS / NOT PASS.**  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -11745,6 +11745,26 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 **Külön blokkolók:** `63.50.46` HIGH publish/metadata storage konfliktus **OPEN / NOT FIXED**; a történeti `00/A` és `00.9–00.9.6.B` **SOURCE NOT RECOVERED / OPEN**. A 271/271 ID-lefedettség nem bizonyítja az eredeti forrásszöveg teljes visszanyerését. Nincs funkcióimplementáció, migráció, deploy vagy runtime PASS.
 
 **Következő aktív alpont: `63.50.114`** — a fenti szemantikai kockázati csoportok konkrét feature-contract/acceptance hiányainak soronkénti rögzítése, majd `63.50.46` publish döntés és hiányzó történeti források lezárási szabályainak vizsgálata. A közös 22-modulos funkciólista-review csak bizonyított tervkapu után következhet. **PLAN IN PROGRESS / NOT PASS.**
+
+### 63.50.114. Szemantikai bizonyítási kapuk és publikálási döntés kerete (2026-10-15)
+
+**DESIGN GATE CLARIFIED / NO RUNTIME FIX / NOT PASS.** A 63.50.113 igazolta a 396/396 registry-routing és a 271/271 történeti cél-ID halmazegyezést. A további auditban nem keverhető össze a strukturális megfeleltetés, a specifikációs döntés és a futó kód igazolása. A jelen fejezet **nem** zárja le a 63.50.46 HIGH konfliktust és nem pótolja a hiányzó történeti forrásokat.
+
+**A 63.50.46/98–106 alapján a publikálás minimális elfogadási szerződése:**
+1. A draft Page Model és a published projection elkülönül: Admin Pages PATCH, Editor Save és rollback nem írhat published snapshotot, published title/description/slug/canonical adatot vagy publikált revision pointert; kizárólag az explicit Publish jogosult erre, ugyanazon canonical Publishing commandon át.
+2. Az explicit Publish permission/site-scope/revision precondition és teljes dokumentumvalidáció után atomi, idempotens snapshot + published metadata + URL state változást hoz létre. Hibánál nincs részleges publish, stale revision esetén konfliktusválasz és megőrzött draft.
+3. A Public renderer, route resolver, redirects, sitemap, robots, OG/canonical és cache **kizárólag** a published projectiont fogyasztják; a preview authorization-kötött, noindex és sosem szivárog publikus sitemapbe vagy shared cache-be.
+4. Slug-váltásnál az előző publikus URL megtartott redirect/history rekordot kap, nincs cross-site slug collision, redirect-loop vagy draft URL leak. Ismeretlen URL valódi HTTP 404, nem csak 200-as hibaképernyő.
+5. Unpublish/restore/rollback külön, verziózott state transition; a draft-only restore nem publikál automatikusan. Migráció előtt read-only D1 preflight, backup/restore bizonyíték és a `pages ↔ editor_revisions` FK-ciklus dry-run kötelező.
+6. Pozitív és negatív acceptance: published v1 → draft v2 → PATCH meta → public továbbra is v1; explicit publish → public v2; jogosulatlan/rossz site/replay/stale revision elutasítás; redirect, canonical, sitemap, robots, OG, cache és rollback böngésző + HTTP teszt. **Mindez tesztterv, nem futtatott PASS.**
+
+**Storage döntési állapot:** a 63.50.106-ban javasolt **B — published revisionhez kötött immutable published metadata/URL projection** a tervezési preferencia, nem jóváhagyott migráció. A végleges választás feltétele a tényleges remote D1 schema/adatprofil, FK/unique index, URL-history és rollback bizonyíték. A/B/C alternatíva nem válhat párhuzamos implementációvá; a választásig minden érintett `WEB-002/004/006/007/013`, `EDT-027/033`, `SEO-001/002/004`, `SET-004`, `DYN-007` acceptance OPEN.
+
+**Történeti követelmény-kapu:** 271/271 H19–H34 sorhoz létező stabil ID tartozik; 145 sor több domain/funkció ID-t érint, ami **nem** jogosít második adatgazdára. A több-ID-s esetekben primary writer, read-only consumer, provider adapter és QA-only acceptance szerepet külön kell rögzíteni. A korábban kiemelt `H23.18`, `H24.06–08`, `H25.01–12`, `H29.01–10`, `H31.00`, `H32.02–06`, `H33.00`, `H34.20–22` csoportok egyedi negatív acceptance és runtime/provider bizonyítéka OPEN.
+
+**00/A és 00.9–00.9.6.B:** `SOURCE NOT RECOVERED / OPEN`; nem írható át `SEMANTIC PASS`-ra pusztán azzal, hogy a 271 elérhető történeti sor megtalálható. A lezárás feltétele dokumentált, kellően széles történeti Git/PR/archív keresés és a fel nem kutatható eredeti forrás explicit no-loss kockázati döntése; eredeti tartalom kitalálása tilos.
+
+**Következő alpont: `63.50.115`** — a 145 több-ID-s történeti sor primary owner/consumer/QA szerepének részletes, kockázatalapú egyeztetése és a hiányzó források további bizonyítékkeresése. Ezután dönthető el a tervkapu és a közös funkciólista-review időpontja. **PLAN IN PROGRESS / NOT PASS; implementation freeze remains.**
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
