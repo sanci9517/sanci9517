@@ -159,7 +159,7 @@ test('public lookup excludes unpublished draft slugs and disables caching', asyn
     { DB }
   );
   assert.equal(response.status, 404);
-  assert.match(DB.calls[0].sql, /published_slug=\\?2/);
+  assert.ok(DB.calls[0].sql.includes('published_slug=?2'));
   assert.match(DB.calls[0].sql, /is_published=1/);
   assert.equal(response.headers.get('Cache-Control'), 'private, no-store, max-age=0');
   assert.equal(response.headers.get('Vary'), 'Cookie');
