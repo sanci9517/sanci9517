@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.67` — **156/156 acceptance specifikáció**, 63.50.63–66 forráskód-gate és prioritás; 63.50.67 célzott történeti Git-forráspróba (00/A és 00.9.6.B továbbra is UNRECOVERED); **következő: git tree/PR és H19–H34 271 tétel szemantikai forrásbizonyíték-vizsgálata**; runtime/CI és user review OPEN; történeti és runtime evidence továbbra is nyitott, különös tekintettel a 63.50.46 HIGH publikálási konfliktusra. A 156 első körös routing kész, de szemantikai és történeti kapu továbbra is nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll és a 63.50.46 HIGH kódaudit-blokkoló ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.69` — nagy MASTER biztonságos fetch_blob visszaolvasás, **00/A.2.2 PARTIAL RECOVERED**, H19–H34 **271 egyedi ID / 279 táblasor / 8 korrekciós duplikált előfordulás**; **következő: 19–34 eredeti forrás szakaszonkénti szemantikai összevetés és 00.9.6.B Git-history/PR**; runtime/CI/user review OPEN; runtime/CI és user review OPEN; történeti és runtime evidence továbbra is nyitott, különös tekintettel a 63.50.46 HIGH publikálási konfliktusra. A 156 első körös routing kész, de szemantikai és történeti kapu továbbra is nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll és a 63.50.46 HIGH kódaudit-blokkoló ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -7208,7 +7208,7 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 5. Minden sikeres audit-commit után a fejléc folytatási állapotát és a legutolsó bejegyzést egyeztetni; a következő munka **egyértelmű azonosítóval**, a még nyitott részhalmazzal és a PASS/NOT PASS határral legyen megadva. A commit SHA csak a GitHub által visszaadott tényleges eredmény alapján közölhető.
 6. Nem létező vagy nem visszanyert történeti forrást nem lehet rekonstruáltnak nevezni; a 396 ID, 22 modul, 156 review és 271 történeti H-ID számlálása nem runtime teszt. A fejlesztési fagyasztás az aktív kapu PASS-áig változatlan.
 
-**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.67 HISTORICAL SOURCE ATTEMPT / NEXT GIT TREE AND H19-H34 SEMANTICS`. A 54.1–54.4 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.7–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
+**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.69 PARTIAL 00A RECOVERY / NEXT HISTORICAL SEMANTICS`. A 54.1–54.4 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.7–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
 
 ### 63.50.41. 54.2 Saját weboldal és Visual Editor: 15 checklist-tétel első körös routingja (2026-10-14)
 
@@ -7945,6 +7945,41 @@ A 63.50.59–62 szerinti 156/156 pozitív-negatív *specifikáció* elkészült;
 **Következő visszakeresési sorrend:** (1) Git tree/history pontos régi path-rename és deleted file audit, (2) PR-ek és kommentek 00/A / 00.9.6.B hivatkozásokra, (3) helyi untracked/stash kivonatok csak a felhasználó által ténylegesen elérhetővé tett fájlok alapján, (4) 271 H-sorhoz source excerpt → current ID → domain → F-phase → acceptance → retained/superseded döntés. A hiányzó B-fejezetet C-ből vagy emlékezetből pótolni tilos.
 
 **GATE:** történeti forrás teljesség **NOT PASS**; nem állítható a végső funkciólista közös felülvizsgálatra késznek pusztán a 156 checklist-sor dokumentálása miatt. **NEXT:** történeti forráshelyek és H19–H34 szemantikai sorok mélyvizsgálata; a P0 publikálási kódhiba továbbra is release blocker.
+
+### 63.50.68. Nagy fájl biztonságos olvasása és 00/A.2.2 részleges forrás-visszanyerés (2026-10-15)
+
+**Új bizonyíték / végrehajtási megoldás:** a kanonikus MASTER már ~1 MB; `fetch_file` a HEAD `b2ef7064bfd8` alatt érvényes blob SHA mellett **üres `content`** választ adott. Ez **nem üres fájl**: ugyanaz a blob `fetch_blob(blob_sha)` művelettel **992220 karakterként** sikeresen visszaolvasható. **Kötelező jövőbeli írási protokoll:** GitHub HEAD → `fetch_file` a blob SHA-hoz → ha tartalom üres, `fetch_blob` → első sor + méret + pontos egyedi insertion marker ellenőrzése → kizárólag egyetlen MASTER-be módosítás → `update_file` az eredeti blob SHA-val → új HEAD/blob visszaellenőrzés. Üres `fetch_file.content` tartalmat **soha nem szabad** visszaírni. Nem készül második aktív terv.
+
+**Visszanyert hiteles archív részlet:** `docs/archive/MASTER-DEVELOPMENT-PLAN-2026-10-13.md` tartalmazza a `## HISTORICAL / QUEUED — 00/A.2.2 — F — SCHEDULE CRUD + INSPECTOR / DOMAIN-DRIVEN EDITOR — DEFINITION OF DONE` című szakaszt. A szakasz 7 megőrzött architekturális szabálya: (1) csak `public/editor-v2/` canonical Editor, (2) Schedule canonical D1 domain, (3) Page Model/presentation és Schedule domain külön, (4) Inspector nem külön property/state engine, (5) legacy Schedule/Admin/Editor nem aktiválható újra, (6) site-scoped mutation/E4 ownership, (7) közös command/history/validation/persistence/audit pipeline. Az archív [x] jelölések **történeti állítások**, nem 2026-10-15-ös új PASS-ok.
+
+| Visszanyert követelmény | Kanonikus cél / tulajdonos | Szemantikai megőrzési acceptance | Bizonyíték |
+| --- | --- | --- | --- |
+| Egyetlen Editor v2 | Editor v2, PAGE/REVISION | /admin/editor egy core, legacy nincs write authority | ARCHIVE SOURCE; runtime újrateszt OPEN |
+| Schedule canonical D1 | SCHEDULE, 49.5 Live/Schedule modul | schedule_items CRUD és site ownership, nincs Page Model event másolat | ARCHIVE SOURCE; runtime OPEN |
+| Presentation/domain külön | PAGE + SCHEDULE + DYN | Schedule node canonical public projectiont fogyaszt, nem ír event rekordot | ARCHIVE SOURCE; public renderer részleges forrás |
+| Inspector egy property registry | PAGE + DESIGN_SYSTEM | Inspector és canvas ugyanazt a command/version útvonalat használja | ARCHIVE SOURCE; E2 történeti bizonyíték, mai E2E OPEN |
+| Legacy nem reaktiválható | Admin/Editor/Schedule route owners | Legacy felület read-only/redirect/archived; nincs párhuzamos persistence | ARCHIVE SOURCE; route regression OPEN |
+| Site ownership | SITE + SCHEDULE + PAGE | idegen site read/write negatív teszt, no cross-tenant | ARCHIVE SOURCE; 0017 schema baseline |
+| Egységes mutation pipeline | PAGE + REVISION + AUDIT | history/validation/save/publish közös command; CMS bypass tiltott | ARCHIVE SOURCE; PUB-01/02/06 jelenleg BLOCK |
+
+**Pontos korlát:** ez **csak a 00/A.2.2 fennmaradt részének visszanyerése**, nem az egész 00/A vagy 00.9.6.B eredeti forrásáé. A korábbi `UNRECOVERED` státuszt ezért részletezni kell: `00/A = PARTIAL SOURCE RECOVERED (00/A.2.2), FULL OPEN`; `00.9.6.B = UNRECOVERED / OPEN`. Az archív szakaszban szereplő régi M0 auditkapu elhagyása és F0 előfeltételei **történeti döntés**, nem a jelenlegi PLAN audit automatikus feloldása.
+
+### 63.50.69. H19–H34 ledger kettős előfordulások és bizonyítékszintek (2026-10-15)
+
+A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előfordulást, de pontosan 271 egyedi történeti ID-t** adott. Ez **nem 279 követelmény**: nyolc ID két táblában szerepel, mert az elsődleges traceability sor mellett szemantikai korrekciós/negatív acceptance sor is van. A 271/271 korábbi strukturális szám helyes, de az összes sor megszámlálása deduplikáció nélkül hibás eredményhez vezet.
+
+| Ismételt H-ID | Elsődleges megőrzési térkép | Második előfordulás szerepe |
+| --- | --- | --- |
+| H19.16 | secure object keys → RES-002, RES-014, SEC-008 | R2 object key nem SEC-009 webhook signature |
+| H21.13 | YouTube statistics → INT-013, ANL-004, ANL-001 | taxonomy nem platformmetrika-implementáció |
+| H21.22 | Secrets + adapter → INT-019, INT-001, SEC-008 | webhook security nem secret storage |
+| H22.16 | title/description/hashtag → CNT-010, CNT-011, AI-013 | AI-014 clip nem szövegjavaslat |
+| H22.19 | performance feedback → ANL-004, CNT-016, ANL-001 | taxonomy nem teljes feedback loop |
+| H28.14 | file validation → RES-003, SEC-006 | XSS sanitization nem teljes MIME/size/magic-byte |
+| H32.18 | content performance → ANL-004, AI-004, AI-013 | stream summary nem content analytics |
+| H34.21 | implementation lifecycle → DEV-001, QA-002, QA-008 | QA önmagában nem implementáció |
+
+**Szemantikai következtetés:** mind a nyolc korrekciót **meg kell őrizni**; nem valódi dupla követelmények és nem törölhetők pusztán deduplikáció címén. A negatív teszt és owner határ a második sorból származik. A 271/271 strukturális ledger mellett a 271/271 *eredeti forráshoz mért teljes szemantikai bizonyítás* továbbra is **NOT PASS**. Következő: történeti 19–34 forrás eredeti szakaszai vs H-ID sorok; majd 00/A és 00.9.6.B további Git-history/PR keresés.
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
