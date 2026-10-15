@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.98` — **HIGH publish conflict draft/published metadata döntése és stabil ID-crosswalk**; stable-ID döntések, 63.50.46 HIGH publish conflict, 00/A/00.9.6.B és runtime bizonyítás OPEN; **PLAN IN PROGRESS / NOT PASS.**  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.99` — **Page publish adatmodell és migrációs függőségek forráskód-auditja**; stable-ID döntések, 63.50.46 HIGH publish conflict, 00/A/00.9.6.B és runtime bizonyítás OPEN; **PLAN IN PROGRESS / NOT PASS.**  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -11116,6 +11116,26 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 **Végrehajtási sorrend csak a tervkapu után:** (1) aktuális Page/Editor route és D1 schema read-only audit; (2) migráció/rollback design; (3) reprodukáló regressziós tesztek; (4) minimális domain-javítás; (5) preview/URL/SEO/cache ellenőrzés; (6) role/site/concurrency/restore teszt; (7) browser/production evidence. Nincs második Editor, Page CRUD vagy publish engine.
 
 **Crosswalk döntés:** az ismert stabil ID-k alatt a követelmény elhelyezhető, új stable ID jelenleg nem indokolt. A 63.50.46 HIGH hiba továbbra is OPEN/NOT FIXED; a 00/A és 00.9.6.B, történeti szemantika és végső review szintén OPEN. PLAN IN PROGRESS / NOT PASS; F0 nem indult.
+
+### 63.50.99. Page publish adatmodell és migrációs függőségek — forráskódhoz kötött audit (2026-10-15)
+
+**Állapot: SOURCE VERIFIED / DESIGN OPEN / NO RUNTIME PASS.** Ellenőrzött fájlok a v2/foundation ágon: src/routes/admin/pages.ts, src/routes/admin/editor.ts és migrations/0005_canonical_page_storage.sql. A 0005 szerint content_json a draft, published_content_json az utolsó explicit published snapshot. A Pages PATCH jelenleg contentChanged és is_published esetén a published_content_json és published_revision_id mezőket is frissíti validált explicit publish nélkül; az Editor POST viszont csak publish=true mellett publikál. Ez a 63.50.46 HIGH konfliktus változatlan bizonyítéka.
+
+**További forrásmegállapítások:** (1) A Pages PATCH közös title/slug/description oszlopokat módosít, ezért a published snapshot védelme önmagában nem választja szét a publikus metaadatot/URL-t. (2) Az Editor POST explicit publish esetén snapshotot és published revisiont frissít, de a metadata/slug szinkronizációja és a Public route feloldása további szerződésvizsgálatot igényel. (3) Az Editor rollback csak draftot és revision historyt ír. (4) A Pages POST isPublished paraméterrel képes új oldalt eleve publikáltként létrehozni; ennek az explicit publish validation és role policy útvonallal való egyezését külön ellenőrizni kell. (5) A pages.ts PATCH response a publishedRevisionId értékét is újraállíthatja, ezért a kliens által látott publish állapot sem tekinthető bizonyítottnak.
+
+| Függőség / owner | Meglévő ID-k | Implementáció előtti kötelező bizonyíték |
+| --- | --- | --- |
+| Page draft/published metadata modell | WEB-002, WEB-004, WEB-006, EDT-033 | pages tábla aktuális CREATE TABLE, indexek, revision FK-k, draft és published title/description/slug szétválasztási alternatívák; adatvesztésmentes backfill |
+| Public URL lifecycle | WEB-012, WEB-013, SEO-001, SEO-004 | Route resolution, redirect prioritás, régi slug megőrzése, 404, sitemap, canonical, preview noindex és cache invalidation |
+| Publish entrypoint consistency | WEB-001, WEB-006, WEB-007, EDT-033 | Pages POST isPublished, Pages PATCH, Editor POST publish, Editor unpublish és rollback útvonalak egységes jogosultsági/validációs mátrixa |
+| Concurrency és ownership | EDT-029, SEC-002, SEC-010 | expectedVersion hiányának és stale update kezelésének negatív tesztje, site_id minden olvasás/írás határán, audit |
+| D1 migráció/restore | OPS-005, QA-007, QA-008 | Remote read-only schema+FK preflight, backup, forward/backward kompatibilitás, dry-run, tényleges restore próba és release rollback |
+
+**Tervezési döntési pontok, még nem implementáció:** A) külön published metadata mezők a pages rekordban, B) immutable published revisionhez kapcsolt metadata és URL state; mindkettőt route, index, migráció és rollback költség szerint össze kell vetni. Nem választunk adatmodellt kizárólag a 0005 migráció alapján. A draft slug egyediség és published slug routing/redirect ütközése, az új oldal publish útvonala és a shared metadata oszlopok külön HIGH acceptance kérdések.
+
+**Kötelező regressziós sorozat:** published v1 → Admin metadata PATCH draft v2 → Public továbbra is v1; Editor Save Draft v3 → Public v1; explicit valid publish → Public v3 és helyes URL/SEO; rollback draft-only; új page isPublished=true csak megfelelő publish validation után; idegen site/role és stale revision tiltott; régi URL redirect vagy valódi 404; sikertelen tranzakció nem okoz félpublikált állapotot. A tesztek itt előírások, nem futási eredmények.
+
+**Következő folytatási kurzor:** 63.50.100 — Public route/slug és Page metadata fogyasztók célzott forrásauditja, majd a migrációs alternatívák kiválasztása. A 63.50.46 HIGH conflict OPEN/NOT FIXED; 00/A, 00.9.6.B és történeti szemantika OPEN. PLAN IN PROGRESS / NOT PASS; F0 nem indult.
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
