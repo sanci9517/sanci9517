@@ -12,7 +12,8 @@ function canonical(document:any,pageId:string){const page=document?.pages?.[page
 export async function adminEditorRoute(request:Request,env:Env):Promise<Response>{
  const { siteId }=getCanonicalSiteContext();
  const user=await getAuthenticatedUser(request,env);if(!user)return error('UNAUTHORIZED',401,'Authentication required');if(!hasRole(user,'editor'))return error('FORBIDDEN',403,'Editor role required');
- const url=new URL(request.url),pageId=url.searchParams.get('pageId')||'';if(!pageId)return error('INVALID_PAGE_ID',400);
+ const url=new URL(request.url),pageId=url.searchParams.get('pageId')||'';
+ if(request.method==='GET'&&!pageId)return error('INVALID_PAGE_ID',400);
  if(request.method==='GET'){
   const row=await env.DB.prepare(`SELECT id,slug,title,description,content_json,is_published,published_revision_id,updated_at FROM pages WHERE id=? AND site_id=? LIMIT 1`).bind(pageId,siteId).first<PageRow>();if(!row)return error('PAGE_NOT_FOUND',404);
   const document=normalizeEditorDocument(parse(row.content_json),row.id,row.title,row.slug,row.description);if(!document)return error('PAGE_NOT_MIGRATED',409,'Az oldal dokumentuma nem alakítható Editor v2 Page Modelre.');
