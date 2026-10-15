@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.92` — **12 forrásszöveggel ellenőrzött, PARTIAL szemantikai crosswalk rekord a 63.50.92 pontban**; a 41 NO LEXICAL és 47 AMBIGUOUS sor első triage-ja dokumentált, de nincs teljes semantic PASS. Következő: minden 54.x sor owner/surface/phase/dependency/positive+negative acceptance és H19–H34 bizonyítása. `63.50.46` HIGH publish conflict NOT FIXED; 00/A/00.9.6.B OPEN; **PLAN IN PROGRESS / NOT PASS.**  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.93` — **a 63.50.92-ben 12 PARTIAL stable-ID crosswalk, a 63.50.93-ban 6 kritikus owner/szerződéshatár ellenőrizve**; a 41 NO LEXICAL és 47 AMBIGUOUS első triage-ja megvan, teljes semantic PASS nincs. Következő: 17 mezős per-row acceptance, történeti H19–H34 és 63.50.46 publish conflict. 00/A/00.9.6.B OPEN; **PLAN IN PROGRESS / NOT PASS.**  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -11002,6 +11002,23 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 **Forrás- és bizonyítékrend:** 24. stabil ID-definíciók; 49. főmodulok; 5./63.20 domain owner; 10./25.–26./63.26–37 feature contract; 54.x eredeti checklist; 63.50.79–80 H19–H34 történeti mezők. A teljes, 17 mezős bizonyítás és az eredeti owner/surface/phase/dependency/pozitív-negatív acceptance összevetése a fenti soroknál is OPEN. A munkajegyzet kizárólag ellenőrzési segédlet: `docs/archive/63-50-92-semantic-review-evidence.md`; **nem második terv**.
 
 **Nyitott blokkolók:** 63.50.46 HIGH publish conflict NOT FIXED; 00/A és 00.9–00.9.6.B történeti forrás OPEN; runtime és negatív tesztek OPEN. Nincs feature implementáció-feloldás, nincs automatikus PASS, nincs stabil ID-k törlése vagy összevonása.
+
+### 63.50.93. Hat kritikus részfunkció szerződéshatárainak kézi ellenőrzése (2026-10-15)
+
+**Státusz: IN PROGRESS / NOT PASS.** A következő hat 54.x sor eredeti szövegét és a 24. fejezet tényleges ID-definícióit egyeztettem. A domain-fejezetben meglévő követelmény nem egyenértékű a teljes, egyedi stable-ID acceptance bizonyítással.
+
+| Követelmény / eredeti fázis | Bizonyított meglévő szerződés és helyes owner-határ | Nem igazolt részfunkció / teszt | Döntés |
+|---|---|---|---|
+| 54.2.14 — P03.1/P03.2/P03.5 | WEB-020 publikus Contact form; WEB a public shell; domain szinten általános űrlap/spam/consent/submission követelmény létezik | Többféle űrlap, admin beküldés-életciklus, rate limit, hozzájárulás visszavonása, hibás input | PARTIAL; a WEB-006 és WEB-030 lexikai jelöltek NEM form contractok |
+| 54.7.11 — P06.1/P06.3 | EXTENSION domain registry/sandbox service, manifest/signature/permission/install/version lifecycle; OBS-005 browser source és OBS-010 overlay preview/export külön fogyasztók | Dedikált stable ID és install/upgrade/remove/permission denial tesztek; a plugin registry nem OBS scene state | CONTRACT EXISTS / STABLE-ID GAP UNPROVEN |
+| 54.8.10 — P05.2 | INT-001 közös provider adapter contract; CNT-013 publish queue, CNT-014 publish status/retry/partial success, CNT-017 short-form export preparation | Provider-API támogatás/tiltás, export + manuális útmutató, platformonkénti hibák, idempotencia | SPLIT / PARTIAL; CNT-021 timeline editor NEM publish adapter |
+| 54.14.01 — P09.5 | LOC-001 translation fallback, LOC-003 content translation; SETTINGS domain locale preference | Admin és Public külön preference tárolás/permission, eltérő locale mellett canonical content integritás | PARTIAL; WEB-012/WEB-029 NEM locale preference |
+| 54.6.08 — P04.2/P05.1 | OBS-004 authorized commands/stream markers; LIV-003 metadata, LIV-006 normalization, LIV-007 status más célú | Preflight checklist tulajdonosa, mikrofon/kamera/bitrate/scene teszt, highlight jegyzet/marker kapcsolata | CONTRACT EXISTS / STABLE-ID GAP UNPROVEN |
+| 54.16.02 — P09.1/P09.3 | EXTENSION manifest/signature/permission/version lifecycle; DEV-001 API reference, DEV-002 API keys és TEAM-003 roles csak kapcsolódó infrastruktúra | Manifest schema validation, sandbox, kompatibilitás, visszavonás, malicious package elutasítása | CONTRACT EXISTS / STABLE-ID GAP UNPROVEN |
+
+**Döntési szabály:** új stable ID-t csak az owner/surface/phase/dependency/acceptance mátrix és a 63.50.79–80 történeti acceptance összevetése után szabad létrehozni. A jelen körben **nem** bővült a 396 ID, nem történt implementáció. Az INT-001 adapter contract és CNT-013/014 publish lifecycle külön owner-réteg, közös provider capability registry INT-018; nem duplikálandó.
+
+**Blokkolók:** 63.50.46 HIGH publish conflict; 00/A és 00.9.6.B történeti forrás; runtime/negatív tesztek OPEN. Következő: 54.2.14, 54.7.11, 54.8.10, 54.14.01, 54.6.08, 54.16.02 teljes, 17 mezős acceptance és H19–H34 eredet-egyeztetés.
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
