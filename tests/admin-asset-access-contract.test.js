@@ -15,15 +15,10 @@ test("canonical Admin and Editor routes require authentication", () => {
   }
 });
 
-test("legacy dashboard HTML paths redirect to the canonical Admin entry", () => {
-  for (const path of ["/admin/home", "/admin-home.html", "/admin.html"]) {
-    assert.ok(worker.includes(`pathname === "${path}"`));
+test("retired entry points return 410 without exposing backing HTML", () => {
+  for (const path of ["/admin-login.html", "/admin-home.html", "/admin.html", "/admin/home", "/editor-v2", "/editor-v2/index.html"]) {
+    assert.ok(worker.includes(`"${path}"`), `Missing retired entry: ${path}`);
   }
-  assert.match(worker, /new URL\("\/admin", request\.url\)/);
-});
-
-test("editor HTML direct access redirects to authenticated entry", () => {
-  assert.ok(worker.includes('pathname === "/editor-v2/index.html"'));
-  assert.ok(worker.includes('pathname === "/editor-v2/"'));
-  assert.ok(worker.includes('new URL("/admin/editor", request.url)'));
+  assert.match(worker, /return new Response\("Gone", \{ status: 410 \}\)/);
+  assert.doesNotMatch(worker, /LEGACY_REDIRECTS/);
 });
