@@ -178,3 +178,14 @@ Az alábbi soroknál a lexikai jelöltek **valódi, a kanonikus 24. fejezetben s
 | 54.16.05 | SEC-003 isolation; TEAM-001 switcher; TEAM-005 multi-site workflows | PARTIAL: invitations and role lifecycle require distinct proof |
 
 **Eredmény:** 43/47 AMBIGUOUS CANDIDATES sor lexikai jelöltjeinek első, 24. fejezetbeli definíció-alapú összevetése dokumentált (10 korábban + 33 itt). **0 teljes szemantikai PASS**: a 49. fejezet, feature contractok, eredeti történeti owner/surface/phase/dependency/acceptance és negatív tesztek tételes ellenőrzése még nyitott. WRONG jelölteket nem szabad automatikusan átvezetni vagy törölni. A következő fázis a hibás jelöltek helyett tényleges stabil ID-k keresése és az igazolt GAP-ek kanonikus tervbe vezetése.
+
+## Utolsó négy többértelmű jelölt definíció-ellenőrzése
+
+| 54.x | A 24. fejezetben ellenőrzött jelöltek | Megállapítás |
+|---|---|---|
+| 54.2.07 | WEB-015 Live route; WEB-016 schedule route shell; WEB-019 community route/CTA | **PARTIAL:** ezek publikus route-ok, nem a dinamikus blokk-katalógus teljes adatbindingja; DYN és Editor blokk-szerződések ellenőrzendők |
+| 54.2.13 | WEB-028 error/maintenance/offline; DYN-001 data source registry | **WRONG+PARTIAL:** egyik sem domain/DNS/HTTPS státusz vagy favicon konfiguráció; WEB-028 csak maintenance részfunkció |
+| 54.2.15 | WEB-030 public cache; DYN-005 dynamic data state machine; DYN-006 cache/freshness | **PARTIAL:** cache releváns, de képoptimalizálás, lazy loading és mért Core Web Vitals nem bizonyított |
+| 54.3.06 | RES-001 asset ID registry; RES-005 asset search; RES-006 tags/collections | **WRONG+PARTIAL:** licenc/forrás inkább RES-007, usage RES-008; owner és verzió tovább ellenőrzendő |
+
+**Most 47/47 többértelmű sorhoz elkészült a jelölt ID-k tényleges 24. fejezetbeli definícióinak első összevetése.** Ez nem végleges szemantikai PASS. A teljes 17 mezős contract, a 49. fejezet és történeti elfogadási feltételek bizonyítása továbbra is nyitott.
