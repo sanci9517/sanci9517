@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.70` — **271/271 H-ID archív forrás ↔ MASTER kétirányú címke/azonosító ellenőrzés, 0 hiányzó ID**, 9 first-occurrence eltérés besorolva; **következő: archív owner/surface/stage/acceptance mély összevetés és 00.9.6.B Git-history/PR**; runtime/CI/user review OPEN; runtime/CI és user review OPEN; történeti és runtime evidence továbbra is nyitott, különös tekintettel a 63.50.46 HIGH publikálási konfliktusra. A 156 első körös routing kész, de szemantikai és történeti kapu továbbra is nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll és a 63.50.46 HIGH kódaudit-blokkoló ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.71` — **271/271 archív ID forrás-egyezés és 16/16 owner/surface/phase/dependency csoportszintű szemantikai szerződés**; **következő: 271 H-ID soronkénti mély acceptance-gap és 00.9.6.B történeti forráskeresés**; runtime/CI/user review OPEN; runtime/CI/user review OPEN; runtime/CI és user review OPEN; történeti és runtime evidence továbbra is nyitott, különös tekintettel a 63.50.46 HIGH publikálási konfliktusra. A 156 első körös routing kész, de szemantikai és történeti kapu továbbra is nyitott; a domain/fázis/evidence további vizsgálata nyitott. Új beszélgetésben előbb a GitHub HEAD + a 63.50.40 frissállapot-protokoll és a 63.50.46 HIGH kódaudit-blokkoló ellenőrzendő, nem a régi csevegés állapota. A strukturális/történeti teljesség kapuja NOT PASS; utána a 396 ID-s közös termék-review, majd az F0. A kód-/runtime-PASS mindig külön bizonyítandó.  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -7208,7 +7208,7 @@ A teljes 54. fejezet checkbox-sorainak **fejezetenkénti** számlálása: `54.1 
 5. Minden sikeres audit-commit után a fejléc folytatási állapotát és a legutolsó bejegyzést egyeztetni; a következő munka **egyértelmű azonosítóval**, a még nyitott részhalmazzal és a PASS/NOT PASS határral legyen megadva. A commit SHA csak a GitHub által visszaadott tényleges eredmény alapján közölhető.
 6. Nem létező vagy nem visszanyert történeti forrást nem lehet rekonstruáltnak nevezni; a 396 ID, 22 modul, 156 review és 271 történeti H-ID számlálása nem runtime teszt. A fejlesztési fagyasztás az aktív kapu PASS-áig változatlan.
 
-**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.70 271 ARCHIVE ID CROSSCHECK / NEXT OWNER SURFACE STAGE`. A 54.1–54.4 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.7–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
+**Jelenlegi folytatási kurzor:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY / 63.50.71 16-GROUP OWNER SURFACE PHASE / NEXT 271 ITEM SEMANTICS`. A 54.1–54.4 további domain/fázis/bizonyíték-kiegészítése külön nyitott; 54.7–54.16 következik, nem a már lezárt 63.50.38 újraírása. **Globális kapu: IN PROGRESS / NOT PASS.**
 
 ### 63.50.41. 54.2 Saját weboldal és Visual Editor: 15 checklist-tétel első körös routingja (2026-10-14)
 
@@ -8024,6 +8024,41 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 **Új forrásbizonyíték-következtetés:** a 271/271 **azonosító és eredeti képességcímke** visszakereshetősége az archívumban ellenőrzött; a 00/A.2.2 részleges visszanyerése ettől külön áll. **Nem PASS** a teljes szemantikai audit: az archív táblák owner/surface/stage/acceptance szövegeinek soronkénti összehasonlítása, az ID→domain/phase új értelmezése és az éles funkciók működése külön vizsgálandó.
 
 **Következő:** az archív H-sorok owner/surface/stage/acceptance oszlopainak szemantikai összevetése 19–22, 23–28, 29–34 csoportban; 00.9.6.B eredeti forrás keresése Git history/PR. **GATE: NOT PASS.**
+
+### 63.50.71. H19–H34 archív owner/surface/stage/dependency — 16/16 csoportos szemantikai szerződés (2026-10-15)
+
+**Módszer:** a 63.50.70 szerinti 271 egyedi H-sor archív elsődleges táblájának `domain owner`, `surface`, `scope/phase`, `dependencies` mezőit csoportonként visszaolvastam; összevetési cél az 5. canonical domain, 49. UI-modul és F0–F11 ütemezés. **Ez csoportszintű szemantikai kontroll**, nem minden egyes H-ID teljes oszloponkénti bizonyítása, és nem runtime acceptance.
+
+| Történeti fejezet | Tételek | Mai kanonikus domain | Felületi tulajdonos | Fázis-kapu | Kötelező megőrzési / negatív szerződés |
+| --- | ---: | --- | --- | --- | --- |
+| H19 | 20 | RESOURCE | Resource Manager + Editor picker + upload API | F0 minimal/F2 full | D1 metadata / R2 binary; site scoped key; usage and safe delete |
+| H20 | 18 | PAGE + source domains | Editor binding + public renderer | F0/F3 + source provider phase | Read projection only; loading/stale/error; no second source store |
+| H21 | 22 | INTEGRATION + LIVE_STATE + CONTENT | Integrations module + Live + Content + public widget | F0 Twitch baseline/F5–F7 others | Cloudflare Secrets, provider scope/quota, no unsupported API |
+| H22 | 19 | SCHEDULE + CONTENT | Schedule module + Content Studio + Editor widget | F0 schedule baseline/F3/F7 | schedule_items canonical, timezone/DST, no copied Page Model events |
+| H23 | 20 | PAGE + REVISION + DESIGN_SYSTEM | Editor Inspector/Canvas + public renderer | F0 baseline/F2 motion | safe interaction, command validation, reduced motion |
+| H24 | 13 | PAGE + DESIGN_SYSTEM + QA | Editor + public site + forms | F0 baseline/F3 accessibility | semantic HTML, keyboard/focus, WCAG, negative test |
+| H25 | 12 | SEO_PUBLICATION + PAGE | Page settings + public HTTP renderer | F0 publish gate/F3 SEO | SSR status/canonical/robots/redirect, no draft leak |
+| H26 | 12 | ANALYTICS | Public collection + Analytics Admin | F9 | consent, retention, source provenance, estimates labeled |
+| H27 | 19 | IDENTITY + ADMIN shell + source domains | Admin home + 22 canonical modules | F1 shell + module phase | permission-aware routes, domain CRUD outside Editor |
+| H28 | 17 | IDENTITY + AUDIT + all owners | Worker/API + Admin + Editor + uploads | F0 security baseline/F4/F11 | server-side can() auth, secrets, CSRF/replay, AI scope later |
+| H29 | 10 | BACKUP + REVISION + RESOURCE | Backup/recovery Admin + D1/R2 | F0 minimum/F11 advanced | restore drill, revision recovery, site-scoped backup |
+| H30 | 14 | QA + OPS | Public + Editor + CI/Worker | F0–F11 release gates | performance budget, E2E, visual regression, no false PASS |
+| H31 | 14 | AI_OPERATION + PAGE/REVISION | AI module + Editor approval UI | F10 AI; canonical commands F0 | Intent→Plan→Actions→Permission→Validation→Preview/Diff→Approval→Execute→Verify→Audit→Version |
+| H32 | 25 | LIVE_STATE + CONTENT + ANALYTICS + AI_OPERATION | Stream Assistant + Content + Analytics | F6/F7/F9; AI F10 | metrics provenance, manual fallback, no unsupported AI claim |
+| H33 | 13 | AUTOMATION + INTEGRATION + AUDIT | Automation module + domain action endpoints | F9; AI F10 | Trigger→Condition→Action→Result→Verify→Audit, idempotency |
+| H34 | 23 | QA + DEV + product governance | Product review + each module owner | Continuous per phase | discovery→approval→implementation→test→user validation; no standalone feature |
+| **Összesen** | **271** | **16 csoport** | | | |
+
+**Konkrét szemantikai kockázatok / nem automatikus PASS:**
+1. **H19–H20:** asset és dynamic data a Page Modelben csak hivatkozás/binding; a R2 blob, D1 metadata, domain rekord és public projection külön tulajdonos. A jelenlegi `page-renderer.js` több dinamikus blokkot placeholderként renderel (RND-01), ezért a címke-megőrzés nem működési bizonyíték.
+2. **H21–H22:** a régi Stage 7/8/10/11 megjelölések **nem** mechanikusan F7/F8/F10/F11; a jelenlegi F0/F3/F5/F7 ütemezésben a Schedule baseline és későbbi adapterek elkülönítendők. Twitch OAuth baseline nem bizonyít YouTube/TikTok/Discord API-képességet.
+3. **H23–H25:** interaction/motion/a11y/SEO public runtime szerződés. A jelenlegi 63.50.63–65 PUB-01–10 és RND-01–06 hibák miatt sem Editor, sem SEO nem jelölhető teljesnek.
+4. **H26–H27:** Analytics külön domain, Admin csak aggregál és navigál. A jelenlegi Admin menüpontok Editorra mutató helyettesítő útvonalai (NAV-02) nem elfogadott végső modulstruktúra.
+5. **H28–H30:** biztonság, restore és release QA minden releváns F-fázis kapuja; a későbbi F11 multi-tenant szerepkörök nem feltételezhetők a mai három szerepkörből.
+6. **H31–H33:** AI és Automation csak canonical command és human approval/permission határon keresztül dolgozhat; a történeti AI Editor nem jelent második Visual Editort. AI outage mellett manual fallback.
+7. **H34:** a discovery, implementáció, teszt és felhasználói validáció **eljárás**, nem 23 külön UI-feature. Az eredeti H34.00 folyamatot nem szabad egy QA checkboxszal helyettesíteni.
+
+**Következő:** a 271 sor teljes archív owner/surface/phase/dependency/acceptance oszlopainak *soronkénti* kockázati osztályozása; a 00.9.6.B forrás továbbra is UNRECOVERED. **GATE: NOT PASS.**
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
