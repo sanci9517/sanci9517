@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.119` — source-gap és high-risk döntési mátrix, a 22 modulos közös funkciólista-review előkészítése; HIGH publish conflict továbbra is OPEN; **PLAN IN PROGRESS / NOT PASS.**  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.120` — a 22 modulos review előtti hivatkozás- és modullefedettség-ellenőrzés, kritikus ownership/acceptance triage; HIGH publish conflict OPEN; **PLAN IN PROGRESS / NOT PASS.**  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -11855,6 +11855,25 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 **Jelenlegi szigorú állapot:** a fenti kapuszétválasztás **javasolt értelmezés**, nem felhasználói jóváhagyás és nem automatikus terv-PASS. A teljes eredeti 00/A és 00.9.6.B forrás `PARTIALLY RECOVERED / REMAINDER OPEN`; `00/A.2.2` archív részlet igazolt. A HIGH publish conflict `SOURCE CONFIRMED / NOT FIXED`. Nem futott migráció, runtime teszt vagy deploy.
 
 **Következő aktív alpont: `63.50.119`** — a fennmaradó kritikus szemantikai és source-gap sorok lezárási döntési mátrixa, 22 modulos funkciólista-review előkészítése, a valóban blokkoló és feature-fázisba vihető tételek szétválasztása. **PLAN IN PROGRESS / NOT PASS.**
+
+### 63.50.119. Terv-review előkészítés és kockázatalapú lezárási mátrix (2026-10-15)
+
+**PLANNING REVIEW PREPARATION / NO AUTOMATIC PASS.** A 396/396 stabil capability ID, 271/271 történeti H-ID, 22 Admin-modul és a 63.50.109–112 teljes routing strukturálisan egyezik. A 63.50.118 új bizonyítéka a történeti `00/A.2.2` részleges szövege; a teljes eredeti `00/A` és `00.9.6.B` továbbra is hiányos. A tervezési és futó implementációs kapu elválasztása az alábbi konkrét döntési mátrixot igényli.
+
+| Tétel | Terv-review előtt | Konkrét feature megvalósítás előtt | Runtime/release előtt |
+| --- | --- | --- | --- |
+| 396 ID / 22 modul / 271 H mapping | Strukturális PASS; szemantikai eltérések explicit kockázat/owner | Érintett feature teljes 10. fejezet szerinti contract | Funkciónkénti pozitív/negatív acceptance |
+| Hiányzó 00/A és 00.9.6.B | Részleges `00/A.2.2` bizonyíték; maradék `SOURCE GAP` döntés felülvizsgálatra, **nem forrás-PASS** | Ha új bizonyíték előkerül, csak a releváns feature DoD módosul | Semmi nem tekinthető automatikusan implementáltnak |
+| 63.50.46 HIGH publish konfliktus | Megoldási opciók és preferált B modell dokumentált; kockázat nyíltan látható | Remote D1 read-only preflight, B/A választás, migration/rollback, URL/history/SEO szerződés | Draft/published isolation, permission/site, redirect/cache/SEO regresszió PASS |
+| AI visual QA / experiments | H31.08 és H32.23 acceptance tervezési szinten rögzítve | AI/ANL storage, API, evaluation, consent és human approval | Provider/evaluation/browser és negatív tesztek |
+| Cross-domain ownership | 145 multi-ID (100 cross-family); fő veszélyes szerepek rögzítve | Feature primary writer, adapter, read-only consumer, QA role | API deny, site isolation, no duplicate writes |
+| Biztonság/backup/restore | SEC/OPS/QA külön ownership és release dependency | Migration és restore runbook | Valódi recovery drill, integrity/authorization teszt |
+
+**22 modulos közös felhasználói funkció-review sorrend (49. fejezet, nem második terv):** 49.1 Kezdőlap; 49.2 Weboldal; 49.3 Márka/design; 49.4 Média; 49.5 Live; 49.6 OBS; 49.7 Integrációk; 49.8 Tartalom; 49.9 Közösség; 49.10 Bolt; 49.11 Támogatás; 49.12 Szponzoráció; 49.13 Analitika; 49.14 Automatizációk; 49.15 SANCI AI; 49.16 Keresés; 49.17 Értesítések; 49.18 Súgó; 49.19 Beállítások/biztonság; 49.20 Fejlesztői API; 49.21 Bővítmények; 49.22 Csapat/SaaS. A közös review során minden modulban ellenőrzendő: hiányzó funkció, helyes menühely, canonical owner, több felületen közös adat, integráció, prioritás és UX. Új ötlet a megfelelő meglévő modul/ID feature-contractjába kerül, nem új tervbe.
+
+**Tervkapu döntés:** a dokumentációban azonosított hiányokból nem következik, hogy a teljes projekt minden független fejlesztése tiltott örökre; ugyanakkor a jelenlegi `PLAN IN PROGRESS / NOT PASS` státuszt nem lehet pusztán a fenti táblázattól PASS-ra állítani. A 22 modulos felhasználói review megkezdhető mint **terméktervezési ellenőrzés**, a `63.50.46` érintett runtime író útvonalak release-ének tiltása megmarad. A hiányzó történeti források `PARTIAL / REMAINDER OPEN` státusza megmarad; a review sem helyettesíti őket.
+
+**Következő aktív alpont: `63.50.120`** — a felhasználói 22 modulos funkció-review előtti automatikus hivatkozás-/modullefedettségi ellenőrzés és a fennmaradó magas kockázatú owner/acceptance eltérések végső triage-ja. A közös review az előkészítés után külön termékdöntési kapu, nem runtime PASS. **PLAN IN PROGRESS / NOT PASS.**
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
