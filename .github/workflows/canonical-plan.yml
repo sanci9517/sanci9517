@@ -1,0 +1,22 @@
+name: Canonical Creator Platform Plan
+on:
+  push:
+    branches: [v2/foundation]
+    paths:
+      - 'README.md'
+      - 'docs/**'
+      - 'scripts/check-canonical-plan.py'
+      - '.github/workflows/canonical-plan.yml'
+  pull_request:
+    paths:
+      - 'README.md'
+      - 'docs/**'
+      - 'scripts/check-canonical-plan.py'
+      - '.github/workflows/canonical-plan.yml'
+jobs:
+  canonical-plan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ensure only one active plan
+        run: python3 scripts/check-canonical-plan.py
