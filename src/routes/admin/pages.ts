@@ -53,7 +53,7 @@ export async function adminPagesRoute(request:Request,env:Env):Promise<Response>
  const nextOrderRow=await env.DB.prepare('SELECT COALESCE(MAX(sort_order),-1)+1 AS next FROM pages WHERE site_id=?').bind(siteId).first<{next:number}>();
  const nextOrder=Number(nextOrderRow?.next??0);
  try{
-  const pageInsert=env.DB.prepare('INSERT INTO pages (id,site_id,slug,title,description,content_json,published_content_json,published_revision_id,is_published,sort_order,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP)').bind(id,siteId,slug,title,description,initialJson,isPublished?initialJson:null,isPublished?revisionId:null,isPublished?1:0,nextOrder);
+  const pageInsert=env.DB.prepare('INSERT INTO pages (id,site_id,slug,title,description,content_json,published_content_json,published_revision_id,is_published,sort_order,published_slug,published_title,published_description,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP)').bind(id,siteId,slug,title,description,initialJson,isPublished?initialJson:null,isPublished?revisionId:null,isPublished?1:0,nextOrder,isPublished?slug:null,isPublished?title:null,isPublished?description:null);
   const revisionInsert=env.DB.prepare('INSERT INTO editor_revisions (id,page_id,version,document_json,created_by,note) VALUES (?,?,?,?,?,?)').bind(revisionId,id,1,initialJson,user.id,'Oldal létrehozva az Editor v2-ben');
   await env.DB.batch([pageInsert,revisionInsert,auditStatement(env,user.id,'page.create','page',id,{slug,title,revisionId})]);
  }catch(e){
