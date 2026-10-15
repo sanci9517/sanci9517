@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — egyetlen aktuális termék-, architektúra- és fejlesztési terv; termékfunkció-review és jelenlegi kódalap-felmérés folyamatban. A történeti audit nem ismétlődő fejlesztésindítási előfeltétel.  
 **Aktív tervpontazonosító:** `PLAN-PRODUCT-REVIEW-AND-IMPLEMENTATION-BASELINE`  
 **Aktív tervpont státusza:** IN PROGRESS — 22 főmodul termék-review előkészítve; meglévő kód funkciónkénti működése még bizonyítandó. Történeti forráshiányok archív/proveniencia-jegyzetek, nem blokkolják önmagukban a termékfejlesztést. A valódi HIGH publikálási és jogosultsági kockázatok érintett kiadási kapui nyitottak.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.124` — a 63.50.123-ban előkészített 22 modulos funkciólista közös áttekintése, kiegészítése és a megvalósítási baseline jóváhagyása; ezután funkciónkénti kód-felmérés, tesztek és fejlesztés. HIGH publish conflict továbbra is OPEN az érintett kiadásnál.  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.125` — a 63.50.123–124 termék- és kódalap-összefoglalója alapján a 22 modul részletes funkció-review-ja és a tényleges tesztbaseline; majd lépésenkénti fejlesztés. HIGH publish conflict továbbra is OPEN az érintett kiadásnál.  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -11998,9 +11998,34 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 
 **Kiadási szabály:** a történeti audit nem blokkoló; **valós** security, adatvesztés, site-scope, publish/rollback konfliktus vagy provider-jogosultsági hiba viszont az érintett funkció fejlesztési/élesítési kapuján kötelezően javítandó. Különösen a 49.2 published snapshot HIGH konfliktus **OPEN**, nem minősül megoldottnak. A későbbi AI/SaaS/marketplace részletek a megfelelő fázisban konkretizálhatók, a termékképességek nem vesznek el.
 
-**Következő aktív alpont: `63.50.124`** — a 22 modul felhasználói review-ja, a hiányok beépítése, majd kódalap baseline és tesztvezérelt fejlesztés. Nem újabb teljes történeti audit.
+**Következő aktív alpont: `63.50.125`** — részletes modul-review és futtatott kódalap-tesztek, majd tesztvezérelt fejlesztés. Nem újabb teljes történeti audit.
 
 
+
+### 63.50.124. Jelenlegi kódalap első bizonyított térképe — 2026-10-15
+
+**Vizsgálati módszer:** az aktuális `v2/foundation` ág fájlfája és az alábbi konkrét fájlok forrásának olvasása. Ez **statikus forráskód-felmérés**, nem lefuttatott teszt és nem production PASS. A Cloudflare-fiókban a `sanci9517-streamer-brand` Worker és `sanci9517-db` D1 erőforrás olvasással azonosítva; ez nem bizonyítja a telepített verziót vagy az üzleti működést.
+
+| Termékterület | Bizonyított forráshely | Első besorolás | Következő kötelező ellenőrzés |
+| --- | --- | --- | --- |
+| Worker és route shell | `src/index.ts`, `src/core/router.ts`, `wrangler.jsonc` | EXISTS / RUNTIME UNVERIFIED | health, auth, route-konfliktus és hibakezelés |
+| Auth/Admin belépés | `src/routes/auth/*`, `src/core/auth/*`, `src/index.ts` | EXISTS / SECURITY TEST NEEDED | session, role, site isolation, redirect és negatív teszt |
+| Admin kezdőlap | `public/admin-home.html`, `src/index.ts` | EXISTS / UX REVIEW NEEDED | valós menü, jogosultság, mobil, nem működő gombok |
+| Weboldal/Page Model | `src/routes/admin/pages.ts`, `src/routes/public/pages.ts`, `src/core/page-model.ts` | EXISTS / HIGH PUBLISH RISK OPEN | draft/published slug, snapshot, redirect, rollback |
+| Visual Editor v2 | `public/editor-v2/*`, `src/routes/admin/editor.ts` | PARTIAL / REBUILD DECISION PENDING | boot, canvas extent, inspector, save, undo/redo, responsive |
+| Legacy Editor | `public/editor/*`, `public/assets/page-builder.js` | LEGACY CANDIDATE / DO NOT DELETE | referencia-funkciók leltára és kanonikus route kizárás |
+| Twitch / Integrations | `src/routes/integrations/twitch.ts`, `src/core/twitch-*.ts` | PARTIAL / PROVIDER LIVE CHECK NEEDED | OAuth, token refresh, scope, reconnect, site ownership |
+| Schedule | `src/routes/admin/schedule.ts`, `src/routes/public/schedule.ts`, `src/core/schedule/*` | EXISTS / DOMAIN TEST NEEDED | source sync, timezone, edit, published read |
+| D1/migrációk | `migrations/0001*–0017*`, `wrangler.jsonc` | SCHEMA EXISTS / REMOTE DATA UNTOUCHED | read-only schema és migration state; mentés előtt nincs írás |
+| Automata tesztek | `package.json`, `tests/*`, `public/editor-v2/tests/*` | TEST FILES EXIST / NOT EXECUTED HERE | tiszta check: typecheck, editor, schedule, domain, auth, admin |
+
+**A többi 49. fejezetbeli modulnál** a fájlfában nem talált dedikált, igazolt end-to-end implementációt ebben a körben; állapotuk `NOT YET VERIFIED`, nem önkényesen `MISSING` vagy `DONE`. A 396 funkció-ID megőrzött scope, nem 396 elkészült funkció.
+
+**Fejlesztésindítási sorrend (bizonyítékvezérelt):** (1) nem destruktív read-only runtime/DB és tesztbaseline; (2) admin shell + jogosultság; (3) HIGH WEB publish snapshot és slug elkülönítés; (4) Editor v2 használható minimuma; (5) külön Brand Kit / Media / Integrations / Schedule domainok; (6) további 49. fejezetbeli modulok függőség szerint. Az első körben nincs production deploy, D1 írás vagy régi kód törlése.
+
+**Funkció-review:** a 63.50.123 táblája a 22 modulos áttekintési index. Az összes részletes funkciót a 49./54. fejezetből, modulonként kell közösen jóváhagyni; hiány esetén ugyanott kiegészíteni. A felhasználó jóváhagyását és a futó implementáció bizonyítékát nem helyettesíti a jelen bejegyzés.
+
+**Következő alpont:** `63.50.125` — első modulok részletes termék-review-ja, majd a fenti tesztbaseline konkrét eredményeinek rögzítése. A régi terv-audit nem tér vissza automatikus kapuként.
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
