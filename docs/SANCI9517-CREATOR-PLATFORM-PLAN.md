@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.100` — **Public route, slug és metadata fogyasztók forrásauditja**; stable-ID döntések, 63.50.46 HIGH publish conflict, 00/A/00.9.6.B és runtime bizonyítás OPEN; **PLAN IN PROGRESS / NOT PASS.**  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.101` — **Public renderer, navigáció és Editor preview fogyasztók forrásauditja**; stable-ID döntések, 63.50.46 HIGH publish conflict, 00/A/00.9.6.B és runtime bizonyítás OPEN; **PLAN IN PROGRESS / NOT PASS.**  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -11157,6 +11157,23 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 | SEO HTML delivery | SEO-001, SEO-002, SEO-004 | Valódi HTML head title/description/canonical/robots és sitemap a published URL állapottal egyezzen; statikus head önmagában nem PASS |
 
 **Következő konkrét döntés (63.50.101):** a public/assets/page-renderer.js és az Admin/Editor UI URL/preview fogyasztóinak auditja; ezután a published metadata tárolási alternatívák összevetése. A Page/Public/Publishing egyetlen adatgazda-contract alatt marad. Nem történt kód- vagy D1-módosítás, és nem futott runtime teszt. PLAN IN PROGRESS / NOT PASS.
+
+### 63.50.101. Public renderer, navigáció és Editor preview fogyasztók (2026-10-15)
+
+**SOURCE VERIFIED / INTEGRATION GAP OPEN / NO RUNTIME PASS.** A v2/foundation ágon ellenőrzött: public/assets/page-renderer.js, public/assets/site.js, public/visual-page.html, public/editor-v2/index.html, src/index.ts és src/routes/public/pages.ts. Az Editor részletes eseménykezelő JavaScriptjének teljes auditja külön nyitott; a vizsgált index.html gombjainak megléte nem bizonyítja a handler viselkedését.
+
+| Tényleges fogyasztó | Forráskódban látható működés | Követelmény / negatív acceptance |
+| --- | --- | --- |
+| Public Page renderer | /p/slug útvonalból slugot számít, az API-tól lekéri az oldalt, document.title és látható title/description az API metaadataiból épül | WEB-002/004, SEO-001: draft metaadat nem jelenhet meg publikus HTML-ben vagy kliensoldali DOM-ban |
+| Public navigation | site.js /api/public/pages listából page.slug és page.title alapján /p/slug linkeket készít | WEB-009/013: draft slug átnevezés nem változtathatja meg az élő menüt; átnevezett published URL redirect/404 policy |
+| Preview toolbar | page-renderer.js preview=1 alapján eszközméret-váltó toolbar és preview=1 API-kérés; az API editor szerepkört ellenőriz | WEB-005, EDT-032: preview auth és site ownership, robots noindex, no-store, hibás session és külső hozzáférés tiltása |
+| HTML shell | visual-page.html statikus robots=index,follow, kezdeti title=Sanci9517; a renderer kliensoldalon írja át a document.title-t | SEO-001/002/004: a keresőrobotoknak kiszolgált HTTP HTML head legyen published metaadat- és robots-konform, preview nem indexelhető |
+| HTTP routing | src/index.ts / és /p/* esetén közvetlenül ugyanazt a visual-page.html assetet adja vissza | WEB-012/013: nem létező /p/slug HTTP 404, canonical redirect és megszűnt URL policy szerveroldali bizonyítása |
+| Editor belépési pont | editor-v2/index.html külön Save, Publish, Unpublish és Preview gombot tartalmaz; /admin/editor route auth ellenőrzött | EDT-027/032/033, SEC-002: külön gombok nem helyettesítik a handler, revision és publish permission tesztet |
+
+**Új, kódalapú függőség:** a published metadata szétválasztás nem zárható le pusztán a pages PATCH vagy a Public Pages API módosításával. Ugyanazon kanonikus published title/slug/description állapotot kell fogyasztania a Public API listának, a navigációnak, a Page renderernek, a HTML head/SEO-nak és a route resolvernek. A preview ugyanazon Page domain draft revisiont olvassa, de auth, noindex és cache izoláció mellett. Második renderer/publish state nem készül.
+
+**Következő ellenőrizhető lépés — 63.50.102:** az Editor Preview/Save/Publish handler pontos forrásútvonalának felkutatása, a publikus HTML HTTP response és a sitemap/robots fogyasztók leltára, majd a két metadata storage alternatíva döntési mátrixa. A 63.50.46 HIGH konfliktus OPEN/NOT FIXED. A 00/A, 00.9.6.B és történeti szemantikai audit OPEN; PLAN IN PROGRESS / NOT PASS; F0 nem indult.
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
