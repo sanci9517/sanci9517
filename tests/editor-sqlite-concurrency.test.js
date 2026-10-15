@@ -72,3 +72,30 @@ print('PASS')
 `;
   assert.match(execFileSync('python3', ['-c', script], { encoding: 'utf8' }), /PASS/);
 });
+
+
+test('rollback creates a new draft without changing the public snapshot', () => {
+  const script = `
+import sqlite3
+c=sqlite3.connect(':memory:')
+c.executescript("""
+CREATE TABLE pages(id TEXT PRIMARY KEY,site_id TEXT,content_json TEXT,published_content_json TEXT,published_revision_id TEXT,is_published INTEGER);
+CREATE TABLE editor_revisions(id TEXT PRIMARY KEY,page_id TEXT,version INTEGER,document_json TEXT,UNIQUE(page_id,version));
+INSERT INTO pages VALUES ('p','site','draft-v2','published-v1','published-rev',1);
+INSERT INTO editor_revisions VALUES ('published-rev','p',1,'published-v1');
+INSERT INTO editor_revisions VALUES ('draft-rev','p',2,'draft-v2');
+""")
+insert="INSERT INTO editor_revisions(id,page_id,version,document_json) SELECT ?,?,?,? WHERE (SELECT COALESCE(MAX(version),0) FROM editor_revisions WHERE page_id=?)=?"
+update="UPDATE pages SET content_json=? WHERE id=? AND site_id=? AND EXISTS (SELECT 1 FROM editor_revisions WHERE id=?)"
+with c:
+    assert c.execute(insert,('rollback-rev','p',3,'published-v1','p',2)).rowcount==1
+    assert c.execute(update,('published-v1','p','site','rollback-rev')).rowcount==1
+assert c.execute('SELECT content_json,published_content_json,published_revision_id,is_published FROM pages').fetchone()==('published-v1','published-v1','published-rev',1)
+with c:
+    assert c.execute(insert,('stale-rev','p',3,'stale','p',2)).rowcount==0
+    assert c.execute(update,('stale','p','site','stale-rev')).rowcount==0
+assert c.execute('SELECT content_json,published_content_json,published_revision_id FROM pages').fetchone()==('published-v1','published-v1','published-rev')
+print('PASS')
+`;
+  assert.match(execFileSync('python3', ['-c', script], { encoding: 'utf8' }), /PASS/);
+});
