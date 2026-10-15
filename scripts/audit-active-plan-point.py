@@ -26,3 +26,12 @@ print("\n=== REVIEW COUNTS (informational; NOT proof of completeness) ===")
 for term in ("UNCERTAIN", "REVIEW", "NOT PASS", "IN PROGRESS", "bizonytalan", "függőség", "owner"):
     print(f"{term}: {text.casefold().count(term.casefold())}")
 print("\nSTATUS: SOURCE_EXTRACTED_ONLY; manual source-by-source semantic verification required.")
+
+print("\\n=== PRIORITY: NO LEXICAL EVIDENCE (source rows) ===")
+for i, line in enumerate(lines):
+    if re.match(r"^\|\s*54\.\d+\.\d+\s*\|", line) and "NO LEXICAL EVIDENCE" in line:
+        print(f"{i+1}: {line[:1200]}")
+print("\\n=== PRIORITY: AMBIGUOUS CANDIDATES (source rows) ===")
+for i, line in enumerate(lines):
+    if re.match(r"^\|\s*54\.\d+\.\d+\s*\|", line) and "AMBIGUOUS CANDIDATES" in line:
+        print(f"{i+1}: {line[:1200]}")
