@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.91` — **54.x 156/156 sor lexikai stable-ID jelölt-triage, semmilyen automatikus szemantikai PASS nincs**; következő: `63.50.92` per-row kézi semantic review, a nulla és többértelmű találatoktól. Kötelező 1.0 cél nincs; `63.50.46` HIGH publish conflict NOT FIXED; 00/A/00.9.6.B OPEN; **PLAN IN PROGRESS / NOT PASS.**  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.92` — **12 forrásszöveggel ellenőrzött, PARTIAL szemantikai crosswalk rekord a 63.50.92 pontban**; a 41 NO LEXICAL és 47 AMBIGUOUS sor első triage-ja dokumentált, de nincs teljes semantic PASS. Következő: minden 54.x sor owner/surface/phase/dependency/positive+negative acceptance és H19–H34 bizonyítása. `63.50.46` HIGH publish conflict NOT FIXED; 00/A/00.9.6.B OPEN; **PLAN IN PROGRESS / NOT PASS.**  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -10979,6 +10979,29 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 
 **A sorrend továbbra is P00–P10**, nem 1.0/1.x+; az azonos domain külön UI-elérései ugyanazt a kanonikus adatot módosítják. A 63.50.46 HIGH publish conflict, a hiányzó 00/A és 00.9–00.9.6.B források és a runtime tesztek OPEN. Következő kurzor: `63.50.92` — kézi, bizonyítékalapú per-row szemantikai review, a 41 lexikai nulla és többértelmű találatokkal kezdve. **PLAN IN PROGRESS / NOT PASS.**
 
+
+### 63.50.92. Kézi, forrásszöveg-alapú szemantikai crosswalk — első 12 rekord (2026-10-15)
+
+**Státusz: IN PROGRESS / NOT PASS.** A 63.50.91 táblázat 156 sora lexikai jelöltlista, nem bizonyított szemantikai megfeleltetés. Az első körben 41 NO LEXICAL és 47 AMBIGUOUS sor előzetes besorolása történt meg, és 47 többértelmű sor jelöltjeinek 24. fejezetbeli tényleges definícióit összevetettük. A lenti 12 sor **részleges, forrásszöveggel alátámasztott** megfeleltetés; egyik sem végleges PASS.
+
+| 54.x követelmény | Valós 24. fejezetbeli stable ID-k | Bizonyított részfunkció | Még nyitott acceptance / függőség | Döntés |
+|---|---|---|---|---|
+| 54.2.02 | WEB-009, WEB-010, WEB-011 | Navigációs fa; header/footer; mobilmenü/keyboard | Nested/dropdown, belső/külső link, jogosultság, negatív tesztek | PARTIAL |
+| 54.2.14 | WEB-020 | Publikus Contact oldal/űrlap | Általános Forms lifecycle, validáció, spam, consent, beküldés-kezelés | PARTIAL |
+| 54.3.06 | RES-007, RES-008 | Asset licenc/forrás és usage/reference map | Tulajdonos, verzió, törlési függőségek | PARTIAL |
+| 54.4.01 | RES-001, RES-002 | Canonical asset ID, R2 bináris és D1 metaadat | Site ownership, migráció, visszaállítás, izoláció | PARTIAL |
+| 54.5.01 | INT-018 | Külső provider capability registry | Twitch/YouTube/TikTok/Discord/Kick adapterenkénti capability, quota, permission | PARTIAL |
+| 54.6.07 | SCH-009, SCH-010 | Countdown, publikus schedule projection | Játékprofil-kapcsolat, iCal, időzóna, hibakezelés | PARTIAL |
+| 54.7.02 | OBS-003, OBS-004 | Scene/stream állapot és engedélyezett parancs/marker | Source/visibility/mute/volume, WebSocket reconnect, denied commands | PARTIAL |
+| 54.8.11 | CNT-022, RES-007 | Tartalomjog, consent, expiry, takedown és asset provenance | Vendéghozzájárulás, lejáratkor tiltás, audit, visszavonás | PARTIAL |
+| 54.8.12 | CNT-019, CNT-020 | Editor feed binding, canonical publikus content feed | Social post és analitika ugyanazon content ID-val | PARTIAL |
+| 54.12.07 | AUT-009 | Dry-run/preview/approval | AI-generált draft, diff, jóváhagyás utáni aktiválás | PARTIAL |
+| 54.14.03 | LOC-003 | Oldal/tartalom/navigáció fordítása | Locale-specifikus média alt, SEO, Open Graph, fallback | PARTIAL |
+| 54.14.05 | LOC-002 | Dátum/szám/pénznem/időzóna lokalizáció | DST, kerekítés, negatív tesztek | PARTIAL |
+
+**Forrás- és bizonyítékrend:** 24. stabil ID-definíciók; 49. főmodulok; 5./63.20 domain owner; 10./25.–26./63.26–37 feature contract; 54.x eredeti checklist; 63.50.79–80 H19–H34 történeti mezők. A teljes, 17 mezős bizonyítás és az eredeti owner/surface/phase/dependency/pozitív-negatív acceptance összevetése a fenti soroknál is OPEN. A munkajegyzet kizárólag ellenőrzési segédlet: `docs/archive/63-50-92-semantic-review-evidence.md`; **nem második terv**.
+
+**Nyitott blokkolók:** 63.50.46 HIGH publish conflict NOT FIXED; 00/A és 00.9–00.9.6.B történeti forrás OPEN; runtime és negatív tesztek OPEN. Nincs feature implementáció-feloldás, nincs automatikus PASS, nincs stabil ID-k törlése vagy összevonása.
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
 
