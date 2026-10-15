@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.86` — **396/396 stable ID függőségi fő-/alpont-munkacsomaghoz rendelve; kötelező 1.0 célverzió nincs**. Következő: `63.50.87` per-ID acceptance és 54.x/H19–H34 végső konzisztencia. `63.50.46` HIGH publish conflict NOT FIXED; 00/A és 00.9.6.B OPEN. **PLAN IN PROGRESS / NOT PASS.**  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.87` — **396 stable ID P00–P10 leképezése és 11 főpont kötelező alpont/DoD sorrendje rögzítve**. Következő: `63.50.88` per-ID acceptance/dependency mélyítés, 54.x és H19–H34 audit, majd teljes funkciólista-review. Kötelező 1.0 kiadás nincs; `63.50.46` HIGH publication conflict NOT FIXED; 00/A és 00.9.6.B OPEN; **PLAN IN PROGRESS / NOT PASS.**  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -10166,6 +10166,38 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 **Minőségkapu:** `396/396 PRIMARY WORK PACKAGE ASSIGNED`, `0 UNMAPPED STABLE IDs`. Ez **strukturális mapping**, nem 396 darab implementációs PASS. A 271 történeti H-ID forráshű mezői és 436 target linkje továbbra is a 63.50.79–84/63.50.83 alatt ellenőrizhető. A `00/A`, `00.9–00.9.6.B` eredeti források hiánya és a `63.50.46` HIGH konfliktus továbbra is OPEN.
 
 **Következő kurzor:** `63.50.87` — a gyűjtő alpontok finom bontása és minden ID konkrét pozitív/negatív acceptance + függőségi gráfja, a 54.x katalógus és H19–H34 egyeztetésével. **PLAN IN PROGRESS / NOT PASS.**
+
+
+### 63.50.87. Teljes tervstruktúra ellenőrzése és végrehajtási kapusorrend (2026-10-15)
+
+**Alapelv:** a 63.50.85 felhasználói döntése szerint a cél a teljes Creator Platform, nem egy külön 1.0 kiadás. A 63.50.86 regiszterben 396 stable ID szerepel. A fő-/alpontstruktúrát az alábbi kapuk szerint kell fokozatosan finomítani, nem egyetlen hatalmas Visual Editor feladattá összevonni.
+
+| Főpont | Tulajdonosi cél | Kötelező alpontok | Blokkoló szerződés |
+| --- | --- | --- | --- |
+| P00 | Audit, provenance és végleges scope | P00.1 régi források; P00.2 stable ID és crosswalk; P00.3 domain/surface; P00.4 user review | nincs termékfunkció PASS pusztán terv alapján |
+| P01 | Közös platform | P01.1 workspace/site/role; P01.2 D1/R2; P01.3 auth/secret; P01.4 API/event; P01.5 CI/recovery; P01.6 Admin shell | security és storage contract |
+| P02 | Közös erőforrás és design | P02.1 Resource; P02.2 icon/tokens; P02.3 theme/template/component | site-bound asset és immutable/versioned references |
+| P03 | Web és Visual Editor | P03.1 Page Model; P03.2 Canvas/Layers/Inspector; P03.3 binding; P03.4 draft; P03.5 explicit publish/SEO; P03.6 renderer | P03.5 published snapshot + metadata atomic, redirect/404 |
+| P04 | Integrációk és élő állapot | P04.1 adapter; P04.2 Twitch; P04.3 YouTube; P04.4 TikTok; P04.5 Discord; P04.6 quota/webhook; P04.7 live widgets | provider capability, revoked auth and secret policy |
+| P05 | Schedule és Content | P05.1 Schedule; P05.2 VOD/Shorts; P05.3 Content Factory; P05.4 approval; P05.5 provider publish | canonical records + partial failure |
+| P06 | OBS és Community | P06.1 OBS; P06.2 overlay; P06.3 community; P06.4 moderation; P06.5 fallback | live action permissions + replay |
+| P07 | Üzleti képességek | P07.1 analytics; P07.2 campaign; P07.3 store; P07.4 membership; P07.5 marketing | consent/payment/attribution |
+| P08 | Automation és AI | P08.1 workflow; P08.2 model/prompt; P08.3 context/privacy; P08.4 agent; P08.5 approval; P08.6 eval/cost | human approval + tenant filter |
+| P09 | Bővíthetőség | P09.1 API; P09.2 plugins; P09.3 team; P09.4 packages; P09.5 locale/a11y; P09.6 search; P09.7 notification; P09.8 help | API version + site isolation |
+| P10 | Átfogó teszt | P10.1 domain; P10.2 E2E; P10.3 browser; P10.4 smoke/recovery; P10.5 user acceptance | minden implementált ponthoz külön evidence |
+
+**Ellenőrzött funkciócsoport-eloszlás a 396-os regiszterben:** `ADM` 13; `WEB` 32; `EDT` 44; `DSN` 18; `RES` 16; `INT` 21; `LIV` 10; `OBS` 10; `SCH` 15; `CNT` 22; `COM` 20; `STO` 21; `SUP` 12; `ANL` 10; `CAM` 9; `AUT` 14; `AI` 21; `SEC` 12; `OPS` 11; `LOC` 6; `TEAM` 7; `MKT` 5; `QA` 10; `SET` 4; `DYN` 8; `SEO` 5; `DEV` 6; `SEARCH` 5; `NTF` 5; `HELP` 4. A prefix nem Admin-menü: a menü a 49. fejezetből, a kanonikus domain-owner az 5. fejezetből származik. A főpontok közötti dependency és az alpontok belső sorrendje külön mező.
+
+**Egységes DoD minden Pxx.y alpontnál:**
+1. Forrás és termékfunkció határa rögzítve; stable ID + történeti H-ID kapcsolatok; owner és minden Admin/Editor/Public felület.
+2. Újrahasznosítható, működő kód/komponens megvizsgálva (licenc, karbantartás, biztonság, kompatibilitás); a saját megoldás indoka dokumentált.
+3. Kanonikus adatmodell, jogosultság és függőségek; migráció/rollback és többfelületes szinkron ahol kell.
+4. Pozitív és negatív domain/API/CI tesztek; böngésző/mobil/accessibility, ha felhasználói felületet érint.
+5. Felhasználói elfogadás, szükséges production evidence; csak ezután `PASS`. A dokumentációs leképezés soha nem számít implementációs bizonyítéknak.
+
+**Kötelező fejlesztési döntések:** P01 security/site izoláció nélkül nincs P02 privát asset vagy P03 publish; P02 közös resource/theme/component szerződés nélkül nincs széttartó Editor és Admin állapot; P03 draft/published atomikus határ nélkül nincs publikus tartalom-PASS; P04 provider adapter nélkül nincs P05 provider publish; P05 Content nélkül nincs P08 automatikus tartalomjóváhagyás. P10 tesztkövetelményei minden fejlesztési alpontban futnak, nem csak a végén.
+
+**Nyitott, nem elhallgatható munkák:** a 396 sor mindegyikének egyedi pozitív/negatív acceptance és finom dependency auditja; a 54.x katalógus és a H19–H34 minden szemantikai edge case-e; a 00/A és 00.9–00.9.6.B forrásai; a 63.50.46 HIGH publikálási hiba. Ezért a **teljes terv még nem végleges PASS**. Következő kurzor: `63.50.88` — 396 stable ID egyedi acceptance és konkrét dependency-sorok finomítása, majd felhasználói teljes funkciólista-review. **PLAN IN PROGRESS / NOT PASS.**
 
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
