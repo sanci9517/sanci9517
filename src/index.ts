@@ -73,6 +73,10 @@ export default {
       if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302);
       return env.ASSETS.fetch(assetRequest("/editor-v2/index.html", request));
     }
+    // Public asset URLs must not bypass the authenticated canonical Admin/Editor routes.
+    if (pathname === "/editor-v2" || pathname === "/editor-v2/index.html") {
+      return Response.redirect(new URL("/admin/editor", request.url).toString(), 302);
+    }
     const legacyTarget = LEGACY_REDIRECTS[pathname];
     if (legacyTarget) return Response.redirect(new URL(legacyTarget, request.url).toString(), 301);
     if (pathname === "/" || pathname === "/index.html") return env.ASSETS.fetch(assetRequest("/visual-page.html", request));
