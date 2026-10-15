@@ -233,3 +233,18 @@ Ez a kör a korábbi, 24. fejezetre szorítkozó következtetéseket **helyesbí
 **Auditkorrekció:** a korábbi „GAP-jelölt” címke nem azonos a „hiányzó funkció” állítással. Legalább négy korábban aggályos területen (OBS command, tartalomjog, extension, stream checklist) a MASTER-ben tényleges, célzott követelményszöveg van. A valódi probléma sok helyen a **24. fejezet stabil ID-je és a 54.x részletes acceptance közötti bizonyítható kapcsolat**, nem a funkció ötletének hiánya. Az 54.2.14 / 54.7.11 / 54.8.10 stable-ID hiányosságokat nem szabad sem automatikusan lezárni, sem duplikált fejlesztési modulként újra felvenni.
 
 **Állapot:** IN PROGRESS / NOT PASS; hiányzó 00/A és 00.9.6.B történeti forrás OPEN; 63.50.46 HIGH publish conflict NOT FIXED.
+
+
+## 63.50.92 — a kanonikus terv szerződésrétegeinek ellenőrzési szabálya
+
+A MASTER fejlécének aktív kurzora továbbra is 63.50.91 → 63.50.92, és a 63.50.91 lexikai táblája továbbra is gépi jelölteket mutat. Az auditarchívum kézi eredményeit ezért nem szabad kész, a MASTER-be átvezetett stable-ID crosswalknak tekinteni. A következő kanonikus módosításnak **a 63.50.92 alatti, konkrét source→stable-ID→owner→surface→phase→dependency→acceptance→negative acceptance rekordokat** kell tartalmaznia; csak így válik a 47 jelöltellenőrzésből fejlesztésre alkalmas bizonyíték.
+
+A teljes MASTER 63.51. pontja szerint a kötelező összeolvasási rend: 1. termékvízió, 5./63.20 domain-owner, 10./25.–26./63.26–37 feature contract, 24. stable ID, 49. UI-modul, 54. review checklist, 63.50.79–80 H19–H34 történeti acceptance. Egyetlen azonos nevű ID nem bizonyít minden részfunkciót.
+
+**Kötelező review-rekord séma:** source ID; original wording and provenance; canonical stable ID(s) and sub-capabilities; owner/storage; Admin/Editor/Public access and shared canonical state; P00–P10 phase; dependencies; positive acceptance; negative acceptance; evidence location; result {PASS, PARTIAL, WRONG, GAP, BLOCKED}; open blocker. Ezt a sémát kell a későbbi kézi szemantikai review-ra alkalmazni.
+
+**Példa — 54.8.11 / CNT-022:** a 24. fejezetben tényleges CNT-022 rights/consent/expiry/takedown szerződés található; ez **STRONG CANDIDATE**, de a pozitív és negatív jogellenőrzések és a H19–H34 történeti mezők összevetése nélkül **nem PASS**.
+
+**Példa — 54.7.02 / OBS-004:** a korábbi OBS-001/003/005 lexikai jelöltek mellé a 24. fejezetből bizonyított OBS-004 authorized commands and stream markers szükséges; **SPLIT / PARTIAL**, amíg a támogatott scene/source/mute/volume parancsok, permission, WebSocket reconnect és sikertelen műveletek acceptance-e nincs rögzítve.
+
+**Konzisztenciakapu:** a 63.50.46 HIGH publish conflict NOT FIXED, 00/A és 00.9.6.B források OPEN, runtime tesztek OPEN. A terv megvalósítási fagyasztása változatlan.
