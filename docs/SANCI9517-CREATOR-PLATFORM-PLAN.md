@@ -4,9 +4,9 @@
 **Verzió:** 4.3.0 — konszolidált, feltöltésre előkészített fejlesztési MASTER  
 **Dátum:** 2026-10-15  
 **Állapot:** KANONIKUS TERMÉK- ÉS FEJLESZTÉSI MASTER — a tervezett termékkör rögzítve, feltöltés után F0.1 kódbaseline indul. A tervezési teljesség nem bizonyít sem kész implementációt, sem teljes körű tételes szemantikai auditot.  
-**Aktív tervpontazonosító:** `F0.1-VERIFIED-BASELINE`  
-**Aktív tervpont státusza:** READY TO VERIFY — a termékképességek specifikációs alapja jelen dokumentumban rögzített; a tényleges kód-/teszt-/éles állapot a repository alapján ellenőrizendő. Ez nem jelenti a teljes platform megvalósítását vagy valamennyi követelmény egyenkénti szemantikai igazolását. A `HIGH publish conflict` OPEN kiadási kockázat marad.
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `F0.1-VERIFIED-BASELINE` — GitHub branch/commit, migrációk, Admin/Auth, ownership és célzott tesztek; utána F0.2 mentés/újratöltés, F0.3 publikálás. A 63.x történeti státuszok nem aktív kurzorok.
+**Aktív tervpontazonosító:** `F0.2-EDITOR-SAVE-RELOAD`  
+**Aktív tervpont státusza:** IN PROGRESS — F0.2 mentés/újratöltés, rollback és stale revision böngészős teszt PASS felhasználói visszajelzés alapján; hálózati hiba/abort, mentés közbeni módosítás, mobil ellenőrzés és teljes elfogadási kapu még nyitott. F0.3 külön fejlesztési kapu; HIGH publish conflict továbbra is OPEN.
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `F0.2-EDITOR-SAVE-RELOAD` — hálózati megszakítás, mentés közbeni új változtatás és mobil save/reload negatív teszt; bizonyított PASS után F0.3 preview/publish/public teljes kapu. A 63.x történeti státuszok nem aktív kurzorok.
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** világszintű, önálló márka- és weboldalépítő, streamelési, tartalomgyártási, közösségi, kereskedelmi, analitikai, automatizációs és AI-rendszer egyetlen logikusan tagolt Creator & Brand Operating Platformon. Elsődleges célcsoport: streamerek és digitális tartalomkészítők, akik egyedi publikus brandoldalukat és teljes tevékenységüket innen kezelik. A többfelhasználós, önkiszolgáló, előfizetéses SaaS és a működés/AI-költség fenntartható finanszírozása a teljes termékcél lényegi része; a funkciókat függőség szerint, fokozatosan építjük meg. Más célcsoportok támogatása későbbi bővíthetőség, nem az elsődleges piac.
 
@@ -13447,7 +13447,7 @@ A fázisokon belüli meglévő részfeladat-ID-k és a 71/73/75/76. fejezet acce
 A már részletezett 24/49/54/56/64–76. fejezet tartalmát **nem kell másodszor újralistázni**; a fejlesztéskor az adott funkcióhoz a kapcsolódó szerződéseket együtt kell alkalmazni.
 
 ### 77.6. Tényleges állapot és nyitott kockázatok
-- **Egyetlen aktív pont:** `F0.1-VERIFIED-BASELINE`, státusz: **READY TO VERIFY / NOT YET PASS**.
+- **Egyetlen aktív pont:** `F0.2-EDITOR-SAVE-RELOAD`, státusz: **IN PROGRESS / NOT YET PASS**. A felhasználó böngészőben sikeresen igazolta a save/reload, rollback és kétfüles stale-revision konfliktus kezelését; a publikus publish smoke is sikeres, de az F0.3 kaput ez önmagában nem zárja. Regressziós tesztek: `db9d12d`, `807ed7e`, `69f4609`; éles D1 táblaszerkezet 2026-10-15 olvasásos ellenőrzéssel igazolt. F0.2 nyitott: network abort/lost connection, mentés közbeni lokális szerkesztés, mobil save/reload, lezáró regressziós bizonyíték.
 - **HIGH publish conflict:** továbbra is **OPEN**, F0.3 kiadási blokkoló, amíg technikai és end-to-end bizonyíték nem oldja fel.
 - Régi 63.x és PLAN-... aktív jelölések kizárólag dátumozott történeti pillanatképek, és **nem indítanak új auditprojektet**. Ha régi fejezet ellentmond a 77. fejezet aktív kurzorának, a fejléc és jelen fejezet az irányadó.
 - A tervbe foglalás nem igazolja a kód készültségét. Tesztet/CI-t/éles hozzáférést csak tényleges ellenőrzés után lehet PASS-ra állítani.
