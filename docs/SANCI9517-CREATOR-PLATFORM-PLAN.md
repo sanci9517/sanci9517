@@ -6,7 +6,7 @@
 **Állapot:** AKTÍV — ez az egyetlen aktuális termék- és fejlesztési terv; a belső konzisztencia és a fejlesztésindítási feltételek ellenőrzése még folyamatban van  
 **Aktív tervpontazonosító:** `PLAN-CAPABILITY-COMPLETENESS-AND-CONSISTENCY`  
 **Aktív tervpont státusza:** IN PROGRESS / NOT PASS — a 396 funkció-ID és 22 főmodul megőrzött; a korábbi H19–H34 forrásjegyzék 271 tétele a 63.52–63.53 fejezetben tételesen megfeleltetett. A történeti 00/A / 00.9.6.B és a szemantikai lezárás még nyitott; új funkció implementálása nem indulhat pusztán tervbeli felsorolás alapján.  
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.89` — **396/396 alap acceptance + 14 HIGH cross-module pozitív/negatív tesztszerződés dokumentálva**; következő: `63.50.90` 54.x/H19–H34 szemantikai döntéslista és hiányzó források vizsgálata. Kötelező 1.0 cél nincs; `63.50.46` HIGH publish conflict NOT FIXED; 00/A/00.9.6.B OPEN; **PLAN IN PROGRESS / NOT PASS.**  
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `63.50.90` — **54.x 156/156 review checklist-sor domain és P-alpont első routingja rögzítve; exact stable ID szemantikai megfelelés OPEN**; következő: `63.50.91` 54.x per-row stable ID audit és egyetlen P00–P10 végrehajtási backlog. Kötelező 1.0 cél nincs; `63.50.46` HIGH publish conflict NOT FIXED; 00/A/00.9.6.B OPEN; **PLAN IN PROGRESS / NOT PASS.**  
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** teljes, egy Adminból kezelhető Brand & Creator Operating Platform, saját weboldallal, közösségi és streaming integrációkkal, tartalomgyártással, bevételi eszközökkel, OBS-integrációval és multimodális SANCI AI-val.
 
@@ -10636,6 +10636,180 @@ A kanonikus MASTER-ben a `^| Hxx.yy |` formájú sorok ellenőrzése **279 előf
 **Hiányzó evidence:** nincs itt lefuttatott kódteszt, CI, D1 migráció vagy production ellenőrzés. A 00/A és 00.9–00.9.6.B források és a 54.x/H19–H34 egyedi edge-case auditja OPEN. A `396/396` általános szerződés nem teszi automatikusan PASS-szá ezeket a konkrét eseteket.
 
 **Következő kurzor:** `63.50.90` — a 54.x 156 sor, H19–H34 271 sor és 396 stable capability crosswalkból a még bizonyítatlan szemantikai döntések lezárási listája; majd csak a teljes tervkapu után közös funkció-review. **PLAN IN PROGRESS / NOT PASS.**
+
+
+### 63.50.90. A 54.x 156 elemű review katalógus teljes domain routingja és szemantikai döntéslistája (2026-10-15)
+
+**Forrás:** 54.1–54.16 alatt ténylegesen található **156 checklist-sor**; 49. fejezet 22 kanonikus Admin főmodulja; 63.50.86 396 stable ID és 63.50.83 271 H-ID → 436 stable link. Az alábbi 156 sor **minden elemének modulcsaládját és végrehajtási fő-/alpontját** kijelöltük. **Fontos:** ez **csoportszintű routing**, nem igazolt egyedi stable ID szemantikai megfelelés. A pontos ID, owner surface, acceptance és történeti proveniencia soronkénti bizonyítása nyitott.
+
+| 54.x review ID | Felhasználói checklist-képesség | Kanonikus ID-családok (első routing) | P-fő/alpont (első routing) | Egyedi szemantikai állapot |
+| --- | --- | --- | --- | --- |
+| 54.1.01 | Egységes Admin shell, oldalsáv, almenük, breadcrumbs, mobil navigáció. | ADM, SEARCH, HELP, NTF | P01.6 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.1.02 | Áttekintő kártyák: weboldal, live, adásrend, kapcsolatok, tartalom, feladatok. | ADM, SEARCH, HELP, NTF | P01.6 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.1.03 | Gyorsműveletek és legutóbbi aktivitás. | ADM, SEARCH, HELP, NTF | P01.6 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.1.04 | Teendők, figyelmeztetések, hibák és elakadt folyamatok. | ADM, SEARCH, HELP, NTF | P01.6 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.1.05 | Globális kereső, command palette, kedvencek, legutóbbi elemek. | ADM, SEARCH, HELP, NTF | P01.6 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.1.06 | Kontextuális súgó, onboarding, üres állapotok és emberi nyelvű hibák. | ADM, SEARCH, HELP, NTF | P01.6 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.1.07 | Értesítési központ, prioritások, digest és csendes időszak. | ADM, SEARCH, HELP, NTF | P01.6 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.1.08 | Valós adatfrissesség, loading/empty/error/stale/partial állapot. | ADM, SEARCH, HELP, NTF | P01.6 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.2.01 | Oldal CRUD, hierarchia, slug, átnevezés, duplikálás, archiválás és törlés. | WEB, EDT, DYN, SEO | P03.1/P03.2/P03.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.2.02 | Navigáció, dropdown/nested menü, footer, mobilmenü, belső/külső link. | WEB, EDT, DYN, SEO | P03.1/P03.2/P03.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.2.03 | Egyetlen Visual Editor: elemkönyvtár, canvas, Layers/Outline, Inspector. | WEB, EDT, DYN, SEO | P03.1/P03.2/P03.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.2.04 | Drag/drop, kijelölés, átrendezés, csoportosítás, duplicate, törlés, zoom/pan. | WEB, EDT, DYN, SEO | P03.1/P03.2/P03.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.2.05 | Undo/redo, mentési állapot, konfliktusfeloldás, revision history és restore. | WEB, EDT, DYN, SEO | P03.1/P03.2/P03.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.2.06 | Szöveg, heading, kép, videó/embed, gomb, link, ikon, lista, kártya, űrlap, divider, spacer, grid/flex/section/container. | WEB, EDT, DYN, SEO | P03.1/P03.2/P03.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.2.07 | Dinamikus SANCI blokkok: live, következő stream, adásrend, játékprofil, videó/clip feed, social links, termék, tagság, támogatás és közösségi CTA. | WEB, EDT, DYN, SEO | P03.1/P03.2/P03.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.2.08 | Desktop/tablet/mobile preview, breakpointonkénti override, öröklés és portrait/landscape. | WEB, EDT, DYN, SEO | P03.1/P03.2/P03.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.2.09 | Globális design tokens: színek, fontok, tipográfia, spacing, border, radius, shadow, layout. | WEB, EDT, DYN, SEO | P03.1/P03.2/P03.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.2.10 | Site/page/section/component sablonok, reusable komponensek, instance/override/detach, verziózás és rollback. | WEB, EDT, DYN, SEO | P03.1/P03.2/P03.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.2.11 | Előnézet, draft, validálás, publikálás, visszavonás és publikált snapshot megőrzése. | WEB, EDT, DYN, SEO | P03.1/P03.2/P03.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.2.12 | SEO: title, description, canonical, robots, Open Graph, social image, sitemap, robots.txt, structured data, redirect, 404. | WEB, EDT, DYN, SEO | P03.1/P03.2/P03.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.2.13 | Domain/DNS/HTTPS státusz, favicon, brand assets, coming-soon/maintenance. | WEB, EDT, DYN, SEO | P03.1/P03.2/P03.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.2.14 | Űrlapok, validáció, spamvédelem, adatkezelési hozzájárulás és beküldés-kezelés. | WEB, EDT, DYN, SEO | P03.1/P03.2/P03.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.2.15 | Webes teljesítmény, képméretezés, lazy loading, cache és Core Web Vitals. | WEB, EDT, DYN, SEO | P03.1/P03.2/P03.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.3.01 | Logóvariánsok, színek, betűcsaládok, ikonstílus, vizuális szabályok. | DSN, RES | P02.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.3.02 | Overlay, thumbnail, intro/outro, watermark, social post, merch és email sablonok. | DSN, RES | P02.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.3.03 | Brand-safe színek/fontok és kontrasztellenőrzés. | DSN, RES | P02.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.3.04 | Globális és komponensszintű tokenek, theme-változatok és dark/light. | DSN, RES | P02.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.3.05 | SVG/PNG/WebP és megfelelő exportméretek. | DSN, RES | P02.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.3.06 | Licenc, forrás, tulajdonos, verzió és asset-használati helyek. | DSN, RES | P02.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.3.07 | Brand consistency ellenőrzés, AI-javaslat és kézi jóváhagyás. | DSN, RES | P02.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.4.01 | Egy asset registry és asset ID, R2 bináris tárolással, D1 metaadattal. | RES | P02.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.4.02 | Képek, videók, hangok, ikonok, fontok, dokumentumok, thumbnailök és exportok. | RES | P02.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.4.03 | Egyenkénti/tömeges feltöltés, progress, cancel, retry és megszakadt feltöltés helyreállítása. | RES | P02.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.4.04 | MIME-/méretellenőrzés, feldolgozási státusz, preview/thumbnail és biztonsági ellenőrzés. | RES | P02.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.4.05 | Címke, keresés, gyűjtemény, alt text, licenc, forrás és crop/focal point. | RES | P02.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.4.06 | Használati helyek, függőségi figyelmeztetés és biztonságos archiválás/törlés. | RES | P02.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.4.07 | Metaadatmódosítások megjelenése minden hivatkozási helyen. | RES | P02.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.5.01 | Integrációs központ: Twitch, YouTube, TikTok, Discord, Kick és későbbi szolgáltatók. | INT, SEC | P04.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.5.02 | Connect/disconnect/reconnect, fiók-/csatornaválasztás, scope és lejárat. | INT, SEC | P04.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.5.03 | Tokenfrissítés, revoke, titkos tárolás, CSRF/state és site ownership. | INT, SEC | P04.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.5.04 | Capability/scope mátrix, API-kvóta, provider health és diagnosztika. | INT, SEC | P04.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.5.05 | Webhook aláírásellenőrzés, replay-védelem, deduplikáció, retry és dead-letter. | INT, SEC | P04.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.5.06 | Szinkronnapló, utolsó siker/hiba, kézi újraszinkron és konfliktusfeloldás. | INT, SEC | P04.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.5.07 | Későbbi email, naptár, fizetés, affiliate, CRM és cloud-storage adapterek. | INT, SEC | P04.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.5.08 | Nem támogatott funkció egyértelmű jelölése és alternatív folyamat. | INT, SEC | P04.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.6.01 | Live/offline állapot és adatfrissesség platformonként. | LIV, SCH | P04.2/P05.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.6.02 | Cím, kategória/játék, kezdés, nézőszám és elérhető streammetrikák. | LIV, SCH | P04.2/P05.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.6.03 | Stream player/embed és offline fallback. | LIV, SCH | P04.2/P05.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.6.04 | Egyetlen adásrend-domain: események, ismétlődések, időzóna, ütközések. | LIV, SCH | P04.2/P05.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.6.05 | Draft/scheduled/confirmed/postponed/cancelled/completed állapot. | LIV, SCH | P04.2/P05.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.6.06 | Twitch/YouTube sync, irány/prioritás, konfliktuskezelés és szinkronelőzmény. | LIV, SCH | P04.2/P05.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.6.07 | Játékprofilok, kapcsolódó tartalom, publikus naptár, countdown és későbbi iCal. | LIV, SCH | P04.2/P05.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.6.08 | Stream előtti checklist, technikai próba, jegyzetek, markerek és highlight-pontok. | LIV, SCH | P04.2/P05.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.6.09 | Multistream célok és platformonkénti metadata csak igazolt capability szerint. | LIV, SCH | P04.2/P05.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.6.10 | Unified Chat, platformjelölés, moderációs státusz, küldési engedély és részleges hiba. | LIV, SCH | P04.2/P05.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.6.11 | Felvétel/backup/replay csak tényleges technikai lehetőség és tisztázott tárolási költség mellett. | LIV, SCH | P04.2/P05.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.7.01 | OBS-párosítás, hitelesítés, kapcsolatstátusz, reconnect és diagnosztika. | OBS, COM | P06.1/P06.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.7.02 | Scene/source lista, állapot, scene-váltás, visibility, audio mute/volume a támogatott műveletek szerint. | OBS, COM | P06.1/P06.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.7.03 | Overlay Studio, browser source, canvas, safe area, méret, pozíció, scene-variáns. | OBS, COM | P06.1/P06.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.7.04 | Alert box és eseményvariánsok follow/sub/gift/cheer/raid/tip/purchase eseményekre, ha elérhetők. | OBS, COM | P06.1/P06.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.7.05 | Event list, chat box, goal/progress, countdown/timer, now-playing, sponsor/QR/link widget. | OBS, COM | P06.1/P06.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.7.06 | Poll, giveaway, loyalty/points, viewer queue és media request csak jogosultsággal és szabályokkal. | OBS, COM | P06.1/P06.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.7.07 | Widgetteszt, preview, verziózás, rollback és megosztható overlay URL. | OBS, COM | P06.1/P06.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.7.08 | Chatbot parancsok, aliasok, változók, timerek, quote/counter, shoutout és FAQ. | OBS, COM | P06.1/P06.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.7.09 | Spam/linkvédelem, slow/follower/sub-only policy ahol a platform engedi, moderációs napló. | OBS, COM | P06.1/P06.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.7.10 | Hotkey, Stream Deck/Macro Deck/MIDI/webhook adapter, allowlist, dry-run és végrehajtási eredmény. | OBS, COM | P06.1/P06.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.7.11 | Plugin/widget registry, verzió, kompatibilitás, permission, eredet, frissítés és eltávolítás. | OBS, COM | P06.1/P06.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.7.12 | Natív OBS plugin vagy desktop companion csak külön, dokumentált biztonsági tervvel. | OBS, COM | P06.1/P06.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.8.01 | VOD, clip, highlight, long-form, Short/Reel, post, image, audio, podcast és replay. | CNT, RES | P05.2 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.8.02 | Közös content ID, platform ID, cím, leírás, thumbnail, időtartam, URL, státusz és jogadat. | CNT, RES | P05.2 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.8.03 | Keresés, szűrés, rendezés, bulk action, duplikáció-észlelés és gyűjtemények. | CNT, RES | P05.2 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.8.04 | Tartalomnaptár és státuszfolyam: idea/draft/review/ready/scheduled/publishing/published/failed. | CNT, RES | P05.2 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.8.05 | Transcript, időbélyeg, speaker/fejezet, felirat, SRT/VTT, fordítás és export. | CNT, RES | P05.2 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.8.06 | AI highlight/clip-javaslat forrás-időbélyeggel, indoklással és emberi választással. | CNT, RES | P05.2 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.8.07 | Videóvágás: trim/split/crop/reframe/aspect ratio, felirat, hang, átmenet és brand overlay. | CNT, RES | P05.2 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.8.08 | Thumbnail/grafika-sablon, variánsok, platformméretek és preview. | CNT, RES | P05.2 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.8.09 | Platformonkénti cím, leírás, hashtag, CTA, képarány és publikálási státusz. | CNT, RES | P05.2 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.8.10 | API-publikálás ahol engedélyezett; egyébként export és kézi közzétételi útmutató. | CNT, RES | P05.2 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.8.11 | Zene-/videójog, vendéghozzájárulás, lejárat, forrás és eltávolítási kérés. | CNT, RES | P05.2 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.8.12 | Tartalomból weboldali feed, social poszt és analitika ugyanazon canonical rekord alapján. | CNT, RES | P05.2 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.9.01 | Publikus fan regisztráció/bejelentkezés, profil, preferencia, adatletöltés/törlés. | COM, TEAM | P06.3/P09.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.9.02 | Posztok, kommentek, reakciók, pollok, kérdések, beküldések és események. | COM, TEAM | P06.3/P09.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.9.03 | Követés, értesítés, jelvény, mérföldkő, kihívás és közösségi jutalom. | COM, TEAM | P06.3/P09.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.9.04 | Tagsági szintek, exkluzív poszt/video/audio, member-only stream és archívum. | COM, TEAM | P06.3/P09.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.9.05 | Discord szerver/csatorna/role mapping entitlement alapján. | COM, TEAM | P06.3/P09.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.9.06 | Moderációs queue, report, appeal, korlátozás/tiltás, spamvédelem és audit. | COM, TEAM | P06.3/P09.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.9.07 | AI moderációs javaslat, bizonytalanság és emberi felülvizsgálat. | COM, TEAM | P06.3/P09.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.9.08 | Public/member-only/private hozzáférés szerveroldali ellenőrzése. | COM, TEAM | P06.3/P09.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.9.09 | Közösségi szabályzat, adatvédelmi és korhatár-/tartalmi szabályok. | COM, TEAM | P06.3/P09.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.10.01 | Fizikai termék, merch, digitális termék, bundle, limited drop és preorder. | STO, SUP | P07.3/P07.4 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.10.02 | Variánsok, SKU, ár/pénznem, készlet, kategória, kollekció, media és SEO. | STO, SUP | P07.3/P07.4 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.10.03 | Terméklista, termékoldal, keresés, kosár, checkout-integráció és rendelés-visszaigazolás. | STO, SUP | P07.3/P07.4 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.10.04 | Rendelésállapot, fizetés, teljesítés, tracking, cancel, refund és support. | STO, SUP | P07.3/P07.4 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.10.05 | Kupon, ajándékkártya, promóció, kampány, bundle és lejárat. | STO, SUP | P07.3/P07.4 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.10.06 | Biztonságos digitális delivery, entitlement és visszavonás refund/chargeback esetén. | STO, SUP | P07.3/P07.4 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.10.07 | Egyszeri támogatás, visszatérő támogatás, célmérő és köszönőüzenet. | STO, SUP | P07.3/P07.4 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.10.08 | Tagsági előnyök, kedvezmények, termékdrop és tagság–Discord összekapcsolás. | STO, SUP | P07.3/P07.4 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.10.09 | Szponzorációs media kit, ajánlat, deliverable, határidő, kampánylink és riport. | STO, SUP | P07.3/P07.4 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.10.10 | Affiliate link/kód, jutalék és konverzió csak mérhető/jogszerű keretben. | STO, SUP | P07.3/P07.4 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.10.11 | Bevételi források, platformdíjak, refundok és export; nem könyvelési/adótanácsadási helyettesítő. | STO, SUP | P07.3/P07.4 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.10.12 | Fizetési, adózási, számlázási, fogyasztóvédelmi és GDPR-követelmények ellenőrzése. | STO, SUP | P07.3/P07.4 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.11.01 | Platformonkénti követő-/nézettség-/engagement-/streamidő-mutatók, ha elérhetők. | ANL, CAM, MKT | P07.1/P07.2 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.11.02 | Tartalom- és csatorna-összehasonlítás, trendek, időszakok és célok. | ANL, CAM, MKT | P07.1/P07.2 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.11.03 | Adatforrás, időbélyeg, frissesség, becsült/valós adat és hiányzó metrika jelzése. | ANL, CAM, MKT | P07.1/P07.2 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.11.04 | Webanalitika, UTM, konverzió, SEO és publikált oldalak teljesítménye. | ANL, CAM, MKT | P07.1/P07.2 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.11.05 | Thumbnail/cím/időzítés kísérletek és mérhető eredmények, ha elég adat áll rendelkezésre. | ANL, CAM, MKT | P07.1/P07.2 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.11.06 | Kampány-/szponzorriport, CSV/JSON export és időszakos jelentés. | ANL, CAM, MKT | P07.1/P07.2 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.11.07 | AI-elemzés hipotézisekkel, forrással és bizonytalansággal; nem garantált növekedési ígéret. | ANL, CAM, MKT | P07.1/P07.2 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.12.01 | Vizuális trigger → condition → action → branch modell. | AUT | P08.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.12.02 | Triggerek: stream, platformesemény, schedule, tartalom, rendelés, tagság, webhook, időzítés. | AUT | P08.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.12.03 | Akciók: értesítés, draft, címke, export, overlay/OBS parancs, publikálási előkészítés. | AUT | P08.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.12.04 | Sablonok, verziózás, aktiválás/leállítás és jogosultság. | AUT | P08.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.12.05 | Dry-run, preview, jóváhagyás, idempotency, rate limit, retry, timeout és napló. | AUT | P08.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.12.06 | Sikertelen ág, karantén, értesítés, kézi helyreállítás és rollback/kompenzáció. | AUT | P08.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.12.07 | AI-ból létrehozott workflow először draft/szimuláció; csak jóváhagyás után éles. | AUT | P08.1 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.13.01 | AI Control Center: provider/model, költségkeret, kvóta, retention, adatforrás és stop switch. | AI, AUT | P08.2/P08.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.13.02 | Projekt-/brandkontextus jogosultsággal és megtekinthető forrásokkal. | AI, AUT | P08.2/P08.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.13.03 | Website Designer: oldal/komponens/dizájn/responsive/SEO/accessibility javaslat. | AI, AUT | P08.2/P08.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.13.04 | Live Coach: opt-in technikai jelzések, pillanatjelölés és stream-/chat-összegzés. | AI, AUT | P08.2/P08.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.13.05 | Content Producer: transcript, clip, felirat, fordítás, thumbnail, cím és platformvariáns. | AI, AUT | P08.2/P08.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.13.06 | Community Assistant: FAQ, összegzés, moderációs javaslat és tagsági művelet-előkészítés. | AI, AUT | P08.2/P08.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.13.07 | Business Analyst: tartalom/kampány elemzés, hipotézis, mérhető teszt. | AI, AUT | P08.2/P08.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.13.08 | Automation Builder: természetes nyelvből workflow-draft, szimuláció és diff. | AI, AUT | P08.2/P08.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.13.09 | Kép-/grafika-/hang-/videógenerálás megfelelő külső modellel/szolgáltatóval, licenc- és költségkorláttal. | AI, AUT | P08.2/P08.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.13.10 | AI-művelet domain API-n át; kockázati szint, preview, jóváhagyás, napló és visszaállítás. | AI, AUT | P08.2/P08.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.13.11 | Generált tartalom jelölése, forrás és bizonytalanság, felhasználói visszajelzés. | AI, AUT | P08.2/P08.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.13.12 | Manuális, AI nélküli út minden alapvető termékfolyamathoz. | AI, AUT | P08.2/P08.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.14.01 | Admin és publikus web külön nyelvi beállítással. | LOC, WEB | P09.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.14.02 | Magyar elsődleges nyelv, további nyelvek fokozatos bevezetése. | LOC, WEB | P09.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.14.03 | Locale-onkénti oldal-/CMS-tartalom, menü, média, alt text, SEO és Open Graph. | LOC, WEB | P09.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.14.04 | Lokalizált slug/URL, hreflang/canonical szabályok és nyelvi fallback. | LOC, WEB | P09.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.14.05 | Dátum/idő/pénznem/szám lokalizáció, időzóna és nyári időszámítás. | LOC, WEB | P09.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.14.06 | RTL layout, billentyűzet, font fallback és hosszabb fordítások tesztje. | LOC, WEB | P09.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.14.07 | Fordítási memória/szószedet és AI-fordítás emberi jóváhagyással. | LOC, WEB | P09.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.14.08 | Nyelvváltó, automatikus nyelvajánlás és felhasználói választás megőrzése. | LOC, WEB | P09.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.15.01 | Profil, site/workspace, locale, timezone, dátum/pénznem és preferenciák. | SET, SEC, OPS, QA | P01.3/P01.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.15.02 | Szerepek: owner/admin/editor/moderator/analyst/commerce és modulonkénti engedély. | SET, SEC, OPS, QA | P01.3/P01.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.15.03 | Szerveroldali authorization, site/tenant izoláció és minimális jogosultság. | SET, SEC, OPS, QA | P01.3/P01.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.15.04 | Session, 2FA/SSO később, secret rotation, rate limit és gyanús aktivitás. | SET, SEC, OPS, QA | P01.3/P01.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.15.05 | Titok/token/payment adat redakció; titkosított token storage. | SET, SEC, OPS, QA | P01.3/P01.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.15.06 | Consent, cookie/privacy, retention, export/delete és adatfeldolgozók. | SET, SEC, OPS, QA | P01.3/P01.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.15.07 | Backup, restore próba, verziózott mentés, import/export és disaster recovery. | SET, SEC, OPS, QA | P01.3/P01.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.15.08 | Health, job queue, webhook, API-quota, error log és audit log. | SET, SEC, OPS, QA | P01.3/P01.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.15.09 | Idempotencia, retry, timeout, cache invalidation, stale-data és partial-failure kezelés. | SET, SEC, OPS, QA | P01.3/P01.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.15.10 | Undo/redo, revision diff, restore és törlés előtti függőségi vizsgálat. | SET, SEC, OPS, QA | P01.3/P01.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.15.11 | WCAG 2.2 AA cél, reduced motion, screen reader, kontraszt, fókusz és touch target. | SET, SEC, OPS, QA | P01.3/P01.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.15.12 | Mobil/tablet/desktop, gyenge hálózat, offline-jelzés és adatvesztés elleni védelem. | SET, SEC, OPS, QA | P01.3/P01.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.15.13 | Tesztek: domain, integration, authorization, migration, UI, accessibility, responsive, E2E és smoke. | SET, SEC, OPS, QA | P01.3/P01.5 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.16.01 | Dokumentált API, webhook registry, API-key kezelés, tesztelő és sandbox. | DEV, TEAM, SEC | P09.1/P09.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.16.02 | Extension/widget/overlay manifest, schema, permission, verzió és kompatibilitás. | DEV, TEAM, SEC | P09.1/P09.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.16.03 | Eredet/licenc/aláírás, sandbox, felülvizsgálat, frissítés, eltávolítás és visszavonás. | DEV, TEAM, SEC | P09.1/P09.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.16.04 | Template/component/overlay/workflow marketplace későbbi fázisban. | DEV, TEAM, SEC | P09.1/P09.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.16.05 | Több site/workspace, aktív workspace választó, csapatmeghívás és szerepek. | DEV, TEAM, SEC | P09.1/P09.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.16.06 | Agency/studio mód, ügyfélhozzáférés, közös sablonok és jóváhagyás. | DEV, TEAM, SEC | P09.1/P09.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.16.07 | Későbbi SaaS billing, csomag, használati limit, számla, lemondás és adat-export. | DEV, TEAM, SEC | P09.1/P09.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+| 54.16.08 | Tenant izoláció, migráció, skálázás, adatrezidencia és költségfelügyelet. | DEV, TEAM, SEC | P09.1/P09.3 | GROUP-LEVEL ROUTING ONLY / exact stable ID and edge cases UNPROVEN |
+
+**Döntési kapuk, amelyeket a fejlesztés megkezdése előtt tételesen fel kell oldani:**
+1. **Nem önálló Admin-modul:** 54.x az átfogó review checklist; a 49. fejezet az egyetlen navigációs menütérkép. A 54.x-ben ismételt capability nem generálhat második implementációt.
+2. **Keresztmodulú képességek:** a 54.2 editor + SEO + binding, 54.5 provider security, 54.6 Live + Schedule, 54.7 OBS + Community, 54.8 Content + Resource, 54.9 Community + Team, 54.10 Store + Support, 54.11 Analytics + Campaign, 54.13 AI + Automation, 54.15 Security + Operations és 54.16 API + Team minden kapcsolódásánál külön kanonikus owner és consumer szükséges.
+3. **Kiadási címkék:** a 54.x-ben maradt „első kiadás”, „későbbi fázis” és „SaaS később” szavak archív/termékkontextus; **nem kötelező 1.0-s verziókorlát**, a sorrendet a P00–P10 függőségek szabják meg.
+4. **Funkcióhiány vs gyűjtőszöveg:** a „minden”, „teljes”, „stb.” jellegű felsorolásokat konkrét acceptance-re kell bontani; a generikus modulcímke nem bizonyítja a 396 stable ID teljes lefedését.
+5. **Történeti hiány:** 00/A és 00.9–00.9.6.B továbbra is SOURCE NOT RECOVERED; 271 H-ID forrásmező és target definíció megvan, de a mély szemantikai PASS nincs.
+6. **Kódblokk:** 63.50.46 HIGH publikálási konfliktus változatlanul NOT FIXED, a 14 high-risk tesztcsomag a 63.50.89 alatt tervezett, nem futtatott.
+
+**Audit-kontroll:** `156/156 54.x ROWS ROUTED TO DOMAIN FAMILY AND P-WORK PACKAGE`; `0 EXACT PER-ROW STABLE ID PASS CLAIMED`; `0 RUNTIME PASS CLAIMED`. Következő kurzor: `63.50.91` — 54.x egyedi stable ID megfeleltetés és szemantikai hiányok, valamint a P00–P10 aktív egyetlen végrehajtási backlog kiépítése. **PLAN IN PROGRESS / NOT PASS.**
 
 
 ### 63.51. Végső terv használati rendje — egyetlen MASTER, nincs második audit-roadmap
