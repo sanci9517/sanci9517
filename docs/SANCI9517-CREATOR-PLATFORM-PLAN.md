@@ -1,5 +1,5 @@
-Warning: truncated output (original token count: 534527)
-... 1089530 bytes omitted ...
+Warning: truncated output (original token count: 535173)
+... 1092116 bytes omitted ...
 
 # SANCI9517 — CREATOR PLATFORM: TERMÉK-, ARCHITEKTÚRA- ÉS FEJLESZTÉSI MASTER-TERV
 
@@ -9,7 +9,7 @@ Warning: truncated output (original token count: 534527)
 **Állapot:** KANONIKUS TERMÉK- ÉS FEJLESZTÉSI MASTER — a tervezett termékkör rögzítve; F0.2 és F0.3 CLOSED / PASS. Az F1.1 Site Core, többoldalas kezelés és navigáció IN PROGRESS. A tervezési teljesség nem bizonyít sem kész implementációt, sem teljes körű tételes szemantikai audit.
 **Aktív tervpontazonosító:** `F1.1-SITE-CORE-MULTIPAGE-NAVIGATION`  
 **Aktív tervpont státusza:** IN PROGRESS — Site Core, többoldalas kezelés és navigáció. A 77.10 szerinti F0.3 kiadási kapu lezárult; az F1.1 oldalkezelési acceptance pontjai a 77.11–77.14 szerint részlegesen teljesültek, a canonical navigációs fa és további CRUD/URL ellenőrzések nyitva maradnak.
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `F1.1-SITE-CORE-MULTIPAGE-NAVIGATION` — a WEB-009 canonical navigation tree fejlesztése; a felhasználó 2026-10-16-án jóváhagyta az éles D1 migrációt és deployt, így a következő lépés a release ellenőrzése és a kézi Editor-elfogadás.
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `F1.1-SITE-CORE-MULTIPAGE-NAVIGATION` — a production WEB-009 kiadás kézi Editor-elfogadása: navigáció betöltése, draft mentés és külön publikálás, majd nested/mobile/keyboard ellenőrzés.
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** világszintű, önálló márka- és weboldalépítő, streamelési, tartalomgyártási, közösségi, kereskedelmi, analitikai, automatizációs és AI-rendszer egyetlen logikusan tagolt Creator & Brand Operating Platformon. Elsődleges célcsoport: streamerek és digitális tartalomkészítők, akik egyedi publikus brandoldalukat és teljes tevékenységüket innen kezelik. A többfelhasználós, önkiszolgáló, előfizetéses SaaS és a működés/AI-költség fenntartható finanszírozása a teljes termékcél lényegi része; a funkciókat függőség szerint, fokozatosan építjük meg. Más célcsoportok támogatása későbbi bővíthetőség, nem az elsődleges piac.
 
@@ -856,7 +856,425 @@ A fejlesztés függőségi sorrendben halad. A teljes termékcél végig megmara
 **P3.7 Responsive:** desktop/tablet/mobile, inheritance, viewport switching without data loss, real-browser acceptance.  
 **P3.8 Mobile Editor:** fixed action bar/safe-area/keyboard/scroll, panel switch, save/preview/publish/undo, real Android Chrome phone/tablet smoke; tablet-login issue remains separately tracked.
 
-#…222152 tokens truncated…/reload, dirty/undo/redo, network abort | tesztek és browser flow | adatvesztés |
+### P4 — Resource/media
+**P4.1 Registry:** asset ID/ownership/metadata, D1/R2 boundary, checksum, references, cross-site denial.  
+**P4.2 Upload/download:** validation, progress, retry/cancel, R2 lifecycle, safe URL, expiry, large/mobile upload.  
+**P4.3 Library UI:** search/filter/collection/tag/preview/alt text/usage map/delete warning; Editor picker shares registry.  
+**P4.4 Icons/fonts:** category/search/license/SVG sanitization/font fallback/weight/load performance.
+
+### P5 — Design system
+**P5.1 Tokens:** typed schema, token editor, usage map, preview/diff/rollback.  
+**P5.2 Theme:** colors/type/spacing/layout, responsive defaults, reduced motion, renderer/Editor consistency, contrast.  
+**P5.3 Templates:** site/page/section/component distinct types, save/preview/apply/version/compatibility/rollback.  
+**P5.4 Reusable symbols:** master/instance, explicit override/detach, global update preview, usage map, undo/reload consistency.
+
+### P6 — Pages and renderer
+**P6.1 Lifecycle:** CRUD/slug/hierarchy/draft/published/archive/revisions/duplicate/delete reference checks.  
+**P6.2 Publish:** preview permission, validation, immutable published snapshot, cache invalidation, rollback, production acceptance.  
+**P6.3 Renderer/blocks:** component registry/schema/fallback/safe rendering/data binding/performance; preview matches public.  
+**P6.4 Navigation/header/footer:** canonical navigation, mobile menu, link validation, 404/redirect/canonical.  
+**P6.5 SEO/public quality:** title/description/OG/sitemap/robots/structured data/link/alt audit, accessibility/performance/production domain smoke.
+
+### P7 — Integrations
+**P7.1 Contract:** provider adapter, secret/token storage, scopes, health, sync, errors, retries, audit, mock tests.  
+**P7.2 Twitch:** OAuth/state/callback, token lifecycle, site binding, reconnect/disconnect, scope, production callback and cross-site negative tests.  
+**P7.3 Live state:** normalize live/offline, poll/webhook, quota, stale state, Dashboard/Live/public consistency, outage test.  
+**P7.4 Schedule sync:** conflict/manual override, timezone/recurrence, all surfaces share API, idempotent sync.  
+**P7.5 YouTube/TikTok/Discord/Kick:** current capability/policy review, adapter, permission-specific activation, partial/revoked access, publish only when supported.
+
+### P8 — Creator profile, schedule and blocks
+**P8.1 Profile/game profile:** public/private fields, image/links/tags, schedule/content relationships.  
+**P8.2 Dynamic block catalogue:** live, next stream, schedule, countdown, VOD/content feed, platform feed, Discord CTA, support, social hub, later product/collection; schema/source/fallback/error/permission for every block.  
+**P8.3 Public site:** home/stream/schedule/about/content/link hub/community/support/store as enabled, responsive, accessible, fast, SEO and embed privacy.
+
+### P9 — Content and publishing
+**P9.1 Content model:** type/status/platform/source ID/metadata/tags/collections/ownership/visibility, duplicate detection.  
+**P9.2 Library:** CRUD/import/archive/search/filter/sort/pagination, VOD/clip/highlight/short/video/post, related content and thumbnails.  
+**P9.3 Calendar/queue:** status lifecycle, provider permission, idempotency, retry, approval, partial success.  
+**P9.4 Studio:** ideas/brief/script/title/description/tag/thumbnail, platform variants, campaign, approval, export and schedule.
+
+### P10 — Community/audience
+**P10.1 External:** Discord server/bot/permissions, CTA, event/notification hooks, reconnect.  
+**P10.2 Own community:** profile/follow/post/comment/reaction/poll/event, report/moderation/ban/role/audit, spam/rate limit/privacy.  
+**P10.3 Email/audience:** signup/consent/double opt-in if required, subscriber list/segment/export/unsubscribe, newsletter vs transactional, bounce/complaint, retention/delete.
+
+### P11 — Commerce/support/membership
+**P11.1 Provider strategy:** fees, EU/HU payment, taxes, fulfillment, API, refund, portability, merchant-of-record decision, legal review.  
+**P11.2 Catalog:** product/variant/collection/category/price/media, physical/digital/bundle/preorder, inventory/fulfillment, public pages.  
+**P11.3 Orders:** checkout adapter, order/payment/fulfillment, signed webhook/idempotency, refund/cancel/tracking, test and production acceptance.  
+**P11.4 Digital delivery:** purchase→entitlement→secure access, signed expiring links, refund revocation, no public R2 exposure.  
+**P11.5 Support/membership:** tips/goals/tiers/perks/access, canonical entitlement, Discord role sync, cancellation/refund/failed payment.
+
+### P12 — Analytics
+**P12.1 Event taxonomy:** canonical event schema, source, timestamp, consent, dedup/late event, retention.  
+**P12.2 Web analytics:** views/sessions/referrer/device/performance, privacy/consent/bot filtering.  
+**P12.3 Creator/content analytics:** provider metrics with unit/source/freshness, per-stream/content comparisons, no fabricated values.  
+**P12.4 Commerce/community analytics:** canonical order metrics, campaign attribution, permission, export/retention.
+
+### P13 — Campaign/sponsorship
+**P13.1 Campaigns:** goals/dates/links/assets/products/content/performance, templates, attribution.  
+**P13.2 Sponsorship:** media kit, public metrics, leads/brands/deals/rate card/deliverables/deadlines, private docs, reminders/export.
+
+### P14 — Automation
+**P14.1 Event registry:** stable schema, authenticated source, dedup/order, retention.  
+**P14.2 Engine:** trigger/condition/action/delay/result, run ID, idempotency, retry/timeout/cancel, cycle detection, dry-run/approval, recovery.  
+**P14.3 Builder:** rules/templates/active/paused/version, preview/permissions/test run/audit; no arbitrary code.
+
+### P15 — Stream Studio/Overlay/OBS
+**P15.1 Assets:** overlay/scene/browser-source config, dimensions/safe area/version/preview/export.  
+**P15.2 OBS connector:** explicit secure pairing, state/commands/permissions, disconnect/reconnect, no exposed secrets.  
+**P15.3 Stream tools:** alerts/overlays/timers/commands/loyalty/giveaway/poll/moderation per provider capability, test mode/rate limit/audit.
+
+### P16 — Backup/portability/diagnostics
+**P16.1 Export:** site/pages/revisions as supported/design/navigation/metadata/asset manifest, version/checksum, secret exclusion.  
+**P16.2 Backup/restore:** scope/retention/encryption, dry-run, D1/R2 consistency, RPO/RTO, restore test.  
+**P16.3 Diagnostics:** broken links/assets/invalid blocks/stale integration/failed job, redacted report and remediation.
+
+### P17 — Security/accessibility/performance/reliability
+**P17.1 Security:** auth/permission/IDOR, OAuth/CSRF/session, XSS/embed, SSRF/redirect/injection, rate limit, webhook signature, secret/dependency audit.  
+**P17.2 Accessibility:** keyboard, semantic structure, focus, screen reader, contrast, reduced motion, zoom, forms/dialogs/tables/canvas alternatives, automated and manual review.  
+**P17.3 Performance:** Core Web Vitals, asset compression, query/API latency, pagination/cache, Editor large documents, bundle/dependency review, slow network.  
+**P17.4 Reliability:** provider outage, retry/backoff, D1/R2 recovery, idempotent webhook/publish, alert thresholds, rollback/restore drill.
+
+### P18 — Localization
+**P18.1 Locale foundation:** Hungarian primary, translation keys/fallback, dates/numbers/currency/timezone, content locale vs UI locale, missing-key tests.  
+**P18.2 Multi-language public site:** locale routes, hreflang, translated pages/SEO/content, fallback/navigation, canonical/indexing rules.
+
+### P19 — Multi-site/team/SaaS
+**P19.1 Workspace/site:** ownership model, switcher/context, resource/integration scope, cross-site denial, config isolation.  
+**P19.2 Team:** invites/roles/permissions/review/approval/audit/notifications/conflict/owner transfer.  
+**P19.3 Billing:** cost-based plans/entitlements/feature gates/subscription lifecycle/usage metering/quotas/export/deletion; no pricing promise before cost review.
+
+### P20 — Extension marketplace
+**P20.1 Contract:** manifest/permissions/version/compatibility/review, safe execution, install/update/uninstall/migration, supply-chain security/rollback.  
+**P20.2 Marketplace:** themes/blocks/templates/overlays/OBS scenes/assets, license/attribution/version/rating/support, entitlement/payment only after legal review, moderation/malicious package scan.
+
+### P21 — AI and creator intelligence
+**P21.1 Governance:** provider/data policy, structured operations, schema/permission/ownership checks, diff/preview/approval/rollback, cost/quota/log/redaction, prompt-injection tests.  
+**P21.2 Website/content AI:** page/design/text/SEO/accessibility/translation suggestions, human edit/approval, no direct production mutation.  
+**P21.3 Stream intelligence:** transcript/chapter/highlight/clip candidate, short-form reuse, copyright/privacy/retention, publish only via separate explicit policy.
+
+### P22 — End-to-end acceptance and continuous evolution
+**P22.1 Full journey:** Admin login→connect Twitch→schedule→create page→blocks→preview→draft save→reload→publish→public verification; cross-surface consistency; asset flow; content hub; enabled commerce; recovery tests; mobile/desktop.  
+**P22.2 Release readiness:** active gates PASS, no critical/high security defect, restore/rollback verified, accessibility/performance/SEO within budgets, help/error messages, production smoke/user acceptance, release notes/known issues.  
+**P22.3 Continuous discovery:** benchmark refresh, user feedback, API/policy review, proposal with impact/dependency/cost/security, no capability silently removed.
+
+---
+
+### A részletes munkacsomagok határa
+- A P1–P22 munkacsomagok a kanonikus F0–F11 fázisokon belül vagy azokat keresztmetszetben szolgálják ki; önmagukban nem hoznak létre külön, párhuzamos ütemtervet.
+- A SANCI AI részletes képességeinek kanonikus termékfejezete a 40. fejezet, végrehajtási fázisa az F10.
+- A multi-site/team/SaaS/marketplace részletes képességeinek kanonikus termékfejezete a 61. fejezet, végrehajtási fázisa az F11.
+- **Fázisszabály:** a fázis nem töröl funkciót a termékcélból. A tényleges provider/API-képességet, költséget, jogi feltételeket és jogosultságokat az adott integráció aktiválásakor ellenőrizzük.
+
+---
+
+## 10. Minden funkció kötelező specifikációja
+
+Minden egyedi funkció-ID alatt kötelező:
+1. ID és név.
+2. Felhasználói cél.
+3. Belépési hely: Admin menü, public route, Editor panel vagy automation.
+4. Pontos működés és eredmény.
+5. Canonical domain owner.
+6. Adatforrás: D1/R2/provider/cache.
+7. Olvasó és író felületek.
+8. Permission, scope, ownership és operation.
+9. Request/response/schema/status/error contract.
+10. Függőségek.
+11. Hibamódok: timeout, stale, outage, conflict, invalid input.
+12. Security/privacy/secret/retention.
+13. UI states.
+14. Automated tests.
+15. Negative tests.
+16. Live acceptance ha runtime/DB/provider/deploy érintett.
+17. User acceptance ha UI/workflow érintett.
+18. Rollback/recovery.
+19. Státusz.
+20. Bizonyíték: commit/CI/test/runtime, titok nélkül.
+21. Tervfrissítés és next point.
+22. Regressziós hatás.
+
+### 10.1. Kötelező negatív tesztek
+- Másik site resource ID-ja.
+- Hiányzó/lejárt session.
+- Hiányzó scope vagy visszavont provider engedély.
+- Hibás schema/túl nagy input.
+- Duplikált webhook/publish/automation event.
+- Stale revision és párhuzamos mentés.
+- Hálózati timeout mentés közben.
+- Használatban lévő asset törlése.
+- Kliens által manipulált role/permission/site ID.
+- Hiányzó/hibás provider data.
+- Cache stale/invalidation.
+- Public route privát adatot kér.
+- Retry dupla tranzakciót vagy contentet okoz.
+- Restore inkompatibilis manifestből.
+- AI javaslat jogosulatlan műveletet tartalmaz.
+
+---
+
+---
+
+## 11. Megvalósítási állapotok
+
+A terv és a tényleges készültség mindig különbözik. Csak az alábbi státuszok használhatók:
+
+- **IMPLEMENTED / VERIFIED:** a kód és a szükséges teszt/runtime bizonyíték igazolja.
+- **IMPLEMENTED / ACCEPTANCE OPEN:** a funkció kódban jelen van, de éles, böngészős, eszközös vagy felhasználói elfogadás még hiányzik.
+- **IN PROGRESS:** aktív fejlesztés folyik.
+- **PLANNED:** termékspecifikáció megvan, implementáció még nincs vagy nem igazolt.
+- **PROVIDER-DEPENDENT:** a végleges viselkedés az adott platform API-jától, scope-jától vagy policy-jától függ.
+- **BLOCKED:** konkrét külső vagy technikai akadály áll fenn, amelyhez megoldási lépés tartozik.
+
+A „tervben szerepel”, „UI megjelenik” vagy „API válaszol” önmagában nem jelent teljes készültséget. A lezárás az adott funkcióra vonatkozóan ellenőrzi a sikeres és hibás útvonalat, jogosultságot, adatkonzisztenciát és helyreállítást.
+
+---
+
+## 12. Kiadási és prioritási stratégia
+
+Nincs kötelező 1.0/2.0 számozás, amely mesterségesen korlátozza a fejlesztést. A teljes termékkatalógus mindig érvényes; a tényleges release a függőségek szerint áll össze:
+
+1. Biztonságos alap: build/auth/ownership/data/revision/storage/recovery.
+2. Első teljes napi workflow: Admin→connection→schedule→page/editor→save→preview→publish→public renderer.
+3. Publikus minőség: pages/navigation/theme/media/SEO/accessibility/responsive.
+4. Creator működés: live/schedule/game profile/content/integrations.
+5. Növekedés: content studio/link hub/audience/community/analytics.
+6. Bevétel: support/membership/commerce/digital products/sponsorship.
+7. Operáció: automation/alerts/OBS/diagnostics/backup.
+8. Platformosodás: multi-site/team/permissions/billing/marketplace.
+9. AI: strukturált, jóváhagyásos segítség, majd stream intelligence.
+10. Folyamatos security/performance/accessibility/benchmark.
+
+Korábbi release scope csak akkor bővíthető, ha dependency PASS, érték egyértelmű, költség/kockázat vállalható és quality gate nem gyengül. A katalógusból funkciót nem törlünk pusztán azért, mert későbbre kerül.
+
+---
+
+---
+
+## 13. Minőségi és üzemeltetési kapuk
+
+**PR előtt:** diff/scope review, typecheck, releváns tesztek, diff-check, security/dependency review, migration/API contract review, aktív pont/acceptance ellenőrzése.
+
+**Deploy előtt:** branch/commit/working tree, secret/binding/migration preflight, rollback plan, API/data tests, deploy diff/version.
+
+**Deploy után:** health, auth/permission, érintett API/DB, public renderer/cache, Editor save/reload/publish ha érintett, browser/device ha UI érintett, log/error review, PASS/FAIL rögzítése.
+
+**Release blocker:** adatvesztés/revision corruption, tenant data leak, secret leak, auth bypass, draft/published összekeverés, payment/entitlement hiba, csendes sync felülírás, kritikus broken public route/asset, kritikus accessibility/mobil hiba a release scope-ban, nem helyreállítható migration/restore.
+
+---
+
+---
+
+## 14. Stabil funkcióazonosító-rendszer
+
+Az ID a menücímke változásakor sem változik:
+- ADM — Admin shell/Dashboard
+- WEB — website/pages/navigation/SEO/publish
+- EDT — Visual Editor
+- DSN — design system/themes/templates/components
+- RES — resources/media/assets/icons/fonts
+- INT — integrations/connections
+- LIV — live/stream
+- SCH — schedule/calendar/game profiles
+- CNT — content/studio/publishing
+- COM — community/moderation
+- STO — store/products/orders/fulfillment
+- SUP — support/membership/entitlements
+- ANL — analytics/metrics
+- CAM — campaigns/sponsorship/business
+- AUT — automation/workflows
+- OBS — OBS/overlay/stream studio
+- AI — AI orchestration/creator intelligence
+- SEC — security/privacy/permissions
+- OPS — observability/deploy/backup/recovery
+- LOC — localization
+- TEAM — workspace/team/roles
+- MKT — marketplace/extensions
+- QA — quality/release/acceptance
+
+Példák: INT-TWITCH-OAUTH, SCH-RECURRING-EVENT, EDT-RESPONSIVE-RESET, WEB-PUBLISH-SNAPSHOT. A menücímke és a belső ID külön fogalom.
+
+---
+
+---
+
+## 15. Folyamatos ellenőrzőlisták
+
+**Termék:** minden Admin művelet/public route; egy canonical domain owner; közös adat több felületen; provider capability matrix; commerce/entitlement; AI approval/rollback; minden modulhoz dependency/acceptance.
+
+**Technika:** auth/RBAC/ownership/tenant isolation; validation/API errors/idempotency; migration/index/FK/integrity; D1/R2 boundary; cache invalidation; redacted logs/monitoring; backup/export/restore; performance/accessibility/SEO/privacy; dependency/license/security; browser/device/production acceptance.
+
+**Felhasználói minőség:** feladatot nevező menük; egyértelmű eredmény; save és publish külön; érthető hiba/következő lépés; unsaved changes védelem; mobilhasználhatóság; közös adatok konzisztenciája; nincs hamis adat/success.
+
+---
+
+## 16. Döntési napló és változáskezelés
+
+Minden döntéshez: dátum, ID, probléma, alternatívák, döntés/indok, érintett domain/menu/ID, data/API/migration/security/privacy/performance hatás, teszt/acceptance, rollback.
+
+Tervmódosításkor a korábbi követelmény státusza és indoka megmarad. Új követelmény egyedi ID-t, domain ownert és DoD-t kap. Funkció nem nevezhető át úgy, hogy elveszítse korábbi jelentését; nem távolítható el csendben.
+
+---
+
+---
+
+## 17. Aktív fejlesztési pont sablon
+
+Minden konkrét fejlesztési pont rögzíti:
+- az elérni kívánt felhasználói eredményt;
+- a pontos scope-ot és a nem célzott változtatásokat;
+- az érintett felületeket, domaineket, API-kat és adatforrásokat;
+- az előfeltételeket és a függőségeket;
+- a lépéseket és az érintett fájlokat;
+- a valós repositoryban létező tesztparancsokat;
+- a pozitív és negatív teszteket;
+- az éles/böngészős ellenőrzést, ha releváns;
+- a hibakezelést, visszaállítást és elfogadási feltételeket;
+- az elkészült eredményt és a következő, függőség szerint esedékes fejlesztési pontot.
+
+A pont célja működő termékfunkció szállítása, nem dokumentum-audit végrehajtása.
+
+---
+
+## 18. Ismert core acceptance-feladatok
+
+Ezek meglévő termékfunkciókhoz tartozó ellenőrzési feladatok:
+- **EDT-SAVE-RELOAD:** mentés és újratöltés utáni teljes round-trip.
+- **EDT-PUBLISH-SNAPSHOT:** save → reload → publish → publikus render.
+- **EDT-MOBILE-ACTION-BAR:** valódi mobilböngészős ellenőrzés.
+- **EDT-LAYERS-INSPECTOR-RESPONSIVE:** Canvas/Layers/Inspector/responsive konzisztencia.
+- **ADM-TABLET-LOGIN:** ismert, külön kezelendő tabletes belépési hiba.
+- **INT-TWITCH:** a lezárt ownership/integration szerződés megőrzése és regressziótesztelése.
+
+Az egyes tételek státusza csak az adott ellenőrzés tényleges lefutása után módosítható.
+
+---
+
+## 19. Következő fejlesztési pont
+
+**Következő implementációs fókusz a tervlezárás UTÁN: F0 — Admin → Visual Editor → mentés → előnézet → publikálás → publikus weboldal.** A jelenlegi aktív munka nem F0 implementáció, hanem a MASTER teljességének, belső konzisztenciájának és fejlesztéskövetési szabályainak lezárása. F0 nem indulhat el a 63. fejezet lezárási feltételeinek teljesülése előtt.
+
+**Következő konkrét ellenőrzési pont: EDT-SAVE-RELOAD → EDT-PUBLISH-SNAPSHOT.** A repositoryban lévő Editor-tesztek között a mentési útvonal több ellenőrzése forrásszöveg-szerződést (statikus mintákat) vizsgál; ez önmagában nem bizonyít valódi böngészős, D1-es mentés/újratöltés/publikálás round-tripet. Először a meglévő teszteket és futó környezetet kell ellenőrizni, majd valódi draft mentés → újratöltés → preview → explicit publish → publikus oldal ellenőrzést végigvinni, a hibákat reprodukálhatóvá tenni és csak ezután módosítani a kódot. Új, nagyobb termékmodul nem kerülhet e core ellenőrzés elé.
+
+Ez a fókusz nem a teljes Creator Platform scope-jának szű…212152 tokens truncated…s viselkedés
+
+| Fogalom | Tartalom | Példányosítás/frissítés | Tulajdonos |
+|---|---|---|---|
+| Starter/site kit | oldalak, navigáció, Brand Kit és opcionális modulkonfiguráció előre megadott összeállítása | telepítéskor saját site-példány; explicit upgrade | 49.3 design/template domain |
+| Site theme | design tokenek, tipográfia, layout primitives, theme módok | globális tokenreferencia; scoped override | Brand Kit |
+| Page template | egy oldaltípus szerkezete és alap komponensei | alapból szerkeszthető oldal-példány; dokumentált linked mód | template registry |
+| Section preset | kiválasztható hero, cards, CTA, gallery, social/stream/layout minta | gyors beszúrás; lokális stílus és tartalom | template registry |
+| Component master | verziózott újrahasznosítható elem propokkal és slotokkal | linkelt példány, explicit override, detach | component registry |
+| Content preset | CMS mezők/collection seed és demonstrációs tartalom | új rekordok, duplikáció és ownership kontroll | CMS domain |
+| Stream/overlay preset | grafikai és animációs konfiguráció, widget layout | Overlay Studio példány; közös brand token | stream studio registry |
+| Automation preset | trigger/condition/action konfiguráció | telepítés alapból *disabled*, csak jóváhagyva aktiválható | automation domain |
+
+**Részletes fejlesztési feladatok (STP-01–STP-24; azonosítók munkacsomag-alpontok, nem a 396 eredeti funkció-ID helyettesítői):**
+1. `STP-01` Manifest schema, verzió, owner, címkék, locale, licenc, preview, moduligény.
+2. `STP-02` Type-safe token schema és globális/lokális öröklés.
+3. `STP-03` Presetválasztó a Site Managerben és releváns Editor-panelben.
+4. `STP-04` Sablonkatalógus típus/cél/kompatibilitás szerint kereshető.
+5. `STP-05` Kit preview desktop/tablet/mobile mintatartalommal.
+6. `STP-06` Install terv: létrejövő oldalak, assetek, CMS-típusok, jogok és modulfüggőségek listája.
+7. `STP-07` Dry-run konfliktusvizsgálat meglévő slugokkal, komponens-ID-kkal és tokennevekkel.
+8. `STP-08` Atomi, idempotens telepítés, napló és visszaállítható hiba.
+9. `STP-09` Kit és page template import/export sémaverzióval.
+10. `STP-10` Global header/footer mint linked komponensek.
+11. `STP-11` Master/instance propok, slotok, boolean/enum/content változatok.
+12. `STP-12` Lokális override és egyértelmű reset-to-master.
+13. `STP-13` Detach/fork konfliktus- és adatvesztésellenőrzéssel.
+14. `STP-14` Sablonfrissítés diff, scope és érintett oldalak előnézetével.
+15. `STP-15` Rollback kompatibilis schema migrációval.
+16. `STP-16` Dark/light/high-contrast theme és tokenreferencia.
+17. `STP-17` Desktop/tablet/mobile breakpoint és container/grid/flex preset.
+18. `STP-18` Mozgás/animáció preset reduced-motion fallbackkal.
+19. `STP-19` Ikon/emoji/SVG asset licence + sanitization és méretstílus.
+20. `STP-20` Tipográfiai preset fallback, preload, licenc, teljesítmény.
+21. `STP-21` Stream alert és live widget preset biztonságos próbaeseménnyel.
+22. `STP-22` Tartalom és shop blokkok domainből kötött referencia-adatokkal.
+23. `STP-23` Keresés, kedvencek, ajánlott és utoljára használt presetek.
+24. `STP-24` Kompatibilitási, keyboard, screen reader, kontraszt és performance tesztkészlet.
+
+**Starter családok:** minimalist creator, purple gaming/streamer, esports team, Twitch-first live, multi-stream hub, YouTube/channel, TikTok/Shorts, VOD archive, podcast, creator blog, link hub, community/fan club, merch store, digital products, membership, sponsor/media kit, launch/campaign, artist/brand basic. Nem mind kész a kezdő kiadásban; minden starterhez referencia UI, tartalmi helyőrzők, lokalizáció és edge-case teszt tartozik.
+
+**Dizájn/preset könyvtár:** palettes; gradient; dark/light/high-contrast; type scale; font pairing; spacing; grid/container; borders/shadows; nav/header/footer; hero; cards; gallery/media; social channel bar; live/countdown; schedule; subscription/shop; alert/overlay; motion/reduced-motion; forms; responsive; SEO/open graph. Nem szabad a presetnek szerkesztőn kívüli, párhuzamos üzleti adatot írnia.
+
+### 73.4. Visual Editor és szerkesztői biztonság — végrehajtás
+
+- Alap: a már létező editor-v2 szerződéseinek felhasználása; az új core cseréje csak mérhető blokkoló indokkal. Specifikációs sorrend: document schema → node registry → property registry → renderer → command/history → persistence/revision → preview/public renderer → design tokens → templates → responsive → advanced UX.
+- Canvas: kijelölés, többes kijelölés, bounding box, zoom, pan, rulers, guides, snapping, auto layout, constraints, section height/overflow, resize/move, keyboard alternatives, focus order, zoom-fit és canvas méretezési következetesség.
+- Layers: tree reparent, reorder, nesting validation, grouping, hide/lock, breadcrumb, search; a valódi hierarchia mentése és a rétegsorrend determinisztikus renderelése kötelező.
+- Inspector: type-safe property per node, token vagy lokális érték, responsive override/inheritance, layout/spacing/typography/background/border/effects/animation/a11y/data binding; unknown property nem törheti meg a régi dokumentumot.
+- History: history transactions, undo/redo a releváns mutációkra, save közbeni új változás, dirty flag, leállítható mentés, revision compare, conflict detection, recoverable draft, crash refresh, időközös mentés csak igazolt idempotens működés után.
+- Publikálás: draft és published snapshot fizikai/logikai izoláció; publish compare-and-swap/revision precondition, validation, atomic pointer swap, korábbi snapshot megtartása, cache invalidation, rollback és audit. A dokumentumban említett HIGH publish conflict kiadási blokkoló marad addig, amíg célzott E2E nem bizonyítja az ellenkezőjét.
+- Data binding: CMS, Schedule, Media, Live, Content, Product, Community, Membership csak ID + query/filter/display props; a szerver a tényleges ownership, entitlement és visibility alapján olvassa.
+- Editori workflow: design preview valós mintatartalommal; public preview jogosult preview-tokennel és lejárattal; soha nincs draft véletlen publikus API-ban; publish előtt link/alt/SEO/performance checks.
+- Három eszköz: Page Editor, Overlay Editor és idővonalas Video Editor nem ugyanaz a workspace; közös Brand Kit, Asset Library, icon/font registry és jogosultsági szerződés, külön domain lifecycle.
+- **Acceptance:** A módosítás B előtt mentett A revízió és közben érkező B revízió nem írhatja felül egymást hangtalanul; publikus oldal snapshotja mindig konzisztens; megszakadó hálózat után a felhasználó helyreállíthatja a munkát.
+
+### 73.5. Provider-integrációk — közös capability és eltérő platformszabályok
+
+A szolgáltatók támogatását **nem egyetlen általános Connected boolean** jelzi. Adatmodell: `provider, accountId, ownerSiteId, tokenRef, scopes, capabilities, health, lastSync, expiresAt, quotaState, webhookSubscriptions, connectionRevision, revokedAt`; titkos érték csak szerveroldali store-ban. Egy adott adat elérhetőségét a `capability + user scopes + platform approval + account eligibility + provider health` együttesen határozza meg.
+
+| Provider | Tervezett képességcsomag | Kötelező negatív próbák |
+|---|---|---|
+| Twitch | OAuth, channel/live, schedule, EventSub, follow/sub/raid/Channel Points engedély szerint, VOD/clip meta, bot/chat szabályok szerint | lejárt token, hibás state, event duplázás, revoked scope, webhook signature, site-scope |
+| YouTube | channel, playlist, videos/Shorts, upload, live, comments, analytics, quota aware jobs | quota exhausted, resumable upload megszakítás, privát/unlisted eltérés, scope tiltás |
+| TikTok | profile, publishing, analytics, esetleges live capability csak jóváhagyott termékekkel | nem auditált app/limited visibility, rate limit, unsupported live, user review |
+| Discord | bot/app, guild/channel/roles, invites, notifications, entitlement mapping, moderation | permission elvesztése, guild removal, duplikált esemény, rossz role mapping |
+| Kick | channel/live, chat/schedule események csak dokumentált elérhető API-val | capability hiány, token expiry, policy change, unsupported action |
+| OBS Studio | helyi OBS WebSocket hitelesített bridge/desktop agent vagy tudatosan helyi kapcsolódás | offline OBS, reconnect, eltérő verzió, localhost biztonság, jelenetállapot változás |
+| Merch/payment/email/other | adapterek hivatalos API/policy alapján, providerfüggetlen domain mapping | refund, webhook replay, provider outage, token leak, tenant leak |
+
+Az OBS-hez ne tervezzünk a publikus Cloudflare Workerből közvetlenül elérhető felhasználói localhost WebSocketet: böngésző/agent/bridge biztonsági és hálózati architektúrát explicit kell megvalósítani és tesztelni.
+
+### 73.6. Stream Studio, Content Studio és Community/Commerce — a hiánytalan creator munkafolyamat
+
+**Stream Studio:** stream preparation checklist; platform health/live status; scenes/source control és OBS reconnect; overlay library/editor; reusable widget registry; alert event queue és dedup; channel point/redeem és overlay scene mapping; stream deck/hotkey integráció ahol engedélyezett; chatbot parancs/permission/cooldown; polls/games/loyalty; moderation log; live multistream indicators; stream utáni recap, VOD link és továbbfeldolgozás. A stream nem állhat meg csendben hibás külső API miatt.
+
+**Content Studio:** ideas → brief → raw asset/VOD → transcript → highlight/clip candidates → timeline/edit → aspect variants → captions/subtitles → thumbnail → metadata SEO → schedule/approval → provider-specific publish → result/analytics → repurpose. Az AI javasolhat lépéseket, de a vágás és alapfolyamat AI nélkül is működjön. Videó feldolgozásnál job queue, státusz, idő-/tárhely-/költséglimit, chunk/resume, retry, cancel, signed delivery és R2 lifecycle szükséges. Harmadik fél licence és szerzői joga ellenőrzendő.
+
+**Community:** publikus visitor, creator account és fan/member account szerepe külön; privacy/consent, OAuth link, email verification, spam protection, comments, reactions, fan messages, moderation tools, bans/reports/appeal, polls/votes, gamification, points, badges, Discord sync, custom notifications, member-only content és jogosultság lejárat. A platformnak nem szabad automatikusan összemosnia a Twitch/Discord felhasználói azonosítót a saját belépési identitással.
+
+**Commerce:** támogatás/tip, membership tiers/perks, shop/merch, digitális termék, kedvezmény/kupon, donor goal, sponsored landing page, affiliate/referral; provider checkout esetén biztonságos state machine, signed webhook, idempotency és entitlement activation/revocation; termék/media/content kapcsolatok canonical ID-val. Order, fulfillment, refund és chargeback kezelés nem a Page Editorban történik. Jogi és adózási megfelelőség kiadási kapu, nem automatikus állítás.
+
+### 73.7. AI, automatizáció, SaaS és fenntartható üzlet — részletes korlátok
+
+- Automatizációs DSL/workflow: trigger, condition, action, delay, branch, human approval, dedupe, idempotency, dry run, audit, retry/backoff, dead-letter, run cancellation, rate limits, loop/cycle defense, secret isolation, feature gating. Adás közbeni veszélyes eseményekhez circuit breaker.
+- SANCI AI: szerkesztési javaslat, blog/SEO/thumbnail/text, brand guidance, voice/transcript, VOD analysis, clip candidate, repurpose, moderation assist, creator growth insights, stream feedback, knowledge base. RAG forrás- és jogosultsági ellenőrzéssel; model provider adapter, prompt injection izolálása; strukturált tool action, diff/draft és human approval; quota, redaction, deletion/export, költség és napló.
+- SaaS: self-service signup → verification → workspace/site → starter kit → plan/trial → domain/publish → optional integrations → billing/usage → upgrade/downgrade/cancel → data export/delete. Multi-tenant access checked per DB query/asset key/cache/job/analytics/event; separate platform staff access logs, support impersonation only explicit audited consent.
+- Billing: plan catalog, subscriptions, trials, limits, seats, included quota, metered overage, fair-use, past due, grace, pause, cancellation, billing disputes, invoice/tax provider, refund webhooks, entitlement state, exact usage provenance. Platform saját pénzügyi kockázatát explicit modellezni kell.
+- **Egységköltség-szerződés:** mért havi aktív creator, fizető workspace, átlagos tárhely GB, kimenő forgalom GB, Workers/D1 műveletek, videó perc és transzkódolás, AI token/perc, email, support, fizetési díjak. Szenáriók: light, active, power creator, AI-heavy; unit contribution margin = nettó árbevétel – változó közvetlen költség; pricing csak konkrét provider árak és terhelés ismeretében végleges.
+- Üzleti funkciók: onboarding funnel, activation rate (publikált site), D7/D30 retention, paid conversion, churn, MRR/ARR, ARPA, churn reasons, cost per workspace, gross margin, AI attach/cost, reliability és support SLA; személyes adatot érintő mérés consent/minimization szabály szerint.
+
+### 73.8. UX, vizuális színvonal és termékbevezetés
+
+- UI: egységes, személyre szabható de nem túlzsúfolt Creator Center; modulonként világos home/list/detail/create/preview/settings, globális keresés, gyorsművelet, breadcrumb, offline/error/empty/success, mobil/asztali, keyboard, screen reader, reduced motion, skeleton és retry.
+- Inspirációs döntés: **Webflow** — component definition/instance property; **Shopify** — szekció/blokk/JSON template/preset; **WordPress** — globális vs nem szinkronizált patterns; **StreamElements/Streamer.bot** — események, alerts és biztonságos actions. Ezek tervezési minták, nem licenc nélkül átvehető kódok.
+- Marketing/launch: értékajánlat, positioning, feature pages, demo gallery, creator starter showcase, product tour, onboarding emails/consent, docs/tutorial, changelog, feedback/bug form, public status, support tickets, creator case study (saját Sanci9517), referral/affiliate később, közösségi launch és mérhető aktivációs célok. Nem építünk belső teljes e-mail marketing szolgáltatást addig, amíg megbízható integráció elég.
+- International: Hungarian-first, English supported when tested, timezone/number/currency/date formatting, translated content/SEO/hreflang, accessible legal/help pages, regional privacy/payment requirements. A marketingállítás különböztessen tervezett és ténylegesen működő képességet.
+
+### 73.9. Kiadási minimumok és felhasználói elfogadás
+
+**Belső Alpha — saját SANCI9517 használat:** auth/site ownership; stabil admin+editor+publish; működő brand/weboldal; Brand Kit + alap sablon/preset + média; Twitch/integrációs kapcsolódás; schedule/live public blokkok; audit/backup; hibátlan regressziós tesztek. A VOD/OBS/Shop/AI akkor kerüljön éles alpha körbe, ha külön tesztelve működik.
+
+**Creator Beta — meghívott alkotók:** önkiszolgáló vagy kontrollált onboarding, több tenant izolációs próbák, több starter sablon, alap CMS, responsive site, provider reconnect, a kiválasztott creator munkafolyamatok, usage reporting, support; onboarding completion és első publish megfigyelés.
+
+**Public SaaS GA:** billing/plan/quotas, subscription lifecycle, consent/privacy, kapacitás/monitoring/backup, üzleti szimulációk, incident runbook, opt-in AI pricing, platform policy approvals és support folyamatok ellenőrzése; csak a ténylegesen elérhető modulok marketingezhetők késznek. A teljes Creator OS funkciókészlet további érett kiadásokban bővíthető.
+
+**Kapu-invariánsok:** egy funkcionalitást nem zárunk PASS-ra implementáció, typecheck, releváns unit/integration/E2E, jogosultsági negatív teszt, szükség esetén valós provider/production ellenőrzés nélkül. A terv elfogadása után nincs kötelező újabb teljes történeti audit: új funkció és kódmódosítás a kanonikus modulhoz és aktív fejlesztési ponthoz kötődik.
+
+### 73.10. Következő konkrét munka — F0.1 / F0.2 / F0.3
+
+| ID | Munka | Bizonyíték és PASS | Blokkolók |
+|---|---|---|---|
+| F0.1.01 | aktuális HEAD és branch, aktuális files/migrations környezet | commit/ref bizonyíték, tiszta kódalap, ismert eltérések | nem igazolt repo baseline |
+| F0.1.02 | router /admin és /admin/editor, auth/session, editor asset hozzáférés | hitelesített és nem hitelesített próbák; nincs alternatív bypass | auth/access control |
+| F0.1.03 | site ownership D1 + API surface inventory csak az aktív útvonalakon | cross-site negatív próbák, schema version | tenant leak |
+| F0.1.04 | npm scripts és typecheck, editor/admin/domain tests futtatása | valós output és CI státusz mentve | failing test |
+| F0.1.05 | draft/preview/publish jelenlegi API/data path trace | tényleges handler/db/renderer/response lépések, mismatch lista | publish conflict nyitott |
+| F0.2.01 | editor save/reload, dirty/undo/redo, network abort | tesztek és browser flow | adatvesztés |
 | F0.2.02 | konkurens editor/revision mentések | 409/ETag/precondition + conflict recovery teszt | silent overwrite |
 | F0.3.01 | preview jog és titkos draft kizárása publikus renderből | anon/auth/draft teszt | draft leak |
 | F0.3.02 | atomic publish pointer és rollback | két szerkesztő, interrupted publish, old/new snapshot teszt | HIGH publish conflict |
@@ -1344,3 +1762,15 @@ A már részletezett 24/49/54/56/64–76. fejezet tartalmát **nem kell másodsz
 **MASTER-re alapozás:** a feature commit újraalapozva a legfrissebb `v2/foundation` ágra; a release-re kerülő feature commit `2ddc30c` (a korábbi lokális jelölt commit utódja).
 
 **Éles kapu:** a felhasználó 2026-10-16-án kifejezetten jóváhagyta az éles migrációt és deployt, ha külön tesztkörnyezet nem indokolt. A 0020 migráció és a feature kód production pushra vár; migráció, Worker deployment és CI csak azok tényleges ellenőrzése után rögzíthető. A WEB-009 és az F1.1 státusza továbbra is IN PROGRESS; ez a bejegyzés nem állít kész vagy PASS állapotot.
+
+### 77.15. F1.1 WEB-009 — éles kiadás és runtime ellenőrzés — 2026-10-16
+
+**Kiadás:** a `v2/foundation` ágra felkerült a WEB-009 canonical navigáció implementációja `85de0377fd311615e3a25181e3279ca21f932728` commitként, a 77.14-ben rögzített felhasználói jóváhagyás alapján. Külön tesztkörnyezet nem indokolt: a migráció kompatibilis, új `site_navigation` táblát hoz létre, a meglévő `pages` és slug korlátozásokhoz nem nyúl.
+
+**Automatizált kapuk:** a GitHub ellenőrzések mind 6/6 sikeresek: Workers Builds, verify, source-audit, editor-core, twitch-integration, canonical-plan. A helyi, Node 24.19.0-s teljes releváns baseline is sikeres: typecheck; admin home 16/16; publikus menü 3/3; page reorder 3/3; új navigáció migráció/API/UI 10/10; admin access 2/2; domain 5/5; Editor 49/49; SQLite regresszió 17/17; F0.3 route integration 8/8; F1.1 public route 5/5; schedule 9/9; canonical plan checker és diff check PASS.
+
+**Éles D1 és Worker:** Cloudflare build `9b20c43f-3bad-49e1-a8e8-d3cc1ddd2367` sikeres; a build `npm run typecheck`, majd a meglévő konfiguráció szerinti `npm run deploy` parancsot futtatta. A `0020_site_navigation_snapshots.sql` migráció 2026-10-16 09:01:12 UTC-kor alkalmazódott. A D1 read-only ellenőrzése szerint a `site-default` rekord létrejött, `revision=1`, `published_revision=1`, 8 publikált menüponttal; az ellenőrző SELECT-ek `rows_written=0`, `changed_db=false` eredménnyel zárultak. Az aktív Worker deployment `d167e289-9665-493f-b052-d193ba9909b0`, verzió `6d86d9db-cde0-41c7-a05c-954cc6bc8517`, forgalmi arány 100%, 2026-10-16 09:01:21 UTC.
+
+**Éles publikus ellenőrzés:** a `https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/p/youtube` oldalon a menü megnyílt; 8 belső menüpont jelent meg, köztük a YouTube oldalra mutató hivatkozás, a menü a működő publikált sorrendet használja. Admin Editor útvonal ellenőrzése a bejelentkezési oldalra irányított, ezért a hitelesített UI-kézi elfogadás itt nem történt meg.
+
+**Következő acceptance lépés:** felhasználó ellenőrizze az Admin Editorban a Navigáció panel betöltését, egy menüpont átrendezésének draft mentését (publikálás nélkül a publikus menü ne változzon), majd a draft publikálását, és a publikus menü frissítését. Ezt követően ellenőrizendő a külső HTTPS link, a hierarchikus/nested menü mobilon és billentyűzettel. Addig a WEB-009 és F1.1 státusza IN PROGRESS marad; az éles runtime és az automatizált tesztek PASS állapota nem helyettesíti a hitelesített UI kézi elfogadását.
