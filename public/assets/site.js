@@ -18,8 +18,11 @@ if(menuButton&&menuPanel){
   document.addEventListener('keydown',e=>{
     if(e.key==='Escape'){setOpen(false,true);return}
     if(!menuPanel.classList.contains('open'))return;
-    const items=links();const index=items.indexOf(document.activeElement);if(index<0||!items.length)return;
+    const active=document.activeElement;const items=links();const index=items.indexOf(active);
+    const onMenuControl=active===menuButton||active===menuPanel||menuPanel.contains(active);
     let next=-1;
+    if(index<0&&onMenuControl){if(e.key==='ArrowDown'||e.key==='Home')next=0;else if(e.key==='ArrowUp'||e.key==='End')next=items.length-1;else return;e.preventDefault();if(next>=0)items[next].focus();return}
+    if(index<0)return;
     if(e.key==='ArrowDown')next=(index+1)%items.length;
     else if(e.key==='ArrowUp')next=(index-1+items.length)%items.length;
     else if(e.key==='Home')next=0;

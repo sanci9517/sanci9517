@@ -13599,4 +13599,14 @@ A már részletezett 24/49/54/56/64–76. fejezet tartalmát **nem kell másodsz
 
 **Éles build és deploy:** Cloudflare Workers Build `9150dd30-0333-4cb0-b770-cc7a94413fee` `success`; a `npm run typecheck` és `npm run deploy` lépések sikeresek. D1-migráció nem kellett (`No migrations to apply`). Deployment `0b8c8e8d-b77a-4a5b-b0fe-41cfaae64f18`, Worker verzió `33471b4a-fee7-4770-abc7-1c5a9e781fd7`, forgalmi arány 100%.
 
-**Állapot és következő lépés:** a javítás éles, de WEB-011/F1.1 nem PASS. Az automatizált éles böngészőben a `/p/youtube` oldal betöltött és a menü kinyílt, de a linkek nem jelentek meg; emiatt a billentyűzetes fókusz/léptetés élő ellenőrzése ebben a böngészőpéldányban nem volt lehetséges. A felhasználó korábban jelezte, hogy saját böngészőjében a menü
+**Állapot és következő lépés:** a javítás éles, de WEB-011/F1.1 nem PASS. Az automatizált éles böngészőben a `/p/youtube` oldal betöltött és a menü kinyílt, de a linkek nem jelentek meg; emiatt a billentyűzetes fókusz/léptetés élő ellenőrzése ebben a böngészőpéldányban nem volt lehetséges. A felhasználó korábban jelezte, hogy saját böngészőjében a menü hivatkozásai láthatók; a billentyűzetes görgetés megszűnését most az új éles javítás után kézi újrateszteléssel kell ellenőrizni.
+
+### 77.18. F1.1 WEB-011 — nyílbillentyű fókusz-fallback és mobil menügörgetés — 2026-10-16
+
+**Visszajelzés:** a felhasználó jelezte, hogy a görgetés továbbra is marad. A 77.17-es implementáció a nyílbillentyűket csak akkor fogta meg, ha egy menühivatkozás már fókuszban volt; ha a fókusz a menügombon maradt, a böngésző alapértelmezett oldalgörgetése érvényesült.
+
+**Javítás:** nyitott menünél a menügombon vagy a menüpanelen álló fókusz esetén az ArrowDown/Home az első, az ArrowUp/End az utolsó elérhető menühivatkozásra lép, és megakadályozza az oldal alapértelmezett görgetését. A fókuszhoz kötött léptetés továbbra is működik. Hosszú menü esetén a panel saját, korlátozott magasságú, overscroll-t a panelen belül tartó görgetést kapott. A CSS és JS cache-buster frissült.
+
+**Automatizált ellenőrzés:** a publikus menü és UI tesztek 8/8 PASS, beleértve a menügombról induló ArrowDown/ArrowUp esetet és a panel saját görgethetőségének szerződését; a navigation route és page-navigation regreszsziók 10/10 PASS; `node --check public/assets/site.js`, `git diff --check` és `python3 scripts/check-canonical-plan.py` PASS.
+
+**Kiadási állapot:** a kód és ez a bejegyzés a legfrissebb kanonikus ágra készül; a Cloudflare production build/deploy eredményét külön rögzítjük, miután a branch-frissítés és a Workers Build befejeződik. Nincs migráció vagy adatbázis-változtatás. A WEB-011/F1.1 továbbra sem PASS: a felhasználónak az új éles verzióval meg kell ismételnie a nyitott menü nyílbillentyűs léptetését.

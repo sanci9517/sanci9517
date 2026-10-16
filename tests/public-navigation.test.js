@@ -90,8 +90,11 @@ test('outside click restores focus only when it was inside the open navigation',
 test('public menu toggle exposes the controlled navigation panel to assistive technology', () => {
   assert.match(visualPage, /data-menu-button[^>]*aria-controls="public-menu"/);
   assert.match(visualPage, /<nav[^>]*id="public-menu"[^>]*data-menu-panel/);
-  assert.match(visualPage, /<script src="\/assets\/site\.js\?v=20261016-4"><\/script>/);
-  assert.match(readFileSync(new URL('../public/assets/site.css', import.meta.url), 'utf8'), /\.menu-link:focus-visible/);
+  assert.match(visualPage, /<script src="\/assets\/site\.js\?v=20261016-5"><\/script>/);
+  assert.match(visualPage, /site\.css\?v=20261016-3/);
+  const css = readFileSync(new URL('../public/assets/site.css', import.meta.url), 'utf8');
+  assert.match(css, /\.menu-link:focus-visible/);
+  assert.match(css, /\.menu-panel\{[^}]*max-height:calc\(100vh - 100px\);overflow-y:auto;overscroll-behavior:contain/);
 });
 
 test('opening the public menu sends focus to its first link', () => {
@@ -115,4 +118,20 @@ test('arrow keys and Home/End move through public menu links without scrolling t
   press('Home');
   assert.equal(fixture.document.activeElement, fixture.menuLinks[0]);
   assert.equal(prevented, 4);
+});
+
+
+test('arrow keys from the open menu toggle are prevented and enter the menu', () => {
+  const fixture = bootNavigation();
+  fixture.listeners.get('click')({ preventDefault() {}, stopPropagation() {} });
+  fixture.document.activeElement = fixture.menuButton;
+  let prevented = 0;
+  fixture.documentListeners.get('keydown')({ key: 'ArrowDown', preventDefault() { prevented += 1; } });
+  assert.equal(prevented, 1);
+  assert.equal(fixture.document.activeElement, fixture.menuLinks[0]);
+
+  fixture.document.activeElement = fixture.menuButton;
+  fixture.documentListeners.get('keydown')({ key: 'ArrowUp', preventDefault() { prevented += 1; } });
+  assert.equal(prevented, 2);
+  assert.equal(fixture.document.activeElement, fixture.menuLinks[2]);
 });
