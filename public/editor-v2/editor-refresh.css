@@ -318,3 +318,8 @@ button, input, select, textarea { line-height: 1.35; }
   }
   .top-actions #openInspector { flex: 0 0 44px; }
 }
+
+/* Published pages can also have a saved draft awaiting publication. */
+.page-row-select { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 8px; text-align: left; }
+.page-row-select strong { min-width: 0; overflow-wrap: anywhere; }
+.page-row-select .page-meta { grid-column: 2; justify-self: start; max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
