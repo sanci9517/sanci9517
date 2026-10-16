@@ -13,7 +13,7 @@ async function fixture(t) {
   db.exec(`
     CREATE TABLE users(id TEXT PRIMARY KEY,email TEXT,display_name TEXT,role TEXT,is_active INTEGER);
     CREATE TABLE sessions(token_hash TEXT,user_id TEXT,expires_at TEXT);
-    CREATE TABLE pages(id TEXT PRIMARY KEY,site_id TEXT,slug TEXT,title TEXT,description TEXT,
+    CREATE TABLE pages(archived_at TEXT,id TEXT PRIMARY KEY,site_id TEXT,slug TEXT,title TEXT,description TEXT,
       content_json TEXT,published_content_json TEXT,published_revision_id TEXT,is_published INTEGER,
       published_slug TEXT,published_title TEXT,published_description TEXT,sort_order INTEGER DEFAULT 0,
       updated_at TEXT DEFAULT CURRENT_TIMESTAMP,published_at TEXT);

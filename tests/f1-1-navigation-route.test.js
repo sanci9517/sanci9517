@@ -23,6 +23,7 @@ async function fixture(t) {
     INSERT INTO pages VALUES('home','site-default',1,'home','Home','Home','home',0),('youtube','site-default',1,'youtube','YouTube','YouTube','youtube',1),('draft','site-default',0,NULL,NULL,'Draft','draft',2),('foreign','other-site',1,'foreign','Foreign','Foreign','foreign',0);
   `);
   db.exec(migration);
+  db.exec('ALTER TABLE pages ADD COLUMN archived_at TEXT');
   const insertSession=db.prepare('INSERT INTO sessions VALUES(?,?,?)');
   insertSession.run(await hashSessionToken('editor-token'),'editor','2999-01-01');
   insertSession.run(await hashSessionToken('viewer-token'),'viewer','2999-01-01');

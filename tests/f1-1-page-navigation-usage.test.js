@@ -16,7 +16,7 @@ async function fixture(t) {
     CREATE TABLE sites(id TEXT PRIMARY KEY,slug TEXT NOT NULL UNIQUE,name TEXT NOT NULL);
     CREATE TABLE users(id TEXT PRIMARY KEY,email TEXT,display_name TEXT,role TEXT,is_active INTEGER);
     CREATE TABLE sessions(token_hash TEXT,user_id TEXT,expires_at TEXT);
-    CREATE TABLE pages(
+    CREATE TABLE pages(archived_at TEXT,
       id TEXT PRIMARY KEY,site_id TEXT NOT NULL,slug TEXT NOT NULL,title TEXT NOT NULL,description TEXT NOT NULL,
       content_json TEXT NOT NULL,published_content_json TEXT,is_published INTEGER NOT NULL,
       published_revision_id TEXT,sort_order INTEGER NOT NULL,published_slug TEXT,published_title TEXT,

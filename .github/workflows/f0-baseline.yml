@@ -31,4 +31,5 @@ jobs:
       - run: node --test tests/editor-sqlite-concurrency.test.js tests/f0-3-draft-isolation-contract.test.js tests/f0-publish-guard-contract.test.js tests/f0-3-sqlite-parallel-publish.test.js tests/f0-3-public-rollback-cache-contract.test.js
       - run: node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/f0-3-route-integration.test.js
       - run: node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/f1-1-public-route.test.js
+      - run: node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/f1-1-page-archive.test.js tests/f1-1-page-archive-ui.test.js
       - run: npm run test:schedule

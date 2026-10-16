@@ -73,7 +73,7 @@ function parseTree(value: string): NavTree | null {
   return validateTree(parsed).tree ?? null;
 }
 
-export async function adminNavigationRoute(request: Request, env: Env): Promise<Response> {
+async function adminNavigationRouteImpl(request: Request, env: Env): Promise<Response> {
   const user = await getAuthenticatedUser(request, env);
   if (!user) return error("UNAUTHORIZED", 401, "Authentication required");
   if (!hasRole(user, "editor")) return error("FORBIDDEN", 403, "Editor role required");
@@ -82,7 +82,7 @@ export async function adminNavigationRoute(request: Request, env: Env): Promise<
   if (request.method === "GET") {
     const row = await env.DB.prepare("SELECT draft_json,published_json,revision,published_revision FROM site_navigation WHERE site_id=? LIMIT 1").bind(siteId).first<NavRow>();
     if (!row) return error("NAVIGATION_NOT_INITIALIZED", 503, "A navigációs adattár még nincs inicializálva.");
-    const pages = await env.DB.prepare("SELECT id,title,slug,published_title,published_slug,is_published FROM pages WHERE site_id=? ORDER BY sort_order,id").bind(siteId).all<PageRow>();
+    const pages = await env.DB.prepare("SELECT id,title,slug,published_title,published_slug,is_published FROM pages WHERE archived_at IS NULL AND site_id=? ORDER BY sort_order,id").bind(siteId).all<PageRow>();
     return ok({ draft: parseTree(row.draft_json), published: parseTree(row.published_json), revision: row.revision, publishedRevision: row.published_revision,
       pages: pages.results.map(page => ({ id: page.id, title: page.title, slug: page.slug, isPublished: Boolean(page.is_published), publishedTitle: page.published_title, publishedSlug: page.published_slug })) });
   }
@@ -106,7 +106,7 @@ export async function adminNavigationRoute(request: Request, env: Env): Promise<
   if (request.method === "PUT") {
     const checked = validateTree(body.tree);
     if (!checked.tree) return error(checked.code ?? "INVALID_NAVIGATION", 400, "A navigációs fa szerkezete hibás.");
-    const pages = await env.DB.prepare("SELECT id FROM pages WHERE site_id=?").bind(siteId).all<{ id: string }>();
+    const pages = await env.DB.prepare("SELECT id FROM pages WHERE archived_at IS NULL AND site_id=?").bind(siteId).all<{ id: string }>();
     const pageIds = new Set(pages.results.map(page => page.id));
     if (checked.pageIds.some(id => !pageIds.has(id))) return error("NAVIGATION_TARGET_NOT_FOUND", 400, "A navigáció olyan oldalt céloz, amely nem ezen a webhelyen található.");
     const nextRevision = expectedRevision + 1;
@@ -124,7 +124,7 @@ export async function adminNavigationRoute(request: Request, env: Env): Promise<
   const references: string[] = [];
   const collect = (items: NavItem[]) => items.forEach(item => { if (item.type === "page" && item.pageId) references.push(item.pageId); collect(item.children); });
   collect(tree.items);
-  const pages = await env.DB.prepare("SELECT id,is_published,published_slug FROM pages WHERE site_id=?").bind(siteId).all<{ id: string; is_published: number; published_slug: string | null }>();
+  const pages = await env.DB.prepare("SELECT id,is_published,published_slug FROM pages WHERE archived_at IS NULL AND site_id=?").bind(siteId).all<{ id: string; is_published: number; published_slug: string | null }>();
   const byId = new Map(pages.results.map(page => [page.id, page]));
   if (references.some(id => !byId.get(id)?.is_published || !byId.get(id)?.published_slug)) return error("NAVIGATION_TARGET_UNPUBLISHED", 409, "Csak létező és publikált oldal tehető közzétett navigációba.");
 
@@ -134,4 +134,11 @@ export async function adminNavigationRoute(request: Request, env: Env): Promise<
   ]);
   if (Number(result[0]?.meta?.changes ?? 0) !== 1) return error("REVISION_CONFLICT", 409, "A navigáció időközben módosult. Töltsd újra a legfrissebb verziót.");
   return ok({ published: true, revision: expectedRevision, publishedRevision: expectedRevision });
+}
+
+export async function adminNavigationRoute(request:Request,env:Env):Promise<Response>{
+ try{return await adminNavigationRouteImpl(request,env)}catch(e){
+  if(String(e).includes('NAVIGATION_TARGET_ARCHIVED'))return error('NAVIGATION_TARGET_ARCHIVED',409,'Archivált oldal nem szerepelhet a navigációban. Töltsd újra az oldallistát.');
+  throw e;
+ }
 }

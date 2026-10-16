@@ -25,7 +25,7 @@ export async function publicNavigationRoute(env: Env): Promise<Response> {
   if (!row) return noStore(error("NAVIGATION_NOT_FOUND", 404));
   const items = parseTree(row.published_json);
   if (!items) return noStore(error("NAVIGATION_INVALID", 503, "A közzétett navigáció jelenleg nem érhető el."));
-  const pages = await env.DB.prepare("SELECT id,published_slug,published_title FROM pages WHERE site_id=? AND is_published=1 AND published_slug IS NOT NULL").bind(siteId).all<PageRow>();
+  const pages = await env.DB.prepare("SELECT id,published_slug,published_title FROM pages WHERE archived_at IS NULL AND site_id=? AND is_published=1 AND published_slug IS NOT NULL").bind(siteId).all<PageRow>();
   const byId = new Map(pages.results.map(page => [page.id, page]));
 
   const project = (nodes: NavItem[]): unknown[] => nodes.flatMap(item => {
