@@ -248,3 +248,73 @@ button, input, select, textarea { line-height: 1.35; }
 @media (prefers-reduced-motion: reduce) {
   .left-dock:not(.closed), .right-dock:not(.closed), .mobile-backdrop { animation: none !important; transition: none !important; }
 }
+
+
+/* Mobile label safety: actions must never squeeze full-text buttons into icon cells. */
+@media (max-width: 850px) {
+  .page-row-actions {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .page-row-actions button {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: visible;
+  }
+  .page-row-actions button:nth-child(5) {
+    grid-column: span 3;
+    font-size: 15px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    height: auto;
+    min-height: 48px;
+    padding: 8px 12px;
+  }
+  .page-row-actions button:nth-child(6) {
+    min-height: 48px;
+    height: auto;
+  }
+  .page-row > button:not(.page-row-select) {
+    min-height: 48px;
+    height: auto;
+    padding: 10px 12px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}
+@media (max-width: 600px) {
+  .editor-app { grid-template-rows: 116px minmax(0, 1fr) 0; }
+  .topbar {
+    height: 116px;
+    min-height: 116px;
+    grid-template-columns: 42px minmax(0, 1fr);
+    grid-template-rows: 48px 52px;
+    align-content: center;
+    gap: 4px 8px;
+  }
+  .brand { grid-column: 1; grid-row: 1; }
+  .top-page-control { grid-column: 2; grid-row: 1; }
+  .top-actions {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .top-actions #save { flex: 1 1 90px; min-width: 0; }
+  .top-actions #publish {
+    flex: 2 1 160px;
+    min-width: 0;
+    height: auto;
+    min-height: 44px;
+    padding: 7px 10px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-align: center;
+    line-height: 1.2;
+  }
+  .top-actions #openInspector { flex: 0 0 44px; }
+}
