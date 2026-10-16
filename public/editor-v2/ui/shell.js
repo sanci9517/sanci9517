@@ -26,7 +26,7 @@ function emit(type,payload={}){bus.emit(type,payload)}
 function syncMobileBackdrop(){
   const backdrop=document.querySelector('#mobileBackdrop');
   if(!backdrop)return;
-  const mobile=window.matchMedia('(max-width: 850px)').matches;
+  const mobile=window.matchMedia('(max-width: 1024px)').matches;
   const open=mobile && (!panels.left?.classList.contains('closed') || !panels.right?.classList.contains('closed'));
   backdrop.setAttribute('aria-hidden',String(!open));
 }
@@ -35,7 +35,7 @@ function setPanel(side,open,{save=true}={}){
   panel.classList.toggle('closed',!open);
   workspace?.classList.toggle(`${side}-closed`,!open);
   workspace?.classList.toggle(`${side}-open`,open);
-  if(side==='right')panel.style.display=open?'block':'none';
+  if(side==='right')panel.style.display=open?'flex':'none';
   if(save){persisted[side==='left'?'leftOpen':'rightOpen']=open;persist()}
   syncMobileBackdrop();
   emit('panel:change',{side,open});
@@ -69,7 +69,7 @@ function resizeDock(side,startX,startWidth){
 }
 function setupResizers(){
   document.querySelectorAll('.dock-resizer').forEach(handle=>handle.addEventListener('pointerdown',event=>{
-    if(window.matchMedia('(max-width: 850px)').matches)return;
+    if(window.matchMedia('(max-width: 1024px)').matches)return;
     const side=handle.dataset.resize;
     const current=parseFloat(getComputedStyle(root).getPropertyValue(side==='left'?'--left-dock-width':'--right-dock-width'))||(side==='left'?310:300);
     handle.setPointerCapture?.(event.pointerId);
@@ -93,7 +93,7 @@ document.querySelectorAll('[data-collapse]').forEach(b=>b.addEventListener('clic
   const side=b.dataset.collapse;
   setPanel(side,panels[side]?.classList.contains('closed')??true);
 }));
-document.querySelector('#openInspector')?.addEventListener('click',()=>setPanel('right',true));
+document.querySelector('#openInspector')?.addEventListener('click',()=>setPanel('right',panels.right?.classList.contains('closed')??true));
 document.querySelector('#mobileBackdrop')?.addEventListener('click',()=>{setPanel('left',false);setPanel('right',false)});
 window.addEventListener('resize',syncMobileBackdrop);
 window.addEventListener('keydown',event=>{if(event.key==='Escape'){setPanel('left',false);setPanel('right',false)}});
@@ -106,7 +106,7 @@ function wireMobileActions(){
 wireMobileActions();
 document.querySelectorAll('.rail-btn').forEach(b=>b.addEventListener('click',()=>showLeftTab(b.dataset.tab)));
 setupResizers();
-window.sanciEditor={version:8,bus,panels:panelRegistry,features:featureRegistry,on:bus.on,emit,openPanel:s=>setPanel(s,true),closePanel:s=>setPanel(s,false),showLeftTab,resizeDock};
-featureRegistry.register('shell-runtime',{version:8,persistence:'localStorage',mobileShell:'dedicated'});
+window.sanciEditor={version:9,bus,panels:panelRegistry,features:featureRegistry,on:bus.on,emit,openPanel:s=>setPanel(s,true),closePanel:s=>setPanel(s,false),showLeftTab,resizeDock};
+featureRegistry.register('shell-runtime',{version:9,persistence:'localStorage',mobileShell:'bottom-sheet'});
 syncMobileBackdrop();
 emit('shell:ready',{version:8});

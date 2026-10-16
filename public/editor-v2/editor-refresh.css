@@ -1,0 +1,244 @@
+/* Editor usability refresh — readable desktop workspace and touch-first mobile controls. */
+:root {
+  --left-dock-width: 344px;
+  --right-dock-width: 352px;
+  --ui-body: 15px;
+  --ui-small: 13px;
+  --ui-heading: 18px;
+  --ui-touch: 44px;
+  --surface-raised: #151d29;
+  --surface-hover: #202d3d;
+  --line-strong: #344359;
+  --text-soft: #bdc8d8;
+}
+
+button, input, select, textarea { font-size: var(--ui-body); }
+button, input, select, textarea { line-height: 1.35; }
+.editor-app { height: 100vh; height: 100dvh; }
+.topbar { min-height: 64px; grid-template-columns: auto minmax(220px, 1fr) auto minmax(320px, auto); gap: 14px; padding-inline: 16px; }
+.brand { gap: 10px; }
+.brand-menu { width: 42px; height: 42px; border-radius: 10px; font-size: 19px; }
+.brand strong { font-size: 17px; }
+.brand span, .top-label, .save-state { font-size: 13px; }
+.top-page-control { min-width: 0; gap: 10px; }
+.top-page-control select { width: min(280px, 28vw); height: 44px; font-size: 15px; }
+.top-center { padding: 4px; }
+.device-btn { min-height: 40px; padding-inline: 14px; font-size: 14px; }
+.top-actions { gap: 8px; }
+.top-actions button { min-height: 42px; }
+.icon-btn { width: 42px; height: 42px; font-size: 18px; }
+.subtle-btn, .primary-btn, .publish-btn { min-height: 42px; padding-inline: 14px; font-size: 14px; }
+.save-state { min-width: 112px; }
+.workspace { min-height: 0; }
+.tool-rail { width: 68px; flex-basis: 68px; padding: 10px 6px; gap: 6px; }
+.rail-btn { width: 55px; min-height: 64px; height: 64px; gap: 6px; border-radius: 9px; }
+.rail-btn span { font-size: 20px; }
+.rail-btn small { font-size: 12px; line-height: 1.2; }
+.dock-heading { min-height: 68px; padding-inline: 16px; }
+.dock-heading, .dock-heading strong { font-size: 18px; }
+.panel-subtitle { font-size: 13px; }
+.collapse-btn { width: 40px; height: 40px; font-size: 24px; }
+.panel-actions { padding: 12px; }
+.wide-action { min-height: 44px; height: auto; padding: 9px 12px; font-size: 14px; }
+.search { height: 44px; padding-inline: 12px; font-size: 14px; }
+.page-list, .layers-tree { padding: 10px; }
+.page-row { min-height: 48px; margin-block: 4px; font-size: 14px; }
+.page-row-select { padding: 10px; }
+.page-edit, .page-delete, .page-duplicate { width: 42px; flex-basis: 42px; font-size: 17px; }
+.page-order { width: 36px; min-width: 36px; height: 40px; font-size: 18px; }
+.page-row .page-meta { font-size: 12px; }
+.element-group { margin-block: 10px; border-radius: 10px; }
+.element-group-title { min-height: 48px; height: auto; padding-inline: 14px; font-size: 14px; }
+.element { min-height: 48px; padding: 11px 14px; font-size: 14px; }
+.layer-row { min-height: 44px; padding-block: 7px; font-size: 14px; }
+.layer-row small { font-size: 12px; }
+.canvas-toolbar { height: 54px; flex-basis: 54px; padding-inline: 14px; gap: 12px; }
+.toolbar-group { gap: 5px; }
+.tool-btn, .canvas-device-btn { min-height: 40px; padding-inline: 12px; font-size: 14px; }
+.canvas-devices { padding: 4px; }
+.viewport-label, .zoom-label, .toolbar-info { font-size: 13px; }
+.canvas { padding: 54px 64px 80px; }
+.canvas-guide { font-size: 12px; }
+.inspector-tabs { height: 48px; }
+.inspector-tabs button { font-size: 14px; }
+.inspector-empty { padding: 22px; font-size: 14px; }
+.inspector-empty b, .inspector-selection b { font-size: 16px; }
+.inspector-selection { padding: 16px; }
+.inspector-selection small { font-size: 13px; }
+.field { padding: 15px 16px; }
+.field label, .field span { margin-bottom: 8px; font-size: 13px; }
+.field input, .field textarea, .field select { min-height: 44px; padding: 9px 11px; font-size: 15px; }
+.inspector-toggle { min-height: 48px; margin: 12px 14px; padding: 12px 14px; font-size: 14px; }
+.inspector-toggle input { width: 18px; height: 18px; }
+.danger-action { min-height: 44px; font-size: 14px; }
+.revision-heading { padding: 13px 14px; }
+.revision-heading strong { font-size: 15px; }
+.revision-heading span, .revision-info span, .revision-info small { font-size: 12px; }
+.revision-info strong { font-size: 14px; }
+.revision-restore { min-height: 40px; padding-inline: 11px; font-size: 13px; }
+.statusbar { min-height: 32px; font-size: 11px; }
+
+@media (max-width: 1450px) and (min-width: 851px) {
+  .topbar { grid-template-columns: auto minmax(150px, 1fr) minmax(340px, auto); gap: 8px; }
+  .top-center, .top-actions .twitch-connection-btn { display: none; }
+  .top-page-control select { width: min(250px, 24vw); }
+  .top-actions { gap: 5px; }
+  .save-state { min-width: 86px; }
+}
+
+@media (max-width: 1180px) and (min-width: 851px) {
+  :root { --left-dock-width: 312px; --right-dock-width: 320px; }
+  .topbar { grid-template-columns: auto minmax(180px, 1fr) minmax(320px, auto); gap: 9px; }
+  .top-center { display: none; }
+  .top-page-control select { width: min(260px, 26vw); }
+}
+
+@media (max-width: 1024px) {
+  :root { --mobile-action-height: 66px; }
+  .editor-app { grid-template-rows: 62px minmax(0, 1fr) 0; }
+  .topbar {
+    height: 62px;
+    min-height: 62px;
+    grid-template-columns: 42px minmax(74px, 1fr) auto;
+    grid-template-rows: 1fr;
+    gap: 8px;
+    padding-inline: 10px;
+  }
+  .brand { min-width: 42px; }
+  .brand-menu { width: 42px; height: 42px; }
+  .brand strong, .brand span { display: none; }
+  .top-page-control { grid-column: 2; grid-row: 1; min-width: 0; }
+  .top-page-control select { width: 100%; min-width: 0; height: 44px; font-size: 15px; }
+  .top-center { display: none; }
+  .top-actions { grid-column: 3; grid-row: 1; gap: 6px; overflow: visible; }
+  .top-actions .twitch-connection-btn, .top-actions #undo, .top-actions #redo,
+  .top-actions #preview, .top-actions #unpublish, .top-actions .save-state { display: none !important; }
+  .top-actions #save {
+    display: inline-flex !important; align-items: center; justify-content: center;
+    width: auto; min-width: 72px; height: 44px; padding: 0 12px;
+    font-size: 14px; white-space: nowrap;
+  }
+  .top-actions #save::after { content: none; }
+  .top-actions #publish {
+    display: inline-flex !important; align-items: center; justify-content: center;
+    width: auto; min-width: 88px; height: 44px; padding: 0 12px;
+    font-size: 14px; white-space: nowrap;
+  }
+  .top-actions #openInspector { display: inline-flex !important; align-items: center; justify-content: center; width: 42px; min-width: 42px; height: 44px; padding: 0; font-size: 18px; }
+
+  .workspace, .workspace.left-open, .workspace.right-open, .workspace.left-open.right-open {
+    display: block; position: relative; height: 100%; min-height: 0; overflow: hidden;
+  }
+  .canvas-area { width: 100%; height: 100%; min-height: 0; }
+  .canvas-toolbar {
+    height: 104px; min-height: 104px; padding: 7px 10px;
+    display: grid; grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: 44px 44px; grid-template-areas: "tools devices" "zoom info";
+    align-content: center; justify-content: stretch; gap: 4px 8px; overflow: hidden;
+  }
+  .canvas-toolbar .toolbar-group:first-child { grid-area: tools; display: flex; min-width: 0; }
+  .canvas-toolbar .toolbar-group:first-child .tool-btn { min-height: 44px; height: 44px; padding-inline: 12px; font-size: 14px; }
+  .canvas-toolbar .canvas-devices {
+    grid-area: devices; display: flex; min-width: 0; height: 44px; overflow: hidden;
+    justify-content: center; border: 1px solid var(--line-strong); border-radius: 10px;
+    background: #0b1119;
+  }
+  .canvas-toolbar .canvas-devices .viewport-label { display: none; }
+  .canvas-device-btn { flex: 0 1 auto; min-width: 0; height: 40px; min-height: 40px; padding-inline: 9px; font-size: 13px; }
+  .canvas-toolbar .center-tools {
+    grid-area: zoom; display: flex; width: max-content; max-width: 100%; height: 44px;
+    margin: 0; padding: 0; border: 0; background: transparent; overflow: visible;
+  }
+  .canvas-toolbar .center-tools .tool-btn { min-width: 44px; height: 44px; padding-inline: 8px; font-size: 15px; }
+  .canvas-toolbar .center-tools .zoom-label { min-width: 50px; font-size: 14px; }
+  .canvas-toolbar .toolbar-group:last-child { grid-area: info; display: flex; justify-content: flex-end; min-width: 0; }
+  .canvas-toolbar .toolbar-info { display: block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
+
+  .canvas { padding: 14px 10px calc(var(--mobile-action-height) + 28px + env(safe-area-inset-bottom, 0px)); }
+  .page-canvas { margin-inline: auto; }
+
+  /* The mobile tool drawer becomes a full-width bottom sheet with a clear tab row. */
+  .left-dock:not(.closed), .right-dock:not(.closed) {
+    display: flex; position: absolute; top: auto; bottom: calc(var(--mobile-action-height) + 8px + env(safe-area-inset-bottom, 0px));
+    left: 0; right: 0; width: 100%; height: min(72dvh, 660px); max-height: calc(100% - 72px);
+    flex-direction: column; border: 1px solid #35455c; border-bottom: 0;
+    border-radius: 20px 20px 0 0; overflow: hidden; z-index: 90;
+    background: #111822; box-shadow: 0 -18px 54px rgba(0,0,0,.48);
+    animation: editorSheetIn .18s ease-out;
+  }
+  .right-dock:not(.closed) { display: flex; }
+  .left-dock.closed, .right-dock.closed { display: none; }
+  .tool-rail {
+    display: flex; flex-direction: row; align-items: stretch; gap: 5px;
+    width: 100%; min-height: 68px; flex: 0 0 68px; overflow-x: auto; overflow-y: hidden;
+    padding: 8px 10px; border-right: 0; border-bottom: 1px solid var(--line);
+    background: #0c121a; scrollbar-width: none; overscroll-behavior-x: contain;
+  }
+  .tool-rail::-webkit-scrollbar { display: none; }
+  .rail-btn { flex: 1 0 64px; width: auto; min-width: 64px; min-height: 50px; height: 50px; gap: 3px; }
+  .rail-btn span { font-size: 19px; }
+  .rail-btn small { font-size: 12px; }
+  .side-panel { display: none; min-height: 0; flex: 1; }
+  .left-dock:not(.closed) .side-panel { display: flex; }
+  .dock-content { min-height: 0; overflow: auto; overscroll-behavior: contain; }
+  .dock-heading { min-height: 66px; padding-inline: 16px; }
+  .dock-heading, .dock-heading strong { font-size: 18px; }
+  .panel-subtitle { font-size: 13px; }
+  .collapse-btn { width: 44px; height: 44px; }
+  .inspector-tabs { height: 52px; flex: 0 0 52px; }
+  .inspector-tabs button { min-height: 48px; font-size: 14px; }
+  .inspector-body { padding-bottom: 18px; }
+  .field { padding: 14px 16px; }
+  .field label, .field span { font-size: 14px; }
+  .field input, .field textarea, .field select { min-height: 48px; font-size: 16px; }
+  .inspector-toggle { min-height: 52px; font-size: 15px; }
+  .wide-action { min-height: 48px; font-size: 15px; }
+  .search { height: 48px; font-size: 15px; }
+  .page-row { min-height: 52px; font-size: 15px; }
+  .page-order, .page-edit, .page-duplicate, .page-delete { min-height: 44px; }
+  .element { min-height: 52px; font-size: 15px; }
+  .layer-row { min-height: 48px; font-size: 15px; }
+
+  .mobile-backdrop {
+    display: block; position: absolute; inset: 0 0 calc(var(--mobile-action-height) + 8px + env(safe-area-inset-bottom, 0px));
+    z-index: 80; background: rgba(2, 6, 12, .62); opacity: 0; pointer-events: none;
+    transition: opacity .16s ease;
+  }
+  .workspace.left-open .mobile-backdrop, .workspace.right-open .mobile-backdrop { opacity: 1; pointer-events: auto; }
+  .mobile-bottom-bar {
+    display: flex !important; position: fixed; left: 10px; right: 10px;
+    bottom: calc(8px + env(safe-area-inset-bottom, 0px)); z-index: 1000;
+    align-items: center; justify-content: center; gap: 6px; min-height: 58px; height: 58px;
+    padding: 6px; overflow-x: auto; overflow-y: hidden; white-space: nowrap;
+    border: 1px solid #34445a; border-radius: 15px; background: #111a26;
+    box-shadow: 0 8px 30px rgba(0,0,0,.42); scrollbar-width: none; overscroll-behavior-x: contain;
+  }
+  .mobile-bottom-bar::-webkit-scrollbar { display: none; }
+  .mobile-bottom-bar button { flex: 0 0 auto; min-width: 44px; min-height: 44px; height: 44px; padding-inline: 12px; border-radius: 10px; font-size: 14px; }
+  .mobile-bottom-bar #mobileFit { min-width: 56px; }
+  .mobile-bottom-bar #mobileZoom { min-width: 48px; font-size: 14px; }
+  .mobile-bottom-bar #mobilePreview { min-width: 76px; background: #1b2a3e; }
+  .mobile-bottom-bar #mobilePublish { display: none !important; }
+  .mobile-bottom-bar #mobileUnpublish { display: none !important; }
+  .statusbar { display: none; }
+  .mobile-multiselect-bar { left: 10px; right: 10px; top: 10px; min-height: 54px; padding: 8px; }
+  .mobile-multiselect-bar strong { font-size: 14px; }
+  .mobile-multiselect-bar button { min-height: 42px; font-size: 13px; }
+}
+
+@media (max-width: 380px) {
+  .topbar { grid-template-columns: 42px minmax(68px, 1fr) auto; gap: 6px; padding-inline: 8px; }
+  .top-actions { gap: 4px; }
+  .top-actions #save { min-width: 58px; padding-inline: 7px; font-size: 13px; }
+  .top-actions #publish { min-width: 74px; padding-inline: 7px; font-size: 13px; }
+  .top-actions #openInspector { width: 38px; min-width: 38px; }
+  .canvas-toolbar { padding-inline: 7px; column-gap: 5px; }
+  .canvas-toolbar .toolbar-group:first-child .tool-btn { padding-inline: 8px; font-size: 13px; }
+  .canvas-device-btn { padding-inline: 6px; font-size: 12px; }
+  .mobile-bottom-bar { left: 6px; right: 6px; gap: 4px; padding: 5px; }
+}
+
+@keyframes editorSheetIn { from { transform: translateY(14px); opacity: .88; } to { transform: translateY(0); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .left-dock:not(.closed), .right-dock:not(.closed), .mobile-backdrop { animation: none !important; transition: none !important; }
+}
