@@ -13484,3 +13484,14 @@ A már részletezett 24/49/54/56/64–76. fejezet tartalmát **nem kell másodsz
 **Következő szükséges bizonyíték:** hitelesített éles Editor/D1 E2E ugyanazon tesztoldalon: oldal-ID, draft revision és published pointer rögzítése; két azonos revisionből induló publish közül pontosan egy siker és egy 409; egyetlen új revision/audit; a nyertes publikus snapshot és metadata; rollback után változatlan public, majd explicit újrapublish után visszaállított public. A tesztoldal tartalma szabadon cserélhető, de az előállapotot rögzíteni kell. Ebben a munkamenetben hitelesített éles felhasználói session nem állt rendelkezésre; auth megkerülés vagy új session létrehozása nem történt. E bizonyíték nélkül F1 nem aktiválható.
 
 **GitHub CI utóellenőrzés:** a `db756de2e17124fef10a40410e700aaa4ee88ee9` commit mind az öt workflow-ja **completed / success**: F0 baseline checks ([38789842879](https://github.com/sanci9517/sanci9517/actions/runs/38789842879)), Editor Core Test (`38789842875`), Twitch Integration Check (`38789842981`), Canonical Creator Platform Plan (`38789842869`), Canonical Plan Active Point Audit (`38789842933`). Az új 8 route-integrációs tesztet a Node 22-es F0 baseline is sikeresen lefuttatta. Ez az adott tesztcommit igazolása; az éles F0.3 E2E és HIGH kapu állapotát nem változtatja meg.
+
+
+### 77.9. F0.3 Editor URL és kiválasztott oldal helyreállítása — 2026-10-16
+
+**Felhasználói hiba:** az Editorban kiválasztott YouTube-oldal nem jelent meg az URL-ben; az `/admin/editor` újratöltése mindig a lista első oldalát, a főoldalt nyitotta meg. **Ok a kódban:** `loadPages()` nem olvasott deep-link állapotot, és `loadPage()` sem szinkronizálta az URL-t.
+
+**Módosítás:** az Editor URL `?pageId=<oldal-azonosító>` paramétere az aktuális oldal tartós, megosztható kiválasztása. Az indulás a paraméter alapján választ; hiányzó vagy már nem létező ID esetén biztonságosan a lista első oldalára esik vissza. Minden sikeres oldalbetöltés `history.replaceState` használatával frissíti a `pageId` értéket úgy, hogy más query paramétert és a hash-t megőrizze. A cache-buster frissült. Az új oldalválasztási tesztek a meglévő Editor tesztscriptből futnak.
+
+**Ellenőrzés:** `npm run test:editor` **49/49 PASS**; `npm run typecheck` **PASS**; `git diff --check` **PASS**. Az induló kiválasztás, fallback, URL-paraméter olvasása, más query/hash megőrzése és az oldal kiválasztásának URL-be írása külön tesztet kapott. Éles böngészős frissítési ellenőrzés a deployment után még szükséges.
+
+**Állapot / következő lépés:** a kódjavítás és CI után ellenőrizni kell, hogy az `/admin/editor?pageId=<YouTube-oldal-ID>` közvetlen megnyitása és frissítése ugyanazt az oldalt tartja meg. A YouTube oldal ID-jét nem találgatom; azt az Editor választója a URL-ben fogja rögzíteni. Az F0.3 éles publish/conflict elfogadása továbbra is külön nyitott kapu.
