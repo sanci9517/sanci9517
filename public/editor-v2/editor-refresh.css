@@ -29,11 +29,12 @@ button, input, select, textarea { line-height: 1.35; }
 .icon-btn { width: 42px; height: 42px; font-size: 18px; }
 .subtle-btn, .primary-btn, .publish-btn { min-height: 42px; padding-inline: 14px; font-size: 14px; }
 .save-state { min-width: 112px; }
-.workspace { min-height: 0; }
-.tool-rail { width: 68px; flex-basis: 68px; padding: 10px 6px; gap: 6px; }
-.rail-btn { width: 55px; min-height: 64px; height: 64px; gap: 6px; border-radius: 9px; }
+.workspace { min-height: 0; grid-template-columns: 76px minmax(0, 1fr) 0; }
+.workspace.right-open { grid-template-columns: 76px minmax(0, 1fr) var(--right-dock-width); }
+.tool-rail { width: 76px; flex-basis: 76px; padding: 10px 6px; gap: 6px; }
+.rail-btn { width: 64px; min-height: 64px; height: 64px; gap: 6px; border-radius: 9px; }
 .rail-btn span { font-size: 20px; }
-.rail-btn small { font-size: 12px; line-height: 1.2; }
+.rail-btn small { font-size: 11px; line-height: 1.2; }
 .dock-heading { min-height: 68px; padding-inline: 16px; }
 .dock-heading, .dock-heading strong { font-size: 18px; }
 .panel-subtitle { font-size: 13px; }
@@ -42,9 +43,13 @@ button, input, select, textarea { line-height: 1.35; }
 .wide-action { min-height: 44px; height: auto; padding: 9px 12px; font-size: 14px; }
 .search { height: 44px; padding-inline: 12px; font-size: 14px; }
 .page-list, .layers-tree { padding: 10px; }
-.page-row { min-height: 48px; margin-block: 4px; font-size: 14px; }
-.page-row-select { padding: 10px; }
-.page-edit, .page-delete, .page-duplicate { width: 42px; flex-basis: 42px; font-size: 17px; }
+.page-row { display: grid; grid-template-columns: minmax(0, 1fr); min-height: 0; margin-block: 8px; font-size: 14px; border: 1px solid #2b3a4f; background: #111923; }
+.page-row-select { width: 100%; min-height: 52px; padding: 10px 12px; }
+.page-row-actions { display: grid; grid-template-columns: repeat(5, minmax(44px, 1fr)); gap: 6px; padding: 8px; border-top: 1px solid #28364a; background: #0c121a; }
+.page-row-actions button { width: 100%; min-width: 44px; min-height: 44px; height: 44px; border: 1px solid #2d3d53; border-radius: 8px; background: #17212d; font-size: 17px; }
+.page-row-actions .page-delete { color: #ffbfc6; border-color: #633a42; background: #321b21; }
+.page-row .page-meta { padding: 4px 7px; border-radius: 999px; background: #1b2b3c; color: #c6d4e6; font-size: 11px; line-height: 1.2; }
+.page-edit, .page-delete, .page-duplicate { width: 100%; min-width: 44px; font-size: 18px; }
 .page-order { width: 36px; min-width: 36px; height: 40px; font-size: 18px; }
 .page-row .page-meta { font-size: 12px; }
 .element-group { margin-block: 10px; border-radius: 10px; }
@@ -82,12 +87,13 @@ button, input, select, textarea { line-height: 1.35; }
   .topbar { grid-template-columns: auto minmax(150px, 1fr) minmax(340px, auto); gap: 8px; }
   .top-center, .top-actions .twitch-connection-btn { display: none; }
   .top-page-control select { width: min(250px, 24vw); }
+  .top-page-control #newPage { display: none; }
   .top-actions { gap: 5px; }
   .save-state { min-width: 86px; }
 }
 
 @media (max-width: 1180px) and (min-width: 851px) {
-  :root { --left-dock-width: 312px; --right-dock-width: 320px; }
+  :root { --left-dock-width: 344px; --right-dock-width: 336px; }
   .topbar { grid-template-columns: auto minmax(180px, 1fr) minmax(320px, auto); gap: 9px; }
   .top-center { display: none; }
   .top-page-control select { width: min(260px, 26vw); }
