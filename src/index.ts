@@ -23,6 +23,7 @@ import { publicPagesRoute } from "./routes/public/pages";
 import { adminNavigationRoute } from "./routes/admin/navigation";
 import { publicNavigationRoute } from "./routes/public/navigation";
 import { getAuthenticatedUser } from "./core/auth/require-auth";
+import { resolvePublishedPageRedirect } from "./core/page-redirects";
 import type { Env } from "./types/env";
 
 export default {
@@ -81,7 +82,19 @@ export default {
       const preview = url.searchParams.get("preview") === "1";
       if (preview) pageUrl.searchParams.set("preview", "1");
       const pageResponse = await publicPagesRoute(new Request(pageUrl, { method: "GET", headers: request.headers }), env);
-      if (pageResponse.status === 404) return publicPageWithStatus(request, env, 404);
+      if (pageResponse.status === 404) {
+        if (!preview) {
+          const targetSlug = await resolvePublishedPageRedirect(env, slug);
+          if (targetSlug) return new Response(null, {
+            status: 308,
+            headers: {
+              Location: `/p/${encodeURIComponent(targetSlug)}${url.search}`,
+              "Cache-Control": "private, no-store, max-age=0"
+            }
+          });
+        }
+        return publicPageWithStatus(request, env, 404);
+      }
       if (pageResponse.status === 401 || pageResponse.status === 403) {
         return publicPageWithStatus(request, env, pageResponse.status);
       }

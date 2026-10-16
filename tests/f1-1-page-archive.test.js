@@ -55,6 +55,7 @@ async function fixture(t) {
   db.exec('ALTER TABLE site_navigation ADD COLUMN updated_at TEXT');
   db.exec(readFileSync(new URL('../migrations/0022_page_archive.sql',import.meta.url),'utf8'));
   db.exec(readFileSync(new URL('../migrations/0023_page_hierarchy.sql',import.meta.url),'utf8'));
+  db.exec(readFileSync(new URL('../migrations/0024_page_slug_redirects.sql',import.meta.url),'utf8'));
   const DB = {
     beforeBatch:null,
     prepare(sql) {
