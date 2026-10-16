@@ -17,6 +17,11 @@ function bootNavigation() {
     addEventListener(name, callback) { listeners.set(name, callback); },
     focus() { document.activeElement = this; }
   };
+  const menuLinks = Array.from({ length: 3 }, (_, index) => ({
+    insideMenu: true,
+    href: `/page-${index + 1}`,
+    focus() { document.activeElement = this; }
+  }));
   const menuPanel = {
     classList: {
       contains(name) { return classes.has(name); },
@@ -27,7 +32,7 @@ function bootNavigation() {
       }
     },
     querySelector() { return { replaceChildren() {} }; },
-    querySelectorAll() { return []; },
+    querySelectorAll(selector) { return selector === 'a[href]' ? menuLinks : []; },
     addEventListener() {},
     contains(node) { return node?.insideMenu === true; }
   };
@@ -49,7 +54,7 @@ function bootNavigation() {
     Map,
     String
   });
-  return { document, menuButton, menuPanel, attributes, listeners, documentListeners };
+  return { document, menuButton, menuPanel, menuLinks, attributes, listeners, documentListeners };
 }
 
 test('Escape closes the public navigation and restores focus to its toggle', () => {
@@ -85,5 +90,29 @@ test('outside click restores focus only when it was inside the open navigation',
 test('public menu toggle exposes the controlled navigation panel to assistive technology', () => {
   assert.match(visualPage, /data-menu-button[^>]*aria-controls="public-menu"/);
   assert.match(visualPage, /<nav[^>]*id="public-menu"[^>]*data-menu-panel/);
-  assert.match(visualPage, /<script src="\/assets\/site\.js\?v=20261016-3"><\/script>/);
+  assert.match(visualPage, /<script src="\/assets\/site\.js\?v=20261016-4"><\/script>/);
+  assert.match(readFileSync(new URL('../public/assets/site.css', import.meta.url), 'utf8'), /\.menu-link:focus-visible/);
+});
+
+test('opening the public menu sends focus to its first link', () => {
+  const fixture = bootNavigation();
+  fixture.listeners.get('click')({ preventDefault() {}, stopPropagation() {} });
+  assert.equal(fixture.document.activeElement, fixture.menuLinks[0]);
+});
+
+test('arrow keys and Home/End move through public menu links without scrolling the page', () => {
+  const fixture = bootNavigation();
+  fixture.listeners.get('click')({ preventDefault() {}, stopPropagation() {} });
+  let prevented = 0;
+  const press = key => fixture.documentListeners.get('keydown')({ key, preventDefault() { prevented += 1; } });
+
+  press('ArrowDown');
+  assert.equal(fixture.document.activeElement, fixture.menuLinks[1]);
+  press('ArrowUp');
+  assert.equal(fixture.document.activeElement, fixture.menuLinks[0]);
+  press('End');
+  assert.equal(fixture.document.activeElement, fixture.menuLinks[2]);
+  press('Home');
+  assert.equal(fixture.document.activeElement, fixture.menuLinks[0]);
+  assert.equal(prevented, 4);
 });
