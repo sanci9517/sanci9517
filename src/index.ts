@@ -63,8 +63,40 @@ export default {
       return new Response("Gone", { status: 410 });
     }
     if (pathname === "/" || pathname === "/index.html") return env.ASSETS.fetch(assetRequest("/visual-page.html", request));
-    if (pathname.startsWith("/p/") && pathname.length > 3) return env.ASSETS.fetch(assetRequest("/visual-page.html", request));
+    if (pathname.startsWith("/p/") && pathname.length > 3) {
+      let slug: string;
+      try {
+        slug = decodeURIComponent(pathname.slice(3));
+      } catch {
+        return publicPageWithStatus(request, env, 404);
+      }
+      if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return publicPageWithStatus(request, env, 404);
+
+      const pageUrl = new URL("/api/public/pages", request.url);
+      pageUrl.searchParams.set("slug", slug);
+      const preview = url.searchParams.get("preview") === "1";
+      if (preview) pageUrl.searchParams.set("preview", "1");
+      const pageResponse = await publicPagesRoute(new Request(pageUrl, { method: "GET", headers: request.headers }), env);
+      if (pageResponse.status === 404) return publicPageWithStatus(request, env, 404);
+      if (pageResponse.status === 401 || pageResponse.status === 403) {
+        return publicPageWithStatus(request, env, pageResponse.status);
+      }
+      if (!pageResponse.ok) {
+        return new Response("A közzétett oldal jelenleg nem érhető el.", {
+          status: 503,
+          headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" }
+        });
+      }
+      return env.ASSETS.fetch(assetRequest("/visual-page.html", request));
+    }
     return env.ASSETS.fetch(request);
   }
 };
 function assetRequest(pathname: string, request: Request): Request { const url = new URL(pathname, request.url); url.search = new URL(request.url).search; return new Request(url.toString(), { method: "GET", headers: request.headers }); }
+
+async function publicPageWithStatus(request: Request, env: Env, status: number): Promise<Response> {
+  const page = await env.ASSETS.fetch(assetRequest("/visual-page.html", request));
+  const headers = new Headers(page.headers);
+  headers.set("Cache-Control", "no-store");
+  return new Response(page.body, { status, headers });
+}
