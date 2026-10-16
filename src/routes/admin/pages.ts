@@ -6,11 +6,11 @@ import { auditStatement } from "../../core/audit";
 import { getCanonicalSiteContext } from "../../core/site-context";
 import { validatePublishDocument } from "../../core/editor-validation";
 
-type PageRow={id:string;slug:string;title:string;description:string;content_json:string;published_content_json:string|null;is_published:number;published_revision_id:string|null;sort_order:number;created_at:string;updated_at:string;revision?:number};
-type PageBody={id?:unknown;sourcePageId?:unknown;slug?:unknown;title?:unknown;description?:unknown;document?:unknown;isPublished?:unknown;sortOrder?:unknown;expectedVersion?:unknown};
+type PageRow={archived_at?:string|null;id:string;slug:string;title:string;description:string;content_json:string;published_content_json:string|null;is_published:number;published_revision_id:string|null;sort_order:number;created_at:string;updated_at:string;revision?:number};
+type PageBody={action?:unknown;id?:unknown;sourcePageId?:unknown;slug?:unknown;title?:unknown;description?:unknown;document?:unknown;isPublished?:unknown;sortOrder?:unknown;expectedVersion?:unknown};
 function parse(value:string):any{try{return JSON.parse(value)}catch{return {}}}
 function canonical(value:unknown,id:string):boolean{const d:any=value;const p=d?.pages?.[id];return Boolean(d&&d.type==='sanci-page-document'&&d.schemaVersion===1&&d.activePageId===id&&p&&p.id===id&&p.rootId&&p.nodes&&typeof p.nodes==='object')}
-function serialize(row:PageRow,includeContent=true){const raw=parse(row.content_json);const document=normalizeEditorDocument(raw,row.id,row.title,row.slug,row.description);const revision=Number(row.revision??document?.revision??document?.pages?.[row.id]?.revision??0);return{id:row.id,slug:row.slug,title:row.title,description:row.description,sortOrder:row.sort_order,revision,...(includeContent?{content:document||raw}:{}),isPublished:Boolean(row.is_published),publishedRevisionId:row.published_revision_id??null,createdAt:row.created_at,updatedAt:row.updated_at}}
+function serialize(row:PageRow,includeContent=true){const raw=parse(row.content_json);const document=normalizeEditorDocument(raw,row.id,row.title,row.slug,row.description);const revision=Number(row.revision??document?.revision??document?.pages?.[row.id]?.revision??0);return{id:row.id,slug:row.slug,title:row.title,description:row.description,sortOrder:row.sort_order,revision,...(includeContent?{content:document||raw}:{}),isPublished:Boolean(row.is_published),archivedAt:row.archived_at??null,publishedRevisionId:row.published_revision_id??null,createdAt:row.created_at,updatedAt:row.updated_at}}
 function validSlug(value:string){return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value)}
 function duplicateDocument(source:PageRow,id:string,title:string,slug:string,description:string){
  const document=normalizeEditorDocument(parse(source.content_json),source.id,source.title,source.slug,source.description);
@@ -26,17 +26,40 @@ function duplicateDocument(source:PageRow,id:string,title:string,slug:string,des
  const nextDocument={...document,activePageId:id,revision:1,pages:{[id]:nextPage}};
  return validatePublishDocument(nextDocument,id)?null:nextDocument;
 }
-export async function adminPagesRoute(request:Request,env:Env):Promise<Response>{
+async function adminPagesRouteImpl(request:Request,env:Env):Promise<Response>{
  const { siteId }=getCanonicalSiteContext();
  const user=await getAuthenticatedUser(request,env);if(!user)return error('UNAUTHORIZED',401,'Authentication required');if(!hasRole(user,'editor'))return error('FORBIDDEN',403,'Editor role required');
- if(request.method==='GET'){const metaOnly=new URL(request.url).searchParams.get('meta')==='1';const rows=await env.DB.prepare('SELECT p.id,p.slug,p.title,p.description,p.content_json,p.is_published,p.published_revision_id,p.sort_order,p.created_at,p.updated_at,COALESCE((SELECT MAX(er.version) FROM editor_revisions er WHERE er.page_id=p.id),0) AS revision FROM pages p WHERE p.site_id=? ORDER BY p.sort_order ASC').bind(siteId).all<PageRow>();return ok(rows.results.map(r=>serialize(r,!metaOnly)))}
+ if(request.method==='GET'){const metaOnly=new URL(request.url).searchParams.get('meta')==='1';const rows=await env.DB.prepare(`SELECT p.id,p.slug,p.title,p.description,p.content_json,p.archived_at,p.is_published,p.published_revision_id,p.sort_order,p.created_at,p.updated_at,COALESCE((SELECT MAX(er.version) FROM editor_revisions er WHERE er.page_id=p.id),0) AS revision FROM pages p WHERE p.site_id=? AND ${new URL(request.url).searchParams.get('archived')==='1'?'p.archived_at IS NOT NULL':'p.archived_at IS NULL'} ORDER BY p.sort_order ASC`).bind(siteId).all<PageRow>();return ok(rows.results.map(r=>serialize(r,!metaOnly)))}
  let body:PageBody;try{body=await request.json() as PageBody}catch{return error('INVALID_JSON',400)}
- if(request.method==='DELETE'){const id=typeof body.id==='string'?body.id:'';if(!id)return error('INVALID_PAGE_ID',400);const count=await env.DB.prepare('SELECT COUNT(*) AS count FROM pages WHERE site_id=?').bind(siteId).first<{count:number}>();if(Number(count?.count||0)<=1)return error('LAST_PAGE',409,'Az utolsó oldal nem törölhető.');const existingOrder=await env.DB.prepare('SELECT sort_order FROM pages WHERE id=? AND site_id=? LIMIT 1').bind(id,siteId).first<{sort_order:number}>();if(!existingOrder)return error('PAGE_NOT_FOUND',404);const deleteStatements:any[]=[env.DB.prepare('DELETE FROM pages WHERE id=? AND site_id=?').bind(id,siteId)];if(existingOrder)deleteStatements.push(env.DB.prepare('UPDATE pages SET sort_order=sort_order-1 WHERE site_id=? AND sort_order>?').bind(siteId,existingOrder.sort_order));deleteStatements.push(auditStatement(env,user.id,'page.delete','page',id,{}));try{await env.DB.batch(deleteStatements)}catch(e){if(String(e).includes('PAGE_IN_USE_BY_NAVIGATION'))return error('PAGE_IN_USE',409,'Az oldal a mentett vagy publikált navigációban szerepel. Távolítsd el a menüből, publikáld a menü módosítását, majd próbáld újra.');throw e}return ok({id,deleted:true})}
+ if(request.method==='PATCH'&&body.action!==undefined){
+  const id=typeof body.id==='string'?body.id:'';
+  if(!id)return error('INVALID_PAGE_ID',400);
+  if(body.action!=='archive'&&body.action!=='restore')return error('INVALID_PAGE_ACTION',400);
+  const row=await env.DB.prepare('SELECT id,archived_at,is_published FROM pages WHERE id=? AND site_id=? LIMIT 1').bind(id,siteId).first<{id:string;archived_at:string|null;is_published:number}>();
+  if(!row)return error('PAGE_NOT_FOUND',404);
+  const archive=body.action==='archive';
+  if(archive===Boolean(row.archived_at))return ok({id,archivedAt:row.archived_at,isPublished:Boolean(row.is_published),changed:false});
+  try{
+   const result=await env.DB.batch([
+    env.DB.prepare(`UPDATE pages SET archived_at=${archive?'CURRENT_TIMESTAMP':'NULL'},sort_order=${archive?'sort_order':'(SELECT COALESCE(MAX(p.sort_order),-1)+1 FROM pages p WHERE p.site_id=pages.site_id AND p.archived_at IS NULL)'},is_published=0,published_content_json=NULL,published_revision_id=NULL,published_slug=NULL,published_title=NULL,published_description=NULL,published_at=NULL,updated_at=CURRENT_TIMESTAMP WHERE id=? AND site_id=? AND archived_at IS ?`).bind(id,siteId,row.archived_at),
+    env.DB.prepare('INSERT INTO audit_log (id,user_id,action,entity_type,entity_id,metadata_json) SELECT ?,?,?,?,?,? WHERE changes()=1').bind(crypto.randomUUID(),user.id,archive?'page.archive':'page.restore','page',id,'{}'),
+    ...(archive?[env.DB.prepare('UPDATE pages SET sort_order=sort_order-1 WHERE site_id=? AND archived_at IS NULL AND changes()=1 AND sort_order>(SELECT sort_order FROM pages WHERE id=?)').bind(siteId,id)]:[])
+   ]);
+   if(Number(result[0]?.meta?.changes??0)!==1)return error('REVISION_CONFLICT',409,'Az oldal állapota időközben módosult. Töltsd újra az oldallistát.');
+  }catch(e){
+   if(String(e).includes('PAGE_IN_USE_BY_NAVIGATION'))return error('PAGE_IN_USE',409,'Az oldal a mentett vagy publikált navigációban szerepel. Távolítsd el a menüből, publikáld a menü módosítását, majd archiváld.');
+   if(String(e).includes('LAST_ACTIVE_PAGE'))return error('LAST_PAGE',409,'Az utolsó aktív oldal nem archiválható.');
+   throw e;
+  }
+  const updated=await env.DB.prepare('SELECT archived_at FROM pages WHERE id=? AND site_id=?').bind(id,siteId).first<{archived_at:string|null}>();
+  return ok({id,archivedAt:updated?.archived_at??null,isPublished:false,changed:true});
+ }
+ if(request.method==='DELETE'){const id=typeof body.id==='string'?body.id:'';if(!id)return error('INVALID_PAGE_ID',400);const count=await env.DB.prepare('SELECT COUNT(*) AS count FROM pages WHERE site_id=? AND archived_at IS NULL').bind(siteId).first<{count:number}>();if(Number(count?.count||0)<=1)return error('LAST_PAGE',409,'Az utolsó oldal nem törölhető.');const existingOrder=await env.DB.prepare('SELECT sort_order FROM pages WHERE id=? AND site_id=? AND archived_at IS NULL LIMIT 1').bind(id,siteId).first<{sort_order:number}>();if(!existingOrder)return error('PAGE_NOT_FOUND',404);const deleteStatements:any[]=[env.DB.prepare('DELETE FROM pages WHERE id=? AND site_id=?').bind(id,siteId)];if(existingOrder)deleteStatements.push(env.DB.prepare('UPDATE pages SET sort_order=sort_order-1 WHERE site_id=? AND archived_at IS NULL AND sort_order>?').bind(siteId,existingOrder.sort_order));deleteStatements.push(auditStatement(env,user.id,'page.delete','page',id,{}));try{await env.DB.batch(deleteStatements)}catch(e){if(String(e).includes('PAGE_IN_USE_BY_NAVIGATION'))return error('PAGE_IN_USE',409,'Az oldal a mentett vagy publikált navigációban szerepel. Távolítsd el a menüből, publikáld a menü módosítását, majd próbáld újra.');throw e}return ok({id,deleted:true})}
  if(request.method==='PATCH'){
   const id=typeof body.id==='string'?body.id:'';const requestedOrder=typeof body.sortOrder==='number'?Math.floor(body.sortOrder):null;const title=typeof body.title==='string'?body.title.trim():'';const requestedSlug=typeof body.slug==='string'?body.slug.trim().toLowerCase():'';const requestedDescription=typeof body.description==='string'?body.description.trim():null;
   if(!id)return error('INVALID_PAGE_ID',400);if(requestedOrder!==null&&requestedOrder<0)return error('INVALID_PAGE_ORDER',400);if(title&&title.length>160)return error('INVALID_PAGE_TITLE',400);if(requestedSlug&&(!validSlug(requestedSlug)||requestedSlug.length>80))return error('INVALID_PAGE_SLUG',400,'A slug csak kisbetűs betűket, számokat és kötőjeleket tartalmazhat.');if(requestedDescription!==null&&requestedDescription.length>500)return error('INVALID_PAGE_DESCRIPTION',400);if(!title&&!requestedSlug&&requestedDescription===null&&requestedOrder===null)return error('INVALID_PAGE_UPDATE',400);
-  const existing=await env.DB.prepare('SELECT id,slug,title,description,content_json,published_content_json,is_published,published_revision_id,sort_order,created_at,updated_at FROM pages WHERE id=? AND site_id=? LIMIT 1').bind(id,siteId).first<PageRow>();if(!existing)return error('PAGE_NOT_FOUND',404);
-  const orderedPages=requestedOrder===null?null:(await env.DB.prepare('SELECT id,sort_order FROM pages WHERE site_id=? ORDER BY sort_order ASC,id ASC').bind(siteId).all<{id:string;sort_order:number}>()).results;
+  const existing=await env.DB.prepare('SELECT id,slug,title,description,content_json,published_content_json,is_published,published_revision_id,sort_order,created_at,updated_at FROM pages WHERE id=? AND site_id=? AND archived_at IS NULL LIMIT 1').bind(id,siteId).first<PageRow>();if(!existing)return error('PAGE_NOT_FOUND',404);
+  const orderedPages=requestedOrder===null?null:(await env.DB.prepare('SELECT id,sort_order FROM pages WHERE site_id=? AND archived_at IS NULL ORDER BY sort_order ASC,id ASC').bind(siteId).all<{id:string;sort_order:number}>()).results;
   if(requestedOrder!==null&&requestedOrder>=orderedPages!.length)return error('INVALID_PAGE_ORDER',400);
   const nextTitle=title||existing.title;const nextSlug=requestedSlug||existing.slug;const nextDescription=requestedDescription===null?existing.description:requestedDescription;const nextOrder=requestedOrder===null?existing.sort_order:requestedOrder;
   const latest=await env.DB.prepare('SELECT COALESCE(MAX(version),0) AS version FROM editor_revisions WHERE page_id=?').bind(id).first<{version:number}>();const currentVersion=Number(latest?.version||0);const expectedVersion=body.expectedVersion===undefined?null:Number(body.expectedVersion);if(expectedVersion!==null&&(!Number.isInteger(expectedVersion)||expectedVersion!==currentVersion))return error('REVISION_CONFLICT',409,'Az oldal időközben módosult. Töltsd újra az oldalt a legfrissebb verzióval.');
@@ -60,7 +83,7 @@ export async function adminPagesRoute(request:Request,env:Env):Promise<Response>
   const title=typeof body.title==='string'?body.title.trim():'';
   const slug=typeof body.slug==='string'?body.slug.trim().toLowerCase():'';
   if(!title||title.length>160||!validSlug(slug)||slug.length>80)return error('INVALID_PAGE',400);
-  const source=await env.DB.prepare('SELECT id,slug,title,description,content_json,published_content_json,is_published,published_revision_id,sort_order,created_at,updated_at FROM pages WHERE id=? AND site_id=? LIMIT 1').bind(sourcePageId,siteId).first<PageRow>();
+  const source=await env.DB.prepare('SELECT id,slug,title,description,content_json,published_content_json,is_published,published_revision_id,sort_order,created_at,updated_at FROM pages WHERE id=? AND site_id=? AND archived_at IS NULL LIMIT 1').bind(sourcePageId,siteId).first<PageRow>();
   if(!source)return error('PAGE_NOT_FOUND',404);
   const id=crypto.randomUUID();
   const description=typeof body.description==='string'?body.description.trim():source.description;
@@ -69,7 +92,7 @@ export async function adminPagesRoute(request:Request,env:Env):Promise<Response>
   if(!document)return error('PAGE_NOT_CANONICAL',409,'Az oldal dokumentuma nem másolható biztonságosan.');
   const contentJson=JSON.stringify(document);
   if(contentJson.length>180000)return error('PAGE_TOO_LARGE',400);
-  const order=await env.DB.prepare('SELECT COALESCE(MAX(sort_order),-1)+1 AS next FROM pages WHERE site_id=?').bind(siteId).first<{next:number}>();
+  const order=await env.DB.prepare('SELECT COALESCE(MAX(sort_order),-1)+1 AS next FROM pages WHERE site_id=? AND archived_at IS NULL').bind(siteId).first<{next:number}>();
   const sortOrder=Number(order?.next??0),revisionId=crypto.randomUUID();
   try{
    await env.DB.batch([
@@ -92,7 +115,7 @@ export async function adminPagesRoute(request:Request,env:Env):Promise<Response>
  if(initialJson.length>180000)return error('PAGE_TOO_LARGE',400);
  const isPublished=body.isPublished===true;
  const revisionId=crypto.randomUUID();
- const nextOrderRow=await env.DB.prepare('SELECT COALESCE(MAX(sort_order),-1)+1 AS next FROM pages WHERE site_id=?').bind(siteId).first<{next:number}>();
+ const nextOrderRow=await env.DB.prepare('SELECT COALESCE(MAX(sort_order),-1)+1 AS next FROM pages WHERE site_id=? AND archived_at IS NULL').bind(siteId).first<{next:number}>();
  const nextOrder=Number(nextOrderRow?.next??0);
  try{
   const pageInsert=env.DB.prepare('INSERT INTO pages (id,site_id,slug,title,description,content_json,published_content_json,published_revision_id,is_published,sort_order,published_slug,published_title,published_description,published_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,CASE WHEN ?=1 THEN CURRENT_TIMESTAMP ELSE NULL END,CURRENT_TIMESTAMP)').bind(id,siteId,slug,title,description,initialJson,isPublished?initialJson:null,isPublished?revisionId:null,isPublished?1:0,nextOrder,isPublished?slug:null,isPublished?title:null,isPublished?description:null,isPublished?1:0);
@@ -103,4 +126,11 @@ export async function adminPagesRoute(request:Request,env:Env):Promise<Response>
   throw e;
  }
  return ok({id,slug,title,description,content:initialDocument,isPublished,version:1,revisionId});
+}
+
+export async function adminPagesRoute(request:Request,env:Env):Promise<Response>{
+ try{return await adminPagesRouteImpl(request,env)}catch(e){
+  if(String(e).includes('PAGE_ARCHIVED'))return error('PAGE_ARCHIVED',409,'Az oldal archiválva van. Először állítsd vissza piszkozatként.');
+  throw e;
+ }
 }
