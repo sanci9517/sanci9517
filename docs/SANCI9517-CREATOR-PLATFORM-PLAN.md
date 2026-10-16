@@ -1,5 +1,5 @@
-Warning: truncated output (original token count: 535173)
-... 1092116 bytes omitted ...
+Warning: truncated output (original token count: 535237)
+... 1092370 bytes omitted ...
 
 # SANCI9517 — CREATOR PLATFORM: TERMÉK-, ARCHITEKTÚRA- ÉS FEJLESZTÉSI MASTER-TERV
 
@@ -1157,11 +1157,7 @@ Az egyes tételek státusza csak az adott ellenőrzés tényleges lefutása utá
 
 **Következő konkrét ellenőrzési pont: EDT-SAVE-RELOAD → EDT-PUBLISH-SNAPSHOT.** A repositoryban lévő Editor-tesztek között a mentési útvonal több ellenőrzése forrásszöveg-szerződést (statikus mintákat) vizsgál; ez önmagában nem bizonyít valódi böngészős, D1-es mentés/újratöltés/publikálás round-tripet. Először a meglévő teszteket és futó környezetet kell ellenőrizni, majd valódi draft mentés → újratöltés → preview → explicit publish → publikus oldal ellenőrzést végigvinni, a hibákat reprodukálhatóvá tenni és csak ezután módosítani a kódot. Új, nagyobb termékmodul nem kerülhet e core ellenőrzés elé.
 
-Ez a fókusz nem a teljes Creator Platform scope-jának szű…212152 tokens truncated…s viselkedés
-
-| Fogalom | Tartalom | Példányosítás/frissítés | Tulajdonos |
-|---|---|---|---|
-| Starter/site kit | oldalak, navigáció, Brand Kit és opcionális modulkonfiguráció előre megadott összeállítása | telepítéskor saját site-példány; explicit upgrade | 49.3 design/template domain |
+Ez a fókusz nem a teljes Creator Platform scope-jának szű…212153 tokens truncated…példány; explicit upgrade | 49.3 design/template domain |
 | Site theme | design tokenek, tipográfia, layout primitives, theme módok | globális tokenreferencia; scoped override | Brand Kit |
 | Page template | egy oldaltípus szerkezete és alap komponensei | alapból szerkeszthető oldal-példány; dokumentált linked mód | template registry |
 | Section preset | kiválasztható hero, cards, CTA, gallery, social/stream/layout minta | gyors beszúrás; lokális stílus és tartalom | template registry |
@@ -1771,6 +1767,6 @@ A már részletezett 24/49/54/56/64–76. fejezet tartalmát **nem kell másodsz
 
 **Éles D1 és Worker:** Cloudflare build `9b20c43f-3bad-49e1-a8e8-d3cc1ddd2367` sikeres; a build `npm run typecheck`, majd a meglévő konfiguráció szerinti `npm run deploy` parancsot futtatta. A `0020_site_navigation_snapshots.sql` migráció 2026-10-16 09:01:12 UTC-kor alkalmazódott. A D1 read-only ellenőrzése szerint a `site-default` rekord létrejött, `revision=1`, `published_revision=1`, 8 publikált menüponttal; az ellenőrző SELECT-ek `rows_written=0`, `changed_db=false` eredménnyel zárultak. Az aktív Worker deployment `d167e289-9665-493f-b052-d193ba9909b0`, verzió `6d86d9db-cde0-41c7-a05c-954cc6bc8517`, forgalmi arány 100%, 2026-10-16 09:01:21 UTC.
 
-**Éles publikus ellenőrzés:** a `https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/p/youtube` oldalon a menü megnyílt; 8 belső menüpont jelent meg, köztük a YouTube oldalra mutató hivatkozás, a menü a működő publikált sorrendet használja. Admin Editor útvonal ellenőrzése a bejelentkezési oldalra irányított, ezért a hitelesített UI-kézi elfogadás itt nem történt meg.
+**Éles runtime ellenőrzés:** a `https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/p/youtube` oldalon a menü megnyílt; 8 belső menüpont jelent meg, köztük a YouTube oldalra mutató hivatkozás, a menü a működő publikált sorrendet használja. Az `/admin/editor` első megnyitása a bejelentkezési oldalra irányított; a biztonságos hitelesítés után új böngészőlapon láthatóan betöltött a `Sanci9517 Visual Editor v2` és a `Navigáció` eszköz. A credential-delivery utáni böngészőadat-védelem blokkolta a további automatizált panel-interakciót, így a panel működésének kézi elfogadása még nem történt meg.
 
 **Következő acceptance lépés:** felhasználó ellenőrizze az Admin Editorban a Navigáció panel betöltését, egy menüpont átrendezésének draft mentését (publikálás nélkül a publikus menü ne változzon), majd a draft publikálását, és a publikus menü frissítését. Ezt követően ellenőrizendő a külső HTTPS link, a hierarchikus/nested menü mobilon és billentyűzettel. Addig a WEB-009 és F1.1 státusza IN PROGRESS marad; az éles runtime és az automatizált tesztek PASS állapota nem helyettesíti a hitelesített UI kézi elfogadását.
