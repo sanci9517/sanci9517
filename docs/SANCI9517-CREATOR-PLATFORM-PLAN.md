@@ -13599,4 +13599,4 @@ A már részletezett 24/49/54/56/64–76. fejezet tartalmát **nem kell másodsz
 
 **Éles build és deploy:** Cloudflare Workers Build `9150dd30-0333-4cb0-b770-cc7a94413fee` `success`; a `npm run typecheck` és `npm run deploy` lépések sikeresek. D1-migráció nem kellett (`No migrations to apply`). Deployment `0b8c8e8d-b77a-4a5b-b0fe-41cfaae64f18`, Worker verzió `33471b4a-fee7-4770-abc7-1c5a9e781fd7`, forgalmi arány 100%.
 
-**Állapot és következő lépés:** a javítás éles, de WEB-011/F1.1 nem PASS, amíg a felhasználó a publikus oldalon kézzel vissza nem igazolja, hogy megnyitáskor a fókusz az első linkre kerül, ArrowDown/ArrowUp és Home/End a menün belül léptet görgetés nélkül, Escape pedig bezár és visszaadja a fókuszt a gombra. A nested és mobil acceptance külön nyitott.
+**Állapot és következő lépés:** a javítás éles, de WEB-011/F1.1 nem PASS. Az automatizált éles böngészőben a `/p/youtube` oldal betöltött és a menü kinyílt, de a linkek nem jelentek meg; emiatt a billentyűzetes fókusz/léptetés élő ellenőrzése ebben a böngészőpéldányban nem volt lehetséges. A felhasználó korábban jelezte, hogy saját böngészőjében a menü
