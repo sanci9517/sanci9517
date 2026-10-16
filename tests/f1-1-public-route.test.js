@@ -33,7 +33,7 @@ function envWithPublishedSlug(publishedSlug = 'youtube', authenticated = false) 
                 return this;
               }
               assert.equal(siteId, 'site-default');
-              lookupSlugs.push(slug);
+              if (!sql.includes('FROM page_slug_redirects')) lookupSlugs.push(slug);
               return this;
             },
             async first() {
@@ -42,6 +42,7 @@ function envWithPublishedSlug(publishedSlug = 'youtube', authenticated = false) 
                   ? { id: 'editor', email: 'editor@example.test', displayName: 'Editor', role: 'editor' }
                   : null;
               }
+              if (sql.includes('FROM page_slug_redirects')) return null;
               if (lookupSlugs.at(-1) !== publishedSlug && !(authenticated && lookupSlugs.at(-1) === 'youtube-draft')) return null;
               return {
                 id: 'youtube-page', slug: 'youtube-draft', title: 'YouTube', description: 'Channel',

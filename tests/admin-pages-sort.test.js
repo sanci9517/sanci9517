@@ -11,7 +11,7 @@ async function fixture(t) {
     CREATE TABLE users(id TEXT PRIMARY KEY,email TEXT,display_name TEXT,role TEXT,is_active INTEGER);
     CREATE TABLE sessions(token_hash TEXT,user_id TEXT,expires_at TEXT);
     CREATE TABLE pages(archived_at TEXT,id TEXT PRIMARY KEY,site_id TEXT,slug TEXT,title TEXT,description TEXT,content_json TEXT,
-      published_content_json TEXT,is_published INTEGER,published_revision_id TEXT,sort_order INTEGER,
+      published_content_json TEXT,is_published INTEGER,published_revision_id TEXT,published_slug TEXT,sort_order INTEGER,
       created_at TEXT DEFAULT CURRENT_TIMESTAMP,updated_at TEXT DEFAULT CURRENT_TIMESTAMP);
     CREATE TABLE editor_revisions(id TEXT PRIMARY KEY,page_id TEXT,version INTEGER);
     CREATE TABLE audit_log(id TEXT PRIMARY KEY,user_id TEXT,action TEXT,entity_type TEXT,entity_id TEXT,metadata_json TEXT);

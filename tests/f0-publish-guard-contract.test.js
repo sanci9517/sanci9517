@@ -18,7 +18,7 @@ test('publish snapshot is guarded by successful revision insertion', () => {
 });
 
 test('draft-only save does not change published snapshot', () => {
-  assert.match(source, /if\(publish\)statements\.push\(env\.DB\.prepare\(`UPDATE pages SET published_content_json/);
+  assert.match(source, /if\s*\(publish\)\s*\{[\s\S]*?UPDATE pages SET published_content_json/);
 });
 
 test('publish audit entry is conditional on inserted revision', () => {
