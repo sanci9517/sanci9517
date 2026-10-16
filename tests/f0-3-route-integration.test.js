@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { DatabaseSync } from 'node:sqlite';
+import { adminPagesRoute } from '../src/routes/admin/pages.ts';
 import { adminEditorRoute } from '../src/routes/admin/editor.ts';
 import { publicPagesRoute } from '../src/routes/public/pages.ts';
 import { hashSessionToken } from '../src/core/auth/session.ts';
@@ -16,7 +17,7 @@ async function fixture(t) {
     CREATE TABLE pages(archived_at TEXT,id TEXT PRIMARY KEY,site_id TEXT,slug TEXT,title TEXT,description TEXT,
       content_json TEXT,published_content_json TEXT,published_revision_id TEXT,is_published INTEGER,
       published_slug TEXT,published_title TEXT,published_description TEXT,sort_order INTEGER DEFAULT 0,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,published_at TEXT);
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,updated_at TEXT DEFAULT CURRENT_TIMESTAMP,published_at TEXT);
     CREATE TABLE editor_revisions(id TEXT PRIMARY KEY,page_id TEXT,version INTEGER,document_json TEXT,
       created_by TEXT,note TEXT,created_at TEXT DEFAULT CURRENT_TIMESTAMP,UNIQUE(page_id,version));
     CREATE TABLE audit_log(id TEXT PRIMARY KEY,user_id TEXT,action TEXT,entity_type TEXT,entity_id TEXT,metadata_json TEXT);
@@ -159,4 +160,24 @@ test('missing/stale revision and invalid publish hierarchy leave all persisted s
   invalid.document.pages.p.nodes.root.children = ['missing'];
   assert.equal((await f.edit(invalid)).status, 409);
   assert.deepEqual(f.state(), before);
+});
+
+
+test('page list distinguishes saved drafts from LIVE snapshots through save, metadata change, publish, rollback and unpublish',async t=>{
+ const f=await fixture(t);
+ const list=async(meta=false)=>{
+  const response=await adminPagesRoute(new Request('https://example.test/api/admin/pages'+(meta?'?meta=1':''),{headers:{Cookie:'sanci9517_session=editor'}}),f.env);
+  assert.equal(response.status,200);
+  return (await response.json()).data;
+ };
+ let rows=await list();assert.equal(rows.length,1);assert.equal(rows[0].hasUnpublishedChanges,false);
+ assert.equal((await f.edit({...f.publish('pending'),publish:false})).status,200);
+ rows=await list(true);assert.equal(rows[0].hasUnpublishedChanges,true);assert.equal(rows[0].isPublished,true);assert.equal('content' in rows[0],false);
+ const changed=await adminPagesRoute(new Request('https://example.test/api/admin/pages',{method:'PATCH',headers:{Cookie:'sanci9517_session=editor','Content-Type':'application/json'},body:JSON.stringify({id:'p',title:'Renamed',slug:'new-slug',expectedVersion:2})}),f.env);
+ assert.equal(changed.status,200);const metadata=(await changed.json()).data;assert.equal(metadata.hasUnpublishedChanges,true);
+ assert.equal((await f.read('?slug=p')).status,200);assert.equal((await f.read('?slug=new-slug')).status,404);
+ assert.equal((await f.edit({pageId:'p',expectedVersion:3,document:metadata.content,publish:true})).status,200);
+ rows=await list();assert.equal(rows[0].hasUnpublishedChanges,false);assert.equal((await f.read('?slug=new-slug')).status,200);
+ assert.equal((await f.edit({pageId:'p',version:1,expectedVersion:4},'PUT')).status,200);assert.equal((await list())[0].hasUnpublishedChanges,true);
+ assert.equal((await f.edit({pageId:'p',action:'unpublish'})).status,200);rows=await list();assert.equal(rows[0].isPublished,false);assert.equal(rows[0].hasUnpublishedChanges,false);
 });
