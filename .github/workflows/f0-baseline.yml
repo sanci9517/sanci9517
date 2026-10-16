@@ -23,6 +23,7 @@ jobs:
       - run: npm run test:admin-home
       - run: node --test tests/public-navigation.test.js
       - run: node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/admin-pages-sort.test.js
+      - run: node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/f1-1-navigation-migration.test.js tests/f1-1-navigation-route.test.js tests/f1-1-navigation-ui-contract.test.js
       - run: npm run test:admin-access
       - run: npm run test:domain
       - run: npm run test:editor

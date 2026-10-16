@@ -85,5 +85,5 @@ test('outside click restores focus only when it was inside the open navigation',
 test('public menu toggle exposes the controlled navigation panel to assistive technology', () => {
   assert.match(visualPage, /data-menu-button[^>]*aria-controls="public-menu"/);
   assert.match(visualPage, /<nav[^>]*id="public-menu"[^>]*data-menu-panel/);
-  assert.match(visualPage, /<script src="\/assets\/site\.js\?v=20261016-2"><\/script>/);
+  assert.match(visualPage, /<script src="\/assets\/site\.js\?v=20261016-3"><\/script>/);
 });

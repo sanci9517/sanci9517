@@ -20,6 +20,8 @@ import {
   twitchDisconnectRoute
 } from "./routes/integrations/twitch";
 import { publicPagesRoute } from "./routes/public/pages";
+import { adminNavigationRoute } from "./routes/admin/navigation";
+import { publicNavigationRoute } from "./routes/public/navigation";
 import { getAuthenticatedUser } from "./core/auth/require-auth";
 import type { Env } from "./types/env";
 
@@ -37,6 +39,7 @@ export default {
     if (pathname === "/api/admin/schedule") return adminScheduleRoute(request, env);
     if (pathname === "/api/admin/twitch/schedule-sync") return adminTwitchScheduleSyncRoute(request, env);
     if (pathname === "/api/admin/pages") return adminPagesRoute(request, env);
+    if (pathname === "/api/admin/navigation") return adminNavigationRoute(request, env);
     if (pathname === "/api/admin/editor") return adminEditorRoute(request, env);
     if (pathname === "/api/public/site-settings") return publicSiteSettingsRoute(env);
     if (pathname === "/api/public/schedule") return publicScheduleRoute(request, env);
@@ -47,6 +50,7 @@ export default {
     if (pathname === "/api/integrations/twitch/validation") return twitchValidationRoute(request, env);
     if (pathname === "/api/integrations/twitch/disconnect") return twitchDisconnectRoute(request, env);
     if (pathname === "/api/public/pages") return publicPagesRoute(request, env);
+    if (pathname === "/api/public/navigation") return publicNavigationRoute(env);
     if (pathname === "/admin/login") return env.ASSETS.fetch(assetRequest("/admin-login.html", request));
     if (pathname === "/admin") {
       const user = await getAuthenticatedUser(request, env);
