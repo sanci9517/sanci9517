@@ -45,7 +45,7 @@ button, input, select, textarea { line-height: 1.35; }
 .page-list, .layers-tree { padding: 10px; }
 .page-row { display: grid; grid-template-columns: minmax(0, 1fr); min-height: 0; margin-block: 8px; font-size: 14px; border: 1px solid #2b3a4f; background: #111923; }
 .page-row-select { width: 100%; min-height: 52px; padding: 10px 12px; }
-.page-row-actions { display: grid; grid-template-columns: repeat(5, minmax(44px, 1fr)); gap: 6px; padding: 8px; border-top: 1px solid #28364a; background: #0c121a; }
+.page-row-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(44px, 1fr)); gap: 6px; padding: 8px; border-top: 1px solid #28364a; background: #0c121a; }
 .page-row-actions button { width: 100%; min-width: 44px; min-height: 44px; height: 44px; border: 1px solid #2d3d53; border-radius: 8px; background: #17212d; font-size: 17px; }
 .page-row-actions .page-delete { color: #ffbfc6; border-color: #633a42; background: #321b21; }
 .page-row .page-meta { padding: 4px 7px; border-radius: 999px; background: #1b2b3c; color: #c6d4e6; font-size: 11px; line-height: 1.2; }
