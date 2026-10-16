@@ -13610,3 +13610,17 @@ A már részletezett 24/49/54/56/64–76. fejezet tartalmát **nem kell másodsz
 **Automatizált ellenőrzés:** a publikus menü és UI tesztek 8/8 PASS, beleértve a menügombról induló ArrowDown/ArrowUp esetet és a panel saját görgethetőségének szerződését; a navigation route és page-navigation regreszsziók 10/10 PASS; `node --check public/assets/site.js`, `git diff --check` és `python3 scripts/check-canonical-plan.py` PASS.
 
 **Kiadás:** a javítás a `v2/foundation` ágra került `b4acd7f19e698e5aa7f9fbfcc93b6dceb040421a` commitként. Cloudflare Workers Build `e272039e-679b-49bc-b2e7-b7a7555091da` sikeres; `npm run typecheck` és `npm run deploy` is sikeres, D1-migráció nem volt (`No migrations to apply`). Deployment `2571c784-a1a4-4aec-91cf-7ae4c1cbdbea`, Worker version `83ed93f4-1a4c-491c-aefc-67ec34c3289f`, forgalmi arány 100%. Adatbázis-változtatás nem történt. A WEB-011/F1.1 továbbra sem PASS: a felhasználónak az új éles verzióval meg kell ismételnie a nyitott menü nyílbillentyűs léptetését.
+
+### 77.19. F1.1 WEB-011 — nyílbillentyűs léptetés kézi elfogadása — 2026-10-16
+
+A felhasználó a 77.18-ban élesített javítás után „működik” visszajelzéssel megerősítette, hogy a nyitott menüben a billentyűzetes léptetés már nem görgeti az oldalt. A menügomb fókuszáról történő ArrowDown/ArrowUp belépés és a fókuszált linkek közötti léptetés acceptance **user-confirmed PASS**. A WEB-011 teljes vizuális/mobil elfogadása és az F1.1 továbbra is nyitott; a nested menü valós mobilnézeti ellenőrzése még szükséges.
+
+### 77.20. F1.1 WEB-003 — oldal másolása új, nem publikált piszkozatként — 2026-10-16
+
+**Leltározott hiány:** az oldalkezelőben volt oldal létrehozás, metaadat-módosítás, sorrendezés és törlés, de meglévő oldal másolására nem volt útvonal vagy művelet. Ez a WEB-003 page lifecycle elfogadási szerződés egy hiányzó szelete.
+
+**Módosítás:** az Admin `POST /api/admin/pages` művelete `sourcePageId` megadásakor a site-on belüli canonical Editor v2 oldalt másolja. A másolat új page ID-t és minden node számára új, helyileg egyedi ID-t kap; a parent/children hivatkozások újramappeltek. Az oldal státusza draft, a published mezők üresek, a publikus navigáció nem módosul. A másolat létrehozása, első revisionje és `page.duplicate` audit eseménye egyetlen D1 batchben készül. A másik site-on lévő forrás 404; hibás vagy foglalt slug nem ír adatot. Az Editor oldallistáján elérhető, feliratozott másolásgomb cím- és slugbekéréssel. Nem mentett aktív módosítás mellett a felület a másolást megállítja, és mentést kér. D1-migráció nem szükséges.
+
+**Automatizált ellenőrzés:** új route- és UI contract tesztek 3/3 PASS; oldal/navigáció regressziók 13/13 PASS; publikus menü/UI 8/8 PASS; `node --check public/editor-v2/app.js`, `git diff --check` és `python3 scripts/check-canonical-plan.py` PASS. A helyi `npm run typecheck` nem indítható, mert a `tsc` nincs telepítve; a Cloudflare Workers Build `npm run typecheck` kapuja még kiadási ellenőrzésre vár.
+
+**Elfogadás és következő lépés:** a kód éles kiadásakor a felhasználóval a valódi Editorban ellenőrizendő egy publikált oldal másolása, a másolat DRAFT státusza és tartalma, az egyedi slug, valamint hogy az eredeti publikus oldal és menü változatlan marad. A WEB-003 másolási részfunkció és F1.1 addig nem PASS, amíg az éles UI-teszt nem igazolt. A következő fejlesztési szelet a Site/Page lifecycle további nyitott pontjainak tényleges kód/test leltára; nem állítjuk késznek az archiválást, hierarchiát, redirect- és multi-site acceptance-et.

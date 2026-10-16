@@ -4,13 +4,28 @@ import { normalizeEditorDocument } from "../../core/page-model";
 import type { Env } from "../../types/env";
 import { auditStatement } from "../../core/audit";
 import { getCanonicalSiteContext } from "../../core/site-context";
+import { validatePublishDocument } from "../../core/editor-validation";
 
 type PageRow={id:string;slug:string;title:string;description:string;content_json:string;published_content_json:string|null;is_published:number;published_revision_id:string|null;sort_order:number;created_at:string;updated_at:string;revision?:number};
-type PageBody={id?:unknown;slug?:unknown;title?:unknown;description?:unknown;document?:unknown;isPublished?:unknown;sortOrder?:unknown;expectedVersion?:unknown};
+type PageBody={id?:unknown;sourcePageId?:unknown;slug?:unknown;title?:unknown;description?:unknown;document?:unknown;isPublished?:unknown;sortOrder?:unknown;expectedVersion?:unknown};
 function parse(value:string):any{try{return JSON.parse(value)}catch{return {}}}
 function canonical(value:unknown,id:string):boolean{const d:any=value;const p=d?.pages?.[id];return Boolean(d&&d.type==='sanci-page-document'&&d.schemaVersion===1&&d.activePageId===id&&p&&p.id===id&&p.rootId&&p.nodes&&typeof p.nodes==='object')}
 function serialize(row:PageRow,includeContent=true){const raw=parse(row.content_json);const document=normalizeEditorDocument(raw,row.id,row.title,row.slug,row.description);const revision=Number(row.revision??document?.revision??document?.pages?.[row.id]?.revision??0);return{id:row.id,slug:row.slug,title:row.title,description:row.description,sortOrder:row.sort_order,revision,...(includeContent?{content:document||raw}:{}),isPublished:Boolean(row.is_published),publishedRevisionId:row.published_revision_id??null,createdAt:row.created_at,updatedAt:row.updated_at}}
 function validSlug(value:string){return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value)}
+function duplicateDocument(source:PageRow,id:string,title:string,slug:string,description:string){
+ const document=normalizeEditorDocument(parse(source.content_json),source.id,source.title,source.slug,source.description);
+ if(!document||!canonical(document,source.id))return null;
+ const page=document.pages[source.id];
+ const nodeIds=new Map<string,string>(Object.keys(page.nodes).map((nodeId:string)=>[nodeId,nodeId===page.rootId?`root-${id}`:`node-${crypto.randomUUID()}`] as [string,string]));
+ const nodes:Record<string,any>={};
+ for(const [oldId,node] of Object.entries<any>(page.nodes)){
+  const nextId=nodeIds.get(oldId)!;
+  nodes[nextId]={...structuredClone(node),id:nextId,parentId:node.parentId?nodeIds.get(node.parentId)??null:null,children:Array.isArray(node.children)?node.children.map((childId:string)=>nodeIds.get(childId)).filter(Boolean):[]};
+ }
+ const nextPage={...structuredClone(page),id,name:title,slug,status:'draft',rootId:nodeIds.get(page.rootId),nodes,revision:1,metadata:{...(page.metadata||{}),title,description,canonical:''}};
+ const nextDocument={...document,activePageId:id,revision:1,pages:{[id]:nextPage}};
+ return validatePublishDocument(nextDocument,id)?null:nextDocument;
+}
 export async function adminPagesRoute(request:Request,env:Env):Promise<Response>{
  const { siteId }=getCanonicalSiteContext();
  const user=await getAuthenticatedUser(request,env);if(!user)return error('UNAUTHORIZED',401,'Authentication required');if(!hasRole(user,'editor'))return error('FORBIDDEN',403,'Editor role required');
@@ -40,6 +55,31 @@ export async function adminPagesRoute(request:Request,env:Env):Promise<Response>
   return ok(serialize({...existing,title:nextTitle,slug:nextSlug,description:nextDescription,sort_order:nextOrder,content_json:contentJson,published_content_json:existing.published_content_json, published_revision_id:existing.published_revision_id},true))
  }
  if(request.method!=='POST')return error('METHOD_NOT_ALLOWED',405);
+ const sourcePageId=typeof body.sourcePageId==='string'?body.sourcePageId.trim():'';
+ if(sourcePageId){
+  const title=typeof body.title==='string'?body.title.trim():'';
+  const slug=typeof body.slug==='string'?body.slug.trim().toLowerCase():'';
+  if(!title||title.length>160||!validSlug(slug)||slug.length>80)return error('INVALID_PAGE',400);
+  const source=await env.DB.prepare('SELECT id,slug,title,description,content_json,published_content_json,is_published,published_revision_id,sort_order,created_at,updated_at FROM pages WHERE id=? AND site_id=? LIMIT 1').bind(sourcePageId,siteId).first<PageRow>();
+  if(!source)return error('PAGE_NOT_FOUND',404);
+  const id=crypto.randomUUID();
+  const description=typeof body.description==='string'?body.description.trim():source.description;
+  if(description.length>500)return error('INVALID_PAGE_DESCRIPTION',400);
+  const document=duplicateDocument(source,id,title,slug,description);
+  if(!document)return error('PAGE_NOT_CANONICAL',409,'Az oldal dokumentuma nem másolható biztonságosan.');
+  const contentJson=JSON.stringify(document);
+  if(contentJson.length>180000)return error('PAGE_TOO_LARGE',400);
+  const order=await env.DB.prepare('SELECT COALESCE(MAX(sort_order),-1)+1 AS next FROM pages WHERE site_id=?').bind(siteId).first<{next:number}>();
+  const sortOrder=Number(order?.next??0),revisionId=crypto.randomUUID();
+  try{
+   await env.DB.batch([
+    env.DB.prepare('INSERT INTO pages (id,site_id,slug,title,description,content_json,published_content_json,published_revision_id,is_published,sort_order,published_slug,published_title,published_description,published_at,updated_at) VALUES (?,?,?,?,?,?,NULL,NULL,0,?,NULL,NULL,NULL,NULL,CURRENT_TIMESTAMP)').bind(id,siteId,slug,title,description,contentJson,sortOrder),
+    env.DB.prepare('INSERT INTO editor_revisions (id,page_id,version,document_json,created_by,note) VALUES (?,?,?,?,?,?)').bind(revisionId,id,1,contentJson,user.id,`Oldal másolata: ${source.id}`),
+    auditStatement(env,user.id,'page.duplicate','page',id,{sourcePageId:source.id,slug,title,revisionId})
+   ]);
+  }catch(e){if(String(e).toLowerCase().includes('unique'))return error('SLUG_EXISTS',409,'Slug already exists');throw e}
+  return ok({id,slug,title,description,content:document,isPublished:false,version:1,revisionId,sourcePageId:source.id,sortOrder});
+ }
  const title=typeof body.title==='string'?body.title.trim():'';
  const slug=typeof body.slug==='string'?body.slug.trim().toLowerCase():'';
  const description=typeof body.description==='string'?body.description.trim():'';
