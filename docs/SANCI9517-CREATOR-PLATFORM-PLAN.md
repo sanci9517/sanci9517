@@ -2,11 +2,11 @@
 
 **Tervazonosító:** S9517-CREATOR-PLATFORM-MASTER  
 **Verzió:** 4.3.0 — konszolidált, feltöltésre előkészített fejlesztési MASTER  
-**Dátum:** 2026-10-15  
-**Állapot:** KANONIKUS TERMÉK- ÉS FEJLESZTÉSI MASTER — a tervezett termékkör rögzítve; F0.2 CLOSED / PASS, F0.3 ellenőrzés folyamatban. A tervezési teljesség nem bizonyít sem kész implementációt, sem teljes körű tételes szemantikai auditot.
-**Aktív tervpontazonosító:** `F0.3-PREVIEW-PUBLISH-PUBLIC`  
-**Aktív tervpont státusza:** IN PROGRESS — F0.3 preview/publish/public. F0.2 lezárva a sikeres mentés/újratöltés, konfliktus, hálózati helyreállítás, mobil és in-flight edit tesztek alapján. HIGH publish conflict OPEN, amíg az F0.3 negatív tesztek nem PASS.
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `F0.3-PREVIEW-PUBLISH-PUBLIC` — preview jogosultság és draft izoláció; atomikus publish és HIGH konfliktus; cache, rollback és publikus smoke. F0.2 CLOSED / PASS (2026-10-15).
+**Dátum:** 2026-10-16  
+**Állapot:** KANONIKUS TERMÉK- ÉS FEJLESZTÉSI MASTER — a tervezett termékkör rögzítve; F0.2 és F0.3 CLOSED / PASS. Az F1.1 Site Core, többoldalas kezelés és navigáció IN PROGRESS. A tervezési teljesség nem bizonyít sem kész implementációt, sem teljes körű tételes szemantikai audit.
+**Aktív tervpontazonosító:** `F1.1-SITE-CORE-MULTIPAGE-NAVIGATION`  
+**Aktív tervpont státusza:** IN PROGRESS — Site Core, többoldalas kezelés és navigáció. A 77.10 szerinti F0.3 kiadási kapu lezárult; az F1.1 oldalkezelési acceptance pontjai a 77.11–77.14 szerint részlegesen teljesültek, a canonical navigációs fa és további CRUD/URL ellenőrzések nyitva maradnak.
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `F1.1-SITE-CORE-MULTIPAGE-NAVIGATION` — a WEB-009 canonical navigation tree adatmodelljének és elfogadásának előkészítése; éles D1 sémamigráció vagy azt automatikusan alkalmazó deploy csak külön felhasználói jóváhagyás után.
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** világszintű, önálló márka- és weboldalépítő, streamelési, tartalomgyártási, közösségi, kereskedelmi, analitikai, automatizációs és AI-rendszer egyetlen logikusan tagolt Creator & Brand Operating Platformon. Elsődleges célcsoport: streamerek és digitális tartalomkészítők, akik egyedi publikus brandoldalukat és teljes tevékenységüket innen kezelik. A többfelhasználós, önkiszolgáló, előfizetéses SaaS és a működés/AI-költség fenntartható finanszírozása a teljes termékcél lényegi része; a funkciókat függőség szerint, fokozatosan építjük meg. Más célcsoportok támogatása későbbi bővíthetőség, nem az elsődleges piac.
 
@@ -73,7 +73,7 @@ E munkamenet nem jelent minden feladatnál felesleges adminisztrációt: a dokum
 - **Kanonikus aktív pont:** `F1.1-SITE-CORE-MULTIPAGE-NAVIGATION`, a dokumentum fejlécével és a 77.6, 77.10. fejezet aktuális bizonyítékaival összhangban. F0.3 lezárt kapu, nem aktív kurzor. A régi 63.x/termék-review kurzorok történeti jegyzetek, nem munkautasítások.
 - **Termékirány:** univerzális brandwebhely, választható streamer/creator/commerce/szolgáltatói és egyéb modulok. A 22 főmenü és 396 stabil ID megőrzött korábbi alap; a 64–71. fejezet részletei kötelező kiegészítések, nem külön termékterv.
 - **Specifikációs státusz:** integrált célarchitektúra rögzítve; specifikációs teljesség nem jelent minden külső API, jogi előírás vagy üzleti igény végleges jóváhagyását.
-- **Implementációs státusz:** minden pont csak repository-, teszt-, böngésző- és szükség szerinti éles bizonyítékkal léptethető. A magas kockázatú publikálási konfliktus ellenőrizendő.
+- **Implementációs státusz:** F0.3 CLOSED / PASS a 77.10 bizonyítékával; F1.1 IN PROGRESS. Minden további pont csak repository-, teszt-, böngésző- és szükség szerinti éles bizonyítékkal léptethető.
 - **Review-elv:** nem ismétlődő történeti audit; új funkció vagy bizonyított hiány a saját moduljába kerül, anélkül, hogy a fejlesztést teljes tervújraírás előzné meg.
 
 ### 0.6. Felhasználóbarát funkcióelhelyezés és bővítési szerződés
@@ -13543,6 +13543,17 @@ A már részletezett 24/49/54/56/64–76. fejezet tartalmát **nem kell másodsz
 
 **Helyi regresszió:** `npm run typecheck` PASS; Admin home 16/16; Admin access 2/2; public navigation 3/3; page sort route 3/3; domain 5/5; Editor 49/49; F0 contracts 17/17; F0 route integration 8/8; F1.1 public route 5/5; schedule 9/9; canonical plan checker és `git diff --check` PASS. Node 24.19.0.
 
-**GitHub CI és éles telepítés (2026-10-16, commit `c9202b778bd6812e5602f51add84ae0f7c0747cd`):** mind az öt workflow `completed / success`: F0 baseline (`38871798104`), Editor Core Test (`38871798058`), Twitch Integration Check (`38871798063`), Canonical Creator Platform Plan (`38871798038`), Canonical Plan Active Point Audit (`38871798051`). A Cloudflare Worker `sanci9517-streamer-brand` legfrissebb deploymentje `a8e8e532-e085-40a0-a991-779c7c349d66`, aktív verzió `3a49d450-ecd5-4533-a947-d9bb47b5cdb3`, 100% forgalom, 2026-10-16 08:09:35 UTC időbélyeggel. A kód éles; az új reorder route automatizált, valódi route-kódot SQLite-on futtató tesztjei 3/3 PASS. Az Editorban autentikált, D1-et módosító manuális sorrendteszt ebben a munkamenetben nem történt, ezért az éles adatmutációs elfogadás felhasználói ellenőrzésre vár; a meglévő oldalsorrendet nem változtattuk meg.
+**GitHub CI és éles telepítés (2026-10-16, commit `c9202b778bd6812e5602f51add84ae0f7c0747cd`):** mind az öt workflow `completed / success`: F0 baseline (`38871798104`), Editor Core Test (`38871798058`), Twitch Integration Check (`38871798063`), Canonical Creator Platform Plan (`38871798038`), Canonical Plan Active Point Audit (`38871798051`). A Cloudflare Worker `sanci9517-streamer-brand` legfrissebb deploymentje `a8e8e532-e085-40a0-a991-779c7c349d66`, aktív verzió `3a49d450-ecd5-4533-a947-d9bb47b5cdb3`, 100% forgalom, 2026-10-16 08:09:35 UTC időbélyeggel. A kód éles; az új reorder route automatizált, valódi route-kódot SQLite-on futtató tesztjei 3/3 PASS. **Felhasználói kézi ellenőrzés:** az Editor oldallistáján az oldalt feljebb, majd vissza lefelé mozgató kért sorrendtesztet a felhasználó „működik” visszajelzéssel sikeresnek erősítette meg. Nincs rögzített képernyőkép vagy nyers adatbázis-vizsgálat; az éles kézi sorrendelfogadás user-confirmed PASS.
 
 **Nyitott F1.1 elemek változatlanul:** canonical szerveroldali navigációs fa, page hierarchy és nested menu; CRUD/slug/redirect lifecycle teljes acceptance; mobil viewport vizuális elfogadása; több-site viselkedés. Ez a részszállítás nem zárja le F1.1-et.
+
+
+### 77.14. F1.1 — WEB-009 canonical navigációs fa: következő adatmodell- és migrációs kapu — 2026-10-16
+
+**Bizonyított jelenlegi hiány:** a publikus `public/assets/site.js` a `/api/public/pages` listából építi fel a menüt, és a `home` oldalt kihagyja. Nincs szerkeszthető, hierarchikus, kanonikus menümodell, ezért a menü most a publikált oldalak listájának nézetéből következik. A WEB-009 elvárt negatív feltételei közé tartozik a ciklikus és hiányzó célú menüpont publikálásának megakadályozása; ezekhez a jelenlegi megoldásban nincs menüfa-validáció.
+
+**Éles D1 read-only ellenőrzés (2026-10-16):** az account `64bbd6a12ac732ed2cac4ca25d8bfa7e`, adatbázis `sanci9517-db` (`5a4a5e96-fdad-421a-a33c-143daaf33e98`). A `pages` táblában 9 oldal található az egyetlen `site-default` site alatt. A jelenlegi slugra globális `UNIQUE` megszorítás van; mellette létezik egyedi részleges index a `(site_id,published_slug)` mezőpárra. A más site-ok közti slug-ütközés lekérdezése nem adott találatot, mert jelenleg egyetlen site van. A `sqlite_master` indexek és page-count lekérdezései read-only, `changed_db=false`, `rows_written=0` eredményt adtak. Migráció vagy adatírás nem történt.
+
+**Következő részfeladat:** `F1.1-WEB-009-CANONICAL-NAVIGATION`. A meglévő publikus listaútvonal és Page domain újrahasználásával egyetlen site-scoped menüfa szerződést kell kialakítani, amely támogatja a belső oldalcélt, külső hivatkozást, rendezést és hierarchiát; a draft/published határnak meg kell akadályoznia, hogy nem publikált menüváltozás azonnal megjelenjen. A mentési/publikálási tranzakció, oldal törlés/slug módosítás hatásai, ciklus- és hiányzó cél validáció, jogosultság, publikus renderelés, mobil/keyboard működés és visszaállíthatóság tesztelendő. A 77.4 egy adatgazda szabálya szerint párhuzamos menüadatforrás nem hozható létre.
+
+**Éles kapu / jóváhagyás szükséges:** az F1.1 szerveroldali nav fa új D1-adatmodellt és éles sémamigrációt igényelhet. A migrációs fájl, lokális SQLite teszt, adatmegőrzési ellenőrzés és kódreview elkészítése előkészíthető; a migráció éles D1-re alkalmazása, illetve az azt automatikusan futtató production deploy előtt a felhasználó kifejezett jóváhagyása szükséges. A WEB-009 és az F1.1 státusza továbbra is IN PROGRESS; ez a bejegyzés nem állít kész vagy PASS állapotot.
