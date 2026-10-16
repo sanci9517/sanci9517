@@ -24,6 +24,8 @@ async function fixture(t) {
     INSERT INTO sites VALUES('site-default','sanci9517','Sanci9517'),('other-site','other','Other');
     INSERT INTO users VALUES('editor','editor@example.test','Editor','editor',1);
   `);
+  db.exec('ALTER TABLE pages ADD COLUMN parent_page_id TEXT');
+  db.exec('ALTER TABLE pages ADD COLUMN published_parent_page_id TEXT');
   db.prepare('INSERT INTO sessions VALUES(?,?,?)').run(await hashSessionToken('editor-token'), 'editor', '2999-01-01');
   const document = {
     schemaVersion: 1,
