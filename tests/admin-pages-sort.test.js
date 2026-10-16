@@ -16,6 +16,8 @@ async function fixture(t) {
     CREATE TABLE editor_revisions(id TEXT PRIMARY KEY,page_id TEXT,version INTEGER);
     CREATE TABLE audit_log(id TEXT PRIMARY KEY,user_id TEXT,action TEXT,entity_type TEXT,entity_id TEXT,metadata_json TEXT);
   `);
+  db.exec('ALTER TABLE pages ADD COLUMN parent_page_id TEXT');
+  db.exec('ALTER TABLE pages ADD COLUMN published_parent_page_id TEXT');
   db.prepare('INSERT INTO users VALUES (?,?,?,?,1)').run('editor', 'editor@example.test', 'Editor', 'editor');
   db.prepare('INSERT INTO sessions VALUES (?,?,?)').run(await hashSessionToken('editor-token'), 'editor', '2999-01-01');
   const insert = db.prepare(`INSERT INTO pages(id,site_id,slug,title,description,content_json,published_content_json,

@@ -35,3 +35,22 @@ test('page list renders LIVE, unpublished draft changes and draft labels from se
  assert.match(list.children[1].children[0].innerHTML,/class="page-meta">ÉLŐ<\/small>/);
  assert.match(list.children[2].children[0].innerHTML,/class="page-meta">PISZKOZAT<\/small>/);
 });
+test('draft parent change enables explicit republish even when content revision did not change',()=>{
+ const f=editor();const publish={};const mobilePublish={};const unpublish={};const mobileUnpublish={};
+ f.context.pages[0]={id:'p',isPublished:true,hasUnpublishedChanges:true,revision:2,publishedRevisionVersion:2};
+ f.context.state.persistence.dirty=false;
+ f.context.$=id=>({'#publish':publish,'#mobilePublish':mobilePublish,'#unpublish':unpublish,'#mobileUnpublish':mobileUnpublish})[id];
+ action('function syncPublishControls()','function renderRevisionPanel()',f.context)();
+ assert.equal(publish.disabled,false);assert.equal(mobilePublish.disabled,false);
+ assert.equal(publish.textContent,'Újrapublikálás');
+});
+test('parent action excludes descendants and submits a draft-only parent change',async()=>{
+ const f=editor();const calls=[];let promptText='';
+ f.context.pages=[{id:'p',title:'Page',parentPageId:null},{id:'child',title:'Child',parentPageId:'p'},{id:'other',title:'Other',parentPageId:null}];
+ f.context.prompt=text=>{promptText=text;return '1'};
+ f.context.api=async(path,options)=>{calls.push([path,JSON.parse(options.body)]);return {data:{parentPageId:'other'}}};
+ f.context.loadPages=async()=>{};
+ await action('async function editPageParent(id)','async function changePageArchive(id,archive)',f.context)('p');
+ assert.doesNotMatch(promptText,/Child/);assert.match(promptText,/Other/);
+ assert.deepEqual(calls,[['/api/admin/pages',{action:'setParent',id:'p',parentPageId:'other',expectedParentPageId:null}]]);
+});

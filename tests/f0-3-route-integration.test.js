@@ -22,6 +22,8 @@ async function fixture(t) {
       created_by TEXT,note TEXT,created_at TEXT DEFAULT CURRENT_TIMESTAMP,UNIQUE(page_id,version));
     CREATE TABLE audit_log(id TEXT PRIMARY KEY,user_id TEXT,action TEXT,entity_type TEXT,entity_id TEXT,metadata_json TEXT);
   `);
+  db.exec('ALTER TABLE pages ADD COLUMN parent_page_id TEXT');
+  db.exec('ALTER TABLE pages ADD COLUMN published_parent_page_id TEXT');
   for (const role of ['editor', 'viewer']) {
     db.prepare('INSERT INTO users VALUES (?,?,?,?,1)').run(role, `${role}@example.test`, role, role);
     db.prepare('INSERT INTO sessions VALUES (?,?,?)').run(await hashSessionToken(role), role, '2999-01-01');
