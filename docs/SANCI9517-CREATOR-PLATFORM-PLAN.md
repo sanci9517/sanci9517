@@ -6,7 +6,7 @@
 **Állapot:** KANONIKUS TERMÉK- ÉS FEJLESZTÉSI MASTER — a tervezett termékkör rögzítve; F0.2 és F0.3 CLOSED / PASS. Az F1.1 Site Core, többoldalas kezelés és navigáció IN PROGRESS. A tervezési teljesség nem bizonyít sem kész implementációt, sem teljes körű tételes szemantikai audit.
 **Aktív tervpontazonosító:** `F1.1-SITE-CORE-MULTIPAGE-NAVIGATION`  
 **Aktív tervpont státusza:** IN PROGRESS — Site Core, többoldalas kezelés és navigáció. A 77.10 szerinti F0.3 kiadási kapu lezárult; az F1.1 oldalkezelési acceptance pontjai a 77.11–77.14 szerint részlegesen teljesültek, a canonical navigációs fa és további CRUD/URL ellenőrzések nyitva maradnak.
-**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `F1.1-SITE-CORE-MULTIPAGE-NAVIGATION` — a publikus menü keyboard fókuszjavításának éles ellenőrzése; utána nested és mobil acceptance.
+**Következő közös lépés / AKTUÁLIS FOLYTATÁSI KURZOR:** `F1.1-SITE-CORE-MULTIPAGE-NAVIGATION` — a publikus menü billentyűzetes fókusz- és léptetésjavításának kézi éles ellenőrzése; ezután nested és mobil acceptance.
 **Repository:** `sanci9517/sanci9517`, `v2/foundation`  
 **Termékcél:** világszintű, önálló márka- és weboldalépítő, streamelési, tartalomgyártási, közösségi, kereskedelmi, analitikai, automatizációs és AI-rendszer egyetlen logikusan tagolt Creator & Brand Operating Platformon. Elsődleges célcsoport: streamerek és digitális tartalomkészítők, akik egyedi publikus brandoldalukat és teljes tevékenységüket innen kezelik. A többfelhasználós, önkiszolgáló, előfizetéses SaaS és a működés/AI-költség fenntartható finanszírozása a teljes termékcél lényegi része; a funkciókat függőség szerint, fokozatosan építjük meg. Más célcsoportok támogatása későbbi bővíthetőség, nem az elsődleges piac.
 
@@ -13595,6 +13595,8 @@ A már részletezett 24/49/54/56/64–76. fejezet tartalmát **nem kell másodsz
 
 **Javítás:** a menü megnyitásakor a fókusz az első elérhető hivatkozásra kerül; ha a navigációs adatok csak ezután töltődnek be, a fókusz a rendereléskor kerül át. A nyitott menüben az ArrowDown/ArrowUp léptet, a Home/End az első/utolsó linkre ugrik, és ezek a billentyűk nem görgetik az oldalt. Escape bezár és visszaadja a fókuszt a menügombra; a fókusz látható stílust kap.
 
-**Helyi ellenőrzés:** a publikus fókusz-/léptetési/UI tesztek 7/7 PASS; a route- és törlésvédelmi regressziók 10/10 PASS; `git diff --check` PASS. A teljes helyi typecheck nem futott, mert `tsc` nincs telepítve. A production build és éles böngészős ellenőrzés a kódfrissítés után rögzítendő.
+**Automatizált ellenőrzés:** a publikus fókusz-/léptetési/UI tesztek 7/7 PASS; a route- és törlésvédelmi regressziók 10/10 PASS; `node --check public/assets/site.js`, canonical plan checker és `git diff --check` PASS. A teljes helyi typecheck nem futott, mert `tsc` nincs telepítve.
 
-**Állapot és következő lépés:** a javítás kiadásra előkészítve, de WEB-011/F1.1 nem PASS addig, amíg a Cloudflare build sikeres és a felhasználó éles oldalon vissza nem igazolja a fókusz belépését és nyilakkal történő léptetést. A mobile/nested acceptance külön nyitott.
+**Éles build és deploy:** Cloudflare Workers Build `9150dd30-0333-4cb0-b770-cc7a94413fee` `success`; a `npm run typecheck` és `npm run deploy` lépések sikeresek. D1-migráció nem kellett (`No migrations to apply`). Deployment `0b8c8e8d-b77a-4a5b-b0fe-41cfaae64f18`, Worker verzió `33471b4a-fee7-4770-abc7-1c5a9e781fd7`, forgalmi arány 100%.
+
+**Állapot és következő lépés:** a javítás éles, de WEB-011/F1.1 nem PASS, amíg a felhasználó a publikus oldalon kézzel vissza nem igazolja, hogy megnyitáskor a fókusz az első linkre kerül, ArrowDown/ArrowUp és Home/End a menün belül léptet görgetés nélkül, Escape pedig bezár és visszaadja a fókuszt a gombra. A nested és mobil acceptance külön nyitott.
