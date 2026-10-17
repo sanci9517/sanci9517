@@ -23,8 +23,10 @@ export async function adminLinkReportRoute(request: Request, env: Env): Promise<
   if (root && (root.schemaVersion !== 1 || !Array.isArray(root.items))) return error("NAVIGATION_INVALID", 503);
   const findings: { itemId: string; label: string; pageId: string; reason: string }[] = [];
   let checked = 0;
+  let navigationDepthTruncated = false;
   function visit(items: NavigationItem[], depth: number): void {
-    if (depth > 20 || checked >= 2000) return;
+    if (depth > 20) { navigationDepthTruncated = true; return; }
+    if (checked >= 2000) return;
     for (const item of items) {
       if (checked >= 2000) break;
       checked++;
@@ -90,7 +92,7 @@ export async function adminLinkReportRoute(request: Request, env: Env): Promise<
     }
     if (contentTruncated) break;
   }
-  const response = ok({ scope: "published-navigation-and-content-page-references", checked, truncated: checked >= 2000, findings, checkedContentLinks, contentTruncated, contentFindings, redirectedContentLinks, missingPublishedContentPages, unparseablePublishedPages, unsupportedPublishedDocuments, oversizedRichTextFields });
+  const response = ok({ scope: "published-navigation-and-content-page-references", checked, truncated: checked >= 2000 || navigationDepthTruncated, navigationDepthTruncated, findings, checkedContentLinks, contentTruncated, contentFindings, redirectedContentLinks, missingPublishedContentPages, unparseablePublishedPages, unsupportedPublishedDocuments, oversizedRichTextFields });
   const headers = new Headers(response.headers);
   headers.set("Cache-Control", "private, no-store");
   return new Response(response.body, { status: response.status, headers });

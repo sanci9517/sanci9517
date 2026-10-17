@@ -51,7 +51,8 @@
         status.textContent += " Figyelem: " + (data.missingPublishedContentPages || 0) + " tartalom nélküli, " + (data.unparseablePublishedPages || 0) + " sérült és " + (data.unsupportedPublishedDocuments || 0) + " nem támogatott szerkezetű publikált oldal tartalma kimaradt a vizsgálatból.";
       }
       if (data.oversizedRichTextFields) status.textContent += " Figyelem: " + data.oversizedRichTextFields + " túl hosszú rich-text mező kimaradt a linkellenőrzésből (100 000 karakteres korlát).";
-      if (data.truncated) status.textContent += " A jelentés 2000 elemnél korlátozott.";
+      if (data.navigationDepthTruncated) status.textContent += " Figyelem: a túl mély (20 szint feletti) navigáció egy része kimaradt az ellenőrzésből.";
+      if (data.truncated && !data.navigationDepthTruncated) status.textContent += " A navigációs jelentés legfeljebb 2000 elemet ellenőriz.";
     } catch {
       status.textContent = "Az ellenőrzés nem sikerült. Próbáld újra később.";
     } finally {
