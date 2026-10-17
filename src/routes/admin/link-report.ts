@@ -45,10 +45,12 @@ export async function adminLinkReportRoute(request: Request, env: Env): Promise<
   const redirectedContentLinks: { sourcePageId: string; nodeId: string; href: string; targetPageId: string }[] = [];
   let checkedContentLinks = 0;
   let contentTruncated = false;
+  let missingPublishedContentPages = 0;
   let unparseablePublishedPages = 0;
   let unsupportedPublishedDocuments = 0;
   for (const page of pages.results) {
-    if (page.archived_at || !page.is_published || !page.published_content_json) continue;
+    if (page.archived_at || !page.is_published) continue;
+    if (!page.published_content_json) { missingPublishedContentPages++; continue; }
     let document: any;
     try { document = JSON.parse(page.published_content_json); } catch { unparseablePublishedPages++; continue; }
     const nodes = document?.pages?.[page.id]?.nodes;
@@ -83,7 +85,7 @@ export async function adminLinkReportRoute(request: Request, env: Env): Promise<
     }
     if (contentTruncated) break;
   }
-  const response = ok({ scope: "published-navigation-and-content-page-references", checked, truncated: checked >= 2000, findings, checkedContentLinks, contentTruncated, contentFindings, redirectedContentLinks, unparseablePublishedPages, unsupportedPublishedDocuments });
+  const response = ok({ scope: "published-navigation-and-content-page-references", checked, truncated: checked >= 2000, findings, checkedContentLinks, contentTruncated, contentFindings, redirectedContentLinks, missingPublishedContentPages, unparseablePublishedPages, unsupportedPublishedDocuments });
   const headers = new Headers(response.headers);
   headers.set("Cache-Control", "private, no-store");
   return new Response(response.body, { status: response.status, headers });

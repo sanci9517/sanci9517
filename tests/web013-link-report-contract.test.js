@@ -13,7 +13,8 @@ test("WEB-013 link report requires editor authorization and never caches private
 });
 
 test("WEB-013 scans published pages, not drafts or archived content", () => {
-  assert.match(route, /page\.archived_at \|\| !page\.is_published \|\| !page\.published_content_json/);
+  assert.match(route, /if \(page\.archived_at \|\| !page\.is_published\) continue;/);
+  assert.match(route, /if \(!page\.published_content_json\) \{ missingPublishedContentPages\+\+; continue; \}/);
   assert.match(route, /published_content_json/);
   assert.match(route, /checkedContentLinks >= 2000/);
 });
@@ -64,4 +65,12 @@ test("WEB-013 reports published pages skipped during content scanning", () => {
 test("WEB-013 decodes HTML-escaped ampersands in rich-text hrefs", () => {
   assert.match(route, /replace\(\/&amp;\/gi, "&"\)/);
   assert.equal("/p/target?x=1&amp;y=2".replace(/&amp;/gi, "&"), "/p/target?x=1&y=2");
+});
+
+test("WEB-013 warns about published pages with missing content", () => {
+  assert.match(route, /let missingPublishedContentPages = 0/);
+  assert.match(route, /if \(!page\.published_content_json\) \{ missingPublishedContentPages\+\+; continue; \}/);
+  assert.match(route, /redirectedContentLinks, missingPublishedContentPages, unparseablePublishedPages/);
+  assert.match(ui, /data\.missingPublishedContentPages/);
+  assert.match(ui, /tartalom nélküli/);
 });
