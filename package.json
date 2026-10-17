@@ -17,7 +17,8 @@
     "db:site-scope:preflight": "wrangler d1 execute sanci9517-db --remote --file=./scripts/web013-site-scope-preflight.sql --json",
     "test:admin-home": "node --test tests/admin-home-contract.test.js",
     "test:admin-access": "node --test tests/admin-asset-access-contract.test.js",
-    "test:editor:layout": "node --test tests/browser/editor-layout.test.js"
+    "test:editor:layout": "node --test tests/browser/editor-layout.test.js",
+    "test:web013:migration-gate": "node scripts/web013-migration-safety-gate.mjs"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "5.20260908.1",
