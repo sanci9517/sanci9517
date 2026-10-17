@@ -39,6 +39,14 @@
         }
         if (data.contentTruncated) status.textContent += " A tartalmi ellenőrzés 2000 linknél korlátozott.";
       }
+      if (Array.isArray(data.redirectedContentLinks) && data.redirectedContentLinks.length) {
+        status.textContent += " Érvényes, átirányított belső linkek: " + data.redirectedContentLinks.length + ".";
+        for (const finding of data.redirectedContentLinks) {
+          const item = document.createElement("li");
+          item.textContent = "Átirányítás · Oldal: " + finding.sourcePageId + " · Elem: " + finding.nodeId + " · Régi cím: " + finding.href;
+          list.appendChild(item);
+        }
+      }
       if (data.truncated) status.textContent += " A jelentés 2000 elemnél korlátozott.";
     } catch {
       status.textContent = "Az ellenőrzés nem sikerült. Próbáld újra később.";
