@@ -5,9 +5,8 @@ const validSlug = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 // A historical slug points to a page ID, never another slug or an arbitrary URL.
 // The current published projection supplies the only redirect destination.
-export async function resolvePublishedPageRedirect(env: Env, fromSlug: string): Promise<string | null> {
+export async function resolvePublishedPageRedirect(env: Env, fromSlug: string, siteId = getCanonicalSiteContext().siteId): Promise<string | null> {
   if (!validSlug.test(fromSlug)) return null;
-  const { siteId } = getCanonicalSiteContext();
   const row = await env.DB.prepare(`
     SELECT p.published_slug AS slug
     FROM page_slug_redirects r

@@ -26,13 +26,15 @@ import { adminNavigationRoute } from "./routes/admin/navigation";
 import { publicNavigationRoute } from "./routes/public/navigation";
 import { getAuthenticatedUser } from "./core/auth/require-auth";
 import { resolvePublishedPageRedirect } from "./core/page-redirects";
+import { getCanonicalSiteContext } from "./core/site-context";
 import type { Env } from "./types/env";
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
     const pathname = url.pathname.replace(/\/+$/, "") || "/";
-    if (pathname === "/sitemap.xml") return sitemapRoute(request, env);
+    const { siteId } = getCanonicalSiteContext();
+    if (pathname === "/sitemap.xml") return sitemapRoute(request, env, siteId);
     if (pathname === "/robots.txt") return robotsRoute(request);
     if (pathname === "/api/health") return healthRoute();
     if (pathname === "/api/db-health") return dbHealthRoute(env);
@@ -48,15 +50,15 @@ export default {
     if (pathname === "/api/admin/navigation") return adminNavigationRoute(request, env);
     if (pathname === "/api/admin/editor") return adminEditorRoute(request, env);
     if (pathname === "/api/public/site-settings") return publicSiteSettingsRoute(env);
-    if (pathname === "/api/public/schedule") return publicScheduleRoute(request, env);
+    if (pathname === "/api/public/schedule") return publicScheduleRoute(request, env, siteId);
     if (pathname === "/api/integrations/twitch/diagnostic") return twitchConfigDiagnosticRoute(request, env);
     if (pathname === "/api/integrations/twitch/connect") return twitchConnectRoute(request, env);
     if (pathname === "/api/integrations/twitch/callback") return twitchCallbackRoute(request, env);
     if (pathname === "/api/integrations/twitch/connection") return twitchConnectionRoute(request, env);
     if (pathname === "/api/integrations/twitch/validation") return twitchValidationRoute(request, env);
     if (pathname === "/api/integrations/twitch/disconnect") return twitchDisconnectRoute(request, env);
-    if (pathname === "/api/public/pages") return publicPagesRoute(request, env);
-    if (pathname === "/api/public/navigation") return publicNavigationRoute(env);
+    if (pathname === "/api/public/pages") return publicPagesRoute(request, env, siteId);
+    if (pathname === "/api/public/navigation") return publicNavigationRoute(env, siteId);
     if (pathname === "/admin/login") return env.ASSETS.fetch(assetRequest("/admin-login.html", request));
     if (pathname === "/admin") {
       const user = await getAuthenticatedUser(request, env);
@@ -86,10 +88,10 @@ export default {
       pageUrl.searchParams.set("slug", slug);
       const preview = url.searchParams.get("preview") === "1";
       if (preview) pageUrl.searchParams.set("preview", "1");
-      const pageResponse = await publicPagesRoute(new Request(pageUrl, { method: "GET", headers: request.headers }), env);
+      const pageResponse = await publicPagesRoute(new Request(pageUrl, { method: "GET", headers: request.headers }), env, siteId);
       if (pageResponse.status === 404) {
         if (!preview) {
-          const targetSlug = await resolvePublishedPageRedirect(env, slug);
+          const targetSlug = await resolvePublishedPageRedirect(env, slug, siteId);
           if (targetSlug) return new Response(null, {
             status: 308,
             headers: {

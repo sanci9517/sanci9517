@@ -30,13 +30,16 @@ test("WEB-013 checks rich text anchors and explicit link properties", () => {
   assert.match(route, /node\?\.props\?\.link\?\.href/);
   assert.match(route, /node\?\.props\?\.html/);
   assert.match(route, /anchors\.exec\(html\)/);
-  assert.match(route, /href\.startsWith\("\/p\/"\)/);
+  assert.match(route, /internalPageSlug\(href, origin\)/);
+  assert.match(route, /inline\?\.link\?\.href/);
 });
 
 test("WEB-013 admin report surfaces broken and redirected links separately", () => {
   assert.match(dashboard, /id="refreshLinkReport"/);
   assert.match(ui, /contentFindings/);
   assert.match(ui, /redirectedContentLinks/);
+  assert.match(ui, /navigationUrlFindings/);
+  assert.match(ui, /redirectedNavigationLinks/);
   assert.match(ui, /Átirányítás/);
   assert.match(ui, /fetch\("\/api\/admin\/link-report"/);
 });

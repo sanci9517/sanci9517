@@ -30,6 +30,22 @@
         item.textContent = (finding.label || finding.itemId || finding.pageId || "Ismeretlen menüpont") + " — " + (reasons[finding.reason] || finding.reason);
         list.appendChild(item);
       }
+      if (Array.isArray(data.navigationUrlFindings)) {
+        status.textContent += " Hibás belső URL a menüben: " + data.navigationUrlFindings.length + ".";
+        for (const finding of data.navigationUrlFindings) {
+          const item = document.createElement("li");
+          item.textContent = "Menü URL · " + (finding.label || finding.itemId || "Ismeretlen menüpont") + " · Hibás cél: " + finding.href;
+          list.appendChild(item);
+        }
+      }
+      if (Array.isArray(data.redirectedNavigationLinks) && data.redirectedNavigationLinks.length) {
+        status.textContent += " Érvényes, átirányított menü-URL: " + data.redirectedNavigationLinks.length + ".";
+        for (const finding of data.redirectedNavigationLinks) {
+          const item = document.createElement("li");
+          item.textContent = "Menü átirányítás · " + (finding.label || finding.itemId || "Ismeretlen menüpont") + " · Régi cím: " + finding.href;
+          list.appendChild(item);
+        }
+      }
       if (Array.isArray(data.contentFindings)) {
         status.textContent += " Tartalmi linkhibák: " + data.contentFindings.length + " (" + (data.checkedContentLinks || 0) + " ellenőrzött belső link).";
         for (const finding of data.contentFindings) {

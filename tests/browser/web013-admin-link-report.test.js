@@ -9,6 +9,8 @@ import { chromium } from 'playwright';
 const root = resolve(import.meta.dirname, '../..', 'public');
 const report = { ok: true, data: {
   checked: 2, findings: [], checkedContentLinks: 2, contentTruncated: false,
+  navigationUrlFindings: [{ itemId: 'broken-menu', label: 'Broken menu', href: 'https://example.test/p/missing', reason: 'TARGET_NOT_PUBLISHED' }],
+  redirectedNavigationLinks: [{ itemId: 'old-menu', label: 'Old menu', href: 'https://example.test/p/old', targetPageId: 'target' }],
   contentFindings: [{ sourcePageId: 'home', nodeId: 'rich-text', href: '/p/' + 'hosszu-hibas-cel-'.repeat(20), reason: 'TARGET_NOT_PUBLISHED' }],
   redirectedContentLinks: [{ sourcePageId: 'home', nodeId: 'rich-text', href: '/p/old', targetPageId: 'target' }]
 } };
@@ -49,7 +51,7 @@ test('Admin link report remains readable and tappable on phone widths', async t 
     await page.goto(base, { waitUntil: 'load' });
     await page.locator('#refreshLinkReport').click();
     await page.getByText('Tartalmi linkhibák: 1').waitFor();
-    assert.equal(await page.locator('#linkReportFindings li').count(), 2);
+    assert.equal(await page.locator('#linkReportFindings li').count(), 4);
     assert.equal(await page.locator('#refreshLinkReport').isEnabled(), true);
     const geometry = await page.evaluate(() => {
       const button = document.getElementById('refreshLinkReport').getBoundingClientRect();
