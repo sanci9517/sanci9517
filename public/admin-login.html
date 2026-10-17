@@ -48,6 +48,8 @@
             const payload = await response.json();
             if (response.ok && payload?.ok && payload?.data?.authenticated === true) return { ready: true };
             if (!response.ok || !payload?.ok) failure = "SESSION_SERVER_ERROR";
+            else if (payload?.data?.reason === "COOKIE_MISSING") failure = "COOKIE_MISSING";
+            else if (payload?.data?.reason === "SESSION_INVALID") failure = "SESSION_INVALID";
           } catch { failure = "SESSION_NETWORK_ERROR"; }
           if (attempt < 2) await new Promise((resolve) => window.setTimeout(resolve, 200 * (attempt + 1)));
         }
@@ -75,7 +77,14 @@
           result.textContent = "Belépés sikeres, munkamenet ellenőrzése…";
           const sessionCheck = await waitForAuthenticatedSession();
           if (!sessionCheck.ready) {
-            result.textContent = "A belépés sikerült, de a munkamenet nem igazolható. A böngésző nem küldte vissza a munkamenetet; próbáld újra, vagy nyisd meg a webhelyet normál Chrome-lapon.";
+            const descriptions = {
+              COOKIE_MISSING: "A böngésző nem küldött munkamenet-cookie-t.",
+              SESSION_INVALID: "A cookie megérkezett, de a szerver nem talált érvényes munkamenetet.",
+              SESSION_SERVER_ERROR: "Szerverhiba történt a munkamenet ellenőrzésekor.",
+              SESSION_NETWORK_ERROR: "Hálózati hiba történt a munkamenet ellenőrzésekor.",
+              SESSION_NOT_RETURNED: "A munkamenet ellenőrzése sikertelen."
+            };
+            result.textContent = `A belépés sikerült, de a munkamenet nem igazolható (${sessionCheck.failure}). ${descriptions[sessionCheck.failure] || descriptions.SESSION_NOT_RETURNED}`;
             return;
           }
           window.location.replace("/admin");
