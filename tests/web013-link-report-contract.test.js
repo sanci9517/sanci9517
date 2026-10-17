@@ -50,3 +50,13 @@ test("WEB-013 rich-text anchor matcher recognizes actual quoted and unquoted hre
   const found = [...html.matchAll(matcher)].map(match => match[1] ?? match[2]);
   assert.deepEqual(found, ["/p/first-page", "/p/second-page?x=1", "/p/third-page"]);
 });
+
+test("WEB-013 reports published pages skipped during content scanning", () => {
+  assert.match(route, /let unparseablePublishedPages = 0/);
+  assert.match(route, /let unsupportedPublishedDocuments = 0/);
+  assert.match(route, /catch \{ unparseablePublishedPages\+\+; continue; \}/);
+  assert.match(route, /unsupportedPublishedDocuments\+\+; continue;/);
+  assert.match(route, /unparseablePublishedPages, unsupportedPublishedDocuments/);
+  assert.match(ui, /data\.unparseablePublishedPages \|\| data\.unsupportedPublishedDocuments/);
+  assert.match(ui, /kimaradt a vizsgálatból/);
+});
