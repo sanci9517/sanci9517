@@ -35,6 +35,12 @@ export async function enforceAdminTenantGate(
   const required = requiredSiteRole(pathname, new URL(request.url));
   if (!required) return null;
   const granted = await requireSiteGrant(request, env, siteId, required);
-  if (granted instanceof Response) return granted;
+  if (granted instanceof Response) {
+    // Keep the browser's existing login redirect behavior for HTML Admin pages.
+    if (granted.status === 401 && (pathname === "/admin" || pathname === "/admin/editor")) {
+      return Response.redirect(new URL("/admin/login", request.url).toString(), 302);
+    }
+    return granted;
+  }
   return null;
 }
