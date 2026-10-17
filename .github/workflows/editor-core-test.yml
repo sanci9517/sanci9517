@@ -30,6 +30,20 @@ jobs:
       - name: Run editor core tests
         run: npm run test:editor
 
+      - name: Install Chromium for layout regression
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Editor browser layout regression
+        run: npm run test:editor:layout
+
+      - name: Upload Editor layout screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: editor-layout-screenshots
+          path: /tmp/editor-issue42-*.png
+          if-no-files-found: ignore
+
       - name: Run canonical schedule tests
         run: npm run test:schedule
 
