@@ -35,6 +35,13 @@
 - **Következő funkcionális munka:** WEB-013 hibáslink-riport, SEO canonical/sitemap szerződés, figyelembe véve a felhasználó még bejelentendő egy további igényét.
 - **Elfogadási szabály:** a felhasználói PASS nem helyettesíti az önálló CI/éles deploy bizonyítékot.
 
+## Bejelentkezés és támogatott eszközök — 2026-10-17
+
+- **#51: CLOSED / not planned (Android 5.0 támogatás).** A #54 javította a bejelentkezési JavaScript szintaktikai hibáját és a kötelező munkamenet-ellenőrzést; a #55 külön `COOKIE_MISSING` és `SESSION_INVALID` diagnosztikát adott.
+- **Felhasználói éles elfogadás:** PC és telefon belépés PASS, mindkettőn biztonságos HTTPS-kapcsolatot jelez a böngésző. A Lenovo Android 5.0 tableten `COOKIE_MISSING` és nem biztonságos kapcsolat jelzés maradt; Wi-Fi és mobilhotspot mellett is. A konkrét TLS/tanúsítvány-ok nem bizonyított.
+- **Biztonsági termékdöntés:** a régi Android 5.0 támogatása miatt nem gyengítjük a HTTPS, `Secure`, `HttpOnly`, `SameSite=Lax` és szerveroldali hitelesítési követelményeket. A támogatott modern eszközök működése elsődleges.
+- **Következő funkcionális fókusz változatlan:** WEB-013 hibáslink-riport és SEO canonical/sitemap; az F1.1 teljes elfogadása továbbra is nyitott.
+
 ## Forrásintegritás
 
 A felosztás kiinduló eredeti Git blob SHA-ja: `16eb83190ffeb805cd9f4bcc9fa7458ddea4c8aa`. A forrás **2 092 085 JavaScript-karakter** hosszú volt; a 12 rész összege pontosan ugyanennyi. A darabolás Markdown címsoroknál történt, és az eredeti szöveget byte/karakter szinten változatlanul hagyja az összefűzés.
