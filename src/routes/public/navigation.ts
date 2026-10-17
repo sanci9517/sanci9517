@@ -19,8 +19,7 @@ function parseTree(value: string): NavItem[] | null {
   } catch { return null; }
 }
 
-export async function publicNavigationRoute(env: Env): Promise<Response> {
-  const siteId = getCanonicalSiteContext().siteId;
+export async function publicNavigationRoute(env: Env, siteId = getCanonicalSiteContext().siteId): Promise<Response> {
   const row = await env.DB.prepare("SELECT published_json FROM site_navigation WHERE site_id=? LIMIT 1").bind(siteId).first<{ published_json: string }>();
   if (!row) return noStore(error("NAVIGATION_NOT_FOUND", 404));
   const items = parseTree(row.published_json);

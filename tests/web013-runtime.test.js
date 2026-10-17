@@ -4,6 +4,10 @@ import test from 'node:test';
 import { DatabaseSync } from 'node:sqlite';
 import worker from '../src/index.ts';
 import { hashSessionToken } from '../src/core/auth/session.ts';
+import { resolvePublishedPageRedirect } from '../src/core/page-redirects.ts';
+import { publicPagesRoute } from '../src/routes/public/pages.ts';
+import { publicNavigationRoute } from '../src/routes/public/navigation.ts';
+import { sitemapRoute } from '../src/routes/public/seo.ts';
 
 const origin = 'https://example.test';
 const shell = readFileSync(new URL('../public/visual-page.html', import.meta.url), 'utf8');
@@ -31,7 +35,20 @@ async function fixture(t) {
   const richText = '<a href="/p/new?from=page&amp;source=web">Current</a>' +
     '<a href="/p/old">Old alias</a><a class="cta" href="/p/missing">Broken</a>' +
     '<a data-href="/p/ghost">No real link</a>';
-  const homePublished = document('home', { content: { id: 'content', props: { html: richText } } });
+  const structuredRichText = { type: 'richtext-document', schemaVersion: 1, blocks: [
+    { type: 'paragraph', children: [
+      { type: 'text', text: 'Current', marks: [], link: { href: 'https://example.test/p/new?from=richtext' } },
+      { type: 'text', text: 'Missing', marks: [], link: { href: '/p/missing-rich' } },
+      { type: 'text', text: 'Foreign', marks: [], link: { href: 'https://other.example.test/p/foreign' } }
+    ] },
+    { type: 'bulleted-list', items: [[
+      { type: 'text', text: 'Old', marks: [], link: { href: '/p/old' } }
+    ]] }
+  ] };
+  const homePublished = document('home', {
+    content: { id: 'content', props: { html: richText, url: 'https://example.test/p/foreign' } },
+    structured: { id: 'structured', type: 'richtext', props: { richText: structuredRichText } }
+  });
   const homeDraft = document('home', { content: { id: 'content', props: { href: '/p/draft-secret' } } });
   const rows = [
     ['home', 'site-default', 'youtube-draft', 'Draft secret', 'Draft description', homeDraft, homePublished, 1, 'youtube', 'Live & <Now>', 'Published "safe" & useful', null],
@@ -51,7 +68,10 @@ async function fixture(t) {
     { id: 'gone', type: 'page', pageId: 'absent', label: 'Gone' },
     { id: 'other', type: 'page', pageId: 'foreign', label: 'Foreign' },
     { id: 'hidden', type: 'page', pageId: 'draft', label: 'Draft' },
-    { id: 'archive', type: 'page', pageId: 'archived', label: 'Archive' }
+    { id: 'archive', type: 'page', pageId: 'archived', label: 'Archive' },
+    { id: 'old-url', type: 'external', url: 'https://example.test/p/old', label: 'Old URL' },
+    { id: 'foreign-url', type: 'external', url: 'https://example.test/p/foreign-old', label: 'Foreign alias' },
+    { id: 'outside', type: 'external', url: 'https://other.example.test/p/ghost', label: 'Other site' }
   ] }));
   const env = {
     DB: { prepare(sql) {
@@ -66,7 +86,7 @@ async function fixture(t) {
   const fetch = (path, role) => worker.fetch(new Request(origin + path, {
     headers: role ? { Cookie: `sanci9517_session=${role}` } : {}
   }), env, {});
-  return { db, fetch };
+  return { db, env, fetch };
 }
 
 test('published HTML exposes only published SEO metadata, escaped for HTML', async t => {
@@ -106,6 +126,7 @@ test('old published URLs redirect once; sitemap and robots exclude draft, archiv
   const redirect = await fetch('/p/old?ref=bookmark');
   assert.equal(redirect.status, 308);
   assert.equal(redirect.headers.get('Location'), '/p/new?ref=bookmark');
+  assert.equal((await fetch('/p/foreign-old')).status, 404, 'another site’s alias must never redirect here');
   const sitemap = await fetch('/sitemap.xml');
   const xml = await sitemap.text();
   assert.equal(sitemap.status, 200);
@@ -133,6 +154,25 @@ test('sitemap includes published pages beyond the former 1000-page cutoff', asyn
   assert.equal((xml.match(/<url>/g) || []).length, 1004);
 });
 
+test('public URL services keep explicit site identities separate', async t => {
+  const { db, env, fetch } = await fixture(t);
+  assert.equal((await fetch('/p/foreign')).status, 404);
+  assert.equal(await resolvePublishedPageRedirect(env, 'foreign-old'), null);
+  assert.equal(await resolvePublishedPageRedirect(env, 'foreign-old', 'other-site'), 'foreign');
+  const foreignPage = await publicPagesRoute(new Request(origin + '/api/public/pages?slug=foreign'), env, 'other-site');
+  assert.equal(foreignPage.status, 200);
+  assert.equal((await foreignPage.json()).data.title, 'Foreign');
+  const foreignSitemap = await sitemapRoute(new Request(origin + '/sitemap.xml'), env, 'other-site');
+  const xml = await foreignSitemap.text();
+  assert.match(xml, /\/p\/foreign<\/loc>/);
+  assert.doesNotMatch(xml, /\/p\/youtube|\/p\/new/);
+  db.prepare('INSERT INTO site_navigation VALUES (?,?)').run('other-site', JSON.stringify({ schemaVersion: 1, items: [
+    { id: 'foreign-nav', type: 'page', pageId: 'foreign', label: 'Foreign', children: [] }
+  ] }));
+  const navigation = await publicNavigationRoute(env, 'other-site');
+  assert.equal((await navigation.json()).data.items[0].href, '/p/foreign');
+});
+
 test('authenticated link report checks published rich text, redirects and site-scoped navigation', async t => {
   const { fetch } = await fixture(t);
   assert.equal((await fetch('/api/admin/link-report')).status, 401);
@@ -141,9 +181,11 @@ test('authenticated link report checks published rich text, redirects and site-s
   const body = await response.json();
   assert.equal(response.status, 200);
   assert.match(response.headers.get('Cache-Control'), /no-store/);
-  assert.equal(body.data.checkedContentLinks, 3);
-  assert.deepEqual(body.data.contentFindings.map(item => item.href), ['/p/missing']);
-  assert.deepEqual(body.data.redirectedContentLinks.map(item => [item.href, item.targetPageId]), [['/p/old', 'target']]);
+  assert.equal(body.data.checkedContentLinks, 7);
+  assert.deepEqual(body.data.contentFindings.map(item => item.href), ['https://example.test/p/foreign', '/p/missing', '/p/missing-rich']);
+  assert.deepEqual(body.data.redirectedContentLinks.map(item => [item.href, item.targetPageId]), [['/p/old', 'target'], ['/p/old', 'target']]);
+  assert.deepEqual(body.data.navigationUrlFindings.map(item => [item.itemId, item.href]), [['foreign-url', 'https://example.test/p/foreign-old']]);
+  assert.deepEqual(body.data.redirectedNavigationLinks.map(item => [item.itemId, item.targetPageId]), [['old-url', 'target']]);
   assert.deepEqual(body.data.findings.map(item => [item.itemId, item.reason]), [
     ['gone', 'PAGE_NOT_FOUND'], ['other', 'PAGE_NOT_FOUND'], ['hidden', 'PAGE_NOT_PUBLISHED'], ['archive', 'PAGE_ARCHIVED']
   ]);

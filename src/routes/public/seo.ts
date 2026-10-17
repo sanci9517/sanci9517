@@ -4,10 +4,9 @@ import { getCanonicalSiteContext } from "../../core/site-context";
 const validSlug = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const xmlEscape = (value: string) => value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
 
-export async function sitemapRoute(request: Request, env: Env): Promise<Response> {
+export async function sitemapRoute(request: Request, env: Env, siteId = getCanonicalSiteContext().siteId): Promise<Response> {
   if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method Not Allowed", { status: 405 });
   const origin = new URL(request.url).origin;
-  const { siteId } = getCanonicalSiteContext();
   try {
     const locations = [origin + "/"];
     let afterSlug = "";
