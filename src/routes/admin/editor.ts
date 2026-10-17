@@ -1,23 +1,31 @@
 import { error, ok } from "../../core/response";
 import { getAuthenticatedUser, hasRole } from "../../core/auth/require-auth";
+import { requireSiteGrant } from "../../core/auth/site-access";
+import type { AuthUser } from "../../core/auth/require-auth";
 import { normalizeEditorDocument } from "../../core/page-model";
 import { validatePublishDocument } from "../../core/editor-validation";
 import type { Env } from "../../types/env";
 import { auditStatement } from "../../core/audit";
-import { getCanonicalSiteContext } from "../../core/site-context";
+import { DEFAULT_SITE_ID } from "../../core/site-context";
 
 type PageRow={id:string;slug:string;title:string;description:string;content_json:string;is_published:number;published_revision_id:string|null;updated_at:string};
 function parse(value:string):any{try{return JSON.parse(value)}catch{return {}}}
 function canonical(document:any,pageId:string){const page=document?.pages?.[pageId];return Boolean(document&&document.type==='sanci-page-document'&&document.schemaVersion===1&&document.activePageId===pageId&&page?.id===pageId&&page.rootId&&page.nodes&&typeof page.nodes==='object')}
-async function adminEditorRouteImpl(request:Request,env:Env):Promise<Response>{
- const { siteId }=getCanonicalSiteContext();
- const user=await getAuthenticatedUser(request,env);if(!user)return error('UNAUTHORIZED',401,'Authentication required');if(!hasRole(user,'editor'))return error('FORBIDDEN',403,'Editor role required');
+async function adminEditorRouteImpl(request:Request,env:Env,siteId:string):Promise<Response>{
+ if(!siteId||!siteId.trim())return error('SITE_CONTEXT_INVALID',403);
+ let user:AuthUser;
+ if(env.SITE_MEMBERSHIP_ENFORCEMENT==='enabled'){
+  const grant=await requireSiteGrant(request,env,siteId,'editor');if(grant instanceof Response)return grant;user=grant.user;
+ }else{
+  if(siteId!==DEFAULT_SITE_ID)return error('SITE_ACCESS_DENIED',403);
+  const legacyUser=await getAuthenticatedUser(request,env);if(!legacyUser)return error('UNAUTHORIZED',401,'Authentication required');if(!hasRole(legacyUser,'editor'))return error('FORBIDDEN',403,'Editor role required');user=legacyUser;
+ }
  const url=new URL(request.url),pageId=url.searchParams.get('pageId')||'';
  if(request.method==='GET'&&!pageId)return error('INVALID_PAGE_ID',400);
  if(request.method==='GET'){
   const row=await env.DB.prepare(`SELECT id,slug,title,description,content_json,is_published,published_revision_id,updated_at FROM pages WHERE id=? AND site_id=? AND archived_at IS NULL LIMIT 1`).bind(pageId,siteId).first<PageRow>();if(!row)return error('PAGE_NOT_FOUND',404);
   const document=normalizeEditorDocument(parse(row.content_json),row.id,row.title,row.slug,row.description);if(!document)return error('PAGE_NOT_MIGRATED',409,'Az oldal dokumentuma nem alakítható Editor v2 Page Modelre.');
-  const revisions=await env.DB.prepare(`SELECT id,version,note,created_by,created_at FROM editor_revisions WHERE page_id=? ORDER BY version DESC LIMIT 30`).bind(pageId).all();return ok({page:{id:row.id,slug:row.slug,title:row.title,description:row.description,isPublished:Boolean(row.is_published),updatedAt:row.updated_at,publishedRevisionId:row.published_revision_id,document},revisions:revisions.results});
+  const revisions=await env.DB.prepare(`SELECT er.id,er.version,er.note,er.created_by,er.created_at FROM editor_revisions er INNER JOIN pages p ON p.id=er.page_id WHERE er.page_id=? AND p.site_id=? ORDER BY er.version DESC LIMIT 30`).bind(pageId,siteId).all();return ok({page:{id:row.id,slug:row.slug,title:row.title,description:row.description,isPublished:Boolean(row.is_published),updatedAt:row.updated_at,publishedRevisionId:row.published_revision_id,document},revisions:revisions.results});
  }
  if(request.method==='POST'){
   let body:any;try{body=await request.json()}catch{return error('INVALID_JSON',400)}const id=typeof body.pageId==='string'?body.pageId:pageId;if(!id|| (pageId&&pageId!==id))return error('INVALID_PAGE_ID',400);
@@ -28,7 +36,7 @@ async function adminEditorRouteImpl(request:Request,env:Env):Promise<Response>{
   const expectedParentPageId=body.expectedParentPageId===undefined?null:body.expectedParentPageId;
   if(publish&&!(expectedParentPageId===null||typeof expectedParentPageId==='string'))return error('INVALID_PAGE_PARENT',400);
   const statements=[
-   env.DB.prepare(`INSERT INTO editor_revisions (id,page_id,version,document_json,created_by,note) SELECT ?,?,?,?,?,? WHERE (SELECT COALESCE(MAX(version),0) FROM editor_revisions WHERE page_id=?)=?${publish?' AND EXISTS (SELECT 1 FROM pages WHERE id=? AND site_id=? AND parent_page_id IS ?)':''}`).bind(revId,id,version,json,user.id,note,id,expectedVersion,...(publish?[id,siteId,expectedParentPageId]:[])),
+   env.DB.prepare(`INSERT INTO editor_revisions (id,page_id,version,document_json,created_by,note) SELECT ?,?,?,?,?,? WHERE (SELECT COALESCE(MAX(version),0) FROM editor_revisions WHERE page_id=?)=? AND EXISTS (SELECT 1 FROM pages WHERE id=? AND site_id=?${publish?' AND parent_page_id IS ?':''})`).bind(revId,id,version,json,user.id,note,id,expectedVersion,id,siteId,...(publish?[expectedParentPageId]:[])),
    env.DB.prepare(`UPDATE pages SET content_json=?,updated_at=CURRENT_TIMESTAMP WHERE id=? AND site_id=? AND EXISTS (SELECT 1 FROM editor_revisions WHERE id=?)`).bind(json,id,siteId,revId)
   ];
   if(publish){
@@ -51,8 +59,8 @@ async function adminEditorRouteImpl(request:Request,env:Env):Promise<Response>{
  return error('METHOD_NOT_ALLOWED',405);
 }
 
-export async function adminEditorRoute(request:Request,env:Env):Promise<Response>{
- try{return await adminEditorRouteImpl(request,env)}catch(e){
+export async function adminEditorRoute(request:Request,env:Env,siteId:string=DEFAULT_SITE_ID):Promise<Response>{
+ try{return await adminEditorRouteImpl(request,env,siteId)}catch(e){
   if(String(e).includes('INVALID_PUBLISHED_PAGE_PARENT'))return error('INVALID_PUBLISHED_PAGE_PARENT',409,'A szülőoldalt előbb publikálni kell.');
   if(String(e).includes('PAGE_HAS_PUBLISHED_CHILDREN'))return error('PAGE_HAS_PUBLISHED_CHILDREN',409,'Előbb a publikált gyermekoldalakat kell áthelyezni vagy visszavonni.');
   if(String(e).includes('PAGE_HIERARCHY_CYCLE'))return error('PAGE_HIERARCHY_CYCLE',409,'A publikált oldalhierarchiában ciklus keletkezne.');

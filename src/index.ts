@@ -57,9 +57,9 @@ export default {
     if (pathname === "/api/admin/schedule") return adminScheduleRoute(request, env);
     if (pathname === "/api/admin/twitch/schedule-sync") return adminTwitchScheduleSyncRoute(request, env);
     if (pathname === "/api/admin/link-report") return adminLinkReportRoute(request, env);
-    if (pathname === "/api/admin/pages") return adminPagesRoute(request, env);
+    if (pathname === "/api/admin/pages") return adminPagesRoute(request, env, siteId);
     if (pathname === "/api/admin/navigation") return adminNavigationRoute(request, env, siteId);
-    if (pathname === "/api/admin/editor") return adminEditorRoute(request, env);
+    if (pathname === "/api/admin/editor") return adminEditorRoute(request, env, siteId);
     if (pathname === "/api/public/site-settings") return publicSiteSettingsRoute(env, siteId, site.siteName);
     if (pathname === "/api/public/schedule") return publicScheduleRoute(request, env, siteId);
     if (pathname === "/api/integrations/twitch/diagnostic") return twitchConfigDiagnosticRoute(request, env);
