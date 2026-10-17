@@ -13,11 +13,13 @@
     "test:domain": "node --test tests/domain-contracts.test.js",
     "db:ownership:preflight": "wrangler d1 execute sanci9517-db --remote --file=./scripts/e4-3-7-preflight.sql --json",
     "test:admin-home": "node --test tests/admin-home-contract.test.js",
-    "test:admin-access": "node --test tests/admin-asset-access-contract.test.js"
+    "test:admin-access": "node --test tests/admin-asset-access-contract.test.js",
+    "test:editor:layout": "node --test tests/browser/editor-layout.test.js"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "5.20260908.1",
     "@types/node": "24.10.1",
+    "playwright": "^1.64.1",
     "typescript": "5.9.2",
     "wrangler": "4.130.0"
   }
