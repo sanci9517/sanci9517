@@ -42,6 +42,17 @@
 - **Biztonsági termékdöntés:** a régi Android 5.0 támogatása miatt nem gyengítjük a HTTPS, `Secure`, `HttpOnly`, `SameSite=Lax` és szerveroldali hitelesítési követelményeket. A támogatott modern eszközök működése elsődleges.
 - **Következő funkcionális fókusz változatlan:** WEB-013 hibáslink-riport és SEO canonical/sitemap; az F1.1 teljes elfogadása továbbra is nyitott.
 
+## WEB-013 tényleges előrehaladás — 2026-10-17
+
+- **#57 MERGED:** `/sitemap.xml` és `/robots.txt`, kizárólag publikált oldalakkal.
+- **#58 MERGED:** publikus canonical HTML URL és előnézet/hibaoldal noindex szabály.
+- **#59 MERGED:** hitelesített, szerkesztői jogosultságú publikált navigációs hibás oldalhivatkozás-riport.
+- **#60 MERGED:** manuálisan indítható riport az Admin főoldal alján; végleges modulba áthelyezése későbbi admin UX-feladat.
+- **#61 MERGED:** publikált Editor-elemek explicit belső `/p/{slug}` linkjeinek ellenőrzése.
+- **Felhasználói éles ellenőrzés:** 8 navigációs elem, 0 hibás hivatkozás; 0 ellenőrzött tartalmi belső link és 0 tartalmi hiba. A második nulla nem bizonyít teljes tartalmi linklefedettséget.
+- **F1.1 / WEB-013 marad nyitott:** redirect-kompatibilis belső linkek megkülönböztetése, rich-text linkek és egyéb szerkesztői linkmezők lefedettsége, regressziós tesztek, SEO szerződés teljes elfogadása.
+- **Admin UX döntés:** az Admin főoldal később modern Creator Control Centerként átalakul, részletes Webhelykezelés/SEO riporttal külön logikus modulban; a Visual Editor kizárólag szerkesztésre szolgál.
+
 ## Forrásintegritás
 
 A felosztás kiinduló eredeti Git blob SHA-ja: `16eb83190ffeb805cd9f4bcc9fa7458ddea4c8aa`. A forrás **2 092 085 JavaScript-karakter** hosszú volt; a 12 rész összege pontosan ugyanennyi. A darabolás Markdown címsoroknál történt, és az eredeti szöveget byte/karakter szinten változatlanul hagyja az összefűzés.
