@@ -35,7 +35,7 @@
       const form = document.getElementById("login-form");
       const result = document.getElementById("result");
       const submit = document.getElementById("submit");
-      async function waitForAuthenticatedSession() {
+      async function waitForAuthenticatedSession() {\n        let failure = "SESSION_NOT_RETURNED";
         for (let attempt = 0; attempt < 3; attempt += 1) {
           try {
             const response = await fetch("/api/auth/session", {
@@ -45,11 +45,11 @@
               headers: { "Accept": "application/json" }
             });
             const payload = await response.json();
-            if (response.ok && payload?.ok && payload?.data?.authenticated === true) return true;
-          } catch {}
+            if (response.ok && payload?.ok && payload?.data?.authenticated === true) return { ready: true };\n            if (!response.ok || !payload?.ok) failure = "SESSION_SERVER_ERROR";
+          } catch { failure = "SESSION_NETWORK_ERROR"; }
           if (attempt < 2) await new Promise((resolve) => window.setTimeout(resolve, 200 * (attempt + 1)));
         }
-        return false;
+        return { ready: false, failure };
       }
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
