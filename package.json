@@ -9,15 +9,16 @@
     "test:editor": "node --test public/editor-v2/tests/core.test.js public/editor-v2/tests/page-url.test.js",
     "test:schedule": "node --test public/editor-v2/tests/schedule-source.test.js",
     "db:migrations:apply": "wrangler d1 migrations apply DB --remote",
-    "deploy": "npm run db:migrations:apply && wrangler deploy",
+    "deploy": "npm run test:web013:migration-gate && npm run db:migrations:apply && wrangler deploy",
     "test:domain": "node --test tests/domain-contracts.test.js",
-    "test:web013": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/web013-link-report-contract.test.js tests/web013-runtime.test.js tests/web013-site-scope-migration.test.js",
+    "test:web013": "npm run test:web013:migration-gate && node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/web013-link-report-contract.test.js tests/web013-runtime.test.js tests/web013-site-scope-migration.test.js",
     "test:web013:browser": "node --test tests/browser/web013-admin-link-report.test.js tests/browser/web013-public-richtext.test.js",
     "db:ownership:preflight": "wrangler d1 execute sanci9517-db --remote --file=./scripts/e4-3-7-preflight.sql --json",
     "db:site-scope:preflight": "wrangler d1 execute sanci9517-db --remote --file=./scripts/web013-site-scope-preflight.sql --json",
     "test:admin-home": "node --test tests/admin-home-contract.test.js",
     "test:admin-access": "node --test tests/admin-asset-access-contract.test.js",
-    "test:editor:layout": "node --test tests/browser/editor-layout.test.js"
+    "test:editor:layout": "node --test tests/browser/editor-layout.test.js",
+    "test:web013:migration-gate": "node scripts/web013-migration-safety-gate.mjs"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "5.20260908.1",
