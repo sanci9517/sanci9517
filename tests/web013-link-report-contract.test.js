@@ -65,3 +65,11 @@ test("WEB-013 decodes HTML-escaped ampersands in rich-text hrefs", () => {
   assert.match(route, /replace\(\/&amp;\/gi, "&"\)/);
   assert.equal("/p/target?x=1&amp;y=2".replace(/&amp;/gi, "&"), "/p/target?x=1&y=2");
 });
+
+test("WEB-013 warns about published pages with missing content", () => {
+  assert.match(route, /let missingPublishedContentPages = 0/);
+  assert.match(route, /if \(!page\.published_content_json\) \{ missingPublishedContentPages\+\+; continue; \}/);
+  assert.match(route, /redirectedContentLinks, missingPublishedContentPages, unparseablePublishedPages/);
+  assert.match(ui, /data\.missingPublishedContentPages/);
+  assert.match(ui, /tartalom nélküli/);
+});
