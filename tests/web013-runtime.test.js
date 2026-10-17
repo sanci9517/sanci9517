@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import { DatabaseSync } from 'node:sqlite';
 import worker from '../src/index.ts';
 import { hashSessionToken } from '../src/core/auth/session.ts';
 
 const origin = 'https://example.test';
-const shell = '<!doctype html><html><head><meta name="robots" content="index,follow"><title>Sanci9517</title></head><body>Public shell</body></html>';
+const shell = readFileSync(new URL('../public/visual-page.html', import.meta.url), 'utf8');
 const document = (id, nodes = {}) => JSON.stringify({
   type: 'sanci-page-document', schemaVersion: 1, activePageId: id,
   pages: { [id]: { id, rootId: 'root', nodes: { root: { id: 'root', type: 'root', children: [], props: {} }, ...nodes } } }
