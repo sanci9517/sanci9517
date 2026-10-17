@@ -23,6 +23,12 @@ async function fixture(t, enabled=true) {
     INSERT INTO sites VALUES ('site-default','active'),('other','active');
     INSERT INTO users VALUES ('admin','a@test','Admin','admin',1),('editor','e@test','Editor','viewer',1),('viewer','v@test','Viewer','viewer',1);
     INSERT INTO site_memberships VALUES ('site-default','admin','admin','active'),('other','editor','editor','active'),('other','viewer','viewer','active');
+    CREATE TRIGGER pages_draft_parent_guard BEFORE UPDATE OF parent_page_id ON pages
+    WHEN NEW.parent_page_id IS NOT NULL BEGIN
+      SELECT RAISE(ABORT,'INVALID_PAGE_PARENT') WHERE NEW.archived_at IS NOT NULL OR NOT EXISTS (
+        SELECT 1 FROM pages parent WHERE parent.id=NEW.parent_page_id AND parent.site_id=NEW.site_id AND parent.archived_at IS NULL
+      );
+    END;
   `);
   for(const name of ['admin','editor','viewer'])db.prepare('INSERT INTO sessions VALUES (?,?,?)').run(await hashSessionToken(name),name,'2999-01-01');
   const document=(id,text='Original')=>({type:'sanci-page-document',schemaVersion:1,activePageId:id,revision:1,pages:{[id]:{id,rootId:'root',nodes:{root:{id:'root',type:'root',parentId:null,children:[],props:{text}}}}}});
@@ -129,4 +135,23 @@ test('tenant metadata and publish URL history never modify the other site',async
     {site_id:'other',from_slug:'b',page_id:'b'});
   assert.equal(f.db.prepare('SELECT published_slug FROM pages WHERE id=?').get('b').published_slug,'renamed');
   assert.equal(f.db.prepare('SELECT published_slug FROM pages WHERE id=?').get('a').published_slug,'a');
+});
+
+test('tenant copy, hierarchy and revision conflicts stay within the authorized site',async t=>{
+  const f=await fixture(t);
+  assert.equal((await f.pages('editor','other','POST',{sourcePageId:'a',slug:'stolen',title:'Stolen'})).status,404);
+  assert.equal((await f.pages('editor','other','PATCH',{id:'a',action:'archive'})).status,404);
+  assert.equal((await f.pages('editor','other','PATCH',{id:'a',action:'setParent',parentPageId:'b',expectedParentPageId:null})).status,404);
+  const copied=await f.pages('editor','other','POST',{sourcePageId:'b',slug:'copy',title:'Copy'});
+  assert.equal(copied.status,200);
+  const copyId=(await copied.json()).data.id;
+  assert.equal(f.db.prepare('SELECT site_id,is_published FROM pages WHERE id=?').get(copyId).site_id,'other');
+  assert.equal(f.db.prepare('SELECT is_published FROM pages WHERE id=?').get(copyId).is_published,0);
+  assert.equal((await f.pages('editor','other','PATCH',{id:copyId,action:'setParent',parentPageId:'b',expectedParentPageId:null})).status,200);
+  assert.equal(f.db.prepare('SELECT parent_page_id FROM pages WHERE id=?').get(copyId).parent_page_id,'b');
+  assert.equal((await f.pages('editor','other','PATCH',{id:copyId,action:'setParent',parentPageId:'a',expectedParentPageId:'b'})).status,409);
+  assert.equal(f.db.prepare('SELECT parent_page_id FROM pages WHERE id=?').get(copyId).parent_page_id,'b');
+  assert.equal(f.db.prepare('SELECT parent_page_id FROM pages WHERE id=?').get('a').parent_page_id,null);
+  assert.equal((await f.editor('editor','other','POST',{pageId:'b',expectedVersion:0,document:f.document('b'),publish:false})).status,409);
+  assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM editor_revisions WHERE page_id=?').get('b').n,1);
 });
