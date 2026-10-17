@@ -27,16 +27,24 @@ import { publicNavigationRoute } from "./routes/public/navigation";
 import { getAuthenticatedUser } from "./core/auth/require-auth";
 import { resolvePublishedPageRedirect } from "./core/page-redirects";
 import { getCanonicalSiteContext } from "./core/site-context";
+import { resolveRequestSite } from "./core/site-domain";
 import type { Env } from "./types/env";
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
     const pathname = url.pathname.replace(/\/+$/, "") || "/";
-    const { siteId } = getCanonicalSiteContext();
+    if (pathname === "/api/health") return healthRoute();
+    const site = await resolveRequestSite(request, env);
+    if (!site) return new Response("Unknown site", { status: 421, headers: { "Cache-Control": "no-store", "X-Robots-Tag": "noindex, nofollow" } });
+    const { siteId } = site;
+    if (siteId !== getCanonicalSiteContext().siteId &&
+      (pathname.startsWith("/api/admin/") || pathname.startsWith("/api/auth/") || pathname.startsWith("/api/integrations/") || pathname.startsWith("/admin") ||
+        ((pathname.startsWith("/p/") || pathname === "/api/public/pages") && url.searchParams.get("preview") === "1"))) {
+      return new Response("Site administration unavailable", { status: 403, headers: { "Cache-Control": "no-store" } });
+    }
     if (pathname === "/sitemap.xml") return sitemapRoute(request, env, siteId);
     if (pathname === "/robots.txt") return robotsRoute(request);
-    if (pathname === "/api/health") return healthRoute();
     if (pathname === "/api/db-health") return dbHealthRoute(env);
     if (pathname === "/api/auth/bootstrap") return authBootstrapRoute(request, env);
     if (pathname === "/api/auth/login") return authLoginRoute(request, env);
@@ -49,7 +57,7 @@ export default {
     if (pathname === "/api/admin/pages") return adminPagesRoute(request, env);
     if (pathname === "/api/admin/navigation") return adminNavigationRoute(request, env);
     if (pathname === "/api/admin/editor") return adminEditorRoute(request, env);
-    if (pathname === "/api/public/site-settings") return publicSiteSettingsRoute(env);
+    if (pathname === "/api/public/site-settings") return publicSiteSettingsRoute(env, siteId, site.siteName);
     if (pathname === "/api/public/schedule") return publicScheduleRoute(request, env, siteId);
     if (pathname === "/api/integrations/twitch/diagnostic") return twitchConfigDiagnosticRoute(request, env);
     if (pathname === "/api/integrations/twitch/connect") return twitchConnectRoute(request, env);
@@ -74,7 +82,7 @@ export default {
     if (["/admin-login.html", "/admin-home.html", "/admin.html", "/admin/home", "/editor-v2", "/editor-v2/index.html", "/about.html", "/community.html", "/contact.html", "/schedule.html", "/tiktok.html", "/twitch.html", "/vod.html", "/youtube.html"].includes(pathname)) {
       return new Response("Gone", { status: 410 });
     }
-    if (pathname === "/" || pathname === "/index.html") return publicPageHtml(request, env, "/");
+    if (pathname === "/" || pathname === "/index.html") return publicPageHtml(request, env, "/", false, { title: site.siteName });
     if (pathname.startsWith("/p/") && pathname.length > 3) {
       let slug: string;
       try {
