@@ -28,6 +28,7 @@ import { getAuthenticatedUser } from "./core/auth/require-auth";
 import { resolvePublishedPageRedirect } from "./core/page-redirects";
 import { getCanonicalSiteContext } from "./core/site-context";
 import { resolveRequestSite } from "./core/site-domain";
+import { enforceAdminTenantGate } from "./core/auth/admin-tenant-gate";
 import type { Env } from "./types/env";
 
 export default {
@@ -43,6 +44,8 @@ export default {
         ((pathname.startsWith("/p/") || pathname === "/api/public/pages") && url.searchParams.get("preview") === "1"))) {
       return new Response("Site administration unavailable", { status: 403, headers: { "Cache-Control": "no-store" } });
     }
+    const tenantDenial = await enforceAdminTenantGate(request, env, siteId, pathname);
+    if (tenantDenial) return tenantDenial;
     if (pathname === "/sitemap.xml") return sitemapRoute(request, env, siteId);
     if (pathname === "/robots.txt") return robotsRoute(request);
     if (pathname === "/api/db-health") return dbHealthRoute(env);
