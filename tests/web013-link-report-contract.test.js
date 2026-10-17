@@ -80,3 +80,11 @@ test("WEB-013 marks truncated rich-text candidate extraction", () => {
   assert.match(route, /if \(candidates\.length >= 2000\) \{ contentTruncated = true; break; \}/);
   assert.match(ui, /if \(data\.contentTruncated\)/);
 });
+
+test("WEB-013 discloses oversized rich-text fields excluded from scanning", () => {
+  assert.match(route, /let oversizedRichTextFields = 0/);
+  assert.match(route, /if \(html\.length > 100000\) \{ oversizedRichTextFields\+\+; continue; \}/);
+  assert.match(route, /unsupportedPublishedDocuments, oversizedRichTextFields/);
+  assert.match(ui, /if \(data\.oversizedRichTextFields\)/);
+  assert.match(ui, /túl hosszú rich-text mező/);
+});

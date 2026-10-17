@@ -48,6 +48,7 @@ export async function adminLinkReportRoute(request: Request, env: Env): Promise<
   let missingPublishedContentPages = 0;
   let unparseablePublishedPages = 0;
   let unsupportedPublishedDocuments = 0;
+  let oversizedRichTextFields = 0;
   for (const page of pages.results) {
     if (page.archived_at || !page.is_published) continue;
     if (!page.published_content_json) { missingPublishedContentPages++; continue; }
@@ -60,7 +61,8 @@ export async function adminLinkReportRoute(request: Request, env: Env): Promise<
       const candidates = [node?.props?.href, node?.props?.url, node?.props?.link?.href, node?.props?.link?.url];
       // Rich-text HTML can contain internal anchors that are not explicit node link props.
       for (const html of [node?.props?.html, node?.props?.richText, node?.props?.content?.html]) {
-        if (typeof html !== "string" || html.length > 100000) continue;
+        if (typeof html !== "string") continue;
+        if (html.length > 100000) { oversizedRichTextFields++; continue; }
         const anchors = /<a\b[^>]*?\bhref\s*=\s*(?:["']([^"']*)["']|([^\s>]+))/gi;
         let match: RegExpExecArray | null;
         while ((match = anchors.exec(html)) !== null) {
@@ -88,7 +90,7 @@ export async function adminLinkReportRoute(request: Request, env: Env): Promise<
     }
     if (contentTruncated) break;
   }
-  const response = ok({ scope: "published-navigation-and-content-page-references", checked, truncated: checked >= 2000, findings, checkedContentLinks, contentTruncated, contentFindings, redirectedContentLinks, missingPublishedContentPages, unparseablePublishedPages, unsupportedPublishedDocuments });
+  const response = ok({ scope: "published-navigation-and-content-page-references", checked, truncated: checked >= 2000, findings, checkedContentLinks, contentTruncated, contentFindings, redirectedContentLinks, missingPublishedContentPages, unparseablePublishedPages, unsupportedPublishedDocuments, oversizedRichTextFields });
   const headers = new Headers(response.headers);
   headers.set("Cache-Control", "private, no-store");
   return new Response(response.body, { status: response.status, headers });
