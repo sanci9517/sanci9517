@@ -245,3 +245,27 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
 @media (max-width: 700px) {
   .right-dock:not(.closed) { left: 0; right: 0; width: 100%; }
 }
+
+
+/* WEB-011 / 77.44: usable typed Inspector controls and structured link toolbar */
+.typed-inspector-field { display:grid; gap:7px; min-width:0; }
+.typed-inspector-field > label { font-size:13px; color:#d3deef; }
+.typed-inspector-field > input,.typed-inspector-field > select { min-height:42px; font-size:14px; }
+.typed-box-controls { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+.typed-box-controls label { display:flex; flex-direction:column; gap:5px; min-width:0; font-size:12px; }
+.typed-box-controls input { min-width:0; min-height:40px; }
+.typed-color-controls { display:grid; grid-template-columns:52px minmax(0,1fr); gap:8px; align-items:center; }
+.typed-color-controls input[type=color] { height:44px; padding:3px; cursor:pointer; }
+.typed-color-controls input[type=text] { min-width:0; }
+.property-validation { color:#ffb7b7; font-size:12px; line-height:1.4; }
+.property-unavailable { padding:9px 11px; border:1px dashed #506078; border-radius:8px; color:#b2bfd0; font-size:12px; line-height:1.4; }
+.property-unit-hint { color:#a9b8c9; font-size:11px; }
+.richtext-link-controls { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; padding:12px; border-top:1px solid var(--editor-line); }
+.richtext-link-controls input { grid-column:1/-1; width:100%; min-width:0; min-height:44px; border:1px solid var(--editor-line); border-radius:8px; background:#101925; color:#fff; padding:8px 10px; font-size:14px; }
+.richtext-link-controls button { min-width:0; min-height:44px; padding:7px 10px; font-size:13px; white-space:normal; }
+.richtext-link-controls small { grid-column:1/-1; font-size:12px; line-height:1.4; color:#ffb7b7; }
+@media(max-width:430px) {
+  .typed-box-controls { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .richtext-link-controls { grid-template-columns:1fr; }
+  .richtext-link-controls input,.richtext-link-controls small { grid-column:1; }
+}

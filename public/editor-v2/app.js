@@ -8,7 +8,9 @@ import {diagnostics} from './diagnostics.js?v=20260918-2';
 import {plainTextToRichText,renderRichTextEditor,richTextEditorToDocument,setBlockType} from './core/richtext-engine.js';
 import {renderSchedulePreview} from './core/schedule-preview.js';
 import {normalizeScheduleConfig,SCHEDULE_MODES,SCHEDULE_ORDERS,SCHEDULE_STATUSES} from './core/schedule-schema.js';
-import {listPropertyGroups,listProperties} from './core/property-registry.js';
+import {listPropertyGroups,listProperties,getProperty} from './core/property-registry.js';
+import {renderPropertyInput} from './ui/property-controls.js';
+import {getRichTextBlockSelection,updateRichTextInlineLink} from './core/richtext-links.js';
 import {initialPageId,rememberPageId,requestedPageId} from './core/page-url.js';
 
 let state=null;let pages=[];let archivedPages=[];let revisionHistory=[];let zoom=1;let inspectorTab='design';let canvasDrag=null;let canvasResize=null;let mobileTouch={active:false,timer:null,downId:null,startX:0,startY:0,snapshot:[],snapshotPrimary:null,suppressClick:false,longPressTriggered:false};let hierarchyDrag={nodeId:null,overId:null};let mobileHierarchyDrag={active:false,timer:null,nodeId:null,overId:null,startX:0,startY:0,suppressClick:false};
@@ -138,7 +140,21 @@ function normalizeDimension(value,{allowAuto=false}={}){const raw=String(value??
 function resolvedGeometry(node,device){return getNodeGeometry(node,device)}
 function responsiveDisplay(node,property,device,fallback){const result=resolveResponsiveValue(node?.responsive,property,device);return result.value??fallback}
 function setGeometry(node,device,property,value){const normalized=normalizeDimension(value,{allowAuto:property==='width'||property==='height'});if(normalized===undefined)return;command('responsive.set',{nodeId:node.id,device,patch:{[property]:normalized}})}
-function renderGeometryInspector(node){const device=state.viewport.device;const geometry=resolvedGeometry(node,device);const position=responsiveDisplay(node,'position',device,node.style?.position||'relative');const section=document.createElement('section');section.className='inspector-group';const title=document.createElement('div');title.className='inspector-group-title';title.innerHTML=`<strong>Geometria</strong><small>${device}</small>`;section.append(title,field('X pozíció',geometry.x,v=>setGeometry(node,device,'x',v)),field('Y pozíció',geometry.y,v=>setGeometry(node,device,'y',v)),field('Szélesség',geometry.width,v=>setGeometry(node,device,'width',v)),field('Magasság',geometry.height,v=>setGeometry(node,device,'height',v)),field('Pozícionálás',position,v=>command('responsive.set',{nodeId:node.id,device,patch:{position:v}})));return section}
+function renderGeometryInspector(node){
+  const device=state.viewport.device, geometry=resolvedGeometry(node,device);
+  const values={x:geometry.x,y:geometry.y,width:geometry.width,height:geometry.height,
+    position:responsiveDisplay(node,'position',device,node.style?.position||'relative')};
+  const section=document.createElement('section');section.className='inspector-group';
+  const title=document.createElement('div');title.className='inspector-group-title';
+  title.innerHTML=`<strong>Geometria</strong><small>${device}</small>`;
+  section.append(title);
+  for(const [id,key] of [['position.x','x'],['position.y','y'],['size.width','width'],['size.height','height'],['position.position','position']]){
+    const prop=getProperty(id);
+    section.append(renderPropertyInput(prop,prop.label,values[key],value=>
+      command('responsive.set',{nodeId:node.id,device,patch:{[key]:value}})));
+  }
+  return section;
+}
 function renderScheduleInspector(node){
   const config=normalizeScheduleConfig(node.props?.schedule||{});
   const section=document.createElement('section');
@@ -208,18 +224,20 @@ function renderScheduleInspector(node){
 }
 
 function renderRegistryInspector(node){
-  const device=state.viewport.device;
-  const groups=listPropertyGroups();
-  const root=document.createDocumentFragment();
-  for(const group of groups){
-    const properties=listProperties({group:group.id,nodeType:node.type});
+  const device=state.viewport.device,root=document.createDocumentFragment();
+  const duplicates=new Set(['content.text','content.href','advanced.nodeName',
+    'position.x','position.y','size.width','size.height','position.position']);
+  for(const group of listPropertyGroups()){
+    const properties=listProperties({group:group.id,nodeType:node.type})
+      .filter(property=>!duplicates.has(property.id));
     if(!properties.length)continue;
     const section=document.createElement('section');section.className='inspector-group';
     const title=document.createElement('div');title.className='inspector-group-title';
-    title.innerHTML='<strong></strong><small></small>';title.querySelector('strong').textContent=group.label;title.querySelector('small').textContent=String(properties.length);
+    title.innerHTML='<strong></strong><small></small>';
+    title.querySelector('strong').textContent=group.label;
+    title.querySelector('small').textContent=String(properties.length);
     section.append(title);
     for(const property of properties){
-      if(property.id==='content.text'||property.id==='content.href'||property.id==='advanced.nodeName')continue;
       const key=property.key||property.id.split('.')[1];
       const resolved=property.responsive?resolveResponsiveValue(node.responsive,key,device):null;
       const current=resolved?.value??node.style?.[key]??'';
@@ -228,20 +246,11 @@ function renderRegistryInspector(node){
         if(property.responsive)command(property.command,{nodeId:node.id,device,patch:{[key]:value}});
         else command(property.command,{nodeId:node.id,patch:{[key]:value}});
       };
-      let control;
-      if(property.type==='select'){
-        control=document.createElement('label');control.className='field';
-        const labelElement=document.createElement('span');labelElement.textContent=label;
-        const select=document.createElement('select');
-        for(const optionValue of property.options||[]){const option=document.createElement('option');option.value=optionValue;option.textContent=optionValue;option.selected=String(current)===String(optionValue);select.append(option)}
-        select.onchange=()=>apply(select.value);
-        control.append(labelElement,select);
-      }else{
-        control=field(label,current,apply);
-      }
-      section.append(control);
+      section.append(renderPropertyInput(property,label,current,apply));
       if(property.responsive&&hasResponsiveOverride(node.responsive,key,device)){
-        const reset=document.createElement('button');reset.type='button';reset.className='property-reset';reset.textContent='Öröklés visszaállítása';reset.title=device+' nézet saját értékének törlése, a szélesebb nézet értékének öröklése';
+        const reset=document.createElement('button');reset.type='button';reset.className='property-reset';
+        reset.textContent='Öröklés visszaállítása';
+        reset.title=device+' nézet saját értékének törlése, a szélesebb nézet értékének öröklése';
         reset.onclick=()=>command('responsive.set',{nodeId:node.id,device,patch:{[key]:undefined}});
         section.append(reset);
       }
@@ -277,13 +286,60 @@ function renderInspector(){
         const section=document.createElement('section');section.className='richtext-editor';
         const toolbar=document.createElement('div');toolbar.className='richtext-toolbar';
         const blockSelect=document.createElement('select');blockSelect.title='Aktuális blokk típusa';
-        [['paragraph','Bekezdés'],['heading-1','H1'],['heading-2','H2'],['heading-3','H3'],['heading-4','H4'],['heading-5','H5'],['heading-6','H6']].forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;blockSelect.append(option)});
-        const editor=document.createElement('div');editor.className='richtext-content richtext-editor-surface';editor.contentEditable='true';editor.spellcheck=true;editor.setAttribute('role','textbox');editor.setAttribute('aria-label','Rich Text szerkesztő');renderRichTextEditor(editor,currentRichText);
-        let richTextDirty=false;const saveRich=()=>{const doc=richTextEditorToDocument(editor);command('richtext.content.set',{nodeId:node.id,document:doc});richTextDirty=false};
-        blockSelect.onchange=()=>{const value=blockSelect.value;const range={from:0,to:richTextEditorToDocument(editor).blocks.reduce((n,b)=>n+(b.children??[]).reduce((m,x)=>m+(x.text?.length??0),0)+1,0)};const type=value==='paragraph'?'paragraph':'heading';const level=value==='paragraph'?1:Number(value.split('-')[1]);const updated=setBlockType(currentRichText,range.from,range.to,type,level);command('richtext.content.set',{nodeId:node.id,document:updated});renderRichTextEditor(editor,updated)};
-        editor.addEventListener('input',()=>{richTextDirty=true});editor.addEventListener('blur',()=>{if(richTextDirty)saveRich()});toolbar.append(blockSelect);section.append(toolbar,editor);inspector.append(section);
+        [['paragraph','Bekezdés'],['heading-1','H1'],['heading-2','H2'],['heading-3','H3'],
+          ['heading-4','H4'],['heading-5','H5'],['heading-6','H6']]
+          .forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;blockSelect.append(option)});
+        const editor=document.createElement('div');editor.className='richtext-content richtext-editor-surface';
+        editor.contentEditable='true';editor.spellcheck=true;editor.setAttribute('role','textbox');
+        editor.setAttribute('aria-label','Rich Text szerkesztő');
+        renderRichTextEditor(editor,currentRichText);
+        let richTextDirty=false, savedLinkSelection=null;
+        const rememberSelection=()=>{const next=getRichTextBlockSelection(editor);if(next)savedLinkSelection=next};
+        const saveRich=()=>{
+          if(!richTextDirty)return;
+          const doc=richTextEditorToDocument(editor);
+          richTextDirty=false;
+          command('richtext.content.set',{nodeId:node.id,document:doc});
+        };
+        blockSelect.onchange=()=>{
+          const doc=richTextEditorToDocument(editor);
+          const range={from:0,to:doc.blocks.reduce((n,b)=>n+(b.children??[])
+            .reduce((m,x)=>m+(x.text?.length??0),0)+1,0)};
+          const type=blockSelect.value==='paragraph'?'paragraph':'heading';
+          const level=type==='paragraph'?1:Number(blockSelect.value.split('-')[1]);
+          command('richtext.content.set',{nodeId:node.id,
+            document:setBlockType(doc,range.from,range.to,type,level)});
+        };
+        const linkControls=document.createElement('div');linkControls.className='richtext-link-controls';
+        const url=document.createElement('input');url.type='url';url.placeholder='/p/home vagy https://...';
+        url.setAttribute('aria-label','Hivatkozás címe');
+        const addLink=document.createElement('button');addLink.type='button';addLink.textContent='Link beállítása';
+        const removeLink=document.createElement('button');removeLink.type='button';removeLink.textContent='Link eltávolítása';
+        const linkFeedback=document.createElement('small');linkFeedback.setAttribute('role','status');
+        const changeLink=href=>{
+          const range=savedLinkSelection||getRichTextBlockSelection(editor);
+          if(!range){linkFeedback.textContent='Jelölj ki egy szövegrészt előbb.';return;}
+          try{
+            const doc=updateRichTextInlineLink(richTextEditorToDocument(editor),range,href);
+            linkFeedback.textContent='';
+            command('richtext.content.set',{nodeId:node.id,document:doc});
+          }catch(e){linkFeedback.textContent=e instanceof Error?e.message:String(e)}
+        };
+        addLink.onclick=()=>changeLink(url.value);
+        removeLink.onclick=()=>changeLink(null);
+        editor.addEventListener('input',()=>{richTextDirty=true});
+        editor.addEventListener('mouseup',rememberSelection);
+        editor.addEventListener('keyup',rememberSelection);
+        editor.addEventListener('touchend',()=>requestAnimationFrame(rememberSelection));
+        editor.addEventListener('blur',event=>{
+          if(richTextDirty&&!section.contains(event.relatedTarget))saveRich();
+        });
+        url.onfocus=()=>rememberSelection();
+        linkControls.append(url,addLink,removeLink,linkFeedback);
+        toolbar.append(blockSelect);section.append(toolbar,editor,linkControls);
+        inspector.append(section);
       }else if(textTypes.has(node.type))inspector.append(field('Szöveg',node.props?.text??node.props?.content??'',v=>command('element.content.set',{nodeId:node.id,content:v})));
-      if(['button','link'].includes(node.type))inspector.append(field('Link / URL',node.props?.href||'',v=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),href:v}}})));
+      if(['button','link'].includes(node.type))inspector.append(renderPropertyInput(getProperty('content.href'),'Link / URL',node.props?.href||'',v=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),href:v}}})));
       else if(!textTypes.has(node.type))inspector.append(field('Tartalom',node.props?.content??'',v=>command('element.content.set',{nodeId:node.id,content:v})));
     }
   }else{
