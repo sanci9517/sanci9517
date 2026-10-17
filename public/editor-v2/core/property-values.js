@@ -1,3 +1,4 @@
+import { validatedLinkHref } from './richtext-links.js';
 /*
  * Typed Inspector value validation. This module deliberately covers only the
  * controls the current Canvas/Renderer property map can actually consume.
@@ -5,7 +6,6 @@
  */
 const lengthToken = /^(?:-?(?:\d+(?:\.\d+)?|\.\d+)(?:px|%|vh|vw|rem|em)|0|auto)$/i;
 const hexColor = /^#[\da-f]{3}(?:[\da-f]{3})?(?:[\da-f]{2})?$/i;
-const safeUrl = /^(?:https?:\/\/[^\s"'<>\\]+|\/(?!\/)[^\s"'<>\\]+)$/i;
 const unitToken = /^(?:auto|0|px|%|vw|vh|rem|em)$/i;
 
 export function normalizeInspectorValue(property, input) {
@@ -56,10 +56,7 @@ export function normalizeInspectorValue(property, input) {
     if (!values.includes(value)) throw new Error('Ismeretlen árnyék preset.');
     return value;
   }
-  if (type === 'url') {
-    if (value.length > 2048 || !safeUrl.test(value)) throw new Error('Biztonságos HTTPS vagy belső /útvonal szükséges.');
-    return value;
-  }
+  if (type === 'url') return validatedLinkHref(value);
   if (type === 'text') return value;
   throw new Error('Ezt a vezérlőt még nem fejlesztettük le.');
 }
