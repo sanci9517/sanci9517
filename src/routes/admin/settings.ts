@@ -2,6 +2,8 @@ import { error, ok } from "../../core/response";
 import { getAuthenticatedUser, hasRole } from "../../core/auth/require-auth";
 import type { Env } from "../../types/env";
 import { auditStatement } from "../../core/audit";
+import { getCanonicalSiteContext } from "../../core/site-context";
+import { loadScopedSiteSettings, scopedSettingsUpsert } from "../../core/site-scoped-settings";
 
 type SettingsBody = {
   siteName?: unknown;
@@ -21,6 +23,13 @@ export async function adminSettingsRoute(request: Request, env: Env): Promise<Re
   if (!hasRole(user, "admin")) return error("FORBIDDEN", 403, "Admin role required");
 
   if (request.method === "GET") {
+    if (env.SITE_SCOPED_SETTINGS_ENABLED === "enabled") {
+      try {
+        return ok(await loadScopedSiteSettings(env, getCanonicalSiteContext().siteId, "Sanci9517"));
+      } catch {
+        return error("SITE_SETTINGS_UNAVAILABLE", 503);
+      }
+    }
     const row = await env.DB.prepare(
       "SELECT key, value_json FROM site_settings WHERE key = ? LIMIT 1"
     )
@@ -51,6 +60,19 @@ export async function adminSettingsRoute(request: Request, env: Env): Promise<Re
 
   if (!siteName || siteName.length > 120 || tagline.length > 240) {
     return error("INVALID_SETTINGS", 400);
+  }
+
+  if (env.SITE_SCOPED_SETTINGS_ENABLED === "enabled") {
+    const { siteId } = getCanonicalSiteContext();
+    try {
+      await env.DB.batch([
+        scopedSettingsUpsert(env, siteId, { siteName, tagline }),
+        auditStatement(env, user.id, "settings.update", "site_scoped_settings", siteId, { siteName, tagline })
+      ]);
+      return ok({ siteName, tagline });
+    } catch {
+      return error("SITE_SETTINGS_UNAVAILABLE", 503);
+    }
   }
 
   const valueJson = JSON.stringify({ siteName, tagline });

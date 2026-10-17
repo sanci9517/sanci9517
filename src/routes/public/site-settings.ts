@@ -1,5 +1,6 @@
 import type { Env } from "../../types/env";
 import { DEFAULT_SITE_ID } from "../../core/site-context";
+import { loadScopedSiteSettings } from "../../core/site-scoped-settings";
 
 const DEFAULT_SITE = {
   siteName: "Sanci9517",
@@ -7,6 +8,17 @@ const DEFAULT_SITE = {
 };
 
 export async function publicSiteSettingsRoute(env: Env, siteId = DEFAULT_SITE_ID, siteName?: string): Promise<Response> {
+  if (env.SITE_SCOPED_SETTINGS_ENABLED === "enabled") {
+    try {
+      const fallbackName = siteName || (siteId === DEFAULT_SITE_ID ? DEFAULT_SITE.siteName : "");
+      const settings = await loadScopedSiteSettings(env, siteId, fallbackName);
+      return Response.json(settings, { headers: { "Cache-Control": "no-store" } });
+    } catch {
+      return Response.json({ error: "SITE_SETTINGS_UNAVAILABLE" }, {
+        status: 503, headers: { "Cache-Control": "no-store", "X-Robots-Tag": "noindex" }
+      });
+    }
+  }
   if (siteId !== DEFAULT_SITE_ID) return Response.json(
     { siteName: siteName || "", tagline: "" },
     { headers: { "Cache-Control": "no-store" } }
