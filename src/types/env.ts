@@ -15,4 +15,5 @@ export interface Env {
   TIKTOK_CLIENT_SECRET?: string;
   SITE_HOST_BINDINGS?: string;
   SITE_MEMBERSHIP_ENFORCEMENT?: string;
+  SITE_SCOPED_SETTINGS_ENABLED?: string;
 }
