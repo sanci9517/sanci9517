@@ -45,12 +45,14 @@ export async function adminLinkReportRoute(request: Request, env: Env): Promise<
   const redirectedContentLinks: { sourcePageId: string; nodeId: string; href: string; targetPageId: string }[] = [];
   let checkedContentLinks = 0;
   let contentTruncated = false;
+  let unparseablePublishedPages = 0;
+  let unsupportedPublishedDocuments = 0;
   for (const page of pages.results) {
     if (page.archived_at || !page.is_published || !page.published_content_json) continue;
     let document: any;
-    try { document = JSON.parse(page.published_content_json); } catch { continue; }
+    try { document = JSON.parse(page.published_content_json); } catch { unparseablePublishedPages++; continue; }
     const nodes = document?.pages?.[page.id]?.nodes;
-    if (!nodes || typeof nodes !== "object" || Array.isArray(nodes)) continue;
+    if (!nodes || typeof nodes !== "object" || Array.isArray(nodes)) { unsupportedPublishedDocuments++; continue; }
     for (const [nodeId, node] of Object.entries<any>(nodes)) {
       if (checkedContentLinks >= 2000) { contentTruncated = true; break; }
       const candidates = [node?.props?.href, node?.props?.url, node?.props?.link?.href, node?.props?.link?.url];
@@ -81,7 +83,7 @@ export async function adminLinkReportRoute(request: Request, env: Env): Promise<
     }
     if (contentTruncated) break;
   }
-  const response = ok({ scope: "published-navigation-and-content-page-references", checked, truncated: checked >= 2000, findings, checkedContentLinks, contentTruncated, contentFindings, redirectedContentLinks });
+  const response = ok({ scope: "published-navigation-and-content-page-references", checked, truncated: checked >= 2000, findings, checkedContentLinks, contentTruncated, contentFindings, redirectedContentLinks, unparseablePublishedPages, unsupportedPublishedDocuments });
   const headers = new Headers(response.headers);
   headers.set("Cache-Control", "private, no-store");
   return new Response(response.body, { status: response.status, headers });
