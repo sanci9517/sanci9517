@@ -11,7 +11,7 @@
     "db:migrations:apply": "wrangler d1 migrations apply DB --remote",
     "deploy": "npm run test:web013:migration-gate && npm run db:migrations:apply && wrangler deploy",
     "test:domain": "node --test tests/domain-contracts.test.js",
-    "test:web013": "npm run test:web013:migration-gate && node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/web013-link-report-contract.test.js tests/web013-runtime.test.js tests/web013-site-scope-migration.test.js tests/web013-site-membership.test.js tests/web013-admin-tenant-gate.test.js tests/web013-site-scoped-settings.test.js tests/web013-live-activation-contract.test.js tests/web013-manual-migration-chain.test.js tests/web013-tenant-preview.test.js tests/web013-tenant-navigation.test.js",
+    "test:web013": "npm run test:web013:migration-gate && node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/web013-link-report-contract.test.js tests/web013-runtime.test.js tests/web013-site-scope-migration.test.js tests/web013-site-membership.test.js tests/web013-admin-tenant-gate.test.js tests/web013-site-scoped-settings.test.js tests/web013-live-activation-contract.test.js tests/web013-manual-migration-chain.test.js tests/web013-tenant-preview.test.js tests/web013-tenant-navigation.test.js tests/web013-tenant-pages-editor.test.js",
     "test:web013:browser": "node --test tests/browser/web013-admin-link-report.test.js tests/browser/web013-public-richtext.test.js",
     "db:ownership:preflight": "wrangler d1 execute sanci9517-db --remote --file=./scripts/e4-3-7-preflight.sql --json",
     "db:site-scope:preflight": "wrangler d1 execute sanci9517-db --remote --file=./scripts/web013-site-scope-preflight.sql --json",

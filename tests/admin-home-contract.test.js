@@ -24,9 +24,13 @@ test("Admin and Editor pages authenticate before serving assets and their APIs e
   assert.ok(editorRouteBlock.includes('return env.ASSETS.fetch(assetRequest("/editor-v2/index.html", request));'));
   assert.ok(adminSettingsRoute.includes('requireSiteGrant(request, env, siteId, "admin")'));
   assert.ok(adminSettingsRoute.includes('if (!hasRole(legacyUser, "admin")) return error("FORBIDDEN", 403, "Admin role required");'));
-  assert.ok(adminPagesRoute.includes("hasRole(user,'editor')"));
+  assert.ok(worker.includes('adminPagesRoute(request, env, siteId)'));
+  assert.ok(adminPagesRoute.includes("requireSiteGrant(request,env,siteId,'editor')"));
+  assert.ok(adminPagesRoute.includes("hasRole(legacyUser,'editor')"));
   assert.ok(adminScheduleRoute.includes('if (!hasRole(user, "editor")) return error("FORBIDDEN", 403, "Editor role required");'));
-  assert.ok(adminEditorRoute.includes("hasRole(user,'editor')"));
+  assert.ok(worker.includes('adminEditorRoute(request, env, siteId)'));
+  assert.ok(adminEditorRoute.includes("requireSiteGrant(request,env,siteId,'editor')"));
+  assert.ok(adminEditorRoute.includes("hasRole(legacyUser,'editor')"));
 });
 
 test("login confirms the new session before navigating to Admin and avoids a redirect loop", () => {

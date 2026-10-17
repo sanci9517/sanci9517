@@ -1,9 +1,11 @@
 import { error, ok } from "../../core/response";
 import { getAuthenticatedUser, hasRole } from "../../core/auth/require-auth";
+import { requireSiteGrant } from "../../core/auth/site-access";
+import type { AuthUser } from "../../core/auth/require-auth";
 import { normalizeEditorDocument } from "../../core/page-model";
 import type { Env } from "../../types/env";
 import { auditStatement } from "../../core/audit";
-import { getCanonicalSiteContext } from "../../core/site-context";
+import { DEFAULT_SITE_ID } from "../../core/site-context";
 import { validatePublishDocument } from "../../core/editor-validation";
 
 type PageRow={archived_at?:string|null;parent_page_id?:string|null;published_parent_page_id?:string|null;published_slug?:string|null;id:string;slug:string;title:string;description:string;content_json:string;published_content_json:string|null;is_published:number;published_revision_id:string|null;sort_order:number;created_at:string;updated_at:string;revision?:number};
@@ -26,9 +28,15 @@ function duplicateDocument(source:PageRow,id:string,title:string,slug:string,des
  const nextDocument={...document,activePageId:id,revision:1,pages:{[id]:nextPage}};
  return validatePublishDocument(nextDocument,id)?null:nextDocument;
 }
-async function adminPagesRouteImpl(request:Request,env:Env):Promise<Response>{
- const { siteId }=getCanonicalSiteContext();
- const user=await getAuthenticatedUser(request,env);if(!user)return error('UNAUTHORIZED',401,'Authentication required');if(!hasRole(user,'editor'))return error('FORBIDDEN',403,'Editor role required');
+async function adminPagesRouteImpl(request:Request,env:Env,siteId:string):Promise<Response>{
+ if(!siteId||!siteId.trim())return error('SITE_CONTEXT_INVALID',403);
+ let user:AuthUser;
+ if(env.SITE_MEMBERSHIP_ENFORCEMENT==='enabled'){
+  const grant=await requireSiteGrant(request,env,siteId,'editor');if(grant instanceof Response)return grant;user=grant.user;
+ }else{
+  if(siteId!==DEFAULT_SITE_ID)return error('SITE_ACCESS_DENIED',403);
+  const legacyUser=await getAuthenticatedUser(request,env);if(!legacyUser)return error('UNAUTHORIZED',401,'Authentication required');if(!hasRole(legacyUser,'editor'))return error('FORBIDDEN',403,'Editor role required');user=legacyUser;
+ }
  if(request.method==='GET'){const metaOnly=new URL(request.url).searchParams.get('meta')==='1';const rows=await env.DB.prepare(`SELECT p.*,COALESCE((SELECT MAX(er.version) FROM editor_revisions er WHERE er.page_id=p.id),0) AS revision FROM pages p WHERE p.site_id=? AND ${new URL(request.url).searchParams.get('archived')==='1'?'p.archived_at IS NOT NULL':'p.archived_at IS NULL'} ORDER BY p.sort_order ASC`).bind(siteId).all<PageRow>();return ok(rows.results.map(r=>serialize(r,!metaOnly)))}
  let body:PageBody;try{body=await request.json() as PageBody}catch{return error('INVALID_JSON',400)}
  if(request.method==='PATCH'&&body.action!==undefined){
@@ -66,7 +74,7 @@ async function adminPagesRouteImpl(request:Request,env:Env):Promise<Response>{
   const updated=await env.DB.prepare('SELECT archived_at FROM pages WHERE id=? AND site_id=?').bind(id,siteId).first<{archived_at:string|null}>();
   return ok({id,archivedAt:updated?.archived_at??null,isPublished:false,changed:true});
  }
- if(request.method==='DELETE'){const id=typeof body.id==='string'?body.id:'';if(!id)return error('INVALID_PAGE_ID',400);const count=await env.DB.prepare('SELECT COUNT(*) AS count FROM pages WHERE site_id=? AND archived_at IS NULL').bind(siteId).first<{count:number}>();if(Number(count?.count||0)<=1)return error('LAST_PAGE',409,'Az utolsó oldal nem törölhető.');const existingOrder=await env.DB.prepare('SELECT sort_order FROM pages WHERE id=? AND site_id=? AND archived_at IS NULL LIMIT 1').bind(id,siteId).first<{sort_order:number}>();if(!existingOrder)return error('PAGE_NOT_FOUND',404);const deleteStatements:any[]=[env.DB.prepare('DELETE FROM pages WHERE id=? AND site_id=?').bind(id,siteId)];if(existingOrder)deleteStatements.push(env.DB.prepare('UPDATE pages SET sort_order=sort_order-1 WHERE site_id=? AND archived_at IS NULL AND sort_order>?').bind(siteId,existingOrder.sort_order));deleteStatements.push(auditStatement(env,user.id,'page.delete','page',id,{}));try{await env.DB.batch(deleteStatements)}catch(e){if(String(e).includes('PAGE_HAS_REDIRECTS'))return error('PAGE_HAS_REDIRECTS',409,'Az oldalnak korábbi publikus URL-je van. A hivatkozások megőrzése miatt véglegesen nem törölhető.');if(String(e).includes('PAGE_HAS_CHILDREN'))return error('PAGE_HAS_CHILDREN',409,'Az oldalhoz gyermekoldal tartozik. Előbb helyezd át a gyermekeket.');if(String(e).includes('PAGE_IN_USE_BY_NAVIGATION'))return error('PAGE_IN_USE',409,'Az oldal a mentett vagy publikált navigációban szerepel. Távolítsd el a menüből, publikáld a menü módosítását, majd próbáld újra.');throw e}return ok({id,deleted:true})}
+ if(request.method==='DELETE'){const id=typeof body.id==='string'?body.id:'';if(!id)return error('INVALID_PAGE_ID',400);const existingOrder=await env.DB.prepare('SELECT sort_order FROM pages WHERE id=? AND site_id=? AND archived_at IS NULL LIMIT 1').bind(id,siteId).first<{sort_order:number}>();if(!existingOrder)return error('PAGE_NOT_FOUND',404);const count=await env.DB.prepare('SELECT COUNT(*) AS count FROM pages WHERE site_id=? AND archived_at IS NULL').bind(siteId).first<{count:number}>();if(Number(count?.count||0)<=1)return error('LAST_PAGE',409,'Az utolsó oldal nem törölhető.');const deleteStatements:any[]=[env.DB.prepare('DELETE FROM pages WHERE id=? AND site_id=?').bind(id,siteId)];if(existingOrder)deleteStatements.push(env.DB.prepare('UPDATE pages SET sort_order=sort_order-1 WHERE site_id=? AND archived_at IS NULL AND sort_order>?').bind(siteId,existingOrder.sort_order));deleteStatements.push(auditStatement(env,user.id,'page.delete','page',id,{}));try{await env.DB.batch(deleteStatements)}catch(e){if(String(e).includes('PAGE_HAS_REDIRECTS'))return error('PAGE_HAS_REDIRECTS',409,'Az oldalnak korábbi publikus URL-je van. A hivatkozások megőrzése miatt véglegesen nem törölhető.');if(String(e).includes('PAGE_HAS_CHILDREN'))return error('PAGE_HAS_CHILDREN',409,'Az oldalhoz gyermekoldal tartozik. Előbb helyezd át a gyermekeket.');if(String(e).includes('PAGE_IN_USE_BY_NAVIGATION'))return error('PAGE_IN_USE',409,'Az oldal a mentett vagy publikált navigációban szerepel. Távolítsd el a menüből, publikáld a menü módosítását, majd próbáld újra.');throw e}return ok({id,deleted:true})}
  if(request.method==='PATCH'){
   const id=typeof body.id==='string'?body.id:'';const requestedOrder=typeof body.sortOrder==='number'?Math.floor(body.sortOrder):null;const title=typeof body.title==='string'?body.title.trim():'';const requestedSlug=typeof body.slug==='string'?body.slug.trim().toLowerCase():'';const requestedDescription=typeof body.description==='string'?body.description.trim():null;
   if(!id)return error('INVALID_PAGE_ID',400);if(requestedOrder!==null&&requestedOrder<0)return error('INVALID_PAGE_ORDER',400);if(title&&title.length>160)return error('INVALID_PAGE_TITLE',400);if(requestedSlug&&(!validSlug(requestedSlug)||requestedSlug.length>80))return error('INVALID_PAGE_SLUG',400,'A slug csak kisbetűs betűket, számokat és kötőjeleket tartalmazhat.');if(requestedDescription!==null&&requestedDescription.length>500)return error('INVALID_PAGE_DESCRIPTION',400);if(!title&&!requestedSlug&&requestedDescription===null&&requestedOrder===null)return error('INVALID_PAGE_UPDATE',400);
@@ -140,8 +148,8 @@ async function adminPagesRouteImpl(request:Request,env:Env):Promise<Response>{
  return ok({id,slug,title,description,content:initialDocument,isPublished,version:1,revisionId});
 }
 
-export async function adminPagesRoute(request:Request,env:Env):Promise<Response>{
- try{return await adminPagesRouteImpl(request,env)}catch(e){
+export async function adminPagesRoute(request:Request,env:Env,siteId:string=DEFAULT_SITE_ID):Promise<Response>{
+ try{return await adminPagesRouteImpl(request,env,siteId)}catch(e){
   if(String(e).includes('PAGE_SLUG_RESERVED'))return error('SLUG_RESERVED',409,'A slug egy másik oldal élő vagy korábbi URL-je. Válassz másikat.');
   if(String(e).includes('PAGE_HIERARCHY_CYCLE'))return error('PAGE_HIERARCHY_CYCLE',409,'Az oldal nem lehet saját maga vagy leszármazottja alá rendezve.');
   if(String(e).includes('INVALID_PAGE_PARENT'))return error('INVALID_PAGE_PARENT',409,'A szülőoldal nem található ezen a webhelyen, vagy archivált.');
