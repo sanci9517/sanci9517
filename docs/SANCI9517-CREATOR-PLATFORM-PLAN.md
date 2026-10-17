@@ -56,3 +56,12 @@
 ## Forrásintegritás
 
 A felosztás kiinduló eredeti Git blob SHA-ja: `16eb83190ffeb805cd9f4bcc9fa7458ddea4c8aa`. A forrás **2 092 085 JavaScript-karakter** hosszú volt; a 12 rész összege pontosan ugyanennyi. A darabolás Markdown címsoroknál történt, és az eredeti szöveget byte/karakter szinten változatlanul hagyja az összefűzés.
+
+
+## WEB-013 előrehaladási napló — #62–#77 (2026-10-17)
+
+- **#62–#77 MERGED a `v2/foundation` ágba.** A WEB-013 publikus sitemap/canonical és admin hibáslink-riport részfeladataihoz elkészültek a slug-átirányítások felismerése, rich-text hivatkozások vizsgálata, az ellenőrzések CI-be kötése és a hibás HTML-hivatkozás-regex javítása.
+- A riport külön kezeli a hibás és érvényesen átirányított belső linkeket. Figyelmeztet a hiányzó, sérült vagy nem támogatott publikált dokumentumokra, a túl hosszú rich-text mezőkre, valamint a link-, menüelem- és navigációmélység-korlátokra.
+- **Bizonyíték:** a #77 PR három GitHub Actions munkafolyamata PASS; squash merge `83d69e4ee4753c633784f26273cf1329e33f651c`. A korábbi részfeladatok külön PR-eken keresztül kerültek be.
+- **Nyitott elfogadás:** a teljes WEB-013/F1.1 még nem tekinthető PASS-nak. Ellenőrizendő a tényleges éles deploy, a publikus SEO-válaszok, a valós publikált rich-text tartalommal végzett funkcionális teszt, valamint a linkkinyerés lefedettsége. A szerkezeti/regex regressziós tesztek önmagukban nem bizonyítanak teljes end-to-end működést.
+- **Következő fejlesztési döntési pont:** a megmaradt WEB-013 elfogadási kritériumokat kell igazolni, nem további öncélú figyelmeztetés-PR-eket gyártani.
