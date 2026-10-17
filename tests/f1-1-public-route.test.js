@@ -24,10 +24,16 @@ function envWithPublishedSlug(publishedSlug = 'youtube', authenticated = false) 
     lookupSlugs,
     sessionHashes,
     env: {
+      SITE_HOST_BINDINGS: '{"example.test":"site-default"}',
       DB: {
         prepare(sql) {
           return {
             bind(siteId, slug) {
+              if (sql.includes('FROM site_domains')) {
+                assert.equal(siteId, 'example.test');
+                assert.equal(slug, 'site-default');
+                return this;
+              }
               if (sql.includes('FROM sessions')) {
                 sessionHashes.push(siteId);
                 return this;
@@ -37,6 +43,7 @@ function envWithPublishedSlug(publishedSlug = 'youtube', authenticated = false) 
               return this;
             },
             async first() {
+              if (sql.includes('FROM site_domains')) return { siteId: 'site-default', siteName: 'Sanci9517' };
               if (sql.includes('FROM sessions')) {
                 return authenticated && sessionHashes.at(-1) === await hashSessionToken('editor-token')
                   ? { id: 'editor', email: 'editor@example.test', displayName: 'Editor', role: 'editor' }

@@ -20,6 +20,10 @@ async function fixture(t) {
   const db = new DatabaseSync(':memory:');
   t.after(() => db.close());
   db.exec(`
+    CREATE TABLE sites(id TEXT PRIMARY KEY,name TEXT,status TEXT);
+    INSERT INTO sites VALUES ('site-default','Sanci9517','active'),('other-site','Other site','active');
+    CREATE TABLE site_domains(hostname TEXT PRIMARY KEY,site_id TEXT,status TEXT,verified_at TEXT);
+    INSERT INTO site_domains VALUES ('example.test','site-default','verified','2026-10-17'),('other.example.test','other-site','verified','2026-10-17');
     CREATE TABLE users(id TEXT PRIMARY KEY,email TEXT,display_name TEXT,role TEXT,is_active INTEGER);
     CREATE TABLE sessions(token_hash TEXT,user_id TEXT,expires_at TEXT);
     CREATE TABLE pages(id TEXT PRIMARY KEY,site_id TEXT,slug TEXT,title TEXT,description TEXT,
@@ -55,7 +59,8 @@ async function fixture(t) {
     ['target', 'site-default', 'new', 'New', 'New description', document('target'), document('target'), 1, 'new', 'New', 'New description', null],
     ['draft', 'site-default', 'draft-only', 'Draft', 'Draft', document('draft'), null, 0, null, null, null, null],
     ['archived', 'site-default', 'archived', 'Archived', 'Archived', document('archived'), document('archived'), 1, 'archived', 'Archived', 'Archived', '2026-10-01'],
-    ['foreign', 'other-site', 'foreign', 'Foreign', 'Foreign', document('foreign'), document('foreign'), 1, 'foreign', 'Foreign', 'Foreign', null]
+    ['foreign', 'other-site', 'foreign', 'Foreign', 'Foreign', document('foreign'), document('foreign'), 1, 'foreign', 'Foreign', 'Foreign', null],
+    ['overlap', 'other-site', 'youtube', 'Other YouTube', 'Other', document('overlap'), document('overlap'), 1, 'youtube', 'Other YouTube', 'Other', null]
   ];
   const insert = db.prepare(`INSERT INTO pages(id,site_id,slug,title,description,content_json,published_content_json,
     is_published,published_slug,published_title,published_description,archived_at,sort_order,updated_at,published_at)
@@ -74,6 +79,7 @@ async function fixture(t) {
     { id: 'outside', type: 'external', url: 'https://other.example.test/p/ghost', label: 'Other site' }
   ] }));
   const env = {
+    SITE_HOST_BINDINGS: JSON.stringify({ 'example.test': 'site-default', 'other.example.test': 'other-site' }),
     DB: { prepare(sql) {
       const statement = db.prepare(sql.replace(/\?\d+/g, '?'));
       let values = [];
@@ -165,12 +171,44 @@ test('public URL services keep explicit site identities separate', async t => {
   const foreignSitemap = await sitemapRoute(new Request(origin + '/sitemap.xml'), env, 'other-site');
   const xml = await foreignSitemap.text();
   assert.match(xml, /\/p\/foreign<\/loc>/);
-  assert.doesNotMatch(xml, /\/p\/youtube|\/p\/new/);
+  assert.doesNotMatch(xml, /\/p\/new/);
   db.prepare('INSERT INTO site_navigation VALUES (?,?)').run('other-site', JSON.stringify({ schemaVersion: 1, items: [
     { id: 'foreign-nav', type: 'page', pageId: 'foreign', label: 'Foreign', children: [] }
   ] }));
   const navigation = await publicNavigationRoute(env, 'other-site');
   assert.equal((await navigation.json()).data.items[0].href, '/p/foreign');
+});
+
+test('Worker serves only verified host/site pairs and isolates overlapping public slugs', async t => {
+  const { db, env, fetch } = await fixture(t);
+  const bootstrapEnv = { ...env, SITE_HOST_BINDINGS: undefined };
+  assert.equal((await worker.fetch(new Request('https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/p/youtube'), bootstrapEnv, {})).status, 200,
+    'current Worker hostname keeps the existing single-site route before the pending migration');
+  const attemptedBootstrapRemap = { ...env, SITE_HOST_BINDINGS: JSON.stringify({ 'sanci9517-streamer-brand.sandor-bogadi95.workers.dev': 'other-site' }) };
+  assert.match(await (await worker.fetch(new Request('https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/p/youtube'), attemptedBootstrapRemap, {})).text(),
+    /Live &amp; &lt;Now&gt;/, 'bootstrap hostname cannot be reassigned by a binding');
+  assert.match(await (await fetch('/p/youtube')).text(), /Live &amp; &lt;Now&gt;/);
+  const foreign = await worker.fetch(new Request('https://other.example.test/p/youtube'), env, {});
+  assert.equal(foreign.status, 200);
+  assert.match(await foreign.text(), /Other YouTube/);
+  const foreignAlias = await worker.fetch(new Request('https://other.example.test/p/foreign-old'), env, {});
+  assert.equal(foreignAlias.status, 308);
+  assert.equal(foreignAlias.headers.get('Location'), '/p/foreign');
+  const settings = await worker.fetch(new Request('https://other.example.test/api/public/site-settings'), env, {});
+  assert.equal((await settings.json()).siteName, 'Other site');
+  assert.equal((await worker.fetch(new Request('https://other.example.test/api/admin/pages'), env, {})).status, 403);
+  assert.equal((await worker.fetch(new Request('https://other.example.test/p/youtube?preview=1', { headers: { Cookie: 'sanci9517_session=editor' } }), env, {})).status, 403);
+  assert.equal((await worker.fetch(new Request('https://other.example.test/api/public/pages?slug=youtube&preview=1', { headers: { Cookie: 'sanci9517_session=editor' } }), env, {})).status, 403);
+  assert.equal((await worker.fetch(new Request('https://unknown.example.test/p/youtube', { headers: { 'X-Forwarded-Host': 'example.test' } }), env, {})).status, 421);
+  const wrongBinding = { ...env, SITE_HOST_BINDINGS: JSON.stringify({ 'other.example.test': 'site-default' }) };
+  assert.equal((await worker.fetch(new Request('https://other.example.test/p/youtube'), wrongBinding, {})).status, 421);
+  db.prepare("UPDATE site_domains SET status='revoked' WHERE hostname='other.example.test'").run();
+  assert.equal((await worker.fetch(new Request('https://other.example.test/p/youtube'), env, {})).status, 421);
+  db.prepare("UPDATE site_domains SET status='verified',verified_at=NULL WHERE hostname='other.example.test'").run();
+  assert.equal((await worker.fetch(new Request('https://other.example.test/p/youtube'), env, {})).status, 421);
+  db.prepare("UPDATE site_domains SET verified_at='2026-10-17'").run();
+  db.prepare("UPDATE sites SET status='archived' WHERE id='other-site'").run();
+  assert.equal((await worker.fetch(new Request('https://other.example.test/p/youtube'), env, {})).status, 421);
 });
 
 test('authenticated link report checks published rich text, redirects and site-scoped navigation', async t => {

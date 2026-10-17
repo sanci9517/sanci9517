@@ -14,8 +14,10 @@ async function fixture(t) {
   const db = new DatabaseSync(':memory:');
   t.after(() => db.close());
   db.exec(`
-    CREATE TABLE sites(id TEXT PRIMARY KEY,slug TEXT,name TEXT);
-    INSERT INTO sites VALUES('site-default','sanci9517','Sanci9517'),('other-site','other','Other');
+    CREATE TABLE sites(id TEXT PRIMARY KEY,slug TEXT,name TEXT,status TEXT NOT NULL DEFAULT 'active');
+    INSERT INTO sites(id,slug,name) VALUES('site-default','sanci9517','Sanci9517'),('other-site','other','Other');
+    CREATE TABLE site_domains(hostname TEXT PRIMARY KEY,site_id TEXT,status TEXT,verified_at TEXT);
+    INSERT INTO site_domains VALUES('example.test','site-default','verified','2026-10-17');
     CREATE TABLE users(id TEXT PRIMARY KEY,email TEXT,display_name TEXT,role TEXT,is_active INTEGER);
     CREATE TABLE sessions(token_hash TEXT,user_id TEXT,expires_at TEXT);
     CREATE TABLE pages(archived_at TEXT,id TEXT PRIMARY KEY,site_id TEXT,slug TEXT,title TEXT,description TEXT,
@@ -43,7 +45,7 @@ async function fixture(t) {
       VALUES (?,?,?,?,?,?,?,?,1,?,?,?)`).run(id, site, id, 'Original', 'Description', json, json, `r-${id}`, id, 'Original', 'Description');
     db.prepare('INSERT INTO editor_revisions(id,page_id,version,document_json) VALUES (?,?,1,?)').run(`r-${id}`, id, json);
   }
-  const env = { DB: {
+  const env = { SITE_HOST_BINDINGS: '{"example.test":"site-default"}', DB: {
     beforeBatch: null,
     prepare(sql) {
       // D1 supports indexed placeholders; these queries bind each index once.
