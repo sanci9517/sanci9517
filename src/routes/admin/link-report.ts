@@ -4,7 +4,7 @@ import { getCanonicalSiteContext } from "../../core/site-context";
 import type { Env } from "../../types/env";
 
 type NavigationItem = { id?: string; type?: string; pageId?: string; label?: string; url?: string; children?: NavigationItem[] };
-type PageRow = { id: string; published_slug: string | null; is_published: number; archived_at: string | null };
+type PageRow = { id: string; published_slug: string | null; is_published: number; archived_at: string | null; published_content_json: string | null };
 
 export async function adminLinkReportRoute(request: Request, env: Env): Promise<Response> {
   if (request.method !== "GET") return error("METHOD_NOT_ALLOWED", 405);
@@ -13,7 +13,7 @@ export async function adminLinkReportRoute(request: Request, env: Env): Promise<
   if (!hasRole(user, "editor")) return error("FORBIDDEN", 403, "Editor role required");
   const { siteId } = getCanonicalSiteContext();
   const navigation = await env.DB.prepare("SELECT published_json FROM site_navigation WHERE site_id=? LIMIT 1").bind(siteId).first<{ published_json: string }>();
-  const pages = await env.DB.prepare("SELECT id,published_slug,is_published,archived_at FROM pages WHERE site_id=?").bind(siteId).all<PageRow>();
+  const pages = await env.DB.prepare("SELECT id,published_slug,is_published,archived_at,published_content_json FROM pages WHERE site_id=?").bind(siteId).all<PageRow>();
   const byId = new Map(pages.results.map(page => [page.id, page]));
   let parsed: unknown = null;
   try { parsed = navigation ? JSON.parse(navigation.published_json) : null; } catch {
@@ -38,7 +38,34 @@ export async function adminLinkReportRoute(request: Request, env: Env): Promise<
     }
   }
   if (root?.items) visit(root.items, 0);
-  const response = ok({ scope: "published-navigation-page-references", checked, truncated: checked >= 2000, findings });
+  const publishedSlugs = new Set(pages.results.filter(page => !page.archived_at && page.is_published && page.published_slug).map(page => page.published_slug));
+  const contentFindings: { sourcePageId: string; nodeId: string; href: string; reason: string }[] = [];
+  let checkedContentLinks = 0;
+  let contentTruncated = false;
+  for (const page of pages.results) {
+    if (page.archived_at || !page.is_published || !page.published_content_json) continue;
+    let document: any;
+    try { document = JSON.parse(page.published_content_json); } catch { continue; }
+    const nodes = document?.pages?.[page.id]?.nodes;
+    if (!nodes || typeof nodes !== "object" || Array.isArray(nodes)) continue;
+    for (const [nodeId, node] of Object.entries<any>(nodes)) {
+      if (checkedContentLinks >= 2000) { contentTruncated = true; break; }
+      const candidates = [node?.props?.href, node?.props?.url, node?.props?.link?.href, node?.props?.link?.url];
+      for (const href of candidates) {
+        if (typeof href !== "string" || !href.startsWith("/p/")) continue;
+        if (checkedContentLinks >= 2000) { contentTruncated = true; break; }
+        checkedContentLinks++;
+        const pathname = href.split(/[?#]/, 1)[0];
+        let slug: string;
+        try { slug = decodeURIComponent(pathname.slice(3)); } catch { slug = ""; }
+        if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) || !publishedSlugs.has(slug)) {
+          contentFindings.push({ sourcePageId: page.id, nodeId, href: href.slice(0, 300), reason: "TARGET_NOT_PUBLISHED" });
+        }
+      }
+    }
+    if (contentTruncated) break;
+  }
+  const response = ok({ scope: "published-navigation-and-content-page-references", checked, truncated: checked >= 2000, findings, checkedContentLinks, contentTruncated, contentFindings });
   const headers = new Headers(response.headers);
   headers.set("Cache-Control", "private, no-store");
   return new Response(response.body, { status: response.status, headers });
