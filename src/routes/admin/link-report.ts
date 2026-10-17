@@ -63,7 +63,10 @@ export async function adminLinkReportRoute(request: Request, env: Env): Promise<
         if (typeof html !== "string" || html.length > 100000) continue;
         const anchors = /<a\b[^>]*?\bhref\s*=\s*(?:["']([^"']*)["']|([^\s>]+))/gi;
         let match: RegExpExecArray | null;
-        while ((match = anchors.exec(html)) !== null && candidates.length < 2000) candidates.push((match[1] ?? match[2]).replace(/&amp;/gi, "&"));
+        while ((match = anchors.exec(html)) !== null) {
+          if (candidates.length >= 2000) { contentTruncated = true; break; }
+          candidates.push((match[1] ?? match[2]).replace(/&amp;/gi, "&"));
+        }
       }
       for (const href of candidates) {
         if (typeof href !== "string" || !href.startsWith("/p/")) continue;

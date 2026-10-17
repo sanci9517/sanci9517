@@ -74,3 +74,9 @@ test("WEB-013 warns about published pages with missing content", () => {
   assert.match(ui, /data\.missingPublishedContentPages/);
   assert.match(ui, /tartalom nélküli/);
 });
+
+test("WEB-013 marks truncated rich-text candidate extraction", () => {
+  assert.match(route, /while \(\(match = anchors\.exec\(html\)\) !== null\)/);
+  assert.match(route, /if \(candidates\.length >= 2000\) \{ contentTruncated = true; break; \}/);
+  assert.match(ui, /if \(data\.contentTruncated\)/);
+});
