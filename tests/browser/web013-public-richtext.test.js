@@ -10,7 +10,7 @@ const root = resolve(import.meta.dirname, '../..', 'public');
 const richText = { schemaVersion: 1, type: 'richtext-document', blocks: [
   { type: 'heading', level: 2, children: [{ type: 'text', text: 'Published <heading>', marks: [] }] },
   { type: 'paragraph', children: [
-    { type: 'text', text: 'Current page', marks: [], link: { href: '/p/target' } },
+    { type: 'text', text: 'Current page', marks: ['bold','underline'], link: { href: '/p/target' } },
     { type: 'text', text: 'Unsafe <script>window.__xss=1</script>', marks: [], link: { href: 'javascript:alert(1)' } },
     { type: 'text', text: 'External', marks: [], link: { href: 'https://example.org/', target: '_blank', title: 'External link' } }
   ] },
@@ -20,8 +20,11 @@ const richText = { schemaVersion: 1, type: 'richtext-document', blocks: [
 ] };
 const page = { ok: true, data: { id: 'sample', slug: 'sample', title: 'Sample', description: 'Published',
   content: { rootId: 'root', nodes: {
-    root: { id: 'root', type: 'root', children: ['rich'], props: {} },
-    rich: { id: 'rich', type: 'richtext', children: [], props: { richText } }
+    root: { id: 'root', type: 'root', children: ['rich','grid'], props: {} },
+    rich: { id: 'rich', type: 'richtext', children: [], props: { richText },
+      responsive: { desktop: { backgroundColor: '#123456', fontSize: '22px', width: '320px' }, mobile: { backgroundColor: '#abcdef', fontSize: '18px', width: '85%' } } },
+    grid: { id: 'grid', type: 'grid', name: 'Grid', children: [], props: {}, style: { display: 'grid' },
+      responsive: { desktop: { gridTemplateColumns: 'repeat(2, minmax(0, 1fr))' }, mobile: { gridTemplateColumns: '1fr' } } }
   } } } };
 
 test('published structured Rich Text renders safe clickable links in the real public shell', async t => {
@@ -52,10 +55,18 @@ test('published structured Rich Text renders safe clickable links in the real pu
   await pageTab.getByRole('link', { name: 'Current page' }).waitFor();
   assert.equal(await pageTab.locator('.visual-text h2').textContent(), 'Published <heading>');
   assert.match(await pageTab.getByRole('link', { name: 'Current page' }).getAttribute('href'), /\/p\/target$/);
+  assert.equal(await pageTab.locator('.visual-text a u strong').textContent(), 'Current page');
   assert.match(await pageTab.getByRole('link', { name: 'Historical URL' }).getAttribute('href'), /\/p\/old$/);
   assert.equal(await pageTab.locator('.visual-text a').count(), 3);
   assert.equal(await pageTab.getByRole('link', { name: 'External' }).getAttribute('rel'), 'noopener noreferrer');
   assert.equal(await pageTab.locator('.visual-text script').count(), 0);
   assert.equal(await pageTab.evaluate(() => window.__xss), undefined);
   assert.match(await pageTab.locator('.visual-text').textContent(), /Unsafe <script>window\.__xss=1<\/script>/);
+  assert.equal(await pageTab.locator('.visual-text').evaluate(el => getComputedStyle(el).backgroundColor), 'rgb(171, 205, 239)');
+  assert.equal(await pageTab.locator('.visual-text').evaluate(el => el.style.getPropertyValue('--editor-mobile-width')), '85%');
+  assert.equal(await pageTab.locator('.visual-card').evaluate(el => getComputedStyle(el).gridTemplateColumns.split(' ').length), 1);
+  await pageTab.setViewportSize({ width: 1366, height: 800 });
+  await pageTab.waitForFunction(() => getComputedStyle(document.querySelector('.visual-text')).backgroundColor === 'rgb(18, 52, 86)');
+  assert.equal(await pageTab.locator('.visual-text').evaluate(el => getComputedStyle(el).fontSize), '22px');
+  assert.equal(await pageTab.locator('.visual-card').evaluate(el => getComputedStyle(el).gridTemplateColumns.split(' ').length), 2);
 });

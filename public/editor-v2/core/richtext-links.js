@@ -22,6 +22,34 @@ export function validatedLinkHref(value) {
 }
 
 export function updateRichTextInlineLink(documentModel, {blockIndex, from, to}, href) {
+  const safeHref = href === null ? null : validatedLinkHref(href);
+  return updateRichTextRange(documentModel, {blockIndex, from, to}, piece => {
+    if (safeHref === null) delete piece.link;
+    else piece.link = {
+      href: safeHref,
+      ...(safeHref.startsWith('https://') || safeHref.startsWith('http://')
+        ? {target: '_blank', rel: 'noopener noreferrer'} : {})
+    };
+  });
+}
+
+export function updateRichTextInlineMark(documentModel, range, mark) {
+  if (!['bold', 'italic', 'underline'].includes(mark)) throw new Error('Ismeretlen szövegformázás.');
+  const block = documentModel?.blocks?.[range.blockIndex];
+  let offset = 0;
+  const selected = (block?.children ?? []).filter(run => {
+    const begin = offset; offset += String(run.text ?? '').length;
+    return offset > range.from && begin < range.to;
+  });
+  const remove = selected.length > 0 && selected.every(run => run.marks?.includes(mark));
+  return updateRichTextRange(documentModel, range, piece => {
+    const marks = new Set(piece.marks ?? []);
+    if (remove) marks.delete(mark); else marks.add(mark);
+    piece.marks = ['bold', 'italic', 'underline'].filter(value => marks.has(value));
+  });
+}
+
+function updateRichTextRange(documentModel, {blockIndex, from, to}, change) {
   if (!Array.isArray(documentModel?.blocks) || !Number.isInteger(blockIndex) ||
       blockIndex < 0 || blockIndex >= documentModel.blocks.length) throw new Error('Érvénytelen szövegkijelölés.');
   const block = documentModel.blocks[blockIndex];
@@ -30,7 +58,6 @@ export function updateRichTextInlineLink(documentModel, {blockIndex, from, to}, 
   if (!Number.isInteger(from) || !Number.isInteger(to) || from < 0 || to > size || to <= from) {
     throw new Error('Először jelölj ki egy szövegrészt.');
   }
-  const safeHref = href === null ? null : validatedLinkHref(href);
   const next = structuredClone(documentModel);
   const updated = [];
   let offset = 0;
@@ -41,14 +68,7 @@ export function updateRichTextInlineLink(documentModel, {blockIndex, from, to}, 
     const take = (a, b, selected) => {
       if (b <= a) return;
       const piece = {...structuredClone(run), text: text.slice(a - begin, b - begin)};
-      if (selected) {
-        if (safeHref === null) delete piece.link;
-        else piece.link = {
-          href: safeHref,
-          ...(safeHref.startsWith('https://') || safeHref.startsWith('http://')
-            ? {target: '_blank', rel: 'noopener noreferrer'} : {})
-        };
-      }
+      if (selected) change(piece);
       updated.push(piece);
     };
     take(begin, Math.min(end, from), false);
@@ -107,4 +127,12 @@ export function getRichTextBlockSelection(editor) {
     to = from + anchor.textContent.length;
   }
   return from === to ? null : {blockIndex, from, to};
+}
+
+export function getRichTextActiveBlockIndex(editor) {
+  const selection=window.getSelection();
+  if(!selection?.rangeCount||!editor.contains(selection.anchorNode))return null;
+  let node=selection.anchorNode.nodeType===Node.ELEMENT_NODE?selection.anchorNode:selection.anchorNode.parentElement;
+  while(node&&node.parentElement!==editor)node=node.parentElement;
+  return node?.parentElement===editor?[...editor.children].indexOf(node):null;
 }

@@ -19,7 +19,8 @@ export function normalizeInspectorValue(property, input) {
   if (type === 'number') {
     const number = Number(value);
     const bounds = property.key === 'opacity' ? [0, 1] :
-      property.key === 'lineHeight' ? [0.5, 5] : [-9999, 9999];
+      property.key === 'lineHeight' ? [0.5, 5] :
+      ['flexGrow','flexShrink'].includes(property.key) ? [0, 100] : [-9999, 9999];
     if (!Number.isFinite(number) || number < bounds[0] || number > bounds[1]) {
       throw new Error('A szám a megengedett tartományon kívül van.');
     }
@@ -27,6 +28,7 @@ export function normalizeInspectorValue(property, input) {
   }
   if (type === 'dimension') {
     if (!lengthToken.test(value)) throw new Error('Használj érvényes méretet: pl. 24px, 50%, 2rem vagy auto.');
+    if (value.startsWith('-') && !['x','y','letterSpacing'].includes(property.key)) throw new Error('Itt nem használható negatív méret.');
     if (value === 'auto' && !property.units?.includes('auto')) throw new Error('Az auto itt nem használható.');
     if (value === '0') return '0';
     const unit = value.match(/[a-z%]+$/i)?.[0] || '';
@@ -38,6 +40,7 @@ export function normalizeInspectorValue(property, input) {
     if (parts.length < 1 || parts.length > 4 || parts.some(p => !lengthToken.test(p))) {
       throw new Error('A térköz 1–4 méretből állhat, pl. 8px 16px.');
     }
+    if(property.key==='padding'&&parts.some(part=>part.startsWith('-')))throw new Error('A belső térköz nem lehet negatív.');
     return parts.join(' ');
   }
   if (type === 'color') {

@@ -6,7 +6,10 @@ import { execute } from '../core/commands.js';
 import { resolveNodeStyle } from '../core/canvas-engine.js';
 import { getProperty } from '../core/property-registry.js';
 import { normalizeInspectorValue } from '../core/property-values.js';
-import { updateRichTextInlineLink, validatedLinkHref } from '../core/richtext-links.js';
+import { updateRichTextInlineLink, updateRichTextInlineMark, validatedLinkHref } from '../core/richtext-links.js';
+import { normalizeRichText } from '../core/schema.js';
+import { setBlockType } from '../core/richtext-engine.js';
+import { ELEMENT_CAPABILITIES, getElementCapability } from '../core/capability-matrix.js';
 
 test('typed Inspector controls validate display values before the command path', () => {
   const width = getProperty('size.width');
@@ -14,8 +17,10 @@ test('typed Inspector controls validate display values before the command path',
   assert.equal(normalizeInspectorValue(width,'auto'),'auto');
   assert.throws(()=>normalizeInspectorValue(width,'calc(1px + url(javascript:x))'));
   assert.throws(()=>normalizeInspectorValue(width,'2em'));
+  assert.throws(()=>normalizeInspectorValue(width,'-20px'));
   assert.equal(normalizeInspectorValue(getProperty('spacing.padding'),'8px 16px 8px 16px'),'8px 16px 8px 16px');
   assert.throws(()=>normalizeInspectorValue(getProperty('spacing.padding'),'8px 8px 8px 8px 8px'));
+  assert.throws(()=>normalizeInspectorValue(getProperty('spacing.padding'),'-8px'));
   assert.equal(normalizeInspectorValue(getProperty('opacity.value'),'0.5'),'0.5');
   assert.throws(()=>normalizeInspectorValue(getProperty('opacity.value'),'7'));
   assert.throws(()=>normalizeInspectorValue(getProperty('opacity.value'),'not-a-number'));
@@ -49,6 +54,39 @@ test('typed changes use Page Model commands, responsive overrides and undo', () 
   assert.equal(resolveNodeStyle(node,'desktop').backgroundColor,'#123456');
   execute(state,{type:'history.undo'});
   assert.notEqual(resolveNodeStyle(activePage(state).nodes[nodeId],'mobile').width,'100%');
+});
+
+test('Flex and Grid Inspector properties resolve from the same responsive Page Model on canvas', () => {
+  const state=createEditorState(createDocument());
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.GRID}});
+  const nodeId=state.selection.primaryId;
+  const columns=getProperty('grid.columns');
+  execute(state,{type:'responsive.set',payload:{nodeId,device:'desktop',patch:{
+    display:normalizeInspectorValue(getProperty('layout.display'),'grid'),
+    gridTemplateColumns:normalizeInspectorValue(columns,'repeat(2, minmax(0, 1fr))')
+  }}});
+  execute(state,{type:'responsive.set',payload:{nodeId,device:'mobile',patch:{
+    gridTemplateColumns:normalizeInspectorValue(columns,'1fr')
+  }}});
+  const node=activePage(state).nodes[nodeId];
+  assert.equal(resolveNodeStyle(node,'desktop').gridTemplateColumns,'repeat(2, minmax(0, 1fr))');
+  assert.equal(resolveNodeStyle(node,'tablet').gridTemplateColumns,'repeat(2, minmax(0, 1fr))');
+  assert.equal(resolveNodeStyle(node,'mobile').gridTemplateColumns,'1fr');
+  execute(state,{type:'history.undo'});
+  assert.equal(resolveNodeStyle(activePage(state).nodes[nodeId],'mobile').gridTemplateColumns,'repeat(2, minmax(0, 1fr))');
+});
+
+test('every palette node type has an explicit honest capability classification', () => {
+  assert.deepEqual(Object.keys(ELEMENT_CAPABILITIES).sort(),Object.values(NODE_TYPES).sort());
+  for(const type of Object.values(NODE_TYPES)){
+    const capability=getElementCapability(type);
+    assert.ok(['PARTIAL','PLANNED'].includes(capability.status));
+    assert.ok(['PARTIAL','PLANNED'].includes(capability.inspector));
+    assert.ok(['PARTIAL','PLANNED'].includes(capability.public));
+  }
+  assert.equal(getElementCapability(NODE_TYPES.RICHTEXT).status,'PARTIAL');
+  assert.equal(getElementCapability(NODE_TYPES.FORM).public,'PLANNED');
+  assert.equal(getElementCapability(NODE_TYPES.TABLE).public,'PLANNED');
 });
 
 const documentModel = {
@@ -98,4 +136,26 @@ test('unsafe schemes and invalid/empty selections are rejected without changing 
   assert.throws(()=>updateRichTextInlineLink(documentModel,{blockIndex:0,from:5,to:5},'/p/home'));
   assert.throws(()=>updateRichTextInlineLink(documentModel,{blockIndex:0,from:0,to:500},'/p/home'));
   assert.throws(()=>updateRichTextInlineLink(documentModel,{blockIndex:99,from:0,to:2},'/p/home'));
+});
+
+test('inline marks, link and block transforms preserve content through commands and undo', () => {
+  const state=createEditorState(createDocument());
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.RICHTEXT}});
+  const nodeId=state.selection.primaryId;
+  const bold=updateRichTextInlineMark(documentModel,{blockIndex:0,from:6,to:11},'bold');
+  const linked=updateRichTextInlineLink(bold,{blockIndex:0,from:6,to:11},'/p/home');
+  const list=setBlockType(linked,0,17,'bulleted-list');
+  execute(state,{type:'richtext.content.set',payload:{nodeId,document:list}});
+  const persisted=activePage(state).nodes[nodeId].props.richText;
+  assert.equal(persisted.blocks[0].type,'bulleted-list');
+  assert.deepEqual(persisted.blocks[0].items[0][1].marks,['bold']);
+  assert.equal(persisted.blocks[0].items[0][1].link.href,'/p/home');
+  assert.deepEqual(normalizeRichText(persisted),persisted);
+  execute(state,{type:'history.undo'});
+  assert.equal(activePage(state).nodes[nodeId].props.richText.blocks[0].type,'paragraph');
+  execute(state,{type:'history.redo'});
+  assert.deepEqual(activePage(state).nodes[nodeId].props.richText,persisted);
+  const unbold=updateRichTextInlineMark(bold,{blockIndex:0,from:6,to:11},'bold');
+  assert.equal(unbold.blocks[0].children.every(run=>run.marks.length===0),true);
+  assert.throws(()=>updateRichTextInlineMark(documentModel,{blockIndex:0,from:0,to:2},'script'));
 });

@@ -125,7 +125,7 @@ export const RICH_TEXT_BLOCK_TYPES = Object.freeze(new Set([
   'paragraph', 'heading', 'quote', 'code', 'bulleted-list', 'numbered-list'
 ]));
 
-export const RICH_TEXT_MARKS = Object.freeze(new Set([]));
+export const RICH_TEXT_MARKS = Object.freeze(new Set(['bold', 'italic', 'underline']));
 
 export function createEmptyRichText() {
   return {
@@ -155,7 +155,7 @@ export function normalizeRichText(value) {
       if (!Array.isArray(block.items) || block.items.length === 0) throw new Error('List items are required');
       return {
         type: block.type,
-        items: block.items.map((item) => normalizeRichTextInlineChildren(item?.children))
+        items: block.items.map((item) => normalizeRichTextInlineChildren(Array.isArray(item) ? item : item?.children))
       };
     }
     return {

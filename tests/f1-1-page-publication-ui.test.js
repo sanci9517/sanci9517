@@ -6,7 +6,7 @@ const app=readFileSync(new URL('../public/editor-v2/app.js',import.meta.url),'ut
 function action(start,end,context){runInNewContext(app.slice(app.indexOf(start),app.indexOf(end))+';this.act='+start.match(/function (\w+)/)[1],context);return context.act}
 function editor(){
  const statuses=[],alerts=[];const meta={id:'p',slug:'p',isPublished:false,revision:1};const state={document:{revision:1,pages:{p:{id:'p'}}},persistence:{dirty:true,saving:false}};
- const context={state,pages:[meta],page:()=>({id:'p'}),setStatus:m=>statuses.push(m),alert:m=>alerts.push(m),structuredClone,markSaved:(s,v)=>{s.persistence.dirty=false;s.persistence.saving=false;s.persistence.lastSavedRevision=v},render:()=>{},renderPageList:()=>{},$:()=>null,showRevisionConflict:()=>{},api:async()=>({data:{pageId:'p',version:2,revisionId:'r2'}})};
+ const context={state,pages:[meta],page:()=>({id:'p'}),flushRichTextDraft:null,setStatus:m=>statuses.push(m),alert:m=>alerts.push(m),structuredClone,markSaved:(s,v)=>{s.persistence.dirty=false;s.persistence.saving=false;s.persistence.lastSavedRevision=v},render:()=>{},renderPageList:()=>{},$:()=>null,showRevisionConflict:()=>{},api:async()=>({data:{pageId:'p',version:2,revisionId:'r2'}})};
  return {context,statuses,alerts};
 }
 test('successful publish immediately marks a previously draft page LIVE; subsequent save keeps LIVE with pending draft',async()=>{
@@ -19,6 +19,17 @@ test('failed publication preserves list publication state and local dirty docume
  const f=editor();f.context.api=async()=>{throw Error('offline')};const original=JSON.stringify(f.context.state.document);
  await action('async function save(publish=false)','async function unpublishPage()',f.context)(true);
  assert.equal(f.context.pages[0].isPublished,false);assert.equal(f.context.state.persistence.dirty,true);assert.equal(JSON.stringify(f.context.state.document),original);
+});
+test('save submits flushed Rich Text and refuses a failed DOM-to-model sync',async()=>{
+ const f=editor(),requests=[];
+ f.context.flushRichTextDraft=()=>{f.context.state.document.pages.p.text='Latest focused text';return true};
+ f.context.api=async(_path,options)=>{requests.push(JSON.parse(options.body));return {data:{pageId:'p',version:2,revisionId:'r2'}}};
+ await action('async function save(publish=false)','async function unpublishPage()',f.context)(false);
+ assert.equal(requests[0].document.pages.p.text,'Latest focused text');
+ const blocked=editor();blocked.context.flushRichTextDraft=()=>false;
+ blocked.context.api=async()=>assert.fail('failed Rich Text flush must not call the server');
+ await action('async function save(publish=false)','async function unpublishPage()',blocked.context)(true);
+ assert.equal(blocked.context.pages[0].isPublished,false);
 });
 test('page settings do not replace dirty content or run during an in-flight save',async()=>{
  for(const field of ['dirty','saving']){

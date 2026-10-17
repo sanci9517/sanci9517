@@ -33,8 +33,8 @@ test('typed Inspector controls and link selection work with real browser DOM at 
     const data=await page.evaluate(async()=>{
       const {renderPropertyInput}=await import('/editor-v2/ui/property-controls.js');
       const {getProperty}=await import('/editor-v2/core/property-registry.js');
-      const {getRichTextBlockSelection,updateRichTextInlineLink}=await import('/editor-v2/core/richtext-links.js');
-      const {renderRichTextEditor,richTextEditorToDocument}=await import('/editor-v2/core/richtext-engine.js');
+      const {getRichTextBlockSelection,updateRichTextInlineLink,updateRichTextInlineMark}=await import('/editor-v2/core/richtext-links.js');
+      const {renderRichTextEditor,richTextEditorToDocument,setBlockType}=await import('/editor-v2/core/richtext-engine.js');
       const host=document.createElement('div');document.body.append(host);
       const edits=[];
       const color=renderPropertyInput(getProperty('background.color'),'Háttérszín','#112233',v=>edits.push(v));
@@ -63,7 +63,15 @@ test('typed Inspector controls and link selection work with real browser DOM at 
       selection.removeAllRanges();selection.addRange(caret);
       const editing=getRichTextBlockSelection(editor);
       const unlinked=updateRichTextInlineLink(richTextEditorToDocument(editor),editing,null);
+      const marked=updateRichTextInlineMark(linked,saved,'bold');
+      renderRichTextEditor(editor,marked);
+      const parsedMarked=richTextEditorToDocument(editor);
+      const list=setBlockType(parsedMarked,0,11,'numbered-list');
+      renderRichTextEditor(editor,list);
+      const parsedList=richTextEditorToDocument(editor);
       return {edits,saved,editing,linkPresent,linksAfterRemoval:unlinked.blocks[0].children.filter(x=>x.link).length,
+        markedRun:parsedMarked.blocks[0].children.find(x=>x.text==='world'),
+        listType:parsedList.blocks[0].type,listText:parsedList.blocks[0].items[0].children.map(x=>x.text).join(''),
         hasHorizontalOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+1};
     });
     assert.deepEqual(data.edits,['#abcdef','8px 12px 8px 8px']);
@@ -71,6 +79,10 @@ test('typed Inspector controls and link selection work with real browser DOM at 
     assert.deepEqual(data.editing,{blockIndex:0,from:6,to:11});
     assert.equal(data.linkPresent,true);
     assert.equal(data.linksAfterRemoval,0);
+    assert.deepEqual(data.markedRun.marks,['bold']);
+    assert.equal(data.markedRun.link.href,'/p/home');
+    assert.equal(data.listType,'numbered-list');
+    assert.equal(data.listText,'Hello world');
     await page.close();
   }
 });
