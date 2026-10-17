@@ -57,7 +57,7 @@ export async function adminLinkReportRoute(request: Request, env: Env): Promise<
       // Rich-text HTML can contain internal anchors that are not explicit node link props.
       for (const html of [node?.props?.html, node?.props?.richText, node?.props?.content?.html]) {
         if (typeof html !== "string" || html.length > 100000) continue;
-        const anchors = /<a\\b[^>]*?\\bhref\\s*=\\s*(?:["']([^"']*)["']|([^\\s>]+))/gi;
+        const anchors = /<a\b[^>]*?\bhref\s*=\s*(?:["']([^"']*)["']|([^\s>]+))/gi;
         let match: RegExpExecArray | null;
         while ((match = anchors.exec(html)) !== null && candidates.length < 2000) candidates.push(match[1] ?? match[2]);
       }
