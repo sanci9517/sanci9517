@@ -35,7 +35,8 @@
       const form = document.getElementById("login-form");
       const result = document.getElementById("result");
       const submit = document.getElementById("submit");
-      async function waitForAuthenticatedSession() {\n        let failure = "SESSION_NOT_RETURNED";
+      async function waitForAuthenticatedSession() {
+        let failure = "SESSION_NOT_RETURNED";
         for (let attempt = 0; attempt < 3; attempt += 1) {
           try {
             const response = await fetch("/api/auth/session", {
@@ -45,7 +46,8 @@
               headers: { "Accept": "application/json" }
             });
             const payload = await response.json();
-            if (response.ok && payload?.ok && payload?.data?.authenticated === true) return { ready: true };\n            if (!response.ok || !payload?.ok) failure = "SESSION_SERVER_ERROR";
+            if (response.ok && payload?.ok && payload?.data?.authenticated === true) return { ready: true };
+            if (!response.ok || !payload?.ok) failure = "SESSION_SERVER_ERROR";
           } catch { failure = "SESSION_NETWORK_ERROR"; }
           if (attempt < 2) await new Promise((resolve) => window.setTimeout(resolve, 200 * (attempt + 1)));
         }
@@ -71,8 +73,8 @@
             return;
           }
           result.textContent = "Belépés sikeres, munkamenet ellenőrzése…";
-          const sessionReady = await waitForAuthenticatedSession();
-          if (!sessionReady) {
+          const sessionCheck = await waitForAuthenticatedSession();
+          if (!sessionCheck.ready) {
             result.textContent = "A belépés sikerült, de a munkamenet nem igazolható. A böngésző nem küldte vissza a munkamenetet; próbáld újra, vagy nyisd meg a webhelyet normál Chrome-lapon.";
             return;
           }
