@@ -88,3 +88,10 @@ test("WEB-013 discloses oversized rich-text fields excluded from scanning", () =
   assert.match(ui, /if \(data\.oversizedRichTextFields\)/);
   assert.match(ui, /túl hosszú rich-text mező/);
 });
+
+test("WEB-013 reports navigation depth limits rather than silently skipping branches", () => {
+  assert.match(route, /let navigationDepthTruncated = false/);
+  assert.match(route, /if \(depth > 20\) \{ navigationDepthTruncated = true; return; \}/);
+  assert.match(route, /truncated: checked >= 2000 \|\| navigationDepthTruncated, navigationDepthTruncated/);
+  assert.match(ui, /if \(data\.navigationDepthTruncated\)/);
+});
