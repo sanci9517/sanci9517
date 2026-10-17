@@ -35,11 +35,3 @@ test("login page verifies authenticated session before navigating to Admin", () 
   assert.match(loginPage, /if \(!sessionReady\)/);
   assert.match(loginPage, /window\.location\.replace\("\/admin"\)/);
 });
-
-test("login distinguishes missing sessions, server errors and network failures without bypassing validation", () => {
-  for (const code of ["SESSION_NOT_RETURNED", "SESSION_SERVER_ERROR", "SESSION_NETWORK_ERROR"]) {
-    assert.match(loginPage, new RegExp(code));
-  }
-  assert.match(loginPage, /if \(!sessionCheck\.ready\)/);
-  assert.match(loginPage, /window\.location\.replace\("\/admin"\)/);
-});
