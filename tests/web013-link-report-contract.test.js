@@ -39,3 +39,14 @@ test("WEB-013 admin report surfaces broken and redirected links separately", () 
   assert.match(ui, /Átirányítás/);
   assert.match(ui, /fetch\("\/api\/admin\/link-report"/);
 });
+
+test("WEB-013 rich-text anchor matcher recognizes actual quoted and unquoted href values", () => {
+  const source = route.match(/const anchors = (\/<a[^;]+\/gi);/);
+  assert.ok(source, "anchor matcher must be present");
+  const expression = source[1];
+  const lastSlash = expression.lastIndexOf("/");
+  const matcher = new RegExp(expression.slice(1, lastSlash), expression.slice(lastSlash + 1));
+  const html = '<p><a href="/p/first-page">First</a><a class="cta" href=\'/p/second-page?x=1\'>Second</a><a href=/p/third-page>Third</a></p>';
+  const found = [...html.matchAll(matcher)].map(match => match[1] ?? match[2]);
+  assert.deepEqual(found, ["/p/first-page", "/p/second-page?x=1", "/p/third-page"]);
+});
