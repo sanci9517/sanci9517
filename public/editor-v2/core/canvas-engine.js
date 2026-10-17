@@ -8,10 +8,25 @@
 
 import { resolveResponsiveValue } from './responsive.js';
 
-const STYLE_MAP = Object.freeze({
+export const STYLE_MAP = Object.freeze({
   width: 'width',
   height: 'height',
   display: 'display',
+  flexDirection: 'flexDirection',
+  justifyContent: 'justifyContent',
+  alignItems: 'alignItems',
+  alignSelf: 'alignSelf',
+  flexWrap: 'flexWrap',
+  flexGrow: 'flexGrow',
+  flexShrink: 'flexShrink',
+  flexBasis: 'flexBasis',
+  gap: 'gap',
+  rowGap: 'rowGap',
+  columnGap: 'columnGap',
+  gridTemplateColumns: 'gridTemplateColumns',
+  gridTemplateRows: 'gridTemplateRows',
+  gridColumn: 'gridColumn',
+  gridRow: 'gridRow',
   overflow: 'overflow',
   color: 'color',
   backgroundColor: 'backgroundColor',
@@ -26,6 +41,7 @@ const STYLE_MAP = Object.freeze({
   fontSize: 'fontSize',
   fontWeight: 'fontWeight',
   lineHeight: 'lineHeight',
+  letterSpacing: 'letterSpacing',
   textAlign: 'textAlign',
   zIndex: 'zIndex',
   margin: 'margin',

@@ -48,6 +48,7 @@ const properties = [
   { id: 'typography.fontSize', key: 'fontSize', group: 'typography', label: 'Betűméret', type: 'dimension', units: ['px', 'rem', 'em', 'vw'], responsive: true, command: 'responsive.set' },
   { id: 'typography.fontWeight', key: 'fontWeight', group: 'typography', label: 'Vastagság', type: 'select', options: ['300', '400', '500', '600', '700', '800', '900'], responsive: true, command: 'responsive.set' },
   { id: 'typography.lineHeight', key: 'lineHeight', group: 'typography', label: 'Sormagasság', type: 'number', responsive: true, command: 'responsive.set' },
+  { id: 'typography.letterSpacing', key: 'letterSpacing', group: 'typography', label: 'Betűköz', type: 'dimension', units: ['px', 'rem', 'em'], responsive: true, command: 'responsive.set' },
   { id: 'typography.textAlign', key: 'textAlign', group: 'typography', label: 'Igazítás', type: 'select', options: ['left', 'center', 'right', 'justify'], responsive: true, command: 'responsive.set' },
   { id: 'background.color', key: 'backgroundColor', group: 'background', label: 'Háttérszín', type: 'color', responsive: true, command: 'responsive.set' },
   { id: 'background.image', key: 'backgroundImage', group: 'background', label: 'Háttérkép', type: 'asset', responsive: true, command: 'responsive.set' },
@@ -57,6 +58,16 @@ const properties = [
   { id: 'radius.all', key: 'borderRadius', group: 'radius', label: 'Lekerekítés', type: 'dimension', units: ['0', 'px', 'rem', '%'], responsive: true, command: 'responsive.set' },
   { id: 'shadow.box', key: 'boxShadow', group: 'shadow', label: 'Árnyék', type: 'shadow', responsive: true, command: 'responsive.set' },
   { id: 'opacity.value', key: 'opacity', group: 'opacity', label: 'Átlátszóság', type: 'number', responsive: true, command: 'responsive.set' },
+  { id: 'flex.direction', key: 'flexDirection', group: 'flex', label: 'Irány', type: 'select', options: ['row', 'column', 'row-reverse', 'column-reverse'], appliesTo: ['flex','row','columns','stack'], responsive: true, command: 'responsive.set' },
+  { id: 'flex.justify', key: 'justifyContent', group: 'flex', label: 'Vízszintes elosztás', type: 'select', options: ['flex-start', 'center', 'flex-end', 'space-between', 'space-around', 'space-evenly'], appliesTo: ['flex','row','columns','stack'], responsive: true, command: 'responsive.set' },
+  { id: 'flex.align', key: 'alignItems', group: 'flex', label: 'Elemek igazítása', type: 'select', options: ['stretch', 'flex-start', 'center', 'flex-end', 'baseline'], appliesTo: ['flex','row','columns','stack'], responsive: true, command: 'responsive.set' },
+  { id: 'flex.wrap', key: 'flexWrap', group: 'flex', label: 'Tördelés', type: 'select', options: ['nowrap', 'wrap', 'wrap-reverse'], appliesTo: ['flex','row','columns','stack'], responsive: true, command: 'responsive.set' },
+  { id: 'flex.gap', key: 'gap', group: 'flex', label: 'Elemköz', type: 'dimension', units: ['px', 'rem', 'em', '%'], appliesTo: ['flex','row','columns','stack','grid'], responsive: true, command: 'responsive.set' },
+  { id: 'flex.grow', key: 'flexGrow', group: 'flex', label: 'Növekedés', type: 'number', responsive: true, command: 'responsive.set' },
+  { id: 'flex.shrink', key: 'flexShrink', group: 'flex', label: 'Zsugorodás', type: 'number', responsive: true, command: 'responsive.set' },
+  { id: 'grid.columns', key: 'gridTemplateColumns', group: 'grid', label: 'Oszlopok', type: 'select', options: ['1fr', 'repeat(2, minmax(0, 1fr))', 'repeat(3, minmax(0, 1fr))', 'repeat(4, minmax(0, 1fr))'], appliesTo: ['grid'], responsive: true, command: 'responsive.set' },
+  { id: 'grid.rowGap', key: 'rowGap', group: 'grid', label: 'Sorköz', type: 'dimension', units: ['px', 'rem', 'em', '%'], appliesTo: ['grid'], responsive: true, command: 'responsive.set' },
+  { id: 'grid.columnGap', key: 'columnGap', group: 'grid', label: 'Oszlopköz', type: 'dimension', units: ['px', 'rem', 'em', '%'], appliesTo: ['grid'], responsive: true, command: 'responsive.set' },
   { id: 'advanced.nodeName', group: 'advanced', label: 'Elem neve', type: 'text', command: 'element.update' }
 ];
 
