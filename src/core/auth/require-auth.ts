@@ -25,11 +25,11 @@ export async function getAuthenticatedUser(
      FROM sessions s
      INNER JOIN users u ON u.id = s.user_id
      WHERE s.token_hash = ?
-       AND s.expires_at > CURRENT_TIMESTAMP
+       AND s.expires_at > ?
        AND u.is_active = 1
      LIMIT 1`
   )
-    .bind(tokenHash)
+    .bind(tokenHash, new Date().toISOString())
     .first<AuthUser>();
 
   if (!row) return null;
