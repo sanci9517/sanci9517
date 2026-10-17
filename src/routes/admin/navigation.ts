@@ -1,7 +1,8 @@
 import { error, ok } from "../../core/response";
 import { auditStatement } from "../../core/audit";
-import { getAuthenticatedUser, hasRole } from "../../core/auth/require-auth";
-import { getCanonicalSiteContext } from "../../core/site-context";
+import { getAuthenticatedUser, hasRole, type AuthUser } from "../../core/auth/require-auth";
+import { requireSiteGrant } from "../../core/auth/site-access";
+import { DEFAULT_SITE_ID } from "../../core/site-context";
 import type { Env } from "../../types/env";
 
 type NavItem = {
@@ -73,11 +74,21 @@ function parseTree(value: string): NavTree | null {
   return validateTree(parsed).tree ?? null;
 }
 
-async function adminNavigationRouteImpl(request: Request, env: Env): Promise<Response> {
-  const user = await getAuthenticatedUser(request, env);
-  if (!user) return error("UNAUTHORIZED", 401, "Authentication required");
-  if (!hasRole(user, "editor")) return error("FORBIDDEN", 403, "Editor role required");
-  const { siteId } = getCanonicalSiteContext();
+async function adminNavigationRouteImpl(request: Request, env: Env, siteId: string): Promise<Response> {
+  if (!siteId || !siteId.trim()) return error("SITE_CONTEXT_INVALID", 403);
+  let user: AuthUser;
+  if (env.SITE_MEMBERSHIP_ENFORCEMENT === "enabled") {
+    const grant = await requireSiteGrant(request, env, siteId, "editor");
+    if (grant instanceof Response) return grant;
+    user = grant.user;
+  } else {
+    // The former global editor role applies only to the original webhely.
+    if (siteId !== DEFAULT_SITE_ID) return error("SITE_ACCESS_DENIED", 403);
+    const legacyUser = await getAuthenticatedUser(request, env);
+    if (!legacyUser) return error("UNAUTHORIZED", 401, "Authentication required");
+    if (!hasRole(legacyUser, "editor")) return error("FORBIDDEN", 403, "Editor role required");
+    user = legacyUser;
+  }
 
   if (request.method === "GET") {
     const row = await env.DB.prepare("SELECT draft_json,published_json,revision,published_revision FROM site_navigation WHERE site_id=? LIMIT 1").bind(siteId).first<NavRow>();
@@ -136,8 +147,8 @@ async function adminNavigationRouteImpl(request: Request, env: Env): Promise<Res
   return ok({ published: true, revision: expectedRevision, publishedRevision: expectedRevision });
 }
 
-export async function adminNavigationRoute(request:Request,env:Env):Promise<Response>{
- try{return await adminNavigationRouteImpl(request,env)}catch(e){
+export async function adminNavigationRoute(request:Request,env:Env,siteId=DEFAULT_SITE_ID):Promise<Response>{
+ try{return await adminNavigationRouteImpl(request,env,siteId)}catch(e){
   if(String(e).includes('NAVIGATION_TARGET_ARCHIVED'))return error('NAVIGATION_TARGET_ARCHIVED',409,'Archivált oldal nem szerepelhet a navigációban. Töltsd újra az oldallistát.');
   throw e;
  }
