@@ -1,3 +1,4 @@
+import { adminLinkReportRoute } from "./routes/admin/link-report";
 import { sitemapRoute, robotsRoute } from "./routes/public/seo";
 import { dbHealthRoute } from "./routes/db-health";
 import { healthRoute } from "./routes/health";
@@ -42,6 +43,7 @@ export default {
     if (pathname === "/api/admin/settings") return adminSettingsRoute(request, env);
     if (pathname === "/api/admin/schedule") return adminScheduleRoute(request, env);
     if (pathname === "/api/admin/twitch/schedule-sync") return adminTwitchScheduleSyncRoute(request, env);
+    if (pathname === "/api/admin/link-report") return adminLinkReportRoute(request, env);
     if (pathname === "/api/admin/pages") return adminPagesRoute(request, env);
     if (pathname === "/api/admin/navigation") return adminNavigationRoute(request, env);
     if (pathname === "/api/admin/editor") return adminEditorRoute(request, env);
