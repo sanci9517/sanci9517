@@ -25,6 +25,9 @@ test('typed Inspector controls validate display values before the command path',
   assert.throws(()=>normalizeInspectorValue(getProperty('typography.fontFamily'),'UnapprovedFont'));
   assert.equal(normalizeInspectorValue(getProperty('shadow.box'),'none'),'none');
   assert.throws(()=>normalizeInspectorValue(getProperty('background.image'),'javascript:1'));
+  assert.equal(normalizeInspectorValue(getProperty('content.href'),'/p/home'),'/p/home');
+  assert.equal(normalizeInspectorValue(getProperty('content.href'),'mailto:team@example.org'),'mailto:team@example.org');
+  assert.throws(()=>normalizeInspectorValue(getProperty('content.href'),'javascript:alert(1)'));
 });
 
 test('typed changes use Page Model commands, responsive overrides and undo', () => {
