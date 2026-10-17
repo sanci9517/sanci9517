@@ -70,7 +70,7 @@ export default {
     if (["/admin-login.html", "/admin-home.html", "/admin.html", "/admin/home", "/editor-v2", "/editor-v2/index.html", "/about.html", "/community.html", "/contact.html", "/schedule.html", "/tiktok.html", "/twitch.html", "/vod.html", "/youtube.html"].includes(pathname)) {
       return new Response("Gone", { status: 410 });
     }
-    if (pathname === "/" || pathname === "/index.html") return env.ASSETS.fetch(assetRequest("/visual-page.html", request));
+    if (pathname === "/" || pathname === "/index.html") return publicPageHtml(request, env, "/");
     if (pathname.startsWith("/p/") && pathname.length > 3) {
       let slug: string;
       try {
@@ -107,15 +107,29 @@ export default {
           headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" }
         });
       }
-      return env.ASSETS.fetch(assetRequest("/visual-page.html", request));
+      return publicPageHtml(request, env, `/p/${encodeURIComponent(slug)}`, preview);
     }
     return env.ASSETS.fetch(request);
   }
 };
 function assetRequest(pathname: string, request: Request): Request { const url = new URL(pathname, request.url); url.search = new URL(request.url).search; return new Request(url.toString(), { method: "GET", headers: request.headers }); }
 
+async function publicPageHtml(request: Request, env: Env, canonicalPath: string, noIndex = false): Promise<Response> {
+  const asset = await env.ASSETS.fetch(assetRequest("/visual-page.html", request));
+  if (!asset.ok) return asset;
+  const canonicalUrl = new URL(canonicalPath, request.url).toString();
+  const escapedUrl = canonicalUrl.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+  const html = (await asset.text()).replace("</head>", `<link rel="canonical" href="${escapedUrl}"></head>`)
+    .replace('<meta name="robots" content="index,follow">', noIndex ? '<meta name="robots" content="noindex,nofollow">' : '<meta name="robots" content="index,follow">');
+  const headers = new Headers(asset.headers);
+  headers.set("Content-Type", "text/html; charset=utf-8");
+  headers.set("Cache-Control", "no-store");
+  headers.delete("Content-Length");
+  return new Response(html, { status: asset.status, headers });
+}
+
 async function publicPageWithStatus(request: Request, env: Env, status: number): Promise<Response> {
-  const page = await env.ASSETS.fetch(assetRequest("/visual-page.html", request));
+  const page = await publicPageHtml(request, env, new URL(request.url).pathname, true);
   const headers = new Headers(page.headers);
   headers.set("Cache-Control", "no-store");
   return new Response(page.body, { status, headers });
