@@ -30,6 +30,15 @@
         item.textContent = (finding.label || finding.itemId || finding.pageId || "Ismeretlen menüpont") + " — " + (reasons[finding.reason] || finding.reason);
         list.appendChild(item);
       }
+      if (Array.isArray(data.contentFindings)) {
+        status.textContent += " Tartalmi linkhibák: " + data.contentFindings.length + " (" + (data.checkedContentLinks || 0) + " ellenőrzött belső link).";
+        for (const finding of data.contentFindings) {
+          const item = document.createElement("li");
+          item.textContent = "Oldal: " + finding.sourcePageId + " · Elem: " + finding.nodeId + " · Hibás cél: " + finding.href;
+          list.appendChild(item);
+        }
+        if (data.contentTruncated) status.textContent += " A tartalmi ellenőrzés 2000 linknél korlátozott.";
+      }
       if (data.truncated) status.textContent += " A jelentés 2000 elemnél korlátozott.";
     } catch {
       status.textContent = "Az ellenőrzés nem sikerült. Próbáld újra később.";
