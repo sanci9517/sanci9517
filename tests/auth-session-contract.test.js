@@ -51,3 +51,13 @@ test("login inline script parses as valid JavaScript", async () => {
   assert.ok(script, "login script must exist");
   assert.doesNotThrow(() => new Script(script));
 });
+
+test("session endpoint distinguishes missing cookie and invalid server-side session", () => {
+  const source = readFileSync(new URL("../src/routes/auth/session.ts", import.meta.url), "utf8");
+  assert.match(source, /getSessionToken\(request\)/);
+  assert.match(source, /reason: "COOKIE_MISSING"/);
+  assert.match(source, /reason: "SESSION_INVALID"/);
+  assert.match(loginPage, /payload\?\.data\?\.reason === "COOKIE_MISSING"/);
+  assert.match(loginPage, /payload\?\.data\?\.reason === "SESSION_INVALID"/);
+  assert.match(loginPage, /if \(!sessionCheck\.ready\)/);
+});
