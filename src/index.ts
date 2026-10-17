@@ -109,29 +109,42 @@ export default {
           headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" }
         });
       }
-      return publicPageHtml(request, env, `/p/${encodeURIComponent(slug)}`, preview);
+      const payload = await pageResponse.json() as { data?: { title?: string; description?: string } };
+      return publicPageHtml(request, env, preview ? null : `/p/${encodeURIComponent(slug)}`, preview, payload.data);
     }
     return env.ASSETS.fetch(request);
   }
 };
 function assetRequest(pathname: string, request: Request): Request { const url = new URL(pathname, request.url); url.search = new URL(request.url).search; return new Request(url.toString(), { method: "GET", headers: request.headers }); }
 
-async function publicPageHtml(request: Request, env: Env, canonicalPath: string, noIndex = false): Promise<Response> {
+type PublicPageSeo = { title?: string; description?: string };
+const escapeHtml = (value: string): string => value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+
+async function publicPageHtml(request: Request, env: Env, canonicalPath: string | null, noIndex = false, seo?: PublicPageSeo): Promise<Response> {
   const asset = await env.ASSETS.fetch(assetRequest("/visual-page.html", request));
   if (!asset.ok) return asset;
-  const canonicalUrl = new URL(canonicalPath, request.url).toString();
-  const escapedUrl = canonicalUrl.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
-  const html = (await asset.text()).replace("</head>", `<link rel="canonical" href="${escapedUrl}"></head>`)
+  const canonicalUrl = canonicalPath && !noIndex ? new URL(canonicalPath, request.url).toString() : null;
+  const title = seo?.title?.trim() || "Sanci9517";
+  const description = seo?.description?.trim() || "";
+  let html = (await asset.text()).replace("<title>Sanci9517</title>", `<title>${escapeHtml(title)}</title>`)
     .replace('<meta name="robots" content="index,follow">', noIndex ? '<meta name="robots" content="noindex,nofollow">' : '<meta name="robots" content="index,follow">');
+  const headTags = [
+    description ? `<meta name="description" content="${escapeHtml(description)}">` : "",
+    canonicalUrl ? `<link rel="canonical" href="${escapeHtml(canonicalUrl)}">` : "",
+    canonicalUrl && seo ? `<meta property="og:title" content="${escapeHtml(title)}"><meta property="og:url" content="${escapeHtml(canonicalUrl)}">` : "",
+    canonicalUrl && description ? `<meta property="og:description" content="${escapeHtml(description)}">` : ""
+  ].join("");
+  html = html.replace("</head>", `${headTags}</head>`);
   const headers = new Headers(asset.headers);
   headers.set("Content-Type", "text/html; charset=utf-8");
   headers.set("Cache-Control", "no-store");
+  if (noIndex) headers.set("X-Robots-Tag", "noindex, nofollow");
   headers.delete("Content-Length");
   return new Response(html, { status: asset.status, headers });
 }
 
 async function publicPageWithStatus(request: Request, env: Env, status: number): Promise<Response> {
-  const page = await publicPageHtml(request, env, new URL(request.url).pathname, true);
+  const page = await publicPageHtml(request, env, null, true);
   const headers = new Headers(page.headers);
   headers.set("Cache-Control", "no-store");
   return new Response(page.body, { status, headers });

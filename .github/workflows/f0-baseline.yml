@@ -27,6 +27,7 @@ jobs:
       - run: node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/f1-1-page-navigation-usage.test.js
       - run: node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/f1-1-navigation-migration.test.js tests/f1-1-navigation-route.test.js tests/f1-1-navigation-ui-contract.test.js
       - run: npm run test:admin-access
+      - run: node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/auth-session-contract.test.js
       - run: npm run test:domain
       - run: npm run test:editor
       - run: node --test tests/editor-sqlite-concurrency.test.js tests/f0-3-draft-isolation-contract.test.js tests/f0-publish-guard-contract.test.js tests/f0-3-sqlite-parallel-publish.test.js tests/f0-3-public-rollback-cache-contract.test.js

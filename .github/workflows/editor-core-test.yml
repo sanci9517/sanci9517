@@ -36,6 +36,9 @@ jobs:
       - name: Run Editor browser layout regression
         run: npm run test:editor:layout
 
+      - name: Run WEB-013 Admin mobile browser regression
+        run: npm run test:web013:browser
+
       - name: Upload Editor layout screenshots
         if: always()
         uses: actions/upload-artifact@v4

@@ -47,7 +47,7 @@ test("login distinguishes missing sessions, server errors and network failures w
 
 test("login inline script parses as valid JavaScript", async () => {
   const { Script } = await import("node:vm");
-  const script = loginPage.match(/<script>([\\s\\S]*?)<\\/script>/)?.[1];
+  const script = loginPage.match(/<script>([\s\S]*?)<\/script>/)?.[1];
   assert.ok(script, "login script must exist");
   assert.doesNotThrow(() => new Script(script));
 });

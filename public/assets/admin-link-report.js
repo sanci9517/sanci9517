@@ -10,7 +10,7 @@
   };
   button.addEventListener("click", async () => {
     button.disabled = true;
-    status.textContent = "Navigáció ellenőrzése…";
+    status.textContent = "Publikált navigáció és oldallinkek ellenőrzése…";
     list.replaceChildren();
     try {
       const response = await fetch("/api/admin/link-report", { credentials: "same-origin", cache: "no-store" });

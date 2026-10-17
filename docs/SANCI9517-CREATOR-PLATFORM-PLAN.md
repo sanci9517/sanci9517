@@ -65,3 +65,8 @@ A felosztás kiinduló eredeti Git blob SHA-ja: `16eb83190ffeb805cd9f4bcc9fa7458
 - **Bizonyíték:** a #77 PR három GitHub Actions munkafolyamata PASS; squash merge `83d69e4ee4753c633784f26273cf1329e33f651c`. A korábbi részfeladatok külön PR-eken keresztül kerültek be.
 - **Nyitott elfogadás:** a teljes WEB-013/F1.1 még nem tekinthető PASS-nak. Ellenőrizendő a tényleges éles deploy, a publikus SEO-válaszok, a valós publikált rich-text tartalommal végzett funkcionális teszt, valamint a linkkinyerés lefedettsége. A szerkezeti/regex regressziós tesztek önmagukban nem bizonyítanak teljes end-to-end működést.
 - **Következő fejlesztési döntési pont:** a megmaradt WEB-013 elfogadási kritériumokat kell igazolni, nem további öncélú figyelmeztetés-PR-eket gyártani.
+
+## WEB-013 aktív blokk — publikus SEO és működő riporttesztek (77.30)
+
+- A szerveroldali publikált SEO-fejléc, előnézet/hiba noindex és canonical kizárás, teljesebb sitemap, pontosabb rich-text href-vizsgálat és mobilon olvasható Admin-riport megvalósítva; célzott WEB-013 **18/18 PASS**, böngészős Admin **1/1 PASS**, széles route/regresszió **148/148 PASS**, Editor **49/49 PASS**, TypeScript és kanonikus terv **PASS** helyben.
+- A CI, egyesítés, Cloudflare Production build és valós éles HTTP/admin elfogadás külön ellenőrizendő. A teljes **WEB-013/F1.1 OPEN**; a következő kapu ezek igazolása, majd a fennmaradó linkmezők és a több-site URL-névtér adatvesztésmentes kezelése.

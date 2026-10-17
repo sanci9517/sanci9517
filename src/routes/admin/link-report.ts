@@ -65,7 +65,7 @@ export async function adminLinkReportRoute(request: Request, env: Env): Promise<
       for (const html of [node?.props?.html, node?.props?.richText, node?.props?.content?.html]) {
         if (typeof html !== "string") continue;
         if (html.length > 100000) { oversizedRichTextFields++; continue; }
-        const anchors = /<a\b[^>]*?\bhref\s*=\s*(?:["']([^"']*)["']|([^\s>]+))/gi;
+        const anchors = /<a\b[^>]*?\s+href\s*=\s*(?:["']([^"']*)["']|([^\s>]+))/gi;
         let match: RegExpExecArray | null;
         while ((match = anchors.exec(html)) !== null) {
           if (candidates.length >= 2000) { contentTruncated = true; break; }
