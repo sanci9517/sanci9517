@@ -39,7 +39,10 @@ export async function adminLinkReportRoute(request: Request, env: Env): Promise<
   }
   if (root?.items) visit(root.items, 0);
   const publishedSlugs = new Set(pages.results.filter(page => !page.archived_at && page.is_published && page.published_slug).map(page => page.published_slug));
+  const redirects = await env.DB.prepare("SELECT from_slug,page_id FROM page_slug_redirects WHERE site_id=?").bind(siteId).all<{from_slug:string;page_id:string}>();
+  const redirectedSlugs = new Map(redirects.results.map(redirect => [redirect.from_slug, redirect.page_id]));
   const contentFindings: { sourcePageId: string; nodeId: string; href: string; reason: string }[] = [];
+  const redirectedContentLinks: { sourcePageId: string; nodeId: string; href: string; targetPageId: string }[] = [];
   let checkedContentLinks = 0;
   let contentTruncated = false;
   for (const page of pages.results) {
@@ -59,13 +62,19 @@ export async function adminLinkReportRoute(request: Request, env: Env): Promise<
         let slug: string;
         try { slug = decodeURIComponent(pathname.slice(3)); } catch { slug = ""; }
         if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) || !publishedSlugs.has(slug)) {
+          const redirectedPageId = redirectedSlugs.get(slug);
+          const redirectedPage = redirectedPageId ? byId.get(redirectedPageId) : null;
+          if (redirectedPage && !redirectedPage.archived_at && redirectedPage.is_published && redirectedPage.published_slug && !redirectedSlugs.has(redirectedPage.published_slug)) {
+            redirectedContentLinks.push({ sourcePageId: page.id, nodeId, href: href.slice(0, 300), targetPageId: redirectedPage.id });
+            continue;
+          }
           contentFindings.push({ sourcePageId: page.id, nodeId, href: href.slice(0, 300), reason: "TARGET_NOT_PUBLISHED" });
         }
       }
     }
     if (contentTruncated) break;
   }
-  const response = ok({ scope: "published-navigation-and-content-page-references", checked, truncated: checked >= 2000, findings, checkedContentLinks, contentTruncated, contentFindings });
+  const response = ok({ scope: "published-navigation-and-content-page-references", checked, truncated: checked >= 2000, findings, checkedContentLinks, contentTruncated, contentFindings, redirectedContentLinks });
   const headers = new Headers(response.headers);
   headers.set("Cache-Control", "private, no-store");
   return new Response(response.body, { status: response.status, headers });
