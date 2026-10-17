@@ -13,7 +13,8 @@ test("WEB-013 link report requires editor authorization and never caches private
 });
 
 test("WEB-013 scans published pages, not drafts or archived content", () => {
-  assert.match(route, /page\.archived_at \|\| !page\.is_published \|\| !page\.published_content_json/);
+  assert.match(route, /if \(page\.archived_at \|\| !page\.is_published\) continue;/);
+  assert.match(route, /if \(!page\.published_content_json\) \{ missingPublishedContentPages\+\+; continue; \}/);
   assert.match(route, /published_content_json/);
   assert.match(route, /checkedContentLinks >= 2000/);
 });
