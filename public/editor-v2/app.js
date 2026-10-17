@@ -339,7 +339,7 @@ function renderInspector(){
         toolbar.append(blockSelect);section.append(toolbar,editor,linkControls);
         inspector.append(section);
       }else if(textTypes.has(node.type))inspector.append(field('Szöveg',node.props?.text??node.props?.content??'',v=>command('element.content.set',{nodeId:node.id,content:v})));
-      if(['button','link'].includes(node.type))inspector.append(field('Link / URL',node.props?.href||'',v=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),href:v}}})));
+      if(['button','link'].includes(node.type))inspector.append(renderPropertyInput(getProperty('content.href'),'Link / URL',node.props?.href||'',v=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),href:v}}})));
       else if(!textTypes.has(node.type))inspector.append(field('Tartalom',node.props?.content??'',v=>command('element.content.set',{nodeId:node.id,content:v})));
     }
   }else{
