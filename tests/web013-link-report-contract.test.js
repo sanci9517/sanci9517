@@ -95,3 +95,9 @@ test("WEB-013 reports navigation depth limits rather than silently skipping bran
   assert.match(route, /truncated: checked >= 2000 \|\| navigationDepthTruncated, navigationDepthTruncated/);
   assert.match(ui, /if \(data\.navigationDepthTruncated\)/);
 });
+
+test("WEB-013 can show navigation depth and item limit warnings together", () => {
+  assert.match(ui, /if \(data\.navigationDepthTruncated\)/);
+  assert.match(ui, /if \(data\.checked >= 2000\)/);
+  assert.doesNotMatch(ui, /data\.truncated && !data\.navigationDepthTruncated/);
+});

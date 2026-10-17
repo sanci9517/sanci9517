@@ -52,7 +52,7 @@
       }
       if (data.oversizedRichTextFields) status.textContent += " Figyelem: " + data.oversizedRichTextFields + " túl hosszú rich-text mező kimaradt a linkellenőrzésből (100 000 karakteres korlát).";
       if (data.navigationDepthTruncated) status.textContent += " Figyelem: a túl mély (20 szint feletti) navigáció egy része kimaradt az ellenőrzésből.";
-      if (data.truncated && !data.navigationDepthTruncated) status.textContent += " A navigációs jelentés legfeljebb 2000 elemet ellenőriz.";
+      if (data.checked >= 2000) status.textContent += " A navigációs jelentés legfeljebb 2000 elemet ellenőriz.";
     } catch {
       status.textContent = "Az ellenőrzés nem sikerült. Próbáld újra később.";
     } finally {
