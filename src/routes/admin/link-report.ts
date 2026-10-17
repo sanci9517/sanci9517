@@ -54,6 +54,13 @@ export async function adminLinkReportRoute(request: Request, env: Env): Promise<
     for (const [nodeId, node] of Object.entries<any>(nodes)) {
       if (checkedContentLinks >= 2000) { contentTruncated = true; break; }
       const candidates = [node?.props?.href, node?.props?.url, node?.props?.link?.href, node?.props?.link?.url];
+      // Rich-text HTML can contain internal anchors that are not explicit node link props.
+      for (const html of [node?.props?.html, node?.props?.richText, node?.props?.content?.html]) {
+        if (typeof html !== "string" || html.length > 100000) continue;
+        const anchors = /<a\\b[^>]*?\\bhref\\s*=\\s*(?:["']([^"']*)["']|([^\\s>]+))/gi;
+        let match: RegExpExecArray | null;
+        while ((match = anchors.exec(html)) !== null && candidates.length < 2000) candidates.push(match[1] ?? match[2]);
+      }
       for (const href of candidates) {
         if (typeof href !== "string" || !href.startsWith("/p/")) continue;
         if (checkedContentLinks >= 2000) { contentTruncated = true; break; }
