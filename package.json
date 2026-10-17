@@ -11,6 +11,7 @@
     "db:migrations:apply": "wrangler d1 migrations apply DB --remote",
     "deploy": "npm run db:migrations:apply && wrangler deploy",
     "test:domain": "node --test tests/domain-contracts.test.js",
+    "test:web013": "node --test tests/web013-link-report-contract.test.js",
     "db:ownership:preflight": "wrangler d1 execute sanci9517-db --remote --file=./scripts/e4-3-7-preflight.sql --json",
     "test:admin-home": "node --test tests/admin-home-contract.test.js",
     "test:admin-access": "node --test tests/admin-asset-access-contract.test.js",
