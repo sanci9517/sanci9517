@@ -32,7 +32,7 @@ test("session cookies remain HttpOnly Secure SameSite Lax and host scoped", () =
 test("login page verifies authenticated session before navigating to Admin", () => {
   assert.match(loginPage, /credentials: "same-origin"/);
   assert.match(loginPage, /waitForAuthenticatedSession\(\)/);
-  assert.match(loginPage, /if \(!sessionReady\)/);
+  assert.match(loginPage, /if \(!sessionCheck\.ready\)/);
   assert.match(loginPage, /window\.location\.replace\("\/admin"\)/);
 });
 
@@ -42,4 +42,12 @@ test("login distinguishes missing sessions, server errors and network failures w
   }
   assert.match(loginPage, /if \(!sessionCheck\.ready\)/);
   assert.match(loginPage, /window\.location\.replace\("\/admin"\)/);
+});
+
+
+test("login inline script parses as valid JavaScript", async () => {
+  const { Script } = await import("node:vm");
+  const script = loginPage.match(/<script>([\\s\\S]*?)<\\/script>/)?.[1];
+  assert.ok(script, "login script must exist");
+  assert.doesNotThrow(() => new Script(script));
 });
