@@ -21,6 +21,7 @@ jobs:
       - run: npm install --no-audit --no-fund
       - run: npm run typecheck
       - run: npm run test:admin-home
+      - run: npm run test:web013
       - run: node --test tests/public-navigation.test.js
       - run: node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/admin-pages-sort.test.js
       - run: node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/f1-1-page-navigation-usage.test.js
