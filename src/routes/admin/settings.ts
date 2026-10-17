@@ -23,7 +23,7 @@ const SETTINGS_KEY = "site";
  * never a user-supplied query parameter, header or JSON body.
  */
 export async function adminSettingsRoute(
-  request: Request, env: Env, siteId = DEFAULT_SITE_ID, siteName = "Sanci9517"
+  request: Request, env: Env, siteId = DEFAULT_SITE_ID, fallbackSiteName = "Sanci9517"
 ): Promise<Response> {
   if (!siteId || !siteId.trim()) return error("SITE_CONTEXT_INVALID", 403);
   let user: AuthUser;
@@ -46,7 +46,7 @@ export async function adminSettingsRoute(
   if (request.method === "GET") {
     if (env.SITE_SCOPED_SETTINGS_ENABLED === "enabled") {
       try {
-        return ok(await loadScopedSiteSettings(env, siteId, siteName));
+        return ok(await loadScopedSiteSettings(env, siteId, fallbackSiteName));
       } catch {
         return error("SITE_SETTINGS_UNAVAILABLE", 503);
       }
