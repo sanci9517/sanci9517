@@ -16,6 +16,7 @@ async function fixture(t, { installed = true, enabled = true } = {}) {
     CREATE TABLE sites(id TEXT PRIMARY KEY,status TEXT NOT NULL);
     CREATE TABLE users(id TEXT PRIMARY KEY,email TEXT,display_name TEXT,role TEXT,is_active INTEGER);
     CREATE TABLE sessions(token_hash TEXT,user_id TEXT,expires_at TEXT);
+    CREATE TABLE site_memberships(site_id TEXT,user_id TEXT,role TEXT,status TEXT,PRIMARY KEY(site_id,user_id));
     CREATE TABLE site_settings(key TEXT PRIMARY KEY,value_json TEXT,updated_at TEXT);
     CREATE TABLE audit_log(id TEXT PRIMARY KEY,user_id TEXT,action TEXT,entity_type TEXT,entity_id TEXT,metadata_json TEXT);
     CREATE TABLE pages(id TEXT PRIMARY KEY,site_id TEXT,title TEXT);
@@ -24,12 +25,14 @@ async function fixture(t, { installed = true, enabled = true } = {}) {
       ('viewer','viewer@example.test','Viewer','viewer',1);
     INSERT INTO site_settings VALUES ('site','{"siteName":"Existing brand","tagline":"Legacy"}','2026-10-16');
     INSERT INTO pages VALUES ('old-page','site-default','Untouched');
+    INSERT INTO site_memberships VALUES ('site-default','admin','admin','active'),('site-default','viewer','viewer','active');
   `);
   if (installed) db.exec(migration);
   for (const name of ['admin','viewer']) {
     db.prepare('INSERT INTO sessions VALUES (?,?,?)').run(await hashSessionToken(name),name,'2999-01-01T00:00:00.000Z');
   }
   const env = {
+    SITE_MEMBERSHIP_ENFORCEMENT:'enabled',
     ...(enabled ? { SITE_SCOPED_SETTINGS_ENABLED:'enabled' } : {}),
     DB: {
       prepare(sql) {
@@ -48,10 +51,10 @@ async function fixture(t, { installed = true, enabled = true } = {}) {
       }
     }
   };
-  const get = (id='admin') => adminSettingsRoute(new Request('https://example.test/api/admin/settings',
-    { headers: id ? { Cookie:`sanci9517_session=${id}` } : {} }),env);
-  const put = (settings,id='admin') => adminSettingsRoute(new Request('https://example.test/api/admin/settings',
-    { method:'PUT',headers:{'Content-Type':'application/json',...(id?{Cookie:`sanci9517_session=${id}`}:{})},body:JSON.stringify(settings) }),env);
+  const get = (id='admin',siteId='site-default',siteName='Sanci9517') => adminSettingsRoute(new Request('https://example.test/api/admin/settings',
+    { headers: id ? { Cookie:`sanci9517_session=${id}` } : {} }),env,siteId,siteName);
+  const put = (settings,id='admin',siteId='site-default',siteName='Sanci9517') => adminSettingsRoute(new Request('https://example.test/api/admin/settings',
+    { method:'PUT',headers:{'Content-Type':'application/json',...(id?{Cookie:`sanci9517_session=${id}`}:{})},body:JSON.stringify(settings) }),env,siteId,siteName);
   return {db,env,get,put};
 }
 
@@ -109,4 +112,48 @@ test('enabled mode fails closed on missing schema while disabled mode keeps lega
   assert.equal((await (await publicSiteSettingsRoute(legacy.env,'another','Other')).json()).siteName,'Other');
   assert.equal(JSON.parse(legacy.db.prepare("SELECT value_json FROM site_settings WHERE key='site'").get().value_json).siteName,
     'Legacy works');
+});
+
+test('admin settings use actual site membership, isolate writes and reject cross-tenant grants', async t => {
+  const {db,get,put}=await fixture(t);
+  assert.equal((await get('admin','another','Other creator')).status,403,
+    'global admin must not inherit permissions on another site');
+  db.prepare("INSERT INTO site_memberships VALUES ('another','admin','viewer','active')").run();
+  assert.equal((await get('admin','another','Other creator')).status,403,
+    'a viewer grant must not inherit the global admin role');
+  db.prepare("UPDATE site_memberships SET role='admin' WHERE site_id='another' AND user_id='admin'").run();
+  const empty=await get('admin','another','Other creator');
+  assert.equal(empty.status,200);
+  assert.deepEqual((await empty.json()).data,{siteName:'Other creator',tagline:''});
+  const saved=await put({siteName:'Other brand',tagline:'Isolated'},'admin','another','Other creator');
+  assert.equal(saved.status,200);
+  assert.deepEqual((await (await get('admin','another','Other creator')).json()).data,
+    {siteName:'Other brand',tagline:'Isolated'});
+  assert.deepEqual((await (await get('admin')).json()).data,
+    {siteName:'Existing brand',tagline:'Legacy'});
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM audit_log WHERE entity_id='another'").get().n,1);
+  db.prepare("UPDATE site_memberships SET status='revoked' WHERE site_id='another' AND user_id='admin'").run();
+  assert.equal((await get('admin','another','Other creator')).status,403);
+  assert.equal((await put({siteName:'No write',tagline:''},'admin','another')).status,403);
+  assert.equal(db.prepare("SELECT value_json FROM site_scoped_settings WHERE site_id='another'").get().value_json,
+    JSON.stringify({siteName:'Other brand',tagline:'Isolated'}));
+});
+
+test('tenant role is authoritative even when legacy users.role is lower', async t => {
+  const {db,get}=await fixture(t);
+  db.prepare("INSERT INTO site_memberships VALUES ('another','viewer','admin','active')").run();
+  const allowed=await get('viewer','another','Second creator');
+  assert.equal(allowed.status,200);
+  assert.equal((await allowed.json()).data.siteName,'Second creator');
+  assert.equal((await get('viewer')).status,403);
+  db.prepare("UPDATE site_memberships SET status='revoked' WHERE site_id='another' AND user_id='viewer'").run();
+  assert.equal((await get('viewer','another')).status,403);
+});
+
+test('tenant membership schema failure denies access instead of using global admin role', async t => {
+  const {db,get}=await fixture(t);
+  db.exec('DROP TABLE site_memberships');
+  const response=await get('admin');
+  assert.equal(response.status,503);
+  assert.equal((await response.json()).error.code,'SITE_ACCESS_UNAVAILABLE');
 });

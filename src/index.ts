@@ -53,7 +53,7 @@ export default {
     if (pathname === "/api/auth/login") return authLoginRoute(request, env);
     if (pathname === "/api/auth/logout") return authLogoutRoute(request, env);
     if (pathname === "/api/auth/session") return authSessionRoute(request, env);
-    if (pathname === "/api/admin/settings") return adminSettingsRoute(request, env);
+    if (pathname === "/api/admin/settings") return adminSettingsRoute(request, env, siteId, site.siteName);
     if (pathname === "/api/admin/schedule") return adminScheduleRoute(request, env);
     if (pathname === "/api/admin/twitch/schedule-sync") return adminTwitchScheduleSyncRoute(request, env);
     if (pathname === "/api/admin/link-report") return adminLinkReportRoute(request, env);

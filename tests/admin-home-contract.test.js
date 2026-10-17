@@ -22,7 +22,8 @@ test("Admin and Editor pages authenticate before serving assets and their APIs e
   assert.ok(editorRouteBlock.includes("const user = await getAuthenticatedUser(request, env);"));
   assert.ok(editorRouteBlock.includes('if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302);'));
   assert.ok(editorRouteBlock.includes('return env.ASSETS.fetch(assetRequest("/editor-v2/index.html", request));'));
-  assert.ok(adminSettingsRoute.includes('if (!hasRole(user, "admin")) return error("FORBIDDEN", 403, "Admin role required");'));
+  assert.ok(adminSettingsRoute.includes('requireSiteGrant(request, env, siteId, "admin")'));
+  assert.ok(adminSettingsRoute.includes('if (!hasRole(legacyUser, "admin")) return error("FORBIDDEN", 403, "Admin role required");'));
   assert.ok(adminPagesRoute.includes("hasRole(user,'editor')"));
   assert.ok(adminScheduleRoute.includes('if (!hasRole(user, "editor")) return error("FORBIDDEN", 403, "Editor role required");'));
   assert.ok(adminEditorRoute.includes("hasRole(user,'editor')"));

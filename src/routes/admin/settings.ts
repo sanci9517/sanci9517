@@ -1,8 +1,9 @@
 import { error, ok } from "../../core/response";
-import { getAuthenticatedUser, hasRole } from "../../core/auth/require-auth";
+import { getAuthenticatedUser, hasRole, type AuthUser } from "../../core/auth/require-auth";
+import { requireSiteGrant } from "../../core/auth/site-access";
 import type { Env } from "../../types/env";
 import { auditStatement } from "../../core/audit";
-import { getCanonicalSiteContext } from "../../core/site-context";
+import { DEFAULT_SITE_ID } from "../../core/site-context";
 import { loadScopedSiteSettings, scopedSettingsUpsert } from "../../core/site-scoped-settings";
 
 type SettingsBody = {
@@ -17,15 +18,35 @@ type SettingRow = {
 
 const SETTINGS_KEY = "site";
 
-export async function adminSettingsRoute(request: Request, env: Env): Promise<Response> {
-  const user = await getAuthenticatedUser(request, env);
-  if (!user) return error("UNAUTHORIZED", 401, "Authentication required");
-  if (!hasRole(user, "admin")) return error("FORBIDDEN", 403, "Admin role required");
+/**
+ * siteId comes exclusively from the Worker's verified domain-to-site resolver,
+ * never a user-supplied query parameter, header or JSON body.
+ */
+export async function adminSettingsRoute(
+  request: Request, env: Env, siteId = DEFAULT_SITE_ID, fallbackSiteName = "Sanci9517"
+): Promise<Response> {
+  if (!siteId || !siteId.trim()) return error("SITE_CONTEXT_INVALID", 403);
+  let user: AuthUser;
+  if (env.SITE_MEMBERSHIP_ENFORCEMENT === "enabled") {
+    const grant = await requireSiteGrant(request, env, siteId, "admin");
+    if (grant instanceof Response) return grant;
+    user = grant.user;
+  } else {
+    // Legacy global roles are only valid for the default site's old route.
+    if (siteId !== DEFAULT_SITE_ID) return error("SITE_ACCESS_DENIED", 403);
+    const legacyUser = await getAuthenticatedUser(request, env);
+    if (!legacyUser) return error("UNAUTHORIZED", 401, "Authentication required");
+    if (!hasRole(legacyUser, "admin")) return error("FORBIDDEN", 403, "Admin role required");
+    user = legacyUser;
+  }
+  if (siteId !== DEFAULT_SITE_ID && env.SITE_SCOPED_SETTINGS_ENABLED !== "enabled") {
+    return error("SITE_SETTINGS_UNAVAILABLE", 503);
+  }
 
   if (request.method === "GET") {
     if (env.SITE_SCOPED_SETTINGS_ENABLED === "enabled") {
       try {
-        return ok(await loadScopedSiteSettings(env, getCanonicalSiteContext().siteId, "Sanci9517"));
+        return ok(await loadScopedSiteSettings(env, siteId, fallbackSiteName));
       } catch {
         return error("SITE_SETTINGS_UNAVAILABLE", 503);
       }
@@ -63,7 +84,6 @@ export async function adminSettingsRoute(request: Request, env: Env): Promise<Re
   }
 
   if (env.SITE_SCOPED_SETTINGS_ENABLED === "enabled") {
-    const { siteId } = getCanonicalSiteContext();
     try {
       await env.DB.batch([
         scopedSettingsUpsert(env, siteId, { siteName, tagline }),
