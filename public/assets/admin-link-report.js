@@ -47,6 +47,9 @@
           list.appendChild(item);
         }
       }
+      if (data.unparseablePublishedPages || data.unsupportedPublishedDocuments) {
+        status.textContent += " Figyelem: " + (data.unparseablePublishedPages || 0) + " sérült és " + (data.unsupportedPublishedDocuments || 0) + " nem támogatott szerkezetű publikált oldal tartalma kimaradt a vizsgálatból.";
+      }
       if (data.truncated) status.textContent += " A jelentés 2000 elemnél korlátozott.";
     } catch {
       status.textContent = "Az ellenőrzés nem sikerült. Próbáld újra később.";
