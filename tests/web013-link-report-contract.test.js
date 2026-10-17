@@ -60,3 +60,8 @@ test("WEB-013 reports published pages skipped during content scanning", () => {
   assert.match(ui, /data\.unparseablePublishedPages \|\| data\.unsupportedPublishedDocuments/);
   assert.match(ui, /kimaradt a vizsgálatból/);
 });
+
+test("WEB-013 decodes HTML-escaped ampersands in rich-text hrefs", () => {
+  assert.match(route, /replace\(\/&amp;\/gi, "&"\)/);
+  assert.equal("/p/target?x=1&amp;y=2".replace(/&amp;/gi, "&"), "/p/target?x=1&y=2");
+});
