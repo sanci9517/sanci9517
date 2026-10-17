@@ -1,3 +1,4 @@
+import { sitemapRoute, robotsRoute } from "./routes/public/seo";
 import { dbHealthRoute } from "./routes/db-health";
 import { healthRoute } from "./routes/health";
 import { authBootstrapRoute } from "./routes/auth/bootstrap";
@@ -30,6 +31,8 @@ export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
     const pathname = url.pathname.replace(/\/+$/, "") || "/";
+    if (pathname === "/sitemap.xml") return sitemapRoute(request, env);
+    if (pathname === "/robots.txt") return robotsRoute(request);
     if (pathname === "/api/health") return healthRoute();
     if (pathname === "/api/db-health") return dbHealthRoute(env);
     if (pathname === "/api/auth/bootstrap") return authBootstrapRoute(request, env);
