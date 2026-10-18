@@ -1067,3 +1067,25 @@ test('badge, quote and icon use real defaults, safe publish validation and undo'
  assert.match(source,/visual-quote/);
  assert.match(source,/iconById/);
 });
+
+test('root appearance opts in only after an explicit edit and supports Undo/Redo without affecting child styles', () => {
+  const state=createEditorState(),pageId=state.document.activePageId;
+  const page=activePage(state),rootId=page.rootId;
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:rootId,props:{text:'Tartalom'}}});
+  const child=state.selection.primaryId;
+  assert.equal(page.nodes[rootId].metadata.rootStyleVersion,undefined,'unchanged pages retain legacy canvas');
+  execute(state,{type:'responsive.set',payload:{nodeId:rootId,device:'desktop',patch:{backgroundColor:'#112233',padding:'24px',color:'#ffffff'}}});
+  assert.equal(page.nodes[rootId].metadata.rootStyleVersion,1);
+  assert.equal(page.nodes[rootId].responsive.desktop.padding,'24px');
+  assert.equal(page.nodes[child].responsive.desktop.backgroundColor,undefined,'root edit does not alter child');
+  execute(state,{type:'responsive.set',payload:{nodeId:rootId,device:'mobile',patch:{backgroundColor:'#abcdef'}}});
+  assert.equal(page.nodes[rootId].responsive.mobile.backgroundColor,'#abcdef');
+  execute(state,{type:'history.undo'});
+  assert.equal(activePage(state).nodes[rootId].responsive.mobile.backgroundColor,undefined);
+  execute(state,{type:'history.redo'});
+  assert.equal(activePage(state).nodes[rootId].responsive.mobile.backgroundColor,'#abcdef');
+  assert.equal(validatePublishDocument(state.document,pageId),null);
+  const old=createDocument();
+  old.pages[old.activePageId].nodes[old.pages[old.activePageId].rootId].style.backgroundColor='#f00';
+  assert.equal(old.pages[old.activePageId].nodes[old.pages[old.activePageId].rootId].metadata.rootStyleVersion,undefined);
+});
