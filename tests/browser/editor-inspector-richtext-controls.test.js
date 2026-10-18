@@ -36,6 +36,11 @@ test('typed Inspector controls and link selection work with real browser DOM at 
       const {getRichTextBlockSelection,updateRichTextInlineLink,updateRichTextInlineMark}=await import('/editor-v2/core/richtext-links.js');
       const {renderRichTextEditor,richTextEditorToDocument,setBlockType}=await import('/editor-v2/core/richtext-engine.js');
       const host=document.createElement('div');document.body.append(host);
+      const helpLengths=listProperties().map(property=>{
+        const field=renderPropertyInput(property,property.label,'16px',()=>{});
+        const description=field.querySelector('.property-help')?.textContent||'';
+        return [property.id,description.length];
+      });
       const edits=[];
       const color=renderPropertyInput(getProperty('background.color'),'Háttérszín','#112233',v=>edits.push(v));
       host.append(color);
@@ -92,13 +97,15 @@ test('typed Inspector controls and link selection work with real browser DOM at 
       const list=setBlockType(parsedMarked,0,11,'numbered-list');
       renderRichTextEditor(editor,list);
       const parsedList=richTextEditorToDocument(editor);
-      return {edits,presetResults,unitOptions,saved,editing,linkPresent,linksAfterRemoval:unlinked.blocks[0].children.filter(x=>x.link).length,
+      return {edits,presetResults,unitOptions,helpLengths,saved,editing,linkPresent,linksAfterRemoval:unlinked.blocks[0].children.filter(x=>x.link).length,
         markedRun:parsedMarked.blocks[0].children.find(x=>x.text==='world'),
         listType:parsedList.blocks[0].type,listText:parsedList.blocks[0].items[0].children.map(x=>x.text).join(''),
         hasHorizontalOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+1};
     });
     assert.deepEqual(data.edits,['#abcdef','8px 12px 8px 8px']);
     assert.ok(Object.keys(data.presetResults).length>=20);
+    assert.ok(data.helpLengths.length>=45);
+    assert.ok(data.helpLengths.every(([,length])=>length>=100),`every property needs detailed guidance: ${data.helpLengths.filter(([,length])=>length<100).map(([id])=>id).join(', ')}`);
     for(const [id,options] of Object.entries(data.unitOptions)){
       assert.deepEqual(options.slice(1),getSupportedUnitsForProperty(id));
     }
