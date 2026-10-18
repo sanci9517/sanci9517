@@ -11,6 +11,7 @@ import { activePage, clearSelection, setSelection } from './state.js';
 import { normalizeScheduleConfig } from './schedule-schema.js';
 import {isStructuredType,createElementContent,normalizeElementContent} from './element-content.js';
 import {defaultDividerStyle,normalizeDividerStyle} from './decorative-elements.js';
+import {defaultCardContent,normalizeCardContent} from './card-content.js';
 import { applyStyleSnapshot } from './style-snapshot.js';
 import { layoutPresetPatch, layoutMode, CHILD_LAYOUT_DEFAULTS } from './layout-presets.js';
 
@@ -84,9 +85,10 @@ export const commands = Object.freeze({
   'selection.clear': (state) => { clearSelection(state); return state; },
   'element.add': (state, { type, parentId, props = {}, style = {}, name } = {}) => commit(state,{type:'element.add',payload:{type,parentId}},(draft)=>{if(!type)throw new Error('Element type is required');const page=requirePage(draft);const selectedParent=draft.selection.primaryId?getNode(page,draft.selection.primaryId):null;const parent=getNode(page,parentId??selectedParent?.id??page.rootId);if(!parent||!canContain(parent,type))throw new Error('Invalid parent for element');const nodeProps=structuredClone(props);if(type==='richtext'&&!nodeProps.richText)nodeProps.richText=createEmptyRichText();if(isStructuredType(type))nodeProps.contentModel=normalizeElementContent(type,nodeProps.contentModel??createElementContent(type));if(type==='badge')nodeProps.text=nodeProps.text==='Badge/Tag'?'Címke':(nodeProps.text??'Címke');if(type==='quote'){nodeProps.text=nodeProps.text==='Quote'?'Ide írd az idézetet':(nodeProps.text??'Ide írd az idézetet');nodeProps.attribution=nodeProps.attribution??''}if(type==='icon'){nodeProps.icon=nodeProps.icon??'star';nodeProps.label=nodeProps.label??'Csillag'}
 if(type==='divider')nodeProps.decoration=normalizeDividerStyle(nodeProps.decoration??defaultDividerStyle());
+if(type==='card')nodeProps.cardContent=normalizeCardContent(nodeProps.cardContent??defaultCardContent());
 const nodeStyle=structuredClone(style);
 if(type==='spacer'&&!Object.hasOwn(nodeStyle,'height'))nodeStyle.height='64px';
-const metadata=type==='divider'?{decorativeVersion:1}:type==='spacer'?{spacerVersion:1}:['image','video','audio'].includes(type)?{editorContentVersion:1}:isStructuredType(type)?{structuredContentVersion:1}:['badge','quote','icon'].includes(type)?{basicContentVersion:1}:{};
+const metadata=type==='card'?{cardContentVersion:1}:type==='divider'?{decorativeVersion:1}:type==='spacer'?{spacerVersion:1}:['image','video','audio'].includes(type)?{editorContentVersion:1}:isStructuredType(type)?{structuredContentVersion:1}:['badge','quote','icon'].includes(type)?{basicContentVersion:1}:{};
 const node=createNode(type,{props:nodeProps,style:nodeStyle,name:name??type,parentId:parent.id,metadata});page.nodes[node.id]=node;parent.children.push(node.id);setSelection(draft,[node.id],node.id);bumpRevision(draft.document)}),
   'element.update': (state, { nodeId, patch = {} } = {}) => commit(state,{type:'element.update',payload:{nodeId,patch:structuredClone(patch)}},(draft)=>{const {page,node}=requireNode(draft,nodeId);const safePatch={...patch};delete safePatch.id;delete safePatch.parentId;delete safePatch.children;Object.assign(node,structuredClone(safePatch));if('style' in safePatch || 'responsive' in safePatch)markRootAppearance(page,node);bumpRevision(draft.document)}),
   'element.content.set': (state, { nodeId, content = '' } = {}) => commit(state,{type:'element.content.set',payload:{nodeId,content:String(content)}},(draft)=>{const {node}=requireNode(draft,nodeId);if(node.type==='richtext')throw new Error('Use richtext.content.set for Rich Text');const value=String(content);const textTypes=new Set(['heading','text','button','link']);node.props={...node.props,...(textTypes.has(node.type)?{text:value,content:value}:{content:value})};bumpRevision(draft.document)}),

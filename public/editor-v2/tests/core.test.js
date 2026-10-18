@@ -1117,3 +1117,33 @@ test('new divider and spacer keep their canonical visual contract without changi
  assert.equal(validatePublishDocument(legacy,pageId),null,'old content is unchanged until opt-in');
  assertValidEditorDocument(state.document);
 });
+
+test('Card content model preserves nested elements and rejects unsafe links on Publish', () => {
+ const state=createEditorState(),root=activePage(state).rootId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.CARD,parentId:root}});
+ const cardId=state.selection.primaryId,card=activePage(state).nodes[cardId];
+ assert.equal(card.metadata.cardContentVersion,1);
+ assert.equal(card.props.cardContent.title,'Új kártya');
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:cardId,props:{text:'Egyedi belső tartalom'}}});
+ const childId=state.selection.primaryId;
+ assert.ok(activePage(state).nodes[cardId].children.includes(childId),'Card remains a real container');
+ const pageId=state.document.activePageId;
+ assert.equal(validatePublishDocument(state.document,pageId),null);
+ execute(state,{type:'element.update',payload:{nodeId:cardId,patch:{props:{cardContent:{
+  version:1,title:'Kreatív kártya',description:'Bemutatkozó kártya',variant:'glass',
+  imageSrc:'/images/hero.jpg',imageAlt:'Fénykép',actionLabel:'Részletek',actionHref:'/p/about',newWindow:false
+ }}}}});
+ assert.equal(validatePublishDocument(state.document,pageId),null);
+ const invalid=structuredClone(state.document);
+ invalid.pages[pageId].nodes[cardId].props.cardContent.actionHref='javascript:alert(1)';
+ assert.equal(validatePublishDocument(invalid,pageId),'INVALID_CARD_CONTENT');
+ invalid.pages[pageId].nodes[cardId].props.cardContent.actionHref='/p/about';
+ invalid.pages[pageId].nodes[cardId].props.cardContent.imageAlt='';
+ assert.equal(validatePublishDocument(invalid,pageId),'INVALID_CARD_CONTENT');
+ const legacy=structuredClone(state.document);
+ const oldCard=legacy.pages[pageId].nodes[cardId];
+ delete oldCard.metadata.cardContentVersion;
+ oldCard.props.cardContent={bad:'old'};
+ assert.equal(validatePublishDocument(legacy,pageId),null,'old card appearance is not migrated automatically');
+ assertValidEditorDocument(state.document);
+});

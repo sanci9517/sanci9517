@@ -23,6 +23,7 @@ import {isStructuredType,createElementContent,normalizeElementContent,renderElem
 import {renderStructuredInspector} from './ui/structured-inspector.js';
 import {ICON_CHOICES,iconById} from './core/icon-options.js';
 import {DIVIDER_LINE_STYLES,normalizeDividerStyle} from './core/decorative-elements.js';
+import {defaultCardContent,CARD_VARIANTS} from './core/card-content.js';
 import {readRichTextSelectionFormatting,clearRichTextInlineFormatting} from './core/richtext-links.js';
 
 let inspectorCategory='all';let richTextSelectionCleanup=null;let richTextToolTab='character';
@@ -255,7 +256,23 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
   [node.states?.focus?.outlineColor,'visual-focus-outline','--sanci-focus-outline']
  ]){const color=validHex(value);if(color){el.classList.add(klass);el.style.setProperty(variable,color)}}
  const head=document.createElement('div');head.className='node-head';const headName=document.createElement('span');headName.textContent=node.name||node.type;const headType=document.createElement('small');headType.textContent=node.type;head.append(headName,headType);el.append(head);
-  if(node.type===NODE_TYPES.DIVIDER&&node.metadata?.decorativeVersion===1){
+  if(node.type===NODE_TYPES.CARD&&node.metadata?.cardContentVersion===1){
+    const model={...defaultCardContent(),...(node.props?.cardContent||{})};
+    const body=document.createElement('div');body.className='node-content card-preview';
+    body.style.cssText='box-sizing:border-box;max-width:100%;min-width:0;padding:16px;border-radius:12px;border:1px solid #64748b;background:rgba(127,127,127,.09)';
+    if(model.variant==='outline')body.style.background='transparent';
+    if(model.variant==='glass')body.style.background='rgba(255,255,255,.15)';
+    const url=String(model.imageSrc||'').trim();
+    if(url&&/^(https?:\/\/|\/(?!\/))/.test(url)){
+      const image=document.createElement('img');image.src=url;image.alt=String(model.imageAlt||'');
+      image.style.cssText='display:block;width:100%;max-height:250px;object-fit:cover;margin-bottom:12px;border-radius:8px';
+      body.append(image);
+    }
+    const title=document.createElement('strong');title.className='card-preview-title';title.textContent=String(model.title||'Kártya címe');body.append(title);
+    if(model.description){const description=document.createElement('p');description.textContent=String(model.description);description.style.whiteSpace='pre-wrap';body.append(description)}
+    if(model.actionLabel){const button=document.createElement('span');button.textContent=String(model.actionLabel);button.className='card-preview-action';button.style.cssText='display:inline-flex;margin-top:8px;padding:8px 12px;border-radius:6px;background:#e2e8f0;color:#111827';body.append(button)}
+    el.append(body);
+  }else if(node.type===NODE_TYPES.DIVIDER&&node.metadata?.decorativeVersion===1){
     const config=normalizeDividerStyle(node.props?.decoration);
     const line=document.createElement('div');line.className='node-content divider-preview';
     line.style.cssText='box-sizing:border-box;width:100%;min-height:0;border:0;';
@@ -685,7 +702,29 @@ function renderInspector(){
     if(node.type==='schedule')inspector.append(renderScheduleInspector(node));
     else {
       const textTypes=new Set(['heading','text','richtext','button','link']);
-      if(node.type==='divider'&&node.metadata?.decorativeVersion===1){
+      if(node.type==='card'&&node.metadata?.cardContentVersion===1){
+        const model={...defaultCardContent(),...(node.props?.cardContent||{})};
+        const update=partial=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),cardContent:{...model,...partial}}}});
+        const section=document.createElement('section');section.className='card-content-inspector';
+        const heading=document.createElement('h3');heading.textContent='Kártya tartalma';section.append(heading);
+        section.append(field('Kártya címe',model.title,value=>update({title:value})));
+        section.append(field('Rövid leírás',model.description,value=>update({description:value}),false,true));
+        const variant=document.createElement('label');variant.className='field';variant.append(document.createTextNode('Megjelenés'));
+        const select=document.createElement('select');select.setAttribute('aria-label','Kártya megjelenése');
+        for(const [value,label] of [['solid','Telített'],['outline','Körvonalas'],['glass','Üveghatású']]){
+          const option=document.createElement('option');option.value=value;option.textContent=label;select.append(option);
+        }
+        select.value=CARD_VARIANTS.includes(model.variant)?model.variant:'solid';select.onchange=()=>update({variant:select.value});variant.append(select);section.append(variant);
+        section.append(field('Kép URL (opcionális)',model.imageSrc,value=>update({imageSrc:value.trim()})));
+        section.append(field('Kép leírása',model.imageAlt,value=>update({imageAlt:value})));
+        section.append(field('Gomb felirata (opcionális)',model.actionLabel,value=>update({actionLabel:value})));
+        section.append(field('Gomb hivatkozása',model.actionHref,value=>update({actionHref:value.trim()})));
+        const newWindow=document.createElement('label');newWindow.className='inspector-toggle';
+        const check=document.createElement('input');check.type='checkbox';check.checked=Boolean(model.newWindow);
+        check.onchange=()=>update({newWindow:check.checked});newWindow.append(check,document.createTextNode('Gomb megnyitása új lapon'));section.append(newWindow);
+        const hint=document.createElement('small');hint.textContent='A képet a leírásával együtt, a gomb feliratát a hivatkozással együtt add meg. További elemeket a kártya belsejébe is helyezhetsz. Mentés ≠ Publikálás.';section.append(hint);
+        inspector.append(section);
+      }else if(node.type==='divider'&&node.metadata?.decorativeVersion===1){
         const config=normalizeDividerStyle(node.props?.decoration);
         const update=patch=>{
           try{const decoration=normalizeDividerStyle({...config,...patch});command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),decoration}}})}
