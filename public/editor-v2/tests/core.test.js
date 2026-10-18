@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 
-import { createDocument, createNode, NODE_TYPES } from '../core/schema.js';
+import { createDocument, createNode, NODE_TYPES, normalizeRichText } from '../core/schema.js';
 import { assertValidEditorDocument } from '../core/validation.js';
 import { createEditorState, activePage } from '../core/state.js';
 import { beginTransaction, commitTransaction, execute, executeBatch, rollbackTransaction } from '../core/commands.js';
@@ -29,6 +29,23 @@ test('canvas workspace expands in every direction without changing artboard coor
   assert.deepEqual(measureCanvasWorkspace([{left:-120,right:420,top:-40,bottom:1100}],300,800,1),{left:120,top:40,right:120,bottom:300});
   assert.deepEqual(measureCanvasWorkspace([{left:-120,right:420,top:-40,bottom:1100}],300,800,.5),{left:240,top:80,right:540,bottom:1400});
   assert.deepEqual(measureCanvasWorkspace([{left:10,right:290,top:10,bottom:790}],300,800,1),{left:0,top:0,right:0,bottom:0});
+});
+
+test('Rich Text schema normalizes Office-friendly tables, safe inline styles and extended semantic marks',()=>{
+  const document=normalizeRichText({schemaVersion:1,type:'richtext-document',blocks:[
+    {type:'paragraph',align:'center',children:[{type:'text',text:'Marked',marks:['bold','strikethrough','superscript'],styles:{color:'#AbC',backgroundColor:'#ffee99'}}]},
+    {type:'table',rows:[{cells:[{header:true,children:[{type:'text',text:'Revenue',marks:[]}]},{header:true,children:[{type:'text',text:'Year',marks:[]}]}]},{cells:[{header:false,children:[{type:'text',text:'100',marks:[]}]},{header:false,children:[{type:'text',text:'2026',marks:[]}]}]}]}
+  ]});
+  assert.equal(document.blocks[0].align,'center');
+  assert.deepEqual(document.blocks[0].children[0].marks,['bold','strikethrough','superscript']);
+  assert.equal(document.blocks[0].children[0].styles.color,'#abc');
+  assert.equal(document.blocks[1].rows[1].cells[0].children[0].text,'100');
+  const office=normalizeRichText({schemaVersion:1,type:'richtext-document',blocks:[{type:'paragraph',children:[{type:'text',text:'Office',marks:['bold'],styles:{fontFamily:'Calibri',fontSize:'24px',color:'#abc'}}]}]});
+  assert.deepEqual(office.blocks[0].children[0].styles,{color:'#abc',fontSize:'24px',fontFamily:'Calibri'});
+  assert.throws(()=>normalizeRichText({schemaVersion:1,type:'richtext-document',blocks:[{type:'paragraph',children:[{type:'text',text:'bad font',marks:[],styles:{fontFamily:'url(javascript:alert(1))'}}]}]}));
+  assert.throws(()=>normalizeRichText({schemaVersion:1,type:'richtext-document',blocks:[{type:'paragraph',children:[{type:'text',text:'too big',marks:[],styles:{fontSize:'120px'}}]}]}));
+  assert.throws(()=>normalizeRichText({schemaVersion:1,type:'richtext-document',blocks:[{type:'paragraph',children:[{type:'text',text:'bad',marks:[],styles:{color:'red;background:url(javascript:1)'}}]}]}));
+  assert.throws(()=>normalizeRichText({schemaVersion:1,type:'richtext-document',blocks:[{type:'table',rows:[{cells:Array.from({length:25},()=>({children:[]}))}]}]}));
 });
 
 test('Editor browser module parses before it is shipped', () => {

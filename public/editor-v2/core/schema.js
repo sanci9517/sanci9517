@@ -122,10 +122,19 @@ export const RICH_TEXT_SCHEMA_VERSION = 1;
 export const RICH_TEXT_TYPE = 'richtext-document';
 
 export const RICH_TEXT_BLOCK_TYPES = Object.freeze(new Set([
-  'paragraph', 'heading', 'quote', 'code', 'bulleted-list', 'numbered-list'
+  'paragraph', 'heading', 'quote', 'code', 'bulleted-list', 'numbered-list', 'table'
 ]));
 
-export const RICH_TEXT_MARKS = Object.freeze(new Set(['bold', 'italic', 'underline']));
+export const RICH_TEXT_MARKS = Object.freeze(new Set([
+  'bold', 'italic', 'underline', 'strikethrough', 'subscript', 'superscript', 'code'
+]));
+
+// Keep imported and editor-authored font choices predictable and safe in both
+// the editable DOM and the public renderer. These include common Office fonts.
+export const RICH_TEXT_FONT_FAMILIES = Object.freeze([
+  'Arial', 'Aptos', 'Calibri', 'Cambria', 'Georgia', 'Tahoma', 'Trebuchet MS',
+  'Verdana', 'Times New Roman', 'Courier New', 'system-ui', 'serif', 'sans-serif', 'monospace'
+]);
 
 export function createEmptyRichText() {
   return {
@@ -158,9 +167,26 @@ export function normalizeRichText(value) {
         items: block.items.map((item) => normalizeRichTextInlineChildren(Array.isArray(item) ? item : item?.children))
       };
     }
+    if (block.type === 'table') {
+      if (!Array.isArray(block.rows) || block.rows.length === 0 || block.rows.length > 100) {
+        throw new Error('Table rows must contain between 1 and 100 rows');
+      }
+      const rows = block.rows.map((row) => {
+        if (!row || !Array.isArray(row.cells) || row.cells.length === 0 || row.cells.length > 24) {
+          throw new Error('Table rows must contain between 1 and 24 cells');
+        }
+        return { cells: row.cells.map((cell) => ({
+          header: Boolean(cell?.header),
+          ...(['left', 'center', 'right', 'justify'].includes(cell?.align) ? { align: cell.align } : {}),
+          children: normalizeRichTextInlineChildren(cell?.children)
+        })) };
+      });
+      return { type: 'table', rows };
+    }
     return {
       type: block.type,
       ...(block.type === 'heading' ? { level: block.level } : {}),
+      ...(['paragraph', 'heading', 'quote'].includes(block.type) && ['left', 'center', 'right', 'justify'].includes(block.align) ? { align: block.align } : {}),
       children: normalizeRichTextInlineChildren(block.children)
     };
   });
@@ -183,6 +209,27 @@ function normalizeRichTextInlineChildren(children) {
     const marks = [...new Set(Array.isArray(inline.marks) ? inline.marks : [])];
     if (marks.some((mark) => !RICH_TEXT_MARKS.has(mark))) throw new Error('Invalid Rich Text mark');
     const result = { type: 'text', text: inline.text, marks };
+    if (inline.styles != null) {
+      if (!inline.styles || typeof inline.styles !== 'object' || Array.isArray(inline.styles)) throw new Error('Invalid Rich Text inline styles');
+      const styles = {};
+      for (const key of ['color', 'backgroundColor']) {
+        if (inline.styles[key] == null || inline.styles[key] === '') continue;
+        const color = String(inline.styles[key]).trim();
+        if (!/^#(?:[\da-f]{3}|[\da-f]{4}|[\da-f]{6}|[\da-f]{8})$/i.test(color)) throw new Error('Rich Text colors must be safe hexadecimal colors');
+        styles[key] = color.toLowerCase();
+      }
+      if (inline.styles.fontSize != null && inline.styles.fontSize !== '') {
+        const size = String(inline.styles.fontSize).trim();
+        if (!/^(?:[8-9]|[1-8]\d|9[0-6])px$/.test(size)) throw new Error('Rich Text font size must be between 8px and 96px');
+        styles.fontSize = size;
+      }
+      if (inline.styles.fontFamily != null && inline.styles.fontFamily !== '') {
+        const family = String(inline.styles.fontFamily).trim();
+        if (!RICH_TEXT_FONT_FAMILIES.includes(family)) throw new Error('Unsupported Rich Text font family');
+        styles.fontFamily = family;
+      }
+      if (Object.keys(styles).length) result.styles = styles;
+    }
     if (inline.link != null) {
       if (!inline.link || typeof inline.link !== 'object' || typeof inline.link.href !== 'string' || !inline.link.href.trim()) {
         throw new Error('Invalid Rich Text link');

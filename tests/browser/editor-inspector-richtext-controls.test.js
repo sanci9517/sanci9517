@@ -33,8 +33,10 @@ test('typed Inspector controls and link selection work with real browser DOM at 
     const data=await page.evaluate(async()=>{
       const {renderPropertyInput}=await import('/editor-v2/ui/property-controls.js');
       const {getProperty,listProperties}=await import('/editor-v2/core/property-registry.js');
-      const {getRichTextBlockSelection,updateRichTextInlineLink,updateRichTextInlineMark}=await import('/editor-v2/core/richtext-links.js');
+      const {getRichTextBlockSelection,getRichTextFormattingSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,updateRichTextBlockAlignment}=await import('/editor-v2/core/richtext-links.js');
       const {renderRichTextEditor,richTextEditorToDocument,setBlockType}=await import('/editor-v2/core/richtext-engine.js');
+      const {importRichTextClipboard}=await import('/editor-v2/core/richtext-import.js');
+      const {normalizeRichText}=await import('/editor-v2/core/schema.js');
       const host=document.createElement('div');document.body.append(host);
       const helpLengths=listProperties().map(property=>{
         const field=renderPropertyInput(property,property.label,'16px',()=>{});
@@ -73,6 +75,11 @@ test('typed Inspector controls and link selection work with real browser DOM at 
         const control=renderPropertyInput(property,property.label,property.presets?.[0]?.value??'16px',()=>{});
         return [property.id,[...control.querySelector('.dimension-controls select').options].map(option=>option.value)];
       }));
+      const importedWord=normalizeRichText(importRichTextClipboard({html:'<h2 style="text-align:center">Quarterly report</h2><p>Hello <strong>bold</strong>, <span style="color:rgb(12,34,56);background-color:#ffee99"><em>highlighted</em></span> <s>old</s><sub>2</sub><a href="javascript:alert(1)">unsafe link</a></p><ul><li>First</li><li>Second</li></ul><table><tr><th>Name</th><th>Value</th></tr><tr><td>Revenue</td><td>100</td></tr><tr><td>Year</td><td style="text-align:right;font-size:12pt;color:#112233">2026</td></tr></table><script>window.__pasteAttack=1</script>'}));
+      const importedEditor=document.createElement('div');renderRichTextEditor(importedEditor,importedWord);const importedRoundTrip=normalizeRichText(richTextEditorToDocument(importedEditor));
+      const officeStyles=normalizeRichText(importRichTextClipboard({html:'<p style="text-align:right;font-family:Calibri;font-size:18pt;color:#112233">Office typography</p>'}));
+      const importedTsv=normalizeRichText(importRichTextClipboard({text:'Name\tValue\nRevenue\t100'}));
+      let oversizedPasteRejected=false;try{importRichTextClipboard({text:'x'.repeat(250001)})}catch{oversizedPasteRejected=true}
       const model={
         schemaVersion:1,type:'richtext-document',
         blocks:[{type:'paragraph',children:[{type:'text',text:'Hello world',marks:[]}]}]
@@ -91,14 +98,27 @@ test('typed Inspector controls and link selection work with real browser DOM at 
       selection.removeAllRanges();selection.addRange(caret);
       const editing=getRichTextBlockSelection(editor);
       const unlinked=updateRichTextInlineLink(richTextEditorToDocument(editor),editing,null);
-      const marked=updateRichTextInlineMark(linked,saved,'bold');
+      const styled=updateRichTextInlineStyle(linked,saved,'fontSize','24px');
+      const family=updateRichTextInlineStyle(styled,saved,'fontFamily','Georgia');
+      const marked=updateRichTextInlineMark(family,saved,'bold');
       renderRichTextEditor(editor,marked);
       const parsedMarked=richTextEditorToDocument(editor);
+      const aligned=updateRichTextBlockAlignment(parsedMarked,0,'justify');
+      const multiModel={schemaVersion:1,type:'richtext-document',blocks:[{type:'paragraph',children:[{type:'text',text:'First paragraph',marks:[]}]},{type:'heading',level:2,children:[{type:'text',text:'Second heading',marks:[]}]}]};
+      const multiEditor=document.createElement('div');renderRichTextEditor(multiEditor,multiModel);host.append(multiEditor);
+      const firstText=multiEditor.children[0].firstChild.firstChild,secondText=multiEditor.children[1].firstChild.firstChild,multiRange=document.createRange();multiRange.setStart(firstText,0);multiRange.setEnd(secondText,6);selection.removeAllRanges();selection.addRange(multiRange);
+      const multiSelection=getRichTextFormattingSelection(multiEditor),multiMarked=updateRichTextInlineMark(multiModel,multiSelection,'italic'),multiStyled=updateRichTextInlineStyle(multiMarked,multiSelection,'fontSize','20px'),multiAligned=updateRichTextBlockAlignment(multiStyled,multiSelection.segments.map(segment=>segment.blockIndex),'center');
       const list=setBlockType(parsedMarked,0,11,'numbered-list');
       renderRichTextEditor(editor,list);
       const parsedList=richTextEditorToDocument(editor);
       return {edits,presetResults,unitOptions,helpLengths,saved,editing,linkPresent,linksAfterRemoval:unlinked.blocks[0].children.filter(x=>x.link).length,
-        markedRun:parsedMarked.blocks[0].children.find(x=>x.text==='world'),
+        importedBlocks:importedRoundTrip.blocks.map(block=>block.type),importedText:importedRoundTrip.blocks[0].children[0].text,importedAlignment:importedRoundTrip.blocks[0].align,
+        importedMarks:importedRoundTrip.blocks[1].children.map(run=>run.marks),importedInlineStyles:importedRoundTrip.blocks[1].children.map(run=>run.styles??{}),
+        importedLinks:importedRoundTrip.blocks[1].children.filter(run=>run.link).length,importedTable:importedRoundTrip.blocks[3].rows.map(row=>row.cells.map(cell=>cell.children.map(run=>run.text).join(''))),officeStyles:officeStyles.blocks[0],tableCell:importedRoundTrip.blocks[3].rows[2].cells[1],
+        tsvType:importedTsv.blocks[0].type,tsvShape:[importedTsv.blocks[0].rows.length,importedTsv.blocks[0].rows[0].cells.length],oversizedPasteRejected,
+        pasteAttack:window.__pasteAttack,
+        markedRun:aligned.blocks[0].children.find(x=>x.text==='world'),alignment:aligned.blocks[0].align,
+        multiSelection,multiBlocks:multiAligned.blocks,
         listType:parsedList.blocks[0].type,listText:parsedList.blocks[0].items[0].children.map(x=>x.text).join(''),
         hasHorizontalOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+1};
     });
@@ -115,8 +135,26 @@ test('typed Inspector controls and link selection work with real browser DOM at 
     assert.equal(data.linksAfterRemoval,0);
     assert.deepEqual(data.markedRun.marks,['bold']);
     assert.equal(data.markedRun.link.href,'/p/home');
+    assert.equal(data.markedRun.styles.fontSize,'24px');assert.equal(data.markedRun.styles.fontFamily,'Georgia');assert.equal(data.alignment,'justify');
+    assert.deepEqual(data.multiSelection,{segments:[{blockIndex:0,from:0,to:15},{blockIndex:1,from:0,to:6}]});
+    assert.equal(data.multiBlocks[0].align,'center');assert.equal(data.multiBlocks[1].align,'center');
+    assert.ok(data.multiBlocks[0].children[0].marks.includes('italic'));assert.ok(data.multiBlocks[1].children[0].marks.includes('italic'));
+    assert.equal(data.multiBlocks[0].children[0].styles.fontSize,'20px');assert.equal(data.multiBlocks[1].children[0].styles.fontSize,'20px');
     assert.equal(data.listType,'numbered-list');
     assert.equal(data.listText,'Hello world');
+    assert.deepEqual(data.importedBlocks,['heading','paragraph','bulleted-list','table']);
+    assert.equal(data.importedText,'Quarterly report');
+    assert.equal(data.importedAlignment,'center');
+    assert.ok(data.importedMarks[3].includes('italic'));
+    assert.ok(data.importedMarks[5].includes('strikethrough'));
+    assert.ok(data.importedMarks[6].includes('subscript'));
+    assert.deepEqual(data.importedInlineStyles[3],{color:'#0c2238',backgroundColor:'#ffee99'});
+    assert.equal(data.importedLinks,0,'unsafe pasted links must be dropped without losing their text');
+    assert.deepEqual(data.importedTable,[['Name','Value'],['Revenue','100'],['Year','2026']]);
+    assert.equal(data.officeStyles.align,'right');assert.deepEqual(data.officeStyles.children[0].styles,{color:'#112233',fontSize:'24px',fontFamily:'Calibri'});
+    assert.equal(data.tableCell.align,'right');assert.equal(data.tableCell.children[0].styles.fontSize,'16px');
+    assert.equal(data.tsvType,'table');assert.deepEqual(data.tsvShape,[2,2]);assert.equal(data.oversizedPasteRejected,true);
+    assert.equal(data.pasteAttack,undefined,'Office markup must be parsed as inert content');
     await page.close();
   }
 });

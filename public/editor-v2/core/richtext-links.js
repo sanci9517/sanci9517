@@ -1,7 +1,8 @@
+import { RICH_TEXT_FONT_FAMILIES } from './schema.js';
+
 /*
- * Rich Text inline link editing. A single paragraph/heading/quote/code selection
- * is updated in the structured model, preserving other runs and existing marks.
- * Link mutation does not touch publish state; caller uses the canonical command.
+ * Rich Text links operate inside one block; formatting can span several blocks.
+ * All mutations preserve the structured model and use the canonical command.
  */
 export function validatedLinkHref(value) {
   const href = String(value ?? '').trim();
@@ -34,19 +35,66 @@ export function updateRichTextInlineLink(documentModel, {blockIndex, from, to}, 
 }
 
 export function updateRichTextInlineMark(documentModel, range, mark) {
-  if (!['bold', 'italic', 'underline'].includes(mark)) throw new Error('Ismeretlen szövegformázás.');
-  const block = documentModel?.blocks?.[range.blockIndex];
-  let offset = 0;
-  const selected = (block?.children ?? []).filter(run => {
-    const begin = offset; offset += String(run.text ?? '').length;
-    return offset > range.from && begin < range.to;
-  });
-  const remove = selected.length > 0 && selected.every(run => run.marks?.includes(mark));
-  return updateRichTextRange(documentModel, range, piece => {
-    const marks = new Set(piece.marks ?? []);
-    if (remove) marks.delete(mark); else marks.add(mark);
-    piece.marks = ['bold', 'italic', 'underline'].filter(value => marks.has(value));
-  });
+  const order=['bold','italic','underline','strikethrough','subscript','superscript','code'];
+  if (!order.includes(mark)) throw new Error('Ismeretlen szövegformázás.');
+  const segments=Array.isArray(range?.segments)?range.segments:[range];
+  const selected=segments.flatMap(segment=>selectedInlineRuns(documentModel,segment));
+  if(!selected.length)throw new Error('Először jelölj ki egy szövegrészt.');
+  const remove=selected.every(run=>run.marks?.includes(mark));
+  return segments.reduce((next,segment)=>updateInlineMarkSegment(next,segment,mark,order,remove),documentModel);
+}
+
+export function updateRichTextInlineStyle(documentModel,range,key,value){
+  if(!['color','backgroundColor','fontSize','fontFamily'].includes(key))throw new Error('Ismeretlen szövegstílus.');
+  const normalized=String(value??'').trim();
+  if(['color','backgroundColor'].includes(key)&&!/^#(?:[\da-f]{3}|[\da-f]{4}|[\da-f]{6}|[\da-f]{8})$/i.test(normalized))throw new Error('Válassz érvényes színt.');
+  if(key==='fontSize'&&normalized&&!/^(?:[8-9]|[1-8]\d|9[0-6])px$/.test(normalized))throw new Error('A betűméret 8 és 96 képpont között lehet.');
+  if(key==='fontFamily'&&normalized&&!RICH_TEXT_FONT_FAMILIES.includes(normalized))throw new Error('Válassz támogatott betűcsaládot.');
+  if(Array.isArray(range?.segments))return range.segments.reduce((next,segment)=>updateRichTextInlineStyle(next,segment,key,normalized),documentModel);
+  const block=documentModel?.blocks?.[range.blockIndex];if(!block)throw new Error('Érvénytelen szövegkijelölés.');
+  const targets=[];
+  if(Array.isArray(block.children))targets.push(block.children);
+  else if(Array.isArray(block.items))for(const item of block.items)targets.push(Array.isArray(item)?item:item?.children??[]);
+  else if(block.type==='table')for(const row of block.rows??[])for(const cell of row.cells??[])targets.push(cell.children??[]);
+  else throw new Error('Ebben a blokkban a kijelölés nem formázható.');
+  let total=0;for(const runs of targets)total+=runs.reduce((sum,run)=>sum+String(run.text??'').length,0);
+  if(!Number.isInteger(range.from)||!Number.isInteger(range.to)||range.from<0||range.to>total||range.to<=range.from)throw new Error('Először jelölj ki egy szövegrészt.');
+  const next=structuredClone(documentModel),nextBlock=next.blocks[range.blockIndex],nextTargets=[];
+  if(Array.isArray(nextBlock.children))nextTargets.push({get:()=>nextBlock.children,set:value=>{nextBlock.children=value}});
+  else if(Array.isArray(nextBlock.items))for(let index=0;index<nextBlock.items.length;index++)nextTargets.push({get:()=>Array.isArray(nextBlock.items[index])?nextBlock.items[index]:nextBlock.items[index]?.children??[],set:value=>{nextBlock.items[index]={children:value}}});
+  else if(nextBlock.type==='table')for(let r=0;r<(nextBlock.rows??[]).length;r++)for(let c=0;c<(nextBlock.rows[r].cells??[]).length;c++)nextTargets.push({get:()=>nextBlock.rows[r].cells[c].children??[],set:value=>{nextBlock.rows[r].cells[c].children=value}});
+  let offset=0;for(const target of nextTargets){const length=target.get().reduce((sum,run)=>sum+String(run.text??'').length,0);const from=Math.max(0,range.from-offset),to=Math.min(length,range.to-offset);if(to>from)target.set(updateRuns(target.get(),from,to,piece=>{const styles={...(piece.styles??{})};if(normalized)styles[key]=['color','backgroundColor'].includes(key)?normalized.toLowerCase():normalized;else delete styles[key];piece.styles=styles;if(!Object.keys(styles).length)delete piece.styles}));offset+=length}
+  return next;
+}
+
+export function updateRichTextBlockAlignment(documentModel,blockIndex,align){
+  if(!['left','center','right','justify'].includes(align))throw new Error('Válassz érvényes bekezdésigazítást.');
+  const indices=[...new Set(Array.isArray(blockIndex)?blockIndex:[blockIndex])];
+  const supported=indices.filter(index=>['paragraph','heading','quote'].includes(documentModel?.blocks?.[index]?.type));
+  if(!supported.length)throw new Error('Ennél a blokknál nem állítható be bekezdésigazítás.');
+  const next=structuredClone(documentModel);for(const index of supported)next.blocks[index].align=align;return next;
+}
+
+function inlineTargets(block, setter=false){
+  if(Array.isArray(block?.children))return [{get:()=>block.children,set:value=>{block.children=value}}];
+  if(Array.isArray(block?.items))return block.items.map((item,index)=>({get:()=>Array.isArray(block.items[index])?block.items[index]:block.items[index]?.children??[],set:value=>{block.items[index]=Array.isArray(block.items[index])?value:{...block.items[index],children:value}}}));
+  if(block?.type==='table')return (block.rows??[]).flatMap((row,rowIndex)=>(row.cells??[]).map((cell,cellIndex)=>({get:()=>block.rows[rowIndex].cells[cellIndex].children??[],set:value=>{block.rows[rowIndex].cells[cellIndex].children=value}})));
+  return [];
+}
+
+function selectedInlineRuns(documentModel,range){
+  const targets=inlineTargets(documentModel?.blocks?.[range?.blockIndex]);if(!targets.length)return [];
+  let offset=0;const selected=[];
+  for(const target of targets)for(const run of target.get()){const begin=offset;offset+=String(run.text??'').length;if(offset>range.from&&begin<range.to)selected.push(run)}
+  if(!Number.isInteger(range.from)||!Number.isInteger(range.to)||range.from<0||range.to>offset||range.to<=range.from)throw new Error('Érvénytelen szövegkijelölés.');
+  return selected;
+}
+
+function updateInlineMarkSegment(documentModel,range,mark,order,remove){
+  selectedInlineRuns(documentModel,range);
+  const next=structuredClone(documentModel),targets=inlineTargets(next.blocks[range.blockIndex]);let offset=0;
+  for(const target of targets){const runs=target.get(),length=runs.reduce((sum,run)=>sum+String(run.text??'').length,0),from=Math.max(0,range.from-offset),to=Math.min(length,range.to-offset);if(to>from)target.set(updateRuns(runs,from,to,piece=>{const marks=new Set(piece.marks??[]);if(remove)marks.delete(mark);else marks.add(mark);piece.marks=order.filter(value=>marks.has(value))}));offset+=length}
+  return next;
 }
 
 function updateRichTextRange(documentModel, {blockIndex, from, to}, change) {
@@ -59,9 +107,14 @@ function updateRichTextRange(documentModel, {blockIndex, from, to}, change) {
     throw new Error('Először jelölj ki egy szövegrészt.');
   }
   const next = structuredClone(documentModel);
+  next.blocks[blockIndex].children = updateRuns(block.children,from,to,change);
+  return next;
+}
+
+function updateRuns(runs,from,to,change){
   const updated = [];
   let offset = 0;
-  for (const run of block.children) {
+  for (const run of runs) {
     const text = String(run.text ?? '');
     const begin = offset, end = begin + text.length;
     offset = end;
@@ -79,12 +132,11 @@ function updateRichTextRange(documentModel, {blockIndex, from, to}, change) {
   const merged = [];
   for (const piece of updated) {
     const last = merged.at(-1);
-    if (last && JSON.stringify({marks:last.marks,link:last.link}) ===
-      JSON.stringify({marks:piece.marks,link:piece.link})) last.text += piece.text;
+    if (last && JSON.stringify({marks:last.marks,styles:last.styles,link:last.link}) ===
+      JSON.stringify({marks:piece.marks,styles:piece.styles,link:piece.link})) last.text += piece.text;
     else merged.push(piece);
   }
-  next.blocks[blockIndex].children = merged;
-  return next;
+  return merged;
 }
 
 // Capture selection before focus moves to toolbar buttons / URL input. The native
@@ -127,6 +179,35 @@ export function getRichTextBlockSelection(editor) {
     to = from + anchor.textContent.length;
   }
   return from === to ? null : {blockIndex, from, to};
+}
+
+/** Return a structured selection split at top-level blocks for model-backed formatting. */
+export function getRichTextFormattingSelection(editor) {
+  const selection=window.getSelection();
+  if(!selection?.rangeCount||selection.isCollapsed)return null;
+  const range=selection.getRangeAt(0);
+  if(!editor.contains(range.startContainer)||!editor.contains(range.endContainer))return null;
+  const topBlock=(container,offset,isStart)=>{
+    if(container===editor){const index=isStart?offset:offset-1;return editor.children?.[index]??null}
+    let current=container.nodeType===Node.ELEMENT_NODE?container:container.parentElement;
+    while(current&&current.parentElement!==editor)current=current.parentElement;
+    return current?.parentElement===editor?current:null;
+  };
+  const start=topBlock(range.startContainer,range.startOffset,true),end=topBlock(range.endContainer,range.endOffset,false);
+  if(!start||!end)return null;
+  const children=[...editor.children],first=children.indexOf(start),last=children.indexOf(end);
+  if(first<0||last<first)return null;
+  const offsetIn=(block,container,offset,isStart)=>{
+    if(container===editor)return isStart?0:block.textContent.length;
+    const prefix=document.createRange();prefix.selectNodeContents(block);prefix.setEnd(container,offset);return prefix.toString().length;
+  };
+  const segments=[];
+  for(let blockIndex=first;blockIndex<=last;blockIndex++){
+    const block=children[blockIndex],from=blockIndex===first?offsetIn(block,range.startContainer,range.startOffset,true):0,
+      to=blockIndex===last?offsetIn(block,range.endContainer,range.endOffset,false):block.textContent.length;
+    if(to>from)segments.push({blockIndex,from,to});
+  }
+  return segments.length?{segments}:null;
 }
 
 export function getRichTextActiveBlockIndex(editor) {
