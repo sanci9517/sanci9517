@@ -67,7 +67,7 @@ export function renderElementContent(type,value,nodeId){
 }
 export function activateStructuredContent(root){
  for(const host of root.querySelectorAll('[data-structured-tabs]')){
-  if(host.dataset.activated)return;host.dataset.activated='1';
+  if(host.dataset.activated)continue;host.dataset.activated='1';
   const tabs=[...host.querySelectorAll('[role="tab"]')],panels=[...host.querySelectorAll('[role="tabpanel"]')];
   const select=index=>{tabs.forEach((tab,i)=>{tab.setAttribute('aria-selected',String(i===index));tab.tabIndex=i===index?0:-1;panels[i].hidden=i!==index});tabs[index]?.focus()};
   tabs.forEach((tab,i)=>{
