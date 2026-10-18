@@ -140,7 +140,9 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await field('radius.topLeft').locator('input[type="number"]').fill('6');
   await field('radius.topLeft').locator('input').press('Tab');
   assert.equal((await css()).radius,'6px');
+  const preResizeText=await publicPage.locator('.visual-card > .visual-text').first().elementHandle();
   await publicPage.setViewportSize({width:390,height:800});
+  await publicPage.waitForFunction(previous=>{const current=document.querySelector('.visual-card > .visual-text');return current&&current!==previous},preResizeText);
   await publicPage.waitForFunction(()=>getComputedStyle(document.querySelector('.visual-card > .visual-text')).borderTopLeftRadius==='12px');
   assert.equal((await publicCss()).radius,'12px');
   assert.deepEqual(errors,[]);
