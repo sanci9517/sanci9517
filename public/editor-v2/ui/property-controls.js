@@ -7,6 +7,8 @@ export function renderPropertyInput(property, label, current, onChange) {
   const wrap = document.createElement('div');
   wrap.className = 'field typed-inspector-field';
   wrap.dataset.propertyId = property.id;
+  const heading = document.createElement('div');
+  heading.className = 'property-heading';
   const title = document.createElement('label');
   title.textContent = label;
   const controlId = 'prop-' + property.id.replaceAll('.', '-') + '-' + Math.random().toString(36).slice(2, 7);
@@ -24,7 +26,22 @@ export function renderPropertyInput(property, label, current, onChange) {
       error.textContent = e instanceof Error ? e.message : 'Érvénytelen érték';
     }
   };
-  wrap.append(title);
+  const info = document.createElement('button');
+  info.type = 'button';
+  info.className = 'property-info-toggle';
+  info.textContent = 'i';
+  info.setAttribute('aria-label', label + ' magyarázata');
+  info.setAttribute('aria-expanded', 'false');
+  const help = document.createElement('small');
+  help.className = 'property-help';
+  help.hidden = true;
+  help.textContent = property.help || describeProperty(property);
+  info.onclick = () => {
+    help.hidden = !help.hidden;
+    info.setAttribute('aria-expanded', String(!help.hidden));
+  };
+  heading.append(title, info);
+  wrap.append(heading, help);
   const type = property.type;
   if (type === 'asset') {
     const note = document.createElement('div');
@@ -121,7 +138,10 @@ export function renderPropertyInput(property, label, current, onChange) {
     input.onkeydown = event => {if(event.key === 'Enter') {event.preventDefault();input.blur();}};
     wrap.append(input);
   }
-  if(property.presets?.length && !['size.width','size.height'].includes(property.id)){
+  // Choice controls already expose every available option. Repeating the same
+  // values as chips makes the Inspector longer without adding a faster choice.
+  const choiceControl = ['select', 'font', 'shadow'].includes(type);
+  if(property.presets?.length && !choiceControl && !['size.width','size.height'].includes(property.id)){
     const group=document.createElement('div');group.className='property-presets';group.setAttribute('role','group');group.setAttribute('aria-label',label+' gyorsbeállítások');
     for(const preset of property.presets){
       const button=document.createElement('button');button.type='button';button.className='property-preset';
@@ -134,4 +154,28 @@ export function renderPropertyInput(property, label, current, onChange) {
   }
   wrap.append(error);
   return wrap;
+}
+
+function describeProperty(property) {
+  const descriptions = {
+    display: 'Megadja, hogy az elem normál blokk, Flexbox vagy rács elrendezés szerint jelenjen meg.',
+    overflow: 'Azt szabályozza, mi történjen, ha a tartalom nagyobb az elemnél.',
+    width: 'Az elem szélessége. A mobilnézethez külön értéket is megadhatsz.',
+    height: 'Az elem magassága. Az „auto” a tartalomhoz igazítja.',
+    color: 'A szöveg színe. HEX-kódot is beírhatsz, például #3366FF.',
+    backgroundColor: 'Az elem hátterének színe; az átlátszó érték a mögötte levő tartalmat mutatja.',
+    fontSize: 'A betűk mérete. A mértékegységgel együtt add meg, például 18px vagy 1.2rem.',
+    fontFamily: 'A szöveg betűcsaládja. A betűtípus a publikált oldalon is érvényesül.',
+    fontWeight: 'A szöveg vastagsága: a kisebb szám vékonyabb, a nagyobb vastagabb betűt jelent.',
+    textAlign: 'A szöveget balra, középre, jobbra vagy sorkizártan rendezi.',
+    padding: 'Belső tér az elem széle és a tartalma között.',
+    margin: 'Külső tér az elem és a szomszédos elemek között.',
+    borderRadius: 'Lekerekíti az elem sarkait.',
+    boxShadow: 'Árnyékot ad az elem mögé; az árnyék a publikált oldalon is megjelenik.',
+    opacity: 'Az elem átlátszósága 0 és 1 között. A 1 teljesen fed, a 0 láthatatlan.',
+    href: 'A célcím lehet belső oldal, például /p/kezdolap, vagy teljes webcím.',
+    position: 'Meghatározza, hogyan helyezkedjen el az elem a többi tartalomhoz képest.'
+  };
+  const key = property.key || property.id?.split('.').at(-1);
+  return descriptions[key] || `${property.label || 'Ez a beállítás'} az elem megjelenését szabályozza. Próbáld ki az értéket, majd ellenőrizd az előnézetben.`;
 }

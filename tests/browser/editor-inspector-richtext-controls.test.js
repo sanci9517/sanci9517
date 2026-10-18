@@ -49,11 +49,19 @@ test('typed Inspector controls and link selection work with real browser DOM at 
       for(const property of listProperties().filter(item=>item.presets?.length&&!['size.width','size.height'].includes(item.id))){
         const selected=property.presets[0];
         const control=renderPropertyInput(property,property.label,selected.value,value=>{presetResults[property.id]=value});host.append(control);
-        for(const preset of property.presets){
-          const button=control.querySelector(`.property-presets button[data-value="${CSS.escape(preset.value)}"]`);
-          if(!button)throw new Error('Hiányzó preset: '+property.id+' / '+preset.label);
-          button.click();
-          if(presetResults[property.id]!==preset.value)throw new Error('A preset nem a mező callbacken keresztül ment: '+property.id);
+        if(['select','font','shadow'].includes(property.type)){
+          if(control.querySelector('.property-presets'))throw new Error('Duplikált enum presetcsoport: '+property.id);
+          const select=control.querySelector('select');
+          for(const preset of property.presets){
+            if(![...select.options].some(option=>option.value===preset.value))throw new Error('Hiányzó enum választás: '+property.id+' / '+preset.label);
+            select.value=preset.value;select.dispatchEvent(new Event('change',{bubbles:true}));
+            if(presetResults[property.id]!==preset.value)throw new Error('Az enum választás nem a mező callbacken keresztül ment: '+property.id);
+          }
+        }else for(const preset of property.presets){
+            const button=control.querySelector(`.property-presets button[data-value="${CSS.escape(preset.value)}"]`);
+            if(!button)throw new Error('Hiányzó preset: '+property.id+' / '+preset.label);
+            button.click();
+            if(presetResults[property.id]!==preset.value)throw new Error('A preset nem a mező callbacken keresztül ment: '+property.id);
         }
       }
       const unitOptions=Object.fromEntries(listProperties().filter(property=>property.type==='dimension').map(property=>{
