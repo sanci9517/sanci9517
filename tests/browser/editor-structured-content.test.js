@@ -67,7 +67,14 @@ test('structured Inspector editing survives Save, Publish and public interaction
   if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
   await editor.locator('.inspector-tabs button').filter({hasText:'Tartalom'}).click();
  };
- await select(ids.tabs);
+ await editor.locator('.node[data-node-id="'+ids.list+'"]').evaluate(el=>el.click());
+ await editor.locator('.node[data-node-id="'+ids.table+'"]').evaluate(el=>el.dispatchEvent(new MouseEvent('click',{bubbles:true,ctrlKey:true})));
+ const multi=editor.locator('.multi-inspector');
+ await multi.waitFor({state:'attached'});
+ assert.match(await multi.locator('h3').textContent(),/2 elem/);
+ await multi.locator('.multi-inspector-field input[type=color]').first().evaluate(el=>{el.value='#112233';el.dispatchEvent(new Event('change',{bubbles:true}))});
+ assert.equal(posts.length,0,'bulk edit does not publish or save automatically');
+  await select(ids.tabs);
  assert.equal(await editor.locator('.structured-inspector h3').textContent(),'Fülek');
  const first=editor.locator('.structured-item').first();
  await first.locator('input').fill('Bemutatkozás');
@@ -118,6 +125,7 @@ test('structured Inspector editing survives Save, Publish and public interaction
  await carousel.locator('.visual-carousel-next').click();
  assert.equal(await carousel.locator('.visual-carousel-count').textContent(),'2 / 2');
  assert.equal(await carousel.locator('.visual-carousel-slide:visible h3').textContent(),'Második dia');
+  assert.equal(await viewer.locator('.visual-editor-node[data-node-id="'+ids.list+'"]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(17, 34, 51)');
   const list=viewer.locator('.visual-editor-node[data-node-id="'+ids.list+'"]');
  assert.equal(await list.locator('li').count(),3);
  const table=viewer.locator('.visual-editor-node[data-node-id="'+ids.table+'"]');
