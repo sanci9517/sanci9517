@@ -32,7 +32,7 @@ test('typed Inspector controls and link selection work with real browser DOM at 
     await page.goto('http://127.0.0.1:'+server.address().port+'/editor-v2/index.html');
     const data=await page.evaluate(async()=>{
       const {renderPropertyInput}=await import('/editor-v2/ui/property-controls.js');
-      const {getProperty}=await import('/editor-v2/core/property-registry.js');
+      const {getProperty,listProperties}=await import('/editor-v2/core/property-registry.js');
       const {getRichTextBlockSelection,updateRichTextInlineLink,updateRichTextInlineMark}=await import('/editor-v2/core/richtext-links.js');
       const {renderRichTextEditor,richTextEditorToDocument,setBlockType}=await import('/editor-v2/core/richtext-engine.js');
       const host=document.createElement('div');document.body.append(host);
@@ -45,6 +45,21 @@ test('typed Inspector controls and link selection work with real browser DOM at 
       host.append(box);
       const sides=box.querySelectorAll('input');
       sides[1].value='12px';sides[1].dispatchEvent(new Event('change',{bubbles:true}));
+      const presetResults={};
+      for(const property of listProperties().filter(item=>item.presets?.length&&!['size.width','size.height'].includes(item.id))){
+        const selected=property.presets[0];
+        const control=renderPropertyInput(property,property.label,selected.value,value=>{presetResults[property.id]=value});host.append(control);
+        for(const preset of property.presets){
+          const button=control.querySelector(`.property-presets button[data-value="${CSS.escape(preset.value)}"]`);
+          if(!button)throw new Error('Hiányzó preset: '+property.id+' / '+preset.label);
+          button.click();
+          if(presetResults[property.id]!==preset.value)throw new Error('A preset nem a mező callbacken keresztül ment: '+property.id);
+        }
+      }
+      const unitOptions=Object.fromEntries(listProperties().filter(property=>property.type==='dimension').map(property=>{
+        const control=renderPropertyInput(property,property.label,property.presets?.[0]?.value??'16px',()=>{});
+        return [property.id,[...control.querySelector('.dimension-controls select').options].map(option=>option.value)];
+      }));
       const model={
         schemaVersion:1,type:'richtext-document',
         blocks:[{type:'paragraph',children:[{type:'text',text:'Hello world',marks:[]}]}]
@@ -69,12 +84,16 @@ test('typed Inspector controls and link selection work with real browser DOM at 
       const list=setBlockType(parsedMarked,0,11,'numbered-list');
       renderRichTextEditor(editor,list);
       const parsedList=richTextEditorToDocument(editor);
-      return {edits,saved,editing,linkPresent,linksAfterRemoval:unlinked.blocks[0].children.filter(x=>x.link).length,
+      return {edits,presetResults,unitOptions,saved,editing,linkPresent,linksAfterRemoval:unlinked.blocks[0].children.filter(x=>x.link).length,
         markedRun:parsedMarked.blocks[0].children.find(x=>x.text==='world'),
         listType:parsedList.blocks[0].type,listText:parsedList.blocks[0].items[0].children.map(x=>x.text).join(''),
         hasHorizontalOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+1};
     });
     assert.deepEqual(data.edits,['#abcdef','8px 12px 8px 8px']);
+    assert.ok(Object.keys(data.presetResults).length>=20);
+    for(const [id,options] of Object.entries(data.unitOptions)){
+      assert.deepEqual(options.slice(1),getSupportedUnitsForProperty(id));
+    }
     assert.deepEqual(data.saved,{blockIndex:0,from:6,to:11});
     assert.deepEqual(data.editing,{blockIndex:0,from:6,to:11});
     assert.equal(data.linkPresent,true);
@@ -86,3 +105,18 @@ test('typed Inspector controls and link selection work with real browser DOM at 
     await page.close();
   }
 });
+
+function getSupportedUnitsForProperty(id){
+  const units={
+    'size.width':['auto','px','%','vw','rem'],'size.height':['auto','px','%','vh','rem'],
+    'size.minWidth':['px','%','vw','rem'],'size.maxWidth':['px','%','vw','rem'],
+    'size.minHeight':['px','%','vh','rem'],'size.maxHeight':['px','%','vh','rem'],
+    'position.x':['px','%','vw','rem'],'position.y':['px','%','vh','rem'],
+    'typography.fontSize':['px','rem','em','vw'],'typography.letterSpacing':['px','rem','em'],
+    'border.width':['px'],'radius.all':['px','rem','%'],'radius.topLeft':['px','rem','%'],
+    'radius.topRight':['px','rem','%'],'radius.bottomRight':['px','rem','%'],'radius.bottomLeft':['px','rem','%'],
+    'flex.gap':['px','rem','em','%'],'flex.basis':['auto','px','%','rem'],
+    'grid.rowGap':['px','rem','em','%'],'grid.columnGap':['px','rem','em','%']
+  };
+  return units[id]??[];
+}

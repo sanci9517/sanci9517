@@ -84,7 +84,61 @@ const properties = [
   { id: 'advanced.nodeName', group: 'advanced', label: 'Elem neve', type: 'text', command: 'element.update' }
 ];
 
-const propertyMap = new Map(properties.map((property) => [property.id, Object.freeze({ ...property })]));
+// Named, validated starting points are owned by the same registry as each
+// property. The Inspector may show them inline, while a future token/preset
+// module can consume this exact source without duplicating CSS semantics.
+const presets = Object.freeze({
+  'size.width': [['Auto','auto'],['Keskeny 320','320px'],['Tartalom 480','480px'],['Fél szélesség','50%'],['Kétharmad','66.6667%'],['Háromnegyed','75%'],['Teljes szélesség','100%'],['Tablet 768','768px'],['Laptop 1024','1024px'],['Asztali 1200','1200px']],
+  'size.height': [['Auto','auto'],['Kompakt 120','120px'],['Közepes 240','240px'],['Szakasz 400','400px'],['Fél képernyő','50vh'],['Teljes képernyő','100vh']],
+  'size.minWidth': [['320px','320px'],['480px','480px'],['640px','640px'],['768px','768px']],
+  'size.maxWidth': [['640px','640px'],['768px','768px'],['1024px','1024px'],['1200px','1200px'],['1440px','1440px'],['Teljes','100%']],
+  'size.minHeight': [['120px','120px'],['240px','240px'],['400px','400px'],['50vh','50vh']],
+  'size.maxHeight': [['400px','400px'],['600px','600px'],['800px','800px'],['Teljes képernyő','100vh']],
+  'position.position': [['Normál folyás','static'],['Mozgatható','relative'],['Réteg','absolute'],['Ragadós','sticky']],
+  'position.x': [['0','0'],['Kis eltolás · 8','8px'],['Eltolás · 16','16px'],['Eltolás · 32','32px'],['Fél szélesség','50%']],
+  'position.y': [['0','0'],['Kis eltolás · 8','8px'],['Eltolás · 16','16px'],['Eltolás · 32','32px'],['Fél magasság','50%']],
+  'position.zIndex': [['Alap · 0','0'],['Réteg · 1','1'],['Fent · 10','10'],['Overlay · 100','100']],
+  'spacing.margin': [['Nincs','0'],['XS · 4','4px'],['S · 8','8px'],['M · 16','16px'],['L · 24','24px'],['XL · 32','32px'],['Középre','0 auto']],
+  'spacing.padding': [['Nincs','0'],['XS · 4','4px'],['S · 8','8px'],['M · 16','16px'],['L · 24','24px'],['XL · 32','32px'],['Szakasz · 48','48px'],['Kártya · 16/24','16px 24px']],
+  'layout.display': [['Blokk','block'],['Egymás mellé','flex'],['Rács','grid']],
+  'layout.overflow': [['Látható','visible'],['Levágás','hidden'],['Görgethető','auto']],
+  'typography.fontSize': [['Apró · 12','12px'],['Kicsi · 14','14px'],['Törzs · 16','16px'],['Kiemelt · 20','20px'],['Alcím · 24','24px'],['Címsor · 32','32px'],['Nagy · 48','48px'],['Hero · 64','64px']],
+  'typography.fontFamily': [['Rendszer','system-ui'],['Arial','Arial'],['Georgia','Georgia'],['Verdana','Verdana'],['Monospace','monospace']],
+  'typography.fontWeight': [['Vékony · 300','300'],['Normál · 400','400'],['Közepes · 500','500'],['Félkövér · 600','600'],['Erős · 700','700'],['Extra · 800','800'],['Fekete · 900','900']],
+  'typography.lineHeight': [['Szoros · 1.1','1.1'],['Cím · 1.25','1.25'],['Kompakt · 1.4','1.4'],['Kényelmes · 1.5','1.5'],['Laza · 1.75','1.75'],['Dupla · 2','2']],
+  'typography.letterSpacing': [['Szoros · -0.5','-0.5px'],['Normál · 0','0'],['Nyitott · 0.5','0.5px'],['Tág · 1','1px']],
+  'typography.textAlign': [['Balra','left'],['Középre','center'],['Jobbra','right'],['Sorkizárt','justify']],
+  'background.color': [['Fehér','#ffffff'],['Világos','#f1f5f9'],['Palaszürke','#64748b'],['Sötét','#0f172a'],['Kék','#2563eb'],['Lila','#7c3aed'],['Áttetsző','transparent']],
+  'border.width': [['Nincs','0'],['Vékony · 1','1px'],['Normál · 2','2px'],['Erős · 4','4px']],
+  'border.style': [['Nincs','none'],['Folytonos','solid'],['Szaggatott','dashed'],['Pontozott','dotted']],
+  'border.color': [['Sötét','#0f172a'],['Szürke','#94a3b8'],['Világos','#e2e8f0'],['Kék','#2563eb']],
+  'radius.all': [['Éles · 0','0'],['Finom · 4','4px'],['Kártya · 8','8px'],['Lágy · 16','16px'],['Kerek · 24','24px'],['Pill · 999','999px']],
+  'radius.topLeft': [['0','0'],['4px','4px'],['8px','8px'],['16px','16px'],['24px','24px']],
+  'radius.topRight': [['0','0'],['4px','4px'],['8px','8px'],['16px','16px'],['24px','24px']],
+  'radius.bottomRight': [['0','0'],['4px','4px'],['8px','8px'],['16px','16px'],['24px','24px']],
+  'radius.bottomLeft': [['0','0'],['4px','4px'],['8px','8px'],['16px','16px'],['24px','24px']],
+  'shadow.box': [['Nincs','none'],['Finom','0 2px 8px #0003'],['Kártya','0 8px 24px #0005'],['Emelt','0 16px 48px #0007']],
+  'opacity.value': [['Teljes · 100%','1'],['Halvány · 75%','0.75'],['Fél · 50%','0.5'],['Visszafogott · 25%','0.25']],
+  'flex.direction': [['Sor','row'],['Oszlop','column']],
+  'flex.justify': [['Kezdő','flex-start'],['Közép','center'],['Vég','flex-end'],['Közte elosztva','space-between'],['Egyenletes','space-evenly']],
+  'flex.align': [['Nyújtás','stretch'],['Közép','center'],['Fent','flex-start'],['Lent','flex-end']],
+  'flex.wrap': [['Egy sor','nowrap'],['Tördelés','wrap']],
+  'flex.grow': [['Ne nőjön','0'],['Töltse ki a helyet','1'],['Kétszeres','2']],
+  'flex.shrink': [['Ne zsugorodjon','0'],['Rugalmas','1'],['Erősebben zsugorodjon','2']],
+  'flex.gap': [['Nincs','0'],['Szoros · 8','8px'],['Normál · 16','16px'],['Laza · 24','24px'],['Tág · 32','32px']],
+  'flex.basis': [['Automatikus','auto'],['25%','25%'],['50%','50%'],['75%','75%'],['Teljes','100%']],
+  'flex.alignSelf': [['Szülőtől','auto'],['Nyújtás','stretch'],['Közép','center'],['Fent','flex-start'],['Lent','flex-end']],
+  'grid.columns': [['1 oszlop','1fr'],['2 oszlop','repeat(2, minmax(0, 1fr))'],['3 oszlop','repeat(3, minmax(0, 1fr))'],['4 oszlop','repeat(4, minmax(0, 1fr))']],
+  'grid.rows': [['Automatikus','auto'],['Egy sor','1fr'],['2 sor','repeat(2, minmax(0, 1fr))'],['3 sor','repeat(3, minmax(0, 1fr))']],
+  'grid.column': [['Automatikus','auto'],['1. oszlop','1'],['2. oszlop','2'],['3. oszlop','3'],['4. oszlop','4'],['Teljes sor','1 / -1']],
+  'grid.row': [['Automatikus','auto'],['1. sor','1'],['2. sor','2'],['3. sor','3'],['4. sor','4'],['Teljes oszlop','1 / -1']],
+  'grid.rowGap': [['Nincs','0'],['Szoros · 8','8px'],['Normál · 16','16px'],['Laza · 24','24px'],['Tág · 32','32px']],
+  'grid.columnGap': [['Nincs','0'],['Szoros · 8','8px'],['Normál · 16','16px'],['Laza · 24','24px'],['Tág · 32','32px']]
+});
+
+const propertyMap = new Map(properties.map((property) => [property.id, Object.freeze({ ...property,
+  presets: presets[property.id] ? Object.freeze(presets[property.id].map(([label,value])=>Object.freeze({label,value}))) : undefined
+})]));
 const groupMap = new Map(groups.map((group) => [group.id, Object.freeze({ ...group })]));
 
 export function listPropertyGroups() {
@@ -100,7 +154,7 @@ export function listProperties({ group = null, nodeType = null } = {}) {
     if (group && property.group !== group) return false;
     if (nodeType && Array.isArray(property.appliesTo) && !property.appliesTo.includes(nodeType)) return false;
     return true;
-  });
+  }).map(property=>propertyMap.get(property.id));
 }
 
 export function getPropertyGroup(id) {

@@ -45,6 +45,20 @@ test('empty Rich Text has direct desktop and mobile editing, typed presets, Save
   await tab.goto(base+'/editor-v2/index.html');
   assert.equal(await tab.evaluate(async()=>{const {richTextEditorToDocument}=await import('/editor-v2/core/richtext-engine.js');const host=document.createElement('div');host.append(document.createTextNode('Beillesztett szöveg'),document.createElement('p'));return richTextEditorToDocument(host).blocks[0].children[0].text}),'Beillesztett szöveg');
   await tab.locator('.page-canvas .node').first().waitFor();
+  await tab.locator('#zoomOut').click();
+  const scaledArtboard=await tab.locator('#canvas').evaluate(el=>{const frame=el.querySelector('.page-canvas-frame'),page=el.querySelector('.page-canvas');return {frameWidth:frame.getBoundingClientRect().width,pageWidth:page.getBoundingClientRect().width,layoutWidth:el.scrollWidth,viewportWidth:el.clientWidth}});
+  assert.ok(Math.abs(scaledArtboard.frameWidth-scaledArtboard.pageWidth)<1);
+  assert.ok(scaledArtboard.frameWidth<1440);
+  assert.ok(scaledArtboard.layoutWidth<1440,'scaled canvas should not retain a 1440px unscaled layout footprint');
+  await tab.locator('#canvas').evaluate(el=>el.scrollTo({left:el.scrollWidth,top:el.scrollHeight,behavior:'instant'}));
+  await tab.locator('#fitCanvas').click();
+  const fittedArtboard=await tab.locator('#canvas').evaluate(el=>{const frame=el.querySelector('.page-canvas-frame'),rect=frame.getBoundingClientRect(),canvas=el.getBoundingClientRect();return {left:rect.left,canvasLeft:canvas.left,scrollLeft:el.scrollLeft,scrollTop:el.scrollTop,visible:rect.right>canvas.left&&rect.left<canvas.right}});
+  assert.equal(fittedArtboard.scrollLeft,0);assert.equal(fittedArtboard.scrollTop,0);assert.equal(fittedArtboard.visible,true);
+  await tab.locator('.canvas-device-btn[data-device="mobile"]').click();
+  const mobileArtboard=await tab.locator('#canvas').evaluate(el=>({pageWidth:el.querySelector('.page-canvas').getBoundingClientRect().width,frameWidth:el.querySelector('.page-canvas-frame').getBoundingClientRect().width,scrollWidth:el.scrollWidth,clientWidth:el.clientWidth}));
+  assert.ok(Math.abs(mobileArtboard.pageWidth-mobileArtboard.frameWidth)<1);
+  assert.ok(mobileArtboard.scrollWidth<=mobileArtboard.clientWidth+2,'mobile artboard fit must not leave unscaled horizontal canvas overflow');
+  await tab.locator('.canvas-device-btn[data-device="desktop"]').click();
   await tab.locator('.rail-btn[data-tab="elements"]').click();
   await tab.locator('.element-group-title').filter({hasText:'Szöveg'}).click();
   assert.equal(await tab.locator('#elementList .element:disabled').count()>0,true);
@@ -79,7 +93,7 @@ test('empty Rich Text has direct desktop and mobile editing, typed presets, Save
   await widthControl.locator('input[type="number"]').fill('320');
   await widthControl.locator('input[type="number"]').press('Tab');
   assert.equal(await tab.locator(`.node[data-node-id="${richId}"]`).evaluate(el=>getComputedStyle(el).width),'320px');
-  for(const [label,values] of [['Szélesség',['auto','50%','100%']],['Magasság',['auto','100px','200px','300px']]]){
+  for(const [label,values] of [['Szélesség',['auto','320px','480px','50%','66.6667%','75%','100%','768px','1024px','1200px']],['Magasság',['auto','120px','240px','400px','50vh','100vh']]]){
     for(const value of values){
       const button=tab.locator(`.geometry-presets[aria-label="${label} gyorsbeállítások"] button[data-value="${value}"]`);
       await button.click();

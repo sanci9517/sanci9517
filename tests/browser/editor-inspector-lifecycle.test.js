@@ -87,6 +87,16 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   assert.equal((await css()).radius,'0px');
   await editor.locator('#redo').click();
   assert.equal((await css()).radius,'12px');
+  await field('spacing.padding').locator('.property-preset').filter({hasText:'Kártya · 16/24'}).click();
+  assert.equal(await field('spacing.padding').locator('.property-preset').filter({hasText:'Kártya · 16/24'}).getAttribute('aria-pressed'),'true');
+  await field('background.color').locator('.property-preset').filter({hasText:'Kék'}).click();
+  assert.equal(await field('background.color').locator('.property-preset').filter({hasText:'Kék'}).getAttribute('aria-pressed'),'true');
+  await field('typography.fontSize').locator('.property-preset').filter({hasText:'Címsor · 32'}).click();
+  assert.equal(await field('typography.fontSize').locator('.property-preset').filter({hasText:'Címsor · 32'}).getAttribute('aria-pressed'),'true');
+  const presetStyle=()=>item.evaluate(el=>{const style=getComputedStyle(el);return {paddingTop:style.paddingTop,paddingRight:style.paddingRight,backgroundColor:style.backgroundColor,fontSize:style.fontSize}});
+  assert.deepEqual(await presetStyle(),{paddingTop:'16px',paddingRight:'24px',backgroundColor:'rgb(37, 99, 235)',fontSize:'32px'});
+  await editor.locator('#undo').click();assert.equal((await presetStyle()).fontSize,'16px');
+  await editor.locator('#redo').click();assert.equal((await presetStyle()).fontSize,'32px');
   await select(gridId);await select(itemId);
   assert.equal(await field('radius.topLeft').locator('input[type="number"]').inputValue(),'12');
   assert.equal(await field('radius.topLeft').locator('select').inputValue(),'px');
@@ -119,6 +129,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   const publicCss=()=>publicPage.locator('.visual-card > .visual-text').first().evaluate(el=>{const style=getComputedStyle(el);return {column:style.gridColumnStart,minWidth:style.minWidth,radius:style.borderTopLeftRadius}});
   await select(itemId);
   assert.deepEqual(await publicCss(),await css());
+  assert.deepEqual(await publicPage.locator('.visual-card > .visual-text').first().evaluate(el=>{const style=getComputedStyle(el);return {paddingTop:style.paddingTop,paddingRight:style.paddingRight,backgroundColor:style.backgroundColor,fontSize:style.fontSize}}),await presetStyle());
   assert.deepEqual(await publicPage.locator('.visual-card:nth-child(2) > .visual-text').evaluate(el=>{const style=getComputedStyle(el);return {basis:style.flexBasis,maxWidth:style.maxWidth}}),await flexCss());
   // A real mobile viewport edits only its own override; the published page stays unchanged.
   await editor.setViewportSize({width:390,height:800});
