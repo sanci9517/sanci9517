@@ -72,7 +72,7 @@ test('Countdown Inspector edits deadline, renders live public output and respect
  assert.equal(posts.at(-1).publish,false);
  assert.equal(draft.pages[pageId].nodes[id].props.countdown.targetISO,eventISO);
  await viewer.reload();
- assert.equal(await viewer.locator('.visual-countdown-clock').count(),0,'Save cannot publish Countdown');
+ assert.match(await viewer.locator('.visual-countdown-clock').textContent(),/Állíts be egy időpontot/,'Save cannot alter the previously published unconfigured Countdown');
  await editor.locator('#publish').click();
  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
  assert.equal(posts.at(-1).publish,true);
