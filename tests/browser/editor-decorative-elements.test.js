@@ -56,7 +56,7 @@ test('Divider and Spacer Inspector changes become public only after Publish, wit
  await controls.getByRole('spinbutton',{name:'Elválasztóvonal vastagsága'}).fill('6');
  await controls.getByRole('spinbutton',{name:'Elválasztóvonal vastagsága'}).press('Tab');
  await controls.getByRole('combobox',{name:'Elválasztóvonal mintázata'}).selectOption('dashed');
- await controls.getByRole('colorwell',{name:'Elválasztóvonal színe'}).evaluate(el=>{el.value='#22aa66';el.dispatchEvent(new Event('change',{bubbles:true}))});
+ await controls.locator('input[type="color"]').evaluate(el=>{el.value='#22aa66';el.dispatchEvent(new Event('change',{bubbles:true}))});
  assert.equal(await canvasNode(dividerId).locator('.divider-preview').evaluate(el=>getComputedStyle(el).borderTopWidth),'6px');
  assert.equal(await canvasNode(dividerId).locator('.divider-preview').evaluate(el=>getComputedStyle(el).borderTopColor),'rgb(34, 170, 102)');
  await select(spacerId);
