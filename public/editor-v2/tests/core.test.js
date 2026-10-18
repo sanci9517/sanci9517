@@ -926,7 +926,7 @@ test('new media remains editable as draft and publish requires a safe source and
 });
 
 test('structured elements share a versioned content contract, publish guard and undo',()=>{
- for(const type of ['list','table','tabs','accordion','gallery']){
+ for(const type of ['list','table','tabs','accordion','gallery','carousel']){
   const state=createEditorState(),root=activePage(state).rootId;
   execute(state,{type:'element.add',payload:{type,parentId:root}});
   const id=state.selection.primaryId,n=activePage(state).nodes[id];
@@ -998,4 +998,17 @@ test('copying an anchor regenerates a distinct element URL fragment',()=>{
  const renderer=readFileSync(new URL('../../assets/page-renderer.js',import.meta.url),'utf8');
  assert.match(renderer,/aria-label/);
  assert.match(renderer,/accessibility\?\.anchorId/);
+});
+
+test('carousel content validates optional media and accessible slide labels',()=>{
+ const model=createElementContent('carousel');
+ assert.equal(validateElementContent('carousel',model),null);
+ model.items[0].src='/slides/screen.png';
+ assert.equal(validateElementContent('carousel',model),'CAROUSEL_ALT_REQUIRED');
+ model.items[0].alt='A stream képernyőképe';
+ assert.equal(validateElementContent('carousel',model),null);
+ const html=renderElementContent('carousel',model,'carousel-demo');
+ assert.match(html,/aria-roledescription="carousel"/);
+ assert.match(html,/aria-roledescription="dia"/);
+ assert.match(html,/visual-carousel-next/);
 });
