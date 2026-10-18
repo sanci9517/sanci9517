@@ -130,10 +130,13 @@ test('structured Inspector editing survives Save, Publish and public interaction
  assert.equal(await list.locator('li').count(),3);
  const table=viewer.locator('.visual-editor-node[data-node-id="'+ids.table+'"]');
  assert.equal(await table.locator('th').count(),2);
+ await editor.screenshot({path:'/tmp/creator-ux-p0-structured-desktop.png'});
+ await viewer.screenshot({path:'/tmp/creator-ux-p0-public-content.png'});
  await editor.setViewportSize({width:390,height:800});
  await editor.locator('.node[data-node-id="'+ids.tabs+'"]').evaluate(el=>el.click());
  const mobile=editor.locator('.structured-item .structured-action').first();
  await mobile.waitFor({state:'attached'});
  assert.ok(await mobile.evaluate(el=>getComputedStyle(el).minHeight==='44px'));
+ await editor.screenshot({path:'/tmp/creator-ux-p0-structured-mobile.png'});
  assert.deepEqual(errors,[]);
 });
