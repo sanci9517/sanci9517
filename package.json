@@ -17,7 +17,7 @@
     "db:site-scope:preflight": "wrangler d1 execute sanci9517-db --remote --file=./scripts/web013-site-scope-preflight.sql --json",
     "test:admin-home": "node --test tests/admin-home-contract.test.js",
     "test:admin-access": "node --test tests/admin-asset-access-contract.test.js",
-    "test:editor:layout": "node --test tests/browser/editor-layout.test.js tests/browser/editor-inspector-richtext-controls.test.js tests/browser/editor-richtext-save-publish.test.js tests/browser/editor-inspector-lifecycle.test.js tests/browser/editor-ux-p0-workflow.test.js tests/browser/editor-style-copy.test.js tests/browser/editor-responsive-layout.test.js",
+    "test:editor:layout": "node --test tests/browser/editor-layout.test.js tests/browser/editor-inspector-richtext-controls.test.js tests/browser/editor-richtext-save-publish.test.js tests/browser/editor-inspector-lifecycle.test.js tests/browser/editor-ux-p0-workflow.test.js tests/browser/editor-style-copy.test.js tests/browser/editor-responsive-layout.test.js tests/browser/editor-structured-content.test.js",
     "test:web013:migration-gate": "node scripts/web013-migration-safety-gate.mjs",
     "test:site-access": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/web013-site-membership.test.js tests/web013-admin-tenant-gate.test.js",
     "test:site-settings": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/web013-site-scoped-settings.test.js",
