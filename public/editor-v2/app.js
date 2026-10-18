@@ -28,6 +28,7 @@ let inspectorCategory='all';let richTextSelectionCleanup=null;let richTextToolTa
 let state=null;let pages=[];let archivedPages=[];let revisionHistory=[];let zoom=1;let inspectorTab='design';let inspectorQuery='';let flushRichTextDraft=null;let inlineEditingId=null;let richTextBookmark=null;let copiedStyleSnapshot=null;let canvasDrag=null;let canvasResize=null;let mobileTouch={active:false,timer:null,downId:null,startX:0,startY:0,snapshot:[],snapshotPrimary:null,suppressClick:false,longPressTriggered:false};let hierarchyDrag={nodeId:null,overId:null};let mobileHierarchyDrag={active:false,timer:null,nodeId:null,overId:null,startX:0,startY:0,suppressClick:false};
 const $=s=>document.querySelector(s);const canvas=$('#canvas');const inspector=$('#inspectorBody');
 const sizes={desktop:1440,tablet:768,mobile:390};
+const validHexColor=value=>typeof value==='string'&&/^#(?:[a-f0-9]{3}|[a-f0-9]{6})$/i.test(value);
 const ELEMENT_DESCRIPTIONS={Section:'Oldalszakasz vagy nagyobb tartalmi blokk.',Container:'Rendezett tartalmak befoglalója.',Stack:'Egymásba rendezett elemek csoportja.',Group:'Több elem közös csoportja.',Row:'Elemek egy sorban történő elrendezése.',Columns:'Több oszlopos elrendezés.',Flex:'Rugalmas Flexbox elrendezés.',Grid:'Rács alapú elrendezés.',Slot:'Fenntartott tartalomhely.',Spacer:'Üres tér létrehozása.',Heading:'Címsor H1–H6 szinttel.',Szöveg:'Egyszerű szöveges tartalom.',"Rich Text":'Formázott szöveg, lista, idézet és link.',Link:'Kattintható hivatkozás.',Gomb:'Kattintható műveleti gomb.',Breadcrumb:'Navigációs útvonal.',Kép:'Kép megjelenítése.',Galéria:'Több kép megjelenítése.',Videó:'Videótartalom.',Audio:'Hanglejátszás.',Ikon:'Grafikus ikon.',Carousel:'Lapozható tartalom.',Embed:'Beágyazott tartalom.',Iframe:'Külső oldal beágyazása.',Code:'Kód megjelenítése.',Card:'Önálló tartalmi kártya.',Lista:'Felsorolás vagy lista.',Táblázat:'Táblázatos adatmegjelenítés.',Tabs:'Fülek között váltható tartalom.',Accordion:'Nyitható-csukható blokkok.',Dropdown:'Lenyíló menü vagy választó.',Pagination:'Lapozás.',Search:'Keresési funkció.',Modal:'Felugró ablak.',Navbar:'Fő navigáció.',Menu:'Navigációs menü.',Sidebar:'Oldalsó sáv.',Footer:'Oldal alsó része.',Form:'Űrlap befoglaló.',Input:'Egysoros beviteli mező.',Textarea:'Többsoros beviteli mező.',Checkbox:'Jelölőnégyzet.',Radio:'Egyszeres választás.',Select:'Lenyíló választó.',Slider:'Csúszkás értékválasztó.',File:'Fájlfeltöltő mező.',Submit:'Űrlap beküldése.',"Social Links":'Közösségi hivatkozások.',Discord:'Discord tartalom vagy hivatkozás.',Twitch:'Twitch tartalom.',YouTube:'YouTube tartalom.',TikTok:'TikTok tartalom.',"Élő állapot":'Élő vagy offline állapot.',Countdown:'Visszaszámláló.',Adásrend:'Tervezett adások listája.',"Stream számláló":'Streamhez kapcsolódó számláló.',"Követők":'Követőszám.',"Feliratkozók":'Feliratkozószám.',VOD:'Korábbi stream vagy videó.',Támogatás:'Támogatási lehetőségek.',Közösség:'Közösségi tartalom.',"Játékkártya":'Játék kiemelt kártyája.',"Játéklista":'Játékok listája.',Komponens:'Újrafelhasználható komponens.',"Egyedi elem":'Egyedi testreszabható elem.',"Badge/Tag":'Címke vagy állapotjelző.',Quote:'Idézet.',Panel:'Tartalmi panel.',Overlay:'Más tartalom fölötti réteg.',Absolute:'Abszolút pozicionált elem.',Sticky:'Görgetés közben rögzített elem.',Tooltip:'Rövid magyarázó felirat.',Shorts:'Shorts tartalmi blokk.',Sponsor:'Szponzorációs tartalom.',"Business Contact":'Üzleti kapcsolatfelvétel.',"About Me":'Bemutatkozó tartalom.',"Sanci Button":'Sanci9517 egyedi gomb.'};
 const groups=[
  ['Layout',[['Section',NODE_TYPES.SECTION],['Container',NODE_TYPES.CONTAINER],['Stack',NODE_TYPES.STACK],['Group',NODE_TYPES.GROUP],['Row',NODE_TYPES.ROW],['Columns',NODE_TYPES.COLUMNS],['Flex',NODE_TYPES.FLEX],['Grid',NODE_TYPES.GRID],['Slot',NODE_TYPES.SLOT],['Spacer',NODE_TYPES.SPACER]]],
@@ -244,7 +245,14 @@ function openRichTextFormatting(id){
   render();window.sanciEditor?.openPanel?.('right');
   requestAnimationFrame(()=>inspector.querySelector('.richtext-editor-surface')?.focus());
 }
-function renderNode(currentPage,id,managed=false){const node=getNode(currentPage,id);if(!node)return null;managed=managed||isManagedLayout(node);const el=document.createElement('div');el.className=`node ${state.selection.ids.includes(id)?'selected':''}`;el.classList.toggle('managed-layout',managed);el.dataset.nodeId=id;el.dataset.device=state.viewport.device;applyNodeStyle(el,node,state.viewport.device);const head=document.createElement('div');head.className='node-head';const headName=document.createElement('span');headName.textContent=node.name||node.type;const headType=document.createElement('small');headType.textContent=node.type;head.append(headName,headType);el.append(head);
+function renderNode(currentPage,id,managed=false){const node=getNode(currentPage,id);if(!node)return null;managed=managed||isManagedLayout(node);const el=document.createElement('div');el.className=`node ${state.selection.ids.includes(id)?'selected':''}`;el.classList.toggle('managed-layout',managed);el.dataset.nodeId=id;el.dataset.device=state.viewport.device;applyNodeStyle(el,node,state.viewport.device);
+ const validHex=value=>typeof value==='string'&&/^#(?:[a-f0-9]{3}|[a-f0-9]{6})$/i.test(value)?value:'';
+ for(const [value,klass,variable] of [
+  [node.states?.hover?.backgroundColor,'visual-hover-bg','--sanci-hover-bg'],
+  [node.states?.hover?.color,'visual-hover-text','--sanci-hover-color'],
+  [node.states?.focus?.outlineColor,'visual-focus-outline','--sanci-focus-outline']
+ ]){const color=validHex(value);if(color){el.classList.add(klass);el.style.setProperty(variable,color)}}
+ const head=document.createElement('div');head.className='node-head';const headName=document.createElement('span');headName.textContent=node.name||node.type;const headType=document.createElement('small');headType.textContent=node.type;head.append(headName,headType);el.append(head);
   if(node.type===NODE_TYPES.RICHTEXT){
     const c=document.createElement('div');c.className='node-content richtext-content';
     renderRichTextEditor(c,node.props?.richText);
@@ -594,6 +602,26 @@ function renderInspector(){
     if(['heading','text','richtext','button','link'].includes(node.type))inspector.append(renderTypographyPresets(node));
     if(node.type==='schedule')inspector.append(renderScheduleInspector(node));
     else inspector.append(renderRegistryInspector(node,'primary'));
+    if(node.id!==page()?.rootId){
+      const statesPanel=document.createElement('section');statesPanel.className='state-inspector';
+      const heading=document.createElement('h3');heading.textContent='Rámutatás és fókusz';statesPanel.append(heading);
+      const note=document.createElement('small');note.textContent='Egyszerű, külön állapotstílusok a látogatói oldalon. A fókuszjelölés a billentyűzetes navigációt segíti.';statesPanel.append(note);
+      for(const [group,key,label,defaultColor] of [
+        ['hover','backgroundColor','Rámutatás: háttér','#334155'],
+        ['hover','color','Rámutatás: szöveg','#ffffff'],
+        ['focus','outlineColor','Fókuszkeret színe','#2563eb']
+      ]){
+        const row=document.createElement('label');row.className='state-color-field';
+        const caption=document.createElement('span');caption.textContent=label;row.append(caption);
+        const value=node.states?.[group]?.[key];
+        const picker=document.createElement('input');picker.type='color';picker.value=validHexColor(value)?value:defaultColor;picker.disabled=Boolean(node.locked);
+        picker.onchange=()=>command('element.update',{nodeId:node.id,patch:{states:{...(node.states||{}),[group]:{...(node.states?.[group]||{}),[key]:picker.value}}}});
+        const clear=document.createElement('button');clear.type='button';clear.textContent='Törlés';clear.disabled=Boolean(node.locked||!value);
+        clear.onclick=()=>{const next={...(node.states?.[group]||{})};delete next[key];command('element.update',{nodeId:node.id,patch:{states:{...(node.states||{}),[group]:next}}})};
+        row.append(picker,clear);statesPanel.append(row);
+      }
+      inspector.append(statesPanel);
+    }
     const lockRow=document.createElement('label');lockRow.className='inspector-toggle';
     const lockInput=document.createElement('input');lockInput.type='checkbox';lockInput.checked=Boolean(node.locked);lockInput.disabled=node.id===page()?.rootId;
     lockInput.onchange=()=>command('element.lock.set',{nodeId:node.id,locked:lockInput.checked});
