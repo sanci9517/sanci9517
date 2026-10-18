@@ -434,3 +434,33 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
   .richtext-typography-control { flex:1 1 100%; }
   .richtext-editor-surface { padding:13px; }
 }
+
+/* Structured static content (77.44) — same semantic presentation on canvas and published pages. */
+.structured-inspector{display:grid;gap:12px;padding:8px 0}
+.structured-inspector h3{font-size:16px;margin:0}
+.structured-inspector-help{font-size:12px;line-height:1.4;color:var(--muted,#aab6c5);margin:0}
+.structured-item{display:grid;gap:10px;min-width:0;border:1px solid rgba(148,163,184,.35);border-radius:10px;padding:10px;margin:0}
+.structured-item legend{font-weight:700;font-size:13px;padding:0 6px}
+.structured-item .field{min-width:0}
+.structured-item textarea{min-height:64px;resize:vertical}
+.structured-actions{display:flex;flex-wrap:wrap;gap:7px}
+.structured-action{min-height:44px;min-width:44px;border:1px solid rgba(148,163,184,.4);border-radius:8px;padding:8px 10px;background:transparent;color:inherit;cursor:pointer}
+.structured-action:disabled{opacity:.4;cursor:not-allowed}
+.structured-preview{min-width:0;max-width:100%;overflow-wrap:anywhere}
+.structured-preview .visual-structured-list{padding-left:1.5em}
+.structured-preview .visual-structured-table-scroll{overflow:auto;max-width:100%}
+.structured-preview .visual-structured-table{border-collapse:collapse;width:100%}
+.structured-preview .visual-structured-table th,.structured-preview .visual-structured-table td{padding:8px;border:1px solid currentColor}
+.structured-preview .visual-structured-accordion details{padding:8px;border-bottom:1px solid #808080}
+.structured-preview .visual-structured-tabs [role=tablist]{display:flex;flex-wrap:wrap;gap:8px}
+.structured-preview .visual-structured-tabs [role=tab]{padding:8px 12px;min-height:44px;border:1px solid #818a9a;border-radius:8px;background:transparent;color:inherit}
+.structured-preview .visual-structured-tabs [role=tab][aria-selected=true]{background:#334155;color:white}
+.structured-preview .visual-structured-panel{padding:12px;white-space:pre-wrap}
+.structured-preview .visual-structured-tabs [hidden]{display:none!important}
+.structured-preview .visual-structured-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+.structured-preview .visual-gallery-thumb{border:1px solid #818a9a;border-radius:8px;overflow:hidden;background:transparent;color:inherit;padding:0}
+.structured-preview .visual-gallery-thumb img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}
+.structured-preview .visual-gallery-empty{padding:20px;border:1px dashed #818a9a}
+.structured-preview .visual-gallery-dialog{max-width:95vw;max-height:95vh;background:#111827;color:#fff;border-radius:12px}
+.structured-preview .visual-gallery-dialog img{max-width:85vw;max-height:75vh;object-fit:contain}
+@media(max-width:600px){.structured-item{padding:10px 8px}.structured-action{flex:1 1 auto}}
