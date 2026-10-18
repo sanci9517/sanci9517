@@ -297,6 +297,7 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
    }else if(isStructuredType(node.type)){
     const c=document.createElement('div');c.className='node-content structured-preview';
     c.innerHTML=renderElementContent(node.type,node.props?.contentModel??createElementContent(node.type),node.id);
+    for(const eventName of ['pointerdown','click','dblclick'])c.addEventListener(eventName,event=>{if(event.target.closest('button,summary,dialog'))event.stopPropagation()});
     el.append(c);activateStructuredContent(c);
   }else if([NODE_TYPES.HEADING,NODE_TYPES.TEXT,NODE_TYPES.BUTTON,NODE_TYPES.LINK].includes(node.type)){
     const c=document.createElement('div');c.className='node-content plain-text-content-surface';c.textContent=node.props?.text??node.props?.content??node.name;
