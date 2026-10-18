@@ -1,0 +1,91 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import {createServer} from 'node:http';
+import {readFile} from 'node:fs/promises';
+import {existsSync} from 'node:fs';
+import {resolve,extname} from 'node:path';
+import {chromium} from 'playwright';
+import {createDocument} from '../../public/editor-v2/core/schema.js';
+import {createEditorState,activePage} from '../../public/editor-v2/core/state.js';
+import {execute} from '../../public/editor-v2/core/commands.js';
+
+test('root Inspector appearance matches published canvas only after Publish at desktop and mobile breakpoints',async t=>{
+ const model=createEditorState(createDocument()),pageId=model.document.activePageId,rootId=activePage(model).rootId;
+ execute(model,{type:'element.add',payload:{type:'text',parentId:rootId,props:{text:'Alapoldal'}}});
+ let draft=structuredClone(model.document),published=structuredClone(draft),version=1;
+ const posts=[],publicDir=resolve(import.meta.dirname,'../../public');
+ const server=createServer(async(req,res)=>{
+  const url=new URL(req.url,'http://localhost');
+  const json=data=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(data));};
+  if(url.pathname==='/api/admin/pages')return json({ok:true,data:url.searchParams.get('archived')==='1'?[]:[{id:pageId,slug:'test',title:'Test',content:draft,revision:version,isPublished:true}]});
+  if(url.pathname==='/api/admin/editor'){
+   if(req.method==='GET')return json({ok:true,data:{page:{id:pageId,document:draft,publishedRevisionId:'published'},revisions:[{id:'revision-'+version,version}]}});
+   let raw='';for await(const chunk of req)raw+=chunk;
+   const request=JSON.parse(raw);posts.push(request);draft=structuredClone(request.document);version++;
+   if(request.publish)published=structuredClone(draft);
+   return json({ok:true,data:{pageId,version,revisionId:'revision-'+version,published:Boolean(request.publish)}});
+  }
+  if(url.pathname==='/api/public/pages')return json({ok:true,data:{id:pageId,slug:'test',title:'Test',description:'',content:published.pages[pageId]}});
+  if(url.pathname==='/api/public/navigation')return json({ok:true,data:{items:[]}});
+  if(url.pathname==='/api/integrations/twitch/connection')return json({ok:true,data:{connected:false}});
+  if(url.pathname.startsWith('/api/'))return json({ok:true,data:{siteName:'Test'}});
+  const path=url.pathname==='/p/test'?'/visual-page.html':url.pathname,file=resolve(publicDir,'.'+path);
+  if(!file.startsWith(publicDir+'/'))return res.writeHead(403).end();
+  try{res.setHeader('content-type',{'.js':'text/javascript','.html':'text/html','.css':'text/css'}[extname(file)]||'application/octet-stream');res.end(await readFile(file))}
+  catch{res.writeHead(404).end()}
+ });
+ await new Promise(done=>server.listen(0,'127.0.0.1',done));
+ const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
+ t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
+ const base='http://127.0.0.1:'+server.address().port;
+ const editor=await browser.newPage({viewport:{width:1366,height:900}}),viewer=await browser.newPage({viewport:{width:1366,height:900}});
+ editor.setDefaultTimeout(7000);viewer.setDefaultTimeout(7000);
+ const errors=[];editor.on('pageerror',e=>errors.push('editor: '+e.message));viewer.on('pageerror',e=>errors.push('public: '+e.message));
+ await editor.goto(base+'/editor-v2/index.html');
+ await viewer.goto(base+'/p/test');
+ const canvas=viewer.locator('#content-canvas');
+ const legacyColor=await canvas.evaluate(el=>getComputedStyle(el).backgroundColor);
+ const rootNode=editor.locator('.node[data-node-id="'+rootId+'"]');
+ await rootNode.evaluate(el=>el.click());
+ if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
+ const group=async name=>{
+  const title=editor.locator('.inspector-group-title').filter({hasText:name});
+  await title.waitFor();if(await title.getAttribute('aria-expanded')==='false')await title.click();
+ };
+ const changeColor=async value=>{
+  await group('Háttér');
+  const input=editor.locator('[data-property-id="background.color"] input[type="text"]');
+  await input.fill(value);await input.press('Tab');
+ };
+ await changeColor('#123456');
+ const rootColor=()=>rootNode.evaluate(el=>getComputedStyle(el).backgroundColor);
+ assert.equal(await rootColor(),'rgb(18, 52, 86)');
+ await group('Térközök');
+ const padding=editor.locator('[data-property-id="spacing.padding"]').getByRole('textbox',{name:'Belső térköz – Felül'});
+ await padding.fill('24px');await padding.press('Tab');
+ assert.equal(await rootNode.evaluate(el=>getComputedStyle(el).paddingTop),'24px');
+ assert.equal(posts.length,0,'editing root never auto-saves');
+ await editor.locator('#save').click();
+ await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+ assert.equal(posts.at(-1).publish,false);
+ assert.equal(draft.pages[pageId].nodes[rootId].metadata.rootStyleVersion,1);
+ await viewer.reload();
+ assert.equal(await canvas.evaluate(el=>getComputedStyle(el).backgroundColor),legacyColor,'Save does not alter published root');
+ await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
+ await changeColor('#aa4400');
+ assert.equal(await rootColor(),'rgb(170, 68, 0)');
+ await editor.locator('#undo').click();
+ assert.equal(await rootColor(),'rgb(18, 52, 86)');
+ await editor.locator('#redo').click();
+ assert.equal(await rootColor(),'rgb(170, 68, 0)');
+ await editor.locator('#publish').click();
+ await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+ assert.equal(posts.at(-1).publish,true);
+ await viewer.reload();
+ assert.equal(await canvas.evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(18, 52, 86)','desktop root appearance is published');
+ assert.equal(await canvas.evaluate(el=>getComputedStyle(el).paddingTop),'24px','root padding passes to public renderer');
+ await viewer.setViewportSize({width:390,height:800});await viewer.reload();
+ assert.equal(await canvas.evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(170, 68, 0)','mobile root override is published');
+ assert.equal(await canvas.evaluate(el=>getComputedStyle(el).paddingTop),'24px','mobile inherits root padding');
+ assert.deepEqual(errors,[]);
+});
