@@ -98,7 +98,14 @@ function readInlines(element){
 
 export function richTextEditorToDocument(editor){
   const blocks=[];
-  for(const el of editor.children){
+  for(const el of editor.childNodes){
+    // Browsers may place the first keystroke or pasted plain text beside an
+    // empty paragraph. Keep it instead of silently dropping a root text node.
+    if(el.nodeType===3){
+      if(el.nodeValue?.trim())blocks.push({type:'paragraph',children:mergeRuns([{text:el.nodeValue,marks:[]}])});
+      continue;
+    }
+    if(el.nodeType!==1)continue;
     const tag=el.tagName;
     if(tag==='UL'||tag==='OL'){
       const items=[...el.children].filter(child=>child.tagName==='LI').map(li=>({children:readInlines(li)}));

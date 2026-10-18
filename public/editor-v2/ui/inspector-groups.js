@@ -1,12 +1,13 @@
 /* Sanci9517 Editor v2 — collapsible Inspector groups.
  * UI-only behavior: no Page Model or mutation state is introduced here.
- * All Inspector sections start collapsed so the panel stays compact as it grows.
+ * Essential sections start open; advanced sections stay compact.
  * Open/closed state survives Inspector re-renders caused by editing.
  */
 
 const STYLE_ID = 'sanci-inspector-groups-style';
 const processed = new WeakSet();
 const openGroups = new Map();
+const initiallyVisible = new Set(['Geometria', 'Elrendezés', 'Térközök', 'Tipográfia', 'Háttér', 'Adásrend']);
 
 function installStyle() {
   if (document.getElementById(STYLE_ID)) return;
@@ -40,7 +41,7 @@ function enhanceGroup(group) {
   [...group.children].filter((child) => child !== title).forEach((child) => content.append(child));
   group.append(content);
 
-  const initiallyOpen = openGroups.get(key) === true;
+  const initiallyOpen = openGroups.get(key) ?? initiallyVisible.has(key);
   group.classList.toggle('is-open', initiallyOpen);
   title.setAttribute('role', 'button');
   title.setAttribute('tabindex', '0');
