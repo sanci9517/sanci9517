@@ -11,6 +11,10 @@ import { resolveResponsiveValue } from './responsive.js';
 export const STYLE_MAP = Object.freeze({
   width: 'width',
   height: 'height',
+  minWidth: 'minWidth',
+  maxWidth: 'maxWidth',
+  minHeight: 'minHeight',
+  maxHeight: 'maxHeight',
   display: 'display',
   flexDirection: 'flexDirection',
   justifyContent: 'justifyContent',
@@ -35,6 +39,10 @@ export const STYLE_MAP = Object.freeze({
   borderStyle: 'borderStyle',
   borderColor: 'borderColor',
   borderRadius: 'borderRadius',
+  borderTopLeftRadius: 'borderTopLeftRadius',
+  borderTopRightRadius: 'borderTopRightRadius',
+  borderBottomRightRadius: 'borderBottomRightRadius',
+  borderBottomLeftRadius: 'borderBottomLeftRadius',
   boxShadow: 'boxShadow',
   opacity: 'opacity',
   fontFamily: 'fontFamily',
@@ -71,8 +79,10 @@ export function applyNodeStyle(element, node, device = 'desktop') {
   const style = resolveNodeStyle(node, device);
   element.style.cssText = '';
 
-  for (const [property, value] of Object.entries(style)) {
-    const cssProperty = STYLE_MAP[property];
+  // Canonical order matters for shorthand/longhand pairs such as border radius.
+  // The public renderer also emits declarations in STYLE_MAP order.
+  for (const [property, cssProperty] of Object.entries(STYLE_MAP)) {
+    const value = style[property];
     if (!cssProperty || value === undefined || value === null || value === '') continue;
     element.style[cssProperty] = String(value);
   }

@@ -1,5 +1,5 @@
 /* Sanci9517 canonical public Page Model renderer — Editor v2 compatible. */
-import { resolveNodeStyle, STYLE_MAP } from "../editor-v2/core/canvas-engine.js";
+import { resolveNodeStyle, STYLE_MAP } from "../editor-v2/core/canvas-engine.js?v=20261018-inspector";
 (()=>{
  const esc=v=>String(v??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const safeUrl=v=>{try{const u=new URL(String(v||''),location.origin);return ['http:','https:'].includes(u.protocol)?u.href:''}catch{return''}};

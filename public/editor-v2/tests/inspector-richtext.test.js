@@ -33,6 +33,13 @@ test('typed Inspector controls validate display values before the command path',
   assert.equal(normalizeInspectorValue(getProperty('content.href'),'/p/home'),'/p/home');
   assert.equal(normalizeInspectorValue(getProperty('content.href'),'mailto:team@example.org'),'mailto:team@example.org');
   assert.throws(()=>normalizeInspectorValue(getProperty('content.href'),'javascript:alert(1)'));
+  assert.equal(normalizeInspectorValue(getProperty('size.maxWidth'),'80vw'),'80vw');
+  assert.throws(()=>normalizeInspectorValue(getProperty('size.minHeight'),'-1px'));
+  assert.equal(normalizeInspectorValue(getProperty('radius.topLeft'),'12px'),'12px');
+  assert.throws(()=>normalizeInspectorValue(getProperty('radius.topLeft'),'12px;display:none'));
+  assert.equal(normalizeInspectorValue(getProperty('flex.basis'),'auto'),'auto');
+  assert.equal(normalizeInspectorValue(getProperty('grid.column'),'1 / -1'),'1 / -1');
+  assert.throws(()=>normalizeInspectorValue(getProperty('grid.column'),'999 / -1'));
 });
 
 test('typed changes use Page Model commands, responsive overrides and undo', () => {
