@@ -968,3 +968,16 @@ test('structured models sanitize content and strictly validate dimensions',()=>{
  const table=renderElementContent('table',{version:1,rows:[['Header'],['Data']]},'table');
  assert.ok(table.includes('<th scope="col">Header</th>'));
 });
+
+test('heading levels and safe external link targets reach the public renderer without script injection',()=>{
+ const source=readFileSync(new URL('../../assets/page-renderer.js',import.meta.url),'utf8');
+ assert.match(source,/const level=Number.isInteger\(p.level\)/);
+ assert.match(source,/target="\_blank" rel="noopener noreferrer"/);
+ assert.match(source,/safeRichUrl\(p.url\|\|p.href\)/);
+ const state=createEditorState(),root=activePage(state).rootId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.HEADING,parentId:root}});
+ const id=state.selection.primaryId;
+ execute(state,{type:'element.update',payload:{nodeId:id,patch:{props:{text:'Kezdőlap',level:1}}}});
+ assert.equal(activePage(state).nodes[id].props.level,1);
+ assertValidEditorDocument(state.document);
+});
