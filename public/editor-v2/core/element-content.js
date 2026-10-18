@@ -63,7 +63,7 @@ export function renderElementContent(type,value,nodeId){
   const prefix='tab-'+idSafe(nodeId);
   return `<div class="visual-structured-tabs" data-structured-tabs><div role="tablist" aria-label="Tartalomfülek">${m.items.map((item,i)=>`<button type="button" role="tab" id="${prefix}-t${i}" aria-controls="${prefix}-p${i}" aria-selected="${i===0}" tabindex="${i===0?0:-1}">${esc(item.label)}</button>`).join('')}</div>${m.items.map((item,i)=>`<div role="tabpanel" id="${prefix}-p${i}" aria-labelledby="${prefix}-t${i}"${i===0?'':' hidden'} class="visual-structured-panel">${esc(item.content)}</div>`).join('')}</div>`;
  }
- return `<div class="visual-structured-gallery" data-structured-gallery>${m.items.map((item,i)=>{const url=safeMediaUrl(item.src);return url?`<button type="button" class="visual-gallery-thumb" data-gallery-index="${i}" aria-label="Kép megnyitása: ${esc(item.alt)}"><img src="${esc(url)}" alt="${esc(item.alt)}" loading="lazy">${item.caption?`<span>${esc(item.caption)}</span>`:''}</button>`:`<div class="visual-gallery-empty">Kép URL megadása szükséges</div>`}).join('')}<dialog class="visual-gallery-dialog" aria-label="Galéria nagyított képe"><button type="button" class="visual-gallery-close" aria-label="Bezárás">×</button><img alt=""><p></p></dialog></div>`;
+ return `<div class="visual-structured-gallery" data-structured-gallery>${m.items.map((item,i)=>{const url=safeMediaUrl(item.src);return url?`<button type="button" class="visual-gallery-thumb" data-gallery-index="${i}" aria-label="Kép megnyitása: ${esc(item.alt)}"><img src="${esc(url)}" alt="${esc(item.alt)}" loading="lazy">${item.caption?`<span>${esc(item.caption)}</span>`:''}</button>`:`<div class="visual-gallery-empty">Kép URL megadása szükséges</div>`}).join('')}<dialog class="visual-gallery-dialog" aria-label="Galéria nagyított képe"><button type="button" class="visual-gallery-close" aria-label="Bezárás">×</button><button type="button" class="visual-gallery-prev" aria-label="Előző kép">‹</button><img alt=""><button type="button" class="visual-gallery-next" aria-label="Következő kép">›</button><p></p></dialog></div>`;
 }
 export function activateStructuredContent(root){
  for(const host of root.querySelectorAll('[data-structured-tabs]')){
@@ -79,13 +79,29 @@ export function activateStructuredContent(root){
   });
  }
  for(const host of root.querySelectorAll('[data-structured-gallery]')){
-  if(host.dataset.activated)return;host.dataset.activated='1';
+  if(host.dataset.activated)continue;host.dataset.activated='1';
   const dialog=host.querySelector('dialog'),big=dialog?.querySelector('img'),caption=dialog?.querySelector('p'),close=dialog?.querySelector('.visual-gallery-close');
   if(!dialog||typeof dialog.showModal!=='function')continue;
-  let lastButton=null;
-  host.querySelectorAll('.visual-gallery-thumb').forEach(button=>button.addEventListener('click',()=>{
-   lastButton=button;const img=button.querySelector('img');big.src=img.src;big.alt=img.alt;caption.textContent=button.querySelector('span')?.textContent||'';dialog.showModal();close.focus();
+  const images=[...host.querySelectorAll('.visual-gallery-thumb')];
+  const prev=dialog.querySelector('.visual-gallery-prev'),next=dialog.querySelector('.visual-gallery-next');
+  if(!images.length){prev.hidden=true;next.hidden=true;continue}
+  if(images.length===1){prev.hidden=true;next.hidden=true}
+  let selected=0,lastButton=null;
+  const show=index=>{
+   selected=(index+images.length)%images.length;
+   const img=images[selected].querySelector('img');
+   big.src=img.src;big.alt=img.alt;caption.textContent=images[selected].querySelector('span')?.textContent||'';
+  };
+  images.forEach((button,index)=>button.addEventListener('click',()=>{
+   lastButton=button;show(index);dialog.showModal();close.focus();
   }));
+  prev.addEventListener('click',()=>show(selected-1));
+  next.addEventListener('click',()=>show(selected+1));
+  dialog.addEventListener('keydown',e=>{
+   if(e.key==='ArrowLeft'||e.key==='ArrowRight'){
+    e.preventDefault();show(selected+(e.key==='ArrowRight'?1:-1));
+   }
+  });
   close.addEventListener('click',()=>dialog.close());
   dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});
   dialog.addEventListener('close',()=>{big.removeAttribute('src');lastButton?.focus()});
