@@ -313,5 +313,7 @@ A Registry `dimension` mezői most külön numerikus érték- és mértékegysé
 
 **Bizonyíték:** `npm run typecheck` PASS; `npm run test:editor` 57/57 PASS; `npm run test:editor:layout` 5/5 valós böngészős/layout teszt PASS, köztük a mobil viewporton megtartott Rich Text-kijelölés, több bekezdés formázása, typed dimension vezérlés, Save/reload és külön Publish; `npm run test:domain`, `test:admin-home` és `test:schedule` PASS. `git diff --check` PASS. Ezek helyi/CI-közeli automatizált bizonyítékok, nem éles telefonos elfogadás. D1-adat, secret, production flag nem változott.
 
+**Kiadás:** PR [#105](https://github.com/sanci9517/sanci9517/pull/105) PASS CI után merge-ölve a `v2/foundation` ágba, merge commit `27f07acacb10bf73615b10128d35a6a0275d392d`; a merge utáni Editor Core, baseline, plan és Twitch workflow-k mind PASS. A Cloudflare Workers PR build PASS. Éles read-only ellenőrzéskor a Worker `/api/health` 200-at adott, az Editor HTML az `ux-p0-r2` asseteket hivatkozta, az éles `app.js` és `editor-refresh.css` SHA-256 értéke bájtszinten egyezett a commit fájljaival. Ez a kódtelepítést igazolja, nem a felhasználói vagy valódi mobilkészülékes acceptance-et.
+
 **Következő aktív pont:** 77.44.UX-P0.3 — biztonságos paste/valódi IME-fókusz és listaelem-kijelölés tesztelése, majd a vászon–publikus computed-style/pozicionálás paritásának célzott javítása; Inspector-hierarchia további használhatósága. Valódi telefonos felhasználói próba szükséges a P0 elfogadáshoz. A WEB-013 éles elfogadások továbbra is UNVERIFIED, a 0025–0027 migrációs ledger OPEN.
 
