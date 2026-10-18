@@ -16,8 +16,9 @@ function validateScheduleConfig(config:any):boolean{
 function validMediaSource(value:unknown):boolean{
  if(typeof value!=='string')return false;
  const raw=value.trim();
- if(!raw||raw.startsWith('//')||/[\\x00-\\x1f\\x7f\\\\]/.test(raw))return false;
- try{const url=new URL(raw,'https://editor.invalid');return ['http:','https:'].includes(url.protocol)&&!url.username&&!url.password&&(/^(https?:\\/\\/|\\/(?!\\/))/.test(raw));}
+ if(!raw||raw.startsWith('//')||[...raw].some(ch=>{const n=ch.charCodeAt(0);return n<32||n===127||n===92;}))return false;
+ if(!(raw.startsWith('/')||raw.startsWith('https://')||raw.startsWith('http://')))return false;
+ try{const url=new URL(raw,'https://editor.invalid');return ['http:','https:'].includes(url.protocol)&&!url.username&&!url.password;}
  catch{return false}
 }
 function validateMediaNode(node:any):string|null{
