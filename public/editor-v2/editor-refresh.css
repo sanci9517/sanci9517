@@ -365,7 +365,16 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
 .richtext-editor-surface blockquote { margin-inline:0; padding:8px 14px; border-left:3px solid #8f9cff; color:#d3dced; background:#172334; }
 .richtext-editor-surface pre { padding:12px; border:1px solid #34465d; border-radius:8px; background:#0b111a; white-space:pre-wrap; overflow-wrap:anywhere; }
 .richtext-editor-surface code { padding:1px 4px; border-radius:4px; background:#243348; font-family:ui-monospace,monospace; }
+.inspector-selection { display:grid; gap:10px; }
+.style-copy-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+.style-copy-actions button { min-width:0; min-height:44px; padding:8px 10px; border:1px solid #3a506b; border-radius:9px; background:#142235; color:#dce8f8; font:inherit; font-size:12px; font-weight:600; line-height:1.35; cursor:pointer; }
+.style-copy-actions button:hover:not(:disabled) { border-color:#8ba8da; background:#1c3048; }
+.style-copy-actions button:focus-visible { outline:2px solid #8f9cff; outline-offset:2px; }
+.style-copy-actions button:disabled { opacity:.5; cursor:not-allowed; }
+.style-copy-actions .style-paste-button:not(:disabled) { border-color:#5168a7; background:#202f58; }
+.style-copy-help { color:#9eafc5; font-size:11px; line-height:1.45; }
 @media(max-width:430px) {
+  .style-copy-actions button { padding:8px 6px; font-size:11px; }
   .typed-box-controls { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .richtext-link-controls { grid-template-columns:1fr; }
   .richtext-link-controls input,.richtext-link-controls small { grid-column:1; }
