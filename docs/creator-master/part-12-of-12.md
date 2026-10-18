@@ -735,3 +735,7 @@ A WEB-011/76.06 következő részblokkja nyolc visszavonható desktop/tablet/mob
 ### 77.44.UX-P0.6.F — Editor gyökérstílus paritás (2026-10-18)
 
 A #121 és #122 Visual Editor elem-paritás bővítések egyesültek. A következő nyitott 77.44 részblokk az explicit gyökérstílus-módosítás és a publikus `content-canvas` reszponzív CSS-azonosságának javítása. Korábban mentett oldalra nem alkalmazunk automatikus stílusmigrációt; a verziójelölt root módosítása Undo/Redo-val és a Save≠Publish életciklussal működik. Új core és Chromium teszt készül, eredményük CI futásig UNVERIFIED. A részletes aktuális státusz a kanonikus MASTER 77.44.UX-P0.6.F bejegyzésében szerepel. A teljes Editor és kézi felhasználói elfogadás OPEN.
+
+### 77.44.UX-P0.6.G — Vizualis alapelemek (2026-10-18)
+
+A #123 gyökérstílus publikálási paritás CI PASS után MERGED, `262ff98a52938b485f94eb36e9f5d359a02b8883`. A következő Editor-alpont új elemeknél verziózott, szerkeszthető, validált elválasztóvonalat és responsive térközt hoz; a régi elemek viselkedése nem változik automatikusan. Piszkozat Save külön a Publish-tól. Unit/Chromium regresszió készül a `test:editor:layout` parancsban, végső CI- és kézi PASS még UNVERIFIED. Az aktuális teljes státusz és következő lépések a kanonikus MASTER 77.44.UX-P0.6.G pontjában; a teljes Editor OPEN.
