@@ -774,7 +774,8 @@ test('Editor save conflict exposes recoverable local-draft export and explicit r
   assert.match(app, /error\.status=response\.status;error\.code=data\?\.error\?\.code/);
   assert.match(app, /e\?\.status===409&&e\?\.code==='REVISION_CONFLICT'/);
   assert.match(app, /function exportConflictDraft\(\)[\s\S]*?URL\.createObjectURL/);
-  assert.match(app, /function reloadLatestAfterConflict\(\)[\s\S]*?await loadPage\(conflict\.pageId\)/);
+  assert.match(app, /function reloadLatestAfterConflict\(\)[\s\S]*?await loadPage\(conflict\.pageId,\{discardConfirmed:true\}\)/);
+  assert.match(app, /async function loadPage\(id,\{discardConfirmed=false\}=\{\}\)[\s\S]*?state\?\.persistence\?\.dirty&&!discardConfirmed/);
   assert.match(html, /id="revisionConflict"[^>]*role="alert"[^>]*hidden/);
   assert.match(html, /id="exportConflictDraft"/);
   assert.match(html, /id="reloadConflictPage"/);

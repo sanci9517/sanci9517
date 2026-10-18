@@ -250,7 +250,7 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
 /* WEB-011 / 77.44: usable typed Inspector controls and structured link toolbar */
 .typed-inspector-field { display:grid; gap:7px; min-width:0; }
 .typed-inspector-field > label { font-size:13px; color:#d3deef; }
-.typed-inspector-field > input,.typed-inspector-field > select { min-height:42px; font-size:14px; }
+.typed-inspector-field > input,.typed-inspector-field > select { min-height:44px; font-size:14px; }
 .typed-box-controls { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
 .typed-box-controls label { display:flex; flex-direction:column; gap:5px; min-width:0; font-size:12px; }
 .typed-box-controls input { min-width:0; min-height:40px; }

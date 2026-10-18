@@ -16,6 +16,8 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
   execute(state,{type:'element.add',payload:{type:NODE_TYPES.RICHTEXT}});
   const nodeId=state.selection.primaryId, pageId=state.document.activePageId;
   execute(state,{type:'richtext.content.set',payload:{nodeId,document:{schemaVersion:1,type:'richtext-document',blocks:[{type:'paragraph',children:[{type:'text',text:'Hello world',marks:[]}]}]}}});
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:state.document.pages[pageId].rootId}});
+  const otherNodeId=state.selection.primaryId;
   let draft=structuredClone(state.document),published=null,version=1;
   const posts=[];
   const server=createServer(async(req,res)=>{
@@ -56,6 +58,15 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
   await openEditor();
   const editor=tab.locator('.richtext-editor-surface');
   await editor.evaluate(el=>{el.querySelector('p span').textContent='Hello world fresh';el.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'insertText'}));el.focus()});
+  await tab.locator('.inspector-tabs button').first().evaluate(el=>el.click());
+  await tab.locator('.inspector-tabs button').nth(1).evaluate(el=>el.click());
+  assert.equal(await tab.locator('.richtext-editor-surface').textContent(),'Hello world fresh');
+  await tab.locator(`.node[data-node-id="${otherNodeId}"]`).evaluate(el=>el.click());
+  await tab.locator(`.node[data-node-id="${nodeId}"]`).evaluate(el=>el.click());
+  assert.equal(await tab.locator('.richtext-editor-surface').textContent(),'Hello world fresh');
+  await tab.locator('.canvas-device-btn[data-device="mobile"]').evaluate(el=>el.click());
+  assert.equal(await tab.locator('.richtext-editor-surface').textContent(),'Hello world fresh');
+  await tab.locator('.canvas-device-btn[data-device="desktop"]').evaluate(el=>el.click());
   await tab.keyboard.press('Control+s');
   await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
   assert.equal(posts.length,1);
@@ -100,4 +111,10 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
   await tab.getByRole('button',{name:'Link beállítása'}).click();
   assert.equal(await tab.locator('.richtext-editor-surface a').getAttribute('href'),'/p/mobile');
   assert.equal(published.pages[pageId].nodes[nodeId].props.richText.blocks[0].children.find(run=>run.link).link.href,'/p/home');
+  const [warning]=await Promise.all([
+    tab.waitForEvent('dialog').then(async dialog=>{const message=dialog.message();await dialog.dismiss();return message}),
+    tab.locator('#newPage').evaluate(el=>el.click())
+  ]);
+  assert.match(warning,/Először mentsd/);
+  assert.equal(await tab.locator('.richtext-editor-surface a').getAttribute('href'),'/p/mobile');
 });
