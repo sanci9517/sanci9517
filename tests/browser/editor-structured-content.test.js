@@ -17,7 +17,7 @@ test('structured Inspector editing survives Save, Publish and public interaction
   ids[type]=model.selection.primaryId;
  }
  const img=activePage(model).nodes[ids.gallery];
- execute(model,{type:'element.update',payload:{nodeId:img.id,patch:{props:{...img.props,contentModel:{version:1,items:[{src:'/media/example.jpg',alt:'Próbakép',caption:'Tesztkép'}]}}}}});
+ execute(model,{type:'element.update',payload:{nodeId:img.id,patch:{props:{...img.props,contentModel:{version:1,items:[{src:'/media/example.jpg',alt:'Próbakép',caption:'Tesztkép'},{src:'/media/second.jpg',alt:'Második kép',caption:'Második kép leírása'}]}}}}});
  let draft=structuredClone(model.document),published=structuredClone(model.document),version=1;
  const posts=[];
  const rootDir=resolve(import.meta.dirname,'../../public');
@@ -85,6 +85,10 @@ test('structured Inspector editing survives Save, Publish and public interaction
  const gallery=viewer.locator('.visual-editor-node[data-node-id="'+ids.gallery+'"]');
  await gallery.locator('.visual-gallery-thumb').first().click();
  assert.ok(await gallery.locator('dialog').evaluate(el=>el.open));
+ await gallery.locator('.visual-gallery-next').click();
+ assert.equal(await gallery.locator('dialog img').getAttribute('alt'),'Második kép');
+ await viewer.keyboard.press('ArrowLeft');
+ assert.equal(await gallery.locator('dialog img').getAttribute('alt'),'Próbakép');
  await viewer.keyboard.press('Escape');
  assert.ok(!(await gallery.locator('dialog').evaluate(el=>el.open)));
  const list=viewer.locator('.visual-editor-node[data-node-id="'+ids.list+'"]');
