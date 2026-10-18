@@ -1026,3 +1026,18 @@ test('hover/focus appearance writes into canonical node states and is undoable',
  assert.match(pub,/visual-hover-bg/);
  assert.match(pub,/visual-focus-outline/);
 });
+
+test('atomic multi-selection appearance can be reverted with one undo and rejects locked nodes',()=>{
+ const state=createEditorState(),root=activePage(state).rootId;
+ for(let i=0;i<2;i++)execute(state,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:root}});
+ const ids=[...activePage(state).nodes[root].children];
+ const actions=ids.map(nodeId=>({type:'responsive.set',payload:{nodeId,device:'desktop',patch:{backgroundColor:'#112233',fontSize:'18px'}}}));
+ executeBatch(state,actions,{label:'Közös megjelenés'});
+ assert.deepEqual(ids.map(id=>activePage(state).nodes[id].responsive.desktop.backgroundColor),['#112233','#112233']);
+ execute(state,{type:'history.undo'});
+ assert.deepEqual(ids.map(id=>activePage(state).nodes[id].responsive.desktop.backgroundColor),[undefined,undefined]);
+ execute(state,{type:'element.lock.set',payload:{nodeId:ids[1],locked:true}});
+ const snapshot=structuredClone(state.document);
+ assert.throws(()=>executeBatch(state,actions,{label:'Közös megjelenés'}));
+ assert.deepEqual(state.document,snapshot);
+});
