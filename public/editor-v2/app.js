@@ -19,6 +19,8 @@ import {importRichTextClipboard} from './core/richtext-import.js';
 import {captureStyleSnapshot} from './core/style-snapshot.js';
 import {LAYOUT_PRESETS,LAYOUT_TYPES,layoutMode,isManagedLayout,isLayoutPropertyRelevant,explicitGridColumnCount} from './core/layout-presets.js';
 import {TYPOGRAPHY_PRESETS,typographyPresetPatch} from './core/typography-presets.js';
+import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent} from './core/element-content.js';
+import {renderStructuredInspector} from './ui/structured-inspector.js';
 import {readRichTextSelectionFormatting,clearRichTextInlineFormatting} from './core/richtext-links.js';
 
 let inspectorCategory='all';let richTextSelectionCleanup=null;let richTextToolTab='character';
@@ -292,6 +294,10 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
       c.append(media);
     }else{const placeholder=document.createElement('small');placeholder.textContent='Adj meg egy média URL-t a Tartalom panelen.';c.append(placeholder);}
     el.append(c);
+   }else if(isStructuredType(node.type)){
+    const c=document.createElement('div');c.className='node-content structured-preview';
+    c.innerHTML=renderElementContent(node.type,node.props?.contentModel??createElementContent(node.type),node.id);
+    el.append(c);activateStructuredContent(c);
   }else if([NODE_TYPES.HEADING,NODE_TYPES.TEXT,NODE_TYPES.BUTTON,NODE_TYPES.LINK].includes(node.type)){
     const c=document.createElement('div');c.className='node-content plain-text-content-surface';c.textContent=node.props?.text??node.props?.content??node.name;
     if(inlineEditingId===id){
@@ -807,6 +813,10 @@ function renderInspector(){
         inspector.append(section);
       }else if(textTypes.has(node.type))inspector.append(renderPlainTextEditor(node));
       if(['button','link'].includes(node.type))inspector.append(renderPropertyInput(getProperty('content.href'),'Link / URL',node.props?.href||'',v=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),href:v}}})));
+      else if(isStructuredType(node.type)){
+        const content=renderStructuredInspector(node,model=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),contentModel:model},metadata:{...(node.metadata||{}),structuredContentVersion:1}}}));
+        if(content)inspector.append(content);
+      }
       else if(['image','video','audio'].includes(node.type)){
         const setMedia=(patch)=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),...patch}}});
         inspector.append(field('Média URL',node.props?.src??'',v=>setMedia({src:v.trim()})));
