@@ -15,7 +15,7 @@ import {initialPageId,rememberPageId,requestedPageId} from './core/page-url.js';
 import {getElementCapability} from './core/capability-matrix.js';
 import {renderGeometryPresets} from './ui/geometry-presets.js';
 
-let state=null;let pages=[];let archivedPages=[];let revisionHistory=[];let zoom=1;let inspectorTab='design';let flushRichTextDraft=null;let inlineEditingId=null;let richTextBookmark=null;let canvasDrag=null;let canvasResize=null;let mobileTouch={active:false,timer:null,downId:null,startX:0,startY:0,snapshot:[],snapshotPrimary:null,suppressClick:false,longPressTriggered:false};let hierarchyDrag={nodeId:null,overId:null};let mobileHierarchyDrag={active:false,timer:null,nodeId:null,overId:null,startX:0,startY:0,suppressClick:false};
+let state=null;let pages=[];let archivedPages=[];let revisionHistory=[];let zoom=1;let inspectorTab='design';let inspectorQuery='';let flushRichTextDraft=null;let inlineEditingId=null;let richTextBookmark=null;let canvasDrag=null;let canvasResize=null;let mobileTouch={active:false,timer:null,downId:null,startX:0,startY:0,snapshot:[],snapshotPrimary:null,suppressClick:false,longPressTriggered:false};let hierarchyDrag={nodeId:null,overId:null};let mobileHierarchyDrag={active:false,timer:null,nodeId:null,overId:null,startX:0,startY:0,suppressClick:false};
 const $=s=>document.querySelector(s);const canvas=$('#canvas');const inspector=$('#inspectorBody');
 const sizes={desktop:1440,tablet:768,mobile:390};
 const ELEMENT_DESCRIPTIONS={Section:'Oldalszakasz vagy nagyobb tartalmi blokk.',Container:'Rendezett tartalmak befoglalója.',Stack:'Egymásba rendezett elemek csoportja.',Group:'Több elem közös csoportja.',Row:'Elemek egy sorban történő elrendezése.',Columns:'Több oszlopos elrendezés.',Flex:'Rugalmas Flexbox elrendezés.',Grid:'Rács alapú elrendezés.',Slot:'Fenntartott tartalomhely.',Spacer:'Üres tér létrehozása.',Heading:'Címsor H1–H6 szinttel.',Szöveg:'Egyszerű szöveges tartalom.',"Rich Text":'Formázott szöveg, lista, idézet és link.',Link:'Kattintható hivatkozás.',Gomb:'Kattintható műveleti gomb.',Breadcrumb:'Navigációs útvonal.',Kép:'Kép megjelenítése.',Galéria:'Több kép megjelenítése.',Videó:'Videótartalom.',Audio:'Hanglejátszás.',Ikon:'Grafikus ikon.',Carousel:'Lapozható tartalom.',Embed:'Beágyazott tartalom.',Iframe:'Külső oldal beágyazása.',Code:'Kód megjelenítése.',Card:'Önálló tartalmi kártya.',Lista:'Felsorolás vagy lista.',Táblázat:'Táblázatos adatmegjelenítés.',Tabs:'Fülek között váltható tartalom.',Accordion:'Nyitható-csukható blokkok.',Dropdown:'Lenyíló menü vagy választó.',Pagination:'Lapozás.',Search:'Keresési funkció.',Modal:'Felugró ablak.',Navbar:'Fő navigáció.',Menu:'Navigációs menü.',Sidebar:'Oldalsó sáv.',Footer:'Oldal alsó része.',Form:'Űrlap befoglaló.',Input:'Egysoros beviteli mező.',Textarea:'Többsoros beviteli mező.',Checkbox:'Jelölőnégyzet.',Radio:'Egyszeres választás.',Select:'Lenyíló választó.',Slider:'Csúszkás értékválasztó.',File:'Fájlfeltöltő mező.',Submit:'Űrlap beküldése.',"Social Links":'Közösségi hivatkozások.',Discord:'Discord tartalom vagy hivatkozás.',Twitch:'Twitch tartalom.',YouTube:'YouTube tartalom.',TikTok:'TikTok tartalom.',"Élő állapot":'Élő vagy offline állapot.',Countdown:'Visszaszámláló.',Adásrend:'Tervezett adások listája.',"Stream számláló":'Streamhez kapcsolódó számláló.',"Követők":'Követőszám.',"Feliratkozók":'Feliratkozószám.',VOD:'Korábbi stream vagy videó.',Támogatás:'Támogatási lehetőségek.',Közösség:'Közösségi tartalom.',"Játékkártya":'Játék kiemelt kártyája.',"Játéklista":'Játékok listája.',Komponens:'Újrafelhasználható komponens.',"Egyedi elem":'Egyedi testreszabható elem.',"Badge/Tag":'Címke vagy állapotjelző.',Quote:'Idézet.',Panel:'Tartalmi panel.',Overlay:'Más tartalom fölötti réteg.',Absolute:'Abszolút pozicionált elem.',Sticky:'Görgetés közben rögzített elem.',Tooltip:'Rövid magyarázó felirat.',Shorts:'Shorts tartalmi blokk.',Sponsor:'Szponzorációs tartalom.',"Business Contact":'Üzleti kapcsolatfelvétel.',"About Me":'Bemutatkozó tartalom.',"Sanci Button":'Sanci9517 egyedi gomb.'};
@@ -342,6 +342,34 @@ function renderRegistryInspector(node,mode='primary'){
   }
   return root;
 }
+function filterInspector(){
+  const query=inspectorQuery.trim().toLocaleLowerCase('hu');
+  const fields=[...inspector.querySelectorAll('.field,.typed-inspector-field,.richtext-editor')];
+  let matches=0;
+  for(const item of new Set(fields)){
+    const text=(item.dataset.propertyId||'')+' '+item.textContent;
+    const visible=!query||text.toLocaleLowerCase('hu').includes(query);
+    item.hidden=!visible;
+    if(visible)matches++;
+  }
+  for(const group of inspector.querySelectorAll('.inspector-group')){
+    const title=group.querySelector(':scope > .inspector-group-title')?.textContent||'';
+    const groupFields=[...group.querySelectorAll('.field,.typed-inspector-field,.richtext-editor')];
+    const visible=!query||title.toLocaleLowerCase('hu').includes(query)||groupFields.some(item=>!item.hidden);
+    group.hidden=!visible;
+    if(query&&visible){group.classList.add('is-open');group.querySelector(':scope > .inspector-group-title')?.setAttribute('aria-expanded','true')}
+  }
+  const status=inspector.querySelector('.inspector-search-status');
+  if(status)status.textContent=query?`${matches} találat`:'';
+}
+function renderInspectorSearch(){
+  const wrap=document.createElement('label');wrap.className='inspector-search';
+  const title=document.createElement('span');title.textContent='Beállítás keresése';
+  const input=document.createElement('input');input.type='search';input.value=inspectorQuery;input.placeholder='Pl. szín, térköz, betűméret';input.setAttribute('aria-label','Beállítás keresése');
+  input.oninput=()=>{inspectorQuery=input.value;filterInspector()};
+  const status=document.createElement('small');status.className='inspector-search-status';status.setAttribute('aria-live','polite');
+  wrap.append(title,input,status);inspector.append(wrap);
+}
 function renderInspector(){
   const previousScrollTop=inspector.scrollTop;
   const restoreScroll=()=>requestAnimationFrame(()=>{inspector.scrollTop=previousScrollTop});
@@ -349,9 +377,10 @@ function renderInspector(){
   // Flush before removing the live contenteditable element from the DOM.
   if(!inlineEditingId){if(flushRichTextDraft?.()===false)return false;flushRichTextDraft=null;}
   inspector.replaceChildren();
+  renderInspectorSearch();
   const nodes=state?selectedNodes(state):[];
-  if(!nodes.length){inspector.innerHTML='<div class="inspector-empty"><b>Inspector</b><span>Válassz ki egy elemet a vásznon vagy a Rétegek panelen.</span></div>';restoreScroll();return}
-  if(nodes.length>1){inspector.innerHTML='<div class="inspector-empty"><b>Több elem kijelölve</b><span>A tulajdonságokat egyenként szerkesztheted. Így más kijelölt elem nem módosul véletlenül.</span></div>';restoreScroll();return}
+  if(!nodes.length){inspector.insertAdjacentHTML('beforeend','<div class="inspector-empty"><b>Inspector</b><span>Válassz ki egy elemet a vásznon vagy a Rétegek panelen.</span></div>');filterInspector();restoreScroll();return}
+  if(nodes.length>1){inspector.insertAdjacentHTML('beforeend','<div class="inspector-empty"><b>Több elem kijelölve</b><span>A tulajdonságokat egyenként szerkesztheted. Így más kijelölt elem nem módosul véletlenül.</span></div>');filterInspector();restoreScroll();return}
   const node=nodes[0];
   const header=document.createElement('div');header.className='inspector-selection';
   const headerName=document.createElement('b');headerName.textContent=node.name||node.type;
@@ -478,7 +507,7 @@ function renderInspector(){
     inspector.append(renderRegistryInspector(node,'advanced'));
     inspector.append(field('Node ID',node.id,()=>{},true),field('Típus',node.type,()=>{},true),field('Szülő ID',node.parentId||'',()=>{},true));
   }
-  const actions=document.createElement('div');actions.className='inspector-actions';const del=document.createElement('button');del.type='button';del.className='danger-action';del.textContent='Törlés';del.disabled=node.id===page()?.rootId;del.title=del.disabled?'A gyökérelem nem törölhető':'Kijelölt elem törlése';del.onclick=()=>{if(!del.disabled)command('element.delete',{nodeId:node.id})};actions.append(del);inspector.append(actions);restoreScroll()
+  const actions=document.createElement('div');actions.className='inspector-actions';const del=document.createElement('button');del.type='button';del.className='danger-action';del.textContent='Törlés';del.disabled=node.id===page()?.rootId;del.title=del.disabled?'A gyökérelem nem törölhető':'Kijelölt elem törlése';del.onclick=()=>{if(!del.disabled)command('element.delete',{nodeId:node.id})};actions.append(del);inspector.append(actions);filterInspector();restoreScroll()
 }
 function clearHierarchyDrag(){hierarchyDrag.nodeId=null;hierarchyDrag.overId=null;document.querySelectorAll('.layer-row.drag-over,.layer-row.dragging').forEach(el=>el.classList.remove('drag-over','dragging'))}
 function clearMobileHierarchyDrag(){clearTimeout(mobileHierarchyDrag.timer);mobileHierarchyDrag.active=false;mobileHierarchyDrag.timer=null;mobileHierarchyDrag.nodeId=null;mobileHierarchyDrag.overId=null;mobileHierarchyDrag.suppressClick=false;document.querySelectorAll('.layer-row.mobile-dragging,.layer-row.mobile-drag-over,.layer-drag-handle.armed').forEach(el=>el.classList.remove('mobile-dragging','mobile-drag-over','armed'))}
