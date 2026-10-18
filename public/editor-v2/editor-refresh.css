@@ -408,6 +408,19 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
 .field .plain-text-editor { min-height:160px; padding:14px; border:1px solid #53617a; resize:vertical; }
 .canvas-edit-text { position:absolute; z-index:4; top:-38px; left:4px; min-height:36px; padding:5px 9px; border:1px solid #8070af; border-radius:8px; background:#282239; color:#eee7ff; font-size:11px; opacity:0; pointer-events:none; }
 .node:has(> .richtext-inline-surface) > .node-head,.node:has(> .plain-text-inline-surface) > .node-head { visibility:hidden; }
+.page-canvas .node.managed-layout { min-width:0; }
+.page-canvas .node.managed-layout > .node-head { opacity:0; }
+.page-canvas .node.managed-layout:hover > .node-head,.page-canvas .node.managed-layout.selected > .node-head { opacity:1; }
+.layout-context { margin:0 0 10px; font-size:13px; font-weight:650; color:#d7cbed; }
+.layout-help { margin:8px 0 12px; color:#b8c4d6; font-size:12px; line-height:1.65; }
+.layout-parent,.layout-auto { width:100%; min-height:44px; padding:10px; text-align:left; border:1px solid #45526d; border-radius:9px; background:#182333; color:#e0e7f4; }
+.layout-preset-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin:10px 0; }
+.layout-preset { display:flex; flex-direction:column; align-items:flex-start; gap:8px; min-width:0; min-height:112px; padding:12px 10px; text-align:left; white-space:normal; border:1px solid #46425e; border-radius:11px; background:linear-gradient(145deg,#25243b,#152232); color:#ece9f9; }
+.layout-preset small { font-size:11px; line-height:1.5; color:#bbc7da; }
+.layout-preset:hover { border-color:#bda1f2; background:#302b49; }
+.layout-preset-preview { width:100%; height:30px; gap:4px; overflow:hidden; }
+.layout-preset-preview > span { display:block; min-width:8px; min-height:5px; flex:1; border-radius:3px; background:#b59bdb; opacity:.85; }
+.layout-warning { margin:12px 0 0; border-left:3px solid #e9af50; padding:9px; background:#382b19; color:#ffe0b1; font-size:12px; line-height:1.6; }
 .node:hover > .canvas-edit-text,.node.selected > .canvas-edit-text { opacity:1; pointer-events:auto; }
 .plain-text-inline-surface { min-height:1.5em!important; outline:2px solid #8b79bd; outline-offset:3px; cursor:text; }
 @media(max-width:430px) {

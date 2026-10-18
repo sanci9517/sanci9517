@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "wrangler dev",
     "typecheck": "tsc --noEmit",
-    "test:editor": "node --test public/editor-v2/tests/core.test.js public/editor-v2/tests/page-url.test.js public/editor-v2/tests/inspector-richtext.test.js public/editor-v2/tests/style-snapshot.test.js",
+    "test:editor": "node --test public/editor-v2/tests/core.test.js public/editor-v2/tests/page-url.test.js public/editor-v2/tests/inspector-richtext.test.js public/editor-v2/tests/style-snapshot.test.js public/editor-v2/tests/layout-presets.test.js",
     "test:schedule": "node --test public/editor-v2/tests/schedule-source.test.js",
     "db:migrations:apply": "wrangler d1 migrations apply DB --remote",
     "deploy": "npm run test:web013:migration-gate && npm run db:migrations:apply && wrangler deploy",
@@ -17,7 +17,7 @@
     "db:site-scope:preflight": "wrangler d1 execute sanci9517-db --remote --file=./scripts/web013-site-scope-preflight.sql --json",
     "test:admin-home": "node --test tests/admin-home-contract.test.js",
     "test:admin-access": "node --test tests/admin-asset-access-contract.test.js",
-    "test:editor:layout": "node --test tests/browser/editor-layout.test.js tests/browser/editor-inspector-richtext-controls.test.js tests/browser/editor-richtext-save-publish.test.js tests/browser/editor-inspector-lifecycle.test.js tests/browser/editor-ux-p0-workflow.test.js tests/browser/editor-style-copy.test.js",
+    "test:editor:layout": "node --test tests/browser/editor-layout.test.js tests/browser/editor-inspector-richtext-controls.test.js tests/browser/editor-richtext-save-publish.test.js tests/browser/editor-inspector-lifecycle.test.js tests/browser/editor-ux-p0-workflow.test.js tests/browser/editor-style-copy.test.js tests/browser/editor-responsive-layout.test.js",
     "test:web013:migration-gate": "node scripts/web013-migration-safety-gate.mjs",
     "test:site-access": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/web013-site-membership.test.js tests/web013-admin-tenant-gate.test.js",
     "test:site-settings": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/web013-site-scoped-settings.test.js",

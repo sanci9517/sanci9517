@@ -17,6 +17,7 @@ import {getElementCapability} from './core/capability-matrix.js';
 import {renderGeometryPresets} from './ui/geometry-presets.js';
 import {importRichTextClipboard} from './core/richtext-import.js';
 import {captureStyleSnapshot} from './core/style-snapshot.js';
+import {LAYOUT_PRESETS,LAYOUT_TYPES,layoutMode,isManagedLayout,isLayoutPropertyRelevant,explicitGridColumnCount} from './core/layout-presets.js';
 import {TYPOGRAPHY_PRESETS,typographyPresetPatch} from './core/typography-presets.js';
 import {readRichTextSelectionFormatting,clearRichTextInlineFormatting} from './core/richtext-links.js';
 
@@ -241,7 +242,7 @@ function openRichTextFormatting(id){
   render();window.sanciEditor?.openPanel?.('right');
   requestAnimationFrame(()=>inspector.querySelector('.richtext-editor-surface')?.focus());
 }
-function renderNode(currentPage,id){const node=getNode(currentPage,id);if(!node)return null;const el=document.createElement('div');el.className=`node ${state.selection.ids.includes(id)?'selected':''}`;el.dataset.nodeId=id;el.dataset.device=state.viewport.device;applyNodeStyle(el,node,state.viewport.device);const head=document.createElement('div');head.className='node-head';const headName=document.createElement('span');headName.textContent=node.name||node.type;const headType=document.createElement('small');headType.textContent=node.type;head.append(headName,headType);el.append(head);
+function renderNode(currentPage,id,managed=false){const node=getNode(currentPage,id);if(!node)return null;managed=managed||isManagedLayout(node);const el=document.createElement('div');el.className=`node ${state.selection.ids.includes(id)?'selected':''}`;el.classList.toggle('managed-layout',managed);el.dataset.nodeId=id;el.dataset.device=state.viewport.device;applyNodeStyle(el,node,state.viewport.device);const head=document.createElement('div');head.className='node-head';const headName=document.createElement('span');headName.textContent=node.name||node.type;const headType=document.createElement('small');headType.textContent=node.type;head.append(headName,headType);el.append(head);
   if(node.type===NODE_TYPES.RICHTEXT){
     const c=document.createElement('div');c.className='node-content richtext-content';
     renderRichTextEditor(c,node.props?.richText);
@@ -295,7 +296,7 @@ function renderNode(currentPage,id){const node=getNode(currentPage,id);if(!node)
     }
     el.ondblclick=event=>{event.stopPropagation();setSelection(state,[id],id);beginRichTextEditing(id)};el.append(c);
   }
-  for(const child of node.children||[]){const x=renderNode(currentPage,child);if(x)el.append(x)}if(state.selection.primaryId===id&&id!==currentPage.rootId&&!node.locked){const handle=document.createElement('button');handle.type='button';handle.className='canvas-resize-handle';handle.setAttribute('aria-label','Elem átméretezése');handle.title='Átméretezés';handle.onpointerdown=e=>beginCanvasResize(id,e,el);handle.onpointermove=e=>moveCanvasResize(id,e);handle.onpointerup=e=>finishCanvasResize(id,e);handle.onpointercancel=e=>finishCanvasResize(id,e,true);el.append(handle)}el.onpointerdown=e=>{if(inlineEditingId===id)return;if(e.pointerType==='touch'){e.stopPropagation();handleMobilePointerDown(id,e);return}beginCanvasDrag(id,e,el)};el.onpointermove=e=>{if(canvasResize?.nodeId===id){moveCanvasResize(id,e);return}if(e.pointerType==='touch')handleMobilePointerMove(e);else moveCanvasDrag(id,e)};el.onpointerup=e=>{if(canvasResize?.nodeId===id){finishCanvasResize(id,e);return}if(e.pointerType==='touch'){e.stopPropagation();handleMobilePointerUp(id,e);return}finishCanvasDrag(id,e)};el.onpointercancel=e=>{if(canvasResize?.nodeId===id){finishCanvasResize(id,e,true);return}if(e.pointerType==='touch')handleMobilePointerCancel(e);else finishCanvasDrag(id,e,true)};el.onclick=e=>{e.stopPropagation();if(inlineEditingId===id)return;if(mobileTouch.active&&mobileTouch.suppressClick){mobileTouch.suppressClick=false;return}selectNodeInteraction(id,e)};return el}
+  for(const child of node.children||[]){const x=renderNode(currentPage,child,managed);if(x)el.append(x)}if(state.selection.primaryId===id&&id!==currentPage.rootId&&!node.locked){const handle=document.createElement('button');handle.type='button';handle.className='canvas-resize-handle';handle.setAttribute('aria-label','Elem átméretezése');handle.title='Átméretezés';handle.onpointerdown=e=>beginCanvasResize(id,e,el);handle.onpointermove=e=>moveCanvasResize(id,e);handle.onpointerup=e=>finishCanvasResize(id,e);handle.onpointercancel=e=>finishCanvasResize(id,e,true);el.append(handle)}el.onpointerdown=e=>{if(inlineEditingId===id)return;if(e.pointerType==='touch'){e.stopPropagation();handleMobilePointerDown(id,e);return}beginCanvasDrag(id,e,el)};el.onpointermove=e=>{if(canvasResize?.nodeId===id){moveCanvasResize(id,e);return}if(e.pointerType==='touch')handleMobilePointerMove(e);else moveCanvasDrag(id,e)};el.onpointerup=e=>{if(canvasResize?.nodeId===id){finishCanvasResize(id,e);return}if(e.pointerType==='touch'){e.stopPropagation();handleMobilePointerUp(id,e);return}finishCanvasDrag(id,e)};el.onpointercancel=e=>{if(canvasResize?.nodeId===id){finishCanvasResize(id,e,true);return}if(e.pointerType==='touch')handleMobilePointerCancel(e);else finishCanvasDrag(id,e,true)};el.onclick=e=>{e.stopPropagation();if(inlineEditingId===id)return;if(mobileTouch.active&&mobileTouch.suppressClick){mobileTouch.suppressClick=false;return}selectNodeInteraction(id,e)};return el}
 function updateCanvasExtent(target=canvas.querySelector('.page-canvas')){if(!target)return;let pageRect=target.getBoundingClientRect();const bottoms=[...target.querySelectorAll('.node')].map(node=>node.getBoundingClientRect().bottom-pageRect.top);target.style.minHeight=`${computeCanvasMinHeight(bottoms,zoom,844,80)}px`;pageRect=target.getBoundingClientRect();const nodes=[...target.querySelectorAll('.node')];const extents=measureCanvasWorkspace(nodes.map(node=>{const rect=node.getBoundingClientRect();return {left:rect.left-pageRect.left,right:rect.right-pageRect.left,top:rect.top-pageRect.top,bottom:rect.bottom-pageRect.top}}),target.offsetWidth,target.offsetHeight,zoom);target.style.left=`${extents.left}px`;target.style.top=`${extents.top}px`;pageRect=target.getBoundingClientRect();for(const node of nodes){const rect=node.getBoundingClientRect();node.classList.toggle('outside-artboard',rect.left<pageRect.left-1||rect.right>pageRect.right+1||rect.top<pageRect.top-1||rect.bottom>pageRect.bottom+1)}const frame=target.parentElement;if(frame?.classList.contains('page-canvas-frame')){frame.style.width=`${(target.offsetWidth+extents.left+extents.right)*zoom}px`;frame.style.height=`${(target.offsetHeight+extents.top+extents.bottom)*zoom}px`}}
 function renderCanvas(){canvas.querySelectorAll('.page-canvas-frame').forEach(x=>x.remove());const current=page();const device=state?.viewport?.device||'desktop';const width=sizes[device];const frame=document.createElement('div');frame.className='page-canvas-frame';const pc=document.createElement('div');pc.className='page-canvas';pc.dataset.device=device;pc.style.width=`${width}px`;pc.style.transform=`scale(${zoom})`;if(current)pc.append(renderNode(current,current.rootId));frame.append(pc);canvas.append(frame);updateCanvasExtent(pc);$('#canvasEmpty').hidden=Boolean(current);$('#canvasMode').textContent=`${device} · ${width}px`;$('#zoom').textContent=`${Math.round(zoom*100)}%`;syncDeviceButtons(device)}
 function fitCanvasToViewport(){const device=state?.viewport?.device||'desktop';zoom=Math.max(.35,Math.min(1.2,(canvas.clientWidth-48)/sizes[device]));render();canvas.scrollTo({left:0,top:0,behavior:'instant'})}
@@ -404,20 +405,22 @@ function renderRegistryInspector(node,mode='primary'){
     'position.x','position.y','size.width','size.height','position.position']);
   for(const group of listPropertyGroups()){
     if((mode==='primary')!==primaryGroups.has(group.id))continue;
-    const properties=listProperties({group:group.id,nodeType:node.type})
-      .filter(property=>!duplicates.has(property.id));
+    const parent=page()?.nodes?.[node.parentId];
+    const properties=listProperties({group:group.id,...(!['flex','grid'].includes(group.id)?{nodeType:node.type}:{})})
+      .filter(property=>!duplicates.has(property.id)&&isLayoutPropertyRelevant(property,node,parent,device));
     if(!properties.length)continue;
     const section=document.createElement('section');section.className='inspector-group';
     section.dataset.inspectorCategory=group.id==='typography'?'text':['background','border','radius','shadow','opacity'].includes(group.id)?'surface':'layout';
     const title=document.createElement('div');title.className='inspector-group-title';
     title.innerHTML='<strong></strong><small></small>';
-    title.querySelector('strong').textContent=group.label;
+    title.querySelector('strong').textContent=group.id==='flex'&&layoutMode(node,device)!=='flex'?(layoutMode(parent,device)==='grid'?'Gyermek igazítása':'Flex-gyermek'):group.id==='grid'&&layoutMode(node,device)!=='grid'?'Grid-gyermek':group.label;
     title.querySelector('small').textContent=String(properties.length);
     section.append(title);
     for(const property of properties){
       const key=property.key||property.id.split('.')[1];
       const resolved=property.responsive?resolveResponsiveValue(node.responsive,key,device):null;
-      const current=resolved?.value??node.style?.[key]??'';
+      const rendered=canvas.querySelector(`.node[data-node-id="${CSS.escape(node.id)}"]`);
+      const current=resolved?.value??node.style?.[key]??(['flex','grid','layout'].includes(property.group)&&rendered?getComputedStyle(rendered)[key]:'')??'';
       const label=property.responsive&&resolved?.inherited?property.label+' · örökölt':property.label;
       const apply=value=>{
         if(property.responsive)command(property.command,{nodeId:node.id,device,patch:{[key]:value}});
@@ -436,9 +439,53 @@ function renderRegistryInspector(node,mode='primary'){
   }
   return root;
 }
+function renderLayoutInspector(node){
+  const section=document.createElement('section');section.className='inspector-group layout-recipes';section.dataset.inspectorCategory='layout';
+  const title=document.createElement('div');title.className='inspector-group-title';
+  const name=document.createElement('strong');name.textContent=LAYOUT_TYPES.includes(node.type)?'Elrendezési minták':'Szülő és elhelyezés';title.append(name);section.append(title);
+  const device=state.viewport.device,parent=page()?.nodes?.[node.parentId];
+  const modeName=mode=>({flex:'Flex',grid:'Grid',block:'Normál folyás'}[mode]);
+  const context=document.createElement('p');context.className='layout-context';context.textContent=`Ez az elem: ${modeName(layoutMode(node,device))} · ${device}.`;
+  section.append(context);
+  if(parent){
+    const parentButton=document.createElement('button');parentButton.type='button';parentButton.className='layout-parent';parentButton.textContent=`Szülő: ${parent.name||parent.type} · ${modeName(layoutMode(parent,device))}`;
+    parentButton.title='A szülő tároló kijelölése. Az oszlopok, irány és a gyermekek közötti távolság ott állítható.';
+    parentButton.onclick=()=>command('selection.set',{ids:[parent.id],primaryId:parent.id});section.append(parentButton);
+  }
+  const help=document.createElement('p');help.className='layout-help';help.textContent='A tároló rendezi el a gyermekeit. Flexnél az irány határozza meg az elosztás tengelyét; Gridnél az oszlopok és sorok adják a rácsot. A gyermek saját növekedése vagy rácshelye csak a megfelelő szülőben hat. A részletes mezők ezt a kapcsolatot követik.';section.append(help);
+  if(LAYOUT_TYPES.includes(node.type)){
+    const rendered=canvas.querySelector(`.node[data-node-id="${CSS.escape(node.id)}"]`);
+    if(!rendered?.classList.contains('managed-layout')){
+      const legacy=document.createElement('p');legacy.className='layout-help';legacy.textContent='Ez még a korábbi publikus megjelenést használja, annak automatikus kártyakeretével és mobilos tördelésével. Az alábbi minták valamelyikével bekapcsolható az új, vászonnal egyező elrendezés. Publikálás előtt ellenőrizd az előnézetet.';section.append(legacy);
+    }
+    const note=document.createElement('p');note.className='layout-help';note.textContent='Egy minta mindhárom nézet elrendezését beállítja, egyetlen visszavonható lépésben. Tartalmat nem cserél és nem publikál. Az elemek saját mérete, pozíciója és rácshelye megmarad; szükség esetén lent automatikus elhelyezés kérhető.';section.append(note);
+    const grid=document.createElement('div');grid.className='layout-preset-grid';
+    for(const preset of LAYOUT_PRESETS){
+      const button=document.createElement('button');button.type='button';button.className='layout-preset';button.dataset.layoutPreset=preset.id;button.disabled=Boolean(node.locked);button.title=preset.help;button.setAttribute('aria-label',preset.label+' elrendezésminta');
+      const preview=document.createElement('span');preview.className='layout-preset-preview';preview.setAttribute('aria-hidden','true');Object.assign(preview.style,preset.layouts[0]);
+      const previewCount=explicitGridColumnCount(preset.layouts[0].gridTemplateColumns)||3;
+      for(let index=0;index<previewCount;index++)preview.append(document.createElement('span'));
+      const label=document.createElement('strong');label.textContent=preset.label;const hint=document.createElement('small');hint.textContent=preset.help;button.append(preview,label,hint);
+      button.onclick=()=>{if(command('layout.preset.apply',{nodeId:node.id,presetId:preset.id}))setStatus('Reszponzív elrendezés beállítva. Mentés és Publikálás külön művelet.')};grid.append(button);
+    }
+    section.append(grid);
+  }
+  if(['grid','flex'].includes(layoutMode(node,device))&&node.children?.length){
+    const auto=document.createElement('button');auto.type='button';auto.className='layout-auto';auto.textContent='Gyermekek automatikus elhelyezése';auto.disabled=Boolean(node.locked)||node.children.some(id=>page()?.nodes?.[id]?.locked);
+    auto.title=auto.disabled?'Zárolt gyermek miatt az egész művelet nem végezhető el.':'Csak az aktuális nézetben állítja automatikusra a közvetlen gyermekek Flex/Grid elhelyezését. A méret, pozíció, tartalom és más nézetek megmaradnak.';
+    auto.onclick=()=>command('layout.children.auto',{nodeId:node.id,device});section.append(auto);
+  }
+  if(parent&&layoutMode(parent,device)==='grid'){
+    const values=resolveNodeStyle(node,device);
+    const columns=explicitGridColumnCount(resolveNodeStyle(parent,device).gridTemplateColumns);
+    const start=parseInt(values.gridColumn,10);
+    if(columns&&start>columns){const warning=document.createElement('p');warning.className='layout-warning';warning.setAttribute('role','status');warning.textContent='A saját oszlophely új, nem tervezett oszlopot nyithat ebben a nézetben. Jelöld ki a szülőt, és válaszd a Gyermekek automatikus elhelyezése műveletet, vagy módosítsd az Oszlophely mezőt.';section.append(warning)}
+  }
+  return section;
+}
 function filterInspector(){
   const query=inspectorQuery.trim().toLocaleLowerCase('hu');
-  const fields=[...inspector.querySelectorAll('.field,.typed-inspector-field,.richtext-editor,.typography-role')];
+  const fields=[...inspector.querySelectorAll('.field,.typed-inspector-field,.richtext-editor,.typography-role,.layout-preset')];
   let matches=0;
   for(const item of new Set(fields)){
     const text=(item.dataset.propertyId||'')+' '+item.textContent+' '+(item.title||'');
@@ -448,7 +495,7 @@ function filterInspector(){
   }
   for(const group of inspector.querySelectorAll('.inspector-group')){
     const title=group.querySelector(':scope > .inspector-group-title')?.textContent||'';
-    const groupFields=[...group.querySelectorAll('.field,.typed-inspector-field,.richtext-editor,.typography-role')];
+    const groupFields=[...group.querySelectorAll('.field,.typed-inspector-field,.richtext-editor,.typography-role,.layout-preset')];
     const visible=query?title.toLocaleLowerCase('hu').includes(query)||groupFields.some(item=>!item.hidden):inspectorCategory==='all'||!group.dataset.inspectorCategory||group.dataset.inspectorCategory===inspectorCategory;
     group.hidden=!visible;
     if(query&&visible){group.classList.add('is-open');group.querySelector(':scope > .inspector-group-title')?.setAttribute('aria-expanded','true')}
@@ -525,6 +572,7 @@ function renderInspector(){
 
   if(inspectorTab==='design'){
     inspector.append(renderInspectorCategories());
+    inspector.append(renderLayoutInspector(node));
     inspector.append(field('Elem neve',node.name,v=>command('element.update',{nodeId:node.id,patch:{name:v}})),renderGeometryInspector(node));
     if(['heading','text','richtext','button','link'].includes(node.type))inspector.append(renderTypographyPresets(node));
     if(node.type==='schedule')inspector.append(renderScheduleInspector(node));

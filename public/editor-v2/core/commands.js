@@ -10,6 +10,7 @@ import { assertValidEditorDocument } from './validation.js';
 import { activePage, clearSelection, setSelection } from './state.js';
 import { normalizeScheduleConfig } from './schedule-schema.js';
 import { applyStyleSnapshot } from './style-snapshot.js';
+import { layoutPresetPatch, layoutMode, CHILD_LAYOUT_DEFAULTS } from './layout-presets.js';
 
 function requirePage(state) {
   const page = activePage(state);
@@ -61,6 +62,15 @@ function bumpRevision(document) {
 }
 
 export const commands = Object.freeze({
+  'layout.preset.apply': (state, {nodeId,presetId}={}) => commit(state,{type:'layout.preset.apply',payload:{nodeId,presetId}},draft=>{
+    const {node}=requireNode(draft,nodeId);Object.assign(node,layoutPresetPatch(node,presetId));bumpRevision(draft.document);
+  }),
+  'layout.children.auto': (state, {nodeId,device}={}) => commit(state,{type:'layout.children.auto',payload:{nodeId,device}},draft=>{
+    const {node}=requireNode(draft,nodeId);
+    if(!['desktop','tablet','mobile'].includes(device)||!['flex','grid'].includes(layoutMode(node,device)))throw new Error('Válassz Flex vagy Grid tárolót és érvényes nézetet.');
+    for(const id of node.children){const {node:child}=requireNode(draft,id);child.responsive={...child.responsive,[device]:{...child.responsive?.[device],...CHILD_LAYOUT_DEFAULTS}}}
+    bumpRevision(draft.document);
+  }),
   'selection.set': (state, { ids = [], primaryId } = {}) => { setSelection(state, ids, primaryId ?? ids.at(-1) ?? null); return state; },
   'selection.clear': (state) => { clearSelection(state); return state; },
   'element.add': (state, { type, parentId, props = {}, style = {}, name } = {}) => commit(state,{type:'element.add',payload:{type,parentId}},(draft)=>{if(!type)throw new Error('Element type is required');const page=requirePage(draft);const selectedParent=draft.selection.primaryId?getNode(page,draft.selection.primaryId):null;const parent=getNode(page,parentId??selectedParent?.id??page.rootId);if(!parent||!canContain(parent,type))throw new Error('Invalid parent for element');const nodeProps=structuredClone(props);if(type==='richtext'&&!nodeProps.richText)nodeProps.richText=createEmptyRichText();const node=createNode(type,{props:nodeProps,style:structuredClone(style),name:name??type,parentId:parent.id});page.nodes[node.id]=node;parent.children.push(node.id);setSelection(draft,[node.id],node.id);bumpRevision(draft.document)}),
