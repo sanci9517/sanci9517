@@ -4,7 +4,7 @@ export const CARD_VARIANTS=Object.freeze(['solid','outline','glass']);
 const safeUrl=(raw,{image=false}={})=>{
  if(typeof raw!=='string'||!raw.trim())return false;
  const value=raw.trim();
- if(/[\\u0000-\\u001f\\u007f\\\\]/.test(value)||value.startsWith('//'))return false;
+ if([...value].some(ch=>{const n=ch.charCodeAt(0);return n<32||n===127||n===92})||value.startsWith('//'))return false;
  if(!image&&value.startsWith('#')&&value.length>1)return true;
  if(value.startsWith('/')&&!value.startsWith('//'))return true;
  try{const url=new URL(value);return ['http:','https:'].includes(url.protocol)&&!url.username&&!url.password;}
