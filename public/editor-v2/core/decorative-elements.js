@@ -1,7 +1,7 @@
 // Shared between the Editor commands, Inspector and public renderer.
 // Legacy divider/spacer nodes are only upgraded on explicit creation/edit.
 export const DIVIDER_LINE_STYLES = Object.freeze(['solid','dashed','dotted','double']);
-const VALID_HEX=/^#[\\da-f]{6}$/i;
+const VALID_HEX=/^#[0-9a-f]{6}$/i;
 
 export function defaultDividerStyle() {
  return {version:1,thickness:2,color:'#94a3b8',lineStyle:'solid'};
