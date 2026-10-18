@@ -95,7 +95,9 @@ export async function adminLinkReportRoute(request: Request, env: Env): Promise<
       const richText = node?.props?.richText;
       if (richText?.type === "richtext-document" && richText.schemaVersion === 1 && Array.isArray(richText.blocks)) {
         for (const block of richText.blocks) {
-          const groups = Array.isArray(block?.items) ? block.items.map((item: any) => Array.isArray(item) ? item : item?.children) : [block?.children];
+          const groups = block?.type === "table" && Array.isArray(block?.rows)
+            ? block.rows.flatMap((row: any) => Array.isArray(row?.cells) ? row.cells.map((cell: any) => cell?.children) : [])
+            : Array.isArray(block?.items) ? block.items.map((item: any) => Array.isArray(item) ? item : item?.children) : [block?.children];
           for (const group of groups) {
             if (!Array.isArray(group)) continue;
             for (const inline of group) {

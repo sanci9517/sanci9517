@@ -47,7 +47,8 @@ async function fixture(t) {
     ] },
     { type: 'bulleted-list', items: [[
       { type: 'text', text: 'Old', marks: [], link: { href: '/p/old' } }
-    ]] }
+    ]] },
+    { type: 'table', rows: [{cells:[{header:true,children:[{type:'text',text:'Reference',marks:[]}]},{header:false,children:[{type:'text',text:'Missing table link',marks:[],link:{href:'/p/missing-table'}}]}]}] }
   ] };
   const homePublished = document('home', {
     content: { id: 'content', props: { html: richText, url: 'https://example.test/p/foreign' } },
@@ -219,8 +220,8 @@ test('authenticated link report checks published rich text, redirects and site-s
   const body = await response.json();
   assert.equal(response.status, 200);
   assert.match(response.headers.get('Cache-Control'), /no-store/);
-  assert.equal(body.data.checkedContentLinks, 7);
-  assert.deepEqual(body.data.contentFindings.map(item => item.href), ['https://example.test/p/foreign', '/p/missing', '/p/missing-rich']);
+  assert.equal(body.data.checkedContentLinks, 8);
+  assert.deepEqual(body.data.contentFindings.map(item => item.href), ['https://example.test/p/foreign', '/p/missing', '/p/missing-rich', '/p/missing-table']);
   assert.deepEqual(body.data.redirectedContentLinks.map(item => [item.href, item.targetPageId]), [['/p/old', 'target'], ['/p/old', 'target']]);
   assert.deepEqual(body.data.navigationUrlFindings.map(item => [item.itemId, item.href]), [['foreign-url', 'https://example.test/p/foreign-old']]);
   assert.deepEqual(body.data.redirectedNavigationLinks.map(item => [item.itemId, item.targetPageId]), [['old-url', 'target']]);

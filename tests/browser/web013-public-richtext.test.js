@@ -16,7 +16,14 @@ const richText = { schemaVersion: 1, type: 'richtext-document', blocks: [
   ] },
   { type: 'bulleted-list', items: [[
     { type: 'text', text: 'Historical URL', marks: [], link: { href: '/p/old' } }
-  ]] }
+  ]] },
+  { type: 'paragraph', children: [
+    { type: 'text', text: 'Emphasis', marks: ['strikethrough','superscript'], styles: { color: '#ff3366', backgroundColor: '#ffee99', fontFamily:'Georgia', fontSize:'24px' } }
+  ] },
+  { type: 'table', rows: [
+    { cells: [{header:true,children:[{type:'text',text:'Metric',marks:[]}]},{header:true,children:[{type:'text',text:'Value',marks:[]}]}] },
+    { cells: [{header:false,children:[{type:'text',text:'Revenue',marks:[]}]},{header:false,children:[{type:'text',text:'100',marks:[]}]}] }
+  ] }
 ] };
 const page = { ok: true, data: { id: 'sample', slug: 'sample', title: 'Sample', description: 'Published',
   content: { rootId: 'root', nodes: {
@@ -58,6 +65,13 @@ test('published structured Rich Text renders safe clickable links in the real pu
   assert.equal(await pageTab.locator('.visual-text a u strong').textContent(), 'Current page');
   assert.match(await pageTab.getByRole('link', { name: 'Historical URL' }).getAttribute('href'), /\/p\/old$/);
   assert.equal(await pageTab.locator('.visual-text a').count(), 3);
+  assert.equal(await pageTab.locator('.visual-text s').textContent(), 'Emphasis');
+  assert.equal(await pageTab.locator('.visual-text sup').textContent(), 'Emphasis');
+  assert.equal(await pageTab.locator('.visual-text span[style*="background-color"]').evaluate(el=>getComputedStyle(el).color), 'rgb(255, 51, 102)');
+  assert.equal(await pageTab.locator('.visual-text span[style*="font-family"]').evaluate(el=>getComputedStyle(el).fontSize), '24px');
+  assert.match(await pageTab.locator('.visual-text span[style*="font-family"]').evaluate(el=>getComputedStyle(el).fontFamily), /Georgia/);
+  assert.equal(await pageTab.locator('.visual-richtext-table th').count(), 2);
+  assert.equal(await pageTab.locator('.visual-richtext-table td').nth(1).textContent(), '100');
   assert.equal(await pageTab.getByRole('link', { name: 'External' }).getAttribute('rel'), 'noopener noreferrer');
   assert.equal(await pageTab.locator('.visual-text script').count(), 0);
   assert.equal(await pageTab.evaluate(() => window.__xss), undefined);
