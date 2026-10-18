@@ -27,6 +27,7 @@ test('structured Inspector editing survives Save, Publish and public interaction
   ids[type]=model.selection.primaryId;
  }
  execute(model,{type:'element.update',payload:{nodeId:ids.heading,patch:{accessibility:{anchorId:'main-heading',ariaLabel:'Főcím'}}}});
+ execute(model,{type:'element.update',payload:{nodeId:ids.link,patch:{states:{hover:{backgroundColor:'#123456',color:'#ffffff'},focus:{outlineColor:'#00ff00'}}}}});
  const img=activePage(model).nodes[ids.gallery];
  execute(model,{type:'element.update',payload:{nodeId:img.id,patch:{props:{...img.props,contentModel:{version:1,items:[{src:'/media/example.jpg',alt:'Próbakép',caption:'Tesztkép'},{src:'/media/second.jpg',alt:'Második kép',caption:'Második kép leírása'}]}}}}});
  let draft=structuredClone(model.document),published=structuredClone(model.document),version=1;
@@ -89,6 +90,8 @@ test('structured Inspector editing survives Save, Publish and public interaction
  const newTabLink=viewer.locator('a[data-node-id="'+ids.link+'"]');
  assert.equal(await newTabLink.getAttribute('target'),'_blank');
  assert.equal(await newTabLink.getAttribute('rel'),'noopener noreferrer');
+ await newTabLink.hover();
+ assert.equal(await newTabLink.evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(18, 52, 86)');
  const tabs=viewer.locator('.visual-editor-node[data-node-id="'+ids.tabs+'"]');
  await tabs.locator('[role=tab]').first().waitFor();
  assert.equal(await tabs.locator('[role=tab]').first().textContent(),'Bemutatkozás');
