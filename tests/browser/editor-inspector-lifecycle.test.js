@@ -63,7 +63,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await select(gridId);
   assert.equal(await editor.locator(`.node[data-node-id="${gridId}"] > .node-head img`).count(),0);
   assert.equal(await editor.locator(`.layer-row[data-node-id="${gridId}"] img`).count(),0);
-  await editor.locator('.inspector-group-title').evaluateAll(elements=>elements.forEach(el=>el.click()));
+  await editor.locator('.inspector-group-title[aria-expanded="false"]').evaluateAll(elements=>elements.forEach(el=>el.click()));
   await field('layout.display').locator('select').selectOption('grid');
   await field('grid.columns').locator('select').selectOption('repeat(2, minmax(0, 1fr))');
   assert.equal(await editor.locator(`.node[data-node-id="${gridId}"]`).evaluate(el=>getComputedStyle(el).display),'grid');

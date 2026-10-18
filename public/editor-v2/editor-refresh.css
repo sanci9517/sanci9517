@@ -166,6 +166,27 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
   .top-actions #openInspector { grid-column: 2; grid-row: 2; justify-self: end; }
 }
 
+/* UX-P0: editor controls are overlays and never occupy Flex/Grid cells. */
+.page-canvas .node { padding: 0; border: 0; min-height: 0; }
+.page-canvas > .node { min-height: 844px; }
+.page-canvas .node:hover { outline: 1px dashed #8da7d3; outline-offset: 1px; }
+.page-canvas .node.selected { outline: 2px solid var(--accent); }
+.page-canvas .node-head { position: absolute; margin: 0; pointer-events: none; }
+.page-canvas .node-content { min-height: 0; }
+.page-canvas .richtext-empty { min-height: 48px; }
+.page-canvas .node:has(> .canvas-edit-richtext) { min-height: 44px; }
+.canvas-edit-richtext { position: absolute; z-index: 4; top: 2px; right: 2px; max-width: calc(100% - 4px); min-height: 40px; padding: 6px 10px; border: 1px solid #4c77bc; border-radius: 6px; background: #132d52; color: #fff; font-size: 13px; box-shadow: 0 3px 12px #0004; }
+.page-canvas .richtext-inline-surface { min-height: 48px; outline: 2px solid #4c77bc; outline-offset: 2px; cursor: text; white-space: normal; }
+.page-canvas .richtext-inline-surface > [data-rich-block] { min-height: 1.5em; }
+.page-canvas .richtext-empty .richtext-inline-surface::before { content: 'Írj ide…'; position: absolute; inset: 0 auto auto 0; color: #64748b; pointer-events: none; }
+.element:disabled { cursor: not-allowed; opacity: .48; }
+.element:disabled:hover { background: #101720; color: #c9d2df; }
+.geometry-presets-wrap { padding: 6px 10px 12px; border-bottom: 1px solid var(--editor-line); }
+.geometry-presets-label { display: block; margin-bottom: 7px; color: #aebbd0; font-size: 12px; }
+.geometry-presets { display: flex; flex-wrap: wrap; gap: 6px; }
+.geometry-presets button { min-width: 54px; min-height: 40px; padding: 6px 9px; border: 1px solid #43566f; border-radius: 7px; background: #182638; color: #e8eff9; font-size: 13px; }
+.geometry-presets button[aria-pressed="true"] { border-color: #6b9eff; background: #234575; }
+
 
 /* #47: Selected Inspector content must never change dock track sizing.
    Keep the shell's right column stable and scroll oversized fields internally. */
