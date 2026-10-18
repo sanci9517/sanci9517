@@ -16,6 +16,17 @@ test('structured Inspector editing survives Save, Publish and public interaction
   execute(model,{type:'element.add',payload:{type,parentId:root,name:type}});
   ids[type]=model.selection.primaryId;
  }
+ for(const [type,props] of [
+  ['image',{src:'/media/banner.jpg',alt:'Kezdőlap borítókép'}],
+  ['video',{src:'/media/trailer.mp4'}],
+  ['audio',{src:'/media/theme.mp3'}],
+  ['heading',{text:'A fő cím',level:1}],
+  ['link',{text:'Megnyitás',href:'/p/about',newWindow:true}]
+ ]){
+  execute(model,{type:'element.add',payload:{type,parentId:root,props,name:type}});
+  ids[type]=model.selection.primaryId;
+ }
+ execute(model,{type:'element.update',payload:{nodeId:ids.heading,patch:{accessibility:{anchorId:'main-heading',ariaLabel:'Főcím'}}}});
  const img=activePage(model).nodes[ids.gallery];
  execute(model,{type:'element.update',payload:{nodeId:img.id,patch:{props:{...img.props,contentModel:{version:1,items:[{src:'/media/example.jpg',alt:'Próbakép',caption:'Tesztkép'},{src:'/media/second.jpg',alt:'Második kép',caption:'Második kép leírása'}]}}}}});
  let draft=structuredClone(model.document),published=structuredClone(model.document),version=1;
@@ -70,6 +81,14 @@ test('structured Inspector editing survives Save, Publish and public interaction
  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
  assert.equal(posts.at(-1).publish,true);
  await viewer.goto(base+'/p/test');
+ const mediaImage=viewer.locator('.visual-editor-node[data-node-id="'+ids.image+'"]');
+ assert.equal(await mediaImage.getAttribute('alt'),'Kezdőlap borítókép');
+ assert.equal(await viewer.locator('video[data-node-id="'+ids.video+'"][controls]').count(),1);
+ assert.equal(await viewer.locator('audio[data-node-id="'+ids.audio+'"][controls]').count(),1);
+ assert.equal(await viewer.locator('h1[data-node-id="'+ids.heading+'"]').getAttribute('id'),'main-heading');
+ const newTabLink=viewer.locator('a[data-node-id="'+ids.link+'"]');
+ assert.equal(await newTabLink.getAttribute('target'),'_blank');
+ assert.equal(await newTabLink.getAttribute('rel'),'noopener noreferrer');
  const tabs=viewer.locator('.visual-editor-node[data-node-id="'+ids.tabs+'"]');
  await tabs.locator('[role=tab]').first().waitFor();
  assert.equal(await tabs.locator('[role=tab]').first().textContent(),'Bemutatkozás');
