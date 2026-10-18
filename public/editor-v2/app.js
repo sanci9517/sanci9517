@@ -853,6 +853,15 @@ function renderInspector(){
     }
   }else{
     inspector.append(renderRegistryInspector(node,'advanced'));
+    const updateAccessibility=patch=>command('element.update',{nodeId:node.id,patch:{accessibility:{...(node.accessibility||{}),...patch}}});
+    inspector.append(field('Hivatkozási azonosító (#)',node.accessibility?.anchorId||'',value=>{
+      const id=value.trim();if(id&&!/^[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(id)){setStatus('Az azonosító betűvel kezdődjön, betűt, számot, - és _ jelet tartalmazhat.');return}
+      const current=page();const duplicate=Object.values(current?.nodes||{}).some(other=>other.id!==node.id&&other.accessibility?.anchorId===id&&Boolean(id));
+      if(duplicate){setStatus('Az azonosító már létezik ezen az oldalon.');return}
+      updateAccessibility({anchorId:id});
+    }));
+    inspector.append(field('Akadálymentes név',node.accessibility?.ariaLabel||'',value=>updateAccessibility({ariaLabel:value.slice(0,250)})));
+    const help=document.createElement('small');help.textContent='A hivatkozási azonosítóhoz #azonosító formával készíthetsz belső linket. Az akadálymentes név a képernyőolvasóknak segít.';inspector.append(help);
     inspector.append(field('Node ID',node.id,()=>{},true),field('Típus',node.type,()=>{},true),field('Szülő ID',node.parentId||'',()=>{},true));
   }
   const actions=document.createElement('div');actions.className='inspector-actions';const del=document.createElement('button');del.type='button';del.className='danger-action';del.textContent='Törlés';del.disabled=node.id===page()?.rootId;del.title=del.disabled?'A gyökérelem nem törölhető':'Kijelölt elem törlése';del.onclick=()=>{if(!del.disabled)command('element.delete',{nodeId:node.id})};actions.append(del);inspector.append(actions);filterInspector();restoreScroll()
