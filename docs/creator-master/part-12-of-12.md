@@ -731,3 +731,7 @@ A WEB-011/76.06 következő részblokkja nyolc visszavonható desktop/tablet/mob
 
 - **Ellenőrzés:** unit és valódi böngészős tartalommentés + publikus szemantikai tesztek a meglévő Editor regressziókban; merge/production és kézi teszt csak ellenőrzés után PASS.
 - **Függőségek:** a 76.08 Brand Kit és a későbbi teljes ikonkezelés külön modultulajdonban marad; nem építjük be most a Visual Editorba. WEB-011/77.44 összesített készültség továbbra is OPEN. Következő lépés: a PR és a felhasználói felület bizonyított működése, azután a fennmaradó Editor-eszközök és szakmai acceptance kritériumok célzott fejlesztése.
+
+### 77.44.UX-P0.6.F — Editor gyökérstílus paritás (2026-10-18)
+
+A #121 és #122 Visual Editor elem-paritás bővítések egyesültek. A következő nyitott 77.44 részblokk az explicit gyökérstílus-módosítás és a publikus `content-canvas` reszponzív CSS-azonosságának javítása. Korábban mentett oldalra nem alkalmazunk automatikus stílusmigrációt; a verziójelölt root módosítása Undo/Redo-val és a Save≠Publish életciklussal működik. Új core és Chromium teszt készül, eredményük CI futásig UNVERIFIED. A részletes aktuális státusz a kanonikus MASTER 77.44.UX-P0.6.F bejegyzésében szerepel. A teljes Editor és kézi felhasználói elfogadás OPEN.
