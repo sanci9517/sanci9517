@@ -739,3 +739,7 @@ A #121 és #122 Visual Editor elem-paritás bővítések egyesültek. A követke
 ### 77.44.UX-P0.6.G — Vizualis alapelemek (2026-10-18)
 
 A #123 gyökérstílus publikálási paritás CI PASS után MERGED, `262ff98a52938b485f94eb36e9f5d359a02b8883`. A következő Editor-alpont új elemeknél verziózott, szerkeszthető, validált elválasztóvonalat és responsive térközt hoz; a régi elemek viselkedése nem változik automatikusan. Piszkozat Save külön a Publish-tól. Unit/Chromium regresszió készül a `test:editor:layout` parancsban, végső CI- és kézi PASS még UNVERIFIED. Az aktuális teljes státusz és következő lépések a kanonikus MASTER 77.44.UX-P0.6.G pontjában; a teljes Editor OPEN.
+
+### 77.44.UX-P0.6.H — Statikus Card tartalmi szerződés (2026-10-18)
+
+A #124 elválasztóvonal/reszponzív térköz CI PASS után MERGED: `458948c8a8868e9be5b3e533cd73e8dbdce7e9c7`. Az aktuális Visual Editor 77.44 alpontban a kártya gyermekeinek megőrzése mellett szerkeszthető, verziózott cím/leírás/kép/gomb és három megjelenési variáns készül. A megosztott adatséma, publikus renderer, Inspector, unit/Chromium regresszió kódja PR-en; CI futtatás és kézi elfogadás még UNVERIFIED. A kanonikus 77.44.UX-P0.6.H pont a részletes tulajdonos és bizonyítéki nyilvántartás. Egyetlen MASTER, nem párhuzamos roadmap; Save != Publish.
