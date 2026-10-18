@@ -282,7 +282,17 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
       el.append(format);
     }
     el.ondblclick=e=>{e.stopPropagation();setSelection(state,[id],id);beginRichTextEditing(id)};
-  }else if(node.type===NODE_TYPES.SCHEDULE){const c=document.createElement('div');c.className='node-content schedule-preview-host';renderSchedulePreview(c,node.props?.schedule);el.append(c)}else if([NODE_TYPES.HEADING,NODE_TYPES.TEXT,NODE_TYPES.BUTTON,NODE_TYPES.LINK].includes(node.type)){
+  }else if(node.type===NODE_TYPES.SCHEDULE){const c=document.createElement('div');c.className='node-content schedule-preview-host';renderSchedulePreview(c,node.props?.schedule);el.append(c)}else if([NODE_TYPES.IMAGE,NODE_TYPES.VIDEO,NODE_TYPES.AUDIO].includes(node.type)){
+    const src=String(node.props?.src||'').trim();const c=document.createElement('div');c.className='node-content media-preview';
+    if(src&&/^(https?:\/\/|\/(?!\/))/.test(src)){
+      const media=document.createElement(node.type===NODE_TYPES.IMAGE?'img':node.type===NODE_TYPES.VIDEO?'video':'audio');
+      media.src=src;media.style.maxWidth='100%';media.style.width='100%';
+      if(node.type===NODE_TYPES.IMAGE){media.alt=String(node.props?.alt||'');media.style.objectFit=node.props?.objectFit==='contain'?'contain':'cover';}
+      else{media.controls=true;media.preload='none';if(node.type===NODE_TYPES.VIDEO)media.playsInline=true;media.addEventListener('pointerdown',event=>event.stopPropagation());}
+      c.append(media);
+    }else{const placeholder=document.createElement('small');placeholder.textContent='Adj meg egy média URL-t a Tartalom panelen.';c.append(placeholder);}
+    el.append(c);
+  }else if([NODE_TYPES.HEADING,NODE_TYPES.TEXT,NODE_TYPES.BUTTON,NODE_TYPES.LINK].includes(node.type)){
     const c=document.createElement('div');c.className='node-content plain-text-content-surface';c.textContent=node.props?.text??node.props?.content??node.name;
     if(inlineEditingId===id){
       c.classList.add('plain-text-inline-surface');c.contentEditable='plaintext-only';c.setAttribute('role','textbox');c.setAttribute('aria-label','Szöveg közvetlen szerkesztése');
@@ -797,6 +807,21 @@ function renderInspector(){
         inspector.append(section);
       }else if(textTypes.has(node.type))inspector.append(renderPlainTextEditor(node));
       if(['button','link'].includes(node.type))inspector.append(renderPropertyInput(getProperty('content.href'),'Link / URL',node.props?.href||'',v=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),href:v}}})));
+      else if(['image','video','audio'].includes(node.type)){
+        const setMedia=(patch)=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),...patch}}});
+        inspector.append(field('Média URL',node.props?.src??'',v=>setMedia({src:v.trim()})));
+        if(node.type==='image'){
+          inspector.append(field('Kép leírása (alt)',node.props?.alt??'',v=>setMedia({alt:v})));
+          const fitLabel=document.createElement('label');fitLabel.className='field';fitLabel.append(document.createTextNode('Kép illesztése'));
+          const fit=document.createElement('select');
+          for(const [value,label] of [['cover','Kitöltés / vágás'],['contain','Teljes kép']]){const option=document.createElement('option');option.value=value;option.textContent=label;fit.append(option)}
+          fit.value=node.props?.objectFit==='contain'?'contain':'cover';fit.onchange=()=>setMedia({objectFit:fit.value});fitLabel.append(fit);inspector.append(fitLabel);
+          const decorative=document.createElement('label');decorative.className='inspector-toggle';
+          const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.checked=Boolean(node.accessibility?.decorative);
+          checkbox.onchange=()=>command('element.update',{nodeId:node.id,patch:{accessibility:{...(node.accessibility||{}),decorative:checkbox.checked}}});
+          decorative.append(checkbox,document.createTextNode('Csak díszítő kép (nem kell képleírás)'));inspector.append(decorative);
+        }else{const hint=document.createElement('small');hint.textContent=node.type==='video'?'Közvetlen videófájl URL-je (pl. MP4), nem YouTube oldalhivatkozás.':'Közvetlen hangfájl URL-je (pl. MP3).';inspector.append(hint);}
+      }
       else if(!textTypes.has(node.type))inspector.append(field('Tartalom',node.props?.content??'',v=>command('element.content.set',{nodeId:node.id,content:v})));
     }
   }else{
