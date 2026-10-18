@@ -1,3 +1,4 @@
+import {createElementContent,normalizeElementContent,validateElementContent,renderElementContent,safeMediaUrl} from '../core/element-content.js';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
@@ -922,4 +923,48 @@ test('new media remains editable as draft and publish requires a safe source and
   const publicRenderer=readFileSync(new URL('../../assets/page-renderer.js',import.meta.url),'utf8');
   assert.match(publicRenderer,/visual-video/);
   assert.match(publicRenderer,/visual-audio/);
+});
+
+test('structured elements share a versioned content contract, publish guard and undo',()=>{
+ for(const type of ['list','table','tabs','accordion','gallery']){
+  const state=createEditorState(),root=activePage(state).rootId;
+  execute(state,{type:'element.add',payload:{type,parentId:root}});
+  const id=state.selection.primaryId,n=activePage(state).nodes[id];
+  assert.equal(n.metadata.structuredContentVersion,1);
+  assert.deepEqual(n.props.contentModel,createElementContent(type));
+  assertValidEditorDocument(state.document);
+  const err=validatePublishDocument(state.document,state.document.activePageId);
+  assert.equal(err,type==='gallery'?'INVALID_GALLERY_IMAGE':null,type);
+  const html=renderElementContent(type,n.props.contentModel,id);
+  assert.ok(html.length>20);
+  if(type==='gallery'){
+   const model={version:1,items:[{src:'/media/safe.png',alt:'Magyar felirat',caption:'Képaláírás'}]};
+   execute(state,{type:'element.update',payload:{nodeId:id,patch:{props:{...n.props,contentModel:model}}}});
+   assert.equal(validatePublishDocument(state.document,state.document.activePageId),null);
+   const bad={version:1,items:[{src:'javascript:alert(1)',alt:'Teszt',caption:''}]};
+   assert.equal(validateElementContent('gallery',bad),'INVALID_GALLERY_IMAGE');
+  }
+  execute(state,{type:'history.undo'});
+  assertValidEditorDocument(state.document);
+ }
+});
+test('structured models sanitize content and strictly validate dimensions',()=>{
+ assert.equal(safeMediaUrl('javascript:alert(1)'),'');
+ assert.equal(safeMediaUrl('//attacker.example/image.png'),'');
+ assert.equal(safeMediaUrl('/image.png'),'/image.png');
+ assert.equal(safeMediaUrl('https://cdn.example.com/photo.jpg'),'https://cdn.example.com/photo.jpg');
+ assert.throws(()=>normalizeElementContent('table',{version:1,rows:[['a','b'],['c']]}));
+ assert.equal(validateElementContent('tabs',{version:1,items:[{label:'',content:'content'}]}),'INCOMPLETE_INTERACTIVE_CONTENT');
+ assert.equal(validateElementContent('gallery',{version:1,items:[{src:'/photo.jpg',alt:'',caption:''}]}),'GALLERY_ALT_REQUIRED');
+ const malicious={version:1,items:[{label:'<script>alert(1)</script>',content:'<img src=x onerror=alert(1)>'}]};
+ const html=renderElementContent('tabs',malicious,'abc');
+ assert.ok(html.includes('&lt;script&gt;'));
+ assert.ok(!html.includes('<script>'));
+ assert.ok(html.includes('role="tab"'));
+ assert.ok(html.includes('role="tabpanel"'));
+ const details=renderElementContent('accordion',{version:1,items:[{label:'FAQ',content:'Details'}]},'faq');
+ assert.ok(details.includes('<details'));
+ assert.ok(details.includes('<summary'));
+ const table=renderElementContent('table',{version:1,rows:[['Header'],['Data']]},'table');
+ assert.ok(table.includes('<th scope="col">Header</th>'));
 });
