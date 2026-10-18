@@ -1,3 +1,4 @@
+import {ICON_CHOICES,iconById,isSupportedIcon} from '../core/icon-options.js';
 import {createElementContent,normalizeElementContent,validateElementContent,renderElementContent,safeMediaUrl} from '../core/element-content.js';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
@@ -1040,4 +1041,29 @@ test('atomic multi-selection appearance can be reverted with one undo and reject
  const snapshot=structuredClone(state.document);
  assert.throws(()=>executeBatch(state,actions,{label:'Közös megjelenés'}));
  assert.deepEqual(state.document,snapshot);
+});
+
+test('badge, quote and icon use real defaults, safe publish validation and undo',()=>{
+ const state=createEditorState(),root=activePage(state).rootId;
+ for(const type of ['badge','quote','icon']){
+  execute(state,{type:'element.add',payload:{type,parentId:root}});
+  const n=activePage(state).nodes[state.selection.primaryId];
+  assert.equal(n.metadata.basicContentVersion,1);
+  assert.equal(validatePublishDocument(state.document,state.document.activePageId),null);
+ }
+ const nodes=Object.values(activePage(state).nodes);
+ const quote=nodes.find(n=>n.type==='quote'),badge=nodes.find(n=>n.type==='badge'),icon=nodes.find(n=>n.type==='icon');
+ assert.ok(quote.props.text.trim()&&badge.props.text.trim());
+ assert.equal(iconById(icon.props.icon).glyph,'★');
+ assert.equal(ICON_CHOICES.length,10);
+ execute(state,{type:'element.update',payload:{nodeId:icon.id,patch:{props:{icon:'<script>'}}}});
+ assert.equal(validatePublishDocument(state.document,state.document.activePageId),'INVALID_ICON_TYPE');
+ execute(state,{type:'history.undo'});
+ assert.equal(isSupportedIcon(activePage(state).nodes[icon.id].props.icon),true);
+ execute(state,{type:'element.update',payload:{nodeId:quote.id,patch:{props:{text:''}}}});
+ assert.equal(validatePublishDocument(state.document,state.document.activePageId),'EMPTY_BASIC_CONTENT');
+ const source=readFileSync(new URL('../../assets/page-renderer.js',import.meta.url),'utf8');
+ assert.match(source,/visual-badge/);
+ assert.match(source,/visual-quote/);
+ assert.match(source,/iconById/);
 });
