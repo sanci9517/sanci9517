@@ -43,6 +43,52 @@ test('typed Inspector controls and link selection work with real browser DOM at 
         const description=field.querySelector('.property-help')?.textContent||'';
         return [property.id,description.length];
       });
+      const fieldMatrix=[];
+      const matrixHost=document.createElement('div');matrixHost.style.cssText='position:absolute;left:-10000px;top:0;width:360px';host.append(matrixHost);
+      for(const property of listProperties()){
+        const editsForProperty=[];
+        const control=renderPropertyInput(property,property.label,'16px',value=>editsForProperty.push(value));matrixHost.append(control);
+        const type=property.type;
+        if(type==='asset'){
+          fieldMatrix.push({id:property.id,type,unavailable:Boolean(control.querySelector('.property-unavailable')),callbackCount:editsForProperty.length});
+          continue;
+        }
+        if(type==='dimension'){
+          const number=control.querySelector('input[type="number"]'),unit=control.querySelector('select');
+          const supported=(property.units||[]).find(value=>!['auto','0'].includes(value));
+          unit.value=supported;number.value='12';number.dispatchEvent(new Event('change',{bubbles:true}));
+        }else if(type==='box'){
+          const input=control.querySelector('input');input.value='12px';input.dispatchEvent(new Event('change',{bubbles:true}));
+        }else if(type==='color'){
+          const input=control.querySelector('input[type="text"]');input.value='#abcdef';input.dispatchEvent(new Event('change',{bubbles:true}));
+        }else if(type==='number'){
+          const input=control.querySelector('input[type="number"]');input.value=property.key==='opacity'?'0.75':property.key==='lineHeight'?'1.5':'2';input.dispatchEvent(new Event('change',{bubbles:true}));
+        }else if(type==='font'||type==='shadow'||type==='select'){
+          const select=control.querySelector('select');select.value=type==='font'?'system-ui':type==='shadow'?'none':property.options[0];select.dispatchEvent(new Event('change',{bubbles:true}));
+        }else{
+          const input=control.querySelector('input');input.value=type==='url'?'/p/teszt':'Teszt tartalom';input.dispatchEvent(new Event('change',{bubbles:true}));
+        }
+        fieldMatrix.push({id:property.id,type,callbackCount:editsForProperty.length,value:editsForProperty[0],error:control.querySelector('.property-validation')?.textContent||''});
+      }
+      matrixHost.remove();
+      const invalidMatrix=[];
+      for(const [id,value,selector] of [
+        ['size.width','-10','input[type="number"]'],
+        ['spacing.padding','-10px','input'],
+        ['background.color','not-a-color','input[type="text"]'],
+        ['opacity.value','2','input[type="number"]'],
+        ['layout.display','not-a-display','select'],
+        ['content.href','javascript:alert(1)','input']
+      ]){
+        const property=getProperty(id),editsForProperty=[],control=renderPropertyInput(property,property.label,
+          id==='size.width'?'12px':id==='spacing.padding'?'8px':id==='background.color'?'#123456':id==='opacity.value'?'0.75':id==='content.href'?'/p/teszt':'block',
+          next=>editsForProperty.push(next));
+        const input=control.querySelector(selector);
+        if(id==='size.width')control.querySelector('select').value='px';
+        if(id==='layout.display'){const option=document.createElement('option');option.value=value;input.append(option)}
+        input.value=value;input.dispatchEvent(new Event('change',{bubbles:true}));
+        invalidMatrix.push({id,callbackCount:editsForProperty.length,error:control.querySelector('.property-validation')?.textContent||''});
+      }
       const edits=[];
       const color=renderPropertyInput(getProperty('background.color'),'Háttérszín','#112233',v=>edits.push(v));
       host.append(color);
@@ -120,12 +166,16 @@ test('typed Inspector controls and link selection work with real browser DOM at 
         markedRun:aligned.blocks[0].children.find(x=>x.text==='world'),alignment:aligned.blocks[0].align,
         multiSelection,multiBlocks:multiAligned.blocks,
         listType:parsedList.blocks[0].type,listText:parsedList.blocks[0].items[0].children.map(x=>x.text).join(''),
-        hasHorizontalOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+1};
+        hasHorizontalOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,fieldMatrix,invalidMatrix};
     });
     assert.deepEqual(data.edits,['#abcdef','8px 12px 8px 8px']);
     assert.ok(Object.keys(data.presetResults).length>=20);
     assert.ok(data.helpLengths.length>=45);
     assert.ok(data.helpLengths.every(([,length])=>length>=100),`every property needs detailed guidance: ${data.helpLengths.filter(([,length])=>length<100).map(([id])=>id).join(', ')}`);
+    assert.ok(data.fieldMatrix.length>=45,`every registered Inspector property should have a real browser control contract; saw ${data.fieldMatrix.length}`);
+    assert.ok(data.fieldMatrix.filter(item=>item.type!=='asset').every(item=>item.callbackCount===1&&!item.error),`supported Inspector fields must reach their validated callback: ${JSON.stringify(data.fieldMatrix.filter(item=>item.type!=='asset'&&(item.callbackCount!==1||item.error)))}`);
+    assert.ok(data.fieldMatrix.filter(item=>item.type==='asset').every(item=>item.unavailable&&item.callbackCount===0),'unsupported media selection must remain explicitly unavailable');
+    assert.ok(data.invalidMatrix.every(item=>item.callbackCount===0&&item.error),`invalid values must be rejected before reaching the command callback: ${JSON.stringify(data.invalidMatrix.filter(item=>item.callbackCount!==0||!item.error))}`);
     for(const [id,options] of Object.entries(data.unitOptions)){
       assert.deepEqual(options.slice(1),getSupportedUnitsForProperty(id));
     }
