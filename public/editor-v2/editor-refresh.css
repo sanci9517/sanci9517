@@ -472,3 +472,15 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
 .structured-preview .visual-carousel-slide img{max-width:100%;max-height:180px;object-fit:contain}
 .structured-preview .visual-carousel-controls{display:flex;gap:12px;align-items:center;justify-content:center;margin-top:10px}
 .structured-preview .visual-carousel-controls button{min-width:44px;min-height:44px;border:1px solid #64748b;border-radius:8px;background:transparent;color:inherit}
+
+/* States share the same JSON with the public renderer. */
+.node.visual-hover-bg:hover{background-color:var(--sanci-hover-bg)!important}
+.node.visual-hover-text:hover{color:var(--sanci-hover-color)!important}
+.node.visual-focus-outline:focus-visible{outline:3px solid var(--sanci-focus-outline)!important;outline-offset:3px}
+.state-inspector{display:grid;gap:9px;padding:10px 0}
+.state-inspector h3{font-size:16px;margin:0}
+.state-inspector small{font-size:12px;line-height:1.5}
+.state-color-field{display:grid;grid-template-columns:1fr 46px auto;gap:8px;align-items:center;min-width:0}
+.state-color-field span{font-size:13px}
+.state-color-field input{width:46px;height:44px;min-width:44px;cursor:pointer}
+.state-color-field button{min-height:44px;padding:8px;border-radius:8px;border:1px solid #64748b;color:inherit;background:transparent;cursor:pointer}
