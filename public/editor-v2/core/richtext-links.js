@@ -136,3 +136,14 @@ export function getRichTextActiveBlockIndex(editor) {
   while(node&&node.parentElement!==editor)node=node.parentElement;
   return node?.parentElement===editor?[...editor.children].indexOf(node):null;
 }
+
+export function restoreRichTextBlockSelection(editor, range) {
+  const block=editor.children?.[range?.blockIndex];
+  if(!block||!Number.isInteger(range.from)||!Number.isInteger(range.to)||range.from<0||range.to<=range.from)return false;
+  const walker=document.createTreeWalker(block,NodeFilter.SHOW_TEXT),nodes=[];let node;
+  while(node=walker.nextNode())nodes.push(node);
+  const locate=target=>{let offset=0;for(const text of nodes){const end=offset+text.nodeValue.length;if(target<=end)return {node:text,offset:target-offset};offset=end}return null};
+  const start=locate(range.from),end=locate(range.to);if(!start||!end)return false;
+  const nativeRange=document.createRange();nativeRange.setStart(start.node,start.offset);nativeRange.setEnd(end.node,end.offset);
+  const selection=window.getSelection();selection.removeAllRanges();selection.addRange(nativeRange);return true;
+}

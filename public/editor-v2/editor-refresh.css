@@ -186,6 +186,12 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
 .geometry-presets { display: flex; flex-wrap: wrap; gap: 6px; }
 .geometry-presets button { min-width: 54px; min-height: 40px; padding: 6px 9px; border: 1px solid #43566f; border-radius: 7px; background: #182638; color: #e8eff9; font-size: 13px; }
 .geometry-presets button[aria-pressed="true"] { border-color: #6b9eff; background: #234575; }
+.dimension-controls { display: grid; grid-template-columns: minmax(0,1fr) minmax(78px,.62fr); gap: 7px; }
+.dimension-controls input[type="number"], .dimension-controls select { min-width: 0; min-height: 44px; border: 1px solid var(--editor-line); border-radius: 8px; background: #101925; color: #edf3ff; padding: 8px 10px; font-size: 14px; }
+.dimension-controls input:disabled { opacity: .5; }
+.property-unit-hint { display: block; margin-top: 6px; color: #8997ab; font-size: 11px; line-height: 1.4; }
+.richtext-editor-surface ::selection { background: #3166aa; color: #fff; }
+.richtext-editor-surface { -webkit-user-select: text; user-select: text; }
 
 
 /* #47: Selected Inspector content must never change dock track sizing.
