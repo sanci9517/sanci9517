@@ -981,3 +981,21 @@ test('heading levels and safe external link targets reach the public renderer wi
  assert.equal(activePage(state).nodes[id].props.level,1);
  assertValidEditorDocument(state.document);
 });
+
+test('copying an anchor regenerates a distinct element URL fragment',()=>{
+ const state=createEditorState(),root=activePage(state).rootId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.SECTION,parentId:root}});
+ const id=state.selection.primaryId;
+ execute(state,{type:'element.update',payload:{nodeId:id,patch:{accessibility:{anchorId:'profile',ariaLabel:'Profil szakasz'}}}});
+ execute(state,{type:'element.duplicate',payload:{nodeId:id}});
+ const clone=activePage(state).nodes[state.selection.primaryId];
+ assert.equal(clone.accessibility.anchorId,'profile-copy');
+ assert.equal(clone.accessibility.ariaLabel,'Profil szakasz');
+ assert.equal(validatePublishDocument(state.document,state.document.activePageId),null);
+ const broken=structuredClone(state.document);
+ broken.pages[broken.activePageId].nodes[clone.id].accessibility.anchorId='profile';
+ assert.equal(validatePublishDocument(broken,broken.activePageId),'DUPLICATE_ELEMENT_ANCHOR');
+ const renderer=readFileSync(new URL('../../assets/page-renderer.js',import.meta.url),'utf8');
+ assert.match(renderer,/aria-label/);
+ assert.match(renderer,/accessibility\?\.anchorId/);
+});
