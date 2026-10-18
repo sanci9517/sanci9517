@@ -12,7 +12,7 @@ import {execute} from '../../public/editor-v2/core/commands.js';
 test('structured Inspector editing survives Save, Publish and public interaction on desktop and mobile',async t=>{
  const model=createEditorState(createDocument()),pageId=model.document.activePageId;
  const root=activePage(model).rootId,ids={};
- for(const type of ['list','table','tabs','accordion','gallery']){
+ for(const type of ['list','table','tabs','accordion','gallery','carousel']){
   execute(model,{type:'element.add',payload:{type,parentId:root,name:type}});
   ids[type]=model.selection.primaryId;
  }
@@ -110,7 +110,12 @@ test('structured Inspector editing survives Save, Publish and public interaction
  assert.equal(await gallery.locator('dialog img').getAttribute('alt'),'Próbakép');
  await viewer.keyboard.press('Escape');
  assert.ok(!(await gallery.locator('dialog').evaluate(el=>el.open)));
- const list=viewer.locator('.visual-editor-node[data-node-id="'+ids.list+'"]');
+ const carousel=viewer.locator('.visual-editor-node[data-node-id="'+ids.carousel+'"]');
+ assert.equal(await carousel.locator('.visual-carousel-slide:visible').count(),1);
+ await carousel.locator('.visual-carousel-next').click();
+ assert.equal(await carousel.locator('.visual-carousel-count').textContent(),'2 / 2');
+ assert.equal(await carousel.locator('.visual-carousel-slide:visible h3').textContent(),'Második dia');
+  const list=viewer.locator('.visual-editor-node[data-node-id="'+ids.list+'"]');
  assert.equal(await list.locator('li').count(),3);
  const table=viewer.locator('.visual-editor-node[data-node-id="'+ids.table+'"]');
  assert.equal(await table.locator('th').count(),2);
