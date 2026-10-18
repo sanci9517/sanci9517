@@ -638,8 +638,8 @@ function renderInspector(){
     if(node.type==='schedule')inspector.append(renderScheduleInspector(node));
     else inspector.append(renderRegistryInspector(node,'primary'));
     if(node.id!==page()?.rootId){
-      const statesPanel=document.createElement('section');statesPanel.className='state-inspector';
-      const heading=document.createElement('h3');heading.textContent='Rámutatás és fókusz';statesPanel.append(heading);
+      const statesPanel=document.createElement('details');statesPanel.className='state-inspector';
+      const heading=document.createElement('summary');heading.textContent='Rámutatás és fókusz';statesPanel.append(heading);
       const note=document.createElement('small');note.textContent='Egyszerű, külön állapotstílusok a látogatói oldalon. A fókuszjelölés a billentyűzetes navigációt segíti.';statesPanel.append(note);
       for(const [group,key,label,defaultColor] of [
         ['hover','backgroundColor','Rámutatás: háttér','#334155'],
