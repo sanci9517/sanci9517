@@ -1,4 +1,4 @@
-export type StructuredType='list'|'table'|'tabs'|'accordion'|'gallery';
+export type StructuredType='list'|'table'|'tabs'|'accordion'|'gallery'|'carousel';
 export type ListContent={version:1;ordered:boolean;items:string[]};
 export type TableContent={version:1;rows:string[][]};
 export type TextItem={label:string;content:string};
