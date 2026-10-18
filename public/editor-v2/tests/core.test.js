@@ -891,3 +891,35 @@ test('Editor preserves edits made while a save request is in flight', () => {
   assert.match(save, /meta\.revision=version/);
   assert.match(save, /további helyi módosítások még nincsenek mentve/);
 });
+
+test('new media remains editable as draft and publish requires a safe source and accessible image', () => {
+  const state=createEditorState();
+  const root=activePage(state).rootId;
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.IMAGE,parentId:root}});
+  const imageId=state.selection.primaryId;
+  const publish=()=>validatePublishDocument(state.document,state.document.activePageId);
+  assert.equal(publish(),'INVALID_MEDIA_SOURCE');
+  execute(state,{type:'element.update',payload:{nodeId:imageId,patch:{props:{src:'/uploads/banner.png'}}}});
+  assert.equal(publish(),'IMAGE_ALT_REQUIRED');
+  execute(state,{type:'element.update',payload:{nodeId:imageId,patch:{props:{src:'/uploads/banner.png',alt:'Borítókép'}}}});
+  assert.equal(publish(),null);
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.VIDEO,parentId:root,props:{src:'javascript:alert(1)'}}});
+  const videoId=state.selection.primaryId;
+  assert.equal(publish(),'INVALID_MEDIA_SOURCE');
+  execute(state,{type:'element.update',payload:{nodeId:videoId,patch:{props:{src:'https://cdn.example.com/intro.mp4'}}}});
+  assert.equal(publish(),null);
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.AUDIO,parentId:root,props:{src:'/media/theme.mp3'}}});
+  assert.equal(publish(),null);
+  assertValidEditorDocument(state.document);
+  execute(state,{type:'element.update',payload:{nodeId:imageId,patch:{accessibility:{decorative:true},props:{src:'/uploads/decor.png'}}}});
+  assert.equal(publish(),null);
+  // Previously saved pages without the new contract are not silently migrated.
+  const legacy=structuredClone(state.document);
+  const img=legacy.pages[legacy.activePageId].nodes[imageId];
+  delete img.metadata.editorContentVersion;
+  img.props={};
+  assert.equal(validatePublishDocument(legacy,legacy.activePageId),null);
+  const publicRenderer=readFileSync(new URL('../../assets/page-renderer.js',import.meta.url),'utf8');
+  assert.match(publicRenderer,/visual-video/);
+  assert.match(publicRenderer,/visual-audio/);
+});
