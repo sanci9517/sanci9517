@@ -73,6 +73,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   assert.equal(await editor.locator(`.node[data-node-id="${gridId}"] > .node-head`).evaluate(el=>getComputedStyle(el).position),'absolute');
   await select(itemId);
   await editor.locator('.inspector-tabs button').first().click();
+  await editor.locator('.inspector-group-title[aria-expanded="false"]').filter({hasText:'Grid-gyermek'}).click();
   await field('grid.column').locator('select').selectOption('2');
   if(await editor.locator('.inspector-group-title[aria-expanded="false"]').filter({hasText:'Méret'}).count())await editor.locator('.inspector-group-title').filter({hasText:'Méret'}).click();
   await field('size.minWidth').locator('input[type="number"]').fill('80');
@@ -106,6 +107,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   if(await editor.locator('.inspector-group-title[aria-expanded="false"]').filter({hasText:'Flex'}).count())await editor.locator('.inspector-group-title').filter({hasText:'Flex'}).click();
   await field('flex.direction').locator('select').selectOption('column');
   await select(flexItemId);
+  await editor.locator('.inspector-group-title[aria-expanded="false"]').filter({hasText:'Flex-gyermek'}).click();
   await field('flex.basis').locator('select').selectOption('%');
   await field('flex.basis').locator('input[type="number"]').fill('30');
   await field('flex.basis').locator('input').press('Tab');
