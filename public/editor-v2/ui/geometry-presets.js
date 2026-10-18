@@ -1,11 +1,10 @@
 import { getProperty } from '../core/property-registry.js';
 import { normalizeInspectorValue } from '../core/property-values.js';
 
-// Only values accepted by the canonical typed Inspector are offered here.
-export const GEOMETRY_PRESETS = Object.freeze({
-  'size.width': Object.freeze([['Auto', 'auto'], ['50%', '50%'], ['100%', '100%']]),
-  'size.height': Object.freeze([['Auto', 'auto'], ['100px', '100px'], ['200px', '200px'], ['300px', '300px']])
-});
+// Geometry options come from the same registry as each Inspector field.
+export const GEOMETRY_PRESETS = Object.freeze(Object.fromEntries(
+  ['size.width','size.height'].map(id=>[id,Object.freeze((getProperty(id)?.presets??[]).map(({label,value})=>[label,value]))])
+));
 
 export function renderGeometryPresets(propertyId, current, apply) {
   const property = getProperty(propertyId);

@@ -4,7 +4,7 @@ import { createDocument, NODE_TYPES } from '../core/schema.js';
 import { createEditorState, activePage } from '../core/state.js';
 import { execute } from '../core/commands.js';
 import { resolveNodeStyle } from '../core/canvas-engine.js';
-import { getProperty } from '../core/property-registry.js';
+import { getProperty, listProperties } from '../core/property-registry.js';
 import { normalizeInspectorValue } from '../core/property-values.js';
 import { updateRichTextInlineLink, updateRichTextInlineMark, validatedLinkHref } from '../core/richtext-links.js';
 import { normalizeRichText } from '../core/schema.js';
@@ -40,6 +40,16 @@ test('typed Inspector controls validate display values before the command path',
   assert.equal(normalizeInspectorValue(getProperty('flex.basis'),'auto'),'auto');
   assert.equal(normalizeInspectorValue(getProperty('grid.column'),'1 / -1'),'1 / -1');
   assert.throws(()=>normalizeInspectorValue(getProperty('grid.column'),'999 / -1'));
+});
+
+test('every registry style preset is accepted by its canonical property validator',()=>{
+  const withPresets=listProperties().filter(property=>property.presets?.length);
+  assert.ok(withPresets.length>=20,'the common visual groups expose useful presets');
+  for(const property of withPresets){
+    for(const preset of property.presets){
+      assert.equal(normalizeInspectorValue(property,preset.value),preset.value,`${property.id}: ${preset.label}`);
+    }
+  }
 });
 
 test('typed changes use Page Model commands, responsive overrides and undo', () => {

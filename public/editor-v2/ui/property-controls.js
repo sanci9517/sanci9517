@@ -97,7 +97,7 @@ export function renderPropertyInput(property, label, current, onChange) {
     number.step='any';number.value=special?'':match?.[1]??'';number.setAttribute('aria-label',label+' értéke');
     const unit=document.createElement('select');unit.setAttribute('aria-label',label+' mértékegysége');
     const blank=document.createElement('option');blank.value='';blank.textContent='Egység';unit.append(blank);
-    for(const choice of property.units||[]){const option=document.createElement('option');option.value=choice;option.textContent=choice==='auto'?'Auto':choice;unit.append(option)}
+    for(const choice of property.units||[]){if(choice==='0')continue;const option=document.createElement('option');option.value=choice;option.textContent=choice==='auto'?'Auto':choice;unit.append(option)}
     if(special)unit.value='auto';
     else if(match){const selected=match[2]||'px';if([...unit.options].some(option=>option.value===selected))unit.value=selected;else unit.value=''}
     else unit.value=(property.units||[]).find(choice=>choice!=='auto'&&choice!=='0')||'';
@@ -120,6 +120,17 @@ export function renderPropertyInput(property, label, current, onChange) {
     input.onchange = () => save(input.value);
     input.onkeydown = event => {if(event.key === 'Enter') {event.preventDefault();input.blur();}};
     wrap.append(input);
+  }
+  if(property.presets?.length && !['size.width','size.height'].includes(property.id)){
+    const group=document.createElement('div');group.className='property-presets';group.setAttribute('role','group');group.setAttribute('aria-label',label+' gyorsbeállítások');
+    for(const preset of property.presets){
+      const button=document.createElement('button');button.type='button';button.className='property-preset';
+      button.textContent=preset.label;button.dataset.value=preset.value;
+      button.setAttribute('aria-pressed',String(String(current??'')===preset.value));
+      if(type==='color'){button.classList.add('property-preset-color');button.style.setProperty('--preset-color',preset.value==='transparent'?'transparent':preset.value);button.title=preset.label+' · '+preset.value}
+      button.onclick=()=>save(preset.value);group.append(button);
+    }
+    wrap.append(group);
   }
   wrap.append(error);
   return wrap;
