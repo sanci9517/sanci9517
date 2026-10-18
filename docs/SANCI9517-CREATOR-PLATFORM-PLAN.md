@@ -34,6 +34,10 @@
 
 **P0 / OPEN / USER-REPORTED FAIL.** A felhasználó a #101–#102 utáni Visual Editor működését nem fogadta el: a Rich Text elemet nem tudja természetesen tartalommal feltölteni, a vászon megjelenése furcsa/hiányos, sok elem funkciója részleges, a presetek és az Inspector beállításai nehezen használhatók. **A korábbi CI/Chromium PASS nem írja felül ezt a valós felhasználói FAIL visszajelzést.** Aktív javítási cursor: **77.44.UX-P0** a 77.44 szerkesztőmodulon belül, az új Rich Text/Flex/Grid feature-építés elé sorolva. Ez nem új MASTER, új termékkör vagy visszalépés régi tervhez. Továbbra is **Save ≠ Publish** és adatvesztésmentesség.
 
+## WEB-011 / 77.44 — aktuális Editor-kiegészítés (2026-10-18)
+
+A 77.44.UX-P0.6.C után az elem-specifikus tartalom + Inspector + publikus renderer hiányait javítjuk. **Aktív PR #121 / IN PROGRESS / nem egyesített.** Lista, táblázat, fülek, lenyitható blokkok, galéria, kép/video/hang, H1–H6, linkcélok és egyedi horgonyazonosítók szerkesztése, biztonságos publikálása, automata és böngészős tesztjei készülnek. A részletes státusz az egyetlen MASTER részeként a `docs/creator-master/part-12-of-12.md` 77.44.UX-P0.6.D pontjában van. A teljes Editor OPEN; a kézi PC/telefon acceptance a végső funkciólista után történik. Save ≠ Publish.
+
 ## Aktuális végrehajtási állapot — 2026-10-17
 
 - **Ág:** `v2/foundation` (a dokumentumszétválasztás #49 PR-en keresztül kerül ide).
