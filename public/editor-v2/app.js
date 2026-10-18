@@ -24,6 +24,7 @@ import {renderStructuredInspector} from './ui/structured-inspector.js';
 import {ICON_CHOICES,iconById} from './core/icon-options.js';
 import {DIVIDER_LINE_STYLES,normalizeDividerStyle} from './core/decorative-elements.js';
 import {defaultCardContent,CARD_VARIANTS} from './core/card-content.js';
+import {defaultCountdownContent,renderCountdownContent,activateCountdowns} from './core/countdown-content.js';
 import {readRichTextSelectionFormatting,clearRichTextInlineFormatting} from './core/richtext-links.js';
 
 let inspectorCategory='all';let richTextSelectionCleanup=null;let richTextToolTab='character';
@@ -256,7 +257,11 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
   [node.states?.focus?.outlineColor,'visual-focus-outline','--sanci-focus-outline']
  ]){const color=validHex(value);if(color){el.classList.add(klass);el.style.setProperty(variable,color)}}
  const head=document.createElement('div');head.className='node-head';const headName=document.createElement('span');headName.textContent=node.name||node.type;const headType=document.createElement('small');headType.textContent=node.type;head.append(headName,headType);el.append(head);
-  if(node.type===NODE_TYPES.CARD&&node.metadata?.cardContentVersion===1){
+  if(node.type===NODE_TYPES.COUNTDOWN&&node.metadata?.countdownVersion===1){
+    const host=document.createElement('div');host.className='node-content countdown-preview';
+    host.innerHTML=renderCountdownContent(node.props?.countdown??defaultCountdownContent());
+    el.append(host);
+  }else if(node.type===NODE_TYPES.CARD&&node.metadata?.cardContentVersion===1){
     const model={...defaultCardContent(),...(node.props?.cardContent||{})};
     const body=document.createElement('div');body.className='node-content card-preview';
     body.style.cssText='box-sizing:border-box;max-width:100%;min-width:0;padding:16px;border-radius:12px;border:1px solid #64748b;background:rgba(127,127,127,.09)';
@@ -359,7 +364,7 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
   }
   for(const child of node.children||[]){const x=renderNode(currentPage,child,managed);if(x)el.append(x)}if(state.selection.primaryId===id&&id!==currentPage.rootId&&!node.locked){const handle=document.createElement('button');handle.type='button';handle.className='canvas-resize-handle';handle.setAttribute('aria-label','Elem átméretezése');handle.title='Átméretezés';handle.onpointerdown=e=>beginCanvasResize(id,e,el);handle.onpointermove=e=>moveCanvasResize(id,e);handle.onpointerup=e=>finishCanvasResize(id,e);handle.onpointercancel=e=>finishCanvasResize(id,e,true);el.append(handle)}el.onpointerdown=e=>{if(inlineEditingId===id)return;if(e.pointerType==='touch'){e.stopPropagation();handleMobilePointerDown(id,e);return}beginCanvasDrag(id,e,el)};el.onpointermove=e=>{if(canvasResize?.nodeId===id){moveCanvasResize(id,e);return}if(e.pointerType==='touch')handleMobilePointerMove(e);else moveCanvasDrag(id,e)};el.onpointerup=e=>{if(canvasResize?.nodeId===id){finishCanvasResize(id,e);return}if(e.pointerType==='touch'){e.stopPropagation();handleMobilePointerUp(id,e);return}finishCanvasDrag(id,e)};el.onpointercancel=e=>{if(canvasResize?.nodeId===id){finishCanvasResize(id,e,true);return}if(e.pointerType==='touch')handleMobilePointerCancel(e);else finishCanvasDrag(id,e,true)};el.onclick=e=>{e.stopPropagation();if(inlineEditingId===id)return;if(mobileTouch.active&&mobileTouch.suppressClick){mobileTouch.suppressClick=false;return}selectNodeInteraction(id,e)};return el}
 function updateCanvasExtent(target=canvas.querySelector('.page-canvas')){if(!target)return;let pageRect=target.getBoundingClientRect();const bottoms=[...target.querySelectorAll('.node')].map(node=>node.getBoundingClientRect().bottom-pageRect.top);target.style.minHeight=`${computeCanvasMinHeight(bottoms,zoom,844,80)}px`;pageRect=target.getBoundingClientRect();const nodes=[...target.querySelectorAll('.node')];const extents=measureCanvasWorkspace(nodes.map(node=>{const rect=node.getBoundingClientRect();return {left:rect.left-pageRect.left,right:rect.right-pageRect.left,top:rect.top-pageRect.top,bottom:rect.bottom-pageRect.top}}),target.offsetWidth,target.offsetHeight,zoom);target.style.left=`${extents.left}px`;target.style.top=`${extents.top}px`;pageRect=target.getBoundingClientRect();for(const node of nodes){const rect=node.getBoundingClientRect();node.classList.toggle('outside-artboard',rect.left<pageRect.left-1||rect.right>pageRect.right+1||rect.top<pageRect.top-1||rect.bottom>pageRect.bottom+1)}const frame=target.parentElement;if(frame?.classList.contains('page-canvas-frame')){frame.style.width=`${(target.offsetWidth+extents.left+extents.right)*zoom}px`;frame.style.height=`${(target.offsetHeight+extents.top+extents.bottom)*zoom}px`}}
-function renderCanvas(){canvas.querySelectorAll('.page-canvas-frame').forEach(x=>x.remove());const current=page();const device=state?.viewport?.device||'desktop';const width=sizes[device];const frame=document.createElement('div');frame.className='page-canvas-frame';const pc=document.createElement('div');pc.className='page-canvas';pc.dataset.device=device;pc.style.width=`${width}px`;pc.style.transform=`scale(${zoom})`;if(current)pc.append(renderNode(current,current.rootId));frame.append(pc);canvas.append(frame);updateCanvasExtent(pc);$('#canvasEmpty').hidden=Boolean(current);$('#canvasMode').textContent=`${device} · ${width}px`;$('#zoom').textContent=`${Math.round(zoom*100)}%`;syncDeviceButtons(device)}
+function renderCanvas(){canvas.querySelectorAll('.page-canvas-frame').forEach(x=>x.remove());const current=page();const device=state?.viewport?.device||'desktop';const width=sizes[device];const frame=document.createElement('div');frame.className='page-canvas-frame';const pc=document.createElement('div');pc.className='page-canvas';pc.dataset.device=device;pc.style.width=`${width}px`;pc.style.transform=`scale(${zoom})`;if(current)pc.append(renderNode(current,current.rootId));frame.append(pc);canvas.append(frame);activateCountdowns(canvas);updateCanvasExtent(pc);$('#canvasEmpty').hidden=Boolean(current);$('#canvasMode').textContent=`${device} · ${width}px`;$('#zoom').textContent=`${Math.round(zoom*100)}%`;syncDeviceButtons(device)}
 function fitCanvasToViewport(){const device=state?.viewport?.device||'desktop';zoom=Math.max(.35,Math.min(1.2,(canvas.clientWidth-48)/sizes[device]));render();canvas.scrollTo({left:0,top:0,behavior:'instant'})}
 function changeCanvasZoom(next){const frame=canvas.querySelector('.page-canvas-frame');const centerX=canvas.scrollLeft+canvas.clientWidth/2,centerY=canvas.scrollTop+canvas.clientHeight/2;const pointX=frame?(centerX-frame.offsetLeft)/zoom:0,pointY=frame?(centerY-frame.offsetTop)/zoom:0;zoom=next;render();requestAnimationFrame(()=>{const updated=canvas.querySelector('.page-canvas-frame');if(!updated)return;canvas.scrollTo({left:Math.max(0,updated.offsetLeft+pointX*zoom-canvas.clientWidth/2),top:Math.max(0,updated.offsetTop+pointY*zoom-canvas.clientHeight/2),behavior:'instant'})})}
 function syncDeviceButtons(device){document.querySelectorAll('[data-device]').forEach(b=>b.classList.toggle('active',b.dataset.device===device));document.querySelectorAll('.canvas-device-btn').forEach(b=>b.classList.toggle('active',b.dataset.device===device))}
@@ -702,7 +707,30 @@ function renderInspector(){
     if(node.type==='schedule')inspector.append(renderScheduleInspector(node));
     else {
       const textTypes=new Set(['heading','text','richtext','button','link']);
-      if(node.type==='card'&&node.metadata?.cardContentVersion===1){
+      if(node.type==='countdown'&&node.metadata?.countdownVersion===1){
+        const model={...defaultCountdownContent(),...(node.props?.countdown||{})};
+        const update=partial=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),countdown:{...model,...partial}}}});
+        const section=document.createElement('section');section.className='countdown-inspector';
+        const heading=document.createElement('h3');heading.textContent='Visszaszámláló';section.append(heading);
+        section.append(field('Esemény neve',model.title,value=>update({title:value})));
+        const dateField=document.createElement('label');dateField.className='field';
+        dateField.append(document.createTextNode('Esemény időpontja (helyi idő)'));
+        const picker=document.createElement('input');picker.type='datetime-local';picker.setAttribute('aria-label','Esemény időpontja');
+        const parsed=Date.parse(model.targetISO||'');
+        if(Number.isFinite(parsed)){
+          const date=new Date(parsed),two=n=>String(n).padStart(2,'0');
+          picker.value=`${date.getFullYear()}-${two(date.getMonth()+1)}-${two(date.getDate())}T${two(date.getHours())}:${two(date.getMinutes())}`;
+        }
+        picker.onchange=()=>{if(!picker.value){update({targetISO:''});return}const date=new Date(picker.value);if(Number.isFinite(date.getTime()))update({targetISO:date.toISOString()})};
+        dateField.append(picker);section.append(dateField);
+        section.append(field('Lejáratkor megjelenő üzenet',model.finishText,value=>update({finishText:value})));
+        const seconds=document.createElement('label');seconds.className='inspector-toggle';
+        const checked=document.createElement('input');checked.type='checkbox';checked.checked=Boolean(model.showSeconds);
+        checked.onchange=()=>update({showSeconds:checked.checked});
+        seconds.append(checked,document.createTextNode('Másodpercek mutatása'));section.append(seconds);
+        const help=document.createElement('small');help.textContent='A kiválasztott időpont a helyi időzónádban értendő, a mentett érték minden látogatónál ugyanazt a pillanatot jelenti. Üres időponttal piszkozatként menthető, de nem publikálható.';section.append(help);
+        inspector.append(section);
+      }else if(node.type==='card'&&node.metadata?.cardContentVersion===1){
         const model={...defaultCardContent(),...(node.props?.cardContent||{})};
         const update=partial=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),cardContent:{...model,...partial}}}});
         const section=document.createElement('section');section.className='card-content-inspector';

@@ -1147,3 +1147,36 @@ test('Card content model preserves nested elements and rejects unsafe links on P
  assert.equal(validatePublishDocument(legacy,pageId),null,'old card appearance is not migrated automatically');
  assertValidEditorDocument(state.document);
 });
+
+test('Countdown deadline is stable, editable and blocked at Publish if incomplete',async()=>{
+ const {remainingText,remainingParts,normalizeCountdownContent,defaultCountdownContent}=await import('../core/countdown-content.js');
+ const state=createEditorState(),root=activePage(state).rootId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.COUNTDOWN,parentId:root}});
+ const id=state.selection.primaryId,pageId=state.document.activePageId;
+ const node=activePage(state).nodes[id];
+ assert.equal(node.metadata.countdownVersion,1);
+ assert.equal(validatePublishDocument(state.document,pageId),'INVALID_COUNTDOWN_CONTENT');
+ assert.equal(remainingParts('',0),null);
+ const target='2026-12-25T20:00:00.000Z';
+ assert.deepEqual(remainingParts(target,Date.parse('2026-12-24T18:29:30Z')),{expired:false,days:1,hours:1,minutes:30,seconds:30});
+ assert.match(remainingText(target,Date.parse('2026-12-24T18:29:30Z')),/1 nap · 01 óra · 30 perc · 30 mp/);
+ assert.equal(remainingText(target,Date.parse(target)+1,true,'Vége'),'Vége');
+ const valid={...defaultCountdownContent(),targetISO:target,title:'Élő adás',finishText:'Már élőben!'};
+ assert.deepEqual(normalizeCountdownContent(valid),valid);
+ execute(state,{type:'element.update',payload:{nodeId:id,patch:{props:{countdown:valid}}}});
+ assert.equal(validatePublishDocument(state.document,pageId),null);
+ execute(state,{type:'history.undo'});
+ assert.equal(validatePublishDocument(state.document,pageId),'INVALID_COUNTDOWN_CONTENT');
+ execute(state,{type:'history.redo'});
+ assert.equal(validatePublishDocument(state.document,pageId),null);
+ assert.throws(()=>normalizeCountdownContent({...valid,targetISO:'2026-12-25T20:00:00'}));
+ assert.throws(()=>normalizeCountdownContent({...valid,targetISO:'javascript:alert(1)'}));
+ const broken=structuredClone(state.document);
+ broken.pages[pageId].nodes[id].props.countdown.targetISO='bad date';
+ assert.equal(validatePublishDocument(broken,pageId),'INVALID_COUNTDOWN_CONTENT');
+ const legacy=structuredClone(state.document);
+ delete legacy.pages[pageId].nodes[id].metadata.countdownVersion;
+ legacy.pages[pageId].nodes[id].props.countdown={bad:'old'};
+ assert.equal(validatePublishDocument(legacy,pageId),null);
+ assertValidEditorDocument(state.document);
+});

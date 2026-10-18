@@ -743,3 +743,7 @@ A #123 gyökérstílus publikálási paritás CI PASS után MERGED, `262ff98a529
 ### 77.44.UX-P0.6.H — Statikus Card tartalmi szerződés (2026-10-18)
 
 A #124 elválasztóvonal/reszponzív térköz CI PASS után MERGED: `458948c8a8868e9be5b3e533cd73e8dbdce7e9c7`. Az aktuális Visual Editor 77.44 alpontban a kártya gyermekeinek megőrzése mellett szerkeszthető, verziózott cím/leírás/kép/gomb és három megjelenési variáns készül. A megosztott adatséma, publikus renderer, Inspector, unit/Chromium regresszió kódja PR-en; CI futtatás és kézi elfogadás még UNVERIFIED. A kanonikus 77.44.UX-P0.6.H pont a részletes tulajdonos és bizonyítéki nyilvántartás. Egyetlen MASTER, nem párhuzamos roadmap; Save != Publish.
+
+### 77.44.UX-P0.6.I — Valódi Countdown szerkesztőelem (2026-10-18)
+
+#125 Card CI PASS után MERGED: `36d03548c6d88eaa032da3c1013ba3a41de40321`. Következő 77.44 Editor-alpont: új verziójelölt Countdown, felhasználó helyi idejű Inspector, abszolút ISO-eseményidő, közös szerkesztő/publikus live-timer és lejárati üzenet, mobil megjelenés, server Publish guard. Még üres dátummal is menthető piszkozat. Unit + Chromium regression CI-be kötve, csak sikeres végrehajtás igazolhatja. Teljes Editor és kézi elfogadás OPEN, a kanonikus MASTER 77.44.UX-P0.6.I része az egyetlen aktuális részletes nyilvántartás.
