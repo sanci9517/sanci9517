@@ -1,6 +1,6 @@
 /* Inspector-only controls for canonical static content. All edits call the command API. */
 import {createElementContent,normalizeElementContent,isStructuredType} from '../core/element-content.js';
-const typeLabels={list:'Lista',table:'Táblázat',tabs:'Fülek',accordion:'Lenyitható blokkok',gallery:'Galéria'};
+const typeLabels={list:'Lista',table:'Táblázat',tabs:'Fülek',accordion:'Lenyitható blokkok',gallery:'Galéria',carousel:'Tartalom-carousel'};
 export function renderStructuredInspector(node,update){
  if(!isStructuredType(node.type))return null;
  let model;try{model=normalizeElementContent(node.type,node.props?.contentModel??createElementContent(node.type))}
@@ -40,7 +40,7 @@ export function renderStructuredInspector(node,update){
   });
  }else{
   const items=model.items;
-  const defaults={list:()=>'',tabs:()=>({label:'Új fül',content:'Írd ide a tartalmat'}),accordion:()=>({label:'Új kérdés',content:'Írd ide a választ'}),gallery:()=>({src:'',alt:'',caption:''})};
+  const defaults={list:()=>'',tabs:()=>({label:'Új fül',content:'Írd ide a tartalmat'}),accordion:()=>({label:'Új kérdés',content:'Írd ide a választ'}),gallery:()=>({src:'',alt:'',caption:''}),carousel:()=>({label:'Új dia',content:'Írd ide a tartalmat',src:'',alt:''})};
   tools.append(action('＋ Új elem',()=>save({...model,items:[...items,defaults[node.type]()] }),items.length>=40));
   section.append(tools);
   items.forEach((entry,i)=>{
@@ -48,9 +48,13 @@ export function renderStructuredInspector(node,update){
    const legend=document.createElement('legend');legend.textContent=`Elem ${i+1}`;item.append(legend);
    const change=patch=>save({...model,items:items.map((v,index)=>index===i?patch:v)});
    if(node.type==='list')item.append(input('Szöveg',entry,val=>change(val),true));
-   if(node.type==='tabs'||node.type==='accordion'){
+   if(['tabs','accordion','carousel'].includes(node.type)){
     item.append(input(node.type==='tabs'?'Fül neve':'Cím',entry.label,val=>change({...entry,label:val})));
     item.append(input('Tartalom',entry.content,val=>change({...entry,content:val}),true));
+   }
+   if(node.type==='carousel'){
+    item.append(input('Kép URL (opcionális)',entry.src,val=>change({...entry,src:val.trim()})));
+    item.append(input('Kép leírása',entry.alt,val=>change({...entry,alt:val})));
    }
    if(node.type==='gallery'){
     item.append(input('Kép URL',entry.src,val=>change({...entry,src:val.trim()})));
@@ -65,7 +69,7 @@ export function renderStructuredInspector(node,update){
    );item.append(controls);section.append(item);
   });
  }
- const note=document.createElement('small');note.className='structured-inspector-help';note.textContent=node.type==='gallery'?'Publikálás előtt minden képhez URL és képleírás szükséges.':node.type==='tabs'||node.type==='accordion'?'Minden címhez tartalom szükséges a publikáláshoz.':'Az elemek sorrendje a publikus oldalon is megmarad.';
+ const note=document.createElement('small');note.className='structured-inspector-help';note.textContent=node.type==='gallery'?'Publikálás előtt minden képhez URL és képleírás szükséges.':['tabs','accordion','carousel'].includes(node.type)?'Minden címhez tartalom szükséges a publikáláshoz.':'Az elemek sorrendje a publikus oldalon is megmarad.';
  section.append(note);
  return section;
 }
