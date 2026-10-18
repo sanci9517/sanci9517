@@ -484,3 +484,11 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
 .state-color-field span{font-size:13px}
 .state-color-field input{width:46px;height:44px;min-width:44px;cursor:pointer}
 .state-color-field button{min-height:44px;padding:8px;border-radius:8px;border:1px solid #64748b;color:inherit;background:transparent;cursor:pointer}
+
+.multi-inspector{display:grid;gap:12px;padding:8px 0}
+.multi-inspector h3{font-size:16px;margin:0}
+.multi-inspector small{font-size:12px;line-height:1.45}
+.multi-inspector-field{display:grid;grid-template-columns:1fr 110px auto;align-items:center;gap:8px;min-width:0}
+.multi-inspector-field>span{font-size:13px}
+.multi-inspector-field input{min-width:0;height:44px;width:100%;border:1px solid #64748b;border-radius:8px;padding:5px 8px;background:transparent;color:inherit}
+.multi-inspector-field input[type=color]{padding:4px}
