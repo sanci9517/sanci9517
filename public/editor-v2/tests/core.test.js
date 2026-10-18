@@ -14,6 +14,7 @@ import { plainTextToRichText } from '../core/richtext-engine.js';
 import { createDefaultScheduleConfig, normalizeScheduleConfig, validateScheduleConfig } from '../core/schedule-schema.js';
 import { getSchedulePreviewItems } from '../core/schedule-preview.js';
 import { computeCanvasMinHeight } from '../core/canvas-extent.js';
+import { measureCanvasWorkspace } from '../core/canvas-workspace.js';
 import { validatePublishDocument } from '../../../src/core/editor-validation.ts';
 
 test('canvas minimum height follows content below the default page extent', () => {
@@ -22,6 +23,12 @@ test('canvas minimum height follows content below the default page extent', () =
   assert.equal(computeCanvasMinHeight([1200], 1), 1280);
   assert.equal(computeCanvasMinHeight([2400], 2), 1280);
   assert.equal(computeCanvasMinHeight([Number.NaN, 1200], 1, 900, 64), 1264);
+});
+
+test('canvas workspace expands in every direction without changing artboard coordinates', () => {
+  assert.deepEqual(measureCanvasWorkspace([{left:-120,right:420,top:-40,bottom:1100}],300,800,1),{left:120,top:40,right:120,bottom:300});
+  assert.deepEqual(measureCanvasWorkspace([{left:-120,right:420,top:-40,bottom:1100}],300,800,.5),{left:240,top:80,right:540,bottom:1400});
+  assert.deepEqual(measureCanvasWorkspace([{left:10,right:290,top:10,bottom:790}],300,800,1),{left:0,top:0,right:0,bottom:0});
 });
 
 test('Editor browser module parses before it is shipped', () => {

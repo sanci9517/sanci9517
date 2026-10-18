@@ -58,6 +58,7 @@ test('empty Rich Text has direct desktop and mobile editing, typed presets, Save
   const mobileArtboard=await tab.locator('#canvas').evaluate(el=>({pageWidth:el.querySelector('.page-canvas').getBoundingClientRect().width,frameWidth:el.querySelector('.page-canvas-frame').getBoundingClientRect().width,scrollWidth:el.scrollWidth,clientWidth:el.clientWidth}));
   assert.ok(Math.abs(mobileArtboard.pageWidth-mobileArtboard.frameWidth)<1);
   assert.ok(mobileArtboard.scrollWidth<=mobileArtboard.clientWidth+2,'mobile artboard fit must not leave unscaled horizontal canvas overflow');
+  await tab.setViewportSize({width:1366,height:900});
   await tab.locator('.canvas-device-btn[data-device="desktop"]').click();
   await tab.locator('.rail-btn[data-tab="elements"]').click();
   await tab.locator('.element-group-title').filter({hasText:'Szöveg'}).click();
@@ -86,6 +87,7 @@ test('empty Rich Text has direct desktop and mobile editing, typed presets, Save
   await inline.waitFor();
   await inline.press('End');await inline.type(' frissítve');
   await tab.locator('.inspector-tabs button').first().click();
+  assert.equal(await tab.locator('.inspector-group.is-open').count(),0,'Inspector groups should start collapsed for a compact first view');
   const inspectorSearch=tab.getByRole('searchbox',{name:'Beállítás keresése'});
   await inspectorSearch.fill('betűméret');
   assert.equal(await tab.locator('.typed-inspector-field[data-property-id="typography.fontSize"]').isVisible(),true,'search should find and reveal the matching typography control');
@@ -97,12 +99,21 @@ test('empty Rich Text has direct desktop and mobile editing, typed presets, Save
   const fontSizeControl=tab.locator('.typed-inspector-field[data-property-id="typography.fontSize"]');
   await fontSizeControl.getByRole('button',{name:'Betűméret magyarázata'}).click();
   assert.equal(await fontSizeControl.locator('.property-help').isVisible(),true);
-  assert.match(await fontSizeControl.locator('.property-help').textContent(),/mértékegység/);
+  assert.match(await fontSizeControl.locator('.property-help').textContent(),/px|rem/);
   const typographyGroup=tab.locator('.inspector-group').filter({has:fontSizeControl});
   const groupTitle=typographyGroup.locator(':scope > .inspector-group-title');
   await groupTitle.click();
   assert.equal(await groupTitle.getAttribute('aria-expanded'),'false','Inspector groups should remain collapsible');
   await groupTitle.click();
+  for(const [id,value,cssName,expected] of [
+    ['typography.fontStyle','italic','fontStyle','italic'],
+    ['typography.textTransform','uppercase','textTransform','uppercase'],
+    ['typography.textDecoration','underline','textDecorationLine','underline']
+  ]){
+    await tab.locator(`.typed-inspector-field[data-property-id="${id}"] select`).selectOption(value);
+    assert.equal(await tab.locator(`.node[data-node-id="${richId}"]`).evaluate((el,key)=>getComputedStyle(el)[key],cssName),expected,`${id} should update the real canvas style`);
+  }
+  await tab.locator('.inspector-group-title').filter({hasText:'Geometria'}).click();
   const widthControl=tab.locator('.typed-inspector-field[data-property-id="size.width"]');
   assert.deepEqual(await widthControl.locator('select option').evaluateAll(options=>options.map(option=>option.value)),['','auto','px','%','vw','rem']);
   assert.match(await widthControl.locator('.property-unit-hint').textContent(),/megváltoztathatja/);
@@ -142,12 +153,15 @@ test('empty Rich Text has direct desktop and mobile editing, typed presets, Save
   await publicTab.goto(base+'/p/test');
   await publicTab.locator('.visual-text').first().waitFor();
   assert.match(await publicTab.locator('.visual-text').first().textContent(),/Első közvetlen tartalom frissítve/);
+  assert.equal(await publicTab.locator('.visual-text').first().evaluate(el=>getComputedStyle(el).fontStyle),'italic');
+  assert.equal(await publicTab.locator('.visual-text').first().evaluate(el=>getComputedStyle(el).textTransform),'uppercase');
+  assert.equal(await publicTab.locator('.visual-text').first().evaluate(el=>getComputedStyle(el).textDecorationLine),'underline');
   assert.equal(await publicTab.locator('.visual-text').last().textContent(),'');
   await tab.setViewportSize({width:390,height:800});
   await tab.locator(`.node[data-node-id="${richId}"] .canvas-edit-richtext`).evaluate(el=>el.click());
   const mobileEditor=tab.locator('.richtext-editor-surface');
   await mobileEditor.waitFor();
-  assert.equal(await mobileEditor.evaluate(el=>document.activeElement===el),true);
+  await tab.waitForFunction(()=>{const el=document.querySelector('.richtext-editor-surface');return el&&document.activeElement===el});
   assert.equal(await tab.locator('#rightDock').evaluate(el=>el.classList.contains('closed')),false);
   await tab.screenshot({path:'/tmp/creator-ux-p0-mobile.png'});
   await mobileEditor.press('End');await mobileEditor.type(' mobil');
@@ -156,5 +170,17 @@ test('empty Rich Text has direct desktop and mobile editing, typed presets, Save
   assert.equal(posts.at(-1).publish,false);
   assert.match(draft.pages[pageId].nodes[richId].props.richText.blocks[0].children[0].text,/mobil$/);
   assert.doesNotMatch(published.pages[pageId].nodes[richId].props.richText.blocks[0].children[0].text,/mobil$/);
+  await tab.locator('#rightDock [data-collapse="right"]').click();
+  await tab.locator('.canvas-device-btn[data-device="desktop"]').click();
+  const canvasBounds=await tab.locator('.page-canvas').evaluate((pageEl,id)=>{const page=pageEl.getBoundingClientRect(),node=pageEl.querySelector(`[data-node-id="${CSS.escape(id)}"] .node-content`)?.getBoundingClientRect();return {left:page.left,right:page.right,nodeLeft:node?.left,nodeTop:node?.top,height:node?.height}},richId);
+  const content=tab.locator(`.node[data-node-id="${richId}"] .node-content`).first();
+  const dragStartX=Math.max(canvasBounds.left+8,canvasBounds.nodeLeft+5),dragStartY=canvasBounds.nodeTop+Math.min(12,canvasBounds.height/2);
+  const dragOutsideX=Math.max(8,canvasBounds.left-24);
+  await tab.mouse.move(dragStartX,dragStartY);await tab.mouse.down();await tab.mouse.move(dragOutsideX,dragStartY,{steps:8});await tab.mouse.up();
+  assert.equal(await tab.locator(`.node[data-node-id="${richId}"]`).evaluate(el=>el.classList.contains('outside-artboard')),true,'an intentionally out-of-artboard element should be identified');
+  assert.ok(await tab.locator('.page-canvas-frame').evaluate(frame=>frame.getBoundingClientRect().width)>await tab.locator('.page-canvas').evaluate(el=>el.getBoundingClientRect().width),'workspace should expand to keep the out-of-artboard element reachable');
+  const outsideRect=await content.boundingBox();
+  await tab.mouse.move(Math.max(8,outsideRect.x+8),outsideRect.y+Math.min(12,outsideRect.height/2));await tab.mouse.down();await tab.mouse.move(canvasBounds.left+90,outsideRect.y+Math.min(12,outsideRect.height/2),{steps:8});await tab.mouse.up();
+  assert.equal(await tab.locator(`.node[data-node-id="${richId}"]`).evaluate(el=>el.classList.contains('outside-artboard')),false,'the same element can be dragged back onto the artboard');
   assert.deepEqual(errors,[]);
 });

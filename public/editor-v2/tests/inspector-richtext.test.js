@@ -5,6 +5,7 @@ import { createEditorState, activePage } from '../core/state.js';
 import { execute } from '../core/commands.js';
 import { resolveNodeStyle } from '../core/canvas-engine.js';
 import { getProperty, listProperties } from '../core/property-registry.js';
+import { STYLE_MAP } from '../core/canvas-engine.js';
 import { normalizeInspectorValue } from '../core/property-values.js';
 import { updateRichTextInlineLink, updateRichTextInlineMark, validatedLinkHref } from '../core/richtext-links.js';
 import { normalizeRichText } from '../core/schema.js';
@@ -49,6 +50,20 @@ test('every registry style preset is accepted by its canonical property validato
     for(const preset of property.presets){
       assert.equal(normalizeInspectorValue(property,preset.value),preset.value,`${property.id}: ${preset.label}`);
     }
+  }
+});
+
+test('expanded typography fields use the canonical CSS renderer allowlist',()=>{
+  const fields={
+    'typography.fontStyle':['normal','italic'],
+    'typography.textTransform':['none','uppercase','lowercase','capitalize'],
+    'typography.textDecoration':['none','underline','line-through','overline']
+  };
+  for(const [id,values] of Object.entries(fields)){
+    const property=getProperty(id);
+    assert.ok(property,`${id} is registered`);
+    assert.equal(STYLE_MAP[property.key],property.key,`${id} is rendered on the canvas and public page`);
+    for(const value of values)assert.equal(normalizeInspectorValue(property,value),value);
   }
 });
 
