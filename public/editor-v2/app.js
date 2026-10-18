@@ -813,7 +813,23 @@ function renderInspector(){
         requestAnimationFrame(()=>{if(editor.isConnected)refreshFormattingControls(null,editor)});
         inspector.append(section);
       }else if(textTypes.has(node.type))inspector.append(renderPlainTextEditor(node));
-      if(['button','link'].includes(node.type))inspector.append(renderPropertyInput(getProperty('content.href'),'Link / URL',node.props?.href||'',v=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),href:v}}})));
+      
+      if(node.type==='heading'){
+        const levelField=document.createElement('label');levelField.className='field';levelField.append(document.createTextNode('Címsorszint'));
+        const levelSelect=document.createElement('select');
+        for(let level=1;level<=6;level++){const opt=document.createElement('option');opt.value=String(level);opt.textContent='H'+level;levelSelect.append(opt)}
+        levelSelect.value=String(Number.isInteger(node.props?.level)?node.props.level:2);
+        levelSelect.disabled=Boolean(node.locked);
+        levelSelect.onchange=()=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),level:Number(levelSelect.value)}}});
+        levelField.append(levelSelect);inspector.append(levelField);
+      }
+      if(['button','link'].includes(node.type)){
+        inspector.append(renderPropertyInput(getProperty('content.href'),'Link / URL',node.props?.href||'',v=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),href:v}}})));
+        const openNew=document.createElement('label');openNew.className='inspector-toggle';
+        const checked=document.createElement('input');checked.type='checkbox';checked.checked=Boolean(node.props?.newWindow);checked.disabled=Boolean(node.locked);
+        checked.onchange=()=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),newWindow:checked.checked}}});
+        openNew.append(checked,document.createTextNode('Megnyitás új lapon'));inspector.append(openNew);
+      }
       else if(isStructuredType(node.type)){
         const content=renderStructuredInspector(node,model=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),contentModel:model},metadata:{...(node.metadata||{}),structuredContentVersion:1}}}));
         if(content)inspector.append(content);
