@@ -1,4 +1,4 @@
-import {validateElementContent,isStructuredType} from '../../public/editor-v2/core/element-content';
+import {validateElementContent,isStructuredType} from '../../public/editor-v2/core/element-content.js';
 
 function validateScheduleConfig(config:any):boolean{
  if(!config||typeof config!=='object'||config.version!==1)return false;
