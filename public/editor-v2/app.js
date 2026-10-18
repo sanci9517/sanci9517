@@ -1,6 +1,6 @@
 import {createDocument,createPage,getNode,NODE_TYPES,canContain,normalizeRichText} from './core/schema.js';
 import {createEditorState,activePage,selectedNodes,setSelection,markSaved} from './core/state.js';
-import {execute,executeCoalesced} from './core/commands.js';
+import {execute,executeCoalesced,executeBatch} from './core/commands.js';
 import {applyNodeStyle,getNodeGeometry,resolveNodeStyle} from './core/canvas-engine.js?v=20261018-text-sync';
 import {computeCanvasMinHeight} from './core/canvas-extent.js';
 import {measureCanvasWorkspace} from './core/canvas-workspace.js';
@@ -571,6 +571,41 @@ function pasteSelectedAppearance(node){
   if(page()?.id===copiedStyleSnapshot.sourcePageId&&node.id===copiedStyleSnapshot.sourceNodeId){setStatus('A forrás elemen már ugyanaz a stílus van.');return}
   if(command('style.snapshot.apply',{nodeId:node.id,snapshot:copiedStyleSnapshot}))setStatus(`A másolt megjelenés alkalmazva: ${node.name||node.type}. Mentéshez használd a Mentés gombot.`);
 }
+function renderMultiInspector(nodes){
+ const panel=document.createElement('section');panel.className='multi-inspector';
+ const title=document.createElement('h3');title.textContent=`${nodes.length} elem közös beállításai`;panel.append(title);
+ const locked=nodes.some(node=>node.locked);
+ const note=document.createElement('small');note.textContent=locked?'Zárolt elem is van kijelölve: a közös módosítás ezért tiltva van.':'A változás az összes kijelölt elemre egyszerre érvényes. Egyetlen Visszavonás visszaállítja az előző állapotot.';panel.append(note);
+ const device=state.viewport.device;
+ const apply=patch=>{if(locked)return;try{
+  executeBatch(state,nodes.map(node=>({type:'responsive.set',payload:{nodeId:node.id,device,patch}})),{label:'Több elem közös formázása'});
+  render();setStatus(`${nodes.length} elem közös megjelenése módosult. Mentés szükséges.`);
+ }catch(error){setStatus(error.message||'A közös formázás nem sikerült.')}};
+ const make=(label,key,kind,defaultValue,unit='')=>{
+  const row=document.createElement('label');row.className='multi-inspector-field';
+  const text=document.createElement('span');text.textContent=label;row.append(text);
+  const values=nodes.map(node=>resolveResponsiveValue(node.responsive,key,device)?.value);
+  const same=values.every(value=>value===values[0]);
+  const input=document.createElement('input');input.type=kind;
+  input.disabled=locked;
+  const value=same?values[0]:undefined;
+  if(kind==='color'){input.value=validHexColor(value)?value:defaultValue;input.title=same?'':'Eltérő értékek';input.onchange=()=>apply({[key]:input.value});}
+  else{
+   input.value=value===undefined?'':String(value).replace(unit,'');input.placeholder=same?'Alapérték':'Eltérő értékek';
+   input.min=key==='opacity'?'0':'0';input.max=key==='opacity'?'1':'2000';input.step=key==='opacity'?'0.05':'1';
+   input.onchange=()=>{const v=Number(input.value);if(!input.value.trim()||!Number.isFinite(v)||v<0||(key==='opacity'&&v>1))return;apply({[key]:unit?`${v}${unit}`:v})};
+  }
+  row.append(input);if(unit){const u=document.createElement('small');u.textContent=unit;row.append(u)}
+  panel.append(row);
+ };
+ make('Háttérszín','backgroundColor','color','#334155');
+ make('Szövegszín','color','color','#ffffff');
+ make('Betűméret','fontSize','number','16','px');
+ make('Belső térköz','padding','number','16','px');
+ make('Saroklekerekítés','borderRadius','number','8','px');
+ make('Átlátszóság','opacity','number','1');
+ return panel;
+}
 function renderInspector(){
   const previousScrollTop=inspector.scrollTop;
   const restoreScroll=()=>requestAnimationFrame(()=>{inspector.scrollTop=previousScrollTop});
@@ -582,7 +617,7 @@ function renderInspector(){
   renderInspectorSearch();
   const nodes=state?selectedNodes(state):[];
   if(!nodes.length){inspector.insertAdjacentHTML('beforeend','<div class="inspector-empty"><b>Inspector</b><span>Válassz ki egy elemet a vásznon vagy a Rétegek panelen.</span></div>');filterInspector();restoreScroll();return}
-  if(nodes.length>1){inspector.insertAdjacentHTML('beforeend','<div class="inspector-empty"><b>Több elem kijelölve</b><span>A tulajdonságokat egyenként szerkesztheted. Így más kijelölt elem nem módosul véletlenül.</span></div>');filterInspector();restoreScroll();return}
+  if(nodes.length>1){inspector.append(renderMultiInspector(nodes));filterInspector();restoreScroll();return}
   const node=nodes[0];
   const header=document.createElement('div');header.className='inspector-selection';
   const headerName=document.createElement('b');headerName.textContent=node.name||node.type;
