@@ -21,6 +21,7 @@ import {LAYOUT_PRESETS,LAYOUT_TYPES,layoutMode,isManagedLayout,isLayoutPropertyR
 import {TYPOGRAPHY_PRESETS,typographyPresetPatch} from './core/typography-presets.js';
 import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent} from './core/element-content.js';
 import {renderStructuredInspector} from './ui/structured-inspector.js';
+import {ICON_CHOICES,iconById} from './core/icon-options.js';
 import {readRichTextSelectionFormatting,clearRichTextInlineFormatting} from './core/richtext-links.js';
 
 let inspectorCategory='all';let richTextSelectionCleanup=null;let richTextToolTab='character';
@@ -292,7 +293,13 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
       el.append(format);
     }
     el.ondblclick=e=>{e.stopPropagation();setSelection(state,[id],id);beginRichTextEditing(id)};
-  }else if(node.type===NODE_TYPES.SCHEDULE){const c=document.createElement('div');c.className='node-content schedule-preview-host';renderSchedulePreview(c,node.props?.schedule);el.append(c)}else if([NODE_TYPES.IMAGE,NODE_TYPES.VIDEO,NODE_TYPES.AUDIO].includes(node.type)){
+  }else if([NODE_TYPES.BADGE,NODE_TYPES.QUOTE,NODE_TYPES.ICON].includes(node.type)){
+   const c=document.createElement('div');c.className='node-content basic-element-preview';
+   if(node.type===NODE_TYPES.ICON){const icon=iconById(node.props?.icon);c.textContent=icon.glyph;c.setAttribute('role','img');c.setAttribute('aria-label',node.props?.label||icon.label);c.classList.add('visual-icon');}
+   else if(node.type===NODE_TYPES.BADGE){c.textContent=node.props?.text||'Címke';c.classList.add('visual-badge');}
+   else{const q=document.createElement('blockquote');q.className='visual-quote';const p=document.createElement('p');p.textContent=node.props?.text||'';q.append(p);if(node.props?.attribution){const cite=document.createElement('cite');cite.textContent=node.props.attribution;q.append(cite)}c.append(q)}
+   el.append(c);
+ }else if(node.type===NODE_TYPES.SCHEDULE){const c=document.createElement('div');c.className='node-content schedule-preview-host';renderSchedulePreview(c,node.props?.schedule);el.append(c)}else if([NODE_TYPES.IMAGE,NODE_TYPES.VIDEO,NODE_TYPES.AUDIO].includes(node.type)){
     const src=String(node.props?.src||'').trim();const c=document.createElement('div');c.className='node-content media-preview';
     if(src&&/^(https?:\/\/|\/(?!\/))/.test(src)){
       const media=document.createElement(node.type===NODE_TYPES.IMAGE?'img':node.type===NODE_TYPES.VIDEO?'video':'audio');
@@ -892,6 +899,20 @@ function renderInspector(){
         const checked=document.createElement('input');checked.type='checkbox';checked.checked=Boolean(node.props?.newWindow);checked.disabled=Boolean(node.locked);
         checked.onchange=()=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),newWindow:checked.checked}}});
         openNew.append(checked,document.createTextNode('Megnyitás új lapon'));inspector.append(openNew);
+      }
+      else if(['badge','quote','icon'].includes(node.type)){
+        const modify=patch=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),...patch}}});
+        if(node.type==='icon'){
+          const row=document.createElement('label');row.className='field';row.append(document.createTextNode('Ikon kiválasztása'));
+          const select=document.createElement('select');select.disabled=Boolean(node.locked);
+          ICON_CHOICES.forEach(icon=>{const option=document.createElement('option');option.value=icon.id;option.textContent=icon.glyph+' '+icon.label;select.append(option)});
+          select.value=iconById(node.props?.icon).id;select.onchange=()=>modify({icon:select.value,label:iconById(select.value).label});
+          row.append(select);inspector.append(row);
+          inspector.append(field('Ikon akadálymentes neve',node.props?.label||'',v=>modify({label:v})));
+        }else{
+          inspector.append(field(node.type==='quote'?'Idézet szövege':'Címke szövege',node.props?.text||'',v=>modify({text:v}),false,true));
+          if(node.type==='quote')inspector.append(field('Forrás / szerző',node.props?.attribution||'',v=>modify({attribution:v})));
+        }
       }
       else if(isStructuredType(node.type)){
         const content=renderStructuredInspector(node,model=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),contentModel:model},metadata:{...(node.metadata||{}),structuredContentVersion:1}}}));

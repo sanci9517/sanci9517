@@ -723,3 +723,11 @@ A WEB-011/76.06 következő részblokkja nyolc visszavonható desktop/tablet/mob
 - **Biztonság:** minden publikus szöveget HTML-escape-elj, csak biztonságos média/hivatkozási sémákat engedj; új, hiányos interaktív vagy médiatartalom publikálása tiltott, de piszkozatként menthető. Hiányzó Médiatár és más dinamikus modul nem helyettesíthető látszatfunkcióval.
 - **Teszt:** új unit és Chromium böngészős regressziók hozzáadva a CI-hez. Az első teljes strukturált elem/browser kör, TypeScript és kapcsolódó checkek korábbi feature-commiton PASS; a legfrissebb commit ellenőrzése és az éles deploy még folyamatban. A teljes 77.44 / Visual Editor OPEN, kézi telefon/PC acceptance még nincs.
 - **Következő sorrend:** PR teljes CI ellenőrzés és javítás → kód/MASTER egyesítés → a még ténylegesen hiányzó 77.44 elem-paritások és Inspector hibák célzott rendezése → a 76.08 Brand Kit függőségeinek külön kezelése a megfelelő későbbi pontban → végül teljes funkciónkénti kézi acceptance lista. Ne térj át más adminmodulokra és ne ismételj történeti auditot.
+
+
+### 77.44.UX-P0.6.E — Kis statikus elemek teljes tartalmi szerződése (2026-10-18)
+
+**STÁTUSZ: IN PROGRESS / manuális acceptance OPEN.** A #121 összetett elemekre vonatkozó Editor/Inspector fejlesztése után [#122 PR](https://github.com/sanci9517/sanci9517/pull/122) a jelenleg hiányos **Badge / Quote / Icon** elemeket készíti el. A közös Page Modelben a Badge szöveges címke, a Quote szöveg + opcionális forrás, az Icon pedig stabil, típusos és akadálymentes elnevezésű ikonbejegyzés. A vászon-Inspector és a publikus renderer ugyanazt a mezőkészletet használja, szerveroldali publikálási guarddal. Az ikonokhoz nem szükséges külső font/CDN. Régi tartalmat automatikusan nem migrálunk; az új elemek verziójelöltek.
+
+- **Ellenőrzés:** unit és valódi böngészős tartalommentés + publikus szemantikai tesztek a meglévő Editor regressziókban; merge/production és kézi teszt csak ellenőrzés után PASS.
+- **Függőségek:** a 76.08 Brand Kit és a későbbi teljes ikonkezelés külön modultulajdonban marad; nem építjük be most a Visual Editorba. WEB-011/77.44 összesített készültség továbbra is OPEN. Következő lépés: a PR és a felhasználói felület bizonyított működése, azután a fennmaradó Editor-eszközök és szakmai acceptance kritériumok célzott fejlesztése.

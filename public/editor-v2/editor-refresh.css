@@ -492,3 +492,9 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
 .multi-inspector-field>span{font-size:13px}
 .multi-inspector-field input{min-width:0;height:44px;width:100%;border:1px solid #64748b;border-radius:8px;padding:5px 8px;background:transparent;color:inherit}
 .multi-inspector-field input[type=color]{padding:4px}
+
+.basic-element-preview{max-width:100%;overflow-wrap:anywhere}
+.basic-element-preview .visual-badge{display:inline-flex;border:1px solid currentColor;border-radius:999px;padding:6px 12px;font-weight:700}
+.basic-element-preview .visual-quote{border-left:4px solid currentColor;margin:0;padding:8px 16px;font-style:italic}
+.basic-element-preview .visual-quote cite{display:block;margin-top:8px;font-size:.85em}
+.basic-element-preview.visual-icon{display:inline-flex;font-size:1.6em;line-height:1}
