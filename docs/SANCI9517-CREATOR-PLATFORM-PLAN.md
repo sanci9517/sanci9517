@@ -26,7 +26,7 @@
 - [11/12 – MASTER fejezetek](creator-master/part-11-of-12.md)
 - [12/12 – MASTER fejezetek](creator-master/part-12-of-12.md)
 
-> **2026-10-18 friss kurzor:** #121 és #122 egyesítve. A 77.44.UX-P0.6.F gyökérstílus-paritás következő ellenőrzés alatt álló Editor-részblokk; a teljes WEB-011/Visual Editor OPEN. A 12 fejezetű kanonikus MASTER az egyetlen irányadó forrás.\n\n## Aktuális Editor teljességi kapu — 2026-10-17
+> **2026-10-18 friss kurzor:** #121 és #122 egyesítve. A 77.44.UX-P0.6.F gyökérstílus-paritás #123 PR-en át, PASS CI után MERGED; a 77.44.UX-P0.6.G elválasztóvonal/térköz-fejlesztés a következő OPEN/CI-pending blokk. A teljes WEB-011/Visual Editor OPEN. A 12 fejezetű kanonikus MASTER az egyetlen irányadó forrás.\n\n## Aktuális Editor teljességi kapu — 2026-10-17
 
 **AKTUÁLIS TERMÉKMINŐSÍTÉS: a Visual Editor nem kész, az Inspector és több elem-specifikus szerkesztési/közzétételi funkció HIÁNYOS.** A hozzáadható elem, a működő vászon/drag, az Inspector megnyitása és a jogosultsági backend PASS nem bizonyítja az elem end-to-end szerkeszthetőségét. A végrehajtást a dokumentum későbbi, **`77.44 / WEB-011 — teljes Visual Editor és Inspector`** fejezete irányítja, a `76.06` Page Model/Editor modul tulajdonjogához kapcsolódva. A `77.43` Pages/Editor tenant-jogosultsági blokkjának lezárása **nem** zárja le a teljes Editort. A régi 74.x/77.x checkpointok történeti adatok, nem írhatják felül ezt a nyitott elfogadási kaput. A teljes WEB-013/F1.1 ettől függetlenül a három megmaradt éles link/redirect teszt és a migrációs ledger miatt OPEN.
 
@@ -435,3 +435,12 @@ Az Inspector az aktuális nézet tényleges `display` értékéből és a szül�
 **Ellenőrzés:** új core-regresszió teszteli az opt-in verziójelölést, mobil override-ot, gyermekadatok megőrzését és Undo/Redo-t; az új Chromium böngészőteszt a tényleges Inspectorban állítja a root háttérszínét és paddingját, külön bizonyítja, hogy a Save nem változtatja meg a publikus oldalt, majd Publish után desktop/mobil CSS-paritást és a mobil öröklést mér. A teszt bekerült a `test:editor:layout` CI-parancsba. **Ezek csak az automatizált teszt tényleges lefutása után minősülnek PASS-nak.**
 
 **Határ és következő lépés:** a teljes elemtípus-mátrix, a webhelyszintű Brand Kit/76.08 design token, az elérhetetlen Médiatár és a valódi készülékes PC/telefonos vizsgálat OPEN marad; további modulra nem ugrunk. Az aktuális kód külön PR-en ellenőrzendő, éles D1-adat/migráció/secret nem változott.
+
+
+#### 77.44.UX-P0.6.G — Elválasztóvonal és reszponzív térköz (2026-10-18)
+
+**Státusz: megvalósított fejlesztési ág, CI/éles és kézi elfogadás még UNVERIFIED.** A #123 gyökérstílus-paritás PR öt ellenőrzésének PASS eredménye után squash merge-ként bekerült az aktív `v2/foundation` ágba, commit: `262ff98a52938b485f94eb36e9f5d359a02b8883`. A külön root-stílus tesztjei automatizáltak; az éles, bejelentkezett felhasználói elfogadás továbbra is OPEN.
+
+**Új statikus alapelemek:** a frissen létrehozott elválasztóvonal verziózott, szigorúan validált vastagságot (1–24 px), HEX színt és folytonos/szaggatott/pontozott/dupla vonalmintát kap. Az Inspector Tartalom panelje magyar címkékkel közvetlenül szerkeszti ezeket, a vászon és a publikus renderer ugyanabból az állapotból dolgozik. A frissen létrehozott térköz kezdeti 64 px magasságot és a meglévő méretmezővel, automatikus desktop→tablet→mobil örökléssel külön állítható magasságot kap; a modern publikus CSS nem kényszeríti rá a korábbi minimum 60px/mobil automatikus magasságot. A régi divider/spacer tartalmak **nem** alakulnak át betöltéskor, csak az új, explicit verziójelölt elemek használják az új renderelést.
+
+**Teszt és határ:** új unit teszt ellenőrzi az új defaults/Undo/Redo/érvénytelen vonal-konfiguráció publikálási tiltását és a legacy kompatibilitást. Új valós Chromium Editor + publikus teszt a teljes vastagság/szín/minta Inspector-interakciót, a desktop/mobil térközt, Undo/Redo-t, Save (nem publikál) / külön Publish-t és számított CSS-t ellenőrzi. A teszt bekerült a `test:editor:layout` CI-parancsba. Ezeket csak valódi sikeres CI után lehet PASS-nak nevezni; a teljes Visual Editor 77.44, Brand Kit/76.08 és az eszközönkénti kézi acceptance OPEN. Nincs más adminmodul, D1, secret vagy éles adat módosítva.
