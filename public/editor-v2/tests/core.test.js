@@ -1012,3 +1012,17 @@ test('carousel content validates optional media and accessible slide labels',()=
  assert.match(html,/aria-roledescription="dia"/);
  assert.match(html,/visual-carousel-next/);
 });
+
+test('hover/focus appearance writes into canonical node states and is undoable',()=>{
+ const state=createEditorState();
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.BUTTON}});
+ const id=state.selection.primaryId;
+ execute(state,{type:'element.update',payload:{nodeId:id,patch:{states:{hover:{backgroundColor:'#123456',color:'#ffffff'},focus:{outlineColor:'#00ff00'}}}}});
+ assert.equal(activePage(state).nodes[id].states.hover.backgroundColor,'#123456');
+ assert.equal(validatePublishDocument(state.document,state.document.activePageId),null);
+ execute(state,{type:'history.undo'});
+ assert.equal(activePage(state).nodes[id].states.hover,undefined);
+ const pub=readFileSync(new URL('../../assets/page-renderer.js',import.meta.url),'utf8');
+ assert.match(pub,/visual-hover-bg/);
+ assert.match(pub,/visual-focus-outline/);
+});
