@@ -208,6 +208,7 @@ test('empty Rich Text has direct desktop and mobile editing, typed presets, Save
   await structuredEditor.locator('p').evaluate(el=>{const range=document.createRange();range.selectNodeContents(el);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range)});
   await tab.getByRole('button',{name:'Félkövér'}).click();
   const richFontSize=richToolbar.getByRole('spinbutton',{name:'Betűméret képpontban'});await richFontSize.fill('24');await richFontSize.press('Tab');
+  await richToolbar.getByRole('tab',{name:'Bekezdés',exact:true}).click();
   await richToolbar.getByRole('combobox',{name:'Bekezdés igazítása'}).selectOption('justify');
   assert.equal(await structuredEditor.locator('p').evaluate(el=>el.style.textAlign),'justify');
   assert.equal(await structuredEditor.locator('p strong').count(),2,'the selected paragraph should be formatted as a single structured selection');

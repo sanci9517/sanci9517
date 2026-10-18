@@ -1,7 +1,7 @@
 import {createDocument,createPage,getNode,NODE_TYPES,canContain,normalizeRichText} from './core/schema.js';
 import {createEditorState,activePage,selectedNodes,setSelection,markSaved} from './core/state.js';
-import {execute} from './core/commands.js';
-import {applyNodeStyle,getNodeGeometry} from './core/canvas-engine.js?v=20261018-ux-p05';
+import {execute,executeCoalesced} from './core/commands.js';
+import {applyNodeStyle,getNodeGeometry,resolveNodeStyle} from './core/canvas-engine.js?v=20261018-text-sync';
 import {computeCanvasMinHeight} from './core/canvas-extent.js';
 import {measureCanvasWorkspace} from './core/canvas-workspace.js';
 import {hasResponsiveOverride,resolveResponsiveValue} from './core/responsive.js';
@@ -17,6 +17,10 @@ import {getElementCapability} from './core/capability-matrix.js';
 import {renderGeometryPresets} from './ui/geometry-presets.js';
 import {importRichTextClipboard} from './core/richtext-import.js';
 import {captureStyleSnapshot} from './core/style-snapshot.js';
+import {TYPOGRAPHY_PRESETS,typographyPresetPatch} from './core/typography-presets.js';
+import {readRichTextSelectionFormatting,clearRichTextInlineFormatting} from './core/richtext-links.js';
+
+let inspectorCategory='all';let richTextSelectionCleanup=null;let richTextToolTab='character';
 
 let state=null;let pages=[];let archivedPages=[];let revisionHistory=[];let zoom=1;let inspectorTab='design';let inspectorQuery='';let flushRichTextDraft=null;let inlineEditingId=null;let richTextBookmark=null;let copiedStyleSnapshot=null;let canvasDrag=null;let canvasResize=null;let mobileTouch={active:false,timer:null,downId:null,startX:0,startY:0,snapshot:[],snapshotPrimary:null,suppressClick:false,longPressTriggered:false};let hierarchyDrag={nodeId:null,overId:null};let mobileHierarchyDrag={active:false,timer:null,nodeId:null,overId:null,startX:0,startY:0,suppressClick:false};
 const $=s=>document.querySelector(s);const canvas=$('#canvas');const inspector=$('#inspectorBody');
@@ -73,11 +77,11 @@ function exportConflictDraft(){if(!state||!page())return;const meta=pages.find(x
 async function reloadLatestAfterConflict(){const conflict=state?.persistence?.conflict;if(!conflict)return;if(!confirm('A helyi szerkesztés felülíródik a szerver legfrissebb változatával. Előbb exportáltad a helyi JSON-vázlatot? Csak akkor folytasd, ha a helyi változatot megőrizted.'))return;try{await loadPage(conflict.pageId,{discardConfirmed:true});state.persistence.conflict=null;$('#revisionConflict').hidden=true;setStatus('Legfrissebb szerververzió betöltve')}catch(error){showError(error)}}
 const canonical=(doc,id)=>Boolean(doc?.type==='sanci-page-document'&&doc?.schemaVersion===1&&doc?.activePageId===id&&doc?.pages?.[id]);
 function verifyCommandResult(type,payload){if(type!=='element.add')return;const current=page();const nodeId=state?.selection?.primaryId;const node=nodeId&&current?getNode(current,nodeId):null;const parentId=payload?.parentId||current?.rootId;const parent=parentId&&current?getNode(current,parentId):null;const exists=Boolean(node&&node.id!==current?.rootId&&node.type===payload?.type&&node.parentId===parent?.id&&parent?.children?.includes(node.id));const canvasNode=nodeId?canvas.querySelector('[data-node-id="'+CSS.escape(nodeId)+'"]'):null;diagnostics.verify(exists,{code:'SANCI-VERIFY-E001',message:'Az elem hozzáadása lefutott, de az új node nem jött létre a várt Page Model helyen.',context:'element.add → Page Model'});diagnostics.verify(Boolean(canvasNode),{code:'SANCI-VERIFY-E002',message:'Az elem létrejött a Page Modelben, de nem jelent meg a Canvason.',context:'element.add → Canvas'});}
-function command(type,payload,{render:shouldRender=true}={}){try{
+function command(type,payload,{render:shouldRender=true,typingGroup=null}={}){try{
   // A DOM-backed editor is an unsaved draft until its content reaches the Page Model.
   // Commit it before another command changes selection, history, or responsive state.
-  if(type!=='richtext.content.set'&&flushRichTextDraft?.()===false)return false;
-  execute(state,{type,payload});if(shouldRender)render();if(shouldRender)verifyCommandResult(type,payload);if(type==='element.add'&&payload?.type===NODE_TYPES.RICHTEXT)beginRichTextEditing(state.selection.primaryId);return true
+  if(!['richtext.content.set','element.content.set'].includes(type)&&flushRichTextDraft?.()===false)return false;
+  if(typingGroup)executeCoalesced(state,{type,payload},typingGroup);else execute(state,{type,payload});if(shouldRender)render();if(shouldRender)verifyCommandResult(type,payload);if(type==='element.add'&&payload?.type===NODE_TYPES.RICHTEXT)beginRichTextEditing(state.selection.primaryId);return true
 }catch(e){diagnostics.add({source:'command',code:'SANCI-CMD-E001',message:e instanceof Error?e.message:String(e),context:type,error:e});if(state?.persistence)state.persistence.error=e instanceof Error?e.message:String(e);setStatus('Szerkesztési hiba');alert(state.persistence.error);return false}}
 function typeForElement(name){const map={'Badge/Tag':'badge','Quote':'quote','Panel':'panel','Overlay':'overlay','Absolute':'absolute','Sticky':'sticky','Tooltip':'tooltip','Shorts':'shorts','Sponsor':'sponsor','Business Contact':'business','About Me':'about','Sanci Button':'sanci-button'};if(map[name])return map[name];for(const items of groups)for(const [label,type] of items)if(label===name&&type)return type;return null}
 function resolveAddParent(current,type){const selected=state.selection.primaryId?getNode(current,state.selection.primaryId):null;if(selected&&canContain(selected,type))return selected;if(selected?.parentId){const parent=getNode(current,selected.parentId);if(parent&&canContain(parent,type))return parent}return getNode(current,current.rootId)}
@@ -141,16 +145,59 @@ function finishCanvasDrag(id,event,cancelled=false){
 function beginCanvasResize(id,event,element){const current=page();const node=current?getNode(current,id):null;if(!current||!node||id===current.rootId||node.locked||event.button!==0)return;const box=element.getBoundingClientRect();canvasResize={nodeId:id,pointerId:event.pointerId,startX:event.clientX,startY:event.clientY,startWidth:box.width/(zoom||1),startHeight:box.height/(zoom||1),width:box.width/(zoom||1),height:box.height/(zoom||1),element,device:state.viewport.device,moved:false,handle:event.currentTarget};try{event.currentTarget.setPointerCapture(event.pointerId)}catch{}event.preventDefault();event.stopPropagation()}
 function moveCanvasResize(id,event){const r=canvasResize;if(!r||r.nodeId!==id||r.pointerId!==event.pointerId)return;const dx=(event.clientX-r.startX)/(zoom||1),dy=(event.clientY-r.startY)/(zoom||1);if(Math.abs(dx)>2||Math.abs(dy)>2)r.moved=true;if(!r.moved)return;r.width=Math.max(24,Math.round(r.startWidth+dx));r.height=Math.max(24,Math.round(r.startHeight+dy));r.element.style.width=r.width+'px';r.element.style.height=r.height+'px';updateCanvasExtent();event.preventDefault();event.stopPropagation()}
 function finishCanvasResize(id,event,cancelled=false){const r=canvasResize;if(!r||r.nodeId!==id||r.pointerId!==event.pointerId)return;canvasResize=null;try{r.handle.releasePointerCapture(event.pointerId)}catch{}if(!cancelled&&r.moved){try{command('responsive.set',{nodeId:id,device:r.device,patch:{width:r.width+'px',height:r.height+'px'}},{render:false})}catch(error){showError(error);return}}render()}
+function syncTextSurfaces(nodeId,value,source=null){
+  const node=page()?.nodes?.[nodeId];if(!node)return;
+  const canvasSurface=canvas.querySelector(`.node[data-node-id="${CSS.escape(nodeId)}"] > .node-content`);
+  const inspectorSurface=inspector.querySelector(`[data-text-node-id="${CSS.escape(nodeId)}"]`);
+  for(const surface of [canvasSurface,inspectorSurface]){
+    if(!surface||surface===source)continue;
+    if(node.type===NODE_TYPES.RICHTEXT)renderRichTextEditor(surface,value);
+    else if(surface instanceof HTMLTextAreaElement)surface.value=value;
+    else surface.textContent=value;
+  }
+  canvasSurface?.parentElement.classList.toggle('richtext-empty',node.type===NODE_TYPES.RICHTEXT&&!canvasSurface.textContent.trim());
+  updateCanvasExtent();
+}
+function commitTextSurface(nodeId,surface,typingGroup){
+  const node=page()?.nodes?.[nodeId];if(!node)return false;
+  try{
+    const value=node.type===NODE_TYPES.RICHTEXT?richTextEditorToDocument(surface):surface instanceof HTMLTextAreaElement?surface.value:surface.innerText;
+    const saved=command(node.type===NODE_TYPES.RICHTEXT?'richtext.content.set':'element.content.set',
+      node.type===NODE_TYPES.RICHTEXT?{nodeId,document:value}:{nodeId,content:value},{render:false,typingGroup});
+    if(saved){syncTextSurfaces(nodeId,value,surface);setStatus('Nem mentett módosítás');syncPublishControls()}
+    return saved;
+  }catch(error){setStatus('A szöveg még nem menthető: '+(error instanceof Error?error.message:String(error)));return false}
+}
+function applyTextSurfaceStyle(surface,node){
+  const canvasNode=canvas.querySelector(`.node[data-node-id="${CSS.escape(node.id)}"]`);
+  const computed=canvasNode?getComputedStyle(canvasNode):null;
+  for(const key of ['color','fontFamily','fontSize','fontWeight','fontStyle','lineHeight','letterSpacing','textAlign','textTransform','textDecoration','textWrap','overflowWrap','wordSpacing','textIndent','textShadow']){
+    if(computed?.[key])surface.style[key]=computed[key];
+  }
+  const background=resolveNodeStyle(node,state.viewport.device).backgroundColor;
+  surface.style.backgroundColor=background&&background!=='transparent'?background:'#ffffff';
+}
+function renderPlainTextEditor(node){
+  const section=document.createElement('section');section.className='field plain-text-content';
+  const label=document.createElement('label');label.textContent='Szöveg';label.htmlFor='plain-text-content';
+  const editor=document.createElement('textarea');editor.id='plain-text-content';editor.className='plain-text-editor';editor.dataset.textNodeId=node.id;editor.setAttribute('aria-label','Szöveg tartalma');editor.value=node.props?.text??node.props?.content??'';editor.disabled=Boolean(node.locked);applyTextSurfaceStyle(editor,node);
+  const typingGroup=crypto.randomUUID();let composing=false,dirty=false;
+  const flush=()=>{if(composing)return false;if(!dirty)return true;const saved=commitTextSurface(node.id,editor,typingGroup);if(saved)dirty=false;return saved};
+  editor.onfocus=()=>{flushRichTextDraft=flush};editor.oninput=()=>{dirty=true;flushRichTextDraft=flush;if(!composing)flush()};
+  editor.oncompositionstart=()=>{composing=true};editor.oncompositionend=()=>{composing=false;dirty=true;flush()};editor.onblur=flush;
+  const help=document.createElement('small');help.className='text-sync-hint';help.textContent='Élő kapcsolat a vászonnal. Gépeléskor a piszkozat frissül; a látogatók csak a külön Publikálás után látják.';
+  section.append(label,editor,help);return section;
+}
 function beginRichTextEditing(id){
   const node=page()&&getNode(page(),id);
-  if(node?.type!==NODE_TYPES.RICHTEXT)return;
+  if(!['richtext','heading','text','button','link'].includes(node?.type)||node.locked)return;
   if(window.innerWidth<=850){
     inlineEditingId=null;
     inspectorTab='content';
     document.querySelectorAll('.inspector-tabs button').forEach((button,index)=>button.classList.toggle('active',index===1));
     renderInspector();
     window.sanciEditor?.openPanel?.('right');
-    requestAnimationFrame(()=>inspector.querySelector('.richtext-editor-surface')?.focus());
+    requestAnimationFrame(()=>inspector.querySelector('.richtext-editor-surface,.plain-text-editor')?.focus());
     return;
   }
   if(flushRichTextDraft?.()===false)return;
@@ -158,7 +205,7 @@ function beginRichTextEditing(id){
   inspectorTab='design';
   document.querySelectorAll('.inspector-tabs button').forEach((button,index)=>button.classList.toggle('active',index===0));
   render();
-  requestAnimationFrame(()=>{const editor=canvas.querySelector('.node[data-node-id="'+CSS.escape(id)+'"] .richtext-inline-surface');if(!editor)return;editor.focus();const block=editor.querySelector('[data-rich-block]');if(block&&!editor.textContent.trim()){const range=document.createRange();range.selectNodeContents(block);range.collapse(false);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range)}});
+  requestAnimationFrame(()=>{const editor=canvas.querySelector('.node[data-node-id="'+CSS.escape(id)+'"] .richtext-inline-surface,.node[data-node-id="'+CSS.escape(id)+'"] .plain-text-inline-surface');if(!editor)return;editor.focus();const block=editor.querySelector('[data-rich-block]');if(block&&!editor.textContent.trim()){const range=document.createRange();range.selectNodeContents(block);range.collapse(false);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range)}});
 }
 function pasteRichTextDocument(editor,documentModel){
   const selection=window.getSelection();
@@ -187,7 +234,7 @@ function pasteRichTextDocument(editor,documentModel){
 }
 function openRichTextFormatting(id){
   if(flushRichTextDraft?.()===false)return;
-  inlineEditingId=null;flushRichTextDraft=null;
+  inlineEditingId=window.innerWidth>850?id:null;flushRichTextDraft=null;
   setSelection(state,[id],id);
   inspectorTab='content';
   document.querySelectorAll('.inspector-tabs button').forEach((button,index)=>button.classList.toggle('active',index===1));
@@ -203,34 +250,51 @@ function renderNode(currentPage,id){const node=getNode(currentPage,id);if(!node)
     if(inlineEditingId===id){
       c.classList.add('richtext-inline-surface');c.contentEditable='true';c.spellcheck=true;
       c.setAttribute('role','textbox');c.setAttribute('aria-label','Rich Text közvetlen szerkesztése');
-      let dirty=false;
+      let dirty=false,composing=false;
+      const typingGroup=crypto.randomUUID();
       const save=()=>{
+        if(composing){setStatus('Fejezd be az aktuális szövegbevitelt.');return false}
         if(!dirty)return true;
-        const document=richTextEditorToDocument(c);
-        dirty=false;inlineEditingId=null;flushRichTextDraft=null;
-        return command('richtext.content.set',{nodeId:id,document});
+        const saved=commitTextSurface(id,c,typingGroup);if(saved)dirty=false;return saved;
       };
       flushRichTextDraft=save;
-      c.oninput=()=>{dirty=true;el.classList.toggle('richtext-empty',!c.textContent.trim())};
+      c.onfocus=()=>{flushRichTextDraft=save};
+      c.oninput=()=>{dirty=true;flushRichTextDraft=save;richTextBookmark=null;if(!composing)save();el.classList.toggle('richtext-empty',!c.textContent.trim())};
+      c.oncompositionstart=()=>{composing=true};
+      c.oncompositionend=()=>{composing=false;dirty=true;save()};
+      c.onpaste=event=>{event.preventDefault();try{const imported=normalizeRichText(importRichTextClipboard({html:event.clipboardData?.getData('text/html')||'',text:event.clipboardData?.getData('text/plain')||''}));if(pasteRichTextDocument(c,imported))c.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'insertFromPaste'}))}catch(error){setStatus(error.message)}};
       c.onblur=()=>{if(inlineEditingId===id)save()};
       c.onpointerdown=e=>e.stopPropagation();c.onclick=e=>e.stopPropagation();
       c.ondblclick=e=>e.stopPropagation();
     }
     el.append(c);
-    if(inlineEditingId!==id){
+    if(inlineEditingId!==id&&!node.locked){
       const edit=document.createElement('button');edit.type='button';edit.className='canvas-edit-richtext';
       edit.textContent=empty?'Írj ide… · Tartalom szerkesztése':'Tartalom szerkesztése';
       edit.setAttribute('aria-label','Tartalom szerkesztése');
       edit.onpointerdown=e=>e.stopPropagation();edit.onclick=e=>{e.stopPropagation();setSelection(state,[id],id);beginRichTextEditing(id)};
       el.append(edit);
-    }else{
+    }else if(!node.locked){
       const format=document.createElement('button');format.type='button';format.className='canvas-edit-richtext canvas-format-richtext';
       format.textContent='Formázás és linkek';
       format.onpointerdown=e=>{e.preventDefault();e.stopPropagation()};format.onclick=e=>{e.stopPropagation();openRichTextFormatting(id)};
       el.append(format);
     }
     el.ondblclick=e=>{e.stopPropagation();setSelection(state,[id],id);beginRichTextEditing(id)};
-  }else if(node.type===NODE_TYPES.SCHEDULE){const c=document.createElement('div');c.className='node-content schedule-preview-host';renderSchedulePreview(c,node.props?.schedule);el.append(c)}else if([NODE_TYPES.HEADING,NODE_TYPES.TEXT,NODE_TYPES.BUTTON,NODE_TYPES.LINK].includes(node.type)){const c=document.createElement('div');c.className='node-content';c.textContent=node.props?.text??node.props?.content??node.name;el.append(c)}
+  }else if(node.type===NODE_TYPES.SCHEDULE){const c=document.createElement('div');c.className='node-content schedule-preview-host';renderSchedulePreview(c,node.props?.schedule);el.append(c)}else if([NODE_TYPES.HEADING,NODE_TYPES.TEXT,NODE_TYPES.BUTTON,NODE_TYPES.LINK].includes(node.type)){
+    const c=document.createElement('div');c.className='node-content plain-text-content-surface';c.textContent=node.props?.text??node.props?.content??node.name;
+    if(inlineEditingId===id){
+      c.classList.add('plain-text-inline-surface');c.contentEditable='plaintext-only';c.setAttribute('role','textbox');c.setAttribute('aria-label','Szöveg közvetlen szerkesztése');
+      const typingGroup=crypto.randomUUID();let composing=false,dirty=false;
+      const flush=()=>{if(composing)return false;if(!dirty)return true;const saved=commitTextSurface(id,c,typingGroup);if(saved)dirty=false;return saved};
+      c.onfocus=()=>{flushRichTextDraft=flush};c.oninput=()=>{dirty=true;flushRichTextDraft=flush;if(!composing)flush()};c.onblur=flush;
+      c.oncompositionstart=()=>{composing=true};c.oncompositionend=()=>{composing=false;dirty=true;flush()};
+      for(const type of ['pointerdown','click','dblclick'])c.addEventListener(type,event=>event.stopPropagation());
+    }else if(!node.locked){
+      const edit=document.createElement('button');edit.type='button';edit.className='canvas-edit-text';edit.textContent='Szöveg szerkesztése';edit.setAttribute('aria-label','Szöveg szerkesztése');edit.onpointerdown=event=>event.stopPropagation();edit.onclick=event=>{event.stopPropagation();setSelection(state,[id],id);beginRichTextEditing(id)};el.append(edit);
+    }
+    el.ondblclick=event=>{event.stopPropagation();setSelection(state,[id],id);beginRichTextEditing(id)};el.append(c);
+  }
   for(const child of node.children||[]){const x=renderNode(currentPage,child);if(x)el.append(x)}if(state.selection.primaryId===id&&id!==currentPage.rootId&&!node.locked){const handle=document.createElement('button');handle.type='button';handle.className='canvas-resize-handle';handle.setAttribute('aria-label','Elem átméretezése');handle.title='Átméretezés';handle.onpointerdown=e=>beginCanvasResize(id,e,el);handle.onpointermove=e=>moveCanvasResize(id,e);handle.onpointerup=e=>finishCanvasResize(id,e);handle.onpointercancel=e=>finishCanvasResize(id,e,true);el.append(handle)}el.onpointerdown=e=>{if(inlineEditingId===id)return;if(e.pointerType==='touch'){e.stopPropagation();handleMobilePointerDown(id,e);return}beginCanvasDrag(id,e,el)};el.onpointermove=e=>{if(canvasResize?.nodeId===id){moveCanvasResize(id,e);return}if(e.pointerType==='touch')handleMobilePointerMove(e);else moveCanvasDrag(id,e)};el.onpointerup=e=>{if(canvasResize?.nodeId===id){finishCanvasResize(id,e);return}if(e.pointerType==='touch'){e.stopPropagation();handleMobilePointerUp(id,e);return}finishCanvasDrag(id,e)};el.onpointercancel=e=>{if(canvasResize?.nodeId===id){finishCanvasResize(id,e,true);return}if(e.pointerType==='touch')handleMobilePointerCancel(e);else finishCanvasDrag(id,e,true)};el.onclick=e=>{e.stopPropagation();if(inlineEditingId===id)return;if(mobileTouch.active&&mobileTouch.suppressClick){mobileTouch.suppressClick=false;return}selectNodeInteraction(id,e)};return el}
 function updateCanvasExtent(target=canvas.querySelector('.page-canvas')){if(!target)return;let pageRect=target.getBoundingClientRect();const bottoms=[...target.querySelectorAll('.node')].map(node=>node.getBoundingClientRect().bottom-pageRect.top);target.style.minHeight=`${computeCanvasMinHeight(bottoms,zoom,844,80)}px`;pageRect=target.getBoundingClientRect();const nodes=[...target.querySelectorAll('.node')];const extents=measureCanvasWorkspace(nodes.map(node=>{const rect=node.getBoundingClientRect();return {left:rect.left-pageRect.left,right:rect.right-pageRect.left,top:rect.top-pageRect.top,bottom:rect.bottom-pageRect.top}}),target.offsetWidth,target.offsetHeight,zoom);target.style.left=`${extents.left}px`;target.style.top=`${extents.top}px`;pageRect=target.getBoundingClientRect();for(const node of nodes){const rect=node.getBoundingClientRect();node.classList.toggle('outside-artboard',rect.left<pageRect.left-1||rect.right>pageRect.right+1||rect.top<pageRect.top-1||rect.bottom>pageRect.bottom+1)}const frame=target.parentElement;if(frame?.classList.contains('page-canvas-frame')){frame.style.width=`${(target.offsetWidth+extents.left+extents.right)*zoom}px`;frame.style.height=`${(target.offsetHeight+extents.top+extents.bottom)*zoom}px`}}
 function renderCanvas(){canvas.querySelectorAll('.page-canvas-frame').forEach(x=>x.remove());const current=page();const device=state?.viewport?.device||'desktop';const width=sizes[device];const frame=document.createElement('div');frame.className='page-canvas-frame';const pc=document.createElement('div');pc.className='page-canvas';pc.dataset.device=device;pc.style.width=`${width}px`;pc.style.transform=`scale(${zoom})`;if(current)pc.append(renderNode(current,current.rootId));frame.append(pc);canvas.append(frame);updateCanvasExtent(pc);$('#canvasEmpty').hidden=Boolean(current);$('#canvasMode').textContent=`${device} · ${width}px`;$('#zoom').textContent=`${Math.round(zoom*100)}%`;syncDeviceButtons(device)}
@@ -247,6 +311,7 @@ function renderGeometryInspector(node){
   const values={x:geometry.x,y:geometry.y,width:geometry.width,height:geometry.height,
     position:responsiveDisplay(node,'position',device,node.style?.position||'relative')};
   const section=document.createElement('section');section.className='inspector-group';
+  section.dataset.inspectorCategory='layout';
   const title=document.createElement('div');title.className='inspector-group-title';
   title.innerHTML=`<strong>Geometria</strong><small>${device}</small>`;
   section.append(title);
@@ -334,7 +399,7 @@ function renderScheduleInspector(node){
 
 function renderRegistryInspector(node,mode='primary'){
   const device=state.viewport.device,root=document.createDocumentFragment();
-  const primaryGroups=new Set(['layout','spacing','typography','background','border','radius','shadow','opacity']);
+  const primaryGroups=new Set(['layout','size','spacing','flex','grid','position','typography','background','border','radius','shadow','opacity']);
   const duplicates=new Set(['content.text','content.href','advanced.nodeName',
     'position.x','position.y','size.width','size.height','position.position']);
   for(const group of listPropertyGroups()){
@@ -343,6 +408,7 @@ function renderRegistryInspector(node,mode='primary'){
       .filter(property=>!duplicates.has(property.id));
     if(!properties.length)continue;
     const section=document.createElement('section');section.className='inspector-group';
+    section.dataset.inspectorCategory=group.id==='typography'?'text':['background','border','radius','shadow','opacity'].includes(group.id)?'surface':'layout';
     const title=document.createElement('div');title.className='inspector-group-title';
     title.innerHTML='<strong></strong><small></small>';
     title.querySelector('strong').textContent=group.label;
@@ -372,18 +438,18 @@ function renderRegistryInspector(node,mode='primary'){
 }
 function filterInspector(){
   const query=inspectorQuery.trim().toLocaleLowerCase('hu');
-  const fields=[...inspector.querySelectorAll('.field,.typed-inspector-field,.richtext-editor')];
+  const fields=[...inspector.querySelectorAll('.field,.typed-inspector-field,.richtext-editor,.typography-role')];
   let matches=0;
   for(const item of new Set(fields)){
-    const text=(item.dataset.propertyId||'')+' '+item.textContent;
+    const text=(item.dataset.propertyId||'')+' '+item.textContent+' '+(item.title||'');
     const visible=!query||text.toLocaleLowerCase('hu').includes(query);
     item.hidden=!visible;
     if(visible)matches++;
   }
   for(const group of inspector.querySelectorAll('.inspector-group')){
     const title=group.querySelector(':scope > .inspector-group-title')?.textContent||'';
-    const groupFields=[...group.querySelectorAll('.field,.typed-inspector-field,.richtext-editor')];
-    const visible=!query||title.toLocaleLowerCase('hu').includes(query)||groupFields.some(item=>!item.hidden);
+    const groupFields=[...group.querySelectorAll('.field,.typed-inspector-field,.richtext-editor,.typography-role')];
+    const visible=query?title.toLocaleLowerCase('hu').includes(query)||groupFields.some(item=>!item.hidden):inspectorCategory==='all'||!group.dataset.inspectorCategory||group.dataset.inspectorCategory===inspectorCategory;
     group.hidden=!visible;
     if(query&&visible){group.classList.add('is-open');group.querySelector(':scope > .inspector-group-title')?.setAttribute('aria-expanded','true')}
   }
@@ -397,6 +463,26 @@ function renderInspectorSearch(){
   input.oninput=()=>{inspectorQuery=input.value;filterInspector()};
   const status=document.createElement('small');status.className='inspector-search-status';status.setAttribute('aria-live','polite');
   wrap.append(title,input,status);inspector.append(wrap);
+}
+function renderInspectorCategories(){
+  const nav=document.createElement('nav');nav.className='inspector-category-nav';nav.setAttribute('aria-label','Stílusbeállítások szűrése');
+  for(const [id,label] of [['all','Összes'],['layout','Elrendezés'],['text','Szöveg'],['surface','Felület']]){
+    const button=document.createElement('button');button.type='button';button.textContent=label;button.dataset.inspectorCategory=id;button.setAttribute('aria-pressed',String(inspectorCategory===id));
+    button.onclick=()=>{inspectorCategory=id;nav.querySelectorAll('button').forEach(item=>item.setAttribute('aria-pressed',String(item===button)));filterInspector()};nav.append(button);
+  }
+  return nav;
+}
+function renderTypographyPresets(node){
+  const section=document.createElement('section');section.className='inspector-group typography-roles';section.dataset.inspectorCategory='text';
+  const title=document.createElement('div');title.className='inspector-group-title';title.innerHTML='<strong>Szövegstílusok</strong><small>8 szerep</small>';section.append(title);
+  const hint=document.createElement('p');hint.className='typography-role-hint';hint.textContent='Az egész elem alapstílusa az aktuális nézetben. A külön formázott szavak felülírhatják; ezek a Tartalom fülön visszaállíthatók.';section.append(hint);
+  const grid=document.createElement('div');grid.className='typography-role-grid';
+  for(const preset of TYPOGRAPHY_PRESETS){
+    const button=document.createElement('button');button.type='button';button.className='typography-role';button.dataset.typographyPreset=preset.id;button.title=preset.help;button.setAttribute('aria-label',preset.label+' szövegstílus');
+    const sample=document.createElement('span');sample.textContent=preset.sample;sample.className='typography-role-sample';sample.style.fontFamily=preset.patch.fontFamily||'system-ui';sample.style.fontWeight=preset.patch.fontWeight;sample.style.fontStyle=preset.patch.fontStyle||'normal';
+    const label=document.createElement('strong');label.textContent=preset.label;button.append(sample,label);button.disabled=Boolean(node.locked);button.onclick=()=>command('responsive.set',{nodeId:node.id,device:state.viewport.device,patch:typographyPresetPatch(preset.id,state.viewport.device)});grid.append(button);
+  }
+  section.append(grid);return section;
 }
 function editorSiteScope(){return String(state?.document?.siteId||location.origin)}
 function copySelectedAppearance(node){
@@ -419,6 +505,7 @@ function renderInspector(){
   // Tab switches and direct selection changes do not pass through command().
   // Flush before removing the live contenteditable element from the DOM.
   if(!inlineEditingId){if(flushRichTextDraft?.()===false)return false;flushRichTextDraft=null;}
+  richTextSelectionCleanup?.();richTextSelectionCleanup=null;
   inspector.replaceChildren();
   renderInspectorSearch();
   const nodes=state?selectedNodes(state):[];
@@ -437,7 +524,9 @@ function renderInspector(){
   header.append(styleActions,styleHelp);inspector.append(header);
 
   if(inspectorTab==='design'){
+    inspector.append(renderInspectorCategories());
     inspector.append(field('Elem neve',node.name,v=>command('element.update',{nodeId:node.id,patch:{name:v}})),renderGeometryInspector(node));
+    if(['heading','text','richtext','button','link'].includes(node.type))inspector.append(renderTypographyPresets(node));
     if(node.type==='schedule')inspector.append(renderScheduleInspector(node));
     else inspector.append(renderRegistryInspector(node,'primary'));
     const lockRow=document.createElement('label');lockRow.className='inspector-toggle';
@@ -466,6 +555,12 @@ function renderInspector(){
         const characterLabel=document.createElement('span');characterLabel.textContent='Karakter';characterLabel.className='richtext-tool-label';characterTools.append(characterLabel);toolbar.append(characterTools);
         const colorTools=document.createElement('div');colorTools.className='richtext-tool-group richtext-color-tools';colorTools.setAttribute('aria-label','Szövegszínek');
         const colorLabel=document.createElement('span');colorLabel.textContent='Színek';colorLabel.className='richtext-tool-label';colorTools.append(colorLabel);toolbar.append(colorTools);
+        const toolTabs=document.createElement('div');toolTabs.className='richtext-tool-tabs';toolTabs.setAttribute('role','tablist');toolTabs.setAttribute('aria-label','Szövegformázási eszközök');
+        for(const [id,label] of [['character','Karakter'],['paragraph','Bekezdés'],['color','Színek']]){
+          const button=document.createElement('button');button.type='button';button.textContent=label;button.setAttribute('role','tab');button.tabIndex=richTextToolTab===id?0:-1;button.setAttribute('aria-selected',String(richTextToolTab===id));
+          button.onclick=()=>{richTextToolTab=id;toolTabs.querySelectorAll('button').forEach(item=>{item.setAttribute('aria-selected',String(item===button));item.tabIndex=item===button?0:-1});characterTools.hidden=id!=='character';paragraphTools.hidden=id!=='paragraph';colorTools.hidden=id!=='color'};toolTabs.append(button);
+        }
+        characterTools.hidden=richTextToolTab!=='character';paragraphTools.hidden=richTextToolTab!=='paragraph';colorTools.hidden=richTextToolTab!=='color';toolbar.prepend(toolTabs);toolTabs.onkeydown=event=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;const buttons=[...toolTabs.querySelectorAll('button')],index=buttons.indexOf(document.activeElement),next=event.key==='Home'?0:event.key==='End'?buttons.length-1:(index+(event.key==='ArrowRight'?1:-1)+buttons.length)%buttons.length;event.preventDefault();buttons[next].click();buttons[next].focus()};
         const fontFamilyLabel=document.createElement('label');fontFamilyLabel.className='richtext-typography-control';fontFamilyLabel.title='Kijelölt szövegrész betűcsaládja';fontFamilyLabel.append(document.createTextNode('Betűcsalád'));
         const fontFamilySelect=document.createElement('select');fontFamilySelect.setAttribute('aria-label','Betűcsalád');fontFamilySelect.title='Betűcsalád alkalmazása a kijelölt szövegre';
         [['','Alapértelmezett'],['Arial','Arial'],['Aptos','Aptos'],['Calibri','Calibri'],['Cambria','Cambria'],['Georgia','Georgia'],['Tahoma','Tahoma'],['Trebuchet MS','Trebuchet MS'],['Verdana','Verdana'],['Times New Roman','Times New Roman'],['Courier New','Courier New'],['system-ui','Rendszer'],['serif','Talpas'],['sans-serif','Talpatlan'],['monospace','Rögzített szélesség']]
@@ -474,25 +569,61 @@ function renderInspector(){
         const fontSizeLabel=document.createElement('label');fontSizeLabel.className='richtext-typography-control richtext-size-control';fontSizeLabel.title='Kijelölt szöveg mérete 8 és 96 képpont között';fontSizeLabel.append(document.createTextNode('Méret'));
         const fontSizeInput=document.createElement('input');fontSizeInput.type='number';fontSizeInput.min='8';fontSizeInput.max='96';fontSizeInput.step='1';fontSizeInput.value='16';fontSizeInput.setAttribute('aria-label','Betűméret képpontban');fontSizeLabel.append(fontSizeInput);characterTools.append(fontSizeLabel);
         const editor=document.createElement('div');editor.className='richtext-content richtext-editor-surface';
-        editor.contentEditable='true';editor.spellcheck=true;editor.setAttribute('role','textbox');
+        editor.dataset.textNodeId=node.id;editor.contentEditable=node.locked?'false':'true';applyTextSurfaceStyle(editor,node);editor.spellcheck=true;editor.setAttribute('role','textbox');
         editor.setAttribute('aria-label','Rich Text szerkesztő');
         renderRichTextEditor(editor,currentRichText);
         let richTextDirty=false, savedLinkSelection=richTextBookmark?.nodeId===node.id?richTextBookmark.range:null,
           savedFormatSelection=richTextBookmark?.nodeId===node.id?richTextBookmark.formatRange:null,
           savedBlockIndex=richTextBookmark?.nodeId===node.id?richTextBookmark.blockIndex:null,composing=false,
           savedSelectionOffsets=null;
-        const rememberSelection=()=>{const offsets=getSelectionOffsets(editor);if(offsets)savedSelectionOffsets={from:offsets.from,to:offsets.to};const format=getRichTextFormattingSelection(editor);if(format)savedFormatSelection=format;const next=getRichTextBlockSelection(editor);if(next)savedLinkSelection=next;else if(offsets&&!offsets.collapsed)savedLinkSelection=null;const index=getRichTextActiveBlockIndex(editor);if(offsets?.collapsed&&index!==null)savedFormatSelection=null;if(index!==null){savedBlockIndex=index;const active=richTextEditorToDocument(editor).blocks[index];if(active){blockSelect.value=active.type==='heading'?`heading-${active.level||1}`:active.type;blockSelect.disabled=active.type==='table';blockSelect.title=active.type==='table'?'A táblázat blokkstílusa itt nem módosítható.':'Aktuális blokk típusa';alignmentSelect.value=active.align||'left';alignmentSelect.disabled=!['paragraph','heading','quote'].includes(active.type)}}if(savedLinkSelection||savedFormatSelection||savedBlockIndex!==null)richTextBookmark={nodeId:node.id,range:savedLinkSelection,formatRange:savedFormatSelection,blockIndex:savedBlockIndex}};
-        const selectionObserver=()=>rememberSelection();
-        const refreshCanvasRichText=doc=>{const preview=canvas.querySelector('.node[data-node-id="'+CSS.escape(node.id)+'"] > .node-content');if(preview)renderRichTextEditor(preview,doc)};
-        const commitWithoutRender=doc=>{const saved=command('richtext.content.set',{nodeId:node.id,document:doc},{render:false});if(saved){richTextDirty=false;refreshCanvasRichText(doc);setStatus('Nem mentett módosítás');syncPublishControls()}return saved};
+        const typingGroup=crypto.randomUUID();let formattingSurface=editor;
+        function refreshFormattingControls(range,surface){
+          const model=richTextEditorToDocument(surface),format=readRichTextSelectionFormatting(model,range);
+          const native=window.getSelection(),anchor=native?.anchorNode;
+          const element=anchor&&surface.contains(anchor)?anchor.nodeType===Node.ELEMENT_NODE?anchor:anchor.parentElement:surface;
+          const css=getComputedStyle(element);
+          fontFamilySelect.value=format.mixed.includes('fontFamily')?'':format.styles.fontFamily||'';
+          fontFamilySelect.title=format.mixed.includes('fontFamily')?'Vegyes betűcsalád':format.styles.fontFamily||css.fontFamily;
+          if(fontSizeInput.dataset.pending!=='true')fontSizeInput.value=format.mixed.includes('fontSize')?'':String(parseFloat(format.styles.fontSize||css.fontSize)||16);
+          fontSizeInput.placeholder=format.mixed.includes('fontSize')?'Vegyes':'';
+          for(const button of characterTools.querySelectorAll('[data-mark]')){
+            const tag={bold:'strong,b',italic:'em,i',underline:'u',strikethrough:'s,strike',subscript:'sub',superscript:'sup',code:'code'}[button.dataset.mark];
+            const value=range?format.marks[button.dataset.mark]:Boolean(element.closest(tag)&&surface.contains(element.closest(tag)));
+            button.setAttribute('aria-pressed',String(value));
+          }
+          for(const input of colorTools.querySelectorAll('input[data-style-key]')){
+            const key=input.dataset.styleKey,value=format.styles[key]||css[key];
+            const rgb=String(value).match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+            const hex=/^#[\da-f]{6}$/i.test(value)?value:/^#[\da-f]{3}$/i.test(value)?'#'+value.slice(1).split('').map(x=>x+x).join(''):rgb?'#'+rgb.slice(1,4).map(x=>Number(x).toString(16).padStart(2,'0')).join(''):null;
+            if(hex)input.value=hex;
+            input.dataset.mixed=String(format.mixed.includes(key));
+          }
+          scope.textContent=range?'Kijelölt szövegrész · a vásznon és az Inspectorban ugyanaz':'Élő szöveg · jelölj ki szavakat a helyi formázáshoz';
+        }
+        const rememberSelection=()=>{
+          const canvasEditor=canvas.querySelector(`.node[data-node-id="${CSS.escape(node.id)}"] .richtext-inline-surface`);
+          const native=window.getSelection();
+          const surface=canvasEditor&&native?.anchorNode&&canvasEditor.contains(native.anchorNode)?canvasEditor:editor;
+          const offsets=getSelectionOffsets(surface);if(!offsets)return;
+          formattingSurface=surface;savedSelectionOffsets={from:offsets.from,to:offsets.to};
+          const format=getRichTextFormattingSelection(surface);savedFormatSelection=format;
+          const next=getRichTextBlockSelection(surface);savedLinkSelection=next;
+          const index=getRichTextActiveBlockIndex(surface);
+          if(index!==null){
+            savedBlockIndex=index;const active=richTextEditorToDocument(surface).blocks[index];
+            if(active){blockSelect.value=active.type==='heading'?`heading-${active.level||1}`:active.type;blockSelect.disabled=active.type==='table';alignmentSelect.value=active.align||'left';alignmentSelect.disabled=!['paragraph','heading','quote'].includes(active.type)}
+          }
+          richTextBookmark={nodeId:node.id,range:savedLinkSelection,formatRange:savedFormatSelection,blockIndex:savedBlockIndex};
+          refreshFormattingControls(format,surface);
+        };
+        const selectionObserver=()=>{if(!editor.isConnected){document.removeEventListener('selectionchange',selectionObserver);return}if(!toolbar.contains(document.activeElement)&&!linkControls.contains(document.activeElement))rememberSelection()};
+        const refreshCanvasRichText=doc=>syncTextSurfaces(node.id,doc,editor);
+        const commitWithoutRender=(doc,group=null)=>{const saved=command('richtext.content.set',{nodeId:node.id,document:doc},{render:false,typingGroup:group});if(saved){richTextDirty=false;refreshCanvasRichText(doc);setStatus('Nem mentett módosítás');syncPublishControls()}return saved};
         const formatStatus=document.createElement('small');formatStatus.className='richtext-format-feedback';formatStatus.setAttribute('role','status');
         const saveRich=()=>{
-          if(!richTextDirty){document.removeEventListener('selectionchange',selectionObserver);return true;}
-          const doc=richTextEditorToDocument(editor);
-          richTextDirty=false;
-          const saved=command('richtext.content.set',{nodeId:node.id,document:doc});
-          if(!saved)richTextDirty=true;
-          document.removeEventListener('selectionchange',selectionObserver);
+          if(composing){setStatus('Fejezd be az aktuális szövegbevitelt.');return false}if(!richTextDirty)return true;
+          const saved=commitTextSurface(node.id,editor,typingGroup);
+          if(saved)richTextDirty=false;
           return saved;
         };
         flushRichTextDraft=saveRich;
@@ -507,12 +638,12 @@ function renderInspector(){
           const type=blockSelect.value.startsWith('heading-')?'heading':blockSelect.value;
           const level=type==='heading'?Number(blockSelect.value.split('-')[1]):1;
           const next=setBlockType(doc,before,before+Math.max(1,(block.children??block.items?.flatMap(item=>item.children??item)??[]).reduce((n,x)=>n+x.text.length,0)),type,level);
-          if(command('richtext.content.set',{nodeId:node.id,document:next},{render:false})){richTextDirty=false;renderRichTextEditor(editor,next);refreshCanvasRichText(next);if(savedSelectionOffsets)restoreSelectionOffsets(editor,savedSelectionOffsets);rememberSelection();setStatus('Nem mentett módosítás');syncPublishControls()}
+          if(command('richtext.content.set',{nodeId:node.id,document:next},{render:false})){richTextDirty=false;renderRichTextEditor(editor,next);refreshCanvasRichText(next);if(savedSelectionOffsets)restoreSelectionOffsets(formattingSurface,savedSelectionOffsets);rememberSelection();setStatus('Nem mentett módosítás');syncPublishControls()}
         };
         alignmentSelect.onpointerdown=rememberSelection;
         alignmentSelect.onchange=()=>{
           const doc=richTextEditorToDocument(editor),index=savedBlockIndex??getRichTextActiveBlockIndex(editor);if(index===null){formatStatus.textContent='Előbb kattints abba a bekezdésbe, amelyet igazítani szeretnél.';return}
-          try{const selection=savedFormatSelection||getRichTextFormattingSelection(editor),indices=selection?.segments?.map(segment=>segment.blockIndex)??[index],next=updateRichTextBlockAlignment(doc,indices,alignmentSelect.value);if(command('richtext.content.set',{nodeId:node.id,document:next},{render:false})){richTextDirty=false;renderRichTextEditor(editor,next);refreshCanvasRichText(next);if(savedSelectionOffsets)restoreSelectionOffsets(editor,savedSelectionOffsets);rememberSelection();setStatus('Nem mentett módosítás');syncPublishControls()}}catch(error){formatStatus.textContent=error instanceof Error?error.message:String(error)}
+          try{const selection=savedFormatSelection||getRichTextFormattingSelection(editor),indices=selection?.segments?.map(segment=>segment.blockIndex)??[index],next=updateRichTextBlockAlignment(doc,indices,alignmentSelect.value);if(command('richtext.content.set',{nodeId:node.id,document:next},{render:false})){richTextDirty=false;renderRichTextEditor(editor,next);refreshCanvasRichText(next);if(savedSelectionOffsets)restoreSelectionOffsets(formattingSurface,savedSelectionOffsets);rememberSelection();setStatus('Nem mentett módosítás');syncPublishControls()}}catch(error){formatStatus.textContent=error instanceof Error?error.message:String(error)}
         };
         for(const [mark,label,glyph] of [['bold','Félkövér','B'],['italic','Dőlt','I'],['underline','Aláhúzott','U'],['strikethrough','Áthúzott','S'],['subscript','Alsó index','x₂'],['superscript','Felső index','x²'],['code','Kódformázás','</>']]){
           const button=document.createElement('button');button.type='button';button.textContent=glyph;button.dataset.mark=mark;button.title=label;
@@ -520,20 +651,20 @@ function renderInspector(){
           button.onclick=()=>{
             const range=savedFormatSelection||getRichTextFormattingSelection(editor);
             const nativeSelection=window.getSelection();
-            const hasNativeSelection=Boolean(nativeSelection?.rangeCount&&!nativeSelection.isCollapsed&&editor.contains(nativeSelection.anchorNode)&&editor.contains(nativeSelection.focusNode));
+            const hasNativeSelection=Boolean(nativeSelection?.rangeCount&&!nativeSelection.isCollapsed&&formattingSurface.contains(nativeSelection.anchorNode)&&formattingSurface.contains(nativeSelection.focusNode));
             if(!range&&!hasNativeSelection&&!savedSelectionOffsets){button.title='Előbb jelölj ki egy szövegrészt.';return}
             if(composing){button.title='Várd meg a mobilos szövegbevitel befejezését.';return}
             try{
               if(!range){
                 const commands={bold:'bold',italic:'italic',underline:'underline',strikethrough:'strikeThrough',subscript:'subscript',superscript:'superscript'};
                 if(!commands[mark])throw new Error('A több blokkra kiterjedő kódformázás még nem támogatott.');
-                editor.focus();if(!hasNativeSelection&&savedSelectionOffsets)restoreSelectionOffsets(editor,savedSelectionOffsets);
+                formattingSurface.focus();if(!hasNativeSelection&&savedSelectionOffsets)restoreSelectionOffsets(formattingSurface,savedSelectionOffsets);
                 if(!document.execCommand(commands[mark],false,null))throw new Error('A böngésző nem tudta végrehajtani a formázást.');
-                const doc=richTextEditorToDocument(editor);if(commitWithoutRender(doc)){rememberSelection();button.title=label+' alkalmazva';}return;
+                const doc=richTextEditorToDocument(formattingSurface);if(commitWithoutRender(doc)){renderRichTextEditor(editor,doc);rememberSelection();button.title=label+' alkalmazva';}return;
               }
               const doc=richTextEditorToDocument(editor),next=updateRichTextInlineMark(doc,range,mark);
               if(command('richtext.content.set',{nodeId:node.id,document:next},{render:false})){
-                richTextDirty=false;renderRichTextEditor(editor,next);refreshCanvasRichText(next);if(savedSelectionOffsets)restoreSelectionOffsets(editor,savedSelectionOffsets);else if(range.blockIndex!==undefined)restoreRichTextBlockSelection(editor,range);rememberSelection();setStatus('Nem mentett módosítás');syncPublishControls();button.title=label+' alkalmazva';
+                richTextDirty=false;renderRichTextEditor(editor,next);refreshCanvasRichText(next);if(savedSelectionOffsets)restoreSelectionOffsets(formattingSurface,savedSelectionOffsets);else if(range.blockIndex!==undefined)restoreRichTextBlockSelection(formattingSurface,range);rememberSelection();setStatus('Nem mentett módosítás');syncPublishControls();button.title=label+' alkalmazva';
               }
             }catch(e){button.title=e instanceof Error?e.message:String(e)}
           };
@@ -541,18 +672,19 @@ function renderInspector(){
         }
         const applyInlineStyle=(key,value)=>{
           const range=savedFormatSelection||getRichTextFormattingSelection(editor);if(!range){formatStatus.textContent='Előbb jelölj ki egy szövegrészt.';return false}
-          try{const doc=richTextEditorToDocument(editor),next=updateRichTextInlineStyle(doc,range,key,value);if(command('richtext.content.set',{nodeId:node.id,document:next},{render:false})){richTextDirty=false;renderRichTextEditor(editor,next);refreshCanvasRichText(next);if(savedSelectionOffsets)restoreSelectionOffsets(editor,savedSelectionOffsets);else if(range.blockIndex!==undefined)restoreRichTextBlockSelection(editor,range);rememberSelection();setStatus('Nem mentett módosítás');syncPublishControls();return true}}catch(error){formatStatus.textContent=error instanceof Error?error.message:String(error)}return false
+          try{const doc=richTextEditorToDocument(editor),next=updateRichTextInlineStyle(doc,range,key,value);if(command('richtext.content.set',{nodeId:node.id,document:next},{render:false})){richTextDirty=false;renderRichTextEditor(editor,next);refreshCanvasRichText(next);if(savedSelectionOffsets)restoreSelectionOffsets(formattingSurface,savedSelectionOffsets);else if(range.blockIndex!==undefined)restoreRichTextBlockSelection(formattingSurface,range);rememberSelection();setStatus('Nem mentett módosítás');syncPublishControls();return true}}catch(error){formatStatus.textContent=error instanceof Error?error.message:String(error)}return false
         };
         fontFamilySelect.onpointerdown=rememberSelection;fontFamilySelect.onchange=()=>applyInlineStyle('fontFamily',fontFamilySelect.value);
-        fontSizeInput.onpointerdown=rememberSelection;fontSizeInput.onchange=()=>{const size=Number(fontSizeInput.value);if(!Number.isInteger(size)||size<8||size>96){formatStatus.textContent='A betűméret 8 és 96 képpont között lehet.';return}applyInlineStyle('fontSize',`${size}px`)};
+        fontSizeInput.onpointerdown=rememberSelection;fontSizeInput.oninput=()=>{fontSizeInput.dataset.pending='true'};fontSizeInput.onchange=()=>{const size=Number(fontSizeInput.value);delete fontSizeInput.dataset.pending;if(!Number.isInteger(size)||size<8||size>96){formatStatus.textContent='A betűméret 8 és 96 képpont között lehet.';return}applyInlineStyle('fontSize',`${size}px`)};
+        fontSizeInput.onblur=()=>{if(fontSizeInput.dataset.pending==='true')fontSizeInput.onchange()};fontSizeInput.onkeydown=event=>{if(['Tab','Enter'].includes(event.key)&&fontSizeInput.dataset.pending==='true'){fontSizeInput.onchange();if(event.key==='Enter'){event.preventDefault();fontSizeInput.blur()}}};
         for(const [key,label] of [['color','Betűszín'],['backgroundColor','Kiemelés színe']]){
           const wrapper=document.createElement('label');wrapper.className='richtext-color-control';wrapper.title=label;
           const text=document.createElement('span');text.textContent=label;
           const input=document.createElement('input');input.type='color';input.value=key==='color'?'#243247':'#fff29a';input.setAttribute('aria-label',label);
-          input.onpointerdown=rememberSelection;input.onchange=()=>applyInlineStyle(key,input.value);
+          input.dataset.styleKey=key;input.onpointerdown=rememberSelection;input.onchange=()=>applyInlineStyle(key,input.value);
           wrapper.append(text,input);colorTools.append(wrapper);
         }
-        formatStatus.textContent='Jelölj ki szöveget, majd válassz formázást. Word- és Excel-beillesztésnél a biztonságos szövegformázás, linkek, listák és táblák maradnak meg.';
+        formatStatus.textContent='Jelölj ki szavakat a vásznon vagy itt, majd formázd őket. Az alapstílus a Stílus fülön állítható.';
         formatStatus.classList.add('richtext-tool-help');toolbar.append(formatStatus);
         const helpDetails=document.createElement('details');helpDetails.className='richtext-editor-help';
         const helpSummary=document.createElement('summary');helpSummary.textContent='ⓘ Mit lehet itt szerkeszteni?';
@@ -570,10 +702,10 @@ function renderInspector(){
           try{
             const doc=updateRichTextInlineLink(richTextEditorToDocument(editor),range,href);
             linkFeedback.textContent='';
-            const offsets=getSelectionOffsets(editor);
+            const offsets=getSelectionOffsets(formattingSurface);
             if(command('richtext.content.set',{nodeId:node.id,document:doc},{render:false})){
               richTextDirty=false;const temporary=document.createElement('div');renderRichTextEditor(temporary,doc);editor.replaceChildren(...temporary.childNodes);
-              restoreSelectionOffsets(editor,offsets);refreshCanvasRichText(doc);setStatus('Nem mentett módosítás');syncPublishControls();rememberSelection();
+              refreshCanvasRichText(doc);restoreSelectionOffsets(formattingSurface,offsets);setStatus('Nem mentett módosítás');syncPublishControls();rememberSelection();
             }
           }catch(e){linkFeedback.textContent=e instanceof Error?e.message:String(e)}
         };
@@ -590,13 +722,14 @@ function renderInspector(){
             setStatus('Nem mentett módosítás');
           }catch(error){formatStatus.textContent=error instanceof Error?error.message:String(error)}
         });
-        editor.addEventListener('input',()=>{richTextDirty=true;savedLinkSelection=null;savedFormatSelection=null;savedSelectionOffsets=null;richTextBookmark=null});
+        editor.addEventListener('input',()=>{richTextDirty=true;flushRichTextDraft=saveRich;savedLinkSelection=null;savedFormatSelection=null;savedSelectionOffsets=null;richTextBookmark=null;if(!composing)saveRich()});
+        editor.addEventListener('focus',()=>{flushRichTextDraft=saveRich});
         editor.addEventListener('beforeinput',()=>{richTextDirty=true});
         editor.addEventListener('compositionstart',()=>{composing=true});
         editor.addEventListener('compositionupdate',()=>{composing=true});
-        editor.addEventListener('compositionend',()=>{composing=false;richTextDirty=true;requestAnimationFrame(rememberSelection)});
-        document.addEventListener('selectionchange',selectionObserver);
-        editor.addEventListener('paste',()=>{richTextDirty=true;requestAnimationFrame(rememberSelection)});
+        editor.addEventListener('compositionend',()=>{composing=false;richTextDirty=true;saveRich();requestAnimationFrame(rememberSelection)});
+        document.addEventListener('selectionchange',selectionObserver);richTextSelectionCleanup=()=>document.removeEventListener('selectionchange',selectionObserver);
+        editor.addEventListener('paste',()=>requestAnimationFrame(rememberSelection));
         editor.addEventListener('mouseup',rememberSelection);
         editor.addEventListener('keyup',rememberSelection);
         editor.addEventListener('touchend',()=>requestAnimationFrame(rememberSelection));
@@ -605,9 +738,16 @@ function renderInspector(){
         });
         url.onfocus=()=>rememberSelection();
         linkControls.append(url,addLink,removeLink,linkFeedback);
-        section.append(toolbar,editor,linkControls);
+        const clearFormat=document.createElement('button');clearFormat.type='button';clearFormat.textContent='Alapformázás';clearFormat.setAttribute('aria-label','Kijelölt szöveg formázásának törlése');clearFormat.title='Az elem alapstílusának visszaállítása a kijelölt szavakon. A szöveg és a linkek megmaradnak.';
+        clearFormat.onpointerdown=event=>{rememberSelection();event.preventDefault()};
+        clearFormat.onclick=()=>{const range=savedFormatSelection;if(!range){formatStatus.textContent='Előbb jelölj ki egy szövegrészt.';return}const doc=clearRichTextInlineFormatting(richTextEditorToDocument(editor),range);if(commitWithoutRender(doc)){renderRichTextEditor(editor,doc);if(savedSelectionOffsets)restoreSelectionOffsets(formattingSurface,savedSelectionOffsets);rememberSelection()}};
+        characterTools.append(clearFormat);
+        const scope=document.createElement('div');scope.className='richtext-scope-banner';scope.setAttribute('role','status');scope.textContent='Élő szöveg · kijelölt rész formázása';
+        section.append(scope,editor,toolbar,linkControls);
+        if(node.locked){toolbar.inert=true;linkControls.inert=true}
+        requestAnimationFrame(()=>{if(editor.isConnected)refreshFormattingControls(null,editor)});
         inspector.append(section);
-      }else if(textTypes.has(node.type))inspector.append(field('Szöveg',node.props?.text??node.props?.content??'',v=>command('element.content.set',{nodeId:node.id,content:v})));
+      }else if(textTypes.has(node.type))inspector.append(renderPlainTextEditor(node));
       if(['button','link'].includes(node.type))inspector.append(renderPropertyInput(getProperty('content.href'),'Link / URL',node.props?.href||'',v=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),href:v}}})));
       else if(!textTypes.has(node.type))inspector.append(field('Tartalom',node.props?.content??'',v=>command('element.content.set',{nodeId:node.id,content:v})));
     }
@@ -646,6 +786,7 @@ function focusScheduleNode(){
 }
 function render(){
   if(flushRichTextDraft?.()===false)return false;
+  if(inlineEditingId&&state?.selection?.primaryId!==inlineEditingId)inlineEditingId=null;
   syncMobileMultiSelectUI();syncPublishControls();renderCanvas();renderInspector();renderLayers();renderRevisionPanel();
   if(state){$('#selection').textContent=`Kijelölés: ${state.selection.primaryId||'—'}`;$('#revision').textContent=`Revision: ${page()?.revision??0}`;setStatus(state.persistence.dirty?'Nem mentett módosítás':'Mentve')}
   const schedule=state?Object.values(page()?.nodes||{}).find(node=>node.type===NODE_TYPES.SCHEDULE):null;
@@ -705,7 +846,7 @@ document.addEventListener('DOMContentLoaded',()=>{
    if(event.target.closest('.node')) return;
    if(state) { command('selection.clear'); }
  });
- document.querySelectorAll('.inspector-tabs button').forEach(b=>b.addEventListener('click',()=>{if(inlineEditingId){if(flushRichTextDraft?.()===false)return;inlineEditingId=null;flushRichTextDraft=null;renderCanvas()}const names=['design','content','advanced'];inspectorTab=names[[...document.querySelectorAll('.inspector-tabs button')].indexOf(b)]||'design';document.querySelectorAll('.inspector-tabs button').forEach(x=>x.classList.toggle('active',x===b));renderInspector()}));
+ document.querySelectorAll('.inspector-tabs button').forEach(b=>b.addEventListener('click',()=>{if(flushRichTextDraft?.()===false)return;const names=['design','content','advanced'];inspectorTab=names[[...document.querySelectorAll('.inspector-tabs button')].indexOf(b)]||'design';document.querySelectorAll('.inspector-tabs button').forEach(x=>x.classList.toggle('active',x===b));renderInspector()}));
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&mobileTouch.active){e.preventDefault();cancelMobileMultiSelect();return}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();save(false)}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();if(state&&flushRichTextDraft?.()!==false){execute(state,{type:e.shiftKey?'history.redo':'history.undo'});render()}}});
  renderPalette();loadTwitchConnection();loadPages().then(()=>window.__sanciEditorBoot?.ready()).catch(showError);
 });

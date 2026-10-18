@@ -57,7 +57,7 @@ export function renderPropertyInput(property, label, current, onChange) {
     for (const value of ['', ...choices]) {
       const option = document.createElement('option');
       option.value = value;
-      option.textContent = value || '— Válassz —';
+      option.textContent = value ? property.optionLabels?.[value] || property.presets?.find(preset=>preset.value===value)?.label || value : '— Válassz —';
       select.append(option);
     }
     if (current && !choices.includes(String(current))) {
@@ -180,6 +180,8 @@ function describeProperty(property) {
     'typography.fontStyle':'A Normál egyenes, a Dőlt megdöntött betűket használ. Rövid kiemeléshez vagy idézethez hasznos; nagy szövegrészen csökkentheti az olvashatóságot.',
     'typography.lineHeight':'A sorok közötti függőleges távolság aránya. 1.4–1.6 általában kényelmes törzsszöveghez, kisebb érték tömör címhez illik.',
     'typography.letterSpacing':'A betűk közötti távolság. Kis pozitív érték levegősebb címet, negatív érték szorosabb megjelenést ad. Törzsszövegnél maradj visszafogott.',
+    'typography.wordSpacing':'A szavak közötti távolságot növeli vagy csökkenti az alap betűközön felül. A 0 az alapérték; például 2px levegősebb mondatot ad. Túl nagy vagy negatív értéknél telefonon nehezebbé válhat az olvasás.',
+    'typography.textIndent':'A bekezdés első sorának behúzása. Például 1em egy betűméretnyi beljebb kezdést ad; negatív értéknél az első sor kilóghat. Nem helyettesíti az egész elem belső térközét.',
     'typography.textAlign':'A szöveg vízszintes igazítása az elemben. A Sorkizárt mindkét szélt kiegyenlíti, ami keskeny telefonos oszlopban nagy hézagokat okozhat.',
     'typography.textTransform':'A megjelenített betűk kis- és nagybetűs alakja. Nem írja át az eredeti tartalmat: a Nagybetűs például vizuálisan nagybetűt mutat, miközben a mentett szöveg változatlan.',
     'typography.textDecoration':'Vizuális vonalat ad a szöveghez: aláhúzás, áthúzás vagy felső vonal. A link aláhúzását ne rejtsd el, ha ez az egyetlen jelzi, hogy kattintható.',
