@@ -1089,3 +1089,31 @@ test('root appearance opts in only after an explicit edit and supports Undo/Redo
   old.pages[old.activePageId].nodes[old.pages[old.activePageId].rootId].style.backgroundColor='#f00';
   assert.equal(old.pages[old.activePageId].nodes[old.pages[old.activePageId].rootId].metadata.rootStyleVersion,undefined);
 });
+
+test('new divider and spacer keep their canonical visual contract without changing legacy pages', () => {
+ const state=createEditorState(),root=activePage(state).rootId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.DIVIDER,parentId:root}});
+ const dividerId=state.selection.primaryId,divider=activePage(state).nodes[dividerId];
+ assert.equal(divider.metadata.decorativeVersion,1);
+ assert.deepEqual(divider.props.decoration,{version:1,thickness:2,color:'#94a3b8',lineStyle:'solid'});
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.SPACER,parentId:root}});
+ const spacerId=state.selection.primaryId,spacer=activePage(state).nodes[spacerId];
+ assert.equal(spacer.metadata.spacerVersion,1);
+ assert.equal(spacer.style.height,'64px');
+ execute(state,{type:'responsive.set',payload:{nodeId:spacerId,device:'mobile',patch:{height:'40px'}}});
+ assert.equal(spacer.responsive.mobile.height,'40px');
+ execute(state,{type:'history.undo'});
+ assert.equal(activePage(state).nodes[spacerId].responsive.mobile.height,undefined);
+ execute(state,{type:'history.redo'});
+ assert.equal(activePage(state).nodes[spacerId].responsive.mobile.height,'40px');
+ const pageId=state.document.activePageId;
+ assert.equal(validatePublishDocument(state.document,pageId),null);
+ const invalid=structuredClone(state.document);
+ invalid.pages[pageId].nodes[dividerId].props.decoration={version:1,thickness:500,color:'#abc',lineStyle:'solid'};
+ assert.equal(validatePublishDocument(invalid,pageId),'INVALID_DIVIDER_CONFIG');
+ const legacy=structuredClone(state.document);
+ delete legacy.pages[pageId].nodes[dividerId].metadata.decorativeVersion;
+ legacy.pages[pageId].nodes[dividerId].props.decoration={version:1,thickness:500,color:'bogus',lineStyle:'none'};
+ assert.equal(validatePublishDocument(legacy,pageId),null,'old content is unchanged until opt-in');
+ assertValidEditorDocument(state.document);
+});
