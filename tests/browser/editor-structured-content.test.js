@@ -16,7 +16,13 @@ test('structured Inspector editing survives Save, Publish and public interaction
   execute(model,{type:'element.add',payload:{type,parentId:root,name:type}});
   ids[type]=model.selection.primaryId;
  }
- for(const [type,props] of [
+ for(const type of ['badge','quote','icon']){
+  execute(model,{type:'element.add',payload:{type,parentId:root}});
+  ids[type]=model.selection.primaryId;
+ }
+ execute(model,{type:'element.update',payload:{nodeId:ids.quote,patch:{props:{text:'Idézet első változat',attribution:'Készítő'}}}});
+ execute(model,{type:'element.update',payload:{nodeId:ids.icon,patch:{props:{icon:'heart',label:'Szív ikon'}}}});
+  for(const [type,props] of [
   ['image',{src:'/media/banner.jpg',alt:'Kezdőlap borítókép'}],
   ['video',{src:'/media/trailer.mp4'}],
   ['audio',{src:'/media/theme.mp3'}],
@@ -74,6 +80,9 @@ test('structured Inspector editing survives Save, Publish and public interaction
  assert.match(await multi.locator('h3').textContent(),/2 elem/);
  await multi.locator('.multi-inspector-field input[type=color]').first().evaluate(el=>{el.value='#112233';el.dispatchEvent(new Event('change',{bubbles:true}))});
  assert.equal(posts.length,0,'bulk edit does not publish or save automatically');
+  await select(ids.quote);
+ await editor.locator('.field textarea').last().fill('Egyedi idézet új változat');
+ await editor.locator('.field textarea').last().press('Tab');
   await select(ids.tabs);
  assert.equal(await editor.locator('.structured-inspector h3').textContent(),'Fülek');
  const first=editor.locator('.structured-item').first();
@@ -89,7 +98,12 @@ test('structured Inspector editing survives Save, Publish and public interaction
  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
  assert.equal(posts.at(-1).publish,true);
  await viewer.goto(base+'/p/test');
- const mediaImage=viewer.locator('.visual-editor-node[data-node-id="'+ids.image+'"]');
+ const quote=viewer.locator('blockquote[data-node-id="'+ids.quote+'"]');
+ assert.match(await quote.textContent(),/Egyedi idézet új változat/);
+ assert.equal(await quote.locator('cite').textContent(),'Készítő');
+ assert.equal(await viewer.locator('span.visual-badge[data-node-id="'+ids.badge+'"]').count(),1);
+ assert.equal(await viewer.locator('span.visual-icon[data-node-id="'+ids.icon+'"]').getAttribute('aria-label'),'Szív ikon');
+  const mediaImage=viewer.locator('.visual-editor-node[data-node-id="'+ids.image+'"]');
  assert.equal(await mediaImage.getAttribute('alt'),'Kezdőlap borítókép');
  assert.equal(await viewer.locator('video[data-node-id="'+ids.video+'"][controls]').count(),1);
  assert.equal(await viewer.locator('audio[data-node-id="'+ids.audio+'"][controls]').count(),1);
