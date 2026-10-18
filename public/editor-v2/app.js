@@ -1,6 +1,6 @@
 import {createDocument,createPage,getNode,NODE_TYPES,canContain,normalizeRichText} from './core/schema.js';
 import {createEditorState,activePage,selectedNodes,setSelection,markSaved} from './core/state.js';
-import {execute,executeCoalesced} from './core/commands.js';
+import {execute,executeCoalesced,executeBatch} from './core/commands.js';
 import {applyNodeStyle,getNodeGeometry,resolveNodeStyle} from './core/canvas-engine.js?v=20261018-text-sync';
 import {computeCanvasMinHeight} from './core/canvas-extent.js';
 import {measureCanvasWorkspace} from './core/canvas-workspace.js';
@@ -19,6 +19,8 @@ import {importRichTextClipboard} from './core/richtext-import.js';
 import {captureStyleSnapshot} from './core/style-snapshot.js';
 import {LAYOUT_PRESETS,LAYOUT_TYPES,layoutMode,isManagedLayout,isLayoutPropertyRelevant,explicitGridColumnCount} from './core/layout-presets.js';
 import {TYPOGRAPHY_PRESETS,typographyPresetPatch} from './core/typography-presets.js';
+import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent} from './core/element-content.js';
+import {renderStructuredInspector} from './ui/structured-inspector.js';
 import {readRichTextSelectionFormatting,clearRichTextInlineFormatting} from './core/richtext-links.js';
 
 let inspectorCategory='all';let richTextSelectionCleanup=null;let richTextToolTab='character';
@@ -26,6 +28,7 @@ let inspectorCategory='all';let richTextSelectionCleanup=null;let richTextToolTa
 let state=null;let pages=[];let archivedPages=[];let revisionHistory=[];let zoom=1;let inspectorTab='design';let inspectorQuery='';let flushRichTextDraft=null;let inlineEditingId=null;let richTextBookmark=null;let copiedStyleSnapshot=null;let canvasDrag=null;let canvasResize=null;let mobileTouch={active:false,timer:null,downId:null,startX:0,startY:0,snapshot:[],snapshotPrimary:null,suppressClick:false,longPressTriggered:false};let hierarchyDrag={nodeId:null,overId:null};let mobileHierarchyDrag={active:false,timer:null,nodeId:null,overId:null,startX:0,startY:0,suppressClick:false};
 const $=s=>document.querySelector(s);const canvas=$('#canvas');const inspector=$('#inspectorBody');
 const sizes={desktop:1440,tablet:768,mobile:390};
+const validHexColor=value=>typeof value==='string'&&/^#(?:[a-f0-9]{3}|[a-f0-9]{6})$/i.test(value);
 const ELEMENT_DESCRIPTIONS={Section:'Oldalszakasz vagy nagyobb tartalmi blokk.',Container:'Rendezett tartalmak befoglalója.',Stack:'Egymásba rendezett elemek csoportja.',Group:'Több elem közös csoportja.',Row:'Elemek egy sorban történő elrendezése.',Columns:'Több oszlopos elrendezés.',Flex:'Rugalmas Flexbox elrendezés.',Grid:'Rács alapú elrendezés.',Slot:'Fenntartott tartalomhely.',Spacer:'Üres tér létrehozása.',Heading:'Címsor H1–H6 szinttel.',Szöveg:'Egyszerű szöveges tartalom.',"Rich Text":'Formázott szöveg, lista, idézet és link.',Link:'Kattintható hivatkozás.',Gomb:'Kattintható műveleti gomb.',Breadcrumb:'Navigációs útvonal.',Kép:'Kép megjelenítése.',Galéria:'Több kép megjelenítése.',Videó:'Videótartalom.',Audio:'Hanglejátszás.',Ikon:'Grafikus ikon.',Carousel:'Lapozható tartalom.',Embed:'Beágyazott tartalom.',Iframe:'Külső oldal beágyazása.',Code:'Kód megjelenítése.',Card:'Önálló tartalmi kártya.',Lista:'Felsorolás vagy lista.',Táblázat:'Táblázatos adatmegjelenítés.',Tabs:'Fülek között váltható tartalom.',Accordion:'Nyitható-csukható blokkok.',Dropdown:'Lenyíló menü vagy választó.',Pagination:'Lapozás.',Search:'Keresési funkció.',Modal:'Felugró ablak.',Navbar:'Fő navigáció.',Menu:'Navigációs menü.',Sidebar:'Oldalsó sáv.',Footer:'Oldal alsó része.',Form:'Űrlap befoglaló.',Input:'Egysoros beviteli mező.',Textarea:'Többsoros beviteli mező.',Checkbox:'Jelölőnégyzet.',Radio:'Egyszeres választás.',Select:'Lenyíló választó.',Slider:'Csúszkás értékválasztó.',File:'Fájlfeltöltő mező.',Submit:'Űrlap beküldése.',"Social Links":'Közösségi hivatkozások.',Discord:'Discord tartalom vagy hivatkozás.',Twitch:'Twitch tartalom.',YouTube:'YouTube tartalom.',TikTok:'TikTok tartalom.',"Élő állapot":'Élő vagy offline állapot.',Countdown:'Visszaszámláló.',Adásrend:'Tervezett adások listája.',"Stream számláló":'Streamhez kapcsolódó számláló.',"Követők":'Követőszám.',"Feliratkozók":'Feliratkozószám.',VOD:'Korábbi stream vagy videó.',Támogatás:'Támogatási lehetőségek.',Közösség:'Közösségi tartalom.',"Játékkártya":'Játék kiemelt kártyája.',"Játéklista":'Játékok listája.',Komponens:'Újrafelhasználható komponens.',"Egyedi elem":'Egyedi testreszabható elem.',"Badge/Tag":'Címke vagy állapotjelző.',Quote:'Idézet.',Panel:'Tartalmi panel.',Overlay:'Más tartalom fölötti réteg.',Absolute:'Abszolút pozicionált elem.',Sticky:'Görgetés közben rögzített elem.',Tooltip:'Rövid magyarázó felirat.',Shorts:'Shorts tartalmi blokk.',Sponsor:'Szponzorációs tartalom.',"Business Contact":'Üzleti kapcsolatfelvétel.',"About Me":'Bemutatkozó tartalom.',"Sanci Button":'Sanci9517 egyedi gomb.'};
 const groups=[
  ['Layout',[['Section',NODE_TYPES.SECTION],['Container',NODE_TYPES.CONTAINER],['Stack',NODE_TYPES.STACK],['Group',NODE_TYPES.GROUP],['Row',NODE_TYPES.ROW],['Columns',NODE_TYPES.COLUMNS],['Flex',NODE_TYPES.FLEX],['Grid',NODE_TYPES.GRID],['Slot',NODE_TYPES.SLOT],['Spacer',NODE_TYPES.SPACER]]],
@@ -242,7 +245,14 @@ function openRichTextFormatting(id){
   render();window.sanciEditor?.openPanel?.('right');
   requestAnimationFrame(()=>inspector.querySelector('.richtext-editor-surface')?.focus());
 }
-function renderNode(currentPage,id,managed=false){const node=getNode(currentPage,id);if(!node)return null;managed=managed||isManagedLayout(node);const el=document.createElement('div');el.className=`node ${state.selection.ids.includes(id)?'selected':''}`;el.classList.toggle('managed-layout',managed);el.dataset.nodeId=id;el.dataset.device=state.viewport.device;applyNodeStyle(el,node,state.viewport.device);const head=document.createElement('div');head.className='node-head';const headName=document.createElement('span');headName.textContent=node.name||node.type;const headType=document.createElement('small');headType.textContent=node.type;head.append(headName,headType);el.append(head);
+function renderNode(currentPage,id,managed=false){const node=getNode(currentPage,id);if(!node)return null;managed=managed||isManagedLayout(node);const el=document.createElement('div');el.className=`node ${state.selection.ids.includes(id)?'selected':''}`;el.classList.toggle('managed-layout',managed);el.dataset.nodeId=id;el.dataset.device=state.viewport.device;applyNodeStyle(el,node,state.viewport.device);
+ const validHex=value=>typeof value==='string'&&/^#(?:[a-f0-9]{3}|[a-f0-9]{6})$/i.test(value)?value:'';
+ for(const [value,klass,variable] of [
+  [node.states?.hover?.backgroundColor,'visual-hover-bg','--sanci-hover-bg'],
+  [node.states?.hover?.color,'visual-hover-text','--sanci-hover-color'],
+  [node.states?.focus?.outlineColor,'visual-focus-outline','--sanci-focus-outline']
+ ]){const color=validHex(value);if(color){el.classList.add(klass);el.style.setProperty(variable,color)}}
+ const head=document.createElement('div');head.className='node-head';const headName=document.createElement('span');headName.textContent=node.name||node.type;const headType=document.createElement('small');headType.textContent=node.type;head.append(headName,headType);el.append(head);
   if(node.type===NODE_TYPES.RICHTEXT){
     const c=document.createElement('div');c.className='node-content richtext-content';
     renderRichTextEditor(c,node.props?.richText);
@@ -282,7 +292,22 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
       el.append(format);
     }
     el.ondblclick=e=>{e.stopPropagation();setSelection(state,[id],id);beginRichTextEditing(id)};
-  }else if(node.type===NODE_TYPES.SCHEDULE){const c=document.createElement('div');c.className='node-content schedule-preview-host';renderSchedulePreview(c,node.props?.schedule);el.append(c)}else if([NODE_TYPES.HEADING,NODE_TYPES.TEXT,NODE_TYPES.BUTTON,NODE_TYPES.LINK].includes(node.type)){
+  }else if(node.type===NODE_TYPES.SCHEDULE){const c=document.createElement('div');c.className='node-content schedule-preview-host';renderSchedulePreview(c,node.props?.schedule);el.append(c)}else if([NODE_TYPES.IMAGE,NODE_TYPES.VIDEO,NODE_TYPES.AUDIO].includes(node.type)){
+    const src=String(node.props?.src||'').trim();const c=document.createElement('div');c.className='node-content media-preview';
+    if(src&&/^(https?:\/\/|\/(?!\/))/.test(src)){
+      const media=document.createElement(node.type===NODE_TYPES.IMAGE?'img':node.type===NODE_TYPES.VIDEO?'video':'audio');
+      media.src=src;media.style.maxWidth='100%';media.style.width='100%';
+      if(node.type===NODE_TYPES.IMAGE){media.alt=String(node.props?.alt||'');media.style.objectFit=node.props?.objectFit==='contain'?'contain':'cover';}
+      else{media.controls=true;media.preload='none';if(node.type===NODE_TYPES.VIDEO)media.playsInline=true;media.addEventListener('pointerdown',event=>event.stopPropagation());}
+      c.append(media);
+    }else{const placeholder=document.createElement('small');placeholder.textContent='Adj meg egy média URL-t a Tartalom panelen.';c.append(placeholder);}
+    el.append(c);
+   }else if(isStructuredType(node.type)){
+    const c=document.createElement('div');c.className='node-content structured-preview';
+    c.innerHTML=renderElementContent(node.type,node.props?.contentModel??createElementContent(node.type),node.id);
+    for(const eventName of ['pointerdown','click','dblclick'])c.addEventListener(eventName,event=>{if(event.target.closest('button,summary,dialog'))event.stopPropagation()});
+    el.append(c);activateStructuredContent(c);
+  }else if([NODE_TYPES.HEADING,NODE_TYPES.TEXT,NODE_TYPES.BUTTON,NODE_TYPES.LINK].includes(node.type)){
     const c=document.createElement('div');c.className='node-content plain-text-content-surface';c.textContent=node.props?.text??node.props?.content??node.name;
     if(inlineEditingId===id){
       c.classList.add('plain-text-inline-surface');c.contentEditable='plaintext-only';c.setAttribute('role','textbox');c.setAttribute('aria-label','Szöveg közvetlen szerkesztése');
@@ -546,6 +571,41 @@ function pasteSelectedAppearance(node){
   if(page()?.id===copiedStyleSnapshot.sourcePageId&&node.id===copiedStyleSnapshot.sourceNodeId){setStatus('A forrás elemen már ugyanaz a stílus van.');return}
   if(command('style.snapshot.apply',{nodeId:node.id,snapshot:copiedStyleSnapshot}))setStatus(`A másolt megjelenés alkalmazva: ${node.name||node.type}. Mentéshez használd a Mentés gombot.`);
 }
+function renderMultiInspector(nodes){
+ const panel=document.createElement('section');panel.className='multi-inspector';
+ const title=document.createElement('h3');title.textContent=`${nodes.length} elem közös beállításai`;panel.append(title);
+ const locked=nodes.some(node=>node.locked);
+ const note=document.createElement('small');note.textContent=locked?'Zárolt elem is van kijelölve: a közös módosítás ezért tiltva van.':'A változás az összes kijelölt elemre egyszerre érvényes. Egyetlen Visszavonás visszaállítja az előző állapotot.';panel.append(note);
+ const device=state.viewport.device;
+ const apply=patch=>{if(locked)return;try{
+  executeBatch(state,nodes.map(node=>({type:'responsive.set',payload:{nodeId:node.id,device,patch}})),{label:'Több elem közös formázása'});
+  render();setStatus(`${nodes.length} elem közös megjelenése módosult. Mentés szükséges.`);
+ }catch(error){setStatus(error.message||'A közös formázás nem sikerült.')}};
+ const make=(label,key,kind,defaultValue,unit='')=>{
+  const row=document.createElement('label');row.className='multi-inspector-field';
+  const text=document.createElement('span');text.textContent=label;row.append(text);
+  const values=nodes.map(node=>resolveResponsiveValue(node.responsive,key,device)?.value);
+  const same=values.every(value=>value===values[0]);
+  const input=document.createElement('input');input.type=kind;
+  input.disabled=locked;
+  const value=same?values[0]:undefined;
+  if(kind==='color'){input.value=validHexColor(value)?value:defaultValue;input.title=same?'':'Eltérő értékek';input.onchange=()=>apply({[key]:input.value});}
+  else{
+   input.value=value===undefined?'':String(value).replace(unit,'');input.placeholder=same?'Alapérték':'Eltérő értékek';
+   input.min=key==='opacity'?'0':'0';input.max=key==='opacity'?'1':'2000';input.step=key==='opacity'?'0.05':'1';
+   input.onchange=()=>{const v=Number(input.value);if(!input.value.trim()||!Number.isFinite(v)||v<0||(key==='opacity'&&v>1))return;apply({[key]:unit?`${v}${unit}`:v})};
+  }
+  row.append(input);if(unit){const u=document.createElement('small');u.textContent=unit;row.append(u)}
+  panel.append(row);
+ };
+ make('Háttérszín','backgroundColor','color','#334155');
+ make('Szövegszín','color','color','#ffffff');
+ make('Betűméret','fontSize','number','16','px');
+ make('Belső térköz','padding','number','16','px');
+ make('Saroklekerekítés','borderRadius','number','8','px');
+ make('Átlátszóság','opacity','number','1');
+ return panel;
+}
 function renderInspector(){
   const previousScrollTop=inspector.scrollTop;
   const restoreScroll=()=>requestAnimationFrame(()=>{inspector.scrollTop=previousScrollTop});
@@ -557,7 +617,7 @@ function renderInspector(){
   renderInspectorSearch();
   const nodes=state?selectedNodes(state):[];
   if(!nodes.length){inspector.insertAdjacentHTML('beforeend','<div class="inspector-empty"><b>Inspector</b><span>Válassz ki egy elemet a vásznon vagy a Rétegek panelen.</span></div>');filterInspector();restoreScroll();return}
-  if(nodes.length>1){inspector.insertAdjacentHTML('beforeend','<div class="inspector-empty"><b>Több elem kijelölve</b><span>A tulajdonságokat egyenként szerkesztheted. Így más kijelölt elem nem módosul véletlenül.</span></div>');filterInspector();restoreScroll();return}
+  if(nodes.length>1){inspector.append(renderMultiInspector(nodes));filterInspector();restoreScroll();return}
   const node=nodes[0];
   const header=document.createElement('div');header.className='inspector-selection';
   const headerName=document.createElement('b');headerName.textContent=node.name||node.type;
@@ -577,6 +637,26 @@ function renderInspector(){
     if(['heading','text','richtext','button','link'].includes(node.type))inspector.append(renderTypographyPresets(node));
     if(node.type==='schedule')inspector.append(renderScheduleInspector(node));
     else inspector.append(renderRegistryInspector(node,'primary'));
+    if(node.id!==page()?.rootId){
+      const statesPanel=document.createElement('details');statesPanel.className='state-inspector';
+      const heading=document.createElement('summary');heading.textContent='Rámutatás és fókusz';statesPanel.append(heading);
+      const note=document.createElement('small');note.textContent='Egyszerű, külön állapotstílusok a látogatói oldalon. A fókuszjelölés a billentyűzetes navigációt segíti.';statesPanel.append(note);
+      for(const [group,key,label,defaultColor] of [
+        ['hover','backgroundColor','Rámutatás: háttér','#334155'],
+        ['hover','color','Rámutatás: szöveg','#ffffff'],
+        ['focus','outlineColor','Fókuszkeret színe','#2563eb']
+      ]){
+        const row=document.createElement('label');row.className='state-color-field';
+        const caption=document.createElement('span');caption.textContent=label;row.append(caption);
+        const value=node.states?.[group]?.[key];
+        const picker=document.createElement('input');picker.type='color';picker.value=validHexColor(value)?value:defaultColor;picker.disabled=Boolean(node.locked);
+        picker.onchange=()=>command('element.update',{nodeId:node.id,patch:{states:{...(node.states||{}),[group]:{...(node.states?.[group]||{}),[key]:picker.value}}}});
+        const clear=document.createElement('button');clear.type='button';clear.textContent='Törlés';clear.disabled=Boolean(node.locked||!value);
+        clear.onclick=()=>{const next={...(node.states?.[group]||{})};delete next[key];command('element.update',{nodeId:node.id,patch:{states:{...(node.states||{}),[group]:next}}})};
+        row.append(picker,clear);statesPanel.append(row);
+      }
+      inspector.append(statesPanel);
+    }
     const lockRow=document.createElement('label');lockRow.className='inspector-toggle';
     const lockInput=document.createElement('input');lockInput.type='checkbox';lockInput.checked=Boolean(node.locked);lockInput.disabled=node.id===page()?.rootId;
     lockInput.onchange=()=>command('element.lock.set',{nodeId:node.id,locked:lockInput.checked});
@@ -796,11 +876,55 @@ function renderInspector(){
         requestAnimationFrame(()=>{if(editor.isConnected)refreshFormattingControls(null,editor)});
         inspector.append(section);
       }else if(textTypes.has(node.type))inspector.append(renderPlainTextEditor(node));
-      if(['button','link'].includes(node.type))inspector.append(renderPropertyInput(getProperty('content.href'),'Link / URL',node.props?.href||'',v=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),href:v}}})));
+      
+      if(node.type==='heading'){
+        const levelField=document.createElement('label');levelField.className='field';levelField.append(document.createTextNode('Címsorszint'));
+        const levelSelect=document.createElement('select');
+        for(let level=1;level<=6;level++){const opt=document.createElement('option');opt.value=String(level);opt.textContent='H'+level;levelSelect.append(opt)}
+        levelSelect.value=String(Number.isInteger(node.props?.level)?node.props.level:2);
+        levelSelect.disabled=Boolean(node.locked);
+        levelSelect.onchange=()=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),level:Number(levelSelect.value)}}});
+        levelField.append(levelSelect);inspector.append(levelField);
+      }
+      if(['button','link'].includes(node.type)){
+        inspector.append(renderPropertyInput(getProperty('content.href'),'Link / URL',node.props?.href||'',v=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),href:v}}})));
+        const openNew=document.createElement('label');openNew.className='inspector-toggle';
+        const checked=document.createElement('input');checked.type='checkbox';checked.checked=Boolean(node.props?.newWindow);checked.disabled=Boolean(node.locked);
+        checked.onchange=()=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),newWindow:checked.checked}}});
+        openNew.append(checked,document.createTextNode('Megnyitás új lapon'));inspector.append(openNew);
+      }
+      else if(isStructuredType(node.type)){
+        const content=renderStructuredInspector(node,model=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),contentModel:model},metadata:{...(node.metadata||{}),structuredContentVersion:1}}}));
+        if(content)inspector.append(content);
+      }
+      else if(['image','video','audio'].includes(node.type)){
+        const setMedia=(patch)=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),...patch}}});
+        inspector.append(field('Média URL',node.props?.src??'',v=>setMedia({src:v.trim()})));
+        if(node.type==='image'){
+          inspector.append(field('Kép leírása (alt)',node.props?.alt??'',v=>setMedia({alt:v})));
+          const fitLabel=document.createElement('label');fitLabel.className='field';fitLabel.append(document.createTextNode('Kép illesztése'));
+          const fit=document.createElement('select');
+          for(const [value,label] of [['cover','Kitöltés / vágás'],['contain','Teljes kép']]){const option=document.createElement('option');option.value=value;option.textContent=label;fit.append(option)}
+          fit.value=node.props?.objectFit==='contain'?'contain':'cover';fit.onchange=()=>setMedia({objectFit:fit.value});fitLabel.append(fit);inspector.append(fitLabel);
+          const decorative=document.createElement('label');decorative.className='inspector-toggle';
+          const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.checked=Boolean(node.accessibility?.decorative);
+          checkbox.onchange=()=>command('element.update',{nodeId:node.id,patch:{accessibility:{...(node.accessibility||{}),decorative:checkbox.checked}}});
+          decorative.append(checkbox,document.createTextNode('Csak díszítő kép (nem kell képleírás)'));inspector.append(decorative);
+        }else{const hint=document.createElement('small');hint.textContent=node.type==='video'?'Közvetlen videófájl URL-je (pl. MP4), nem YouTube oldalhivatkozás.':'Közvetlen hangfájl URL-je (pl. MP3).';inspector.append(hint);}
+      }
       else if(!textTypes.has(node.type))inspector.append(field('Tartalom',node.props?.content??'',v=>command('element.content.set',{nodeId:node.id,content:v})));
     }
   }else{
     inspector.append(renderRegistryInspector(node,'advanced'));
+    const updateAccessibility=patch=>command('element.update',{nodeId:node.id,patch:{accessibility:{...(node.accessibility||{}),...patch}}});
+    inspector.append(field('Hivatkozási azonosító (#)',node.accessibility?.anchorId||'',value=>{
+      const id=value.trim();if(id&&!/^[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(id)){setStatus('Az azonosító betűvel kezdődjön, betűt, számot, - és _ jelet tartalmazhat.');return}
+      const current=page();const duplicate=Object.values(current?.nodes||{}).some(other=>other.id!==node.id&&other.accessibility?.anchorId===id&&Boolean(id));
+      if(duplicate){setStatus('Az azonosító már létezik ezen az oldalon.');return}
+      updateAccessibility({anchorId:id});
+    }));
+    inspector.append(field('Akadálymentes név',node.accessibility?.ariaLabel||'',value=>updateAccessibility({ariaLabel:value.slice(0,250)})));
+    const help=document.createElement('small');help.textContent='A hivatkozási azonosítóhoz #azonosító formával készíthetsz belső linket. Az akadálymentes név a képernyőolvasóknak segít.';inspector.append(help);
     inspector.append(field('Node ID',node.id,()=>{},true),field('Típus',node.type,()=>{},true),field('Szülő ID',node.parentId||'',()=>{},true));
   }
   const actions=document.createElement('div');actions.className='inspector-actions';const del=document.createElement('button');del.type='button';del.className='danger-action';del.textContent='Törlés';del.disabled=node.id===page()?.rootId;del.title=del.disabled?'A gyökérelem nem törölhető':'Kijelölt elem törlése';del.onclick=()=>{if(!del.disabled)command('element.delete',{nodeId:node.id})};actions.append(del);inspector.append(actions);filterInspector();restoreScroll()

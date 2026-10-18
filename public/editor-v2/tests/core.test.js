@@ -1,3 +1,4 @@
+import {createElementContent,normalizeElementContent,validateElementContent,renderElementContent,safeMediaUrl} from '../core/element-content.js';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
@@ -890,4 +891,153 @@ test('Editor preserves edits made while a save request is in flight', () => {
   assert.match(save, /if\(unchanged\)\{markSaved\(stateAtStart,version\)\}else\{stateAtStart\.persistence\.saving=false;stateAtStart\.persistence\.dirty=true/);
   assert.match(save, /meta\.revision=version/);
   assert.match(save, /további helyi módosítások még nincsenek mentve/);
+});
+
+test('new media remains editable as draft and publish requires a safe source and accessible image', () => {
+  const state=createEditorState();
+  const root=activePage(state).rootId;
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.IMAGE,parentId:root}});
+  const imageId=state.selection.primaryId;
+  const publish=()=>validatePublishDocument(state.document,state.document.activePageId);
+  assert.equal(publish(),'INVALID_MEDIA_SOURCE');
+  execute(state,{type:'element.update',payload:{nodeId:imageId,patch:{props:{src:'/uploads/banner.png'}}}});
+  assert.equal(publish(),'IMAGE_ALT_REQUIRED');
+  execute(state,{type:'element.update',payload:{nodeId:imageId,patch:{props:{src:'/uploads/banner.png',alt:'Borítókép'}}}});
+  assert.equal(publish(),null);
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.VIDEO,parentId:root,props:{src:'javascript:alert(1)'}}});
+  const videoId=state.selection.primaryId;
+  assert.equal(publish(),'INVALID_MEDIA_SOURCE');
+  execute(state,{type:'element.update',payload:{nodeId:videoId,patch:{props:{src:'https://cdn.example.com/intro.mp4'}}}});
+  assert.equal(publish(),null);
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.AUDIO,parentId:root,props:{src:'/media/theme.mp3'}}});
+  assert.equal(publish(),null);
+  assertValidEditorDocument(state.document);
+  execute(state,{type:'element.update',payload:{nodeId:imageId,patch:{accessibility:{decorative:true},props:{src:'/uploads/decor.png'}}}});
+  assert.equal(publish(),null);
+  // Previously saved pages without the new contract are not silently migrated.
+  const legacy=structuredClone(state.document);
+  const img=legacy.pages[legacy.activePageId].nodes[imageId];
+  delete img.metadata.editorContentVersion;
+  img.props={};
+  assert.equal(validatePublishDocument(legacy,legacy.activePageId),null);
+  const publicRenderer=readFileSync(new URL('../../assets/page-renderer.js',import.meta.url),'utf8');
+  assert.match(publicRenderer,/visual-video/);
+  assert.match(publicRenderer,/visual-audio/);
+});
+
+test('structured elements share a versioned content contract, publish guard and undo',()=>{
+ for(const type of ['list','table','tabs','accordion','gallery','carousel']){
+  const state=createEditorState(),root=activePage(state).rootId;
+  execute(state,{type:'element.add',payload:{type,parentId:root}});
+  const id=state.selection.primaryId,n=activePage(state).nodes[id];
+  assert.equal(n.metadata.structuredContentVersion,1);
+  assert.deepEqual(n.props.contentModel,createElementContent(type));
+  assertValidEditorDocument(state.document);
+  const err=validatePublishDocument(state.document,state.document.activePageId);
+  assert.equal(err,type==='gallery'?'INVALID_GALLERY_IMAGE':null,type);
+  const html=renderElementContent(type,n.props.contentModel,id);
+  assert.ok(html.length>20);
+  if(type==='gallery'){
+   const model={version:1,items:[{src:'/media/safe.png',alt:'Magyar felirat',caption:'Képaláírás'}]};
+   execute(state,{type:'element.update',payload:{nodeId:id,patch:{props:{...n.props,contentModel:model}}}});
+   assert.equal(validatePublishDocument(state.document,state.document.activePageId),null);
+   const bad={version:1,items:[{src:'javascript:alert(1)',alt:'Teszt',caption:''}]};
+   assert.equal(validateElementContent('gallery',bad),'INVALID_GALLERY_IMAGE');
+  }
+  execute(state,{type:'history.undo'});
+  assertValidEditorDocument(state.document);
+ }
+});
+test('structured models sanitize content and strictly validate dimensions',()=>{
+ assert.equal(safeMediaUrl('javascript:alert(1)'),'');
+ assert.equal(safeMediaUrl('//attacker.example/image.png'),'');
+ assert.equal(safeMediaUrl('/image.png'),'/image.png');
+ assert.equal(safeMediaUrl('https://cdn.example.com/photo.jpg'),'https://cdn.example.com/photo.jpg');
+ assert.throws(()=>normalizeElementContent('table',{version:1,rows:[['a','b'],['c']]}));
+ assert.equal(validateElementContent('tabs',{version:1,items:[{label:'',content:'content'}]}),'INCOMPLETE_INTERACTIVE_CONTENT');
+ assert.equal(validateElementContent('gallery',{version:1,items:[{src:'/photo.jpg',alt:'',caption:''}]}),'GALLERY_ALT_REQUIRED');
+ const malicious={version:1,items:[{label:'<script>alert(1)</script>',content:'<img src=x onerror=alert(1)>'}]};
+ const html=renderElementContent('tabs',malicious,'abc');
+ assert.ok(html.includes('&lt;script&gt;'));
+ assert.ok(!html.includes('<script>'));
+ assert.ok(html.includes('role="tab"'));
+ assert.ok(html.includes('role="tabpanel"'));
+ const details=renderElementContent('accordion',{version:1,items:[{label:'FAQ',content:'Details'}]},'faq');
+ assert.ok(details.includes('<details'));
+ assert.ok(details.includes('<summary'));
+ const table=renderElementContent('table',{version:1,rows:[['Header'],['Data']]},'table');
+ assert.ok(table.includes('<th scope="col">Header</th>'));
+});
+
+test('heading levels and safe external link targets reach the public renderer without script injection',()=>{
+ const source=readFileSync(new URL('../../assets/page-renderer.js',import.meta.url),'utf8');
+ assert.match(source,/const level=Number.isInteger\(p.level\)/);
+ assert.match(source,/target="\_blank" rel="noopener noreferrer"/);
+ assert.match(source,/safeRichUrl\(p.url\|\|p.href\)/);
+ const state=createEditorState(),root=activePage(state).rootId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.HEADING,parentId:root}});
+ const id=state.selection.primaryId;
+ execute(state,{type:'element.update',payload:{nodeId:id,patch:{props:{text:'Kezdőlap',level:1}}}});
+ assert.equal(activePage(state).nodes[id].props.level,1);
+ assertValidEditorDocument(state.document);
+});
+
+test('copying an anchor regenerates a distinct element URL fragment',()=>{
+ const state=createEditorState(),root=activePage(state).rootId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.SECTION,parentId:root}});
+ const id=state.selection.primaryId;
+ execute(state,{type:'element.update',payload:{nodeId:id,patch:{accessibility:{anchorId:'profile',ariaLabel:'Profil szakasz'}}}});
+ execute(state,{type:'element.duplicate',payload:{nodeId:id}});
+ const clone=activePage(state).nodes[state.selection.primaryId];
+ assert.equal(clone.accessibility.anchorId,'profile-copy');
+ assert.equal(clone.accessibility.ariaLabel,'Profil szakasz');
+ assert.equal(validatePublishDocument(state.document,state.document.activePageId),null);
+ const broken=structuredClone(state.document);
+ broken.pages[broken.activePageId].nodes[clone.id].accessibility.anchorId='profile';
+ assert.equal(validatePublishDocument(broken,broken.activePageId),'DUPLICATE_ELEMENT_ANCHOR');
+ const renderer=readFileSync(new URL('../../assets/page-renderer.js',import.meta.url),'utf8');
+ assert.match(renderer,/aria-label/);
+ assert.match(renderer,/accessibility\?\.anchorId/);
+});
+
+test('carousel content validates optional media and accessible slide labels',()=>{
+ const model=createElementContent('carousel');
+ assert.equal(validateElementContent('carousel',model),null);
+ model.items[0].src='/slides/screen.png';
+ assert.equal(validateElementContent('carousel',model),'CAROUSEL_ALT_REQUIRED');
+ model.items[0].alt='A stream képernyőképe';
+ assert.equal(validateElementContent('carousel',model),null);
+ const html=renderElementContent('carousel',model,'carousel-demo');
+ assert.match(html,/aria-roledescription="carousel"/);
+ assert.match(html,/aria-roledescription="dia"/);
+ assert.match(html,/visual-carousel-next/);
+});
+
+test('hover/focus appearance writes into canonical node states and is undoable',()=>{
+ const state=createEditorState();
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.BUTTON}});
+ const id=state.selection.primaryId;
+ execute(state,{type:'element.update',payload:{nodeId:id,patch:{states:{hover:{backgroundColor:'#123456',color:'#ffffff'},focus:{outlineColor:'#00ff00'}}}}});
+ assert.equal(activePage(state).nodes[id].states.hover.backgroundColor,'#123456');
+ assert.equal(validatePublishDocument(state.document,state.document.activePageId),null);
+ execute(state,{type:'history.undo'});
+ assert.equal(activePage(state).nodes[id].states.hover,undefined);
+ const pub=readFileSync(new URL('../../assets/page-renderer.js',import.meta.url),'utf8');
+ assert.match(pub,/visual-hover-bg/);
+ assert.match(pub,/visual-focus-outline/);
+});
+
+test('atomic multi-selection appearance can be reverted with one undo and rejects locked nodes',()=>{
+ const state=createEditorState(),root=activePage(state).rootId;
+ for(let i=0;i<2;i++)execute(state,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:root}});
+ const ids=[...activePage(state).nodes[root].children];
+ const actions=ids.map(nodeId=>({type:'responsive.set',payload:{nodeId,device:'desktop',patch:{backgroundColor:'#112233',fontSize:'18px'}}}));
+ executeBatch(state,actions,{label:'Közös megjelenés'});
+ assert.deepEqual(ids.map(id=>activePage(state).nodes[id].responsive.desktop.backgroundColor),['#112233','#112233']);
+ execute(state,{type:'history.undo'});
+ assert.deepEqual(ids.map(id=>activePage(state).nodes[id].responsive.desktop.backgroundColor),[undefined,undefined]);
+ execute(state,{type:'element.lock.set',payload:{nodeId:ids[1],locked:true}});
+ const snapshot=structuredClone(state.document);
+ assert.throws(()=>executeBatch(state,actions,{label:'Közös megjelenés'}));
+ assert.deepEqual(state.document,snapshot);
 });
