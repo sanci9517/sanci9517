@@ -28,7 +28,7 @@ export function normalizeInspectorValue(property, input) {
   }
   if (type === 'dimension') {
     if (!lengthToken.test(value)) throw new Error('Használj érvényes méretet: pl. 24px, 50%, 2rem vagy auto.');
-    if (value.startsWith('-') && !['x','y','letterSpacing'].includes(property.key)) throw new Error('Itt nem használható negatív méret.');
+    if (value.startsWith('-') && !['x','y','letterSpacing','wordSpacing','textIndent'].includes(property.key)) throw new Error('Itt nem használható negatív méret.');
     if (value === 'auto' && !property.units?.includes('auto')) throw new Error('Az auto itt nem használható.');
     if (value === '0') return '0';
     const unit = value.match(/[a-z%]+$/i)?.[0] || '';

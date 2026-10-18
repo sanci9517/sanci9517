@@ -27,6 +27,11 @@ export const STYLE_SNAPSHOT_PROPERTIES = Object.freeze([
   'textAlign',
   'textTransform',
   'textDecoration',
+  'textWrap',
+  'overflowWrap',
+  'wordSpacing',
+  'textIndent',
+  'textShadow',
   'margin',
   'padding'
 ]);

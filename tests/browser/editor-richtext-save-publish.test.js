@@ -19,6 +19,7 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
     {type:'paragraph',children:[{type:'text',text:'Hello world',marks:[]}]},
     {type:'paragraph',children:[{type:'text',text:'Second paragraph',marks:[]}]}
   ]}}});
+  execute(state,{type:'responsive.set',payload:{nodeId,device:'desktop',patch:{fontFamily:'Georgia',fontSize:'20px',lineHeight:'1.6',color:'#123456'}}});
   execute(state,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:state.document.pages[pageId].rootId}});
   const otherNodeId=state.selection.primaryId;
   let draft=structuredClone(state.document),published=null,version=1;
@@ -141,4 +142,86 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
   ]);
   assert.match(warning,/Először mentsd/);
   assert.equal(await tab.locator('.richtext-editor-surface a').getAttribute('href'),'/p/mobile');
+
+  // Live Inspector input updates the canvas while focus and the caret stay put.
+  const liveEditor=tab.locator('.richtext-editor-surface');
+  const postsBeforeTyping=posts.length;
+  await liveEditor.press('Control+End');await liveEditor.type(' élő');
+  assert.match(await tab.locator(`.node[data-node-id="${nodeId}"] > .node-content`).textContent(),/élő$/);
+  assert.equal(await liveEditor.evaluate(el=>document.activeElement===el),true);
+  assert.equal(posts.length,postsBeforeTyping,'live synchronization updates the local draft without an implicit server Save');
+  const beforeIME=await tab.locator(`.node[data-node-id="${nodeId}"] > .node-content`).textContent();
+  await liveEditor.evaluate(el=>{el.dispatchEvent(new CompositionEvent('compositionstart',{bubbles:true}));el.lastElementChild.querySelector('span').textContent='árvíztűrő';el.dispatchEvent(new InputEvent('input',{bubbles:true,isComposing:true}))});
+  assert.equal(await tab.locator(`.node[data-node-id="${nodeId}"] > .node-content`).textContent(),beforeIME,'unfinished IME composition must not enter the canonical model');
+  await liveEditor.evaluate(el=>el.dispatchEvent(new CompositionEvent('compositionend',{bubbles:true,data:'árvíztűrő'})));
+  assert.match(await tab.locator(`.node[data-node-id="${nodeId}"] > .node-content`).textContent(),/árvíztűrő/);
+  await tab.locator('#save').click();await tab.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false);
+
+  await tab.setViewportSize({width:1366,height:900});await openEditor();
+  await tab.locator(`.node[data-node-id="${nodeId}"] .canvas-edit-richtext`).click();
+  await tab.locator('.canvas-format-richtext').click();
+  const inline=tab.getByRole('textbox',{name:'Rich Text közvetlen szerkesztése'});
+  await inline.press('Control+End');await inline.type(' vászon');
+  assert.match(await liveEditor.textContent(),/vászon$/,'canvas input must immediately reach the Inspector');
+  assert.equal(await inline.evaluate(el=>document.activeElement===el),true);
+  await liveEditor.press('Control+End');await liveEditor.type(' Inspector');
+  assert.match(await inline.textContent(),/Inspector$/,'Inspector input must immediately reach the canvas');
+  const selectFirstLink=async root=>root.locator('a span').first().evaluate(el=>{const range=document.createRange();range.selectNodeContents(el);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);document.dispatchEvent(new Event('selectionchange'))});
+  await selectFirstLink(inline);
+  await tab.getByRole('spinbutton',{name:'Betűméret képpontban'}).fill('26');
+  await tab.getByRole('spinbutton',{name:'Betűméret képpontban'}).press('Tab');
+  await tab.getByRole('combobox',{name:'Betűcsalád',exact:true}).selectOption('Georgia');
+  await selectFirstLink(inline);
+  assert.equal(await tab.getByRole('spinbutton',{name:'Betűméret képpontban'}).inputValue(),'26');
+  assert.equal(await tab.getByRole('combobox',{name:'Betűcsalád',exact:true}).inputValue(),'Georgia');
+  assert.equal(await tab.getByRole('button',{name:'Félkövér',exact:true}).getAttribute('aria-pressed'),'true');
+  await tab.getByRole('button',{name:'Kijelölt szöveg formázásának törlése'}).click();
+  assert.equal(await liveEditor.locator('a').getAttribute('href'),'/p/mobile');
+  assert.equal(await liveEditor.locator('a strong').count(),0);
+  assert.equal(await liveEditor.locator('a span').getAttribute('style'),null,'clear formatting restores the element base without removing the link');
+  const textMetrics=el=>{const css=getComputedStyle(el);return {fontSize:css.fontSize,fontFamily:css.fontFamily,lineHeight:css.lineHeight,color:css.color,marginBottom:css.marginBottom}};
+  const canvasTextMetrics=await inline.locator('p').first().evaluate(textMetrics);
+  assert.deepEqual(await liveEditor.locator('p').first().evaluate(textMetrics),canvasTextMetrics,'Inspector and canvas must use the same typography and block spacing');
+  await tab.screenshot({path:'/tmp/creator-ux-p0-live-text-desktop.png'});
+
+  // Ordinary text is the same live workflow, rather than a separate change-on-blur field.
+  await tab.locator(`.node[data-node-id="${otherNodeId}"]`).evaluate(el=>el.click());
+  const plain=tab.getByRole('textbox',{name:'Szöveg tartalma'});
+  await plain.fill('Új tartalom');
+  assert.equal(await tab.locator(`.node[data-node-id="${otherNodeId}"] > .node-content`).textContent(),'Új tartalom');
+  await tab.locator(`.node[data-node-id="${otherNodeId}"] .canvas-edit-text`).click();
+  await tab.locator('.inspector-tabs button').nth(1).click();
+  const plainInline=tab.getByRole('textbox',{name:'Szöveg közvetlen szerkesztése'});
+  await plainInline.press('Control+End');await plainInline.type(' vászon');
+  assert.equal(await plain.inputValue(),'Új tartalom vászon');
+  await tab.locator('#undo').click();assert.equal(await plain.inputValue(),'Új tartalom');
+  await tab.locator('#redo').click();assert.equal(await plain.inputValue(),'Új tartalom vászon');
+  await tab.locator('.inspector-tabs button').first().click();
+  await tab.locator('.inspector-category-nav button').filter({hasText:'Szöveg'}).click();
+  assert.equal(await tab.locator('.inspector-group').filter({hasText:'Geometria'}).isVisible(),false);
+  const roles=tab.locator('.inspector-group-title').filter({hasText:'Szövegstílusok'});await roles.click();
+  const inspectorSearch=tab.getByRole('searchbox',{name:'Beállítás keresése'});
+  await inspectorSearch.fill('Hero');
+  assert.equal(await tab.getByRole('button',{name:'Hero cím szövegstílus',exact:true}).isVisible(),true);
+  assert.equal(await tab.getByRole('button',{name:'Idézet szövegstílus',exact:true}).isVisible(),false);
+  await inspectorSearch.fill('');
+  await tab.getByRole('button',{name:'Hero cím szövegstílus',exact:true}).click();
+  assert.equal(await tab.locator(`.node[data-node-id="${otherNodeId}"]`).evaluate(el=>getComputedStyle(el).fontSize),'72px');
+  assert.equal(await plainInline.textContent(),'Új tartalom vászon');
+  await tab.screenshot({path:'/tmp/creator-ux-p0-inspector-roles-desktop.png'});
+  await tab.locator('.canvas-device-btn[data-device="mobile"]').click();
+  await tab.setViewportSize({width:390,height:800});
+  await tab.getByRole('button',{name:'Hero cím szövegstílus',exact:true}).click();
+  assert.equal(await tab.locator(`.node[data-node-id="${otherNodeId}"]`).evaluate(el=>getComputedStyle(el).fontSize),'40px');
+  await tab.screenshot({path:'/tmp/creator-ux-p0-inspector-roles-mobile.png'});
+  await tab.locator('#save').click();await tab.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false);
+  assert.notEqual(published.pages[pageId].nodes[otherNodeId].props.text,'Új tartalom vászon');
+  await tab.locator('#publish').evaluate(el=>el.click());await tab.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');
+  await publicTab.reload();
+  const publicPlain=publicTab.locator('.visual-text').filter({hasText:'Új tartalom vászon'});await publicPlain.waitFor();
+  assert.equal(await publicPlain.evaluate(el=>getComputedStyle(el).fontSize),'40px');
+  assert.equal(await publicPlain.evaluate(el=>getComputedStyle(el).textWrap),'balance');
+  assert.deepEqual(await publicTab.locator('.visual-richtext p').first().evaluate(textMetrics),canvasTextMetrics,'published Rich Text uses the same typography and block spacing');
 });

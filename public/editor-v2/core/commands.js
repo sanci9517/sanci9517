@@ -87,4 +87,23 @@ export function beginTransaction(state,label='Transaction'){if(state.history.tra
 export function commitTransaction(state){const transaction=state.history.transaction;if(!transaction)throw new Error('No active history transaction');state.history.transaction=null;if(!transaction.actions.length)return state;state.history.past.push({action:{type:'transaction',label:transaction.label,actions:transaction.actions},before:transaction.before,after:cloneDocument(state.document),selectionBefore:transaction.selectionBefore,selectionAfter:structuredClone(state.selection),timestamp:Date.now()});if(state.history.past.length>state.history.limit)state.history.past.shift();state.history.future=[];state.persistence.dirty=true;state.persistence.error=null;return state}
 export function rollbackTransaction(state){const transaction=state.history.transaction;if(!transaction)throw new Error('No active history transaction');state.history.transaction=null;state.document=cloneDocument(transaction.before);setSelection(state,transaction.selectionBefore.ids,transaction.selectionBefore.primaryId);return state}
 export function execute(state,action){if(!action||typeof action.type!=='string')throw new Error('Invalid command');const handler=commands[action.type];if(!handler)throw new Error(`Unknown command: ${action.type}`);state.runtime.activeCommand=action.type;try{const result=handler(state,action.payload??{});assertValidEditorDocument(state.document);state.runtime.activeCommand=null;return result}catch(error){state.runtime.activeCommand=null;state.runtime.lastError=error instanceof Error?error.message:String(error);throw error}}
+
+/** Live typing reaches the model immediately; one short typing burst is one Undo. */
+export function executeCoalesced(state, action, group, { interval = 1200 } = {}) {
+  const previous = state.history.past.at(-1);
+  const wasDirty = state.persistence.dirty;
+  const result = execute(state, action);
+  const latest = state.history.past.at(-1);
+  if (!group || !latest || latest === previous || state.history.transaction) return result;
+  if (wasDirty && state.history.past.at(-2) === previous && previous?.typingGroup === group && previous.action.type === latest.action.type &&
+      previous.action.payload?.nodeId === latest.action.payload?.nodeId &&
+      latest.timestamp - previous.timestamp <= interval) {
+    previous.after = latest.after;
+    previous.action = latest.action;
+    previous.selectionAfter = latest.selectionAfter;
+    previous.timestamp = latest.timestamp;
+    state.history.past.pop();
+  } else latest.typingGroup = group;
+  return result;
+}
 export function executeBatch(state,actions,{label='Batch',atomic=true}={}){if(!Array.isArray(actions))throw new Error('actions must be an array');if(state.history.transaction)throw new Error('A history transaction is already active');const before=snapshot(state);const selectionBefore=structuredClone(state.selection);const futureBefore=structuredClone(state.history.future);const persistenceBefore=structuredClone(state.persistence);const historyStart=state.history.past.length;const transaction={label,before,selectionBefore,actions:[],startedAt:Date.now()};state.history.transaction=transaction;try{for(const action of actions){execute(state,action);if(state.history.past.length>historyStart)state.history.past.splice(historyStart)}state.history.transaction=null;state.history.past.splice(historyStart);if(transaction.actions.length){state.history.past.push({action:{type:'transaction',label:transaction.label,actions:transaction.actions},before:transaction.before,after:cloneDocument(state.document),selectionBefore:transaction.selectionBefore,selectionAfter:structuredClone(state.selection),timestamp:Date.now()});if(state.history.past.length>state.history.limit)state.history.past.shift();state.history.future=[];state.persistence.dirty=true;state.persistence.error=null}return state}catch(error){state.history.transaction=null;if(atomic){state.document=cloneDocument(before);setSelection(state,selectionBefore.ids,selectionBefore.primaryId);state.history.past.splice(historyStart);state.history.future=futureBefore;Object.assign(state.persistence,persistenceBefore)}else if(transaction.actions.length){state.history.past.splice(historyStart);state.history.past.push({action:{type:'transaction',label:transaction.label,actions:transaction.actions},before:transaction.before,after:cloneDocument(state.document),selectionBefore:transaction.selectionBefore,selectionAfter:structuredClone(state.selection),timestamp:Date.now()});if(state.history.past.length>state.history.limit)state.history.past.shift();state.history.future=[];state.persistence.dirty=true;state.persistence.error=null}throw error}}

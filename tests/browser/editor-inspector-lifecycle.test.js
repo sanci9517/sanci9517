@@ -65,16 +65,16 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   assert.equal(await editor.locator(`.layer-row[data-node-id="${gridId}"] img`).count(),0);
   await editor.locator('.inspector-group-title[aria-expanded="false"]').evaluateAll(elements=>elements.forEach(el=>el.click()));
   await field('layout.display').locator('select').selectOption('grid');
-  await editor.locator('.inspector-tabs button').nth(2).click();
-  await editor.locator('.inspector-group-title').filter({hasText:'Grid'}).click();
+  await editor.locator('.inspector-tabs button').first().click();
+  if(await editor.locator('.inspector-group-title[aria-expanded="false"]').filter({hasText:'Grid'}).count())await editor.locator('.inspector-group-title').filter({hasText:'Grid'}).click();
   await field('grid.columns').locator('select').selectOption('repeat(2, minmax(0, 1fr))');
   assert.equal(await editor.locator(`.node[data-node-id="${gridId}"]`).evaluate(el=>getComputedStyle(el).display),'grid');
   // Editor chrome must not consume a grid cell.
   assert.equal(await editor.locator(`.node[data-node-id="${gridId}"] > .node-head`).evaluate(el=>getComputedStyle(el).position),'absolute');
   await select(itemId);
-  await editor.locator('.inspector-tabs button').nth(2).click();
+  await editor.locator('.inspector-tabs button').first().click();
   await field('grid.column').locator('select').selectOption('2');
-  await editor.locator('.inspector-group-title').filter({hasText:'Méret'}).click();
+  if(await editor.locator('.inspector-group-title[aria-expanded="false"]').filter({hasText:'Méret'}).count())await editor.locator('.inspector-group-title').filter({hasText:'Méret'}).click();
   await field('size.minWidth').locator('input[type="number"]').fill('80');
   await field('size.minWidth').locator('input').press('Tab');
   await editor.locator('.inspector-tabs button').first().click();
@@ -102,8 +102,8 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   assert.equal(await field('radius.topLeft').locator('select').inputValue(),'px');
   await select(flexId);
   await field('layout.display').locator('select').selectOption('flex');
-  await editor.locator('.inspector-tabs button').nth(2).click();
-  await editor.locator('.inspector-group-title').filter({hasText:'Flex'}).click();
+  await editor.locator('.inspector-tabs button').first().click();
+  if(await editor.locator('.inspector-group-title[aria-expanded="false"]').filter({hasText:'Flex'}).count())await editor.locator('.inspector-group-title').filter({hasText:'Flex'}).click();
   await field('flex.direction').locator('select').selectOption('column');
   await select(flexItemId);
   await field('flex.basis').locator('select').selectOption('%');

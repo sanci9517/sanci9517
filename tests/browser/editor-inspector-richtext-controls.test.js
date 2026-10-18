@@ -216,6 +216,7 @@ function getSupportedUnitsForProperty(id){
     'size.minHeight':['px','%','vh','rem'],'size.maxHeight':['px','%','vh','rem'],
     'position.x':['px','%','vw','rem'],'position.y':['px','%','vh','rem'],
     'typography.fontSize':['px','rem','em','vw'],'typography.letterSpacing':['px','rem','em'],
+    'typography.wordSpacing':['px','rem','em'],'typography.textIndent':['px','rem','em','%'],
     'border.width':['px'],'radius.all':['px','rem','%'],'radius.topLeft':['px','rem','%'],
     'radius.topRight':['px','rem','%'],'radius.bottomRight':['px','rem','%'],'radius.bottomLeft':['px','rem','%'],
     'flex.gap':['px','rem','em','%'],'flex.basis':['auto','px','%','rem'],

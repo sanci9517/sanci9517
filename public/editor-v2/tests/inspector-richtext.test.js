@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createDocument, NODE_TYPES } from '../core/schema.js';
 import { createEditorState, activePage } from '../core/state.js';
-import { execute } from '../core/commands.js';
+import { execute, executeCoalesced } from '../core/commands.js';
 import { resolveNodeStyle } from '../core/canvas-engine.js';
 import { getProperty, listProperties } from '../core/property-registry.js';
 import { STYLE_MAP } from '../core/canvas-engine.js';
@@ -11,6 +11,54 @@ import { updateRichTextInlineLink, updateRichTextInlineMark, validatedLinkHref }
 import { normalizeRichText } from '../core/schema.js';
 import { setBlockType } from '../core/richtext-engine.js';
 import { ELEMENT_CAPABILITIES, getElementCapability } from '../core/capability-matrix.js';
+import { TYPOGRAPHY_PRESETS, typographyPresetPatch } from '../core/typography-presets.js';
+import { readRichTextSelectionFormatting, clearRichTextInlineFormatting } from '../core/richtext-links.js';
+
+test('live typing reaches the model immediately and a burst undoes as one edit',()=>{
+  const state=createEditorState(createDocument());execute(state,{type:'element.add',payload:{type:'text',props:{text:'Start'}}});
+  const nodeId=state.selection.primaryId;
+  for(const content of ['Start a','Start ab','Start abc']){
+    executeCoalesced(state,{type:'element.content.set',payload:{nodeId,content}},'session-a');
+    assert.equal(activePage(state).nodes[nodeId].props.text,content);
+  }
+  assert.equal(state.history.past.length,2);
+  execute(state,{type:'history.undo'});assert.equal(activePage(state).nodes[nodeId].props.text,'Start');
+  execute(state,{type:'history.redo'});assert.equal(activePage(state).nodes[nodeId].props.text,'Start abc');
+  execute(state,{type:'style.set',payload:{nodeId,patch:{color:'#123456'}}});
+  executeCoalesced(state,{type:'element.content.set',payload:{nodeId,content:'Next'}},'session-a');
+  assert.equal(state.history.past.length,4,'a style command separates typing bursts');
+  state.history.limit=1;state.history.past=state.history.past.slice(-1);
+  executeCoalesced(state,{type:'element.content.set',payload:{nodeId,content:'Next b'}},'session-a');
+  assert.equal(state.history.past.length,1,'history truncation must not remove the only undo entry');
+});
+
+test('selection formatting reflects mixed values and clearing overrides preserves links',()=>{
+  const model=normalizeRichText({schemaVersion:1,type:'richtext-document',blocks:[{type:'paragraph',children:[
+    {type:'text',text:'Hello',marks:['bold'],styles:{fontSize:'24px',fontFamily:'Georgia'},link:{href:'/p/home'}},
+    {type:'text',text:' world',marks:[],styles:{fontSize:'16px'}}
+  ]}]});
+  const range={segments:[{blockIndex:0,from:0,to:11}]};
+  const format=readRichTextSelectionFormatting(model,range);
+  assert.equal(format.marks.bold,'mixed');assert.ok(format.mixed.includes('fontSize'));assert.ok(format.mixed.includes('fontFamily'));
+  const reset=clearRichTextInlineFormatting(model,range);
+  assert.equal(reset.blocks[0].children[0].link.href,'/p/home');
+  assert.equal(reset.blocks[0].children.map(run=>run.text).join(''),'Hello world');
+  assert.ok(reset.blocks[0].children.every(run=>!run.marks.length&&!run.styles));
+  assert.equal(model.blocks[0].children[0].styles.fontSize,'24px','source content remains immutable');
+});
+
+test('creator typography roles use valid shared properties at every breakpoint',()=>{
+  for(const preset of TYPOGRAPHY_PRESETS)for(const device of ['desktop','tablet','mobile']){
+    const patch=typographyPresetPatch(preset.id,device);
+    for(const [key,value] of Object.entries(patch)){
+      const property=listProperties().find(item=>item.key===key);
+      assert.ok(property,`${preset.id}: ${key}`);assert.equal(STYLE_MAP[key],key);
+      assert.equal(normalizeInspectorValue(property,value),value);
+    }
+  }
+  assert.equal(typographyPresetPatch('hero','mobile').fontSize,'40px');
+  assert.throws(()=>typographyPresetPatch('unknown','desktop'));
+});
 
 test('typed Inspector controls validate display values before the command path', () => {
   const width = getProperty('size.width');

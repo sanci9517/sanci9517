@@ -7,7 +7,7 @@ const root=document.documentElement;
 const panels={left:document.querySelector('#leftDock'),right:document.querySelector('#rightDock')};
 const resizeLimits={left:{min:250,max:460},right:{min:260,max:440}};
 const STORAGE_KEY='sanci-editor-shell-v2';
-const defaults={leftOpen:false,rightOpen:false,leftTab:'pages',leftWidth:310,rightWidth:300};
+const defaults={leftOpen:false,rightOpen:false,leftTab:'pages',leftWidth:310,rightWidth:352};
 
 function readPersisted(){
   try{

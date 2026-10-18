@@ -90,6 +90,38 @@ function selectedInlineRuns(documentModel,range){
   return selected;
 }
 
+/** Current selection state, including mixed values across blocks/lists/cells. */
+export function readRichTextSelectionFormatting(documentModel,range){
+  const segments=Array.isArray(range?.segments)?range.segments:range?[range]:[];
+  const runs=segments.flatMap(segment=>selectedInlineRuns(documentModel,segment));
+  const marks=Object.fromEntries(['bold','italic','underline','strikethrough','subscript','superscript','code'].map(mark=>{
+    const count=runs.filter(run=>run.marks?.includes(mark)).length;
+    return [mark,count===0?false:count===runs.length?true:'mixed'];
+  }));
+  const styles={},mixed=[];
+  for(const key of ['color','backgroundColor','fontSize','fontFamily']){
+    const values=new Set(runs.map(run=>run.styles?.[key]??''));
+    if(values.size>1)mixed.push(key);else styles[key]=[...values][0]||'';
+  }
+  return {marks,styles,mixed};
+}
+
+/** Clear local character overrides while retaining the text and safe links. */
+export function clearRichTextInlineFormatting(documentModel,range){
+  const segments=Array.isArray(range?.segments)?range.segments:[range];
+  return segments.reduce((model,segment)=>{
+    selectedInlineRuns(model,segment);
+    const next=structuredClone(model);let offset=0;
+    for(const target of inlineTargets(next.blocks[segment.blockIndex])){
+      const runs=target.get(),length=runs.reduce((sum,run)=>sum+String(run.text??'').length,0);
+      const from=Math.max(0,segment.from-offset),to=Math.min(length,segment.to-offset);
+      if(to>from)target.set(updateRuns(runs,from,to,piece=>{piece.marks=[];delete piece.styles}));
+      offset+=length;
+    }
+    return next;
+  },documentModel);
+}
+
 function updateInlineMarkSegment(documentModel,range,mark,order,remove){
   selectedInlineRuns(documentModel,range);
   const next=structuredClone(documentModel),targets=inlineTargets(next.blocks[range.blockIndex]);let offset=0;
