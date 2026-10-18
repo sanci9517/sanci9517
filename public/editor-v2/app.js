@@ -22,6 +22,7 @@ import {TYPOGRAPHY_PRESETS,typographyPresetPatch} from './core/typography-preset
 import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent} from './core/element-content.js';
 import {renderStructuredInspector} from './ui/structured-inspector.js';
 import {ICON_CHOICES,iconById} from './core/icon-options.js';
+import {DIVIDER_LINE_STYLES,normalizeDividerStyle} from './core/decorative-elements.js';
 import {readRichTextSelectionFormatting,clearRichTextInlineFormatting} from './core/richtext-links.js';
 
 let inspectorCategory='all';let richTextSelectionCleanup=null;let richTextToolTab='character';
@@ -254,7 +255,18 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
   [node.states?.focus?.outlineColor,'visual-focus-outline','--sanci-focus-outline']
  ]){const color=validHex(value);if(color){el.classList.add(klass);el.style.setProperty(variable,color)}}
  const head=document.createElement('div');head.className='node-head';const headName=document.createElement('span');headName.textContent=node.name||node.type;const headType=document.createElement('small');headType.textContent=node.type;head.append(headName,headType);el.append(head);
-  if(node.type===NODE_TYPES.RICHTEXT){
+  if(node.type===NODE_TYPES.DIVIDER&&node.metadata?.decorativeVersion===1){
+    const config=normalizeDividerStyle(node.props?.decoration);
+    const line=document.createElement('div');line.className='node-content divider-preview';
+    line.style.cssText='box-sizing:border-box;width:100%;min-height:0;border:0;';
+    line.style.borderTop=`${config.thickness}px ${config.lineStyle} ${config.color}`;
+    line.style.pointerEvents='none';el.append(line);
+  }else if(node.type===NODE_TYPES.SPACER&&node.metadata?.spacerVersion===1){
+    const label=document.createElement('small');label.className='node-content spacer-preview';
+    label.textContent='Üres tér · a Méret panelen vagy itt módosítható';
+    label.style.cssText='pointer-events:none;position:absolute;left:8px;top:6px;opacity:.5;font-size:11px;';
+    el.append(label);
+  }else if(node.type===NODE_TYPES.RICHTEXT){
     const c=document.createElement('div');c.className='node-content richtext-content';
     renderRichTextEditor(c,node.props?.richText);
     const empty=!c.textContent.trim();
@@ -437,6 +449,7 @@ function renderRegistryInspector(node,mode='primary'){
     'position.x','position.y','size.width','size.height','position.position']);
   for(const group of listPropertyGroups()){
     if((mode==='primary')!==primaryGroups.has(group.id))continue;
+    if(node.type==='divider'&&node.metadata?.decorativeVersion===1&&group.id==='border')continue; // Dedicated line inspector owns the border.
     const parent=page()?.nodes?.[node.parentId];
     const properties=listProperties({group:group.id,...(!['flex','grid'].includes(group.id)?{nodeType:node.type}:{})})
       .filter(property=>!duplicates.has(property.id)&&isLayoutPropertyRelevant(property,node,parent,device));
@@ -672,7 +685,45 @@ function renderInspector(){
     if(node.type==='schedule')inspector.append(renderScheduleInspector(node));
     else {
       const textTypes=new Set(['heading','text','richtext','button','link']);
-      if(node.type==='richtext'){
+      if(node.type==='divider'&&node.metadata?.decorativeVersion===1){
+        const config=normalizeDividerStyle(node.props?.decoration);
+        const update=patch=>{
+          try{const decoration=normalizeDividerStyle({...config,...patch});command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),decoration}}})}
+          catch(error){setStatus(error instanceof Error?error.message:String(error))}
+        };
+        const section=document.createElement('section');section.className='decorative-inspector';
+        const heading=document.createElement('h3');heading.textContent='Elválasztóvonal';section.append(heading);
+        const width=document.createElement('label');width.className='field';width.append(document.createTextNode('Vastagság (1–24 px)'));
+        const thickness=document.createElement('input');thickness.type='number';thickness.min='1';thickness.max='24';thickness.step='1';thickness.value=String(config.thickness);thickness.setAttribute('aria-label','Elválasztóvonal vastagsága');
+        thickness.onchange=()=>update({thickness:Number(thickness.value)});width.append(thickness);section.append(width);
+        const color=document.createElement('label');color.className='field';color.append(document.createTextNode('Vonal színe'));
+        const picker=document.createElement('input');picker.type='color';picker.value=config.color;picker.setAttribute('aria-label','Elválasztóvonal színe');picker.onchange=()=>update({color:picker.value});
+        color.append(picker);section.append(color);
+        const styleLabel=document.createElement('label');styleLabel.className='field';styleLabel.append(document.createTextNode('Vonal mintázata'));
+        const kind=document.createElement('select');kind.setAttribute('aria-label','Elválasztóvonal mintázata');
+        for(const [value,label] of [['solid','Folytonos'],['dashed','Szaggatott'],['dotted','Pontozott'],['double','Dupla']]){
+          const option=document.createElement('option');option.value=value;option.textContent=label;kind.append(option);
+        }
+        kind.value=config.lineStyle;kind.onchange=()=>update({lineStyle:kind.value});styleLabel.append(kind);section.append(styleLabel);
+        const hint=document.createElement('small');hint.textContent='A vonal hosszát a Stílus → Méret részben állíthatod. Mentés után még nem kerül ki a publikus oldalra.';section.append(hint);
+        inspector.append(section);
+      }else if(node.type==='spacer'&&node.metadata?.spacerVersion===1){
+        const section=document.createElement('section');section.className='decorative-inspector';
+        const heading=document.createElement('h3');heading.textContent='Üres térköz';section.append(heading);
+        const device=state.viewport.device;
+        const inherited=resolveResponsiveValue(node.responsive,'height',device);
+        const current=inherited.value??node.style?.height??'64px';
+        section.append(renderPropertyInput(getProperty('size.height'),'Térköz magassága',current,value=>
+          command('responsive.set',{nodeId:node.id,device,patch:{height:value}})
+        ));
+        if(hasResponsiveOverride(node.responsive,'height',device)){
+          const reset=document.createElement('button');reset.type='button';reset.className='property-reset';
+          reset.textContent='Magasság öröklése';reset.onclick=()=>command('responsive.set',{nodeId:node.id,device,patch:{height:undefined}});
+          section.append(reset);
+        }
+        const hint=document.createElement('small');hint.textContent='Csak üres helyet foglal az oldalon. Minden nézethez külön magasságot állíthatsz; Mentés ≠ Publikálás.';section.append(hint);
+        inspector.append(section);
+      }else if(node.type==='richtext'){
         const currentRichText=node.props?.richText||plainTextToRichText('');
         const section=document.createElement('section');section.className='richtext-editor';
         const toolbar=document.createElement('div');toolbar.className='richtext-toolbar';
