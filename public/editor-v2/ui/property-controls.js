@@ -89,12 +89,29 @@ export function renderPropertyInput(property, label, current, onChange) {
       grid.append(field);
     });
     wrap.append(grid);
+  } else if (type === 'dimension') {
+    const controls=document.createElement('div');controls.className='dimension-controls';
+    const match=String(current??'').trim().match(/^(-?(?:\d+(?:\.\d*)?|\.\d+))([a-z%]*)$/i);
+    const special=String(current??'').trim()==='auto'&&property.units?.includes('auto');
+    const number=document.createElement('input');number.type='number';number.inputMode='decimal';
+    number.step='any';number.value=special?'':match?.[1]??'';number.setAttribute('aria-label',label+' értéke');
+    const unit=document.createElement('select');unit.setAttribute('aria-label',label+' mértékegysége');
+    const blank=document.createElement('option');blank.value='';blank.textContent='Egység';unit.append(blank);
+    for(const choice of property.units||[]){const option=document.createElement('option');option.value=choice;option.textContent=choice==='auto'?'Auto':choice;unit.append(option)}
+    if(special)unit.value='auto';
+    else if(match){const selected=match[2]||'px';if([...unit.options].some(option=>option.value===selected))unit.value=selected;else unit.value=''}
+    else unit.value=(property.units||[]).find(choice=>choice!=='auto'&&choice!=='0')||'';
+    number.disabled=special;unit.onchange=()=>{number.disabled=unit.value==='auto';if(unit.value==='auto'){number.value='';save('auto')}else if(number.value)save(number.value+(unit.value||''))};
+    number.onchange=()=>{if(number.value&&unit.value&&unit.value!=='auto')save(number.value+unit.value)};
+    number.onkeydown=event=>{if(event.key==='Enter'){event.preventDefault();number.blur()}};
+    controls.append(number,unit);wrap.append(controls);
+    const note=document.createElement('small');note.className='property-unit-hint';
+    note.textContent='Az egység módosítása megváltoztathatja a tényleges méretet.';wrap.append(note);
   } else {
     const input = document.createElement('input');
     input.id = controlId;
     input.type = type === 'number' ? 'number' : 'text';
     input.value = current ?? '';
-    if (type === 'dimension') input.placeholder = property.units?.join(' · ') || 'pl. 20px';
     if (type === 'number') {
       input.step = property.key === 'opacity' || property.key === 'lineHeight' ? '0.1' : '1';
       if (property.key === 'opacity') { input.min = '0'; input.max = '1'; }
@@ -103,12 +120,6 @@ export function renderPropertyInput(property, label, current, onChange) {
     input.onchange = () => save(input.value);
     input.onkeydown = event => {if(event.key === 'Enter') {event.preventDefault();input.blur();}};
     wrap.append(input);
-    if (type === 'dimension') {
-      const note = document.createElement('small');
-      note.className = 'property-unit-hint';
-      note.textContent = 'Egységek: ' + (property.units || []).join(', ');
-      wrap.append(note);
-    }
   }
   wrap.append(error);
   return wrap;

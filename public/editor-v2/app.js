@@ -5,12 +5,12 @@ import {applyNodeStyle,getNodeGeometry} from './core/canvas-engine.js?v=20261018
 import {computeCanvasMinHeight} from './core/canvas-extent.js';
 import {hasResponsiveOverride,resolveResponsiveValue} from './core/responsive.js';
 import {diagnostics} from './diagnostics.js?v=20260918-2';
-import {plainTextToRichText,renderRichTextEditor,richTextEditorToDocument,setBlockType} from './core/richtext-engine.js';
+import {plainTextToRichText,renderRichTextEditor,richTextEditorToDocument,restoreSelectionOffsets,getSelectionOffsets,setBlockType} from './core/richtext-engine.js';
 import {renderSchedulePreview} from './core/schedule-preview.js';
 import {normalizeScheduleConfig,SCHEDULE_MODES,SCHEDULE_ORDERS,SCHEDULE_STATUSES} from './core/schedule-schema.js';
 import {listPropertyGroups,listProperties,getProperty} from './core/property-registry.js';
 import {renderPropertyInput} from './ui/property-controls.js';
-import {getRichTextBlockSelection,getRichTextActiveBlockIndex,updateRichTextInlineLink,updateRichTextInlineMark} from './core/richtext-links.js';
+import {getRichTextBlockSelection,getRichTextActiveBlockIndex,restoreRichTextBlockSelection,updateRichTextInlineLink} from './core/richtext-links.js';
 import {initialPageId,rememberPageId,requestedPageId} from './core/page-url.js';
 import {getElementCapability} from './core/capability-matrix.js';
 import {renderGeometryPresets} from './ui/geometry-presets.js';
@@ -225,6 +225,12 @@ function renderGeometryInspector(node){
     const apply=value=>command('responsive.set',{nodeId:node.id,device,patch:{[key]:value}});
     section.append(renderPropertyInput(prop,prop.label,values[key],apply));
     if(id==='size.width'||id==='size.height')section.append(renderGeometryPresets(id,values[key],apply));
+    if(hasResponsiveOverride(node.responsive,key,device)){
+      const reset=document.createElement('button');reset.type='button';reset.className='property-reset';
+      reset.textContent='Visszaállítás az alapértékre';
+      reset.onclick=()=>command('responsive.set',{nodeId:node.id,device,patch:{[key]:undefined}});
+      section.append(reset);
+    }
   }
   return section;
 }
@@ -296,11 +302,13 @@ function renderScheduleInspector(node){
   return section;
 }
 
-function renderRegistryInspector(node){
+function renderRegistryInspector(node,mode='primary'){
   const device=state.viewport.device,root=document.createDocumentFragment();
+  const primaryGroups=new Set(['layout','spacing','typography','background','border','radius','shadow','opacity']);
   const duplicates=new Set(['content.text','content.href','advanced.nodeName',
     'position.x','position.y','size.width','size.height','position.position']);
   for(const group of listPropertyGroups()){
+    if((mode==='primary')!==primaryGroups.has(group.id))continue;
     const properties=listProperties({group:group.id,nodeType:node.type})
       .filter(property=>!duplicates.has(property.id));
     if(!properties.length)continue;
@@ -333,13 +341,15 @@ function renderRegistryInspector(node){
   return root;
 }
 function renderInspector(){
+  const previousScrollTop=inspector.scrollTop;
+  const restoreScroll=()=>requestAnimationFrame(()=>{inspector.scrollTop=previousScrollTop});
   // Tab switches and direct selection changes do not pass through command().
   // Flush before removing the live contenteditable element from the DOM.
   if(!inlineEditingId){if(flushRichTextDraft?.()===false)return false;flushRichTextDraft=null;}
   inspector.replaceChildren();
   const nodes=state?selectedNodes(state):[];
-  if(!nodes.length){inspector.innerHTML='<div class="inspector-empty"><b>Inspector</b><span>Válassz ki egy elemet a vásznon vagy a Rétegek panelen.</span></div>';return}
-  if(nodes.length>1){inspector.innerHTML='<div class="inspector-empty"><b>Több elem kijelölve</b><span>A tulajdonságokat egyenként szerkesztheted. Így más kijelölt elem nem módosul véletlenül.</span></div>';return}
+  if(!nodes.length){inspector.innerHTML='<div class="inspector-empty"><b>Inspector</b><span>Válassz ki egy elemet a vásznon vagy a Rétegek panelen.</span></div>';restoreScroll();return}
+  if(nodes.length>1){inspector.innerHTML='<div class="inspector-empty"><b>Több elem kijelölve</b><span>A tulajdonságokat egyenként szerkesztheted. Így más kijelölt elem nem módosul véletlenül.</span></div>';restoreScroll();return}
   const node=nodes[0];
   const header=document.createElement('div');header.className='inspector-selection';
   const headerName=document.createElement('b');headerName.textContent=node.name||node.type;
@@ -349,7 +359,7 @@ function renderInspector(){
   if(inspectorTab==='design'){
     inspector.append(field('Elem neve',node.name,v=>command('element.update',{nodeId:node.id,patch:{name:v}})),renderGeometryInspector(node));
     if(node.type==='schedule')inspector.append(renderScheduleInspector(node));
-    else inspector.append(renderRegistryInspector(node));
+    else inspector.append(renderRegistryInspector(node,'primary'));
     const lockRow=document.createElement('label');lockRow.className='inspector-toggle';
     const lockInput=document.createElement('input');lockInput.type='checkbox';lockInput.checked=Boolean(node.locked);lockInput.disabled=node.id===page()?.rootId;
     lockInput.onchange=()=>command('element.lock.set',{nodeId:node.id,locked:lockInput.checked});
@@ -372,14 +382,19 @@ function renderInspector(){
         editor.setAttribute('aria-label','Rich Text szerkesztő');
         renderRichTextEditor(editor,currentRichText);
         let richTextDirty=false, savedLinkSelection=richTextBookmark?.nodeId===node.id?richTextBookmark.range:null,
-          savedBlockIndex=richTextBookmark?.nodeId===node.id?richTextBookmark.blockIndex:null;
-        const rememberSelection=()=>{const next=getRichTextBlockSelection(editor);if(next)savedLinkSelection=next;const index=getRichTextActiveBlockIndex(editor);if(index!==null)savedBlockIndex=index;if(savedLinkSelection||savedBlockIndex!==null)richTextBookmark={nodeId:node.id,range:savedLinkSelection,blockIndex:savedBlockIndex}};
+          savedBlockIndex=richTextBookmark?.nodeId===node.id?richTextBookmark.blockIndex:null,composing=false,
+          savedSelectionOffsets=null;
+        const rememberSelection=()=>{const offsets=getSelectionOffsets(editor);if(offsets&&!offsets.collapsed)savedSelectionOffsets={from:offsets.from,to:offsets.to};const next=getRichTextBlockSelection(editor);if(next)savedLinkSelection=next;const index=getRichTextActiveBlockIndex(editor);if(index!==null)savedBlockIndex=index;if(savedLinkSelection||savedBlockIndex!==null)richTextBookmark={nodeId:node.id,range:savedLinkSelection,blockIndex:savedBlockIndex}};
+        const selectionObserver=()=>rememberSelection();
+        const refreshCanvasRichText=doc=>{const preview=canvas.querySelector('.node[data-node-id="'+CSS.escape(node.id)+'"] > .node-content');if(preview)renderRichTextEditor(preview,doc)};
+        const commitWithoutRender=doc=>{const saved=command('richtext.content.set',{nodeId:node.id,document:doc},{render:false});if(saved){richTextDirty=false;refreshCanvasRichText(doc);setStatus('Nem mentett módosítás');syncPublishControls()}return saved};
         const saveRich=()=>{
-          if(!richTextDirty)return true;
+          if(!richTextDirty){document.removeEventListener('selectionchange',selectionObserver);return true;}
           const doc=richTextEditorToDocument(editor);
           richTextDirty=false;
           const saved=command('richtext.content.set',{nodeId:node.id,document:doc});
           if(!saved)richTextDirty=true;
+          document.removeEventListener('selectionchange',selectionObserver);
           return saved;
         };
         flushRichTextDraft=saveRich;
@@ -392,16 +407,25 @@ function renderInspector(){
           const before=doc.blocks.slice(0,index).reduce((sum,b)=>sum+(b.children??b.items?.flatMap(item=>item.children??item)??[]).reduce((n,x)=>n+x.text.length,0)+1,0);
           const type=blockSelect.value.startsWith('heading-')?'heading':blockSelect.value;
           const level=type==='heading'?Number(blockSelect.value.split('-')[1]):1;
-          if(command('richtext.content.set',{nodeId:node.id,document:setBlockType(doc,before,before+Math.max(1,(block.children??block.items?.flatMap(item=>item.children??item)??[]).reduce((n,x)=>n+x.text.length,0)),type,level)}))richTextDirty=false;
+          const next=setBlockType(doc,before,before+Math.max(1,(block.children??block.items?.flatMap(item=>item.children??item)??[]).reduce((n,x)=>n+x.text.length,0)),type,level);
+          if(command('richtext.content.set',{nodeId:node.id,document:next},{render:false})){richTextDirty=false;renderRichTextEditor(editor,next);refreshCanvasRichText(next);setStatus('Nem mentett módosítás');syncPublishControls()}
         };
         for(const [mark,label] of [['bold','Félkövér'],['italic','Dőlt'],['underline','Aláhúzott']]){
           const button=document.createElement('button');button.type='button';button.textContent=label;
-          button.setAttribute('aria-label',label);button.onpointerdown=rememberSelection;
+          button.setAttribute('aria-label',label);button.onpointerdown=event=>{rememberSelection();event.preventDefault()};
           button.onclick=()=>{
             const range=savedLinkSelection||getRichTextBlockSelection(editor);
-            if(!range){button.title='Előbb jelölj ki egy szövegrészt.';return}
-            try{const doc=updateRichTextInlineMark(richTextEditorToDocument(editor),range,mark);
-              if(command('richtext.content.set',{nodeId:node.id,document:doc}))richTextDirty=false;
+            const nativeSelection=window.getSelection();
+            const hasNativeSelection=Boolean(nativeSelection?.rangeCount&&!nativeSelection.isCollapsed&&editor.contains(nativeSelection.anchorNode)&&editor.contains(nativeSelection.focusNode));
+            if(!range&&!hasNativeSelection&&!savedSelectionOffsets){button.title='Előbb jelölj ki egy szövegrészt.';return}
+            if(composing){button.title='Várd meg a mobilos szövegbevitel befejezését.';return}
+            try{
+              editor.focus();
+              if(!hasNativeSelection){if(range)restoreRichTextBlockSelection(editor,range);else if(savedSelectionOffsets)restoreSelectionOffsets(editor,savedSelectionOffsets)}
+              const changed=document.execCommand(mark==='bold'?'bold':mark==='italic'?'italic':'underline',false,null);
+              if(!changed)throw new Error('A böngésző nem tudta végrehajtani a formázást.');
+              const doc=richTextEditorToDocument(editor);
+              if(commitWithoutRender(doc)){rememberSelection();button.title='Formázás alkalmazva';}
             }catch(e){button.title=e instanceof Error?e.message:String(e)}
           };
           toolbar.append(button);
@@ -418,12 +442,22 @@ function renderInspector(){
           try{
             const doc=updateRichTextInlineLink(richTextEditorToDocument(editor),range,href);
             linkFeedback.textContent='';
-            if(command('richtext.content.set',{nodeId:node.id,document:doc}))richTextDirty=false;
+            const offsets=getSelectionOffsets(editor);
+            if(command('richtext.content.set',{nodeId:node.id,document:doc},{render:false})){
+              richTextDirty=false;const temporary=document.createElement('div');renderRichTextEditor(temporary,doc);editor.replaceChildren(...temporary.childNodes);
+              restoreSelectionOffsets(editor,offsets);refreshCanvasRichText(doc);setStatus('Nem mentett módosítás');syncPublishControls();rememberSelection();
+            }
           }catch(e){linkFeedback.textContent=e instanceof Error?e.message:String(e)}
         };
         addLink.onclick=()=>changeLink(url.value);
         removeLink.onclick=()=>changeLink(null);
-        editor.addEventListener('input',()=>{richTextDirty=true;savedLinkSelection=null;richTextBookmark=null});
+        editor.addEventListener('input',()=>{richTextDirty=true;savedLinkSelection=null;savedSelectionOffsets=null;richTextBookmark=null});
+        editor.addEventListener('beforeinput',()=>{richTextDirty=true});
+        editor.addEventListener('compositionstart',()=>{composing=true});
+        editor.addEventListener('compositionupdate',()=>{composing=true});
+        editor.addEventListener('compositionend',()=>{composing=false;richTextDirty=true;requestAnimationFrame(rememberSelection)});
+        document.addEventListener('selectionchange',selectionObserver);
+        editor.addEventListener('paste',()=>{richTextDirty=true;requestAnimationFrame(rememberSelection)});
         editor.addEventListener('mouseup',rememberSelection);
         editor.addEventListener('keyup',rememberSelection);
         editor.addEventListener('touchend',()=>requestAnimationFrame(rememberSelection));
@@ -439,9 +473,10 @@ function renderInspector(){
       else if(!textTypes.has(node.type))inspector.append(field('Tartalom',node.props?.content??'',v=>command('element.content.set',{nodeId:node.id,content:v})));
     }
   }else{
+    inspector.append(renderRegistryInspector(node,'advanced'));
     inspector.append(field('Node ID',node.id,()=>{},true),field('Típus',node.type,()=>{},true),field('Szülő ID',node.parentId||'',()=>{},true));
   }
-  const actions=document.createElement('div');actions.className='inspector-actions';const del=document.createElement('button');del.type='button';del.className='danger-action';del.textContent='Törlés';del.disabled=node.id===page()?.rootId;del.title=del.disabled?'A gyökérelem nem törölhető':'Kijelölt elem törlése';del.onclick=()=>{if(!del.disabled)command('element.delete',{nodeId:node.id})};actions.append(del);inspector.append(actions)
+  const actions=document.createElement('div');actions.className='inspector-actions';const del=document.createElement('button');del.type='button';del.className='danger-action';del.textContent='Törlés';del.disabled=node.id===page()?.rootId;del.title=del.disabled?'A gyökérelem nem törölhető':'Kijelölt elem törlése';del.onclick=()=>{if(!del.disabled)command('element.delete',{nodeId:node.id})};actions.append(del);inspector.append(actions);restoreScroll()
 }
 function clearHierarchyDrag(){hierarchyDrag.nodeId=null;hierarchyDrag.overId=null;document.querySelectorAll('.layer-row.drag-over,.layer-row.dragging').forEach(el=>el.classList.remove('drag-over','dragging'))}
 function clearMobileHierarchyDrag(){clearTimeout(mobileHierarchyDrag.timer);mobileHierarchyDrag.active=false;mobileHierarchyDrag.timer=null;mobileHierarchyDrag.nodeId=null;mobileHierarchyDrag.overId=null;mobileHierarchyDrag.suppressClick=false;document.querySelectorAll('.layer-row.mobile-dragging,.layer-row.mobile-drag-over,.layer-drag-handle.armed').forEach(el=>el.classList.remove('mobile-dragging','mobile-drag-over','armed'))}

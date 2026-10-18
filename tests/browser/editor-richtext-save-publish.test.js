@@ -15,7 +15,10 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
   const state=createEditorState(createDocument());
   execute(state,{type:'element.add',payload:{type:NODE_TYPES.RICHTEXT}});
   const nodeId=state.selection.primaryId, pageId=state.document.activePageId;
-  execute(state,{type:'richtext.content.set',payload:{nodeId,document:{schemaVersion:1,type:'richtext-document',blocks:[{type:'paragraph',children:[{type:'text',text:'Hello world',marks:[]}]}]}}});
+  execute(state,{type:'richtext.content.set',payload:{nodeId,document:{schemaVersion:1,type:'richtext-document',blocks:[
+    {type:'paragraph',children:[{type:'text',text:'Hello world',marks:[]}]},
+    {type:'paragraph',children:[{type:'text',text:'Second paragraph',marks:[]}]}
+  ]}}});
   execute(state,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:state.document.pages[pageId].rootId}});
   const otherNodeId=state.selection.primaryId;
   let draft=structuredClone(state.document),published=null,version=1;
@@ -55,17 +58,18 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
     await tab.locator('.inspector-tabs button').nth(1).evaluate(el=>el.click());
     await tab.locator('.richtext-editor-surface').waitFor();
   };
+  await tab.setViewportSize({width:390,height:800});
   await openEditor();
   const editor=tab.locator('.richtext-editor-surface');
   await editor.evaluate(el=>{el.querySelector('p span').textContent='Hello world fresh';el.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'insertText'}));el.focus()});
   await tab.locator('.inspector-tabs button').first().evaluate(el=>el.click());
   await tab.locator('.inspector-tabs button').nth(1).evaluate(el=>el.click());
-  assert.equal(await tab.locator('.richtext-editor-surface').textContent(),'Hello world fresh');
+  assert.match(await tab.locator('.richtext-editor-surface').textContent(),/^Hello world freshSecond paragraph$/);
   await tab.locator(`.node[data-node-id="${otherNodeId}"]`).evaluate(el=>el.click());
   await tab.locator(`.node[data-node-id="${nodeId}"]`).evaluate(el=>el.click());
-  assert.equal(await tab.locator('.richtext-editor-surface').textContent(),'Hello world fresh');
+  assert.match(await tab.locator('.richtext-editor-surface').textContent(),/^Hello world freshSecond paragraph$/);
   await tab.locator('.canvas-device-btn[data-device="mobile"]').evaluate(el=>el.click());
-  assert.equal(await tab.locator('.richtext-editor-surface').textContent(),'Hello world fresh');
+  assert.match(await tab.locator('.richtext-editor-surface').textContent(),/^Hello world freshSecond paragraph$/);
   await tab.locator('.canvas-device-btn[data-device="desktop"]').evaluate(el=>el.click());
   await tab.keyboard.press('Control+s');
   await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
@@ -75,13 +79,33 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
   assert.equal(published,null);
   await openEditor();
   const selectWorld=()=>tab.locator('.richtext-editor-surface').evaluate(el=>{
-    const node=[...el.querySelectorAll('span')].find(span=>span.textContent.includes('Hello world fresh')).firstChild;
-    const range=document.createRange();range.setStart(node,6);range.setEnd(node,11);
+    const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);let node;while(node=walker.nextNode())if(node.nodeValue.includes('world'))break;
+    const start=node.nodeValue.indexOf('world');const range=document.createRange();range.setStart(node,start);range.setEnd(node,start+5);
     const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);
   });
   await selectWorld();
-  await tab.getByRole('button',{name:'Félkövér'}).click();
-  await tab.locator('.richtext-editor-surface strong').waitFor();
+  await tab.locator('.richtext-editor-surface').evaluate(el=>window.__richTextSurface=el);
+  for(const mark of ['Félkövér','Dőlt','Aláhúzott']){
+    await tab.getByRole('button',{name:mark}).click();
+    assert.equal(await tab.evaluate(()=>document.getSelection().toString()),'world');
+    assert.equal(await tab.locator('.richtext-editor-surface').evaluate(el=>el===window.__richTextSurface&&el.isConnected&&document.activeElement===el),true);
+  }
+  await tab.locator('.richtext-editor-surface :is(strong,b)').waitFor();
+  await tab.locator('.richtext-editor-surface :is(em,i)').waitFor();
+  await tab.locator('.richtext-editor-surface u').waitFor();
+  const acrossBlocks=await tab.locator('.richtext-editor-surface').evaluate(el=>{
+    const first=[...el.children[0].querySelectorAll('span')].find(span=>span.textContent.includes('Hello')).firstChild;
+    const second=el.children[1].querySelector('span').firstChild;
+    const range=document.createRange();range.setStart(first,0);range.setEnd(second,second.length);
+    const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);
+    return selection.toString();
+  });
+  await tab.evaluate(()=>new Promise(requestAnimationFrame));
+  await tab.getByRole('button',{name:'Aláhúzott'}).click();
+  assert.equal(await tab.evaluate(()=>document.getSelection().toString()),acrossBlocks);
+  const formattedBlocks=await tab.locator('.richtext-editor-surface').evaluate(el=>[...el.children].map(block=>Boolean(block.querySelector('u'))));
+  assert.deepEqual(formattedBlocks,[true,true]);
+  await selectWorld();
   await tab.locator('.richtext-link-controls input').fill('/p/home');
   await tab.getByRole('button',{name:'Link beállítása'}).click();
   await tab.locator('.richtext-editor-surface a strong').waitFor();
