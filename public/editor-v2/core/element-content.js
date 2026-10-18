@@ -1,6 +1,6 @@
 /* WEB-011 77.44 — canonical, versioned static content for Editor and public renderer.
    This module has no DOM dependencies. Only explicit new/edited nodes opt into v1. */
-export const STRUCTURED_TYPES=Object.freeze(['list','table','tabs','accordion','gallery']);
+export const STRUCTURED_TYPES=Object.freeze(['list','table','tabs','accordion','gallery','carousel']);
 export const isStructuredType=type=>STRUCTURED_TYPES.includes(type);
 const text=(v,max=2000)=>String(v??'').slice(0,max);
 export function safeMediaUrl(value){
@@ -15,6 +15,7 @@ export function createElementContent(type){
  case 'tabs':return {version:1,items:[{label:'Első fül',content:'Első fül tartalma'},{label:'Második fül',content:'Második fül tartalma'}]};
  case 'accordion':return {version:1,items:[{label:'Első kérdés',content:'Első válasz'},{label:'Második kérdés',content:'Második válasz'}]};
  case 'gallery':return {version:1,items:[{src:'',alt:'',caption:''}]};
+ case 'carousel':return {version:1,items:[{label:'Első dia',content:'Kiemelt tartalom',src:'',alt:''},{label:'Második dia',content:'További részletek',src:'',alt:''}]};
  default:throw Error('Unsupported structured element');
  }
 }
@@ -34,6 +35,7 @@ export function normalizeElementContent(type,value){
  if(type==='gallery'){
   return {version:1,items:value.items.map(item=>({src:text(item?.src,2048).trim(),alt:text(item?.alt,250),caption:text(item?.caption,500)}))};
  }
+ if(type==='carousel')return {version:1,items:value.items.map(item=>({label:text(item?.label,120),content:text(item?.content,3000),src:text(item?.src,2048).trim(),alt:text(item?.alt,250)}))};
  return {version:1,items:value.items.map(item=>({label:text(item?.label,120),content:text(item?.content,3000)}))};
 }
 export function validateElementContent(type,value){
@@ -42,6 +44,13 @@ export function validateElementContent(type,value){
   for(const item of model.items){
    if(!safeMediaUrl(item.src))return 'INVALID_GALLERY_IMAGE';
    if(!item.alt.trim())return 'GALLERY_ALT_REQUIRED';
+  }
+ }
+ if(type==='carousel'){
+  for(const item of model.items){
+   if(!item.label.trim()||!item.content.trim())return 'INCOMPLETE_CAROUSEL_SLIDE';
+   if(item.src&&!safeMediaUrl(item.src))return 'INVALID_CAROUSEL_IMAGE';
+   if(item.src&&!item.alt.trim())return 'CAROUSEL_ALT_REQUIRED';
   }
  }
  if(type==='tabs'||type==='accordion'){
@@ -58,6 +67,7 @@ export function renderElementContent(type,value,nodeId){
   const tag=m.ordered?'ol':'ul';return `<${tag} class="visual-structured-list">${m.items.map(i=>`<li>${esc(i)}</li>`).join('')}</${tag}>`;
  }
  if(type==='table')return `<div class="visual-structured-table-scroll" tabindex="0" role="region" aria-label="Táblázat"><table class="visual-structured-table"><thead><tr>${m.rows[0].map(v=>`<th scope="col">${esc(v)}</th>`).join('')}</tr></thead><tbody>${m.rows.slice(1).map(row=>`<tr>${row.map(v=>`<td>${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+ if(type==='carousel')return `<section class="visual-structured-carousel" data-structured-carousel aria-roledescription="carousel"><div class="visual-carousel-track">${m.items.map((item,i)=>{const src=safeMediaUrl(item.src);return `<article class="visual-carousel-slide" role="group" aria-roledescription="dia" aria-label="${i+1}. / ${m.items.length}. dia"${i===0?'':' hidden'}>${src?`<img src="${esc(src)}" alt="${esc(item.alt)}" loading="lazy">`:''}<h3>${esc(item.label)}</h3><p>${esc(item.content)}</p></article>`}).join('')}</div><div class="visual-carousel-controls"><button type="button" class="visual-carousel-prev" aria-label="Előző dia">‹</button><span class="visual-carousel-count" aria-live="polite">1 / ${m.items.length}</span><button type="button" class="visual-carousel-next" aria-label="Következő dia">›</button></div></section>`;
  if(type==='accordion')return `<div class="visual-structured-accordion">${m.items.map((item,i)=>`<details${i===0?' open':''}><summary>${esc(item.label)}</summary><div class="visual-structured-panel">${esc(item.content)}</div></details>`).join('')}</div>`;
  if(type==='tabs'){
   const prefix='tab-'+idSafe(nodeId);
@@ -78,7 +88,16 @@ export function activateStructuredContent(root){
    });
   });
  }
- for(const host of root.querySelectorAll('[data-structured-gallery]')){
+ for(const host of root.querySelectorAll('[data-structured-carousel]')){
+  if(host.dataset.activated)continue;host.dataset.activated='1';
+  const slides=[...host.querySelectorAll('.visual-carousel-slide')],prev=host.querySelector('.visual-carousel-prev'),next=host.querySelector('.visual-carousel-next'),counter=host.querySelector('.visual-carousel-count');
+  if(!slides.length)continue;
+  let selected=0;
+  const show=index=>{selected=(index+slides.length)%slides.length;slides.forEach((el,i)=>el.hidden=i!==selected);counter.textContent=`${selected+1} / ${slides.length}`};
+  prev.addEventListener('click',()=>show(selected-1));next.addEventListener('click',()=>show(selected+1));
+  host.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();show(selected+(e.key==='ArrowRight'?1:-1))}});
+ }
+  for(const host of root.querySelectorAll('[data-structured-gallery]')){
   if(host.dataset.activated)continue;host.dataset.activated='1';
   const dialog=host.querySelector('dialog'),big=dialog?.querySelector('img'),caption=dialog?.querySelector('p'),close=dialog?.querySelector('.visual-gallery-close');
   if(!dialog||typeof dialog.showModal!=='function')continue;
