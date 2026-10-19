@@ -6,7 +6,8 @@ const text=field('text','Szöveg','textarea',{max:20000});
 const href=field('href','Hivatkozás','url',{help:'Belső /p/oldal vagy #azonosító, illetve teljes https:// vagy mailto: cím. Üresen az elem nem navigál.'});
 const linkFields=[href,field('target','Megnyitás','select',{options:{_self:'Ebben az ablakban',_blank:'Új ablakban'}}),field('ariaLabel','Akadálymentes elnevezés','text',{max:160})];
 const media=[field('src','Média címe','media-url',{help:'HTTPS vagy a webhelyen belüli /útvonal. A közös Médiatár szolgáltatás elkészültéig ellenőrzött forráscímet használhatsz.'})];
-const imageFields=[...media,field('alt','Kép szöveges leírása','text',{max:500}),field('decorative','Csak díszítő kép','boolean'),field('caption','Képaláírás','textarea',{max:1000}),field('fit','Kép illesztése','select',{options:{cover:'Kitöltés, vágással',contain:'Teljes kép',fill:'Nyújtás',none:'Eredeti méret', 'scale-down':'Csak kicsinyítés'}}),field('ratio','Képarány','select',{options:{auto:'Eredeti','16 / 9':'16:9','4 / 3':'4:3','1 / 1':'Négyzet','3 / 4':'Álló 3:4'}}),field('focalPoint','Kivágás középpontja','select',{options:{center:'Közép',top:'Felül',bottom:'Alul',left:'Balra',right:'Jobbra'}}),field('loading','Betöltés','select',{options:{lazy:'Késleltetett',eager:'Azonnali'}})];
+const focalFields=[field('focalX','Kivágás vízszintesen','range',{min:0,max:100,step:1,help:'A kép látható részét balról jobbra igazítja.'}),field('focalY','Kivágás függőlegesen','range',{min:0,max:100,step:1,help:'A kép látható részét felülről lefelé igazítja.'})];
+const imageFields=[...media,field('alt','Kép szöveges leírása','text',{max:500}),field('decorative','Csak díszítő kép','boolean'),field('caption','Képaláírás','textarea',{max:1000}),field('fit','Kép illesztése','select',{options:{cover:'Kitöltés, vágással',contain:'Teljes kép',fill:'Nyújtás',none:'Eredeti méret', 'scale-down':'Csak kicsinyítés'}}),field('ratio','Képarány','select',{options:{auto:'Eredeti','16 / 9':'16:9','4 / 3':'4:3','1 / 1':'Négyzet','3 / 4':'Álló 3:4'}}),...focalFields,field('loading','Betöltés','select',{options:{lazy:'Késleltetett',eager:'Azonnali'}})];
 export const CONTENT_FIELDS=Object.freeze({
   heading:[text,field('level','Címsor szemantikai szintje','select',{options:{1:'H1 – főcím',2:'H2 – szakaszcím',3:'H3',4:'H4',5:'H5',6:'H6'}})],
   text:[text],button:[text,...linkFields],link:[text,...linkFields],quote:[text,field('citation','Forrás / szerző')],badge:[text],icon:[field('icon','Ikon','select',{options:{star:'Csillag',heart:'Szív',play:'Lejátszás',check:'Pipa',arrow:'Nyíl',bolt:'Villám',camera:'Kamera',music:'Zene',globe:'Web',mail:'Levél'}}),field('ariaLabel','Ikon leírása','text',{max:160})],
@@ -14,14 +15,19 @@ export const CONTENT_FIELDS=Object.freeze({
   list:[field('ordered','Számozott lista','boolean'),field('items','Listaelemek','repeater',{itemFields:[text,href]})],
   table:[field('caption','Táblázat címe'),field('header','Az első sor fejléc','boolean'),field('rows','Táblázat sorai','table')],
   tabs:[field('items','Fülek','repeater',{itemFields:[field('title','Fül címe'),text]})],accordion:[field('items','Lenyitható részek','repeater',{itemFields:[field('title','Rész címe'),text]})],dropdown:[field('items','Lenyitható részek','repeater',{itemFields:[field('title','Rész címe'),text]})],
-  gallery:[field('columns','Oszlopok asztalon','select',{options:{2:'2 oszlop',3:'3 oszlop',4:'4 oszlop'}}),field('items','Képek','repeater',{itemFields:[...media,field('alt','Képleírás'),field('caption','Képaláírás')]})],
-  carousel:[field('ariaLabel','Galéria elnevezése'),field('items','Lapozható képek','repeater',{itemFields:[...media,field('alt','Képleírás'),field('caption','Képaláírás')]})],
+  gallery:[field('columns','Oszlopok asztalon','select',{options:{2:'2 oszlop',3:'3 oszlop',4:'4 oszlop'}}),field('items','Képek','repeater',{itemFields:[...media,field('alt','Képleírás'),field('caption','Képaláírás'),field('fit','Kép illesztése','select',{options:{cover:'Kitöltés, vágással',contain:'Teljes kép'}}),...focalFields]})],
+  carousel:[field('ariaLabel','Galéria elnevezése'),field('items','Lapozható képek','repeater',{itemFields:[...media,field('alt','Képleírás'),field('caption','Képaláírás'),field('fit','Kép illesztése','select',{options:{cover:'Kitöltés, vágással',contain:'Teljes kép'}}),...focalFields]})],
   code:[field('code','Megjelenített kód','textarea',{max:20000}),field('wrap','Hosszú sorok tördelése','boolean')],tooltip:[field('text','Gomb felirata'),field('description','Magyarázat','textarea',{max:2000})],divider:[],spacer:[]
 });
 export const CONTENT_TYPES=Object.freeze(Object.keys(CONTENT_FIELDS));
 export function contentProperties(node){
   const defaults={level:'2',columns:'3',controls:true,target:'_self',fit:'cover',ratio:'auto',focalPoint:'center',loading:'lazy',icon:'star'};
-  return {...Object.fromEntries((CONTENT_FIELDS[node.type]||[]).filter(field=>Object.hasOwn(defaults,field.key)).map(field=>[field.key,defaults[field.key]])),...node.props};
+  const props={...Object.fromEntries((CONTENT_FIELDS[node.type]||[]).filter(field=>Object.hasOwn(defaults,field.key)).map(field=>[field.key,defaults[field.key]])),...node.props};
+  if(['image','gallery','carousel'].includes(node.type)){
+    const legacy={center:[50,50],top:[50,0],bottom:[50,100],left:[0,50],right:[100,50]}[props.focalPoint]||[50,50];
+    props.focalX??=legacy[0];props.focalY??=legacy[1];
+  }
+  return props;
 }
 export const STRUCTURAL_TYPES=Object.freeze(['section','container','row','columns','flex','grid','stack','group','slot','card','panel','navbar','menu','footer','sidebar','absolute','sticky','overlay']);
 export function isAuthoredContent(node){return node?.metadata?.contentVersion===CONTENT_VERSION}
@@ -40,6 +46,11 @@ export function normalizeContentField(definition,value){
   if(definition.type==='table'){
     if(!Array.isArray(value)||value.length>100)throw new Error('Legfeljebb 100 sor adható meg.');
     return value.map(row=>{if(!Array.isArray(row)||row.length>16)throw new Error('Legfeljebb 16 oszlop használható.');return row.map(cell=>normalizeContentField({type:'text',max:2000},cell))});
+  }
+  if(definition.type==='range'){
+    const number=typeof value==='number'?value:Number(value);
+    if(!Number.isFinite(number)||number<(definition.min??0)||number>(definition.max??100))throw new Error(`Az érték ${definition.min??0} és ${definition.max??100} közé essen.`);
+    return number;
   }
   if(typeof value!=='string'&&typeof value!=='number')throw new Error('Szöveges érték szükséges.');
   const result=String(value);if(result.length>(definition.max||2048))throw new Error('Túl hosszú érték.');
@@ -124,7 +135,7 @@ export function contentAttributes(node){
 }
 export function authoredNodeHtml(node,{childrenHtml='',device='desktop',editor=false}={}){
   const p=contentProperties(node),text=esc(p.text??p.content??node.name??''),id='creator-'+String(node.id).replace(/[^\w-]/g,'-');
-  const image=item=>{const src=safeSrc(item.src);return src?`<img src="${esc(src)}" alt="${esc(item.decorative?'':item.alt||'')}" loading="${item.loading==='eager'?'eager':'lazy'}" decoding="async" style="object-fit:${['cover','contain','fill','none','scale-down'].includes(item.fit)?item.fit:'cover'};object-position:${['top','bottom','left','right'].includes(item.focalPoint)?item.focalPoint:'center'}">`:`<span class="creator-media-empty">${editor?'Adj meg képforrást a Tartalom fülön.':'A kép nem érhető el.'}</span>`};
+  const image=item=>{const src=safeSrc(item.src),legacy={center:[50,50],top:[50,0],bottom:[50,100],left:[0,50],right:[100,50]}[item.focalPoint]||[50,50],x=Number.isFinite(Number(item.focalX))?Math.max(0,Math.min(100,Number(item.focalX))):legacy[0],y=Number.isFinite(Number(item.focalY))?Math.max(0,Math.min(100,Number(item.focalY))):legacy[1];return src?`<img src="${esc(src)}" alt="${esc(item.decorative?'':item.alt||'')}" loading="${item.loading==='eager'?'eager':'lazy'}" decoding="async" style="object-fit:${['cover','contain','fill','none','scale-down'].includes(item.fit)?item.fit:'cover'};object-position:${x}% ${y}%">`:`<span class="creator-media-empty">${editor?'Adj meg képforrást a Tartalom fülön.':'A kép nem érhető el.'}</span>`};
   const items=Array.isArray(p.items)?p.items.slice(0,40):[];
   if(['heading','text','button','link','badge'].includes(node.type))return text;
   if(node.type==='quote')return `<div>${text}</div>${p.citation?`<cite>${esc(p.citation)}</cite>`:''}`;
