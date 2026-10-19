@@ -1148,6 +1148,31 @@ test('Card content model preserves nested elements and rejects unsafe links on P
  assertValidEditorDocument(state.document);
 });
 
+test('Card shared Media IDs preserve legacy URLs and reject malformed unpublished IDs', async () => {
+ const {normalizeCardContent,defaultCardContent,cardImageSrc}=await import('../core/card-content.js');
+ const id='11111111-2222-4333-8444-555555555555';
+ const original={...defaultCardContent(),imageSrc:'/images/legacy.jpg',imageAlt:'Kártya fénykép'};
+ assert.equal(normalizeCardContent(original).imageAssetId,'','legacy URL cards need no migration');
+ assert.equal(cardImageSrc(original),'/images/legacy.jpg');
+ const selected={...original,imageAssetId:id};
+ assert.equal(cardImageSrc(selected,{editor:true}),'/api/admin/media?id='+id);
+ assert.equal(cardImageSrc(selected),'/media/'+id);
+ assert.equal(normalizeCardContent(selected).imageAssetId,id);
+ assert.throws(()=>normalizeCardContent({...selected,imageAssetId:'javascript:alert(1)'}));
+ assert.throws(()=>normalizeCardContent({...selected,imageAlt:''}));
+ const state=createEditorState(),root=activePage(state).rootId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.CARD,parentId:root}});
+ const cardId=state.selection.primaryId,pageId=state.document.activePageId;
+ execute(state,{type:'element.update',payload:{nodeId:cardId,patch:{props:{cardContent:selected}}}});
+ assert.equal(validatePublishDocument(state.document,pageId),null);
+ execute(state,{type:'history.undo'});
+ assert.equal(activePage(state).nodes[cardId].props.cardContent.imageAssetId,'');
+ execute(state,{type:'history.redo'});
+ assert.equal(activePage(state).nodes[cardId].props.cardContent.imageAssetId,id);
+ const invalid=structuredClone(state.document);invalid.pages[pageId].nodes[cardId].props.cardContent.imageAssetId='not-a-uuid';
+ assert.equal(validatePublishDocument(invalid,pageId),'INVALID_CARD_CONTENT');
+});
+
 test('Countdown deadline is stable, editable and blocked at Publish if incomplete',async()=>{
  const {remainingText,remainingParts,normalizeCountdownContent,defaultCountdownContent}=await import('../core/countdown-content.js');
  const state=createEditorState(),root=activePage(state).rootId;
