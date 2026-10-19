@@ -3,6 +3,8 @@ const input = document.getElementById("imageInput");
 const button = document.getElementById("uploadButton");
 const status = document.getElementById("uploadStatus");
 const gallery = document.getElementById("gallery");
+const search = document.getElementById("mediaSearch");
+const searchClear = document.getElementById("mediaSearchClear");
 const supported = new Set(["image/png", "image/jpeg", "image/gif", "image/webp"]);
 const maxBytes = 4 * 1024 * 1024;
 
@@ -38,9 +40,10 @@ function empty(message) {
   placeholder.textContent = message;
   gallery.replaceChildren(placeholder);
 }
-async function refresh() {
+async function refresh(query = "") {
   try {
-    const data = await api("/api/admin/media");
+    const url = new URL("/api/admin/media", location.origin); if (query) url.searchParams.set("q", query);
+    const data = await api(url.toString());
     const assets = Array.isArray(data.assets) ? data.assets : [];
     if (!assets.length) { empty("Még nincs feltöltött kép."); return; }
     const tiles = assets.map(asset => {
@@ -57,13 +60,18 @@ async function refresh() {
       name.textContent = asset.name;
       const size = document.createElement("small");
       size.textContent = (asset.sizeBytes / 1024).toFixed(1) + " KiB";
-      details.append(name,size);card.append(link,details);return card;
+      const alt = document.createElement("input"); alt.type = "text"; alt.maxLength = 500; alt.value = asset.altText || ""; alt.placeholder = "Alternatív képleírás"; alt.setAttribute("aria-label", asset.name + " alternatív képleírása");
+      const saveAlt = document.createElement("button"); saveAlt.type = "button"; saveAlt.textContent = "Leírás mentése";
+      const feedback = document.createElement("small"); feedback.setAttribute("role", "status");
+      saveAlt.onclick = async () => { saveAlt.disabled = true; try { await api("/api/admin/media?id=" + encodeURIComponent(asset.id), { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ altText: alt.value }) }); feedback.textContent = "Mentve"; feedback.dataset.kind = "ok"; } catch (error) { feedback.textContent = error.message; feedback.dataset.kind = "error"; } finally { saveAlt.disabled = false; } };
+      details.append(name,size,alt,saveAlt,feedback);card.append(link,details);return card;
     });
     gallery.replaceChildren(...tiles);
   } catch (e) {
     empty(e instanceof Error ? e.message : "A képek nem tölthetők be.");
   }
 }
+let searchTimer;search?.addEventListener("input",()=>{clearTimeout(searchTimer);searchTimer=setTimeout(()=>refresh(search.value.trim()),220)});searchClear?.addEventListener("click",()=>{search.value="";refresh()});
 form.addEventListener("submit", async event => {
   event.preventDefault();
   const file = input.files?.[0];

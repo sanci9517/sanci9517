@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { DatabaseSync } from "node:sqlite";
-import { adminMediaRoute } from "../src/routes/admin/media.ts";
+import { adminMediaRoute, publishedMediaRoute } from "../src/routes/admin/media.ts";
 import { hashSessionToken } from "../src/core/auth/session.ts";
 
 const png = Uint8Array.from([137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,1,0,0,0,1]);
@@ -20,6 +20,7 @@ async function fixture(t) {
     "original_name TEXT NOT NULL, mime_type TEXT NOT NULL, size_bytes INTEGER NOT NULL,",
     "alt_text TEXT NOT NULL DEFAULT '', created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,",
     "site_id TEXT NOT NULL);",
+    "CREATE TABLE pages(id TEXT PRIMARY KEY,site_id TEXT,archived_at TEXT,is_published INTEGER,published_content_json TEXT);",
     "CREATE INDEX idx_media_site_id ON media(site_id);"
   ].join("\n"));
   for (const role of ["editor","viewer"]) {
@@ -48,9 +49,10 @@ async function fixture(t) {
     const url=new URL("https://example.test/api/admin/media");
     if(opts.id)url.searchParams.set("id",opts.id);
     if(opts.name)url.searchParams.set("name",opts.name);
+    if(opts.q)url.searchParams.set("q",opts.q);
     const headers = new Headers();
     if(role)headers.set("Cookie","sanci9517_session="+role);
-    if(method==="POST") { headers.set("Origin",opts.origin||url.origin);headers.set("Content-Type",opts.contentType||"image/png"); }
+    if(method==="POST"||method==="PATCH") { headers.set("Origin",opts.origin||url.origin);headers.set("Content-Type",opts.contentType||(method==="PATCH"?"application/json":"image/png")); }
     return adminMediaRoute(new Request(url,{method,headers,...(body?{body}: {})}),env,opts.site||"site-default");
   };
   return {db,env,files,call};
@@ -72,6 +74,28 @@ test("authenticated image upload produces private asset and site-scoped listing"
   assert.equal(blob.headers.get("Cache-Control"),"private, no-store");
   assert.deepEqual(new Uint8Array(await blob.arrayBuffer()),png);
   assert.equal((await f.call("GET","editor",null,{id:asset.id,site:"other"})).status,403);
+});
+
+test("site-scoped search, safe alt metadata and published-only delivery",async t=>{
+  const f=await fixture(t);
+  const uploaded=await f.call("POST","editor",png,{name:"creator portrait.png"});
+  const asset=(await uploaded.json()).data;
+  const byName=await f.call("GET","editor",null,{q:"portrait"});
+  assert.equal((await byName.json()).data.assets[0].id,asset.id);
+  const byAlt=await f.call("PATCH","editor",JSON.stringify({altText:"Alkotó portré"}),{id:asset.id});
+  assert.equal(byAlt.status,200);
+  assert.equal(f.db.prepare("SELECT alt_text FROM media WHERE id=?").get(asset.id).alt_text,"Alkotó portré");
+  assert.equal((await f.call("PATCH","editor",JSON.stringify({altText:"x"}),{id:asset.id,site:"other"})).status,403);
+  const publicUrl=await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id);
+  assert.equal(publicUrl.status,404);
+  assert.equal((await publishedMediaRoute(new Request("https://other.test/media/"+asset.id),f.env,"other",asset.id)).status,404,"an unrelated site cannot resolve this asset ID");
+  f.db.prepare("INSERT INTO pages VALUES('page-1','site-default',NULL,1,?)").run(JSON.stringify({pages:{page:{nodes:{image:{props:{assetId:asset.id}}}}}}));
+  const delivered=await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id);
+  assert.equal(delivered.status,200);
+  assert.equal(delivered.headers.get("Cache-Control"),"public, max-age=300, s-maxage=300");
+  assert.deepEqual(new Uint8Array(await delivered.arrayBuffer()),png);
+  f.db.prepare("UPDATE pages SET is_published=0").run();
+  assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,404);
 });
 
 test("anonymous, viewer and cross-origin writers cannot read or create media",async t=>{

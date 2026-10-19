@@ -25,6 +25,7 @@ button.primary{border:0;border-radius:10px;color:#160f31;background:#b5a7ff;font
 .tile img{width:100%;aspect-ratio:4/3;object-fit:contain;background:#070b17;display:block}
 .tile .details{padding:10px 12px;font-size:.88rem}.tile .name{display:block;overflow-wrap:anywhere;font-weight:650}.tile small{color:var(--muted)}
 .empty{padding:30px 18px;border:1px dashed var(--line);border-radius:12px;color:var(--muted);text-align:center}
+.library-tools{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;margin:0 0 16px}.library-tools input,.tile input{width:100%;min-width:0;min-height:42px;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text)}.library-tools button,.tile button{min-height:42px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:#29344b;color:var(--text)}.tile .details{display:grid;gap:8px}.tile .details small{color:var(--muted)}
 .note{margin-top:24px;color:var(--muted);font-size:.9rem}
 @media(max-width:800px){.panels{grid-template-columns:minmax(0,1fr)}.panel{padding:18px}.tiles{grid-template-columns:repeat(auto-fill,minmax(135px,1fr))}}
 @media(prefers-color-scheme:light){:root{color-scheme:light;--bg:#f4f6fc;--panel:#fff;--line:#d5dced;--text:#171d33;--muted:#50607e;--accent:#6247dd} .tile{background:#f6f7fd}.tile img{background:#f0f1f8}button.primary{color:white;background:#6349cd}.status[data-kind=error]{color:#ae2121}.status[data-kind=ok]{color:#15784c}}
@@ -48,12 +49,13 @@ button.primary{border:0;border-radius:10px;color:#160f31;background:#b5a7ff;font
 <p role="status" aria-live="polite" class="status" id="uploadStatus">Válassz ki egy képfájlt.</p>
 </section>
 <section class="panel" aria-labelledby="libraryTitle">
-<h2 id="libraryTitle">Legutóbbi képek</h2>
-<p class="muted">A legutóbbi 50 feltöltés. A fájlok még nem jelennek meg automatikusan a publikus weboldalon.</p>
+<h2 id="libraryTitle">Képtár</h2>
+<p class="muted">Keresés fájlnév vagy alternatív képleírás alapján. A piszkozatként kiválasztott fájl csak külön publikálás után válik nyilvánossá.</p>
+<div class="library-tools"><input id="mediaSearch" type="search" placeholder="Keresés a képek között…" aria-label="Keresés a képek között"><button id="mediaSearchClear" type="button">Törlés</button></div>
 <div id="gallery" class="tiles" aria-live="polite"><p class="empty">Képek betöltése…</p></div>
 </section>
 </div>
-<p class="note">A médiatároló privát; a publikus képkiszolgálás és a Visual Editor médiaválasztója egy következő fejlesztési blokk.</p>
+<p class="note">A képleírás akadálymentességi szöveg. A fájlok privátak maradnak, amíg egy oldal publikált változata nem hivatkozik rájuk.</p>
 </main>
 </div>
 <script type="module" src="/assets/admin-media.js"></script>

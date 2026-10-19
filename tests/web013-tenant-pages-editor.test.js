@@ -19,6 +19,7 @@ async function fixture(t, enabled=true) {
     CREATE TABLE editor_revisions(id TEXT PRIMARY KEY,page_id TEXT,version INTEGER,document_json TEXT,
       created_by TEXT,note TEXT,created_at TEXT DEFAULT CURRENT_TIMESTAMP,UNIQUE(page_id,version));
     CREATE TABLE page_slug_redirects(site_id TEXT,from_slug TEXT,page_id TEXT,PRIMARY KEY(site_id,from_slug));
+    CREATE TABLE media(id TEXT PRIMARY KEY,site_id TEXT NOT NULL,object_key TEXT NOT NULL,mime_type TEXT NOT NULL,original_name TEXT NOT NULL,size_bytes INTEGER NOT NULL,alt_text TEXT NOT NULL DEFAULT '',created_at TEXT DEFAULT CURRENT_TIMESTAMP);
     CREATE TABLE audit_log(id TEXT PRIMARY KEY,user_id TEXT,action TEXT,entity_type TEXT,entity_id TEXT,metadata_json TEXT);
     INSERT INTO sites VALUES ('site-default','active'),('other','active');
     INSERT INTO users VALUES ('admin','a@test','Admin','admin',1),('editor','e@test','Editor','viewer',1),('viewer','v@test','Viewer','viewer',1);
@@ -83,6 +84,20 @@ test('site editor saves, publishes and rolls back only own page; revocation fail
   f.db.prepare("UPDATE site_memberships SET status='revoked' WHERE user_id='editor' AND site_id='other'").run();
   assert.equal((await f.editor('editor','other','POST',{pageId:'b',expectedVersion:4,document:f.document('b'),publish:false})).status,403);
   assert.equal((await f.pages('editor','other','DELETE',{id:'b'})).status,403);
+});
+
+test('asset references save as private drafts and Publish accepts only media owned by the page site',async t=>{
+  const f=await fixture(t),own='6b1c2e65-e46e-4764-b234-123456789abc',foreign='cdb85522-f682-4561-bd61-bfb83c4381b2';
+  f.db.prepare('INSERT INTO media(id,site_id,object_key,mime_type,original_name,size_bytes) VALUES(?,?,?,?,?,?)').run(own,'other','sites/other/media/'+own,'image/png','own.png',100);
+  f.db.prepare('INSERT INTO media(id,site_id,object_key,mime_type,original_name,size_bytes) VALUES(?,?,?,?,?,?)').run(foreign,'site-default','sites/site-default/media/'+foreign,'image/png','foreign.png',100);
+  const withAsset=id=>({type:'sanci-page-document',schemaVersion:1,activePageId:'b',revision:1,pages:{b:{id:'b',rootId:'root',nodes:{root:{id:'root',type:'root',parentId:null,children:['image'],props:{}},image:{id:'image',type:'image',parentId:'root',children:[],metadata:{contentVersion:1,editorContentVersion:1},props:{assetId:id,alt:'Leírt kép'}}}}}});
+  const saved=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:1,document:withAsset(own),publish:false});
+  assert.equal(saved.status,200);
+  assert.equal(f.db.prepare('SELECT json_extract(published_content_json,\'$.pages.b.nodes.image.props.assetId\') AS asset FROM pages WHERE id=?').get('b').asset,null,'Save preserves the published snapshot');
+  const wrongSite=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:2,document:withAsset(foreign),publish:true});
+  assert.equal(wrongSite.status,409);
+  assert.equal((await wrongSite.json()).error.code,'MEDIA_NOT_FOUND');
+  assert.equal(f.db.prepare('SELECT json_extract(published_content_json,\'$.pages.b.nodes.image.props.assetId\') AS asset FROM pages WHERE id=?').get('b').asset,null);
 });
 
 test('missing membership schema returns 503 and legacy role is default-site only',async t=>{
