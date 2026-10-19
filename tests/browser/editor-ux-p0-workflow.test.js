@@ -187,7 +187,14 @@ test('empty Rich Text has direct desktop and mobile editing, typed presets, Save
   const dragStartX=Math.max(canvasBounds.left+8,canvasBounds.nodeLeft+5),dragStartY=canvasBounds.nodeTop+Math.min(12,canvasBounds.height/2);
   const dragOutsideX=Math.max(8,canvasBounds.left-24);
   await tab.mouse.move(dragStartX,dragStartY);await tab.mouse.down();await tab.mouse.move(dragOutsideX,dragStartY,{steps:8});await tab.mouse.up();
-  await tab.waitForFunction(id=>document.querySelector(`.node[data-node-id="${CSS.escape(id)}"]`)?.classList.contains('outside-artboard'),richId,{timeout:5000});
+  const outsideDebug=await tab.locator(`.node[data-node-id="${richId}"]`).evaluate(el=>{
+    const p=document.querySelector('.page-canvas'),n=el.getBoundingClientRect(),b=p.getBoundingClientRect();
+    const current=document.querySelector('.canvas-device-btn.active');
+    return {outside:el.classList.contains('outside-artboard'),pos:{left:getComputedStyle(el).left,top:getComputedStyle(el).top},
+      node:{left:n.left,right:n.right,top:n.top,bottom:n.bottom},canvas:{left:b.left,right:b.right,top:b.top,bottom:b.bottom},
+      activeDevice:current?.dataset.device,tool:document.querySelector('#selectTool')?.className};
+  });
+  assert.equal(outsideDebug.outside,true,'drag outside artboard diagnostics: '+JSON.stringify(outsideDebug));
   assert.equal(await tab.locator(`.node[data-node-id="${richId}"]`).evaluate(el=>el.classList.contains('outside-artboard')),true,'an intentionally out-of-artboard element should be identified');
   assert.ok(await tab.locator('.page-canvas-frame').evaluate(frame=>frame.getBoundingClientRect().width)>await tab.locator('.page-canvas').evaluate(el=>el.getBoundingClientRect().width),'workspace should expand to keep the out-of-artboard element reachable');
   const outsideRect=await content.boundingBox();
