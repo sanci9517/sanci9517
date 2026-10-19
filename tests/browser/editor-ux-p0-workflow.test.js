@@ -178,11 +178,13 @@ test('empty Rich Text has direct desktop and mobile editing, typed presets, Save
   assert.doesNotMatch(published.pages[pageId].nodes[richId].props.richText.blocks[0].children[0].text,/mobil$/);
   await tab.locator('#rightDock [data-collapse="right"]').click();
   await tab.locator('.canvas-device-btn[data-device="desktop"]').click();
+  assert.equal(await tab.locator('.canvas-device-btn[data-device="desktop"]').evaluate(el=>el.classList.contains('active')),true,'a valid saved draft and collapsed Inspector must allow desktop breakpoint switching');
   const canvasBounds=await tab.locator('.page-canvas').evaluate((pageEl,id)=>{const page=pageEl.getBoundingClientRect(),node=pageEl.querySelector(`[data-node-id="${CSS.escape(id)}"] .node-content`)?.getBoundingClientRect();return {left:page.left,right:page.right,nodeLeft:node?.left,nodeTop:node?.top,height:node?.height}},richId);
   const content=tab.locator(`.node[data-node-id="${richId}"] .node-content`).first();
   const dragStartX=Math.max(canvasBounds.left+8,canvasBounds.nodeLeft+5),dragStartY=canvasBounds.nodeTop+Math.min(12,canvasBounds.height/2);
   const dragOutsideX=Math.max(8,canvasBounds.left-24);
   await tab.mouse.move(dragStartX,dragStartY);await tab.mouse.down();await tab.mouse.move(dragOutsideX,dragStartY,{steps:8});await tab.mouse.up();
+  await tab.waitForFunction(id=>document.querySelector(`.node[data-node-id="${CSS.escape(id)}"]`)?.classList.contains('outside-artboard'),richId,{timeout:5000});
   assert.equal(await tab.locator(`.node[data-node-id="${richId}"]`).evaluate(el=>el.classList.contains('outside-artboard')),true,'an intentionally out-of-artboard element should be identified');
   assert.ok(await tab.locator('.page-canvas-frame').evaluate(frame=>frame.getBoundingClientRect().width)>await tab.locator('.page-canvas').evaluate(el=>el.getBoundingClientRect().width),'workspace should expand to keep the out-of-artboard element reachable');
   const outsideRect=await content.boundingBox();
