@@ -1,0 +1,114 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import {createServer} from 'node:http';
+import {readFile} from 'node:fs/promises';
+import {existsSync} from 'node:fs';
+import {resolve,extname} from 'node:path';
+import {chromium} from 'playwright';
+import {createDocument} from '../../public/editor-v2/core/schema.js';
+import {createEditorState,activePage} from '../../public/editor-v2/core/state.js';
+import {execute} from '../../public/editor-v2/core/commands.js';
+
+test('Creator Embed stays private before consent and Publish, supports responsive YouTube and narrow Twitch fallback',async t=>{
+ const model=createEditorState(createDocument()),pageId=model.document.activePageId,root=activePage(model).rootId;
+ execute(model,{type:'element.add',payload:{type:'embed',parentId:root}});
+ const embedId=model.selection.primaryId;
+ let draft=structuredClone(model.document),published=structuredClone(draft),version=1;
+ const posts=[],assetRoot=resolve(import.meta.dirname,'../../public');
+ const server=createServer(async(req,res)=>{
+  const url=new URL(req.url,'http://localhost');
+  const json=data=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(data))};
+  if(url.pathname==='/api/admin/pages')return json({ok:true,data:url.searchParams.get('archived')==='1'?[]:[{id:pageId,slug:'test',title:'Test',content:draft,revision:version,isPublished:true}]});
+  if(url.pathname==='/api/admin/editor'){
+   if(req.method==='GET')return json({ok:true,data:{page:{id:pageId,document:draft,publishedRevisionId:'published'},revisions:[{id:'revision-'+version,version}]}});
+   let raw='';for await(const chunk of req)raw+=chunk;
+   const request=JSON.parse(raw);posts.push(request);draft=structuredClone(request.document);version++;
+   if(request.publish)published=structuredClone(draft);
+   return json({ok:true,data:{pageId,version,revisionId:'revision-'+version,published:Boolean(request.publish)}});
+  }
+  if(url.pathname==='/api/public/pages')return json({ok:true,data:{id:pageId,slug:'test',title:'Test',description:'',content:published.pages[pageId]}});
+  if(url.pathname==='/api/public/navigation')return json({ok:true,data:{items:[]}});
+  if(url.pathname==='/api/integrations/twitch/connection')return json({ok:true,data:{connected:false}});
+  if(url.pathname.startsWith('/api/'))return json({ok:true,data:{siteName:'Test'}});
+  const asset=url.pathname==='/p/test'?'/visual-page.html':url.pathname,file=resolve(assetRoot,'.'+asset);
+  if(!file.startsWith(assetRoot+'/')){res.writeHead(403).end();return}
+  try{res.setHeader('content-type',{'.html':'text/html','.js':'text/javascript','.css':'text/css'}[extname(file)]||'application/octet-stream');res.end(await readFile(file))}
+  catch{res.writeHead(404).end()}
+ });
+ await new Promise(done=>server.listen(0,'127.0.0.1',done));
+ const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
+ t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
+ const base='http://127.0.0.1:'+server.address().port;
+ const editor=await browser.newPage({viewport:{width:1366,height:900}}),viewer=await browser.newPage({viewport:{width:1366,height:900}});
+ editor.setDefaultTimeout(7000);viewer.setDefaultTimeout(7000);
+ const errors=[];editor.on('pageerror',e=>errors.push('editor:'+e.message));viewer.on('pageerror',e=>errors.push('public:'+e.message));
+ let youtubeRequests=0;
+ await viewer.route('https://www.youtube-nocookie.com/**',route=>{youtubeRequests++;return route.fulfill({status:200,contentType:'text/html',body:'<!doctype html><title>Player fixture</title>'})});
+ await editor.goto(base+'/editor-v2/index.html');await viewer.goto(base+'/p/test');
+ const node=editor.locator('.node[data-node-id="'+embedId+'"]');
+ await node.evaluate(el=>el.click());
+ if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
+ await editor.locator('.inspector-tabs button').nth(1).click();
+ const inspector=editor.locator('.creator-embed-inspector');
+ assert.equal(await inspector.locator('h3').textContent(),'Videó vagy élőadás beágyazása');
+ const type=async(label,text)=>{
+  const input=inspector.getByRole('textbox',{name:label});
+  await input.fill(text);await input.press('Tab');
+ };
+ await type('Videó URL vagy azonosító','https://www.youtube.com/watch?v=M7lc1UVf-VE');
+ await type('Lejátszó címe','Bemutatkozás <script>alert(1)</script>');
+ await inspector.getByRole('combobox',{name:'Videó arány'}).selectOption('classic');
+ const consent=inspector.getByRole('checkbox',{name:'Betöltés csak látogatói kattintásra'});
+ await consent.uncheck();
+ await editor.locator('#undo').click();
+ assert.equal(await consent.isChecked(),true);
+ await editor.locator('#redo').click();
+ assert.equal(await consent.isChecked(),false);
+ await editor.locator('#undo').click();
+ assert.equal(await consent.isChecked(),true);
+ assert.equal(posts.length,0,'changing video Inspector must not save automatically');
+ assert.match(await node.locator('.visual-embed-load').textContent(),/Bemutatkozás/);
+ await editor.locator('#save').click();
+ await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+ assert.equal(posts.at(-1).publish,false);
+ assert.equal(draft.pages[pageId].nodes[embedId].props.embedContent.ratio,'classic');
+ await viewer.reload();
+ const publicNode=viewer.locator('.visual-creator-embed[data-node-id="'+embedId+'"]');
+ assert.equal(await publicNode.locator('.visual-embed-player').count(),0,'draft Save never changes published video');
+ assert.equal(await youtubeRequests,0,'old published content sends no remote request');
+ await editor.locator('#publish').click();
+ await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+ assert.equal(posts.at(-1).publish,true);
+ await viewer.reload();
+ assert.equal(await publicNode.locator('.visual-embed-player').count(),1);
+ assert.equal(await publicNode.locator('iframe').count(),0,'before consent no remote player frame');
+ assert.equal(youtubeRequests,0,'no third-party request before click');
+ assert.equal(await publicNode.locator('.visual-embed-load script').count(),0,'title cannot execute HTML');
+ assert.match(await publicNode.locator('.visual-embed-load').textContent(),/Bemutatkozás <script>alert/);
+ await publicNode.locator('.visual-embed-load').click();
+ const frame=publicNode.locator('iframe.visual-embed-frame');
+ await frame.waitFor();
+ assert.equal(await frame.getAttribute('src'),'https://www.youtube-nocookie.com/embed/M7lc1UVf-VE?rel=0');
+ assert.equal(await frame.getAttribute('title'),'Bemutatkozás <script>alert(1)</script>');
+ assert.equal(await frame.getAttribute('referrerpolicy'),'strict-origin-when-cross-origin');
+ assert.ok(youtubeRequests>=1,'video loads only after user activation');
+ await viewer.setViewportSize({width:390,height:800});await viewer.reload();
+ const player=publicNode.locator('.visual-embed-player');
+ const rect=await player.boundingBox();
+ assert.ok(rect.width<=390 && rect.width>180,'player fits mobile page');
+ assert.ok(rect.height>=200,'player provides sufficient height');
+ const twitch=await viewer.evaluate(async()=>{
+  const {renderEmbedHtml,activateEmbeds}=await import('/editor-v2/core/creator-embed.js');
+  const host=document.createElement('div');host.style.width='320px';
+  host.innerHTML=renderEmbedHtml({version:1,provider:'twitch-live',source:'sanci9517',title:'Twitch élő',ratio:'landscape',clickToLoad:true});
+  document.body.append(host);activateEmbeds(host);
+  const button=host.querySelector('.visual-embed-load');button.click();
+  const link=host.querySelector('.visual-embed-external');
+  const result={href:link?.href,blank:link?.target,iframe:host.querySelectorAll('iframe').length};
+  host.remove();return result;
+ });
+ assert.equal(twitch.href,'https://www.twitch.tv/sanci9517');
+ assert.equal(twitch.blank,'_blank');
+ assert.equal(twitch.iframe,0,'Twitch documented minimum width is respected');
+ assert.deepEqual(errors,[]);
+});
