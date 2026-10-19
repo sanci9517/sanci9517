@@ -522,8 +522,8 @@ function renderRegistryInspector(node,mode='primary'){
       const label=property.responsive&&resolved?.inherited?property.label+' · örökölt':property.label;
       const apply=value=>{
         const typingGroup=`inspector:${node.id}:${device}:${key}`;
-        if(property.responsive)command(property.command,{nodeId:node.id,device,patch:{[key]:value}},{typingGroup});
-        else command(property.command,{nodeId:node.id,patch:{[key]:value}},{typingGroup});
+        if(property.responsive)return command(property.command,{nodeId:node.id,device,patch:{[key]:value}},{typingGroup});
+        return command(property.command,{nodeId:node.id,patch:{[key]:value}},{typingGroup});
       };
       section.append(propertyInput({...property,disabled:Boolean(node.locked)},label,current,apply));
       if(property.responsive&&hasResponsiveOverride(node.responsive,key,device)){

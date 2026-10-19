@@ -33,6 +33,7 @@ test('typed Inspector controls and link selection work with real browser DOM at 
     await page.goto('http://127.0.0.1:'+server.address().port+'/editor-v2/index.html');
     const data=await page.evaluate(async()=>{
       const {renderPropertyInput}=await import('/editor-v2/ui/property-controls.js');
+      const {mediaAssetPicker}=await import('/editor-v2/ui/element-content-controls.js');
       const {getProperty,listProperties}=await import('/editor-v2/core/property-registry.js');
       const {getRichTextBlockSelection,getRichTextFormattingSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,updateRichTextBlockAlignment}=await import('/editor-v2/core/richtext-links.js');
       const {renderRichTextEditor,richTextEditorToDocument,setBlockType}=await import('/editor-v2/core/richtext-engine.js');
@@ -93,6 +94,31 @@ test('typed Inspector controls and link selection work with real browser DOM at 
         input.value=value;input.dispatchEvent(new Event('change',{bubbles:true}));
         invalidMatrix.push({id,callbackCount:editsForProperty.length,error:control.querySelector('.property-validation')?.textContent||''});
       }
+      const assetControl=renderPropertyInput(getProperty('background.image'),'Háttérkép','',()=>{throw new Error('A parancs elutasítva.');});host.append(assetControl);
+      const assetOpen=assetControl.querySelector('.editor-media-picker > button');
+      const assetSearch=assetControl.querySelector('input[type="search"]');
+      const assetInitiallyClosed=assetOpen.getAttribute('aria-expanded')==='false'&&assetSearch.hidden;
+      assetOpen.click();
+      for(let retry=0;retry<40&&!assetControl.querySelector('.editor-media-choice');retry++)await new Promise(resolve=>setTimeout(resolve,20));
+      const assetExpanded=assetOpen.getAttribute('aria-expanded')==='true'&&!assetSearch.hidden;
+      assetControl.querySelector('.editor-media-choice').click();
+      const assetRejected=assetOpen.getAttribute('aria-expanded')==='true'&&!assetControl.querySelector('.editor-media-selected')&&assetControl.querySelector('.property-validation').textContent==='A parancs elutasítva.';
+      const acceptedAsset=renderPropertyInput(getProperty('background.image'),'Háttérkép','',()=>{});host.append(acceptedAsset);
+      const acceptedOpen=acceptedAsset.querySelector('.editor-media-picker > button');acceptedOpen.click();
+      for(let retry=0;retry<40&&!acceptedAsset.querySelector('.editor-media-choice');retry++)await new Promise(resolve=>setTimeout(resolve,20));
+      acceptedAsset.querySelector('.editor-media-choice').click();
+      const assetClosedAfterSelection=acceptedOpen.getAttribute('aria-expanded')==='false'&&acceptedAsset.querySelector('input[type="search"]').hidden&&Boolean(acceptedAsset.querySelector('.editor-media-selected'));
+      acceptedOpen.click();const assetReopened=acceptedOpen.getAttribute('aria-expanded')==='true'&&!acceptedAsset.querySelector('input[type="search"]').hidden;
+      const originalFetch=window.fetch,pendingAssets=new Map();
+      window.fetch=input=>new Promise(resolve=>pendingAssets.set(new URL(input).searchParams.get('q')||'',resolve));
+      const racingPicker=mediaAssetPicker('',()=>{});host.append(racingPicker);racingPicker.querySelector(':scope > button').click();
+      const racingSearch=racingPicker.querySelector('input[type="search"]');
+      racingSearch.value='régi';racingSearch.dispatchEvent(new Event('input',{bubbles:true}));await new Promise(resolve=>setTimeout(resolve,240));
+      racingSearch.value='új';racingSearch.dispatchEvent(new Event('input',{bubbles:true}));await new Promise(resolve=>setTimeout(resolve,240));
+      const reply=name=>({ok:true,json:async()=>({ok:true,data:{assets:[{id:'6b1c2e65-e46e-4764-b234-123456789abc',name,previewUrl:'/media/test'}]}})});
+      pendingAssets.get('új')(reply('Új találat'));await new Promise(resolve=>setTimeout(resolve,0));
+      pendingAssets.get('régi')(reply('Régi találat'));pendingAssets.get('')(reply('Kezdeti találat'));await new Promise(resolve=>setTimeout(resolve,0));
+      const latestSearchWins=racingPicker.querySelector('.editor-media-choice')?.textContent==='Új találat';window.fetch=originalFetch;
       const edits=[];
       const color=renderPropertyInput(getProperty('background.color'),'Háttérszín','#112233',v=>edits.push(v));
       host.append(color);
@@ -161,7 +187,7 @@ test('typed Inspector controls and link selection work with real browser DOM at 
       const list=setBlockType(parsedMarked,0,11,'numbered-list');
       renderRichTextEditor(editor,list);
       const parsedList=richTextEditorToDocument(editor);
-      return {edits,presetResults,unitOptions,helpLengths,saved,editing,linkPresent,linksAfterRemoval:unlinked.blocks[0].children.filter(x=>x.link).length,
+      return {edits,presetResults,unitOptions,helpLengths,saved,editing,assetInitiallyClosed,assetExpanded,assetRejected,assetClosedAfterSelection,assetReopened,latestSearchWins,linkPresent,linksAfterRemoval:unlinked.blocks[0].children.filter(x=>x.link).length,
         importedBlocks:importedRoundTrip.blocks.map(block=>block.type),importedText:importedRoundTrip.blocks[0].children[0].text,importedAlignment:importedRoundTrip.blocks[0].align,
         importedMarks:importedRoundTrip.blocks[1].children.map(run=>run.marks),importedInlineStyles:importedRoundTrip.blocks[1].children.map(run=>run.styles??{}),
         importedLinks:importedRoundTrip.blocks[1].children.filter(run=>run.link).length,importedTable:importedRoundTrip.blocks[3].rows.map(row=>row.cells.map(cell=>cell.children.map(run=>run.text).join(''))),officeStyles:officeStyles.blocks[0],tableCell:importedRoundTrip.blocks[3].rows[2].cells[1],
@@ -173,6 +199,8 @@ test('typed Inspector controls and link selection work with real browser DOM at 
         hasHorizontalOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,fieldMatrix,invalidMatrix};
     });
     assert.deepEqual(data.edits,['#abcdef','8px 12px 8px 8px']);
+    assert.ok(data.assetInitiallyClosed&&data.assetExpanded&&data.assetRejected&&data.assetClosedAfterSelection&&data.assetReopened,'asset picker must expose its state, preserve rejected edits, and reopen after selection');
+    assert.equal(data.latestSearchWins,true,'late search responses must not replace the newest Media results');
     assert.ok(Object.keys(data.presetResults).length>=20);
     assert.ok(data.helpLengths.length>=45);
     assert.ok(data.helpLengths.every(([,length])=>length>=100),`every property needs detailed guidance: ${data.helpLengths.filter(([,length])=>length<100).map(([id])=>id).join(', ')}`);

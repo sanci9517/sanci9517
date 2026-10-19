@@ -16,17 +16,20 @@ async function loadAssets(query=''){
 export function mediaAssetPicker(selectedId,onSelect,{disabled=false}={}){
   const root=document.createElement('div');root.className='editor-media-picker';
   const status=document.createElement('p');status.className='content-field-help';status.setAttribute('role','status');
-  const current=document.createElement('div');current.className='editor-media-current';
+  const current=document.createElement('div');current.className='editor-media-current';current.id='media-choices-'+crypto.randomUUID();
   const selection=document.createElement('div');selection.className='editor-media-selection';
   const renderSelected=id=>{selection.replaceChildren();if(!id)return;const preview=document.createElement('img');preview.src='/api/admin/media?id='+encodeURIComponent(id);preview.alt='Kiválasztott kép';preview.className='editor-media-selected';const clear=document.createElement('button');clear.type='button';clear.textContent='Kép eltávolítása';clear.disabled=disabled;clear.onclick=()=>{if(onSelect('')===false)return;renderSelected('');status.textContent='A Médiatár-kép eltávolítva.'};selection.append(preview,clear)};
-  const refresh=async(query='')=>{current.replaceChildren();status.textContent='Médiatár betöltése…';try{
-    const assets=await loadAssets(query);if(!assets.length){status.textContent='Nincs találat. Tölts fel képet az Admin → Médiatár oldalon.';return}
-    status.textContent=`${assets.length} kép`;for(const asset of assets){const button=document.createElement('button');button.type='button';button.className='editor-media-choice';button.disabled=disabled;button.setAttribute('aria-label',`${asset.name} kiválasztása`);const image=document.createElement('img');image.src=asset.previewUrl;image.alt='';image.loading='lazy';const name=document.createElement('span');name.textContent=asset.name;button.append(image,name);button.onclick=()=>{if(onSelect(asset.id,asset)===false)return;renderSelected(asset.id);current.hidden=true;status.textContent=`Kiválasztva: ${asset.name}`};current.append(button)}
-  }catch(error){status.textContent=error.message||'A Médiatár betöltése nem sikerült.'}};
+  let latestRequest=0;
+  const refresh=async(query='')=>{const request=++latestRequest;current.replaceChildren();status.textContent='Médiatár betöltése…';try{
+    const assets=await loadAssets(query);if(request!==latestRequest)return;if(!assets.length){status.textContent='Nincs találat. Tölts fel képet az Admin → Médiatár oldalon.';return}
+    status.textContent=`${assets.length} kép`;for(const asset of assets){const button=document.createElement('button');button.type='button';button.className='editor-media-choice';button.disabled=disabled;button.setAttribute('aria-label',`${asset.name} kiválasztása`);const image=document.createElement('img');image.src=asset.previewUrl;image.alt='';image.loading='lazy';const name=document.createElement('span');name.textContent=asset.name;button.append(image,name);button.onclick=()=>{if(onSelect(asset.id,asset)===false)return;renderSelected(asset.id);setOpen(false);status.textContent=`Kiválasztva: ${asset.name}`;open.focus()};current.append(button)}
+  }catch(error){if(request===latestRequest)status.textContent=error.message||'A Médiatár betöltése nem sikerült.'}};
   const search=document.createElement('input');search.type='search';search.placeholder='Keresés név vagy leírás alapján';search.setAttribute('aria-label','Keresés a Médiatárban');search.disabled=disabled;let timer;
-  search.oninput=()=>{clearTimeout(timer);timer=setTimeout(()=>refresh(search.value.trim()),220)};
-  const open=document.createElement('button');open.type='button';open.textContent='Médiatár megnyitása';open.disabled=disabled;open.onclick=()=>{current.hidden=!current.hidden;if(!current.hidden)refresh(search.value.trim())};
-  renderSelected(selectedId);current.hidden=true;root.append(selection,open,search,current,status);return root;
+  search.oninput=()=>{clearTimeout(timer);timer=setTimeout(()=>{if(!current.hidden)refresh(search.value.trim())},220)};
+  const open=document.createElement('button');open.type='button';open.disabled=disabled;open.setAttribute('aria-controls',current.id);
+  const setOpen=value=>{current.hidden=!value;search.hidden=!value;open.setAttribute('aria-expanded',String(value));open.textContent=value?'Médiatár bezárása':'Médiatár megnyitása';if(!value){latestRequest++;clearTimeout(timer)}};
+  open.onclick=()=>{const next=current.hidden;setOpen(next);if(next)refresh(search.value.trim())};
+  renderSelected(selectedId);setOpen(false);root.append(selection,open,search,current,status);return root;
 }
 const selectedAlt=asset=>typeof asset?.altText==='string'?asset.altText.trim().slice(0,500):'';
 export function renderElementContentControls(node,{apply,pending,exclude=[],pages=[]}){
