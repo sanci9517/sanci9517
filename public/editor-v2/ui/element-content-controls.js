@@ -16,14 +16,15 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
     let input;
     if(definition.type==='select'){input=document.createElement('select');for(const [value,text] of Object.entries(definition.options)){const option=document.createElement('option');option.value=value;option.textContent=text;input.append(option)}input.value=String(value??Object.keys(definition.options)[0])}
     else if(definition.type==='boolean'){input=document.createElement('input');input.type='checkbox';input.checked=Boolean(value)}
-    else {input=document.createElement(definition.type==='textarea'?'textarea':'input');if(input.tagName==='INPUT')input.type='text';input.value=value??'';input.maxLength=definition.max||2048}
+    else {input=document.createElement(definition.type==='textarea'?'textarea':'input');if(input.tagName==='INPUT'){input.type=definition.type==='range'?'range':'text';if(definition.type==='range'){input.min=String(definition.min??0);input.max=String(definition.max??100);input.step=String(definition.step??1)}}input.value=value??'';if(definition.type!=='range')input.maxLength=definition.max||2048}
     input.setAttribute('aria-label',definition.label);input.disabled=Boolean(node.locked);input.dataset.typingGroup=crypto.randomUUID();
+    const rangeOutput=definition.type==='range'?document.createElement('output'):null;if(rangeOutput){rangeOutput.className='content-range-value';rangeOutput.value=String(input.value);rangeOutput.textContent=`${input.value}%`;rangeOutput.setAttribute('aria-live','polite')}
     let committed=value;
-    const update=()=>{try{const next=normalizeContentField(definition,definition.type==='boolean'?input.checked:input.value);input.removeAttribute('aria-invalid');fail.textContent='';save(next,input.dataset.typingGroup);committed=next}catch(error){input.setAttribute('aria-invalid','true');fail.textContent=error.message}};
+    const update=()=>{try{const next=normalizeContentField(definition,definition.type==='boolean'?input.checked:definition.type==='range'?input.valueAsNumber:input.value);input.removeAttribute('aria-invalid');fail.textContent='';save(next,input.dataset.typingGroup);committed=next;if(rangeOutput){rangeOutput.value=String(next);rangeOutput.textContent=`${next}%`}}catch(error){input.setAttribute('aria-invalid','true');fail.textContent=error.message}};
     input.addEventListener(['select','boolean'].includes(definition.type)?'change':'input',update);
     input.addEventListener('focus',()=>pending(()=>!root.querySelector('[aria-invalid="true"]')));
     input.addEventListener('keydown',event=>{if(event.key==='Escape'){input.value=committed??'';if(definition.type==='boolean')input.checked=Boolean(committed);input.removeAttribute('aria-invalid');fail.textContent=''}});
-    wrap.append(input);if(definition.type==='url'){const picker=pageLinkPicker(pages,input);picker.disabled=Boolean(node.locked);wrap.append(picker)}if(definition.help){const help=document.createElement('small');help.className='content-field-help';help.textContent=definition.help;wrap.append(help)}return wrap;
+    wrap.append(input);if(rangeOutput)wrap.append(rangeOutput);if(definition.type==='url'){const picker=pageLinkPicker(pages,input);picker.disabled=Boolean(node.locked);wrap.append(picker)}if(definition.help){const help=document.createElement('small');help.className='content-field-help';help.textContent=definition.help;wrap.append(help)}return wrap;
   };
   for(const definition of CONTENT_FIELDS[node.type]||[]){
     if(exclude.includes(definition.key))continue;

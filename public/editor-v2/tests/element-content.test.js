@@ -43,6 +43,17 @@ test('authored markup escapes text, preserves link security and uses native acce
   assert.match(authoredNodeHtml({...node,type:'image',props:{src:'/image.svg',alt:'Illusztráció',ratio:'1 / 1',fit:'contain'}}),/alt="Illusztráció"/);
 });
 
+test('image focal position supports precise two-axis crops while preserving legacy presets',()=>{
+  const image={id:'crop',type:'image',metadata:{contentVersion:1},props:{src:'/image.jpg',alt:'Teszt'}};
+  assert.match(authoredNodeHtml({...image,props:{...image.props,focalX:18,focalY:82}}),/object-position:18% 82%/);
+  assert.match(authoredNodeHtml({...image,props:{...image.props,focalPoint:'top'}}),/object-position:50% 0%/);
+  assert.deepEqual([contentProperties({...image,props:{...image.props,focalPoint:'left'}}).focalX,contentProperties({...image,props:{...image.props,focalPoint:'left'}}).focalY],[0,50]);
+  assert.equal(normalizeElementContent(image,{focalX:0,focalY:100}).focalY,100);
+  assert.throws(()=>normalizeElementContent(image,{focalX:-1}),/közé/);
+  assert.throws(()=>normalizeElementContent(image,{focalY:101}),/közé/);
+  assert.match(authoredNodeHtml({...image,type:'gallery',props:{items:[{src:'/image.jpg',alt:'Kép',focalX:20,focalY:70}]}}),/object-position:20% 70%/);
+});
+
 test('accessibility IDs are unique within a page and invalid mutations roll back',()=>{
   const state=createEditorState(createDocument());const ids=[];
   for(let i=0;i<2;i++){execute(state,{type:'element.add',payload:{type:'text',parentId:activePage(state).rootId}});ids.push(state.selection.primaryId)}
