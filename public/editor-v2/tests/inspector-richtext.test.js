@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createDocument, NODE_TYPES } from '../core/schema.js';
+import {responsiveGroupResetActions} from '../ui/responsive-group-reset.js';
 import { createEditorState, activePage } from '../core/state.js';
-import { execute, executeCoalesced } from '../core/commands.js';
+import { execute, executeCoalesced, executeBatch } from '../core/commands.js';
 import { resolveNodeStyle } from '../core/canvas-engine.js';
 import { getProperty, listProperties } from '../core/property-registry.js';
 import { STYLE_MAP } from '../core/canvas-engine.js';
@@ -252,4 +253,31 @@ test('inline marks, link and block transforms preserve content through commands 
   const unbold=updateRichTextInlineMark(bold,{blockIndex:0,from:6,to:11},'bold');
   assert.equal(unbold.blocks[0].children.every(run=>run.marks.length===0),true);
   assert.throws(()=>updateRichTextInlineMark(documentModel,{blockIndex:0,from:0,to:2},'script'));
+});
+
+
+test('group breakpoint reset is atomic and preserves other groups, devices and one-step Undo',()=>{
+  const state=createEditorState(createDocument());
+  const rootId=activePage(state).rootId;
+  execute(state,{type:'element.add',payload:{type:'text',parentId:rootId}});
+  const id=state.selection.primaryId;
+  execute(state,{type:'responsive.set',payload:{nodeId:id,device:'desktop',patch:{margin:'4px',padding:'8px',color:'#112233'}}});
+  execute(state,{type:'responsive.set',payload:{nodeId:id,device:'mobile',patch:{margin:'12px',padding:'16px',color:'#abcdef'}}});
+  const original=structuredClone(state.document);
+  const node=activePage(state).nodes[id];
+  const actions=responsiveGroupResetActions(node,[getProperty('spacing.margin'),getProperty('spacing.padding'),getProperty('spacing.margin'),getProperty('typography.color')].slice(0,3),'mobile');
+  assert.equal(actions.length,2,'duplicate props must not produce duplicate mutations');
+  assert.equal(responsiveGroupResetActions(node,[getProperty('spacing.margin')],'tablet').length,0,'no tablet overrides to reset');
+  const beforeCount=state.history.past.length;
+  executeBatch(state,actions,{label:'Térközök visszaállítása',atomic:true});
+  assert.equal(state.history.past.length,beforeCount+1,'all sides undo as one operation');
+  const values=activePage(state).nodes[id].responsive;
+  assert.equal(values.mobile?.margin,undefined);
+  assert.equal(values.mobile?.padding,undefined);
+  assert.equal(values.mobile?.color,'#abcdef','unrelated typography remains unchanged');
+  assert.equal(values.desktop?.margin,'4px','desktop values remain unchanged');
+  execute(state,{type:'history.undo'});
+  assert.deepEqual(state.document,original,'one Undo restores all original values');
+  execute(state,{type:'history.redo'});
+  assert.equal(activePage(state).nodes[id].responsive.mobile?.padding,undefined);
 });

@@ -571,3 +571,9 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
 .typed-color-status:empty{display:none}
 .typed-color-controls input[type=color].color-preview-limited{outline:2px dashed #9fabc8;outline-offset:2px}
 @media(max-width:700px){.typed-color-controls input[type=color],.typed-color-controls input[type=text]{min-height:44px}}
+
+/* Single Undo transaction for one responsive property group. */
+.group-responsive-reset{display:block;width:calc(100% - 18px);max-width:100%;margin:12px 9px 8px;padding:10px 12px;min-height:44px;box-sizing:border-box;border:1px solid #617998;border-radius:10px;background:#24354d;color:#e8f1ff;font-size:12px;font-weight:650;text-align:center;overflow-wrap:anywhere;cursor:pointer}
+.group-responsive-reset:hover:not(:disabled){background:#304966}
+.group-responsive-reset:disabled{opacity:.45;cursor:not-allowed}
+.group-responsive-reset:focus-visible{outline:2px solid #a9c5ff;outline-offset:2px}
