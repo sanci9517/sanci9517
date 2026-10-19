@@ -13,7 +13,7 @@ import {listPropertyGroups,listProperties,getProperty} from './core/property-reg
 import {renderPropertyInput} from './ui/property-controls.js';
 import {describeResponsiveOrigin} from './ui/responsive-origin.js';
 import {responsiveGroupResetActions} from './ui/responsive-group-reset.js';
-import {getRichTextBlockSelection,getRichTextFormattingSelection,getRichTextActiveBlockIndex,restoreRichTextBlockSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,updateRichTextBlockAlignment} from './core/richtext-links.js';
+import {getRichTextBlockSelection,getRichTextFormattingSelection,getRichTextActiveBlockIndex,restoreRichTextBlockSelection,restoreRichTextFormattingSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,updateRichTextBlockAlignment} from './core/richtext-links.js';
 import {initialPageId,rememberPageId,requestedPageId} from './core/page-url.js';
 import {getElementCapability} from './core/capability-matrix.js';
 import {renderGeometryPresets} from './ui/geometry-presets.js';
@@ -949,11 +949,15 @@ function renderInspector(){
         // Preserve a word selection when toolbar focus or DOM re-render removes the native Range.
         // Reattach to the Inspector copy if the original canvas surface is no longer mounted.
         const restoreFormattingSelection=()=>{
-          if(!savedSelectionOffsets)return false;
+          if(!savedFormatSelection&&!savedSelectionOffsets)return false;
           const target=formattingSurface?.isConnected?formattingSurface:editor;
           if(!target.isConnected)return false;
           target.focus({preventScroll:true});
-          if(!restoreSelectionOffsets(target,savedSelectionOffsets))return false;
+          // A per-block bookmark is authoritative for paragraph/list/table spans.
+          // Flattened offsets do not include exactly the same block separators.
+          const restored=(savedFormatSelection&&restoreRichTextFormattingSelection(target,savedFormatSelection))||
+            (savedSelectionOffsets&&restoreSelectionOffsets(target,savedSelectionOffsets));
+          if(!restored)return false;
           rememberSelection();return true;
         };
         const selectionObserver=()=>{if(!editor.isConnected){document.removeEventListener('selectionchange',selectionObserver);return}if(!toolbar.contains(document.activeElement)&&!linkControls.contains(document.activeElement))rememberSelection()};
