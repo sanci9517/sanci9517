@@ -86,17 +86,49 @@ export function renderPropertyInput(property, label, current, onChange, {tokens=
     const picker = document.createElement('input');
     picker.type = 'color';
     picker.id = controlId;
-    picker.value = /^#[\da-f]{6}$/i.test(String(current)) ? current : '#808080';
     picker.setAttribute('aria-label', label + ' színválasztó');
     const hex = document.createElement('input');
     hex.type = 'text';
     hex.value = current || '';
     hex.placeholder = '#RRGGBB vagy transparent';
     hex.setAttribute('aria-label', label + ' HEX');
-    picker.onchange = () => save(picker.value);
-    hex.onchange = () => save(hex.value);
-    controls.append(picker, hex);
-    wrap.append(controls);
+    const indicator=document.createElement('small');
+    indicator.className='typed-color-status';
+    indicator.setAttribute('role','status');
+    // Native input[type=color] only supports opaque RGB. Never claim a
+    // transparent/alpha color matches the fallback swatch.
+    const pickerRgb=value=>{
+      const text=String(value??'');
+      if(/^#[0-9a-f]{3}$/i.test(text))
+        return '#'+[...text.slice(1)].map(char=>char+char).join('');
+      if(/^#[0-9a-f]{6}$/i.test(text))return text;
+      if(/^#[0-9a-f]{8}$/i.test(text))return text.slice(0,7);
+      return null;
+    };
+    const sync=value=>{
+      const rgb=pickerRgb(value);
+      if(rgb)picker.value=rgb;
+      else picker.value='#808080';
+      hex.value=value;
+      const transparent=String(value).toLowerCase()==='transparent';
+      const alpha=/^#[0-9a-f]{8}$/i.test(String(value));
+      picker.classList.toggle('color-preview-limited',transparent||alpha);
+      indicator.textContent=transparent?'Átlátszó szín – a színválasztó RGB-előnézete nem mérvadó.':
+        alpha?'Az átlátszóságot a HEX-mező őrzi; a színválasztó csak RGB-t mutat.':'';
+    };
+    const commitColor=value=>{
+      // Invalid values stay visible with validation feedback. The previous
+      // swatch and Page Model value must not change until validation succeeds.
+      if(save(value))sync(value);
+    };
+    picker.onchange=()=>commitColor(picker.value);
+    hex.onchange=()=>commitColor(hex.value);
+    sync(current||'');
+    controls.append(picker,hex);
+    wrap.append(controls,indicator);
+    // Presets use the same sync pathway as the picker and HEX entry.
+    wrap.dataset.colorField='true';
+    wrap._syncInspectorColor=commitColor;
   } else if (type === 'box') {
     // A typed number + unit per side: no CSS syntax needed on mobile.
     // The stored value remains the same four-part CSS shorthand.
@@ -196,7 +228,7 @@ export function renderPropertyInput(property, label, current, onChange, {tokens=
       button.textContent=preset.label;button.dataset.value=preset.value;
       button.setAttribute('aria-pressed',String(String(current??'')===preset.value));
       if(type==='color'){button.classList.add('property-preset-color');button.style.setProperty('--preset-color',preset.value==='transparent'?'transparent':preset.value);button.title=preset.label+' · '+preset.value}
-      button.onclick=()=>save(preset.value);group.append(button);
+      button.onclick=()=>type==='color'?wrap._syncInspectorColor(preset.value):save(preset.value);group.append(button);
     }
     wrap.append(group);
   }
