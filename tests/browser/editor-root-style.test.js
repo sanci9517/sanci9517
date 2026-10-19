@@ -61,8 +61,8 @@ test('root Inspector appearance matches published canvas only after Publish at d
  const rootColor=()=>rootNode.evaluate(el=>getComputedStyle(el).backgroundColor);
  assert.equal(await rootColor(),'rgb(18, 52, 86)');
  await group('Térközök');
- const padding=editor.locator('[data-property-id="spacing.padding"]').getByRole('textbox',{name:'Belső térköz – Felül'});
- await padding.fill('24px');await padding.press('Tab');
+ const padding=editor.locator('[data-property-id="spacing.padding"]').getByRole('spinbutton',{name:'Belső térköz – Felül értéke'});
+ await padding.fill('24');await padding.press('Tab');
  assert.equal(await rootNode.evaluate(el=>getComputedStyle(el).paddingTop),'24px');
  assert.equal(posts.length,0,'editing root never auto-saves');
  await editor.locator('#save').click();
