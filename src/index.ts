@@ -27,7 +27,7 @@ import {
 import { publicPagesRoute } from "./routes/public/pages";
 import { adminNavigationRoute } from "./routes/admin/navigation";
 import { publicNavigationRoute } from "./routes/public/navigation";
-import { getAuthenticatedUser } from "./core/auth/require-auth";
+import { getAuthenticatedUser, hasRole } from "./core/auth/require-auth";
 import { resolvePublishedPageRedirect } from "./core/page-redirects";
 import { getCanonicalSiteContext } from "./core/site-context";
 import { resolveRequestSite } from "./core/site-domain";
@@ -83,13 +83,21 @@ export default {
       if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302);
       return env.ASSETS.fetch(assetRequest("/admin-home.html", request));
     }
+    if (pathname === "/admin/media") {
+      const user = await getAuthenticatedUser(request, env);
+      if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302);
+      if (env.SITE_MEMBERSHIP_ENFORCEMENT !== "enabled" && !hasRole(user, "editor")) {
+        return new Response("Forbidden", { status: 403 });
+      }
+      return env.ASSETS.fetch(assetRequest("/admin-media.html", request));
+    }
     if (pathname === "/admin/editor") {
       const user = await getAuthenticatedUser(request, env);
       if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302);
       return env.ASSETS.fetch(assetRequest("/editor-v2/index.html", request));
     }
     // Retired entry points must not expose the backing HTML assets directly.
-    if (["/admin-design.html", "/admin-login.html", "/admin-home.html", "/admin.html", "/admin/home", "/editor-v2", "/editor-v2/index.html", "/about.html", "/community.html", "/contact.html", "/schedule.html", "/tiktok.html", "/twitch.html", "/vod.html", "/youtube.html"].includes(pathname)) {
+    if (["/admin-media.html", "/admin-design.html", "/admin-login.html", "/admin-home.html", "/admin.html", "/admin/home", "/editor-v2", "/editor-v2/index.html", "/about.html", "/community.html", "/contact.html", "/schedule.html", "/tiktok.html", "/twitch.html", "/vod.html", "/youtube.html"].includes(pathname)) {
       return new Response("Gone", { status: 410 });
     }
     if (pathname === "/" || pathname === "/index.html") return publicPageHtml(request, env, "/", false, { title: site.siteName });
