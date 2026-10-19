@@ -819,3 +819,12 @@ A meglévő admin Médiatár GET listaválasza a site-scoped D1-metadata alapjá
 ### 49.4 / RES — Tárhelykeret backend és kezelőfelület kiadási állapot (2026-10-19)
 
 #153 squash MERGED `507f6d0ff9f06ad7d0a5b921f06f329547d2a726`: D1 site-scoped, szűrőfüggetlen aktív, archivált és teljes médiaméret; negatív és cross-site unit regresszió. #154 squash MERGED `88a66b4e8af644b6cc6ba1f4c900b53089e6ed7f`: admin Médiatárban progressbar, MiB és archivált tárhely külön kijelzése, hibánál őszinte fallback. A két PR elérhető Editor Core/F0/Twitch CI-je PASS; éles fizikai R2 költségmérés, valódi bejelentkezett böngészős PC/mobil elfogadás és a teljes Editor/49.4 OPEN. Az alkalmazásszintű D1 összeg nem a Cloudflare R2 számlázott felhasználásának hiteles másolata.
+
+
+### 77.44 / WEB-011 — Mobil vászonközpontú panel-UX és egyetlen Publish esemény (2026-10-19; PR alatt)
+
+**Hibajavítás:** a mobil Publikálás gombhoz a shell eseménytovábbító és az Editor alkalmazás külön `save(true)` kezelője is kapcsolódott, ezért egyetlen kattintás két egymás melletti publikálást indíthatott. A shellből eltávolítjuk a duplikált továbbítást; a publikálás egyetlen gazdája az Editor app marad. A Save≠Publish szerződés változatlan.
+
+**Felület:** 700px alatt az elempaletta, navigáció és Inspector a vásznat részben láthatóan hagyó, függőlegesen görgethető alsó panelben jelenik meg. A panel fókuszba kerül nyitáskor, Escape bezáráskor a korábbi vezérlőre tér vissza. A canvas a nyitott mobil panel mögött nem billentyűzettel fókuszálható; a panelek egymást kizárják. Akadálymentes aria-expanded/aria-hidden állapotok és a desktop összehajtott rail megőrzése. Nem új Editor/backend/adatmodell.
+
+**Elvárt bizonyíték:** valós Chromium 390px mobil szakasz, panelgeometria, fókuszvisszaadás, aria/inert, egypaneles működés és egyetlen publish esemény, továbbá teljes Editor layout/regresszió, typecheck, canonical-plan és Workers build CI. **Amíg ezek nem PASS, részblokk OPEN.** Native Android/PC felhasználói elfogadás külön OPEN; a teljes Visual Editor/WEB-011 OPEN.

@@ -108,3 +108,40 @@ test('Editor shell has no inaccessible or overlapping controls across widths and
     await page.close();
   }
 });
+
+test('mobile inspector is a bottom sheet with focus restoration and single publish dispatch',async t=>{
+  const http=server();await new Promise(r=>http.listen(0,'127.0.0.1',r));
+  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
+  t.after(async()=>{await browser.close();await new Promise(r=>http.close(r))});
+  const page=await browser.newPage({viewport:{width:390,height:850}});
+  await page.goto(`http://127.0.0.1:${http.address().port}/editor-v2/index.html`,{waitUntil:'load'});
+  const inspectorButton=page.locator('#openInspector');
+  await inspectorButton.click();
+  assert.equal(await inspectorButton.getAttribute('aria-expanded'),'true');
+  assert.equal(await page.locator('#rightDock').getAttribute('aria-hidden'),'false');
+  const sheet=await page.locator('#rightDock').boundingBox();
+  const work=await page.locator('.workspace').boundingBox();
+  assert.ok(sheet.y > work.y+30,'mobile sheet should preserve a visible canvas strip');
+  assert.ok(sheet.height < work.height-72,'sheet must not swallow the whole editing workspace');
+  assert.equal(await page.locator('.canvas-area').evaluate(el=>el.inert),true);
+  await page.keyboard.press('Escape');
+  assert.equal(await inspectorButton.getAttribute('aria-expanded'),'false');
+  assert.equal(await page.locator('#rightDock').getAttribute('aria-hidden'),'true');
+  assert.equal(await page.locator('.canvas-area').evaluate(el=>el.inert),false);
+  assert.equal(await page.evaluate(()=>document.activeElement?.id),'openInspector','return keyboard focus to panel opener');
+  await page.locator('#editorMenu').click();
+  assert.equal(await page.locator('#editorMenu').getAttribute('aria-expanded'),'true');
+  await page.locator('#openInspector').click();
+  assert.equal(await page.locator('#leftDock').getAttribute('aria-hidden'),'true','only one mobile drawer can be open');
+  assert.equal(await page.locator('#rightDock').getAttribute('aria-hidden'),'false');
+  // Direct mobile publish has its own app.js handler; a synthetic click must
+  // not also trigger a click on the desktop publish button.
+  const forwarded=await page.evaluate(()=>{
+    let count=0;document.querySelector('#publish').addEventListener('click',()=>count++);
+    const mobile=document.querySelector('#mobilePublish');
+    mobile.disabled=false;
+    mobile.click();
+    return count;
+  });
+  assert.equal(forwarded,0,'one mobile click must never also dispatch desktop publish');
+});

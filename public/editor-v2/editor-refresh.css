@@ -541,3 +541,21 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
 .code-snippet-inspector textarea.code-snippet-source{box-sizing:border-box;width:100%;min-width:0;min-height:210px;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2;white-space:pre;resize:vertical}
 .code-snippet-inspector .inspector-toggle{min-height:44px}
 .code-preview{min-width:0;width:100%;overflow:hidden}
+
+/* 77.44 mobile shell: keep some canvas visible beneath either edit drawer.
+   The dock itself scrolls; the page viewport never becomes a second scroller. */
+@media (max-width: 700px) {
+  .workspace .left-dock:not(.closed),
+  .workspace .right-dock:not(.closed) {
+    top: auto;
+    bottom: 72px;
+    height: min(72%, 590px);
+    max-height: calc(100% - 72px);
+    min-height: 0;
+    width: 100%;
+    border-radius: 18px 18px 0 0;
+    overflow: hidden;
+  }
+  .workspace .left-dock .dock-content,
+  .workspace .right-dock .dock-content { min-height: 0; overscroll-behavior: contain; }
+}
