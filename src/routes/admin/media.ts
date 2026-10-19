@@ -272,17 +272,23 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
     // case our randomly named R2 object is not owned by the winning row.
   }
   if (!inserted) {
-    await removeOrphan(env,key);
     let existing: MediaRow | null = null;
     try {
       existing = await env.DB.prepare(
         "SELECT id,site_id,object_key,original_name,mime_type,size_bytes,alt_text,created_at FROM media WHERE id=? AND site_id=? LIMIT 1"
       ).bind(id,siteId).first<MediaRow>();
       if (existing) {
+        // A D1 client error can occur after a committed INSERT. Never delete
+        // the object that a successfully committed row actually owns.
+        if (existing.object_key === key) {
+          return Response.json({ok:true,data:{...dto(existing),duplicate:false}}, {status:201,headers:{"Cache-Control":"no-store"}});
+        }
+        await removeOrphan(env,key);
         if (!await sameStoredImage(env, existing, bytes, mime)) return error("MEDIA_DUPLICATE_CONFLICT", 409);
         return Response.json({ok:true,data:{...dto(existing),duplicate:true}}, {status:200,headers:{"Cache-Control":"no-store"}});
       }
-    } catch { return error("MEDIA_METADATA_FAILED",503); }
+    } catch { await removeOrphan(env,key); return error("MEDIA_METADATA_FAILED",503); }
+    await removeOrphan(env,key);
     // Either quota rejection or a DB failure. Do not claim quota exhaustion
     // until the condition can actually be verified.
     try {
