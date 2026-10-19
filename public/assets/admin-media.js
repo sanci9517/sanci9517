@@ -5,6 +5,8 @@ const status = document.getElementById("uploadStatus");
 const gallery = document.getElementById("gallery");
 const search = document.getElementById("mediaSearch");
 const searchClear = document.getElementById("mediaSearchClear");
+const mediaState = document.getElementById("mediaState");
+let currentListRequest = 0;
 const supported = new Set(["image/png", "image/jpeg", "image/gif", "image/webp"]);
 const maxBytes = 4 * 1024 * 1024;
 const progress = document.getElementById("uploadProgress");
@@ -27,7 +29,13 @@ function explain(code) {
     MEDIA_QUOTA_EXCEEDED: "A webhely 5 GB-os médiakerete megtelt.",
     MEDIA_STORAGE_FAILED: "A tárhely jelenleg nem elérhető.",
     MEDIA_METADATA_FAILED: "A fájl adatainak mentése nem sikerült.",
-    MEDIA_STORAGE_UNAVAILABLE: "A médiatároló nincs bekötve."
+    MEDIA_STORAGE_UNAVAILABLE: "A médiatároló nincs bekötve.",
+    MEDIA_ARCHIVED_EXISTS: "Ez a kép már archiválva van. Az Archivált képek nézetben állíthatod vissza.",
+    MEDIA_ASSET_IN_USE: "A képre oldal vagy korábbi verzió hivatkozik. Nézd meg a Használati helyeket.",
+    MEDIA_USAGE_INCOMPLETE: "A használati helyek ellenőrzése nem teljes, az archiválás biztonságból leállt.",
+    MEDIA_ARCHIVE_CONFLICT: "A kép állapota megváltozott. Frissítsd a listát.",
+    MEDIA_OBJECT_MISSING: "A tárolt képfájl hiányzik. Nem lehet visszaállítani.",
+    INVALID_MEDIA_STATE: "Érvénytelen Médiatár nézet."
   };
   return messages[code] || "A kérés sikertelen. Próbáld újra.";
 }
@@ -45,11 +53,14 @@ function empty(message) {
   gallery.replaceChildren(placeholder);
 }
 async function refresh(query = "") {
+  const request = ++currentListRequest;
   try {
     const url = new URL("/api/admin/media", location.origin); if (query) url.searchParams.set("q", query);
+    url.searchParams.set("state",mediaState.value);
     const data = await api(url.toString());
+    if (request !== currentListRequest) return;
     const assets = Array.isArray(data.assets) ? data.assets : [];
-    if (!assets.length) { empty("Még nincs feltöltött kép."); return; }
+    if (!assets.length) { empty(mediaState.value === "archived" ? "Nincs archivált kép." : "Még nincs feltöltött kép."); return; }
     const tiles = assets.map(asset => {
       const card = document.createElement("article"); card.className = "tile";
       const link = document.createElement("a");
@@ -93,13 +104,43 @@ async function refresh(query = "") {
         } catch (error) { usage.textContent = error.message || "A használati helyek nem tölthetők be."; }
         finally { usageButton.disabled = false; }
       };
-      details.append(name,size,alt,saveAlt,feedback,usageButton,usage);card.append(link,details);return card;
+      const lifecycle=document.createElement("button");lifecycle.type="button";
+      const lifecycleStatus=document.createElement("small");lifecycleStatus.className="archive-status";lifecycleStatus.setAttribute("role","status");
+      const isArchived=Boolean(asset.archivedAt);
+      lifecycle.textContent=isArchived?"Kép visszaállítása":"Kép archiválása";
+      let armed=false;
+      lifecycle.onclick=async()=>{
+        if(!isArchived&&!armed){
+          armed=true;lifecycle.textContent="Archiválás megerősítése";
+          lifecycle.classList.add("archive-confirm");
+          lifecycleStatus.textContent="Csak nem használt képet archiválhatsz. A fájl az R2-ben megmarad.";
+          lifecycle.focus();return;
+        }
+        lifecycle.disabled=true;
+        lifecycleStatus.textContent=isArchived?"Visszaállítás…":"Használat ellenőrzése és archiválás…";
+        try{
+          await api("/api/admin/media?id="+encodeURIComponent(asset.id),{
+            method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({archived:!isArchived})
+          });
+          await refresh(search.value.trim());
+        }catch(error){
+          lifecycleStatus.textContent=error instanceof Error?error.message:"A művelet sikertelen.";
+          lifecycleStatus.dataset.kind="error";
+          if(!isArchived&&/hivatkozik|ellenőrzése nem teljes/.test(lifecycleStatus.textContent)&&usage.hidden)usageButton.click();
+          armed=false;lifecycle.textContent=isArchived?"Kép visszaállítása":"Kép archiválása";
+          lifecycle.classList.remove("archive-confirm");
+          lifecycle.disabled=false;
+        }
+      };
+      details.append(name,size,alt,saveAlt,feedback,usageButton,usage,lifecycle,lifecycleStatus);
+      card.append(link,details);return card;
     });
     gallery.replaceChildren(...tiles);
   } catch (e) {
-    empty(e instanceof Error ? e.message : "A képek nem tölthetők be.");
+    if(request === currentListRequest)empty(e instanceof Error ? e.message : "A képek nem tölthetők be.");
   }
 }
+mediaState.addEventListener("change",()=>refresh(search.value.trim()));
 let searchTimer;search?.addEventListener("input",()=>{clearTimeout(searchTimer);searchTimer=setTimeout(()=>refresh(search.value.trim()),220)});searchClear?.addEventListener("click",()=>{search.value="";refresh()});
 function uploadImage(file) {
   return new Promise((resolve, reject) => {

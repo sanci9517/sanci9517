@@ -11,7 +11,7 @@ const MAX_USAGE_REFERENCES = 100;
 
 type MediaRow = {
   id: string; site_id: string; object_key: string; original_name: string;
-  mime_type: string; size_bytes: number; alt_text: string; created_at: string;
+  mime_type: string; size_bytes: number; alt_text: string; created_at: string; archived_at: string | null;
 };
 
 function imageMime(bytes: Uint8Array): string | null {
@@ -78,6 +78,7 @@ function dto(row: MediaRow) {
   return {
     id: row.id, name: row.original_name, mimeType: row.mime_type,
     sizeBytes: row.size_bytes, altText: row.alt_text, createdAt: row.created_at,
+    archivedAt: row.archived_at,
     previewUrl: "/api/admin/media?id=" + encodeURIComponent(row.id)
   };
 }
@@ -189,18 +190,20 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
       const limitRaw = url.searchParams.get("limit") || "50";
       const limit = Number(limitRaw);
       if (!/^\d+$/.test(limitRaw) || limit < 1 || limit > 100) return error("INVALID_MEDIA_LIMIT", 400);
-      const clauses = ["site_id=?"];
+      const state = url.searchParams.get('state') || 'active';
+      if (!['active','archived'].includes(state)) return error('INVALID_MEDIA_STATE',400);
+      const clauses = ['site_id=?', state === 'archived' ? 'archived_at IS NOT NULL' : 'archived_at IS NULL'];
       const binds: (string | number)[] = [siteId];
       if (query) { clauses.push("(original_name LIKE ? ESCAPE '^' OR alt_text LIKE ? ESCAPE '^')"); const pattern = `%${escapeLike(query)}%`; binds.push(pattern, pattern); }
       if (mime) { clauses.push("mime_type=?"); binds.push(mime); }
       const rows = await env.DB.prepare(
-        `SELECT id,site_id,object_key,original_name,mime_type,size_bytes,alt_text,created_at FROM media WHERE ${clauses.join(" AND ")} ORDER BY created_at DESC,id DESC LIMIT ${limit}`
+        `SELECT id,site_id,object_key,original_name,mime_type,size_bytes,alt_text,created_at,archived_at FROM media WHERE ${clauses.join(" AND ")} ORDER BY created_at DESC,id DESC LIMIT ${limit}`
       ).bind(...binds).all<MediaRow>();
       return ok({ assets: rows.results.map(dto), maxUploadBytes: MAX_IMAGE_BYTES, siteQuotaBytes: SITE_MEDIA_LIMIT_BYTES });
     }
     if (!/^[0-9a-f-]{36}$/.test(id)) return error("MEDIA_NOT_FOUND", 404);
     const row = await env.DB.prepare(
-      "SELECT id,site_id,object_key,original_name,mime_type,size_bytes,alt_text,created_at FROM media WHERE id=? AND site_id=? LIMIT 1"
+      "SELECT id,site_id,object_key,original_name,mime_type,size_bytes,alt_text,created_at,archived_at FROM media WHERE id=? AND site_id=? LIMIT 1"
     ).bind(id, siteId).first<MediaRow>();
     if (!row || !["image/png","image/jpeg","image/gif","image/webp"].includes(row.mime_type)) {
       return error("MEDIA_NOT_FOUND", 404);
@@ -220,7 +223,42 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
     const id = url.searchParams.get("id") || "";
     if (!/^[0-9a-f-]{36}$/.test(id)) return error("MEDIA_NOT_FOUND", 404);
     let body: unknown; try { body = await request.json(); } catch { return error("INVALID_JSON", 400); }
-    if (!body || typeof body !== "object" || Array.isArray(body) || Object.keys(body as object).some(key => key !== "altText")) return error("INVALID_MEDIA_METADATA", 400);
+    if (!body || typeof body !== "object" || Array.isArray(body) || Object.keys(body as object).length !== 1) return error("INVALID_MEDIA_METADATA",400);
+    if (Object.prototype.hasOwnProperty.call(body,'archived')) {
+      const archived=(body as {archived?:unknown}).archived;
+      if (typeof archived !== 'boolean') return error('INVALID_MEDIA_METADATA',400);
+      const existing=await env.DB.prepare(
+        'SELECT id,site_id,object_key,original_name,mime_type,size_bytes,alt_text,created_at,archived_at FROM media WHERE id=? AND site_id=? LIMIT 1'
+      ).bind(id,siteId).first<MediaRow>();
+      if (!existing) return error('MEDIA_NOT_FOUND',404);
+      if (Boolean(existing.archived_at)===archived) return ok({id,archived,changed:false});
+      if (archived) {
+        const report=await mediaUsage(env,siteId,id);
+        if (!report.ok) return error('MEDIA_USAGE_INCOMPLETE',409);
+        const data=await report.json() as {data?:{complete?:boolean;references?:unknown[]}};
+        if (!data.data?.complete) return error('MEDIA_USAGE_INCOMPLETE',409);
+        if (data.data.references?.length) return error('MEDIA_ASSET_IN_USE',409);
+        // Atomic predicate prevents archiving an asset referenced by an
+        // existing draft, live snapshot, archived page or editor revision.
+        const changed=await env.DB.prepare(
+          "UPDATE media SET archived_at=CURRENT_TIMESTAMP WHERE id=? AND site_id=? AND archived_at IS NULL "+
+          "AND NOT EXISTS (SELECT 1 FROM pages p WHERE p.site_id=? AND (instr(COALESCE(p.content_json,''),?)>0 OR instr(COALESCE(p.published_content_json,''),?)>0)) "+
+          "AND NOT EXISTS (SELECT 1 FROM editor_revisions er JOIN pages p ON p.id=er.page_id WHERE p.site_id=? AND instr(er.document_json,?)>0)"
+        ).bind(id,siteId,siteId,id,id,siteId,id).run();
+        if (Number(changed.meta?.changes??0)!==1) return error('MEDIA_ASSET_IN_USE',409);
+      } else {
+        let present:unknown;
+        try { present=await env.MEDIA.get(existing.object_key); }
+        catch { return error('MEDIA_STORAGE_FAILED',503); }
+        if (!present) return error('MEDIA_OBJECT_MISSING',409);
+        const changed=await env.DB.prepare(
+          'UPDATE media SET archived_at=NULL WHERE id=? AND site_id=? AND archived_at IS NOT NULL'
+        ).bind(id,siteId).run();
+        if (Number(changed.meta?.changes??0)!==1) return error('MEDIA_ARCHIVE_CONFLICT',409);
+      }
+      return ok({id,archived,changed:true});
+    }
+    if (Object.keys(body as object)[0] !== 'altText') return error('INVALID_MEDIA_METADATA',400);
     const altText = (body as { altText?: unknown }).altText;
     if (typeof altText !== "string" || altText.length > 500 || /[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/.test(altText)) return error("INVALID_ALT_TEXT", 400);
     const result = await env.DB.prepare("UPDATE media SET alt_text=? WHERE id=? AND site_id=?").bind(altText.trim(), id, siteId).run();
@@ -243,9 +281,10 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
   }
   const id = await fingerprintId(siteId, bytes);
   const matching = await env.DB.prepare(
-    "SELECT id,site_id,object_key,original_name,mime_type,size_bytes,alt_text,created_at FROM media WHERE id=? AND site_id=? LIMIT 1"
+    "SELECT id,site_id,object_key,original_name,mime_type,size_bytes,alt_text,created_at,archived_at FROM media WHERE id=? AND site_id=? LIMIT 1"
   ).bind(id,siteId).first<MediaRow>();
   if (matching) {
+    if (matching.archived_at) return error('MEDIA_ARCHIVED_EXISTS',409);
     try {
       if (!await sameStoredImage(env, matching, bytes, mime)) return error("MEDIA_DUPLICATE_CONFLICT", 409);
     } catch { return error("MEDIA_STORAGE_FAILED", 503); }
@@ -275,9 +314,10 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
     let existing: MediaRow | null = null;
     try {
       existing = await env.DB.prepare(
-        "SELECT id,site_id,object_key,original_name,mime_type,size_bytes,alt_text,created_at FROM media WHERE id=? AND site_id=? LIMIT 1"
+        "SELECT id,site_id,object_key,original_name,mime_type,size_bytes,alt_text,created_at,archived_at FROM media WHERE id=? AND site_id=? LIMIT 1"
       ).bind(id,siteId).first<MediaRow>();
       if (existing) {
+        if (existing.archived_at) { await removeOrphan(env,key); return error('MEDIA_ARCHIVED_EXISTS',409); }
         // A D1 client error can occur after a committed INSERT. Never delete
         // the object that a successfully committed row actually owns.
         if (existing.object_key === key) {
@@ -310,9 +350,9 @@ export async function publishedMediaRoute(request: Request, env: Env, siteId: st
   if (request.method !== "GET" && request.method !== "HEAD") return error("METHOD_NOT_ALLOWED", 405);
   if (!/^[0-9a-f-]{36}$/.test(assetId) || !env.MEDIA) return error("MEDIA_NOT_FOUND", 404);
   const row = await env.DB.prepare(
-    "SELECT id,site_id,object_key,original_name,mime_type,size_bytes,alt_text,created_at FROM media WHERE id=? AND site_id=? LIMIT 1"
+    "SELECT id,site_id,object_key,original_name,mime_type,size_bytes,alt_text,created_at,archived_at FROM media WHERE id=? AND site_id=? LIMIT 1"
   ).bind(assetId, siteId).first<MediaRow>();
-  if (!row || !["image/png", "image/jpeg", "image/gif", "image/webp"].includes(row.mime_type)) return error("MEDIA_NOT_FOUND", 404);
+  if (!row || row.archived_at || !["image/png", "image/jpeg", "image/gif", "image/webp"].includes(row.mime_type)) return error("MEDIA_NOT_FOUND", 404);
   const pages = await env.DB.prepare(
     "SELECT id,published_content_json FROM pages WHERE site_id=? AND archived_at IS NULL AND is_published=1 AND published_content_json IS NOT NULL AND instr(published_content_json,?)>0"
   ).bind(siteId, assetId).all<{ id: string; published_content_json: string }>();

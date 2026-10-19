@@ -7,7 +7,8 @@ const migrations = new URL("../migrations/", import.meta.url);
 const pendingNames = [
   "0025_site_domains_and_site_slug.sql",
   "0026_site_memberships.sql",
-  "0027_site_scoped_settings.sql"
+  "0027_site_scoped_settings.sql",
+  "0028_media_archive.sql"
 ];
 const pending = pendingNames.map(name =>
   readFileSync(new URL("../scripts/pending/" + name, import.meta.url), "utf8")
@@ -61,6 +62,8 @@ test("fresh 0024 DB upgrades through manually staged 0025-0027 without data loss
   }
   assert.doesNotMatch(db.prepare("SELECT sql FROM sqlite_master WHERE name='pages'").get().sql, /slug TEXT NOT NULL UNIQUE/);
   assert.equal(count(db, "site_domains"), 1);
+  assert.ok(db.prepare('PRAGMA table_info(media)').all().some(col=>col.name==='archived_at'));
+  assert.ok(db.prepare("SELECT name FROM sqlite_master WHERE name='media_archive_pages_update_guard'").get());
   assert.equal(count(db, "site_memberships"), 2, "only active default-site users are seeded");
   assert.deepEqual(
     db.prepare("SELECT user_id,role,site_id,status FROM site_memberships ORDER BY user_id").all().map(r => ({...r})),

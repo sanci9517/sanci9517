@@ -112,3 +112,67 @@ test('Admin image upload supports real progress, explicit retry and cancellation
  await page.setViewportSize({width:1366,height:900});
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'desktop upload controls do not overflow');
 });
+
+
+test('Media library archives only after confirmation and restores in mobile and desktop views',async t=>{
+ const root=resolve(import.meta.dirname,'../../public');
+ const id='6b1c2e65-e46e-4764-b234-123456789abc';
+ let archived=false,used=true;
+ const changes=[];
+ const server=createServer(async(req,res)=>{
+  const url=new URL(req.url,'http://localhost');
+  if(url.pathname==='/api/admin/media'&&req.method==='GET'&&url.searchParams.has('usage')){
+   res.setHeader('content-type','application/json');
+   return res.end(JSON.stringify({ok:true,data:{assetId:id,complete:true,references:used?[{pageId:'page-1',pageTitle:'Bemutatkozás',source:'draft',nodeName:'Kép',path:'props.assetId'}]:[]}}));
+  }
+  if(url.pathname==='/api/admin/media'&&req.method==='GET'){
+   res.setHeader('content-type','application/json');
+   const wanted=url.searchParams.get('state')||'active';
+   return res.end(JSON.stringify({ok:true,data:{assets:(wanted==='archived')===archived?[{id,name:'portrait.png',sizeBytes:2048,altText:'Meglévő képleírás',archivedAt:archived?'2026-10-19':null,previewUrl:'/image.png'}]:[]}}));
+  }
+  if(url.pathname==='/api/admin/media'&&req.method==='PATCH'){
+   let text='';for await(const part of req)text+=part;
+   const body=JSON.parse(text);changes.push(body);
+   res.setHeader('content-type','application/json');
+   if(body.archived&&used){res.statusCode=409;return res.end(JSON.stringify({ok:false,error:{code:'MEDIA_ASSET_IN_USE'}}))}
+   archived=body.archived;
+   return res.end(JSON.stringify({ok:true,data:{id,archived,changed:true}}));
+  }
+  if(url.pathname==='/image.png'){res.setHeader('content-type','image/png');return res.end(Buffer.from([137,80,78,71,13,10,26,10]))}
+  const file=resolve(root,'.'+url.pathname);
+  if(!file.startsWith(root+'/'))return res.writeHead(403).end();
+  try{res.setHeader('content-type',{'.html':'text/html','.js':'text/javascript'}[extname(file)]||'application/octet-stream');res.end(await readFile(file))}
+  catch{return res.writeHead(404).end()}
+ });
+ await new Promise(done=>server.listen(0,'127.0.0.1',done));
+ const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
+ t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
+ const page=await browser.newPage({viewport:{width:390,height:844}});page.setDefaultTimeout(6000);
+ await page.goto('http://127.0.0.1:'+server.address().port+'/admin-media.html');
+ await page.locator('.tile').waitFor();
+ const archive=page.getByRole('button',{name:'Kép archiválása'});
+ await archive.click();
+ assert.equal(changes.length,0,'first click must only arm, never archive');
+ await page.getByRole('button',{name:'Archiválás megerősítése'}).click();
+ await page.getByText(/A képre oldal vagy korábbi verzió hivatkozik/).waitFor();
+ await page.getByRole('link',{name:/Piszkozat: Bemutatkozás/}).waitFor();
+ assert.equal(archived,false,'a referenced image remains active');
+ used=false;
+ await page.getByRole('button',{name:'Kép archiválása'}).click();
+ await page.getByRole('button',{name:'Archiválás megerősítése'}).click();
+ await page.getByText('Még nincs feltöltött kép.').waitFor();
+ assert.equal(archived,true);
+ await page.getByLabel('Médiatár nézet').selectOption('archived');
+ await page.locator('.tile').waitFor();
+ assert.match(await page.locator('.tile').textContent(),/portrait.png/);
+ await page.getByRole('button',{name:'Kép visszaállítása'}).click();
+ await page.getByText('Nincs archivált kép.').waitFor();
+ assert.equal(archived,false);
+ await page.getByLabel('Médiatár nézet').selectOption('active');
+ await page.locator('.tile').waitFor();
+ assert.equal(await page.locator('.tile input').inputValue(),'Meglévő képleírás');
+ assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'mobile lifecycle controls stay within viewport');
+ await page.setViewportSize({width:1366,height:900});
+ assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'desktop lifecycle controls stay within viewport');
+ assert.deepEqual(changes,[{archived:true},{archived:true},{archived:false}]);
+});

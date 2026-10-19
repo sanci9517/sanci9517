@@ -19,10 +19,13 @@ async function fixture(t) {
     "CREATE TABLE media(id TEXT PRIMARY KEY, object_key TEXT UNIQUE NOT NULL,",
     "original_name TEXT NOT NULL, mime_type TEXT NOT NULL, size_bytes INTEGER NOT NULL,",
     "alt_text TEXT NOT NULL DEFAULT '', created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,",
-    "site_id TEXT NOT NULL);",
+    "site_id TEXT NOT NULL, archived_at TEXT DEFAULT NULL);",
     "CREATE TABLE pages(id TEXT PRIMARY KEY,site_id TEXT,archived_at TEXT,is_published INTEGER,published_content_json TEXT,content_json TEXT,title TEXT,slug TEXT);",
     "CREATE TABLE editor_revisions(id TEXT PRIMARY KEY,page_id TEXT,version INTEGER,document_json TEXT);",
-    "CREATE INDEX idx_media_site_id ON media(site_id);"
+    "CREATE INDEX idx_media_site_id ON media(site_id);",
+    "CREATE TRIGGER media_archive_pages_insert_guard BEFORE INSERT ON pages WHEN EXISTS (SELECT 1 FROM media m WHERE m.site_id=NEW.site_id AND m.archived_at IS NOT NULL AND (instr(COALESCE(NEW.content_json,''),m.id)>0 OR instr(COALESCE(NEW.published_content_json,''),m.id)>0)) BEGIN SELECT RAISE(ABORT,'ARCHIVED_MEDIA_REFERENCE'); END;",
+    "CREATE TRIGGER media_archive_pages_update_guard BEFORE UPDATE OF content_json,published_content_json ON pages WHEN EXISTS (SELECT 1 FROM media m WHERE m.site_id=NEW.site_id AND m.archived_at IS NOT NULL AND (instr(COALESCE(NEW.content_json,''),m.id)>0 OR instr(COALESCE(NEW.published_content_json,''),m.id)>0)) BEGIN SELECT RAISE(ABORT,'ARCHIVED_MEDIA_REFERENCE'); END;",
+    "CREATE TRIGGER media_archive_revisions_insert_guard BEFORE INSERT ON editor_revisions WHEN EXISTS (SELECT 1 FROM media m JOIN pages p ON p.site_id=m.site_id WHERE p.id=NEW.page_id AND m.archived_at IS NOT NULL AND instr(NEW.document_json,m.id)>0) BEGIN SELECT RAISE(ABORT,'ARCHIVED_MEDIA_REFERENCE'); END;"
   ].join("\n"));
   for (const role of ["editor","viewer"]) {
     db.prepare("INSERT INTO users VALUES (?,?,?,?,1)").run(role,role+"@test.local",role,role);
@@ -51,6 +54,7 @@ async function fixture(t) {
     if(opts.id)url.searchParams.set("id",opts.id);
     if(opts.name)url.searchParams.set("name",opts.name);
     if(opts.q)url.searchParams.set("q",opts.q);
+    if(opts.state)url.searchParams.set("state",opts.state);
     if(opts.usage)url.searchParams.set("usage",opts.usage);
     const headers = new Headers();
     if(role)headers.set("Cookie","sanci9517_session="+role);
@@ -168,6 +172,96 @@ test("a D1 acknowledgement lost after commit must not delete the successfully st
   assert.deepEqual(new Uint8Array(await read.arrayBuffer()),png);
 });
 
+
+test("archived media stays in R2 and quota, disappears from picker and returns with identity and metadata",async t=>{
+ const f=await fixture(t);
+ const created=await f.call("POST","editor",png,{name:"archive.png"});
+ const asset=(await created.json()).data;
+ const renamed=await f.call("PATCH","editor",JSON.stringify({altText:"Megőrzött képleírás"}),{id:asset.id});
+ assert.equal(renamed.status,200);
+ const archived=await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id});
+ assert.equal(archived.status,200);
+ assert.equal((await archived.json()).data.archived,true);
+ assert.equal(f.files.size,1);
+ assert.equal(f.db.prepare("SELECT SUM(size_bytes) AS total FROM media").get().total,png.length,"archived objects retain storage quota");
+ assert.equal((await (await f.call("GET")).json()).data.assets.length,0,"default picker sees active only");
+ const list=await f.call("GET","editor",null,{state:"archived"});
+ assert.equal(list.status,200);
+ const archivedAssets=(await list.json()).data.assets;
+ assert.equal(archivedAssets.length,1);
+ assert.equal(archivedAssets[0].id,asset.id);
+ assert.ok(archivedAssets[0].archivedAt);
+ assert.equal(archivedAssets[0].altText,"Megőrzött képleírás");
+ assert.equal((await f.call("GET","editor",null,{id:asset.id})).status,200,"editor can preview an archived asset for restoration");
+ assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,404);
+ const repeated=await f.call("POST","editor",png,{name:"retry.png"});
+ assert.equal(repeated.status,409,"same archived content must not silently restore or re-upload");
+ assert.equal((await repeated.json()).error.code,"MEDIA_ARCHIVED_EXISTS");
+ assert.equal(f.files.size,1);
+ const restored=await f.call("PATCH","editor",JSON.stringify({archived:false}),{id:asset.id});
+ assert.equal(restored.status,200);
+ assert.equal((await restored.json()).data.changed,true);
+ assert.equal((await (await f.call("GET")).json()).data.assets[0].id,asset.id);
+ assert.equal((await (await f.call("GET","editor",null,{state:"archived"})).json()).data.assets.length,0);
+ assert.equal(f.db.prepare("SELECT alt_text FROM media WHERE id=?").get(asset.id).alt_text,"Megőrzött képleírás");
+ const restoreAgain=await f.call("PATCH","editor",JSON.stringify({archived:false}),{id:asset.id});
+ assert.equal((await restoreAgain.json()).data.changed,false);
+});
+
+test("archive refuses any live, draft, old revision or unverified usage and remains site-scoped",async t=>{
+ const f=await fixture(t);
+ const created=await f.call("POST","editor",png,{name:"used.png"});
+ const asset=(await created.json()).data;
+ const json=nodes=>JSON.stringify({pages:{"page-1":{nodes}}});
+ const refs=json({picture:{type:"image",props:{assetId:asset.id}}});
+ f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES (?,?,?,?,?,?,?,?)").run("page-1","site-default",null,1,refs,"{}","Használt kép","used");
+ assert.equal((await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id})).status,409,"published image cannot be archived");
+ f.db.prepare("UPDATE pages SET is_published=0,published_content_json=NULL,content_json=?").run(refs);
+ assert.equal((await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id})).status,409,"draft image cannot be archived");
+ f.db.prepare("UPDATE pages SET content_json='{}'").run();
+ f.db.prepare("INSERT INTO editor_revisions VALUES (?,?,?,?)").run("rev-1","page-1",1,refs);
+ assert.equal((await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id})).status,409,"historical references cannot be broken");
+ f.db.prepare("DELETE FROM editor_revisions").run();
+ f.db.prepare("UPDATE pages SET content_json=?").run("{not-json "+asset.id);
+ assert.equal((await (await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id})).json()).error.code,"MEDIA_USAGE_INCOMPLETE");
+ assert.equal(f.db.prepare("SELECT archived_at FROM media").get().archived_at,null);
+ f.db.prepare("UPDATE pages SET content_json='{}'").run();
+ assert.equal((await f.call("PATCH","viewer",JSON.stringify({archived:true}),{id:asset.id})).status,403);
+ assert.equal((await f.call("PATCH","",JSON.stringify({archived:true}),{id:asset.id})).status,401);
+ assert.equal((await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id,site:"other"})).status,403);
+ assert.equal((await f.call("PATCH","editor",JSON.stringify({archived:"true"}),{id:asset.id})).status,400);
+ assert.equal((await f.call("PATCH","editor",JSON.stringify({archived:true,altText:"bad"}),{id:asset.id})).status,400);
+ assert.equal((await f.call("GET","editor",null,{state:"nonsense"})).status,400);
+ assert.equal((await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id,origin:"https://evil.test"})).status,403);
+});
+
+
+test("database guards prevent creating new references to archived images after concurrent preflight",async t=>{
+ const f=await fixture(t);
+ const image=(await (await f.call("POST","editor",png,{name:"guard.png"})).json()).data;
+ const archive=await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:image.id});
+ assert.equal(archive.status,200);
+ const doc=JSON.stringify({pages:{'page-1':{nodes:{photo:{props:{assetId:image.id}}}}}});
+ assert.throws(()=>f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)").run("page-1","site-default",null,0,null,doc,"Test","test"),/ARCHIVED_MEDIA_REFERENCE/);
+ f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)").run("page-1","site-default",null,0,null,"{}","Test","test");
+ assert.throws(()=>f.db.prepare("UPDATE pages SET published_content_json=? WHERE id='page-1'").run(doc),/ARCHIVED_MEDIA_REFERENCE/);
+ assert.throws(()=>f.db.prepare("INSERT INTO editor_revisions VALUES (?,?,?,?)").run("rev-block","page-1",1,doc),/ARCHIVED_MEDIA_REFERENCE/);
+ assert.equal(f.db.prepare("SELECT COUNT(*) AS n FROM editor_revisions").get().n,0);
+ assert.equal(f.db.prepare("SELECT content_json FROM pages WHERE id='page-1'").get().content_json,"{}");
+});
+
+test("restoring missing R2 binary fails closed, without exposing published archived media",async t=>{
+ const f=await fixture(t);
+ const asset=(await (await f.call("POST","editor",png,{name:"gone.png"})).json()).data;
+ await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id});
+ const key=f.db.prepare("SELECT object_key FROM media WHERE id=?").get(asset.id).object_key;
+ f.files.delete(key);
+ const restored=await f.call("PATCH","editor",JSON.stringify({archived:false}),{id:asset.id});
+ assert.equal(restored.status,409);
+ assert.equal((await restored.json()).error.code,"MEDIA_OBJECT_MISSING");
+ assert.ok(f.db.prepare("SELECT archived_at FROM media").get().archived_at);
+});
+
 test("site-scoped search, safe alt metadata and published-only delivery",async t=>{
   const f=await fixture(t);
   const uploaded=await f.call("POST","editor",png,{name:"creator portrait.png"});
@@ -276,7 +370,7 @@ test("rejects invalid media names, script payloads, wrong declared types and exc
 
 test("atomic D1 quota rejection deletes newly uploaded R2 object",async t=>{
   const f=await fixture(t);
-  f.db.prepare("INSERT INTO media VALUES (?,?,?,?,?,?,CURRENT_TIMESTAMP,?)").run(
+  f.db.prepare("INSERT INTO media (id,object_key,original_name,mime_type,size_bytes,alt_text,site_id) VALUES (?,?,?,?,?,?,?)").run(
     "existing","sites/site-default/media/existing","large.jpg","image/jpeg",5_000_000_000,"","site-default");
   const result=await f.call("POST","editor",png,{name:"new.png"});
   assert.equal(result.status,409);
