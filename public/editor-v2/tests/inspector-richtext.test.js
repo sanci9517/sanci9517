@@ -92,6 +92,19 @@ test('typed Inspector controls validate display values before the command path',
   assert.throws(()=>normalizeInspectorValue(getProperty('grid.column'),'999 / -1'));
 });
 
+test('box spacing accepts CSS lengths and margin auto but rejects invalid padding and units',()=>{
+  const margin=getProperty('spacing.margin'),padding=getProperty('spacing.padding');
+  assert.equal(normalizeInspectorValue(margin,'0 auto'),'0 auto');
+  assert.equal(normalizeInspectorValue(margin,' -4px   5vw  2rem  auto '),'-4px 5vw 2rem auto');
+  assert.equal(normalizeInspectorValue(padding,'1em 2vh 3vw 4%'),'1em 2vh 3vw 4%');
+  for(const value of ['auto','8px auto','0 auto 0 0','-2px','1fr','2ch','calc(2px + 1px)']){
+    assert.throws(()=>normalizeInspectorValue(padding,value),undefined,`padding: ${value}`);
+  }
+  for(const value of ['1fr','2ch','calc(2px + 1px)']){
+    assert.throws(()=>normalizeInspectorValue(margin,value),undefined,`margin: ${value}`);
+  }
+});
+
 test('every registry style preset is accepted by its canonical property validator',()=>{
   const withPresets=listProperties().filter(property=>property.presets?.length);
   assert.ok(withPresets.length>=20,'the common visual groups expose useful presets');
