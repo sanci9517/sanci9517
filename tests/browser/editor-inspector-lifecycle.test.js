@@ -190,6 +190,8 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   // breakpoint-local width now shares the atomic group reset contract.
   const geometryHeading=editor.locator('.inspector-group-title').filter({hasText:'Geometria'});
   if(await geometryHeading.getAttribute('aria-expanded')==='false')await geometryHeading.click();
+  const widthUnit=field('size.width').locator('select:not(.property-token-picker)');
+  await widthUnit.selectOption('px');
   const mobileWidth=field('size.width').locator('input[type="number"]');
   await mobileWidth.fill('260');
   await mobileWidth.press('Tab');
