@@ -6,7 +6,7 @@ const app=readFileSync(new URL('../public/editor-v2/app.js',import.meta.url),'ut
 function action(start,end,context){runInNewContext(app.slice(app.indexOf(start),app.indexOf(end))+';this.act='+start.match(/function (\w+)/)[1],context);return context.act}
 function editor(){
  const statuses=[],alerts=[];const meta={id:'p',slug:'p',isPublished:false,revision:1};const state={document:{revision:1,pages:{p:{id:'p'}}},persistence:{dirty:true,saving:false}};
- const context={state,pages:[meta],page:()=>({id:'p'}),flushRichTextDraft:null,commitActiveInspectorControl:()=>true,inspectorValidationError:()=>null,validatePageForPublication:()=>{},setStatus:m=>statuses.push(m),alert:m=>alerts.push(m),structuredClone,markSaved:(s,v)=>{s.persistence.dirty=false;s.persistence.saving=false;s.persistence.lastSavedRevision=v},render:()=>{},renderPageList:()=>{},$:()=>null,showRevisionConflict:()=>{},api:async()=>({data:{pageId:'p',version:2,revisionId:'r2'}})};
+ const context={state,pages:[meta],page:()=>({id:'p'}),flushRichTextDraft:null,commitActiveInspectorControl:()=>true,inspectorValidationError:()=>null,revealInspectorValidationError:()=>{},validatePageForPublication:()=>{},setStatus:m=>statuses.push(m),alert:m=>alerts.push(m),structuredClone,markSaved:(s,v)=>{s.persistence.dirty=false;s.persistence.saving=false;s.persistence.lastSavedRevision=v},render:()=>{},renderPageList:()=>{},$:()=>null,showRevisionConflict:()=>{},api:async()=>({data:{pageId:'p',version:2,revisionId:'r2'}})};
  return {context,statuses,alerts};
 }
 test('successful publish immediately marks a previously draft page LIVE; subsequent save keeps LIVE with pending draft',async()=>{
