@@ -119,6 +119,18 @@ test("site-scoped search, safe alt metadata and published-only delivery",async t
   assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,404,"other node types cannot pretend to be a Card");
   f.db.prepare("UPDATE pages SET published_content_json=?").run(JSON.stringify({pages:{'page-1':{rootId:'root',nodes:{root:{type:'root',children:[]},card:cardNode}}}}));
   assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,404,"detached Card cannot expose a private asset");
+  // Authored video poster uses an image asset; video playback stays an external URL.
+  const posterNode={type:'video',metadata:{contentVersion:1},props:{src:'/videos/external.webm',posterAssetId:asset.id}};
+  f.db.prepare("UPDATE pages SET published_content_json=?").run(JSON.stringify({pages:{'page-1':{nodes:{video:posterNode}}}}));
+  assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,200,"published video poster is available");
+  f.db.prepare("UPDATE pages SET published_content_json=?").run(JSON.stringify({pages:{'page-1':{nodes:{video:{...posterNode,metadata:{}}}}}}));
+  assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,404,"legacy video cannot expose unvalidated private poster");
+  f.db.prepare("UPDATE pages SET published_content_json=?").run(JSON.stringify({pages:{'page-1':{nodes:{video:{...posterNode,type:'text'}}}}}));
+  assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,404,"unrelated nodes cannot expose private poster");
+  f.db.prepare("UPDATE pages SET published_content_json=?").run(JSON.stringify({pages:{'page-1':{nodes:{video:{...posterNode,visibility:{desktop:false,tablet:false,mobile:false}}}}}}));
+  assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,404,"invisible video poster stays private");
+  f.db.prepare("UPDATE pages SET published_content_json=?").run(JSON.stringify({pages:{'page-1':{rootId:'root',nodes:{root:{type:'root',children:[]},video:posterNode}}}}));
+  assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,404,"unreachable video poster stays private");
   f.db.prepare("UPDATE pages SET is_published=0").run();
   assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,404);
 });
