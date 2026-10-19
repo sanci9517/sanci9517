@@ -175,6 +175,22 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await paddingTopEditor.fill('-7');
   await paddingTopEditor.dispatchEvent('change');
   assert.match(await field('spacing.padding').locator('.property-validation').textContent(),/negatív|belső|padding/i);
+  const pendingInvalidPosts=posts.length;
+  const publishedBeforeInvalid=JSON.stringify(published);
+  // Clicking Save intentionally blurs the invalid input. The application
+  // must inspect unresolved Inspector validation, not only activeElement.
+  await editor.locator('#save').click();
+  assert.equal(posts.length,pendingInvalidPosts,'blurred invalid padding must not produce a draft save request');
+  assert.equal(JSON.stringify(published),publishedBeforeInvalid,'previous public snapshot stays untouched');
+  assert.equal(await field('spacing.padding').locator('.typed-box-entry input').first().inputValue(),'-7');
+  await editor.locator('#publish').evaluate(button=>{
+    const wasDisabled=button.disabled;
+    button.disabled=false;
+    button.click();
+    button.disabled=wasDisabled;
+  });
+  assert.equal(posts.length,pendingInvalidPosts,'desktop Publish must not send a request for a blurred invalid Inspector field');
+  assert.match(await editor.locator('#saveStatus').textContent(),/Javítsd a jelzett mezőt/);
   // The focused field may be lost when Save/Publish is triggered from a
   // toolbar. Invalid input must never commit or publish the older model.
   const writesBeforeInvalid=posts.length;
