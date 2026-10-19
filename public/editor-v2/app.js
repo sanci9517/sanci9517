@@ -418,7 +418,18 @@ function renderGeometryInspector(node){
   for(const [id,key] of [['position.x','x'],['position.y','y'],['size.width','width'],['size.height','height'],['position.position','position']]){
     const prop=getProperty(id);
     const apply=value=>command('responsive.set',{nodeId:node.id,device,patch:{[key]:value}});
-    section.append(propertyInput(prop,prop.label,values[key],apply));
+    const control=propertyInput({...prop,disabled:Boolean(node.locked)},prop.label,values[key],apply);
+    const origin=describeResponsiveOrigin(node.responsive,key,device,{
+      hasBaseStyle:node.style?.[key]!==undefined&&node.style?.[key]!==null
+    });
+    const status=document.createElement('small');
+    status.className='responsive-origin';
+    status.dataset.kind=origin.kind;
+    if(origin.source)status.dataset.source=origin.source;
+    status.textContent=origin.label;
+    status.setAttribute('aria-label',prop.label+': '+origin.label);
+    control.append(status);
+    section.append(control);
     if(id==='size.width'||id==='size.height')section.append(renderGeometryPresets(id,values[key],apply));
     if(hasResponsiveOverride(node.responsive,key,device)){
       const reset=document.createElement('button');reset.type='button';reset.className='property-reset';
