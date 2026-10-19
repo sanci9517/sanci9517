@@ -165,6 +165,10 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   assert.deepEqual(await publicPage.locator('.visual-card:nth-child(2) > .visual-text').evaluate(el=>{const style=getComputedStyle(el);return {basis:style.flexBasis,maxWidth:style.maxWidth}}),await flexCss());
   // A real mobile viewport edits only its own override; the published page stays unchanged.
   await editor.setViewportSize({width:390,height:800});
+  if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))
+    await editor.locator('#openInspector').click();
+  const spacingHeading=editor.locator('.inspector-group-title').filter({hasText:'Térközök'});
+  if(await spacingHeading.getAttribute('aria-expanded')==='false')await spacingHeading.click();
   // Changing a breakpoint must never consume a pending invalid typed edit:
   // the click may already have moved DOM focus away from the Inspector field.
   const paddingTopEditor=field('spacing.padding').locator('.typed-box-entry input').first();
