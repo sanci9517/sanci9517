@@ -109,6 +109,16 @@ test("site-scoped search, safe alt metadata and published-only delivery",async t
   assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,404,"a detached node outside the published tree cannot expose its image");
   f.db.prepare("UPDATE pages SET published_content_json=?").run(JSON.stringify({pages:{'page-1':{nodes:{section:{responsive:{desktop:{backgroundAssetId:'wrong'}}}}}}}));
   assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,404,"a stale background reference cannot expose the image");
+  // A Card cannot expose a private R2 asset until the exact published Card version references it.
+  const cardNode={type:'card',metadata:{cardContentVersion:1},props:{cardContent:{imageAssetId:asset.id}}};
+  f.db.prepare("UPDATE pages SET published_content_json=?").run(JSON.stringify({pages:{'page-1':{nodes:{card:cardNode}}}}));
+  assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,200,"published Card asset is reachable");
+  f.db.prepare("UPDATE pages SET published_content_json=?").run(JSON.stringify({pages:{'page-1':{nodes:{card:{...cardNode,metadata:{}}}}}}));
+  assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,404,"legacy Card cannot expose an unvalidated asset");
+  f.db.prepare("UPDATE pages SET published_content_json=?").run(JSON.stringify({pages:{'page-1':{nodes:{card:{...cardNode,type:'text'}}}}}));
+  assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,404,"other node types cannot pretend to be a Card");
+  f.db.prepare("UPDATE pages SET published_content_json=?").run(JSON.stringify({pages:{'page-1':{rootId:'root',nodes:{root:{type:'root',children:[]},card:cardNode}}}}));
+  assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,404,"detached Card cannot expose a private asset");
   f.db.prepare("UPDATE pages SET is_published=0").run();
   assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,404);
 });
