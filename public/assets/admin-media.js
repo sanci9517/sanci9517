@@ -32,6 +32,15 @@ function renderQuota(data) {
     " · Archivált: " + readableBytes(quota.archivedBytes) +
     " · Szabad: " + readableBytes(quota.remainingBytes) +
     ". Az archivált képek is foglalják a tárhelyet.";
+  // Reject internally inconsistent responses rather than displaying a false
+  // reassuring figure when the database/API is partially unavailable.
+  if (quota.activeBytes + quota.archivedBytes !== quota.usedBytes ||
+      quota.remainingBytes !== Math.max(0, limit - quota.usedBytes)) {
+    quotaSummary.textContent = "A tárhelyadatok nem egyeznek. Frissítsd az oldalt.";
+    quotaDetails.textContent = "";
+    quotaProgress.hidden = true;
+    return;
+  }
   quotaProgress.value = Math.min(100, 100 * quota.usedBytes / limit);
   quotaProgress.hidden = false;
 }
