@@ -175,8 +175,13 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await editor.locator('.inspector-lock-toggle').check();
   assert.equal(await field('radius.topLeft').locator('input[type="number"]').isDisabled(),true);
   assert.equal(await editor.locator('.property-reset').filter({hasText:'Öröklés visszaállítása'}).first().isDisabled(),true);
+  assert.equal(await field('radius.topLeft').locator('xpath=ancestor::section[contains(@class,"inspector-group")]').locator('.group-responsive-reset').isDisabled(),true,'locked node cannot reset group');
   await editor.locator('.inspector-lock-toggle').uncheck();
-  await editor.locator('.property-reset').filter({hasText:'Öröklés visszaállítása'}).first().click();
+  const radiusGroup=field('radius.topLeft').locator('xpath=ancestor::section[contains(@class,"inspector-group")]');
+  const bulkReset=radiusGroup.locator('.group-responsive-reset');
+  assert.equal(await bulkReset.isEnabled(),true);
+  assert.match(await bulkReset.textContent(),/Saját értékek visszaállítása/);
+  await bulkReset.click();
   assert.equal((await css()).radius,'12px');
   await editor.locator('#mobileUndo').click();
   assert.equal((await css()).radius,'6px');
