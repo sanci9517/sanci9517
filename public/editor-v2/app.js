@@ -1116,7 +1116,29 @@ inspector.addEventListener('focusin',event=>{const input=event.target;if(input.m
 inspector.addEventListener('change',event=>{const input=event.target;if(input.matches('input,textarea,select'))input.dataset.focusValue=String(input.type==='checkbox'?input.checked:input.value)});
 async function save(publish=false){if(!commitActiveInspectorControl()){setStatus('Javítsd a jelzett mezőt mentés előtt.');return}if(state?.persistence?.saving){setStatus('Mentés folyamatban…');return;}if(flushRichTextDraft?.()===false){setStatus('Javítsd a jelzett tartalommezőt mentés előtt.');return;}const current=page();if(!current)return;if(publish){try{validatePageForPublication(current)}catch(error){if(error.nodeId){setSelection(state,[error.nodeId],error.nodeId);inspectorTab='content';render();window.sanciEditor?.openPanel?.('right');const note=document.createElement('p');note.className='property-validation';note.setAttribute('role','alert');note.textContent=error.message;inspector.prepend(note)}setStatus(error.message);return}}const meta=pages.find(x=>x.id===current.id);if(!meta)return;const stateAtStart=state;const pageId=current.id;const submittedDocument=structuredClone(stateAtStart.document);const submittedJson=JSON.stringify(submittedDocument);const expectedVersion=Number(meta.revision??stateAtStart.document.revision??0);setStatus(publish?'Publikálás…':'Mentés…');stateAtStart.persistence.saving=true;try{const result=await api(`/api/admin/editor?pageId=${encodeURIComponent(pageId)}`,{method:'POST',body:JSON.stringify({pageId,document:submittedDocument,publish,expectedVersion,expectedParentPageId:meta.parentPageId??null,note:publish?'Editor v2 publikálás':'Editor v2 mentés'})});const version=Number(result?.data?.version);if(result?.data?.pageId!==pageId||!Number.isInteger(version)||version<1)throw new Error('A mentés válasza hiányos vagy hibás revision-adatot tartalmaz; a helyi módosításokat nem jelöltük mentettnek.');const unchanged=state===stateAtStart&&JSON.stringify(stateAtStart.document)===submittedJson;stateAtStart.document.revision=version;if(stateAtStart.document.pages?.[pageId])stateAtStart.document.pages[pageId].revision=version;meta.revision=version;if(unchanged){markSaved(stateAtStart,version)}else{stateAtStart.persistence.saving=false;stateAtStart.persistence.dirty=true;stateAtStart.persistence.error=null;stateAtStart.persistence.lastSavedRevision=version}stateAtStart.persistence.conflict=null;const panel=$('#revisionConflict');if(panel&&state===stateAtStart)panel.hidden=true;const i=pages.findIndex(x=>x.id===pageId);if(i>=0){const previous=pages[i];pages[i]={...previous,content:submittedDocument,isPublished:publish||Boolean(previous.isPublished),hasUnpublishedChanges:!publish&&Boolean(previous.isPublished),publishedRevisionId:publish?result.data.revisionId:previous.publishedRevisionId,publishedParentPageId:publish?previous.parentPageId:previous.publishedParentPageId,publishedSlug:publish?previous.slug:previous.publishedSlug,publishedRevisionVersion:publish?version:Number(previous.publishedRevisionVersion??0),revision:version};}renderPageList();if(state===stateAtStart){render();setStatus(unchanged?(publish?'Publikálva':(pages.find(x=>x.id===pageId)?.isPublished?'Mentve — a nyilvános oldal változatlan':'Mentve')):'A mentett verzió elkészült; további helyi módosítások még nincsenek mentve')}return result}catch(e){stateAtStart.persistence.saving=false;stateAtStart.persistence.dirty=true;stateAtStart.persistence.error=e instanceof Error?e.message:String(e);if(state===stateAtStart&&e?.status===409&&e?.code==='REVISION_CONFLICT'){showRevisionConflict(e,pageId);return}if(state===stateAtStart){setStatus('Mentési hiba');alert(stateAtStart.persistence.error)}return}}
 async function unpublishPage(){const current=page();const meta=current&&pages.find(x=>x.id===current.id);if(!current||!meta?.isPublished)return;if(!confirm('Biztosan visszavonod ennek az oldalnak a publikálását?'))return;setStatus('Publikálás visszavonása…');try{const result=await api('/api/admin/editor?pageId='+encodeURIComponent(current.id),{method:'POST',body:JSON.stringify({pageId:current.id,action:'unpublish'})});const i=pages.findIndex(x=>x.id===current.id);if(i>=0)pages[i]={...pages[i],isPublished:Boolean(result.data?.published),hasUnpublishedChanges:false};renderPageList();render();setStatus('Publikálás visszavonva')}catch(e){showError(e)}}
-function setDevice(device){if(!state)return;state.viewport.device=device;zoom=device==='desktop'?1:Math.max(.35,Math.min(1,(canvas.clientWidth-48)/sizes[device]));render();canvas.scrollTo({left:0,top:0,behavior:'instant'})}
+function setDevice(device){
+ if(!state||!Object.hasOwn(sizes,device))return false;
+ if(state.viewport.device===device)return true;
+ // The button often receives focus before its click listener runs, so an
+ // invalid Inspector field can no longer be inferred from activeElement alone.
+ // Do not change the viewport until all pending edits are validated/flushed.
+ if(!commitActiveInspectorControl()||
+    [...inspector.querySelectorAll('.property-validation')].some(el=>el.textContent.trim())||
+    flushRichTextDraft?.()===false){
+   setStatus('Javítsd a hibás mezőt a nézetváltás előtt.');
+   return false;
+ }
+ const previousDevice=state.viewport.device,previousZoom=zoom;
+ state.viewport.device=device;
+ zoom=device==='desktop'?1:Math.max(.35,Math.min(1,(canvas.clientWidth-48)/sizes[device]));
+ if(render()===false){
+   state.viewport.device=previousDevice;zoom=previousZoom;
+   setStatus('A nézetváltás nem sikerült. A módosítások megmaradtak.');
+   return false;
+ }
+ canvas.scrollTo({left:0,top:0,behavior:'instant'});
+ return true;
+}
 document.addEventListener('DOMContentLoaded',()=>{
  diagnostics.init();
  window.__sanciEditorDiagnostics=diagnostics;
