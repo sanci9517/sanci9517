@@ -13,6 +13,7 @@ import {isStructuredType,createElementContent,normalizeElementContent} from './e
 import {defaultDividerStyle,normalizeDividerStyle} from './decorative-elements.js';
 import {defaultCardContent,normalizeCardContent} from './card-content.js';
 import {defaultCountdownContent} from './countdown-content.js';
+import {defaultSocialLinks} from './social-links.js';
 import { applyStyleSnapshot } from './style-snapshot.js';
 import { layoutPresetPatch, layoutMode, CHILD_LAYOUT_DEFAULTS } from './layout-presets.js';
 
@@ -88,9 +89,10 @@ export const commands = Object.freeze({
 if(type==='divider')nodeProps.decoration=normalizeDividerStyle(nodeProps.decoration??defaultDividerStyle());
 if(type==='card')nodeProps.cardContent=normalizeCardContent(nodeProps.cardContent??defaultCardContent());
 if(type==='countdown')nodeProps.countdown=nodeProps.countdown??defaultCountdownContent();
+if(type==='social')nodeProps.socialLinks=nodeProps.socialLinks??defaultSocialLinks();
 const nodeStyle=structuredClone(style);
 if(type==='spacer'&&!Object.hasOwn(nodeStyle,'height'))nodeStyle.height='64px';
-const metadata=type==='countdown'?{countdownVersion:1}:type==='card'?{cardContentVersion:1}:type==='divider'?{decorativeVersion:1}:type==='spacer'?{spacerVersion:1}:['image','video','audio'].includes(type)?{editorContentVersion:1}:isStructuredType(type)?{structuredContentVersion:1}:['badge','quote','icon'].includes(type)?{basicContentVersion:1}:{};
+const metadata=type==='social'?{socialLinksVersion:1}:type==='countdown'?{countdownVersion:1}:type==='card'?{cardContentVersion:1}:type==='divider'?{decorativeVersion:1}:type==='spacer'?{spacerVersion:1}:['image','video','audio'].includes(type)?{editorContentVersion:1}:isStructuredType(type)?{structuredContentVersion:1}:['badge','quote','icon'].includes(type)?{basicContentVersion:1}:{};
 const node=createNode(type,{props:nodeProps,style:nodeStyle,name:name??type,parentId:parent.id,metadata});page.nodes[node.id]=node;parent.children.push(node.id);setSelection(draft,[node.id],node.id);bumpRevision(draft.document)}),
   'element.update': (state, { nodeId, patch = {} } = {}) => commit(state,{type:'element.update',payload:{nodeId,patch:structuredClone(patch)}},(draft)=>{const {page,node}=requireNode(draft,nodeId);const safePatch={...patch};delete safePatch.id;delete safePatch.parentId;delete safePatch.children;Object.assign(node,structuredClone(safePatch));if('style' in safePatch || 'responsive' in safePatch)markRootAppearance(page,node);bumpRevision(draft.document)}),
   'element.content.set': (state, { nodeId, content = '' } = {}) => commit(state,{type:'element.content.set',payload:{nodeId,content:String(content)}},(draft)=>{const {node}=requireNode(draft,nodeId);if(node.type==='richtext')throw new Error('Use richtext.content.set for Rich Text');const value=String(content);const textTypes=new Set(['heading','text','button','link']);node.props={...node.props,...(textTypes.has(node.type)?{text:value,content:value}:{content:value})};bumpRevision(draft.document)}),
