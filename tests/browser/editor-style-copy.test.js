@@ -79,8 +79,8 @@ test('copy appearance between text elements preserves content and geometry throu
   await ensureGroupOpen('Térközök');
   for(const [side,value] of [['Felül','12px'],['Jobb','20px'],['Alul','12px'],['Bal','20px']]){
     const field=tab.locator('.typed-inspector-field[data-property-id="spacing.padding"]');
-    const input=field.getByRole('textbox',{name:`Belső térköz – ${side}`});
-    await input.fill(value);await input.press('Tab');
+    const input=field.getByRole('spinbutton',{name:`Belső térköz – ${side} értéke`});
+    await input.fill(value.replace('px',''));await input.press('Tab');
   }
   await ensureGroupOpen('Szegély');
   await editDimension('border.width','2');

@@ -63,7 +63,7 @@ test('typed Inspector controls and link selection work with real browser DOM at 
           const supported=(property.units||[]).find(value=>!['auto','0'].includes(value));
           unit.value=supported;number.value='12';number.dispatchEvent(new Event('change',{bubbles:true}));
         }else if(type==='box'){
-          const input=control.querySelector('input');input.value='12px';input.dispatchEvent(new Event('change',{bubbles:true}));
+          const input=control.querySelector('.typed-box-entry input');input.value='12';input.dispatchEvent(new Event('change',{bubbles:true}));
         }else if(type==='color'){
           const input=control.querySelector('input[type="text"]');input.value='#abcdef';input.dispatchEvent(new Event('change',{bubbles:true}));
         }else if(type==='number'){
@@ -79,7 +79,7 @@ test('typed Inspector controls and link selection work with real browser DOM at 
       const invalidMatrix=[];
       for(const [id,value,selector] of [
         ['size.width','-10','input[type="number"]'],
-        ['spacing.padding','-10px','input'],
+        ['spacing.padding','-10','input[type="number"]'],
         ['background.color','not-a-color','input[type="text"]'],
         ['opacity.value','2','input[type="number"]'],
         ['layout.display','not-a-display','select'],
@@ -127,7 +127,26 @@ test('typed Inspector controls and link selection work with real browser DOM at 
       const box=renderPropertyInput(getProperty('spacing.padding'),'Belső térköz','8px',v=>edits.push(v));
       host.append(box);
       const sides=box.querySelectorAll('input');
-      sides[1].value='12px';sides[1].dispatchEvent(new Event('change',{bubbles:true}));
+      sides[1].value='12';sides[1].dispatchEvent(new Event('change',{bubbles:true}));
+      const marginEdits=[];
+      const marginBox=renderPropertyInput(getProperty('spacing.margin'),'Külső térköz','-4px 8% 2rem auto',value=>marginEdits.push(value));
+      host.append(marginBox);
+      const marginNumbers=[...marginBox.querySelectorAll('.typed-box-entry input')];
+      const marginUnits=[...marginBox.querySelectorAll('.typed-box-entry select')];
+      const initialMargin={numbers:marginNumbers.map(x=>x.value),units:marginUnits.map(x=>x.value)};
+      marginUnits[1].value='vw';marginUnits[1].dispatchEvent(new Event('change',{bubbles:true}));
+      marginUnits[3].value='px';marginUnits[3].dispatchEvent(new Event('change',{bubbles:true}));
+      marginNumbers[3].value='5';marginNumbers[3].dispatchEvent(new Event('change',{bubbles:true}));
+      const paddingEdits=[];
+      const typedPadding=renderPropertyInput(getProperty('spacing.padding'),'Belső térköz','0',value=>paddingEdits.push(value));
+      host.append(typedPadding);
+      const paddingNum=typedPadding.querySelector('.typed-box-entry input');
+      paddingNum.value='-3';paddingNum.dispatchEvent(new Event('change',{bubbles:true}));
+      const paddingRejected=paddingEdits.length===0 && Boolean(typedPadding.querySelector('.property-validation')?.textContent);
+      paddingNum.value='6';paddingNum.dispatchEvent(new Event('change',{bubbles:true}));
+      const boxControls={initialMargin,marginEdits,paddingEdits,paddingRejected,
+        paddingUnitOptions:[...typedPadding.querySelector('.typed-box-entry select').options].map(x=>x.value),
+        marginUnitOptions:[...marginUnits[0].options].map(x=>x.value)};
       const presetResults={};
       for(const property of listProperties().filter(item=>item.presets?.length&&!['size.width','size.height'].includes(item.id))){
         const selected=property.presets[0];
@@ -187,7 +206,7 @@ test('typed Inspector controls and link selection work with real browser DOM at 
       const list=setBlockType(parsedMarked,0,11,'numbered-list');
       renderRichTextEditor(editor,list);
       const parsedList=richTextEditorToDocument(editor);
-      return {edits,presetResults,unitOptions,helpLengths,saved,editing,assetInitiallyClosed,assetExpanded,assetRejected,assetClosedAfterSelection,assetReopened,latestSearchWins,linkPresent,linksAfterRemoval:unlinked.blocks[0].children.filter(x=>x.link).length,
+      return {edits,boxControls,presetResults,unitOptions,helpLengths,saved,editing,assetInitiallyClosed,assetExpanded,assetRejected,assetClosedAfterSelection,assetReopened,latestSearchWins,linkPresent,linksAfterRemoval:unlinked.blocks[0].children.filter(x=>x.link).length,
         importedBlocks:importedRoundTrip.blocks.map(block=>block.type),importedText:importedRoundTrip.blocks[0].children[0].text,importedAlignment:importedRoundTrip.blocks[0].align,
         importedMarks:importedRoundTrip.blocks[1].children.map(run=>run.marks),importedInlineStyles:importedRoundTrip.blocks[1].children.map(run=>run.styles??{}),
         importedLinks:importedRoundTrip.blocks[1].children.filter(run=>run.link).length,importedTable:importedRoundTrip.blocks[3].rows.map(row=>row.cells.map(cell=>cell.children.map(run=>run.text).join(''))),officeStyles:officeStyles.blocks[0],tableCell:importedRoundTrip.blocks[3].rows[2].cells[1],
@@ -199,6 +218,13 @@ test('typed Inspector controls and link selection work with real browser DOM at 
         hasHorizontalOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,fieldMatrix,invalidMatrix};
     });
     assert.deepEqual(data.edits,['#abcdef','8px 12px 8px 8px']);
+    assert.deepEqual(data.boxControls.initialMargin,{numbers:['-4','8','2',''],units:['px','%','rem','auto']});
+    assert.deepEqual(data.boxControls.marginEdits,['-4px 8vw 2rem auto','-4px 8vw 2rem 0','-4px 8vw 2rem 5px']);
+    assert.equal(data.boxControls.paddingRejected,true,'negative padding must not reach command callback');
+    assert.deepEqual(data.boxControls.paddingEdits,['6px 0 0 0']);
+    assert.ok(data.boxControls.marginUnitOptions.includes('auto'),'only margin supports Auto');
+    assert.ok(!data.boxControls.paddingUnitOptions.includes('auto'),'padding cannot use Auto');
+
     assert.ok(data.assetInitiallyClosed&&data.assetExpanded&&data.assetRejected&&data.assetClosedAfterSelection&&data.assetReopened,'asset picker must expose its state, preserve rejected edits, and reopen after selection');
     assert.equal(data.latestSearchWins,true,'late search responses must not replace the newest Media results');
     assert.ok(Object.keys(data.presetResults).length>=20);

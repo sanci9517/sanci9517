@@ -828,3 +828,10 @@ A meglévő admin Médiatár GET listaválasza a site-scoped D1-metadata alapjá
 **Felület:** 700px alatt az elempaletta, navigáció és Inspector a vásznat részben láthatóan hagyó, függőlegesen görgethető alsó panelben jelenik meg. A panel fókuszba kerül nyitáskor, Escape bezáráskor a korábbi vezérlőre tér vissza. A canvas a nyitott mobil panel mögött nem billentyűzettel fókuszálható; a panelek egymást kizárják. Akadálymentes aria-expanded/aria-hidden állapotok és a desktop összehajtott rail megőrzése. Nem új Editor/backend/adatmodell.
 
 **Elvárt bizonyíték:** valós Chromium 390px mobil szakasz, panelgeometria, fókuszvisszaadás, aria/inert, egypaneles működés és egyetlen publish esemény, továbbá teljes Editor layout/regresszió, typecheck, canonical-plan és Workers build CI. **Amíg ezek nem PASS, részblokk OPEN.** Native Android/PC felhasználói elfogadás külön OPEN; a teljes Visual Editor/WEB-011 OPEN.
+
+
+### 77.44 / WEB-011 — Négyoldalas térközök típusos mértékegység-szerkesztése (2026-10-19, PR alatt)
+
+A közös Inspector `spacing.margin` és `spacing.padding` mezőjében a négy égtáj szerinti érték önálló numerikus mező + egységselect. Egységek: px, %, rem, em, vw, vh; `auto` csak marginnál jelenik meg. 0 rövidített kimenete, a margin negatív méretei és a korábbi CSS 1–4 értékű shorthand visszaolvasása kompatibilis marad. A padding negatív/Auto esetben nem menthető; a hiba a mezőn belül látszik. A megjelenítésnél 44px minimális érintési cél és mobilon kétoszlopos, görgethető panel. Minden módosítás a meglévő Inspector command callbacken megy a Page Model felé: Undo/Redo és Save≠Publish változatlan. Nincs új tároló, migráció vagy engedélymódosítás.
+
+**CI/elfogadás:** Chromium mobil+desktop beállítási mezőmátrix, padding negatív védelem, margin Auto, mértékegység-váltás és normalizált shorthand, Editor Core/typecheck/canonical-plan és Workers build; éles natív PC/telefon elfogadás külön OPEN. A teljes WEB-011 és 76.08 design system továbbra is OPEN.
