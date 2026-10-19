@@ -22,7 +22,10 @@ async function fixture(t) {
     "site_id TEXT NOT NULL, archived_at TEXT DEFAULT NULL);",
     "CREATE TABLE pages(id TEXT PRIMARY KEY,site_id TEXT,archived_at TEXT,is_published INTEGER,published_content_json TEXT,content_json TEXT,title TEXT,slug TEXT);",
     "CREATE TABLE editor_revisions(id TEXT PRIMARY KEY,page_id TEXT,version INTEGER,document_json TEXT);",
-    "CREATE INDEX idx_media_site_id ON media(site_id);"
+    "CREATE INDEX idx_media_site_id ON media(site_id);",
+    "CREATE TRIGGER media_archive_pages_insert_guard BEFORE INSERT ON pages WHEN EXISTS (SELECT 1 FROM media m WHERE m.site_id=NEW.site_id AND m.archived_at IS NOT NULL AND (instr(COALESCE(NEW.content_json,''),m.id)>0 OR instr(COALESCE(NEW.published_content_json,''),m.id)>0)) BEGIN SELECT RAISE(ABORT,'ARCHIVED_MEDIA_REFERENCE'); END;",
+    "CREATE TRIGGER media_archive_pages_update_guard BEFORE UPDATE OF content_json,published_content_json ON pages WHEN EXISTS (SELECT 1 FROM media m WHERE m.site_id=NEW.site_id AND m.archived_at IS NOT NULL AND (instr(COALESCE(NEW.content_json,''),m.id)>0 OR instr(COALESCE(NEW.published_content_json,''),m.id)>0)) BEGIN SELECT RAISE(ABORT,'ARCHIVED_MEDIA_REFERENCE'); END;",
+    "CREATE TRIGGER media_archive_revisions_insert_guard BEFORE INSERT ON editor_revisions WHEN EXISTS (SELECT 1 FROM media m JOIN pages p ON p.site_id=m.site_id WHERE p.id=NEW.page_id AND m.archived_at IS NOT NULL AND instr(NEW.document_json,m.id)>0) BEGIN SELECT RAISE(ABORT,'ARCHIVED_MEDIA_REFERENCE'); END;"
   ].join("\n"));
   for (const role of ["editor","viewer"]) {
     db.prepare("INSERT INTO users VALUES (?,?,?,?,1)").run(role,role+"@test.local",role,role);
@@ -230,6 +233,21 @@ test("archive refuses any live, draft, old revision or unverified usage and rema
  assert.equal((await f.call("PATCH","editor",JSON.stringify({archived:true,altText:"bad"}),{id:asset.id})).status,400);
  assert.equal((await f.call("GET","editor",null,{state:"nonsense"})).status,400);
  assert.equal((await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id,origin:"https://evil.test"})).status,403);
+});
+
+
+test("database guards prevent creating new references to archived images after concurrent preflight",async t=>{
+ const f=await fixture(t);
+ const image=(await (await f.call("POST","editor",png,{name:"guard.png"})).json()).data;
+ const archive=await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:image.id});
+ assert.equal(archive.status,200);
+ const doc=JSON.stringify({pages:{'page-1':{nodes:{photo:{props:{assetId:image.id}}}}}});
+ assert.throws(()=>f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)").run("page-1","site-default",null,0,null,doc,"Test","test"),/ARCHIVED_MEDIA_REFERENCE/);
+ f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)").run("page-1","site-default",null,0,null,"{}","Test","test");
+ assert.throws(()=>f.db.prepare("UPDATE pages SET published_content_json=? WHERE id='page-1'").run(doc),/ARCHIVED_MEDIA_REFERENCE/);
+ assert.throws(()=>f.db.prepare("INSERT INTO editor_revisions VALUES (?,?,?,?)").run("rev-block","page-1",1,doc),/ARCHIVED_MEDIA_REFERENCE/);
+ assert.equal(f.db.prepare("SELECT COUNT(*) AS n FROM editor_revisions").get().n,0);
+ assert.equal(f.db.prepare("SELECT content_json FROM pages WHERE id='page-1'").get().content_json,"{}");
 });
 
 test("restoring missing R2 binary fails closed, without exposing published archived media",async t=>{
