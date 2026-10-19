@@ -1,4 +1,5 @@
 import { RICH_TEXT_FONT_FAMILIES } from './schema.js';
+import { textOffsetWithin } from './richtext-selection-offset.js';
 
 /*
  * Rich Text links operate inside one block; formatting can span several blocks.
@@ -199,24 +200,18 @@ export function getRichTextBlockSelection(editor) {
   const start = findBlock(firstBlock), end = findBlock(lastBlock);
   if (!start || start !== end) return null;
   const blockIndex = [...editor.children].indexOf(start);
-  const offset = (container, n) => {
-    const r = document.createRange();
-    r.selectNodeContents(start);
-    r.setEnd(container, n);
-    return r.toString().length;
-  };
-  let from = offset(range.startContainer, range.startOffset);
-  let to = offset(range.endContainer, range.endOffset);
+  let from = textOffsetWithin(start, range.startContainer, range.startOffset);
+  let to = textOffsetWithin(start, range.endContainer, range.endOffset);
+  if (from === null || to === null) return null;
   if (from === to) {
     // A caret inside an existing link means 'edit/unlink this link'.
     const element = range.startContainer.nodeType === Node.ELEMENT_NODE
       ? range.startContainer : range.startContainer.parentElement;
     const anchor = element?.closest('a');
     if (!anchor || !start.contains(anchor)) return null;
-    const r = document.createRange();
-    r.selectNodeContents(start);
-    r.setEndBefore(anchor);
-    from = r.toString().length;
+    const index = [...anchor.parentNode.childNodes].indexOf(anchor);
+    from = textOffsetWithin(start, anchor.parentNode, index);
+    if (from === null) return null;
     to = from + anchor.textContent.length;
   }
   return from === to ? null : {blockIndex, from, to};
@@ -240,12 +235,13 @@ export function getRichTextFormattingSelection(editor) {
   if(first<0||last<first)return null;
   const offsetIn=(block,container,offset,isStart)=>{
     if(container===editor)return isStart?0:block.textContent.length;
-    const prefix=document.createRange();prefix.selectNodeContents(block);prefix.setEnd(container,offset);return prefix.toString().length;
+    return textOffsetWithin(block,container,offset);
   };
   const segments=[];
   for(let blockIndex=first;blockIndex<=last;blockIndex++){
     const block=children[blockIndex],from=blockIndex===first?offsetIn(block,range.startContainer,range.startOffset,true):0,
       to=blockIndex===last?offsetIn(block,range.endContainer,range.endOffset,false):block.textContent.length;
+    if(from===null||to===null)return null;
     if(to>from)segments.push({blockIndex,from,to});
   }
   return segments.length?{segments}:null;
