@@ -7,6 +7,10 @@ const search = document.getElementById("mediaSearch");
 const searchClear = document.getElementById("mediaSearchClear");
 const supported = new Set(["image/png", "image/jpeg", "image/gif", "image/webp"]);
 const maxBytes = 4 * 1024 * 1024;
+const progress = document.getElementById("uploadProgress");
+const cancel = document.getElementById("uploadCancel");
+const retry = document.getElementById("uploadRetry");
+let activeUpload = null;
 
 function feedback(message, kind = "") {
   status.textContent = message;
@@ -97,28 +101,100 @@ async function refresh(query = "") {
   }
 }
 let searchTimer;search?.addEventListener("input",()=>{clearTimeout(searchTimer);searchTimer=setTimeout(()=>refresh(search.value.trim()),220)});searchClear?.addEventListener("click",()=>{search.value="";refresh()});
-form.addEventListener("submit", async event => {
-  event.preventDefault();
-  const file = input.files?.[0];
+function uploadImage(file) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    let settled = false;
+    const finish = (error, data) => { if (settled) return; settled = true; error ? reject(error) : resolve(data); };
+    xhr.open("POST", "/api/admin/media?name=" + encodeURIComponent(file.name));
+    xhr.responseType = "json";
+    xhr.setRequestHeader("Content-Type", file.type);
+    xhr.timeout = 120000;
+    // Bytes sent are not the same as bytes persisted in D1/R2.
+    xhr.upload.onprogress = event => {
+      if (activeUpload !== xhr || !event.lengthComputable || !event.total) return;
+      if (event.loaded >= event.total) {
+        progress.value = 99;
+        feedback("Kép elküldve; tárhely- és adatbázismentés ellenőrzése…");
+      } else {
+        const value = Math.min(99, Math.floor(event.loaded / event.total * 100));
+        progress.value = value;
+        if (value >= (xhr.lastAnnounced || 0) + 10) {
+          xhr.lastAnnounced = value;
+          feedback("Kép küldése: " + value + "%");
+        }
+      }
+    };
+    xhr.onload = () => {
+      const payload = xhr.response && typeof xhr.response === "object" ? xhr.response : null;
+      if (xhr.status >= 200 && xhr.status < 300 && payload?.ok === true) {
+        progress.value = 100;
+        finish(null, payload.data);
+      } else {
+        const error = new Error(payload?.error?.code ? explain(payload.error.code) : "A szerver nem megfelelő választ adott.");
+        error.canRetry = ![400,401,403,409,413,415].includes(xhr.status);
+        finish(error);
+      }
+    };
+    xhr.onerror = () => {
+      const error = new Error("Hálózati hiba. Ellenőrizd a képtárat újrapróbálás előtt: lehet, hogy a kép már megérkezett.");
+      error.canRetry = true;
+      finish(error);
+    };
+    xhr.ontimeout = () => {
+      const error = new Error("A feltöltés időtúllépés miatt megszakadt. Ellenőrizd a képtárat újrapróbálás előtt.");
+      error.canRetry = true;
+      finish(error);
+    };
+    xhr.onabort = () => {
+      const error = new Error("A feltöltést megszakítottad. Ha a kép már megérkezett a szerverre, megjelenhet a képtárban.");
+      error.cancelled = true;
+      finish(error);
+    };
+    activeUpload = xhr;
+    button.disabled = true;
+    input.disabled = true;
+    cancel.hidden = false;
+    retry.hidden = true;
+    progress.hidden = false;
+    progress.value = 0;
+    feedback("Feltöltés indítása…");
+    try { xhr.send(file); } catch (error) { finish(error); }
+  });
+}
+async function startUpload(file) {
+  if (activeUpload) return;
   if (!file) return feedback("Válassz ki egy képfájlt.", "error");
   if (!supported.has(file.type) || !file.size || file.size > maxBytes) {
     return feedback("PNG, JPG, GIF vagy WebP képet válassz, legfeljebb 4 MiB méretben.", "error");
   }
-  button.disabled = true;
-  feedback("Feltöltés és biztonsági ellenőrzés…");
   try {
-    await api("/api/admin/media?name=" + encodeURIComponent(file.name), {
-      method: "POST",
-      headers: { "Content-Type": file.type },
-      body: file
-    });
+    await uploadImage(file);
     form.reset();
     feedback("A kép sikeresen bekerült a privát médiatárba.", "ok");
-    await refresh();
-  } catch (e) {
-    feedback(e instanceof Error ? e.message : "Nem sikerült feltölteni a képet.", "error");
+    await refresh(search.value.trim());
+  } catch (error) {
+    feedback(error instanceof Error ? error.message : "Nem sikerült feltölteni a képet.", "error");
+    // No silent retries: a lost response might still have persisted the image.
+    retry.hidden = !error?.canRetry || Boolean(error?.cancelled);
   } finally {
+    activeUpload = null;
     button.disabled = false;
+    input.disabled = false;
+    cancel.hidden = true;
   }
+}
+cancel.addEventListener("click", () => { if (activeUpload) activeUpload.abort(); });
+retry.addEventListener("click", () => { if (!activeUpload) startUpload(input.files?.[0]); });
+input.addEventListener("change", () => {
+  if (activeUpload) return;
+  retry.hidden = true;
+  progress.hidden = true;
+  progress.value = 0;
+  feedback(input.files?.[0] ? "A kép feltöltésre kész." : "Válassz ki egy képfájlt.");
+});
+form.addEventListener("submit", event => {
+  event.preventDefault();
+  if (!activeUpload) startUpload(input.files?.[0]);
 });
 await refresh();
