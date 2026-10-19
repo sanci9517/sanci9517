@@ -498,3 +498,18 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
 .basic-element-preview .visual-quote{border-left:4px solid currentColor;margin:0;padding:8px 16px;font-style:italic}
 .basic-element-preview .visual-quote cite{display:block;margin-top:8px;font-size:.85em}
 .basic-element-preview.visual-icon{display:inline-flex;font-size:1.6em;line-height:1}
+
+/* Shared Card-like Social Links visual parity with public page */
+.visual-social{min-width:0;max-width:100%}.visual-social-nav{width:100%;max-width:100%}.visual-social-list{list-style:none;display:flex;flex-wrap:wrap;gap:12px;align-items:stretch;margin:0;padding:0}.visual-social-item{min-width:0}.visual-social-link{display:flex;align-items:center;justify-content:center;gap:9px;min-height:44px;padding:10px 16px;max-width:100%;border-radius:999px;border:1px solid rgba(148,163,184,.55);background:rgba(30,41,59,.85);color:#f8fafc;text-decoration:none;font:600 14px/1.45 system-ui;overflow-wrap:anywhere;transition:background-color .15s ease,transform .15s ease}.visual-social-link:hover{background:#334155;transform:translateY(-1px)}.visual-social-link:focus-visible{outline:3px solid #60a5fa;outline-offset:3px}.visual-social-icon{display:inline-flex;align-items:center;justify-content:center;flex:none;min-width:20px;font-size:1.2em}.visual-social-text{min-width:0}.visual-social-cards .visual-social-link{border-radius:14px;padding:18px 22px;box-shadow:0 3px 14px rgba(0,0,0,.15)}.visual-social-minimal .visual-social-link{background:transparent;border-color:transparent;border-radius:6px;padding:8px 10px;text-decoration:underline;text-underline-offset:3px}.visual-social-stack .visual-social-list{flex-direction:column}.visual-social-stack .visual-social-item{width:100%}.visual-social-grid .visual-social-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr))}.visual-social-grid .visual-social-link{height:100%}.visual-social-missing{opacity:.68;cursor:not-allowed;flex-wrap:wrap}.visual-social-missing small{font:400 11px system-ui;color:#cbd5e1}.visual-social-empty{padding:14px;color:#cbd5e1}.social-preview .visual-social-nav{pointer-events:none}@media(prefers-reduced-motion:reduce){.visual-social-link{transition:none}.visual-social-link:hover{transform:none}}
+
+/* Social Links — contextual content tools and touch-safe link management */
+.social-links-inspector{display:flex;flex-direction:column;gap:12px;min-width:0}
+.social-links-inspector h3{margin:4px 0;font-size:16px}
+.social-links-inspector .social-link-item{display:flex;flex-direction:column;gap:10px;min-width:0;border:1px solid #41536c;border-radius:12px;padding:12px;margin:0}
+.social-links-inspector .social-link-item legend{padding:0 6px;font-weight:700}
+.social-links-inspector .social-link-field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.social-links-inspector .social-link-field input,.social-links-inspector .social-link-field select{width:100%;min-width:0;min-height:44px}
+.social-links-inspector .structured-actions{display:flex;flex-wrap:wrap;gap:8px}
+.social-links-inspector .structured-action{min-height:44px;min-width:44px}
+.social-links-inspector .inspector-toggle{min-height:44px}
+.social-preview{width:100%;min-width:0}

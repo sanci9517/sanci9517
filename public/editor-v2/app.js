@@ -25,6 +25,8 @@ import {ICON_CHOICES,iconById} from './core/icon-options.js';
 import {DIVIDER_LINE_STYLES,normalizeDividerStyle} from './core/decorative-elements.js';
 import {defaultCardContent,CARD_VARIANTS} from './core/card-content.js';
 import {defaultCountdownContent,renderCountdownContent,activateCountdowns} from './core/countdown-content.js';
+import {defaultSocialLinks,renderSocialLinksHtml} from './core/social-links.js';
+import {renderSocialLinksInspector} from './ui/social-links-inspector.js';
 import {readRichTextSelectionFormatting,clearRichTextInlineFormatting} from './core/richtext-links.js';
 
 let inspectorCategory='all';let richTextSelectionCleanup=null;let richTextToolTab='character';
@@ -257,7 +259,12 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
   [node.states?.focus?.outlineColor,'visual-focus-outline','--sanci-focus-outline']
  ]){const color=validHex(value);if(color){el.classList.add(klass);el.style.setProperty(variable,color)}}
  const head=document.createElement('div');head.className='node-head';const headName=document.createElement('span');headName.textContent=node.name||node.type;const headType=document.createElement('small');headType.textContent=node.type;head.append(headName,headType);el.append(head);
-  if(node.type===NODE_TYPES.COUNTDOWN&&node.metadata?.countdownVersion===1){
+  if(node.type===NODE_TYPES.SOCIAL&&node.metadata?.socialLinksVersion===1){
+    const host=document.createElement('div');host.className='node-content social-preview';
+    host.innerHTML=renderSocialLinksHtml(node.props?.socialLinks??defaultSocialLinks());
+    host.inert=true; // Links on the Editor canvas never navigate away or steal focus.
+    el.append(host);
+  }else if(node.type===NODE_TYPES.COUNTDOWN&&node.metadata?.countdownVersion===1){
     const host=document.createElement('div');host.className='node-content countdown-preview';
     host.innerHTML=renderCountdownContent(node.props?.countdown??defaultCountdownContent());
     el.append(host);
@@ -707,7 +714,12 @@ function renderInspector(){
     if(node.type==='schedule')inspector.append(renderScheduleInspector(node));
     else {
       const textTypes=new Set(['heading','text','richtext','button','link']);
-      if(node.type==='countdown'&&node.metadata?.countdownVersion===1){
+      if(node.type==='social'&&node.metadata?.socialLinksVersion===1){
+        const panel=renderSocialLinksInspector(node,model=>command('element.update',{
+          nodeId:node.id,patch:{props:{...(node.props||{}),socialLinks:model}}
+        }));
+        inspector.append(panel);
+      }else if(node.type==='countdown'&&node.metadata?.countdownVersion===1){
         const model={...defaultCountdownContent(),...(node.props?.countdown||{})};
         const update=partial=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),countdown:{...model,...partial}}}});
         const section=document.createElement('section');section.className='countdown-inspector';

@@ -747,3 +747,8 @@ A #124 elválasztóvonal/reszponzív térköz CI PASS után MERGED: `458948c8a88
 ### 77.44.UX-P0.6.I — Valódi Countdown szerkesztőelem (2026-10-18)
 
 #125 Card CI PASS után MERGED: `36d03548c6d88eaa032da3c1013ba3a41de40321`. Következő 77.44 Editor-alpont: új verziójelölt Countdown, felhasználó helyi idejű Inspector, abszolút ISO-eseményidő, közös szerkesztő/publikus live-timer és lejárati üzenet, mobil megjelenés, server Publish guard. Még üres dátummal is menthető piszkozat. Unit + Chromium regression CI-be kötve, csak sikeres végrehajtás igazolhatja. Teljes Editor és kézi elfogadás OPEN, a kanonikus MASTER 77.44.UX-P0.6.I része az egyetlen aktuális részletes nyilvántartás.
+
+
+### 77.44.UX-P0.6.J — Social Links Editor-képesség (2026-10-19)
+
+A #126 Countdown CI PASS után egyesült: 38a3c8570174ae09d21fcc3074d4c7d0e5327804. A következő 77.44 Editor-pont statikus, szerkeszthető közösségi hivatkozás elem: 11 platform, egyedi címek és biztonságos URL-ek, hozzáadás/sorrend/törlés, három layout és megjelenés, közös HTML renderer/Inspector, reszponzív fókusz- és érintési cél, verziózott opt-in, Undo/Redo és Save≠Publish. Nincs dinamikus platformintegráció vagy állítólagos követőszám, nincs régi adatmigráció. Unit és Chromium regression PR CI-vel igazolandó; teljes Editor és kézi elfogadás OPEN. Az egyetlen részletes tulajdonos a kanonikus MASTER 77.44.UX-P0.6.J alpontja.
