@@ -120,7 +120,7 @@ test('empty Rich Text has direct desktop and mobile editing, typed presets, Save
   const widthControl=tab.locator('.typed-inspector-field[data-property-id="size.width"]');
   assert.deepEqual(await widthControl.locator('select option').evaluateAll(options=>options.map(option=>option.value)),['','auto','px','%','vw','rem']);
   assert.match(await widthControl.locator('.property-unit-hint').textContent(),/megváltoztathatja/);
-  await widthControl.locator('select').selectOption('px');
+  await widthControl.locator('select:not(.property-token-picker)').selectOption('px');
   await widthControl.locator('input[type="number"]').fill('320');
   await widthControl.locator('input[type="number"]').press('Tab');
   assert.equal(await tab.locator(`.node[data-node-id="${richId}"]`).evaluate(el=>getComputedStyle(el).width),'320px');

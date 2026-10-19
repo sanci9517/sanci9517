@@ -143,7 +143,7 @@ test("future modules are visibly disabled rather than presented as implemented",
 
 test("every dashboard link targets the canonical Admin, Editor, public site, or an existing section", () => {
   const destinations = [...dashboard.matchAll(/\bhref="([^"]+)"/g)].map((match) => match[1]);
-  const allowed = new Set(["/admin", "/admin/editor", "/", "#platformCapabilities"]);
+  const allowed = new Set(["/admin", "/admin/editor", "/admin/design", "/", "#platformCapabilities"]);
   assert.ok(destinations.length > 0, "dashboard must contain navigable destinations");
   for (const destination of destinations) {
     assert.ok(allowed.has(destination), `unexpected dashboard destination: ${destination}`);
@@ -163,7 +163,7 @@ test("every enabled sidebar destination is a canonical, authenticated Admin rout
   assert.ok(destinations.length > 0, "sidebar must expose at least one active destination");
   for (const destination of destinations) {
     assert.ok(
-      ["/admin", "/admin/editor"].includes(destination),
+      ["/admin", "/admin/editor", "/admin/design"].includes(destination),
       `unexpected active sidebar destination: ${destination}`
     );
   }

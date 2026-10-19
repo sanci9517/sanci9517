@@ -1,4 +1,5 @@
 import { validatedLinkHref } from './richtext-links.js';
+import {parseTokenReference,compatibleTokens} from './design-tokens.js';
 /*
  * Typed Inspector value validation. This module deliberately covers only the
  * controls the current Canvas/Renderer property map can actually consume.
@@ -11,6 +12,8 @@ const unitToken = /^(?:auto|0|px|%|vw|vh|rem|em)$/i;
 export function normalizeInspectorValue(property, input) {
   const type = property?.type;
   const value = String(input ?? '').trim();
+  const token=parseTokenReference(value);
+  if(token){if(!compatibleTokens(property).includes(token))throw new Error('Ez a közös stílus nem használható ebben a mezőben.');return value}
   if (!value) throw new Error('Az üres érték helyett használd az Öröklés visszaállítása gombot.');
   if (type === 'select') {
     if (!property.options?.includes(value)) throw new Error('Érvénytelen választási lehetőség.');
@@ -18,7 +21,7 @@ export function normalizeInspectorValue(property, input) {
   }
   if (type === 'number') {
     const number = Number(value);
-    const bounds = property.key === 'opacity' ? [0, 1] :
+    const bounds = property.key === 'scale' ? [.1,4] : property.key === 'opacity' ? [0, 1] :
       property.key === 'lineHeight' ? [0.5, 5] :
       ['flexGrow','flexShrink'].includes(property.key) ? [0, 100] : [-9999, 9999];
     if (!Number.isFinite(number) || number < bounds[0] || number > bounds[1]) {
@@ -27,6 +30,7 @@ export function normalizeInspectorValue(property, input) {
     return String(number);
   }
   if (type === 'dimension') {
+    if(property.key==='rotate'){if(!/^-?\d+(?:\.\d+)?deg$/.test(value)||Math.abs(parseFloat(value))>360)throw new Error('A forgatás -360 és 360 fok között lehet.');return value}
     if (!lengthToken.test(value)) throw new Error('Használj érvényes méretet: pl. 24px, 50%, 2rem vagy auto.');
     if (value.startsWith('-') && !['x','y','letterSpacing','wordSpacing','textIndent'].includes(property.key)) throw new Error('Itt nem használható negatív méret.');
     if (value === 'auto' && !property.units?.includes('auto')) throw new Error('Az auto itt nem használható.');

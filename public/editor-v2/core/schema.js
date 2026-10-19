@@ -318,7 +318,8 @@ export function createPage({ id = createId('page'), name = 'Új oldal', slug = '
   };
 }
 
-export function createDocument(page = createPage()) {
+export function createDocument(page = createPage(), {modern=false}={}) {
+  if(modern)page={...page,nodes:{...page.nodes,[page.rootId]:{...page.nodes[page.rootId],metadata:{...page.nodes[page.rootId].metadata,editorRootVersion:1}}}};
   return {
     schemaVersion: SCHEMA_VERSION,
     type: DOCUMENT_TYPE,

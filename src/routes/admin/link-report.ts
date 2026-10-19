@@ -92,6 +92,9 @@ export async function adminLinkReportRoute(request: Request, env: Env): Promise<
     for (const [nodeId, node] of Object.entries<any>(nodes)) {
       if (checkedContentLinks >= 2000) { contentTruncated = true; break; }
       const candidates = [node?.props?.href, node?.props?.url, node?.props?.link?.href, node?.props?.link?.url];
+      if(node?.type==='list'&&Array.isArray(node?.props?.items)){
+        for(const item of node.props.items.slice(0,40))if(typeof item?.href==='string')candidates.push(item.href);
+      }
       const richText = node?.props?.richText;
       if (richText?.type === "richtext-document" && richText.schemaVersion === 1 && Array.isArray(richText.blocks)) {
         for (const block of richText.blocks) {

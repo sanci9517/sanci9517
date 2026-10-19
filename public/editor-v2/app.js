@@ -29,10 +29,19 @@ import {defaultSocialLinks,renderSocialLinksHtml} from './core/social-links.js';
 import {renderSocialLinksInspector} from './ui/social-links-inspector.js';
 import {defaultEmbedContent,renderEmbedHtml} from './core/creator-embed.js';
 import {renderEmbedInspector} from './ui/creator-embed-inspector.js';
-import {defaultCodeSnippet,renderCodeSnippet} from './core/code-snippet.js';
+import {defaultCodeSnippet,renderCodeSnippet,activateCodeBlocks} from './core/code-snippet.js';
 import {renderCodeSnippetInspector} from './ui/code-snippet-inspector.js';
 import {readRichTextSelectionFormatting,clearRichTextInlineFormatting} from './core/richtext-links.js';
+import {opaqueContrast} from './core/accessibility.js';
+import {STATE_PROPERTY_IDS,applyStateStyles} from './core/state-styles.js';
+import {defaultTokens,applyTokenVariables} from './core/design-tokens.js';
+import {CONTENT_TYPES,STRUCTURAL_TYPES,validatePageForPublication,isAuthoredContent,authoredNodeHtml,contentAttributes,initContentInteractions,contentTag} from './core/authored-content.js';
+import {renderElementContentControls,pageLinkPicker} from './ui/element-content-controls.js';
 
+let editorTokens=defaultTokens();
+function propertyInput(...args){return renderPropertyInput(...args,{tokens:editorTokens})}
+async function loadEditorTokens(){try{const response=await fetch('/api/public/presentation?preview=1',{cache:'no-store',credentials:'same-origin'});const result=await response.json();if(response.ok&&result?.data?.tokens){editorTokens=result.data.tokens;const target=canvas.querySelector('.page-canvas');if(target)applyTokenVariables(target,editorTokens)}}catch{} }
+let statePreview='none';
 let inspectorCategory='all';let richTextSelectionCleanup=null;let richTextToolTab='character';
 
 let state=null;let pages=[];let archivedPages=[];let revisionHistory=[];let zoom=1;let inspectorTab='design';let inspectorQuery='';let flushRichTextDraft=null;let inlineEditingId=null;let richTextBookmark=null;let copiedStyleSnapshot=null;let canvasDrag=null;let canvasResize=null;let mobileTouch={active:false,timer:null,downId:null,startX:0,startY:0,snapshot:[],snapshotPrimary:null,suppressClick:false,longPressTriggered:false};let hierarchyDrag={nodeId:null,overId:null};let mobileHierarchyDrag={active:false,timer:null,nodeId:null,overId:null,startX:0,startY:0,suppressClick:false};
@@ -99,7 +108,8 @@ function command(type,payload,{render:shouldRender=true,typingGroup=null}={}){tr
 }catch(e){diagnostics.add({source:'command',code:'SANCI-CMD-E001',message:e instanceof Error?e.message:String(e),context:type,error:e});if(state?.persistence)state.persistence.error=e instanceof Error?e.message:String(e);setStatus('Szerkesztési hiba');alert(state.persistence.error);return false}}
 function typeForElement(name){const map={'Badge/Tag':'badge','Quote':'quote','Panel':'panel','Overlay':'overlay','Absolute':'absolute','Sticky':'sticky','Tooltip':'tooltip','Shorts':'shorts','Sponsor':'sponsor','Business Contact':'business','About Me':'about','Sanci Button':'sanci-button'};if(map[name])return map[name];for(const items of groups)for(const [label,type] of items)if(label===name&&type)return type;return null}
 function resolveAddParent(current,type){const selected=state.selection.primaryId?getNode(current,state.selection.primaryId):null;if(selected&&canContain(selected,type))return selected;if(selected?.parentId){const parent=getNode(current,selected.parentId);if(parent&&canContain(parent,type))return parent}return getNode(current,current.rootId)}
-function renderPalette(filter=''){const root=$('#elementList');if(!root){diagnostics.add({source:'ui',code:'SANCI-UI-E002',message:'Az Elemek lista konténere nem található.'});return}root.replaceChildren();const q=String(filter||'').trim().toLowerCase();for(const[group,items]of groups){const matches=items.filter(([name,type])=>{const resolvedType=type||typeForElement(name);return name.toLowerCase().includes(q)&&Boolean(resolvedType)});if(!matches.length)continue;const section=document.createElement('section');section.className='element-group collapsed';const title=document.createElement('button');title.type='button';title.className='element-group-title';title.innerHTML='<span>'+group+'</span><b>'+matches.length+'</b>';const body=document.createElement('div');for(const[name,type]of matches){const resolvedType=type||typeForElement(name);const row=document.createElement('div');row.className='element-row';const b=document.createElement('button');b.type='button';b.className='element';b.innerHTML='<i>◇</i><span>'+name+'</span>';const capability=getElementCapability(resolvedType);const badge=document.createElement('small');badge.className='element-capability';badge.textContent=capability.status==='PARTIAL'?'Részleges':'Tervezett';b.append(badge);if(capability.status==='PLANNED'){b.disabled=true;b.title='Később: ez az elem még nem használható.'}else b.onclick=()=>{const current=page();if(!current)return;const parent=resolveAddParent(current,resolvedType);command('element.add',{type:resolvedType,name,parentId:parent?.id||current.rootId,props:resolvedType===NODE_TYPES.RICHTEXT?{}:{text:name}})};const info=document.createElement('button');info.type='button';info.className='element-info';info.textContent='i';info.title='Mi ez? '+name;info.setAttribute('aria-label','Mi ez? '+name);const help=document.createElement('div');help.className='element-description';help.textContent=(ELEMENT_DESCRIPTIONS[name]||name+' elem hozzáadására szolgál.')+' Inspector: '+capability.inspector+', publikus kimenet: '+capability.public+'.';help.hidden=true;info.onclick=e=>{e.stopPropagation();help.hidden=!help.hidden};row.append(b,info,help);body.append(row)}title.onclick=()=>section.classList.toggle('collapsed');section.append(title,body);root.append(section)}if(!root.children.length)diagnostics.add({source:'ui',code:'SANCI-UI-E003',message:'Az Elemek lista üres: egyetlen érvényes elem típus sem került a palettába.'})}
+function addAuthoredElement(type,name,parentId){const authored=CONTENT_TYPES.includes(type)&&!['code','divider','spacer','heading','text','richtext','button','link'].includes(type);command('element.add',{type,name,parentId,authored,props:type===NODE_TYPES.RICHTEXT?{}:{text:name}})}
+function renderPalette(filter=''){const root=$('#elementList');if(!root){diagnostics.add({source:'ui',code:'SANCI-UI-E002',message:'Az Elemek lista konténere nem található.'});return}root.replaceChildren();const q=String(filter||'').trim().toLowerCase();for(const[group,items]of groups){const matches=items.filter(([name,type])=>{const resolvedType=type||typeForElement(name);return name.toLowerCase().includes(q)&&Boolean(resolvedType)});if(!matches.length)continue;const section=document.createElement('section');section.className='element-group collapsed';const title=document.createElement('button');title.type='button';title.className='element-group-title';title.innerHTML='<span>'+group+'</span><b>'+matches.length+'</b>';const body=document.createElement('div');for(const[name,type]of matches){const resolvedType=type||typeForElement(name);const row=document.createElement('div');row.className='element-row';const b=document.createElement('button');b.type='button';b.className='element';b.innerHTML='<i>◇</i><span>'+name+'</span>';const capability=getElementCapability(resolvedType);const badge=document.createElement('small');badge.className='element-capability';badge.textContent=capability.status==='PARTIAL'?'Részleges':'Tervezett';b.append(badge);if(capability.status==='PLANNED'){b.disabled=true;b.title='Később: ez az elem még nem használható.'}else b.onclick=()=>{const current=page();if(!current)return;const parent=resolveAddParent(current,resolvedType);addAuthoredElement(resolvedType,name,parent?.id||current.rootId)};const info=document.createElement('button');info.type='button';info.className='element-info';info.textContent='i';info.title='Mi ez? '+name;info.setAttribute('aria-label','Mi ez? '+name);const help=document.createElement('div');help.className='element-description';help.textContent=(ELEMENT_DESCRIPTIONS[name]||name+' elem hozzáadására szolgál.')+' Inspector: '+capability.inspector+', publikus kimenet: '+capability.public+'.';help.hidden=true;info.onclick=e=>{e.stopPropagation();help.hidden=!help.hidden};row.append(b,info,help);body.append(row)}title.onclick=()=>section.classList.toggle('collapsed');section.append(title,body);root.append(section)}if(!root.children.length)diagnostics.add({source:'ui',code:'SANCI-UI-E003',message:'Az Elemek lista üres: egyetlen érvényes elem típus sem került a palettába.'})}
 function syncHierarchyActions(){const current=page();const ids=state?.selection?.ids||[];const nodes=current?ids.map(id=>getNode(current,id)).filter(Boolean):[];const sameParent=nodes.length>=2&&nodes.every(node=>node.parentId===nodes[0].parentId);const groupLocked=nodes.some(node=>node.locked);const groupButton=$('#groupSelection');if(groupButton){groupButton.disabled=!sameParent||groupLocked||nodes.some(node=>node.id===current?.rootId)}const primary=current&&state?.selection?.primaryId?getNode(current,state.selection.primaryId):null;const ungroupButton=$('#ungroupSelection');if(ungroupButton)ungroupButton.disabled=!(primary?.type===NODE_TYPES.GROUP&&!primary.locked);const mobileGroup=$('#mobileGroup');if(mobileGroup)mobileGroup.disabled=!sameParent||groupLocked||nodes.some(node=>node.id===current?.rootId);const mobileUngroup=$('#mobileUngroup');if(mobileUngroup)mobileUngroup.disabled=!(primary?.type===NODE_TYPES.GROUP&&!primary.locked)}
 function syncMobileMultiSelectUI(){const bar=$('#mobileMultiSelectBar');if(!bar)return;bar.hidden=!mobileTouch.active;const count=$('#mobileSelectionCount');if(count)count.textContent=`${state?.selection?.ids?.length||0} elem kijelölve`;syncHierarchyActions()}
 function enterMobileMultiSelect(id){if(!state)return;const current=page();const target=current?getNode(current,id):null;if(!target||target.id===current?.rootId)return;mobileTouch.active=true;mobileTouch.snapshot=[...(state.selection.ids||[])];mobileTouch.snapshotPrimary=state.selection.primaryId;setSelection(state,[id],id);render()}
@@ -255,7 +265,7 @@ function openRichTextFormatting(id){
   render();window.sanciEditor?.openPanel?.('right');
   requestAnimationFrame(()=>inspector.querySelector('.richtext-editor-surface')?.focus());
 }
-function renderNode(currentPage,id,managed=false){const node=getNode(currentPage,id);if(!node)return null;managed=managed||isManagedLayout(node);const el=document.createElement('div');el.className=`node ${state.selection.ids.includes(id)?'selected':''}`;el.classList.toggle('managed-layout',managed);el.dataset.nodeId=id;el.dataset.device=state.viewport.device;applyNodeStyle(el,node,state.viewport.device);
+function renderNode(currentPage,id,managed=false){const node=getNode(currentPage,id);if(!node)return null;managed=managed||isManagedLayout(node)||isAuthoredContent(node);const el=document.createElement('div');el.className=`node ${state.selection.ids.includes(id)?'selected':''}`;el.classList.toggle('managed-layout',managed);el.dataset.nodeId=id;el.dataset.device=state.viewport.device;if(isAuthoredContent(node)){el.classList.add('creator-node');el.dataset.contentType=node.type}if(node.metadata?.stateVersion===1){el.classList.add('creator-state-enabled');if(state.selection.primaryId===id&&statePreview!=='none')el.dataset.editorState=statePreview;el.tabIndex=0}for(const [key,value] of Object.entries(contentAttributes(node)))if(!['href','target','rel','type'].includes(key))el.setAttribute(key,value);applyNodeStyle(el,node,state.viewport.device);
  const validHex=value=>typeof value==='string'&&/^#(?:[a-f0-9]{3}|[a-f0-9]{6})$/i.test(value)?value:'';
  for(const [value,klass,variable] of [
   [node.states?.hover?.backgroundColor,'visual-hover-bg','--sanci-hover-bg'],
@@ -348,13 +358,13 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
       el.append(format);
     }
     el.ondblclick=e=>{e.stopPropagation();setSelection(state,[id],id);beginRichTextEditing(id)};
-  }else if([NODE_TYPES.BADGE,NODE_TYPES.QUOTE,NODE_TYPES.ICON].includes(node.type)){
+  }else if([NODE_TYPES.BADGE,NODE_TYPES.QUOTE,NODE_TYPES.ICON].includes(node.type)&&!isAuthoredContent(node)){
    const c=document.createElement('div');c.className='node-content basic-element-preview';
    if(node.type===NODE_TYPES.ICON){const icon=iconById(node.props?.icon);c.textContent=icon.glyph;c.setAttribute('role','img');c.setAttribute('aria-label',node.props?.label||icon.label);c.classList.add('visual-icon');}
    else if(node.type===NODE_TYPES.BADGE){c.textContent=node.props?.text||'Címke';c.classList.add('visual-badge');}
    else{const q=document.createElement('blockquote');q.className='visual-quote';const p=document.createElement('p');p.textContent=node.props?.text||'';q.append(p);if(node.props?.attribution){const cite=document.createElement('cite');cite.textContent=node.props.attribution;q.append(cite)}c.append(q)}
    el.append(c);
- }else if(node.type===NODE_TYPES.SCHEDULE){const c=document.createElement('div');c.className='node-content schedule-preview-host';renderSchedulePreview(c,node.props?.schedule);el.append(c)}else if([NODE_TYPES.IMAGE,NODE_TYPES.VIDEO,NODE_TYPES.AUDIO].includes(node.type)){
+ }else if(node.type===NODE_TYPES.SCHEDULE){const c=document.createElement('div');c.className='node-content schedule-preview-host';renderSchedulePreview(c,node.props?.schedule);el.append(c)}else if([NODE_TYPES.IMAGE,NODE_TYPES.VIDEO,NODE_TYPES.AUDIO].includes(node.type)&&!isAuthoredContent(node)){
     const src=String(node.props?.src||'').trim();const c=document.createElement('div');c.className='node-content media-preview';
     if(src&&/^(https?:\/\/|\/(?!\/))/.test(src)){
       const media=document.createElement(node.type===NODE_TYPES.IMAGE?'img':node.type===NODE_TYPES.VIDEO?'video':'audio');
@@ -364,7 +374,7 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
       c.append(media);
     }else{const placeholder=document.createElement('small');placeholder.textContent='Adj meg egy média URL-t a Tartalom panelen.';c.append(placeholder);}
     el.append(c);
-   }else if(isStructuredType(node.type)){
+   }else if(isStructuredType(node.type)&&!isAuthoredContent(node)){
     const c=document.createElement('div');c.className='node-content structured-preview';
     c.innerHTML=renderElementContent(node.type,node.props?.contentModel??createElementContent(node.type),node.id);
     for(const eventName of ['pointerdown','click','dblclick'])c.addEventListener(eventName,event=>{if(event.target.closest('button,summary,dialog'))event.stopPropagation()});
@@ -383,9 +393,10 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
     }
     el.ondblclick=event=>{event.stopPropagation();setSelection(state,[id],id);beginRichTextEditing(id)};el.append(c);
   }
-  for(const child of node.children||[]){const x=renderNode(currentPage,child,managed);if(x)el.append(x)}if(state.selection.primaryId===id&&id!==currentPage.rootId&&!node.locked){const handle=document.createElement('button');handle.type='button';handle.className='canvas-resize-handle';handle.setAttribute('aria-label','Elem átméretezése');handle.title='Átméretezés';handle.onpointerdown=e=>beginCanvasResize(id,e,el);handle.onpointermove=e=>moveCanvasResize(id,e);handle.onpointerup=e=>finishCanvasResize(id,e);handle.onpointercancel=e=>finishCanvasResize(id,e,true);el.append(handle)}el.onpointerdown=e=>{if(inlineEditingId===id)return;if(e.pointerType==='touch'){e.stopPropagation();handleMobilePointerDown(id,e);return}beginCanvasDrag(id,e,el)};el.onpointermove=e=>{if(canvasResize?.nodeId===id){moveCanvasResize(id,e);return}if(e.pointerType==='touch')handleMobilePointerMove(e);else moveCanvasDrag(id,e)};el.onpointerup=e=>{if(canvasResize?.nodeId===id){finishCanvasResize(id,e);return}if(e.pointerType==='touch'){e.stopPropagation();handleMobilePointerUp(id,e);return}finishCanvasDrag(id,e)};el.onpointercancel=e=>{if(canvasResize?.nodeId===id){finishCanvasResize(id,e,true);return}if(e.pointerType==='touch')handleMobilePointerCancel(e);else finishCanvasDrag(id,e,true)};el.onclick=e=>{e.stopPropagation();if(inlineEditingId===id)return;if(mobileTouch.active&&mobileTouch.suppressClick){mobileTouch.suppressClick=false;return}selectNodeInteraction(id,e)};return el}
+  if(isAuthoredContent(node)&&!['code','embed','social','countdown','card','divider','spacer','richtext','heading','text','button','link'].includes(node.type)){const host=document.createElement('div');host.className='node-content creator-content-host';host.innerHTML=authoredNodeHtml(node,{device:state.viewport.device,editor:true});initContentInteractions(host);host.addEventListener('click',event=>{if(event.target.closest('a'))event.preventDefault()});host.addEventListener('pointerdown',event=>{if(event.target.closest('button,summary,video,audio'))event.stopPropagation()});el.append(host)}
+  for(const child of node.children||[]){const x=renderNode(currentPage,child,managed);if(x)el.append(x)}if(state.selection.primaryId===id&&id!==currentPage.rootId&&!node.locked){const handle=document.createElement('button');handle.type='button';handle.className='canvas-resize-handle';handle.setAttribute('aria-label','Elem átméretezése');handle.title='Átméretezés';handle.onpointerdown=e=>beginCanvasResize(id,e,el);handle.onpointermove=e=>moveCanvasResize(id,e);handle.onpointerup=e=>finishCanvasResize(id,e);handle.onpointercancel=e=>finishCanvasResize(id,e,true);el.append(handle)}el.onpointerdown=e=>{if(inlineEditingId===id)return;if(e.pointerType==='touch'){e.stopPropagation();handleMobilePointerDown(id,e);return}beginCanvasDrag(id,e,el)};el.onpointermove=e=>{if(canvasResize?.nodeId===id){moveCanvasResize(id,e);return}if(e.pointerType==='touch')handleMobilePointerMove(e);else moveCanvasDrag(id,e)};el.onpointerup=e=>{if(canvasResize?.nodeId===id){finishCanvasResize(id,e);return}if(e.pointerType==='touch'){e.stopPropagation();handleMobilePointerUp(id,e);return}finishCanvasDrag(id,e)};el.onpointercancel=e=>{if(canvasResize?.nodeId===id){finishCanvasResize(id,e,true);return}if(e.pointerType==='touch')handleMobilePointerCancel(e);else finishCanvasDrag(id,e,true)};el.onclick=e=>{e.stopPropagation();if(isAuthoredContent(node)&&e.target.closest('.creator-content-host')&&e.target.closest('button,summary,video,audio'))return;if(inlineEditingId===id)return;if(mobileTouch.active&&mobileTouch.suppressClick){mobileTouch.suppressClick=false;return}selectNodeInteraction(id,e)};return el}
 function updateCanvasExtent(target=canvas.querySelector('.page-canvas')){if(!target)return;let pageRect=target.getBoundingClientRect();const bottoms=[...target.querySelectorAll('.node')].map(node=>node.getBoundingClientRect().bottom-pageRect.top);target.style.minHeight=`${computeCanvasMinHeight(bottoms,zoom,844,80)}px`;pageRect=target.getBoundingClientRect();const nodes=[...target.querySelectorAll('.node')];const extents=measureCanvasWorkspace(nodes.map(node=>{const rect=node.getBoundingClientRect();return {left:rect.left-pageRect.left,right:rect.right-pageRect.left,top:rect.top-pageRect.top,bottom:rect.bottom-pageRect.top}}),target.offsetWidth,target.offsetHeight,zoom);target.style.left=`${extents.left}px`;target.style.top=`${extents.top}px`;pageRect=target.getBoundingClientRect();for(const node of nodes){const rect=node.getBoundingClientRect();node.classList.toggle('outside-artboard',rect.left<pageRect.left-1||rect.right>pageRect.right+1||rect.top<pageRect.top-1||rect.bottom>pageRect.bottom+1)}const frame=target.parentElement;if(frame?.classList.contains('page-canvas-frame')){frame.style.width=`${(target.offsetWidth+extents.left+extents.right)*zoom}px`;frame.style.height=`${(target.offsetHeight+extents.top+extents.bottom)*zoom}px`}}
-function renderCanvas(){canvas.querySelectorAll('.page-canvas-frame').forEach(x=>x.remove());const current=page();const device=state?.viewport?.device||'desktop';const width=sizes[device];const frame=document.createElement('div');frame.className='page-canvas-frame';const pc=document.createElement('div');pc.className='page-canvas';pc.dataset.device=device;pc.style.width=`${width}px`;pc.style.transform=`scale(${zoom})`;if(current)pc.append(renderNode(current,current.rootId));frame.append(pc);canvas.append(frame);activateCountdowns(canvas);updateCanvasExtent(pc);$('#canvasEmpty').hidden=Boolean(current);$('#canvasMode').textContent=`${device} · ${width}px`;$('#zoom').textContent=`${Math.round(zoom*100)}%`;syncDeviceButtons(device)}
+function renderCanvas(){canvas.querySelectorAll('.page-canvas-frame').forEach(x=>x.remove());const current=page();const device=state?.viewport?.device||'desktop';const width=sizes[device];const frame=document.createElement('div');frame.className='page-canvas-frame';const pc=document.createElement('div');pc.className='page-canvas';pc.dataset.device=device;pc.style.width=`${width}px`;applyTokenVariables(pc,editorTokens);pc.style.transform=`scale(${zoom})`;if(current){pc.append(renderNode(current,current.rootId));applyStateStyles(pc,current,device);activateCodeBlocks(pc)}frame.append(pc);canvas.append(frame);updateCanvasExtent(pc);$('#canvasEmpty').hidden=Boolean(current);$('#canvasMode').textContent=`${device} · ${width}px`;$('#zoom').textContent=`${Math.round(zoom*100)}%`;syncDeviceButtons(device)}
 function fitCanvasToViewport(){const device=state?.viewport?.device||'desktop';zoom=Math.max(.35,Math.min(1.2,(canvas.clientWidth-48)/sizes[device]));render();canvas.scrollTo({left:0,top:0,behavior:'instant'})}
 function changeCanvasZoom(next){const frame=canvas.querySelector('.page-canvas-frame');const centerX=canvas.scrollLeft+canvas.clientWidth/2,centerY=canvas.scrollTop+canvas.clientHeight/2;const pointX=frame?(centerX-frame.offsetLeft)/zoom:0,pointY=frame?(centerY-frame.offsetTop)/zoom:0;zoom=next;render();requestAnimationFrame(()=>{const updated=canvas.querySelector('.page-canvas-frame');if(!updated)return;canvas.scrollTo({left:Math.max(0,updated.offsetLeft+pointX*zoom-canvas.clientWidth/2),top:Math.max(0,updated.offsetTop+pointY*zoom-canvas.clientHeight/2),behavior:'instant'})})}
 function syncDeviceButtons(device){document.querySelectorAll('[data-device]').forEach(b=>b.classList.toggle('active',b.dataset.device===device));document.querySelectorAll('.canvas-device-btn').forEach(b=>b.classList.toggle('active',b.dataset.device===device))}
@@ -406,7 +417,7 @@ function renderGeometryInspector(node){
   for(const [id,key] of [['position.x','x'],['position.y','y'],['size.width','width'],['size.height','height'],['position.position','position']]){
     const prop=getProperty(id);
     const apply=value=>command('responsive.set',{nodeId:node.id,device,patch:{[key]:value}});
-    section.append(renderPropertyInput(prop,prop.label,values[key],apply));
+    section.append(propertyInput(prop,prop.label,values[key],apply));
     if(id==='size.width'||id==='size.height')section.append(renderGeometryPresets(id,values[key],apply));
     if(hasResponsiveOverride(node.responsive,key,device)){
       const reset=document.createElement('button');reset.type='button';reset.className='property-reset';
@@ -487,12 +498,11 @@ function renderScheduleInspector(node){
 
 function renderRegistryInspector(node,mode='primary'){
   const device=state.viewport.device,root=document.createDocumentFragment();
-  const primaryGroups=new Set(['layout','size','spacing','flex','grid','position','typography','background','border','radius','shadow','opacity']);
+  const primaryGroups=new Set(['layout','size','spacing','flex','grid','position','typography','background','border','radius','shadow','opacity','transform','filter','animation']);
   const duplicates=new Set(['content.text','content.href','advanced.nodeName',
     'position.x','position.y','size.width','size.height','position.position']);
   for(const group of listPropertyGroups()){
     if((mode==='primary')!==primaryGroups.has(group.id))continue;
-    if(node.type==='divider'&&node.metadata?.decorativeVersion===1&&group.id==='border')continue; // Dedicated line inspector owns the border.
     const parent=page()?.nodes?.[node.parentId];
     const properties=listProperties({group:group.id,...(!['flex','grid'].includes(group.id)?{nodeType:node.type}:{})})
       .filter(property=>!duplicates.has(property.id)&&isLayoutPropertyRelevant(property,node,parent,device));
@@ -511,10 +521,11 @@ function renderRegistryInspector(node,mode='primary'){
       const current=resolved?.value??node.style?.[key]??(['flex','grid','layout'].includes(property.group)&&rendered?getComputedStyle(rendered)[key]:'')??'';
       const label=property.responsive&&resolved?.inherited?property.label+' · örökölt':property.label;
       const apply=value=>{
-        if(property.responsive)command(property.command,{nodeId:node.id,device,patch:{[key]:value}});
-        else command(property.command,{nodeId:node.id,patch:{[key]:value}});
+        const typingGroup=`inspector:${node.id}:${device}:${key}`;
+        if(property.responsive)command(property.command,{nodeId:node.id,device,patch:{[key]:value}},{typingGroup});
+        else command(property.command,{nodeId:node.id,patch:{[key]:value}},{typingGroup});
       };
-      section.append(renderPropertyInput(property,label,current,apply));
+      section.append(propertyInput(property,label,current,apply));
       if(property.responsive&&hasResponsiveOverride(node.responsive,key,device)){
         const reset=document.createElement('button');reset.type='button';reset.className='property-reset';
         reset.textContent='Öröklés visszaállítása';
@@ -527,6 +538,37 @@ function renderRegistryInspector(node,mode='primary'){
   }
   return root;
 }
+function renderStatesInspector(node){
+  const section=document.createElement('section');section.className='inspector-group';const title=document.createElement('div');title.className='inspector-group-title';title.innerHTML='<strong>Rámutatás és fókusz</strong>';section.append(title);
+  if(node.type==='root'&&node.metadata?.editorRootVersion!==1){const note=document.createElement('p');note.className='content-field-help';note.textContent='Az oldalgyökér állapotaihoz előbb engedélyezd a vászon megjelenését a Stílus fül Elrendezési csoportjában.';section.append(note);return section}
+  const label=document.createElement('label');label.className='field';label.textContent='Állapot előnézete';const choose=document.createElement('select');choose.setAttribute('aria-label','Állapot előnézete');
+  for(const [value,text] of [['none','Alaphelyzet'],['hover','Rámutatás'],['focus-visible','Billentyűzetes fókusz']]){const option=document.createElement('option');option.value=value;option.textContent=text;choose.append(option)}
+  choose.value=statePreview;choose.onchange=()=>{statePreview=choose.value;renderCanvas();renderInspector()};label.append(choose);section.append(label);
+  const note=document.createElement('p');note.className='content-field-help';note.textContent='Az előnézeti állapot nem kerül mentésre. A beállított színek és hatások az aktuális eszköznézethez tartoznak, és a valódi rámutatáskor vagy billentyűzetes fókusznál lépnek életbe.';section.append(note);
+  if(statePreview==='none')return section;
+  for(const id of STATE_PROPERTY_IDS){const property=getProperty(id);const value=resolveResponsiveValue(node.states?.[statePreview],property.key,state.viewport.device).value;
+    const control=propertyInput(property,property.label,value??'',value=>command('states.set',{nodeId:node.id,state:statePreview,device:state.viewport.device,patch:{[property.key]:value}}));control.dataset.stateProperty=property.key;
+    if(node.locked)for(const input of control.querySelectorAll('input,select,button'))input.disabled=true;
+    section.append(control);
+    if(hasResponsiveOverride(node.states?.[statePreview],property.key,state.viewport.device)){const reset=document.createElement('button');reset.type='button';reset.className='property-reset';reset.textContent='Állapotérték öröklésének visszaállítása';reset.disabled=Boolean(node.locked);reset.onclick=()=>command('states.set',{nodeId:node.id,state:statePreview,device:state.viewport.device,patch:{[property.key]:undefined}});section.append(reset)}
+  }
+  return section;
+}
+function renderAccessibilityInspector(node){
+  const section=document.createElement('section');section.className='inspector-group';
+  const title=document.createElement('div');title.className='inspector-group-title';title.innerHTML='<strong>Akadálymentesség és láthatóság</strong>';section.append(title);
+  for(const [key,label] of [['label','Képernyőolvasó elnevezés'],['id','Oldalbeli hivatkozási azonosító'],['lang','Tartalom nyelve (pl. hu)']].filter(([key])=>node.type!=='root'||key!=='id'))section.append(field(label,node.accessibility?.[key]||'',value=>command('accessibility.set',{nodeId:node.id,patch:{[key]:value}}),Boolean(node.locked)));
+  for(const device of ['desktop','tablet','mobile']){
+    const label=document.createElement('label');label.className='inspector-toggle';const input=document.createElement('input');input.type='checkbox';input.checked=node.visibility!==false&&node.visibility?.[device]!==false;input.disabled=Boolean(node.locked)||node.type==='root';input.onchange=()=>command('element.visibility.set',{nodeId:node.id,device,visible:input.checked});label.append(input,document.createTextNode('Látható: '+device));section.append(label);
+  }
+  if(['heading','text','richtext','button','link','quote','badge'].includes(node.type)){
+    const target=canvas.querySelector(`.node[data-node-id="${CSS.escape(node.id)}"]`);let background='rgb(255, 255, 255)',unknown=false,foundBackground=false;
+    for(let el=target;el&&el!==canvas;el=el.parentElement){const style=getComputedStyle(el);if((!foundBackground&&style.backgroundImage!=='none')||style.filter!=='none'||Number(style.opacity)<1)unknown=true;if(!foundBackground&&style.backgroundColor!=='rgba(0, 0, 0, 0)'&&style.backgroundColor!=='transparent'){background=style.backgroundColor;foundBackground=true}}
+    const css=target?getComputedStyle(target):null,ratio=css&&!unknown?opaqueContrast(css.color,background):null,threshold=css&&(parseFloat(css.fontSize)>=24||(parseFloat(css.fontSize)>=18.66&&Number(css.fontWeight)>=700))?3:4.5;
+    const note=document.createElement('p');note.className='content-field-help contrast-feedback';note.textContent=ratio===null?'Áttetsző, képes vagy átmenetes háttérnél a kontrasztot kézzel is ellenőrizd.':`Alapstílus kontrasztja: ${ratio.toFixed(2)}:1 · ${ratio>=threshold?'megfelelő':'alacsony'} (cél: ${threshold}:1). A külön formázott szavakat és az interaktív állapotokat külön is ellenőrizd.`;if(ratio!==null&&ratio<threshold)note.classList.add('layout-warning');section.append(note);
+  }
+  return section;
+}
 function renderLayoutInspector(node){
   const section=document.createElement('section');section.className='inspector-group layout-recipes';section.dataset.inspectorCategory='layout';
   const title=document.createElement('div');title.className='inspector-group-title';
@@ -535,6 +577,7 @@ function renderLayoutInspector(node){
   const modeName=mode=>({flex:'Flex',grid:'Grid',block:'Normál folyás'}[mode]);
   const context=document.createElement('p');context.className='layout-context';context.textContent=`Ez az elem: ${modeName(layoutMode(node,device))} · ${device}.`;
   section.append(context);
+  if(node.type==='root'&&node.metadata?.editorRootVersion!==1){const enable=document.createElement('button');enable.type='button';enable.className='layout-parent';enable.textContent='Oldalgyökér stílusainak használata az előnézetben';enable.onclick=()=>command('root.appearance.enable',{nodeId:node.id});section.append(enable)}
   if(parent){
     const parentButton=document.createElement('button');parentButton.type='button';parentButton.className='layout-parent';parentButton.textContent=`Szülő: ${parent.name||parent.type} · ${modeName(layoutMode(parent,device))}`;
     parentButton.title='A szülő tároló kijelölése. Az oszlopok, irány és a gyermekek közötti távolság ott állítható.';
@@ -669,6 +712,24 @@ function renderMultiInspector(nodes){
  make('Átlátszóság','opacity','number','1');
  return panel;
 }
+function renderExistingContentInspector(node){
+  const update=(key,value)=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),[key]:value}}});
+  if(!isAuthoredContent(node)&&node.metadata?.basicContentVersion===1&&['badge','quote','icon'].includes(node.type)){
+    const section=document.createElement('section');section.className='basic-content-inspector';
+    if(node.type==='badge'){section.append(field('Címke szövege',node.props?.text||'',value=>update('text',value)))}
+    else if(node.type==='quote'){section.append(field('Idézet szövege',node.props?.text||'',value=>update('text',value),false,true),field('Forrás vagy szerző',node.props?.attribution||'',value=>update('attribution',value)))}
+    else{const select=document.createElement('select');select.setAttribute('aria-label','Ikon');for(const [value,label] of [['star','Csillag'],['heart','Szív'],['play','Lejátszás'],['check','Pipa'],['arrow','Nyíl'],['bolt','Villám'],['camera','Kamera'],['music','Zene'],['globe','Web'],['mail','Levél']]){const option=document.createElement('option');option.value=value;option.textContent=label;select.append(option)}select.value=node.props?.icon||'star';select.onchange=()=>update('icon',select.value);section.append(field('Ikon leírása',node.props?.label||'',value=>update('label',value)),select)}
+    inspector.append(section);return true;
+  }
+  if(node.type==='embed'&&node.metadata?.embedContentVersion===1){inspector.append(renderEmbedInspector(node,value=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),embedContent:value}}})));return true}
+  if(node.type==='social'&&node.metadata?.socialLinksVersion===1){inspector.append(renderSocialLinksInspector(node,value=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),socialLinks:value}}})));return true}
+  if(node.type==='card'&&node.metadata?.cardContentVersion===1){const model={...defaultCardContent(),...(node.props?.cardContent||{})};const set=patch=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),cardContent:{...model,...patch}}}});const section=document.createElement('section');section.className='card-content-inspector';section.append(Object.assign(document.createElement('h3'),{textContent:'Kártya tartalma'}));section.append(field('Kártya címe',model.title,v=>set({title:v})),field('Rövid leírás',model.description,v=>set({description:v}),false,true));const variant=document.createElement('select');variant.setAttribute('aria-label','Kártya megjelenése');for(const [value,label] of [['solid','Telített'],['outline','Körvonal'],['glass','Üveghatás']]){const option=document.createElement('option');option.value=value;option.textContent=label;variant.append(option)}variant.value=model.variant;variant.onchange=()=>set({variant:variant.value});section.append(variant,field('Kép URL (opcionális)',model.imageSrc,v=>set({imageSrc:v.trim()})),field('Kép leírása',model.imageAlt,v=>set({imageAlt:v})),field('Gomb felirata (opcionális)',model.actionLabel,v=>set({actionLabel:v})),field('Gomb hivatkozása',model.actionHref,v=>set({actionHref:v.trim()})));const check=document.createElement('input');check.type='checkbox';check.checked=Boolean(model.newWindow);check.onchange=()=>set({newWindow:check.checked});const openLabel=document.createElement('label');openLabel.className='inspector-toggle';openLabel.append(check,document.createTextNode('Gomb megnyitása új lapon'));section.append(openLabel);inspector.append(section);return true}
+  if(node.type==='countdown'&&node.metadata?.countdownVersion===1){const model={...defaultCountdownContent(),...(node.props?.countdown||{})};const set=patch=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),countdown:{...model,...patch}}}});const section=document.createElement('section');section.className='countdown-inspector';section.append(Object.assign(document.createElement('h3'),{textContent:'Visszaszámláló'}),field('Esemény neve',model.title,v=>set({title:v})));const date=document.createElement('input');date.type='datetime-local';date.setAttribute('aria-label','Esemény időpontja');const parsed=Date.parse(model.targetISO||'');if(Number.isFinite(parsed)){const d=new Date(parsed),two=v=>String(v).padStart(2,'0');date.value=`${d.getFullYear()}-${two(d.getMonth()+1)}-${two(d.getDate())}T${two(d.getHours())}:${two(d.getMinutes())}`}date.onchange=()=>set({targetISO:date.value?new Date(date.value).toISOString():''});section.append(date,field('Lejáratkor megjelenő üzenet',model.finishText,v=>set({finishText:v})));const toggle=document.createElement('input');toggle.type='checkbox';toggle.checked=Boolean(model.showSeconds);toggle.onchange=()=>set({showSeconds:toggle.checked});section.append(toggle,Object.assign(document.createElement('small'),{textContent:'A kijelölt helyi időzóna minden látogatónál ugyanazt az időpontot jelenti. Mentés és publikálás külön művelet.'}));inspector.append(section);return true}
+  if(node.type==='divider'&&node.metadata?.decorativeVersion===1){const cfg=normalizeDividerStyle(node.props?.decoration),section=document.createElement('section');section.className='decorative-inspector';section.append(Object.assign(document.createElement('h3'),{textContent:'Elválasztóvonal'}));const set=patch=>{const decoration=normalizeDividerStyle({...cfg,...patch});command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),decoration}}})};const thickness=document.createElement('input');thickness.type='number';thickness.min='1';thickness.max='24';thickness.value=String(cfg.thickness);thickness.setAttribute('aria-label','Elválasztóvonal vastagsága');thickness.onchange=()=>set({thickness:Number(thickness.value)});const color=document.createElement('input');color.type='color';color.value=cfg.color;color.setAttribute('aria-label','Elválasztóvonal színe');color.onchange=()=>set({color:color.value});const style=document.createElement('select');style.setAttribute('aria-label','Elválasztóvonal mintázata');for(const value of DIVIDER_LINE_STYLES){const option=document.createElement('option');option.value=value;option.textContent=value;style.append(option)}style.value=cfg.lineStyle;style.onchange=()=>set({lineStyle:style.value});section.append(thickness,color,style);inspector.append(section);return true}
+  if(node.type==='spacer'&&node.metadata?.spacerVersion===1){const section=document.createElement('section');section.className='decorative-inspector';section.append(Object.assign(document.createElement('h3'),{textContent:'Üres térköz'}));const device=state.viewport.device,current=resolveResponsiveValue(node.responsive,'height',device).value??node.style?.height??'64px';section.append(renderPropertyInput(getProperty('size.height'),'Térköz magassága',current,value=>command('responsive.set',{nodeId:node.id,device,patch:{height:value}})));inspector.append(section);return true}
+  if(!isAuthoredContent(node)&&isStructuredType(node.type)&&node.metadata?.structuredContentVersion===1){inspector.append(renderStructuredInspector(node,model=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),contentModel:model},metadata:{...(node.metadata||{}),structuredContentVersion:1}}})));return true}
+  return false;
+}
 function renderInspector(){
   const previousScrollTop=inspector.scrollTop;
   const restoreScroll=()=>requestAnimationFrame(()=>{inspector.scrollTop=previousScrollTop});
@@ -691,7 +752,7 @@ function renderInspector(){
   const pasteStyle=document.createElement('button');pasteStyle.type='button';pasteStyle.className='style-paste-button';pasteStyle.textContent='Másolt stílus alkalmazása';pasteStyle.setAttribute('aria-label','Másolt stílus alkalmazása');pasteStyle.disabled=!copiedStyleSnapshot||editorSiteScope()!==copiedStyleSnapshot.siteId||(page()?.id===copiedStyleSnapshot.sourcePageId&&node.id===copiedStyleSnapshot.sourceNodeId)||Boolean(node.locked);pasteStyle.title='A másolt külső megjelenést alkalmazza erre az elemre; a tartalom, méret és pozíció változatlan marad.';pasteStyle.onclick=()=>pasteSelectedAppearance(node);
   styleActions.append(copyStyle,pasteStyle);
   const styleHelp=document.createElement('small');styleHelp.className='style-copy-help';styleHelp.textContent='Másik szövegnél ugyanazt a megjelenést használhatod. A méretet, pozíciót és tartalmat külön kezeli.';
-  header.append(styleActions,styleHelp);inspector.append(header);
+  const brand=document.createElement('a');brand.className='inspector-brand-link';brand.href='/admin/design';brand.target='_blank';brand.rel='noopener';brand.textContent='Közös webhelystílusok · Brand Kit';header.append(styleActions,styleHelp,brand);inspector.append(header);
 
   if(inspectorTab==='design'){
     inspector.append(renderInspectorCategories());
@@ -700,26 +761,6 @@ function renderInspector(){
     if(['heading','text','richtext','button','link'].includes(node.type))inspector.append(renderTypographyPresets(node));
     if(node.type==='schedule')inspector.append(renderScheduleInspector(node));
     else inspector.append(renderRegistryInspector(node,'primary'));
-    if(node.id!==page()?.rootId){
-      const statesPanel=document.createElement('details');statesPanel.className='state-inspector';
-      const heading=document.createElement('summary');heading.textContent='Rámutatás és fókusz';statesPanel.append(heading);
-      const note=document.createElement('small');note.textContent='Egyszerű, külön állapotstílusok a látogatói oldalon. A fókuszjelölés a billentyűzetes navigációt segíti.';statesPanel.append(note);
-      for(const [group,key,label,defaultColor] of [
-        ['hover','backgroundColor','Rámutatás: háttér','#334155'],
-        ['hover','color','Rámutatás: szöveg','#ffffff'],
-        ['focus','outlineColor','Fókuszkeret színe','#2563eb']
-      ]){
-        const row=document.createElement('label');row.className='state-color-field';
-        const caption=document.createElement('span');caption.textContent=label;row.append(caption);
-        const value=node.states?.[group]?.[key];
-        const picker=document.createElement('input');picker.type='color';picker.value=validHexColor(value)?value:defaultColor;picker.disabled=Boolean(node.locked);
-        picker.onchange=()=>command('element.update',{nodeId:node.id,patch:{states:{...(node.states||{}),[group]:{...(node.states?.[group]||{}),[key]:picker.value}}}});
-        const clear=document.createElement('button');clear.type='button';clear.textContent='Törlés';clear.disabled=Boolean(node.locked||!value);
-        clear.onclick=()=>{const next={...(node.states?.[group]||{})};delete next[key];command('element.update',{nodeId:node.id,patch:{states:{...(node.states||{}),[group]:next}}})};
-        row.append(picker,clear);statesPanel.append(row);
-      }
-      inspector.append(statesPanel);
-    }
     const lockRow=document.createElement('label');lockRow.className='inspector-toggle';
     const lockInput=document.createElement('input');lockInput.type='checkbox';lockInput.checked=Boolean(node.locked);lockInput.disabled=node.id===page()?.rootId;
     lockInput.onchange=()=>command('element.lock.set',{nodeId:node.id,locked:lockInput.checked});
@@ -728,105 +769,7 @@ function renderInspector(){
     if(node.type==='schedule')inspector.append(renderScheduleInspector(node));
     else {
       const textTypes=new Set(['heading','text','richtext','button','link']);
-      if(node.type==='code'&&node.metadata?.codeSnippetVersion===1){
-        const panel=renderCodeSnippetInspector(node,model=>command('element.update',{
-          nodeId:node.id,patch:{props:{...(node.props||{}),codeSnippet:model}}
-        }));
-        inspector.append(panel);
-      }else if(node.type==='embed'&&node.metadata?.embedContentVersion===1){
-        const panel=renderEmbedInspector(node,model=>command('element.update',{
-          nodeId:node.id,patch:{props:{...(node.props||{}),embedContent:model}}
-        }));
-        inspector.append(panel);
-      }else if(node.type==='social'&&node.metadata?.socialLinksVersion===1){
-        const panel=renderSocialLinksInspector(node,model=>command('element.update',{
-          nodeId:node.id,patch:{props:{...(node.props||{}),socialLinks:model}}
-        }));
-        inspector.append(panel);
-      }else if(node.type==='countdown'&&node.metadata?.countdownVersion===1){
-        const model={...defaultCountdownContent(),...(node.props?.countdown||{})};
-        const update=partial=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),countdown:{...model,...partial}}}});
-        const section=document.createElement('section');section.className='countdown-inspector';
-        const heading=document.createElement('h3');heading.textContent='Visszaszámláló';section.append(heading);
-        section.append(field('Esemény neve',model.title,value=>update({title:value})));
-        const dateField=document.createElement('label');dateField.className='field';
-        dateField.append(document.createTextNode('Esemény időpontja (helyi idő)'));
-        const picker=document.createElement('input');picker.type='datetime-local';picker.setAttribute('aria-label','Esemény időpontja');
-        const parsed=Date.parse(model.targetISO||'');
-        if(Number.isFinite(parsed)){
-          const date=new Date(parsed),two=n=>String(n).padStart(2,'0');
-          picker.value=`${date.getFullYear()}-${two(date.getMonth()+1)}-${two(date.getDate())}T${two(date.getHours())}:${two(date.getMinutes())}`;
-        }
-        picker.onchange=()=>{if(!picker.value){update({targetISO:''});return}const date=new Date(picker.value);if(Number.isFinite(date.getTime()))update({targetISO:date.toISOString()})};
-        dateField.append(picker);section.append(dateField);
-        section.append(field('Lejáratkor megjelenő üzenet',model.finishText,value=>update({finishText:value})));
-        const seconds=document.createElement('label');seconds.className='inspector-toggle';
-        const checked=document.createElement('input');checked.type='checkbox';checked.checked=Boolean(model.showSeconds);
-        checked.onchange=()=>update({showSeconds:checked.checked});
-        seconds.append(checked,document.createTextNode('Másodpercek mutatása'));section.append(seconds);
-        const help=document.createElement('small');help.textContent='A kiválasztott időpont a helyi időzónádban értendő, a mentett érték minden látogatónál ugyanazt a pillanatot jelenti. Üres időponttal piszkozatként menthető, de nem publikálható.';section.append(help);
-        inspector.append(section);
-      }else if(node.type==='card'&&node.metadata?.cardContentVersion===1){
-        const model={...defaultCardContent(),...(node.props?.cardContent||{})};
-        const update=partial=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),cardContent:{...model,...partial}}}});
-        const section=document.createElement('section');section.className='card-content-inspector';
-        const heading=document.createElement('h3');heading.textContent='Kártya tartalma';section.append(heading);
-        section.append(field('Kártya címe',model.title,value=>update({title:value})));
-        section.append(field('Rövid leírás',model.description,value=>update({description:value}),false,true));
-        const variant=document.createElement('label');variant.className='field';variant.append(document.createTextNode('Megjelenés'));
-        const select=document.createElement('select');select.setAttribute('aria-label','Kártya megjelenése');
-        for(const [value,label] of [['solid','Telített'],['outline','Körvonalas'],['glass','Üveghatású']]){
-          const option=document.createElement('option');option.value=value;option.textContent=label;select.append(option);
-        }
-        select.value=CARD_VARIANTS.includes(model.variant)?model.variant:'solid';select.onchange=()=>update({variant:select.value});variant.append(select);section.append(variant);
-        section.append(field('Kép URL (opcionális)',model.imageSrc,value=>update({imageSrc:value.trim()})));
-        section.append(field('Kép leírása',model.imageAlt,value=>update({imageAlt:value})));
-        section.append(field('Gomb felirata (opcionális)',model.actionLabel,value=>update({actionLabel:value})));
-        section.append(field('Gomb hivatkozása',model.actionHref,value=>update({actionHref:value.trim()})));
-        const newWindow=document.createElement('label');newWindow.className='inspector-toggle';
-        const check=document.createElement('input');check.type='checkbox';check.checked=Boolean(model.newWindow);
-        check.onchange=()=>update({newWindow:check.checked});newWindow.append(check,document.createTextNode('Gomb megnyitása új lapon'));section.append(newWindow);
-        const hint=document.createElement('small');hint.textContent='A képet a leírásával együtt, a gomb feliratát a hivatkozással együtt add meg. További elemeket a kártya belsejébe is helyezhetsz. Mentés ≠ Publikálás.';section.append(hint);
-        inspector.append(section);
-      }else if(node.type==='divider'&&node.metadata?.decorativeVersion===1){
-        const config=normalizeDividerStyle(node.props?.decoration);
-        const update=patch=>{
-          try{const decoration=normalizeDividerStyle({...config,...patch});command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),decoration}}})}
-          catch(error){setStatus(error instanceof Error?error.message:String(error))}
-        };
-        const section=document.createElement('section');section.className='decorative-inspector';
-        const heading=document.createElement('h3');heading.textContent='Elválasztóvonal';section.append(heading);
-        const width=document.createElement('label');width.className='field';width.append(document.createTextNode('Vastagság (1–24 px)'));
-        const thickness=document.createElement('input');thickness.type='number';thickness.min='1';thickness.max='24';thickness.step='1';thickness.value=String(config.thickness);thickness.setAttribute('aria-label','Elválasztóvonal vastagsága');
-        thickness.onchange=()=>update({thickness:Number(thickness.value)});width.append(thickness);section.append(width);
-        const color=document.createElement('label');color.className='field';color.append(document.createTextNode('Vonal színe'));
-        const picker=document.createElement('input');picker.type='color';picker.value=config.color;picker.setAttribute('aria-label','Elválasztóvonal színe');picker.onchange=()=>update({color:picker.value});
-        color.append(picker);section.append(color);
-        const styleLabel=document.createElement('label');styleLabel.className='field';styleLabel.append(document.createTextNode('Vonal mintázata'));
-        const kind=document.createElement('select');kind.setAttribute('aria-label','Elválasztóvonal mintázata');
-        for(const [value,label] of [['solid','Folytonos'],['dashed','Szaggatott'],['dotted','Pontozott'],['double','Dupla']]){
-          const option=document.createElement('option');option.value=value;option.textContent=label;kind.append(option);
-        }
-        kind.value=config.lineStyle;kind.onchange=()=>update({lineStyle:kind.value});styleLabel.append(kind);section.append(styleLabel);
-        const hint=document.createElement('small');hint.textContent='A vonal hosszát a Stílus → Méret részben állíthatod. Mentés után még nem kerül ki a publikus oldalra.';section.append(hint);
-        inspector.append(section);
-      }else if(node.type==='spacer'&&node.metadata?.spacerVersion===1){
-        const section=document.createElement('section');section.className='decorative-inspector';
-        const heading=document.createElement('h3');heading.textContent='Üres térköz';section.append(heading);
-        const device=state.viewport.device;
-        const inherited=resolveResponsiveValue(node.responsive,'height',device);
-        const current=inherited.value??node.style?.height??'64px';
-        section.append(renderPropertyInput(getProperty('size.height'),'Térköz magassága',current,value=>
-          command('responsive.set',{nodeId:node.id,device,patch:{height:value}})
-        ));
-        if(hasResponsiveOverride(node.responsive,'height',device)){
-          const reset=document.createElement('button');reset.type='button';reset.className='property-reset';
-          reset.textContent='Magasság öröklése';reset.onclick=()=>command('responsive.set',{nodeId:node.id,device,patch:{height:undefined}});
-          section.append(reset);
-        }
-        const hint=document.createElement('small');hint.textContent='Csak üres helyet foglal az oldalon. Minden nézethez külön magasságot állíthatsz; Mentés ≠ Publikálás.';section.append(hint);
-        inspector.append(section);
-      }else if(node.type==='richtext'){
+      if(node.type==='richtext'){
         const currentRichText=node.props?.richText||plainTextToRichText('');
         const section=document.createElement('section');section.className='richtext-editor';
         const toolbar=document.createElement('div');toolbar.className='richtext-toolbar';
@@ -1026,7 +969,7 @@ function renderInspector(){
           if(richTextDirty&&!section.contains(event.relatedTarget))saveRich();
         });
         url.onfocus=()=>rememberSelection();
-        linkControls.append(url,addLink,removeLink,linkFeedback);
+        const pagePicker=pageLinkPicker(pages,url);pagePicker.onpointerdown=rememberSelection;pagePicker.style.gridColumn='1 / -1';linkControls.append(url,pagePicker,addLink,removeLink,linkFeedback);
         const clearFormat=document.createElement('button');clearFormat.type='button';clearFormat.textContent='Alapformázás';clearFormat.setAttribute('aria-label','Kijelölt szöveg formázásának törlése');clearFormat.title='Az elem alapstílusának visszaállítása a kijelölt szavakon. A szöveg és a linkek megmaradnak.';
         clearFormat.onpointerdown=event=>{rememberSelection();event.preventDefault()};
         clearFormat.onclick=()=>{const range=savedFormatSelection;if(!range){formatStatus.textContent='Előbb jelölj ki egy szövegrészt.';return}const doc=clearRichTextInlineFormatting(richTextEditorToDocument(editor),range);if(commitWithoutRender(doc)){renderRichTextEditor(editor,doc);if(savedSelectionOffsets)restoreSelectionOffsets(formattingSurface,savedSelectionOffsets);rememberSelection()}};
@@ -1037,69 +980,18 @@ function renderInspector(){
         requestAnimationFrame(()=>{if(editor.isConnected)refreshFormattingControls(null,editor)});
         inspector.append(section);
       }else if(textTypes.has(node.type))inspector.append(renderPlainTextEditor(node));
-      
-      if(node.type==='heading'){
-        const levelField=document.createElement('label');levelField.className='field';levelField.append(document.createTextNode('Címsorszint'));
-        const levelSelect=document.createElement('select');
-        for(let level=1;level<=6;level++){const opt=document.createElement('option');opt.value=String(level);opt.textContent='H'+level;levelSelect.append(opt)}
-        levelSelect.value=String(Number.isInteger(node.props?.level)?node.props.level:2);
-        levelSelect.disabled=Boolean(node.locked);
-        levelSelect.onchange=()=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),level:Number(levelSelect.value)}}});
-        levelField.append(levelSelect);inspector.append(levelField);
-      }
-      if(['button','link'].includes(node.type)){
-        inspector.append(renderPropertyInput(getProperty('content.href'),'Link / URL',node.props?.href||'',v=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),href:v}}})));
-        const openNew=document.createElement('label');openNew.className='inspector-toggle';
-        const checked=document.createElement('input');checked.type='checkbox';checked.checked=Boolean(node.props?.newWindow);checked.disabled=Boolean(node.locked);
-        checked.onchange=()=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),newWindow:checked.checked}}});
-        openNew.append(checked,document.createTextNode('Megnyitás új lapon'));inspector.append(openNew);
-      }
-      else if(['badge','quote','icon'].includes(node.type)){
-        const modify=patch=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),...patch}}});
-        if(node.type==='icon'){
-          const row=document.createElement('label');row.className='field';row.append(document.createTextNode('Ikon kiválasztása'));
-          const select=document.createElement('select');select.disabled=Boolean(node.locked);
-          ICON_CHOICES.forEach(icon=>{const option=document.createElement('option');option.value=icon.id;option.textContent=icon.glyph+' '+icon.label;select.append(option)});
-          select.value=iconById(node.props?.icon).id;select.onchange=()=>modify({icon:select.value,label:iconById(select.value).label});
-          row.append(select);inspector.append(row);
-          inspector.append(field('Ikon akadálymentes neve',node.props?.label||'',v=>modify({label:v})));
-        }else{
-          inspector.append(field(node.type==='quote'?'Idézet szövege':'Címke szövege',node.props?.text||'',v=>modify({text:v}),false,true));
-          if(node.type==='quote')inspector.append(field('Forrás / szerző',node.props?.attribution||'',v=>modify({attribution:v})));
-        }
-      }
-      else if(isStructuredType(node.type)){
-        const content=renderStructuredInspector(node,model=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),contentModel:model},metadata:{...(node.metadata||{}),structuredContentVersion:1}}}));
-        if(content)inspector.append(content);
-      }
-      else if(['image','video','audio'].includes(node.type)){
-        const setMedia=(patch)=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),...patch}}});
-        inspector.append(field('Média URL',node.props?.src??'',v=>setMedia({src:v.trim()})));
-        if(node.type==='image'){
-          inspector.append(field('Kép leírása (alt)',node.props?.alt??'',v=>setMedia({alt:v})));
-          const fitLabel=document.createElement('label');fitLabel.className='field';fitLabel.append(document.createTextNode('Kép illesztése'));
-          const fit=document.createElement('select');
-          for(const [value,label] of [['cover','Kitöltés / vágás'],['contain','Teljes kép']]){const option=document.createElement('option');option.value=value;option.textContent=label;fit.append(option)}
-          fit.value=node.props?.objectFit==='contain'?'contain':'cover';fit.onchange=()=>setMedia({objectFit:fit.value});fitLabel.append(fit);inspector.append(fitLabel);
-          const decorative=document.createElement('label');decorative.className='inspector-toggle';
-          const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.checked=Boolean(node.accessibility?.decorative);
-          checkbox.onchange=()=>command('element.update',{nodeId:node.id,patch:{accessibility:{...(node.accessibility||{}),decorative:checkbox.checked}}});
-          decorative.append(checkbox,document.createTextNode('Csak díszítő kép (nem kell képleírás)'));inspector.append(decorative);
-        }else{const hint=document.createElement('small');hint.textContent=node.type==='video'?'Közvetlen videófájl URL-je (pl. MP4), nem YouTube oldalhivatkozás.':'Közvetlen hangfájl URL-je (pl. MP3).';inspector.append(hint);}
-      }
-      else if(!textTypes.has(node.type))inspector.append(field('Tartalom',node.props?.content??'',v=>command('element.content.set',{nodeId:node.id,content:v})));
+      if(node.type==='code'&&node.metadata?.codeSnippetVersion===1)inspector.append(renderCodeSnippetInspector(node,model=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),codeSnippet:model}}})));
+      else if(renderExistingContentInspector(node)){}
+      else if(CONTENT_TYPES.includes(node.type))inspector.append(renderElementContentControls(node,{
+        exclude:textTypes.has(node.type)?['text']:[],pages,pending:flush=>{flushRichTextDraft=flush},
+        apply:(patch,{typingGroup,render:fullRender=false}={})=>{const saved=command('content.properties.set',{nodeId:node.id,patch},{render:fullRender,typingGroup});if(saved&&!fullRender){renderCanvas();setStatus('Nem mentett módosítás');syncPublishControls()}return saved}
+      }));
+      else if(STRUCTURAL_TYPES.includes(node.type))inspector.append(Object.assign(document.createElement('p'),{className:'content-field-help',textContent:'Ez a tároló a gyermekeit jeleníti meg. Tartalomhoz adj hozzá szöveget, képet vagy más elemet.'}));
+      else if(!textTypes.has(node.type))inspector.append(Object.assign(document.createElement('p'),{className:'content-field-help',textContent:'Ehhez az elemhez a közös szolgáltatás és a részletes szerkesztő még hiányzik. A meglévő adatok megmaradnak.'}));
     }
   }else{
     inspector.append(renderRegistryInspector(node,'advanced'));
-    const updateAccessibility=patch=>command('element.update',{nodeId:node.id,patch:{accessibility:{...(node.accessibility||{}),...patch}}});
-    inspector.append(field('Hivatkozási azonosító (#)',node.accessibility?.anchorId||'',value=>{
-      const id=value.trim();if(id&&!/^[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(id)){setStatus('Az azonosító betűvel kezdődjön, betűt, számot, - és _ jelet tartalmazhat.');return}
-      const current=page();const duplicate=Object.values(current?.nodes||{}).some(other=>other.id!==node.id&&other.accessibility?.anchorId===id&&Boolean(id));
-      if(duplicate){setStatus('Az azonosító már létezik ezen az oldalon.');return}
-      updateAccessibility({anchorId:id});
-    }));
-    inspector.append(field('Akadálymentes név',node.accessibility?.ariaLabel||'',value=>updateAccessibility({ariaLabel:value.slice(0,250)})));
-    const help=document.createElement('small');help.textContent='A hivatkozási azonosítóhoz #azonosító formával készíthetsz belső linket. Az akadálymentes név a képernyőolvasóknak segít.';inspector.append(help);
+    inspector.append(renderAccessibilityInspector(node),renderStatesInspector(node));
     inspector.append(field('Node ID',node.id,()=>{},true),field('Típus',node.type,()=>{},true),field('Szülő ID',node.parentId||'',()=>{},true));
   }
   const actions=document.createElement('div');actions.className='inspector-actions';const del=document.createElement('button');del.type='button';del.className='danger-action';del.textContent='Törlés';del.disabled=node.id===page()?.rootId;del.title=del.disabled?'A gyökérelem nem törölhető':'Kijelölt elem törlése';del.onclick=()=>{if(!del.disabled)command('element.delete',{nodeId:node.id})};actions.append(del);inspector.append(actions);filterInspector();restoreScroll()
@@ -1170,8 +1062,17 @@ async function loadPage(id,{discardConfirmed=false}={}){
   if(state?.persistence?.dirty&&!discardConfirmed&&!confirm('Nem mentett módosítások vannak. Elveted őket az oldal betöltésével?')){renderPageList();return;}
   setStatus('Oldal betöltése…');const meta=pages.find(x=>x.id===id);if(!meta)throw new Error('Az oldal nem található.');const data=await api('/api/admin/editor?pageId='+encodeURIComponent(id));const document=data?.data?.page?.document||meta.content;const revisions=Array.isArray(data?.data?.revisions)?data.data.revisions:[];if(!canonical(document,id))throw new Error(`Az oldal (${meta.title||meta.slug}) nem canonical Editor v2 dokumentum.`);const rawRevision=revisions.length?Number(revisions[0]?.version):0;if(!Number.isInteger(rawRevision)||rawRevision<0)throw new Error('Hibás revision-válasz: a szerver revision-száma nem érvényes.');revisionHistory=revisions;const latestRevision=rawRevision;meta.revision=latestRevision;meta.publishedRevisionId=data?.data?.page?.publishedRevisionId??meta.publishedRevisionId??null;meta.publishedRevisionVersion=meta.publishedRevisionId?Number(revisions.find(rev=>rev.id===meta.publishedRevisionId)?.version||0):0;document.revision=latestRevision;document.pages[id].revision=latestRevision;state=createEditorState(document);markSaved(state,latestRevision);rememberPageId(id);renderPageList();render();setStatus('Mentve')}
 async function rollbackToRevision(version){const current=page();const meta=current&&pages.find(x=>x.id===current.id);const latest=Number(revisionHistory[0]?.version||meta?.revision||0);if(!current||!meta||!Number.isInteger(version)||version<1)return;if(version===latest){return}if(!confirm(`Biztosan visszaállítod a(z) v${version} revisiont?\n\nA jelenlegi draft nem vész el véglegesen: a visszaállítás új revisionként jön létre.`))return;setStatus(`v${version} visszaállítása…`);try{await api('/api/admin/editor?pageId='+encodeURIComponent(current.id),{method:'PUT',body:JSON.stringify({pageId:current.id,version,expectedVersion:latest})});await loadPage(current.id,{discardConfirmed:true});setStatus(`v${version} visszaállítva`)}catch(e){showError(e)}}
-async function createNew(){if(flushRichTextDraft?.()===false)return;if(state?.persistence?.dirty){alert('Először mentsd az aktuális módosításokat, majd hozz létre új oldalt.');return}const title=prompt('Új oldal neve','Új oldal');if(!title)return;const slug=prompt('Slug',title.toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''));if(!slug)return;const p=createPage({name:title,slug});await api('/api/admin/pages',{method:'POST',body:JSON.stringify({id:p.id,title,slug,description:'',document:createDocument(p)})});await loadPages();await loadPage(p.id)}
-async function save(publish=false){if(state?.persistence?.saving){setStatus('Mentés folyamatban…');return;}if(flushRichTextDraft?.()===false){setStatus('Rich Text mentési hiba');return;}const current=page();if(!current)return;const meta=pages.find(x=>x.id===current.id);if(!meta)return;const stateAtStart=state;const pageId=current.id;const submittedDocument=structuredClone(stateAtStart.document);const submittedJson=JSON.stringify(submittedDocument);const expectedVersion=Number(meta.revision??stateAtStart.document.revision??0);setStatus(publish?'Publikálás…':'Mentés…');stateAtStart.persistence.saving=true;try{const result=await api(`/api/admin/editor?pageId=${encodeURIComponent(pageId)}`,{method:'POST',body:JSON.stringify({pageId,document:submittedDocument,publish,expectedVersion,expectedParentPageId:meta.parentPageId??null,note:publish?'Editor v2 publikálás':'Editor v2 mentés'})});const version=Number(result?.data?.version);if(result?.data?.pageId!==pageId||!Number.isInteger(version)||version<1)throw new Error('A mentés válasza hiányos vagy hibás revision-adatot tartalmaz; a helyi módosításokat nem jelöltük mentettnek.');const unchanged=state===stateAtStart&&JSON.stringify(stateAtStart.document)===submittedJson;stateAtStart.document.revision=version;if(stateAtStart.document.pages?.[pageId])stateAtStart.document.pages[pageId].revision=version;meta.revision=version;if(unchanged){markSaved(stateAtStart,version)}else{stateAtStart.persistence.saving=false;stateAtStart.persistence.dirty=true;stateAtStart.persistence.error=null;stateAtStart.persistence.lastSavedRevision=version}stateAtStart.persistence.conflict=null;const panel=$('#revisionConflict');if(panel&&state===stateAtStart)panel.hidden=true;const i=pages.findIndex(x=>x.id===pageId);if(i>=0){const previous=pages[i];pages[i]={...previous,content:submittedDocument,isPublished:publish||Boolean(previous.isPublished),hasUnpublishedChanges:!publish&&Boolean(previous.isPublished),publishedRevisionId:publish?result.data.revisionId:previous.publishedRevisionId,publishedParentPageId:publish?previous.parentPageId:previous.publishedParentPageId,publishedSlug:publish?previous.slug:previous.publishedSlug,publishedRevisionVersion:publish?version:Number(previous.publishedRevisionVersion??0),revision:version};}renderPageList();if(state===stateAtStart){render();setStatus(unchanged?(publish?'Publikálva':(pages.find(x=>x.id===pageId)?.isPublished?'Mentve — a nyilvános oldal változatlan':'Mentve')):'A mentett verzió elkészült; további helyi módosítások még nincsenek mentve')}return result}catch(e){stateAtStart.persistence.saving=false;stateAtStart.persistence.dirty=true;stateAtStart.persistence.error=e instanceof Error?e.message:String(e);if(state===stateAtStart&&e?.status===409&&e?.code==='REVISION_CONFLICT'){showRevisionConflict(e,pageId);return}if(state===stateAtStart){setStatus('Mentési hiba');alert(stateAtStart.persistence.error)}return}}
+async function createNew(){if(flushRichTextDraft?.()===false)return;if(state?.persistence?.dirty){alert('Először mentsd az aktuális módosításokat, majd hozz létre új oldalt.');return}const title=prompt('Új oldal neve','Új oldal');if(!title)return;const slug=prompt('Slug',title.toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''));if(!slug)return;const p=createPage({name:title,slug});await api('/api/admin/pages',{method:'POST',body:JSON.stringify({id:p.id,title,slug,description:'',document:createDocument(p,{modern:true})})});await loadPages();await loadPage(p.id)}
+function commitActiveInspectorControl(){
+  const input=document.activeElement;if(!input||!inspector.contains(input)||!input.matches('input,textarea,select'))return true;
+  if(typeof input.onchange==='function'&&input.dataset.focusValue!==String(input.type==='checkbox'?input.checked:input.value)){
+    input.dispatchEvent(new Event('change',{bubbles:true}));if(state?.persistence?.error)return false;
+  }
+  return !input.closest('.field')?.querySelector('.property-validation')?.textContent&&!input.matches('[aria-invalid="true"]');
+}
+inspector.addEventListener('focusin',event=>{const input=event.target;if(input.matches('input,textarea,select'))input.dataset.focusValue=String(input.type==='checkbox'?input.checked:input.value)});
+inspector.addEventListener('change',event=>{const input=event.target;if(input.matches('input,textarea,select'))input.dataset.focusValue=String(input.type==='checkbox'?input.checked:input.value)});
+async function save(publish=false){if(!commitActiveInspectorControl()){setStatus('Javítsd a jelzett mezőt mentés előtt.');return}if(state?.persistence?.saving){setStatus('Mentés folyamatban…');return;}if(flushRichTextDraft?.()===false){setStatus('Javítsd a jelzett tartalommezőt mentés előtt.');return;}const current=page();if(!current)return;if(publish){try{validatePageForPublication(current)}catch(error){if(error.nodeId){setSelection(state,[error.nodeId],error.nodeId);inspectorTab='content';render();window.sanciEditor?.openPanel?.('right');const note=document.createElement('p');note.className='property-validation';note.setAttribute('role','alert');note.textContent=error.message;inspector.prepend(note)}setStatus(error.message);return}}const meta=pages.find(x=>x.id===current.id);if(!meta)return;const stateAtStart=state;const pageId=current.id;const submittedDocument=structuredClone(stateAtStart.document);const submittedJson=JSON.stringify(submittedDocument);const expectedVersion=Number(meta.revision??stateAtStart.document.revision??0);setStatus(publish?'Publikálás…':'Mentés…');stateAtStart.persistence.saving=true;try{const result=await api(`/api/admin/editor?pageId=${encodeURIComponent(pageId)}`,{method:'POST',body:JSON.stringify({pageId,document:submittedDocument,publish,expectedVersion,expectedParentPageId:meta.parentPageId??null,note:publish?'Editor v2 publikálás':'Editor v2 mentés'})});const version=Number(result?.data?.version);if(result?.data?.pageId!==pageId||!Number.isInteger(version)||version<1)throw new Error('A mentés válasza hiányos vagy hibás revision-adatot tartalmaz; a helyi módosításokat nem jelöltük mentettnek.');const unchanged=state===stateAtStart&&JSON.stringify(stateAtStart.document)===submittedJson;stateAtStart.document.revision=version;if(stateAtStart.document.pages?.[pageId])stateAtStart.document.pages[pageId].revision=version;meta.revision=version;if(unchanged){markSaved(stateAtStart,version)}else{stateAtStart.persistence.saving=false;stateAtStart.persistence.dirty=true;stateAtStart.persistence.error=null;stateAtStart.persistence.lastSavedRevision=version}stateAtStart.persistence.conflict=null;const panel=$('#revisionConflict');if(panel&&state===stateAtStart)panel.hidden=true;const i=pages.findIndex(x=>x.id===pageId);if(i>=0){const previous=pages[i];pages[i]={...previous,content:submittedDocument,isPublished:publish||Boolean(previous.isPublished),hasUnpublishedChanges:!publish&&Boolean(previous.isPublished),publishedRevisionId:publish?result.data.revisionId:previous.publishedRevisionId,publishedParentPageId:publish?previous.parentPageId:previous.publishedParentPageId,publishedSlug:publish?previous.slug:previous.publishedSlug,publishedRevisionVersion:publish?version:Number(previous.publishedRevisionVersion??0),revision:version};}renderPageList();if(state===stateAtStart){render();setStatus(unchanged?(publish?'Publikálva':(pages.find(x=>x.id===pageId)?.isPublished?'Mentve — a nyilvános oldal változatlan':'Mentve')):'A mentett verzió elkészült; további helyi módosítások még nincsenek mentve')}return result}catch(e){stateAtStart.persistence.saving=false;stateAtStart.persistence.dirty=true;stateAtStart.persistence.error=e instanceof Error?e.message:String(e);if(state===stateAtStart&&e?.status===409&&e?.code==='REVISION_CONFLICT'){showRevisionConflict(e,pageId);return}if(state===stateAtStart){setStatus('Mentési hiba');alert(stateAtStart.persistence.error)}return}}
 async function unpublishPage(){const current=page();const meta=current&&pages.find(x=>x.id===current.id);if(!current||!meta?.isPublished)return;if(!confirm('Biztosan visszavonod ennek az oldalnak a publikálását?'))return;setStatus('Publikálás visszavonása…');try{const result=await api('/api/admin/editor?pageId='+encodeURIComponent(current.id),{method:'POST',body:JSON.stringify({pageId:current.id,action:'unpublish'})});const i=pages.findIndex(x=>x.id===current.id);if(i>=0)pages[i]={...pages[i],isPublished:Boolean(result.data?.published),hasUnpublishedChanges:false};renderPageList();render();setStatus('Publikálás visszavonva')}catch(e){showError(e)}}
 function setDevice(device){if(!state)return;state.viewport.device=device;zoom=device==='desktop'?1:Math.max(.35,Math.min(1,(canvas.clientWidth-48)/sizes[device]));render();canvas.scrollTo({left:0,top:0,behavior:'instant'})}
 document.addEventListener('DOMContentLoaded',()=>{
@@ -1185,7 +1086,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  $('#exportConflictDraft').onclick=()=>exportConflictDraft();$('#reloadConflictPage').onclick=()=>reloadLatestAfterConflict();
  $('#save').onclick=()=>save(false);$('#publish').onclick=()=>save(true);$('#unpublish').onclick=()=>unpublishPage().catch(showError);$('#mobilePublish').onclick=()=>save(true);$('#mobileUnpublish').onclick=()=>unpublishPage().catch(showError);
  $('#preview').onclick=()=>{const p=page();if(p)window.open(`/p/${encodeURIComponent(p.slug)}?preview=1`,'_blank','noopener,noreferrer')};
- $('#undo').onclick=()=>{if(state&&flushRichTextDraft?.()!==false){try{execute(state,{type:'history.undo'});render()}catch(e){showError(e)}}};$('#redo').onclick=()=>{if(state&&flushRichTextDraft?.()!==false){try{execute(state,{type:'history.redo'});render()}catch(e){showError(e)}}};
+ $('#undo').onclick=()=>{if(state&&commitActiveInspectorControl()&&flushRichTextDraft?.()!==false){try{execute(state,{type:'history.undo'});render()}catch(e){showError(e)}}};$('#redo').onclick=()=>{if(state&&commitActiveInspectorControl()&&flushRichTextDraft?.()!==false){try{execute(state,{type:'history.redo'});render()}catch(e){showError(e)}}};
  $('#zoomIn').onclick=()=>changeCanvasZoom(Math.min(1.5,zoom+.1));$('#zoomOut').onclick=()=>changeCanvasZoom(Math.max(.35,zoom-.1));$('#fitCanvas').onclick=fitCanvasToViewport;
  $('#selectTool').onclick=()=>{$('#selectTool').classList.add('active');$('#panTool').classList.remove('active');canvas.style.cursor='default'};$('#groupSelection').onclick=()=>{if(!$('#groupSelection').disabled)command('hierarchy.group')};$('#ungroupSelection').onclick=()=>{if(!$('#ungroupSelection').disabled)command('hierarchy.ungroup')};$('#mobileGroup').onclick=()=>{if(!$('#mobileGroup').disabled)command('hierarchy.group')};$('#mobileUngroup').onclick=()=>{if(!$('#mobileUngroup').disabled)command('hierarchy.ungroup')};$('#mobileMultiDone').onclick=()=>finishMobileMultiSelect();$('#mobileMultiCancel').onclick=()=>cancelMobileMultiSelect();$('#panTool').onclick=()=>{$('#panTool').classList.add('active');$('#selectTool').classList.remove('active');canvas.style.cursor='grab'};
  document.querySelectorAll('[data-device]').forEach(b=>b.onclick=()=>setDevice(b.dataset.device));
@@ -1194,6 +1095,8 @@ document.addEventListener('DOMContentLoaded',()=>{
    if(state) { command('selection.clear'); }
  });
  document.querySelectorAll('.inspector-tabs button').forEach(b=>b.addEventListener('click',()=>{if(flushRichTextDraft?.()===false)return;const names=['design','content','advanced'];inspectorTab=names[[...document.querySelectorAll('.inspector-tabs button')].indexOf(b)]||'design';document.querySelectorAll('.inspector-tabs button').forEach(x=>x.classList.toggle('active',x===b));renderInspector()}));
- document.addEventListener('keydown',e=>{if(e.key==='Escape'&&mobileTouch.active){e.preventDefault();cancelMobileMultiSelect();return}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();save(false)}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();if(state&&flushRichTextDraft?.()!==false){execute(state,{type:e.shiftKey?'history.redo':'history.undo'});render()}}});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&mobileTouch.active){e.preventDefault();cancelMobileMultiSelect();return}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();save(false)}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();if(state&&commitActiveInspectorControl()&&flushRichTextDraft?.()!==false){execute(state,{type:e.shiftKey?'history.redo':'history.undo'});render()}}});
  renderPalette();loadTwitchConnection();loadPages().then(()=>window.__sanciEditorBoot?.ready()).catch(showError);
 });
+
+loadEditorTokens();window.addEventListener('focus',()=>loadEditorTokens());

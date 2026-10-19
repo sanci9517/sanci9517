@@ -166,7 +166,7 @@ test('every palette node type has an explicit honest capability classification',
   }
   assert.equal(getElementCapability(NODE_TYPES.RICHTEXT).status,'PARTIAL');
   assert.equal(getElementCapability(NODE_TYPES.FORM).public,'PLANNED');
-  assert.equal(getElementCapability(NODE_TYPES.TABLE).public,'PLANNED');
+  assert.equal(getElementCapability(NODE_TYPES.TABLE).public,'PARTIAL');
 });
 
 const documentModel = {

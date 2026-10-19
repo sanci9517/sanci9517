@@ -3,7 +3,7 @@ import { resolveNodeStyle } from './canvas-engine.js';
 // An explicit, versioned layout opts a subtree out of legacy public card/mobile
 // fallbacks. Old documents are not migrated or restyled on load.
 export const LAYOUT_VERSION = 1;
-export const LAYOUT_TYPES = Object.freeze(['section','container','row','columns','flex','grid','stack','group','slot']);
+export const LAYOUT_TYPES = Object.freeze(['section','container','row','columns','flex','grid','stack','group','slot','card','panel','navbar','menu','footer','sidebar','absolute','sticky','overlay']);
 const grid = columns => ({display:'grid',gridTemplateColumns:columns,gridTemplateRows:'auto'});
 const flex = (direction, extra={}) => ({display:'flex',flexDirection:direction,flexWrap:'nowrap',justifyContent:'flex-start',alignItems:'stretch',...extra});
 export const LAYOUT_PRESETS = Object.freeze([

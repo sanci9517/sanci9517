@@ -7,6 +7,7 @@
  */
 
 import { resolveResponsiveValue } from './responsive.js';
+import { contentDefaults } from './authored-content.js';
 
 export const STYLE_MAP = Object.freeze({
   width: 'width',
@@ -15,6 +16,11 @@ export const STYLE_MAP = Object.freeze({
   maxWidth: 'maxWidth',
   minHeight: 'minHeight',
   maxHeight: 'maxHeight',
+  aspectRatio:'aspectRatio',
+  rotate:'rotate',
+  scale:'scale',
+  filter:'filter',
+  transition:'transition',
   display: 'display',
   flexDirection: 'flexDirection',
   justifyContent: 'justifyContent',
@@ -68,7 +74,7 @@ export const STYLE_MAP = Object.freeze({
 });
 
 export function resolveNodeStyle(node, device = 'desktop') {
-  const base = { ...(node?.style ?? {}) };
+  const base = { ...contentDefaults(node,device),...(node?.style ?? {}) };
   const properties = new Set([
     ...Object.keys(base),
     ...Object.keys(node?.responsive?.desktop ?? {}),
