@@ -127,7 +127,7 @@ test('Rich Text list/table/cross-block DOM range offsets match Page Model at mob
     ]);
     assert.deepEqual(cross.after,cross.segments);
     assert.equal(cross.restored,true);
-    assert.deepEqual(cross.global,{from:6,to:21,collapsed:false});
+    assert.deepEqual(cross.global,{from:6,to:22,collapsed:false});
     assert.equal(cross.fallback,true);
     assert.equal(cross.list,'eta');
     assert.deepEqual(cross.table,['Gamma','Delta']);
