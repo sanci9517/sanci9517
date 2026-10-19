@@ -13,7 +13,7 @@ import { requireSiteGrant, type SiteRole } from "./site-access";
  */
 export function requiredSiteRole(pathname: string, url: URL): SiteRole | null {
   if (pathname === "/admin") return "viewer";
-  if (pathname === "/admin/editor") return "editor";
+  if (pathname === "/admin/editor" || pathname === "/admin/media") return "editor";
   if (pathname.startsWith("/api/admin/")) {
     if (pathname === "/api/admin/settings") return "admin";
     return "editor";
@@ -37,7 +37,7 @@ export async function enforceAdminTenantGate(
   const granted = await requireSiteGrant(request, env, siteId, required);
   if (granted instanceof Response) {
     // Keep the browser's existing login redirect behavior for HTML Admin pages.
-    if (granted.status === 401 && (pathname === "/admin" || pathname === "/admin/editor")) {
+    if (granted.status === 401 && (pathname === "/admin" || pathname === "/admin/editor" || pathname === "/admin/media")) {
       return Response.redirect(new URL("/admin/login", request.url).toString(), 302);
     }
     return granted;
