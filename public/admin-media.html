@@ -20,7 +20,7 @@ label{display:block;font-weight:650;margin:12px 0 7px}
 input[type=file]{display:block;width:100%;padding:14px;border:1px dashed var(--muted);border-radius:10px;background:var(--bg);color:var(--text)}
 button.primary{border:0;border-radius:10px;color:#160f31;background:#b5a7ff;font-weight:750;padding:12px 16px;width:100%;margin-top:14px;min-height:44px}
 button.upload-secondary{border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text);font-weight:650;padding:10px 14px;min-height:44px;width:100%;margin-top:9px}button.upload-secondary[hidden],progress[hidden]{display:none}#uploadProgress{display:block;width:100%;height:12px;accent-color:var(--accent);margin-top:12px}#uploadProgress[hidden]{display:none}.status{color:var(--muted);min-height:1.7em;margin-top:14px;overflow-wrap:anywhere}.status[data-kind=error]{color:#ffb3b3}.status[data-kind=ok]{color:var(--success)}
-.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
+.quota-panel{margin:0 0 18px;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}.quota-panel p{margin:5px 0;overflow-wrap:anywhere}.quota-panel progress{width:100%;height:12px;accent-color:var(--accent)}.quota-panel progress[hidden]{display:none}.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
 .tile{min-width:0;border:1px solid var(--line);background:#12192b;border-radius:14px;overflow:hidden}
 .tile img{width:100%;aspect-ratio:4/3;object-fit:contain;background:#070b17;display:block}
 .tile .details{padding:10px 12px;font-size:.88rem}.tile .name{display:block;overflow-wrap:anywhere;font-weight:650}.tile small{color:var(--muted)}
@@ -55,6 +55,12 @@ button.upload-secondary{border:1px solid var(--line);border-radius:10px;backgrou
 <section class="panel" aria-labelledby="libraryTitle">
 <h2 id="libraryTitle">Képtár</h2>
 <p class="muted">Keresés fájlnév vagy alternatív képleírás alapján. A Használati helyek mutatja a piszkozatok, publikált oldalak, archivált oldalak és korábbi verziók hivatkozásait. A piszkozatként kiválasztott fájl csak külön publikálás után válik nyilvánossá.</p>
+<div id="mediaQuota" class="quota-panel" role="status" aria-live="polite" aria-label="Webhely médiatárhelye">
+<strong>Tárhelyhasználat</strong>
+<p id="mediaQuotaSummary">Tárhelyadatok betöltése…</p>
+<progress id="mediaQuotaProgress" max="100" value="0" aria-label="Felhasznált médiatárhely százalékban" hidden></progress>
+<p id="mediaQuotaDetails" class="muted"></p>
+</div>
 <div class="media-state-row"><label for="mediaState">Nézet</label><select id="mediaState" aria-label="Médiatár nézet"><option value="active">Aktív képek</option><option value="archived">Archivált képek</option></select></div>
 <div class="library-tools"><input id="mediaSearch" type="search" placeholder="Keresés a képek között…" aria-label="Keresés a képek között"><button id="mediaSearchClear" type="button">Törlés</button></div>
 <div id="gallery" class="tiles" aria-live="polite"><p class="empty">Képek betöltése…</p></div>

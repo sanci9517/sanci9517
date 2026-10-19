@@ -7,6 +7,34 @@ const search = document.getElementById("mediaSearch");
 const searchClear = document.getElementById("mediaSearchClear");
 const mediaState = document.getElementById("mediaState");
 let currentListRequest = 0;
+const quotaSummary = document.getElementById("mediaQuotaSummary");
+const quotaDetails = document.getElementById("mediaQuotaDetails");
+const quotaProgress = document.getElementById("mediaQuotaProgress");
+const sizeFormat = new Intl.NumberFormat("hu-HU", { maximumFractionDigits: 1 });
+function readableBytes(bytes) {
+  if (!Number.isFinite(bytes) || bytes < 0) return "ismeretlen";
+  return sizeFormat.format(bytes / (1024 * 1024)) + " MiB";
+}
+function renderQuota(data) {
+  const quota = data?.quota;
+  const limit = data?.siteQuotaBytes;
+  if (!quota || !Number.isSafeInteger(limit) || limit <= 0 ||
+      !["usedBytes","activeBytes","archivedBytes","remainingBytes"].every(key =>
+        Number.isSafeInteger(quota[key]) && quota[key] >= 0)) {
+    quotaSummary.textContent = "A tárhelyadatok nem érhetők el.";
+    quotaDetails.textContent = "";
+    quotaProgress.hidden = true;
+    return;
+  }
+  quotaSummary.textContent = "Felhasznált: " + readableBytes(quota.usedBytes) +
+    " / " + readableBytes(limit);
+  quotaDetails.textContent = "Aktív: " + readableBytes(quota.activeBytes) +
+    " · Archivált: " + readableBytes(quota.archivedBytes) +
+    " · Szabad: " + readableBytes(quota.remainingBytes) +
+    ". Az archivált képek is foglalják a tárhelyet.";
+  quotaProgress.value = Math.min(100, 100 * quota.usedBytes / limit);
+  quotaProgress.hidden = false;
+}
 const supported = new Set(["image/png", "image/jpeg", "image/gif", "image/webp"]);
 const maxBytes = 4 * 1024 * 1024;
 const progress = document.getElementById("uploadProgress");
@@ -59,6 +87,7 @@ async function refresh(query = "") {
     url.searchParams.set("state",mediaState.value);
     const data = await api(url.toString());
     if (request !== currentListRequest) return;
+    renderQuota(data);
     const assets = Array.isArray(data.assets) ? data.assets : [];
     if (!assets.length) { empty(mediaState.value === "archived" ? "Nincs archivált kép." : "Még nincs feltöltött kép."); return; }
     const tiles = assets.map(asset => {
@@ -137,7 +166,10 @@ async function refresh(query = "") {
     });
     gallery.replaceChildren(...tiles);
   } catch (e) {
-    if(request === currentListRequest)empty(e instanceof Error ? e.message : "A képek nem tölthetők be.");
+    if(request === currentListRequest){
+      renderQuota(null);
+      empty(e instanceof Error ? e.message : "A képek nem tölthetők be.");
+    }
   }
 }
 mediaState.addEventListener("change",()=>refresh(search.value.trim()));
