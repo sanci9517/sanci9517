@@ -752,3 +752,8 @@ A #124 elválasztóvonal/reszponzív térköz CI PASS után MERGED: `458948c8a88
 ### 77.44.UX-P0.6.J — Social Links Editor-képesség (2026-10-19)
 
 A #126 Countdown CI PASS után egyesült: 38a3c8570174ae09d21fcc3074d4c7d0e5327804. A következő 77.44 Editor-pont statikus, szerkeszthető közösségi hivatkozás elem: 11 platform, egyedi címek és biztonságos URL-ek, hozzáadás/sorrend/törlés, három layout és megjelenés, közös HTML renderer/Inspector, reszponzív fókusz- és érintési cél, verziózott opt-in, Undo/Redo és Save≠Publish. Nincs dinamikus platformintegráció vagy állítólagos követőszám, nincs régi adatmigráció. Unit és Chromium regression PR CI-vel igazolandó; teljes Editor és kézi elfogadás OPEN. Az egyetlen részletes tulajdonos a kanonikus MASTER 77.44.UX-P0.6.J alpontja.
+
+
+### 77.44.UX-P0.6.K — Biztonságos creator-videó beágyazás (2026-10-19)
+
+#127 Social Links CI PASS után MERGED: 3d206417b5bfa4684766cff3867259f2c2ce4d92. A következő Visual Editor-elem a verziózott YouTube/Twitch Live/Twitch VOD/Vimeo Embed: URL/ID és cím, képarány, kattintással betöltés; sandbox nélküli, előre engedélyezett szolgáltatói iframe-domain, szigorú platformlistás feloldás; YouTube nocookie, Vimeo dnt, dinamikus Twitch parent. 400px alatti Twitch iframe helyett használható közvetlen link. Draft Save külön, új hibás adat Publish guarddal tiltott, legacy opt-in. Core/Chromium desktop/mobil CI ellenőrzésre vár; teljes Editor és saját készülékes felhasználói elfogadás OPEN. Az egyetlen részletes forrás a kanonikus MASTER 77.44.UX-P0.6.K alpontja.
