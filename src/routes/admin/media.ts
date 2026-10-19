@@ -51,6 +51,29 @@ async function boundedBody(request: Request): Promise<Uint8Array | null> {
   return bytes;
 }
 
+// Stable UUIDv4-shaped asset ID from a site-scoped SHA-256 fingerprint.
+// Legacy assets retain their randomly generated IDs. Object keys stay random
+// so simultaneous retries never delete or overwrite one another's R2 objects.
+async function fingerprintId(siteId: string, bytes: Uint8Array): Promise<string> {
+  const prefix = new TextEncoder().encode(siteId);
+  const material = new Uint8Array(prefix.length + 1 + bytes.length);
+  material.set(prefix);
+  material.set(bytes, prefix.length + 1);
+  const hash = new Uint8Array(await crypto.subtle.digest("SHA-256", material));
+  hash[6] = (hash[6] & 15) | 64;
+  hash[8] = (hash[8] & 63) | 128;
+  const hex = Array.from(hash.subarray(0, 16), value => value.toString(16).padStart(2,"0")).join("");
+  return [hex.slice(0,8),hex.slice(8,12),hex.slice(12,16),hex.slice(16,20),hex.slice(20,32)].join("-");
+}
+
+async function sameStoredImage(env: Env, row: MediaRow, bytes: Uint8Array, mime: string): Promise<boolean> {
+  if (row.size_bytes !== bytes.byteLength || row.mime_type !== mime) return false;
+  const object = await env.MEDIA.get(row.object_key);
+  if (!object) return false;
+  const stored = new Uint8Array(await new Response(object.body).arrayBuffer());
+  return stored.length === bytes.length && stored.every((byte, index) => byte === bytes[index]);
+}
+
 function dto(row: MediaRow) {
   return {
     id: row.id, name: row.original_name, mimeType: row.mime_type,
@@ -218,29 +241,66 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
   if (declared && declared !== "application/octet-stream" && declared !== mime) {
     return error("MEDIA_TYPE_MISMATCH", 415);
   }
-  const id = crypto.randomUUID();
-  const key = "sites/" + encodeURIComponent(siteId) + "/media/" + id;
+  const id = await fingerprintId(siteId, bytes);
+  const matching = await env.DB.prepare(
+    "SELECT id,site_id,object_key,original_name,mime_type,size_bytes,alt_text,created_at FROM media WHERE id=? AND site_id=? LIMIT 1"
+  ).bind(id,siteId).first<MediaRow>();
+  if (matching) {
+    try {
+      if (!await sameStoredImage(env, matching, bytes, mime)) return error("MEDIA_DUPLICATE_CONFLICT", 409);
+    } catch { return error("MEDIA_STORAGE_FAILED", 503); }
+    return Response.json({ok:true,data:{...dto(matching),duplicate:true}}, {status:200,headers:{"Cache-Control":"no-store"}});
+  }
+  // Never share an R2 key between requests: only the losing request's object
+  // may be deleted when a concurrent INSERT collides on the deterministic ID.
+  const key = "sites/" + encodeURIComponent(siteId) + "/media/" + crypto.randomUUID();
   try {
     await env.MEDIA.put(key, bytes, { httpMetadata: { contentType: mime } });
   } catch {
     return error("MEDIA_STORAGE_FAILED", 503);
   }
+  let inserted = false;
   try {
     const saved = await env.DB.prepare(
       "INSERT INTO media(id,object_key,original_name,mime_type,size_bytes,alt_text,site_id) " +
       "SELECT ?,?,?,?,?,?,? WHERE " +
       "(SELECT COALESCE(SUM(size_bytes),0) FROM media WHERE site_id=?) + ? <= ?"
     ).bind(id,key,filename,mime,bytes.byteLength,"",siteId,siteId,bytes.byteLength,SITE_MEDIA_LIMIT_BYTES).run();
-    if (Number(saved.meta?.changes ?? 0) !== 1) {
-      await removeOrphan(env,key);
-      return error("MEDIA_QUOTA_EXCEEDED", 409);
-    }
+    inserted = Number(saved.meta?.changes ?? 0) === 1;
   } catch {
+    // A concurrent upload may have committed the same content. In either
+    // case our randomly named R2 object is not owned by the winning row.
+  }
+  if (!inserted) {
+    let existing: MediaRow | null = null;
+    try {
+      existing = await env.DB.prepare(
+        "SELECT id,site_id,object_key,original_name,mime_type,size_bytes,alt_text,created_at FROM media WHERE id=? AND site_id=? LIMIT 1"
+      ).bind(id,siteId).first<MediaRow>();
+      if (existing) {
+        // A D1 client error can occur after a committed INSERT. Never delete
+        // the object that a successfully committed row actually owns.
+        if (existing.object_key === key) {
+          return Response.json({ok:true,data:{...dto(existing),duplicate:false}}, {status:201,headers:{"Cache-Control":"no-store"}});
+        }
+        await removeOrphan(env,key);
+        if (!await sameStoredImage(env, existing, bytes, mime)) return error("MEDIA_DUPLICATE_CONFLICT", 409);
+        return Response.json({ok:true,data:{...dto(existing),duplicate:true}}, {status:200,headers:{"Cache-Control":"no-store"}});
+      }
+    } catch { await removeOrphan(env,key); return error("MEDIA_METADATA_FAILED",503); }
     await removeOrphan(env,key);
-    return error("MEDIA_METADATA_FAILED", 503);
+    // Either quota rejection or a DB failure. Do not claim quota exhaustion
+    // until the condition can actually be verified.
+    try {
+      const usage=await env.DB.prepare(
+        "SELECT COALESCE(SUM(size_bytes),0) AS total FROM media WHERE site_id=?"
+      ).bind(siteId).first<{total:number}>();
+      if (Number(usage?.total??0)+bytes.byteLength>SITE_MEDIA_LIMIT_BYTES) return error("MEDIA_QUOTA_EXCEEDED",409);
+    } catch { /* Report metadata failure below. */ }
+    return error("MEDIA_METADATA_FAILED",503);
   }
   return Response.json({ ok: true, data: {
-    id, name: filename, mimeType: mime, sizeBytes: bytes.byteLength, altText: "",
+    id, name: filename, mimeType: mime, sizeBytes: bytes.byteLength, altText: "", duplicate:false,
     previewUrl: "/api/admin/media?id=" + encodeURIComponent(id)
   } }, { status: 201, headers: { "Cache-Control": "no-store" } });
 }

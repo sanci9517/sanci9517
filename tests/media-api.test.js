@@ -78,6 +78,96 @@ test("authenticated image upload produces private asset and site-scoped listing"
   assert.equal((await f.call("GET","editor",null,{id:asset.id,site:"other"})).status,403);
 });
 
+
+test("repeated image content reuses the same site asset without extra R2 storage or losing metadata",async t=>{
+  const f=await fixture(t);
+  const first=await f.call("POST","editor",png,{name:"first.png"});
+  assert.equal(first.status,201);
+  const original=(await first.json()).data;
+  assert.equal(original.duplicate,false);
+  await f.call("PATCH","editor",JSON.stringify({altText:"Egyedi képleírás"}),{id:original.id});
+  const same=await f.call("POST","editor",png,{name:"renamed.png"});
+  assert.equal(same.status,200);
+  const reused=(await same.json()).data;
+  assert.equal(reused.id,original.id);
+  assert.equal(reused.name,"first.png","duplicate must retain the original name");
+  assert.equal(reused.altText,"Egyedi képleírás","duplicate must retain metadata");
+  assert.equal(reused.duplicate,true);
+  assert.equal(f.files.size,1,"sequential duplicate must not create another R2 object");
+  assert.equal(f.db.prepare("SELECT COUNT(*) AS n FROM media").get().n,1,"one D1 asset reference");
+  const changed=Uint8Array.from(png);changed[changed.length-1]^=1;
+  const second=await f.call("POST","editor",changed,{name:"different.png"});
+  assert.equal(second.status,201);
+  assert.notEqual((await second.json()).data.id,original.id,"different binary content must create a distinct asset");
+  assert.equal(f.files.size,2);
+});
+
+test("fingerprints are site-scoped and parallel uploads clean up only their losing R2 object",async t=>{
+  const f=await fixture(t);
+  f.db.prepare("INSERT INTO site_memberships VALUES('other','editor','editor','active')").run();
+  const other=await f.call("POST","editor",png,{name:"other.png",site:"other"});
+  assert.equal(other.status,201);
+  const original=(await other.json()).data;
+  const a=await f.call("POST","editor",png,{name:"first.png"});
+  assert.equal(a.status,201);
+  const secondSite=(await a.json()).data;
+  assert.notEqual(original.id,secondSite.id,"cross-site identical content needs an unrelated asset ID");
+  assert.equal(f.files.size,2);
+  const concurrent=await Promise.all([
+    f.call("POST","editor",gif,{name:"a.gif",contentType:"image/gif"}),
+    f.call("POST","editor",gif,{name:"b.gif",contentType:"image/gif"})
+  ]);
+  assert.deepEqual(concurrent.map(x=>x.status).sort(),[200,201]);
+  const assets=await Promise.all(concurrent.map(x=>x.json()));
+  assert.equal(assets[0].data.id,assets[1].data.id);
+  assert.equal(f.files.size,3,"parallel duplicate loser must remove only its random R2 object");
+  assert.equal(f.db.prepare("SELECT COUNT(*) AS n FROM media").get().n,3);
+  const read=await f.call("GET","editor",null,{id:assets[0].data.id});
+  assert.equal(read.status,200);
+  assert.deepEqual(new Uint8Array(await read.arrayBuffer()),gif);
+});
+
+test("a stale object or inaccessible cross-site match must never become duplicate success",async t=>{
+  const f=await fixture(t);
+  const first=await f.call("POST","editor",png,{name:"original.png"});
+  const id=(await first.json()).data.id;
+  const key=f.db.prepare("SELECT object_key FROM media WHERE id=?").get(id).object_key;
+  f.files.delete(key);
+  const duplicate=await f.call("POST","editor",png,{name:"again.png"});
+  assert.equal(duplicate.status,409,"do not return success when stored asset is missing");
+  assert.equal((await duplicate.json()).error.code,"MEDIA_DUPLICATE_CONFLICT");
+  assert.equal(f.db.prepare("SELECT COUNT(*) AS n FROM media").get().n,1);
+  assert.equal(f.files.size,0);
+});
+
+
+test("a D1 acknowledgement lost after commit must not delete the successfully stored image",async t=>{
+  const f=await fixture(t);
+  const originalPrepare=f.env.DB.prepare;
+  let injected=false;
+  f.env.DB.prepare=sql=>{
+    const statement=originalPrepare(sql);
+    if(sql.startsWith("INSERT INTO media(")) {
+      const oldRun=statement.run;
+      statement.run=async()=>{
+        const result=await oldRun();
+        if(!injected){injected=true;throw new Error("lost acknowledgement after D1 commit");}
+        return result;
+      };
+    }
+    return statement;
+  };
+  const response=await f.call("POST","editor",png,{name:"committed.png"});
+  assert.equal(response.status,201);
+  const asset=(await response.json()).data;
+  assert.equal(asset.duplicate,false);
+  assert.equal(f.files.size,1,"the already committed R2 object must not be deleted");
+  assert.equal(f.db.prepare("SELECT COUNT(*) AS n FROM media").get().n,1);
+  const read=await f.call("GET","editor",null,{id:asset.id});
+  assert.equal(read.status,200);
+  assert.deepEqual(new Uint8Array(await read.arrayBuffer()),png);
+});
+
 test("site-scoped search, safe alt metadata and published-only delivery",async t=>{
   const f=await fixture(t);
   const uploaded=await f.call("POST","editor",png,{name:"creator portrait.png"});
