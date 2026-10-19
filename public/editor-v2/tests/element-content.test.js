@@ -60,6 +60,11 @@ test('Médiatár asset ID renders as a private canvas preview and a public route
   assert.equal(normalizeElementContent(node,{assetId}).assetId,assetId);
   assert.match(authoredNodeHtml(node,{editor:true}),new RegExp(`/api/admin/media\\?id=${assetId}`));
   assert.match(authoredNodeHtml(node),new RegExp(`/media/${assetId}`));
+  for(const type of ['gallery','carousel']){
+    const collection={...node,type,props:{items:[{assetId,src:'/old-image.jpg',alt:'Márkajel'}]}};
+    assert.match(authoredNodeHtml(collection,{editor:true}),new RegExp(`data-lightbox-src="/api/admin/media\\?id=${assetId}"`));
+    assert.match(authoredNodeHtml(collection),new RegExp(`data-lightbox-src="/media/${assetId}"`));
+  }
   assert.throws(()=>normalizeElementContent(node,{assetId:'../private'}),/azonosító/);
 });
 
