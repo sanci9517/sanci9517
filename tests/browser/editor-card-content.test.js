@@ -16,6 +16,7 @@ test('Card Inspector produces semantic public Card with nested content, safe lin
  const childId=model.selection.primaryId;
  let draft=structuredClone(model.document),published=structuredClone(draft),version=1;
  const posts=[],assetRoot=resolve(import.meta.dirname,'../../public');
+ const assetId='11111111-2222-4333-8444-555555555555';
  const server=createServer(async(req,res)=>{
   const url=new URL(req.url,'http://localhost');
   const json=data=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(data))};
@@ -30,6 +31,8 @@ test('Card Inspector produces semantic public Card with nested content, safe lin
   if(url.pathname==='/api/public/pages')return json({ok:true,data:{id:pageId,slug:'test',title:'Test',description:'',content:published.pages[pageId]}});
   if(url.pathname==='/api/public/navigation')return json({ok:true,data:{items:[]}});
   if(url.pathname==='/api/integrations/twitch/connection')return json({ok:true,data:{connected:false}});
+  if(url.pathname==='/api/admin/media'&&!url.searchParams.has('id'))return json({ok:true,data:{assets:[{id:assetId,name:'Saját Médiatár-kép',altText:'Új leírás',previewUrl:'/api/admin/media?id='+assetId}]}});
+  if(url.pathname==='/api/admin/media'&&url.searchParams.get('id')===assetId){res.setHeader('content-type','image/png');return res.end(Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/l5sAAAAASUVORK5CYII=','base64'))}
   if(url.pathname.startsWith('/api/'))return json({ok:true,data:{siteName:'Test'}});
   const path=url.pathname==='/p/test'?'/visual-page.html':url.pathname,file=resolve(assetRoot,'.'+path);
   if(!file.startsWith(assetRoot+'/'))return res.writeHead(403).end();
@@ -90,5 +93,21 @@ test('Card Inspector produces semantic public Card with nested content, safe lin
  assert.ok((await publicCard.getAttribute('class')).includes('visual-card-outline'));
  await viewer.setViewportSize({width:390,height:800});await viewer.reload();
  assert.ok((await action.boundingBox()).height>=44,'touch-friendly CTA');
+ // Reuse the same Media picker as image/gallery, without dropping the existing image description.
+ await editor.getByRole('button',{name:'Médiatár megnyitása'}).click();
+ await editor.getByRole('button',{name:'Saját Médiatár-kép kiválasztása'}).click();
+ assert.equal(await card.locator('.card-preview img').getAttribute('src'),'/api/admin/media?id='+assetId);
+ assert.equal(await field('Kép leírása').inputValue(),'Fénykép a csatornáról');
+ assert.equal(posts.length,2,'asset selection is a draft edit, not an implicit Save or Publish');
+ await editor.locator('#save').click();
+ await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+ assert.equal(posts.at(-1).publish,false);
+ assert.equal(posts.at(-1).document.pages[pageId].nodes[cardId].props.cardContent.imageAssetId,assetId);
+ await viewer.reload();
+ assert.equal(await publicCard.locator('.visual-card-media').getAttribute('src'),'/media/hero.jpg','Save must not publish the newly selected asset');
+ await editor.locator('#publish').click();
+ await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+ await viewer.reload();
+ assert.equal(await publicCard.locator('.visual-card-media').getAttribute('src'),'/media/'+assetId);
  assert.deepEqual(errors,[]);
 });
