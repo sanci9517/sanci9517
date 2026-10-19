@@ -757,3 +757,8 @@ A #126 Countdown CI PASS után egyesült: 38a3c8570174ae09d21fcc3074d4c7d0e53278
 ### 77.44.UX-P0.6.K — Biztonságos creator-videó beágyazás (2026-10-19)
 
 #127 Social Links CI PASS után MERGED: 3d206417b5bfa4684766cff3867259f2c2ce4d92. A következő Visual Editor-elem a verziózott YouTube/Twitch Live/Twitch VOD/Vimeo Embed: URL/ID és cím, képarány, kattintással betöltés; sandbox nélküli, előre engedélyezett szolgáltatói iframe-domain, szigorú platformlistás feloldás; YouTube nocookie, Vimeo dnt, dinamikus Twitch parent. 400px alatti Twitch iframe helyett használható közvetlen link. Draft Save külön, új hibás adat Publish guarddal tiltott, legacy opt-in. Core/Chromium desktop/mobil CI ellenőrzésre vár; teljes Editor és saját készülékes felhasználói elfogadás OPEN. Az egyetlen részletes forrás a kanonikus MASTER 77.44.UX-P0.6.K alpontja.
+
+
+### 77.44.UX-P0.6.L — Code blokk, natív megjelenítés és másolás (2026-10-19)
+
+A #128 Embed blokk minden elérhető GitHub check PASS után MERGED: 719b644ab3232aa173deb62f13f9c1a38125e20c. A következő 77.44 részblokk a Code elem: inert, biztonságos forrás, 12 nyelvi címke, világos/sötét téma, sorszámok, tördelés, valóban működő publikus Másolás művelet, közös Page Model és Inspector, mobil CSS, verziózott opt-in és server Publish guard. Unit/Chromium teszt a CI-ben futtatandó; rendszer-vágólap és teljes telefon/PC kézi elfogadás OPEN. Egyetlen részletes kanonikus nyilvántartás a MASTER 77.44.UX-P0.6.L.
