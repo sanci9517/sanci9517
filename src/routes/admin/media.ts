@@ -3,6 +3,10 @@ import { getAuthenticatedUser, hasRole } from "../../core/auth/require-auth";
 import { requireSiteGrant } from "../../core/auth/site-access";
 import { DEFAULT_SITE_ID } from "../../core/site-context";
 import type { Env } from "../../types/env";
+import { normalizeCardContent } from "../../../public/editor-v2/core/card-content.js";
+import { CONTENT_TYPES, safeMediaUrl } from "../../../public/editor-v2/core/authored-content.js";
+import { isLeafType } from "../../../public/editor-v2/core/schema.js";
+import { isStructuredType } from "../../../public/editor-v2/core/element-content.js";
 
 const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
 const SITE_MEDIA_LIMIT_BYTES = 5 * 1000 * 1000 * 1000;
@@ -99,28 +103,82 @@ function assetPaths(value: unknown, assetId: string, path = "", depth = 0): stri
 }
 
 function documentAssetReferences(json: string, pageId: string, assetId: string, publicOnly = false): { nodeId: string; nodeName: string; path: string }[] {
-  const model = JSON.parse(json) as { pages?: Record<string, { rootId?: string; nodes?: Record<string, { name?: string; type?: string; metadata?: {cardContentVersion?: number;contentVersion?: number}; props?: unknown; style?: unknown; responsive?: unknown; visibility?: unknown; children?: string[] }> }> };
+  const model = JSON.parse(json) as { pages?: Record<string, { rootId?: string; nodes?: Record<string, { name?: string; type?: string; metadata?: {cardContentVersion?: number;contentVersion?: number;rootStyleVersion?: number;editorRootVersion?: number}; props?: unknown; style?: unknown; responsive?: unknown; visibility?: unknown; children?: string[] }> }> };
   const page = model?.pages?.[pageId];
   const nodes = page?.nodes;
   if (!nodes || typeof nodes !== "object") return [];
-  const reachable = new Set<string>();
-  if (publicOnly && page?.rootId && nodes[page.rootId]) {
-    const visit = (id: string, depth = 0) => {
-      if (depth > 32 || reachable.has(id) || !nodes[id]) return;
-      reachable.add(id);
-      for (const child of Array.isArray(nodes[id].children) ? nodes[id].children : []) if (typeof child === "string") visit(child, depth + 1);
-    };
-    visit(page.rootId);
+  const visibleAt = new Map<string, Set<string>>();
+  if (publicOnly) {
+    // The public renderer rejects a document without its root. A media URL
+    // must never grant access from a detached node in that invalid snapshot.
+    if (!page?.rootId || !nodes[page.rootId]) return [];
+    for (const device of ["desktop", "tablet", "mobile"]) {
+      const visited = new Set<string>();
+      const visit = (id: string, depth = 0) => {
+        const node = nodes[id];
+        if (depth > 32 || visited.has(id) || !node || node.visibility === false ||
+            node.visibility && typeof node.visibility === "object" && (node.visibility as Record<string, unknown>)[device] === false) return;
+        visited.add(id);
+        if (!visibleAt.has(id)) visibleAt.set(id, new Set());
+        visibleAt.get(id)!.add(device);
+        // Some saved/legacy snapshots contain children under leaf nodes even
+        // though the public renderer discards their HTML. Such descendants
+        // must not grant public access to otherwise private media.
+        const dropsChildren = isLeafType(node.type || "") || node.type === "schedule" ||
+          node.metadata?.contentVersion === 1 && CONTENT_TYPES.includes(node.type || "") && node.type !== "spacer" ||
+          isStructuredType(node.type || "") && Boolean((node.props as Record<string, unknown> | undefined)?.contentModel);
+        if (node.type === "card" && node.metadata?.cardContentVersion === 1) {
+          try { normalizeCardContent((node.props as Record<string, unknown> | undefined)?.cardContent); }
+          catch { return; } // A malformed Card renders only its fallback, without children.
+        }
+        if (!dropsChildren) for (const child of Array.isArray(node.children) ? node.children : []) if (typeof child === "string") visit(child, depth + 1);
+      };
+      visit(page.rootId);
+    }
   }
   return Object.entries(nodes).flatMap(([nodeId, node]) => {
-    if (publicOnly && reachable.size && !reachable.has(nodeId)) return [];
+    const visibleDevices = visibleAt.get(nodeId);
+    if (publicOnly && !visibleDevices?.size) return [];
     if (!node || typeof node !== "object") return [];
     const visibility = node.visibility;
     if (publicOnly && (visibility === false || visibility && typeof visibility === "object" && ["desktop", "tablet", "mobile"].every(device => (visibility as Record<string, unknown>)[device] === false))) return [];
     const nodeName = typeof node.name === "string" && node.name.trim() ? node.name : node.type || nodeId;
+    const props = node.props as Record<string, unknown> | undefined;
+    const validCardImage = () => {
+      try { return normalizeCardContent(props?.cardContent).imageAssetId === assetId; }
+      catch { return false; }
+    };
+    const validVideoSource = () => {
+      try { return typeof props?.src === "string" && Boolean(safeMediaUrl(props.src)); }
+      catch { return false; }
+    };
+    const renderedBackground = (path: string): boolean => {
+      if (!/^(?:style|responsive\.(?:desktop|tablet|mobile))\.backgroundAssetId$/.test(path)) return false;
+      if (nodeId === page.rootId && node.metadata?.rootStyleVersion !== 1 && node.metadata?.editorRootVersion !== 1) return false;
+      const style = node.style as Record<string, unknown> | undefined;
+      const responsive = node.responsive as Record<string, Record<string, unknown>> | undefined;
+      return [...(visibleDevices || [])].some(device => {
+        const order = device === "mobile" ? ["mobile", "tablet", "desktop"] : device === "tablet" ? ["tablet", "desktop"] : ["desktop"];
+        let effective = style?.backgroundAssetId;
+        for (const viewport of order.reverse()) {
+          const override = responsive?.[viewport]?.backgroundAssetId;
+          if (override !== undefined && override !== null && override !== "") effective = override;
+        }
+        return effective === assetId;
+      });
+    };
+    const renderedReference = (path: string): boolean => {
+      if (!publicOnly) return true;
+      if (nodeId === page.rootId) return renderedBackground(path);
+      return path === "props.assetId" && node.type === "image" && node.metadata?.contentVersion === 1 ||
+        path === "props.cardContent.imageAssetId" && node.type === "card" && node.metadata?.cardContentVersion === 1 && validCardImage() ||
+        path === "props.posterAssetId" && node.type === "video" && node.metadata?.contentVersion === 1 && validVideoSource() ||
+        /^props\.items\[\d+\]\.assetId$/.test(path) && Number(path.match(/\[(\d+)\]/)?.[1]) < 40 && ["gallery", "carousel"].includes(node.type || "") && node.metadata?.contentVersion === 1 ||
+        renderedBackground(path);
+    };
     return ["props", "style", "responsive"].flatMap(field =>
       assetPaths(node[field as keyof typeof node], assetId, field)
-        .filter(path => !publicOnly || path === "props.assetId" && node.type === "image" || path === "props.cardContent.imageAssetId" && node.type === "card" && node.metadata?.cardContentVersion === 1 || path === "props.posterAssetId" && node.type === "video" && node.metadata?.contentVersion === 1 || /^props\.items\[\d+\]\.assetId$/.test(path) && ["gallery", "carousel"].includes(node.type || "") || /^(?:style|responsive\.(?:desktop|tablet|mobile))\.backgroundAssetId$/.test(path))
+        .filter(renderedReference)
         .map(path => ({ nodeId, nodeName, path })));
   });
 }

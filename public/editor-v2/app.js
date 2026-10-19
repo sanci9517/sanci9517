@@ -753,6 +753,7 @@ function renderInspector(){
   styleActions.append(copyStyle,pasteStyle);
   const styleHelp=document.createElement('small');styleHelp.className='style-copy-help';styleHelp.textContent='Másik szövegnél ugyanazt a megjelenést használhatod. A méretet, pozíciót és tartalmat külön kezeli.';
   const brand=document.createElement('a');brand.className='inspector-brand-link';brand.href='/admin/design';brand.target='_blank';brand.rel='noopener';brand.textContent='Közös webhelystílusok · Brand Kit';header.append(styleActions,styleHelp,brand);inspector.append(header);
+  if(node.locked){const note=document.createElement('p');note.className='content-field-help inspector-locked-note';note.setAttribute('role','status');note.textContent='Ez az elem zárolt, ezért a beállítások csak olvashatók. A Stílus fülön a „Zárolt elem” jelölést kikapcsolva újra szerkesztheted.';inspector.append(note)}
 
   if(inspectorTab==='design'){
     inspector.append(renderInspectorCategories());
@@ -762,7 +763,7 @@ function renderInspector(){
     if(node.type==='schedule')inspector.append(renderScheduleInspector(node));
     else inspector.append(renderRegistryInspector(node,'primary'));
     const lockRow=document.createElement('label');lockRow.className='inspector-toggle';
-    const lockInput=document.createElement('input');lockInput.type='checkbox';lockInput.checked=Boolean(node.locked);lockInput.disabled=node.id===page()?.rootId;
+    const lockInput=document.createElement('input');lockInput.type='checkbox';lockInput.className='inspector-lock-toggle';lockInput.checked=Boolean(node.locked);lockInput.disabled=node.id===page()?.rootId;
     lockInput.onchange=()=>command('element.lock.set',{nodeId:node.id,locked:lockInput.checked});
     const lockText=document.createElement('span');lockText.textContent='Zárolt elem';lockRow.append(lockInput,lockText);inspector.append(lockRow);
   }else if(inspectorTab==='content'){
@@ -994,7 +995,18 @@ function renderInspector(){
     inspector.append(renderAccessibilityInspector(node),renderStatesInspector(node));
     inspector.append(field('Node ID',node.id,()=>{},true),field('Típus',node.type,()=>{},true),field('Szülő ID',node.parentId||'',()=>{},true));
   }
-  const actions=document.createElement('div');actions.className='inspector-actions';const del=document.createElement('button');del.type='button';del.className='danger-action';del.textContent='Törlés';del.disabled=node.id===page()?.rootId;del.title=del.disabled?'A gyökérelem nem törölhető':'Kijelölt elem törlése';del.onclick=()=>{if(!del.disabled)command('element.delete',{nodeId:node.id})};actions.append(del);inspector.append(actions);filterInspector();restoreScroll()
+  const actions=document.createElement('div');actions.className='inspector-actions';const del=document.createElement('button');del.type='button';del.className='danger-action';del.textContent='Törlés';del.disabled=node.id===page()?.rootId||Boolean(node.locked);del.title=del.disabled?'A gyökér- vagy zárolt elem nem törölhető':'Kijelölt elem törlése';del.onclick=()=>{if(!del.disabled)command('element.delete',{nodeId:node.id})};actions.append(del);inspector.append(actions);
+  if(node.locked){
+    // Content and legacy inspectors share this boundary with typed Style fields.
+    // Disable every mutation at the DOM boundary, but preserve search, category
+    // navigation, state preview, explanations and the way back out of the lock.
+    for(const control of inspector.querySelectorAll('input,select,textarea,button')){
+      if(control.matches('.inspector-lock-toggle,.property-info-toggle,.style-copy-button,[aria-label="Állapot előnézete"]')||control.closest('.inspector-search,.inspector-category-nav,.richtext-tool-tabs'))continue;
+      control.disabled=true;
+    }
+    for(const editor of inspector.querySelectorAll('[contenteditable]'))editor.contentEditable='false';
+  }
+  filterInspector();restoreScroll()
 }
 function clearHierarchyDrag(){hierarchyDrag.nodeId=null;hierarchyDrag.overId=null;document.querySelectorAll('.layer-row.drag-over,.layer-row.dragging').forEach(el=>el.classList.remove('drag-over','dragging'))}
 function clearMobileHierarchyDrag(){clearTimeout(mobileHierarchyDrag.timer);mobileHierarchyDrag.active=false;mobileHierarchyDrag.timer=null;mobileHierarchyDrag.nodeId=null;mobileHierarchyDrag.overId=null;mobileHierarchyDrag.suppressClick=false;document.querySelectorAll('.layer-row.mobile-dragging,.layer-row.mobile-drag-over,.layer-drag-handle.armed').forEach(el=>el.classList.remove('mobile-dragging','mobile-drag-over','armed'))}

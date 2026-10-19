@@ -166,6 +166,9 @@ export function renderPropertyInput(property, label, current, onChange, {tokens=
   if(tokenPicker)wrap.append(tokenPicker);
   wrap.append(error);
   if(binding)for(const input of wrap.querySelectorAll('input,select:not(.property-token-picker),.property-presets button'))input.disabled=true;
+  // A locked node is read-only, including presets and token bindings. Keep the
+  // explanation toggle available so its settings remain understandable.
+  if(property.disabled)for(const control of wrap.querySelectorAll('input,select,textarea,button:not(.property-info-toggle)'))control.disabled=true;
   return wrap;
 }
 

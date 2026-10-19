@@ -98,6 +98,26 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   assert.deepEqual(await presetStyle(),{paddingTop:'16px',paddingRight:'24px',backgroundColor:'rgb(37, 99, 235)',fontSize:'32px'});
   await editor.locator('#undo').click();assert.equal((await presetStyle()).fontSize,'16px');
   await editor.locator('#redo').click();assert.equal((await presetStyle()).fontSize,'32px');
+  // Locking is read-only throughout the Inspector, including typed controls,
+  // presets, token bindings and legacy content. Navigation and help stay usable.
+  await editor.locator('.inspector-lock-toggle').check();
+  assert.match(await editor.locator('.inspector-locked-note').textContent(),/Stílus fülön/);
+  assert.equal(await field('background.color').locator('input[type="color"]').isDisabled(),true);
+  assert.equal(await field('spacing.padding').locator('input').first().isDisabled(),true);
+  assert.equal(await field('spacing.padding').locator('.property-preset').first().isDisabled(),true);
+  assert.equal(await field('typography.fontSize').locator('.property-token-picker').isDisabled(),true);
+  assert.equal(await editor.locator('.geometry-presets button').first().isDisabled(),true);
+  assert.equal(await editor.locator('.inspector-actions .danger-action').isDisabled(),true);
+  assert.equal(await editor.getByLabel('Beállítás keresése').isEnabled(),true);
+  await field('background.color').locator('.property-info-toggle').click();
+  assert.equal(await field('background.color').locator('.property-info-toggle').getAttribute('aria-expanded'),'true');
+  assert.deepEqual(await presetStyle(),{paddingTop:'16px',paddingRight:'24px',backgroundColor:'rgb(37, 99, 235)',fontSize:'32px'});
+  await editor.locator('.inspector-tabs button').nth(1).click();
+  assert.match(await editor.locator('.inspector-locked-note').textContent(),/Zárolt elem/);
+  assert.equal(await editor.getByLabel('Szöveg tartalma').isDisabled(),true);
+  await editor.locator('.inspector-tabs button').first().click();
+  await editor.locator('.inspector-lock-toggle').uncheck();
+  assert.equal(await field('background.color').locator('input[type="color"]').isEnabled(),true);
   await select(gridId);await select(itemId);
   assert.equal(await field('radius.topLeft').locator('input[type="number"]').inputValue(),'12');
   assert.equal(await field('radius.topLeft').locator('select:not(.property-token-picker)').inputValue(),'px');
@@ -142,6 +162,17 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await field('radius.topLeft').locator('input[type="number"]').fill('6');
   await field('radius.topLeft').locator('input').press('Tab');
   assert.equal((await css()).radius,'6px');
+  await editor.locator('.inspector-lock-toggle').check();
+  assert.equal(await field('radius.topLeft').locator('input[type="number"]').isDisabled(),true);
+  assert.equal(await editor.locator('.property-reset').filter({hasText:'Öröklés visszaállítása'}).first().isDisabled(),true);
+  await editor.locator('.inspector-lock-toggle').uncheck();
+  await editor.locator('.property-reset').filter({hasText:'Öröklés visszaállítása'}).first().click();
+  assert.equal((await css()).radius,'12px');
+  await editor.locator('#mobileUndo').click();
+  assert.equal((await css()).radius,'6px');
+  await editor.keyboard.press('Control+s');
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false);
   const preResizeText=await publicPage.locator('.visual-card > .visual-text').first().elementHandle();
   await publicPage.setViewportSize({width:390,height:800});
   await publicPage.waitForFunction(previous=>{const current=document.querySelector('.visual-card > .visual-text');return current&&current!==previous},preResizeText);

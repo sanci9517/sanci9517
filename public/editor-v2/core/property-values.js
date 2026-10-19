@@ -6,6 +6,7 @@ import {parseTokenReference,compatibleTokens} from './design-tokens.js';
  * Unsupported asset selection is NOT represented as a working text field.
  */
 const lengthToken = /^(?:-?(?:\d+(?:\.\d+)?|\.\d+)(?:px|%|vh|vw|rem|em)|0|auto)$/i;
+const boxLengthToken = /^-?(?:\d+(?:\.\d+)?|\.\d+)(?:px|%|vh|vw|rem|em)$/i;
 const hexColor = /^#[\da-f]{3}(?:[\da-f]{3})?(?:[\da-f]{2})?$/i;
 const unitToken = /^(?:auto|0|px|%|vw|vh|rem|em)$/i;
 
@@ -46,7 +47,8 @@ export function normalizeInspectorValue(property, input) {
   }
   if (type === 'box') {
     const parts = value.split(/\s+/);
-    if (parts.length < 1 || parts.length > 4 || parts.some(p => !lengthToken.test(p))) {
+    if (!['margin','padding'].includes(property.key) || parts.length > 4 || parts.some(part =>
+      part !== '0' && !(property.key === 'margin' && part === 'auto') && !boxLengthToken.test(part))) {
       throw new Error('A térköz 1–4 méretből állhat, pl. 8px 16px.');
     }
     if(property.key==='padding'&&parts.some(part=>part.startsWith('-')))throw new Error('A belső térköz nem lehet negatív.');
