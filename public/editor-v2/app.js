@@ -732,7 +732,37 @@ function renderExistingContentInspector(node){
 }
 function renderInspector(){
   const previousScrollTop=inspector.scrollTop;
-  const restoreScroll=()=>requestAnimationFrame(()=>{inspector.scrollTop=previousScrollTop});
+  const focused=document.activeElement;
+  const focusedProperty=inspector.contains(focused)
+    ? focused?.closest?.('.typed-inspector-field[data-property-id]') : null;
+  // The Inspector is reconstructed on every Page Model edit. Remember only
+  // typed field focus: rich text uses its own selection/bookmark lifecycle.
+  const fieldInputs=focusedProperty?.querySelectorAll('input,select,textarea');
+  const focusBookmark=focusedProperty && focused?.matches?.('input,select,textarea')
+    ? {propertyId:focusedProperty.dataset.propertyId,
+       ariaLabel:focused.getAttribute('aria-label'),
+       index:[...fieldInputs].indexOf(focused),
+       start:typeof focused.selectionStart==='number'?focused.selectionStart:null,
+       end:typeof focused.selectionEnd==='number'?focused.selectionEnd:null}
+    : null;
+  const restoreScroll=()=>requestAnimationFrame(()=>{
+    inspector.scrollTop=previousScrollTop;
+    // Never steal focus from a next field reached by Tab, a toolbar action,
+    // or a newly opened dialog. Only repair focus lost to DOM replacement.
+    if(!focusBookmark||document.activeElement!==document.body)return;
+    const replacement=[...inspector.querySelectorAll('.typed-inspector-field[data-property-id]')]
+      .find(field=>field.dataset.propertyId===focusBookmark.propertyId);
+    if(!replacement)return;
+    const inputs=[...replacement.querySelectorAll('input,select,textarea')];
+    const target=inputs.find(el=>el.getAttribute('aria-label')===focusBookmark.ariaLabel)||
+      inputs[focusBookmark.index];
+    if(!target||target.disabled||!target.getClientRects().length)return;
+    target.focus({preventScroll:true});
+    if(focusBookmark.start!==null&&focusBookmark.end!==null&&
+       typeof target.setSelectionRange==='function'){
+      try{target.setSelectionRange(focusBookmark.start,focusBookmark.end)}catch{}
+    }
+  });
   // Tab switches and direct selection changes do not pass through command().
   // Flush before removing the live contenteditable element from the DOM.
   if(!inlineEditingId){if(flushRichTextDraft?.()===false)return false;flushRichTextDraft=null;}

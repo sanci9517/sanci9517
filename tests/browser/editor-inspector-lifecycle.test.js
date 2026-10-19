@@ -65,6 +65,16 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   assert.equal(await editor.locator(`.layer-row[data-node-id="${gridId}"] img`).count(),0);
   await editor.locator('.inspector-group-title[aria-expanded="false"]').evaluateAll(elements=>elements.forEach(el=>el.click()));
   await field('layout.display').locator('select:not(.property-token-picker)').selectOption('grid');
+  // Inspector controls rerender after every change. Keyboard focus must
+  // return to the same typed control, rather than vanish into the document.
+  const displaySelect=field('layout.display').locator('select:not(.property-token-picker)');
+  await displaySelect.evaluate(select=>{
+    select.focus();
+    select.dispatchEvent(new Event('change',{bubbles:true}));
+  });
+  await editor.waitForFunction(()=>document.activeElement?.closest('.typed-inspector-field')?.dataset.propertyId==='layout.display');
+  assert.equal(await editor.evaluate(()=>document.activeElement?.tagName),'SELECT','the re-rendered typed select should retain focus');
+
   await editor.locator('.inspector-tabs button').first().click();
   if(await editor.locator('.inspector-group-title[aria-expanded="false"]').filter({hasText:'Grid'}).count())await editor.locator('.inspector-group-title').filter({hasText:'Grid'}).click();
   await field('grid.columns').locator('select:not(.property-token-picker)').selectOption('repeat(2, minmax(0, 1fr))');
