@@ -20,7 +20,8 @@ async function fixture(t) {
     "original_name TEXT NOT NULL, mime_type TEXT NOT NULL, size_bytes INTEGER NOT NULL,",
     "alt_text TEXT NOT NULL DEFAULT '', created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,",
     "site_id TEXT NOT NULL);",
-    "CREATE TABLE pages(id TEXT PRIMARY KEY,site_id TEXT,archived_at TEXT,is_published INTEGER,published_content_json TEXT);",
+    "CREATE TABLE pages(id TEXT PRIMARY KEY,site_id TEXT,archived_at TEXT,is_published INTEGER,published_content_json TEXT,content_json TEXT,title TEXT,slug TEXT);",
+    "CREATE TABLE editor_revisions(id TEXT PRIMARY KEY,page_id TEXT,version INTEGER,document_json TEXT);",
     "CREATE INDEX idx_media_site_id ON media(site_id);"
   ].join("\n"));
   for (const role of ["editor","viewer"]) {
@@ -50,6 +51,7 @@ async function fixture(t) {
     if(opts.id)url.searchParams.set("id",opts.id);
     if(opts.name)url.searchParams.set("name",opts.name);
     if(opts.q)url.searchParams.set("q",opts.q);
+    if(opts.usage)url.searchParams.set("usage",opts.usage);
     const headers = new Headers();
     if(role)headers.set("Cookie","sanci9517_session="+role);
     if(method==="POST"||method==="PATCH") { headers.set("Origin",opts.origin||url.origin);headers.set("Content-Type",opts.contentType||(method==="PATCH"?"application/json":"image/png")); }
@@ -89,19 +91,55 @@ test("site-scoped search, safe alt metadata and published-only delivery",async t
   const publicUrl=await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id);
   assert.equal(publicUrl.status,404);
   assert.equal((await publishedMediaRoute(new Request("https://other.test/media/"+asset.id),f.env,"other",asset.id)).status,404,"an unrelated site cannot resolve this asset ID");
-  f.db.prepare("INSERT INTO pages VALUES('page-1','site-default',NULL,1,?)").run(JSON.stringify({pages:{'page-1':{nodes:{image:{props:{assetId:asset.id}}}}}}));
+  const publishedDocument = {pages:{'page-1':{nodes:{image:{type:'image',props:{assetId:asset.id}}}}}};
+  f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES('page-1','site-default',NULL,1,?,?,?,?)").run(JSON.stringify(publishedDocument),"{}","Page 1","page-1");
   const delivered=await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id);
   assert.equal(delivered.status,200);
   assert.equal(delivered.headers.get("Cache-Control"),"public, max-age=300, s-maxage=300");
   assert.deepEqual(new Uint8Array(await delivered.arrayBuffer()),png);
   f.db.prepare("UPDATE pages SET published_content_json=?").run(JSON.stringify({pages:{'page-1':{nodes:{}},'unpublished-page':{nodes:{image:{props:{assetId:asset.id}}}}}}));
   assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,404,"an unrelated draft page inside a published document cannot expose the asset");
-  f.db.prepare("UPDATE pages SET published_content_json=?").run(JSON.stringify({pages:{'page-1':{nodes:{section:{responsive:{desktop:{backgroundAssetId:asset.id}}}}}}}));
+  f.db.prepare("UPDATE pages SET published_content_json=?").run(JSON.stringify({pages:{'page-1':{nodes:{section:{type:'section',responsive:{desktop:{backgroundAssetId:asset.id}}}}}}}));
   assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,200,"a published background reference can deliver the image");
+  f.db.prepare("UPDATE pages SET published_content_json=?").run(JSON.stringify({pages:{'page-1':{nodes:{image:{type:'text',props:{unused:{assetId:asset.id}}}}}}}));
+  assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,404,"unused properties cannot expose a private image");
+  f.db.prepare("UPDATE pages SET published_content_json=?").run(JSON.stringify({pages:{'page-1':{nodes:{image:{type:'image',visibility:{desktop:false,tablet:false,mobile:false},props:{assetId:asset.id}}}}}}));
+  assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,404,"an entirely hidden node cannot expose its image");
+  f.db.prepare("UPDATE pages SET published_content_json=?").run(JSON.stringify({pages:{'page-1':{rootId:'root',nodes:{root:{type:'root',children:[]},image:{type:'image',props:{assetId:asset.id}}}}}}));
+  assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,404,"a detached node outside the published tree cannot expose its image");
   f.db.prepare("UPDATE pages SET published_content_json=?").run(JSON.stringify({pages:{'page-1':{nodes:{section:{responsive:{desktop:{backgroundAssetId:'wrong'}}}}}}}));
   assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,404,"a stale background reference cannot expose the image");
   f.db.prepare("UPDATE pages SET is_published=0").run();
   assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,404);
+});
+
+test("usage report includes exact site-scoped draft, published, archived and revision references",async t=>{
+  const f=await fixture(t);
+  const asset=(await (await f.call("POST","editor",png,{name:"used.png"})).json()).data;
+  const doc=(pageId, nodes)=>JSON.stringify({pages:{[pageId]:{nodes}}});
+  const draft=doc("page-1",{hero:{name:"Fő kép",props:{items:[{assetId:asset.id}]},responsive:{mobile:{backgroundAssetId:asset.id}}}});
+  const live=doc("page-1",{hero:{name:"Fő kép",props:{assetId:asset.id}}});
+  const older=doc("page-1",{hero:{name:"Fő kép",style:{backgroundAssetId:asset.id}}});
+  f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)").run("page-1","site-default",null,1,live,draft,"Bemutatkozás","about");
+  f.db.prepare("INSERT INTO editor_revisions VALUES(?,?,?,?)").run("rev-1","page-1",1,older);
+  f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)").run("archived","site-default","2026-10-19",0,null,doc("archived",{image:{props:{assetId:asset.id}}}),"Régi oldal","old");
+  f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)").run("other","other",null,1,doc("other",{image:{props:{assetId:asset.id}}}),doc("other",{image:{props:{assetId:asset.id}}}),"Másik oldal","other");
+  const result=await f.call("GET","editor",null,{usage:asset.id});
+  assert.equal(result.status,200);
+  assert.equal(result.headers.get("Cache-Control"),"no-store");
+  const usage=(await result.json()).data;
+  assert.equal(usage.complete,true);
+  assert.equal(usage.references.length,5);
+  assert.deepEqual(new Set(usage.references.map(ref=>ref.source)),new Set(["draft","published","revision"]));
+  assert.ok(usage.references.some(ref=>ref.path==="responsive.mobile.backgroundAssetId"&&ref.pageId==="page-1"));
+  assert.ok(usage.references.some(ref=>ref.version===1&&ref.path==="style.backgroundAssetId"));
+  assert.ok(usage.references.some(ref=>ref.archived&&ref.pageId==="archived"));
+  assert.ok(usage.references.every(ref=>ref.pageId!=="other"));
+  assert.equal((await f.call("GET","viewer",null,{usage:asset.id})).status,403);
+  assert.equal((await f.call("GET","",null,{usage:asset.id})).status,401);
+  assert.equal((await f.call("GET","editor",null,{usage:"not-an-id"})).status,404);
+  f.db.prepare("UPDATE pages SET content_json=? WHERE id='page-1'").run(`{${asset.id}`);
+  assert.equal((await (await f.call("GET","editor",null,{usage:asset.id})).json()).data.complete,false,"corrupt saved data must not produce an authoritative empty-usage report");
 });
 
 test("anonymous, viewer and cross-origin writers cannot read or create media",async t=>{

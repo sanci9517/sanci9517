@@ -10,6 +10,10 @@ test('Admin media search and alt-text editing work on desktop and mobile without
   const root=resolve(import.meta.dirname,'../../public'),patches=[],queries=[];
   const server=createServer(async(req,res)=>{
     const url=new URL(req.url,'http://localhost');
+    if(url.pathname==='/api/admin/media'&&req.method==='GET'&&url.searchParams.has('usage')){
+      res.setHeader('content-type','application/json');
+      return res.end(JSON.stringify({ok:true,data:{assetId:url.searchParams.get('usage'),complete:true,references:[{pageId:'page-1',pageTitle:'Bemutatkozás',slug:'about',archived:false,source:'published',nodeId:'hero',nodeName:'Fő szakasz',path:'responsive.mobile.backgroundAssetId'},{pageId:'old',pageTitle:'Régi oldal',slug:'old',archived:true,source:'revision',version:2,nodeId:'photo',nodeName:'Kép',path:'props.assetId'}]}}));
+    }
     if(url.pathname==='/api/admin/media'&&req.method==='GET'){
       queries.push(url.searchParams.get('q')||'');
       res.setHeader('content-type','application/json');
@@ -33,8 +37,12 @@ test('Admin media search and alt-text editing work on desktop and mobile without
   await page.waitForTimeout(300);
   await page.waitForFunction(()=>document.querySelector('#gallery .tile'));
   await page.locator('.tile input').fill('Alkotó félalakos portré');
-  await page.locator('.tile button').click();
+  await page.getByRole('button',{name:'Leírás mentése'}).click();
   await page.getByText('Mentve',{exact:true}).waitFor();
+  await page.getByRole('button',{name:'Használati helyek'}).click();
+  await page.getByRole('link',{name:/Publikált: Bemutatkozás/}).waitFor();
+  assert.match(await page.locator('.media-usage').textContent(),/Korábbi verzió v2 · archivált/);
+  assert.equal(await page.locator('.media-usage a').getAttribute('href'),'/editor-v2/index.html?pageId=page-1');
   assert.deepEqual(patches,[{id:'6b1c2e65-e46e-4764-b234-123456789abc',body:{altText:'Alkotó félalakos portré'}}]);
   assert.ok(queries.includes('portrait'));
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'mobile library must not create horizontal scrolling');
