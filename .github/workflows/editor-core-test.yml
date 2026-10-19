@@ -30,6 +30,9 @@ jobs:
       - name: Run editor core tests
         run: npm run test:editor
 
+      - name: Run private R2 media API tests
+        run: npm run test:media
+
       - name: Install Chromium for layout regression
         run: npx playwright install --with-deps chromium
 
