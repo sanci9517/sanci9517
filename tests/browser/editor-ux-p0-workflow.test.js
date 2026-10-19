@@ -182,11 +182,11 @@ test('empty Rich Text has direct desktop and mobile editing, typed presets, Save
   await tab.setViewportSize({width:1366,height:900});
   await tab.locator('.canvas-device-btn[data-device="desktop"]').click();
   assert.equal(await tab.locator('.canvas-device-btn[data-device="desktop"]').evaluate(el=>el.classList.contains('active')),true,'a valid saved draft and collapsed Inspector must allow desktop breakpoint switching');
-  const canvasBounds=await tab.locator('.page-canvas').evaluate((pageEl,id)=>{const page=pageEl.getBoundingClientRect(),node=pageEl.querySelector(`[data-node-id="${CSS.escape(id)}"] .node-content`)?.getBoundingClientRect();return {left:page.left,right:page.right,nodeLeft:node?.left,nodeTop:node?.top,height:node?.height}},richId);
-  const content=tab.locator(`.node[data-node-id="${richId}"] .node-content`).first();
+  const canvasBounds=await tab.locator('.page-canvas').evaluate((pageEl,id)=>{const page=pageEl.getBoundingClientRect(),node=pageEl.querySelector(`.node[data-node-id="${CSS.escape(id)}"]`)?.getBoundingClientRect();return {left:page.left,right:page.right,nodeLeft:node?.left,nodeTop:node?.top,height:node?.height}},richId);
+  const content=tab.locator(`.node[data-node-id="${richId}"]`).first();
   const dragStartX=Math.max(canvasBounds.left+8,canvasBounds.nodeLeft+5);
-  // A tall Rich Text element can start *above* the viewport after mobile
-  // editing. Mouse events at negative screen coordinates never hit the node.
+  // The draggable target is the entire Rich Text element box, not its
+  // inner text content, which may sit entirely above the visible viewport.
   const dragStartY=Math.max(110,Math.min(740,canvasBounds.nodeTop+canvasBounds.height/2));
   assert.ok(dragStartY>canvasBounds.nodeTop&&dragStartY<canvasBounds.nodeTop+canvasBounds.height,
     'drag must start inside the visible portion of the Rich Text node');
