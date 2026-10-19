@@ -80,6 +80,7 @@ test('Creator Embed stays private before consent and Publish, supports responsiv
  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
  assert.equal(posts.at(-1).publish,true);
  await viewer.reload();
+ await publicNode.locator('.visual-embed-player').waitFor({state:'visible'});
  assert.equal(await publicNode.locator('.visual-embed-player').count(),1);
  assert.equal(await publicNode.locator('iframe').count(),0,'before consent no remote player frame');
  assert.equal(youtubeRequests,0,'no third-party request before click');
