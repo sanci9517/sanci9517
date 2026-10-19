@@ -294,3 +294,27 @@ test('responsive property origin is canonical, device-scoped and describes base 
   assert.deepEqual(describeResponsiveOrigin({},'fontSize','mobile'),{kind:'base',source:null,label:'Alapértelmezett'});
   assert.throws(()=>describeResponsiveOrigin({},'fontSize','unsupported'),/Ismeretlen/);
 });
+
+
+test('geometry breakpoint reset preserves parent view and is one Undo operation',()=>{
+  const state=createEditorState(createDocument());
+  const rootId=activePage(state).rootId;
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:rootId}});
+  const id=state.selection.primaryId;
+  execute(state,{type:'responsive.set',payload:{nodeId:id,device:'desktop',patch:{x:'16px',y:'8px',width:'480px'}}});
+  execute(state,{type:'responsive.set',payload:{nodeId:id,device:'mobile',patch:{x:'64px',y:'40px',width:'200px',height:'120px'}}});
+  const node=activePage(state).nodes[id];
+  const before=structuredClone(state.document),historyBefore=state.history.past.length;
+  const geometry=['position.x','position.y','size.width','size.height','position.position'].map(getProperty);
+  const actions=responsiveGroupResetActions(node,geometry,'mobile');
+  assert.deepEqual(actions.map(item=>Object.keys(item.payload.patch)[0]),['x','y','width','height']);
+  executeBatch(state,actions,{label:'Geometria visszaállítása',atomic:true});
+  assert.equal(state.history.past.length,historyBefore+1);
+  const after=activePage(state).nodes[id].responsive;
+  assert.equal(after.mobile.x,undefined);assert.equal(after.mobile.width,undefined);
+  assert.equal(after.desktop.width,'480px');assert.equal(after.desktop.x,'16px');
+  execute(state,{type:'history.undo'});
+  assert.deepEqual(state.document,before);
+  execute(state,{type:'history.redo'});
+  assert.equal(activePage(state).nodes[id].responsive.mobile.height,undefined);
+});
