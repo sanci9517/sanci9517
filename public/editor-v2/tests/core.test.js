@@ -1234,3 +1234,53 @@ test('Social Links: typed platforms, safe URLs, empty draft, accessible output, 
  assert.equal(validatePublishDocument(legacy,pageId),null,'older published Social widgets are not migrated');
  assertValidEditorDocument(state.document);
 });
+
+test('Creator Embed: allowlisted platform URLs, privacy URL, Twitch parent, XSS and Publish contract',async()=>{
+ const {parseEmbedSource,normalizeEmbedContent,defaultEmbedContent,buildEmbedUrl,renderEmbedHtml}=await import('../core/creator-embed.js');
+ const testId='M7lc1UVf-VE';
+ for(const source of [testId,'https://youtu.be/'+testId,'https://www.youtube.com/watch?v='+testId,
+  'https://www.youtube.com/shorts/'+testId,'https://www.youtube.com/embed/'+testId]){
+  assert.deepEqual(parseEmbedSource('youtube',source),{provider:'youtube',id:testId,hash:''});
+ }
+ for(const bad of ['javascript:alert(1)','http://youtube.com/watch?v='+testId,'https://youtube.com.evil.example/watch?v='+testId,
+  'https://user:pass@youtube.com/watch?v='+testId,'https://youtu.be/invalid','https://vimeo.com/123']){
+  assert.throws(()=>parseEmbedSource('youtube',bad),'untrusted video source accepted: '+bad);
+ }
+ assert.deepEqual(parseEmbedSource('twitch-live','https://www.twitch.tv/sanci9517'),{provider:'twitch-live',id:'sanci9517',hash:''});
+ assert.deepEqual(parseEmbedSource('twitch-vod','https://www.twitch.tv/videos/12345'),{provider:'twitch-vod',id:'12345',hash:''});
+ assert.deepEqual(parseEmbedSource('vimeo','https://player.vimeo.com/video/12345?h=abcdef1234'),{provider:'vimeo',id:'12345',hash:'abcdef1234'});
+ assert.equal(buildEmbedUrl({provider:'youtube',source:testId}),'https://www.youtube-nocookie.com/embed/'+testId+'?rel=0');
+ assert.equal(buildEmbedUrl({provider:'twitch-live',source:'sanci9517'},'creator.example.com'),'https://player.twitch.tv/?channel=sanci9517&parent=creator.example.com&autoplay=false');
+ assert.equal(buildEmbedUrl({provider:'twitch-vod',source:'12345'},'creator.example.com'),'https://player.twitch.tv/?video=v12345&parent=creator.example.com&autoplay=false');
+ assert.equal(buildEmbedUrl({provider:'twitch-live',source:'sanci9517'},''),'','Twitch requires a verified hostname');
+ assert.equal(buildEmbedUrl({provider:'vimeo',source:'https://player.vimeo.com/video/12345?h=abcdef1234'}),
+  'https://player.vimeo.com/video/12345?h=abcdef1234&dnt=1');
+ const state=createEditorState(),root=activePage(state).rootId,pageId=state.document.activePageId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.EMBED,parentId:root}});
+ const id=state.selection.primaryId,node=activePage(state).nodes[id];
+ assert.equal(node.metadata.embedContentVersion,1);
+ assert.deepEqual(node.props.embedContent,defaultEmbedContent());
+ assert.equal(validatePublishDocument(state.document,pageId),'INVALID_EMBED_CONTENT');
+ const valid={...defaultEmbedContent(),source:'https://youtu.be/'+testId,title:'Egyedi <script>alert(1)</script>',ratio:'classic',clickToLoad:true};
+ assert.deepEqual(normalizeEmbedContent(valid),valid);
+ execute(state,{type:'element.update',payload:{nodeId:id,patch:{props:{embedContent:valid}}}});
+ assert.equal(validatePublishDocument(state.document,pageId),null);
+ const html=renderEmbedHtml(valid);
+ assert.ok(!html.includes('<iframe'),'third-party content loads only after consent');
+ assert.ok(!html.includes('<script>'));
+ assert.match(html,/&lt;script&gt;/);
+ assert.match(html,/data-embed-click="true"/);
+ assert.ok(!renderEmbedHtml({...valid,source:'javascript:alert(1)'}).includes('data-embed-source='));
+ execute(state,{type:'history.undo'});
+ assert.equal(validatePublishDocument(state.document,pageId),'INVALID_EMBED_CONTENT');
+ execute(state,{type:'history.redo'});
+ assert.equal(validatePublishDocument(state.document,pageId),null);
+ const unsafe=structuredClone(state.document);
+ unsafe.pages[pageId].nodes[id].props.embedContent.source='https://evil.example/malware';
+ assert.equal(validatePublishDocument(unsafe,pageId),'INVALID_EMBED_CONTENT');
+ const legacy=structuredClone(state.document);
+ delete legacy.pages[pageId].nodes[id].metadata.embedContentVersion;
+ legacy.pages[pageId].nodes[id].props.embedContent={version:9};
+ assert.equal(validatePublishDocument(legacy,pageId),null,'legacy Embed nodes retain their previous behavior');
+ assertValidEditorDocument(state.document);
+});
