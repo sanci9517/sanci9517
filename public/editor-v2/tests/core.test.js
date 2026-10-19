@@ -894,6 +894,35 @@ test('Editor preserves edits made while a save request is in flight', () => {
   assert.match(save, /további helyi módosítások még nincsenek mentve/);
 });
 
+test('Authored video uses site-scoped poster assets without exposing video upload or changing legacy poster', async () => {
+ const {authoredNodeHtml,normalizeContentField,CONTENT_FIELDS}=await import('../core/authored-content.js');
+ const state=createEditorState(),root=activePage(state).rootId,id='6b1c2e65-e46e-4764-b234-123456789abc';
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.VIDEO,parentId:root}});
+ const videoId=state.selection.primaryId,pageId=state.document.activePageId;
+ execute(state,{type:'content.properties.set',payload:{nodeId:videoId,patch:{src:'https://cdn.example.com/clip.mp4',poster:'/images/legacy.jpg',controls:true}}});
+ let video=activePage(state).nodes[videoId];
+ assert.match(authoredNodeHtml(video),/poster="\/images\/legacy.jpg"/);
+ const poster=CONTENT_FIELDS.video.find(f=>f.key==='posterAssetId');
+ assert.equal(poster.type,'asset');
+ assert.throws(()=>normalizeContentField(poster,'../../wrong'));
+ const before=structuredClone(state.document);
+ assert.throws(()=>execute(state,{type:'content.properties.set',payload:{nodeId:videoId,patch:{posterAssetId:'javascript:alert(1)'}}}));
+ assert.deepEqual(state.document,before);
+ execute(state,{type:'content.properties.set',payload:{nodeId:videoId,patch:{posterAssetId:id}}});
+ video=activePage(state).nodes[videoId];
+ assert.match(authoredNodeHtml(video,{editor:true}),new RegExp('poster="/api/admin/media\\?id='+id+'"'));
+ assert.match(authoredNodeHtml(video),new RegExp('poster="/media/'+id+'"'));
+ assert.equal(video.props.poster,'/images/legacy.jpg','legacy URL retained as fallback');
+ assert.equal(validatePublishDocument(state.document,pageId),null);
+ execute(state,{type:'history.undo'});
+ assert.match(authoredNodeHtml(activePage(state).nodes[videoId]),/poster="\/images\/legacy.jpg"/);
+ execute(state,{type:'history.redo'});
+ assert.match(authoredNodeHtml(activePage(state).nodes[videoId]),new RegExp('poster="/media/'+id+'"'));
+ const invalid=structuredClone(state.document);
+ invalid.pages[pageId].nodes[videoId].props.posterAssetId='invalid';
+ assert.equal(validatePublishDocument(invalid,pageId),'INVALID_EDITOR_CONTENT');
+});
+
 test('new media remains editable as draft and publish requires a safe source and accessible image', () => {
   const state=createEditorState();
   const root=activePage(state).rootId;
