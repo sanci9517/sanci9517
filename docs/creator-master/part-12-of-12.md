@@ -861,3 +861,8 @@ A két külön ág azonos Inspector és tesztfájlokat érintett; a már főágb
 
 
 **Integrációs regresszió-kiegészítés (2026-10-19):** a nézetváltási védelmet kizárólag a felhasználó számára látható validációs hibaüzenetek blokkolhatják. Az összecsukott Inspector rejtett, korábbi hibaüzenete nem akadályozhatja az érvényes, már mentett oldalon a Desktop nézet visszaállítását. A meglévő out-of-artboard teszt a mobil → desktop gombállapotot külön állítja és a vászon határát jelző osztály megjelenését megvárja, nem enyhíti a tényleges geometriai követelményt. A teljes Editor CI és a manuális elfogadás továbbra is nyitott.
+
+
+### 77.44.7.A/C — Geometria breakpoint csoportos reset (2026-10-19; integrációt követő PR alatt)
+
+A Geometria önálló Editor Inspector-szekcióként nem tartozott a registry által korábban lefedett csoportos resethez. Most ugyanez a közös atomi parancstervező kezeli az X, Y, width, height és position saját aktuális breakpoint-értékeit. Meglévő, más nézetekből örökölt geometriát változatlanul hagy; a reset egyetlen Undo és egyetlen Redo műveletben megfordítható. A zárolt geometria-szekcióban sem az egyedi, sem a csoportos reset nem indíthat módosítást. Unit: 4 külön mobile override, megőrzött desktop és történelem. Chromium: 390px width felülírás → csoport reset → Undo → reset, majd a publikus snapshot változatlansága külön Save-ig és Publish-ig. Ezt nem szabad MERGED/PASS állapotúnak jelölni a teljes Github CI előtt; valódi natív PC/Android ellenőrzés és teljes WEB-011 OPEN.
