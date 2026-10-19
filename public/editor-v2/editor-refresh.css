@@ -565,3 +565,9 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
 .typed-box-controls .typed-box-side strong{font-weight:600;color:#d3deef}
 .typed-box-entry{display:grid;grid-template-columns:minmax(0,1fr) minmax(64px,.8fr);gap:5px;min-width:0}
 .typed-box-entry input,.typed-box-entry select{box-sizing:border-box;width:100%;min-width:0;min-height:44px;padding-inline:6px;font-size:16px}
+
+/* 77.44.7.A/C shared Inspector color control: honest alpha/transparent state. */
+.typed-color-status{display:block;min-height:0;color:#bccbe0;font-size:12px;line-height:1.4}
+.typed-color-status:empty{display:none}
+.typed-color-controls input[type=color].color-preview-limited{outline:2px dashed #9fabc8;outline-offset:2px}
+@media(max-width:700px){.typed-color-controls input[type=color],.typed-color-controls input[type=text]{min-height:44px}}
