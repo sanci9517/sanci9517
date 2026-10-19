@@ -169,9 +169,9 @@ async function startUpload(file) {
     return feedback("PNG, JPG, GIF vagy WebP képet válassz, legfeljebb 4 MiB méretben.", "error");
   }
   try {
-    await uploadImage(file);
+    const saved = await uploadImage(file);
     form.reset();
-    feedback("A kép sikeresen bekerült a privát médiatárba.", "ok");
+    feedback(saved?.duplicate ? "Ez a kép már szerepel a Médiatárban. A meglévő képet használjuk, nem készült új másolat." : "A kép sikeresen bekerült a privát médiatárba.", "ok");
     await refresh(search.value.trim());
   } catch (error) {
     feedback(error instanceof Error ? error.message : "Nem sikerült feltölteni a képet.", "error");
