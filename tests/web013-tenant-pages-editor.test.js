@@ -19,7 +19,7 @@ async function fixture(t, enabled=true) {
     CREATE TABLE editor_revisions(id TEXT PRIMARY KEY,page_id TEXT,version INTEGER,document_json TEXT,
       created_by TEXT,note TEXT,created_at TEXT DEFAULT CURRENT_TIMESTAMP,UNIQUE(page_id,version));
     CREATE TABLE page_slug_redirects(site_id TEXT,from_slug TEXT,page_id TEXT,PRIMARY KEY(site_id,from_slug));
-    CREATE TABLE media(id TEXT PRIMARY KEY,site_id TEXT NOT NULL,object_key TEXT NOT NULL,mime_type TEXT NOT NULL,original_name TEXT NOT NULL,size_bytes INTEGER NOT NULL,alt_text TEXT NOT NULL DEFAULT '',created_at TEXT DEFAULT CURRENT_TIMESTAMP);
+    CREATE TABLE media(id TEXT PRIMARY KEY,site_id TEXT NOT NULL,object_key TEXT NOT NULL,mime_type TEXT NOT NULL,original_name TEXT NOT NULL,size_bytes INTEGER NOT NULL,alt_text TEXT NOT NULL DEFAULT '',created_at TEXT DEFAULT CURRENT_TIMESTAMP,archived_at TEXT DEFAULT NULL);
     CREATE TABLE audit_log(id TEXT PRIMARY KEY,user_id TEXT,action TEXT,entity_type TEXT,entity_id TEXT,metadata_json TEXT);
     INSERT INTO sites VALUES ('site-default','active'),('other','active');
     INSERT INTO users VALUES ('admin','a@test','Admin','admin',1),('editor','e@test','Editor','viewer',1),('viewer','v@test','Viewer','viewer',1);
