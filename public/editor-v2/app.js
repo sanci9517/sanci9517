@@ -11,6 +11,7 @@ import {renderSchedulePreview} from './core/schedule-preview.js';
 import {normalizeScheduleConfig,SCHEDULE_MODES,SCHEDULE_ORDERS,SCHEDULE_STATUSES} from './core/schedule-schema.js';
 import {listPropertyGroups,listProperties,getProperty} from './core/property-registry.js';
 import {renderPropertyInput} from './ui/property-controls.js';
+import {describeResponsiveOrigin} from './ui/responsive-origin.js';
 import {responsiveGroupResetActions} from './ui/responsive-group-reset.js';
 import {getRichTextBlockSelection,getRichTextFormattingSelection,getRichTextActiveBlockIndex,restoreRichTextBlockSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,updateRichTextBlockAlignment} from './core/richtext-links.js';
 import {initialPageId,rememberPageId,requestedPageId} from './core/page-url.js';
@@ -418,7 +419,18 @@ function renderGeometryInspector(node){
   for(const [id,key] of [['position.x','x'],['position.y','y'],['size.width','width'],['size.height','height'],['position.position','position']]){
     const prop=getProperty(id);
     const apply=value=>command('responsive.set',{nodeId:node.id,device,patch:{[key]:value}});
-    section.append(propertyInput(prop,prop.label,values[key],apply));
+    const control=propertyInput({...prop,disabled:Boolean(node.locked)},prop.label,values[key],apply);
+    const origin=describeResponsiveOrigin(node.responsive,key,device,{
+      hasBaseStyle:node.style?.[key]!==undefined&&node.style?.[key]!==null
+    });
+    const status=document.createElement('small');
+    status.className='responsive-origin';
+    status.dataset.kind=origin.kind;
+    if(origin.source)status.dataset.source=origin.source;
+    status.textContent=origin.label;
+    status.setAttribute('aria-label',prop.label+': '+origin.label);
+    control.append(status);
+    section.append(control);
     if(id==='size.width'||id==='size.height')section.append(renderGeometryPresets(id,values[key],apply));
     if(hasResponsiveOverride(node.responsive,key,device)){
       const reset=document.createElement('button');reset.type='button';reset.className='property-reset';
@@ -520,13 +532,26 @@ function renderRegistryInspector(node,mode='primary'){
       const resolved=property.responsive?resolveResponsiveValue(node.responsive,key,device):null;
       const rendered=canvas.querySelector(`.node[data-node-id="${CSS.escape(node.id)}"]`);
       const current=resolved?.value??node.style?.[key]??(['flex','grid','layout'].includes(property.group)&&rendered?getComputedStyle(rendered)[key]:'')??'';
-      const label=property.responsive&&resolved?.inherited?property.label+' · örökölt':property.label;
+      const label=property.label;
       const apply=value=>{
         const typingGroup=`inspector:${node.id}:${device}:${key}`;
         if(property.responsive)return command(property.command,{nodeId:node.id,device,patch:{[key]:value}},{typingGroup});
         return command(property.command,{nodeId:node.id,patch:{[key]:value}},{typingGroup});
       };
-      section.append(propertyInput({...property,disabled:Boolean(node.locked)},label,current,apply));
+      const control=propertyInput({...property,disabled:Boolean(node.locked)},label,current,apply);
+      if(property.responsive){
+        const origin=describeResponsiveOrigin(node.responsive,key,device,{
+          hasBaseStyle:node.style?.[key]!==undefined&&node.style?.[key]!==null
+        });
+        const status=document.createElement('small');
+        status.className='responsive-origin';
+        status.dataset.kind=origin.kind;
+        if(origin.source)status.dataset.source=origin.source;
+        status.textContent=origin.label;
+        status.setAttribute('aria-label',property.label+': '+origin.label);
+        control.append(status);
+      }
+      section.append(control);
       if(property.responsive&&hasResponsiveOverride(node.responsive,key,device)){
         const reset=document.createElement('button');reset.type='button';reset.className='property-reset';
         reset.textContent='Öröklés visszaállítása';
@@ -1135,7 +1160,26 @@ inspector.addEventListener('focusin',event=>{const input=event.target;if(input.m
 inspector.addEventListener('change',event=>{const input=event.target;if(input.matches('input,textarea,select'))input.dataset.focusValue=String(input.type==='checkbox'?input.checked:input.value)});
 async function save(publish=false){if(!commitActiveInspectorControl()){setStatus('Javítsd a jelzett mezőt mentés előtt.');return}if(state?.persistence?.saving){setStatus('Mentés folyamatban…');return;}if(flushRichTextDraft?.()===false){setStatus('Javítsd a jelzett tartalommezőt mentés előtt.');return;}const current=page();if(!current)return;if(publish){try{validatePageForPublication(current)}catch(error){if(error.nodeId){setSelection(state,[error.nodeId],error.nodeId);inspectorTab='content';render();window.sanciEditor?.openPanel?.('right');const note=document.createElement('p');note.className='property-validation';note.setAttribute('role','alert');note.textContent=error.message;inspector.prepend(note)}setStatus(error.message);return}}const meta=pages.find(x=>x.id===current.id);if(!meta)return;const stateAtStart=state;const pageId=current.id;const submittedDocument=structuredClone(stateAtStart.document);const submittedJson=JSON.stringify(submittedDocument);const expectedVersion=Number(meta.revision??stateAtStart.document.revision??0);setStatus(publish?'Publikálás…':'Mentés…');stateAtStart.persistence.saving=true;try{const result=await api(`/api/admin/editor?pageId=${encodeURIComponent(pageId)}`,{method:'POST',body:JSON.stringify({pageId,document:submittedDocument,publish,expectedVersion,expectedParentPageId:meta.parentPageId??null,note:publish?'Editor v2 publikálás':'Editor v2 mentés'})});const version=Number(result?.data?.version);if(result?.data?.pageId!==pageId||!Number.isInteger(version)||version<1)throw new Error('A mentés válasza hiányos vagy hibás revision-adatot tartalmaz; a helyi módosításokat nem jelöltük mentettnek.');const unchanged=state===stateAtStart&&JSON.stringify(stateAtStart.document)===submittedJson;stateAtStart.document.revision=version;if(stateAtStart.document.pages?.[pageId])stateAtStart.document.pages[pageId].revision=version;meta.revision=version;if(unchanged){markSaved(stateAtStart,version)}else{stateAtStart.persistence.saving=false;stateAtStart.persistence.dirty=true;stateAtStart.persistence.error=null;stateAtStart.persistence.lastSavedRevision=version}stateAtStart.persistence.conflict=null;const panel=$('#revisionConflict');if(panel&&state===stateAtStart)panel.hidden=true;const i=pages.findIndex(x=>x.id===pageId);if(i>=0){const previous=pages[i];pages[i]={...previous,content:submittedDocument,isPublished:publish||Boolean(previous.isPublished),hasUnpublishedChanges:!publish&&Boolean(previous.isPublished),publishedRevisionId:publish?result.data.revisionId:previous.publishedRevisionId,publishedParentPageId:publish?previous.parentPageId:previous.publishedParentPageId,publishedSlug:publish?previous.slug:previous.publishedSlug,publishedRevisionVersion:publish?version:Number(previous.publishedRevisionVersion??0),revision:version};}renderPageList();if(state===stateAtStart){render();setStatus(unchanged?(publish?'Publikálva':(pages.find(x=>x.id===pageId)?.isPublished?'Mentve — a nyilvános oldal változatlan':'Mentve')):'A mentett verzió elkészült; további helyi módosítások még nincsenek mentve')}return result}catch(e){stateAtStart.persistence.saving=false;stateAtStart.persistence.dirty=true;stateAtStart.persistence.error=e instanceof Error?e.message:String(e);if(state===stateAtStart&&e?.status===409&&e?.code==='REVISION_CONFLICT'){showRevisionConflict(e,pageId);return}if(state===stateAtStart){setStatus('Mentési hiba');alert(stateAtStart.persistence.error)}return}}
 async function unpublishPage(){const current=page();const meta=current&&pages.find(x=>x.id===current.id);if(!current||!meta?.isPublished)return;if(!confirm('Biztosan visszavonod ennek az oldalnak a publikálását?'))return;setStatus('Publikálás visszavonása…');try{const result=await api('/api/admin/editor?pageId='+encodeURIComponent(current.id),{method:'POST',body:JSON.stringify({pageId:current.id,action:'unpublish'})});const i=pages.findIndex(x=>x.id===current.id);if(i>=0)pages[i]={...pages[i],isPublished:Boolean(result.data?.published),hasUnpublishedChanges:false};renderPageList();render();setStatus('Publikálás visszavonva')}catch(e){showError(e)}}
-function setDevice(device){if(!state)return;state.viewport.device=device;zoom=device==='desktop'?1:Math.max(.35,Math.min(1,(canvas.clientWidth-48)/sizes[device]));render();canvas.scrollTo({left:0,top:0,behavior:'instant'})}
+function setDevice(device){
+ if(!state||!Object.hasOwn(sizes,device))return false;
+ if(state.viewport.device===device)return true;
+ if(!commitActiveInspectorControl()||
+    [...inspector.querySelectorAll('.property-validation')].some(el=>el.textContent.trim())||
+    flushRichTextDraft?.()===false){
+   setStatus('Javítsd a hibás mezőt a nézetváltás előtt.');
+   return false;
+ }
+ const previousDevice=state.viewport.device,previousZoom=zoom;
+ state.viewport.device=device;
+ zoom=device==='desktop'?1:Math.max(.35,Math.min(1,(canvas.clientWidth-48)/sizes[device]));
+ if(render()===false){
+   state.viewport.device=previousDevice;zoom=previousZoom;
+   setStatus('A nézetváltás nem sikerült. A módosítások megmaradtak.');
+   return false;
+ }
+ canvas.scrollTo({left:0,top:0,behavior:'instant'});
+ return true;
+}
 document.addEventListener('DOMContentLoaded',()=>{
  diagnostics.init();
  window.__sanciEditorDiagnostics=diagnostics;
