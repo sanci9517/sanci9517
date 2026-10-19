@@ -177,6 +177,9 @@ test('empty Rich Text has direct desktop and mobile editing, typed presets, Save
   assert.match(draft.pages[pageId].nodes[richId].props.richText.blocks[0].children[0].text,/mobil$/);
   assert.doesNotMatch(published.pages[pageId].nodes[richId].props.richText.blocks[0].children[0].text,/mobil$/);
   await tab.locator('#rightDock [data-collapse="right"]').click();
+  // Pointer drags against the desktop artboard need a desktop-sized browser.
+  // The preceding Rich Text controls were intentionally tested at 390px.
+  await tab.setViewportSize({width:1366,height:900});
   await tab.locator('.canvas-device-btn[data-device="desktop"]').click();
   assert.equal(await tab.locator('.canvas-device-btn[data-device="desktop"]').evaluate(el=>el.classList.contains('active')),true,'a valid saved draft and collapsed Inspector must allow desktop breakpoint switching');
   const canvasBounds=await tab.locator('.page-canvas').evaluate((pageEl,id)=>{const page=pageEl.getBoundingClientRect(),node=pageEl.querySelector(`[data-node-id="${CSS.escape(id)}"] .node-content`)?.getBoundingClientRect();return {left:page.left,right:page.right,nodeLeft:node?.left,nodeTop:node?.top,height:node?.height}},richId);
@@ -190,7 +193,6 @@ test('empty Rich Text has direct desktop and mobile editing, typed presets, Save
   const outsideRect=await content.boundingBox();
   await tab.mouse.move(Math.max(8,outsideRect.x+8),outsideRect.y+Math.min(12,outsideRect.height/2));await tab.mouse.down();await tab.mouse.move(canvasBounds.left+90,outsideRect.y+Math.min(12,outsideRect.height/2),{steps:8});await tab.mouse.up();
   assert.equal(await tab.locator(`.node[data-node-id="${richId}"]`).evaluate(el=>el.classList.contains('outside-artboard')),false,'the same element can be dragged back onto the artboard');
-  await tab.setViewportSize({width:1366,height:900});
   await tab.locator(`.node[data-node-id="${richId}"]`).getByRole('button',{name:'Tartalom szerkesztése'}).click();
   await tab.locator('.canvas-format-richtext').click();
   const structuredEditor=tab.locator('.richtext-editor-surface');await structuredEditor.waitFor();
