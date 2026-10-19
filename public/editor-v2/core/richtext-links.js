@@ -133,13 +133,22 @@ function updateRichTextRange(documentModel, {blockIndex, from, to}, change) {
   if (!Array.isArray(documentModel?.blocks) || !Number.isInteger(blockIndex) ||
       blockIndex < 0 || blockIndex >= documentModel.blocks.length) throw new Error('Érvénytelen szövegkijelölés.');
   const block = documentModel.blocks[blockIndex];
-  if (!Array.isArray(block.children)) throw new Error('A hivatkozás beszúrása jelenleg egy szövegblokkban támogatott.');
-  const size = block.children.reduce((sum, run) => sum + (run.text?.length || 0), 0);
-  if (!Number.isInteger(from) || !Number.isInteger(to) || from < 0 || to > size || to <= from) {
-    throw new Error('Először jelölj ki egy szövegrészt.');
+  if (!Array.isArray(block.children) && !Array.isArray(block.items) && block.type !== 'table') {
+    throw new Error('Ebben a blokkban nem szerkeszthető a hivatkozás.');
   }
+  // Validate the complete range against the same flattened inline model used
+  // by marks and inline styles, without confusing separate list items/cells.
+  selectedInlineRuns(documentModel, {blockIndex, from, to});
   const next = structuredClone(documentModel);
-  next.blocks[blockIndex].children = updateRuns(block.children,from,to,change);
+  let offset = 0;
+  for (const target of inlineTargets(next.blocks[blockIndex])) {
+    const runs = target.get();
+    const length = runs.reduce((total, run) => total + String(run.text ?? '').length, 0);
+    const localFrom = Math.max(0, from - offset);
+    const localTo = Math.min(length, to - offset);
+    if (localTo > localFrom) target.set(updateRuns(runs, localFrom, localTo, change));
+    offset += length;
+  }
   return next;
 }
 

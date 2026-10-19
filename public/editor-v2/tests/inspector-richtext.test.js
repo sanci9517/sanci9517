@@ -318,3 +318,47 @@ test('geometry breakpoint reset preserves parent view and is one Undo operation'
   execute(state,{type:'history.redo'});
   assert.equal(activePage(state).nodes[id].responsive.mobile.height,undefined);
 });
+
+test('safe Rich Text links inside lists and table cells preserve nested structure and Undo/Redo', () => {
+  const initial=normalizeRichText({schemaVersion:1,type:'richtext-document',blocks:[
+    {type:'bulleted-list',items:[
+      [{type:'text',text:'Alpha',marks:['bold']}],
+      [{type:'text',text:'Beta',marks:['italic']}]
+    ]},
+    {type:'table',rows:[{cells:[
+      {header:true,align:'center',children:[{type:'text',text:'Gamma',marks:[]}]},
+      {header:false,align:'right',children:[{type:'text',text:'Delta',marks:['underline']}]}
+    ]}]}
+  ]});
+  const linkedList=updateRichTextInlineLink(initial,{blockIndex:0,from:3,to:7},'/p/list');
+  assert.deepEqual(linkedList.blocks[0].items[0].map(run=>run.text),['Alp','ha']);
+  assert.equal(linkedList.blocks[0].items[0][1].link.href,'/p/list');
+  assert.equal(linkedList.blocks[0].items[1][0].link.href,'/p/list');
+  assert.equal(linkedList.blocks[0].items[1].map(run=>run.text).join(''),'Beta');
+  const linkedTable=updateRichTextInlineLink(linkedList,{blockIndex:1,from:2,to:7},'https://example.org/test');
+  assert.equal(linkedTable.blocks[1].rows[0].cells[0].children[1].link.href,'https://example.org/test');
+  assert.equal(linkedTable.blocks[1].rows[0].cells[1].children[0].link.rel,'noopener noreferrer');
+  assert.equal(linkedTable.blocks[1].rows[0].cells[0].header,true);
+  assert.equal(linkedTable.blocks[1].rows[0].cells[0].align,'center');
+  assert.equal(linkedTable.blocks[1].rows[0].cells[1].align,'right');
+  assert.deepEqual(linkedTable.blocks[1].rows[0].cells[1].children[0].marks,['underline']);
+  assert.deepEqual(normalizeRichText(linkedTable),linkedTable);
+  assert.equal(initial.blocks[0].items[0][0].link,undefined,'original is immutable');
+  const unlinked=updateRichTextInlineLink(linkedTable,{blockIndex:0,from:3,to:7},null);
+  assert.equal(unlinked.blocks[0].items.every(item=>item.every(run=>!run.link)),true);
+  assert.equal(unlinked.blocks[1].rows[0].cells[0].children.some(run=>run.link?.href==='https://example.org/test'),true);
+  assert.throws(()=>updateRichTextInlineLink(initial,{blockIndex:0,from:1,to:400},'/p/no'),/kijelölés/i);
+  assert.throws(()=>updateRichTextInlineLink(initial,{blockIndex:1,from:0,to:1},'javascript:alert(1)'),/link|protokoll|https/i);
+
+  const state=createEditorState(createDocument());
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.RICHTEXT}});
+  const id=state.selection.primaryId;
+  execute(state,{type:'richtext.content.set',payload:{nodeId:id,document:initial}});
+  execute(state,{type:'richtext.content.set',payload:{nodeId:id,document:linkedTable}});
+  assert.deepEqual(activePage(state).nodes[id].props.richText,linkedTable);
+  execute(state,{type:'history.undo'});
+  assert.deepEqual(activePage(state).nodes[id].props.richText,initial);
+  execute(state,{type:'history.redo'});
+  assert.deepEqual(activePage(state).nodes[id].props.richText,linkedTable);
+  assert.notEqual(state.status,'published');
+});
