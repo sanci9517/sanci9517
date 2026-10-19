@@ -66,6 +66,7 @@ test('Admin image upload supports real progress, explicit retry and cancellation
    res.setHeader('content-type','application/json');
    if(uploads===1){res.statusCode=503;return res.end(JSON.stringify({ok:false,error:{code:'MEDIA_STORAGE_FAILED'}}))}
    if(uploads===2){saved=true;res.statusCode=201;return res.end(JSON.stringify({ok:true,data:{id:'6b1c2e65-e46e-4764-b234-123456789abc'}}))}
+   if(uploads===3){res.statusCode=200;return res.end(JSON.stringify({ok:true,data:{id:'6b1c2e65-e46e-4764-b234-123456789abc',duplicate:true}}))}
    return setTimeout(()=>{if(!res.destroyed){res.statusCode=201;res.end(JSON.stringify({ok:true,data:{id:'ignored-after-abort'}}))}},1800);
   }
   if(url.pathname==='/image.png'){res.setHeader('content-type','image/png');return res.end(Buffer.from([137,80,78,71,13,10,26,10]))}
@@ -97,6 +98,10 @@ test('Admin image upload supports real progress, explicit retry and cancellation
  assert.equal(await page.locator('#uploadProgress').evaluate(el=>el.value),100);
  assert.equal(await page.locator('#imageInput').evaluate(el=>el.files.length),0);
  assert.equal(await page.locator('#uploadRetry').isVisible(),false);
+ await page.locator('#imageInput').setInputFiles(file);
+ await page.getByRole('button',{name:'Feltöltés a médiatárba'}).click();
+ await page.getByText(/Ez a kép már szerepel a Médiatárban/).waitFor();
+ assert.equal(uploads,3,'duplicate response shows reuse, not a new success message');
  await page.locator('#imageInput').setInputFiles({...file,name:'cancel.png'});
  await page.getByRole('button',{name:'Feltöltés a médiatárba'}).click();
  await page.getByRole('button',{name:'Feltöltés megszakítása'}).click();
