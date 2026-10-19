@@ -11,7 +11,7 @@
 5. A `docs/MASTER-DEVELOPMENT-PLAN.md` régi hivatkozási fájl, **nem** aktív fejlesztési terv.
 6. Nagyobb átrendezés előtt ellenőrizd a teljes szöveg egyezését és az összes fejezetfájlt; ne hagyj ki funkciókat.
 
-> **2026-10-19 – legfrissebb Editor részblokk:** a 77.44.7.A/C Rich Text kijelölés-megőrzés és Inspector–vászon formázási paritás [#170 PR](https://github.com/sanci9517/sanci9517/pull/170) kódja és a mobil/desktop Chromium regresszió első teljes Editor Core, F0 és Twitch PR-ellenőrzése **PASS**. A kanonikus 12/12 fejezet rögzíti a működést és a még nyitott kapukat; a dokumentációs commit, végső PR CI és merge további igazolást igényel. **Aktív következő Editor kurzor:** 77.44.7.A/C fennmaradó Rich Text/Inspector–vászon–publikus renderer elempárhuzamosság, majd natív PC/Android elfogadás. A teljes 77.44/WEB-011/49.4 **OPEN**, Save ≠ Publish és az egyetlen MASTER szabálya változatlan.
+> **2026-10-19 – legfrissebb Editor részblokk KIADVA:** a 77.44.7.A/C Rich Text kijelölés-megőrzés és Inspector–vászon formázási paritás [#170 PR](https://github.com/sanci9517/sanci9517/pull/170) squash MERGED `8ec9e14b693709632199c4a45330c82e38b23f22` a `v2/foundation` ágba. A PR végső Editor Core (390/1366px Chromium regresszióval), F0, Twitch és Canonical Creator Platform Plan workflow-ja **PASS**. A Cloudflare Production aktív Worker-source SHA és a natív PC/Android elfogadás nem igazolt. A kanonikus 12/12 fejezet részletezi a kiadást. **Következő aktív Editor kurzor:** 77.44.7.A/C fennmaradó Rich Text/Inspector–vászon–publikus renderer elemparitás és a végső eszközös elfogadás. A teljes 77.44/WEB-011/49.4 **OPEN**, Save ≠ Publish és az egyetlen MASTER szabálya változatlan.
 
 ## A MASTER 12 része
 
