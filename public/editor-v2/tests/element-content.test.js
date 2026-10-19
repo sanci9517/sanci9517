@@ -54,6 +54,15 @@ test('image focal position supports precise two-axis crops while preserving lega
   assert.match(authoredNodeHtml({...image,type:'gallery',props:{items:[{src:'/image.jpg',alt:'Kép',focalX:20,focalY:70}]}}),/object-position:20% 70%/);
 });
 
+test('Médiatár asset ID renders as a private canvas preview and a public route only in published output',()=>{
+  const assetId='6b1c2e65-e46e-4764-b234-123456789abc';
+  const node={id:'media',type:'image',metadata:{contentVersion:1},props:{assetId,alt:'Márkajel'}};
+  assert.equal(normalizeElementContent(node,{assetId}).assetId,assetId);
+  assert.match(authoredNodeHtml(node,{editor:true}),new RegExp(`/api/admin/media\\?id=${assetId}`));
+  assert.match(authoredNodeHtml(node),new RegExp(`/media/${assetId}`));
+  assert.throws(()=>normalizeElementContent(node,{assetId:'../private'}),/azonosító/);
+});
+
 test('accessibility IDs are unique within a page and invalid mutations roll back',()=>{
   const state=createEditorState(createDocument());const ids=[];
   for(let i=0;i<2;i++){execute(state,{type:'element.add',payload:{type:'text',parentId:activePage(state).rootId}});ids.push(state.selection.primaryId)}

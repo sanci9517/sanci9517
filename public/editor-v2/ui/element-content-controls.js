@@ -7,16 +7,41 @@ export function pageLinkPicker(pages,input){
   select.value=[...select.options].some(option=>option.value===input.value)?input.value:'';
   select.onchange=()=>{if(select.value){input.value=select.value;input.dispatchEvent(new Event('input',{bubbles:true}))}};return select;
 }
+async function loadAssets(query=''){
+  const url=new URL('/api/admin/media',location.origin);url.searchParams.set('limit','50');if(query)url.searchParams.set('q',query);
+  const response=await fetch(url,{credentials:'same-origin',headers:{Accept:'application/json'}});
+  const payload=await response.json().catch(()=>null);if(!response.ok||payload?.ok!==true)throw new Error(payload?.error?.message||'A Médiatár nem érhető el.');
+  return payload.data?.assets||[];
+}
+export function mediaAssetPicker(selectedId,onSelect,{disabled=false}={}){
+  const root=document.createElement('div');root.className='editor-media-picker';
+  const status=document.createElement('p');status.className='content-field-help';status.setAttribute('role','status');
+  const current=document.createElement('div');current.className='editor-media-current';
+  const refresh=async(query='')=>{current.replaceChildren();status.textContent='Médiatár betöltése…';try{
+    const assets=await loadAssets(query);if(!assets.length){status.textContent='Nincs találat. Tölts fel képet az Admin → Médiatár oldalon.';return}
+    status.textContent=`${assets.length} kép`;for(const asset of assets){const button=document.createElement('button');button.type='button';button.className='editor-media-choice';button.disabled=disabled;button.setAttribute('aria-label',`${asset.name} kiválasztása`);const image=document.createElement('img');image.src=asset.previewUrl;image.alt='';image.loading='lazy';const name=document.createElement('span');name.textContent=asset.name;button.append(image,name);button.onclick=()=>{onSelect(asset.id,asset);status.textContent=`Kiválasztva: ${asset.name}`};current.append(button)}
+  }catch(error){status.textContent=error.message||'A Médiatár betöltése nem sikerült.'}};
+  const search=document.createElement('input');search.type='search';search.placeholder='Keresés név vagy leírás alapján';search.setAttribute('aria-label','Keresés a Médiatárban');search.disabled=disabled;let timer;
+  search.oninput=()=>{clearTimeout(timer);timer=setTimeout(()=>refresh(search.value.trim()),220)};
+  const open=document.createElement('button');open.type='button';open.textContent='Médiatár megnyitása';open.disabled=disabled;open.onclick=()=>{current.hidden=!current.hidden;if(!current.hidden)refresh(search.value.trim())};
+  if(selectedId){const preview=document.createElement('img');preview.src='/api/admin/media?id='+encodeURIComponent(selectedId);preview.alt='Kiválasztott kép';preview.className='editor-media-selected';root.append(preview);const clear=document.createElement('button');clear.type='button';clear.textContent='Kép eltávolítása';clear.disabled=disabled;clear.onclick=()=>{onSelect('');preview.remove();status.textContent='A Médiatár-kép eltávolítva.'};root.append(clear)}
+  current.hidden=true;root.append(open,search,current,status);return root;
+}
 export function renderElementContentControls(node,{apply,pending,exclude=[],pages=[]}){
   const root=document.createElement('section');root.className='element-content-controls';
   const fail=document.createElement('p');fail.className='property-validation';fail.setAttribute('role','status');
   const control=(definition,value,save)=>{
-    const wrap=document.createElement('label');wrap.className='field content-schema-field';wrap.dataset.contentKey=definition.key;
+    const wrap=document.createElement('div');wrap.className='field content-schema-field';wrap.dataset.contentKey=definition.key;
     const label=document.createElement('span');label.textContent=definition.label;wrap.append(label);
     let input;
     if(definition.type==='select'){input=document.createElement('select');for(const [value,text] of Object.entries(definition.options)){const option=document.createElement('option');option.value=value;option.textContent=text;input.append(option)}input.value=String(value??Object.keys(definition.options)[0])}
     else if(definition.type==='boolean'){input=document.createElement('input');input.type='checkbox';input.checked=Boolean(value)}
+    else if(definition.type==='asset'){input=null}
     else {input=document.createElement(definition.type==='textarea'?'textarea':'input');if(input.tagName==='INPUT'){input.type=definition.type==='range'?'range':'text';if(definition.type==='range'){input.min=String(definition.min??0);input.max=String(definition.max??100);input.step=String(definition.step??1)}}input.value=value??'';if(definition.type!=='range')input.maxLength=definition.max||2048}
+    if(definition.type==='asset'){
+      wrap.append(mediaAssetPicker(String(value||''),id=>{try{save(id)}catch(error){fail.textContent=error.message}} ,{disabled:Boolean(node.locked)}));
+      if(definition.help){const help=document.createElement('small');help.className='content-field-help';help.textContent=definition.help;wrap.append(help)}return wrap;
+    }
     input.setAttribute('aria-label',definition.label);input.disabled=Boolean(node.locked);input.dataset.typingGroup=crypto.randomUUID();
     const rangeOutput=definition.type==='range'?document.createElement('output'):null;if(rangeOutput){rangeOutput.className='content-range-value';rangeOutput.value=String(input.value);rangeOutput.textContent=`${input.value}%`;rangeOutput.setAttribute('aria-live','polite')}
     let committed=value;

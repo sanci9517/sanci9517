@@ -34,7 +34,7 @@ function validMediaSource(value:unknown):boolean{
 }
 function validateMediaNode(node:any):string|null{
  if(node.metadata?.editorContentVersion!==1||!['image','video','audio'].includes(node.type))return null;
- if(!validMediaSource(node.props?.src))return 'INVALID_MEDIA_SOURCE';
+ if(node.props?.assetId!==undefined&&typeof node.props.assetId==='string'&&/^[0-9a-f-]{36}$/i.test(node.props.assetId)){}else if(!validMediaSource(node.props?.src))return 'INVALID_MEDIA_SOURCE';
  if(node.type==='image'&&!node.accessibility?.decorative&&!String(node.props?.alt||'').trim())return 'IMAGE_ALT_REQUIRED';
  return null;
 }

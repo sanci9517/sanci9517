@@ -5,13 +5,14 @@ const field=(key,label,type='text',extra={})=>({key,label,type,...extra});
 const text=field('text','Szöveg','textarea',{max:20000});
 const href=field('href','Hivatkozás','url',{help:'Belső /p/oldal vagy #azonosító, illetve teljes https:// vagy mailto: cím. Üresen az elem nem navigál.'});
 const linkFields=[href,field('target','Megnyitás','select',{options:{_self:'Ebben az ablakban',_blank:'Új ablakban'}}),field('ariaLabel','Akadálymentes elnevezés','text',{max:160})];
-const media=[field('src','Média címe','media-url',{help:'HTTPS vagy a webhelyen belüli /útvonal. A közös Médiatár szolgáltatás elkészültéig ellenőrzött forráscímet használhatsz.'})];
+const media=[field('src','Külső média címe','media-url',{help:'Régi vagy külső HTTPS-képforráshoz. A Médiatárból választott fájl lentebb rögzített assetazonosítót használ.'}),field('assetId','Médiatár','asset',{help:'A kiválasztott képet a webhely saját, hozzáférés-ellenőrzött Médiatára szolgálja ki. A piszkozat mentése nem teszi nyilvánossá.'})];
+const externalMedia=[field('src','Külső média címe','media-url',{help:'HTTPS vagy webhelyen belüli, ellenőrzött médiaforrás.'})];
 const focalFields=[field('focalX','Kivágás vízszintesen','range',{min:0,max:100,step:1,help:'A kép látható részét balról jobbra igazítja.'}),field('focalY','Kivágás függőlegesen','range',{min:0,max:100,step:1,help:'A kép látható részét felülről lefelé igazítja.'})];
 const imageFields=[...media,field('alt','Kép szöveges leírása','text',{max:500}),field('decorative','Csak díszítő kép','boolean'),field('caption','Képaláírás','textarea',{max:1000}),field('fit','Kép illesztése','select',{options:{cover:'Kitöltés, vágással',contain:'Teljes kép',fill:'Nyújtás',none:'Eredeti méret', 'scale-down':'Csak kicsinyítés'}}),field('ratio','Képarány','select',{options:{auto:'Eredeti','16 / 9':'16:9','4 / 3':'4:3','1 / 1':'Négyzet','3 / 4':'Álló 3:4'}}),...focalFields,field('loading','Betöltés','select',{options:{lazy:'Késleltetett',eager:'Azonnali'}})];
 export const CONTENT_FIELDS=Object.freeze({
   heading:[text,field('level','Címsor szemantikai szintje','select',{options:{1:'H1 – főcím',2:'H2 – szakaszcím',3:'H3',4:'H4',5:'H5',6:'H6'}})],
   text:[text],button:[text,...linkFields],link:[text,...linkFields],quote:[text,field('citation','Forrás / szerző')],badge:[text],icon:[field('icon','Ikon','select',{options:{star:'Csillag',heart:'Szív',play:'Lejátszás',check:'Pipa',arrow:'Nyíl',bolt:'Villám',camera:'Kamera',music:'Zene',globe:'Web',mail:'Levél'}}),field('ariaLabel','Ikon leírása','text',{max:160})],
-  image:imageFields,video:[...media,field('poster','Borítókép címe','media-url'),field('controls','Lejátszó vezérlők','boolean'),field('muted','Némítás','boolean'),field('loop','Ismétlés','boolean'),field('autoplay','Automatikus indítás némítva','boolean')],audio:[...media,field('controls','Lejátszó vezérlők','boolean'),field('loop','Ismétlés','boolean')],
+  image:imageFields,video:[...externalMedia,field('poster','Borítókép címe','media-url'),field('controls','Lejátszó vezérlők','boolean'),field('muted','Némítás','boolean'),field('loop','Ismétlés','boolean'),field('autoplay','Automatikus indítás némítva','boolean')],audio:[...externalMedia,field('controls','Lejátszó vezérlők','boolean'),field('loop','Ismétlés','boolean')],
   list:[field('ordered','Számozott lista','boolean'),field('items','Listaelemek','repeater',{itemFields:[text,href]})],
   table:[field('caption','Táblázat címe'),field('header','Az első sor fejléc','boolean'),field('rows','Táblázat sorai','table')],
   tabs:[field('items','Fülek','repeater',{itemFields:[field('title','Fül címe'),text]})],accordion:[field('items','Lenyitható részek','repeater',{itemFields:[field('title','Rész címe'),text]})],dropdown:[field('items','Lenyitható részek','repeater',{itemFields:[field('title','Rész címe'),text]})],
@@ -52,6 +53,9 @@ export function normalizeContentField(definition,value){
     if(!Number.isFinite(number)||number<(definition.min??0)||number>(definition.max??100))throw new Error(`Az érték ${definition.min??0} és ${definition.max??100} közé essen.`);
     return number;
   }
+  if(definition.type==='asset'){
+    const result=String(value??'');if(result&&!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(result))throw new Error('Érvénytelen Médiatár-azonosító.');return result;
+  }
   if(typeof value!=='string'&&typeof value!=='number')throw new Error('Szöveges érték szükséges.');
   const result=String(value);if(result.length>(definition.max||2048))throw new Error('Túl hosszú érték.');
   if(definition.type==='select'&&!Object.hasOwn(definition.options,result))throw new Error('Érvénytelen választás.');
@@ -81,11 +85,11 @@ export function validatePageForPublication(page){
     const modes=['desktop','tablet','mobile'].map((device,index)=>visible[index]&&node.visibility!==false&&node.visibility?.[device]!==false),p=contentProperties(node);
     if(isAuthoredContent(node)&&modes.some(Boolean)){
       let missing='';
-      if(['image','video','audio'].includes(node.type)&&!p.src?.trim())missing='Adj meg médiaforrást.';
-      if(node.type==='image'&&p.src&&!p.decorative&&!p.alt?.trim())missing='Adj meg képleírást, vagy jelöld a képet díszítőnek.';
+      if(['image','video','audio'].includes(node.type)&&!p.src?.trim()&&!p.assetId)missing='Válassz Médiatár-fájlt vagy adj meg médiaforrást.';
+      if(node.type==='image'&&(p.src||p.assetId)&&!p.decorative&&!p.alt?.trim())missing='Adj meg képleírást, vagy jelöld a képet díszítőnek.';
       if(['link','button'].includes(node.type)&&!p.href?.trim())missing='Adj meg hivatkozási célt. Művelet nélküli gomb nem publikálható.';
       if(node.type==='heading'&&!p.text?.trim())missing='A címsor nem lehet üres.';
-      if(['gallery','carousel'].includes(node.type)&&(!p.items?.length||p.items.some(item=>!item.src?.trim()||!(item.alt?.trim()||item.caption?.trim()))))missing='A képekhez forrás és leírás vagy képaláírás szükséges.';
+      if(['gallery','carousel'].includes(node.type)&&(!p.items?.length||p.items.some(item=>(!item.src?.trim()&&!item.assetId)||!(item.alt?.trim()||item.caption?.trim()))))missing='A képekhez Médiatár-fájl vagy forrás, és leírás vagy képaláírás szükséges.';
       if(['tabs','accordion','dropdown'].includes(node.type)&&(!p.items?.length||p.items.some(item=>!item.title?.trim())))missing='Legalább egy elnevezett rész szükséges.';
       if(node.type==='table'&&(!p.rows?.length||!p.rows.some(row=>row.some(cell=>String(cell).trim()))))missing='A táblázatnak legyen tartalma.';
       if(node.type==='list'&&(!p.items?.length||p.items.some(item=>!item.text?.trim())))missing='Adj meg legalább egy nem üres listaelemet.';
@@ -135,14 +139,14 @@ export function contentAttributes(node){
 }
 export function authoredNodeHtml(node,{childrenHtml='',device='desktop',editor=false}={}){
   const p=contentProperties(node),text=esc(p.text??p.content??node.name??''),id='creator-'+String(node.id).replace(/[^\w-]/g,'-');
-  const image=item=>{const src=safeSrc(item.src),legacy={center:[50,50],top:[50,0],bottom:[50,100],left:[0,50],right:[100,50]}[item.focalPoint]||[50,50],x=Number.isFinite(Number(item.focalX))?Math.max(0,Math.min(100,Number(item.focalX))):legacy[0],y=Number.isFinite(Number(item.focalY))?Math.max(0,Math.min(100,Number(item.focalY))):legacy[1];return src?`<img src="${esc(src)}" alt="${esc(item.decorative?'':item.alt||'')}" loading="${item.loading==='eager'?'eager':'lazy'}" decoding="async" style="object-fit:${['cover','contain','fill','none','scale-down'].includes(item.fit)?item.fit:'cover'};object-position:${x}% ${y}%">`:`<span class="creator-media-empty">${editor?'Adj meg képforrást a Tartalom fülön.':'A kép nem érhető el.'}</span>`};
+  const image=item=>{const asset=typeof item.assetId==='string'&&/^[0-9a-f-]{36}$/i.test(item.assetId)?`/${editor?'api/admin/media?id=':'media/'}${encodeURIComponent(item.assetId)}`:'';const src=asset||safeSrc(item.src),legacy={center:[50,50],top:[50,0],bottom:[50,100],left:[0,50],right:[100,50]}[item.focalPoint]||[50,50],x=Number.isFinite(Number(item.focalX))?Math.max(0,Math.min(100,Number(item.focalX))):legacy[0],y=Number.isFinite(Number(item.focalY))?Math.max(0,Math.min(100,Number(item.focalY))):legacy[1];return src?`<img src="${esc(src)}" alt="${esc(item.decorative?'':item.alt||'')}" loading="${item.loading==='eager'?'eager':'lazy'}" decoding="async" style="object-fit:${['cover','contain','fill','none','scale-down'].includes(item.fit)?item.fit:'cover'};object-position:${x}% ${y}%">`:`<span class="creator-media-empty">${editor?'Válassz képet a Médiatárból vagy adj meg képcímet.':'A kép nem érhető el.'}</span>`};
   const items=Array.isArray(p.items)?p.items.slice(0,40):[];
   if(['heading','text','button','link','badge'].includes(node.type))return text;
   if(node.type==='quote')return `<div>${text}</div>${p.citation?`<cite>${esc(p.citation)}</cite>`:''}`;
   if(node.type==='icon')return `<span aria-hidden="true">${({star:'★',heart:'♥',play:'▶',check:'✓',arrow:'➜',bolt:'ϟ',camera:'📷',music:'♫',globe:'◎',mail:'✉'})[p.icon]||'★'}</span>`;
   if(node.type==='image')return `<div class="creator-image-frame"${['16 / 9','4 / 3','1 / 1','3 / 4'].includes(p.ratio)?` style="aspect-ratio:${p.ratio}"`:''}>${image(p)}</div>${p.caption?`<figcaption>${esc(p.caption)}</figcaption>`:''}`;
   if(['video','audio'].includes(node.type)){
-    const src=safeSrc(p.src);if(!src)return `<span class="creator-media-empty">${editor?'Adj meg médiaforrást a Tartalom fülön.':'A média nem érhető el.'}</span>`;
+    const asset=typeof p.assetId==='string'&&/^[0-9a-f-]{36}$/i.test(p.assetId)?`/${editor?'api/admin/media?id=':'media/'}${encodeURIComponent(p.assetId)}`:'';const src=asset||safeSrc(p.src);if(!src)return `<span class="creator-media-empty">${editor?'Válassz fájlt a Médiatárból vagy adj meg médiaforrást.':'A média nem érhető el.'}</span>`;
     const tag=node.type;return `<${tag} src="${esc(src)}" preload="metadata"${p.controls!==false?' controls':''}${p.loop?' loop':''}${p.muted?' muted':''}${p.autoplay&&p.muted&&!editor?' autoplay':''}${tag==='video'?' playsinline':''}${tag==='video'&&safeSrc(p.poster)?` poster="${esc(safeSrc(p.poster))}"`:''}></${tag}>`;
   }
   if(node.type==='list')return `<${p.ordered?'ol':'ul'}>${items.map(item=>`<li>${safeHref(item.href)?`<a href="${esc(safeHref(item.href))}">${esc(item.text)}</a>`:esc(item.text)}</li>`).join('')}</${p.ordered?'ol':'ul'}>`;
