@@ -186,6 +186,22 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   assert.equal(await editor.locator('.canvas-device-btn[data-device="mobile"]').getAttribute('class').then(x=>x.includes('active')),true,'valid corrected field allows mobile breakpoint');
 
   await select(itemId);
+  // Geometry was previously only resettable one property at a time. Its
+  // breakpoint-local width now shares the atomic group reset contract.
+  const geometryHeading=editor.locator('.inspector-group-title').filter({hasText:'Geometria'});
+  if(await geometryHeading.getAttribute('aria-expanded')==='false')await geometryHeading.click();
+  const mobileWidth=field('size.width').locator('input[type="number"]');
+  await mobileWidth.fill('260');
+  await mobileWidth.press('Tab');
+  assert.equal(await field('size.width').locator('.responsive-origin').textContent(),'Saját érték · Mobil');
+  const geometryGroup=field('size.width').locator('xpath=ancestor::section[contains(@class,"inspector-group")]');
+  assert.equal(await geometryGroup.locator('.group-responsive-reset').count(),1);
+  await geometryGroup.locator('.group-responsive-reset').click();
+  assert.notEqual(await field('size.width').locator('.responsive-origin').getAttribute('data-kind'),'own','reset width must no longer have a mobile override');
+  await editor.locator('#mobileUndo').click();
+  assert.equal(await field('size.width').locator('input[type="number"]').inputValue(),'260');
+  await geometryGroup.locator('.group-responsive-reset').click();
+  assert.notEqual(await field('size.width').locator('.responsive-origin').getAttribute('data-kind'),'own','reset width must no longer have a mobile override');
   assert.equal(await field('radius.topLeft').locator('.responsive-origin').textContent(),'Örökölt · Asztali','mobile radius must identify desktop inheritance');
   await editor.locator('.inspector-group-title').filter({hasText:'Lekerekítés'}).click();
   assert.ok((await field('radius.topLeft').locator('input').boundingBox()).height>=44);
