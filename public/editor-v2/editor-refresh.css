@@ -571,3 +571,8 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
 .typed-color-status:empty{display:none}
 .typed-color-controls input[type=color].color-preview-limited{outline:2px dashed #9fabc8;outline-offset:2px}
 @media(max-width:700px){.typed-color-controls input[type=color],.typed-color-controls input[type=text]{min-height:44px}}
+
+/* 77.44.7.A/C: own vs inherited responsive property provenance. */
+.responsive-origin{display:block;width:max-content;max-width:100%;margin:7px 0 3px;padding:3px 7px;border-radius:6px;background:#202d41;color:#b8cce8;font-size:11px;line-height:1.35;overflow-wrap:anywhere}
+.responsive-origin[data-kind="own"]{background:#263751;color:#e3edff}
+.responsive-origin[data-kind="base"]{background:#1e2837;color:#adbbd0}
