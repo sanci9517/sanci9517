@@ -10,7 +10,7 @@ import { DEFAULT_SITE_ID } from "../../core/site-context";
 
 type PageRow={id:string;slug:string;title:string;description:string;content_json:string;is_published:number;published_revision_id:string|null;updated_at:string};
 function parse(value:string):any{try{return JSON.parse(value)}catch{return {}}}
-function collectAssetIds(value:any,out=new Set<string>(),depth=0):Set<string>{if(depth>24||!value||typeof value!=='object')return out;if(Array.isArray(value)){for(const item of value)collectAssetIds(item,out,depth+1);return out}for(const key of ['assetId','backgroundAssetId','imageAssetId'])if(typeof value[key]==='string'&&/^[0-9a-f-]{36}$/i.test(value[key]))out.add(value[key]);for(const item of Object.values(value))collectAssetIds(item,out,depth+1);return out}
+function collectAssetIds(value:any,out=new Set<string>(),depth=0):Set<string>{if(depth>24||!value||typeof value!=='object')return out;if(Array.isArray(value)){for(const item of value)collectAssetIds(item,out,depth+1);return out}for(const key of ['assetId','backgroundAssetId','imageAssetId','posterAssetId'])if(typeof value[key]==='string'&&/^[0-9a-f-]{36}$/i.test(value[key]))out.add(value[key]);for(const item of Object.values(value))collectAssetIds(item,out,depth+1);return out}
 function canonical(document:any,pageId:string){const page=document?.pages?.[pageId];return Boolean(document&&document.type==='sanci-page-document'&&document.schemaVersion===1&&document.activePageId===pageId&&page?.id===pageId&&page.rootId&&page.nodes&&typeof page.nodes==='object')}
 async function adminEditorRouteImpl(request:Request,env:Env,siteId:string):Promise<Response>{
  if(!siteId||!siteId.trim())return error('SITE_CONTEXT_INVALID',403);
