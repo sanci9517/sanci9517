@@ -114,10 +114,12 @@ function documentAssetReferences(json: string, pageId: string, assetId: string, 
     if (!page?.rootId || !nodes[page.rootId]) return [];
     for (const device of ["desktop", "tablet", "mobile"]) {
       const visited = new Set<string>();
-      const visit = (id: string, depth = 0) => {
+      const pending = [page.rootId];
+      while (pending.length) {
+        const id = pending.pop()!;
         const node = nodes[id];
-        if (depth > 32 || visited.has(id) || !node || node.visibility === false ||
-            node.visibility && typeof node.visibility === "object" && (node.visibility as Record<string, unknown>)[device] === false) return;
+        if (visited.has(id) || !node || node.visibility === false ||
+            node.visibility && typeof node.visibility === "object" && (node.visibility as Record<string, unknown>)[device] === false) continue;
         visited.add(id);
         if (!visibleAt.has(id)) visibleAt.set(id, new Set());
         visibleAt.get(id)!.add(device);
@@ -129,11 +131,10 @@ function documentAssetReferences(json: string, pageId: string, assetId: string, 
           isStructuredType(node.type || "") && Boolean((node.props as Record<string, unknown> | undefined)?.contentModel);
         if (node.type === "card" && node.metadata?.cardContentVersion === 1) {
           try { normalizeCardContent((node.props as Record<string, unknown> | undefined)?.cardContent); }
-          catch { return; } // A malformed Card renders only its fallback, without children.
+          catch { continue; } // A malformed Card renders only its fallback, without children.
         }
-        if (!dropsChildren) for (const child of Array.isArray(node.children) ? node.children : []) if (typeof child === "string") visit(child, depth + 1);
-      };
-      visit(page.rootId);
+        if (!dropsChildren) for (const child of Array.isArray(node.children) ? node.children : []) if (typeof child === "string") pending.push(child);
+      }
     }
   }
   return Object.entries(nodes).flatMap(([nodeId, node]) => {

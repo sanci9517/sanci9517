@@ -306,6 +306,11 @@ test("site-scoped search, safe alt metadata and published-only delivery",async t
   assert.equal((await media()).status,404,"an authored content node that discards children cannot expose media");
   publish({rootId:"root",nodes:{root:{type:"root",children:["card"]},card:{type:"card",metadata:{cardContentVersion:1},props:{cardContent:{}},children:["image"]},image}});
   assert.equal((await media()).status,404,"a malformed Card fallback cannot expose its discarded child");
+  const deep={root:{type:"root",children:["section-0"]}};
+  for(let depth=0;depth<40;depth++)deep[`section-${depth}`]={type:"section",children:[depth===39?"image":`section-${depth+1}`]};
+  deep.image=image;
+  publish({rootId:"root",nodes:deep});
+  assert.equal((await media()).status,200,"a visible image deeper than 32 levels remains available");
   publish({rootId:"root",nodes:{root:{type:"root",children:["parent"]},parent:{type:"section",visibility:{desktop:true,tablet:false,mobile:false},children:["image"]},image:{...image,visibility:{desktop:false,tablet:true,mobile:true}}}});
   assert.equal((await media()).status,404,"no common visible viewport keeps a descendant image private");
   publish({rootId:"root",nodes:{root:{type:"root",children:["parent"]},parent:{type:"section",visibility:{desktop:true,tablet:false,mobile:false},children:["image"]},image}});
