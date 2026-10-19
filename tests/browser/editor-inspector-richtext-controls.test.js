@@ -10,6 +10,7 @@ const root=resolve(import.meta.dirname,'../..','public');
 function serve(){
   return createServer(async(req,res)=>{
     const path=new URL(req.url,'http://localhost').pathname;
+    if(path==='/api/admin/media') {res.setHeader('Content-Type','application/json');res.end(JSON.stringify({ok:true,data:{assets:[{id:'6b1c2e65-e46e-4764-b234-123456789abc',name:'background.png',previewUrl:'/media/6b1c2e65-e46e-4764-b234-123456789abc'}]}}));return;}
     const file=resolve(root,'.'+path);
     if(!file.startsWith(root+'/')){res.writeHead(403).end();return;}
     try {
@@ -50,7 +51,10 @@ test('typed Inspector controls and link selection work with real browser DOM at 
         const control=renderPropertyInput(property,property.label,'16px',value=>editsForProperty.push(value));matrixHost.append(control);
         const type=property.type;
         if(type==='asset'){
-          fieldMatrix.push({id:property.id,type,unavailable:Boolean(control.querySelector('.property-unavailable')),callbackCount:editsForProperty.length});
+          [...control.querySelectorAll('.editor-media-picker > button')].find(button=>button.textContent==='Médiatár megnyitása').click();
+          for(let retry=0;retry<40&&!control.querySelector('.editor-media-choice');retry++)await new Promise(resolve=>setTimeout(resolve,20));
+          control.querySelector('.editor-media-choice')?.click();
+          fieldMatrix.push({id:property.id,type,callbackCount:editsForProperty.length,value:editsForProperty[0]});
           continue;
         }
         if(type==='dimension'){
@@ -174,7 +178,7 @@ test('typed Inspector controls and link selection work with real browser DOM at 
     assert.ok(data.helpLengths.every(([,length])=>length>=100),`every property needs detailed guidance: ${data.helpLengths.filter(([,length])=>length<100).map(([id])=>id).join(', ')}`);
     assert.ok(data.fieldMatrix.length>=45,`every registered Inspector property should have a real browser control contract; saw ${data.fieldMatrix.length}`);
     assert.ok(data.fieldMatrix.filter(item=>item.type!=='asset').every(item=>item.callbackCount===1&&!item.error),`supported Inspector fields must reach their validated callback: ${JSON.stringify(data.fieldMatrix.filter(item=>item.type!=='asset'&&(item.callbackCount!==1||item.error)))}`);
-    assert.ok(data.fieldMatrix.filter(item=>item.type==='asset').every(item=>item.unavailable&&item.callbackCount===0),'unsupported media selection must remain explicitly unavailable');
+    assert.ok(data.fieldMatrix.filter(item=>item.type==='asset').every(item=>item.callbackCount===1&&item.value==='6b1c2e65-e46e-4764-b234-123456789abc'),`background picker must deliver the selected site asset ID: ${JSON.stringify(data.fieldMatrix.filter(item=>item.type==='asset'))}`);
     assert.ok(data.invalidMatrix.every(item=>item.callbackCount===0&&item.error),`invalid values must be rejected before reaching the command callback: ${JSON.stringify(data.invalidMatrix.filter(item=>item.callbackCount!==0||!item.error))}`);
     for(const [id,options] of Object.entries(data.unitOptions)){
       assert.deepEqual(options.slice(1),getSupportedUnitsForProperty(id));

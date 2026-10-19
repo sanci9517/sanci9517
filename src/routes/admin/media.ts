@@ -174,7 +174,7 @@ function containsAssetReference(value: unknown, assetId: string, depth = 0): boo
   if (depth > 32 || value === null || typeof value !== "object") return false;
   if (Array.isArray(value)) return value.some(item => containsAssetReference(item, assetId, depth + 1));
   const record = value as Record<string, unknown>;
-  if (record.assetId === assetId) return true;
+  if (record.assetId === assetId || record.backgroundAssetId === assetId) return true;
   return Object.values(record).some(item => containsAssetReference(item, assetId, depth + 1));
 }
 
@@ -187,10 +187,10 @@ export async function publishedMediaRoute(request: Request, env: Env, siteId: st
   ).bind(assetId, siteId).first<MediaRow>();
   if (!row || !["image/png", "image/jpeg", "image/gif", "image/webp"].includes(row.mime_type)) return error("MEDIA_NOT_FOUND", 404);
   const pages = await env.DB.prepare(
-    "SELECT published_content_json FROM pages WHERE site_id=? AND archived_at IS NULL AND is_published=1 AND published_content_json IS NOT NULL AND instr(published_content_json,?)>0"
-  ).bind(siteId, assetId).all<{ published_content_json: string }>();
+    "SELECT id,published_content_json FROM pages WHERE site_id=? AND archived_at IS NULL AND is_published=1 AND published_content_json IS NOT NULL AND instr(published_content_json,?)>0"
+  ).bind(siteId, assetId).all<{ id: string; published_content_json: string }>();
   const allowed = pages.results.some(page => {
-    try { return containsAssetReference(JSON.parse(page.published_content_json), assetId); } catch { return false; }
+    try { return containsAssetReference(JSON.parse(page.published_content_json)?.pages?.[page.id]?.nodes, assetId); } catch { return false; }
   });
   if (!allowed) return error("MEDIA_NOT_FOUND", 404);
   const object = await env.MEDIA.get(row.object_key);

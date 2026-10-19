@@ -13,6 +13,7 @@ import {renderCodeSnippet,activateCodeBlocks} from "../editor-v2/core/code-snipp
 import {isAuthoredContent,contentTag,contentAttributes,authoredNodeHtml,initContentInteractions} from "../editor-v2/core/authored-content.js";
 import {defaultTokens,applyTokenVariables} from "../editor-v2/core/design-tokens.js";
 import {applyStateStyles} from "../editor-v2/core/state-styles.js";
+import {backgroundImageValue,MEDIA_ASSET_ID} from "../editor-v2/core/background-asset.js";
 (()=>{
  const esc=v=>String(v??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const safeUrl=v=>{try{const u=new URL(String(v||''),location.origin);return ['http:','https:'].includes(u.protocol)?u.href:''}catch{return''}};
@@ -22,16 +23,22 @@ import {applyStateStyles} from "../editor-v2/core/state-styles.js";
  function style(n){
   const values=resolveNodeStyle(n,currentDevice);let out='';
   for(const [key,property] of Object.entries(STYLE_MAP)){
-   if(key==='backgroundImage')continue; // Media picker has no validated asset contract yet.
+    if(['backgroundImage','backgroundSize','backgroundPosition','backgroundRepeat'].includes(key))continue;
    const cssProperty=property.replace(/[A-Z]/g,letter=>'-'+letter.toLowerCase());
    const value=values[key];if(value===undefined||value===null||value==='')continue;
    const text=String(value);if(/[\u0000-\u001f\u007f;]/.test(text)||!CSS.supports(cssProperty,text))continue;
    out+=`${cssProperty}:${esc(text)};`;
    if(key==='width'&&currentDevice==='mobile')out+=`--editor-mobile-width:${esc(text)};`;
   }
-  for(const [legacy,property] of [['background','background'],['border','border']]){
+   for(const [legacy,property] of [['background','background'],['border','border']]){
    if(values[legacy]&&CSS.supports(property,String(values[legacy])))out+=`${property}:${esc(values[legacy])};`;
   }
+   const background=backgroundImageValue(values);if(background!=='none')out+=`background-image:${esc(background)};`;
+   const hasAsset=MEDIA_ASSET_ID.test(String(values.backgroundAssetId||''));
+   for(const [key,property,fallback] of [['backgroundSize','background-size','cover'],['backgroundPosition','background-position','center center'],['backgroundRepeat','background-repeat','no-repeat']]){
+    const value=values[key]||(hasAsset?fallback:'');
+    if(value&&CSS.supports(property,String(value)))out+=`${property}:${esc(value)};`;
+   }
   if(values.radius!==undefined&&Number.isFinite(Number(values.radius)))out+=`border-radius:${Math.max(0,Number(values.radius))}px;`;
   if(values.fontSize!==undefined&&Number.isFinite(Number(values.fontSize)))out+=`font-size:${Math.max(8,Number(values.fontSize))}px;`;
   for(const [key,property] of [['x','left'],['y','top']]){

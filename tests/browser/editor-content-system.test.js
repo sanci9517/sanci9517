@@ -66,6 +66,11 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await openGroup('Animáció');await editor.locator('[data-property-id="animation.transition"] select').selectOption('all 180ms ease');
   await openGroup('Transzformáció');const rotation=editor.locator('[data-property-id="transform.rotate"]');await rotation.locator('input').fill('3');await rotation.locator('input').press('Tab');
   await openGroup('Háttér');await editor.locator('[data-property-id="background.gradient"] select').selectOption('linear-gradient(135deg, #7047eb 0%, #17b8a6 100%)');
+  await editor.locator('[data-property-id="background.image"] .editor-media-picker > button').click();
+  await editor.locator('[data-property-id="background.image"] .editor-media-choice').click();
+  await editor.locator('[data-property-id="background.size"] select').selectOption('cover');
+  await editor.locator('[data-property-id="background.position"] select').selectOption('center top');
+  assert.match(await node(editor,'button').evaluate(el=>getComputedStyle(el).backgroundImage),/api\/admin\/media\?id=/,'canvas uses authenticated background preview');
   await editor.locator('.inspector-tabs button').nth(2).click();await openGroup('Rámutatás és fókusz');
   await editor.getByLabel('Állapot előnézete',{exact:true}).selectOption('hover');
   await editor.locator('[data-state-property="backgroundColor"] input[type=text]').fill('#dc143c');await editor.locator('[data-state-property="backgroundColor"] input[type=text]').press('Tab');
@@ -95,7 +100,9 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(posts.length,1);
   await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));assert.equal(posts.at(-1).publish,false);
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.image].props.assetId,assetId,'Save persists the site asset reference but never publishes it');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.button].responsive.desktop.backgroundAssetId,assetId,'Save stores the background asset ID');
   await live.goto(base+'/p/test');assert.equal(await live.locator('h1[data-node-id]').textContent(),'Alkotói főcím');
+  assert.equal(await node(live,'button').evaluate(el=>getComputedStyle(el).backgroundImage),'none','draft background stays private before Publish');
   assert.equal(await node(live,'image').locator('img').evaluate(el=>getComputedStyle(el).objectPosition),'50% 50%','Save does not publish image crop');
   await editor.reload();await select('heading');assert.equal(await editor.getByLabel('Címsor szemantikai szintje',{exact:true}).inputValue(),'3');
   await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');await live.reload();
@@ -103,6 +110,8 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await live.locator(`h3[data-node-id="${ids.heading}"]`).textContent(),'Módosított főcím');
   assert.equal(await node(live,'button').getAttribute('href'),'/p/home');assert.equal(await node(live,'button').getAttribute('rel'),'noopener noreferrer');
   assert.equal(await node(live,'button').getAttribute('aria-label'),'Alkotói bemutatkozás megnyitása');
+  assert.match(await node(live,'button').evaluate(el=>getComputedStyle(el).backgroundImage),/\/media\/6b1c2e65-e46e-4764-b234-123456789abc/,'Publish serves the background through the guarded public route');
+  assert.match(await node(live,'button').evaluate(el=>getComputedStyle(el).backgroundPosition),/^50% 0%/);
   await node(live,'button').hover();await live.waitForFunction(id=>getComputedStyle(document.querySelector(`[data-node-id="${id}"]`)).backgroundColor==='rgb(220, 20, 60)',ids.button);
   assert.equal(await node(live,'button').evaluate(el=>getComputedStyle(el).backgroundImage),'none');
   await live.keyboard.press('Tab');await node(live,'button').focus();await live.waitForFunction(id=>getComputedStyle(document.querySelector(`[data-node-id="${id}"]`)).backgroundColor==='rgb(37, 99, 235)',ids.button);
@@ -130,8 +139,20 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
       assert.deepEqual(await node(live,type).evaluate(metric),await node(editor,type).evaluate(metric),`${type}/${width} content parity`);
       if(type==='image')assert.equal(await node(live,type).locator('img').evaluate(el=>getComputedStyle(el).objectPosition),await node(editor,type).locator('img').evaluate(el=>getComputedStyle(el).objectPosition),`image crop parity/${width}`);
     }
+    const backgroundMetric=el=>{const css=getComputedStyle(el);return {size:css.backgroundSize,position:css.backgroundPosition,repeat:css.backgroundRepeat}};
+    assert.deepEqual(await node(live,'button').evaluate(backgroundMetric),await node(editor,'button').evaluate(backgroundMetric),`background image style parity/${width}`);
+    assert.match(await node(live,'button').evaluate(el=>getComputedStyle(el).backgroundImage),/\/media\/6b1c2e65-e46e-4764-b234-123456789abc/,`published background survives ${width}px`);
   }
   for(const [device,width] of [['desktop',1440],['tablet',768],['mobile',390]]){await live.goto(base+'/p/test?preview=1&device='+device);await live.locator('.visual-root-authored').waitFor();assert.equal(await live.locator('.preview-frame').evaluate(el=>el.getBoundingClientRect().width),width,'preview uses the declared artboard width, even on a small outer viewport')}
+  await select('button');await editor.locator('.inspector-tabs button').first().click();await openGroup('Háttér');
+  await editor.locator('[data-property-id="background.image"]').getByRole('button',{name:'Kép eltávolítása'}).click();
+  assert.doesNotMatch(await node(editor,'button').evaluate(el=>getComputedStyle(el).backgroundImage),/api\/admin\/media/);
+  await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  await live.goto(base+'/p/test');assert.match(await node(live,'button').evaluate(el=>getComputedStyle(el).backgroundImage),/\/media\/6b1c2e65-e46e-4764-b234-123456789abc/,'Save does not remove the live background');
+  await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');await live.reload();
+  assert.doesNotMatch(await node(live,'button').evaluate(el=>getComputedStyle(el).backgroundImage),/\/media\//,'Publish removes the background reference without removing the gradient');
+  await live.setViewportSize({width:1366,height:900});await live.reload();
+  assert.match(await node(live,'button').evaluate(el=>getComputedStyle(el).backgroundImage),/\/media\/6b1c2e65-e46e-4764-b234-123456789abc/,'desktop retains its image after mobile-only removal');
   await editor.setViewportSize({width:390,height:800});await select('image');await editor.screenshot({path:'/tmp/creator-ux-p0-content-mobile.png'});
   assert.deepEqual(errors,[]);
 });

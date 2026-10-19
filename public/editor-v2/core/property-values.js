@@ -14,6 +14,11 @@ export function normalizeInspectorValue(property, input) {
   const value = String(input ?? '').trim();
   const token=parseTokenReference(value);
   if(token){if(!compatibleTokens(property).includes(token))throw new Error('Ez a közös stílus nem használható ebben a mezőben.');return value}
+  if(type==='asset'){
+    if(value==='none')return value;
+    if(!/^[0-9a-f-]{36}$/i.test(value))throw new Error('Érvénytelen Médiatár-azonosító.');
+    return value;
+  }
   if (!value) throw new Error('Az üres érték helyett használd az Öröklés visszaállítása gombot.');
   if (type === 'select') {
     if (!property.options?.includes(value)) throw new Error('Érvénytelen választási lehetőség.');

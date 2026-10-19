@@ -8,6 +8,7 @@
 
 import { resolveResponsiveValue } from './responsive.js';
 import { contentDefaults } from './authored-content.js';
+import { backgroundImageValue, MEDIA_ASSET_ID } from './background-asset.js';
 
 export const STYLE_MAP = Object.freeze({
   width: 'width',
@@ -41,6 +42,9 @@ export const STYLE_MAP = Object.freeze({
   color: 'color',
   backgroundColor: 'backgroundColor',
   backgroundImage: 'backgroundImage',
+  backgroundSize: 'backgroundSize',
+  backgroundPosition: 'backgroundPosition',
+  backgroundRepeat: 'backgroundRepeat',
   borderWidth: 'borderWidth',
   borderStyle: 'borderStyle',
   borderColor: 'borderColor',
@@ -96,9 +100,16 @@ export function applyNodeStyle(element, node, device = 'desktop') {
   // Canonical order matters for shorthand/longhand pairs such as border radius.
   // The public renderer also emits declarations in STYLE_MAP order.
   for (const [property, cssProperty] of Object.entries(STYLE_MAP)) {
+    if(property==='backgroundImage')continue;
     const value = style[property];
     if (!cssProperty || value === undefined || value === null || value === '') continue;
     element.style[cssProperty] = String(value);
+  }
+  element.style.backgroundImage=backgroundImageValue(style,{editor:true});
+  if(MEDIA_ASSET_ID.test(String(style.backgroundAssetId||''))){
+    if(!style.backgroundSize)element.style.backgroundSize='cover';
+    if(!style.backgroundPosition)element.style.backgroundPosition='center center';
+    if(!style.backgroundRepeat)element.style.backgroundRepeat='no-repeat';
   }
 
   if (style.x !== undefined && style.x !== '') {

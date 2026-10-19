@@ -89,11 +89,17 @@ test("site-scoped search, safe alt metadata and published-only delivery",async t
   const publicUrl=await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id);
   assert.equal(publicUrl.status,404);
   assert.equal((await publishedMediaRoute(new Request("https://other.test/media/"+asset.id),f.env,"other",asset.id)).status,404,"an unrelated site cannot resolve this asset ID");
-  f.db.prepare("INSERT INTO pages VALUES('page-1','site-default',NULL,1,?)").run(JSON.stringify({pages:{page:{nodes:{image:{props:{assetId:asset.id}}}}}}));
+  f.db.prepare("INSERT INTO pages VALUES('page-1','site-default',NULL,1,?)").run(JSON.stringify({pages:{'page-1':{nodes:{image:{props:{assetId:asset.id}}}}}}));
   const delivered=await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id);
   assert.equal(delivered.status,200);
   assert.equal(delivered.headers.get("Cache-Control"),"public, max-age=300, s-maxage=300");
   assert.deepEqual(new Uint8Array(await delivered.arrayBuffer()),png);
+  f.db.prepare("UPDATE pages SET published_content_json=?").run(JSON.stringify({pages:{'page-1':{nodes:{}},'unpublished-page':{nodes:{image:{props:{assetId:asset.id}}}}}}));
+  assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,404,"an unrelated draft page inside a published document cannot expose the asset");
+  f.db.prepare("UPDATE pages SET published_content_json=?").run(JSON.stringify({pages:{'page-1':{nodes:{section:{responsive:{desktop:{backgroundAssetId:asset.id}}}}}}}));
+  assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,200,"a published background reference can deliver the image");
+  f.db.prepare("UPDATE pages SET published_content_json=?").run(JSON.stringify({pages:{'page-1':{nodes:{section:{responsive:{desktop:{backgroundAssetId:'wrong'}}}}}}}));
+  assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,404,"a stale background reference cannot expose the image");
   f.db.prepare("UPDATE pages SET is_published=0").run();
   assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+asset.id),f.env,"site-default",asset.id)).status,404);
 });

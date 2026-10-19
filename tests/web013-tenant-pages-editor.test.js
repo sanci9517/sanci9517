@@ -98,6 +98,19 @@ test('asset references save as private drafts and Publish accepts only media own
   assert.equal(wrongSite.status,409);
   assert.equal((await wrongSite.json()).error.code,'MEDIA_NOT_FOUND');
   assert.equal(f.db.prepare('SELECT json_extract(published_content_json,\'$.pages.b.nodes.image.props.assetId\') AS asset FROM pages WHERE id=?').get('b').asset,null);
+  const background=withAsset(own);background.pages.b.nodes.root.responsive={desktop:{backgroundAssetId:foreign}};
+  const foreignBackground=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:2,document:background,publish:true});
+  assert.equal(foreignBackground.status,409,'a foreign-site background is rejected before Publish');
+  assert.equal((await foreignBackground.json()).error.code,'MEDIA_NOT_FOUND');
+  background.pages.b.nodes.root.responsive.desktop.backgroundAssetId='javascript:alert(1)';
+  const unsafe=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:2,document:background,publish:true});
+  assert.equal(unsafe.status,409);
+  assert.equal((await unsafe.json()).error.code,'INVALID_BACKGROUND_ASSET');
+  background.pages.b.nodes.root.responsive.desktop.backgroundAssetId=own;
+  background.pages.b.nodes.root.responsive.mobile={backgroundAssetId:'none'};
+  const publishedBackground=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:2,document:background,publish:true});
+  assert.equal(publishedBackground.status,200);
+  assert.equal(f.db.prepare('SELECT json_extract(published_content_json,\'$.pages.b.nodes.root.responsive.desktop.backgroundAssetId\') AS asset FROM pages WHERE id=?').get('b').asset,own);
 });
 
 test('missing membership schema returns 503 and legacy role is default-site only',async t=>{
