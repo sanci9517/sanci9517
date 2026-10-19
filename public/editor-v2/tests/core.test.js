@@ -1180,3 +1180,57 @@ test('Countdown deadline is stable, editable and blocked at Publish if incomplet
  assert.equal(validatePublishDocument(legacy,pageId),null);
  assertValidEditorDocument(state.document);
 });
+
+test('Social Links: typed platforms, safe URLs, empty draft, accessible output, Undo/Redo and legacy isolation',async()=>{
+ const {defaultSocialLinks,defaultSocialEntry,normalizeSocialLinks,socialLinkUrl,renderSocialLinksHtml}=await import('../core/social-links.js');
+ assert.equal(socialLinkUrl('https://twitch.tv/example','twitch'),'https://twitch.tv/example');
+ assert.equal(socialLinkUrl('/p/about','website'),'/p/about');
+ assert.equal(socialLinkUrl('#contact','website'),'#contact');
+ assert.equal(socialLinkUrl('mailto:hello@example.com','email'),'mailto:hello@example.com');
+ for(const malicious of ['javascript:alert(1)','data:text/html,hello','http://unsafe.example','//evil.example','https://user:secret@example.com','https://site.example/\nscript','https://site.example\\@evil.com']){
+  assert.equal(socialLinkUrl(malicious,'website'),'Unsafe social link accepted: '+malicious);
+ }
+ assert.equal(socialLinkUrl('/internal','twitch'),'','platform-specific links require HTTPS');
+ const state=createEditorState(),root=activePage(state).rootId,pageId=state.document.activePageId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.SOCIAL,parentId:root}});
+ const id=state.selection.primaryId,node=activePage(state).nodes[id];
+ assert.equal(node.metadata.socialLinksVersion,1);
+ assert.deepEqual(node.props.socialLinks,defaultSocialLinks());
+ assert.equal(validatePublishDocument(state.document,pageId),'INVALID_SOCIAL_LINKS','incomplete draft cannot be published');
+ const entries=[
+  {...defaultSocialEntry('twitch','link1'),label:'Nézd a <streamet>',href:'https://twitch.tv/example'},
+  {...defaultSocialEntry('website','link2'),label:'Részletek',href:'/p/about',newWindow:false},
+  {...defaultSocialEntry('email','link3'),label:'Írj nekem',href:'mailto:hello@example.com',newWindow:false}
+ ];
+ const valid={version:1,variant:'cards',layout:'grid',showIcons:true,items:entries};
+ assert.deepEqual(normalizeSocialLinks(valid),valid);
+ execute(state,{type:'element.update',payload:{nodeId:id,patch:{props:{...node.props,socialLinks:valid}}}});
+ assert.equal(validatePublishDocument(state.document,pageId),null);
+ const markup=renderSocialLinksHtml(valid);
+ assert.match(markup,/visual-social-cards/);
+ assert.match(markup,/visual-social-grid/);
+ assert.match(markup,/aria-label="Közösségi elérhetőségek"/);
+ assert.ok(!markup.includes('<streamet>'),'HTML injection in link label');
+ assert.match(markup,/&lt;streamet&gt;/);
+ assert.match(markup,/rel="noopener noreferrer"/);
+ assert.match(markup,/href="mailto:hello@example.com"/);
+ assert.equal((markup.match(/<li class="visual-social-item">/g)||[]).length,3);
+ const draft={...valid,items:[{...entries[0],href:'javascript:alert(1)'}]};
+ const invalidOutput=renderSocialLinksHtml(draft);
+ assert.ok(!invalidOutput.includes('href="javascript:'));
+ assert.match(invalidOutput,/aria-disabled="true"/);
+ const fail=structuredClone(state.document);
+ fail.pages[pageId].nodes[id].props.socialLinks=draft;
+ assert.equal(validatePublishDocument(fail,pageId),'INVALID_SOCIAL_LINKS');
+ fail.pages[pageId].nodes[id].props.socialLinks={...valid,items:[entries[0],{...entries[0]}]};
+ assert.equal(validatePublishDocument(fail,pageId),'INVALID_SOCIAL_LINKS','duplicate entry id is blocked');
+ execute(state,{type:'history.undo'});
+ assert.equal(validatePublishDocument(state.document,pageId),'INVALID_SOCIAL_LINKS');
+ execute(state,{type:'history.redo'});
+ assert.equal(validatePublishDocument(state.document,pageId),null);
+ const legacy=structuredClone(state.document);
+ delete legacy.pages[pageId].nodes[id].metadata.socialLinksVersion;
+ legacy.pages[pageId].nodes[id].props.socialLinks={version:9};
+ assert.equal(validatePublishDocument(legacy,pageId),null,'older published Social widgets are not migrated');
+ assertValidEditorDocument(state.document);
+});
