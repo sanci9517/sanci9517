@@ -11,6 +11,7 @@ import {renderSchedulePreview} from './core/schedule-preview.js';
 import {normalizeScheduleConfig,SCHEDULE_MODES,SCHEDULE_ORDERS,SCHEDULE_STATUSES} from './core/schedule-schema.js';
 import {listPropertyGroups,listProperties,getProperty} from './core/property-registry.js';
 import {renderPropertyInput} from './ui/property-controls.js';
+import {describeResponsiveOrigin} from './ui/responsive-origin.js';
 import {getRichTextBlockSelection,getRichTextFormattingSelection,getRichTextActiveBlockIndex,restoreRichTextBlockSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,updateRichTextBlockAlignment} from './core/richtext-links.js';
 import {initialPageId,rememberPageId,requestedPageId} from './core/page-url.js';
 import {getElementCapability} from './core/capability-matrix.js';
@@ -519,13 +520,26 @@ function renderRegistryInspector(node,mode='primary'){
       const resolved=property.responsive?resolveResponsiveValue(node.responsive,key,device):null;
       const rendered=canvas.querySelector(`.node[data-node-id="${CSS.escape(node.id)}"]`);
       const current=resolved?.value??node.style?.[key]??(['flex','grid','layout'].includes(property.group)&&rendered?getComputedStyle(rendered)[key]:'')??'';
-      const label=property.responsive&&resolved?.inherited?property.label+' · örökölt':property.label;
+      const label=property.label;
       const apply=value=>{
         const typingGroup=`inspector:${node.id}:${device}:${key}`;
         if(property.responsive)return command(property.command,{nodeId:node.id,device,patch:{[key]:value}},{typingGroup});
         return command(property.command,{nodeId:node.id,patch:{[key]:value}},{typingGroup});
       };
-      section.append(propertyInput({...property,disabled:Boolean(node.locked)},label,current,apply));
+      const control=propertyInput({...property,disabled:Boolean(node.locked)},label,current,apply);
+      if(property.responsive){
+        const origin=describeResponsiveOrigin(node.responsive,key,device,{
+          hasBaseStyle:node.style?.[key]!==undefined&&node.style?.[key]!==null
+        });
+        const status=document.createElement('small');
+        status.className='responsive-origin';
+        status.dataset.kind=origin.kind;
+        if(origin.source)status.dataset.source=origin.source;
+        status.textContent=origin.label;
+        status.setAttribute('aria-label',property.label+': '+origin.label);
+        control.append(status);
+      }
+      section.append(control);
       if(property.responsive&&hasResponsiveOverride(node.responsive,key,device)){
         const reset=document.createElement('button');reset.type='button';reset.className='property-reset';
         reset.textContent='Öröklés visszaállítása';
