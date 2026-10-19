@@ -165,7 +165,22 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   assert.deepEqual(await publicPage.locator('.visual-card:nth-child(2) > .visual-text').evaluate(el=>{const style=getComputedStyle(el);return {basis:style.flexBasis,maxWidth:style.maxWidth}}),await flexCss());
   // A real mobile viewport edits only its own override; the published page stays unchanged.
   await editor.setViewportSize({width:390,height:800});
+  // Changing a breakpoint must never consume a pending invalid typed edit:
+  // the click may already have moved DOM focus away from the Inspector field.
+  const paddingTopEditor=field('spacing.padding').locator('.typed-box-entry input').first();
+  await paddingTopEditor.fill('-7');
+  await paddingTopEditor.dispatchEvent('change');
+  assert.match(await field('spacing.padding').locator('.property-validation').textContent(),/negatív|belső|padding/i);
   await editor.locator('.canvas-device-btn[data-device="mobile"]').evaluate(el=>el.click());
+  assert.equal(await editor.locator('.canvas-device-btn[data-device="desktop"]').getAttribute('class').then(x=>x.includes('active')),true,'invalid Inspector input must keep desktop editor state');
+  assert.equal(await editor.locator('.canvas-device-btn[data-device="mobile"]').getAttribute('class').then(x=>x.includes('active')),false,'invalid Inspector input must not activate mobile');
+  assert.equal(await field('spacing.padding').locator('.typed-box-entry input').first().inputValue(),'-7','unsaved invalid value stays available for correction');
+  await field('spacing.padding').locator('.typed-box-entry input').first().fill('16');
+  await field('spacing.padding').locator('.typed-box-entry input').first().dispatchEvent('change');
+  assert.equal(await field('spacing.padding').locator('.property-validation').textContent(),'');
+  await editor.locator('.canvas-device-btn[data-device="mobile"]').evaluate(el=>el.click());
+  assert.equal(await editor.locator('.canvas-device-btn[data-device="mobile"]').getAttribute('class').then(x=>x.includes('active')),true,'valid corrected field allows mobile breakpoint');
+
   await select(itemId);
   await editor.locator('.inspector-group-title').filter({hasText:'Lekerekítés'}).click();
   assert.ok((await field('radius.topLeft').locator('input').boundingBox()).height>=44);
