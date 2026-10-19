@@ -1164,7 +1164,7 @@ function setDevice(device){
  if(!state||!Object.hasOwn(sizes,device))return false;
  if(state.viewport.device===device)return true;
  if(!commitActiveInspectorControl()||
-    [...inspector.querySelectorAll('.property-validation')].some(el=>el.textContent.trim())||
+    [...inspector.querySelectorAll('.property-validation')].some(el=>el.textContent.trim()&&el.getClientRects().length>0)||
     flushRichTextDraft?.()===false){
    setStatus('Javítsd a hibás mezőt a nézetváltás előtt.');
    return false;
