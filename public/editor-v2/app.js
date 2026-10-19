@@ -29,6 +29,8 @@ import {defaultSocialLinks,renderSocialLinksHtml} from './core/social-links.js';
 import {renderSocialLinksInspector} from './ui/social-links-inspector.js';
 import {defaultEmbedContent,renderEmbedHtml} from './core/creator-embed.js';
 import {renderEmbedInspector} from './ui/creator-embed-inspector.js';
+import {defaultCodeSnippet,renderCodeSnippet} from './core/code-snippet.js';
+import {renderCodeSnippetInspector} from './ui/code-snippet-inspector.js';
 import {readRichTextSelectionFormatting,clearRichTextInlineFormatting} from './core/richtext-links.js';
 
 let inspectorCategory='all';let richTextSelectionCleanup=null;let richTextToolTab='character';
@@ -261,7 +263,12 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
   [node.states?.focus?.outlineColor,'visual-focus-outline','--sanci-focus-outline']
  ]){const color=validHex(value);if(color){el.classList.add(klass);el.style.setProperty(variable,color)}}
  const head=document.createElement('div');head.className='node-head';const headName=document.createElement('span');headName.textContent=node.name||node.type;const headType=document.createElement('small');headType.textContent=node.type;head.append(headName,headType);el.append(head);
-  if(node.type===NODE_TYPES.EMBED&&node.metadata?.embedContentVersion===1){
+  if(node.type===NODE_TYPES.CODE&&node.metadata?.codeSnippetVersion===1){
+    const host=document.createElement('div');host.className='node-content code-preview';
+    host.innerHTML=renderCodeSnippet(node.props?.codeSnippet??defaultCodeSnippet());
+    host.inert=true; // Preview cannot manipulate clipboard or steal Editor focus.
+    el.append(host);
+  }else if(node.type===NODE_TYPES.EMBED&&node.metadata?.embedContentVersion===1){
     const host=document.createElement('div');host.className='node-content embed-preview';
     host.innerHTML=renderEmbedHtml(node.props?.embedContent??defaultEmbedContent());
     host.inert=true; // No third-party requests or keyboard traps inside Editor canvas.
@@ -721,7 +728,12 @@ function renderInspector(){
     if(node.type==='schedule')inspector.append(renderScheduleInspector(node));
     else {
       const textTypes=new Set(['heading','text','richtext','button','link']);
-      if(node.type==='embed'&&node.metadata?.embedContentVersion===1){
+      if(node.type==='code'&&node.metadata?.codeSnippetVersion===1){
+        const panel=renderCodeSnippetInspector(node,model=>command('element.update',{
+          nodeId:node.id,patch:{props:{...(node.props||{}),codeSnippet:model}}
+        }));
+        inspector.append(panel);
+      }else if(node.type==='embed'&&node.metadata?.embedContentVersion===1){
         const panel=renderEmbedInspector(node,model=>command('element.update',{
           nodeId:node.id,patch:{props:{...(node.props||{}),embedContent:model}}
         }));
