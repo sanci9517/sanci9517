@@ -115,7 +115,7 @@ test('copy appearance between text elements preserves content and geometry throu
   assert.equal(await resetBackground.count(),1,'a mobile-only value should offer a clear inheritance reset');
   await resetBackground.click();
   assert.equal(await tab.locator(`.node[data-node-id="${sourceId}"]`).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(25, 55, 91)');
-  assert.match(await tab.locator('.typed-inspector-field[data-property-id="background.color"] label').textContent(),/örökölt/);
+  assert.equal(await tab.locator('.typed-inspector-field[data-property-id="background.color"] .responsive-origin').textContent(),'Örökölt · Asztali','responsive origin must identify the inherited desktop source after reset');
   await editColor('background.color','#284e72');
   await tab.getByRole('button',{name:'Megjelenés másolása'}).click();
   assert.match(await tab.locator('#saveStatus').textContent(),/Megjelenés másolva/);
