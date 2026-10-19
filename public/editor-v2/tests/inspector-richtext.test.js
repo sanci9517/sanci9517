@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createDocument, NODE_TYPES } from '../core/schema.js';
+import { describeResponsiveOrigin } from '../ui/responsive-origin.js';
 import { createEditorState, activePage } from '../core/state.js';
 import { execute, executeCoalesced } from '../core/commands.js';
 import { resolveNodeStyle } from '../core/canvas-engine.js';
@@ -252,4 +253,16 @@ test('inline marks, link and block transforms preserve content through commands 
   const unbold=updateRichTextInlineMark(bold,{blockIndex:0,from:6,to:11},'bold');
   assert.equal(unbold.blocks[0].children.every(run=>run.marks.length===0),true);
   assert.throws(()=>updateRichTextInlineMark(documentModel,{blockIndex:0,from:0,to:2},'script'));
+});
+
+
+test('responsive property origin is canonical, device-scoped and describes base fallback',()=>{
+  const values={desktop:{fontSize:'32px'},tablet:{fontSize:'25px'},mobile:{}};
+  assert.deepEqual(describeResponsiveOrigin(values,'fontSize','desktop'),{kind:'own',source:'desktop',label:'Saját érték · Asztali'});
+  assert.deepEqual(describeResponsiveOrigin(values,'fontSize','tablet'),{kind:'own',source:'tablet',label:'Saját érték · Tablet'});
+  assert.deepEqual(describeResponsiveOrigin(values,'fontSize','mobile'),{kind:'inherited',source:'tablet',label:'Örökölt · Tablet'});
+  assert.deepEqual(describeResponsiveOrigin({desktop:{fontSize:'32px'}},'fontSize','mobile'),{kind:'inherited',source:'desktop',label:'Örökölt · Asztali'});
+  assert.deepEqual(describeResponsiveOrigin({},'fontSize','mobile',{hasBaseStyle:true}),{kind:'base',source:null,label:'Alapstílus'});
+  assert.deepEqual(describeResponsiveOrigin({},'fontSize','mobile'),{kind:'base',source:null,label:'Alapértelmezett'});
+  assert.throws(()=>describeResponsiveOrigin({},'fontSize','unsupported'),/Ismeretlen/);
 });
