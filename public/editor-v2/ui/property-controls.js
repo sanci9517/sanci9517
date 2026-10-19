@@ -24,10 +24,12 @@ export function renderPropertyInput(property, label, current, onChange, {tokens=
   const save = raw => {
     try {
       const value = normalizeInspectorValue(property, raw);
+      if(onChange(value)===false)throw new Error('A módosítás nem alkalmazható.');
       error.textContent = '';
-      onChange(value);
+      return true;
     } catch (e) {
       error.textContent = e instanceof Error ? e.message : 'Érvénytelen érték';
+      return false;
     }
   };
   const info = document.createElement('button');
@@ -55,7 +57,8 @@ export function renderPropertyInput(property, label, current, onChange, {tokens=
   }
   const type = property.type;
   if (type === 'asset') {
-    wrap.append(mediaAssetPicker(current==='none'?'':current||'',id=>id?save(id):save('none'),{disabled:Boolean(property.disabled)}));
+    wrap.append(mediaAssetPicker(current==='none'?'':current||'',id=>save(id||'none'),{disabled:Boolean(property.disabled)}));
+    wrap.append(error);
     return wrap;
   }
   if (type === 'select' || type === 'font' || type === 'shadow') {
