@@ -55,5 +55,8 @@ jobs:
       - name: Run domain contract tests
         run: npm run test:domain
 
+      - name: Run Brand Kit storage and access regression
+        run: npm run test:design
+
       - name: Run Admin home contract tests
         run: npm run test:admin-home

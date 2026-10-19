@@ -1,9 +1,12 @@
 import {
   normalizeInspectorValue, INSPECTOR_FONTS, INSPECTOR_SHADOWS
 } from '../core/property-values.js';
+import {TOKEN_SPECS,compatibleTokens,parseTokenReference,tokenReference,tokenValue,defaultTokens} from '../core/design-tokens.js';
 
 /** One property input. All changes go through the central command callback. */
-export function renderPropertyInput(property, label, current, onChange) {
+export function renderPropertyInput(property, label, current, onChange, {tokens=defaultTokens()}={}) {
+  const binding=parseTokenReference(current),availableTokens=compatibleTokens(property);
+  if(binding)current=tokenValue(tokens,binding);
   const wrap = document.createElement('div');
   wrap.className = 'field typed-inspector-field';
   wrap.dataset.propertyId = property.id;
@@ -42,6 +45,13 @@ export function renderPropertyInput(property, label, current, onChange) {
   };
   heading.append(title, info);
   wrap.append(heading, help);
+  let tokenPicker=null;
+  if(availableTokens.length){
+    const picker=document.createElement('select');picker.className='property-token-picker';picker.setAttribute('aria-label',label+' közös stílusa');
+    for(const [value,text] of [['','Egyedi érték'],...availableTokens.map(id=>[id,TOKEN_SPECS[id].label])]){const option=document.createElement('option');option.value=value;option.textContent=text;picker.append(option)}
+    picker.value=binding||'';picker.onchange=()=>save(picker.value?tokenReference(picker.value):current);tokenPicker=picker;
+    if(binding){const note=document.createElement('small');note.className='content-field-help';note.textContent='A Brand Kit közös értékét követi. Egyedi értékre váltva leválaszthatod.';wrap.append(note)}
+  }
   const type = property.type;
   if (type === 'asset') {
     const note = document.createElement('div');
@@ -152,7 +162,9 @@ export function renderPropertyInput(property, label, current, onChange) {
     }
     wrap.append(group);
   }
+  if(tokenPicker)wrap.append(tokenPicker);
   wrap.append(error);
+  if(binding)for(const input of wrap.querySelectorAll('input,select:not(.property-token-picker),.property-presets button'))input.disabled=true;
   return wrap;
 }
 

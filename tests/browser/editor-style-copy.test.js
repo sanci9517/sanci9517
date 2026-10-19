@@ -90,7 +90,7 @@ test('copy appearance between text elements preserves content and geometry throu
   await ensureGroupOpen('Lekerekítés');
   await editDimension('radius.all','14');
   await ensureGroupOpen('Árnyék');
-  await tab.locator('.typed-inspector-field[data-property-id="shadow.box"] select').selectOption('0 2px 8px #0003');
+  await tab.locator('.typed-inspector-field[data-property-id="shadow.box"] select:not(.property-token-picker)').selectOption('0 2px 8px #0003');
   await ensureGroupOpen('Tipográfia');
   await editDimension('typography.fontSize','30');
   await tab.locator('.typed-inspector-field[data-property-id="typography.fontWeight"] select').selectOption('700');

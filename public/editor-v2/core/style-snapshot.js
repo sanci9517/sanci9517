@@ -1,3 +1,4 @@
+import {GRADIENTS} from './state-styles.js';
 /*
  * A deliberately narrow, versioned appearance snapshot. Content, element
  * size, position and container layout are not part of this clipboard: applying
@@ -8,6 +9,7 @@ export const STYLE_SNAPSHOT_VERSION = 1;
 export const STYLE_SNAPSHOT_PROPERTIES = Object.freeze([
   'color',
   'backgroundColor',
+  'backgroundImage',
   'borderWidth',
   'borderStyle',
   'borderColor',
@@ -43,6 +45,7 @@ function pickProperties(source) {
   const picked = {};
   for (const key of STYLE_SNAPSHOT_PROPERTIES) {
     const value = source?.[key];
+    if(key==='backgroundImage'&&!GRADIENTS.includes(value))continue;
     if (typeof value === 'string' && value.length <= 256) picked[key] = value;
     else if (typeof value === 'number' && Number.isFinite(value)) picked[key] = String(value);
   }

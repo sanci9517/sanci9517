@@ -211,6 +211,7 @@ test('typed Inspector controls and link selection work with real browser DOM at 
 
 function getSupportedUnitsForProperty(id){
   const units={
+    'transform.rotate':['deg'],
     'size.width':['auto','px','%','vw','rem'],'size.height':['auto','px','%','vh','rem'],
     'size.minWidth':['px','%','vw','rem'],'size.maxWidth':['px','%','vw','rem'],
     'size.minHeight':['px','%','vh','rem'],'size.maxHeight':['px','%','vh','rem'],

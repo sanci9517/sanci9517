@@ -1,3 +1,5 @@
+import {adminPresentationRoute,presentationAccess} from "./routes/admin/presentation";
+import {publicPresentationRoute} from "./routes/public/presentation";
 import { adminLinkReportRoute } from "./routes/admin/link-report";
 import { sitemapRoute, robotsRoute } from "./routes/public/seo";
 import { dbHealthRoute } from "./routes/db-health";
@@ -41,7 +43,7 @@ export default {
     const { siteId } = site;
     if (siteId !== getCanonicalSiteContext().siteId &&
       (pathname.startsWith("/api/admin/") || pathname.startsWith("/api/auth/") || pathname.startsWith("/api/integrations/") || pathname.startsWith("/admin") ||
-        ((pathname.startsWith("/p/") || pathname === "/api/public/pages") && url.searchParams.get("preview") === "1"))) {
+        ((pathname.startsWith("/p/") || (pathname === "/api/public/pages" || pathname === "/api/public/presentation")) && url.searchParams.get("preview") === "1"))) {
       return new Response("Site administration unavailable", { status: 403, headers: { "Cache-Control": "no-store" } });
     }
     const tenantDenial = await enforceAdminTenantGate(request, env, siteId, pathname);
@@ -53,6 +55,9 @@ export default {
     if (pathname === "/api/auth/login") return authLoginRoute(request, env);
     if (pathname === "/api/auth/logout") return authLogoutRoute(request, env);
     if (pathname === "/api/auth/session") return authSessionRoute(request, env);
+    if (pathname === "/api/admin/presentation") return adminPresentationRoute(request, env, siteId);
+    if (pathname === "/api/public/presentation") return publicPresentationRoute(request, env, siteId);
+    if (pathname === "/admin/design") { const user=await presentationAccess(request,env,siteId);if(user instanceof Response)return user.status===401?Response.redirect(new URL("/admin/login",request.url).toString(),302):user;return env.ASSETS.fetch(assetRequest("/admin-design.html",request)); }
     if (pathname === "/api/admin/settings") return adminSettingsRoute(request, env, siteId, site.siteName);
     if (pathname === "/api/admin/schedule") return adminScheduleRoute(request, env);
     if (pathname === "/api/admin/twitch/schedule-sync") return adminTwitchScheduleSyncRoute(request, env);
@@ -82,7 +87,7 @@ export default {
       return env.ASSETS.fetch(assetRequest("/editor-v2/index.html", request));
     }
     // Retired entry points must not expose the backing HTML assets directly.
-    if (["/admin-login.html", "/admin-home.html", "/admin.html", "/admin/home", "/editor-v2", "/editor-v2/index.html", "/about.html", "/community.html", "/contact.html", "/schedule.html", "/tiktok.html", "/twitch.html", "/vod.html", "/youtube.html"].includes(pathname)) {
+    if (["/admin-design.html", "/admin-login.html", "/admin-home.html", "/admin.html", "/admin/home", "/editor-v2", "/editor-v2/index.html", "/about.html", "/community.html", "/contact.html", "/schedule.html", "/tiktok.html", "/twitch.html", "/vod.html", "/youtube.html"].includes(pathname)) {
       return new Response("Gone", { status: 410 });
     }
     if (pathname === "/" || pathname === "/index.html") return publicPageHtml(request, env, "/", false, { title: site.siteName });
