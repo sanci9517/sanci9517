@@ -84,6 +84,19 @@ export function activateEmbeds(root){
   if(activated.has(host))continue;
   activated.add(host);
   const load=()=>{
+   // Twitch documents a 400px minimum player width. On narrower cards,
+   // offer the verified canonical link instead of pretending the embed works.
+   if(String(host.dataset.embedProvider).startsWith('twitch-')&&host.getBoundingClientRect().width<400){
+    try{
+     const parsed=parseEmbedSource(host.dataset.embedProvider,host.dataset.embedSource);
+     const link=document.createElement('a');link.className='visual-embed-external';
+     link.href=parsed.provider==='twitch-live'?'https://www.twitch.tv/'+encodeURIComponent(parsed.id):'https://www.twitch.tv/videos/'+encodeURIComponent(parsed.id);
+     link.target='_blank';link.rel='noopener noreferrer';
+     link.textContent='A Twitch-lejátszóhoz szélesebb hely kell. Megnyitás Twitch-en (új lapon).';
+     host.replaceChildren(link);
+    }catch{}
+    return;
+   }
    const url=buildEmbedUrl({provider:host.dataset.embedProvider,source:host.dataset.embedSource},location.hostname);
    if(!url)return;
    const iframe=document.createElement('iframe');
