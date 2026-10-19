@@ -5,11 +5,11 @@ import { NODE_TYPES } from './schema.js';
 const partial = new Set([
   'section','container','row','columns','flex','grid','stack','group','spacer',
   'heading','text','richtext','link','button','image','icon','divider','card',
-  'list','table','tabs','accordion','gallery','carousel','badge','quote','countdown','social','embed','form','schedule'
+  'list','table','tabs','accordion','gallery','carousel','badge','quote','countdown','social','embed','code','form','schedule'
 ]);
 const published = new Set([
   'section','container','row','columns','flex','grid','stack','group','spacer',
-  'heading','text','richtext','link','button','image','icon','divider','card','badge','quote','countdown','social','embed','schedule'
+  'heading','text','richtext','link','button','image','icon','divider','card','badge','quote','countdown','social','embed','code','schedule'
 ]);
 
 export const ELEMENT_CAPABILITIES = Object.freeze(Object.fromEntries(
