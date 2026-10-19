@@ -1,0 +1,10 @@
+export type EmbedProvider='youtube'|'twitch-live'|'twitch-vod'|'vimeo';
+export type EmbedContent={version:1,provider:EmbedProvider,source:string,title:string,ratio:'landscape'|'classic'|'square'|'portrait',clickToLoad:boolean};
+export const EMBED_PROVIDERS:readonly {id:EmbedProvider,label:string}[];
+export const EMBED_RATIOS:readonly string[];
+export function defaultEmbedContent():EmbedContent;
+export function parseEmbedSource(provider:EmbedProvider,source:string):{provider:EmbedProvider,id:string,hash:string};
+export function normalizeEmbedContent(value:unknown):EmbedContent;
+export function buildEmbedUrl(config:Pick<EmbedContent,'provider'|'source'>,parentHost?:string):string;
+export function renderEmbedHtml(value:unknown):string;
+export function activateEmbeds(root:unknown):void;
