@@ -72,11 +72,11 @@ test('Rich Text cross-paragraph selection survives repeated marks and draft Save
     assert.deepEqual(segments,[{blockIndex:0,from:6,to:10},{blockIndex:1,from:0,to:5}]);
     await page.getByRole('button',{name:'Félkövér',exact:true}).click();
     assert.deepEqual(await surface.locator('strong').allTextContents(),['Beta','Gamma'],'both paragraphs must receive bold');
-    assert.match(await page.evaluate(()=>window.getSelection()?.toString()??''),/Beta[\\s\\S]*Gamma/,'cross-block selection must survive first render');
+    assert.match(await page.evaluate(()=>window.getSelection()?.toString()??''),/Beta[\s\S]*Gamma/,'cross-block selection must survive first render');
     await page.getByRole('button',{name:'Dőlt',exact:true}).click();
     assert.deepEqual(await surface.locator('strong').allTextContents(),['Beta','Gamma'],'bold must survive subsequent mark');
     assert.deepEqual(await surface.locator('em').allTextContents(),['Beta','Gamma'],'italic must affect both paragraphs');
-    assert.match(await page.evaluate(()=>window.getSelection()?.toString()??''),/Beta[\\s\\S]*Gamma/,'cross-block selection must survive second render');
+    assert.match(await page.evaluate(()=>window.getSelection()?.toString()??''),/Beta[\s\S]*Gamma/,'cross-block selection must survive second render');
     const canvas=page.locator(`.node[data-node-id="${nodeId}"] .richtext-content`).first();
     assert.deepEqual(await canvas.locator('strong').allTextContents(),['Beta','Gamma'],'canvas must mirror the Inspector model');
     assert.deepEqual(await canvas.locator('em').allTextContents(),['Beta','Gamma']);
