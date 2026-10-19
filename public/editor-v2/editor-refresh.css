@@ -559,3 +559,9 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
   .workspace .left-dock .dock-content,
   .workspace .right-dock .dock-content { min-height: 0; overscroll-behavior: contain; }
 }
+
+/* 77.44 spacing Inspector: number and unit side by side, including 390px. */
+.typed-box-controls .typed-box-side{display:grid;gap:6px;min-width:0;font-size:12px}
+.typed-box-controls .typed-box-side strong{font-weight:600;color:#d3deef}
+.typed-box-entry{display:grid;grid-template-columns:minmax(0,1fr) minmax(64px,.8fr);gap:5px;min-width:0}
+.typed-box-entry input,.typed-box-entry select{box-sizing:border-box;width:100%;min-width:0;min-height:44px;padding-inline:6px;font-size:16px}
