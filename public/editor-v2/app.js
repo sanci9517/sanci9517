@@ -434,10 +434,33 @@ function renderGeometryInspector(node){
     if(id==='size.width'||id==='size.height')section.append(renderGeometryPresets(id,values[key],apply));
     if(hasResponsiveOverride(node.responsive,key,device)){
       const reset=document.createElement('button');reset.type='button';reset.className='property-reset';
-      reset.textContent='Visszaállítás az alapértékre';
-      reset.onclick=()=>command('responsive.set',{nodeId:node.id,device,patch:{[key]:undefined}});
+      reset.textContent='Visszaállítás az örökölt értékre';
+      reset.disabled=Boolean(node.locked);
+      reset.onclick=()=>{if(!node.locked)command('responsive.set',{nodeId:node.id,device,patch:{[key]:undefined}})};
       section.append(reset);
     }
+  }
+  // Geometry lives in its own Inspector section, outside the property
+  // registry groups. Reuse the same canonical atomic reset planner.
+  const geometryProperties=['position.x','position.y','size.width','size.height','position.position']
+    .map(getProperty).filter(Boolean);
+  const geometryResets=responsiveGroupResetActions(node,geometryProperties,device);
+  if(geometryResets.length){
+    const resetAll=document.createElement('button');
+    resetAll.type='button';
+    resetAll.className='group-responsive-reset';
+    resetAll.textContent='Geometria saját értékeinek visszaállítása ('+geometryResets.length+')';
+    resetAll.title='Csak az aktuális nézet X/Y pozíciója, szélessége, magassága és pozicionálási módja tér vissza az örökölt értékhez. Egyetlen Undo lépés.';
+    resetAll.setAttribute('aria-label',resetAll.textContent);
+    resetAll.disabled=Boolean(node.locked);
+    resetAll.onclick=()=>{
+      if(node.locked||!commitActiveInspectorControl()||flushRichTextDraft?.()===false)return;
+      try{
+        executeBatch(state,geometryResets,{label:'Geometria reszponzív visszaállítása',atomic:true});
+        render();
+      }catch(error){showError(error)}
+    };
+    section.append(resetAll);
   }
   return section;
 }
