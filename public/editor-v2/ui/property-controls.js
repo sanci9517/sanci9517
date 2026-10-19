@@ -2,6 +2,7 @@ import {
   normalizeInspectorValue, INSPECTOR_FONTS, INSPECTOR_SHADOWS
 } from '../core/property-values.js';
 import {TOKEN_SPECS,compatibleTokens,parseTokenReference,tokenReference,tokenValue,defaultTokens} from '../core/design-tokens.js';
+import {mediaAssetPicker} from './element-content-controls.js';
 
 /** One property input. All changes go through the central command callback. */
 export function renderPropertyInput(property, label, current, onChange, {tokens=defaultTokens()}={}) {
@@ -54,10 +55,7 @@ export function renderPropertyInput(property, label, current, onChange, {tokens=
   }
   const type = property.type;
   if (type === 'asset') {
-    const note = document.createElement('div');
-    note.className = 'property-unavailable';
-    note.textContent = 'Média-választó fejlesztés alatt – még nem szerkeszthető.';
-    wrap.append(note);
+    wrap.append(mediaAssetPicker(current==='none'?'':current||'',id=>id?save(id):save('none'),{disabled:Boolean(property.disabled)}));
     return wrap;
   }
   if (type === 'select' || type === 'font' || type === 'shadow') {
@@ -198,7 +196,7 @@ function describeProperty(property) {
     'typography.textTransform':'A megjelenített betűk kis- és nagybetűs alakja. Nem írja át az eredeti tartalmat: a Nagybetűs például vizuálisan nagybetűt mutat, miközben a mentett szöveg változatlan.',
     'typography.textDecoration':'Vizuális vonalat ad a szöveghez: aláhúzás, áthúzás vagy felső vonal. A link aláhúzását ne rejtsd el, ha ez az egyetlen jelzi, hogy kattintható.',
     'background.color':'Az elem háttérszíne. A színválasztó vagy HEX-kód ugyanazt az értéket állítja; az áttetsző opciónál a mögöttes szín látszik. A kontrasztot a szöveggel együtt ellenőrizd.',
-    'background.image':'Háttérképet állítana be. A média-választó még nincs bekötve, ezért itt jelenleg nem módosítható; képet az erre szolgáló Média modulból válassz.',
+    'background.image':'A webhely Médiatárából választhatsz dekoratív háttérképet. A kép csak külön Publish után jelenik meg a publikus oldalon.',
     'border.width':'A keret vastagsága. A 0 eltünteti, 1px finom elválasztó, 2px vagy több hangsúlyosabb szegély. A stílushoz és színhez a Szegély csoport tartozik.',
     'border.style':'A keret vonalának formája. Folytonos a szokásos keret; szaggatott vagy pontozott vonal inkább szerkesztői vagy különleges jelölésre való.',
     'border.color':'A keret színe. A szöveghez és háttérhez képest legyen jól látható, de ne versenyezzen a tartalommal.',

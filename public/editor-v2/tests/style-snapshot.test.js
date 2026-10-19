@@ -12,9 +12,9 @@ test('appearance snapshots copy responsive visual styles without copying content
     props: { text: 'Forrás tartalom' },
     style: { color: '#112233', fontSize: '28px', width: '640px', position: 'absolute' },
     responsive: {
-      desktop: { backgroundColor: '#fefefe', padding: '16px 20px', height: '240px' },
+      desktop: { backgroundColor: '#fefefe', backgroundAssetId:'6b1c2e65-e46e-4764-b234-123456789abc', padding: '16px 20px', height: '240px' },
       tablet: { borderRadius: '12px', width: '75%' },
-      mobile: { fontSize: '22px', opacity: '0.8', left: '20px' }
+      mobile: { fontSize: '22px', opacity: '0.8', backgroundAssetId:'none', left: '20px' }
     }
   };
   const snapshot = captureStyleSnapshot(source);
@@ -23,7 +23,7 @@ test('appearance snapshots copy responsive visual styles without copying content
     props: { text: 'Másik tartalom' },
     style: { color: '#ffffff', fontSize: '16px', width: '320px', position: 'relative' },
     responsive: {
-      desktop: { backgroundColor: '#000000', padding: '4px', height: '120px' },
+      desktop: { backgroundColor: '#000000', backgroundAssetId:'0c2360d8-c100-4b4c-b8bb-4628e69f26ad', padding: '4px', height: '120px' },
       tablet: { borderRadius: '4px', width: '50%' },
       mobile: { fontSize: '14px', opacity: '1', left: '0' }
     }
@@ -34,9 +34,9 @@ test('appearance snapshots copy responsive visual styles without copying content
     width: '320px', position: 'relative', color: '#112233', fontSize: '28px'
   });
   assert.deepEqual(applied.responsive, {
-    desktop: { height: '120px', backgroundColor: '#fefefe', padding: '16px 20px' },
+    desktop: { height: '120px', backgroundColor: '#fefefe', backgroundAssetId:'6b1c2e65-e46e-4764-b234-123456789abc', padding: '16px 20px' },
     tablet: { width: '50%', borderRadius: '12px' },
-    mobile: { left: '0', fontSize: '22px', opacity: '0.8' }
+    mobile: { left: '0', fontSize: '22px', opacity: '0.8', backgroundAssetId:'none' }
   });
   assert.equal(target.props.text, 'Másik tartalom');
   assert.equal(snapshot.style.width, undefined);

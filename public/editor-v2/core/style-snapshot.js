@@ -10,6 +10,10 @@ export const STYLE_SNAPSHOT_PROPERTIES = Object.freeze([
   'color',
   'backgroundColor',
   'backgroundImage',
+  'backgroundAssetId',
+  'backgroundSize',
+  'backgroundPosition',
+  'backgroundRepeat',
   'borderWidth',
   'borderStyle',
   'borderColor',
@@ -46,6 +50,7 @@ function pickProperties(source) {
   for (const key of STYLE_SNAPSHOT_PROPERTIES) {
     const value = source?.[key];
     if(key==='backgroundImage'&&!GRADIENTS.includes(value))continue;
+    if(key==='backgroundAssetId'&&!(value==='none'||typeof value==='string'&&/^[0-9a-f-]{36}$/i.test(value)))continue;
     if (typeof value === 'string' && value.length <= 256) picked[key] = value;
     else if (typeof value === 'number' && Number.isFinite(value)) picked[key] = String(value);
   }

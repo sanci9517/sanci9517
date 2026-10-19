@@ -79,6 +79,7 @@ test('typed Inspector controls validate display values before the command path',
   assert.throws(()=>normalizeInspectorValue(getProperty('typography.fontFamily'),'UnapprovedFont'));
   assert.equal(normalizeInspectorValue(getProperty('shadow.box'),'none'),'none');
   assert.throws(()=>normalizeInspectorValue(getProperty('background.image'),'javascript:1'));
+  assert.equal(normalizeInspectorValue(getProperty('background.image'),'6b1c2e65-e46e-4764-b234-123456789abc'),'6b1c2e65-e46e-4764-b234-123456789abc');
   assert.equal(normalizeInspectorValue(getProperty('content.href'),'/p/home'),'/p/home');
   assert.equal(normalizeInspectorValue(getProperty('content.href'),'mailto:team@example.org'),'mailto:team@example.org');
   assert.throws(()=>normalizeInspectorValue(getProperty('content.href'),'javascript:alert(1)'));

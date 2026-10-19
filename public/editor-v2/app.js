@@ -525,7 +525,7 @@ function renderRegistryInspector(node,mode='primary'){
         if(property.responsive)command(property.command,{nodeId:node.id,device,patch:{[key]:value}},{typingGroup});
         else command(property.command,{nodeId:node.id,patch:{[key]:value}},{typingGroup});
       };
-      section.append(propertyInput(property,label,current,apply));
+      section.append(propertyInput({...property,disabled:Boolean(node.locked)},label,current,apply));
       if(property.responsive&&hasResponsiveOverride(node.responsive,key,device)){
         const reset=document.createElement('button');reset.type='button';reset.className='property-reset';
         reset.textContent='Öröklés visszaállítása';
