@@ -905,7 +905,7 @@ function renderInspector(){
         let richTextDirty=false, savedLinkSelection=richTextBookmark?.nodeId===node.id?richTextBookmark.range:null,
           savedFormatSelection=richTextBookmark?.nodeId===node.id?richTextBookmark.formatRange:null,
           savedBlockIndex=richTextBookmark?.nodeId===node.id?richTextBookmark.blockIndex:null,composing=false,
-          savedSelectionOffsets=null;
+          savedSelectionOffsets=richTextBookmark?.nodeId===node.id?richTextBookmark.selectionOffsets??null:null;
         const typingGroup=crypto.randomUUID();let formattingSurface=editor;
         function refreshFormattingControls(range,surface){
           const model=richTextEditorToDocument(surface),format=readRichTextSelectionFormatting(model,range);
@@ -943,8 +943,18 @@ function renderInspector(){
             savedBlockIndex=index;const active=richTextEditorToDocument(surface).blocks[index];
             if(active){blockSelect.value=active.type==='heading'?`heading-${active.level||1}`:active.type;blockSelect.disabled=active.type==='table';alignmentSelect.value=active.align||'left';alignmentSelect.disabled=!['paragraph','heading','quote'].includes(active.type)}
           }
-          richTextBookmark={nodeId:node.id,range:savedLinkSelection,formatRange:savedFormatSelection,blockIndex:savedBlockIndex};
+          richTextBookmark={nodeId:node.id,range:savedLinkSelection,formatRange:savedFormatSelection,blockIndex:savedBlockIndex,selectionOffsets:savedSelectionOffsets};
           refreshFormattingControls(format,surface);
+        };
+        // Preserve a word selection when toolbar focus or DOM re-render removes the native Range.
+        // Reattach to the Inspector copy if the original canvas surface is no longer mounted.
+        const restoreFormattingSelection=()=>{
+          if(!savedSelectionOffsets)return false;
+          const target=formattingSurface?.isConnected?formattingSurface:editor;
+          if(!target.isConnected)return false;
+          target.focus({preventScroll:true});
+          if(!restoreSelectionOffsets(target,savedSelectionOffsets))return false;
+          rememberSelection();return true;
         };
         const selectionObserver=()=>{if(!editor.isConnected){document.removeEventListener('selectionchange',selectionObserver);return}if(!toolbar.contains(document.activeElement)&&!linkControls.contains(document.activeElement))rememberSelection()};
         const refreshCanvasRichText=doc=>syncTextSurfaces(node.id,doc,editor);
@@ -968,12 +978,12 @@ function renderInspector(){
           const type=blockSelect.value.startsWith('heading-')?'heading':blockSelect.value;
           const level=type==='heading'?Number(blockSelect.value.split('-')[1]):1;
           const next=setBlockType(doc,before,before+Math.max(1,(block.children??block.items?.flatMap(item=>item.children??item)??[]).reduce((n,x)=>n+x.text.length,0)),type,level);
-          if(command('richtext.content.set',{nodeId:node.id,document:next},{render:false})){richTextDirty=false;renderRichTextEditor(editor,next);refreshCanvasRichText(next);if(savedSelectionOffsets)restoreSelectionOffsets(formattingSurface,savedSelectionOffsets);rememberSelection();setStatus('Nem mentett módosítás');syncPublishControls()}
+          if(command('richtext.content.set',{nodeId:node.id,document:next},{render:false})){richTextDirty=false;renderRichTextEditor(editor,next);refreshCanvasRichText(next);restoreFormattingSelection();setStatus('Nem mentett módosítás');syncPublishControls()}
         };
         alignmentSelect.onpointerdown=rememberSelection;
         alignmentSelect.onchange=()=>{
           const doc=richTextEditorToDocument(editor),index=savedBlockIndex??getRichTextActiveBlockIndex(editor);if(index===null){formatStatus.textContent='Előbb kattints abba a bekezdésbe, amelyet igazítani szeretnél.';return}
-          try{const selection=savedFormatSelection||getRichTextFormattingSelection(editor),indices=selection?.segments?.map(segment=>segment.blockIndex)??[index],next=updateRichTextBlockAlignment(doc,indices,alignmentSelect.value);if(command('richtext.content.set',{nodeId:node.id,document:next},{render:false})){richTextDirty=false;renderRichTextEditor(editor,next);refreshCanvasRichText(next);if(savedSelectionOffsets)restoreSelectionOffsets(formattingSurface,savedSelectionOffsets);rememberSelection();setStatus('Nem mentett módosítás');syncPublishControls()}}catch(error){formatStatus.textContent=error instanceof Error?error.message:String(error)}
+          try{const selection=savedFormatSelection||getRichTextFormattingSelection(editor),indices=selection?.segments?.map(segment=>segment.blockIndex)??[index],next=updateRichTextBlockAlignment(doc,indices,alignmentSelect.value);if(command('richtext.content.set',{nodeId:node.id,document:next},{render:false})){richTextDirty=false;renderRichTextEditor(editor,next);refreshCanvasRichText(next);restoreFormattingSelection();setStatus('Nem mentett módosítás');syncPublishControls()}}catch(error){formatStatus.textContent=error instanceof Error?error.message:String(error)}
         };
         for(const [mark,label,glyph] of [['bold','Félkövér','B'],['italic','Dőlt','I'],['underline','Aláhúzott','U'],['strikethrough','Áthúzott','S'],['subscript','Alsó index','x₂'],['superscript','Felső index','x²'],['code','Kódformázás','</>']]){
           const button=document.createElement('button');button.type='button';button.textContent=glyph;button.dataset.mark=mark;button.title=label;
@@ -990,11 +1000,11 @@ function renderInspector(){
                 if(!commands[mark])throw new Error('A több blokkra kiterjedő kódformázás még nem támogatott.');
                 formattingSurface.focus();if(!hasNativeSelection&&savedSelectionOffsets)restoreSelectionOffsets(formattingSurface,savedSelectionOffsets);
                 if(!document.execCommand(commands[mark],false,null))throw new Error('A böngésző nem tudta végrehajtani a formázást.');
-                const doc=richTextEditorToDocument(formattingSurface);if(commitWithoutRender(doc)){renderRichTextEditor(editor,doc);rememberSelection();button.title=label+' alkalmazva';}return;
+                const doc=richTextEditorToDocument(formattingSurface);if(commitWithoutRender(doc)){renderRichTextEditor(editor,doc);restoreFormattingSelection();button.title=label+' alkalmazva';}return;
               }
               const doc=richTextEditorToDocument(editor),next=updateRichTextInlineMark(doc,range,mark);
               if(command('richtext.content.set',{nodeId:node.id,document:next},{render:false})){
-                richTextDirty=false;renderRichTextEditor(editor,next);refreshCanvasRichText(next);if(savedSelectionOffsets)restoreSelectionOffsets(formattingSurface,savedSelectionOffsets);else if(range.blockIndex!==undefined)restoreRichTextBlockSelection(formattingSurface,range);rememberSelection();setStatus('Nem mentett módosítás');syncPublishControls();button.title=label+' alkalmazva';
+                richTextDirty=false;renderRichTextEditor(editor,next);refreshCanvasRichText(next);if(!restoreFormattingSelection()&&range.blockIndex!==undefined){restoreRichTextBlockSelection(editor,range);rememberSelection()}setStatus('Nem mentett módosítás');syncPublishControls();button.title=label+' alkalmazva';
               }
             }catch(e){button.title=e instanceof Error?e.message:String(e)}
           };
@@ -1002,7 +1012,7 @@ function renderInspector(){
         }
         const applyInlineStyle=(key,value)=>{
           const range=savedFormatSelection||getRichTextFormattingSelection(editor);if(!range){formatStatus.textContent='Előbb jelölj ki egy szövegrészt.';return false}
-          try{const doc=richTextEditorToDocument(editor),next=updateRichTextInlineStyle(doc,range,key,value);if(command('richtext.content.set',{nodeId:node.id,document:next},{render:false})){richTextDirty=false;renderRichTextEditor(editor,next);refreshCanvasRichText(next);if(savedSelectionOffsets)restoreSelectionOffsets(formattingSurface,savedSelectionOffsets);else if(range.blockIndex!==undefined)restoreRichTextBlockSelection(formattingSurface,range);rememberSelection();setStatus('Nem mentett módosítás');syncPublishControls();return true}}catch(error){formatStatus.textContent=error instanceof Error?error.message:String(error)}return false
+          try{const doc=richTextEditorToDocument(editor),next=updateRichTextInlineStyle(doc,range,key,value);if(command('richtext.content.set',{nodeId:node.id,document:next},{render:false})){richTextDirty=false;renderRichTextEditor(editor,next);refreshCanvasRichText(next);if(!restoreFormattingSelection()&&range.blockIndex!==undefined){restoreRichTextBlockSelection(editor,range);rememberSelection()}setStatus('Nem mentett módosítás');syncPublishControls();return true}}catch(error){formatStatus.textContent=error instanceof Error?error.message:String(error)}return false
         };
         fontFamilySelect.onpointerdown=rememberSelection;fontFamilySelect.onchange=()=>applyInlineStyle('fontFamily',fontFamilySelect.value);
         fontSizeInput.onpointerdown=rememberSelection;fontSizeInput.oninput=()=>{fontSizeInput.dataset.pending='true'};fontSizeInput.onchange=()=>{const size=Number(fontSizeInput.value);delete fontSizeInput.dataset.pending;if(!Number.isInteger(size)||size<8||size>96){formatStatus.textContent='A betűméret 8 és 96 képpont között lehet.';return}applyInlineStyle('fontSize',`${size}px`)};
@@ -1032,10 +1042,10 @@ function renderInspector(){
           try{
             const doc=updateRichTextInlineLink(richTextEditorToDocument(editor),range,href);
             linkFeedback.textContent='';
-            const offsets=getSelectionOffsets(formattingSurface);
+            const offsets=getSelectionOffsets(formattingSurface)||savedSelectionOffsets;
             if(command('richtext.content.set',{nodeId:node.id,document:doc},{render:false})){
               richTextDirty=false;const temporary=document.createElement('div');renderRichTextEditor(temporary,doc);editor.replaceChildren(...temporary.childNodes);
-              refreshCanvasRichText(doc);restoreSelectionOffsets(formattingSurface,offsets);setStatus('Nem mentett módosítás');syncPublishControls();rememberSelection();
+              refreshCanvasRichText(doc);savedSelectionOffsets=offsets;restoreFormattingSelection();setStatus('Nem mentett módosítás');syncPublishControls();
             }
           }catch(e){linkFeedback.textContent=e instanceof Error?e.message:String(e)}
         };
@@ -1070,7 +1080,7 @@ function renderInspector(){
         const pagePicker=pageLinkPicker(pages,url);pagePicker.onpointerdown=rememberSelection;pagePicker.style.gridColumn='1 / -1';linkControls.append(url,pagePicker,addLink,removeLink,linkFeedback);
         const clearFormat=document.createElement('button');clearFormat.type='button';clearFormat.textContent='Alapformázás';clearFormat.setAttribute('aria-label','Kijelölt szöveg formázásának törlése');clearFormat.title='Az elem alapstílusának visszaállítása a kijelölt szavakon. A szöveg és a linkek megmaradnak.';
         clearFormat.onpointerdown=event=>{rememberSelection();event.preventDefault()};
-        clearFormat.onclick=()=>{const range=savedFormatSelection;if(!range){formatStatus.textContent='Előbb jelölj ki egy szövegrészt.';return}const doc=clearRichTextInlineFormatting(richTextEditorToDocument(editor),range);if(commitWithoutRender(doc)){renderRichTextEditor(editor,doc);if(savedSelectionOffsets)restoreSelectionOffsets(formattingSurface,savedSelectionOffsets);rememberSelection()}};
+        clearFormat.onclick=()=>{const range=savedFormatSelection;if(!range){formatStatus.textContent='Előbb jelölj ki egy szövegrészt.';return}const doc=clearRichTextInlineFormatting(richTextEditorToDocument(editor),range);if(commitWithoutRender(doc)){renderRichTextEditor(editor,doc);restoreFormattingSelection()}};
         characterTools.append(clearFormat);
         const scope=document.createElement('div');scope.className='richtext-scope-banner';scope.setAttribute('role','status');scope.textContent='Élő szöveg · kijelölt rész formázása';
         section.append(scope,editor,toolbar,linkControls);
