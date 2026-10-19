@@ -11,6 +11,7 @@ import {renderSchedulePreview} from './core/schedule-preview.js';
 import {normalizeScheduleConfig,SCHEDULE_MODES,SCHEDULE_ORDERS,SCHEDULE_STATUSES} from './core/schedule-schema.js';
 import {listPropertyGroups,listProperties,getProperty} from './core/property-registry.js';
 import {renderPropertyInput} from './ui/property-controls.js';
+import {responsiveGroupResetActions} from './ui/responsive-group-reset.js';
 import {getRichTextBlockSelection,getRichTextFormattingSelection,getRichTextActiveBlockIndex,restoreRichTextBlockSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,updateRichTextBlockAlignment} from './core/richtext-links.js';
 import {initialPageId,rememberPageId,requestedPageId} from './core/page-url.js';
 import {getElementCapability} from './core/capability-matrix.js';
@@ -533,6 +534,24 @@ function renderRegistryInspector(node,mode='primary'){
         reset.onclick=()=>command('responsive.set',{nodeId:node.id,device,patch:{[key]:undefined}});
         section.append(reset);
       }
+    }
+    const groupResets=responsiveGroupResetActions(node,properties,device);
+    if(groupResets.length){
+      const resetAll=document.createElement('button');
+      resetAll.type='button';
+      resetAll.className='group-responsive-reset';
+      resetAll.textContent='Saját értékek visszaállítása ('+groupResets.length+')';
+      resetAll.title='Csak a(z) '+device+' nézet aktuális csoportjának saját értékeit törli. Az örökölt és másik nézet értékei változatlanok. A művelet egy lépésben visszavonható.';
+      resetAll.setAttribute('aria-label',group.label+': '+resetAll.textContent);
+      resetAll.disabled=Boolean(node.locked);
+      resetAll.onclick=()=>{
+        if(node.locked||flushRichTextDraft?.()===false)return;
+        try{
+          executeBatch(state,groupResets,{label:'Reszponzív '+group.label+' visszaállítása',atomic:true});
+          render();
+        }catch(error){showError(error)}
+      };
+      section.append(resetAll);
     }
     root.append(section);
   }
