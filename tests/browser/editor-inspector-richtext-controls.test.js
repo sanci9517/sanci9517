@@ -283,3 +283,50 @@ function getSupportedUnitsForProperty(id){
   };
   return units[id]??[];
 }
+
+
+test('shared Inspector color controls synchronize RGB, short HEX, alpha, transparent and presets',async t=>{
+  const http=serve();await new Promise(resolve=>http.listen(0,'127.0.0.1',resolve));
+  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
+  t.after(async()=>{await browser.close();await new Promise(resolve=>http.close(resolve));});
+  for(const width of [390,1366]){
+    const page=await browser.newPage({viewport:{width,height:850}});
+    await page.goto('http://127.0.0.1:'+http.address().port+'/editor-v2/index.html');
+    const values=await page.evaluate(async()=>{
+      const {renderPropertyInput}=await import('/editor-v2/ui/property-controls.js');
+      const {getProperty}=await import('/editor-v2/core/property-registry.js');
+      const committed=[];
+      const root=renderPropertyInput(getProperty('background.color'),'Háttérszín','#abc',value=>{committed.push(value);return true});
+      document.body.append(root);
+      const picker=root.querySelector('input[type=color]'),hex=root.querySelector('input[type=text]');
+      const start=[picker.value,hex.value];
+      picker.value='#123456';picker.dispatchEvent(new Event('change',{bubbles:true}));
+      const fromPicker=[picker.value,hex.value];
+      hex.value='#fed';hex.dispatchEvent(new Event('change',{bubbles:true}));
+      const fromShortHex=[picker.value,hex.value];
+      hex.value='not-a-color';hex.dispatchEvent(new Event('change',{bubbles:true}));
+      const invalid=[picker.value,hex.value,root.querySelector('.property-validation').textContent,committed.length];
+      hex.value='#11223344';hex.dispatchEvent(new Event('change',{bubbles:true}));
+      const alpha=[picker.value,hex.value,root.querySelector('.typed-color-status').textContent,picker.classList.contains('color-preview-limited')];
+      hex.value='transparent';hex.dispatchEvent(new Event('change',{bubbles:true}));
+      const transparent=[hex.value,root.querySelector('.typed-color-status').textContent,picker.classList.contains('color-preview-limited')];
+      const preset=root.querySelector('.property-presets .property-preset-color');
+      if(preset)preset.click();
+      const fromPreset=preset?[picker.value,hex.value,root.querySelector('.property-validation').textContent]:null;
+      return {start,fromPicker,fromShortHex,invalid,alpha,transparent,fromPreset,presetValue:preset?.dataset.value,committed};
+    });
+    assert.deepEqual(values.start,['#aabbcc','#abc']);
+    assert.deepEqual(values.fromPicker,['#123456','#123456']);
+    assert.deepEqual(values.fromShortHex,['#ffeedd','#fed']);
+    assert.equal(values.invalid[0],'#ffeedd');
+    assert.equal(values.invalid[1],'not-a-color');
+    assert.match(values.invalid[2],/HEX/);
+    assert.equal(values.invalid[3],2,'invalid color must not reach Page Model command');
+    assert.deepEqual(values.alpha.slice(0,2),['#112233','#11223344']);
+    assert.ok(values.alpha[2].includes('RGB')&&values.alpha[3]);
+    assert.ok(values.transparent[1].includes('Átlátszó')&&values.transparent[2]);
+    assert.equal(values.fromPreset?.[1],values.presetValue,'a preset must update the same HEX and swatch state');
+    assert.equal(values.fromPreset?.[2],'','valid preset must clear prior errors');
+    await page.close();
+  }
+});
