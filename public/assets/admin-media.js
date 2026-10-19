@@ -64,7 +64,32 @@ async function refresh(query = "") {
       const saveAlt = document.createElement("button"); saveAlt.type = "button"; saveAlt.textContent = "Leírás mentése";
       const feedback = document.createElement("small"); feedback.setAttribute("role", "status");
       saveAlt.onclick = async () => { saveAlt.disabled = true; try { await api("/api/admin/media?id=" + encodeURIComponent(asset.id), { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ altText: alt.value }) }); feedback.textContent = "Mentve"; feedback.dataset.kind = "ok"; } catch (error) { feedback.textContent = error.message; feedback.dataset.kind = "error"; } finally { saveAlt.disabled = false; } };
-      details.append(name,size,alt,saveAlt,feedback);card.append(link,details);return card;
+      const usageButton = document.createElement("button"); usageButton.type = "button"; usageButton.textContent = "Használati helyek"; usageButton.setAttribute("aria-expanded", "false");
+      const usage = document.createElement("div"); usage.className = "media-usage"; usage.hidden = true; usage.setAttribute("role", "status");
+      usageButton.onclick = async () => {
+        if (!usage.hidden) { usage.hidden = true; usageButton.setAttribute("aria-expanded", "false"); return; }
+        usage.hidden = false; usageButton.setAttribute("aria-expanded", "true"); usage.textContent = "Használati helyek betöltése…"; usageButton.disabled = true;
+        try {
+          const data = await api("/api/admin/media?usage=" + encodeURIComponent(asset.id));
+          usage.replaceChildren();
+          if (!data.complete) { const warning = document.createElement("p"); warning.textContent = "A vizsgálat nem teljes. Az asset használatban lehet; eltávolítás előtt további ellenőrzés szükséges."; usage.append(warning); }
+          if (!data.references.length) { const empty = document.createElement("p"); empty.textContent = data.complete ? "Nincs hivatkozás az oldalakban vagy korábbi verziókban." : "Nem található biztos hivatkozás."; usage.append(empty); }
+          else {
+            const list = document.createElement("ul");
+            for (const ref of data.references) {
+              const item = document.createElement("li");
+              const source = {draft:"Piszkozat",published:"Publikált",revision:"Korábbi verzió"}[ref.source] || ref.source;
+              const label = `${source}${ref.version ? ` v${ref.version}` : ""}${ref.archived ? " · archivált" : ""}: ${ref.pageTitle || ref.slug || ref.pageId} / ${ref.nodeName} / ${ref.path}`;
+              if (ref.archived) item.textContent = label;
+              else { const target = document.createElement("a"); target.href = "/editor-v2/index.html?pageId=" + encodeURIComponent(ref.pageId); target.textContent = label; item.append(target); }
+              list.append(item);
+            }
+            usage.append(list);
+          }
+        } catch (error) { usage.textContent = error.message || "A használati helyek nem tölthetők be."; }
+        finally { usageButton.disabled = false; }
+      };
+      details.append(name,size,alt,saveAlt,feedback,usageButton,usage);card.append(link,details);return card;
     });
     gallery.replaceChildren(...tiles);
   } catch (e) {

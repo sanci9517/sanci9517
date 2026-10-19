@@ -6,6 +6,8 @@ import type { Env } from "../../types/env";
 
 const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
 const SITE_MEDIA_LIMIT_BYTES = 5 * 1000 * 1000 * 1000;
+const MAX_USAGE_SNAPSHOTS = 100;
+const MAX_USAGE_REFERENCES = 100;
 
 type MediaRow = {
   id: string; site_id: string; object_key: string; original_name: string;
@@ -59,6 +61,74 @@ function dto(row: MediaRow) {
 
 function escapeLike(value: string): string { return value.replace(/[\^%_]/g, "^$&"); }
 
+function assetPaths(value: unknown, assetId: string, path = "", depth = 0): string[] {
+  if (depth > 16 || !value || typeof value !== "object") return [];
+  if (Array.isArray(value)) return value.flatMap((item, index) => assetPaths(item, assetId, `${path}[${index}]`, depth + 1));
+  const record = value as Record<string, unknown>;
+  const paths: string[] = [];
+  for (const [key, item] of Object.entries(record)) {
+    const next = path ? `${path}.${key}` : key;
+    if ((key === "assetId" || key === "backgroundAssetId") && item === assetId) paths.push(next);
+    else if (item && typeof item === "object") paths.push(...assetPaths(item, assetId, next, depth + 1));
+  }
+  return paths;
+}
+
+function documentAssetReferences(json: string, pageId: string, assetId: string, publicOnly = false): { nodeId: string; nodeName: string; path: string }[] {
+  const model = JSON.parse(json) as { pages?: Record<string, { rootId?: string; nodes?: Record<string, { name?: string; type?: string; props?: unknown; style?: unknown; responsive?: unknown; visibility?: unknown; children?: string[] }> }> };
+  const page = model?.pages?.[pageId];
+  const nodes = page?.nodes;
+  if (!nodes || typeof nodes !== "object") return [];
+  const reachable = new Set<string>();
+  if (publicOnly && page?.rootId && nodes[page.rootId]) {
+    const visit = (id: string, depth = 0) => {
+      if (depth > 32 || reachable.has(id) || !nodes[id]) return;
+      reachable.add(id);
+      for (const child of Array.isArray(nodes[id].children) ? nodes[id].children : []) if (typeof child === "string") visit(child, depth + 1);
+    };
+    visit(page.rootId);
+  }
+  return Object.entries(nodes).flatMap(([nodeId, node]) => {
+    if (publicOnly && reachable.size && !reachable.has(nodeId)) return [];
+    if (!node || typeof node !== "object") return [];
+    const visibility = node.visibility;
+    if (publicOnly && (visibility === false || visibility && typeof visibility === "object" && ["desktop", "tablet", "mobile"].every(device => (visibility as Record<string, unknown>)[device] === false))) return [];
+    const nodeName = typeof node.name === "string" && node.name.trim() ? node.name : node.type || nodeId;
+    return ["props", "style", "responsive"].flatMap(field =>
+      assetPaths(node[field as keyof typeof node], assetId, field)
+        .filter(path => !publicOnly || path === "props.assetId" && node.type === "image" || /^props\.items\[\d+\]\.assetId$/.test(path) && ["gallery", "carousel"].includes(node.type || "") || /^(?:style|responsive\.(?:desktop|tablet|mobile))\.backgroundAssetId$/.test(path))
+        .map(path => ({ nodeId, nodeName, path })));
+  });
+}
+
+async function mediaUsage(env: Env, siteId: string, assetId: string): Promise<Response> {
+  const asset = await env.DB.prepare("SELECT id FROM media WHERE id=? AND site_id=? LIMIT 1").bind(assetId, siteId).first<{ id: string }>();
+  if (!asset) return error("MEDIA_NOT_FOUND", 404);
+  const pages = await env.DB.prepare(
+    `SELECT id,title,slug,archived_at,content_json,published_content_json,is_published FROM pages WHERE site_id=? AND (instr(content_json,?)>0 OR instr(published_content_json,?)>0) ORDER BY id LIMIT ${MAX_USAGE_SNAPSHOTS + 1}`
+  ).bind(siteId, assetId, assetId).all<{ id: string; title: string; slug: string; archived_at: string | null; content_json: string; published_content_json: string | null; is_published: number }>();
+  const revisions = await env.DB.prepare(
+    `SELECT p.id AS page_id,p.title,p.slug,p.archived_at,er.version,er.document_json FROM editor_revisions er JOIN pages p ON p.id=er.page_id WHERE p.site_id=? AND instr(er.document_json,?)>0 ORDER BY er.version DESC,er.id DESC LIMIT ${MAX_USAGE_SNAPSHOTS + 1}`
+  ).bind(siteId, assetId).all<{ page_id: string; title: string; slug: string; archived_at: string | null; version: number; document_json: string }>();
+  const references: { pageId: string; pageTitle: string; slug: string; archived: boolean; source: "draft" | "published" | "revision"; version?: number; nodeId: string; nodeName: string; path: string }[] = [];
+  let complete = pages.results.length <= MAX_USAGE_SNAPSHOTS && revisions.results.length <= MAX_USAGE_SNAPSHOTS;
+  const add = (json: string | null, page: { id: string; title: string; slug: string; archived_at: string | null }, source: "draft" | "published" | "revision", version?: number) => {
+    if (!json || !json.includes(assetId)) return;
+    try {
+      for (const ref of documentAssetReferences(json, page.id, assetId)) {
+        if (references.length >= MAX_USAGE_REFERENCES) { complete = false; return; }
+        references.push({ pageId: page.id, pageTitle: page.title, slug: page.slug, archived: Boolean(page.archived_at), source, ...(version === undefined ? {} : { version }), ...ref });
+      }
+    } catch { complete = false; }
+  };
+  for (const page of pages.results.slice(0, MAX_USAGE_SNAPSHOTS)) {
+    add(page.content_json, page, "draft");
+    if (page.is_published) add(page.published_content_json, page, "published");
+  }
+  for (const revision of revisions.results.slice(0, MAX_USAGE_SNAPSHOTS)) add(revision.document_json, { ...revision, id: revision.page_id }, "revision", revision.version);
+  return ok({ assetId, references, complete });
+}
+
 async function grantEditor(request: Request, env: Env, siteId: string): Promise<Response | null> {
   if (env.SITE_MEMBERSHIP_ENFORCEMENT === "enabled") {
     const grant = await requireSiteGrant(request, env, siteId, "editor");
@@ -83,6 +153,11 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
   const url = new URL(request.url);
   if (request.method === "GET") {
     const id = url.searchParams.get("id");
+    const usageId = url.searchParams.get("usage");
+    if (usageId !== null) {
+      if (id !== null || !/^[0-9a-f-]{36}$/.test(usageId)) return error("MEDIA_NOT_FOUND", 404);
+      return mediaUsage(env, siteId, usageId);
+    }
     if (!id) {
       const query = (url.searchParams.get("q") || "").trim().slice(0, 100);
       const mime = url.searchParams.get("mime") || "";
@@ -170,14 +245,6 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
   } }, { status: 201, headers: { "Cache-Control": "no-store" } });
 }
 
-function containsAssetReference(value: unknown, assetId: string, depth = 0): boolean {
-  if (depth > 32 || value === null || typeof value !== "object") return false;
-  if (Array.isArray(value)) return value.some(item => containsAssetReference(item, assetId, depth + 1));
-  const record = value as Record<string, unknown>;
-  if (record.assetId === assetId || record.backgroundAssetId === assetId) return true;
-  return Object.values(record).some(item => containsAssetReference(item, assetId, depth + 1));
-}
-
 /** Public delivery is granted only while an active published page in this site references the asset. */
 export async function publishedMediaRoute(request: Request, env: Env, siteId: string, assetId: string): Promise<Response> {
   if (request.method !== "GET" && request.method !== "HEAD") return error("METHOD_NOT_ALLOWED", 405);
@@ -190,7 +257,7 @@ export async function publishedMediaRoute(request: Request, env: Env, siteId: st
     "SELECT id,published_content_json FROM pages WHERE site_id=? AND archived_at IS NULL AND is_published=1 AND published_content_json IS NOT NULL AND instr(published_content_json,?)>0"
   ).bind(siteId, assetId).all<{ id: string; published_content_json: string }>();
   const allowed = pages.results.some(page => {
-    try { return containsAssetReference(JSON.parse(page.published_content_json)?.pages?.[page.id]?.nodes, assetId); } catch { return false; }
+    try { return documentAssetReferences(page.published_content_json, page.id, assetId, true).length > 0; } catch { return false; }
   });
   if (!allowed) return error("MEDIA_NOT_FOUND", 404);
   const object = await env.MEDIA.get(row.object_key);
