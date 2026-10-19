@@ -175,6 +175,19 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await paddingTopEditor.fill('-7');
   await paddingTopEditor.dispatchEvent('change');
   assert.match(await field('spacing.padding').locator('.property-validation').textContent(),/negatív|belső|padding/i);
+  // The focused field may be lost when Save/Publish is triggered from a
+  // toolbar. Invalid input must never commit or publish the older model.
+  const writesBeforeInvalid=posts.length;
+  await editor.keyboard.press('Control+s');
+  assert.equal(posts.length,writesBeforeInvalid,'Ctrl+S must not send a revision with an invalid Inspector field');
+  assert.match(await editor.locator('#saveStatus').textContent(),/Javítsd a jelzett mezőt/);
+  await editor.locator('#mobilePublish').evaluate(button=>{
+    const wasDisabled=button.disabled;
+    button.disabled=false;
+    button.click();
+    button.disabled=wasDisabled;
+  });
+  assert.equal(posts.length,writesBeforeInvalid,'Publish must also reject an invalid field even if action is invoked');
   await editor.locator('.canvas-device-btn[data-device="mobile"]').evaluate(el=>el.click());
   assert.equal(await editor.locator('.canvas-device-btn[data-device="desktop"]').getAttribute('class').then(x=>x.includes('active')),true,'invalid Inspector input must keep desktop editor state');
   assert.equal(await editor.locator('.canvas-device-btn[data-device="mobile"]').getAttribute('class').then(x=>x.includes('active')),false,'invalid Inspector input must not activate mobile');
