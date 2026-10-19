@@ -140,6 +140,34 @@ test("a stale object or inaccessible cross-site match must never become duplicat
   assert.equal(f.files.size,0);
 });
 
+
+test("a D1 acknowledgement lost after commit must not delete the successfully stored image",async t=>{
+  const f=await fixture(t);
+  const originalPrepare=f.env.DB.prepare;
+  let injected=false;
+  f.env.DB.prepare=sql=>{
+    const statement=originalPrepare(sql);
+    if(sql.startsWith("INSERT INTO media(")) {
+      const oldRun=statement.run;
+      statement.run=async()=>{
+        const result=await oldRun();
+        if(!injected){injected=true;throw new Error("lost acknowledgement after D1 commit");}
+        return result;
+      };
+    }
+    return statement;
+  };
+  const response=await f.call("POST","editor",png,{name:"committed.png"});
+  assert.equal(response.status,201);
+  const asset=(await response.json()).data;
+  assert.equal(asset.duplicate,false);
+  assert.equal(f.files.size,1,"the already committed R2 object must not be deleted");
+  assert.equal(f.db.prepare("SELECT COUNT(*) AS n FROM media").get().n,1);
+  const read=await f.call("GET","editor",null,{id:asset.id});
+  assert.equal(read.status,200);
+  assert.deepEqual(new Uint8Array(await read.arrayBuffer()),png);
+});
+
 test("site-scoped search, safe alt metadata and published-only delivery",async t=>{
   const f=await fixture(t);
   const uploaded=await f.call("POST","editor",png,{name:"creator portrait.png"});
