@@ -1188,7 +1188,7 @@ test('Social Links: typed platforms, safe URLs, empty draft, accessible output, 
  assert.equal(socialLinkUrl('#contact','website'),'#contact');
  assert.equal(socialLinkUrl('mailto:hello@example.com','email'),'mailto:hello@example.com');
  for(const malicious of ['javascript:alert(1)','data:text/html,hello','http://unsafe.example','//evil.example','https://user:secret@example.com','https://site.example/\nscript','https://site.example\\@evil.com']){
-  assert.equal(socialLinkUrl(malicious,'website'),'Unsafe social link accepted: '+malicious);
+  assert.equal(socialLinkUrl(malicious,'website'),'','Unsafe social link accepted: '+malicious);
  }
  assert.equal(socialLinkUrl('/internal','twitch'),'','platform-specific links require HTTPS');
  const state=createEditorState(),root=activePage(state).rootId,pageId=state.document.activePageId;
