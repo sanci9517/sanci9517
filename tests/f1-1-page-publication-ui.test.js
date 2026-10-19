@@ -6,7 +6,7 @@ const app=readFileSync(new URL('../public/editor-v2/app.js',import.meta.url),'ut
 function action(start,end,context){runInNewContext(app.slice(app.indexOf(start),app.indexOf(end))+';this.act='+start.match(/function (\w+)/)[1],context);return context.act}
 function editor(){
  const statuses=[],alerts=[];const meta={id:'p',slug:'p',isPublished:false,revision:1};const state={document:{revision:1,pages:{p:{id:'p'}}},persistence:{dirty:true,saving:false}};
- const context={state,pages:[meta],page:()=>({id:'p'}),flushRichTextDraft:null,commitActiveInspectorControl:()=>true,validatePageForPublication:()=>{},setStatus:m=>statuses.push(m),alert:m=>alerts.push(m),structuredClone,markSaved:(s,v)=>{s.persistence.dirty=false;s.persistence.saving=false;s.persistence.lastSavedRevision=v},render:()=>{},renderPageList:()=>{},$:()=>null,showRevisionConflict:()=>{},api:async()=>({data:{pageId:'p',version:2,revisionId:'r2'}})};
+ const context={state,pages:[meta],page:()=>({id:'p'}),flushRichTextDraft:null,commitActiveInspectorControl:()=>true,inspectorValidationError:()=>null,validatePageForPublication:()=>{},setStatus:m=>statuses.push(m),alert:m=>alerts.push(m),structuredClone,markSaved:(s,v)=>{s.persistence.dirty=false;s.persistence.saving=false;s.persistence.lastSavedRevision=v},render:()=>{},renderPageList:()=>{},$:()=>null,showRevisionConflict:()=>{},api:async()=>({data:{pageId:'p',version:2,revisionId:'r2'}})};
  return {context,statuses,alerts};
 }
 test('successful publish immediately marks a previously draft page LIVE; subsequent save keeps LIVE with pending draft',async()=>{
@@ -14,6 +14,21 @@ test('successful publish immediately marks a previously draft page LIVE; subsequ
  await save(true);assert.equal(f.context.pages[0].isPublished,true);assert.equal(f.context.pages[0].hasUnpublishedChanges,false);
  assert.equal(f.context.pages[0].publishedSlug,'p');
  f.context.state.document.pages.p.title='New';f.context.state.persistence.dirty=true;await save(false);assert.equal(f.context.pages[0].isPublished,true);assert.equal(f.context.pages[0].hasUnpublishedChanges,true);
+});
+test('save and publish reject a previously blurred invalid property without any API request',async()=>{
+ const f=editor();let requests=0;
+ f.context.inspectorValidationError=()=>({textContent:'Hibás CSS-érték',getClientRects:()=>[]});
+ f.context.api=async()=>{requests++;return {data:{pageId:'p',version:2,revisionId:'r2'}}};
+ const save=action('async function save(publish=false)','async function unpublishPage()',f.context);
+ await save(false);await save(true);
+ assert.equal(requests,0,'invalid Inspector value blocks draft and publish HTTP requests');
+ assert.equal(f.context.pages[0].isPublished,false);
+ assert.equal(f.context.state.persistence.dirty,true);
+ assert.match(f.statuses.at(-1),/Javítsd/);
+ f.context.inspectorValidationError=()=>null;
+ await save(false);
+ assert.equal(requests,1,'repaired property allows draft save again');
+ assert.equal(f.context.pages[0].isPublished,false,'draft save never publishes');
 });
 test('failed publication preserves list publication state and local dirty document',async()=>{
  const f=editor();f.context.api=async()=>{throw Error('offline')};const original=JSON.stringify(f.context.state.document);
