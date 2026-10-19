@@ -163,6 +163,23 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   assert.deepEqual(await publicCss(),await css());
   assert.deepEqual(await publicPage.locator('.visual-card > .visual-text').first().evaluate(el=>{const style=getComputedStyle(el);return {paddingTop:style.paddingTop,paddingRight:style.paddingRight,backgroundColor:style.backgroundColor,fontSize:style.fontSize}}),await presetStyle());
   assert.deepEqual(await publicPage.locator('.visual-card:nth-child(2) > .visual-text').evaluate(el=>{const style=getComputedStyle(el);return {basis:style.flexBasis,maxWidth:style.maxWidth}}),await flexCss());
+  // An unsatisfied publication-only requirement may remain visible after a
+  // refused Publish, but it must not prevent a draft-only save.
+  const beforePublicationNote=posts.length;
+  const publicBeforeNote=JSON.stringify(published);
+  await editor.locator('#inspectorBody').evaluate(host=>{
+    const note=document.createElement('p');
+    note.className='property-validation';
+    note.dataset.validationKind='publication';
+    note.setAttribute('role','alert');
+    note.textContent='A publikálás előtt hiányzó kötelező tartalom.';
+    host.prepend(note);
+  });
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.equal(posts.length,beforePublicationNote+1,'draft save may proceed despite publication-only warning');
+  assert.equal(posts.at(-1).publish,false,'saving after a failed Publish never implicitly republishes');
+  assert.equal(JSON.stringify(published),publicBeforeNote,'draft save must not alter live content');
   // A real mobile viewport edits only its own override; the published page stays unchanged.
   await editor.setViewportSize({width:390,height:800});
   if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))
