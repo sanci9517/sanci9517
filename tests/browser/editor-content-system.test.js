@@ -90,18 +90,34 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await editor.locator('.editor-media-picker > button').click();
   await editor.locator('.editor-media-choice').click();
   await editor.waitForFunction(id=>document.querySelector(`[data-node-id="${id}"] img`)?.getAttribute('src')==='/api/admin/media?id=6b1c2e65-e46e-4764-b234-123456789abc',ids.image);
+  assert.equal(await node(editor,'image').locator('img').getAttribute('alt'),'Új képleírás','choosing an asset preserves a manually written alt');
+  await editor.getByLabel('Kép szöveges leírása',{exact:true}).fill('');
+  await editor.locator('[data-content-key="assetId"]').getByRole('button',{name:'Médiatár megnyitása'}).click();
+  await editor.locator('[data-content-key="assetId"] .editor-media-choice').click();
+  assert.equal(await node(editor,'image').locator('img').getAttribute('alt'),'Márkajel','empty image alt adopts the Media library description');
   assert.equal(await editor.locator('.content-range-value').first().textContent(),'18%');
   await editor.getByLabel('Külső média címe',{exact:true}).fill('javascript:alert(1)');assert.equal(await editor.locator('[aria-invalid=true]').count(),1);
   await editor.getByLabel('Külső média címe',{exact:true}).fill('/fixture.svg');
   await select('gallery');await setCrop('Kivágás vízszintesen',24);await setCrop('Kivágás függőlegesen',68);
   assert.equal(await node(editor,'gallery').locator('img').first().evaluate(el=>getComputedStyle(el).objectPosition),'24% 68%','repeater image crop edits the selected gallery item');
+  const galleryItem=editor.locator('.content-repeater fieldset').first();
+  await galleryItem.getByLabel('Képleírás',{exact:true}).fill('');
+  await galleryItem.getByRole('button',{name:'Médiatár megnyitása'}).click();await galleryItem.locator('.editor-media-choice').click();
+  assert.equal(await node(editor,'gallery').locator('img').first().getAttribute('alt'),'Márkajel','gallery item inherits metadata only when its own alt is empty');
+  assert.equal(await node(editor,'gallery').locator('.creator-image-zoom').first().getAttribute('data-lightbox-src'),'/api/admin/media?id='+assetId,'canvas zoom uses the selected private asset');
+  await select('carousel');const carouselItem=editor.locator('.content-repeater fieldset').first();
+  await carouselItem.getByRole('button',{name:'Médiatár megnyitása'}).click();await carouselItem.locator('.editor-media-choice').click();
+  assert.equal(await node(editor,'carousel').locator('.creator-image-zoom').first().getAttribute('data-lightbox-src'),'/api/admin/media?id='+assetId);
+  assert.equal(await node(editor,'carousel').locator('img').first().getAttribute('alt'),'Első dia','a manually written carousel alt is preserved');
   await select('list');const texts=editor.locator('.content-repeater textarea');await texts.first().fill('Átírt listaelem');
   await editor.getByRole('button',{name:'1. elem: Le',exact:true}).click();assert.match(await node(editor,'list').locator('ol').textContent(),/^Második elem/);
   assert.equal(posts.length,1);
   await editor.locator('#save').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));assert.equal(posts.at(-1).publish,false);
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.image].props.assetId,assetId,'Save persists the site asset reference but never publishes it');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.gallery].props.items[0].assetId,assetId);
   assert.equal(posts.at(-1).document.pages[pageId].nodes[ids.button].responsive.desktop.backgroundAssetId,assetId,'Save stores the background asset ID');
   await live.goto(base+'/p/test');assert.equal(await live.locator('h1[data-node-id]').textContent(),'Alkotói főcím');
+  assert.equal(await node(live,'gallery').locator('.creator-image-zoom').first().getAttribute('data-lightbox-src'),'/fixture.svg','Save does not publish the new gallery image');
   assert.equal(await node(live,'button').evaluate(el=>getComputedStyle(el).backgroundImage),'none','draft background stays private before Publish');
   assert.equal(await node(live,'image').locator('img').evaluate(el=>getComputedStyle(el).objectPosition),'50% 50%','Save does not publish image crop');
   await editor.reload();await select('heading');assert.equal(await editor.getByLabel('Címsor szemantikai szintje',{exact:true}).inputValue(),'3');
@@ -117,7 +133,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await live.keyboard.press('Tab');await node(live,'button').focus();await live.waitForFunction(id=>getComputedStyle(document.querySelector(`[data-node-id="${id}"]`)).backgroundColor==='rgb(37, 99, 235)',ids.button);
   assert.equal(await node(live,'button').evaluate(el=>getComputedStyle(el).rotate),'3deg');
   await live.emulateMedia({reducedMotion:'reduce'});assert.equal(await node(live,'button').evaluate(el=>getComputedStyle(el).transitionDuration),'0s');
-  assert.equal(await node(live,'image').locator('img').getAttribute('alt'),'Új képleírás');assert.equal(await node(live,'image').locator('img').evaluate(el=>getComputedStyle(el).objectPosition),'18% 82%');assert.equal(await node(live,'image').locator('figcaption').textContent(),'Képaláírás');
+  assert.equal(await node(live,'image').locator('img').getAttribute('alt'),'Márkajel');assert.equal(await node(live,'image').locator('img').evaluate(el=>getComputedStyle(el).objectPosition),'18% 82%');assert.equal(await node(live,'image').locator('figcaption').textContent(),'Képaláírás');
   assert.equal(await node(live,'gallery').locator('img').first().evaluate(el=>getComputedStyle(el).objectPosition),'24% 68%','published gallery item retains its independent crop');
   assert.equal(await node(live,'table').locator('th[scope=col]').count(),2);assert.equal(await node(live,'video').locator('video[controls]').count(),1);assert.equal(await node(live,'audio').locator('audio[controls]').count(),1);
   for(const type of ['video','audio']){const playback=await node(live,type).locator(type).evaluate(async media=>{if(media.readyState<1)await new Promise((resolve,reject)=>{media.addEventListener('loadedmetadata',resolve,{once:true});media.addEventListener('error',reject,{once:true})});media.muted=true;await media.play();const result={playing:!media.paused,duration:media.duration,readyState:media.readyState};media.pause();return result});assert.equal(playback.playing,true);assert.ok(playback.duration>0);assert.ok(playback.readyState>=2)}
@@ -127,7 +143,9 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await node(live,'accordion').locator('summary').click();assert.equal(await node(live,'accordion').locator('details').evaluate(el=>el.open),true);
   await node(live,'dropdown').locator('summary').click();assert.equal(await node(live,'dropdown').locator('details').evaluate(el=>el.open),true);
   await node(live,'carousel').getByRole('button',{name:'Következő kép',exact:true}).click();await live.waitForFunction(id=>document.querySelector(`[data-node-id="${id}"] .creator-carousel`).scrollLeft>0,ids.carousel);
-  await node(live,'gallery').locator('.creator-image-zoom').first().click();await live.getByRole('dialog',{name:'Kép előnézete'}).waitFor();await live.keyboard.press('Escape');await live.locator('dialog.creator-lightbox').waitFor({state:'detached'});assert.equal(await live.getByRole('dialog').count(),0);assert.equal(await node(live,'gallery').locator('.creator-image-zoom').first().evaluate(el=>document.activeElement===el),true);
+  assert.equal(await node(live,'gallery').locator('.creator-image-zoom').first().getAttribute('data-lightbox-src'),'/media/'+assetId);
+  assert.equal(await node(live,'carousel').locator('.creator-image-zoom').first().getAttribute('data-lightbox-src'),'/media/'+assetId);
+  await node(live,'gallery').locator('.creator-image-zoom').first().click();await live.getByRole('dialog',{name:'Kép előnézete'}).waitFor();assert.equal(await live.locator('dialog.creator-lightbox img').getAttribute('src'),'/media/'+assetId,'lightbox renders the same published asset as the thumbnail');await live.keyboard.press('Escape');await live.locator('dialog.creator-lightbox').waitFor({state:'detached'});assert.equal(await live.getByRole('dialog').count(),0);assert.equal(await node(live,'gallery').locator('.creator-image-zoom').first().evaluate(el=>document.activeElement===el),true);
   await node(live,'tooltip').locator('button').focus();assert.equal(await node(live,'tooltip').getByRole('tooltip').isVisible(),true);
   for(const width of [1366,768,390]){
     await live.setViewportSize({width,height:900});await live.reload();await node(live,'gallery').waitFor();
