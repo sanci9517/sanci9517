@@ -1,5 +1,6 @@
 /* Sanci9517 Visual Editor v2 — structured Rich Text DOM bridge. */
 import { validatedLinkHref } from './richtext-links.js';
+import { textOffsetWithin } from './richtext-selection-offset.js';
 import { RICH_TEXT_FONT_FAMILIES } from './schema.js';
 
 export function plainTextToRichText(text=''){
@@ -33,8 +34,9 @@ export function getSelectionOffsets(editor){
   const selection=window.getSelection();
   if(!selection||selection.rangeCount===0||!editor.contains(selection.anchorNode)||!editor.contains(selection.focusNode))return null;
   const range=selection.getRangeAt(0);
-  const point=(container,offset)=>{const r=document.createRange();r.selectNodeContents(editor);r.setEnd(container,offset);return r.toString().length};
-  const a=point(range.startContainer,range.startOffset),b=point(range.endContainer,range.endOffset);
+  const a=textOffsetWithin(editor,range.startContainer,range.startOffset);
+  const b=textOffsetWithin(editor,range.endContainer,range.endOffset);
+  if(a===null||b===null)return null;
   return {from:Math.min(a,b),to:Math.max(a,b),collapsed:a===b};
 }
 
