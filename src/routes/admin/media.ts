@@ -258,7 +258,25 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
       const rows = await env.DB.prepare(
         `SELECT id,site_id,object_key,original_name,mime_type,size_bytes,alt_text,created_at,archived_at FROM media WHERE ${clauses.join(" AND ")} ORDER BY created_at DESC,id DESC LIMIT ${limit}`
       ).bind(...binds).all<MediaRow>();
-      return ok({ assets: rows.results.map(dto), maxUploadBytes: MAX_IMAGE_BYTES, siteQuotaBytes: SITE_MEDIA_LIMIT_BYTES });
+      // All stored objects count against the application quota, including archived
+      // assets. This is D1 metadata usage, not provider-side R2 billing.
+      const quota = await env.DB.prepare(
+        "SELECT COALESCE(SUM(size_bytes),0) AS used, " +
+        "COALESCE(SUM(CASE WHEN archived_at IS NOT NULL THEN size_bytes ELSE 0 END),0) AS archived " +
+        "FROM media WHERE site_id=?"
+      ).bind(siteId).first<{ used: number; archived: number }>();
+      const usedBytes = Number(quota?.used ?? 0);
+      const archivedBytes = Number(quota?.archived ?? 0);
+      if (!Number.isSafeInteger(usedBytes) || usedBytes < 0 ||
+          !Number.isSafeInteger(archivedBytes) || archivedBytes < 0 ||
+          archivedBytes > usedBytes) return error("MEDIA_QUOTA_UNAVAILABLE", 503);
+      return ok({
+        assets: rows.results.map(dto), maxUploadBytes: MAX_IMAGE_BYTES,
+        siteQuotaBytes: SITE_MEDIA_LIMIT_BYTES,
+        quota: { usedBytes, archivedBytes,
+          activeBytes: usedBytes - archivedBytes,
+          remainingBytes: Math.max(0, SITE_MEDIA_LIMIT_BYTES - usedBytes) }
+      });
     }
     if (!/^[0-9a-f-]{36}$/.test(id)) return error("MEDIA_NOT_FOUND", 404);
     const row = await env.DB.prepare(

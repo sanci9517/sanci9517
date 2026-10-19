@@ -83,6 +83,24 @@ test("authenticated image upload produces private asset and site-scoped listing"
 });
 
 
+test("site quota telemetry includes archived assets, excludes other sites and is filter-independent",async t=>{
+  const f=await fixture(t);
+  f.db.prepare("INSERT INTO site_memberships VALUES('other','editor','editor','active')").run();
+  const initial=(await (await f.call("GET")).json()).data;
+  assert.deepEqual(initial.quota,{usedBytes:0,archivedBytes:0,activeBytes:0,remainingBytes:5_000_000_000});
+  const image=(await (await f.call("POST","editor",png,{name:"quota.png"})).json()).data;
+  await f.call("POST","editor",gif,{name:"other.gif",contentType:"image/gif",site:"other"});
+  const active=(await (await f.call("GET","editor",null,{q:"no-match"})).json()).data;
+  assert.equal(active.assets.length,0);
+  assert.deepEqual(active.quota,{usedBytes:png.length,archivedBytes:0,activeBytes:png.length,remainingBytes:5_000_000_000-png.length});
+  assert.equal((await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:image.id})).status,200);
+  const archived=(await (await f.call("GET","editor",null,{state:"archived"})).json()).data;
+  assert.deepEqual(archived.quota,{usedBytes:png.length,archivedBytes:png.length,activeBytes:0,remainingBytes:5_000_000_000-png.length});
+  const other=(await (await f.call("GET","editor",null,{site:"other"})).json()).data;
+  assert.equal(other.quota.usedBytes,gif.length);
+  assert.equal(other.quota.archivedBytes,0);
+});
+
 test("repeated image content reuses the same site asset without extra R2 storage or losing metadata",async t=>{
   const f=await fixture(t);
   const first=await f.call("POST","editor",png,{name:"first.png"});
