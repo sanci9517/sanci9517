@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Média és erőforrások · Sanci9517</title>
+<style>
+:root{color-scheme:dark;--bg:#101423;--panel:#1b2335;--line:#36435c;--text:#f4f5fc;--muted:#b7c0d3;--accent:#9480f7;--success:#74d7ae}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
+a{color:inherit}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.55;cursor:wait}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.shell{max-width:1200px;margin:auto;padding:22px clamp(14px,3vw,38px) 64px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-bottom:22px;border-bottom:1px solid var(--line)}
+.brand{font-weight:800;font-size:1.08rem;letter-spacing:.06em;text-decoration:none}.back{font-weight:600;text-underline-offset:4px;color:var(--muted)}
+h1{font-size:clamp(1.75rem,3vw,2.8rem);line-height:1.15;margin:28px 0 8px}h2{font-size:1.2rem;margin:0 0 12px}
+.lead,.muted{color:var(--muted)}
+.panels{display:grid;grid-template-columns:minmax(270px,360px) minmax(0,1fr);gap:20px;margin-top:28px;align-items:start}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px;min-width:0}
+label{display:block;font-weight:650;margin:12px 0 7px}
+input[type=file]{display:block;width:100%;padding:14px;border:1px dashed var(--muted);border-radius:10px;background:var(--bg);color:var(--text)}
+button.primary{border:0;border-radius:10px;color:#160f31;background:#b5a7ff;font-weight:750;padding:12px 16px;width:100%;margin-top:14px;min-height:44px}
+.status{color:var(--muted);min-height:1.7em;margin-top:14px;overflow-wrap:anywhere}.status[data-kind=error]{color:#ffb3b3}.status[data-kind=ok]{color:var(--success)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
+.tile{min-width:0;border:1px solid var(--line);background:#12192b;border-radius:14px;overflow:hidden}
+.tile img{width:100%;aspect-ratio:4/3;object-fit:contain;background:#070b17;display:block}
+.tile .details{padding:10px 12px;font-size:.88rem}.tile .name{display:block;overflow-wrap:anywhere;font-weight:650}.tile small{color:var(--muted)}
+.empty{padding:30px 18px;border:1px dashed var(--line);border-radius:12px;color:var(--muted);text-align:center}
+.note{margin-top:24px;color:var(--muted);font-size:.9rem}
+@media(max-width:800px){.panels{grid-template-columns:minmax(0,1fr)}.panel{padding:18px}.tiles{grid-template-columns:repeat(auto-fill,minmax(135px,1fr))}}
+@media(prefers-color-scheme:light){:root{color-scheme:light;--bg:#f4f6fc;--panel:#fff;--line:#d5dced;--text:#171d33;--muted:#50607e;--accent:#6247dd} .tile{background:#f6f7fd}.tile img{background:#f0f1f8}button.primary{color:white;background:#6349cd}.status[data-kind=error]{color:#ae2121}.status[data-kind=ok]{color:#15784c}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header><a class="brand" href="/admin">SANCI9517 / CREATOR</a><a class="back" href="/admin">← Vezérlőpult</a></header>
+<main>
+<h1>Média és erőforrások</h1>
+<p class="lead">Közös, privát képtár – a Creator Platform médiatárolójának első működő változata.</p>
+<div class="panels">
+<section class="panel" aria-labelledby="uploadTitle">
+<h2 id="uploadTitle">Kép feltöltése</h2>
+<p class="muted">PNG, JPG, GIF vagy WebP. Legfeljebb 4 MiB képenként. Kezdeti webhelykvóta: 5 GB.</p>
+<form id="uploadForm">
+<label for="imageInput">Képfájl</label>
+<input id="imageInput" name="image" type="file" accept="image/png,image/jpeg,image/gif,image/webp" required>
+<button class="primary" id="uploadButton" type="submit">Feltöltés a médiatárba</button>
+</form>
+<p role="status" aria-live="polite" class="status" id="uploadStatus">Válassz ki egy képfájlt.</p>
+</section>
+<section class="panel" aria-labelledby="libraryTitle">
+<h2 id="libraryTitle">Legutóbbi képek</h2>
+<p class="muted">A legutóbbi 50 feltöltés. A fájlok még nem jelennek meg automatikusan a publikus weboldalon.</p>
+<div id="gallery" class="tiles" aria-live="polite"><p class="empty">Képek betöltése…</p></div>
+</section>
+</div>
+<p class="note">A médiatároló privát; a publikus képkiszolgálás és a Visual Editor médiaválasztója egy következő fejlesztési blokk.</p>
+</main>
+</div>
+<script type="module" src="/assets/admin-media.js"></script>
+</body>
+</html>
