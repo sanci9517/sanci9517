@@ -242,6 +242,46 @@ export function getRichTextFormattingSelection(editor) {
   return segments.length?{segments}:null;
 }
 
+/** Rebuild a native Range from canonical per-block character positions after markup is replaced.
+ * This intentionally does not use a flattened text offset: DOM Range.toString()
+ * inserts separators between blocks, while TreeWalker(SHOW_TEXT) does not.
+ */
+export function restoreRichTextFormattingSelection(editor,selectionRange) {
+  const segments=selectionRange?.segments;
+  if(!editor||!Array.isArray(segments)||!segments.length)return false;
+  const first=segments[0],last=segments[segments.length-1];
+  const blockAt=(item)=>{
+    if(!Number.isInteger(item?.blockIndex)||!Number.isInteger(item?.from)||
+       !Number.isInteger(item?.to)||item.from<0||item.to<=item.from)return null;
+    return editor.children[item.blockIndex]??null;
+  };
+  const firstBlock=blockAt(first),lastBlock=blockAt(last);
+  if(!firstBlock||!lastBlock||first.blockIndex>last.blockIndex)return false;
+  const locate=(block,position)=>{
+    const walker=document.createTreeWalker(block,NodeFilter.SHOW_TEXT);
+    let text,offset=0;
+    while((text=walker.nextNode())){
+      const end=offset+text.nodeValue.length;
+      if(position<=end)return {node:text,offset:position-offset};
+      offset=end;
+    }
+    return null;
+  };
+  const start=locate(firstBlock,first.from),end=locate(lastBlock,last.to);
+  if(!start||!end)return false;
+  try{
+    const nativeRange=document.createRange();
+    nativeRange.setStart(start.node,start.offset);
+    nativeRange.setEnd(end.node,end.offset);
+    if(nativeRange.collapsed)return false;
+    const selection=window.getSelection();
+    if(!selection)return false;
+    selection.removeAllRanges();
+    selection.addRange(nativeRange);
+    return true;
+  }catch{return false}
+}
+
 export function getRichTextActiveBlockIndex(editor) {
   const selection=window.getSelection();
   if(!selection?.rangeCount||!editor.contains(selection.anchorNode))return null;
