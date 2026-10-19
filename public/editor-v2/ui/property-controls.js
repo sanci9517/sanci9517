@@ -49,6 +49,7 @@ export function renderPropertyInput(property, label, current, onChange, {tokens=
   heading.append(title, info);
   wrap.append(heading, help);
   let tokenPicker=null;
+  let commitColorPreset=null;
   if(availableTokens.length){
     const picker=document.createElement('select');picker.className='property-token-picker';picker.setAttribute('aria-label',label+' közös stílusa');
     for(const [value,text] of [['','Egyedi érték'],...availableTokens.map(id=>[id,TOKEN_SPECS[id].label])]){const option=document.createElement('option');option.value=value;option.textContent=text;picker.append(option)}
@@ -115,6 +116,9 @@ export function renderPropertyInput(property, label, current, onChange, {tokens=
       picker.classList.toggle('color-preview-limited',transparent||alpha);
       indicator.textContent=transparent?'Átlátszó szín – a színválasztó RGB-előnézete nem mérvadó.':
         alpha?'Az átlátszóságot a HEX-mező őrzi; a színválasztó csak RGB-t mutat.':'';
+      for(const button of wrap.querySelectorAll('.property-preset-color')){
+        button.setAttribute('aria-pressed',String(button.dataset.value===value));
+      }
     };
     const commitColor=value=>{
       // Invalid values stay visible with validation feedback. The previous
@@ -128,7 +132,7 @@ export function renderPropertyInput(property, label, current, onChange, {tokens=
     wrap.append(controls,indicator);
     // Presets use the same sync pathway as the picker and HEX entry.
     wrap.dataset.colorField='true';
-    wrap._syncInspectorColor=commitColor;
+    commitColorPreset=commitColor;
   } else if (type === 'box') {
     // A typed number + unit per side: no CSS syntax needed on mobile.
     // The stored value remains the same four-part CSS shorthand.
@@ -228,7 +232,7 @@ export function renderPropertyInput(property, label, current, onChange, {tokens=
       button.textContent=preset.label;button.dataset.value=preset.value;
       button.setAttribute('aria-pressed',String(String(current??'')===preset.value));
       if(type==='color'){button.classList.add('property-preset-color');button.style.setProperty('--preset-color',preset.value==='transparent'?'transparent':preset.value);button.title=preset.label+' · '+preset.value}
-      button.onclick=()=>type==='color'?wrap._syncInspectorColor(preset.value):save(preset.value);group.append(button);
+      button.onclick=()=>type==='color'?commitColorPreset(preset.value):save(preset.value);group.append(button);
     }
     wrap.append(group);
   }
