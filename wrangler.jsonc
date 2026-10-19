@@ -20,6 +20,12 @@
       "migrations_dir": "migrations"
     }
   ],
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "sanci9517-media"
+    }
+  ],
   "vars": {
     "SITE_MEMBERSHIP_ENFORCEMENT": "enabled",
     "SITE_SCOPED_SETTINGS_ENABLED": "enabled"
