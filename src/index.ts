@@ -13,6 +13,7 @@ import { adminScheduleRoute } from "./routes/admin/schedule";
 import { adminTwitchScheduleSyncRoute } from "./routes/admin/twitch-schedule-sync";
 import { adminPagesRoute } from "./routes/admin/pages";
 import { adminEditorRoute } from "./routes/admin/editor";
+import { adminMediaRoute } from "./routes/admin/media";
 import { publicSiteSettingsRoute } from "./routes/public/site-settings";
 import { publicScheduleRoute } from "./routes/public/schedule";
 import {
@@ -65,6 +66,7 @@ export default {
     if (pathname === "/api/admin/pages") return adminPagesRoute(request, env, siteId);
     if (pathname === "/api/admin/navigation") return adminNavigationRoute(request, env, siteId);
     if (pathname === "/api/admin/editor") return adminEditorRoute(request, env, siteId);
+    if (pathname === "/api/admin/media") return adminMediaRoute(request, env, siteId);
     if (pathname === "/api/public/site-settings") return publicSiteSettingsRoute(env, siteId, site.siteName);
     if (pathname === "/api/public/schedule") return publicScheduleRoute(request, env, siteId);
     if (pathname === "/api/integrations/twitch/diagnostic") return twitchConfigDiagnosticRoute(request, env);
