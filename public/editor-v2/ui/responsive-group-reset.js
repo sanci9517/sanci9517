@@ -5,7 +5,7 @@ import {hasResponsiveOverride,VIEWPORTS} from '../core/responsive.js';
  * Returns canonical Editor commands; Undo grouping belongs to executeBatch.
  */
 export function responsiveGroupResetActions(node,properties,device){
-  if(!node?.id||node.locked||!VIEWPORTS.includes(device))return [];
+  if(!node?.id||!VIEWPORTS.includes(device))return [];
   const seen=new Set(),actions=[];
   for(const property of properties||[]){
     if(!property?.responsive)continue;
