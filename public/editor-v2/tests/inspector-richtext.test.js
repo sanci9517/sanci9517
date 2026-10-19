@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createDocument, NODE_TYPES } from '../core/schema.js';
+import { describeResponsiveOrigin } from '../ui/responsive-origin.js';
 import {responsiveGroupResetActions} from '../ui/responsive-group-reset.js';
 import { createEditorState, activePage } from '../core/state.js';
 import { execute, executeCoalesced, executeBatch } from '../core/commands.js';
@@ -280,4 +281,16 @@ test('group breakpoint reset is atomic and preserves other groups, devices and o
   assert.deepEqual(state.document,original,'one Undo restores all original values');
   execute(state,{type:'history.redo'});
   assert.equal(activePage(state).nodes[id].responsive.mobile?.padding,undefined);
+});
+
+
+test('responsive property origin is canonical, device-scoped and describes base fallback',()=>{
+  const values={desktop:{fontSize:'32px'},tablet:{fontSize:'25px'},mobile:{}};
+  assert.deepEqual(describeResponsiveOrigin(values,'fontSize','desktop'),{kind:'own',source:'desktop',label:'Saját érték · Asztali'});
+  assert.deepEqual(describeResponsiveOrigin(values,'fontSize','tablet'),{kind:'own',source:'tablet',label:'Saját érték · Tablet'});
+  assert.deepEqual(describeResponsiveOrigin(values,'fontSize','mobile'),{kind:'inherited',source:'tablet',label:'Örökölt · Tablet'});
+  assert.deepEqual(describeResponsiveOrigin({desktop:{fontSize:'32px'}},'fontSize','mobile'),{kind:'inherited',source:'desktop',label:'Örökölt · Asztali'});
+  assert.deepEqual(describeResponsiveOrigin({},'fontSize','mobile',{hasBaseStyle:true}),{kind:'base',source:null,label:'Alapstílus'});
+  assert.deepEqual(describeResponsiveOrigin({},'fontSize','mobile'),{kind:'base',source:null,label:'Alapértelmezett'});
+  assert.throws(()=>describeResponsiveOrigin({},'fontSize','unsupported'),/Ismeretlen/);
 });
