@@ -175,11 +175,22 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await paddingTopEditor.fill('-7');
   await paddingTopEditor.dispatchEvent('change');
   assert.match(await field('spacing.padding').locator('.property-validation').textContent(),/negatív|belső|padding/i);
+  // A category filter and closed accordion must not trap a validation error
+  // after Save blurs the field. The existing right dock should lead to it.
+  const spacingTitleInvalid=editor.locator('.inspector-group-title').filter({hasText:'Térközök'});
+  if(await spacingTitleInvalid.getAttribute('aria-expanded')==='true')await spacingTitleInvalid.click();
+  await editor.locator('.inspector-category-nav button[data-inspector-category="surface"]').click();
+  assert.equal(await field('spacing.padding').isVisible(),false,'surface filter hides the invalid spacing input before Save');
   const pendingInvalidPosts=posts.length;
   const publishedBeforeInvalid=JSON.stringify(published);
   // Clicking Save intentionally blurs the invalid input. The application
   // must inspect unresolved Inspector validation, not only activeElement.
   await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.activeElement?.getAttribute('aria-label')==='Belső térköz – Felül értéke');
+  assert.equal(await field('spacing.padding').isVisible(),true,'Save reveals the invalid field');
+  assert.equal(await spacingTitleInvalid.getAttribute('aria-expanded'),'true','Save expands the invalid group');
+  assert.equal(await editor.locator('.inspector-category-nav button[data-inspector-category="all"]').getAttribute('aria-pressed'),'true','Save resets the category filter to show the error');
+  assert.equal(await editor.locator('#rightDock').getAttribute('aria-hidden'),'false','Inspector must be accessible while the error is shown');
   assert.equal(posts.length,pendingInvalidPosts,'blurred invalid padding must not produce a draft save request');
   assert.equal(JSON.stringify(published),publishedBeforeInvalid,'previous public snapshot stays untouched');
   assert.equal(await field('spacing.padding').locator('.typed-box-entry input').first().inputValue(),'-7');
