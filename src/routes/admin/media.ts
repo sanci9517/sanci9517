@@ -68,14 +68,14 @@ function assetPaths(value: unknown, assetId: string, path = "", depth = 0): stri
   const paths: string[] = [];
   for (const [key, item] of Object.entries(record)) {
     const next = path ? `${path}.${key}` : key;
-    if ((key === "assetId" || key === "backgroundAssetId") && item === assetId) paths.push(next);
+    if ((key === "assetId" || key === "backgroundAssetId" || key === "imageAssetId") && item === assetId) paths.push(next);
     else if (item && typeof item === "object") paths.push(...assetPaths(item, assetId, next, depth + 1));
   }
   return paths;
 }
 
 function documentAssetReferences(json: string, pageId: string, assetId: string, publicOnly = false): { nodeId: string; nodeName: string; path: string }[] {
-  const model = JSON.parse(json) as { pages?: Record<string, { rootId?: string; nodes?: Record<string, { name?: string; type?: string; props?: unknown; style?: unknown; responsive?: unknown; visibility?: unknown; children?: string[] }> }> };
+  const model = JSON.parse(json) as { pages?: Record<string, { rootId?: string; nodes?: Record<string, { name?: string; type?: string; metadata?: {cardContentVersion?: number}; props?: unknown; style?: unknown; responsive?: unknown; visibility?: unknown; children?: string[] }> }> };
   const page = model?.pages?.[pageId];
   const nodes = page?.nodes;
   if (!nodes || typeof nodes !== "object") return [];
@@ -96,7 +96,7 @@ function documentAssetReferences(json: string, pageId: string, assetId: string, 
     const nodeName = typeof node.name === "string" && node.name.trim() ? node.name : node.type || nodeId;
     return ["props", "style", "responsive"].flatMap(field =>
       assetPaths(node[field as keyof typeof node], assetId, field)
-        .filter(path => !publicOnly || path === "props.assetId" && node.type === "image" || /^props\.items\[\d+\]\.assetId$/.test(path) && ["gallery", "carousel"].includes(node.type || "") || /^(?:style|responsive\.(?:desktop|tablet|mobile))\.backgroundAssetId$/.test(path))
+        .filter(path => !publicOnly || path === "props.assetId" && node.type === "image" || path === "props.cardContent.imageAssetId" && node.type === "card" && node.metadata?.cardContentVersion === 1 || /^props\.items\[\d+\]\.assetId$/.test(path) && ["gallery", "carousel"].includes(node.type || "") || /^(?:style|responsive\.(?:desktop|tablet|mobile))\.backgroundAssetId$/.test(path))
         .map(path => ({ nodeId, nodeName, path })));
   });
 }
