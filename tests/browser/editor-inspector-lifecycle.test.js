@@ -165,13 +165,34 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   assert.deepEqual(await publicPage.locator('.visual-card:nth-child(2) > .visual-text').evaluate(el=>{const style=getComputedStyle(el);return {basis:style.flexBasis,maxWidth:style.maxWidth}}),await flexCss());
   // A real mobile viewport edits only its own override; the published page stays unchanged.
   await editor.setViewportSize({width:390,height:800});
+  if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))
+    await editor.locator('#openInspector').click();
+  const spacingHeading=editor.locator('.inspector-group-title').filter({hasText:'Térközök'});
+  if(await spacingHeading.getAttribute('aria-expanded')==='false')await spacingHeading.click();
+  // Changing a breakpoint must never consume a pending invalid typed edit:
+  // the click may already have moved DOM focus away from the Inspector field.
+  const paddingTopEditor=field('spacing.padding').locator('.typed-box-entry input').first();
+  await paddingTopEditor.fill('-7');
+  await paddingTopEditor.dispatchEvent('change');
+  assert.match(await field('spacing.padding').locator('.property-validation').textContent(),/negatív|belső|padding/i);
   await editor.locator('.canvas-device-btn[data-device="mobile"]').evaluate(el=>el.click());
+  assert.equal(await editor.locator('.canvas-device-btn[data-device="desktop"]').getAttribute('class').then(x=>x.includes('active')),true,'invalid Inspector input must keep desktop editor state');
+  assert.equal(await editor.locator('.canvas-device-btn[data-device="mobile"]').getAttribute('class').then(x=>x.includes('active')),false,'invalid Inspector input must not activate mobile');
+  assert.equal(await field('spacing.padding').locator('.typed-box-entry input').first().inputValue(),'-7','unsaved invalid value stays available for correction');
+  await field('spacing.padding').locator('.typed-box-entry input').first().fill('16');
+  await field('spacing.padding').locator('.typed-box-entry input').first().dispatchEvent('change');
+  assert.equal(await field('spacing.padding').locator('.property-validation').textContent(),'');
+  await editor.locator('.canvas-device-btn[data-device="mobile"]').evaluate(el=>el.click());
+  assert.equal(await editor.locator('.canvas-device-btn[data-device="mobile"]').getAttribute('class').then(x=>x.includes('active')),true,'valid corrected field allows mobile breakpoint');
+
   await select(itemId);
+  assert.equal(await field('radius.topLeft').locator('.responsive-origin').textContent(),'Örökölt · Asztali','mobile radius must identify desktop inheritance');
   await editor.locator('.inspector-group-title').filter({hasText:'Lekerekítés'}).click();
   assert.ok((await field('radius.topLeft').locator('input').boundingBox()).height>=44);
   await field('radius.topLeft').locator('input[type="number"]').fill('6');
   await field('radius.topLeft').locator('input').press('Tab');
   assert.equal((await css()).radius,'6px');
+  assert.equal(await field('radius.topLeft').locator('.responsive-origin').textContent(),'Saját érték · Mobil','new override must be marked local');
   await editor.locator('.inspector-lock-toggle').check();
   assert.equal(await field('radius.topLeft').locator('input[type="number"]').isDisabled(),true);
   assert.equal(await editor.locator('.property-reset').filter({hasText:'Öröklés visszaállítása'}).first().isDisabled(),true);
@@ -183,6 +204,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   assert.match(await bulkReset.textContent(),/Saját értékek visszaállítása/);
   await bulkReset.click();
   assert.equal((await css()).radius,'12px');
+  assert.equal(await field('radius.topLeft').locator('.responsive-origin').textContent(),'Örökölt · Asztali','bulk reset restores desktop origin');
   await editor.locator('#mobileUndo').click();
   assert.equal((await css()).radius,'6px');
   await editor.keyboard.press('Control+s');
