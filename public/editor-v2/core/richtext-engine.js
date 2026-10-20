@@ -41,13 +41,25 @@ export function getSelectionOffsets(editor){
 }
 
 export function restoreSelectionOffsets(editor,selection){
-  if(!selection)return false;
+  if(!editor||!selection||!Number.isSafeInteger(selection.from)||!Number.isSafeInteger(selection.to)||
+     selection.from<0||selection.to<selection.from)return false;
   const walker=document.createTreeWalker(editor,NodeFilter.SHOW_TEXT),nodes=[];let node;
   while(node=walker.nextNode())nodes.push(node);
   const locate=target=>{let offset=0;for(const text of nodes){const end=offset+text.nodeValue.length;if(target<=end)return {node:text,offset:target-offset};offset=end}const last=nodes.at(-1);return last?{node:last,offset:last.nodeValue.length}:null};
+  // A newly cleared Rich Text paragraph has no text nodes (<p><br></p>).
+  // Restore its collapsed caret to the editable block instead of silently
+  // losing focus/selection after Undo, toolbar changes or an IME update.
+  if(!nodes.length){
+    if(selection.from!==0||selection.to!==0)return false;
+    const empty=editor.querySelector('p,h1,h2,h3,h4,h5,h6,blockquote,pre,li,td,th')||editor;
+    const range=document.createRange();range.selectNodeContents(empty);range.collapse(true);
+    const native=window.getSelection();if(!native)return false;
+    native.removeAllRanges();native.addRange(range);return true;
+  }
   const start=locate(selection.from),end=locate(selection.to);if(!start||!end)return false;
   const range=document.createRange();range.setStart(start.node,start.offset);range.setEnd(end.node,end.offset);
-  const native=window.getSelection();native.removeAllRanges();native.addRange(range);return true;
+  const native=window.getSelection();if(!native)return false;
+  native.removeAllRanges();native.addRange(range);return true;
 }
 
 function inlineElement(inline){
