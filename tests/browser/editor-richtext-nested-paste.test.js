@@ -1,0 +1,142 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import {createServer} from 'node:http';
+import {readFile} from 'node:fs/promises';
+import {existsSync} from 'node:fs';
+import {resolve,extname} from 'node:path';
+import {chromium} from 'playwright';
+import {createDocument,NODE_TYPES} from '../../public/editor-v2/core/schema.js';
+import {createEditorState} from '../../public/editor-v2/core/state.js';
+import {execute} from '../../public/editor-v2/core/commands.js';
+
+const root=resolve(import.meta.dirname,'../../public');
+
+test('Rich Text paste stays inside LI/TD, rejects cross-cell replacement and preserves published parity',async t=>{
+  const state=createEditorState(createDocument()),pageId=state.document.activePageId;
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.RICHTEXT,parentId:state.document.pages[pageId].rootId}});
+  const nodeId=state.selection.primaryId;
+  execute(state,{type:'richtext.content.set',payload:{nodeId,document:{
+    schemaVersion:1,type:'richtext-document',blocks:[
+      {type:'bulleted-list',items:[
+        [{type:'text',text:'Alpha',marks:[]}],
+        [{type:'text',text:'Beta',marks:[]}],
+        [{type:'text',text:'Gamma',marks:['italic']}]
+      ]},
+      {type:'table',rows:[{cells:[
+        {header:true,align:'center',children:[{type:'text',text:'Head',marks:[]}]},
+        {header:false,align:'right',children:[{type:'text',text:'Cell',marks:[]}]}
+      ]}]},
+      {type:'paragraph',children:[{type:'text',text:'Outro',marks:[]}]}
+    ]
+  }}});
+  const fixture=structuredClone(state.document);
+  let draft=structuredClone(fixture),published=null,version=1;const posts=[];
+  const server=createServer(async(req,res)=>{
+    const url=new URL(req.url,'http://localhost');
+    const json=data=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(data))};
+    if(url.pathname==='/api/admin/pages')return json({ok:true,data:url.searchParams.get('archived')==='1'?[]:[{id:pageId,title:'Nested paste',slug:'nested-paste',content:draft,revision:version,isPublished:Boolean(published)}]});
+    if(url.pathname==='/api/admin/editor'){
+      if(req.method==='GET')return json({ok:true,data:{page:{id:pageId,document:draft,publishedRevisionId:published?'published':null},revisions:[]}});
+      let body='';for await(const chunk of req)body+=chunk;
+      const request=JSON.parse(body);posts.push(request);draft=structuredClone(request.document);version++;
+      if(request.publish)published=structuredClone(draft);
+      return json({ok:true,data:{pageId,version,revisionId:'test-revision-'+version,published:Boolean(request.publish)}});
+    }
+    if(url.pathname==='/api/public/pages')return json(published?{ok:true,data:{id:pageId,slug:'nested-paste',title:'Nested paste',content:published.pages[pageId]}}:{ok:false});
+    if(url.pathname==='/api/public/navigation')return json({ok:true,data:{items:[]}});
+    if(url.pathname==='/api/integrations/twitch/connection')return json({ok:true,data:{connected:false}});
+    if(url.pathname.startsWith('/api/'))return json({ok:true,data:{siteName:'Test'}});
+    const asset=url.pathname==='/p/nested-paste'?'/visual-page.html':url.pathname;
+    const file=resolve(root,'.'+asset);
+    if(!file.startsWith(root+'/')){res.writeHead(403).end();return}
+    try{res.setHeader('content-type',{'.html':'text/html','.js':'text/javascript','.css':'text/css'}[extname(file)]||'application/octet-stream');res.end(await readFile(file))}
+    catch{res.writeHead(404).end()}
+  });
+  await new Promise(done=>server.listen(0,'127.0.0.1',done));
+  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
+  t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
+  const base='http://127.0.0.1:'+server.address().port;
+  for(const width of [390,1366]){
+    draft=structuredClone(fixture);published=null;version=1;posts.length=0;
+    const page=await browser.newPage({viewport:{width,height:870}});
+    page.setDefaultTimeout(9500);
+    const errors=[];page.on('pageerror',error=>errors.push(error.message));
+    await page.goto(base+'/editor-v2/index.html');
+    await page.locator(`.node[data-node-id="${nodeId}"]`).waitFor();
+    await page.locator(`.node[data-node-id="${nodeId}"]`).evaluate(node=>node.click());
+    await page.evaluate(()=>window.sanciEditor?.openPanel?.('right'));
+    await page.locator('.inspector-tabs button').nth(1).evaluate(button=>button.click());
+    const editor=page.locator('.richtext-editor-surface');await editor.waitFor();
+
+    const dispatchPaste=async(startSelector,startOffset,endSelector,endOffset,html,text)=>{
+      return editor.evaluate(el,({startSelector,startOffset,endSelector,endOffset,html,text})=>{
+        const startEl=el.querySelector(startSelector),endEl=el.querySelector(endSelector);
+        const start=document.createTreeWalker(startEl,NodeFilter.SHOW_TEXT).nextNode();
+        const end=document.createTreeWalker(endEl,NodeFilter.SHOW_TEXT).nextNode();
+        el.focus();
+        const range=document.createRange();range.setStart(start,startOffset);range.setEnd(end,endOffset);
+        const selected=window.getSelection();selected.removeAllRanges();selected.addRange(range);
+        const data=new DataTransfer();data.setData('text/html',html);data.setData('text/plain',text);
+        const before=el.innerHTML;
+        el.dispatchEvent(new ClipboardEvent('paste',{bubbles:true,cancelable:true,clipboardData:data}));
+        return {before,after:el.innerHTML,selected:selected.toString()};
+      },{startSelector,startOffset,endSelector,endOffset,html,text});
+    };
+
+    // A Word-like inline formatting selection affects just one LI.
+    await dispatchPaste('ul li:nth-child(2)',1,'ul li:nth-child(2)',3,
+      '<p><a href="/p/inserted"><strong>NEW</strong></a></p>','NEW');
+    assert.deepEqual(await editor.locator('ul > li').allTextContents(),['Alpha','BNEWa','Gamma']);
+    assert.equal(await editor.locator('ul li:nth-child(2) a strong').textContent(),'NEW');
+    assert.equal(await editor.locator('ul').count(),1,'never insert another list inside an LI');
+    const canvas=page.locator(`.node[data-node-id="${nodeId}"] .richtext-content`).first();
+    assert.deepEqual(await canvas.locator('ul > li').allTextContents(),['Alpha','BNEWa','Gamma']);
+    assert.equal(await canvas.locator('ul li:nth-child(2) a').getAttribute('href'),'/p/inserted');
+
+    // Multiple source paragraphs inside one table cell become plain text,
+    // preserving table structure and the header + alignment metadata.
+    await dispatchPaste('table td',2,'table td',2,
+      '<p>One</p><p>Two</p>','One\nTwo');
+    assert.equal(await editor.locator('table').count(),1);
+    assert.equal(await editor.locator('table td').textContent(),'CeOne\nTwoll');
+    assert.equal(await editor.locator('table th').textContent(),'Head');
+    assert.equal(await canvas.locator('table td').textContent(),'CeOne\nTwoll');
+    assert.equal(await canvas.locator('table td').evaluate(el=>el.style.textAlign),'right');
+
+    // A selection spanning two different cells must be rejected atomically.
+    const rejected=await dispatchPaste('table th',1,'table td',1,'<p>Unsafe</p>','Unsafe');
+    assert.equal(rejected.before,rejected.after,'cross-cell replacement cannot change the DOM');
+    assert.match(await page.locator('.richtext-format-feedback').textContent(),/Több listaelem vagy táblázatcella/);
+    assert.equal(await editor.locator('table th').textContent(),'Head');
+    assert.equal(await editor.locator('table td').textContent(),'CeOne\nTwoll');
+    assert.equal(posts.length,0,'pasting locally never invokes Save or Publish');
+
+    if(width===1366){
+      await page.locator('#save').click();
+      await page.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+      assert.equal(posts.length,1);assert.equal(posts[0].publish,false);
+      assert.equal(published,null,'draft Save must not publish');
+      await page.locator('#publish').click();
+      await page.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
+      assert.equal(posts.at(-1).publish,true);
+      const model=published.pages[pageId].nodes[nodeId].props.richText;
+      assert.equal(model.blocks[0].items.length,3);
+      assert.equal(model.blocks[0].items[1].map(item=>item.text).join(''),'BNEWa');
+      assert.equal(model.blocks[0].items[1].find(item=>item.text==='NEW')?.link?.href,'/p/inserted');
+      assert.equal(model.blocks[1].rows[0].cells[0].header,true);
+      assert.equal(model.blocks[1].rows[0].cells[0].align,'center');
+      assert.equal(model.blocks[1].rows[0].cells[1].align,'right');
+      assert.equal(model.blocks[1].rows[0].cells[1].children.map(item=>item.text).join(''),'CeOne\nTwoll');
+      const publicTab=await browser.newPage({viewport:{width:390,height:870}});
+      await publicTab.goto(base+'/p/nested-paste');
+      const output=publicTab.locator('.visual-richtext');await output.waitFor();
+      assert.deepEqual(await output.locator('ul li').allTextContents(),['Alpha','BNEWa','Gamma']);
+      assert.equal(await output.locator('ul li:nth-child(2) a strong').textContent(),'NEW');
+      assert.equal(await output.locator('table td').textContent(),'CeOne\nTwoll');
+      assert.equal(await output.locator('table th').textContent(),'Head');
+      await publicTab.close();
+    }
+    assert.deepEqual(errors,[],`no page errors at ${width}px`);
+    await page.close();
+  }
+});
