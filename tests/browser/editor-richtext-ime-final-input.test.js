@@ -65,7 +65,7 @@ test('mobile IME final input commits once after compositionend in Inspector and 
     const mirrorSelector=mode==='inspector'
       ?`.node[data-node-id="${nodeId}"] .richtext-content`
       :'.richtext-editor-surface';
-    const before=await source.evaluate(el=>{
+    const before=await source.evaluate((el,{nodeId})=>{
       const native=window.getSelection();
       el.focus();
       const text=document.createTreeWalker(el.querySelector('p'),NodeFilter.SHOW_TEXT).nextNode();
@@ -80,16 +80,14 @@ test('mobile IME final input commits once after compositionend in Inspector and 
       text.nodeValue='Végleges';
       el.dispatchEvent(new InputEvent('input',{bubbles:true,isComposing:false,inputType:'insertText',data:'Végleges'}));
       const nativeAfter=window.getSelection();
+      const canvasBefore=document.querySelector(`.node[data-node-id="${nodeId}"] .node-content.richtext-content p`)?.textContent;
       return {intermediate,final:el.querySelector('p')?.textContent,
-        stillFocused:document.activeElement===el,
+        canvasBefore,stillFocused:document.activeElement===el,
         selectionInside:el.contains(nativeAfter?.anchorNode)};
-    });
-    assert.deepEqual(before,{intermediate:'Vé',final:'Végleges',stillFocused:true,selectionInside:true},
+    },{nodeId});
+    assert.deepEqual(before,{intermediate:'Vé',final:'Végleges',
+      canvasBefore:mode==='inspector'?'Base':'Végleges',stillFocused:true,selectionInside:true},
       `IME DOM events should not detach the active ${mode} at ${width}px`);
-    if(mode==='inspector'){
-      assert.deepEqual(await node.locator('.richtext-content p').allTextContents(),['Base','Unchanged'],
-        'canvas must not commit an intermediate composition before the last input');
-    }
     await page.waitForFunction(({nodeId,mode})=>{
       const node=document.querySelector(`.node[data-node-id="${nodeId}"]`);
       if(!node)return false;
