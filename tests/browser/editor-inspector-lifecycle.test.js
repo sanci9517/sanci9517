@@ -23,6 +23,8 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   const flexId=model.selection.primaryId;
   execute(model,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:flexId,props:{text:'Flex item'}}});
   const flexItemId=model.selection.primaryId;
+  execute(model,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:model.document.pages[pageId].rootId,props:{text:'Offset item'}}});
+  const offsetId=model.selection.primaryId;
   let draft=structuredClone(model.document), published=null, version=1;
   const posts=[];
   const server=createServer(async(req,res)=>{
@@ -163,6 +165,28 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   assert.deepEqual(await publicCss(),await css());
   assert.deepEqual(await publicPage.locator('.visual-card > .visual-text').first().evaluate(el=>{const style=getComputedStyle(el);return {paddingTop:style.paddingTop,paddingRight:style.paddingRight,backgroundColor:style.backgroundColor,fontSize:style.fontSize}}),await presetStyle());
   assert.deepEqual(await publicPage.locator('.visual-card:nth-child(2) > .visual-text').evaluate(el=>{const style=getComputedStyle(el);return {basis:style.flexBasis,maxWidth:style.maxWidth}}),await flexCss());
+  // A dragged/offset static node is rendered with the same relative CSS on
+  // canvas and public page. The Inspector also makes leaving the artboard
+  // explicit and offers a scoped recovery action.
+  await select(offsetId);
+  if(await editor.locator('.inspector-group-title[aria-expanded="false"]').filter({hasText:'Geometria'}).count())await editor.locator('.inspector-group-title').filter({hasText:'Geometria'}).click();
+  const offsetX=field('position.x').locator('input[type="number"]');
+  await offsetX.fill('-96');await offsetX.press('Tab');
+  assert.equal(await editor.locator(`.node[data-node-id="${offsetId}"]`).evaluate(el=>el.classList.contains('outside-artboard')),true);
+  assert.match(await editor.locator('.layout-warning').first().textContent(),/fehér vásznon kívül/);
+  await editor.getByRole('button',{name:'Eltolás visszaállítása ebben a nézetben'}).click();
+  assert.equal(await editor.locator(`.node[data-node-id="${offsetId}"]`).evaluate(el=>el.classList.contains('outside-artboard')),false);
+  await offsetX.fill('72');await offsetX.press('Tab');
+  assert.deepEqual(await editor.locator(`.node[data-node-id="${offsetId}"]`).evaluate(el=>{const style=getComputedStyle(el);return {position:style.position,left:style.left}}),{position:'relative',left:'72px'});
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false);
+  await publicPage.reload();
+  assert.notEqual(await publicPage.locator(`[data-node-id="${offsetId}"]`).evaluate(el=>getComputedStyle(el).left),'72px','draft offset stays private before Publish');
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
+  await publicPage.reload();
+  assert.deepEqual(await publicPage.locator(`[data-node-id="${offsetId}"]`).evaluate(el=>{const style=getComputedStyle(el);return {position:style.position,left:style.left}}),{position:'relative',left:'72px'});
   // An unsatisfied publication-only requirement may remain visible after a
   // refused Publish, but it must not prevent a draft-only save.
   const beforePublicationNote=posts.length;

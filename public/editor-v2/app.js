@@ -520,6 +520,17 @@ function renderScheduleInspector(node){
 
 function renderRegistryInspector(node,mode='primary'){
   const device=state.viewport.device,root=document.createDocumentFragment();
+  const rendered=canvas.querySelector(`.node[data-node-id="${CSS.escape(node.id)}"]`);
+  if(mode==='primary'&&rendered?.classList.contains('outside-artboard')){
+    const warning=document.createElement('section');warning.className='inspector-group layout-warning';
+    warning.setAttribute('role','status');
+    const text=document.createElement('p');text.className='content-field-help';
+    text.textContent='Az elem részben a fehér vásznon kívül van. A munkaterület ezt szándékosan megengedi, de a publikált oldalon túlcsordulást vagy levágást okozhat.';
+    const reset=document.createElement('button');reset.type='button';reset.className='property-reset';reset.textContent='Eltolás visszaállítása ebben a nézetben';
+    reset.title='Az aktuális nézet X és Y eltolását 0-ra állítja; más nézetek beállításai megmaradnak.';
+    reset.disabled=Boolean(node.locked);reset.onclick=()=>command('responsive.set',{nodeId:node.id,device,patch:{x:'0px',y:'0px'}});
+    warning.append(text,reset);root.append(warning);
+  }
   const primaryGroups=new Set(['layout','size','spacing','flex','grid','position','typography','background','border','radius','shadow','opacity','transform','filter','animation']);
   const duplicates=new Set(['content.text','content.href','advanced.nodeName',
     'position.x','position.y','size.width','size.height','position.position']);
@@ -539,7 +550,6 @@ function renderRegistryInspector(node,mode='primary'){
     for(const property of properties){
       const key=property.key||property.id.split('.')[1];
       const resolved=property.responsive?resolveResponsiveValue(node.responsive,key,device):null;
-      const rendered=canvas.querySelector(`.node[data-node-id="${CSS.escape(node.id)}"]`);
       const current=resolved?.value??node.style?.[key]??(['flex','grid','layout'].includes(property.group)&&rendered?getComputedStyle(rendered)[key]:'')??'';
       const label=property.label;
       const apply=value=>{

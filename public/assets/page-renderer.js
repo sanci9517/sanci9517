@@ -1,5 +1,5 @@
 /* Sanci9517 canonical public Page Model renderer — Editor v2 compatible. */
-import { resolveNodeStyle, STYLE_MAP } from "../editor-v2/core/canvas-engine.js?v=20261018-layout";
+import { resolveNodeStyle, STYLE_MAP, needsRelativeOffsetPosition } from "../editor-v2/core/canvas-engine.js?v=20261020-position";
 import { RICH_TEXT_FONT_FAMILIES } from "../editor-v2/core/schema.js";
 import { LAYOUT_TYPES, isManagedLayout } from "../editor-v2/core/layout-presets.js";
 import {isStructuredType,renderElementContent,activateStructuredContent} from "../editor-v2/core/element-content.js";
@@ -30,6 +30,10 @@ import {backgroundImageValue,MEDIA_ASSET_ID} from "../editor-v2/core/background-
    out+=`${cssProperty}:${esc(text)};`;
    if(key==='width'&&currentDevice==='mobile')out+=`--editor-mobile-width:${esc(text)};`;
   }
+  // Keep drag/Inspector offsets identical to the Editor canvas. left/top do
+  // not move a static element in CSS, while the canvas engine promotes it to
+  // relative positioning for the same Page Model value.
+  if(needsRelativeOffsetPosition(values))out+='position:relative;';
    for(const [legacy,property] of [['background','background'],['border','border']]){
    if(values[legacy]&&CSS.supports(property,String(values[legacy])))out+=`${property}:${esc(values[legacy])};`;
   }

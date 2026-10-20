@@ -77,6 +77,14 @@ export const STYLE_MAP = Object.freeze({
   top: 'top'
 });
 
+// Offsets are stored separately from CSS `position` so dragging remains a
+// simple responsive edit. CSS ignores left/top on static elements, therefore
+// every renderer must make the node positioned when an offset is present.
+export function needsRelativeOffsetPosition(style = {}) {
+  const hasOffset = [style.x, style.y].some(value => value !== undefined && value !== null && value !== '');
+  return hasOffset && (!style.position || style.position === 'static');
+}
+
 export function resolveNodeStyle(node, device = 'desktop') {
   const base = { ...contentDefaults(node,device),...(node?.style ?? {}) };
   const properties = new Set([
@@ -114,12 +122,11 @@ export function applyNodeStyle(element, node, device = 'desktop') {
 
   if (style.x !== undefined && style.x !== '') {
     element.style.left = String(style.x);
-    if (!style.position || style.position === 'static') element.style.position = 'relative';
   }
   if (style.y !== undefined && style.y !== '') {
     element.style.top = String(style.y);
-    if (!style.position || style.position === 'static') element.style.position = 'relative';
   }
+  if (needsRelativeOffsetPosition(style)) element.style.position = 'relative';
 
   return style;
 }
