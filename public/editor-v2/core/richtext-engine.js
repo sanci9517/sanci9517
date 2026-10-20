@@ -37,7 +37,10 @@ export function getSelectionOffsets(editor){
   const a=textOffsetWithin(editor,range.startContainer,range.startOffset);
   const b=textOffsetWithin(editor,range.endContainer,range.endOffset);
   if(a===null||b===null)return null;
-  return {from:Math.min(a,b),to:Math.max(a,b),collapsed:a===b};
+  const anchor=textOffsetWithin(editor,selection.anchorNode,selection.anchorOffset);
+  const focus=textOffsetWithin(editor,selection.focusNode,selection.focusOffset);
+  return {from:Math.min(a,b),to:Math.max(a,b),collapsed:a===b,
+    ...(anchor!==null&&focus!==null&&anchor>focus?{backward:true}:{})};
 }
 
 export function restoreSelectionOffsets(editor,selection){
@@ -68,7 +71,11 @@ export function restoreSelectionOffsets(editor,selection){
   const start=locate(selection.from),end=locate(selection.to);if(!start||!end)return false;
   const range=document.createRange();range.setStart(start.node,start.offset);range.setEnd(end.node,end.offset);
   const native=window.getSelection();if(!native)return false;
-  native.removeAllRanges();native.addRange(range);return true;
+  native.removeAllRanges();native.addRange(range);
+  if(selection.backward&&!range.collapsed&&typeof native.setBaseAndExtent==='function'){
+    native.setBaseAndExtent(end.node,end.offset,start.node,start.offset);
+  }
+  return true;
 }
 
 function inlineElement(inline){
