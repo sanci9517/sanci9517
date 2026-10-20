@@ -6,7 +6,7 @@ import {computeCanvasMinHeight} from './core/canvas-extent.js';
 import {measureCanvasWorkspace} from './core/canvas-workspace.js';
 import {hasResponsiveOverride,resolveResponsiveValue} from './core/responsive.js';
 import {diagnostics} from './diagnostics.js?v=20260918-2';
-import {plainTextToRichText,renderRichTextEditor,richTextEditorToDocument,restoreSelectionOffsets,getSelectionOffsets,setBlockType} from './core/richtext-engine.js';
+import {plainTextToRichText,renderRichTextEditor,richTextEditorToDocument,restoreSelectionOffsets,getSelectionOffsets,transformRichTextBlockTypes} from './core/richtext-engine.js';
 import {renderSchedulePreview} from './core/schedule-preview.js';
 import {normalizeScheduleConfig,SCHEDULE_MODES,SCHEDULE_ORDERS,SCHEDULE_STATUSES} from './core/schedule-schema.js';
 import {listPropertyGroups,listProperties,getProperty} from './core/property-registry.js';
@@ -972,17 +972,36 @@ function renderInspector(){
         };
         flushRichTextDraft=saveRich;
         toolbar.onpointerdown=rememberSelection;
+        blockSelect.onpointerdown=rememberSelection;
+        blockSelect.setAttribute('aria-label','Szövegblokkok típusa');
         blockSelect.onchange=()=>{
+          if(composing){formatStatus.textContent='Fejezd be a szövegbevitelt a blokk átalakítása előtt.';return}
           const doc=richTextEditorToDocument(editor);
-          const index=savedBlockIndex??getRichTextActiveBlockIndex(editor);
-          if(index===null){blockSelect.title='Előbb helyezd a kurzort egy szövegblokkba.';return}
-          const block=doc.blocks[index];if(!block)return;
-          if(block.type==='table'){blockSelect.title='A táblázat cellájában maradva nem változtatható meg a teljes táblázat blokkstílusa.';return}
-          const before=doc.blocks.slice(0,index).reduce((sum,b)=>sum+(b.children??b.items?.flatMap(item=>item.children??item)??[]).reduce((n,x)=>n+x.text.length,0)+1,0);
+          const selection=savedFormatSelection||getRichTextFormattingSelection(editor);
+          const indices=selection?.segments?.map(item=>item.blockIndex)??
+            [savedBlockIndex??getRichTextActiveBlockIndex(editor)].filter(index=>index!==null);
+          if(!indices.length){formatStatus.textContent='Előbb helyezd a kurzort egy szövegblokkba.';return}
           const type=blockSelect.value.startsWith('heading-')?'heading':blockSelect.value;
           const level=type==='heading'?Number(blockSelect.value.split('-')[1]):1;
-          const next=setBlockType(doc,before,before+Math.max(1,(block.children??block.items?.flatMap(item=>item.children??item)??[]).reduce((n,x)=>n+x.text.length,0)),type,level);
-          if(command('richtext.content.set',{nodeId:node.id,document:next},{render:false})){richTextDirty=false;renderRichTextEditor(editor,next);refreshCanvasRichText(next);restoreFormattingSelection();setStatus('Nem mentett módosítás');syncPublishControls()}
+          try{
+            const next=transformRichTextBlockTypes(doc,indices,type,level);
+            // Block conversion changes top-level indices. Save the model-aligned
+            // text offset rather than trying to restore obsolete block indices.
+            const selectionOffsets=getSelectionOffsets(formattingSurface)||savedSelectionOffsets;
+            if(command('richtext.content.set',{nodeId:node.id,document:next},{render:false})){
+              richTextDirty=false;renderRichTextEditor(editor,next);refreshCanvasRichText(next);
+              savedFormatSelection=null;savedLinkSelection=null;savedBlockIndex=null;
+              richTextBookmark=null;formattingSurface=editor;
+              savedSelectionOffsets=selectionOffsets;
+              if(selectionOffsets&&restoreSelectionOffsets(editor,selectionOffsets))rememberSelection();
+              setStatus('Nem mentett módosítás');syncPublishControls();
+              formatStatus.textContent='Blokktípus módosítva. A külön Mentés nem publikálja az oldalt.';
+            }
+          }catch(error){
+            formatStatus.textContent=error instanceof Error?error.message:String(error);
+            const block=doc.blocks[indices[0]];
+            if(block)blockSelect.value=block.type==='heading'?'heading-'+(block.level||1):block.type;
+          }
         };
         alignmentSelect.onpointerdown=rememberSelection;
         alignmentSelect.onchange=()=>{

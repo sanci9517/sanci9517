@@ -11,7 +11,7 @@ import { STYLE_MAP } from '../core/canvas-engine.js';
 import { normalizeInspectorValue } from '../core/property-values.js';
 import { updateRichTextInlineLink, updateRichTextInlineMark, validatedLinkHref } from '../core/richtext-links.js';
 import { normalizeRichText } from '../core/schema.js';
-import { setBlockType } from '../core/richtext-engine.js';
+import { setBlockType,transformRichTextBlockTypes } from '../core/richtext-engine.js';
 import { ELEMENT_CAPABILITIES, getElementCapability } from '../core/capability-matrix.js';
 import { TYPOGRAPHY_PRESETS, typographyPresetPatch } from '../core/typography-presets.js';
 import { readRichTextSelectionFormatting, clearRichTextInlineFormatting } from '../core/richtext-links.js';
@@ -361,4 +361,53 @@ test('safe Rich Text links inside lists and table cells preserve nested structur
   execute(state,{type:'history.redo'});
   assert.deepEqual(activePage(state).nodes[id].props.richText,linkedTable);
   assert.notEqual(state.status,'published');
+});
+
+test('block transformations preserve list item boundaries, marks, safe links and one-step Undo',()=>{
+  const initial=normalizeRichText({schemaVersion:1,type:'richtext-document',blocks:[
+    {type:'paragraph',children:[{type:'text',text:'Intro',marks:['italic']}]},
+    {type:'bulleted-list',items:[
+      [{type:'text',text:'Alpha',marks:['bold'],link:{href:'/p/alpha'}}],
+      [{type:'text',text:'Beta',marks:[],styles:{color:'#123456'}}]
+    ]},
+    {type:'paragraph',children:[{type:'text',text:'Finish',marks:[]}]}
+  ]});
+  const heading=transformRichTextBlockTypes(initial,[1],'heading',2);
+  assert.deepEqual(heading.blocks.map(block=>block.type),['paragraph','heading','heading','paragraph']);
+  assert.deepEqual(heading.blocks.slice(1,3).map(block=>block.children.map(run=>run.text).join('')),['Alpha','Beta']);
+  assert.equal(heading.blocks[1].level,2);
+  assert.equal(heading.blocks[1].children[0].link.href,'/p/alpha');
+  assert.deepEqual(heading.blocks[1].children[0].marks,['bold']);
+  assert.equal(heading.blocks[2].children[0].styles.color,'#123456');
+  assert.equal(initial.blocks[1].items.length,2,'source must not be mutated');
+  assert.deepEqual(normalizeRichText(heading),heading);
+
+  const list=transformRichTextBlockTypes(heading,[0,1,2],'numbered-list');
+  assert.deepEqual(list.blocks.map(block=>block.type),['numbered-list','paragraph']);
+  assert.deepEqual(list.blocks[0].items.map(item=>item.map(run=>run.text).join('')),['Intro','Alpha','Beta']);
+  assert.equal(list.blocks[0].items[1][0].link.href,'/p/alpha');
+  assert.deepEqual(normalizeRichText(list),list);
+  const numbered=transformRichTextBlockTypes(initial,[1],'numbered-list');
+  assert.equal(numbered.blocks[1].items.length,2,'switching list markers preserves item count');
+
+  const state=createEditorState(createDocument());
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.RICHTEXT}});
+  const id=state.selection.primaryId;
+  execute(state,{type:'richtext.content.set',payload:{nodeId:id,document:initial}});
+  execute(state,{type:'richtext.content.set',payload:{nodeId:id,document:heading}});
+  assert.deepEqual(activePage(state).nodes[id].props.richText,heading);
+  execute(state,{type:'history.undo'});
+  assert.deepEqual(activePage(state).nodes[id].props.richText,initial);
+  execute(state,{type:'history.redo'});
+  assert.deepEqual(activePage(state).nodes[id].props.richText,heading);
+  assert.notEqual(state.status,'published');
+
+  const table=normalizeRichText({schemaVersion:1,type:'richtext-document',blocks:[
+    {type:'paragraph',children:[{type:'text',text:'Safe',marks:[]}]},
+    {type:'table',rows:[{cells:[{children:[{type:'text',text:'Cell',marks:[]}]}]}]}
+  ]});
+  assert.throws(()=>transformRichTextBlockTypes(table,[0,1],'heading',2),/Táblázat/,'reject the whole selection, not only the table');
+  assert.throws(()=>transformRichTextBlockTypes(table,[-1],'paragraph'),/válassz/i);
+  assert.throws(()=>transformRichTextBlockTypes(table,[0],'heading',7),/1–6/);
+  assert.deepEqual(transformRichTextBlockTypes(table,[0],'heading',1).blocks[1],table.blocks[1]);
 });
