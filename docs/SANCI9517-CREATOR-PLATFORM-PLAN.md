@@ -15,6 +15,8 @@
 
 > **2026-10-20 – folytatás KIADVA:** `77.44.7.A/C` üres Rich Text-kijelölés javítva, [#196](https://github.com/sanci9517/sanci9517/pull/196) squash MERGED `a430021aaaaf8c6dcb4424d702f3b97aeafb03e3`; 390/1366px Chromium teszt integrálva. Editor Core, F0 baseline és Twitch CI **PASS**. **Aktív kurzor:** hátralévő strukturált kijelölés-/fókusz-/IME-paritás és Inspector–vászon–publikus egyezőség. Production source-SHA és fizikai Android/PC kézi elfogadás **UNVERIFIED**; teljes 77.44/WEB-011/49.4 **OPEN**. Save ≠ Publish.
 
+> **2026-10-20 – #197 Rich Text kijelölési offset javítás: squash MERGED `f8431157ff8308bf0ece8bb020dc6f42f035393d` (`v2/foundation`); Editor Core Chromium, F0 és Twitch CI PASS. Elavult, szöveghosszon túlnyúló kijelölés visszaállítása elutasítva, a natív kurzor változatlan marad; 390/1366px regresszió bővült, Chromium/HTTP-teszt lezárás sorrendje javítva. Aktív kurzor: 77.44.7.A/C mobil fókusz/IME és strukturált Inspector–vászon–publikus paritás. Production source-SHA/fizikai Android-PC UNVERIFIED, teljes Visual Editor OPEN, Save ≠ Publish.**
+
 ## A MASTER 12 része
 
 - [1/12 – MASTER fejezetek](creator-master/part-01-of-12.md)
