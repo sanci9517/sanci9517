@@ -52,6 +52,9 @@ export function restoreSelectionOffsets(editor,selection){
 
 function inlineElement(inline){
   let node=document.createElement('span');node.textContent=inline.text??'';
+  // Preserve hard line breaks visually in the Inspector and canvas, matching
+  // the public renderer's .visual-text {white-space:pre-wrap} semantics.
+  if(String(inline.text??'').includes('\n'))node.style.whiteSpace='pre-wrap';
   for(const [key,value] of Object.entries(inline.styles??{})){
     if(['color','backgroundColor'].includes(key)&&/^#(?:[\da-f]{3}|[\da-f]{4}|[\da-f]{6}|[\da-f]{8})$/i.test(value))node.style[key]=value;
     if(key==='fontSize'&&/^(?:[8-9]|[1-8]\d|9[0-6])px$/.test(value))node.style.fontSize=value;
@@ -132,11 +135,21 @@ function stylesFromNode(node,block){
   return Object.keys(styles).length?styles:undefined;
 }
 function readInlines(element){
-  const items=[];const walker=document.createTreeWalker(element,NodeFilter.SHOW_TEXT);let node;
+  const items=[];
+  // A native Shift+Enter often creates <br> rather than a text node. Read
+  // both elements and text to retain hard breaks instead of concatenating
+  // adjacent words when Inspector/canvas content is saved.
+  const walker=document.createTreeWalker(element,NodeFilter.SHOW_TEXT|NodeFilter.SHOW_ELEMENT);
+  const singlePlaceholderBreak=element.querySelectorAll('br').length===1&&element.textContent==='';
+  let node;
   while(node=walker.nextNode()){
-    if(!node.nodeValue)continue;
+    const isBreak=node.nodeType===Node.ELEMENT_NODE&&node.tagName==='BR';
+    if(!isBreak&&node.nodeType!==Node.TEXT_NODE)continue;
+    if(isBreak&&singlePlaceholderBreak)continue;
+    const text=isBreak?'\n':node.nodeValue;
+    if(!text)continue;
     const styles=stylesFromNode(node,element);
-    const item={type:'text',text:node.nodeValue,marks:marksFromNode(node,element),...(styles?{styles}:{})};
+    const item={type:'text',text,marks:marksFromNode(node,element),...(styles?{styles}:{})};
     const link=linkFromNode(node);if(link)item.link=link;items.push(item);
   }
   return mergeRuns(items);
