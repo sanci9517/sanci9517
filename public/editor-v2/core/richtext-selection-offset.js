@@ -27,3 +27,14 @@ export function textOffsetWithin(root, container, offset) {
     return null;
   }
 }
+
+/**
+ * Native contenteditable Shift+Enter creates BR nodes, although the canonical
+ * document serializes those as one newline character. Empty placeholder BR
+ * nodes are not content and must never add a phantom character.
+ */
+export function isRichTextHardBreak(node) {
+  if(node?.nodeType!==Node.ELEMENT_NODE||node.tagName!=='BR')return false;
+  const block=node.closest('p,h1,h2,h3,h4,h5,h6,blockquote,pre,li,td,th');
+  return !block||block.textContent!==''||block.querySelectorAll('br').length>1;
+}
