@@ -69,7 +69,7 @@ test('Rich Text paste stays inside LI/TD, rejects cross-cell replacement and pre
     const editor=page.locator('.richtext-editor-surface');await editor.waitFor();
 
     const dispatchPaste=async(startSelector,startOffset,endSelector,endOffset,html,text)=>{
-      return editor.evaluate(el,({startSelector,startOffset,endSelector,endOffset,html,text})=>{
+      return editor.evaluate((el,{startSelector,startOffset,endSelector,endOffset,html,text})=>{
         const startEl=el.querySelector(startSelector),endEl=el.querySelector(endSelector);
         const start=document.createTreeWalker(startEl,NodeFilter.SHOW_TEXT).nextNode();
         const end=document.createTreeWalker(endEl,NodeFilter.SHOW_TEXT).nextNode();
