@@ -109,6 +109,38 @@ test('Rich Text paste stays inside LI/TD, rejects cross-cell replacement and pre
     assert.match(await page.locator('.richtext-format-feedback').textContent(),/Több listaelem vagy táblázatcella/);
     assert.equal(await editor.locator('table th').textContent(),'Head');
     assert.equal(await editor.locator('table td').textContent(),'CeOne\nTwoll');
+    // A top-level paragraph paste keeps the caret inside the inserted block;
+    // the next keystroke must extend INSERT, not land in the following paragraph.
+    await dispatchPaste('p:last-child',2,'p:last-child',2,
+      '<p><strong>INSERT</strong></p>','INSERT');
+    assert.deepEqual(await editor.locator('p').allTextContents(),['Ou','INSERT','tro']);
+    const caretAfterPaste=await editor.evaluate(el=>{
+      const native=window.getSelection();
+      const anchor=native?.anchorNode;
+      const node=anchor?.nodeType===Node.ELEMENT_NODE?anchor:anchor?.parentElement;
+      return {inside:el.contains(anchor),paragraph:node?.closest('p')?.textContent??null,collapsed:native?.isCollapsed};
+    });
+    assert.deepEqual(caretAfterPaste,{inside:true,paragraph:'INSERT',collapsed:true},
+      'caret remains inside the inserted paragraph, not a detached root marker');
+    await editor.evaluate(el=>{el.focus();document.execCommand('insertText',false,'!')});
+    assert.deepEqual(await editor.locator('p').allTextContents(),['Ou','INSERT!','tro'],
+      'typing continues directly after the pasted Rich Text');
+
+    // A mobile toolbar may steal selection. Never silently append at page end.
+    const outsidePaste=await editor.evaluate(el=>{
+      const outside=document.getElementById('save');
+      outside.focus();
+      const range=document.createRange();range.selectNodeContents(outside);
+      const native=window.getSelection();native.removeAllRanges();native.addRange(range);
+      const before=el.innerHTML;
+      const data=new DataTransfer();data.setData('text/html','<p>LOST</p>');data.setData('text/plain','LOST');
+      el.dispatchEvent(new ClipboardEvent('paste',{bubbles:true,cancelable:true,clipboardData:data}));
+      return {unchanged:before===el.innerHTML,selectionOutside:!el.contains(native.anchorNode)};
+    });
+    assert.deepEqual(outsidePaste,{unchanged:true,selectionOutside:true},
+      'lost selection cannot change the document');
+    assert.match(await page.locator('.richtext-format-feedback').textContent(),/beillesztés helye elveszett/);
+
     assert.equal(posts.length,0,'pasting locally never invokes Save or Publish');
 
     if(width===1366){
@@ -127,6 +159,7 @@ test('Rich Text paste stays inside LI/TD, rejects cross-cell replacement and pre
       assert.equal(model.blocks[1].rows[0].cells[0].align,'center');
       assert.equal(model.blocks[1].rows[0].cells[1].align,'right');
       assert.equal(model.blocks[1].rows[0].cells[1].children.map(item=>item.text).join(''),'CeOne\nTwoll');
+      assert.deepEqual(model.blocks.slice(2).map(block=>block.children.map(run=>run.text).join('')),['Ou','INSERT!','tro']);
       const publicTab=await browser.newPage({viewport:{width:390,height:870}});
       await publicTab.goto(base+'/p/nested-paste');
       const output=publicTab.locator('.visual-richtext');await output.waitFor();
@@ -134,8 +167,28 @@ test('Rich Text paste stays inside LI/TD, rejects cross-cell replacement and pre
       assert.equal(await output.locator('ul li:nth-child(2) a strong').textContent(),'NEW');
       assert.equal(await output.locator('table td').textContent(),'CeOne\nTwoll');
       assert.equal(await output.locator('table th').textContent(),'Head');
+      assert.deepEqual(await output.locator('p').allTextContents(),['Ou','INSERT!','tro']);
       await publicTab.close();
     }
+    // Inserting at the editor root boundary must not replace the first UL.
+    const rootInsert=await editor.evaluate(async el=>{
+      const {pasteRichTextDocument}=await import('/editor-v2/core/richtext-paste.js');
+      const native=window.getSelection(),range=document.createRange();
+      range.setStart(el,0);range.collapse(true);
+      native.removeAllRanges();native.addRange(range);
+      const ok=pasteRichTextDocument(el,{
+        schemaVersion:1,type:'richtext-document',
+        blocks:[{type:'paragraph',children:[{type:'text',text:'PREFIX',marks:[]}]}]
+      });
+      const anchor=native.anchorNode;
+      const element=anchor?.nodeType===Node.ELEMENT_NODE?anchor:anchor?.parentElement;
+      return {ok,first:el.firstElementChild?.textContent,
+        listCount:el.querySelectorAll('ul').length,
+        caretParagraph:element?.closest('p')?.textContent};
+    });
+    assert.deepEqual(rootInsert,{ok:true,first:'PREFIX',listCount:1,caretParagraph:'PREFIX'},
+      'root-level insertion is zero-width and does not delete the first list');
+
     assert.deepEqual(errors,[],`no page errors at ${width}px`);
     await page.close();
   }
