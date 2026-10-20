@@ -1002,3 +1002,8 @@ A [#194](https://github.com/sanci9517/sanci9517/pull/194) egy teljes, összefüg
 **Ellenőrzés:** `tests/browser/editor-richtext-empty-selection.test.js` valós Chromium 390px/1366px; az `npm run test:editor:layout` csomagba felvéve. GitHub Editor Core, F0 és Twitch CI mind SUCCESS a PR fej-commitjára (`47d4e60bd76fe98a0354dddc9054870f0dbe1820`). **Korlát:** a CI nem fizikai Android-billentyűzet, sem hitelesített Production Editor teszt; a Production worker source-SHA és felhasználói PC/telefon próba UNVERIFIED. A teljes 77.44/WEB-011/49.4 OPEN.
 
 **Következő kurzor:** 77.44.7.A/C kijelölés pozíció/irány paritás az egyes Rich Text szerkezetek között, fókusz és IME; csak bizonyított hiba esetén változtass, valódi mobil/desktop regresszióval, majd Inspector–vászon–publikus elemparitás. Nincs párhuzamos terv, új DB-migráció vagy automatikus publikálás.
+
+
+#### 77.44.7.A/C – #197 további kijelölési határvédelem
+
+2026-10-20 – #197 Rich Text kijelölési offset javítás: squash MERGED `f8431157ff8308bf0ece8bb020dc6f42f035393d` (`v2/foundation`); Editor Core Chromium, F0 és Twitch CI PASS. Elavult, szöveghosszon túlnyúló kijelölés visszaállítása elutasítva, a natív kurzor változatlan marad; 390/1366px regresszió bővült, Chromium/HTTP-teszt lezárás sorrendje javítva. Aktív kurzor: 77.44.7.A/C mobil fókusz/IME és strukturált Inspector–vászon–publikus paritás. Production source-SHA/fizikai Android-PC UNVERIFIED, teljes Visual Editor OPEN, Save ≠ Publish.
