@@ -109,21 +109,23 @@ test('Rich Text paste stays inside LI/TD, rejects cross-cell replacement and pre
     assert.match(await page.locator('.richtext-format-feedback').textContent(),/Több listaelem vagy táblázatcella/);
     assert.equal(await editor.locator('table th').textContent(),'Head');
     assert.equal(await editor.locator('table td').textContent(),'CeOne\nTwoll');
-    // A top-level paragraph paste keeps the caret inside the inserted block;
-    // the next keystroke must extend INSERT, not land in the following paragraph.
+    // A single pasted paragraph is inline at the selection: no unintended
+    // sibling paragraphs, while the native caret stays beside the new mark.
     await dispatchPaste('p:last-child',2,'p:last-child',2,
       '<p><strong>INSERT</strong></p>','INSERT');
-    assert.deepEqual(await editor.locator('p').allTextContents(),['Ou','INSERT','tro']);
+    assert.deepEqual(await editor.locator('p').allTextContents(),['OuINSERTtro']);
+    assert.equal(await editor.locator('p strong').textContent(),'INSERT');
+    assert.equal(await editor.locator('p').count(),1,'single-block paste must keep the destination paragraph');
     const caretAfterPaste=await editor.evaluate(el=>{
       const native=window.getSelection();
       const anchor=native?.anchorNode;
       const node=anchor?.nodeType===Node.ELEMENT_NODE?anchor:anchor?.parentElement;
       return {inside:el.contains(anchor),paragraph:node?.closest('p')?.textContent??null,collapsed:native?.isCollapsed};
     });
-    assert.deepEqual(caretAfterPaste,{inside:true,paragraph:'INSERT',collapsed:true},
+    assert.deepEqual(caretAfterPaste,{inside:true,paragraph:'OuINSERTtro',collapsed:true},
       'caret remains inside the inserted paragraph, not a detached root marker');
     await editor.evaluate(el=>{el.focus();document.execCommand('insertText',false,'!')});
-    assert.deepEqual(await editor.locator('p').allTextContents(),['Ou','INSERT!','tro'],
+    assert.deepEqual(await editor.locator('p').allTextContents(),['OuINSERT!tro'],
       'typing continues directly after the pasted Rich Text');
 
     // A mobile toolbar may steal selection. Never silently append at page end.
@@ -159,7 +161,8 @@ test('Rich Text paste stays inside LI/TD, rejects cross-cell replacement and pre
       assert.equal(model.blocks[1].rows[0].cells[0].align,'center');
       assert.equal(model.blocks[1].rows[0].cells[1].align,'right');
       assert.equal(model.blocks[1].rows[0].cells[1].children.map(item=>item.text).join(''),'CeOne\nTwoll');
-      assert.deepEqual(model.blocks.slice(2).map(block=>block.children.map(run=>run.text).join('')),['Ou','INSERT!','tro']);
+      assert.deepEqual(model.blocks.slice(2).map(block=>block.children.map(run=>run.text).join('')),['OuINSERT!tro']);
+      assert.equal(model.blocks[2].children.find(run=>run.text==='INSERT')?.marks?.includes('bold'),true);
       const publicTab=await browser.newPage({viewport:{width:390,height:870}});
       await publicTab.goto(base+'/p/nested-paste');
       const output=publicTab.locator('.visual-richtext');await output.waitFor();
@@ -167,7 +170,8 @@ test('Rich Text paste stays inside LI/TD, rejects cross-cell replacement and pre
       assert.equal(await output.locator('ul li:nth-child(2) a strong').textContent(),'NEW');
       assert.equal(await output.locator('table td').textContent(),'CeOne\nTwoll');
       assert.equal(await output.locator('table th').textContent(),'Head');
-      assert.deepEqual(await output.locator('p').allTextContents(),['Ou','INSERT!','tro']);
+      assert.deepEqual(await output.locator('p').allTextContents(),['OuINSERT!tro']);
+      assert.equal(await output.locator('p strong').textContent(),'INSERT');
       await publicTab.close();
     }
     // Inserting at the editor root boundary must not replace the first UL.
@@ -188,6 +192,30 @@ test('Rich Text paste stays inside LI/TD, rejects cross-cell replacement and pre
     });
     assert.deepEqual(rootInsert,{ok:true,first:'PREFIX',listCount:1,caretParagraph:'PREFIX'},
       'root-level insertion is zero-width and does not delete the first list');
+
+    // Two imported blocks intentionally remain separate, unlike one inline
+    // fragment. Check the pure shared paste engine without touching the draft.
+    const multi=await page.evaluate(async()=>{
+      const {renderRichTextEditor}=await import('/editor-v2/core/richtext-engine.js');
+      const {pasteRichTextDocument}=await import('/editor-v2/core/richtext-paste.js');
+      const host=document.createElement('div');host.contentEditable='true';
+      document.body.append(host);
+      renderRichTextEditor(host,{schemaVersion:1,type:'richtext-document',blocks:[
+        {type:'paragraph',children:[{type:'text',text:'BeforeAfter',marks:[]}]}
+      ]});
+      const text=document.createTreeWalker(host.firstElementChild,NodeFilter.SHOW_TEXT).nextNode();
+      const range=document.createRange();range.setStart(text,6);range.collapse(true);
+      const sel=window.getSelection();sel.removeAllRanges();sel.addRange(range);
+      const ok=pasteRichTextDocument(host,{schemaVersion:1,type:'richtext-document',blocks:[
+        {type:'paragraph',children:[{type:'text',text:'First',marks:['bold']}]},
+        {type:'paragraph',children:[{type:'text',text:'Second',marks:['italic']}]}
+      ]});
+      const result={ok,paragraphs:[...host.children].map(el=>el.textContent),
+        strong:host.querySelector('strong')?.textContent,
+        italic:host.querySelector('em')?.textContent};
+      host.remove();return result;
+    });
+    assert.deepEqual(multi,{ok:true,paragraphs:['Before','First','Second','After'],strong:'First',italic:'Second'});
 
     assert.deepEqual(errors,[],`no page errors at ${width}px`);
     await page.close();
