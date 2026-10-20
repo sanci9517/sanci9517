@@ -17,6 +17,13 @@ export function pasteRichTextDocument(editor,documentModel){
     throw new Error('A beillesztés helye elveszett. Érintsd meg a kívánt szövegrészt, majd próbáld újra.');
   }
   const model=normalizeRichText(documentModel);
+  // Also protect direct callers: a single empty text block carries no paste
+  // data and must never erase a noncollapsed selection. Deliberate multi-
+  // paragraph spacing and empty table/list structures remain supported.
+  if(model.blocks.length===1&&['paragraph','heading','quote','code'].includes(model.blocks[0].type)&&
+     !model.blocks[0].children?.some(run=>String(run.text??'').length>0)){
+    throw new Error('A vágólapon nincs beilleszthető szöveg.');
+  }
   const imported=document.createElement('div');
   renderRichTextEditor(imported,model);
   const incoming=[...imported.childNodes];
