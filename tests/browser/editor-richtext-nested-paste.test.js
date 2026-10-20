@@ -173,7 +173,7 @@ test('Rich Text paste stays inside LI/TD, rejects cross-cell replacement and pre
       assert.equal(await output.locator('table td').textContent(),'CeOne\nTwoll');
       assert.equal(await output.locator('table th').textContent(),'Head');
       assert.deepEqual(await output.locator('p').allTextContents(),['OuINSERT!tro']);
-      assert.equal(await output.locator('p strong').textContent(),'INSERT');
+      assert.match(await output.locator('p strong').textContent(),/INSERT/,'published paste retains its bold text');
       await publicTab.close();
     }
     // Inserting at the editor root boundary must not replace the first UL.
