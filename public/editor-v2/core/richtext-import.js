@@ -88,6 +88,16 @@ function readInlineNodes(root, inherited = {marks: [], styles: {}}, inheritedLin
     if (node.nodeType !== Node.ELEMENT_NODE) return;
     const tag = node.tagName.toUpperCase();
     if (['SCRIPT', 'STYLE', 'SVG', 'IFRAME', 'OBJECT', 'EMBED', 'FORM', 'INPUT', 'BUTTON'].includes(tag)) return;
+    if (tag === 'BR') {
+      // Preserve in-paragraph/LI/TD hard breaks as canonical inline newlines.
+      // A single placeholder <br> in an otherwise empty block is not content.
+      if (!(root.querySelectorAll?.('br').length === 1 && root.textContent === '')) {
+        result.push({type:'text',text:'\n',marks:[...context.marks],
+          ...(Object.keys(context.styles).length?{styles:{...context.styles}}:{}),
+          ...(link?{link}:{})});
+      }
+      return;
+    }
     const next = styleFor(node, context);
     const nextLink = tag === 'A' ? safeLink(node) : link;
     for (const child of node.childNodes) visit(child, next, nextLink);
@@ -199,7 +209,13 @@ export function importRichTextClipboard({html = '', text = ''} = {}) {
   if (sourceHtml.trim()) {
     const parsed = new DOMParser().parseFromString(sourceHtml, 'text/html');
     const blocks = parseHtmlBlocks(parsed.body);
-    if (blocks.length) return {schemaVersion: 1, type: 'richtext-document', blocks};
+    const hasUsableContent = blocks.some(block=>
+      block.type === 'table' || block.type === 'bulleted-list' || block.type === 'numbered-list' ||
+      block.children?.some(run=>String(run.text??'').length>0));
+    if (hasUsableContent || (blocks.length>1))return {schemaVersion: 1, type: 'richtext-document', blocks};
   }
+  // HTML containing only discarded elements (e.g. SCRIPT or IMG) or an
+  // empty clipboard must not silently replace a nonempty selection with ''.
+  if(!sourceText.length)throw new Error('A vágólapon nincs beilleszthető szöveg.');
   return fromPlainText(sourceText);
 }

@@ -49,7 +49,12 @@ import {backgroundImageValue,MEDIA_ASSET_ID} from "../editor-v2/core/background-
  function richTextHtml(value){
   if(value?.type!=='richtext-document'||value.schemaVersion!==1||!Array.isArray(value.blocks))return'';
   const inlines=items=>(Array.isArray(items)?items:[]).map(item=>{
-   let label=esc(item?.text??'');for(const [mark,tag] of [['bold','strong'],['italic','em'],['underline','u'],['strikethrough','s'],['subscript','sub'],['superscript','sup'],['code','code']])if(item?.marks?.includes(mark))label=`<${tag}>${label}</${tag}>`;
+   let label=esc(item?.text??'');
+   // A page style can override .visual-text white-space. Keep explicit
+   // Shift+Enter / clipboard hard breaks visible without changing textContent
+   // (a <br> element would lose the canonical \\n on DOM roundtrip).
+   if(String(item?.text??'').includes('\n'))label=`<span style="white-space:pre-wrap">${label}</span>`;
+   for(const [mark,tag] of [['bold','strong'],['italic','em'],['underline','u'],['strikethrough','s'],['subscript','sub'],['superscript','sup'],['code','code']])if(item?.marks?.includes(mark))label=`<${tag}>${label}</${tag}>`;
    const safeColor=value=>typeof value==='string'&&/^#(?:[\da-f]{3}|[\da-f]{4}|[\da-f]{6}|[\da-f]{8})$/i.test(value)?value:'';
    const styles=[];const color=safeColor(item?.styles?.color),highlight=safeColor(item?.styles?.backgroundColor);if(color)styles.push(`color:${color}`);if(highlight)styles.push(`background-color:${highlight}`);const fontSize=typeof item?.styles?.fontSize==='string'&&/^(?:[8-9]|[1-8]\d|9[0-6])px$/.test(item.styles.fontSize)?item.styles.fontSize:'';if(fontSize)styles.push(`font-size:${fontSize}`);const fontFamily=RICH_TEXT_FONT_FAMILIES.includes(item?.styles?.fontFamily)?item.styles.fontFamily:'';if(fontFamily)styles.push(`font-family:${esc(fontFamily)}`);if(styles.length)label=`<span style="${styles.join(';')}">${label}</span>`;
    const href=typeof item?.link?.href==='string'?safeRichUrl(item.link.href):'';
