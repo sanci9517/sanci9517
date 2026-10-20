@@ -9,7 +9,9 @@ import {chromium} from 'playwright';
 const root=resolve(import.meta.dirname,'../../public');
 test('Rich Text selection restores an empty editable block without inventing text',async t=>{
   const server=createServer(async(req,res)=>{
-    const file=resolve(root,'.'+new URL(req.url,'http://localhost').pathname);
+    const pathname=new URL(req.url,'http://localhost').pathname;
+    if(pathname==='/'){res.setHeader('content-type','text/html');res.end('<!doctype html><html><body></body></html>');return}
+    const file=resolve(root,'.'+pathname);
     if(!file.startsWith(root+'/')){res.writeHead(403).end();return}
     try{res.setHeader('content-type',{'.js':'text/javascript','.html':'text/html'}[extname(file)]||'text/plain');res.end(await readFile(file))}
     catch{res.writeHead(404).end()}
@@ -21,7 +23,7 @@ test('Rich Text selection restores an empty editable block without inventing tex
   const base='http://127.0.0.1:'+server.address().port;
   for(const width of [390,1366]){
     const page=await browser.newPage({viewport:{width,height:800}});
-    await page.goto(base+'/editor-v2/index.html');
+    await page.goto(base+'/');
     const result=await page.evaluate(async()=>{
       const {restoreSelectionOffsets,getSelectionOffsets}=await import('/editor-v2/core/richtext-engine.js');
       const root=document.createElement('div');root.contentEditable='true';
