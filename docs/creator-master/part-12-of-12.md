@@ -1007,3 +1007,8 @@ A [#194](https://github.com/sanci9517/sanci9517/pull/194) egy teljes, összefüg
 #### 77.44.7.A/C – #197 további kijelölési határvédelem
 
 2026-10-20 – #197 Rich Text kijelölési offset javítás: squash MERGED `f8431157ff8308bf0ece8bb020dc6f42f035393d` (`v2/foundation`); Editor Core Chromium, F0 és Twitch CI PASS. Elavult, szöveghosszon túlnyúló kijelölés visszaállítása elutasítva, a natív kurzor változatlan marad; 390/1366px regresszió bővült, Chromium/HTTP-teszt lezárás sorrendje javítva. Aktív kurzor: 77.44.7.A/C mobil fókusz/IME és strukturált Inspector–vászon–publikus paritás. Production source-SHA/fizikai Android-PC UNVERIFIED, teljes Visual Editor OPEN, Save ≠ Publish.
+
+
+#### 77.44.7.A/C – #198 Shift+Enter-kijelölésparitás
+
+2026-10-20 – Rich Text natív Shift+Enter kijelölésparitás: [#198](https://github.com/sanci9517/sanci9517/pull/198) squash MERGED `979c655645cf6b4c866e145c56246e79926a163f`. A natív `BR` sortörés egy UTF-16 karaktert számít a kijelölésben, az egyetlen üres placeholder BR nem; pozíció-visszaállítás sortörés előtt/után. 390/1366px Chromium az Editor Core regresszióban, F0 és Twitch CI mind PASS. Production source-SHA és fizikai Android/PC teszt UNVERIFIED; 77.44/WEB-011/49.4 OPEN, Save ≠ Publish. Következő kurzor: Rich Text strukturált kijelölés/fókusz/IME és Inspector–vászon–publikus paritás.
