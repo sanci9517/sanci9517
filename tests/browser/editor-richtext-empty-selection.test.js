@@ -45,8 +45,18 @@ test('Rich Text selection restores an empty editable block without inventing tex
       const preserved=native.anchorNode===textNode&&native.anchorOffset===1;
       const validEnd=restoreSelectionOffsets(root,{from:3,to:3});
       const validEndOffset=native.anchorOffset;
+      root.innerHTML='<p>North<br>South</p>';
+      const south=root.querySelector('p').lastChild;
+      const afterBreak=document.createRange();afterBreak.setStart(south,0);afterBreak.collapse(true);
+      native.removeAllRanges();native.addRange(afterBreak);
+      const newlineOffset=getSelectionOffsets(root);
+      const restoredAfterBreak=restoreSelectionOffsets(root,{from:6,to:6});
+      const roundtripAfterBreak=getSelectionOffsets(root);
+      const beforeBreak=restoreSelectionOffsets(root,{from:5,to:5});
+      const roundtripBeforeBreak=getSelectionOffsets(root);
+      const invalidPastBreak=restoreSelectionOffsets(root,{from:12,to:12});
       root.remove();
-      return {restored,caretInBlock,offsets,invalidNegative,invalidNoncollapsed,unchanged,staleOffset,staleRange,preserved,validEnd,validEndOffset};
+      return {restored,caretInBlock,offsets,invalidNegative,invalidNoncollapsed,unchanged,staleOffset,staleRange,preserved,validEnd,validEndOffset,newlineOffset,restoredAfterBreak,roundtripAfterBreak,beforeBreak,roundtripBeforeBreak,invalidPastBreak};
     });
     assert.equal(result.restored,true);
     assert.equal(result.caretInBlock,true);
@@ -59,6 +69,12 @@ test('Rich Text selection restores an empty editable block without inventing tex
     assert.equal(result.preserved,true);
     assert.equal(result.validEnd,true);
     assert.equal(result.validEndOffset,3);
+    assert.deepEqual(result.newlineOffset,{from:6,to:6,collapsed:true});
+    assert.equal(result.restoredAfterBreak,true);
+    assert.deepEqual(result.roundtripAfterBreak,{from:6,to:6,collapsed:true});
+    assert.equal(result.beforeBreak,true);
+    assert.deepEqual(result.roundtripBeforeBreak,{from:5,to:5,collapsed:true});
+    assert.equal(result.invalidPastBreak,false);
     await page.close();
   }
 });
