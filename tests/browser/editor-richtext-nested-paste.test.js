@@ -219,6 +219,88 @@ test('Rich Text paste stays inside LI/TD, rejects cross-cell replacement and pre
     });
     assert.deepEqual(multi,{ok:true,paragraphs:['Before','First','Second','After'],strong:'First',italic:'Second'});
 
+    // Mixed paragraph selections must not silently remove a complete table
+    // or list in the middle. Both Inspector mobile/desktop browser paths share
+    // this production paste engine; use isolated DOM to avoid modifying draft.
+    const crossStructure=await page.evaluate(async()=>{
+      const {renderRichTextEditor}=await import('/editor-v2/core/richtext-engine.js');
+      const {pasteRichTextDocument}=await import('/editor-v2/core/richtext-paste.js');
+      const text=value=>[{type:'text',text:value,marks:[]}];
+      const host=document.createElement('div');host.contentEditable='true';
+      document.body.append(host);
+      renderRichTextEditor(host,{schemaVersion:1,type:'richtext-document',blocks:[
+        {type:'paragraph',children:text('LeadAlpha')},
+        {type:'table',rows:[{cells:[
+          {header:true,children:text('Header')},
+          {header:false,children:text('Cell')}
+        ]}]},
+        {type:'paragraph',children:text('MiddleText')},
+        {type:'bulleted-list',items:[text('One'),text('Two')]},
+        {type:'paragraph',children:text('TailOmega')}
+      ]});
+      const replacement={schemaVersion:1,type:'richtext-document',blocks:[
+        {type:'paragraph',children:text('REPLACED')}
+      ]};
+      const native=window.getSelection();
+      const choose=(startNode,startOffset,endNode,endOffset)=>{
+        const range=document.createRange();
+        range.setStart(startNode,startOffset);range.setEnd(endNode,endOffset);
+        native.removeAllRanges();native.addRange(range);
+      };
+      const firstText=element=>document.createTreeWalker(element,NodeFilter.SHOW_TEXT).nextNode();
+      const check=(label,startNode,startOffset,endNode,endOffset)=>{
+        choose(startNode,startOffset,endNode,endOffset);
+        const before=host.innerHTML;
+        let rejected=false,message='';
+        try{pasteRichTextDocument(host,replacement)}
+        catch(error){rejected=true;message=String(error.message)}
+        return {label,rejected,unchanged:before===host.innerHTML,
+          structurePreserved:host.querySelector('table th')?.textContent==='Header'&&
+            host.querySelectorAll('ul > li').length===2,
+          message};
+      };
+      const cases=[
+        check('paragraph-to-paragraph across table',
+          firstText(host.children[0]),4,firstText(host.children[2]),6),
+        check('paragraph-to-paragraph across list',
+          firstText(host.children[2]),3,firstText(host.children[4]),4),
+        check('collapsed inside table wrapper',
+          host.querySelector('tbody'),0,host.querySelector('tbody'),0),
+        check('collapsed inside list wrapper',
+          host.querySelector('ul'),1,host.querySelector('ul'),1),
+        check('root selection including table',host,0,host,2)
+      ];
+      // Adjacent ordinary paragraphs still support replacing a cross-block
+      // selection with formatted text; the protection is intentionally narrow.
+      const safe=document.createElement('div');safe.contentEditable='true';
+      document.body.append(safe);
+      renderRichTextEditor(safe,{schemaVersion:1,type:'richtext-document',blocks:[
+        {type:'paragraph',children:text('LeftPart')},
+        {type:'paragraph',children:text('RightPart')}
+      ]});
+      choose(firstText(safe.children[0]),4,firstText(safe.children[1]),5);
+      const ok=pasteRichTextDocument(safe,{
+        schemaVersion:1,type:'richtext-document',blocks:[
+          {type:'paragraph',children:[{type:'text',text:'NEW',marks:['bold']}]}
+        ]
+      });
+      const allowed={ok,paragraphs:[...safe.children].map(el=>el.textContent),
+        bold:safe.querySelector('strong')?.textContent,
+        caretInside:safe.contains(native.anchorNode)};
+      host.remove();safe.remove();
+      return {cases,allowed};
+    });
+    assert.equal(crossStructure.cases.length,5);
+    for(const result of crossStructure.cases){
+      assert.equal(result.rejected,true,result.label+' must refuse unsafe paste');
+      assert.equal(result.unchanged,true,result.label+' must preserve the complete original DOM');
+      assert.equal(result.structurePreserved,true,result.label+' must keep lists and tables intact');
+      assert.match(result.message,/kijelölés|kurzorhely/,result.label+' needs useful feedback');
+    }
+    assert.deepEqual(crossStructure.allowed,
+      {ok:true,paragraphs:['Left','NEW','Part'],bold:'NEW',caretInside:true},
+      'ordinary adjacent paragraph replacement still works and keeps its marks');
+
     assert.deepEqual(errors,[],`no page errors at ${width}px`);
     await page.close();
   }
