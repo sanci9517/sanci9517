@@ -56,6 +56,10 @@ export function restoreSelectionOffsets(editor,selection){
     const native=window.getSelection();if(!native)return false;
     native.removeAllRanges();native.addRange(range);return true;
   }
+  // Never clamp a stale selection beyond the current document to its last
+  // character: that silently moves the caret after an Inspector re-render.
+  const textLength=nodes.reduce((sum,text)=>sum+text.nodeValue.length,0);
+  if(selection.to>textLength)return false;
   const start=locate(selection.from),end=locate(selection.to);if(!start||!end)return false;
   const range=document.createRange();range.setStart(start.node,start.offset);range.setEnd(end.node,end.offset);
   const native=window.getSelection();if(!native)return false;
