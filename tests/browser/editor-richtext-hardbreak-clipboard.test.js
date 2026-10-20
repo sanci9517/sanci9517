@@ -160,7 +160,11 @@ test('Rich Text preserves HTML and native hard breaks, rejects empty clipboard a
       assert.equal(await rendered.locator('ul li:nth-child(2) a').getAttribute('href'),'/p/link');
       assert.equal(await rendered.locator('table td').textContent(),expected.cell);
       assert.equal(await rendered.locator('p:last-child').textContent(),expected.native);
-      assert.equal(await rendered.evaluate(el=>getComputedStyle(el).whiteSpace),'pre-wrap');
+      assert.equal(await rendered.locator('p:first-child strong span').evaluate(el=>getComputedStyle(el).whiteSpace),'pre-wrap',
+        'visible hard breaks must survive even when the outer page style overrides white-space');
+      assert.equal(await rendered.locator('ul li:nth-child(2) a span').evaluate(el=>getComputedStyle(el).whiteSpace),'pre-wrap');
+      assert.equal(await rendered.locator('table td span').evaluate(el=>getComputedStyle(el).whiteSpace),'pre-wrap');
+      assert.equal(await rendered.locator('p:last-child span').evaluate(el=>getComputedStyle(el).whiteSpace),'pre-wrap');
       await publicPage.close();
     }
     assert.deepEqual(errors,[],`no browser errors at ${width}px`);
