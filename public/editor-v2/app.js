@@ -18,6 +18,7 @@ import {initialPageId,rememberPageId,requestedPageId} from './core/page-url.js';
 import {getElementCapability} from './core/capability-matrix.js';
 import {renderGeometryPresets} from './ui/geometry-presets.js';
 import {importRichTextClipboard} from './core/richtext-import.js';
+import {pasteRichTextDocument} from './core/richtext-paste.js';
 import {captureStyleSnapshot} from './core/style-snapshot.js';
 import {LAYOUT_PRESETS,LAYOUT_TYPES,layoutMode,isManagedLayout,isLayoutPropertyRelevant,explicitGridColumnCount} from './core/layout-presets.js';
 import {TYPOGRAPHY_PRESETS,typographyPresetPatch} from './core/typography-presets.js';
@@ -232,31 +233,6 @@ function beginRichTextEditing(id){
   document.querySelectorAll('.inspector-tabs button').forEach((button,index)=>button.classList.toggle('active',index===0));
   render();
   requestAnimationFrame(()=>{const editor=canvas.querySelector('.node[data-node-id="'+CSS.escape(id)+'"] .richtext-inline-surface,.node[data-node-id="'+CSS.escape(id)+'"] .plain-text-inline-surface');if(!editor)return;editor.focus();const block=editor.querySelector('[data-rich-block]');if(block&&!editor.textContent.trim()){const range=document.createRange();range.selectNodeContents(block);range.collapse(false);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range)}});
-}
-function pasteRichTextDocument(editor,documentModel){
-  const selection=window.getSelection();
-  const range=selection?.rangeCount?selection.getRangeAt(0):null;
-  const topLevel=node=>{let current=node?.nodeType===Node.ELEMENT_NODE?node:node?.parentElement;while(current?.parentElement&&current.parentElement!==editor)current=current.parentElement;return current?.parentElement===editor?current:null};
-  const startBlock=range&&range.startContainer===editor?editor.childNodes[range.startOffset]:(range&&editor.contains(range.startContainer)?topLevel(range.startContainer):null);
-  const endBlock=range&&range.endContainer===editor?editor.childNodes[Math.max(0,range.endOffset-1)]:(range&&editor.contains(range.endContainer)?topLevel(range.endContainer):null);
-  const imported=document.createElement('div');renderRichTextEditor(imported,normalizeRichText(documentModel));
-  const incoming=[...imported.childNodes];if(!incoming.length)return false;
-  if(!startBlock||!endBlock){editor.append(...incoming);return true}
-  const children=[...editor.childNodes],first=children.indexOf(startBlock),last=children.indexOf(endBlock);
-  if(first<0||last<first)return false;
-  const prefix=document.createDocumentFragment(),suffix=document.createDocumentFragment();
-  if(range.startContainer!==editor){const prefixRange=document.createRange();prefixRange.selectNodeContents(startBlock);prefixRange.setEnd(range.startContainer,range.startOffset);prefix.append(prefixRange.cloneContents())}
-  if(range.endContainer!==editor){const suffixRange=document.createRange();suffixRange.selectNodeContents(endBlock);suffixRange.setStart(range.endContainer,range.endOffset);suffix.append(suffixRange.cloneContents())}
-  const meaningful=fragment=>[...fragment.childNodes].some(node=>node.nodeType===Node.TEXT_NODE?Boolean(node.nodeValue):Boolean(node.textContent));
-  const fragment=document.createDocumentFragment();
-  if(meaningful(prefix)){const wrapper=startBlock.cloneNode(false);wrapper.removeAttribute('data-rich-block');wrapper.removeAttribute('data-richBlock');wrapper.append(prefix);fragment.append(wrapper)}
-  fragment.append(...incoming);
-  const marker=document.createElement('span');marker.className='richtext-paste-caret';marker.setAttribute('aria-hidden','true');fragment.append(marker);
-  if(meaningful(suffix)){const wrapper=endBlock.cloneNode(false);wrapper.removeAttribute('data-rich-block');wrapper.removeAttribute('data-richBlock');wrapper.append(suffix);fragment.append(wrapper)}
-  startBlock.before(fragment);
-  for(const block of children.slice(first,last+1))block.remove();
-  const caret=document.createRange();caret.setStartBefore(marker);caret.collapse(true);selection.removeAllRanges();selection.addRange(caret);marker.remove();
-  return true;
 }
 function openRichTextFormatting(id){
   if(flushRichTextDraft?.()===false)return;
