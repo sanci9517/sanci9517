@@ -17,6 +17,7 @@ import { createDefaultScheduleConfig, normalizeScheduleConfig, validateScheduleC
 import { getSchedulePreviewItems } from '../core/schedule-preview.js';
 import { computeCanvasMinHeight } from '../core/canvas-extent.js';
 import { measureCanvasWorkspace } from '../core/canvas-workspace.js';
+import { needsRelativeOffsetPosition } from '../core/canvas-engine.js';
 import { validatePublishDocument } from '../../../src/core/editor-validation.ts';
 
 test('canvas minimum height follows content below the default page extent', () => {
@@ -31,6 +32,14 @@ test('canvas workspace expands in every direction without changing artboard coor
   assert.deepEqual(measureCanvasWorkspace([{left:-120,right:420,top:-40,bottom:1100}],300,800,1),{left:120,top:40,right:120,bottom:300});
   assert.deepEqual(measureCanvasWorkspace([{left:-120,right:420,top:-40,bottom:1100}],300,800,.5),{left:240,top:80,right:540,bottom:1400});
   assert.deepEqual(measureCanvasWorkspace([{left:10,right:290,top:10,bottom:790}],300,800,1),{left:0,top:0,right:0,bottom:0});
+});
+
+test('responsive drag offsets promote only static nodes to relative positioning', () => {
+  assert.equal(needsRelativeOffsetPosition({}), false);
+  assert.equal(needsRelativeOffsetPosition({ x: '24px' }), true);
+  assert.equal(needsRelativeOffsetPosition({ y: '-12px', position: 'static' }), true);
+  assert.equal(needsRelativeOffsetPosition({ x: '24px', position: 'absolute' }), false);
+  assert.equal(needsRelativeOffsetPosition({ x: '24px', position: 'sticky' }), false);
 });
 
 test('Rich Text schema normalizes Office-friendly tables, safe inline styles and extended semantic marks',()=>{
