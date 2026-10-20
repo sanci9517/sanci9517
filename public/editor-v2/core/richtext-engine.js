@@ -110,7 +110,27 @@ function marksFromNode(node,block){
 }
 function canonicalColor(value){const raw=String(value??'').trim().toLowerCase();if(/^#(?:[\da-f]{3}|[\da-f]{4}|[\da-f]{6}|[\da-f]{8})$/i.test(raw))return raw;const rgb=raw.match(/^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})(?:\s*,\s*(?:0|1|0?\.\d+))?\s*\)$/);if(!rgb||rgb.slice(1,4).some(channel=>Number(channel)>255))return null;return `#${rgb.slice(1,4).map(channel=>Number(channel).toString(16).padStart(2,'0')).join('')}`}
 function canonicalFontFamily(value){const first=String(value??'').split(',')[0].trim().replace(/^['\"]|['\"]$/g,'');return RICH_TEXT_FONT_FAMILIES.find(family=>family.toLowerCase()===first.toLowerCase())}
-function stylesFromNode(node,block){const styles={};let parent=node.parentElement;while(parent&&parent!==block){for(const key of ['color','backgroundColor']){const color=canonicalColor(parent.style?.[key]);if(color)styles[key]=color}const family=canonicalFontFamily(parent.style?.fontFamily);if(family)styles.fontFamily=family;const size=String(parent.style?.fontSize??'').trim();if(/^(?:[8-9]|[1-8]\d|9[0-6])px$/.test(size))styles.fontSize=size;parent=parent.parentElement}return Object.keys(styles).length?styles:undefined}
+function stylesFromNode(node,block){
+  const styles={};
+  // Walk from the text outward. CSS uses the closest explicitly declared
+  // value for a nested inline style; an outer span must not overwrite it.
+  for(let parent=node.parentElement;parent&&parent!==block;parent=parent.parentElement){
+    for(const key of ['color','backgroundColor']){
+      if(styles[key]!==undefined)continue;
+      const color=canonicalColor(parent.style?.[key]);
+      if(color)styles[key]=color;
+    }
+    if(styles.fontFamily===undefined){
+      const family=canonicalFontFamily(parent.style?.fontFamily);
+      if(family)styles.fontFamily=family;
+    }
+    if(styles.fontSize===undefined){
+      const size=String(parent.style?.fontSize??'').trim();
+      if(/^(?:[8-9]|[1-8]\d|9[0-6])px$/.test(size))styles.fontSize=size;
+    }
+  }
+  return Object.keys(styles).length?styles:undefined;
+}
 function readInlines(element){
   const items=[];const walker=document.createTreeWalker(element,NodeFilter.SHOW_TEXT);let node;
   while(node=walker.nextNode()){
