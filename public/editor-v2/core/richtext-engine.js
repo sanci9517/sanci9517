@@ -155,11 +155,14 @@ export function richTextEditorToDocument(editor){
 const TRANSFORMABLE_BLOCK_TYPES=new Set(['paragraph','heading','quote','code','bulleted-list','numbered-list']);
 
 /**
- * Transform complete selected top-level blocks without losing list item boundaries.
- * The result is a new normalized-model-compatible document; callers commit it as
- * ONE richtext.content.set command so the whole selection is one Undo/Redo step.
+ * Transform selected text blocks and, optionally, only the list items touched
+ * by a selection. The untouched LI runs remain in their original list type.
+ * One return value means one Page Model command / Undo step for the caller.
+ * selectionSegments contain canonical per-block text offsets or an exact
+ * itemIndex for collapsed carets within an LI. Without them, the entire block
+ * is converted for backwards-compatible call sites.
  */
-export function transformRichTextBlockTypes(documentModel,indices,type,level=1){
+export function transformRichTextBlockTypes(documentModel,indices,type,level=1,selectionSegments=null){
   if(!TRANSFORMABLE_BLOCK_TYPES.has(type))throw new Error('Nem támogatott szövegblokk-típus.');
   if(type==='heading'&&(!Number.isInteger(level)||level<1||level>6))throw new Error('A címsor szintje 1–6 lehet.');
   if(!Array.isArray(documentModel?.blocks)||!Array.isArray(indices)||!indices.length||
@@ -170,7 +173,7 @@ export function transformRichTextBlockTypes(documentModel,indices,type,level=1){
   if([...selected].some(index=>documentModel.blocks[index].type==='table')){
     throw new Error('Táblázat blokkstílusa nem alakítható át. Jelölj ki csak szövegblokkokat.');
   }
-  const result=clone(documentModel),blocks=[];
+  const result=clone(documentModel),blocks=[],isListTarget=type==='bulleted-list'||type==='numbered-list';
   let previousWasSelected=false;
   for(let index=0;index<result.blocks.length;index++){
     const source=result.blocks[index];
@@ -179,19 +182,44 @@ export function transformRichTextBlockTypes(documentModel,indices,type,level=1){
     }
     const wasList=['bulleted-list','numbered-list'].includes(source.type);
     const items=wasList?source.items.map(item=>clone(Array.isArray(item)?item:item.children??[])):[clone(source.children??[])];
-    if(type==='bulleted-list'||type==='numbered-list'){
-      if(previousWasSelected&&blocks.at(-1)?.type===type){
-        blocks.at(-1).items.push(...items);
-      }else blocks.push({type,items});
-    }else{
-      for(const children of items){
-        const nextBlock={type,...(type==='heading'?{level}:{}),
-          ...(['paragraph','heading','quote'].includes(type)&&!wasList&&source.align?{align:source.align}:{}),
-          children};
-        blocks.push(nextBlock);
-      }
+    const ranges=Array.isArray(selectionSegments)?selectionSegments.filter(segment=>segment?.blockIndex===index):[];
+    const selectedItems=new Set();
+    if(wasList&&ranges.length){
+      let offset=0;
+      items.forEach((runs,itemIndex)=>{
+        const length=runs.reduce((sum,run)=>sum+String(run.text??'').length,0);
+        if(ranges.some(segment=>segment.itemIndex===itemIndex||
+           (Number.isInteger(segment.from)&&Number.isInteger(segment.to)&&
+             (segment.to>offset&&segment.from<offset+length||
+              !length&&segment.from<=offset&&segment.to>=offset)))){
+          selectedItems.add(itemIndex);
+        }
+        offset+=length;
+      });
+    }else items.forEach((_,itemIndex)=>selectedItems.add(itemIndex));
+    if(wasList&&source.type===type&&selectedItems.size<items.length){
+      // The chosen marker already applies: a partial selection is a no-op.
+      blocks.push(source);previousWasSelected=false;continue;
     }
-    previousWasSelected=true;
+    let lastEmitted=null;
+    items.forEach((children,itemIndex)=>{
+      if(!selectedItems.has(itemIndex)){
+        if(lastEmitted==='original'&&blocks.at(-1)?.type===source.type){
+          blocks.at(-1).items.push(children);
+        }else blocks.push({type:source.type,items:[children]});
+        lastEmitted='original';previousWasSelected=false;return;
+      }
+      if(isListTarget){
+        if(previousWasSelected&&blocks.at(-1)?.type===type){
+          blocks.at(-1).items.push(children);
+        }else blocks.push({type,items:[children]});
+      }else{
+        blocks.push({type,...(type==='heading'?{level}:{}),
+          ...(['paragraph','heading','quote'].includes(type)&&!wasList&&source.align?{align:source.align}:{}),
+          children});
+      }
+      lastEmitted='converted';previousWasSelected=true;
+    });
   }
   result.blocks=blocks;
   return result;
