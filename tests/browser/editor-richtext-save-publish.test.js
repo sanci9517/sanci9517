@@ -154,6 +154,10 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
   await liveEditor.evaluate(el=>{el.dispatchEvent(new CompositionEvent('compositionstart',{bubbles:true}));el.lastElementChild.querySelector('span').textContent='árvíztűrő';el.dispatchEvent(new InputEvent('input',{bubbles:true,isComposing:true}))});
   assert.equal(await tab.locator(`.node[data-node-id="${nodeId}"] > .node-content`).textContent(),beforeIME,'unfinished IME composition must not enter the canonical model');
   await liveEditor.evaluate(el=>el.dispatchEvent(new CompositionEvent('compositionend',{bubbles:true,data:'árvíztűrő'})));
+  // Reconciliation is deferred until the IME has had a chance to deliver a
+  // final input event; wait for the settled canvas rather than assuming the
+  // next Playwright call occurs after a browser animation frame.
+  await tab.waitForFunction(id=>document.querySelector(`.node[data-node-id="${id}"] > .node-content`)?.textContent?.includes('árvíztűrő'),nodeId);
   assert.match(await tab.locator(`.node[data-node-id="${nodeId}"] > .node-content`).textContent(),/árvíztűrő/);
   await tab.locator('#save').click();await tab.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
   assert.equal(posts.at(-1).publish,false);
