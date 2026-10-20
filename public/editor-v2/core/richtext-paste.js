@@ -66,6 +66,24 @@ export function pasteRichTextDocument(editor,documentModel){
     return true;
   }
 
+  // The start/end nodes can both be ordinary paragraphs while the selection
+  // crosses an intervening table or list. The old top-level replacement then
+  // deleted that entire structured block as an accidental side effect.
+  // Likewise, a collapsed caret on a UL/TABLE/TR/TBODY wrapper is not inside
+  // an editable LI/TD/TH and must never receive arbitrary paragraph markup.
+  const structuralAncestor=container=>{
+    const element=container?.nodeType===Node.ELEMENT_NODE?container:container?.parentElement;
+    const structure=element?.closest('ul,ol,table');
+    return structure&&editor.contains(structure)?structure:null;
+  };
+  if(structuralAncestor(range.startContainer)||structuralAncestor(range.endContainer)){
+    throw new Error('A lista vagy táblázat szerkezetén kívülre eső kurzorhely nem szerkeszthető. Válassz egy szövegrészt vagy cellát.');
+  }
+  if(!range.collapsed&&[...editor.children].some(block=>
+    ['UL','OL','TABLE'].includes(block.tagName)&&range.intersectsNode(block))){
+    throw new Error('A kijelölés listát vagy táblázatot is érint. A beillesztéshez jelölj ki csak szövegbekezdéseket; a strukturált elem változatlan maradt.');
+  }
+
   const topLevel=node=>{
     let current=node?.nodeType===Node.ELEMENT_NODE?node:node?.parentElement;
     while(current?.parentElement&&current.parentElement!==editor)current=current.parentElement;
