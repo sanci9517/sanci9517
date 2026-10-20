@@ -11,11 +11,25 @@ import {renderRichTextEditor,richTextToPlainText} from './richtext-engine.js';
 export function pasteRichTextDocument(editor,documentModel){
   const selection=window.getSelection();
   const range=selection?.rangeCount?selection.getRangeAt(0):null;
+  // Mobile toolbars/IME may leave the native selection in another control.
+  // Never guess a paste location or silently append to the end of the page.
+  if(!range||!editor.contains(range.startContainer)||!editor.contains(range.endContainer)){
+    throw new Error('A beillesztés helye elveszett. Érintsd meg a kívánt szövegrészt, majd próbáld újra.');
+  }
   const model=normalizeRichText(documentModel);
   const imported=document.createElement('div');
   renderRichTextEditor(imported,model);
   const incoming=[...imported.childNodes];
   if(!incoming.length)return false;
+  const lastInserted=incoming.at(-1);
+  const restoreCaret=()=>{
+    if(!lastInserted?.isConnected)return false;
+    const caret=document.createRange();
+    caret.selectNodeContents(lastInserted);
+    caret.collapse(false);
+    selection.removeAllRanges();selection.addRange(caret);
+    return true;
+  };
 
   const nestedTarget=container=>{
     if(!container||!editor.contains(container))return null;
@@ -59,9 +73,16 @@ export function pasteRichTextDocument(editor,documentModel){
     while(current?.parentElement&&current.parentElement!==editor)current=current.parentElement;
     return current?.parentElement===editor?current:null;
   };
+  // A caret between top-level blocks is an insertion point, not a request
+  // to replace the following whole block (especially offset 0 on mobile).
+  if(range.startContainer===editor&&range.endContainer===editor){
+    const fragment=document.createDocumentFragment();fragment.append(...incoming);
+    range.deleteContents();range.insertNode(fragment);
+    restoreCaret();return true;
+  }
   const startBlock=range&&range.startContainer===editor?editor.childNodes[range.startOffset]:(range&&editor.contains(range.startContainer)?topLevel(range.startContainer):null);
   const endBlock=range&&range.endContainer===editor?editor.childNodes[Math.max(0,range.endOffset-1)]:(range&&editor.contains(range.endContainer)?topLevel(range.endContainer):null);
-  if(!startBlock||!endBlock){editor.append(...incoming);return true}
+  if(!startBlock||!endBlock){editor.append(...incoming);restoreCaret();return true}
   const children=[...editor.childNodes],first=children.indexOf(startBlock),last=children.indexOf(endBlock);
   if(first<0||last<first)return false;
   const prefix=document.createDocumentFragment(),suffix=document.createDocumentFragment();
@@ -84,10 +105,6 @@ export function pasteRichTextDocument(editor,documentModel){
     wrapper.append(prefix);
   }
   fragment.append(...incoming);
-  const marker=document.createElement('span');
-  marker.className='richtext-paste-caret';
-  marker.setAttribute('aria-hidden','true');
-  fragment.append(marker);
   if(meaningful(suffix)){
     const wrapper=endBlock.cloneNode(false);
     wrapper.removeAttribute('data-rich-block');
@@ -95,8 +112,8 @@ export function pasteRichTextDocument(editor,documentModel){
   }
   startBlock.before(fragment);
   for(const block of children.slice(first,last+1))block.remove();
-  const caret=document.createRange();
-  caret.setStartBefore(marker);caret.collapse(true);
-  selection.removeAllRanges();selection.addRange(caret);marker.remove();
+  // Keep the native caret *inside* the last inserted Rich Text block.
+  // A detached marker between blocks left subsequent typing at a root edge.
+  restoreCaret();
   return true;
 }
