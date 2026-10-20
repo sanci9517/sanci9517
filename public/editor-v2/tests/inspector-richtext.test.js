@@ -390,9 +390,10 @@ test('partial LI selection converts only targeted item, preserving neighbors and
   const spanning=transformRichTextBlockTypes(model,[0,1],'numbered-list',1,[
     {blockIndex:0,from:2,to:7},{blockIndex:1,from:0,to:5}
   ]);
-  assert.deepEqual(spanning.blocks.map(b=>b.type),['numbered-list','bulleted-list','table']);
-  assert.deepEqual(spanning.blocks[0].items.map(item=>item.map(r=>r.text).join('')),['Alpha','Beta','Outro']);
+  assert.deepEqual(spanning.blocks.map(b=>b.type),['numbered-list','bulleted-list','numbered-list','table']);
+  assert.deepEqual(spanning.blocks[0].items.map(item=>item.map(r=>r.text).join('')),['Alpha','Beta']);
   assert.deepEqual(spanning.blocks[1].items.map(item=>item.map(r=>r.text).join('')),['Gamma']);
+  assert.deepEqual(spanning.blocks[2].items.map(item=>item.map(r=>r.text).join('')),['Outro'],'an untouched LI breaks list merging');
   assert.deepEqual(transformRichTextBlockTypes(model,[0],'bulleted-list',1,[{blockIndex:0,itemIndex:1}]),model,'choosing the same list type does not split it');
   assert.deepEqual(model.blocks[0].items.map(item=>item.map(r=>r.text).join('')),['Alpha','Beta','Gamma'],'source remains immutable');
 
