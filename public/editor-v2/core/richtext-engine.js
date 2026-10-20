@@ -152,20 +152,61 @@ export function richTextEditorToDocument(editor){
   return {schemaVersion:1,type:'richtext-document',blocks:blocks.length?blocks:[{type:'paragraph',children:[{type:'text',text:'',marks:[]}]}]};
 }
 
-export function setBlockType(document,from,to,type,level=1){
-  const next=clone(document);let offset=0;
-  for(const block of next.blocks??[]){
-    const children=block.children??block.items?.flatMap(item=>Array.isArray(item)?item:item.children??[])??[];
-    const length=children.reduce((n,x)=>n+(x.text?.length??0),0);const start=offset,end=offset+length;
-    if((to>start&&from<end)||(length===0&&from===start)){
-      if(type==='bulleted-list'||type==='numbered-list'){
-        block.type=type;block.items=[{children:clone(children)}];delete block.children;delete block.level;
-      }else{
-        block.type=type;block.children=clone(children);delete block.items;
-        if(type==='heading')block.level=Math.min(6,Math.max(1,Number(level)||1));else delete block.level;
+const TRANSFORMABLE_BLOCK_TYPES=new Set(['paragraph','heading','quote','code','bulleted-list','numbered-list']);
+
+/**
+ * Transform complete selected top-level blocks without losing list item boundaries.
+ * The result is a new normalized-model-compatible document; callers commit it as
+ * ONE richtext.content.set command so the whole selection is one Undo/Redo step.
+ */
+export function transformRichTextBlockTypes(documentModel,indices,type,level=1){
+  if(!TRANSFORMABLE_BLOCK_TYPES.has(type))throw new Error('Nem támogatott szövegblokk-típus.');
+  if(type==='heading'&&(!Number.isInteger(level)||level<1||level>6))throw new Error('A címsor szintje 1–6 lehet.');
+  if(!Array.isArray(documentModel?.blocks)||!Array.isArray(indices)||!indices.length||
+     indices.some(index=>!Number.isInteger(index)||index<0||index>=documentModel.blocks.length)){
+    throw new Error('Előbb válassz egy szövegblokkot.');
+  }
+  const selected=new Set(indices);
+  if([...selected].some(index=>documentModel.blocks[index].type==='table')){
+    throw new Error('Táblázat blokkstílusa nem alakítható át. Jelölj ki csak szövegblokkokat.');
+  }
+  const result=clone(documentModel),blocks=[];
+  let previousWasSelected=false;
+  for(let index=0;index<result.blocks.length;index++){
+    const source=result.blocks[index];
+    if(!selected.has(index)){
+      blocks.push(source);previousWasSelected=false;continue;
+    }
+    const wasList=['bulleted-list','numbered-list'].includes(source.type);
+    const items=wasList?source.items.map(item=>clone(Array.isArray(item)?item:item.children??[])):[clone(source.children??[])];
+    if(type==='bulleted-list'||type==='numbered-list'){
+      if(previousWasSelected&&blocks.at(-1)?.type===type){
+        blocks.at(-1).items.push(...items);
+      }else blocks.push({type,items});
+    }else{
+      for(const children of items){
+        const nextBlock={type,...(type==='heading'?{level}:{}),
+          ...(['paragraph','heading','quote'].includes(type)&&!wasList&&source.align?{align:source.align}:{}),
+          children};
+        blocks.push(nextBlock);
       }
     }
-    offset=end+1;
+    previousWasSelected=true;
   }
-  return next;
+  result.blocks=blocks;
+  return result;
+}
+
+/** Backwards-compatible character-range helper for older command call sites. */
+export function setBlockType(document,from,to,type,level=1){
+  const indices=[];let offset=0;
+  for(let index=0;index<(document?.blocks??[]).length;index++){
+    const block=document.blocks[index];
+    const children=block.children??block.items?.flatMap(item=>Array.isArray(item)?item:item.children??[])??
+      block.rows?.flatMap(row=>row.cells.flatMap(cell=>cell.children??[]))??[];
+    const length=children.reduce((n,x)=>n+String(x.text??'').length,0);
+    if((to>offset&&from<offset+length)||(length===0&&from===offset))indices.push(index);
+    offset+=length+1;
+  }
+  return indices.length?transformRichTextBlockTypes(document,indices,type,level):clone(document);
 }
