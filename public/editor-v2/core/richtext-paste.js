@@ -66,13 +66,37 @@ export function pasteRichTextDocument(editor,documentModel){
     return true;
   }
 
-  // Existing top-level document paste contract: split surrounding text
-  // blocks, insert safe modeled blocks, and leave the caret after the paste.
   const topLevel=node=>{
     let current=node?.nodeType===Node.ELEMENT_NODE?node:node?.parentElement;
     while(current?.parentElement&&current.parentElement!==editor)current=current.parentElement;
     return current?.parentElement===editor?current:null;
   };
+  // Pasting a single text block *within* a paragraph/heading/quote/code
+  // should replace only the selected inline characters. Splitting the
+  // destination into three sibling paragraphs changes spacing and editing
+  // semantics even when the clipboard contains just one paragraph.
+  // Preserve the destination block type/alignment and imported inline marks.
+  const firstBlock=topLevel(range.startContainer);
+  const lastBlock=topLevel(range.endContainer);
+  if(firstBlock&&firstBlock===lastBlock&&
+     /^(?:P|H[1-6]|BLOCKQUOTE|PRE)$/.test(firstBlock.tagName)&&
+     model.blocks.length===1&&['paragraph','heading','quote','code'].includes(model.blocks[0].type)){
+    const inlines=[...incoming[0].childNodes];
+    if(!inlines.some(node=>Boolean(node.textContent||node.nodeValue)))return false;
+    const fragment=document.createDocumentFragment();
+    fragment.append(...inlines);
+    const lastInline=fragment.lastChild;
+    range.deleteContents();
+    range.insertNode(fragment);
+    const caret=document.createRange();
+    caret.setStartAfter(lastInline);
+    caret.collapse(true);
+    selection.removeAllRanges();selection.addRange(caret);
+    return true;
+  }
+
+  // Multiple imported blocks still split the surrounding top-level blocks.
+  // This retains the original explicit paragraph/list/table paste behavior.
   // A caret between top-level blocks is an insertion point, not a request
   // to replace the following whole block (especially offset 0 on mobile).
   if(range.startContainer===editor&&range.endContainer===editor){
