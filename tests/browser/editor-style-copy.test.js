@@ -79,8 +79,8 @@ test('copy appearance between text elements preserves content and geometry throu
   await ensureGroupOpen('Térközök');
   for(const [side,value] of [['Felül','12px'],['Jobb','20px'],['Alul','12px'],['Bal','20px']]){
     const field=tab.locator('.typed-inspector-field[data-property-id="spacing.padding"]');
-    const input=field.getByRole('textbox',{name:`Belső térköz – ${side}`});
-    await input.fill(value);await input.press('Tab');
+    const input=field.getByRole('spinbutton',{name:`Belső térköz – ${side} értéke`});
+    await input.fill(value.replace('px',''));await input.press('Tab');
   }
   await ensureGroupOpen('Szegély');
   await editDimension('border.width','2');
@@ -115,7 +115,7 @@ test('copy appearance between text elements preserves content and geometry throu
   assert.equal(await resetBackground.count(),1,'a mobile-only value should offer a clear inheritance reset');
   await resetBackground.click();
   assert.equal(await tab.locator(`.node[data-node-id="${sourceId}"]`).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(25, 55, 91)');
-  assert.match(await tab.locator('.typed-inspector-field[data-property-id="background.color"] label').textContent(),/örökölt/);
+  assert.equal(await tab.locator('.typed-inspector-field[data-property-id="background.color"] .responsive-origin').textContent(),'Örökölt · Asztali','responsive origin must identify the inherited desktop source after reset');
   await editColor('background.color','#284e72');
   await tab.getByRole('button',{name:'Megjelenés másolása'}).click();
   assert.match(await tab.locator('#saveStatus').textContent(),/Megjelenés másolva/);

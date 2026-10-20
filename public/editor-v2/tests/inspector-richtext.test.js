@@ -1,15 +1,17 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createDocument, NODE_TYPES } from '../core/schema.js';
+import { describeResponsiveOrigin } from '../ui/responsive-origin.js';
+import {responsiveGroupResetActions} from '../ui/responsive-group-reset.js';
 import { createEditorState, activePage } from '../core/state.js';
-import { execute, executeCoalesced } from '../core/commands.js';
+import { execute, executeCoalesced, executeBatch } from '../core/commands.js';
 import { resolveNodeStyle } from '../core/canvas-engine.js';
 import { getProperty, listProperties } from '../core/property-registry.js';
 import { STYLE_MAP } from '../core/canvas-engine.js';
 import { normalizeInspectorValue } from '../core/property-values.js';
 import { updateRichTextInlineLink, updateRichTextInlineMark, validatedLinkHref } from '../core/richtext-links.js';
 import { normalizeRichText } from '../core/schema.js';
-import { setBlockType } from '../core/richtext-engine.js';
+import { setBlockType,transformRichTextBlockTypes } from '../core/richtext-engine.js';
 import { ELEMENT_CAPABILITIES, getElementCapability } from '../core/capability-matrix.js';
 import { TYPOGRAPHY_PRESETS, typographyPresetPatch } from '../core/typography-presets.js';
 import { readRichTextSelectionFormatting, clearRichTextInlineFormatting } from '../core/richtext-links.js';
@@ -252,4 +254,205 @@ test('inline marks, link and block transforms preserve content through commands 
   const unbold=updateRichTextInlineMark(bold,{blockIndex:0,from:6,to:11},'bold');
   assert.equal(unbold.blocks[0].children.every(run=>run.marks.length===0),true);
   assert.throws(()=>updateRichTextInlineMark(documentModel,{blockIndex:0,from:0,to:2},'script'));
+});
+
+
+test('group breakpoint reset is atomic and preserves other groups, devices and one-step Undo',()=>{
+  const state=createEditorState(createDocument());
+  const rootId=activePage(state).rootId;
+  execute(state,{type:'element.add',payload:{type:'text',parentId:rootId}});
+  const id=state.selection.primaryId;
+  execute(state,{type:'responsive.set',payload:{nodeId:id,device:'desktop',patch:{margin:'4px',padding:'8px',color:'#112233'}}});
+  execute(state,{type:'responsive.set',payload:{nodeId:id,device:'mobile',patch:{margin:'12px',padding:'16px',color:'#abcdef'}}});
+  const original=structuredClone(state.document);
+  const node=activePage(state).nodes[id];
+  const actions=responsiveGroupResetActions(node,[getProperty('spacing.margin'),getProperty('spacing.padding'),getProperty('spacing.margin'),getProperty('typography.color')].slice(0,3),'mobile');
+  assert.equal(actions.length,2,'duplicate props must not produce duplicate mutations');
+  assert.equal(responsiveGroupResetActions(node,[getProperty('spacing.margin')],'tablet').length,0,'no tablet overrides to reset');
+  const beforeCount=state.history.past.length;
+  executeBatch(state,actions,{label:'Térközök visszaállítása',atomic:true});
+  assert.equal(state.history.past.length,beforeCount+1,'all sides undo as one operation');
+  const values=activePage(state).nodes[id].responsive;
+  assert.equal(values.mobile?.margin,undefined);
+  assert.equal(values.mobile?.padding,undefined);
+  assert.equal(values.mobile?.color,'#abcdef','unrelated typography remains unchanged');
+  assert.equal(values.desktop?.margin,'4px','desktop values remain unchanged');
+  execute(state,{type:'history.undo'});
+  assert.deepEqual(state.document,original,'one Undo restores all original values');
+  execute(state,{type:'history.redo'});
+  assert.equal(activePage(state).nodes[id].responsive.mobile?.padding,undefined);
+});
+
+
+test('responsive property origin is canonical, device-scoped and describes base fallback',()=>{
+  const values={desktop:{fontSize:'32px'},tablet:{fontSize:'25px'},mobile:{}};
+  assert.deepEqual(describeResponsiveOrigin(values,'fontSize','desktop'),{kind:'own',source:'desktop',label:'Saját érték · Asztali'});
+  assert.deepEqual(describeResponsiveOrigin(values,'fontSize','tablet'),{kind:'own',source:'tablet',label:'Saját érték · Tablet'});
+  assert.deepEqual(describeResponsiveOrigin(values,'fontSize','mobile'),{kind:'inherited',source:'tablet',label:'Örökölt · Tablet'});
+  assert.deepEqual(describeResponsiveOrigin({desktop:{fontSize:'32px'}},'fontSize','mobile'),{kind:'inherited',source:'desktop',label:'Örökölt · Asztali'});
+  assert.deepEqual(describeResponsiveOrigin({},'fontSize','mobile',{hasBaseStyle:true}),{kind:'base',source:null,label:'Alapstílus'});
+  assert.deepEqual(describeResponsiveOrigin({},'fontSize','mobile'),{kind:'base',source:null,label:'Alapértelmezett'});
+  assert.throws(()=>describeResponsiveOrigin({},'fontSize','unsupported'),/Ismeretlen/);
+});
+
+
+test('geometry breakpoint reset preserves parent view and is one Undo operation',()=>{
+  const state=createEditorState(createDocument());
+  const rootId=activePage(state).rootId;
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:rootId}});
+  const id=state.selection.primaryId;
+  execute(state,{type:'responsive.set',payload:{nodeId:id,device:'desktop',patch:{x:'16px',y:'8px',width:'480px'}}});
+  execute(state,{type:'responsive.set',payload:{nodeId:id,device:'mobile',patch:{x:'64px',y:'40px',width:'200px',height:'120px'}}});
+  const node=activePage(state).nodes[id];
+  const before=structuredClone(state.document),historyBefore=state.history.past.length;
+  const geometry=['position.x','position.y','size.width','size.height','position.position'].map(getProperty);
+  const actions=responsiveGroupResetActions(node,geometry,'mobile');
+  assert.deepEqual(actions.map(item=>Object.keys(item.payload.patch)[0]),['x','y','width','height']);
+  executeBatch(state,actions,{label:'Geometria visszaállítása',atomic:true});
+  assert.equal(state.history.past.length,historyBefore+1);
+  const after=activePage(state).nodes[id].responsive;
+  assert.equal(after.mobile.x,undefined);assert.equal(after.mobile.width,undefined);
+  assert.equal(after.desktop.width,'480px');assert.equal(after.desktop.x,'16px');
+  execute(state,{type:'history.undo'});
+  assert.deepEqual(state.document,before);
+  execute(state,{type:'history.redo'});
+  assert.equal(activePage(state).nodes[id].responsive.mobile.height,undefined);
+});
+
+test('safe Rich Text links inside lists and table cells preserve nested structure and Undo/Redo', () => {
+  const initial=normalizeRichText({schemaVersion:1,type:'richtext-document',blocks:[
+    {type:'bulleted-list',items:[
+      [{type:'text',text:'Alpha',marks:['bold']}],
+      [{type:'text',text:'Beta',marks:['italic']}]
+    ]},
+    {type:'table',rows:[{cells:[
+      {header:true,align:'center',children:[{type:'text',text:'Gamma',marks:[]}]},
+      {header:false,align:'right',children:[{type:'text',text:'Delta',marks:['underline']}]}
+    ]}]}
+  ]});
+  const linkedList=updateRichTextInlineLink(initial,{blockIndex:0,from:3,to:7},'/p/list');
+  assert.deepEqual(linkedList.blocks[0].items[0].map(run=>run.text),['Alp','ha']);
+  assert.equal(linkedList.blocks[0].items[0][1].link.href,'/p/list');
+  assert.equal(linkedList.blocks[0].items[1][0].link.href,'/p/list');
+  assert.equal(linkedList.blocks[0].items[1].map(run=>run.text).join(''),'Beta');
+  const linkedTable=updateRichTextInlineLink(linkedList,{blockIndex:1,from:2,to:7},'https://example.org/test');
+  assert.equal(linkedTable.blocks[1].rows[0].cells[0].children[1].link.href,'https://example.org/test');
+  assert.equal(linkedTable.blocks[1].rows[0].cells[1].children[0].link.rel,'noopener noreferrer');
+  assert.equal(linkedTable.blocks[1].rows[0].cells[0].header,true);
+  assert.equal(linkedTable.blocks[1].rows[0].cells[0].align,'center');
+  assert.equal(linkedTable.blocks[1].rows[0].cells[1].align,'right');
+  assert.deepEqual(linkedTable.blocks[1].rows[0].cells[1].children[0].marks,['underline']);
+  assert.deepEqual(normalizeRichText(linkedTable),linkedTable);
+  assert.equal(initial.blocks[0].items[0][0].link,undefined,'original is immutable');
+  const unlinked=updateRichTextInlineLink(linkedTable,{blockIndex:0,from:3,to:7},null);
+  assert.equal(unlinked.blocks[0].items.every(item=>item.every(run=>!run.link)),true);
+  assert.equal(unlinked.blocks[1].rows[0].cells[0].children.some(run=>run.link?.href==='https://example.org/test'),true);
+  assert.throws(()=>updateRichTextInlineLink(initial,{blockIndex:0,from:1,to:400},'/p/no'),/kijelölés/i);
+  assert.throws(()=>updateRichTextInlineLink(initial,{blockIndex:1,from:0,to:1},'javascript:alert(1)'),/link|protokoll|https/i);
+
+  const state=createEditorState(createDocument());
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.RICHTEXT}});
+  const id=state.selection.primaryId;
+  execute(state,{type:'richtext.content.set',payload:{nodeId:id,document:initial}});
+  execute(state,{type:'richtext.content.set',payload:{nodeId:id,document:linkedTable}});
+  assert.deepEqual(activePage(state).nodes[id].props.richText,linkedTable);
+  execute(state,{type:'history.undo'});
+  assert.deepEqual(activePage(state).nodes[id].props.richText,initial);
+  execute(state,{type:'history.redo'});
+  assert.deepEqual(activePage(state).nodes[id].props.richText,linkedTable);
+  assert.notEqual(state.status,'published');
+});
+
+test('partial LI selection converts only targeted item, preserving neighbors and links',()=>{
+  const model=normalizeRichText({schemaVersion:1,type:'richtext-document',blocks:[
+    {type:'bulleted-list',items:[
+      [{type:'text',text:'Alpha',marks:[]}],
+      [{type:'text',text:'Beta',marks:['bold'],link:{href:'/p/beta'}}],
+      [{type:'text',text:'Gamma',marks:['italic']}]
+    ]},
+    {type:'paragraph',children:[{type:'text',text:'Outro',marks:[]}]},
+    {type:'table',rows:[{cells:[{header:true,children:[{type:'text',text:'Protected',marks:[]}]}]}]}
+  ]});
+  const partial=transformRichTextBlockTypes(model,[0],'heading',3,[{blockIndex:0,from:5,to:9}]);
+  assert.deepEqual(partial.blocks.map(b=>b.type),['bulleted-list','heading','bulleted-list','paragraph','table']);
+  assert.deepEqual(partial.blocks[0].items.map(item=>item.map(r=>r.text).join('')),['Alpha']);
+  assert.equal(partial.blocks[1].children[0].text,'Beta');
+  assert.equal(partial.blocks[1].children[0].link.href,'/p/beta');
+  assert.deepEqual(partial.blocks[1].children[0].marks,['bold']);
+  assert.deepEqual(partial.blocks[2].items.map(item=>item.map(r=>r.text).join('')),['Gamma']);
+  assert.deepEqual(partial.blocks[4],model.blocks[2]);
+  assert.deepEqual(normalizeRichText(partial),partial);
+  const caret=transformRichTextBlockTypes(model,[0],'quote',1,[{blockIndex:0,itemIndex:2}]);
+  assert.deepEqual(caret.blocks.map(b=>b.type),['bulleted-list','quote','paragraph','table']);
+  assert.deepEqual(caret.blocks[0].items.map(item=>item.map(r=>r.text).join('')),['Alpha','Beta']);
+  assert.deepEqual(caret.blocks[1].children,[{type:'text',text:'Gamma',marks:['italic']}]);
+
+  const spanning=transformRichTextBlockTypes(model,[0,1],'numbered-list',1,[
+    {blockIndex:0,from:2,to:7},{blockIndex:1,from:0,to:5}
+  ]);
+  assert.deepEqual(spanning.blocks.map(b=>b.type),['numbered-list','bulleted-list','numbered-list','table']);
+  assert.deepEqual(spanning.blocks[0].items.map(item=>item.map(r=>r.text).join('')),['Alpha','Beta']);
+  assert.deepEqual(spanning.blocks[1].items.map(item=>item.map(r=>r.text).join('')),['Gamma']);
+  assert.deepEqual(spanning.blocks[2].items.map(item=>item.map(r=>r.text).join('')),['Outro'],'an untouched LI breaks list merging');
+  assert.deepEqual(transformRichTextBlockTypes(model,[0],'bulleted-list',1,[{blockIndex:0,itemIndex:1}]),model,'choosing the same list type does not split it');
+  assert.deepEqual(model.blocks[0].items.map(item=>item.map(r=>r.text).join('')),['Alpha','Beta','Gamma'],'source remains immutable');
+
+  const state=createEditorState(createDocument());
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.RICHTEXT}});
+  const nodeId=state.selection.primaryId;
+  execute(state,{type:'richtext.content.set',payload:{nodeId,document:model}});
+  execute(state,{type:'richtext.content.set',payload:{nodeId,document:partial}});
+  execute(state,{type:'history.undo'});
+  assert.deepEqual(activePage(state).nodes[nodeId].props.richText,model);
+  execute(state,{type:'history.redo'});
+  assert.deepEqual(activePage(state).nodes[nodeId].props.richText,partial);
+});
+
+test('block transformations preserve list item boundaries, marks, safe links and one-step Undo',()=>{
+  const initial=normalizeRichText({schemaVersion:1,type:'richtext-document',blocks:[
+    {type:'paragraph',children:[{type:'text',text:'Intro',marks:['italic']}]},
+    {type:'bulleted-list',items:[
+      [{type:'text',text:'Alpha',marks:['bold'],link:{href:'/p/alpha'}}],
+      [{type:'text',text:'Beta',marks:[],styles:{color:'#123456'}}]
+    ]},
+    {type:'paragraph',children:[{type:'text',text:'Finish',marks:[]}]}
+  ]});
+  const heading=transformRichTextBlockTypes(initial,[1],'heading',2);
+  assert.deepEqual(heading.blocks.map(block=>block.type),['paragraph','heading','heading','paragraph']);
+  assert.deepEqual(heading.blocks.slice(1,3).map(block=>block.children.map(run=>run.text).join('')),['Alpha','Beta']);
+  assert.equal(heading.blocks[1].level,2);
+  assert.equal(heading.blocks[1].children[0].link.href,'/p/alpha');
+  assert.deepEqual(heading.blocks[1].children[0].marks,['bold']);
+  assert.equal(heading.blocks[2].children[0].styles.color,'#123456');
+  assert.equal(initial.blocks[1].items.length,2,'source must not be mutated');
+  assert.deepEqual(normalizeRichText(heading),heading);
+
+  const list=transformRichTextBlockTypes(heading,[0,1,2],'numbered-list');
+  assert.deepEqual(list.blocks.map(block=>block.type),['numbered-list','paragraph']);
+  assert.deepEqual(list.blocks[0].items.map(item=>item.map(run=>run.text).join('')),['Intro','Alpha','Beta']);
+  assert.equal(list.blocks[0].items[1][0].link.href,'/p/alpha');
+  assert.deepEqual(normalizeRichText(list),list);
+  const numbered=transformRichTextBlockTypes(initial,[1],'numbered-list');
+  assert.equal(numbered.blocks[1].items.length,2,'switching list markers preserves item count');
+
+  const state=createEditorState(createDocument());
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.RICHTEXT}});
+  const id=state.selection.primaryId;
+  execute(state,{type:'richtext.content.set',payload:{nodeId:id,document:initial}});
+  execute(state,{type:'richtext.content.set',payload:{nodeId:id,document:heading}});
+  assert.deepEqual(activePage(state).nodes[id].props.richText,heading);
+  execute(state,{type:'history.undo'});
+  assert.deepEqual(activePage(state).nodes[id].props.richText,initial);
+  execute(state,{type:'history.redo'});
+  assert.deepEqual(activePage(state).nodes[id].props.richText,heading);
+  assert.notEqual(state.status,'published');
+
+  const table=normalizeRichText({schemaVersion:1,type:'richtext-document',blocks:[
+    {type:'paragraph',children:[{type:'text',text:'Safe',marks:[]}]},
+    {type:'table',rows:[{cells:[{children:[{type:'text',text:'Cell',marks:[]}]}]}]}
+  ]});
+  assert.throws(()=>transformRichTextBlockTypes(table,[0,1],'heading',2),/Táblázat/,'reject the whole selection, not only the table');
+  assert.throws(()=>transformRichTextBlockTypes(table,[-1],'paragraph'),/válassz/i);
+  assert.throws(()=>transformRichTextBlockTypes(table,[0],'heading',7),/1–6/);
+  assert.deepEqual(transformRichTextBlockTypes(table,[0],'heading',1).blocks[1],table.blocks[1]);
 });

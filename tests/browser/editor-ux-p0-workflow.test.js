@@ -177,18 +177,40 @@ test('empty Rich Text has direct desktop and mobile editing, typed presets, Save
   assert.match(draft.pages[pageId].nodes[richId].props.richText.blocks[0].children[0].text,/mobil$/);
   assert.doesNotMatch(published.pages[pageId].nodes[richId].props.richText.blocks[0].children[0].text,/mobil$/);
   await tab.locator('#rightDock [data-collapse="right"]').click();
+  // Pointer drags against the desktop artboard need a desktop-sized browser.
+  // The preceding Rich Text controls were intentionally tested at 390px.
+  await tab.setViewportSize({width:1366,height:900});
   await tab.locator('.canvas-device-btn[data-device="desktop"]').click();
-  const canvasBounds=await tab.locator('.page-canvas').evaluate((pageEl,id)=>{const page=pageEl.getBoundingClientRect(),node=pageEl.querySelector(`[data-node-id="${CSS.escape(id)}"] .node-content`)?.getBoundingClientRect();return {left:page.left,right:page.right,nodeLeft:node?.left,nodeTop:node?.top,height:node?.height}},richId);
-  const content=tab.locator(`.node[data-node-id="${richId}"] .node-content`).first();
-  const dragStartX=Math.max(canvasBounds.left+8,canvasBounds.nodeLeft+5),dragStartY=canvasBounds.nodeTop+Math.min(12,canvasBounds.height/2);
+  assert.equal(await tab.locator('.canvas-device-btn[data-device="desktop"]').evaluate(el=>el.classList.contains('active')),true,'a valid saved draft and collapsed Inspector must allow desktop breakpoint switching');
+  const canvasBounds=await tab.locator('.page-canvas').evaluate((pageEl,id)=>{const page=pageEl.getBoundingClientRect(),node=pageEl.querySelector(`.node[data-node-id="${CSS.escape(id)}"]`)?.getBoundingClientRect();return {left:page.left,right:page.right,nodeLeft:node?.left,nodeTop:node?.top,height:node?.height}},richId);
+  const content=tab.locator(`.node[data-node-id="${richId}"]`).first();
+  const dragStartX=Math.max(canvasBounds.left+8,canvasBounds.nodeLeft+5);
+  // The draggable target is the entire Rich Text element box, not its
+  // inner text content, which may sit entirely above the visible viewport.
+  const dragStartY=Math.max(110,Math.min(740,canvasBounds.nodeTop+canvasBounds.height/2));
+  assert.ok(dragStartY>canvasBounds.nodeTop&&dragStartY<canvasBounds.nodeTop+canvasBounds.height,
+    'drag must start inside the visible portion of the Rich Text node');
   const dragOutsideX=Math.max(8,canvasBounds.left-24);
   await tab.mouse.move(dragStartX,dragStartY);await tab.mouse.down();await tab.mouse.move(dragOutsideX,dragStartY,{steps:8});await tab.mouse.up();
+  const outsideDebug=await tab.locator(`.node[data-node-id="${richId}"]`).evaluate(el=>{
+    const p=document.querySelector('.page-canvas'),n=el.getBoundingClientRect(),b=p.getBoundingClientRect();
+    const current=document.querySelector('.canvas-device-btn.active');
+    return {outside:el.classList.contains('outside-artboard'),pos:{left:getComputedStyle(el).left,top:getComputedStyle(el).top},
+      node:{left:n.left,right:n.right,top:n.top,bottom:n.bottom},canvas:{left:b.left,right:b.right,top:b.top,bottom:b.bottom},
+      activeDevice:current?.dataset.device,tool:document.querySelector('#selectTool')?.className};
+  });
+  assert.equal(outsideDebug.outside,true,'drag outside artboard diagnostics: '+JSON.stringify(outsideDebug));
   assert.equal(await tab.locator(`.node[data-node-id="${richId}"]`).evaluate(el=>el.classList.contains('outside-artboard')),true,'an intentionally out-of-artboard element should be identified');
   assert.ok(await tab.locator('.page-canvas-frame').evaluate(frame=>frame.getBoundingClientRect().width)>await tab.locator('.page-canvas').evaluate(el=>el.getBoundingClientRect().width),'workspace should expand to keep the out-of-artboard element reachable');
   const outsideRect=await content.boundingBox();
-  await tab.mouse.move(Math.max(8,outsideRect.x+8),outsideRect.y+Math.min(12,outsideRect.height/2));await tab.mouse.down();await tab.mouse.move(canvasBounds.left+90,outsideRect.y+Math.min(12,outsideRect.height/2),{steps:8});await tab.mouse.up();
+  const returnY=Math.max(110,Math.min(740,outsideRect.y+outsideRect.height/2));
+  assert.ok(returnY>outsideRect.y&&returnY<outsideRect.y+outsideRect.height,
+    'return drag must also begin within the visible portion of the node');
+  await tab.mouse.move(Math.max(8,outsideRect.x+8),returnY);
+  await tab.mouse.down();
+  await tab.mouse.move(canvasBounds.left+90,returnY,{steps:8});
+  await tab.mouse.up();
   assert.equal(await tab.locator(`.node[data-node-id="${richId}"]`).evaluate(el=>el.classList.contains('outside-artboard')),false,'the same element can be dragged back onto the artboard');
-  await tab.setViewportSize({width:1366,height:900});
   await tab.locator(`.node[data-node-id="${richId}"]`).getByRole('button',{name:'Tartalom szerkesztése'}).click();
   await tab.locator('.canvas-format-richtext').click();
   const structuredEditor=tab.locator('.richtext-editor-surface');await structuredEditor.waitFor();

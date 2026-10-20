@@ -541,3 +541,44 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
 .code-snippet-inspector textarea.code-snippet-source{box-sizing:border-box;width:100%;min-width:0;min-height:210px;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2;white-space:pre;resize:vertical}
 .code-snippet-inspector .inspector-toggle{min-height:44px}
 .code-preview{min-width:0;width:100%;overflow:hidden}
+
+/* 77.44 mobile shell: keep some canvas visible beneath either edit drawer.
+   The dock itself scrolls; the page viewport never becomes a second scroller. */
+@media (max-width: 700px) {
+  .workspace .left-dock:not(.closed),
+  .workspace .right-dock:not(.closed) {
+    top: auto;
+    bottom: 72px;
+    height: min(72%, 590px);
+    max-height: calc(100% - 72px);
+    min-height: 0;
+    width: 100%;
+    border-radius: 18px 18px 0 0;
+    overflow: hidden;
+  }
+  .workspace .left-dock .dock-content,
+  .workspace .right-dock .dock-content { min-height: 0; overscroll-behavior: contain; }
+}
+
+/* 77.44 spacing Inspector: number and unit side by side, including 390px. */
+.typed-box-controls .typed-box-side{display:grid;gap:6px;min-width:0;font-size:12px}
+.typed-box-controls .typed-box-side strong{font-weight:600;color:#d3deef}
+.typed-box-entry{display:grid;grid-template-columns:minmax(0,1fr) minmax(64px,.8fr);gap:5px;min-width:0}
+.typed-box-entry input,.typed-box-entry select{box-sizing:border-box;width:100%;min-width:0;min-height:44px;padding-inline:6px;font-size:16px}
+
+/* 77.44.7.A/C shared Inspector color control: honest alpha/transparent state. */
+.typed-color-status{display:block;min-height:0;color:#bccbe0;font-size:12px;line-height:1.4}
+.typed-color-status:empty{display:none}
+.typed-color-controls input[type=color].color-preview-limited{outline:2px dashed #9fabc8;outline-offset:2px}
+@media(max-width:700px){.typed-color-controls input[type=color],.typed-color-controls input[type=text]{min-height:44px}}
+
+/* Single Undo transaction for one responsive property group. */
+.group-responsive-reset{display:block;width:calc(100% - 18px);max-width:100%;margin:12px 9px 8px;padding:10px 12px;min-height:44px;box-sizing:border-box;border:1px solid #617998;border-radius:10px;background:#24354d;color:#e8f1ff;font-size:12px;font-weight:650;text-align:center;overflow-wrap:anywhere;cursor:pointer}
+.group-responsive-reset:hover:not(:disabled){background:#304966}
+.group-responsive-reset:disabled{opacity:.45;cursor:not-allowed}
+.group-responsive-reset:focus-visible{outline:2px solid #a9c5ff;outline-offset:2px}
+
+/* 77.44.7.A/C: own vs inherited responsive property provenance. */
+.responsive-origin{display:block;width:max-content;max-width:100%;margin:7px 0 3px;padding:3px 7px;border-radius:6px;background:#202d41;color:#b8cce8;font-size:11px;line-height:1.35;overflow-wrap:anywhere}
+.responsive-origin[data-kind="own"]{background:#263751;color:#e3edff}
+.responsive-origin[data-kind="base"]{background:#1e2837;color:#adbbd0}

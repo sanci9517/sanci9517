@@ -67,6 +67,16 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   assert.equal(await editor.locator(`.layer-row[data-node-id="${gridId}"] img`).count(),0);
   await editor.locator('.inspector-group-title[aria-expanded="false"]').evaluateAll(elements=>elements.forEach(el=>el.click()));
   await field('layout.display').locator('select:not(.property-token-picker)').selectOption('grid');
+  // Inspector controls rerender after every change. Keyboard focus must
+  // return to the same typed control, rather than vanish into the document.
+  const displaySelect=field('layout.display').locator('select:not(.property-token-picker)');
+  await displaySelect.evaluate(select=>{
+    select.focus();
+    select.dispatchEvent(new Event('change',{bubbles:true}));
+  });
+  await editor.waitForFunction(()=>document.activeElement?.closest('.typed-inspector-field')?.dataset.propertyId==='layout.display');
+  assert.equal(await editor.evaluate(()=>document.activeElement?.tagName),'SELECT','the re-rendered typed select should retain focus');
+
   await editor.locator('.inspector-tabs button').first().click();
   if(await editor.locator('.inspector-group-title[aria-expanded="false"]').filter({hasText:'Grid'}).count())await editor.locator('.inspector-group-title').filter({hasText:'Grid'}).click();
   await field('grid.columns').locator('select:not(.property-token-picker)').selectOption('repeat(2, minmax(0, 1fr))');
@@ -177,21 +187,123 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
   await publicPage.reload();
   assert.deepEqual(await publicPage.locator(`[data-node-id="${offsetId}"]`).evaluate(el=>{const style=getComputedStyle(el);return {position:style.position,left:style.left}}),{position:'relative',left:'72px'});
+  // An unsatisfied publication-only requirement may remain visible after a
+  // refused Publish, but it must not prevent a draft-only save.
+  const beforePublicationNote=posts.length;
+  const publicBeforeNote=JSON.stringify(published);
+  await editor.locator('#inspectorBody').evaluate(host=>{
+    const note=document.createElement('p');
+    note.className='property-validation';
+    note.dataset.validationKind='publication';
+    note.setAttribute('role','alert');
+    note.textContent='A publikálás előtt hiányzó kötelező tartalom.';
+    host.prepend(note);
+  });
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.equal(posts.length,beforePublicationNote+1,'draft save may proceed despite publication-only warning');
+  assert.equal(posts.at(-1).publish,false,'saving after a failed Publish never implicitly republishes');
+  assert.equal(JSON.stringify(published),publicBeforeNote,'draft save must not alter live content');
   // A real mobile viewport edits only its own override; the published page stays unchanged.
   await editor.setViewportSize({width:390,height:800});
+  if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))
+    await editor.locator('#openInspector').click();
+  const spacingHeading=editor.locator('.inspector-group-title').filter({hasText:'Térközök'});
+  if(await spacingHeading.getAttribute('aria-expanded')==='false')await spacingHeading.click();
+  // Changing a breakpoint must never consume a pending invalid typed edit:
+  // the click may already have moved DOM focus away from the Inspector field.
+  const paddingTopEditor=field('spacing.padding').locator('.typed-box-entry input').first();
+  await paddingTopEditor.fill('-7');
+  await paddingTopEditor.dispatchEvent('change');
+  assert.match(await field('spacing.padding').locator('.property-validation').textContent(),/negatív|belső|padding/i);
+  // A category filter and closed accordion must not trap a validation error
+  // after Save blurs the field. The existing right dock should lead to it.
+  const spacingTitleInvalid=editor.locator('.inspector-group-title').filter({hasText:'Térközök'});
+  if(await spacingTitleInvalid.getAttribute('aria-expanded')==='true')await spacingTitleInvalid.click();
+  await editor.locator('.inspector-category-nav button[data-inspector-category="surface"]').click();
+  assert.equal(await field('spacing.padding').isVisible(),false,'surface filter hides the invalid spacing input before Save');
+  const pendingInvalidPosts=posts.length;
+  const publishedBeforeInvalid=JSON.stringify(published);
+  // Clicking Save intentionally blurs the invalid input. The application
+  // must inspect unresolved Inspector validation, not only activeElement.
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.activeElement?.getAttribute('aria-label')==='Belső térköz – Felül értéke');
+  assert.equal(await field('spacing.padding').isVisible(),true,'Save reveals the invalid field');
+  assert.equal(await spacingTitleInvalid.getAttribute('aria-expanded'),'true','Save expands the invalid group');
+  assert.equal(await editor.locator('.inspector-category-nav button[data-inspector-category="all"]').getAttribute('aria-pressed'),'true','Save resets the category filter to show the error');
+  assert.equal(await editor.locator('#rightDock').getAttribute('aria-hidden'),'false','Inspector must be accessible while the error is shown');
+  assert.equal(posts.length,pendingInvalidPosts,'blurred invalid padding must not produce a draft save request');
+  assert.equal(JSON.stringify(published),publishedBeforeInvalid,'previous public snapshot stays untouched');
+  assert.equal(await field('spacing.padding').locator('.typed-box-entry input').first().inputValue(),'-7');
+  await editor.locator('#publish').evaluate(button=>{
+    const wasDisabled=button.disabled;
+    button.disabled=false;
+    button.click();
+    button.disabled=wasDisabled;
+  });
+  assert.equal(posts.length,pendingInvalidPosts,'desktop Publish must not send a request for a blurred invalid Inspector field');
+  assert.match(await editor.locator('#saveStatus').textContent(),/Javítsd a jelzett mezőt/);
+  // The focused field may be lost when Save/Publish is triggered from a
+  // toolbar. Invalid input must never commit or publish the older model.
+  const writesBeforeInvalid=posts.length;
+  await editor.keyboard.press('Control+s');
+  assert.equal(posts.length,writesBeforeInvalid,'Ctrl+S must not send a revision with an invalid Inspector field');
+  assert.match(await editor.locator('#saveStatus').textContent(),/Javítsd a jelzett mezőt/);
+  await editor.locator('#mobilePublish').evaluate(button=>{
+    const wasDisabled=button.disabled;
+    button.disabled=false;
+    button.click();
+    button.disabled=wasDisabled;
+  });
+  assert.equal(posts.length,writesBeforeInvalid,'Publish must also reject an invalid field even if action is invoked');
   await editor.locator('.canvas-device-btn[data-device="mobile"]').evaluate(el=>el.click());
+  assert.equal(await editor.locator('.canvas-device-btn[data-device="desktop"]').getAttribute('class').then(x=>x.includes('active')),true,'invalid Inspector input must keep desktop editor state');
+  assert.equal(await editor.locator('.canvas-device-btn[data-device="mobile"]').getAttribute('class').then(x=>x.includes('active')),false,'invalid Inspector input must not activate mobile');
+  assert.equal(await field('spacing.padding').locator('.typed-box-entry input').first().inputValue(),'-7','unsaved invalid value stays available for correction');
+  await field('spacing.padding').locator('.typed-box-entry input').first().fill('16');
+  await field('spacing.padding').locator('.typed-box-entry input').first().dispatchEvent('change');
+  assert.equal(await field('spacing.padding').locator('.property-validation').textContent(),'');
+  await editor.locator('.canvas-device-btn[data-device="mobile"]').evaluate(el=>el.click());
+  assert.equal(await editor.locator('.canvas-device-btn[data-device="mobile"]').getAttribute('class').then(x=>x.includes('active')),true,'valid corrected field allows mobile breakpoint');
+
   await select(itemId);
+  // Geometry was previously only resettable one property at a time. Its
+  // breakpoint-local width now shares the atomic group reset contract.
+  const geometryHeading=editor.locator('.inspector-group-title').filter({hasText:'Geometria'});
+  if(await geometryHeading.getAttribute('aria-expanded')==='false')await geometryHeading.click();
+  const widthUnit=field('size.width').locator('select:not(.property-token-picker)');
+  await widthUnit.selectOption('px');
+  const mobileWidth=field('size.width').locator('input[type="number"]');
+  await mobileWidth.fill('260');
+  await mobileWidth.press('Tab');
+  assert.equal(await field('size.width').locator('.responsive-origin').textContent(),'Saját érték · Mobil');
+  const geometryGroup=field('size.width').locator('xpath=ancestor::section[contains(@class,"inspector-group")]');
+  assert.equal(await geometryGroup.locator('.group-responsive-reset').count(),1);
+  await geometryGroup.locator('.group-responsive-reset').click();
+  assert.notEqual(await field('size.width').locator('.responsive-origin').getAttribute('data-kind'),'own','reset width must no longer have a mobile override');
+  await editor.locator('#mobileUndo').click();
+  assert.equal(await field('size.width').locator('input[type="number"]').inputValue(),'260');
+  await geometryGroup.locator('.group-responsive-reset').click();
+  assert.notEqual(await field('size.width').locator('.responsive-origin').getAttribute('data-kind'),'own','reset width must no longer have a mobile override');
+  assert.equal(await field('radius.topLeft').locator('.responsive-origin').textContent(),'Örökölt · Asztali','mobile radius must identify desktop inheritance');
   await editor.locator('.inspector-group-title').filter({hasText:'Lekerekítés'}).click();
   assert.ok((await field('radius.topLeft').locator('input').boundingBox()).height>=44);
   await field('radius.topLeft').locator('input[type="number"]').fill('6');
   await field('radius.topLeft').locator('input').press('Tab');
   assert.equal((await css()).radius,'6px');
+  assert.equal(await field('radius.topLeft').locator('.responsive-origin').textContent(),'Saját érték · Mobil','new override must be marked local');
   await editor.locator('.inspector-lock-toggle').check();
   assert.equal(await field('radius.topLeft').locator('input[type="number"]').isDisabled(),true);
   assert.equal(await editor.locator('.property-reset').filter({hasText:'Öröklés visszaállítása'}).first().isDisabled(),true);
+  assert.equal(await field('radius.topLeft').locator('xpath=ancestor::section[contains(@class,"inspector-group")]').locator('.group-responsive-reset').isDisabled(),true,'locked node cannot reset group');
   await editor.locator('.inspector-lock-toggle').uncheck();
-  await editor.locator('.property-reset').filter({hasText:'Öröklés visszaállítása'}).first().click();
+  const radiusGroup=field('radius.topLeft').locator('xpath=ancestor::section[contains(@class,"inspector-group")]');
+  const bulkReset=radiusGroup.locator('.group-responsive-reset');
+  assert.equal(await bulkReset.isEnabled(),true);
+  assert.match(await bulkReset.textContent(),/Saját értékek visszaállítása/);
+  await bulkReset.click();
   assert.equal((await css()).radius,'12px');
+  assert.equal(await field('radius.topLeft').locator('.responsive-origin').textContent(),'Örökölt · Asztali','bulk reset restores desktop origin');
   await editor.locator('#mobileUndo').click();
   assert.equal((await css()).radius,'6px');
   await editor.keyboard.press('Control+s');

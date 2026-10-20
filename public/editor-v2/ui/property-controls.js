@@ -49,6 +49,7 @@ export function renderPropertyInput(property, label, current, onChange, {tokens=
   heading.append(title, info);
   wrap.append(heading, help);
   let tokenPicker=null;
+  let commitColorPreset=null;
   if(availableTokens.length){
     const picker=document.createElement('select');picker.className='property-token-picker';picker.setAttribute('aria-label',label+' közös stílusa');
     for(const [value,text] of [['','Egyedi érték'],...availableTokens.map(id=>[id,TOKEN_SPECS[id].label])]){const option=document.createElement('option');option.value=value;option.textContent=text;picker.append(option)}
@@ -86,34 +87,106 @@ export function renderPropertyInput(property, label, current, onChange, {tokens=
     const picker = document.createElement('input');
     picker.type = 'color';
     picker.id = controlId;
-    picker.value = /^#[\da-f]{6}$/i.test(String(current)) ? current : '#808080';
     picker.setAttribute('aria-label', label + ' színválasztó');
     const hex = document.createElement('input');
     hex.type = 'text';
     hex.value = current || '';
     hex.placeholder = '#RRGGBB vagy transparent';
     hex.setAttribute('aria-label', label + ' HEX');
-    picker.onchange = () => save(picker.value);
-    hex.onchange = () => save(hex.value);
-    controls.append(picker, hex);
-    wrap.append(controls);
+    const indicator=document.createElement('small');
+    indicator.className='typed-color-status';
+    indicator.setAttribute('role','status');
+    // Native input[type=color] only supports opaque RGB. Never claim a
+    // transparent/alpha color matches the fallback swatch.
+    const pickerRgb=value=>{
+      const text=String(value??'');
+      if(/^#[0-9a-f]{3}$/i.test(text))
+        return '#'+[...text.slice(1)].map(char=>char+char).join('');
+      if(/^#[0-9a-f]{6}$/i.test(text))return text;
+      if(/^#[0-9a-f]{8}$/i.test(text))return text.slice(0,7);
+      return null;
+    };
+    const sync=value=>{
+      const rgb=pickerRgb(value);
+      if(rgb)picker.value=rgb;
+      else picker.value='#808080';
+      hex.value=value;
+      const transparent=String(value).toLowerCase()==='transparent';
+      const alpha=/^#[0-9a-f]{8}$/i.test(String(value));
+      picker.classList.toggle('color-preview-limited',transparent||alpha);
+      indicator.textContent=transparent?'Átlátszó szín – a színválasztó RGB-előnézete nem mérvadó.':
+        alpha?'Az átlátszóságot a HEX-mező őrzi; a színválasztó csak RGB-t mutat.':'';
+      for(const button of wrap.querySelectorAll('.property-preset-color')){
+        button.setAttribute('aria-pressed',String(button.dataset.value===value));
+      }
+    };
+    const commitColor=value=>{
+      // Invalid values stay visible with validation feedback. The previous
+      // swatch and Page Model value must not change until validation succeeds.
+      if(save(value))sync(value);
+    };
+    picker.onchange=()=>commitColor(picker.value);
+    hex.onchange=()=>commitColor(hex.value);
+    sync(current||'');
+    controls.append(picker,hex);
+    wrap.append(controls,indicator);
+    // Presets use the same sync pathway as the picker and HEX entry.
+    wrap.dataset.colorField='true';
+    commitColorPreset=commitColor;
   } else if (type === 'box') {
-    // Store the standard CSS four-value shorthand (top, right, bottom, left).
+    // A typed number + unit per side: no CSS syntax needed on mobile.
+    // The stored value remains the same four-part CSS shorthand.
     const parts = String(current || '0').trim().split(/\s+/);
     const values = parts.length === 1 ? [parts[0],parts[0],parts[0],parts[0]] :
       parts.length === 2 ? [parts[0],parts[1],parts[0],parts[1]] :
       parts.length === 3 ? [parts[0],parts[1],parts[2],parts[1]] : parts.slice(0,4);
     const grid = document.createElement('div');
     grid.className = 'typed-box-controls';
+    const boxUnits = ['px','%','rem','em','vw','vh'];
+    const isMargin=property.key==='margin';
     ['Felül','Jobb','Alul','Bal'].forEach((side,i) => {
-      const field = document.createElement('label');
-      field.textContent = side;
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.value = values[i] || '0';
-      input.setAttribute('aria-label', label + ' – ' + side);
-      input.onchange = () => { values[i] = input.value.trim(); save(values.join(' ')); };
-      field.append(input);
+      const field=document.createElement('div');
+      field.className='typed-box-side';
+      const sideLabel=document.createElement('strong');
+      sideLabel.textContent=side;
+      const controls=document.createElement('div');
+      controls.className='typed-box-entry';
+      const number=document.createElement('input');
+      number.type='number';number.inputMode='decimal';number.step='any';
+      if(!isMargin)number.min='0';
+      number.setAttribute('aria-label',label+' – '+side+' értéke');
+      const unit=document.createElement('select');
+      unit.setAttribute('aria-label',label+' – '+side+' mértékegysége');
+      for(const choice of [...boxUnits,...(isMargin?['auto']:[])]) {
+        const option=document.createElement('option');
+        option.value=choice;option.textContent=choice==='auto'?'Auto':choice;
+        unit.append(option);
+      }
+      const existing=values[i]||'0';
+      const parsed=existing.match(/^(-?(?:\d+(?:\.\d+)?|\.\d+))([a-z%]*)$/i);
+      const isAuto=existing==='auto'&&isMargin;
+      number.value=isAuto?'':parsed?.[1]??'0';
+      unit.value=isAuto?'auto':boxUnits.includes(parsed?.[2])?parsed[2]:'px';
+      number.disabled=isAuto;
+      const commit=()=>{
+        if(unit.value==='auto'&&isMargin){values[i]='auto';number.disabled=true;number.value='';}
+        else {
+          number.disabled=false;
+          if(number.value==='')return;
+          const numberValue=Number(number.value);
+          // Canonical zero is valid with any selected unit.
+          values[i]=numberValue===0?'0':number.value+unit.value;
+        }
+        save(values.join(' '));
+      };
+      number.onchange=commit;
+      number.onkeydown=event=>{if(event.key==='Enter'){event.preventDefault();number.blur()}};
+      unit.onchange=()=>{
+        if(unit.value!=='auto'&&!number.value)number.value='0';
+        commit();
+      };
+      controls.append(number,unit);
+      field.append(sideLabel,controls);
       grid.append(field);
     });
     wrap.append(grid);
@@ -159,7 +232,7 @@ export function renderPropertyInput(property, label, current, onChange, {tokens=
       button.textContent=preset.label;button.dataset.value=preset.value;
       button.setAttribute('aria-pressed',String(String(current??'')===preset.value));
       if(type==='color'){button.classList.add('property-preset-color');button.style.setProperty('--preset-color',preset.value==='transparent'?'transparent':preset.value);button.title=preset.label+' · '+preset.value}
-      button.onclick=()=>save(preset.value);group.append(button);
+      button.onclick=()=>type==='color'?commitColorPreset(preset.value):save(preset.value);group.append(button);
     }
     wrap.append(group);
   }

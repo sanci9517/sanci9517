@@ -1,4 +1,5 @@
 import { RICH_TEXT_FONT_FAMILIES } from './schema.js';
+import { textOffsetWithin } from './richtext-selection-offset.js';
 
 /*
  * Rich Text links operate inside one block; formatting can span several blocks.
@@ -133,13 +134,22 @@ function updateRichTextRange(documentModel, {blockIndex, from, to}, change) {
   if (!Array.isArray(documentModel?.blocks) || !Number.isInteger(blockIndex) ||
       blockIndex < 0 || blockIndex >= documentModel.blocks.length) throw new Error('Érvénytelen szövegkijelölés.');
   const block = documentModel.blocks[blockIndex];
-  if (!Array.isArray(block.children)) throw new Error('A hivatkozás beszúrása jelenleg egy szövegblokkban támogatott.');
-  const size = block.children.reduce((sum, run) => sum + (run.text?.length || 0), 0);
-  if (!Number.isInteger(from) || !Number.isInteger(to) || from < 0 || to > size || to <= from) {
-    throw new Error('Először jelölj ki egy szövegrészt.');
+  if (!Array.isArray(block.children) && !Array.isArray(block.items) && block.type !== 'table') {
+    throw new Error('Ebben a blokkban nem szerkeszthető a hivatkozás.');
   }
+  // Validate the complete range against the same flattened inline model used
+  // by marks and inline styles, without confusing separate list items/cells.
+  selectedInlineRuns(documentModel, {blockIndex, from, to});
   const next = structuredClone(documentModel);
-  next.blocks[blockIndex].children = updateRuns(block.children,from,to,change);
+  let offset = 0;
+  for (const target of inlineTargets(next.blocks[blockIndex])) {
+    const runs = target.get();
+    const length = runs.reduce((total, run) => total + String(run.text ?? '').length, 0);
+    const localFrom = Math.max(0, from - offset);
+    const localTo = Math.min(length, to - offset);
+    if (localTo > localFrom) target.set(updateRuns(runs, localFrom, localTo, change));
+    offset += length;
+  }
   return next;
 }
 
@@ -190,24 +200,18 @@ export function getRichTextBlockSelection(editor) {
   const start = findBlock(firstBlock), end = findBlock(lastBlock);
   if (!start || start !== end) return null;
   const blockIndex = [...editor.children].indexOf(start);
-  const offset = (container, n) => {
-    const r = document.createRange();
-    r.selectNodeContents(start);
-    r.setEnd(container, n);
-    return r.toString().length;
-  };
-  let from = offset(range.startContainer, range.startOffset);
-  let to = offset(range.endContainer, range.endOffset);
+  let from = textOffsetWithin(start, range.startContainer, range.startOffset);
+  let to = textOffsetWithin(start, range.endContainer, range.endOffset);
+  if (from === null || to === null) return null;
   if (from === to) {
     // A caret inside an existing link means 'edit/unlink this link'.
     const element = range.startContainer.nodeType === Node.ELEMENT_NODE
       ? range.startContainer : range.startContainer.parentElement;
     const anchor = element?.closest('a');
     if (!anchor || !start.contains(anchor)) return null;
-    const r = document.createRange();
-    r.selectNodeContents(start);
-    r.setEndBefore(anchor);
-    from = r.toString().length;
+    const index = [...anchor.parentNode.childNodes].indexOf(anchor);
+    from = textOffsetWithin(start, anchor.parentNode, index);
+    if (from === null) return null;
     to = from + anchor.textContent.length;
   }
   return from === to ? null : {blockIndex, from, to};
@@ -231,15 +235,80 @@ export function getRichTextFormattingSelection(editor) {
   if(first<0||last<first)return null;
   const offsetIn=(block,container,offset,isStart)=>{
     if(container===editor)return isStart?0:block.textContent.length;
-    const prefix=document.createRange();prefix.selectNodeContents(block);prefix.setEnd(container,offset);return prefix.toString().length;
+    return textOffsetWithin(block,container,offset);
   };
   const segments=[];
   for(let blockIndex=first;blockIndex<=last;blockIndex++){
     const block=children[blockIndex],from=blockIndex===first?offsetIn(block,range.startContainer,range.startOffset,true):0,
       to=blockIndex===last?offsetIn(block,range.endContainer,range.endOffset,false):block.textContent.length;
+    if(from===null||to===null)return null;
     if(to>from)segments.push({blockIndex,from,to});
   }
   return segments.length?{segments}:null;
+}
+
+/** Rebuild a native Range from canonical per-block character positions after markup is replaced.
+ * This intentionally does not use a flattened text offset: DOM Range.toString()
+ * inserts separators between blocks, while TreeWalker(SHOW_TEXT) does not.
+ */
+export function restoreRichTextFormattingSelection(editor,selectionRange) {
+  const segments=selectionRange?.segments;
+  if(!editor||!Array.isArray(segments)||!segments.length)return false;
+  const first=segments[0],last=segments[segments.length-1];
+  const blockAt=(item)=>{
+    if(!Number.isInteger(item?.blockIndex)||!Number.isInteger(item?.from)||
+       !Number.isInteger(item?.to)||item.from<0||item.to<=item.from)return null;
+    return editor.children[item.blockIndex]??null;
+  };
+  const firstBlock=blockAt(first),lastBlock=blockAt(last);
+  if(!firstBlock||!lastBlock||first.blockIndex>last.blockIndex)return false;
+  const locate=(block,position)=>{
+    const walker=document.createTreeWalker(block,NodeFilter.SHOW_TEXT);
+    let text,offset=0;
+    while((text=walker.nextNode())){
+      const end=offset+text.nodeValue.length;
+      if(position<=end)return {node:text,offset:position-offset};
+      offset=end;
+    }
+    return null;
+  };
+  const start=locate(firstBlock,first.from),end=locate(lastBlock,last.to);
+  if(!start||!end)return false;
+  try{
+    const nativeRange=document.createRange();
+    nativeRange.setStart(start.node,start.offset);
+    nativeRange.setEnd(end.node,end.offset);
+    if(nativeRange.collapsed)return false;
+    const selection=window.getSelection();
+    if(!selection)return false;
+    selection.removeAllRanges();
+    selection.addRange(nativeRange);
+    return true;
+  }catch{return false}
+}
+
+/** Capture selected list-item targets before an Inspector dropdown takes focus.
+ * Noncollapsed selections retain per-block inline offsets. Collapsed carets
+ * within a list carry their exact LI index, avoiding the ambiguous boundary
+ * between one item's end and the next item's start.
+ */
+export function getRichTextBlockTransformSelection(editor) {
+  const selection=window.getSelection();
+  if(!selection?.rangeCount||!editor?.contains(selection.anchorNode)||
+     !editor.contains(selection.focusNode))return null;
+  const format=getRichTextFormattingSelection(editor);
+  if(format?.segments?.length)return format.segments;
+  const blockIndex=getRichTextActiveBlockIndex(editor);
+  if(blockIndex===null)return null;
+  const block=editor.children[blockIndex];
+  const anchor=selection.anchorNode;
+  const element=anchor.nodeType===Node.ELEMENT_NODE?anchor:anchor.parentElement;
+  const item=element?.closest('li');
+  if(item?.parentElement===block){
+    const itemIndex=[...block.children].indexOf(item);
+    if(itemIndex>=0)return [{blockIndex,itemIndex}];
+  }
+  return [{blockIndex}];
 }
 
 export function getRichTextActiveBlockIndex(editor) {
