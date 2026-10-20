@@ -287,6 +287,30 @@ export function restoreRichTextFormattingSelection(editor,selectionRange) {
   }catch{return false}
 }
 
+/** Capture selected list-item targets before an Inspector dropdown takes focus.
+ * Noncollapsed selections retain per-block inline offsets. Collapsed carets
+ * within a list carry their exact LI index, avoiding the ambiguous boundary
+ * between one item's end and the next item's start.
+ */
+export function getRichTextBlockTransformSelection(editor) {
+  const selection=window.getSelection();
+  if(!selection?.rangeCount||!editor?.contains(selection.anchorNode)||
+     !editor.contains(selection.focusNode))return null;
+  const format=getRichTextFormattingSelection(editor);
+  if(format?.segments?.length)return format.segments;
+  const blockIndex=getRichTextActiveBlockIndex(editor);
+  if(blockIndex===null)return null;
+  const block=editor.children[blockIndex];
+  const anchor=selection.anchorNode;
+  const element=anchor.nodeType===Node.ELEMENT_NODE?anchor:anchor.parentElement;
+  const item=element?.closest('li');
+  if(item?.parentElement===block){
+    const itemIndex=[...block.children].indexOf(item);
+    if(itemIndex>=0)return [{blockIndex,itemIndex}];
+  }
+  return [{blockIndex}];
+}
+
 export function getRichTextActiveBlockIndex(editor) {
   const selection=window.getSelection();
   if(!selection?.rangeCount||!editor.contains(selection.anchorNode))return null;
