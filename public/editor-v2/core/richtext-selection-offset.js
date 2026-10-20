@@ -11,15 +11,17 @@ export function textOffsetWithin(root, container, offset) {
   try {
     cursor.setStart(container, offset);
     cursor.collapse(true);
-    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT);
     let total = 0;
     for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-      if (node === container) return total + offset;
-      // comparePoint < 0: text end before cursor; 0: exactly at cursor.
-      if (cursor.comparePoint(node, node.nodeValue.length) <= 0) {
-        total += node.nodeValue.length;
-      } else {
-        break;
+      if (node === container && node.nodeType === Node.TEXT_NODE) return total + offset;
+      if (isRichTextHardBreak(node)) {
+        const parent=node.parentNode, index=[...parent.childNodes].indexOf(node);
+        if(cursor.comparePoint(parent,index+1)<=0)total+=1;
+        else break;
+      } else if (node.nodeType === Node.TEXT_NODE) {
+        if (cursor.comparePoint(node, node.nodeValue.length) <= 0) total += node.nodeValue.length;
+        else break;
       }
     }
     return total;
