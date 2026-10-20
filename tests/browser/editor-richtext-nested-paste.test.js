@@ -127,6 +127,7 @@ test('Rich Text paste stays inside LI/TD, rejects cross-cell replacement and pre
     await editor.evaluate(el=>{el.focus();document.execCommand('insertText',false,'!')});
     assert.deepEqual(await editor.locator('p').allTextContents(),['OuINSERT!tro'],
       'typing continues directly after the pasted Rich Text');
+    assert.match(await editor.locator('p strong').textContent(),/INSERT/,'insertion does not remove the pasted bold style');
 
     // A mobile toolbar may steal selection. Never silently append at page end.
     const outsidePaste=await editor.evaluate(el=>{
@@ -162,7 +163,8 @@ test('Rich Text paste stays inside LI/TD, rejects cross-cell replacement and pre
       assert.equal(model.blocks[1].rows[0].cells[1].align,'right');
       assert.equal(model.blocks[1].rows[0].cells[1].children.map(item=>item.text).join(''),'CeOne\nTwoll');
       assert.deepEqual(model.blocks.slice(2).map(block=>block.children.map(run=>run.text).join('')),['OuINSERT!tro']);
-      assert.equal(model.blocks[2].children.find(run=>run.text==='INSERT')?.marks?.includes('bold'),true);
+      assert.equal(model.blocks[2].children.some(run=>run.text.includes('INSERT')&&run.marks?.includes('bold')),true,
+        'formatted runs may merge with the next typed character but retain their bold mark');
       const publicTab=await browser.newPage({viewport:{width:390,height:870}});
       await publicTab.goto(base+'/p/nested-paste');
       const output=publicTab.locator('.visual-richtext');await output.waitFor();
