@@ -59,7 +59,7 @@ test('mobile IME final input commits once after compositionend in Inspector and 
     if(mode==='inspector'){
       await page.evaluate(()=>window.sanciEditor?.openPanel?.('right'));
       await page.locator('.inspector-tabs button').nth(1).evaluate(el=>el.click());
-    }else await node.dblclick();
+    }else await node.locator('.canvas-edit-richtext').click();
     const source=mode==='inspector'?page.locator('.richtext-editor-surface'):page.locator(`.node[data-node-id="${nodeId}"] .richtext-inline-surface`);
     await source.waitFor();
     const mirrorSelector=mode==='inspector'
