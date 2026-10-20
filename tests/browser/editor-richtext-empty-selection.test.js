@@ -36,8 +36,17 @@ test('Rich Text selection restores an empty editable block without inventing tex
       const invalidNegative=restoreSelectionOffsets(root,{from:-1,to:0});
       const invalidNoncollapsed=restoreSelectionOffsets(root,{from:0,to:1});
       const unchanged=root.innerHTML==='<p><br></p>';
+      root.innerHTML='<p>abc</p>';
+      const textNode=root.querySelector('p').firstChild;
+      const prior=document.createRange();prior.setStart(textNode,1);prior.collapse(true);
+      native.removeAllRanges();native.addRange(prior);
+      const staleOffset=restoreSelectionOffsets(root,{from:4,to:4});
+      const staleRange=restoreSelectionOffsets(root,{from:2,to:5});
+      const preserved=native.anchorNode===textNode&&native.anchorOffset===1;
+      const validEnd=restoreSelectionOffsets(root,{from:3,to:3});
+      const validEndOffset=native.anchorOffset;
       root.remove();
-      return {restored,caretInBlock,offsets,invalidNegative,invalidNoncollapsed,unchanged};
+      return {restored,caretInBlock,offsets,invalidNegative,invalidNoncollapsed,unchanged,staleOffset,staleRange,preserved,validEnd,validEndOffset};
     });
     assert.equal(result.restored,true);
     assert.equal(result.caretInBlock,true);
@@ -45,6 +54,11 @@ test('Rich Text selection restores an empty editable block without inventing tex
     assert.equal(result.invalidNegative,false);
     assert.equal(result.invalidNoncollapsed,false);
     assert.equal(result.unchanged,true);
+    assert.equal(result.staleOffset,false);
+    assert.equal(result.staleRange,false);
+    assert.equal(result.preserved,true);
+    assert.equal(result.validEnd,true);
+    assert.equal(result.validEndOffset,3);
     await page.close();
   }
 });
