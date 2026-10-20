@@ -17,9 +17,9 @@ test('Rich Text selection restores an empty editable block without inventing tex
     catch{res.writeHead(404).end()}
   });
   await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
-  t.after(()=>new Promise(resolve=>server.close(resolve)));
   const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
-  t.after(()=>browser.close());
+  // Close browser connections before awaiting HTTP server shutdown.
+  t.after(async()=>{await browser.close();await new Promise(resolve=>server.close(resolve))});
   const base='http://127.0.0.1:'+server.address().port;
   for(const width of [390,1366]){
     const page=await browser.newPage({viewport:{width,height:800}});
