@@ -1,6 +1,6 @@
 /* Sanci9517 Visual Editor v2 — structured Rich Text DOM bridge. */
 import { validatedLinkHref } from './richtext-links.js';
-import { textOffsetWithin } from './richtext-selection-offset.js';
+import { textOffsetWithin, isRichTextHardBreak } from './richtext-selection-offset.js';
 import { RICH_TEXT_FONT_FAMILIES } from './schema.js';
 
 export function plainTextToRichText(text=''){
@@ -43,9 +43,14 @@ export function getSelectionOffsets(editor){
 export function restoreSelectionOffsets(editor,selection){
   if(!editor||!selection||!Number.isSafeInteger(selection.from)||!Number.isSafeInteger(selection.to)||
      selection.from<0||selection.to<selection.from)return false;
-  const walker=document.createTreeWalker(editor,NodeFilter.SHOW_TEXT),nodes=[];let node;
-  while(node=walker.nextNode())nodes.push(node);
-  const locate=target=>{let offset=0;for(const text of nodes){const end=offset+text.nodeValue.length;if(target<=end)return {node:text,offset:target-offset};offset=end}const last=nodes.at(-1);return last?{node:last,offset:last.nodeValue.length}:null};
+  const walker=document.createTreeWalker(editor,NodeFilter.SHOW_TEXT|NodeFilter.SHOW_ELEMENT),nodes=[];let node;
+  while(node=walker.nextNode())if(node.nodeType===Node.TEXT_NODE||isRichTextHardBreak(node))nodes.push(node);
+  const lengthOf=item=>item.nodeType===Node.TEXT_NODE?item.nodeValue.length:1;
+  const locate=target=>{let offset=0;for(const item of nodes){const end=offset+lengthOf(item);if(target<=end){
+    if(item.nodeType===Node.TEXT_NODE)return {node:item,offset:target-offset};
+    const parent=item.parentNode,index=[...parent.childNodes].indexOf(item);
+    return {node:parent,offset:index+(target===end?1:0)};
+  }offset=end}return null};
   // A newly cleared Rich Text paragraph has no text nodes (<p><br></p>).
   // Restore its collapsed caret to the editable block instead of silently
   // losing focus/selection after Undo, toolbar changes or an IME update.
@@ -58,7 +63,7 @@ export function restoreSelectionOffsets(editor,selection){
   }
   // Never clamp a stale selection beyond the current document to its last
   // character: that silently moves the caret after an Inspector re-render.
-  const textLength=nodes.reduce((sum,text)=>sum+text.nodeValue.length,0);
+  const textLength=nodes.reduce((sum,item)=>sum+lengthOf(item),0);
   if(selection.to>textLength)return false;
   const start=locate(selection.from),end=locate(selection.to);if(!start||!end)return false;
   const range=document.createRange();range.setStart(start.node,start.offset);range.setEnd(end.node,end.offset);
