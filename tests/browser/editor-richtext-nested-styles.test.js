@@ -51,7 +51,7 @@ test('Rich Text nested CSS uses closest visible style after DOM-to-model and edi
       document.body.append(roundtrip);
       const roundtripModel=normalizeRichText(richTextEditorToDocument(roundtrip));
       const rendered={
-        inner:getComputedStyle(roundtrip.querySelector('p strong')).color,
+        inner:getComputedStyle(roundtrip.querySelector('p strong span')).color,
         outer:getComputedStyle(roundtrip.querySelector('p span:last-child')).color,
         header:roundtrip.querySelector('table th')?.style.textAlign,
         cell:roundtrip.querySelector('table td')?.style.textAlign,
