@@ -363,6 +363,51 @@ test('safe Rich Text links inside lists and table cells preserve nested structur
   assert.notEqual(state.status,'published');
 });
 
+test('partial LI selection converts only targeted item, preserving neighbors and links',()=>{
+  const model=normalizeRichText({schemaVersion:1,type:'richtext-document',blocks:[
+    {type:'bulleted-list',items:[
+      [{type:'text',text:'Alpha',marks:[]}],
+      [{type:'text',text:'Beta',marks:['bold'],link:{href:'/p/beta'}}],
+      [{type:'text',text:'Gamma',marks:['italic']}]
+    ]},
+    {type:'paragraph',children:[{type:'text',text:'Outro',marks:[]}]},
+    {type:'table',rows:[{cells:[{header:true,children:[{type:'text',text:'Protected',marks:[]}]}]}]}
+  ]});
+  const partial=transformRichTextBlockTypes(model,[0],'heading',3,[{blockIndex:0,from:5,to:9}]);
+  assert.deepEqual(partial.blocks.map(b=>b.type),['bulleted-list','heading','bulleted-list','paragraph','table']);
+  assert.deepEqual(partial.blocks[0].items.map(item=>item.map(r=>r.text).join('')),['Alpha']);
+  assert.equal(partial.blocks[1].children[0].text,'Beta');
+  assert.equal(partial.blocks[1].children[0].link.href,'/p/beta');
+  assert.deepEqual(partial.blocks[1].children[0].marks,['bold']);
+  assert.deepEqual(partial.blocks[2].items.map(item=>item.map(r=>r.text).join('')),['Gamma']);
+  assert.deepEqual(partial.blocks[4],model.blocks[2]);
+  assert.deepEqual(normalizeRichText(partial),partial);
+  const caret=transformRichTextBlockTypes(model,[0],'quote',1,[{blockIndex:0,itemIndex:2}]);
+  assert.deepEqual(caret.blocks.map(b=>b.type),['bulleted-list','quote','paragraph','table']);
+  assert.deepEqual(caret.blocks[0].items.map(item=>item.map(r=>r.text).join('')),['Alpha','Beta']);
+  assert.deepEqual(caret.blocks[1].children,[{type:'text',text:'Gamma',marks:['italic']}]);
+
+  const spanning=transformRichTextBlockTypes(model,[0,1],'numbered-list',1,[
+    {blockIndex:0,from:2,to:7},{blockIndex:1,from:0,to:5}
+  ]);
+  assert.deepEqual(spanning.blocks.map(b=>b.type),['numbered-list','bulleted-list','numbered-list','table']);
+  assert.deepEqual(spanning.blocks[0].items.map(item=>item.map(r=>r.text).join('')),['Alpha','Beta']);
+  assert.deepEqual(spanning.blocks[1].items.map(item=>item.map(r=>r.text).join('')),['Gamma']);
+  assert.deepEqual(spanning.blocks[2].items.map(item=>item.map(r=>r.text).join('')),['Outro'],'an untouched LI breaks list merging');
+  assert.deepEqual(transformRichTextBlockTypes(model,[0],'bulleted-list',1,[{blockIndex:0,itemIndex:1}]),model,'choosing the same list type does not split it');
+  assert.deepEqual(model.blocks[0].items.map(item=>item.map(r=>r.text).join('')),['Alpha','Beta','Gamma'],'source remains immutable');
+
+  const state=createEditorState(createDocument());
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.RICHTEXT}});
+  const nodeId=state.selection.primaryId;
+  execute(state,{type:'richtext.content.set',payload:{nodeId,document:model}});
+  execute(state,{type:'richtext.content.set',payload:{nodeId,document:partial}});
+  execute(state,{type:'history.undo'});
+  assert.deepEqual(activePage(state).nodes[nodeId].props.richText,model);
+  execute(state,{type:'history.redo'});
+  assert.deepEqual(activePage(state).nodes[nodeId].props.richText,partial);
+});
+
 test('block transformations preserve list item boundaries, marks, safe links and one-step Undo',()=>{
   const initial=normalizeRichText({schemaVersion:1,type:'richtext-document',blocks:[
     {type:'paragraph',children:[{type:'text',text:'Intro',marks:['italic']}]},

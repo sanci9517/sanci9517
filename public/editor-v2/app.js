@@ -13,7 +13,7 @@ import {listPropertyGroups,listProperties,getProperty} from './core/property-reg
 import {renderPropertyInput} from './ui/property-controls.js';
 import {describeResponsiveOrigin} from './ui/responsive-origin.js';
 import {responsiveGroupResetActions} from './ui/responsive-group-reset.js';
-import {getRichTextBlockSelection,getRichTextFormattingSelection,getRichTextActiveBlockIndex,restoreRichTextBlockSelection,restoreRichTextFormattingSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,updateRichTextBlockAlignment} from './core/richtext-links.js';
+import {getRichTextBlockSelection,getRichTextFormattingSelection,getRichTextBlockTransformSelection,getRichTextActiveBlockIndex,restoreRichTextBlockSelection,restoreRichTextFormattingSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,updateRichTextBlockAlignment} from './core/richtext-links.js';
 import {initialPageId,rememberPageId,requestedPageId} from './core/page-url.js';
 import {getElementCapability} from './core/capability-matrix.js';
 import {renderGeometryPresets} from './ui/geometry-presets.js';
@@ -904,7 +904,8 @@ function renderInspector(){
         renderRichTextEditor(editor,currentRichText);
         let richTextDirty=false, savedLinkSelection=richTextBookmark?.nodeId===node.id?richTextBookmark.range:null,
           savedFormatSelection=richTextBookmark?.nodeId===node.id?richTextBookmark.formatRange:null,
-          savedBlockIndex=richTextBookmark?.nodeId===node.id?richTextBookmark.blockIndex:null,composing=false,
+          savedBlockIndex=richTextBookmark?.nodeId===node.id?richTextBookmark.blockIndex:null,
+          savedBlockTransformSelection=richTextBookmark?.nodeId===node.id?richTextBookmark.transformSelection:null,composing=false,
           savedSelectionOffsets=richTextBookmark?.nodeId===node.id?richTextBookmark.selectionOffsets??null:null;
         const typingGroup=crypto.randomUUID();let formattingSurface=editor;
         function refreshFormattingControls(range,surface){
@@ -937,13 +938,14 @@ function renderInspector(){
           const offsets=getSelectionOffsets(surface);if(!offsets)return;
           formattingSurface=surface;savedSelectionOffsets={from:offsets.from,to:offsets.to};
           const format=getRichTextFormattingSelection(surface);savedFormatSelection=format;
+          savedBlockTransformSelection=getRichTextBlockTransformSelection(surface);
           const next=getRichTextBlockSelection(surface);savedLinkSelection=next;
           const index=getRichTextActiveBlockIndex(surface);
           if(index!==null){
             savedBlockIndex=index;const active=richTextEditorToDocument(surface).blocks[index];
             if(active){blockSelect.value=active.type==='heading'?`heading-${active.level||1}`:active.type;blockSelect.disabled=active.type==='table';alignmentSelect.value=active.align||'left';alignmentSelect.disabled=!['paragraph','heading','quote'].includes(active.type)}
           }
-          richTextBookmark={nodeId:node.id,range:savedLinkSelection,formatRange:savedFormatSelection,blockIndex:savedBlockIndex,selectionOffsets:savedSelectionOffsets};
+          richTextBookmark={nodeId:node.id,range:savedLinkSelection,formatRange:savedFormatSelection,blockIndex:savedBlockIndex,transformSelection:savedBlockTransformSelection,selectionOffsets:savedSelectionOffsets};
           refreshFormattingControls(format,surface);
         };
         // Preserve a word selection when toolbar focus or DOM re-render removes the native Range.
@@ -977,21 +979,22 @@ function renderInspector(){
         blockSelect.onchange=()=>{
           if(composing){formatStatus.textContent='Fejezd be a szövegbevitelt a blokk átalakítása előtt.';return}
           const doc=richTextEditorToDocument(editor);
-          const selection=savedFormatSelection||getRichTextFormattingSelection(editor);
-          const indices=selection?.segments?.map(item=>item.blockIndex)??
+          const targets=savedBlockTransformSelection||getRichTextBlockTransformSelection(editor)||
+            savedFormatSelection?.segments;
+          const indices=targets?.map(item=>item.blockIndex)??
             [savedBlockIndex??getRichTextActiveBlockIndex(editor)].filter(index=>index!==null);
           if(!indices.length){formatStatus.textContent='Előbb helyezd a kurzort egy szövegblokkba.';return}
           const type=blockSelect.value.startsWith('heading-')?'heading':blockSelect.value;
           const level=type==='heading'?Number(blockSelect.value.split('-')[1]):1;
           try{
-            const next=transformRichTextBlockTypes(doc,indices,type,level);
+            const next=transformRichTextBlockTypes(doc,indices,type,level,targets);
             // Block conversion changes top-level indices. Save the model-aligned
             // text offset rather than trying to restore obsolete block indices.
             const selectionOffsets=getSelectionOffsets(formattingSurface)||savedSelectionOffsets;
             if(command('richtext.content.set',{nodeId:node.id,document:next},{render:false})){
               richTextDirty=false;renderRichTextEditor(editor,next);refreshCanvasRichText(next);
               savedFormatSelection=null;savedLinkSelection=null;savedBlockIndex=null;
-              richTextBookmark=null;formattingSurface=editor;
+              savedBlockTransformSelection=null;richTextBookmark=null;formattingSurface=editor;
               savedSelectionOffsets=selectionOffsets;
               if(selectionOffsets&&restoreSelectionOffsets(editor,selectionOffsets))rememberSelection();
               setStatus('Nem mentett módosítás');syncPublishControls();
