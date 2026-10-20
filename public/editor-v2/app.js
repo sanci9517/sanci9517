@@ -305,7 +305,7 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
     if(inlineEditingId===id){
       c.classList.add('richtext-inline-surface');c.contentEditable='true';c.spellcheck=true;
       c.setAttribute('role','textbox');c.setAttribute('aria-label','Rich Text közvetlen szerkesztése');
-      let dirty=false,composing=false;
+      let dirty=false,composing=false,compositionRevision=0;
       const typingGroup=crypto.randomUUID();
       const save=()=>{
         if(composing){setStatus('Fejezd be az aktuális szövegbevitelt.');return false}
@@ -315,8 +315,18 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
       flushRichTextDraft=save;
       c.onfocus=()=>{flushRichTextDraft=save};
       c.oninput=()=>{dirty=true;flushRichTextDraft=save;richTextBookmark=null;if(!composing)save();el.classList.toggle('richtext-empty',!c.textContent.trim())};
-      c.oncompositionstart=()=>{composing=true};
-      c.oncompositionend=()=>{composing=false;dirty=true;save()};
+      c.oncompositionstart=()=>{compositionRevision++;composing=true};
+      c.oncompositionend=()=>{
+        dirty=true;const revision=compositionRevision;
+        // Some mobile IMEs dispatch their final input AFTER compositionend.
+        // Keep the composition guard until the next paint so that neither
+        // intermediate text nor a stale earlier composition is committed.
+        requestAnimationFrame(()=>{
+          if(revision!==compositionRevision)return;
+          composing=false;
+          if(c.isConnected&&inlineEditingId===id)save();
+        });
+      };
       c.onpaste=event=>{event.preventDefault();try{const imported=normalizeRichText(importRichTextClipboard({html:event.clipboardData?.getData('text/html')||'',text:event.clipboardData?.getData('text/plain')||''}));if(pasteRichTextDocument(c,imported))c.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'insertFromPaste'}))}catch(error){setStatus(error.message)}};
       c.onblur=()=>{if(inlineEditingId===id)save()};
       c.onpointerdown=e=>e.stopPropagation();c.onclick=e=>e.stopPropagation();
@@ -881,7 +891,7 @@ function renderInspector(){
         let richTextDirty=false, savedLinkSelection=richTextBookmark?.nodeId===node.id?richTextBookmark.range:null,
           savedFormatSelection=richTextBookmark?.nodeId===node.id?richTextBookmark.formatRange:null,
           savedBlockIndex=richTextBookmark?.nodeId===node.id?richTextBookmark.blockIndex:null,
-          savedBlockTransformSelection=richTextBookmark?.nodeId===node.id?richTextBookmark.transformSelection:null,composing=false,
+          savedBlockTransformSelection=richTextBookmark?.nodeId===node.id?richTextBookmark.transformSelection:null,composing=false,compositionRevision=0,
           savedSelectionOffsets=richTextBookmark?.nodeId===node.id?richTextBookmark.selectionOffsets??null:null;
         const typingGroup=crypto.randomUUID();let formattingSurface=editor;
         function refreshFormattingControls(range,surface){
@@ -1067,9 +1077,18 @@ function renderInspector(){
         editor.addEventListener('input',()=>{richTextDirty=true;flushRichTextDraft=saveRich;savedLinkSelection=null;savedFormatSelection=null;savedSelectionOffsets=null;richTextBookmark=null;if(!composing)saveRich()});
         editor.addEventListener('focus',()=>{flushRichTextDraft=saveRich});
         editor.addEventListener('beforeinput',()=>{richTextDirty=true});
-        editor.addEventListener('compositionstart',()=>{composing=true});
+        editor.addEventListener('compositionstart',()=>{compositionRevision++;composing=true});
         editor.addEventListener('compositionupdate',()=>{composing=true});
-        editor.addEventListener('compositionend',()=>{composing=false;richTextDirty=true;saveRich();requestAnimationFrame(rememberSelection)});
+        editor.addEventListener('compositionend',()=>{
+          richTextDirty=true;const revision=compositionRevision;
+          // Wait until the mobile keyboard has delivered its final input event
+          // before reconciling the document or updating the canvas surface.
+          requestAnimationFrame(()=>{
+            if(revision!==compositionRevision)return;
+            composing=false;
+            if(editor.isConnected){saveRich();rememberSelection()}
+          });
+        });
         document.addEventListener('selectionchange',selectionObserver);richTextSelectionCleanup=()=>document.removeEventListener('selectionchange',selectionObserver);
         editor.addEventListener('paste',()=>requestAnimationFrame(rememberSelection));
         editor.addEventListener('mouseup',rememberSelection);
