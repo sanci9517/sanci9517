@@ -48,7 +48,8 @@ test('Inspector Media picker reaches older images and keeps filtered pages disti
     await page.goto(base+'/');
     await page.evaluate(async()=>{
       const {mediaAssetPicker}=await import('/editor-v2/ui/element-content-controls.js');
-      window.__choices=[];
+      window.__choices=[];window.__outerEscapeCount=0;
+      document.addEventListener('keydown',event=>{if(event.key==='Escape')window.__outerEscapeCount++});
       const picker=mediaAssetPicker('',(assetId,asset)=>{window.__choices.push({id:assetId,alt:asset?.altText||''});return true});
       document.getElementById('fixture').append(picker);
     });
@@ -58,13 +59,34 @@ test('Inspector Media picker reaches older images and keeps filtered pages disti
     assert.equal(await choices.count(),50,`initial page at ${width}px`);
     await picker.getByRole('button',{name:'További képek betöltése'}).click();
     await page.waitForFunction(()=>document.querySelectorAll('.editor-media-choice').length===100);
+    assert.equal(await choices.nth(50).evaluate(el=>document.activeElement===el),true,
+      'load-more keyboard focus moves to first newly appended tile');
+    await choices.nth(50).press('Tab');
+    assert.equal(await choices.nth(51).evaluate(el=>document.activeElement===el),true,
+      'Tab reaches another newly appended tile without moving backwards');
     await picker.getByRole('button',{name:'További képek betöltése'}).click();
     await page.waitForFunction(()=>document.querySelectorAll('.editor-media-choice').length===120);
+    assert.equal(await choices.nth(100).evaluate(el=>document.activeElement===el),true,
+      'last page hides load-more only after focus has moved to a valid new tile');
     assert.equal(await picker.getByRole('button',{name:'További képek betöltése'}).isVisible(),false);
     const unique=await choices.evaluateAll(elements=>new Set(elements.map(el=>el.getAttribute('aria-label'))).size);
     assert.equal(unique,120,'no duplicate choices across pages with matching timestamps');
     assert.equal(await choices.last().getAttribute('aria-label'),'asset-0.png kiválasztása','oldest image is reachable');
-    await picker.getByRole('searchbox',{name:'Keresés a Médiatárban'}).fill('asset-11');
+    await choices.last().press('Escape');
+    assert.equal(await picker.getByRole('button',{name:'Médiatár megnyitása'}).evaluate(el=>document.activeElement===el),true,
+      'Escape from an asset choice returns focus to the picker opener');
+    assert.equal(await page.evaluate(()=>window.__outerEscapeCount),0,
+      'Escape should not bubble to the global Editor mobile sheet handler');
+    await picker.getByRole('button',{name:'Médiatár megnyitása'}).click();
+    await page.waitForFunction(()=>document.querySelectorAll('.editor-media-choice').length===50);
+    const search=picker.getByRole('searchbox',{name:'Keresés a Médiatárban'});
+    await search.focus();await search.press('Escape');
+    assert.equal(await picker.getByRole('button',{name:'Médiatár megnyitása'}).evaluate(el=>document.activeElement===el),true,
+      'Escape from the search box closes the picker, preserving the Editor sheet');
+    assert.equal(await page.evaluate(()=>window.__outerEscapeCount),0);
+    await picker.getByRole('button',{name:'Médiatár megnyitása'}).click();
+    await page.waitForFunction(()=>document.querySelectorAll('.editor-media-choice').length===50);
+    await search.fill('asset-11');
     await page.waitForFunction(()=>document.querySelectorAll('.editor-media-choice').length===11);
     assert.equal(await picker.getByRole('button',{name:'További képek betöltése'}).isVisible(),false);
     await picker.getByRole('button',{name:'asset-119.png kiválasztása'}).click();
