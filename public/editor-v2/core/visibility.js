@@ -27,3 +27,23 @@ export function getNodeVisibilityState(page,nodeId,device='desktop'){
   }
   return {ownVisible,effectiveVisible:ownVisible&&!hiddenByAncestorId,hiddenByAncestorId};
 }
+
+/**
+ * Traverses only nodes that can actually render on this device. Root itself
+ * is a Page Model container and is not a renderable element.
+ * Hidden ancestors exclude their entire subtree, including data-driven nodes.
+ */
+export function collectVisibleDescendants(page,device='desktop'){
+  const nodes=page?.nodes??{};
+  const visible=[],seen=new Set();
+  const visit=id=>{
+    if(seen.has(id))return;
+    seen.add(id);
+    const node=nodes[id];
+    if(!isVisibleOnDevice(node,device))return;
+    visible.push(node);
+    for(const child of node.children??[])visit(child);
+  };
+  for(const id of nodes[page?.rootId]?.children??[])visit(id);
+  return visible;
+}
