@@ -24,8 +24,8 @@ test('Rich Text list/table/cross-block DOM range offsets match Page Model at mob
     const page=await browser.newPage({viewport:{width,height:850}});
     await page.goto('http://127.0.0.1:'+server.address().port+'/');
     const result=await page.evaluate(async()=>{
-      const {renderRichTextEditor,getSelectionOffsets,restoreSelectionOffsets}=await import('/editor-v2/core/richtext-engine.js');
-      const {getRichTextBlockSelection,getRichTextFormattingSelection,restoreRichTextFormattingSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,clearRichTextInlineFormatting}=await import('/editor-v2/core/richtext-links.js');
+      const {renderRichTextEditor,richTextEditorToDocument,getSelectionOffsets,restoreSelectionOffsets}=await import('/editor-v2/core/richtext-engine.js');
+      const {getRichTextBlockSelection,restoreRichTextBlockSelection,getRichTextFormattingSelection,restoreRichTextFormattingSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,clearRichTextInlineFormatting}=await import('/editor-v2/core/richtext-links.js');
       const fixture={
         schemaVersion:1,type:'richtext-document',blocks:[
           {type:'bulleted-list',items:[
@@ -99,9 +99,52 @@ test('Rich Text list/table/cross-block DOM range offsets match Page Model at mob
       const caret=document.createRange();caret.setStart(nested,1);caret.collapse(true);
       const selection=window.getSelection();selection.removeAllRanges();selection.addRange(caret);
       snapshots.push({key:'caret',range:getRichTextBlockSelection(root)});
+
+      // Native Shift+Enter produces real BR nodes, while the Page Model
+      // serializes those same inline breaks as one UTF-16 newline each.
+      // Cross-block formatting must count BRs both when reading and restoring.
+      root.replaceChildren();
+      for(const [before,after] of [['Alpha','Beta'],['Omega','Last']]){
+        const p=document.createElement('p');
+        p.append(document.createTextNode(before),document.createElement('br'),document.createTextNode(after));
+        root.append(p);
+      }
+      const nativeSelection=window.getSelection(),nativeRange=document.createRange();
+      nativeRange.setStart(root.children[0].firstChild,2);
+      nativeRange.setEnd(root.children[1].lastChild,2);
+      nativeSelection.removeAllRanges();nativeSelection.addRange(nativeRange);
+      const hardBreakRange=getRichTextFormattingSelection(root);
+      const hardBreakVisible=nativeSelection.toString();
+      const hardBreakRestore=restoreRichTextFormattingSelection(root,hardBreakRange);
+      const hardBreakRoundtrip=getRichTextFormattingSelection(root);
+      const hardBreakRestoredText=nativeSelection.toString();
+      // Also exercise the Range(root, childIndex) boundary case: both
+      // intermediate block lengths must include the native BR character.
+      const wholeRange=document.createRange();
+      wholeRange.setStart(root,0);wholeRange.setEnd(root,2);
+      nativeSelection.removeAllRanges();nativeSelection.addRange(wholeRange);
+      const fullBlocks=getRichTextFormattingSelection(root);
+      // A one-block selection crossing the soft break uses the same offsets.
+      const lineRange=document.createRange();
+      lineRange.setStart(root.children[0].firstChild,3);
+      lineRange.setEnd(root.children[0].lastChild,2);
+      nativeSelection.removeAllRanges();nativeSelection.addRange(lineRange);
+      const inlineRange=getRichTextBlockSelection(root);
+      const inlineRestore=restoreRichTextBlockSelection(root,inlineRange);
+      const inlineRoundtrip=getRichTextBlockSelection(root);
+      const beforeRender=richTextEditorToDocument(root);
+      const marked=updateRichTextInlineMark(beforeRender,hardBreakRange,'underline');
+      renderRichTextEditor(root,marked);
+      const modelRestore=restoreRichTextFormattingSelection(root,hardBreakRange);
+      snapshots.push({key:'hardbreak',range:hardBreakRange,visible:hardBreakVisible,
+        restored:hardBreakRestore,roundtrip:hardBreakRoundtrip,restoredText:hardBreakRestoredText,
+        fullBlocks:fullBlocks?.segments,inline: inlineRange,inlineRestore,inlineRoundtrip,
+        modelBlocks:beforeRender.blocks.map(block=>block.children.map(run=>run.text).join('')),
+        modelRestore,afterRender:getRichTextFormattingSelection(root),
+        formatted:marked.blocks.map(block=>block.children.filter(run=>run.marks.includes('underline')).map(run=>run.text).join(''))});
       return snapshots;
     });
-    const [list,table,cross,caret]=result;
+    const [list,table,cross,caret,hardbreak]=result;
     assert.deepEqual(list.link,{blockIndex:0,from:2,to:8},'list item separator must not be counted');
     assert.deepEqual(list.format,{segments:[list.link]});
     assert.deepEqual(list.global,{from:2,to:8,collapsed:false});
@@ -134,6 +177,21 @@ test('Rich Text list/table/cross-block DOM range offsets match Page Model at mob
     assert.equal(cross.para,'Ome');
     assert.equal(cross.cleared,true);
     assert.deepEqual(caret.range,{blockIndex:1,from:5,to:8},'collapsed caret expands to the nested linked fragment');
+    assert.deepEqual(hardbreak.range,{segments:[{blockIndex:0,from:2,to:10},{blockIndex:1,from:0,to:8}]},
+      'cross-paragraph range counts native Shift+Enter BRs in both paragraphs');
+    assert.equal(hardbreak.restored,true);
+    assert.deepEqual(hardbreak.roundtrip,hardbreak.range);
+    assert.equal(hardbreak.restoredText,hardbreak.visible,'selection text survives BR-aware restore');
+    assert.deepEqual(hardbreak.fullBlocks,[{blockIndex:0,from:0,to:10},{blockIndex:1,from:0,to:10}],
+      'root child-boundary ranges use canonical inline lengths, not textContent.length');
+    assert.deepEqual(hardbreak.inline,{blockIndex:0,from:3,to:8});
+    assert.equal(hardbreak.inlineRestore,true);
+    assert.deepEqual(hardbreak.inlineRoundtrip,hardbreak.inline);
+    assert.deepEqual(hardbreak.modelBlocks,['Alpha\nBeta','Omega\nLast']);
+    assert.equal(hardbreak.modelRestore,true,'selection restores after canonical model DOM rerender');
+    assert.deepEqual(hardbreak.afterRender,hardbreak.range);
+    assert.deepEqual(hardbreak.formatted,['pha\nBeta','Omega\nLa'],
+      'only selected portions are underlined across both paragraphs');
     await page.close();
   }
 });

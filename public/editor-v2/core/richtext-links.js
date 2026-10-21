@@ -1,5 +1,5 @@
 import { RICH_TEXT_FONT_FAMILIES } from './schema.js';
-import { textOffsetWithin } from './richtext-selection-offset.js';
+import { textOffsetWithin, locateRichTextOffset } from './richtext-selection-offset.js';
 
 /*
  * Rich Text links operate inside one block; formatting can span several blocks.
@@ -233,14 +233,15 @@ export function getRichTextFormattingSelection(editor) {
   if(!start||!end)return null;
   const children=[...editor.children],first=children.indexOf(start),last=children.indexOf(end);
   if(first<0||last<first)return null;
+  const blockLength=block=>textOffsetWithin(block,block,block.childNodes.length);
   const offsetIn=(block,container,offset,isStart)=>{
-    if(container===editor)return isStart?0:block.textContent.length;
+    if(container===editor)return isStart?0:blockLength(block);
     return textOffsetWithin(block,container,offset);
   };
   const segments=[];
   for(let blockIndex=first;blockIndex<=last;blockIndex++){
     const block=children[blockIndex],from=blockIndex===first?offsetIn(block,range.startContainer,range.startOffset,true):0,
-      to=blockIndex===last?offsetIn(block,range.endContainer,range.endOffset,false):block.textContent.length;
+      to=blockIndex===last?offsetIn(block,range.endContainer,range.endOffset,false):blockLength(block);
     if(from===null||to===null)return null;
     if(to>from)segments.push({blockIndex,from,to});
   }
@@ -262,17 +263,7 @@ export function restoreRichTextFormattingSelection(editor,selectionRange) {
   };
   const firstBlock=blockAt(first),lastBlock=blockAt(last);
   if(!firstBlock||!lastBlock||first.blockIndex>last.blockIndex)return false;
-  const locate=(block,position)=>{
-    const walker=document.createTreeWalker(block,NodeFilter.SHOW_TEXT);
-    let text,offset=0;
-    while((text=walker.nextNode())){
-      const end=offset+text.nodeValue.length;
-      if(position<=end)return {node:text,offset:position-offset};
-      offset=end;
-    }
-    return null;
-  };
-  const start=locate(firstBlock,first.from),end=locate(lastBlock,last.to);
+  const start=locateRichTextOffset(firstBlock,first.from),end=locateRichTextOffset(lastBlock,last.to);
   if(!start||!end)return false;
   try{
     const nativeRange=document.createRange();
@@ -322,10 +313,8 @@ export function getRichTextActiveBlockIndex(editor) {
 export function restoreRichTextBlockSelection(editor, range) {
   const block=editor.children?.[range?.blockIndex];
   if(!block||!Number.isInteger(range.from)||!Number.isInteger(range.to)||range.from<0||range.to<=range.from)return false;
-  const walker=document.createTreeWalker(block,NodeFilter.SHOW_TEXT),nodes=[];let node;
-  while(node=walker.nextNode())nodes.push(node);
-  const locate=target=>{let offset=0;for(const text of nodes){const end=offset+text.nodeValue.length;if(target<=end)return {node:text,offset:target-offset};offset=end}return null};
-  const start=locate(range.from),end=locate(range.to);if(!start||!end)return false;
+  const start=locateRichTextOffset(block,range.from),end=locateRichTextOffset(block,range.to);
+  if(!start||!end)return false;
   const nativeRange=document.createRange();nativeRange.setStart(start.node,start.offset);nativeRange.setEnd(end.node,end.offset);
   const selection=window.getSelection();selection.removeAllRanges();selection.addRange(nativeRange);return true;
 }
