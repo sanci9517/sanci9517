@@ -19,7 +19,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     quote:{text:'A kreativitás tanulható.',citation:'Egy alkotó'},badge:{text:'Új sorozat'},icon:{icon:'star',ariaLabel:'Kedvenc'},
     image:{src:'/fixture.svg',alt:'Tesztillusztráció',caption:'Képaláírás',fit:'contain',ratio:'1 / 1'},video:{src:'/fixture.webm',poster:'/fixture.svg',controls:true,muted:true},audio:{src:'/fixture.mp3',controls:true},
     list:{ordered:true,items:[{text:'Első hivatkozás',href:'/p/home'},{text:'Második elem'}]},table:{caption:'Eredmények',header:true,rows:[['Név','Érték'],['Nézők','42']]},
-    tabs:{ariaLabel:'Eredeti fülek',items:[{title:'Videók',text:'Videólista'},{title:'Bemutatkozás',text:'Személyes történet'}]},accordion:{items:[{title:'Hogyan készült?',text:'A kulisszák mögött.'}]},dropdown:{items:[{title:'További részletek',text:'Kiegészítés'}]},
+    tabs:{ariaLabel:'Eredeti fülek',items:[{title:'Videók',text:'Videólista'},{title:'Bemutatkozás',text:'Személyes történet'}]},accordion:{items:[{title:'Hogyan készült?',text:'A kulisszák mögött.'},{title:'Hol találom?',text:'A szerkesztőben.'}]},dropdown:{items:[{title:'További részletek',text:'Kiegészítés'},{title:'Másik rész',text:'Új információ'}]},
     gallery:{ariaLabel:'Eredeti képrács',columns:'3',items:[{src:'/fixture.svg',alt:'Első kép'},{src:'/fixture.svg',alt:'Második kép',caption:'Második képaláírás'}]},carousel:{ariaLabel:'Alkotói galéria',items:[{src:'/fixture.svg',alt:'Első dia'},{src:'/fixture.svg',alt:'Második dia'}]},
     code:{code:'<script>alert("Nem futok le")</script>',wrap:true},tooltip:{text:'Mi ez?',description:'Részletes magyarázat'},divider:{},spacer:{}
   };
@@ -102,6 +102,23 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await editor.getByLabel('Fülcsoport elnevezése',{exact:true}).fill('Bemutatkozás & videók');
   assert.equal(await node(editor,'tabs').getByRole('tablist',{name:'Bemutatkozás & videók'}).count(),1,
     'the real Canvas tablist inherits the Inspector name');
+  await select('accordion');
+  await editor.getByLabel('Harmonikacsoport elnevezése',{exact:true}).fill('Kérdések & válaszok');
+  await editor.getByLabel('Egyszerre csak egy nyitott rész',{exact:true}).check();
+  const canvasAccordion=node(editor,'accordion').getByRole('group',{name:'Kérdések & válaszok'});
+  assert.equal(await canvasAccordion.count(),1,'Inspector names the real Canvas accordion group');
+  assert.equal(await canvasAccordion.locator('details').count(),2);
+  assert.equal(await canvasAccordion.locator('details').first().getAttribute('name'),
+    await canvasAccordion.locator('details').last().getAttribute('name'),
+    'single-open uses the same native details name within this accordion');
+  await select('dropdown');
+  await editor.getByLabel('Lenyitható csoport elnevezése',{exact:true}).fill('További lehetőségek');
+  await editor.getByLabel('Első rész kezdetben nyitva',{exact:true}).check();
+  const canvasDropdown=node(editor,'dropdown').getByRole('group',{name:'További lehetőségek'});
+  assert.equal(await canvasDropdown.locator('details').first().evaluate(el=>el.open),true,
+    'native first-open state is visible immediately on the Canvas');
+  assert.equal(await canvasDropdown.locator('details').last().hasAttribute('name'),false,
+    'multi-open default does not accidentally make separate dropdown items exclusive');
   await select('gallery');
   await editor.getByLabel('Képgaléria elnevezése',{exact:true}).fill('Műhelyem & képeim');
   assert.equal(await node(editor,'gallery').getByRole('region',{name:'Műhelyem & képeim'}).count(),1,
@@ -145,6 +162,10 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     'gallery Inspector name stays draft-only after Save');
   assert.equal(await node(live,'tabs').getByRole('tablist',{name:'Eredeti fülek'}).count(),1,
     'tablist Inspector name stays draft-only after Save');
+  assert.equal(await node(live,'accordion').getByRole('group',{name:'Harmonika'}).count(),1,
+    'Accordion naming changes remain draft-only until Publish');
+  assert.equal(await node(live,'dropdown').locator('details').first().evaluate(el=>el.open),false,
+    'first-open setting remains private after Save');
   assert.equal(await node(live,'carousel').locator('.creator-carousel').getAttribute('aria-label'),'Alkotói galéria',
     'a newly named carousel is still draft-only after Save');
   assert.equal(await node(live,'button').evaluate(el=>getComputedStyle(el).backgroundImage),'none','draft background stays private before Publish');
@@ -170,6 +191,10 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     'Publish exposes the new image grid accessible name');
   assert.equal(await node(live,'tabs').getByRole('tablist',{name:'Bemutatkozás & videók'}).count(),1,
     'Publish exposes the new tablist accessible name');
+  assert.equal(await node(live,'accordion').getByRole('group',{name:'Kérdések & válaszok'}).count(),1,
+    'Publish exposes the editable Accordion group name');
+  assert.equal(await node(live,'dropdown').getByRole('group',{name:'További lehetőségek'}).count(),1,
+    'Publish exposes the editable Dropdown group name');
   assert.equal(await node(live,'carousel').getByRole('region',{name:'Képes történeteim & fotók'}).count(),1,
     'published carousel region inherits the exact accessible Inspector name');
   assert.equal(await node(live,'table').locator('th[scope=col]').count(),2);assert.equal(await node(live,'video').locator('video[controls]').count(),1);assert.equal(await node(live,'audio').locator('audio[controls]').count(),1);
@@ -177,8 +202,20 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await node(live,'code').locator('script').count(),0);assert.match(await node(live,'code').locator('code').textContent(),/<script>/);
   await node(live,'tabs').getByRole('tab',{name:'Bemutatkozás',exact:true}).click();assert.equal(await node(live,'tabs').getByRole('tabpanel').textContent(),'Személyes történet');
   await node(live,'tabs').getByRole('tab',{name:'Bemutatkozás',exact:true}).press('Home');assert.equal(await node(live,'tabs').getByRole('tabpanel').textContent(),'Videólista');
-  await node(live,'accordion').locator('summary').click();assert.equal(await node(live,'accordion').locator('details').evaluate(el=>el.open),true);
-  await node(live,'dropdown').locator('summary').click();assert.equal(await node(live,'dropdown').locator('details').evaluate(el=>el.open),true);
+  const accordion=node(live,'accordion').getByRole('group',{name:'Kérdések & válaszok'});
+  await accordion.locator('summary').first().click();
+  assert.deepEqual(await accordion.locator('details').evaluateAll(items=>items.map(el=>el.open)),[true,false]);
+  await accordion.locator('summary').last().press('Enter');
+  assert.deepEqual(await accordion.locator('details').evaluateAll(items=>items.map(el=>el.open)),[false,true],
+    'native details name closes the old Accordion item when opening another with Enter');
+  const dropdown=node(live,'dropdown').getByRole('group',{name:'További lehetőségek'});
+  assert.deepEqual(await dropdown.locator('details').evaluateAll(items=>items.map(el=>el.open)),[true,false],
+    'published Dropdown honors initial first-open setting');
+  await dropdown.locator('summary').last().press('Enter');
+  assert.deepEqual(await dropdown.locator('details').evaluateAll(items=>items.map(el=>el.open)),[true,true],
+    'Dropdown default allows multiple simultaneously open sections and keyboard access');
+  assert.deepEqual(await accordion.locator('details').evaluateAll(items=>items.map(el=>el.open)),[false,true],
+    'interacting with a second details group cannot close the first group');
   await node(live,'carousel').getByRole('button',{name:'Következő kép',exact:true}).click();await live.waitForFunction(id=>document.querySelector(`[data-node-id="${id}"] .creator-carousel`).scrollLeft>0,ids.carousel);
   assert.equal(await node(live,'gallery').locator('.creator-image-zoom').first().getAttribute('data-lightbox-src'),'/media/'+assetId);
   assert.equal(await node(live,'carousel').locator('.creator-image-zoom').first().getAttribute('data-lightbox-src'),'/media/'+assetId);
@@ -212,6 +249,11 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     assert.ok(await live.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'modern root does not inherit a narrower legacy template or horizontal overflow');
     assert.equal(await node(live,'gallery').getByRole('region',{name:'Műhelyem & képeim'}).count(),1);
     assert.equal(await node(live,'tabs').getByRole('tablist',{name:'Bemutatkozás & videók'}).count(),1);
+    assert.equal(await node(live,'accordion').getByRole('group',{name:'Kérdések & válaszok'}).count(),1);
+    assert.deepEqual(await node(live,'accordion').locator('details').evaluateAll(items=>items.map(el=>el.open)),[false,false],
+      'accordion starts collapsed on every responsive viewport');
+    assert.deepEqual(await node(live,'dropdown').locator('details').evaluateAll(items=>items.map(el=>el.open)),[true,false],
+      'Dropdown starts with first section open on every responsive viewport');
     const keyboardCarousel=node(live,'carousel').getByRole('region',{name:'Képes történeteim & fotók'});
     await keyboardCarousel.focus();
     await keyboardCarousel.press('ArrowRight');
