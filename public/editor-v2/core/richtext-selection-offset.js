@@ -40,3 +40,31 @@ export function isRichTextHardBreak(node) {
   const block=node.closest('p,h1,h2,h3,h4,h5,h6,blockquote,pre,li,td,th');
   return !block||block.textContent!==''||block.querySelectorAll('br').length>1;
 }
+
+/**
+ * Rehydrate an inline UTF-16 Page Model offset to a DOM boundary. The same
+ * native Shift+Enter BRs counted by textOffsetWithin must consume one
+ * character here, including when a selection crosses different blocks.
+ * Placeholder BRs in empty contenteditable paragraphs consume none.
+ */
+export function locateRichTextOffset(root, target) {
+  if (!root || !Number.isSafeInteger(target) || target < 0) return null;
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT);
+  let total = 0;
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const end = total + node.nodeValue.length;
+      if (target <= end) return {node, offset: target - total};
+      total = end;
+    } else if (isRichTextHardBreak(node)) {
+      const parent = node.parentNode;
+      const index = [...parent.childNodes].indexOf(node);
+      if (index < 0) return null;
+      if (target === total) return {node: parent, offset: index};
+      total += 1;
+      if (target === total) return {node: parent, offset: index + 1};
+    }
+  }
+  // Do not silently clamp a stale selection to the end of the content.
+  return null;
+}
