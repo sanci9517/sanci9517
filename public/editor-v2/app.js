@@ -1088,7 +1088,15 @@ function renderInspector(){
             setStatus('Nem mentett módosítás');
           }catch(error){formatStatus.textContent=error instanceof Error?error.message:String(error)}
         });
-        editor.addEventListener('input',()=>{richTextDirty=true;flushRichTextDraft=saveRich;savedLinkSelection=null;savedFormatSelection=null;savedSelectionOffsets=null;richTextBookmark=null;if(!composing)saveRich()});
+        editor.addEventListener('input',()=>{
+          richTextDirty=true;flushRichTextDraft=saveRich;
+          // The DOM has changed, so block/link ranges must be recalculated.
+          // Keep a fresh text-offset bookmark after the browser has placed
+          // the caret, otherwise Undo/Redo or an Inspector rebuild loses it.
+          savedLinkSelection=null;savedFormatSelection=null;savedSelectionOffsets=null;richTextBookmark=null;
+          requestAnimationFrame(()=>{if(editor.isConnected)rememberSelection()});
+          if(!composing)saveRich();
+        });
         editor.addEventListener('focus',()=>{flushRichTextDraft=saveRich});
         editor.addEventListener('beforeinput',()=>{richTextDirty=true});
         editor.addEventListener('compositionstart',()=>{compositionRevision++;composing=true});
@@ -1120,7 +1128,14 @@ function renderInspector(){
         const scope=document.createElement('div');scope.className='richtext-scope-banner';scope.setAttribute('role','status');scope.textContent='Élő szöveg · kijelölt rész formázása';
         section.append(scope,editor,toolbar,linkControls);
         if(node.locked){toolbar.inert=true;linkControls.inert=true}
-        requestAnimationFrame(()=>{if(editor.isConnected)refreshFormattingControls(null,editor)});
+        requestAnimationFrame(()=>{
+          if(!editor.isConnected)return;
+          if(richTextBookmark?.nodeId===node.id&&savedSelectionOffsets){
+            editor.focus({preventScroll:true});
+            restoreSelectionOffsets(editor,savedSelectionOffsets);
+          }
+          refreshFormattingControls(null,editor);
+        });
         inspector.append(section);
       }else if(textTypes.has(node.type))inspector.append(renderPlainTextEditor(node));
       if(node.type==='code'&&node.metadata?.codeSnippetVersion===1)inspector.append(renderCodeSnippetInspector(node,model=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),codeSnippet:model}}})));
