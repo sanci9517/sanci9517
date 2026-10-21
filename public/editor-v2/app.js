@@ -932,7 +932,11 @@ function renderInspector(){
           const native=window.getSelection();
           const surface=canvasEditor&&native?.anchorNode&&canvasEditor.contains(native.anchorNode)?canvasEditor:editor;
           const offsets=getSelectionOffsets(surface);if(!offsets)return;
-          formattingSurface=surface;savedSelectionOffsets={from:offsets.from,to:offsets.to};
+          // Keep the native anchor/focus direction too. Toolbar focus moves
+          // commonly remove the DOM Range on touch devices; reducing this to
+          // from/to here would discard a backward selection before the shared
+          // Rich Text restore path can reattach it.
+          formattingSurface=surface;savedSelectionOffsets={...offsets};
           const format=getRichTextFormattingSelection(surface);savedFormatSelection=format;
           savedBlockTransformSelection=getRichTextBlockTransformSelection(surface);
           const next=getRichTextBlockSelection(surface);savedLinkSelection=next;
