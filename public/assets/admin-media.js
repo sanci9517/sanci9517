@@ -6,7 +6,11 @@ const gallery = document.getElementById("gallery");
 const search = document.getElementById("mediaSearch");
 const searchClear = document.getElementById("mediaSearchClear");
 const mediaState = document.getElementById("mediaState");
+const mediaLoadMore = document.getElementById("mediaLoadMore");
+const mediaListStatus = document.getElementById("mediaListStatus");
 let currentListRequest = 0;
+let nextMediaCursor = null;
+let shownMediaCount = 0;
 const quotaSummary = document.getElementById("mediaQuotaSummary");
 const quotaDetails = document.getElementById("mediaQuotaDetails");
 const quotaProgress = document.getElementById("mediaQuotaProgress");
@@ -89,16 +93,32 @@ function empty(message) {
   placeholder.textContent = message;
   gallery.replaceChildren(placeholder);
 }
-async function refresh(query = "") {
+async function refresh(query = "", append = false) {
+  if (append && !nextMediaCursor) return;
   const request = ++currentListRequest;
+  const before = append ? nextMediaCursor : null;
+  if (append) {
+    mediaLoadMore.disabled = true;
+    mediaListStatus.textContent = "További képek betöltése…";
+  } else {
+    nextMediaCursor = null;
+    shownMediaCount = 0;
+    mediaLoadMore.hidden = true;
+    mediaLoadMore.disabled = false;
+    mediaListStatus.textContent = "Képek betöltése…";
+  }
   try {
     const url = new URL("/api/admin/media", location.origin); if (query) url.searchParams.set("q", query);
     url.searchParams.set("state",mediaState.value);
+    url.searchParams.set("limit", "50");
+    if (before) url.searchParams.set("before", before);
     const data = await api(url.toString());
     if (request !== currentListRequest) return;
     renderQuota(data);
     const assets = Array.isArray(data.assets) ? data.assets : [];
-    if (!assets.length) { empty(mediaState.value === "archived" ? "Nincs archivált kép." : "Még nincs feltöltött kép."); return; }
+    if (!assets.length && !append) {
+      empty(mediaState.value === "archived" ? "Nincs archivált kép." : "Még nincs feltöltött kép.");
+    }
     const tiles = assets.map(asset => {
       const card = document.createElement("article"); card.className = "tile";
       const link = document.createElement("a");
@@ -173,16 +193,44 @@ async function refresh(query = "") {
       details.append(name,size,alt,saveAlt,feedback,usageButton,usage,lifecycle,lifecycleStatus);
       card.append(link,details);return card;
     });
-    gallery.replaceChildren(...tiles);
+    if (append) gallery.append(...tiles);
+    else if (assets.length) gallery.replaceChildren(...tiles);
+    shownMediaCount += assets.length;
+    nextMediaCursor = typeof data.nextCursor === "string" && data.nextCursor ? data.nextCursor : null;
+    mediaLoadMore.hidden = !nextMediaCursor;
+    mediaLoadMore.disabled = false;
+    mediaListStatus.textContent = shownMediaCount
+      ? shownMediaCount + " kép betöltve" + (nextMediaCursor ? " · további képek elérhetők." : " · az összes találat betöltve.")
+      : "Nincs találat.";
+    // Appended cards precede the load-more button in the DOM. Restore
+    // keyboard focus to the first new image link, including the last page.
+    if (append) (tiles[0]?.querySelector("a") || mediaLoadMore).focus({preventScroll:false});
   } catch (e) {
-    if(request === currentListRequest){
+    if (request !== currentListRequest) return;
+    if (append) {
+      mediaLoadMore.hidden = false;
+      mediaLoadMore.disabled = false;
+      mediaLoadMore.focus({preventScroll:true});
+      mediaListStatus.textContent = e instanceof Error ? e.message : "A további képek nem tölthetők be.";
+    } else {
       renderQuota(null);
       empty(e instanceof Error ? e.message : "A képek nem tölthetők be.");
+      mediaListStatus.textContent = "A képek betöltése sikertelen.";
     }
   }
 }
+mediaLoadMore.addEventListener("click",()=>refresh(search.value.trim(),true));
 mediaState.addEventListener("change",()=>refresh(search.value.trim()));
-let searchTimer;search?.addEventListener("input",()=>{clearTimeout(searchTimer);searchTimer=setTimeout(()=>refresh(search.value.trim()),220)});searchClear?.addEventListener("click",()=>{search.value="";refresh()});
+let searchTimer;search?.addEventListener("input",()=>{
+  // Invalidate pending responses immediately rather than after debounce.
+  currentListRequest++;
+  nextMediaCursor = null;
+  mediaLoadMore.hidden = true;
+  clearTimeout(searchTimer);
+  mediaListStatus.textContent = "Keresés…";
+  searchTimer=setTimeout(()=>refresh(search.value.trim()),220);
+});
+searchClear?.addEventListener("click",()=>{search.value="";clearTimeout(searchTimer);refresh()});
 function uploadImage(file) {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
