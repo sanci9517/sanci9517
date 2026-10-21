@@ -53,6 +53,8 @@
 
 > **2026-10-21 — 77.44.7.A/C többbekezdéses Kódformázás regresszió:** a meglévő közös Rich Text Page Model Kódformázás-műveletét most valódi 390px és 1366px Chromium teszt védi két bekezdés részleges kijelölésén. A `Beta` és `Gamma` együtt kapja meg a `code` jelölést, a kijelölés, félkövér/dőlt jelölések és vászon-paritás megmaradnak; asztali nézetben a külön draft Save a kanonikus modellben is megőrzi a jelölést, publikálás nélkül. Célzott böngészőteszt, TypeScript és Editor Core **106/106 PASS**. D1/R2, secret, Production Worker és Save ≠ Publish változatlan; teljes WEB-011 és fizikai Android/PC elfogadás **OPEN/UNVERIFIED**.
 
+> **2026-10-21 — 77.44.7.A/C vászon-formázó azonnali fókusz- és kurzorparitás:** a vászonból indított „Formázás és linkek” korábban csak a következő animációs képkockában állította vissza a kijelölést. Közvetlen, gyors további gépelésnél ez a kurzort hibás pozícióra tehette, különösen a Kódformázás után. A nem linkes vászon-formázóút most a szinkron újrarajzolás után azonnal visszaállítja az eredeti vászon-kijelölést és fókuszt; a meglévő képkockás visszaállítás megmarad védőútként. Valódi Chromiumban a Canvas Kódformázás → új oldalbetöltés → Formázás → Ctrl+End → gépelés lánc az Inspector–vászon élő szinkronnal és automatikus Save/Publish nélkül PASS. D1/R2, secret és Production Worker változatlan; WEB-011 és fizikai Android/PC elfogadás **OPEN/UNVERIFIED**.
+
 ## A MASTER 12 része
 
 - [1/12 – MASTER fejezetek](creator-master/part-01-of-12.md)

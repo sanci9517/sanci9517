@@ -175,6 +175,11 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
   }
   assert.equal(posts.length,canvasMarkPosts,'canvas formatting must not Save or Publish implicitly');
   assert.equal(await canvasInline.locator('a').getAttribute('href'),'/p/canvas');
+  await tab.getByRole('button',{name:'Kódformázás',exact:true}).click();
+  assert.equal(await canvasInline.locator('a code').count(),1);
+  assert.equal(await canvasInline.evaluate(el=>document.activeElement===el&&window.getSelection()?.toString()==='world'),true,
+    'Inspector code control should return to the selected canvas surface');
+  assert.equal(posts.length,canvasMarkPosts,'canvas code formatting must not Save or Publish implicitly');
   await tab.setViewportSize({width:390,height:800});
   await openEditor();
   const urlField=tab.locator('.richtext-link-controls input');

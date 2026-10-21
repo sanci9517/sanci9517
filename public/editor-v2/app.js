@@ -268,6 +268,17 @@ function openRichTextFormatting(id,{focusLink=false}={}){
   inspectorTab='content';
   document.querySelectorAll('.inspector-tabs button').forEach((button,index)=>button.classList.toggle('active',index===1));
   render();window.sanciEditor?.openPanel?.('right');
+  // A toolbar action can be followed immediately by the next keystroke. When
+  // it started on the Canvas, restore that selection synchronously after the
+  // render instead of waiting for the Inspector's next animation frame. Link
+  // mode intentionally focuses its URL input below.
+  if(!focusLink&&richTextBookmark?.nodeId===id&&richTextBookmark.source==='canvas'&&richTextBookmark.selectionOffsets){
+    const restoredCanvas=canvas.querySelector(`.node[data-node-id="${CSS.escape(id)}"] .richtext-inline-surface`);
+    if(restoredCanvas){
+      restoredCanvas.focus({preventScroll:true});
+      restoreSelectionOffsets(restoredCanvas,richTextBookmark.selectionOffsets);
+    }
+  }
   requestAnimationFrame(()=>{
     const editor=inspector.querySelector('.richtext-editor-surface');if(!editor)return;
     if(focusLink)editor.closest('.richtext-editor')?.querySelector('.richtext-link-controls input')?.focus({preventScroll:true});

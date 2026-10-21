@@ -823,6 +823,14 @@ A közös `updateRichTextInlineMark` már a blokk-szegmensekre bontott kijelöl�
 
 **Helyi bizonyíték:** célzott valós Chromium PASS, TypeScript PASS, Editor Core **106/106 PASS**. Ez nem Production Worker source-SHA vagy fizikai Android/PC elfogadás; ezek és a teljes WEB-011 továbbra is **OPEN/UNVERIFIED**. A vászonból indított Kódformázás közvetlen fókusz-életciklusa külön, még nem igazolt határeset marad.
 
+### 77.44.7.A/C — Vászon-formázó azonnali kijelölés-visszaállítása (2026-10-21)
+
+**Hiba:** a közvetlen Canvas Rich Text „Formázás és linkek” gombja a synchron render után a kijelölés-visszaállítást kizárólag az Inspector későbbi `requestAnimationFrame` callbackjére bízta. Gyors billentyűs folytatásnál — különösen Kódformázást követően — a `Ctrl+End` és gépelés a még átmeneti kurzorpozíciót használhatta.
+
+**Javítás:** `openRichTextFormatting()` a nem linkmezőt nyitó, vászon-eredetű bookmark esetén a közvetlen render után az új vászonfelületre fókuszál és az eredeti szöveg-offsetes kijelölést azonnal helyreállítja. A meglévő, későbbi Inspector callback változatlanul megmarad: linkmódban továbbra is a URL-mező kap fókuszt, egyébként a később csatlakozó DOM esetén védő-visszaállítást ad. Nincs új modell, mentési útvonal vagy publikálás.
+
+**Helyi bizonyíték:** a valós Chromium folyamat Canvas Kódformázás → új Editor-betöltés → közvetlen vászon Formázás → Ctrl+End → gépelés során igazolja a helyes végpozíciót, az élő Inspector–vászon szinkront és a Save/Publish hiányát. Célzott két Rich Text böngészőteszt, TypeScript és Editor Core **106/106 PASS**. Production Worker source-SHA és fizikai Android/PC elfogadás **UNVERIFIED**, teljes WEB-011 **OPEN**.
+
 ### 77.44.7.A/C — Inspector ismétlődő elemek hozzáadás/törlés utáni billentyűzetes fókusz (#233 MERGED, 2026-10-21)
 
 **Korlát és hibaforrás:** A #231-es „Fel/Le” újrarajzolási fókuszjavítás a `repeater` sorok „Hozzáadás” gombját nem kezelte; törlésnél nem volt célzott fókusz az újraszámozott, megmaradt sor első tartalommezőjére, illetve az üres lista hozzáadásgombjára. A kiválasztott fül eltávolítása után a #231-es Canvas-state helper a legközelebbi megmaradt, a listaméret szerint biztonságos fülre tér vissza. A javítás csak az Inspector-vezérlő meglevő lokális DOM-életciklusát érinti, új item ID vagy második tároló nélkül.
