@@ -1099,9 +1099,14 @@ function renderInspector(){
           const button=document.createElement('button');button.type='button';button.textContent=glyph;button.dataset.mark=mark;button.title=label;
           button.setAttribute('aria-label',label);button.onpointerdown=event=>{rememberSelection();event.preventDefault()};
           const applyMark=()=>{
-            const range=savedFormatSelection||getRichTextFormattingSelection(editor);
             const nativeSelection=window.getSelection();
             const hasNativeSelection=Boolean(nativeSelection?.rangeCount&&!nativeSelection.isCollapsed&&formattingSurface.contains(nativeSelection.anchorNode)&&formattingSurface.contains(nativeSelection.focusNode));
+            // The canvas and Inspector are two views of one document. Prefer a
+            // live canvas selection when it exists, so all marks (including
+            // multi-block code) use the structured Page Model operation rather
+            // than the browser's legacy execCommand fallback.
+            const nativeRange=hasNativeSelection?getRichTextFormattingSelection(formattingSurface):null;
+            const range=nativeRange||savedFormatSelection||getRichTextFormattingSelection(editor);
             if(!range&&!hasNativeSelection&&!savedSelectionOffsets){button.title='Előbb jelölj ki egy szövegrészt.';return}
             if(composing){button.title='Várd meg a mobilos szövegbevitel befejezését.';return}
             try{
@@ -1112,7 +1117,8 @@ function renderInspector(){
                 if(!document.execCommand(commands[mark],false,null))throw new Error('A böngésző nem tudta végrehajtani a formázást.');
                 const doc=richTextEditorToDocument(formattingSurface);if(commitWithoutRender(doc)){renderRichTextEditor(editor,doc);restoreFormattingSelection();button.title=label+' alkalmazva';}return;
               }
-              const doc=richTextEditorToDocument(editor),next=updateRichTextInlineMark(doc,range,mark);
+              const source=nativeRange?formattingSurface:editor;
+              const doc=richTextEditorToDocument(source),next=updateRichTextInlineMark(doc,range,mark);
               if(command('richtext.content.set',{nodeId:node.id,document:next},{render:false})){
                 richTextDirty=false;renderRichTextEditor(editor,next);refreshCanvasRichText(next);if(!restoreFormattingSelection()&&range.blockIndex!==undefined){restoreRichTextBlockSelection(editor,range);rememberSelection()}setStatus('Nem mentett módosítás');syncPublishControls();button.title=label+' alkalmazva';
               }

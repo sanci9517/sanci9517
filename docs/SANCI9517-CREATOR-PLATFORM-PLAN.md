@@ -55,6 +55,8 @@
 
 > **2026-10-21 — 77.44.7.A/C vászon-formázó azonnali fókusz- és kurzorparitás:** a vászonból indított „Formázás és linkek” korábban csak a következő animációs képkockában állította vissza a kijelölést. Közvetlen, gyors további gépelésnél ez a kurzort hibás pozícióra tehette, különösen a Kódformázás után. A nem linkes vászon-formázóút most a szinkron újrarajzolás után azonnal visszaállítja az eredeti vászon-kijelölést és fókuszt; a meglévő képkockás visszaállítás megmarad védőútként. Valódi Chromiumban a Canvas Kódformázás → új oldalbetöltés → Formázás → Ctrl+End → gépelés lánc az Inspector–vászon élő szinkronnal és automatikus Save/Publish nélkül PASS. D1/R2, secret és Production Worker változatlan; WEB-011 és fizikai Android/PC elfogadás **OPEN/UNVERIFIED**.
 
+> **2026-10-21 — 77.44.7.A/C élő vászon többblokkos Kódformázás-paritás:** a közvetlen Canvasban kijelölt szöveg most mindig a strukturált, szegmens-alapú `updateRichTextInlineMark` műveletet részesíti előnyben. Így az első és második bekezdésre is kiterjedő Kódformázás nem a böngésző régi `execCommand` visszaesésétől függ, hanem ugyanazt a Page Model-szerződést használja, mint az Inspector. Valódi Chromium tesztben megmarad a vászon fókusza és teljes kijelölése, mindkét blokk `code` jelölést kap, és sem Save, sem Publish nem indul el. Célzott böngészőteszt és TypeScript PASS; a teljes regresszió/CI külön ellenőrzés alatt. D1/R2/secret/Production Worker változatlan; WEB-011 és fizikai Android/PC elfogadás **OPEN/UNVERIFIED**.
+
 ## A MASTER 12 része
 
 - [1/12 – MASTER fejezetek](creator-master/part-01-of-12.md)
