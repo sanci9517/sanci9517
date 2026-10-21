@@ -36,7 +36,7 @@ test('typed Inspector controls and link selection work with real browser DOM at 
       const {mediaAssetPicker}=await import('/editor-v2/ui/element-content-controls.js');
       const {getProperty,listProperties}=await import('/editor-v2/core/property-registry.js');
       const {getRichTextBlockSelection,getRichTextFormattingSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,updateRichTextBlockAlignment}=await import('/editor-v2/core/richtext-links.js');
-      const {renderRichTextEditor,richTextEditorToDocument,setBlockType}=await import('/editor-v2/core/richtext-engine.js');
+      const {renderRichTextEditor,richTextEditorToDocument,setBlockType,getSelectionOffsets,restoreSelectionOffsets}=await import('/editor-v2/core/richtext-engine.js');
       const {importRichTextClipboard}=await import('/editor-v2/core/richtext-import.js');
       const {normalizeRichText}=await import('/editor-v2/core/schema.js');
       const host=document.createElement('div');document.body.append(host);
@@ -182,6 +182,11 @@ test('typed Inspector controls and link selection work with real browser DOM at 
       const editor=document.createElement('div');editor.contentEditable='true';host.append(editor);
       renderRichTextEditor(editor,model);
       const text=editor.querySelector('p span').firstChild;
+      const backwardRange=document.createRange();backwardRange.setStart(text,1);backwardRange.setEnd(text,5);
+      const backwardNative=window.getSelection();backwardNative.removeAllRanges();backwardNative.addRange(backwardRange);
+      if(typeof backwardNative.setBaseAndExtent==='function')backwardNative.setBaseAndExtent(text,5,text,1);
+      const inspectorBookmark={...getSelectionOffsets(editor)};
+      const inspectorBookmarkKeepsDirection=inspectorBookmark.backward===true&&restoreSelectionOffsets(editor,inspectorBookmark)&&backwardNative.anchorOffset===5&&backwardNative.focusOffset===1;
       const range=document.createRange();range.setStart(text,6);range.setEnd(text,11);
       const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);
       const saved=getRichTextBlockSelection(editor);
@@ -215,9 +220,10 @@ test('typed Inspector controls and link selection work with real browser DOM at 
         markedRun:aligned.blocks[0].children.find(x=>x.text==='world'),alignment:aligned.blocks[0].align,
         multiSelection,multiBlocks:multiAligned.blocks,
         listType:parsedList.blocks[0].type,listText:parsedList.blocks[0].items[0].children.map(x=>x.text).join(''),
-        hasHorizontalOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,fieldMatrix,invalidMatrix};
+        hasHorizontalOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,inspectorBookmarkKeepsDirection,fieldMatrix,invalidMatrix};
     });
     assert.deepEqual(data.edits,['#abcdef','8px 12px 8px 8px']);
+    assert.equal(data.inspectorBookmarkKeepsDirection,true);
     assert.deepEqual(data.boxControls.initialMargin,{numbers:['-4','8','2',''],units:['px','%','rem','auto']});
     assert.deepEqual(data.boxControls.marginEdits,['-4px 8vw 2rem auto','-4px 8vw 2rem 0','-4px 8vw 2rem 5px']);
     assert.equal(data.boxControls.paddingRejected,true,'negative padding must not reach command callback');
