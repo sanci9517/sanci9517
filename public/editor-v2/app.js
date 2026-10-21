@@ -5,6 +5,7 @@ import {applyNodeStyle,getNodeGeometry,resolveNodeStyle} from './core/canvas-eng
 import {computeCanvasMinHeight} from './core/canvas-extent.js';
 import {measureCanvasWorkspace} from './core/canvas-workspace.js';
 import {hasResponsiveOverride,resolveResponsiveValue} from './core/responsive.js';
+import {getNodeVisibilityState,isVisibleOnDevice} from './core/visibility.js';
 import {diagnostics} from './diagnostics.js?v=20260918-2';
 import {plainTextToRichText,renderRichTextEditor,richTextEditorToDocument,restoreSelectionOffsets,getSelectionOffsets,transformRichTextBlockTypes} from './core/richtext-engine.js';
 import {renderSchedulePreview} from './core/schedule-preview.js';
@@ -284,14 +285,14 @@ function openRichTextFormatting(id,{focusLink=false}={}){
     if(focusLink)editor.closest('.richtext-editor')?.querySelector('.richtext-link-controls input')?.focus({preventScroll:true});
   });
 }
-function renderNode(currentPage,id,managed=false){const node=getNode(currentPage,id);if(!node)return null;managed=managed||isManagedLayout(node)||isAuthoredContent(node);const el=document.createElement('div');el.className=`node ${state.selection.ids.includes(id)?'selected':''}`;el.classList.toggle('managed-layout',managed);el.dataset.nodeId=id;el.dataset.device=state.viewport.device;if(isAuthoredContent(node)){el.classList.add('creator-node');el.dataset.contentType=node.type;if(['accordion','dropdown'].includes(node.type)){const props=node.props||{};el.dataset.detailsBehavior=`${props.singleOpen===true?'exclusive':'multiple'}:${props.openFirst===true?'open':'closed'}`}}if(node.metadata?.stateVersion===1){el.classList.add('creator-state-enabled');if(state.selection.primaryId===id&&statePreview!=='none')el.dataset.editorState=statePreview;el.tabIndex=0}for(const [key,value] of Object.entries(contentAttributes(node)))if(!['href','target','rel','type'].includes(key))el.setAttribute(key,value);applyNodeStyle(el,node,state.viewport.device);
+function renderNode(currentPage,id,managed=false){const node=getNode(currentPage,id);if(!node)return null;managed=managed||isManagedLayout(node)||isAuthoredContent(node);const el=document.createElement('div');el.className=`node ${state.selection.ids.includes(id)?'selected':''}`;el.classList.toggle('managed-layout',managed);el.dataset.nodeId=id;el.dataset.device=state.viewport.device;const visibility=getNodeVisibilityState(currentPage,id,state.viewport.device);if(node.type!=='root'&&!visibility.effectiveVisible){el.classList.add(visibility.ownVisible?'visibility-hidden-parent':'visibility-hidden-own');el.dataset.visibility='hidden';}if(isAuthoredContent(node)){el.classList.add('creator-node');el.dataset.contentType=node.type;if(['accordion','dropdown'].includes(node.type)){const props=node.props||{};el.dataset.detailsBehavior=`${props.singleOpen===true?'exclusive':'multiple'}:${props.openFirst===true?'open':'closed'}`}}if(node.metadata?.stateVersion===1){el.classList.add('creator-state-enabled');if(state.selection.primaryId===id&&statePreview!=='none')el.dataset.editorState=statePreview;el.tabIndex=0}for(const [key,value] of Object.entries(contentAttributes(node)))if(!['href','target','rel','type'].includes(key))el.setAttribute(key,value);applyNodeStyle(el,node,state.viewport.device);
  const validHex=value=>typeof value==='string'&&/^#(?:[a-f0-9]{3}|[a-f0-9]{6})$/i.test(value)?value:'';
  for(const [value,klass,variable] of [
   [node.states?.hover?.backgroundColor,'visual-hover-bg','--sanci-hover-bg'],
   [node.states?.hover?.color,'visual-hover-text','--sanci-hover-color'],
   [node.states?.focus?.outlineColor,'visual-focus-outline','--sanci-focus-outline']
  ]){const color=validHex(value);if(color){el.classList.add(klass);el.style.setProperty(variable,color)}}
- const head=document.createElement('div');head.className='node-head';const headName=document.createElement('span');headName.textContent=node.name||node.type;const headType=document.createElement('small');headType.textContent=node.type;head.append(headName,headType);el.append(head);
+ const head=document.createElement('div');head.className='node-head';const headName=document.createElement('span');headName.textContent=node.name||node.type;const headType=document.createElement('small');headType.textContent=node.type;head.append(headName,headType);if(node.type!=='root'&&!visibility.effectiveVisible){const note=document.createElement('span');note.className='node-visibility-indicator';note.textContent=visibility.ownVisible?'Szülő miatt rejtve':'Rejtve';note.title='Ez az elem ebben a nézetben nem jelenik meg a publikus oldalon.';head.append(note)}el.append(head);
   if(node.type===NODE_TYPES.CODE&&node.metadata?.codeSnippetVersion===1){
     const host=document.createElement('div');host.className='node-content code-preview';
     host.innerHTML=renderCodeSnippet(node.props?.codeSnippet??defaultCodeSnippet());
@@ -702,7 +703,18 @@ function renderAccessibilityInspector(node){
   const title=document.createElement('div');title.className='inspector-group-title';title.innerHTML='<strong>Akadálymentesség és láthatóság</strong>';section.append(title);
   for(const [key,label] of [['label','Képernyőolvasó elnevezés'],['id','Oldalbeli hivatkozási azonosító'],['lang','Tartalom nyelve (pl. hu)']].filter(([key])=>node.type!=='root'||key!=='id'))section.append(field(label,node.accessibility?.[key]||'',value=>command('accessibility.set',{nodeId:node.id,patch:{[key]:value}}),Boolean(node.locked)));
   for(const device of ['desktop','tablet','mobile']){
-    const label=document.createElement('label');label.className='inspector-toggle';const input=document.createElement('input');input.type='checkbox';input.checked=node.visibility!==false&&node.visibility?.[device]!==false;input.disabled=Boolean(node.locked)||node.type==='root';input.onchange=()=>command('element.visibility.set',{nodeId:node.id,device,visible:input.checked});label.append(input,document.createTextNode('Látható: '+device));section.append(label);
+    const label=document.createElement('label');label.className='inspector-toggle';const input=document.createElement('input');input.type='checkbox';input.checked=isVisibleOnDevice(node,device);input.disabled=Boolean(node.locked)||node.type==='root';input.onchange=()=>command('element.visibility.set',{nodeId:node.id,device,visible:input.checked});label.append(input,document.createTextNode('Látható: '+device));section.append(label);
+  }
+  if(node.type!=='root'){
+    const visibility=getNodeVisibilityState(page(),node.id,state.viewport.device);
+    if(!visibility.effectiveVisible){
+      const note=document.createElement('p');note.className='visibility-inspector-note';note.setAttribute('role','status');
+      const parent=visibility.hiddenByAncestorId?page()?.nodes?.[visibility.hiddenByAncestorId]:null;
+      note.textContent=parent
+        ?'Ebben a(z) '+state.viewport.device+' nézetben a(z) „'+(parent.name||parent.type)+'” szülőelem rejtett. A saját láthatósági kapcsoló bekapcsolva maradhat; a megjelenéshez a szülőt is engedélyezd.'
+        :'Ez az elem a(z) '+state.viewport.device+' nézet publikus oldalán rejtett. A vásznon továbbra is kijelölhető és szerkeszthető.';
+      section.append(note);
+    }
   }
   if(['heading','text','richtext','button','link','quote','badge'].includes(node.type)){
     const target=canvas.querySelector(`.node[data-node-id="${CSS.escape(node.id)}"]`);let background='rgb(255, 255, 255)',unknown=false,foundBackground=false;

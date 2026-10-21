@@ -585,3 +585,11 @@ button:focus-visible, summary:focus-visible, .rail-btn:focus-visible { outline: 
 .responsive-origin{display:block;width:max-content;max-width:100%;margin:7px 0 3px;padding:3px 7px;border-radius:6px;background:#202d41;color:#b8cce8;font-size:11px;line-height:1.35;overflow-wrap:anywhere}
 .responsive-origin[data-kind="own"]{background:#263751;color:#e3edff}
 .responsive-origin[data-kind="base"]{background:#1e2837;color:#adbbd0}
+
+/* Visibility in Editor is a selectable editing ghost, never a DOM removal. */
+.page-canvas .node.visibility-hidden-own,
+.page-canvas .node.visibility-hidden-parent { outline: 2px dashed #cb9650; outline-offset: -2px; }
+.page-canvas .node.visibility-hidden-parent { outline-color: #8797aa; }
+.page-canvas .node-visibility-indicator { display: inline-flex; align-items: center; white-space: nowrap; padding: 2px 6px; border: 1px solid #b78a4e; border-radius: 5px; background: #352919; color: #ffe6bc; font: 600 10px/1.3 Inter,system-ui,sans-serif; pointer-events: none; }
+.page-canvas .node.visibility-hidden-parent > .node-head > .node-visibility-indicator { border-color: #61768a; background: #1f2a37; color: #d5e4f1; }
+.visibility-inspector-note { margin: 10px; padding: 10px 12px; border: 1px solid #b78a4e; border-radius: 8px; background: #342819; color: #ffe6bc; font: 500 12px/1.5 Inter,system-ui,sans-serif; }
