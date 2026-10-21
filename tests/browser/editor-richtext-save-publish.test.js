@@ -146,6 +146,19 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
   assert.equal(await shortcutUrl.evaluate(el=>document.activeElement===el),true);
   await shortcutUrl.press('Escape');
   await tab.waitForFunction(id=>{const surface=document.querySelector(`.node[data-node-id="${id}"] .richtext-inline-surface`);return document.activeElement===surface&&document.getSelection().toString()==='world'},nodeId);
+  // Applying a link from the canvas shortcut must use the same validated
+  // command path as the Inspector. It remains an in-memory draft: neither
+  // Save nor Publish is allowed to happen as a side effect of Enter.
+  const canvasLinkPosts=posts.length;
+  await canvasInline.press('Control+k');
+  await shortcutUrl.waitFor();
+  await shortcutUrl.fill('/p/canvas');
+  await shortcutUrl.press('Enter');
+  await canvasInline.locator('a').waitFor();
+  assert.equal(await canvasInline.locator('a').getAttribute('href'),'/p/canvas');
+  assert.equal(await canvasInline.evaluate(el=>document.activeElement===el&&window.getSelection()?.toString()==='world'),true,
+    'canvas link update should restore its original selection and focus');
+  assert.equal(posts.length,canvasLinkPosts,'canvas link Enter must not Save or Publish implicitly');
   // Direct Canvas uses the same canonical Rich Text mark transformations as
   // the Inspector. Toggling each mark must preserve the selection/focus,
   // neighboring text, link and an unpublished draft with no network writes.
@@ -161,7 +174,7 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
     assert.equal(await canvasInline.evaluate(el=>document.activeElement===el&&window.getSelection()?.toString()==='world'),true);
   }
   assert.equal(posts.length,canvasMarkPosts,'canvas formatting must not Save or Publish implicitly');
-  assert.equal(await canvasInline.locator('a').getAttribute('href'),'/p/home');
+  assert.equal(await canvasInline.locator('a').getAttribute('href'),'/p/canvas');
   await tab.setViewportSize({width:390,height:800});
   await openEditor();
   const urlField=tab.locator('.richtext-link-controls input');
