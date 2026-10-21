@@ -105,9 +105,12 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await select('accordion');
   await editor.getByLabel('Harmonikacsoport elnevezése',{exact:true}).fill('Kérdések & válaszok');
   await editor.getByLabel('Egyszerre csak egy nyitott rész',{exact:true}).check();
+  await editor.getByLabel('Első rész kezdetben nyitva',{exact:true}).check();
   const canvasAccordion=node(editor,'accordion').getByRole('group',{name:'Kérdések & válaszok'});
   assert.equal(await canvasAccordion.count(),1,'Inspector names the real Canvas accordion group');
   assert.equal(await canvasAccordion.locator('details').count(),2);
+  assert.deepEqual(await canvasAccordion.locator('details').evaluateAll(items=>items.map(el=>el.open)),[true,false],
+    'single-open and initially-open options can be combined in the Canvas');
   assert.equal(await canvasAccordion.locator('details').first().getAttribute('name'),
     await canvasAccordion.locator('details').last().getAttribute('name'),
     'single-open uses the same native details name within this accordion');
@@ -203,8 +206,8 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await node(live,'tabs').getByRole('tab',{name:'Bemutatkozás',exact:true}).click();assert.equal(await node(live,'tabs').getByRole('tabpanel').textContent(),'Személyes történet');
   await node(live,'tabs').getByRole('tab',{name:'Bemutatkozás',exact:true}).press('Home');assert.equal(await node(live,'tabs').getByRole('tabpanel').textContent(),'Videólista');
   const accordion=node(live,'accordion').getByRole('group',{name:'Kérdések & válaszok'});
-  await accordion.locator('summary').first().click();
-  assert.deepEqual(await accordion.locator('details').evaluateAll(items=>items.map(el=>el.open)),[true,false]);
+  assert.deepEqual(await accordion.locator('details').evaluateAll(items=>items.map(el=>el.open)),[true,false],
+    'Accordion opens its first section initially after Publish');
   await accordion.locator('summary').last().press('Enter');
   assert.deepEqual(await accordion.locator('details').evaluateAll(items=>items.map(el=>el.open)),[false,true],
     'native details name closes the old Accordion item when opening another with Enter');
@@ -250,8 +253,8 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     assert.equal(await node(live,'gallery').getByRole('region',{name:'Műhelyem & képeim'}).count(),1);
     assert.equal(await node(live,'tabs').getByRole('tablist',{name:'Bemutatkozás & videók'}).count(),1);
     assert.equal(await node(live,'accordion').getByRole('group',{name:'Kérdések & válaszok'}).count(),1);
-    assert.deepEqual(await node(live,'accordion').locator('details').evaluateAll(items=>items.map(el=>el.open)),[false,false],
-      'accordion starts collapsed on every responsive viewport');
+    assert.deepEqual(await node(live,'accordion').locator('details').evaluateAll(items=>items.map(el=>el.open)),[true,false],
+      'single-open Accordion starts with its first section open on every responsive viewport');
     assert.deepEqual(await node(live,'dropdown').locator('details').evaluateAll(items=>items.map(el=>el.open)),[true,false],
       'Dropdown starts with first section open on every responsive viewport');
     const keyboardCarousel=node(live,'carousel').getByRole('region',{name:'Képes történeteim & fotók'});
