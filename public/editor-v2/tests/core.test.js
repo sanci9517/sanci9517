@@ -12,6 +12,7 @@ import { createEditorState, activePage } from '../core/state.js';
 import { beginTransaction, commitTransaction, execute, executeBatch, rollbackTransaction } from '../core/commands.js';
 import { getProperty, listProperties, listPropertyGroups } from '../core/property-registry.js';
 import { hasResponsiveOverride, resolveResponsiveValue, setResponsiveValue } from '../core/responsive.js';
+import {collectVisibleDescendants} from '../core/visibility.js';
 import {normalizeVisibility,isVisibleOnDevice,getNodeVisibilityState} from '../core/visibility.js';
 import { plainTextToRichText } from '../core/richtext-engine.js';
 import { createDefaultScheduleConfig, normalizeScheduleConfig, validateScheduleConfig } from '../core/schedule-schema.js';
@@ -208,6 +209,26 @@ test('visibility switches normalize legacy Page Models, preserve independent dev
   assert.throws(()=>execute(state,{type:'element.visibility.set',payload:{nodeId:parentId,device:'watch',visible:false}}),/Invalid responsive device/);
   assert.equal(activePage(state).nodes[parentId].visibility.mobile,true,'invalid actions never corrupt visibility');
   assert.equal(isVisibleOnDevice(null,'desktop'),false);
+});
+
+test('visible descendant walk never preloads hidden schedules or orphan nodes', () => {
+  const state=createEditorState(createDocument());
+  const root=activePage(state).rootId;
+  execute(state,{type:'element.add',payload:{type:'schedule',parentId:root}});
+  const visibleId=state.selection.primaryId;
+  execute(state,{type:'element.add',payload:{type:'container',parentId:root}});
+  const parentId=state.selection.primaryId;
+  execute(state,{type:'element.add',payload:{type:'schedule',parentId}});
+  const childId=state.selection.primaryId;
+  execute(state,{type:'element.visibility.set',payload:{nodeId:parentId,device:'mobile',visible:false}});
+  const page=activePage(state);
+  assert.deepEqual(collectVisibleDescendants(page,'mobile').map(n=>n.id),[visibleId]);
+  assert.deepEqual(collectVisibleDescendants(page,'tablet').map(n=>n.id),[visibleId,parentId,childId]);
+  assert.deepEqual(collectVisibleDescendants(page,'desktop').map(n=>n.id),[visibleId,parentId,childId]);
+  execute(state,{type:'element.visibility.set',payload:{nodeId:visibleId,device:'mobile',visible:false}});
+  assert.deepEqual(collectVisibleDescendants(activePage(state),'mobile'),[]);
+  execute(state,{type:'history.undo'});
+  assert.deepEqual(collectVisibleDescendants(activePage(state),'mobile').map(n=>n.id),[visibleId]);
 });
 
 test('responsive values inherit from wider viewports and can be overridden/reset', () => {
