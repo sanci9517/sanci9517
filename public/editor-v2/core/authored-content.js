@@ -177,7 +177,47 @@ export function initContentInteractions(root){
     }
   };
   root.addEventListener('click',event=>{const zoom=event.target.closest('[data-lightbox-src]');if(zoom&&root.contains(zoom)&&safeSrc(zoom.dataset.lightboxSrc)){
-    const dialog=document.createElement('dialog');dialog.className='creator-lightbox';dialog.setAttribute('aria-label','Kép előnézete');const close=document.createElement('button');close.type='button';close.textContent='Bezárás';const img=document.createElement('img');img.src=safeSrc(zoom.dataset.lightboxSrc);img.alt=zoom.dataset.lightboxAlt||'';dialog.append(close,img);document.body.append(dialog);close.onclick=()=>dialog.close();dialog.onclick=event=>{if(event.target===dialog)dialog.close()};dialog.onclose=()=>{const active=document.activeElement,restore=active===document.body||dialog.contains(active)||active===zoom;dialog.remove();if(restore)zoom.focus()};dialog.showModal();
+    // The preview is scoped to its own gallery/carousel; nested galleries
+    // elsewhere on the page never leak into this lightbox's navigation.
+    const container=zoom.closest('.creator-gallery,.creator-carousel');
+    const choices=[...(container||root).querySelectorAll('.creator-image-zoom[data-lightbox-src]')]
+      .filter(button=>Boolean(safeSrc(button.dataset.lightboxSrc)));
+    let activeIndex=Math.max(0,choices.indexOf(zoom));
+    const dialog=document.createElement('dialog');dialog.className='creator-lightbox';dialog.setAttribute('aria-label','Kép előnézete');
+    const close=document.createElement('button');close.type='button';close.textContent='Bezárás';
+    const img=document.createElement('img');
+    const caption=document.createElement('p');caption.className='creator-lightbox-caption';
+    const nav=document.createElement('div');nav.className='creator-lightbox-nav';
+    const previous=document.createElement('button');previous.type='button';previous.textContent='←';previous.setAttribute('aria-label','Előző kép');
+    const count=document.createElement('span');count.setAttribute('role','status');count.setAttribute('aria-live','polite');
+    const next=document.createElement('button');next.type='button';next.textContent='→';next.setAttribute('aria-label','Következő kép');
+    nav.append(previous,count,next);nav.hidden=choices.length<=1;
+    const show=index=>{
+      activeIndex=(index+choices.length)%choices.length;
+      const selected=choices[activeIndex];
+      img.src=safeSrc(selected.dataset.lightboxSrc);
+      img.alt=selected.dataset.lightboxAlt||'';
+      caption.textContent=selected.dataset.lightboxCaption||'';
+      caption.hidden=!caption.textContent;
+      count.textContent=(activeIndex+1)+' / '+choices.length;
+    };
+    previous.onclick=()=>show(activeIndex-1);
+    next.onclick=()=>show(activeIndex+1);
+    dialog.addEventListener('keydown',event=>{
+      if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)||choices.length<=1)return;
+      event.preventDefault();
+      show(event.key==='Home'?0:event.key==='End'?choices.length-1:activeIndex+(event.key==='ArrowRight'?1:-1));
+    });
+    dialog.append(close,img,caption,nav);document.body.append(dialog);show(activeIndex);
+    close.onclick=()=>dialog.close();
+    dialog.onclick=event=>{if(event.target===dialog)dialog.close()};
+    dialog.onclose=()=>{
+      const focused=document.activeElement;
+      const restore=focused===document.body||dialog.contains(focused)||focused===zoom;
+      dialog.remove();
+      if(restore&&zoom.isConnected)zoom.focus();
+    };
+    dialog.showModal();close.focus();
   }const tab=event.target.closest('[role="tab"]');if(tab&&root.contains(tab))activate(tab);const step=event.target.closest('[data-carousel-step]');if(step&&root.contains(step)){const track=step.parentElement.previousElementSibling;scrollCarousel(track,Number(step.dataset.carouselStep)>0?'ArrowRight':'ArrowLeft')}});
   // The carousel region is intentionally keyboard-focusable. Arrow keys and
   // Home/End must operate the same viewport used by its visible buttons;
