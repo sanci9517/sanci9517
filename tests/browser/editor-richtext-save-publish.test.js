@@ -86,10 +86,11 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
   });
   await selectWorld();
   await tab.locator('.richtext-editor-surface').evaluate(el=>window.__richTextSurface=el);
-  for(const mark of ['Félkövér','Dőlt','Aláhúzott']){
-    await tab.getByRole('button',{name:mark}).click();
+  for(const [mark,shortcut] of [['Félkövér','Control+b'],['Dőlt','Control+i'],['Aláhúzott','Control+u']]){
+    await tab.locator('.richtext-editor-surface').press(shortcut);
     assert.equal(await tab.evaluate(()=>document.getSelection().toString()),'world');
     assert.equal(await tab.locator('.richtext-editor-surface').evaluate(el=>el===window.__richTextSurface&&el.isConnected&&document.activeElement===el),true);
+    assert.equal(await tab.getByRole('button',{name:mark}).getAttribute('aria-pressed'),'true');
   }
   await tab.locator('.richtext-editor-surface :is(strong,b)').waitFor();
   await tab.locator('.richtext-editor-surface :is(em,i)').waitFor();

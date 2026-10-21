@@ -1011,10 +1011,11 @@ function renderInspector(){
           const doc=richTextEditorToDocument(editor),index=savedBlockIndex??getRichTextActiveBlockIndex(editor);if(index===null){formatStatus.textContent='Előbb kattints abba a bekezdésbe, amelyet igazítani szeretnél.';return}
           try{const selection=savedFormatSelection||getRichTextFormattingSelection(editor),indices=selection?.segments?.map(segment=>segment.blockIndex)??[index],next=updateRichTextBlockAlignment(doc,indices,alignmentSelect.value);if(command('richtext.content.set',{nodeId:node.id,document:next},{render:false})){richTextDirty=false;renderRichTextEditor(editor,next);refreshCanvasRichText(next);restoreFormattingSelection();setStatus('Nem mentett módosítás');syncPublishControls()}}catch(error){formatStatus.textContent=error instanceof Error?error.message:String(error)}
         };
+        const applyMarkActions=new Map();
         for(const [mark,label,glyph] of [['bold','Félkövér','B'],['italic','Dőlt','I'],['underline','Aláhúzott','U'],['strikethrough','Áthúzott','S'],['subscript','Alsó index','x₂'],['superscript','Felső index','x²'],['code','Kódformázás','</>']]){
           const button=document.createElement('button');button.type='button';button.textContent=glyph;button.dataset.mark=mark;button.title=label;
           button.setAttribute('aria-label',label);button.onpointerdown=event=>{rememberSelection();event.preventDefault()};
-          button.onclick=()=>{
+          const applyMark=()=>{
             const range=savedFormatSelection||getRichTextFormattingSelection(editor);
             const nativeSelection=window.getSelection();
             const hasNativeSelection=Boolean(nativeSelection?.rangeCount&&!nativeSelection.isCollapsed&&formattingSurface.contains(nativeSelection.anchorNode)&&formattingSurface.contains(nativeSelection.focusNode));
@@ -1034,6 +1035,7 @@ function renderInspector(){
               }
             }catch(e){button.title=e instanceof Error?e.message:String(e)}
           };
+          button.onclick=applyMark;applyMarkActions.set(mark,applyMark);
           characterTools.append(button);
         }
         const applyInlineStyle=(key,value)=>{
@@ -1098,6 +1100,12 @@ function renderInspector(){
           if(!composing)saveRich();
         });
         editor.addEventListener('focus',()=>{flushRichTextDraft=saveRich});
+        editor.addEventListener('keydown',event=>{
+          if(!(event.ctrlKey||event.metaKey)||event.altKey)return;
+          const mark={b:'bold',i:'italic',u:'underline'}[event.key.toLowerCase()];
+          if(!mark)return;
+          event.preventDefault();rememberSelection();applyMarkActions.get(mark)?.();
+        });
         editor.addEventListener('beforeinput',()=>{richTextDirty=true});
         editor.addEventListener('compositionstart',()=>{compositionRevision++;composing=true});
         editor.addEventListener('compositionupdate',()=>{composing=true});
