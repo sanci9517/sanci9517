@@ -16,12 +16,12 @@ test('each authored structural type preserves its semantics and responsive layou
     const state=createEditorState(createDocument(createPage({id:type,name:type,slug:type}),{modern:true}));
     execute(state,{type:'style.set',payload:{nodeId:activePage(state).rootId,patch:{width:'320px',height:'360px',minHeight:'360px',padding:'12px'}}});
     execute(state,{type:'element.add',payload:{type,parentId:activePage(state).rootId,authored:true}});const id=state.selection.primaryId;
-    execute(state,{type:'element.add',payload:{type:'text',parentId:id,authored:true,props:{text:'Megőrzött tartalom'}}});
+    execute(state,{type:'element.add',payload:{type:'text',parentId:id,authored:true,props:{text:'Megőrzött tartalom'}}});const childId=state.selection.primaryId;
     // Older snapshots can carry both legacy and current accessibility keys.
     execute(state,{type:'element.update',payload:{nodeId:id,patch:{accessibility:{
       id:'modern-'+type,anchorId:'legacy-'+type,label:'Inspector '+type,ariaLabel:'Régi címke '+type
     }}}});
-    models[type]={id,tag:contentTag(activePage(state).nodes[id]),draft:structuredClone(state.document),published:structuredClone(state.document),version:1};
+    models[type]={id,childId,tag:contentTag(activePage(state).nodes[id]),draft:structuredClone(state.document),published:structuredClone(state.document),version:1};
   }
   const root=resolve(import.meta.dirname,'../../public');let posts=0;
   const server=createServer(async(req,res)=>{
@@ -60,5 +60,44 @@ test('each authored structural type preserves its semantics and responsive layou
       assert.equal(await target.evaluate(el=>el.tagName.toLowerCase()),models[type].tag,type+' semantics');assert.deepEqual(await target.evaluate(measure),await source.evaluate(measure),type+'/'+device);assert.match(await target.textContent(),/Megőrzött tartalom/);
     }
   }
-  assert.equal(posts,STRUCTURAL_TYPES.length*2);assert.deepEqual(errors,[]);
+  // Inspector visibility is a per-device decision. The public subtree is not
+  // removed until Publish, while the Canvas must keep it editable as a ghost.
+  const hiddenType=STRUCTURAL_TYPES[0],{id:hiddenId,childId}=models[hiddenType];
+  await editor.goto(base+'/editor-v2/index.html?pageId='+hiddenType);
+  await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
+  const parent=editor.locator(`.node[data-node-id="${hiddenId}"]`),child=editor.locator(`.node[data-node-id="${childId}"]`);
+  await parent.evaluate(el=>el.click());
+  if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
+  const mobileToggle=editor.getByRole('checkbox',{name:'Látható: mobile'});
+  await mobileToggle.uncheck();
+  assert.equal(await parent.getAttribute('data-visibility'),'hidden','hidden parent stays selectable on Canvas');
+  assert.equal(await parent.locator('> .node-head > .node-visibility-indicator').count(),1,'Canvas explicitly marks the hidden element');
+  assert.equal(await child.getAttribute('data-visibility'),'hidden','hidden parent marks its descendants');
+  await editor.locator('#undo').click();
+  assert.equal(await parent.getAttribute('data-visibility'),null,'undo restores Canvas visibility');
+  await editor.locator('#redo').click();
+  assert.equal(await parent.getAttribute('data-visibility'),'hidden','redo restores Canvas hidden marker');
+  await child.evaluate(el=>el.click());
+  assert.equal(await editor.getByRole('checkbox',{name:'Látható: mobile'}).isChecked(),true,'child retains its independent visibility');
+  assert.match(await editor.locator('.visibility-inspector-note').textContent(),/szülőelem rejtett/,'Inspector explains inherited hiding');
+  await parent.evaluate(el=>el.click());
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(models[hiddenType].draft.pages[hiddenType].nodes[hiddenId].visibility.mobile,false);
+  assert.equal(models[hiddenType].published.pages[hiddenType].nodes[hiddenId].visibility.mobile,true,'Save does not publish the hidden subtree');
+  await live.setViewportSize({width:390,height:900});await live.goto(base+'/p/'+hiddenType);
+  assert.equal(await live.locator(`[data-node-id="${hiddenId}"]`).count(),1,'published mobile page is unchanged after Save');
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');
+  await live.reload();
+  assert.equal(await live.locator(`[data-node-id="${hiddenId}"]`).count(),0,'published mobile hides the parent');
+  assert.equal(await live.locator(`[data-node-id="${childId}"]`).count(),0,'published mobile hides the nested child');
+  for(const width of [768,1440]){
+    await live.setViewportSize({width,height:900});await live.reload();
+    assert.equal(await live.locator(`[data-node-id="${hiddenId}"]`).count(),1,width+' other viewport still shows the element');
+  }
+  await editor.reload();
+  await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
+  assert.equal(await parent.getAttribute('data-visibility'),'hidden','reload preserves hidden Canvas marker');
+  assert.equal(posts,STRUCTURAL_TYPES.length*2+2);assert.deepEqual(errors,[]);
 });
