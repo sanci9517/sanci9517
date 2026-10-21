@@ -371,7 +371,40 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     assert.deepEqual(await node(live,'button').evaluate(backgroundMetric),await node(editor,'button').evaluate(backgroundMetric),`background image style parity/${width}`);
     assert.match(await node(live,'button').evaluate(el=>getComputedStyle(el).backgroundImage),/\/media\/6b1c2e65-e46e-4764-b234-123456789abc/,`published background survives ${width}px`);
   }
-  for(const [device,width] of [['desktop',1440],['tablet',768],['mobile',390]]){await live.goto(base+'/p/test?preview=1&device='+device);await live.locator('.visual-root-authored').waitFor();assert.equal(await live.locator('.preview-frame').evaluate(el=>el.getBoundingClientRect().width),width,'preview uses the declared artboard width, even on a small outer viewport')}
+  // Preview uses a genuine viewport so both responsive Page Model values AND
+  // browser CSS media queries match the real public page, regardless of outer size.
+  const standalone=await browser.newPage({viewport:{width:1440,height:900}});
+  standalone.on('pageerror',error=>errors.push('standalone: '+error.message));
+  await live.setViewportSize({width:900,height:900});
+  for(const [device,width] of [['desktop',1440],['tablet',768],['mobile',390]]){
+    await live.goto(base+'/p/test?preview=1&device='+device);
+    const frame=live.locator('.preview-frame'),iframe=live.locator('iframe.preview-viewport');
+    const embedded=iframe.contentFrame();
+    await embedded.locator('.visual-root-authored').waitFor();
+    assert.equal(await frame.evaluate(el=>el.getBoundingClientRect().width),width,'preview keeps the exact '+device+' width in a narrower parent');
+    assert.equal(await iframe.evaluate(el=>el.contentWindow.innerWidth),width,'CSS viewport matches '+device);
+    assert.equal(await iframe.getAttribute('title'),'Weboldal előnézete');
+    assert.match(await iframe.getAttribute('src'),/preview=1.*embed=1/,'embedded preview retains the preview API contract');
+    await standalone.setViewportSize({width,height:900});await standalone.goto(base+'/p/test');
+    await standalone.locator('.visual-root-authored').waitFor();
+    const mediaMetrics=el=>({
+      headerHeight:getComputedStyle(el.querySelector('.nav')).height,
+      pagePadding:getComputedStyle(el.querySelector('main.page')).paddingTop,
+      menuColumns:getComputedStyle(el.querySelector('.menu-grid')).gridTemplateColumns,
+      rootColor:getComputedStyle(el.querySelector('#content-canvas')).backgroundColor
+    });
+    assert.deepEqual(await embedded.locator('body').evaluate(mediaMetrics),await standalone.locator('body').evaluate(mediaMetrics),device+' preview/public CSS parity');
+    assert.equal(await embedded.locator('.creator-node').count(),await standalone.locator('.creator-node').count(),device+' content parity');
+    assert.equal(await embedded.locator('.preview-toolbar').count(),0,'embedded page never creates nested preview controls');
+  }
+  assert.equal(await live.locator('[data-preview-device="mobile"]').getAttribute('aria-pressed'),'true');
+  await live.locator('[data-preview-device="desktop"]').click();
+  await live.locator('iframe.preview-viewport').contentFrame().locator('.visual-root-authored').waitFor();
+  assert.equal(await live.locator('iframe.preview-viewport').evaluate(el=>el.contentWindow.innerWidth),1440,'switching devices updates the real CSS viewport');
+  assert.equal(await live.locator('[data-preview-device="desktop"]').getAttribute('aria-pressed'),'true');
+  // Restore the mobile viewport expected by the following publish-isolation test.
+  // That test verifies a mobile-only background removal leaves desktop intact.
+  await live.setViewportSize({width:390,height:900});
   await select('button');await editor.locator('.inspector-tabs button').first().click();await openGroup('Háttér');
   await editor.locator('[data-property-id="background.image"]').getByRole('button',{name:'Kép eltávolítása'}).click();
   assert.doesNotMatch(await node(editor,'button').evaluate(el=>getComputedStyle(el).backgroundImage),/api\/admin\/media/);

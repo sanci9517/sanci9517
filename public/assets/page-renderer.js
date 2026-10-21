@@ -144,11 +144,55 @@ if(n.type==='card'&&n.metadata?.cardContentVersion===1){
  function scheduleDate(v){const d=new Date(v);return Number.isNaN(d.getTime())?String(v||''):new Intl.DateTimeFormat('hu-HU',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).format(d)}
  function scheduleHtml(n){const cfg=scheduleConfig(n.props?.schedule),items=scheduleCache.get(JSON.stringify(cfg))||[];let cards='';for(const item of items){let h='';if(cfg.showTitle)h+='<strong class="visual-schedule-title">'+esc(item.title)+'</strong>';let meta='';if(cfg.showPlatform)meta+='<span>'+esc(item.platform)+'</span>';if(cfg.showTime)meta+='<span>'+esc(scheduleDate(item.startsAt))+'</span>';if(cfg.showEndTime&&item.endsAt)meta+='<span>'+esc(scheduleDate(item.endsAt))+'</span>';if(meta)h+='<div class="visual-schedule-meta">'+meta+'</div>';if(cfg.showStatus)h+='<span class="visual-schedule-status">'+esc(item.status)+'</span>';if(cfg.showNotes&&item.notes)h+='<p class="visual-schedule-notes">'+esc(item.notes)+'</p>';if(cfg.showLink&&item.url){const u=safeUrl(item.url);if(u)h+='<a class="visual-schedule-link" href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">Megnyitás</a>'}cards+='<article class="visual-schedule-card">'+h+'</article>'}return '<section class="visual-editor-node visual-schedule" style="'+style(n)+'"><div class="visual-schedule-header"><strong>Adásrend</strong></div>'+(cards||'<div class="visual-schedule-empty">'+esc(cfg.emptyText)+'</div>')+'</section>'}
 
- function setupPreview(){const params=new URL(location.href).searchParams;if(params.get('preview')!=='1')return;currentDevice=['desktop','tablet','mobile'].includes(params.get('device')||'')?params.get('device'):'desktop';const body=document.body;const header=document.querySelector('.site-header'),main=document.querySelector('main.page'),footer=document.querySelector('.footer');if(!header||!main||!footer)return;const toolbar=document.createElement('div');toolbar.className='preview-toolbar';toolbar.innerHTML='<span>Előnézet</span><button data-preview-device="desktop">Asztali</button><button data-preview-device="tablet">Tablet</button><button data-preview-device="mobile">Mobil</button>';const shell=document.createElement('div');shell.className='preview-shell';const frame=document.createElement('div');frame.className='preview-frame';frame.append(header,main,footer);shell.append(frame);body.replaceChildren(toolbar,shell);const setDevice=d=>{const previous=currentDevice;currentDevice=d;frame.className=`preview-frame preview-${d}`;toolbar.querySelectorAll('[data-preview-device]').forEach(b=>b.classList.toggle('active',b.dataset.previewDevice===d));const u=new URL(location.href);u.searchParams.set('device',d);history.replaceState(null,'',u.toString());if(previous!==d&&document.getElementById('content-canvas')?.classList.contains('visual-editor-canvas'))loadPage()};toolbar.querySelectorAll('[data-preview-device]').forEach(b=>b.onclick=()=>setDevice(b.dataset.previewDevice));setDevice(currentDevice)}
+ function setupPreview(){
+  const params=new URL(location.href).searchParams;
+  // An embedded preview is an ordinary page at the iframe's real CSS viewport.
+  // It keeps the existing authenticated preview API, not a second renderer.
+  if(params.get('preview')!=='1'||params.get('embed')==='1')return false;
+  const body=document.body;
+  const toolbar=document.createElement('div');
+  toolbar.className='preview-toolbar';
+  toolbar.setAttribute('role','group');
+  toolbar.setAttribute('aria-label','Előnézeti képernyőméret');
+  toolbar.innerHTML='<span>Előnézet</span><button type="button" data-preview-device="desktop">Asztali</button><button type="button" data-preview-device="tablet">Tablet</button><button type="button" data-preview-device="mobile">Mobil</button>';
+  const shell=document.createElement('div');
+  shell.className='preview-shell';
+  shell.style.justifyContent='flex-start';
+  shell.style.overflowX='auto';
+  const frame=document.createElement('div');
+  frame.className='preview-frame';
+  // Fixed viewport widths must not be capped by the parent window.
+  frame.style.cssText='flex:0 0 auto;max-width:none;margin:0 auto;overflow:visible';
+  const iframe=document.createElement('iframe');
+  iframe.className='preview-viewport';
+  iframe.title='Weboldal előnézete';
+  iframe.referrerPolicy='same-origin';
+  iframe.style.cssText='display:block;width:100%;height:max(480px,calc(100dvh - 140px));border:0;background:#fff';
+  frame.append(iframe);shell.append(frame);body.replaceChildren(toolbar,shell);
+  const setDevice=device=>{
+   if(!['desktop','tablet','mobile'].includes(device))return;
+   currentDevice=device;frame.className='preview-frame preview-'+device;
+   toolbar.querySelectorAll('[data-preview-device]').forEach(button=>{
+    const active=button.dataset.previewDevice===device;
+    button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));
+   });
+   const url=new URL(location.href);
+   url.searchParams.set('preview','1');url.searchParams.set('device',device);
+   url.searchParams.delete('embed');
+   history.replaceState(null,'',url.toString());
+   // The iframe width, JS device resolution and CSS @media rules now agree.
+   const embedded=new URL(url);
+   embedded.searchParams.set('embed','1');
+   iframe.src=embedded.toString();
+  };
+  toolbar.querySelectorAll('[data-preview-device]').forEach(button=>button.onclick=()=>setDevice(button.dataset.previewDevice));
+  setDevice(['desktop','tablet','mobile'].includes(params.get('device'))?params.get('device'):'desktop');
+  return true;
+ }
  async function loadPage(){const raw=location.pathname.startsWith('/p/')?location.pathname.slice(3).split('/')[0]:'';const slug=decodeURIComponent(raw||'home').trim();const title=document.getElementById('page-title'),desc=document.getElementById('page-description'),canvas=document.getElementById('content-canvas');if(!slug){title.textContent='Hiányzó oldal';canvas.innerHTML='<div class="content-error"><h1>Hiányzó oldal</h1></div>';return}try{const preview=new URL(location.href).searchParams.get('preview')==='1';const r=await fetch('/api/public/pages?slug='+encodeURIComponent(slug)+(preview?'&preview=1':''),{cache:'no-store',credentials:'same-origin'});const payload=await r.json().catch(()=>({}));if(!r.ok||!payload.ok)throw new Error(payload?.error?.message||'not-found');const p=payload.data||{},c=p.content||{};document.title=(p.title||'Sanci9517')+' — Sanci9517';title.textContent=p.title||'Sanci9517';desc.textContent=p.description||'';ensureStyle();const rootId=c.rootId;const page=c;if(!rootId||!page.nodes?.[rootId])throw new Error('invalid-document');const root=page.nodes[rootId];const scheduleNodes=Object.values(page.nodes||{}).filter(n=>n?.type==='schedule');for(const node of scheduleNodes){const cfg=scheduleConfig(node.props?.schedule);const key=JSON.stringify(cfg);if(!scheduleCache.has(key)){const sr=await fetch('/api/public/schedule?'+scheduleQuery(cfg),{cache:'no-store',credentials:'same-origin'});const sp=await sr.json().catch(()=>({}));if(!sr.ok||!sp.ok)throw new Error(sp?.error?.message||'schedule-load-failed');scheduleCache.set(key,Array.isArray(sp.data)?sp.data:[]);}}canvas.className='content-canvas visual-editor-canvas';
 // Explicit root editing opts into the same responsive style as the canvas.
 if(root.metadata?.rootStyleVersion===1||root.metadata?.editorRootVersion===1){canvas.classList.add('visual-root-authored');canvas.style.cssText=style(root);canvas.dataset.nodeId=root.id;const frame=canvas.closest('.preview-frame');if(frame){frame.style.maxWidth='none';frame.style.flex='0 0 auto';frame.style.margin='0 auto';frame.parentElement.style.overflowX='auto';frame.parentElement.style.justifyContent='flex-start'}}
 canvas.innerHTML=(root.children||[]).map(id=>nodeHtml(page,id)).join('')||'<div class="builder-text">Az oldalnak még nincs tartalma.</div>';let tokens=defaultTokens();try{const tokenUrl='/api/public/presentation'+(preview?'?preview=1':'');const tokenResponse=await fetch(tokenUrl,{cache:'no-store',credentials:'same-origin'});const tokenPayload=await tokenResponse.json();if(tokenResponse.ok&&tokenPayload?.data?.tokens)tokens=tokenPayload.data.tokens}catch{}applyTokenVariables(canvas,tokens);initContentInteractions(canvas);applyStateStyles(canvas,page,currentDevice);activateStructuredContent(canvas);activateCountdowns(canvas);activateEmbeds(canvas);activateCodeBlocks(canvas);}catch(e){title.textContent='Az oldal nem található';desc.textContent='';canvas.innerHTML='<div class="content-error"><h1>404</h1><p>Ez az oldal nem létezik, vagy nincs publikálva.</p></div>'}}
  if(new URL(location.href).searchParams.get('preview')!=='1')window.addEventListener('resize',()=>{const next=window.innerWidth<=700?'mobile':window.innerWidth<=900?'tablet':'desktop';if(next!==currentDevice){currentDevice=next;loadPage()}});
- ensureStyle();setupPreview();loadPage();
+ ensureStyle();if(!setupPreview())loadPage();
 })();
