@@ -109,9 +109,13 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
   assert.deepEqual(formattedBlocks,[true,true]);
   await selectWorld();
   await tab.locator('.richtext-editor-surface').press('Control+k');
-  assert.equal(await tab.locator('.richtext-link-controls input').evaluate(el=>document.activeElement===el),true);
-  await tab.locator('.richtext-link-controls input').fill('/p/home');
-  await tab.getByRole('button',{name:'Link beállítása'}).click();
+  const shortcutUrl=tab.locator('.richtext-link-controls input');
+  assert.equal(await shortcutUrl.evaluate(el=>document.activeElement===el),true);
+  await shortcutUrl.press('Escape');
+  await tab.waitForFunction(()=>{const editor=document.querySelector('.richtext-editor-surface');return document.activeElement===editor&&document.getSelection().toString()==='world'});
+  await tab.locator('.richtext-editor-surface').press('Control+k');
+  await shortcutUrl.fill('/p/home');
+  await shortcutUrl.press('Enter');
   await tab.locator('.richtext-editor-surface a strong').waitFor();
   await tab.keyboard.press('Control+s');
   await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
