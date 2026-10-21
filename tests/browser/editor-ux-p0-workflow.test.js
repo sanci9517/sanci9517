@@ -139,9 +139,38 @@ test('empty Rich Text has direct desktop and mobile editing, typed presets, Save
   assert.notEqual(await tab.locator(`.node[data-node-id="${richId}"]`).evaluate(el=>getComputedStyle(el).width),'720px');
   await tab.locator('#redo').click();
   assert.equal(await tab.locator(`.node[data-node-id="${richId}"]`).evaluate(el=>getComputedStyle(el).width),'720px');
+  // Resize starts only from the explicit handle.  It must change dimensions
+  // without also invoking the canvas drag handler and moving the element.
+  const resizeTarget=tab.locator(`.node[data-node-id="${richId}"]`);
+  const beforeResize=await resizeTarget.evaluate(el=>({
+    width:Math.round(el.getBoundingClientRect().width),
+    height:Math.round(el.getBoundingClientRect().height),
+    left:getComputedStyle(el).left,
+    top:getComputedStyle(el).top
+  }));
+  const resizeHandle=resizeTarget.getByRole('button',{name:'Elem átméretezése'});
+  await resizeHandle.scrollIntoViewIfNeeded();
+  const resizeBox=await resizeHandle.boundingBox();
+  assert.ok(resizeBox,'the selected element exposes an explicit resize handle');
+  await tab.mouse.move(resizeBox.x+resizeBox.width/2,resizeBox.y+resizeBox.height/2);
+  await tab.mouse.down();
+  await tab.mouse.move(resizeBox.x+resizeBox.width/2+56,resizeBox.y+resizeBox.height/2+44,{steps:8});
+  await tab.mouse.up();
+  const afterResize=await resizeTarget.evaluate(el=>({
+    width:Math.round(el.getBoundingClientRect().width),
+    height:Math.round(el.getBoundingClientRect().height),
+    left:getComputedStyle(el).left,
+    top:getComputedStyle(el).top
+  }));
+  assert.ok(afterResize.width>=beforeResize.width+50,'the resize handle should increase the real canvas width: '+JSON.stringify({beforeResize,afterResize,resizeBox}));
+  assert.ok(afterResize.height>=beforeResize.height+38,'the resize handle should increase the real canvas height: '+JSON.stringify({beforeResize,afterResize,resizeBox}));
+  assert.equal(afterResize.left,beforeResize.left,'resize must not also drag the element horizontally');
+  assert.equal(afterResize.top,beforeResize.top,'resize must not also drag the element vertically');
   await tab.locator('#save').click();
   await tab.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
   assert.equal(published,null);
+  assert.equal(draft.pages[pageId].nodes[richId].responsive.desktop.width,`${afterResize.width}px`,'the resized desktop width is stored in the responsive model');
+  assert.equal(draft.pages[pageId].nodes[richId].responsive.desktop.height,`${afterResize.height}px`,'the resized desktop height is stored in the responsive model');
   await tab.locator('.rail-btn[data-tab="elements"]').click();
   await tab.locator('.element-group-title').filter({hasText:'Szöveg'}).click();
   await tab.locator('#elementList .element').filter({hasText:'Rich Text'}).click();
