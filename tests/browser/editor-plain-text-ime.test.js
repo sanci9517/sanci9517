@@ -80,7 +80,7 @@ test('plain text mobile IME final input is the only committed value in Inspector
       'the canvas must not show an unfinished composition as the saved draft: '+JSON.stringify(before));
     assert.equal(before.focused,true);
     await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
-    assert.equal(await node.locator('.plain-text-content-surface').textContent(),'Végleges');
+    assert.equal(await node.locator('.plain-text-content-surface').textContent(),'Végleges',`final canvas mirror at ${mode}/${width}px: ${JSON.stringify(before)}`);
     assert.equal(await source.evaluate(el=>el instanceof HTMLTextAreaElement?el.value:el.textContent),'Végleges');
     assert.equal(posts.length,0,'typing remains a local draft and never calls Publish');
     if(width===1366){
