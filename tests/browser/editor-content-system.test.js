@@ -99,11 +99,21 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await editor.getByLabel('Külső média címe',{exact:true}).fill('javascript:alert(1)');assert.equal(await editor.locator('[aria-invalid=true]').count(),1);
   await editor.getByLabel('Külső média címe',{exact:true}).fill('/fixture.svg');
   await select('tabs');
+  await node(editor,'tabs').getByRole('tab',{name:'Bemutatkozás',exact:true}).click();
+  assert.equal(await node(editor,'tabs').getByRole('tab',{name:'Bemutatkozás',exact:true}).getAttribute('aria-selected'),'true');
   await editor.getByLabel('Fülcsoport elnevezése',{exact:true}).fill('Bemutatkozás & videók');
+  assert.equal(await node(editor,'tabs').getByRole('tab',{name:'Bemutatkozás',exact:true}).getAttribute('aria-selected'),'true',
+    'typing in the Inspector keeps the selected Canvas tab instead of resetting to the first');
+  assert.equal(await node(editor,'tabs').getByRole('tabpanel').last().isVisible(),true,
+    'the previously selected panel remains visible after Canvas re-render');
   assert.equal(await node(editor,'tabs').getByRole('tablist',{name:'Bemutatkozás & videók'}).count(),1,
     'the real Canvas tablist inherits the Inspector name');
   await select('accordion');
+  await node(editor,'accordion').locator('summary').last().click();
+  assert.deepEqual(await node(editor,'accordion').locator('details').evaluateAll(items=>items.map(el=>el.open)),[false,true]);
   await editor.getByLabel('Harmonikacsoport elnevezése',{exact:true}).fill('Kérdések & válaszok');
+  assert.deepEqual(await node(editor,'accordion').locator('details').evaluateAll(items=>items.map(el=>el.open)),[false,true],
+    'changing a group label preserves already expanded Canvas sections');
   await editor.getByLabel('Egyszerre csak egy nyitott rész',{exact:true}).check();
   await editor.getByLabel('Első rész kezdetben nyitva',{exact:true}).check();
   const canvasAccordion=node(editor,'accordion').getByRole('group',{name:'Kérdések & válaszok'});
@@ -134,7 +144,12 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await node(editor,'gallery').locator('img').first().getAttribute('alt'),'Márkajel','gallery item inherits metadata only when its own alt is empty');
   assert.equal(await node(editor,'gallery').locator('.creator-image-zoom').first().getAttribute('data-lightbox-src'),'/api/admin/media?id='+assetId,'canvas zoom uses the selected private asset');
   await select('carousel');
+  await editor.emulateMedia({reducedMotion:'reduce'});
+  await node(editor,'carousel').getByRole('button',{name:'Következő kép',exact:true}).click();
+  await editor.waitForFunction(id=>document.querySelector(`[data-node-id="${id}"] .creator-carousel`)?.scrollLeft>0,ids.carousel);
   await editor.getByLabel('Galéria elnevezése',{exact:true}).fill('Képes történeteim & fotók');
+  assert.ok(await node(editor,'carousel').locator('.creator-carousel').evaluate(el=>el.scrollLeft)>0,
+    'the Canvas carousel retains its previewed scroll position during Inspector editing');
   const carouselRegion=node(editor,'carousel').locator('.creator-carousel[role="region"]');
   assert.equal(await carouselRegion.getAttribute('aria-label'),'Képes történeteim & fotók',
     'Inspector name must be exposed on the actual keyboard-focusable canvas carousel');
