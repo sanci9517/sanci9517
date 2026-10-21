@@ -2,6 +2,7 @@
 export const VISIBILITY_DEVICES=Object.freeze(['desktop','tablet','mobile']);
 
 export function isVisibleOnDevice(node,device='desktop'){
+  if(!node)return false;
   // Old persisted Page Models may use a single false value.
   return node?.visibility!==false&&node?.visibility?.[device]!==false;
 }
