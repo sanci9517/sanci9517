@@ -204,6 +204,42 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await posterPicker.locator('.editor-media-choice').click();
   assert.equal(await node(editor,'video').locator('video').getAttribute('poster'),'/api/admin/media?id='+assetId,'Editor video poster uses authenticated preview');
   assert.equal(await node(editor,'video').locator('video').getAttribute('src'),'/fixture.webm','choosing a cover does not change video source');
+  // Desktop and narrow-screen Inspector text fields must not persist an
+  // unfinished IME candidate; the confirmed replacement may arrive after
+  // compositionend, or the compositionend may be the last event.
+  for(const width of [1366,390]){
+    await editor.setViewportSize({width,height:900});
+    await select('list');
+    const listField=editor.locator('.content-repeater fieldset').first().getByLabel('Szöveg',{exact:true});
+    const initialPosts=posts.length;
+    const partial=await listField.evaluate(el=>{
+      el.focus();
+      el.dispatchEvent(new CompositionEvent('compositionstart',{bubbles:true}));
+      el.value='Köztes';
+      el.dispatchEvent(new InputEvent('input',{bubbles:true,isComposing:true,inputType:'insertCompositionText',data:'Köztes'}));
+      const canvasBefore=document.querySelector('.creator-node[data-content-type="list"] ol li')?.textContent;
+      el.dispatchEvent(new CompositionEvent('compositionend',{bubbles:true,data:'Végleges'}));
+      const canvasBeforeFinal=document.querySelector('.creator-node[data-content-type="list"] ol li')?.textContent;
+      el.value='Végleges';
+      el.dispatchEvent(new InputEvent('input',{bubbles:true,isComposing:false,inputType:'insertText',data:'Végleges'}));
+      return {canvasBefore,canvasBeforeFinal};
+    });
+    assert.deepEqual(partial,{canvasBefore:'Első hivatkozás',canvasBeforeFinal:'Első hivatkozás'},
+      'IME partial input and compositionend do not persist intermediate list text at '+width+'px');
+    await editor.waitForFunction(()=>document.querySelector('.creator-node[data-content-type="list"] ol li')?.textContent==='Végleges');
+    assert.equal(await listField.inputValue(),'Végleges');
+    await listField.evaluate(el=>{
+      el.dispatchEvent(new CompositionEvent('compositionstart',{bubbles:true}));
+      el.value='Köztes második';
+      el.dispatchEvent(new InputEvent('input',{bubbles:true,isComposing:true,inputType:'insertCompositionText'}));
+      el.value='Kész';
+      el.dispatchEvent(new CompositionEvent('compositionend',{bubbles:true,data:'Kész'}));
+    });
+    await editor.waitForFunction(()=>document.querySelector('.creator-node[data-content-type="list"] ol li')?.textContent==='Kész');
+    assert.equal(posts.length,initialPosts,'IME only updates local draft and never saves or publishes at '+width+'px');
+    await listField.fill('Első hivatkozás');
+  }
+  await editor.setViewportSize({width:1366,height:900});
   await select('list');const texts=editor.locator('.content-repeater textarea');await texts.first().fill('Átírt listaelem');
   await editor.getByRole('button',{name:'1. elem: Le',exact:true}).click();assert.match(await node(editor,'list').locator('ol').textContent(),/^Második elem/);
   assert.equal(posts.length,1);
