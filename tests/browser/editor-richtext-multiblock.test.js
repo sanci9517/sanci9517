@@ -77,9 +77,13 @@ test('Rich Text cross-paragraph selection survives repeated marks and draft Save
     assert.deepEqual(await surface.locator('strong').allTextContents(),['Beta','Gamma'],'bold must survive subsequent mark');
     assert.deepEqual(await surface.locator('em').allTextContents(),['Beta','Gamma'],'italic must affect both paragraphs');
     assert.match(await page.evaluate(()=>window.getSelection()?.toString()??''),/Beta[\s\S]*Gamma/,'cross-block selection must survive second render');
+    await page.getByRole('button',{name:'Kódformázás',exact:true}).click();
+    assert.deepEqual(await surface.locator('code').allTextContents(),['Beta','Gamma'],'code formatting must use the same multi-block Page Model range');
+    assert.match(await page.evaluate(()=>window.getSelection()?.toString()??''),/Beta[\s\S]*Gamma/,'cross-block selection must survive code formatting');
     const canvas=page.locator(`.node[data-node-id="${nodeId}"] .richtext-content`).first();
     assert.deepEqual(await canvas.locator('strong').allTextContents(),['Beta','Gamma'],'canvas must mirror the Inspector model');
     assert.deepEqual(await canvas.locator('em').allTextContents(),['Beta','Gamma']);
+    assert.deepEqual(await canvas.locator('code').allTextContents(),['Beta','Gamma']);
     if(width===1366){
       await page.locator('#save').click();
       await page.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
@@ -88,6 +92,8 @@ test('Rich Text cross-paragraph selection survives repeated marks and draft Save
       const persisted=writes[0].document.pages[pageId].nodes[nodeId].props.richText;
       assert.equal(persisted.blocks[0].children.find(run=>run.text==='Beta')?.marks?.includes('bold'),true);
       assert.equal(persisted.blocks[1].children.find(run=>run.text==='Gamma')?.marks?.includes('italic'),true);
+      assert.equal(persisted.blocks[0].children.find(run=>run.text==='Beta')?.marks?.includes('code'),true);
+      assert.equal(persisted.blocks[1].children.find(run=>run.text==='Gamma')?.marks?.includes('code'),true);
       assert.equal(persisted.blocks[0].children.map(run=>run.text).join(''),'Alpha Beta');
       assert.equal(persisted.blocks[1].children.map(run=>run.text).join(''),'Gamma Delta');
     }else{

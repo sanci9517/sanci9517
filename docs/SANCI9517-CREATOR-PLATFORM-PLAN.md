@@ -51,6 +51,8 @@
 
 > **2026-10-21 — 77.44.7.A/C vászonról indított link Enter-regresszió:** a már létező közvetlen Canvas Ctrl/Cmd+K linkfolyamatot most pozitív URL-módosítási teszt is védi: kijelölt vászon-szöveg → `/p/canvas` → Enter ugyanazon validált `richtext.content.set` parancsot alkalmazza, visszaadja a fókuszt és kijelölést a vászonnak, és nem indít Save-et vagy Publish-t. Valódi Chromium célzott ellenőrzés, TypeScript, Editor Core **106/106** és teljes Editor-layout **37/37 PASS**. Csak regressziós bizonyíték bővült: nincs D1/R2/secret/adat- vagy Production Worker-módosítás. A teljes WEB-011 és fizikai Android/PC elfogadás **OPEN/UNVERIFIED**.
 
+> **2026-10-21 — 77.44.7.A/C többbekezdéses Kódformázás regresszió:** a meglévő közös Rich Text Page Model Kódformázás-műveletét most valódi 390px és 1366px Chromium teszt védi két bekezdés részleges kijelölésén. A `Beta` és `Gamma` együtt kapja meg a `code` jelölést, a kijelölés, félkövér/dőlt jelölések és vászon-paritás megmaradnak; asztali nézetben a külön draft Save a kanonikus modellben is megőrzi a jelölést, publikálás nélkül. Célzott böngészőteszt, TypeScript és Editor Core **106/106 PASS**. D1/R2, secret, Production Worker és Save ≠ Publish változatlan; teljes WEB-011 és fizikai Android/PC elfogadás **OPEN/UNVERIFIED**.
+
 ## A MASTER 12 része
 
 - [1/12 – MASTER fejezetek](creator-master/part-01-of-12.md)

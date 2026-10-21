@@ -817,6 +817,12 @@ A közvetlen Canvas Rich Text Ctrl/Cmd+K útvonal korábban az Inspector URL-mez
 
 **Helyi bizonyíték:** célzott valós Chromium PASS, TypeScript PASS, Editor Core **106/106 PASS**, teljes `test:editor:layout` **37/37 PASS**. Ez regressziós, fixture-alapú böngészőbizonyíték; fizikai Android/PC és a tényleges Production Worker source-SHA továbbra is **UNVERIFIED**, teljes WEB-011 **OPEN**.
 
+### 77.44.7.A/C — Többbekezdéses Rich Text Kódformázás paritás (2026-10-21)
+
+A közös `updateRichTextInlineMark` már a blokk-szegmensekre bontott kijelölést használta, de a Kódformázás nem szerepelt a többbekezdéses valós böngészőregresszióban. A bővített `tests/browser/editor-richtext-multiblock.test.js` 390px és 1366px nézetben az `Alpha Beta` és `Gamma Delta` közötti részleges kijelölésen előbb félkövér és dőlt, majd Kódformázást alkalmaz. A `Beta` és `Gamma` mindkét felületen `<code>` jelölést kap, a teljes többblokkos kijelölés újrarajzolás után is megmarad, az Inspector és a vászon ugyanazt a strukturált dokumentumot mutatja. Asztali nézetben a külön draft Save-ben a két érintett inline run `code` markja is megmarad; mobilon a módosítás nem ment automatikusan. A meglévő Page Model, Undo/Redo és Save ≠ Publish szerződés változatlan.
+
+**Helyi bizonyíték:** célzott valós Chromium PASS, TypeScript PASS, Editor Core **106/106 PASS**. Ez nem Production Worker source-SHA vagy fizikai Android/PC elfogadás; ezek és a teljes WEB-011 továbbra is **OPEN/UNVERIFIED**. A vászonból indított Kódformázás közvetlen fókusz-életciklusa külön, még nem igazolt határeset marad.
+
 ### 77.44.7.A/C — Inspector ismétlődő elemek hozzáadás/törlés utáni billentyűzetes fókusz (#233 MERGED, 2026-10-21)
 
 **Korlát és hibaforrás:** A #231-es „Fel/Le” újrarajzolási fókuszjavítás a `repeater` sorok „Hozzáadás” gombját nem kezelte; törlésnél nem volt célzott fókusz az újraszámozott, megmaradt sor első tartalommezőjére, illetve az üres lista hozzáadásgombjára. A kiválasztott fül eltávolítása után a #231-es Canvas-state helper a legközelebbi megmaradt, a listaméret szerint biztonságos fülre tér vissza. A javítás csak az Inspector-vezérlő meglevő lokális DOM-életciklusát érinti, új item ID vagy második tároló nélkül.
