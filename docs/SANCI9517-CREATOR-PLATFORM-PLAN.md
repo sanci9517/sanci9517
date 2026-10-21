@@ -19,7 +19,7 @@
 
 > **2026-10-20 – Rich Text natív Shift+Enter kijelölésparitás: [#198](https://github.com/sanci9517/sanci9517/pull/198) squash MERGED `979c655645cf6b4c866e145c56246e79926a163f`. A natív `BR` sortörés egy UTF-16 karaktert számít a kijelölésben, az egyetlen üres placeholder BR nem; pozíció-visszaállítás sortörés előtt/után. 390/1366px Chromium az Editor Core regresszióban, F0 és Twitch CI mind PASS. Production source-SHA és fizikai Android/PC teszt UNVERIFIED; 77.44/WEB-011/49.4 OPEN, Save ≠ Publish. Következő kurzor: Rich Text strukturált kijelölés/fókusz/IME és Inspector–vászon–publikus paritás.**
 
-## A MASTER 12 része
+> **2026-10-21 – Editor egyszerű szöveg IME-paritás (#210 PR / CI folyamatban):** A 77.44.7.A/C aktív szerkesztési blokkban a Rich Textnél már védett, `compositionend` után késve érkező végleges mobil billentyűzetes `input` esemény kezelését az Inspector **egyszerű szöveg textarea** és az asztali **közvetlen canvas plaintext** szerkesztő is megkapja. Az idő előtti köztes Page Model commit helyett az első rajzolásig a végleges értéket várjuk; revision guard védi az egymást követő kompozíciókat. Új 390px/1366px Chromium teszt a nem publikált szöveg-, Save ≠ Publish- és fókuszfolyamot ellenőrzi a `test:editor:layout` parancsban. [#210](https://github.com/sanci9517/sanci9517/pull/210) **ellenőrzés alatt, nem elfogadott**; Production Worker source-SHA és fizikai Android/PC teszt továbbra is **UNVERIFIED**. Következő: fennmaradó Rich Text és strukturált elem-paritás, végül 77.44/WEB-011/49.4 manuális teljes elfogadás; teljes Visual Editor **OPEN**.\n\n## A MASTER 12 része
 
 - [1/12 – MASTER fejezetek](creator-master/part-01-of-12.md)
 - [2/12 – MASTER fejezetek](creator-master/part-02-of-12.md)
