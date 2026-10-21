@@ -19,6 +19,8 @@
 
 > **2026-10-20 – Rich Text natív Shift+Enter kijelölésparitás: [#198](https://github.com/sanci9517/sanci9517/pull/198) squash MERGED `979c655645cf6b4c866e145c56246e79926a163f`. A natív `BR` sortörés egy UTF-16 karaktert számít a kijelölésben, az egyetlen üres placeholder BR nem; pozíció-visszaállítás sortörés előtt/után. 390/1366px Chromium az Editor Core regresszióban, F0 és Twitch CI mind PASS. Production source-SHA és fizikai Android/PC teszt UNVERIFIED; 77.44/WEB-011/49.4 OPEN, Save ≠ Publish. Következő kurzor: Rich Text strukturált kijelölés/fókusz/IME és Inspector–vászon–publikus paritás.**
 
+> **2026-10-21 – AI-011 szerkeszthető teljes webhelygenerálás SPEC / OPEN:** a 40.6.A pontban (`docs/creator-master/part-02-of-12.md`) rögzítve a természetes nyelvből, sablonból és feltöltött tartalomból előállított, többoldalas webhely közös Page Model/Visual Editor-kompatibilis kimenete, közös RES/R2–D1 médiatár, WEB navigáció, draft/diff, külön Save/Publish, jog- és biztonsági határok és végponttól végpontig acceptance. **Nem új Editor vagy AI feature ID:** AI-011 részletesítés. A 77.44 Visual Editor jelenlegi aktív fejlesztési kurzora változatlan; AI-megvalósítás és kézi elfogadás OPEN.
+
 ## A MASTER 12 része
 
 - [1/12 – MASTER fejezetek](creator-master/part-01-of-12.md)
