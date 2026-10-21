@@ -57,6 +57,8 @@ test('Inspector Media picker reaches older images and keeps filtered pages disti
     await picker.getByRole('button',{name:'Médiatár megnyitása'}).click();
     await page.waitForFunction(()=>document.querySelectorAll('.editor-media-choice').length===50);
     assert.equal(await choices.count(),50,`initial page at ${width}px`);
+    assert.equal(await picker.getByRole('region',{name:'Médiatár találatok'}).getAttribute('aria-busy'),'false',
+      'loaded asset results expose a settled state to assistive technology');
     await picker.getByRole('button',{name:'További képek betöltése'}).click();
     await page.waitForFunction(()=>document.querySelectorAll('.editor-media-choice').length===100);
     assert.equal(await choices.nth(50).evaluate(el=>document.activeElement===el),true,
@@ -88,6 +90,8 @@ test('Inspector Media picker reaches older images and keeps filtered pages disti
     await page.waitForFunction(()=>document.querySelectorAll('.editor-media-choice').length===50);
     await search.fill('asset-11');
     await page.waitForFunction(()=>document.querySelectorAll('.editor-media-choice').length===11);
+    assert.match(await picker.locator('[role=status]').textContent(),/11 kép betöltve a kereséshez/,
+      'search result status explains that the count belongs to the active query');
     assert.equal(await picker.getByRole('button',{name:'További képek betöltése'}).isVisible(),false);
     await picker.getByRole('button',{name:'asset-119.png kiválasztása'}).click();
     const results=await page.evaluate(()=>window.__choices);

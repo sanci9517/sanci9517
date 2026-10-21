@@ -20,7 +20,7 @@ async function loadAssets(query='',before=null){
 export function mediaAssetPicker(selectedId,onSelect,{disabled=false}={}){
   const root=document.createElement('div');root.className='editor-media-picker';
   const status=document.createElement('p');status.className='content-field-help';status.setAttribute('role','status');
-  const current=document.createElement('div');current.className='editor-media-current';current.id='media-choices-'+crypto.randomUUID();
+  const current=document.createElement('div');current.className='editor-media-current';current.id='media-choices-'+crypto.randomUUID();current.setAttribute('role','region');current.setAttribute('aria-label','Médiatár találatok');
   const selection=document.createElement('div');selection.className='editor-media-selection';
   const renderSelected=id=>{
     selection.replaceChildren();if(!id)return;
@@ -37,13 +37,13 @@ export function mediaAssetPicker(selectedId,onSelect,{disabled=false}={}){
     current.hidden=!value;search.hidden=!value;more.hidden=!value||!nextCursor;
     open.setAttribute('aria-expanded',String(value));
     open.textContent=value?'Médiatár bezárása':'Médiatár megnyitása';
-    if(!value){latestRequest++;clearTimeout(timer)}
+    if(!value){latestRequest++;clearTimeout(timer);current.setAttribute('aria-busy','false')}
   };
   const refresh=async(append=false)=>{
     const request=++latestRequest,query=search.value.trim(),before=append?nextCursor:null;
     if(append){if(!before)return;more.disabled=true}
     else{current.replaceChildren();shown=0;nextCursor=null;more.hidden=true}
-    status.textContent=append?'További képek betöltése…':'Médiatár betöltése…';
+    current.setAttribute('aria-busy','true');status.textContent=append?'További képek betöltése…':'Médiatár betöltése…';
     try{
       const {assets,nextCursor:cursor}=await loadAssets(query,before);
       if(request!==latestRequest||current.hidden)return;
@@ -58,13 +58,15 @@ export function mediaAssetPicker(selectedId,onSelect,{disabled=false}={}){
         current.append(button);
       }
       shown+=assets.length;nextCursor=cursor;more.hidden=!nextCursor;more.disabled=disabled;
-      status.textContent=shown?`${shown} kép betöltve`:'Nincs találat. Tölts fel képet az Admin → Médiatár oldalon.';
+      current.setAttribute('aria-busy','false');
+      status.textContent=shown?`${shown} kép betöltve${query?' a kereséshez':''}`:'Nincs találat. Tölts fel képet az Admin → Médiatár oldalon.';
       // Newly appended tiles precede the "Load more" button in DOM order.
       // Move keyboard focus there even when this was the final page and
       // the previously focused pagination button becomes hidden.
       if(append)(firstNewChoice||more).focus({preventScroll:false});
     }catch(error){
       if(request!==latestRequest||current.hidden)return;
+      current.setAttribute('aria-busy','false');
       more.hidden=!nextCursor;more.disabled=disabled;
       status.textContent=error.message||'A Médiatár betöltése nem sikerült.';
       if(append&&!more.hidden)more.focus({preventScroll:true});
