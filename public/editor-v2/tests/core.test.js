@@ -12,6 +12,7 @@ import { createEditorState, activePage } from '../core/state.js';
 import { beginTransaction, commitTransaction, execute, executeBatch, rollbackTransaction } from '../core/commands.js';
 import { getProperty, listProperties, listPropertyGroups } from '../core/property-registry.js';
 import { hasResponsiveOverride, resolveResponsiveValue, setResponsiveValue } from '../core/responsive.js';
+import {normalizeVisibility,isVisibleOnDevice,getNodeVisibilityState} from '../core/visibility.js';
 import { plainTextToRichText } from '../core/richtext-engine.js';
 import { createDefaultScheduleConfig, normalizeScheduleConfig, validateScheduleConfig } from '../core/schedule-schema.js';
 import { getSchedulePreviewItems } from '../core/schedule-preview.js';
@@ -179,6 +180,34 @@ test('property registry exposes extensible inspector groups and properties', () 
   assert.equal(getProperty('radius.all').key, 'borderRadius');
   assert.equal(getProperty('content.text').command, 'element.update');
   assert.ok(listProperties({ group: 'size' }).some((property) => property.id === 'size.width'));
+});
+
+test('visibility switches normalize legacy Page Models, preserve independent devices and allow ancestor discovery', () => {
+  const state=createEditorState(),page=activePage(state);
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.SECTION,parentId:page.rootId}});
+  const parentId=state.selection.primaryId;
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId}});
+  const childId=state.selection.primaryId;
+  assert.deepEqual(getNodeVisibilityState(activePage(state),childId,'mobile'),{ownVisible:true,effectiveVisible:true,hiddenByAncestorId:null});
+  execute(state,{type:'element.update',payload:{nodeId:parentId,patch:{visibility:false}}});
+  assert.equal(isVisibleOnDevice(activePage(state).nodes[parentId],'mobile'),false);
+  assert.deepEqual(normalizeVisibility(false),{desktop:false,tablet:false,mobile:false});
+  assert.deepEqual(getNodeVisibilityState(activePage(state),childId,'mobile'),{ownVisible:true,effectiveVisible:false,hiddenByAncestorId:parentId});
+  execute(state,{type:'element.visibility.set',payload:{nodeId:parentId,device:'mobile',visible:true}});
+  assert.deepEqual(activePage(state).nodes[parentId].visibility,{desktop:false,tablet:false,mobile:true});
+  assert.equal(getNodeVisibilityState(activePage(state),childId,'mobile').effectiveVisible,true);
+  assert.equal(getNodeVisibilityState(activePage(state),childId,'desktop').effectiveVisible,false);
+  execute(state,{type:'history.undo'});
+  assert.equal(activePage(state).nodes[parentId].visibility,false,'undo restores the exact legacy snapshot');
+  execute(state,{type:'history.redo'});
+  assert.equal(getNodeVisibilityState(activePage(state),childId,'mobile').effectiveVisible,true);
+  execute(state,{type:'element.visibility.set',payload:{nodeId:childId,device:'mobile',visible:false}});
+  assert.equal(getNodeVisibilityState(activePage(state),childId,'mobile').ownVisible,false);
+  assert.equal(getNodeVisibilityState(activePage(state),childId,'mobile').effectiveVisible,false);
+  assert.throws(()=>execute(state,{type:'element.visibility.set',payload:{nodeId:page.rootId,device:'desktop',visible:false}}),/Root visibility/);
+  assert.throws(()=>execute(state,{type:'element.visibility.set',payload:{nodeId:parentId,device:'watch',visible:false}}),/Invalid responsive device/);
+  assert.equal(activePage(state).nodes[parentId].visibility.mobile,true,'invalid actions never corrupt visibility');
+  assert.equal(isVisibleOnDevice(null,'desktop'),false);
 });
 
 test('responsive values inherit from wider viewports and can be overridden/reset', () => {
