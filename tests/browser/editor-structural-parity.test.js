@@ -56,7 +56,7 @@ test('each authored structural type preserves its semantics and responsive layou
       assert.equal(await target.getAttribute('id'),'legacy-'+type,type+'/'+device+' public legacy anchor');
       assert.equal(await source.getAttribute('aria-label'),'Régi címke '+type,type+'/'+device+' canvas label');
       assert.equal(await target.getAttribute('aria-label'),'Régi címke '+type,type+'/'+device+' public label');
-      assert.equal(await target.evaluate(el=>el.outerHTML.match(/\\bid=/g)?.length),1,type+'/'+device+' one anchor only');
+      assert.equal(await target.evaluate(el=>el.outerHTML.split(' id=').length-1),1,type+'/'+device+' one anchor only');
       assert.equal(await target.evaluate(el=>el.tagName.toLowerCase()),models[type].tag,type+' semantics');assert.deepEqual(await target.evaluate(measure),await source.evaluate(measure),type+'/'+device);assert.match(await target.textContent(),/Megőrzött tartalom/);
     }
   }
