@@ -108,12 +108,31 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     'the previously selected panel remains visible after Canvas re-render');
   assert.equal(await node(editor,'tabs').getByRole('tablist',{name:'Bemutatkozás & videók'}).count(),1,
     'the real Canvas tablist inherits the Inspector name');
+  // Reordering the Inspector repeater must move the selected *item*, not leave
+  // a stale selected index pointing at the old position.
+  await editor.locator('.content-repeater').getByRole('button',{name:'2. elem: Fel'}).press('Enter');
+  assert.equal(await node(editor,'tabs').getByRole('tab').first().textContent(),'Bemutatkozás');
+  assert.equal(await node(editor,'tabs').getByRole('tab').first().getAttribute('aria-selected'),'true',
+    'Canvas selection follows the moved tab item');
+  assert.equal(await node(editor,'tabs').getByRole('tabpanel').first().isVisible(),true);
+  await editor.waitForFunction(()=>document.activeElement?.textContent==='Le'&&
+    document.activeElement?.getAttribute('aria-label')==='1. elem: Le');
+  await editor.locator('.content-repeater').getByRole('button',{name:'1. elem: Le'}).press('Enter');
+  assert.equal(await node(editor,'tabs').getByRole('tab').last().getAttribute('aria-selected'),'true',
+    'moving the tab back keeps the same content selected');
   await select('accordion');
   await node(editor,'accordion').locator('summary').last().click();
   assert.deepEqual(await node(editor,'accordion').locator('details').evaluateAll(items=>items.map(el=>el.open)),[false,true]);
   await editor.getByLabel('Harmonikacsoport elnevezése',{exact:true}).fill('Kérdések & válaszok');
   assert.deepEqual(await node(editor,'accordion').locator('details').evaluateAll(items=>items.map(el=>el.open)),[false,true],
     'changing a group label preserves already expanded Canvas sections');
+  await editor.locator('.content-repeater').getByRole('button',{name:'2. elem: Fel'}).press('Enter');
+  assert.equal(await node(editor,'accordion').locator('summary').first().textContent(),'Hol találom?');
+  assert.deepEqual(await node(editor,'accordion').locator('details').evaluateAll(items=>items.map(el=>el.open)),[true,false],
+    'the expanded Accordion follows the reordered section, rather than its old index');
+  await editor.locator('.content-repeater').getByRole('button',{name:'1. elem: Le'}).press('Enter');
+  assert.deepEqual(await node(editor,'accordion').locator('details').evaluateAll(items=>items.map(el=>el.open)),[false,true],
+    'expanded section remains open after reversing the move');
   await editor.getByLabel('Egyszerre csak egy nyitott rész',{exact:true}).check();
   await editor.getByLabel('Első rész kezdetben nyitva',{exact:true}).check();
   const canvasAccordion=node(editor,'accordion').getByRole('group',{name:'Kérdések & válaszok'});
