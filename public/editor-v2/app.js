@@ -208,10 +208,27 @@ function renderPlainTextEditor(node){
   const section=document.createElement('section');section.className='field plain-text-content';
   const label=document.createElement('label');label.textContent='Szöveg';label.htmlFor='plain-text-content';
   const editor=document.createElement('textarea');editor.id='plain-text-content';editor.className='plain-text-editor';editor.dataset.textNodeId=node.id;editor.setAttribute('aria-label','Szöveg tartalma');editor.value=node.props?.text??node.props?.content??'';editor.disabled=Boolean(node.locked);applyTextSurfaceStyle(editor,node);
-  const typingGroup=crypto.randomUUID();let composing=false,dirty=false;
+  const typingGroup=crypto.randomUUID();let composing=false,dirty=false,compositionRevision=0;
   const flush=()=>{if(composing)return false;if(!dirty)return true;const saved=commitTextSurface(node.id,editor,typingGroup);if(saved)dirty=false;return saved};
-  editor.onfocus=()=>{flushRichTextDraft=flush};editor.oninput=()=>{dirty=true;flushRichTextDraft=flush;if(!composing)flush()};
-  editor.oncompositionstart=()=>{composing=true};editor.oncompositionend=()=>{composing=false;dirty=true;flush()};editor.onblur=flush;
+  editor.onfocus=()=>{flushRichTextDraft=flush};editor.oninput=event=>{
+    dirty=true;flushRichTextDraft=flush;
+    if(event.isComposing){composing=true;return}
+    // A confirmed non-composing input can be the final replacement after
+    // compositionend, or the only final signal on some mobile keyboards.
+    composing=false;flush();
+  };
+  editor.oncompositionstart=()=>{compositionRevision++;composing=true};
+  editor.oncompositionend=()=>{
+    dirty=true;const revision=compositionRevision;
+    // A mobile IME may deliver the final input *after* compositionend.
+    // Do not mirror or commit an intermediate character before that event.
+    requestAnimationFrame(()=>{
+      if(revision!==compositionRevision)return;
+      composing=false;
+      if(editor.isConnected)flush();
+    });
+  };
+  editor.onblur=flush;
   const help=document.createElement('small');help.className='text-sync-hint';help.textContent='Élő kapcsolat a vászonnal. Gépeléskor a piszkozat frissül; a látogatók csak a külön Publikálás után látják.';
   section.append(label,editor,help);return section;
 }
@@ -388,10 +405,22 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
     const c=document.createElement('div');c.className='node-content plain-text-content-surface';c.textContent=node.props?.text??node.props?.content??node.name;
     if(inlineEditingId===id){
       c.classList.add('plain-text-inline-surface');c.contentEditable='plaintext-only';c.setAttribute('role','textbox');c.setAttribute('aria-label','Szöveg közvetlen szerkesztése');
-      const typingGroup=crypto.randomUUID();let composing=false,dirty=false;
+      const typingGroup=crypto.randomUUID();let composing=false,dirty=false,compositionRevision=0;
       const flush=()=>{if(composing)return false;if(!dirty)return true;const saved=commitTextSurface(id,c,typingGroup);if(saved)dirty=false;return saved};
-      c.onfocus=()=>{flushRichTextDraft=flush};c.oninput=()=>{dirty=true;flushRichTextDraft=flush;if(!composing)flush()};c.onblur=flush;
-      c.oncompositionstart=()=>{composing=true};c.oncompositionend=()=>{composing=false;dirty=true;flush()};
+      c.onfocus=()=>{flushRichTextDraft=flush};c.oninput=event=>{
+        dirty=true;flushRichTextDraft=flush;
+        if(event.isComposing){composing=true;return}
+        composing=false;flush();
+      };c.onblur=flush;
+      c.oncompositionstart=()=>{compositionRevision++;composing=true};
+      c.oncompositionend=()=>{
+        dirty=true;const revision=compositionRevision;
+        requestAnimationFrame(()=>{
+          if(revision!==compositionRevision)return;
+          composing=false;
+          if(c.isConnected&&inlineEditingId===id)flush();
+        });
+      };
       for(const type of ['pointerdown','click','dblclick'])c.addEventListener(type,event=>event.stopPropagation());
     }else if(!node.locked){
       const edit=document.createElement('button');edit.type='button';edit.className='canvas-edit-text';edit.textContent='Szöveg szerkesztése';edit.setAttribute('aria-label','Szöveg szerkesztése');edit.onpointerdown=event=>event.stopPropagation();edit.onclick=event=>{event.stopPropagation();setSelection(state,[id],id);beginRichTextEditing(id)};el.append(edit);
