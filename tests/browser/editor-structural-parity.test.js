@@ -69,6 +69,8 @@ test('each authored structural type preserves its semantics and responsive layou
   await parent.evaluate(el=>el.click());
   if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
   await editor.getByRole('button',{name:'Haladó beállítások'}).click();
+  const visibilityGroup=editor.locator('.inspector-group-title').filter({hasText:'Akadálymentesség és láthatóság'});
+  if(await visibilityGroup.getAttribute('aria-expanded')==='false')await visibilityGroup.click();
   const mobileToggle=editor.getByRole('checkbox',{name:'Látható: mobile'});
   await mobileToggle.uncheck();
   assert.equal(await parent.getAttribute('data-visibility'),'hidden','hidden parent stays selectable on Canvas');
