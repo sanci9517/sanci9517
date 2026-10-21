@@ -101,16 +101,6 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await select('tabs');
   await node(editor,'tabs').getByRole('tab',{name:'Bemutatkozás',exact:true}).click();
   assert.equal(await node(editor,'tabs').getByRole('tab',{name:'Bemutatkozás',exact:true}).getAttribute('aria-selected'),'true');
-  if(await editor.getByLabel('Fülcsoport elnevezése',{exact:true}).count()===0){
-    const debug=await editor.evaluate(()=>({
-      inspector:document.querySelector('#inspectorBody')?.textContent?.slice(0,1200),
-      selected:document.querySelector('#inspectorBody [data-content-key]')?.getAttribute('data-content-key'),
-      invalid:[...document.querySelectorAll('#inspectorBody [aria-invalid=true]')].map(el=>el.getAttribute('aria-label')),
-      tabCanvas:[...document.querySelectorAll('.creator-node[data-content-type=tabs]')].map(el=>el.className),
-      focused:document.activeElement?.getAttribute('aria-label')
-    }));
-    console.error('INSPECTOR IME DEBUG '+JSON.stringify(debug));
-  }
   await editor.getByLabel('Fülcsoport elnevezése',{exact:true}).fill('Bemutatkozás & videók');
   assert.equal(await node(editor,'tabs').getByRole('tab',{name:'Bemutatkozás',exact:true}).getAttribute('aria-selected'),'true',
     'typing in the Inspector keeps the selected Canvas tab instead of resetting to the first');
