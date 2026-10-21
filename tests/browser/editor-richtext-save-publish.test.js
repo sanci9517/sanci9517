@@ -180,6 +180,23 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
   assert.equal(await canvasInline.evaluate(el=>document.activeElement===el&&window.getSelection()?.toString()==='world'),true,
     'Inspector code control should return to the selected canvas surface');
   assert.equal(posts.length,canvasMarkPosts,'canvas code formatting must not Save or Publish implicitly');
+  // A live canvas selection spanning blocks must take the same structured mark
+  // path. This specifically protects code formatting from falling back to
+  // document.execCommand, which cannot represent all editor document marks.
+  const canvasAcrossBlocks=await canvasInline.evaluate(el=>{
+    const first=el.children[0],second=el.children[1];
+    const firstText=document.createTreeWalker(first,NodeFilter.SHOW_TEXT).nextNode();
+    const secondText=document.createTreeWalker(second,NodeFilter.SHOW_TEXT).nextNode();
+    const range=document.createRange();range.setStart(firstText,0);range.setEnd(secondText,6);
+    const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);el.focus();
+    return selection.toString();
+  });
+  await tab.getByRole('button',{name:'Kódformázás',exact:true}).click();
+  assert.equal(await canvasInline.evaluate(el=>document.activeElement===el&&window.getSelection()?.toString()),canvasAcrossBlocks,
+    'multi-block canvas code formatting should preserve its live selection');
+  assert.equal(await canvasInline.locator('code').evaluateAll(nodes=>nodes.some(node=>node.textContent.includes('Hello'))&&nodes.some(node=>node.textContent.includes('Second'))),true,
+    'multi-block canvas selection should be represented by canonical code marks');
+  assert.equal(posts.length,canvasMarkPosts,'multi-block canvas formatting must not Save or Publish implicitly');
   await tab.setViewportSize({width:390,height:800});
   await openEditor();
   const urlField=tab.locator('.richtext-link-controls input');

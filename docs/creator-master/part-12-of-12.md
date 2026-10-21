@@ -831,6 +831,14 @@ A közös `updateRichTextInlineMark` már a blokk-szegmensekre bontott kijelöl�
 
 **Helyi bizonyíték:** a valós Chromium folyamat Canvas Kódformázás → új Editor-betöltés → közvetlen vászon Formázás → Ctrl+End → gépelés során igazolja a helyes végpozíciót, az élő Inspector–vászon szinkront és a Save/Publish hiányát. Célzott két Rich Text böngészőteszt, TypeScript és Editor Core **106/106 PASS**. Production Worker source-SHA és fizikai Android/PC elfogadás **UNVERIFIED**, teljes WEB-011 **OPEN**.
 
+### 77.44.7.A/C — Élő Canvas többblokkos Kódformázás strukturált útvonala (2026-10-21)
+
+**Hiba és határ:** a formázógomb korábban az Inspectorban elmentett tartományt részesítette előnyben; ha csak a Canvas élő DOM-kijelölése maradt meg, a visszaeső ág a böngésző `execCommand` funkciójára támaszkodott. Ez a `code` markot nem tudta a Rich Text többblokkos Page Model-szegmenseivel azonos módon kezelni.
+
+**Javítás:** aktív, nem üres Canvas-kijelölés esetén a vezérlő közvetlenül abból állítja elő a `getRichTextFormattingSelection()` strukturált tartományt, és a friss Canvas-dokumentumot a már meglévő `updateRichTextInlineMark()` műveletnek adja át. A modellváltozás utáni Inspector- és Canvas-frissítés, kijelölés-visszaállítás, Undo/Redo és Save ≠ Publish szerződés változatlan. Az `execCommand` csak olyan régi, nem strukturálható visszaeső helyzetre marad, amelyben nincs érvényes modell-tartomány.
+
+**Helyi bizonyíték:** a valós Chromium `editor-richtext-save-publish` folyamat közvetlen vászon-kijelöléssel az első bekezdés elejétől a második bekezdés `Second` szövegéig terjed, majd Inspector Kódformázást alkalmaz. A fókusz és a teljes kijelölés a Canvasban marad, mindkét blokkban létrejön a kanonikus `code` mark, hálózati Save/Publish kérés nélkül. A célzott két Rich Text böngészőteszt és `npm run typecheck` PASS. Teljes Editor regresszió, GitHub CI, Production Worker source-SHA és fizikai Android/PC elfogadás **UNVERIFIED**; a teljes WEB-011 **OPEN**, D1/R2/secret nem változott.
+
 ### 77.44.7.A/C — Inspector ismétlődő elemek hozzáadás/törlés utáni billentyűzetes fókusz (#233 MERGED, 2026-10-21)
 
 **Korlát és hibaforrás:** A #231-es „Fel/Le” újrarajzolási fókuszjavítás a `repeater` sorok „Hozzáadás” gombját nem kezelte; törlésnél nem volt célzott fókusz az újraszámozott, megmaradt sor első tartalommezőjére, illetve az üres lista hozzáadásgombjára. A kiválasztott fül eltávolítása után a #231-es Canvas-state helper a legközelebbi megmaradt, a listaméret szerint biztonságos fülre tér vissza. A javítás csak az Inspector-vezérlő meglevő lokális DOM-életciklusát érinti, új item ID vagy második tároló nélkül.
