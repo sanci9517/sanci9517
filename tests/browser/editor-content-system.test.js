@@ -117,7 +117,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   const canvasDropdown=node(editor,'dropdown').getByRole('group',{name:'További lehetőségek'});
   assert.equal(await canvasDropdown.locator('details').first().evaluate(el=>el.open),true,
     'native first-open state is visible immediately on the Canvas');
-  assert.equal(await canvasDropdown.locator('details').last().getAttribute('name'),false,
+  assert.equal(await canvasDropdown.locator('details').last().getAttribute('name'),null,
     'multi-open default does not accidentally make separate dropdown items exclusive');
   await select('gallery');
   await editor.getByLabel('Képgaléria elnevezése',{exact:true}).fill('Műhelyem & képeim');
