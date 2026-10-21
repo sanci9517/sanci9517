@@ -402,6 +402,9 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await live.locator('iframe.preview-viewport').contentFrame().locator('.visual-root-authored').waitFor();
   assert.equal(await live.locator('iframe.preview-viewport').evaluate(el=>el.contentWindow.innerWidth),1440,'switching devices updates the real CSS viewport');
   assert.equal(await live.locator('[data-preview-device="desktop"]').getAttribute('aria-pressed'),'true');
+  // Restore the mobile viewport expected by the following publish-isolation test.
+  // That test verifies a mobile-only background removal leaves desktop intact.
+  await live.setViewportSize({width:390,height:900});
   await select('button');await editor.locator('.inspector-tabs button').first().click();await openGroup('Háttér');
   await editor.locator('[data-property-id="background.image"]').getByRole('button',{name:'Kép eltávolítása'}).click();
   assert.doesNotMatch(await node(editor,'button').evaluate(el=>getComputedStyle(el).backgroundImage),/api\/admin\/media/);
