@@ -103,11 +103,45 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
     }
     input.setAttribute('aria-label',definition.label);input.disabled=Boolean(node.locked);input.dataset.typingGroup=crypto.randomUUID();
     const rangeOutput=definition.type==='range'?document.createElement('output'):null;if(rangeOutput){rangeOutput.className='content-range-value';rangeOutput.value=String(input.value);rangeOutput.textContent=`${input.value}%`;rangeOutput.setAttribute('aria-live','polite')}
-    let committed=value;
-    const update=()=>{try{const next=normalizeContentField(definition,definition.type==='boolean'?input.checked:definition.type==='range'?input.valueAsNumber:input.value);input.removeAttribute('aria-invalid');fail.textContent='';save(next,input.dataset.typingGroup);committed=next;if(rangeOutput){rangeOutput.value=String(next);rangeOutput.textContent=`${next}%`}}catch(error){input.setAttribute('aria-invalid','true');fail.textContent=error.message}};
-    input.addEventListener(['select','boolean'].includes(definition.type)?'change':'input',update);
-    input.addEventListener('focus',()=>pending(()=>!root.querySelector('[aria-invalid="true"]')));
-    input.addEventListener('keydown',event=>{if(event.key==='Escape'){input.value=committed??'';if(definition.type==='boolean')input.checked=Boolean(committed);input.removeAttribute('aria-invalid');fail.textContent=''}});
+    let committed=value,composing=false,dirty=false,compositionRevision=0;
+    const canCompose=input.tagName==='TEXTAREA'||(input.tagName==='INPUT'&&input.type==='text');
+    const update=()=>{
+      try{
+        const next=normalizeContentField(definition,definition.type==='boolean'?input.checked:definition.type==='range'?input.valueAsNumber:input.value);
+        save(next,input.dataset.typingGroup);
+        input.removeAttribute('aria-invalid');fail.textContent='';committed=next;dirty=false;
+        if(rangeOutput){rangeOutput.value=String(next);rangeOutput.textContent=`${next}%`}
+        return true;
+      }catch(error){input.setAttribute('aria-invalid','true');fail.textContent=error.message;return false}
+    };
+    const flush=()=>!composing&&(!dirty||update());
+    if(canCompose){
+      input.addEventListener('compositionstart',()=>{compositionRevision++;composing=true});
+      input.addEventListener('compositionend',()=>{
+        dirty=true;const revision=compositionRevision;
+        // Some Android IMEs deliver the confirmed replacement after
+        // compositionend. Read the live value on the next animation frame;
+        // never persist the unfinished phonetic/composition candidate.
+        requestAnimationFrame(()=>{
+          if(revision!==compositionRevision||!input.isConnected)return;
+          composing=false;flush();
+        });
+      });
+      input.addEventListener('input',event=>{
+        dirty=true;
+        if(event.isComposing||composing)return;
+        flush();
+      });
+      input.addEventListener('blur',()=>{if(!composing)flush()});
+    }else input.addEventListener(['select','boolean'].includes(definition.type)?'change':'input',update);
+    input.addEventListener('focus',()=>pending(()=>!composing&&!root.querySelector('[aria-invalid="true"]')));
+    input.addEventListener('keydown',event=>{
+      if(event.key!=='Escape')return;
+      compositionRevision++;composing=false;dirty=false;
+      input.value=committed??'';
+      if(definition.type==='boolean')input.checked=Boolean(committed);
+      input.removeAttribute('aria-invalid');fail.textContent='';
+    });
     wrap.append(input);if(rangeOutput)wrap.append(rangeOutput);if(definition.type==='url'){const picker=pageLinkPicker(pages,input);picker.disabled=Boolean(node.locked);wrap.append(picker)}if(definition.help){const help=document.createElement('small');help.className='content-field-help';help.textContent=definition.help;wrap.append(help)}return wrap;
   };
   for(const definition of CONTENT_FIELDS[node.type]||[]){
