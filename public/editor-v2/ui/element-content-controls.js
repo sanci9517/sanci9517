@@ -114,7 +114,7 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
     if(exclude.includes(definition.key))continue;
     const save=(value,typingGroup,render=false)=>{const result=apply({[definition.key]:value},{typingGroup,render});if(result===false)throw new Error('A módosítás nem alkalmazható.');return result};
     if(definition.type==='repeater'){
-      const section=document.createElement('details');section.className='content-repeater';section.open=true;
+      const section=document.createElement('details');section.className='content-repeater';section.dataset.contentKey=definition.key;section.open=true;
       const summary=document.createElement('summary');summary.textContent=definition.label;section.append(summary);
       const items=Array.isArray(node.props?.[definition.key])?node.props[definition.key]:[];
       items.forEach((item,index)=>{
@@ -123,7 +123,28 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
         const actions=document.createElement('div');actions.className='content-repeater-actions';
         for(const [label,offset] of [['Fel',-1],['Le',1],['Eltávolítás',0]]){
           const button=document.createElement('button');button.type='button';button.textContent=label;button.setAttribute('aria-label',`${index+1}. elem: ${label}`);button.disabled=Boolean(node.locked)||(offset<0&&index===0)||(offset>0&&index===items.length-1);
-          button.onclick=()=>{const next=structuredClone(node.props?.[definition.key]||items);if(!offset)next.splice(index,1);else [next[index],next[index+offset]]=[next[index+offset],next[index]];save(next,null,true)};actions.append(button);
+          button.onclick=()=>{
+            const keepFocus=document.activeElement===button;
+            const next=structuredClone(node.props?.[definition.key]||items);
+            if(!offset)next.splice(index,1);else [next[index],next[index+offset]]=[next[index+offset],next[index]];
+            save(next,null,true);
+            // A structural edit rebuilds the Inspector. Keyboard users should
+            // continue beside the moved row, not restart from the document top.
+            if(keepFocus)requestAnimationFrame(()=>{
+              if(document.activeElement!==document.body)return;
+              const current=[...document.querySelectorAll('#inspectorBody .content-repeater')]
+                .find(el=>el.dataset.contentKey===definition.key);
+              if(!current)return;
+              const newIndex=offset?index+offset:Math.min(index,next.length-1);
+              const row=current.querySelectorAll('fieldset')[newIndex];
+              const preferred=offset<0?'Le':offset>0?'Fel':'Eltávolítás';
+              const buttons=[...(row?.querySelectorAll('.content-repeater-actions button')||[])];
+              const destination=buttons.find(el=>el.textContent===preferred&&!el.disabled)
+                ||buttons.find(el=>!el.disabled)
+                ||current.querySelector('button:last-child');
+              if(destination&&!destination.disabled)destination.focus({preventScroll:true});
+            });
+          };actions.append(button);
         }
         card.append(actions);section.append(card);
       });
