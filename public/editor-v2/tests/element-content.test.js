@@ -43,6 +43,21 @@ test('authored markup escapes text, preserves link security and uses native acce
   assert.match(authoredNodeHtml({...node,type:'image',props:{src:'/image.svg',alt:'Illusztráció',ratio:'1 / 1',fit:'contain'}}),/alt="Illusztráció"/);
 });
 
+test('legacy accessibility attributes have one canonical Canvas/Public interpretation',()=>{
+  const base={type:'icon',props:{ariaLabel:'Tulajdonság neve'},accessibility:{
+    id:'current-anchor',anchorId:'legacy-anchor',label:'Inspector név',ariaLabel:'Régi elnevezés'
+  }};
+  assert.deepEqual(contentAttributes(base),{
+    'aria-label':'Régi elnevezés',role:'img',id:'legacy-anchor'
+  },'legacy label/anchor have the same precedence as the original published renderer');
+  assert.deepEqual(contentAttributes({...base,accessibility:{id:'current-anchor',label:'Inspector név'}}),{
+    'aria-label':'Tulajdonság neve',role:'img',id:'current-anchor'
+  },'new editor properties remain functional');
+  assert.equal(contentAttributes({...base,accessibility:{id:'current-anchor',anchorId:'not valid',label:'Inspector név'}}).id,'current-anchor');
+  assert.equal(contentAttributes({...base,type:'image',props:{},accessibility:{ariaLabel:'Legacy media label'}})['aria-label'],undefined,
+    'old public renderer deliberately excluded legacy media labels');
+});
+
 test('image focal position supports precise two-axis crops while preserving legacy presets',()=>{
   const image={id:'crop',type:'image',metadata:{contentVersion:1},props:{src:'/image.jpg',alt:'Teszt'}};
   assert.match(authoredNodeHtml({...image,props:{...image.props,focalX:18,focalY:82}}),/object-position:18% 82%/);

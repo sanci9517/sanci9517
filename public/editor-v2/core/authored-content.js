@@ -130,9 +130,15 @@ export function contentAttributes(node){
   const target=['_self','_blank'].includes(p.target)?p.target:'_self';
   if(['button','link'].includes(node.type)&&safeHref(p.href)){attributes.href=safeHref(p.href);attributes.target=target;if(target==='_blank')attributes.rel='noopener noreferrer'}
   if(node.type==='button'&&!attributes.href)attributes.type='button';
-  if(p.ariaLabel||a.label)attributes['aria-label']=String(p.ariaLabel||a.label).slice(0,160);
+  // Legacy snapshots can still carry ariaLabel/anchorId. Resolve them here,
+  // once, so Editor canvas and published HTML share the same attributes.
+  const legacyLabel=!['image','video','audio'].includes(node.type)&&typeof a.ariaLabel==='string'?a.ariaLabel.trim():'';
+  const label=legacyLabel||p.ariaLabel||a.label;
+  if(label)attributes['aria-label']=String(label).slice(0,legacyLabel?250:160);
   if(node.type==='icon'){if(attributes['aria-label'])attributes.role='img';else attributes['aria-hidden']='true'}
-  if(a.id&&/^[A-Za-z][\w-]{0,79}$/.test(a.id))attributes.id=a.id;
+  const legacyAnchor=typeof a.anchorId==='string'&&/^[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(a.anchorId)?a.anchorId:'';
+  if(legacyAnchor)attributes.id=legacyAnchor;
+  else if(a.id&&/^[A-Za-z][\w-]{0,79}$/.test(a.id))attributes.id=a.id;
   if(['en','hu','de','fr','es','it','pt','pl','ja','ko','zh'].includes(a.lang))attributes.lang=a.lang;
   if(a.decorative===true)attributes['aria-hidden']='true';
   return attributes;
