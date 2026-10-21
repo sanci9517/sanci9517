@@ -108,6 +108,8 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
   const formattedBlocks=await tab.locator('.richtext-editor-surface').evaluate(el=>[...el.children].map(block=>Boolean(block.querySelector('u'))));
   assert.deepEqual(formattedBlocks,[true,true]);
   await selectWorld();
+  await tab.locator('.richtext-editor-surface').press('Control+k');
+  assert.equal(await tab.locator('.richtext-link-controls input').evaluate(el=>document.activeElement===el),true);
   await tab.locator('.richtext-link-controls input').fill('/p/home');
   await tab.getByRole('button',{name:'Link beállítása'}).click();
   await tab.locator('.richtext-editor-surface a strong').waitFor();
