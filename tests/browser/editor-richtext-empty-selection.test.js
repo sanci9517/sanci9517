@@ -49,6 +49,15 @@ test('Rich Text selection restores an empty editable block without inventing tex
       const backwardCaptured=getSelectionOffsets(root);
       const backwardRestored=restoreSelectionOffsets(root,backwardCaptured);
       const backwardPreserved=native.anchorOffset===3&&native.focusOffset===1;
+      // Mobile WebKit may not expose Selection.setBaseAndExtent. Exercise the
+      // standards-based collapse/extend fallback in the real browser too.
+      const proto=Object.getPrototypeOf(native);
+      const original=Object.getOwnPropertyDescriptor(proto,'setBaseAndExtent');
+      Object.defineProperty(proto,'setBaseAndExtent',{configurable:true,writable:true,value:undefined});
+      native.removeAllRanges();
+      const fallbackRestored=restoreSelectionOffsets(root,backwardCaptured);
+      const fallbackBackwardPreserved=native.anchorOffset===3&&native.focusOffset===1;
+      if(original)Object.defineProperty(proto,'setBaseAndExtent',original);else delete proto.setBaseAndExtent;
       root.innerHTML='<p>North<br>South</p>';
       const south=root.querySelector('p').lastChild;
       const afterBreak=document.createRange();afterBreak.setStart(south,0);afterBreak.collapse(true);
@@ -60,7 +69,7 @@ test('Rich Text selection restores an empty editable block without inventing tex
       const roundtripBeforeBreak=getSelectionOffsets(root);
       const invalidPastBreak=restoreSelectionOffsets(root,{from:12,to:12});
       root.remove();
-      return {restored,caretInBlock,offsets,invalidNegative,invalidNoncollapsed,unchanged,staleOffset,staleRange,preserved,validEnd,validEndOffset,newlineOffset,restoredAfterBreak,roundtripAfterBreak,beforeBreak,roundtripBeforeBreak,invalidPastBreak,backwardCaptured,backwardRestored,backwardPreserved};
+      return {restored,caretInBlock,offsets,invalidNegative,invalidNoncollapsed,unchanged,staleOffset,staleRange,preserved,validEnd,validEndOffset,newlineOffset,restoredAfterBreak,roundtripAfterBreak,beforeBreak,roundtripBeforeBreak,invalidPastBreak,backwardCaptured,backwardRestored,backwardPreserved,fallbackRestored,fallbackBackwardPreserved};
     });
     assert.equal(result.restored,true);
     assert.equal(result.caretInBlock,true);
@@ -76,6 +85,8 @@ test('Rich Text selection restores an empty editable block without inventing tex
     assert.deepEqual(result.backwardCaptured,{from:1,to:3,collapsed:false,backward:true});
     assert.equal(result.backwardRestored,true);
     assert.equal(result.backwardPreserved,true);
+    assert.equal(result.fallbackRestored,true);
+    assert.equal(result.fallbackBackwardPreserved,true);
     assert.deepEqual(result.newlineOffset,{from:6,to:6,collapsed:true});
     assert.equal(result.restoredAfterBreak,true);
     assert.deepEqual(result.roundtripAfterBreak,{from:6,to:6,collapsed:true});
