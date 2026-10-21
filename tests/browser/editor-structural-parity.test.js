@@ -17,6 +17,10 @@ test('each authored structural type preserves its semantics and responsive layou
     execute(state,{type:'style.set',payload:{nodeId:activePage(state).rootId,patch:{width:'320px',height:'360px',minHeight:'360px',padding:'12px'}}});
     execute(state,{type:'element.add',payload:{type,parentId:activePage(state).rootId,authored:true}});const id=state.selection.primaryId;
     execute(state,{type:'element.add',payload:{type:'text',parentId:id,authored:true,props:{text:'Megőrzött tartalom'}}});
+    // Older snapshots can carry both legacy and current accessibility keys.
+    execute(state,{type:'element.update',payload:{nodeId:id,patch:{accessibility:{
+      id:'modern-'+type,anchorId:'legacy-'+type,label:'Inspector '+type,ariaLabel:'Régi címke '+type
+    }}}});
     models[type]={id,tag:contentTag(activePage(state).nodes[id]),draft:structuredClone(state.document),published:structuredClone(state.document),version:1};
   }
   const root=resolve(import.meta.dirname,'../../public');let posts=0;
@@ -48,6 +52,11 @@ test('each authored structural type preserves its semantics and responsive layou
     await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');await editor.reload();assert.equal(await source.evaluate(el=>getComputedStyle(el).borderRadius),'12px',type+' reload');
     for(const [device,width] of [['desktop',1440],['tablet',768],['mobile',390]]){
       await editor.locator(`.canvas-device-btn[data-device="${device}"]`).click();await live.setViewportSize({width,height:900});await live.goto(base+'/p/'+type);const target=live.locator(`[data-node-id="${id}"]`);await target.waitFor();
+      assert.equal(await source.getAttribute('id'),'legacy-'+type,type+'/'+device+' canvas legacy anchor');
+      assert.equal(await target.getAttribute('id'),'legacy-'+type,type+'/'+device+' public legacy anchor');
+      assert.equal(await source.getAttribute('aria-label'),'Régi címke '+type,type+'/'+device+' canvas label');
+      assert.equal(await target.getAttribute('aria-label'),'Régi címke '+type,type+'/'+device+' public label');
+      assert.equal(await target.evaluate(el=>el.outerHTML.match(/\\bid=/g)?.length),1,type+'/'+device+' one anchor only');
       assert.equal(await target.evaluate(el=>el.tagName.toLowerCase()),models[type].tag,type+' semantics');assert.deepEqual(await target.evaluate(measure),await source.evaluate(measure),type+'/'+device);assert.match(await target.textContent(),/Megőrzött tartalom/);
     }
   }
