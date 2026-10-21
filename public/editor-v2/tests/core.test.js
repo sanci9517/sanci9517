@@ -1036,7 +1036,10 @@ test('copying an anchor regenerates a distinct element URL fragment',()=>{
  assert.equal(validatePublishDocument(broken,broken.activePageId),'DUPLICATE_ELEMENT_ANCHOR');
  const renderer=readFileSync(new URL('../../assets/page-renderer.js',import.meta.url),'utf8');
  assert.match(renderer,/aria-label/);
- assert.match(renderer,/accessibility\?\.anchorId/);
+ // Legacy fragment attributes now resolve through the same canonical helper
+ // as the Canvas and authored public nodes, rather than duplicate injections.
+ assert.match(renderer,/contentAttributes\(node\)/);
+ assert.doesNotMatch(renderer,/accessibility\?\.anchorId/);
 });
 
 test('carousel content validates optional media and accessible slide labels',()=>{
