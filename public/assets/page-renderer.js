@@ -12,6 +12,7 @@ import {renderEmbedHtml,activateEmbeds} from "../editor-v2/core/creator-embed.js
 import {renderCodeSnippet,activateCodeBlocks} from "../editor-v2/core/code-snippet.js";
 import {isAuthoredContent,contentTag,contentAttributes,authoredNodeHtml,initContentInteractions} from "../editor-v2/core/authored-content.js";
 import {defaultTokens,applyTokenVariables} from "../editor-v2/core/design-tokens.js";
+import {isVisibleOnDevice} from "../editor-v2/core/visibility.js";
 import {applyStateStyles} from "../editor-v2/core/state-styles.js";
 import {backgroundImageValue,MEDIA_ASSET_ID} from "../editor-v2/core/background-asset.js";
 (()=>{
@@ -78,7 +79,7 @@ import {backgroundImageValue,MEDIA_ASSET_ID} from "../editor-v2/core/background-
    return `<${tag}${align}>${inlines(block?.children)}</${tag}>`;
   }).join('');
  }
- function renderNodeHtml(page,id,managed){const n=page.nodes?.[id];if(!n||n.visibility===false||n.visibility?.[currentDevice]===false)return'';const t=esc(n.props?.text??n.name??'');const p=n.props||{};const children=(n.children||[]).map(child=>nodeHtml(page,child,managed)).join('');const st=style(n);if(n.metadata?.contentVersion===1&&isAuthoredContent(n)){const tag=contentTag(n),attrs=Object.entries(contentAttributes(n)).map(([key,value])=>' '+key+'="'+esc(value)+'"').join('');return '<'+tag+' class="visual-editor-node creator-node" data-content-type="'+esc(n.type)+'"'+attrs+' style="'+st+'">'+authoredNodeHtml(n,{childrenHtml:children,device:currentDevice})+'</'+tag+'>'}if(n.type==='schedule')return scheduleHtml(n);if(sanci[n.type])return `<section class="visual-editor-node visual-sanci-block" style="${st}">${sanciBlock(n)}${children}</section>`;if(isStructuredType(n.type)&&p.contentModel)return `<section class="visual-editor-node visual-structured" style="${st}">${renderElementContent(n.type,p.contentModel,n.id)}</section>`;if(n.type==='code'&&n.metadata?.codeSnippetVersion===1)
+ function renderNodeHtml(page,id,managed){const n=page.nodes?.[id];if(!n||!isVisibleOnDevice(n,currentDevice))return'';const t=esc(n.props?.text??n.name??'');const p=n.props||{};const children=(n.children||[]).map(child=>nodeHtml(page,child,managed)).join('');const st=style(n);if(n.metadata?.contentVersion===1&&isAuthoredContent(n)){const tag=contentTag(n),attrs=Object.entries(contentAttributes(n)).map(([key,value])=>' '+key+'="'+esc(value)+'"').join('');return '<'+tag+' class="visual-editor-node creator-node" data-content-type="'+esc(n.type)+'"'+attrs+' style="'+st+'">'+authoredNodeHtml(n,{childrenHtml:children,device:currentDevice})+'</'+tag+'>'}if(n.type==='schedule')return scheduleHtml(n);if(sanci[n.type])return `<section class="visual-editor-node visual-sanci-block" style="${st}">${sanciBlock(n)}${children}</section>`;if(isStructuredType(n.type)&&p.contentModel)return `<section class="visual-editor-node visual-structured" style="${st}">${renderElementContent(n.type,p.contentModel,n.id)}</section>`;if(n.type==='code'&&n.metadata?.codeSnippetVersion===1)
  return `<section class="visual-editor-node visual-code-container" style="${st}">${renderCodeSnippet(p.codeSnippet)}${children}</section>`;
 if(n.type==='embed'&&n.metadata?.embedContentVersion===1)
  return `<section class="visual-editor-node visual-creator-embed" style="${st}">${renderEmbedHtml(p.embedContent)}${children}</section>`;
