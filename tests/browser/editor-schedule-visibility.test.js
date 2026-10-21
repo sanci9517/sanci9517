@@ -79,8 +79,30 @@ test('hidden or hidden-parent schedules never fetch or break the public mobile p
   assert.equal(await inner.locator(`[data-node-id="${directHiddenId}"]`).count(),0);
   await preview.close();
 
-  // Wider devices must not lose data or visibility after a mobile hide.
+  // A *visible* failing data-driven block is a local error, never a page 404.
+  // Healthy schedule and unrelated content must survive the two 503 responses.
+  requests.length=0;
+  const degraded=await open(768);
+  assert.deepEqual(requests,['upcoming','next','all'],'tablet requests all three visible sources');
+  assert.equal(await degraded.locator('.visual-schedule-error[role="status"]').count(),2,'failed schedules have accessible local fallbacks');
+  assert.equal(await degraded.locator('.visual-schedule-title').count(),1,'healthy sibling schedule still renders');
+  assert.equal(await degraded.locator(`[data-node-id="${directHiddenId}"] .visual-schedule-error`).count(),1);
+  assert.equal(await degraded.locator(`[data-node-id="${nestedHiddenId}"] .visual-schedule-error`).count(),1);
+  assert.match(await degraded.locator(`[data-node-id="${textId}"]`).textContent(),/Minden nézetben látható/);
+  assert.equal(await degraded.locator('.content-error').count(),0,'a schedule 503 is never displayed as a missing page');
+  assert.equal(await degraded.locator('#page-title').textContent(),'Működő oldal');
+
+  // Failed queries must be retried after recovery, not cached as empty data.
   errorModes.clear();requests.length=0;
+  await degraded.reload();
+  await degraded.locator('.visual-schedule-title').last().waitFor();
+  assert.deepEqual(requests,['upcoming','next','all'],'the recovered page retries all schedule configurations');
+  assert.equal(await degraded.locator('.visual-schedule-error').count(),0);
+  assert.equal(await degraded.locator('.visual-schedule-title').count(),3);
+  await degraded.close();
+
+  // Wider devices must not lose data or visibility after a mobile hide.
+  requests.length=0;
   for(const width of [768,1440]){
     const page=await open(width);
     assert.equal(await page.locator(`[data-node-id="${directHiddenId}"]`).count(),1);
