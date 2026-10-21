@@ -108,11 +108,15 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
     const update=()=>{
       try{
         const next=normalizeContentField(definition,definition.type==='boolean'?input.checked:definition.type==='range'?input.valueAsNumber:input.value);
+        // Clear an earlier validation error before command() runs: its
+        // Inspector pending guard rejects edits while any field is invalid.
+        input.removeAttribute('aria-invalid');fail.textContent='';
+        dirty=false;
         save(next,input.dataset.typingGroup);
-        input.removeAttribute('aria-invalid');fail.textContent='';committed=next;dirty=false;
+        committed=next;
         if(rangeOutput){rangeOutput.value=String(next);rangeOutput.textContent=`${next}%`}
         return true;
-      }catch(error){input.setAttribute('aria-invalid','true');fail.textContent=error.message;return false}
+      }catch(error){dirty=true;input.setAttribute('aria-invalid','true');fail.textContent=error.message;return false}
     };
     const flush=()=>!composing&&(!dirty||update());
     if(canCompose){
