@@ -66,7 +66,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await openGroup('Animáció');await editor.locator('[data-property-id="animation.transition"] select').selectOption('all 180ms ease');
   await openGroup('Transzformáció');const rotation=editor.locator('[data-property-id="transform.rotate"]');await rotation.locator('input').fill('3');await rotation.locator('input').press('Tab');
   await openGroup('Háttér');await editor.locator('[data-property-id="background.gradient"] select').selectOption('linear-gradient(135deg, #7047eb 0%, #17b8a6 100%)');
-  await editor.locator('[data-property-id="background.image"] .editor-media-picker > button').click();
+  await editor.locator('[data-property-id="background.image"]').getByRole('button',{name:'Médiatár megnyitása'}).click();
   await editor.locator('[data-property-id="background.image"] .editor-media-choice').click();
   await editor.locator('[data-property-id="background.size"] select').selectOption('cover');
   await editor.locator('[data-property-id="background.position"] select').selectOption('center top');
@@ -87,7 +87,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   const setCrop=async(label,value,index=0)=>editor.getByLabel(label,{exact:true}).nth(index).evaluate((input,next)=>{input.value=String(next);input.dispatchEvent(new Event('input',{bubbles:true}))},value);
   await setCrop('Kivágás vízszintesen',18);await setCrop('Kivágás függőlegesen',82);
   assert.equal(await node(editor,'image').locator('img').evaluate(el=>getComputedStyle(el).objectPosition),'18% 82%');
-  await editor.locator('.editor-media-picker > button').click();
+  await editor.locator('.editor-media-picker').getByRole('button',{name:'Médiatár megnyitása'}).click();
   await editor.locator('.editor-media-choice').click();
   await editor.waitForFunction(id=>document.querySelector(`[data-node-id="${id}"] img`)?.getAttribute('src')==='/api/admin/media?id=6b1c2e65-e46e-4764-b234-123456789abc',ids.image);
   assert.equal(await node(editor,'image').locator('img').getAttribute('alt'),'Új képleírás','choosing an asset preserves a manually written alt');
