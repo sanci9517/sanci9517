@@ -251,12 +251,27 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
       if (!/^\d+$/.test(limitRaw) || limit < 1 || limit > 100) return error("INVALID_MEDIA_LIMIT", 400);
       const state = url.searchParams.get('state') || 'active';
       if (!['active','archived'].includes(state)) return error('INVALID_MEDIA_STATE',400);
+      const before = url.searchParams.get('before');
+      if (before !== null && !/^[0-9a-f-]{36}$/.test(before)) return error('INVALID_MEDIA_CURSOR',400);
       const clauses = ['site_id=?', state === 'archived' ? 'archived_at IS NOT NULL' : 'archived_at IS NULL'];
       const binds: (string | number)[] = [siteId];
       if (query) { clauses.push("(original_name LIKE ? ESCAPE '^' OR alt_text LIKE ? ESCAPE '^')"); const pattern = `%${escapeLike(query)}%`; binds.push(pattern, pattern); }
       if (mime) { clauses.push("mime_type=?"); binds.push(mime); }
+      if (before !== null) {
+        // Resolve the cursor inside the authorized site and requested archive state.
+        // The created_at + id pair exactly matches the stable descending sort,
+        // including images uploaded within the same database timestamp.
+        const cursor = await env.DB.prepare(
+          `SELECT created_at,id FROM media WHERE id=? AND site_id=? AND ${state === 'archived' ? 'archived_at IS NOT NULL' : 'archived_at IS NULL'} LIMIT 1`
+        ).bind(before,siteId).first<{ created_at:string; id:string }>();
+        if (!cursor) return error('INVALID_MEDIA_CURSOR',400);
+        clauses.push('(created_at < ? OR (created_at = ? AND id < ?))');
+        binds.push(cursor.created_at,cursor.created_at,cursor.id);
+      }
+      // Fetch one extra record to distinguish the final page from a full page
+      // without exposing quota details or making a separate count query.
       const rows = await env.DB.prepare(
-        `SELECT id,site_id,object_key,original_name,mime_type,size_bytes,alt_text,created_at,archived_at FROM media WHERE ${clauses.join(" AND ")} ORDER BY created_at DESC,id DESC LIMIT ${limit}`
+        `SELECT id,site_id,object_key,original_name,mime_type,size_bytes,alt_text,created_at,archived_at FROM media WHERE ${clauses.join(" AND ")} ORDER BY created_at DESC,id DESC LIMIT ${limit + 1}`
       ).bind(...binds).all<MediaRow>();
       // All stored objects count against the application quota, including archived
       // assets. This is D1 metadata usage, not provider-side R2 billing.
@@ -271,7 +286,9 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
           !Number.isSafeInteger(archivedBytes) || archivedBytes < 0 ||
           archivedBytes > usedBytes) return error("MEDIA_QUOTA_UNAVAILABLE", 503);
       return ok({
-        assets: rows.results.map(dto), maxUploadBytes: MAX_IMAGE_BYTES,
+        assets: rows.results.slice(0,limit).map(dto),
+        nextCursor: rows.results.length > limit ? rows.results[limit-1].id : null,
+        maxUploadBytes: MAX_IMAGE_BYTES,
         siteQuotaBytes: SITE_MEDIA_LIMIT_BYTES,
         quota: { usedBytes, archivedBytes,
           activeBytes: usedBytes - archivedBytes,

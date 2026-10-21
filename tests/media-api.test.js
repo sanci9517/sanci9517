@@ -54,6 +54,8 @@ async function fixture(t) {
     if(opts.id)url.searchParams.set("id",opts.id);
     if(opts.name)url.searchParams.set("name",opts.name);
     if(opts.q)url.searchParams.set("q",opts.q);
+    if(opts.before!==undefined)url.searchParams.set("before",opts.before);
+    if(opts.limit!==undefined)url.searchParams.set("limit",String(opts.limit));
     if(opts.state)url.searchParams.set("state",opts.state);
     if(opts.usage)url.searchParams.set("usage",opts.usage);
     const headers = new Headers();
@@ -99,6 +101,47 @@ test("site quota telemetry includes archived assets, excludes other sites and is
   const other=(await (await f.call("GET","editor",null,{site:"other"})).json()).data;
   assert.equal(other.quota.usedBytes,gif.length);
   assert.equal(other.quota.archivedBytes,0);
+});
+
+test("media list cursor can reach every image beyond 50 while remaining site- and state-scoped",async t=>{
+  const f=await fixture(t);
+  const assetId=index=>`00000000-0000-4000-8000-${String(index).padStart(12,'0')}`;
+  const insert=(id,name,site="site-default",archived=null)=>{
+    f.db.prepare("INSERT INTO media(id,object_key,original_name,mime_type,size_bytes,alt_text,created_at,site_id,archived_at) VALUES (?,?,?,?,?,?,?,?,?)")
+      .run(id,"objects/"+id,name,"image/png",png.length,"", "2026-10-21 10:00:00",site,archived);
+  };
+  for(let index=0;index<117;index++)insert(assetId(index),`artwork-${index}.png`);
+  const crossSite=assetId(999),archived=assetId(998);
+  insert(crossSite,"cross-site.png","other");
+  insert(archived,"archived.png","site-default","2026-10-21 10:01:00");
+  const seen=[];
+  let before=null,rounds=0;
+  do{
+    const response=await f.call("GET","editor",null,before?{before}:{});
+    assert.equal(response.status,200);
+    const {assets,nextCursor}= (await response.json()).data;
+    assert.ok(assets.length>0 && assets.length<=50);
+    seen.push(...assets.map(asset=>asset.id));
+    before=nextCursor;rounds++;
+    assert.ok(rounds<6,"cursor must terminate, not loop at timestamp ties");
+  }while(before);
+  assert.deepEqual(seen,Array.from({length:117},(_,i)=>assetId(116-i)),
+    "identical created_at timestamps must paginate by the ID tiebreaker with no duplicates or omissions");
+  assert.equal(rounds,3);
+  assert.equal((await (await f.call("GET","editor",null,{q:"artwork-11",limit:10})).json()).data.assets.length,8,
+    "a new filtered query starts from the beginning rather than an old cursor");
+  const malformed=await f.call("GET","editor",null,{before:"../private"});
+  assert.equal(malformed.status,400);
+  assert.equal((await malformed.json()).error.code,"INVALID_MEDIA_CURSOR");
+  for(const inaccessible of [crossSite,archived,assetId(997)]){
+    const result=await f.call("GET","editor",null,{before:inaccessible});
+    assert.equal(result.status,400,"cross-site, archived and missing anchors cannot be used as active cursors");
+  }
+  assert.equal((await f.call("GET","viewer",null,{before:assetId(100)})).status,403);
+  const archivedPage=(await (await f.call("GET","editor",null,{state:"archived"})).json()).data;
+  assert.equal(archivedPage.assets.length,1);
+  assert.equal(archivedPage.assets[0].id,archived);
+  assert.equal(archivedPage.nextCursor,null);
 });
 
 test("repeated image content reuses the same site asset without extra R2 storage or losing metadata",async t=>{
