@@ -47,20 +47,27 @@ export function mediaAssetPicker(selectedId,onSelect,{disabled=false}={}){
     try{
       const {assets,nextCursor:cursor}=await loadAssets(query,before);
       if(request!==latestRequest||current.hidden)return;
+      let firstNewChoice=null;
       for(const asset of assets){
         const button=document.createElement('button');button.type='button';button.className='editor-media-choice';button.disabled=disabled;
         button.setAttribute('aria-label',`${asset.name} kiválasztása`);
         const image=document.createElement('img');image.src=asset.previewUrl;image.alt='';image.loading='lazy';
         const name=document.createElement('span');name.textContent=asset.name;button.append(image,name);
         button.onclick=()=>{if(onSelect(asset.id,asset)===false)return;renderSelected(asset.id);setOpen(false);status.textContent=`Kiválasztva: ${asset.name}`;open.focus()};
+        if(!firstNewChoice)firstNewChoice=button;
         current.append(button);
       }
       shown+=assets.length;nextCursor=cursor;more.hidden=!nextCursor;more.disabled=disabled;
       status.textContent=shown?`${shown} kép betöltve`:'Nincs találat. Tölts fel képet az Admin → Médiatár oldalon.';
+      // Newly appended tiles precede the "Load more" button in DOM order.
+      // Move keyboard focus there even when this was the final page and
+      // the previously focused pagination button becomes hidden.
+      if(append)(firstNewChoice||more).focus({preventScroll:false});
     }catch(error){
       if(request!==latestRequest||current.hidden)return;
       more.hidden=!nextCursor;more.disabled=disabled;
       status.textContent=error.message||'A Médiatár betöltése nem sikerült.';
+      if(append&&!more.hidden)more.focus({preventScroll:true});
     }
   };
   search.oninput=()=>{
@@ -68,6 +75,12 @@ export function mediaAssetPicker(selectedId,onSelect,{disabled=false}={}){
     if(!current.hidden){status.textContent='Keresés…';timer=setTimeout(()=>refresh(),220)}
   };
   open.onclick=()=>{const next=current.hidden;setOpen(next);if(next)refresh()};
+  // Escape closes only this picker, preventing the global Editor shell from
+  // closing the entire Inspector sheet or discarding a draft selection.
+  root.addEventListener('keydown',event=>{
+    if(event.key!=='Escape'||current.hidden)return;
+    event.preventDefault();event.stopPropagation();setOpen(false);open.focus({preventScroll:true});
+  });
   more.onclick=()=>refresh(true);
   renderSelected(selectedId);setOpen(false);root.append(selection,open,search,current,more,status);
   return root;
