@@ -21,7 +21,11 @@
 
 > **2026-10-21 – AI-011 szerkeszthető teljes webhelygenerálás SPEC / OPEN:** a 40.6.A pontban (`docs/creator-master/part-02-of-12.md`) rögzítve a természetes nyelvből, sablonból és feltöltött tartalomból előállított, többoldalas webhely közös Page Model/Visual Editor-kompatibilis kimenete, közös RES/R2–D1 médiatár, WEB navigáció, draft/diff, külön Save/Publish, jog- és biztonsági határok és végponttól végpontig acceptance. **Nem új Editor vagy AI feature ID:** AI-011 részletesítés. A 77.44 Visual Editor jelenlegi aktív fejlesztési kurzora változatlan; AI-megvalósítás és kézi elfogadás OPEN.
 
+> **2026-10-21 – AI nélkül is szerkeszthető teljes oldalimport SPEC / OPEN:** a `76.06.A` pontban (`docs/creator-master/part-12-of-12.md`) önálló végrehajtási és elfogadási kapu lett a közös Page Model JSON/command alapú **hitelesített oldal-létrehozás/import**, Médiatár-hivatkozás, dry-run, draft-only mentés, Visual Editor teljes oda-vissza szerkeszthetőség és többoldalas recovery. **A teljes Editor kézi elfogadását megelőző integrációs cél**, nem igényli a SANCI AI-011 befejezését, és nem hoz létre második Editort, adatgazdát vagy párhuzamos publikálási folyamatot. Aktív 77.44 fejlesztési kurzor változatlan; implementáció, CI és felhasználói teszt OPEN.
+
 > **2026-10-21 — 77.44.7.A/C egyszerű szöveg IME-paritás (#211, ellenőrzés alatt):** Az Inspector sima szövegmezőin és a közvetlen vászonszerkesztésnél a `compositionend` utáni végleges mobil `input` esemény késleltetett feldolgozását és a hiányzó `compositionstart` esetén az `isComposing` jelzést egységesítjük a Rich Text útvonallal. Az első Chromium-kör 34/35 PASS volt, az új teszt a köztes tartalom túl korai megjelenítését jelezte; a regressziót javítjuk és újra futtatjuk. A módosítás **nem elfogadott**; nincs D1/R2-migráció, Save ≠ Publish. Az AI-011 újabb MASTER-kiegészítései megőrizve. A teljes Visual Editor, Production source-SHA és Android/PC kézi ellenőrzés **OPEN/UNVERIFIED**.\n\n## A MASTER 12 része
+
+## A MASTER 12 része
 
 - [1/12 – MASTER fejezetek](creator-master/part-01-of-12.md)
 - [2/12 – MASTER fejezetek](creator-master/part-02-of-12.md)
