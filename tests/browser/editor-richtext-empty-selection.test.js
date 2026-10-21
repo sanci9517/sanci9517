@@ -45,6 +45,10 @@ test('Rich Text selection restores an empty editable block without inventing tex
       const preserved=native.anchorNode===textNode&&native.anchorOffset===1;
       const validEnd=restoreSelectionOffsets(root,{from:3,to:3});
       const validEndOffset=native.anchorOffset;
+      native.setBaseAndExtent(textNode,3,textNode,1);
+      const backwardCaptured=getSelectionOffsets(root);
+      const backwardRestored=restoreSelectionOffsets(root,backwardCaptured);
+      const backwardPreserved=native.anchorOffset===3&&native.focusOffset===1;
       root.innerHTML='<p>North<br>South</p>';
       const south=root.querySelector('p').lastChild;
       const afterBreak=document.createRange();afterBreak.setStart(south,0);afterBreak.collapse(true);
@@ -56,7 +60,7 @@ test('Rich Text selection restores an empty editable block without inventing tex
       const roundtripBeforeBreak=getSelectionOffsets(root);
       const invalidPastBreak=restoreSelectionOffsets(root,{from:12,to:12});
       root.remove();
-      return {restored,caretInBlock,offsets,invalidNegative,invalidNoncollapsed,unchanged,staleOffset,staleRange,preserved,validEnd,validEndOffset,newlineOffset,restoredAfterBreak,roundtripAfterBreak,beforeBreak,roundtripBeforeBreak,invalidPastBreak};
+      return {restored,caretInBlock,offsets,invalidNegative,invalidNoncollapsed,unchanged,staleOffset,staleRange,preserved,validEnd,validEndOffset,newlineOffset,restoredAfterBreak,roundtripAfterBreak,beforeBreak,roundtripBeforeBreak,invalidPastBreak,backwardCaptured,backwardRestored,backwardPreserved};
     });
     assert.equal(result.restored,true);
     assert.equal(result.caretInBlock,true);
@@ -69,6 +73,9 @@ test('Rich Text selection restores an empty editable block without inventing tex
     assert.equal(result.preserved,true);
     assert.equal(result.validEnd,true);
     assert.equal(result.validEndOffset,3);
+    assert.deepEqual(result.backwardCaptured,{from:1,to:3,collapsed:false,backward:true});
+    assert.equal(result.backwardRestored,true);
+    assert.equal(result.backwardPreserved,true);
     assert.deepEqual(result.newlineOffset,{from:6,to:6,collapsed:true});
     assert.equal(result.restoredAfterBreak,true);
     assert.deepEqual(result.roundtripAfterBreak,{from:6,to:6,collapsed:true});
