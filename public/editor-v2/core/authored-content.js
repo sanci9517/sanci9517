@@ -142,6 +142,7 @@ export function authoredNodeHtml(node,{childrenHtml='',device='desktop',editor=f
   const imageSource=item=>typeof item.assetId==='string'&&/^[0-9a-f-]{36}$/i.test(item.assetId)?`/${editor?'api/admin/media?id=':'media/'}${encodeURIComponent(item.assetId)}`:safeSrc(item.src);
   const image=item=>{const src=imageSource(item),legacy={center:[50,50],top:[50,0],bottom:[50,100],left:[0,50],right:[100,50]}[item.focalPoint]||[50,50],x=Number.isFinite(Number(item.focalX))?Math.max(0,Math.min(100,Number(item.focalX))):legacy[0],y=Number.isFinite(Number(item.focalY))?Math.max(0,Math.min(100,Number(item.focalY))):legacy[1];return src?`<img src="${esc(src)}" alt="${esc(item.decorative?'':item.alt||'')}" loading="${item.loading==='eager'?'eager':'lazy'}" decoding="async" style="object-fit:${['cover','contain','fill','none','scale-down'].includes(item.fit)?item.fit:'cover'};object-position:${x}% ${y}%">`:`<span class="creator-media-empty">${editor?'Válassz képet a Médiatárból vagy adj meg képcímet.':'A kép nem érhető el.'}</span>`};
   const items=Array.isArray(p.items)?p.items.slice(0,40):[];
+  const carouselName=String(p.ariaLabel??'').trim().slice(0,160)||'Képgaléria';
   if(['heading','text','button','link','badge'].includes(node.type))return text;
   if(node.type==='quote')return `<div>${text}</div>${p.citation?`<cite>${esc(p.citation)}</cite>`:''}`;
   if(node.type==='icon')return `<span aria-hidden="true">${({star:'★',heart:'♥',play:'▶',check:'✓',arrow:'➜',bolt:'ϟ',camera:'📷',music:'♫',globe:'◎',mail:'✉'})[p.icon]||'★'}</span>`;
@@ -154,7 +155,7 @@ export function authoredNodeHtml(node,{childrenHtml='',device='desktop',editor=f
   if(node.type==='table')return `<div class="creator-table-scroll" role="region" aria-label="${esc(p.caption||'Táblázat')}" tabindex="0"><table>${p.caption?`<caption>${esc(p.caption)}</caption>`:''}<tbody>${(Array.isArray(p.rows)?p.rows:[]).slice(0,100).map((row,index)=>`<tr>${(Array.isArray(row)?row:[]).slice(0,16).map(cell=>`<${p.header&&index===0?'th scope="col"':'td'}>${esc(cell)}</${p.header&&index===0?'th':'td'}>`).join('')}</tr>`).join('')}</tbody></table></div>`;
   if(node.type==='tabs')return `<div class="creator-tabs"><div role="tablist" aria-label="Fülek">${items.map((item,index)=>`<button type="button" role="tab" id="${id}-tab-${index}" aria-controls="${id}-panel-${index}" aria-selected="${index===0}" tabindex="${index===0?'0':'-1'}">${esc(item.title||'Fül '+(index+1))}</button>`).join('')}</div>${items.map((item,index)=>`<div role="tabpanel" id="${id}-panel-${index}" aria-labelledby="${id}-tab-${index}" tabindex="0"${index?' hidden':''}>${esc(item.text)}</div>`).join('')}</div>`;
   if(['accordion','dropdown'].includes(node.type))return `<div class="creator-accordion">${items.map(item=>`<details><summary>${esc(item.title||'Részletek')}</summary><div>${esc(item.text)}</div></details>`).join('')}</div>`;
-  if(['gallery','carousel'].includes(node.type))return `<div class="creator-${node.type}"${node.type==='gallery'?` style="grid-template-columns:repeat(${device==='mobile'?1:device==='tablet'?2:[2,3,4].includes(Number(p.columns))?Number(p.columns):3},minmax(0,1fr))"`:' tabindex="0" role="region" aria-roledescription="képgaléria"'}>${items.map(item=>`<figure><button type="button" class="creator-image-zoom" data-lightbox-src="${esc(imageSource(item))}" data-lightbox-alt="${esc(item.alt||item.caption||'')}" aria-label="${esc('Kép nagyítása: '+(item.caption||item.alt||'kép'))}">${image(item)}</button>${item.caption?`<figcaption>${esc(item.caption)}</figcaption>`:''}</figure>`).join('')}</div>${node.type==='carousel'?'<div class="creator-carousel-controls"><button type="button" data-carousel-step="-1" aria-label="Előző kép">←</button><button type="button" data-carousel-step="1" aria-label="Következő kép">→</button></div>':''}`;
+  if(['gallery','carousel'].includes(node.type))return `<div class="creator-${node.type}"${node.type==='gallery'?` style="grid-template-columns:repeat(${device==='mobile'?1:device==='tablet'?2:[2,3,4].includes(Number(p.columns))?Number(p.columns):3},minmax(0,1fr))"`:' tabindex="0" role="region" aria-roledescription="képgaléria" aria-label="${esc(carouselName)}"'}>${items.map(item=>`<figure><button type="button" class="creator-image-zoom" data-lightbox-src="${esc(imageSource(item))}" data-lightbox-alt="${esc(item.alt||item.caption||'')}" aria-label="${esc('Kép nagyítása: '+(item.caption||item.alt||'kép'))}">${image(item)}</button>${item.caption?`<figcaption>${esc(item.caption)}</figcaption>`:''}</figure>`).join('')}</div>${node.type==='carousel'?'<div class="creator-carousel-controls"><button type="button" data-carousel-step="-1" aria-label="Előző kép">←</button><button type="button" data-carousel-step="1" aria-label="Következő kép">→</button></div>':''}`;
   if(node.type==='code')return `<pre${p.wrap?' class="creator-code-wrap"':''}><code>${esc(p.code)}</code></pre>`;
   if(node.type==='tooltip')return `<span class="creator-tooltip"><button type="button" aria-describedby="${id}-tip">${text}</button><span role="tooltip" id="${id}-tip">${esc(p.description)}</span></span>`;
   if(node.type==='divider')return '<hr>';
@@ -164,8 +165,26 @@ export function authoredNodeHtml(node,{childrenHtml='',device='desktop',editor=f
 export function initContentInteractions(root){
   if(root.dataset.contentInteractions==='1')return;root.dataset.contentInteractions='1';
   const activate=tab=>{const group=tab.closest('.creator-tabs');if(!group)return;for(const button of group.querySelectorAll('[role="tab"]')){const selected=button===tab;button.setAttribute('aria-selected',String(selected));button.tabIndex=selected?0:-1;const panel=group.querySelector('[id="'+button.getAttribute('aria-controls')+'"]');if(panel)panel.hidden=!selected}};
+  const scrollCarousel=(track,key)=>{
+    if(!track)return;
+    const behavior=matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth';
+    if(key==='Home'||key==='End'){
+      track.scrollTo({left:key==='Home'?0:track.scrollWidth,behavior});
+    }else{
+      track.scrollBy({left:(key==='ArrowRight'?1:-1)*track.clientWidth,behavior});
+    }
+  };
   root.addEventListener('click',event=>{const zoom=event.target.closest('[data-lightbox-src]');if(zoom&&root.contains(zoom)&&safeSrc(zoom.dataset.lightboxSrc)){
     const dialog=document.createElement('dialog');dialog.className='creator-lightbox';dialog.setAttribute('aria-label','Kép előnézete');const close=document.createElement('button');close.type='button';close.textContent='Bezárás';const img=document.createElement('img');img.src=safeSrc(zoom.dataset.lightboxSrc);img.alt=zoom.dataset.lightboxAlt||'';dialog.append(close,img);document.body.append(dialog);close.onclick=()=>dialog.close();dialog.onclick=event=>{if(event.target===dialog)dialog.close()};dialog.onclose=()=>{const active=document.activeElement,restore=active===document.body||dialog.contains(active)||active===zoom;dialog.remove();if(restore)zoom.focus()};dialog.showModal();
-  }const tab=event.target.closest('[role="tab"]');if(tab&&root.contains(tab))activate(tab);const step=event.target.closest('[data-carousel-step]');if(step&&root.contains(step)){const track=step.parentElement.previousElementSibling;track?.scrollBy({left:Number(step.dataset.carouselStep)*track.clientWidth,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})}});
+  }const tab=event.target.closest('[role="tab"]');if(tab&&root.contains(tab))activate(tab);const step=event.target.closest('[data-carousel-step]');if(step&&root.contains(step)){const track=step.parentElement.previousElementSibling;scrollCarousel(track,Number(step.dataset.carouselStep)>0?'ArrowRight':'ArrowLeft')}});
+  // The carousel region is intentionally keyboard-focusable. Arrow keys and
+  // Home/End must operate the same viewport used by its visible buttons;
+  // do not hijack keys while a nested image/lightbox button is focused.
+  root.addEventListener('keydown',event=>{
+    const track=event.target.closest('.creator-carousel[role="region"]');
+    if(!track||!root.contains(track)||event.target!==track||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+    event.preventDefault();
+    scrollCarousel(track,event.key);
+  });
   root.addEventListener('keydown',event=>{const tab=event.target.closest('[role="tab"]');if(!tab||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;const tabs=[...tab.closest('[role="tablist"]').querySelectorAll('[role="tab"]')],index=tabs.indexOf(tab);const next=tabs[event.key==='Home'?0:event.key==='End'?tabs.length-1:(index+(event.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length];event.preventDefault();activate(next);next.focus()});
 }
