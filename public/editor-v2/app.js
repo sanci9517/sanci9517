@@ -210,7 +210,13 @@ function renderPlainTextEditor(node){
   const editor=document.createElement('textarea');editor.id='plain-text-content';editor.className='plain-text-editor';editor.dataset.textNodeId=node.id;editor.setAttribute('aria-label','Szöveg tartalma');editor.value=node.props?.text??node.props?.content??'';editor.disabled=Boolean(node.locked);applyTextSurfaceStyle(editor,node);
   const typingGroup=crypto.randomUUID();let composing=false,dirty=false,compositionRevision=0;
   const flush=()=>{if(composing)return false;if(!dirty)return true;const saved=commitTextSurface(node.id,editor,typingGroup);if(saved)dirty=false;return saved};
-  editor.onfocus=()=>{flushRichTextDraft=flush};editor.oninput=event=>{dirty=true;flushRichTextDraft=flush;if(event.isComposing)composing=true;if(!composing)flush()};
+  editor.onfocus=()=>{flushRichTextDraft=flush};editor.oninput=event=>{
+    dirty=true;flushRichTextDraft=flush;
+    if(event.isComposing){composing=true;return}
+    // A confirmed non-composing input can be the final replacement after
+    // compositionend, or the only final signal on some mobile keyboards.
+    composing=false;flush();
+  };
   editor.oncompositionstart=()=>{compositionRevision++;composing=true};
   editor.oncompositionend=()=>{
     dirty=true;const revision=compositionRevision;
@@ -401,7 +407,11 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
       c.classList.add('plain-text-inline-surface');c.contentEditable='plaintext-only';c.setAttribute('role','textbox');c.setAttribute('aria-label','Szöveg közvetlen szerkesztése');
       const typingGroup=crypto.randomUUID();let composing=false,dirty=false,compositionRevision=0;
       const flush=()=>{if(composing)return false;if(!dirty)return true;const saved=commitTextSurface(id,c,typingGroup);if(saved)dirty=false;return saved};
-      c.onfocus=()=>{flushRichTextDraft=flush};c.oninput=event=>{dirty=true;flushRichTextDraft=flush;if(event.isComposing)composing=true;if(!composing)flush()};c.onblur=flush;
+      c.onfocus=()=>{flushRichTextDraft=flush};c.oninput=event=>{
+        dirty=true;flushRichTextDraft=flush;
+        if(event.isComposing){composing=true;return}
+        composing=false;flush();
+      };c.onblur=flush;
       c.oncompositionstart=()=>{compositionRevision++;composing=true};
       c.oncompositionend=()=>{
         dirty=true;const revision=compositionRevision;
