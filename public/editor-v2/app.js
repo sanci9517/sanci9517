@@ -234,14 +234,26 @@ function beginRichTextEditing(id){
   render();
   requestAnimationFrame(()=>{const editor=canvas.querySelector('.node[data-node-id="'+CSS.escape(id)+'"] .richtext-inline-surface,.node[data-node-id="'+CSS.escape(id)+'"] .plain-text-inline-surface');if(!editor)return;editor.focus();const block=editor.querySelector('[data-rich-block]');if(block&&!editor.textContent.trim()){const range=document.createRange();range.selectNodeContents(block);range.collapse(false);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range)}});
 }
-function openRichTextFormatting(id){
+function captureRichTextBookmark(id,surface){
+  const offsets=getSelectionOffsets(surface);if(!offsets)return false;
+  richTextBookmark={nodeId:id,range:getRichTextBlockSelection(surface),formatRange:getRichTextFormattingSelection(surface),
+    blockIndex:getRichTextActiveBlockIndex(surface),transformSelection:getRichTextBlockTransformSelection(surface),selectionOffsets:{...offsets},
+    source:surface.classList.contains('richtext-inline-surface')?'canvas':'inspector'};
+  return true;
+}
+function openRichTextFormatting(id,{focusLink=false}={}){
   if(flushRichTextDraft?.()===false)return;
+  const canvasEditor=canvas.querySelector(`.node[data-node-id="${CSS.escape(id)}"] .richtext-inline-surface`);
+  if(canvasEditor)captureRichTextBookmark(id,canvasEditor);
   inlineEditingId=window.innerWidth>850?id:null;flushRichTextDraft=null;
   setSelection(state,[id],id);
   inspectorTab='content';
   document.querySelectorAll('.inspector-tabs button').forEach((button,index)=>button.classList.toggle('active',index===1));
   render();window.sanciEditor?.openPanel?.('right');
-  requestAnimationFrame(()=>inspector.querySelector('.richtext-editor-surface')?.focus());
+  requestAnimationFrame(()=>{
+    const editor=inspector.querySelector('.richtext-editor-surface');if(!editor)return;
+    if(focusLink)editor.closest('.richtext-editor')?.querySelector('.richtext-link-controls input')?.focus({preventScroll:true});
+  });
 }
 function renderNode(currentPage,id,managed=false){const node=getNode(currentPage,id);if(!node)return null;managed=managed||isManagedLayout(node)||isAuthoredContent(node);const el=document.createElement('div');el.className=`node ${state.selection.ids.includes(id)?'selected':''}`;el.classList.toggle('managed-layout',managed);el.dataset.nodeId=id;el.dataset.device=state.viewport.device;if(isAuthoredContent(node)){el.classList.add('creator-node');el.dataset.contentType=node.type}if(node.metadata?.stateVersion===1){el.classList.add('creator-state-enabled');if(state.selection.primaryId===id&&statePreview!=='none')el.dataset.editorState=statePreview;el.tabIndex=0}for(const [key,value] of Object.entries(contentAttributes(node)))if(!['href','target','rel','type'].includes(key))el.setAttribute(key,value);applyNodeStyle(el,node,state.viewport.device);
  const validHex=value=>typeof value==='string'&&/^#(?:[a-f0-9]{3}|[a-f0-9]{6})$/i.test(value)?value:'';
@@ -326,6 +338,11 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
           composing=false;
           if(c.isConnected&&inlineEditingId===id)save();
         });
+      };
+      c.onkeydown=event=>{
+        if((event.ctrlKey||event.metaKey)&&!event.altKey&&event.key.toLowerCase()==='k'){
+          event.preventDefault();openRichTextFormatting(id,{focusLink:true});
+        }
       };
       c.onpaste=event=>{event.preventDefault();try{const imported=normalizeRichText(importRichTextClipboard({html:event.clipboardData?.getData('text/html')||'',text:event.clipboardData?.getData('text/plain')||''}));if(pasteRichTextDocument(c,imported))c.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'insertFromPaste'}))}catch(error){setStatus(error.message)}};
       c.onblur=()=>{if(inlineEditingId===id)save()};
@@ -903,7 +920,10 @@ function renderInspector(){
           savedBlockIndex=richTextBookmark?.nodeId===node.id?richTextBookmark.blockIndex:null,
           savedBlockTransformSelection=richTextBookmark?.nodeId===node.id?richTextBookmark.transformSelection:null,composing=false,compositionRevision=0,
           savedSelectionOffsets=richTextBookmark?.nodeId===node.id?richTextBookmark.selectionOffsets??null:null;
-        const typingGroup=crypto.randomUUID();let formattingSurface=editor;
+        const typingGroup=crypto.randomUUID();
+        const bookmarkedCanvas=richTextBookmark?.nodeId===node.id&&richTextBookmark.source==='canvas'
+          ?canvas.querySelector(`.node[data-node-id="${CSS.escape(node.id)}"] .richtext-inline-surface`):null;
+        let formattingSurface=bookmarkedCanvas||editor;
         function refreshFormattingControls(range,surface){
           const model=richTextEditorToDocument(surface),format=readRichTextSelectionFormatting(model,range);
           const native=window.getSelection(),anchor=native?.anchorNode;
@@ -945,7 +965,7 @@ function renderInspector(){
             savedBlockIndex=index;const active=richTextEditorToDocument(surface).blocks[index];
             if(active){blockSelect.value=active.type==='heading'?`heading-${active.level||1}`:active.type;blockSelect.disabled=active.type==='table';alignmentSelect.value=active.align||'left';alignmentSelect.disabled=!['paragraph','heading','quote'].includes(active.type)}
           }
-          richTextBookmark={nodeId:node.id,range:savedLinkSelection,formatRange:savedFormatSelection,blockIndex:savedBlockIndex,transformSelection:savedBlockTransformSelection,selectionOffsets:savedSelectionOffsets};
+          richTextBookmark={nodeId:node.id,range:savedLinkSelection,formatRange:savedFormatSelection,blockIndex:savedBlockIndex,transformSelection:savedBlockTransformSelection,selectionOffsets:savedSelectionOffsets,source:surface===canvasEditor?'canvas':'inspector'};
           refreshFormattingControls(format,surface);
         };
         // Preserve a word selection when toolbar focus or DOM re-render removes the native Range.
@@ -1143,8 +1163,9 @@ function renderInspector(){
             // Returning from a URL input is a caret operation. Prefer the
             // exact text-offset bookmark over a structural formatting range,
             // which may no longer match after an Inspector rerender.
-            editor.focus({preventScroll:true});
-            if(!savedSelectionOffsets||!restoreSelectionOffsets(editor,savedSelectionOffsets))restoreFormattingSelection();
+            const target=formattingSurface?.isConnected?formattingSurface:editor;
+            target.focus({preventScroll:true});
+            if(!savedSelectionOffsets||!restoreSelectionOffsets(target,savedSelectionOffsets))restoreFormattingSelection();
           }else if(event.key==='Enter'){
             event.preventDefault();
             changeLink(url.value);
@@ -1161,10 +1182,11 @@ function renderInspector(){
         requestAnimationFrame(()=>{
           if(!editor.isConnected)return;
           if(richTextBookmark?.nodeId===node.id&&savedSelectionOffsets){
-            editor.focus({preventScroll:true});
-            restoreSelectionOffsets(editor,savedSelectionOffsets);
+            const target=formattingSurface?.isConnected?formattingSurface:editor;
+            target.focus({preventScroll:true});
+            restoreSelectionOffsets(target,savedSelectionOffsets);
           }
-          refreshFormattingControls(null,editor);
+          refreshFormattingControls(null,formattingSurface?.isConnected?formattingSurface:editor);
         });
         inspector.append(section);
       }else if(textTypes.has(node.type))inspector.append(renderPlainTextEditor(node));

@@ -130,6 +130,22 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
   await publicTab.goto(base+'/p/test');
   assert.equal(await publicTab.locator('.visual-text a strong').textContent(),'world');
   assert.match(await publicTab.locator('.visual-text a').getAttribute('href'),/\/p\/home$/);
+  // Ctrl/Cmd+K is also available while the creator is typing directly on the
+  // canvas. Opening the Inspector must not turn that selection into a second,
+  // unrelated editing context; Escape returns to the same canvas surface.
+  await tab.setViewportSize({width:1366,height:900});await openEditor();
+  await tab.locator(`.node[data-node-id="${nodeId}"] .canvas-edit-richtext`).click();
+  const canvasInline=tab.locator(`.node[data-node-id="${nodeId}"] .richtext-inline-surface`);
+  await canvasInline.evaluate(el=>{
+    const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);let text;while(text=walker.nextNode())if(text.nodeValue.includes('world'))break;
+    const start=text.nodeValue.indexOf('world'),range=document.createRange();range.setStart(text,start);range.setEnd(text,start+5);
+    const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);el.focus();
+  });
+  await canvasInline.press('Control+k');
+  await shortcutUrl.waitFor();
+  assert.equal(await shortcutUrl.evaluate(el=>document.activeElement===el),true);
+  await shortcutUrl.press('Escape');
+  await tab.waitForFunction(id=>{const surface=document.querySelector(`.node[data-node-id="${id}"] .richtext-inline-surface`);return document.activeElement===surface&&document.getSelection().toString()==='world'},nodeId);
   await tab.setViewportSize({width:390,height:800});
   await openEditor();
   const urlField=tab.locator('.richtext-link-controls input');
