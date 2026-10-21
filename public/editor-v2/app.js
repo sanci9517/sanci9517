@@ -1102,6 +1102,11 @@ function renderInspector(){
         editor.addEventListener('focus',()=>{flushRichTextDraft=saveRich});
         editor.addEventListener('keydown',event=>{
           if(!(event.ctrlKey||event.metaKey)||event.altKey)return;
+          if(event.key.toLowerCase()==='k'){
+            event.preventDefault();rememberSelection();
+            url.focus({preventScroll:true});
+            return;
+          }
           const mark={b:'bold',i:'italic',u:'underline'}[event.key.toLowerCase()];
           if(!mark)return;
           event.preventDefault();rememberSelection();applyMarkActions.get(mark)?.();
