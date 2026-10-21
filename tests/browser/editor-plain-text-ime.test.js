@@ -61,19 +61,23 @@ test('plain text mobile IME final input is the only committed value in Inspector
     await source.waitFor();
     const before=await source.evaluate((el,{nodeId,mode})=>{
       el.focus();
+      const mirror=()=>document.querySelector(`.node[data-node-id="${nodeId}"] > .node-content`)?.textContent;
+      const initialMirror=mode==='inspector'?mirror():null;
+      const hasHandler=typeof el.oncompositionstart==='function';
       el.dispatchEvent(new CompositionEvent('compositionstart',{bubbles:true,data:''}));
+      const afterStart=mode==='inspector'?mirror():null;
       if(el instanceof HTMLTextAreaElement)el.value='Vé';else el.textContent='Vé';
       el.dispatchEvent(new InputEvent('input',{bubbles:true,isComposing:true,inputType:'insertCompositionText',data:'Vé'}));
+      const afterPartial=mode==='inspector'?mirror():null;
       el.dispatchEvent(new CompositionEvent('compositionend',{bubbles:true,data:'Végleges'}));
       // The final IME replacement is delivered after compositionend, before paint.
-      const mirrorBeforeFinal=mode==='inspector'
-        ?document.querySelector(`.node[data-node-id="${nodeId}"] > .node-content`)?.textContent:null;
+      const mirrorBeforeFinal=mode==='inspector'?mirror():null;
       if(el instanceof HTMLTextAreaElement)el.value='Végleges';else el.textContent='Végleges';
       el.dispatchEvent(new InputEvent('input',{bubbles:true,isComposing:false,inputType:'insertText',data:'Végleges'}));
-      return {mirrorBeforeFinal,focused:document.activeElement===el};
+      return {initialMirror,hasHandler,afterStart,afterPartial,mirrorBeforeFinal,focused:document.activeElement===el};
     },{nodeId,mode});
     if(mode==='inspector')assert.equal(before.mirrorBeforeFinal,'Base',
-      'the canvas must not show an unfinished composition as the saved draft');
+      'the canvas must not show an unfinished composition as the saved draft: '+JSON.stringify(before));
     assert.equal(before.focused,true);
     await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
     assert.equal(await node.locator('.plain-text-content-surface').textContent(),'Végleges');
