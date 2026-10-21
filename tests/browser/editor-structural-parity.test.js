@@ -71,7 +71,7 @@ test('each authored structural type preserves its semantics and responsive layou
   const mobileToggle=editor.getByRole('checkbox',{name:'Látható: mobile'});
   await mobileToggle.uncheck();
   assert.equal(await parent.getAttribute('data-visibility'),'hidden','hidden parent stays selectable on Canvas');
-  assert.equal(await parent.locator('> .node-head > .node-visibility-indicator').count(),1,'Canvas explicitly marks the hidden element');
+  assert.equal(await parent.locator(':scope > .node-head > .node-visibility-indicator').count(),1,'Canvas explicitly marks the hidden element');
   assert.equal(await child.getAttribute('data-visibility'),'hidden','hidden parent marks its descendants');
   await editor.locator('#undo').click();
   assert.equal(await parent.getAttribute('data-visibility'),null,'undo restores Canvas visibility');
