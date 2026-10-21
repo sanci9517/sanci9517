@@ -72,8 +72,16 @@ export function restoreSelectionOffsets(editor,selection){
   const range=document.createRange();range.setStart(start.node,start.offset);range.setEnd(end.node,end.offset);
   const native=window.getSelection();if(!native)return false;
   native.removeAllRanges();native.addRange(range);
-  if(selection.backward&&!range.collapsed&&typeof native.setBaseAndExtent==='function'){
-    native.setBaseAndExtent(end.node,end.offset,start.node,start.offset);
+  if(selection.backward&&!range.collapsed){
+    // Chromium exposes setBaseAndExtent, while some mobile WebKit versions
+    // expose only collapse/extend. Both retain the user's backward anchor
+    // and focus direction across an Inspector or toolbar re-render.
+    if(typeof native.setBaseAndExtent==='function'){
+      native.setBaseAndExtent(end.node,end.offset,start.node,start.offset);
+    }else if(typeof native.extend==='function'){
+      native.collapse(end.node,end.offset);
+      native.extend(start.node,start.offset);
+    }
   }
   return true;
 }
