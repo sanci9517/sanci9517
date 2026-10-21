@@ -1133,6 +1133,23 @@ function renderInspector(){
           if(richTextDirty&&!section.contains(event.relatedTarget))saveRich();
         });
         url.onfocus=()=>rememberSelection();
+        url.onkeydown=event=>{
+          if(event.key==='Escape'){
+            event.preventDefault();
+            // The mobile shell also uses Escape to close its panels. This
+            // field owns Escape while a Rich Text link edit is in progress:
+            // keep the Inspector mounted so the exact selection can return.
+            event.stopPropagation();
+            // Returning from a URL input is a caret operation. Prefer the
+            // exact text-offset bookmark over a structural formatting range,
+            // which may no longer match after an Inspector rerender.
+            editor.focus({preventScroll:true});
+            if(!savedSelectionOffsets||!restoreSelectionOffsets(editor,savedSelectionOffsets))restoreFormattingSelection();
+          }else if(event.key==='Enter'){
+            event.preventDefault();
+            changeLink(url.value);
+          }
+        };
         const pagePicker=pageLinkPicker(pages,url);pagePicker.onpointerdown=rememberSelection;pagePicker.style.gridColumn='1 / -1';linkControls.append(url,pagePicker,addLink,removeLink,linkFeedback);
         const clearFormat=document.createElement('button');clearFormat.type='button';clearFormat.textContent='Alapformázás';clearFormat.setAttribute('aria-label','Kijelölt szöveg formázásának törlése');clearFormat.title='Az elem alapstílusának visszaállítása a kijelölt szavakon. A szöveg és a linkek megmaradnak.';
         clearFormat.onpointerdown=event=>{rememberSelection();event.preventDefault()};
