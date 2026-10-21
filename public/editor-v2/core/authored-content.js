@@ -15,8 +15,8 @@ export const CONTENT_FIELDS=Object.freeze({
   image:imageFields,video:[...externalMedia,field('poster','Külső borítókép címe','media-url',{help:'Meglévő HTTPS vagy belső kép-URL. A Médiatárból választott borítókép elsőbbséget kap.'}),field('posterAssetId','Borítókép a Médiatárból','asset',{help:'A videó továbbra is URL-ből játszódik le; csak a borítókép kerül a privát kép-Médiatárból az oldalra.'}),field('controls','Lejátszó vezérlők','boolean'),field('muted','Némítás','boolean'),field('loop','Ismétlés','boolean'),field('autoplay','Automatikus indítás némítva','boolean')],audio:[...externalMedia,field('controls','Lejátszó vezérlők','boolean'),field('loop','Ismétlés','boolean')],
   list:[field('ordered','Számozott lista','boolean'),field('items','Listaelemek','repeater',{itemFields:[text,href]})],
   table:[field('caption','Táblázat címe'),field('header','Az első sor fejléc','boolean'),field('rows','Táblázat sorai','table')],
-  tabs:[field('items','Fülek','repeater',{itemFields:[field('title','Fül címe'),text]})],accordion:[field('items','Lenyitható részek','repeater',{itemFields:[field('title','Rész címe'),text]})],dropdown:[field('items','Lenyitható részek','repeater',{itemFields:[field('title','Rész címe'),text]})],
-  gallery:[field('columns','Oszlopok asztalon','select',{options:{2:'2 oszlop',3:'3 oszlop',4:'4 oszlop'}}),field('items','Képek','repeater',{itemFields:[...media,field('alt','Képleírás'),field('caption','Képaláírás'),field('fit','Kép illesztése','select',{options:{cover:'Kitöltés, vágással',contain:'Teljes kép'}}),...focalFields]})],
+  tabs:[field('ariaLabel','Fülcsoport elnevezése','text',{max:160}),field('items','Fülek','repeater',{itemFields:[field('title','Fül címe'),text]})],accordion:[field('items','Lenyitható részek','repeater',{itemFields:[field('title','Rész címe'),text]})],dropdown:[field('items','Lenyitható részek','repeater',{itemFields:[field('title','Rész címe'),text]})],
+  gallery:[field('ariaLabel','Képgaléria elnevezése','text',{max:160}),field('columns','Oszlopok asztalon','select',{options:{2:'2 oszlop',3:'3 oszlop',4:'4 oszlop'}}),field('items','Képek','repeater',{itemFields:[...media,field('alt','Képleírás'),field('caption','Képaláírás'),field('fit','Kép illesztése','select',{options:{cover:'Kitöltés, vágással',contain:'Teljes kép'}}),...focalFields]})],
   carousel:[field('ariaLabel','Galéria elnevezése'),field('items','Lapozható képek','repeater',{itemFields:[...media,field('alt','Képleírás'),field('caption','Képaláírás'),field('fit','Kép illesztése','select',{options:{cover:'Kitöltés, vágással',contain:'Teljes kép'}}),...focalFields]})],
   code:[field('code','Megjelenített kód','textarea',{max:20000}),field('wrap','Hosszú sorok tördelése','boolean')],tooltip:[field('text','Gomb felirata'),field('description','Magyarázat','textarea',{max:2000})],divider:[],spacer:[]
 });
@@ -143,6 +143,8 @@ export function authoredNodeHtml(node,{childrenHtml='',device='desktop',editor=f
   const image=item=>{const src=imageSource(item),legacy={center:[50,50],top:[50,0],bottom:[50,100],left:[0,50],right:[100,50]}[item.focalPoint]||[50,50],x=Number.isFinite(Number(item.focalX))?Math.max(0,Math.min(100,Number(item.focalX))):legacy[0],y=Number.isFinite(Number(item.focalY))?Math.max(0,Math.min(100,Number(item.focalY))):legacy[1];return src?`<img src="${esc(src)}" alt="${esc(item.decorative?'':item.alt||'')}" loading="${item.loading==='eager'?'eager':'lazy'}" decoding="async" style="object-fit:${['cover','contain','fill','none','scale-down'].includes(item.fit)?item.fit:'cover'};object-position:${x}% ${y}%">`:`<span class="creator-media-empty">${editor?'Válassz képet a Médiatárból vagy adj meg képcímet.':'A kép nem érhető el.'}</span>`};
   const items=Array.isArray(p.items)?p.items.slice(0,40):[];
   const carouselName=String(p.ariaLabel??'').trim().slice(0,160)||'Képgaléria';
+  const galleryName=String(p.ariaLabel??'').trim().slice(0,160)||'Képek';
+  const tablistName=String(p.ariaLabel??'').trim().slice(0,160)||'Fülek';
   if(['heading','text','button','link','badge'].includes(node.type))return text;
   if(node.type==='quote')return `<div>${text}</div>${p.citation?`<cite>${esc(p.citation)}</cite>`:''}`;
   if(node.type==='icon')return `<span aria-hidden="true">${({star:'★',heart:'♥',play:'▶',check:'✓',arrow:'➜',bolt:'ϟ',camera:'📷',music:'♫',globe:'◎',mail:'✉'})[p.icon]||'★'}</span>`;
@@ -153,9 +155,9 @@ export function authoredNodeHtml(node,{childrenHtml='',device='desktop',editor=f
   }
   if(node.type==='list')return `<${p.ordered?'ol':'ul'}>${items.map(item=>`<li>${safeHref(item.href)?`<a href="${esc(safeHref(item.href))}">${esc(item.text)}</a>`:esc(item.text)}</li>`).join('')}</${p.ordered?'ol':'ul'}>`;
   if(node.type==='table')return `<div class="creator-table-scroll" role="region" aria-label="${esc(p.caption||'Táblázat')}" tabindex="0"><table>${p.caption?`<caption>${esc(p.caption)}</caption>`:''}<tbody>${(Array.isArray(p.rows)?p.rows:[]).slice(0,100).map((row,index)=>`<tr>${(Array.isArray(row)?row:[]).slice(0,16).map(cell=>`<${p.header&&index===0?'th scope="col"':'td'}>${esc(cell)}</${p.header&&index===0?'th':'td'}>`).join('')}</tr>`).join('')}</tbody></table></div>`;
-  if(node.type==='tabs')return `<div class="creator-tabs"><div role="tablist" aria-label="Fülek">${items.map((item,index)=>`<button type="button" role="tab" id="${id}-tab-${index}" aria-controls="${id}-panel-${index}" aria-selected="${index===0}" tabindex="${index===0?'0':'-1'}">${esc(item.title||'Fül '+(index+1))}</button>`).join('')}</div>${items.map((item,index)=>`<div role="tabpanel" id="${id}-panel-${index}" aria-labelledby="${id}-tab-${index}" tabindex="0"${index?' hidden':''}>${esc(item.text)}</div>`).join('')}</div>`;
+  if(node.type==='tabs')return `<div class="creator-tabs"><div role="tablist" aria-label="${esc(tablistName)}">${items.map((item,index)=>`<button type="button" role="tab" id="${id}-tab-${index}" aria-controls="${id}-panel-${index}" aria-selected="${index===0}" tabindex="${index===0?'0':'-1'}">${esc(item.title||'Fül '+(index+1))}</button>`).join('')}</div>${items.map((item,index)=>`<div role="tabpanel" id="${id}-panel-${index}" aria-labelledby="${id}-tab-${index}" tabindex="0"${index?' hidden':''}>${esc(item.text)}</div>`).join('')}</div>`;
   if(['accordion','dropdown'].includes(node.type))return `<div class="creator-accordion">${items.map(item=>`<details><summary>${esc(item.title||'Részletek')}</summary><div>${esc(item.text)}</div></details>`).join('')}</div>`;
-  if(['gallery','carousel'].includes(node.type))return `<div class="creator-${node.type}"${node.type==='gallery'?` style="grid-template-columns:repeat(${device==='mobile'?1:device==='tablet'?2:[2,3,4].includes(Number(p.columns))?Number(p.columns):3},minmax(0,1fr))"`:` tabindex="0" role="region" aria-roledescription="képgaléria" aria-label="${esc(carouselName)}"`}>${items.map(item=>`<figure><button type="button" class="creator-image-zoom" data-lightbox-src="${esc(imageSource(item))}" data-lightbox-alt="${esc(item.alt||item.caption||'')}" aria-label="${esc('Kép nagyítása: '+(item.caption||item.alt||'kép'))}">${image(item)}</button>${item.caption?`<figcaption>${esc(item.caption)}</figcaption>`:''}</figure>`).join('')}</div>${node.type==='carousel'?'<div class="creator-carousel-controls"><button type="button" data-carousel-step="-1" aria-label="Előző kép">←</button><button type="button" data-carousel-step="1" aria-label="Következő kép">→</button></div>':''}`;
+  if(['gallery','carousel'].includes(node.type))return `<div class="creator-${node.type}"${node.type==='gallery'?` role="region" aria-label="${esc(galleryName)}" style="grid-template-columns:repeat(${device==='mobile'?1:device==='tablet'?2:[2,3,4].includes(Number(p.columns))?Number(p.columns):3},minmax(0,1fr))"`:` tabindex="0" role="region" aria-roledescription="képgaléria" aria-label="${esc(carouselName)}"`}>${items.map(item=>`<figure><button type="button" class="creator-image-zoom" data-lightbox-src="${esc(imageSource(item))}" data-lightbox-alt="${esc(item.alt||item.caption||'')}" data-lightbox-caption="${esc(item.caption||'')}" aria-haspopup="dialog" aria-label="${esc('Kép nagyítása: '+(item.caption||item.alt||'kép'))}">${image(item)}</button>${item.caption?`<figcaption>${esc(item.caption)}</figcaption>`:''}</figure>`).join('')}</div>${node.type==='carousel'?'<div class="creator-carousel-controls"><button type="button" data-carousel-step="-1" aria-label="Előző kép">←</button><button type="button" data-carousel-step="1" aria-label="Következő kép">→</button></div>':''}`;
   if(node.type==='code')return `<pre${p.wrap?' class="creator-code-wrap"':''}><code>${esc(p.code)}</code></pre>`;
   if(node.type==='tooltip')return `<span class="creator-tooltip"><button type="button" aria-describedby="${id}-tip">${text}</button><span role="tooltip" id="${id}-tip">${esc(p.description)}</span></span>`;
   if(node.type==='divider')return '<hr>';
@@ -175,7 +177,47 @@ export function initContentInteractions(root){
     }
   };
   root.addEventListener('click',event=>{const zoom=event.target.closest('[data-lightbox-src]');if(zoom&&root.contains(zoom)&&safeSrc(zoom.dataset.lightboxSrc)){
-    const dialog=document.createElement('dialog');dialog.className='creator-lightbox';dialog.setAttribute('aria-label','Kép előnézete');const close=document.createElement('button');close.type='button';close.textContent='Bezárás';const img=document.createElement('img');img.src=safeSrc(zoom.dataset.lightboxSrc);img.alt=zoom.dataset.lightboxAlt||'';dialog.append(close,img);document.body.append(dialog);close.onclick=()=>dialog.close();dialog.onclick=event=>{if(event.target===dialog)dialog.close()};dialog.onclose=()=>{const active=document.activeElement,restore=active===document.body||dialog.contains(active)||active===zoom;dialog.remove();if(restore)zoom.focus()};dialog.showModal();
+    // The preview is scoped to its own gallery/carousel; nested galleries
+    // elsewhere on the page never leak into this lightbox's navigation.
+    const container=zoom.closest('.creator-gallery,.creator-carousel');
+    const choices=[...(container||root).querySelectorAll('.creator-image-zoom[data-lightbox-src]')]
+      .filter(button=>Boolean(safeSrc(button.dataset.lightboxSrc)));
+    let activeIndex=Math.max(0,choices.indexOf(zoom));
+    const dialog=document.createElement('dialog');dialog.className='creator-lightbox';dialog.setAttribute('aria-label','Kép előnézete');
+    const close=document.createElement('button');close.type='button';close.textContent='Bezárás';
+    const img=document.createElement('img');
+    const caption=document.createElement('p');caption.className='creator-lightbox-caption';
+    const nav=document.createElement('div');nav.className='creator-lightbox-nav';
+    const previous=document.createElement('button');previous.type='button';previous.textContent='←';previous.setAttribute('aria-label','Előző kép');
+    const count=document.createElement('span');count.setAttribute('role','status');count.setAttribute('aria-live','polite');
+    const next=document.createElement('button');next.type='button';next.textContent='→';next.setAttribute('aria-label','Következő kép');
+    nav.append(previous,count,next);nav.hidden=choices.length<=1;
+    const show=index=>{
+      activeIndex=(index+choices.length)%choices.length;
+      const selected=choices[activeIndex];
+      img.src=safeSrc(selected.dataset.lightboxSrc);
+      img.alt=selected.dataset.lightboxAlt||'';
+      caption.textContent=selected.dataset.lightboxCaption||'';
+      caption.hidden=!caption.textContent;
+      count.textContent=(activeIndex+1)+' / '+choices.length;
+    };
+    previous.onclick=()=>show(activeIndex-1);
+    next.onclick=()=>show(activeIndex+1);
+    dialog.addEventListener('keydown',event=>{
+      if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)||choices.length<=1)return;
+      event.preventDefault();
+      show(event.key==='Home'?0:event.key==='End'?choices.length-1:activeIndex+(event.key==='ArrowRight'?1:-1));
+    });
+    dialog.append(close,img,caption,nav);document.body.append(dialog);show(activeIndex);
+    close.onclick=()=>dialog.close();
+    dialog.onclick=event=>{if(event.target===dialog)dialog.close()};
+    dialog.onclose=()=>{
+      const focused=document.activeElement;
+      const restore=focused===document.body||dialog.contains(focused)||focused===zoom;
+      dialog.remove();
+      if(restore&&zoom.isConnected)zoom.focus();
+    };
+    dialog.showModal();close.focus();
   }const tab=event.target.closest('[role="tab"]');if(tab&&root.contains(tab))activate(tab);const step=event.target.closest('[data-carousel-step]');if(step&&root.contains(step)){const track=step.parentElement.previousElementSibling;scrollCarousel(track,Number(step.dataset.carouselStep)>0?'ArrowRight':'ArrowLeft')}});
   // The carousel region is intentionally keyboard-focusable. Arrow keys and
   // Home/End must operate the same viewport used by its visible buttons;

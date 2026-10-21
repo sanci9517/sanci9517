@@ -19,8 +19,8 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     quote:{text:'A kreativitás tanulható.',citation:'Egy alkotó'},badge:{text:'Új sorozat'},icon:{icon:'star',ariaLabel:'Kedvenc'},
     image:{src:'/fixture.svg',alt:'Tesztillusztráció',caption:'Képaláírás',fit:'contain',ratio:'1 / 1'},video:{src:'/fixture.webm',poster:'/fixture.svg',controls:true,muted:true},audio:{src:'/fixture.mp3',controls:true},
     list:{ordered:true,items:[{text:'Első hivatkozás',href:'/p/home'},{text:'Második elem'}]},table:{caption:'Eredmények',header:true,rows:[['Név','Érték'],['Nézők','42']]},
-    tabs:{items:[{title:'Videók',text:'Videólista'},{title:'Bemutatkozás',text:'Személyes történet'}]},accordion:{items:[{title:'Hogyan készült?',text:'A kulisszák mögött.'}]},dropdown:{items:[{title:'További részletek',text:'Kiegészítés'}]},
-    gallery:{columns:'3',items:[{src:'/fixture.svg',alt:'Első kép'},{src:'/fixture.svg',alt:'Második kép'}]},carousel:{ariaLabel:'Alkotói galéria',items:[{src:'/fixture.svg',alt:'Első dia'},{src:'/fixture.svg',alt:'Második dia'}]},
+    tabs:{ariaLabel:'Eredeti fülek',items:[{title:'Videók',text:'Videólista'},{title:'Bemutatkozás',text:'Személyes történet'}]},accordion:{items:[{title:'Hogyan készült?',text:'A kulisszák mögött.'}]},dropdown:{items:[{title:'További részletek',text:'Kiegészítés'}]},
+    gallery:{ariaLabel:'Eredeti képrács',columns:'3',items:[{src:'/fixture.svg',alt:'Első kép'},{src:'/fixture.svg',alt:'Második kép',caption:'Második képaláírás'}]},carousel:{ariaLabel:'Alkotói galéria',items:[{src:'/fixture.svg',alt:'Első dia'},{src:'/fixture.svg',alt:'Második dia'}]},
     code:{code:'<script>alert("Nem futok le")</script>',wrap:true},tooltip:{text:'Mi ez?',description:'Részletes magyarázat'},divider:{},spacer:{}
   };
   for(const [type,props] of Object.entries(definitions)){
@@ -98,7 +98,15 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await editor.locator('.content-range-value').first().textContent(),'18%');
   await editor.getByLabel('Külső média címe',{exact:true}).fill('javascript:alert(1)');assert.equal(await editor.locator('[aria-invalid=true]').count(),1);
   await editor.getByLabel('Külső média címe',{exact:true}).fill('/fixture.svg');
-  await select('gallery');await setCrop('Kivágás vízszintesen',24);await setCrop('Kivágás függőlegesen',68);
+  await select('tabs');
+  await editor.getByLabel('Fülcsoport elnevezése',{exact:true}).fill('Bemutatkozás & videók');
+  assert.equal(await node(editor,'tabs').getByRole('tablist',{name:'Bemutatkozás & videók'}).count(),1,
+    'the real Canvas tablist inherits the Inspector name');
+  await select('gallery');
+  await editor.getByLabel('Képgaléria elnevezése',{exact:true}).fill('Műhelyem & képeim');
+  assert.equal(await node(editor,'gallery').getByRole('region',{name:'Műhelyem & képeim'}).count(),1,
+    'the real Canvas image grid is a named gallery region');
+  await setCrop('Kivágás vízszintesen',24);await setCrop('Kivágás függőlegesen',68);
   assert.equal(await node(editor,'gallery').locator('img').first().evaluate(el=>getComputedStyle(el).objectPosition),'24% 68%','repeater image crop edits the selected gallery item');
   const galleryItem=editor.locator('.content-repeater fieldset').first();
   await galleryItem.getByLabel('Képleírás',{exact:true}).fill('');
@@ -133,6 +141,10 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await live.goto(base+'/p/test');assert.equal(await live.locator('h1[data-node-id]').textContent(),'Alkotói főcím');
   assert.equal(await node(live,'video').locator('video').getAttribute('poster'),'/fixture.svg','Save never publishes the newly chosen poster');
   assert.equal(await node(live,'gallery').locator('.creator-image-zoom').first().getAttribute('data-lightbox-src'),'/fixture.svg','Save does not publish the new gallery image');
+  assert.equal(await node(live,'gallery').getByRole('region',{name:'Eredeti képrács'}).count(),1,
+    'gallery Inspector name stays draft-only after Save');
+  assert.equal(await node(live,'tabs').getByRole('tablist',{name:'Eredeti fülek'}).count(),1,
+    'tablist Inspector name stays draft-only after Save');
   assert.equal(await node(live,'carousel').locator('.creator-carousel').getAttribute('aria-label'),'Alkotói galéria',
     'a newly named carousel is still draft-only after Save');
   assert.equal(await node(live,'button').evaluate(el=>getComputedStyle(el).backgroundImage),'none','draft background stays private before Publish');
@@ -154,6 +166,10 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await live.emulateMedia({reducedMotion:'reduce'});assert.equal(await node(live,'button').evaluate(el=>getComputedStyle(el).transitionDuration),'0s');
   assert.equal(await node(live,'image').locator('img').getAttribute('alt'),'Márkajel');assert.equal(await node(live,'image').locator('img').evaluate(el=>getComputedStyle(el).objectPosition),'18% 82%');assert.equal(await node(live,'image').locator('figcaption').textContent(),'Képaláírás');
   assert.equal(await node(live,'gallery').locator('img').first().evaluate(el=>getComputedStyle(el).objectPosition),'24% 68%','published gallery item retains its independent crop');
+  assert.equal(await node(live,'gallery').getByRole('region',{name:'Műhelyem & képeim'}).count(),1,
+    'Publish exposes the new image grid accessible name');
+  assert.equal(await node(live,'tabs').getByRole('tablist',{name:'Bemutatkozás & videók'}).count(),1,
+    'Publish exposes the new tablist accessible name');
   assert.equal(await node(live,'carousel').getByRole('region',{name:'Képes történeteim & fotók'}).count(),1,
     'published carousel region inherits the exact accessible Inspector name');
   assert.equal(await node(live,'table').locator('th[scope=col]').count(),2);assert.equal(await node(live,'video').locator('video[controls]').count(),1);assert.equal(await node(live,'audio').locator('audio[controls]').count(),1);
@@ -166,11 +182,36 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await node(live,'carousel').getByRole('button',{name:'Következő kép',exact:true}).click();await live.waitForFunction(id=>document.querySelector(`[data-node-id="${id}"] .creator-carousel`).scrollLeft>0,ids.carousel);
   assert.equal(await node(live,'gallery').locator('.creator-image-zoom').first().getAttribute('data-lightbox-src'),'/media/'+assetId);
   assert.equal(await node(live,'carousel').locator('.creator-image-zoom').first().getAttribute('data-lightbox-src'),'/media/'+assetId);
-  await node(live,'gallery').locator('.creator-image-zoom').first().click();await live.getByRole('dialog',{name:'Kép előnézete'}).waitFor();assert.equal(await live.locator('dialog.creator-lightbox img').getAttribute('src'),'/media/'+assetId,'lightbox renders the same published asset as the thumbnail');await live.keyboard.press('Escape');await live.locator('dialog.creator-lightbox').waitFor({state:'detached'});assert.equal(await live.getByRole('dialog').count(),0);assert.equal(await node(live,'gallery').locator('.creator-image-zoom').first().evaluate(el=>document.activeElement===el),true);
+  await node(live,'gallery').locator('.creator-image-zoom').first().click();
+  const lightbox=live.getByRole('dialog',{name:'Kép előnézete'});
+  await lightbox.waitFor();
+  assert.equal(await lightbox.locator('img').getAttribute('src'),'/media/'+assetId,
+    'lightbox renders the same published asset as its first thumbnail');
+  assert.equal(await lightbox.locator('.creator-lightbox-nav [role=status]').textContent(),'1 / 2');
+  await live.keyboard.press('ArrowRight');
+  assert.equal(await lightbox.locator('img').getAttribute('alt'),'Második kép',
+    'arrow key navigates to the next image without closing the dialog');
+  assert.equal(await lightbox.locator('.creator-lightbox-caption').textContent(),'Második képaláírás');
+  await live.keyboard.press('Home');
+  assert.equal(await lightbox.locator('img').getAttribute('alt'),'Márkajel');
+  await live.keyboard.press('End');
+  assert.equal(await lightbox.locator('.creator-lightbox-nav [role=status]').textContent(),'2 / 2');
+  await lightbox.getByRole('button',{name:'Előző kép'}).click();
+  assert.equal(await lightbox.locator('img').getAttribute('alt'),'Márkajel');
+  await lightbox.getByRole('button',{name:'Előző kép'}).click();
+  assert.equal(await lightbox.locator('img').getAttribute('alt'),'Második kép',
+    'previous-image control wraps within only this gallery');
+  await live.keyboard.press('Escape');
+  await live.locator('dialog.creator-lightbox').waitFor({state:'detached'});
+  assert.equal(await live.getByRole('dialog').count(),0);
+  assert.equal(await node(live,'gallery').locator('.creator-image-zoom').first().evaluate(el=>document.activeElement===el),true,
+    'Escape restores keyboard focus to the exact thumbnail that opened the preview');
   await node(live,'tooltip').locator('button').focus();assert.equal(await node(live,'tooltip').getByRole('tooltip').isVisible(),true);
   for(const width of [1366,768,390]){
     await live.setViewportSize({width,height:900});await live.reload();await node(live,'gallery').waitFor();
     assert.ok(await live.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'modern root does not inherit a narrower legacy template or horizontal overflow');
+    assert.equal(await node(live,'gallery').getByRole('region',{name:'Műhelyem & képeim'}).count(),1);
+    assert.equal(await node(live,'tabs').getByRole('tablist',{name:'Bemutatkozás & videók'}).count(),1);
     const keyboardCarousel=node(live,'carousel').getByRole('region',{name:'Képes történeteim & fotók'});
     await keyboardCarousel.focus();
     await keyboardCarousel.press('ArrowRight');
