@@ -146,6 +146,22 @@ test('actual Inspector keeps unsaved Rich Text through Ctrl+S, reload and separa
   assert.equal(await shortcutUrl.evaluate(el=>document.activeElement===el),true);
   await shortcutUrl.press('Escape');
   await tab.waitForFunction(id=>{const surface=document.querySelector(`.node[data-node-id="${id}"] .richtext-inline-surface`);return document.activeElement===surface&&document.getSelection().toString()==='world'},nodeId);
+  // Direct Canvas uses the same canonical Rich Text mark transformations as
+  // the Inspector. Toggling each mark must preserve the selection/focus,
+  // neighboring text, link and an unpublished draft with no network writes.
+  const canvasMarkPosts=posts.length;
+  for(const [key,tag] of [['b','strong'],['i','em'],['u','u']]){
+    await canvasInline.press('Control+'+key);
+    assert.equal(await canvasInline.locator('a '+tag).count(),0,key+' should remove the existing mark');
+    assert.equal(await canvasInline.locator('a').textContent(),'world');
+    assert.equal(await canvasInline.evaluate(el=>document.activeElement===el&&window.getSelection()?.toString()==='world'),true,
+      key+' should preserve canvas focus and word selection');
+    await canvasInline.press('Control+'+key);
+    assert.equal(await canvasInline.locator('a '+tag).count(),1,key+' should restore the mark');
+    assert.equal(await canvasInline.evaluate(el=>document.activeElement===el&&window.getSelection()?.toString()==='world'),true);
+  }
+  assert.equal(posts.length,canvasMarkPosts,'canvas formatting must not Save or Publish implicitly');
+  assert.equal(await canvasInline.locator('a').getAttribute('href'),'/p/home');
   await tab.setViewportSize({width:390,height:800});
   await openEditor();
   const urlField=tab.locator('.richtext-link-controls input');
