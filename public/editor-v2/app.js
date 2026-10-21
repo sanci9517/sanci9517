@@ -357,9 +357,31 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
         });
       };
       c.onkeydown=event=>{
-        if((event.ctrlKey||event.metaKey)&&!event.altKey&&event.key.toLowerCase()==='k'){
-          event.preventDefault();openRichTextFormatting(id,{focusLink:true});
+        if(!(event.ctrlKey||event.metaKey)||event.altKey)return;
+        const key=event.key.toLowerCase();
+        if(key==='k'){
+          event.preventDefault();openRichTextFormatting(id,{focusLink:true});return;
         }
+        const mark={b:'bold',i:'italic',u:'underline'}[key];
+        if(!mark)return;
+        event.preventDefault();
+        if(composing){setStatus('Fejezd be a szövegbevitelt a formázás előtt.');return}
+        // Canvas and Inspector use the same structured Rich Text commands;
+        // never rely on execCommand or a second, browser-only formatting state.
+        const range=getRichTextFormattingSelection(c),offsets=getSelectionOffsets(c);
+        if(!range||!offsets||offsets.collapsed){
+          setStatus('Előbb jelölj ki egy szövegrészt a formázáshoz.');return;
+        }
+        try{
+          const next=updateRichTextInlineMark(richTextEditorToDocument(c),range,mark);
+          if(!command('richtext.content.set',{nodeId:id,document:next},{render:false}))return;
+          dirty=false;richTextBookmark=null;
+          renderRichTextEditor(c,next);
+          syncTextSurfaces(id,next,c);
+          c.focus({preventScroll:true});
+          if(!restoreSelectionOffsets(c,offsets))restoreRichTextFormattingSelection(c,range);
+          setStatus('Nem mentett módosítás');syncPublishControls();
+        }catch(error){setStatus(error instanceof Error?error.message:String(error))}
       };
       c.onpaste=event=>{event.preventDefault();try{const imported=normalizeRichText(importRichTextClipboard({html:event.clipboardData?.getData('text/html')||'',text:event.clipboardData?.getData('text/plain')||''}));if(pasteRichTextDocument(c,imported))c.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'insertFromPaste'}))}catch(error){setStatus(error.message)}};
       c.onblur=()=>{if(inlineEditingId===id)save()};
