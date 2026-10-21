@@ -187,10 +187,10 @@ test('Rich Text list/table/cross-block DOM range offsets match Page Model at mob
     assert.deepEqual(hardbreak.inline,{blockIndex:0,from:3,to:8});
     assert.equal(hardbreak.inlineRestore,true);
     assert.deepEqual(hardbreak.inlineRoundtrip,hardbreak.inline);
-    assert.deepEqual(hardbreak.modelBlocks,['Alpha\\nBeta','Omega\\nLast']);
+    assert.deepEqual(hardbreak.modelBlocks,['Alpha\nBeta','Omega\nLast']);
     assert.equal(hardbreak.modelRestore,true,'selection restores after canonical model DOM rerender');
     assert.deepEqual(hardbreak.afterRender,hardbreak.range);
-    assert.deepEqual(hardbreak.formatted,['pha\\nBeta','Omega\\nLa'],
+    assert.deepEqual(hardbreak.formatted,['pha\nBeta','Omega\nLa'],
       'only selected portions are underlined across both paragraphs');
     await page.close();
   }
