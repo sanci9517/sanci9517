@@ -120,6 +120,27 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await editor.locator('.content-repeater').getByRole('button',{name:'1. elem: Le'}).press('Enter');
   assert.equal(await node(editor,'tabs').getByRole('tab').last().getAttribute('aria-selected'),'true',
     'moving the tab back keeps the same content selected');
+  const countBeforeStructuralEdit=posts.length;
+  const tabRepeater=editor.locator('.content-repeater');
+  await tabRepeater.getByRole('button',{name:'Fülek hozzáadása'}).press('Enter');
+  await editor.waitForFunction(()=>document.activeElement?.getAttribute('aria-label')==='Fül címe'&&
+    document.activeElement?.closest('fieldset')?.querySelector('legend')?.textContent==='3. elem');
+  assert.equal(await tabRepeater.locator('fieldset').count(),3,'Add creates an editable third row');
+  await tabRepeater.locator('fieldset').nth(2).getByLabel('Fül címe').fill('Próba fül');
+  await tabRepeater.locator('fieldset').nth(2).getByLabel('Szöveg').fill('Próba tartalom');
+  assert.equal(await node(editor,'tabs').getByRole('tab',{name:'Próba fül'}).count(),1);
+  await tabRepeater.getByRole('button',{name:'3. elem: Fel'}).press('Enter');
+  assert.equal(await node(editor,'tabs').getByRole('tab').nth(1).textContent(),'Próba fül');
+  await node(editor,'tabs').getByRole('tab',{name:'Próba fül'}).click();
+  await tabRepeater.getByRole('button',{name:'2. elem: Eltávolítás'}).press('Enter');
+  await editor.waitForFunction(()=>document.activeElement?.getAttribute('aria-label')==='Fül címe'&&
+    document.activeElement?.closest('fieldset')?.querySelector('legend')?.textContent==='2. elem');
+  assert.equal(await tabRepeater.locator('fieldset').count(),2,'Delete removes only the selected row');
+  assert.equal(await node(editor,'tabs').getByRole('tab').last().textContent(),'Bemutatkozás');
+  assert.equal(await node(editor,'tabs').getByRole('tab').last().getAttribute('aria-selected'),'true',
+    'deleting a selected tab falls back to the nearest existing tab');
+  assert.equal(posts.length,countBeforeStructuralEdit,
+    'Inspector structural edits stay in the draft; neither Save nor Publish runs automatically');
   await select('accordion');
   await node(editor,'accordion').locator('summary').last().click();
   assert.deepEqual(await node(editor,'accordion').locator('details').evaluateAll(items=>items.map(el=>el.open)),[false,true]);

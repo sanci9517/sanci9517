@@ -115,6 +115,23 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
     const save=(value,typingGroup,render=false)=>{const result=apply({[definition.key]:value},{typingGroup,render});if(result===false)throw new Error('A módosítás nem alkalmazható.');return result};
     if(definition.type==='repeater'){
       const section=document.createElement('details');section.className='content-repeater';section.dataset.contentKey=definition.key;section.open=true;
+      // Structural edits replace the Inspector DOM. Continue from the edited
+      // row after the render, unless focus has moved to another live control.
+      const restoreRowFocus=({rowIndex,preferredAction='',editField=false}={})=>requestAnimationFrame(()=>{
+        if(document.activeElement!==document.body)return;
+        const inspector=document.getElementById('inspectorBody');
+        const current=[...(inspector?.querySelectorAll('.content-repeater')||[])]
+          .find(el=>el.dataset.contentKey===definition.key);
+        if(!current||!current.open)return;
+        const rows=[...current.querySelectorAll(':scope > fieldset')];
+        const row=rows[Math.min(Math.max(0,rowIndex??0),rows.length-1)];
+        const input=row?.querySelector('.content-schema-field input:not([disabled]),.content-schema-field textarea:not([disabled]),.content-schema-field select:not([disabled])');
+        const buttons=[...(row?.querySelectorAll('.content-repeater-actions button:not([disabled])')||[])];
+        const action=buttons.find(el=>el.textContent===preferredAction);
+        const add=current.querySelector(':scope > button:last-child:not([disabled])');
+        const target=editField?(input||action||buttons[0]||add):(action||buttons[0]||input||add);
+        if(target&&target.getClientRects().length)target.focus({preventScroll:true});
+      });
       const summary=document.createElement('summary');summary.textContent=definition.label;section.append(summary);
       const items=Array.isArray(node.props?.[definition.key])?node.props[definition.key]:[];
       items.forEach((item,index)=>{
@@ -128,27 +145,23 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
             const next=structuredClone(node.props?.[definition.key]||items);
             if(!offset)next.splice(index,1);else [next[index],next[index+offset]]=[next[index+offset],next[index]];
             save(next,null,true);
-            // A structural edit rebuilds the Inspector. Keyboard users should
-            // continue beside the moved row, not restart from the document top.
-            if(keepFocus)requestAnimationFrame(()=>{
-              if(document.activeElement!==document.body)return;
-              const current=[...document.querySelectorAll('#inspectorBody .content-repeater')]
-                .find(el=>el.dataset.contentKey===definition.key);
-              if(!current)return;
-              const newIndex=offset?index+offset:Math.min(index,next.length-1);
-              const row=current.querySelectorAll('fieldset')[newIndex];
-              const preferred=offset<0?'Le':offset>0?'Fel':'Eltávolítás';
-              const buttons=[...(row?.querySelectorAll('.content-repeater-actions button')||[])];
-              const destination=buttons.find(el=>el.textContent===preferred&&!el.disabled)
-                ||buttons.find(el=>!el.disabled)
-                ||current.querySelector('button:last-child');
-              if(destination&&!destination.disabled)destination.focus({preventScroll:true});
+            if(keepFocus)restoreRowFocus({
+              rowIndex:offset?index+offset:Math.min(index,next.length-1),
+              preferredAction:offset<0?'Le':offset>0?'Fel':'',
+              editField:offset===0
             });
           };actions.append(button);
         }
         card.append(actions);section.append(card);
       });
-      const add=document.createElement('button');add.type='button';add.textContent=definition.label+' hozzáadása';add.disabled=Boolean(node.locked)||items.length>=40;add.onclick=()=>save([...node.props?.[definition.key]||[],{}],null,true);section.append(add);root.append(section);
+      const add=document.createElement('button');add.type='button';add.textContent=definition.label+' hozzáadása';add.disabled=Boolean(node.locked)||items.length>=40;
+      add.onclick=()=>{
+        const keepFocus=document.activeElement===add;
+        const next=[...(node.props?.[definition.key]||[]),{}];
+        save(next,null,true);
+        if(keepFocus)restoreRowFocus({rowIndex:next.length-1,editField:true});
+      };
+      section.append(add);root.append(section);
     }else if(definition.type==='table'){
       const note=document.createElement('p');note.className='content-field-help';note.textContent='Soronként egy sor, tabulátorral elválasztott cellák. Excelből másolt egyszerű táblázat is beilleszthető. A cellák szöveget tárolnak, képletek nem futnak.';root.append(note);
       root.append(control({...definition,type:'textarea',max:40000},(node.props?.rows||[]).map(row=>row.join('\t')).join('\n'),(value,group)=>save(value.split('\n').map(row=>row.split('\t')),group)));
