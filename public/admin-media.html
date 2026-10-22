@@ -22,7 +22,7 @@ button.primary{border:0;border-radius:10px;color:#160f31;background:#b5a7ff;font
 button.upload-secondary{border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text);font-weight:650;padding:10px 14px;min-height:44px;width:100%;margin-top:9px}button.upload-secondary[hidden],progress[hidden]{display:none}#uploadProgress{display:block;width:100%;height:12px;accent-color:var(--accent);margin-top:12px}#uploadProgress[hidden]{display:none}.status{color:var(--muted);min-height:1.7em;margin-top:14px;overflow-wrap:anywhere}.status[data-kind=error]{color:#ffb3b3}.status[data-kind=ok]{color:var(--success)}
 .quota-panel{margin:0 0 18px;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}.quota-panel p{margin:5px 0;overflow-wrap:anywhere}.quota-panel progress{width:100%;height:12px;accent-color:var(--accent)}.quota-panel progress[hidden]{display:none}.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
 .tile{min-width:0;border:1px solid var(--line);background:#12192b;border-radius:14px;overflow:hidden}
-.tile img{width:100%;aspect-ratio:4/3;object-fit:contain;background:#070b17;display:block}
+.tile img,.tile .media-icon{width:100%;aspect-ratio:4/3;object-fit:contain;background:#070b17;display:grid;place-items:center;font-size:2rem}
 .tile .details{padding:10px 12px;font-size:.88rem}.tile .name{display:block;overflow-wrap:anywhere;font-weight:650}.tile small{color:var(--muted)}
 .empty{padding:30px 18px;border:1px dashed var(--line);border-radius:12px;color:var(--muted);text-align:center}
 .library-tools{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;margin:0 0 16px}.media-state-row{display:flex;align-items:center;gap:10px;margin:0 0 14px;flex-wrap:wrap}.media-state-row label{margin:0}.media-state-row select{background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:8px;min-height:44px;padding:8px 12px;max-width:100%}.tile .archive-status{overflow-wrap:anywhere}.tile .archive-confirm{border-color:#d6a354}.tile .archive-danger{border-color:#c27c7c}.library-tools input,.tile input{width:100%;min-width:0;min-height:42px;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text)}.library-tools button,.tile button{min-height:42px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:#29344b;color:var(--text)}.media-paging{display:grid;gap:9px;margin-top:16px}.media-paging button{width:100%;min-height:44px;padding:10px 14px;border:1px solid var(--line);border-radius:9px;background:#29344b;color:var(--text)}.media-paging button[hidden]{display:none}.media-paging p{margin:0;color:var(--muted);font-size:.9rem;overflow-wrap:anywhere}.tile .details{display:grid;gap:8px}.tile .details small{color:var(--muted)}
@@ -37,37 +37,37 @@ button.upload-secondary{border:1px solid var(--line);border-radius:10px;backgrou
 <header><a class="brand" href="/admin">SANCI9517 / CREATOR</a><a class="back" href="/admin">← Vezérlőpult</a></header>
 <main>
 <h1>Média és erőforrások</h1>
-<p class="lead">Közös, privát képtár – a Creator Platform médiatárolójának első működő változata.</p>
+<p class="lead">Közös, privát médiatár – a Creator Platform médiatárolójának első működő változata.</p>
 <div class="panels">
 <section class="panel" aria-labelledby="uploadTitle">
-<h2 id="uploadTitle">Kép feltöltése</h2>
-<p class="muted">PNG, JPG, GIF vagy WebP. Legfeljebb 4 MiB képenként. Kezdeti webhelykvóta: 5 GB.</p>
+<h2 id="uploadTitle">Média feltöltése</h2>
+<p class="muted">PNG, JPG, GIF, WebP, MP3, OGG, WAV vagy WebM. Legfeljebb 4 MiB fájlonként. Kezdeti webhelykvóta: 5 GB.</p>
 <form id="uploadForm">
-<label for="imageInput">Képfájl</label>
-<input id="imageInput" name="image" type="file" accept="image/png,image/jpeg,image/gif,image/webp" required>
+<label for="imageInput">Médiafájl</label>
+<input id="imageInput" name="media" type="file" accept="image/png,image/jpeg,image/gif,image/webp,audio/mpeg,audio/ogg,audio/wav,video/webm" required>
 <button class="primary" id="uploadButton" type="submit">Feltöltés a médiatárba</button>
-<progress id="uploadProgress" aria-label="Képfeltöltés elküldött adatmennyisége" max="100" value="0" hidden></progress>
+<progress id="uploadProgress" aria-label="Médiafeltöltés elküldött adatmennyisége" max="100" value="0" hidden></progress>
 <button class="upload-secondary" id="uploadCancel" type="button" hidden>Feltöltés megszakítása</button>
 <button class="upload-secondary" id="uploadRetry" type="button" hidden>Feltöltés újrapróbálása</button>
 </form>
-<p role="status" aria-live="polite" class="status" id="uploadStatus">Válassz ki egy képfájlt.</p>
+<p role="status" aria-live="polite" class="status" id="uploadStatus">Válassz ki egy médiafájlt.</p>
 </section>
 <section class="panel" aria-labelledby="libraryTitle">
-<h2 id="libraryTitle">Képtár</h2>
-<p class="muted">Keresés fájlnév vagy alternatív képleírás alapján. A Használati helyek mutatja a piszkozatok, publikált oldalak, archivált oldalak és korábbi verziók hivatkozásait. A piszkozatként kiválasztott fájl csak külön publikálás után válik nyilvánossá.</p>
+<h2 id="libraryTitle">Médiatár</h2>
+<p class="muted">Keresés fájlnév vagy leírás alapján. A Használati helyek mutatja a piszkozatok, publikált oldalak, archivált oldalak és korábbi verziók hivatkozásait. A piszkozatként kiválasztott fájl csak külön publikálás után válik nyilvánossá.</p>
 <div id="mediaQuota" class="quota-panel" role="status" aria-live="polite" aria-label="Webhely médiatárhelye">
 <strong>Tárhelyhasználat</strong>
 <p id="mediaQuotaSummary">Tárhelyadatok betöltése…</p>
 <progress id="mediaQuotaProgress" max="100" value="0" aria-label="Felhasznált médiatárhely százalékban" hidden></progress>
 <p id="mediaQuotaDetails" class="muted"></p>
 </div>
-<div class="media-state-row"><label for="mediaState">Nézet</label><select id="mediaState" aria-label="Médiatár nézet"><option value="active">Aktív képek</option><option value="archived">Archivált képek</option></select></div>
-<div class="library-tools"><input id="mediaSearch" type="search" placeholder="Keresés a képek között…" aria-label="Keresés a képek között"><button id="mediaSearchClear" type="button">Törlés</button></div>
-<div id="gallery" class="tiles" aria-live="polite"><p class="empty">Képek betöltése…</p></div>
-<div class="media-paging"><button id="mediaLoadMore" type="button" hidden>További képek betöltése</button><p id="mediaListStatus" role="status" aria-live="polite">Képek betöltése…</p></div>
+<div class="media-state-row"><label for="mediaState">Nézet</label><select id="mediaState" aria-label="Médiatár nézet"><option value="active">Aktív médiafájlok</option><option value="archived">Archivált médiafájlok</option></select></div>
+<div class="library-tools"><input id="mediaSearch" type="search" placeholder="Keresés a médiafájlok között…" aria-label="Keresés a médiafájlok között"><button id="mediaSearchClear" type="button">Törlés</button></div>
+<div id="gallery" class="tiles" aria-live="polite"><p class="empty">Médiafájlok betöltése…</p></div>
+<div class="media-paging"><button id="mediaLoadMore" type="button" hidden>További médiafájl betöltése</button><p id="mediaListStatus" role="status" aria-live="polite">Médiafájlok betöltése…</p></div>
 </section>
 </div>
-<p class="note">Az archiválás nem törli a fájlt és nem csökkenti a felhasznált tárhelyet. A használatban lévő képek (piszkozat, publikált oldal, korábbi verzió) nem archiválhatók. A visszaállítás az eredeti azonosítót és képleírást őrzi meg. A képek csak külön oldali publikálás után válnak nyilvánossá.</p>
+<p class="note">Az archiválás nem törli a fájlt és nem csökkenti a felhasznált tárhelyet. A használatban lévő médiafájlok (piszkozat, publikált oldal, korábbi verzió) nem archiválhatók. A visszaállítás az eredeti azonosítót és leírást őrzi meg. A médiafájlok csak külön oldali publikálás után válnak nyilvánossá.</p>
 </main>
 </div>
 <script type="module" src="/assets/admin-media.js"></script>

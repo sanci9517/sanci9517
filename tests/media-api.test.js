@@ -6,6 +6,8 @@ import { hashSessionToken } from "../src/core/auth/session.ts";
 
 const png = Uint8Array.from([137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,1,0,0,0,1]);
 const gif = new TextEncoder().encode("GIF89aTEST");
+const wav = Uint8Array.from([82,73,70,70,0,0,0,0,87,65,86,69,102,109,116,32]);
+const webm = Uint8Array.from([0x1a,0x45,0xdf,0xa3,0x93,0x42,0x82,0x84]);
 
 async function fixture(t) {
   const db = new DatabaseSync(":memory:");
@@ -58,6 +60,7 @@ async function fixture(t) {
     if(opts.limit!==undefined)url.searchParams.set("limit",String(opts.limit));
     if(opts.state)url.searchParams.set("state",opts.state);
     if(opts.usage)url.searchParams.set("usage",opts.usage);
+    if(opts.mime)url.searchParams.set("mime",opts.mime);
     const headers = new Headers();
     if(role)headers.set("Cookie","sanci9517_session="+role);
     if(method==="POST"||method==="PATCH") { headers.set("Origin",opts.origin||url.origin);headers.set("Content-Type",opts.contentType||(method==="PATCH"?"application/json":"image/png")); }
@@ -82,6 +85,30 @@ test("authenticated image upload produces private asset and site-scoped listing"
   assert.equal(blob.headers.get("Cache-Control"),"private, no-store");
   assert.deepEqual(new Uint8Array(await blob.arrayBuffer()),png);
   assert.equal((await f.call("GET","editor",null,{id:asset.id,site:"other"})).status,403);
+});
+
+test("authenticated playable media remains site-scoped and becomes public only through its matching rendered node",async t=>{
+  const f=await fixture(t);
+  const uploaded=await f.call("POST","editor",webm,{name:"intro.webm",contentType:"video/webm"});
+  assert.equal(uploaded.status,201);
+  const video=(await uploaded.json()).data;
+  const audioUpload=await f.call("POST","editor",wav,{name:"theme.wav",contentType:"audio/wav"});
+  assert.equal(audioUpload.status,201);
+  const audio=(await audioUpload.json()).data;
+  assert.equal((await f.call("POST","editor",webm,{name:"wrong.mp3",contentType:"audio/mpeg"})).status,415,"declared type cannot override the binary signature");
+  const videos=(await (await f.call("GET","editor",null,{mime:"video"})).json()).data.assets;
+  const sounds=(await (await f.call("GET","editor",null,{mime:"audio"})).json()).data.assets;
+  assert.deepEqual(videos.map(asset=>asset.id),[video.id]);
+  assert.deepEqual(sounds.map(asset=>asset.id),[audio.id]);
+  const publish=nodes=>f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)").run("playable-page","site-default",null,1,JSON.stringify({pages:{"playable-page":{rootId:"root",nodes:{root:{type:"root",children:Object.keys(nodes)},...nodes}}}}),"{}","Playable","playable");
+  publish({movie:{type:"video",metadata:{editorContentVersion:1},props:{assetId:video.id}}});
+  const videoDelivery=await publishedMediaRoute(new Request("https://example.test/media/"+video.id),f.env,"site-default",video.id);
+  assert.equal(videoDelivery.status,200);
+  assert.equal(videoDelivery.headers.get("Content-Type"),"video/webm");
+  assert.deepEqual(new Uint8Array(await videoDelivery.arrayBuffer()),webm);
+  assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+audio.id),f.env,"site-default",audio.id)).status,404,"unreferenced audio stays private");
+  f.db.prepare("UPDATE pages SET published_content_json=? WHERE id='playable-page'").run(JSON.stringify({pages:{"playable-page":{rootId:"root",nodes:{root:{type:"root",children:["wrong"]},wrong:{type:"audio",metadata:{editorContentVersion:1},props:{assetId:video.id}}}}}}));
+  assert.equal((await publishedMediaRoute(new Request("https://example.test/media/"+video.id),f.env,"site-default",video.id)).status,404,"a video asset cannot be exposed through an audio node");
 });
 
 

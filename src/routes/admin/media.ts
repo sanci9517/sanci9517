@@ -8,7 +8,9 @@ import { CONTENT_TYPES, safeMediaUrl } from "../../../public/editor-v2/core/auth
 import { isLeafType } from "../../../public/editor-v2/core/schema.js";
 import { isStructuredType } from "../../../public/editor-v2/core/element-content.js";
 
-const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
+// Keep playable uploads inside the existing low-cost, application-level cap.
+// This is not a provider billing ceiling and deliberately excludes large video.
+const MAX_MEDIA_BYTES = 4 * 1024 * 1024;
 const SITE_MEDIA_LIMIT_BYTES = 5 * 1000 * 1000 * 1000;
 const MAX_USAGE_SNAPSHOTS = 100;
 const MAX_USAGE_REFERENCES = 100;
@@ -18,19 +20,28 @@ type MediaRow = {
   mime_type: string; size_bytes: number; alt_text: string; created_at: string; archived_at: string | null;
 };
 
-function imageMime(bytes: Uint8Array): string | null {
+const IMAGE_MIMES = ["image/png", "image/jpeg", "image/gif", "image/webp"] as const;
+const PLAYABLE_MIMES = ["audio/mpeg", "audio/ogg", "audio/wav", "video/webm"] as const;
+const MEDIA_MIMES = [...IMAGE_MIMES, ...PLAYABLE_MIMES] as const;
+function mediaMime(bytes: Uint8Array): string | null {
   if (bytes.length >= 8 && [137,80,78,71,13,10,26,10].every((v,i) => bytes[i] === v)) return "image/png";
   if (bytes.length >= 3 && bytes[0] === 255 && bytes[1] === 216 && bytes[2] === 255) return "image/jpeg";
   if (bytes.length >= 6 && /^GIF8[79]a$/.test(String.fromCharCode(...bytes.subarray(0,6)))) return "image/gif";
   if (bytes.length >= 12 && String.fromCharCode(...bytes.subarray(0,4)) === "RIFF" &&
       String.fromCharCode(...bytes.subarray(8,12)) === "WEBP") return "image/webp";
+  if (bytes.length >= 12 && String.fromCharCode(...bytes.subarray(0,4)) === "RIFF" &&
+      String.fromCharCode(...bytes.subarray(8,12)) === "WAVE") return "audio/wav";
+  if (bytes.length >= 4 && String.fromCharCode(...bytes.subarray(0,4)) === "OggS") return "audio/ogg";
+  if (bytes.length >= 3 && String.fromCharCode(...bytes.subarray(0,3)) === "ID3") return "audio/mpeg";
+  if (bytes.length >= 4 && bytes[0] === 255 && (bytes[1] & 0xe0) === 0xe0) return "audio/mpeg";
+  if (bytes.length >= 4 && [0x1a,0x45,0xdf,0xa3].every((v,i)=>bytes[i]===v)) return "video/webm";
   return null;
 }
 
 async function boundedBody(request: Request): Promise<Uint8Array | null> {
   if (!request.body) return null;
   const length = request.headers.get("Content-Length");
-  if (length !== null && (!/^\d+$/.test(length) || Number(length) > MAX_IMAGE_BYTES)) return null;
+  if (length !== null && (!/^\d+$/.test(length) || Number(length) > MAX_MEDIA_BYTES)) return null;
   const reader = request.body.getReader();
   const chunks: Uint8Array[] = [];
   let size = 0;
@@ -39,7 +50,7 @@ async function boundedBody(request: Request): Promise<Uint8Array | null> {
       const next = await reader.read();
       if (next.done) break;
       size += next.value.byteLength;
-      if (size > MAX_IMAGE_BYTES) {
+      if (size > MAX_MEDIA_BYTES) {
         await reader.cancel().catch(() => {});
         return null;
       }
@@ -102,8 +113,8 @@ function assetPaths(value: unknown, assetId: string, path = "", depth = 0): stri
   return paths;
 }
 
-function documentAssetReferences(json: string, pageId: string, assetId: string, publicOnly = false): { nodeId: string; nodeName: string; path: string }[] {
-  const model = JSON.parse(json) as { pages?: Record<string, { rootId?: string; nodes?: Record<string, { name?: string; type?: string; metadata?: {cardContentVersion?: number;contentVersion?: number;rootStyleVersion?: number;editorRootVersion?: number}; props?: unknown; style?: unknown; responsive?: unknown; visibility?: unknown; children?: string[] }> }> };
+function documentAssetReferences(json: string, pageId: string, assetId: string, publicOnly = false, mime = ""): { nodeId: string; nodeName: string; path: string }[] {
+  const model = JSON.parse(json) as { pages?: Record<string, { rootId?: string; nodes?: Record<string, { name?: string; type?: string; metadata?: {cardContentVersion?: number;contentVersion?: number;editorContentVersion?: number;rootStyleVersion?: number;editorRootVersion?: number}; props?: unknown; style?: unknown; responsive?: unknown; visibility?: unknown; children?: string[] }> }> };
   const page = model?.pages?.[pageId];
   const nodes = page?.nodes;
   if (!nodes || typeof nodes !== "object") return [];
@@ -171,7 +182,12 @@ function documentAssetReferences(json: string, pageId: string, assetId: string, 
     const renderedReference = (path: string): boolean => {
       if (!publicOnly) return true;
       if (nodeId === page.rootId) return renderedBackground(path);
-      return path === "props.assetId" && node.type === "image" && node.metadata?.contentVersion === 1 ||
+      const compatible = (kind: "image" | "video" | "audio") => !mime ||
+        kind === "image" ? (IMAGE_MIMES as readonly string[]).includes(mime) :
+        kind === "video" ? mime === "video/webm" : (PLAYABLE_MIMES as readonly string[]).includes(mime) && mime !== "video/webm";
+      return path === "props.assetId" && node.type === "image" && node.metadata?.contentVersion === 1 && compatible("image") ||
+        path === "props.assetId" && node.type === "video" && node.metadata?.editorContentVersion === 1 && compatible("video") ||
+        path === "props.assetId" && node.type === "audio" && node.metadata?.editorContentVersion === 1 && compatible("audio") ||
         path === "props.cardContent.imageAssetId" && node.type === "card" && node.metadata?.cardContentVersion === 1 && validCardImage() ||
         path === "props.posterAssetId" && node.type === "video" && node.metadata?.contentVersion === 1 && validVideoSource() ||
         /^props\.items\[\d+\]\.assetId$/.test(path) && Number(path.match(/\[(\d+)\]/)?.[1]) < 40 && ["gallery", "carousel"].includes(node.type || "") && node.metadata?.contentVersion === 1 ||
@@ -244,7 +260,7 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
     if (!id) {
       const query = (url.searchParams.get("q") || "").trim().slice(0, 100);
       const mime = url.searchParams.get("mime") || "";
-      const allowedMime = ["", "image/png", "image/jpeg", "image/gif", "image/webp"];
+      const allowedMime = ["", ...MEDIA_MIMES, "audio", "video"];
       if (!allowedMime.includes(mime)) return error("INVALID_MEDIA_FILTER", 400);
       const limitRaw = url.searchParams.get("limit") || "50";
       const limit = Number(limitRaw);
@@ -256,7 +272,9 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
       const clauses = ['site_id=?', state === 'archived' ? 'archived_at IS NOT NULL' : 'archived_at IS NULL'];
       const binds: (string | number)[] = [siteId];
       if (query) { clauses.push("(original_name LIKE ? ESCAPE '^' OR alt_text LIKE ? ESCAPE '^')"); const pattern = `%${escapeLike(query)}%`; binds.push(pattern, pattern); }
-      if (mime) { clauses.push("mime_type=?"); binds.push(mime); }
+      if (mime === "audio") clauses.push("mime_type LIKE 'audio/%'");
+      else if (mime === "video") clauses.push("mime_type LIKE 'video/%'");
+      else if (mime) { clauses.push("mime_type=?"); binds.push(mime); }
       if (before !== null) {
         // Resolve the cursor inside the authorized site and requested archive state.
         // The created_at + id pair exactly matches the stable descending sort,
@@ -288,7 +306,7 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
       return ok({
         assets: rows.results.slice(0,limit).map(dto),
         nextCursor: rows.results.length > limit ? rows.results[limit-1].id : null,
-        maxUploadBytes: MAX_IMAGE_BYTES,
+        maxUploadBytes: MAX_MEDIA_BYTES,
         siteQuotaBytes: SITE_MEDIA_LIMIT_BYTES,
         quota: { usedBytes, archivedBytes,
           activeBytes: usedBytes - archivedBytes,
@@ -299,7 +317,7 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
     const row = await env.DB.prepare(
       "SELECT id,site_id,object_key,original_name,mime_type,size_bytes,alt_text,created_at,archived_at FROM media WHERE id=? AND site_id=? LIMIT 1"
     ).bind(id, siteId).first<MediaRow>();
-    if (!row || !["image/png","image/jpeg","image/gif","image/webp"].includes(row.mime_type)) {
+    if (!row || !(MEDIA_MIMES as readonly string[]).includes(row.mime_type)) {
       return error("MEDIA_NOT_FOUND", 404);
     }
     const object = await env.MEDIA.get(row.object_key);
@@ -367,7 +385,7 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
   if (!filename) return error("INVALID_MEDIA_NAME", 400);
   const bytes = await boundedBody(request);
   if (!bytes) return error("MEDIA_SIZE_INVALID", 413);
-  const mime = imageMime(bytes);
+  const mime = mediaMime(bytes);
   if (!mime) return error("MEDIA_TYPE_UNSUPPORTED", 415);
   const declared = request.headers.get("Content-Type")?.split(";")[0].trim().toLowerCase();
   if (declared && declared !== "application/octet-stream" && declared !== mime) {
@@ -446,12 +464,12 @@ export async function publishedMediaRoute(request: Request, env: Env, siteId: st
   const row = await env.DB.prepare(
     "SELECT id,site_id,object_key,original_name,mime_type,size_bytes,alt_text,created_at,archived_at FROM media WHERE id=? AND site_id=? LIMIT 1"
   ).bind(assetId, siteId).first<MediaRow>();
-  if (!row || row.archived_at || !["image/png", "image/jpeg", "image/gif", "image/webp"].includes(row.mime_type)) return error("MEDIA_NOT_FOUND", 404);
+  if (!row || row.archived_at || !(MEDIA_MIMES as readonly string[]).includes(row.mime_type)) return error("MEDIA_NOT_FOUND", 404);
   const pages = await env.DB.prepare(
     "SELECT id,published_content_json FROM pages WHERE site_id=? AND archived_at IS NULL AND is_published=1 AND published_content_json IS NOT NULL AND instr(published_content_json,?)>0"
   ).bind(siteId, assetId).all<{ id: string; published_content_json: string }>();
   const allowed = pages.results.some(page => {
-    try { return documentAssetReferences(page.published_content_json, page.id, assetId, true).length > 0; } catch { return false; }
+    try { return documentAssetReferences(page.published_content_json, page.id, assetId, true, row.mime_type).length > 0; } catch { return false; }
   });
   if (!allowed) return error("MEDIA_NOT_FOUND", 404);
   const object = await env.MEDIA.get(row.object_key);

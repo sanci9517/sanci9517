@@ -59,18 +59,18 @@ test('Inspector Media picker reaches older images and keeps filtered pages disti
     assert.equal(await choices.count(),50,`initial page at ${width}px`);
     assert.equal(await picker.getByRole('region',{name:'Médiatár találatok'}).getAttribute('aria-busy'),'false',
       'loaded asset results expose a settled state to assistive technology');
-    await picker.getByRole('button',{name:'További képek betöltése'}).click();
+    await picker.getByRole('button',{name:'További médiafájl betöltése'}).click();
     await page.waitForFunction(()=>document.querySelectorAll('.editor-media-choice').length===100);
     assert.equal(await choices.nth(50).evaluate(el=>document.activeElement===el),true,
       'load-more keyboard focus moves to first newly appended tile');
     await choices.nth(50).press('Tab');
     assert.equal(await choices.nth(51).evaluate(el=>document.activeElement===el),true,
       'Tab reaches another newly appended tile without moving backwards');
-    await picker.getByRole('button',{name:'További képek betöltése'}).click();
+    await picker.getByRole('button',{name:'További médiafájl betöltése'}).click();
     await page.waitForFunction(()=>document.querySelectorAll('.editor-media-choice').length===120);
     assert.equal(await choices.nth(100).evaluate(el=>document.activeElement===el),true,
       'last page hides load-more only after focus has moved to a valid new tile');
-    assert.equal(await picker.getByRole('button',{name:'További képek betöltése'}).isVisible(),false);
+    assert.equal(await picker.getByRole('button',{name:'További médiafájl betöltése'}).isVisible(),false);
     const unique=await choices.evaluateAll(elements=>new Set(elements.map(el=>el.getAttribute('aria-label'))).size);
     assert.equal(unique,120,'no duplicate choices across pages with matching timestamps');
     assert.equal(await choices.last().getAttribute('aria-label'),'asset-0.png kiválasztása','oldest image is reachable');
@@ -90,9 +90,9 @@ test('Inspector Media picker reaches older images and keeps filtered pages disti
     await page.waitForFunction(()=>document.querySelectorAll('.editor-media-choice').length===50);
     await search.fill('asset-11');
     await page.waitForFunction(()=>document.querySelectorAll('.editor-media-choice').length===11);
-    assert.match(await picker.locator('[role=status]').textContent(),/11 kép betöltve a kereséshez/,
+    assert.match(await picker.locator('[role=status]').textContent(),/11 médiafájl betöltve a kereséshez/,
       'search result status explains that the count belongs to the active query');
-    assert.equal(await picker.getByRole('button',{name:'További képek betöltése'}).isVisible(),false);
+    assert.equal(await picker.getByRole('button',{name:'További médiafájl betöltése'}).isVisible(),false);
     await picker.getByRole('button',{name:'asset-119.png kiválasztása'}).click();
     const results=await page.evaluate(()=>window.__choices);
     assert.deepEqual(results,[{id:id(119),alt:'Picture 119'}]);
