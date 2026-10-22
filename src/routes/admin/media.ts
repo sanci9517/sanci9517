@@ -7,7 +7,7 @@ import { normalizeCardContent } from "../../../public/editor-v2/core/card-conten
 import { CONTENT_TYPES, safeMediaUrl } from "../../../public/editor-v2/core/authored-content.js";
 import { isLeafType } from "../../../public/editor-v2/core/schema.js";
 import { isStructuredType } from "../../../public/editor-v2/core/element-content.js";
-import { prepareRetentionRequest } from "../../core/media-retention-request.js";
+import { prepareRetentionRequest, prepareRetentionCancellation } from "../../core/media-retention-request.js";
 import { retentionQueries } from "../../core/media-retention-queries.js";
 
 // Keep playable uploads inside the existing low-cost, application-level cap.
@@ -273,6 +273,21 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
       const saved=await env.DB.prepare(retentionQueries.request).bind(requestId,prepared.value.notBefore,id,siteId).run();
       if (Number(saved.meta?.changes??0)!==1) return error("RETENTION_PRECONDITION_CHANGED",409);
       return Response.json({ok:true,data:{id:requestId,assetId:id,state:"requested",notBefore:prepared.value.notBefore,created:true,permanentDeletionAuthorized:false}},{status:201,headers:{"Cache-Control":"no-store"}});
+    } catch { return error("RETENTION_MIGRATION_NOT_ACTIVE",503); }
+  }
+  if (request.method === "DELETE" && retentionFlag[0] === "1") {
+    if (request.headers.get("Origin") !== url.origin || request.headers.get("Sec-Fetch-Site") === "cross-site") return error("INVALID_ORIGIN",403);
+    const requestId=url.searchParams.get("requestId") || "";
+    if (!/^[0-9a-f-]{36}$/.test(requestId) || url.searchParams.has("id") || url.searchParams.has("name")) return error("INVALID_RETENTION_REQUEST",400);
+    try {
+      const existing=await env.DB.prepare(retentionQueries.get).bind(requestId,siteId).first<{id:string;site_id:string;state:string}>();
+      if (!existing) return error("RETENTION_REQUEST_NOT_FOUND",404);
+      if (existing.state === "cancelled") return ok({id:existing.id,state:"cancelled",changed:false,permanentDeletionAuthorized:false});
+      const prepared=prepareRetentionCancellation(existing);
+      if (!prepared.ok) return error(prepared.reason,409);
+      const cancelled=await env.DB.prepare(retentionQueries.cancel).bind(requestId,siteId).run();
+      if (Number(cancelled.meta?.changes??0)!==1) return error("RETENTION_STATE_CONFLICT",409);
+      return ok({id:requestId,state:"cancelled",changed:true,permanentDeletionAuthorized:false});
     } catch { return error("RETENTION_MIGRATION_NOT_ACTIVE",503); }
   }
   if (request.method === "GET") {
