@@ -79,6 +79,13 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
     assert.equal(await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>getComputedStyle(el).width),'240px','shared width reaches all selected elements');
   }
   await editor.locator('#undo').click();
+  const minWidth=editor.locator('.multi-inspector-field[data-property-id="minWidth"] input');
+  await minWidth.fill('120');
+  await minWidth.dispatchEvent('change');
+  for(const id of [flexId,offsetId]){
+    assert.equal(await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>getComputedStyle(el).minWidth),'120px','shared responsive minimum width reaches both canvas nodes');
+  }
+  await editor.locator('#undo').click();
   // Invalid shared dimensions must be rejected before they enter the Page Model.
   await sharedWidth.fill('2001');
   await sharedWidth.dispatchEvent('change');
