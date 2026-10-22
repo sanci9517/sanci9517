@@ -23,7 +23,7 @@ import {pasteRichTextDocument} from './core/richtext-paste.js';
 import {captureStyleSnapshot} from './core/style-snapshot.js';
 import {LAYOUT_PRESETS,LAYOUT_TYPES,layoutMode,isManagedLayout,isLayoutPropertyRelevant,explicitGridColumnCount} from './core/layout-presets.js';
 import {TYPOGRAPHY_PRESETS,typographyPresetPatch} from './core/typography-presets.js';
-import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent} from './core/element-content.js';
+import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent,safeMediaUrl} from './core/element-content.js';
 import {renderStructuredInspector} from './ui/structured-inspector.js';
 import {ICON_CHOICES,iconById} from './core/icon-options.js';
 import {DIVIDER_LINE_STYLES,normalizeDividerStyle} from './core/decorative-elements.js';
@@ -422,8 +422,8 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
    else{const q=document.createElement('blockquote');q.className='visual-quote';const p=document.createElement('p');p.textContent=node.props?.text||'';q.append(p);if(node.props?.attribution){const cite=document.createElement('cite');cite.textContent=node.props.attribution;q.append(cite)}c.append(q)}
    el.append(c);
  }else if(node.type===NODE_TYPES.SCHEDULE){const c=document.createElement('div');c.className='node-content schedule-preview-host';renderSchedulePreview(c,node.props?.schedule);el.append(c)}else if([NODE_TYPES.IMAGE,NODE_TYPES.VIDEO,NODE_TYPES.AUDIO].includes(node.type)&&!isAuthoredContent(node)){
-    const src=String(node.props?.src||'').trim();const c=document.createElement('div');c.className='node-content media-preview';
-    if(src&&/^(https?:\/\/|\/(?!\/))/.test(src)){
+    const src=safeMediaUrl(node.props?.src);const c=document.createElement('div');c.className='node-content media-preview';
+    if(src){
       const media=document.createElement(node.type===NODE_TYPES.IMAGE?'img':node.type===NODE_TYPES.VIDEO?'video':'audio');
       media.src=src;media.style.maxWidth='100%';media.style.width='100%';
       if(node.type===NODE_TYPES.IMAGE){media.alt=String(node.props?.alt||'');media.style.objectFit=node.props?.objectFit==='contain'?'contain':'cover';}
