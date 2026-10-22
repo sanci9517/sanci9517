@@ -50,7 +50,8 @@ export function legacyImagePresentation(props){
   const p=props??{},fit=IMAGE_FITS.has(p.objectFit)?p.objectFit:(IMAGE_FITS.has(p.fit)?p.fit:'cover');
   const ratio=IMAGE_RATIOS.has(p.ratio)?p.ratio:'auto';
   // Never read inherited Object.prototype keys as preset coordinates.
-  const preset=Object.hasOwn(LEGACY_FOCAL_POINTS,p.focalPoint)?LEGACY_FOCAL_POINTS[p.focalPoint]:LEGACY_FOCAL_POINTS.center;
+  const preset=typeof p.focalPoint==='string'&&Object.hasOwn(LEGACY_FOCAL_POINTS,p.focalPoint)
+    ?LEGACY_FOCAL_POINTS[p.focalPoint]:LEGACY_FOCAL_POINTS.center;
   const [oldX,oldY]=preset;
   const focalX=focal(p.focalX,oldX),focalY=focal(p.focalY,oldY);
   const decorative=p.decorative===true;
