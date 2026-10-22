@@ -137,6 +137,15 @@ test('legacy image media library source separates draft and published paths and 
  assert.equal(legacyImageSource({assetId:'',src:'javascript:alert(1)'}),'');
 });
 
+test('legacy image focal points reject malformed persisted values without shifting the crop',()=>{
+ const top={focalPoint:'top',focalX:' ',focalY:true};
+ assert.deepEqual([legacyImagePresentation(top).focalX,legacyImagePresentation(top).focalY],[50,0]);
+ const right={focalPoint:'right',focalX:[],focalY:{value:90}};
+ assert.deepEqual([legacyImagePresentation(right).focalX,legacyImagePresentation(right).focalY],[100,50]);
+ assert.equal(legacyImagePresentation({focalX:' 75 ',focalY:22.6}).objectPosition,'75% 23%');
+ assert.equal(legacyImagePresentation({focalX:-8,focalY:111}).objectPosition,'0% 100%');
+});
+
 test('legacy playback settings preserve prior controls defaults and prohibit unmuted autoplay',()=>{
  const posterId='00000000-0000-4000-8000-000000000123';
  assert.deepEqual(legacyPlaybackSettings({}, {video:true,editor:false}),{controls:true,loop:false,muted:false,autoplay:false,poster:''});
