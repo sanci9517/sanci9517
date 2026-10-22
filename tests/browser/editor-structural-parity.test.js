@@ -16,7 +16,11 @@ test('each authored structural type preserves its semantics and responsive layou
     const state=createEditorState(createDocument(createPage({id:type,name:type,slug:type}),{modern:true}));
     execute(state,{type:'style.set',payload:{nodeId:activePage(state).rootId,patch:{width:'320px',height:'360px',minHeight:'360px',padding:'12px'}}});
     execute(state,{type:'element.add',payload:{type,parentId:activePage(state).rootId,authored:true}});const id=state.selection.primaryId;
-    for(const device of ['desktop','tablet','mobile'])execute(state,{type:'responsive.set',payload:{nodeId:id,device,patch:{minWidth:'80px',maxWidth:'600px',minHeight:'36px',maxHeight:'900px'}}});
+    for(const [device,patch] of Object.entries({
+      desktop:{minWidth:'80px',maxWidth:'600px',minHeight:'36px',maxHeight:'900px'},
+      tablet:{minWidth:'90px',maxWidth:'480px',minHeight:'42px',maxHeight:'700px'},
+      mobile:{minWidth:'100px',maxWidth:'320px',minHeight:'48px',maxHeight:'500px'}
+    }))execute(state,{type:'responsive.set',payload:{nodeId:id,device,patch}});
     execute(state,{type:'element.add',payload:{type:'text',parentId:id,authored:true,props:{text:'Megőrzött tartalom'}}});const childId=state.selection.primaryId;
     // Older snapshots can carry both legacy and current accessibility keys.
     execute(state,{type:'element.update',payload:{nodeId:id,patch:{accessibility:{
@@ -98,6 +102,8 @@ test('each authored structural type preserves its semantics and responsive layou
       assert.equal(await source.getAttribute('aria-label'),'Régi címke '+type,type+'/'+device+' canvas label');
       assert.equal(await target.getAttribute('aria-label'),'Régi címke '+type,type+'/'+device+' public label');
       assert.equal(await target.evaluate(el=>el.outerHTML.split(' id=').length-1),1,type+'/'+device+' one anchor only');
+      const expectedLimits={desktop:['80px','600px','36px','900px'],tablet:['90px','480px','42px','700px'],mobile:['100px','320px','48px','500px']}[device];
+      assert.deepEqual(await target.evaluate(el=>{const css=getComputedStyle(el);return [css.minWidth,css.maxWidth,css.minHeight,css.maxHeight]}),expectedLimits,type+'/'+device+' authored breakpoint limits');
       assert.equal(await target.evaluate(el=>el.tagName.toLowerCase()),models[type].tag,type+' semantics');assert.deepEqual(await target.evaluate(measure),await source.evaluate(measure),type+'/'+device);assert.match(await target.textContent(),/Megőrzött tartalom/);
     }
   }
