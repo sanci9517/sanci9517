@@ -25,6 +25,9 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
     execute(model,{type:'element.add',payload:{type,parentId:rootId,props:{src,alt:'Tesztkép'}}});
     ids[key]=model.selection.primaryId;
   }
+  execute(model,{type:'element.add',payload:{type:'image',parentId:rootId,props:{src:'',alt:''}}});
+  ids.libraryImage=model.selection.primaryId;
+  const mediaId='00000000-0000-4000-8000-000000000123';
   assert.equal(safeMediaUrl('//untrusted.invalid/track.png'),'');
   assert.equal(safeMediaUrl('https://user:pass@untrusted.invalid/private.mp4'),'');
   assert.equal(safeMediaUrl('relative/sound.mp3'),'');
@@ -44,6 +47,11 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
       draft=structuredClone(request.document);revision++;
       if(request.publish)published=structuredClone(draft);
       return json({ok:true,data:{pageId,version:revision,revisionId:'revision-'+revision,published:Boolean(request.publish)}});
+    }
+    if(url.pathname==='/api/admin/media'&&!url.searchParams.has('id'))return json({ok:true,data:{assets:[{id:mediaId,name:'saját-kép.svg',mimeType:'image/svg+xml',altText:'Médiatárból választott kép',previewUrl:'/api/admin/media?id='+mediaId}],nextCursor:null}});
+    if(url.pathname==='/api/admin/media'&&url.searchParams.get('id')===mediaId||url.pathname==='/media/'+mediaId){
+      res.setHeader('content-type','image/svg+xml');
+      return res.end('<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><rect width="20" height="20" fill="#56f"/></svg>');
     }
     if(url.pathname==='/api/public/pages')return json({ok:true,data:{id:pageId,slug:'test',title:'Test',description:'',content:published.pages[pageId]}});
     if(url.pathname==='/api/public/navigation')return json({ok:true,data:{items:[]}});
@@ -119,6 +127,35 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   assert.equal(await repaired.getAttribute('alt'),'Javított képleírás');
   assert.equal(await repaired.evaluate(el=>getComputedStyle(el).objectFit),'contain');
 
+  // The existing R2 image picker must also work for legacy image nodes.
+  // Library selection updates only the draft and uses the private Admin route
+  // while editing; public output becomes available only after Publish.
+  await canvasNode(ids.libraryImage).evaluate(el=>el.click());
+  await inspector.getByRole('button',{name:'Médiatár megnyitása'}).click();
+  await inspector.getByRole('button',{name:'saját-kép.svg kiválasztása'}).click();
+  const draftAsset=canvasNode(ids.libraryImage).locator('.media-preview img');
+  await draftAsset.waitFor();
+  assert.match(await draftAsset.getAttribute('src'),/\/api\/admin\/media\?id=00000000-0000-4000-8000-000000000123$/);
+  assert.equal(await draftAsset.getAttribute('alt'),'Médiatárból választott kép','picker transfers asset alt text to empty legacy alt');
+  assert.equal(await publishedNode(ids.libraryImage).evaluate(el=>el.tagName.toLowerCase()),'div','asset selection never auto-publishes');
+
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false);
+  assert.equal(draft.pages[pageId].nodes[ids.libraryImage].props.assetId,mediaId);
+  await viewer.reload();
+  assert.equal(await publishedNode(ids.libraryImage).evaluate(el=>el.tagName.toLowerCase()),'div','saved image remains private until Publish');
+
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  assert.equal(posts.at(-1).publish,true);
+  await viewer.reload();
+  const publishedAsset=publishedNode(ids.libraryImage);
+  await publishedAsset.waitFor();
+  assert.equal(await publishedAsset.evaluate(el=>el.tagName.toLowerCase()),'img');
+  assert.match(await publishedAsset.getAttribute('src'),/\/media\/00000000-0000-4000-8000-000000000123$/);
+  assert.equal(await publishedAsset.getAttribute('alt'),'Médiatárból választott kép');
+
   await viewer.setViewportSize({width:390,height:820});
   await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
   for(const [key,mediaType] of [['badVideo','video'],['badAudio','audio']]){
@@ -127,6 +164,16 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   }
   assert.equal(await publishedNode(ids.badImage).evaluate(el=>el.tagName.toLowerCase()),'img','repaired image visible in mobile public');
   assert.equal(await canvasNode(ids.badImage).locator('img').count(),1,'repaired image visible in mobile Canvas');
+  assert.equal(await publishedNode(ids.libraryImage).evaluate(el=>el.tagName.toLowerCase()),'img','R2 library image visible publicly on mobile');
+  assert.match(await canvasNode(ids.libraryImage).locator('img').getAttribute('src'),/\/api\/admin\/media\?id=/);
+
+  // A manual source URL can replace a previously selected media-library asset;
+  // the obsolete asset ID must not silently override the Inspector input.
+  await canvasNode(ids.libraryImage).evaluate(el=>el.click());
+  await inspector.getByRole('textbox',{name:'Kép URL'}).fill('/fixture.svg');
+  await inspector.getByRole('textbox',{name:'Kép URL'}).press('Tab');
+  assert.equal((await canvasNode(ids.libraryImage).locator('img').getAttribute('src')).endsWith('/fixture.svg'),true);
+  assert.equal(editor&&draft.pages[pageId].nodes[ids.libraryImage].props.assetId,mediaId,'unsaved manual source cannot mutate the saved revision');
   assert.deepEqual(externalRequests,[],'invalid media are blocked at all viewport sizes');
   assert.deepEqual(errors,[]);
 });
