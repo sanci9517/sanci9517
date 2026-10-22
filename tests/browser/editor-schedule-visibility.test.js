@@ -121,12 +121,12 @@ test('hidden or hidden-parent schedules never fetch or break the public mobile p
   assert.deepEqual(requests,['upcoming','next','all']);
   feedRevision=2;
   await responsive.setViewportSize({width:390,height:850});
-  await responsive.locator(`[data-node-id="${visibleScheduleId}"] .visual-schedule-title`).getByText('Stream upcoming #2').waitFor();
+  await responsive.locator(`[data-node-id="${visibleScheduleId}"] .visual-schedule-title`).filter({hasText:'Stream upcoming #2'}).waitFor();
   assert.deepEqual(requests,['upcoming','next','all','upcoming'],'mobile responsive reload refetches the latest visible schedule only');
   assert.equal(await responsive.locator(`[data-node-id="${directHiddenId}"]`).count(),0,'mobile hide survives a fresh schedule reload');
   feedRevision=3;
   await responsive.setViewportSize({width:768,height:850});
-  await responsive.locator(`[data-node-id="${directHiddenId}"] .visual-schedule-title`).getByText('Stream next #3').waitFor();
+  await responsive.locator(`[data-node-id="${directHiddenId}"] .visual-schedule-title`).filter({hasText:'Stream next #3'}).waitFor();
   assert.deepEqual(requests.slice(-3),['upcoming','next','all'],'tablet refetches all visible streams for the new feed revision');
   assert.equal(await responsive.locator(`[data-node-id="${nestedHiddenId}"] .visual-schedule-title`).textContent(),'Stream all #3');
   assert.equal(await responsive.locator('.visual-schedule-error').count(),0,'healthy refresh never shows stale errors');
