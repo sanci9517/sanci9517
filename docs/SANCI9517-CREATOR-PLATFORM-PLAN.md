@@ -11,6 +11,8 @@
 5. A `docs/MASTER-DEVELOPMENT-PLAN.md` régi hivatkozási fájl, **nem** aktív fejlesztési terv.
 6. Nagyobb átrendezés előtt ellenőrizd a teljes szöveg egyezését és az összes fejezetfájlt; ne hagyj ki funkciókat.
 
+> **2026-10-22 — 77.44 Inspector kereső találatszám paritás — CI FÜGGŐBEN:** A címalapú keresésnél már helyesen felfedett vezérlők eddig nem mindig szerepeltek a `találat` számlálóban. Az `app.js` a csoportcím-egyezéssel felfedett korábban rejtett mezőket is számolja (`5a275bf`), és a Chromium `editor-inspector-lifecycle` tesztje pozitív találatszámot vár az élő keresőből (`f4fba8e`). E javítás új CI-je PENDING, a kézi mobil/asztali elfogadás OPEN; az előző, `31e2ccd` kódbázis öt ellenőrzése PASS.
+
 > **2026-10-22 — 77.44 Inspector kereső regresszió — CI PASS:** A `31e2ccdf8f8b374c8ad1aa6236480ac633962f38` commiton mind az öt GitHub ellenőrzés SUCCESS, beleértve az Editor Core teljes Chromium tesztet. A normalizált címalapú keresés, beágyazott csoport-megjelenítés és DOM-szöveghez illesztett teszt regressziója automatizáltan lezárva. A teljes Inspector/Editor valós mobil/asztali kézi elfogadása változatlanul OPEN.
 
 > **2026-10-22 — 77.44 Inspector nested group keresési viselkedés — CI FÜGGŐBEN:** A címalapú keresésnél a külső `inspector-group` csoport megegyező címe ellenére a beágyazott belső csoportok újra elrejthették a hozzájuk tartozó mezőket. A `public/editor-v2/app.js` most a keresési egyezést a teljes ős-csoportláncon feloldja, és címalapú találatnál megmutatja az összes beágyazott alcsoportot és vezérlőt. Kód: `7cd7310`, az Editor Core GitHub CI eredménye még PENDING; a fizikai mobilos/asztali elfogadás OPEN. A megelőző `dd91a69` futása is folyamatban volt a legutóbbi lekérdezéskor.
