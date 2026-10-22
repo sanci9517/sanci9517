@@ -75,6 +75,12 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
     assert.equal(await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>getComputedStyle(el).width),'240px','shared width reaches all selected elements');
   }
   await editor.locator('#undo').click();
+  // Invalid shared dimensions must be rejected before they enter the Page Model.
+  await sharedWidth.fill('2001');
+  await sharedWidth.dispatchEvent('change');
+  for(const id of [flexId,offsetId]){
+    assert.notEqual(await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>getComputedStyle(el).width),'2001px','invalid shared width rejected');
+  }
   await select(gridId);
   // Searching a section heading reveals its controls rather than an empty section.
   const search=editor.locator('.inspector-search input[type=search]');
