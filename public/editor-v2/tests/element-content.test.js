@@ -6,6 +6,7 @@ import {execute} from '../core/commands.js';
 import {authoredNodeHtml,contentAttributes,contentTag,normalizeElementContent,validateElementContent,validatePageForPublication,contentProperties} from '../core/authored-content.js';
 import {opaqueContrast} from '../core/accessibility.js';
 import {legacyImageSource,legacyPlaybackSettings} from '../core/legacy-media-source.js';
+import {safeLegacyLinkHref,legacyLinkHref,legacyLinkUpdate} from '../core/legacy-link.js';
 
 test('typed content edits preserve unknown legacy data and undo restores the complete node',()=>{
   const state=createEditorState(createDocument());execute(state,{type:'element.add',payload:{type:'heading',props:{text:'Eredeti cím',legacy:{kept:true}},style:{width:'240px'}}});
@@ -155,4 +156,14 @@ test('legacy playback settings preserve prior controls defaults and prohibit unm
  });
  assert.equal(legacyPlaybackSettings({poster:'https://valid.example/path.png',posterAssetId:'invalid'},{video:true}).poster,'https://valid.example/path.png');
  assert.equal(legacyPlaybackSettings({poster:'javascript:alert(1)'},{video:true}).poster,'');
+});
+
+test('legacy links and buttons share URL security and clear both historic URL aliases',()=>{
+ const ok=['/p/bemutatkozas','#szakasz','https://example.com/utvonal','http://example.com','mailto:hello@example.com'];
+ for(const url of ok)assert.equal(safeLegacyLinkHref(url),url);
+ for(const url of ['javascript:alert(1)','//evil.example/track','relative/link','https://user:pass@example.com','https://example.com/\\\\path','', ' '.repeat(3)])assert.equal(safeLegacyLinkHref(url),'');
+ assert.equal(legacyLinkHref({url:'',href:'#cel'}),'#cel');
+ assert.equal(legacyLinkHref({url:'javascript:alert(1)',href:'/p/safe'}),'','an explicit unsafe url cannot fall back to a stale safe href');
+ assert.deepEqual(legacyLinkUpdate({url:'javascript:alert(1)',href:'/p/old',text:'Link'},'/p/new'),{url:'/p/new',href:'/p/new',text:'Link'});
+ assert.deepEqual(legacyLinkUpdate({url:'/p/old',href:'/p/old'},''),{url:'',href:''},'clearing the Inspector removes both historical sources');
 });
