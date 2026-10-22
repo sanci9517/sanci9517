@@ -25,6 +25,7 @@ import {LAYOUT_PRESETS,LAYOUT_TYPES,layoutMode,isManagedLayout,isLayoutPropertyR
 import {TYPOGRAPHY_PRESETS,typographyPresetPatch} from './core/typography-presets.js';
 import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent,safeMediaUrl} from './core/element-content.js';
 import {legacyImageSource,legacyPlaybackSettings} from './core/legacy-media-source.js';
+import {legacyLinkHref,safeLegacyLinkHref,legacyLinkUpdate} from './core/legacy-link.js';
 import {renderStructuredInspector} from './ui/structured-inspector.js';
 import {ICON_CHOICES,iconById} from './core/icon-options.js';
 import {DIVIDER_LINE_STYLES,normalizeDividerStyle} from './core/decorative-elements.js';
@@ -876,6 +877,29 @@ function renderMultiInspector(nodes){
 }
 function renderExistingContentInspector(node){
   const update=(key,value)=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),[key]:value}}});
+  if(!isAuthoredContent(node)&&['button','link'].includes(node.type)){
+    const section=document.createElement('section');section.className='legacy-link-inspector';
+    const readonly=Boolean(node.locked);
+    section.append(field('Felirat',node.props?.text??node.props?.content??node.name,value=>update('text',value),readonly));
+    section.append(field('Hivatkozás URL',node.props?.url||node.props?.href||'',value=>
+      command('element.update',{nodeId:node.id,patch:{props:legacyLinkUpdate(node.props,value)}}),readonly));
+    section.append(field('Akadálymentes elnevezés',node.props?.ariaLabel||'',value=>update('ariaLabel',value),readonly));
+    const row=document.createElement('label');row.className='inspector-toggle';
+    const input=document.createElement('input');input.type='checkbox';input.checked=node.props?.newWindow===true;input.disabled=readonly;
+    input.setAttribute('aria-label','Hivatkozás új ablakban');
+    input.onchange=()=>update('newWindow',input.checked);
+    row.append(input,document.createTextNode('Megnyitás új lapon'));section.append(row);
+    const help=document.createElement('p');help.className='content-field-help';
+    help.textContent='Belső /p/oldal vagy #azonosító, illetve http(s):// vagy mailto: hivatkozás adható meg. Üres link esetén csak szöveg látható; a Mentés nem publikál.';
+    section.append(help);
+    const source=String(node.props?.url||node.props?.href||'').trim();
+    if(source&&!legacyLinkHref(node.props)){
+      const warning=document.createElement('p');warning.className='property-validation';warning.setAttribute('role','status');
+      warning.textContent='Nem biztonságos vagy nem támogatott hivatkozás: a publikus oldalon nem lesz kattintható.';
+      section.append(warning);
+    }
+    inspector.append(section);return true;
+  }
   if(!isAuthoredContent(node)&&['image','video','audio'].includes(node.type)){
     const section=document.createElement('section');section.className='legacy-media-inspector';
     const mediaLabel={image:'Kép',video:'Videó',audio:'Hang'}[node.type];
