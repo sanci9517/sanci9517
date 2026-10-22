@@ -155,6 +155,49 @@ Minden presethez, ahol értelmezhető, kötelező:
 
 **Elfogadás/teszt:** desktop nagy és kis szélesség, tablet álló/fekvő, mobil és 200% zoom; bal/job panel külön és egyszerre nyitás/zárás/resize; viewport-breakpoint nem változik véletlenül, nincs overlay a vászonon, nincs vízszintes clipping/scroll, kiválasztott elem és input/IME fókusz megtartás, drag/resize helyes geometriával, Layers->Canvas->Inspector parity. Tooltip egér/focus/érintés, akadálymentes nevekkel, megfelelő kontraszt és screen reader; Save/Publish külön; UI theme független webhelytémától. Jelenleg TERV; nem jelölhető implementáltként. A pontos méretek, ikonválasztás, panel-dűlő viselkedés és részletdesign az elfogadott alapirányon belül tovább finomítható.
 
+### 38.3.B — Bal eszköztár, jobb Inspector és workspace részletes UX-szerződés (2026-10-22; SPEC / IMPLEMENTÁCIÓ NYITOTT)
+
+**Designcél és források:** egységes Creator Editor, nem Figma/Webflow/Framer-klón. Figma: kompakt ikonrail, kiválasztott tab alapján dinamikus bal panel, panel-átméretezés és rétegfa; Webflow: kereshető, hierarchikus Navigator, releváns tulajdonságcsoportok és fókuszmód; Framer: vászon elsőbbsége és eszközkrom visszafogottsága. Referencia: https://help.figma.com/hc/en-us/articles/360039831974-Explore-the-navigation-bar-and-left-sidebar ; https://help.webflow.com/hc/en-us/articles/33961320786451-Navigator ; https://help.webflow.com/hc/en-us/articles/33961362040723-Style-panel-overview . Ezek inspirációk, nem függőségek.
+
+**1. Workspace régiók, hierarchia és rugalmas méretek.**
+- Felső keret: vissza az Adminba, oldalválasztó + draft/dirty státusz, Undo/Redo, viewport/breakpoint és zoom, Preview, külön és közérthető **Mentés** / **Publikálás**. A státuszok szövegesen is kiolvashatók, veszélyes/mélységi műveletek nem ikon-only.
+- Bal ikonrail (javasolt optikai keret 44–60 CSS px, érintési cél méret preferált minimum 44×44 px) és tőle jobbra csak EGY aktív tartalompanel (tipikus 250–360 px, átméretezhető; nem fix kötelező méret). Panelek szélességét és induló állapotát workspace preference őrzi.
+- Középső canvas flexibilis 1fr; panelnyitás/csukás/drag resize a rendelkezésre álló helyet osztja újra, **nem** borít rá a canvason kijelölt objektumra. A választott weboldal viewportja és layout breakpointja változatlan marad; szükség esetén fit/zoom vagy a munkatér *belső* pan/scroll segít, a publikus oldal külön, egységes document-scroll szerződése érintetlen.
+- Jobb Inspector alapból kontextuális, szélessége példaként 300–420 px, átméretezhető / összehúzható, nem kell a bal panelével azonosnak lennie. Kezelőinek mérete tartalom- és műveletfüggő. Keskeny desktopnál kompakt rail, egy aktív panel, canvas-minimumot védő responsive workspace switch; nincs ráúszó panel standard módban.
+- Alsó kisméretű canvas status strip opcionálisan: kijelölés/elemútvonal, snap, zoom, segédvonalak. Ne duplikálja a felső mentés/publikálás részt.
+- Semleges, jól olvasható chrome és visszafogott kiemelőszín; adaptív light/dark/system, méret/density opciók; publikus Brand Kit teljesen független az editor UI témától.
+
+**2. Bal oldali ikonrail sorrend és csoportok.**
+- **Építés:** + Elemek (keresés, struktúra/layout, szöveg, média, gomb/CTA, interaktív, űrlap, creator, dinamikus tartalom), Layers/Rétegek (fa, collapse, keresés, lock/visibility, reparent/drag), Components (szimbólumok és instance-ok), Templates & Sections (gyári és saját).
+- **Erőforrások:** Media/Assets (R2 Asset Registry), Brand Kit/Styles (tokenek, színek, tipográfia), opcionális Data/CMS (csak amikor támogatott); elérhetőség/hiányzó provider állapot jelölve.
+- **Eszközök:** AI-asszisztens külön tudatos nyitás/jóváhagyási határral; oldalszintű settings, shortcuts/help az alsó ritkább csoportban. Shop, Twitch/integráció, OBS és kampány adminisztratív kezelés **nem** épül bele külön panelként a Visual Editorba; csak a már regisztrált weboldal-komponenseik jelenhetnek meg Elemek közt.
+- Rail alapállapot: egyértelmű ikonok, active mark, hover/focus tooltip név+egymondatos magyarázat+shortcut, dedikált shortcut help; nincs szöveges sáv minden ikon mellett. Kétértelmű ikonhoz rövid címke/kiegészítő popover. Felhasználó választhatja a címkézett/kezdő módot.
+- Panelen belül kontextusfüggő search, kategóriachipek, Favorites/Recent, vizuális thumbnail és compact list/grid kapcsoló. Add flow: kattintással beszúrás a kiválasztott konténerbe vagy drag preview a canvasra, invalid drop állapot magyarázattal.
+- Rétegpanelen hover a canvas megfelelő elemét emeli ki és fordítva; selection nem módosul hoverre; click/tap választ, keyboard nyilak és Enter navigálnak; lock/visibility külön az éles weboldal beállításától.
+
+**3. Jobb oldali Inspector információarchitektúra.**
+- Fejléc: elemikon + szerkeszthető elemnév + breadcrumb, device override/mixed-state, lock/visibility/duplicate/more; selection hiányában page-level gyorsbeállítások. Többszörös kijelölés esetén közös kompatibilis mezők, mixed érték és egy Undo egység.
+- Fő tabok ikon-first (tooltip/focus segítséggel, aktív cím szükség szerint): **Tartalom** (text/media/links), **Elrendezés** (display, flex/grid, size, position, spacing), **Stílus** (typography, colors, backgrounds, borders, effects), **Animáció** (trigger/presets/timeline), **Interakciók** (states/actions), **Haladó** (accessibility, SEO where relevant, binding, debug). Ha egy elemnek nincs adott képessége, tab rejtett vagy egyértelműen disabled magyarázattal; tab-sorrend konzisztens. Search minden elérhető csoportban, rendezett találatokkal.
+- Az aktív tabon belül 2. szintű logikus accordion-csoportok, alapértelmezésben a gyakori nyitva; Focus mode: egyszerre egy rész nyitva. Nem legyen 20 azonos vizuális súlyú nagy blokk. Csoportokban 2-oszlopos kompakt mezők, ha elegendő hely; megmaradó mezők teljes szélességűek. A spacing/flex/grid/transform konfigurációknál kicsi, vizuális kontroll (box model, 3×3 alignment, axis/anchor), érték és mértékegység külön.
+- Számbeviteli UX: numeric + stepper/drag scrub where safe; unit chooser (px, %, rem, em, vw/vh, auto, etc. csak releváns esetben), reset inherited és breakpoint indicator. Egérrel görgetés csak explicit fókusz/intent mellett változtathat értéket; beírt mező fókusza/caret/IME kijelölése render során stabil. Inputs validáció nem blokkolhat normál gépelést.
+- Megszokott műveletek egyetlen, gyors elérési útvonalon; ritkább haladó property-k nincsenek eldobva, csak kereséssel vagy Haladó módban elérhetők. „?” ikonok halmozása helyett igény szerinti tooltip/popover, bonyolult helyzetekben példával; no auto-open modal.
+- Hover/focus tartalom: felirat, rövid leírás, billentyűparancs, figyelmeztetés/következmény; tooltipek nem váltják ki az aria-labelt, fókuszláthatóságot, hibaszöveget és mobilos hozzáférést. Tooltip késleltetés mérsékelt, ne vibráljon a sűrű ikonsávban.
+- Animáció tab: kontextusfüggő presets, Play/Stop Preview, trigger, timing, priority; a Motion Studio részletes timeline-ja szükség esetén szerkesztésre használható külön dockolt nagyobb panelként úgy, hogy a canvas ne legyen kitakarva.
+
+**4. Kontextuális eszközök és műveleti prioritás.**
+- Vászonon kijelölt elem mellett csak néhány, közvetlen szerkesztéshez kapcsolódó kisméretű quick action (edit text, duplicate, move, layout, more) jelenjen meg; ne takarjon fontos tartalmat. Teljes eszközkatalógus továbbra is az Inspectorban.
+- Kattintás / jobb kattintás menük a selectiont és a node parent útvonalat követik. Command palette: kategorizált keresés, diszkrét shortcut javaslat, discoverability, tiltott akció disabled.
+- Panel open/close / layout switch soha nem jelent implicit Save/Publish műveletet; navigáció közbeni unsaved changes védelem változatlan.
+
+**5. Mobil/tablet UX.**
+- Tablet fekvő nézetben a panelek adott szélességnél dockolhatók; tablet álló/mobil esetén egy aktív alsó sheet (closed/half/full) és kompakt bottom nav. Sheet nyitásakor a canvas rendelkezésre álló látható tere csökken és skálázható, de az authored viewport nem törik át implicit.
+- Mobilon tooltip helyett long-press vagy tap-to-help / kontextuscímke; minden fontos fő funkció stabilan megnyitható. Safe area, virtuális keyboard és visszalépés nem veszti el kijelölés/fókusz/IME kompozíció állapotát; mentés/publikálás elérhető, de egymástól világosan elkülönül.
+
+**6. Elfogadási kapuk és végrehajtás.**
+- Először UI tokenek, ikonregiszter, panelek/dock layout + state persistance; majd bal Add/Layers/Assets/Components; jobb Inspector tabok/group registry; unit controls/tooltip/keyboard; tablet/mobil sheet; animáció integráció. Ezek a meglévő F0/F2/77.44 szerződéshez tartoznak, NEM új párhuzamos roadmap.
+- Chromium e2e: panelek külön/együtt nyitás/zárás és resize, világos/sötét téma, 1280/1440/1920 desktop, tablet/mobil portrait és landscape, 200% zoom, canvas hit testing és scroll anchor, layers selection sync, inspector search és focus/caret, drag/drop, tooltip hover/focus, keyboard+touch, reduced motion, Undo/Redo/Save ≠ Publish és publikus paritás. Összecsukott és extrém keskeny nézetben nincs vízszintes document overflow, nincs panel-vászon ütközés.
+- A pontos méretek ajánlott kiindulópontok, nem törvényi állandók; finomítás után kézi PC/Android elfogadás kell. 2026-10-22: **csak specifikáció, implementation/CI/deploy/unified manual acceptance OPEN**.
+
 ### 38.4 — Oldalmodell, Layers és struktúra
 
 - Page → template/section → container/layout → element hierarchia, stabil node ID-val.
