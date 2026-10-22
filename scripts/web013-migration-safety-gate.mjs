@@ -17,9 +17,17 @@ const pending = readFileSync(resolve(root, "scripts/pending/0025_site_domains_an
 const memberships = readFileSync(resolve(root, "scripts/pending/0026_site_memberships.sql"), "utf8");
 const settings = readFileSync(resolve(root, "scripts/pending/0027_site_scoped_settings.sql"), "utf8");
 const mediaArchive = readFileSync(resolve(root,"scripts/pending/0028_media_archive.sql"),"utf8");
+const retention = readFileSync(resolve(root,"scripts/pending/media_retention_requests.sql"),"utf8");
 
 if (migrations.some((name) => /^002[5678][_-]/.test(name))) {
   console.error("BLOCK: migration 0025 is already applied manually in production; 0026 and 0027 are also manually installed, and 0028 requires controlled rollout. Do not auto-replay these SQL files. Reconcile the migration ledger and new-database bootstrap first.");
+  process.exit(1);
+}
+if (!retention.includes("CREATE TABLE IF NOT EXISTS media_retention_requests") ||
+    !retention.includes("UNIQUE(site_id,asset_id)") ||
+    !retention.includes("FOREIGN KEY(asset_id) REFERENCES media(id)") ||
+    /(?:^|\n)\s*(?:DELETE\s+FROM|DROP\s+TABLE|CREATE\s+TRIGGER)/im.test(retention)) {
+  console.error("BLOCK: manual-only retention proposal was changed or became destructive.");
   process.exit(1);
 }
 if (!pending.includes("CREATE UNIQUE INDEX idx_pages_site_slug ON pages(site_id,slug)") ||
@@ -33,4 +41,4 @@ if (!pending.includes("CREATE UNIQUE INDEX idx_pages_site_slug ON pages(site_id,
   console.error("BLOCK: pending 0025/0026/0027 migrations no longer match the verified production schema contract.");
   process.exit(1);
 }
-console.log("PASS: 0025-0028 stay manual-only. The production D1 rollout for 0028 must be separately verified; Wrangler ledger remains at 0024.");
+console.log("PASS: 0025-0028 and media retention stay manual-only. The production D1 rollout for 0028 must be separately verified; Wrangler ledger remains at 0024.");
