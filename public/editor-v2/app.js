@@ -795,10 +795,20 @@ function filterInspector(){
   for(const group of inspector.querySelectorAll('.inspector-group')){
     const title=group.querySelector(':scope > .inspector-group-title')?.textContent||'';
     const groupFields=[...group.querySelectorAll('.field,.typed-inspector-field,.richtext-editor,.typography-role,.layout-preset')];
+    const inheritedTitleMatches=Boolean(query)&&(()=>{
+      let parent=group.parentElement?.closest('.inspector-group');
+      while(parent){
+        const parentTitle=parent.querySelector(':scope > .inspector-group-title')?.textContent||'';
+        if(normalizedSearchText(parentTitle).includes(query))return true;
+        parent=parent.parentElement?.closest('.inspector-group');
+      }
+      return false;
+    })();
     const titleMatches=Boolean(query)&&normalizedSearchText(title).includes(query);
+    const revealGroup=titleMatches||inheritedTitleMatches;
     // A group-title match must reveal its controls, not an empty accordion.
-    if(titleMatches)for(const field of groupFields)field.hidden=false;
-    const visible=query?titleMatches||groupFields.some(item=>!item.hidden):inspectorCategory==='all'||!group.dataset.inspectorCategory||group.dataset.inspectorCategory===inspectorCategory;
+    if(revealGroup)for(const field of groupFields)field.hidden=false;
+    const visible=query?revealGroup||groupFields.some(item=>!item.hidden):inspectorCategory==='all'||!group.dataset.inspectorCategory||group.dataset.inspectorCategory===inspectorCategory;
     group.hidden=!visible;
     if(query&&visible){group.classList.add('is-open');group.querySelector(':scope > .inspector-group-title')?.setAttribute('aria-expanded','true')}
   }
