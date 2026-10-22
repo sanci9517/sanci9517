@@ -38,7 +38,14 @@ async function fixture(t) {
   const bucket = {
     async put(key,bytes) { files.set(key,Uint8Array.from(bytes)); },
     async get(key) { const bytes=files.get(key); return bytes ? {body:new Blob([bytes]).stream()} : null; },
-    async delete(key) { files.delete(key); }
+    async delete(key) { files.delete(key); },
+    async list({prefix,limit,cursor}) {
+      const keys=[...files.keys()].filter(key=>key.startsWith(prefix)).sort();
+      const start=cursor?Number(cursor):0;
+      const slice=keys.slice(start,start+limit);
+      const next=start+slice.length;
+      return {objects:slice.map(key=>({key})),truncated:next<keys.length,cursor:String(next)};
+    }
   };
   const env = { SITE_MEMBERSHIP_ENFORCEMENT:"enabled", MEDIA:bucket, DB:{
     prepare(sql) {
@@ -61,6 +68,8 @@ async function fixture(t) {
     if(opts.state)url.searchParams.set("state",opts.state);
     if(opts.usage)url.searchParams.set("usage",opts.usage);
     if(opts.mime)url.searchParams.set("mime",opts.mime);
+    if(opts.orphanAudit)url.searchParams.set("orphanAudit","1");
+    if(opts.cursor!==undefined)url.searchParams.set("cursor",opts.cursor);
     const headers = new Headers();
     if(role)headers.set("Cookie","sanci9517_session="+role);
     if(method==="POST"||method==="PATCH") { headers.set("Origin",opts.origin||url.origin);headers.set("Content-Type",opts.contentType||(method==="PATCH"?"application/json":"image/png")); }
@@ -521,4 +530,25 @@ test("R2 failure never registers a D1 asset; missing R2 object stays private",as
   assert.equal((await f.call("POST","editor",png,{name:"x.png"})).status,503);
   assert.equal(f.db.prepare("SELECT COUNT(*) AS n FROM media").get().n,0);
   assert.equal((await f.call("GET","editor",null,{id:"00000000-0000-4000-8000-000000000000"})).status,404);
+});
+
+test("orphan audit is site-scoped, read-only and never authorizes deletion", async t => {
+  const f=await fixture(t);
+  const uploaded=await (await f.call("POST","editor",png,{name:"owned.png"})).json();
+  assert.equal(uploaded.ok,true);
+  f.files.set("sites/site-default/media/unregistered",png);
+  f.files.set("sites/other/media/private",png);
+  const result=await f.call("GET","editor",null,{orphanAudit:true});
+  assert.equal(result.status,200);
+  const report=(await result.json()).data;
+  assert.equal(report.mode,"read-only");
+  assert.equal(report.deletionAuthorized,false);
+  assert.deepEqual(report.unregisteredCandidates,["sites/site-default/media/unregistered"]);
+  assert.equal(report.checked,2);
+  assert.equal(report.complete,true);
+  assert.equal(f.files.size,3);
+  assert.equal((await f.call("GET","viewer",null,{orphanAudit:true})).status,403);
+  assert.equal((await f.call("GET","",null,{orphanAudit:true})).status,401);
+  assert.equal((await f.call("GET","editor",null,{orphanAudit:true,site:"other"})).status,403);
+  assert.equal((await f.call("GET","editor",null,{orphanAudit:true,cursor:"!bad"})).status,400);
 });
