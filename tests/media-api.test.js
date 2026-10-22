@@ -39,6 +39,7 @@ async function fixture(t) {
     async put(key,bytes) { files.set(key,Uint8Array.from(bytes)); },
     async get(key) { const bytes=files.get(key); return bytes ? {body:new Blob([bytes]).stream()} : null; },
     async delete(key) { files.delete(key); },
+    async head(key) { return files.has(key) ? {size:files.get(key).length} : null; },
     async list({prefix,limit,cursor}) {
       const keys=[...files.keys()].filter(key=>key.startsWith(prefix)).sort();
       const start=cursor?Number(cursor):0;
@@ -69,6 +70,7 @@ async function fixture(t) {
     if(opts.usage)url.searchParams.set("usage",opts.usage);
     if(opts.mime)url.searchParams.set("mime",opts.mime);
     if(opts.orphanAudit)url.searchParams.set("orphanAudit","1");
+    if(opts.missingAudit)url.searchParams.set("missingAudit","1");
     if(opts.cursor!==undefined)url.searchParams.set("cursor",opts.cursor);
     const headers = new Headers();
     if(role)headers.set("Cookie","sanci9517_session="+role);
@@ -567,4 +569,22 @@ test("orphan audit paginates large R2 listings without deleting candidates", asy
   assert.equal(second.unregisteredCandidates.length,1);
   assert.equal(new Set([...first.unregisteredCandidates,...second.unregisteredCandidates]).size,101);
   assert.equal(f.files.size,101);
+});
+
+test("D1-to-R2 missing audit is read-only and scoped to editor permissions",async t=>{
+  const f=await fixture(t);
+  const asset=(await (await f.call("POST","editor",png,{name:"media.png"})).json()).data;
+  const key=f.db.prepare("SELECT object_key FROM media WHERE id=?").get(asset.id).object_key;
+  const complete=await (await f.call("GET","editor",null,{missingAudit:true})).json();
+  assert.equal(complete.data.checked,1);
+  assert.deepEqual(complete.data.missing,[]);
+  f.files.delete(key);
+  const found=await (await f.call("GET","editor",null,{missingAudit:true})).json();
+  assert.deepEqual(found.data.missing,[{id:asset.id,name:"media.png",archived:false}]);
+  assert.equal(found.data.repairAuthorized,false);
+  assert.equal(f.db.prepare("SELECT COUNT(*) n FROM media").get().n,1);
+  assert.equal((await f.call("GET","viewer",null,{missingAudit:true})).status,403);
+  assert.equal((await f.call("GET","",null,{missingAudit:true})).status,401);
+  assert.equal((await f.call("GET","editor",null,{missingAudit:true,site:"other"})).status,403);
+  assert.equal((await f.call("GET","editor",null,{missingAudit:true,before:"invalid"})).status,400);
 });

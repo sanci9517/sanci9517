@@ -255,6 +255,28 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
     const usageId = url.searchParams.get("usage");
     // Diagnostic only: never infer that a recently uploaded object is safe
     // to delete merely because its D1 INSERT has not completed yet.
+    if (url.searchParams.get("missingAudit") === "1") {
+      if (id !== null || usageId !== null || url.searchParams.has("orphanAudit")) return error("INVALID_MEDIA_AUDIT", 400);
+      const before = url.searchParams.get("before");
+      if (before !== null && !/^[0-9a-f-]{36}$/.test(before)) return error("INVALID_MEDIA_CURSOR", 400);
+      const rows = await env.DB.prepare(
+        "SELECT id,object_key,original_name,archived_at FROM media WHERE site_id=? " +
+        (before ? "AND id > ? " : "") + "ORDER BY id ASC LIMIT 101"
+      ).bind(...(before ? [siteId,before] : [siteId])).all<Pick<MediaRow,"id"|"object_key"|"original_name"|"archived_at">>();
+      const batch = rows.results.slice(0,100);
+      const missing: { id:string; name:string; archived:boolean }[]=[];
+      for (const row of batch) {
+        let object;
+        try { object = await env.MEDIA.head(row.object_key); }
+        catch { return error("MEDIA_STORAGE_FAILED",503); }
+        if (!object) missing.push({id:row.id,name:row.original_name,archived:Boolean(row.archived_at)});
+      }
+      return ok({
+        mode:"read-only",checked:batch.length,missing,
+        nextCursor:rows.results.length>100 ? batch[batch.length-1]?.id : null,
+        complete:rows.results.length<=100,repairAuthorized:false
+      });
+    }
     if (url.searchParams.get("orphanAudit") === "1") {
       if (id !== null || usageId !== null) return error("INVALID_MEDIA_AUDIT", 400);
       const requestedCursor = url.searchParams.get("cursor");
