@@ -4,7 +4,7 @@ import { RICH_TEXT_FONT_FAMILIES } from "../editor-v2/core/schema.js";
 import { LAYOUT_TYPES, isManagedLayout } from "../editor-v2/core/layout-presets.js";
 import {isStructuredType,renderElementContent,activateStructuredContent,safeMediaUrl} from "../editor-v2/core/element-content.js";
 import {legacyImageSource,legacyPlaybackSettings} from "../editor-v2/core/legacy-media-source.js";
-import {legacyLinkHref} from "../editor-v2/core/legacy-link.js";
+import {legacyLinkHref,safeLegacyLinkHref} from "../editor-v2/core/legacy-link.js";
 import {iconById} from "../editor-v2/core/icon-options.js";
 import {normalizeDividerStyle} from "../editor-v2/core/decorative-elements.js";
 import {normalizeCardContent,cardImageSrc} from "../editor-v2/core/card-content.js";
@@ -63,7 +63,7 @@ import {backgroundImageValue,MEDIA_ASSET_ID} from "../editor-v2/core/background-
    for(const [mark,tag] of [['bold','strong'],['italic','em'],['underline','u'],['strikethrough','s'],['subscript','sub'],['superscript','sup'],['code','code']])if(item?.marks?.includes(mark))label=`<${tag}>${label}</${tag}>`;
    const safeColor=value=>typeof value==='string'&&/^#(?:[\da-f]{3}|[\da-f]{4}|[\da-f]{6}|[\da-f]{8})$/i.test(value)?value:'';
    const styles=[];const color=safeColor(item?.styles?.color),highlight=safeColor(item?.styles?.backgroundColor);if(color)styles.push(`color:${color}`);if(highlight)styles.push(`background-color:${highlight}`);const fontSize=typeof item?.styles?.fontSize==='string'&&/^(?:[8-9]|[1-8]\d|9[0-6])px$/.test(item.styles.fontSize)?item.styles.fontSize:'';if(fontSize)styles.push(`font-size:${fontSize}`);const fontFamily=RICH_TEXT_FONT_FAMILIES.includes(item?.styles?.fontFamily)?item.styles.fontFamily:'';if(fontFamily)styles.push(`font-family:${esc(fontFamily)}`);if(styles.length)label=`<span style="${styles.join(';')}">${label}</span>`;
-   const href=typeof item?.link?.href==='string'?safeRichUrl(item.link.href):'';
+   const href=typeof item?.link?.href==='string'?safeLegacyLinkHref(item.link.href):'';
    if(!href)return label;
    const blank=item.link.target==='_blank';const title=typeof item.link.title==='string'?` title="${esc(item.link.title)}"`:'';
    return `<a href="${esc(href)}"${blank?' target="_blank" rel="noopener noreferrer"':''}${title}>${label}</a>`;
@@ -93,7 +93,7 @@ if(n.type==='card'&&n.metadata?.cardContentVersion===1){
  catch{return `<article class="visual-editor-node visual-card" style="${st}"><p>Hiányos kártyatartalom – javítsd a szerkesztőben.</p></article>`}
  const cardSrc=cardImageSrc(cfg);const media=cardSrc?`<img class="visual-card-media" src="${esc(cardSrc)}" alt="${esc(cfg.imageAlt)}" loading="lazy">`:'';
  const description=cfg.description?`<p class="visual-card-description">${esc(cfg.description)}</p>`:'';
- const action=cfg.actionHref?`<a class="visual-card-action" href="${esc(safeRichUrl(cfg.actionHref))}"${cfg.newWindow?' target="_blank" rel="noopener noreferrer"':''}>${esc(cfg.actionLabel)}</a>`:'';
+ const action=cfg.actionHref?`<a class="visual-card-action" href="${esc(safeLegacyLinkHref(cfg.actionHref))}"${cfg.newWindow?' target="_blank" rel="noopener noreferrer"':''}>${esc(cfg.actionLabel)}</a>`:'';
  return `<article class="visual-editor-node visual-card visual-card-${cfg.variant}" style="${st}">${media}<h3 class="visual-card-title">${esc(cfg.title)}</h3>${description}${children}${action}</article>`;
 }if(n.type==='badge')return `<span class="visual-editor-node visual-badge" style="${st}">${esc(p.text??'')}</span>`;
  if(n.type==='quote')return `<blockquote class="visual-editor-node visual-quote" style="${st}"><p>${esc(p.text??'')}</p>${p.attribution?`<footer><cite>${esc(p.attribution)}</cite></footer>`:''}</blockquote>`;
