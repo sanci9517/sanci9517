@@ -25,7 +25,7 @@
     "test:web013:migration-chain": "node --test tests/web013-manual-migration-chain.test.js",
     "test:tenant-preview": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/web013-tenant-preview.test.js",
     "test:tenant-navigation": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/web013-tenant-navigation.test.js",
-    "test:media": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/media-api.test.js tests/media-retention-migration.test.js tests/media-retention-policy.test.js tests/media-retention-request.test.js"
+    "test:media": "node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/media-api.test.js tests/media-retention-migration.test.js tests/media-retention-policy.test.js tests/media-retention-request.test.js tests/media-retention-queries.test.js"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "5.20260908.1",
