@@ -69,6 +69,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   const titleText=(await group.locator(':scope > .inspector-group-title').textContent()).replace(/\s+/g,' ').trim();
   await search.fill(titleText);
   assert.ok(await group.locator('.typed-inspector-field:not([hidden])').count()>0,'group heading search must show the controls');
+  assert.ok(Number((await editor.locator('.inspector-search-status').innerText()).match(/\d+/)?.[0])>0,'search result count must include controls revealed by heading match');
   await search.fill('');
   assert.equal(await search.evaluate(el=>document.activeElement===el),true,'search retains keyboard focus');
   assert.equal(await editor.locator(`.node[data-node-id="${gridId}"] > .node-head img`).count(),0);
