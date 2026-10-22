@@ -52,6 +52,26 @@ test('each authored structural type preserves its semantics and responsive layou
     await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');await editor.reload();assert.equal(await source.evaluate(el=>getComputedStyle(el).borderRadius),'12px',type+' reload');
     for(const [device,width] of [['desktop',1440],['tablet',768],['mobile',390]]){
       await editor.locator(`.canvas-device-btn[data-device="${device}"]`).click();await live.setViewportSize({width,height:900});await live.goto(base+'/p/'+type);const target=live.locator(`[data-node-id="${id}"]`);await target.waitFor();
+      // Public shell stays in the same document flow at every viewport.
+      // The two empty future widget zones never create an inner scroll.
+      const shell=await live.evaluate(()=>{
+        const root=document.querySelector('#content-canvas');
+        const left=document.querySelector('.public-side-zone-left');
+        const right=document.querySelector('.public-side-zone-right');
+        return {overflow:getComputedStyle(root).overflowY,
+          rootHeight:getComputedStyle(root).height,
+          slots:[left,right].map(el=>({display:getComputedStyle(el).display,overflow:getComputedStyle(el).overflowY})),
+          pageOverflow:getComputedStyle(document.querySelector('main.page')).overflowY};
+      });
+      assert.equal(shell.overflow,'visible',type+'/'+device+' root does not scroll independently');
+      assert.equal(shell.pageOverflow,'visible',type+'/'+device+' page stays in document flow');
+      assert.equal(shell.slots.length,2);
+      for(const zone of shell.slots){
+        assert.equal(zone.display==='none',device==='mobile',type+'/'+device+' responsive side zone');
+        assert.notEqual(zone.overflow,'scroll',type+'/'+device+' side zone scroll');
+        assert.notEqual(zone.overflow,'auto',type+'/'+device+' side zone scroll');
+      }
+      assert.equal(shell.rootHeight,'360px',type+'/'+device+' authored root height preserved');
       assert.equal(await source.getAttribute('id'),'legacy-'+type,type+'/'+device+' canvas legacy anchor');
       assert.equal(await target.getAttribute('id'),'legacy-'+type,type+'/'+device+' public legacy anchor');
       assert.equal(await source.getAttribute('aria-label'),'Régi címke '+type,type+'/'+device+' canvas label');
