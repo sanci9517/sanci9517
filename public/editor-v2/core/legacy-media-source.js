@@ -39,7 +39,9 @@ const focal=(value,fallback)=>{
   // Persisted legacy documents may contain non-numeric JSON values. Never
   // coerce booleans, arrays, objects or whitespace into a valid focal point.
   if(typeof value!=='number'&&typeof value!=='string')return fallback;
-  if(typeof value==='string'&&!value.trim())return fallback;
+  // Only plain decimal text is valid. Number() also accepts hexadecimal,
+  // binary and octal strings, which are not Inspector percentage values.
+  if(typeof value==='string'&&!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(value.trim()))return fallback;
   const parsed=Number(value);
   return Number.isFinite(parsed)?Math.max(0,Math.min(100,Math.round(parsed))):fallback;
 };
