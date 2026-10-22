@@ -694,3 +694,19 @@ test("deletion preflight rejects incomplete usage and never grants deletion",asy
   assert.equal(report.data.permanentDeletionAuthorized,false);
   assert.equal(f.files.size,1);
 });
+
+test("media deletion preflight rejects malformed or conflicting mode flags",async t=>{
+  const f=await fixture(t);
+  const item=(await (await f.call("POST","editor",png,{name:"modes.png"})).json()).data;
+  for(const query of [
+    "deletePreflight=0", "deletePreflight=1&deletePreflight=1",
+    "deletePreflight=1&usage="+item.id,
+    "deletePreflight=1&missingAudit=1",
+    "deletePreflight=1&orphanAudit=1"
+  ]) {
+    const response=await f.call("GET","editor",null,{rawQuery:"id="+item.id+"&"+query});
+    assert.equal(response.status,400,query);
+    assert.equal((await response.json()).error.code,"INVALID_MEDIA_PREFLIGHT");
+  }
+  assert.equal(f.files.size,1);
+});
