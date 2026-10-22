@@ -70,8 +70,10 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await search.fill(titleText);
   assert.ok(await group.locator('.typed-inspector-field:not([hidden])').count()>0,'group heading search must show the controls');
   assert.ok(Number((await editor.locator('.inspector-search-status').innerText()).match(/\d+/)?.[0])>0,'search result count must include controls revealed by heading match');
-  await search.fill('');
-  assert.equal(await search.evaluate(el=>document.activeElement===el),true,'search retains keyboard focus');
+  await search.press('Escape');
+  assert.equal(await search.inputValue(),'','Escape clears the active Inspector search');
+  assert.equal(await search.evaluate(el=>document.activeElement===el),true,'Escape retains search focus');
+  assert.ok(await group.locator('.typed-inspector-field:not([hidden])').count()>0,'cleared search restores controls');
   assert.equal(await editor.locator(`.node[data-node-id="${gridId}"] > .node-head img`).count(),0);
   assert.equal(await editor.locator(`.layer-row[data-node-id="${gridId}"] img`).count(),0);
   await editor.locator('.inspector-group-title[aria-expanded="false"]').evaluateAll(elements=>elements.forEach(el=>el.click()));
