@@ -794,7 +794,10 @@ function filterInspector(){
   for(const group of inspector.querySelectorAll('.inspector-group')){
     const title=group.querySelector(':scope > .inspector-group-title')?.textContent||'';
     const groupFields=[...group.querySelectorAll('.field,.typed-inspector-field,.richtext-editor,.typography-role,.layout-preset')];
-    const visible=query?title.toLocaleLowerCase('hu').includes(query)||groupFields.some(item=>!item.hidden):inspectorCategory==='all'||!group.dataset.inspectorCategory||group.dataset.inspectorCategory===inspectorCategory;
+    const titleMatches=Boolean(query)&&title.toLocaleLowerCase('hu').includes(query);
+    // A group-title match must reveal its controls, not an empty accordion.
+    if(titleMatches)for(const field of groupFields)field.hidden=false;
+    const visible=query?titleMatches||groupFields.some(item=>!item.hidden):inspectorCategory==='all'||!group.dataset.inspectorCategory||group.dataset.inspectorCategory===inspectorCategory;
     group.hidden=!visible;
     if(query&&visible){group.classList.add('is-open');group.querySelector(':scope > .inspector-group-title')?.setAttribute('aria-expanded','true')}
   }
@@ -986,6 +989,8 @@ function renderExistingContentInspector(node){
 function renderInspector(){
   const previousScrollTop=inspector.scrollTop;
   const focused=document.activeElement;
+  const searchFocused=inspector.contains(focused)&&focused?.matches?.('.inspector-search input[type=search]');
+  const searchSelection=searchFocused?[focused.selectionStart,focused.selectionEnd]:null;
   const focusedProperty=inspector.contains(focused)
     ? focused?.closest?.('.typed-inspector-field[data-property-id]') : null;
   // The Inspector is reconstructed on every Page Model edit. Remember only
@@ -1002,7 +1007,13 @@ function renderInspector(){
     inspector.scrollTop=previousScrollTop;
     // Never steal focus from a next field reached by Tab, a toolbar action,
     // or a newly opened dialog. Only repair focus lost to DOM replacement.
-    if(!focusBookmark||document.activeElement!==document.body)return;
+    if(document.activeElement!==document.body)return;
+    if(searchFocused){
+      const search=inspector.querySelector('.inspector-search input[type=search]');
+      if(search){search.focus({preventScroll:true});try{search.setSelectionRange(...searchSelection)}catch{}}
+      return;
+    }
+    if(!focusBookmark)return;
     const replacement=[...inspector.querySelectorAll('.typed-inspector-field[data-property-id]')]
       .find(field=>field.dataset.propertyId===focusBookmark.propertyId);
     if(!replacement)return;
