@@ -11,7 +11,9 @@ export function legacyImageSource(props,{editor=false}={}){
   if(typeof id==='string'&&MEDIA_ASSET_ID.test(id)){
     return editor?'/api/admin/media?id='+encodeURIComponent(id):'/media/'+encodeURIComponent(id);
   }
-  return safeMediaUrl(props?.src);
+  // Old persisted Page Models can contain malformed structured src values.
+  // Never coerce them to strings: custom conversion can throw or create a URL.
+  return typeof props?.src==='string'?safeMediaUrl(props.src):'';
 }
 
 /** Same playback flags in legacy Editor Canvas and the published page. */
