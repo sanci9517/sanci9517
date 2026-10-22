@@ -102,7 +102,8 @@ test('root Inspector appearance matches published canvas only after Publish at d
  await viewer.setViewportSize({width:1366,height:900});
  await viewer.getByText('Új publikált gyökér nélküli változat').waitFor();
  assert.equal(await canvas.getAttribute('class'),'content-canvas visual-editor-canvas','the refreshed template has no authored root class');
- assert.equal(await canvas.getAttribute('style'),'', 'legacy Page Model must clear all previous inline root styles and tokens are reapplied only when present');
+ assert.equal(await canvas.evaluate(el=>el.style.backgroundColor),'','legacy Page Model must clear previous authored inline background');
+ assert.equal(await canvas.evaluate(el=>el.style.paddingTop),'','legacy Page Model must clear previous inline padding while retaining design token variables');
  assert.equal(await canvas.getAttribute('data-node-id'),null,'previous root selector is not retained');
  assert.equal(await canvas.evaluate(el=>getComputedStyle(el).backgroundColor),legacyColor,'desktop template uses its own CSS, not stale authored colors');
 
