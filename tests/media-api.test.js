@@ -29,6 +29,7 @@ async function fixture(t) {
     "CREATE TRIGGER media_archive_pages_update_guard BEFORE UPDATE OF content_json,published_content_json ON pages WHEN EXISTS (SELECT 1 FROM media m WHERE m.site_id=NEW.site_id AND m.archived_at IS NOT NULL AND (instr(COALESCE(NEW.content_json,''),m.id)>0 OR instr(COALESCE(NEW.published_content_json,''),m.id)>0)) BEGIN SELECT RAISE(ABORT,'ARCHIVED_MEDIA_REFERENCE'); END;",
     "CREATE TRIGGER media_archive_revisions_insert_guard BEFORE INSERT ON editor_revisions WHEN EXISTS (SELECT 1 FROM media m JOIN pages p ON p.site_id=m.site_id WHERE p.id=NEW.page_id AND m.archived_at IS NOT NULL AND instr(NEW.document_json,m.id)>0) BEGIN SELECT RAISE(ABORT,'ARCHIVED_MEDIA_REFERENCE'); END;"
   ].join("\n"));
+  db.exec("CREATE TABLE media_retention_requests(id TEXT PRIMARY KEY,site_id TEXT NOT NULL,asset_id TEXT NOT NULL,object_key TEXT NOT NULL,state TEXT NOT NULL,requested_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,not_before TEXT NOT NULL,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,attempt_count INTEGER NOT NULL DEFAULT 0,last_error TEXT,UNIQUE(site_id,asset_id));");
   for (const role of ["editor","viewer"]) {
     db.prepare("INSERT INTO users VALUES (?,?,?,?,1)").run(role,role+"@test.local",role,role);
     db.prepare("INSERT INTO site_memberships VALUES (?,?,?,'active')").run("site-default",role,role);
@@ -73,6 +74,7 @@ async function fixture(t) {
     if(opts.orphanAudit)url.searchParams.set("orphanAudit","1");
     if(opts.missingAudit)url.searchParams.set("missingAudit","1");
     if(opts.deletePreflight)url.searchParams.set("deletePreflight","1");
+    if(opts.retentionRequest)url.searchParams.set("retentionRequest","1");
     if(opts.cursor!==undefined)url.searchParams.set("cursor",opts.cursor);
     const headers = new Headers();
     if(role)headers.set("Cookie","sanci9517_session="+role);
@@ -701,6 +703,22 @@ test("deletion preflight remains non-destructive for archived and missing object
   const failure=await f.call("GET","editor",null,{id:asset.id,deletePreflight:true});
   assert.equal(failure.status,503);
   assert.equal((await failure.json()).error.code,"MEDIA_STORAGE_FAILED");
+});
+
+test("retention request is site-scoped, idempotent and never authorizes deletion",async t=>{
+ const f=await fixture(t);
+ const asset=(await (await f.call("POST","editor",png,{name:"retention-api.png"})).json()).data;
+ assert.equal((await f.call("POST","editor",null,{id:asset.id,retentionRequest:true})).status,409,"active assets cannot be retained");
+ assert.equal((await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id})).status,200);
+ const first=await f.call("POST","editor",null,{id:asset.id,retentionRequest:true});
+ assert.equal(first.status,201); const data=(await first.json()).data;
+ assert.equal(data.state,"requested"); assert.equal(data.created,true); assert.equal(data.permanentDeletionAuthorized,false);
+ const repeat=await f.call("POST","editor",null,{id:asset.id,retentionRequest:true});
+ assert.equal(repeat.status,200); assert.equal((await repeat.json()).data.id,data.id);
+ assert.equal(f.db.prepare("SELECT COUNT(*) n FROM media_retention_requests").get().n,1);
+ assert.equal(f.files.size,1);
+ assert.equal((await f.call("POST","viewer",null,{id:asset.id,retentionRequest:true})).status,403);
+ assert.equal((await f.call("POST","editor",null,{id:asset.id,retentionRequest:true,site:"other"})).status,403);
 });
 test("deletion preflight rejects incomplete usage and never grants deletion",async t=>{
   const f=await fixture(t);
