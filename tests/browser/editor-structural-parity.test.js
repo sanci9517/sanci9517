@@ -100,6 +100,19 @@ test('each authored structural type preserves its semantics and responsive layou
       assert.equal(await target.evaluate(el=>el.tagName.toLowerCase()),models[type].tag,type+' semantics');assert.deepEqual(await target.evaluate(measure),await source.evaluate(measure),type+'/'+device);assert.match(await target.textContent(),/Megőrzött tartalom/);
     }
   }
+  // Real keyboard navigation: the skip link is the first tab stop, appears
+  // when focused, and transfers focus directly to the published content.
+  for(const width of [1440,390]){
+    await live.setViewportSize({width,height:900});
+    await live.goto(base+'/p/'+STRUCTURAL_TYPES[0]);
+    await live.keyboard.press('Tab');
+    const skip=live.locator('.public-skip-link');
+    assert.equal(await skip.evaluate(el=>document.activeElement===el),true,width+' skip link first focus target');
+    assert.equal(await skip.evaluate(el=>getComputedStyle(el).transform),'none',width+' skip visible on focus');
+    await live.keyboard.press('Enter');
+    assert.equal(await live.evaluate(()=>location.hash),'#content-canvas',width+' skip anchor');
+    assert.equal(await live.locator('#content-canvas').evaluate(el=>document.activeElement===el),true,width+' content receives focus');
+  }
   // Inspector visibility is a per-device decision. The public subtree is not
   // removed until Publish, while the Canvas must keep it editable as a ghost.
   const hiddenType=STRUCTURAL_TYPES[0],{id:hiddenId,childId}=models[hiddenType];
