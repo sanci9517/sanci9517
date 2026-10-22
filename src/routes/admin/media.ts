@@ -8,6 +8,7 @@ import { CONTENT_TYPES, safeMediaUrl } from "../../../public/editor-v2/core/auth
 import { isLeafType } from "../../../public/editor-v2/core/schema.js";
 import { isStructuredType } from "../../../public/editor-v2/core/element-content.js";
 import { prepareRetentionRequest } from "../../core/media-retention-request.js";
+import { retentionQueries } from "../../core/media-retention-queries.js";
 
 // Keep playable uploads inside the existing low-cost, application-level cap.
 // This is not a provider billing ceiling and deliberately excludes large video.
@@ -251,6 +252,29 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
   if (denied) return denied;
   if (!env.MEDIA) return error("MEDIA_STORAGE_UNAVAILABLE", 503);
   const url = new URL(request.url);
+  const retentionFlag = url.searchParams.getAll("retentionRequest");
+  if (retentionFlag.length && (retentionFlag.length !== 1 || retentionFlag[0] !== "1")) return error("INVALID_RETENTION_REQUEST",400);
+  if (request.method === "POST" && retentionFlag[0] === "1") {
+    if (request.headers.get("Origin") !== url.origin || request.headers.get("Sec-Fetch-Site") === "cross-site") return error("INVALID_ORIGIN",403);
+    const id=url.searchParams.get("id") || "";
+    if (!/^[0-9a-f-]{36}$/.test(id) || url.searchParams.has("name")) return error("INVALID_RETENTION_REQUEST",400);
+    const asset=await env.DB.prepare("SELECT id,site_id,object_key,original_name,mime_type,size_bytes,alt_text,created_at,archived_at FROM media WHERE id=? AND site_id=? LIMIT 1").bind(id,siteId).first<MediaRow>();
+    if (!asset) return error("MEDIA_NOT_FOUND",404);
+    const report=await mediaUsage(env,siteId,id);
+    if (!report.ok) return error("MEDIA_USAGE_INCOMPLETE",409);
+    const usage=(await report.json() as {data?:{complete?:boolean;references?:unknown[]}}).data;
+    let objectPresent:boolean; try { objectPresent=Boolean(await env.MEDIA.head(asset.object_key)); } catch { return error("MEDIA_STORAGE_FAILED",503); }
+    const prepared=await prepareRetentionRequest({asset,usage:{complete:usage?.complete===true,references:usage?.references||[]},objectPresent,now:new Date()});
+    if (!prepared.ok) return error(prepared.reason,409);
+    try {
+      const existing=await env.DB.prepare(retentionQueries.getByAsset).bind(id,siteId).first<{id:string;state:string;not_before:string}>();
+      if (existing) return ok({id:existing.id,assetId:id,state:existing.state,notBefore:existing.not_before,created:false,permanentDeletionAuthorized:false});
+      const requestId=crypto.randomUUID();
+      const saved=await env.DB.prepare(retentionQueries.request).bind(requestId,prepared.value.notBefore,id,siteId).run();
+      if (Number(saved.meta?.changes??0)!==1) return error("RETENTION_PRECONDITION_CHANGED",409);
+      return Response.json({ok:true,data:{id:requestId,assetId:id,state:"requested",notBefore:prepared.value.notBefore,created:true,permanentDeletionAuthorized:false}},{status:201,headers:{"Cache-Control":"no-store"}});
+    } catch { return error("RETENTION_MIGRATION_NOT_ACTIVE",503); }
+  }
   if (request.method === "GET") {
     const id = url.searchParams.get("id");
     const preflightFlags = url.searchParams.getAll("deletePreflight");
