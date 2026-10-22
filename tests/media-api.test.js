@@ -659,3 +659,38 @@ test("deletion preflight is advisory only and protects referenced assets",async 
   assert.equal(f.files.size,1);
   assert.equal(f.db.prepare("SELECT COUNT(*) n FROM media").get().n,1);
 });
+
+test("deletion preflight remains non-destructive for archived and missing objects",async t=>{
+  const f=await fixture(t);
+  const asset=(await (await f.call("POST","editor",png,{name:"old.png"})).json()).data;
+  const key=f.db.prepare("SELECT object_key FROM media WHERE id=?").get(asset.id).object_key;
+  const archived=await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id});
+  assert.equal(archived.status,200);
+  const inspect=async()=> (await (await f.call("GET","editor",null,{id:asset.id,deletePreflight:true})).json()).data;
+  const existing=await inspect();
+  assert.equal(existing.archived,true);
+  assert.equal(existing.objectPresent,true);
+  assert.equal(existing.usageComplete,true);
+  assert.equal(existing.eligibleForRetention,true);
+  assert.equal(existing.permanentDeletionAuthorized,false);
+  f.files.delete(key);
+  const missing=await inspect();
+  assert.equal(missing.objectPresent,false);
+  assert.equal(missing.permanentDeletionAuthorized,false);
+  assert.equal(f.db.prepare("SELECT archived_at FROM media WHERE id=?").get(asset.id).archived_at!==null,true);
+  assert.equal((await f.call("GET","editor",null,{id:asset.id,deletePreflight:true})).status,200);
+  f.env.MEDIA.head=async()=>{throw new Error("storage unavailable");};
+  const failure=await f.call("GET","editor",null,{id:asset.id,deletePreflight:true});
+  assert.equal(failure.status,503);
+  assert.equal((await failure.json()).error.code,"MEDIA_STORAGE_FAILED");
+});
+test("deletion preflight rejects incomplete usage and never grants deletion",async t=>{
+  const f=await fixture(t);
+  const asset=(await (await f.call("POST","editor",png,{name:"incomplete.png"})).json()).data;
+  f.db.prepare("INSERT INTO pages(id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)").run("bad","site-default",null,0,null,"{"+asset.id,"Bad","bad");
+  const report=await (await f.call("GET","editor",null,{id:asset.id,deletePreflight:true})).json();
+  assert.equal(report.data.usageComplete,false);
+  assert.equal(report.data.eligibleForRetention,false);
+  assert.equal(report.data.permanentDeletionAuthorized,false);
+  assert.equal(f.files.size,1);
+});
