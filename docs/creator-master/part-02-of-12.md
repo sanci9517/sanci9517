@@ -212,6 +212,36 @@ Minden presethez, ahol értelmezhető, kötelező:
 
 **Teszt és végrehajtás:** kanonikus UI component/token registry, dark/light/system kontraszt és fókusz; icon readability, hover/focus/touch help, panel open/close/resize, live canvas reflow és visual viewport preservation; Inspector keyboard/IME/caret; UI animation reduced motion; pixel/screenshot teszt ésszerű tűréssel Chrome+mobil, valamint kézi PC/Android. Nem válhat második, párhuzamos designrendszerré; 38.3.A/B követelményeit finomítja. STATUS: PLAN ONLY; nincs Editor-kód, CI, Production deploy vagy kézi elfogadás.
 
+### 38.3.D — Jóváhagyott Editor UX-bővítések és intelligens szerkesztési segédek (2026-10-22, SPEC ONLY)
+
+**Döntés:** a felhasználó az összes 2026-10-22-i javasolt UI/UX-funkciót elfogadta. Ez a szakasz a 38.3.A–C, 38.4–38.10 és EDT-040/CMS/Brand Kit meglévő követelményeit pontosítja, nem hoz létre második implementációt vagy párhuzamos registryt. Elsődleges elv: gyors, ikon-first, adaptív és vásznat nem takaró szerkesztés; funkciónként helyes méret/hierarchia; mobilon külön sheet kezelés; Save != Publish.
+
+**Elfogadott működés és részletek:**
+1. Kijelölésfüggő, kompakt **context toolbar** a vásznon: text → type/style/links, image → crop/focal/replace, layout → align/gap/distribute, interactive → states/preview. Intelligens placement (collision avoidance, ne fedje a selectiont és ne legyen takaró floating Inspector), billentyűzet/touch alternatíva, soha nem akadályozhatja a drag/resize hit testinget.
+2. Vizuális **Layout Controls**: 3x3 alignment matrix, flex/grid direction/wrap/distribution, külön választható egységek, box-model margin/padding diagram, drag scrub/stepper, szomszédos elemekhez viszonyított távolságok és live preview. A valós CSS/Page Model contract és breakpoint inheritance az igazságforrás, nem külön DOM-adat.
+3. **Component Variants/States**: default/hover/focus-visible/active/disabled/checked/expanded/loading/success/error a releváns komponenseknél; instance override vs shared definition külön, változatok előnézete és biztonságos reset; az EDT-040 animációs triggerekhez közös state registry kapcsolódik.
+4. **Smart Auto Layout**: responsive flex/grid/stack, implicit intrinsic sizing, breakpoint variants és mobile stack/wrap; beillesztési javaslatok, vizuális drop indicator és „suggest/apply” a romboló, tömeges átrendezés előtt, indokolható Undo. Ne írja át észrevétlenül a felhasználó kézzel beállított pozícióit, és ne okozzon vízszintes overflow-t.
+5. **X-ray/Structure Mode**: outline-olt page/container/slot/grid/flex területek, gap/margin/padding, positioning/stacking context, overflow, hidden/locked jelölések, DOM/Canvas vs Public eltérés diagnosztika. Kizárólag editor overlay; nem publikálódik, és nem ad hozzá interaktív tartalmat az oldalhoz.
+6. **Vizuális Revision Compare**: draft vs published és két korábbi revision összehasonlítása side-by-side/overlay + értelmezhető diff (content/style/layout/motion), breakpointonként; restore csak explicit jóváhagyással, mentett draft marad, külön Publish szükséges.
+7. **Simple/Advanced Inspector View**: kezdő nézet a fő propertykkel, haladó minden támogatott beállítással; ugyanaz az egy Page Model, registry, undo/redo, nincsenek elrejtett adatvesztések. Átváltás nem állítja vissza a beállításokat.
+8. **Command Palette (Ctrl+K / mobil gyorskereső)** minden engedélyezett Editor akcióhoz, billentyűparancs és kategória, scoped keresés. Kedvencek/utoljára használt elemek, animációk, style presetek és szekciók (user preference).
+9. **Smart Guides / Snapping**: center/edge/baseline/safe-area, azonos távolság javaslatok és constraint státusz, tunable snap toggle; zoom/pan/viewport melletti helyes geometria.
+10. **Design Check**: breakpoint-/mobil overflow, fókusz/keyboard, alt/aria, low contrast, hiányzó label, sérült link/asset, túlzott mozgás és performance rizikó; severity és célzott „Ugrás az elemhez / javítás javaslata”, automatikus javítást mindig preview/undo-val. Nem válik külön CI-keretrendszerré.
+11. **AI Design Assistant (későbbi gate)**: természetes nyelvű layout, stílus, tartalom és animáció javaslat; Intent→Plan→Actions→Preview/Diff→Approval→Execute→Verify, jogosultság és audit, nincs önálló nem-validált HTML/CSS/JS injekció vagy automatikus publikálás.
+
+**Kiegészítő senior UX-funkciók:**
+12. **Copy/Paste Appearance**: szándékosan szűrt style/effect/motion tokenek másolása, célkompatibilitás visszajelzés és részleges alkalmazás preview; tartalmat és bindingot nem ír át véletlenül.
+13. **Safe Edit / Isolation**: komponens/section izolált szerkesztési módja; fókuszált réteghierarchia, parent breadcrumb, világos kilépés és módjelzés; zárolt/globális shared component módosításához külön megerősítés.
+14. **Breakpoint Comparison**: desktop/tablet/mobile nézetek egymás melletti vizuális ellenőrzése, csak az aktuális breakpoint módosul ott, ahol ez a szerződés; inherited override és reset kijelzés.
+15. **Interaction Preview**: hover/focus/active/expanded/loading és animáció próba explicit Play/Stop vezérléssel; szerkesztéskor a tényleges navigáció, fizetés, külső submit, jogosultságváltozás nem futtatható.
+16. **Workspace Rescue / Reset Layout**: eltűnt panel, túlzott zoom, elveszett kijelölés esetén egy kattintásos Fit/Locate selected/Reset workspace; felhasználói workspace state nem írja át a publikus site beállítását.
+17. **Onboarding kevés zajjal**: első használatkor nem tolakodó vezetett tippek, később help kereső és fokozatos felfedezés; nem ismétlődő információs feliratok, hover/focus tooltip és touch help.
+18. **Performance budget & accessibility**: virtuális/halasztott nagy Layers/Assets lista, memoizált Inspector, drag közben alacsony késleltetés; reduced-motion, screen reader, jó billentyűzetfókusz, megfelelő touch target; nem romolhat az Editor navigáció és szöveg-IME szerkesztés stabilitása.
+
+**Fejlesztési sorrend:** (A) dockolt UI, ikonsáv, Inspector és tooltip stabilizálás; (B) context toolbar, vizuális layout controls, Smart Guides, Simple/Advanced és palette; (C) Auto Layout és variants/states; (D) X-ray, Design Check, revision compare és responsive side-by-side; (E) AI és mély interakciós/time-line integráció, miután a közös Page Model, Canvas–Inspector–Public paritás, jogosultság és acceptance igazolt. Nem előzi meg az aktív 77.44 feladatok lezárását.
+
+**Acceptance:** unit schema + Playwright desktop/tablet/mobil; 200% zoom, portrait/landscape és low-end Android; fókusz, pointer capture, textarea/IME caret, multiple selection, invalid/drop rejection, responsive override, Save/Undo/Redo vs Publish, role-scope, reduced-motion; public page nem tartalmaz editor-only vizuális segédeket, és panelek sosem fedik a vásznat normál szerkesztési módban. Minden pont SPEC/IMPLEMENTATION/CI/MANUAL/PRODUCTION státusza külön követendő. **2026-10-22: kizárólag terv, nincs feature implementáció, CI PASS vagy éles elfogadás.**
+
 ### 38.4 — Oldalmodell, Layers és struktúra
 
 - Page → template/section → container/layout → element hierarchia, stabil node ID-val.
