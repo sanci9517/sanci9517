@@ -899,6 +899,11 @@ function renderMultiInspector(nodes){
  make('Belső térköz','padding','number','16','px');
  make('Saroklekerekítés','borderRadius','number','8','px');
  make('Átlátszóság','opacity','number','1');
+ // Shared geometry edits use the same responsive command and single undo step.
+ make('Szélesség','width','number','320','px');
+ make('Magasság','height','number','180','px');
+ make('Külső térköz','margin','number','0','px');
+ make('Elemek közötti távolság','gap','number','0','px');
  return panel;
 }
 function renderExistingContentInspector(node){
