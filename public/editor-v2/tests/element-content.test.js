@@ -5,7 +5,7 @@ import {createEditorState,activePage} from '../core/state.js';
 import {execute} from '../core/commands.js';
 import {authoredNodeHtml,contentAttributes,contentTag,normalizeElementContent,validateElementContent,validatePageForPublication,contentProperties} from '../core/authored-content.js';
 import {opaqueContrast} from '../core/accessibility.js';
-import {legacyImageSource,legacyPlaybackSettings} from '../core/legacy-media-source.js';
+import {legacyImageSource,legacyPlaybackSettings,legacyImagePresentation} from '../core/legacy-media-source.js';
 
 test('typed content edits preserve unknown legacy data and undo restores the complete node',()=>{
   const state=createEditorState(createDocument());execute(state,{type:'element.add',payload:{type:'heading',props:{text:'Eredeti cím',legacy:{kept:true}},style:{width:'240px'}}});
@@ -155,4 +155,19 @@ test('legacy playback settings preserve prior controls defaults and prohibit unm
  });
  assert.equal(legacyPlaybackSettings({poster:'https://valid.example/path.png',posterAssetId:'invalid'},{video:true}).poster,'https://valid.example/path.png');
  assert.equal(legacyPlaybackSettings({poster:'javascript:alert(1)'},{video:true}).poster,'');
+});
+
+test('legacy image crop, ratio and load settings share allowlisted defaults and safe bounds',()=>{
+ const defaults=legacyImagePresentation({});
+ assert.deepEqual(defaults,{fit:'cover',ratio:'auto',focalX:50,focalY:50,objectPosition:'50% 50%',loading:'lazy',alt:'',decorative:false});
+ assert.deepEqual(legacyImagePresentation({objectFit:'contain',ratio:'16 / 9',focalX:17,focalY:82,loading:'eager',alt:'Napló kép'}),{
+  fit:'contain',ratio:'16 / 9',focalX:17,focalY:82,objectPosition:'17% 82%',loading:'eager',alt:'Napló kép',decorative:false
+ });
+ const decorative=legacyImagePresentation({objectFit:'scale-down',ratio:'3 / 4',focalX:'125',focalY:-20,decorative:true,alt:'Megőrzendő szöveg'});
+ assert.equal(decorative.objectPosition,'100% 0%');
+ assert.equal(decorative.alt,'');assert.equal(decorative.decorative,true);
+ assert.equal(legacyImagePresentation({focalPoint:'top'}).objectPosition,'50% 0%');
+ assert.deepEqual(legacyImagePresentation({fit:'url(javascript:bad)',objectFit:'unknown',ratio:'666 / 0',focalX:'NaN',focalY:'Infinity',loading:'script'}),defaults);
+ assert.equal(legacyImagePresentation({fit:'fill',ratio:'1 / 1'}).fit,'fill');
+ assert.equal(legacyImagePresentation({fit:'fill',objectFit:'contain'}).fit,'contain','the legacy Inspector must override an older fit alias');
 });

@@ -25,3 +25,31 @@ export function legacyPlaybackSettings(props,{video=false,editor=false}={}){
     poster:video?legacyImageSource({assetId:p.posterAssetId,src:p.poster},{editor}):''
   };
 }
+
+/**
+ * Legacy image appearance shares the authored image vocabulary, while keeping
+ * old objectFit, focalPoint and loading defaults. Return only allowlisted CSS
+ * values: these are written into both DOM style and published inline styles.
+ */
+const IMAGE_FITS=new Set(['cover','contain','fill','none','scale-down']);
+const IMAGE_RATIOS=new Set(['auto','16 / 9','4 / 3','1 / 1','3 / 4']);
+const LEGACY_FOCAL_POINTS={center:[50,50],top:[50,0],bottom:[50,100],left:[0,50],right:[100,50]};
+const focal=(value,fallback)=>{
+  if(value===null||value===undefined||value==='')return fallback;
+  const parsed=Number(value);
+  return Number.isFinite(parsed)?Math.max(0,Math.min(100,Math.round(parsed))):fallback;
+};
+
+export function legacyImagePresentation(props){
+  const p=props??{},fit=IMAGE_FITS.has(p.objectFit)?p.objectFit:(IMAGE_FITS.has(p.fit)?p.fit:'cover');
+  const ratio=IMAGE_RATIOS.has(p.ratio)?p.ratio:'auto';
+  const [oldX,oldY]=LEGACY_FOCAL_POINTS[p.focalPoint]??LEGACY_FOCAL_POINTS.center;
+  const focalX=focal(p.focalX,oldX),focalY=focal(p.focalY,oldY);
+  const decorative=p.decorative===true;
+  return {
+    fit,ratio,focalX,focalY,objectPosition:`${focalX}% ${focalY}%`,
+    loading:p.loading==='eager'?'eager':'lazy',
+    alt:decorative?'':String(p.alt??''),
+    decorative
+  };
+}
