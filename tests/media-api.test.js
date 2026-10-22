@@ -552,3 +552,19 @@ test("orphan audit is site-scoped, read-only and never authorizes deletion", asy
   assert.equal((await f.call("GET","editor",null,{orphanAudit:true,site:"other"})).status,403);
   assert.equal((await f.call("GET","editor",null,{orphanAudit:true,cursor:"!bad"})).status,400);
 });
+
+test("orphan audit paginates large R2 listings without deleting candidates", async t => {
+  const f=await fixture(t);
+  for (let i=0;i<101;i++) f.files.set("sites/site-default/media/unregistered-"+String(i).padStart(3,"0"),png);
+  const first=(await (await f.call("GET","editor",null,{orphanAudit:true})).json()).data;
+  assert.equal(first.checked,100);
+  assert.equal(first.complete,false);
+  assert.equal(first.unregisteredCandidates.length,100);
+  assert.ok(first.nextCursor);
+  const second=(await (await f.call("GET","editor",null,{orphanAudit:true,cursor:first.nextCursor})).json()).data;
+  assert.equal(second.checked,1);
+  assert.equal(second.complete,true);
+  assert.equal(second.unregisteredCandidates.length,1);
+  assert.equal(new Set([...first.unregisteredCandidates,...second.unregisteredCandidates]).size,101);
+  assert.equal(f.files.size,101);
+});
