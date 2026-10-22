@@ -7,6 +7,7 @@ import { normalizeCardContent } from "../../../public/editor-v2/core/card-conten
 import { CONTENT_TYPES, safeMediaUrl } from "../../../public/editor-v2/core/authored-content.js";
 import { isLeafType } from "../../../public/editor-v2/core/schema.js";
 import { isStructuredType } from "../../../public/editor-v2/core/element-content.js";
+import { prepareRetentionRequest } from "../../core/media-retention-request.js";
 
 // Keep playable uploads inside the existing low-cost, application-level cap.
 // This is not a provider billing ceiling and deliberately excludes large video.
@@ -271,6 +272,11 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
     let objectPresent: boolean;
     try { objectPresent=Boolean(await env.MEDIA.head(existing.object_key)); }
     catch { return error("MEDIA_STORAGE_FAILED",503); }
+    // Read-only preview only. Persistence remains gated on the pending D1
+    // migration and can never authorize a destructive R2 operation.
+    const preparedRetention=await prepareRetentionRequest({
+      asset:existing, usage:{complete,references}, objectPresent, now:new Date()
+    });
     return ok({
       assetId:id,archived:Boolean(existing.archived_at),objectPresent,
       references:references.length,usageComplete:complete,
@@ -278,6 +284,8 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
       // are required before an irreversible operation is allowed.
       eligibleForRetention:complete && references.length===0 && Boolean(existing.archived_at) && objectPresent,
       retentionRequestAvailable:false, // Manual D1 migration and transactional API not active
+      retentionPreview:preparedRetention.ok ? preparedRetention.value : null,
+      retentionPreviewReason:preparedRetention.ok ? null : preparedRetention.reason,
       permanentDeletionAuthorized:false
     });
   }
