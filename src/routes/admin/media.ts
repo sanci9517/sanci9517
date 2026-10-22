@@ -276,7 +276,8 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
       references:references.length,usageComplete:complete,
       // Advisory only: a second locked recheck and durable retention state
       // are required before an irreversible operation is allowed.
-      eligibleForRetention:complete && references.length===0 && Boolean(existing.archived_at),
+      eligibleForRetention:complete && references.length===0 && Boolean(existing.archived_at) && objectPresent,
+      retentionRequestAvailable:false, // Manual D1 migration and transactional API not active
       permanentDeletionAuthorized:false
     });
   }
