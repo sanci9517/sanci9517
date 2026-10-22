@@ -60,7 +60,7 @@ test('each authored structural type preserves its semantics and responsive layou
         const right=document.querySelector('.public-side-zone-right');
         return {overflow:getComputedStyle(root).overflowY,
           rootHeight:getComputedStyle(root).height,
-          slots:[left,right].map(el=>({display:getComputedStyle(el).display,overflow:getComputedStyle(el).overflowY})),
+          slots:[left,right].map(el=>({display:getComputedStyle(el).display,overflow:getComputedStyle(el).overflowY,background:getComputedStyle(el).backgroundColor,pointerEvents:getComputedStyle(el).pointerEvents})),
           pageOverflow:getComputedStyle(document.querySelector('main.page')).overflowY};
       });
       assert.equal(shell.overflow,'visible',type+'/'+device+' root does not scroll independently');
@@ -68,6 +68,8 @@ test('each authored structural type preserves its semantics and responsive layou
       assert.equal(shell.slots.length,2);
       for(const zone of shell.slots){
         assert.equal(zone.display==='none',device==='mobile',type+'/'+device+' responsive side zone');
+        assert.equal(zone.background,'rgba(0, 0, 0, 0)',type+'/'+device+' side zone blends with page background');
+        assert.equal(zone.pointerEvents,'none',type+'/'+device+' empty side zone never intercepts interaction');
         assert.notEqual(zone.overflow,'scroll',type+'/'+device+' side zone scroll');
         assert.notEqual(zone.overflow,'auto',type+'/'+device+' side zone scroll');
       }
