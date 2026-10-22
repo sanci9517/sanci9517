@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "wrangler dev",
     "typecheck": "tsc --noEmit",
-    "test:editor": "node --test public/editor-v2/tests/core.test.js public/editor-v2/tests/page-url.test.js public/editor-v2/tests/inspector-richtext.test.js public/editor-v2/tests/style-snapshot.test.js public/editor-v2/tests/layout-presets.test.js public/editor-v2/tests/element-content.test.js public/editor-v2/tests/state-tokens.test.js",
+    "test:editor": "node --test public/editor-v2/tests/core.test.js public/editor-v2/tests/page-url.test.js public/editor-v2/tests/inspector-richtext.test.js public/editor-v2/tests/style-snapshot.test.js public/editor-v2/tests/layout-presets.test.js public/editor-v2/tests/element-content.test.js public/editor-v2/tests/state-tokens.test.js public/editor-v2/tests/public-side-zones.test.js",
     "test:schedule": "node --test public/editor-v2/tests/schedule-source.test.js",
     "db:migrations:apply": "wrangler d1 migrations apply DB --remote",
     "deploy": "npm run test:web013:migration-gate && npm run db:migrations:apply && wrangler deploy",
