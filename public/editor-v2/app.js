@@ -782,19 +782,20 @@ function renderLayoutInspector(node){
   return section;
 }
 function filterInspector(){
-  const query=inspectorQuery.trim().toLocaleLowerCase('hu');
+  const normalizedSearchText=value=>String(value??'').replace(/\s+/g,' ').trim().toLocaleLowerCase('hu');
+  const query=normalizedSearchText(inspectorQuery);
   const fields=[...inspector.querySelectorAll('.field,.typed-inspector-field,.richtext-editor,.typography-role,.layout-preset')];
   let matches=0;
   for(const item of new Set(fields)){
     const text=(item.dataset.propertyId||'')+' '+item.textContent+' '+(item.title||'');
-    const visible=!query||text.toLocaleLowerCase('hu').includes(query);
+    const visible=!query||normalizedSearchText(text).includes(query);
     item.hidden=!visible;
     if(visible)matches++;
   }
   for(const group of inspector.querySelectorAll('.inspector-group')){
     const title=group.querySelector(':scope > .inspector-group-title')?.textContent||'';
     const groupFields=[...group.querySelectorAll('.field,.typed-inspector-field,.richtext-editor,.typography-role,.layout-preset')];
-    const titleMatches=Boolean(query)&&title.toLocaleLowerCase('hu').includes(query);
+    const titleMatches=Boolean(query)&&normalizedSearchText(title).includes(query);
     // A group-title match must reveal its controls, not an empty accordion.
     if(titleMatches)for(const field of groupFields)field.hidden=false;
     const visible=query?titleMatches||groupFields.some(item=>!item.hidden):inspectorCategory==='all'||!group.dataset.inspectorCategory||group.dataset.inspectorCategory===inspectorCategory;
