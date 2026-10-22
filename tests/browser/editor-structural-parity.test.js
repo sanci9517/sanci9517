@@ -111,6 +111,21 @@ test('each authored structural type preserves its semantics and responsive layou
       assert.deepEqual(await target.evaluate(measure),await source.evaluate(measure),type+'/'+device);assert.match(await target.textContent(),/Megőrzött tartalom/);
     }
   }
+  // Intrinsic-height diagnostics are independent of fixed-height parity.
+  // The generated public page must never collapse below its authored minimum.
+  for(const device of ['desktop','tablet','mobile']){
+    const width={desktop:1440,tablet:768,mobile:390}[device];
+    await editor.goto(base+'/editor-v2/index.html?pageId='+STRUCTURAL_TYPES[0]);
+    await editor.locator(`.canvas-device-btn[data-device="${device}"]`).click();
+    await live.setViewportSize({width,height:900});
+    await live.goto(base+'/p/'+STRUCTURAL_TYPES[0]);
+    const id=models[STRUCTURAL_TYPES[0]].id;
+    for(const page of [editor,live]){
+      const node=page.locator(`[data-node-id="${id}"]`).first();
+      const box=await node.evaluate(el=>({height:el.getBoundingClientRect().height,minHeight:parseFloat(getComputedStyle(el).minHeight)}));
+      assert.ok(box.height+0.5>=box.minHeight,'intrinsic height respects authored minimum on '+device);
+    }
+  }
   // Real keyboard navigation: the skip link is the first tab stop, appears
   // when focused, and transfers focus directly to the published content.
   for(const width of [1440,390]){
