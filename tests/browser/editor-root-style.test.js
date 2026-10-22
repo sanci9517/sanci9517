@@ -87,5 +87,31 @@ test('root Inspector appearance matches published canvas only after Publish at d
  await viewer.setViewportSize({width:390,height:800});await viewer.reload();
  assert.equal(await canvas.evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(170, 68, 0)','mobile root override is published');
  assert.equal(await canvas.evaluate(el=>getComputedStyle(el).paddingTop),'24px','mobile inherits root padding');
+ // A viewer may keep the tab open while a separately published revision
+ // replaces the authored root with a legacy/template root. A breakpoint change
+ // refetches that Page Model without navigating/reloading the tab.
+ const authoredPublished=published;
+ published=structuredClone(published);
+ const legacyRoot=published.pages[pageId].nodes[rootId];
+ delete legacyRoot.metadata.rootStyleVersion;
+ delete legacyRoot.metadata.editorRootVersion;
+ legacyRoot.style={};
+ legacyRoot.responsive={desktop:{},tablet:{},mobile:{}};
+ const textId=published.pages[pageId].nodes[rootId].children[0];
+ published.pages[pageId].nodes[textId].props.text='Új publikált gyökér nélküli változat';
+ await viewer.setViewportSize({width:1366,height:900});
+ await viewer.getByText('Új publikált gyökér nélküli változat').waitFor();
+ assert.equal(await canvas.getAttribute('class'),'content-canvas visual-editor-canvas','the refreshed template has no authored root class');
+ assert.equal(await canvas.evaluate(el=>el.style.backgroundColor),'','legacy Page Model must clear previous authored inline background');
+ assert.equal(await canvas.evaluate(el=>el.style.paddingTop),'','legacy Page Model must clear previous inline padding while retaining design token variables');
+ assert.equal(await canvas.getAttribute('data-node-id'),null,'previous root selector is not retained');
+ assert.equal(await canvas.evaluate(el=>getComputedStyle(el).backgroundColor),legacyColor,'desktop template uses its own CSS, not stale authored colors');
+
+ // The opposite transition must still apply new authored root styles.
+ published=authoredPublished;
+ await viewer.setViewportSize({width:390,height:800});
+ await viewer.locator('.visual-root-authored').waitFor();
+ assert.equal(await canvas.evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(170, 68, 0)','re-authored mobile revision restores the breakpoint override');
+ assert.equal(await canvas.evaluate(el=>getComputedStyle(el).paddingTop),'24px');
  assert.deepEqual(errors,[]);
 });
