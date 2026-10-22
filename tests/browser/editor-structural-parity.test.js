@@ -16,6 +16,7 @@ test('each authored structural type preserves its semantics and responsive layou
     const state=createEditorState(createDocument(createPage({id:type,name:type,slug:type}),{modern:true}));
     execute(state,{type:'style.set',payload:{nodeId:activePage(state).rootId,patch:{width:'320px',height:'360px',minHeight:'360px',padding:'12px'}}});
     execute(state,{type:'element.add',payload:{type,parentId:activePage(state).rootId,authored:true}});const id=state.selection.primaryId;
+    for(const device of ['desktop','tablet','mobile'])execute(state,{type:'responsive.set',payload:{nodeId:id,device,patch:{minWidth:'80px',maxWidth:'600px',minHeight:'36px',maxHeight:'900px'}}});
     execute(state,{type:'element.add',payload:{type:'text',parentId:id,authored:true,props:{text:'Megőrzött tartalom'}}});const childId=state.selection.primaryId;
     // Older snapshots can carry both legacy and current accessibility keys.
     execute(state,{type:'element.update',payload:{nodeId:id,patch:{accessibility:{
@@ -42,7 +43,7 @@ test('each authored structural type preserves its semantics and responsive layou
   const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
   const base=`http://127.0.0.1:${server.address().port}`,editor=await browser.newPage({viewport:{width:1440,height:900}}),live=await browser.newPage({viewport:{width:1440,height:900}}),errors=[];
   for(const page of [editor,live]){page.setDefaultTimeout(6000);page.on('pageerror',error=>errors.push(error.message))}
-  const measure=el=>{const style=getComputedStyle(el);return Object.fromEntries(['display','position','width','height','minHeight','padding','borderRadius','backgroundColor','color','flexDirection','gap','gridTemplateColumns'].map(key=>[key,style[key]]))};
+  const measure=el=>{const style=getComputedStyle(el);return Object.fromEntries(['display','position','width','height','minWidth','maxWidth','minHeight','maxHeight','padding','borderRadius','backgroundColor','color','flexDirection','gap','gridTemplateColumns'].map(key=>[key,style[key]]))};
   for(const type of STRUCTURAL_TYPES){
     const {id}=models[type];await editor.goto(base+'/editor-v2/index.html?pageId='+type);const source=editor.locator(`.node[data-node-id="${id}"]`);await source.evaluate(el=>el.click());if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
     const title=editor.locator('.inspector-group-title').filter({hasText:'Lekerekítés'});if(await title.getAttribute('aria-expanded')==='false')await title.click();
