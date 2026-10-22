@@ -98,12 +98,12 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   await editor.getByRole('button',{name:'Tartalom és szöveg'}).click();
   const inspector=editor.locator('.legacy-media-inspector');
   await inspector.waitFor();
-  assert.equal(await inspector.getByRole('status').count(),1,'invalid URL is explained to the editor user');
+  assert.equal(await inspector.locator('.property-validation[role="status"]').count(),1,'invalid URL is explained to the editor user');
   assert.equal(posts.length,0,'selecting and inspecting the node cannot persist or publish');
   await inspector.getByRole('textbox',{name:'Kép URL'}).fill('/fixture.svg');
   await inspector.getByRole('textbox',{name:'Kép URL'}).press('Tab');
   await canvasNode(ids.badImage).locator('.media-preview img').waitFor();
-  assert.equal(await inspector.getByRole('status').count(),0,'warning disappears once URL is repaired');
+  assert.equal(await inspector.locator('.property-validation[role="status"]').count(),0,'warning disappears once URL is repaired');
   await inspector.getByRole('textbox',{name:'Kép leírása (alt)'}).fill('Javított képleírás');
   await inspector.getByRole('textbox',{name:'Kép leírása (alt)'}).press('Tab');
   await inspector.getByRole('combobox',{name:'Kép illesztése'}).selectOption('contain');
