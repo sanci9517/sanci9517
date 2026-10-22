@@ -16,6 +16,9 @@ test("retention state migration is additive, inert and keeps one request per sit
   assert.throws(()=>insert.run("req-c","site-default","absent","sites/site-default/media/missing","2026-12-01 00:00:00"),/FOREIGN KEY/);
   assert.throws(()=>db.prepare("UPDATE media_retention_requests SET state='unknown'").run(),/CHECK/);
   assert.throws(()=>db.prepare("UPDATE media_retention_requests SET attempt_count=-1").run(),/CHECK/);
+  assert.throws(()=>insert.run("req-d","","asset-a","key","2026-12-01 00:00:00"),/CHECK/);
+  assert.throws(()=>insert.run("req-e","site-default","asset-a"," ","2026-12-01 00:00:00"),/CHECK/);
+  assert.throws(()=>insert.run("req-f","site-default","asset-a","key",""),/CHECK/);
   db.exec(readFileSync(new URL("../scripts/pending/media_retention_requests.sql",import.meta.url),"utf8"));
   assert.equal(db.prepare("SELECT COUNT(*) n FROM media_retention_requests").get().n,1);
  } finally { db.close(); }
