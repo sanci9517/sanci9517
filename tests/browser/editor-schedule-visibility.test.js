@@ -27,6 +27,7 @@ test('hidden or hidden-parent schedules never fetch or break the public mobile p
   execute(model,{type:'schedule.config.set',payload:{nodeId:nestedHiddenId,patch:{mode:'all'}}});
   execute(model,{type:'element.visibility.set',payload:{nodeId:parentId,device:'mobile',visible:false}});
   const published=structuredClone(model.document),requests=[],errorModes=new Set(['next','all']);
+  let feedRevision=1;
   const publicDir=resolve(import.meta.dirname,'../../public');
   const server=createServer(async(req,res)=>{
     const url=new URL(req.url,'http://localhost');
@@ -36,7 +37,7 @@ test('hidden or hidden-parent schedules never fetch or break the public mobile p
       const mode=url.searchParams.get('mode');
       requests.push(mode);
       if(errorModes.has(mode))return json({ok:false,error:{message:'A rejtett adásrend forrása nem érhető el'}},503);
-      return json({ok:true,data:[{id:mode,title:'Stream '+mode,platform:'Twitch',startsAt:'2030-10-21T16:00:00Z',status:'scheduled'}]});
+      return json({ok:true,data:[{id:mode,title:'Stream '+mode+' #'+feedRevision,platform:'Twitch',startsAt:'2030-10-21T16:00:00Z',status:'scheduled'}]});
     }
     if(url.pathname==='/api/public/navigation')return json({ok:true,data:{items:[]}});
     if(url.pathname.startsWith('/api/'))return json({ok:true,data:{}});
@@ -111,5 +112,24 @@ test('hidden or hidden-parent schedules never fetch or break the public mobile p
     assert.deepEqual(requests.slice(-3).sort(),['all','next','upcoming'],width+' loads all visible schedules');
     await page.close();
   }
+  // The browser tab stays open. Changes to the public schedule must be
+  // visible after a breakpoint-triggered Page Model reload, not stuck in a
+  // process-global cache from its initial view. No whole-page reload occurs.
+  requests.length=0;
+  const responsive=await open(768);
+  assert.equal(await responsive.locator(`[data-node-id="${visibleScheduleId}"] .visual-schedule-title`).textContent(),'Stream upcoming #1');
+  assert.deepEqual(requests,['upcoming','next','all']);
+  feedRevision=2;
+  await responsive.setViewportSize({width:390,height:850});
+  await responsive.locator(`[data-node-id="${visibleScheduleId}"] .visual-schedule-title`).getByText('Stream upcoming #2').waitFor();
+  assert.deepEqual(requests,['upcoming','next','all','upcoming'],'mobile responsive reload refetches the latest visible schedule only');
+  assert.equal(await responsive.locator(`[data-node-id="${directHiddenId}"]`).count(),0,'mobile hide survives a fresh schedule reload');
+  feedRevision=3;
+  await responsive.setViewportSize({width:768,height:850});
+  await responsive.locator(`[data-node-id="${directHiddenId}"] .visual-schedule-title`).getByText('Stream next #3').waitFor();
+  assert.deepEqual(requests.slice(-3),['upcoming','next','all'],'tablet refetches all visible streams for the new feed revision');
+  assert.equal(await responsive.locator(`[data-node-id="${nestedHiddenId}"] .visual-schedule-title`).textContent(),'Stream all #3');
+  assert.equal(await responsive.locator('.visual-schedule-error').count(),0,'healthy refresh never shows stale errors');
+  await responsive.close();
   assert.deepEqual(errors,[]);
 });
