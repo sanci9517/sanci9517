@@ -160,6 +160,15 @@ test('legacy image presets ignore inherited object properties in old saved pages
  assert.equal(legacyImagePresentation({focalPoint:'top',focalX:'80'}).objectPosition,'80% 0%');
 });
 
+test('legacy image alt safely handles malformed persisted structured values',()=>{
+ for(const alt of [{toString:null},{valueOf:null,toString:null},['not','an','alt'],true,{}]){
+  assert.equal(legacyImagePresentation({alt}).alt,'');
+ }
+ assert.equal(legacyImagePresentation({alt:'Saját fotó'}).alt,'Saját fotó');
+ assert.equal(legacyImagePresentation({alt:12}).alt,'12');
+ assert.equal(legacyImagePresentation({alt:'Megőrzött leírás',decorative:true}).alt,'');
+});
+
 test('legacy playback settings preserve prior controls defaults and prohibit unmuted autoplay',()=>{
  const posterId='00000000-0000-4000-8000-000000000123';
  assert.deepEqual(legacyPlaybackSettings({}, {video:true,editor:false}),{controls:true,loop:false,muted:false,autoplay:false,poster:''});
