@@ -36,6 +36,10 @@ const IMAGE_RATIOS=new Set(['auto','16 / 9','4 / 3','1 / 1','3 / 4']);
 const LEGACY_FOCAL_POINTS={center:[50,50],top:[50,0],bottom:[50,100],left:[0,50],right:[100,50]};
 const focal=(value,fallback)=>{
   if(value===null||value===undefined||value==='')return fallback;
+  // Persisted legacy documents may contain non-numeric JSON values. Never
+  // coerce booleans, arrays, objects or whitespace into a valid focal point.
+  if(typeof value!=='number'&&typeof value!=='string')return fallback;
+  if(typeof value==='string'&&!value.trim())return fallback;
   const parsed=Number(value);
   return Number.isFinite(parsed)?Math.max(0,Math.min(100,Math.round(parsed))):fallback;
 };
