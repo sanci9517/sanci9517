@@ -887,8 +887,10 @@ function renderMultiInspector(nodes){
   if(kind==='color'){input.value=validHexColor(value)?value:defaultValue;input.title=same?'':'Eltérő értékek';input.onchange=()=>apply({[key]:input.value});}
   else{
    input.value=value===undefined?'':String(value).replace(unit,'');input.placeholder=same?'Alapérték':'Eltérő értékek';
-   input.min=key==='opacity'?'0':'0';input.max=key==='opacity'?'1':'2000';input.step=key==='opacity'?'0.05':'1';
-   input.onchange=()=>{const v=Number(input.value);if(!input.value.trim()||!Number.isFinite(v)||v<0||(key==='opacity'&&v>1))return;apply({[key]:unit?`${v}${unit}`:v})};
+   input.min='0';input.max=key==='opacity'?'1':'2000';input.step=key==='opacity'?'0.05':'1';
+   input.setAttribute('aria-label',label);
+   input.inputMode='decimal';
+   input.onchange=()=>{const v=Number(input.value);if(!input.value.trim()||!Number.isFinite(v)||v<0||(key==='opacity'&&v>1)||(key!=='opacity'&&v>2000))return;apply({[key]:unit?`${v}${unit}`:v})};
   }
   row.append(input);if(unit){const u=document.createElement('small');u.textContent=unit;row.append(u)}
   panel.append(row);
