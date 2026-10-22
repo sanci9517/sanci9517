@@ -27,3 +27,12 @@ test("only cancellable requests can be prepared for cancellation",()=>{
  assert.equal(prepareRetentionCancellation({...req,state:"deleted"}).ok,false);
  assert.equal(prepareRetentionCancellation({...req,state:"cancelled"}).ok,false);
 });
+
+test("retention requests reject cross-site R2 keys and invalid deadlines",async()=>{
+ const now=new Date("2026-10-22T12:00:00Z");
+ for(const object_key of ["sites/other/media/asset","sites/site-default/media/","other/key"]) {
+  assert.deepEqual((await prepareRetentionRequest({asset:{...asset,object_key},usage,objectPresent:true,now})).ok,false);
+ }
+ assert.equal((await prepareRetentionRequest({asset,usage,objectPresent:true,now:new Date(NaN)})).ok,false);
+ assert.equal((await prepareRetentionRequest({asset,usage,objectPresent:true,now:new Date(8640000000000000)})).ok,false);
+});
