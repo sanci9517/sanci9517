@@ -10,12 +10,11 @@ CREATE TABLE IF NOT EXISTS media_retention_requests (
   CHECK (state IN ('requested','quarantined','revalidated','cancelled','deleted','blocked')),
  requested_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
  not_before TEXT NOT NULL,
- CHECK (length(trim(not_before)) >= 10),
  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
  attempt_count INTEGER NOT NULL DEFAULT 0 CHECK (attempt_count >= 0),
  last_error TEXT,
  FOREIGN KEY(asset_id) REFERENCES media(id),
- CHECK (length(trim(site_id)) > 0 AND length(trim(object_key)) > 0),
+ CHECK (length(trim(site_id)) > 0 AND length(trim(object_key)) > 0 AND length(trim(not_before)) >= 10),
  UNIQUE(site_id,asset_id)
 );
 CREATE INDEX IF NOT EXISTS idx_media_retention_due ON media_retention_requests(site_id,state,not_before);
