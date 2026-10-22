@@ -6,6 +6,9 @@ const page=readFileSync(new URL('../../visual-page.html',import.meta.url),'utf8'
 
 test('public page keeps one continuous scroll and empty responsive side zones',()=>{
   assert.match(page,/<main class="page public-page-layout">/);
+  assert.match(page,/<a class="public-skip-link" href="#content-canvas">Ugrás a tartalomhoz<\/a>/);
+  assert.match(page,/<section id="content-canvas" class="content-canvas" tabindex="-1">/);
+  assert.match(page,/\.public-skip-link:focus-visible\{transform:none/);
   assert.equal((page.match(/class="public-side-zone public-side-zone-(?:left|right)"/g)||[]).length,2);
   assert.match(page,/public-side-zone-left" aria-hidden="true"/);
   assert.match(page,/public-side-zone-right" aria-hidden="true"/);
