@@ -881,12 +881,15 @@ function renderMultiInspector(nodes){
   const text=document.createElement('span');text.textContent=label;row.append(text);
   const values=nodes.map(node=>resolveResponsiveValue(node.responsive,key,device)?.value);
   const same=values.every(value=>value===values[0]);
+  const mixed=!same;
+  row.title=mixed?'Eltérő értékek a kijelölt elemek között':'';
   const input=document.createElement('input');input.type=kind;
   input.disabled=locked;
   const value=same?values[0]:undefined;
   if(kind==='color'){input.value=validHexColor(value)?value:defaultValue;input.title=same?'':'Eltérő értékek';input.onchange=()=>apply({[key]:input.value});}
   else{
    input.value=value===undefined?'':String(value).replace(unit,'');input.placeholder=same?'Alapérték':'Eltérő értékek';
+   input.setAttribute('aria-description',mixed?'A kijelölt elemek értékei eltérnek. Új érték megadásával mindegyiket módosítod.':'');
    input.min='0';input.max=key==='opacity'?'1':'2000';input.step=key==='opacity'?'0.05':'1';
    input.setAttribute('aria-label',label);
    input.inputMode='decimal';
