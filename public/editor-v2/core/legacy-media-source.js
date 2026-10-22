@@ -58,7 +58,8 @@ export function legacyImagePresentation(props){
   return {
     fit,ratio,focalX,focalY,objectPosition:`${focalX}% ${focalY}%`,
     loading:p.loading==='eager'?'eager':'lazy',
-    alt:decorative?'':String(p.alt??''),
+    // Invalid persisted structured values must not throw during Canvas/public rendering.
+    alt:decorative?'':(typeof p.alt==='string'?p.alt:typeof p.alt==='number'&&Number.isFinite(p.alt)?String(p.alt):''),
     decorative
   };
 }
