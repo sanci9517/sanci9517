@@ -23,7 +23,7 @@ import {pasteRichTextDocument} from './core/richtext-paste.js';
 import {captureStyleSnapshot} from './core/style-snapshot.js';
 import {LAYOUT_PRESETS,LAYOUT_TYPES,layoutMode,isManagedLayout,isLayoutPropertyRelevant,explicitGridColumnCount} from './core/layout-presets.js';
 import {TYPOGRAPHY_PRESETS,typographyPresetPatch} from './core/typography-presets.js';
-import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent} from './core/element-content.js';
+import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent,safeMediaUrl} from './core/element-content.js';
 import {renderStructuredInspector} from './ui/structured-inspector.js';
 import {ICON_CHOICES,iconById} from './core/icon-options.js';
 import {DIVIDER_LINE_STYLES,normalizeDividerStyle} from './core/decorative-elements.js';
@@ -422,8 +422,8 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
    else{const q=document.createElement('blockquote');q.className='visual-quote';const p=document.createElement('p');p.textContent=node.props?.text||'';q.append(p);if(node.props?.attribution){const cite=document.createElement('cite');cite.textContent=node.props.attribution;q.append(cite)}c.append(q)}
    el.append(c);
  }else if(node.type===NODE_TYPES.SCHEDULE){const c=document.createElement('div');c.className='node-content schedule-preview-host';renderSchedulePreview(c,node.props?.schedule);el.append(c)}else if([NODE_TYPES.IMAGE,NODE_TYPES.VIDEO,NODE_TYPES.AUDIO].includes(node.type)&&!isAuthoredContent(node)){
-    const src=String(node.props?.src||'').trim();const c=document.createElement('div');c.className='node-content media-preview';
-    if(src&&/^(https?:\/\/|\/(?!\/))/.test(src)){
+    const src=safeMediaUrl(node.props?.src);const c=document.createElement('div');c.className='node-content media-preview';
+    if(src){
       const media=document.createElement(node.type===NODE_TYPES.IMAGE?'img':node.type===NODE_TYPES.VIDEO?'video':'audio');
       media.src=src;media.style.maxWidth='100%';media.style.width='100%';
       if(node.type===NODE_TYPES.IMAGE){media.alt=String(node.props?.alt||'');media.style.objectFit=node.props?.objectFit==='contain'?'contain':'cover';}
@@ -869,6 +869,30 @@ function renderMultiInspector(nodes){
 }
 function renderExistingContentInspector(node){
   const update=(key,value)=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),[key]:value}}});
+  if(!isAuthoredContent(node)&&['image','video','audio'].includes(node.type)){
+    const section=document.createElement('section');section.className='legacy-media-inspector';
+    const mediaLabel={image:'Kép',video:'Videó',audio:'Hang'}[node.type];
+    section.append(field(mediaLabel+' URL',node.props?.src||'',value=>update('src',value.trim())));
+    if(node.type==='image'){
+      section.append(field('Kép leírása (alt)',node.props?.alt||'',value=>update('alt',value)));
+      const objectFit=document.createElement('select');objectFit.setAttribute('aria-label','Kép illesztése');
+      for(const [value,label] of [['cover','Kitöltés (vágással)'],['contain','Teljes kép (vágás nélkül)']]){
+        const option=document.createElement('option');option.value=value;option.textContent=label;objectFit.append(option)
+      }
+      objectFit.value=node.props?.objectFit==='contain'?'contain':'cover';
+      objectFit.onchange=()=>update('objectFit',objectFit.value);section.append(objectFit);
+    }
+    const help=document.createElement('p');help.className='content-field-help';
+    help.textContent='HTTPS/HTTP hivatkozás vagy / jellel kezdődő webhelyútvonal használható. A szerkesztő és a publikus oldal ugyanúgy ellenőrzi.';
+    section.append(help);
+    const source=String(node.props?.src||'').trim();
+    if(source&&!safeMediaUrl(source)){
+      const warning=document.createElement('p');warning.className='property-validation';warning.setAttribute('role','status');
+      warning.textContent='Ez a média-URL nem biztonságos vagy nem támogatott; a publikus oldalon sem töltődik be.';
+      section.append(warning);
+    }
+    inspector.append(section);return true;
+  }
   if(!isAuthoredContent(node)&&node.metadata?.basicContentVersion===1&&['badge','quote','icon'].includes(node.type)){
     const section=document.createElement('section');section.className='basic-content-inspector';
     if(node.type==='badge'){section.append(field('Címke szövege',node.props?.text||'',value=>update('text',value)))}

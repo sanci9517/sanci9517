@@ -2,7 +2,7 @@
 import { resolveNodeStyle, STYLE_MAP, needsRelativeOffsetPosition } from "../editor-v2/core/canvas-engine.js?v=20261020-position";
 import { RICH_TEXT_FONT_FAMILIES } from "../editor-v2/core/schema.js";
 import { LAYOUT_TYPES, isManagedLayout } from "../editor-v2/core/layout-presets.js";
-import {isStructuredType,renderElementContent,activateStructuredContent} from "../editor-v2/core/element-content.js";
+import {isStructuredType,renderElementContent,activateStructuredContent,safeMediaUrl} from "../editor-v2/core/element-content.js";
 import {iconById} from "../editor-v2/core/icon-options.js";
 import {normalizeDividerStyle} from "../editor-v2/core/decorative-elements.js";
 import {normalizeCardContent,cardImageSrc} from "../editor-v2/core/card-content.js";
@@ -17,7 +17,7 @@ import {applyStateStyles} from "../editor-v2/core/state-styles.js";
 import {backgroundImageValue,MEDIA_ASSET_ID} from "../editor-v2/core/background-asset.js";
 (()=>{
  const esc=v=>String(v??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
- const safeUrl=v=>{try{const u=new URL(String(v||''),location.origin);return ['http:','https:'].includes(u.protocol)?u.href:''}catch{return''}};
+ const safeUrl=v=>{const raw=safeMediaUrl(v);if(!raw)return '';try{return new URL(raw,location.origin).href}catch{return''}};
  const safeRichUrl=v=>{const raw=String(v??'').trim();if(!raw||/[\u0000-\u001f\u007f\\]/.test(raw)||raw.startsWith('//'))return'';if(raw.startsWith('#')&&raw.length>1)return raw;if(raw.startsWith('/')&&!raw.startsWith('//'))return raw;try{const u=new URL(raw);return !u.username&&!u.password&&['http:','https:','mailto:'].includes(u.protocol)?raw:''}catch{return''}};
  const sanci={live:['🔴','Twitch Live','Élő adás állapota'],twitch:['🎮','Twitch Player','Twitch élő közvetítés'],youtube:['▶️','YouTube','Videók és feltöltések'],tiktok:['♪','TikTok','Rövid klipek és tartalmak'],discord:['👥','Discord','Közösség és beszélgetés'],schedule:['📅','Menetrend','Következő adások és időpontok'],streamcount:['📊','Stream statisztika','Aktuális adásstatisztikák'],followers:['👤','Követők','Követőszám'],subs:['⭐','Feliratkozók','Feliratkozói információk'],vod:['🎥','VOD','Korábbi adások'],support:['🤝','Támogatás','A csatorna támogatási lehetőségei'],community:['👥','Közösség','Csatlakozz a Sanci9517 közösséghez'],gamecard:['🎮','Játékkártya','Kiemelt játék'],gamelist:['🕹️','Játéklista','Játszott és tervezett játékok']};
  function sanciBlock(n){const d=sanci[n.type]||['✦',n.name||n.type,'Sanci9517 tartalom'];const text=n.props?.text&&n.props.text!==n.name?n.props.text:'';return `<div class="visual-sanci-icon">${d[0]}</div><div class="visual-sanci-copy"><strong>${esc(text||d[1])}</strong><span>${esc(d[2])}</span></div>`}
