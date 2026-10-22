@@ -79,7 +79,7 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   }
   for(const [key,mediaType] of [['goodImage','img'],['goodVideo','video'],['goodAudio','audio']]){
     assert.equal(await canvasNode(ids[key]).locator('.media-preview '+mediaType).count(),1,key+' rendered on Canvas');
-    assert.equal(await publishedNode(ids[key]).locator(mediaType).count(),1,key+' rendered publicly');
+    assert.equal(await publishedNode(ids[key]).evaluate(el=>el.tagName.toLowerCase()),mediaType,key+' rendered publicly as the media element itself');
   }
   assert.deepEqual(externalRequests,[],'invalid external media never makes a network request');
 
@@ -113,7 +113,7 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
   assert.equal(posts.at(-1).publish,true);
   await viewer.reload();
-  const repaired=publishedNode(ids.badImage).locator('img');
+  const repaired=publishedNode(ids.badImage);
   await repaired.waitFor();
   assert.match(await repaired.getAttribute('src'),/\/fixture\.svg$/);
   assert.equal(await repaired.getAttribute('alt'),'Javított képleírás');
@@ -125,7 +125,7 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
     assert.equal(await canvasNode(ids[key]).locator('.media-preview '+mediaType).count(),0,'invalid '+key+' still hidden in mobile Editor');
     assert.equal(await publishedNode(ids[key]).locator(mediaType).count(),0,'invalid '+key+' still hidden on mobile public');
   }
-  assert.equal(await publishedNode(ids.badImage).locator('img').count(),1,'repaired image visible in mobile public');
+  assert.equal(await publishedNode(ids.badImage).evaluate(el=>el.tagName.toLowerCase()),'img','repaired image visible in mobile public');
   assert.equal(await canvasNode(ids.badImage).locator('img').count(),1,'repaired image visible in mobile Canvas');
   assert.deepEqual(externalRequests,[],'invalid media are blocked at all viewport sizes');
   assert.deepEqual(errors,[]);
