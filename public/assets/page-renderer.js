@@ -3,7 +3,7 @@ import { resolveNodeStyle, STYLE_MAP, needsRelativeOffsetPosition } from "../edi
 import { RICH_TEXT_FONT_FAMILIES } from "../editor-v2/core/schema.js";
 import { LAYOUT_TYPES, isManagedLayout } from "../editor-v2/core/layout-presets.js";
 import {isStructuredType,renderElementContent,activateStructuredContent,safeMediaUrl} from "../editor-v2/core/element-content.js";
-import {legacyImageSource,legacyPlaybackSettings,legacyImagePresentation} from "../editor-v2/core/legacy-media-source.js";
+import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation} from "../editor-v2/core/legacy-media-source.js";
 import {iconById} from "../editor-v2/core/icon-options.js";
 import {normalizeDividerStyle} from "../editor-v2/core/decorative-elements.js";
 import {normalizeCardContent,cardImageSrc} from "../editor-v2/core/card-content.js";
@@ -102,10 +102,10 @@ if(n.type==='card'&&n.metadata?.cardContentVersion===1){
   const u=safeUrl(legacyImageSource(p)),cfg=legacyImagePresentation(p);
   return u?`<img class="visual-editor-node visual-image" style="${st}object-fit:${cfg.fit};object-position:${cfg.objectPosition};aspect-ratio:${cfg.ratio};" src="${esc(u)}" alt="${esc(cfg.alt)}"${cfg.decorative?' role="presentation"':''} loading="${cfg.loading}">`:`<div class="visual-editor-node visual-card" style="${st}">Kép</div>`;
 }if(n.type==='video'){
-  const u=safeUrl(p.src),cfg=legacyPlaybackSettings(p,{video:true}),poster=safeUrl(cfg.poster);
+  const u=safeUrl(legacyPlayableSource(p)),cfg=legacyPlaybackSettings(p,{video:true}),poster=safeUrl(cfg.poster);
   return u?`<video class="visual-editor-node visual-video" style="${st}" src="${esc(u)}"${cfg.controls?' controls':''}${cfg.loop?' loop':''}${cfg.muted?' muted':''}${cfg.autoplay?' autoplay':''}${poster?` poster="${esc(poster)}"`:''} playsinline preload="metadata"></video>`:`<div class="visual-editor-node visual-card" style="${st}">Videó még nincs beállítva</div>`;
 }if(n.type==='audio'){
-  const u=safeUrl(p.src),cfg=legacyPlaybackSettings(p);
+  const u=safeUrl(legacyPlayableSource(p)),cfg=legacyPlaybackSettings(p);
   return u?`<audio class="visual-editor-node visual-audio" style="${st}" src="${esc(u)}"${cfg.controls?' controls':''}${cfg.loop?' loop':''} preload="none"></audio>`:`<div class="visual-editor-node visual-card" style="${st}">Hang még nincs beállítva</div>`;
 }if(n.type==='divider'){
  if(n.metadata?.decorativeVersion===1){
