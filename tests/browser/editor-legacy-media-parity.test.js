@@ -262,10 +262,18 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   await viewer.reload();
   for(const width of [390,1440]){
     await viewer.setViewportSize({width,height:820});
+    // A viewport change starts a fresh async Page Model render. Wait for its
+    // attached, restyled image rather than sampling a node being replaced.
+    await viewer.waitForFunction(id=>{
+      const img=document.querySelector('[data-node-id="'+id+'"]');
+      if(!(img instanceof HTMLImageElement)||!img.isConnected)return false;
+      const css=getComputedStyle(img);
+      return css.objectFit==='cover'&&css.objectPosition==='25% 80%'&&css.aspectRatio==='1 / 1';
+    },ids.badImage);
     const image=publishedNode(ids.badImage);
-    assert.equal(await image.evaluate(el=>getComputedStyle(el).objectFit),'cover');
-    assert.equal(await image.evaluate(el=>getComputedStyle(el).objectPosition),'25% 80%');
-    assert.equal(await image.evaluate(el=>getComputedStyle(el).aspectRatio),'1 / 1');
+    assert.equal(await image.evaluate(el=>el.style.objectFit),'cover');
+    assert.equal(await image.evaluate(el=>el.style.objectPosition),'25% 80%');
+    assert.equal(await image.evaluate(el=>el.style.aspectRatio),'1 / 1');
     assert.equal(await image.getAttribute('loading'),'eager');
     assert.equal(await image.getAttribute('alt'),'');
     assert.equal(await image.getAttribute('role'),'presentation');
