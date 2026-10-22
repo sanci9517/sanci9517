@@ -16,11 +16,11 @@ test('each authored structural type preserves its semantics and responsive layou
     const state=createEditorState(createDocument(createPage({id:type,name:type,slug:type}),{modern:true}));
     execute(state,{type:'style.set',payload:{nodeId:activePage(state).rootId,patch:{width:'320px',height:'360px',minHeight:'360px',padding:'12px'}}});
     execute(state,{type:'element.add',payload:{type,parentId:activePage(state).rootId,authored:true}});const id=state.selection.primaryId;
-    for(const [device,patch] of Object.entries({
-      desktop:{height:'120px',minWidth:'80px',maxWidth:'600px',minHeight:'36px',maxHeight:'900px'},
-      tablet:{height:'120px',minWidth:'90px',maxWidth:'480px',minHeight:'42px',maxHeight:'700px'},
-      mobile:{height:'120px',minWidth:'100px',maxWidth:'320px',minHeight:'48px',maxHeight:'500px'}
-    }))execute(state,{type:'responsive.set',payload:{nodeId:id,device,patch}});
+    for(const [device,limits] of Object.entries({
+      desktop:{minWidth:'80px',maxWidth:'600px',minHeight:'36px',maxHeight:'900px'},
+      tablet:{minWidth:'90px',maxWidth:'480px',minHeight:'42px',maxHeight:'700px'},
+      mobile:{minWidth:'100px',maxWidth:'320px',minHeight:'48px',maxHeight:'500px'}
+    }))execute(state,{type:'responsive.set',payload:{nodeId:id,device,patch:{...limits,...(type==='stack'?{}:{height:'120px'})}}});
     execute(state,{type:'element.add',payload:{type:'text',parentId:id,authored:true,props:{text:'Megőrzött tartalom'}}});const childId=state.selection.primaryId;
     // Older snapshots can carry both legacy and current accessibility keys.
     execute(state,{type:'element.update',payload:{nodeId:id,patch:{accessibility:{
@@ -106,25 +106,28 @@ test('each authored structural type preserves its semantics and responsive layou
       assert.deepEqual(await target.evaluate(el=>{const css=getComputedStyle(el);return [css.minWidth,css.maxWidth,css.minHeight,css.maxHeight]}),expectedLimits,type+'/'+device+' authored breakpoint limits');
       assert.equal(await target.evaluate(el=>el.tagName.toLowerCase()),models[type].tag,type+' semantics');
       const publicBox=await target.evaluate(el=>{const r=el.getBoundingClientRect();const child=el.querySelector('[data-node-id]');const c=child?.getBoundingClientRect();return {height:r.height,childBottom:c?.bottom,containerBottom:r.bottom,overflow:getComputedStyle(el).overflowY}});
-      assert.equal(publicBox.height,120,type+'/'+device+' explicit height is stable');
+      if(type!=='stack')assert.equal(publicBox.height,120,type+'/'+device+' explicit height is stable');
       if(publicBox.childBottom!==undefined&&publicBox.overflow!=='visible')assert.ok(publicBox.childBottom<=publicBox.containerBottom+1,type+'/'+device+' content stays visible inside constrained height');
       assert.deepEqual(await target.evaluate(measure),await source.evaluate(measure),type+'/'+device);assert.match(await target.textContent(),/Megőrzött tartalom/);
     }
   }
-  // Intrinsic-height diagnostics are independent of fixed-height parity.
-  // The generated public page must never collapse below its authored minimum.
+  // Stack uses no authored height: its real content height and minimum must
+  // remain identical between the Canvas and the published renderer.
   for(const device of ['desktop','tablet','mobile']){
     const width={desktop:1440,tablet:768,mobile:390}[device];
-    await editor.goto(base+'/editor-v2/index.html?pageId='+STRUCTURAL_TYPES[0]);
+    await editor.goto(base+'/editor-v2/index.html?pageId=stack');
     await editor.locator(`.canvas-device-btn[data-device="${device}"]`).click();
     await live.setViewportSize({width,height:900});
-    await live.goto(base+'/p/'+STRUCTURAL_TYPES[0]);
-    const id=models[STRUCTURAL_TYPES[0]].id;
-    for(const page of [editor,live]){
-      const node=page.locator(`[data-node-id="${id}"]`).first();
-      const box=await node.evaluate(el=>({height:el.getBoundingClientRect().height,minHeight:parseFloat(getComputedStyle(el).minHeight)}));
-      assert.ok(box.height+0.5>=box.minHeight,'intrinsic height respects authored minimum on '+device);
-    }
+    await live.goto(base+'/p/stack');
+    const id=models.stack.id;
+    const dimensions=locator=>locator.evaluate(el=>({height:el.getBoundingClientRect().height,minHeight:parseFloat(getComputedStyle(el).minHeight)}));
+    const [canvasBox,publicBox]=await Promise.all([
+      dimensions(editor.locator(`.page-canvas .node[data-node-id="${id}"]`)),
+      dimensions(live.locator(`[data-node-id="${id}"]`))
+    ]);
+    assert.ok(canvasBox.height+0.5>=canvasBox.minHeight,'canvas intrinsic height respects authored minimum on '+device+': '+JSON.stringify({canvasBox,publicBox}));
+    assert.ok(publicBox.height+0.5>=publicBox.minHeight,'public intrinsic height respects authored minimum on '+device+': '+JSON.stringify({canvasBox,publicBox}));
+    assert.equal(publicBox.height,canvasBox.height,'intrinsic stack height matches on '+device);
   }
   // Real keyboard navigation: the skip link is the first tab stop, appears
   // when focused, and transfers focus directly to the published content.
