@@ -252,6 +252,31 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
   const url = new URL(request.url);
   if (request.method === "GET") {
     const id = url.searchParams.get("id");
+    if (url.searchParams.get("deletePreflight") === "1") {
+    const id=url.searchParams.get("id") || "";
+    if (!/^[0-9a-f-]{36}$/.test(id)) return error("MEDIA_NOT_FOUND",404);
+    const existing=await env.DB.prepare(
+      "SELECT id,site_id,object_key,original_name,mime_type,size_bytes,alt_text,created_at,archived_at FROM media WHERE id=? AND site_id=? LIMIT 1"
+    ).bind(id,siteId).first<MediaRow>();
+    if(!existing) return error("MEDIA_NOT_FOUND",404);
+    const report=await mediaUsage(env,siteId,id);
+    if(!report.ok) return error("MEDIA_USAGE_INCOMPLETE",409);
+    const payload=await report.json() as {data?:{complete?:boolean;references?:unknown[]}};
+    const complete=payload.data?.complete===true;
+    const references=payload.data?.references || [];
+    let objectPresent: boolean;
+    try { objectPresent=Boolean(await env.MEDIA.head(existing.object_key)); }
+    catch { return error("MEDIA_STORAGE_FAILED",503); }
+    return ok({
+      assetId:id,archived:Boolean(existing.archived_at),objectPresent,
+      references:references.length,usageComplete:complete,
+      // Advisory only: a second locked recheck and durable retention state
+      // are required before an irreversible operation is allowed.
+      eligibleForRetention:complete && references.length===0 && Boolean(existing.archived_at),
+      permanentDeletionAuthorized:false
+    });
+  }
+
     const usageId = url.searchParams.get("usage");
     // An audit must have exactly one explicit mode; never silently fall back
     // to a normal media list for malformed diagnostic requests.
@@ -397,30 +422,6 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
       "X-Content-Type-Options": "nosniff",
       "Content-Disposition": "inline"
     } });
-  }
-  if (request.method === "GET" && url.searchParams.get("deletePreflight") === "1") {
-    const id=url.searchParams.get("id") || "";
-    if (!/^[0-9a-f-]{36}$/.test(id)) return error("MEDIA_NOT_FOUND",404);
-    const existing=await env.DB.prepare(
-      "SELECT id,site_id,object_key,original_name,mime_type,size_bytes,alt_text,created_at,archived_at FROM media WHERE id=? AND site_id=? LIMIT 1"
-    ).bind(id,siteId).first<MediaRow>();
-    if(!existing) return error("MEDIA_NOT_FOUND",404);
-    const report=await mediaUsage(env,siteId,id);
-    if(!report.ok) return error("MEDIA_USAGE_INCOMPLETE",409);
-    const payload=await report.json() as {data?:{complete?:boolean;references?:unknown[]}};
-    const complete=payload.data?.complete===true;
-    const references=payload.data?.references || [];
-    let objectPresent: boolean;
-    try { objectPresent=Boolean(await env.MEDIA.head(existing.object_key)); }
-    catch { return error("MEDIA_STORAGE_FAILED",503); }
-    return ok({
-      assetId:id,archived:Boolean(existing.archived_at),objectPresent,
-      references:references.length,usageComplete:complete,
-      // Advisory only: a second locked recheck and durable retention state
-      // are required before an irreversible operation is allowed.
-      eligibleForRetention:complete && references.length===0 && Boolean(existing.archived_at),
-      permanentDeletionAuthorized:false
-    });
   }
   if (request.method === "PATCH") {
     if (request.headers.get("Origin") !== url.origin || request.headers.get("Sec-Fetch-Site") === "cross-site") return error("INVALID_ORIGIN", 403);
