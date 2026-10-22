@@ -252,6 +252,10 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
   const url = new URL(request.url);
   if (request.method === "GET") {
     const id = url.searchParams.get("id");
+    const preflightFlags = url.searchParams.getAll("deletePreflight");
+    if (preflightFlags.length && (preflightFlags.length !== 1 || preflightFlags[0] !== "1" ||
+        url.searchParams.has("usage") || url.searchParams.has("orphanAudit") ||
+        url.searchParams.has("missingAudit"))) return error("INVALID_MEDIA_PREFLIGHT",400);
     if (url.searchParams.get("deletePreflight") === "1") {
     const id=url.searchParams.get("id") || "";
     if (!/^[0-9a-f-]{36}$/.test(id)) return error("MEDIA_NOT_FOUND",404);
