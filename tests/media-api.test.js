@@ -672,10 +672,13 @@ test("deletion preflight remains non-destructive for archived and missing object
   assert.equal(existing.objectPresent,true);
   assert.equal(existing.usageComplete,true);
   assert.equal(existing.eligibleForRetention,true);
+  assert.equal(existing.retentionRequestAvailable,false);
   assert.equal(existing.permanentDeletionAuthorized,false);
   f.files.delete(key);
   const missing=await inspect();
   assert.equal(missing.objectPresent,false);
+  assert.equal(missing.eligibleForRetention,false);
+  assert.equal(missing.retentionRequestAvailable,false);
   assert.equal(missing.permanentDeletionAuthorized,false);
   assert.equal(f.db.prepare("SELECT archived_at FROM media WHERE id=?").get(asset.id).archived_at!==null,true);
   assert.equal((await f.call("GET","editor",null,{id:asset.id,deletePreflight:true})).status,200);
