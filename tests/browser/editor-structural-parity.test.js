@@ -74,6 +74,24 @@ test('each authored structural type preserves its semantics and responsive layou
         assert.notEqual(zone.overflow,'auto',type+'/'+device+' side zone scroll');
       }
       assert.equal(shell.rootHeight,'360px',type+'/'+device+' authored root height preserved');
+      const layout=await live.evaluate(()=>{
+        const main=document.querySelector('main.public-page-layout');
+        const content=main.querySelector('.content-page');
+        const left=main.querySelector('.public-side-zone-left');
+        const right=main.querySelector('.public-side-zone-right');
+        const box=el=>{const r=el.getBoundingClientRect();return {left:r.left,right:r.right,width:r.width}};
+        return {main:box(main),content:box(content),left:box(left),right:box(right),
+          viewport:document.documentElement.clientWidth,
+          documentWidth:document.documentElement.scrollWidth};
+      });
+      assert.ok(layout.documentWidth<=layout.viewport+1,type+'/'+device+' no page-level horizontal scroll');
+      assert.ok(layout.content.width>0,type+'/'+device+' usable content width');
+      assert.ok(layout.content.left>=-1&&layout.content.right<=layout.viewport+1,type+'/'+device+' content inside viewport');
+      if(device!=='mobile'){
+        assert.ok(layout.left.right<=layout.content.left+1,type+'/'+device+' left zone outside content');
+        assert.ok(layout.right.left>=layout.content.right-1,type+'/'+device+' right zone outside content');
+      }
+
       assert.equal(await source.getAttribute('id'),'legacy-'+type,type+'/'+device+' canvas legacy anchor');
       assert.equal(await target.getAttribute('id'),'legacy-'+type,type+'/'+device+' public legacy anchor');
       assert.equal(await source.getAttribute('aria-label'),'Régi címke '+type,type+'/'+device+' canvas label');
