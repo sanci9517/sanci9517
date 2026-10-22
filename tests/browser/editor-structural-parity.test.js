@@ -104,7 +104,11 @@ test('each authored structural type preserves its semantics and responsive layou
       assert.equal(await target.evaluate(el=>el.outerHTML.split(' id=').length-1),1,type+'/'+device+' one anchor only');
       const expectedLimits={desktop:['80px','600px','36px','900px'],tablet:['90px','480px','42px','700px'],mobile:['100px','320px','48px','500px']}[device];
       assert.deepEqual(await target.evaluate(el=>{const css=getComputedStyle(el);return [css.minWidth,css.maxWidth,css.minHeight,css.maxHeight]}),expectedLimits,type+'/'+device+' authored breakpoint limits');
-      assert.equal(await target.evaluate(el=>el.tagName.toLowerCase()),models[type].tag,type+' semantics');assert.deepEqual(await target.evaluate(measure),await source.evaluate(measure),type+'/'+device);assert.match(await target.textContent(),/Megőrzött tartalom/);
+      assert.equal(await target.evaluate(el=>el.tagName.toLowerCase()),models[type].tag,type+' semantics');
+      const publicBox=await target.evaluate(el=>{const r=el.getBoundingClientRect();const child=el.querySelector('[data-node-id]');const c=child?.getBoundingClientRect();return {height:r.height,childBottom:c?.bottom,containerBottom:r.bottom,overflow:getComputedStyle(el).overflowY}});
+      assert.equal(publicBox.height,120,type+'/'+device+' explicit height is stable');
+      if(publicBox.childBottom!==undefined&&publicBox.overflow!=='visible')assert.ok(publicBox.childBottom<=publicBox.containerBottom+1,type+'/'+device+' content stays visible inside constrained height');
+      assert.deepEqual(await target.evaluate(measure),await source.evaluate(measure),type+'/'+device);assert.match(await target.textContent(),/Megőrzött tartalom/);
     }
   }
   // Real keyboard navigation: the skip link is the first tab stop, appears
