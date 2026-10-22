@@ -16,6 +16,11 @@ export function legacyImageSource(props,{editor=false}={}){
   return typeof props?.src==='string'?safeMediaUrl(props.src):'';
 }
 
+/** Shared, non-coercing source check for old video and audio elements. */
+export function legacyPlayableSource(props){
+  return typeof props?.src==='string'?safeMediaUrl(props.src):'';
+}
+
 /** Same playback flags in legacy Editor Canvas and the published page. */
 export function legacyPlaybackSettings(props,{video=false,editor=false}={}){
   const p=props??{},muted=video&&p.muted===true;
