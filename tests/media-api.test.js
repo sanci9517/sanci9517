@@ -78,7 +78,7 @@ async function fixture(t) {
     if(opts.cursor!==undefined)url.searchParams.set("cursor",opts.cursor);
     const headers = new Headers();
     if(role)headers.set("Cookie","sanci9517_session="+role);
-    if(method==="POST"||method==="PATCH") { headers.set("Origin",opts.origin||url.origin);headers.set("Content-Type",opts.contentType||(method==="PATCH"?"application/json":"image/png")); }
+    if(method==="POST"||method==="PATCH"||method==="DELETE") { headers.set("Origin",opts.origin||url.origin);headers.set("Content-Type",opts.contentType||(method==="PATCH"?"application/json":"image/png")); }
     return adminMediaRoute(new Request(url,{method,headers,...(body?{body}: {})}),env,opts.site||"site-default");
   };
   return {db,env,files,call};
@@ -719,6 +719,21 @@ test("retention request is site-scoped, idempotent and never authorizes deletion
  assert.equal(f.files.size,1);
  assert.equal((await f.call("POST","viewer",null,{id:asset.id,retentionRequest:true})).status,403);
  assert.equal((await f.call("POST","editor",null,{id:asset.id,retentionRequest:true,site:"other"})).status,403);
+});
+
+test("retention cancellation is site-scoped, idempotent and leaves the binary intact",async t=>{
+ const f=await fixture(t);
+ const asset=(await (await f.call("POST","editor",png,{name:"cancel-retention.png"})).json()).data;
+ await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id});
+ const request=(await (await f.call("POST","editor",null,{id:asset.id,retentionRequest:true})).json()).data;
+ const cancel=async(role="editor",site=undefined)=>f.call("DELETE",role,null,{retentionRequest:true,rawQuery:"requestId="+request.id,...(site?{site}: {})});
+ const first=await cancel(); assert.equal(first.status,200); assert.equal((await first.json()).data.changed,true);
+ const repeat=await cancel(); assert.equal(repeat.status,200); assert.equal((await repeat.json()).data.changed,false);
+ assert.equal(f.db.prepare("SELECT state FROM media_retention_requests WHERE id=?").get(request.id).state,"cancelled");
+ assert.equal(f.files.size,1);
+ assert.equal((await cancel("viewer")).status,403);
+ assert.equal((await cancel("editor","other")).status,403);
+ assert.equal((await f.call("DELETE","editor",null,{retentionRequest:true,rawQuery:"requestId=not-a-uuid"})).status,400);
 });
 test("deletion preflight rejects incomplete usage and never grants deletion",async t=>{
   const f=await fixture(t);

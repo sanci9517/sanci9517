@@ -20,6 +20,10 @@ export type RetentionPreparation =
   | { ok: true; value: RetentionPreview }
   | { ok: false; reason: string };
 
+export type RetentionCancellation =
+  | { ok: true; value: { id: string; siteId: string; nextState: "cancelled"; finalDeletionAuthorized: false } }
+  | { ok: false; reason: string };
+
 export function prepareRetentionRequest(input: {
   asset: RetentionAsset;
   usage: RetentionUsage;
@@ -32,4 +36,4 @@ export function prepareRetentionCancellation(request: {
   id: string;
   site_id: string;
   state: string;
-}): RetentionPreparation;
+}): RetentionCancellation;
