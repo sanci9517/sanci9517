@@ -5,7 +5,7 @@ import {createEditorState,activePage} from '../core/state.js';
 import {execute} from '../core/commands.js';
 import {authoredNodeHtml,contentAttributes,contentTag,normalizeElementContent,validateElementContent,validatePageForPublication,contentProperties} from '../core/authored-content.js';
 import {opaqueContrast} from '../core/accessibility.js';
-import {legacyImageSource} from '../core/legacy-media-source.js';
+import {legacyImageSource,legacyPlaybackSettings} from '../core/legacy-media-source.js';
 
 test('typed content edits preserve unknown legacy data and undo restores the complete node',()=>{
   const state=createEditorState(createDocument());execute(state,{type:'element.add',payload:{type:'heading',props:{text:'Eredeti cím',legacy:{kept:true}},style:{width:'240px'}}});
@@ -135,4 +135,24 @@ test('legacy image media library source separates draft and published paths and 
  assert.equal(legacyImageSource({assetId:'not-an-asset',src:'//untrusted.invalid/image.png'}),'');
  assert.equal(legacyImageSource({assetId:'',src:'https://example.com/photo.png'}),'https://example.com/photo.png');
  assert.equal(legacyImageSource({assetId:'',src:'javascript:alert(1)'}),'');
+});
+
+test('legacy playback settings preserve prior controls defaults and prohibit unmuted autoplay',()=>{
+ const posterId='00000000-0000-4000-8000-000000000123';
+ assert.deepEqual(legacyPlaybackSettings({}, {video:true,editor:false}),{controls:true,loop:false,muted:false,autoplay:false,poster:''});
+ assert.deepEqual(legacyPlaybackSettings({controls:false,loop:true,muted:false,autoplay:true,poster:'/poster.svg'},{video:true}),{
+  controls:false,loop:true,muted:false,autoplay:false,poster:'/poster.svg'
+ });
+ const movie={controls:false,loop:true,muted:true,autoplay:true,posterAssetId:posterId,poster:'//blocked.invalid/p.png'};
+ assert.deepEqual(legacyPlaybackSettings(movie,{video:true,editor:true}),{
+  controls:false,loop:true,muted:true,autoplay:false,poster:'/api/admin/media?id='+posterId
+ });
+ assert.deepEqual(legacyPlaybackSettings(movie,{video:true,editor:false}),{
+  controls:false,loop:true,muted:true,autoplay:true,poster:'/media/'+posterId
+ });
+ assert.deepEqual(legacyPlaybackSettings({controls:false,loop:true,muted:true,autoplay:true,poster:'/poster.svg'}),{
+  controls:false,loop:true,muted:false,autoplay:false,poster:''
+ });
+ assert.equal(legacyPlaybackSettings({poster:'https://valid.example/path.png',posterAssetId:'invalid'},{video:true}).poster,'https://valid.example/path.png');
+ assert.equal(legacyPlaybackSettings({poster:'javascript:alert(1)'},{video:true}).poster,'');
 });

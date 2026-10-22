@@ -13,3 +13,15 @@ export function legacyImageSource(props,{editor=false}={}){
   }
   return safeMediaUrl(props?.src);
 }
+
+/** Same playback flags in legacy Editor Canvas and the published page. */
+export function legacyPlaybackSettings(props,{video=false,editor=false}={}){
+  const p=props??{},muted=video&&p.muted===true;
+  return {
+    controls:p.controls!==false,
+    loop:p.loop===true,
+    muted,
+    autoplay:video&&!editor&&p.autoplay===true&&muted,
+    poster:video?legacyImageSource({assetId:p.posterAssetId,src:p.poster},{editor}):''
+  };
+}
