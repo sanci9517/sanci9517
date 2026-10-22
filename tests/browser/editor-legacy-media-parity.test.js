@@ -225,6 +225,55 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   assert.equal(await publishedMovie.getAttribute('poster')!==null,true,'mobile public poster is preserved');
   assert.equal(await publishedSound.getAttribute('loop'),'','mobile audio still loops');
 
+  // The legacy image needs the same crop/focal/loading/decorative controls
+  // on Editor Canvas and the published page, at mobile and desktop widths.
+  await canvasNode(ids.badImage).evaluate(el=>el.click());
+  const imageInspector=editor.locator('.legacy-media-inspector');
+  await imageInspector.getByRole('combobox',{name:'Kép illesztése'}).selectOption('cover');
+  await imageInspector.getByRole('combobox',{name:'Képarány'}).selectOption('1 / 1');
+  for(const [name,value] of [['Kivágás vízszintesen','25'],['Kivágás függőlegesen','80']]){
+    await imageInspector.getByRole('slider',{name}).evaluate((el,next)=>{
+      el.value=next;
+      el.dispatchEvent(new Event('input',{bubbles:true}));
+      el.dispatchEvent(new Event('change',{bubbles:true}));
+    },value);
+  }
+  await imageInspector.getByRole('combobox',{name:'Kép betöltése'}).selectOption('eager');
+  await imageInspector.getByRole('checkbox',{name:'Csak díszítő kép'}).check();
+  const croppedCanvas=canvasNode(ids.badImage).locator('img');
+  assert.equal(await croppedCanvas.evaluate(el=>getComputedStyle(el).objectFit),'cover');
+  assert.equal(await croppedCanvas.evaluate(el=>getComputedStyle(el).objectPosition),'25% 80%');
+  assert.equal(await croppedCanvas.evaluate(el=>getComputedStyle(el).aspectRatio),'1 / 1');
+  assert.equal(await croppedCanvas.getAttribute('loading'),'eager');
+  assert.equal(await croppedCanvas.getAttribute('alt'),'','decorative image has no accessible alt');
+  assert.equal(await croppedCanvas.getAttribute('role'),'presentation');
+  assert.equal(await publishedNode(ids.badImage).evaluate(el=>getComputedStyle(el).objectFit),'contain','public crop remains unchanged before Save');
+
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false);
+  assert.equal(draft.pages[pageId].nodes[ids.badImage].props.alt,'Javított képleírás','decorative mode does not delete the authored alt text');
+  await viewer.reload();
+  assert.equal(await publishedNode(ids.badImage).getAttribute('role'),null,'Save does not publish decorative mode');
+  assert.equal(await publishedNode(ids.badImage).getAttribute('loading'),'lazy');
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  assert.equal(posts.at(-1).publish,true);
+  await viewer.reload();
+  for(const width of [390,1440]){
+    await viewer.setViewportSize({width,height:820});
+    const image=publishedNode(ids.badImage);
+    assert.equal(await image.evaluate(el=>getComputedStyle(el).objectFit),'cover');
+    assert.equal(await image.evaluate(el=>getComputedStyle(el).objectPosition),'25% 80%');
+    assert.equal(await image.evaluate(el=>getComputedStyle(el).aspectRatio),'1 / 1');
+    assert.equal(await image.getAttribute('loading'),'eager');
+    assert.equal(await image.getAttribute('alt'),'');
+    assert.equal(await image.getAttribute('role'),'presentation');
+  }
+  // Turning decorative mode off restores the stored alt without retyping.
+  await imageInspector.getByRole('checkbox',{name:'Csak díszítő kép'}).uncheck();
+  assert.equal(await canvasNode(ids.badImage).locator('img').getAttribute('alt'),'Javított képleírás');
+
   assert.deepEqual(externalRequests,[],'invalid media are blocked at all viewport sizes');
   assert.deepEqual(errors,[]);
 });
