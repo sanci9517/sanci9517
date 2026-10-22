@@ -148,6 +148,15 @@ test('legacy image focal points reject malformed persisted values without shifti
  assert.equal(legacyImagePresentation({focalX:-8,focalY:111}).objectPosition,'0% 100%');
 });
 
+test('legacy image presets ignore inherited object properties in old saved pages',()=>{
+ for(const focalPoint of ['constructor','toString','valueOf','__proto__','hasOwnProperty']){
+  const appearance=legacyImagePresentation({focalPoint,focalX:null,focalY:'invalid'});
+  assert.equal(appearance.objectPosition,'50% 50%',focalPoint);
+ }
+ assert.equal(legacyImagePresentation({focalPoint:'right'}).objectPosition,'100% 50%');
+ assert.equal(legacyImagePresentation({focalPoint:'top',focalX:'80'}).objectPosition,'80% 0%');
+});
+
 test('legacy playback settings preserve prior controls defaults and prohibit unmuted autoplay',()=>{
  const posterId='00000000-0000-4000-8000-000000000123';
  assert.deepEqual(legacyPlaybackSettings({}, {video:true,editor:false}),{controls:true,loop:false,muted:false,autoplay:false,poster:''});
