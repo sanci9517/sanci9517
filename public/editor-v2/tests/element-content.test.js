@@ -169,6 +169,15 @@ test('legacy image alt safely handles malformed persisted structured values',()=
  assert.equal(legacyImagePresentation({alt:'Megőrzött leírás',decorative:true}).alt,'');
 });
 
+test('legacy media source ignores malformed structured URLs without throwing',()=>{
+ for(const src of [{toString:null},{valueOf:null,toString:null},['/unsafe.svg'],true,123]){
+  assert.equal(legacyImageSource({src}), '');
+  assert.equal(legacyPlaybackSettings({poster:src},{video:true}).poster,'');
+ }
+ assert.equal(legacyImageSource({src:'/valid.svg'}),'/valid.svg');
+ assert.equal(legacyImageSource({src:'https://example.com/media.png'}),'https://example.com/media.png');
+});
+
 test('legacy playback settings preserve prior controls defaults and prohibit unmuted autoplay',()=>{
  const posterId='00000000-0000-4000-8000-000000000123';
  assert.deepEqual(legacyPlaybackSettings({}, {video:true,editor:false}),{controls:true,loop:false,muted:false,autoplay:false,poster:''});
