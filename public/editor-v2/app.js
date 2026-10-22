@@ -822,6 +822,12 @@ function renderInspectorSearch(){
   const title=document.createElement('span');title.textContent='Beállítás keresése';
   const input=document.createElement('input');input.type='search';input.value=inspectorQuery;input.placeholder='Pl. szín, térköz, betűméret';input.setAttribute('aria-label','Beállítás keresése');
   input.oninput=()=>{inspectorQuery=input.value;filterInspector()};
+  input.onkeydown=event=>{
+    if(event.key!=='Escape'||!input.value)return;
+    event.preventDefault();event.stopPropagation();
+    input.value='';inspectorQuery='';filterInspector();
+    input.focus({preventScroll:true});
+  };
   const status=document.createElement('small');status.className='inspector-search-status';status.setAttribute('aria-live','polite');
   wrap.append(title,input,status);inspector.append(wrap);
 }
