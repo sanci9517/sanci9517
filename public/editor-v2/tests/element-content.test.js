@@ -153,6 +153,9 @@ test('legacy image presets ignore inherited object properties in old saved pages
   const appearance=legacyImagePresentation({focalPoint,focalX:null,focalY:'invalid'});
   assert.equal(appearance.objectPosition,'50% 50%',focalPoint);
  }
+ for(const focalPoint of [null,42,true,[],{toString:null},{valueOf:null,toString:null}]){
+  assert.equal(legacyImagePresentation({focalPoint}).objectPosition,'50% 50%');
+ }
  assert.equal(legacyImagePresentation({focalPoint:'right'}).objectPosition,'100% 50%');
  assert.equal(legacyImagePresentation({focalPoint:'top',focalX:'80'}).objectPosition,'80% 0%');
 });
