@@ -24,6 +24,7 @@ import {captureStyleSnapshot} from './core/style-snapshot.js';
 import {LAYOUT_PRESETS,LAYOUT_TYPES,layoutMode,isManagedLayout,isLayoutPropertyRelevant,explicitGridColumnCount} from './core/layout-presets.js';
 import {TYPOGRAPHY_PRESETS,typographyPresetPatch} from './core/typography-presets.js';
 import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent,safeMediaUrl} from './core/element-content.js';
+import {legacyImageSource} from './core/legacy-media-source.js';
 import {renderStructuredInspector} from './ui/structured-inspector.js';
 import {ICON_CHOICES,iconById} from './core/icon-options.js';
 import {DIVIDER_LINE_STYLES,normalizeDividerStyle} from './core/decorative-elements.js';
@@ -422,7 +423,7 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
    else{const q=document.createElement('blockquote');q.className='visual-quote';const p=document.createElement('p');p.textContent=node.props?.text||'';q.append(p);if(node.props?.attribution){const cite=document.createElement('cite');cite.textContent=node.props.attribution;q.append(cite)}c.append(q)}
    el.append(c);
  }else if(node.type===NODE_TYPES.SCHEDULE){const c=document.createElement('div');c.className='node-content schedule-preview-host';renderSchedulePreview(c,node.props?.schedule);el.append(c)}else if([NODE_TYPES.IMAGE,NODE_TYPES.VIDEO,NODE_TYPES.AUDIO].includes(node.type)&&!isAuthoredContent(node)){
-    const src=safeMediaUrl(node.props?.src);const c=document.createElement('div');c.className='node-content media-preview';
+    const src=node.type===NODE_TYPES.IMAGE?legacyImageSource(node.props,{editor:true}):safeMediaUrl(node.props?.src);const c=document.createElement('div');c.className='node-content media-preview';
     if(src){
       const media=document.createElement(node.type===NODE_TYPES.IMAGE?'img':node.type===NODE_TYPES.VIDEO?'video':'audio');
       media.src=src;media.style.maxWidth='100%';media.style.width='100%';
@@ -872,8 +873,13 @@ function renderExistingContentInspector(node){
   if(!isAuthoredContent(node)&&['image','video','audio'].includes(node.type)){
     const section=document.createElement('section');section.className='legacy-media-inspector';
     const mediaLabel={image:'Kép',video:'Videó',audio:'Hang'}[node.type];
-    section.append(field(mediaLabel+' URL',node.props?.src||'',value=>update('src',value.trim())));
+    section.append(field(mediaLabel+' URL',node.props?.src||'',value=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),src:value.trim(),...(node.type==='image'?{assetId:''}:{})}}})));
     if(node.type==='image'){
+      section.append(mediaAssetPicker(node.props?.assetId||'',(id,asset)=>{
+        const alt=typeof asset?.altText==='string'?asset.altText.trim().slice(0,250):'';
+        const next={...(node.props||{}),assetId:id,...(!id?{src:''}:alt&&!String(node.props?.alt||'').trim()?{alt}:{})};
+        return command('element.update',{nodeId:node.id,patch:{props:next}});
+      },{disabled:Boolean(node.locked)}));
       section.append(field('Kép leírása (alt)',node.props?.alt||'',value=>update('alt',value)));
       const objectFit=document.createElement('select');objectFit.setAttribute('aria-label','Kép illesztése');
       for(const [value,label] of [['cover','Kitöltés (vágással)'],['contain','Teljes kép (vágás nélkül)']]){
