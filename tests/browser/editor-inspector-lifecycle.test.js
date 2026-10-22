@@ -70,6 +70,10 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   const sharedWidth=editor.locator('.multi-inspector-field[data-property-id="width"] input');
   await sharedWidth.fill('240');
   await sharedWidth.dispatchEvent('change');
+  assert.equal(await editor.locator('.multi-inspector-field[data-property-id="minWidth"] input').count(),1,'multi Inspector provides responsive minimum width');
+  assert.equal(await editor.locator('.multi-inspector-field[data-property-id="maxWidth"] input').count(),1,'multi Inspector provides responsive maximum width');
+  assert.equal(await editor.locator('.multi-inspector-field[data-property-id="minHeight"] input').count(),1,'multi Inspector provides responsive minimum height');
+  assert.equal(await editor.locator('.multi-inspector-field[data-property-id="maxHeight"] input').count(),1,'multi Inspector provides responsive maximum height');
   await editor.waitForFunction(()=>document.activeElement?.closest('.multi-inspector-field')?.dataset.propertyId==='width');
   for(const id of [flexId,offsetId]){
     assert.equal(await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>getComputedStyle(el).width),'240px','shared width reaches all selected elements');
