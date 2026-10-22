@@ -2,6 +2,8 @@
 
 > **Egy terv, 12 fájlban.** Ez a dokumentum az egyetlen hivatalos belépési pont. A fejezetfájlok az eredeti, 2026-10-17-i teljes MASTER-szöveg veszteségmentes, sorrendtartó felosztását tartalmazzák. Nem különálló vagy alternatív tervek.
 
+> **2026-10-22 — NEMZETKÖZI CREATOR BENCHMARK → VISUAL EDITOR (SPEC ONLY):** A `docs/creator-master/part-02-of-12.md` 38.18.A fejezete 12 külön szerkesztő-követelménycsoportot rögzít: membership és exkluzív tartalom, esemény/űrlap, sponsor/media kit, közösségi és podcast elemek, dinamikus adatbinding, feltételes láthatóság, commerce-kártyák, profiszintű layout, interakciós állapotok, SEO/analitika, szerkeszthető AI-sablonok és végponttól végpontig Editor–Public teszt. Fejezetcommit `68a8411`. Implementáció, CI, Production és kézi elfogadás nem történt; 77.44 aktív pont változatlan.
+
 ## Olvasási és módosítási szabályok
 
 1. **Mindig innen indulj.** A fejezeteket számozás szerint olvasd; a folytatódó alcímek az előző részhez tartoznak.
