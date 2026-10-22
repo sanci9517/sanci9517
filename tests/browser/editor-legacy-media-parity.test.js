@@ -27,7 +27,7 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   }
   execute(model,{type:'element.add',payload:{type:'image',parentId:rootId,props:{src:'',alt:''}}});
   ids.libraryImage=model.selection.primaryId;
-  const mediaId='00000000-0000-4000-8000-000000000123';
+  const mediaId='00000000-0000-4000-8000-000000000123',videoMediaId='00000000-0000-4000-8000-000000000124';
   assert.equal(safeMediaUrl('//untrusted.invalid/track.png'),'');
   assert.equal(safeMediaUrl('https://user:pass@untrusted.invalid/private.mp4'),'');
   assert.equal(safeMediaUrl('relative/sound.mp3'),'');
@@ -48,8 +48,12 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
       if(request.publish)published=structuredClone(draft);
       return json({ok:true,data:{pageId,version:revision,revisionId:'revision-'+revision,published:Boolean(request.publish)}});
     }
-    if(url.pathname==='/api/admin/media'&&!url.searchParams.has('id'))return json({ok:true,data:{assets:[{id:mediaId,name:'saját-kép.svg',mimeType:'image/svg+xml',altText:'Médiatárból választott kép',previewUrl:'/api/admin/media?id='+mediaId}],nextCursor:null}});
-    if(url.pathname==='/api/admin/media'&&url.searchParams.get('id')===mediaId||url.pathname==='/media/'+mediaId){
+    if(url.pathname==='/api/admin/media'&&!url.searchParams.has('id')){
+      const playable=url.searchParams.get('mime');
+      const asset=playable==='video'?{id:videoMediaId,name:'bemutatkozas.webm',mimeType:'video/webm',altText:'Bemutatkozó videó',previewUrl:'/api/admin/media?id='+videoMediaId}:{id:mediaId,name:'saját-kép.svg',mimeType:'image/svg+xml',altText:'Médiatárból választott kép',previewUrl:'/api/admin/media?id='+mediaId};
+      return json({ok:true,data:{assets:[asset],nextCursor:null}});
+    }
+    if((url.pathname==='/api/admin/media'&&(url.searchParams.get('id')===mediaId||url.searchParams.get('id')===videoMediaId))||url.pathname==='/media/'+mediaId||url.pathname==='/media/'+videoMediaId){
       res.setHeader('content-type','image/svg+xml');
       return res.end('<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><rect width="20" height="20" fill="#56f"/></svg>');
     }
@@ -189,7 +193,10 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   await videoInspector.getByRole('checkbox',{name:'Folyamatos ismétlés'}).check();
   await videoInspector.getByRole('checkbox',{name:'Videó némítása'}).check();
   await videoInspector.getByRole('checkbox',{name:'Automatikus videóindítás (csak némítva)'}).check();
-  await videoInspector.getByRole('button',{name:'Médiatár megnyitása'}).click();
+  await videoInspector.getByRole('button',{name:'Médiatár megnyitása'}).first().click();
+  await videoInspector.getByRole('button',{name:'bemutatkozas.webm kiválasztása'}).click();
+  assert.match(await canvasNode(ids.goodVideo).locator('video').getAttribute('src'),/\/api\/admin\/media\?id=00000000-0000-4000-8000-000000000124$/,'video picker uses its private editor source');
+  await videoInspector.getByRole('button',{name:'Médiatár megnyitása'}).nth(1).click();
   await videoInspector.getByRole('button',{name:'saját-kép.svg kiválasztása'}).click();
   const moviePreview=canvasNode(ids.goodVideo).locator('video');
   assert.equal(await moviePreview.evaluate(el=>el.controls),false);

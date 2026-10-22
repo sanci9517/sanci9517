@@ -35,7 +35,7 @@ function renderQuota(data) {
   quotaDetails.textContent = "Aktív: " + readableBytes(quota.activeBytes) +
     " · Archivált: " + readableBytes(quota.archivedBytes) +
     " · Szabad: " + readableBytes(quota.remainingBytes) +
-    ". Az archivált képek is foglalják a tárhelyet.";
+    ". Az archivált médiafájlok is foglalják a tárhelyet.";
   // Reject internally inconsistent responses rather than displaying a false
   // reassuring figure when the database/API is partially unavailable.
   if (quota.activeBytes + quota.archivedBytes !== quota.usedBytes ||
@@ -48,7 +48,7 @@ function renderQuota(data) {
   quotaProgress.value = Math.min(100, 100 * quota.usedBytes / limit);
   quotaProgress.hidden = false;
 }
-const supported = new Set(["image/png", "image/jpeg", "image/gif", "image/webp"]);
+const supported = new Set(["image/png", "image/jpeg", "image/gif", "image/webp", "audio/mpeg", "audio/ogg", "audio/wav", "video/webm"]);
 const maxBytes = 4 * 1024 * 1024;
 const progress = document.getElementById("uploadProgress");
 const cancel = document.getElementById("uploadCancel");
@@ -66,16 +66,16 @@ function explain(code) {
     FORBIDDEN: "A feltöltés szerkesztői jogosultságot igényel.",
     MEDIA_TYPE_UNSUPPORTED: "Ez a fájlformátum nem támogatott.",
     MEDIA_TYPE_MISMATCH: "A fájl tartalma nem egyezik a megadott típussal.",
-    MEDIA_SIZE_INVALID: "A képfájl túl nagy vagy üres.",
+    MEDIA_SIZE_INVALID: "A médiafájl túl nagy vagy üres.",
     MEDIA_QUOTA_EXCEEDED: "A webhely 5 GB-os médiakerete megtelt.",
     MEDIA_STORAGE_FAILED: "A tárhely jelenleg nem elérhető.",
     MEDIA_METADATA_FAILED: "A fájl adatainak mentése nem sikerült.",
     MEDIA_STORAGE_UNAVAILABLE: "A médiatároló nincs bekötve.",
-    MEDIA_ARCHIVED_EXISTS: "Ez a kép már archiválva van. Az Archivált képek nézetben állíthatod vissza.",
-    MEDIA_ASSET_IN_USE: "A képre oldal vagy korábbi verzió hivatkozik. Nézd meg a Használati helyeket.",
+    MEDIA_ARCHIVED_EXISTS: "Ez a médiafájl már archiválva van. Az Archivált nézetben állíthatod vissza.",
+    MEDIA_ASSET_IN_USE: "A médiafájlra oldal vagy korábbi verzió hivatkozik. Nézd meg a Használati helyeket.",
     MEDIA_USAGE_INCOMPLETE: "A használati helyek ellenőrzése nem teljes, az archiválás biztonságból leállt.",
-    MEDIA_ARCHIVE_CONFLICT: "A kép állapota megváltozott. Frissítsd a listát.",
-    MEDIA_OBJECT_MISSING: "A tárolt képfájl hiányzik. Nem lehet visszaállítani.",
+    MEDIA_ARCHIVE_CONFLICT: "A médiafájl állapota megváltozott. Frissítsd a listát.",
+    MEDIA_OBJECT_MISSING: "A tárolt médiafájl hiányzik. Nem lehet visszaállítani.",
     INVALID_MEDIA_STATE: "Érvénytelen Médiatár nézet."
   };
   return messages[code] || "A kérés sikertelen. Próbáld újra.";
@@ -99,13 +99,13 @@ async function refresh(query = "", append = false) {
   const before = append ? nextMediaCursor : null;
   if (append) {
     mediaLoadMore.disabled = true;
-    mediaListStatus.textContent = "További képek betöltése…";
+    mediaListStatus.textContent = "További médiafájlok betöltése…";
   } else {
     nextMediaCursor = null;
     shownMediaCount = 0;
     mediaLoadMore.hidden = true;
     mediaLoadMore.disabled = false;
-    mediaListStatus.textContent = "Képek betöltése…";
+    mediaListStatus.textContent = "Médiafájlok betöltése…";
   }
   try {
     const url = new URL("/api/admin/media", location.origin); if (query) url.searchParams.set("q", query);
@@ -117,7 +117,7 @@ async function refresh(query = "", append = false) {
     renderQuota(data);
     const assets = Array.isArray(data.assets) ? data.assets : [];
     if (!assets.length && !append) {
-      empty(mediaState.value === "archived" ? "Nincs archivált kép." : "Még nincs feltöltött kép.");
+      empty(mediaState.value === "archived" ? "Nincs archivált médiafájl." : "Még nincs feltöltött médiafájl.");
     }
     const tiles = assets.map(asset => {
       const card = document.createElement("article"); card.className = "tile";
@@ -125,15 +125,20 @@ async function refresh(query = "", append = false) {
       link.href = "/api/admin/media?id=" + encodeURIComponent(asset.id);
       link.target = "_blank"; link.rel = "noopener noreferrer";
       link.setAttribute("aria-label", asset.name + " megtekintése");
-      const img = document.createElement("img");
-      img.src = link.href; img.alt = asset.altText || asset.name;
-      img.loading = "lazy"; link.append(img);
+      if (!asset.mimeType || asset.mimeType.startsWith("image/")) {
+        const img = document.createElement("img");
+        img.src = link.href; img.alt = asset.altText || asset.name; img.loading = "lazy"; link.append(img);
+      } else {
+        const icon = document.createElement("span"); icon.className = "media-icon";
+        icon.textContent = asset.mimeType?.startsWith("video/") ? "🎬" : "🔊";
+        icon.setAttribute("aria-label", asset.mimeType?.startsWith("video/") ? "Videófájl" : "Hangfájl"); link.append(icon);
+      }
       const details = document.createElement("div"); details.className = "details";
       const name = document.createElement("span"); name.className = "name";
       name.textContent = asset.name;
       const size = document.createElement("small");
       size.textContent = (asset.sizeBytes / 1024).toFixed(1) + " KiB";
-      const alt = document.createElement("input"); alt.type = "text"; alt.maxLength = 500; alt.value = asset.altText || ""; alt.placeholder = "Alternatív képleírás"; alt.setAttribute("aria-label", asset.name + " alternatív képleírása");
+      const alt = document.createElement("input"); alt.type = "text"; alt.maxLength = 500; alt.value = asset.altText || ""; alt.placeholder = "Leírás vagy alternatív képleírás"; alt.setAttribute("aria-label", asset.name + " leírása");
       const saveAlt = document.createElement("button"); saveAlt.type = "button"; saveAlt.textContent = "Leírás mentése";
       const feedback = document.createElement("small"); feedback.setAttribute("role", "status");
       saveAlt.onclick = async () => { saveAlt.disabled = true; try { await api("/api/admin/media?id=" + encodeURIComponent(asset.id), { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ altText: alt.value }) }); feedback.textContent = "Mentve"; feedback.dataset.kind = "ok"; } catch (error) { feedback.textContent = error.message; feedback.dataset.kind = "error"; } finally { saveAlt.disabled = false; } };
@@ -165,13 +170,13 @@ async function refresh(query = "", append = false) {
       const lifecycle=document.createElement("button");lifecycle.type="button";
       const lifecycleStatus=document.createElement("small");lifecycleStatus.className="archive-status";lifecycleStatus.setAttribute("role","status");
       const isArchived=Boolean(asset.archivedAt);
-      lifecycle.textContent=isArchived?"Kép visszaállítása":"Kép archiválása";
+      lifecycle.textContent=isArchived?"Médiafájl visszaállítása":"Médiafájl archiválása";
       let armed=false;
       lifecycle.onclick=async()=>{
         if(!isArchived&&!armed){
           armed=true;lifecycle.textContent="Archiválás megerősítése";
           lifecycle.classList.add("archive-confirm");
-          lifecycleStatus.textContent="Csak nem használt képet archiválhatsz. A fájl az R2-ben megmarad.";
+          lifecycleStatus.textContent="Csak nem használt médiafájlt archiválhatsz. A fájl az R2-ben megmarad.";
           lifecycle.focus();return;
         }
         lifecycle.disabled=true;
@@ -185,7 +190,7 @@ async function refresh(query = "", append = false) {
           lifecycleStatus.textContent=error instanceof Error?error.message:"A művelet sikertelen.";
           lifecycleStatus.dataset.kind="error";
           if(!isArchived&&/hivatkozik|ellenőrzése nem teljes/.test(lifecycleStatus.textContent)&&usage.hidden)usageButton.click();
-          armed=false;lifecycle.textContent=isArchived?"Kép visszaállítása":"Kép archiválása";
+          armed=false;lifecycle.textContent=isArchived?"Médiafájl visszaállítása":"Médiafájl archiválása";
           lifecycle.classList.remove("archive-confirm");
           lifecycle.disabled=false;
         }
@@ -200,7 +205,7 @@ async function refresh(query = "", append = false) {
     mediaLoadMore.hidden = !nextMediaCursor;
     mediaLoadMore.disabled = false;
     mediaListStatus.textContent = shownMediaCount
-      ? shownMediaCount + " kép betöltve" + (nextMediaCursor ? " · további képek elérhetők." : " · az összes találat betöltve.")
+      ? shownMediaCount + " médiafájl betöltve" + (nextMediaCursor ? " · további médiafájlok elérhetők." : " · az összes találat betöltve.")
       : "Nincs találat.";
     // Appended cards precede the load-more button in the DOM. Restore
     // keyboard focus to the first new image link, including the last page.
@@ -231,7 +236,7 @@ let searchTimer;search?.addEventListener("input",()=>{
   searchTimer=setTimeout(()=>refresh(search.value.trim()),220);
 });
 searchClear?.addEventListener("click",()=>{search.value="";clearTimeout(searchTimer);refresh()});
-function uploadImage(file) {
+function uploadMedia(file) {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     let settled = false;
@@ -245,13 +250,13 @@ function uploadImage(file) {
       if (activeUpload !== xhr || !event.lengthComputable || !event.total) return;
       if (event.loaded >= event.total) {
         progress.value = 99;
-        feedback("Kép elküldve; tárhely- és adatbázismentés ellenőrzése…");
+        feedback("Médiafájl elküldve; tárhely- és adatbázismentés ellenőrzése…");
       } else {
         const value = Math.min(99, Math.floor(event.loaded / event.total * 100));
         progress.value = value;
         if (value >= (xhr.lastAnnounced || 0) + 10) {
           xhr.lastAnnounced = value;
-          feedback("Kép küldése: " + value + "%");
+          feedback("Médiafájl küldése: " + value + "%");
         }
       }
     };
@@ -267,17 +272,17 @@ function uploadImage(file) {
       }
     };
     xhr.onerror = () => {
-      const error = new Error("Hálózati hiba. Ellenőrizd a képtárat újrapróbálás előtt: lehet, hogy a kép már megérkezett.");
+      const error = new Error("Hálózati hiba. Ellenőrizd a médiatárat újrapróbálás előtt: lehet, hogy a fájl már megérkezett.");
       error.canRetry = true;
       finish(error);
     };
     xhr.ontimeout = () => {
-      const error = new Error("A feltöltés időtúllépés miatt megszakadt. Ellenőrizd a képtárat újrapróbálás előtt.");
+      const error = new Error("A feltöltés időtúllépés miatt megszakadt. Ellenőrizd a médiatárat újrapróbálás előtt.");
       error.canRetry = true;
       finish(error);
     };
     xhr.onabort = () => {
-      const error = new Error("A feltöltést megszakítottad. Ha a kép már megérkezett a szerverre, megjelenhet a képtárban.");
+      const error = new Error("A feltöltést megszakítottad. Ha a fájl már megérkezett a szerverre, megjelenhet a médiatárban.");
       error.cancelled = true;
       finish(error);
     };
@@ -294,17 +299,17 @@ function uploadImage(file) {
 }
 async function startUpload(file) {
   if (activeUpload) return;
-  if (!file) return feedback("Válassz ki egy képfájlt.", "error");
+  if (!file) return feedback("Válassz ki egy médiafájlt.", "error");
   if (!supported.has(file.type) || !file.size || file.size > maxBytes) {
-    return feedback("PNG, JPG, GIF vagy WebP képet válassz, legfeljebb 4 MiB méretben.", "error");
+    return feedback("PNG, JPG, GIF, WebP, MP3, OGG, WAV vagy WebM fájlt válassz, legfeljebb 4 MiB méretben.", "error");
   }
   try {
-    const saved = await uploadImage(file);
+    const saved = await uploadMedia(file);
     form.reset();
-    feedback(saved?.duplicate ? "Ez a kép már szerepel a Médiatárban. A meglévő képet használjuk, nem készült új másolat." : "A kép sikeresen bekerült a privát médiatárba.", "ok");
+    feedback(saved?.duplicate ? "Ez a médiafájl már szerepel a Médiatárban. A meglévő fájlt használjuk, nem készült új másolat." : "A médiafájl sikeresen bekerült a privát médiatárba.", "ok");
     await refresh(search.value.trim());
   } catch (error) {
-    feedback(error instanceof Error ? error.message : "Nem sikerült feltölteni a képet.", "error");
+    feedback(error instanceof Error ? error.message : "Nem sikerült feltölteni a médiafájlt.", "error");
     // No silent retries: a lost response might still have persisted the image.
     retry.hidden = !error?.canRetry || Boolean(error?.cancelled);
   } finally {
@@ -321,7 +326,7 @@ input.addEventListener("change", () => {
   retry.hidden = true;
   progress.hidden = true;
   progress.value = 0;
-  feedback(input.files?.[0] ? "A kép feltöltésre kész." : "Válassz ki egy képfájlt.");
+  feedback(input.files?.[0] ? "A médiafájl feltöltésre kész." : "Válassz ki egy médiafájlt.");
 });
 form.addEventListener("submit", event => {
   event.preventDefault();

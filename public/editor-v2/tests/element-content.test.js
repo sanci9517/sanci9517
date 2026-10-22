@@ -186,12 +186,16 @@ test('legacy media source ignores malformed structured URLs without throwing',()
 });
 
 test('legacy video and audio reject corrupt nonstring source without coercion',()=>{
+ const assetId='00000000-0000-4000-8000-000000000123';
  for(const src of [null,42,true,['/fixture.webm'],{toString:null},{valueOf:null,toString:null}]){
   assert.equal(legacyPlayableSource({src}), '',String(typeof src));
  }
  assert.equal(legacyPlayableSource({src:'/fixture.webm'}),'/fixture.webm');
  assert.equal(legacyPlayableSource({src:'https://example.com/audio.mp3'}),'https://example.com/audio.mp3');
  assert.equal(legacyPlayableSource({src:'javascript:alert(1)'}),'');
+ assert.equal(legacyPlayableSource({assetId,src:'https://example.com/old.webm'},{editor:true}),'/api/admin/media?id='+assetId);
+ assert.equal(legacyPlayableSource({assetId,src:'https://example.com/old.webm'}),'/media/'+assetId);
+ assert.equal(legacyPlayableSource({assetId:'not-an-asset',src:'/fixture.webm'}),'/fixture.webm');
 });
 
 test('legacy playback settings preserve prior controls defaults and prohibit unmuted autoplay',()=>{

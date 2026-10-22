@@ -17,7 +17,9 @@ export function legacyImageSource(props,{editor=false}={}){
 }
 
 /** Shared, non-coercing source check for old video and audio elements. */
-export function legacyPlayableSource(props){
+export function legacyPlayableSource(props,{editor=false}={}){
+  const id=props?.assetId;
+  if(typeof id==='string'&&MEDIA_ASSET_ID.test(id))return editor?'/api/admin/media?id='+encodeURIComponent(id):'/media/'+encodeURIComponent(id);
   return typeof props?.src==='string'?safeMediaUrl(props.src):'';
 }
 

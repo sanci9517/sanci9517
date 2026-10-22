@@ -54,37 +54,37 @@ test('Admin Media lists all active and archived assets, with keyboard paging and
     await page.goto('http://127.0.0.1:'+server.address().port+'/admin-media.html');
     const tiles=page.locator('#gallery .tile');
     await page.waitForFunction(()=>document.querySelectorAll('#gallery .tile').length===50);
-    assert.equal(await page.getByRole('button',{name:'További képek betöltése'}).isVisible(),true);
-    await page.getByRole('button',{name:'További képek betöltése'}).click();
+    assert.equal(await page.getByRole('button',{name:'További médiafájl betöltése'}).isVisible(),true);
+    await page.getByRole('button',{name:'További médiafájl betöltése'}).click();
     await page.waitForFunction(()=>document.querySelectorAll('#gallery .tile').length===100);
     assert.equal(await tiles.nth(50).locator('a').evaluate(el=>document.activeElement===el),true,
       'focus moves to the first newly loaded image');
     await tiles.nth(50).locator('a').press('Tab');
     assert.equal(await tiles.nth(50).locator('input').evaluate(el=>document.activeElement===el),true,
       'Tab moves into the newly appended image details');
-    await page.getByRole('button',{name:'További képek betöltése'}).click();
+    await page.getByRole('button',{name:'További médiafájl betöltése'}).click();
     await page.waitForFunction(()=>document.querySelectorAll('#gallery .tile').length===121);
     assert.equal(await tiles.nth(100).locator('a').evaluate(el=>document.activeElement===el),true,
       'final page keeps valid keyboard focus when load-more hides');
-    assert.equal(await page.getByRole('button',{name:'További képek betöltése'}).isVisible(),false);
+    assert.equal(await page.getByRole('button',{name:'További médiafájl betöltése'}).isVisible(),false);
     assert.equal(await tiles.last().locator('.name').textContent(),'asset-0.png');
     await tiles.last().getByRole('button',{name:'Használati helyek'}).click();
     await tiles.last().getByRole('link',{name:/Publikált: Rólam/}).waitFor();
-    await tiles.last().getByRole('button',{name:'Kép archiválása'}).click();
+    await tiles.last().getByRole('button',{name:'Médiafájl archiválása'}).click();
     await tiles.last().getByRole('button',{name:'Archiválás megerősítése'}).click();
-    await tiles.last().getByText(/A képre oldal vagy korábbi verzió hivatkozik/).waitFor();
+    await tiles.last().getByText(/A médiafájlra oldal vagy korábbi verzió hivatkozik/).waitFor();
     assert.equal(tiles&&await tiles.count(),121,'in-use old asset remains visible and not archived');
-    await tiles.last().getByLabel('asset-0.png alternatív képleírása').fill('Régi kép');
+    await tiles.last().getByLabel('asset-0.png leírása').fill('Régi kép');
     await tiles.last().getByRole('button',{name:'Leírás mentése'}).click();
     await tiles.last().getByText('Mentve',{exact:true}).waitFor();
     await page.getByLabel('Médiatár nézet').selectOption('archived');
     await page.waitForFunction(()=>document.querySelectorAll('#gallery .tile').length===50);
-    await page.getByRole('button',{name:'További képek betöltése'}).click();
+    await page.getByRole('button',{name:'További médiafájl betöltése'}).click();
     await page.waitForFunction(()=>document.querySelectorAll('#gallery .tile').length===64);
     assert.equal(await tiles.last().locator('.name').textContent(),'archived-0.png');
-    await page.getByRole('searchbox',{name:'Keresés a képek között'}).fill('archived-0');
+    await page.getByRole('searchbox',{name:'Keresés a médiafájlok között'}).fill('archived-0');
     await page.waitForFunction(()=>document.querySelectorAll('#gallery .tile').length===1);
-    assert.equal(await page.getByRole('button',{name:'További képek betöltése'}).isVisible(),false);
+    assert.equal(await page.getByRole('button',{name:'További médiafájl betöltése'}).isVisible(),false);
     assert.equal(await tiles.first().locator('.name').textContent(),'archived-0.png');
     assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'no horizontal overflow at '+width);
     assert.deepEqual(errors,[]);
