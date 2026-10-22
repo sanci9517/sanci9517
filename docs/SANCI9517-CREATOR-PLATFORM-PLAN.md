@@ -739,3 +739,78 @@ Az Inspector az aktuális nézet tényleges `display` értékéből és a szül�
 - Automatikus ellenőrzés: Editor↔Inspector↔Preview↔Save↔Publish↔public paritás, responsive, reduced motion, adatforrás nélküli fallback, API-failure, touch/keyboard, CLS/performance és scroll; meglévő funkció regresszió nélkül.
 - Felhasználói kézi átvétel PC-n és mobilon a teljességi kapu végén. Kizárólag tesztbizonyítékkal PASS, API/production kapcsolat és kézi elfogadás külön státuszban.
 - **Ütemezés:** az Editor jelenlegi 77.44-es minőségkapuja után, a kapcsolódó modulok megvalósításakor bontandó végrehajtható részfeladatokra; először közös primitívek és adatkontraktusok, majd widgetek és sablonok, végül integrációs/e2e tesztek. Nem módosítja a jelenleg kijelölt következő aktív pontot.
+
+
+## UX-RESEARCH-GLOBAL-20261022 — Nemzetközi creator-site gap analysis
+
+> **Státusz: SPEC ONLY / OPEN.** 2026-10-22-i célzott nemzetközi összehasonlítás: Sidemen (sidemen.com), Mythical / Mythical Society (mythical.com, mythicalsociety.com), Ludwig merchandise (ludwig.gg), Linus Tech Tips / LTTStore / LTT Forum (lttstore.com, linustechtips.com), Beast Philanthropy és Beast Games (beastphilanthropy.org, beastgames.com), valamint Streamer.bot integrációs dokumentáció. Csak látható, ellenőrizhető mintákból származó termékkövetelmények; a lentiek nem azt jelentik, hogy e szolgáltatások mind azonos technológiát használnak. Ez a kanonikus terv kiegészítése, nem második terv, nem lezárt fejlesztés és nem új aktív kurzor. A meglévő Visual Editor, Animációk (EDT-040), Közösség, Integrációk, Shop/Merch, AI, Analitika, Automations és jogosultságrendszer tulajdonosi határai érvényesek.
+
+### UX-GLOBAL.1 — Membership, creator club és hozzáférési termékek (Közösség + Auth + Shop)
+- Többszintű tagság: free/paid/tier, havi/éves csomagok, próba vagy ajándék tagság opcionálisan; benefit-mátrix és vizuális összehasonlító árkártya (Mythical Society típusú minta).
+- Jogosultsággal védett tartalomtípusok: videó, VOD, kulisszák mögötti bejegyzés, letöltés, esemény, Discord-közösség, korai shop-hozzáférés és kedvezmény. Tagsági állapot és entitlement egy közös szolgáltatásban; nem külön widgetenként.
+- Tagságváltás, lemondás, lejárat, türelmi idő, sikertelen fizetés, visszatérítés, külső membership-provider szinkron és manuális admin override naplózottan; fizetési rendszer bekötése előtt csak konfigurálható, nem fizető mód.
+- Világos árazás, adó/számlázás/jogszabályok szerinti checkout, hozzáférés visszavonása és privát média aláírt kiszolgálása; URL elrejtése önmagában nem hozzáférésvédelem.
+
+### UX-GLOBAL.2 — Kampány- és eseménylandingek (Public site + Editor + Menetrend)
+- Újrafelhasználható esemény/launch/verseny/gyűjtés landing sablon: hero, countdown, jelentkezési vagy várólista űrlap, helyszín/online link, szabályzat, résztvevő-korlát és visszaigazolás; Beast Games és creator-események inspirációja.
+- Kampány státusz életciklus: draft → scheduled → active → ended → archived, start/end dátum időzónával, előre időzített CTA-cserével és SEO beállításokkal; visszaállítás/verziózás.
+- Alkalmazás/verseny/nyereményjáték esetén jogosultsági és részvételi szabályok, korhatár, adatvédelmi hozzájárulás, bot/duplikációvédelem, sorsolási audit; fizetős jegy csak külön jóváhagyott ticketing-integráción keresztül.
+- Eseménykártyák és kampány CTA-k ugyanabból a tartalomforrásból a kezdőlapon, hírlevélben és a publikus event-oldalon.
+
+### UX-GLOBAL.3 — Rajongói kapcsolat / CRM-lite (Közösség + Automations + Analitika)
+- Feliratkozó, várólista és érdeklődő űrlapblokkok: név/email opcionálisan, témacímke, forráskampány, double opt-in, leiratkozás, hozzájárulás-folyam és adatmegőrzési szabály.
+- Szegmentált hírlevél és értesítések: új videó, tervezett stream, merch-drop, esemény, klubtartalom; sablonok, előnézet, ütemezés, send-test, visszapattanás/leiratkozás kezelés; kezdetben provider-integrációval.
+- Fan profile: kedvelt platform vagy kategória opcionális; profil törlése/exportálása; PII korlátozott admin hozzáféréssel, teljes hozzáférési audit.
+- Analitikában kizárólag átlátható, hozzájáruláson alapuló funnel: kampánymegjelenés → kattintás → feliratkozás → későbbi konverzió; nincs rejtett cross-site tracking.
+
+### UX-GLOBAL.4 — Sponsor/brand partner professional kit (Szponzor + Shop + Analitika)
+- Nyilvános vagy hozzáférésvezérelt media kit oldal: elérhető csatornák, hitelesített/kézzel jelölt metrikák dátummal, demográfia csak aggregáltan, szolgáltatások és szponzori együttműködési csomagok.
+- Partnership inquiry form strukturált ajánlatkéréssel, spamvédelemmel, CRM-lite lead-állapottal és admin értesítéssel. Brand asset-/logo-/press-készlet jogosultságvezérelt letöltése.
+- Kampánytábla: partner, csomag, megjelenés, időtartam, kreatív, UTM, disclosure, teljesítés, link-kattintás és jelentés export; affiliate/kupon kapcsolat csak jóváhagyott providerrel.
+- Transzparens „hirdetés/szponzorált” jelölés, FTC/EU/hu jogi megfelelés vizsgálata megjelenés előtt; szolgáltatás nem állíthat hamis nézettségi adatot.
+
+### UX-GLOBAL.5 — Rajongói közösség + moderáció (Közösség modul)
+- Fórum/Q&A/komment/vélemény/visszajelzés felületek modulárisan, szerepkörökkel (visitor/member/mod/creator/admin), témakategóriákkal, kereséssel, jelöléssel és rögzített posztokkal; LTT fórum inspiráció.
+- Moderáció: jelentés, rejtés, karantén, tiltás, lassítás/rate-limit, automatikus spam-profilozás nélkül is működő szabályok, fellebbezés és auditnapló; szükség esetén előmoderálás.
+- Közösségi kihívás/eredményjelző (leaderboard), rajongói benyújtás és publikálási jóváhagyás opcionálisan, anti-cheat/anti-bot és adatminimalizálási követelményekkel.
+- A közösségi chat/Discord jogosultságai integráció révén, de a portál saját szerep- és hozzáférési forrásából; platformhibák esetén visszajelzés.
+
+### UX-GLOBAL.6 — Tartalom-univerzum / több creator vagy sorozat (Média + routing + search)
+- Több creator-csatorna, műsor, podcast, sorozat és brand gyűjtőoldalai közös médiakatalógusból, saját borítóval, URL-lel, epizódlistával és kapcsolódó termék/kampány blokkal (Sidemen és Mythical minta).
+- Tartalomrelációk: sorozat → évad → epizód → klipek/shortok, szereplők, platformok, kapcsolódó cikkek; egy közös publikálási állapot és jogosultsági modell.
+- Publikus facettás keresés/filter és ajánlott kapcsolódó tartalom, relevancia/újdonság rendezés; SEO schema és canonical, pagináció, keresőbarát üres/archív állapot.
+- Podcast/audio-first embed/lejátszó, epizódjegyzet és hírlevélre hivatkozás: provider vagy saját jogtiszta forrás, nem automatikus jogosulatlan rehost.
+
+### UX-GLOBAL.7 — Merch és digitális termék életciklus (Shop/Merch)
+- Drop/készletkampányok: előrendelés, limitált termék, waitlist, értesítés, szín/méretváltozat, sold-out fallback, ajándékkártya és bundling, amennyiben választott commerce-backend támogatja (LTTStore / Ludwig merchandising).
+- Digitális termékek: overlay/preset/theme/template pack és letöltések license+entitlement-védelemmel, sértetlen fájl és verzió, refund/revocation kezelés.
+- Shop CMS: termék-oldal, szállítás/ország/pénznem/tax/garancia/support információ, régió- és nyelvváltás. Egy készlet-/áradatgazda, nincs Editor által lemásolt stock vagy checkout logika.
+- Affiliates/szponzorált termékek vizuálisan elkülönítve, UTM + affiliate disclosure. Checkout előtt provider/számlázás megfelelőségi döntési kapu.
+
+### UX-GLOBAL.8 — Creator business operations és mérhetőség (Admin + Analitika)
+- Content calendar és release planning több csatornára: ötlet, forgatás, szerkesztés, jóváhagyás, időzítés, publikálva; anyag és feladat kapcsolódik a meglévő Médiatárhoz/Automationshöz.
+- Kampányokhoz célok, UTM, linkrövidítés csak biztonságosan, A/B teszt consent-korláttal, landing konverzió és CTA analitika; botforgalom és platform-API bizonytalanság elkülönítve.
+- Letölthető sponsor/creator riportok, bevételi kategóriákhoz származási dátum és státusz (becsült/megerősített); nincs automatikus pénzügyi állítás integráció nélkül.
+- Jogosultság-alapú szerepkörök a creator csapat számára (designer, editor, moderator, analyst, shop manager) tartalom-jóváhagyási folyamattal és audit trail-lel.
+
+### UX-GLOBAL.9 — Eseményvezérelt creator automation (Integrációk + OBS/Overlays + Automations)
+- Közös triggers/actions contract: stream started/ended, új videó, membership event, merch drop, form signup, event registration; platform adapters és webhook signature verify, idempotency, retry/backoff és dead-letter queue.
+- No-code szabályépítő: trigger → feltétel → késleltetés → action, dry-run, részletes előnézet, ki-/bekapcsolás, hibanapló, limit és kézi újrafuttatás. Streamer.bot mint integrációs mintakészlet, nem teljes scope másolás.
+- OBS/browser overlay/Discord/social announcement action adapterek explicit OAuth-scopes és jóváhagyások mellett; spam/meghívó/DM küldés tiltókorlátok, külső API-függőségek nyomon követése.
+- Éles esemény és teszt esemény elkülönítése, újraindíthatóság, provider outage kezelése, latency és rate-limit megfigyelés.
+
+### UX-GLOBAL.10 — Tervezési függőségek és bizonyítás
+- A meglévő modulokkal semmi nem duplikálható: Auth/entitlement, Médiatár/R2, Integrációk, Content/Pages, Design system/Editor, Menetrend, Shop, Community, Automations, Analytics központi szerződései az egyedüli adatgazdák.
+- Modulonként előttünk álló külön ellenőrzés: jelenlegi 12 fejezetben van-e már részletes pont? Ha igen, az itt felsoroltak acceptance-gapjei oda kerüljenek; a jelen fejezet nem írja felül a korábbi feladat státuszát.
+- Minden funkció SPEC ONLY; a fejlesztésnél scope & risk gate: auth/security, privacy/GDPR, payment/compliance, abuse/moderation, platform API terms. Fizetés, nyereményjáték, közösségi publikálás és automatikus üzenetküldés csak kontrollokkal és tesztekkel.
+- Tesztmatrix: jogosultságok, fizetési és provider-hibák, publikus/privát adatszivárgás, reszponzív és billentyűzetes UX, SEO, regresszió, per-module contract tests, end-to-end Save→Publish és production verify.
+- **Végrehajtási sorrend változatlan:** jelenlegi 77.44 Editor-paritás kapu előbb zárandó; később közös szerződések → alap widgetek → közösség/commerce/CRM funkciók → teszt/kiadás. Új implementáció vagy deploy nem történt ebben a dokumentációs commitban.
+
+#### Nyilvános referenciaoldalak (2026-10-22-i kutatás)
+- https://www.sidemen.com/
+- https://mythical.com/pages/about-us
+- https://www.mythicalsociety.com/
+- https://ludwig.gg/
+- https://www.lttstore.com/ és https://linustechtips.com/
+- https://www.beastphilanthropy.org/ és https://www.beastgames.com/
+- https://docs.streamer.bot/guide/integrations
