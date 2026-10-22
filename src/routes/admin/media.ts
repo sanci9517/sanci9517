@@ -253,6 +253,13 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
   if (request.method === "GET") {
     const id = url.searchParams.get("id");
     const usageId = url.searchParams.get("usage");
+    // An audit must have exactly one explicit mode; never silently fall back
+    // to a normal media list for malformed diagnostic requests.
+    const missingFlags = url.searchParams.getAll("missingAudit");
+    const orphanFlags = url.searchParams.getAll("orphanAudit");
+    if ((missingFlags.length && (missingFlags.length !== 1 || missingFlags[0] !== "1")) ||
+        (orphanFlags.length && (orphanFlags.length !== 1 || orphanFlags[0] !== "1")) ||
+        (missingFlags.length && orphanFlags.length)) return error("INVALID_MEDIA_AUDIT", 400);
     // Diagnostic only: never infer that a recently uploaded object is safe
     // to delete merely because its D1 INSERT has not completed yet.
     if (url.searchParams.get("missingAudit") === "1") {
