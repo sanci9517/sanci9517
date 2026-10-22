@@ -70,3 +70,8 @@ export function legacyImagePresentation(props){
     decorative
   };
 }
+
+/** User-visible caption, kept consistent between Canvas and public output. */
+export function legacyImageCaption(props){
+  return typeof props?.caption==='string' ? props.caption.trim().slice(0,1000) : '';
+}

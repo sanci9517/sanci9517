@@ -5,7 +5,7 @@ import {createEditorState,activePage} from '../core/state.js';
 import {execute} from '../core/commands.js';
 import {authoredNodeHtml,contentAttributes,contentTag,normalizeElementContent,validateElementContent,validatePageForPublication,contentProperties} from '../core/authored-content.js';
 import {opaqueContrast} from '../core/accessibility.js';
-import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation} from '../core/legacy-media-source.js';
+import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption} from '../core/legacy-media-source.js';
 
 test('typed content edits preserve unknown legacy data and undo restores the complete node',()=>{
   const state=createEditorState(createDocument());execute(state,{type:'element.add',payload:{type:'heading',props:{text:'Eredeti cím',legacy:{kept:true}},style:{width:'240px'}}});
@@ -167,6 +167,13 @@ test('legacy image alt safely handles malformed persisted structured values',()=
  assert.equal(legacyImagePresentation({alt:'Saját fotó'}).alt,'Saját fotó');
  assert.equal(legacyImagePresentation({alt:12}).alt,'12');
  assert.equal(legacyImagePresentation({alt:'Megőrzött leírás',decorative:true}).alt,'');
+});
+
+test('legacy image captions keep only supported visible text',()=>{
+ assert.equal(legacyImageCaption({caption:'  Saját képaláírás  '}),'Saját képaláírás');
+ assert.equal(legacyImageCaption({caption:{toString:null}}),'');
+ assert.equal(legacyImageCaption({caption:12}),'');
+ assert.equal(legacyImageCaption({caption:'x'.repeat(1200)}).length,1000);
 });
 
 test('legacy media source ignores malformed structured URLs without throwing',()=>{
