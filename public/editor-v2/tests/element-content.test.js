@@ -5,7 +5,7 @@ import {createEditorState,activePage} from '../core/state.js';
 import {execute} from '../core/commands.js';
 import {authoredNodeHtml,contentAttributes,contentTag,normalizeElementContent,validateElementContent,validatePageForPublication,contentProperties} from '../core/authored-content.js';
 import {opaqueContrast} from '../core/accessibility.js';
-import {legacyImageSource,legacyPlaybackSettings,legacyImagePresentation} from '../core/legacy-media-source.js';
+import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation} from '../core/legacy-media-source.js';
 
 test('typed content edits preserve unknown legacy data and undo restores the complete node',()=>{
   const state=createEditorState(createDocument());execute(state,{type:'element.add',payload:{type:'heading',props:{text:'Eredeti cím',legacy:{kept:true}},style:{width:'240px'}}});
@@ -176,6 +176,15 @@ test('legacy media source ignores malformed structured URLs without throwing',()
  }
  assert.equal(legacyImageSource({src:'/valid.svg'}),'/valid.svg');
  assert.equal(legacyImageSource({src:'https://example.com/media.png'}),'https://example.com/media.png');
+});
+
+test('legacy video and audio reject corrupt nonstring source without coercion',()=>{
+ for(const src of [null,42,true,['/fixture.webm'],{toString:null},{valueOf:null,toString:null}]){
+  assert.equal(legacyPlayableSource({src}), '',String(typeof src));
+ }
+ assert.equal(legacyPlayableSource({src:'/fixture.webm'}),'/fixture.webm');
+ assert.equal(legacyPlayableSource({src:'https://example.com/audio.mp3'}),'https://example.com/audio.mp3');
+ assert.equal(legacyPlayableSource({src:'javascript:alert(1)'}),'');
 });
 
 test('legacy playback settings preserve prior controls defaults and prohibit unmuted autoplay',()=>{
