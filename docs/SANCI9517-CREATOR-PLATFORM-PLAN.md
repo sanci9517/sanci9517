@@ -11,6 +11,8 @@
 5. A `docs/MASTER-DEVELOPMENT-PLAN.md` régi hivatkozási fájl, **nem** aktív fejlesztési terv.
 6. Nagyobb átrendezés előtt ellenőrizd a teljes szöveg egyezését és az összes fejezetfájlt; ne hagyj ki funkciókat.
 
+> **2026-10-22 — 77.44 Inspector gyors kereséstörlés — CI FÜGGŐBEN:** A `public/editor-v2/app.js` Inspector keresőmezője aktív keresésnél Escape-re törli a szűrést, megőrzi a mező fókuszát és visszaállítja a vezérlőket. A `tests/browser/editor-inspector-lifecycle.test.js` valós Chromium tesztje ellenőrzi a működést. Kód `ac95513`, teszt `b1030c6`; legújabb GitHub CI futások PENDING. Előző `b7cc7e4` Editor Core az ellenőrzéskor még in_progress, a többi négy check PASS. Fizikai mobil/asztali elfogadás OPEN.
+
 > **2026-10-22 — 77.44 Inspector kereső találatszám paritás — CI FÜGGŐBEN:** A címalapú keresésnél már helyesen felfedett vezérlők eddig nem mindig szerepeltek a `találat` számlálóban. Az `app.js` a csoportcím-egyezéssel felfedett korábban rejtett mezőket is számolja (`5a275bf`), és a Chromium `editor-inspector-lifecycle` tesztje pozitív találatszámot vár az élő keresőből (`f4fba8e`). E javítás új CI-je PENDING, a kézi mobil/asztali elfogadás OPEN; az előző, `31e2ccd` kódbázis öt ellenőrzése PASS.
 
 > **2026-10-22 — 77.44 Inspector kereső regresszió — CI PASS:** A `31e2ccdf8f8b374c8ad1aa6236480ac633962f38` commiton mind az öt GitHub ellenőrzés SUCCESS, beleértve az Editor Core teljes Chromium tesztet. A normalizált címalapú keresés, beágyazott csoport-megjelenítés és DOM-szöveghez illesztett teszt regressziója automatizáltan lezárva. A teljes Inspector/Editor valós mobil/asztali kézi elfogadása változatlanul OPEN.
