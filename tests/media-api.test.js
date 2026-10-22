@@ -605,3 +605,34 @@ test("media audits reject malformed and conflicting flags without changing data"
   assert.equal(f.files.size,0);
   assert.equal(f.db.prepare("SELECT COUNT(*) n FROM media").get().n,0);
 });
+
+test("D1-to-R2 missing audit paginates 101 assets without mutating records",async t=>{
+  const f=await fixture(t);
+  const insert=f.db.prepare("INSERT INTO media(id,object_key,original_name,mime_type,size_bytes,alt_text,site_id) VALUES(?,?,?,?,?,?,?)");
+  for(let i=0;i<101;i++){
+    const id="00000000-0000-4000-8000-"+String(i).padStart(12,"0");
+    const key="sites/site-default/media/"+String(i);
+    insert.run(id,key,"media-"+i+".png","image/png",png.length,"","site-default");
+    if(i%2===0)f.files.set(key,png);
+  }
+  const first=(await (await f.call("GET","editor",null,{missingAudit:true})).json()).data;
+  assert.equal(first.checked,100);
+  assert.equal(first.complete,false);
+  assert.ok(first.nextCursor);
+  assert.equal(first.missing.length,50);
+  const second=(await (await f.call("GET","editor",null,{missingAudit:true,before:first.nextCursor})).json()).data;
+  assert.equal(second.checked,1);
+  assert.equal(second.complete,true);
+  assert.equal(second.missing.length,0);
+  assert.equal(f.db.prepare("SELECT COUNT(*) n FROM media").get().n,101);
+  assert.equal(f.files.size,51);
+});
+test("D1-to-R2 missing audit fails closed on storage outage",async t=>{
+  const f=await fixture(t);
+  await f.call("POST","editor",png,{name:"media.png"});
+  f.env.MEDIA.head=async()=>{throw new Error("unavailable");};
+  const response=await f.call("GET","editor",null,{missingAudit:true});
+  assert.equal(response.status,503);
+  assert.equal((await response.json()).error.code,"MEDIA_STORAGE_FAILED");
+  assert.equal(f.db.prepare("SELECT COUNT(*) n FROM media").get().n,1);
+});
