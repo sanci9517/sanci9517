@@ -869,6 +869,30 @@ function renderMultiInspector(nodes){
 }
 function renderExistingContentInspector(node){
   const update=(key,value)=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),[key]:value}}});
+  if(!isAuthoredContent(node)&&['image','video','audio'].includes(node.type)){
+    const section=document.createElement('section');section.className='legacy-media-inspector';
+    const mediaLabel={image:'Kép',video:'Videó',audio:'Hang'}[node.type];
+    section.append(field(mediaLabel+' URL',node.props?.src||'',value=>update('src',value.trim())));
+    if(node.type==='image'){
+      section.append(field('Kép leírása (alt)',node.props?.alt||'',value=>update('alt',value)));
+      const objectFit=document.createElement('select');objectFit.setAttribute('aria-label','Kép illesztése');
+      for(const [value,label] of [['cover','Kitöltés (vágással)'],['contain','Teljes kép (vágás nélkül)']]){
+        const option=document.createElement('option');option.value=value;option.textContent=label;objectFit.append(option)
+      }
+      objectFit.value=node.props?.objectFit==='contain'?'contain':'cover';
+      objectFit.onchange=()=>update('objectFit',objectFit.value);section.append(objectFit);
+    }
+    const help=document.createElement('p');help.className='content-field-help';
+    help.textContent='HTTPS/HTTP hivatkozás vagy / jellel kezdődő webhelyútvonal használható. A szerkesztő és a publikus oldal ugyanúgy ellenőrzi.';
+    section.append(help);
+    const source=String(node.props?.src||'').trim();
+    if(source&&!safeMediaUrl(source)){
+      const warning=document.createElement('p');warning.className='property-validation';warning.setAttribute('role','status');
+      warning.textContent='Ez a média-URL nem biztonságos vagy nem támogatott; a publikus oldalon sem töltődik be.';
+      section.append(warning);
+    }
+    inspector.append(section);return true;
+  }
   if(!isAuthoredContent(node)&&node.metadata?.basicContentVersion===1&&['badge','quote','icon'].includes(node.type)){
     const section=document.createElement('section');section.className='basic-content-inspector';
     if(node.type==='badge'){section.append(field('Címke szövege',node.props?.text||'',value=>update('text',value)))}
