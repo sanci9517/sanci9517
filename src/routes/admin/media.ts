@@ -285,6 +285,8 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
         // Only candidates: an in-flight upload may legitimately not have
         // committed its D1 row yet. No deletion is authorized by this report.
         unregisteredCandidates: keys.filter(key => !registered.has(key)),
+        // These are informational counts, not a deletion plan.
+        registeredCount: keys.filter(key => registered.has(key)).length,
         nextCursor: listing.truncated ? listing.cursor : null,
         complete: !listing.truncated,
         deletionAuthorized: false
