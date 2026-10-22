@@ -5,6 +5,7 @@ import {createEditorState,activePage} from '../core/state.js';
 import {execute} from '../core/commands.js';
 import {authoredNodeHtml,contentAttributes,contentTag,normalizeElementContent,validateElementContent,validatePageForPublication,contentProperties} from '../core/authored-content.js';
 import {opaqueContrast} from '../core/accessibility.js';
+import {legacyImageSource} from '../core/legacy-media-source.js';
 
 test('typed content edits preserve unknown legacy data and undo restores the complete node',()=>{
   const state=createEditorState(createDocument());execute(state,{type:'element.add',payload:{type:'heading',props:{text:'Eredeti cím',legacy:{kept:true}},style:{width:'240px'}}});
@@ -123,4 +124,15 @@ test('incomplete authored content may remain a draft but cannot publish visibly;
   execute(state,{type:'content.properties.set',payload:{nodeId:image,patch:{src:''}}});
   for(const device of ['desktop','tablet','mobile'])execute(state,{type:'element.visibility.set',payload:{nodeId:container,device,visible:false}});
   validatePageForPublication(activePage(state));assert.equal(activePage(state).nodes[image].props.src,'');
+});
+
+test('legacy image media library source separates draft and published paths and rejects invalid asset IDs',()=>{
+ const assetId='00000000-0000-4000-8000-000000000123';
+ const image={assetId,src:'https://example.com/previous.png'};
+ assert.equal(legacyImageSource(image,{editor:true}),'/api/admin/media?id='+assetId);
+ assert.equal(legacyImageSource(image,{editor:false}),'/media/'+assetId);
+ assert.equal(legacyImageSource({assetId:'../../../secret',src:'/fallback.png'}),'/fallback.png');
+ assert.equal(legacyImageSource({assetId:'not-an-asset',src:'//untrusted.invalid/image.png'}),'');
+ assert.equal(legacyImageSource({assetId:'',src:'https://example.com/photo.png'}),'https://example.com/photo.png');
+ assert.equal(legacyImageSource({assetId:'',src:'javascript:alert(1)'}),'');
 });
