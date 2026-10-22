@@ -4,7 +4,10 @@ import { retentionTransition } from "./media-retention-policy.js";
 // a transactionally safe, authorized persistence adapter.
 export async function prepareRetentionRequest({asset,usage,objectPresent,now,days=30}) {
   if (!asset || typeof asset.id!=="string" || typeof asset.site_id!=="string" ||
-      typeof asset.object_key!=="string" || !Number.isInteger(days) || days<1 || days>365 ||
+      typeof asset.object_key!=="string" ||
+      !asset.object_key.startsWith("sites/"+encodeURIComponent(asset.site_id)+"/media/") ||
+      asset.object_key.length <= ("sites/"+encodeURIComponent(asset.site_id)+"/media/").length ||
+      !Number.isInteger(days) || days<1 || days>365 ||
       !(now instanceof Date) || !Number.isFinite(now.getTime()))
     return {ok:false,reason:"INVALID_REQUEST"};
   const verdict=retentionTransition("requested","quarantined",{
@@ -14,9 +17,11 @@ export async function prepareRetentionRequest({asset,usage,objectPresent,now,day
     objectPresent
   });
   if (!verdict.allowed) return {ok:false,reason:verdict.reason};
+  const notBefore=new Date(now.getTime()+days*86400000);
+  if (!Number.isFinite(notBefore.getTime())) return {ok:false,reason:"INVALID_REQUEST"};
   return {ok:true,value:{
     siteId:asset.site_id,assetId:asset.id,objectKey:asset.object_key,
-    state:"requested",notBefore:new Date(now.getTime()+days*86400000).toISOString(),
+    state:"requested",notBefore:notBefore.toISOString(),
     finalDeletionAuthorized:false
   }};
 }
