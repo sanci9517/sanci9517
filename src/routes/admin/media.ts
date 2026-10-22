@@ -253,6 +253,43 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
   if (request.method === "GET") {
     const id = url.searchParams.get("id");
     const usageId = url.searchParams.get("usage");
+    // Diagnostic only: never infer that a recently uploaded object is safe
+    // to delete merely because its D1 INSERT has not completed yet.
+    if (url.searchParams.get("orphanAudit") === "1") {
+      if (id !== null || usageId !== null) return error("INVALID_MEDIA_AUDIT", 400);
+      const requestedCursor = url.searchParams.get("cursor");
+      if (requestedCursor !== null && (requestedCursor.length > 1024 || !/^[A-Za-z0-9_+\/=:-]+$/.test(requestedCursor)))
+        return error("INVALID_MEDIA_CURSOR", 400);
+      const prefix = "sites/" + encodeURIComponent(siteId) + "/media/";
+      let listing: Awaited<ReturnType<typeof env.MEDIA.list>>;
+      try {
+        listing = await env.MEDIA.list({
+          prefix, limit: 100,
+          ...(requestedCursor ? { cursor: requestedCursor } : {})
+        });
+      } catch { return error("MEDIA_STORAGE_FAILED", 503); }
+      const keys = listing.objects.map(item => item.key).filter(key => key.startsWith(prefix));
+      const registered = new Set<string>();
+      if (keys.length) {
+        try {
+          const placeholders = keys.map(() => "?").join(",");
+          const rows = await env.DB.prepare(
+            `SELECT object_key FROM media WHERE site_id=? AND object_key IN (${placeholders})`
+          ).bind(siteId, ...keys).all<{ object_key: string }>();
+          for (const row of rows.results) registered.add(row.object_key);
+        } catch { return error("MEDIA_METADATA_FAILED", 503); }
+      }
+      return ok({
+        mode: "read-only", siteId,
+        checked: keys.length,
+        // Only candidates: an in-flight upload may legitimately not have
+        // committed its D1 row yet. No deletion is authorized by this report.
+        unregisteredCandidates: keys.filter(key => !registered.has(key)),
+        nextCursor: listing.truncated ? listing.cursor : null,
+        complete: !listing.truncated,
+        deletionAuthorized: false
+      });
+    }
     if (usageId !== null) {
       if (id !== null || !/^[0-9a-f-]{36}$/.test(usageId)) return error("MEDIA_NOT_FOUND", 404);
       return mediaUsage(env, siteId, usageId);
