@@ -1062,7 +1062,7 @@ test('heading levels and safe external link targets reach the public renderer wi
  const source=readFileSync(new URL('../../assets/page-renderer.js',import.meta.url),'utf8');
  assert.match(source,/const level=Number.isInteger\(p.level\)/);
  assert.match(source,/target="\_blank" rel="noopener noreferrer"/);
- assert.match(source,/safeRichUrl\(p.url\|\|p.href\)/);
+ assert.match(source,/legacyLinkHref\(p\)/);
  const state=createEditorState(),root=activePage(state).rootId;
  execute(state,{type:'element.add',payload:{type:NODE_TYPES.HEADING,parentId:root}});
  const id=state.selection.primaryId;
