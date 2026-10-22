@@ -807,7 +807,9 @@ function filterInspector(){
     const titleMatches=Boolean(query)&&normalizedSearchText(title).includes(query);
     const revealGroup=titleMatches||inheritedTitleMatches;
     // A group-title match must reveal its controls, not an empty accordion.
-    if(revealGroup)for(const field of groupFields)field.hidden=false;
+    if(revealGroup)for(const field of groupFields){
+      if(field.hidden){field.hidden=false;matches++}
+    }
     const visible=query?revealGroup||groupFields.some(item=>!item.hidden):inspectorCategory==='all'||!group.dataset.inspectorCategory||group.dataset.inspectorCategory===inspectorCategory;
     group.hidden=!visible;
     if(query&&visible){group.classList.add('is-open');group.querySelector(':scope > .inspector-group-title')?.setAttribute('aria-expanded','true')}
