@@ -6,6 +6,7 @@
 .creator-node li+li { margin-top:.4em; }
 .creator-node :is(figure,blockquote,pre) { margin:0; }
 .creator-node :is(figcaption,cite) { display:block; font-size:.85em; opacity:.8; padding-top:.5em; }
+.legacy-image-figure{margin:0;max-width:100%}.legacy-image-figure>img{display:block;max-width:100%}.legacy-image-figure>figcaption{display:block;padding-top:.5em;font-size:.85em;opacity:.8;white-space:pre-wrap;overflow-wrap:anywhere}
 .creator-image-frame { overflow:hidden; }
 .creator-image-frame[style] img { height:100%; }
 .creator-media-empty { display:grid; place-items:center; min-height:100px; padding:20px; background:#edf0f7; color:#394358; border:1px dashed #8993a6; font:14px/1.5 system-ui; }

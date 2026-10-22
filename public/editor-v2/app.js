@@ -24,7 +24,7 @@ import {captureStyleSnapshot} from './core/style-snapshot.js';
 import {LAYOUT_PRESETS,LAYOUT_TYPES,layoutMode,isManagedLayout,isLayoutPropertyRelevant,explicitGridColumnCount} from './core/layout-presets.js';
 import {TYPOGRAPHY_PRESETS,typographyPresetPatch} from './core/typography-presets.js';
 import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent,safeMediaUrl} from './core/element-content.js';
-import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation} from './core/legacy-media-source.js';
+import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption} from './core/legacy-media-source.js';
 import {renderStructuredInspector} from './ui/structured-inspector.js';
 import {ICON_CHOICES,iconById} from './core/icon-options.js';
 import {DIVIDER_LINE_STYLES,normalizeDividerStyle} from './core/decorative-elements.js';
@@ -432,6 +432,12 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
         media.alt=cfg.alt;media.style.objectFit=cfg.fit;media.style.objectPosition=cfg.objectPosition;
         media.style.aspectRatio=cfg.ratio;media.loading=cfg.loading;
         if(cfg.decorative)media.setAttribute('role','presentation');
+        const caption=legacyImageCaption(node.props);
+        if(caption){
+          const figure=document.createElement('figure');figure.className='legacy-image-figure';
+          const text=document.createElement('figcaption');text.textContent=caption;
+          figure.append(media,text);c.append(figure);
+        }else c.append(media);
       }
       else{
         const cfg=legacyPlaybackSettings(node.props,{video:node.type===NODE_TYPES.VIDEO,editor:true});
@@ -440,7 +446,7 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
         if(node.type===NODE_TYPES.VIDEO){media.playsInline=true;if(cfg.poster)media.poster=cfg.poster}
         media.addEventListener('pointerdown',event=>event.stopPropagation());
       }
-      c.append(media);
+      if(node.type!==NODE_TYPES.IMAGE)c.append(media);
     }else{const placeholder=document.createElement('small');placeholder.textContent='Adj meg egy média URL-t a Tartalom panelen.';c.append(placeholder);}
     el.append(c);
    }else if(isStructuredType(node.type)&&!isAuthoredContent(node)){
@@ -939,6 +945,7 @@ function renderExistingContentInspector(node){
         return command('element.update',{nodeId:node.id,patch:{props:next}});
       },{disabled:Boolean(node.locked)}));
       section.append(field('Kép leírása (alt)',node.props?.alt||'',value=>update('alt',value)));
+      section.append(field('Képaláírás (opcionális)',legacyImageCaption(node.props),value=>update('caption',value)));
       const objectFit=document.createElement('select');objectFit.setAttribute('aria-label','Kép illesztése');
       for(const [value,label] of [['cover','Kitöltés (vágással)'],['contain','Teljes kép (vágás nélkül)'],['fill','Nyújtás'],['none','Eredeti méret'],['scale-down','Csak kicsinyítés']]){
         const option=document.createElement('option');option.value=value;option.textContent=label;objectFit.append(option)

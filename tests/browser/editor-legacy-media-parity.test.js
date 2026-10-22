@@ -106,8 +106,11 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   assert.equal(await inspector.locator('.property-validation[role="status"]').count(),0,'warning disappears once URL is repaired');
   await inspector.getByRole('textbox',{name:'Kép leírása (alt)'}).fill('Javított képleírás');
   await inspector.getByRole('textbox',{name:'Kép leírása (alt)'}).press('Tab');
+  await inspector.getByRole('textbox',{name:'Képaláírás (opcionális)'}).fill('A javított kép képaláírása');
+  await inspector.getByRole('textbox',{name:'Képaláírás (opcionális)'}).press('Tab');
   await inspector.getByRole('combobox',{name:'Kép illesztése'}).selectOption('contain');
   assert.equal(await canvasNode(ids.badImage).locator('img').getAttribute('alt'),'Javított képleírás');
+  assert.equal(await canvasNode(ids.badImage).locator('figcaption').textContent(),'A javított kép képaláírása');
   assert.equal(await canvasNode(ids.badImage).locator('img').evaluate(el=>getComputedStyle(el).objectFit),'contain');
   assert.equal(await publishedNode(ids.badImage).locator('img').count(),0,'public site unchanged before Save and Publish');
 
@@ -123,9 +126,11 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   await viewer.reload();
   const repaired=publishedNode(ids.badImage);
   await repaired.waitFor();
-  assert.match(await repaired.getAttribute('src'),/\/fixture\.svg$/);
-  assert.equal(await repaired.getAttribute('alt'),'Javított képleírás');
-  assert.equal(await repaired.evaluate(el=>getComputedStyle(el).objectFit),'contain');
+  assert.equal(await repaired.evaluate(el=>el.tagName.toLowerCase()),'figure');
+  assert.match(await repaired.locator('img').getAttribute('src'),/\/fixture\.svg$/);
+  assert.equal(await repaired.locator('img').getAttribute('alt'),'Javított képleírás');
+  assert.equal(await repaired.locator('figcaption').textContent(),'A javított kép képaláírása');
+  assert.equal(await repaired.locator('img').evaluate(el=>getComputedStyle(el).objectFit),'contain');
 
   // The existing R2 image picker must also work for legacy image nodes.
   // Library selection updates only the draft and uses the private Admin route
@@ -162,7 +167,7 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
     assert.equal(await canvasNode(ids[key]).locator('.media-preview '+mediaType).count(),0,'invalid '+key+' still hidden in mobile Editor');
     assert.equal(await publishedNode(ids[key]).locator(mediaType).count(),0,'invalid '+key+' still hidden on mobile public');
   }
-  assert.equal(await publishedNode(ids.badImage).evaluate(el=>el.tagName.toLowerCase()),'img','repaired image visible in mobile public');
+  assert.equal(await publishedNode(ids.badImage).evaluate(el=>el.tagName.toLowerCase()),'figure','captioned repaired image visible in mobile public');
   assert.equal(await canvasNode(ids.badImage).locator('img').count(),1,'repaired image visible in mobile Canvas');
   assert.equal(await publishedNode(ids.libraryImage).evaluate(el=>el.tagName.toLowerCase()),'img','R2 library image visible publicly on mobile');
   assert.match(await canvasNode(ids.libraryImage).locator('img').getAttribute('src'),/\/api\/admin\/media\?id=/);
@@ -247,15 +252,15 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   assert.equal(await croppedCanvas.getAttribute('loading'),'eager');
   assert.equal(await croppedCanvas.getAttribute('alt'),'','decorative image has no accessible alt');
   assert.equal(await croppedCanvas.getAttribute('role'),'presentation');
-  assert.equal(await publishedNode(ids.badImage).evaluate(el=>getComputedStyle(el).objectFit),'contain','public crop remains unchanged before Save');
+  assert.equal(await publishedNode(ids.badImage).locator('img').evaluate(el=>getComputedStyle(el).objectFit),'contain','public crop remains unchanged before Save');
 
   await editor.locator('#save').click();
   await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
   assert.equal(posts.at(-1).publish,false);
   assert.equal(draft.pages[pageId].nodes[ids.badImage].props.alt,'Javított képleírás','decorative mode does not delete the authored alt text');
   await viewer.reload();
-  assert.equal(await publishedNode(ids.badImage).getAttribute('role'),null,'Save does not publish decorative mode');
-  assert.equal(await publishedNode(ids.badImage).getAttribute('loading'),'lazy');
+  assert.equal(await publishedNode(ids.badImage).locator('img').getAttribute('role'),null,'Save does not publish decorative mode');
+  assert.equal(await publishedNode(ids.badImage).locator('img').getAttribute('loading'),'lazy');
   await editor.locator('#publish').click();
   await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
   assert.equal(posts.at(-1).publish,true);
@@ -265,12 +270,12 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
     // A viewport change starts a fresh async Page Model render. Wait for its
     // attached, restyled image rather than sampling a node being replaced.
     await viewer.waitForFunction(id=>{
-      const img=document.querySelector('[data-node-id="'+id+'"]');
+      const img=document.querySelector('[data-node-id="'+id+'"] img');
       if(!(img instanceof HTMLImageElement)||!img.isConnected)return false;
       const css=getComputedStyle(img);
       return css.objectFit==='cover'&&css.objectPosition==='25% 80%'&&css.aspectRatio==='1 / 1';
     },ids.badImage);
-    const image=publishedNode(ids.badImage);
+    const image=publishedNode(ids.badImage).locator('img');
     assert.equal(await image.evaluate(el=>el.style.objectFit),'cover');
     assert.equal(await image.evaluate(el=>el.style.objectPosition),'25% 80%');
     assert.equal(await image.evaluate(el=>el.style.aspectRatio),'1 / 1');
