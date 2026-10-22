@@ -62,6 +62,19 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
     if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
   };
   const field=id=>editor.locator(`.typed-inspector-field[data-property-id="${id}"]`);
+  // Multi-element Inspector: shared dimensions apply atomically to both nodes,
+  // keep focus after rerender, and remain undoable as a single operation.
+  await select(flexId);
+  await editor.locator(`.node[data-node-id="${offsetId}"]`).evaluate(el=>el.dispatchEvent(new MouseEvent('click',{bubbles:true,ctrlKey:true})));
+  assert.equal(await editor.locator('.multi-inspector').count(),1,'multi-selection exposes shared Inspector');
+  const sharedWidth=editor.locator('.multi-inspector-field[data-property-id="width"] input');
+  await sharedWidth.fill('240');
+  await sharedWidth.dispatchEvent('change');
+  await editor.waitForFunction(()=>document.activeElement?.closest('.multi-inspector-field')?.dataset.propertyId==='width');
+  for(const id of [flexId,offsetId]){
+    assert.equal(await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>getComputedStyle(el).width),'240px','shared width reaches all selected elements');
+  }
+  await editor.locator('#undo').click();
   await select(gridId);
   // Searching a section heading reveals its controls rather than an empty section.
   const search=editor.locator('.inspector-search input[type=search]');
