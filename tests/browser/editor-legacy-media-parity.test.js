@@ -174,6 +174,57 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   await inspector.getByRole('textbox',{name:'Kép URL'}).press('Tab');
   assert.equal((await canvasNode(ids.libraryImage).locator('img').getAttribute('src')).endsWith('/fixture.svg'),true);
   assert.equal(draft.pages[pageId].nodes[ids.libraryImage].props.assetId,mediaId,'unsaved manual source cannot mutate the saved revision');
+  // Both legacy playback blocks have functional Inspector controls. Their
+  // Canvas preview and public markup must honor exactly the same flags, except
+  // that autoplay is always suppressed on the Editor Canvas.
+  await viewer.setViewportSize({width:1440,height:900});
+  await canvasNode(ids.goodVideo).evaluate(el=>el.click());
+  const videoInspector=editor.locator('.legacy-media-inspector');
+  await videoInspector.getByRole('checkbox',{name:'Lejátszóvezérlők megjelenítése'}).uncheck();
+  await videoInspector.getByRole('checkbox',{name:'Folyamatos ismétlés'}).check();
+  await videoInspector.getByRole('checkbox',{name:'Videó némítása'}).check();
+  await videoInspector.getByRole('checkbox',{name:'Automatikus videóindítás (csak némítva)'}).check();
+  await videoInspector.getByRole('button',{name:'Médiatár megnyitása'}).click();
+  await videoInspector.getByRole('button',{name:'saját-kép.svg kiválasztása'}).click();
+  const moviePreview=canvasNode(ids.goodVideo).locator('video');
+  assert.equal(await moviePreview.evaluate(el=>el.controls),false);
+  assert.equal(await moviePreview.evaluate(el=>el.loop),true);
+  assert.equal(await moviePreview.evaluate(el=>el.muted),true);
+  assert.equal(await moviePreview.evaluate(el=>el.autoplay),false,'Canvas never autoplays while editing');
+  assert.match(await moviePreview.getAttribute('poster'),/\/api\/admin\/media\?id=00000000-0000-4000-8000-000000000123$/);
+  assert.equal(await publishedNode(ids.goodVideo).getAttribute('poster'),null,'unsaved new poster never appears publicly');
+  assert.equal(await publishedNode(ids.goodVideo).evaluate(el=>el.controls),true,'published controls unchanged before Save');
+
+  await canvasNode(ids.goodAudio).evaluate(el=>el.click());
+  const audioInspector=editor.locator('.legacy-media-inspector');
+  await audioInspector.getByRole('checkbox',{name:'Lejátszóvezérlők megjelenítése'}).uncheck();
+  await audioInspector.getByRole('checkbox',{name:'Folyamatos ismétlés'}).check();
+  const soundPreview=canvasNode(ids.goodAudio).locator('audio');
+  assert.equal(await soundPreview.evaluate(el=>el.controls),false);
+  assert.equal(await soundPreview.evaluate(el=>el.loop),true);
+
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false,'playback controls do not auto-publish');
+  await viewer.reload();
+  assert.equal(await publishedNode(ids.goodVideo).getAttribute('poster'),null,'Save keeps old public video');
+  assert.equal(await publishedNode(ids.goodAudio).evaluate(el=>el.controls),true,'Save keeps old public audio');
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  assert.equal(posts.at(-1).publish,true);
+  await viewer.reload();
+  const publishedMovie=publishedNode(ids.goodVideo),publishedSound=publishedNode(ids.goodAudio);
+  assert.equal(await publishedMovie.getAttribute('controls'),null);
+  assert.equal(await publishedMovie.getAttribute('loop'),'');
+  assert.equal(await publishedMovie.getAttribute('muted'),'');
+  assert.equal(await publishedMovie.getAttribute('autoplay'),'','public autoplay only on muted video');
+  assert.match(await publishedMovie.getAttribute('poster'),/\/media\/00000000-0000-4000-8000-000000000123$/);
+  assert.equal(await publishedSound.getAttribute('controls'),null);
+  assert.equal(await publishedSound.getAttribute('loop'),'');
+  await viewer.setViewportSize({width:390,height:820});
+  assert.equal(await publishedMovie.getAttribute('poster')!==null,true,'mobile public poster is preserved');
+  assert.equal(await publishedSound.getAttribute('loop'),'','mobile audio still loops');
+
   assert.deepEqual(externalRequests,[],'invalid media are blocked at all viewport sizes');
   assert.deepEqual(errors,[]);
 });
