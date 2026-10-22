@@ -588,3 +588,20 @@ test("D1-to-R2 missing audit is read-only and scoped to editor permissions",asyn
   assert.equal((await f.call("GET","editor",null,{missingAudit:true,site:"other"})).status,403);
   assert.equal((await f.call("GET","editor",null,{missingAudit:true,before:"invalid"})).status,400);
 });
+
+test("media audits reject malformed and conflicting flags without changing data",async t=>{
+  const f=await fixture(t);
+  for (const query of [
+    "?orphanAudit=0","?missingAudit=true","?orphanAudit=1&orphanAudit=1",
+    "?missingAudit=1&missingAudit=1","?orphanAudit=1&missingAudit=1"
+  ]) {
+    const response=await adminMediaRoute(
+      new Request("https://example.test/api/admin/media"+query,{headers:{"Cookie":"sanci9517_session=editor"}}),
+      f.env,"site-default"
+    );
+    assert.equal(response.status,400,query);
+    assert.equal((await response.json()).error.code,"INVALID_MEDIA_AUDIT");
+  }
+  assert.equal(f.files.size,0);
+  assert.equal(f.db.prepare("SELECT COUNT(*) n FROM media").get().n,0);
+});
