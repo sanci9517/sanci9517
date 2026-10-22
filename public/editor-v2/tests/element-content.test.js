@@ -169,4 +169,5 @@ test('legacy image crop, ratio and load settings share allowlisted defaults and 
  assert.equal(legacyImagePresentation({focalPoint:'top'}).objectPosition,'50% 0%');
  assert.deepEqual(legacyImagePresentation({fit:'url(javascript:bad)',objectFit:'unknown',ratio:'666 / 0',focalX:'NaN',focalY:'Infinity',loading:'script'}),defaults);
  assert.equal(legacyImagePresentation({fit:'fill',ratio:'1 / 1'}).fit,'fill');
+ assert.equal(legacyImagePresentation({fit:'fill',objectFit:'contain'}).fit,'contain','the legacy Inspector must override an older fit alias');
 });
