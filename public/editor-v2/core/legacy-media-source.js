@@ -41,7 +41,7 @@ const focal=(value,fallback)=>{
 };
 
 export function legacyImagePresentation(props){
-  const p=props??{},fit=IMAGE_FITS.has(p.fit)?p.fit:(IMAGE_FITS.has(p.objectFit)?p.objectFit:'cover');
+  const p=props??{},fit=IMAGE_FITS.has(p.objectFit)?p.objectFit:(IMAGE_FITS.has(p.fit)?p.fit:'cover');
   const ratio=IMAGE_RATIOS.has(p.ratio)?p.ratio:'auto';
   const [oldX,oldY]=LEGACY_FOCAL_POINTS[p.focalPoint]??LEGACY_FOCAL_POINTS.center;
   const focalX=focal(p.focalX,oldX),focalY=focal(p.focalY,oldY);
