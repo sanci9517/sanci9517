@@ -61,6 +61,7 @@ async function fixture(t) {
   }};
   const call = (method,role="editor",body=null,opts={}) => {
     const url=new URL("https://example.test/api/admin/media");
+    if(opts.rawQuery) for(const [key,value] of new URLSearchParams(opts.rawQuery)) url.searchParams.append(key,value);
     if(opts.id)url.searchParams.set("id",opts.id);
     if(opts.name)url.searchParams.set("name",opts.name);
     if(opts.q)url.searchParams.set("q",opts.q);
