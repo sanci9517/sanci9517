@@ -71,6 +71,7 @@ async function fixture(t) {
     if(opts.mime)url.searchParams.set("mime",opts.mime);
     if(opts.orphanAudit)url.searchParams.set("orphanAudit","1");
     if(opts.missingAudit)url.searchParams.set("missingAudit","1");
+    if(opts.deletePreflight)url.searchParams.set("deletePreflight","1");
     if(opts.cursor!==undefined)url.searchParams.set("cursor",opts.cursor);
     const headers = new Headers();
     if(role)headers.set("Cookie","sanci9517_session="+role);
@@ -634,5 +635,27 @@ test("D1-to-R2 missing audit fails closed on storage outage",async t=>{
   const response=await f.call("GET","editor",null,{missingAudit:true});
   assert.equal(response.status,503);
   assert.equal((await response.json()).error.code,"MEDIA_STORAGE_FAILED");
+  assert.equal(f.db.prepare("SELECT COUNT(*) n FROM media").get().n,1);
+});
+
+test("deletion preflight is advisory only and protects referenced assets",async t=>{
+  const f=await fixture(t);
+  const asset=(await (await f.call("POST","editor",png,{name:"retain.png"})).json()).data;
+  const run=async()=> (await (await f.call("GET","editor",null,{id:asset.id,deletePreflight:true})).json()).data;
+  const unused=await run();
+  assert.equal(unused.archived,false);
+  assert.equal(unused.objectPresent,true);
+  assert.equal(unused.usageComplete,true);
+  assert.equal(unused.eligibleForRetention,false);
+  assert.equal(unused.permanentDeletionAuthorized,false);
+  const doc=JSON.stringify({pages:{page:{nodes:{hero:{props:{assetId:asset.id}}}}}});
+  f.db.prepare("INSERT INTO pages (id,site_id,archived_at,is_published,published_content_json,content_json,title,slug) VALUES(?,?,?,?,?,?,?,?)").run("page","site-default",null,0,null,doc,"Test","test");
+  const used=await run();
+  assert.equal(used.references,1);
+  assert.equal(used.eligibleForRetention,false);
+  assert.equal(used.permanentDeletionAuthorized,false);
+  assert.equal((await f.call("GET","viewer",null,{id:asset.id,deletePreflight:true})).status,403);
+  assert.equal((await f.call("GET","editor",null,{id:asset.id,deletePreflight:true,site:"other"})).status,403);
+  assert.equal(f.files.size,1);
   assert.equal(f.db.prepare("SELECT COUNT(*) n FROM media").get().n,1);
 });
