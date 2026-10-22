@@ -24,7 +24,7 @@ import {captureStyleSnapshot} from './core/style-snapshot.js';
 import {LAYOUT_PRESETS,LAYOUT_TYPES,layoutMode,isManagedLayout,isLayoutPropertyRelevant,explicitGridColumnCount} from './core/layout-presets.js';
 import {TYPOGRAPHY_PRESETS,typographyPresetPatch} from './core/typography-presets.js';
 import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent,safeMediaUrl} from './core/element-content.js';
-import {legacyImageSource,legacyPlaybackSettings} from './core/legacy-media-source.js';
+import {legacyImageSource,legacyPlaybackSettings,legacyImagePresentation} from './core/legacy-media-source.js';
 import {renderStructuredInspector} from './ui/structured-inspector.js';
 import {ICON_CHOICES,iconById} from './core/icon-options.js';
 import {DIVIDER_LINE_STYLES,normalizeDividerStyle} from './core/decorative-elements.js';
@@ -427,7 +427,12 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
     if(src){
       const media=document.createElement(node.type===NODE_TYPES.IMAGE?'img':node.type===NODE_TYPES.VIDEO?'video':'audio');
       media.src=src;media.style.maxWidth='100%';media.style.width='100%';
-      if(node.type===NODE_TYPES.IMAGE){media.alt=String(node.props?.alt||'');media.style.objectFit=node.props?.objectFit==='contain'?'contain':'cover';}
+      if(node.type===NODE_TYPES.IMAGE){
+        const cfg=legacyImagePresentation(node.props);
+        media.alt=cfg.alt;media.style.objectFit=cfg.fit;media.style.objectPosition=cfg.objectPosition;
+        media.style.aspectRatio=cfg.ratio;media.loading=cfg.loading;
+        if(cfg.decorative)media.setAttribute('role','presentation');
+      }
       else{
         const cfg=legacyPlaybackSettings(node.props,{video:node.type===NODE_TYPES.VIDEO,editor:true});
         media.controls=cfg.controls;media.loop=cfg.loop;media.muted=cfg.muted;
@@ -888,11 +893,37 @@ function renderExistingContentInspector(node){
       },{disabled:Boolean(node.locked)}));
       section.append(field('Kép leírása (alt)',node.props?.alt||'',value=>update('alt',value)));
       const objectFit=document.createElement('select');objectFit.setAttribute('aria-label','Kép illesztése');
-      for(const [value,label] of [['cover','Kitöltés (vágással)'],['contain','Teljes kép (vágás nélkül)']]){
+      for(const [value,label] of [['cover','Kitöltés (vágással)'],['contain','Teljes kép (vágás nélkül)'],['fill','Nyújtás'],['none','Eredeti méret'],['scale-down','Csak kicsinyítés']]){
         const option=document.createElement('option');option.value=value;option.textContent=label;objectFit.append(option)
       }
-      objectFit.value=node.props?.objectFit==='contain'?'contain':'cover';
+      const appearance=legacyImagePresentation(node.props);
+      objectFit.value=appearance.fit;
       objectFit.onchange=()=>update('objectFit',objectFit.value);section.append(objectFit);
+      const ratio=document.createElement('select');ratio.setAttribute('aria-label','Képarány');
+      for(const [value,label] of [['auto','Eredeti'],['16 / 9','16:9 – széles'],['4 / 3','4:3'],['1 / 1','1:1 – négyzet'],['3 / 4','3:4 – álló']]){
+        const option=document.createElement('option');option.value=value;option.textContent=label;ratio.append(option);
+      }
+      ratio.value=appearance.ratio;ratio.onchange=()=>update('ratio',ratio.value);section.append(ratio);
+      for(const [key,label,value] of [['focalX','Kivágás vízszintesen',appearance.focalX],['focalY','Kivágás függőlegesen',appearance.focalY]]){
+        const row=document.createElement('label');row.className='inspector-image-focal';
+        const title=document.createElement('span');title.textContent=label;
+        const range=document.createElement('input');range.type='range';range.min='0';range.max='100';range.step='1';
+        range.value=String(value);range.setAttribute('aria-label',label);range.disabled=Boolean(node.locked);
+        const output=document.createElement('output');output.textContent=range.value+'%';
+        range.oninput=()=>{output.textContent=range.value+'%'};
+        range.onchange=()=>update(key,Number(range.value));
+        row.append(title,range,output);section.append(row);
+      }
+      const loading=document.createElement('select');loading.setAttribute('aria-label','Kép betöltése');
+      for(const [value,label] of [['lazy','Késleltetett betöltés'],['eager','Azonnali betöltés']]){
+        const option=document.createElement('option');option.value=value;option.textContent=label;loading.append(option);
+      }
+      loading.value=appearance.loading;loading.onchange=()=>update('loading',loading.value);section.append(loading);
+      const decoration=document.createElement('label');decoration.className='inspector-toggle';
+      const decorative=document.createElement('input');decorative.type='checkbox';
+      decorative.setAttribute('aria-label','Csak díszítő kép');decorative.checked=appearance.decorative;decorative.disabled=Boolean(node.locked);
+      decorative.onchange=()=>update('decorative',decorative.checked);
+      decoration.append(decorative,document.createTextNode('Csak díszítő kép (üres alt szöveg)'));section.append(decoration);
     }else{
       const isVideo=node.type==='video';
       const toggles=[
