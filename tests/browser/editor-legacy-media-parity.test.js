@@ -173,7 +173,7 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   await inspector.getByRole('textbox',{name:'Kép URL'}).fill('/fixture.svg');
   await inspector.getByRole('textbox',{name:'Kép URL'}).press('Tab');
   assert.equal((await canvasNode(ids.libraryImage).locator('img').getAttribute('src')).endsWith('/fixture.svg'),true);
-  assert.equal(editor&&draft.pages[pageId].nodes[ids.libraryImage].props.assetId,mediaId,'unsaved manual source cannot mutate the saved revision');
+  assert.equal(draft.pages[pageId].nodes[ids.libraryImage].props.assetId,mediaId,'unsaved manual source cannot mutate the saved revision');
   assert.deepEqual(externalRequests,[],'invalid media are blocked at all viewport sizes');
   assert.deepEqual(errors,[]);
 });
