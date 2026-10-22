@@ -906,6 +906,10 @@ function renderMultiInspector(nodes){
  make('Magasság','height','number','180','px');
  make('Külső térköz','margin','number','0','px');
  make('Elemek közötti távolság','gap','number','0','px');
+ make('Minimális szélesség','minWidth','number','0','px');
+ make('Maximális szélesség','maxWidth','number','1200','px');
+ make('Minimális magasság','minHeight','number','0','px');
+ make('Maximális magasság','maxHeight','number','1200','px');
  return panel;
 }
 function renderExistingContentInspector(node){
