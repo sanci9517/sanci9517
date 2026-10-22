@@ -693,3 +693,45 @@ Az Inspector az aktuális nézet tényleges `display` értékéből és a szül�
 **Bizonyíték:** célzott modellegységteszt ellenőrzi a két tengelyt, a 0–100 tartomány határait, a régi preset visszaolvasását és a galériakimenetet. Chromium UI teszt módosít képet és ismétlődő galériaelemet, a vásznon azonnali `object-position`-t mér, Save után igazolja, hogy az éles/publikus másolat változatlan marad, majd külön Publish után mindkét kivágást ellenőrzi. `npm run typecheck` PASS; `npm run test:editor` **95/95 PASS**; teljes `npm run test:editor:layout` **18/18 PASS**; célzott megismételt `editor-content-system` Chromium teszt PASS; `npm run test:design` **5/5 PASS**; `npm run test:web013` **57/57 PASS**; `git diff --check` PASS. A célzott böngészőteszt helyi API-mockot használ; Production és valódi PC/telefon felhasználói elfogadást nem bizonyít.
 
 **Következő aktív pont:** a `77.44.7.A/C/D` tényleges média- és Inspector-paritásának folytatása. A közös Médiatár API (`src/routes/admin/media.ts`) és az Editor asset-választó (`public/editor-v2/ui/element-content-controls.js`) már létezik; a következő helyes lépés a még nyitott Editor-elemparitási mátrix és a teljes Médiatár-életciklus ellenőrzése, a mostani 50+ elem lapozási résének megszüntetése után. Nincs párhuzamos feltöltő vagy adatgazda. Teljes Visual Editor/WEB-011 és felhasználói PC/telefon elfogadás OPEN; nincs D1, secret vagy éles jogosultságmódosítás.
+
+
+## UX-REF-AVID-20261022 — Streameroldal referencia és újrahasznosítható komponensek
+
+> Döntés: az avidisodd.hu inspirációs referencia, nem pixelpontos másolandó felület. Ez a blokk az egyetlen kanonikus MASTER korábbi Editor, Integrációk, Média, Animációk, Menetrend, Shop/Merch és Sablonok pontjaihoz tartozó **keresztmetszeti követelménykiegészítés**; nem önálló roadmap, nem új aktív checkpoint. A jelenleg aktív 77.44.7.A/C/D és a tényleges Editor-paritási, teszt- és publikálási kapuk prioritása változatlan. Referenciaértékelés: 2026-10-22.
+
+### UX-REF-AVID.1 — Publikus creator/streamer kezdőoldal (Editor + sablonok)
+- Moduláris, könnyen áttekinthető főoldal: hero/arculat, rövid bemutatkozás, platformkapcsolatok, következő stream, közösségi mutatók, friss videók és shortok, támogatók, partnerlogók, kiemelt shoptermékek.
+- Minden szekció külön hozzáadható, törölhető, sorrendezhető, duplikálható és menthető saját sablonként; a teljes oldal is választható induló creator-template. Tetszőleges felhasználói arculat, ne kötelező referencia-stílus.
+- Az elemek az Editor közös Layout/Inspector/Layers/Undo-Redo/Save/Publish/responsive mechanizmusát használják, nem külön HTML-szigetek; desktop/tablet/mobil szabályok és időben stabil publikus render.
+- Sablonválasztás és szerkesztés vizuális, előnézettel; a meglévő admin/adatmodell az egyetlen tulajdonos.
+
+### UX-REF-AVID.2 — Adatvezérelt streamerwidgetek (Integrációk + widgetkönyvtár)
+- Újrahasznosítható megjelenítő widgetek: élő/offline státusz, streamcím és játék, „következő élő adás” visszaszámláló, platformstatisztikák (pl. Twitch/YouTube/TikTok, opcionálisan más támogatott szolgáltatók), videó/short/VOD lista, social linkek és CTA.
+- Forrásadatok csak a közös Integrációk és Menetrend/Média API-kon át, jogosultsági és platform-API korlátokkal. Widget megjelenítése nem ígér minden platformon elérhető API-adatot.
+- Hibás token, API-korlát, üres adat és offline állapot esetén szerkeszthető fallback, frissítési idő és egyértelmű üres/hibaállapot; cache és rate-limit kezelés; API-titok soha ne kerüljön a publikus kliensre.
+- Az Editorban mock/preview adat külön jelölve; Publish után valós konfigurált források, és ne induljon külső lekérés minden scroll/animáció eseményre.
+
+### UX-REF-AVID.3 — Animációk minden értelmezhető elemhez (Editor + design system)
+- Közös animációs képességregiszter: belépés/kilépés, scroll reveal, hover/focus, kattintás, átmenet, finom parallax, számlálók, carousel, ticker/marquee és horizontális végtelen logósáv. Elem- és szekciószintű preset + részletes override.
+- Egységes Inspector vezérlők: típus, irány, sebesség/időtartam, késleltetés, easing, loop, hover-pause, viewport-trigger, egyszeri/ismételt futás, mozgástartomány; értelmes alapértékek és élő preview.
+- Animáció újrafelhasználható szövegen, képen, ikonon, kártyán, gombon, konténeren, számlálón, sponsorblokkon és médiakártyán, ahol funkcionálisan értelmes; ne legyen szponzorsávra korlátozva.
+- prefers-reduced-motion, billentyűzet/fókusz, szüneteltetés, láthatóság és mobil teljesítmény: hozzáférhető és takarékos alternatíva kötelező; kerülendő túl sok automatikus mozgás és layout shift.
+
+### UX-REF-AVID.4 — Szponzorok, partnerek és opcionális oldalsáv (public blocks + monetizáció)
+- Sponsor-logo ticker (végtelen vízszintes), reszponzív logo-grid, partnerkártya, szponzor CTA és kiemelt támogatói szekció, közös rekordokból.
+- Sáv beállításai: irány, sebesség, résköz, logoszélesség, háttér, finom fade, hover/focus pause, link, akadálymentes statikus fallback, mobilon külön viselkedés. Duplikálás nélküli vagy hozzáférhetően rejtett klónokkal megvalósított zökkenőmentes loop.
+- Opcionális külső oldal-/hátterelevonulás vagy szponzor/reklám oldalsáv a fő tartalom mellett: reszponzív container/grid régió, egyértelműen elkülönített hirdetésjelölés, nem takarja vagy szűkíti használhatatlanná a vásznat/tartalmat; mobilon elrejthető vagy átrendezhető.
+- A jelenlegi tesztoldalakat nem kell konzerválni; a publikus sablonok, sponsor blokkok és főoldal szabadon cserélhetők.
+
+### UX-REF-AVID.5 — Videó/Média, Menetrend és Shop összekötése
+- Legújabb videó, short és VOD komponensek szűrővel, címkékkel, képpel, lejátszási/link viselkedéssel és forrásonkénti frissítésvezérléssel; fallback manuális kurálás.
+- Menetrend widget a meglévő Twitch schedule/reconcile vagy kézzel megadott bejegyzések alapján, időzóna- és ütközéskezeléssel; nincs párhuzamos schedule storage.
+- Shop/Merch kiemelt termékek és kollekciók kártya/slider/grid módokkal, csak a közös Shop termékforrásból; a fizetési és checkout folyamat külön modul marad.
+- Tartalmak és ikonok közös médiatárból (R2, amikor használatba kerül) és design tokenekből; szerkesztés ne generáljon árván maradt asseteket.
+
+### UX-REF-AVID.6 — UX és minőségi elfogadás
+- Desktopon vászonközpontú, adaptív és becsukható Editor panelek; mobilon alulról nyíló szerkesztő, minimális feliratozás, beszédes ikonok és hover helyett touch/keyboard-kompatibilis tooltip.
+- Komponenskönyvtárból a streamer-home elemek egyesével és teljes kezdőlapként beszúrhatók; a felhasználó egyedi méretet, sorrendet, téma- és mozgásbeállítást megadhat.
+- Automatikus ellenőrzés: Editor↔Inspector↔Preview↔Save↔Publish↔public paritás, responsive, reduced motion, adatforrás nélküli fallback, API-failure, touch/keyboard, CLS/performance és scroll; meglévő funkció regresszió nélkül.
+- Felhasználói kézi átvétel PC-n és mobilon a teljességi kapu végén. Kizárólag tesztbizonyítékkal PASS, API/production kapcsolat és kézi elfogadás külön státuszban.
+- **Ütemezés:** az Editor jelenlegi 77.44-es minőségkapuja után, a kapcsolódó modulok megvalósításakor bontandó végrehajtható részfeladatokra; először közös primitívek és adatkontraktusok, majd widgetek és sablonok, végül integrációs/e2e tesztek. Nem módosítja a jelenleg kijelölt következő aktív pontot.
