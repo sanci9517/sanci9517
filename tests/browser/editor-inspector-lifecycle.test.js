@@ -66,7 +66,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   // Searching a section heading reveals its controls rather than an empty section.
   const search=editor.locator('.inspector-search input[type=search]');
   const group=editor.locator('.inspector-group').filter({has:editor.locator('.typed-inspector-field')}).first();
-  const titleText=(await group.locator(':scope > .inspector-group-title').innerText()).replace(/\s+/g,' ').trim();
+  const titleText=(await group.locator(':scope > .inspector-group-title').textContent()).replace(/\s+/g,' ').trim();
   await search.fill(titleText);
   assert.ok(await group.locator('.typed-inspector-field:not([hidden])').count()>0,'group heading search must show the controls');
   await search.fill('');
