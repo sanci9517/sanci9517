@@ -143,6 +143,8 @@ test('legacy image focal points reject malformed persisted values without shifti
  const right={focalPoint:'right',focalX:[],focalY:{value:90}};
  assert.deepEqual([legacyImagePresentation(right).focalX,legacyImagePresentation(right).focalY],[100,50]);
  assert.equal(legacyImagePresentation({focalX:' 75 ',focalY:22.6}).objectPosition,'75% 23%');
+ assert.equal(legacyImagePresentation({focalPoint:'right',focalX:'0x10',focalY:'0b11'}).objectPosition,'100% 50%');
+ assert.equal(legacyImagePresentation({focalPoint:'top',focalX:'0o12',focalY:'12px'}).objectPosition,'50% 0%');
  assert.equal(legacyImagePresentation({focalX:-8,focalY:111}).objectPosition,'0% 100%');
 });
 
