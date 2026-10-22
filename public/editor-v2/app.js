@@ -24,7 +24,7 @@ import {captureStyleSnapshot} from './core/style-snapshot.js';
 import {LAYOUT_PRESETS,LAYOUT_TYPES,layoutMode,isManagedLayout,isLayoutPropertyRelevant,explicitGridColumnCount} from './core/layout-presets.js';
 import {TYPOGRAPHY_PRESETS,typographyPresetPatch} from './core/typography-presets.js';
 import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent,safeMediaUrl} from './core/element-content.js';
-import {legacyImageSource} from './core/legacy-media-source.js';
+import {legacyImageSource,legacyPlaybackSettings} from './core/legacy-media-source.js';
 import {renderStructuredInspector} from './ui/structured-inspector.js';
 import {ICON_CHOICES,iconById} from './core/icon-options.js';
 import {DIVIDER_LINE_STYLES,normalizeDividerStyle} from './core/decorative-elements.js';
@@ -428,7 +428,13 @@ function renderNode(currentPage,id,managed=false){const node=getNode(currentPage
       const media=document.createElement(node.type===NODE_TYPES.IMAGE?'img':node.type===NODE_TYPES.VIDEO?'video':'audio');
       media.src=src;media.style.maxWidth='100%';media.style.width='100%';
       if(node.type===NODE_TYPES.IMAGE){media.alt=String(node.props?.alt||'');media.style.objectFit=node.props?.objectFit==='contain'?'contain':'cover';}
-      else{media.controls=true;media.preload='none';if(node.type===NODE_TYPES.VIDEO)media.playsInline=true;media.addEventListener('pointerdown',event=>event.stopPropagation());}
+      else{
+        const cfg=legacyPlaybackSettings(node.props,{video:node.type===NODE_TYPES.VIDEO,editor:true});
+        media.controls=cfg.controls;media.loop=cfg.loop;media.muted=cfg.muted;
+        media.autoplay=false;media.preload=node.type===NODE_TYPES.VIDEO?'metadata':'none';
+        if(node.type===NODE_TYPES.VIDEO){media.playsInline=true;if(cfg.poster)media.poster=cfg.poster}
+        media.addEventListener('pointerdown',event=>event.stopPropagation());
+      }
       c.append(media);
     }else{const placeholder=document.createElement('small');placeholder.textContent='Adj meg egy média URL-t a Tartalom panelen.';c.append(placeholder);}
     el.append(c);
@@ -887,6 +893,37 @@ function renderExistingContentInspector(node){
       }
       objectFit.value=node.props?.objectFit==='contain'?'contain':'cover';
       objectFit.onchange=()=>update('objectFit',objectFit.value);section.append(objectFit);
+    }else{
+      const isVideo=node.type==='video';
+      const toggles=[
+        ['controls','Lejátszóvezérlők megjelenítése',node.props?.controls!==false],
+        ['loop','Folyamatos ismétlés',node.props?.loop===true],
+        ...(isVideo?[
+          ['muted','Videó némítása',node.props?.muted===true],
+          ['autoplay','Automatikus videóindítás (csak némítva)',node.props?.autoplay===true]
+        ]:[])
+      ];
+      for(const [key,labelText,checked] of toggles){
+        const row=document.createElement('label');row.className='inspector-toggle';
+        const input=document.createElement('input');input.type='checkbox';
+        input.checked=checked;input.disabled=Boolean(node.locked);
+        input.setAttribute('aria-label',labelText);
+        input.onchange=()=>update(key,input.checked);
+        row.append(input,document.createTextNode(labelText));section.append(row);
+      }
+      if(isVideo){
+        section.append(field('Videó borítókép URL',node.props?.poster||'',value=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),poster:value.trim(),posterAssetId:''}}})));
+        section.append(mediaAssetPicker(node.props?.posterAssetId||'',id=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),posterAssetId:id,...(!id?{poster:''}:{})}}}),{disabled:Boolean(node.locked)}));
+        const poster=String(node.props?.poster||'').trim();
+        if(poster&&!safeMediaUrl(poster)&&!node.props?.posterAssetId){
+          const warning=document.createElement('p');warning.className='property-validation';warning.setAttribute('role','status');
+          warning.textContent='Érvénytelen borítókép URL. Használj biztonságos HTTPS vagy belső képútvonalat.';
+          section.append(warning);
+        }
+        const notice=document.createElement('small');notice.className='content-field-help';
+        notice.textContent='A videó a szerkesztőben nem indul automatikusan. Publikálva az automatikus indítás csak némított videónál aktív.';
+        section.append(notice);
+      }
     }
     const help=document.createElement('p');help.className='content-field-help';
     help.textContent='HTTPS/HTTP hivatkozás vagy / jellel kezdődő webhelyútvonal használható. A szerkesztő és a publikus oldal ugyanúgy ellenőrzi.';
