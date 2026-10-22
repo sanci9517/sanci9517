@@ -877,7 +877,7 @@ function renderMultiInspector(nodes){
   render();setStatus(`${nodes.length} elem közös megjelenése módosult. Mentés szükséges.`);
  }catch(error){setStatus(error.message||'A közös formázás nem sikerült.')}};
  const make=(label,key,kind,defaultValue,unit='')=>{
-  const row=document.createElement('label');row.className='multi-inspector-field';
+  const row=document.createElement('label');row.className='multi-inspector-field';row.dataset.propertyId=key;
   const text=document.createElement('span');text.textContent=label;row.append(text);
   const values=nodes.map(node=>resolveResponsiveValue(node.responsive,key,device)?.value);
   const same=values.every(value=>value===values[0]);
@@ -1010,6 +1010,8 @@ function renderInspector(){
   const focused=document.activeElement;
   const searchFocused=inspector.contains(focused)&&focused?.matches?.('.inspector-search input[type=search]');
   const searchSelection=searchFocused?[focused.selectionStart,focused.selectionEnd]:null;
+  const multiFocused=inspector.contains(focused)?focused?.closest?.('.multi-inspector-field[data-property-id]'):null;
+  const multiFocusId=multiFocused&&focused?.matches?.('input')?multiFocused.dataset.propertyId:null;
   const focusedProperty=inspector.contains(focused)
     ? focused?.closest?.('.typed-inspector-field[data-property-id]') : null;
   // The Inspector is reconstructed on every Page Model edit. Remember only
@@ -1030,6 +1032,12 @@ function renderInspector(){
     if(searchFocused){
       const search=inspector.querySelector('.inspector-search input[type=search]');
       if(search){search.focus({preventScroll:true});try{search.setSelectionRange(...searchSelection)}catch{}}
+      return;
+    }
+    if(multiFocusId){
+      const target=[...inspector.querySelectorAll('.multi-inspector-field[data-property-id]')]
+        .find(row=>row.dataset.propertyId===multiFocusId)?.querySelector('input');
+      if(target&&!target.disabled&&target.getClientRects().length)target.focus({preventScroll:true});
       return;
     }
     if(!focusBookmark)return;
