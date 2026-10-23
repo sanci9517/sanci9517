@@ -1,3 +1,4 @@
+import {exerciseComposition} from './helpers/composition.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {createServer} from 'node:http';
@@ -9,7 +10,7 @@ import {createDocument} from '../../public/editor-v2/core/schema.js';
 import {createEditorState,activePage} from '../../public/editor-v2/core/state.js';
 import {execute} from '../../public/editor-v2/core/commands.js';
 
-for(const width of [390,1366])test(`Social Links Inspector keeps keyboard focus and publishes safe responsive navigation at ${width}px`,async t=>{
+for(const width of [390,1366])test(`Social Links Inspector keeps keyboard focus, IME drafts and publishes safe responsive navigation at ${width}px`,async t=>{
  const model=createEditorState(createDocument()),pageId=model.document.activePageId,root=activePage(model).rootId;
  execute(model,{type:'element.add',payload:{type:'social',parentId:root}});
  const socialId=model.selection.primaryId;
@@ -85,6 +86,24 @@ for(const width of [390,1366])test(`Social Links Inspector keeps keyboard focus 
  assert.match(await item(0).getByRole('textbox',{name:'Felirat'}).inputValue(),/Twitch/);
  await editor.keyboard.press('Control+Shift+z');
  assert.equal(await item(0).getByRole('textbox',{name:'Felirat'}).inputValue(),'Discord közösség');
+ const finalTwitchLabel='Twitch végleges <img src=x onerror=alert(1)>',finalTwitchUrl='https://www.twitch.tv/final';
+ const twitchSelector=`.node[data-node-id="${socialId}"] .visual-social-item:nth-child(2)`;
+ await exerciseComposition({page:editor,input:item(1).getByRole('textbox',{name:'Felirat'}),selector:twitchSelector+' .visual-social-text',before:'Twitch <img src=x onerror=alert(1)>',final:finalTwitchLabel,posts,otherInput:item(1).getByRole('textbox',{name:'Hivatkozás URL'}),attemptBlocked:async()=>{
+  await item(1).getByRole('combobox',{name:'Platform'}).selectOption('website');
+  assert.equal(await item(1).getByRole('combobox',{name:'Platform'}).inputValue(),'twitch','blocked platform changes restore the displayed selection');
+  await add();assert.equal(await panel.locator('.social-link-item').count(),2,'adding a row cannot discard a pending composition');
+ }});
+ await exerciseComposition({page:editor,input:item(1).getByRole('textbox',{name:'Hivatkozás URL'}),selector:twitchSelector+' .visual-social-link',attribute:'href',before:'https://www.twitch.tv/example',final:finalTwitchUrl,posts,restart:true});
+ // Full-render controls must use the freshly edited row rather than the
+ // originally captured items array or its original platform default label.
+ await item(1).getByRole('combobox',{name:'Platform'}).selectOption('website');
+ assert.equal(await item(1).getByRole('textbox',{name:'Felirat'}).inputValue(),finalTwitchLabel);
+ await item(1).getByRole('combobox',{name:'Platform'}).selectOption('twitch');
+ await add();assert.equal(await panel.locator('.social-link-item').count(),3);
+ await item(2).getByRole('button',{name:'× Törlés'}).click();
+ await item(1).getByRole('button',{name:'↑ Fel'}).click();await item(0).getByRole('button',{name:'↓ Le'}).click();
+ assert.equal(await item(1).getByRole('textbox',{name:'Felirat'}).inputValue(),finalTwitchLabel);
+ assert.equal(await item(1).getByRole('textbox',{name:'Hivatkozás URL'}).inputValue(),finalTwitchUrl);
  await editor.locator('#save').click();
  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
  assert.equal(posts.at(-1).publish,false);
@@ -93,6 +112,11 @@ for(const width of [390,1366])test(`Social Links Inspector keeps keyboard focus 
  const nav=viewer.locator('.visual-social-nav');
  assert.equal(await nav.locator('a').count(),0,'Save cannot expose a new published social link');
  assert.match(await nav.textContent(),/Adj hozzá/);
+ await editor.reload();await editorNode.evaluate(el=>el.click());
+ if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
+ await editor.locator('.inspector-tabs button').nth(1).click();
+ assert.equal(await item(1).getByRole('textbox',{name:'Felirat'}).inputValue(),finalTwitchLabel);
+ assert.equal(await item(1).getByRole('textbox',{name:'Hivatkozás URL'}).inputValue(),finalTwitchUrl);
  await editor.locator('#publish').click();
  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
  assert.equal(posts.at(-1).publish,true);
@@ -101,11 +125,11 @@ for(const width of [390,1366])test(`Social Links Inspector keeps keyboard focus 
  assert.equal(await nav.locator('a').first().getAttribute('href'),'https://discord.gg/example');
  assert.equal(await nav.locator('a').first().getAttribute('target'),null);
  const twitch=nav.locator('a').nth(1);
- assert.equal(await twitch.getAttribute('href'),'https://www.twitch.tv/example');
+ assert.equal(await twitch.getAttribute('href'),finalTwitchUrl);
  assert.equal(await twitch.getAttribute('target'),'_blank');
  assert.equal(await twitch.getAttribute('rel'),'noopener noreferrer');
  assert.match(await twitch.getAttribute('aria-label'),/új lapon/);
- assert.equal(await twitch.textContent(),'Twitch <img src=x onerror=alert(1)>');
+ assert.equal(await twitch.textContent(),finalTwitchLabel);
  assert.equal(await twitch.locator('img,script').count(),0,'labels are escaped');
  assert.ok((await nav.getAttribute('class')).includes('visual-social-cards'));
  assert.ok((await nav.getAttribute('class')).includes('visual-social-grid'));
@@ -161,5 +185,44 @@ for(const width of [390,1366])test(`Social Links Inspector keeps keyboard focus 
   host.remove();outside.remove();return {rejection,newerFocus,differentNode,lockedSafe,limitSafe};
  });
  assert.deepEqual(focusGuards,{rejection:true,newerFocus:true,differentNode:true,lockedSafe:true,limitSafe:true});
+
+ if(width===390){
+  const recovery=await editor.evaluate(async()=>{
+   const {renderSocialLinksInspector}=await import('/editor-v2/ui/social-links-inspector.js');
+   const {renderEmbedInspector}=await import('/editor-v2/ui/creator-embed-inspector.js');
+   const cases=[
+    {kind:'social',render:renderSocialLinksInspector,key:'socialLinks',first:'Felirat',second:'Hivatkozás URL',value:{version:1,variant:'pills',layout:'wrap',showIcons:true,items:[{id:'one',platform:'twitch',label:'Mentett cím',href:'https://twitch.tv/one',newWindow:true},{id:'two',platform:'website',label:'Másik sor',href:'https://example.com',newWindow:false}]}},
+    {kind:'embed',render:renderEmbedInspector,key:'embedContent',first:'Lejátszó címe',second:'Videó URL vagy azonosító',value:{version:1,provider:'youtube',source:'M7lc1UVf-VE',title:'Mentett cím',ratio:'classic',clickToLoad:true}}
+   ];
+   const checks=[];
+   for(const entry of cases)for(const mode of ['false','throw']){
+    const node={id:'recovery-'+entry.kind,props:{[entry.key]:structuredClone(entry.value)}};
+    let allow=false,accepted,guard;
+    const root=entry.render(node,value=>{if(!allow){if(mode==='throw')throw Error('Fixture rejection');return false;}accepted=structuredClone(value);return true;},{pending:fn=>{guard=fn;}});
+    document.querySelector('#inspectorBody').append(root);
+    const first=root.querySelector(`[aria-label="${entry.first}"]`),second=root.querySelector(`[aria-label="${entry.second}"]`);
+    first.focus();first.value='Elutasított';first.dispatchEvent(new InputEvent('input',{bubbles:true}));
+    const rejected=first.getAttribute('aria-invalid')==='true'&&!guard()&&!accepted;
+    first.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));const escaped=first.value==='Mentett cím'&&guard();
+    allow=true;first.value='Új cím';first.dispatchEvent(new Event('change',{bubbles:true}));
+    second.focus();second.value=entry.kind==='social'?'https://twitch.tv/final':'dQw4w9WgXcQ';second.dispatchEvent(new InputEvent('input',{bubbles:true}));
+    const current=entry.kind==='social'?accepted.items[0]:accepted;
+    const fresh=(current.label||current.title)==='Új cím'&&(current.href||current.source)===second.value&&guard();
+    const other=entry.kind!=='social'||JSON.stringify(accepted.items[1])===JSON.stringify(entry.value.items[1]);
+    let status=true;
+    if(entry.kind==='embed'){
+     second.value='not a video';second.dispatchEvent(new InputEvent('input',{bubbles:true}));
+     status=!!root.querySelector('.embed-inspector-status.invalid')&&guard();
+     second.value='dQw4w9WgXcQ';second.dispatchEvent(new InputEvent('input',{bubbles:true}));status=status&&!root.querySelector('.embed-inspector-status.invalid');
+    }
+    const unchanged=JSON.stringify(node.props[entry.key])===JSON.stringify(entry.value);root.remove();
+    const locked=entry.render({...node,locked:true},()=>{throw Error('Locked fixture changed');});document.querySelector('#inspectorBody').append(locked);
+    const lockedSafe=[...locked.querySelectorAll('input,select,button')].every(el=>el.disabled);locked.remove();
+    checks.push({kind:entry.kind,mode,rejected,escaped,fresh,other,status,unchanged,lockedSafe});
+   }return checks;
+  });
+  for(const result of recovery)for(const key of ['rejected','escaped','fresh','other','status','unchanged','lockedSafe'])assert.equal(result[key],true,JSON.stringify(result));
+ }
+ assert.equal(posts.length,2,'control recovery does not trigger extra API writes');
  assert.deepEqual(errors,[]);
 });

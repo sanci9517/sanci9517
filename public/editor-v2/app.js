@@ -934,6 +934,11 @@ function renderMultiInspector(nodes){
  return panel;
 }
 function renderExistingContentInspector(node){
+  const updateModel=(key,value,{render:fullRender=true,typingGroup}={})=>{
+    const saved=command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),[key]:value}}},{render:fullRender,typingGroup});
+    if(saved&&!fullRender){renderCanvas();setStatus('Nem mentett módosítás');syncPublishControls();}
+    return saved;
+  };
   const update=(key,value)=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),[key]:value}}});
   if(!isAuthoredContent(node)&&['image','video','audio'].includes(node.type)){
     const section=document.createElement('section');section.className='legacy-media-inspector';
@@ -1038,8 +1043,8 @@ function renderExistingContentInspector(node){
     else{const select=document.createElement('select');select.setAttribute('aria-label','Ikon');for(const [value,label] of [['star','Csillag'],['heart','Szív'],['play','Lejátszás'],['check','Pipa'],['arrow','Nyíl'],['bolt','Villám'],['camera','Kamera'],['music','Zene'],['globe','Web'],['mail','Levél']]){const option=document.createElement('option');option.value=value;option.textContent=label;select.append(option)}select.value=node.props?.icon||'star';select.onchange=()=>update('icon',select.value);section.append(field('Ikon leírása',node.props?.label||'',value=>update('label',value)),select)}
     inspector.append(section);return true;
   }
-  if(node.type==='embed'&&node.metadata?.embedContentVersion===1){inspector.append(renderEmbedInspector(node,value=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),embedContent:value}}})));return true}
-  if(node.type==='social'&&node.metadata?.socialLinksVersion===1){inspector.append(renderSocialLinksInspector(node,value=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),socialLinks:value}}})));return true}
+  if(node.type==='embed'&&node.metadata?.embedContentVersion===1){inspector.append(renderEmbedInspector(node,(value,options)=>updateModel('embedContent',value,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}
+  if(node.type==='social'&&node.metadata?.socialLinksVersion===1){inspector.append(renderSocialLinksInspector(node,(value,options)=>updateModel('socialLinks',value,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}
   if(node.type==='card'&&node.metadata?.cardContentVersion===1){
     const model={...defaultCardContent(),...(node.props?.cardContent||{})};
     const set=patch=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),cardContent:{...model,...patch}}}});
