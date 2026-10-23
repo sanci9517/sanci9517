@@ -28,12 +28,13 @@ import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImag
 import {renderStructuredInspector} from './ui/structured-inspector.js';
 import {ICON_CHOICES,iconById} from './core/icon-options.js';
 import {DIVIDER_LINE_STYLES,normalizeDividerStyle} from './core/decorative-elements.js';
-import {defaultCardContent,CARD_VARIANTS,cardImageSrc} from './core/card-content.js';
+import {defaultCardContent,cardImageSrc} from './core/card-content.js';
 import {defaultCountdownContent,renderCountdownContent,activateCountdowns} from './core/countdown-content.js';
 import {renderCountdownDateControl} from './ui/countdown-date-control.js';
 import {defaultSocialLinks,renderSocialLinksHtml} from './core/social-links.js';
 import {renderSocialLinksInspector} from './ui/social-links-inspector.js';
 import {defaultEmbedContent,renderEmbedHtml} from './core/creator-embed.js';
+import {renderCardInspector} from './ui/card-content-inspector.js';
 import {renderEmbedInspector} from './ui/creator-embed-inspector.js';
 import {defaultCodeSnippet,renderCodeSnippet,activateCodeBlocks} from './core/code-snippet.js';
 import {renderCodeSnippetInspector} from './ui/code-snippet-inspector.js';
@@ -1045,31 +1046,7 @@ function renderExistingContentInspector(node){
   }
   if(node.type==='embed'&&node.metadata?.embedContentVersion===1){inspector.append(renderEmbedInspector(node,(value,options)=>updateModel('embedContent',value,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}
   if(node.type==='social'&&node.metadata?.socialLinksVersion===1){inspector.append(renderSocialLinksInspector(node,(value,options)=>updateModel('socialLinks',value,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}
-  if(node.type==='card'&&node.metadata?.cardContentVersion===1){
-    const model={...defaultCardContent(),...(node.props?.cardContent||{})};
-    const set=patch=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),cardContent:{...model,...patch}}}});
-    const section=document.createElement('section');section.className='card-content-inspector';
-    section.append(Object.assign(document.createElement('h3'),{textContent:'Kártya tartalma'}));
-    section.append(field('Kártya címe',model.title,v=>set({title:v})),field('Rövid leírás',model.description,v=>set({description:v}),false,true));
-    const variant=document.createElement('select');variant.setAttribute('aria-label','Kártya megjelenése');
-    for(const [value,label] of [['solid','Telített'],['outline','Körvonal'],['glass','Üveghatás']]){
-      const option=document.createElement('option');option.value=value;option.textContent=label;variant.append(option);
-    }
-    variant.value=model.variant;variant.onchange=()=>set({variant:variant.value});
-    section.append(variant,mediaAssetPicker(model.imageAssetId||'',(id,asset)=>{
-      const alt=typeof asset?.altText==='string'?asset.altText.trim().slice(0,250):'';
-      // Source changes are one command: a cleared asset must not reveal an
-      // old URL, and a selected asset has no hidden external fallback.
-      return set({imageAssetId:id,imageSrc:'',...(alt&&!model.imageAlt.trim()?{imageAlt:alt}:{})})!==false;
-    },{disabled:Boolean(node.locked)}));
-    section.append(field('Kép URL (opcionális)',model.imageSrc,v=>set({imageSrc:v.trim(),imageAssetId:''})),
-      field('Kép leírása',model.imageAlt,v=>set({imageAlt:v})),
-      field('Gomb felirata (opcionális)',model.actionLabel,v=>set({actionLabel:v})),
-      field('Gomb hivatkozása',model.actionHref,v=>set({actionHref:v.trim()})));
-    const check=document.createElement('input');check.type='checkbox';check.checked=Boolean(model.newWindow);check.onchange=()=>set({newWindow:check.checked});
-    const openLabel=document.createElement('label');openLabel.className='inspector-toggle';openLabel.append(check,document.createTextNode('Gomb megnyitása új lapon'));
-    section.append(openLabel);inspector.append(section);return true;
-  }
+  if(node.type==='card'&&node.metadata?.cardContentVersion===1){inspector.append(renderCardInspector(node,(value,options)=>updateModel('cardContent',value,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}
   if(node.type==='countdown'&&node.metadata?.countdownVersion===1){
     const model={...defaultCountdownContent(),...(node.props?.countdown||{})};
     const set=patch=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),countdown:{...model,...patch}}}});

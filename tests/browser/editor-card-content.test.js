@@ -1,3 +1,4 @@
+import {exerciseComposition} from './helpers/composition.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {createServer} from 'node:http';
@@ -9,7 +10,7 @@ import {createDocument} from '../../public/editor-v2/core/schema.js';
 import {createEditorState,activePage} from '../../public/editor-v2/core/state.js';
 import {execute} from '../../public/editor-v2/core/commands.js';
 
-test('Card Inspector produces semantic public Card with nested content, safe links and Save/Publish isolation',async t=>{
+for(const width of [390,1366])test(`Card Inspector IME, sources and Save/Publish isolation at ${width}px`,async t=>{
  const model=createEditorState(createDocument()),pageId=model.document.activePageId,root=activePage(model).rootId;
  execute(model,{type:'element.add',payload:{type:'card',parentId:root}});const cardId=model.selection.primaryId;
  execute(model,{type:'element.add',payload:{type:'text',parentId:cardId,props:{text:'Egyedi belső szöveg'}}});
@@ -43,7 +44,7 @@ test('Card Inspector produces semantic public Card with nested content, safe lin
  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
  t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
  const base='http://127.0.0.1:'+server.address().port;
- const editor=await browser.newPage({viewport:{width:1366,height:900}}),viewer=await browser.newPage({viewport:{width:1366,height:900}});
+ const editor=await browser.newPage({viewport:{width,height:900}}),viewer=await browser.newPage({viewport:{width,height:900}});
  editor.setDefaultTimeout(7000);viewer.setDefaultTimeout(7000);
  const errors=[];editor.on('pageerror',e=>errors.push('editor:'+e.message));viewer.on('pageerror',e=>errors.push('public:'+e.message));
  await editor.goto(base+'/editor-v2/index.html');await viewer.goto(base+'/p/test');
@@ -66,10 +67,35 @@ test('Card Inspector produces semantic public Card with nested content, safe lin
  const preview=card.locator('.card-preview');
  assert.match(await preview.textContent(),/Kreatív/);
  assert.match(await preview.textContent(),/További tartalom/);
- await editor.locator('#undo').click();
+ await editor.keyboard.press('Control+z');
  assert.equal(await editor.locator('.card-content-inspector input[type="checkbox"]').isChecked(),false);
- await editor.locator('#redo').click();
+ await editor.keyboard.press('Control+Shift+z');
  assert.equal(await editor.locator('.card-content-inspector input[type="checkbox"]').isChecked(),true);
+ const mirror=`.node[data-node-id="${cardId}"] .card-preview`;
+ for(const [label,selector,attribute,before,final] of [
+  ['Kártya címe',mirror+' .card-preview-title',undefined,'Kreatív <img src=x onerror=alert(1)>','Végleges kreatív'],
+  ['Rövid leírás',mirror+' p',undefined,'Bemutatkozó kártya, élő adásokkal.','Végleges\nleírás'],
+  ['Kép leírása',mirror+' img','alt','Fénykép a csatornáról','Végleges képleírás'],
+  ['Gomb felirata (opcionális)',mirror+' .card-preview-action',undefined,'További tartalom','Végleges gomb'],
+  ['Kép URL (opcionális)',mirror+' img','src','/media/hero.jpg','/media/final.jpg']
+ ]){
+  await exerciseComposition({page:editor,input:field(label),selector,attribute,before,final,posts,restart:true,otherInput:field('Gomb hivatkozása'),attemptBlocked:async()=>{
+   await editor.getByRole('combobox',{name:'Kártya megjelenése'}).selectOption('glass');
+   assert.equal(await editor.getByRole('combobox',{name:'Kártya megjelenése'}).inputValue(),'outline');
+   await editor.locator('.card-content-inspector input[type="checkbox"]').click();
+   assert.equal(await editor.locator('.card-content-inspector input[type="checkbox"]').isChecked(),true);
+  }}).catch(error=>{assert.equal(posts.length,0,'unfinished Card composition cannot reach the Editor API');throw error;});
+  await setField(label,before);
+ }
+ const href=field('Gomb hivatkozása');
+ await href.evaluate(el=>{el.focus();el.dispatchEvent(new CompositionEvent('compositionstart',{bubbles:true}));el.value='/p/unfinished';el.dispatchEvent(new InputEvent('input',{bubbles:true,isComposing:true}));});
+ for(const action of ['#save','#publish']){await editor.locator(action).click();assert.equal(posts.length,0);}
+ await field('Kártya címe').focus();await editor.keyboard.press('Control+s');assert.equal(posts.length,0);
+ await href.evaluate(el=>{el.focus();el.dispatchEvent(new CompositionEvent('compositionend',{bubbles:true}));el.value='/p/final';el.dispatchEvent(new InputEvent('input',{bubbles:true}));});
+ await editor.evaluate(()=>new Promise(resolve=>requestAnimationFrame(resolve)));
+ await editor.keyboard.press('Control+z');assert.equal(await href.inputValue(),'/p/about');
+ await editor.keyboard.press('Control+Shift+z');assert.equal(await href.inputValue(),'/p/final');
+ await setField('Gomb hivatkozása','/p/about');
  await editor.locator('#save').click();
  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
  assert.equal(posts.at(-1).publish,false);
@@ -99,6 +125,11 @@ test('Card Inspector produces semantic public Card with nested content, safe lin
  assert.equal(await card.locator('.card-preview img').getAttribute('src'),'/api/admin/media?id='+assetId);
  assert.equal(await field('Kép leírása').inputValue(),'Fénykép a csatornáról');
  assert.equal(posts.length,2,'asset selection is a draft edit, not an implicit Save or Publish');
+ await exerciseComposition({page:editor,input:field('Kép URL (opcionális)'),selector:mirror+' img',attribute:'src',before:'/api/admin/media?id='+assetId,final:'/media/temporary.jpg',posts});
+ assert.equal(await editor.locator('.card-content-inspector .editor-media-selected').count(),0,'live URL commit synchronizes the selected asset view');
+ await editor.getByRole('button',{name:'Médiatár megnyitása'}).click();
+ await editor.getByRole('button',{name:'Saját Médiatár-kép kiválasztása'}).click();
+ assert.equal(await field('Kép URL (opcionális)').inputValue(),'','picker selection clears the committed URL');
  await editor.locator('#save').click();
  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
  assert.equal(posts.at(-1).publish,false);
@@ -170,5 +201,31 @@ test('Card Inspector produces semantic public Card with nested content, safe lin
   await chooseAsset();await publishDraft();await viewer.reload();assert.equal(await publicCard.locator('.visual-card-media').getAttribute('src'),'/media/'+assetId);
  }
  assert.ok(requests.every(req=>req.method==='GET'||(req.method==='POST'&&req.path==='/api/admin/editor')),'image removal never calls a file-delete or upload endpoint');
+ if(width===390){
+  const recovery=await editor.evaluate(async()=>{
+   const {renderCardInspector}=await import('/editor-v2/ui/card-content-inspector.js');
+   const {defaultCardContent}=await import('/editor-v2/core/card-content.js');
+   const results=[];
+   for(const mode of ['false','throw']){
+    const original={...defaultCardContent(),title:'Mentett cím',description:'Mentett leírás',imageSrc:'/media/original.jpg',imageAlt:'Saját alt'};
+    const node={id:'card-recovery',props:{cardContent:structuredClone(original)}};let allow=false,accepted,guard;
+    const root=renderCardInspector(node,next=>{if(!allow){if(mode==='throw')throw Error('Fixture rejection');return false;}accepted=structuredClone(next);return true;},{pending:fn=>{guard=fn;}});
+    document.querySelector('#inspectorBody').append(root);
+    const input=label=>root.querySelector(`[aria-label="${label}"]`);
+    const title=input('Kártya címe');title.focus();title.value='Elutasított';title.dispatchEvent(new InputEvent('input',{bubbles:true}));
+    const rejected=title.hasAttribute('aria-invalid')&&!guard()&&!accepted;
+    title.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));
+    const escaped=title.value==='Mentett cím'&&guard();
+    allow=true;title.value='Új cím';title.dispatchEvent(new Event('change',{bubbles:true}));
+    const description=input('Rövid leírás');description.focus();description.value='Új leírás';description.dispatchEvent(new InputEvent('input',{bubbles:true}));
+    const fresh=accepted.title==='Új cím'&&accepted.description==='Új leírás'&&accepted.imageAlt==='Saját alt'&&guard();
+    const unchanged=JSON.stringify(node.props.cardContent)===JSON.stringify(original);root.remove();
+    const locked=renderCardInspector({...node,locked:true},()=>{throw Error('Locked Card changed');});document.querySelector('#inspectorBody').append(locked);
+    const lockedSafe=[...locked.querySelectorAll('input,select,textarea,button')].every(el=>el.disabled);locked.remove();
+    results.push({mode,rejected,escaped,fresh,unchanged,lockedSafe});
+   }return results;
+  });
+  for(const result of recovery)for(const key of ['rejected','escaped','fresh','unchanged','lockedSafe'])assert.equal(result[key],true,JSON.stringify(result));
+ }
  assert.deepEqual(errors,[]);
 });

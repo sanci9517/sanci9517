@@ -21,6 +21,8 @@ async function loadAssets(query='',before=null,mimes=[]){
   return {assets:payload.data?.assets||[],nextCursor:payload.data?.nextCursor||null};
 }
 const selectionViews=new WeakMap();
+// Synchronize a mounted picker view without invoking its PageModel callback.
+export function setMediaAssetPickerSelection(picker,id){selectionViews.get(picker)?.(id);}
 export function mediaAssetPicker(selectedId,onSelect,{disabled=false,mimes=[]}={}){
   const root=document.createElement('div');root.className='editor-media-picker';
   const status=document.createElement('p');status.className='content-field-help';status.setAttribute('role','status');
@@ -142,7 +144,7 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
     else {input=document.createElement(definition.type==='textarea'?'textarea':'input');if(input.tagName==='INPUT'){input.type=definition.type==='range'?'range':'text';if(definition.type==='range'){input.min=String(definition.min??0);input.max=String(definition.max??100);input.step=String(definition.step??1)}}input.value=value??'';if(definition.type!=='range')input.maxLength=definition.max||2048}
     if(definition.type==='asset'){
       const picker=mediaAssetPicker(String(value||''),(id,asset)=>{try{save(id,undefined,asset);fail.textContent='';return true}catch(error){fail.textContent=error.message;return false}},{disabled:Boolean(node.locked)});
-      register(next=>selectionViews.get(picker)?.(next));wrap.append(picker);
+      register(next=>setMediaAssetPickerSelection(picker,next));wrap.append(picker);
       if(definition.help){const help=document.createElement('small');help.className='content-field-help';help.textContent=definition.help;wrap.append(help)}return wrap;
     }
     input.setAttribute('aria-label',definition.label);input.disabled=Boolean(node.locked);input.dataset.typingGroup=crypto.randomUUID();
