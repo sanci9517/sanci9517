@@ -1,5 +1,6 @@
 import { mountRetentionStatus } from "./admin-media-retention.js";
 import { mountRetentionRequest } from "./admin-media-retention-actions.js";
+import { mountMediaIntegrity } from "./admin-media-integrity.js";
 let retentionStatus;
 
 const form = document.getElementById("uploadForm");
@@ -354,4 +355,6 @@ const retentionPanel = document.getElementById("mediaRetentionPanel");
 if (retentionPanel) retentionStatus = mountRetentionStatus(retentionPanel, () => api("/api/admin/media?retentionStatus=1"), {
   cancelRequest: id => api("/api/admin/media?retentionRequest=1&requestId=" + encodeURIComponent(id), { method: "DELETE" })
 });
+const integrityPanel = document.getElementById("mediaIntegrityPanel");
+if (integrityPanel) mountMediaIntegrity(integrityPanel);
 await refresh();
