@@ -75,6 +75,7 @@ async function fixture(t) {
     if(opts.missingAudit)url.searchParams.set("missingAudit","1");
     if(opts.deletePreflight)url.searchParams.set("deletePreflight","1");
     if(opts.retentionRequest)url.searchParams.set("retentionRequest","1");
+    if(opts.retentionStatus)url.searchParams.set("retentionStatus","1");
     if(opts.cursor!==undefined)url.searchParams.set("cursor",opts.cursor);
     const headers = new Headers();
     if(role)headers.set("Cookie","sanci9517_session="+role);
@@ -734,6 +735,20 @@ test("retention cancellation is site-scoped, idempotent and leaves the binary in
  assert.equal((await cancel("viewer")).status,403);
  assert.equal((await cancel("editor","other")).status,403);
  assert.equal((await f.call("DELETE","editor",null,{retentionRequest:true,rawQuery:"requestId=not-a-uuid"})).status,400);
+});
+
+test("retention status is read-only, site-scoped and signals an active schema",async t=>{
+ const f=await fixture(t);
+ const empty=await f.call("GET","editor",null,{retentionStatus:true});
+ assert.equal(empty.status,200); assert.deepEqual((await empty.json()).data.requests,[]);
+ const asset=(await (await f.call("POST","editor",png,{name:"retention-status.png"})).json()).data;
+ await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id});
+ await f.call("POST","editor",null,{id:asset.id,retentionRequest:true});
+ const status=await f.call("GET","editor",null,{retentionStatus:true}); const data=(await status.json()).data;
+ assert.equal(data.migrationActive,true); assert.equal(data.requests.length,1); assert.equal(data.requests[0].assetId,asset.id); assert.equal(data.requests[0].permanentDeletionAuthorized,false);
+ assert.equal((await f.call("GET","viewer",null,{retentionStatus:true})).status,403);
+ assert.equal((await f.call("GET","editor",null,{retentionStatus:true,site:"other"})).status,403);
+ assert.equal(f.files.size,1);
 });
 test("deletion preflight rejects incomplete usage and never grants deletion",async t=>{
   const f=await fixture(t);
