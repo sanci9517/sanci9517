@@ -237,3 +237,52 @@ A publikus `/api/health` HTTPS-próba **HTTP 403 Forbidden** eredményt adott. E
 A teljes eredeti és post-export, importeredmény és részletes pre/postflight a védett
 `/workspace/.private-d1/ledger-292-execution/` könyvtárban marad, nem kerül gitbe.
 A korábbi „NEM végrehajtott” szakaszok a jóváhagyás előtti történeti állapotot dokumentálják; az aktuális ledgerállapotot ez a bejegyzés rögzíti.
+
+## 2026-10-23 — health diagnózis lezárva; additív retention-séma alkalmazva
+
+### A korábbi HTTP 403 oka és a működő HTTP-ellenőrzés
+
+A korábbi alapértelmezett Python HTTP-kliens válaszában Cloudflare `error code: 1010` szerepelt.
+A forrás szerint `/api/health` még a site- és auth-gate-ek előtt ad választ; a célzott mérés kliensfüggő edge-szűrést mutatott.
+Valós, névvel azonosított üzemeltetési klienssel (`User-Agent: sanci9517-production-preflight/1.0`, `Accept: application/json`),
+**ugyanazon session proxyn, változatlan HTTPS/TLS-ellenőrzéssel** a health és DB-health HTTP 200, `ok:true`.
+Cloudflare/BIC/WAF-beállítást és alkalmazáskódot nem módosítottunk; nem kapcsoltunk ki védelmet, és nem került CF-token a Worker-kérésbe.
+A korábbi 403 ezért nem tekinthető igazolt alkalmazáshibának. A kontrollkérésekhez a fenti ops-kliensazonosítót kell használni.
+
+### A jóváhagyott retention-rollout tényleges eredménye
+
+A további „Folytasd” utasítás és a korábbi kifejezett additív retention-jóváhagyás alapján a rendezett ledgerrel,
+friss read-only preflighttal és mentéssel a `scripts/pending/media_retention_requests.sql` eredeti két CREATE utasítása egyszer lefutott.
+GitHub `v2/foundation` továbbra is `caf91bf`; a SQL bájtpontosan egyezik az ottani jóváhagyott fájllal:
+`beba715f00f279c7f7064d284ceec2c07ff10e4c844fe4f33dd1c18410cb2c4a`.
+Közvetlenül előtte a `media_retention_requests` és `idx_media_retention_due` bizonyítottan hiányzott. Dupla migráció nem történt.
+
+A friss teljes backup SHA-256-a `af72386a041fe2d2d388bff4c2807e3fc4407a302ab1023d9a9a8fe05f360054`.
+Új, production-adatokat használó izolált D1/Miniflare-rehearsal: restore + az eredeti retention SQL PASS;
+mind a 26 korábbi tábla változatlan, új tábla üres, teljes séma egyezik, ledger 34, FK/quick-check PASS.
+Ez célzott, az új rollout előtti rehearsal volt; teljes fejlesztési tesztauditot nem futtattunk újra.
+Az alkalmazáskód és SQL korábbi teljes GitHub CI-ja PASS; a #292 forrásága a retention előtt `78e868b`, minden check PASS.
+
+A production import **2 SQL-utasítást** futtatott, végső bookmark:
+`00000774-00000006-0000510d-d4a34fcacf0550ea8df1b51eafb223ec`.
+Közvetlen előtte PITR bookmark: `00000774-00000000-0000510d-1beaab55d29837798dc626f03755c29d`.
+A D1 metadata 5 belső/séma rows_written értéket jelzett; retention-kérés vagy meglévő business rekord nem íródott.
+
+Utóellenőrzés **2026-10-23 12:50:39 Europe/Budapest / 10:50:39 UTC**:
+- Új sémaobjektumok kizárólag: `media_retention_requests` és `idx_media_retention_due`; a tábla constraints/implicit indexei a teljes CREATE definícióval egyeznek.
+- Retention-rekordok száma **0**; minden korábbi tábla teljes adata változatlan, beleértve mind a 34 ledgerrekordot és a sqlite_sequence-t.
+- Foreign-key-check üres, quick_check `ok`.
+- Health és DB-health HTTP **200**; bejelentkezés nélküli retention-status admin API HTTP **401**, ahogy elvárt.
+- Az alkalmazás **tényleges** `retentionQueries.list` SQL-je, site-default paraméterrel, production D1-en PASS: 0 rekord / 0 írás.
+- Autentikált admin API runtime-elfogadás **OPEN/UNVERIFIED**: nincs kapott alkalmazás-session, és nem hoztunk létre kerülő teszt-sessiont vagy kérésadatot.
+- R2-objektumtörlés, automatikus cleanup, Worker deploy és PR merge **nem történt**.
+
+A retention file nem számozott automatikus migráció. Kizárólag a jóváhagyott DDL futott; nem adtunk hozzá kitalált nevet a Wrangler ledgerhez.
+A manuális alkalmazás bizonyítéka a fájl SHA-256-a, a séma és a [retention execution report](evidence/d1-retention-execution-2026-10-23.json).
+Friss DB-n a 0028-ig tartó bootstrap után ez a külön manuális séma-lépés is szükséges; az automatikus migration könyvtárba nem másoltuk át.
+Következő, csak olvasási runtime-elfogadás egy már hitelesített editor-sessionnel:
+`GET /api/admin/media?retentionStatus=1` → 200, `migrationActive:true`, kezdetben üres `requests`, `permanentDeletionAuthorized:false`.
+Ez a megmaradt API-elfogadási pont nem engedélyez végleges törlést, R2-cleanupot, POST-kérés létrehozását vagy DELETE-cancellation próbát.
+
+Az eredeti, a rendezett restore-, valamint pre/post-rollout exportok és részletes válaszok továbbra is a védett
+`/workspace/.private-d1/retention-execution/` és korábbi privát könyvtárakban maradnak; nem kerülnek gitbe.
