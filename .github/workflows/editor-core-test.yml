@@ -34,6 +34,8 @@ jobs:
         run: |
           python3 tests/d1-ledger-reconciliation.test.py
           node tests/d1-ledger-miniflare.mjs
+          python3 tests/d1-restore-order.test.py
+          node tests/d1-restore-order-miniflare.mjs
 
       - name: Run private R2 media API tests
         run: npm run test:media
