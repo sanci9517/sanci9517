@@ -34,6 +34,7 @@ import {renderCountdownInspector} from './ui/countdown-inspector.js';
 import {defaultSocialLinks,renderSocialLinksHtml} from './core/social-links.js';
 import {renderSocialLinksInspector} from './ui/social-links-inspector.js';
 import {defaultEmbedContent,renderEmbedHtml} from './core/creator-embed.js';
+import {renderBasicContentInspector} from './ui/basic-content-inspector.js';
 import {renderLegacyMediaInspector} from './ui/legacy-media-inspector.js';
 import {renderCardInspector} from './ui/card-content-inspector.js';
 import {renderEmbedInspector} from './ui/creator-embed-inspector.js';
@@ -936,26 +937,16 @@ function renderMultiInspector(nodes){
  return panel;
 }
 function renderExistingContentInspector(node){
-  const updateModel=(key,value,{render:fullRender=true,typingGroup}={})=>{
-    const saved=command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),[key]:value}}},{render:fullRender,typingGroup});
+  const updateProps=(props,{render:fullRender=true,typingGroup}={})=>{
+    const saved=command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),...props}}},{render:fullRender,typingGroup});
     if(saved&&!fullRender){renderCanvas();setStatus('Nem mentett módosítás');syncPublishControls();}
     return saved;
   };
-  const update=(key,value)=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),[key]:value}}});
+  const updateModel=(key,value,options)=>updateProps({[key]:value},options);
   if(!isAuthoredContent(node)&&['image','video','audio'].includes(node.type)){
-    inspector.append(renderLegacyMediaInspector(node,(props,{render:fullRender=true,typingGroup}={})=>{
-      const saved=command('element.update',{nodeId:node.id,patch:{props}},{render:fullRender,typingGroup});
-      if(saved&&!fullRender){renderCanvas();setStatus('Nem mentett módosítás');syncPublishControls();}
-      return saved;
-    },{pending:flush=>{flushRichTextDraft=flush}}));return true;
+    inspector.append(renderLegacyMediaInspector(node,updateProps,{pending:flush=>{flushRichTextDraft=flush}}));return true;
   }
-  if(!isAuthoredContent(node)&&node.metadata?.basicContentVersion===1&&['badge','quote','icon'].includes(node.type)){
-    const section=document.createElement('section');section.className='basic-content-inspector';
-    if(node.type==='badge'){section.append(field('Címke szövege',node.props?.text||'',value=>update('text',value)))}
-    else if(node.type==='quote'){section.append(field('Idézet szövege',node.props?.text||'',value=>update('text',value),false,true),field('Forrás vagy szerző',node.props?.attribution||'',value=>update('attribution',value)))}
-    else{const select=document.createElement('select');select.setAttribute('aria-label','Ikon');for(const [value,label] of [['star','Csillag'],['heart','Szív'],['play','Lejátszás'],['check','Pipa'],['arrow','Nyíl'],['bolt','Villám'],['camera','Kamera'],['music','Zene'],['globe','Web'],['mail','Levél']]){const option=document.createElement('option');option.value=value;option.textContent=label;select.append(option)}select.value=node.props?.icon||'star';select.onchange=()=>update('icon',select.value);section.append(field('Ikon leírása',node.props?.label||'',value=>update('label',value)),select)}
-    inspector.append(section);return true;
-  }
+  if(!isAuthoredContent(node)&&node.metadata?.basicContentVersion===1&&['badge','quote','icon'].includes(node.type)){inspector.append(renderBasicContentInspector(node,updateProps,{pending:flush=>{flushRichTextDraft=flush}}));return true}
   if(node.type==='embed'&&node.metadata?.embedContentVersion===1){inspector.append(renderEmbedInspector(node,(value,options)=>updateModel('embedContent',value,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}
   if(node.type==='social'&&node.metadata?.socialLinksVersion===1){inspector.append(renderSocialLinksInspector(node,(value,options)=>updateModel('socialLinks',value,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}
   if(node.type==='card'&&node.metadata?.cardContentVersion===1){inspector.append(renderCardInspector(node,(value,options)=>updateModel('cardContent',value,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}

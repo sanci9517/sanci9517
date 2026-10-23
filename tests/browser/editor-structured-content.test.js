@@ -1,3 +1,4 @@
+import {exerciseComposition} from './helpers/composition.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {createServer} from 'node:http';
@@ -8,6 +9,7 @@ import {chromium} from 'playwright';
 import {createDocument} from '../../public/editor-v2/core/schema.js';
 import {createEditorState,activePage} from '../../public/editor-v2/core/state.js';
 import {execute} from '../../public/editor-v2/core/commands.js';
+import {iconById} from '../../public/editor-v2/core/icon-options.js';
 
 test('structured Inspector editing survives Save, Publish and public interaction on desktop and mobile',async t=>{
  const model=createEditorState(createDocument()),pageId=model.document.activePageId;
@@ -83,6 +85,26 @@ test('structured Inspector editing survives Save, Publish and public interaction
   await select(ids.quote);
  await editor.locator('.field textarea').last().fill('Egyedi idézet új változat');
  await editor.locator('.field textarea').last().press('Tab');
+ const finalBadge='Végleges címke <img src=x onerror=alert(1)>',finalQuote='Végleges idézet\nMásodik sor',finalAttribution='Új szerző',finalIcon='Egyedi ikon " onload="alert(1)';
+ for(const width of [390,1366]){
+  await editor.setViewportSize({width,height:900});
+  for(const [type,label,part,attribute,before,final] of [
+   ['badge','Címke szövege','.basic-element-preview',undefined,width===390?'Címke':finalBadge+' mobil',finalBadge+(width===390?' mobil':'')],
+   ['quote','Idézet szövege','.visual-quote p',undefined,width===390?'Egyedi idézet új változat':finalQuote+' mobil',finalQuote+(width===390?' mobil':'')],
+   ['quote','Forrás vagy szerző','.visual-quote cite',undefined,width===390?'Készítő':finalAttribution+' mobil',finalAttribution+(width===390?' mobil':'')],
+   ['icon','Ikon leírása','.visual-icon','aria-label',width===390?'Szív ikon':finalIcon+' mobil',finalIcon+(width===390?' mobil':'')]
+  ]){
+   await select(ids[type]);
+   const basic=editor.locator('.basic-content-inspector'),input=basic.getByRole('textbox',{name:label,exact:true});
+   await exerciseComposition({page:editor,input,selector:`.node[data-node-id="${ids[type]}"] `+part,attribute,before,final,posts,restart:true,attemptBlocked:type==='icon'?async()=>{const picker=basic.getByRole('combobox',{name:'Ikon',exact:true});await picker.selectOption('star');assert.equal(await picker.inputValue(),'heart','a glyph change cannot discard a composing label');}:undefined,otherInput:type==='quote'?basic.getByRole('textbox',{name:label==='Idézet szövege'?'Forrás vagy szerző':'Idézet szövege',exact:true}):undefined}).catch(error=>{assert.equal(posts.length,0,'unfinished basic content composition cannot reach the Editor API');throw error;});
+  }
+ }
+ await select(ids.icon);
+ const iconPicker=editor.locator('.basic-content-inspector').getByRole('combobox',{name:'Ikon',exact:true});
+ await iconPicker.selectOption('star');
+ assert.equal(await editor.locator('.basic-content-inspector').getByRole('textbox',{name:'Ikon leírása'}).inputValue(),finalIcon,'glyph selection preserves the freshly edited accessible label');
+ await editor.keyboard.press('Control+z');assert.equal(await iconPicker.inputValue(),'heart');
+ await editor.keyboard.press('Control+Shift+z');assert.equal(await iconPicker.inputValue(),'star');
   await select(ids.tabs);
  assert.equal(await editor.locator('.structured-inspector h3').textContent(),'Fülek');
  const first=editor.locator('.structured-item').first();
@@ -94,15 +116,32 @@ test('structured Inspector editing survives Save, Publish and public interaction
  assert.equal(posts.at(-1).publish,false);
  assert.equal(published.pages[pageId].nodes[ids.tabs].props.contentModel.items[0].label,'Első fül');
  assert.equal(draft.pages[pageId].nodes[ids.tabs].props.contentModel.items[0].label,'Bemutatkozás');
+ assert.equal(draft.pages[pageId].nodes[ids.badge].props.text,finalBadge);
+ assert.equal(draft.pages[pageId].nodes[ids.quote].props.text,finalQuote);
+ assert.equal(draft.pages[pageId].nodes[ids.quote].props.attribution,finalAttribution);
+ assert.equal(draft.pages[pageId].nodes[ids.icon].props.label,finalIcon);
+ assert.equal(draft.pages[pageId].nodes[ids.icon].props.icon,'star');
+ await viewer.goto(base+'/p/test');
+ assert.equal(await viewer.locator('.visual-badge[data-node-id="'+ids.badge+'"]').textContent(),'Címke','Save cannot expose the new badge');
+ assert.match(await viewer.locator('blockquote[data-node-id="'+ids.quote+'"]').textContent(),/Idézet első változat/);
+ assert.equal(await viewer.locator('.visual-icon[data-node-id="'+ids.icon+'"]').getAttribute('aria-label'),'Szív ikon');
+ await editor.reload();
+ for(const [type,label,value] of [['badge','Címke szövege',finalBadge],['quote','Idézet szövege',finalQuote],['quote','Forrás vagy szerző',finalAttribution],['icon','Ikon leírása',finalIcon]]){
+  await select(ids[type]);assert.equal(await editor.locator('.basic-content-inspector').getByRole('textbox',{name:label,exact:true}).inputValue(),value);
+ }
  await editor.locator('#publish').click();
  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
  assert.equal(posts.at(-1).publish,true);
  await viewer.goto(base+'/p/test');
  const quote=viewer.locator('blockquote[data-node-id="'+ids.quote+'"]');
- assert.match(await quote.textContent(),/Egyedi idézet új változat/);
- assert.equal(await quote.locator('cite').textContent(),'Készítő');
+ assert.match(await quote.textContent(),/Végleges idézet/);
+ assert.equal(await quote.locator('cite').textContent(),finalAttribution);
  assert.equal(await viewer.locator('span.visual-badge[data-node-id="'+ids.badge+'"]').count(),1);
- assert.equal(await viewer.locator('span.visual-icon[data-node-id="'+ids.icon+'"]').getAttribute('aria-label'),'Szív ikon');
+ assert.equal(await viewer.locator('span.visual-icon[data-node-id="'+ids.icon+'"]').getAttribute('aria-label'),finalIcon);
+ const publicBadge=viewer.locator('span.visual-badge[data-node-id="'+ids.badge+'"]'),publicIcon=viewer.locator('span.visual-icon[data-node-id="'+ids.icon+'"]');
+ assert.equal(await publicBadge.textContent(),finalBadge);assert.equal(await publicBadge.locator('img,script').count(),0);
+ assert.equal(await publicIcon.getAttribute('onload'),null);assert.equal(await publicIcon.textContent(),iconById('star').glyph);
+ assert.equal(await quote.locator('p').textContent(),finalQuote,'multiline quote is preserved through Save/reload/Publish');
   const mediaImage=viewer.locator('.visual-editor-node[data-node-id="'+ids.image+'"]');
  assert.equal(await mediaImage.getAttribute('alt'),'Kezdőlap borítókép');
  assert.equal(await viewer.locator('video[data-node-id="'+ids.video+'"][controls]').count(),1);
@@ -152,5 +191,30 @@ test('structured Inspector editing survives Save, Publish and public interaction
  await mobile.waitFor({state:'attached'});
  assert.ok(await mobile.evaluate(el=>getComputedStyle(el).minHeight==='44px'));
  await editor.screenshot({path:'/tmp/creator-ux-p0-structured-mobile.png'});
+ const recovery=await editor.evaluate(async()=>{
+  const {renderBasicContentInspector}=await import('/editor-v2/ui/basic-content-inspector.js');const results=[];
+  for(const type of ['badge','quote','icon'])for(const mode of ['false','throw']){
+   const original={text:'Mentett szöveg',attribution:'Mentett szerző',icon:'heart',label:'Mentett leírás',unknown:{keep:'same'}};
+   const node={id:'basic-recovery',type,props:structuredClone(original)};let allow=false,accepted,guard;
+   const root=renderBasicContentInspector(node,next=>{if(!allow){if(mode==='throw')throw Error('Fixture rejection');return false;}accepted=structuredClone(next);return true;},{pending:fn=>{guard=fn;}});
+   document.querySelector('#inspectorBody').append(root);
+   const input=root.querySelector(type==='quote'?'textarea':'input');const before=input.value;
+   input.focus();input.value='Elutasított';input.dispatchEvent(new InputEvent('input',{bubbles:true}));
+   const rejected=input.hasAttribute('aria-invalid')&&!guard()&&!accepted;
+   input.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));const escaped=input.value===before&&guard();
+   allow=true;input.value='Új szöveg';input.dispatchEvent(new Event('change',{bubbles:true}));
+   let fresh=(type==='icon'?accepted.label:accepted.text)==='Új szöveg'&&JSON.stringify(accepted.unknown)===JSON.stringify(original.unknown)&&guard();
+   if(type==='quote'){
+    const source=root.querySelector('input');source.focus();source.value='Új szerző';source.dispatchEvent(new InputEvent('input',{bubbles:true}));fresh=fresh&&accepted.text==='Új szöveg'&&accepted.attribution==='Új szerző';
+   }else if(type==='icon'){
+    const picker=root.querySelector('select');picker.value='star';picker.dispatchEvent(new Event('change',{bubbles:true}));fresh=fresh&&accepted.icon==='star'&&accepted.label==='Új szöveg';
+   }
+   const unchanged=JSON.stringify(node.props)===JSON.stringify(original);root.remove();
+   const locked=renderBasicContentInspector({...node,locked:true},()=>{throw Error('Locked basic content changed');});document.querySelector('#inspectorBody').append(locked);
+   const lockedSafe=[...locked.querySelectorAll('input,textarea,select')].every(el=>el.disabled);locked.remove();
+   results.push({type,mode,rejected,escaped,fresh,unchanged,lockedSafe});
+  }return results;
+ });
+ for(const result of recovery)for(const key of ['rejected','escaped','fresh','unchanged','lockedSafe'])assert.equal(result[key],true,JSON.stringify(result));
  assert.deepEqual(errors,[]);
 });
