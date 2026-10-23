@@ -1,3 +1,4 @@
+import {countdownISOToLocal,countdownLocalToISO} from '../core/countdown-local-time.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createDocument} from '../core/schema.js';
@@ -274,4 +275,29 @@ test('legacy media Inspector rejects structured JSON without coercion or mutatin
  assert.deepEqual(legacyMediaInspectorValues(null),{src:'',poster:'',alt:'',assetId:'',posterAssetId:'',invalidFields:[]});
  const decorative=legacyMediaInspectorValues({alt:'Megőrzött képleírás',decorative:true,assetId:'invalid'});
  assert.equal(decorative.alt,'Megőrzött képleírás');assert.deepEqual(decorative.invalidFields,['assetId']);
+});
+
+test('Countdown local time rejects nonexistent wall times in multiple time zones',()=>{
+ const previousTimezone=process.env.TZ;
+ try{
+  for(const [zone,gap,valid,iso] of [
+   ['Europe/Budapest','2030-03-31T02:30','2030-03-31T03:30','2030-03-31T01:30:00.000Z'],
+   ['America/New_York','2030-03-10T02:30','2030-03-10T03:30','2030-03-10T07:30:00.000Z']]){
+   process.env.TZ=zone;assert.throws(()=>countdownLocalToISO(gap),/nem létezik/);assert.equal(countdownLocalToISO(valid),iso);
+  }
+  process.env.TZ='UTC';
+  for(const invalid of ['2030-02-30T12:00','2030-12-31T24:00','2030-13-01T12:00','2030-01-01T12:60','not a date','2030-01-01T12:00Z'])assert.throws(()=>countdownLocalToISO(invalid));
+  for(const outside of ['1999-12-31T23:59','2101-01-01T00:00'])assert.throws(()=>countdownLocalToISO(outside),/2000 és 2100/);
+  assert.equal(countdownLocalToISO(''),'');
+ }finally{if(previousTimezone===undefined)delete process.env.TZ;else process.env.TZ=previousTimezone;}
+});
+test('Countdown local view preserves sub-minute precision and canonical instants',()=>{
+ const previousTimezone=process.env.TZ;
+ try{
+  for(const zone of ['Europe/Budapest','America/New_York','UTC']){
+   process.env.TZ=zone;
+   for(const iso of ['2030-12-31T20:30:00.000Z','2030-12-31T20:30:42.000Z','2030-12-31T20:30:42.123Z','2030-12-31T20:30:00.007Z'])assert.equal(countdownLocalToISO(countdownISOToLocal(iso)),iso);
+  }
+  for(const invalid of ['',null,undefined,'invalid'])assert.equal(countdownISOToLocal(invalid),'');
+ }finally{if(previousTimezone===undefined)delete process.env.TZ;else process.env.TZ=previousTimezone;}
 });
