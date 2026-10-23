@@ -26,10 +26,11 @@ button.upload-secondary{border:1px solid var(--line);border-radius:10px;backgrou
 .tile .details{padding:10px 12px;font-size:.88rem}.tile .name{display:block;overflow-wrap:anywhere;font-weight:650}.tile small{color:var(--muted)}
 .empty{padding:30px 18px;border:1px dashed var(--line);border-radius:12px;color:var(--muted);text-align:center}
 .library-tools{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;margin:0 0 16px}.media-state-row{display:flex;align-items:center;gap:10px;margin:0 0 14px;flex-wrap:wrap}.media-state-row label{margin:0}.media-state-row select{background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:8px;min-height:44px;padding:8px 12px;max-width:100%}.tile .archive-status{overflow-wrap:anywhere}.tile .archive-confirm{border-color:#d6a354}.tile .archive-danger{border-color:#c27c7c}.library-tools input,.tile input{width:100%;min-width:0;min-height:42px;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text)}.library-tools button,.tile button{min-height:42px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:#29344b;color:var(--text)}.media-paging{display:grid;gap:9px;margin-top:16px}.media-paging button{width:100%;min-height:44px;padding:10px 14px;border:1px solid var(--line);border-radius:9px;background:#29344b;color:var(--text)}.media-paging button[hidden]{display:none}.media-paging p{margin:0;color:var(--muted);font-size:.9rem;overflow-wrap:anywhere}.tile .details{display:grid;gap:8px}.tile .details small{color:var(--muted)}
+.retention-panel{margin-top:20px}.retention-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.retention-heading h2{margin:0}.retention-heading button{min-height:44px;padding:10px 14px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--text)}.retention-list{list-style:none;padding:0;margin:16px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px}.retention-list[hidden]{display:none}.retention-card{padding:16px;border:1px solid var(--line);border-radius:12px;min-width:0}.retention-card p{overflow-wrap:anywhere}.retention-asset{color:var(--muted);font-size:.88rem}.retention-fields{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:6px 12px;font-size:.9rem}.retention-fields dt{color:var(--muted)}.retention-fields dd{margin:0;min-width:0;overflow-wrap:anywhere}.retention-panel[data-state=error] [role=status]{color:#ffb3b3}.retention-notice{color:var(--muted)}
 .note{margin-top:24px;color:var(--muted);font-size:.9rem}
 .media-usage{border-top:1px solid var(--line);padding-top:8px;overflow-wrap:anywhere}.media-usage[hidden]{display:none}.media-usage p{margin:4px 0;color:var(--muted)}.media-usage ul{padding-left:18px;margin:4px 0}.media-usage li{margin:6px 0}
 @media(max-width:800px){.panels{grid-template-columns:minmax(0,1fr)}.panel{padding:18px}.tiles{grid-template-columns:repeat(auto-fill,minmax(135px,1fr))}}
-@media(prefers-color-scheme:light){:root{color-scheme:light;--bg:#f4f6fc;--panel:#fff;--line:#d5dced;--text:#171d33;--muted:#50607e;--accent:#6247dd} .tile{background:#f6f7fd}.tile img{background:#f0f1f8}button.primary{color:white;background:#6349cd}.status[data-kind=error]{color:#ae2121}.status[data-kind=ok]{color:#15784c}}
+@media(prefers-color-scheme:light){:root{color-scheme:light;--bg:#f4f6fc;--panel:#fff;--line:#d5dced;--text:#171d33;--muted:#50607e;--accent:#6247dd} .tile{background:#f6f7fd}.tile img{background:#f0f1f8}button.primary{color:white;background:#6349cd}.status[data-kind=error],.retention-panel[data-state=error] [role=status]{color:#ae2121}.status[data-kind=ok]{color:#15784c}}
 </style>
 </head>
 <body>
@@ -67,6 +68,13 @@ button.upload-secondary{border:1px solid var(--line);border-radius:10px;backgrou
 <div class="media-paging"><button id="mediaLoadMore" type="button" hidden>További médiafájl betöltése</button><p id="mediaListStatus" role="status" aria-live="polite">Médiafájlok betöltése…</p></div>
 </section>
 </div>
+<section class="panel retention-panel" id="mediaRetentionPanel" aria-labelledby="retentionTitle" aria-busy="true">
+<div class="retention-heading"><h2 id="retentionTitle">Adatmegőrzési kérelmek</h2><button type="button" aria-controls="retentionRequests">Állapot frissítése</button></div>
+<p class="muted">A kérelmek aktuális állapota. A várakozási idő vége önmagában nem indít törlést.</p>
+<p role="status" aria-live="polite">Adatmegőrzési kérelmek betöltése…</p>
+<p class="retention-notice" hidden></p>
+<ul class="retention-list" id="retentionRequests" aria-label="Adatmegőrzési kérelmek" hidden></ul>
+</section>
 <p class="note">Az archiválás nem törli a fájlt és nem csökkenti a felhasznált tárhelyet. A használatban lévő médiafájlok (piszkozat, publikált oldal, korábbi verzió) nem archiválhatók. A visszaállítás az eredeti azonosítót és leírást őrzi meg. A médiafájlok csak külön oldali publikálás után válnak nyilvánossá.</p>
 </main>
 </div>

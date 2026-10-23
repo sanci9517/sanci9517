@@ -1,3 +1,5 @@
+import { mountRetentionStatus } from "./admin-media-retention.js";
+
 const form = document.getElementById("uploadForm");
 const input = document.getElementById("imageInput");
 const button = document.getElementById("uploadButton");
@@ -76,6 +78,7 @@ function explain(code) {
     MEDIA_USAGE_INCOMPLETE: "A használati helyek ellenőrzése nem teljes, az archiválás biztonságból leállt.",
     MEDIA_ARCHIVE_CONFLICT: "A médiafájl állapota megváltozott. Frissítsd a listát.",
     MEDIA_OBJECT_MISSING: "A tárolt médiafájl hiányzik. Nem lehet visszaállítani.",
+    RETENTION_MIGRATION_NOT_ACTIVE: "Az adatmegőrzési kérelmek jelenleg nem érhetők el. Próbáld újra később.",
     INVALID_MEDIA_STATE: "Érvénytelen Médiatár nézet."
   };
   return messages[code] || "A kérés sikertelen. Próbáld újra.";
@@ -332,4 +335,6 @@ form.addEventListener("submit", event => {
   event.preventDefault();
   if (!activeUpload) startUpload(input.files?.[0]);
 });
+const retentionPanel = document.getElementById("mediaRetentionPanel");
+if (retentionPanel) mountRetentionStatus(retentionPanel, () => api("/api/admin/media?retentionStatus=1"));
 await refresh();
