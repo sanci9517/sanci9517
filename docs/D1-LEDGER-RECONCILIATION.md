@@ -286,3 +286,50 @@ Ez a megmaradt API-elfogadási pont nem engedélyez végleges törlést, R2-clea
 
 Az eredeti, a rendezett restore-, valamint pre/post-rollout exportok és részletes válaszok továbbra is a védett
 `/workspace/.private-d1/retention-execution/` és korábbi privát könyvtárakban maradnak; nem kerülnek gitbe.
+
+## 2026-10-23 — bejelentkezett Worker-útvonal offline elfogadása
+
+Új, célzott ellenőrzés a retention utáni production export **izolált, memóriabeli** másolatán:
+[`scripts/d1/check-retention-route.mjs`](../scripts/d1/check-retention-route.mjs) a tényleges `src/index.ts` Worker belépési pontját,
+site-feloldást, tenant gate-et, session-hash ellenőrzést, membership-jogosultságot és admin media route-ot hívja.
+A helyi, rövid életű session kizárólag a memóriabeli backupmásolatban létezik, minden setup-változás ROLLBACK-kel megszűnik.
+Nincs HTTP-hívás, production DB-binding, production session/kérés vagy R2-művelet.
+
+Eredmény: hitelesített editor/admin GET **200**, `migrationActive:true`, `requests.length=0`, `permanentDeletionAuthorized:false`;
+auth nélkül **401**, viewer **403**, visszavont membership **403**. A route összesen 13 SELECT-et végzett, a DB-adapter minden
+nem-SELECT utasítást visszautasított; R2 műveletek száma 0. A setup rollbackje után az összes eredeti helyi adat változatlan, ledger 34.
+A helper sem sessiontokent, sem cookie-t, sem személyes vagy production rekordadatot nem ír a kimenetre;
+az adatmegőrzést összehasonlító assert is csak SHA-256 lenyomatokat hasonlít.
+
+Reprodukció repository gyökeréből, védett input és új report fájl használatával:
+```bash
+node --experimental-loader ./tests/ts-extension-loader.mjs scripts/d1/check-retention-route.mjs \
+  /workspace/.private-d1/retention-execution/production-after.sql \
+  /workspace/.private-d1/retention-execution/NEW-authenticated-local-report.json
+```
+A forrás SQL kizárólag megbízható, védett export lehet; nem másolható gitbe. Az output kizárólag anonimizált ellenőrzési összesítő, 0600, felülírás nélkül.
+[Sanitized helyi eredmény](evidence/d1-retention-authenticated-local-2026-10-23.json).
+
+**Ez nem production HTTP-acceptance.** Ehhez a környezethez nincs alkalmazás-session vagy csatlakoztatott felhasználói böngésző;
+a Cloudflare-token nem helyettesíti az alkalmazás hitelesítését. Az async kérdésben elküldött, csak olvasó ellenőrzés a saját,
+már bejelentkezett adminböngészőben végezhető el:
+`https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev/api/admin/media?retentionStatus=1`.
+Csak a sikerességet és a `data.migrationActive`, `data.requests.length`, `data.permanentDeletionAuthorized` értékeket kell visszajelezni;
+cookie/tokent/belépési adatot nem kérünk. A production autentikált acceptance addig továbbra is OPEN/UNVERIFIED.
+
+## 2026-10-23 — éles, bejelentkezett retention API felhasználói elfogadás PASS
+
+A felhasználó a saját, bejelentkezett production böngészőjéből az alábbi választ küldte vissza a csak olvasó státusz végpontról:
+```json
+{"ok":true,"data":{"migrationActive":true,"requests":[],"complete":true,"permanentDeletionAuthorized":false}}
+```
+Ez **felhasználó által visszaigazolt production API-elfogadás**, nem az asszisztens saját HTTP/session mérése;
+külön HTTP-státuszkódot nem kaptunk, ezért azt nem állítjuk önállóan mért eredménynek.
+A payload a teljes elvárt szerződésnek megfelel: migráció aktív, kéréslista üres és teljes, végleges törlés nem engedélyezett.
+[Anonimizált bizonyíték](evidence/d1-retention-authenticated-production-user-2026-10-23.json).
+
+A korábban nyitott **éles, autentikált read-only retention-status acceptance ezzel PASS**.
+Nem kértünk és nem kaptunk cookie-t vagy tokent; production teszt-session, kérés, cancellation vagy végleges törlés nem készült.
+A ledger-rendezés és az additív retention-migráció végrehajtási/ellenőrzési lánca lezárható.
+A teljes 49.4 Médiatár funkciókészlete ettől nem automatikusan kész; a POST/cancellation, teljes UI és fizikai mobil/PC acceptance külön pontok,
+a végleges törlés és automatikus cleanup továbbra is tiltott. Ez nem engedélyez PR merge-et vagy production deployt.
