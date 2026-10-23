@@ -1,0 +1,29 @@
+{
+  "ledger_reconciliation": "PASS",
+  "executed_at_utc": "2026-10-23 10:32:50",
+  "reviewed_sql_sha256": "cf516293f56fa136d158469490b2fc280cdd2a282706cbfd618323e64cbd903b",
+  "original_ledger_records_unchanged": 30,
+  "new_ledger_records": 4,
+  "new_ids": [
+    31,
+    32,
+    33,
+    34
+  ],
+  "unchanged_business_tables": 25,
+  "all_business_rows_equal": true,
+  "full_exported_schema_equal": true,
+  "only_sequence_change": "d1_migrations -> 34",
+  "foreign_key_check": [],
+  "quick_check": "ok",
+  "before_backup_sha256": "257ad3234f6746d1512f520e26520bf7188c4fd3e1856e3a69afd67704cbaba5",
+  "after_backup_sha256": "af72386a041fe2d2d388bff4c2807e3fc4407a302ab1023d9a9a8fe05f360054",
+  "import_retry_performed": false,
+  "cli_json_processing_error": "Wrangler mixed console text with JSON; parsed locally and confirmed by production readback without re-execution",
+  "health_http_status": 403,
+  "health_verified": false,
+  "retention_migration_applied": false,
+  "r2_deleted": false,
+  "merged": false,
+  "production_deploy_performed": false
+}
