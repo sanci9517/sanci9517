@@ -209,3 +209,31 @@ Ezeket nem szabad sikeres éles restore-próbaként jelenteni; a későbbi végr
 
 **Production ledgerírás, retention-migráció, R2-törlés, merge és production deploy NEM történt.**
 A külön jóváhagyandó ledger SQL továbbra is kizárólag a négy hiányzó migrációnevet szúrná be; az eredeti migrációkat nem játssza újra.
+
+## 2026-10-23 — production ledger-rendezés végrehajtva
+
+A felhasználó „ha biztonságos szabadkezet kapsz” jóváhagyása után a friss read-only preflight és új teljes export PASS.
+Az új backup bájtpontosan azonos a már SQLite-on és D1/Miniflare-en teljesen visszaállított, ellenőrzött backuppal;
+a változatlan SQL SHA-256-a `cf516293f56fa136d158469490b2fc280cdd2a282706cbfd618323e64cbd903b`.
+A tranzakció előtti bookmark `00000771-00000000-0000510d-89687ae194e3f6d2379aa25658a5a2e4`.
+Külön alkalmazásszintű write-freeze nem volt elérhető: kizárólag a D1 file-import tranzakciós DB-zárának idejére volt íráskizárás.
+Nem telepítettünk maintenance kódot vagy business írásokat tiltó triggert.
+
+**Végrehajtás: 2026-10-23 12:32:50 Europe/Budapest / 10:32:50 UTC.** A reviewed file egyszer futott le, 7 SQL-utasításban.
+A D1 import belső/guard/ledger számlálói 15 rows_written értéket jelentettek; ez nem 15 módosított business rekord.
+Végső bookmark: `00000771-00000008-0000510d-f947c5f0a64883323596dd166ce78654`.
+Az eredeti 30 ledgerrekord változatlan; a négy új név ID 31–34, applied_at `2026-10-23 10:32:50`.
+A teljes production séma változatlan, guardtábla nem maradt; FK-check üres és quick_check `ok`.
+A teljes előtte–utána export összevetésében mind a **25 üzleti tábla minden rekordja változatlan**.
+Csak a négy ledgerrekord és annak sqlite_sequence számlálója változott (34-re); más AUTOINCREMENT állapot sem módosult.
+
+A Wrangler 0 kilépési kóddal tért vissza, de konzolszöveget is írt a JSON mellé, ezért az első helyi JSON-feldolgozás hibázott.
+Nem történt import-retry: kizárólag read-only visszaolvasás és a meglévő válasz helyi feldolgozása igazolta a sikert.
+A publikus `/api/health` HTTPS-próba **HTTP 403 Forbidden** eredményt adott. Ezért a health nem PASS,
+és a további éles lépések leálltak. A 403 forrását ebből az egy válaszból nem állapítottuk meg.
+**Retention-migráció, R2-törlés/cleanup, PR merge és production deploy nem történt.**
+
+Összesített, érzékeny adat nélküli bizonyíték: [ledger-execution-2026-10-23](evidence/d1-ledger-execution-2026-10-23.json).
+A teljes eredeti és post-export, importeredmény és részletes pre/postflight a védett
+`/workspace/.private-d1/ledger-292-execution/` könyvtárban marad, nem kerül gitbe.
+A korábbi „NEM végrehajtott” szakaszok a jóváhagyás előtti történeti állapotot dokumentálják; az aktuális ledgerállapotot ez a bejegyzés rögzíti.
