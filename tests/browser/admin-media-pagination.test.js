@@ -14,6 +14,9 @@ test('Admin Media lists all active and archived assets, with keyboard paging and
   const requests=[],mutations=[];
   const server=createServer(async(req,res)=>{
     const url=new URL(req.url,'http://localhost'),send=(result,status=200)=>{res.statusCode=status;res.setHeader('content-type','application/json');res.end(JSON.stringify(result))};
+    if(url.pathname==='/api/admin/media' && req.method==='GET' && url.searchParams.get('retentionStatus')==='1') {
+      return send({ok:true,data:{migrationActive:true,requests:[],complete:true,permanentDeletionAuthorized:false}});
+    }
     if(url.pathname==='/api/admin/media' && req.method==='GET' && url.searchParams.has('usage')){
       return send({ok:true,data:{complete:true,references:[{pageId:'page-1',source:'published',nodeName:'Kép',path:'props.assetId',pageTitle:'Rólam'}]}});
     }

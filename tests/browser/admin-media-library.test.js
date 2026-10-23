@@ -10,6 +10,9 @@ test('Admin media search and alt-text editing work on desktop and mobile without
   const root=resolve(import.meta.dirname,'../../public'),patches=[],queries=[];
   const server=createServer(async(req,res)=>{
     const url=new URL(req.url,'http://localhost');
+    if(url.pathname==='/api/admin/media'&&req.method==='GET'&&url.searchParams.get('retentionStatus')==='1'){
+      res.setHeader('content-type','application/json');return res.end(JSON.stringify({ok:true,data:{migrationActive:true,requests:[],complete:true,permanentDeletionAuthorized:false}}));
+    }
     if(url.pathname==='/api/admin/media'&&req.method==='GET'&&url.searchParams.has('usage')){
       res.setHeader('content-type','application/json');
       return res.end(JSON.stringify({ok:true,data:{assetId:url.searchParams.get('usage'),complete:true,references:[{pageId:'page-1',pageTitle:'Bemutatkozás',slug:'about',archived:false,source:'published',nodeId:'hero',nodeName:'Fő szakasz',path:'responsive.mobile.backgroundAssetId'},{pageId:'old',pageTitle:'Régi oldal',slug:'old',archived:true,source:'revision',version:2,nodeId:'photo',nodeName:'Kép',path:'props.assetId'}]}}));
@@ -55,6 +58,9 @@ test('Admin image upload supports real progress, explicit retry and cancellation
  const root=resolve(import.meta.dirname,'../../public');let uploads=0,saved=false;
  const server=createServer(async(req,res)=>{
   const url=new URL(req.url,'http://localhost');
+    if(url.pathname==='/api/admin/media'&&req.method==='GET'&&url.searchParams.get('retentionStatus')==='1'){
+      res.setHeader('content-type','application/json');return res.end(JSON.stringify({ok:true,data:{migrationActive:true,requests:[],complete:true,permanentDeletionAuthorized:false}}));
+    }
   if(url.pathname==='/api/admin/media'&&req.method==='GET'){
    res.setHeader('content-type','application/json');
    return res.end(JSON.stringify({ok:true,data:{assets:saved?[{id:'6b1c2e65-e46e-4764-b234-123456789abc',name:'portrait.png',sizeBytes:120,altText:'',previewUrl:'/image.png'}]:[]}}));
@@ -121,6 +127,9 @@ test('Media library archives only after confirmation and restores in mobile and 
  const changes=[];
  const server=createServer(async(req,res)=>{
   const url=new URL(req.url,'http://localhost');
+    if(url.pathname==='/api/admin/media'&&req.method==='GET'&&url.searchParams.get('retentionStatus')==='1'){
+      res.setHeader('content-type','application/json');return res.end(JSON.stringify({ok:true,data:{migrationActive:true,requests:[],complete:true,permanentDeletionAuthorized:false}}));
+    }
   if(url.pathname==='/api/admin/media'&&req.method==='GET'&&url.searchParams.has('usage')){
    res.setHeader('content-type','application/json');
    return res.end(JSON.stringify({ok:true,data:{assetId:id,complete:true,references:used?[{pageId:'page-1',pageTitle:'Bemutatkozás',source:'draft',nodeName:'Kép',path:'props.assetId'}]:[]}}));
