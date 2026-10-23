@@ -57,6 +57,7 @@ jobs:
           path: |
             /tmp/editor-issue42-*.png
             /tmp/creator-ux-p0-*.png
+            /tmp/media-retention-*.png
           if-no-files-found: ignore
 
       - name: Run canonical schedule tests

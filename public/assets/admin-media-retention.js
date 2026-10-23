@@ -1,26 +1,9 @@
-const labels = Object.freeze({
-  requested: "Kérelem rögzítve",
-  quarantined: "Várakozási idő",
-  revalidated: "Újraellenőrizve",
-  cancelled: "Visszavonva",
-  deleted: "Törölve",
-  blocked: "Elakadt"
-});
-const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+import { retentionLabels as labels, uuid, cancellable, actionButton, checkedCancellation, parseRetentionDate } from "./admin-media-retention-actions.js";
 const invalid = "Az adatmegőrzési kérelmek adatai nem ellenőrizhetők. Próbáld újra.";
 const dateFormat = new Intl.DateTimeFormat("hu-HU", {
   year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", timeZoneName: "short"
 });
-function parseDate(value) {
-  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})?$/.test(value)) throw new Error(invalid);
-  // SQLite CURRENT_TIMESTAMP is UTC even though its text has no zone suffix.
-  const calendar = new Date(value.slice(0, 10) + "T00:00:00Z");
-  if (!Number.isFinite(calendar.getTime()) || calendar.toISOString().slice(0, 10) !== value.slice(0, 10)) throw new Error(invalid);
-  const iso = value.replace(" ", "T") + (/(Z|[+-]\d{2}:\d{2})$/.test(value) ? "" : "Z");
-  const date = new Date(iso);
-  if (!Number.isFinite(date.getTime())) throw new Error(invalid);
-  return date;
-}
+function parseDate(value) { return parseRetentionDate(value, invalid); }
 function checkedRequests(data) {
   if (data?.migrationActive !== true || data.permanentDeletionAuthorized !== false ||
       typeof data.complete !== "boolean" || !Array.isArray(data.requests) || data.requests.length > 100 ||
@@ -34,7 +17,7 @@ function checkedRequests(data) {
     return { ...row, requested: parseDate(row.requestedAt), due: parseDate(row.notBefore), updated: parseDate(row.updatedAt) };
   });
 }
-function requestCard(row) {
+function requestCard(row, cancelRequest) {
   const card = document.createElement("li");
   card.className = "retention-card";
   const title = document.createElement("strong");
@@ -55,17 +38,55 @@ function requestCard(row) {
     const help = document.createElement("p"); help.className = "muted";
     help.textContent = "A kérelem további ellenőrzést igényel."; card.append(help);
   }
+  if (cancelRequest && cancellable.has(row.state)) {
+    const cancel = actionButton("Kérelem visszavonása");
+    const controls = document.createElement("div"); controls.className = "retention-controls";
+    cancel.onclick = () => {
+      cancel.disabled = true;
+      const message = document.createElement("p"); message.textContent = "Visszavonod ezt a kérelmet? A médiafájl archivált marad, a tárhelyhasználat nem változik.";
+      const confirm = actionButton("Visszavonás megerősítése");
+      const abort = actionButton("Mégse");
+      controls.replaceChildren(message, confirm, abort); confirm.focus({ preventScroll: true });
+      abort.onclick = () => { controls.replaceChildren(); cancel.disabled = false; cancel.focus({ preventScroll: true }); };
+      confirm.onclick = () => { void cancelRequest(row); };
+    };
+    card.append(cancel, controls);
+  }
   return card;
 }
 
-/** Read-only status view. The loader must only perform the existing GET. */
-export function mountRetentionStatus(panel, loadStatus) {
+/** Loading/refreshing only reads; cancellation requires a separate confirmation. */
+export function mountRetentionStatus(panel, loadStatus, { cancelRequest } = {}) {
   const button = panel.querySelector("button");
   const status = panel.querySelector("[role=status]");
   const list = panel.querySelector("ul");
   const notice = panel.querySelector(".retention-notice");
   let request = 0;
+  let mutation = false;
+  async function cancel(row) {
+    if (mutation || !panel.isConnected) return;
+    mutation = true;
+    ++request; // Invalidate an older status read before changing metadata.
+    panel.dataset.state = "updating";
+    panel.querySelectorAll("button").forEach(control => { control.disabled = true; });
+    panel.setAttribute("aria-busy", "true");
+    status.textContent = "Kérelem visszavonása…";
+    let outcome;
+    try {
+      checkedCancellation(await cancelRequest(row.id), row.id);
+      outcome = "A kérelem visszavonva. A médiafájl megmaradt.";
+    } catch (error) {
+      outcome = (error instanceof TypeError ? "Kapcsolati hiba." : error.message || "A visszavonás nem igazolható.") +
+        " Ellenőrizd a friss állapotot. A kérés nem ismétlődik meg automatikusan.";
+    } finally {
+      mutation = false;
+      await refresh();
+      status.textContent = outcome + " " + status.textContent;
+      button.focus({ preventScroll: true });
+    }
+  }
   async function refresh() {
+    if (mutation) return;
     const current = ++request;
     const hadFocus = document.activeElement === button;
     button.disabled = true;
@@ -78,7 +99,7 @@ export function mountRetentionStatus(panel, loadStatus) {
       const data = await loadStatus();
       if (current !== request) return;
       const rows = checkedRequests(data);
-      list.replaceChildren(...rows.map(requestCard)); list.hidden = rows.length === 0;
+      list.replaceChildren(...rows.map(row => requestCard(row, cancelRequest ? cancel : null))); list.hidden = rows.length === 0;
       status.textContent = rows.length ? `${rows.length} adatmegőrzési kérelem látható.` : "Nincs adatmegőrzési kérelem.";
       if (!data.complete) {
         notice.textContent = "Az első 100 kérelem látható; a lista nem teljes.";
