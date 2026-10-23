@@ -110,7 +110,7 @@ Typecheck, WEB-013 11 tesztfájl, Média/retention 5 tesztfájl, migration gate 
 2. Exportáljuk a teljes D1-t **védett, nem gitelt** helyre (`wrangler d1 export sanci9517-db --remote --output <protected-backup.sql>`).
    A backup személyes adatot/credential ciphertextet tartalmazhat; ne kerüljön PR-ba vagy logba.
    Rögzítsük a fájl SHA-256-át és méretét; importáljuk izolált lokális D1-be, ellenőrizzük az FK/quick-checket és a ledger/adatszámokat.
-   A mostani sémafixture nem helyettesíti ezt a backupot. Teljes production export és restore-próba **még nem történt**.
+   A sémafixture nem helyettesíti ezt a backupot. Az első teljes export közvetlen importja sorrendhibával megállt; az alábbi célzott javítással a teljes SQLite- és D1/Miniflare-visszaállítás már PASS. Friss export esetén a hash-t és restore-próbát újra rögzíteni kell, a régi backup nem bizonyítja későbbi írások mentését.
 3. Közvetlenül írás előtt `wrangler d1 time-travel info sanci9517-db --json` segítségével rögzítsünk új bookmarkot és pontos időt.
    A mostani read-only próba PASS bookmarkja: `00000769-00000000-0000510d-5ab489994ee1dc6c9c6e30c737e5e83d`.
    Ez nem örök érvényű backup: a fiókhoz tartozó tényleges megőrzési időt, restore-jogot és szükséges elérési utat is ellenőrizni kell.
@@ -135,3 +135,77 @@ Typecheck, WEB-013 11 tesztfájl, Média/retention 5 tesztfájl, migration gate 
    Itt sem retention-migráció, sem R2-objektumtörlés, sem automatikus cleanup, sem Worker deploy nem történik.
 
 A PR merge/push a `v2/foundation` ágra production buildet indíthat; a mostani feladat kizárólag review-PR-t enged, merge-et és release-t nem végez.
+
+## 2026-10-23 — teljes backup/restore sorrendhiba javítása
+
+Forrás: [workers-sdk #5683, átirányítva developer-platform #41-re](https://github.com/cloudflare/developer-platform/issues/41).
+Az export adatot tölt be egy hivatkozott tábla létrehozása előtt; a deferred FK önmagában nem oldja meg a hiányzó tábla feloldását.
+A production backup **611. teljes SQL-utasítása `INSERT INTO pages`**, miközben az általa `published_revision_id` FK-n keresztül
+hivatkozott `editor_revisions` csak a **619. utasításban** jön létre. Pontos hiba: `no such table: main.editor_revisions: SQLITE_ERROR`.
+Érzékeny INSERT-tartalom nem került logba vagy gitbe.
+
+Az eredeti backup változatlanul `/workspace/.private-d1/ledger-292-final/production-full.sql`:
+`257ad3234f6746d1512f520e26520bf7188c4fd3e1856e3a69afd67704cbaba5` (806091 bájt).
+A külön másolat `/workspace/.private-d1/ledger-292-final/production-restore-ordered.sql`:
+`55e093aa370dd6ff05f15f5968d8bce0d728af5fb9c7d9c601ae8dcd814fa03e`.
+A fájlok és restore-adatbázisok repo-n kívül, 0700 könyvtárakban és 0600 fájljogokkal maradnak; környezeti munkaterületi mentések,
+nem külső/offsite backupok. Érzékeny adatot tartalmazó export vagy digest-lista nem csatolható a PR-hoz.
+
+### Biztonságos helyi restore útvonal
+
+```bash
+python3 scripts/d1/restore-order.py \
+  --source /workspace/.private-d1/ledger-292-final/production-full.sql \
+  --output /workspace/.private-d1/ledger-292-final/NEW-restore-ordered.sql \
+  --expected-sha256 257ad3234f6746d1512f520e26520bf7188c4fd3e1856e3a69afd67704cbaba5
+npx --no-install wrangler d1 execute sanci9517-db --local \
+  --persist-to /workspace/.private-d1/ledger-292-final/NEW-isolated-restore \
+  --file /workspace/.private-d1/ledger-292-final/NEW-restore-ordered.sql
+```
+
+Az output és a restore-útvonal legyen új. A restore mindig `--local`; itt sem production restore, sem ledger SQL nem fut.
+A script kizárólag offline működik és `sqlite3.complete_statement` segítségével **teljes SQL-utasításokat** választ szét,
+a triggerbeli belső pontosvesszőket, stringeket és kommenteket is kezelve. Nem rendezi soronként az INSERT-eket.
+Az eredeti 857 utasítás mindegyike megmarad, tartalmi átírás nélkül, a következő fázisokban:
+1 deferred-FK PRAGMA → 26 CREATE TABLE → 775 adatutasítás (az eredeti relatív sorrendben, a sqlite_sequence kezelésével együtt)
+→ 36 index → 19 teljes trigger. A csoportokon belüli sorrend megmarad; a parser az outputot is visszaellenőrzi.
+Ismeretlen utasítás, FK-kikapcsolás, hash-eltérés, hiányos SQL vagy már létező output esetén fail-closed.
+
+D1-en az FK enforcement bekapcsolva marad. Minden tábla létrejön az INSERT-ek előtt; a ciklikus pages–revision FK-k
+`PRAGMA defer_foreign_keys=TRUE` mellett a D1-batch tranzakció végén ellenőrződnek.
+A triggerek adatbetöltés után, de ugyanabban a tranzakcióban kerülnek vissza: nem futnak utólagos mellékhatásokkal az eredeti adatokon.
+SQLite-ban explicit BEGIN/COMMIT határolja a javított restore-t. Az eredeti export független referenciája kizárólag lokális,
+FK-enforcement nélküli SQLite-on épült fel; ez nem production/D1 beállítás, és utána teljes FK-check igazolta az adatokat.
+
+### Tényleges restore-bizonyíték
+
+- **Friss izolált SQLite és valódi D1/Miniflare: PASS.** quick_check és integrity_check `ok`; foreign_key_check üres.
+- **81/81 exportált sémaobjektum teljes CREATE SQL-je egyezik**, minden constraint/index/trigger megmaradt.
+  A read-only production snapshot 82. objektuma a provider-belső `_cf_KV`, amelyet a Cloudflare teljes export sem exportál;
+  business táblát/objektumot nem hagytunk ki. A production snapshot többi 81 objektuma egyezik az exporttal is.
+- **26/26 exportált tábla, 773 rekord** teljes adattartalma és száma egyezik a független eredeti-export referenciával,
+  nem csak az összesítő számlálók. `sqlite_sequence` külön, pontosan egyezik. A seed-, membership-, user- és settings-adatok is változatlanok.
+- Mind a **30 eredeti ledgerbejegyzés** ID/neve/időbélyege változatlan, és egyezik a production read-only snapshot ledgerével.
+- Privát részletes ellenőrzési bizonyíték: `sqlite-verification.json`, `d1-miniflare-verification.json` ugyanabban a védett könyvtárban.
+- Új célzott regresszió: Python **5/5 PASS**, a valódi Miniflare-teszt reprodukálja az eredeti hibát,
+  majd igazolja a teljes javított restore-t, a constraint és trigger működését. Teljes fejlesztési tesztauditot nem futtattunk újra.
+
+### Végső production előkészítés állapota
+
+A restore utáni read-only preflight ismét PASS: séma és az eredeti 30 ledgerrekord változatlan, seed-összesítők rendben,
+FK-check üres és quick_check `ok`. A friss evidence-ből generált ledger SQL bájtpontosan egyezik az eredetileg review-zott #292 változattal:
+`cf516293f56fa136d158469490b2fc280cdd2a282706cbfd618323e64cbd903b`.
+
+PITR ellenőrzés: **2026-10-23 12:04:41 Europe/Budapest** (10:04:41 UTC), DB version `production`.
+Aktuális bookmark: `0000076d-00000000-0000510d-1df9fbcf29c4f053a1a6c9650d16065e`.
+A 2026-10-22 10:04:41 UTC időponthoz történeti bookmark is elérhető:
+`0000071f-00000008-0000510c-b1fbd06889f1b6dc8990d88c8ca9e056`.
+A restore-parancs és endpoint elérési útja a telepített Wranglerben ellenőrzött:
+`wrangler d1 time-travel restore sanci9517-db --bookmark=<jóváhagyott-bookmark>`.
+**Ezt a parancsot NEM futtattuk.** A visszaállítás egész production DB-t írná felül; nincs dokumentált read-only restore dry-run.
+A jelenlegi és egynapos bookmark olvashatósága igazolt; a pontos csomagszintű megőrzési ablakot a DB-metaadat API nem közölte,
+és a tényleges production restore végrehajtási jogosultságát read-only próbával nem bizonyítottuk.
+Ezeket nem szabad sikeres éles restore-próbaként jelenteni; a későbbi végrehajtási ablakban friss bookmark és operátori restore-hozzáférés szükséges.
+
+**Production ledgerírás, retention-migráció, R2-törlés, merge és production deploy NEM történt.**
+A külön jóváhagyandó ledger SQL továbbra is kizárólag a négy hiányzó migrációnevet szúrná be; az eredeti migrációkat nem játssza újra.
