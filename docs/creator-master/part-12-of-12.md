@@ -1,3 +1,24 @@
+### 77.44.7.A/C/D — Editor Inspector javítások közös integrációja (2026-10-23)
+
+A külön draft #295–#304 ugyanarról a `v2/foundation` `caf91bf91ca4937805c7bbf527de944893c11f78` alapról indult. Önálló PASS eredményük nem igazolta az egymást átfedő változások közös működését. A `codex/editor-inspector-integration` izolált ág a tíz ellenőrzött változatot egyesíti; GitHub PR-merge, eredeti PR lezárás, production deploy vagy D1-/R2-művelet nélkül. #292–#294 külön marad. Az alábbi korábbi checkpointok az egyedi ágak történeti eredményei; az összesített állapotot ez a bejegyzés és az integrációs PR pontos headjén ellenőrzött CI jelzi.
+
+| Forrás draft PR | Ellenőrzött eredeti head |
+| --- | --- |
+| [#295](https://github.com/sanci9517/sanci9517/pull/295) | `2726f9b9d64b6b4e861c4982878990f82d5101c1` |
+| [#296](https://github.com/sanci9517/sanci9517/pull/296) | `6deb488cd6b369714f3b6107a2dcf8e66c7bc5fa` |
+| [#297](https://github.com/sanci9517/sanci9517/pull/297) | `0263aa3d034eb83e7a92cdf25b206b75448b48a4` |
+| [#298](https://github.com/sanci9517/sanci9517/pull/298) | `2377dffcbadd48f702a4e30e6c63449a1fcb4e4b` |
+| [#299](https://github.com/sanci9517/sanci9517/pull/299) | `9db781c430272ff90378129bbbee3ed99a74a0ba` |
+| [#300](https://github.com/sanci9517/sanci9517/pull/300) | `7f62e0cd0be78d0232bdfb2526d2ad934c998d46` |
+| [#301](https://github.com/sanci9517/sanci9517/pull/301) | `15fbef109a4a23ea5f1bbc27ae9532689ee3c484` |
+| [#302](https://github.com/sanci9517/sanci9517/pull/302) | `5a6d2b79a8b56bf1b200662e4b751e389acfd2cf` |
+| [#303](https://github.com/sanci9517/sanci9517/pull/303) | `411c924caea3840073ce88feb321c12b9ba5c37a` |
+| [#304](https://github.com/sanci9517/sanci9517/pull/304) | `04751638930d4c4d5bf59139bfbeebb810ec2c28` |
+
+**Érdemi összeillesztések:** a galéria/carousel sorok friss munkamodellből végzett atomi URL/asset váltása és a régi kivágási presetekből feloldott nézeti tengelyek együtt maradnak meg. A Social strukturális műveletek a legutóbb sikeresen szerkesztett sorokból indulnak, stabil sorazonosítóval állítanak fókuszt; az IME mentési kapu ugyanakkor védi a félkész bevitelt. A Social és Embed browser esetek a fókusz- és IME-bizonyítékokat egyesítik. A Kártya forráspár, Countdown pontos helyi idő és naptárvalidálás, valamint Code IME változásai megmaradnak. Mindkét kanonikus tervfájl teljes alapváltozata sorrendtartóan megőrzött, az egyedi checkpointok hozzáadva.
+
+**Helyi bizonyíték:** TypeScript PASS, tényleges Editor core **125/125 PASS**, kapcsolódó Editor API **9/9 PASS**. Teljes közös Chromium-regresszió **48/48 PASS**, majd a galéria/carousel forrásváltás + régi kivágás közös működésére két további 390/1366px eset; a célzott teljes galériafájl **4/4 PASS** (ebből két már szereplő eset). Így **50 külön browser eset** ellenőrzött: az új közös esetek forrásváltás utáni crop, kétlépéses Undo/Redo, teljes sor- és érintetlen képegyezés, nem materializált másik tengely, Save/reload és külön Publish. A tíz forrás-PR pontos headje és mind az öt meglévő checkje frissen read-only ellenőrizve PASS. Canonical-plan és diff PASS; az új integrációs head CI-je még UNVERIFIED, annak eredményét a draft PR leírása rögzíti. A fizikai PC/telefon/IME, valódi providerlejátszás és teljes 77.44/WEB-011/49.4 acceptance OPEN. R2-törlés és automatikus retention cleanup továbbra is tilos.
+
 > **2026-10-23 — 77.44.7.A/C / 77.44.UX-P0.6.J/K Social Links és Creator Embed: közös IME-mentésvédelem, helyi PASS.** A `codex/editor-social-embed-ime` ág a `v2/foundation` `caf91bf` alapjáról külön draft PR; a még draft #297–#303 nem része a diffnek. A #303 `411c924` head mind az öt GitHub ellenőrzése PASS. A két meglévő Inspector komponens szöveg- és mentési paritása a cél; a Code #303 implementációját ez a blokk nem alkalmazza újra.
 >
 > - **Bizonyított hiba:** Social-felirat és Embed-cím félkész compositionstart/input állapotából Ctrl+S tényleges Editor POST-ot küldött. A javítás előtti két 390px Chromium teszt `posts.length=1` eredménnyel FAIL.

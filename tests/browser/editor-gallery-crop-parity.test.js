@@ -101,3 +101,46 @@ for(const width of [390,1366])test(`gallery/carousel legacy crop matches Inspect
  }
  assert.ok(f.requests.every(r=>r.method==='GET'||(r.method==='POST'&&r.path==='/api/admin/editor')));assert.deepEqual(f.errors,[]);
 });
+
+for(const width of [390,1366])test(`gallery source switching and legacy crop edits compose without stale rows at ${width}px`,async t=>{
+ const f=await fixture(t,width);
+ const image=(page,type)=>f.node(page,type).locator('img').nth(1);
+ for(const type of types){
+  await f.select(type);
+  const url=`/fixture-integrated-${type}.svg`;
+  await f.rows().nth(1).getByRole('textbox',{name:'Külső média címe',exact:true}).fill(url);
+  assert.equal(await image(f.editor,type).getAttribute('src'),url);
+  assert.equal(await f.slider(1,'x').inputValue(),'50');
+  assert.equal(await f.slider(1,'y').inputValue(),'0');
+  await f.slider(1,'x').focus();await f.slider(1,'x').press('ArrowRight');
+  assert.equal(await image(f.editor,type).evaluate(el=>getComputedStyle(el).objectPosition),'51% 0%');
+  assert.equal(await image(f.editor,type).getAttribute('src'),url,'crop edit keeps the new source from the live row');
+  await f.editor.keyboard.press('Control+z');
+  assert.equal(await image(f.editor,type).getAttribute('src'),url);
+  assert.equal(await f.slider(1,'x').inputValue(),'50');
+  await f.editor.keyboard.press('Control+z');
+  assert.equal(await image(f.editor,type).getAttribute('src'),'/fixture-old.svg');
+  await f.editor.keyboard.press('Control+Shift+z');await f.editor.keyboard.press('Control+Shift+z');
+  assert.equal(await image(f.editor,type).getAttribute('src'),url);
+  assert.equal(await f.slider(1,'x').inputValue(),'51');
+ }
+ assert.equal(f.posts.length,0);
+ await f.save(false);await f.live.reload();
+ for(const type of types){
+  const original=f.original.pages[f.pageId].nodes[f.ids[type]].props.items;
+  const rows=f.draft().pages[f.pageId].nodes[f.ids[type]].props.items;
+  assert.deepEqual(rows[1],{...original[1],src:`/fixture-integrated-${type}.svg`,assetId:'',focalX:51});
+  for(const index of [0,2,3,4,5,6])assert.deepEqual(rows[index],original[index]);
+  assert.equal(Object.hasOwn(rows[1],'focalY'),false,'view-only preset defaults are not persisted');
+  assert.equal(await image(f.live,type).getAttribute('src'),'/fixture-old.svg','Save leaves the published source unchanged');
+ }
+ await f.editor.reload();
+ for(const type of types){await f.select(type);assert.equal(await f.slider(1,'x').inputValue(),'51');assert.equal(await f.slider(1,'y').inputValue(),'0');}
+ await f.save(true);await f.live.reload();
+ for(const type of types){
+  assert.equal(await image(f.live,type).getAttribute('src'),`/fixture-integrated-${type}.svg`);
+  assert.equal(await image(f.live,type).evaluate(el=>getComputedStyle(el).objectPosition),'51% 0%');
+ }
+ assert.deepEqual(f.errors,[]);
+ assert.ok(f.requests.every(r=>r.method==='GET'||(r.method==='POST'&&r.path==='/api/admin/editor')));
+});
