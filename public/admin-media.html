@@ -30,6 +30,7 @@ button.upload-secondary{border:1px solid var(--line);border-radius:10px;backgrou
 .media-usage{border-top:1px solid var(--line);padding-top:8px;overflow-wrap:anywhere}.media-usage[hidden]{display:none}.media-usage p{margin:4px 0;color:var(--muted)}.media-usage ul{padding-left:18px;margin:4px 0}.media-usage li{margin:6px 0}
 @media(max-width:800px){.panels{grid-template-columns:minmax(0,1fr)}.panel{padding:18px}.tiles{grid-template-columns:repeat(auto-fill,minmax(135px,1fr))}}
 @media(prefers-color-scheme:light){:root{color-scheme:light;--bg:#f4f6fc;--panel:#fff;--line:#d5dced;--text:#171d33;--muted:#50607e;--accent:#6247dd} .tile{background:#f6f7fd}.tile img{background:#f0f1f8}button.primary{color:white;background:#6349cd}.status[data-kind=error]{color:#ae2121}.status[data-kind=ok]{color:#15784c}}
+.integrity-panel{margin-top:20px}.integrity-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}.integrity-audit{min-width:0;border:1px solid var(--line);border-radius:12px;padding:16px}.integrity-audit h3{margin-top:0}.integrity-controls{display:flex;gap:8px;flex-wrap:wrap}.integrity-controls button{min-height:44px;max-width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text);white-space:normal}.integrity-controls [hidden],.integrity-findings[hidden]{display:none}.integrity-findings{list-style:none;padding:0;margin:0;display:grid;gap:12px}.integrity-findings li{padding:12px;border:1px solid var(--line);border-radius:8px}.integrity-audit p,.integrity-findings strong{overflow-wrap:anywhere}.integrity-findings p{font-size:.85rem;margin:6px 0 0;color:var(--muted)}.integrity-audit[data-state=error] [role=status]{font-weight:650}
 </style>
 </head>
 <body>
@@ -67,6 +68,26 @@ button.upload-secondary{border:1px solid var(--line);border-radius:10px;backgrou
 <div class="media-paging"><button id="mediaLoadMore" type="button" hidden>További médiafájl betöltése</button><p id="mediaListStatus" role="status" aria-live="polite">Médiafájlok betöltése…</p></div>
 </section>
 </div>
+<section class="panel integrity-panel" id="mediaIntegrityPanel" aria-labelledby="integrityTitle">
+<h2 id="integrityTitle">Fájlok és nyilvántartás ellenőrzése</h2>
+<p class="muted">A vizsgálatok csak olvasnak, kézzel indulnak és részletenként legfeljebb 100 fájlt ellenőriznek. Az eredmény mindig az aktuális részletet mutatja. A fájlok közben változhatnak; ez nem pillanatfelvétel és nem teljes integritási garancia.</p>
+<div class="integrity-grid">
+<section class="integrity-audit" data-audit-mode="missing" data-state="idle" aria-labelledby="missingAuditTitle" aria-busy="false">
+<h3 id="missingAuditTitle">Hiányzó tárolt fájlok</h3>
+<p class="muted">A nyilvántartott aktív és archivált médiafájlok elérhetőségét vizsgálja. Találatnál ellenőrzött forrásból történő helyreállítás szükséges; a vizsgálat nem módosítja a bejegyzést.</p>
+<div class="integrity-controls"><button type="button" data-audit-start>Hiányzó fájlok vizsgálata</button><button type="button" data-audit-next hidden>Következő részlet ellenőrzése</button><button type="button" data-audit-retry hidden>Részlet újrapróbálása</button></div>
+<p role="status" aria-live="polite">A vizsgálat még nem indult el.</p>
+<ul class="integrity-findings" aria-label="Hiányzó tárolt fájlok" hidden></ul>
+</section>
+<section class="integrity-audit" data-audit-mode="orphan" data-state="idle" aria-labelledby="orphanAuditTitle" aria-busy="false">
+<h3 id="orphanAuditTitle">Nem nyilvántartott fájljelöltek</h3>
+<p class="muted">A tárolt fájlokat veti össze a webhely nyilvántartásával. Friss vagy folyamatban lévő feltöltés is megjelenhet jelöltként. Ez az eredmény nem törlési lista.</p>
+<div class="integrity-controls"><button type="button" data-audit-start>Nyilvántartás egyeztetése</button><button type="button" data-audit-next hidden>Következő részlet ellenőrzése</button><button type="button" data-audit-retry hidden>Részlet újrapróbálása</button></div>
+<p role="status" aria-live="polite">A vizsgálat még nem indult el.</p>
+<ul class="integrity-findings" aria-label="Nem nyilvántartott fájljelöltek" hidden></ul>
+</section>
+</div>
+</section>
 <p class="note">Az archiválás nem törli a fájlt és nem csökkenti a felhasznált tárhelyet. A használatban lévő médiafájlok (piszkozat, publikált oldal, korábbi verzió) nem archiválhatók. A visszaállítás az eredeti azonosítót és leírást őrzi meg. A médiafájlok csak külön oldali publikálás után válnak nyilvánossá.</p>
 </main>
 </div>

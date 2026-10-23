@@ -776,3 +776,33 @@ test("media deletion preflight rejects malformed or conflicting mode flags",asyn
   }
   assert.equal(f.files.size,1);
 });
+
+
+test("full orphan pages respect D1's 100-parameter limit and fail closed if the second lookup fails",async t=>{
+ const f=await fixture(t);
+ const insert=f.db.prepare("INSERT INTO media(id,object_key,original_name,mime_type,size_bytes,alt_text,site_id) VALUES(?,?,?,?,?,?,?)");
+ for(let i=0;i<100;i++){
+  const key="sites/site-default/media/limit-"+String(i).padStart(3,"0");f.files.set(key,png);
+  if(i===0||i===99)insert.run("00000000-0000-4000-8000-"+String(i).padStart(12,"0"),key,"registered.png","image/png",png.length,"","site-default");
+ }
+ const before=f.db.prepare("SELECT * FROM media ORDER BY id").all(),files=new Map(f.files),counts=[];
+ const original=f.env.DB.prepare.bind(f.env.DB);let failSecond=false;
+ f.env.DB.prepare=sql=>{
+  const statement=original(sql);
+  if(!sql.startsWith("SELECT object_key FROM media WHERE site_id=? AND object_key IN"))return statement;
+  assert.ok(sql.startsWith("SELECT"));
+  return {
+   bind(...values){counts.push(values.length);if(values.length>100)throw new Error("D1 parameter limit exceeded");statement.bind(...values);return this;},
+   async all(){if(failSecond&&counts.length===2)throw new Error("second lookup unavailable");return statement.all();}
+  };
+ };
+ let storageWrites=0;
+ f.env.MEDIA.put=f.env.MEDIA.delete=async()=>{storageWrites++;throw new Error("read-only audit attempted storage mutation");};
+ const result=await f.call("GET","editor",null,{orphanAudit:true});assert.equal(result.status,200);
+ const report=(await result.json()).data;assert.equal(report.checked,100);assert.equal(report.registeredCount,2);assert.equal(report.unregisteredCandidates.length,98);
+ assert.deepEqual(counts,[100,2]);assert.equal(report.deletionAuthorized,false);
+ counts.length=0;failSecond=true;
+ const failed=await f.call("GET","editor",null,{orphanAudit:true});assert.equal(failed.status,503);
+ const error=await failed.json();assert.equal(error.error.code,"MEDIA_METADATA_FAILED");assert.equal(error.data,undefined,"no partial diagnostic may be returned as success");
+ assert.deepEqual(f.db.prepare("SELECT * FROM media ORDER BY id").all(),before);assert.deepEqual(f.files,files);assert.equal(storageWrites,0);
+});

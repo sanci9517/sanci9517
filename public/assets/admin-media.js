@@ -1,3 +1,5 @@
+import { mountMediaIntegrity } from "./admin-media-integrity.js";
+
 const form = document.getElementById("uploadForm");
 const input = document.getElementById("imageInput");
 const button = document.getElementById("uploadButton");
@@ -332,4 +334,6 @@ form.addEventListener("submit", event => {
   event.preventDefault();
   if (!activeUpload) startUpload(input.files?.[0]);
 });
+const integrityPanel = document.getElementById("mediaIntegrityPanel");
+if (integrityPanel) mountMediaIntegrity(integrityPanel);
 await refresh();

@@ -388,11 +388,16 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
       const registered = new Set<string>();
       if (keys.length) {
         try {
-          const placeholders = keys.map(() => "?").join(",");
-          const rows = await env.DB.prepare(
-            `SELECT object_key FROM media WHERE site_id=? AND object_key IN (${placeholders})`
-          ).bind(siteId, ...keys).all<{ object_key: string }>();
-          for (const row of rows.results) registered.add(row.object_key);
+          // D1 allows 100 bound parameters per query, including siteId.
+          // A full 100-object R2 page therefore needs two bounded SELECTs.
+          for (let offset=0; offset<keys.length; offset+=99) {
+            const batch=keys.slice(offset,offset+99);
+            const placeholders = batch.map(() => "?").join(",");
+            const rows = await env.DB.prepare(
+              `SELECT object_key FROM media WHERE site_id=? AND object_key IN (${placeholders})`
+            ).bind(siteId, ...batch).all<{ object_key: string }>();
+            for (const row of rows.results) registered.add(row.object_key);
+          }
         } catch { return error("MEDIA_METADATA_FAILED", 503); }
       }
       return ok({
