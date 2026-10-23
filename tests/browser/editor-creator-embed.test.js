@@ -1,3 +1,4 @@
+import {exerciseComposition} from './helpers/composition.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {createServer} from 'node:http';
@@ -9,7 +10,7 @@ import {createDocument} from '../../public/editor-v2/core/schema.js';
 import {createEditorState,activePage} from '../../public/editor-v2/core/state.js';
 import {execute} from '../../public/editor-v2/core/commands.js';
 
-test('Creator Embed stays private before consent and Publish, supports responsive YouTube and narrow Twitch fallback',async t=>{
+for(const width of [390,1366])test(`Creator Embed IME and consent at ${width}px`,async t=>{
  const model=createEditorState(createDocument()),pageId=model.document.activePageId,root=activePage(model).rootId;
  execute(model,{type:'element.add',payload:{type:'embed',parentId:root}});
  const embedId=model.selection.primaryId;
@@ -39,7 +40,7 @@ test('Creator Embed stays private before consent and Publish, supports responsiv
  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
  t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
  const base='http://127.0.0.1:'+server.address().port;
- const editor=await browser.newPage({viewport:{width:1366,height:900}}),viewer=await browser.newPage({viewport:{width:1366,height:900}});
+ const editor=await browser.newPage({viewport:{width,height:900}}),viewer=await browser.newPage({viewport:{width,height:900}});
  editor.setDefaultTimeout(7000);viewer.setDefaultTimeout(7000);
  const errors=[];editor.on('pageerror',e=>errors.push('editor:'+e.message));viewer.on('pageerror',e=>errors.push('public:'+e.message));
  let youtubeRequests=0;
@@ -57,17 +58,27 @@ test('Creator Embed stays private before consent and Publish, supports responsiv
  };
  await type('Videó URL vagy azonosító','https://www.youtube.com/watch?v=M7lc1UVf-VE');
  await type('Lejátszó címe','Bemutatkozás <script>alert(1)</script>');
+
  await inspector.getByRole('combobox',{name:'Videó arány'}).selectOption('classic');
  const consent=inspector.getByRole('checkbox',{name:'Betöltés csak látogatói kattintásra'});
  await consent.uncheck();
- await editor.locator('#undo').click();
+ await editor.keyboard.press('Control+z');
  assert.equal(await consent.isChecked(),true);
- await editor.locator('#redo').click();
+ await editor.keyboard.press('Control+Shift+z');
  assert.equal(await consent.isChecked(),false);
- await editor.locator('#undo').click();
+ await editor.keyboard.press('Control+z');
  assert.equal(await consent.isChecked(),true);
  assert.equal(posts.length,0,'changing video Inspector must not save automatically');
  assert.match(await node.locator('.visual-embed-load').textContent(),/Bemutatkozás/);
+ const playerSelector=`.node[data-node-id="${embedId}"] .visual-embed-player`,finalTitle='Végleges bemutatkozás <script>alert(1)</script>',finalSource='https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+ await exerciseComposition({page:editor,input:inspector.getByRole('textbox',{name:'Lejátszó címe'}),selector:playerSelector,attribute:'data-embed-title',before:'Bemutatkozás <script>alert(1)</script>',final:finalTitle,posts,otherInput:inspector.getByRole('textbox',{name:'Videó URL vagy azonosító'}),attemptBlocked:async()=>{
+  await inspector.getByRole('combobox',{name:'Videó arány'}).selectOption('portrait');
+  assert.equal(await inspector.getByRole('combobox',{name:'Videó arány'}).inputValue(),'classic');
+  await consent.click();assert.equal(await consent.isChecked(),true,'blocked consent edit restores the checkbox');
+ }});
+ await exerciseComposition({page:editor,input:inspector.getByRole('textbox',{name:'Videó URL vagy azonosító'}),selector:playerSelector,attribute:'data-embed-source',before:'https://www.youtube.com/watch?v=M7lc1UVf-VE',final:finalSource,posts,restart:true});
+ assert.match(await inspector.locator('.embed-inspector-status').textContent(),/Támogatott/);
+ assert.equal(await inspector.locator('.embed-inspector-status.invalid').count(),0);
  await editor.locator('#save').click();
  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
  assert.equal(posts.at(-1).publish,false);
@@ -76,6 +87,11 @@ test('Creator Embed stays private before consent and Publish, supports responsiv
  const publicNode=viewer.locator('.visual-creator-embed[data-node-id="'+embedId+'"]');
  assert.equal(await publicNode.locator('.visual-embed-player').count(),0,'draft Save never changes published video');
  assert.equal(await youtubeRequests,0,'old published content sends no remote request');
+ await editor.reload();await node.evaluate(el=>el.click());
+ if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
+ await editor.locator('.inspector-tabs button').nth(1).click();
+ assert.equal(await inspector.getByRole('textbox',{name:'Lejátszó címe'}).inputValue(),finalTitle);
+ assert.equal(await inspector.getByRole('textbox',{name:'Videó URL vagy azonosító'}).inputValue(),finalSource);
  await editor.locator('#publish').click();
  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
  assert.equal(posts.at(-1).publish,true);
@@ -85,12 +101,12 @@ test('Creator Embed stays private before consent and Publish, supports responsiv
  assert.equal(await publicNode.locator('iframe').count(),0,'before consent no remote player frame');
  assert.equal(youtubeRequests,0,'no third-party request before click');
  assert.equal(await publicNode.locator('.visual-embed-load script').count(),0,'title cannot execute HTML');
- assert.match(await publicNode.locator('.visual-embed-load').textContent(),/Bemutatkozás <script>alert/);
+ assert.match(await publicNode.locator('.visual-embed-load').textContent(),/Végleges bemutatkozás <script>alert/);
  await publicNode.locator('.visual-embed-load').click();
  const frame=publicNode.locator('iframe.visual-embed-frame');
  await frame.waitFor();
- assert.equal(await frame.getAttribute('src'),'https://www.youtube-nocookie.com/embed/M7lc1UVf-VE?rel=0');
- assert.equal(await frame.getAttribute('title'),'Bemutatkozás <script>alert(1)</script>');
+ assert.equal(await frame.getAttribute('src'),'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?rel=0');
+ assert.equal(await frame.getAttribute('title'),finalTitle);
  assert.equal(await frame.getAttribute('referrerpolicy'),'strict-origin-when-cross-origin');
  assert.ok(youtubeRequests>=1,'video loads only after user activation');
  await viewer.setViewportSize({width:390,height:800});await viewer.reload();
