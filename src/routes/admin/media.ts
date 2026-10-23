@@ -253,7 +253,9 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
   if (!env.MEDIA) return error("MEDIA_STORAGE_UNAVAILABLE", 503);
   const url = new URL(request.url);
   const retentionFlag = url.searchParams.getAll("retentionRequest");
+  const retentionStatusFlag = url.searchParams.getAll("retentionStatus");
   if (retentionFlag.length && (retentionFlag.length !== 1 || retentionFlag[0] !== "1")) return error("INVALID_RETENTION_REQUEST",400);
+  if (retentionStatusFlag.length && (retentionStatusFlag.length !== 1 || retentionStatusFlag[0] !== "1" || retentionFlag.length)) return error("INVALID_RETENTION_STATUS",400);
   if (request.method === "POST" && retentionFlag[0] === "1") {
     if (request.headers.get("Origin") !== url.origin || request.headers.get("Sec-Fetch-Site") === "cross-site") return error("INVALID_ORIGIN",403);
     const id=url.searchParams.get("id") || "";
@@ -292,6 +294,14 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
   }
   if (request.method === "GET") {
     const id = url.searchParams.get("id");
+    if (retentionStatusFlag[0] === "1") {
+      if (id !== null || url.searchParams.has("deletePreflight") || url.searchParams.has("usage")) return error("INVALID_RETENTION_STATUS",400);
+      try {
+        const rows=await env.DB.prepare(retentionQueries.list).bind(siteId).all<{id:string;asset_id:string;state:string;requested_at:string;not_before:string;updated_at:string;attempt_count:number}>();
+        const requests=rows.results.slice(0,100).map(row=>({id:row.id,assetId:row.asset_id,state:row.state,requestedAt:row.requested_at,notBefore:row.not_before,updatedAt:row.updated_at,attemptCount:row.attempt_count,permanentDeletionAuthorized:false}));
+        return ok({migrationActive:true,requests,complete:rows.results.length<=100,permanentDeletionAuthorized:false});
+      } catch { return error("RETENTION_MIGRATION_NOT_ACTIVE",503); }
+    }
     const preflightFlags = url.searchParams.getAll("deletePreflight");
     if (preflightFlags.length && (preflightFlags.length !== 1 || preflightFlags[0] !== "1" ||
         url.searchParams.has("usage") || url.searchParams.has("orphanAudit") ||
