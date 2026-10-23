@@ -7,6 +7,7 @@
  *
  * This script is read-only: it inspects repository files, not D1.
  */
+import { createHash } from "node:crypto";
 import { readdirSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { resolve, dirname } from "node:path";
@@ -17,6 +18,17 @@ const pending = readFileSync(resolve(root, "scripts/pending/0025_site_domains_an
 const memberships = readFileSync(resolve(root, "scripts/pending/0026_site_memberships.sql"), "utf8");
 const settings = readFileSync(resolve(root, "scripts/pending/0027_site_scoped_settings.sql"), "utf8");
 const mediaArchive = readFileSync(resolve(root,"scripts/pending/0028_media_archive.sql"),"utf8");
+const manualManifest = JSON.parse(readFileSync(resolve(root, "scripts/d1/manual-migrations.json"), "utf8"));
+const expectedNames = ["0025_site_domains_and_site_slug.sql", "0026_site_memberships.sql", "0027_site_scoped_settings.sql", "0028_media_archive.sql"];
+if (JSON.stringify(manualManifest.map(entry => entry.name)) !== JSON.stringify(expectedNames)) {
+  throw new Error("Manual migration registry must reserve exactly 0025-0028");
+}
+for (const entry of manualManifest) {
+  if (entry.path !== `scripts/pending/${entry.name}` ||
+      createHash("sha256").update(readFileSync(resolve(root, entry.path))).digest("hex") !== entry.sha256) {
+    throw new Error(`Manual migration hash/path mismatch: ${entry.name}`);
+  }
+}
 const retention = readFileSync(resolve(root,"scripts/pending/media_retention_requests.sql"),"utf8");
 
 if (migrations.some((name) => /^002[5678][_-]/.test(name))) {
@@ -41,4 +53,4 @@ if (!pending.includes("CREATE UNIQUE INDEX idx_pages_site_slug ON pages(site_id,
   console.error("BLOCK: pending 0025/0026/0027 migrations no longer match the verified production schema contract.");
   process.exit(1);
 }
-console.log("PASS: 0025-0028 and media retention stay manual-only. The production D1 rollout for 0028 must be separately verified; Wrangler ledger remains at 0024.");
+console.log("PASS: immutable 0025-0028 registry reserved; manual SQL cannot auto-replay. Use the reviewed ledger reconciliation and fresh bootstrap runbook; production ledger state requires live verification. Retention stays manual-only.");
