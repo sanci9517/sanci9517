@@ -83,6 +83,14 @@ export function activateEmbeds(root){
  for(const host of root.querySelectorAll('.visual-embed-player[data-embed-provider]')){
   if(activated.has(host))continue;
   activated.add(host);
+  const button=host.querySelector('button.visual-embed-load');
+  const replacePlayer=element=>{
+   // Keep a keyboard visitor at the content they just activated. Automatic
+   // or programmatic loading must not move focus from another control.
+   const restoreFocus=button&&document.activeElement===button;
+   host.replaceChildren(element);
+   if(restoreFocus)element.focus({preventScroll:true});
+  };
   const load=()=>{
    // Twitch documents a 400px minimum player width. On narrower cards,
    // offer the verified canonical link instead of pretending the embed works.
@@ -93,7 +101,7 @@ export function activateEmbeds(root){
      link.href=parsed.provider==='twitch-live'?'https://www.twitch.tv/'+encodeURIComponent(parsed.id):'https://www.twitch.tv/videos/'+encodeURIComponent(parsed.id);
      link.target='_blank';link.rel='noopener noreferrer';
      link.textContent='A Twitch-lejátszóhoz szélesebb hely kell. Megnyitás Twitch-en (új lapon).';
-     host.replaceChildren(link);
+     replacePlayer(link);
     }catch{}
     return;
    }
@@ -105,9 +113,8 @@ export function activateEmbeds(root){
    iframe.loading='lazy';iframe.referrerPolicy='strict-origin-when-cross-origin';
    iframe.allow='encrypted-media; picture-in-picture; fullscreen';
    iframe.allowFullscreen=true;
-   host.replaceChildren(iframe);
+   replacePlayer(iframe);
   };
-  const button=host.querySelector('button.visual-embed-load');
   if(button)button.addEventListener('click',load,{once:true});
   if(host.dataset.embedClick==='false')load();
  }
