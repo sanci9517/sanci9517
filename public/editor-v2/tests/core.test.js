@@ -1439,3 +1439,26 @@ test('Code snippet model keeps source inert and copyable, validates size and pre
  assert.equal(validatePublishDocument(legacy,pageId),null,'legacy Code does not get an implicit schema migration');
  assertValidEditorDocument(state.document);
 });
+
+test('Countdown rejects impossible authored calendar dates before UTC normalization',async()=>{
+ const {normalizeCountdownContent,defaultCountdownContent}=await import('../core/countdown-content.js');
+ const base=defaultCountdownContent();
+ for(const targetISO of ['2030-02-29T12:00:00Z','2030-02-30T12:00:00Z','2030-02-31T12:00:00+02:00','2030-04-31T12:00:00Z','2100-02-29T12:00:00Z','2030-12-31T24:00:00Z','2030-01-00T12:00:00Z','2030-13-01T12:00:00Z','2030-01-01T12:60:00Z','2030-01-01T12:00:60Z','2030-01-01T12:00:00+24:00','2030-01-01T12:00:00+01:60']){
+  assert.throws(()=>normalizeCountdownContent({...base,targetISO}),/Érvénytelen eseményidőpont/,targetISO);
+ }
+});
+test('Countdown preserves valid leap days, sub-second precision and offset boundary semantics',async()=>{
+ const {normalizeCountdownContent,defaultCountdownContent}=await import('../core/countdown-content.js');
+ for(const [targetISO,expected] of [
+  ['2000-02-29T12:00:00Z','2000-02-29T12:00:00.000Z'],
+  ['2032-02-29T00:30:42.123+01:00','2032-02-28T23:30:42.123Z'],
+  ['2030-01-01T00:30:00+02:00','2029-12-31T22:30:00.000Z'],
+  ['2030-12-31T23:30:00-02:30','2031-01-01T02:00:00.000Z'],
+  ['1999-12-31T23:30:00-01:00','2000-01-01T00:30:00.000Z'],
+  ['2101-01-01T00:30:00+01:00','2100-12-31T23:30:00.000Z'],
+  ['2030-12-31T20:30:00.007Z','2030-12-31T20:30:00.007Z']]){
+  const input=Object.freeze({...defaultCountdownContent(),targetISO});
+  assert.equal(normalizeCountdownContent(input).targetISO,expected);
+  assert.equal(input.targetISO,targetISO,'normalization cannot mutate the original draft');
+ }
+});
