@@ -38,6 +38,10 @@ test('structured Inspector editing survives Save, Publish and public interaction
  execute(model,{type:'element.update',payload:{nodeId:ids.link,patch:{states:{hover:{backgroundColor:'#123456',color:'#ffffff'},focus:{outlineColor:'#00ff00'}}}}});
  const img=activePage(model).nodes[ids.gallery];
  execute(model,{type:'element.update',payload:{nodeId:img.id,patch:{props:{...img.props,contentModel:{version:1,items:[{src:'/media/example.jpg',alt:'Próbakép',caption:'Tesztkép'},{src:'/media/second.jpg',alt:'Második kép',caption:'Második kép leírása'}]}}}}});
+ const carouselNode=activePage(model).nodes[ids.carousel];
+ execute(model,{type:'element.update',payload:{nodeId:carouselNode.id,patch:{props:{...carouselNode.props,contentModel:{...carouselNode.props.contentModel,items:carouselNode.props.contentModel.items.map((item,index)=>index===0?{...item,src:'/media/carousel.jpg',alt:'Kezdő dia'}:item)}}}}});
+ const expectedModels=Object.fromEntries(['list','table','tabs','accordion','gallery','carousel'].map(type=>[type,structuredClone(activePage(model).nodes[ids[type]].props.contentModel)]));
+ const initialModels=structuredClone(expectedModels);
  let draft=structuredClone(model.document),published=structuredClone(model.document),version=1;
  const posts=[];
  const rootDir=resolve(import.meta.dirname,'../../public');
@@ -111,11 +115,69 @@ test('structured Inspector editing survives Save, Publish and public interaction
  await first.locator('input').fill('Bemutatkozás');
  await first.locator('input').press('Tab');
  assert.equal(draft.pages[pageId].nodes[ids.tabs].props.contentModel.items[0].label,'Első fül','draft snapshot is unchanged before Save');
+ expectedModels.tabs.items[0].label='Bemutatkozás';
+ const structuredFields=[
+   ['list',0,'Szöveg',null,'.visual-structured-list li:first-child'],
+   ['table',0,'Oszlop 1',0,'.visual-structured-table th:first-child'],
+   ['table',1,'Oszlop 2',1,'.visual-structured-table td:nth-child(2)'],
+   ['tabs',0,'Fül neve','label','[role="tab"]:first-child'],
+   ['tabs',0,'Tartalom','content','[role="tabpanel"]:not([hidden])'],
+   ['accordion',0,'Cím','label','.visual-structured-accordion details:first-child summary'],
+   ['accordion',0,'Tartalom','content','.visual-structured-accordion details:first-child .visual-structured-panel'],
+   ['gallery',0,'Kép URL','src','.visual-gallery-thumb:first-child img','src'],
+   ['gallery',0,'Kép leírása (alt)','alt','.visual-gallery-thumb:first-child img','alt'],
+   ['gallery',0,'Képaláírás','caption','.visual-gallery-thumb:first-child span'],
+   ['carousel',0,'Cím','label','.visual-carousel-slide:first-child h3'],
+   ['carousel',0,'Tartalom','content','.visual-carousel-slide:first-child p'],
+   ['carousel',0,'Kép URL (opcionális)','src','.visual-carousel-slide:first-child img','src'],
+   ['carousel',0,'Kép leírása','alt','.visual-carousel-slide:first-child img','alt']
+ ];
+ for(const width of [390,1366]){
+  await editor.setViewportSize({width,height:900});
+  for(const [type,rowIndex,label,key,selector,attribute] of structuredFields){
+   await select(ids[type]);const panel=editor.locator('.structured-inspector'),row=panel.locator('.structured-item').nth(rowIndex),input=row.getByRole('textbox',{name:label,exact:true});
+   const before=await input.inputValue(),final=key==='src'?`/media/${type}-${width}.svg`:`Végleges ${type} ${String(key)} ${width} <img>`;
+   await exerciseComposition({page:editor,input,selector:`.node[data-node-id="${ids[type]}"] `+selector,attribute,before,final,posts,restart:true,attemptBlocked:async()=>{
+    const count=await panel.locator('.structured-item').count();
+    if(type==='table'){
+     const fields=await panel.locator('.structured-input').count();await panel.getByRole('button',{name:'＋ Oszlop',exact:true}).click();assert.equal(await panel.locator('.structured-input').count(),fields);
+     await panel.getByRole('button',{name:'− Utolsó oszlop',exact:true}).click();assert.equal(await panel.locator('.structured-input').count(),fields,'the composing column cannot be removed');
+     await panel.getByRole('button',{name:'＋ Sor',exact:true}).click();await panel.locator('.structured-item').nth(1).getByRole('button',{name:'Sor törlése',exact:true}).click();
+    }else{
+     await panel.getByRole('button',{name:'＋ Új elem',exact:true}).click();
+     const first=panel.locator('.structured-item').first();await first.getByRole('button',{name:'↓ Le',exact:true}).click();await first.getByRole('button',{name:'× Törlés',exact:true}).click();
+     if(type==='list'){const ordered=panel.getByRole('checkbox',{name:'Számozott lista'});await ordered.click();assert.equal(await ordered.isChecked(),false);}
+    }
+    assert.equal(await panel.locator('.structured-item').count(),count,'structural edits cannot discard a composing row');
+   },otherInput:type==='table'?row.getByRole('textbox',{name:label==='Oszlop 1'?'Oszlop 2':'Oszlop 1',exact:true}):['tabs','accordion','carousel'].includes(type)?row.getByRole('textbox',{name:label==='Tartalom'?(type==='tabs'?'Fül neve':'Cím'):'Tartalom',exact:true}):undefined}).catch(error=>{assert.equal(posts.length,0,'unfinished structured content composition cannot reach the Editor API');throw error;});
+   if(type==='table')expectedModels.table.rows[rowIndex][key]=final;
+   else if(type==='list')expectedModels.list.items[rowIndex]=final;
+   else expectedModels[type].items[rowIndex][key]=final;
+  }
+ }
+ // Structural operations must consume the freshly edited model, too.
+ for(const type of Object.keys(expectedModels)){
+  await select(ids[type]);const panel=editor.locator('.structured-inspector'),rows=panel.locator('.structured-item');
+  if(type==='table'){
+   await panel.getByRole('button',{name:'＋ Oszlop',exact:true}).click();await panel.getByRole('button',{name:'− Utolsó oszlop',exact:true}).click();
+   await panel.getByRole('button',{name:'＋ Sor',exact:true}).click();await rows.last().getByRole('button',{name:'Sor törlése',exact:true}).click();
+  }else{
+   await panel.getByRole('button',{name:'＋ Új elem',exact:true}).click();await rows.last().getByRole('button',{name:'× Törlés',exact:true}).click();
+   await rows.first().getByRole('button',{name:'↓ Le',exact:true}).click();await rows.nth(1).getByRole('button',{name:'↑ Fel',exact:true}).click();
+   if(type==='list'){const ordered=panel.getByRole('checkbox',{name:'Számozott lista'});await ordered.check();await ordered.uncheck();}
+  }
+ }
+ await select(ids.tabs);
+ const limited=editor.locator('.structured-item').first().getByRole('textbox',{name:'Fül neve',exact:true});
+ await limited.fill('x'.repeat(120));await limited.press('y');assert.equal(await limited.inputValue(),'x'.repeat(120),'native editing stops at the canonical boundary');
+ assert.equal(await editor.locator(`.node[data-node-id="${ids.tabs}"] [role="tab"]`).first().textContent(),'x'.repeat(120));
+ await editor.keyboard.press('Control+z');assert.equal(await limited.inputValue(),expectedModels.tabs.items[0].label);
  await editor.locator('#save').click();
  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
  assert.equal(posts.at(-1).publish,false);
  assert.equal(published.pages[pageId].nodes[ids.tabs].props.contentModel.items[0].label,'Első fül');
- assert.equal(draft.pages[pageId].nodes[ids.tabs].props.contentModel.items[0].label,'Bemutatkozás');
+ assert.equal(draft.pages[pageId].nodes[ids.tabs].props.contentModel.items[0].label,expectedModels.tabs.items[0].label);
+ for(const type of Object.keys(expectedModels)){assert.deepEqual(draft.pages[pageId].nodes[ids[type]].props.contentModel,expectedModels[type],'all fresh fields and untouched rows survive structural operations');assert.deepEqual(published.pages[pageId].nodes[ids[type]].props.contentModel,initialModels[type],'Save cannot alter any published structured model');}
  assert.equal(draft.pages[pageId].nodes[ids.badge].props.text,finalBadge);
  assert.equal(draft.pages[pageId].nodes[ids.quote].props.text,finalQuote);
  assert.equal(draft.pages[pageId].nodes[ids.quote].props.attribution,finalAttribution);
@@ -129,10 +191,19 @@ test('structured Inspector editing survives Save, Publish and public interaction
  for(const [type,label,value] of [['badge','Címke szövege',finalBadge],['quote','Idézet szövege',finalQuote],['quote','Forrás vagy szerző',finalAttribution],['icon','Ikon leírása',finalIcon]]){
   await select(ids[type]);assert.equal(await editor.locator('.basic-content-inspector').getByRole('textbox',{name:label,exact:true}).inputValue(),value);
  }
+ for(const [type,rowIndex,label,key] of structuredFields){
+  await select(ids[type]);const value=type==='table'?expectedModels.table.rows[rowIndex][key]:type==='list'?expectedModels.list.items[rowIndex]:expectedModels[type].items[rowIndex][key];
+  assert.equal(await editor.locator('.structured-item').nth(rowIndex).getByRole('textbox',{name:label,exact:true}).inputValue(),value,'saved structured fields survive editor reload');
+ }
  await editor.locator('#publish').click();
  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
  assert.equal(posts.at(-1).publish,true);
  await viewer.goto(base+'/p/test');
+ for(const [type,rowIndex,label,key,selector,attribute] of structuredFields){
+  const value=type==='table'?expectedModels.table.rows[rowIndex][key]:type==='list'?expectedModels.list.items[rowIndex]:expectedModels[type].items[rowIndex][key];
+  const target=viewer.locator(`.visual-editor-node[data-node-id="${ids[type]}"] `+selector);
+  assert.equal(attribute?await target.getAttribute(attribute):await target.textContent(),value,'published content equals the saved model');
+ }
  const quote=viewer.locator('blockquote[data-node-id="'+ids.quote+'"]');
  assert.match(await quote.textContent(),/Végleges idézet/);
  assert.equal(await quote.locator('cite').textContent(),finalAttribution);
@@ -154,7 +225,7 @@ test('structured Inspector editing survives Save, Publish and public interaction
  assert.equal(await newTabLink.evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(18, 52, 86)');
  const tabs=viewer.locator('.visual-editor-node[data-node-id="'+ids.tabs+'"]');
  await tabs.locator('[role=tab]').first().waitFor();
- assert.equal(await tabs.locator('[role=tab]').first().textContent(),'Bemutatkozás');
+ assert.equal(await tabs.locator('[role=tab]').first().textContent(),expectedModels.tabs.items[0].label);
  assert.equal(await tabs.locator('[role=tabpanel]:visible').count(),1);
  await tabs.locator('[role=tab]').first().focus();
  await viewer.keyboard.press('ArrowRight');
@@ -170,7 +241,7 @@ test('structured Inspector editing survives Save, Publish and public interaction
  await gallery.locator('.visual-gallery-next').click();
  assert.equal(await gallery.locator('dialog img').getAttribute('alt'),'Második kép');
  await viewer.keyboard.press('ArrowLeft');
- assert.equal(await gallery.locator('dialog img').getAttribute('alt'),'Próbakép');
+ assert.equal(await gallery.locator('dialog img').getAttribute('alt'),expectedModels.gallery.items[0].alt);
  await viewer.keyboard.press('Escape');
  assert.ok(!(await gallery.locator('dialog').evaluate(el=>el.open)));
  const carousel=viewer.locator('.visual-editor-node[data-node-id="'+ids.carousel+'"]');
@@ -216,5 +287,31 @@ test('structured Inspector editing survives Save, Publish and public interaction
   }return results;
  });
  for(const result of recovery)for(const key of ['rejected','escaped','fresh','unchanged','lockedSafe'])assert.equal(result[key],true,JSON.stringify(result));
+ const structuredRecovery=await editor.evaluate(async()=>{
+  const {renderStructuredInspector}=await import('/editor-v2/ui/structured-inspector.js');
+  const {createElementContent}=await import('/editor-v2/core/element-content.js');const results=[];
+  for(const type of ['list','table','tabs','accordion','gallery','carousel'])for(const mode of ['false','throw']){
+   const node={id:'structured-recovery',type,props:{contentModel:createElementContent(type),unknown:{keep:'same'}}};
+   const before=JSON.stringify(node.props);let allow=false,accepted,guard;
+   const root=renderStructuredInspector(node,next=>{if(!allow){if(mode==='throw')throw Error('Fixture rejection');return false;}accepted=structuredClone(next);return true;},{pending:fn=>{guard=fn;}});
+   document.querySelector('#inspectorBody').append(root);
+   const fields=root.querySelectorAll('.structured-input input,.structured-input textarea'),first=fields[0],second=fields[1],original=first.value;
+   first.focus();first.value='Elutasított';first.dispatchEvent(new InputEvent('input',{bubbles:true}));
+   const rejected=first.hasAttribute('aria-invalid')&&!guard()&&!accepted;
+   first.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));const escaped=first.value===original&&guard();
+   allow=true;const final=type==='gallery'?'/media/new.svg':'Új első érték';first.value=final;first.dispatchEvent(new Event('change',{bubbles:true}));
+   let fresh=true;
+   if(second){
+    second.focus();second.value='Új második érték';second.dispatchEvent(new InputEvent('input',{bubbles:true}));
+    const saved=type==='table'?accepted.rows[0][0]:type==='list'?accepted.items[0]:type==='gallery'?accepted.items[0].src:accepted.items[0].label;
+    fresh=saved===final&&guard();
+   }
+   const unchanged=JSON.stringify(node.props)===before;root.remove();
+   const locked=renderStructuredInspector({...node,locked:true},()=>{throw Error('Locked structured content changed');});document.querySelector('#inspectorBody').append(locked);
+   const lockedSafe=[...locked.querySelectorAll('input,textarea,button')].every(el=>el.disabled);locked.remove();
+   results.push({type,mode,rejected,escaped,fresh,unchanged,lockedSafe});
+  }return results;
+ });
+ for(const result of structuredRecovery)for(const key of ['rejected','escaped','fresh','unchanged','lockedSafe'])assert.equal(result[key],true,JSON.stringify(result));
  assert.deepEqual(errors,[]);
 });
