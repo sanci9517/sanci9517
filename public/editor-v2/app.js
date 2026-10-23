@@ -23,8 +23,8 @@ import {pasteRichTextDocument} from './core/richtext-paste.js';
 import {captureStyleSnapshot} from './core/style-snapshot.js';
 import {LAYOUT_PRESETS,LAYOUT_TYPES,layoutMode,isManagedLayout,isLayoutPropertyRelevant,explicitGridColumnCount} from './core/layout-presets.js';
 import {TYPOGRAPHY_PRESETS,typographyPresetPatch} from './core/typography-presets.js';
-import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent,safeMediaUrl} from './core/element-content.js';
-import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption,legacyMediaInspectorValues} from './core/legacy-media-source.js';
+import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent} from './core/element-content.js';
+import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption} from './core/legacy-media-source.js';
 import {renderStructuredInspector} from './ui/structured-inspector.js';
 import {ICON_CHOICES,iconById} from './core/icon-options.js';
 import {DIVIDER_LINE_STYLES,normalizeDividerStyle} from './core/decorative-elements.js';
@@ -34,6 +34,7 @@ import {renderCountdownInspector} from './ui/countdown-inspector.js';
 import {defaultSocialLinks,renderSocialLinksHtml} from './core/social-links.js';
 import {renderSocialLinksInspector} from './ui/social-links-inspector.js';
 import {defaultEmbedContent,renderEmbedHtml} from './core/creator-embed.js';
+import {renderLegacyMediaInspector} from './ui/legacy-media-inspector.js';
 import {renderCardInspector} from './ui/card-content-inspector.js';
 import {renderEmbedInspector} from './ui/creator-embed-inspector.js';
 import {defaultCodeSnippet,renderCodeSnippet,activateCodeBlocks} from './core/code-snippet.js';
@@ -44,7 +45,7 @@ import {STATE_PROPERTY_IDS,applyStateStyles} from './core/state-styles.js';
 import {defaultTokens,applyTokenVariables} from './core/design-tokens.js';
 import {CONTENT_TYPES,STRUCTURAL_TYPES,validatePageForPublication,isAuthoredContent,authoredNodeHtml,contentAttributes,initContentInteractions,contentTag} from './core/authored-content.js';
 import {captureCanvasInteractionState,restoreCanvasInteractionState} from './core/canvas-interaction-state.js';
-import {renderElementContentControls,pageLinkPicker,mediaAssetPicker} from './ui/element-content-controls.js';
+import {renderElementContentControls,pageLinkPicker} from './ui/element-content-controls.js';
 
 let editorTokens=defaultTokens();
 function propertyInput(...args){return renderPropertyInput(...args,{tokens:editorTokens})}
@@ -942,100 +943,11 @@ function renderExistingContentInspector(node){
   };
   const update=(key,value)=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),[key]:value}}});
   if(!isAuthoredContent(node)&&['image','video','audio'].includes(node.type)){
-    const section=document.createElement('section');section.className='legacy-media-inspector';
-    const mediaLabel={image:'Kép',video:'Videó',audio:'Hang'}[node.type];
-    const values=legacyMediaInspectorValues(node.props);
-    section.append(field(mediaLabel+' URL',values.src,value=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),src:value.trim(),...(['image','video','audio'].includes(node.type)?{assetId:''}:{})}}})));
-    if(node.type==='image'){
-      section.append(mediaAssetPicker(values.assetId,(id,asset)=>{
-        const alt=typeof asset?.altText==='string'?asset.altText.trim().slice(0,250):'';
-        const next={...(node.props||{}),assetId:id,...(!id?{src:''}:alt&&!values.alt.trim()?{alt}:{})};
-        return command('element.update',{nodeId:node.id,patch:{props:next}});
-      },{disabled:Boolean(node.locked)}));
-      section.append(field('Kép leírása (alt)',values.alt,value=>update('alt',value)));
-      section.append(field('Képaláírás (opcionális)',legacyImageCaption(node.props),value=>update('caption',value)));
-      const objectFit=document.createElement('select');objectFit.setAttribute('aria-label','Kép illesztése');
-      for(const [value,label] of [['cover','Kitöltés (vágással)'],['contain','Teljes kép (vágás nélkül)'],['fill','Nyújtás'],['none','Eredeti méret'],['scale-down','Csak kicsinyítés']]){
-        const option=document.createElement('option');option.value=value;option.textContent=label;objectFit.append(option)
-      }
-      const appearance=legacyImagePresentation(node.props);
-      objectFit.value=appearance.fit;
-      objectFit.onchange=()=>update('objectFit',objectFit.value);section.append(objectFit);
-      const ratio=document.createElement('select');ratio.setAttribute('aria-label','Képarány');
-      for(const [value,label] of [['auto','Eredeti'],['16 / 9','16:9 – széles'],['4 / 3','4:3'],['1 / 1','1:1 – négyzet'],['3 / 4','3:4 – álló']]){
-        const option=document.createElement('option');option.value=value;option.textContent=label;ratio.append(option);
-      }
-      ratio.value=appearance.ratio;ratio.onchange=()=>update('ratio',ratio.value);section.append(ratio);
-      for(const [key,label,value] of [['focalX','Kivágás vízszintesen',appearance.focalX],['focalY','Kivágás függőlegesen',appearance.focalY]]){
-        const row=document.createElement('label');row.className='inspector-image-focal';
-        const title=document.createElement('span');title.textContent=label;
-        const range=document.createElement('input');range.type='range';range.min='0';range.max='100';range.step='1';
-        range.value=String(value);range.setAttribute('aria-label',label);range.disabled=Boolean(node.locked);
-        const output=document.createElement('output');output.textContent=range.value+'%';
-        range.oninput=()=>{output.textContent=range.value+'%'};
-        range.onchange=()=>update(key,Number(range.value));
-        row.append(title,range,output);section.append(row);
-      }
-      const loading=document.createElement('select');loading.setAttribute('aria-label','Kép betöltése');
-      for(const [value,label] of [['lazy','Késleltetett betöltés'],['eager','Azonnali betöltés']]){
-        const option=document.createElement('option');option.value=value;option.textContent=label;loading.append(option);
-      }
-      loading.value=appearance.loading;loading.onchange=()=>update('loading',loading.value);section.append(loading);
-      const decoration=document.createElement('label');decoration.className='inspector-toggle';
-      const decorative=document.createElement('input');decorative.type='checkbox';
-      decorative.setAttribute('aria-label','Csak díszítő kép');decorative.checked=appearance.decorative;decorative.disabled=Boolean(node.locked);
-      decorative.onchange=()=>update('decorative',decorative.checked);
-      decoration.append(decorative,document.createTextNode('Csak díszítő kép (üres alt szöveg)'));section.append(decoration);
-    }else{
-      const isVideo=node.type==='video';
-      const playableMimes=isVideo?['video/webm']:['audio/mpeg','audio/ogg','audio/wav'];
-      section.append(mediaAssetPicker(values.assetId,id=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),assetId:id,...(id?{src:''}:{})}}}),{disabled:Boolean(node.locked),mimes:playableMimes}));
-      const toggles=[
-        ['controls','Lejátszóvezérlők megjelenítése',node.props?.controls!==false],
-        ['loop','Folyamatos ismétlés',node.props?.loop===true],
-        ...(isVideo?[
-          ['muted','Videó némítása',node.props?.muted===true],
-          ['autoplay','Automatikus videóindítás (csak némítva)',node.props?.autoplay===true]
-        ]:[])
-      ];
-      for(const [key,labelText,checked] of toggles){
-        const row=document.createElement('label');row.className='inspector-toggle';
-        const input=document.createElement('input');input.type='checkbox';
-        input.checked=checked;input.disabled=Boolean(node.locked);
-        input.setAttribute('aria-label',labelText);
-        input.onchange=()=>update(key,input.checked);
-        row.append(input,document.createTextNode(labelText));section.append(row);
-      }
-      if(isVideo){
-        section.append(field('Videó borítókép URL',values.poster,value=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),poster:value.trim(),posterAssetId:''}}})));
-        section.append(mediaAssetPicker(values.posterAssetId,id=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),posterAssetId:id,...(!id?{poster:''}:{})}}}),{disabled:Boolean(node.locked)}));
-        const poster=values.poster.trim();
-        if(poster&&!safeMediaUrl(poster)&&!node.props?.posterAssetId){
-          const warning=document.createElement('p');warning.className='property-validation';warning.setAttribute('role','status');
-          warning.textContent='Érvénytelen borítókép URL. Használj biztonságos HTTPS vagy belső képútvonalat.';
-          section.append(warning);
-        }
-        const notice=document.createElement('small');notice.className='content-field-help';
-        notice.textContent='A videó a szerkesztőben nem indul automatikusan. Publikálva az automatikus indítás csak némított videónál aktív.';
-        section.append(notice);
-      }
-    }
-    const usedFields=['src','assetId',...(node.type==='image'?['alt']:node.type==='video'?['poster','posterAssetId']:[])];
-    if(values.invalidFields.some(key=>usedFields.includes(key))){
-      const warning=document.createElement('p');warning.className='property-validation legacy-media-type-warning';warning.setAttribute('role','status');
-      warning.textContent='Sérült médiaadat található az elemben. A hibás mező üresen jelenik meg; válassz fájlt vagy adj meg új értéket a javításhoz. A megnyitás nem módosítja a mentett adatot.';
-      section.append(warning);
-    }
-    const help=document.createElement('p');help.className='content-field-help';
-    help.textContent='HTTPS/HTTP hivatkozás vagy / jellel kezdődő webhelyútvonal használható. A szerkesztő és a publikus oldal ugyanúgy ellenőrzi.';
-    section.append(help);
-    const source=values.src.trim();
-    if(source&&!safeMediaUrl(source)){
-      const warning=document.createElement('p');warning.className='property-validation';warning.setAttribute('role','status');
-      warning.textContent='Ez a média-URL nem biztonságos vagy nem támogatott; a publikus oldalon sem töltődik be.';
-      section.append(warning);
-    }
-    inspector.append(section);return true;
+    inspector.append(renderLegacyMediaInspector(node,(props,{render:fullRender=true,typingGroup}={})=>{
+      const saved=command('element.update',{nodeId:node.id,patch:{props}},{render:fullRender,typingGroup});
+      if(saved&&!fullRender){renderCanvas();setStatus('Nem mentett módosítás');syncPublishControls();}
+      return saved;
+    },{pending:flush=>{flushRichTextDraft=flush}}));return true;
   }
   if(!isAuthoredContent(node)&&node.metadata?.basicContentVersion===1&&['badge','quote','icon'].includes(node.type)){
     const section=document.createElement('section');section.className='basic-content-inspector';
