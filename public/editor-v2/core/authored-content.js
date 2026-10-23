@@ -21,12 +21,19 @@ export const CONTENT_FIELDS=Object.freeze({
   code:[field('code','Megjelenített kód','textarea',{max:20000}),field('wrap','Hosszú sorok tördelése','boolean')],tooltip:[field('text','Gomb felirata'),field('description','Magyarázat','textarea',{max:2000})],divider:[],spacer:[]
 });
 export const CONTENT_TYPES=Object.freeze(Object.keys(CONTENT_FIELDS));
+const FOCAL_PRESETS=Object.freeze({center:[50,50],top:[50,0],bottom:[50,100],left:[0,50],right:[100,50]});
+// Resolve a view without adding numeric axes to a persisted legacy image.
+export function imageFocalPosition(item={}){
+  const preset=typeof item.focalPoint==='string'&&Object.hasOwn(FOCAL_PRESETS,item.focalPoint)?FOCAL_PRESETS[item.focalPoint]:FOCAL_PRESETS.center;
+  const axis=(value,fallback)=>Number.isFinite(Number(value))?Math.max(0,Math.min(100,Number(value))):fallback;
+  return {focalX:axis(item.focalX,preset[0]),focalY:axis(item.focalY,preset[1])};
+}
 export function contentProperties(node){
   const defaults={level:'2',columns:'3',controls:true,target:'_self',fit:'cover',ratio:'auto',focalPoint:'center',loading:'lazy',icon:'star'};
   const props={...Object.fromEntries((CONTENT_FIELDS[node.type]||[]).filter(field=>Object.hasOwn(defaults,field.key)).map(field=>[field.key,defaults[field.key]])),...node.props};
   if(['image','gallery','carousel'].includes(node.type)){
-    const legacy={center:[50,50],top:[50,0],bottom:[50,100],left:[0,50],right:[100,50]}[props.focalPoint]||[50,50];
-    props.focalX??=legacy[0];props.focalY??=legacy[1];
+    const legacy=imageFocalPosition({focalPoint:props.focalPoint});
+    props.focalX??=legacy.focalX;props.focalY??=legacy.focalY;
   }
   return props;
 }
@@ -146,7 +153,7 @@ export function contentAttributes(node){
 export function authoredNodeHtml(node,{childrenHtml='',device='desktop',editor=false}={}){
   const p=contentProperties(node),text=esc(p.text??p.content??node.name??''),id='creator-'+String(node.id).replace(/[^\w-]/g,'-');
   const imageSource=item=>typeof item.assetId==='string'&&/^[0-9a-f-]{36}$/i.test(item.assetId)?`/${editor?'api/admin/media?id=':'media/'}${encodeURIComponent(item.assetId)}`:safeSrc(item.src);
-  const image=item=>{const src=imageSource(item),legacy={center:[50,50],top:[50,0],bottom:[50,100],left:[0,50],right:[100,50]}[item.focalPoint]||[50,50],x=Number.isFinite(Number(item.focalX))?Math.max(0,Math.min(100,Number(item.focalX))):legacy[0],y=Number.isFinite(Number(item.focalY))?Math.max(0,Math.min(100,Number(item.focalY))):legacy[1];return src?`<img src="${esc(src)}" alt="${esc(item.decorative?'':item.alt||'')}" loading="${item.loading==='eager'?'eager':'lazy'}" decoding="async" style="object-fit:${['cover','contain','fill','none','scale-down'].includes(item.fit)?item.fit:'cover'};object-position:${x}% ${y}%">`:`<span class="creator-media-empty">${editor?'Válassz képet a Médiatárból vagy adj meg képcímet.':'A kép nem érhető el.'}</span>`};
+  const image=item=>{const src=imageSource(item),{focalX:x,focalY:y}=imageFocalPosition(item);return src?`<img src="${esc(src)}" alt="${esc(item.decorative?'':item.alt||'')}" loading="${item.loading==='eager'?'eager':'lazy'}" decoding="async" style="object-fit:${['cover','contain','fill','none','scale-down'].includes(item.fit)?item.fit:'cover'};object-position:${x}% ${y}%">`:`<span class="creator-media-empty">${editor?'Válassz képet a Médiatárból vagy adj meg képcímet.':'A kép nem érhető el.'}</span>`};
   const items=Array.isArray(p.items)?p.items.slice(0,40):[];
   const carouselName=String(p.ariaLabel??'').trim().slice(0,160)||'Képgaléria';
   const galleryName=String(p.ariaLabel??'').trim().slice(0,160)||'Képek';

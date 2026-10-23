@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {createDocument} from '../core/schema.js';
 import {createEditorState,activePage} from '../core/state.js';
 import {execute} from '../core/commands.js';
-import {authoredNodeHtml,contentAttributes,contentTag,normalizeElementContent,validateElementContent,validatePageForPublication,contentProperties} from '../core/authored-content.js';
+import {authoredNodeHtml,contentAttributes,contentTag,normalizeElementContent,validateElementContent,validatePageForPublication,contentProperties,imageFocalPosition} from '../core/authored-content.js';
 import {opaqueContrast} from '../core/accessibility.js';
 import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption} from '../core/legacy-media-source.js';
 
@@ -57,6 +57,28 @@ test('legacy accessibility attributes have one canonical Canvas/Public interpret
   assert.equal(contentAttributes({...base,accessibility:{id:'current-anchor',anchorId:'not valid',label:'Inspector név'}}).id,'current-anchor');
   assert.equal(contentAttributes({...base,type:'image',props:{},accessibility:{ariaLabel:'Legacy media label'}})['aria-label'],undefined,
     'old public renderer deliberately excluded legacy media labels');
+});
+
+test('gallery crop views preserve legacy presets and partial axes without materializing saved defaults',()=>{
+ const presets={center:[50,50],top:[50,0],bottom:[50,100],left:[0,50],right:[100,50]};
+ for(const [focalPoint,[focalX,focalY]] of Object.entries(presets)){
+  const item=Object.freeze({src:'/image.jpg',alt:'Régi kép',focalPoint});
+  const before=structuredClone(item);
+  assert.deepEqual(imageFocalPosition(item),{focalX,focalY});
+  for(const type of ['gallery','carousel']){
+   const node={id:'legacy-crop',type,metadata:{contentVersion:1},props:{items:Object.freeze([item])}};
+   assert.match(authoredNodeHtml(node),new RegExp(`object-position:${focalX}% ${focalY}%`));
+   const changed=normalizeElementContent(node,{items:[{...item,caption:'Új felirat'}]});
+   assert.equal(Object.hasOwn(changed.items[0],'focalX'),false);
+   assert.equal(Object.hasOwn(changed.items[0],'focalY'),false);
+  }
+  assert.deepEqual(item,before);
+ }
+ assert.deepEqual(imageFocalPosition({focalPoint:'top',focalX:24}),{focalX:24,focalY:0});
+ assert.deepEqual(imageFocalPosition({focalPoint:'right',focalY:68}),{focalX:100,focalY:68});
+ assert.deepEqual(imageFocalPosition({focalPoint:'top',focalX:-5,focalY:120}),{focalX:0,focalY:100});
+ assert.deepEqual(imageFocalPosition({focalPoint:'right',focalX:'invalid'}),{focalX:100,focalY:50});
+ for(const focalPoint of ['constructor','__proto__','unknown',null])assert.deepEqual(imageFocalPosition({focalPoint}),{focalX:50,focalY:50});
 });
 
 test('image focal position supports precise two-axis crops while preserving legacy presets',()=>{

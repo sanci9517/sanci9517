@@ -1,4 +1,4 @@
-import {CONTENT_FIELDS,normalizeContentField,contentProperties} from '../core/authored-content.js';
+import {CONTENT_FIELDS,normalizeContentField,contentProperties,imageFocalPosition} from '../core/authored-content.js';
 
 export function pageLinkPicker(pages,input){
   const select=document.createElement('select');select.className='content-page-picker';select.setAttribute('aria-label','Belső oldal kiválasztása');
@@ -183,8 +183,9 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
       const summary=document.createElement('summary');summary.textContent=definition.label;section.append(summary);
       const items=Array.isArray(node.props?.[definition.key])?node.props[definition.key]:[];
       items.forEach((item,index)=>{
+        const crop=['gallery','carousel'].includes(node.type)?imageFocalPosition(item):{};
         const card=document.createElement('fieldset');const legend=document.createElement('legend');legend.textContent=`${index+1}. elem`;card.append(legend);
-        for(const child of definition.itemFields)card.append(control(child,item[child.key],(value,group)=>{const next=structuredClone(node.props?.[definition.key]||items);next[index][child.key]=value;save(next,group)},child.key==='assetId'?(id,asset)=>{const next=structuredClone(node.props?.[definition.key]||items);next[index].assetId=id;const alt=selectedAlt(asset);if(alt&&!String(next[index].alt||'').trim())next[index].alt=alt;save(next)}:undefined));
+        for(const child of definition.itemFields)card.append(control(child,Object.hasOwn(crop,child.key)?crop[child.key]:item[child.key],(value,group)=>{const next=structuredClone(node.props?.[definition.key]||items);next[index][child.key]=value;save(next,group)},child.key==='assetId'?(id,asset)=>{const next=structuredClone(node.props?.[definition.key]||items);next[index].assetId=id;const alt=selectedAlt(asset);if(alt&&!String(next[index].alt||'').trim())next[index].alt=alt;save(next)}:undefined));
         const actions=document.createElement('div');actions.className='content-repeater-actions';
         for(const [label,offset] of [['Fel',-1],['Le',1],['Eltávolítás',0]]){
           const button=document.createElement('button');button.type='button';button.textContent=label;button.setAttribute('aria-label',`${index+1}. elem: ${label}`);button.disabled=Boolean(node.locked)||(offset<0&&index===0)||(offset>0&&index===items.length-1);
