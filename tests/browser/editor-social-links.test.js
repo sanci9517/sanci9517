@@ -9,7 +9,7 @@ import {createDocument} from '../../public/editor-v2/core/schema.js';
 import {createEditorState,activePage} from '../../public/editor-v2/core/state.js';
 import {execute} from '../../public/editor-v2/core/commands.js';
 
-test('Social Links Inspector edits, reorders and publishes safe responsive navigation only on Publish',async t=>{
+for(const width of [390,1366])test(`Social Links Inspector keeps keyboard focus and publishes safe responsive navigation at ${width}px`,async t=>{
  const model=createEditorState(createDocument()),pageId=model.document.activePageId,root=activePage(model).rootId;
  execute(model,{type:'element.add',payload:{type:'social',parentId:root}});
  const socialId=model.selection.primaryId;
@@ -39,7 +39,7 @@ test('Social Links Inspector edits, reorders and publishes safe responsive navig
  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
  t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
  const base='http://127.0.0.1:'+server.address().port;
- const editor=await browser.newPage({viewport:{width:1366,height:900}}),viewer=await browser.newPage({viewport:{width:1366,height:900}});
+ const editor=await browser.newPage({viewport:{width,height:900}}),viewer=await browser.newPage({viewport:{width,height:900}});
  editor.setDefaultTimeout(7000);viewer.setDefaultTimeout(7000);
  const errors=[];editor.on('pageerror',e=>errors.push('editor:'+e.message));viewer.on('pageerror',e=>errors.push('public:'+e.message));
  await editor.goto(base+'/editor-v2/index.html');await viewer.goto(base+'/p/test');
@@ -50,7 +50,12 @@ test('Social Links Inspector edits, reorders and publishes safe responsive navig
  const panel=editor.locator('.social-links-inspector');
  await panel.locator('h3').waitFor();
  assert.equal(await panel.locator('h3').textContent(),'Közösségi hivatkozások');
- const add=async()=>panel.getByRole('button',{name:'＋ Új közösségi link'}).click();
+ const expectFocus=async locator=>{
+  await locator.waitFor();await editor.evaluate(()=>new Promise(resolve=>requestAnimationFrame(resolve)));
+  assert.equal(await locator.evaluate(el=>el===document.activeElement),true,'structural action restores focus inside its current Inspector');
+ };
+ const keyboard=async button=>{await button.focus();await button.press('Enter');};
+ const add=async()=>keyboard(panel.getByRole('button',{name:'＋ Új közösségi link'}));
  const item=index=>panel.locator('.social-link-item').nth(index);
  const change=async(index,name,value)=>{
   const input=item(index).getByRole('textbox',{name});
@@ -58,9 +63,11 @@ test('Social Links Inspector edits, reorders and publishes safe responsive navig
  };
  await add();
  assert.equal(await panel.locator('.social-link-item').count(),1);
+ await expectFocus(item(0).getByRole('textbox',{name:'Felirat'}));
  await change(0,'Felirat','Twitch <img src=x onerror=alert(1)>');
  await change(0,'Hivatkozás URL','https://www.twitch.tv/example');
  await add();
+ await expectFocus(item(1).getByRole('textbox',{name:'Felirat'}));
  await item(1).getByRole('combobox',{name:'Platform'}).selectOption('discord');
  await change(1,'Felirat','Discord közösség');
  await change(1,'Hivatkozás URL','https://discord.gg/example');
@@ -68,14 +75,15 @@ test('Social Links Inspector edits, reorders and publishes safe responsive navig
  await panel.getByRole('combobox',{name:'Megjelenés'}).selectOption('cards');
  await panel.getByRole('combobox',{name:'Elrendezés'}).selectOption('grid');
  await panel.getByRole('checkbox',{name:'Ikonok megjelenítése'}).uncheck();
- await item(1).getByRole('button',{name:'↑ Fel'}).click();
+ await keyboard(item(1).getByRole('button',{name:'↑ Fel'}));
+ await expectFocus(item(0).getByRole('button',{name:'↓ Le'}));
  assert.equal(await item(0).getByRole('textbox',{name:'Felirat'}).inputValue(),'Discord közösség');
  assert.equal(await panel.locator('.social-link-item').count(),2);
  assert.equal(await editorNode.locator('.visual-social-link').count(),2);
  assert.equal(posts.length,0,'editing must not save or publish');
- await editor.locator('#undo').click();
+ await editor.keyboard.press('Control+z');
  assert.match(await item(0).getByRole('textbox',{name:'Felirat'}).inputValue(),/Twitch/);
- await editor.locator('#redo').click();
+ await editor.keyboard.press('Control+Shift+z');
  assert.equal(await item(0).getByRole('textbox',{name:'Felirat'}).inputValue(),'Discord közösség');
  await editor.locator('#save').click();
  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
@@ -105,5 +113,53 @@ test('Social Links Inspector edits, reorders and publishes safe responsive navig
  await viewer.setViewportSize({width:390,height:800});await viewer.reload();
  assert.ok((await nav.locator('a').first().boundingBox()).height>=44,'touch target');
  assert.ok(await viewer.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth+2),'no page-wide mobile overflow');
+ // Exercise both reorder boundaries and all deletion fallbacks without a save.
+ const writes=posts.length;await add();await expectFocus(item(2).getByRole('textbox',{name:'Felirat'}));
+ const movedId=await item(2).getAttribute('data-social-entry-id');
+ await keyboard(item(2).getByRole('button',{name:'↑ Fel'}));await expectFocus(item(1).getByRole('button',{name:'↑ Fel'}));
+ await keyboard(item(1).getByRole('button',{name:'↑ Fel'}));await expectFocus(item(0).getByRole('button',{name:'↓ Le'}));
+ assert.equal(await item(0).getAttribute('data-social-entry-id'),movedId);
+ await keyboard(item(0).getByRole('button',{name:'↓ Le'}));await expectFocus(item(1).getByRole('button',{name:'↓ Le'}));
+ await keyboard(item(1).getByRole('button',{name:'↓ Le'}));await expectFocus(item(2).getByRole('button',{name:'↑ Fel'}));
+ assert.equal(await item(2).getAttribute('data-social-entry-id'),movedId);
+ const nextId=await item(2).getAttribute('data-social-entry-id');
+ await keyboard(item(1).getByRole('button',{name:'× Törlés'}));await expectFocus(item(1).getByRole('textbox',{name:'Felirat'}));
+ assert.equal(await item(1).getAttribute('data-social-entry-id'),nextId,'middle-row deletion focuses its surviving successor');
+ await keyboard(item(1).getByRole('button',{name:'× Törlés'}));await expectFocus(item(0).getByRole('textbox',{name:'Felirat'}));
+ await keyboard(item(0).getByRole('button',{name:'× Törlés'}));await expectFocus(panel.getByRole('button',{name:'＋ Új közösségi link'}));
+ assert.equal(await panel.locator('.social-link-item').count(),0);assert.equal(posts.length,writes);
+ await viewer.reload();assert.equal(await nav.locator('a').count(),2,'keyboard structural edits remain draft-only');
+ const focusGuards=await editor.evaluate(async()=>{
+  const {renderSocialLinksInspector}=await import('/editor-v2/ui/social-links-inspector.js');
+  const {defaultSocialLinks,defaultSocialEntry}=await import('/editor-v2/core/social-links.js');
+  const host=document.createElement('div');document.querySelector('#inspectorBody').append(host);
+  const outside=document.createElement('button');outside.textContent='Másik vezérlő';document.body.append(outside);
+  const frame=()=>new Promise(resolve=>requestAnimationFrame(resolve));
+  const make=(id,items=[],locked=false)=>({id,locked,props:{socialLinks:{...defaultSocialLinks(),items}}});
+  const find=kind=>host.querySelector(`[data-social-action="${kind}"]`);
+  let calls=0,root;
+  const rejected=make('social-rejected');
+  root=renderSocialLinksInspector(rejected,()=>{calls++;return false;});host.replaceChildren(root);
+  find('add').focus();find('add').click();await frame();
+  const rejection=calls===1&&host.querySelectorAll('.social-link-item').length===0&&document.activeElement===find('add');
+  const initial=make('social-focus-guard');
+  root=renderSocialLinksInspector(initial,next=>{host.replaceChildren(renderSocialLinksInspector({...initial,props:{socialLinks:next}},()=>true));return true;});
+  host.replaceChildren(root);find('add').focus();find('add').click();outside.focus();await frame();
+  const newerFocus=document.activeElement===outside;
+  root=renderSocialLinksInspector(initial,next=>{
+   host.replaceChildren(renderSocialLinksInspector({...initial,props:{socialLinks:next}},()=>true));return true;
+  });host.replaceChildren(root);find('add').focus();find('add').click();
+  host.replaceChildren(renderSocialLinksInspector(make('different-selected-node'),()=>true));await frame();
+  const differentNode=document.activeElement===document.body;
+  calls=0;const locked=make('social-locked',[defaultSocialEntry('twitch','one')],true);
+  host.replaceChildren(renderSocialLinksInspector(locked,()=>{calls++;return true;}));
+  for(const button of host.querySelectorAll('button'))button.click();
+  const lockedSafe=calls===0&&[...host.querySelectorAll('input,select,button')].every(el=>el.disabled);
+  const entries=Array.from({length:12},(_,index)=>defaultSocialEntry('twitch','entry'+index));
+  host.replaceChildren(renderSocialLinksInspector(make('social-limit',entries),()=>{calls++;return true;}));
+  find('add').click();const limitSafe=calls===0&&find('add').disabled;
+  host.remove();outside.remove();return {rejection,newerFocus,differentNode,lockedSafe,limitSafe};
+ });
+ assert.deepEqual(focusGuards,{rejection:true,newerFocus:true,differentNode:true,lockedSafe:true,limitSafe:true});
  assert.deepEqual(errors,[]);
 });

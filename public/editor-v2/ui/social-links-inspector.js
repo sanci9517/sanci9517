@@ -4,14 +4,33 @@ import {SOCIAL_PLATFORMS,SOCIAL_VARIANTS,SOCIAL_LAYOUTS,defaultSocialLinks,defau
 export function renderSocialLinksInspector(node,update){
  const saved=node.props?.socialLinks;
  const model={...defaultSocialLinks(),...(saved&&typeof saved==='object'?saved:{}),items:Array.isArray(saved?.items)?saved.items:[]};
- const section=document.createElement('section');section.className='social-links-inspector';
+ const section=document.createElement('section');section.className='social-links-inspector';section.dataset.nodeId=node.id;
  const heading=document.createElement('h3');heading.textContent='Közösségi hivatkozások';section.append(heading);
  const intro=document.createElement('p');intro.className='structured-inspector-help';
  intro.textContent='Twitch, YouTube, TikTok, Discord és további elérhetőségek egyedi feliratokkal. A mentés nem publikál automatikusan.';section.append(intro);
  const save=next=>update({...next,version:1});
- const action=(name,handler,disabled=false)=>{
+ const saveItems=(items,restoreFocus,{entryId,preferredAction}={})=>{
+  const result=save({...model,items});
+  if(!restoreFocus||result===false)return;
+  requestAnimationFrame(()=>{
+   // A command replaces the Inspector. Restore keyboard focus only if the
+   // removed button owned it, and no newer interaction has placed it elsewhere.
+   if(document.activeElement!==document.body)return;
+   const current=[...document.querySelectorAll('#inspectorBody .social-links-inspector')]
+    .find(section=>section.dataset.nodeId===node.id);
+   if(!current)return;
+   const row=[...current.querySelectorAll('.social-link-item')].find(row=>row.dataset.socialEntryId===entryId);
+   const buttons=[...(row?.querySelectorAll('.social-link-actions button:not(:disabled)')||[])];
+   const preferred=buttons.find(button=>button.dataset.socialAction===preferredAction);
+   const target=(preferredAction?(preferred||buttons[0]):row?.querySelector('input:not(:disabled)'))
+    ||current.querySelector('[data-social-action="add"]:not(:disabled)');
+   if(target?.getClientRects().length)target.focus({preventScroll:false});
+  });
+ };
+ const action=(name,handler,disabled=false,kind='')=>{
   const button=document.createElement('button');button.type='button';button.className='structured-action';button.textContent=name;
-  button.disabled=Boolean(node.locked||disabled);button.onclick=handler;return button;
+  if(kind)button.dataset.socialAction=kind;
+  button.disabled=Boolean(node.locked||disabled);button.onclick=()=>handler(document.activeElement===button);return button;
  };
  const select=(label,choices,value,handler)=>{
   const wrap=document.createElement('label');wrap.className='field social-link-field';wrap.append(document.createTextNode(label));
@@ -37,10 +56,10 @@ export function renderSocialLinksInspector(node,update){
  );
  const items=model.items;
  const actions=document.createElement('div');actions.className='structured-actions';
- actions.append(action('＋ Új közösségi link',()=>{
+ actions.append(action('＋ Új közösségi link',restoreFocus=>{
   const entry=defaultSocialEntry('twitch','s'+crypto.randomUUID().replace(/-/g,''));
-  save({...model,items:[...items,entry]});
- },items.length>=12));
+  saveItems([...items,entry],restoreFocus,{entryId:entry.id});
+ },items.length>=12,'add'));
  section.append(actions);
  if(!items.length){
   const empty=document.createElement('p');empty.className='structured-inspector-help';
@@ -58,11 +77,11 @@ export function renderSocialLinksInspector(node,update){
   item.append(text('Felirat',entry.label,value=>change({label:value}),'Pl. Nézz meg Twitch-en'));
   item.append(text('Hivatkozás URL',entry.href,value=>change({href:value.trim()}),entry.platform==='email'?'mailto:nev@example.com':'https://...'));
   item.append(toggle('Megnyitás új lapon',entry.newWindow,value=>change({newWindow:value})));
-  const reorder=document.createElement('div');reorder.className='structured-actions';
+  const reorder=document.createElement('div');reorder.className='structured-actions social-link-actions';
   reorder.append(
-   action('↑ Fel',()=>{const next=[...items];[next[index-1],next[index]]=[next[index],next[index-1]];save({...model,items:next})},index===0),
-   action('↓ Le',()=>{const next=[...items];[next[index+1],next[index]]=[next[index],next[index+1]];save({...model,items:next})},index===items.length-1),
-   action('× Törlés',()=>save({...model,items:items.filter((_,i)=>i!==index)}))
+   action('↑ Fel',restoreFocus=>{const next=[...items];[next[index-1],next[index]]=[next[index],next[index-1]];saveItems(next,restoreFocus,{entryId:entry.id,preferredAction:'up'})},index===0,'up'),
+   action('↓ Le',restoreFocus=>{const next=[...items];[next[index+1],next[index]]=[next[index],next[index+1]];saveItems(next,restoreFocus,{entryId:entry.id,preferredAction:'down'})},index===items.length-1,'down'),
+   action('× Törlés',restoreFocus=>{const next=items.filter((_,i)=>i!==index);saveItems(next,restoreFocus,{entryId:next[Math.min(index,next.length-1)]?.id})},false,'remove')
   );
   item.append(reorder);section.append(item);
  });
