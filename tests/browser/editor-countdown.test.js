@@ -1,3 +1,4 @@
+import {exerciseComposition} from './helpers/composition.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {createServer} from 'node:http';
@@ -62,11 +63,27 @@ for(const [width,timezoneId,gap,overlapISO,overlapLocal] of [[390,'Europe/Budape
  },eventISO);
  await field.locator('input[type="datetime-local"]').fill(localDate);
  await field.locator('input[type="datetime-local"]').press('Tab');
+ const mirror=`.node[data-node-id="${id}"]`;
+ await exerciseComposition({page:editor,input:field.getByRole('textbox',{name:'Esemény neve'}),selector:mirror+' .visual-countdown-heading',before:'Élő premier <script>alert(1)</script>',final:'Végleges premier',posts,otherInput:field.locator('input[type="datetime-local"]'),restart:true}).catch(error=>{assert.equal(posts.length,0,'unfinished Countdown composition cannot reach the Editor API');throw error;});
+ await setText('Esemény neve','Élő premier <script>alert(1)</script>');
+ await exerciseComposition({page:editor,input:field.getByRole('textbox',{name:'Lejáratkor megjelenő üzenet'}),selector:mirror+' .visual-countdown-content',attribute:'data-countdown-finish',before:'Már élőben!',final:'Végleges lejárati üzenet',posts,restart:true,otherInput:field.getByRole('textbox',{name:'Esemény neve'}),attemptBlocked:async()=>{
+  await field.locator('input[type="checkbox"]').click();assert.equal(await field.locator('input[type="checkbox"]').isChecked(),true,'blocked toggle restores its view');
+  const date=field.locator('input[type="datetime-local"]');
+  await date.fill('2031-01-01T12:00');await date.press('Tab');
+  assert.equal(await selected.locator('.visual-countdown-clock').getAttribute('datetime'),eventISO,'changing a date cannot discard a pending text composition');
+  assert.equal(await date.getAttribute('aria-invalid'),'true');await date.press('Escape');assert.equal(await date.inputValue(),localDate);
+ }});
+ await setText('Lejáratkor megjelenő üzenet','Már élőben!');
  const beforeGap=await selected.locator('.visual-countdown-clock').getAttribute('datetime');
  await field.locator('input[type="datetime-local"]').fill(gap);await field.locator('input[type="datetime-local"]').press('Tab');
  assert.equal(await field.locator('input[type="datetime-local"]').getAttribute('aria-invalid'),'true','a DST gap must not silently move the event');
  assert.equal(await selected.locator('.visual-countdown-clock').getAttribute('datetime'),beforeGap);
  await editor.keyboard.press('Control+z');assert.equal(await field.locator('input[type="datetime-local"]').inputValue(),gap,'invalid local input survives blocked Undo');
+ const title=field.getByRole('textbox',{name:'Esemény neve'});
+ await title.focus();await editor.keyboard.press('Control+s');assert.equal(posts.length,0,'text focus cannot forget an invalid date guard');
+ await title.fill('Nem menthető cím');
+ assert.equal(await selected.locator('.visual-countdown-heading').textContent(),'Élő premier <script>alert(1)</script>','invalid date blocks unrelated model changes');
+ assert.equal(await title.getAttribute('aria-invalid'),'true');await title.press('Escape');
  for(const action of ['#save','#publish']){await editor.locator(action).click();assert.equal(posts.length,0,'invalid local time blocks all API writes');}
  await field.locator('input[type="datetime-local"]').fill(localDate);await field.locator('input[type="datetime-local"]').press('Tab');
  assert.equal(posts.length,0,'Inspector change never saves');
@@ -125,5 +142,31 @@ for(const [width,timezoneId,gap,overlapISO,overlapLocal] of [[390,'Europe/Budape
  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Mentési hiba');
  assert.equal(posts.length,emptyWrites+1);assert.equal(posts.at(-1).publish,true,'the existing server publication guard rejects an incomplete draft');
  await viewer.reload();assert.equal(await clock.getAttribute('datetime'),eventISO);
+ if(width===390){
+  const recovery=await editor.evaluate(async()=>{
+   const {renderCountdownInspector}=await import('/editor-v2/ui/countdown-inspector.js');
+   const {defaultCountdownContent}=await import('/editor-v2/core/countdown-content.js');
+   const results=[];
+   for(const mode of ['false','throw']){
+    const original={...defaultCountdownContent(),title:'Mentett cím',targetISO:'2030-12-31T20:30:42.123Z'};
+    const node={id:'countdown-recovery',props:{countdown:structuredClone(original)}};let allow=false,accepted,guard;
+    const root=renderCountdownInspector(node,next=>{if(!allow){if(mode==='throw')throw Error('Fixture rejection');return false;}if(!guard())return false;accepted=structuredClone(next);return true;},{pending:fn=>{guard=fn;}});
+    document.querySelector('#inspectorBody').append(root);
+    const title=root.querySelector('[aria-label="Esemény neve"]'),finish=root.querySelector('[aria-label="Lejáratkor megjelenő üzenet"]'),date=root.querySelector('[type="datetime-local"]');
+    title.focus();title.value='Elutasított';title.dispatchEvent(new InputEvent('input',{bubbles:true}));
+    const rejected=title.hasAttribute('aria-invalid')&&!guard()&&!accepted;
+    title.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));const escaped=title.value==='Mentett cím'&&guard();
+    allow=true;title.value='Új cím';title.dispatchEvent(new Event('change',{bubbles:true}));
+    date.value='2031-01-02T12:00';date.dispatchEvent(new Event('change',{bubbles:true}));
+    const dateISO=accepted.targetISO;finish.focus();finish.value='Új üzenet';finish.dispatchEvent(new InputEvent('input',{bubbles:true}));
+    const fresh=accepted.title==='Új cím'&&accepted.finishText==='Új üzenet'&&accepted.targetISO===dateISO&&dateISO!==original.targetISO&&guard();
+    const unchanged=JSON.stringify(node.props.countdown)===JSON.stringify(original);root.remove();
+    const locked=renderCountdownInspector({...node,locked:true},()=>{throw Error('Locked Countdown changed');});document.querySelector('#inspectorBody').append(locked);
+    const lockedSafe=[...locked.querySelectorAll('input,select,textarea,button')].every(el=>el.disabled);locked.remove();
+    results.push({mode,rejected,escaped,fresh,unchanged,lockedSafe});
+   }return results;
+  });
+  for(const result of recovery)for(const key of ['rejected','escaped','fresh','unchanged','lockedSafe'])assert.equal(result[key],true,JSON.stringify(result));
+ }
  assert.deepEqual(errors,[]);
 });

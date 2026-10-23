@@ -30,7 +30,7 @@ import {ICON_CHOICES,iconById} from './core/icon-options.js';
 import {DIVIDER_LINE_STYLES,normalizeDividerStyle} from './core/decorative-elements.js';
 import {defaultCardContent,cardImageSrc} from './core/card-content.js';
 import {defaultCountdownContent,renderCountdownContent,activateCountdowns} from './core/countdown-content.js';
-import {renderCountdownDateControl} from './ui/countdown-date-control.js';
+import {renderCountdownInspector} from './ui/countdown-inspector.js';
 import {defaultSocialLinks,renderSocialLinksHtml} from './core/social-links.js';
 import {renderSocialLinksInspector} from './ui/social-links-inspector.js';
 import {defaultEmbedContent,renderEmbedHtml} from './core/creator-embed.js';
@@ -1047,21 +1047,7 @@ function renderExistingContentInspector(node){
   if(node.type==='embed'&&node.metadata?.embedContentVersion===1){inspector.append(renderEmbedInspector(node,(value,options)=>updateModel('embedContent',value,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}
   if(node.type==='social'&&node.metadata?.socialLinksVersion===1){inspector.append(renderSocialLinksInspector(node,(value,options)=>updateModel('socialLinks',value,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}
   if(node.type==='card'&&node.metadata?.cardContentVersion===1){inspector.append(renderCardInspector(node,(value,options)=>updateModel('cardContent',value,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}
-  if(node.type==='countdown'&&node.metadata?.countdownVersion===1){
-    const model={...defaultCountdownContent(),...(node.props?.countdown||{})};
-    const set=patch=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),countdown:{...model,...patch}}}});
-    const section=document.createElement('section');section.className='countdown-inspector';
-    section.append(Object.assign(document.createElement('h3'),{textContent:'Visszaszámláló'}),field('Esemény neve',model.title,v=>set({title:v})));
-    const date=renderCountdownDateControl(model.targetISO,{
-      apply:targetISO=>set({targetISO}),
-      pending:flush=>{flushRichTextDraft=flush},
-      disabled:Boolean(node.locked)
-    });
-    section.append(date,field('Lejáratkor megjelenő üzenet',model.finishText,v=>set({finishText:v})));
-    const toggle=document.createElement('input');toggle.type='checkbox';toggle.checked=Boolean(model.showSeconds);toggle.onchange=()=>set({showSeconds:toggle.checked});
-    section.append(toggle,Object.assign(document.createElement('small'),{textContent:'Mentés és publikálás külön művelet.'}));
-    inspector.append(section);return true;
-  }
+  if(node.type==='countdown'&&node.metadata?.countdownVersion===1){inspector.append(renderCountdownInspector(node,(value,options)=>updateModel('countdown',value,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}
   if(node.type==='divider'&&node.metadata?.decorativeVersion===1){const cfg=normalizeDividerStyle(node.props?.decoration),section=document.createElement('section');section.className='decorative-inspector';section.append(Object.assign(document.createElement('h3'),{textContent:'Elválasztóvonal'}));const set=patch=>{const decoration=normalizeDividerStyle({...cfg,...patch});command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),decoration}}})};const thickness=document.createElement('input');thickness.type='number';thickness.min='1';thickness.max='24';thickness.value=String(cfg.thickness);thickness.setAttribute('aria-label','Elválasztóvonal vastagsága');thickness.onchange=()=>set({thickness:Number(thickness.value)});const color=document.createElement('input');color.type='color';color.value=cfg.color;color.setAttribute('aria-label','Elválasztóvonal színe');color.onchange=()=>set({color:color.value});const style=document.createElement('select');style.setAttribute('aria-label','Elválasztóvonal mintázata');for(const value of DIVIDER_LINE_STYLES){const option=document.createElement('option');option.value=value;option.textContent=value;style.append(option)}style.value=cfg.lineStyle;style.onchange=()=>set({lineStyle:style.value});section.append(thickness,color,style);inspector.append(section);return true}
   if(node.type==='spacer'&&node.metadata?.spacerVersion===1){const section=document.createElement('section');section.className='decorative-inspector';section.append(Object.assign(document.createElement('h3'),{textContent:'Üres térköz'}));const device=state.viewport.device,current=resolveResponsiveValue(node.responsive,'height',device).value??node.style?.height??'64px';section.append(renderPropertyInput(getProperty('size.height'),'Térköz magassága',current,value=>command('responsive.set',{nodeId:node.id,device,patch:{height:value}})));inspector.append(section);return true}
   if(!isAuthoredContent(node)&&isStructuredType(node.type)&&node.metadata?.structuredContentVersion===1){inspector.append(renderStructuredInspector(node,model=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),contentModel:model},metadata:{...(node.metadata||{}),structuredContentVersion:1}}})));return true}

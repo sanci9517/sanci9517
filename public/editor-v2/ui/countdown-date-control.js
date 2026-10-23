@@ -25,5 +25,6 @@ export function renderCountdownDateControl(targetISO,{apply,pending,disabled=fal
   if(event.key!=='Escape')return;
   event.stopPropagation();date.value=committed;clear();
  };
+ pending(valid);
  field.append(date,help,error);return field;
 }
