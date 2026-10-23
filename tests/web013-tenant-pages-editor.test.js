@@ -183,3 +183,25 @@ test('tenant copy, hierarchy and revision conflicts stay within the authorized s
   assert.equal((await f.editor('editor','other','POST',{pageId:'b',expectedVersion:0,document:f.document('b'),publish:false})).status,409);
   assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM editor_revisions WHERE page_id=?').get('b').n,1);
 });
+
+test('Countdown publication rejects impossible calendar dates without revisions, audit or live changes',async t=>{
+  const f=await fixture(t),document=f.document('b');
+  document.pages.b.nodes.root.children=['deadline'];
+  document.pages.b.nodes.deadline={id:'deadline',name:'Esemény',type:'countdown',parentId:'root',children:[],metadata:{countdownVersion:1},props:{countdown:{version:1,title:'Premiere',finishText:'Elindult',showSeconds:true,targetISO:'2030-02-30T12:00:00Z'}}};
+  const saved=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:1,document,publish:false});
+  assert.equal(saved.status,200,'an incomplete or invalid draft can still be repaired');
+  const snapshots=()=>({page:f.db.prepare('SELECT * FROM pages WHERE id=?').get('b'),revisions:f.db.prepare('SELECT * FROM editor_revisions ORDER BY id').all(),audit:f.db.prepare('SELECT * FROM audit_log ORDER BY id').all()});
+  const before=snapshots();
+  for(const targetISO of ['2030-02-30T12:00:00Z','2030-04-31T12:00:00+02:00','2030-12-31T24:00:00Z','2100-02-29T12:00:00Z']){
+    document.pages.b.nodes.deadline.props.countdown.targetISO=targetISO;
+    const response=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:2,document,publish:true});
+    assert.equal(response.status,409,targetISO);assert.equal((await response.json()).error.code,'INVALID_COUNTDOWN_CONTENT');
+    assert.deepEqual(snapshots(),before,'a rejected publication must not mutate any page/revision/audit record');
+  }
+  const targetISO='2032-02-29T00:30:42.123+01:00';document.pages.b.nodes.deadline.props.countdown.targetISO=targetISO;
+  const repaired=await f.editor('editor','other','POST',{pageId:'b',expectedVersion:2,document,publish:true});
+  assert.equal(repaired.status,200,'a real leap day and explicit offset can be published');
+  const after=snapshots();assert.equal(after.revisions.length,before.revisions.length+1);assert.equal(after.audit.length,before.audit.length+1);
+  const live=JSON.parse(after.page.published_content_json);
+  assert.equal(live.pages.b.nodes.deadline.props.countdown.targetISO,targetISO,'validation must not silently rewrite the authored timestamp');
+});

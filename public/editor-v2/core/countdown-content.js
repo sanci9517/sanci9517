@@ -10,7 +10,15 @@ export function normalizeCountdownContent(value){
  if(typeof value.showSeconds!=='boolean')throw new Error('Hibás másodperckijelzési beállítás');
  const targetISO=String(value.targetISO??'').trim();
  // Require a timezone: otherwise the editor machine and public browser disagree.
- if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/.test(targetISO))throw new Error('A dátumhoz időzóna is szükséges');
+ const fields=/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,3})?(?:Z|[+-](\d{2}):(\d{2}))$/.exec(targetISO);
+ if(!fields)throw new Error('A dátumhoz időzóna is szükséges');
+ const [year,month,day,hour,minute,second]=fields.slice(1,7).map(Number);
+ const leap=year%4===0&&(year%100!==0||year%400===0);
+ const days=[31,leap?29:28,31,30,31,30,31,31,30,31,30,31];
+ // Date.parse rolls February 30 and 24:00 into a different date. Validate
+ // the authored calendar fields before applying its explicit UTC offset.
+ if(month<1||month>12||day<1||day>days[month-1]||hour>23||minute>59||second>59||
+    (fields[7]!==undefined&&(Number(fields[7])>23||Number(fields[8])>59)))throw new Error('Érvénytelen eseményidőpont');
  const date=Date.parse(targetISO);
  if(!Number.isFinite(date)||new Date(date).getUTCFullYear()<2000||new Date(date).getUTCFullYear()>2100)throw new Error('Érvénytelen eseményidőpont');
  return {version:1,title,targetISO:new Date(date).toISOString(),finishText,showSeconds:value.showSeconds};
