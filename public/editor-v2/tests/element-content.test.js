@@ -5,7 +5,7 @@ import {createEditorState,activePage} from '../core/state.js';
 import {execute} from '../core/commands.js';
 import {authoredNodeHtml,contentAttributes,contentTag,normalizeElementContent,validateElementContent,validatePageForPublication,contentProperties} from '../core/authored-content.js';
 import {opaqueContrast} from '../core/accessibility.js';
-import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption} from '../core/legacy-media-source.js';
+import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption,legacyMediaInspectorValues} from '../core/legacy-media-source.js';
 
 test('typed content edits preserve unknown legacy data and undo restores the complete node',()=>{
   const state=createEditorState(createDocument());execute(state,{type:'element.add',payload:{type:'heading',props:{text:'Eredeti cím',legacy:{kept:true}},style:{width:'240px'}}});
@@ -231,4 +231,25 @@ test('legacy image crop, ratio and load settings share allowlisted defaults and 
  assert.deepEqual(legacyImagePresentation({fit:'url(javascript:bad)',objectFit:'unknown',ratio:'666 / 0',focalX:'NaN',focalY:'Infinity',loading:'script'}),defaults);
  assert.equal(legacyImagePresentation({fit:'fill',ratio:'1 / 1'}).fit,'fill');
  assert.equal(legacyImagePresentation({fit:'fill',objectFit:'contain'}).fit,'contain','the legacy Inspector must override an older fit alias');
+});
+
+
+test('legacy media Inspector rejects structured JSON without coercion or mutating persisted values',()=>{
+ const bad={toString:'not callable',valueOf:'not callable'};
+ for(const value of [bad,{},[],['/image.png'],true,false,19,Infinity]){
+  const props=Object.freeze({src:value,poster:value,assetId:value,posterAssetId:value,alt:value});
+  const before=structuredClone(props);
+  const view=legacyMediaInspectorValues(props);
+  assert.equal(view.src,'');assert.equal(view.poster,'');assert.equal(view.assetId,'');assert.equal(view.posterAssetId,'');
+  assert.equal(view.alt,typeof value==='number'&&Number.isFinite(value)?String(value):'');
+  assert.ok(view.invalidFields.includes('src'));assert.ok(view.invalidFields.includes('posterAssetId'));
+  assert.deepEqual(props,before);
+ }
+ const id='00000000-0000-4000-8000-000000000123';
+ assert.deepEqual(legacyMediaInspectorValues({src:'/image.png',poster:'/poster.png',alt:0,assetId:id,posterAssetId:id}),{
+  src:'/image.png',poster:'/poster.png',alt:'0',assetId:id,posterAssetId:id,invalidFields:[]
+ });
+ assert.deepEqual(legacyMediaInspectorValues(null),{src:'',poster:'',alt:'',assetId:'',posterAssetId:'',invalidFields:[]});
+ const decorative=legacyMediaInspectorValues({alt:'Megőrzött képleírás',decorative:true,assetId:'invalid'});
+ assert.equal(decorative.alt,'Megőrzött képleírás');assert.deepEqual(decorative.invalidFields,['assetId']);
 });
