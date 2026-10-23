@@ -1441,7 +1441,11 @@ function renderInspector(){
         });
         inspector.append(section);
       }else if(textTypes.has(node.type))inspector.append(renderPlainTextEditor(node));
-      if(node.type==='code'&&node.metadata?.codeSnippetVersion===1)inspector.append(renderCodeSnippetInspector(node,model=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),codeSnippet:model}}})));
+      if(node.type==='code'&&node.metadata?.codeSnippetVersion===1)inspector.append(renderCodeSnippetInspector(node,(model,{render:fullRender=true,typingGroup}={})=>{
+        const saved=command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),codeSnippet:model}}},{render:fullRender,typingGroup});
+        if(saved&&!fullRender){renderCanvas();setStatus('Nem mentett módosítás');syncPublishControls();}
+        return saved;
+      },{pending:flush=>{flushRichTextDraft=flush}}));
       else if(renderExistingContentInspector(node)){}
       else if(CONTENT_TYPES.includes(node.type))inspector.append(renderElementContentControls(node,{
         exclude:textTypes.has(node.type)?['text']:[],pages,pending:flush=>{flushRichTextDraft=flush},
