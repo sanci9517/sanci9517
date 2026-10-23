@@ -13,17 +13,22 @@ import {safeMediaUrl} from '../../public/editor-v2/core/element-content.js';
 test('legacy image video audio share guarded media URLs in Inspector Canvas and public Save/Publish',async t=>{
   const model=createEditorState(createDocument());
   const pageId=model.document.activePageId,rootId=activePage(model).rootId,ids={};
+  const corrupt={toString:'not callable',valueOf:'not callable'};
+  const originalCorrupt={};
   const entries=[
     ['badImage','image','//untrusted.invalid/track.png'],
     ['badVideo','video','https://user:pass@untrusted.invalid/private.mp4'],
     ['badAudio','audio','relative/sound.mp3'],
     ['goodImage','image','/fixture.svg'],
     ['goodVideo','video','/fixture.webm'],
-    ['goodAudio','audio','/fixture.webm']
+    ['goodAudio','audio','/fixture.webm'],
+    ['corruptImage','image',corrupt],['corruptVideo','video',corrupt],['corruptAudio','audio',corrupt]
   ];
   for(const [key,type,src] of entries){
-    execute(model,{type:'element.add',payload:{type,parentId:rootId,props:{src,alt:'Tesztkép'}}});
+    const props={src,alt:'Tesztkép',...(key.startsWith('corrupt')?{assetId:corrupt,...(type==='image'?{alt:corrupt}:type==='video'?{poster:corrupt,posterAssetId:corrupt}:{})}:{})};
+    execute(model,{type:'element.add',payload:{type,parentId:rootId,props}});
     ids[key]=model.selection.primaryId;
+    if(key.startsWith('corrupt'))originalCorrupt[key]=structuredClone(activePage(model).nodes[ids[key]].props);
   }
   execute(model,{type:'element.add',payload:{type:'image',parentId:rootId,props:{src:'',alt:''}}});
   ids.libraryImage=model.selection.primaryId;
@@ -102,6 +107,29 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   await editor.getByRole('button',{name:'Tartalom és szöveg'}).click();
   const inspector=editor.locator('.legacy-media-inspector');
   await inspector.waitFor();
+  for(const width of [390,1366]){
+    await editor.setViewportSize({width,height:900});
+    for(const [key,type,label] of [['corruptImage','image','Kép URL'],['corruptVideo','video','Videó URL'],['corruptAudio','audio','Hang URL']]){
+      await canvasNode(ids[key]).evaluate(el=>el.click());
+      if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
+      await editor.getByRole('button',{name:'Tartalom és szöveg'}).click();
+      await inspector.locator('.legacy-media-type-warning').waitFor();
+      const source=inspector.getByRole('textbox',{name:label,exact:true});
+      assert.equal(await source.inputValue(),'','malformed source must not be coerced into an input');
+      if(type==='image')assert.equal(await inspector.getByRole('textbox',{name:'Kép leírása (alt)'}).inputValue(),'');
+      if(type==='video')assert.equal(await inspector.getByRole('textbox',{name:'Videó borítókép URL'}).inputValue(),'');
+      assert.equal(await canvasNode(ids[key]).locator('.media-preview '+(type==='image'?'img':type)).count(),0);
+      await source.fill(type==='image'?'/fixture.svg':'/fixture.webm');await source.press('Tab');
+      await canvasNode(ids[key]).locator('.media-preview '+(type==='image'?'img':type)).waitFor({state:'attached'});
+      await editor.keyboard.press('Control+z');
+      assert.equal(await source.inputValue(),'','Undo restores malformed stored data safely');
+      await editor.keyboard.press('Control+Shift+z');assert.match(await source.inputValue(),/^\/fixture\./);
+      await editor.keyboard.press('Control+z');assert.equal(await source.inputValue(),'');
+      assert.equal(posts.length,0,'inspection and command edits never auto-save/publish');
+    }
+  }
+  await canvasNode(ids.badImage).evaluate(el=>el.click());
+  assert.deepEqual(errors,[],'all malformed legacy media Inspectors must remain usable');
   assert.equal(await inspector.locator('.property-validation[role="status"]').count(),1,'invalid URL is explained to the editor user');
   assert.equal(posts.length,0,'selecting and inspecting the node cannot persist or publish');
   await inspector.getByRole('textbox',{name:'Kép URL'}).fill('/fixture.svg');
@@ -121,6 +149,7 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   await editor.locator('#save').click();
   await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
   assert.equal(posts.at(-1).publish,false,'Save only persists the draft');
+  for(const [key,props] of Object.entries(originalCorrupt))assert.deepEqual(posts.at(-1).document.pages[pageId].nodes[ids[key]].props,props,'opening the Inspector must not silently normalize persisted '+key);
   await viewer.reload();
   assert.equal(await publishedNode(ids.badImage).locator('img').count(),0,'Save never updates the published invalid media');
 

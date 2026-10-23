@@ -24,7 +24,7 @@ import {captureStyleSnapshot} from './core/style-snapshot.js';
 import {LAYOUT_PRESETS,LAYOUT_TYPES,layoutMode,isManagedLayout,isLayoutPropertyRelevant,explicitGridColumnCount} from './core/layout-presets.js';
 import {TYPOGRAPHY_PRESETS,typographyPresetPatch} from './core/typography-presets.js';
 import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent,safeMediaUrl} from './core/element-content.js';
-import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption} from './core/legacy-media-source.js';
+import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption,legacyMediaInspectorValues} from './core/legacy-media-source.js';
 import {renderStructuredInspector} from './ui/structured-inspector.js';
 import {ICON_CHOICES,iconById} from './core/icon-options.js';
 import {DIVIDER_LINE_STYLES,normalizeDividerStyle} from './core/decorative-elements.js';
@@ -937,14 +937,15 @@ function renderExistingContentInspector(node){
   if(!isAuthoredContent(node)&&['image','video','audio'].includes(node.type)){
     const section=document.createElement('section');section.className='legacy-media-inspector';
     const mediaLabel={image:'Kép',video:'Videó',audio:'Hang'}[node.type];
-    section.append(field(mediaLabel+' URL',node.props?.src||'',value=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),src:value.trim(),...(['image','video','audio'].includes(node.type)?{assetId:''}:{})}}})));
+    const values=legacyMediaInspectorValues(node.props);
+    section.append(field(mediaLabel+' URL',values.src,value=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),src:value.trim(),...(['image','video','audio'].includes(node.type)?{assetId:''}:{})}}})));
     if(node.type==='image'){
-      section.append(mediaAssetPicker(node.props?.assetId||'',(id,asset)=>{
+      section.append(mediaAssetPicker(values.assetId,(id,asset)=>{
         const alt=typeof asset?.altText==='string'?asset.altText.trim().slice(0,250):'';
-        const next={...(node.props||{}),assetId:id,...(!id?{src:''}:alt&&!String(node.props?.alt||'').trim()?{alt}:{})};
+        const next={...(node.props||{}),assetId:id,...(!id?{src:''}:alt&&!values.alt.trim()?{alt}:{})};
         return command('element.update',{nodeId:node.id,patch:{props:next}});
       },{disabled:Boolean(node.locked)}));
-      section.append(field('Kép leírása (alt)',node.props?.alt||'',value=>update('alt',value)));
+      section.append(field('Kép leírása (alt)',values.alt,value=>update('alt',value)));
       section.append(field('Képaláírás (opcionális)',legacyImageCaption(node.props),value=>update('caption',value)));
       const objectFit=document.createElement('select');objectFit.setAttribute('aria-label','Kép illesztése');
       for(const [value,label] of [['cover','Kitöltés (vágással)'],['contain','Teljes kép (vágás nélkül)'],['fill','Nyújtás'],['none','Eredeti méret'],['scale-down','Csak kicsinyítés']]){
@@ -981,7 +982,7 @@ function renderExistingContentInspector(node){
     }else{
       const isVideo=node.type==='video';
       const playableMimes=isVideo?['video/webm']:['audio/mpeg','audio/ogg','audio/wav'];
-      section.append(mediaAssetPicker(node.props?.assetId||'',id=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),assetId:id,...(id?{src:''}:{})}}}),{disabled:Boolean(node.locked),mimes:playableMimes}));
+      section.append(mediaAssetPicker(values.assetId,id=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),assetId:id,...(id?{src:''}:{})}}}),{disabled:Boolean(node.locked),mimes:playableMimes}));
       const toggles=[
         ['controls','Lejátszóvezérlők megjelenítése',node.props?.controls!==false],
         ['loop','Folyamatos ismétlés',node.props?.loop===true],
@@ -999,9 +1000,9 @@ function renderExistingContentInspector(node){
         row.append(input,document.createTextNode(labelText));section.append(row);
       }
       if(isVideo){
-        section.append(field('Videó borítókép URL',node.props?.poster||'',value=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),poster:value.trim(),posterAssetId:''}}})));
-        section.append(mediaAssetPicker(node.props?.posterAssetId||'',id=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),posterAssetId:id,...(!id?{poster:''}:{})}}}),{disabled:Boolean(node.locked)}));
-        const poster=String(node.props?.poster||'').trim();
+        section.append(field('Videó borítókép URL',values.poster,value=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),poster:value.trim(),posterAssetId:''}}})));
+        section.append(mediaAssetPicker(values.posterAssetId,id=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),posterAssetId:id,...(!id?{poster:''}:{})}}}),{disabled:Boolean(node.locked)}));
+        const poster=values.poster.trim();
         if(poster&&!safeMediaUrl(poster)&&!node.props?.posterAssetId){
           const warning=document.createElement('p');warning.className='property-validation';warning.setAttribute('role','status');
           warning.textContent='Érvénytelen borítókép URL. Használj biztonságos HTTPS vagy belső képútvonalat.';
@@ -1012,10 +1013,16 @@ function renderExistingContentInspector(node){
         section.append(notice);
       }
     }
+    const usedFields=['src','assetId',...(node.type==='image'?['alt']:node.type==='video'?['poster','posterAssetId']:[])];
+    if(values.invalidFields.some(key=>usedFields.includes(key))){
+      const warning=document.createElement('p');warning.className='property-validation legacy-media-type-warning';warning.setAttribute('role','status');
+      warning.textContent='Sérült médiaadat található az elemben. A hibás mező üresen jelenik meg; válassz fájlt vagy adj meg új értéket a javításhoz. A megnyitás nem módosítja a mentett adatot.';
+      section.append(warning);
+    }
     const help=document.createElement('p');help.className='content-field-help';
     help.textContent='HTTPS/HTTP hivatkozás vagy / jellel kezdődő webhelyútvonal használható. A szerkesztő és a publikus oldal ugyanúgy ellenőrzi.';
     section.append(help);
-    const source=String(node.props?.src||'').trim();
+    const source=values.src.trim();
     if(source&&!safeMediaUrl(source)){
       const warning=document.createElement('p');warning.className='property-validation';warning.setAttribute('role','status');
       warning.textContent='Ez a média-URL nem biztonságos vagy nem támogatott; a publikus oldalon sem töltődik be.';
