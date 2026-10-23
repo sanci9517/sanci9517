@@ -321,18 +321,25 @@ export async function adminMediaRoute(request: Request, env: Env, siteId: string
     let objectPresent: boolean;
     try { objectPresent=Boolean(await env.MEDIA.head(existing.object_key)); }
     catch { return error("MEDIA_STORAGE_FAILED",503); }
-    // Read-only preview only. Persistence remains gated on the pending D1
-    // migration and can never authorize a destructive R2 operation.
+    // Advisory, read-only capability check. Never bootstrap a missing schema.
     const preparedRetention=await prepareRetentionRequest({
       asset:existing, usage:{complete,references}, objectPresent, now:new Date()
     });
+    let retentionMigrationActive=false;
+    let existingRetentionRequest: {id:string;state:string;notBefore:string} | null=null;
+    try {
+      const row=await env.DB.prepare(retentionQueries.getByAsset).bind(id,siteId).first<{id:string;state:string;not_before:string}>();
+      retentionMigrationActive=true;
+      if (row) existingRetentionRequest={id:row.id,state:row.state,notBefore:row.not_before};
+    } catch { /* Unavailable or incompatible schema: keep request creation disabled. */ }
     return ok({
       assetId:id,archived:Boolean(existing.archived_at),objectPresent,
       references:references.length,usageComplete:complete,
       // Advisory only: a second locked recheck and durable retention state
       // are required before an irreversible operation is allowed.
       eligibleForRetention:complete && references.length===0 && Boolean(existing.archived_at) && objectPresent,
-      retentionRequestAvailable:false, // Manual D1 migration and transactional API not active
+      retentionMigrationActive,existingRetentionRequest,
+      retentionRequestAvailable:preparedRetention.ok && retentionMigrationActive && existingRetentionRequest===null,
       retentionPreview:preparedRetention.ok ? preparedRetention.value : null,
       retentionPreviewReason:preparedRetention.ok ? null : preparedRetention.reason,
       permanentDeletionAuthorized:false

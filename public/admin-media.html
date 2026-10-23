@@ -31,6 +31,7 @@ button.upload-secondary{border:1px solid var(--line);border-radius:10px;backgrou
 .media-usage{border-top:1px solid var(--line);padding-top:8px;overflow-wrap:anywhere}.media-usage[hidden]{display:none}.media-usage p{margin:4px 0;color:var(--muted)}.media-usage ul{padding-left:18px;margin:4px 0}.media-usage li{margin:6px 0}
 @media(max-width:800px){.panels{grid-template-columns:minmax(0,1fr)}.panel{padding:18px}.tiles{grid-template-columns:repeat(auto-fill,minmax(135px,1fr))}}
 @media(prefers-color-scheme:light){:root{color-scheme:light;--bg:#f4f6fc;--panel:#fff;--line:#d5dced;--text:#171d33;--muted:#50607e;--accent:#6247dd} .tile{background:#f6f7fd}.tile img{background:#f0f1f8}button.primary{color:white;background:#6349cd}.status[data-kind=error],.retention-panel[data-state=error] [role=status]{color:#ae2121}.status[data-kind=ok]{color:#15784c}}
+.retention-action{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.retention-action p,.retention-controls p{font-size:.85rem;line-height:1.5;overflow-wrap:anywhere}.retention-controls{display:flex;flex-wrap:wrap;gap:8px}.retention-controls p{flex-basis:100%;margin:8px 0}.tiles:has(.retention-action){grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr))}.retention-action button,.retention-card button{padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text)}.retention-controls button,.retention-action>button,.retention-card>button{min-height:44px;max-width:100%;white-space:normal;overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -70,7 +71,7 @@ button.upload-secondary{border:1px solid var(--line);border-radius:10px;backgrou
 </div>
 <section class="panel retention-panel" id="mediaRetentionPanel" aria-labelledby="retentionTitle" aria-busy="true">
 <div class="retention-heading"><h2 id="retentionTitle">Adatmegőrzési kérelmek</h2><button type="button" aria-controls="retentionRequests">Állapot frissítése</button></div>
-<p class="muted">A kérelmek aktuális állapota. A várakozási idő vége önmagában nem indít törlést.</p>
+<p class="muted">Az archivált, nem használt fájlhoz előellenőrzés után rögzíthető kérelem. A várakozási idő vége önmagában nem indít törlést. A visszavonás a fájlt és a tárhelyhasználatot változatlanul hagyja.</p>
 <p role="status" aria-live="polite">Adatmegőrzési kérelmek betöltése…</p>
 <p class="retention-notice" hidden></p>
 <ul class="retention-list" id="retentionRequests" aria-label="Adatmegőrzési kérelmek" hidden></ul>

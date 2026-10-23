@@ -1,4 +1,6 @@
 import { mountRetentionStatus } from "./admin-media-retention.js";
+import { mountRetentionRequest } from "./admin-media-retention-actions.js";
+let retentionStatus;
 
 const form = document.getElementById("uploadForm");
 const input = document.getElementById("imageInput");
@@ -79,6 +81,15 @@ function explain(code) {
     MEDIA_ARCHIVE_CONFLICT: "A médiafájl állapota megváltozott. Frissítsd a listát.",
     MEDIA_OBJECT_MISSING: "A tárolt médiafájl hiányzik. Nem lehet visszaállítani.",
     RETENTION_MIGRATION_NOT_ACTIVE: "Az adatmegőrzési kérelmek jelenleg nem érhetők el. Próbáld újra később.",
+    RETENTION_PRECONDITION_CHANGED: "Az előfeltételek megváltoztak. Friss ellenőrzés szükséges.",
+    RETENTION_STATE_CONFLICT: "A kérelem állapota megváltozott. Frissítsd az állapotot.",
+    RETENTION_REQUEST_NOT_FOUND: "A kérelem már nem érhető el ezen a webhelyen.",
+    INVALID_TRANSITION: "Ez a kérelem ebben az állapotban nem vonható vissza.",
+    INVALID_ORIGIN: "A művelet csak az eredeti adminoldalról indítható. Frissítsd az oldalt.",
+    ASSET_IN_USE: "Oldal vagy korábbi verzió hivatkozik a fájlra. Nézd meg a Használati helyeket.",
+    ASSET_NOT_ARCHIVED: "A fájl már nincs archiválva. Frissítsd a médiatárat.",
+    USAGE_INCOMPLETE: "A használati helyek ellenőrzése nem teljes. Új ellenőrzés szükséges.",
+    OBJECT_UNAVAILABLE: "A tárolt fájl nem érhető el.",
     INVALID_MEDIA_STATE: "Érvénytelen Médiatár nézet."
   };
   return messages[code] || "A kérés sikertelen. Próbáld újra.";
@@ -199,6 +210,10 @@ async function refresh(query = "", append = false) {
         }
       };
       details.append(name,size,alt,saveAlt,feedback,usageButton,usage,lifecycle,lifecycleStatus);
+      mountRetentionRequest(details, asset, {
+        api, onChanged: () => retentionStatus?.refresh(),
+        setLifecycleBusy: busy => { lifecycle.disabled = busy; }
+      });
       card.append(link,details);return card;
     });
     if (append) gallery.append(...tiles);
@@ -336,5 +351,7 @@ form.addEventListener("submit", event => {
   if (!activeUpload) startUpload(input.files?.[0]);
 });
 const retentionPanel = document.getElementById("mediaRetentionPanel");
-if (retentionPanel) mountRetentionStatus(retentionPanel, () => api("/api/admin/media?retentionStatus=1"));
+if (retentionPanel) retentionStatus = mountRetentionStatus(retentionPanel, () => api("/api/admin/media?retentionStatus=1"), {
+  cancelRequest: id => api("/api/admin/media?retentionRequest=1&requestId=" + encodeURIComponent(id), { method: "DELETE" })
+});
 await refresh();

@@ -680,7 +680,9 @@ test("deletion preflight remains non-destructive for archived and missing object
   assert.equal(existing.objectPresent,true);
   assert.equal(existing.usageComplete,true);
   assert.equal(existing.eligibleForRetention,true);
-  assert.equal(existing.retentionRequestAvailable,false);
+  assert.equal(existing.retentionRequestAvailable,true);
+  assert.equal(existing.retentionMigrationActive,true);
+  assert.equal(existing.existingRetentionRequest,null);
   assert.deepEqual(Object.keys(existing.retentionPreview).sort(),["assetId","finalDeletionAuthorized","notBefore","objectKey","siteId","state"]);
   assert.equal(existing.retentionPreview.assetId,asset.id);
   assert.equal(existing.retentionPreview.siteId,"site-default");
@@ -775,4 +777,44 @@ test("media deletion preflight rejects malformed or conflicting mode flags",asyn
     assert.equal((await response.json()).error.code,"INVALID_MEDIA_PREFLIGHT");
   }
   assert.equal(f.files.size,1);
+});
+
+
+test("retention preflight capability is read-only and fails closed for unavailable schema or existing requests",async t=>{
+ const f=await fixture(t);
+ const asset=(await (await f.call("POST","editor",png,{name:"capability.png"})).json()).data;
+ await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id});
+ const inspect=async()=> (await (await f.call("GET","editor",null,{id:asset.id,deletePreflight:true})).json()).data;
+ const before=f.db.prepare("SELECT * FROM media").all();
+ const healthy=await inspect();assert.equal(healthy.retentionRequestAvailable,true);
+ assert.equal(f.db.prepare("SELECT COUNT(*) n FROM media_retention_requests").get().n,0);
+ const created=(await (await f.call("POST","editor",null,{id:asset.id,retentionRequest:true})).json()).data;
+ for(const state of ["requested","quarantined","revalidated","blocked","cancelled","deleted"]){
+  f.db.prepare("UPDATE media_retention_requests SET state=? WHERE id=?").run(state,created.id);
+  const result=await inspect();assert.equal(result.retentionRequestAvailable,false);
+  assert.equal(result.retentionMigrationActive,true);
+  assert.deepEqual(result.existingRetentionRequest,{id:created.id,state,notBefore:created.notBefore});
+ }
+ f.db.exec("DROP TABLE media_retention_requests");
+ const unavailable=await inspect();assert.equal(unavailable.retentionMigrationActive,false);
+ assert.equal(unavailable.retentionRequestAvailable,false);assert.equal(unavailable.existingRetentionRequest,null);
+ assert.equal(unavailable.permanentDeletionAuthorized,false);
+ assert.equal(f.db.prepare("SELECT COUNT(*) n FROM sqlite_master WHERE name='media_retention_requests'").get().n,0,"no implicit migration");
+ f.db.exec("CREATE TABLE media_retention_requests(id TEXT PRIMARY KEY)");
+ const incompatible=await inspect();assert.equal(incompatible.retentionMigrationActive,false);assert.equal(incompatible.retentionRequestAvailable,false);
+ assert.deepEqual(f.db.prepare("SELECT * FROM media").all(),before);assert.equal(f.files.size,1);
+});
+
+test("retention creation rechecks changes after preflight and requires same-origin mutations",async t=>{
+ const f=await fixture(t);
+ const asset=(await (await f.call("POST","editor",png,{name:"race.png"})).json()).data;
+ await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id});
+ const preflight=await f.call("GET","editor",null,{id:asset.id,deletePreflight:true});
+ assert.equal((await preflight.json()).data.retentionRequestAvailable,true);
+ const forbidden=await f.call("POST","editor",null,{id:asset.id,retentionRequest:true,origin:"https://attacker.example"});
+ assert.equal(forbidden.status,403);
+ await f.call("PATCH","editor",JSON.stringify({archived:false}),{id:asset.id});
+ const stale=await f.call("POST","editor",null,{id:asset.id,retentionRequest:true});
+ assert.equal(stale.status,409);assert.equal((await stale.json()).error.code,"ASSET_NOT_ARCHIVED");
+ assert.equal(f.db.prepare("SELECT COUNT(*) n FROM media_retention_requests").get().n,0);assert.equal(f.files.size,1);
 });
