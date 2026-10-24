@@ -69,7 +69,7 @@ A táblázat runtime/forrás-hozzárendelés; a „nem igazolt” nem állítja 
 - Friss `npm run typecheck`: PASS. Friss canonical-plan checker: PASS a saját szűk fájl/név-scope-jában.
 - Friss repository migration-safety gate: PASS; nem végzett production SQL-t. A már alkalmazott manuális 0025–0028/retention SQL nem játszható újra.
 - A változatlan runtime korábbi helyi route/Editor tesztje: **377/377 PASS**; a közös mezővalidáció 2 browser + kapcsolódó 4 browser PASS. Ezeket e felülvizsgálatban nem állítjuk újrafuttatottnak.
-- A `5b866936` commiton a GitHub/Workers öt check completed/success; az editor-core a lekérdezéskor még a teljes böngészős csomagot futtatja. Typecheck/core/D1 offline/media API/isolated Worker storage lépései sikeresek; a későbbi lépések nem jelölhetők előre PASS-nak.
+- A `5b866936` commiton a felülvizsgálat végső GitHub-lekérdezése szerint mind a hat check completed/success: Workers Builds, editor-core, verify, twitch-integration, canonical-plan és source-audit. Ez a CI saját tesztscope-jának sikere, nem a teljes terv elfogadása.
 - A `5b866936` production build success, Worker `139c1f98-bf85-4cdb-9b9b-d900bd6f0c14` 100%; JS/CSS byte-egyezés és health/D1-health a korábbi munkamenetben ellenőrzött. Ez nem az összes backend-modul új production tesztje.
 - E felülvizsgálat nem módosít runtime kódot, nem pushol, nem indít deployt, nem migrál vagy töröl D1/R2-adatot.
 
