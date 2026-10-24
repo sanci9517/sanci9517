@@ -4,7 +4,12 @@ on:
     branches: [v2/foundation]
     paths:
       - 'docs/SANCI9517-CREATOR-PLATFORM-PLAN.md'
+      - 'docs/creator-master/**'
+      - 'docs/evidence/feature-traceability.json'
       - 'scripts/audit-active-plan-point.py'
+      - 'scripts/plan_contract.py'
+      - 'scripts/build-feature-traceability.py'
+      - 'tests/plan-contract.test.py'
       - '.github/workflows/active-plan-audit.yml'
   workflow_dispatch:
 jobs:
@@ -12,8 +17,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Extract actual 63.50.92 source and review signals
-        run: python3 scripts/audit-active-plan-point.py | tee active-plan-audit.txt
+      - name: Check current cursor and all 396 source mappings
+        run: |
+          set -o pipefail
+          python3 scripts/audit-active-plan-point.py | tee active-plan-audit.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -6,17 +6,27 @@ on:
       - 'README.md'
       - 'docs/**'
       - 'scripts/check-canonical-plan.py'
+      - 'scripts/plan_contract.py'
+      - 'scripts/build-feature-traceability.py'
+      - 'tests/plan-contract.test.py'
       - '.github/workflows/canonical-plan.yml'
   pull_request:
     paths:
       - 'README.md'
       - 'docs/**'
       - 'scripts/check-canonical-plan.py'
+      - 'scripts/plan_contract.py'
+      - 'scripts/build-feature-traceability.py'
+      - 'tests/plan-contract.test.py'
       - '.github/workflows/canonical-plan.yml'
 jobs:
   canonical-plan:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Ensure only one active plan
+      - name: Test plan corruption and stale-state rejection
+        run: python3 tests/plan-contract.test.py
+      - name: Check reproducible source crosswalk
+        run: python3 scripts/build-feature-traceability.py --check
+      - name: Ensure one complete master and active cursor
         run: python3 scripts/check-canonical-plan.py

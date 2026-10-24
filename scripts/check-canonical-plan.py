@@ -3,6 +3,7 @@
 from pathlib import Path
 import re
 import sys
+from plan_contract import validate
 
 root = Path(__file__).resolve().parents[1]
 canonical = root / "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md"
@@ -33,9 +34,14 @@ readme = (root / "README.md").read_text(encoding="utf-8")
 if "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md" not in readme:
     errors.append("README must link to the canonical plan.")
 
+try:
+    validate(root)
+except (ValueError, KeyError, IndexError, OSError) as error:
+    errors.append(str(error))
+
 # The archived files remain available as evidence; do not enforce deletion.
 if errors:
     for error in errors:
         print("ERROR:", error, file=sys.stderr)
     sys.exit(1)
-print("PASS: one canonical plan; legacy names confined to archive.")
+print("PASS: one complete 13-file master, one current cursor, 396 source mappings; functional acceptance NOT certified.")
