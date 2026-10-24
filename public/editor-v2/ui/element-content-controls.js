@@ -117,12 +117,49 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
     publicationNote.textContent=issue?'Publikálás előtt: '+issue:'';
     publicationNote.hidden=!issue;
   };
-  refreshPublicationNote();
-  root.append(publicationNote);
+  // Prefer the first actionable authored field. Never mark an input aria-invalid:
+  // incomplete publication content must not block normal draft editing.
+  const publicationTarget=()=>{
+    const p=working,t=node.type;
+    if(['image','video','audio'].includes(t)){
+      if(!p.src?.trim()&&!p.assetId)return 'src';
+      if(t==='image'&&!p.decorative&&!p.alt?.trim())return 'alt';
+      if(t==='audio'&&p.controls===false)return 'controls';
+      if(t==='video'&&p.controls===false&&!(p.autoplay&&p.muted))return 'controls';
+    }
+    if(['link','button'].includes(t)&&!p.href?.trim())return 'href';
+    if(t==='heading'&&!p.text?.trim())return 'text';
+    if(['gallery','carousel','tabs','accordion','dropdown','list'].includes(t))return 'items';
+    if(t==='table')return 'rows';
+    if(t==='tooltip')return !p.text?.trim()?'text':'description';
+    return null;
+  };
+  const jump=document.createElement('button');
+  jump.type='button';jump.className='editor-publication-jump';
+  jump.textContent='Ugrás a mezőhöz';
+  jump.hidden=true;
+  jump.onclick=()=>{
+    const key=publicationTarget();
+    const field=[...root.querySelectorAll('[data-content-key]')].find(el=>el.dataset.contentKey===key);
+    if(!field)return;
+    if(field.tagName==='DETAILS')field.open=true;
+    const control=field.querySelector('input:not([disabled]),textarea:not([disabled]),select:not([disabled]),button:not([disabled]),summary');
+    (control||field).scrollIntoView({block:'nearest',behavior:'auto'});
+    control?.focus({preventScroll:true});
+  };
+  const updateJump=()=>{
+    const key=publicationTarget();
+    jump.hidden=publicationNote.hidden||!key||exclude.includes(key);
+    for(const field of root.querySelectorAll('[data-content-key]')){
+      field.classList.toggle('editor-publication-required',!publicationNote.hidden&&field.dataset.contentKey===key);
+    }
+  };
+  // Initial update runs after the controls are mounted; refresh after edits.
+  root.append(publicationNote,jump);
   const write=(patch,options={})=>{
     const result=apply(patch,options);
     if(result===false)throw new Error('A módosítás nem alkalmazható.');
-    Object.assign(working,structuredClone(patch));refreshPublicationNote();return result;
+    Object.assign(working,structuredClone(patch));refreshPublicationNote();updateJump();return result;
   };
   const group=(fields,read,commit)=>{
     const views=new Map(),keys=new Set(fields.map(field=>field.key));
@@ -273,5 +310,5 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
       root.append(control({...definition,type:'textarea',max:40000},(node.props?.rows||[]).map(row=>row.join('\t')).join('\n'),(value,group)=>save(value.split('\n').map(row=>row.split('\t')),group),update=>top.register(definition.key,update)));
     }else root.append(control(definition,working[definition.key],(value,typingGroup,asset)=>top.save(definition.key,value,typingGroup,asset),update=>top.register(definition.key,update)));
   }
-  root.append(fail);return root;
+  root.append(fail);updateJump();return root;
 }
