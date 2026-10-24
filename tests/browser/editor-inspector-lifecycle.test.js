@@ -215,6 +215,33 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   assert.deepEqual(await publicCss(),await css());
   assert.deepEqual(await publicPage.locator('.visual-card > .visual-text').first().evaluate(el=>{const style=getComputedStyle(el);return {paddingTop:style.paddingTop,paddingRight:style.paddingRight,backgroundColor:style.backgroundColor,fontSize:style.fontSize}}),await presetStyle());
   assert.deepEqual(await publicPage.locator('.visual-card:nth-child(2) > .visual-text').evaluate(el=>{const style=getComputedStyle(el);return {basis:style.flexBasis,maxWidth:style.maxWidth}}),await flexCss());
+  // A second Inspector field follows its own full route. Changing the color
+  // must reach Canvas, remain one undoable command, persist as a draft, and
+  // update the live page only after the separate Publish action.
+  const backgroundColor=()=>item.evaluate(el=>getComputedStyle(el).backgroundColor);
+  assert.equal(await backgroundColor(),'rgb(37, 99, 235)');
+  await field('background.color').locator('input[type="color"]').evaluate(input=>{
+    input.value='#dc2626';input.dispatchEvent(new Event('change',{bubbles:true}));
+  });
+  assert.equal(await backgroundColor(),'rgb(220, 38, 38)','Inspector color reaches the Canvas node');
+  await editor.locator('#undo').click();
+  assert.equal(await backgroundColor(),'rgb(37, 99, 235)','Undo restores the previous Inspector color');
+  await editor.locator('#redo').click();
+  assert.equal(await backgroundColor(),'rgb(220, 38, 38)','Redo restores the selected Inspector color');
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false,'saving a color edit must not publish');
+  await editor.reload();await select(itemId);
+  assert.equal(await backgroundColor(),'rgb(220, 38, 38)','saved Inspector color survives Editor reload');
+  await publicPage.reload();
+  assert.equal(await publicPage.locator(`[data-node-id="${itemId}"]`).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(37, 99, 235)',
+    'draft Save leaves the prior published Inspector color live');
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
+  assert.equal(posts.at(-1).publish,true,'only explicit Publish sends the new color live');
+  await publicPage.reload();
+  assert.equal(await publicPage.locator(`[data-node-id="${itemId}"]`).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(220, 38, 38)',
+    'the separately published Inspector color reaches the public renderer');
   // Edit a field after a live snapshot exists: Save updates only the draft,
   // reload retains it, and only the separate Publish changes the public CSS.
   await editor.locator('.inspector-tabs button').first().click();

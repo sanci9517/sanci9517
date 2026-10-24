@@ -1,7 +1,7 @@
 {
   "date": "2026-10-24",
   "plan_cursor": "77.44.7.A",
-  "inspector_field": "typography.textAlign",
+  "inspector_fields": ["typography.textAlign", "background.color"],
   "route": [
     "real Inspector select control",
     "responsive.set Page Model command",
@@ -10,11 +10,12 @@
     "draft Save and Editor reload",
     "previous public snapshot remains unchanged after Save",
     "explicit Publish",
-    "public renderer computed CSS"
+    "public renderer computed CSS",
+    "background.color: previous published blue remains unchanged after draft Save; explicit Publish changes public CSS to red"
   ],
   "checks": {
-    "inspector_lifecycle_chromium": "PASS 1/1",
-    "editor_browser_suite": "PASS 85/85",
+    "inspector_lifecycle_chromium": "PASS 1/1 after extending the test with background.color",
+    "editor_browser_suite": "PASS 85/85 before the latest assertion extension; target test rerun PASS 1/1 after extension",
     "editor_unit_suite": "PASS 131/131",
     "typescript": "PASS",
     "plan_contract": "PASS 13/13",
@@ -30,11 +31,11 @@
   "production_source": {
     "superseded_version": "b2db9f3f-19f8-4c06-b15a-c23b18f5be77",
     "superseded_source_commit": "b7cec261e53bf308853444e494cb44c437f5292d",
-    "current_version_at_check": "44d1e96f-41dc-4894-ac46-4ba1118b0d06",
-    "current_deployment_id": "78707d2f-4643-445f-89fc-15ebba2132cf",
+    "current_version_at_check": "cbc16225-087b-437f-8aa0-8433662f590f",
+    "current_deployment_id": "18504549-9866-44d9-94dd-758de3e01693",
     "current_traffic_percent": 100,
-    "current_source_commit": "69124947c7efee192c2a47770873607c5329c8bc",
-    "workers_build_id": "72a8ddf1-4364-44cb-b6a3-bec96065f112",
+    "current_source_commit": "1c2e1388049fe7a7c29debdadaf41902281859e1",
+    "workers_build_id": "55ef6d92-8d33-4c53-9603-994cd7f54ce0",
     "workers_build_outcome": "success",
     "migration_gate": "No migrations to apply",
     "live_inspector_module_sha256_matches": {
@@ -50,7 +51,7 @@
     "d1_migrations": false,
     "r2_deletions": false,
     "git_push_pending": true,
-    "github_editor_core_rerun_pending": true
+    "github_editor_core_rerun_pending": false
   },
-  "acceptance": "One style field route verified; all 79 element types, 68 properties, mobile physical/IME and full 77.44 acceptance remain open."
+  "acceptance": "Two style-field routes verified in the current local browser test. The full browser suite is due to rerun in CI for this final extension; all 79 element types, 68 properties, mobile physical/IME and full 77.44 acceptance remain open."
 }
