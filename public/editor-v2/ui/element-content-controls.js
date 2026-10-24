@@ -1,4 +1,4 @@
-import {CONTENT_FIELDS,normalizeContentField,contentProperties,imageFocalPosition,getPublicationContentIssue} from '../core/authored-content.js';
+import {CONTENT_FIELDS,normalizeContentField,contentProperties,imageFocalPosition,getPublicationContentGuidance} from '../core/authored-content.js';
 
 export function pageLinkPicker(pages,input){
   const select=document.createElement('select');select.className='content-page-picker';select.setAttribute('aria-label','Belső oldal kiválasztása');
@@ -112,28 +112,15 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
   const publicationNote=document.createElement('p');
   publicationNote.className='content-field-help editor-publication-warning';
   publicationNote.setAttribute('role','status');
+  const currentPublicationGuidance=()=>getPublicationContentGuidance({...node,props:working});
   const refreshPublicationNote=()=>{
-    const issue=getPublicationContentIssue({...node,props:working});
-    publicationNote.textContent=issue?'Publikálás előtt: '+issue:'';
-    publicationNote.hidden=!issue;
+    const guidance=currentPublicationGuidance();
+    publicationNote.textContent=guidance?'Publikálás előtt: '+guidance.message:'';
+    publicationNote.hidden=!guidance;
   };
-  // Prefer the first actionable authored field. Never mark an input aria-invalid:
-  // incomplete publication content must not block normal draft editing.
-  const publicationTarget=()=>{
-    const p=working,t=node.type;
-    if(['image','video','audio'].includes(t)){
-      if(!p.src?.trim()&&!p.assetId)return 'src';
-      if(t==='image'&&!p.decorative&&!p.alt?.trim())return 'alt';
-      if(t==='audio'&&p.controls===false)return 'controls';
-      if(t==='video'&&p.controls===false&&!(p.autoplay&&p.muted))return 'controls';
-    }
-    if(['link','button'].includes(t)&&!p.href?.trim())return 'href';
-    if(t==='heading'&&!p.text?.trim())return 'text';
-    if(['gallery','carousel','tabs','accordion','dropdown','list'].includes(t))return 'items';
-    if(t==='table')return 'rows';
-    if(t==='tooltip')return !p.text?.trim()?'text':'description';
-    return null;
-  };
+  // The server and Inspector share both the message and the target property.
+  // Do not reconstruct required-field conditions separately in this UI.
+  const publicationTarget=()=>currentPublicationGuidance()?.fieldKey??null;
   const jump=document.createElement('button');
   jump.type='button';jump.className='editor-publication-jump';
   jump.textContent='Ugrás a mezőhöz';
