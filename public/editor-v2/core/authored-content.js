@@ -88,22 +88,28 @@ export function validateElementContent(node){
 }
 // Single source for the visible authored-content publication gate. The Inspector can
 // read this without mutating a draft; the server uses the same decision.
-export function getPublicationContentIssue(node){
+// One authoritative source for the authored-content publication message and
+// the Inspector target. Keep publication precedence identical to the server gate.
+export function getPublicationContentGuidance(node){
   if(!isAuthoredContent(node)||!CONTENT_FIELDS[node?.type])return null;
   const p=contentProperties(node);
-  let missing='';
-  if(['image','video','audio'].includes(node.type)&&!p.src?.trim()&&!p.assetId)missing='Válassz Médiatár-fájlt vagy adj meg médiaforrást.';
-  if(node.type==='image'&&(p.src||p.assetId)&&!p.decorative&&!p.alt?.trim())missing='Adj meg képleírást, vagy jelöld a képet díszítőnek.';
-  if(['link','button'].includes(node.type)&&!p.href?.trim())missing='Adj meg hivatkozási célt. Művelet nélküli gomb nem publikálható.';
-  if(node.type==='heading'&&!p.text?.trim())missing='A címsor nem lehet üres.';
-  if(['gallery','carousel'].includes(node.type)&&(!p.items?.length||p.items.some(item=>(!item.src?.trim()&&!item.assetId)||!(item.alt?.trim()||item.caption?.trim()))))missing='A képekhez Médiatár-fájl vagy forrás, és leírás vagy képaláírás szükséges.';
-  if(['tabs','accordion','dropdown'].includes(node.type)&&(!p.items?.length||p.items.some(item=>!item.title?.trim())))missing='Legalább egy elnevezett rész szükséges.';
-  if(node.type==='table'&&(!p.rows?.length||!p.rows.some(row=>row.some(cell=>String(cell).trim()))))missing='A táblázatnak legyen tartalma.';
-  if(node.type==='list'&&(!p.items?.length||p.items.some(item=>!item.text?.trim())))missing='Adj meg legalább egy nem üres listaelemet.';
-  if(node.type==='tooltip'&&(!p.text?.trim()||!p.description?.trim()))missing='Felirat és magyarázat is szükséges.';
-  if(node.type==='audio'&&p.controls===false)missing='A hanglejátszó vezérlőit nem rejtheted el.';
-  if(node.type==='video'&&p.controls===false&&!(p.autoplay&&p.muted))missing='Vezérlők nélküli háttérvideó csak némítva, automatikusan indulhat.';
-  return missing||null;
+  let missing=null;
+  const requireField=(fieldKey,message)=>{missing={fieldKey,message}};
+  if(['image','video','audio'].includes(node.type)&&!p.src?.trim()&&!p.assetId)requireField('src','Válassz Médiatár-fájlt vagy adj meg médiaforrást.');
+  if(node.type==='image'&&(p.src||p.assetId)&&!p.decorative&&!p.alt?.trim())requireField('alt','Adj meg képleírást, vagy jelöld a képet díszítőnek.');
+  if(['link','button'].includes(node.type)&&!p.href?.trim())requireField('href','Adj meg hivatkozási célt. Művelet nélküli gomb nem publikálható.');
+  if(node.type==='heading'&&!p.text?.trim())requireField('text','A címsor nem lehet üres.');
+  if(['gallery','carousel'].includes(node.type)&&(!p.items?.length||p.items.some(item=>(!item.src?.trim()&&!item.assetId)||!(item.alt?.trim()||item.caption?.trim()))))requireField('items','A képekhez Médiatár-fájl vagy forrás, és leírás vagy képaláírás szükséges.');
+  if(['tabs','accordion','dropdown'].includes(node.type)&&(!p.items?.length||p.items.some(item=>!item.title?.trim())))requireField('items','Legalább egy elnevezett rész szükséges.');
+  if(node.type==='table'&&(!p.rows?.length||!p.rows.some(row=>row.some(cell=>String(cell).trim()))))requireField('rows','A táblázatnak legyen tartalma.');
+  if(node.type==='list'&&(!p.items?.length||p.items.some(item=>!item.text?.trim())))requireField('items','Adj meg legalább egy nem üres listaelemet.');
+  if(node.type==='tooltip'&&(!p.text?.trim()||!p.description?.trim()))requireField(!p.text?.trim()?'text':'description','Felirat és magyarázat is szükséges.');
+  if(node.type==='audio'&&p.controls===false)requireField('controls','A hanglejátszó vezérlőit nem rejtheted el.');
+  if(node.type==='video'&&p.controls===false&&!(p.autoplay&&p.muted))requireField('controls','Vezérlők nélküli háttérvideó csak némítva, automatikusan indulhat.');
+  return missing?Object.freeze(missing):null;
+}
+export function getPublicationContentIssue(node){
+  return getPublicationContentGuidance(node)?.message??null;
 }
 
 export function validatePageForPublication(page){
