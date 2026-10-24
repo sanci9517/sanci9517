@@ -6,3 +6,4 @@ export const CONTENT_TYPES: readonly string[];
 
 export function imageFocalPosition(item?: {focalPoint?: unknown; focalX?: unknown; focalY?: unknown}): {focalX:number; focalY:number};
 export function getPublicationContentIssue(node: any): string | null;
+export function getPublicationContentGuidance(node:any): Readonly<{fieldKey:string;message:string}> | null;
