@@ -1,0 +1,294 @@
+{
+  "stage": "production code/static release verified; authenticated UI and physical-device acceptance remain open",
+  "recorded_at": "2026-10-24T08:37:02.490391+00:00",
+  "integration_pr": 313,
+  "target_branch": "v2/foundation",
+  "candidate_sha": "7e50ca959f18071e3b0486b2204578d1c7cfc1be",
+  "merge_sha": "19cd5e409aa6588a3201acf0736ca81359183ee7",
+  "merge_tree_matches_candidate": true,
+  "source_coverage": {
+    "prs": 21,
+    "contributions": 28,
+    "byte_preserved_files": 57,
+    "status": "PASS"
+  },
+  "merged_head_checks": {
+    "passed": 6,
+    "total": 6,
+    "editor_core_run": 40078190055,
+    "names": [
+      "Workers Builds",
+      "source-audit",
+      "twitch-integration",
+      "editor-core",
+      "verify",
+      "canonical-plan"
+    ]
+  },
+  "delivery": {
+    "mechanism": "Existing Cloudflare Workers Builds integration automatically deployed after merge; no duplicate manual deploy",
+    "deployment_id": "06d18145-1130-4ab0-bfa2-65c96fcc17ae",
+    "version_id": "6eaf2a91-e961-463e-9999-e02f7a89033a",
+    "created_on": "2026-10-24T08:29:08.756421Z",
+    "traffic_percentage": 100,
+    "downloaded_worker_bundle_sha256": "47e43002fc1b2f5c19853db37b86e0c7838dcb176b69bd62cd611a74dd256496",
+    "matches_local_merge_commit_bundle": true
+  },
+  "browser_verification": {
+    "source_sha": "19cd5e409aa6588a3201acf0736ca81359183ee7",
+    "checked_at": "2026-10-24T08:34:55.000Z",
+    "method": "real Chromium via inherited proxy; read-only HTTP; no session",
+    "health": [
+      {
+        "path": "/api/health",
+        "status": 200,
+        "ok": true,
+        "connected": null,
+        "errorCode": null
+      },
+      {
+        "path": "/api/db-health",
+        "status": 200,
+        "ok": true,
+        "connected": true,
+        "errorCode": null
+      },
+      {
+        "path": "/api/admin/media?retentionStatus=1",
+        "status": 401,
+        "ok": false,
+        "connected": null,
+        "errorCode": "UNAUTHORIZED"
+      }
+    ],
+    "changed_non_html_assets": 28,
+    "asset_matches": 28,
+    "assets": [
+      {
+        "path": "public/assets/admin-media-integrity.js",
+        "sha256": "3b47b2189d953ffff0a05210e3d5105f5a228cc80fcd5643b3dc1d3cec1d9452",
+        "status": 200,
+        "actual_sha256": "3b47b2189d953ffff0a05210e3d5105f5a228cc80fcd5643b3dc1d3cec1d9452",
+        "match": true
+      },
+      {
+        "path": "public/assets/admin-media-retention-actions.js",
+        "sha256": "87d75b197f97adaac36db90ca5adcff20eacb305a121eac3523fcb65d4cfd879",
+        "status": 200,
+        "actual_sha256": "87d75b197f97adaac36db90ca5adcff20eacb305a121eac3523fcb65d4cfd879",
+        "match": true
+      },
+      {
+        "path": "public/assets/admin-media-retention.js",
+        "sha256": "af274b7b0bb4c90ff2fd7e690600f7b4c3dc50c5f12a940c216f1719bb8ba551",
+        "status": 200,
+        "actual_sha256": "af274b7b0bb4c90ff2fd7e690600f7b4c3dc50c5f12a940c216f1719bb8ba551",
+        "match": true
+      },
+      {
+        "path": "public/assets/admin-media.js",
+        "sha256": "1d9eb86d004c84a054b8c7f92be36d78e34e8510146b8588825db486f615bad6",
+        "status": 200,
+        "actual_sha256": "1d9eb86d004c84a054b8c7f92be36d78e34e8510146b8588825db486f615bad6",
+        "match": true
+      },
+      {
+        "path": "public/assets/page-renderer.js",
+        "sha256": "b581f4a274f31b28afdaf73a57844f9914178f0643d1b42c0330d512f07a07d1",
+        "status": 200,
+        "actual_sha256": "b581f4a274f31b28afdaf73a57844f9914178f0643d1b42c0330d512f07a07d1",
+        "match": true
+      },
+      {
+        "path": "public/editor-v2/app.js",
+        "sha256": "28f7a740fb776100300603a0a06a2008a5a42ea5c4d2179cbfec513e2e887db5",
+        "status": 200,
+        "actual_sha256": "28f7a740fb776100300603a0a06a2008a5a42ea5c4d2179cbfec513e2e887db5",
+        "match": true
+      },
+      {
+        "path": "public/editor-v2/core/accessibility.js",
+        "sha256": "b3f1da56fa5f014915bb04130e34262f79169970f98b244bdc06c05acfc8b929",
+        "status": 200,
+        "actual_sha256": "b3f1da56fa5f014915bb04130e34262f79169970f98b244bdc06c05acfc8b929",
+        "match": true
+      },
+      {
+        "path": "public/editor-v2/core/authored-content.d.ts",
+        "sha256": "12cb5883d040ed0f730aa3347ffabe71212da1be2fce9518852d2d2a032afbc4",
+        "status": 200,
+        "actual_sha256": "12cb5883d040ed0f730aa3347ffabe71212da1be2fce9518852d2d2a032afbc4",
+        "match": true
+      },
+      {
+        "path": "public/editor-v2/core/authored-content.js",
+        "sha256": "7fe1cef4949081d6a585c62f4e669b1363e03467269dc0ca631543f52e8bec6e",
+        "status": 200,
+        "actual_sha256": "7fe1cef4949081d6a585c62f4e669b1363e03467269dc0ca631543f52e8bec6e",
+        "match": true
+      },
+      {
+        "path": "public/editor-v2/core/countdown-content.js",
+        "sha256": "33086dc4f65c43dbd31b1d3b0ab29cce06f2123c148895b7b835359c17e7a39f",
+        "status": 200,
+        "actual_sha256": "33086dc4f65c43dbd31b1d3b0ab29cce06f2123c148895b7b835359c17e7a39f",
+        "match": true
+      },
+      {
+        "path": "public/editor-v2/core/countdown-local-time.d.ts",
+        "sha256": "4817101484152543f42b69ae2b5a5b17ddfd80244ad1d720eb408cf5c82f2181",
+        "status": 200,
+        "actual_sha256": "4817101484152543f42b69ae2b5a5b17ddfd80244ad1d720eb408cf5c82f2181",
+        "match": true
+      },
+      {
+        "path": "public/editor-v2/core/countdown-local-time.js",
+        "sha256": "3b96f973074e8a05bfeda0461a1625f589fa8a48a48c48c47a5dd7a755203dc3",
+        "status": 200,
+        "actual_sha256": "3b96f973074e8a05bfeda0461a1625f589fa8a48a48c48c47a5dd7a755203dc3",
+        "match": true
+      },
+      {
+        "path": "public/editor-v2/core/creator-embed.js",
+        "sha256": "56d01f520e94a34ca2ab9ba875f95410f9e0bd5ff9211014eb0711e7946c3506",
+        "status": 200,
+        "actual_sha256": "56d01f520e94a34ca2ab9ba875f95410f9e0bd5ff9211014eb0711e7946c3506",
+        "match": true
+      },
+      {
+        "path": "public/editor-v2/core/legacy-media-source.js",
+        "sha256": "0c0c9ceffdd2e2df3b9787a68bde64110759fbd1e38d70d61e8b2e6a48458c5d",
+        "status": 200,
+        "actual_sha256": "0c0c9ceffdd2e2df3b9787a68bde64110759fbd1e38d70d61e8b2e6a48458c5d",
+        "match": true
+      },
+      {
+        "path": "public/editor-v2/tests/core.test.js",
+        "sha256": "4b93cfc3050e377caefd53434b2e2916050306a7bbc02ab8053af90b5e2fee1e",
+        "status": 200,
+        "actual_sha256": "4b93cfc3050e377caefd53434b2e2916050306a7bbc02ab8053af90b5e2fee1e",
+        "match": true
+      },
+      {
+        "path": "public/editor-v2/tests/element-content.test.js",
+        "sha256": "e8d270ba84de6cfbb877c4042f2e6a26e250faad6f3774981560deaf283d7554",
+        "status": 200,
+        "actual_sha256": "e8d270ba84de6cfbb877c4042f2e6a26e250faad6f3774981560deaf283d7554",
+        "match": true
+      },
+      {
+        "path": "public/editor-v2/ui/accessibility-fields.js",
+        "sha256": "c125ba9c4028a9b82bf9089633f8aa9d70e61d3b68ebfdb3a287c8a58c1abc7c",
+        "status": 200,
+        "actual_sha256": "c125ba9c4028a9b82bf9089633f8aa9d70e61d3b68ebfdb3a287c8a58c1abc7c",
+        "match": true
+      },
+      {
+        "path": "public/editor-v2/ui/basic-content-inspector.js",
+        "sha256": "9989dfac89a3a414b58bb8ea75837fa6ac73a3eef4d53ea8d79533be4fc16ac3",
+        "status": 200,
+        "actual_sha256": "9989dfac89a3a414b58bb8ea75837fa6ac73a3eef4d53ea8d79533be4fc16ac3",
+        "match": true
+      },
+      {
+        "path": "public/editor-v2/ui/card-content-inspector.js",
+        "sha256": "dc3a1aef5c0c2b962b179471806e590ae43767dec3986a2a246cc16cda73c37d",
+        "status": 200,
+        "actual_sha256": "dc3a1aef5c0c2b962b179471806e590ae43767dec3986a2a246cc16cda73c37d",
+        "match": true
+      },
+      {
+        "path": "public/editor-v2/ui/code-snippet-inspector.js",
+        "sha256": "c088239c971b59dcb20812f32119ea8a3c4e0c2c1d57333b9129e0fe8d48278e",
+        "status": 200,
+        "actual_sha256": "c088239c971b59dcb20812f32119ea8a3c4e0c2c1d57333b9129e0fe8d48278e",
+        "match": true
+      },
+      {
+        "path": "public/editor-v2/ui/composition-inputs.js",
+        "sha256": "5944dff0aafd6d208e365f38303d018ff1186b56b989beefedd0ade62839a62c",
+        "status": 200,
+        "actual_sha256": "5944dff0aafd6d208e365f38303d018ff1186b56b989beefedd0ade62839a62c",
+        "match": true
+      },
+      {
+        "path": "public/editor-v2/ui/countdown-date-control.js",
+        "sha256": "39ebc03518dcd2acfbcf8418b29fcb1b1f1418c6985a5a036e913155ebb9b353",
+        "status": 200,
+        "actual_sha256": "39ebc03518dcd2acfbcf8418b29fcb1b1f1418c6985a5a036e913155ebb9b353",
+        "match": true
+      },
+      {
+        "path": "public/editor-v2/ui/countdown-inspector.js",
+        "sha256": "3044565b85222e199ccda26e7d312e477b4c3b2be70c99ab4a9b464ebec1927b",
+        "status": 200,
+        "actual_sha256": "3044565b85222e199ccda26e7d312e477b4c3b2be70c99ab4a9b464ebec1927b",
+        "match": true
+      },
+      {
+        "path": "public/editor-v2/ui/creator-embed-inspector.js",
+        "sha256": "69dd73967fed5430dd69ae827bc70ca8144417b7b0e772fb2ae54472adf98134",
+        "status": 200,
+        "actual_sha256": "69dd73967fed5430dd69ae827bc70ca8144417b7b0e772fb2ae54472adf98134",
+        "match": true
+      },
+      {
+        "path": "public/editor-v2/ui/element-content-controls.js",
+        "sha256": "409ebd68b2da32f57d98c94ba000a19a17c20ddc6295f49f64e248019311501a",
+        "status": 200,
+        "actual_sha256": "409ebd68b2da32f57d98c94ba000a19a17c20ddc6295f49f64e248019311501a",
+        "match": true
+      },
+      {
+        "path": "public/editor-v2/ui/legacy-media-inspector.js",
+        "sha256": "db00b7fc165b1d9cbf515bf54f9a45146fb8149ec09c7318cfffca96be720eac",
+        "status": 200,
+        "actual_sha256": "db00b7fc165b1d9cbf515bf54f9a45146fb8149ec09c7318cfffca96be720eac",
+        "match": true
+      },
+      {
+        "path": "public/editor-v2/ui/social-links-inspector.js",
+        "sha256": "b659df72f65cf6a2f870bd27dc420bc691ae2d2ade0b9ea647d933f4fedaeae5",
+        "status": 200,
+        "actual_sha256": "b659df72f65cf6a2f870bd27dc420bc691ae2d2ade0b9ea647d933f4fedaeae5",
+        "match": true
+      },
+      {
+        "path": "public/editor-v2/ui/structured-inspector.js",
+        "sha256": "630dc1996d01b27cd66c15a4e4589dd1d571a3d0fa73dba8fba98c3f40d1e8b4",
+        "status": 200,
+        "actual_sha256": "630dc1996d01b27cd66c15a4e4589dd1d571a3d0fa73dba8fba98c3f40d1e8b4",
+        "match": true
+      }
+    ],
+    "authenticated_admin_ui_acceptance": false,
+    "physical_device_acceptance": false
+  },
+  "d1": {
+    "quick_check": "ok",
+    "foreign_key_violations": 0,
+    "schema_objects": 84,
+    "ledger_records": 34,
+    "schema_and_ledger_unchanged_after_release": true,
+    "pending_wrangler_migrations_before_release": 0,
+    "preflight_queries_rows_written": 0,
+    "schema_sha256": "619f32ce3dc3ce14f598532ab853c6d7e2fa20acea8ceefd1233d31b16fa44d7",
+    "ledger_sha256": "3954f9b2dbbaacaf5c35649c13b5463f3e1ec67f45f1b31bc77f49e3760c8bac"
+  },
+  "resolved_issues": [
+    "Worker deployments/settings/content API access now passes after credential update",
+    "Python urllib public HTTP returned Cloudflare 403/1010; genuine Chromium via same inherited proxy passes. No security rule or proxy bypass."
+  ],
+  "limits": [
+    "No production login/session was created or borrowed. Authenticated Admin panel interaction has not been observed in this release.",
+    "No physical device/IME/provider playback acceptance claimed.",
+    "Quick/FK/schema/ledger checks do not establish an all-business-row content comparison."
+  ],
+  "actions": {
+    "manual_deploys": 0,
+    "manual_production_sql_writes": 0,
+    "migration_replays": 0,
+    "r2_deletions": 0,
+    "retention_cleanup_runs": 0
+  }
+}

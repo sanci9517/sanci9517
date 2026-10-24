@@ -1,0 +1,27 @@
+{
+  "scope": "Saved draft and live page paths in Editor list; preserves current remote hierarchy, tenant and IME changes",
+  "local_preserved_commit": "6569125",
+  "integrated_remote_head": "5f9abad667fb9e62a1e4177f2022f4110145b3d5",
+  "checks": {
+    "typecheck": "PASS",
+    "route_and_editor_tests": {
+      "passed": 375,
+      "failed": 0,
+      "skipped": 0
+    },
+    "chromium_page_paths": {
+      "passed": 2,
+      "widths": [
+        390,
+        1366
+      ],
+      "data": "synthetic local API fixture"
+    },
+    "canonical_plan": "PASS",
+    "diff_check": "PASS"
+  },
+  "migration_preflight": "wrangler d1 migrations list DB --remote: No migrations to apply",
+  "production_database_writes": false,
+  "r2_deletions": false,
+  "release": "pending source push and deployment verification"
+}

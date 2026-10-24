@@ -23,7 +23,10 @@ test('public API returns published snapshot, never draft, and forbids caching', 
 });
 
 test('preview requires editor authentication before reading draft', () => {
-  assert.match(publicRoute, /if\(explicitPreview\)\{const user=await getAuthenticatedUser/);
+  assert.match(publicRoute, /if\(explicitPreview\)\{/);
+  assert.match(publicRoute, /requireSiteGrant\(request,env,siteId,'editor'\)/);
+  assert.match(publicRoute, /if\(grant instanceof Response\)return noStore\(grant\)/);
+  assert.match(publicRoute, /if\(siteId!==DEFAULT_SITE_ID\)return noStore\(error\('SITE_ACCESS_DENIED',403\)\)/);
   assert.match(publicRoute, /if\(!user\)return noStore\(error\('UNAUTHORIZED',401/);
   assert.match(publicRoute, /if\(!hasRole\(user,'editor'\)\)return noStore\(error\('FORBIDDEN',403/);
 });

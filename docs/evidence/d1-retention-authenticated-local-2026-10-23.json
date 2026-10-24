@@ -1,0 +1,17 @@
+{
+  "kind": "local-full-worker-authenticated-rehearsal",
+  "production_http_acceptance": false,
+  "production_writes": 0,
+  "authenticated_status": 200,
+  "migrationActive": true,
+  "requestCount": 0,
+  "permanentDeletionAuthorized": false,
+  "unauthenticated_status": 401,
+  "viewer_status": 403,
+  "revoked_status": 403,
+  "select_operations": 13,
+  "r2_operations": 0,
+  "local_setup_rolled_back": true,
+  "all_original_local_data_preserved": true,
+  "ledger_records": 34
+}

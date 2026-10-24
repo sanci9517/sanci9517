@@ -1,0 +1,176 @@
+import {exerciseComposition} from './helpers/composition.js';
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import {createServer} from 'node:http';
+import {readFile} from 'node:fs/promises';
+import {existsSync} from 'node:fs';
+import {resolve,extname} from 'node:path';
+import {chromium} from 'playwright';
+import {createDocument} from '../../public/editor-v2/core/schema.js';
+import {createEditorState,activePage} from '../../public/editor-v2/core/state.js';
+import {execute} from '../../public/editor-v2/core/commands.js';
+
+for(const width of [390,1366])test(`Creator Embed keeps IME drafts, activation focus and consent/Publish isolation at ${width}px`,async t=>{
+ const model=createEditorState(createDocument()),pageId=model.document.activePageId,root=activePage(model).rootId;
+ execute(model,{type:'element.add',payload:{type:'embed',parentId:root}});
+ const embedId=model.selection.primaryId;
+ let draft=structuredClone(model.document),published=structuredClone(draft),version=1;
+ const posts=[],assetRoot=resolve(import.meta.dirname,'../../public');
+ const server=createServer(async(req,res)=>{
+  const url=new URL(req.url,'http://localhost');
+  const json=data=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(data))};
+  if(url.pathname==='/api/admin/pages')return json({ok:true,data:url.searchParams.get('archived')==='1'?[]:[{id:pageId,slug:'test',title:'Test',content:draft,revision:version,isPublished:true}]});
+  if(url.pathname==='/api/admin/editor'){
+   if(req.method==='GET')return json({ok:true,data:{page:{id:pageId,document:draft,publishedRevisionId:'published'},revisions:[{id:'revision-'+version,version}]}});
+   let raw='';for await(const chunk of req)raw+=chunk;
+   const request=JSON.parse(raw);posts.push(request);draft=structuredClone(request.document);version++;
+   if(request.publish)published=structuredClone(draft);
+   return json({ok:true,data:{pageId,version,revisionId:'revision-'+version,published:Boolean(request.publish)}});
+  }
+  if(url.pathname==='/api/public/pages')return json({ok:true,data:{id:pageId,slug:'test',title:'Test',description:'',content:published.pages[pageId]}});
+  if(url.pathname==='/api/public/navigation')return json({ok:true,data:{items:[]}});
+  if(url.pathname==='/api/integrations/twitch/connection')return json({ok:true,data:{connected:false}});
+  if(url.pathname.startsWith('/api/'))return json({ok:true,data:{siteName:'Test'}});
+  const asset=url.pathname==='/p/test'?'/visual-page.html':url.pathname,file=resolve(assetRoot,'.'+asset);
+  if(!file.startsWith(assetRoot+'/')){res.writeHead(403).end();return}
+  try{res.setHeader('content-type',{'.html':'text/html','.js':'text/javascript','.css':'text/css'}[extname(file)]||'application/octet-stream');res.end(await readFile(file))}
+  catch{res.writeHead(404).end()}
+ });
+ await new Promise(done=>server.listen(0,'127.0.0.1',done));
+ const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
+ t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
+ const base='http://127.0.0.1:'+server.address().port;
+ const editor=await browser.newPage({viewport:{width,height:900}}),viewer=await browser.newPage({viewport:{width,height:900}});
+ editor.setDefaultTimeout(7000);viewer.setDefaultTimeout(7000);
+ const errors=[];editor.on('pageerror',e=>errors.push('editor:'+e.message));viewer.on('pageerror',e=>errors.push('public:'+e.message));
+ let youtubeRequests=0;
+ await viewer.route('https://www.youtube-nocookie.com/**',route=>{youtubeRequests++;return route.fulfill({status:200,contentType:'text/html',body:'<!doctype html><title>Player fixture</title>'})});
+ for(const pattern of ['https://player.vimeo.com/**','https://player.twitch.tv/**'])await viewer.route(pattern,route=>route.fulfill({status:200,contentType:'text/html',body:'<!doctype html><title>Player fixture</title>'}));
+ await editor.goto(base+'/editor-v2/index.html');await viewer.goto(base+'/p/test');
+ const node=editor.locator('.node[data-node-id="'+embedId+'"]');
+ await node.evaluate(el=>el.click());
+ if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
+ await editor.locator('.inspector-tabs button').nth(1).click();
+ const inspector=editor.locator('.creator-embed-inspector');
+ assert.equal(await inspector.locator('h3').textContent(),'Videó vagy élőadás beágyazása');
+ const type=async(label,text)=>{
+  const input=inspector.getByRole('textbox',{name:label});
+  await input.fill(text);await input.press('Tab');
+ };
+ await type('Videó URL vagy azonosító','https://www.youtube.com/watch?v=M7lc1UVf-VE');
+ await type('Lejátszó címe','Bemutatkozás <script>alert(1)</script>');
+
+ await inspector.getByRole('combobox',{name:'Videó arány'}).selectOption('classic');
+ const consent=inspector.getByRole('checkbox',{name:'Betöltés csak látogatói kattintásra'});
+ await consent.uncheck();
+ await editor.keyboard.press('Control+z');
+ assert.equal(await consent.isChecked(),true);
+ await editor.keyboard.press('Control+Shift+z');
+ assert.equal(await consent.isChecked(),false);
+ await editor.keyboard.press('Control+z');
+ assert.equal(await consent.isChecked(),true);
+ assert.equal(posts.length,0,'changing video Inspector must not save automatically');
+ assert.match(await node.locator('.visual-embed-load').textContent(),/Bemutatkozás/);
+ const playerSelector=`.node[data-node-id="${embedId}"] .visual-embed-player`,finalTitle='Végleges bemutatkozás <script>alert(1)</script>',finalSource='https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+ await exerciseComposition({page:editor,input:inspector.getByRole('textbox',{name:'Lejátszó címe'}),selector:playerSelector,attribute:'data-embed-title',before:'Bemutatkozás <script>alert(1)</script>',final:finalTitle,posts,otherInput:inspector.getByRole('textbox',{name:'Videó URL vagy azonosító'}),attemptBlocked:async()=>{
+  await inspector.getByRole('combobox',{name:'Videó arány'}).selectOption('portrait');
+  assert.equal(await inspector.getByRole('combobox',{name:'Videó arány'}).inputValue(),'classic');
+  await consent.click();assert.equal(await consent.isChecked(),true,'blocked consent edit restores the checkbox');
+ }});
+ await exerciseComposition({page:editor,input:inspector.getByRole('textbox',{name:'Videó URL vagy azonosító'}),selector:playerSelector,attribute:'data-embed-source',before:'https://www.youtube.com/watch?v=M7lc1UVf-VE',final:finalSource,posts,restart:true});
+ assert.match(await inspector.locator('.embed-inspector-status').textContent(),/Támogatott/);
+ assert.equal(await inspector.locator('.embed-inspector-status.invalid').count(),0);
+ await editor.locator('#save').click();
+ await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+ assert.equal(posts.at(-1).publish,false);
+ assert.equal(draft.pages[pageId].nodes[embedId].props.embedContent.ratio,'classic');
+ await viewer.reload();
+ const publicNode=viewer.locator('.visual-creator-embed[data-node-id="'+embedId+'"]');
+ assert.equal(await publicNode.locator('.visual-embed-player').count(),0,'draft Save never changes published video');
+ assert.equal(await youtubeRequests,0,'old published content sends no remote request');
+ await editor.reload();await node.evaluate(el=>el.click());
+ if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
+ await editor.locator('.inspector-tabs button').nth(1).click();
+ assert.equal(await inspector.getByRole('textbox',{name:'Lejátszó címe'}).inputValue(),finalTitle);
+ assert.equal(await inspector.getByRole('textbox',{name:'Videó URL vagy azonosító'}).inputValue(),finalSource);
+ await editor.locator('#publish').click();
+ await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+ assert.equal(posts.at(-1).publish,true);
+ await viewer.reload();
+ await publicNode.locator('.visual-embed-player').waitFor({state:'visible'});
+ assert.equal(await publicNode.locator('.visual-embed-player').count(),1);
+ assert.equal(await publicNode.locator('iframe').count(),0,'before consent no remote player frame');
+ assert.equal(youtubeRequests,0,'no third-party request before click');
+ assert.equal(await publicNode.locator('.visual-embed-load script').count(),0,'title cannot execute HTML');
+ assert.match(await publicNode.locator('.visual-embed-load').textContent(),/Végleges bemutatkozás <script>alert/);
+ await publicNode.locator('.visual-embed-load').focus();
+ await publicNode.locator('.visual-embed-load').press('Enter');
+ const frame=publicNode.locator('iframe.visual-embed-frame');
+ await frame.waitFor();
+ assert.equal(await frame.evaluate(el=>el===document.activeElement),true,'keyboard activation transfers focus into the loaded player');
+ assert.equal(await frame.getAttribute('src'),'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?rel=0');
+ assert.equal(await frame.getAttribute('title'),finalTitle);
+ assert.equal(await frame.getAttribute('referrerpolicy'),'strict-origin-when-cross-origin');
+ assert.ok(youtubeRequests>=1,'video loads only after user activation');
+ await viewer.setViewportSize({width:390,height:800});await viewer.reload();
+ const player=publicNode.locator('.visual-embed-player');
+ const rect=await player.boundingBox();
+ assert.ok(rect.width<=390 && rect.width>180,'player fits mobile page');
+ assert.ok(rect.height>=200,'player provides sufficient height');
+ await viewer.evaluate(async()=>{
+  const {renderEmbedHtml,activateEmbeds}=await import('/editor-v2/core/creator-embed.js');
+  for(const [provider,source] of [['twitch-live','sanci9517'],['twitch-vod','123456789']]){
+   const host=document.createElement('div');host.style.width='320px';host.dataset.testProvider=provider;
+   host.innerHTML=renderEmbedHtml({version:1,provider,source,title:'Twitch próba',ratio:'landscape',clickToLoad:true});
+   document.body.append(host);activateEmbeds(host);activateEmbeds(host);
+  }
+ });
+ for(const [provider,path,key] of [['twitch-live','sanci9517','Enter'],['twitch-vod','videos/123456789','Space']]){
+  const host=viewer.locator(`[data-test-provider="${provider}"]`),button=host.locator('.visual-embed-load');
+  assert.equal(await host.locator('iframe,a').count(),0,'narrow Twitch needs explicit activation');
+  await button.focus();await button.press(key);const link=host.locator('.visual-embed-external');
+  assert.equal(await link.getAttribute('href'),'https://www.twitch.tv/'+path);
+  assert.equal(await link.getAttribute('target'),'_blank');assert.equal(await link.getAttribute('rel'),'noopener noreferrer');
+  assert.equal(await link.evaluate(el=>el===document.activeElement),true,'Twitch fallback stays reachable after keyboard activation');
+  assert.equal(await host.locator('iframe').count(),0,'Twitch documented minimum width is respected');
+ }
+ for(const [provider,source] of [['vimeo','https://vimeo.com/76979871/abc123'],['twitch-live','sanci9517'],['twitch-vod','123456789']]){
+  await viewer.evaluate(async({provider,source})=>{
+   const {renderEmbedHtml,activateEmbeds}=await import('/editor-v2/core/creator-embed.js');
+   const host=document.createElement('div');host.style.width='480px';host.dataset.testPlayer=provider;
+   host.innerHTML=renderEmbedHtml({version:1,provider,source,title:'Billentyűzetes '+provider,ratio:'landscape',clickToLoad:true});
+   document.body.append(host);activateEmbeds(host);
+  },{provider,source});
+  const host=viewer.locator(`[data-test-player="${provider}"]`),button=host.locator('.visual-embed-load');
+  assert.equal(await host.locator('iframe').count(),0);await button.focus();await button.press('Enter');
+  const frame=host.locator('iframe');await frame.waitFor();
+  assert.equal(await frame.evaluate(el=>el===document.activeElement),true,provider+' player receives activation focus');
+  assert.equal(await frame.getAttribute('title'),'Billentyűzetes '+provider);
+  const url=new URL(await frame.getAttribute('src'));
+  if(provider==='vimeo')assert.equal(url.href,'https://player.vimeo.com/video/76979871?h=abc123&dnt=1');
+  else{
+   assert.equal(url.origin,'https://player.twitch.tv');assert.equal(url.searchParams.get('parent'),'127.0.0.1');
+   assert.equal(url.searchParams.get(provider==='twitch-live'?'channel':'video'),provider==='twitch-live'?'sanci9517':'v123456789');
+  }
+  await host.evaluate(el=>el.remove());
+ }
+ const focusGuards=await viewer.evaluate(async()=>{
+  const {renderEmbedHtml,activateEmbeds}=await import('/editor-v2/core/creator-embed.js');
+  const outside=document.createElement('button');outside.textContent='Másik vezérlő';document.body.append(outside);outside.focus();
+  const create=clickToLoad=>{
+   const host=document.createElement('div');host.style.width='320px';
+   host.innerHTML=renderEmbedHtml({version:1,provider:'youtube',source:'M7lc1UVf-VE',title:'Próba',ratio:'landscape',clickToLoad});
+   document.body.append(host);activateEmbeds(host);return host;
+  };
+  const auto=create(false),automatic=document.activeElement===outside&&auto.querySelectorAll('iframe').length===1;
+  const manual=create(true),unloaded=manual.querySelectorAll('iframe').length===0;
+  const button=manual.querySelector('button');button.click();
+  const programmatic=document.activeElement===outside&&manual.querySelectorAll('iframe').length===1;
+  const frame=manual.querySelector('iframe');activateEmbeds(manual);button.click();
+  const idempotent=manual.querySelector('iframe')===frame&&manual.querySelectorAll('iframe').length===1;
+  auto.remove();manual.remove();outside.remove();return {automatic,unloaded,programmatic,idempotent};
+ });
+ assert.deepEqual(focusGuards,{automatic:true,unloaded:true,programmatic:true,idempotent:true});
+ assert.equal(posts.length,2,'player activation never saves or publishes editor content');
+ assert.deepEqual(errors,[]);
+});

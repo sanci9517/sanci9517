@@ -1,0 +1,122 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import {createServer} from 'node:http';
+import {readFile} from 'node:fs/promises';
+import {existsSync} from 'node:fs';
+import {resolve,extname} from 'node:path';
+import {chromium} from 'playwright';
+import {createDocument} from '../../public/editor-v2/core/schema.js';
+import {createEditorState,activePage} from '../../public/editor-v2/core/state.js';
+import {execute} from '../../public/editor-v2/core/commands.js';
+import {LAYOUT_PRESETS} from '../../public/editor-v2/core/layout-presets.js';
+
+test('responsive layout recipes preserve draft/public isolation and match real Flex/Grid geometry at all breakpoints',async t=>{
+  const model=createEditorState(createDocument()),pageId=model.document.activePageId;
+  const rootId=activePage(model).rootId;
+  execute(model,{type:'element.add',payload:{type:'container',parentId:rootId,name:'Bemutatkozó elrendezés',style:{width:'320px',padding:'16px',backgroundColor:'#eef2ff',color:'#123456'}}});
+  const layoutId=model.selection.primaryId,children=[];
+  for(const text of ['Első tartalom','Második tartalom','Harmadik tartalom']){
+    execute(model,{type:'element.add',payload:{type:'text',parentId:layoutId,props:{text},style:{fontSize:'16px',lineHeight:'1.25',padding:'4px'}}});children.push(model.selection.primaryId);
+  }
+  execute(model,{type:'element.add',payload:{type:'grid',parentId:rootId,name:'Régi elrendezés',style:{width:'320px',display:'grid',gridTemplateColumns:'1fr 1fr'}}});
+  const legacyId=model.selection.primaryId;
+  execute(model,{type:'element.add',payload:{type:'text',parentId:legacyId,props:{text:'Megmaradó régi elem'}}});
+  let draft=structuredClone(model.document),published=structuredClone(model.document),version=1;
+  const posts=[];
+  const root=resolve(import.meta.dirname,'../../public');
+  const server=createServer(async(req,res)=>{
+    const url=new URL(req.url,'http://localhost');
+    const json=data=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(data))};
+    if(url.pathname==='/api/admin/pages')return json({ok:true,data:url.searchParams.get('archived')==='1'?[]:[{id:pageId,slug:'test',title:'Test',content:draft,revision:version,isPublished:true}]});
+    if(url.pathname==='/api/admin/editor'){
+      if(req.method==='GET')return json({ok:true,data:{page:{id:pageId,document:draft,publishedRevisionId:'published'},revisions:[{id:'revision-'+version,version}]}});
+      let body='';for await(const chunk of req)body+=chunk;
+      const request=JSON.parse(body);posts.push(request);draft=structuredClone(request.document);version++;
+      if(request.publish)published=structuredClone(draft);
+      return json({ok:true,data:{pageId,version,revisionId:'revision-'+version}});
+    }
+    if(url.pathname==='/api/public/pages')return json({ok:true,data:{id:pageId,slug:'test',title:'Test',content:published.pages[pageId]}});
+    if(url.pathname==='/api/public/navigation')return json({ok:true,data:{items:[]}});
+    if(url.pathname==='/api/integrations/twitch/connection')return json({ok:true,data:{connected:false}});
+    if(url.pathname.startsWith('/api/'))return json({ok:true,data:{siteName:'Test'}});
+    const path=url.pathname==='/p/test'?'/visual-page.html':url.pathname,file=resolve(root,'.'+path);
+    if(!file.startsWith(root+'/'))return res.writeHead(403).end();
+    try{res.setHeader('content-type',{'.html':'text/html','.js':'text/javascript','.css':'text/css'}[extname(file)]||'application/octet-stream');res.end(await readFile(file))}catch{res.writeHead(404).end()}
+  });
+  await new Promise(done=>server.listen(0,'127.0.0.1',done));
+  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
+  t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
+  const base=`http://127.0.0.1:${server.address().port}`;
+  const editor=await browser.newPage({viewport:{width:1366,height:900}}),publicPage=await browser.newPage();
+  editor.setDefaultTimeout(6000);publicPage.setDefaultTimeout(6000);
+  const errors=[];editor.on('pageerror',error=>errors.push(error.message));publicPage.on('pageerror',error=>errors.push(error.message));
+  const canvasNode=id=>editor.locator(`.node[data-node-id="${id}"]`);
+  const publicNode=id=>publicPage.locator(`.visual-editor-node[data-node-id="${id}"]`);
+  const select=async id=>{await canvasNode(id).evaluate(el=>el.click());if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click()};
+  const openGroup=async name=>{const title=editor.locator('.inspector-group-title').filter({has:editor.getByText(name,{exact:true})});if(await title.getAttribute('aria-expanded')==='false')await title.click()};
+  const save=async publish=>{await editor.locator(publish?'#publish':'#save').click();await editor.waitForFunction(p=>document.querySelector('#saveStatus').textContent.startsWith(p?'Publikálva':'Mentve'),publish)};
+  const metrics=el=>{const css=getComputedStyle(el);return Object.fromEntries(['display','flexDirection','justifyContent','alignItems','flexWrap','gap','rowGap','columnGap','gridTemplateColumns','gridTemplateRows','padding','width','height'].map(key=>[key,css[key]]))};
+  const geometry=el=>{const box=el.getBoundingClientRect(),parent=el.parentElement.getBoundingClientRect();return {width:box.width,left:box.left-parent.left,top:box.top-parent.top}};
+  await editor.goto(base+'/editor-v2/index.html');await select(layoutId);
+  const recipes=editor.locator('.inspector-group-title').filter({hasText:'Elrendezési minták'});assert.equal(await recipes.getAttribute('aria-expanded'),'false');await recipes.click();
+  await editor.getByRole('button',{name:'Két egyenlő oszlop elrendezésminta',exact:true}).click();
+  assert.equal(posts.length,0,'choosing a recipe is not an implicit server save');
+  await save(false);assert.equal(posts.at(-1).publish,false);
+  assert.equal(published.pages[pageId].nodes[layoutId].metadata?.layoutVersion,undefined);
+  await publicPage.goto(base+'/p/test');assert.equal(await publicNode(layoutId).getAttribute('class'),'visual-editor-node visual-card');
+  await editor.reload();await select(layoutId);assert.equal(await canvasNode(layoutId).evaluate(el=>getComputedStyle(el).display),'grid');
+  await openGroup('Elrendezési minták');
+  // All recipes use the real Inspector, actual public renderer and computed child geometry.
+  for(const preset of LAYOUT_PRESETS){
+    await editor.locator('.canvas-device-btn[data-device="desktop"]').click();
+    await editor.getByRole('button',{name:preset.label+' elrendezésminta',exact:true}).click();
+    await save(true);
+    for(const [device,width] of [['desktop',1366],['tablet',768],['mobile',390]]){
+      await editor.locator(`.canvas-device-btn[data-device="${device}"]`).click();
+      await publicPage.setViewportSize({width,height:900});await publicPage.goto(base+'/p/test');await publicNode(layoutId).waitFor();
+      assert.deepEqual(await publicNode(layoutId).evaluate(metrics),await canvasNode(layoutId).evaluate(metrics),`${preset.id}/${device} computed layout`);
+      for(const id of children){
+        const actual=await publicNode(id).evaluate(geometry),expected=await canvasNode(id).evaluate(geometry);
+        for(const key of ['left','top','width'])assert.ok(Math.abs(actual[key]-expected[key])<1,`${preset.id}/${device}/${key}: ${actual[key]} != ${expected[key]}`);
+        assert.equal(await publicNode(id).textContent(),draft.pages[pageId].nodes[id].props.text);
+      }
+      assert.equal(await publicNode(legacyId).getAttribute('class'),'visual-editor-node visual-card','unrelated legacy layout retains its renderer');
+    }
+  }
+  // Switching display on a generic container also switches the relevant fields.
+  await editor.locator('.canvas-device-btn[data-device="desktop"]').click();
+  await openGroup('Elrendezés');await editor.locator('[data-property-id="layout.display"] select').selectOption('grid');
+  assert.equal(await editor.locator('[data-property-id="grid.columns"]').count(),1);
+  assert.equal(await editor.locator('[data-property-id="flex.direction"]').count(),0);
+  await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
+  await editor.getByRole('button',{name:'Két egyenlő oszlop elrendezésminta',exact:true}).click();
+  await openGroup('Grid');
+  const columns=editor.locator('[data-property-id="grid.columns"]');
+  await columns.locator('select').selectOption('repeat(3, minmax(0, 1fr))');
+  assert.equal((await canvasNode(layoutId).evaluate(el=>getComputedStyle(el).gridTemplateColumns)).split(' ').length,3);
+  await columns.locator('xpath=following-sibling::button[1]').click();
+  assert.equal((await canvasNode(layoutId).evaluate(el=>getComputedStyle(el).gridTemplateColumns)).split(' ').length,2,'reset inherits desktop/tablet columns');
+  await editor.locator('#undo').click();assert.equal((await canvasNode(layoutId).evaluate(el=>getComputedStyle(el).gridTemplateColumns)).split(' ').length,3);
+  await editor.locator('#redo').click();assert.equal((await canvasNode(layoutId).evaluate(el=>getComputedStyle(el).gridTemplateColumns)).split(' ').length,2);
+  await editor.locator('.canvas-device-btn[data-device="desktop"]').click();
+  await editor.getByRole('button',{name:'Két egyenlő oszlop elrendezésminta',exact:true}).click();
+  await select(children[0]);await openGroup('Grid-gyermek');
+  assert.equal(await editor.locator('[data-property-id="flex.grow"]').count(),0);
+  await editor.locator('[data-property-id="grid.column"] select').selectOption('2');
+  await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
+  await openGroup('Szülő és elhelyezés');assert.equal(await editor.locator('.layout-warning').isVisible(),true);
+  await editor.getByRole('button',{name:/Szülő: Bemutatkozó/}).click();
+  await openGroup('Elrendezési minták');await editor.getByRole('button',{name:'Gyermekek automatikus elhelyezése',exact:true}).click();
+  assert.equal(await canvasNode(children[0]).evaluate(el=>getComputedStyle(el).gridColumnStart),'auto');
+  await editor.locator('#undo').click();assert.equal(await canvasNode(children[0]).evaluate(el=>getComputedStyle(el).gridColumnStart),'2');
+  await editor.locator('#redo').click();assert.equal(await canvasNode(children[0]).evaluate(el=>getComputedStyle(el).gridColumnStart),'auto');
+  await editor.locator('.canvas-device-btn[data-device="desktop"]').click();assert.equal(await canvasNode(children[0]).evaluate(el=>getComputedStyle(el).gridColumnStart),'2');
+  await editor.getByRole('button',{name:'Tördelődő gombsor elrendezésminta',exact:true}).click();await openGroup('Flex');
+  const gap=editor.locator('[data-property-id="flex.gap"]');await gap.locator('input[type="number"]').fill('32');await gap.locator('input').press('Tab');
+  assert.deepEqual(await canvasNode(layoutId).evaluate(el=>{const css=getComputedStyle(el);return [css.rowGap,css.columnGap]}),['32px','32px'],'gap remains editable after choosing a recipe');
+  await editor.screenshot({path:'/tmp/creator-ux-p0-layout-desktop.png'});
+  await editor.setViewportSize({width:390,height:800});await editor.locator('.canvas-device-btn[data-device="mobile"]').evaluate(el=>el.click());await select(layoutId);await openGroup('Elrendezési minták');
+  const target=editor.getByRole('button',{name:'Három kártya elrendezésminta',exact:true});assert.ok((await target.boundingBox()).height>=44);await target.click();
+  await editor.screenshot({path:'/tmp/creator-ux-p0-layout-mobile.png'});
+  assert.deepEqual(errors,[]);
+});

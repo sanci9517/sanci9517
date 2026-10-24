@@ -1,0 +1,21 @@
+/* Shared content presentation: the Inspector, canvas and public Rich Text use
+   identical block spacing and relative typography. Element styles still own
+   font, colour, sizing and responsive overrides. */
+:is(.richtext-content,.visual-text.visual-richtext) { overflow-wrap:inherit; white-space:normal; }
+:is(.richtext-content,.visual-text.visual-richtext) > :first-child { margin-top:0; }
+:is(.richtext-content,.visual-text.visual-richtext) > :last-child { margin-bottom:0; }
+:is(.richtext-content,.visual-text.visual-richtext) p { margin:0 0 .8em; line-height:inherit; }
+:is(.richtext-content,.visual-text.visual-richtext) h1 { font-size:2em; }
+:is(.richtext-content,.visual-text.visual-richtext) h2 { font-size:1.5em; }
+:is(.richtext-content,.visual-text.visual-richtext) h3 { font-size:1.25em; }
+:is(.richtext-content,.visual-text.visual-richtext) h4 { font-size:1.1em; }
+:is(.richtext-content,.visual-text.visual-richtext) h5 { font-size:1em; }
+:is(.richtext-content,.visual-text.visual-richtext) h6 { font-size:.9em; }
+:is(.richtext-content,.visual-text.visual-richtext) :is(h1,h2,h3,h4,h5,h6) { margin:.8em 0 .4em; line-height:1.2; color:inherit; }
+:is(.richtext-content,.visual-text.visual-richtext) :is(ul,ol) { margin:.6em 0; padding-inline-start:1.5em; }
+:is(.richtext-content,.visual-text.visual-richtext) li { margin:.2em 0; }
+:is(.richtext-content,.visual-text.visual-richtext) blockquote { margin:.8em 0; padding:.4em .9em; border-left:3px solid currentColor; color:inherit; background:transparent; }
+:is(.richtext-content,.visual-text.visual-richtext) table { border-collapse:collapse; max-width:100%; font:inherit; color:inherit; }
+:is(.richtext-content,.visual-text.visual-richtext) :is(th,td) { padding:.4em .6em; border:1px solid currentColor; text-align:left; vertical-align:top; }
+:is(.richtext-content,.visual-text.visual-richtext) a { color:inherit; text-decoration:underline; text-underline-offset:.15em; }
+.plain-text-content-surface { white-space:pre-wrap; overflow-wrap:inherit; }

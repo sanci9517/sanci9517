@@ -1,0 +1,19 @@
+{
+  "verification": "PASS",
+  "source": "User-provided JSON from own authenticated production browser",
+  "recorded_at": "2026-10-23T10:59:28.999754+00:00",
+  "endpoint": "GET /api/admin/media?retentionStatus=1",
+  "http_status_independently_measured": false,
+  "response": {
+    "ok": true,
+    "data": {
+      "migrationActive": true,
+      "requests": [],
+      "complete": true,
+      "permanentDeletionAuthorized": false
+    }
+  },
+  "credentials_shared": false,
+  "assistant_created_production_session": false,
+  "retention_request_created": false
+}

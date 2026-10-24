@@ -1,0 +1,188 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {createServer} from 'node:http';
+import {readFile} from 'node:fs/promises';
+import {existsSync} from 'node:fs';
+import {resolve,extname} from 'node:path';
+import {chromium} from 'playwright';
+import {createDocument,createPage} from '../../public/editor-v2/core/schema.js';
+import {createEditorState,activePage} from '../../public/editor-v2/core/state.js';
+import {execute} from '../../public/editor-v2/core/commands.js';
+import {STRUCTURAL_TYPES,contentTag} from '../../public/editor-v2/core/authored-content.js';
+
+test('each authored structural type preserves its semantics and responsive layout through focused Ctrl+S, Undo/Redo and Publish',async t=>{
+  const models={};
+  for(const type of STRUCTURAL_TYPES){
+    const state=createEditorState(createDocument(createPage({id:type,name:type,slug:type}),{modern:true}));
+    execute(state,{type:'style.set',payload:{nodeId:activePage(state).rootId,patch:{width:'320px',height:'360px',minHeight:'360px',padding:'12px'}}});
+    execute(state,{type:'element.add',payload:{type,parentId:activePage(state).rootId,authored:true}});const id=state.selection.primaryId;
+    for(const [device,limits] of Object.entries({
+      desktop:{minWidth:'80px',maxWidth:'600px',minHeight:'36px',maxHeight:'900px'},
+      tablet:{minWidth:'90px',maxWidth:'480px',minHeight:'42px',maxHeight:'700px'},
+      mobile:{minWidth:'100px',maxWidth:'320px',minHeight:'48px',maxHeight:'500px'}
+    }))execute(state,{type:'responsive.set',payload:{nodeId:id,device,patch:{...limits,...(type==='stack'?{}:{height:'120px'})}}});
+    execute(state,{type:'element.add',payload:{type:'text',parentId:id,authored:true,props:{text:'Megőrzött tartalom'}}});const childId=state.selection.primaryId;
+    // Older snapshots can carry both legacy and current accessibility keys.
+    execute(state,{type:'element.update',payload:{nodeId:id,patch:{accessibility:{
+      id:'modern-'+type,anchorId:'legacy-'+type,label:'Inspector '+type,ariaLabel:'Régi címke '+type
+    }}}});
+    models[type]={id,childId,tag:contentTag(activePage(state).nodes[id]),draft:structuredClone(state.document),published:structuredClone(state.document),version:1};
+  }
+  const root=resolve(import.meta.dirname,'../../public');let posts=0;
+  const server=createServer(async(req,res)=>{
+    const url=new URL(req.url,'http://localhost'),json=data=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(data))};
+    if(url.pathname==='/api/admin/pages')return json({ok:true,data:url.searchParams.get('archived')==='1'?[]:Object.entries(models).map(([id,value])=>({id,slug:id,title:id,content:value.draft,revision:value.version,isPublished:true}))});
+    if(url.pathname==='/api/admin/editor'){
+      if(req.method==='GET'){const id=url.searchParams.get('pageId'),value=models[id];return json({ok:true,data:{page:{id,document:value.draft,publishedRevisionId:'published'},revisions:[{id:'rev-'+value.version,version:value.version}]}})}
+      let body='';for await(const chunk of req)body+=chunk;const request=JSON.parse(body),value=models[request.pageId];value.draft=structuredClone(request.document);value.version++;posts++;if(request.publish)value.published=structuredClone(value.draft);return json({ok:true,data:{pageId:request.pageId,version:value.version,revisionId:'rev-'+value.version}});
+    }
+    if(url.pathname==='/api/public/pages'){const id=url.searchParams.get('slug');return json({ok:true,data:{id,title:id,slug:id,content:models[id].published.pages[id]}})}
+    if(url.pathname==='/api/public/navigation')return json({ok:true,data:{items:[]}});
+    if(url.pathname==='/api/integrations/twitch/connection')return json({ok:true,data:{connected:false}});
+    if(url.pathname.startsWith('/api/'))return json({ok:true,data:{siteName:'Test'}});
+    const file=resolve(root,'.'+(url.pathname.startsWith('/p/')?'/visual-page.html':url.pathname));if(!file.startsWith(root+'/'))return res.writeHead(403).end();
+    try{res.setHeader('content-type',{'.html':'text/html','.js':'text/javascript','.css':'text/css'}[extname(file)]||'application/octet-stream');res.end(await readFile(file))}catch{res.writeHead(404).end()}
+  });
+  await new Promise(done=>server.listen(0,'127.0.0.1',done));
+  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
+  const base=`http://127.0.0.1:${server.address().port}`,editor=await browser.newPage({viewport:{width:1440,height:900}}),live=await browser.newPage({viewport:{width:1440,height:900}}),errors=[];
+  for(const page of [editor,live]){page.setDefaultTimeout(6000);page.on('pageerror',error=>errors.push(error.message))}
+  const measure=el=>{const style=getComputedStyle(el);return Object.fromEntries(['display','position','width','height','minWidth','maxWidth','minHeight','maxHeight','padding','borderRadius','backgroundColor','color','flexDirection','gap','gridTemplateColumns'].map(key=>[key,style[key]]))};
+  for(const type of STRUCTURAL_TYPES){
+    const {id}=models[type];await editor.goto(base+'/editor-v2/index.html?pageId='+type);const source=editor.locator(`.node[data-node-id="${id}"]`);await source.evaluate(el=>el.click());if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
+    const title=editor.locator('.inspector-group-title').filter({hasText:'Lekerekítés'});if(await title.getAttribute('aria-expanded')==='false')await title.click();
+    const before=await source.evaluate(el=>getComputedStyle(el).borderRadius),input=editor.locator('[data-property-id="radius.all"] input[type=number]');await input.fill('12');await input.press('Control+s');await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+    assert.equal(models[type].published.pages[type].nodes[id].responsive.desktop.borderRadius,undefined,type+' draft isolation');
+    await editor.locator('#undo').click();assert.equal(await source.evaluate(el=>getComputedStyle(el).borderRadius),before,type+' undo');await editor.locator('#redo').click();assert.equal(await source.evaluate(el=>getComputedStyle(el).borderRadius),'12px');
+    await editor.locator('#publish').click();await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');await editor.reload();assert.equal(await source.evaluate(el=>getComputedStyle(el).borderRadius),'12px',type+' reload');
+    for(const [device,width] of [['desktop',1440],['tablet',768],['mobile',390]]){
+      await editor.locator(`.canvas-device-btn[data-device="${device}"]`).click();await live.setViewportSize({width,height:900});await live.goto(base+'/p/'+type);const target=live.locator(`[data-node-id="${id}"]`);await target.waitFor();
+      // Public shell stays in the same document flow at every viewport.
+      // The two empty future widget zones never create an inner scroll.
+      const shell=await live.evaluate(()=>{
+        const root=document.querySelector('#content-canvas');
+        const left=document.querySelector('.public-side-zone-left');
+        const right=document.querySelector('.public-side-zone-right');
+        return {overflow:getComputedStyle(root).overflowY,
+          rootHeight:getComputedStyle(root).height,
+          slots:[left,right].map(el=>({display:getComputedStyle(el).display,overflow:getComputedStyle(el).overflowY,background:getComputedStyle(el).backgroundColor,pointerEvents:getComputedStyle(el).pointerEvents})),
+          pageOverflow:getComputedStyle(document.querySelector('main.page')).overflowY};
+      });
+      assert.equal(shell.overflow,'visible',type+'/'+device+' root does not scroll independently');
+      assert.equal(shell.pageOverflow,'visible',type+'/'+device+' page stays in document flow');
+      assert.equal(shell.slots.length,2);
+      for(const zone of shell.slots){
+        assert.equal(zone.display==='none',device==='mobile',type+'/'+device+' responsive side zone');
+        assert.equal(zone.background,'rgba(0, 0, 0, 0)',type+'/'+device+' side zone blends with page background');
+        assert.equal(zone.pointerEvents,'none',type+'/'+device+' empty side zone never intercepts interaction');
+        assert.notEqual(zone.overflow,'scroll',type+'/'+device+' side zone scroll');
+        assert.notEqual(zone.overflow,'auto',type+'/'+device+' side zone scroll');
+      }
+      assert.equal(shell.rootHeight,'360px',type+'/'+device+' authored root height preserved');
+      const layout=await live.evaluate(()=>{
+        const main=document.querySelector('main.public-page-layout');
+        const content=main.querySelector('.content-page');
+        const left=main.querySelector('.public-side-zone-left');
+        const right=main.querySelector('.public-side-zone-right');
+        const box=el=>{const r=el.getBoundingClientRect();return {left:r.left,right:r.right,width:r.width}};
+        return {main:box(main),content:box(content),left:box(left),right:box(right),
+          viewport:document.documentElement.clientWidth,
+          documentWidth:document.documentElement.scrollWidth};
+      });
+      assert.ok(layout.documentWidth<=layout.viewport+1,type+'/'+device+' no page-level horizontal scroll');
+      assert.ok(layout.content.width>0,type+'/'+device+' usable content width');
+      assert.ok(layout.content.left>=-1&&layout.content.right<=layout.viewport+1,type+'/'+device+' content inside viewport');
+      if(device!=='mobile'){
+        assert.ok(layout.left.right<=layout.content.left+1,type+'/'+device+' left zone outside content');
+        assert.ok(layout.right.left>=layout.content.right-1,type+'/'+device+' right zone outside content');
+      }
+
+      assert.equal(await source.getAttribute('id'),'legacy-'+type,type+'/'+device+' canvas legacy anchor');
+      assert.equal(await target.getAttribute('id'),'legacy-'+type,type+'/'+device+' public legacy anchor');
+      assert.equal(await source.getAttribute('aria-label'),'Régi címke '+type,type+'/'+device+' canvas label');
+      assert.equal(await target.getAttribute('aria-label'),'Régi címke '+type,type+'/'+device+' public label');
+      assert.equal(await target.evaluate(el=>el.outerHTML.split(' id=').length-1),1,type+'/'+device+' one anchor only');
+      const expectedLimits={desktop:['80px','600px','36px','900px'],tablet:['90px','480px','42px','700px'],mobile:['100px','320px','48px','500px']}[device];
+      assert.deepEqual(await target.evaluate(el=>{const css=getComputedStyle(el);return [css.minWidth,css.maxWidth,css.minHeight,css.maxHeight]}),expectedLimits,type+'/'+device+' authored breakpoint limits');
+      assert.equal(await target.evaluate(el=>el.tagName.toLowerCase()),models[type].tag,type+' semantics');
+      const publicBox=await target.evaluate(el=>{const r=el.getBoundingClientRect();const child=el.querySelector('[data-node-id]');const c=child?.getBoundingClientRect();return {height:r.height,childBottom:c?.bottom,containerBottom:r.bottom,overflow:getComputedStyle(el).overflowY}});
+      if(type!=='stack')assert.equal(publicBox.height,120,type+'/'+device+' explicit height is stable');
+      if(publicBox.childBottom!==undefined&&publicBox.overflow!=='visible')assert.ok(publicBox.childBottom<=publicBox.containerBottom+1,type+'/'+device+' content stays visible inside constrained height');
+      assert.deepEqual(await target.evaluate(measure),await source.evaluate(measure),type+'/'+device);assert.match(await target.textContent(),/Megőrzött tartalom/);
+    }
+  }
+  // Stack uses no authored height: its real content height and minimum must
+  // remain identical between the Canvas and the published renderer.
+  for(const device of ['desktop','tablet','mobile']){
+    const width={desktop:1440,tablet:768,mobile:390}[device];
+    await editor.goto(base+'/editor-v2/index.html?pageId=stack');
+    await editor.locator(`.canvas-device-btn[data-device="${device}"]`).click();
+    await live.setViewportSize({width,height:900});
+    await live.goto(base+'/p/stack');
+    const id=models.stack.id;
+    const dimensions=locator=>locator.evaluate(el=>({height:el.getBoundingClientRect().height,minHeight:parseFloat(getComputedStyle(el).minHeight)}));
+    const [canvasBox,publicBox]=await Promise.all([
+      dimensions(editor.locator(`.page-canvas .node[data-node-id="${id}"]`)),
+      dimensions(live.locator(`[data-node-id="${id}"]`))
+    ]);
+    assert.ok(canvasBox.height+0.5>=canvasBox.minHeight,'canvas intrinsic height respects authored minimum on '+device+': '+JSON.stringify({canvasBox,publicBox}));
+    assert.ok(publicBox.height+0.5>=publicBox.minHeight,'public intrinsic height respects authored minimum on '+device+': '+JSON.stringify({canvasBox,publicBox}));
+    assert.equal(publicBox.height,canvasBox.height,'intrinsic stack height matches on '+device);
+  }
+  // Real keyboard navigation: the skip link is the first tab stop, appears
+  // when focused, and transfers focus directly to the published content.
+  for(const width of [1440,390]){
+    await live.setViewportSize({width,height:900});
+    await live.goto(base+'/p/'+STRUCTURAL_TYPES[0]);
+    await live.keyboard.press('Tab');
+    const skip=live.locator('.public-skip-link');
+    assert.equal(await skip.evaluate(el=>document.activeElement===el),true,width+' skip link first focus target');
+    assert.equal(await skip.evaluate(el=>getComputedStyle(el).transform),'none',width+' skip visible on focus');
+    await live.keyboard.press('Enter');
+    assert.equal(await live.evaluate(()=>location.hash),'#content-canvas',width+' skip anchor');
+    assert.equal(await live.locator('#content-canvas').evaluate(el=>document.activeElement===el),true,width+' content receives focus');
+  }
+  // Inspector visibility is a per-device decision. The public subtree is not
+  // removed until Publish, while the Canvas must keep it editable as a ghost.
+  const hiddenType=STRUCTURAL_TYPES[0],{id:hiddenId,childId}=models[hiddenType];
+  await editor.goto(base+'/editor-v2/index.html?pageId='+hiddenType);
+  await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
+  const parent=editor.locator(`.node[data-node-id="${hiddenId}"]`),child=editor.locator(`.node[data-node-id="${childId}"]`);
+  await parent.evaluate(el=>el.click());
+  if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
+  await editor.getByRole('button',{name:'Haladó beállítások'}).click();
+  const visibilityGroup=editor.locator('.inspector-group-title').filter({hasText:'Akadálymentesség és láthatóság'});
+  if(await visibilityGroup.getAttribute('aria-expanded')==='false')await visibilityGroup.click();
+  const mobileToggle=editor.getByRole('checkbox',{name:'Látható: mobile'});
+  await mobileToggle.uncheck();
+  assert.equal(await parent.getAttribute('data-visibility'),'hidden','hidden parent stays selectable on Canvas');
+  assert.equal(await parent.locator(':scope > .node-head > .node-visibility-indicator').count(),1,'Canvas explicitly marks the hidden element');
+  assert.equal(await child.getAttribute('data-visibility'),'hidden','hidden parent marks its descendants');
+  await editor.locator('#undo').click();
+  assert.equal(await parent.getAttribute('data-visibility'),null,'undo restores Canvas visibility');
+  await editor.locator('#redo').click();
+  assert.equal(await parent.getAttribute('data-visibility'),'hidden','redo restores Canvas hidden marker');
+  await child.evaluate(el=>el.click());
+  assert.equal(await editor.getByRole('checkbox',{name:'Látható: mobile'}).isChecked(),true,'child retains its independent visibility');
+  assert.match(await editor.locator('.visibility-inspector-note').textContent(),/szülőelem rejtett/,'Inspector explains inherited hiding');
+  await parent.evaluate(el=>el.click());
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  assert.equal(models[hiddenType].draft.pages[hiddenType].nodes[hiddenId].visibility.mobile,false);
+  assert.equal(models[hiddenType].published.pages[hiddenType].nodes[hiddenId].visibility.mobile,true,'Save does not publish the hidden subtree');
+  await live.setViewportSize({width:390,height:900});await live.goto(base+'/p/'+hiddenType);
+  assert.equal(await live.locator(`[data-node-id="${hiddenId}"]`).count(),1,'published mobile page is unchanged after Save');
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');
+  await live.reload();
+  assert.equal(await live.locator(`[data-node-id="${hiddenId}"]`).count(),0,'published mobile hides the parent');
+  assert.equal(await live.locator(`[data-node-id="${childId}"]`).count(),0,'published mobile hides the nested child');
+  for(const width of [768,1440]){
+    await live.setViewportSize({width,height:900});await live.reload();
+    assert.equal(await live.locator(`[data-node-id="${hiddenId}"]`).count(),1,width+' other viewport still shows the element');
+  }
+  await editor.reload();
+  await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
+  assert.equal(await parent.getAttribute('data-visibility'),'hidden','reload preserves hidden Canvas marker');
+  assert.equal(posts,STRUCTURAL_TYPES.length*2+2);assert.deepEqual(errors,[]);
+});

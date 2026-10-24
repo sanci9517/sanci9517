@@ -1,0 +1,16 @@
+export type StructuredType='list'|'table'|'tabs'|'accordion'|'gallery'|'carousel';
+export type ListContent={version:1;ordered:boolean;items:string[]};
+export type TableContent={version:1;rows:string[][]};
+export type TextItem={label:string;content:string};
+export type MediaItem={src:string;alt:string;caption:string};
+export type TextContent={version:1;items:TextItem[]};
+export type GalleryContent={version:1;items:MediaItem[]};
+export type ElementContent=ListContent|TableContent|TextContent|GalleryContent;
+export declare const STRUCTURED_TYPES:readonly StructuredType[];
+export declare function isStructuredType(type:unknown):type is StructuredType;
+export declare function safeMediaUrl(value:unknown):string;
+export declare function createElementContent(type:StructuredType):ElementContent;
+export declare function normalizeElementContent(type:StructuredType,value:unknown):ElementContent;
+export declare function validateElementContent(type:StructuredType,value:unknown):string|null;
+export declare function renderElementContent(type:StructuredType,value:unknown,nodeId:string):string;
+export declare function activateStructuredContent(root:Element):void;

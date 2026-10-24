@@ -1,3 +1,4 @@
+import {validateAccessibility} from './accessibility.js';
 /*
  * Sanci9517 Visual Editor v2 — canonical validation helpers.
  *
@@ -6,6 +7,9 @@
  */
 
 import { getNode, validateDocument, normalizeRichText } from './schema.js';
+import { validateElementContent as validateStructuredContent,isStructuredType } from './element-content.js';
+import { validateElementContent as validateAuthoredContent } from './authored-content.js';
+import {validateStateStyles} from './state-styles.js';
 
 export function findReachableNodeIds(page) {
   const reachable = new Set();
@@ -90,6 +94,7 @@ export function validateEditorDocument(document) {
 }
 
 export function assertValidEditorDocument(document) {
+  for(const page of Object.values(document?.pages||{})){validateAccessibility(page);for(const node of Object.values(page.nodes||{})){if(node.metadata?.structuredContentVersion===1&&isStructuredType(node.type))validateStructuredContent(node.type,node.props?.contentModel);validateAuthoredContent(node);validateStateStyles(node)}}
   const errors = validateEditorDocument(document);
   if (errors.length) {
     throw new Error(`Invalid editor document: ${errors.join('; ')}`);

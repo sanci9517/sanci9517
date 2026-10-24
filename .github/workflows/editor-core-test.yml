@@ -30,11 +30,50 @@ jobs:
       - name: Run editor core tests
         run: npm run test:editor
 
+      - name: Test offline D1 ledger reconciliation and bootstrap
+        run: |
+          python3 tests/d1-ledger-reconciliation.test.py
+          node tests/d1-ledger-miniflare.mjs
+          python3 tests/d1-restore-order.test.py
+          node tests/d1-restore-order-miniflare.mjs
+
+      - name: Run private R2 media API tests
+        run: npm run test:media
+
+      - name: Install Chromium for layout regression
+        run: npx playwright install --with-deps chromium
+
+      - name: Test real Worker media upload with isolated D1 and R2
+        run: npm run test:media:storage
+
+      - name: Run Editor browser layout regression
+        run: npm run test:editor:layout
+
+      - name: Run WEB-013 Admin mobile browser regression
+        run: npm run test:web013:browser
+
+      - name: Upload Editor layout screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: editor-layout-screenshots
+          path: |
+            /tmp/editor-issue42-*.png
+            /tmp/editor-general-fields-ime-*.png
+            /tmp/creator-ux-p0-*.png
+            /tmp/media-retention-*.png
+            /tmp/media-integrity-*.png
+            /tmp/media-worker-storage-*.png
+          if-no-files-found: ignore
+
       - name: Run canonical schedule tests
         run: npm run test:schedule
 
       - name: Run domain contract tests
         run: npm run test:domain
+
+      - name: Run Brand Kit storage and access regression
+        run: npm run test:design
 
       - name: Run Admin home contract tests
         run: npm run test:admin-home

@@ -13,4 +13,7 @@ export interface Env {
   YOUTUBE_CLIENT_SECRET?: string;
   TIKTOK_CLIENT_KEY?: string;
   TIKTOK_CLIENT_SECRET?: string;
+  SITE_HOST_BINDINGS?: string;
+  SITE_MEMBERSHIP_ENFORCEMENT?: string;
+  SITE_SCOPED_SETTINGS_ENABLED?: string;
 }

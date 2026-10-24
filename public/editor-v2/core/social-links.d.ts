@@ -1,0 +1,11 @@
+export type SocialPlatform='twitch'|'youtube'|'tiktok'|'discord'|'instagram'|'kick'|'x'|'facebook'|'github'|'website'|'email';
+export type SocialEntry={id:string,platform:SocialPlatform,label:string,href:string,newWindow:boolean};
+export type SocialLinks={version:1,variant:'pills'|'cards'|'minimal',layout:'wrap'|'stack'|'grid',showIcons:boolean,items:SocialEntry[]};
+export const SOCIAL_PLATFORMS:readonly {id:SocialPlatform,label:string,glyph:string}[];
+export const SOCIAL_VARIANTS:readonly string[];
+export const SOCIAL_LAYOUTS:readonly string[];
+export function defaultSocialLinks():SocialLinks;
+export function defaultSocialEntry(platform?:SocialPlatform,id?:string):SocialEntry;
+export function socialLinkUrl(value:unknown,platform?:SocialPlatform):string;
+export function normalizeSocialLinks(value:unknown):SocialLinks;
+export function renderSocialLinksHtml(value:unknown):string;

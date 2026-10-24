@@ -54,6 +54,8 @@ async function fixture(t) {
   db.prepare('INSERT INTO site_navigation VALUES(?,?,?,?,?)').run('site-default',JSON.stringify({schemaVersion:1,items:[{id:'page:source-page',type:'page',pageId:'source-page',children:[]}]}),JSON.stringify({schemaVersion:1,items:[{id:'page:source-page',type:'page',pageId:'source-page',children:[]}]}),1,1);
   db.exec('ALTER TABLE site_navigation ADD COLUMN updated_at TEXT');
   db.exec(readFileSync(new URL('../migrations/0022_page_archive.sql',import.meta.url),'utf8'));
+  db.exec(readFileSync(new URL('../migrations/0023_page_hierarchy.sql',import.meta.url),'utf8'));
+  db.exec(readFileSync(new URL('../migrations/0024_page_slug_redirects.sql',import.meta.url),'utf8'));
   const DB = {
     beforeBatch:null,
     prepare(sql) {
@@ -207,4 +209,64 @@ test('restore audit failure leaves the page archived and its reserved slug intac
  assert.ok(f.db.prepare("SELECT archived_at FROM pages WHERE id='source-page'").get().archived_at);
  const second=f.db.prepare("SELECT id FROM pages WHERE site_id='site-default' AND archived_at IS NULL").get().id;
  assert.equal((await f.duplicate({sourcePageId:second,title:'Collision',slug:'youtube'})).status,409);
+});
+
+test('WEB-002 draft hierarchy rejects foreign, missing, self and cyclic parents without changing LIVE routes',async t=>{
+ const f=await fixture(t);f.clearNav();
+ const second=f.db.prepare("SELECT id,content_json FROM pages WHERE slug='second'").get();
+ const setParent=(id,parentPageId,expectedParentPageId=null)=>adminPagesRoute(f.req('/api/admin/pages','PATCH',{action:'setParent',id,parentPageId,expectedParentPageId}),{DB:f.DB});
+ for(const parent of ['foreign-page','missing-page',second.id]){
+  const response=await setParent(second.id,parent);
+  assert.equal(response.status,409,parent);
+ }
+ assert.equal((await setParent(second.id,'source-page')).status,200);
+ assert.equal((await setParent('source-page',second.id)).status,409);
+ assert.equal((await setParent(second.id,null)).status,409,'stale expected parent must fail');
+ const draft=(await (await f.list()).json()).data.find(p=>p.id===second.id);
+ assert.equal(draft.parentPageId,'source-page');assert.equal(draft.publishedParentPageId,null);
+ assert.equal(f.db.prepare('SELECT published_parent_page_id FROM pages WHERE id=?').get(second.id).published_parent_page_id,null);
+ assert.equal((await publicPagesRoute(f.req('/api/public/pages?slug=second'),{DB:f.DB})).status,404);
+ assert.equal((await publicPagesRoute(f.req('/api/public/pages?slug=youtube'),{DB:f.DB})).status,200);
+ assert.equal((await setParent(second.id,null,'source-page')).status,200);
+ assert.equal(f.db.prepare('SELECT parent_page_id FROM pages WHERE id=?').get(second.id).parent_page_id,null);
+});
+
+test('WEB-002 explicit publish snapshots hierarchy; parent lifecycle guards protect active and LIVE children',async t=>{
+ const f=await fixture(t);f.clearNav();
+ const child=f.db.prepare("SELECT id,content_json FROM pages WHERE slug='second'").get();
+ const setParent=(id,parentPageId,expectedParentPageId=null)=>adminPagesRoute(f.req('/api/admin/pages','PATCH',{action:'setParent',id,parentPageId,expectedParentPageId}),{DB:f.DB});
+ assert.equal((await setParent(child.id,'source-page')).status,200);
+ assert.equal((await f.action('archive')).status,409,'draft child blocks parent archive');
+ assert.equal((await adminEditorRoute(f.req('/api/admin/editor?pageId='+child.id,'POST',{pageId:child.id,document:JSON.parse(child.content_json),expectedVersion:1,expectedParentPageId:null,publish:true}),{DB:f.DB})).status,409,'stale editor must not publish a new parent');
+ assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM editor_revisions WHERE page_id=?').get(child.id).n,1);
+ assert.equal((await adminEditorRoute(f.req('/api/admin/editor?pageId='+child.id,'POST',{pageId:child.id,document:JSON.parse(child.content_json),expectedVersion:1,expectedParentPageId:'source-page',publish:true}),{DB:f.DB})).status,200);
+ assert.equal(f.db.prepare('SELECT published_parent_page_id FROM pages WHERE id=?').get(child.id).published_parent_page_id,'source-page');
+ assert.equal((await publicPagesRoute(f.req('/api/public/pages?slug=second'),{DB:f.DB})).status,200);
+ assert.equal((await adminEditorRoute(f.req('/api/admin/editor?pageId=source-page','POST',{pageId:'source-page',action:'unpublish'}),{DB:f.DB})).status,409);
+ assert.equal((await adminPagesRoute(f.req('/api/admin/pages','DELETE',{id:'source-page'}),{DB:f.DB})).status,409);
+ assert.equal((await setParent(child.id,null,'source-page')).status,200);
+ assert.equal(f.db.prepare('SELECT published_parent_page_id FROM pages WHERE id=?').get(child.id).published_parent_page_id,'source-page','draft reparent must not change LIVE snapshot');
+ assert.equal((await setParent('source-page',child.id)).status,200);
+ assert.equal((await adminEditorRoute(f.req('/api/admin/editor?pageId=source-page','POST',{pageId:'source-page',document:f.document,expectedVersion:0,expectedParentPageId:child.id,publish:true}),{DB:f.DB})).status,409,'published hierarchy cycle must fail atomically');
+ assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM editor_revisions WHERE page_id=?').get('source-page').n,0);
+ assert.equal((await setParent('source-page',null,child.id)).status,200);
+ assert.equal((await f.action('archive')).status,409,'published child still blocks archive');
+ assert.equal((await adminEditorRoute(f.req('/api/admin/editor?pageId='+child.id,'POST',{pageId:child.id,document:JSON.parse(child.content_json),expectedVersion:2,expectedParentPageId:null,publish:true}),{DB:f.DB})).status,200);
+ assert.equal(f.db.prepare('SELECT published_parent_page_id FROM pages WHERE id=?').get(child.id).published_parent_page_id,null);
+ assert.equal((await adminEditorRoute(f.req('/api/admin/editor?pageId=source-page','POST',{pageId:'source-page',action:'unpublish'}),{DB:f.DB})).status,200);
+ assert.equal((await publicPagesRoute(f.req('/api/public/pages?slug=second'),{DB:f.DB})).status,200);
+});
+
+test('WEB-002 publishing a child requires an active published parent and leaves revision atomic on failure',async t=>{
+ const f=await fixture(t);f.clearNav();
+ const child=f.db.prepare("SELECT id,content_json FROM pages WHERE slug='second'").get();
+ const setParent=(id,parentPageId)=>adminPagesRoute(f.req('/api/admin/pages','PATCH',{action:'setParent',id,parentPageId,expectedParentPageId:null}),{DB:f.DB});
+ assert.equal((await adminEditorRoute(f.req('/api/admin/editor?pageId=source-page','POST',{pageId:'source-page',action:'unpublish'}),{DB:f.DB})).status,200);
+ assert.equal((await setParent(child.id,'source-page')).status,200);
+ const before=f.db.prepare('SELECT COUNT(*) AS n FROM editor_revisions WHERE page_id=?').get(child.id).n;
+ const response=await adminEditorRoute(f.req('/api/admin/editor?pageId='+child.id,'POST',{pageId:child.id,document:JSON.parse(child.content_json),expectedVersion:1,expectedParentPageId:'source-page',publish:true}),{DB:f.DB});
+ assert.equal(response.status,409);
+ assert.equal((await response.json()).error.code,'INVALID_PUBLISHED_PAGE_PARENT');
+ assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM editor_revisions WHERE page_id=?').get(child.id).n,before);
+ assert.equal(f.db.prepare('SELECT is_published FROM pages WHERE id=?').get(child.id).is_published,0);
 });

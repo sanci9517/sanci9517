@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import { DatabaseSync } from 'node:sqlite';
 import { adminPagesRoute } from '../src/routes/admin/pages.ts';
 import { adminEditorRoute } from '../src/routes/admin/editor.ts';
 import { publicPagesRoute } from '../src/routes/public/pages.ts';
+import worker from '../src/index.ts';
 import { hashSessionToken } from '../src/core/auth/session.ts';
 
 // Executes production route SQL against SQLite. The adapter models D1's atomic
@@ -12,6 +14,10 @@ async function fixture(t) {
   const db = new DatabaseSync(':memory:');
   t.after(() => db.close());
   db.exec(`
+    CREATE TABLE sites(id TEXT PRIMARY KEY,slug TEXT,name TEXT,status TEXT NOT NULL DEFAULT 'active');
+    INSERT INTO sites(id,slug,name) VALUES('site-default','sanci9517','Sanci9517'),('other-site','other','Other');
+    CREATE TABLE site_domains(hostname TEXT PRIMARY KEY,site_id TEXT,status TEXT,verified_at TEXT);
+    INSERT INTO site_domains VALUES('example.test','site-default','verified','2026-10-17');
     CREATE TABLE users(id TEXT PRIMARY KEY,email TEXT,display_name TEXT,role TEXT,is_active INTEGER);
     CREATE TABLE sessions(token_hash TEXT,user_id TEXT,expires_at TEXT);
     CREATE TABLE pages(archived_at TEXT,id TEXT PRIMARY KEY,site_id TEXT,slug TEXT,title TEXT,description TEXT,
@@ -22,6 +28,9 @@ async function fixture(t) {
       created_by TEXT,note TEXT,created_at TEXT DEFAULT CURRENT_TIMESTAMP,UNIQUE(page_id,version));
     CREATE TABLE audit_log(id TEXT PRIMARY KEY,user_id TEXT,action TEXT,entity_type TEXT,entity_id TEXT,metadata_json TEXT);
   `);
+  db.exec('ALTER TABLE pages ADD COLUMN parent_page_id TEXT');
+  db.exec('ALTER TABLE pages ADD COLUMN published_parent_page_id TEXT');
+  db.exec(readFileSync(new URL('../migrations/0024_page_slug_redirects.sql',import.meta.url),'utf8'));
   for (const role of ['editor', 'viewer']) {
     db.prepare('INSERT INTO users VALUES (?,?,?,?,1)').run(role, `${role}@example.test`, role, role);
     db.prepare('INSERT INTO sessions VALUES (?,?,?)').run(await hashSessionToken(role), role, '2999-01-01');
@@ -36,7 +45,7 @@ async function fixture(t) {
       VALUES (?,?,?,?,?,?,?,?,1,?,?,?)`).run(id, site, id, 'Original', 'Description', json, json, `r-${id}`, id, 'Original', 'Description');
     db.prepare('INSERT INTO editor_revisions(id,page_id,version,document_json) VALUES (?,?,1,?)').run(`r-${id}`, id, json);
   }
-  const env = { DB: {
+  const env = { SITE_HOST_BINDINGS: '{"example.test":"site-default"}', DB: {
     beforeBatch: null,
     prepare(sql) {
       // D1 supports indexed placeholders; these queries bind each index once.
@@ -174,10 +183,104 @@ test('page list distinguishes saved drafts from LIVE snapshots through save, met
  assert.equal((await f.edit({...f.publish('pending'),publish:false})).status,200);
  rows=await list(true);assert.equal(rows[0].hasUnpublishedChanges,true);assert.equal(rows[0].isPublished,true);assert.equal('content' in rows[0],false);
  const changed=await adminPagesRoute(new Request('https://example.test/api/admin/pages',{method:'PATCH',headers:{Cookie:'sanci9517_session=editor','Content-Type':'application/json'},body:JSON.stringify({id:'p',title:'Renamed',slug:'new-slug',expectedVersion:2})}),f.env);
- assert.equal(changed.status,200);const metadata=(await changed.json()).data;assert.equal(metadata.hasUnpublishedChanges,true);assert.equal(metadata.slug,"new-slug");assert.equal(metadata.publishedSlug,"p");assert.equal((await list(true))[0].publishedSlug,"p");
+ assert.equal(changed.status,200);const metadata=(await changed.json()).data;assert.equal(metadata.hasUnpublishedChanges,true);
  assert.equal((await f.read('?slug=p')).status,200);assert.equal((await f.read('?slug=new-slug')).status,404);
  assert.equal((await f.edit({pageId:'p',expectedVersion:3,document:metadata.content,publish:true})).status,200);
- rows=await list();assert.equal(rows[0].hasUnpublishedChanges,false);assert.equal(rows[0].publishedSlug,'new-slug');assert.equal((await f.read('?slug=new-slug')).status,200);
+ rows=await list();assert.equal(rows[0].hasUnpublishedChanges,false);assert.equal((await f.read('?slug=new-slug')).status,200);
  assert.equal((await f.edit({pageId:'p',version:1,expectedVersion:4},'PUT')).status,200);assert.equal((await list())[0].hasUnpublishedChanges,true);
- assert.equal((await f.edit({pageId:'p',action:'unpublish'})).status,200);rows=await list();assert.equal(rows[0].isPublished,false);assert.equal(rows[0].publishedSlug,null);assert.equal(rows[0].hasUnpublishedChanges,false);
+ assert.equal((await f.edit({pageId:'p',action:'unpublish'})).status,200);rows=await list();assert.equal(rows[0].isPublished,false);assert.equal(rows[0].hasUnpublishedChanges,false);
+});
+
+function urlFixture(f){
+ f.env.ASSETS={fetch:async()=>new Response('<!doctype html><title>Public page</title>',{headers:{'Content-Type':'text/html'}})};
+ const patch=body=>adminPagesRoute(new Request('https://example.test/api/admin/pages',{method:'PATCH',headers:{Cookie:'sanci9517_session=editor','Content-Type':'application/json'},body:JSON.stringify({id:'p',...body})}),f.env);
+ const visit=(slug,query='')=>worker.fetch(new Request(`https://example.test/p/${slug}${query}`),f.env,{});
+ const publish=(version,text)=>f.edit({pageId:'p',expectedVersion:version,document:f.document(text),publish:true});
+ return {patch,visit,publish};
+}
+
+test('WEB-013 published rename creates a one-hop same-origin redirect; draft save and preview do not redirect',async t=>{
+ const f=await fixture(t),u=urlFixture(f);
+ assert.equal((await u.patch({slug:'renamed',expectedVersion:1})).status,200);
+ assert.equal((await u.visit('p')).status,200,'old URL remains LIVE before explicit publish');
+ assert.equal((await u.visit('renamed')).status,404,'draft URL is not public');
+ assert.equal((await u.visit('p','?preview=1')).status,401,'anonymous preview is never redirected');
+ assert.equal((await u.publish(2,'new published')).status,200);
+ const redirect=await u.visit('p','?ref=phone');
+ assert.equal(redirect.status,308);assert.equal(redirect.headers.get('Location'),'/p/renamed?ref=phone');
+ assert.equal(redirect.headers.get('Cache-Control'),'private, no-store, max-age=0');
+ assert.equal((await u.visit('renamed')).status,200);
+ assert.equal((await f.read('?slug=p')).status,404,'content API does not expose a historical slug as a page');
+ assert.deepEqual(f.db.prepare('SELECT site_id,from_slug,page_id FROM page_slug_redirects').all().map(row=>({...row})),[{site_id:'site-default',from_slug:'p',page_id:'p'}]);
+});
+
+test('WEB-013 repeat rename and return to an old slug never create chains or loops',async t=>{
+ const f=await fixture(t),u=urlFixture(f);
+ assert.equal((await u.patch({slug:'second',expectedVersion:1})).status,200);
+ assert.equal((await u.publish(2,'second')).status,200);
+ assert.equal((await u.patch({slug:'third',expectedVersion:3})).status,200);
+ assert.equal((await u.publish(4,'third')).status,200);
+ for(const old of ['p','second'])assert.equal((await u.visit(old)).headers.get('Location'),'/p/third');
+ assert.equal((await u.patch({slug:'p',expectedVersion:5})).status,200,'own historical slug is reusable');
+ assert.equal((await u.publish(6,'returned')).status,200);
+ assert.equal((await u.visit('p')).status,200);
+ for(const old of ['second','third'])assert.equal((await u.visit(old)).headers.get('Location'),'/p/p');
+ assert.deepEqual(f.db.prepare('SELECT from_slug FROM page_slug_redirects ORDER BY from_slug').all().map(r=>r.from_slug),['second','third']);
+ assert.equal((await u.visit('missing')).status,404);
+});
+
+test('WEB-013 reservations reject shadowing and cross-site ownership while preserving site-scoped aliases',async t=>{
+ const f=await fixture(t),u=urlFixture(f);
+ const json=JSON.stringify(f.document('other','q'));
+ f.db.prepare('INSERT INTO pages(id,site_id,slug,title,description,content_json,is_published,sort_order) VALUES(?,?,?,?,?,?,0,1)').run('q','site-default','q','Q','',json);
+ assert.equal((await u.patch({slug:'renamed',expectedVersion:1})).status,200);
+ assert.equal((await u.publish(2,'renamed')).status,200);
+ const qPatch=slug=>adminPagesRoute(new Request('https://example.test/api/admin/pages',{method:'PATCH',headers:{Cookie:'sanci9517_session=editor','Content-Type':'application/json'},body:JSON.stringify({id:'q',slug,expectedVersion:0})}),f.env);
+ for(const slug of ['p','renamed']){
+  const response=await qPatch(slug);assert.equal(response.status,409,slug);assert.equal((await response.json()).error.code,'SLUG_RESERVED');
+ }
+ assert.equal(f.db.prepare('SELECT slug FROM pages WHERE id=?').get('q').slug,'q');
+ assert.throws(()=>f.db.prepare('INSERT INTO page_slug_redirects(site_id,from_slug,page_id) VALUES(?,?,?)').run('site-default','outside','foreign'),/REDIRECT_SITE_MISMATCH/);
+ f.db.prepare('INSERT INTO page_slug_redirects(site_id,from_slug,page_id) VALUES(?,?,?)').run('other-site','p','foreign');
+ assert.equal((await u.visit('p')).headers.get('Location'),'/p/renamed','foreign-site alias must not leak');
+ assert.equal((await adminPagesRoute(new Request('https://example.test/api/admin/pages',{method:'DELETE',headers:{Cookie:'sanci9517_session=editor','Content-Type':'application/json'},body:JSON.stringify({id:'p'})}),f.env)).status,409,'history owner cannot be permanently deleted');
+});
+
+test('WEB-013 failed redirect write rolls back revision, published URL and history atomically',async t=>{
+ const f=await fixture(t),u=urlFixture(f);
+ assert.equal((await u.patch({slug:'renamed',expectedVersion:1})).status,200);
+ f.db.exec("CREATE TRIGGER fail_redirect BEFORE INSERT ON page_slug_redirects BEGIN SELECT RAISE(ABORT,'injected redirect failure'); END;");
+ const before=f.state();
+ await assert.rejects(()=>u.publish(2,'would be new'),/injected redirect failure/);
+ assert.deepEqual(f.state(),before);
+ assert.equal(f.db.prepare('SELECT COUNT(*) n FROM page_slug_redirects').get().n,0);
+ assert.equal((await u.visit('p')).status,200);
+ assert.equal((await u.visit('renamed')).status,404);
+});
+
+test('WEB-013 aliases go dark on unpublish and revive only after explicit republish',async t=>{
+ const f=await fixture(t),u=urlFixture(f);
+ assert.equal((await u.patch({slug:'renamed',expectedVersion:1})).status,200);
+ assert.equal((await u.publish(2,'renamed')).status,200);
+ assert.equal((await f.edit({pageId:'p',action:'unpublish'})).status,200);
+ assert.equal((await u.visit('p')).status,404);
+ assert.equal((await u.visit('renamed')).status,404);
+ assert.equal((await u.publish(3,'republished')).status,200);
+ assert.equal((await u.visit('p')).status,308);
+});
+
+test('WEB-013 archived alias stays reserved but returns 404 until explicit republish after restore',async t=>{
+ const f=await fixture(t),u=urlFixture(f);
+ const json=JSON.stringify(f.document('other','q'));
+ f.db.prepare('INSERT INTO pages(id,site_id,slug,title,description,content_json,is_published,sort_order) VALUES(?,?,?,?,?,?,0,1)').run('q','site-default','q','Q','',json);
+ assert.equal((await u.patch({slug:'renamed',expectedVersion:1})).status,200);
+ assert.equal((await u.publish(2,'renamed')).status,200);
+ const action=action=>adminPagesRoute(new Request('https://example.test/api/admin/pages',{method:'PATCH',headers:{Cookie:'sanci9517_session=editor','Content-Type':'application/json'},body:JSON.stringify({id:'p',action})}),f.env);
+ assert.equal((await action('archive')).status,200);
+ assert.equal((await u.visit('p')).status,404);
+ assert.equal(f.db.prepare('SELECT COUNT(*) n FROM page_slug_redirects WHERE from_slug=?').get('p').n,1);
+ assert.equal((await action('restore')).status,200);
+ assert.equal((await u.visit('p')).status,404,'restore does not publish');
+ assert.equal((await u.publish(3,'republished')).status,200);
+ assert.equal((await u.visit('p')).headers.get('Location'),'/p/renamed');
 });

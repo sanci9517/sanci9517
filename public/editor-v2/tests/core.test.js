@@ -1,19 +1,25 @@
+import {ICON_CHOICES,iconById,isSupportedIcon} from '../core/icon-options.js';
+import {createElementContent,normalizeElementContent,validateElementContent,renderElementContent,safeMediaUrl} from '../core/element-content.js';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 
-import { createDocument, createNode, NODE_TYPES } from '../core/schema.js';
+import { createDocument, createNode, NODE_TYPES, normalizeRichText } from '../core/schema.js';
 import { assertValidEditorDocument } from '../core/validation.js';
 import { createEditorState, activePage } from '../core/state.js';
 import { beginTransaction, commitTransaction, execute, executeBatch, rollbackTransaction } from '../core/commands.js';
 import { getProperty, listProperties, listPropertyGroups } from '../core/property-registry.js';
 import { hasResponsiveOverride, resolveResponsiveValue, setResponsiveValue } from '../core/responsive.js';
+import {collectVisibleDescendants} from '../core/visibility.js';
+import {normalizeVisibility,isVisibleOnDevice,getNodeVisibilityState} from '../core/visibility.js';
 import { plainTextToRichText } from '../core/richtext-engine.js';
 import { createDefaultScheduleConfig, normalizeScheduleConfig, validateScheduleConfig } from '../core/schedule-schema.js';
 import { getSchedulePreviewItems } from '../core/schedule-preview.js';
 import { computeCanvasMinHeight } from '../core/canvas-extent.js';
+import { measureCanvasWorkspace } from '../core/canvas-workspace.js';
+import { needsRelativeOffsetPosition } from '../core/canvas-engine.js';
 import { validatePublishDocument } from '../../../src/core/editor-validation.ts';
 
 test('canvas minimum height follows content below the default page extent', () => {
@@ -22,6 +28,37 @@ test('canvas minimum height follows content below the default page extent', () =
   assert.equal(computeCanvasMinHeight([1200], 1), 1280);
   assert.equal(computeCanvasMinHeight([2400], 2), 1280);
   assert.equal(computeCanvasMinHeight([Number.NaN, 1200], 1, 900, 64), 1264);
+});
+
+test('canvas workspace expands in every direction without changing artboard coordinates', () => {
+  assert.deepEqual(measureCanvasWorkspace([{left:-120,right:420,top:-40,bottom:1100}],300,800,1),{left:120,top:40,right:120,bottom:300});
+  assert.deepEqual(measureCanvasWorkspace([{left:-120,right:420,top:-40,bottom:1100}],300,800,.5),{left:240,top:80,right:540,bottom:1400});
+  assert.deepEqual(measureCanvasWorkspace([{left:10,right:290,top:10,bottom:790}],300,800,1),{left:0,top:0,right:0,bottom:0});
+});
+
+test('responsive drag offsets promote only static nodes to relative positioning', () => {
+  assert.equal(needsRelativeOffsetPosition({}), false);
+  assert.equal(needsRelativeOffsetPosition({ x: '24px' }), true);
+  assert.equal(needsRelativeOffsetPosition({ y: '-12px', position: 'static' }), true);
+  assert.equal(needsRelativeOffsetPosition({ x: '24px', position: 'absolute' }), false);
+  assert.equal(needsRelativeOffsetPosition({ x: '24px', position: 'sticky' }), false);
+});
+
+test('Rich Text schema normalizes Office-friendly tables, safe inline styles and extended semantic marks',()=>{
+  const document=normalizeRichText({schemaVersion:1,type:'richtext-document',blocks:[
+    {type:'paragraph',align:'center',children:[{type:'text',text:'Marked',marks:['bold','strikethrough','superscript'],styles:{color:'#AbC',backgroundColor:'#ffee99'}}]},
+    {type:'table',rows:[{cells:[{header:true,children:[{type:'text',text:'Revenue',marks:[]}]},{header:true,children:[{type:'text',text:'Year',marks:[]}]}]},{cells:[{header:false,children:[{type:'text',text:'100',marks:[]}]},{header:false,children:[{type:'text',text:'2026',marks:[]}]}]}]}
+  ]});
+  assert.equal(document.blocks[0].align,'center');
+  assert.deepEqual(document.blocks[0].children[0].marks,['bold','strikethrough','superscript']);
+  assert.equal(document.blocks[0].children[0].styles.color,'#abc');
+  assert.equal(document.blocks[1].rows[1].cells[0].children[0].text,'100');
+  const office=normalizeRichText({schemaVersion:1,type:'richtext-document',blocks:[{type:'paragraph',children:[{type:'text',text:'Office',marks:['bold'],styles:{fontFamily:'Calibri',fontSize:'24px',color:'#abc'}}]}]});
+  assert.deepEqual(office.blocks[0].children[0].styles,{color:'#abc',fontSize:'24px',fontFamily:'Calibri'});
+  assert.throws(()=>normalizeRichText({schemaVersion:1,type:'richtext-document',blocks:[{type:'paragraph',children:[{type:'text',text:'bad font',marks:[],styles:{fontFamily:'url(javascript:alert(1))'}}]}]}));
+  assert.throws(()=>normalizeRichText({schemaVersion:1,type:'richtext-document',blocks:[{type:'paragraph',children:[{type:'text',text:'too big',marks:[],styles:{fontSize:'120px'}}]}]}));
+  assert.throws(()=>normalizeRichText({schemaVersion:1,type:'richtext-document',blocks:[{type:'paragraph',children:[{type:'text',text:'bad',marks:[],styles:{color:'red;background:url(javascript:1)'}}]}]}));
+  assert.throws(()=>normalizeRichText({schemaVersion:1,type:'richtext-document',blocks:[{type:'table',rows:[{cells:Array.from({length:25},()=>({children:[]}))}]}]}));
 });
 
 test('Editor browser module parses before it is shipped', () => {
@@ -144,6 +181,54 @@ test('property registry exposes extensible inspector groups and properties', () 
   assert.equal(getProperty('radius.all').key, 'borderRadius');
   assert.equal(getProperty('content.text').command, 'element.update');
   assert.ok(listProperties({ group: 'size' }).some((property) => property.id === 'size.width'));
+});
+
+test('visibility switches normalize legacy Page Models, preserve independent devices and allow ancestor discovery', () => {
+  const state=createEditorState(),page=activePage(state);
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.SECTION,parentId:page.rootId}});
+  const parentId=state.selection.primaryId;
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId}});
+  const childId=state.selection.primaryId;
+  assert.deepEqual(getNodeVisibilityState(activePage(state),childId,'mobile'),{ownVisible:true,effectiveVisible:true,hiddenByAncestorId:null});
+  execute(state,{type:'element.update',payload:{nodeId:parentId,patch:{visibility:false}}});
+  assert.equal(isVisibleOnDevice(activePage(state).nodes[parentId],'mobile'),false);
+  assert.deepEqual(normalizeVisibility(false),{desktop:false,tablet:false,mobile:false});
+  assert.deepEqual(getNodeVisibilityState(activePage(state),childId,'mobile'),{ownVisible:true,effectiveVisible:false,hiddenByAncestorId:parentId});
+  execute(state,{type:'element.visibility.set',payload:{nodeId:parentId,device:'mobile',visible:true}});
+  assert.deepEqual(activePage(state).nodes[parentId].visibility,{desktop:false,tablet:false,mobile:true});
+  assert.equal(getNodeVisibilityState(activePage(state),childId,'mobile').effectiveVisible,true);
+  assert.equal(getNodeVisibilityState(activePage(state),childId,'desktop').effectiveVisible,false);
+  execute(state,{type:'history.undo'});
+  assert.equal(activePage(state).nodes[parentId].visibility,false,'undo restores the exact legacy snapshot');
+  execute(state,{type:'history.redo'});
+  assert.equal(getNodeVisibilityState(activePage(state),childId,'mobile').effectiveVisible,true);
+  execute(state,{type:'element.visibility.set',payload:{nodeId:childId,device:'mobile',visible:false}});
+  assert.equal(getNodeVisibilityState(activePage(state),childId,'mobile').ownVisible,false);
+  assert.equal(getNodeVisibilityState(activePage(state),childId,'mobile').effectiveVisible,false);
+  assert.throws(()=>execute(state,{type:'element.visibility.set',payload:{nodeId:page.rootId,device:'desktop',visible:false}}),/Root visibility/);
+  assert.throws(()=>execute(state,{type:'element.visibility.set',payload:{nodeId:parentId,device:'watch',visible:false}}),/Invalid responsive device/);
+  assert.equal(activePage(state).nodes[parentId].visibility.mobile,true,'invalid actions never corrupt visibility');
+  assert.equal(isVisibleOnDevice(null,'desktop'),false);
+});
+
+test('visible descendant walk never preloads hidden schedules or orphan nodes', () => {
+  const state=createEditorState(createDocument());
+  const root=activePage(state).rootId;
+  execute(state,{type:'element.add',payload:{type:'schedule',parentId:root}});
+  const visibleId=state.selection.primaryId;
+  execute(state,{type:'element.add',payload:{type:'container',parentId:root}});
+  const parentId=state.selection.primaryId;
+  execute(state,{type:'element.add',payload:{type:'schedule',parentId}});
+  const childId=state.selection.primaryId;
+  execute(state,{type:'element.visibility.set',payload:{nodeId:parentId,device:'mobile',visible:false}});
+  const page=activePage(state);
+  assert.deepEqual(collectVisibleDescendants(page,'mobile').map(n=>n.id),[visibleId]);
+  assert.deepEqual(collectVisibleDescendants(page,'tablet').map(n=>n.id),[visibleId,parentId,childId]);
+  assert.deepEqual(collectVisibleDescendants(page,'desktop').map(n=>n.id),[visibleId,parentId,childId]);
+  execute(state,{type:'element.visibility.set',payload:{nodeId:visibleId,device:'mobile',visible:false}});
+  assert.deepEqual(collectVisibleDescendants(activePage(state),'mobile'),[]);
+  execute(state,{type:'history.undo'});
+  assert.deepEqual(collectVisibleDescendants(activePage(state),'mobile').map(n=>n.id),[visibleId]);
 });
 
 test('responsive values inherit from wider viewports and can be overridden/reset', () => {
@@ -774,7 +859,8 @@ test('Editor save conflict exposes recoverable local-draft export and explicit r
   assert.match(app, /error\.status=response\.status;error\.code=data\?\.error\?\.code/);
   assert.match(app, /e\?\.status===409&&e\?\.code==='REVISION_CONFLICT'/);
   assert.match(app, /function exportConflictDraft\(\)[\s\S]*?URL\.createObjectURL/);
-  assert.match(app, /function reloadLatestAfterConflict\(\)[\s\S]*?await loadPage\(conflict\.pageId\)/);
+  assert.match(app, /function reloadLatestAfterConflict\(\)[\s\S]*?await loadPage\(conflict\.pageId,\{discardConfirmed:true\}\)/);
+  assert.match(app, /async function loadPage\(id,\{discardConfirmed=false\}=\{\}\)[\s\S]*?state\?\.persistence\?\.dirty&&!discardConfirmed/);
   assert.match(html, /id="revisionConflict"[^>]*role="alert"[^>]*hidden/);
   assert.match(html, /id="exportConflictDraft"/);
   assert.match(html, /id="reloadConflictPage"/);
@@ -865,4 +951,514 @@ test('Editor preserves edits made while a save request is in flight', () => {
   assert.match(save, /if\(unchanged\)\{markSaved\(stateAtStart,version\)\}else\{stateAtStart\.persistence\.saving=false;stateAtStart\.persistence\.dirty=true/);
   assert.match(save, /meta\.revision=version/);
   assert.match(save, /további helyi módosítások még nincsenek mentve/);
+});
+
+test('Authored video uses site-scoped poster assets without exposing video upload or changing legacy poster', async () => {
+ const {authoredNodeHtml,normalizeContentField,CONTENT_FIELDS}=await import('../core/authored-content.js');
+ const state=createEditorState(),root=activePage(state).rootId,id='6b1c2e65-e46e-4764-b234-123456789abc';
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.VIDEO,parentId:root}});
+ const videoId=state.selection.primaryId,pageId=state.document.activePageId;
+ execute(state,{type:'content.properties.set',payload:{nodeId:videoId,patch:{src:'https://cdn.example.com/clip.mp4',poster:'/images/legacy.jpg',controls:true}}});
+ let video=activePage(state).nodes[videoId];
+ assert.match(authoredNodeHtml(video),/poster="\/images\/legacy.jpg"/);
+ const poster=CONTENT_FIELDS.video.find(f=>f.key==='posterAssetId');
+ assert.equal(poster.type,'asset');
+ assert.throws(()=>normalizeContentField(poster,'../../wrong'));
+ const before=structuredClone(state.document);
+ assert.throws(()=>execute(state,{type:'content.properties.set',payload:{nodeId:videoId,patch:{posterAssetId:'javascript:alert(1)'}}}));
+ assert.deepEqual(state.document,before);
+ execute(state,{type:'content.properties.set',payload:{nodeId:videoId,patch:{posterAssetId:id}}});
+ video=activePage(state).nodes[videoId];
+ assert.match(authoredNodeHtml(video,{editor:true}),new RegExp('poster="/api/admin/media\\?id='+id+'"'));
+ assert.match(authoredNodeHtml(video),new RegExp('poster="/media/'+id+'"'));
+ assert.equal(video.props.poster,'/images/legacy.jpg','legacy URL retained as fallback');
+ assert.equal(validatePublishDocument(state.document,pageId),null);
+ execute(state,{type:'history.undo'});
+ assert.match(authoredNodeHtml(activePage(state).nodes[videoId]),/poster="\/images\/legacy.jpg"/);
+ execute(state,{type:'history.redo'});
+ assert.match(authoredNodeHtml(activePage(state).nodes[videoId]),new RegExp('poster="/media/'+id+'"'));
+ const invalid=structuredClone(state.document);
+ invalid.pages[pageId].nodes[videoId].props.posterAssetId='invalid';
+ assert.equal(validatePublishDocument(invalid,pageId),'INVALID_EDITOR_CONTENT');
+});
+
+test('new media remains editable as draft and publish requires a safe source and accessible image', () => {
+  const state=createEditorState();
+  const root=activePage(state).rootId;
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.IMAGE,parentId:root}});
+  const imageId=state.selection.primaryId;
+  const publish=()=>validatePublishDocument(state.document,state.document.activePageId);
+  assert.equal(publish(),'INVALID_MEDIA_SOURCE');
+  execute(state,{type:'element.update',payload:{nodeId:imageId,patch:{props:{src:'/uploads/banner.png'}}}});
+  assert.equal(publish(),'IMAGE_ALT_REQUIRED');
+  execute(state,{type:'element.update',payload:{nodeId:imageId,patch:{props:{src:'/uploads/banner.png',alt:'Borítókép'}}}});
+  assert.equal(publish(),null);
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.VIDEO,parentId:root,props:{src:'javascript:alert(1)'}}});
+  const videoId=state.selection.primaryId;
+  assert.equal(publish(),'INVALID_MEDIA_SOURCE');
+  execute(state,{type:'element.update',payload:{nodeId:videoId,patch:{props:{src:'https://cdn.example.com/intro.mp4'}}}});
+  assert.equal(publish(),null);
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.AUDIO,parentId:root,props:{src:'/media/theme.mp3'}}});
+  assert.equal(publish(),null);
+  assertValidEditorDocument(state.document);
+  execute(state,{type:'element.update',payload:{nodeId:imageId,patch:{accessibility:{decorative:true},props:{src:'/uploads/decor.png'}}}});
+  assert.equal(publish(),null);
+  // Previously saved pages without the new contract are not silently migrated.
+  const legacy=structuredClone(state.document);
+  const img=legacy.pages[legacy.activePageId].nodes[imageId];
+  delete img.metadata.editorContentVersion;
+  img.props={};
+  assert.equal(validatePublishDocument(legacy,legacy.activePageId),null);
+  const publicRenderer=readFileSync(new URL('../../assets/page-renderer.js',import.meta.url),'utf8');
+  assert.match(publicRenderer,/visual-video/);
+  assert.match(publicRenderer,/visual-audio/);
+});
+
+test('structured elements share a versioned content contract, publish guard and undo',()=>{
+ for(const type of ['list','table','tabs','accordion','gallery','carousel']){
+  const state=createEditorState(),root=activePage(state).rootId;
+  execute(state,{type:'element.add',payload:{type,parentId:root}});
+  const id=state.selection.primaryId,n=activePage(state).nodes[id];
+  assert.equal(n.metadata.structuredContentVersion,1);
+  assert.deepEqual(n.props.contentModel,createElementContent(type));
+  assertValidEditorDocument(state.document);
+  const err=validatePublishDocument(state.document,state.document.activePageId);
+  assert.equal(err,type==='gallery'?'INVALID_GALLERY_IMAGE':null,type);
+  const html=renderElementContent(type,n.props.contentModel,id);
+  assert.ok(html.length>20);
+  if(type==='gallery'){
+   const model={version:1,items:[{src:'/media/safe.png',alt:'Magyar felirat',caption:'Képaláírás'}]};
+   execute(state,{type:'element.update',payload:{nodeId:id,patch:{props:{...n.props,contentModel:model}}}});
+   assert.equal(validatePublishDocument(state.document,state.document.activePageId),null);
+   const bad={version:1,items:[{src:'javascript:alert(1)',alt:'Teszt',caption:''}]};
+   assert.equal(validateElementContent('gallery',bad),'INVALID_GALLERY_IMAGE');
+  }
+  execute(state,{type:'history.undo'});
+  assertValidEditorDocument(state.document);
+ }
+});
+test('structured models sanitize content and strictly validate dimensions',()=>{
+ assert.equal(safeMediaUrl('javascript:alert(1)'),'');
+ assert.equal(safeMediaUrl('//attacker.example/image.png'),'');
+ assert.equal(safeMediaUrl('/image.png'),'/image.png');
+ assert.equal(safeMediaUrl('https://cdn.example.com/photo.jpg'),'https://cdn.example.com/photo.jpg');
+ assert.throws(()=>normalizeElementContent('table',{version:1,rows:[['a','b'],['c']]}));
+ assert.equal(validateElementContent('tabs',{version:1,items:[{label:'',content:'content'}]}),'INCOMPLETE_INTERACTIVE_CONTENT');
+ assert.equal(validateElementContent('gallery',{version:1,items:[{src:'/photo.jpg',alt:'',caption:''}]}),'GALLERY_ALT_REQUIRED');
+ const malicious={version:1,items:[{label:'<script>alert(1)</script>',content:'<img src=x onerror=alert(1)>'}]};
+ const html=renderElementContent('tabs',malicious,'abc');
+ assert.ok(html.includes('&lt;script&gt;'));
+ assert.ok(!html.includes('<script>'));
+ assert.ok(html.includes('role="tab"'));
+ assert.ok(html.includes('role="tabpanel"'));
+ const details=renderElementContent('accordion',{version:1,items:[{label:'FAQ',content:'Details'}]},'faq');
+ assert.ok(details.includes('<details'));
+ assert.ok(details.includes('<summary'));
+ const table=renderElementContent('table',{version:1,rows:[['Header'],['Data']]},'table');
+ assert.ok(table.includes('<th scope="col">Header</th>'));
+});
+
+test('heading levels and safe external link targets reach the public renderer without script injection',()=>{
+ const source=readFileSync(new URL('../../assets/page-renderer.js',import.meta.url),'utf8');
+ assert.match(source,/const level=Number.isInteger\(p.level\)/);
+ assert.match(source,/target="\_blank" rel="noopener noreferrer"/);
+ assert.match(source,/safeRichUrl\(p.url\|\|p.href\)/);
+ const state=createEditorState(),root=activePage(state).rootId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.HEADING,parentId:root}});
+ const id=state.selection.primaryId;
+ execute(state,{type:'element.update',payload:{nodeId:id,patch:{props:{text:'Kezdőlap',level:1}}}});
+ assert.equal(activePage(state).nodes[id].props.level,1);
+ assertValidEditorDocument(state.document);
+});
+
+test('copying an anchor regenerates a distinct element URL fragment',()=>{
+ const state=createEditorState(),root=activePage(state).rootId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.SECTION,parentId:root}});
+ const id=state.selection.primaryId;
+ execute(state,{type:'element.update',payload:{nodeId:id,patch:{accessibility:{anchorId:'profile',ariaLabel:'Profil szakasz'}}}});
+ execute(state,{type:'element.duplicate',payload:{nodeId:id}});
+ const clone=activePage(state).nodes[state.selection.primaryId];
+ assert.equal(clone.accessibility.anchorId,'profile-copy');
+ assert.equal(clone.accessibility.ariaLabel,'Profil szakasz');
+ assert.equal(validatePublishDocument(state.document,state.document.activePageId),null);
+ const broken=structuredClone(state.document);
+ broken.pages[broken.activePageId].nodes[clone.id].accessibility.anchorId='profile';
+ assert.equal(validatePublishDocument(broken,broken.activePageId),'DUPLICATE_ELEMENT_ANCHOR');
+ const renderer=readFileSync(new URL('../../assets/page-renderer.js',import.meta.url),'utf8');
+ assert.match(renderer,/aria-label/);
+ // Legacy fragment attributes now resolve through the same canonical helper
+ // as the Canvas and authored public nodes, rather than duplicate injections.
+ assert.match(renderer,/contentAttributes\(node\)/);
+ assert.doesNotMatch(renderer,/accessibility\?\.anchorId/);
+});
+
+test('carousel content validates optional media and accessible slide labels',()=>{
+ const model=createElementContent('carousel');
+ assert.equal(validateElementContent('carousel',model),null);
+ model.items[0].src='/slides/screen.png';
+ assert.equal(validateElementContent('carousel',model),'CAROUSEL_ALT_REQUIRED');
+ model.items[0].alt='A stream képernyőképe';
+ assert.equal(validateElementContent('carousel',model),null);
+ const html=renderElementContent('carousel',model,'carousel-demo');
+ assert.match(html,/aria-roledescription="carousel"/);
+ assert.match(html,/aria-roledescription="dia"/);
+ assert.match(html,/visual-carousel-next/);
+});
+
+test('hover/focus appearance writes into canonical node states and is undoable',()=>{
+ const state=createEditorState();
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.BUTTON}});
+ const id=state.selection.primaryId;
+ execute(state,{type:'element.update',payload:{nodeId:id,patch:{states:{hover:{backgroundColor:'#123456',color:'#ffffff'},focus:{outlineColor:'#00ff00'}}}}});
+ assert.equal(activePage(state).nodes[id].states.hover.backgroundColor,'#123456');
+ assert.equal(validatePublishDocument(state.document,state.document.activePageId),null);
+ execute(state,{type:'history.undo'});
+ assert.equal(activePage(state).nodes[id].states.hover,undefined);
+ const pub=readFileSync(new URL('../../assets/page-renderer.js',import.meta.url),'utf8');
+ assert.match(pub,/visual-hover-bg/);
+ assert.match(pub,/visual-focus-outline/);
+});
+
+test('atomic multi-selection appearance can be reverted with one undo and rejects locked nodes',()=>{
+ const state=createEditorState(),root=activePage(state).rootId;
+ for(let i=0;i<2;i++)execute(state,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:root}});
+ const ids=[...activePage(state).nodes[root].children];
+ const actions=ids.map(nodeId=>({type:'responsive.set',payload:{nodeId,device:'desktop',patch:{backgroundColor:'#112233',fontSize:'18px'}}}));
+ executeBatch(state,actions,{label:'Közös megjelenés'});
+ assert.deepEqual(ids.map(id=>activePage(state).nodes[id].responsive.desktop.backgroundColor),['#112233','#112233']);
+ execute(state,{type:'history.undo'});
+ assert.deepEqual(ids.map(id=>activePage(state).nodes[id].responsive.desktop.backgroundColor),[undefined,undefined]);
+ execute(state,{type:'element.lock.set',payload:{nodeId:ids[1],locked:true}});
+ const snapshot=structuredClone(state.document);
+ assert.throws(()=>executeBatch(state,actions,{label:'Közös megjelenés'}));
+ assert.deepEqual(state.document,snapshot);
+});
+
+test('badge, quote and icon use real defaults, safe publish validation and undo',()=>{
+ const state=createEditorState(),root=activePage(state).rootId;
+ for(const type of ['badge','quote','icon']){
+  execute(state,{type:'element.add',payload:{type,parentId:root}});
+  const n=activePage(state).nodes[state.selection.primaryId];
+  assert.equal(n.metadata.basicContentVersion,1);
+  assert.equal(validatePublishDocument(state.document,state.document.activePageId),null);
+ }
+ const nodes=Object.values(activePage(state).nodes);
+ const quote=nodes.find(n=>n.type==='quote'),badge=nodes.find(n=>n.type==='badge'),icon=nodes.find(n=>n.type==='icon');
+ assert.ok(quote.props.text.trim()&&badge.props.text.trim());
+ assert.equal(iconById(icon.props.icon).glyph,'★');
+ assert.equal(ICON_CHOICES.length,10);
+ execute(state,{type:'element.update',payload:{nodeId:icon.id,patch:{props:{icon:'<script>'}}}});
+ assert.equal(validatePublishDocument(state.document,state.document.activePageId),'INVALID_ICON_TYPE');
+ execute(state,{type:'history.undo'});
+ assert.equal(isSupportedIcon(activePage(state).nodes[icon.id].props.icon),true);
+ execute(state,{type:'element.update',payload:{nodeId:quote.id,patch:{props:{text:''}}}});
+ assert.equal(validatePublishDocument(state.document,state.document.activePageId),'EMPTY_BASIC_CONTENT');
+ const source=readFileSync(new URL('../../assets/page-renderer.js',import.meta.url),'utf8');
+ assert.match(source,/visual-badge/);
+ assert.match(source,/visual-quote/);
+ assert.match(source,/iconById/);
+});
+
+test('root appearance opts in only after an explicit edit and supports Undo/Redo without affecting child styles', () => {
+  const state=createEditorState(),pageId=state.document.activePageId;
+  const page=activePage(state),rootId=page.rootId;
+  execute(state,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:rootId,props:{text:'Tartalom'}}});
+  const child=state.selection.primaryId;
+  assert.equal(page.nodes[rootId].metadata.rootStyleVersion,undefined,'unchanged pages retain legacy canvas');
+  execute(state,{type:'responsive.set',payload:{nodeId:rootId,device:'desktop',patch:{backgroundColor:'#112233',padding:'24px',color:'#ffffff'}}});
+  assert.equal(page.nodes[rootId].metadata.rootStyleVersion,1);
+  assert.equal(page.nodes[rootId].responsive.desktop.padding,'24px');
+  assert.equal(page.nodes[child].responsive.desktop.backgroundColor,undefined,'root edit does not alter child');
+  execute(state,{type:'responsive.set',payload:{nodeId:rootId,device:'mobile',patch:{backgroundColor:'#abcdef'}}});
+  assert.equal(page.nodes[rootId].responsive.mobile.backgroundColor,'#abcdef');
+  execute(state,{type:'history.undo'});
+  assert.equal(activePage(state).nodes[rootId].responsive.mobile.backgroundColor,undefined);
+  execute(state,{type:'history.redo'});
+  assert.equal(activePage(state).nodes[rootId].responsive.mobile.backgroundColor,'#abcdef');
+  assert.equal(validatePublishDocument(state.document,pageId),null);
+  const old=createDocument();
+  old.pages[old.activePageId].nodes[old.pages[old.activePageId].rootId].style.backgroundColor='#f00';
+  assert.equal(old.pages[old.activePageId].nodes[old.pages[old.activePageId].rootId].metadata.rootStyleVersion,undefined);
+});
+
+test('new divider and spacer keep their canonical visual contract without changing legacy pages', () => {
+ const state=createEditorState(),root=activePage(state).rootId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.DIVIDER,parentId:root}});
+ const dividerId=state.selection.primaryId,divider=activePage(state).nodes[dividerId];
+ assert.equal(divider.metadata.decorativeVersion,1);
+ assert.deepEqual(divider.props.decoration,{version:1,thickness:2,color:'#94a3b8',lineStyle:'solid'});
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.SPACER,parentId:root}});
+ const spacerId=state.selection.primaryId,spacer=activePage(state).nodes[spacerId];
+ assert.equal(spacer.metadata.spacerVersion,1);
+ assert.equal(spacer.style.height,'64px');
+ execute(state,{type:'responsive.set',payload:{nodeId:spacerId,device:'mobile',patch:{height:'40px'}}});
+ assert.equal(spacer.responsive.mobile.height,'40px');
+ execute(state,{type:'history.undo'});
+ assert.equal(activePage(state).nodes[spacerId].responsive.mobile.height,undefined);
+ execute(state,{type:'history.redo'});
+ assert.equal(activePage(state).nodes[spacerId].responsive.mobile.height,'40px');
+ const pageId=state.document.activePageId;
+ assert.equal(validatePublishDocument(state.document,pageId),null);
+ const invalid=structuredClone(state.document);
+ invalid.pages[pageId].nodes[dividerId].props.decoration={version:1,thickness:500,color:'#abc',lineStyle:'solid'};
+ assert.equal(validatePublishDocument(invalid,pageId),'INVALID_DIVIDER_CONFIG');
+ const legacy=structuredClone(state.document);
+ delete legacy.pages[pageId].nodes[dividerId].metadata.decorativeVersion;
+ legacy.pages[pageId].nodes[dividerId].props.decoration={version:1,thickness:500,color:'bogus',lineStyle:'none'};
+ assert.equal(validatePublishDocument(legacy,pageId),null,'old content is unchanged until opt-in');
+ assertValidEditorDocument(state.document);
+});
+
+test('Card content model preserves nested elements and rejects unsafe links on Publish', () => {
+ const state=createEditorState(),root=activePage(state).rootId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.CARD,parentId:root}});
+ const cardId=state.selection.primaryId,card=activePage(state).nodes[cardId];
+ assert.equal(card.metadata.cardContentVersion,1);
+ assert.equal(card.props.cardContent.title,'Új kártya');
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:cardId,props:{text:'Egyedi belső tartalom'}}});
+ const childId=state.selection.primaryId;
+ assert.ok(activePage(state).nodes[cardId].children.includes(childId),'Card remains a real container');
+ const pageId=state.document.activePageId;
+ assert.equal(validatePublishDocument(state.document,pageId),null);
+ execute(state,{type:'element.update',payload:{nodeId:cardId,patch:{props:{cardContent:{
+  version:1,title:'Kreatív kártya',description:'Bemutatkozó kártya',variant:'glass',
+  imageSrc:'/images/hero.jpg',imageAlt:'Fénykép',actionLabel:'Részletek',actionHref:'/p/about',newWindow:false
+ }}}}});
+ assert.equal(validatePublishDocument(state.document,pageId),null);
+ const invalid=structuredClone(state.document);
+ invalid.pages[pageId].nodes[cardId].props.cardContent.actionHref='javascript:alert(1)';
+ assert.equal(validatePublishDocument(invalid,pageId),'INVALID_CARD_CONTENT');
+ invalid.pages[pageId].nodes[cardId].props.cardContent.actionHref='/p/about';
+ invalid.pages[pageId].nodes[cardId].props.cardContent.imageAlt='';
+ assert.equal(validatePublishDocument(invalid,pageId),'INVALID_CARD_CONTENT');
+ const legacy=structuredClone(state.document);
+ const oldCard=legacy.pages[pageId].nodes[cardId];
+ delete oldCard.metadata.cardContentVersion;
+ oldCard.props.cardContent={bad:'old'};
+ assert.equal(validatePublishDocument(legacy,pageId),null,'old card appearance is not migrated automatically');
+ assertValidEditorDocument(state.document);
+});
+
+test('Card shared Media IDs preserve legacy URLs and reject malformed unpublished IDs', async () => {
+ const {normalizeCardContent,defaultCardContent,cardImageSrc}=await import('../core/card-content.js');
+ const id='11111111-2222-4333-8444-555555555555';
+ const original={...defaultCardContent(),imageSrc:'/images/legacy.jpg',imageAlt:'Kártya fénykép'};
+ assert.equal(normalizeCardContent(original).imageAssetId,'','legacy URL cards need no migration');
+ assert.equal(cardImageSrc(original),'/images/legacy.jpg');
+ const selected={...original,imageAssetId:id};
+ assert.equal(cardImageSrc(selected,{editor:true}),'/api/admin/media?id='+id);
+ assert.equal(cardImageSrc(selected),'/media/'+id);
+ assert.equal(normalizeCardContent(selected).imageAssetId,id);
+ assert.throws(()=>normalizeCardContent({...selected,imageAssetId:'javascript:alert(1)'}));
+ assert.throws(()=>normalizeCardContent({...selected,imageAlt:''}));
+ const state=createEditorState(),root=activePage(state).rootId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.CARD,parentId:root}});
+ const cardId=state.selection.primaryId,pageId=state.document.activePageId;
+ execute(state,{type:'element.update',payload:{nodeId:cardId,patch:{props:{cardContent:selected}}}});
+ assert.equal(validatePublishDocument(state.document,pageId),null);
+ execute(state,{type:'history.undo'});
+ assert.equal(activePage(state).nodes[cardId].props.cardContent.imageAssetId,'');
+ execute(state,{type:'history.redo'});
+ assert.equal(activePage(state).nodes[cardId].props.cardContent.imageAssetId,id);
+ const invalid=structuredClone(state.document);invalid.pages[pageId].nodes[cardId].props.cardContent.imageAssetId='not-a-uuid';
+ assert.equal(validatePublishDocument(invalid,pageId),'INVALID_CARD_CONTENT');
+});
+
+test('Countdown deadline is stable, editable and blocked at Publish if incomplete',async()=>{
+ const {remainingText,remainingParts,normalizeCountdownContent,defaultCountdownContent}=await import('../core/countdown-content.js');
+ const state=createEditorState(),root=activePage(state).rootId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.COUNTDOWN,parentId:root}});
+ const id=state.selection.primaryId,pageId=state.document.activePageId;
+ const node=activePage(state).nodes[id];
+ assert.equal(node.metadata.countdownVersion,1);
+ assert.equal(validatePublishDocument(state.document,pageId),'INVALID_COUNTDOWN_CONTENT');
+ assert.equal(remainingParts('',0),null);
+ const target='2026-12-25T20:00:00.000Z';
+ assert.deepEqual(remainingParts(target,Date.parse('2026-12-24T18:29:30Z')),{expired:false,days:1,hours:1,minutes:30,seconds:30});
+ assert.match(remainingText(target,Date.parse('2026-12-24T18:29:30Z')),/1 nap · 01 óra · 30 perc · 30 mp/);
+ assert.equal(remainingText(target,Date.parse(target)+1,true,'Vége'),'Vége');
+ const valid={...defaultCountdownContent(),targetISO:target,title:'Élő adás',finishText:'Már élőben!'};
+ assert.deepEqual(normalizeCountdownContent(valid),valid);
+ execute(state,{type:'element.update',payload:{nodeId:id,patch:{props:{countdown:valid}}}});
+ assert.equal(validatePublishDocument(state.document,pageId),null);
+ execute(state,{type:'history.undo'});
+ assert.equal(validatePublishDocument(state.document,pageId),'INVALID_COUNTDOWN_CONTENT');
+ execute(state,{type:'history.redo'});
+ assert.equal(validatePublishDocument(state.document,pageId),null);
+ assert.throws(()=>normalizeCountdownContent({...valid,targetISO:'2026-12-25T20:00:00'}));
+ assert.throws(()=>normalizeCountdownContent({...valid,targetISO:'javascript:alert(1)'}));
+ const broken=structuredClone(state.document);
+ broken.pages[pageId].nodes[id].props.countdown.targetISO='bad date';
+ assert.equal(validatePublishDocument(broken,pageId),'INVALID_COUNTDOWN_CONTENT');
+ const legacy=structuredClone(state.document);
+ delete legacy.pages[pageId].nodes[id].metadata.countdownVersion;
+ legacy.pages[pageId].nodes[id].props.countdown={bad:'old'};
+ assert.equal(validatePublishDocument(legacy,pageId),null);
+ assertValidEditorDocument(state.document);
+});
+
+test('Social Links: typed platforms, safe URLs, empty draft, accessible output, Undo/Redo and legacy isolation',async()=>{
+ const {defaultSocialLinks,defaultSocialEntry,normalizeSocialLinks,socialLinkUrl,renderSocialLinksHtml}=await import('../core/social-links.js');
+ assert.equal(socialLinkUrl('https://twitch.tv/example','twitch'),'https://twitch.tv/example');
+ assert.equal(socialLinkUrl('/p/about','website'),'/p/about');
+ assert.equal(socialLinkUrl('#contact','website'),'#contact');
+ assert.equal(socialLinkUrl('mailto:hello@example.com','email'),'mailto:hello@example.com');
+ for(const malicious of ['javascript:alert(1)','data:text/html,hello','http://unsafe.example','//evil.example','https://user:secret@example.com','https://site.example/\nscript','https://site.example\\@evil.com']){
+  assert.equal(socialLinkUrl(malicious,'website'),'','Unsafe social link accepted: '+malicious);
+ }
+ assert.equal(socialLinkUrl('/internal','twitch'),'','platform-specific links require HTTPS');
+ const state=createEditorState(),root=activePage(state).rootId,pageId=state.document.activePageId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.SOCIAL,parentId:root}});
+ const id=state.selection.primaryId,node=activePage(state).nodes[id];
+ assert.equal(node.metadata.socialLinksVersion,1);
+ assert.deepEqual(node.props.socialLinks,defaultSocialLinks());
+ assert.equal(validatePublishDocument(state.document,pageId),'INVALID_SOCIAL_LINKS','incomplete draft cannot be published');
+ const entries=[
+  {...defaultSocialEntry('twitch','link1'),label:'Nézd a <streamet>',href:'https://twitch.tv/example'},
+  {...defaultSocialEntry('website','link2'),label:'Részletek',href:'/p/about',newWindow:false},
+  {...defaultSocialEntry('email','link3'),label:'Írj nekem',href:'mailto:hello@example.com',newWindow:false}
+ ];
+ const valid={version:1,variant:'cards',layout:'grid',showIcons:true,items:entries};
+ assert.deepEqual(normalizeSocialLinks(valid),valid);
+ execute(state,{type:'element.update',payload:{nodeId:id,patch:{props:{...node.props,socialLinks:valid}}}});
+ assert.equal(validatePublishDocument(state.document,pageId),null);
+ const markup=renderSocialLinksHtml(valid);
+ assert.match(markup,/visual-social-cards/);
+ assert.match(markup,/visual-social-grid/);
+ assert.match(markup,/aria-label="Közösségi elérhetőségek"/);
+ assert.ok(!markup.includes('<streamet>'),'HTML injection in link label');
+ assert.match(markup,/&lt;streamet&gt;/);
+ assert.match(markup,/rel="noopener noreferrer"/);
+ assert.match(markup,/href="mailto:hello@example.com"/);
+ assert.equal((markup.match(/<li class="visual-social-item">/g)||[]).length,3);
+ const draft={...valid,items:[{...entries[0],href:'javascript:alert(1)'}]};
+ const invalidOutput=renderSocialLinksHtml(draft);
+ assert.ok(!invalidOutput.includes('href="javascript:'));
+ assert.match(invalidOutput,/aria-disabled="true"/);
+ const fail=structuredClone(state.document);
+ fail.pages[pageId].nodes[id].props.socialLinks=draft;
+ assert.equal(validatePublishDocument(fail,pageId),'INVALID_SOCIAL_LINKS');
+ fail.pages[pageId].nodes[id].props.socialLinks={...valid,items:[entries[0],{...entries[0]}]};
+ assert.equal(validatePublishDocument(fail,pageId),'INVALID_SOCIAL_LINKS','duplicate entry id is blocked');
+ execute(state,{type:'history.undo'});
+ assert.equal(validatePublishDocument(state.document,pageId),'INVALID_SOCIAL_LINKS');
+ execute(state,{type:'history.redo'});
+ assert.equal(validatePublishDocument(state.document,pageId),null);
+ const legacy=structuredClone(state.document);
+ delete legacy.pages[pageId].nodes[id].metadata.socialLinksVersion;
+ legacy.pages[pageId].nodes[id].props.socialLinks={version:9};
+ assert.equal(validatePublishDocument(legacy,pageId),null,'older published Social widgets are not migrated');
+ assertValidEditorDocument(state.document);
+});
+
+test('Creator Embed: allowlisted platform URLs, privacy URL, Twitch parent, XSS and Publish contract',async()=>{
+ const {parseEmbedSource,normalizeEmbedContent,defaultEmbedContent,buildEmbedUrl,renderEmbedHtml}=await import('../core/creator-embed.js');
+ const testId='M7lc1UVf-VE';
+ for(const source of [testId,'https://youtu.be/'+testId,'https://www.youtube.com/watch?v='+testId,
+  'https://www.youtube.com/shorts/'+testId,'https://www.youtube.com/embed/'+testId]){
+  assert.deepEqual(parseEmbedSource('youtube',source),{provider:'youtube',id:testId,hash:''});
+ }
+ for(const bad of ['javascript:alert(1)','http://youtube.com/watch?v='+testId,'https://youtube.com.evil.example/watch?v='+testId,
+  'https://user:pass@youtube.com/watch?v='+testId,'https://youtu.be/invalid','https://vimeo.com/123']){
+  assert.throws(()=>parseEmbedSource('youtube',bad),'untrusted video source accepted: '+bad);
+ }
+ assert.deepEqual(parseEmbedSource('twitch-live','https://www.twitch.tv/sanci9517'),{provider:'twitch-live',id:'sanci9517',hash:''});
+ assert.deepEqual(parseEmbedSource('twitch-vod','https://www.twitch.tv/videos/12345'),{provider:'twitch-vod',id:'12345',hash:''});
+ assert.deepEqual(parseEmbedSource('vimeo','https://player.vimeo.com/video/12345?h=abcdef1234'),{provider:'vimeo',id:'12345',hash:'abcdef1234'});
+ assert.equal(buildEmbedUrl({provider:'youtube',source:testId}),'https://www.youtube-nocookie.com/embed/'+testId+'?rel=0');
+ assert.equal(buildEmbedUrl({provider:'twitch-live',source:'sanci9517'},'creator.example.com'),'https://player.twitch.tv/?channel=sanci9517&parent=creator.example.com&autoplay=false');
+ assert.equal(buildEmbedUrl({provider:'twitch-vod',source:'12345'},'creator.example.com'),'https://player.twitch.tv/?video=v12345&parent=creator.example.com&autoplay=false');
+ assert.equal(buildEmbedUrl({provider:'twitch-live',source:'sanci9517'},''),'','Twitch requires a verified hostname');
+ assert.equal(buildEmbedUrl({provider:'vimeo',source:'https://player.vimeo.com/video/12345?h=abcdef1234'}),
+  'https://player.vimeo.com/video/12345?h=abcdef1234&dnt=1');
+ const state=createEditorState(),root=activePage(state).rootId,pageId=state.document.activePageId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.EMBED,parentId:root}});
+ const id=state.selection.primaryId,node=activePage(state).nodes[id];
+ assert.equal(node.metadata.embedContentVersion,1);
+ assert.deepEqual(node.props.embedContent,defaultEmbedContent());
+ assert.equal(validatePublishDocument(state.document,pageId),'INVALID_EMBED_CONTENT');
+ const valid={...defaultEmbedContent(),source:'https://youtu.be/'+testId,title:'Egyedi <script>alert(1)</script>',ratio:'classic',clickToLoad:true};
+ assert.deepEqual(normalizeEmbedContent(valid),valid);
+ execute(state,{type:'element.update',payload:{nodeId:id,patch:{props:{embedContent:valid}}}});
+ assert.equal(validatePublishDocument(state.document,pageId),null);
+ const html=renderEmbedHtml(valid);
+ assert.ok(!html.includes('<iframe'),'third-party content loads only after consent');
+ assert.ok(!html.includes('<script>'));
+ assert.match(html,/&lt;script&gt;/);
+ assert.match(html,/data-embed-click="true"/);
+ assert.ok(!renderEmbedHtml({...valid,source:'javascript:alert(1)'}).includes('data-embed-source='));
+ execute(state,{type:'history.undo'});
+ assert.equal(validatePublishDocument(state.document,pageId),'INVALID_EMBED_CONTENT');
+ execute(state,{type:'history.redo'});
+ assert.equal(validatePublishDocument(state.document,pageId),null);
+ const unsafe=structuredClone(state.document);
+ unsafe.pages[pageId].nodes[id].props.embedContent.source='https://evil.example/malware';
+ assert.equal(validatePublishDocument(unsafe,pageId),'INVALID_EMBED_CONTENT');
+ const legacy=structuredClone(state.document);
+ delete legacy.pages[pageId].nodes[id].metadata.embedContentVersion;
+ legacy.pages[pageId].nodes[id].props.embedContent={version:9};
+ assert.equal(validatePublishDocument(legacy,pageId),null,'legacy Embed nodes retain their previous behavior');
+ assertValidEditorDocument(state.document);
+});
+
+test('Code snippet model keeps source inert and copyable, validates size and preserves Undo/legacy',async()=>{
+ const {defaultCodeSnippet,normalizeCodeSnippet,renderCodeSnippet}=await import('../core/code-snippet.js');
+ const state=createEditorState(),root=activePage(state).rootId,pageId=state.document.activePageId;
+ execute(state,{type:'element.add',payload:{type:NODE_TYPES.CODE,parentId:root}});
+ const id=state.selection.primaryId,node=activePage(state).nodes[id];
+ assert.equal(node.metadata.codeSnippetVersion,1);
+ assert.deepEqual(node.props.codeSnippet,defaultCodeSnippet());
+ assert.equal(validatePublishDocument(state.document,pageId),'INVALID_CODE_SNIPPET');
+ const code='console.log("<script>alert(1)</script>");\nconst message = "Hello!";';
+ const cfg={version:1,title:'Példa <img src=x onerror=alert(1)>',language:'javascript',code,theme:'light',showLineNumbers:true,wrapLines:true};
+ assert.deepEqual(normalizeCodeSnippet(cfg),cfg);
+ const html=renderCodeSnippet(cfg);
+ assert.ok(!html.includes('<script>'),'source must not become executable HTML');
+ assert.ok(!html.includes('<img '),'title must be escaped');
+ assert.match(html,/&lt;script&gt;/);
+ assert.match(html,/&lt;img/);
+ assert.match(html,/visual-code-numbered/);
+ assert.match(html,/visual-code-wrap/);
+ assert.match(html,/data-line="2"/);
+ execute(state,{type:'element.update',payload:{nodeId:id,patch:{props:{codeSnippet:cfg}}}});
+ assert.equal(validatePublishDocument(state.document,pageId),null);
+ execute(state,{type:'history.undo'});
+ assert.equal(validatePublishDocument(state.document,pageId),'INVALID_CODE_SNIPPET');
+ execute(state,{type:'history.redo'});
+ assert.equal(validatePublishDocument(state.document,pageId),null);
+ assert.throws(()=>normalizeCodeSnippet({...cfg,language:'execute-javascript'}));
+ assert.throws(()=>normalizeCodeSnippet({...cfg,code:' '.repeat(12)}));
+ assert.throws(()=>normalizeCodeSnippet({...cfg,code:'x\n'.repeat(501)}));
+ assert.throws(()=>normalizeCodeSnippet({...cfg,code:'x'.repeat(40001)}));
+ const unsafe=structuredClone(state.document);
+ unsafe.pages[pageId].nodes[id].props.codeSnippet.code='';
+ assert.equal(validatePublishDocument(unsafe,pageId),'INVALID_CODE_SNIPPET');
+ const legacy=structuredClone(state.document);
+ delete legacy.pages[pageId].nodes[id].metadata.codeSnippetVersion;
+ legacy.pages[pageId].nodes[id].props.codeSnippet={version:99};
+ assert.equal(validatePublishDocument(legacy,pageId),null,'legacy Code does not get an implicit schema migration');
+ assertValidEditorDocument(state.document);
+});
+
+test('Countdown rejects impossible authored calendar dates before UTC normalization',async()=>{
+ const {normalizeCountdownContent,defaultCountdownContent}=await import('../core/countdown-content.js');
+ const base=defaultCountdownContent();
+ for(const targetISO of ['2030-02-29T12:00:00Z','2030-02-30T12:00:00Z','2030-02-31T12:00:00+02:00','2030-04-31T12:00:00Z','2100-02-29T12:00:00Z','2030-12-31T24:00:00Z','2030-01-00T12:00:00Z','2030-13-01T12:00:00Z','2030-01-01T12:60:00Z','2030-01-01T12:00:60Z','2030-01-01T12:00:00+24:00','2030-01-01T12:00:00+01:60']){
+  assert.throws(()=>normalizeCountdownContent({...base,targetISO}),/Érvénytelen eseményidőpont/,targetISO);
+ }
+});
+test('Countdown preserves valid leap days, sub-second precision and offset boundary semantics',async()=>{
+ const {normalizeCountdownContent,defaultCountdownContent}=await import('../core/countdown-content.js');
+ for(const [targetISO,expected] of [
+  ['2000-02-29T12:00:00Z','2000-02-29T12:00:00.000Z'],
+  ['2032-02-29T00:30:42.123+01:00','2032-02-28T23:30:42.123Z'],
+  ['2030-01-01T00:30:00+02:00','2029-12-31T22:30:00.000Z'],
+  ['2030-12-31T23:30:00-02:30','2031-01-01T02:00:00.000Z'],
+  ['1999-12-31T23:30:00-01:00','2000-01-01T00:30:00.000Z'],
+  ['2101-01-01T00:30:00+01:00','2100-12-31T23:30:00.000Z'],
+  ['2030-12-31T20:30:00.007Z','2030-12-31T20:30:00.007Z']]){
+  const input=Object.freeze({...defaultCountdownContent(),targetISO});
+  assert.equal(normalizeCountdownContent(input).targetISO,expected);
+  assert.equal(input.targetISO,targetISO,'normalization cannot mutate the original draft');
+ }
 });

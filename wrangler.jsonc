@@ -19,5 +19,15 @@
       "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98",
       "migrations_dir": "migrations"
     }
-  ]
+  ],
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "sanci9517-media"
+    }
+  ],
+  "vars": {
+    "SITE_MEMBERSHIP_ENFORCEMENT": "enabled",
+    "SITE_SCOPED_SETTINGS_ENABLED": "enabled"
+  }
 }

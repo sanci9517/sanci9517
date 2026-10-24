@@ -7,7 +7,9 @@ const root=document.documentElement;
 const panels={left:document.querySelector('#leftDock'),right:document.querySelector('#rightDock')};
 const resizeLimits={left:{min:250,max:460},right:{min:260,max:440}};
 const STORAGE_KEY='sanci-editor-shell-v2';
-const defaults={leftOpen:false,rightOpen:false,leftTab:'pages',leftWidth:310,rightWidth:300};
+const defaults={leftOpen:false,rightOpen:false,leftTab:'pages',leftWidth:310,rightWidth:352};
+const mobileQuery=window.matchMedia('(max-width: 1024px)');
+let focusBeforeMobilePanel=null;
 
 function readPersisted(){
   try{
@@ -24,24 +26,58 @@ function persist(){
 }
 function emit(type,payload={}){bus.emit(type,payload)}
 function syncMobileBackdrop(){
+  const mobile=mobileQuery.matches;
+  const leftOpen=!panels.left?.classList.contains('closed');
+  const rightOpen=!panels.right?.classList.contains('closed');
+  const open=mobile && (leftOpen||rightOpen);
   const backdrop=document.querySelector('#mobileBackdrop');
-  if(!backdrop)return;
-  const mobile=window.matchMedia('(max-width: 1024px)').matches;
-  const open=mobile && (!panels.left?.classList.contains('closed') || !panels.right?.classList.contains('closed'));
-  backdrop.setAttribute('aria-hidden',String(!open));
+  backdrop?.setAttribute('aria-hidden',String(!open));
+  // Keep the hidden mobile drawer and background canvas out of keyboard
+  // navigation. On desktop, the collapsed left rail remains interactive.
+  if(panels.left) {
+    panels.left.inert=mobile&&!leftOpen;
+    panels.left.setAttribute('aria-hidden',String(mobile&&!leftOpen));
+  }
+  if(panels.right) {
+    panels.right.inert=!rightOpen;
+    panels.right.setAttribute('aria-hidden',String(!rightOpen));
+  }
+  const canvasArea=document.querySelector('.canvas-area');
+  if(canvasArea)canvasArea.inert=open;
+  document.querySelector('#editorMenu')?.setAttribute('aria-expanded',String(leftOpen));
+  document.querySelector('#openInspector')?.setAttribute('aria-expanded',String(rightOpen));
 }
-function setPanel(side,open,{save=true}={}){
+function setPanel(side,open,{save=true,restoreFocus=true}={}){
   const panel=panels[side];if(!panel)return;
+  const wasOpen=!panel.classList.contains('closed');
+  if(open && mobileQuery.matches){
+    const other=side==='left'?'right':'left';
+    if(!panels[other]?.classList.contains('closed'))setPanel(other,false,{save:false,restoreFocus:false});
+    if(!wasOpen && document.activeElement instanceof HTMLElement &&
+        !panel.contains(document.activeElement))focusBeforeMobilePanel=document.activeElement;
+  }
+  const wasFocused=panel.contains(document.activeElement);
   panel.classList.toggle('closed',!open);
   workspace?.classList.toggle(`${side}-closed`,!open);
   workspace?.classList.toggle(`${side}-open`,open);
   if(side==='right')panel.style.display=open?'flex':'none';
   if(save){persisted[side==='left'?'leftOpen':'rightOpen']=open;persist()}
   syncMobileBackdrop();
+  if(mobileQuery.matches && open && !wasOpen){
+    requestAnimationFrame(()=>{
+      if(!panel.classList.contains('closed')){
+        panel.querySelector('[data-collapse]')?.focus({preventScroll:true});
+      }
+    });
+  }
+  if(mobileQuery.matches && !open && wasOpen && restoreFocus && wasFocused &&
+     focusBeforeMobilePanel?.isConnected){
+    focusBeforeMobilePanel.focus({preventScroll:true});
+  }
   emit('panel:change',{side,open});
 }
-function showLeftTab(tab,{save=true}={}){
-  setPanel('left',true,{save:false});
+function showLeftTab(tab,{save=true,open=true}={}){
+  if(open)setPanel('left',true,{save:false});
   document.querySelectorAll('.rail-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
   document.querySelectorAll('[data-content]').forEach(x=>x.classList.toggle('hidden',x.dataset.content!==tab));
   if(save){persisted.leftTab=tab;persist()}
@@ -80,10 +116,10 @@ function setupResizers(){
 
 root.style.setProperty('--left-dock-width',`${clamp(Number(persisted.leftWidth),resizeLimits.left)}px`);
 root.style.setProperty('--right-dock-width',`${clamp(Number(persisted.rightWidth),resizeLimits.right)}px`);
-setPanel('left',Boolean(persisted.leftOpen),{save:false});
-setPanel('right',Boolean(persisted.rightOpen),{save:false});
-showLeftTab(persisted.leftTab,{save:false});
-if(!persisted.leftOpen)setPanel('left',false,{save:false});
+// A previous desktop session must not cover the mobile canvas on entry.
+setPanel('left',!mobileQuery.matches && Boolean(persisted.leftOpen),{save:false});
+setPanel('right',!mobileQuery.matches && Boolean(persisted.rightOpen),{save:false});
+showLeftTab(persisted.leftTab,{save:false,open:false});
 
 document.querySelector('#editorMenu')?.addEventListener('click',()=>{
   if(panels.left?.classList.contains('closed'))showLeftTab(persisted.leftTab||'pages');
@@ -94,14 +130,22 @@ document.querySelectorAll('[data-collapse]').forEach(b=>b.addEventListener('clic
   setPanel(side,panels[side]?.classList.contains('closed')??true);
 }));
 document.querySelector('#openInspector')?.addEventListener('click',()=>setPanel('right',panels.right?.classList.contains('closed')??true));
+document.querySelector('.more-actions')?.addEventListener('toggle',event=>{
+  if(event.target.open && window.matchMedia('(max-width: 1024px)').matches){
+    setPanel('left',false);setPanel('right',false);
+  }
+});
 document.querySelector('#mobileBackdrop')?.addEventListener('click',()=>{setPanel('left',false);setPanel('right',false)});
 window.addEventListener('resize',syncMobileBackdrop);
 window.addEventListener('keydown',event=>{if(event.key==='Escape'){setPanel('left',false);setPanel('right',false)}});
 
 function wireMobileActions(){
   const click=(id,target)=>document.querySelector(id)?.addEventListener('click',()=>document.querySelector(target)?.click());
+  click('#mobileUndo','#undo'); click('#mobileRedo','#redo');
   click('#mobileFit','#fitCanvas'); click('#mobileZoomOut','#zoomOut'); click('#mobileZoomIn','#zoomIn');
-  click('#mobilePreview','#preview'); click('#mobilePublish','#publish');
+  click('#mobilePreview','#preview');
+  // app.js already owns #mobilePublish and #mobileUnpublish. Forwarding
+  // #mobilePublish to #publish caused two asynchronous publish requests.
 }
 wireMobileActions();
 document.querySelectorAll('.rail-btn').forEach(b=>b.addEventListener('click',()=>showLeftTab(b.dataset.tab)));

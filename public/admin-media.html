@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Média és erőforrások · Sanci9517</title>
+<style>
+:root{color-scheme:dark;--bg:#101423;--panel:#1b2335;--line:#36435c;--text:#f4f5fc;--muted:#b7c0d3;--accent:#9480f7;--success:#74d7ae}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
+a{color:inherit}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.55;cursor:wait}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.shell{max-width:1200px;margin:auto;padding:22px clamp(14px,3vw,38px) 64px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-bottom:22px;border-bottom:1px solid var(--line)}
+.brand{font-weight:800;font-size:1.08rem;letter-spacing:.06em;text-decoration:none}.back{font-weight:600;text-underline-offset:4px;color:var(--muted)}
+h1{font-size:clamp(1.75rem,3vw,2.8rem);line-height:1.15;margin:28px 0 8px}h2{font-size:1.2rem;margin:0 0 12px}
+.lead,.muted{color:var(--muted)}
+.panels{display:grid;grid-template-columns:minmax(270px,360px) minmax(0,1fr);gap:20px;margin-top:28px;align-items:start}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px;min-width:0}
+label{display:block;font-weight:650;margin:12px 0 7px}
+input[type=file]{display:block;width:100%;padding:14px;border:1px dashed var(--muted);border-radius:10px;background:var(--bg);color:var(--text)}
+button.primary{border:0;border-radius:10px;color:#160f31;background:#b5a7ff;font-weight:750;padding:12px 16px;width:100%;margin-top:14px;min-height:44px}
+button.upload-secondary{border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text);font-weight:650;padding:10px 14px;min-height:44px;width:100%;margin-top:9px}button.upload-secondary[hidden],progress[hidden]{display:none}#uploadProgress{display:block;width:100%;height:12px;accent-color:var(--accent);margin-top:12px}#uploadProgress[hidden]{display:none}.status{color:var(--muted);min-height:1.7em;margin-top:14px;overflow-wrap:anywhere}.status[data-kind=error]{color:#ffb3b3}.status[data-kind=ok]{color:var(--success)}
+.quota-panel{margin:0 0 18px;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}.quota-panel p{margin:5px 0;overflow-wrap:anywhere}.quota-panel progress{width:100%;height:12px;accent-color:var(--accent)}.quota-panel progress[hidden]{display:none}.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
+.tile{min-width:0;border:1px solid var(--line);background:#12192b;border-radius:14px;overflow:hidden}
+.tile img,.tile .media-icon{width:100%;aspect-ratio:4/3;object-fit:contain;background:#070b17;display:grid;place-items:center;font-size:2rem}
+.tile .details{padding:10px 12px;font-size:.88rem}.tile .name{display:block;overflow-wrap:anywhere;font-weight:650}.tile small{color:var(--muted)}
+.empty{padding:30px 18px;border:1px dashed var(--line);border-radius:12px;color:var(--muted);text-align:center}
+.library-tools{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;margin:0 0 16px}.media-state-row{display:flex;align-items:center;gap:10px;margin:0 0 14px;flex-wrap:wrap}.media-state-row label{margin:0}.media-state-row select{background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:8px;min-height:44px;padding:8px 12px;max-width:100%}.tile .archive-status{overflow-wrap:anywhere}.tile .archive-confirm{border-color:#d6a354}.tile .archive-danger{border-color:#c27c7c}.library-tools input,.tile input{width:100%;min-width:0;min-height:42px;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text)}.library-tools button,.tile button{min-height:42px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:#29344b;color:var(--text)}.media-paging{display:grid;gap:9px;margin-top:16px}.media-paging button{width:100%;min-height:44px;padding:10px 14px;border:1px solid var(--line);border-radius:9px;background:#29344b;color:var(--text)}.media-paging button[hidden]{display:none}.media-paging p{margin:0;color:var(--muted);font-size:.9rem;overflow-wrap:anywhere}.tile .details{display:grid;gap:8px}.tile .details small{color:var(--muted)}
+.retention-panel{margin-top:20px}.retention-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.retention-heading h2{margin:0}.retention-heading button{min-height:44px;padding:10px 14px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--text)}.retention-list{list-style:none;padding:0;margin:16px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px}.retention-list[hidden]{display:none}.retention-card{padding:16px;border:1px solid var(--line);border-radius:12px;min-width:0}.retention-card p{overflow-wrap:anywhere}.retention-asset{color:var(--muted);font-size:.88rem}.retention-fields{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:6px 12px;font-size:.9rem}.retention-fields dt{color:var(--muted)}.retention-fields dd{margin:0;min-width:0;overflow-wrap:anywhere}.retention-panel[data-state=error] [role=status]{color:#ffb3b3}.retention-notice{color:var(--muted)}
+.note{margin-top:24px;color:var(--muted);font-size:.9rem}
+.media-usage{border-top:1px solid var(--line);padding-top:8px;overflow-wrap:anywhere}.media-usage[hidden]{display:none}.media-usage p{margin:4px 0;color:var(--muted)}.media-usage ul{padding-left:18px;margin:4px 0}.media-usage li{margin:6px 0}
+@media(max-width:800px){.panels{grid-template-columns:minmax(0,1fr)}.panel{padding:18px}.tiles{grid-template-columns:repeat(auto-fill,minmax(135px,1fr))}}
+@media(prefers-color-scheme:light){:root{color-scheme:light;--bg:#f4f6fc;--panel:#fff;--line:#d5dced;--text:#171d33;--muted:#50607e;--accent:#6247dd} .tile{background:#f6f7fd}.tile img{background:#f0f1f8}button.primary{color:white;background:#6349cd}.status[data-kind=error],.retention-panel[data-state=error] [role=status]{color:#ae2121}.status[data-kind=ok]{color:#15784c}}
+.retention-action{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.retention-action p,.retention-controls p{font-size:.85rem;line-height:1.5;overflow-wrap:anywhere}.retention-controls{display:flex;flex-wrap:wrap;gap:8px}.retention-controls p{flex-basis:100%;margin:8px 0}.tiles:has(.retention-action){grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr))}.retention-action button,.retention-card button{padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text)}.retention-controls button,.retention-action>button,.retention-card>button{min-height:44px;max-width:100%;white-space:normal;overflow-wrap:anywhere}
+
+.integrity-panel{margin-top:20px}.integrity-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}.integrity-audit{min-width:0;border:1px solid var(--line);border-radius:12px;padding:16px}.integrity-audit h3{margin-top:0}.integrity-controls{display:flex;gap:8px;flex-wrap:wrap}.integrity-controls button{min-height:44px;max-width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text);white-space:normal}.integrity-controls [hidden],.integrity-findings[hidden]{display:none}.integrity-findings{list-style:none;padding:0;margin:0;display:grid;gap:12px}.integrity-findings li{padding:12px;border:1px solid var(--line);border-radius:8px}.integrity-audit p,.integrity-findings strong{overflow-wrap:anywhere}.integrity-findings p{font-size:.85rem;margin:6px 0 0;color:var(--muted)}.integrity-audit[data-state=error] [role=status]{font-weight:650}
+</style>
+</head>
+<body>
+<div class="shell">
+<header><a class="brand" href="/admin">SANCI9517 / CREATOR</a><a class="back" href="/admin">← Vezérlőpult</a></header>
+<main>
+<h1>Média és erőforrások</h1>
+<p class="lead">Közös, privát médiatár – a Creator Platform médiatárolójának első működő változata.</p>
+<div class="panels">
+<section class="panel" aria-labelledby="uploadTitle">
+<h2 id="uploadTitle">Média feltöltése</h2>
+<p class="muted">PNG, JPG, GIF, WebP, MP3, OGG, WAV vagy WebM. Legfeljebb 4 MiB fájlonként. Kezdeti webhelykvóta: 5 GB.</p>
+<form id="uploadForm">
+<label for="imageInput">Médiafájl</label>
+<input id="imageInput" name="media" type="file" accept="image/png,image/jpeg,image/gif,image/webp,audio/mpeg,audio/ogg,audio/wav,video/webm" required>
+<button class="primary" id="uploadButton" type="submit">Feltöltés a médiatárba</button>
+<progress id="uploadProgress" aria-label="Médiafeltöltés elküldött adatmennyisége" max="100" value="0" hidden></progress>
+<button class="upload-secondary" id="uploadCancel" type="button" hidden>Feltöltés megszakítása</button>
+<button class="upload-secondary" id="uploadRetry" type="button" hidden>Feltöltés újrapróbálása</button>
+</form>
+<p role="status" aria-live="polite" class="status" id="uploadStatus">Válassz ki egy médiafájlt.</p>
+</section>
+<section class="panel" aria-labelledby="libraryTitle">
+<h2 id="libraryTitle">Médiatár</h2>
+<p class="muted">Keresés fájlnév vagy leírás alapján. A Használati helyek mutatja a piszkozatok, publikált oldalak, archivált oldalak és korábbi verziók hivatkozásait. A piszkozatként kiválasztott fájl csak külön publikálás után válik nyilvánossá.</p>
+<div id="mediaQuota" class="quota-panel" role="status" aria-live="polite" aria-label="Webhely médiatárhelye">
+<strong>Tárhelyhasználat</strong>
+<p id="mediaQuotaSummary">Tárhelyadatok betöltése…</p>
+<progress id="mediaQuotaProgress" max="100" value="0" aria-label="Felhasznált médiatárhely százalékban" hidden></progress>
+<p id="mediaQuotaDetails" class="muted"></p>
+</div>
+<div class="media-state-row"><label for="mediaState">Nézet</label><select id="mediaState" aria-label="Médiatár nézet"><option value="active">Aktív médiafájlok</option><option value="archived">Archivált médiafájlok</option></select></div>
+<div class="library-tools"><input id="mediaSearch" type="search" placeholder="Keresés a médiafájlok között…" aria-label="Keresés a médiafájlok között"><button id="mediaSearchClear" type="button">Törlés</button></div>
+<div id="gallery" class="tiles" aria-live="polite"><p class="empty">Médiafájlok betöltése…</p></div>
+<div class="media-paging"><button id="mediaLoadMore" type="button" hidden>További médiafájl betöltése</button><p id="mediaListStatus" role="status" aria-live="polite">Médiafájlok betöltése…</p></div>
+</section>
+</div>
+<section class="panel retention-panel" id="mediaRetentionPanel" aria-labelledby="retentionTitle" aria-busy="true">
+<div class="retention-heading"><h2 id="retentionTitle">Adatmegőrzési kérelmek</h2><button type="button" aria-controls="retentionRequests">Állapot frissítése</button></div>
+<p class="muted">Az archivált, nem használt fájlhoz előellenőrzés után rögzíthető kérelem. A várakozási idő vége önmagában nem indít törlést. A visszavonás a fájlt és a tárhelyhasználatot változatlanul hagyja.</p>
+<p role="status" aria-live="polite">Adatmegőrzési kérelmek betöltése…</p>
+<p class="retention-notice" hidden></p>
+<ul class="retention-list" id="retentionRequests" aria-label="Adatmegőrzési kérelmek" hidden></ul>
+</section>
+<section class="panel integrity-panel" id="mediaIntegrityPanel" aria-labelledby="integrityTitle">
+<h2 id="integrityTitle">Fájlok és nyilvántartás ellenőrzése</h2>
+<p class="muted">A vizsgálatok csak olvasnak, kézzel indulnak és részletenként legfeljebb 100 fájlt ellenőriznek. Az eredmény mindig az aktuális részletet mutatja. A fájlok közben változhatnak; ez nem pillanatfelvétel és nem teljes integritási garancia.</p>
+<div class="integrity-grid">
+<section class="integrity-audit" data-audit-mode="missing" data-state="idle" aria-labelledby="missingAuditTitle" aria-busy="false">
+<h3 id="missingAuditTitle">Hiányzó tárolt fájlok</h3>
+<p class="muted">A nyilvántartott aktív és archivált médiafájlok elérhetőségét vizsgálja. Találatnál ellenőrzött forrásból történő helyreállítás szükséges; a vizsgálat nem módosítja a bejegyzést.</p>
+<div class="integrity-controls"><button type="button" data-audit-start>Hiányzó fájlok vizsgálata</button><button type="button" data-audit-next hidden>Következő részlet ellenőrzése</button><button type="button" data-audit-retry hidden>Részlet újrapróbálása</button></div>
+<p role="status" aria-live="polite">A vizsgálat még nem indult el.</p>
+<ul class="integrity-findings" aria-label="Hiányzó tárolt fájlok" hidden></ul>
+</section>
+<section class="integrity-audit" data-audit-mode="orphan" data-state="idle" aria-labelledby="orphanAuditTitle" aria-busy="false">
+<h3 id="orphanAuditTitle">Nem nyilvántartott fájljelöltek</h3>
+<p class="muted">A tárolt fájlokat veti össze a webhely nyilvántartásával. Friss vagy folyamatban lévő feltöltés is megjelenhet jelöltként. Ez az eredmény nem törlési lista.</p>
+<div class="integrity-controls"><button type="button" data-audit-start>Nyilvántartás egyeztetése</button><button type="button" data-audit-next hidden>Következő részlet ellenőrzése</button><button type="button" data-audit-retry hidden>Részlet újrapróbálása</button></div>
+<p role="status" aria-live="polite">A vizsgálat még nem indult el.</p>
+<ul class="integrity-findings" aria-label="Nem nyilvántartott fájljelöltek" hidden></ul>
+</section>
+</div>
+</section>
+<p class="note">Az archiválás nem törli a fájlt és nem csökkenti a felhasznált tárhelyet. A használatban lévő médiafájlok (piszkozat, publikált oldal, korábbi verzió) nem archiválhatók. A visszaállítás az eredeti azonosítót és leírást őrzi meg. A médiafájlok csak külön oldali publikálás után válnak nyilvánossá.</p>
+</main>
+</div>
+<script type="module" src="/assets/admin-media.js"></script>
+</body>
+</html>

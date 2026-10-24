@@ -3,14 +3,27 @@ import { getAuthenticatedUser, hasRole } from "../../core/auth/require-auth";
 import { normalizeEditorDocument } from "../../core/page-model";
 import type { Env } from "../../types/env";
 import { getCanonicalSiteContext } from "../../core/site-context";
+import { DEFAULT_SITE_ID } from "../../core/site-context";
+import { requireSiteGrant } from "../../core/auth/site-access";
 
 type PageRow={id:string;slug:string;title:string;description:string;published_content_json:string|null;content_json:string;published_slug:string|null;published_title:string|null;published_description:string|null;sort_order:number;updated_at:string;published_at:string|null};
 function noStore(response:Response):Response{const headers=new Headers(response.headers);headers.set('Cache-Control','private, no-store, max-age=0');headers.set('Vary','Cookie');return new Response(response.body,{status:response.status,statusText:response.statusText,headers})}
 function parse(value:string|null|undefined):any{try{return JSON.parse(value||'{}')}catch{return null}}
 function mapPage(row:PageRow,useDraft=false){const raw=parse(useDraft?row.content_json:row.published_content_json);const document=normalizeEditorDocument(raw,row.id,useDraft?row.title:row.published_title??'',useDraft?row.slug:row.published_slug??'',useDraft?row.description:row.published_description??'');if(!document)return null;const content=document.pages[row.id];if(!content)return null;return{id:row.id,slug:useDraft?row.slug:(row.published_slug??''),title:useDraft?row.title:(row.published_title??''),description:useDraft?row.description:(row.published_description??''),content:{...content,type:'sanci-document'},updatedAt:useDraft?row.updated_at:row.published_at}}
-export async function publicPagesRoute(request:Request,env:Env):Promise<Response>{
+export async function publicPagesRoute(request:Request,env:Env,siteId=getCanonicalSiteContext().siteId):Promise<Response>{
  const url=new URL(request.url),slug=url.searchParams.get('slug')?.trim().toLowerCase()||'',explicitPreview=url.searchParams.get('preview')==='1';const useDraft=explicitPreview;
- if(explicitPreview){const user=await getAuthenticatedUser(request,env);if(!user)return noStore(error('UNAUTHORIZED',401,'Authentication required'));if(!hasRole(user,'editor'))return noStore(error('FORBIDDEN',403,'Editor role required'))}
- if(!slug){const siteId=getCanonicalSiteContext().siteId;const result=await env.DB.prepare(`SELECT id,slug,title,description,published_slug,published_title,published_description,published_content_json,content_json,sort_order,updated_at,published_at FROM pages WHERE site_id=? AND archived_at IS NULL AND ${useDraft?'1=1':'is_published=1'} ORDER BY sort_order ASC LIMIT 100`).bind(siteId).all<PageRow>();return noStore(ok(result.results.map(r=>mapPage(r,useDraft)).filter(Boolean)))}
- const siteId=getCanonicalSiteContext().siteId;const row=await env.DB.prepare(`SELECT id,slug,title,description,published_slug,published_title,published_description,published_content_json,content_json,sort_order,updated_at,published_at FROM pages WHERE site_id=?1 AND archived_at IS NULL AND ${useDraft?'slug':'published_slug'}=?2 ${useDraft?'':'AND is_published=1'} LIMIT 1`).bind(siteId,slug).first<PageRow>();if(!row)return noStore(error('PAGE_NOT_FOUND',404));const page=mapPage(row,useDraft);if(!page)return noStore(error('PAGE_NOT_CANONICAL',409,'Az oldal dokumentuma nem alakítható canonical Editor v2 Page Modelre.'));return noStore(ok(page));
+ if(explicitPreview){
+  if(env.SITE_MEMBERSHIP_ENFORCEMENT==='enabled'){
+   const grant=await requireSiteGrant(request,env,siteId,'editor');
+   if(grant instanceof Response)return noStore(grant);
+  }else{
+   // Legacy global roles have never been valid for a foreign site's drafts.
+   if(siteId!==DEFAULT_SITE_ID)return noStore(error('SITE_ACCESS_DENIED',403));
+   const user=await getAuthenticatedUser(request,env);
+   if(!user)return noStore(error('UNAUTHORIZED',401,'Authentication required'));
+   if(!hasRole(user,'editor'))return noStore(error('FORBIDDEN',403,'Editor role required'));
+  }
+ }
+ if(!slug){const result=await env.DB.prepare(`SELECT id,slug,title,description,published_slug,published_title,published_description,published_content_json,content_json,sort_order,updated_at,published_at FROM pages WHERE site_id=? AND archived_at IS NULL AND ${useDraft?'1=1':'is_published=1'} ORDER BY sort_order ASC LIMIT 100`).bind(siteId).all<PageRow>();return noStore(ok(result.results.map(r=>mapPage(r,useDraft)).filter(Boolean)))}
+ const row=await env.DB.prepare(`SELECT id,slug,title,description,published_slug,published_title,published_description,published_content_json,content_json,sort_order,updated_at,published_at FROM pages WHERE site_id=?1 AND archived_at IS NULL AND ${useDraft?'slug':'published_slug'}=?2 ${useDraft?'':'AND is_published=1'} LIMIT 1`).bind(siteId,slug).first<PageRow>();if(!row)return noStore(error('PAGE_NOT_FOUND',404));const page=mapPage(row,useDraft);if(!page)return noStore(error('PAGE_NOT_CANONICAL',409,'Az oldal dokumentuma nem alakítható canonical Editor v2 Page Modelre.'));return noStore(ok(page));
 }

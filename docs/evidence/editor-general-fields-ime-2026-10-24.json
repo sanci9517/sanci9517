@@ -1,0 +1,41 @@
+{
+  "recorded_at": "2026-10-24T11:14:20.116336+00:00",
+  "base_sha": "e686f039fa098c378793fa6788ab1945aa01b852",
+  "plan": "77.44.7.A/C Inspector composition and Save/Publish parity",
+  "changed_runtime_files": [
+    "public/editor-v2/app.js"
+  ],
+  "before_fix": {
+    "command": "node --test --test-name-pattern='390px' tests/browser/editor-general-fields-ime.test.js",
+    "result": "FAIL",
+    "observed_failure": "During composition, Ctrl+S failed to reach the expected blocked-save status (exerciseComposition); reproduced with a valid Schedule fixture"
+  },
+  "after_fix": {
+    "command": "node --test tests/browser/editor-general-fields-ime.test.js tests/browser/editor-accessibility-ime.test.js tests/browser/editor-schedule-visibility.test.js",
+    "tests": 5,
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "widths": [
+      390,
+      1366
+    ],
+    "scope": "Real Chromium with programmatically generated composition/input events; not physical Android/IME acceptance"
+  },
+  "behavior": [
+    "General node name and Schedule empty text share existing per-mount composition guard",
+    "Intermediate input, late final input, restarted composition and Escape follow the shared helper",
+    "No Inspector DOM replacement while typing; live Canvas and layers update",
+    "Grouped Undo/Redo; compositionend-only input is committed",
+    "Blank or overlong Schedule text stays invalid, preserves last valid model and blocks Save/Publish after focus moves",
+    "Stable accessible field names with separate validation description",
+    "Locked fields remain read-only",
+    "Save preserves published Schedule empty text; explicit Publish updates it",
+    "Internal node name stays internal",
+    "Schedule empty text composition and lock handling verified on both Design and Content tabs"
+  ],
+  "production_acceptance": "Not claimed by this local test report; verify deployed app asset after CI/merge, physical IME remains open",
+  "migration_changes": false,
+  "production_sql_writes_by_agent": 0,
+  "r2_deletions_by_agent": 0
+}

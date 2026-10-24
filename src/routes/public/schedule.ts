@@ -7,9 +7,8 @@ const parseList = (value: string | null) => value
   ? value.split(",").map(item => item.trim()).filter(Boolean)
   : undefined;
 
-export async function publicScheduleRoute(request: Request, env: Env): Promise<Response> {
+export async function publicScheduleRoute(request: Request, env: Env, siteId = getCanonicalSiteContext().siteId): Promise<Response> {
   const url = new URL(request.url);
-  const { siteId } = getCanonicalSiteContext();
 
   try {
     const items = await readPublicSchedule(env.DB, {

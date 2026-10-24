@@ -1,0 +1,780 @@
+{
+  "result": [
+    {
+      "results": [
+        {
+          "type": "index",
+          "name": "idx_admin_audit_log_created_at",
+          "tbl_name": "admin_audit_log",
+          "sql": "CREATE INDEX idx_admin_audit_log_created_at\n  ON admin_audit_log(created_at)"
+        },
+        {
+          "type": "index",
+          "name": "idx_audit_created_at",
+          "tbl_name": "audit_log",
+          "sql": "CREATE INDEX idx_audit_created_at ON audit_log(created_at)"
+        },
+        {
+          "type": "index",
+          "name": "idx_audit_user_id",
+          "tbl_name": "audit_log",
+          "sql": "CREATE INDEX idx_audit_user_id ON audit_log(user_id)"
+        },
+        {
+          "type": "index",
+          "name": "idx_editor_revisions_created_at",
+          "tbl_name": "editor_revisions",
+          "sql": "CREATE INDEX idx_editor_revisions_created_at\n  ON editor_revisions(created_at)"
+        },
+        {
+          "type": "index",
+          "name": "idx_editor_revisions_page",
+          "tbl_name": "editor_revisions",
+          "sql": "CREATE INDEX idx_editor_revisions_page\n  ON editor_revisions(page_id, version DESC)"
+        },
+        {
+          "type": "index",
+          "name": "idx_editor_revisions_page_version",
+          "tbl_name": "editor_revisions",
+          "sql": "CREATE INDEX idx_editor_revisions_page_version\n  ON editor_revisions(page_id, version DESC)"
+        },
+        {
+          "type": "index",
+          "name": "idx_media_site_archived",
+          "tbl_name": "media",
+          "sql": "CREATE INDEX idx_media_site_archived ON media(site_id,archived_at,created_at)"
+        },
+        {
+          "type": "index",
+          "name": "idx_media_site_id",
+          "tbl_name": "media",
+          "sql": "CREATE INDEX idx_media_site_id ON media(site_id)"
+        },
+        {
+          "type": "index",
+          "name": "idx_page_slug_redirects_page",
+          "tbl_name": "page_slug_redirects",
+          "sql": "CREATE INDEX idx_page_slug_redirects_page ON page_slug_redirects(page_id)"
+        },
+        {
+          "type": "index",
+          "name": "idx_pages_published_revision",
+          "tbl_name": "pages",
+          "sql": "CREATE INDEX idx_pages_published_revision\n  ON pages(published_revision_id)"
+        },
+        {
+          "type": "index",
+          "name": "idx_pages_site_archive_order",
+          "tbl_name": "pages",
+          "sql": "CREATE INDEX idx_pages_site_archive_order ON pages(site_id,archived_at,sort_order)"
+        },
+        {
+          "type": "index",
+          "name": "idx_pages_site_id",
+          "tbl_name": "pages",
+          "sql": "CREATE INDEX idx_pages_site_id\n  ON pages(site_id)"
+        },
+        {
+          "type": "index",
+          "name": "idx_pages_site_parent",
+          "tbl_name": "pages",
+          "sql": "CREATE INDEX idx_pages_site_parent ON pages(site_id,parent_page_id)"
+        },
+        {
+          "type": "index",
+          "name": "idx_pages_site_published_parent",
+          "tbl_name": "pages",
+          "sql": "CREATE INDEX idx_pages_site_published_parent ON pages(site_id,published_parent_page_id)"
+        },
+        {
+          "type": "index",
+          "name": "idx_pages_site_published_slug",
+          "tbl_name": "pages",
+          "sql": "CREATE UNIQUE INDEX idx_pages_site_published_slug ON pages(site_id,published_slug) WHERE published_slug IS NOT NULL"
+        },
+        {
+          "type": "index",
+          "name": "idx_pages_site_slug",
+          "tbl_name": "pages",
+          "sql": "CREATE UNIQUE INDEX idx_pages_site_slug ON pages(site_id,slug)"
+        },
+        {
+          "type": "index",
+          "name": "idx_pages_sort_order",
+          "tbl_name": "pages",
+          "sql": "CREATE INDEX idx_pages_sort_order\n  ON pages(sort_order)"
+        },
+        {
+          "type": "index",
+          "name": "idx_schedule_site_starts",
+          "tbl_name": "schedule_items",
+          "sql": "CREATE INDEX idx_schedule_site_starts\n  ON schedule_items(site_id, starts_at)"
+        },
+        {
+          "type": "index",
+          "name": "idx_schedule_source_account_starts",
+          "tbl_name": "schedule_items",
+          "sql": "CREATE INDEX idx_schedule_source_account_starts\n  ON schedule_items(source, source_account_id, starts_at)"
+        },
+        {
+          "type": "index",
+          "name": "idx_schedule_source_identity",
+          "tbl_name": "schedule_items",
+          "sql": "CREATE UNIQUE INDEX idx_schedule_source_identity\n  ON schedule_items(source, source_account_id, source_id)"
+        },
+        {
+          "type": "index",
+          "name": "idx_schedule_source_presence_starts",
+          "tbl_name": "schedule_items",
+          "sql": "CREATE INDEX idx_schedule_source_presence_starts\n  ON schedule_items(source, source_account_id, source_presence, starts_at)"
+        },
+        {
+          "type": "index",
+          "name": "idx_schedule_starts_at",
+          "tbl_name": "schedule_items",
+          "sql": "CREATE INDEX idx_schedule_starts_at ON schedule_items(starts_at)"
+        },
+        {
+          "type": "index",
+          "name": "idx_schedule_sync_state_status",
+          "tbl_name": "schedule_sync_state",
+          "sql": "CREATE INDEX idx_schedule_sync_state_status\n  ON schedule_sync_state(status)"
+        },
+        {
+          "type": "index",
+          "name": "idx_schedule_sync_state_updated",
+          "tbl_name": "schedule_sync_state",
+          "sql": "CREATE INDEX idx_schedule_sync_state_updated\n  ON schedule_sync_state(updated_at)"
+        },
+        {
+          "type": "index",
+          "name": "idx_sessions_expires_at",
+          "tbl_name": "sessions",
+          "sql": "CREATE INDEX idx_sessions_expires_at ON sessions(expires_at)"
+        },
+        {
+          "type": "index",
+          "name": "idx_sessions_user_id",
+          "tbl_name": "sessions",
+          "sql": "CREATE INDEX idx_sessions_user_id ON sessions(user_id)"
+        },
+        {
+          "type": "index",
+          "name": "idx_site_domains_site",
+          "tbl_name": "site_domains",
+          "sql": "CREATE INDEX idx_site_domains_site ON site_domains(site_id,status)"
+        },
+        {
+          "type": "index",
+          "name": "idx_site_memberships_user_status",
+          "tbl_name": "site_memberships",
+          "sql": "CREATE INDEX idx_site_memberships_user_status\n  ON site_memberships(user_id, status, site_id)"
+        },
+        {
+          "type": "index",
+          "name": "idx_social_accounts_site_id",
+          "tbl_name": "social_accounts",
+          "sql": "CREATE INDEX idx_social_accounts_site_id ON social_accounts(site_id)"
+        },
+        {
+          "type": "index",
+          "name": "idx_twitch_connections_refresh_lock",
+          "tbl_name": "twitch_connections",
+          "sql": "CREATE INDEX idx_twitch_connections_refresh_lock\n  ON twitch_connections(refresh_lock_until)"
+        },
+        {
+          "type": "index",
+          "name": "idx_twitch_connections_site_id",
+          "tbl_name": "twitch_connections",
+          "sql": "CREATE INDEX idx_twitch_connections_site_id\n  ON twitch_connections(site_id)"
+        },
+        {
+          "type": "index",
+          "name": "idx_twitch_connections_status",
+          "tbl_name": "twitch_connections",
+          "sql": "CREATE INDEX idx_twitch_connections_status ON twitch_connections(status)"
+        },
+        {
+          "type": "index",
+          "name": "idx_twitch_connections_user_id",
+          "tbl_name": "twitch_connections",
+          "sql": "CREATE INDEX idx_twitch_connections_user_id ON twitch_connections(user_id)"
+        },
+        {
+          "type": "index",
+          "name": "idx_twitch_oauth_states_expires_at",
+          "tbl_name": "twitch_oauth_states",
+          "sql": "CREATE INDEX idx_twitch_oauth_states_expires_at\n  ON twitch_oauth_states(expires_at)"
+        },
+        {
+          "type": "index",
+          "name": "idx_twitch_oauth_states_site_id",
+          "tbl_name": "twitch_oauth_states",
+          "sql": "CREATE INDEX idx_twitch_oauth_states_site_id\n  ON twitch_oauth_states(site_id)"
+        },
+        {
+          "type": "index",
+          "name": "idx_users_active_role",
+          "tbl_name": "users",
+          "sql": "CREATE INDEX idx_users_active_role ON users(is_active, role)"
+        },
+        {
+          "type": "table",
+          "name": "_cf_KV",
+          "tbl_name": "_cf_KV",
+          "sql": "CREATE TABLE _cf_KV (\n        key TEXT PRIMARY KEY,\n        value BLOB\n      ) WITHOUT ROWID"
+        },
+        {
+          "type": "table",
+          "name": "admin_audit_log",
+          "tbl_name": "admin_audit_log",
+          "sql": "CREATE TABLE admin_audit_log (\n  id INTEGER PRIMARY KEY AUTOINCREMENT,\n  action TEXT NOT NULL,\n  details TEXT,\n  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP\n)"
+        },
+        {
+          "type": "table",
+          "name": "app_settings",
+          "tbl_name": "app_settings",
+          "sql": "CREATE TABLE app_settings (\n  key TEXT PRIMARY KEY,\n  value TEXT NOT NULL,\n  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP\n)"
+        },
+        {
+          "type": "table",
+          "name": "audit_log",
+          "tbl_name": "audit_log",
+          "sql": "CREATE TABLE audit_log (\n  id TEXT PRIMARY KEY,\n  user_id TEXT,\n  action TEXT NOT NULL,\n  entity_type TEXT NOT NULL,\n  entity_id TEXT,\n  metadata_json TEXT NOT NULL DEFAULT '{}',\n  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL\n)"
+        },
+        {
+          "type": "table",
+          "name": "d1_migrations",
+          "tbl_name": "d1_migrations",
+          "sql": "CREATE TABLE d1_migrations(\n\t\tid         INTEGER PRIMARY KEY AUTOINCREMENT,\n\t\tname       TEXT UNIQUE,\n\t\tapplied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL\n)"
+        },
+        {
+          "type": "table",
+          "name": "design_tokens",
+          "tbl_name": "design_tokens",
+          "sql": "CREATE TABLE design_tokens (\n  id TEXT PRIMARY KEY,\n  name TEXT NOT NULL UNIQUE,\n  tokens_json TEXT NOT NULL DEFAULT '{}',\n  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP\n)"
+        },
+        {
+          "type": "table",
+          "name": "editor_components",
+          "tbl_name": "editor_components",
+          "sql": "CREATE TABLE editor_components (\n  id TEXT PRIMARY KEY,\n  name TEXT NOT NULL,\n  component_json TEXT NOT NULL DEFAULT '{}',\n  created_by TEXT,\n  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  FOREIGN KEY(created_by) REFERENCES users(id) ON DELETE SET NULL\n)"
+        },
+        {
+          "type": "table",
+          "name": "editor_preferences",
+          "tbl_name": "editor_preferences",
+          "sql": "CREATE TABLE editor_preferences (\n  user_id TEXT PRIMARY KEY,\n  preferences_json TEXT NOT NULL DEFAULT '{}',\n  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE\n)"
+        },
+        {
+          "type": "table",
+          "name": "editor_revisions",
+          "tbl_name": "editor_revisions",
+          "sql": "CREATE TABLE editor_revisions (\n  id TEXT PRIMARY KEY,\n  page_id TEXT NOT NULL,\n  version INTEGER NOT NULL,\n  document_json TEXT NOT NULL,\n  created_by TEXT,\n  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  note TEXT DEFAULT '',\n  UNIQUE(page_id, version),\n  FOREIGN KEY(page_id) REFERENCES pages(id) ON DELETE CASCADE\n)"
+        },
+        {
+          "type": "table",
+          "name": "media",
+          "tbl_name": "media",
+          "sql": "CREATE TABLE \"media\" (\n  id TEXT PRIMARY KEY,\n  object_key TEXT NOT NULL UNIQUE,\n  original_name TEXT NOT NULL,\n  mime_type TEXT NOT NULL,\n  size_bytes INTEGER NOT NULL,\n  alt_text TEXT NOT NULL DEFAULT '',\n  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  site_id TEXT NOT NULL\n    REFERENCES sites(id) ON DELETE RESTRICT\n, archived_at TEXT DEFAULT NULL)"
+        },
+        {
+          "type": "table",
+          "name": "page_slug_redirects",
+          "tbl_name": "page_slug_redirects",
+          "sql": "CREATE TABLE page_slug_redirects (\n  site_id TEXT NOT NULL REFERENCES sites(id) ON DELETE RESTRICT,\n  from_slug TEXT NOT NULL CHECK (\n    length(from_slug) BETWEEN 1 AND 80\n    AND from_slug NOT GLOB '*[^a-z0-9-]*'\n    AND from_slug NOT GLOB '-*'\n    AND from_slug NOT GLOB '*-'\n    AND instr(from_slug,'--')=0\n  ),\n  page_id TEXT NOT NULL REFERENCES pages(id) ON DELETE RESTRICT,\n  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY (site_id,from_slug)\n)"
+        },
+        {
+          "type": "table",
+          "name": "pages",
+          "tbl_name": "pages",
+          "sql": "CREATE TABLE pages (\n  id TEXT PRIMARY KEY,\n  slug TEXT NOT NULL,\n  title TEXT NOT NULL,\n  description TEXT NOT NULL DEFAULT '',\n  content_json TEXT NOT NULL DEFAULT '{}',\n  is_published INTEGER NOT NULL DEFAULT 1 CHECK (is_published IN (0, 1)),\n  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  published_content_json TEXT,\n  sort_order INTEGER NOT NULL DEFAULT 0,\n  published_revision_id TEXT\n    REFERENCES editor_revisions(id)\n    ON DELETE SET NULL,\n  site_id TEXT NOT NULL\n    REFERENCES sites(id) ON DELETE RESTRICT\n, published_slug TEXT, published_title TEXT, published_description TEXT, published_at TEXT, archived_at TEXT, parent_page_id TEXT REFERENCES pages(id) ON DELETE RESTRICT, published_parent_page_id TEXT REFERENCES pages(id) ON DELETE RESTRICT)"
+        },
+        {
+          "type": "table",
+          "name": "schedule_items",
+          "tbl_name": "schedule_items",
+          "sql": "CREATE TABLE \"schedule_items\" (\n  id TEXT PRIMARY KEY,\n  title TEXT NOT NULL,\n  platform TEXT NOT NULL,\n  starts_at TEXT NOT NULL,\n  ends_at TEXT,\n  status TEXT NOT NULL DEFAULT 'scheduled'\n    CHECK (status IN ('scheduled', 'live', 'completed', 'cancelled')),\n  url TEXT,\n  notes TEXT NOT NULL DEFAULT '',\n  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  source TEXT NOT NULL DEFAULT 'manual',\n  source_id TEXT,\n  source_account_id TEXT,\n  source_presence TEXT NOT NULL DEFAULT 'present'\n    CHECK (source_presence IN ('present', 'missing')),\n  source_synced_at TEXT,\n  source_missing_at TEXT,\n  is_recurring INTEGER NOT NULL DEFAULT 0\n    CHECK (is_recurring IN (0, 1)),\n  source_category_id TEXT,\n  source_category_name TEXT,\n  site_id TEXT NOT NULL\n    REFERENCES sites(id) ON DELETE RESTRICT\n)"
+        },
+        {
+          "type": "table",
+          "name": "schedule_sync_state",
+          "tbl_name": "schedule_sync_state",
+          "sql": "CREATE TABLE schedule_sync_state (\n  id TEXT PRIMARY KEY,\n  source TEXT NOT NULL,\n  source_account_id TEXT NOT NULL,\n  status TEXT NOT NULL DEFAULT 'idle'\n    CHECK (status IN (\n      'idle',\n      'running',\n      'success',\n      'source_empty',\n      'reauthorization_required',\n      'rate_limited',\n      'failed'\n    )),\n  window_start_at TEXT,\n  window_end_at TEXT,\n  last_started_at TEXT,\n  last_succeeded_at TEXT,\n  last_completed_at TEXT,\n  last_seen_count INTEGER NOT NULL DEFAULT 0,\n  last_error_code TEXT,\n  last_error_at TEXT,\n  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  UNIQUE(source, source_account_id)\n)"
+        },
+        {
+          "type": "table",
+          "name": "sessions",
+          "tbl_name": "sessions",
+          "sql": "CREATE TABLE sessions (\n  id TEXT PRIMARY KEY,\n  user_id TEXT NOT NULL,\n  token_hash TEXT NOT NULL UNIQUE,\n  expires_at TEXT NOT NULL,\n  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  last_seen_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE\n)"
+        },
+        {
+          "type": "table",
+          "name": "site_domains",
+          "tbl_name": "site_domains",
+          "sql": "CREATE TABLE site_domains (\n  hostname TEXT PRIMARY KEY CHECK (hostname=lower(hostname) AND hostname NOT GLOB '*[^a-z0-9.-]*'),\n  site_id TEXT NOT NULL REFERENCES sites(id) ON DELETE RESTRICT,\n  status TEXT NOT NULL CHECK (status IN ('pending','verified','revoked')),\n  verified_at TEXT,\n  verification_method TEXT,\n  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  CHECK (status<>'verified' OR (verified_at IS NOT NULL AND verification_method IS NOT NULL))\n)"
+        },
+        {
+          "type": "table",
+          "name": "site_memberships",
+          "tbl_name": "site_memberships",
+          "sql": "CREATE TABLE site_memberships (\n  site_id TEXT NOT NULL REFERENCES sites(id) ON DELETE RESTRICT,\n  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,\n  role TEXT NOT NULL CHECK (role IN ('admin','editor','viewer')),\n  status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active','revoked')),\n  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY (site_id, user_id)\n)"
+        },
+        {
+          "type": "table",
+          "name": "site_navigation",
+          "tbl_name": "site_navigation",
+          "sql": "CREATE TABLE site_navigation (\n  site_id TEXT PRIMARY KEY NOT NULL\n    REFERENCES sites(id) ON DELETE CASCADE,\n  draft_json TEXT NOT NULL CHECK (json_valid(draft_json)),\n  published_json TEXT NOT NULL CHECK (json_valid(published_json)),\n  revision INTEGER NOT NULL DEFAULT 1 CHECK (revision >= 1),\n  published_revision INTEGER NOT NULL DEFAULT 1 CHECK (published_revision >= 1),\n  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP\n)"
+        },
+        {
+          "type": "table",
+          "name": "site_scoped_settings",
+          "tbl_name": "site_scoped_settings",
+          "sql": "CREATE TABLE site_scoped_settings (\n  site_id TEXT NOT NULL REFERENCES sites(id) ON DELETE RESTRICT,\n  key TEXT NOT NULL CHECK (key IN ('site')),\n  value_json TEXT NOT NULL CHECK (json_valid(value_json)),\n  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY(site_id, key)\n)"
+        },
+        {
+          "type": "table",
+          "name": "site_settings",
+          "tbl_name": "site_settings",
+          "sql": "CREATE TABLE site_settings (\n  key TEXT PRIMARY KEY,\n  value_json TEXT NOT NULL,\n  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP\n)"
+        },
+        {
+          "type": "table",
+          "name": "sites",
+          "tbl_name": "sites",
+          "sql": "CREATE TABLE sites (\n  id TEXT PRIMARY KEY,\n  slug TEXT NOT NULL UNIQUE,\n  name TEXT NOT NULL,\n  status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active','archived')),\n  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP\n)"
+        },
+        {
+          "type": "table",
+          "name": "social_accounts",
+          "tbl_name": "social_accounts",
+          "sql": "CREATE TABLE \"social_accounts\" (\n  id TEXT PRIMARY KEY,\n  platform TEXT NOT NULL\n    CHECK (platform IN ('twitch', 'tiktok', 'youtube', 'discord', 'other')),\n  handle TEXT NOT NULL,\n  url TEXT NOT NULL,\n  is_visible INTEGER NOT NULL DEFAULT 1 CHECK (is_visible IN (0, 1)),\n  sort_order INTEGER NOT NULL DEFAULT 0,\n  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  site_id TEXT NOT NULL\n    REFERENCES sites(id) ON DELETE RESTRICT\n)"
+        },
+        {
+          "type": "table",
+          "name": "system_page_content",
+          "tbl_name": "system_page_content",
+          "sql": "CREATE TABLE system_page_content (\n  path TEXT PRIMARY KEY,\n  content_json TEXT NOT NULL DEFAULT '{\"version\":1,\"blocks\":[]}',\n  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP\n)"
+        },
+        {
+          "type": "table",
+          "name": "twitch_connections",
+          "tbl_name": "twitch_connections",
+          "sql": "CREATE TABLE \"twitch_connections\" (\n  id TEXT PRIMARY KEY,\n  user_id TEXT NOT NULL,\n  broadcaster_id TEXT NOT NULL UNIQUE,\n  broadcaster_login TEXT NOT NULL,\n  access_token_ciphertext TEXT NOT NULL,\n  access_token_iv TEXT NOT NULL,\n  refresh_token_ciphertext TEXT NOT NULL,\n  refresh_token_iv TEXT NOT NULL,\n  scopes_json TEXT NOT NULL DEFAULT '[]',\n  access_token_expires_at TEXT NOT NULL,\n  status TEXT NOT NULL DEFAULT 'connected'\n    CHECK (status IN ('connected','reauthorization_required','revocation_pending','revoked')),\n  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  last_validated_at TEXT,\n  refresh_lock_token TEXT,\n  refresh_lock_until TEXT,\n  site_id TEXT NOT NULL\n    REFERENCES sites(id) ON DELETE RESTRICT,\n  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE\n)"
+        },
+        {
+          "type": "table",
+          "name": "twitch_oauth_states",
+          "tbl_name": "twitch_oauth_states",
+          "sql": "CREATE TABLE \"twitch_oauth_states\" (\n  id TEXT PRIMARY KEY,\n  user_id TEXT NOT NULL,\n  state_hash TEXT NOT NULL UNIQUE,\n  expires_at TEXT NOT NULL,\n  used_at TEXT,\n  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  site_id TEXT NOT NULL\n    REFERENCES sites(id) ON DELETE RESTRICT,\n  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE\n)"
+        },
+        {
+          "type": "table",
+          "name": "twitch_oauth_tokens",
+          "tbl_name": "twitch_oauth_tokens",
+          "sql": "CREATE TABLE twitch_oauth_tokens (\n  id TEXT PRIMARY KEY,\n  twitch_user_id TEXT NOT NULL,\n  twitch_login TEXT NOT NULL,\n  twitch_display_name TEXT NOT NULL,\n  access_token_ciphertext TEXT NOT NULL,\n  refresh_token_ciphertext TEXT NOT NULL,\n  scopes_json TEXT NOT NULL,\n  expires_at TEXT NOT NULL,\n  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP\n)"
+        },
+        {
+          "type": "table",
+          "name": "users",
+          "tbl_name": "users",
+          "sql": "CREATE TABLE users (\n  id TEXT PRIMARY KEY,\n  email TEXT NOT NULL UNIQUE,\n  display_name TEXT NOT NULL,\n  role TEXT NOT NULL DEFAULT 'admin' CHECK (role IN ('admin', 'editor', 'viewer')),\n  is_active INTEGER NOT NULL DEFAULT 1 CHECK (is_active IN (0, 1)),\n  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP\n, password_hash TEXT, password_salt TEXT)"
+        },
+        {
+          "type": "trigger",
+          "name": "editor_revisions_archived_guard",
+          "tbl_name": "editor_revisions",
+          "sql": "CREATE TRIGGER editor_revisions_archived_guard\nBEFORE INSERT ON editor_revisions\nWHEN EXISTS (SELECT 1 FROM pages WHERE id=NEW.page_id AND archived_at IS NOT NULL)\nBEGIN\n  SELECT RAISE(ABORT,'PAGE_ARCHIVED');\nEND"
+        },
+        {
+          "type": "trigger",
+          "name": "media_archive_pages_insert_guard",
+          "tbl_name": "pages",
+          "sql": "CREATE TRIGGER media_archive_pages_insert_guard\nBEFORE INSERT ON pages\nWHEN EXISTS (\n SELECT 1 FROM media m WHERE m.site_id=NEW.site_id AND m.archived_at IS NOT NULL\n AND (instr(COALESCE(NEW.content_json,''),m.id)>0 OR instr(COALESCE(NEW.published_content_json,''),m.id)>0)\n)\nBEGIN SELECT RAISE(ABORT,'ARCHIVED_MEDIA_REFERENCE'); END"
+        },
+        {
+          "type": "trigger",
+          "name": "media_archive_pages_update_guard",
+          "tbl_name": "pages",
+          "sql": "CREATE TRIGGER media_archive_pages_update_guard\nBEFORE UPDATE OF content_json,published_content_json ON pages\nWHEN EXISTS (\n SELECT 1 FROM media m WHERE m.site_id=NEW.site_id AND m.archived_at IS NOT NULL\n AND (instr(COALESCE(NEW.content_json,''),m.id)>0 OR instr(COALESCE(NEW.published_content_json,''),m.id)>0)\n)\nBEGIN SELECT RAISE(ABORT,'ARCHIVED_MEDIA_REFERENCE'); END"
+        },
+        {
+          "type": "trigger",
+          "name": "media_archive_revisions_insert_guard",
+          "tbl_name": "editor_revisions",
+          "sql": "CREATE TRIGGER media_archive_revisions_insert_guard\nBEFORE INSERT ON editor_revisions\nWHEN EXISTS (\n SELECT 1 FROM media m JOIN pages p ON p.site_id=m.site_id\n WHERE p.id=NEW.page_id AND m.archived_at IS NOT NULL AND instr(NEW.document_json,m.id)>0\n)\nBEGIN SELECT RAISE(ABORT,'ARCHIVED_MEDIA_REFERENCE'); END"
+        },
+        {
+          "type": "trigger",
+          "name": "navigation_archived_target_insert_guard",
+          "tbl_name": "site_navigation",
+          "sql": "CREATE TRIGGER navigation_archived_target_insert_guard\nBEFORE INSERT ON site_navigation\nWHEN EXISTS (\n SELECT 1 FROM pages p WHERE p.site_id=NEW.site_id AND p.archived_at IS NOT NULL AND (\n  EXISTS (SELECT 1 FROM json_tree(NEW.draft_json) WHERE key='pageId' AND type='text' AND value=p.id)\n  OR EXISTS (SELECT 1 FROM json_tree(NEW.published_json) WHERE key='pageId' AND type='text' AND value=p.id)\n )\n)\nBEGIN\n SELECT RAISE(ABORT,'NAVIGATION_TARGET_ARCHIVED');\nEND"
+        },
+        {
+          "type": "trigger",
+          "name": "navigation_archived_target_update_guard",
+          "tbl_name": "site_navigation",
+          "sql": "CREATE TRIGGER navigation_archived_target_update_guard\nBEFORE UPDATE OF draft_json,published_json ON site_navigation\nWHEN EXISTS (\n SELECT 1 FROM pages p WHERE p.site_id=NEW.site_id AND p.archived_at IS NOT NULL AND (\n  EXISTS (SELECT 1 FROM json_tree(NEW.draft_json) WHERE key='pageId' AND type='text' AND value=p.id)\n  OR EXISTS (SELECT 1 FROM json_tree(NEW.published_json) WHERE key='pageId' AND type='text' AND value=p.id)\n )\n)\nBEGIN\n SELECT RAISE(ABORT,'NAVIGATION_TARGET_ARCHIVED');\nEND"
+        },
+        {
+          "type": "trigger",
+          "name": "page_slug_redirect_immutable",
+          "tbl_name": "page_slug_redirects",
+          "sql": "CREATE TRIGGER page_slug_redirect_immutable\nBEFORE UPDATE ON page_slug_redirects\nBEGIN\n SELECT RAISE(ABORT,'REDIRECT_IMMUTABLE');\nEND"
+        },
+        {
+          "type": "trigger",
+          "name": "page_slug_redirect_insert_guard",
+          "tbl_name": "page_slug_redirects",
+          "sql": "CREATE TRIGGER page_slug_redirect_insert_guard\nBEFORE INSERT ON page_slug_redirects\nBEGIN\n SELECT RAISE(ABORT,'REDIRECT_SITE_MISMATCH') WHERE NOT EXISTS (\n  SELECT 1 FROM pages p WHERE p.id=NEW.page_id AND p.site_id=NEW.site_id\n );\n SELECT RAISE(ABORT,'PAGE_SLUG_RESERVED') WHERE EXISTS (\n  SELECT 1 FROM pages p WHERE p.site_id=NEW.site_id AND p.id<>NEW.page_id\n   AND (p.slug=NEW.from_slug OR p.published_slug=NEW.from_slug)\n );\nEND"
+        },
+        {
+          "type": "trigger",
+          "name": "pages_archive_navigation_guard",
+          "tbl_name": "pages",
+          "sql": "CREATE TRIGGER pages_archive_navigation_guard\nBEFORE UPDATE OF archived_at ON pages\nWHEN OLD.archived_at IS NULL AND NEW.archived_at IS NOT NULL\nBEGIN\n  SELECT RAISE(ABORT,'LAST_ACTIVE_PAGE') WHERE\n    (SELECT COUNT(*) FROM pages WHERE site_id=OLD.site_id AND archived_at IS NULL)<=1;\n  SELECT RAISE(ABORT,'PAGE_IN_USE_BY_NAVIGATION') WHERE EXISTS (\n    SELECT 1 FROM site_navigation nav WHERE nav.site_id=OLD.site_id AND (\n      EXISTS (SELECT 1 FROM json_tree(nav.draft_json) WHERE key='pageId' AND type='text' AND value=OLD.id)\n      OR EXISTS (SELECT 1 FROM json_tree(nav.published_json) WHERE key='pageId' AND type='text' AND value=OLD.id)\n    )\n  );\nEND"
+        },
+        {
+          "type": "trigger",
+          "name": "pages_archived_edit_guard",
+          "tbl_name": "pages",
+          "sql": "CREATE TRIGGER pages_archived_edit_guard\nBEFORE UPDATE OF content_json,title,slug,description,sort_order ON pages\nWHEN OLD.archived_at IS NOT NULL AND NEW.archived_at IS NOT NULL\nBEGIN\n SELECT RAISE(ABORT,'PAGE_ARCHIVED');\nEND"
+        },
+        {
+          "type": "trigger",
+          "name": "pages_archived_publication_guard",
+          "tbl_name": "pages",
+          "sql": "CREATE TRIGGER pages_archived_publication_guard\nBEFORE UPDATE ON pages\nWHEN NEW.archived_at IS NOT NULL AND (\n  NEW.is_published<>0 OR NEW.published_content_json IS NOT NULL OR NEW.published_revision_id IS NOT NULL\n  OR NEW.published_slug IS NOT NULL OR NEW.published_title IS NOT NULL\n  OR NEW.published_description IS NOT NULL OR NEW.published_at IS NOT NULL\n)\nBEGIN\n  SELECT RAISE(ABORT,'PAGE_ARCHIVED');\nEND"
+        },
+        {
+          "type": "trigger",
+          "name": "pages_draft_parent_guard",
+          "tbl_name": "pages",
+          "sql": "CREATE TRIGGER pages_draft_parent_guard\nBEFORE UPDATE OF parent_page_id ON pages\nWHEN NEW.parent_page_id IS NOT NULL\nBEGIN\n SELECT RAISE(ABORT,'INVALID_PAGE_PARENT') WHERE NEW.archived_at IS NOT NULL OR NOT EXISTS (\n  SELECT 1 FROM pages parent WHERE parent.id=NEW.parent_page_id AND parent.site_id=NEW.site_id AND parent.archived_at IS NULL\n );\n SELECT RAISE(ABORT,'PAGE_HIERARCHY_CYCLE') WHERE EXISTS (\n  WITH RECURSIVE ancestors(id,parent_id) AS (\n   SELECT id,parent_page_id FROM pages WHERE id=NEW.parent_page_id\n   UNION\n   SELECT p.id,p.parent_page_id FROM pages p JOIN ancestors a ON p.id=a.parent_id\n  ) SELECT 1 FROM ancestors WHERE id=NEW.id\n );\nEND"
+        },
+        {
+          "type": "trigger",
+          "name": "pages_parent_delete_guard",
+          "tbl_name": "pages",
+          "sql": "CREATE TRIGGER pages_parent_delete_guard\nBEFORE DELETE ON pages\nWHEN EXISTS (SELECT 1 FROM pages child WHERE child.parent_page_id=OLD.id OR child.published_parent_page_id=OLD.id)\nBEGIN\n SELECT RAISE(ABORT,'PAGE_HAS_CHILDREN');\nEND"
+        },
+        {
+          "type": "trigger",
+          "name": "pages_parent_lifecycle_guard",
+          "tbl_name": "pages",
+          "sql": "CREATE TRIGGER pages_parent_lifecycle_guard\nBEFORE UPDATE OF archived_at,is_published ON pages\nWHEN (OLD.archived_at IS NULL AND NEW.archived_at IS NOT NULL) OR (OLD.is_published=1 AND NEW.is_published=0)\nBEGIN\n SELECT RAISE(ABORT,'PAGE_HAS_CHILDREN') WHERE OLD.archived_at IS NULL AND NEW.archived_at IS NOT NULL\n  AND EXISTS (SELECT 1 FROM pages child WHERE child.parent_page_id=OLD.id OR child.published_parent_page_id=OLD.id);\n SELECT RAISE(ABORT,'PAGE_HAS_PUBLISHED_CHILDREN') WHERE OLD.is_published=1 AND NEW.is_published=0\n  AND EXISTS (SELECT 1 FROM pages child WHERE child.is_published=1 AND child.published_parent_page_id=OLD.id);\nEND"
+        },
+        {
+          "type": "trigger",
+          "name": "pages_prevent_navigation_target_delete",
+          "tbl_name": "pages",
+          "sql": "CREATE TRIGGER pages_prevent_navigation_target_delete\nBEFORE DELETE ON pages\nWHEN EXISTS (\n  SELECT 1\n  FROM site_navigation AS nav\n  WHERE nav.site_id = OLD.site_id\n    AND (\n      EXISTS (\n        SELECT 1 FROM json_tree(nav.draft_json)\n        WHERE key = 'pageId' AND type = 'text' AND value = OLD.id\n      )\n      OR EXISTS (\n        SELECT 1 FROM json_tree(nav.published_json)\n        WHERE key = 'pageId' AND type = 'text' AND value = OLD.id\n      )\n    )\n)\nBEGIN\n  SELECT RAISE(ABORT, 'PAGE_IN_USE_BY_NAVIGATION');\nEND"
+        },
+        {
+          "type": "trigger",
+          "name": "pages_published_parent_guard",
+          "tbl_name": "pages",
+          "sql": "CREATE TRIGGER pages_published_parent_guard\nBEFORE UPDATE OF published_parent_page_id,is_published ON pages\nWHEN NEW.is_published=1 AND NEW.published_parent_page_id IS NOT NULL\nBEGIN\n SELECT RAISE(ABORT,'INVALID_PUBLISHED_PAGE_PARENT') WHERE NOT EXISTS (\n  SELECT 1 FROM pages parent WHERE parent.id=NEW.published_parent_page_id AND parent.site_id=NEW.site_id\n   AND parent.archived_at IS NULL AND parent.is_published=1\n );\n SELECT RAISE(ABORT,'PAGE_HIERARCHY_CYCLE') WHERE EXISTS (\n  WITH RECURSIVE ancestors(id,parent_id) AS (\n   SELECT id,published_parent_page_id FROM pages WHERE id=NEW.published_parent_page_id\n   UNION\n   SELECT p.id,p.published_parent_page_id FROM pages p JOIN ancestors a ON p.id=a.parent_id\n  ) SELECT 1 FROM ancestors WHERE id=NEW.id\n );\nEND"
+        },
+        {
+          "type": "trigger",
+          "name": "pages_redirect_delete_guard",
+          "tbl_name": "pages",
+          "sql": "CREATE TRIGGER pages_redirect_delete_guard\nBEFORE DELETE ON pages\nWHEN EXISTS (SELECT 1 FROM page_slug_redirects r WHERE r.page_id=OLD.id)\nBEGIN\n SELECT RAISE(ABORT,'PAGE_HAS_REDIRECTS');\nEND"
+        },
+        {
+          "type": "trigger",
+          "name": "pages_slug_namespace_insert_guard",
+          "tbl_name": "pages",
+          "sql": "CREATE TRIGGER pages_slug_namespace_insert_guard\nBEFORE INSERT ON pages\nWHEN EXISTS (SELECT 1 FROM page_slug_redirects r WHERE r.site_id=NEW.site_id AND r.from_slug=NEW.slug)\n OR (NEW.published_slug IS NOT NULL AND EXISTS (\n  SELECT 1 FROM page_slug_redirects r WHERE r.site_id=NEW.site_id AND r.from_slug=NEW.published_slug\n ))\n OR EXISTS (SELECT 1 FROM pages p WHERE p.site_id=NEW.site_id AND p.published_slug=NEW.slug)\n OR (NEW.published_slug IS NOT NULL AND EXISTS (\n  SELECT 1 FROM pages p WHERE p.site_id=NEW.site_id AND p.slug=NEW.published_slug\n ))\nBEGIN\n SELECT RAISE(ABORT,'PAGE_SLUG_RESERVED');\nEND"
+        },
+        {
+          "type": "trigger",
+          "name": "pages_slug_namespace_update_guard",
+          "tbl_name": "pages",
+          "sql": "CREATE TRIGGER pages_slug_namespace_update_guard\nBEFORE UPDATE OF slug,published_slug,site_id ON pages\nWHEN EXISTS (\n  SELECT 1 FROM page_slug_redirects r WHERE r.site_id=NEW.site_id\n   AND r.from_slug=NEW.slug AND r.page_id<>NEW.id\n )\n OR (NEW.published_slug IS NOT NULL AND EXISTS (\n  SELECT 1 FROM page_slug_redirects r WHERE r.site_id=NEW.site_id AND r.from_slug=NEW.published_slug\n ))\n OR EXISTS (\n  SELECT 1 FROM pages p WHERE p.site_id=NEW.site_id AND p.id<>NEW.id AND p.published_slug=NEW.slug\n )\n OR (NEW.published_slug IS NOT NULL AND EXISTS (\n  SELECT 1 FROM pages p WHERE p.site_id=NEW.site_id AND p.id<>NEW.id AND p.slug=NEW.published_slug\n ))\nBEGIN\n SELECT RAISE(ABORT,'PAGE_SLUG_RESERVED');\nEND"
+        }
+      ],
+      "success": true,
+      "meta": {
+        "served_by": "v3-prod",
+        "served_by_region": "EEUR",
+        "served_by_colo": "FRA",
+        "served_by_primary": true,
+        "timings": {
+          "sql_duration_ms": 0.5356
+        },
+        "duration": 0.5356,
+        "changes": 0,
+        "last_row_id": 0,
+        "changed_db": false,
+        "size_after": 1318912,
+        "rows_read": 199,
+        "rows_written": 0,
+        "total_attempts": 1
+      }
+    },
+    {
+      "results": [
+        {
+          "id": 1,
+          "name": "0001_initial.sql",
+          "applied_at": "2026-09-07 17:10:20"
+        },
+        {
+          "id": 2,
+          "name": "0002_twitch_oauth.sql",
+          "applied_at": "2026-09-08 13:11:19"
+        },
+        {
+          "id": 3,
+          "name": "0001_initial_schema.sql",
+          "applied_at": "2026-09-09 05:12:47"
+        },
+        {
+          "id": 4,
+          "name": "0002_auth_credentials.sql",
+          "applied_at": "2026-09-09 05:12:47"
+        },
+        {
+          "id": 5,
+          "name": "0003_v2_initial_schema.sql",
+          "applied_at": "2026-09-09 05:12:47"
+        },
+        {
+          "id": 6,
+          "name": "0004_v2_auth_credentials.sql",
+          "applied_at": "2026-09-09 05:13:27"
+        },
+        {
+          "id": 7,
+          "name": "0004_system_page_content.sql",
+          "applied_at": "2026-09-11 04:09:13"
+        },
+        {
+          "id": 8,
+          "name": "0002_editor_platform.sql",
+          "applied_at": "2026-09-12 02:29:37"
+        },
+        {
+          "id": 9,
+          "name": "0003_legacy_pages.sql",
+          "applied_at": "2026-09-12 17:48:17"
+        },
+        {
+          "id": 10,
+          "name": "0002_editor_revisions.sql",
+          "applied_at": "2026-09-16 09:37:21"
+        },
+        {
+          "id": 11,
+          "name": "0005_canonical_page_storage.sql",
+          "applied_at": "2026-09-16 11:12:40"
+        },
+        {
+          "id": 12,
+          "name": "0006_canonicalize_legacy_pages.sql",
+          "applied_at": "2026-09-16 12:01:47"
+        },
+        {
+          "id": 13,
+          "name": "0007_sync_published_canonical_pages.sql",
+          "applied_at": "2026-09-16 13:58:29"
+        },
+        {
+          "id": 14,
+          "name": "0008_restore_canonical_standard_pages.sql",
+          "applied_at": "2026-09-22 02:44:14"
+        },
+        {
+          "id": 15,
+          "name": "0009_page_sort_order.sql",
+          "applied_at": "2026-09-22 02:55:33"
+        },
+        {
+          "id": 16,
+          "name": "0010_canonical_revision_contract.sql",
+          "applied_at": "2026-09-22 06:21:08"
+        },
+        {
+          "id": 17,
+          "name": "0011_twitch_integration.sql",
+          "applied_at": "2026-09-22 18:23:48"
+        },
+        {
+          "id": 18,
+          "name": "0012_twitch_refresh_lock.sql",
+          "applied_at": "2026-09-22 18:48:20"
+        },
+        {
+          "id": 19,
+          "name": "0013_schedule_source_sync.sql",
+          "applied_at": "2026-09-24 02:29:14"
+        },
+        {
+          "id": 20,
+          "name": "0014_twitch_connection_status.sql",
+          "applied_at": "2026-09-25 02:30:32"
+        },
+        {
+          "id": 21,
+          "name": "0015_site_ownership_foundation.sql",
+          "applied_at": "2026-09-25 18:04:52"
+        },
+        {
+          "id": 22,
+          "name": "0016_twitch_oauth_site_ownership.sql",
+          "applied_at": "2026-09-28 10:45:51"
+        },
+        {
+          "id": 23,
+          "name": "0017_site_ownership_not_null.sql",
+          "applied_at": "2026-10-07 16:17:25"
+        },
+        {
+          "id": 24,
+          "name": "0018_published_page_metadata.sql",
+          "applied_at": "2026-10-15 16:29:05"
+        },
+        {
+          "id": 25,
+          "name": "0019_published_page_timestamp.sql",
+          "applied_at": "2026-10-15 18:22:49"
+        },
+        {
+          "id": 26,
+          "name": "0020_site_navigation_snapshots.sql",
+          "applied_at": "2026-10-16 09:01:12"
+        },
+        {
+          "id": 27,
+          "name": "0021_prevent_deleting_navigation_pages.sql",
+          "applied_at": "2026-10-16 09:21:46"
+        },
+        {
+          "id": 28,
+          "name": "0022_page_archive.sql",
+          "applied_at": "2026-10-16 18:05:11"
+        },
+        {
+          "id": 29,
+          "name": "0023_page_hierarchy.sql",
+          "applied_at": "2026-10-16 19:21:28"
+        },
+        {
+          "id": 30,
+          "name": "0024_page_slug_redirects.sql",
+          "applied_at": "2026-10-16 20:07:59"
+        }
+      ],
+      "success": true,
+      "meta": {
+        "served_by": "v3-prod",
+        "served_by_region": "EEUR",
+        "served_by_colo": "FRA",
+        "served_by_primary": true,
+        "timings": {
+          "sql_duration_ms": 0.1436
+        },
+        "duration": 0.1436,
+        "changes": 0,
+        "last_row_id": 0,
+        "changed_db": false,
+        "size_after": 1318912,
+        "rows_read": 30,
+        "rows_written": 0,
+        "total_attempts": 1
+      }
+    },
+    {
+      "results": [
+        {
+          "check_name": "domain",
+          "n": 1
+        },
+        {
+          "check_name": "active_default_users_without_membership",
+          "n": 0
+        },
+        {
+          "check_name": "default_settings_missing_or_different",
+          "n": 0
+        },
+        {
+          "check_name": "snapshot_tables",
+          "n": 0
+        }
+      ],
+      "success": true,
+      "meta": {
+        "served_by": "v3-prod",
+        "served_by_region": "EEUR",
+        "served_by_colo": "FRA",
+        "served_by_primary": true,
+        "timings": {
+          "sql_duration_ms": 1.252
+        },
+        "duration": 1.252,
+        "changes": 0,
+        "last_row_id": 0,
+        "changed_db": false,
+        "size_after": 1318912,
+        "rows_read": 122,
+        "rows_written": 0,
+        "total_attempts": 1
+      }
+    },
+    {
+      "results": [],
+      "success": true,
+      "meta": {
+        "served_by": "v3-prod",
+        "served_by_region": "EEUR",
+        "served_by_colo": "FRA",
+        "served_by_primary": true,
+        "timings": {
+          "sql_duration_ms": 9.7063
+        },
+        "duration": 9.7063,
+        "changes": 0,
+        "last_row_id": 0,
+        "changed_db": false,
+        "size_after": 1318912,
+        "rows_read": 740,
+        "rows_written": 0,
+        "total_attempts": 1
+      }
+    },
+    {
+      "results": [
+        {
+          "quick_check": "ok"
+        }
+      ],
+      "success": true,
+      "meta": {
+        "served_by": "v3-prod",
+        "served_by_region": "EEUR",
+        "served_by_colo": "FRA",
+        "served_by_primary": true,
+        "timings": {
+          "sql_duration_ms": 4.7127
+        },
+        "duration": 4.7127,
+        "changes": 0,
+        "last_row_id": 0,
+        "changed_db": false,
+        "size_after": 1318912,
+        "rows_read": 909,
+        "rows_written": 0,
+        "total_attempts": 1
+      }
+    }
+  ],
+  "errors": [],
+  "messages": [],
+  "success": true,
+  "captured_at": "2026-10-23T09:36:40.487057+00:00",
+  "account_id": "64bbd6a12ac732ed2cac4ca25d8bfa7e",
+  "database_id": "5a4a5e96-fdad-421a-a33c-143daaf33e98"
+}

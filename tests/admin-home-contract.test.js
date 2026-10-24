@@ -22,10 +22,15 @@ test("Admin and Editor pages authenticate before serving assets and their APIs e
   assert.ok(editorRouteBlock.includes("const user = await getAuthenticatedUser(request, env);"));
   assert.ok(editorRouteBlock.includes('if (!user) return Response.redirect(new URL("/admin/login", request.url).toString(), 302);'));
   assert.ok(editorRouteBlock.includes('return env.ASSETS.fetch(assetRequest("/editor-v2/index.html", request));'));
-  assert.ok(adminSettingsRoute.includes('if (!hasRole(user, "admin")) return error("FORBIDDEN", 403, "Admin role required");'));
-  assert.ok(adminPagesRoute.includes("hasRole(user,'editor')"));
+  assert.ok(adminSettingsRoute.includes('requireSiteGrant(request, env, siteId, "admin")'));
+  assert.ok(adminSettingsRoute.includes('if (!hasRole(legacyUser, "admin")) return error("FORBIDDEN", 403, "Admin role required");'));
+  assert.ok(worker.includes('adminPagesRoute(request, env, siteId)'));
+  assert.ok(adminPagesRoute.includes("requireSiteGrant(request,env,siteId,'editor')"));
+  assert.ok(adminPagesRoute.includes("hasRole(legacyUser,'editor')"));
   assert.ok(adminScheduleRoute.includes('if (!hasRole(user, "editor")) return error("FORBIDDEN", 403, "Editor role required");'));
-  assert.ok(adminEditorRoute.includes("hasRole(user,'editor')"));
+  assert.ok(worker.includes('adminEditorRoute(request, env, siteId)'));
+  assert.ok(adminEditorRoute.includes("requireSiteGrant(request,env,siteId,'editor')"));
+  assert.ok(adminEditorRoute.includes("hasRole(legacyUser,'editor')"));
 });
 
 test("login confirms the new session before navigating to Admin and avoids a redirect loop", () => {
@@ -130,7 +135,7 @@ test("dashboard includes responsive, keyboard and reduced-motion affordances", (
 });
 
 test("future modules are visibly disabled rather than presented as implemented", () => {
-  assert.match(dashboard, /disabled data-nav-label="Média erőforrások/);
+  assert.match(dashboard, /href="\/admin\/media" data-nav-label="Média erőforrások/);
   assert.match(dashboard, /disabled data-nav-label="Publikálás/);
   assert.match(dashboard, /disabled data-nav-label="Analitika/);
   assert.match(dashboard, /Tervezett/);
@@ -138,7 +143,7 @@ test("future modules are visibly disabled rather than presented as implemented",
 
 test("every dashboard link targets the canonical Admin, Editor, public site, or an existing section", () => {
   const destinations = [...dashboard.matchAll(/\bhref="([^"]+)"/g)].map((match) => match[1]);
-  const allowed = new Set(["/admin", "/admin/editor", "/", "#platformCapabilities"]);
+  const allowed = new Set(["/admin", "/admin/editor", "/admin/design", "/admin/media", "/", "#platformCapabilities"]);
   assert.ok(destinations.length > 0, "dashboard must contain navigable destinations");
   for (const destination of destinations) {
     assert.ok(allowed.has(destination), `unexpected dashboard destination: ${destination}`);
@@ -158,7 +163,7 @@ test("every enabled sidebar destination is a canonical, authenticated Admin rout
   assert.ok(destinations.length > 0, "sidebar must expose at least one active destination");
   for (const destination of destinations) {
     assert.ok(
-      ["/admin", "/admin/editor"].includes(destination),
+      ["/admin", "/admin/editor", "/admin/design", "/admin/media"].includes(destination),
       `unexpected active sidebar destination: ${destination}`
     );
   }
@@ -167,7 +172,7 @@ test("every enabled sidebar destination is a canonical, authenticated Admin rout
   assert.ok(activeControls.every((attrs) => /class="nav-item"/.test(attrs)));
   assert.ok(nav.includes('href="/admin" aria-current="page"'));
   assert.match(nav, /href="\/admin\/editor"/);
-  assert.match(nav, /<button\b[^>]*disabled[^>]*data-nav-label="Média erőforrások/);
+  assert.match(nav, /href="\/admin\/media" data-nav-label="Média erőforrások/);
   assert.doesNotMatch(nav, /<button\b(?![^>]*\bdisabled\b)[^>]*data-nav-label=/);
 });
 

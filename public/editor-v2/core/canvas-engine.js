@@ -7,26 +7,68 @@
  */
 
 import { resolveResponsiveValue } from './responsive.js';
+import { contentDefaults } from './authored-content.js';
+import { backgroundImageValue, MEDIA_ASSET_ID } from './background-asset.js';
 
-const STYLE_MAP = Object.freeze({
+export const STYLE_MAP = Object.freeze({
   width: 'width',
   height: 'height',
+  minWidth: 'minWidth',
+  maxWidth: 'maxWidth',
+  minHeight: 'minHeight',
+  maxHeight: 'maxHeight',
+  aspectRatio:'aspectRatio',
+  rotate:'rotate',
+  scale:'scale',
+  filter:'filter',
+  transition:'transition',
   display: 'display',
+  flexDirection: 'flexDirection',
+  justifyContent: 'justifyContent',
+  alignItems: 'alignItems',
+  alignSelf: 'alignSelf',
+  flexWrap: 'flexWrap',
+  flexGrow: 'flexGrow',
+  flexShrink: 'flexShrink',
+  flexBasis: 'flexBasis',
+  gap: 'gap',
+  rowGap: 'rowGap',
+  columnGap: 'columnGap',
+  gridTemplateColumns: 'gridTemplateColumns',
+  gridTemplateRows: 'gridTemplateRows',
+  gridColumn: 'gridColumn',
+  gridRow: 'gridRow',
   overflow: 'overflow',
   color: 'color',
   backgroundColor: 'backgroundColor',
   backgroundImage: 'backgroundImage',
+  backgroundSize: 'backgroundSize',
+  backgroundPosition: 'backgroundPosition',
+  backgroundRepeat: 'backgroundRepeat',
   borderWidth: 'borderWidth',
   borderStyle: 'borderStyle',
   borderColor: 'borderColor',
   borderRadius: 'borderRadius',
+  borderTopLeftRadius: 'borderTopLeftRadius',
+  borderTopRightRadius: 'borderTopRightRadius',
+  borderBottomRightRadius: 'borderBottomRightRadius',
+  borderBottomLeftRadius: 'borderBottomLeftRadius',
   boxShadow: 'boxShadow',
   opacity: 'opacity',
   fontFamily: 'fontFamily',
   fontSize: 'fontSize',
   fontWeight: 'fontWeight',
+  fontStyle: 'fontStyle',
   lineHeight: 'lineHeight',
+  letterSpacing: 'letterSpacing',
   textAlign: 'textAlign',
+  textTransform: 'textTransform',
+  textDecoration: 'textDecoration',
+  textWrap: 'textWrap',
+  overflowWrap: 'overflowWrap',
+  wordSpacing: 'wordSpacing',
+  textIndent: 'textIndent',
+  textShadow: 'textShadow',
   zIndex: 'zIndex',
   margin: 'margin',
   padding: 'padding',
@@ -35,8 +77,16 @@ const STYLE_MAP = Object.freeze({
   top: 'top'
 });
 
+// Offsets are stored separately from CSS `position` so dragging remains a
+// simple responsive edit. CSS ignores left/top on static elements, therefore
+// every renderer must make the node positioned when an offset is present.
+export function needsRelativeOffsetPosition(style = {}) {
+  const hasOffset = [style.x, style.y].some(value => value !== undefined && value !== null && value !== '');
+  return hasOffset && (!style.position || style.position === 'static');
+}
+
 export function resolveNodeStyle(node, device = 'desktop') {
-  const base = { ...(node?.style ?? {}) };
+  const base = { ...contentDefaults(node,device),...(node?.style ?? {}) };
   const properties = new Set([
     ...Object.keys(base),
     ...Object.keys(node?.responsive?.desktop ?? {}),
@@ -55,20 +105,28 @@ export function applyNodeStyle(element, node, device = 'desktop') {
   const style = resolveNodeStyle(node, device);
   element.style.cssText = '';
 
-  for (const [property, value] of Object.entries(style)) {
-    const cssProperty = STYLE_MAP[property];
+  // Canonical order matters for shorthand/longhand pairs such as border radius.
+  // The public renderer also emits declarations in STYLE_MAP order.
+  for (const [property, cssProperty] of Object.entries(STYLE_MAP)) {
+    if(property==='backgroundImage')continue;
+    const value = style[property];
     if (!cssProperty || value === undefined || value === null || value === '') continue;
     element.style[cssProperty] = String(value);
+  }
+  element.style.backgroundImage=backgroundImageValue(style,{editor:true});
+  if(MEDIA_ASSET_ID.test(String(style.backgroundAssetId||''))){
+    if(!style.backgroundSize)element.style.backgroundSize='cover';
+    if(!style.backgroundPosition)element.style.backgroundPosition='center center';
+    if(!style.backgroundRepeat)element.style.backgroundRepeat='no-repeat';
   }
 
   if (style.x !== undefined && style.x !== '') {
     element.style.left = String(style.x);
-    if (!style.position || style.position === 'static') element.style.position = 'relative';
   }
   if (style.y !== undefined && style.y !== '') {
     element.style.top = String(style.y);
-    if (!style.position || style.position === 'static') element.style.position = 'relative';
   }
+  if (needsRelativeOffsetPosition(style)) element.style.position = 'relative';
 
   return style;
 }
