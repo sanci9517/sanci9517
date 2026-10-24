@@ -22,6 +22,7 @@ jobs:
       - run: npm run typecheck
       - run: node --test tests/editor-multi-validation.test.js
       - run: node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/editor-content-profiles.test.js
+      - run: node --experimental-loader ./tests/ts-extension-loader.mjs --test tests/editor-content-initial-publication-contract.test.js
       - run: npm run test:admin-home
       - run: npm run test:web013
       - run: node --test tests/public-navigation.test.js
