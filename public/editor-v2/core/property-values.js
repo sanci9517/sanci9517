@@ -9,6 +9,36 @@ const lengthToken = /^(?:-?(?:\d+(?:\.\d+)?|\.\d+)(?:px|%|vh|vw|rem|em)|0|auto)$
 const boxLengthToken = /^-?(?:\d+(?:\.\d+)?|\.\d+)(?:px|%|vh|vw|rem|em)$/i;
 const hexColor = /^#[\da-f]{3}(?:[\da-f]{3})?(?:[\da-f]{2})?$/i;
 const unitToken = /^(?:auto|0|px|%|vw|vh|rem|em)$/i;
+export const INSPECTOR_FONTS = Object.freeze(['inherit','system-ui','Arial','Georgia','Verdana','monospace','sans-serif','serif']);
+export const INSPECTOR_SHADOWS = Object.freeze(['none','0 2px 8px #0003','0 8px 24px #0005','0 16px 48px #0007']);
+
+function numberBounds(property) {
+  return property?.key === 'scale' ? [.1,4] : property?.key === 'opacity' ? [0, 1] :
+    property?.key === 'lineHeight' ? [0.5, 5] :
+    ['flexGrow','flexShrink'].includes(property?.key) ? [0, 100] : [-9999, 9999];
+}
+
+/** A declarative view of the same rules enforced by normalizeInspectorValue. */
+export function getInspectorValueContract(property) {
+  if (!property || typeof property !== 'object') return Object.freeze({kind:'unsupported'});
+  const type=property.type;
+  const tokens=Object.freeze(compatibleTokens(property));
+  let contract;
+  if(type==='select') contract={kind:'enum',values:Object.freeze([...(property.options||[])])};
+  else if(type==='font') contract={kind:'enum',values:INSPECTOR_FONTS};
+  else if(type==='shadow') contract={kind:'enum',values:INSPECTOR_SHADOWS};
+  else if(type==='number') { const [min,max]=numberBounds(property);contract={kind:'number',min,max}; }
+  else if(type==='dimension') contract=property.key==='rotate'
+    ? {kind:'dimension',units:Object.freeze(['deg']),min:-360,max:360}
+    : {kind:'dimension',units:Object.freeze([...(property.units||[])]),allowsZero:true,allowsAuto:Boolean(property.units?.includes('auto')),negative:['x','y','letterSpacing','wordSpacing','textIndent'].includes(property.key)};
+  else if(type==='box') contract={kind:'box',maxParts:4,units:Object.freeze(['px','%','vh','vw','rem','em']),negativeMargin:property.key==='margin',negativePadding:false};
+  else if(type==='asset') contract={kind:'asset-id',format:'uuid',allowsNone:true};
+  else if(type==='color') contract={kind:'color',formats:Object.freeze(['hex','transparent'])};
+  else if(type==='url') contract={kind:'url',policy:'validatedLinkHref'};
+  else if(type==='text') contract={kind:'text',trimmed:true};
+  else contract={kind:'unsupported'};
+  return Object.freeze({...contract,tokens});
+}
 
 export function normalizeInspectorValue(property, input) {
   const type = property?.type;
@@ -27,9 +57,7 @@ export function normalizeInspectorValue(property, input) {
   }
   if (type === 'number') {
     const number = Number(value);
-    const bounds = property.key === 'scale' ? [.1,4] : property.key === 'opacity' ? [0, 1] :
-      property.key === 'lineHeight' ? [0.5, 5] :
-      ['flexGrow','flexShrink'].includes(property.key) ? [0, 100] : [-9999, 9999];
+    const bounds = numberBounds(property);
     if (!Number.isFinite(number) || number < bounds[0] || number > bounds[1]) {
       throw new Error('A szám a megengedett tartományon kívül van.');
     }
@@ -75,6 +103,4 @@ export function normalizeInspectorValue(property, input) {
   throw new Error('Ezt a vezérlőt még nem fejlesztettük le.');
 }
 
-export const INSPECTOR_FONTS = Object.freeze(['inherit','system-ui','Arial','Georgia','Verdana','monospace','sans-serif','serif']);
-export const INSPECTOR_SHADOWS = Object.freeze(['none','0 2px 8px #0003','0 8px 24px #0005','0 16px 48px #0007']);
 export const INSPECTOR_LENGTH_UNITS = unitToken;

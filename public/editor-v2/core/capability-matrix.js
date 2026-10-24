@@ -1,6 +1,7 @@
 import {CONTENT_TYPES,STRUCTURAL_TYPES} from './authored-content.js';
 import { NODE_TYPES } from './schema.js';
 import { listProperties } from './property-registry.js';
+import {getInspectorValueContract} from './property-values.js';
 
 // A palette entry is only complete when Inspector, canvas and public behavior
 // are all verified. The current Editor has no such blanket acceptance yet.
@@ -37,7 +38,13 @@ export function getElementInspectorContract(type) {
     key:property.key??null,
     scope:property.responsive?'viewport':'node',
     reset:property.responsive?'inherit':'type-specific',
-    valueContract:property.responsive?'resolveResponsiveValue':'type-specific',
+    resetContract:Object.freeze(property.responsive
+      ? {status:'SUPPORTED',command:property.command,operation:'clear-override',effect:'inherit'}
+      : {status:'TYPE_SPECIFIC',command:property.command,operation:'type-specific'}),
+    initialValue:Object.hasOwn(property,'defaultValue')
+      ? Object.freeze({status:'DECLARED',value:property.defaultValue})
+      : Object.freeze({status:'NOT_DECLARED'}),
+    valueContract:getInspectorValueContract(property),
   }));
   return Object.freeze({
     type:typeof type==='string'?type:null,

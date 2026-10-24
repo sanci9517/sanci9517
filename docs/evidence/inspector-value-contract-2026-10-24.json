@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-24",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Expose the existing Inspector value validator and registry semantics through the existing capability contract.",
+  "changes": {
+    "files": [
+      "public/editor-v2/core/property-values.js",
+      "public/editor-v2/core/capability-matrix.js",
+      "public/editor-v2/tests/capability-contract.test.js"
+    ],
+    "contract": [
+      "select/font/shadow enumerations",
+      "number bounds",
+      "dimension units, zero/auto and sign policy",
+      "compatible design tokens",
+      "responsive clear-override command and inheritance effect",
+      "initialValue is NOT_DECLARED unless the registry explicitly declares defaultValue"
+    ],
+    "defaults_in_registry": 0,
+    "database_migrations": false,
+    "production_data_writes": false,
+    "r2_deletions": false
+  },
+  "checks": {
+    "editor_tests": "PASS 131/131",
+    "typescript": "PASS",
+    "plan_contract": "PASS 13/13",
+    "canonical_plan": "PASS; 396 mappings, acceptance NOT_CERTIFIED",
+    "git_diff_check": "PASS",
+    "production_release": "NOT DEPLOYED; this local change is not in the active Worker"
+  },
+  "remote_state": {
+    "github_branch_v2_foundation": "53650fb540f4a20792ff1bb722aa6ee725a4077f",
+    "worker_active_version": "c684ddba-8587-4475-a50a-b08c7b4957ad",
+    "worker_traffic_percent": 100,
+    "local_changes_released": false
+  },
+  "acceptance": "NOT_CERTIFIED"
+}
