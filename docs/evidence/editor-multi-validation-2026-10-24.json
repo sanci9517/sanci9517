@@ -14,5 +14,45 @@
   "production_migration_preflight": "No migrations to apply",
   "production_migrations": false,
   "r2_deletions": false,
-  "release": "pending push and verification"
+  "release": {
+    "source_commit": "5b8669364b749691d1e685f9a84a71a8d126e9a6",
+    "build_id": "1076f1f6-7c62-4992-8198-abf38937ed70",
+    "build_outcome": "success",
+    "deployment_id": "ef6fb478-28b3-432c-9ed9-7b761ab450d6",
+    "version_id": "139c1f98-bf85-4cdb-9b9b-d900bd6f0c14",
+    "traffic_percent": 100,
+    "build_log_no_migrations": true,
+    "http": [
+      {
+        "path": "/api/health",
+        "status": 200
+      },
+      {
+        "path": "/api/db-health",
+        "status": 200
+      },
+      {
+        "path": "/api/admin/pages",
+        "status": 401
+      },
+      {
+        "path": "/editor-v2/app.js?v=20261024-multi-validation",
+        "status": 200,
+        "sha256": "395848b53ba392fb10d8299191f6698e8f7dcecafd545d5e74b4a6f79144db3d",
+        "matchesLocal": true
+      },
+      {
+        "path": "/editor-v2/editor-refresh.css?v=20261024-page-paths",
+        "status": 200,
+        "sha256": "b0a52f064dae3294e83df7d1f7053b564f4f0b58af0880e71e50c8db593f7b46",
+        "matchesLocal": true
+      }
+    ],
+    "github_checks": "5 completed/success including Workers Builds; editor-core still in_progress at last check",
+    "manual_authenticated_acceptance": "OPEN"
+  },
+  "related_browser_tests": {
+    "passed": 4,
+    "scope": "general Inspector IME and draft/live path regression"
+  }
 }
