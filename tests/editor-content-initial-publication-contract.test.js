@@ -110,7 +110,8 @@ test('canonical element.add supplies real initial content and version gates',()=
     assert.ok(contract.profiles.some(profile=>profile.marker===marker),type);
     if(type==='gallery')assert.equal(validatePublishDocument(state.document,page.id),'INVALID_GALLERY_IMAGE');
     if(type==='image')assert.equal(validatePublishDocument(state.document,page.id),'INVALID_MEDIA_SOURCE');
-    if(type==='list'||type==='carousel'||type==='badge'||type==='quote'||type==='icon'||type==='code')
+    if(type==='code')assert.equal(validatePublishDocument(state.document,page.id),'INVALID_CODE_SNIPPET');
+    if(type==='list'||type==='carousel'||type==='badge'||type==='quote'||type==='icon')
       assert.equal(validatePublishDocument(state.document,page.id),null,type);
   }
 });
