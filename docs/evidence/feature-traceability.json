@@ -1,7 +1,7 @@
 {
   "source_hashes": {
     ".github/workflows/editor-core-test.yml": "7dcc4a0a4027ef5dbd16f16f116c8852d79e660751f5f2c4f8d5328b15d78ce9",
-    ".github/workflows/f0-baseline.yml": "9dc753e118021a86f94de4487dc69e4060bc6c136c20ddacbd9d16b72333d07f",
+    ".github/workflows/f0-baseline.yml": "f2a1d78d5fd46ad208c8579bbd5e2d6de766321a93ddac888fc97e8714e502a5",
     "public/admin-home.html": "19937bb160950acaac6a1dc9784e0a6086ed537e9223d43318ffa21f4f84a955",
     "public/assets/admin-design.js": "1ff8c7a8cfee87cd673b736771e3f55999af9a78248afb2ca9ac7a3a26017103",
     "public/assets/admin-media.js": "1d9eb86d004c84a054b8c7f92be36d78e34e8510146b8588825db486f615bad6",
@@ -22,7 +22,7 @@
     "public/editor-v2/core/schedule-schema.js": "d13bf4a56fb761273e0c62f5b6f0d15d4fe0528cd65860cea0aaf8690d34352a",
     "public/editor-v2/core/schema.js": "4f0dee171fb39b687e0fcaac32a33be7ad87e101e61940bcacc037e6a1aa03b9",
     "public/editor-v2/ui/basic-content-inspector.js": "9989dfac89a3a414b58bb8ea75837fa6ac73a3eef4d53ea8d79533be4fc16ac3",
-    "public/editor-v2/ui/element-content-controls.js": "409ebd68b2da32f57d98c94ba000a19a17c20ddc6295f49f64e248019311501a",
+    "public/editor-v2/ui/element-content-controls.js": "b325f97b7a9b816dbbf6bbc24a796951aafa25f7d00ffd591aa1e2801c3567e0",
     "public/editor-v2/ui/property-controls.js": "96d4e9b8136936f83f4dacb011a471164c4ea9ce88f5eac51356d9b556d08ecd",
     "public/editor-v2/ui/responsive-group-reset.js": "fc3ed5460c17ef9c32e9067484b3e55edb00367c55d84b7570955d9f5f649c20",
     "scripts/d1/ledger-reconciliation.py": "44d19ed415b40473c73c248d49980e16eaaa0e96a8a4412b7016213e0ee7ffcb",
