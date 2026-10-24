@@ -86,23 +86,32 @@ export function validateElementContent(node){
   const patch=Object.fromEntries(CONTENT_FIELDS[node.type].filter(field=>node.props?.[field.key]!==undefined).map(field=>[field.key,node.props[field.key]]));
   normalizeElementContent(node,patch);
 }
+// Single source for the visible authored-content publication gate. The Inspector can
+// read this without mutating a draft; the server uses the same decision.
+export function getPublicationContentIssue(node){
+  if(!isAuthoredContent(node)||!CONTENT_FIELDS[node?.type])return null;
+  const p=contentProperties(node);
+  let missing='';
+  if(['image','video','audio'].includes(node.type)&&!p.src?.trim()&&!p.assetId)missing='Válassz Médiatár-fájlt vagy adj meg médiaforrást.';
+  if(node.type==='image'&&(p.src||p.assetId)&&!p.decorative&&!p.alt?.trim())missing='Adj meg képleírást, vagy jelöld a képet díszítőnek.';
+  if(['link','button'].includes(node.type)&&!p.href?.trim())missing='Adj meg hivatkozási célt. Művelet nélküli gomb nem publikálható.';
+  if(node.type==='heading'&&!p.text?.trim())missing='A címsor nem lehet üres.';
+  if(['gallery','carousel'].includes(node.type)&&(!p.items?.length||p.items.some(item=>(!item.src?.trim()&&!item.assetId)||!(item.alt?.trim()||item.caption?.trim()))))missing='A képekhez Médiatár-fájl vagy forrás, és leírás vagy képaláírás szükséges.';
+  if(['tabs','accordion','dropdown'].includes(node.type)&&(!p.items?.length||p.items.some(item=>!item.title?.trim())))missing='Legalább egy elnevezett rész szükséges.';
+  if(node.type==='table'&&(!p.rows?.length||!p.rows.some(row=>row.some(cell=>String(cell).trim()))))missing='A táblázatnak legyen tartalma.';
+  if(node.type==='list'&&(!p.items?.length||p.items.some(item=>!item.text?.trim())))missing='Adj meg legalább egy nem üres listaelemet.';
+  if(node.type==='tooltip'&&(!p.text?.trim()||!p.description?.trim()))missing='Felirat és magyarázat is szükséges.';
+  if(node.type==='audio'&&p.controls===false)missing='A hanglejátszó vezérlőit nem rejtheted el.';
+  if(node.type==='video'&&p.controls===false&&!(p.autoplay&&p.muted))missing='Vezérlők nélküli háttérvideó csak némítva, automatikusan indulhat.';
+  return missing||null;
+}
+
 export function validatePageForPublication(page){
   const seen=new Set();
   const visit=(id,visible)=>{if(seen.has(id))return;seen.add(id);const node=page.nodes?.[id];if(!node)return;
     const modes=['desktop','tablet','mobile'].map((device,index)=>visible[index]&&node.visibility!==false&&node.visibility?.[device]!==false),p=contentProperties(node);
     if(isAuthoredContent(node)&&modes.some(Boolean)){
-      let missing='';
-      if(['image','video','audio'].includes(node.type)&&!p.src?.trim()&&!p.assetId)missing='Válassz Médiatár-fájlt vagy adj meg médiaforrást.';
-      if(node.type==='image'&&(p.src||p.assetId)&&!p.decorative&&!p.alt?.trim())missing='Adj meg képleírást, vagy jelöld a képet díszítőnek.';
-      if(['link','button'].includes(node.type)&&!p.href?.trim())missing='Adj meg hivatkozási célt. Művelet nélküli gomb nem publikálható.';
-      if(node.type==='heading'&&!p.text?.trim())missing='A címsor nem lehet üres.';
-      if(['gallery','carousel'].includes(node.type)&&(!p.items?.length||p.items.some(item=>(!item.src?.trim()&&!item.assetId)||!(item.alt?.trim()||item.caption?.trim()))))missing='A képekhez Médiatár-fájl vagy forrás, és leírás vagy képaláírás szükséges.';
-      if(['tabs','accordion','dropdown'].includes(node.type)&&(!p.items?.length||p.items.some(item=>!item.title?.trim())))missing='Legalább egy elnevezett rész szükséges.';
-      if(node.type==='table'&&(!p.rows?.length||!p.rows.some(row=>row.some(cell=>String(cell).trim()))))missing='A táblázatnak legyen tartalma.';
-      if(node.type==='list'&&(!p.items?.length||p.items.some(item=>!item.text?.trim())))missing='Adj meg legalább egy nem üres listaelemet.';
-      if(node.type==='tooltip'&&(!p.text?.trim()||!p.description?.trim()))missing='Felirat és magyarázat is szükséges.';
-      if(node.type==='audio'&&p.controls===false)missing='A hanglejátszó vezérlőit nem rejtheted el.';
-      if(node.type==='video'&&p.controls===false&&!(p.autoplay&&p.muted))missing='Vezérlők nélküli háttérvideó csak némítva, automatikusan indulhat.';
+      const missing=getPublicationContentIssue(node);
       if(missing){const error=new Error(`${node.name||node.type}: ${missing}`);error.nodeId=node.id;throw error}
     }
     for(const child of node.children||[])visit(child,modes);
