@@ -310,5 +310,5 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
       root.append(control({...definition,type:'textarea',max:40000},(node.props?.rows||[]).map(row=>row.join('\t')).join('\n'),(value,group)=>save(value.split('\n').map(row=>row.split('\t')),group),update=>top.register(definition.key,update)));
     }else root.append(control(definition,working[definition.key],(value,typingGroup,asset)=>top.save(definition.key,value,typingGroup,asset),update=>top.register(definition.key,update)));
   }
-  root.append(fail);updateJump();return root;
+  root.append(fail);refreshPublicationNote();updateJump();return root;
 }
