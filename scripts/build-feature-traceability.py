@@ -39,7 +39,7 @@ PARTIAL = {
 EXACT_SOURCES = {
  'EDT-015':['public/editor-v2/core/capability-matrix.js','public/editor-v2/core/schema.js','public/editor-v2/app.js'],
  'EDT-021':['public/editor-v2/core/property-registry.js','public/editor-v2/core/capability-matrix.js'],
- 'EDT-022':['public/editor-v2/core/property-values.js','public/editor-v2/ui/property-controls.js','src/core/editor-validation.ts'],
+ 'EDT-022':['public/editor-v2/core/property-values.js','public/editor-v2/ui/property-controls.js','public/editor-v2/core/content-profiles.js','src/core/editor-validation.ts'],
  'EDT-024':['public/editor-v2/core/responsive.js','public/editor-v2/ui/responsive-group-reset.js'],
  'EDT-043':['public/editor-v2/core/richtext-engine.js','public/editor-v2/core/richtext-import.js','public/editor-v2/core/richtext-links.js','public/editor-v2/app.js'],
  'RES-011':['public/editor-v2/core/icon-options.js','public/editor-v2/ui/basic-content-inspector.js'],

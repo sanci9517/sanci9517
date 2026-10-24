@@ -47,3 +47,6 @@ export function getElementInspectorContract(type) {
     groups:Object.freeze([...new Set(fields.map(field=>field.group))]),
   });
 }
+
+// Content versions share the same gates as Inspector and server publication.
+export {getElementContentContract} from './content-profiles.js';

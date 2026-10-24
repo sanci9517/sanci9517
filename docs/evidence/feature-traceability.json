@@ -1,14 +1,15 @@
 {
   "source_hashes": {
     ".github/workflows/editor-core-test.yml": "7dcc4a0a4027ef5dbd16f16f116c8852d79e660751f5f2c4f8d5328b15d78ce9",
-    ".github/workflows/f0-baseline.yml": "092b16a3dc9e9a89b5beb272273aff5249512ff81997cc2052a8fed956181e28",
+    ".github/workflows/f0-baseline.yml": "9dc753e118021a86f94de4487dc69e4060bc6c136c20ddacbd9d16b72333d07f",
     "public/admin-home.html": "19937bb160950acaac6a1dc9784e0a6086ed537e9223d43318ffa21f4f84a955",
     "public/assets/admin-design.js": "1ff8c7a8cfee87cd673b736771e3f55999af9a78248afb2ca9ac7a3a26017103",
     "public/assets/admin-media.js": "1d9eb86d004c84a054b8c7f92be36d78e34e8510146b8588825db486f615bad6",
     "public/assets/page-renderer.js": "b581f4a274f31b28afdaf73a57844f9914178f0643d1b42c0330d512f07a07d1",
-    "public/editor-v2/app.js": "395848b53ba392fb10d8299191f6698e8f7dcecafd545d5e74b4a6f79144db3d",
-    "public/editor-v2/core/capability-matrix.js": "c8da5c4b5a27d172dd735d50e489123051160f96d9dffa8e79e5679dd1d3d191",
+    "public/editor-v2/app.js": "cc8a235f6679847b4213e09de3d2e20ce9f40a42936e3265ec0ccd50666e0e19",
+    "public/editor-v2/core/capability-matrix.js": "87d6a0c1ee3c74f0c128bb6c311aec5b6bdddc023f55d1e9a67278efbcc786e5",
     "public/editor-v2/core/commands.js": "3cb3e89a7853b00763a315695dc21f73f38adb6f2ac618dda9c9d1116c74154f",
+    "public/editor-v2/core/content-profiles.js": "530da6d0d2561105091ba8bf27b88041b3ebfe8f0f8cce9a8128107e6c034588",
     "public/editor-v2/core/creator-embed.js": "56d01f520e94a34ca2ab9ba875f95410f9e0bd5ff9211014eb0711e7946c3506",
     "public/editor-v2/core/design-tokens.js": "ddeb5e60dec65453d4bbf19dda5aac43bc621a8a709f659b9d58c619a25e8c4c",
     "public/editor-v2/core/icon-options.js": "457e7721748b81e0c1b224375b4118c637113e941f3e53bd646b75be7699cd8e",
@@ -31,7 +32,7 @@
     "src/core/auth/require-auth.ts": "7933ad739fe34dd47234a2ab66a3e54a06daee75c8b96de60f1007cec246788e",
     "src/core/auth/session.ts": "39289ef8bffad7b09a6ec6476b7d280e8bf664635d0bc5327ce216edfde7866b",
     "src/core/auth/site-access.ts": "1651ea7a2437ebd9b86700ee87fb6ec7fc5944e84c13869dc957e889e78b47ff",
-    "src/core/editor-validation.ts": "beedcf2ed7fab3f8066164ee78e5385c93b08e12140c4f442e4293bf7904a3c6",
+    "src/core/editor-validation.ts": "db000e69bd13109e20d1d1e827c02e06354af3e3f8ff9ca56265f064cef1a4a1",
     "src/core/media-retention-policy.js": "0bb1a1bb04acc1105372c04aeab1ff55c364945aad1e97e500ab5fd2563ecfe7",
     "src/core/page-redirects.ts": "5e4cab4b3ab9d01f3072058c93ec8b91b35aa41e139f459c66aa85b887e5f06f",
     "src/core/schedule-read.ts": "15c0f93718409a8ff58760341631a00a9c5aebba7201bd187e66cc89bd459399",
@@ -1573,6 +1574,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -1657,6 +1659,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -1741,6 +1744,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -1825,6 +1829,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -1909,6 +1914,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -1993,6 +1999,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -2077,6 +2084,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -2161,6 +2169,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -2245,6 +2254,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -2329,6 +2339,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -2413,6 +2424,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -2497,6 +2509,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -2581,6 +2594,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -2665,6 +2679,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -2745,6 +2760,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -2829,6 +2845,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -2913,6 +2930,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -2997,6 +3015,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -3081,6 +3100,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -3165,6 +3185,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -3244,6 +3265,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -3272,6 +3294,7 @@
       "implementation": [
         "public/editor-v2/core/property-values.js",
         "public/editor-v2/ui/property-controls.js",
+        "public/editor-v2/core/content-profiles.js",
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
@@ -3324,6 +3347,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -3408,6 +3432,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -3487,6 +3512,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -3571,6 +3597,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -3655,6 +3682,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -3739,6 +3767,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -3823,6 +3852,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -3907,6 +3937,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -3991,6 +4022,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -4075,6 +4107,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -4159,6 +4192,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -4243,6 +4277,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -4327,6 +4362,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -4411,6 +4447,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -4495,6 +4532,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -4579,6 +4617,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -4663,6 +4702,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -4770,6 +4810,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -4854,6 +4895,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -4938,6 +4980,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -5019,6 +5062,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"
@@ -5103,6 +5147,7 @@
         "tests/browser/editor-structured-content.test.js",
         "tests/browser/editor-style-copy.test.js",
         "tests/browser/editor-ux-p0-workflow.test.js",
+        "tests/editor-content-profiles.test.js",
         "tests/editor-multi-validation.test.js",
         "tests/editor-sqlite-concurrency.test.js",
         "tests/f0-3-route-integration.test.js"

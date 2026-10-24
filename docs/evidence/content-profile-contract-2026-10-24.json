@@ -1,0 +1,23 @@
+{
+  "plan": "77.44.7.A",
+  "profiles": 12,
+  "scope": "existing Inspector/server version gates; not a new schema or completion claim",
+  "checks": {
+    "new_server_tests": 3,
+    "full_route_editor": 383,
+    "plan_contract_tests": 13,
+    "related_chromium": 7,
+    "typecheck": "PASS"
+  },
+  "differential_validation": {
+    "cases": 2765,
+    "identical_results": true,
+    "input_unchanged": true,
+    "baseline": "HEAD:src/core/editor-validation.ts before this change",
+    "scope": "79 types; absent, mixed and numeric/string/unknown version gates with empty content; no production writes"
+  },
+  "migration_preflight": "No migrations to apply",
+  "release": "pending push and verification",
+  "runtime_data_migration": false,
+  "r2_deletions": false
+}
