@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createServer} from 'node:http';
 import {readFile} from 'node:fs/promises';
+import {existsSync} from 'node:fs';
 import {resolve,extname} from 'node:path';
 import {chromium} from 'playwright';
 
@@ -17,7 +18,7 @@ test('Inspector publication warning navigates to required field and updates with
   catch{res.writeHead(404).end()}
  });
  await new Promise(done=>server.listen(0,'127.0.0.1',done));
- const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+ const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
  t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
  for(const width of [1366,390]){
   const page=await browser.newPage({viewport:{width,height:800}});
@@ -77,11 +78,15 @@ test('Inspector publication warning navigates to required field and updates with
    const external=document.createElement('section');external.className='field plain-text-content';
    const textarea=document.createElement('textarea');textarea.className='plain-text-editor';textarea.setAttribute('aria-label','Külön szövegmező');
    external.append(textarea);
+   const host=document.querySelector('#host');
+   // In the real Editor the separate Content field is already mounted in the
+   // connected Inspector when the authored guidance component resolves it.
+   host.replaceChildren(external);
    const panel=renderElementContentControls(node,{
     apply:patch=>{Object.assign(node.props,patch);return true},
     pending:()=>{},exclude:['text'],resolveExternalField:key=>key==='text'?textarea:null
    });
-   document.querySelector('#host').replaceChildren(external,panel);
+   host.append(panel);
    window.__draftNode=node;
   });
   const externalField=page.getByRole('textbox',{name:'Külön szövegmező'});

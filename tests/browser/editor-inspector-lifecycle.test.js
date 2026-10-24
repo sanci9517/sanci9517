@@ -151,6 +151,12 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   assert.deepEqual(await presetStyle(),{paddingTop:'16px',paddingRight:'24px',backgroundColor:'rgb(37, 99, 235)',fontSize:'32px'});
   await editor.locator('#undo').click();assert.equal((await presetStyle()).fontSize,'16px');
   await editor.locator('#redo').click();assert.equal((await presetStyle()).fontSize,'32px');
+  const alignment=()=>item.evaluate(el=>getComputedStyle(el).textAlign);
+  const inheritedAlignment=await alignment();
+  await field('typography.textAlign').locator('select:not(.property-token-picker)').selectOption('center');
+  assert.equal(await alignment(),'center','Inspector text alignment reaches the real Canvas node');
+  await editor.locator('#undo').click();assert.equal(await alignment(),inheritedAlignment,'Undo restores the prior text alignment');
+  await editor.locator('#redo').click();assert.equal(await alignment(),'center','Redo restores the Inspector text alignment');
   // Locking is read-only throughout the Inspector, including typed controls,
   // presets, token bindings and legacy content. Navigation and help stay usable.
   await editor.locator('.inspector-lock-toggle').check();
@@ -194,6 +200,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   assert.equal(published,null);
   await editor.reload();await select(itemId);
   assert.deepEqual(await css(),{column:'2',minWidth:'80px',radius:'12px'});
+  assert.equal(await alignment(),'center','saved text alignment survives Editor reload');
   await editor.locator('#publish').click();
   await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
   assert.equal(posts.at(-1).publish,true);
@@ -201,11 +208,34 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   publicPage.on('pageerror',error=>errors.push(error.message));
   await publicPage.goto(base+'/p/test');
   await publicPage.locator('.visual-card > .visual-text').first().waitFor();
+  assert.equal(await publicPage.locator(`[data-node-id="${itemId}"]`).evaluate(el=>getComputedStyle(el).textAlign),'center',
+    'the separately published public snapshot uses the same Inspector text alignment');
   const publicCss=()=>publicPage.locator('.visual-card > .visual-text').first().evaluate(el=>{const style=getComputedStyle(el);return {column:style.gridColumnStart,minWidth:style.minWidth,radius:style.borderTopLeftRadius}});
   await select(itemId);
   assert.deepEqual(await publicCss(),await css());
   assert.deepEqual(await publicPage.locator('.visual-card > .visual-text').first().evaluate(el=>{const style=getComputedStyle(el);return {paddingTop:style.paddingTop,paddingRight:style.paddingRight,backgroundColor:style.backgroundColor,fontSize:style.fontSize}}),await presetStyle());
   assert.deepEqual(await publicPage.locator('.visual-card:nth-child(2) > .visual-text').evaluate(el=>{const style=getComputedStyle(el);return {basis:style.flexBasis,maxWidth:style.maxWidth}}),await flexCss());
+  // Edit a field after a live snapshot exists: Save updates only the draft,
+  // reload retains it, and only the separate Publish changes the public CSS.
+  await editor.locator('.inspector-tabs button').first().click();
+  const typographyTitle=editor.locator('.inspector-group-title').filter({hasText:'Tipográfia'});
+  if(await typographyTitle.getAttribute('aria-expanded')==='false')await typographyTitle.click();
+  await field('typography.textAlign').locator('select:not(.property-token-picker)').selectOption('right');
+  assert.equal(await alignment(),'right');
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false,'text alignment Save must not publish');
+  await editor.reload();await select(itemId);
+  assert.equal(await alignment(),'right','draft text alignment survives reload');
+  await publicPage.reload();
+  assert.equal(await publicPage.locator(`[data-node-id="${itemId}"]`).evaluate(el=>getComputedStyle(el).textAlign),'center',
+    'the previous published text alignment remains live after draft Save');
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
+  assert.equal(posts.at(-1).publish,true,'only the explicit Publish sends the new text alignment live');
+  await publicPage.reload();
+  assert.equal(await publicPage.locator(`[data-node-id="${itemId}"]`).evaluate(el=>getComputedStyle(el).textAlign),'right',
+    'the separately published text alignment reaches the public renderer');
   // A dragged/offset static node is rendered with the same relative CSS on
   // canvas and public page. The Inspector also makes leaving the artboard
   // explicit and offers a scoped recovery action.
