@@ -390,7 +390,9 @@ Közös funkciók:
 
 **Discord:** bot/app, guild/server, channel és role mapping; webhook/értesítés; membership role sync; engedély, reconnect és disconnect.
 
-**Kick és későbbi platformok:** provider capability audit; külön adapter; nem támogatott API-képességet nem szabad működőként szimulálni.
+**Kick (INT-016):** önálló, site-scoped Kick Dev OAuth 2.1/PKCE provider-adapter; csatornaazonosítás, elérhető live/offline státusz és streammetaadat, engedélyezett chat/értesítési és moderációs műveletek, hitelesített eseménywebhookok, token-/scope-/kvótakezelés. A megvalósítási és negatív elfogadási szerződés a 37.4 pontban található. A támogatás cél és **SPEC ONLY / OPEN**, nem meglévő működő kapcsolat. Kick adásrend/VOD/klip feltöltést, automatikus streamindítást vagy beágyazást kizárólag külön igazolt hivatalos API-/lejátszó-képesség esetén szabad aktiválni; addig kézi ütemezés/külső link fallback.
+
+**További platformok:** külön capability/policy audit és adapter; nem támogatott API-képességet nem szabad működőként szimulálni.
 
 ### 3.4. Live és Stream
 **Almenük:** Live állapot; Stream áttekintés; Stream események; Stream eszközök; Alert/overlay kapcsolatok.
