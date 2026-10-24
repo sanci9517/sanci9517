@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {createDocument, createNode} from '../public/editor-v2/core/schema.js';
 import {createElementContent, validateElementContent as validateStructuredContent} from '../public/editor-v2/core/element-content.js';
-import {CONTENT_FIELDS, contentProperties, getPublicationContentIssue} from '../public/editor-v2/core/authored-content.js';
+import {CONTENT_FIELDS, contentProperties, getPublicationContentIssue, getPublicationContentGuidance} from '../public/editor-v2/core/authored-content.js';
 import {getElementContentContract} from '../public/editor-v2/core/content-profiles.js';
 import {validatePublishDocument} from '../src/core/editor-validation.ts';
 import {createEditorState} from '../public/editor-v2/core/state.js';
@@ -146,4 +146,38 @@ test('Inspector publication issue reader mirrors real server required-content ga
   assert.equal(publish(),expected?'INCOMPLETE_EDITOR_CONTENT':null,type);
  }
  assert.equal(getPublicationContentIssue(createNode('heading')),null,'legacy nodes are not silently migrated');
+});
+
+test('publication guidance uses the same required-field rule as server publication',()=>{
+ const cases=[
+  ['heading',{},'text'],
+  ['button',{text:'Megnyitás'},'href'],
+  ['image',{},'src'],
+  ['image',{src:'/image.png'},'alt'],
+  ['audio',{src:'/audio.ogg',controls:false},'controls'],
+  ['video',{src:'/video.webm',controls:false},'controls'],
+  ['gallery',{},'items'],
+  ['carousel',{},'items'],
+  ['tabs',{},'items'],
+  ['accordion',{},'items'],
+  ['dropdown',{},'items'],
+  ['table',{},'rows'],
+  ['list',{},'items'],
+  ['tooltip',{},'text'],
+  ['tooltip',{text:'Mi ez?'},'description'],
+ ];
+ for(const [type,props,fieldKey] of cases){
+  const {node,publish}=probe(type,{metadata:{contentVersion:1},props});
+  const original=structuredClone(node);
+  const guidance=getPublicationContentGuidance(node);
+  assert.ok(guidance,type);
+  assert.equal(guidance.fieldKey,fieldKey,type);
+  assert.equal(guidance.message,getPublicationContentIssue(node),type);
+  assert.equal(Object.isFrozen(guidance),true,type);
+  assert.equal(publish(),'INCOMPLETE_EDITOR_CONTENT',type);
+  assert.deepEqual(node,original,type);
+ }
+ const complete=probe('heading',{metadata:{contentVersion:1},props:{text:'Valódi címsor'}});
+ assert.equal(getPublicationContentGuidance(complete.node),null);
+ assert.equal(getPublicationContentGuidance(createNode('heading')),null);
 });
