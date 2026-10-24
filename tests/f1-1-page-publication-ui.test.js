@@ -11,7 +11,7 @@ function editor(){
 }
 test('successful publish immediately marks a previously draft page LIVE; subsequent save keeps LIVE with pending draft',async()=>{
  const f=editor();const save=action('async function save(publish=false)','async function unpublishPage()',f.context);
- await save(true);assert.equal(f.context.pages[0].isPublished,true);assert.equal(f.context.pages[0].hasUnpublishedChanges,false);
+ await save(true);assert.equal(f.context.pages[0].isPublished,true);assert.equal(f.context.pages[0].publishedSlug,"p");assert.equal(f.context.pages[0].hasUnpublishedChanges,false);
  f.context.state.document.pages.p.title='New';f.context.state.persistence.dirty=true;await save(false);assert.equal(f.context.pages[0].isPublished,true);assert.equal(f.context.pages[0].hasUnpublishedChanges,true);
 });
 test('failed publication preserves list publication state and local dirty document',async()=>{
@@ -28,10 +28,10 @@ test('page settings do not replace dirty content or run during an in-flight save
 test('page list renders LIVE, unpublished draft changes and draft labels from server state',()=>{
  const f=editor();const list={children:[],replaceChildren(){this.children=[]},append(...xs){this.children.push(...xs)}};
  const select={replaceChildren(){},append(){}};f.context.$=id=>id==='#pageList'?list:select;f.context.archivedPages=[];f.context.escapeHtml=x=>x;
- f.context.pages=[{id:'p',title:'Pending',isPublished:true,hasUnpublishedChanges:true},{id:'live',title:'Live',isPublished:true,hasUnpublishedChanges:false},{id:'draft',title:'Draft',isPublished:false}];
+ f.context.pages=[{id:'p',title:'Pending',slug:'new-path',publishedSlug:'old-path',isPublished:true,hasUnpublishedChanges:true},{id:'live',title:'Live',isPublished:true,hasUnpublishedChanges:false},{id:'draft',title:'Draft',isPublished:false}];
  f.context.document={createElement:()=>({children:[],setAttribute(){},append(...xs){this.children.push(...xs)},innerHTML:''})};
  action('function renderPageList()','function focusScheduleNode()',f.context)();
- assert.match(list.children[0].children[0].innerHTML,/ÉLŐ · MÓDOSÍTOTT PISZKOZAT/);
+ assert.match(list.children[0].children[0].innerHTML,/ÉLŐ · MÓDOSÍTOTT PISZKOZAT/);assert.equal(list.children[0].children[0].children[0].textContent,'Piszkozat: /p/new-path · Élő: /p/old-path');assert.match(list.children[2].children[0].children[0].textContent,/Nincs élő URL/);
  assert.match(list.children[1].children[0].innerHTML,/class="page-meta">ÉLŐ<\/small>/);
  assert.match(list.children[2].children[0].innerHTML,/class="page-meta">PISZKOZAT<\/small>/);
 });

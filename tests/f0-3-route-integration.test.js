@@ -174,10 +174,10 @@ test('page list distinguishes saved drafts from LIVE snapshots through save, met
  assert.equal((await f.edit({...f.publish('pending'),publish:false})).status,200);
  rows=await list(true);assert.equal(rows[0].hasUnpublishedChanges,true);assert.equal(rows[0].isPublished,true);assert.equal('content' in rows[0],false);
  const changed=await adminPagesRoute(new Request('https://example.test/api/admin/pages',{method:'PATCH',headers:{Cookie:'sanci9517_session=editor','Content-Type':'application/json'},body:JSON.stringify({id:'p',title:'Renamed',slug:'new-slug',expectedVersion:2})}),f.env);
- assert.equal(changed.status,200);const metadata=(await changed.json()).data;assert.equal(metadata.hasUnpublishedChanges,true);
+ assert.equal(changed.status,200);const metadata=(await changed.json()).data;assert.equal(metadata.hasUnpublishedChanges,true);assert.equal(metadata.slug,"new-slug");assert.equal(metadata.publishedSlug,"p");assert.equal((await list(true))[0].publishedSlug,"p");
  assert.equal((await f.read('?slug=p')).status,200);assert.equal((await f.read('?slug=new-slug')).status,404);
  assert.equal((await f.edit({pageId:'p',expectedVersion:3,document:metadata.content,publish:true})).status,200);
- rows=await list();assert.equal(rows[0].hasUnpublishedChanges,false);assert.equal((await f.read('?slug=new-slug')).status,200);
+ rows=await list();assert.equal(rows[0].hasUnpublishedChanges,false);assert.equal(rows[0].publishedSlug,'new-slug');assert.equal((await f.read('?slug=new-slug')).status,200);
  assert.equal((await f.edit({pageId:'p',version:1,expectedVersion:4},'PUT')).status,200);assert.equal((await list())[0].hasUnpublishedChanges,true);
- assert.equal((await f.edit({pageId:'p',action:'unpublish'})).status,200);rows=await list();assert.equal(rows[0].isPublished,false);assert.equal(rows[0].hasUnpublishedChanges,false);
+ assert.equal((await f.edit({pageId:'p',action:'unpublish'})).status,200);rows=await list();assert.equal(rows[0].isPublished,false);assert.equal(rows[0].publishedSlug,null);assert.equal(rows[0].hasUnpublishedChanges,false);
 });
