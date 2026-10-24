@@ -9,7 +9,7 @@ import {getNodeVisibilityState,isVisibleOnDevice} from './core/visibility.js';
 import {diagnostics} from './diagnostics.js?v=20260918-2';
 import {plainTextToRichText,renderRichTextEditor,richTextEditorToDocument,restoreSelectionOffsets,getSelectionOffsets,transformRichTextBlockTypes} from './core/richtext-engine.js';
 import {renderSchedulePreview} from './core/schedule-preview.js';
-import {normalizeScheduleConfig,SCHEDULE_MODES,SCHEDULE_ORDERS,SCHEDULE_STATUSES} from './core/schedule-schema.js';
+import {normalizeScheduleConfig,SCHEDULE_MODES,SCHEDULE_ORDERS,SCHEDULE_STATUSES,SCHEDULE_EMPTY_TEXT_MAX} from './core/schedule-schema.js';
 import {listPropertyGroups,listProperties,getProperty} from './core/property-registry.js';
 import {renderPropertyInput} from './ui/property-controls.js';
 import {describeResponsiveOrigin} from './ui/responsive-origin.js';
@@ -42,6 +42,7 @@ import {defaultCodeSnippet,renderCodeSnippet,activateCodeBlocks} from './core/co
 import {renderCodeSnippetInspector} from './ui/code-snippet-inspector.js';
 import {readRichTextSelectionFormatting,clearRichTextInlineFormatting} from './core/richtext-links.js';
 import {renderAccessibilityFields} from './ui/accessibility-fields.js';
+import {createCompositionInputs} from './ui/composition-inputs.js';
 import {opaqueContrast} from './core/accessibility.js';
 import {STATE_PROPERTY_IDS,applyStateStyles} from './core/state-styles.js';
 import {defaultTokens,applyTokenVariables} from './core/design-tokens.js';
@@ -503,7 +504,21 @@ function renderCanvas(){const current=page();const previous=canvas.querySelector
 function fitCanvasToViewport(){const device=state?.viewport?.device||'desktop';zoom=Math.max(.35,Math.min(1.2,(canvas.clientWidth-48)/sizes[device]));render();canvas.scrollTo({left:0,top:0,behavior:'instant'})}
 function changeCanvasZoom(next){const frame=canvas.querySelector('.page-canvas-frame');const centerX=canvas.scrollLeft+canvas.clientWidth/2,centerY=canvas.scrollTop+canvas.clientHeight/2;const pointX=frame?(centerX-frame.offsetLeft)/zoom:0,pointY=frame?(centerY-frame.offsetTop)/zoom:0;zoom=next;render();requestAnimationFrame(()=>{const updated=canvas.querySelector('.page-canvas-frame');if(!updated)return;canvas.scrollTo({left:Math.max(0,updated.offsetLeft+pointX*zoom-canvas.clientWidth/2),top:Math.max(0,updated.offsetTop+pointY*zoom-canvas.clientHeight/2),behavior:'instant'})})}
 function syncDeviceButtons(device){document.querySelectorAll('[data-device]').forEach(b=>b.classList.toggle('active',b.dataset.device===device));document.querySelectorAll('.canvas-device-btn').forEach(b=>b.classList.toggle('active',b.dataset.device===device))}
-function field(label,value,onChange,readOnly=false,multiline=false){const f=document.createElement('label');f.className='field';const l=document.createElement('span');l.textContent=label;const input=multiline?document.createElement('textarea'):document.createElement('input');input.value=value??'';input.readOnly=readOnly;if(!readOnly){input.onchange=()=>{onChange(input.value)};if(!multiline)input.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();input.blur()}}}f.append(l,input);return f}
+function field(label,value,onChange,readOnly=false,multiline=false,composition=null){
+ const wrap=document.createElement('label');wrap.className='field';
+ const title=document.createElement('span');title.textContent=label;
+ const input=document.createElement(multiline?'textarea':'input');input.value=value??'';input.readOnly=readOnly;if(composition)input.setAttribute('aria-label',label);wrap.append(title,input);
+ if(!readOnly){
+  if(composition)wrap.append(composition.attach(input,onChange));
+  else{input.onchange=()=>onChange(input.value);if(!multiline)input.onkeydown=event=>{if(event.key==='Enter'){event.preventDefault();input.blur()}};}
+ }
+ return wrap;
+}
+function commitInspectorText(type,payload,options){
+ const saved=command(type,payload,options);
+ if(saved&&options?.render===false){renderCanvas();renderLayers();setStatus('Nem mentett módosítás');syncPublishControls();}
+ return saved;
+}
 function normalizeDimension(value,{allowAuto=false}={}){const raw=String(value??'').trim().toLowerCase();if(allowAuto&&raw==='auto')return 'auto';if(!raw)return undefined;if(/^-?(?:\d+(?:\.\d+)?|\.\d+)(?:px|%|vw|vh|rem|em)$/.test(raw))return raw;if(/^-?(?:\d+(?:\.\d+)?|\.\d+)$/.test(raw))return `${raw}px`;return raw}
 function resolvedGeometry(node,device){return getNodeGeometry(node,device)}
 function responsiveDisplay(node,property,device,fallback){const result=resolveResponsiveValue(node?.responsive,property,device);return result.value??fallback}
@@ -565,7 +580,7 @@ function renderGeometryInspector(node){
   }
   return section;
 }
-function renderScheduleInspector(node){
+function renderScheduleInspector(node,composition){
   const config=normalizeScheduleConfig(node.props?.schedule||{});
   const section=document.createElement('section');
   section.className='inspector-group schedule-inspector';
@@ -626,10 +641,15 @@ function renderScheduleInspector(node){
     input.onchange=()=>command('schedule.config.set',{nodeId:node.id,patch:{[key]:input.checked}});
     const span=document.createElement('span');span.textContent=labelText;row.append(input,span);section.append(row);
   }
-  section.append(field('Üres állapot szövege',config.emptyText,v=>{
-    const value=String(v).trim();if(!value)return;
-    command('schedule.config.set',{nodeId:node.id,patch:{emptyText:value}});
-  },false,true));
+  section.append(field('Üres állapot szövege',config.emptyText,(value,options)=>{
+    // Validate before command() so an incomplete draft stays in this field,
+    // without diagnostics alerts or an update to the canonical Schedule model.
+    if(!value.trim())throw new Error('Adj meg szöveget az üres adásrendhez.');
+    if(value.trim().length>SCHEDULE_EMPTY_TEXT_MAX)throw new Error(`Legfeljebb ${SCHEDULE_EMPTY_TEXT_MAX} karakter adható meg.`);
+    const current=page()?.nodes?.[node.id]?.props?.schedule||{};
+    const normalized=normalizeScheduleConfig({...current,emptyText:value});
+    return commitInspectorText('schedule.config.set',{nodeId:node.id,patch:{emptyText:normalized.emptyText}},options);
+  },Boolean(node.locked),true,composition));
   return section;
 }
 
@@ -1020,6 +1040,7 @@ function renderInspector(){
   if(!nodes.length){inspector.insertAdjacentHTML('beforeend','<div class="inspector-empty"><b>Inspector</b><span>Válassz ki egy elemet a vásznon vagy a Rétegek panelen.</span></div>');filterInspector();restoreScroll();return}
   if(nodes.length>1){inspector.append(renderMultiInspector(nodes));filterInspector();restoreScroll();return}
   const node=nodes[0];
+  const composition=createCompositionInputs(flush=>{flushRichTextDraft=flush});
   const header=document.createElement('div');header.className='inspector-selection';
   const headerName=document.createElement('b');headerName.textContent=node.name||node.type;
   const headerType=document.createElement('small');headerType.textContent=node.type;
@@ -1035,16 +1056,20 @@ function renderInspector(){
   if(inspectorTab==='design'){
     inspector.append(renderInspectorCategories());
     inspector.append(renderLayoutInspector(node));
-    inspector.append(field('Elem neve',node.name,v=>command('element.update',{nodeId:node.id,patch:{name:v}})),renderGeometryInspector(node));
+    inspector.append(field('Elem neve',node.name,(value,options)=>{
+      const saved=commitInspectorText('element.update',{nodeId:node.id,patch:{name:value}},options);
+      if(saved)headerName.textContent=value||node.type;
+      return saved;
+    },Boolean(node.locked),false,composition),renderGeometryInspector(node));
     if(['heading','text','richtext','button','link'].includes(node.type))inspector.append(renderTypographyPresets(node));
-    if(node.type==='schedule')inspector.append(renderScheduleInspector(node));
+    if(node.type==='schedule')inspector.append(renderScheduleInspector(node,composition));
     else inspector.append(renderRegistryInspector(node,'primary'));
     const lockRow=document.createElement('label');lockRow.className='inspector-toggle';
     const lockInput=document.createElement('input');lockInput.type='checkbox';lockInput.className='inspector-lock-toggle';lockInput.checked=Boolean(node.locked);lockInput.disabled=node.id===page()?.rootId;
     lockInput.onchange=()=>command('element.lock.set',{nodeId:node.id,locked:lockInput.checked});
     const lockText=document.createElement('span');lockText.textContent='Zárolt elem';lockRow.append(lockInput,lockText);inspector.append(lockRow);
   }else if(inspectorTab==='content'){
-    if(node.type==='schedule')inspector.append(renderScheduleInspector(node));
+    if(node.type==='schedule')inspector.append(renderScheduleInspector(node,composition));
     else {
       const textTypes=new Set(['heading','text','richtext','button','link']);
       if(node.type==='richtext'){
