@@ -60,7 +60,17 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await editor.goto(base+'/editor-v2/index.html');await select('heading');
   await editor.getByLabel('Címsor szemantikai szintje',{exact:true}).selectOption('3');
   assert.equal(await node(editor,'heading').evaluate(el=>getComputedStyle(el).fontSize),'28px');
-  await editor.getByRole('textbox',{name:'Szöveg tartalma',exact:true}).fill('Módosított főcím');
+  const plainHeading=editor.getByRole('textbox',{name:'Szöveg tartalma',exact:true});
+  await plainHeading.fill('');
+  await editor.waitForFunction(()=>document.querySelector('.editor-publication-warning')?.textContent.includes('A címsor nem lehet üres'));
+  assert.equal(await editor.locator('.plain-text-content').evaluate(el=>el.classList.contains('editor-publication-required')),true);
+  const headingJump=editor.getByRole('button',{name:'Ugrás a mezőhöz'});
+  await headingJump.click();
+  assert.equal(await plainHeading.evaluate(el=>el===document.activeElement),true,'jump focuses separately mounted heading text control');
+  await plainHeading.fill('Módosított főcím');
+  await editor.waitForFunction(()=>document.querySelector('.editor-publication-warning')?.hidden===true);
+  assert.equal(await headingJump.isHidden(),true);
+  assert.equal(await editor.locator('.plain-text-content').evaluate(el=>el.classList.contains('editor-publication-required')),false);
   await select('button');await editor.locator('.inspector-tabs button').first().click();
   const openGroup=async name=>{const title=editor.locator('.inspector-group-title').filter({has:editor.getByText(name,{exact:true})});if(await title.getAttribute('aria-expanded')==='false')await title.click()};
   await openGroup('Animáció');await editor.locator('[data-property-id="animation.transition"] select').selectOption('all 180ms ease');

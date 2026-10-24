@@ -100,7 +100,7 @@ export function mediaAssetPicker(selectedId,onSelect,{disabled=false,mimes=[]}={
   return root;
 }
 const selectedAlt=asset=>typeof asset?.altText==='string'?asset.altText.trim().slice(0,500):'';
-export function renderElementContentControls(node,{apply,pending,exclude=[],pages=[]}){
+export function renderElementContentControls(node,{apply,pending,exclude=[],pages=[],resolveExternalField=null}){
   const root=document.createElement('section');root.className='element-content-controls';
   const fail=document.createElement('p');fail.className='property-validation';fail.setAttribute('role','status');
   // A successful command mutates the Editor model, but validation failure may
@@ -125,20 +125,29 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
   jump.type='button';jump.className='editor-publication-jump';
   jump.textContent='Ugrás a mezőhöz';
   jump.hidden=true;
+  const externalField=key=>typeof resolveExternalField==='function'?resolveExternalField(key):null;
   jump.onclick=()=>{
     const key=publicationTarget();
     const field=[...root.querySelectorAll('[data-content-key]')].find(el=>el.dataset.contentKey===key);
-    if(!field)return;
-    if(field.tagName==='DETAILS')field.open=true;
-    const control=field.querySelector('input:not([disabled]),textarea:not([disabled]),select:not([disabled]),button:not([disabled]),summary');
-    (control||field).scrollIntoView({block:'nearest',behavior:'auto'});
+    const external=exclude.includes(key)?externalField(key):null;
+    if(!field&&!external)return;
+    if(field?.tagName==='DETAILS')field.open=true;
+    const control=external||field?.querySelector('input:not([disabled]),textarea:not([disabled]),select:not([disabled]),button:not([disabled]),summary');
+    (control||field)?.scrollIntoView({block:'nearest',behavior:'auto'});
     control?.focus({preventScroll:true});
   };
   const updateJump=()=>{
     const key=publicationTarget();
-    jump.hidden=publicationNote.hidden||!key||exclude.includes(key);
+    const excluded=exclude.includes(key);
+    const external=excluded?externalField(key):null;
+    jump.hidden=publicationNote.hidden||!key||Boolean(node.locked)||(excluded&&(!external||!external.isConnected||external.disabled));
     for(const field of root.querySelectorAll('[data-content-key]')){
       field.classList.toggle('editor-publication-required',!publicationNote.hidden&&field.dataset.contentKey===key);
+    }
+    for(const excludedKey of exclude){
+      externalField(excludedKey)?.closest('.field')?.classList.toggle(
+        'editor-publication-required',!publicationNote.hidden&&key===excludedKey
+      );
     }
   };
   // Initial update runs after the controls are mounted; refresh after edits.
@@ -297,5 +306,12 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
       root.append(control({...definition,type:'textarea',max:40000},(node.props?.rows||[]).map(row=>row.join('\t')).join('\n'),(value,group)=>save(value.split('\n').map(row=>row.split('\t')),group),update=>top.register(definition.key,update)));
     }else root.append(control(definition,working[definition.key],(value,typingGroup,asset)=>top.save(definition.key,value,typingGroup,asset),update=>top.register(definition.key,update)));
   }
+  root.addEventListener('editor:external-content-updated',event=>{
+    const detail=event.detail;
+    if(detail?.nodeId!==node.id||!exclude.includes(detail.key))return;
+    // The PageModel command has already succeeded; the event is display-only.
+    working[detail.key]=detail.value;
+    refreshPublicationNote();updateJump();
+  });
   root.append(fail);refreshPublicationNote();updateJump();return root;
 }

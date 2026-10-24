@@ -201,7 +201,15 @@ function commitTextSurface(nodeId,surface,typingGroup){
     const value=node.type===NODE_TYPES.RICHTEXT?richTextEditorToDocument(surface):surface instanceof HTMLTextAreaElement?surface.value:surface.innerText;
     const saved=command(node.type===NODE_TYPES.RICHTEXT?'richtext.content.set':'element.content.set',
       node.type===NODE_TYPES.RICHTEXT?{nodeId,document:value}:{nodeId,content:value},{render:false,typingGroup});
-    if(saved){syncTextSurfaces(nodeId,value,surface);setStatus('Nem mentett módosítás');syncPublishControls()}
+    if(saved){
+      syncTextSurfaces(nodeId,value,surface);
+      // A Content fül külön szerkesztett szövege is ugyanazt a szerveroldali
+      // kötelezőtartalom-útmutatást frissíti; nincs Inspector újrarender/IME-fókuszvesztés.
+      if(node.type!==NODE_TYPES.RICHTEXT)inspector.querySelector('.element-content-controls')?.dispatchEvent(
+        new CustomEvent('editor:external-content-updated',{detail:{nodeId,key:'text',value}})
+      );
+      setStatus('Nem mentett módosítás');syncPublishControls();
+    }
     return saved;
   }catch(error){setStatus('A szöveg még nem menthető: '+(error instanceof Error?error.message:String(error)));return false}
 }
@@ -1400,7 +1408,9 @@ function renderInspector(){
       },{pending:flush=>{flushRichTextDraft=flush}}));
       else if(renderExistingContentInspector(node)){}
       else if(CONTENT_TYPES.includes(node.type))inspector.append(renderElementContentControls(node,{
-        exclude:textTypes.has(node.type)?['text']:[],pages,pending:flush=>{flushRichTextDraft=flush},
+        exclude:textTypes.has(node.type)?['text']:[],
+        resolveExternalField:key=>key==='text'?inspector.querySelector(`.plain-text-editor[data-text-node-id="${CSS.escape(node.id)}"]`):null,
+        pages,pending:flush=>{flushRichTextDraft=flush},
         apply:(patch,{typingGroup,render:fullRender=false}={})=>{const saved=command('content.properties.set',{nodeId:node.id,patch},{render:fullRender,typingGroup});if(saved&&!fullRender){renderCanvas();setStatus('Nem mentett módosítás');syncPublishControls()}return saved}
       }));
       else if(STRUCTURAL_TYPES.includes(node.type))inspector.append(Object.assign(document.createElement('p'),{className:'content-field-help',textContent:'Ez a tároló a gyermekeit jeleníti meg. Tartalomhoz adj hozzá szöveget, képet vagy más elemet.'}));
