@@ -27,13 +27,21 @@
     "plan_contract": "PASS 13/13",
     "canonical_plan": "PASS; 396 mappings, acceptance NOT_CERTIFIED",
     "git_diff_check": "PASS",
-    "production_release": "NOT DEPLOYED; this local change is not in the active Worker"
+    "production_release": "PASS; Workers Build deployed the commit and the live Worker modules match local SHA-256"
   },
   "remote_state": {
     "github_branch_v2_foundation": "53650fb540f4a20792ff1bb722aa6ee725a4077f",
-    "worker_active_version": "c684ddba-8587-4475-a50a-b08c7b4957ad",
+    "worker_active_version": "9361c835-4cb3-484b-b996-e00555f1c7b9",
+    "worker_deployment_id": "1c06ca35-b59d-4f51-910b-7804ef7a6921",
+    "workers_build_id": "bd18b095-f894-4285-829e-6c6efefe3a9f",
     "worker_traffic_percent": 100,
-    "local_changes_released": false
+    "local_changes_released": true,
+    "live_module_hashes_match": {
+      "public/editor-v2/core/capability-matrix.js": "7dd60706cfd8eb33d4b47041db120315138085d1083a92f6bda19dbeceea914d",
+      "public/editor-v2/core/property-values.js": "7258adc1ad21d85ae6f0299d80daaddc0316fc2f3184adadce2deacca4996314",
+      "public/editor-v2/core/property-registry.js": "2f0be1ca519d2c76ee091a59d979feed2fe5a30a92246450d48ae680b2f3580d"
+    },
+    "health": {"api_health": 200, "db_health": 200, "anonymous_admin": 401}
   },
   "acceptance": "NOT_CERTIFIED"
 }
