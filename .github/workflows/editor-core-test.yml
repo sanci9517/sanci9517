@@ -59,6 +59,7 @@ jobs:
           name: editor-layout-screenshots
           path: |
             /tmp/editor-issue42-*.png
+            /tmp/editor-general-fields-ime-*.png
             /tmp/creator-ux-p0-*.png
             /tmp/media-retention-*.png
             /tmp/media-integrity-*.png

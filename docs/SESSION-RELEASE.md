@@ -78,3 +78,7 @@ A bejelentkezett Admin Médiatár két paneljének interaktív elfogadása és a
 ## Későbbi felületi elfogadás — 2026-10-24
 
 A felhasználó képei igazolják a két panel éles, bejelentkezett láthatóságát és mindkét read-only diagnosztika befejezését üres médiatárral (0 ellenőrzött fájl, 0 eltérés, nincs további részlet vagy látható hiba). Ez a konkrét üres eseti kapu lezárt; a korábbi nyitott UI-állapot erre az esetre már nem érvényes. Az új `npm run test:media:storage` a tényleges Workert normál belépéssel, Chromium-feltöltéssel, natív lokális D1/R2-vel, nem üres tiszta és szándékosan hibás fixture-állapotokkal is ellenőrzi. Production adminsession hiányában éles képfeltöltést nem hajtottunk végre; a nem üres production elfogadás és a további fizikai/Editor-vizsgálatok nyitottak. [Részletes bizonyíték](evidence/media-nonempty-acceptance-2026-10-24.json).
+
+## Nem üres éles médiatár felhasználói visszaigazolása — 2026-10-24
+
+A felhasználó a kért éles feltöltési/diagnosztikai próbát és külön az archiválást ellenőrzöttként igazolta vissza: „Ellorizve es az atchiválás is”. A nem üres production kézi kapu így USER_REPORTED_PASS; ez nem az agent közvetlen adminmérése, új pontos darabszámot vagy R2-byte-egyezést nem igazolunk vele. [Frissített bizonyíték](evidence/media-nonempty-acceptance-2026-10-24.json). A következő fejlesztés a kanonikus 77.44 Inspector-paritási blokkon belül folytatódik; a történeti közös kiadási manifest/hash-eket nem írjuk át az új fejlesztés miatt.
