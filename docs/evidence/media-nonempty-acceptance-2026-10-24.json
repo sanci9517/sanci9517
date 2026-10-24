@@ -1,0 +1,62 @@
+{
+  "recorded_at": "2026-10-24T10:19:39.272248+00:00",
+  "base_sha": "45af966b43251994c1c80a3ae801cd6f6f41c6cd",
+  "production_user_evidence": {
+    "source": "User-supplied authenticated mobile screenshots; no session or credentials shared",
+    "screenshots": [
+      {
+        "filename": "1-1000012087.jpg",
+        "sha256": "54811e898f872b91cacd55a269bac5d5676d6920602a995ea5e4646658b00976",
+        "observation": "production-authenticated-panels-visible"
+      },
+      {
+        "filename": "1-1000012088.jpg",
+        "sha256": "2a88f19d89e5062d594e84606fc107abe83e96c8343ea399824b0585cac59eb1",
+        "observation": "production-authenticated-empty-diagnostics-complete"
+      }
+    ],
+    "retention_panel": "No requests shown",
+    "missing_audit": {
+      "checked": 0,
+      "missing": 0,
+      "complete": true
+    },
+    "orphan_audit": {
+      "checked": 0,
+      "candidates": 0,
+      "complete": true
+    },
+    "visible_error": false,
+    "scope": "Empty production media library only; screenshot does not prove upload or non-empty production diagnostics"
+  },
+  "local_nonempty_acceptance": {
+    "command": "npm run test:media:storage",
+    "status": "PASS",
+    "tests": 1,
+    "skipped": 0,
+    "implementation": "Actual Worker entry point, actual password login/session, Chromium, native Miniflare D1 and R2; production-derived committed DDL plus additive retention SQL, synthetic seeds only",
+    "cases": [
+      "Normal password login through the Worker",
+      "PNG upload through actual Admin UI and browser image decode",
+      "Stored R2 bytes match uploaded image SHA-256",
+      "Same bytes uploaded again reuse the original row/object",
+      "Non-empty clean missing/orphan diagnostics preserve D1 rows and R2 bytes",
+      "Archive changes metadata and preserves object bytes",
+      "Synthetic unregistered local R2 object is reported without deletion authorization",
+      "Synthetic missing archived file is reported without repair authorization",
+      "Retention refresh performs only GET and creates no request",
+      "foreign_key_check empty and quick_check=ok",
+      "390px viewport has no horizontal overflow"
+    ],
+    "production_data_used": false,
+    "production_uploads": 0,
+    "production_writes": 0,
+    "production_r2_deletions": 0
+  },
+  "production_nonempty_acceptance": {
+    "status": "OPEN",
+    "blocker": "This runtime has Cloudflare API access but no authenticated application browser/session; no production credentials requested or session forged",
+    "next_step": "User uploads one non-sensitive image through their existing logged-in Admin UI; then reruns both read-only diagnostics and shares counts/results",
+    "expected": "At least 1 checked file, 0 missing and 0 unregistered candidates if the current library contains only normally uploaded files; allow additional rows/parts if other files appear concurrently"
+  }
+}
