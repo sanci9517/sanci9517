@@ -17,7 +17,70 @@
     "scope": "79 types; absent, mixed and numeric/string/unknown version gates with empty content; no production writes"
   },
   "migration_preflight": "No migrations to apply",
-  "release": "pending push and verification",
+  "release": {
+    "source_commit": "53650fb540f4a20792ff1bb722aa6ee725a4077f",
+    "build": "4c504eac-8683-4907-b185-2314b288b404",
+    "status": "success",
+    "deployment": "f34ec7fe-b17a-4722-bffd-f32fc6e0877d",
+    "worker_version": "c684ddba-8587-4475-a50a-b08c7b4957ad",
+    "traffic_percent": 100,
+    "no_migrations": true,
+    "chromium_contract": {
+      "status": 200,
+      "types": 79,
+      "properties": 68,
+      "registered": 68,
+      "uncertified": true,
+      "plannedEmpty": true,
+      "prototypeSafe": true,
+      "mixed": [
+        "authored-v1",
+        "media-v1"
+      ],
+      "authoredFields": [
+        "src",
+        "assetId",
+        "alt",
+        "decorative",
+        "caption",
+        "fit",
+        "ratio",
+        "focalX",
+        "focalY",
+        "loading"
+      ],
+      "legacy": "legacy-or-unrecognized-version",
+      "sha256": "87d6a0c1ee3c74f0c128bb6c311aec5b6bdddc023f55d1e9a67278efbcc786e5",
+      "matchesLocal": true
+    },
+    "http": [
+      {
+        "path": "/api/health",
+        "status": 200
+      },
+      {
+        "path": "/api/db-health",
+        "status": 200
+      },
+      {
+        "path": "/api/admin/pages",
+        "status": 401
+      },
+      {
+        "path": "/editor-v2/app.js?v=20261024-content-profiles",
+        "status": 200,
+        "sha256": "cc8a235f6679847b4213e09de3d2e20ce9f40a42936e3265ec0ccd50666e0e19",
+        "matchesLocal": true
+      },
+      {
+        "path": "/editor-v2/editor-refresh.css?v=20261024-page-paths",
+        "status": 200,
+        "sha256": "b0a52f064dae3294e83df7d1f7053b564f4f0b58af0880e71e50c8db593f7b46",
+        "matchesLocal": true
+      }
+    ],
+    "github_checks": "Workers Builds, source-audit, twitch-integration, canonical-plan, verify success; editor-core in_progress at final check"
+  },
   "runtime_data_migration": false,
   "r2_deletions": false
 }
