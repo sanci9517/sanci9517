@@ -69,6 +69,46 @@ test('Inspector publication warning navigates to required field and updates with
   assert.equal(await page.locator('[aria-invalid="true"]').count(),0);
   assert.deepEqual(await page.evaluate(()=>window.__draftNode.props),{text:'Rövid felirat',description:'Részletes magyarázat'});
 
+  // In the actual Editor, Heading/Text/Button/Link use a sibling plain-text
+  // surface; the authored Inspector deliberately excludes the duplicate field.
+  await page.evaluate(async()=>{
+   const {renderElementContentControls}=await import('/editor-v2/ui/element-content-controls.js');
+   const node={id:'excluded-heading',type:'heading',props:{text:''},metadata:{contentVersion:1},locked:false};
+   const external=document.createElement('section');external.className='field plain-text-content';
+   const textarea=document.createElement('textarea');textarea.className='plain-text-editor';textarea.setAttribute('aria-label','Külön szövegmező');
+   external.append(textarea);
+   const panel=renderElementContentControls(node,{
+    apply:patch=>{Object.assign(node.props,patch);return true},
+    pending:()=>{},exclude:['text'],resolveExternalField:key=>key==='text'?textarea:null
+   });
+   document.querySelector('#host').replaceChildren(external,panel);
+   window.__draftNode=node;
+  });
+  const externalField=page.getByRole('textbox',{name:'Külön szövegmező'});
+  assert.match(await warning.textContent(),/A címsor nem lehet üres/);
+  assert.equal(await jump.isVisible(),true,'excluded field has a real navigation target');
+  assert.equal(await page.locator('.plain-text-content').evaluate(el=>el.classList.contains('editor-publication-required')),true);
+  await jump.click();
+  assert.equal(await externalField.evaluate(el=>el===document.activeElement),true);
+  await page.evaluate(()=>{
+   // A stale event for a different selected node must not change the warning.
+   document.querySelector('.element-content-controls').dispatchEvent(new CustomEvent('editor:external-content-updated',{
+    detail:{nodeId:'other',key:'text',value:'Másik elem'}
+   }));
+  });
+  assert.match(await warning.textContent(),/A címsor nem lehet üres/);
+  await externalField.fill('Külön szerkesztett főcím');
+  await page.evaluate(()=>{
+   window.__draftNode.props.text=document.querySelector('.plain-text-editor').value;
+   document.querySelector('.element-content-controls').dispatchEvent(new CustomEvent('editor:external-content-updated',{
+    detail:{nodeId:'excluded-heading',key:'text',value:window.__draftNode.props.text}
+   }));
+  });
+  await page.waitForFunction(()=>document.querySelector('.editor-publication-warning').hidden);
+  assert.equal(await jump.isHidden(),true);
+  assert.equal(await page.locator('.plain-text-content').evaluate(el=>el.classList.contains('editor-publication-required')),false);
+  assert.equal(await page.locator('[aria-invalid="true"]').count(),0);
+
   assert.deepEqual(errors,[]);
   await page.close();
  }
