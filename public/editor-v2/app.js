@@ -41,6 +41,7 @@ import {renderEmbedInspector} from './ui/creator-embed-inspector.js';
 import {defaultCodeSnippet,renderCodeSnippet,activateCodeBlocks} from './core/code-snippet.js';
 import {renderCodeSnippetInspector} from './ui/code-snippet-inspector.js';
 import {readRichTextSelectionFormatting,clearRichTextInlineFormatting} from './core/richtext-links.js';
+import {renderAccessibilityFields} from './ui/accessibility-fields.js';
 import {opaqueContrast} from './core/accessibility.js';
 import {STATE_PROPERTY_IDS,applyStateStyles} from './core/state-styles.js';
 import {defaultTokens,applyTokenVariables} from './core/design-tokens.js';
@@ -734,9 +735,13 @@ function renderStatesInspector(node){
 function renderAccessibilityInspector(node){
   const section=document.createElement('section');section.className='inspector-group';
   const title=document.createElement('div');title.className='inspector-group-title';title.innerHTML='<strong>Akadálymentesség és láthatóság</strong>';section.append(title);
-  for(const [key,label] of [['label','Képernyőolvasó elnevezés'],['id','Oldalbeli hivatkozási azonosító'],['lang','Tartalom nyelve (pl. hu)']].filter(([key])=>node.type!=='root'||key!=='id'))section.append(field(label,node.accessibility?.[key]||'',value=>command('accessibility.set',{nodeId:node.id,patch:{[key]:value}}),Boolean(node.locked)));
+  section.append(renderAccessibilityFields(node,(patch,{render:fullRender=true,typingGroup}={})=>{
+    const saved=command('accessibility.set',{nodeId:node.id,patch},{render:fullRender,typingGroup});
+    if(saved&&!fullRender){renderCanvas();setStatus('Nem mentett módosítás');syncPublishControls();}
+    return saved;
+  },{nodes:()=>page()?.nodes||{},pending:flush=>{flushRichTextDraft=flush}}));
   for(const device of ['desktop','tablet','mobile']){
-    const label=document.createElement('label');label.className='inspector-toggle';const input=document.createElement('input');input.type='checkbox';input.checked=isVisibleOnDevice(node,device);input.disabled=Boolean(node.locked)||node.type==='root';input.onchange=()=>command('element.visibility.set',{nodeId:node.id,device,visible:input.checked});label.append(input,document.createTextNode('Látható: '+device));section.append(label);
+    const label=document.createElement('label');label.className='inspector-toggle';const input=document.createElement('input');input.type='checkbox';input.checked=isVisibleOnDevice(node,device);input.disabled=Boolean(node.locked)||node.type==='root';input.onchange=()=>{if(command('element.visibility.set',{nodeId:node.id,device,visible:input.checked})===false)input.checked=isVisibleOnDevice(node,device);};label.append(input,document.createTextNode('Látható: '+device));section.append(label);
   }
   if(node.type!=='root'){
     const visibility=getNodeVisibilityState(page(),node.id,state.viewport.device);

@@ -5,7 +5,7 @@ import {createDocument} from '../core/schema.js';
 import {createEditorState,activePage} from '../core/state.js';
 import {execute} from '../core/commands.js';
 import {authoredNodeHtml,contentAttributes,contentTag,normalizeElementContent,validateElementContent,validatePageForPublication,contentProperties,imageFocalPosition} from '../core/authored-content.js';
-import {opaqueContrast} from '../core/accessibility.js';
+import {normalizeAccessibility,opaqueContrast} from '../core/accessibility.js';
 import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption,legacyMediaInspectorValues} from '../core/legacy-media-source.js';
 
 test('typed content edits preserve unknown legacy data and undo restores the complete node',()=>{
@@ -300,4 +300,23 @@ test('Countdown local view preserves sub-minute precision and canonical instants
   }
   for(const invalid of ['',null,undefined,'invalid'])assert.equal(countdownISOToLocal(invalid),'');
  }finally{if(previousTimezone===undefined)delete process.env.TZ;else process.env.TZ=previousTimezone;}
+});
+
+
+test('explicit accessibility edits replace their own legacy alias and Undo restores the full snapshot',()=>{
+ const state=createEditorState(createDocument());execute(state,{type:'element.add',payload:{type:'section'}});const id=state.selection.primaryId;
+ const legacy={label:'Old canonical',id:'old-canonical',ariaLabel:'Legacy label',anchorId:'legacy-anchor',lang:'hu'};
+ execute(state,{type:'element.update',payload:{nodeId:id,patch:{accessibility:legacy}}});const before=structuredClone(activePage(state).nodes[id]);
+ execute(state,{type:'accessibility.set',payload:{nodeId:id,patch:{label:'New label'}}});let node=activePage(state).nodes[id];
+ assert.equal(Object.hasOwn(node.accessibility,'ariaLabel'),false);assert.equal(node.accessibility.anchorId,'legacy-anchor');assert.equal(contentAttributes(node)['aria-label'],'New label');
+ execute(state,{type:'history.undo'});assert.deepEqual(activePage(state).nodes[id],before);
+ execute(state,{type:'accessibility.set',payload:{nodeId:id,patch:{id:'new-anchor'}}});node=activePage(state).nodes[id];
+ assert.equal(Object.hasOwn(node.accessibility,'anchorId'),false);assert.equal(node.accessibility.ariaLabel,'Legacy label');assert.equal(contentAttributes(node).id,'new-anchor');
+ execute(state,{type:'history.undo'});assert.deepEqual(activePage(state).nodes[id],before);
+});
+test('accessibility validation remains pure and preserves unrelated aliases and root identity rules',()=>{
+ const node={id:'node',type:'section',accessibility:{ariaLabel:'Legacy label',anchorId:'legacy-anchor',lang:'hu'}},before=structuredClone(node);
+ const changed=normalizeAccessibility(node,{lang:'de'},{node});assert.equal(changed.ariaLabel,'Legacy label');assert.equal(changed.anchorId,'legacy-anchor');assert.deepEqual(node,before);
+ assert.throws(()=>normalizeAccessibility(node,{id:'taken'},{node,other:{id:'other',accessibility:{id:'taken'}}}),/foglalt/);
+ assert.throws(()=>normalizeAccessibility(node,{lang:'h'}),/nyelv/);assert.throws(()=>normalizeAccessibility({...node,type:'root'},{id:'new-root'}),/védett/);assert.deepEqual(node,before);
 });

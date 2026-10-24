@@ -10,6 +10,10 @@ export function normalizeAccessibility(node,patch,nodes={}){
       }
       if(key==='lang'&&value&&!['en','hu','de','fr','es','it','pt','pl','ja','ko','zh'].includes(value))throw new Error('Nem támogatott nyelv.');
       result[key]=value;
+      // An explicit canonical edit replaces only its own legacy alias. Reads,
+      // validation and edits to other fields never mutate the saved snapshot.
+      if(key==='label')delete result.ariaLabel;
+      if(key==='id')delete result.anchorId;
     }else if(key==='decorative'&&typeof value==='boolean'&&['image','icon','divider','spacer'].includes(node.type))result[key]=value;
     else throw new Error('Nem támogatott akadálymentességi mező.');
   }
