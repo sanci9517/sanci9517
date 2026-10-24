@@ -5,3 +5,4 @@ export function safeMediaUrl(value: unknown): string;
 export const CONTENT_TYPES: readonly string[];
 
 export function imageFocalPosition(item?: {focalPoint?: unknown; focalX?: unknown; focalY?: unknown}): {focalX:number; focalY:number};
+export function getPublicationContentIssue(node: any): string | null;
