@@ -8,7 +8,7 @@ export function renderAccessibilityFields(node,apply,{nodes=()=>({}),pending=()=
  const attributes=contentAttributes(node);
  for(const [key,label,attribute] of [['label','Képernyőolvasó elnevezés','aria-label'],['id','Oldalbeli hivatkozási azonosító','id'],['lang','Tartalom nyelve (pl. hu)','lang']]){
   if(node.type==='root'&&key==='id')continue;
-  const wrap=document.createElement('label');wrap.className='field';wrap.append(document.createTextNode(label));
+  const wrap=document.createElement('label');wrap.className='field';wrap.append(Object.assign(document.createElement('span'),{textContent:label}));
   const input=document.createElement('input');input.value=attributes[attribute]||'';input.maxLength=key==='label'?160:80;input.disabled=Boolean(node.locked);input.setAttribute('aria-label',label);
   wrap.append(input,composition.attach(input,(value,options)=>{
    // Validate transient syntax/uniqueness locally. An invalid candidate stays
