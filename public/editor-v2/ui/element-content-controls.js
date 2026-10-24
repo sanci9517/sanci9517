@@ -1,4 +1,4 @@
-import {CONTENT_FIELDS,normalizeContentField,contentProperties,imageFocalPosition} from '../core/authored-content.js';
+import {CONTENT_FIELDS,normalizeContentField,contentProperties,imageFocalPosition,getPublicationContentIssue} from '../core/authored-content.js';
 
 export function pageLinkPicker(pages,input){
   const select=document.createElement('select');select.className='content-page-picker';select.setAttribute('aria-label','Belső oldal kiválasztása');
@@ -107,10 +107,22 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
   // replace it on rollback. Keep this mounted view's working values current
   // without writing into node.props or reconstructing focused text controls.
   const working=structuredClone(contentProperties(node));
+  // Advice only: a draft may be saved while a visible authored node is incomplete.
+  // Source of truth is the same pure requirement reader used by publication validation.
+  const publicationNote=document.createElement('p');
+  publicationNote.className='content-field-help editor-publication-warning';
+  publicationNote.setAttribute('role','status');
+  const refreshPublicationNote=()=>{
+    const issue=getPublicationContentIssue({...node,props:working});
+    publicationNote.textContent=issue?'Publikálás előtt: '+issue:'';
+    publicationNote.hidden=!issue;
+  };
+  refreshPublicationNote();
+  root.append(publicationNote);
   const write=(patch,options={})=>{
     const result=apply(patch,options);
     if(result===false)throw new Error('A módosítás nem alkalmazható.');
-    Object.assign(working,structuredClone(patch));return result;
+    Object.assign(working,structuredClone(patch));refreshPublicationNote();return result;
   };
   const group=(fields,read,commit)=>{
     const views=new Map(),keys=new Set(fields.map(field=>field.key));
