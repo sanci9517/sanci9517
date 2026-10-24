@@ -939,7 +939,11 @@ function renderMultiInspector(nodes){
    input.min='0';input.max=key==='opacity'?'1':'2000';input.step=key==='opacity'?'0.05':'1';
    input.setAttribute('aria-label',label);
    input.inputMode='decimal';
-   input.onchange=()=>{const v=Number(input.value);if(!input.value.trim()||!Number.isFinite(v)||v<0||(key==='opacity'&&v>1)||(key!=='opacity'&&v>2000))return;apply({[key]:unit?`${v}${unit}`:v})};
+   const validation=document.createElement('small');validation.className='property-validation';validation.id='multi-validation-'+key;validation.setAttribute('role','alert');input.setAttribute('aria-describedby',validation.id);
+   const validate=()=>{const v=Number(input.value),max=key==='opacity'?1:2000;const valid=Boolean(input.value.trim())&&Number.isFinite(v)&&v>=0&&v<=max;validation.textContent=valid?'':`${label}: 0 és ${max} közötti számot adj meg.`;input.setAttribute('aria-invalid',String(!valid));return valid};
+   input.oninput=validate;
+   input.onchange=()=>{if(!validate())return;const v=Number(input.value);apply({[key]:unit?`${v}${unit}`:v})};
+   row.append(validation);
   }
   row.append(input);if(unit){const u=document.createElement('small');u.textContent=unit;row.append(u)}
   panel.append(row);
@@ -1528,7 +1532,7 @@ function revealInspectorValidationError(error){
   window.sanciEditor?.openPanel?.('right');
   requestAnimationFrame(()=>{
     if(!error.isConnected)return;
-    const field=error.closest('.typed-inspector-field,.field');
+    const field=error.closest('.typed-inspector-field,.field,.multi-inspector-field');
     const input=field?.querySelector('input:not(:disabled),textarea:not(:disabled),select:not(:disabled)');
     if(input?.getClientRects().length)input.focus({preventScroll:true});
     error.scrollIntoView({block:'nearest',behavior:'smooth'});

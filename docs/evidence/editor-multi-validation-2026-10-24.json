@@ -1,0 +1,18 @@
+{
+  "scope": "77.44 multi-selection Inspector numeric validation",
+  "tests": {
+    "unit": 2,
+    "full_route_editor": 377,
+    "chromium": 2,
+    "widths": [
+      390,
+      1366
+    ],
+    "typecheck": "PASS"
+  },
+  "browser_scope": "synthetic local API; invalid input blocks keyboard Save and button Save/Publish; repaired width reaches both nodes in one saved document",
+  "production_migration_preflight": "No migrations to apply",
+  "production_migrations": false,
+  "r2_deletions": false,
+  "release": "pending push and verification"
+}
