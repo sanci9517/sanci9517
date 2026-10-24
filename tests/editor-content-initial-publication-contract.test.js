@@ -5,6 +5,8 @@ import {createElementContent, validateElementContent as validateStructuredConten
 import {CONTENT_FIELDS, contentProperties} from '../public/editor-v2/core/authored-content.js';
 import {getElementContentContract} from '../public/editor-v2/core/content-profiles.js';
 import {validatePublishDocument} from '../src/core/editor-validation.ts';
+import {createEditorState} from '../public/editor-v2/core/state.js';
+import {execute} from '../public/editor-v2/core/commands.js';
 
 // 77.44.7.A: regression evidence for real initial values versus publication gates.
 // Do not synthesize initial defaults from Inspector field metadata.
@@ -83,4 +85,45 @@ test('versioned media must satisfy their own server gate without changing legacy
   assert.equal(probe('image',{metadata:{editorContentVersion:1}}).publish(),'INVALID_MEDIA_SOURCE');
   assert.equal(probe('image',{metadata:{editorContentVersion:1},props:{src:'/photo.png'}}).publish(),'IMAGE_ALT_REQUIRED');
   assert.equal(probe('image',{metadata:{editorContentVersion:1},props:{src:'/photo.png',alt:'Fotó'}}).publish(),null);
+});
+
+test('canonical element.add supplies real initial content and version gates',()=>{
+  const cases=[
+    ['badge','basicContentVersion','text','Címke'],
+    ['quote','basicContentVersion','text','Ide írd az idézetet'],
+    ['icon','basicContentVersion','icon','star'],
+    ['list','structuredContentVersion','contentModel',undefined],
+    ['gallery','structuredContentVersion','contentModel',undefined],
+    ['carousel','structuredContentVersion','contentModel',undefined],
+    ['code','codeSnippetVersion','codeSnippet',undefined],
+    ['image','editorContentVersion','src',undefined]
+  ];
+  for(const [type,marker,key,expected] of cases){
+    const state=createEditorState();
+    execute(state,{type:'element.add',payload:{type}});
+    const page=state.document.pages[state.document.activePageId];
+    const node=page.nodes[state.selection.primaryId];
+    assert.equal(node.metadata[marker],1,type);
+    if(expected!==undefined)assert.equal(node.props[key],expected,type);
+    else if(type!=='image')assert.ok(node.props[key],type);
+    const contract=getElementContentContract(node);
+    assert.ok(contract.profiles.some(profile=>profile.marker===marker),type);
+    if(type==='gallery')assert.equal(validatePublishDocument(state.document,page.id),'INVALID_GALLERY_IMAGE');
+    if(type==='image')assert.equal(validatePublishDocument(state.document,page.id),'INVALID_MEDIA_SOURCE');
+    if(type==='list'||type==='carousel'||type==='badge'||type==='quote'||type==='icon'||type==='code')
+      assert.equal(validatePublishDocument(state.document,page.id),null,type);
+  }
+});
+
+test('authored element.add does not inherit legacy content markers or invented media source',()=>{
+  for(const type of ['heading','image','gallery','carousel','button']){
+    const state=createEditorState();
+    execute(state,{type:'element.add',payload:{type,authored:true}});
+    const page=state.document.pages[state.document.activePageId];
+    const node=page.nodes[state.selection.primaryId];
+    assert.equal(node.metadata.contentVersion,1,type);
+    assert.equal(node.metadata.editorContentVersion,undefined,type);
+    assert.equal(node.metadata.structuredContentVersion,undefined,type);
+    assert.equal(validatePublishDocument(state.document,page.id),'INCOMPLETE_EDITOR_CONTENT',type);
+  }
 });
