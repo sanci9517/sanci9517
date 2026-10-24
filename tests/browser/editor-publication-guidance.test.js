@@ -42,6 +42,33 @@ test('Inspector publication warning navigates to required field and updates with
   assert.equal(await jump.isHidden(),true);
   assert.equal(await field.evaluate(el=>el.classList.contains('editor-publication-required')),false);
   assert.equal(await page.evaluate(()=>window.__draftNode.props.text),'Kitöltött főcím');
+
+  // The same warning must redirect to the *next* required field after an edit.
+  await page.evaluate(async()=>{
+   const {renderElementContentControls}=await import('/editor-v2/ui/element-content-controls.js');
+   const node={type:'tooltip',name:'Magyarázat',props:{text:'',description:''},metadata:{contentVersion:1},locked:false};
+   document.querySelector('#host').replaceChildren(renderElementContentControls(node,{
+    apply:patch=>{Object.assign(node.props,patch);return true},pending:()=>{}
+   }));
+   window.__draftNode=node;
+  });
+  assert.match(await warning.textContent(),/Felirat és magyarázat/);
+  assert.equal(await page.locator('[data-content-key="text"]').evaluate(el=>el.classList.contains('editor-publication-required')),true);
+  await jump.click();
+  const titleInput=page.locator('[data-content-key="text"] input');
+  assert.equal(await titleInput.evaluate(el=>el===document.activeElement),true);
+  await titleInput.fill('Rövid felirat');
+  const description=page.locator('[data-content-key="description"] textarea');
+  await page.waitForFunction(()=>document.querySelector('[data-content-key="description"]').classList.contains('editor-publication-required'));
+  assert.equal(await jump.isVisible(),true);
+  await jump.click();
+  assert.equal(await description.evaluate(el=>el===document.activeElement),true);
+  await description.fill('Részletes magyarázat');
+  await page.waitForFunction(()=>document.querySelector('.editor-publication-warning').hidden);
+  assert.equal(await jump.isHidden(),true);
+  assert.equal(await page.locator('[aria-invalid="true"]').count(),0);
+  assert.deepEqual(await page.evaluate(()=>window.__draftNode.props),{text:'Rövid felirat',description:'Részletes magyarázat'});
+
   assert.deepEqual(errors,[]);
   await page.close();
  }
