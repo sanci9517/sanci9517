@@ -1,13 +1,14 @@
 import {createCompositionInputs} from './composition-inputs.js';
 /* Inspector-only controls for canonical static content. All edits call the command API. */
 import {createElementContent,normalizeElementContent,isStructuredType} from '../core/element-content.js';
+const focusRequests=new WeakMap();
 const typeLabels={list:'Lista',table:'Táblázat',tabs:'Fülek',accordion:'Lenyitható blokkok',gallery:'Galéria',carousel:'Tartalom-carousel'};
 export function renderStructuredInspector(node,update,{pending=()=>{}}={}){
  const composition=createCompositionInputs(pending);
  if(!isStructuredType(node.type))return null;
  let model;try{model=normalizeElementContent(node.type,node.props?.contentModel??createElementContent(node.type))}
  catch{model=createElementContent(node.type)}
- const section=document.createElement('section');section.className='structured-inspector';
+ const section=document.createElement('section');section.className='structured-inspector';section.dataset.nodeId=node.id;
  const title=document.createElement('h3');title.textContent=typeLabels[node.type];section.append(title);
  const help=document.createElement('p');help.className='structured-inspector-help';
  help.textContent='A változtatások piszkozatban maradnak. A publikus oldal csak külön publikálás után frissül.';section.append(help);
@@ -16,8 +17,29 @@ export function renderStructuredInspector(node,update,{pending=()=>{}}={}){
   if(result!==false)model=normalized;
   return result;
  };
- const action=(label,fn,disabled=false)=>{
-  const button=document.createElement('button');button.type='button';button.className='structured-action';button.textContent=label;button.disabled=Boolean(node.locked||disabled);button.onclick=fn;return button;
+ const structural=(next,target)=>save(next)===false?null:target;
+ const action=(label,fn,disabled=false,kind='')=>{
+  const button=document.createElement('button');button.type='button';button.className='structured-action';button.textContent=label;button.disabled=Boolean(node.locked||disabled);
+  if(kind)button.dataset.structuredAction=kind;
+  button.onclick=()=>{
+   if(button.disabled)return;
+   const doc=section.ownerDocument,ownedFocus=doc.activeElement===button,request={};focusRequests.set(doc,request);
+   const target=fn();
+   if(!ownedFocus||!target||section.isConnected)return;
+   const current=[...doc.querySelectorAll('#inspectorBody .structured-inspector')].find(view=>view.dataset.nodeId===node.id);
+   if(!current)return;
+   // Bind to the exact replacement view. A newer action, selection or render
+   // invalidates the request, even when it selects the same node again.
+   requestAnimationFrame(()=>{
+    if(focusRequests.get(doc)!==request||!current.isConnected||doc.activeElement!==doc.body||current.closest('#rightDock')?.classList.contains('closed'))return;
+    const row=current.querySelectorAll('.structured-item')[target.row];
+    const moves=[...(row?.querySelectorAll('[data-structured-action="up"]:not(:disabled),[data-structured-action="down"]:not(:disabled)')||[])];
+    const preferred=moves.find(move=>move.dataset.structuredAction===target.action);
+    const field=row?.querySelectorAll('.structured-input input:not(:disabled),.structured-input textarea:not(:disabled)')[target.col??0];
+    const control=(target.action?(preferred||moves[0]||field):field);
+    if(control?.getClientRects().length)control.focus({preventScroll:false});
+   });
+  };return button;
  };
  const input=(name,value,onChange,multi=false,maxLength=500)=>{
   const label=document.createElement('label');label.className='field structured-input';
@@ -34,20 +56,20 @@ export function renderStructuredInspector(node,update,{pending=()=>{}}={}){
  }
  if(node.type==='table'){
   const cols=model.rows[0].length;
-  tools.append(action('＋ Sor',()=>save({...model,rows:[...model.rows,Array(cols).fill('')]}),model.rows.length>=40),
-   action('＋ Oszlop',()=>save({...model,rows:model.rows.map(r=>[...r,''])}),cols>=12),
-   action('− Utolsó oszlop',()=>save({...model,rows:model.rows.map(r=>r.slice(0,-1))}),cols<=1));
+  tools.append(action('＋ Sor',()=>structural({...model,rows:[...model.rows,Array(cols).fill('')]},{row:model.rows.length}),model.rows.length>=40,'add-row'),
+   action('＋ Oszlop',()=>structural({...model,rows:model.rows.map(r=>[...r,''])},{row:0,col:cols}),cols>=12,'add-column'),
+   action('− Utolsó oszlop',()=>structural({...model,rows:model.rows.map(r=>r.slice(0,-1))},{row:0,col:cols-2}),cols<=1,'remove-column'));
   section.append(tools);
   model.rows.forEach((row,ri)=>{
    const item=document.createElement('fieldset');item.className='structured-item';const legend=document.createElement('legend');legend.textContent=ri===0?'Fejléc':`Sor ${ri}`;item.append(legend);
    row.forEach((v,ci)=>item.append(input(`Oszlop ${ci+1}`,v,(val,options)=>{const rows=model.rows.map(r=>[...r]);rows[ri][ci]=val;return save({...model,rows},options)})));
-   item.append(action('Sor törlése',()=>save({...model,rows:model.rows.filter((_,i)=>i!==ri)}),model.rows.length===1||ri===0));
+   item.append(action('Sor törlése',()=>structural({...model,rows:model.rows.filter((_,i)=>i!==ri)},{row:Math.min(ri,model.rows.length-2)}),model.rows.length===1||ri===0,'remove-row'));
    section.append(item);
   });
  }else{
   const items=model.items;
   const defaults={list:()=>'',tabs:()=>({label:'Új fül',content:'Írd ide a tartalmat'}),accordion:()=>({label:'Új kérdés',content:'Írd ide a választ'}),gallery:()=>({src:'',alt:'',caption:''}),carousel:()=>({label:'Új dia',content:'Írd ide a tartalmat',src:'',alt:''})};
-  tools.append(action('＋ Új elem',()=>save({...model,items:[...model.items,defaults[node.type]()] }),items.length>=40));
+  tools.append(action('＋ Új elem',()=>structural({...model,items:[...model.items,defaults[node.type]()]},{row:model.items.length}),items.length>=40,'add'));
   section.append(tools);
   items.forEach((entry,i)=>{
    const item=document.createElement('fieldset');item.className='structured-item';
@@ -69,9 +91,9 @@ export function renderStructuredInspector(node,update,{pending=()=>{}}={}){
    }
    const controls=document.createElement('div');controls.className='structured-actions';
    controls.append(
-    action('↑ Fel',()=>{const copy=[...model.items];[copy[i-1],copy[i]]=[copy[i],copy[i-1]];save({...model,items:copy})},i===0),
-    action('↓ Le',()=>{const copy=[...model.items];[copy[i+1],copy[i]]=[copy[i],copy[i+1]];save({...model,items:copy})},i===items.length-1),
-    action('× Törlés',()=>save({...model,items:model.items.filter((_,index)=>index!==i)}),items.length<=1)
+    action('↑ Fel',()=>{const copy=[...model.items];[copy[i-1],copy[i]]=[copy[i],copy[i-1]];return structural({...model,items:copy},{row:i-1,action:'up'})},i===0,'up'),
+    action('↓ Le',()=>{const copy=[...model.items];[copy[i+1],copy[i]]=[copy[i],copy[i+1]];return structural({...model,items:copy},{row:i+1,action:'down'})},i===items.length-1,'down'),
+    action('× Törlés',()=>structural({...model,items:model.items.filter((_,index)=>index!==i)},{row:Math.min(i,model.items.length-2)}),items.length<=1,'remove')
    );item.append(controls);section.append(item);
   });
  }

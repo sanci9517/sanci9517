@@ -155,16 +155,38 @@ test('structured Inspector editing survives Save, Publish and public interaction
    else expectedModels[type].items[rowIndex][key]=final;
   }
  }
- // Structural operations must consume the freshly edited model, too.
- for(const type of Object.keys(expectedModels)){
-  await select(ids[type]);const panel=editor.locator('.structured-inspector'),rows=panel.locator('.structured-item');
+ const expectFocus=async target=>{
+  await target.waitFor();await editor.evaluate(()=>new Promise(resolve=>requestAnimationFrame(resolve)));
+  assert.equal(await target.evaluate(el=>el===document.activeElement),true,'keyboard structural action restores the intended Inspector control');
+ };
+ const keyboard=async button=>{await button.focus();await button.press('Enter');};
+ for(const width of [390,1366])for(const type of Object.keys(expectedModels)){
+  await editor.setViewportSize({width,height:900});await select(ids[type]);const panel=editor.locator('.structured-inspector'),rows=panel.locator('.structured-item');
+  const cell=(row,col=0)=>rows.nth(row).locator('.structured-input input,.structured-input textarea').nth(col);
   if(type==='table'){
-   await panel.getByRole('button',{name:'＋ Oszlop',exact:true}).click();await panel.getByRole('button',{name:'− Utolsó oszlop',exact:true}).click();
-   await panel.getByRole('button',{name:'＋ Sor',exact:true}).click();await rows.last().getByRole('button',{name:'Sor törlése',exact:true}).click();
+   await keyboard(panel.getByRole('button',{name:'＋ Oszlop',exact:true}));await expectFocus(cell(0,2));
+   await keyboard(panel.getByRole('button',{name:'− Utolsó oszlop',exact:true}));await expectFocus(cell(0,1));
+   await keyboard(panel.getByRole('button',{name:'＋ Sor',exact:true}));await expectFocus(cell(2));
+   await keyboard(rows.last().getByRole('button',{name:'Sor törlése',exact:true}));await expectFocus(cell(1));
+   await keyboard(rows.last().getByRole('button',{name:'Sor törlése',exact:true}));await expectFocus(cell(0));
+   await editor.keyboard.press('Control+z');assert.equal(await rows.count(),2,'the protected header survives deletion of the last data row');
   }else{
-   await panel.getByRole('button',{name:'＋ Új elem',exact:true}).click();await rows.last().getByRole('button',{name:'× Törlés',exact:true}).click();
-   await rows.first().getByRole('button',{name:'↓ Le',exact:true}).click();await rows.nth(1).getByRole('button',{name:'↑ Fel',exact:true}).click();
-   if(type==='list'){const ordered=panel.getByRole('checkbox',{name:'Számozott lista'});await ordered.check();await ordered.uncheck();}
+   const originalCount=expectedModels[type].items.length;
+   await keyboard(panel.getByRole('button',{name:'＋ Új elem',exact:true}));await expectFocus(cell(originalCount));
+   await keyboard(rows.last().getByRole('button',{name:'× Törlés',exact:true}));await expectFocus(cell(originalCount-1));
+   await keyboard(rows.first().getByRole('button',{name:'↓ Le',exact:true}));await expectFocus(rows.nth(1).getByRole('button',{name:originalCount===2?'↑ Fel':'↓ Le',exact:true}));
+   await keyboard(rows.nth(1).getByRole('button',{name:'↑ Fel',exact:true}));await expectFocus(rows.first().getByRole('button',{name:'↓ Le',exact:true}));
+   if(type==='list'){
+    await keyboard(rows.first().getByRole('button',{name:'↓ Le',exact:true}));await expectFocus(rows.nth(1).getByRole('button',{name:'↓ Le',exact:true}));
+    await keyboard(rows.nth(1).getByRole('button',{name:'↓ Le',exact:true}));await expectFocus(rows.last().getByRole('button',{name:'↑ Fel',exact:true}));
+    await keyboard(rows.last().getByRole('button',{name:'↑ Fel',exact:true}));await expectFocus(rows.nth(1).getByRole('button',{name:'↑ Fel',exact:true}));
+    await keyboard(rows.nth(1).getByRole('button',{name:'↑ Fel',exact:true}));await expectFocus(rows.first().getByRole('button',{name:'↓ Le',exact:true}));
+    for(const index of [1,0,2]){
+     await keyboard(rows.nth(index).getByRole('button',{name:'× Törlés',exact:true}));await expectFocus(cell(Math.min(index,1)));
+     await editor.keyboard.press('Control+z');assert.equal(await rows.count(),3,'Undo restores the full original list');
+    }
+    const ordered=panel.getByRole('checkbox',{name:'Számozott lista'});await ordered.check();await ordered.uncheck();
+   }
   }
  }
  await select(ids.tabs);
@@ -313,5 +335,34 @@ test('structured Inspector editing survives Save, Publish and public interaction
   }return results;
  });
  for(const result of structuredRecovery)for(const key of ['rejected','escaped','fresh','unchanged','lockedSafe'])assert.equal(result[key],true,JSON.stringify(result));
+ const focusGuards=await editor.evaluate(async()=>{
+  const {renderStructuredInspector}=await import('/editor-v2/ui/structured-inspector.js');
+  const {createElementContent}=await import('/editor-v2/core/element-content.js');
+  const host=document.createElement('div');document.querySelector('#inspectorBody').append(host);
+  const outside=document.createElement('button');outside.textContent='Másik vezérlő';document.body.append(outside);
+  const frame=()=>new Promise(resolve=>requestAnimationFrame(resolve));
+  const make=(id,model=createElementContent('list'),type='list',locked=false)=>({id,type,locked,props:{contentModel:model}});
+  const button=kind=>host.querySelector(`[data-structured-action="${kind}"]`);
+  const mount=(node,apply)=>{host.replaceChildren(renderStructuredInspector(node,apply));};
+  const checks={};let calls=0;
+  mount(make('rejected-focus'),()=>{calls++;return false;});button('add').focus();const rejected=button('add');rejected.click();await frame();
+  checks.rejected=calls===1&&document.activeElement===rejected&&host.querySelectorAll('.structured-item').length===3;
+  const initial=make('focus-fixture');
+  const apply=next=>{mount(make(initial.id,next),apply);return true;};
+  mount(initial,apply);button('add').focus();button('add').click();outside.focus();await frame();checks.newerFocus=document.activeElement===outside;
+  mount(initial,apply);button('add').focus();button('add').click();mount(make('different-node'),()=>true);await frame();checks.differentNode=document.activeElement===document.body;
+  mount(initial,apply);button('add').focus();button('add').click();mount(initial,apply);await frame();checks.sameNodeNewRender=document.activeElement===document.body;
+  const dock=document.querySelector('#rightDock'),wasClosed=dock.classList.contains('closed');
+  mount(initial,apply);button('add').focus();button('add').click();dock.classList.add('closed');await frame();checks.closedPanel=document.activeElement===document.body;dock.classList.toggle('closed',wasClosed);
+  mount(initial,apply);outside.focus();button('add').click();await frame();checks.programmatic=document.activeElement===outside;
+  mount(initial,apply);button('add').focus();button('add').click();button('add').focus();button('add').click();await frame();
+  const last=host.querySelector('.structured-item:last-of-type .structured-input textarea');checks.newestAction=host.querySelectorAll('.structured-item').length===5&&document.activeElement===last;
+  calls=0;
+  for(const node of [make('locked-focus',undefined,'list',true),make('minimum-list',{version:1,ordered:false,items:['One']}),make('maximum-list',{version:1,ordered:false,items:Array(40).fill('One')}),make('minimum-table',{version:1,rows:[['Header']]},'table'),make('maximum-table',{version:1,rows:[Array(12).fill('Header')]},'table')]){
+   mount(node,()=>{calls++;return true;});for(const disabled of host.querySelectorAll('button:disabled'))disabled.click();
+  }
+  checks.disabled=calls===0;host.remove();outside.remove();return checks;
+ });
+ assert.deepEqual(focusGuards,{rejected:true,newerFocus:true,differentNode:true,sameNodeNewRender:true,closedPanel:true,programmatic:true,newestAction:true,disabled:true});
  assert.deepEqual(errors,[]);
 });
