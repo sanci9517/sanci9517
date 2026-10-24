@@ -18,6 +18,7 @@ async function fixture(t,handler,width=390){
   const url=new URL(req.url,'http://localhost');
   if(url.pathname==='/api/admin/media'){
    calls.push({method:req.method,query:url.search,cache:req.headers['cache-control']});
+   if(url.searchParams.has('retentionStatus'))return json(res,{ok:true,data:{migrationActive:true,requests:[],complete:true,permanentDeletionAuthorized:false}});
    if(url.searchParams.has('missingAudit')||url.searchParams.has('orphanAudit'))return handler(req,res,url);
    if(url.searchParams.has('id')){res.writeHead(200,{'content-type':'image/png'});return res.end(Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/l5sAAAAASUVORK5CYII=','base64'));}
    return json(res,{ok:true,data:{assets:[{id:id(999),name:'Médiatár fixture.png',mimeType:'image/png',sizeBytes:10,altText:''}]}});
@@ -45,6 +46,9 @@ for(const width of [390,1366])test(`integrity diagnostics start manually and sho
   if(url.searchParams.has('missingAudit')){finish=()=>json(res,{ok:true,data:missing([row(),{...row(2),archived:true}])});return;}
   json(res,{ok:true,data:orphan([long])});
  },width);
+ const retention=f.page.getByRole('region',{name:'Adatmegőrzési kérelmek',exact:true});
+ await f.page.waitForFunction(()=>document.querySelector('#mediaRetentionPanel').dataset.state==='empty');
+ assert.equal(await retention.getByRole('status').textContent(),'Nincs adatmegőrzési kérelem.','both integrated panels load successfully');
  assert.equal(f.audits().length,0,'page load must not scan storage');
  assert.match(await f.panels.orphan.textContent(),/folyamatban lévő feltöltés/);
  const start=f.panels.missing.locator('[data-audit-start]');
@@ -58,6 +62,11 @@ for(const width of [390,1366])test(`integrity diagnostics start manually and sho
  await f.panels.orphan.getByRole('button',{name:'Nyilvántartás egyeztetése'}).click();await f.state('orphan','findings');
  assert.equal(await f.panels.orphan.locator('li p').textContent(),'Tárolt fájl azonosítója: '+long);
  assert.equal(await f.panels.orphan.locator('a').count(),0,'private object keys must not turn into URLs');
+ const scans=f.audits().length;
+ await retention.getByRole('button',{name:'Állapot frissítése',exact:true}).click();
+ await f.page.waitForFunction(()=>document.querySelector('#mediaRetentionPanel').dataset.state==='empty');
+ assert.equal(f.audits().length,scans,'retention refresh cannot start or repeat an integrity scan');
+ assert.equal(await f.panels.missing.locator('li').count(),2);assert.equal(await f.panels.orphan.locator('li').count(),1,'both diagnostic results survive the other panel refresh');
  assert.ok(f.calls.every(c=>c.method==='GET'));assert.deepEqual(f.errors,[]);
  assert.ok(await f.page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
  await f.region.screenshot({path:`/tmp/media-integrity-${width}.png`});

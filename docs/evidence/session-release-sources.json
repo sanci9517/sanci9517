@@ -1,0 +1,671 @@
+{
+  "version": 1,
+  "stage": "integration-preparation",
+  "base": "caf91bf91ca4937805c7bbf527de944893c11f78",
+  "observed_on": "2026-10-24",
+  "required_pr_range": [
+    292,
+    312
+  ],
+  "sources": [
+    {
+      "pr": 292,
+      "url": "https://github.com/sanci9517/sanci9517/pull/292",
+      "source_head": "08abbd21c4baa2c7966c650f81965eb3840f7553",
+      "title": "Reconcile manual D1 ledger and verify additive retention rollout",
+      "observed_state": "OPEN",
+      "observed_checks": "5/5 PASS",
+      "contributions": [
+        {
+          "source_commit": "04cdd92d9e0edc86f4a8d0769cd8fb5c2b6eafab",
+          "integrated_commit": "ad0806c18ab819c993bf4a3f3b1aecc9723d8abd",
+          "subject": "Prepare guarded D1 ledger reconciliation and fresh bootstrap"
+        },
+        {
+          "source_commit": "e3100169de077cbd1dc1f1c75bf4a99749cdd25f",
+          "integrated_commit": "1a35b1be792d5bb021088ae59b7c46e3673a53e3",
+          "subject": "Fix complete D1 backup restore ordering with targeted regression"
+        },
+        {
+          "source_commit": "78e868bf1fddbcb828a412972780f0a080788042",
+          "integrated_commit": "be0869c69359d33b54b976238fd0e406662120f0",
+          "subject": "Record verified production ledger reconciliation and blocked health check"
+        },
+        {
+          "source_commit": "15df2b208b4a630091920dc077119732b8a5ce99",
+          "integrated_commit": "5eb1970eae45ae2097195e7af492425f70e9cd03",
+          "subject": "Record verified retention schema rollout and resolved health probe"
+        },
+        {
+          "source_commit": "08abbd21c4baa2c7966c650f81965eb3840f7553",
+          "integrated_commit": "35d03e8a0f57a32c7984821b29cd2c4562ddc0da",
+          "subject": "Verify retention auth route and record user-confirmed production acceptance"
+        }
+      ]
+    },
+    {
+      "pr": 293,
+      "url": "https://github.com/sanci9517/sanci9517/pull/293",
+      "source_head": "3e1ece6b856adfcb576b82c8c65372fcba229e03",
+      "title": "Add safe media retention request and cancellation controls",
+      "observed_state": "OPEN",
+      "observed_checks": "5/5 PASS",
+      "contributions": [
+        {
+          "source_commit": "b8f2bed531ac2ef0d9b9d8d96df7e1f076411d89",
+          "integrated_commit": "834566f2c9d2eea3f4ae2da656b71aa9cf8f5668",
+          "subject": "Show read-only retention status in the media library"
+        },
+        {
+          "source_commit": "be7e6fcac4affdcad7155f34d84689447456ac59",
+          "integrated_commit": "332bdd977e3484ebcf8e5d23ca7678268ce8099f",
+          "subject": "Record passing CI for read-only media retention panel"
+        },
+        {
+          "source_commit": "3e1ece6b856adfcb576b82c8c65372fcba229e03",
+          "integrated_commit": "db950149320e578623365bff5b7b96f3d30667ca",
+          "subject": "Add confirmed media retention requests and cancellation"
+        }
+      ]
+    },
+    {
+      "pr": 294,
+      "url": "https://github.com/sanci9517/sanci9517/pull/294",
+      "source_head": "13cd569f0c7bb982ecbd4124a02002b12699264b",
+      "title": "Add manual read-only media integrity diagnostics",
+      "observed_state": "OPEN",
+      "observed_checks": "5/5 PASS",
+      "contributions": [
+        {
+          "source_commit": "13cd569f0c7bb982ecbd4124a02002b12699264b",
+          "integrated_commit": "bb7e0281fa89a58a92ed80245b0e62e77fddc07e",
+          "subject": "Add manual read-only media integrity diagnostics"
+        }
+      ]
+    },
+    {
+      "pr": 295,
+      "url": "https://github.com/sanci9517/sanci9517/pull/295",
+      "source_head": "2726f9b9d64b6b4e861c4982878990f82d5101c1",
+      "title": "Keep legacy media Inspectors usable with malformed saved data",
+      "observed_state": "OPEN",
+      "observed_checks": "5/5 PASS",
+      "contributions": [
+        {
+          "source_commit": "2726f9b9d64b6b4e861c4982878990f82d5101c1",
+          "integrated_commit": "9be540bbea5ca26aa2b47fe68729da296b8a880e",
+          "subject": "Keep legacy media Inspectors usable with malformed persisted data"
+        }
+      ]
+    },
+    {
+      "pr": 296,
+      "url": "https://github.com/sanci9517/sanci9517/pull/296",
+      "source_head": "6deb488cd6b369714f3b6107a2dcf8e66c7bc5fa",
+      "title": "Keep Card image source switches and removal consistent",
+      "observed_state": "OPEN",
+      "observed_checks": "5/5 PASS",
+      "contributions": [
+        {
+          "source_commit": "6deb488cd6b369714f3b6107a2dcf8e66c7bc5fa",
+          "integrated_commit": "9ad8fbf3446803a52e38476eefb080614019c0f6",
+          "subject": "Keep Card image source switches and removal consistent"
+        }
+      ]
+    },
+    {
+      "pr": 297,
+      "url": "https://github.com/sanci9517/sanci9517/pull/297",
+      "source_head": "0263aa3d034eb83e7a92cdf25b206b75448b48a4",
+      "title": "fix(editor): atomic authored image, gallery and poster source changes",
+      "observed_state": "OPEN",
+      "observed_checks": "5/5 PASS",
+      "contributions": [
+        {
+          "source_commit": "0263aa3d034eb83e7a92cdf25b206b75448b48a4",
+          "integrated_commit": "ff3010a4caa48200fd6c0e9bafbd1c4c5355710b",
+          "subject": "fix(editor): switch authored media sources atomically"
+        }
+      ]
+    },
+    {
+      "pr": 298,
+      "url": "https://github.com/sanci9517/sanci9517/pull/298",
+      "source_head": "2377dffcbadd48f702a4e30e6c63449a1fcb4e4b",
+      "title": "fix(editor): preserve keyboard focus when editing social link rows",
+      "observed_state": "OPEN",
+      "observed_checks": "5/5 PASS",
+      "contributions": [
+        {
+          "source_commit": "2377dffcbadd48f702a4e30e6c63449a1fcb4e4b",
+          "integrated_commit": "c9279d59b604597cf3053994d2b886184765c8ce",
+          "subject": "fix(editor): preserve social link structural action focus"
+        }
+      ]
+    },
+    {
+      "pr": 299,
+      "url": "https://github.com/sanci9517/sanci9517/pull/299",
+      "source_head": "9db781c430272ff90378129bbbee3ed99a74a0ba",
+      "title": "fix(editor): align gallery and carousel crop controls with rendered presets",
+      "observed_state": "OPEN",
+      "observed_checks": "5/5 PASS",
+      "contributions": [
+        {
+          "source_commit": "9db781c430272ff90378129bbbee3ed99a74a0ba",
+          "integrated_commit": "c8c76c1f94d4739f5164334870a7e7feefcb1d05",
+          "subject": "fix(editor): align legacy gallery crop controls with rendering"
+        }
+      ]
+    },
+    {
+      "pr": 300,
+      "url": "https://github.com/sanci9517/sanci9517/pull/300",
+      "source_head": "7f62e0cd0be78d0232bdfb2526d2ad934c998d46",
+      "title": "fix(editor): retain keyboard focus when activating embedded players",
+      "observed_state": "OPEN",
+      "observed_checks": "5/5 PASS",
+      "contributions": [
+        {
+          "source_commit": "7f62e0cd0be78d0232bdfb2526d2ad934c998d46",
+          "integrated_commit": "93ab6a01d62db9479f98ac415d3cd05520846ef5",
+          "subject": "fix(editor): retain focus when activating embedded players"
+        }
+      ]
+    },
+    {
+      "pr": 301,
+      "url": "https://github.com/sanci9517/sanci9517/pull/301",
+      "source_head": "15fbef109a4a23ea5f1bbc27ae9532689ee3c484",
+      "title": "fix(editor): validate countdown local time and preserve precise deadlines",
+      "observed_state": "OPEN",
+      "observed_checks": "5/5 PASS",
+      "contributions": [
+        {
+          "source_commit": "15fbef109a4a23ea5f1bbc27ae9532689ee3c484",
+          "integrated_commit": "b341d45e6c6de0e9ed4ab0ac6bf979dedc08830d",
+          "subject": "fix(editor): validate countdown wall time and preserve exact instants"
+        }
+      ]
+    },
+    {
+      "pr": 302,
+      "url": "https://github.com/sanci9517/sanci9517/pull/302",
+      "source_head": "5a6d2b79a8b56bf1b200662e4b751e389acfd2cf",
+      "title": "fix(editor): reject impossible countdown dates before publication",
+      "observed_state": "OPEN",
+      "observed_checks": "5/5 PASS",
+      "contributions": [
+        {
+          "source_commit": "5a6d2b79a8b56bf1b200662e4b751e389acfd2cf",
+          "integrated_commit": "dec9322c4b92dc374e21b4db596c02eb08a5b44f",
+          "subject": "fix(editor): reject impossible countdown calendar timestamps"
+        }
+      ]
+    },
+    {
+      "pr": 303,
+      "url": "https://github.com/sanci9517/sanci9517/pull/303",
+      "source_head": "411c924caea3840073ce88feb321c12b9ba5c37a",
+      "title": "fix(editor): protect code Inspector composition during Save and Publish",
+      "observed_state": "OPEN",
+      "observed_checks": "5/5 PASS",
+      "contributions": [
+        {
+          "source_commit": "411c924caea3840073ce88feb321c12b9ba5c37a",
+          "integrated_commit": "cf1f34cc3e179ec3eaecf28abeba2b48388f13d0",
+          "subject": "fix(editor): keep code inspector IME drafts out of Save and Publish"
+        }
+      ]
+    },
+    {
+      "pr": 304,
+      "url": "https://github.com/sanci9517/sanci9517/pull/304",
+      "source_head": "04751638930d4c4d5bf59139bfbeebb810ec2c28",
+      "title": "fix(editor): protect Social Links and Embed IME during Save and Publish",
+      "observed_state": "OPEN",
+      "observed_checks": "5/5 PASS",
+      "contributions": [
+        {
+          "source_commit": "04751638930d4c4d5bf59139bfbeebb810ec2c28",
+          "integrated_commit": "c39d594d8a4a84f6bc0329be287f47692cf9202b",
+          "subject": "fix(editor): protect social and embed Inspector composition"
+        }
+      ]
+    },
+    {
+      "pr": 305,
+      "url": "https://github.com/sanci9517/sanci9517/pull/305",
+      "source_head": "0867c8821f1bea995d9aae83b32f3ebdd1dafa15",
+      "title": "fix(editor): integrate Inspector media, focus, IME and countdown fixes",
+      "observed_state": "OPEN",
+      "observed_checks": "5/5 PASS",
+      "contributions": [
+        {
+          "source_commit": "0867c8821f1bea995d9aae83b32f3ebdd1dafa15",
+          "integrated_commit": "0867c8821f1bea995d9aae83b32f3ebdd1dafa15",
+          "subject": "test(editor): verify combined Inspector source crop focus and IME fixes"
+        }
+      ]
+    },
+    {
+      "pr": 306,
+      "url": "https://github.com/sanci9517/sanci9517/pull/306",
+      "source_head": "5b9327ba2cdc5340930ad59655c0f374a5f554a4",
+      "title": "fix(editor): protect Card Inspector IME and preserve media sources",
+      "observed_state": "OPEN",
+      "observed_checks": "5/5 PASS",
+      "contributions": [
+        {
+          "source_commit": "5b9327ba2cdc5340930ad59655c0f374a5f554a4",
+          "integrated_commit": "5b9327ba2cdc5340930ad59655c0f374a5f554a4",
+          "subject": "fix(editor): protect Card Inspector composition and preserve media source edits"
+        }
+      ]
+    },
+    {
+      "pr": 307,
+      "url": "https://github.com/sanci9517/sanci9517/pull/307",
+      "source_head": "ad00255b33a056280dd9a28a3ad0b960bad6aa3a",
+      "title": "fix(editor): preserve Countdown text drafts and date validation together",
+      "observed_state": "OPEN",
+      "observed_checks": "5/5 PASS",
+      "contributions": [
+        {
+          "source_commit": "ad00255b33a056280dd9a28a3ad0b960bad6aa3a",
+          "integrated_commit": "ad00255b33a056280dd9a28a3ad0b960bad6aa3a",
+          "subject": "fix(editor): combine Countdown text composition and date validation guards"
+        }
+      ]
+    },
+    {
+      "pr": 308,
+      "url": "https://github.com/sanci9517/sanci9517/pull/308",
+      "source_head": "2460ab147f0e7964ee890577b848356068c61781",
+      "title": "fix(editor): preserve legacy media Inspector IME and source selection",
+      "observed_state": "OPEN",
+      "observed_checks": "5/5 PASS",
+      "contributions": [
+        {
+          "source_commit": "2460ab147f0e7964ee890577b848356068c61781",
+          "integrated_commit": "2460ab147f0e7964ee890577b848356068c61781",
+          "subject": "fix(editor): preserve legacy media Inspector composition and source views"
+        }
+      ]
+    },
+    {
+      "pr": 309,
+      "url": "https://github.com/sanci9517/sanci9517/pull/309",
+      "source_head": "2ed471fa4ef0c584224c83ba8a45a69a59a0d64d",
+      "title": "fix(editor): protect badge quote and icon Inspector IME",
+      "observed_state": "OPEN",
+      "observed_checks": "5/5 PASS",
+      "contributions": [
+        {
+          "source_commit": "2ed471fa4ef0c584224c83ba8a45a69a59a0d64d",
+          "integrated_commit": "2ed471fa4ef0c584224c83ba8a45a69a59a0d64d",
+          "subject": "fix(editor): protect badge quote and icon Inspector composition"
+        }
+      ]
+    },
+    {
+      "pr": 310,
+      "url": "https://github.com/sanci9517/sanci9517/pull/310",
+      "source_head": "ad5de2acdccca4e2863e17c0fad3968047ae4f8e",
+      "title": "fix(editor): protect structured Inspector IME and preserve fresh row values",
+      "observed_state": "OPEN",
+      "observed_checks": "5/5 PASS",
+      "contributions": [
+        {
+          "source_commit": "ad5de2acdccca4e2863e17c0fad3968047ae4f8e",
+          "integrated_commit": "ad5de2acdccca4e2863e17c0fad3968047ae4f8e",
+          "subject": "fix(editor): preserve structured Inspector composition and current row values"
+        }
+      ]
+    },
+    {
+      "pr": 311,
+      "url": "https://github.com/sanci9517/sanci9517/pull/311",
+      "source_head": "c15deb8781cbc83ff90531b646c58c83e4d545d4",
+      "title": "fix(editor): restore keyboard focus after structured row and column actions",
+      "observed_state": "OPEN",
+      "observed_checks": "5/5 PASS",
+      "contributions": [
+        {
+          "source_commit": "c15deb8781cbc83ff90531b646c58c83e4d545d4",
+          "integrated_commit": "c15deb8781cbc83ff90531b646c58c83e4d545d4",
+          "subject": "fix(editor): restore structured Inspector keyboard focus after row operations"
+        }
+      ]
+    },
+    {
+      "pr": 312,
+      "url": "https://github.com/sanci9517/sanci9517/pull/312",
+      "source_head": "7c455ab98d71e169fe15705d96d848c439e49818",
+      "title": "fix(editor): protect accessibility drafts and publish matching attributes",
+      "observed_state": "OPEN",
+      "observed_checks": "5/5 PASS",
+      "contributions": [
+        {
+          "source_commit": "caee0f4afb2fd1a5ebde744258d37cac16f103ec",
+          "integrated_commit": "caee0f4afb2fd1a5ebde744258d37cac16f103ec",
+          "subject": "fix(editor): protect accessibility drafts and align published attributes"
+        },
+        {
+          "source_commit": "7c455ab98d71e169fe15705d96d848c439e49818",
+          "integrated_commit": "7c455ab98d71e169fe15705d96d848c439e49818",
+          "subject": "fix(editor): retain the existing accessibility field caption markup"
+        }
+      ]
+    }
+  ],
+  "byte_preserved_files": [
+    {
+      "path": "docs/D1-LEDGER-RECONCILIATION.md",
+      "source_pr": 292,
+      "sha256": "080a8eba7d7af9ce720d2924335895c02372e54265fa3563e14cb82cb1051379"
+    },
+    {
+      "path": "docs/evidence/d1-ledger-execution-2026-10-23.json",
+      "source_pr": 292,
+      "sha256": "fc342e31433938e471988021228bc4464ea52e2b999b3237d24dd5e94a78185e"
+    },
+    {
+      "path": "docs/evidence/d1-ledger-preflight.json",
+      "source_pr": 292,
+      "sha256": "214b9b5e7a908e1bef6f6d49f256050e1c8b5032d1612a7cd67a16c493848858"
+    },
+    {
+      "path": "docs/evidence/d1-retention-authenticated-local-2026-10-23.json",
+      "source_pr": 292,
+      "sha256": "cc96b97ba32c31250807489e8a72f1f883ea79f7ca189b6e0d7bbb1ae1612c97"
+    },
+    {
+      "path": "docs/evidence/d1-retention-authenticated-production-user-2026-10-23.json",
+      "source_pr": 292,
+      "sha256": "e091e159f0b1703837043ae4cef8c0c49bfb488c22d67f2fb63446f59c356c8d"
+    },
+    {
+      "path": "docs/evidence/d1-retention-execution-2026-10-23.json",
+      "source_pr": 292,
+      "sha256": "dfea8f1eaa163a69e6ad4d7b0ac9dbf77914366ee8a46906ad8b64622d980549"
+    },
+    {
+      "path": "scripts/d1/capture-preflight.py",
+      "source_pr": 292,
+      "sha256": "0f5cf713e21b5eeb537ad95f72e9fc86a3d338d2fbedad2de2e364cf95ac3f52"
+    },
+    {
+      "path": "scripts/d1/check-retention-route.mjs",
+      "source_pr": 292,
+      "sha256": "9a8a775f20db655867a05e12ca4e2880a5411c638b28a407cfdaf735a304c1f1"
+    },
+    {
+      "path": "scripts/d1/ledger-reconciliation.py",
+      "source_pr": 292,
+      "sha256": "44d19ed415b40473c73c248d49980e16eaaa0e96a8a4412b7016213e0ee7ffcb"
+    },
+    {
+      "path": "scripts/d1/manual-migrations.json",
+      "source_pr": 292,
+      "sha256": "8b9fbe7b985dd7893843dbe759c9e5eaa4f565835c0a96cf0194cd414565ec03"
+    },
+    {
+      "path": "scripts/d1/reconcile-0025-0028.sql",
+      "source_pr": 292,
+      "sha256": "cf516293f56fa136d158469490b2fc280cdd2a282706cbfd618323e64cbd903b"
+    },
+    {
+      "path": "scripts/d1/restore-order.py",
+      "source_pr": 292,
+      "sha256": "779ff3d74f8874e8c2924cfc13a089af0c7b3872d3a60e87692ae345dfc34192"
+    },
+    {
+      "path": "tests/d1-ledger-miniflare.mjs",
+      "source_pr": 292,
+      "sha256": "ba2f2d426069c9f129d80a150bd2316af9ac63acf8c874d6782c96c10dddc3d8"
+    },
+    {
+      "path": "tests/d1-ledger-reconciliation.test.py",
+      "source_pr": 292,
+      "sha256": "d224118039c7c040ce52efdb70c8d7336148bd905ac6ac191c1a73e28d7d0c23"
+    },
+    {
+      "path": "tests/d1-restore-order-miniflare.mjs",
+      "source_pr": 292,
+      "sha256": "418782d7dbb9f2d01f76bf608eb97ee7258c8b0e89c703812f5b521b3525b363"
+    },
+    {
+      "path": "tests/d1-restore-order.test.py",
+      "source_pr": 292,
+      "sha256": "fec4623817252e9957180a9a921c624a60a4228869808a59289de1d0f22b38dd"
+    },
+    {
+      "path": "tests/fixtures/d1-export-order.sql",
+      "source_pr": 292,
+      "sha256": "214cbbd8a7842bf53b18c3492d73fee79ef4ee9061cd62cd659b8fd9f9127012"
+    },
+    {
+      "path": "public/assets/admin-media-retention-actions.js",
+      "source_pr": 293,
+      "sha256": "87d75b197f97adaac36db90ca5adcff20eacb305a121eac3523fcb65d4cfd879"
+    },
+    {
+      "path": "public/assets/admin-media-retention.js",
+      "source_pr": 293,
+      "sha256": "af274b7b0bb4c90ff2fd7e690600f7b4c3dc50c5f12a940c216f1719bb8ba551"
+    },
+    {
+      "path": "public/assets/admin-media-integrity.js",
+      "source_pr": 294,
+      "sha256": "3b47b2189d953ffff0a05210e3d5105f5a228cc80fcd5643b3dc1d3cec1d9452"
+    },
+    {
+      "path": "public/assets/page-renderer.js",
+      "source_pr": 312,
+      "sha256": "b581f4a274f31b28afdaf73a57844f9914178f0643d1b42c0330d512f07a07d1"
+    },
+    {
+      "path": "public/editor-v2/app.js",
+      "source_pr": 312,
+      "sha256": "28f7a740fb776100300603a0a06a2008a5a42ea5c4d2179cbfec513e2e887db5"
+    },
+    {
+      "path": "public/editor-v2/core/accessibility.js",
+      "source_pr": 312,
+      "sha256": "b3f1da56fa5f014915bb04130e34262f79169970f98b244bdc06c05acfc8b929"
+    },
+    {
+      "path": "public/editor-v2/core/authored-content.d.ts",
+      "source_pr": 312,
+      "sha256": "12cb5883d040ed0f730aa3347ffabe71212da1be2fce9518852d2d2a032afbc4"
+    },
+    {
+      "path": "public/editor-v2/core/authored-content.js",
+      "source_pr": 312,
+      "sha256": "7fe1cef4949081d6a585c62f4e669b1363e03467269dc0ca631543f52e8bec6e"
+    },
+    {
+      "path": "public/editor-v2/core/countdown-content.js",
+      "source_pr": 312,
+      "sha256": "33086dc4f65c43dbd31b1d3b0ab29cce06f2123c148895b7b835359c17e7a39f"
+    },
+    {
+      "path": "public/editor-v2/core/countdown-local-time.d.ts",
+      "source_pr": 312,
+      "sha256": "4817101484152543f42b69ae2b5a5b17ddfd80244ad1d720eb408cf5c82f2181"
+    },
+    {
+      "path": "public/editor-v2/core/countdown-local-time.js",
+      "source_pr": 312,
+      "sha256": "3b96f973074e8a05bfeda0461a1625f589fa8a48a48c48c47a5dd7a755203dc3"
+    },
+    {
+      "path": "public/editor-v2/core/creator-embed.js",
+      "source_pr": 312,
+      "sha256": "56d01f520e94a34ca2ab9ba875f95410f9e0bd5ff9211014eb0711e7946c3506"
+    },
+    {
+      "path": "public/editor-v2/core/legacy-media-source.js",
+      "source_pr": 312,
+      "sha256": "0c0c9ceffdd2e2df3b9787a68bde64110759fbd1e38d70d61e8b2e6a48458c5d"
+    },
+    {
+      "path": "public/editor-v2/tests/core.test.js",
+      "source_pr": 312,
+      "sha256": "4b93cfc3050e377caefd53434b2e2916050306a7bbc02ab8053af90b5e2fee1e"
+    },
+    {
+      "path": "public/editor-v2/tests/element-content.test.js",
+      "source_pr": 312,
+      "sha256": "e8d270ba84de6cfbb877c4042f2e6a26e250faad6f3774981560deaf283d7554"
+    },
+    {
+      "path": "public/editor-v2/ui/accessibility-fields.js",
+      "source_pr": 312,
+      "sha256": "c125ba9c4028a9b82bf9089633f8aa9d70e61d3b68ebfdb3a287c8a58c1abc7c"
+    },
+    {
+      "path": "public/editor-v2/ui/basic-content-inspector.js",
+      "source_pr": 312,
+      "sha256": "9989dfac89a3a414b58bb8ea75837fa6ac73a3eef4d53ea8d79533be4fc16ac3"
+    },
+    {
+      "path": "public/editor-v2/ui/card-content-inspector.js",
+      "source_pr": 312,
+      "sha256": "dc3a1aef5c0c2b962b179471806e590ae43767dec3986a2a246cc16cda73c37d"
+    },
+    {
+      "path": "public/editor-v2/ui/code-snippet-inspector.js",
+      "source_pr": 312,
+      "sha256": "c088239c971b59dcb20812f32119ea8a3c4e0c2c1d57333b9129e0fe8d48278e"
+    },
+    {
+      "path": "public/editor-v2/ui/composition-inputs.js",
+      "source_pr": 312,
+      "sha256": "5944dff0aafd6d208e365f38303d018ff1186b56b989beefedd0ade62839a62c"
+    },
+    {
+      "path": "public/editor-v2/ui/countdown-date-control.js",
+      "source_pr": 312,
+      "sha256": "39ebc03518dcd2acfbcf8418b29fcb1b1f1418c6985a5a036e913155ebb9b353"
+    },
+    {
+      "path": "public/editor-v2/ui/countdown-inspector.js",
+      "source_pr": 312,
+      "sha256": "3044565b85222e199ccda26e7d312e477b4c3b2be70c99ab4a9b464ebec1927b"
+    },
+    {
+      "path": "public/editor-v2/ui/creator-embed-inspector.js",
+      "source_pr": 312,
+      "sha256": "69dd73967fed5430dd69ae827bc70ca8144417b7b0e772fb2ae54472adf98134"
+    },
+    {
+      "path": "public/editor-v2/ui/element-content-controls.js",
+      "source_pr": 312,
+      "sha256": "409ebd68b2da32f57d98c94ba000a19a17c20ddc6295f49f64e248019311501a"
+    },
+    {
+      "path": "public/editor-v2/ui/legacy-media-inspector.js",
+      "source_pr": 312,
+      "sha256": "db00b7fc165b1d9cbf515bf54f9a45146fb8149ec09c7318cfffca96be720eac"
+    },
+    {
+      "path": "public/editor-v2/ui/social-links-inspector.js",
+      "source_pr": 312,
+      "sha256": "b659df72f65cf6a2f870bd27dc420bc691ae2d2ade0b9ea647d933f4fedaeae5"
+    },
+    {
+      "path": "public/editor-v2/ui/structured-inspector.js",
+      "source_pr": 312,
+      "sha256": "630dc1996d01b27cd66c15a4e4589dd1d571a3d0fa73dba8fba98c3f40d1e8b4"
+    },
+    {
+      "path": "tests/browser/editor-accessibility-ime.test.js",
+      "source_pr": 312,
+      "sha256": "a34d4f1fb29eec5024ebd50eb3b2926a7bc4b946619cfa89c3990fd53c5f862d"
+    },
+    {
+      "path": "tests/browser/editor-card-content.test.js",
+      "source_pr": 312,
+      "sha256": "106fc9bbd6231ca18c18fd07f489ae2c071284328d4c180a302c79ae5cfde8ba"
+    },
+    {
+      "path": "tests/browser/editor-code-snippet.test.js",
+      "source_pr": 312,
+      "sha256": "96202b52a6d69a7830f52432ce796fe84b021d585519f22b275d78f6169ce2db"
+    },
+    {
+      "path": "tests/browser/editor-content-system.test.js",
+      "source_pr": 312,
+      "sha256": "f6278f190f2f4a739b9b3b27ebb8d79c2d023ef01f99eae99cb15db614aea692"
+    },
+    {
+      "path": "tests/browser/editor-countdown.test.js",
+      "source_pr": 312,
+      "sha256": "e30f2551976f168c70817fc475c9ba32c295b37517de26f94f538c8dce8124d2"
+    },
+    {
+      "path": "tests/browser/editor-creator-embed.test.js",
+      "source_pr": 312,
+      "sha256": "3276017083cb20e86c42b8db48ed42efb2e50de5b2ce839e4cf169eada0cd73e"
+    },
+    {
+      "path": "tests/browser/editor-gallery-crop-parity.test.js",
+      "source_pr": 312,
+      "sha256": "f281726fc5f295ac23d61692fbfd4b30228d85b1d1b8aee06f5aa66341c73bc8"
+    },
+    {
+      "path": "tests/browser/editor-legacy-media-parity.test.js",
+      "source_pr": 312,
+      "sha256": "ccf4e380eeb9828e9482d0450f1efade2afd5f98e0400c3a7b93e267519a17b9"
+    },
+    {
+      "path": "tests/browser/editor-media-source-switch.test.js",
+      "source_pr": 312,
+      "sha256": "9b94e7ac1b837b881ca6f6323c68fdf6fd4aa97227c15dc9f5f6cd72262eeff7"
+    },
+    {
+      "path": "tests/browser/editor-social-links.test.js",
+      "source_pr": 312,
+      "sha256": "8ed309c3cb0bd4e6bebea18ec0fa8b7934d55b81334a8e22e5a1c5dbf85efe4b"
+    },
+    {
+      "path": "tests/browser/editor-structured-content.test.js",
+      "source_pr": 312,
+      "sha256": "44d4c11390c0a281aacd5f860f1efb9a249223590b01c1e70f2cea1aa4f79880"
+    },
+    {
+      "path": "tests/browser/helpers/composition.js",
+      "source_pr": 312,
+      "sha256": "6ed6c0e6f1ff2b4a3ce5fd10460d97145fc320e007c42666c405d1edc5387252"
+    },
+    {
+      "path": "tests/web013-tenant-pages-editor.test.js",
+      "source_pr": 312,
+      "sha256": "5a27ce2069bd30595f044113f5d31ae4c3247e14c8d409dbcce674d405abb3f4"
+    }
+  ],
+  "resolved_shared_files": [
+    "docs/SANCI9517-CREATOR-PLATFORM-PLAN.md",
+    "docs/creator-master/part-02-of-12.md",
+    ".github/workflows/editor-core-test.yml",
+    "package.json",
+    "public/admin-media.html",
+    "public/assets/admin-media.js",
+    "tests/media-api.test.js"
+  ],
+  "prohibited_actions": [
+    "production migration replay",
+    "production ledger writes",
+    "R2 object deletion",
+    "automatic retention cleanup",
+    "PR merge",
+    "production deploy"
+  ],
+  "integration_verification_files": [
+    "tests/browser/admin-media-integrity.test.js",
+    "scripts/verify-session-release.py",
+    "docs/SESSION-RELEASE.md"
+  ]
+}

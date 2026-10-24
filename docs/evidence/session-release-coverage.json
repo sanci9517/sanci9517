@@ -1,0 +1,11 @@
+{
+  "stage": "pre-merge source coverage; not production acceptance",
+  "head": "bb7e0281fa89a58a92ed80245b0e62e77fddc07e",
+  "base": "caf91bf91ca4937805c7bbf527de944893c11f78",
+  "source_prs": 21,
+  "contributions": 28,
+  "byte_preserved_files": 57,
+  "reserved_sql_unchanged": true,
+  "status": "PASS",
+  "errors": []
+}
