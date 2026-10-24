@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {createDocument, createNode} from '../public/editor-v2/core/schema.js';
 import {createElementContent, validateElementContent as validateStructuredContent} from '../public/editor-v2/core/element-content.js';
-import {CONTENT_FIELDS, contentProperties} from '../public/editor-v2/core/authored-content.js';
+import {CONTENT_FIELDS, contentProperties, getPublicationContentIssue} from '../public/editor-v2/core/authored-content.js';
 import {getElementContentContract} from '../public/editor-v2/core/content-profiles.js';
 import {validatePublishDocument} from '../src/core/editor-validation.ts';
 import {createEditorState} from '../public/editor-v2/core/state.js';
@@ -127,4 +127,23 @@ test('authored element.add does not inherit legacy content markers or invented m
     assert.equal(node.metadata.structuredContentVersion,undefined,type);
     assert.equal(validatePublishDocument(state.document,page.id),'INCOMPLETE_EDITOR_CONTENT',type);
   }
+});
+
+test('Inspector publication issue reader mirrors real server required-content gate',()=>{
+ const cases=[
+  ['heading',{},'A címsor nem lehet üres.'],
+  ['button',{text:'Megnyitás'},'Adj meg hivatkozási célt. Művelet nélküli gomb nem publikálható.'],
+  ['image',{src:'/photo.png'},'Adj meg képleírást, vagy jelöld a képet díszítőnek.'],
+  ['image',{src:'/photo.png',alt:'Kép'},null],
+  ['audio',{src:'/sound.ogg',controls:false},'A hanglejátszó vezérlőit nem rejtheted el.'],
+  ['text',{text:'Szöveg'},null]
+ ];
+ for(const [type,props,expected] of cases){
+  const {node,publish}=probe(type,{metadata:{contentVersion:1},props});
+  const before=structuredClone(node);
+  assert.equal(getPublicationContentIssue(node),expected,type);
+  assert.deepEqual(node,before,type);
+  assert.equal(publish(),expected?'INCOMPLETE_EDITOR_CONTENT':null,type);
+ }
+ assert.equal(getPublicationContentIssue(createNode('heading')),null,'legacy nodes are not silently migrated');
 });
