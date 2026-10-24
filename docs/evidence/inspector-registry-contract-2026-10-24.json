@@ -15,6 +15,26 @@
     "PLANNED": 34
   },
   "migration_preflight": "No migrations to apply",
-  "release": "pending push and deployment verification",
+  "release": {
+    "source_commit": "453611eb4302fe2284be5f730e00171504d70caa",
+    "build_id": "bd36a599-2810-4f2c-834d-1f570ddb38be",
+    "status": "success",
+    "deployment_id": "e6047f48-0423-4759-93d0-80e44f1fccf8",
+    "worker_version": "d3fdb837-c9e5-479b-a872-97c16d24df8d",
+    "traffic_percent": 100,
+    "no_migrations": true,
+    "chromium_production": {
+      "status": 200,
+      "types": 79,
+      "properties": 68,
+      "registered": 68,
+      "uncertified": true,
+      "plannedEmpty": true,
+      "prototypeSafe": true,
+      "sha256": "c8da5c4b5a27d172dd735d50e489123051160f96d9dffa8e79e5679dd1d3d191",
+      "matchesLocal": true
+    },
+    "github_checks": "Workers Builds, canonical-plan, twitch-integration, verify, source-audit success; editor-core in_progress at final check"
+  },
   "remaining": "type-specific content variants and server validation mapping; complete lifecycle acceptance"
 }
