@@ -23,5 +23,43 @@
   "migration_preflight": "wrangler d1 migrations list DB --remote: No migrations to apply",
   "production_database_writes": false,
   "r2_deletions": false,
-  "release": "pending source push and deployment verification"
+  "release": {
+    "status": "production deployment and asset bytes verified",
+    "source_commit": "6e8e220d2f947e2a3f35812b0bca8f1b1542dcc1",
+    "build_id": "c6258dc9-f623-4067-8a48-d608fb43290c",
+    "build_outcome": "success",
+    "deployment_id": "66fb0091-ffb9-448d-b225-2584e9fdce9b",
+    "version_id": "ffdd0347-2b42-4297-982d-bad3fe7e9062",
+    "traffic_percent": 100,
+    "build_log_no_migrations_to_apply": true,
+    "http": [
+      {
+        "path": "/api/health",
+        "status": 200
+      },
+      {
+        "path": "/api/db-health",
+        "status": 200
+      },
+      {
+        "path": "/api/admin/pages",
+        "status": 401
+      },
+      {
+        "path": "/editor-v2/app.js?v=20261024-page-paths",
+        "status": 200,
+        "sha256": "bb9d33af69f449ef963a194fdbba2eb74758a3723ea0ae8d99606a4a5bde8d55",
+        "matchesLocal": true
+      },
+      {
+        "path": "/editor-v2/editor-refresh.css?v=20261024-page-paths",
+        "status": 200,
+        "sha256": "b0a52f064dae3294e83df7d1f7053b564f4f0b58af0880e71e50c8db593f7b46",
+        "matchesLocal": true
+      }
+    ],
+    "github_checks": "Workers Builds, verify, twitch-integration, canonical-plan, source-audit success; editor-core in progress at last check",
+    "authenticated_manual_ui": "not performed; requires user browser",
+    "note": "Raw browser fetch ArrayBuffer confirms JS/CSS bytes. CSS navigation response.body initially reencoded non-ASCII bytes; that comparison was rejected."
+  }
 }

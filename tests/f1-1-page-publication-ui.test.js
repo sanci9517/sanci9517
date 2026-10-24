@@ -59,7 +59,7 @@ test('page list renders LIVE, unpublished draft changes and draft labels from se
  f.context.document={createElement:()=>({children:[],setAttribute(){},append(...xs){this.children.push(...xs)},innerHTML:''})};
  action('function renderPageList()','function focusScheduleNode()',f.context)();
  assert.match(list.children[0].children[0].innerHTML,/ÉLŐ · MÓDOSÍTOTT PISZKOZAT/);assert.equal(list.children[0].children[0].children[0].textContent,'Piszkozat: /p/new · Élő: /p/old');assert.match(list.children[2].children[0].children[0].textContent,/Nincs élő URL/);
- 
+
  assert.match(list.children[1].children[0].innerHTML,/class="page-meta">ÉLŐ<\/small>/);
  assert.match(list.children[2].children[0].innerHTML,/class="page-meta">PISZKOZAT<\/small>/);
 });
