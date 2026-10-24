@@ -72,13 +72,27 @@ Az Integrációk/Admin-központ egy helyen mutatja az összes csatlakoztatott pl
 - **TikTok:** profil- és tartalomkapcsolatok, LIVE és publikálási funkciók kizárólag a fiókhoz és régióhoz elérhető hivatalos API-képesség szerint.
 - **Discord:** szerverkapcsolat, bot, szerepkörök, értesítések, közösségi CTA-k és tagsági jogosultság-szinkron, a botengedélyek és szerverkonfiguráció szerint.
 - **OBS Studio:** biztonságos pairing és WebSocket-alapú vezérlés, kapcsolatállapot, scene/source állapot, browser source, overlay, felvétel és stream műveletek csak explicit engedéllyel.
-- **Későbbi provider adapterek:** Kick, Instagram, X, Patreon és más platformok csak a termékérték, API, policy, költség és karbantartási igény ellenőrzése után.
+- **Kick:** első osztályú, külön ütemezett provider-cél (INT-016): hivatalos Kick Dev OAuth 2.1/PKCE, csatorna/live metaadatok, jogosultság szerinti chat, követés-/előfizetés-események, moderáció, overlay/alert és automatikák a 37.4 elfogadási szerződés szerint; státusz **SPEC ONLY / OPEN**, nem kész integráció.
+- **Későbbi provider adapterek:** Instagram, X, Patreon és más platformok csak a termékérték, API, policy, költség és karbantartási igény ellenőrzése után.
 
 ### 37.2. Egységes kapcsolati UX
 Minden kapcsolatnál: csatlakozás, scope magyarázat, státusz, utolsó sikeres művelet, hiba és következő lépés, újracsatlakozás, biztonságos leválasztás, sync retry, provider-quota és részleges jogosultság jelzése. A provider hibája nem törölheti a kézi adatokat.
 
 ### 37.3. Többplatformos működés
 Ahol hivatalosan támogatott, legyen közös chat/üzenetkezelés, streamcélok kezelése, tartalomnaptár, platformvariánsok, analitika és publikálási queue. A funkciók platformonként külön képességmátrixot használnak; a közös felület nem állíthatja, hogy egy művelet mindenhol elérhető, ha nem az.
+
+### 37.4. Kick — teljes értékű, de capability-gated provider cél (INT-016, 2026-10-24)
+**Állapot: SPEC ONLY / OPEN.** A Kick már szerepelt a platformlistában; ez a rész a pontos megvalósítási és tesztelési szerződés. Az Integrációk modul a kizárólagos token-/kapcsolatgazda, a Live, Schedule, Automations, Overlay, Analitika, Chat és Editor csak a közös normalizált API-t fogyasztja. Nem keletkezhet második csatornaadatbázis, adásrend, médianyilvántartás vagy publikálási útvonal; a jelenlegi 77.44 Visual Editor és 49.4 Médiatár kapuk prioritása változatlan.
+
+1. **Kapcsolat és védelem:** külön Kick kártya a Creator Control Center / Integrációk felületen; Kick Developer app, OAuth 2.1 Authorization Code + PKCE (S256), state/CSRF, redirect-allowlist, site/user binding, minimális scope, tokenfrissítés, revocation, reconnect/disconnect, titkos szerveroldali tárolás és audit. Csak bejelentkezett, jogosult creator kapcsolhat; multi-tenant/cross-site izoláció kötelező. Token, client secret és streamkulcs nem kerülhet frontendbe, logba vagy publikus válaszba.
+2. **Csatorna és élő státusz:** a hivatalos Users/Channels/Livestreams végpontokból engedélyezett csatornaazonosító, cím/kategória, online/offline, streamkezdés és elérhető nézőszám; forrás + lekérés ideje, cache, API-hiba, stale/offline és disconnect jelzések. Live widget, Creator Dashboard, közös platformkártya, már létező Social Links Kick-link és külső „Nézd Kicken” CTA; streamlejátszó/embed kizárólag ellenőrzött, engedélyezett Kick beágyazási megoldással, különben biztonságos külső link.
+3. **Chat, események és alert:** Kick hivatalos Events subscription és ellenőrzött webhook (aláírás/nyilvános kulcs, replay-, idempotencia- és duplikációvédelem, megújítás, leiratkozás); az aktuálisan elérhető chatüzenet, követés, előfizetés, ajándékozás és egyéb események normalizálása. Közös chat/overlay/OBS-alert/automatizáció csak megfelelő consent, event- és scope-jogosultság esetén; a chatüzenet küldése (chat:write) és moderáció külön, explicit bekapcsolható művelet. Rate-limit, spam-/visszaélésvédelem és adatmegőrzési határ.
+4. **Képességek szétválasztása:** csatornametaadat írása csak channel:write engedéllyel; chat, moderáció, channel rewards, ads és KICKs metrikák kizárólag az aktuális API + scope alapján. A streamkey:read különösen érzékeny: alapértelmezésben **nem kérjük**, nem szolgáljuk ki az UI-nak, és semmilyen multistream/OBS-automatika nem használhatja explicit cél és biztonsági felülvizsgálat nélkül. OBS/Twitch/YouTube/TikTok párhuzamos streaming és adásindítás külön Stream Studio feladat, nem Kick API-képességből következik.
+5. **Nem ígérhető funkciók:** Kick API-n nem igazolt automatikus Schedule-szinkron, VOD/klip import, videófeltöltés/publikálás, követőlista vagy natív iframe nem jelenhet meg „kész”-ként; kézi Schedule, külső link, offline/üres állapot és beállítható fallback. A szolgáltató API/ToS, fejlesztőapp-jóváhagyás, scope, régió, kvóta és változások megvalósításkor újra ellenőrizendők.
+6. **Elfogadási kapuk:** Kick app/consent létrehozás → sikeres OAuth és scope-ellenőrzés → csatornaazonosság → live/offline/stale → valid és manipulált webhook → chat/alert → tokenlejárat/refresh/revoke → rate-limit/429/5xx/timeout → cross-site/CSRF/replay/secret-leak negatív tesztek → reszponzív Admin és publikus widget → Save≠Publish → valódi jogosult Kick-fiókos production read-only és később engedélyezett művelet próbája. Unit, provider mock/integration, Chromium és CI csak az általuk igazolt részre PASS; kézi és production acceptance külön OPEN, amíg nincs bizonyíték.
+7. **Fázis:** F5/49.7/INT-016 keretben; első szelet OAuth + csatorna + live + biztonságos link/widget; második webhook/alert + chat/overlay; harmadik, csak API/permission által támogatott írás/moderáció/haladó statisztika. A Kick miatt a jelenlegi Editor-fejlesztési kurzor nem változik.
+
+**Hivatalos referencia (2026-10-24 ellenőrzés):** [Kick Dev](https://dev.kick.com/), [Kick Developer API](https://docs.kick.com/), [OAuth 2.1/PKCE](https://github.com/KickEngineering/KickDevDocs/blob/main/getting-started/generating-tokens-oauth2-flow.md), [scope lista](https://github.com/KickEngineering/KickDevDocs/blob/main/scopes/scopes.md), [Events/webhook](https://github.com/KickEngineering/KickDevDocs/blob/main/events/introduction.md), [Swagger API műveletek](https://api.kick.com/swagger/index.html). Mindig a legfrissebb szolgáltatói dokumentáció dönt.
 
 ---
 
@@ -1312,7 +1326,7 @@ A visszajelzés feldolgozási szabályai:
 - **YouTube:** csatorna, videó/playlist, live broadcast, feltöltés, metaadat és elérhető analitika. API-kvóta, OAuth, feltöltési állapot és projekt-ellenőrzési követelmények kezelendők.
 - **TikTok:** profil és videó megjelenítése; Content Posting API külön engedélyezési és domain-/app-feltételekkel. A közvetlen publikálást és a draft-feltöltést külön képességként kell kezelni.
 - **Discord:** OAuth, bot, guild/channel/role, webhook, események és tagság-jogosultság; minimális botjogosultság és szerveroldali ellenőrzés szükséges.
-- **Kick:** csak a mindenkori hivatalos API és hozzáférési feltételek által igazolt funkciók. Hiányzó API-képességet nem szabad szimulálni.
+- **Kick (INT-016, 37.4):** az aktuális hivatalos OAuth 2.1/PKCE, Users/Channels/Livestreams, Chat, Events/webhook és engedélyezett moderáció/rewards/ads végpontok képesség- és scope-mátrixa szerint. Nem igazolt Schedule, VOD, feltöltés és beágyazás nem szimulálható. Az Integrációk az adatgazda; Live, Overlay, Chat, Automations és Editor csak jogosultság-ellenőrzött fogyasztó.
 
 ### 53.8. Megkülönböztető SANCI-érték
 
