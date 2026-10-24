@@ -7,6 +7,7 @@
     "public/assets/admin-media.js": "1d9eb86d004c84a054b8c7f92be36d78e34e8510146b8588825db486f615bad6",
     "public/assets/page-renderer.js": "b581f4a274f31b28afdaf73a57844f9914178f0643d1b42c0330d512f07a07d1",
     "public/editor-v2/app.js": "395848b53ba392fb10d8299191f6698e8f7dcecafd545d5e74b4a6f79144db3d",
+    "public/editor-v2/core/capability-matrix.js": "c8da5c4b5a27d172dd735d50e489123051160f96d9dffa8e79e5679dd1d3d191",
     "public/editor-v2/core/commands.js": "3cb3e89a7853b00763a315695dc21f73f38adb6f2ac618dda9c9d1116c74154f",
     "public/editor-v2/core/creator-embed.js": "56d01f520e94a34ca2ab9ba875f95410f9e0bd5ff9211014eb0711e7946c3506",
     "public/editor-v2/core/design-tokens.js": "ddeb5e60dec65453d4bbf19dda5aac43bc621a8a709f659b9d58c619a25e8c4c",
@@ -1523,6 +1524,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -1606,6 +1608,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -1689,6 +1692,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -1772,6 +1776,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -1855,6 +1860,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -1938,6 +1944,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -2021,6 +2028,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -2104,6 +2112,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -2187,6 +2196,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -2270,6 +2280,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -2353,6 +2364,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -2436,6 +2448,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -2519,6 +2532,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -2602,6 +2616,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -2676,15 +2691,12 @@
       },
       "source_status": "PARTIAL_SOURCE",
       "implementation": [
-        "public/editor-v2/app.js",
+        "public/editor-v2/core/capability-matrix.js",
         "public/editor-v2/core/schema.js",
-        "public/editor-v2/core/commands.js",
-        "public/editor-v2/core/property-registry.js",
-        "public/editor-v2/ui/property-controls.js",
-        "public/assets/page-renderer.js",
-        "src/core/editor-validation.ts"
+        "public/editor-v2/app.js"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -2768,6 +2780,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -2851,6 +2864,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -2934,6 +2948,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -3017,6 +3032,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -3100,6 +3116,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -3174,9 +3191,11 @@
       },
       "source_status": "PARTIAL_SOURCE",
       "implementation": [
-        "public/editor-v2/core/property-registry.js"
+        "public/editor-v2/core/property-registry.js",
+        "public/editor-v2/core/capability-matrix.js"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -3256,6 +3275,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -3339,6 +3359,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -3417,6 +3438,7 @@
         "public/editor-v2/ui/responsive-group-reset.js"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -3500,6 +3522,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -3583,6 +3606,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -3666,6 +3690,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -3749,6 +3774,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -3832,6 +3858,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -3915,6 +3942,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -3998,6 +4026,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -4081,6 +4110,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -4164,6 +4194,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -4247,6 +4278,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -4330,6 +4362,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -4413,6 +4446,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -4496,6 +4530,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -4579,6 +4614,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -4685,6 +4721,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -4768,6 +4805,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -4851,6 +4889,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -4931,6 +4970,7 @@
         "public/editor-v2/app.js"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
@@ -5014,6 +5054,7 @@
         "src/core/editor-validation.ts"
       ],
       "test_candidates": [
+        "public/editor-v2/tests/capability-contract.test.js",
         "public/editor-v2/tests/core.test.js",
         "public/editor-v2/tests/element-content.test.js",
         "public/editor-v2/tests/inspector-richtext.test.js",
