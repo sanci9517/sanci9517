@@ -1,4 +1,4 @@
-import {CONTENT_FIELDS,normalizeContentField,contentProperties} from '../core/authored-content.js';
+import {CONTENT_FIELDS,normalizeContentField,contentProperties,imageFocalPosition} from '../core/authored-content.js';
 
 export function pageLinkPicker(pages,input){
   const select=document.createElement('select');select.className='content-page-picker';select.setAttribute('aria-label','Belső oldal kiválasztása');
@@ -20,6 +20,9 @@ async function loadAssets(query='',before=null,mimes=[]){
   if(!response.ok||payload?.ok!==true)throw new Error(payload?.error?.message||'A Médiatár nem érhető el.');
   return {assets:payload.data?.assets||[],nextCursor:payload.data?.nextCursor||null};
 }
+const selectionViews=new WeakMap();
+// Synchronize a mounted picker view without invoking its PageModel callback.
+export function setMediaAssetPickerSelection(picker,id){selectionViews.get(picker)?.(id);}
 export function mediaAssetPicker(selectedId,onSelect,{disabled=false,mimes=[]}={}){
   const root=document.createElement('div');root.className='editor-media-picker';
   const status=document.createElement('p');status.className='content-field-help';status.setAttribute('role','status');
@@ -32,7 +35,7 @@ export function mediaAssetPicker(selectedId,onSelect,{disabled=false,mimes=[]}={
     if(isImage){preview.src='/api/admin/media?id='+encodeURIComponent(id);preview.alt='Kiválasztott kép'}
     else{preview.textContent=asset.mimeType?.startsWith('video/')?'🎬 Kiválasztott videó':'🔊 Kiválasztott hang';preview.setAttribute('aria-label','Kiválasztott médiafájl')}
     const clear=document.createElement('button');clear.type='button';clear.textContent=isImage?'Kép eltávolítása':'Médiafájl eltávolítása';clear.disabled=disabled;
-    clear.onclick=()=>{if(onSelect('')===false)return;renderSelected('');status.textContent='A kiválasztott médiafájl eltávolítva.'};
+    clear.onclick=()=>{if(onSelect('')===false)return;renderSelected('');status.textContent='A kiválasztott médiafájl eltávolítva.';if(root.isConnected)open.focus({preventScroll:true})};
     selection.append(preview,clear);
   };
   const search=document.createElement('input');search.type='search';search.placeholder='Keresés név vagy leírás alapján';search.setAttribute('aria-label','Keresés a Médiatárban');search.disabled=disabled;
@@ -93,13 +96,45 @@ export function mediaAssetPicker(selectedId,onSelect,{disabled=false,mimes=[]}={
   });
   more.onclick=()=>refresh(true);
   renderSelected(selectedId);setOpen(false);root.append(selection,open,search,current,more,status);
+  selectionViews.set(root,id=>{renderSelected(id);setOpen(false);status.textContent=id?'Médiatár-kép kiválasztva.':'A Médiatár-kapcsolat eltávolítva.'});
   return root;
 }
 const selectedAlt=asset=>typeof asset?.altText==='string'?asset.altText.trim().slice(0,500):'';
 export function renderElementContentControls(node,{apply,pending,exclude=[],pages=[]}){
   const root=document.createElement('section');root.className='element-content-controls';
   const fail=document.createElement('p');fail.className='property-validation';fail.setAttribute('role','status');
-  const control=(definition,value,save,onAsset)=>{
+  // A successful command mutates the Editor model, but validation failure may
+  // replace it on rollback. Keep this mounted view's working values current
+  // without writing into node.props or reconstructing focused text controls.
+  const working=structuredClone(contentProperties(node));
+  const write=(patch,options={})=>{
+    const result=apply(patch,options);
+    if(result===false)throw new Error('A módosítás nem alkalmazható.');
+    Object.assign(working,structuredClone(patch));return result;
+  };
+  const group=(fields,read,commit)=>{
+    const views=new Map(),keys=new Set(fields.map(field=>field.key));
+    const pairs=[['src','assetId'],['poster','posterAssetId']].filter(pair=>pair.every(key=>keys.has(key)));
+    return {
+      register:(key,update)=>views.set(key,update),
+      save(key,value,typingGroup,asset,render=false){
+        const patch={[key]:value},pair=pairs.find(pair=>pair.includes(key));
+        if(pair)patch[pair.find(other=>other!==key)]='';
+        const current=read(),alt=selectedAlt(asset);
+        const emptyAlt=current.alt==null||(typeof current.alt==='string'&&!current.alt.trim());
+        if(key==='assetId'&&value&&alt&&keys.has('alt')&&!current.decorative&&emptyAlt)patch.alt=alt;
+        const updates=Object.entries(patch).filter(([changed,next])=>changed!==key&&current[changed]!==next);
+        const result=commit(patch,{typingGroup,render});
+        if(result===false)throw new Error('A módosítás nem alkalmazható.');
+        // Sync only companion fields after success. The active input keeps its
+        // DOM node, caret, typing group and pending composition untouched.
+        for(const [changed,next] of updates)views.get(changed)?.(next);
+        return result;
+      }
+    };
+  };
+  const top=group(CONTENT_FIELDS[node.type]||[],()=>working,write);
+  const control=(definition,value,save,register)=>{
     const wrap=document.createElement('div');wrap.className='field content-schema-field';wrap.dataset.contentKey=definition.key;
     const label=document.createElement('span');label.textContent=definition.label;wrap.append(label);
     let input;
@@ -108,12 +143,18 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
     else if(definition.type==='asset'){input=null}
     else {input=document.createElement(definition.type==='textarea'?'textarea':'input');if(input.tagName==='INPUT'){input.type=definition.type==='range'?'range':'text';if(definition.type==='range'){input.min=String(definition.min??0);input.max=String(definition.max??100);input.step=String(definition.step??1)}}input.value=value??'';if(definition.type!=='range')input.maxLength=definition.max||2048}
     if(definition.type==='asset'){
-      wrap.append(mediaAssetPicker(String(value||''),(id,asset)=>{try{if(id&&onAsset)onAsset(id,asset);else save(id);fail.textContent='';return true}catch(error){fail.textContent=error.message;return false}} ,{disabled:Boolean(node.locked)}));
+      const picker=mediaAssetPicker(String(value||''),(id,asset)=>{try{save(id,undefined,asset);fail.textContent='';return true}catch(error){fail.textContent=error.message;return false}},{disabled:Boolean(node.locked)});
+      register(next=>setMediaAssetPickerSelection(picker,next));wrap.append(picker);
       if(definition.help){const help=document.createElement('small');help.className='content-field-help';help.textContent=definition.help;wrap.append(help)}return wrap;
     }
     input.setAttribute('aria-label',definition.label);input.disabled=Boolean(node.locked);input.dataset.typingGroup=crypto.randomUUID();
     const rangeOutput=definition.type==='range'?document.createElement('output'):null;if(rangeOutput){rangeOutput.className='content-range-value';rangeOutput.value=String(input.value);rangeOutput.textContent=`${input.value}%`;rangeOutput.setAttribute('aria-live','polite')}
     let committed=value,composing=false,dirty=false,compositionRevision=0;
+    register(next=>{
+      committed=next;dirty=false;compositionRevision++;composing=false;
+      if(definition.type==='boolean')input.checked=Boolean(next);else input.value=next??'';
+      input.removeAttribute('aria-invalid');
+    });
     const canCompose=input.tagName==='TEXTAREA'||(input.tagName==='INPUT'&&input.type==='text');
     const update=()=>{
       try{
@@ -151,6 +192,7 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
     input.addEventListener('focus',()=>pending(()=>!composing&&!root.querySelector('[aria-invalid="true"]')));
     input.addEventListener('keydown',event=>{
       if(event.key!=='Escape')return;
+      event.stopPropagation();
       compositionRevision++;composing=false;dirty=false;
       input.value=committed??'';
       if(definition.type==='boolean')input.checked=Boolean(committed);
@@ -160,7 +202,7 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
   };
   for(const definition of CONTENT_FIELDS[node.type]||[]){
     if(exclude.includes(definition.key))continue;
-    const save=(value,typingGroup,render=false)=>{const result=apply({[definition.key]:value},{typingGroup,render});if(result===false)throw new Error('A módosítás nem alkalmazható.');return result};
+    const save=(value,typingGroup,render=false)=>top.save(definition.key,value,typingGroup,undefined,render);
     if(definition.type==='repeater'){
       const section=document.createElement('details');section.className='content-repeater';section.dataset.contentKey=definition.key;section.open=true;
       // Structural edits replace the Inspector DOM. Continue from the edited
@@ -181,16 +223,20 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
         if(target&&target.getClientRects().length)target.focus({preventScroll:true});
       });
       const summary=document.createElement('summary');summary.textContent=definition.label;section.append(summary);
-      const items=Array.isArray(node.props?.[definition.key])?node.props[definition.key]:[];
+      const items=Array.isArray(working[definition.key])?working[definition.key]:[];
       items.forEach((item,index)=>{
+        const crop=['gallery','carousel'].includes(node.type)?imageFocalPosition(item):{};
         const card=document.createElement('fieldset');const legend=document.createElement('legend');legend.textContent=`${index+1}. elem`;card.append(legend);
-        for(const child of definition.itemFields)card.append(control(child,item[child.key],(value,group)=>{const next=structuredClone(node.props?.[definition.key]||items);next[index][child.key]=value;save(next,group)},child.key==='assetId'?(id,asset)=>{const next=structuredClone(node.props?.[definition.key]||items);next[index].assetId=id;const alt=selectedAlt(asset);if(alt&&!String(next[index].alt||'').trim())next[index].alt=alt;save(next)}:undefined));
+        const row=group(definition.itemFields,()=>working[definition.key]?.[index]||{},(patch,options)=>{
+          const next=structuredClone(working[definition.key]||items);Object.assign(next[index],patch);return save(next,options.typingGroup);
+        });
+        for(const child of definition.itemFields)card.append(control(child,Object.hasOwn(crop,child.key)?crop[child.key]:item[child.key],(value,typingGroup,asset)=>row.save(child.key,value,typingGroup,asset),update=>row.register(child.key,update)));
         const actions=document.createElement('div');actions.className='content-repeater-actions';
         for(const [label,offset] of [['Fel',-1],['Le',1],['Eltávolítás',0]]){
           const button=document.createElement('button');button.type='button';button.textContent=label;button.setAttribute('aria-label',`${index+1}. elem: ${label}`);button.disabled=Boolean(node.locked)||(offset<0&&index===0)||(offset>0&&index===items.length-1);
           button.onclick=()=>{
             const keepFocus=document.activeElement===button;
-            const next=structuredClone(node.props?.[definition.key]||items);
+            const next=structuredClone(working[definition.key]||items);
             if(!offset)next.splice(index,1);else [next[index],next[index+offset]]=[next[index+offset],next[index]];
             save(next,null,true);
             if(keepFocus)restoreRowFocus({
@@ -205,15 +251,15 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
       const add=document.createElement('button');add.type='button';add.textContent=definition.label+' hozzáadása';add.disabled=Boolean(node.locked)||items.length>=40;
       add.onclick=()=>{
         const keepFocus=document.activeElement===add;
-        const next=[...(node.props?.[definition.key]||[]),{}];
+        const next=[...(working[definition.key]||[]),{}];
         save(next,null,true);
         if(keepFocus)restoreRowFocus({rowIndex:next.length-1,editField:true});
       };
       section.append(add);root.append(section);
     }else if(definition.type==='table'){
       const note=document.createElement('p');note.className='content-field-help';note.textContent='Soronként egy sor, tabulátorral elválasztott cellák. Excelből másolt egyszerű táblázat is beilleszthető. A cellák szöveget tárolnak, képletek nem futnak.';root.append(note);
-      root.append(control({...definition,type:'textarea',max:40000},(node.props?.rows||[]).map(row=>row.join('\t')).join('\n'),(value,group)=>save(value.split('\n').map(row=>row.split('\t')),group)));
-    }else root.append(control(definition,contentProperties(node)[definition.key],save,node.type==='image'&&definition.key==='assetId'?(id,asset)=>{const patch={assetId:id},alt=selectedAlt(asset);if(alt&&!node.props?.decorative&&!String(node.props?.alt||'').trim())patch.alt=alt;const result=apply(patch);if(result===false)throw new Error('A módosítás nem alkalmazható.')} : undefined));
+      root.append(control({...definition,type:'textarea',max:40000},(node.props?.rows||[]).map(row=>row.join('\t')).join('\n'),(value,group)=>save(value.split('\n').map(row=>row.split('\t')),group),update=>top.register(definition.key,update)));
+    }else root.append(control(definition,working[definition.key],(value,typingGroup,asset)=>top.save(definition.key,value,typingGroup,asset),update=>top.register(definition.key,update)));
   }
   root.append(fail);return root;
 }

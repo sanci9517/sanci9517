@@ -30,6 +30,13 @@ jobs:
       - name: Run editor core tests
         run: npm run test:editor
 
+      - name: Test offline D1 ledger reconciliation and bootstrap
+        run: |
+          python3 tests/d1-ledger-reconciliation.test.py
+          node tests/d1-ledger-miniflare.mjs
+          python3 tests/d1-restore-order.test.py
+          node tests/d1-restore-order-miniflare.mjs
+
       - name: Run private R2 media API tests
         run: npm run test:media
 
@@ -50,6 +57,8 @@ jobs:
           path: |
             /tmp/editor-issue42-*.png
             /tmp/creator-ux-p0-*.png
+            /tmp/media-retention-*.png
+            /tmp/media-integrity-*.png
           if-no-files-found: ignore
 
       - name: Run canonical schedule tests

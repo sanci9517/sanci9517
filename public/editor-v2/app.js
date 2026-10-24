@@ -23,26 +23,31 @@ import {pasteRichTextDocument} from './core/richtext-paste.js';
 import {captureStyleSnapshot} from './core/style-snapshot.js';
 import {LAYOUT_PRESETS,LAYOUT_TYPES,layoutMode,isManagedLayout,isLayoutPropertyRelevant,explicitGridColumnCount} from './core/layout-presets.js';
 import {TYPOGRAPHY_PRESETS,typographyPresetPatch} from './core/typography-presets.js';
-import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent,safeMediaUrl} from './core/element-content.js';
+import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent} from './core/element-content.js';
 import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption} from './core/legacy-media-source.js';
 import {renderStructuredInspector} from './ui/structured-inspector.js';
 import {ICON_CHOICES,iconById} from './core/icon-options.js';
 import {DIVIDER_LINE_STYLES,normalizeDividerStyle} from './core/decorative-elements.js';
-import {defaultCardContent,CARD_VARIANTS,cardImageSrc} from './core/card-content.js';
+import {defaultCardContent,cardImageSrc} from './core/card-content.js';
 import {defaultCountdownContent,renderCountdownContent,activateCountdowns} from './core/countdown-content.js';
+import {renderCountdownInspector} from './ui/countdown-inspector.js';
 import {defaultSocialLinks,renderSocialLinksHtml} from './core/social-links.js';
 import {renderSocialLinksInspector} from './ui/social-links-inspector.js';
 import {defaultEmbedContent,renderEmbedHtml} from './core/creator-embed.js';
+import {renderBasicContentInspector} from './ui/basic-content-inspector.js';
+import {renderLegacyMediaInspector} from './ui/legacy-media-inspector.js';
+import {renderCardInspector} from './ui/card-content-inspector.js';
 import {renderEmbedInspector} from './ui/creator-embed-inspector.js';
 import {defaultCodeSnippet,renderCodeSnippet,activateCodeBlocks} from './core/code-snippet.js';
 import {renderCodeSnippetInspector} from './ui/code-snippet-inspector.js';
 import {readRichTextSelectionFormatting,clearRichTextInlineFormatting} from './core/richtext-links.js';
+import {renderAccessibilityFields} from './ui/accessibility-fields.js';
 import {opaqueContrast} from './core/accessibility.js';
 import {STATE_PROPERTY_IDS,applyStateStyles} from './core/state-styles.js';
 import {defaultTokens,applyTokenVariables} from './core/design-tokens.js';
 import {CONTENT_TYPES,STRUCTURAL_TYPES,validatePageForPublication,isAuthoredContent,authoredNodeHtml,contentAttributes,initContentInteractions,contentTag} from './core/authored-content.js';
 import {captureCanvasInteractionState,restoreCanvasInteractionState} from './core/canvas-interaction-state.js';
-import {renderElementContentControls,pageLinkPicker,mediaAssetPicker} from './ui/element-content-controls.js';
+import {renderElementContentControls,pageLinkPicker} from './ui/element-content-controls.js';
 
 let editorTokens=defaultTokens();
 function propertyInput(...args){return renderPropertyInput(...args,{tokens:editorTokens})}
@@ -730,9 +735,13 @@ function renderStatesInspector(node){
 function renderAccessibilityInspector(node){
   const section=document.createElement('section');section.className='inspector-group';
   const title=document.createElement('div');title.className='inspector-group-title';title.innerHTML='<strong>Akadálymentesség és láthatóság</strong>';section.append(title);
-  for(const [key,label] of [['label','Képernyőolvasó elnevezés'],['id','Oldalbeli hivatkozási azonosító'],['lang','Tartalom nyelve (pl. hu)']].filter(([key])=>node.type!=='root'||key!=='id'))section.append(field(label,node.accessibility?.[key]||'',value=>command('accessibility.set',{nodeId:node.id,patch:{[key]:value}}),Boolean(node.locked)));
+  section.append(renderAccessibilityFields(node,(patch,{render:fullRender=true,typingGroup}={})=>{
+    const saved=command('accessibility.set',{nodeId:node.id,patch},{render:fullRender,typingGroup});
+    if(saved&&!fullRender){renderCanvas();setStatus('Nem mentett módosítás');syncPublishControls();}
+    return saved;
+  },{nodes:()=>page()?.nodes||{},pending:flush=>{flushRichTextDraft=flush}}));
   for(const device of ['desktop','tablet','mobile']){
-    const label=document.createElement('label');label.className='inspector-toggle';const input=document.createElement('input');input.type='checkbox';input.checked=isVisibleOnDevice(node,device);input.disabled=Boolean(node.locked)||node.type==='root';input.onchange=()=>command('element.visibility.set',{nodeId:node.id,device,visible:input.checked});label.append(input,document.createTextNode('Látható: '+device));section.append(label);
+    const label=document.createElement('label');label.className='inspector-toggle';const input=document.createElement('input');input.type='checkbox';input.checked=isVisibleOnDevice(node,device);input.disabled=Boolean(node.locked)||node.type==='root';input.onchange=()=>{if(command('element.visibility.set',{nodeId:node.id,device,visible:input.checked})===false)input.checked=isVisibleOnDevice(node,device);};label.append(input,document.createTextNode('Látható: '+device));section.append(label);
   }
   if(node.type!=='root'){
     const visibility=getNodeVisibilityState(page(),node.id,state.viewport.device);
@@ -933,110 +942,23 @@ function renderMultiInspector(nodes){
  return panel;
 }
 function renderExistingContentInspector(node){
-  const update=(key,value)=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),[key]:value}}});
+  const updateProps=(props,{render:fullRender=true,typingGroup}={})=>{
+    const saved=command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),...props}}},{render:fullRender,typingGroup});
+    if(saved&&!fullRender){renderCanvas();setStatus('Nem mentett módosítás');syncPublishControls();}
+    return saved;
+  };
+  const updateModel=(key,value,options)=>updateProps({[key]:value},options);
   if(!isAuthoredContent(node)&&['image','video','audio'].includes(node.type)){
-    const section=document.createElement('section');section.className='legacy-media-inspector';
-    const mediaLabel={image:'Kép',video:'Videó',audio:'Hang'}[node.type];
-    section.append(field(mediaLabel+' URL',node.props?.src||'',value=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),src:value.trim(),...(['image','video','audio'].includes(node.type)?{assetId:''}:{})}}})));
-    if(node.type==='image'){
-      section.append(mediaAssetPicker(node.props?.assetId||'',(id,asset)=>{
-        const alt=typeof asset?.altText==='string'?asset.altText.trim().slice(0,250):'';
-        const next={...(node.props||{}),assetId:id,...(!id?{src:''}:alt&&!String(node.props?.alt||'').trim()?{alt}:{})};
-        return command('element.update',{nodeId:node.id,patch:{props:next}});
-      },{disabled:Boolean(node.locked)}));
-      section.append(field('Kép leírása (alt)',node.props?.alt||'',value=>update('alt',value)));
-      section.append(field('Képaláírás (opcionális)',legacyImageCaption(node.props),value=>update('caption',value)));
-      const objectFit=document.createElement('select');objectFit.setAttribute('aria-label','Kép illesztése');
-      for(const [value,label] of [['cover','Kitöltés (vágással)'],['contain','Teljes kép (vágás nélkül)'],['fill','Nyújtás'],['none','Eredeti méret'],['scale-down','Csak kicsinyítés']]){
-        const option=document.createElement('option');option.value=value;option.textContent=label;objectFit.append(option)
-      }
-      const appearance=legacyImagePresentation(node.props);
-      objectFit.value=appearance.fit;
-      objectFit.onchange=()=>update('objectFit',objectFit.value);section.append(objectFit);
-      const ratio=document.createElement('select');ratio.setAttribute('aria-label','Képarány');
-      for(const [value,label] of [['auto','Eredeti'],['16 / 9','16:9 – széles'],['4 / 3','4:3'],['1 / 1','1:1 – négyzet'],['3 / 4','3:4 – álló']]){
-        const option=document.createElement('option');option.value=value;option.textContent=label;ratio.append(option);
-      }
-      ratio.value=appearance.ratio;ratio.onchange=()=>update('ratio',ratio.value);section.append(ratio);
-      for(const [key,label,value] of [['focalX','Kivágás vízszintesen',appearance.focalX],['focalY','Kivágás függőlegesen',appearance.focalY]]){
-        const row=document.createElement('label');row.className='inspector-image-focal';
-        const title=document.createElement('span');title.textContent=label;
-        const range=document.createElement('input');range.type='range';range.min='0';range.max='100';range.step='1';
-        range.value=String(value);range.setAttribute('aria-label',label);range.disabled=Boolean(node.locked);
-        const output=document.createElement('output');output.textContent=range.value+'%';
-        range.oninput=()=>{output.textContent=range.value+'%'};
-        range.onchange=()=>update(key,Number(range.value));
-        row.append(title,range,output);section.append(row);
-      }
-      const loading=document.createElement('select');loading.setAttribute('aria-label','Kép betöltése');
-      for(const [value,label] of [['lazy','Késleltetett betöltés'],['eager','Azonnali betöltés']]){
-        const option=document.createElement('option');option.value=value;option.textContent=label;loading.append(option);
-      }
-      loading.value=appearance.loading;loading.onchange=()=>update('loading',loading.value);section.append(loading);
-      const decoration=document.createElement('label');decoration.className='inspector-toggle';
-      const decorative=document.createElement('input');decorative.type='checkbox';
-      decorative.setAttribute('aria-label','Csak díszítő kép');decorative.checked=appearance.decorative;decorative.disabled=Boolean(node.locked);
-      decorative.onchange=()=>update('decorative',decorative.checked);
-      decoration.append(decorative,document.createTextNode('Csak díszítő kép (üres alt szöveg)'));section.append(decoration);
-    }else{
-      const isVideo=node.type==='video';
-      const playableMimes=isVideo?['video/webm']:['audio/mpeg','audio/ogg','audio/wav'];
-      section.append(mediaAssetPicker(node.props?.assetId||'',id=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),assetId:id,...(id?{src:''}:{})}}}),{disabled:Boolean(node.locked),mimes:playableMimes}));
-      const toggles=[
-        ['controls','Lejátszóvezérlők megjelenítése',node.props?.controls!==false],
-        ['loop','Folyamatos ismétlés',node.props?.loop===true],
-        ...(isVideo?[
-          ['muted','Videó némítása',node.props?.muted===true],
-          ['autoplay','Automatikus videóindítás (csak némítva)',node.props?.autoplay===true]
-        ]:[])
-      ];
-      for(const [key,labelText,checked] of toggles){
-        const row=document.createElement('label');row.className='inspector-toggle';
-        const input=document.createElement('input');input.type='checkbox';
-        input.checked=checked;input.disabled=Boolean(node.locked);
-        input.setAttribute('aria-label',labelText);
-        input.onchange=()=>update(key,input.checked);
-        row.append(input,document.createTextNode(labelText));section.append(row);
-      }
-      if(isVideo){
-        section.append(field('Videó borítókép URL',node.props?.poster||'',value=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),poster:value.trim(),posterAssetId:''}}})));
-        section.append(mediaAssetPicker(node.props?.posterAssetId||'',id=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),posterAssetId:id,...(!id?{poster:''}:{})}}}),{disabled:Boolean(node.locked)}));
-        const poster=String(node.props?.poster||'').trim();
-        if(poster&&!safeMediaUrl(poster)&&!node.props?.posterAssetId){
-          const warning=document.createElement('p');warning.className='property-validation';warning.setAttribute('role','status');
-          warning.textContent='Érvénytelen borítókép URL. Használj biztonságos HTTPS vagy belső képútvonalat.';
-          section.append(warning);
-        }
-        const notice=document.createElement('small');notice.className='content-field-help';
-        notice.textContent='A videó a szerkesztőben nem indul automatikusan. Publikálva az automatikus indítás csak némított videónál aktív.';
-        section.append(notice);
-      }
-    }
-    const help=document.createElement('p');help.className='content-field-help';
-    help.textContent='HTTPS/HTTP hivatkozás vagy / jellel kezdődő webhelyútvonal használható. A szerkesztő és a publikus oldal ugyanúgy ellenőrzi.';
-    section.append(help);
-    const source=String(node.props?.src||'').trim();
-    if(source&&!safeMediaUrl(source)){
-      const warning=document.createElement('p');warning.className='property-validation';warning.setAttribute('role','status');
-      warning.textContent='Ez a média-URL nem biztonságos vagy nem támogatott; a publikus oldalon sem töltődik be.';
-      section.append(warning);
-    }
-    inspector.append(section);return true;
+    inspector.append(renderLegacyMediaInspector(node,updateProps,{pending:flush=>{flushRichTextDraft=flush}}));return true;
   }
-  if(!isAuthoredContent(node)&&node.metadata?.basicContentVersion===1&&['badge','quote','icon'].includes(node.type)){
-    const section=document.createElement('section');section.className='basic-content-inspector';
-    if(node.type==='badge'){section.append(field('Címke szövege',node.props?.text||'',value=>update('text',value)))}
-    else if(node.type==='quote'){section.append(field('Idézet szövege',node.props?.text||'',value=>update('text',value),false,true),field('Forrás vagy szerző',node.props?.attribution||'',value=>update('attribution',value)))}
-    else{const select=document.createElement('select');select.setAttribute('aria-label','Ikon');for(const [value,label] of [['star','Csillag'],['heart','Szív'],['play','Lejátszás'],['check','Pipa'],['arrow','Nyíl'],['bolt','Villám'],['camera','Kamera'],['music','Zene'],['globe','Web'],['mail','Levél']]){const option=document.createElement('option');option.value=value;option.textContent=label;select.append(option)}select.value=node.props?.icon||'star';select.onchange=()=>update('icon',select.value);section.append(field('Ikon leírása',node.props?.label||'',value=>update('label',value)),select)}
-    inspector.append(section);return true;
-  }
-  if(node.type==='embed'&&node.metadata?.embedContentVersion===1){inspector.append(renderEmbedInspector(node,value=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),embedContent:value}}})));return true}
-  if(node.type==='social'&&node.metadata?.socialLinksVersion===1){inspector.append(renderSocialLinksInspector(node,value=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),socialLinks:value}}})));return true}
-  if(node.type==='card'&&node.metadata?.cardContentVersion===1){const model={...defaultCardContent(),...(node.props?.cardContent||{})};const set=patch=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),cardContent:{...model,...patch}}}});const section=document.createElement('section');section.className='card-content-inspector';section.append(Object.assign(document.createElement('h3'),{textContent:'Kártya tartalma'}));section.append(field('Kártya címe',model.title,v=>set({title:v})),field('Rövid leírás',model.description,v=>set({description:v}),false,true));const variant=document.createElement('select');variant.setAttribute('aria-label','Kártya megjelenése');for(const [value,label] of [['solid','Telített'],['outline','Körvonal'],['glass','Üveghatás']]){const option=document.createElement('option');option.value=value;option.textContent=label;variant.append(option)}variant.value=model.variant;variant.onchange=()=>set({variant:variant.value});section.append(variant,mediaAssetPicker(model.imageAssetId||'',(id,asset)=>{const alt=typeof asset?.altText==='string'?asset.altText.trim().slice(0,250):'';return set({imageAssetId:id,...(alt&&!model.imageAlt.trim()?{imageAlt:alt}:{})})!==false},{disabled:Boolean(node.locked)}),field('Kép URL (opcionális)',model.imageSrc,v=>set({imageSrc:v.trim()})),field('Kép leírása',model.imageAlt,v=>set({imageAlt:v})),field('Gomb felirata (opcionális)',model.actionLabel,v=>set({actionLabel:v})),field('Gomb hivatkozása',model.actionHref,v=>set({actionHref:v.trim()})));const check=document.createElement('input');check.type='checkbox';check.checked=Boolean(model.newWindow);check.onchange=()=>set({newWindow:check.checked});const openLabel=document.createElement('label');openLabel.className='inspector-toggle';openLabel.append(check,document.createTextNode('Gomb megnyitása új lapon'));section.append(openLabel);inspector.append(section);return true}
-  if(node.type==='countdown'&&node.metadata?.countdownVersion===1){const model={...defaultCountdownContent(),...(node.props?.countdown||{})};const set=patch=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),countdown:{...model,...patch}}}});const section=document.createElement('section');section.className='countdown-inspector';section.append(Object.assign(document.createElement('h3'),{textContent:'Visszaszámláló'}),field('Esemény neve',model.title,v=>set({title:v})));const date=document.createElement('input');date.type='datetime-local';date.setAttribute('aria-label','Esemény időpontja');const parsed=Date.parse(model.targetISO||'');if(Number.isFinite(parsed)){const d=new Date(parsed),two=v=>String(v).padStart(2,'0');date.value=`${d.getFullYear()}-${two(d.getMonth()+1)}-${two(d.getDate())}T${two(d.getHours())}:${two(d.getMinutes())}`}date.onchange=()=>set({targetISO:date.value?new Date(date.value).toISOString():''});section.append(date,field('Lejáratkor megjelenő üzenet',model.finishText,v=>set({finishText:v})));const toggle=document.createElement('input');toggle.type='checkbox';toggle.checked=Boolean(model.showSeconds);toggle.onchange=()=>set({showSeconds:toggle.checked});section.append(toggle,Object.assign(document.createElement('small'),{textContent:'A kijelölt helyi időzóna minden látogatónál ugyanazt az időpontot jelenti. Mentés és publikálás külön művelet.'}));inspector.append(section);return true}
+  if(!isAuthoredContent(node)&&node.metadata?.basicContentVersion===1&&['badge','quote','icon'].includes(node.type)){inspector.append(renderBasicContentInspector(node,updateProps,{pending:flush=>{flushRichTextDraft=flush}}));return true}
+  if(node.type==='embed'&&node.metadata?.embedContentVersion===1){inspector.append(renderEmbedInspector(node,(value,options)=>updateModel('embedContent',value,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}
+  if(node.type==='social'&&node.metadata?.socialLinksVersion===1){inspector.append(renderSocialLinksInspector(node,(value,options)=>updateModel('socialLinks',value,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}
+  if(node.type==='card'&&node.metadata?.cardContentVersion===1){inspector.append(renderCardInspector(node,(value,options)=>updateModel('cardContent',value,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}
+  if(node.type==='countdown'&&node.metadata?.countdownVersion===1){inspector.append(renderCountdownInspector(node,(value,options)=>updateModel('countdown',value,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}
   if(node.type==='divider'&&node.metadata?.decorativeVersion===1){const cfg=normalizeDividerStyle(node.props?.decoration),section=document.createElement('section');section.className='decorative-inspector';section.append(Object.assign(document.createElement('h3'),{textContent:'Elválasztóvonal'}));const set=patch=>{const decoration=normalizeDividerStyle({...cfg,...patch});command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),decoration}}})};const thickness=document.createElement('input');thickness.type='number';thickness.min='1';thickness.max='24';thickness.value=String(cfg.thickness);thickness.setAttribute('aria-label','Elválasztóvonal vastagsága');thickness.onchange=()=>set({thickness:Number(thickness.value)});const color=document.createElement('input');color.type='color';color.value=cfg.color;color.setAttribute('aria-label','Elválasztóvonal színe');color.onchange=()=>set({color:color.value});const style=document.createElement('select');style.setAttribute('aria-label','Elválasztóvonal mintázata');for(const value of DIVIDER_LINE_STYLES){const option=document.createElement('option');option.value=value;option.textContent=value;style.append(option)}style.value=cfg.lineStyle;style.onchange=()=>set({lineStyle:style.value});section.append(thickness,color,style);inspector.append(section);return true}
   if(node.type==='spacer'&&node.metadata?.spacerVersion===1){const section=document.createElement('section');section.className='decorative-inspector';section.append(Object.assign(document.createElement('h3'),{textContent:'Üres térköz'}));const device=state.viewport.device,current=resolveResponsiveValue(node.responsive,'height',device).value??node.style?.height??'64px';section.append(renderPropertyInput(getProperty('size.height'),'Térköz magassága',current,value=>command('responsive.set',{nodeId:node.id,device,patch:{height:value}})));inspector.append(section);return true}
-  if(!isAuthoredContent(node)&&isStructuredType(node.type)&&node.metadata?.structuredContentVersion===1){inspector.append(renderStructuredInspector(node,model=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),contentModel:model},metadata:{...(node.metadata||{}),structuredContentVersion:1}}})));return true}
+  if(!isAuthoredContent(node)&&isStructuredType(node.type)&&node.metadata?.structuredContentVersion===1){inspector.append(renderStructuredInspector(node,(model,options)=>updateModel('contentModel',model,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}
   return false;
 }
 function renderInspector(){
@@ -1441,7 +1363,11 @@ function renderInspector(){
         });
         inspector.append(section);
       }else if(textTypes.has(node.type))inspector.append(renderPlainTextEditor(node));
-      if(node.type==='code'&&node.metadata?.codeSnippetVersion===1)inspector.append(renderCodeSnippetInspector(node,model=>command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),codeSnippet:model}}})));
+      if(node.type==='code'&&node.metadata?.codeSnippetVersion===1)inspector.append(renderCodeSnippetInspector(node,(model,{render:fullRender=true,typingGroup}={})=>{
+        const saved=command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),codeSnippet:model}}},{render:fullRender,typingGroup});
+        if(saved&&!fullRender){renderCanvas();setStatus('Nem mentett módosítás');syncPublishControls();}
+        return saved;
+      },{pending:flush=>{flushRichTextDraft=flush}}));
       else if(renderExistingContentInspector(node)){}
       else if(CONTENT_TYPES.includes(node.type))inspector.append(renderElementContentControls(node,{
         exclude:textTypes.has(node.type)?['text']:[],pages,pending:flush=>{flushRichTextDraft=flush},

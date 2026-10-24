@@ -1,0 +1,22 @@
+[
+  {
+    "name": "0025_site_domains_and_site_slug.sql",
+    "path": "scripts/pending/0025_site_domains_and_site_slug.sql",
+    "sha256": "41b6678eacf28a29c8390c7bc977ddc2024b094454f9a03051129e93dd28c63d"
+  },
+  {
+    "name": "0026_site_memberships.sql",
+    "path": "scripts/pending/0026_site_memberships.sql",
+    "sha256": "22377570985f9d920daf5005ec2d9e32c48c0d5bb18d4bd473b2889909bfbd50"
+  },
+  {
+    "name": "0027_site_scoped_settings.sql",
+    "path": "scripts/pending/0027_site_scoped_settings.sql",
+    "sha256": "99f5b66e50e2761f8c919e776dec03d02adca17c77e15fa8d019d0c2ab09b94c"
+  },
+  {
+    "name": "0028_media_archive.sql",
+    "path": "scripts/pending/0028_media_archive.sql",
+    "sha256": "23c6297c592ef28f685e9dc0895102a6c12ac3489c1d816c405b2c5b892b57fd"
+  }
+]

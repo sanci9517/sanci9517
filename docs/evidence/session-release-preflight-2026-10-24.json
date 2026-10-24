@@ -1,0 +1,51 @@
+{
+  "observed_at": "2026-10-24T08:14:10Z",
+  "candidate_sha": "de81ff268ed0168332a81340442e1edfede765dc",
+  "target_branch": "v2/foundation",
+  "target_sha": "caf91bf91ca4937805c7bbf527de944893c11f78",
+  "authorization": "User explicitly lifted prior merge/deploy prohibitions; no additional approval requested.",
+  "github_candidate_checks": {
+    "passed": 5,
+    "total": 5
+  },
+  "source_coverage": {
+    "status": "PASS",
+    "source_prs": 21,
+    "contributions": 28,
+    "byte_preserved_files": 57,
+    "reserved_sql_unchanged": true
+  },
+  "d1": {
+    "direct_read": "PASS",
+    "wrangler_select_1": "PASS",
+    "ledger_records": 34,
+    "last_ledger_id": 34,
+    "quick_check": "ok",
+    "foreign_key_violations": 0,
+    "schema_objects": 84,
+    "domain_check": 1,
+    "missing_active_memberships": 0,
+    "settings_mismatches": 0,
+    "snapshot_tables": 0,
+    "retention_table_present": true,
+    "rows_written": 0,
+    "pending_wrangler_migrations": 0
+  },
+  "migration_safety_gate": "PASS",
+  "blocker": {
+    "command": "wrangler deployments list --json",
+    "resource": "/accounts/64bbd6a12ac732ed2cac4ca25d8bfa7e/workers/scripts/sanci9517-streamer-brand/deployments",
+    "error": "No access to the specified resource.",
+    "http_status": "not reported by Wrangler",
+    "interpretation": "D1 access passed; Worker deployment read permission is unproven/denied. Do not infer D1 authentication failure.",
+    "required_resolution": "Verify token Workers Scripts Read/Edit access for the target account; then repeat deployment read preflight before merge/deploy."
+  },
+  "actions": {
+    "production_writes": 0,
+    "merge": false,
+    "deploy": false,
+    "migration_replayed": false,
+    "r2_deletions": 0
+  },
+  "raw_preflight": "Protected outside repository; no row contents or credentials included."
+}

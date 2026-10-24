@@ -1,0 +1,48 @@
+{
+  "retention_migration": "PASS",
+  "verified_at": "2026-10-23T10:50:39.235655+00:00",
+  "sql_sha256": "beba715f00f279c7f7064d284ceec2c07ff10e4c844fe4f33dd1c18410cb2c4a",
+  "added_objects": [
+    {
+      "type": "index",
+      "name": "idx_media_retention_due",
+      "tbl_name": "media_retention_requests",
+      "sql": "CREATE INDEX idx_media_retention_due ON media_retention_requests(site_id,state,not_before)"
+    },
+    {
+      "type": "table",
+      "name": "media_retention_requests",
+      "tbl_name": "media_retention_requests",
+      "sql": "CREATE TABLE media_retention_requests (\n id TEXT PRIMARY KEY,\n site_id TEXT NOT NULL,\n asset_id TEXT NOT NULL,\n object_key TEXT NOT NULL,\n state TEXT NOT NULL DEFAULT 'requested'\n  CHECK (state IN ('requested','quarantined','revalidated','cancelled','deleted','blocked')),\n requested_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,\n not_before TEXT NOT NULL,\n updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,\n attempt_count INTEGER NOT NULL DEFAULT 0 CHECK (attempt_count >= 0),\n last_error TEXT,\n FOREIGN KEY(asset_id) REFERENCES media(id),\n CHECK (length(trim(site_id)) > 0 AND length(trim(object_key)) > 0 AND length(trim(not_before)) >= 10),\n UNIQUE(site_id,asset_id)\n)"
+    }
+  ],
+  "retention_rows": 0,
+  "unchanged_existing_tables_including_sqlite_sequence": 27,
+  "all_existing_rows_equal": true,
+  "ledger_records_unchanged": 34,
+  "foreign_key_check": [],
+  "quick_check": "ok",
+  "api_checks": [
+    {
+      "path": "/api/health",
+      "status": 200
+    },
+    {
+      "path": "/api/db-health",
+      "status": 200
+    },
+    {
+      "path": "/api/admin/media?retentionStatus=1",
+      "status": 401
+    }
+  ],
+  "authenticated_retention_api_acceptance": "UNVERIFIED: no application session supplied; none created",
+  "manual_migration_ledger_entry_added": false,
+  "r2_deletion": false,
+  "automatic_cleanup": false,
+  "production_deploy": false,
+  "merge": false,
+  "before_backup_sha256": "af72386a041fe2d2d388bff4c2807e3fc4407a302ab1023d9a9a8fe05f360054",
+  "after_backup_sha256": "57c1491bce2be55bd78965ba51bf6fb8a784e02f48876b0740c4b11d27c3001e",
+  "actual_retention_adapter_list_query": "PASS: zero rows, zero writes"
+}

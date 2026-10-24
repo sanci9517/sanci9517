@@ -1,11 +1,12 @@
+import {countdownISOToLocal,countdownLocalToISO} from '../core/countdown-local-time.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createDocument} from '../core/schema.js';
 import {createEditorState,activePage} from '../core/state.js';
 import {execute} from '../core/commands.js';
-import {authoredNodeHtml,contentAttributes,contentTag,normalizeElementContent,validateElementContent,validatePageForPublication,contentProperties} from '../core/authored-content.js';
-import {opaqueContrast} from '../core/accessibility.js';
-import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption} from '../core/legacy-media-source.js';
+import {authoredNodeHtml,contentAttributes,contentTag,normalizeElementContent,validateElementContent,validatePageForPublication,contentProperties,imageFocalPosition} from '../core/authored-content.js';
+import {normalizeAccessibility,opaqueContrast} from '../core/accessibility.js';
+import {legacyImageSource,legacyPlayableSource,legacyPlaybackSettings,legacyImagePresentation,legacyImageCaption,legacyMediaInspectorValues} from '../core/legacy-media-source.js';
 
 test('typed content edits preserve unknown legacy data and undo restores the complete node',()=>{
   const state=createEditorState(createDocument());execute(state,{type:'element.add',payload:{type:'heading',props:{text:'Eredeti cím',legacy:{kept:true}},style:{width:'240px'}}});
@@ -57,6 +58,28 @@ test('legacy accessibility attributes have one canonical Canvas/Public interpret
   assert.equal(contentAttributes({...base,accessibility:{id:'current-anchor',anchorId:'not valid',label:'Inspector név'}}).id,'current-anchor');
   assert.equal(contentAttributes({...base,type:'image',props:{},accessibility:{ariaLabel:'Legacy media label'}})['aria-label'],undefined,
     'old public renderer deliberately excluded legacy media labels');
+});
+
+test('gallery crop views preserve legacy presets and partial axes without materializing saved defaults',()=>{
+ const presets={center:[50,50],top:[50,0],bottom:[50,100],left:[0,50],right:[100,50]};
+ for(const [focalPoint,[focalX,focalY]] of Object.entries(presets)){
+  const item=Object.freeze({src:'/image.jpg',alt:'Régi kép',focalPoint});
+  const before=structuredClone(item);
+  assert.deepEqual(imageFocalPosition(item),{focalX,focalY});
+  for(const type of ['gallery','carousel']){
+   const node={id:'legacy-crop',type,metadata:{contentVersion:1},props:{items:Object.freeze([item])}};
+   assert.match(authoredNodeHtml(node),new RegExp(`object-position:${focalX}% ${focalY}%`));
+   const changed=normalizeElementContent(node,{items:[{...item,caption:'Új felirat'}]});
+   assert.equal(Object.hasOwn(changed.items[0],'focalX'),false);
+   assert.equal(Object.hasOwn(changed.items[0],'focalY'),false);
+  }
+  assert.deepEqual(item,before);
+ }
+ assert.deepEqual(imageFocalPosition({focalPoint:'top',focalX:24}),{focalX:24,focalY:0});
+ assert.deepEqual(imageFocalPosition({focalPoint:'right',focalY:68}),{focalX:100,focalY:68});
+ assert.deepEqual(imageFocalPosition({focalPoint:'top',focalX:-5,focalY:120}),{focalX:0,focalY:100});
+ assert.deepEqual(imageFocalPosition({focalPoint:'right',focalX:'invalid'}),{focalX:100,focalY:50});
+ for(const focalPoint of ['constructor','__proto__','unknown',null])assert.deepEqual(imageFocalPosition({focalPoint}),{focalX:50,focalY:50});
 });
 
 test('image focal position supports precise two-axis crops while preserving legacy presets',()=>{
@@ -231,4 +254,69 @@ test('legacy image crop, ratio and load settings share allowlisted defaults and 
  assert.deepEqual(legacyImagePresentation({fit:'url(javascript:bad)',objectFit:'unknown',ratio:'666 / 0',focalX:'NaN',focalY:'Infinity',loading:'script'}),defaults);
  assert.equal(legacyImagePresentation({fit:'fill',ratio:'1 / 1'}).fit,'fill');
  assert.equal(legacyImagePresentation({fit:'fill',objectFit:'contain'}).fit,'contain','the legacy Inspector must override an older fit alias');
+});
+
+
+test('legacy media Inspector rejects structured JSON without coercion or mutating persisted values',()=>{
+ const bad={toString:'not callable',valueOf:'not callable'};
+ for(const value of [bad,{},[],['/image.png'],true,false,19,Infinity]){
+  const props=Object.freeze({src:value,poster:value,assetId:value,posterAssetId:value,alt:value});
+  const before=structuredClone(props);
+  const view=legacyMediaInspectorValues(props);
+  assert.equal(view.src,'');assert.equal(view.poster,'');assert.equal(view.assetId,'');assert.equal(view.posterAssetId,'');
+  assert.equal(view.alt,typeof value==='number'&&Number.isFinite(value)?String(value):'');
+  assert.ok(view.invalidFields.includes('src'));assert.ok(view.invalidFields.includes('posterAssetId'));
+  assert.deepEqual(props,before);
+ }
+ const id='00000000-0000-4000-8000-000000000123';
+ assert.deepEqual(legacyMediaInspectorValues({src:'/image.png',poster:'/poster.png',alt:0,assetId:id,posterAssetId:id}),{
+  src:'/image.png',poster:'/poster.png',alt:'0',assetId:id,posterAssetId:id,invalidFields:[]
+ });
+ assert.deepEqual(legacyMediaInspectorValues(null),{src:'',poster:'',alt:'',assetId:'',posterAssetId:'',invalidFields:[]});
+ const decorative=legacyMediaInspectorValues({alt:'Megőrzött képleírás',decorative:true,assetId:'invalid'});
+ assert.equal(decorative.alt,'Megőrzött képleírás');assert.deepEqual(decorative.invalidFields,['assetId']);
+});
+
+test('Countdown local time rejects nonexistent wall times in multiple time zones',()=>{
+ const previousTimezone=process.env.TZ;
+ try{
+  for(const [zone,gap,valid,iso] of [
+   ['Europe/Budapest','2030-03-31T02:30','2030-03-31T03:30','2030-03-31T01:30:00.000Z'],
+   ['America/New_York','2030-03-10T02:30','2030-03-10T03:30','2030-03-10T07:30:00.000Z']]){
+   process.env.TZ=zone;assert.throws(()=>countdownLocalToISO(gap),/nem létezik/);assert.equal(countdownLocalToISO(valid),iso);
+  }
+  process.env.TZ='UTC';
+  for(const invalid of ['2030-02-30T12:00','2030-12-31T24:00','2030-13-01T12:00','2030-01-01T12:60','not a date','2030-01-01T12:00Z'])assert.throws(()=>countdownLocalToISO(invalid));
+  for(const outside of ['1999-12-31T23:59','2101-01-01T00:00'])assert.throws(()=>countdownLocalToISO(outside),/2000 és 2100/);
+  assert.equal(countdownLocalToISO(''),'');
+ }finally{if(previousTimezone===undefined)delete process.env.TZ;else process.env.TZ=previousTimezone;}
+});
+test('Countdown local view preserves sub-minute precision and canonical instants',()=>{
+ const previousTimezone=process.env.TZ;
+ try{
+  for(const zone of ['Europe/Budapest','America/New_York','UTC']){
+   process.env.TZ=zone;
+   for(const iso of ['2030-12-31T20:30:00.000Z','2030-12-31T20:30:42.000Z','2030-12-31T20:30:42.123Z','2030-12-31T20:30:00.007Z'])assert.equal(countdownLocalToISO(countdownISOToLocal(iso)),iso);
+  }
+  for(const invalid of ['',null,undefined,'invalid'])assert.equal(countdownISOToLocal(invalid),'');
+ }finally{if(previousTimezone===undefined)delete process.env.TZ;else process.env.TZ=previousTimezone;}
+});
+
+
+test('explicit accessibility edits replace their own legacy alias and Undo restores the full snapshot',()=>{
+ const state=createEditorState(createDocument());execute(state,{type:'element.add',payload:{type:'section'}});const id=state.selection.primaryId;
+ const legacy={label:'Old canonical',id:'old-canonical',ariaLabel:'Legacy label',anchorId:'legacy-anchor',lang:'hu'};
+ execute(state,{type:'element.update',payload:{nodeId:id,patch:{accessibility:legacy}}});const before=structuredClone(activePage(state).nodes[id]);
+ execute(state,{type:'accessibility.set',payload:{nodeId:id,patch:{label:'New label'}}});let node=activePage(state).nodes[id];
+ assert.equal(Object.hasOwn(node.accessibility,'ariaLabel'),false);assert.equal(node.accessibility.anchorId,'legacy-anchor');assert.equal(contentAttributes(node)['aria-label'],'New label');
+ execute(state,{type:'history.undo'});assert.deepEqual(activePage(state).nodes[id],before);
+ execute(state,{type:'accessibility.set',payload:{nodeId:id,patch:{id:'new-anchor'}}});node=activePage(state).nodes[id];
+ assert.equal(Object.hasOwn(node.accessibility,'anchorId'),false);assert.equal(node.accessibility.ariaLabel,'Legacy label');assert.equal(contentAttributes(node).id,'new-anchor');
+ execute(state,{type:'history.undo'});assert.deepEqual(activePage(state).nodes[id],before);
+});
+test('accessibility validation remains pure and preserves unrelated aliases and root identity rules',()=>{
+ const node={id:'node',type:'section',accessibility:{ariaLabel:'Legacy label',anchorId:'legacy-anchor',lang:'hu'}},before=structuredClone(node);
+ const changed=normalizeAccessibility(node,{lang:'de'},{node});assert.equal(changed.ariaLabel,'Legacy label');assert.equal(changed.anchorId,'legacy-anchor');assert.deepEqual(node,before);
+ assert.throws(()=>normalizeAccessibility(node,{id:'taken'},{node,other:{id:'other',accessibility:{id:'taken'}}}),/foglalt/);
+ assert.throws(()=>normalizeAccessibility(node,{lang:'h'}),/nyelv/);assert.throws(()=>normalizeAccessibility({...node,type:'root'},{id:'new-root'}),/védett/);assert.deepEqual(node,before);
 });

@@ -680,7 +680,9 @@ test("deletion preflight remains non-destructive for archived and missing object
   assert.equal(existing.objectPresent,true);
   assert.equal(existing.usageComplete,true);
   assert.equal(existing.eligibleForRetention,true);
-  assert.equal(existing.retentionRequestAvailable,false);
+  assert.equal(existing.retentionRequestAvailable,true);
+  assert.equal(existing.retentionMigrationActive,true);
+  assert.equal(existing.existingRetentionRequest,null);
   assert.deepEqual(Object.keys(existing.retentionPreview).sort(),["assetId","finalDeletionAuthorized","notBefore","objectKey","siteId","state"]);
   assert.equal(existing.retentionPreview.assetId,asset.id);
   assert.equal(existing.retentionPreview.siteId,"site-default");
@@ -775,4 +777,73 @@ test("media deletion preflight rejects malformed or conflicting mode flags",asyn
     assert.equal((await response.json()).error.code,"INVALID_MEDIA_PREFLIGHT");
   }
   assert.equal(f.files.size,1);
+});
+
+
+test("retention preflight capability is read-only and fails closed for unavailable schema or existing requests",async t=>{
+ const f=await fixture(t);
+ const asset=(await (await f.call("POST","editor",png,{name:"capability.png"})).json()).data;
+ await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id});
+ const inspect=async()=> (await (await f.call("GET","editor",null,{id:asset.id,deletePreflight:true})).json()).data;
+ const before=f.db.prepare("SELECT * FROM media").all();
+ const healthy=await inspect();assert.equal(healthy.retentionRequestAvailable,true);
+ assert.equal(f.db.prepare("SELECT COUNT(*) n FROM media_retention_requests").get().n,0);
+ const created=(await (await f.call("POST","editor",null,{id:asset.id,retentionRequest:true})).json()).data;
+ for(const state of ["requested","quarantined","revalidated","blocked","cancelled","deleted"]){
+  f.db.prepare("UPDATE media_retention_requests SET state=? WHERE id=?").run(state,created.id);
+  const result=await inspect();assert.equal(result.retentionRequestAvailable,false);
+  assert.equal(result.retentionMigrationActive,true);
+  assert.deepEqual(result.existingRetentionRequest,{id:created.id,state,notBefore:created.notBefore});
+ }
+ f.db.exec("DROP TABLE media_retention_requests");
+ const unavailable=await inspect();assert.equal(unavailable.retentionMigrationActive,false);
+ assert.equal(unavailable.retentionRequestAvailable,false);assert.equal(unavailable.existingRetentionRequest,null);
+ assert.equal(unavailable.permanentDeletionAuthorized,false);
+ assert.equal(f.db.prepare("SELECT COUNT(*) n FROM sqlite_master WHERE name='media_retention_requests'").get().n,0,"no implicit migration");
+ f.db.exec("CREATE TABLE media_retention_requests(id TEXT PRIMARY KEY)");
+ const incompatible=await inspect();assert.equal(incompatible.retentionMigrationActive,false);assert.equal(incompatible.retentionRequestAvailable,false);
+ assert.deepEqual(f.db.prepare("SELECT * FROM media").all(),before);assert.equal(f.files.size,1);
+});
+
+test("retention creation rechecks changes after preflight and requires same-origin mutations",async t=>{
+ const f=await fixture(t);
+ const asset=(await (await f.call("POST","editor",png,{name:"race.png"})).json()).data;
+ await f.call("PATCH","editor",JSON.stringify({archived:true}),{id:asset.id});
+ const preflight=await f.call("GET","editor",null,{id:asset.id,deletePreflight:true});
+ assert.equal((await preflight.json()).data.retentionRequestAvailable,true);
+ const forbidden=await f.call("POST","editor",null,{id:asset.id,retentionRequest:true,origin:"https://attacker.example"});
+ assert.equal(forbidden.status,403);
+ await f.call("PATCH","editor",JSON.stringify({archived:false}),{id:asset.id});
+ const stale=await f.call("POST","editor",null,{id:asset.id,retentionRequest:true});
+ assert.equal(stale.status,409);assert.equal((await stale.json()).error.code,"ASSET_NOT_ARCHIVED");
+ assert.equal(f.db.prepare("SELECT COUNT(*) n FROM media_retention_requests").get().n,0);assert.equal(f.files.size,1);
+});
+
+test("full orphan pages respect D1's 100-parameter limit and fail closed if the second lookup fails",async t=>{
+ const f=await fixture(t);
+ const insert=f.db.prepare("INSERT INTO media(id,object_key,original_name,mime_type,size_bytes,alt_text,site_id) VALUES(?,?,?,?,?,?,?)");
+ for(let i=0;i<100;i++){
+  const key="sites/site-default/media/limit-"+String(i).padStart(3,"0");f.files.set(key,png);
+  if(i===0||i===99)insert.run("00000000-0000-4000-8000-"+String(i).padStart(12,"0"),key,"registered.png","image/png",png.length,"","site-default");
+ }
+ const before=f.db.prepare("SELECT * FROM media ORDER BY id").all(),files=new Map(f.files),counts=[];
+ const original=f.env.DB.prepare.bind(f.env.DB);let failSecond=false;
+ f.env.DB.prepare=sql=>{
+  const statement=original(sql);
+  if(!sql.startsWith("SELECT object_key FROM media WHERE site_id=? AND object_key IN"))return statement;
+  assert.ok(sql.startsWith("SELECT"));
+  return {
+   bind(...values){counts.push(values.length);if(values.length>100)throw new Error("D1 parameter limit exceeded");statement.bind(...values);return this;},
+   async all(){if(failSecond&&counts.length===2)throw new Error("second lookup unavailable");return statement.all();}
+  };
+ };
+ let storageWrites=0;
+ f.env.MEDIA.put=f.env.MEDIA.delete=async()=>{storageWrites++;throw new Error("read-only audit attempted storage mutation");};
+ const result=await f.call("GET","editor",null,{orphanAudit:true});assert.equal(result.status,200);
+ const report=(await result.json()).data;assert.equal(report.checked,100);assert.equal(report.registeredCount,2);assert.equal(report.unregisteredCandidates.length,98);
+ assert.deepEqual(counts,[100,2]);assert.equal(report.deletionAuthorized,false);
+ counts.length=0;failSecond=true;
+ const failed=await f.call("GET","editor",null,{orphanAudit:true});assert.equal(failed.status,503);
+ const error=await failed.json();assert.equal(error.error.code,"MEDIA_METADATA_FAILED");assert.equal(error.data,undefined,"no partial diagnostic may be returned as success");
+ assert.deepEqual(f.db.prepare("SELECT * FROM media ORDER BY id").all(),before);assert.deepEqual(f.files,files);assert.equal(storageWrites,0);
 });

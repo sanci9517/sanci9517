@@ -98,6 +98,11 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await editor.locator('.content-range-value').first().textContent(),'18%');
   await editor.getByLabel('Külső média címe',{exact:true}).fill('javascript:alert(1)');assert.equal(await editor.locator('[aria-invalid=true]').count(),1);
   await editor.getByLabel('Külső média címe',{exact:true}).fill('/fixture.svg');
+  assert.equal(await node(editor,'image').locator('img').getAttribute('src'),'/fixture.svg','a valid handwritten URL replaces the prior asset');
+  assert.equal(await editor.locator('[data-content-key="assetId"] .editor-media-selected').count(),0);
+  // Choose the library image explicitly again for the publication checks below.
+  await editor.locator('[data-content-key="assetId"]').getByRole('button',{name:'Médiatár megnyitása'}).click();
+  await editor.locator('[data-content-key="assetId"] .editor-media-choice').click();
   await select('tabs');
   await node(editor,'tabs').getByRole('tab',{name:'Bemutatkozás',exact:true}).click();
   assert.equal(await node(editor,'tabs').getByRole('tab',{name:'Bemutatkozás',exact:true}).getAttribute('aria-selected'),'true');

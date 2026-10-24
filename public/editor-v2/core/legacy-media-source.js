@@ -6,6 +6,23 @@ import {safeMediaUrl} from './element-content.js';
 
 const MEDIA_ASSET_ID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
+/** Editable text for legacy media, without coercing malformed persisted JSON.
+ * Reading the Inspector must never rewrite the original Page Model.
+ */
+export function legacyMediaInspectorValues(props){
+  const p=props??{},values={},invalidFields=[];
+  for(const key of ['src','poster','alt','assetId','posterAssetId']){
+    const value=p[key];
+    const numericAlt=key==='alt'&&typeof value==='number'&&Number.isFinite(value);
+    const valid=typeof value==='string'||numericAlt;
+    const id=key==='assetId'||key==='posterAssetId';
+    const accepted=valid&&(!id||value===''||MEDIA_ASSET_ID.test(value));
+    values[key]=accepted?(numericAlt?String(value):value):'';
+    if(value!==undefined&&value!==null&&value!==''&&!accepted)invalidFields.push(key);
+  }
+  return {...values,invalidFields};
+}
+
 export function legacyImageSource(props,{editor=false}={}){
   const id=props?.assetId;
   if(typeof id==='string'&&MEDIA_ASSET_ID.test(id)){
