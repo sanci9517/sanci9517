@@ -1,7 +1,12 @@
 {
   "date": "2026-10-25",
   "plan_cursor": "77.44.7.A",
-  "inspector_fields": ["typography.textAlign", "background.color", "radius.topLeft", "typography.fontSize"],
+  "inspector_fields": [
+    "typography.textAlign",
+    "background.color",
+    "radius.topLeft",
+    "typography.fontSize"
+  ],
   "route": [
     "real Inspector select control",
     "responsive.set Page Model command",
@@ -17,7 +22,7 @@
   ],
   "checks": {
     "inspector_lifecycle_chromium": "PASS 1/1 after extending the test with typography.fontSize Save/Publish",
-    "editor_browser_suite": "PASS 85/85 on commit 3f81fa09 before the latest fontSize assertion extension; focused lifecycle rerun PASS 1/1 after extension",
+    "editor_browser_suite": "PASS 85/85 on commit 64af5d21; all six GitHub checks PASS",
     "editor_unit_suite": "PASS 131/131",
     "typescript": "PASS",
     "plan_contract": "PASS 13/13",
@@ -42,11 +47,11 @@
   "production_source": {
     "superseded_version": "b2db9f3f-19f8-4c06-b15a-c23b18f5be77",
     "superseded_source_commit": "b7cec261e53bf308853444e494cb44c437f5292d",
-    "current_version_at_check": "1ddcb0d2-04ec-40f0-9848-ffac4a53b6d0",
-    "current_deployment_id": "8e71008b-b495-4180-8d86-9dc7a5946c03",
+    "current_version_at_check": "7bbe2b11-ddda-4b4d-a62d-ed215e5c93e5",
+    "current_deployment_id": "22691b89-6407-436f-b8ba-66cbb5d6c38f",
     "current_traffic_percent": 100,
-    "current_source_commit": "3f81fa09671cbc9cb07d330976191b48f64944b6",
-    "workers_build_id": "7400516b-702c-4240-bb8c-269f932a5bde",
+    "current_source_commit": "64af5d2181b7cbbf2b2589eccf92e8f44ba25dd3",
+    "workers_build_id": "89aa2882-cc23-4fa1-a35d-132ce46d1407",
     "workers_build_outcome": "success",
     "migration_gate": "No migrations to apply",
     "live_inspector_module_sha256_matches": {
@@ -54,15 +59,19 @@
       "public/editor-v2/core/property-values.js": "7258adc1ad21d85ae6f0299d80daaddc0316fc2f3184adadce2deacca4996314",
       "public/editor-v2/core/property-registry.js": "2f0be1ca519d2c76ee091a59d979feed2fe5a30a92246450d48ae680b2f3580d"
     },
-    "health_status": {"api_health": 200, "db_health": 200, "anonymous_admin": 401}
+    "health_status": {
+      "api_health": 200,
+      "db_health": 200,
+      "anonymous_admin": 401
+    }
   },
   "changes_in_this_local_step": {
     "runtime_files_changed": false,
     "production_data_writes": false,
     "d1_migrations": false,
     "r2_deletions": false,
-    "git_push_pending": true,
-    "github_editor_core_rerun_pending": true
+    "git_push_pending": false,
+    "github_editor_core_rerun_pending": false
   },
-  "acceptance": "Four style-field routes verified in the current local browser test. The latest fontSize extension has a focused Chromium PASS; full CI rerun is pending. All 79 element types, 68 properties, physical mobile/IME and full 77.44 acceptance remain open."
+  "acceptance": "Four style-field routes verified in the current browser test. The latest fontSize extension passed the full Editor Core suite 85/85 and all six GitHub checks. All 79 element types, 68 properties, physical mobile/IME and full 77.44 acceptance remain open."
 }
