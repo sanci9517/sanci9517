@@ -16,7 +16,7 @@
   ],
   "checks": {
     "inspector_lifecycle_chromium": "PASS 1/1 after extending the test with radius.topLeft mobile Save/Publish",
-    "editor_browser_suite": "PASS 85/85 on commit 3d67a53b before the latest assertion extension; target test rerun PASS 1/1 after extension",
+    "editor_browser_suite": "4d1e1c29 CI: 84/85, failed only at pre-existing countdown assertion; focused corrected countdown tests PASS 2/2, full CI rerun pending",
     "editor_unit_suite": "PASS 131/131",
     "typescript": "PASS",
     "plan_contract": "PASS 13/13",
@@ -29,14 +29,21 @@
     "correction": "Mount the external Inspector field before creating the guidance panel, matching the real Editor DOM order; use CHROMIUM_PATH or the system Chromium binary.",
     "local_regression": "PASS in the 85-test Editor browser suite"
   },
+  "countdown_browser_ci_failure": {
+    "commit": "4d1e1c2970c9dd4595e73388a2a3fa17f5b1d771",
+    "result": "84/85 Editor browser tests passed; editor-countdown.test.js expected aria-invalid on the unrelated title input while the date input owned the validation error",
+    "correction": "Assert the invalid state remains on the date input and Escape restores the blocked title draft",
+    "local_regression": "PASS 2/2 desktop and mobile time-zone variants",
+    "github_rerun_pending": true
+  },
   "production_source": {
     "superseded_version": "b2db9f3f-19f8-4c06-b15a-c23b18f5be77",
     "superseded_source_commit": "b7cec261e53bf308853444e494cb44c437f5292d",
-    "current_version_at_check": "3e814311-7355-4794-9708-603f0de19f58",
-    "current_deployment_id": "24bd4266-f4f1-4b53-9ea3-ee9a71b0be6f",
+    "current_version_at_check": "2aaff4e6-11ea-4f80-a1dd-e88ce2b3d88b",
+    "current_deployment_id": "6aaf7ba4-f83f-4d9e-872c-75e89beed35d",
     "current_traffic_percent": 100,
-    "current_source_commit": "3d67a53bc2c9ec34dfa7e2de8f864d53cd62cf5f",
-    "workers_build_id": "4fbf9e7f-c1bb-4237-bafa-3000f14390dd",
+    "current_source_commit": "4d1e1c2970c9dd4595e73388a2a3fa17f5b1d771",
+    "workers_build_id": "93ea1f6d-97b8-4857-bf20-ed6fedc32d19",
     "workers_build_outcome": "success",
     "migration_gate": "No migrations to apply",
     "live_inspector_module_sha256_matches": {
@@ -54,5 +61,5 @@
     "git_push_pending": true,
     "github_editor_core_rerun_pending": true
   },
-  "acceptance": "Three style-field routes verified in the current local browser test. The full browser suite is due to rerun in CI for the latest responsive-radius extension; all 79 element types, 68 properties, physical mobile/IME and full 77.44 acceptance remain open."
+  "acceptance": "Three style-field routes verified in the current local browser test. Full browser CI for radius extension reported 84/85 due to the corrected unrelated countdown assertion; re-run is pending. All 79 element types, 68 properties, physical mobile/IME and full 77.44 acceptance remain open."
 }

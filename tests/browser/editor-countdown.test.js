@@ -83,7 +83,9 @@ for(const [width,timezoneId,gap,overlapISO,overlapLocal] of [[390,'Europe/Budape
  await title.focus();await editor.keyboard.press('Control+s');assert.equal(posts.length,0,'text focus cannot forget an invalid date guard');
  await title.fill('Nem menthető cím');
  assert.equal(await selected.locator('.visual-countdown-heading').textContent(),'Élő premier <script>alert(1)</script>','invalid date blocks unrelated model changes');
- assert.equal(await title.getAttribute('aria-invalid'),'true');await title.press('Escape');
+ assert.equal(await field.locator('input[type="datetime-local"]').getAttribute('aria-invalid'),'true','a blocked title edit must not clear the invalid date state');
+ await title.press('Escape');
+ assert.equal(await title.inputValue(),'Élő premier <script>alert(1)</script>','Escape discards the blocked title draft');
  for(const action of ['#save','#publish']){await editor.locator(action).click();assert.equal(posts.length,0,'invalid local time blocks all API writes');}
  await field.locator('input[type="datetime-local"]').fill(localDate);await field.locator('input[type="datetime-local"]').press('Tab');
  assert.equal(posts.length,0,'Inspector change never saves');
