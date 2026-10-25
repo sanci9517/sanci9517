@@ -27,8 +27,8 @@
     "typography.lineHeight: Laza · 1.75 preset reaches Canvas (84px at 48px font), survives Undo/Redo + draft Save/reload; previous published line-height remains until explicit Publish"
   ],
   "checks": {
-    "inspector_lifecycle_chromium": "PASS 1/1 locally after extending the test with typography.lineHeight; GitHub Editor Core rerun pending for this extension",
-    "editor_browser_suite": "PASS 85/85 on commit 1ca93e88 before the unpushed typography.lineHeight assertion extension",
+    "inspector_lifecycle_chromium": "PASS 1/1 locally and in full GitHub Editor Core Chromium suite on commit 82e217bd",
+    "editor_browser_suite": "PASS 85/85 on commit 82e217bd; all five GitHub workflow runs PASS",
     "editor_unit_suite": "PASS 131/131 in the Editor Core workflow for commit 49978160",
     "typescript": "PASS",
     "plan_contract": "PASS 13/13",
@@ -52,13 +52,13 @@
     "rerun_result": "Editor Core browser suite 85/85 PASS; all six checks PASS"
   },
   "production_source": {
-    "latest_verified_worker_version": "ead26073-97de-4518-9c29-24ca38349a8c",
-    "latest_verified_deployment_id": "2779ae0a-1540-4024-b2bb-796c405a33b2",
+    "verified_worker_version": "c8e165d9-be7b-4d11-bec5-d746099c7bbb",
+    "verified_deployment_id": "273c3284-4bb0-4a1c-b756-923ae67710a1",
     "traffic_percent": 100,
-    "source_commit": "92079a44a538daa86f8e335aac3990daf4df1ad9",
-    "workers_build_id": "76086d76-57d5-4d68-9313-e6c67663b363",
+    "source_commit": "82e217bd68c09b4b6147a3c9d9906d57be4c144a",
+    "workers_build_id": "70db413f-7ca6-47a2-a249-c68a0ced3263",
     "workers_build_outcome": "success",
-    "runtime_delta": "The verified 92079a44 build was documentation-only; runtime and asset code are unchanged from the tested 1ca93e88 application source.",
+    "runtime_delta": "Tests and documentation only; no application runtime, asset, migration, or production-data files changed.",
     "last_live_smoke_verified_version": "7bbe2b11-ddda-4b4d-a62d-ed215e5c93e5",
     "last_live_smoke_source_commit": "64af5d2181b7cbbf2b2589eccf92e8f44ba25dd3",
     "last_live_smoke_results": {
@@ -74,8 +74,8 @@
     "production_data_writes": false,
     "d1_migration_files_changed": false,
     "r2_deletions": false,
-    "git_push_pending": true,
-    "github_editor_core_rerun_pending": true
+    "git_push_pending": false,
+    "github_editor_core_rerun_pending": false
   },
-  "acceptance": "Seven style-field routes are represented in the browser test; the new typography.lineHeight 1.75 route passed focused Chromium 1/1 locally (84px at 48px font). The last pushed version passed Editor Core 85/85 on 1ca93e88; the new lineHeight assertion needs its own GitHub CI run. All 79 element types, 68 properties, physical mobile/IME and full 77.44 acceptance remain open."
+  "acceptance": "Seven style-field routes are verified; typography.lineHeight Laza · 1.75 renders as 84px at 48px font through Canvas, Undo/Redo, draft Save/reload and explicit Publish. The full Editor Core suite passed 85/85 on 82e217bd and all five GitHub workflows plus the Cloudflare build passed. All 79 element types, 68 properties, physical mobile/IME and full 77.44 acceptance remain open."
 }
