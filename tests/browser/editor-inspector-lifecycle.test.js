@@ -317,6 +317,35 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await publicPage.reload();
   assert.deepEqual(await publicPage.locator(`[data-node-id="${itemId}"]`).evaluate(el=>{const style=getComputedStyle(el);return {top:style.paddingTop,right:style.paddingRight}}),
     {top:'32px',right:'32px'},'the separately published padding reaches the public renderer');
+  // The typed minimum-width dimension follows the same draft/publication
+  // boundary after a public value already exists.
+  await editor.locator('.inspector-tabs button').first().click();
+  const sizeTitle=editor.locator('.inspector-group-title').filter({hasText:'Méret'});
+  if(await sizeTitle.getAttribute('aria-expanded')==='false')await sizeTitle.click();
+  const minWidthCss=()=>item.evaluate(el=>getComputedStyle(el).minWidth);
+  assert.equal(await minWidthCss(),'80px','the previously published minimum width is 80px');
+  const minWidthNumberInput=field('size.minWidth').locator('input[type="number"]');
+  await minWidthNumberInput.fill('160');
+  await minWidthNumberInput.press('Tab');
+  assert.equal(await minWidthCss(),'160px','the typed minimum width reaches Canvas');
+  await editor.locator('#undo').click();
+  assert.equal(await minWidthCss(),'80px','Undo restores the prior minimum width');
+  await editor.locator('#redo').click();
+  assert.equal(await minWidthCss(),'160px','Redo restores the selected minimum width');
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false,'saving minimum width must not publish');
+  await editor.reload();await select(itemId);
+  assert.equal(await minWidthCss(),'160px','saved minimum width survives Editor reload');
+  await publicPage.reload();
+  assert.equal(await publicPage.locator(`[data-node-id="${itemId}"]`).evaluate(el=>getComputedStyle(el).minWidth),'80px',
+    'draft Save leaves the previous published minimum width live');
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
+  assert.equal(posts.at(-1).publish,true,'only explicit Publish sends the new minimum width live');
+  await publicPage.reload();
+  assert.equal(await publicPage.locator(`[data-node-id="${itemId}"]`).evaluate(el=>getComputedStyle(el).minWidth),'160px',
+    'the separately published minimum width reaches the public renderer');
   // A dragged/offset static node is rendered with the same relative CSS on
   // canvas and public page. The Inspector also makes leaving the artboard
   // explicit and offers a scoped recovery action.

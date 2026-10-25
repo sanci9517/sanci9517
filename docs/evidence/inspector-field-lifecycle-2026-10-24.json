@@ -6,7 +6,8 @@
     "background.color",
     "radius.topLeft",
     "typography.fontSize",
-    "spacing.padding"
+    "spacing.padding",
+    "size.minWidth"
   ],
   "route": [
     "real Inspector select control",
@@ -20,11 +21,12 @@
     "background.color: previous published blue remains unchanged after draft Save; explicit Publish changes public CSS to red",
     "radius.topLeft on mobile: draft Save preserves inherited published radius; explicit Publish updates mobile public CSS to the local override",
     "typography.fontSize: 48px preset reaches Canvas and survives Undo/Redo + Save/reload; prior published 32px remains until explicit Publish",
-    "spacing.padding: XL · 32 preset reaches Canvas, survives Undo/Redo + draft Save/reload; previous published 16px/24px remains until explicit Publish"
+    "spacing.padding: XL · 32 preset reaches Canvas, survives Undo/Redo + draft Save/reload; previous published 16px/24px remains until explicit Publish",
+    "size.minWidth: typed 160px reaches Canvas, survives Undo/Redo + draft Save/reload; published 80px stays live until explicit Publish"
   ],
   "checks": {
-    "inspector_lifecycle_chromium": "PASS 1/1 locally and in the full Editor Core browser suite on commit 49978160",
-    "editor_browser_suite": "PASS 85/85 on commit 49978160; all five GitHub workflow runs and the Cloudflare Workers Build PASS",
+    "inspector_lifecycle_chromium": "PASS 1/1 locally after extending the test with size.minWidth Save/Publish; GitHub Editor Core rerun pending for this extension",
+    "editor_browser_suite": "PASS 85/85 on commits 49978160 and 414b2ea4 before the unpushed size.minWidth assertion extension",
     "editor_unit_suite": "PASS 131/131 in the Editor Core workflow for commit 49978160",
     "typescript": "PASS",
     "plan_contract": "PASS 13/13",
@@ -47,13 +49,13 @@
     "rerun_result": "Editor Core browser suite 85/85 PASS; all six checks PASS"
   },
   "production_source": {
-    "current_version_at_check": "aae5d632-ff39-4ea3-b44b-5103eb8bc540",
-    "current_deployment_id": "7d7dde04-145d-451c-bd63-9587159bc2b9",
-    "current_traffic_percent": 100,
-    "current_source_commit": "49978160b94fc8e067e8be3f95832645bdaf9bf6",
-    "workers_build_id": "3a9e729b-0ef4-4fc9-827d-3b720377501e",
+    "latest_verified_worker_version": "22bc9050-0b65-4cc8-8477-19cca470368c",
+    "latest_verified_deployment_id": "6b4bdf9c-2460-4960-81fd-ca39cee87f43",
+    "traffic_percent": 100,
+    "source_commit": "414b2ea46bd03b02bed86c15e9399d9abf0f450d",
+    "workers_build_id": "e804c691-1ff7-4d29-89f4-e9ce0eafb9db",
     "workers_build_outcome": "success",
-    "commit_runtime_delta": "The 49978160 commit changes only browser tests and documentation; no runtime, asset, migration, or production-data files changed.",
+    "runtime_delta_since_verified_feature_commit": "No runtime or asset changes since 49978160; 414b2ea4 contains only documentation.",
     "last_live_smoke_verified_version": "7bbe2b11-ddda-4b4d-a62d-ed215e5c93e5",
     "last_live_smoke_source_commit": "64af5d2181b7cbbf2b2589eccf92e8f44ba25dd3",
     "last_live_smoke_results": {
@@ -61,7 +63,7 @@
       "db_health": 200,
       "anonymous_admin": 401,
       "inspector_module_hashes_match": true,
-      "note": "Live HTTP/hash smoke is from the immediately preceding runtime-identical application build; network access to workers.dev from this shell was blocked, so no fresh HTTP smoke was obtained after the documentation-only releases."
+      "note": "A fresh HTTP smoke after the documentation-only builds was blocked by the shell network policy."
     }
   },
   "changes_in_this_local_step": {
@@ -69,8 +71,8 @@
     "production_data_writes": false,
     "d1_migration_files_changed": false,
     "r2_deletions": false,
-    "git_push_pending": false,
-    "github_editor_core_rerun_pending": false
+    "git_push_pending": true,
+    "github_editor_core_rerun_pending": true
   },
-  "acceptance": "Five style-field routes are verified in the browser test; spacing.padding XL · 32 reaches Canvas, survives Undo/Redo and draft Save/reload, leaves published 16px/24px unchanged until explicit Publish, then reaches public CSS. The full Editor Core suite passed 85/85 on 49978160 and all five GitHub workflow runs plus the Cloudflare build passed. All 79 element types, 68 properties, physical mobile/IME and full 77.44 acceptance remain open."
+  "acceptance": "Six style-field routes are verified in the browser test; the new size.minWidth route passed focused Chromium 1/1 locally. The last pushed browser-test source passed Editor Core 85/85 on 49978160 and 414b2ea4; the new minWidth assertion needs its own GitHub CI run. All 79 element types, 68 properties, physical mobile/IME and full 77.44 acceptance remain open."
 }
