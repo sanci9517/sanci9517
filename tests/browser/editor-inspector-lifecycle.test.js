@@ -290,6 +290,33 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await publicPage.reload();
   assert.equal(await publicPage.locator(`[data-node-id="${itemId}"]`).evaluate(el=>getComputedStyle(el).textAlign),'right',
     'the separately published text alignment reaches the public renderer');
+  // Responsive box spacing also gets a complete route through the existing
+  // typed preset: Canvas, Undo/Redo, draft persistence, and explicit Publish.
+  await editor.locator('.inspector-tabs button').first().click();
+  const spacingTitle=editor.locator('.inspector-group-title').filter({hasText:'Térközök'});
+  if(await spacingTitle.getAttribute('aria-expanded')==='false')await spacingTitle.click();
+  const padding=()=>item.evaluate(el=>{const style=getComputedStyle(el);return {top:style.paddingTop,right:style.paddingRight}});
+  assert.deepEqual(await padding(),{top:'16px',right:'24px'},'initial published padding preset is intact');
+  await field('spacing.padding').locator('.property-preset').filter({hasText:'XL · 32'}).click();
+  assert.deepEqual(await padding(),{top:'32px',right:'32px'},'padding preset reaches the Canvas node');
+  await editor.locator('#undo').click();
+  assert.deepEqual(await padding(),{top:'16px',right:'24px'},'Undo restores the previous padding');
+  await editor.locator('#redo').click();
+  assert.deepEqual(await padding(),{top:'32px',right:'32px'},'Redo restores the selected padding');
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false,'saving padding must not publish');
+  await editor.reload();await select(itemId);
+  assert.deepEqual(await padding(),{top:'32px',right:'32px'},'saved padding survives Editor reload');
+  await publicPage.reload();
+  assert.deepEqual(await publicPage.locator(`[data-node-id="${itemId}"]`).evaluate(el=>{const style=getComputedStyle(el);return {top:style.paddingTop,right:style.paddingRight}}),
+    {top:'16px',right:'24px'},'draft Save leaves the previous published padding live');
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
+  assert.equal(posts.at(-1).publish,true,'only explicit Publish sends the new padding live');
+  await publicPage.reload();
+  assert.deepEqual(await publicPage.locator(`[data-node-id="${itemId}"]`).evaluate(el=>{const style=getComputedStyle(el);return {top:style.paddingTop,right:style.paddingRight}}),
+    {top:'32px',right:'32px'},'the separately published padding reaches the public renderer');
   // A dragged/offset static node is rendered with the same relative CSS on
   // canvas and public page. The Inspector also makes leaving the artboard
   // explicit and offers a scoped recovery action.

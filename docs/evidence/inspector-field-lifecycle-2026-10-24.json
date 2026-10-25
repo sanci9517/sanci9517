@@ -5,7 +5,8 @@
     "typography.textAlign",
     "background.color",
     "radius.topLeft",
-    "typography.fontSize"
+    "typography.fontSize",
+    "spacing.padding"
   ],
   "route": [
     "real Inspector select control",
@@ -18,11 +19,12 @@
     "public renderer computed CSS",
     "background.color: previous published blue remains unchanged after draft Save; explicit Publish changes public CSS to red",
     "radius.topLeft on mobile: draft Save preserves inherited published radius; explicit Publish updates mobile public CSS to the local override",
-    "typography.fontSize: 48px preset reaches Canvas and survives Undo/Redo + Save/reload; prior published 32px remains until explicit Publish"
+    "typography.fontSize: 48px preset reaches Canvas and survives Undo/Redo + Save/reload; prior published 32px remains until explicit Publish",
+    "spacing.padding: XL · 32 preset reaches Canvas, survives Undo/Redo + draft Save/reload; previous published 16px/24px remains until explicit Publish"
   ],
   "checks": {
-    "inspector_lifecycle_chromium": "PASS 1/1 after extending the test with typography.fontSize Save/Publish",
-    "editor_browser_suite": "PASS 85/85 on commit 64af5d21; all six GitHub checks PASS",
+    "inspector_lifecycle_chromium": "PASS 1/1 locally after extending the test with spacing.padding Save/Publish; GitHub Editor Core rerun pending for this extension",
+    "editor_browser_suite": "PASS 85/85 in GitHub Editor Core run for commit 3590a276 before the unpushed spacing.padding assertion extension",
     "editor_unit_suite": "PASS 131/131",
     "typescript": "PASS",
     "plan_contract": "PASS 13/13",
@@ -45,33 +47,35 @@
     "rerun_result": "Editor Core browser suite 85/85 PASS; all six checks PASS"
   },
   "production_source": {
-    "superseded_version": "b2db9f3f-19f8-4c06-b15a-c23b18f5be77",
-    "superseded_source_commit": "b7cec261e53bf308853444e494cb44c437f5292d",
-    "current_version_at_check": "7bbe2b11-ddda-4b4d-a62d-ed215e5c93e5",
-    "current_deployment_id": "22691b89-6407-436f-b8ba-66cbb5d6c38f",
+    "current_version_at_check": "6c7a0d16-8388-4cad-bc24-337da4d9b1af",
+    "current_deployment_id": "5901ea23-bbfc-4045-9c01-1a6ea6830ffc",
     "current_traffic_percent": 100,
-    "current_source_commit": "64af5d2181b7cbbf2b2589eccf92e8f44ba25dd3",
-    "workers_build_id": "89aa2882-cc23-4fa1-a35d-132ce46d1407",
+    "current_source_commit": "3590a2760ea09b0e956b4cdfb33db233bd980105",
+    "workers_build_id": "55ac3be4-b4e9-4fb3-a8ba-2f890d1f0711",
     "workers_build_outcome": "success",
-    "migration_gate": "No migrations to apply",
-    "live_inspector_module_sha256_matches": {
-      "public/editor-v2/core/capability-matrix.js": "7dd60706cfd8eb33d4b47041db120315138085d1083a92f6bda19dbeceea914d",
-      "public/editor-v2/core/property-values.js": "7258adc1ad21d85ae6f0299d80daaddc0316fc2f3184adadce2deacca4996314",
-      "public/editor-v2/core/property-registry.js": "2f0be1ca519d2c76ee091a59d979feed2fe5a30a92246450d48ae680b2f3580d"
-    },
-    "health_status": {
-      "api_health": 200,
-      "db_health": 200,
-      "anonymous_admin": 401
+    "commit_runtime_delta": "The 3590a276 commit contains documentation only; no runtime or asset source changes compared with 64af5d21.",
+    "last_live_smoke_verified_version": "7bbe2b11-ddda-4b4d-a62d-ed215e5c93e5",
+    "last_live_smoke_source_commit": "64af5d2181b7cbbf2b2589eccf92e8f44ba25dd3",
+    "last_live_smoke_results": {
+      "health_status": {
+        "api_health": 200,
+        "db_health": 200,
+        "anonymous_admin": 401
+      },
+      "live_inspector_module_sha256_matches": {
+        "public/editor-v2/core/capability-matrix.js": "7dd60706cfd8eb33d4b47041db120315138085d1083a92f6bda19dbeceea914d",
+        "public/editor-v2/core/property-values.js": "7258adc1ad21d85ae6f0299d80daaddc0316fc2f3184adadce2deacca4996314",
+        "public/editor-v2/core/property-registry.js": "2f0be1ca519d2c76ee091a59d979feed2fe5a30a92246450d48ae680b2f3580d"
+      }
     }
   },
   "changes_in_this_local_step": {
     "runtime_files_changed": false,
     "production_data_writes": false,
-    "d1_migrations": false,
+    "d1_migration_files_changed": false,
     "r2_deletions": false,
-    "git_push_pending": false,
-    "github_editor_core_rerun_pending": false
+    "git_push_pending": true,
+    "github_editor_core_rerun_pending": true
   },
-  "acceptance": "Four style-field routes verified in the current browser test. The latest fontSize extension passed the full Editor Core suite 85/85 and all six GitHub checks. All 79 element types, 68 properties, physical mobile/IME and full 77.44 acceptance remain open."
+  "acceptance": "Five style-field routes are represented in the current local browser test; the new spacing.padding route passed focused Chromium 1/1 locally. The last pushed version of the browser test passed Editor Core 85/85 on 3590a276; the new padding assertion still needs GitHub CI. All 79 element types, 68 properties, physical mobile/IME and full 77.44 acceptance remain open."
 }
