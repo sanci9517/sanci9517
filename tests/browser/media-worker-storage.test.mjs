@@ -11,12 +11,13 @@ import {Miniflare, convertV4MiniflareOptions} from 'miniflare';
 import {chromium} from 'playwright';
 import worker from '../../src/index.ts';
 import {hashPassword, generateSalt, bytesToBase64} from '../../src/core/auth/password.ts';
+import {createDocument,createNode,createPage,NODE_TYPES} from '../../public/editor-v2/core/schema.js';
 
 const root=resolve(import.meta.dirname,'../..');
 const png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/l5sAAAAASUVORK5CYII=','base64');
 const digest=bytes=>createHash('sha256').update(Buffer.from(bytes)).digest('hex');
 
-test('real Worker login, image upload, duplicate, archive and non-empty diagnostics with local D1/R2', {timeout:90000},async t=>{
+test('real Worker login, image upload, duplicate, Editor background asset lifecycle and non-empty diagnostics with local D1/R2', {timeout:180000},async t=>{
  const mf=new Miniflare(convertV4MiniflareOptions({modules:true,script:'',d1Databases:{DB:'media-acceptance-local'},r2Buckets:{MEDIA:'media-acceptance-local'}}));
  t.after(()=>mf.dispose());
  const DB=await mf.getD1Database('DB'), MEDIA=await mf.getR2Bucket('MEDIA');
@@ -92,8 +93,75 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
  await page.getByRole('button',{name:'Feltöltés a médiatárba',exact:true}).click();
  const duplicate=await(await duplicateResponse).json();assert.equal(duplicate.data.duplicate,true);assert.equal(duplicate.data.id,row.id);
  assert.deepEqual(await snapshot(),before,'duplicate upload must reuse one D1 row and one R2 object');
+ // Reuse the uploaded R2 object in the real Editor over the same Worker,
+ // authenticated session, isolated D1 and isolated R2 bindings.
+ const pageId=crypto.randomUUID(),fixturePage=createPage({id:pageId,name:'Háttérkép lifecycle',slug:'background-asset-fixture'});
+ const targetNode=createNode(NODE_TYPES.TEXT,{name:'Háttér tesztelem',parentId:fixturePage.rootId,props:{text:'Médiatár háttér'},style:{width:'320px',height:'160px'}});
+ fixturePage.nodes[targetNode.id]=targetNode;fixturePage.nodes[fixturePage.rootId].children.push(targetNode.id);
+ const document=createDocument(fixturePage,{modern:true});
+ const created=await context.request.post(base+'/api/admin/pages',{data:{id:pageId,title:fixturePage.name,slug:fixturePage.slug,description:'',document}});
+ assert.equal(created.status(),200,'an Admin page is created through the real Worker route');
+ assert.ok((await (await context.request.get(base+'/api/admin/pages')).json()).data.some(item=>item.id===pageId),'the Worker lists the created Editor fixture');
+ const editor=await context.newPage(),live=await context.newPage();
+ for(const browserPage of [editor,live])browserPage.setDefaultTimeout(10000);
+ await editor.setViewportSize({width:1280,height:900});
+ editor.on('pageerror',e=>errors.push(e.message));live.on('pageerror',e=>errors.push(e.message));
+ await editor.goto(base+'/admin/editor?pageId='+encodeURIComponent(pageId));
+ const canvasNode=editor.locator(`.node[data-node-id="${targetNode.id}"]`);
+ await canvasNode.waitFor();
+ await canvasNode.click();
+ if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
+ await editor.locator('.inspector-tabs button').first().click();
+ const backgroundGroup=editor.locator('.inspector-group-title').filter({hasText:'Háttér'});
+ if(await backgroundGroup.getAttribute('aria-expanded')==='false')await backgroundGroup.click();
+ const backgroundField=editor.locator('.typed-inspector-field[data-property-id="background.image"]');
+ await backgroundField.locator('.editor-media-picker').getByRole('button',{name:'Médiatár megnyitása'}).click();
+ await backgroundField.locator('[role="region"][aria-label="Médiatár találatok"]').getByRole('button',{name:'isolated-acceptance.png kiválasztása'}).click();
+ const canvasBackground=()=>editor.locator(`.node[data-node-id="${targetNode.id}"]`).evaluate(el=>getComputedStyle(el).backgroundImage);
+ assert.ok((await canvasBackground()).includes(`/api/admin/media?id=${row.id}`),'the canvas previews the site-scoped asset through the authenticated Worker route');
+ await editor.locator('#undo').click();assert.equal(await canvasBackground(),'none');
+ await editor.locator('#redo').click();assert.ok((await canvasBackground()).includes(`/api/admin/media?id=${row.id}`));
+ const save=async publish=>{
+  await editor.locator(publish?'#publish':'#save').click();
+  await editor.waitForFunction(pub=>document.querySelector('#saveStatus')?.textContent?.startsWith(pub?'Publikálva':'Mentve'),publish);
+ };
+ await save(false);
+ const stored=(await DB.prepare('SELECT content_json FROM pages WHERE id=?').bind(pageId).first()).content_json;
+ assert.equal(JSON.parse(stored).pages[pageId].nodes[targetNode.id].responsive.desktop.backgroundAssetId,row.id,'draft Save persists the asset ID through the real Editor route');
+ assert.equal((await context.request.get(base+'/media/'+row.id)).status(),404,'an asset referenced only by a draft is not public');
+ await editor.reload();await canvasNode.click();
+ assert.ok((await canvasBackground()).includes(`/api/admin/media?id=${row.id}`),'the draft asset remains after a real Editor reload');
+ await save(true);
+ const publicResponse=await context.request.get(base+'/media/'+row.id);
+ assert.equal(publicResponse.status(),200,'explicit Publish activates the public asset route');
+ assert.equal(digest(await publicResponse.body()),digest(png),'the Worker returns the exact uploaded bytes');
+ await live.goto(base+'/p/'+fixturePage.slug);
+ const publicNode=live.locator(`[data-node-id="${targetNode.id}"]`);await publicNode.waitFor();
+ assert.ok((await publicNode.evaluate(el=>getComputedStyle(el).backgroundImage)).includes(`/media/${row.id}`),
+  'the real public page renderer uses the published R2 asset route');
+ const usageAfterPublish=await get('?usage='+row.id);
+ assert.equal(usageAfterPublish.complete,true);
+ assert.ok(usageAfterPublish.references.some(ref=>ref.source==='published'&&ref.path==='responsive.desktop.backgroundAssetId'));
+ await editor.locator('.inspector-tabs button').first().click();
+ if(await backgroundGroup.getAttribute('aria-expanded')==='false')await backgroundGroup.click();
+ const selectedBackground=editor.locator('.typed-inspector-field[data-property-id="background.image"]');
+ await selectedBackground.locator('.editor-media-picker').getByRole('button',{name:'Kép eltávolítása',exact:true}).click();
+ assert.equal(await canvasBackground(),'none');
+ await save(false);
+ assert.equal((await context.request.get(base+'/media/'+row.id)).status(),200,'draft removal retains the current published asset');
+ await live.reload();assert.ok((await live.locator(`[data-node-id="${targetNode.id}"]`).evaluate(el=>getComputedStyle(el).backgroundImage)).includes(`/media/${row.id}`),
+  'the published page remains unchanged after draft removal');
+ await editor.reload();await canvasNode.click();assert.equal(await canvasBackground(),'none','draft removal remains after Editor reload');
+ await save(true);
+ assert.equal((await context.request.get(base+'/media/'+row.id)).status(),404,'Publish removal revokes public delivery when no published page references the asset');
+ await live.reload();assert.equal(await live.locator(`[data-node-id="${targetNode.id}"]`).evaluate(el=>getComputedStyle(el).backgroundImage),'none',
+  'the real public page reflects removal only after explicit Publish');
+ const usageAfterRemoval=await get('?usage='+row.id);
+ assert.equal(usageAfterRemoval.complete,true);
+ assert.ok(usageAfterRemoval.references.some(ref=>ref.source==='revision'&&ref.path==='responsive.desktop.backgroundAssetId'),
+  'historical revisions keep the asset in use after the published reference is removed');
  const archive=await context.request.patch(base+'/api/admin/media?id='+row.id,{headers:{Origin:base},data:{archived:true}});
- assert.equal(archive.status(),200);assert.equal((await archive.json()).data.archived,true);
+ assert.equal(archive.status(),409,'the safe usage report blocks archival while historical versions still reference the asset');
  await scan('missing','empty',1);assert.equal(digest(await(await MEDIA.get(row.object_key)).arrayBuffer()),digest(png),'archive preserves object bytes');
  const orphanKey='sites/site-default/media/isolated-orphan-fixture.png';await MEDIA.put(orphanKey,png);
  const orphanPanel=await scan('orphan','findings',2);assert.match(await orphanPanel.textContent(),/isolated-orphan-fixture/);
@@ -101,7 +169,7 @@ print(json.dumps(result))`],{cwd:root,encoding:'utf8'}));
  // Remove only this in-memory fixture object, never a remote/production object.
  await MEDIA.delete(row.object_key);
  const missingPanel=await scan('missing','findings',1);assert.match(await missingPanel.textContent(),/isolated-acceptance\.png/);
- const missing=await get('?missingAudit=1');assert.equal(missing.missing[0].id,row.id);assert.equal(missing.missing[0].archived,true);assert.equal(missing.repairAuthorized,false);
+ const missing=await get('?missingAudit=1');assert.equal(missing.missing[0].id,row.id);assert.equal(missing.missing[0].archived,false);assert.equal(missing.repairAuthorized,false);
  assert.equal((await DB.prepare('SELECT COUNT(*) n FROM media').first()).n,1,'diagnostics never remove the registry entry');
  assert.ok(await MEDIA.head(orphanKey),'diagnostics never delete the unregistered candidate');
  assert.equal((await DB.prepare('SELECT COUNT(*) n FROM media_retention_requests').first()).n,0);

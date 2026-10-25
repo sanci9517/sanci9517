@@ -9,7 +9,7 @@
   },
   "fixture": {
     "asset_id": "a44f0ce3-6273-4a8f-991e-572c4a89cdd1",
-    "storage": "synthetic local HTTP fixture only",
+    "storage": "synthetic asset, real Worker code in-process, isolated Miniflare D1 and R2; no production storage",
     "production_r2_touched": false
   },
   "lifecycle": [
@@ -20,10 +20,14 @@
     "The prior public snapshot remains unchanged after draft Save",
     "Explicit Publish renders the public /media/{id} asset route",
     "Removing the asset and saving preserves the prior public image",
-    "Only a second explicit Publish removes the public image reference"
+    "Only a second explicit Publish removes the public image reference",
+    "The real Worker public renderer returns the uploaded bytes and renders the published background",
+    "The media usage report retains the published reference and later historical revision reference",
+    "Archival is rejected while a historical revision still references the media asset"
   ],
   "checks": {
-    "targeted_chromium": "PASS 1/1, 154.8 seconds",
+    "targeted_chromium_mocked_lifecycle": "PASS 1/1, 154.8 seconds",
+    "real_worker_d1_r2_lifecycle": "PASS 1/1, 61.6 seconds; synthetic rows and isolated Miniflare bindings only",
     "editor_unit": "PASS 132/132",
     "typecheck": "PASS",
     "plan_contract": "PASS 13/13",
@@ -34,10 +38,31 @@
   "scope": {
     "runtime_changed": false,
     "production_deploy_needed": false,
+    "automatic_deployment_after_push": {
+      "deployment_id": "f663a4fa-2ae1-4dfb-a81d-9b1302cda963",
+      "version_id": "a345a7ed-b403-4564-83e7-3d59f47fb345",
+      "traffic": "100%",
+      "script_etag": "de88d09b8d1a1b8c131e426dec32b9504ba352a344669734b098b1035e1de487",
+      "runtime_source_changed": false,
+      "health": "/api/health 200; /api/db-health 200, D1 connected",
+      "production_asset_sha256": {
+        "public/editor-v2/app.js": "2e37116103a03ce5fbf62670f3709ffaf2ea8abc5248adc081084e745613646e",
+        "public/editor-v2/core/capability-matrix.js": "4427cd624a7d254c801407e104a530ef1c9270d6dabe1332b5a5c5e4762b9605"
+      }
+    },
     "d1_migrations": false,
     "production_data_writes": false,
     "r2_deletions": false,
-    "github_ci": "pending push verification"
+    "github_ci": {
+    "status": "PASS; Editor Core and four other workflows all succeeded",
+      "editor_core_run": "https://github.com/sanci9517/sanci9517/actions/runs/40224975774",
+      "other_runs": [
+        "https://github.com/sanci9517/sanci9517/actions/runs/40224975636",
+        "https://github.com/sanci9517/sanci9517/actions/runs/40224975647",
+        "https://github.com/sanci9517/sanci9517/actions/runs/40224975678",
+        "https://github.com/sanci9517/sanci9517/actions/runs/40224975694"
+      ]
+    }
   },
   "acceptance": "The Inspector-to-Canvas-to-public asset route passes against a synthetic local fixture. Production R2, real authenticated Editor use, all element types, all device variants and physical PC/mobile acceptance remain OPEN."
 }
