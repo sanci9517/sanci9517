@@ -39,8 +39,20 @@
   },
   "release": {
     "runtime_files_changed": false,
-    "worker_deployment_required": false,
-    "github_ci": "pending push verification",
+    "manual_worker_deployment_required": false,
+    "automatic_worker_deployment": {
+      "version_id": "c5748803-6ac6-4b72-b5f1-6f99f05383ec",
+      "traffic_percent": 100,
+      "script_etag": "de88d09b8d1a1b8c131e426dec32b9504ba352a344669734b098b1035e1de487",
+      "previous_version_id": "de0a7e5b-dfb2-4b1a-842a-23b9c7bcd56b",
+      "previous_script_etag": "de88d09b8d1a1b8c131e426dec32b9504ba352a344669734b098b1035e1de487"
+    },
+    "github_ci": "PASS: Editor Core, F0, canonical plan, active-point audit, Twitch (5/5)",
+    "production_smoke": {
+      "/api/health": 200,
+      "/api/db-health": "200; D1 connected",
+      "/editor-v2/": "200 after redirect"
+    },
     "d1_migrations": false,
     "production_data_writes": false,
     "r2_deletions": false
