@@ -8,7 +8,7 @@
 import { canContain, cloneDocument, createEmptyRichText, createNode, getNode, normalizeRichText } from './schema.js';
 import { assertValidEditorDocument } from './validation.js';
 import { activePage, clearSelection, setSelection } from './state.js';
-import { normalizeScheduleConfig } from './schedule-schema.js';
+import { createDefaultScheduleConfig, normalizeScheduleConfig } from './schedule-schema.js';
 import {isStructuredType,createElementContent,normalizeElementContent} from './element-content.js';
 import {defaultDividerStyle,normalizeDividerStyle} from './decorative-elements.js';
 import {defaultCardContent,normalizeCardContent} from './card-content.js';
@@ -98,6 +98,7 @@ export const commands = Object.freeze({
   'selection.set': (state, { ids = [], primaryId } = {}) => { setSelection(state, ids, primaryId ?? ids.at(-1) ?? null); return state; },
   'selection.clear': (state) => { clearSelection(state); return state; },
   'element.add': (state, { type, parentId, props = {}, style = {}, name, authored = false } = {}) => commit(state,{type:'element.add',payload:{type,parentId}},(draft)=>{if(!type)throw new Error('Element type is required');const page=requirePage(draft);const selectedParent=draft.selection.primaryId?getNode(page,draft.selection.primaryId):null;const parent=getNode(page,parentId??selectedParent?.id??page.rootId);if(!parent||!canContain(parent,type))throw new Error('Invalid parent for element');const nodeProps=structuredClone(props);if(type==='richtext'&&!nodeProps.richText)nodeProps.richText=createEmptyRichText();if(isStructuredType(type)&&!authored)nodeProps.contentModel=normalizeElementContent(type,nodeProps.contentModel??createElementContent(type));if(!authored&&type==='badge')nodeProps.text=nodeProps.text==='Badge/Tag'?'Címke':(nodeProps.text??'Címke');if(!authored&&type==='quote'){nodeProps.text=nodeProps.text==='Quote'?'Ide írd az idézetet':(nodeProps.text??'Ide írd az idézetet');nodeProps.attribution=nodeProps.attribution??''}if(!authored&&type==='icon'){nodeProps.icon=nodeProps.icon??'star';nodeProps.label=nodeProps.label??'Csillag'}
+if(type==='schedule')nodeProps.schedule=normalizeScheduleConfig(nodeProps.schedule??createDefaultScheduleConfig());
 if(!authored&&type==='divider')nodeProps.decoration=normalizeDividerStyle(nodeProps.decoration??defaultDividerStyle());
 if(!authored&&type==='card')nodeProps.cardContent=normalizeCardContent(nodeProps.cardContent??defaultCardContent());
 if(!authored&&type==='countdown')nodeProps.countdown=nodeProps.countdown??defaultCountdownContent();

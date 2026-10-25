@@ -116,6 +116,23 @@ test('canonical element.add supplies real initial content and version gates',()=
   }
 });
 
+test('canonical schedule element.add preserves normalized defaults and is publishable',()=>{
+  const state=createEditorState();
+  execute(state,{type:'element.add',payload:{type:'schedule'}});
+  const page=state.document.pages[state.document.activePageId];
+  const node=page.nodes[state.selection.primaryId];
+  assert.deepEqual(node.props.schedule,createNode('schedule').props.schedule);
+  assert.equal(validatePublishDocument(state.document,page.id),null);
+
+  const partial=createEditorState();
+  execute(partial,{type:'element.add',payload:{type:'schedule',props:{schedule:{mode:'next'}}}});
+  const partialPage=partial.document.pages[partial.document.activePageId];
+  const partialNode=partialPage.nodes[partial.selection.primaryId];
+  assert.equal(partialNode.props.schedule.mode,'next');
+  assert.equal(partialNode.props.schedule.version,1);
+  assert.equal(validatePublishDocument(partial.document,partialPage.id),null);
+});
+
 test('authored element.add does not inherit legacy content markers or invented media source',()=>{
   for(const type of ['heading','image','gallery','carousel','button']){
     const state=createEditorState();
