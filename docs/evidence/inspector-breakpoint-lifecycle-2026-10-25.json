@@ -35,12 +35,15 @@
       "cause": "The public page viewport changed to tablet/desktop after mobile Publish and the test read computed CSS before reloading the public fixture."
     },
     "local_after_fix": "PASS 3/3 targeted Chromium runs after adding explicit public fixture reloads before post-reset tablet and desktop assertions",
-    "github_ci_for_fix_commit": "PENDING"
+    "github_ci_for_fix_commit_7e6465db": {
+      "result": "PASS: Editor Core browser suite 86/86; all five workflows PASS",
+      "run": "https://github.com/sanci9517/sanci9517/actions/runs/40215975723"
+    }
   },
   "production": {
     "runtime_files_changed": false,
-    "last_verified_worker_version": "803f9a45-4c4f-4ff4-b61b-61477a1b5d12",
-    "last_verified_deployment_id": "a4fefe69-0f6f-4c4d-93cc-fd0e86083ffd",
+    "last_verified_worker_version": "e27a634f-d336-4764-810d-67fae569580c",
+    "last_verified_deployment_id": "bdc6a8f2-d5ac-4200-b9c5-1f2a23000c62",
     "traffic_percent": 100,
     "script_etag": "de88d09b8d1a1b8c131e426dec32b9504ba352a344669734b098b1035e1de487",
     "previous_verified_script_etag": "de88d09b8d1a1b8c131e426dec32b9504ba352a344669734b098b1035e1de487",
@@ -55,7 +58,7 @@
       "public/editor-v2/index.html",
       "public/editor-v2/ui/geometry-presets.js"
     ],
-    "note": "The push triggered Cloudflare's automatic Worker deployment. This commit adds only browser acceptance and CI registration; the active Worker script ETag matches both immediately preceding tested deployments, and all nine Inspector runtime assets match local bytes."
+    "note": "The push triggered Cloudflare's automatic Worker deployment. This commit adds only browser acceptance and CI registration; the active Worker script ETag matches the immediately preceding tested deployments, and all nine Inspector runtime assets match local bytes."
   },
   "data_safety": {
     "d1_migrations": false,
