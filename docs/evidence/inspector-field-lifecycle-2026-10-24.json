@@ -7,7 +7,8 @@
     "radius.topLeft",
     "typography.fontSize",
     "spacing.padding",
-    "size.minWidth"
+    "size.minWidth",
+    "typography.lineHeight"
   ],
   "route": [
     "real Inspector select control",
@@ -22,11 +23,12 @@
     "radius.topLeft on mobile: draft Save preserves inherited published radius; explicit Publish updates mobile public CSS to the local override",
     "typography.fontSize: 48px preset reaches Canvas and survives Undo/Redo + Save/reload; prior published 32px remains until explicit Publish",
     "spacing.padding: XL · 32 preset reaches Canvas, survives Undo/Redo + draft Save/reload; previous published 16px/24px remains until explicit Publish",
-    "size.minWidth: typed 160px reaches Canvas, survives Undo/Redo + draft Save/reload; published 80px stays live until explicit Publish"
+    "size.minWidth: typed 160px reaches Canvas, survives Undo/Redo + draft Save/reload; published 80px stays live until explicit Publish",
+    "typography.lineHeight: Laza · 1.75 preset reaches Canvas (84px at 48px font), survives Undo/Redo + draft Save/reload; previous published line-height remains until explicit Publish"
   ],
   "checks": {
-    "inspector_lifecycle_chromium": "PASS 1/1 locally and in full GitHub Editor Core Chromium suite on commit 1ca93e88",
-    "editor_browser_suite": "PASS 85/85 on commit 1ca93e88; all five GitHub workflow runs PASS",
+    "inspector_lifecycle_chromium": "PASS 1/1 locally after extending the test with typography.lineHeight; GitHub Editor Core rerun pending for this extension",
+    "editor_browser_suite": "PASS 85/85 on commit 1ca93e88 before the unpushed typography.lineHeight assertion extension",
     "editor_unit_suite": "PASS 131/131 in the Editor Core workflow for commit 49978160",
     "typescript": "PASS",
     "plan_contract": "PASS 13/13",
@@ -50,13 +52,13 @@
     "rerun_result": "Editor Core browser suite 85/85 PASS; all six checks PASS"
   },
   "production_source": {
-    "latest_verified_worker_version": "ca5b5346-2043-471c-987c-b22b606a9dba",
-    "latest_verified_deployment_id": "543e9f36-8e06-4a2b-aa69-054638dc1c88",
+    "latest_verified_worker_version": "ead26073-97de-4518-9c29-24ca38349a8c",
+    "latest_verified_deployment_id": "2779ae0a-1540-4024-b2bb-796c405a33b2",
     "traffic_percent": 100,
-    "source_commit": "1ca93e885959193fa857ea9a3456aa929cedc4af",
-    "workers_build_id": "77eb6fd9-3977-4ff5-9f65-53611bd89bbb",
+    "source_commit": "92079a44a538daa86f8e335aac3990daf4df1ad9",
+    "workers_build_id": "76086d76-57d5-4d68-9313-e6c67663b363",
     "workers_build_outcome": "success",
-    "runtime_delta": "Test and documentation changes only; no application runtime, asset, migration, or production-data files changed.",
+    "runtime_delta": "The verified 92079a44 build was documentation-only; runtime and asset code are unchanged from the tested 1ca93e88 application source.",
     "last_live_smoke_verified_version": "7bbe2b11-ddda-4b4d-a62d-ed215e5c93e5",
     "last_live_smoke_source_commit": "64af5d2181b7cbbf2b2589eccf92e8f44ba25dd3",
     "last_live_smoke_results": {
@@ -72,8 +74,8 @@
     "production_data_writes": false,
     "d1_migration_files_changed": false,
     "r2_deletions": false,
-    "git_push_pending": false,
-    "github_editor_core_rerun_pending": false
+    "git_push_pending": true,
+    "github_editor_core_rerun_pending": true
   },
-  "acceptance": "Six style-field routes are verified in the browser test; size.minWidth 80→160px reaches Canvas, survives Undo/Redo and draft Save/reload, leaves published 80px unchanged until explicit Publish, then reaches public CSS. The full Editor Core suite passed 85/85 on 1ca93e88 and all five GitHub workflow runs plus the Cloudflare build passed. All 79 element types, 68 properties, physical mobile/IME and full 77.44 acceptance remain open."
+  "acceptance": "Seven style-field routes are represented in the browser test; the new typography.lineHeight 1.75 route passed focused Chromium 1/1 locally (84px at 48px font). The last pushed version passed Editor Core 85/85 on 1ca93e88; the new lineHeight assertion needs its own GitHub CI run. All 79 element types, 68 properties, physical mobile/IME and full 77.44 acceptance remain open."
 }

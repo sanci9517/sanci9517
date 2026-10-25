@@ -346,6 +346,35 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await publicPage.reload();
   assert.equal(await publicPage.locator(`[data-node-id="${itemId}"]`).evaluate(el=>getComputedStyle(el).minWidth),'160px',
     'the separately published minimum width reaches the public renderer');
+  // Unitless line-height is a typography value distinct from font size; keep
+  // its authored multiplier and its public computed result in sync.
+  await editor.locator('.inspector-tabs button').first().click();
+  const typographyGroup=editor.locator('.inspector-group-title').filter({hasText:'Tipográfia'});
+  if(await typographyGroup.getAttribute('aria-expanded')==='false')await typographyGroup.click();
+  const lineHeightCss=()=>item.evaluate(el=>getComputedStyle(el).lineHeight);
+  const publishedLineHeight=await lineHeightCss();
+  await field('typography.lineHeight').locator('.property-preset').filter({hasText:'Laza · 1.75'}).click();
+  const draftLineHeight=await lineHeightCss();
+  assert.notEqual(draftLineHeight,publishedLineHeight,'line-height preset changes the Canvas computed style');
+  assert.equal(draftLineHeight,'84px','1.75 line-height at the published 48px font resolves to 84px');
+  await editor.locator('#undo').click();
+  assert.equal(await lineHeightCss(),publishedLineHeight,'Undo restores the prior line-height');
+  await editor.locator('#redo').click();
+  assert.equal(await lineHeightCss(),draftLineHeight,'Redo restores the selected line-height');
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false,'saving line-height must not publish');
+  await editor.reload();await select(itemId);
+  assert.equal(await lineHeightCss(),draftLineHeight,'saved line-height survives Editor reload');
+  await publicPage.reload();
+  assert.equal(await publicPage.locator(`[data-node-id="${itemId}"]`).evaluate(el=>getComputedStyle(el).lineHeight),publishedLineHeight,
+    'draft Save leaves the previous published line-height live');
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
+  assert.equal(posts.at(-1).publish,true,'only explicit Publish sends the new line-height live');
+  await publicPage.reload();
+  assert.equal(await publicPage.locator(`[data-node-id="${itemId}"]`).evaluate(el=>getComputedStyle(el).lineHeight),draftLineHeight,
+    'the separately published line-height reaches the public renderer');
   // A dragged/offset static node is rendered with the same relative CSS on
   // canvas and public page. The Inspector also makes leaving the artboard
   // explicit and offers a scoped recovery action.
