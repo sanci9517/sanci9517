@@ -9,7 +9,12 @@
       "fixed_registry_command": "element.content.set",
       "key": "text",
       "view": "plain-text Inspector textarea",
-      "applies_to": ["heading", "text", "button", "link"],
+      "applies_to": [
+        "heading",
+        "text",
+        "button",
+        "link"
+      ],
       "excluded_type": "richtext uses the separate structured richtext.content.set editor"
     },
     {
@@ -25,10 +30,11 @@
     "Specialized content controls expose property ID, command and key from the property registry",
     "Editor dispatches the registered command for plain text and authored href fields",
     "Registry imports and Editor entrypoint use a fresh content-property route cache key",
-    "Browser lifecycle verifies Undo/Redo, Save without Publish, Editor reload, unchanged public state, and separate Publish for text and href"
+    "Browser lifecycle verifies Undo/Redo, Save without Publish, Editor reload, unchanged public state, and separate Publish for text and href",
+    "Extended content.href lifecycle coverage to plain link nodes as well as buttons"
   ],
   "checks": {
-    "editor_inspector_lifecycle_chromium": "PASS 1/1, 161.9 seconds; includes content.text fallback, content.href and background.image",
+    "editor_inspector_lifecycle_chromium": "PASS 1/1, 168.7 seconds; covers content.text fallback, content.href on button and link, and background.image",
     "general_fields_and_richtext_chromium": "PASS 4/4 across 390px and 1366px",
     "editor_unit": "PASS 132/132",
     "typecheck": "PASS",
@@ -36,13 +42,36 @@
     "traceability": "PASS 396 source mappings; acceptance NOT certified",
     "wrangler_version": "4.130.0",
     "remote_d1_preflight": "PASS: No migrations to apply",
-    "worker_dry_run": "PASS: 159 public assets, 287.10 KiB total; dry-run exited without upload"
+    "worker_dry_run": "PASS: 159 public assets, 287.10 KiB total; dry-run exited without upload",
+    "editor_core_ci": "PASS for source commit 0341b5821ad422310a9de57e1485e8b2f740af02; browser layout regression completed successfully",
+    "link_node_lifecycle_local": "PASS in the extended 1/1 Chromium lifecycle run; follow-up CI pending for the added link-node assertions"
   },
   "production_scope": {
     "runtime_changed": true,
-    "release_branch_push": "pending",
-    "production_deploy": "pending release verification",
-    "production_health": "pending post-deployment smoke",
+    "release_branch_push": {
+      "status": "verified",
+      "branch": "v2/foundation",
+      "commit": "0341b5821ad422310a9de57e1485e8b2f740af02"
+    },
+    "production_deploy": {
+      "status": "verified",
+      "deployment_id": "a2ee1b7a-42fd-4b90-966c-b0d91f773339",
+      "version_id": "57a0f98f-29cb-48b0-846d-80209df1c81b",
+      "traffic_percent": 100,
+      "script_etag": "0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0"
+    },
+    "production_health": "PASS: /api/health 200; /api/db-health 200, D1 connected",
+    "live_asset_sha256_match": {
+      "public/editor-v2/index.html": "2f15f35e5388d913ba002b194f79efef4655de8400d7146f1317381fc74aa470",
+      "public/editor-v2/app.js": "0869d199391330b96ef3b45f501c2f5612a9774f45334cc8a1041d1786369600",
+      "public/editor-v2/core/property-registry.js": "dc54cfb4804e7db8d73dad6fa881d286c1ef5407fbe503bf6d243aa552ac997e",
+      "public/editor-v2/core/capability-matrix.js": "f060d42e2ee80afb5a726291cd25bc815f14b7dc0107e6f880eea6566651caf2",
+      "public/editor-v2/ui/element-content-controls.js": "e5ad0435fd89eb6555aa180794565f052bbe37001e33a8c97d268ef83b790ea9",
+      "public/editor-v2/core/inspector-style-contract.js": "7d7c7cb8424d99c0210fb3c9c817944efa6a14e30e49a6ebb9fb207bb267c80f",
+      "public/editor-v2/core/state-styles.js": "8afe587e87f786ac4a1cddbfd68b46be65f0763486b5796addbb857f6c65ed2f",
+      "public/editor-v2/ui/geometry-presets.js": "e4c9be7c872254d3830b7e127918d88793527edab3ef004db2d4559002828032"
+    },
+    "editor_core_ci": "PASS for source commit 0341b5821ad422310a9de57e1485e8b2f740af02; extended link-node lifecycle test awaits follow-up CI",
     "d1_migrations_applied": false,
     "production_data_writes": false,
     "production_r2_changes": false

@@ -29,6 +29,8 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   const offsetId=model.selection.primaryId;
   execute(model,{type:'element.add',payload:{type:NODE_TYPES.BUTTON,parentId:rootId,authored:true,props:{text:'Default CTA',href:'#default-cta'}}});
   const buttonId=model.selection.primaryId;
+  execute(model,{type:'element.add',payload:{type:NODE_TYPES.LINK,parentId:rootId,authored:true,props:{text:'Default link',href:'/default-link'}}});
+  const linkId=model.selection.primaryId;
   execute(model,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:rootId,name:'Inspector fallback'}});
   const fallbackTextId=model.selection.primaryId;
   let draft=structuredClone(model.document), published=null, version=1;
@@ -286,6 +288,25 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await publicPage.reload();assert.equal(await publicButtonHref(),originalHref,'draft link target remains unpublished');
   await saveContentProperty(true);await publicPage.reload();
   assert.equal(await publicButtonHref(),'/p/registry-link','Publish sends registry-backed link target to the public renderer');
+
+  await select(linkId);await editor.locator('.inspector-tabs button').nth(1).click();
+  const linkHrefContract=editor.locator('.content-schema-field[data-property-id="content.href"]');
+  assert.equal(await linkHrefContract.getAttribute('data-property-command'),'content.properties.set');
+  assert.equal(await linkHrefContract.getAttribute('data-property-key'),'href');
+  const linkHrefInput=linkHrefContract.locator('input[aria-label="Hivatkozás"]');
+  const publicLinkHref=()=>publicPage.locator(`[data-node-id="${linkId}"]`).evaluate(readButtonHref);
+  const originalLinkHref=await publicLinkHref();
+  await linkHrefInput.fill('/p/registry-text-link');
+  assert.equal(await linkHrefInput.inputValue(),'/p/registry-text-link');
+  await editor.locator('#undo').click();assert.equal(await linkHrefContract.locator('input[aria-label="Hivatkozás"]').inputValue(),'/default-link');
+  await editor.locator('#redo').click();assert.equal(await editor.locator('.content-schema-field[data-property-id="content.href"] input[aria-label="Hivatkozás"]').inputValue(),'/p/registry-text-link');
+  await saveContentProperty(false);
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[linkId].props.href,'/p/registry-text-link');
+  await editor.reload();await select(linkId);await editor.locator('.inspector-tabs button').nth(1).click();
+  assert.equal(await editor.locator('.content-schema-field[data-property-id="content.href"] input[aria-label="Hivatkozás"]').inputValue(),'/p/registry-text-link');
+  await publicPage.reload();assert.equal(await publicLinkHref(),originalLinkHref,'draft link-element target remains unpublished');
+  await saveContentProperty(true);await publicPage.reload();
+  assert.equal(await publicLinkHref(),'/p/registry-text-link','Publish sends registry-backed link-element target to the public renderer');
 
   // The registry-backed background asset control must use the shared Media
   // picker and carry the same responsive asset ID through Canvas, draft Save,
