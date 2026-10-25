@@ -1,7 +1,7 @@
-import {hasContentProfile} from './core/content-profiles.js';
+import {hasContentProfile} from './core/content-profiles.js?v=20261025-inspector-lifecycle-contract';
 import {createDocument,createPage,getNode,NODE_TYPES,canContain,normalizeRichText} from './core/schema.js';
 import {createEditorState,activePage,selectedNodes,setSelection,markSaved} from './core/state.js';
-import {execute,executeCoalesced,executeBatch} from './core/commands.js?v=20261025-inspector-style-contract';
+import {execute,executeCoalesced,executeBatch} from './core/commands.js?v=20261025-inspector-lifecycle-contract';
 import {applyNodeStyle,getNodeGeometry,resolveNodeStyle} from './core/canvas-engine.js?v=20261018-text-sync';
 import {computeCanvasMinHeight} from './core/canvas-extent.js';
 import {measureCanvasWorkspace} from './core/canvas-workspace.js';
@@ -11,7 +11,7 @@ import {diagnostics} from './diagnostics.js?v=20260918-2';
 import {plainTextToRichText,renderRichTextEditor,richTextEditorToDocument,restoreSelectionOffsets,getSelectionOffsets,transformRichTextBlockTypes} from './core/richtext-engine.js';
 import {renderSchedulePreview} from './core/schedule-preview.js';
 import {normalizeScheduleConfig,SCHEDULE_MODES,SCHEDULE_ORDERS,SCHEDULE_STATUSES,SCHEDULE_EMPTY_TEXT_MAX} from './core/schedule-schema.js';
-import {listPropertyGroups,listProperties,getProperty} from './core/property-registry.js';
+import {listPropertyGroups,listProperties,getProperty} from './core/property-registry.js?v=20261025-inspector-lifecycle-contract';
 import {renderPropertyInput} from './ui/property-controls.js';
 import {describeResponsiveOrigin} from './ui/responsive-origin.js';
 import {responsiveGroupResetActions} from './ui/responsive-group-reset.js';
@@ -1069,11 +1069,16 @@ function renderInspector(){
   if(inspectorTab==='design'){
     inspector.append(renderInspectorCategories());
     inspector.append(renderLayoutInspector(node));
-    inspector.append(field('Elem neve',node.name,(value,options)=>{
-      const saved=commitInspectorText('element.update',{nodeId:node.id,patch:{name:value}},options);
+    const nameProperty=getProperty('advanced.nodeName');
+    const nameField=field(nameProperty.label,node.name,(value,options)=>{
+      const saved=commitInspectorText(nameProperty.command,{nodeId:node.id,patch:{[nameProperty.key]:value}},options);
       if(saved)headerName.textContent=value||node.type;
       return saved;
-    },Boolean(node.locked),false,composition),renderGeometryInspector(node));
+    },Boolean(node.locked),false,composition);
+    nameField.dataset.propertyId=nameProperty.id;
+    nameField.dataset.propertyCommand=nameProperty.command;
+    nameField.dataset.propertyKey=nameProperty.key;
+    inspector.append(nameField,renderGeometryInspector(node));
     if(['heading','text','richtext','button','link'].includes(node.type))inspector.append(renderTypographyPresets(node));
     if(node.type==='schedule')inspector.append(renderScheduleInspector(node,composition));
     else inspector.append(renderRegistryInspector(node,'primary'));

@@ -1,4 +1,4 @@
-import {getProperty,listProperties} from './property-registry.js';
+import {getProperty,listProperties} from './property-registry.js?v=20261025-inspector-lifecycle-contract';
 import {normalizeInspectorValue} from './property-values.js';
 import {resolveResponsiveValue,normalizeResponsive} from './responsive.js';
 

@@ -5,7 +5,7 @@ import {createEditorState,activePage} from '../core/state.js';
 import {execute} from '../core/commands.js';
 import {defaultTokens,normalizeTokens,tokenReference,parseTokenReference,compatibleTokens} from '../core/design-tokens.js';
 import {normalizeInspectorValue} from '../core/property-values.js';
-import {getProperty} from '../core/property-registry.js';
+import {getProperty} from '../core/property-registry.js?v=20261025-inspector-lifecycle-contract';
 import {buildStateStyles} from '../core/state-styles.js';
 
 test('token bindings are canonical, compatible with the target field and cannot introduce cycles or scripts',()=>{

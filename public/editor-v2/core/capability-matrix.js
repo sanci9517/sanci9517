@@ -1,6 +1,6 @@
 import {CONTENT_TYPES,STRUCTURAL_TYPES} from './authored-content.js';
 import { NODE_TYPES } from './schema.js';
-import { listProperties } from './property-registry.js';
+import { listProperties } from './property-registry.js?v=20261025-inspector-lifecycle-contract';
 import {getInspectorValueContract} from './property-values.js';
 
 // A palette entry is only complete when Inspector, canvas and public behavior
@@ -56,4 +56,4 @@ export function getElementInspectorContract(type) {
 }
 
 // Content versions share the same gates as Inspector and server publication.
-export {getElementContentContract} from './content-profiles.js';
+export {getElementContentContract} from './content-profiles.js?v=20261025-inspector-lifecycle-contract';

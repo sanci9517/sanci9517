@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {NODE_TYPES} from '../core/schema.js';
 import {getElementCapability,getElementInspectorContract} from '../core/capability-matrix.js';
-import {listProperties,registerProperty} from '../core/property-registry.js';
+import {listProperties,registerProperty} from '../core/property-registry.js?v=20261025-inspector-lifecycle-contract';
 import {getInspectorValueContract} from '../core/property-values.js';
 
 test('every declared type exposes its actual registry fields without certifying readiness',()=>{
@@ -32,6 +32,8 @@ test('Inspector value contracts expose the validator bounds and enumerations wit
  assert.deepEqual(byId('typography.lineHeight').valueContract,{kind:'number',min:0.5,max:5,tokens:['typography.lineHeight']});
  assert.deepEqual(byId('content.text').initialValue,{status:'NOT_DECLARED'});
  assert.equal(Object.isFrozen(byId('typography.textAlign').valueContract.values),true);
+ const nodeName=getElementInspectorContract('text').fields.find(field=>field.id==='advanced.nodeName');
+ assert.equal(nodeName.command,'element.update');assert.equal(nodeName.key,'name');
 });
 test('unknown, inherited object keys and planned form types never advertise working controls',()=>{
  for(const type of [null,undefined,{},'constructor','toString','__proto__','unknown','form','input']){

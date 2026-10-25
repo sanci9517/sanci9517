@@ -23,7 +23,7 @@ import { applyStyleSnapshot } from './style-snapshot.js';
 import { layoutPresetPatch, layoutMode, CHILD_LAYOUT_DEFAULTS } from './layout-presets.js';
 import {VISIBILITY_DEVICES,normalizeVisibility} from './visibility.js';
 import {trackInspectorStylePatch} from './inspector-style-contract.js';
-import {getElementContentProfileMetadata} from './content-profiles.js';
+import {getElementContentProfileMetadata} from './content-profiles.js?v=20261025-inspector-lifecycle-contract';
 
 function requirePage(state) {
   const page = activePage(state);

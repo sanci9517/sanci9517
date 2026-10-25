@@ -46,6 +46,9 @@ for(const width of [390,1366])test(`general Inspector name and Schedule empty te
  if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
  const group=editor.locator('.schedule-inspector .inspector-group-title');if(await group.getAttribute('aria-expanded')==='false')await group.click();
  const name=()=>editor.getByRole('textbox',{name:'Elem neve',exact:true}),empty=()=>editor.getByRole('textbox',{name:'Üres állapot szövege',exact:true});
+ const nameContract=editor.locator('.field[data-property-id="advanced.nodeName"]');
+ assert.equal(await nameContract.getAttribute('data-property-command'),'element.update');
+ assert.equal(await nameContract.getAttribute('data-property-key'),'name');
  const headSelector=`.node[data-node-id="${id}"] > .node-head > span`,emptySelector=`.node[data-node-id="${id}"] .schedule-preview-empty`;
  await exerciseComposition({page:editor,input:name(),selector:headSelector,before:'Mentett elem',final:'Végleges belső név',posts,restart:true,otherInput:empty()});
  await exerciseComposition({page:editor,input:empty(),selector:emptySelector,before:'Mentett adásrend',final:'Végleges üres adásrend',posts,restart:true,otherInput:name()});

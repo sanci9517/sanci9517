@@ -10,7 +10,7 @@ import { createDocument, createNode, NODE_TYPES, normalizeRichText } from '../co
 import { assertValidEditorDocument } from '../core/validation.js';
 import { createEditorState, activePage } from '../core/state.js';
 import { beginTransaction, commitTransaction, execute, executeBatch, rollbackTransaction } from '../core/commands.js';
-import { getProperty, listProperties, listPropertyGroups } from '../core/property-registry.js';
+import { getProperty, listProperties, listPropertyGroups } from '../core/property-registry.js?v=20261025-inspector-lifecycle-contract';
 import { hasResponsiveOverride, resolveResponsiveValue, setResponsiveValue } from '../core/responsive.js';
 import {collectVisibleDescendants} from '../core/visibility.js';
 import {normalizeVisibility,isVisibleOnDevice,getNodeVisibilityState} from '../core/visibility.js';
