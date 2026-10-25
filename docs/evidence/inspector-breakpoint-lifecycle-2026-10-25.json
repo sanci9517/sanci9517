@@ -1,0 +1,46 @@
+{
+  "date": "2026-10-25",
+  "plan_cursor": "77.44.7.A",
+  "property": "background.color",
+  "breakpoints": [
+    { "device": "desktop", "width": 1366, "value": "#dc2626" },
+    { "device": "tablet", "width": 768, "value": "#16a34a" },
+    { "device": "mobile", "width": 390, "value": "#9333ea" }
+  ],
+  "route": [
+    "real Inspector color input",
+    "Canvas computed background color at desktop/tablet/mobile",
+    "draft Save and Editor reload preserve independent overrides",
+    "public snapshot remains the previous desktop color until explicit Publish",
+    "explicit Publish exposes each breakpoint-specific public color",
+    "mobile override reset inherits tablet; Undo/Redo restores the override/inheritance",
+    "draft reset does not alter public mobile value until a second explicit Publish",
+    "desktop and tablet values remain independent after mobile reset"
+  ],
+  "test": {
+    "file": "tests/browser/editor-inspector-breakpoint-lifecycle.test.js",
+    "script": "npm run test:editor:layout",
+    "targeted_result": "PASS 1/1 Chromium"
+  },
+  "checks": {
+    "editor_unit": "PASS 131/131",
+    "typecheck": "PASS",
+    "plan_contract": "PASS 13/13",
+    "source_crosswalk": "PASS 396 mappings; acceptance NOT CERTIFIED",
+    "git_diff_check": "PASS",
+    "github_ci_for_prior_runtime_commit_2aabfc31": "PASS: Editor Core, F0, canonical plan, active-point audit, Twitch (5/5)",
+    "github_ci_for_this_test_commit": "PENDING"
+  },
+  "production": {
+    "runtime_files_changed": false,
+    "last_verified_worker_version": "1adb87f6-8703-4da7-a6be-0ba999787994",
+    "traffic_percent": 100,
+    "note": "This commit adds only browser acceptance and CI registration; the existing tested responsive runtime remains active."
+  },
+  "data_safety": {
+    "d1_migrations": false,
+    "production_data_writes": false,
+    "r2_deletions": false
+  },
+  "acceptance": "Three-breakpoint Inspector lifecycle and mobile inheritance reset are covered by a real Chromium test. Full 77.44.7.A and physical device/user acceptance remain OPEN."
+}
