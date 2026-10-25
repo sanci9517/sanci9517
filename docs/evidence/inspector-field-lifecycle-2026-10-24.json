@@ -1,7 +1,7 @@
 {
-  "date": "2026-10-24",
+  "date": "2026-10-25",
   "plan_cursor": "77.44.7.A",
-  "inspector_fields": ["typography.textAlign", "background.color"],
+  "inspector_fields": ["typography.textAlign", "background.color", "radius.topLeft"],
   "route": [
     "real Inspector select control",
     "responsive.set Page Model command",
@@ -11,11 +11,12 @@
     "previous public snapshot remains unchanged after Save",
     "explicit Publish",
     "public renderer computed CSS",
-    "background.color: previous published blue remains unchanged after draft Save; explicit Publish changes public CSS to red"
+    "background.color: previous published blue remains unchanged after draft Save; explicit Publish changes public CSS to red",
+    "radius.topLeft on mobile: draft Save preserves inherited published radius; explicit Publish updates mobile public CSS to the local override"
   ],
   "checks": {
-    "inspector_lifecycle_chromium": "PASS 1/1 after extending the test with background.color",
-    "editor_browser_suite": "PASS 85/85 before the latest assertion extension; target test rerun PASS 1/1 after extension",
+    "inspector_lifecycle_chromium": "PASS 1/1 after extending the test with radius.topLeft mobile Save/Publish",
+    "editor_browser_suite": "PASS 85/85 on commit 3d67a53b before the latest assertion extension; target test rerun PASS 1/1 after extension",
     "editor_unit_suite": "PASS 131/131",
     "typescript": "PASS",
     "plan_contract": "PASS 13/13",
@@ -31,11 +32,11 @@
   "production_source": {
     "superseded_version": "b2db9f3f-19f8-4c06-b15a-c23b18f5be77",
     "superseded_source_commit": "b7cec261e53bf308853444e494cb44c437f5292d",
-    "current_version_at_check": "cbc16225-087b-437f-8aa0-8433662f590f",
-    "current_deployment_id": "18504549-9866-44d9-94dd-758de3e01693",
+    "current_version_at_check": "3e814311-7355-4794-9708-603f0de19f58",
+    "current_deployment_id": "24bd4266-f4f1-4b53-9ea3-ee9a71b0be6f",
     "current_traffic_percent": 100,
-    "current_source_commit": "1c2e1388049fe7a7c29debdadaf41902281859e1",
-    "workers_build_id": "55ef6d92-8d33-4c53-9603-994cd7f54ce0",
+    "current_source_commit": "3d67a53bc2c9ec34dfa7e2de8f864d53cd62cf5f",
+    "workers_build_id": "4fbf9e7f-c1bb-4237-bafa-3000f14390dd",
     "workers_build_outcome": "success",
     "migration_gate": "No migrations to apply",
     "live_inspector_module_sha256_matches": {
@@ -51,7 +52,7 @@
     "d1_migrations": false,
     "r2_deletions": false,
     "git_push_pending": true,
-    "github_editor_core_rerun_pending": false
+    "github_editor_core_rerun_pending": true
   },
-  "acceptance": "Two style-field routes verified in the current local browser test. The full browser suite is due to rerun in CI for this final extension; all 79 element types, 68 properties, mobile physical/IME and full 77.44 acceptance remain open."
+  "acceptance": "Three style-field routes verified in the current local browser test. The full browser suite is due to rerun in CI for the latest responsive-radius extension; all 79 element types, 68 properties, physical mobile/IME and full 77.44 acceptance remain open."
 }

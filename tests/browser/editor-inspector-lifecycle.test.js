@@ -411,6 +411,12 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await publicPage.setViewportSize({width:390,height:800});
   await publicPage.waitForFunction(previous=>{const current=document.querySelector('.visual-card > .visual-text');return current&&current!==previous},preResizeText);
   await publicPage.waitForFunction(()=>getComputedStyle(document.querySelector('.visual-card > .visual-text')).borderTopLeftRadius==='12px');
-  assert.equal((await publicCss()).radius,'12px');
+  assert.equal((await publicCss()).radius,'12px','mobile draft Save must preserve the previously published inherited radius');
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
+  assert.equal(posts.at(-1).publish,true,'mobile radius override is published only through explicit Publish');
+  await publicPage.reload();
+  await publicPage.waitForFunction(()=>getComputedStyle(document.querySelector('.visual-card > .visual-text')).borderTopLeftRadius==='6px');
+  assert.equal((await publicCss()).radius,'6px','published mobile radius override reaches the public renderer');
   assert.deepEqual(errors,[]);
 });
