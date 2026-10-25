@@ -25,13 +25,14 @@
     "size.minWidth: typed 160px reaches Canvas, survives Undo/Redo + draft Save/reload; published 80px stays live until explicit Publish"
   ],
   "checks": {
-    "inspector_lifecycle_chromium": "PASS 1/1 locally after extending the test with size.minWidth Save/Publish; GitHub Editor Core rerun pending for this extension",
-    "editor_browser_suite": "PASS 85/85 on commits 49978160 and 414b2ea4 before the unpushed size.minWidth assertion extension",
+    "inspector_lifecycle_chromium": "PASS 1/1 locally and in full GitHub Editor Core Chromium suite on commit 1ca93e88",
+    "editor_browser_suite": "PASS 85/85 on commit 1ca93e88; all five GitHub workflow runs PASS",
     "editor_unit_suite": "PASS 131/131 in the Editor Core workflow for commit 49978160",
     "typescript": "PASS",
     "plan_contract": "PASS 13/13",
     "canonical_source_crosswalk": "PASS 396 IDs; functional acceptance NOT_CERTIFIED",
-    "diff_check": "PASS"
+    "diff_check": "PASS",
+    "production_d1_migration_files": "No migration files changed in the tested commits; no production data operation performed"
   },
   "publication_guidance_ci_failure": {
     "commit": "69124947c7efee192c2a47770873607c5329c8bc",
@@ -49,13 +50,13 @@
     "rerun_result": "Editor Core browser suite 85/85 PASS; all six checks PASS"
   },
   "production_source": {
-    "latest_verified_worker_version": "22bc9050-0b65-4cc8-8477-19cca470368c",
-    "latest_verified_deployment_id": "6b4bdf9c-2460-4960-81fd-ca39cee87f43",
+    "latest_verified_worker_version": "ca5b5346-2043-471c-987c-b22b606a9dba",
+    "latest_verified_deployment_id": "543e9f36-8e06-4a2b-aa69-054638dc1c88",
     "traffic_percent": 100,
-    "source_commit": "414b2ea46bd03b02bed86c15e9399d9abf0f450d",
-    "workers_build_id": "e804c691-1ff7-4d29-89f4-e9ce0eafb9db",
+    "source_commit": "1ca93e885959193fa857ea9a3456aa929cedc4af",
+    "workers_build_id": "77eb6fd9-3977-4ff5-9f65-53611bd89bbb",
     "workers_build_outcome": "success",
-    "runtime_delta_since_verified_feature_commit": "No runtime or asset changes since 49978160; 414b2ea4 contains only documentation.",
+    "runtime_delta": "Test and documentation changes only; no application runtime, asset, migration, or production-data files changed.",
     "last_live_smoke_verified_version": "7bbe2b11-ddda-4b4d-a62d-ed215e5c93e5",
     "last_live_smoke_source_commit": "64af5d2181b7cbbf2b2589eccf92e8f44ba25dd3",
     "last_live_smoke_results": {
@@ -63,7 +64,7 @@
       "db_health": 200,
       "anonymous_admin": 401,
       "inspector_module_hashes_match": true,
-      "note": "A fresh HTTP smoke after the documentation-only builds was blocked by the shell network policy."
+      "note": "HTTP/hash smoke predates documentation-only deployments; fresh shell HTTP access is blocked by network policy."
     }
   },
   "changes_in_this_local_step": {
@@ -71,8 +72,8 @@
     "production_data_writes": false,
     "d1_migration_files_changed": false,
     "r2_deletions": false,
-    "git_push_pending": true,
-    "github_editor_core_rerun_pending": true
+    "git_push_pending": false,
+    "github_editor_core_rerun_pending": false
   },
-  "acceptance": "Six style-field routes are verified in the browser test; the new size.minWidth route passed focused Chromium 1/1 locally. The last pushed browser-test source passed Editor Core 85/85 on 49978160 and 414b2ea4; the new minWidth assertion needs its own GitHub CI run. All 79 element types, 68 properties, physical mobile/IME and full 77.44 acceptance remain open."
+  "acceptance": "Six style-field routes are verified in the browser test; size.minWidth 80→160px reaches Canvas, survives Undo/Redo and draft Save/reload, leaves published 80px unchanged until explicit Publish, then reaches public CSS. The full Editor Core suite passed 85/85 on 1ca93e88 and all five GitHub workflow runs plus the Cloudflare build passed. All 79 element types, 68 properties, physical mobile/IME and full 77.44 acceptance remain open."
 }
