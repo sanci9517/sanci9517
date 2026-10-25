@@ -29,13 +29,33 @@
     "source_crosswalk": "PASS 396 mappings; acceptance NOT CERTIFIED",
     "git_diff_check": "PASS",
     "github_ci_for_prior_runtime_commit_2aabfc31": "PASS: Editor Core, F0, canonical plan, active-point audit, Twitch (5/5)",
-    "github_ci_for_this_test_commit": "PENDING"
+    "github_ci_for_test_commit_dac95809": {
+      "result": "FAILURE: Editor Core browser suite 85/86",
+      "run": "https://github.com/sanci9517/sanci9517/actions/runs/40214862050",
+      "cause": "The public page viewport changed to tablet/desktop after mobile Publish and the test read computed CSS before reloading the public fixture."
+    },
+    "local_after_fix": "PASS 3/3 targeted Chromium runs after adding explicit public fixture reloads before post-reset tablet and desktop assertions",
+    "github_ci_for_fix_commit": "PENDING"
   },
   "production": {
     "runtime_files_changed": false,
-    "last_verified_worker_version": "1adb87f6-8703-4da7-a6be-0ba999787994",
+    "last_verified_worker_version": "803f9a45-4c4f-4ff4-b61b-61477a1b5d12",
+    "last_verified_deployment_id": "a4fefe69-0f6f-4c4d-93cc-fd0e86083ffd",
     "traffic_percent": 100,
-    "note": "This commit adds only browser acceptance and CI registration; the existing tested responsive runtime remains active."
+    "script_etag": "de88d09b8d1a1b8c131e426dec32b9504ba352a344669734b098b1035e1de487",
+    "previous_verified_script_etag": "de88d09b8d1a1b8c131e426dec32b9504ba352a344669734b098b1035e1de487",
+    "asset_byte_matches": [
+      "public/editor-v2/app.js",
+      "public/editor-v2/core/capability-matrix.js",
+      "public/editor-v2/core/commands.js",
+      "public/editor-v2/core/content-profiles.js",
+      "public/editor-v2/core/inspector-style-contract.js",
+      "public/editor-v2/core/property-registry.js",
+      "public/editor-v2/core/state-styles.js",
+      "public/editor-v2/index.html",
+      "public/editor-v2/ui/geometry-presets.js"
+    ],
+    "note": "The push triggered Cloudflare's automatic Worker deployment. This commit adds only browser acceptance and CI registration; the active Worker script ETag matches both immediately preceding tested deployments, and all nine Inspector runtime assets match local bytes."
   },
   "data_safety": {
     "d1_migrations": false,

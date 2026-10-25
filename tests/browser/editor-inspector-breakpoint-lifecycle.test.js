@@ -81,7 +81,7 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   await save(false);assert.equal(await color(live),'rgb(147, 51, 234)','reset remains a draft until Publish');
   await save(true);await publicPage.reload();
   assert.equal(await color(live),'rgb(22, 163, 74)','published mobile reset inherits tablet color');
-  await activate('tablet',768);assert.equal(await color(live),'rgb(22, 163, 74)','tablet override remains intact after mobile reset');
-  await activate('desktop',1366);assert.equal(await color(live),'rgb(220, 38, 38)','desktop override remains intact after mobile reset');
+  await activate('tablet',768);await publicPage.reload();assert.equal(await color(live),'rgb(22, 163, 74)','tablet override remains intact after mobile reset');
+  await activate('desktop',1366);await publicPage.reload();assert.equal(await color(live),'rgb(220, 38, 38)','desktop override remains intact after mobile reset');
   assert.deepEqual(errors,[]);
 });
