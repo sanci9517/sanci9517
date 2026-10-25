@@ -11,13 +11,13 @@ import {diagnostics} from './diagnostics.js?v=20260918-2';
 import {plainTextToRichText,renderRichTextEditor,richTextEditorToDocument,restoreSelectionOffsets,getSelectionOffsets,transformRichTextBlockTypes} from './core/richtext-engine.js';
 import {renderSchedulePreview} from './core/schedule-preview.js';
 import {normalizeScheduleConfig,SCHEDULE_MODES,SCHEDULE_ORDERS,SCHEDULE_STATUSES,SCHEDULE_EMPTY_TEXT_MAX} from './core/schedule-schema.js';
-import {listPropertyGroups,listProperties,getProperty} from './core/property-registry.js?v=20261025-inspector-lifecycle-contract';
+import {listPropertyGroups,listProperties,getProperty} from './core/property-registry.js?v=20261025-content-property-route-contract';
 import {renderPropertyInput} from './ui/property-controls.js';
 import {describeResponsiveOrigin} from './ui/responsive-origin.js';
 import {responsiveGroupResetActions} from './ui/responsive-group-reset.js';
 import {getRichTextBlockSelection,getRichTextFormattingSelection,getRichTextBlockTransformSelection,getRichTextActiveBlockIndex,restoreRichTextBlockSelection,restoreRichTextFormattingSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,updateRichTextBlockAlignment} from './core/richtext-links.js';
 import {initialPageId,rememberPageId,requestedPageId} from './core/page-url.js';
-import {getElementCapability} from './core/capability-matrix.js?v=20261025-initial-value-source-contract';
+import {getElementCapability} from './core/capability-matrix.js?v=20261025-content-property-route-contract';
 import {renderGeometryPresets} from './ui/geometry-presets.js';
 import {importRichTextClipboard} from './core/richtext-import.js';
 import {pasteRichTextDocument} from './core/richtext-paste.js';
@@ -199,7 +199,8 @@ function commitTextSurface(nodeId,surface,typingGroup){
   const node=page()?.nodes?.[nodeId];if(!node)return false;
   try{
     const value=node.type===NODE_TYPES.RICHTEXT?richTextEditorToDocument(surface):surface instanceof HTMLTextAreaElement?surface.value:surface.innerText;
-    const saved=command(node.type===NODE_TYPES.RICHTEXT?'richtext.content.set':'element.content.set',
+    const textProperty=getProperty('content.text');
+    const saved=command(node.type===NODE_TYPES.RICHTEXT?'richtext.content.set':textProperty.command,
       node.type===NODE_TYPES.RICHTEXT?{nodeId,document:value}:{nodeId,content:value},{render:false,typingGroup});
     if(saved){
       syncTextSurfaces(nodeId,value,surface);
@@ -223,9 +224,11 @@ function applyTextSurfaceStyle(surface,node){
   surface.style.backgroundColor=background&&background!=='transparent'?background:'#ffffff';
 }
 function renderPlainTextEditor(node){
+  const property=getProperty('content.text');
   const section=document.createElement('section');section.className='field plain-text-content';
+  section.dataset.propertyId=property.id;section.dataset.propertyCommand=property.command;section.dataset.propertyKey=property.key;
   const label=document.createElement('label');label.textContent='Szöveg';label.htmlFor='plain-text-content';
-  const editor=document.createElement('textarea');editor.id='plain-text-content';editor.className='plain-text-editor';editor.dataset.textNodeId=node.id;editor.setAttribute('aria-label','Szöveg tartalma');editor.value=node.props?.text??node.props?.content??'';editor.disabled=Boolean(node.locked);applyTextSurfaceStyle(editor,node);
+  const editor=document.createElement('textarea');editor.id='plain-text-content';editor.className='plain-text-editor';editor.dataset.textNodeId=node.id;editor.setAttribute('aria-label','Szöveg tartalma');editor.value=node.props?.text??node.props?.content??node.name??'';editor.disabled=Boolean(node.locked);applyTextSurfaceStyle(editor,node);
   const typingGroup=crypto.randomUUID();let composing=false,dirty=false,compositionRevision=0;
   const flush=()=>{if(composing)return false;if(!dirty)return true;const saved=commitTextSurface(node.id,editor,typingGroup);if(saved)dirty=false;return saved};
   editor.onfocus=()=>{flushRichTextDraft=flush};editor.oninput=event=>{
@@ -1417,7 +1420,7 @@ function renderInspector(){
         exclude:textTypes.has(node.type)?['text']:[],
         resolveExternalField:key=>key==='text'?inspector.querySelector(`.plain-text-editor[data-text-node-id="${CSS.escape(node.id)}"]`):null,
         pages,pending:flush=>{flushRichTextDraft=flush},
-        apply:(patch,{typingGroup,render:fullRender=false}={})=>{const saved=command('content.properties.set',{nodeId:node.id,patch},{render:fullRender,typingGroup});if(saved&&!fullRender){renderCanvas();setStatus('Nem mentett módosítás');syncPublishControls()}return saved}
+        apply:(patch,{typingGroup,render:fullRender=false}={})=>{const property=Object.hasOwn(patch,'href')?getProperty('content.href'):null;const saved=command(property?.command||'content.properties.set',{nodeId:node.id,patch},{render:fullRender,typingGroup});if(saved&&!fullRender){renderCanvas();setStatus('Nem mentett módosítás');syncPublishControls()}return saved}
       }));
       else if(STRUCTURAL_TYPES.includes(node.type))inspector.append(Object.assign(document.createElement('p'),{className:'content-field-help',textContent:'Ez a tároló a gyermekeit jeleníti meg. Tartalomhoz adj hozzá szöveget, képet vagy más elemet.'}));
       else if(!textTypes.has(node.type))inspector.append(Object.assign(document.createElement('p'),{className:'content-field-help',textContent:'Ehhez az elemhez a közös szolgáltatás és a részletes szerkesztő még hiányzik. A meglévő adatok megmaradnak.'}));

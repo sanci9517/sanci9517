@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {NODE_TYPES} from '../core/schema.js';
 import {getElementCapability,getElementInspectorContract} from '../core/capability-matrix.js';
-import {listProperties,registerProperty} from '../core/property-registry.js?v=20261025-inspector-lifecycle-contract';
+import {listProperties,registerProperty} from '../core/property-registry.js?v=20261025-content-property-route-contract';
 import {getInspectorValueContract} from '../core/property-values.js';
 import {STYLE_MAP} from '../core/canvas-engine.js';
 
@@ -68,6 +68,7 @@ test('every responsive registry field has an explicit Inspector control and Canv
 });
 test('type restrictions and new property registration flow through the single registry',()=>{
  assert.ok(getElementInspectorContract('text').fields.some(p=>p.id==='content.text'));
+ assert.equal(getElementInspectorContract('richtext').fields.some(p=>p.id==='content.text'),false,'Rich Text uses its structured editor contract instead of a plain-text field');
  assert.equal(getElementInspectorContract('image').fields.some(p=>p.id==='content.text'),false);
  const id='test.contract.registered';
  registerProperty({id,group:'typography',label:'Test',type:'number',command:'responsive.set',responsive:true,key:'testContract',appliesTo:['text']});

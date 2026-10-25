@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-25",
+  "plan_cursor": "77.44.7.A / 77.44.1-2 Inspector property contract",
+  "verified_drift": [
+    {
+      "property_id": "content.text",
+      "previous_registry_command": "element.update",
+      "actual_command": "element.content.set",
+      "fixed_registry_command": "element.content.set",
+      "key": "text",
+      "view": "plain-text Inspector textarea",
+      "applies_to": ["heading", "text", "button", "link"],
+      "excluded_type": "richtext uses the separate structured richtext.content.set editor"
+    },
+    {
+      "property_id": "content.href",
+      "previous_registry_command": "element.update",
+      "actual_command": "content.properties.set",
+      "fixed_registry_command": "content.properties.set",
+      "key": "href",
+      "view": "authored link/button content control"
+    }
+  ],
+  "changes": [
+    "Specialized content controls expose property ID, command and key from the property registry",
+    "Editor dispatches the registered command for plain text and authored href fields",
+    "Registry imports and Editor entrypoint use a fresh content-property route cache key",
+    "Browser lifecycle verifies Undo/Redo, Save without Publish, Editor reload, unchanged public state, and separate Publish for text and href"
+  ],
+  "checks": {
+    "editor_inspector_lifecycle_chromium": "PASS 1/1, 161.9 seconds; includes content.text fallback, content.href and background.image",
+    "general_fields_and_richtext_chromium": "PASS 4/4 across 390px and 1366px",
+    "editor_unit": "PASS 132/132",
+    "typecheck": "PASS",
+    "plan_contract": "PASS 13/13",
+    "traceability": "PASS 396 source mappings; acceptance NOT certified",
+    "wrangler_version": "4.130.0",
+    "remote_d1_preflight": "PASS: No migrations to apply",
+    "worker_dry_run": "PASS: 159 public assets, 287.10 KiB total; dry-run exited without upload"
+  },
+  "production_scope": {
+    "runtime_changed": true,
+    "release_branch_push": "pending",
+    "production_deploy": "pending release verification",
+    "production_health": "pending post-deployment smoke",
+    "d1_migrations_applied": false,
+    "production_data_writes": false,
+    "production_r2_changes": false
+  },
+  "acceptance": "These two registry-specialized field routes now match the commands used by the Editor and pass browser lifecycle tests. This is not full 79-type/68-property acceptance, nor production asset or physical-device acceptance."
+}

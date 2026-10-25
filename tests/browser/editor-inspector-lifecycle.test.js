@@ -29,6 +29,8 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   const offsetId=model.selection.primaryId;
   execute(model,{type:'element.add',payload:{type:NODE_TYPES.BUTTON,parentId:rootId,authored:true,props:{text:'Default CTA',href:'#default-cta'}}});
   const buttonId=model.selection.primaryId;
+  execute(model,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:rootId,name:'Inspector fallback'}});
+  const fallbackTextId=model.selection.primaryId;
   let draft=structuredClone(model.document), published=null, version=1;
   const posts=[];
   const server=createServer(async(req,res)=>{
@@ -235,11 +237,62 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await publicPage.locator('.visual-card > .visual-text').first().waitFor();
   assert.equal(await publicPage.locator(`[data-node-id="${itemId}"]`).evaluate(el=>getComputedStyle(el).textAlign),'center',
     'the separately published public snapshot uses the same Inspector text alignment');
+  // Content properties use specialized editor controls, but their registry
+  // IDs, commands and keys must still describe the real Page Model route.
+  const saveContentProperty=async publish=>{
+    const response=editor.waitForResponse(r=>new URL(r.url()).pathname==='/api/admin/editor'&&r.request().method()==='POST');
+    await editor.locator(publish?'#publish':'#save').click();
+    await response;
+    await editor.waitForFunction(pub=>pub?document.querySelector('#saveStatus')?.textContent==='Publikálva':document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'),publish);
+  };
+  await select(fallbackTextId);await editor.locator('.inspector-tabs button').nth(1).click();
+  assert.equal(await editor.locator('.plain-text-content[data-property-id="content.text"] textarea').inputValue(),'Inspector fallback',
+    'plain-text Inspector uses the same node-name fallback as the Canvas');
+  await select(itemId);await editor.locator('.inspector-tabs button').nth(1).click();
+  const textContract=editor.locator('.plain-text-content[data-property-id="content.text"]');
+  assert.equal(await textContract.getAttribute('data-property-command'),'element.content.set');
+  assert.equal(await textContract.getAttribute('data-property-key'),'text');
+  const textInput=textContract.locator('textarea');
+  const publicText=()=>publicPage.locator(`[data-node-id="${itemId}"]`).innerText();
+  const originalPublicText=await publicText();
+  await textInput.fill('Registry-alapú szöveg');
+  assert.equal(await editor.locator(`.node[data-node-id="${itemId}"] > .node-content`).innerText(),'Registry-alapú szöveg');
+  await editor.locator('#undo').click();assert.equal(await textInput.inputValue(),'Grid item');
+  await editor.locator('#redo').click();assert.equal(await textInput.inputValue(),'Registry-alapú szöveg');
+  await saveContentProperty(false);
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[itemId].props.text,'Registry-alapú szöveg');
+  await editor.reload();await select(itemId);await editor.locator('.inspector-tabs button').nth(1).click();
+  assert.equal(await editor.locator('.plain-text-content[data-property-id="content.text"] textarea').inputValue(),'Registry-alapú szöveg');
+  await publicPage.reload();assert.equal(await publicText(),originalPublicText,'draft text remains unpublished');
+  await saveContentProperty(true);await publicPage.reload();
+  assert.equal(await publicText(),'Registry-alapú szöveg','Publish sends registry-backed text to the public renderer');
+
+  await select(buttonId);await editor.locator('.inspector-tabs button').nth(1).click();
+  const hrefContract=editor.locator('.content-schema-field[data-property-id="content.href"]');
+  assert.equal(await hrefContract.getAttribute('data-property-command'),'content.properties.set');
+  assert.equal(await hrefContract.getAttribute('data-property-key'),'href');
+  const hrefInput=hrefContract.locator('input[aria-label="Hivatkozás"]');
+  const readButtonHref=el=>(el.matches('a')?el:el.querySelector('a'))?.getAttribute('href')??el.getAttribute('href');
+  const publicButtonHref=()=>publicPage.locator(`[data-node-id="${buttonId}"]`).evaluate(readButtonHref);
+  const originalHref=await publicButtonHref();
+  await hrefInput.fill('/p/registry-link');
+  assert.equal(await hrefInput.inputValue(),'/p/registry-link');
+  await editor.locator('#undo').click();assert.equal(await hrefContract.locator('input[aria-label="Hivatkozás"]').inputValue(),'#default-cta');
+  await editor.locator('#redo').click();assert.equal(await editor.locator('.content-schema-field[data-property-id="content.href"] input[aria-label="Hivatkozás"]').inputValue(),'/p/registry-link');
+  await saveContentProperty(false);
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[buttonId].props.href,'/p/registry-link');
+  await editor.reload();await select(buttonId);await editor.locator('.inspector-tabs button').nth(1).click();
+  assert.equal(await editor.locator('.content-schema-field[data-property-id="content.href"] input[aria-label="Hivatkozás"]').inputValue(),'/p/registry-link');
+  await publicPage.reload();assert.equal(await publicButtonHref(),originalHref,'draft link target remains unpublished');
+  await saveContentProperty(true);await publicPage.reload();
+  assert.equal(await publicButtonHref(),'/p/registry-link','Publish sends registry-backed link target to the public renderer');
+
   // The registry-backed background asset control must use the shared Media
   // picker and carry the same responsive asset ID through Canvas, draft Save,
   // reload and the separate public Publish route.
   const backgroundImage=()=>item.evaluate(el=>getComputedStyle(el).backgroundImage);
   const publishedBackgroundImage=()=>publicPage.locator(`[data-node-id="${itemId}"]`).evaluate(el=>getComputedStyle(el).backgroundImage);
+  await select(itemId);
   await editor.locator('.inspector-tabs button').first().click();
   const backgroundGroup=editor.locator('.inspector-group-title').filter({hasText:'Háttér'});
   if(await backgroundGroup.getAttribute('aria-expanded')==='false')await backgroundGroup.click();

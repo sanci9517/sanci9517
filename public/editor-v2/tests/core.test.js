@@ -10,7 +10,7 @@ import { createDocument, createNode, NODE_TYPES, normalizeRichText } from '../co
 import { assertValidEditorDocument } from '../core/validation.js';
 import { createEditorState, activePage } from '../core/state.js';
 import { beginTransaction, commitTransaction, execute, executeBatch, rollbackTransaction } from '../core/commands.js';
-import { getProperty, listProperties, listPropertyGroups } from '../core/property-registry.js?v=20261025-inspector-lifecycle-contract';
+import { getProperty, listProperties, listPropertyGroups } from '../core/property-registry.js?v=20261025-content-property-route-contract';
 import { hasResponsiveOverride, resolveResponsiveValue, setResponsiveValue } from '../core/responsive.js';
 import {collectVisibleDescendants} from '../core/visibility.js';
 import {normalizeVisibility,isVisibleOnDevice,getNodeVisibilityState} from '../core/visibility.js';
@@ -179,7 +179,10 @@ test('property registry exposes extensible inspector groups and properties', () 
   assert.equal(getProperty('size.width').command, 'responsive.set');
   assert.equal(getProperty('background.color').key, 'backgroundColor');
   assert.equal(getProperty('radius.all').key, 'borderRadius');
-  assert.equal(getProperty('content.text').command, 'element.update');
+  assert.equal(getProperty('content.text').command, 'element.content.set');
+  assert.equal(getProperty('content.text').key, 'text');
+  assert.equal(getProperty('content.href').command, 'content.properties.set');
+  assert.equal(getProperty('content.href').key, 'href');
   assert.ok(listProperties({ group: 'size' }).some((property) => property.id === 'size.width'));
 });
 

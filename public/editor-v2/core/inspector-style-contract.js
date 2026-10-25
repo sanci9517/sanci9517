@@ -1,4 +1,4 @@
-import { listProperties } from './property-registry.js?v=20261025-inspector-lifecycle-contract';
+import { listProperties } from './property-registry.js?v=20261025-content-property-route-contract';
 import { normalizeInspectorValue } from './property-values.js';
 
 const SCOPES = new Set(['style', 'desktop', 'tablet', 'mobile']);

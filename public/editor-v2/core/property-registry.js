@@ -32,8 +32,8 @@ const groups = Object.freeze([
 ]);
 
 const properties = [
-  { id: 'content.text', group: 'content', label: 'Szöveg', type: 'text', command: 'element.update', appliesTo: ['heading', 'text', 'richtext', 'button', 'link'] },
-  { id: 'content.href', group: 'content', label: 'Link / URL', type: 'url', command: 'element.update', appliesTo: ['link', 'button'] },
+  { id: 'content.text', key: 'text', group: 'content', label: 'Szöveg', type: 'text', command: 'element.content.set', appliesTo: ['heading', 'text', 'button', 'link'] },
+  { id: 'content.href', key: 'href', group: 'content', label: 'Link / URL', type: 'url', command: 'content.properties.set', appliesTo: ['link', 'button'] },
   { id: 'size.width', key: 'width', group: 'size', label: 'Szélesség', type: 'dimension', units: ['auto', 'px', '%', 'vw', 'rem'], responsive: true, command: 'responsive.set' },
   { id: 'size.height', key: 'height', group: 'size', label: 'Magasság', type: 'dimension', units: ['auto', 'px', '%', 'vh', 'rem'], responsive: true, command: 'responsive.set' },
   { id: 'size.minWidth', key: 'minWidth', group: 'size', label: 'Min. szélesség', type: 'dimension', units: ['px', '%', 'vw', 'rem'], responsive: true, command: 'responsive.set' },

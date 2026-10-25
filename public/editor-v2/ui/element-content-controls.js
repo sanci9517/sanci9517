@@ -1,4 +1,5 @@
 import {CONTENT_FIELDS,normalizeContentField,contentProperties,imageFocalPosition,getPublicationContentGuidance} from '../core/authored-content.js';
+import {getProperty} from '../core/property-registry.js?v=20261025-content-property-route-contract';
 
 export function pageLinkPicker(pages,input){
   const select=document.createElement('select');select.className='content-page-picker';select.setAttribute('aria-label','Belső oldal kiválasztása');
@@ -181,6 +182,8 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
   const top=group(CONTENT_FIELDS[node.type]||[],()=>working,write);
   const control=(definition,value,save,register)=>{
     const wrap=document.createElement('div');wrap.className='field content-schema-field';wrap.dataset.contentKey=definition.key;
+    const property=definition.key==='href'&&['button','link'].includes(node.type)?getProperty('content.href'):null;
+    if(property){wrap.dataset.propertyId=property.id;wrap.dataset.propertyCommand=property.command;wrap.dataset.propertyKey=property.key;}
     const label=document.createElement('span');label.textContent=definition.label;wrap.append(label);
     let input;
     if(definition.type==='select'){input=document.createElement('select');for(const [value,text] of Object.entries(definition.options)){const option=document.createElement('option');option.value=value;option.textContent=text;input.append(option)}input.value=String(value??Object.keys(definition.options)[0])}
