@@ -19,6 +19,11 @@ test('every declared type exposes its actual registry fields without certifying 
    assert.equal(field.scope,property.responsive?'viewport':'node');assert.equal(field.reset,property.responsive?'inherit':'type-specific');
    assert.equal(field.key,property.key??null);assert.deepEqual(field.valueContract,getInspectorValueContract(property));
    assert.equal(field.initialValue.status,Object.hasOwn(property,'defaultValue')?'DECLARED':'NOT_DECLARED');
+   if(property.responsive){assert.equal(field.initialValue.source.strategy,'resolved-style');assert.equal(field.initialValue.source.key,property.key);assert.deepEqual(field.initialValue.source.precedence,['responsive-cascade','node.style','authored-content-default']);}
+   else if(property.id==='content.text')assert.deepEqual(field.initialValue.source,{strategy:'node-props',keys:['text','content'],fallback:'node.name'});
+   else if(property.id==='content.href')assert.deepEqual(field.initialValue.source,{strategy:'node-props',keys:['href'],fallback:'empty'});
+   else assert.deepEqual(field.initialValue.source,{strategy:'node-field',key:'name',fallback:'node.type'});
+   assert.ok(Object.isFrozen(field.initialValue.source));
    assert.equal(field.resetContract.status,property.responsive?'SUPPORTED':'TYPE_SPECIFIC');
    assert.ok(Object.isFrozen(field));assert.ok(Object.isFrozen(field.valueContract));assert.ok(Object.isFrozen(field.resetContract));
   }
@@ -31,7 +36,7 @@ test('Inspector value contracts expose the validator bounds and enumerations wit
  assert.deepEqual(byId('typography.textAlign').valueContract,{kind:'enum',values:['left','center','right','justify'],tokens:[]});
  assert.deepEqual(byId('typography.fontSize').valueContract,{kind:'dimension',units:['px','rem','em','vw'],allowsZero:true,allowsAuto:false,negative:false,tokens:['typography.bodySize','typography.headingSize']});
  assert.deepEqual(byId('typography.lineHeight').valueContract,{kind:'number',min:0.5,max:5,tokens:['typography.lineHeight']});
- assert.deepEqual(byId('content.text').initialValue,{status:'NOT_DECLARED'});
+ assert.deepEqual(byId('content.text').initialValue,{status:'NOT_DECLARED',source:{strategy:'node-props',keys:['text','content'],fallback:'node.name'}});
  assert.equal(Object.isFrozen(byId('typography.textAlign').valueContract.values),true);
  const nodeName=getElementInspectorContract('text').fields.find(field=>field.id==='advanced.nodeName');
  assert.equal(nodeName.command,'element.update');assert.equal(nodeName.key,'name');

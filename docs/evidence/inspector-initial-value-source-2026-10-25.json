@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-25",
+  "plan_cursor": "77.44.7.A",
+  "finding": {
+    "node_type": "button",
+    "symptom": "Canvas rendered authored default styles but Inspector color, typography and spacing fields appeared empty.",
+    "reproduction": "real Chromium Inspector lifecycle test; background.color was empty while Canvas computed backgroundColor was rgb(112, 71, 235)",
+    "cause": "Inspector initial value lookup stopped at responsive overrides and node.style and did not use the existing resolved authored styles."
+  },
+  "change": {
+    "runtime": "Inspector responsive field fallback now reads the existing resolveNodeStyle(node, device) result.",
+    "purity": "Reading fields does not persist a style value or create a responsive override.",
+    "capability_contract": {
+      "fields": 68,
+      "responsive_source": "resolveNodeStyle: responsive cascade, base style, authored content defaults; layout/flex/grid use computed Canvas style as fallback",
+      "content_text_source": "node.props.text, then node.props.content, then node.name",
+      "content_href_source": "node.props.href, otherwise empty",
+      "node_name_source": "node.name, otherwise node.type",
+      "default_value_policy": "No defaultValue was invented; initialValue status remains NOT_DECLARED unless the registry explicitly declares one."
+    },
+    "cache_bust": "app.js entry URL and capability-matrix import use 20261025-initial-value-source-contract"
+  },
+  "test": {
+    "file": "tests/browser/editor-inspector-lifecycle.test.js",
+    "assertions": [
+      "authored button Canvas background matches Inspector HEX field",
+      "authored text color appears in Inspector",
+      "authored four-sided padding values appear in typed controls",
+      "authored radius appears in dimension control",
+      "Page Model style and desktop/tablet/mobile overrides remain empty after inspection",
+      "existing 37-property Inspector lifecycle remains green"
+    ],
+    "targeted_chromium": "PASS 1/1",
+    "full_editor_browser_suite": "83/86 on first local full run; three unrelated 1366px IME/Inspector timeout cases passed 6/6 when rerun by file without suite contention",
+    "editor_unit": "PASS 132/132 in earlier permitted runner; rerun here blocked by sandbox EPERM launching core.test.js child process",
+    "current_sandbox_recheck": {
+      "typecheck": "PASS",
+      "plan_contract": "PASS 13/13",
+      "traceability": "PASS 396 mappings",
+      "capability_contract": "PASS",
+      "direct_javascript_parse": "PASS",
+      "browser_lifecycle": "BLOCKED: listen EPERM opening local test server",
+      "wrangler_remote_preflight": "BLOCKED: Wrangler could not write its config-directory log on this read-only filesystem"
+    },
+    "typecheck": "PASS",
+    "javascript_parse_and_diff_check": "PASS"
+  },
+  "release": {
+    "runtime_files_changed": [
+      "public/editor-v2/app.js",
+      "public/editor-v2/index.html"
+    ],
+    "capability_contract_changed": "public/editor-v2/core/capability-matrix.js",
+    "github_ci": "pending push verification",
+    "cloudflare": {
+      "preflight": "PASS: remote D1 reports No migrations to apply; wrangler deploy --dry-run bundles successfully",
+      "automatic_deployment": "pending push verification"
+    },
+    "d1_migrations": false,
+    "production_data_writes": false,
+    "r2_deletions": false
+  },
+  "acceptance": "The authored initial style value discrepancy is fixed and tested. Full 77.44.7.A, all-type acceptance, and physical PC/mobile acceptance remain OPEN."
+}

@@ -17,7 +17,7 @@ import {describeResponsiveOrigin} from './ui/responsive-origin.js';
 import {responsiveGroupResetActions} from './ui/responsive-group-reset.js';
 import {getRichTextBlockSelection,getRichTextFormattingSelection,getRichTextBlockTransformSelection,getRichTextActiveBlockIndex,restoreRichTextBlockSelection,restoreRichTextFormattingSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,updateRichTextBlockAlignment} from './core/richtext-links.js';
 import {initialPageId,rememberPageId,requestedPageId} from './core/page-url.js';
-import {getElementCapability} from './core/capability-matrix.js';
+import {getElementCapability} from './core/capability-matrix.js?v=20261025-initial-value-source-contract';
 import {renderGeometryPresets} from './ui/geometry-presets.js';
 import {importRichTextClipboard} from './core/richtext-import.js';
 import {pasteRichTextDocument} from './core/richtext-paste.js';
@@ -694,7 +694,8 @@ function renderRegistryInspector(node,mode='primary'){
     for(const property of properties){
       const key=property.key||property.id.split('.')[1];
       const resolved=property.responsive?resolveResponsiveValue(node.responsive,key,device):null;
-      const current=resolved?.value??node.style?.[key]??(['flex','grid','layout'].includes(property.group)&&rendered?getComputedStyle(rendered)[key]:'')??'';
+      const effectiveStyle=property.responsive?resolveNodeStyle(node,device):null;
+      const current=resolved?.value??effectiveStyle?.[key]??(['flex','grid','layout'].includes(property.group)&&rendered?getComputedStyle(rendered)[key]:'')??'';
       const label=property.label;
       const apply=value=>{
         const typingGroup=`inspector:${node.id}:${device}:${key}`;

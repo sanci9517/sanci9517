@@ -14,6 +14,7 @@ const root=resolve(import.meta.dirname,'../../public');
 test('real Inspector layout survives selection, undo, save/reload and separate publish with canvas/public parity',async t=>{
   const model=createEditorState(createDocument());
   const pageId=model.document.activePageId;
+  const rootId=model.document.pages[pageId].rootId;
   execute(model,{type:'element.add',payload:{type:NODE_TYPES.GRID,parentId:model.document.pages[pageId].rootId}});
   const gridId=model.selection.primaryId;
   execute(model,{type:'element.update',payload:{nodeId:gridId,patch:{name:'<img src=x onerror=alert(1)>'}}});
@@ -25,6 +26,8 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   const flexItemId=model.selection.primaryId;
   execute(model,{type:'element.add',payload:{type:NODE_TYPES.TEXT,parentId:model.document.pages[pageId].rootId,props:{text:'Offset item'}}});
   const offsetId=model.selection.primaryId;
+  execute(model,{type:'element.add',payload:{type:NODE_TYPES.BUTTON,parentId:rootId,authored:true,props:{text:'Default CTA',href:'#default-cta'}}});
+  const buttonId=model.selection.primaryId;
   let draft=structuredClone(model.document), published=null, version=1;
   const posts=[];
   const server=createServer(async(req,res)=>{
@@ -63,6 +66,17 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
     if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
   };
   const field=id=>editor.locator(`.typed-inspector-field[data-property-id="${id}"]`);
+  // Authored defaults are visible in the style Inspector even before users
+  // persist an explicit style override. Merely selecting a node stays pure.
+  await select(buttonId);
+  const button=editor.locator(`.node[data-node-id="${buttonId}"]`);
+  assert.equal(await button.evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(112, 71, 235)');
+  assert.equal(await field('background.color').locator('input[aria-label$="HEX"]').inputValue(),'#7047eb');
+  assert.equal(await field('typography.color').locator('input[aria-label$="HEX"]').inputValue(),'#ffffff');
+  assert.deepEqual(await field('spacing.padding').locator('.typed-box-side input[type="number"]').evaluateAll(inputs=>inputs.map(input=>input.value)),['12','18','12','18']);
+  assert.equal(await field('radius.all').locator('.dimension-controls input[type="number"]').inputValue(),'10');
+  assert.deepEqual(draft.pages[pageId].nodes[buttonId].style,{},'opening Inspector defaults must not materialize style data');
+  assert.deepEqual(draft.pages[pageId].nodes[buttonId].responsive,{desktop:{},tablet:{},mobile:{}},'reading defaults must not create responsive overrides');
   // Multi-element Inspector: shared dimensions apply atomically to both nodes,
   // keep focus after rerender, and remain undoable as a single operation.
   await select(flexId);

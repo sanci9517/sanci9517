@@ -19,6 +19,18 @@ export const ELEMENT_CAPABILITIES = Object.freeze(Object.fromEntries(
 
 const unavailable=Object.freeze({status:'PLANNED',canvas:false,inspector:'PLANNED',public:'PLANNED'});
 
+function inspectorInitialValueSource(property){
+  if(property.responsive)return Object.freeze({
+    strategy:'resolved-style',
+    key:property.key,
+    precedence:Object.freeze(['responsive-cascade','node.style','authored-content-default']),
+    fallback:['layout','flex','grid'].includes(property.group)?'computed-canvas-style':'css-initial-or-inherited'
+  });
+  if(property.id==='content.text')return Object.freeze({strategy:'node-props',keys:Object.freeze(['text','content']),fallback:'node.name'});
+  if(property.id==='content.href')return Object.freeze({strategy:'node-props',keys:Object.freeze(['href']),fallback:'empty'});
+  return Object.freeze({strategy:'node-field',key:property.key??'name',fallback:'node.type'});
+}
+
 export function getElementCapability(type) {
   return typeof type==='string'&&Object.hasOwn(ELEMENT_CAPABILITIES,type)?ELEMENT_CAPABILITIES[type]:unavailable;
 }
@@ -42,8 +54,8 @@ export function getElementInspectorContract(type) {
       ? {status:'SUPPORTED',command:property.command,operation:'clear-override',effect:'inherit'}
       : {status:'TYPE_SPECIFIC',command:property.command,operation:'type-specific'}),
     initialValue:Object.hasOwn(property,'defaultValue')
-      ? Object.freeze({status:'DECLARED',value:property.defaultValue})
-      : Object.freeze({status:'NOT_DECLARED'}),
+      ? Object.freeze({status:'DECLARED',value:property.defaultValue,source:inspectorInitialValueSource(property)})
+      : Object.freeze({status:'NOT_DECLARED',source:inspectorInitialValueSource(property)}),
     valueContract:getInspectorValueContract(property),
   }));
   return Object.freeze({
