@@ -16,13 +16,14 @@ import {defaultCountdownContent} from './countdown-content.js';
 import {defaultSocialLinks} from './social-links.js';
 import {defaultEmbedContent} from './creator-embed.js';
 import {defaultCodeSnippet} from './code-snippet.js';
-import { normalizeElementContent as normalizeAuthoredElementContent, CONTENT_TYPES, STRUCTURAL_TYPES } from './authored-content.js';
+import { normalizeElementContent as normalizeAuthoredElementContent, CONTENT_TYPES } from './authored-content.js';
 import {normalizeAccessibility,remapDuplicateAnchors} from './accessibility.js';
 import {normalizeStatePatch} from './state-styles.js';
 import { applyStyleSnapshot } from './style-snapshot.js';
 import { layoutPresetPatch, layoutMode, CHILD_LAYOUT_DEFAULTS } from './layout-presets.js';
 import {VISIBILITY_DEVICES,normalizeVisibility} from './visibility.js';
 import {trackInspectorStylePatch} from './inspector-style-contract.js';
+import {getElementContentProfileMetadata} from './content-profiles.js';
 
 function requirePage(state) {
   const page = activePage(state);
@@ -105,8 +106,8 @@ if(!authored&&type==='embed')nodeProps.embedContent=nodeProps.embedContent??defa
 if(type==='code')nodeProps.codeSnippet=nodeProps.codeSnippet??defaultCodeSnippet();
 const nodeStyle=structuredClone(style);
 if(!authored&&type==='spacer'&&!Object.hasOwn(nodeStyle,'height'))nodeStyle.height='64px';
-const metadata=authored?{}:type==='code'?{codeSnippetVersion:1}:type==='embed'?{embedContentVersion:1}:type==='social'?{socialLinksVersion:1}:type==='countdown'?{countdownVersion:1}:type==='card'?{cardContentVersion:1}:type==='divider'?{decorativeVersion:1}:type==='spacer'?{spacerVersion:1}:['image','video','audio'].includes(type)?{editorContentVersion:1}:isStructuredType(type)?{structuredContentVersion:1}:['badge','quote','icon'].includes(type)?{basicContentVersion:1}:{};
-if(authored&&CONTENT_TYPES.includes(type))Object.assign(nodeProps,normalizeAuthoredElementContent({type,props:nodeProps},{}));const nodeMetadata={...metadata};if(authored&&(CONTENT_TYPES.includes(type)||STRUCTURAL_TYPES.includes(type)))nodeMetadata.contentVersion=1;const node=createNode(type,{props:nodeProps,style:nodeStyle,name:name??type,parentId:parent.id,metadata:nodeMetadata});page.nodes[node.id]=node;parent.children.push(node.id);setSelection(draft,[node.id],node.id);bumpRevision(draft.document)}),
+const metadata=getElementContentProfileMetadata(type,{authored});
+if(authored&&CONTENT_TYPES.includes(type))Object.assign(nodeProps,normalizeAuthoredElementContent({type,props:nodeProps},{}));const node=createNode(type,{props:nodeProps,style:nodeStyle,name:name??type,parentId:parent.id,metadata});page.nodes[node.id]=node;parent.children.push(node.id);setSelection(draft,[node.id],node.id);bumpRevision(draft.document)}),
   'element.update': (state, { nodeId, patch = {} } = {}) => commit(state,{type:'element.update',payload:{nodeId,patch:structuredClone(patch)}},(draft)=>{const {page,node}=requireNode(draft,nodeId);const safePatch={...patch};delete safePatch.id;delete safePatch.parentId;delete safePatch.children;Object.assign(node,structuredClone(safePatch));if('style' in safePatch || 'responsive' in safePatch)markRootAppearance(page,node);bumpRevision(draft.document)}),
   'element.content.set': (state, { nodeId, content = '' } = {}) => commit(state,{type:'element.content.set',payload:{nodeId,content:String(content)}},(draft)=>{const {node}=requireNode(draft,nodeId);if(node.type==='richtext')throw new Error('Use richtext.content.set for Rich Text');const value=String(content);const textTypes=new Set(['heading','text','button','link']);node.props={...node.props,...(textTypes.has(node.type)?{text:value,content:value}:{content:value})};bumpRevision(draft.document)}),
   'richtext.content.set': (state, { nodeId, document } = {}) => commit(state,{type:'richtext.content.set',payload:{nodeId,document:structuredClone(document)}},(draft)=>{const {node}=requireNode(draft,nodeId);if(node.type!=='richtext')throw new Error('richtext.content.set requires a Rich Text node');node.props={...node.props,richText:normalizeRichText(document)};bumpRevision(draft.document)}),

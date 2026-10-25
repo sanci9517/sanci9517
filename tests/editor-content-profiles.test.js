@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {CONTENT_PROFILES,hasContentProfile,getElementContentContract} from '../public/editor-v2/core/content-profiles.js';
-import {createDocument,createNode} from '../public/editor-v2/core/schema.js';
+import {createDocument,createNode,NODE_TYPES} from '../public/editor-v2/core/schema.js';
 import {validatePublishDocument} from '../src/core/editor-validation.ts';
 import {createEditorState} from '../public/editor-v2/core/state.js';
 import {execute} from '../public/editor-v2/core/commands.js';
@@ -27,6 +27,22 @@ test('existing versioned profiles map to their actual storage and validation wit
  assert.equal(getElementContentContract({type:'image'}).profiles[0].id,'legacy-or-unrecognized-version');
  const authored=getElementContentContract({type:'image',metadata:{contentVersion:1}});assert.ok(authored.fields.some(f=>f.key==='alt'));assert.ok(Object.isFrozen(authored.fields));assert.ok(Object.isFrozen(authored.fields[0]));assert.deepEqual(getElementContentContract({type:'image'}).fields,[]);
  assert.deepEqual(getElementContentContract({type:'constructor',metadata:{contentVersion:1}}).fields,[]);
+});
+test('element.add assigns version markers from the same profile declarations used by publication',()=>{
+ for(const profile of Object.values(CONTENT_PROFILES)){
+  const type=profile.id==='authored-v1'?'text':profile.id==='structured-v1'?'table':profile.types?.[0];
+  assert.ok(Object.values(NODE_TYPES).includes(type),`${profile.id} has an Editor node type`);
+  const state=createEditorState();
+  execute(state,{type:'element.add',payload:{type,authored:profile.id==='authored-v1'}});
+  const page=state.document.pages[state.document.activePageId];
+  const node=page.nodes[state.selection.primaryId];
+  assert.ok(hasContentProfile(node,profile.id),`${profile.id} is enabled on newly added ${type}`);
+  assert.ok(getElementContentContract(node).profiles.some(candidate=>candidate.id===profile.id));
+ }
+ const authoredStructure=createEditorState();
+ execute(authoredStructure,{type:'element.add',payload:{type:'section',authored:true}});
+ const page=authoredStructure.document.pages[authoredStructure.document.activePageId];
+ assert.equal(page.nodes[authoredStructure.selection.primaryId].metadata.contentVersion,1,'authored structural nodes retain their existing version gate');
 });
 test('versioned code and structured validation stay active while legacy documents remain compatible',()=>{
  const legacy=documentWith('code');assert.equal(legacy.check(),null);

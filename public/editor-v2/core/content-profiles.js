@@ -1,4 +1,4 @@
-import {isAuthoredContent,CONTENT_FIELDS} from './authored-content.js';
+import {isAuthoredContent,CONTENT_FIELDS,CONTENT_TYPES,STRUCTURAL_TYPES} from './authored-content.js';
 import {isStructuredType} from './element-content.js';
 
 // These describe existing version gates, not a new content schema or validator.
@@ -19,6 +19,24 @@ export const CONTENT_PROFILES=Object.freeze({
  'code-v1':definition('code-v1','codeSnippetVersion',['code'],'props.codeSnippet','normalizeCodeSnippet'),
  'schedule':definition('schedule',null,['schedule'],'props.schedule','validateScheduleConfig'),
 });
+
+/** Return the existing profile version markers assigned when the Editor adds a node.
+ * Keep this beside the profile declarations so command creation cannot silently
+ * drift away from the server publication gates. This does not add content defaults.
+ */
+export function getElementContentProfileMetadata(type,{authored=false}={}){
+ const metadata={};
+ if(authored){
+  if(CONTENT_TYPES.includes(type)||STRUCTURAL_TYPES.includes(type))metadata.contentVersion=1;
+  return metadata;
+ }
+ for(const profile of Object.values(CONTENT_PROFILES)){
+  if(!profile.marker||profile.id==='authored-v1')continue;
+  const applies=profile.types?.includes(type)||(profile.id==='structured-v1'&&isStructuredType(type));
+  if(applies)metadata[profile.marker]=1;
+ }
+ return metadata;
+}
 
 export function hasContentProfile(node,id){
  if(!node||typeof node!=='object'||typeof id!=='string'||!Object.hasOwn(CONTENT_PROFILES,id))return false;
