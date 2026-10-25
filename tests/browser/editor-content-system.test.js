@@ -81,6 +81,13 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await editor.locator('[data-property-id="background.size"] select').selectOption('cover');
   await editor.locator('[data-property-id="background.position"] select').selectOption('center top');
   assert.match(await node(editor,'button').evaluate(el=>getComputedStyle(el).backgroundImage),/api\/admin\/media\?id=/,'canvas uses authenticated background preview');
+  await editor.locator('.inspector-tabs button').nth(1).click();
+  const buttonHref=editor.locator('[data-content-key="href"] input');
+  await buttonHref.fill('/p/updated');
+  assert.equal(await buttonHref.inputValue(),'/p/updated','the content Inspector retains the edited link');
+  await editor.locator('#undo').click();assert.equal(await editor.locator('[data-content-key="href"] input').inputValue(),'/p/home','Undo restores the previous link');
+  await editor.locator('#redo').click();assert.equal(await editor.locator('[data-content-key="href"] input').inputValue(),'/p/updated','Redo restores the selected link');
+  await editor.locator('.inspector-tabs button').first().click();
   await editor.locator('.inspector-tabs button').nth(2).click();await openGroup('Rámutatás és fókusz');
   await editor.getByLabel('Állapot előnézete',{exact:true}).selectOption('hover');
   await editor.locator('[data-state-property="backgroundColor"] input[type=text]').fill('#dc143c');await editor.locator('[data-state-property="backgroundColor"] input[type=text]').press('Tab');
@@ -275,6 +282,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
     'Accordion naming changes remain draft-only until Publish');
   assert.equal(await node(live,'dropdown').locator('details').first().evaluate(el=>el.open),false,
     'first-open setting remains private after Save');
+  assert.equal(await node(live,'button').getAttribute('href'),'/p/home','Save keeps the prior published link live');
   assert.equal(await node(live,'carousel').locator('.creator-carousel').getAttribute('aria-label'),'Alkotói galéria',
     'a newly named carousel is still draft-only after Save');
   assert.equal(await node(live,'button').evaluate(el=>getComputedStyle(el).backgroundImage),'none','draft background stays private before Publish');
@@ -285,7 +293,7 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   assert.equal(await node(live,'video').locator('video').getAttribute('src'),'/fixture.webm','original video playback URL survives Publish');
   assert.equal(await node(live,'image').locator('img').getAttribute('src'),'/media/'+assetId,'published content resolves the public media route');
   assert.equal(await live.locator(`h3[data-node-id="${ids.heading}"]`).textContent(),'Módosított főcím');
-  assert.equal(await node(live,'button').getAttribute('href'),'/p/home');assert.equal(await node(live,'button').getAttribute('rel'),'noopener noreferrer');
+  assert.equal(await node(live,'button').getAttribute('href'),'/p/updated');assert.equal(await node(live,'button').getAttribute('rel'),'noopener noreferrer');
   assert.equal(await node(live,'button').getAttribute('aria-label'),'Alkotói bemutatkozás megnyitása');
   assert.match(await node(live,'button').evaluate(el=>getComputedStyle(el).backgroundImage),/\/media\/6b1c2e65-e46e-4764-b234-123456789abc/,'Publish serves the background through the guarded public route');
   assert.match(await node(live,'button').evaluate(el=>getComputedStyle(el).backgroundPosition),/^50% 0%/);

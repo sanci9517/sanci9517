@@ -381,14 +381,17 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   // Exercise the remaining primary typography controls through the identical
   // real Inspector → Canvas → draft → public boundary, rather than relying on
   // the initial style snapshot alone.
-  const verifyInspectorFieldLifecycle=async({propertyId,cssProperty,label,groupName='Tipográfia',edit})=>{
+  const verifyInspectorFieldLifecycle=async({propertyId,cssProperty,label,groupName='Tipográfia',nodeId=itemId,publicMatches=(canvasValue,publicValue)=>canvasValue===publicValue,edit})=>{
     const openGroup=async()=>{
       await editor.locator('.inspector-tabs button').first().click();
       const group=editor.locator('.inspector-group-title').filter({hasText:groupName});
       if(await group.getAttribute('aria-expanded')==='false')await group.click();
     };
-    const canvasValue=()=>item.evaluate((el,key)=>getComputedStyle(el)[key],cssProperty);
-    const publicValue=()=>publicPage.locator(`[data-node-id="${itemId}"]`).evaluate((el,key)=>getComputedStyle(el)[key],cssProperty);
+    const canvasNode=()=>editor.locator(`.node[data-node-id="${nodeId}"]`);
+    const publicNode=()=>publicPage.locator(`[data-node-id="${nodeId}"]`);
+    const canvasValue=()=>canvasNode().evaluate((el,key)=>getComputedStyle(el)[key],cssProperty);
+    const publicValue=()=>publicNode().evaluate((el,key)=>getComputedStyle(el)[key],cssProperty);
+    await select(nodeId);
     await openGroup();
     const previous=await canvasValue();
     const previousPublic=await publicValue();
@@ -404,7 +407,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
     await editor.locator('#save').click();
     await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
     assert.equal(posts.at(-1).publish,false,`${label}: draft Save does not publish`);
-    await editor.reload();await select(itemId);await openGroup();
+    await editor.reload();await select(nodeId);await openGroup();
     assert.equal(await canvasValue(),next,`${label}: draft value survives Editor reload`);
     await publicPage.reload();
     assert.equal(await publicValue(),previousPublic,`${label}: public value stays unchanged after draft Save`);
@@ -412,7 +415,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
     await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
     assert.equal(posts.at(-1).publish,true,`${label}: only explicit Publish publishes`);
     await publicPage.reload();
-    assert.equal(await publicValue(),next,`${label}: explicit Publish updates public CSS`);
+    assert.equal(publicMatches(next,await publicValue()),true,`${label}: explicit Publish updates public CSS`);
   };
   await verifyInspectorFieldLifecycle({
     propertyId:'typography.fontFamily',cssProperty:'fontFamily',label:'font family',
@@ -483,12 +486,118 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
     edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('18');await input.press('Tab')}
   });
   await verifyInspectorFieldLifecycle({
+    propertyId:'radius.all',cssProperty:'borderBottomLeftRadius',label:'all-corner radius',groupName:'Lekerekítés',
+    edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('10');await input.press('Tab')}
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'radius.bottomLeft',cssProperty:'borderBottomLeftRadius',label:'bottom left radius',groupName:'Lekerekítés',
+    edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('14');await input.press('Tab')}
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'radius.bottomRight',cssProperty:'borderBottomRightRadius',label:'bottom right radius',groupName:'Lekerekítés',
+    edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('16');await input.press('Tab')}
+  });
+  await verifyInspectorFieldLifecycle({
     propertyId:'shadow.box',cssProperty:'boxShadow',label:'box shadow',groupName:'Árnyék',
     edit:control=>control.locator('select:not(.property-token-picker)').selectOption('0 2px 8px #0003')
   });
   await verifyInspectorFieldLifecycle({
     propertyId:'opacity.value',cssProperty:'opacity',label:'opacity',groupName:'Átlátszóság',
     edit:async control=>{const input=control.locator('input[type="number"]');await input.fill('0.75');await input.press('Tab')}
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'background.gradient',cssProperty:'backgroundImage',label:'background gradient',groupName:'Háttér',
+    edit:control=>control.locator('select:not(.property-token-picker)').selectOption('linear-gradient(135deg, #7047eb 0%, #17b8a6 100%)')
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'background.size',cssProperty:'backgroundSize',label:'background image size',groupName:'Háttér',
+    edit:control=>control.locator('select:not(.property-token-picker)').selectOption('contain')
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'background.position',cssProperty:'backgroundPosition',label:'background image position',groupName:'Háttér',
+    edit:control=>control.locator('select:not(.property-token-picker)').selectOption('center top')
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'background.repeat',cssProperty:'backgroundRepeat',label:'background image repeat',groupName:'Háttér',
+    edit:control=>control.locator('select:not(.property-token-picker)').selectOption('repeat-x')
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'flex.direction',cssProperty:'flexDirection',label:'flex direction',groupName:'Flex',nodeId:flexId,
+    edit:control=>control.locator('select:not(.property-token-picker)').selectOption('row')
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'flex.justify',cssProperty:'justifyContent',label:'flex main-axis alignment',groupName:'Flex',nodeId:flexId,
+    edit:control=>control.locator('select:not(.property-token-picker)').selectOption('center')
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'flex.align',cssProperty:'alignItems',label:'flex cross-axis alignment',groupName:'Flex',nodeId:flexId,
+    edit:control=>control.locator('select:not(.property-token-picker)').selectOption('center')
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'flex.wrap',cssProperty:'flexWrap',label:'flex wrapping',groupName:'Flex',nodeId:flexId,
+    edit:control=>control.locator('select:not(.property-token-picker)').selectOption('wrap')
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'flex.gap',cssProperty:'gap',label:'flex gap',groupName:'Flex',nodeId:flexId,
+    edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('24');await input.press('Tab')}
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'flex.basis',cssProperty:'flexBasis',label:'flex basis',groupName:'Flex',nodeId:flexItemId,
+    edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('45');await input.press('Tab')}
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'flex.grow',cssProperty:'flexGrow',label:'flex grow',groupName:'Flex',nodeId:flexItemId,
+    edit:async control=>{const input=control.locator('input[type="number"]');await input.fill('2');await input.press('Tab')}
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'flex.shrink',cssProperty:'flexShrink',label:'flex shrink',groupName:'Flex',nodeId:flexItemId,
+    edit:async control=>{const input=control.locator('input[type="number"]');await input.fill('0');await input.press('Tab')}
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'flex.alignSelf',cssProperty:'alignSelf',label:'flex item alignment',groupName:'Flex',nodeId:flexItemId,
+    edit:control=>control.locator('select:not(.property-token-picker)').selectOption('center')
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'filter.effect',cssProperty:'filter',label:'visual filter',groupName:'Szűrők',
+    edit:control=>control.locator('select:not(.property-token-picker)').selectOption('grayscale(1)')
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'animation.transition',cssProperty:'transition',label:'state transition',groupName:'Animáció',
+    edit:control=>control.locator('select:not(.property-token-picker)').selectOption('all 180ms ease')
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'transform.rotate',cssProperty:'rotate',label:'rotation',groupName:'Transzformáció',
+    edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('18');await input.press('Tab')}
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'transform.scale',cssProperty:'scale',label:'visual scale',groupName:'Transzformáció',
+    edit:async control=>{const input=control.locator('input[type="number"]');await input.fill('1.2');await input.press('Tab')}
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'grid.row',cssProperty:'gridRowStart',label:'grid row placement',groupName:'Grid-gyermek',nodeId:itemId,
+    edit:control=>control.locator('select:not(.property-token-picker)').selectOption('2')
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'grid.column',cssProperty:'gridColumnStart',label:'grid column placement',groupName:'Grid-gyermek',nodeId:itemId,
+    edit:control=>control.locator('select:not(.property-token-picker)').selectOption('3')
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'grid.columns',cssProperty:'gridTemplateColumns',label:'grid columns',groupName:'Grid',nodeId:gridId,
+    publicMatches:(canvasValue,publicValue)=>canvasValue.trim().split(/\s+/).length===publicValue.trim().split(/\s+/).length,
+    edit:control=>control.locator('select:not(.property-token-picker)').selectOption('repeat(3, minmax(0, 1fr))')
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'grid.rows',cssProperty:'gridTemplateRows',label:'grid rows',groupName:'Grid',nodeId:gridId,
+    publicMatches:(canvasValue,publicValue)=>canvasValue.trim().split(/\s+/).length===publicValue.trim().split(/\s+/).length,
+    edit:control=>control.locator('select:not(.property-token-picker)').selectOption('repeat(2, minmax(0, 1fr))')
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'grid.rowGap',cssProperty:'rowGap',label:'grid row gap',groupName:'Grid',nodeId:gridId,
+    edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('12');await input.press('Tab')}
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'grid.columnGap',cssProperty:'columnGap',label:'grid column gap',groupName:'Grid',nodeId:gridId,
+    edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('18');await input.press('Tab')}
   });
   await verifyInspectorFieldLifecycle({
     propertyId:'size.maxWidth',cssProperty:'maxWidth',label:'maximum width',groupName:'Méret',
@@ -513,6 +622,10 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await verifyInspectorFieldLifecycle({
     propertyId:'layout.overflow',cssProperty:'overflow',label:'overflow mode',groupName:'Elrendezés',
     edit:control=>control.locator('select:not(.property-token-picker)').selectOption('hidden')
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'size.aspectRatio',cssProperty:'aspectRatio',label:'aspect ratio',groupName:'Méret',
+    edit:control=>control.locator('select:not(.property-token-picker)').selectOption('16 / 9')
   });
   await verifyInspectorFieldLifecycle({
     propertyId:'size.width',cssProperty:'width',label:'geometry width',groupName:'Geometria',

@@ -3,6 +3,8 @@ import test from 'node:test';
 import {CONTENT_PROFILES,hasContentProfile,getElementContentContract} from '../public/editor-v2/core/content-profiles.js';
 import {createDocument,createNode} from '../public/editor-v2/core/schema.js';
 import {validatePublishDocument} from '../src/core/editor-validation.ts';
+import {createEditorState} from '../public/editor-v2/core/state.js';
+import {execute} from '../public/editor-v2/core/commands.js';
 
 function documentWith(type,metadata={},props={}){
  const document=createDocument(),page=document.pages[document.activePageId];
@@ -40,4 +42,20 @@ test('authored media and versioned legacy media retain their distinct publicatio
  const authored=documentWith('image',{contentVersion:1});assert.equal(authored.check(),'INCOMPLETE_EDITOR_CONTENT');
  const mixed={type:'image',metadata:{contentVersion:1,editorContentVersion:1}};
  assert.deepEqual(getElementContentContract(mixed).profiles.map(p=>p.id),['authored-v1','media-v1']);
+});
+
+test('published Inspector style values use the registry while untouched legacy styles stay compatible',()=>{
+ const state=createEditorState();
+ execute(state,{type:'element.add',payload:{type:'text'}});
+ const page=state.document.pages[state.document.activePageId],node=page.nodes[state.selection.primaryId];
+ execute(state,{type:'responsive.set',payload:{nodeId:node.id,device:'desktop',patch:{fontSize:'32px'}}});
+ assert.equal(validatePublishDocument(state.document,page.id),null);
+ node.responsive.desktop.fontSize='javascript:alert(1)';
+ assert.equal(validatePublishDocument(state.document,page.id),'INVALID_INSPECTOR_STYLE');
+ execute(state,{type:'responsive.set',payload:{nodeId:node.id,device:'desktop',patch:{fontSize:undefined}}});
+ assert.equal(validatePublishDocument(state.document,page.id),null,'reset removes its tracked local override');
+
+ const legacy=documentWith('text');
+ legacy.node.style={fontSize:'legacy-token(large)'};
+ assert.equal(legacy.check(),null,'older unversioned content does not gain a new publish gate');
 });
