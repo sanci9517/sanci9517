@@ -34,16 +34,18 @@
     "result": "84/85 Editor browser tests passed; editor-countdown.test.js expected aria-invalid on the unrelated title input while the date input owned the validation error",
     "correction": "Assert the invalid state remains on the date input and Escape restores the blocked title draft",
     "local_regression": "PASS 2/2 desktop and mobile time-zone variants",
-    "github_rerun_pending": true
+    "github_rerun_pending": false,
+    "rerun_commit": "2ac70594ff984cf357a2d0af96c8b5d4cc02702c",
+    "rerun_result": "Editor Core browser suite 85/85 PASS; all six checks PASS"
   },
   "production_source": {
     "superseded_version": "b2db9f3f-19f8-4c06-b15a-c23b18f5be77",
     "superseded_source_commit": "b7cec261e53bf308853444e494cb44c437f5292d",
-    "current_version_at_check": "2aaff4e6-11ea-4f80-a1dd-e88ce2b3d88b",
-    "current_deployment_id": "6aaf7ba4-f83f-4d9e-872c-75e89beed35d",
+    "current_version_at_check": "d532a069-2551-4ea1-a8f3-24e55ce085f1",
+    "current_deployment_id": "b0697498-a77a-4c78-8feb-e9acf49e8307",
     "current_traffic_percent": 100,
-    "current_source_commit": "4d1e1c2970c9dd4595e73388a2a3fa17f5b1d771",
-    "workers_build_id": "93ea1f6d-97b8-4857-bf20-ed6fedc32d19",
+    "current_source_commit": "2ac70594ff984cf357a2d0af96c8b5d4cc02702c",
+    "workers_build_id": "5f0267b9-940e-442b-a6ef-8ac4c918fa6c",
     "workers_build_outcome": "success",
     "migration_gate": "No migrations to apply",
     "live_inspector_module_sha256_matches": {
@@ -59,7 +61,7 @@
     "d1_migrations": false,
     "r2_deletions": false,
     "git_push_pending": true,
-    "github_editor_core_rerun_pending": true
+    "github_editor_core_rerun_pending": false
   },
-  "acceptance": "Three style-field routes verified in the current local browser test. Full browser CI for radius extension reported 84/85 due to the corrected unrelated countdown assertion; re-run is pending. All 79 element types, 68 properties, physical mobile/IME and full 77.44 acceptance remain open."
+  "acceptance": "Three style-field routes verified in the current local browser test. The corrected commit passed the full Editor Core browser suite 85/85 and all six GitHub checks. All 79 element types, 68 properties, physical mobile/IME and full 77.44 acceptance remain open."
 }
