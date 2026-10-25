@@ -64,5 +64,24 @@
       ]
     }
   },
-  "acceptance": "The Inspector-to-Canvas-to-public asset route passes against a synthetic local fixture. Production R2, real authenticated Editor use, all element types, all device variants and physical PC/mobile acceptance remain OPEN."
+  "production_observation_after_test_commit": {
+    "commit": "47359e20039cedd377af2e5b09c04857a91ce7c9",
+    "runtime_changed_by_commit": false,
+    "latest_worker_deployment": {
+      "deployment_id": "f3a1e43f-108e-4984-ae37-efa7ad6a1717",
+      "version_id": "7f288f20-d9fb-4e3d-9b06-62e9937158b8",
+      "created_on": "2026-10-25T19:13:37Z",
+      "traffic": "100%",
+      "script_etag": "de88d09b8d1a1b8c131e426dec32b9504ba352a344669734b098b1035e1de487",
+      "health": "/api/health 200; /api/db-health 200, D1 connected",
+      "served_assets_match_source": true,
+      "asset_sha256": {
+        "public/editor-v2/app.js": "2e37116103a03ce5fbf62670f3709ffaf2ea8abc5248adc081084e745613646e",
+        "public/editor-v2/core/capability-matrix.js": "4427cd624a7d254c801407e104a530ef1c9270d6dabe1332b5a5c5e4762b9605"
+      }
+    },
+    "github_commit": "47359e20039cedd377af2e5b09c04857a91ce7c9",
+    "github_editor_core": "in progress at observation; four other workflows passed"
+  },
+  "acceptance": "The Inspector-to-Canvas-to-public asset lifecycle passes against real Worker code and authenticated routes using synthetic data in isolated Miniflare D1/R2. Production assets, all element types, all device variants and physical PC/mobile acceptance remain OPEN."
 }
