@@ -375,6 +375,72 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await publicPage.reload();
   assert.equal(await publicPage.locator(`[data-node-id="${itemId}"]`).evaluate(el=>getComputedStyle(el).lineHeight),draftLineHeight,
     'the separately published line-height reaches the public renderer');
+  // Exercise the remaining primary typography controls through the identical
+  // real Inspector → Canvas → draft → public boundary, rather than relying on
+  // the initial style snapshot alone.
+  const verifyTypographyLifecycle=async({propertyId,cssProperty,label,edit})=>{
+    const openTypography=async()=>{
+      await editor.locator('.inspector-tabs button').first().click();
+      const group=editor.locator('.inspector-group-title').filter({hasText:'Tipográfia'});
+      if(await group.getAttribute('aria-expanded')==='false')await group.click();
+    };
+    const canvasValue=()=>item.evaluate((el,key)=>getComputedStyle(el)[key],cssProperty);
+    const publicValue=()=>publicPage.locator(`[data-node-id="${itemId}"]`).evaluate((el,key)=>getComputedStyle(el)[key],cssProperty);
+    await openTypography();
+    const previous=await canvasValue();
+    const previousPublic=await publicValue();
+    const inspectorField=field(propertyId);
+    assert.equal(await inspectorField.count(),1,`${label}: Inspector exposes the expected field`);
+    await edit(inspectorField);
+    const next=await canvasValue();
+    assert.notEqual(next,previous,`${label}: Inspector edit changes Canvas CSS`);
+    await editor.locator('#undo').click();
+    assert.equal(await canvasValue(),previous,`${label}: Undo restores the prior Canvas CSS`);
+    await editor.locator('#redo').click();
+    assert.equal(await canvasValue(),next,`${label}: Redo restores the Inspector CSS`);
+    await editor.locator('#save').click();
+    await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+    assert.equal(posts.at(-1).publish,false,`${label}: draft Save does not publish`);
+    await editor.reload();await select(itemId);await openTypography();
+    assert.equal(await canvasValue(),next,`${label}: draft value survives Editor reload`);
+    await publicPage.reload();
+    assert.equal(await publicValue(),previousPublic,`${label}: public value stays unchanged after draft Save`);
+    await editor.locator('#publish').click();
+    await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
+    assert.equal(posts.at(-1).publish,true,`${label}: only explicit Publish publishes`);
+    await publicPage.reload();
+    assert.equal(await publicValue(),next,`${label}: explicit Publish updates public CSS`);
+  };
+  await verifyTypographyLifecycle({
+    propertyId:'typography.fontFamily',cssProperty:'fontFamily',label:'font family',
+    edit:control=>control.locator('select:not(.property-token-picker)').selectOption('Georgia')
+  });
+  await verifyTypographyLifecycle({
+    propertyId:'typography.fontWeight',cssProperty:'fontWeight',label:'font weight',
+    edit:control=>control.locator('select:not(.property-token-picker)').selectOption('700')
+  });
+  await verifyTypographyLifecycle({
+    propertyId:'typography.fontStyle',cssProperty:'fontStyle',label:'font style',
+    edit:control=>control.locator('select:not(.property-token-picker)').selectOption('italic')
+  });
+  await verifyTypographyLifecycle({
+    propertyId:'typography.letterSpacing',cssProperty:'letterSpacing',label:'letter spacing',
+    edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('1');await input.press('Tab')}
+  });
+  await verifyTypographyLifecycle({
+    propertyId:'typography.textTransform',cssProperty:'textTransform',label:'text transform',
+    edit:control=>control.locator('select:not(.property-token-picker)').selectOption('uppercase')
+  });
+  await verifyTypographyLifecycle({
+    propertyId:'typography.textDecoration',cssProperty:'textDecoration',label:'text decoration',
+    edit:control=>control.locator('select:not(.property-token-picker)').selectOption('underline')
+  });
+  await verifyTypographyLifecycle({
+    propertyId:'typography.color',cssProperty:'color',label:'text color',
+    edit:control=>control.locator('input[type="color"]').evaluate(input=>{
+      input.value='#c026d3';input.dispatchEvent(new Event('change',{bubbles:true}));
+    })
+  });
   // A dragged/offset static node is rendered with the same relative CSS on
   // canvas and public page. The Inspector also makes leaving the artboard
   // explicit and offers a scoped recovery action.
