@@ -54,6 +54,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   const base=`http://127.0.0.1:${server.address().port}`;
   const editor=await browser.newPage({viewport:{width:1366,height:900}});
   editor.setDefaultTimeout(5000);
+  editor.setDefaultNavigationTimeout(12000);
   const errors=[];
   editor.on('pageerror',error=>errors.push(error.message));
   await editor.goto(base+'/editor-v2/index.html');
@@ -205,6 +206,8 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
   assert.equal(posts.at(-1).publish,true);
   const publicPage=await browser.newPage({viewport:{width:1366,height:900}});
+  publicPage.setDefaultTimeout(5000);
+  publicPage.setDefaultNavigationTimeout(12000);
   publicPage.on('pageerror',error=>errors.push(error.message));
   await publicPage.goto(base+'/p/test');
   await publicPage.locator('.visual-card > .visual-text').first().waitFor();
@@ -524,6 +527,28 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
       await control.locator('select:not(.property-token-picker)').selectOption('px');
       const input=control.locator('input[type="number"]');await input.fill('177');await input.press('Tab');
     }
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'position.x',cssProperty:'left',label:'geometry X position',groupName:'Geometria',
+    edit:async control=>{
+      await control.locator('select:not(.property-token-picker)').selectOption('px');
+      const input=control.locator('input[type="number"]');await input.fill('42');await input.press('Tab');
+    }
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'position.y',cssProperty:'top',label:'geometry Y position',groupName:'Geometria',
+    edit:async control=>{
+      await control.locator('select:not(.property-token-picker)').selectOption('px');
+      const input=control.locator('input[type="number"]');await input.fill('27');await input.press('Tab');
+    }
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'position.position',cssProperty:'position',label:'position mode',groupName:'Geometria',
+    edit:control=>control.locator('select:not(.property-token-picker)').selectOption('absolute')
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'position.zIndex',cssProperty:'zIndex',label:'stacking order',groupName:'Pozíció',
+    edit:async control=>{const input=control.locator('input[type="number"]');await input.fill('12');await input.press('Tab')}
   });
   // A dragged/offset static node is rendered with the same relative CSS on
   // canvas and public page. The Inspector also makes leaving the artboard
