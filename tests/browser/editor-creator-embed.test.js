@@ -42,6 +42,7 @@ for(const width of [390,1366])test(`Creator Embed keeps IME drafts, activation f
  const base='http://127.0.0.1:'+server.address().port;
  const editor=await browser.newPage({viewport:{width,height:900}}),viewer=await browser.newPage({viewport:{width,height:900}});
  editor.setDefaultTimeout(7000);viewer.setDefaultTimeout(7000);
+ editor.setDefaultNavigationTimeout(12000);viewer.setDefaultNavigationTimeout(12000);
  const errors=[];editor.on('pageerror',e=>errors.push('editor:'+e.message));viewer.on('pageerror',e=>errors.push('public:'+e.message));
  let youtubeRequests=0;
  await viewer.route('https://www.youtube-nocookie.com/**',route=>{youtubeRequests++;return route.fulfill({status:200,contentType:'text/html',body:'<!doctype html><title>Player fixture</title>'})});

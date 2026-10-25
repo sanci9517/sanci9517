@@ -487,6 +487,44 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
     propertyId:'opacity.value',cssProperty:'opacity',label:'opacity',groupName:'Átlátszóság',
     edit:async control=>{const input=control.locator('input[type="number"]');await input.fill('0.75');await input.press('Tab')}
   });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'size.maxWidth',cssProperty:'maxWidth',label:'maximum width',groupName:'Méret',
+    edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('420');await input.press('Tab')}
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'size.minHeight',cssProperty:'minHeight',label:'minimum height',groupName:'Méret',
+    edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('96');await input.press('Tab')}
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'size.maxHeight',cssProperty:'maxHeight',label:'maximum height',groupName:'Méret',
+    edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('240');await input.press('Tab')}
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'spacing.margin',cssProperty:'marginTop',label:'outer spacing',groupName:'Térközök',
+    edit:async control=>{const input=control.locator('.typed-box-side').first().locator('input[type="number"]');await input.fill('14');await input.press('Tab')}
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'layout.display',cssProperty:'display',label:'display mode',groupName:'Elrendezés',
+    edit:control=>control.locator('select:not(.property-token-picker)').selectOption('flex')
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'layout.overflow',cssProperty:'overflow',label:'overflow mode',groupName:'Elrendezés',
+    edit:control=>control.locator('select:not(.property-token-picker)').selectOption('hidden')
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'size.width',cssProperty:'width',label:'geometry width',groupName:'Geometria',
+    edit:async control=>{
+      await control.locator('select:not(.property-token-picker)').selectOption('px');
+      const input=control.locator('input[type="number"]');await input.fill('333');await input.press('Tab');
+    }
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'size.height',cssProperty:'height',label:'geometry height',groupName:'Geometria',
+    edit:async control=>{
+      await control.locator('select:not(.property-token-picker)').selectOption('px');
+      const input=control.locator('input[type="number"]');await input.fill('177');await input.press('Tab');
+    }
+  });
   // A dragged/offset static node is rendered with the same relative CSS on
   // canvas and public page. The Inspector also makes leaving the artboard
   // explicit and offers a scoped recovery action.
