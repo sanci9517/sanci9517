@@ -29,6 +29,20 @@ test('existing versioned profiles map to their actual storage and validation wit
  assert.deepEqual(getElementContentContract({type:'constructor',metadata:{contentVersion:1}}).fields,[]);
 });
 test('element.add assigns version markers from the same profile declarations used by publication',()=>{
+ const initialPublication={
+  'authored-v1':null,
+  'media-v1':'INVALID_MEDIA_SOURCE',
+  'basic-v1':null,
+  'structured-v1':null,
+  'divider-v1':null,
+  'spacer-v1':null,
+  'card-v1':null,
+  'countdown-v1':'INVALID_COUNTDOWN_CONTENT',
+  'social-v1':'INVALID_SOCIAL_LINKS',
+  'embed-v1':'INVALID_EMBED_CONTENT',
+  'code-v1':'INVALID_CODE_SNIPPET',
+  'schedule':null,
+ };
  for(const profile of Object.values(CONTENT_PROFILES)){
   const type=profile.id==='authored-v1'?'text':profile.id==='structured-v1'?'table':profile.types?.[0];
   assert.ok(Object.values(NODE_TYPES).includes(type),`${profile.id} has an Editor node type`);
@@ -38,6 +52,7 @@ test('element.add assigns version markers from the same profile declarations use
   const node=page.nodes[state.selection.primaryId];
   assert.ok(hasContentProfile(node,profile.id),`${profile.id} is enabled on newly added ${type}`);
   assert.ok(getElementContentContract(node).profiles.some(candidate=>candidate.id===profile.id));
+  assert.equal(validatePublishDocument(state.document,page.id),initialPublication[profile.id],`${profile.id} initial publication result`);
  }
  const authoredStructure=createEditorState();
  execute(authoredStructure,{type:'element.add',payload:{type:'section',authored:true}});
