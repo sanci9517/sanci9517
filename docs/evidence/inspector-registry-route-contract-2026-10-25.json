@@ -1,0 +1,49 @@
+{
+  "date": "2026-10-25",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Require every responsive Inspector registry property to expose a valid control, command, Page Model key, and Canvas/public renderer route.",
+  "registry": {
+    "responsive_property_count": 65,
+    "required_control_types": [
+      "asset",
+      "box",
+      "color",
+      "dimension",
+      "font",
+      "number",
+      "select",
+      "shadow",
+      "text",
+      "url"
+    ],
+    "renderer_routes": {
+      "STYLE_MAP": "shared by Canvas and public page renderer",
+      "x": "Canvas offset adapter maps to CSS left and promotes static nodes to relative",
+      "y": "Canvas offset adapter maps to CSS top and promotes static nodes to relative",
+      "backgroundAssetId": "safe background-image resolver"
+    },
+    "additional_contracts": [
+      "select properties declare non-empty options",
+      "dimension properties declare supported units",
+      "all responsive properties declare command and Page Model key"
+    ]
+  },
+  "test": {
+    "file": "public/editor-v2/tests/capability-contract.test.js",
+    "name": "every responsive registry field has an explicit Inspector control and Canvas/public style route",
+    "targeted_result": "PASS",
+    "npm_run_test_editor": "PASS 132/132",
+    "typecheck": "PASS",
+    "traceability": "PASS 396 mappings; acceptance NOT certified",
+    "git_diff_check": "PASS"
+  },
+  "release": {
+    "runtime_files_changed": false,
+    "worker_deployment_required": false,
+    "github_ci": "pending push verification",
+    "d1_migrations": false,
+    "production_data_writes": false,
+    "r2_deletions": false
+  },
+  "acceptance": "The registry route contract is automated; full 77.44.7.A and physical device/user acceptance remain OPEN."
+}

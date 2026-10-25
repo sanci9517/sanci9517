@@ -4,6 +4,7 @@ import {NODE_TYPES} from '../core/schema.js';
 import {getElementCapability,getElementInspectorContract} from '../core/capability-matrix.js';
 import {listProperties,registerProperty} from '../core/property-registry.js?v=20261025-inspector-lifecycle-contract';
 import {getInspectorValueContract} from '../core/property-values.js';
+import {STYLE_MAP} from '../core/canvas-engine.js';
 
 test('every declared type exposes its actual registry fields without certifying readiness',()=>{
  const covered=new Set();
@@ -39,6 +40,26 @@ test('unknown, inherited object keys and planned form types never advertise work
  for(const type of [null,undefined,{},'constructor','toString','__proto__','unknown','form','input']){
   assert.equal(getElementCapability(type).status,'PLANNED');assert.deepEqual(getElementInspectorContract(type).fields,[]);
  }
+});
+test('every responsive registry field has an explicit Inspector control and Canvas/public style route',()=>{
+ const controlTypes=new Set(['asset','box','color','dimension','font','number','select','shadow','text','url']);
+ const explicitRoutes={
+  // Offsets are adapted to CSS left/top and static nodes become relative.
+  x:'canvas-engine offset adapter',y:'canvas-engine offset adapter',
+  // Background media is resolved to a safe CSS image by background-asset.js.
+  backgroundAssetId:'background-image resolver'
+ };
+ const properties=listProperties().filter(property=>property.responsive);
+ assert.equal(properties.length,65);
+ for(const property of properties){
+  assert.ok(controlTypes.has(property.type),`${property.id} has a renderer control`);
+  assert.ok(property.command,`${property.id} dispatches through an Editor command`);
+  assert.ok(property.key,`${property.id} maps to a Page Model style key`);
+  assert.ok(Object.hasOwn(STYLE_MAP,property.key)||explicitRoutes[property.key],`${property.id} has a Canvas/public renderer route`);
+  if(property.type==='select')assert.ok(property.options?.length,`${property.id} declares selectable values`);
+  if(property.type==='dimension')assert.ok(property.units?.length,`${property.id} declares supported units`);
+ }
+ assert.equal(Object.keys(explicitRoutes).length,3,'all non-standard adapters are listed explicitly');
 });
 test('type restrictions and new property registration flow through the single registry',()=>{
  assert.ok(getElementInspectorContract('text').fields.some(p=>p.id==='content.text'));
