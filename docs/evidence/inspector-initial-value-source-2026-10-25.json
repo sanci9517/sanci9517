@@ -46,15 +46,39 @@
     "javascript_parse_and_diff_check": "PASS"
   },
   "release": {
+    "commit": "bcc838bf0ff93d947e22bdc86ddfd12391b4cb58",
+    "push": "PASS: fast-forward push to origin/v2/foundation",
     "runtime_files_changed": [
       "public/editor-v2/app.js",
       "public/editor-v2/index.html"
     ],
     "capability_contract_changed": "public/editor-v2/core/capability-matrix.js",
-    "github_ci": "pending push verification",
+    "github_ci": {
+      "result": "PASS 5/5 workflows",
+      "runs": [
+        "https://github.com/sanci9517/sanci9517/actions/runs/40223172921",
+        "https://github.com/sanci9517/sanci9517/actions/runs/40223172922",
+        "https://github.com/sanci9517/sanci9517/actions/runs/40223172941",
+        "https://github.com/sanci9517/sanci9517/actions/runs/40223172947",
+        "https://github.com/sanci9517/sanci9517/actions/runs/40223172954"
+      ],
+      "editor_core": "PASS: editor tests, TypeScript, full Editor browser layout regression, WEB-013 mobile browser regression, isolated D1/R2 checks and remaining Editor Core steps"
+    },
     "cloudflare": {
       "preflight": "PASS: remote D1 reports No migrations to apply; wrangler deploy --dry-run bundles successfully",
-      "automatic_deployment": "pending push verification"
+      "automatic_deployment": {
+        "deployment_id": "71757566-f96a-45ce-9634-07e981dfbeb8",
+        "version_id": "859b34a1-50fd-4079-85b1-fd3a71b7256d",
+        "traffic": "100%",
+        "script_etag": "de88d09b8d1a1b8c131e426dec32b9504ba352a344669734b098b1035e1de487",
+        "health": "/api/health 200",
+        "database_health": "/api/db-health 200; D1 connected",
+        "editor_entry": "/editor-v2/ references the new cache-busted app.js",
+        "production_asset_sha256": {
+          "public/editor-v2/app.js": "2e37116103a03ce5fbf62670f3709ffaf2ea8abc5248adc081084e745613646e",
+          "public/editor-v2/core/capability-matrix.js": "4427cd624a7d254c801407e104a530ef1c9270d6dabe1332b5a5c5e4762b9605"
+        }
+      }
     },
     "d1_migrations": false,
     "production_data_writes": false,
