@@ -441,6 +441,26 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
       input.value='#c026d3';input.dispatchEvent(new Event('change',{bubbles:true}));
     })
   });
+  await verifyTypographyLifecycle({
+    propertyId:'typography.textWrap',cssProperty:'textWrap',label:'text wrapping',
+    edit:control=>control.locator('select:not(.property-token-picker)').selectOption('nowrap')
+  });
+  await verifyTypographyLifecycle({
+    propertyId:'typography.overflowWrap',cssProperty:'overflowWrap',label:'long word wrapping',
+    edit:control=>control.locator('select:not(.property-token-picker)').selectOption('break-word')
+  });
+  await verifyTypographyLifecycle({
+    propertyId:'typography.wordSpacing',cssProperty:'wordSpacing',label:'word spacing',
+    edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('2');await input.press('Tab')}
+  });
+  await verifyTypographyLifecycle({
+    propertyId:'typography.textIndent',cssProperty:'textIndent',label:'first line indent',
+    edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('12');await input.press('Tab')}
+  });
+  await verifyTypographyLifecycle({
+    propertyId:'typography.textShadow',cssProperty:'textShadow',label:'text shadow',
+    edit:control=>control.locator('select:not(.property-token-picker)').selectOption('0 2px 8px #0006')
+  });
   // A dragged/offset static node is rendered with the same relative CSS on
   // canvas and public page. The Inspector also makes leaving the artboard
   // explicit and offers a scoped recovery action.
