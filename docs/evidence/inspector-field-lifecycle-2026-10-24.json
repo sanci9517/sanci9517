@@ -1,7 +1,7 @@
 {
   "date": "2026-10-25",
   "plan_cursor": "77.44.7.A",
-  "inspector_fields": ["typography.textAlign", "background.color", "radius.topLeft"],
+  "inspector_fields": ["typography.textAlign", "background.color", "radius.topLeft", "typography.fontSize"],
   "route": [
     "real Inspector select control",
     "responsive.set Page Model command",
@@ -12,11 +12,12 @@
     "explicit Publish",
     "public renderer computed CSS",
     "background.color: previous published blue remains unchanged after draft Save; explicit Publish changes public CSS to red",
-    "radius.topLeft on mobile: draft Save preserves inherited published radius; explicit Publish updates mobile public CSS to the local override"
+    "radius.topLeft on mobile: draft Save preserves inherited published radius; explicit Publish updates mobile public CSS to the local override",
+    "typography.fontSize: 48px preset reaches Canvas and survives Undo/Redo + Save/reload; prior published 32px remains until explicit Publish"
   ],
   "checks": {
-    "inspector_lifecycle_chromium": "PASS 1/1 after extending the test with radius.topLeft mobile Save/Publish",
-    "editor_browser_suite": "4d1e1c29 CI: 84/85, failed only at pre-existing countdown assertion; focused corrected countdown tests PASS 2/2, full CI rerun pending",
+    "inspector_lifecycle_chromium": "PASS 1/1 after extending the test with typography.fontSize Save/Publish",
+    "editor_browser_suite": "PASS 85/85 on commit 3f81fa09 before the latest fontSize assertion extension; focused lifecycle rerun PASS 1/1 after extension",
     "editor_unit_suite": "PASS 131/131",
     "typescript": "PASS",
     "plan_contract": "PASS 13/13",
@@ -41,11 +42,11 @@
   "production_source": {
     "superseded_version": "b2db9f3f-19f8-4c06-b15a-c23b18f5be77",
     "superseded_source_commit": "b7cec261e53bf308853444e494cb44c437f5292d",
-    "current_version_at_check": "d532a069-2551-4ea1-a8f3-24e55ce085f1",
-    "current_deployment_id": "b0697498-a77a-4c78-8feb-e9acf49e8307",
+    "current_version_at_check": "1ddcb0d2-04ec-40f0-9848-ffac4a53b6d0",
+    "current_deployment_id": "8e71008b-b495-4180-8d86-9dc7a5946c03",
     "current_traffic_percent": 100,
-    "current_source_commit": "2ac70594ff984cf357a2d0af96c8b5d4cc02702c",
-    "workers_build_id": "5f0267b9-940e-442b-a6ef-8ac4c918fa6c",
+    "current_source_commit": "3f81fa09671cbc9cb07d330976191b48f64944b6",
+    "workers_build_id": "7400516b-702c-4240-bb8c-269f932a5bde",
     "workers_build_outcome": "success",
     "migration_gate": "No migrations to apply",
     "live_inspector_module_sha256_matches": {
@@ -61,7 +62,7 @@
     "d1_migrations": false,
     "r2_deletions": false,
     "git_push_pending": true,
-    "github_editor_core_rerun_pending": false
+    "github_editor_core_rerun_pending": true
   },
-  "acceptance": "Three style-field routes verified in the current local browser test. The corrected commit passed the full Editor Core browser suite 85/85 and all six GitHub checks. All 79 element types, 68 properties, physical mobile/IME and full 77.44 acceptance remain open."
+  "acceptance": "Four style-field routes verified in the current local browser test. The latest fontSize extension has a focused Chromium PASS; full CI rerun is pending. All 79 element types, 68 properties, physical mobile/IME and full 77.44 acceptance remain open."
 }

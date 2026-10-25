@@ -242,6 +242,33 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await publicPage.reload();
   assert.equal(await publicPage.locator(`[data-node-id="${itemId}"]`).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(220, 38, 38)',
     'the separately published Inspector color reaches the public renderer');
+  // Typography size already appears in the initial style snapshot; also
+  // verify a later Inspector preset edit keeps Save separate from Publish.
+  await editor.locator('.inspector-tabs button').first().click();
+  const typographyHeading=editor.locator('.inspector-group-title').filter({hasText:'Tipográfia'});
+  if(await typographyHeading.getAttribute('aria-expanded')==='false')await typographyHeading.click();
+  const fontSize=()=>item.evaluate(el=>getComputedStyle(el).fontSize);
+  assert.equal(await fontSize(),'32px','the initial published Inspector font size is 32px');
+  await field('typography.fontSize').locator('.property-preset').filter({hasText:'Nagy · 48'}).click();
+  assert.equal(await fontSize(),'48px','the font-size preset reaches Canvas');
+  await editor.locator('#undo').click();
+  assert.equal(await fontSize(),'32px','Undo restores the previous Inspector font size');
+  await editor.locator('#redo').click();
+  assert.equal(await fontSize(),'48px','Redo restores the selected Inspector font size');
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false,'saving a font-size edit must not publish');
+  await editor.reload();await select(itemId);
+  assert.equal(await fontSize(),'48px','saved Inspector font size survives Editor reload');
+  await publicPage.reload();
+  assert.equal(await publicPage.locator(`[data-node-id="${itemId}"]`).evaluate(el=>getComputedStyle(el).fontSize),'32px',
+    'draft Save preserves the previous published font size');
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
+  assert.equal(posts.at(-1).publish,true,'only explicit Publish sends the new font size live');
+  await publicPage.reload();
+  assert.equal(await publicPage.locator(`[data-node-id="${itemId}"]`).evaluate(el=>getComputedStyle(el).fontSize),'48px',
+    'the separately published font size reaches the public renderer');
   // Edit a field after a live snapshot exists: Save updates only the draft,
   // reload retains it, and only the separate Publish changes the public CSS.
   await editor.locator('.inspector-tabs button').first().click();
