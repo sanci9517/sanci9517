@@ -378,15 +378,15 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   // Exercise the remaining primary typography controls through the identical
   // real Inspector → Canvas → draft → public boundary, rather than relying on
   // the initial style snapshot alone.
-  const verifyTypographyLifecycle=async({propertyId,cssProperty,label,edit})=>{
-    const openTypography=async()=>{
+  const verifyInspectorFieldLifecycle=async({propertyId,cssProperty,label,groupName='Tipográfia',edit})=>{
+    const openGroup=async()=>{
       await editor.locator('.inspector-tabs button').first().click();
-      const group=editor.locator('.inspector-group-title').filter({hasText:'Tipográfia'});
+      const group=editor.locator('.inspector-group-title').filter({hasText:groupName});
       if(await group.getAttribute('aria-expanded')==='false')await group.click();
     };
     const canvasValue=()=>item.evaluate((el,key)=>getComputedStyle(el)[key],cssProperty);
     const publicValue=()=>publicPage.locator(`[data-node-id="${itemId}"]`).evaluate((el,key)=>getComputedStyle(el)[key],cssProperty);
-    await openTypography();
+    await openGroup();
     const previous=await canvasValue();
     const previousPublic=await publicValue();
     const inspectorField=field(propertyId);
@@ -401,7 +401,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
     await editor.locator('#save').click();
     await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
     assert.equal(posts.at(-1).publish,false,`${label}: draft Save does not publish`);
-    await editor.reload();await select(itemId);await openTypography();
+    await editor.reload();await select(itemId);await openGroup();
     assert.equal(await canvasValue(),next,`${label}: draft value survives Editor reload`);
     await publicPage.reload();
     assert.equal(await publicValue(),previousPublic,`${label}: public value stays unchanged after draft Save`);
@@ -411,55 +411,81 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
     await publicPage.reload();
     assert.equal(await publicValue(),next,`${label}: explicit Publish updates public CSS`);
   };
-  await verifyTypographyLifecycle({
+  await verifyInspectorFieldLifecycle({
     propertyId:'typography.fontFamily',cssProperty:'fontFamily',label:'font family',
     edit:control=>control.locator('select:not(.property-token-picker)').selectOption('Georgia')
   });
-  await verifyTypographyLifecycle({
+  await verifyInspectorFieldLifecycle({
     propertyId:'typography.fontWeight',cssProperty:'fontWeight',label:'font weight',
     edit:control=>control.locator('select:not(.property-token-picker)').selectOption('700')
   });
-  await verifyTypographyLifecycle({
+  await verifyInspectorFieldLifecycle({
     propertyId:'typography.fontStyle',cssProperty:'fontStyle',label:'font style',
     edit:control=>control.locator('select:not(.property-token-picker)').selectOption('italic')
   });
-  await verifyTypographyLifecycle({
+  await verifyInspectorFieldLifecycle({
     propertyId:'typography.letterSpacing',cssProperty:'letterSpacing',label:'letter spacing',
     edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('1');await input.press('Tab')}
   });
-  await verifyTypographyLifecycle({
+  await verifyInspectorFieldLifecycle({
     propertyId:'typography.textTransform',cssProperty:'textTransform',label:'text transform',
     edit:control=>control.locator('select:not(.property-token-picker)').selectOption('uppercase')
   });
-  await verifyTypographyLifecycle({
+  await verifyInspectorFieldLifecycle({
     propertyId:'typography.textDecoration',cssProperty:'textDecoration',label:'text decoration',
     edit:control=>control.locator('select:not(.property-token-picker)').selectOption('underline')
   });
-  await verifyTypographyLifecycle({
+  await verifyInspectorFieldLifecycle({
     propertyId:'typography.color',cssProperty:'color',label:'text color',
     edit:control=>control.locator('input[type="color"]').evaluate(input=>{
       input.value='#c026d3';input.dispatchEvent(new Event('change',{bubbles:true}));
     })
   });
-  await verifyTypographyLifecycle({
+  await verifyInspectorFieldLifecycle({
     propertyId:'typography.textWrap',cssProperty:'textWrap',label:'text wrapping',
     edit:control=>control.locator('select:not(.property-token-picker)').selectOption('nowrap')
   });
-  await verifyTypographyLifecycle({
+  await verifyInspectorFieldLifecycle({
     propertyId:'typography.overflowWrap',cssProperty:'overflowWrap',label:'long word wrapping',
     edit:control=>control.locator('select:not(.property-token-picker)').selectOption('break-word')
   });
-  await verifyTypographyLifecycle({
+  await verifyInspectorFieldLifecycle({
     propertyId:'typography.wordSpacing',cssProperty:'wordSpacing',label:'word spacing',
     edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('2');await input.press('Tab')}
   });
-  await verifyTypographyLifecycle({
+  await verifyInspectorFieldLifecycle({
     propertyId:'typography.textIndent',cssProperty:'textIndent',label:'first line indent',
     edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('12');await input.press('Tab')}
   });
-  await verifyTypographyLifecycle({
+  await verifyInspectorFieldLifecycle({
     propertyId:'typography.textShadow',cssProperty:'textShadow',label:'text shadow',
     edit:control=>control.locator('select:not(.property-token-picker)').selectOption('0 2px 8px #0006')
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'border.style',cssProperty:'borderTopStyle',label:'border style',groupName:'Szegély',
+    edit:control=>control.locator('select:not(.property-token-picker)').selectOption('solid')
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'border.width',cssProperty:'borderTopWidth',label:'border width',groupName:'Szegély',
+    edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('2');await input.press('Tab')}
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'border.color',cssProperty:'borderTopColor',label:'border color',groupName:'Szegély',
+    edit:control=>control.locator('input[type="color"]').evaluate(input=>{
+      input.value='#0f766e';input.dispatchEvent(new Event('change',{bubbles:true}));
+    })
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'radius.topRight',cssProperty:'borderTopRightRadius',label:'top right radius',groupName:'Lekerekítés',
+    edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('18');await input.press('Tab')}
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'shadow.box',cssProperty:'boxShadow',label:'box shadow',groupName:'Árnyék',
+    edit:control=>control.locator('select:not(.property-token-picker)').selectOption('0 2px 8px #0003')
+  });
+  await verifyInspectorFieldLifecycle({
+    propertyId:'opacity.value',cssProperty:'opacity',label:'opacity',groupName:'Átlátszóság',
+    edit:async control=>{const input=control.locator('input[type="number"]');await input.fill('0.75');await input.press('Tab')}
   });
   // A dragged/offset static node is rendered with the same relative CSS on
   // canvas and public page. The Inspector also makes leaving the artboard
