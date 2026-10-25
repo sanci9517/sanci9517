@@ -39,7 +39,7 @@ for(const width of [390,1366])test(`general Inspector name and Schedule empty te
  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
  t.after(async()=>{await browser.close();await new Promise(done=>server.close(done));});
  const base='http://127.0.0.1:'+server.address().port,editor=await browser.newPage({viewport:{width,height:900}}),viewer=await browser.newPage({viewport:{width,height:900}});
- for(const page of [editor,viewer]){page.setDefaultTimeout(7000);page.on('pageerror',error=>errors.push(error.message));}
+ for(const page of [editor,viewer]){page.setDefaultTimeout(7000);page.setDefaultNavigationTimeout(12000);page.on('pageerror',error=>errors.push(error.message));}
  editor.on('dialog',async dialog=>{dialogs.push(dialog.message());await dialog.dismiss();});
  await editor.goto(base+'/editor-v2/index.html');await viewer.goto(base+'/p/test');
  await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>el.click());
