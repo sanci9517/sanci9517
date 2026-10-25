@@ -43,8 +43,9 @@
     "wrangler_version": "4.130.0",
     "remote_d1_preflight": "PASS: No migrations to apply",
     "worker_dry_run": "PASS: 159 public assets, 287.10 KiB total; dry-run exited without upload",
-    "editor_core_ci": "PASS for source commit 0341b5821ad422310a9de57e1485e8b2f740af02; browser layout regression completed successfully",
-    "link_node_lifecycle_local": "PASS in the extended 1/1 Chromium lifecycle run; follow-up CI pending for the added link-node assertions"
+    "editor_core_ci": "PASS on follow-up commit 721c552c3cdb8eb539d05483e9cf80c8dc163ffe; Editor browser layout and WEB-013 Admin mobile browser regressions passed",
+    "link_node_lifecycle_local": "PASS in the extended 1/1 Chromium lifecycle run; follow-up CI pending for the added link-node assertions",
+    "link_node_lifecycle_ci": "Included in Editor browser layout regression; PASS on follow-up commit 721c552c3cdb8eb539d05483e9cf80c8dc163ffe"
   },
   "production_scope": {
     "runtime_changed": true,
@@ -76,5 +77,12 @@
     "production_data_writes": false,
     "production_r2_changes": false
   },
-  "acceptance": "These two registry-specialized field routes now match the commands used by the Editor and pass browser lifecycle tests. This is not full 79-type/68-property acceptance, nor production asset or physical-device acceptance."
+  "acceptance": "These two registry-specialized field routes now match the commands used by the Editor and pass browser lifecycle tests. This is not full 79-type/68-property acceptance, nor production asset or physical-device acceptance.",
+  "github_workflows": {
+    "editor_core": 40229794772,
+    "f0_baseline": 40229794769,
+    "twitch_integration": 40229794800,
+    "canonical_active_point_audit": 40229794802,
+    "canonical_creator_platform_plan": 40229794796
+  }
 }
