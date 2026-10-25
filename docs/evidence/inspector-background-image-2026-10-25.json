@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-25",
+  "plan_cursor": "77.44.7.A / 49.4 dependency",
+  "property": {
+    "id": "background.image",
+    "key": "backgroundAssetId",
+    "control": "shared Media library asset picker",
+    "command": "responsive.set"
+  },
+  "fixture": {
+    "asset_id": "a44f0ce3-6273-4a8f-991e-572c4a89cdd1",
+    "storage": "synthetic local HTTP fixture only",
+    "production_r2_touched": false
+  },
+  "lifecycle": [
+    "Media picker selection renders through the authenticated /api/admin/media?id=… Canvas route",
+    "Undo removes and Redo restores the pending selection",
+    "Save uses publish:false and stores the asset ID in the desktop responsive style",
+    "Editor reload retains the draft asset ID",
+    "The prior public snapshot remains unchanged after draft Save",
+    "Explicit Publish renders the public /media/{id} asset route",
+    "Removing the asset and saving preserves the prior public image",
+    "Only a second explicit Publish removes the public image reference"
+  ],
+  "checks": {
+    "targeted_chromium": "PASS 1/1, 154.8 seconds",
+    "editor_unit": "PASS 132/132",
+    "typecheck": "PASS",
+    "plan_contract": "PASS 13/13",
+    "traceability": "PASS 396 mappings",
+    "javascript_parse": "PASS",
+    "diff_check": "PASS"
+  },
+  "scope": {
+    "runtime_changed": false,
+    "production_deploy_needed": false,
+    "d1_migrations": false,
+    "production_data_writes": false,
+    "r2_deletions": false,
+    "github_ci": "pending push verification"
+  },
+  "acceptance": "The Inspector-to-Canvas-to-public asset route passes against a synthetic local fixture. Production R2, real authenticated Editor use, all element types, all device variants and physical PC/mobile acceptance remain OPEN."
+}

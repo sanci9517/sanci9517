@@ -10,6 +10,7 @@ import {createEditorState} from '../../public/editor-v2/core/state.js';
 import {execute} from '../../public/editor-v2/core/commands.js';
 
 const root=resolve(import.meta.dirname,'../../public');
+const inspectorBackgroundAssetId='a44f0ce3-6273-4a8f-991e-572c4a89cdd1';
 
 test('real Inspector layout survives selection, undo, save/reload and separate publish with canvas/public parity',async t=>{
   const model=createEditorState(createDocument());
@@ -33,6 +34,13 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   const server=createServer(async(req,res)=>{
     const url=new URL(req.url,'http://localhost');
     const json=data=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(data))};
+    if(url.pathname==='/api/admin/media'&&!url.searchParams.has('id'))return json({ok:true,data:{assets:[{
+      id:inspectorBackgroundAssetId,name:'Inspector háttér.svg',mimeType:'image/svg+xml',altText:'Dekoratív teszt-háttér',
+      previewUrl:`/api/admin/media?id=${inspectorBackgroundAssetId}`
+    }],nextCursor:null}});
+    if((url.pathname==='/api/admin/media'&&url.searchParams.get('id')===inspectorBackgroundAssetId)||url.pathname===`/media/${inspectorBackgroundAssetId}`){
+      res.setHeader('content-type','image/svg+xml');return res.end('<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8"><rect width="8" height="8" fill="#16a34a"/></svg>');
+    }
     if(url.pathname==='/api/admin/pages')return json({ok:true,data:url.searchParams.get('archived')==='1'?[]:[{id:pageId,slug:'test',title:'Test',content:draft,revision:version,isPublished:Boolean(published)}]});
     if(url.pathname==='/api/admin/editor'){
       if(req.method==='GET')return json({ok:true,data:{page:{id:pageId,document:draft,publishedRevisionId:published?'published':null},revisions:[{id:'revision-'+version,version}]}});
@@ -227,6 +235,60 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await publicPage.locator('.visual-card > .visual-text').first().waitFor();
   assert.equal(await publicPage.locator(`[data-node-id="${itemId}"]`).evaluate(el=>getComputedStyle(el).textAlign),'center',
     'the separately published public snapshot uses the same Inspector text alignment');
+  // The registry-backed background asset control must use the shared Media
+  // picker and carry the same responsive asset ID through Canvas, draft Save,
+  // reload and the separate public Publish route.
+  const backgroundImage=()=>item.evaluate(el=>getComputedStyle(el).backgroundImage);
+  const publishedBackgroundImage=()=>publicPage.locator(`[data-node-id="${itemId}"]`).evaluate(el=>getComputedStyle(el).backgroundImage);
+  await editor.locator('.inspector-tabs button').first().click();
+  const backgroundGroup=editor.locator('.inspector-group-title').filter({hasText:'Háttér'});
+  if(await backgroundGroup.getAttribute('aria-expanded')==='false')await backgroundGroup.click();
+  const backgroundImageField=field('background.image');
+  const backgroundImagePicker=backgroundImageField.locator('.editor-media-picker');
+  assert.equal(await backgroundImage(), 'none', 'no image asset is applied before selection');
+  assert.equal(await publishedBackgroundImage(), 'none', 'the initial public snapshot has no background asset');
+  await backgroundImagePicker.getByRole('button',{name:'Médiatár megnyitása'}).click();
+  await backgroundImagePicker.locator('[role="region"][aria-label="Médiatár találatok"]').waitFor();
+  await backgroundImagePicker.getByRole('button',{name:'Inspector háttér.svg kiválasztása'}).click();
+  assert.ok((await backgroundImage()).includes(`/api/admin/media?id=${inspectorBackgroundAssetId}`),
+    'the selected asset previews through the authenticated Canvas media route');
+  await editor.locator('#undo').click();
+  assert.equal(await backgroundImage(),'none','Undo removes the pending background asset selection');
+  await editor.locator('#redo').click();
+  assert.ok((await backgroundImage()).includes(`/api/admin/media?id=${inspectorBackgroundAssetId}`),
+    'Redo restores the same background asset reference');
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false,'saving a background asset selection does not publish it');
+  assert.equal(posts.at(-1).document.pages[pageId].nodes[itemId].responsive.desktop.backgroundAssetId,inspectorBackgroundAssetId,
+    'the asset ID is saved in the current desktop responsive style');
+  await editor.reload();await select(itemId);
+  assert.ok((await backgroundImage()).includes(`/api/admin/media?id=${inspectorBackgroundAssetId}`),
+    'the selected asset remains in the Canvas after Editor reload');
+  await publicPage.reload();
+  assert.equal(await publishedBackgroundImage(),'none','draft Save keeps the previous public background unchanged');
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
+  assert.equal(posts.at(-1).publish,true,'only explicit Publish makes the background asset public');
+  await publicPage.reload();
+  assert.ok((await publishedBackgroundImage()).includes(`/media/${inspectorBackgroundAssetId}`),
+    'Publish resolves the asset ID through the public media route');
+  await editor.locator('.inspector-tabs button').first().click();
+  if(await backgroundGroup.getAttribute('aria-expanded')==='false')await backgroundGroup.click();
+  await field('background.image').locator('.editor-media-picker').getByRole('button',{name:'Kép eltávolítása',exact:true}).click();
+  assert.equal(await backgroundImage(),'none','removal clears the current Canvas background reference');
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent?.startsWith('Mentve'));
+  assert.equal(posts.at(-1).publish,false,'removing a background in the draft does not publish');
+  await editor.reload();await select(itemId);
+  assert.equal(await backgroundImage(),'none','draft removal survives Editor reload');
+  await publicPage.reload();
+  assert.ok((await publishedBackgroundImage()).includes(`/media/${inspectorBackgroundAssetId}`),
+    'draft removal keeps the previously published asset live');
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
+  await publicPage.reload();
+  assert.equal(await publishedBackgroundImage(),'none','explicit Publish removes the public background asset reference');
   const publicCss=()=>publicPage.locator('.visual-card > .visual-text').first().evaluate(el=>{const style=getComputedStyle(el);return {column:style.gridColumnStart,minWidth:style.minWidth,radius:style.borderTopLeftRadius}});
   await select(itemId);
   assert.deepEqual(await publicCss(),await css());
