@@ -23,9 +23,9 @@
     "spacing.padding: XL · 32 preset reaches Canvas, survives Undo/Redo + draft Save/reload; previous published 16px/24px remains until explicit Publish"
   ],
   "checks": {
-    "inspector_lifecycle_chromium": "PASS 1/1 locally after extending the test with spacing.padding Save/Publish; GitHub Editor Core rerun pending for this extension",
-    "editor_browser_suite": "PASS 85/85 in GitHub Editor Core run for commit 3590a276 before the unpushed spacing.padding assertion extension",
-    "editor_unit_suite": "PASS 131/131",
+    "inspector_lifecycle_chromium": "PASS 1/1 locally and in the full Editor Core browser suite on commit 49978160",
+    "editor_browser_suite": "PASS 85/85 on commit 49978160; all five GitHub workflow runs and the Cloudflare Workers Build PASS",
+    "editor_unit_suite": "PASS 131/131 in the Editor Core workflow for commit 49978160",
     "typescript": "PASS",
     "plan_contract": "PASS 13/13",
     "canonical_source_crosswalk": "PASS 396 IDs; functional acceptance NOT_CERTIFIED",
@@ -47,26 +47,21 @@
     "rerun_result": "Editor Core browser suite 85/85 PASS; all six checks PASS"
   },
   "production_source": {
-    "current_version_at_check": "6c7a0d16-8388-4cad-bc24-337da4d9b1af",
-    "current_deployment_id": "5901ea23-bbfc-4045-9c01-1a6ea6830ffc",
+    "current_version_at_check": "aae5d632-ff39-4ea3-b44b-5103eb8bc540",
+    "current_deployment_id": "7d7dde04-145d-451c-bd63-9587159bc2b9",
     "current_traffic_percent": 100,
-    "current_source_commit": "3590a2760ea09b0e956b4cdfb33db233bd980105",
-    "workers_build_id": "55ac3be4-b4e9-4fb3-a8ba-2f890d1f0711",
+    "current_source_commit": "49978160b94fc8e067e8be3f95832645bdaf9bf6",
+    "workers_build_id": "3a9e729b-0ef4-4fc9-827d-3b720377501e",
     "workers_build_outcome": "success",
-    "commit_runtime_delta": "The 3590a276 commit contains documentation only; no runtime or asset source changes compared with 64af5d21.",
+    "commit_runtime_delta": "The 49978160 commit changes only browser tests and documentation; no runtime, asset, migration, or production-data files changed.",
     "last_live_smoke_verified_version": "7bbe2b11-ddda-4b4d-a62d-ed215e5c93e5",
     "last_live_smoke_source_commit": "64af5d2181b7cbbf2b2589eccf92e8f44ba25dd3",
     "last_live_smoke_results": {
-      "health_status": {
-        "api_health": 200,
-        "db_health": 200,
-        "anonymous_admin": 401
-      },
-      "live_inspector_module_sha256_matches": {
-        "public/editor-v2/core/capability-matrix.js": "7dd60706cfd8eb33d4b47041db120315138085d1083a92f6bda19dbeceea914d",
-        "public/editor-v2/core/property-values.js": "7258adc1ad21d85ae6f0299d80daaddc0316fc2f3184adadce2deacca4996314",
-        "public/editor-v2/core/property-registry.js": "2f0be1ca519d2c76ee091a59d979feed2fe5a30a92246450d48ae680b2f3580d"
-      }
+      "api_health": 200,
+      "db_health": 200,
+      "anonymous_admin": 401,
+      "inspector_module_hashes_match": true,
+      "note": "Live HTTP/hash smoke is from the immediately preceding runtime-identical application build; network access to workers.dev from this shell was blocked, so no fresh HTTP smoke was obtained after the documentation-only releases."
     }
   },
   "changes_in_this_local_step": {
@@ -74,8 +69,8 @@
     "production_data_writes": false,
     "d1_migration_files_changed": false,
     "r2_deletions": false,
-    "git_push_pending": true,
-    "github_editor_core_rerun_pending": true
+    "git_push_pending": false,
+    "github_editor_core_rerun_pending": false
   },
-  "acceptance": "Five style-field routes are represented in the current local browser test; the new spacing.padding route passed focused Chromium 1/1 locally. The last pushed version of the browser test passed Editor Core 85/85 on 3590a276; the new padding assertion still needs GitHub CI. All 79 element types, 68 properties, physical mobile/IME and full 77.44 acceptance remain open."
+  "acceptance": "Five style-field routes are verified in the browser test; spacing.padding XL · 32 reaches Canvas, survives Undo/Redo and draft Save/reload, leaves published 16px/24px unchanged until explicit Publish, then reaches public CSS. The full Editor Core suite passed 85/85 on 49978160 and all five GitHub workflow runs plus the Cloudflare build passed. All 79 element types, 68 properties, physical mobile/IME and full 77.44 acceptance remain open."
 }
