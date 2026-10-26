@@ -97,6 +97,9 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   await bulkBackgroundReset.click();
   assert.equal(await color(canvas),'rgb(22, 163, 74)','multi-key reset restores the inherited mobile background');
   const geometryHeading=editor.locator('.inspector-group-title').filter({hasText:'Geometria'});if(await geometryHeading.getAttribute('aria-expanded')==='false')await geometryHeading.click();
+  const widthPreset=editor.locator('.geometry-presets button').first();
+  assert.equal(await widthPreset.getAttribute('data-property-command'),'responsive.set');
+  assert.equal(await widthPreset.getAttribute('data-property-key'),'width');
   const offsetX=editor.locator('.typed-inspector-field[data-property-id="position.x"] input[type="number"]');
   await offsetX.fill('-96');await offsetX.press('Tab');
   assert.equal(await canvas().evaluate(el=>el.classList.contains('outside-artboard')),true);

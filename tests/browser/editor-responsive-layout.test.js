@@ -61,7 +61,12 @@ test('responsive layout recipes preserve draft/public isolation and match real F
   };
   const metrics=el=>{const css=getComputedStyle(el);return Object.fromEntries(['display','flexDirection','justifyContent','alignItems','flexWrap','gap','rowGap','columnGap','gridTemplateColumns','gridTemplateRows','padding','width','height'].map(key=>[key,css[key]]))};
   const geometry=el=>{const box=el.getBoundingClientRect(),parent=el.parentElement.getBoundingClientRect();return {width:box.width,left:box.left-parent.left,top:box.top-parent.top}};
-  await editor.goto(base+'/editor-v2/index.html');await select(layoutId);
+  await editor.goto(base+'/editor-v2/index.html');await select(children[0]);
+  const textRoles=editor.locator('.inspector-group-title').filter({hasText:'Szövegstílusok'});if(await textRoles.getAttribute('aria-expanded')==='false')await textRoles.click();
+  const typographyPreset=editor.locator('.typography-role').first();
+  assert.equal(await typographyPreset.getAttribute('data-property-command'),'responsive.set');
+  assert.ok(JSON.parse(await typographyPreset.getAttribute('data-property-keys')).length>1,'typography presets declare all changed responsive keys');
+  await select(layoutId);
   const recipes=editor.locator('.inspector-group-title').filter({hasText:'Elrendezési minták'});assert.equal(await recipes.getAttribute('aria-expanded'),'false');await recipes.click();
   await editor.getByRole('button',{name:'Két egyenlő oszlop elrendezésminta',exact:true}).click();
   assert.equal(posts.length,0,'choosing a recipe is not an implicit server save');
@@ -73,7 +78,14 @@ test('responsive layout recipes preserve draft/public isolation and match real F
   // All recipes use the real Inspector, actual public renderer and computed child geometry.
   for(const preset of LAYOUT_PRESETS){
     await editor.locator('.canvas-device-btn[data-device="desktop"]').click();
-    await editor.getByRole('button',{name:preset.label+' elrendezésminta',exact:true}).click();
+    const presetButton=editor.getByRole('button',{name:preset.label+' elrendezésminta',exact:true});
+    assert.equal(await presetButton.getAttribute('data-inspector-command'),'layout.preset.apply');
+    assert.ok(JSON.parse(await presetButton.getAttribute('data-inspector-keys')).includes('metadata.layoutPresetId'));
+    assert.equal(await presetButton.getAttribute('data-inspector-preset-id'),preset.id);
+    await presetButton.click();
+    const autoPlacement=editor.locator('.layout-auto');
+    assert.equal(await autoPlacement.getAttribute('data-inspector-command'),'layout.children.auto');
+    assert.ok(JSON.parse(await autoPlacement.getAttribute('data-inspector-keys')).includes('children.responsive.gridColumn'));
     await save(true);
     for(const [device,width] of [['desktop',1366],['tablet',768],['mobile',390]]){
       await editor.locator(`.canvas-device-btn[data-device="${device}"]`).click();

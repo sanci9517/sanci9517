@@ -23,6 +23,8 @@ export function renderGeometryPresets(propertyId, current, apply) {
     button.type = 'button';
     button.textContent = name;
     button.dataset.value = value;
+    button.dataset.propertyCommand = property.command;
+    button.dataset.propertyKey = property.key;
     button.setAttribute('aria-pressed', String(current === value));
     button.onclick = () => apply(value);
     options.append(button);
