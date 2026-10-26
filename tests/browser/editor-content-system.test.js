@@ -57,7 +57,38 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   editor.setDefaultTimeout(6000);live.setDefaultTimeout(6000);live.setDefaultNavigationTimeout(12000);editor.on('pageerror',e=>errors.push(e.message));live.on('pageerror',e=>errors.push(e.message));
   const node=(tab,type)=>tab.locator(`.creator-node[data-node-id="${ids[type]}"]`);
   const select=async type=>{await node(editor,type).evaluate(el=>el.click());if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();await editor.locator('.inspector-tabs button').nth(1).click()};
-  await editor.goto(base+'/editor-v2/index.html');await select('heading');
+  await editor.goto(base+'/editor-v2/index.html');
+  // Tie every visible authored field to the command and Page Model path that
+  // actually receives its edit, including repeater child and table cell paths.
+  for(const type of Object.keys(definitions)){
+    await select(type);
+    const fields=await editor.locator('.content-schema-field').evaluateAll((elements,type)=>elements.map(field=>{
+      const repeater=field.closest('.content-repeater');
+      const path=type==='table'&&field.dataset.contentKey==='rows'?'rows[][]':
+        (repeater?repeater.dataset.contentKey+'[].':'')+field.dataset.contentKey;
+      return {key:field.dataset.inspectorKey,command:field.dataset.inspectorCommand,expected:'props.'+path};
+    }),type);
+    for(const field of fields){
+      assert.equal(field.command,'content.properties.set',`${type}/${field.expected} command`);
+      assert.equal(field.key,field.expected,`${type} field route`);
+    }
+    const table=editor.locator('.content-schema-field[data-content-key="rows"]');
+    if(type==='table'){
+      assert.equal(await table.getAttribute('data-inspector-command'),'content.properties.set');
+      assert.equal(await table.getAttribute('data-inspector-key'),'props.rows[][]','table cells map to nested row/cell values');
+    }
+    const repeater=editor.locator('.content-repeater');
+    if(await repeater.count()){
+      const collection=repeater.getAttribute('data-content-key');
+      assert.equal(await repeater.getAttribute('data-inspector-command'),'content.properties.set');
+      assert.equal(await repeater.getAttribute('data-inspector-key'),`props.${await collection}`);
+      for(const action of await repeater.locator('.content-repeater-actions button, :scope > button').all()){
+        assert.equal(await action.getAttribute('data-inspector-command'),'content.properties.set',`${type}/${await action.getAttribute('aria-label')||await action.textContent()} action route`);
+        assert.equal(await action.getAttribute('data-inspector-key'),`props.${await collection}`);
+      }
+    }
+  }
+  await select('heading');
   await editor.getByLabel('Címsor szemantikai szintje',{exact:true}).selectOption('3');
   assert.equal(await node(editor,'heading').evaluate(el=>getComputedStyle(el).fontSize),'28px');
   const plainHeading=editor.getByRole('textbox',{name:'Szöveg tartalma',exact:true});

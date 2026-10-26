@@ -180,8 +180,13 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
     };
   };
   const top=group(CONTENT_FIELDS[node.type]||[],()=>working,write);
-  const control=(definition,value,save,register)=>{
+  const route=(element,key)=>{
+    element.dataset.inspectorCommand='content.properties.set';
+    element.dataset.inspectorKey='props.'+key;
+  };
+  const control=(definition,value,save,register,path=definition.key)=>{
     const wrap=document.createElement('div');wrap.className='field content-schema-field';wrap.dataset.contentKey=definition.key;
+    route(wrap,path);
     const property=definition.key==='href'&&['button','link'].includes(node.type)?getProperty('content.href'):null;
     if(property){wrap.dataset.propertyId=property.id;wrap.dataset.propertyCommand=property.command;wrap.dataset.propertyKey=property.key;}
     const label=document.createElement('span');label.textContent=definition.label;wrap.append(label);
@@ -253,6 +258,7 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
     const save=(value,typingGroup,render=false)=>top.save(definition.key,value,typingGroup,undefined,render);
     if(definition.type==='repeater'){
       const section=document.createElement('details');section.className='content-repeater';section.dataset.contentKey=definition.key;section.open=true;
+      route(section,definition.key);
       // Structural edits replace the Inspector DOM. Continue from the edited
       // row after the render, unless focus has moved to another live control.
       const restoreRowFocus=({rowIndex,preferredAction='',editField=false}={})=>requestAnimationFrame(()=>{
@@ -278,10 +284,11 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
         const row=group(definition.itemFields,()=>working[definition.key]?.[index]||{},(patch,options)=>{
           const next=structuredClone(working[definition.key]||items);Object.assign(next[index],patch);return save(next,options.typingGroup);
         });
-        for(const child of definition.itemFields)card.append(control(child,Object.hasOwn(crop,child.key)?crop[child.key]:item[child.key],(value,typingGroup,asset)=>row.save(child.key,value,typingGroup,asset),update=>row.register(child.key,update)));
+        for(const child of definition.itemFields)card.append(control(child,Object.hasOwn(crop,child.key)?crop[child.key]:item[child.key],(value,typingGroup,asset)=>row.save(child.key,value,typingGroup,asset),update=>row.register(child.key,update),`${definition.key}[].${child.key}`));
         const actions=document.createElement('div');actions.className='content-repeater-actions';
         for(const [label,offset] of [['Fel',-1],['Le',1],['Eltávolítás',0]]){
           const button=document.createElement('button');button.type='button';button.textContent=label;button.setAttribute('aria-label',`${index+1}. elem: ${label}`);button.disabled=Boolean(node.locked)||(offset<0&&index===0)||(offset>0&&index===items.length-1);
+          route(button,definition.key);
           button.onclick=()=>{
             const keepFocus=document.activeElement===button;
             const next=structuredClone(working[definition.key]||items);
@@ -297,6 +304,7 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
         card.append(actions);section.append(card);
       });
       const add=document.createElement('button');add.type='button';add.textContent=definition.label+' hozzáadása';add.disabled=Boolean(node.locked)||items.length>=40;
+      route(add,definition.key);
       add.onclick=()=>{
         const keepFocus=document.activeElement===add;
         const next=[...(working[definition.key]||[]),{}];
@@ -306,7 +314,7 @@ export function renderElementContentControls(node,{apply,pending,exclude=[],page
       section.append(add);root.append(section);
     }else if(definition.type==='table'){
       const note=document.createElement('p');note.className='content-field-help';note.textContent='Soronként egy sor, tabulátorral elválasztott cellák. Excelből másolt egyszerű táblázat is beilleszthető. A cellák szöveget tárolnak, képletek nem futnak.';root.append(note);
-      root.append(control({...definition,type:'textarea',max:40000},(node.props?.rows||[]).map(row=>row.join('\t')).join('\n'),(value,group)=>save(value.split('\n').map(row=>row.split('\t')),group),update=>top.register(definition.key,update)));
+      root.append(control({...definition,type:'textarea',max:40000},(node.props?.rows||[]).map(row=>row.join('\t')).join('\n'),(value,group)=>save(value.split('\n').map(row=>row.split('\t')),group),update=>top.register(definition.key,update),'rows[][]'));
     }else root.append(control(definition,working[definition.key],(value,typingGroup,asset)=>top.save(definition.key,value,typingGroup,asset),update=>top.register(definition.key,update)));
   }
   root.addEventListener('editor:external-content-updated',event=>{

@@ -49,7 +49,7 @@ import {STATE_PROPERTY_IDS,applyStateStyles} from './core/state-styles.js';
 import {defaultTokens,applyTokenVariables} from './core/design-tokens.js';
 import {CONTENT_TYPES,STRUCTURAL_TYPES,validatePageForPublication,isAuthoredContent,authoredNodeHtml,contentAttributes,initContentInteractions,contentTag} from './core/authored-content.js';
 import {captureCanvasInteractionState,restoreCanvasInteractionState} from './core/canvas-interaction-state.js';
-import {renderElementContentControls,pageLinkPicker} from './ui/element-content-controls.js';
+import {renderElementContentControls,pageLinkPicker} from './ui/element-content-controls.js?v=20261026-authored-content-route-contract';
 
 let editorTokens=defaultTokens();
 function propertyInput(property,label,current,onChange,options={}){
