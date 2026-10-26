@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-26",
+  "plan_cursor": "77.44.7.A — Inspector fields across edit, Canvas, Save and Publish",
+  "finding": "The Schedule Inspector declared the shared responsive design fields in its property contract, but its Design panel rendered only the type-specific schedule configuration.",
+  "change": {
+    "runtime": "Schedule Design now renders its type-specific configuration and the common primary registry fields.",
+    "cache_busting": "Updated the editor app module query version.",
+    "coverage": "Added a real Chromium test covering 45 partial capability types against their inspector registry and command/key routes, including layout-contextual and advanced fields."
+  },
+  "checks": {
+    "new_partial_type_chromium_test": "PASS 1/1; all 45 types matched applicable registered fields and routes",
+    "editor_unit": "PASS 134/134",
+    "schedule_unit": "PASS 1/1",
+    "typecheck": "PASS",
+    "editor_browser_suite": "86/87 in one four-worker run; the sole failure was a 9-second page.goto(load) timeout in the legacy-media test under parallel load. Isolated rerun PASS 1/1 in 35.1 seconds.",
+    "canonical_plan_audit": "pending final validation",
+    "active_plan_cursor": "77.44 / WEB-011 → 77.44.7.A; acceptance NOT_CERTIFIED"
+  },
+  "scope": "Includes an Inspector runtime fix and browser coverage. No D1 migration or production data write, no R2 deletion. Full 77.44.7.A and user acceptance remain open."
+}

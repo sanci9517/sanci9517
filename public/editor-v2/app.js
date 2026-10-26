@@ -1125,7 +1125,12 @@ function renderInspector(){
     nameField.dataset.propertyKey=nameProperty.key;
     inspector.append(nameField,renderGeometryInspector(node));
     if(['heading','text','richtext','button','link'].includes(node.type))inspector.append(renderTypographyPresets(node));
-    if(node.type==='schedule')inspector.append(renderScheduleInspector(node,composition));
+    if(node.type==='schedule'){
+      inspector.append(renderScheduleInspector(node,composition));
+      // Schedule configuration is type-specific content; it still shares the
+      // same responsive design properties as every other partial node type.
+      inspector.append(renderRegistryInspector(node,'primary'));
+    }
     else inspector.append(renderRegistryInspector(node,'primary'));
     const lockRow=document.createElement('label');lockRow.className='inspector-toggle';
     const lockInput=document.createElement('input');lockInput.type='checkbox';lockInput.className='inspector-lock-toggle';lockInput.dataset.inspectorCommand='element.lock.set';lockInput.dataset.inspectorKey='locked';lockInput.checked=Boolean(node.locked);lockInput.disabled=node.id===page()?.rootId;
