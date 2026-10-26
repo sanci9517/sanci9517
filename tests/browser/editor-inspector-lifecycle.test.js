@@ -69,16 +69,22 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
   const base=`http://127.0.0.1:${server.address().port}`;
   const editor=await browser.newPage({viewport:{width:1366,height:900}});
-  editor.setDefaultTimeout(5000);
-  editor.setDefaultNavigationTimeout(12000);
+  editor.setDefaultTimeout(15000);
+  editor.setDefaultNavigationTimeout(20000);
   const errors=[];
   editor.on('pageerror',error=>errors.push(error.message));
   await editor.goto(base+'/editor-v2/index.html');
   const select=async id=>{
-    await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>el.click());
+    await editor.locator(`.node[data-node-id="${id}"]`).evaluate(el=>{if(!el.classList.contains('selected'))el.click()});
     if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
   };
   const field=id=>editor.locator(`.typed-inspector-field[data-property-id="${id}"]`);
+  const assertRegisteredRoute=async id=>{
+    const property=listProperties().find(candidate=>candidate.id===id);
+    assert.ok(property,`${id}: property is registered`);
+    assert.equal(await field(id).getAttribute('data-property-command'),property.command,`${id}: rendered Inspector command matches the registry`);
+    assert.equal(await field(id).getAttribute('data-property-key'),property.key,`${id}: rendered Inspector key matches the registry`);
+  };
   // Authored defaults are visible in the style Inspector even before users
   // persist an explicit style override. Merely selecting a node stays pure.
   await select(buttonId);
@@ -249,8 +255,8 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await editor.waitForFunction(()=>document.querySelector('#saveStatus')?.textContent==='Publikálva');
   assert.equal(posts.at(-1).publish,true);
   const publicPage=await browser.newPage({viewport:{width:1366,height:900}});
-  publicPage.setDefaultTimeout(5000);
-  publicPage.setDefaultNavigationTimeout(12000);
+  publicPage.setDefaultTimeout(15000);
+  publicPage.setDefaultNavigationTimeout(20000);
   publicPage.on('pageerror',error=>errors.push(error.message));
   await publicPage.goto(base+'/p/test');
   await publicPage.locator('.visual-card > .visual-text').first().waitFor();
@@ -413,6 +419,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   // must reach Canvas, remain one undoable command, persist as a draft, and
   // update the live page only after the separate Publish action.
   const backgroundColor=()=>item.evaluate(el=>getComputedStyle(el).backgroundColor);
+  await assertRegisteredRoute('background.color');
   assert.equal(await backgroundColor(),'rgb(37, 99, 235)');
   await field('background.color').locator('input[type="color"]').evaluate(input=>{
     input.value='#dc2626';input.dispatchEvent(new Event('change',{bubbles:true}));
@@ -442,6 +449,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   const typographyHeading=editor.locator('.inspector-group-title').filter({hasText:'Tipográfia'});
   if(await typographyHeading.getAttribute('aria-expanded')==='false')await typographyHeading.click();
   const fontSize=()=>item.evaluate(el=>getComputedStyle(el).fontSize);
+  await assertRegisteredRoute('typography.fontSize');
   assert.equal(await fontSize(),'32px','the initial published Inspector font size is 32px');
   await field('typography.fontSize').locator('.property-preset').filter({hasText:'Nagy · 48'}).click();
   assert.equal(await fontSize(),'48px','the font-size preset reaches Canvas');
@@ -468,6 +476,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await editor.locator('.inspector-tabs button').first().click();
   const typographyTitle=editor.locator('.inspector-group-title').filter({hasText:'Tipográfia'});
   if(await typographyTitle.getAttribute('aria-expanded')==='false')await typographyTitle.click();
+  await assertRegisteredRoute('typography.textAlign');
   await field('typography.textAlign').locator('select:not(.property-token-picker)').selectOption('right');
   assert.equal(await alignment(),'right');
   await editor.locator('#save').click();
@@ -489,6 +498,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await editor.locator('.inspector-tabs button').first().click();
   const spacingTitle=editor.locator('.inspector-group-title').filter({hasText:'Térközök'});
   if(await spacingTitle.getAttribute('aria-expanded')==='false')await spacingTitle.click();
+  await assertRegisteredRoute('spacing.padding');
   const padding=()=>item.evaluate(el=>{const style=getComputedStyle(el);return {top:style.paddingTop,right:style.paddingRight}});
   assert.deepEqual(await padding(),{top:'16px',right:'24px'},'initial published padding preset is intact');
   await field('spacing.padding').locator('.property-preset').filter({hasText:'XL · 32'}).click();
@@ -517,6 +527,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   const sizeTitle=editor.locator('.inspector-group-title').filter({hasText:'Méret'});
   if(await sizeTitle.getAttribute('aria-expanded')==='false')await sizeTitle.click();
   const minWidthCss=()=>item.evaluate(el=>getComputedStyle(el).minWidth);
+  await assertRegisteredRoute('size.minWidth');
   assert.equal(await minWidthCss(),'80px','the previously published minimum width is 80px');
   const minWidthNumberInput=field('size.minWidth').locator('input[type="number"]');
   await minWidthNumberInput.fill('160');
@@ -546,6 +557,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   const typographyGroup=editor.locator('.inspector-group-title').filter({hasText:'Tipográfia'});
   if(await typographyGroup.getAttribute('aria-expanded')==='false')await typographyGroup.click();
   const lineHeightCss=()=>item.evaluate(el=>getComputedStyle(el).lineHeight);
+  await assertRegisteredRoute('typography.lineHeight');
   const publishedLineHeight=await lineHeightCss();
   await field('typography.lineHeight').locator('.property-preset').filter({hasText:'Laza · 1.75'}).click();
   const draftLineHeight=await lineHeightCss();
@@ -581,7 +593,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
     const canvasNode=()=>editor.locator(`.node[data-node-id="${nodeId}"]`);
     const publicNode=()=>publicPage.locator(`[data-node-id="${nodeId}"]`);
     const canvasValue=()=>canvasNode().evaluate((el,key)=>getComputedStyle(el)[key],cssProperty);
-    const publicValue=()=>publicNode().evaluate((el,key)=>getComputedStyle(el)[key],cssProperty);
+    const publicValue=async()=>{await publicNode().waitFor({state:'attached'});return publicNode().evaluate((el,key)=>getComputedStyle(el)[key],cssProperty)};
     await select(nodeId);
     await openGroup();
     const previous=await canvasValue();

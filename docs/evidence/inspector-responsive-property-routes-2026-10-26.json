@@ -24,9 +24,10 @@
   },
   "registry_route_followup": {
     "file": "tests/browser/editor-inspector-lifecycle.test.js",
-    "result": "PASS 1/1, 223.9 seconds",
-    "fields_checked": 57,
-    "assertions": "For each lifecycle field, the rendered Inspector data-property-command and data-property-key are compared to the canonical property-registry command and key; explicitly declared route expectations remain asserted too.",
+    "result": "PASS 1/1, 197.0 seconds",
+    "fields_checked": 63,
+    "assertions": "For 57 fields in the shared lifecycle helper plus six fields in their existing dedicated lifecycle flows (background.color, typography.fontSize, typography.textAlign, spacing.padding, size.minWidth and typography.lineHeight), the rendered Inspector data-property-command and data-property-key are compared to the canonical property-registry command and key; explicit route expectations remain asserted too.",
+    "test_stability": "Selection avoids re-clicking a node that is already selected; public CSS reads wait for the asynchronously rendered public node after reload.",
     "lifecycle": "All assertions run within the real Chromium Canvas → Undo/Redo → draft Save/reload → separate Publish → public CSS parity flow."
   },
   "other_checks": {
