@@ -94,6 +94,12 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await select(flexId);
   await editor.locator(`.node[data-node-id="${offsetId}"]`).evaluate(el=>el.dispatchEvent(new MouseEvent('click',{bubbles:true,ctrlKey:true})));
   assert.equal(await editor.locator('.multi-inspector').count(),1,'multi-selection exposes shared Inspector');
+  const multiFieldRoutes=await editor.locator('.multi-inspector-field').evaluateAll(rows=>rows.map(row=>({id:row.dataset.propertyId,command:row.dataset.propertyCommand,key:row.dataset.propertyKey})));
+  assert.ok(multiFieldRoutes.length>0,'shared Inspector exposes route metadata for each control');
+  for(const route of multiFieldRoutes){
+    assert.equal(route.command,'responsive.set',`${route.id}: shared Inspector exposes the actual command route`);
+    assert.equal(route.key,route.id,`${route.id}: shared Inspector exposes the Page Model key`);
+  }
   const sharedWidth=editor.locator('.multi-inspector-field[data-property-id="width"] input');
   await sharedWidth.fill('240');
   await sharedWidth.dispatchEvent('change');

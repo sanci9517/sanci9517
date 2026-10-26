@@ -51,6 +51,13 @@
     ],
     "lifecycle": "Assertions run in the existing responsive layout test, which covers Canvas, Undo/Redo, draft Save, separate Publish, public geometry parity and all device breakpoints."
   },
+  "multi_selection_route_followup": {
+    "implementation": "Shared multi-selection Inspector controls now expose data-property-command and data-property-key alongside data-property-id; every field identifies the responsive.set batch route and its responsive Page Model key.",
+    "file": "tests/browser/editor-inspector-lifecycle.test.js",
+    "targeted_chromium": "PASS 1/1, 172.1 seconds",
+    "routes_asserted": "All 14 multi-selection controls; each uses responsive.set and its own property key.",
+    "lifecycle": "The existing real Inspector test applies a shared responsive width to two selected nodes, verifies Canvas output and one-step Undo, then continues through its Save/reload and separate Publish/public parity flow."
+  },
   "local_checks": {
     "editor_unit": "PASS 132/132",
     "typecheck": "PASS",
@@ -108,5 +115,5 @@
     "database_migrations_or_writes": false,
     "r2_changes": false
   },
-  "acceptance": "Rendered route metadata is verified for the asserted base-style, hover-state, five geometry controls, spacer height, and conditional Flex/Grid layout controls; geometry, spacer and responsive layout flows pass their targeted lifecycle checks. Full 79-type/68-property lifecycle acceptance remains OPEN."
+  "acceptance": "Rendered route metadata is verified for the asserted base-style, hover-state, five geometry controls, spacer height, conditional Flex/Grid layout controls, and all 14 multi-selection controls; the corresponding real lifecycle checks pass. Full 79-type/68-property lifecycle acceptance remains OPEN."
 }

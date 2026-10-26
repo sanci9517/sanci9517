@@ -938,7 +938,7 @@ function renderMultiInspector(nodes){
   render();setStatus(`${nodes.length} elem közös megjelenése módosult. Mentés szükséges.`);
  }catch(error){setStatus(error.message||'A közös formázás nem sikerült.')}};
  const make=(label,key,kind,defaultValue,unit='')=>{
-  const row=document.createElement('label');row.className='multi-inspector-field';row.dataset.propertyId=key;
+  const row=document.createElement('label');row.className='multi-inspector-field';row.dataset.propertyId=key;row.dataset.propertyCommand='responsive.set';row.dataset.propertyKey=key;
   const text=document.createElement('span');text.textContent=label;row.append(text);
   const values=nodes.map(node=>resolveResponsiveValue(node.responsive,key,device)?.value);
   const same=values.every(value=>value===values[0]);
