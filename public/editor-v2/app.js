@@ -42,7 +42,7 @@ import {renderEmbedInspector} from './ui/creator-embed-inspector.js?v=20261026-p
 import {defaultCodeSnippet,renderCodeSnippet,activateCodeBlocks} from './core/code-snippet.js';
 import {renderCodeSnippetInspector} from './ui/code-snippet-inspector.js?v=20261026-profile-route-contract';
 import {readRichTextSelectionFormatting,clearRichTextInlineFormatting} from './core/richtext-links.js';
-import {renderAccessibilityFields} from './ui/accessibility-fields.js';
+import {renderAccessibilityFields} from './ui/accessibility-fields.js?v=20261026-accessibility-route-contract';
 import {createCompositionInputs} from './ui/composition-inputs.js';
 import {opaqueContrast} from './core/accessibility.js';
 import {STATE_PROPERTY_IDS,applyStateStyles} from './core/state-styles.js';
@@ -777,7 +777,7 @@ function renderAccessibilityInspector(node){
     return saved;
   },{nodes:()=>page()?.nodes||{},pending:flush=>{flushRichTextDraft=flush}}));
   for(const device of ['desktop','tablet','mobile']){
-    const label=document.createElement('label');label.className='inspector-toggle';const input=document.createElement('input');input.type='checkbox';input.checked=isVisibleOnDevice(node,device);input.disabled=Boolean(node.locked)||node.type==='root';input.onchange=()=>{if(command('element.visibility.set',{nodeId:node.id,device,visible:input.checked})===false)input.checked=isVisibleOnDevice(node,device);};label.append(input,document.createTextNode('Látható: '+device));section.append(label);
+    const label=document.createElement('label');label.className='inspector-toggle';label.dataset.inspectorCommand='element.visibility.set';label.dataset.inspectorKey='visibility.'+device;const input=document.createElement('input');input.type='checkbox';input.checked=isVisibleOnDevice(node,device);input.disabled=Boolean(node.locked)||node.type==='root';input.onchange=()=>{if(command('element.visibility.set',{nodeId:node.id,device,visible:input.checked})===false)input.checked=isVisibleOnDevice(node,device);};label.append(input,document.createTextNode('Látható: '+device));section.append(label);
   }
   if(node.type!=='root'){
     const visibility=getNodeVisibilityState(page(),node.id,state.viewport.device);

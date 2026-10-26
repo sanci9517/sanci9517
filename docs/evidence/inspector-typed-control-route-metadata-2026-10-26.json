@@ -339,5 +339,25 @@
     "d1_migrations_applied": false,
     "production_data_writes": false,
     "r2_changes": false
+  },
+  "accessibility_route_followup": {
+    "implementation": "Accessibility label, page ID and language controls expose accessibility.set with their accessibility.* Page Model keys. Desktop/tablet/mobile visibility controls expose element.visibility.set with visibility.* keys.",
+    "files": [
+      "public/editor-v2/ui/accessibility-fields.js",
+      "public/editor-v2/app.js",
+      "public/editor-v2/index.html"
+    ],
+    "browser_test": "tests/browser/editor-accessibility-ime.test.js",
+    "targeted_chromium": "PASS 2/2 at 390px and 1366px",
+    "routes_asserted": [
+      "accessibility.set / accessibility.label",
+      "accessibility.set / accessibility.id",
+      "accessibility.set / accessibility.lang",
+      "element.visibility.set / visibility.desktop",
+      "element.visibility.set / visibility.tablet",
+      "element.visibility.set / visibility.mobile"
+    ],
+    "lifecycle": "Assertions run inside the existing accessibility field IME/validation flow through Canvas attributes, Undo/Redo, draft Save, separate Publish and public DOM. Existing invalid candidate retention, alias normalization, lock and root ID protection checks remain active.",
+    "production_release": "D1 preflight PASS: No migrations to apply (read-only). Wrangler 4.130.0 deploy --dry-run PASS: 159 assets, 287.10 KiB, no upload. Ready for fast-forward release."
   }
 }

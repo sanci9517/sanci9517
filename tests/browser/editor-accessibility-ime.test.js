@@ -44,10 +44,15 @@ for(const width of [390,1366])test(`accessibility Inspector IME validation and p
  await editor.goto(base+'/editor-v2/index.html');await viewer.goto(base+'/p/test');
  const canvas=id=>editor.locator(`.node[data-node-id="${id}"]`),live=id=>viewer.locator(`[data-node-id="${id}"]`);
  const select=async id=>{await canvas(id).evaluate(el=>el.click());if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();await editor.locator('.inspector-tabs button').nth(2).click();const group=editor.locator('.inspector-group-title').filter({hasText:'Akadálymentesség és láthatóság'});if(await group.getAttribute('aria-expanded')==='false')await group.click();};
+ const accessibilityGroup=()=>editor.locator('.inspector-group').filter({hasText:'Akadálymentesség és láthatóság'});
  const label='Képernyőolvasó elnevezés',anchor='Oldalbeli hivatkozási azonosító',lang='Tartalom nyelve (pl. hu)';
  const field=name=>editor.getByRole('textbox',{name,exact:true});
  for(const kind of ['legacy','authored']){
   await select(ids[kind]);
+  assert.deepEqual(await accessibilityGroup().locator('[data-inspector-command]').evaluateAll(controls=>controls.map(control=>[control.dataset.inspectorCommand,control.dataset.inspectorKey])),[
+   ['accessibility.set','accessibility.label'],['accessibility.set','accessibility.id'],['accessibility.set','accessibility.lang'],
+   ['element.visibility.set','visibility.desktop'],['element.visibility.set','visibility.tablet'],['element.visibility.set','visibility.mobile']
+  ],'accessibility and responsive visibility controls expose their actual command and Page Model key');
   for(const [name,attribute,before,final] of [[label,'aria-label','Mentett '+kind,'Végleges '+kind+' " onload="alert(1) lang="zz"'],[anchor,'id','old-'+kind,'new-'+kind],[lang,'lang','hu','ja']]){
    await exerciseComposition({page:editor,input:field(name),selector:`.node[data-node-id="${ids[kind]}"]`,attribute,before,final,posts,restart:true,otherInput:field(name===label?lang:label)}).catch(error=>{assert.equal(posts.length,0,'unfinished accessibility input cannot reach the Editor API');throw error;});
   }
