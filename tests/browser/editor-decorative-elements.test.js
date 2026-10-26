@@ -53,10 +53,16 @@ test('Divider and Spacer Inspector changes become public only after Publish, wit
  await select(dividerId);
  const controls=editor.locator('.decorative-inspector');
  assert.equal(await controls.locator('h3').textContent(),'Elválasztóvonal');
- await controls.getByRole('spinbutton',{name:'Elválasztóvonal vastagsága'}).fill('6');
- await controls.getByRole('spinbutton',{name:'Elválasztóvonal vastagsága'}).press('Tab');
- await controls.getByRole('combobox',{name:'Elválasztóvonal mintázata'}).selectOption('dashed');
- await controls.locator('input[type="color"]').evaluate(el=>{el.value='#22aa66';el.dispatchEvent(new Event('change',{bubbles:true}))});
+ const assertRoute=async(control,key)=>{
+  assert.equal(await control.getAttribute('data-inspector-command'),'element.update',`${key}: Divider exposes the actual command route`);
+  assert.equal(await control.getAttribute('data-inspector-key'),`props.decoration.${key}`,`${key}: Divider exposes the Page Model path`);
+ };
+ const thickness=controls.getByRole('spinbutton',{name:'Elválasztóvonal vastagsága'});
+ await assertRoute(thickness,'thickness');await thickness.fill('6');await thickness.press('Tab');
+ const style=controls.getByRole('combobox',{name:'Elválasztóvonal mintázata'});
+ await assertRoute(style,'lineStyle');await style.selectOption('dashed');
+ const color=controls.locator('input[type="color"]');await assertRoute(color,'color');
+ await color.evaluate(el=>{el.value='#22aa66';el.dispatchEvent(new Event('change',{bubbles:true}))});
  assert.equal(await canvasNode(dividerId).locator('.divider-preview').evaluate(el=>getComputedStyle(el).borderTopWidth),'6px');
  assert.equal(await canvasNode(dividerId).locator('.divider-preview').evaluate(el=>getComputedStyle(el).borderTopColor),'rgb(34, 170, 102)');
  await select(spacerId);

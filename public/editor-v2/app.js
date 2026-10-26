@@ -995,7 +995,32 @@ function renderExistingContentInspector(node){
   if(hasContentProfile(node,'social-v1')){inspector.append(renderSocialLinksInspector(node,(value,options)=>updateModel('socialLinks',value,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}
   if(hasContentProfile(node,'card-v1')){inspector.append(renderCardInspector(node,(value,options)=>updateModel('cardContent',value,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}
   if(hasContentProfile(node,'countdown-v1')){inspector.append(renderCountdownInspector(node,(value,options)=>updateModel('countdown',value,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}
-  if(hasContentProfile(node,'divider-v1')){const cfg=normalizeDividerStyle(node.props?.decoration),section=document.createElement('section');section.className='decorative-inspector';section.append(Object.assign(document.createElement('h3'),{textContent:'Elválasztóvonal'}));const set=patch=>{const decoration=normalizeDividerStyle({...cfg,...patch});command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),decoration}}})};const thickness=document.createElement('input');thickness.type='number';thickness.min='1';thickness.max='24';thickness.value=String(cfg.thickness);thickness.setAttribute('aria-label','Elválasztóvonal vastagsága');thickness.onchange=()=>set({thickness:Number(thickness.value)});const color=document.createElement('input');color.type='color';color.value=cfg.color;color.setAttribute('aria-label','Elválasztóvonal színe');color.onchange=()=>set({color:color.value});const style=document.createElement('select');style.setAttribute('aria-label','Elválasztóvonal mintázata');for(const value of DIVIDER_LINE_STYLES){const option=document.createElement('option');option.value=value;option.textContent=value;style.append(option)}style.value=cfg.lineStyle;style.onchange=()=>set({lineStyle:style.value});section.append(thickness,color,style);inspector.append(section);return true}
+  if(hasContentProfile(node,'divider-v1')){
+    const cfg=normalizeDividerStyle(node.props?.decoration),section=document.createElement('section');
+    section.className='decorative-inspector';
+    section.append(Object.assign(document.createElement('h3'),{textContent:'Elválasztóvonal'}));
+    const set=patch=>{
+      const decoration=normalizeDividerStyle({...cfg,...patch});
+      command('element.update',{nodeId:node.id,patch:{props:{...(node.props||{}),decoration}}});
+    };
+    const route=(control,key)=>{
+      control.dataset.inspectorCommand='element.update';
+      control.dataset.inspectorKey='props.decoration.'+key;
+      return control;
+    };
+    const thickness=route(document.createElement('input'),'thickness');
+    thickness.type='number';thickness.min='1';thickness.max='24';thickness.value=String(cfg.thickness);
+    thickness.setAttribute('aria-label','Elválasztóvonal vastagsága');
+    thickness.onchange=()=>set({thickness:Number(thickness.value)});
+    const color=route(document.createElement('input'),'color');
+    color.type='color';color.value=cfg.color;color.setAttribute('aria-label','Elválasztóvonal színe');
+    color.onchange=()=>set({color:color.value});
+    const style=route(document.createElement('select'),'lineStyle');
+    style.setAttribute('aria-label','Elválasztóvonal mintázata');
+    for(const value of DIVIDER_LINE_STYLES){const option=document.createElement('option');option.value=value;option.textContent=value;style.append(option)}
+    style.value=cfg.lineStyle;style.onchange=()=>set({lineStyle:style.value});
+    section.append(thickness,color,style);inspector.append(section);return true;
+  }
   if(hasContentProfile(node,'spacer-v1')){const section=document.createElement('section');section.className='decorative-inspector';section.append(Object.assign(document.createElement('h3'),{textContent:'Üres térköz'}));const device=state.viewport.device,current=resolveResponsiveValue(node.responsive,'height',device).value??node.style?.height??'64px';section.append(renderPropertyInput(getProperty('size.height'),'Térköz magassága',current,value=>command('responsive.set',{nodeId:node.id,device,patch:{height:value}})));inspector.append(section);return true}
   if(!isAuthoredContent(node)&&hasContentProfile(node,'structured-v1')){inspector.append(renderStructuredInspector(node,(model,options)=>updateModel('contentModel',model,options),{pending:flush=>{flushRichTextDraft=flush}}));return true}
   return false;

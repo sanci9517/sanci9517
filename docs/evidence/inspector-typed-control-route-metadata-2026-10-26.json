@@ -58,6 +58,17 @@
     "routes_asserted": "All 14 multi-selection controls; each uses responsive.set and its own property key.",
     "lifecycle": "The existing real Inspector test applies a shared responsive width to two selected nodes, verifies Canvas output and one-step Undo, then continues through its Save/reload and separate Publish/public parity flow."
   },
+  "divider_profile_route_followup": {
+    "implementation": "The separate legacy Divider profile controls expose the actual element.update command and nested Page Model path without pretending to be registry properties.",
+    "file": "tests/browser/editor-decorative-elements.test.js",
+    "targeted_chromium": "PASS 1/1, 5.80 seconds",
+    "routes_asserted": [
+      "Divider thickness → element.update / props.decoration.thickness",
+      "Divider color → element.update / props.decoration.color",
+      "Divider line style → element.update / props.decoration.lineStyle"
+    ],
+    "lifecycle": "The existing real Divider/Spacer Inspector test verifies route metadata, Canvas rendering, draft Save isolation and separate Publish to the public page."
+  },
   "local_checks": {
     "editor_unit": "PASS 132/132",
     "typecheck": "PASS",
@@ -115,5 +126,5 @@
     "database_migrations_or_writes": false,
     "r2_changes": false
   },
-  "acceptance": "Rendered route metadata is verified for the asserted base-style, hover-state, five geometry controls, spacer height, conditional Flex/Grid layout controls, and all 14 multi-selection controls; the corresponding real lifecycle checks pass. Full 79-type/68-property lifecycle acceptance remains OPEN."
+  "acceptance": "Rendered route metadata is verified for the asserted base-style, hover-state, five geometry controls, spacer height, conditional Flex/Grid layout controls, all 14 multi-selection controls, and three nested Divider profile controls; the corresponding real lifecycle checks pass. Full 79-type/68-property lifecycle acceptance remains OPEN."
 }
