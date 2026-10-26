@@ -15,7 +15,7 @@
     "editor_unit": "PASS 132/132.",
     "typecheck": "PASS.",
     "canonical_plan_and_traceability": "PASS: 13 master files, 396 mappings; functional acceptance remains NOT_CERTIFIED.",
-    "wrangler_dry_run": "PASS; 159 assets, 287.10 KiB upload estimate; no deployment command run locally."
+    "wrangler_dry_run": "PASS before push; 159 assets, 287.10 KiB upload estimate. The push triggered the verified automatic Worker deployment."
   },
   "production": {
     "branch": "v2/foundation",
@@ -41,12 +41,13 @@
       40329346446,
       40329346437,
       40329346460,
-      40329346495
+      40329346495,
+      40329346426
     ],
     "editor_core_test": {
       "run_id": 40329346426,
-      "status": "in_progress",
-      "current_step": "Run Editor browser layout regression"
+      "status": "completed",
+      "conclusion": "success"
     }
   },
   "acceptance_boundary": "The tested Inspector routes and release are verified. The complete 77.44.7.A capability matrix and full user acceptance remain OPEN/NOT_CERTIFIED."
