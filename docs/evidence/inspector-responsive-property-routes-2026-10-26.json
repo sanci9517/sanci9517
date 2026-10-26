@@ -22,6 +22,13 @@
     ],
     "lifecycle": "The responsive size limits, corner radii, Flex child values and Grid child placement are asserted in the existing real Chromium Inspector → Canvas → Undo/Redo → draft Save/reload → separate Publish → public CSS parity flow."
   },
+  "registry_route_followup": {
+    "file": "tests/browser/editor-inspector-lifecycle.test.js",
+    "result": "PASS 1/1, 223.9 seconds",
+    "fields_checked": 57,
+    "assertions": "For each lifecycle field, the rendered Inspector data-property-command and data-property-key are compared to the canonical property-registry command and key; explicitly declared route expectations remain asserted too.",
+    "lifecycle": "All assertions run within the real Chromium Canvas → Undo/Redo → draft Save/reload → separate Publish → public CSS parity flow."
+  },
   "other_checks": {
     "typecheck": "PASS",
     "plan_contract": "PASS",

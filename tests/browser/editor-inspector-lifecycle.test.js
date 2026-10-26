@@ -8,6 +8,7 @@ import {chromium} from 'playwright';
 import {createDocument, NODE_TYPES} from '../../public/editor-v2/core/schema.js';
 import {createEditorState} from '../../public/editor-v2/core/state.js';
 import {execute} from '../../public/editor-v2/core/commands.js';
+import {listProperties} from '../../public/editor-v2/core/property-registry.js';
 
 const root=resolve(import.meta.dirname,'../../public');
 const inspectorBackgroundAssetId='a44f0ce3-6273-4a8f-991e-572c4a89cdd1';
@@ -587,8 +588,10 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
     const previousPublic=await publicValue();
     const inspectorField=field(propertyId);
     assert.equal(await inspectorField.count(),1,`${label}: Inspector exposes the expected field`);
-    if(expectedCommand)assert.equal(await inspectorField.getAttribute('data-property-command'),expectedCommand,`${label}: Inspector exposes the actual command route`);
-    if(expectedKey)assert.equal(await inspectorField.getAttribute('data-property-key'),expectedKey,`${label}: Inspector exposes the actual property key`);
+    const registeredProperty=listProperties().find(property=>property.id===propertyId);
+    assert.ok(registeredProperty,`${label}: lifecycle field belongs to the canonical property registry`);
+    assert.equal(await inspectorField.getAttribute('data-property-command'),expectedCommand||registeredProperty.command,`${label}: Inspector exposes the actual command route`);
+    assert.equal(await inspectorField.getAttribute('data-property-key'),expectedKey||registeredProperty.key,`${label}: Inspector exposes the actual property key`);
     await edit(inspectorField);
     const next=await canvasValue();
     assert.notEqual(next,previous,`${label}: Inspector edit changes Canvas CSS`);
