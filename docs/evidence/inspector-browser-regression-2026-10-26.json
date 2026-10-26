@@ -26,5 +26,15 @@
     }
   ],
   "lifecycle": "The test exercises 21 registered Inspector properties through command/key metadata, Canvas CSS, Undo/Redo, draft Save, reload persistence, public isolation and separate Publish/public CSS parity.",
-  "scope": "Test reliability and documentation only. No runtime assets, production data, migrations or R2 objects changed. The wide suite's one transient timeout was repeated successfully; this is not a claim that the entire suite passed in one run. Full 77.44.7.A remains open."
+  "release": {
+    "commit": "1db84007",
+    "branch": "v2/foundation",
+    "github_workflows": "No workflow runs returned for this commit at verification time.",
+    "cloudflare_deployment": "99fcb167-6da2-4d81-9426-b927f51027f1",
+    "worker_version": "1dc4b1df-62e3-4b7f-be7b-28c5d65f09a7",
+    "traffic": "100%",
+    "script_etag": "0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0",
+    "runtime_change": "Worker script ETag matches the prior release; this commit changes test and documentation files only."
+  },
+  "scope": "Test reliability and documentation only. No production data, migrations or R2 objects changed. The wide suite's one transient timeout was repeated successfully; this is not a claim that the entire suite passed in one run. Full 77.44.7.A remains open."
 }
