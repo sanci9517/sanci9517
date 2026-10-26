@@ -44,6 +44,36 @@
   "production_data_changed": false,
   "database_migration_run": false,
   "r2_changed": false,
-  "deployment_status": "pending commit release workflow verification",
+  "release": {
+    "commit": "7ce70dd03bf18287ffdc6a8eb06a377d766e132e",
+    "branch": "v2/foundation",
+    "deployment_id": "2a21d206-3f0e-46f4-9bc4-ff2c45fda836",
+    "worker_version_id": "945311ff-ee4a-4baa-839e-1226b5fc8c00",
+    "traffic_percent": 100,
+    "worker_etag": "0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0",
+    "production_smoke": {
+      "/api/health": 200,
+      "/api/db-health": 200,
+      "/editor-v2/": 200
+    },
+    "deployed_page_renderer_sha256": "2ca8049a16e0b4873e110b7bb2d7626606d4b764d958cdf8d7108e5e8102760d",
+    "source_page_renderer_sha256": "2ca8049a16e0b4873e110b7bb2d7626606d4b764d958cdf8d7108e5e8102760d"
+  },
+  "github_ci_at_release_check": {
+    "commit": "7ce70dd03bf18287ffdc6a8eb06a377d766e132e",
+    "run_ids": {
+      "canonical_plan": 40414960617,
+      "active_plan_point": 40414960584,
+      "twitch_integration": 40414960610,
+      "f0_baseline": 40414960520,
+      "editor_core": 40414960665
+    },
+    "canonical_plan": "PASS",
+    "active_plan_point": "PASS",
+    "twitch_integration": "PASS",
+    "f0_baseline": "PASS",
+    "editor_core": "PASS",
+    "all_workflows": "PASS"
+  },
   "acceptance_status": "77.44.7.A and WEB-011 remain OPEN; this covers keyboard reachability for one shared focus state route, not complete Editor acceptance"
 }
