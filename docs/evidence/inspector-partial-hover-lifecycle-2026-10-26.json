@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-26",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Responsive styles, mobile visibility, and hover state lifecycle across every non-root PARTIAL element type",
+  "test_file": "tests/browser/editor-inspector-partial-types.test.js",
+  "test_result": {
+    "command": "node --test tests/browser/editor-inspector-partial-types.test.js",
+    "tests": 1,
+    "passed": 1,
+    "failed": 0,
+    "duration_ms": 54916.5,
+    "scenario_duration_ms": 54348.8
+  },
+  "coverage": {
+    "partial_non_root_types": 44,
+    "inspector_route": "states.set / backgroundColor",
+    "assertions": [
+      "each type exposes the expected Inspector route and Page Model key",
+      "hover state preview reaches the Canvas for each type",
+      "Save stores hover style in the draft while published state remains unchanged",
+      "public hover appearance remains unchanged after draft Save",
+      "separate Publish stores and renders each public hover style"
+    ],
+    "test_fixture_note": "zero-area public nodes receive temporary hitboxes in the browser test so native hover events can be exercised"
+  },
+  "additional_checks": {
+    "typecheck": "PASS",
+    "canonical_plan": "PASS",
+    "active_plan_point": "PASS",
+    "traceability_mappings": 396,
+    "traceability": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "runner_diagnosis": {
+    "restricted_launch_failure": "Chromium could not start in the restricted sandbox; host returned Operation not permitted",
+    "resolution_for_this_run": "The same targeted test passed using elevated local execution"
+  },
+  "runtime_code_changed": false,
+  "production_data_changed": false,
+  "database_migration_run": false,
+  "r2_changed": false,
+  "acceptance_status": "77.44.7.A remains OPEN; this proves hover state lifecycle for the 44 PARTIAL types, not full Editor acceptance"
+}

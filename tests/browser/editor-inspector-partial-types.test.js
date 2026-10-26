@@ -11,12 +11,13 @@ import {execute} from '../../public/editor-v2/core/commands.js';
 import {getElementCapability,getElementInspectorContract} from '../../public/editor-v2/core/capability-matrix.js';
 import {listProperties} from '../../public/editor-v2/core/property-registry.js';
 import {isLayoutPropertyRelevant} from '../../public/editor-v2/core/layout-presets.js';
+import {plainTextToRichText} from '../../public/editor-v2/core/richtext-engine.js';
 
 const publicDir=resolve(import.meta.dirname,'../../public');
 const primaryGroups=new Set(['layout','size','spacing','flex','grid','position','typography','background','border','radius','shadow','opacity','transform','filter','animation']);
 const duplicatePrimaryIds=new Set(['content.text','content.href','advanced.nodeName']);
 
-test('every PARTIAL type renders declared Inspector routes and publishes responsive styles only after Publish',async t=>{
+test('every PARTIAL type renders Inspector routes and preserves Save versus Publish for responsive, visibility, and hover state',async t=>{
   const model=createEditorState(createDocument());
   const page=activePage(model),pageId=page.id,rootId=page.rootId;
   const nodes=[{type:NODE_TYPES.ROOT,id:rootId}];
@@ -25,7 +26,8 @@ test('every PARTIAL type renders declared Inspector routes and publishes respons
     if(type===NODE_TYPES.ROOT||getElementCapability(type).status!=='PARTIAL')continue;
     execute(model,{type:'element.add',payload:{type,parentId:rootId,authored:authoredTypes.has(type)}});
     const id=model.selection.primaryId;
-    if(authoredTypes.has(type)&&type!=='richtext')execute(model,{type:'element.content.set',payload:{nodeId:id,content:'Inspector-típus próba'}});
+    if(type==='richtext')execute(model,{type:'richtext.content.set',payload:{nodeId:id,document:plainTextToRichText('Inspector-típus próba')}});
+    else if(authoredTypes.has(type))execute(model,{type:'element.content.set',payload:{nodeId:id,content:'Inspector-típus próba'}});
     if(type==='button'||type==='link')execute(model,{type:'content.properties.set',payload:{nodeId:id,patch:{href:'https://example.com'}}});
     nodes.push({type,id});
   }
@@ -164,6 +166,70 @@ test('every PARTIAL type renders declared Inspector routes and publishes respons
   for(const {type,id} of editableNodes){
     assert.equal(published.pages[pageId].nodes[id].visibility.mobile,false,`${type}: Publish stores hidden mobile visibility`);
     assert.equal(await publicNode(id).count(),0,`${type}: published mobile output hides the node`);
+  }
+
+  // Verify the separate interactive-state route for every partial type. The
+  // public renderer must keep the previous state through Save and apply the
+  // Inspector-authored hover style only after the explicit Publish.
+  await editor.locator('.canvas-device-btn[data-device="desktop"]').click();
+  await viewer.setViewportSize({width:1366,height:900});
+  await viewer.reload();
+  const prepareHoverTargets=()=>viewer.evaluate(()=>{
+    for(const element of document.querySelectorAll('.visual-editor-node[data-node-id]')){
+      const rect=element.getBoundingClientRect();
+      if(rect.width===0||rect.height===0){
+        element.style.setProperty('display','block','important');
+        element.style.setProperty('width','32px','important');
+        element.style.setProperty('height','24px','important');
+      }
+    }
+  });
+  await prepareHoverTargets();
+  const publicHoverBaseline={};
+  for(const {id} of editableNodes){
+    await publicNode(id).hover();
+    publicHoverBaseline[id]=await publicNode(id).evaluate(el=>getComputedStyle(el).backgroundColor);
+  }
+  const hoverColors=editableNodes.map((_,index)=>'#'+((0x804020+index*0x020307)&0xffffff).toString(16).padStart(6,'0'));
+  for(const [index,{type,id}] of editableNodes.entries()){
+    const canvasNode=editor.locator(`.node[data-node-id="${id}"]`);
+    await canvasNode.evaluate(el=>el.click());
+    await editor.locator('.inspector-tabs button').nth(2).click();
+    let stateGroup=inspector.locator('.inspector-group').filter({hasText:'Rámutatás és fókusz'});
+    let stateTitle=stateGroup.locator(':scope > .inspector-group-title');
+    if(await stateTitle.getAttribute('aria-expanded')==='false')await stateTitle.click();
+    await editor.getByLabel('Állapot előnézete',{exact:true}).selectOption('hover');
+    stateGroup=inspector.locator('.inspector-group').filter({hasText:'Rámutatás és fókusz'});
+    stateTitle=stateGroup.locator(':scope > .inspector-group-title');
+    if(await stateTitle.getAttribute('aria-expanded')==='false')await stateTitle.click();
+    const stateColor=stateGroup.locator('[data-state-property="backgroundColor"]');
+    assert.equal(await stateColor.getAttribute('data-property-command'),'states.set',`${type}: hover command`);
+    assert.equal(await stateColor.getAttribute('data-property-key'),'backgroundColor',`${type}: hover Page Model key`);
+    const input=stateColor.locator('input[type="text"]');
+    await input.fill(hoverColors[index]);
+    await input.press('Tab');
+    assert.equal(await canvasNode.evaluate(el=>getComputedStyle(el).backgroundColor),asRgb(hoverColors[index]),`${type}: hover preview reaches Canvas`);
+  }
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  for(const [index,{type,id}] of editableNodes.entries()){
+    assert.equal(draft.pages[pageId].nodes[id].states.hover.desktop.backgroundColor,hoverColors[index],`${type}: Save stores hover state in the draft`);
+    assert.equal(published.pages[pageId].nodes[id].states?.hover?.desktop?.backgroundColor,undefined,`${type}: Save leaves the published hover state unchanged`);
+  }
+  await viewer.reload();
+  await prepareHoverTargets();
+  for(const {id} of editableNodes){
+    await publicNode(id).hover();
+    assert.equal(await publicNode(id).evaluate(el=>getComputedStyle(el).backgroundColor),publicHoverBaseline[id],'draft Save preserves published hover appearance');
+  }
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  await viewer.reload();
+  await prepareHoverTargets();
+  for(const [index,{type,id}] of editableNodes.entries()){
+    await publicNode(id).hover();
+    assert.equal(published.pages[pageId].nodes[id].states.hover.desktop.backgroundColor,hoverColors[index],`${type}: Publish stores hover style`);
+    assert.equal(await publicNode(id).evaluate(el=>getComputedStyle(el).backgroundColor),asRgb(hoverColors[index]),`${type}: published hover style reaches public output`);
   }
   assert.deepEqual(editorErrors,[],'opening every partial type must not throw');
 });
