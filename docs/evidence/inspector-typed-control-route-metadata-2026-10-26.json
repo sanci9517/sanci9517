@@ -273,8 +273,50 @@
     "targeted_lifecycle": "PASS 9/9 combined real-Chromium suites: Card 2 viewport runs, Creator Embed 2, Social Links 2, Code 2, Structured content 1 (covers six structures and Basic badge/quote/icon); plus legacy media 1/1.",
     "remote_d1_preflight": "PASS; No migrations to apply (read-only)",
     "wrangler_dry_run": "PASS; Wrangler 4.130.0, 159 assets, 287.10 KiB, no upload",
-    "release_state": "Local changes only at evidence capture; production release must be added after verified push/deployment/smoke.",
+    "release_state": "Runtime commit pushed and deployed; Editor Core CI is still running. See production_release_followup for the exact commit, deployment and live hashes.",
     "targeted_lifecycle_result": "PASS: 10 browser test cases total across the new route/lifecycle coverage (combined batch 9/9 plus legacy media 1/1).",
     "plan_and_traceability": "PASS canonical plan checker; PASS active point audit (77.44.7.A OPEN); PASS 396-source traceability check; PASS git diff --check."
+  },
+  "production_release_followup": {
+    "commit": "99282f9869efa41a47643c125b378548fbc445eb",
+    "branch": "v2/foundation",
+    "push": "PASS; fast-forward from b22b2eba345bb9d784dceb7b174a288ed2959dc4",
+    "github_ci": {
+      "result": "PASS 5/5 workflows",
+      "editor_core_run": 40312294222,
+      "f0_run": 40312294294,
+      "twitch_run": 40312294280,
+      "canonical_active_point_audit_run": 40312294168,
+      "canonical_plan_run": 40312294233,
+      "editor_core_duration": "6m21s",
+      "annotation": "GitHub reports Node.js 20 deprecation for existing action versions; job ran successfully under Node.js 24."
+    },
+    "production_deployment_id": "22c4dcbf-85a8-4c66-a125-9dd66c94bf56",
+    "production_version_id": "754199bc-3c17-45ef-a165-24abde24d83e",
+    "traffic_percent": 100,
+    "script_etag": "0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0",
+    "production_smoke": {
+      "worker_origin": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev",
+      "api_health": 200,
+      "db_health": {
+        "status": 200,
+        "connected": true
+      },
+      "editor_entry": 200
+    },
+    "live_sha256_match": {
+      "public/editor-v2/index.html": "36eeea5aee3ebde1e36ed17a3bd9a740f34e6b15a12956cf885914c3ed37a022",
+      "public/editor-v2/app.js": "06d961cf8b461e715630d069d7071ece368b497316fa302d7dd692a95e906d17",
+      "public/editor-v2/ui/basic-content-inspector.js": "f2af0abe27e5803c68b337488b8bd7ce1796b3547312d16c9538ccafb3404e26",
+      "public/editor-v2/ui/card-content-inspector.js": "bf260e214b1a89f2a1e9ecb397d30a48e4e74d12051678618b1ad7e58a2b7c68",
+      "public/editor-v2/ui/code-snippet-inspector.js": "338626962b3161b83e490586673b16cd863d60d804413f46cca014df000447f6",
+      "public/editor-v2/ui/creator-embed-inspector.js": "8723a36bab0243d2287cb15bdad9e064de1d9964e690f3fff95d1c9ff6582563",
+      "public/editor-v2/ui/legacy-media-inspector.js": "609a8c0e854fe5a82785fd9289a842d618569a36d95db1457e6d7d4a34869a92",
+      "public/editor-v2/ui/social-links-inspector.js": "6fc37fc7a3de570f421a7f5e356566ea81d3d9b867dfe4e0e42c0eb6f0dee33e",
+      "public/editor-v2/ui/structured-inspector.js": "95eda1ba7ab8858cae2e3e1214e4f002c55931058f840956f7c5b3730ce88643"
+    },
+    "d1_migrations_applied": false,
+    "production_data_writes": false,
+    "r2_changes": false
   }
 }
