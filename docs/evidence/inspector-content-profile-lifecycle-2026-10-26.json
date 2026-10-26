@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-26",
+  "plan_cursor": "77.44.7.A — content profile Inspector routes and lifecycle",
+  "browser_suite": {
+    "files": [
+      "tests/browser/editor-content-system.test.js",
+      "tests/browser/editor-structured-content.test.js",
+      "tests/browser/editor-decorative-elements.test.js",
+      "tests/browser/editor-card-content.test.js",
+      "tests/browser/editor-countdown.test.js",
+      "tests/browser/editor-social-links.test.js",
+      "tests/browser/editor-creator-embed.test.js",
+      "tests/browser/editor-code-snippet.test.js"
+    ],
+    "unique_cases": 13,
+    "first_combined_run": "12 PASS, 1 timeout",
+    "timeout": {
+      "file": "tests/browser/editor-code-snippet.test.js",
+      "viewport": "390px",
+      "step": "page.reload() after draft Save",
+      "message": "7 second timeout waiting for the page load event after navigation"
+    },
+    "fix": "Code fixture reloads use waitUntil=domcontentloaded; post-reload Inspector and publication assertions still wait for actual app elements and values.",
+    "targeted_rerun": "PASS 2/2 (390px and 1366px), 13.7 seconds",
+    "combined_result": "All 13 unique browser cases passed across the combined run and targeted Code rerun."
+  },
+  "coverage": {
+    "authored_content": "DOM command/key routes checked for every visible field in the authored content test definitions; real content, Canvas and publication flows exercised.",
+    "structured_content": "All six structured types (list, table, tabs, accordion, gallery, carousel), 14 nested content field routes and collection operations; browser coverage at 390px and 1366px with Save and separate Publish.",
+    "specialized_profiles": ["card", "countdown", "social", "embed", "code"],
+    "publication_boundary": "Draft Save leaves the published snapshot unchanged; explicit Publish updates public content."
+  },
+  "supporting_checks": {
+    "editor_unit": "PASS 134/134",
+    "typecheck": "PASS",
+    "canonical_plan": "PASS",
+    "active_plan_cursor": "77.44 / WEB-011 → 77.44.7.A; functional acceptance NOT_CERTIFIED",
+    "traceability": "PASS 396/396 source mappings; acceptance not certified",
+    "javascript_syntax": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "scope": "Test reliability and route/lifecycle evidence only. No runtime code, production data, database migrations or R2 objects changed. The combined suite had one load-event timeout, which passed on targeted retry after the fixture wait condition was corrected. Full 77.44.7.A remains open."
+}
