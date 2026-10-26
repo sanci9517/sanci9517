@@ -9,7 +9,7 @@ import {createDocument} from '../../public/editor-v2/core/schema.js';
 import {createEditorState,activePage} from '../../public/editor-v2/core/state.js';
 import {execute} from '../../public/editor-v2/core/commands.js';
 
-test('Divider and Spacer Inspector changes become public only after Publish, with responsive height and Undo',async t=>{
+test('partial palette types and Divider/Spacer Inspector edits become public only after Publish',async t=>{
  const model=createEditorState(createDocument()),pageId=model.document.activePageId,root=activePage(model).rootId;
  execute(model,{type:'element.add',payload:{type:'divider',parentId:root}});const dividerId=model.selection.primaryId;
  execute(model,{type:'element.add',payload:{type:'spacer',parentId:root}});const spacerId=model.selection.primaryId;
@@ -55,11 +55,39 @@ test('Divider and Spacer Inspector changes become public only after Publish, wit
  assert.equal(await editor.locator(`.node[data-node-id="${paletteAddedNodeId}"]`).count(),1,'the newly created node is visible on Canvas');
  const canvasNode=id=>editor.locator('.node[data-node-id="'+id+'"]');
  const publicNode=id=>viewer.locator('.visual-editor-node[data-node-id="'+id+'"]');
+ const paletteAddedNodeIds={divider:paletteAddedNodeId};
+ for(const [type,groupName,label] of [
+  ['panel','Layout','Panel'],['overlay','Layout','Overlay'],['absolute','Layout','Absolute'],['sticky','Layout','Sticky'],
+  ['badge','Szöveg','Badge/Tag'],['quote','Szöveg','Quote'],['tooltip','Szöveg','Tooltip']
+ ]){
+  await canvasNode(dividerId).evaluate(el=>el.click());
+  const group=editor.locator('.element-group').filter({has:editor.locator('.element-group-title').filter({hasText:groupName})});
+  if(await group.evaluate(el=>el.classList.contains('collapsed')))await group.locator('.element-group-title').click();
+  const entry=group.locator('button.element').filter({hasText:label});
+  assert.equal(await entry.count(),1,`${label} has one honest partial-capability palette entry`);
+  assert.equal(await entry.isEnabled(),true,`${label} can be added because its Inspector, Canvas and public capability is partial`);
+  const before=await editor.locator('.node[data-node-id]').evaluateAll(nodes=>nodes.map(node=>node.dataset.nodeId));
+  await entry.click();
+  const newId=await editor.locator('.node[data-node-id]').evaluateAll((nodes,existing)=>nodes.map(node=>node.dataset.nodeId).find(id=>!existing.includes(id)),before);
+  assert.ok(newId,`${label} palette entry creates a Canvas Page Model node`);
+  paletteAddedNodeIds[type]=newId;
+ }
  const select=async id=>{
   await canvasNode(id).evaluate(el=>el.click());
   if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
   await editor.locator('.inspector-tabs button').nth(1).click();
  };
+ const tooltipId=paletteAddedNodeIds.tooltip;
+ await select(tooltipId);
+ const tooltipDescription=editor.locator('.content-schema-field[data-content-key="description"]');
+ assert.equal(await tooltipDescription.getAttribute('data-inspector-command'),'content.properties.set');
+ assert.equal(await tooltipDescription.getAttribute('data-inspector-key'),'props.description');
+ await editor.locator('#publish').click();
+ await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.includes('Tooltip: Felirat és magyarázat is szükséges.'));
+ assert.equal(posts.length,0,'the incomplete palette tooltip is guided and blocked from Publish');
+ const tooltipDescriptionText=tooltipDescription.locator('textarea');
+ await tooltipDescriptionText.fill('További információ erről az elemről.');
+ assert.equal(await canvasNode(tooltipId).locator('.creator-tooltip [role="tooltip"]').textContent(),'További információ erről az elemről.','tooltip description Inspector edit reaches Canvas');
  await select(dividerId);
  const controls=editor.locator('.decorative-inspector');
  assert.equal(await controls.locator('h3').textContent(),'Elválasztóvonal');
@@ -97,22 +125,27 @@ test('Divider and Spacer Inspector changes become public only after Publish, wit
  await editor.locator('#save').click();
  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
  assert.equal(posts.at(-1).publish,false);
- assert.equal(draft.pages[pageId].nodes[paletteAddedNodeId].type,'divider','Save persists the palette-created Page Model node');
- assert.equal(published.pages[pageId].nodes[paletteAddedNodeId],undefined,'Save leaves the published snapshot unchanged');
+ for(const [type,nodeId] of Object.entries(paletteAddedNodeIds)){
+  assert.equal(draft.pages[pageId].nodes[nodeId].type,type,`Save persists the palette-created ${type} Page Model node`);
+  assert.equal(published.pages[pageId].nodes[nodeId],undefined,`draft Save leaves palette-created ${type} unpublished`);
+ }
  await viewer.reload();
- assert.equal(await publicNode(paletteAddedNodeId).count(),0,'the palette-created divider is not public after Save');
+ for(const [type,nodeId] of Object.entries(paletteAddedNodeIds))assert.equal(await publicNode(nodeId).count(),0,`palette-created ${type} stays private after Save`);
  assert.equal(await publicNode(dividerId).evaluate(el=>getComputedStyle(el).borderTopWidth),'2px','Save does not change live divider');
  assert.equal(await publicNode(spacerId).evaluate(el=>getComputedStyle(el).height),'64px','Save does not change live spacer');
  await editor.locator('#publish').click();
- await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+ await editor.waitForTimeout(300);
+ assert.equal(posts.at(-1).publish,true,`explicit Publish is sent; UI status: ${await editor.locator('#saveStatus').textContent()}`);
  assert.equal(posts.at(-1).publish,true);
- assert.equal(published.pages[pageId].nodes[paletteAddedNodeId].type,'divider','explicit Publish copies the palette-created node to the live snapshot');
+ for(const [type,nodeId] of Object.entries(paletteAddedNodeIds))assert.equal(published.pages[pageId].nodes[nodeId].type,type,`explicit Publish copies palette-created ${type} to the live snapshot`);
  await viewer.reload();
- assert.equal(await publicNode(paletteAddedNodeId).count(),1,'the palette-created divider appears on the published page after Publish');
+ for(const [type,nodeId] of Object.entries(paletteAddedNodeIds))assert.equal(await publicNode(nodeId).count(),1,`palette-created ${type} appears publicly only after Publish`);
  assert.equal(await publicNode(dividerId).evaluate(el=>getComputedStyle(el).borderTopWidth),'6px');
  assert.equal(await publicNode(dividerId).evaluate(el=>getComputedStyle(el).borderTopStyle),'dashed');
  assert.equal(await publicNode(dividerId).evaluate(el=>getComputedStyle(el).borderTopColor),'rgb(34, 170, 102)');
  assert.equal(await publicNode(spacerId).evaluate(el=>getComputedStyle(el).height),'120px');
+ await publicNode(tooltipId).locator('button').focus();
+ assert.equal(await publicNode(tooltipId).getByRole('tooltip').textContent(),'További információ erről az elemről.','tooltip content and its required description reach the public page');
  await viewer.setViewportSize({width:390,height:800});await viewer.reload();
  assert.equal(await publicNode(spacerId).evaluate(el=>getComputedStyle(el).height),'40px','mobile spacer keeps its own height');
  assert.deepEqual(errors,[]);

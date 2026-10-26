@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-26",
+  "plan_cursor": "77.44.7.A/C/D — partial palette element Inspector and publish routes",
+  "test": {
+    "file": "tests/browser/editor-decorative-elements.test.js",
+    "result": "PASS 1/1, 7.3 seconds",
+    "palette_types": [
+      "divider",
+      "badge",
+      "quote",
+      "panel",
+      "overlay",
+      "absolute",
+      "sticky",
+      "tooltip"
+    ],
+    "lifecycle": [
+      "Each partial palette type creates a Canvas node and correct Page Model type.",
+      "Draft Save stores the nodes while the public snapshot remains unchanged.",
+      "Explicit Publish makes all palette-created nodes public.",
+      "Tooltip description exposes content.properties.set / props.description; missing required description blocks Publish until edited, then reaches Canvas and public output.",
+      "Divider and Spacer style routes retain their dedicated Canvas, Undo/Redo, responsive and public parity assertions."
+    ]
+  },
+  "scope": "Browser test and plan evidence only; no runtime source, production data, migration, or R2 changes. Full 77.44.7.A remains open."
+}
