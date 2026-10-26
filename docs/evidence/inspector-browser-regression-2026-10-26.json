@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-26",
+  "plan_cursor": "77.44.7.A — Inspector route and lifecycle regression",
+  "wide_suite": {
+    "command": "npm run test:editor:layout",
+    "browser_files": 45,
+    "cases": 86,
+    "result": "85 PASS, 1 timeout",
+    "failure": {
+      "file": "tests/browser/editor-inspector-lifecycle.test.js",
+      "step": "page.reload() after draft Save, at the border.style case",
+      "message": "20 second timeout while waiting for the page load event; no application assertion failed"
+    },
+    "other_cases": "All 85 other real Chromium cases passed across Admin Media, Inspector, content, responsive layout, Rich Text, Save and Publish."
+  },
+  "targeted_lifecycle": [
+    {
+      "change": "before reload wait condition adjustment",
+      "command": "node --test tests/browser/editor-inspector-lifecycle.test.js",
+      "result": "PASS 1/1, 235.7 seconds"
+    },
+    {
+      "change": "editor and public page reload now wait for domcontentloaded; subsequent Inspector and page assertions verify application readiness",
+      "command": "node --test tests/browser/editor-inspector-lifecycle.test.js",
+      "result": "PASS 1/1, 198.9 seconds"
+    }
+  ],
+  "lifecycle": "The test exercises 21 registered Inspector properties through command/key metadata, Canvas CSS, Undo/Redo, draft Save, reload persistence, public isolation and separate Publish/public CSS parity.",
+  "scope": "Test reliability and documentation only. No runtime assets, production data, migrations or R2 objects changed. The wide suite's one transient timeout was repeated successfully; this is not a claim that the entire suite passed in one run. Full 77.44.7.A remains open."
+}
