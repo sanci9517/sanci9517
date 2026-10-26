@@ -979,4 +979,6 @@ A Schedule Inspector 12 speciális mezője most a tényleges `schedule.config.se
 
 A Visszaszámláló négy vezérlője a tényleges `element.update` parancsot és teljes Page Model kulcsot teszi ki: `props.countdown.title`, `targetISO`, `finishText` és `showSeconds`. A meglévő, két időzónán és 390/1366 px-en futó Chromium-életciklusteszt mind a négy route-ot ellenőrzi, miközben lefedi a helyi idő/DST validációt, Canvas-előnézetet, kompozíciós mezőket, Undo/Redo-t, a piszkozat Save és külön Publish viselkedését, valamint a publikus nézetet. Célzott eredmény: 2/2 PASS. Részletek: [Inspector útvonal-metaadat bizonyíték](evidence/inspector-typed-control-route-metadata-2026-10-26.json).
 
+**Kiadás és éles ellenőrzés:** `909c01e4` a `v2/foundation` ágra került. Worker `5e322dd1-349e-47a1-bd55-f62d72a94299` 100% forgalmat kapott; health, D1-health és Editor belépő 200. Az éles `index.html`, `app.js` és Countdown Inspector SHA-256 egyezik a commitolt forrással. GitHub CI 5/5 PASS. Nincs migráció, production adatírás vagy R2-változás. [Bizonyíték](evidence/inspector-typed-control-route-metadata-2026-10-26.json).
+
 **Határ:** ez a Countdown útvonal-lifecycle szelet; a 77.44.7.A, a teljes 79 típus/68 property lefedés és a fizikai eszközös elfogadás OPEN. Nincs sémaváltozás vagy D1/R2 adatváltozás.

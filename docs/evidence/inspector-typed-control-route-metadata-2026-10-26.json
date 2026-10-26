@@ -210,5 +210,35 @@
       "Show seconds → element.update / props.countdown.showSeconds"
     ],
     "lifecycle": "Assertions run inside the existing real Countdown flow covering timezone/DST validation, composition and invalid-input guards, Canvas output, Undo/Redo, draft Save isolation, separate Publish and public desktop/mobile rendering."
+  },
+  "countdown_profile_runtime_release": {
+    "commit": "909c01e4ce8fc303e820f5b7bb57fde2f2096433",
+    "branch": "v2/foundation",
+    "github_ci": {
+      "result": "PASS 5/5 workflows",
+      "editor_core_run": 40305559096,
+      "f0_run": 40305559089,
+      "twitch_run": 40305559100,
+      "canonical_active_point_audit_run": 40305559219,
+      "canonical_plan_run": 40305559158
+    },
+    "production_deployment_id": "6ba2771d-4fa0-4ad6-9a82-e782d9665dcf",
+    "production_version_id": "5e322dd1-349e-47a1-bd55-f62d72a94299",
+    "traffic_percent": 100,
+    "script_etag": "0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0",
+    "health": {
+      "api_health": 200,
+      "db_health": 200,
+      "d1_connected": true,
+      "editor_entry": 200
+    },
+    "live_sha256_match": {
+      "public/editor-v2/index.html": "00aca5babdcb272cb4991f13985e5a2c904ce3b706fcb9caec5899d31ff53adb",
+      "public/editor-v2/app.js": "afb9925ad5e7b3f7d9a3d0a5ffd9251ebbfaa1e6af5e359677c56d37eb7c2358",
+      "public/editor-v2/ui/countdown-inspector.js": "ea50122cdbb0c8622a534ed229f62c173e9e99d51248d0161d7a07800f6a914b"
+    },
+    "d1_migrations_applied": false,
+    "production_data_writes": false,
+    "r2_changes": false
   }
 }
