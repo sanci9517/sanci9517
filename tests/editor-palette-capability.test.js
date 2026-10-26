@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import test from 'node:test';
-import {NODE_TYPES} from '../core/schema.js';
-import {getElementCapability} from '../core/capability-matrix.js';
+import {NODE_TYPES} from '../public/editor-v2/core/schema.js';
+import {getElementCapability} from '../public/editor-v2/core/capability-matrix.js';
 
-const source=readFileSync(new URL('../app.js',import.meta.url),'utf8');
+const source=readFileSync(new URL('../public/editor-v2/app.js',import.meta.url),'utf8');
 const palette=source.match(/const groups=\[([\s\S]*?)\n\];/)?.[1]??'';
 const paletteTypes=[...palette.matchAll(/NODE_TYPES\.([A-Z_]+)/g)].map(([,key])=>NODE_TYPES[key]);
 
