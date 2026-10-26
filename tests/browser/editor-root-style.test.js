@@ -48,6 +48,8 @@ test('root Inspector appearance matches published canvas only after Publish at d
  const rootNode=editor.locator('.node[data-node-id="'+rootId+'"]');
  await rootNode.evaluate(el=>el.click());
  if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
+ const enableRoot=editor.locator('[data-inspector-command="root.appearance.enable"]');
+ assert.equal(await enableRoot.getAttribute('data-inspector-key'),'metadata.editorRootVersion');
  const group=async name=>{
   const title=editor.locator('.inspector-group-title').filter({hasText:name});
   await title.waitFor();if(await title.getAttribute('aria-expanded')==='false')await title.click();

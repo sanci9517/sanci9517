@@ -122,6 +122,11 @@ test('copy appearance between text elements preserves content and geometry throu
   await tab.locator(`.node[data-node-id="${targetId}"]`).click();
   const paste=tab.getByRole('button',{name:'Másolt stílus alkalmazása'});
   assert.equal(await paste.isEnabled(),true);
+  assert.equal(await paste.getAttribute('data-inspector-command'),'style.snapshot.apply');
+  const pasteKeys=JSON.parse(await paste.getAttribute('data-inspector-keys'));
+  assert.ok(pasteKeys.includes('style.backgroundColor'));
+  assert.ok(pasteKeys.includes('responsive.mobile.fontSize'));
+  assert.equal(pasteKeys.includes('style.width'),false,'appearance paste does not target geometry');
   await paste.click();
   const readNode=async(id,key)=>tab.locator(`.node[data-node-id="${id}"]`).evaluate((el,property)=>getComputedStyle(el)[property],key);
   assert.equal(await readNode(targetId,'backgroundColor'),'rgb(40, 78, 114)');

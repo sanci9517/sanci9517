@@ -21,7 +21,7 @@ import {getElementCapability} from './core/capability-matrix.js?v=20261025-conte
 import {renderGeometryPresets} from './ui/geometry-presets.js';
 import {importRichTextClipboard} from './core/richtext-import.js';
 import {pasteRichTextDocument} from './core/richtext-paste.js';
-import {captureStyleSnapshot} from './core/style-snapshot.js';
+import {captureStyleSnapshot,STYLE_SNAPSHOT_PROPERTIES} from './core/style-snapshot.js';
 import {LAYOUT_PRESETS,LAYOUT_TYPES,layoutMode,isManagedLayout,isLayoutPropertyRelevant,explicitGridColumnCount} from './core/layout-presets.js';
 import {TYPOGRAPHY_PRESETS,typographyPresetPatch} from './core/typography-presets.js';
 import {isStructuredType,createElementContent,normalizeElementContent,renderElementContent,activateStructuredContent} from './core/element-content.js';
@@ -818,7 +818,7 @@ function renderLayoutInspector(node){
   const modeName=mode=>({flex:'Flex',grid:'Grid',block:'Normál folyás'}[mode]);
   const context=document.createElement('p');context.className='layout-context';context.textContent=`Ez az elem: ${modeName(layoutMode(node,device))} · ${device}.`;
   section.append(context);
-  if(node.type==='root'&&node.metadata?.editorRootVersion!==1){const enable=document.createElement('button');enable.type='button';enable.className='layout-parent';enable.textContent='Oldalgyökér stílusainak használata az előnézetben';enable.onclick=()=>command('root.appearance.enable',{nodeId:node.id});section.append(enable)}
+  if(node.type==='root'&&node.metadata?.editorRootVersion!==1){const enable=document.createElement('button');enable.type='button';enable.className='layout-parent';enable.dataset.inspectorCommand='root.appearance.enable';enable.dataset.inspectorKey='metadata.editorRootVersion';enable.textContent='Oldalgyökér stílusainak használata az előnézetben';enable.onclick=()=>command('root.appearance.enable',{nodeId:node.id});section.append(enable)}
   if(parent){
     const parentButton=document.createElement('button');parentButton.type='button';parentButton.className='layout-parent';parentButton.textContent=`Szülő: ${parent.name||parent.type} · ${modeName(layoutMode(parent,device))}`;
     parentButton.title='A szülő tároló kijelölése. Az oszlopok, irány és a gyermekek közötti távolság ott állítható.';
@@ -1105,7 +1105,7 @@ function renderInspector(){
   header.append(headerName,headerType);
   const styleActions=document.createElement('div');styleActions.className='style-copy-actions';
   const copyStyle=document.createElement('button');copyStyle.type='button';copyStyle.className='style-copy-button';copyStyle.textContent='Megjelenés másolása';copyStyle.setAttribute('aria-label','Megjelenés másolása');copyStyle.title='Szín, tipográfia, térköz, keret, árnyék és áttetszőség másolása. A tartalom, méret és pozíció megmarad.';copyStyle.onclick=()=>copySelectedAppearance(node);
-  const pasteStyle=document.createElement('button');pasteStyle.type='button';pasteStyle.className='style-paste-button';pasteStyle.textContent='Másolt stílus alkalmazása';pasteStyle.setAttribute('aria-label','Másolt stílus alkalmazása');pasteStyle.disabled=!copiedStyleSnapshot||editorSiteScope()!==copiedStyleSnapshot.siteId||(page()?.id===copiedStyleSnapshot.sourcePageId&&node.id===copiedStyleSnapshot.sourceNodeId)||Boolean(node.locked);pasteStyle.title='A másolt külső megjelenést alkalmazza erre az elemre; a tartalom, méret és pozíció változatlan marad.';pasteStyle.onclick=()=>pasteSelectedAppearance(node);
+  const pasteStyle=document.createElement('button');pasteStyle.type='button';pasteStyle.className='style-paste-button';pasteStyle.dataset.inspectorCommand='style.snapshot.apply';pasteStyle.dataset.inspectorKeys=JSON.stringify([...STYLE_SNAPSHOT_PROPERTIES.map(key=>`style.${key}`),...['desktop','tablet','mobile'].flatMap(view=>STYLE_SNAPSHOT_PROPERTIES.map(key=>`responsive.${view}.${key}`)),...(node.type==='root'?['metadata.rootStyleVersion']:[])]);pasteStyle.textContent='Másolt stílus alkalmazása';pasteStyle.setAttribute('aria-label','Másolt stílus alkalmazása');pasteStyle.disabled=!copiedStyleSnapshot||editorSiteScope()!==copiedStyleSnapshot.siteId||(page()?.id===copiedStyleSnapshot.sourcePageId&&node.id===copiedStyleSnapshot.sourceNodeId)||Boolean(node.locked);pasteStyle.title='A másolt külső megjelenést alkalmazza erre az elemre; a tartalom, méret és pozíció változatlan marad.';pasteStyle.onclick=()=>pasteSelectedAppearance(node);
   styleActions.append(copyStyle,pasteStyle);
   const styleHelp=document.createElement('small');styleHelp.className='style-copy-help';styleHelp.textContent='Másik szövegnél ugyanazt a megjelenést használhatod. A méretet, pozíciót és tartalmat külön kezeli.';
   const brand=document.createElement('a');brand.className='inspector-brand-link';brand.href='/admin/design';brand.target='_blank';brand.rel='noopener';brand.textContent='Közös webhelystílusok · Brand Kit';header.append(styleActions,styleHelp,brand);inspector.append(header);
@@ -1128,7 +1128,7 @@ function renderInspector(){
     if(node.type==='schedule')inspector.append(renderScheduleInspector(node,composition));
     else inspector.append(renderRegistryInspector(node,'primary'));
     const lockRow=document.createElement('label');lockRow.className='inspector-toggle';
-    const lockInput=document.createElement('input');lockInput.type='checkbox';lockInput.className='inspector-lock-toggle';lockInput.checked=Boolean(node.locked);lockInput.disabled=node.id===page()?.rootId;
+    const lockInput=document.createElement('input');lockInput.type='checkbox';lockInput.className='inspector-lock-toggle';lockInput.dataset.inspectorCommand='element.lock.set';lockInput.dataset.inspectorKey='locked';lockInput.checked=Boolean(node.locked);lockInput.disabled=node.id===page()?.rootId;
     lockInput.onchange=()=>command('element.lock.set',{nodeId:node.id,locked:lockInput.checked});
     const lockText=document.createElement('span');lockText.textContent='Zárolt elem';lockRow.append(lockInput,lockText);inspector.append(lockRow);
   }else if(inspectorTab==='content'){
@@ -1471,7 +1471,7 @@ function renderInspector(){
     inspector.append(renderAccessibilityInspector(node),renderStatesInspector(node));
     inspector.append(field('Node ID',node.id,()=>{},true),field('Típus',node.type,()=>{},true),field('Szülő ID',node.parentId||'',()=>{},true));
   }
-  const actions=document.createElement('div');actions.className='inspector-actions';const del=document.createElement('button');del.type='button';del.className='danger-action';del.textContent='Törlés';del.disabled=node.id===page()?.rootId||Boolean(node.locked);del.title=del.disabled?'A gyökér- vagy zárolt elem nem törölhető':'Kijelölt elem törlése';del.onclick=()=>{if(!del.disabled)command('element.delete',{nodeId:node.id})};actions.append(del);inspector.append(actions);
+  const actions=document.createElement('div');actions.className='inspector-actions';const del=document.createElement('button');del.type='button';del.className='danger-action';del.dataset.inspectorCommand='element.delete';del.dataset.inspectorNodeId=node.id;const deleteIds=[node.id],pageNodes=page()?.nodes??{};for(let index=0;index<deleteIds.length;index++)deleteIds.push(...(pageNodes[deleteIds[index]]?.children??[]));del.dataset.inspectorKeys=JSON.stringify(deleteIds.map(id=>`nodes.${id}`));del.textContent='Törlés';del.disabled=node.id===page()?.rootId||Boolean(node.locked);del.title=del.disabled?'A gyökér- vagy zárolt elem nem törölhető':'Kijelölt elem törlése';del.onclick=()=>{if(!del.disabled)command('element.delete',{nodeId:node.id})};actions.append(del);inspector.append(actions);
   if(node.locked){
     // Content and legacy inspectors share this boundary with typed Style fields.
     // Disable every mutation at the DOM boundary, but preserve search, category
