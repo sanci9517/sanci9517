@@ -34,6 +34,12 @@
     ],
     "lifecycle": "Each route is asserted inside the existing real Inspector → Canvas → Undo/Redo → draft Save/reload → separate Publish → public CSS parity flow."
   },
+  "decorative_spacer_lifecycle_followup": {
+    "file": "tests/browser/editor-decorative-elements.test.js",
+    "targeted_chromium": "PASS 1/1, 5.36 seconds",
+    "route_asserted": "spacer size.height → responsive.set / height",
+    "lifecycle": "The existing decorative Inspector flow verifies responsive height, Undo/Redo, draft Save, separate Publish and public/mobile rendering parity."
+  },
   "local_checks": {
     "editor_unit": "PASS 132/132",
     "typecheck": "PASS",

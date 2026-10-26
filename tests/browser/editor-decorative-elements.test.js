@@ -61,6 +61,9 @@ test('Divider and Spacer Inspector changes become public only after Publish, wit
  assert.equal(await canvasNode(dividerId).locator('.divider-preview').evaluate(el=>getComputedStyle(el).borderTopColor),'rgb(34, 170, 102)');
  await select(spacerId);
  assert.equal(await editor.locator('.decorative-inspector h3').textContent(),'Üres térköz');
+ const spacerHeight=editor.locator('.decorative-inspector .typed-inspector-field[data-property-id="size.height"]');
+ assert.equal(await spacerHeight.getAttribute('data-property-command'),'responsive.set','spacer exposes its actual responsive command route');
+ assert.equal(await spacerHeight.getAttribute('data-property-key'),'height','spacer exposes the Page Model height key');
  const editHeight=async value=>{
   const input=editor.locator('.decorative-inspector input[type="number"]');
   await input.fill(value);await input.press('Tab');
