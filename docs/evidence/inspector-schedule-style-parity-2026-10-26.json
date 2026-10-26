@@ -1,20 +1,35 @@
 {
   "date": "2026-10-26",
   "plan_cursor": "77.44.7.A — Inspector fields across edit, Canvas, Save and Publish",
-  "finding": "The Schedule Inspector declared the shared responsive design fields in its property contract, but its Design panel rendered only the type-specific schedule configuration.",
+  "finding": "The Schedule Inspector declared shared responsive design fields in its property contract, but the Design panel rendered only type-specific schedule configuration.",
   "change": {
-    "runtime": "Schedule Design now renders its type-specific configuration and the common primary registry fields.",
+    "runtime": "Schedule Design now renders both type-specific configuration and common primary registry fields.",
     "cache_busting": "Updated the editor app module query version.",
-    "coverage": "Added a real Chromium test covering 45 partial capability types against their inspector registry and command/key routes, including layout-contextual and advanced fields."
+    "partial_type_coverage": "Real Chromium compares Inspector controls and command/key routes for all 45 PARTIAL node types, including root, contextual Flex/Grid and advanced node name.",
+    "schedule_style_lifecycle": "The real Schedule background-color field is edited through the Inspector, verified on Canvas and in the saved responsive Page Model; Save leaves the public snapshot unchanged, and separate Publish exposes the color publicly."
   },
-  "checks": {
-    "new_partial_type_chromium_test": "PASS 1/1; all 45 types matched applicable registered fields and routes",
+  "local_checks": {
+    "partial_type_chromium": "PASS 1/1; 45/45 node types matched their applicable registry fields and routes",
+    "schedule_style_lifecycle": "PASS 2/2 at 390px and 1366px",
     "editor_unit": "PASS 134/134",
-    "schedule_unit": "PASS 1/1",
+    "schedule_unit": "PASS 9/9",
     "typecheck": "PASS",
     "editor_browser_suite": "86/87 in one four-worker run; the sole failure was a 9-second page.goto(load) timeout in the legacy-media test under parallel load. Isolated rerun PASS 1/1 in 35.1 seconds.",
-    "canonical_plan_audit": "pending final validation",
-    "active_plan_cursor": "77.44 / WEB-011 → 77.44.7.A; acceptance NOT_CERTIFIED"
+    "canonical_plan": "PASS",
+    "active_plan_cursor": "77.44 / WEB-011 → 77.44.7.A; acceptance NOT_CERTIFIED",
+    "traceability": "PASS 396/396 source mappings"
   },
-  "scope": "Includes an Inspector runtime fix and browser coverage. No D1 migration or production data write, no R2 deletion. Full 77.44.7.A and user acceptance remain open."
+  "github": {
+    "commit": "6db98a43ebeb8126e1d9a0be0e73f9b823605dff",
+    "branch": "v2/foundation",
+    "checks": "Five checks PASS (source-audit, verify, canonical-plan, twitch-integration, Workers Builds); editor-core browser job was still in progress at verification."
+  },
+  "production": {
+    "deployment_id": "ed92f4f0-7e6f-4aab-acba-ad9e73ccb3d3",
+    "worker_version_id": "c8638958-2b53-441a-ba6d-67d357794773",
+    "traffic_percent": 100,
+    "worker_script_etag": "0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0",
+    "live_index_and_app": "HTTP 200; production editor index contains the new cache key; app.js SHA-256 byte-matches the local source (1658ae72f45851a7cae827b39e3b54bdd2dca65e7eabf8d68440831a5267044b)."
+  },
+  "scope": "Runtime Inspector fix deployed. The later lifecycle-test edit is test-only. No D1 migration or production data write, no R2 deletion. Full 77.44.7.A and user acceptance remain open."
 }
