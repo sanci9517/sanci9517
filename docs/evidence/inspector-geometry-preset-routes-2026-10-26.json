@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-26",
+  "plan_cursor": "77.44.7.A / geometry preset render routes",
+  "test": {
+    "file": "tests/browser/editor-inspector-breakpoint-lifecycle.test.js",
+    "result": "PASS 1/1, 25.1 seconds",
+    "assertions": [
+      "Every rendered width preset button exposes responsive.set / width.",
+      "Every rendered height preset button exposes responsive.set / height."
+    ],
+    "context": "Assertions run in the real Chromium tablet/mobile/desktop Inspector breakpoint lifecycle; existing checks continue to verify Canvas, Undo/Redo, responsive reset, Save and separate Publish."
+  },
+  "scope": "Test and documentation only; no runtime code, production data, migration, or R2 changes. Full 77.44.7.A remains open."
+}

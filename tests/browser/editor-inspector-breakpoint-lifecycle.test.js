@@ -97,6 +97,13 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   await bulkBackgroundReset.click();
   assert.equal(await color(canvas),'rgb(22, 163, 74)','multi-key reset restores the inherited mobile background');
   const geometryHeading=editor.locator('.inspector-group-title').filter({hasText:'Geometria'});if(await geometryHeading.getAttribute('aria-expanded')==='false')await geometryHeading.click();
+  for(const [label,key] of [['Szélesség','width'],['Magasság','height']]){
+    const presets=editor.getByRole('group',{name:`${label} gyorsbeállítások`});
+    assert.equal(await presets.count(),1,`${label}: registry geometry presets are visible`);
+    const routes=await presets.locator('button').evaluateAll(buttons=>buttons.map(button=>({command:button.dataset.propertyCommand,key:button.dataset.propertyKey})));
+    assert.ok(routes.length>0,`${label}: presets are available`);
+    assert.ok(routes.every(route=>route.command==='responsive.set'&&route.key===key),`${label}: every preset exposes responsive.set / ${key}`);
+  }
   const widthPreset=editor.locator('.geometry-presets button').first();
   assert.equal(await widthPreset.getAttribute('data-property-command'),'responsive.set');
   assert.equal(await widthPreset.getAttribute('data-property-key'),'width');
