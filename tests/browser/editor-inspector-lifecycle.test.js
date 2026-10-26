@@ -163,9 +163,13 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await field('grid.column').locator('select:not(.property-token-picker)').selectOption('2');
   if(await editor.locator('.inspector-group-title[aria-expanded="false"]').filter({hasText:'Méret'}).count())await editor.locator('.inspector-group-title').filter({hasText:'Méret'}).click();
   await field('size.minWidth').locator('input[type="number"]').fill('80');
+  assert.equal(await field('size.minWidth').getAttribute('data-property-command'),'responsive.set');
+  assert.equal(await field('size.minWidth').getAttribute('data-property-key'),'minWidth');
   await field('size.minWidth').locator('input').press('Tab');
   await editor.locator('.inspector-tabs button').first().click();
   await field('radius.topLeft').locator('input[type="number"]').fill('12');
+  assert.equal(await field('radius.topLeft').getAttribute('data-property-command'),'responsive.set');
+  assert.equal(await field('radius.topLeft').getAttribute('data-property-key'),'borderTopLeftRadius');
   await field('radius.topLeft').locator('input').press('Tab');
   const item=editor.locator(`.node[data-node-id="${itemId}"]`);
   const css=()=>item.evaluate(el=>{const style=getComputedStyle(el);return {column:style.gridColumnStart,minWidth:style.minWidth,radius:style.borderTopLeftRadius}});
@@ -671,18 +675,22 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   });
   await verifyInspectorFieldLifecycle({
     propertyId:'radius.topRight',cssProperty:'borderTopRightRadius',label:'top right radius',groupName:'Lekerekítés',
+    expectedCommand:'responsive.set',expectedKey:'borderTopRightRadius',
     edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('18');await input.press('Tab')}
   });
   await verifyInspectorFieldLifecycle({
     propertyId:'radius.all',cssProperty:'borderBottomLeftRadius',label:'all-corner radius',groupName:'Lekerekítés',
+    expectedCommand:'responsive.set',expectedKey:'borderRadius',
     edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('10');await input.press('Tab')}
   });
   await verifyInspectorFieldLifecycle({
     propertyId:'radius.bottomLeft',cssProperty:'borderBottomLeftRadius',label:'bottom left radius',groupName:'Lekerekítés',
+    expectedCommand:'responsive.set',expectedKey:'borderBottomLeftRadius',
     edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('14');await input.press('Tab')}
   });
   await verifyInspectorFieldLifecycle({
     propertyId:'radius.bottomRight',cssProperty:'borderBottomRightRadius',label:'bottom right radius',groupName:'Lekerekítés',
+    expectedCommand:'responsive.set',expectedKey:'borderBottomRightRadius',
     edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('16');await input.press('Tab')}
   });
   await verifyInspectorFieldLifecycle({
@@ -731,14 +739,17 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   });
   await verifyInspectorFieldLifecycle({
     propertyId:'flex.basis',cssProperty:'flexBasis',label:'flex basis',groupName:'Flex',nodeId:flexItemId,
+    expectedCommand:'responsive.set',expectedKey:'flexBasis',
     edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('45');await input.press('Tab')}
   });
   await verifyInspectorFieldLifecycle({
     propertyId:'flex.grow',cssProperty:'flexGrow',label:'flex grow',groupName:'Flex',nodeId:flexItemId,
+    expectedCommand:'responsive.set',expectedKey:'flexGrow',
     edit:async control=>{const input=control.locator('input[type="number"]');await input.fill('2');await input.press('Tab')}
   });
   await verifyInspectorFieldLifecycle({
     propertyId:'flex.shrink',cssProperty:'flexShrink',label:'flex shrink',groupName:'Flex',nodeId:flexItemId,
+    expectedCommand:'responsive.set',expectedKey:'flexShrink',
     edit:async control=>{const input=control.locator('input[type="number"]');await input.fill('0');await input.press('Tab')}
   });
   await verifyInspectorFieldLifecycle({
@@ -763,10 +774,12 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   });
   await verifyInspectorFieldLifecycle({
     propertyId:'grid.row',cssProperty:'gridRowStart',label:'grid row placement',groupName:'Grid-gyermek',nodeId:itemId,
+    expectedCommand:'responsive.set',expectedKey:'gridRow',
     edit:control=>control.locator('select:not(.property-token-picker)').selectOption('2')
   });
   await verifyInspectorFieldLifecycle({
     propertyId:'grid.column',cssProperty:'gridColumnStart',label:'grid column placement',groupName:'Grid-gyermek',nodeId:itemId,
+    expectedCommand:'responsive.set',expectedKey:'gridColumn',
     edit:control=>control.locator('select:not(.property-token-picker)').selectOption('3')
   });
   await verifyInspectorFieldLifecycle({
@@ -789,14 +802,17 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   });
   await verifyInspectorFieldLifecycle({
     propertyId:'size.maxWidth',cssProperty:'maxWidth',label:'maximum width',groupName:'Méret',
+    expectedCommand:'responsive.set',expectedKey:'maxWidth',
     edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('420');await input.press('Tab')}
   });
   await verifyInspectorFieldLifecycle({
     propertyId:'size.minHeight',cssProperty:'minHeight',label:'minimum height',groupName:'Méret',
+    expectedCommand:'responsive.set',expectedKey:'minHeight',
     edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('96');await input.press('Tab')}
   });
   await verifyInspectorFieldLifecycle({
     propertyId:'size.maxHeight',cssProperty:'maxHeight',label:'maximum height',groupName:'Méret',
+    expectedCommand:'responsive.set',expectedKey:'maxHeight',
     edit:async control=>{const input=control.locator('.dimension-controls input[type="number"]');await input.fill('240');await input.press('Tab')}
   });
   await verifyInspectorFieldLifecycle({

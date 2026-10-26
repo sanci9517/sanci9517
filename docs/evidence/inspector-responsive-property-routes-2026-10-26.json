@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-26",
+  "plan_cursor": "77.44.7.A / Inspector responsive property route lifecycle",
+  "test": {
+    "file": "tests/browser/editor-inspector-lifecycle.test.js",
+    "result": "PASS 1/1, 214.5 seconds",
+    "routes_asserted": [
+      "size.minWidth → responsive.set / minWidth",
+      "size.maxWidth → responsive.set / maxWidth",
+      "size.minHeight → responsive.set / minHeight",
+      "size.maxHeight → responsive.set / maxHeight",
+      "radius.all → responsive.set / borderRadius",
+      "radius.topLeft → responsive.set / borderTopLeftRadius",
+      "radius.topRight → responsive.set / borderTopRightRadius",
+      "radius.bottomRight → responsive.set / borderBottomRightRadius",
+      "radius.bottomLeft → responsive.set / borderBottomLeftRadius",
+      "flex.basis → responsive.set / flexBasis",
+      "flex.grow → responsive.set / flexGrow",
+      "flex.shrink → responsive.set / flexShrink",
+      "grid.row → responsive.set / gridRow",
+      "grid.column → responsive.set / gridColumn"
+    ],
+    "lifecycle": "The responsive size limits, corner radii, Flex child values and Grid child placement are asserted in the existing real Chromium Inspector → Canvas → Undo/Redo → draft Save/reload → separate Publish → public CSS parity flow."
+  },
+  "other_checks": {
+    "typecheck": "PASS",
+    "plan_contract": "PASS",
+    "traceability": "PASS, 396 mappings",
+    "git_diff_check": "PASS"
+  },
+  "scope": "Test and plan evidence only; no runtime, production data, migration or storage changes. The full 77.44.7.A acceptance remains open."
+}
