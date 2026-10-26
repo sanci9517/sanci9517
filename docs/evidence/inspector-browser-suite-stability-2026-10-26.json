@@ -2,19 +2,31 @@
   "date": "2026-10-26",
   "plan_cursor": "77.44.7.A — full Editor browser regression and style-copy route",
   "browser_suite": {
-    "command": "npm run test:editor:layout",
+    "command": "npm run test:editor:layout -- --test-concurrency=4",
     "files": 45,
     "cases": 86,
-    "initial_result": "85 PASS, 1 FAIL",
-    "failure": {
-      "file": "tests/browser/editor-style-copy.test.js",
-      "step": "fill the bottom padding side after editing the preceding box sides",
-      "error": "7 second timeout waiting for the accessible spinbutton locator"
+    "initial_full_runs": [
+      "85/86: style-copy locator timed out after 7 seconds under default concurrent browser load.",
+      "85/86: structural-parity locator evaluation timed out after 6 seconds under default concurrent load; target node was visible and style-copy passed."
+    ],
+    "adjustments": [
+      {
+        "file": "tests/browser/editor-style-copy.test.js",
+        "change": "Playwright default timeout 7s → 15s",
+        "targeted_result": "PASS 1/1 in 28.1s"
+      },
+      {
+        "file": "tests/browser/editor-structural-parity.test.js",
+        "change": "Playwright default timeout 6s → 15s",
+        "targeted_result": "PASS 1/1 in 99.0s"
+      }
+    ],
+    "final_full_run": {
+      "result": "PASS 86/86; zero failures",
+      "duration_ms": 1317115,
+      "concurrency": 4
     },
-    "isolated_reproduction": "PASS before timeout change",
-    "adjustment": "Raised this lifecycle fixture's default locator timeout from 7 seconds to 15 seconds to accommodate suite load; no product code or asserted behavior changed.",
-    "targeted_validation_after_adjustment": "PASS 1/1 in 28.1 seconds",
-    "wide_suite_after_adjustment": "NOT RUN; the prior 85/86 full run remains the only wide-run result"
+    "coverage": "Inspector fields and layout, authored and structured content, Rich Text and IME, media, Save versus separate Publish, responsive canvas and public renderer parity."
   },
   "supporting_checks": {
     "editor_unit": "PASS 134/134",
@@ -25,5 +37,5 @@
     "javascript_syntax": "PASS",
     "git_diff_check": "PASS"
   },
-  "scope": "Browser-test timeout and plan/evidence documentation only. No runtime source or production data changed. GitHub branch/CI and any automatic deployment state must be verified separately; no manual Worker deploy, D1 migration/data write, or R2 operation was performed. The full 77.44.7.A remains open."
+  "scope": "Browser-test timeouts and plan/evidence documentation only. No runtime source or production data changed; no D1 migration/write or R2 operation occurred. Full 77.44.7.A and user acceptance remain open."
 }

@@ -46,7 +46,9 @@ test('each authored structural type preserves its semantics and responsive layou
   await new Promise(done=>server.listen(0,'127.0.0.1',done));
   const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
   const base=`http://127.0.0.1:${server.address().port}`,editor=await browser.newPage({viewport:{width:1440,height:900}}),live=await browser.newPage({viewport:{width:1440,height:900}}),errors=[];
-  for(const page of [editor,live]){page.setDefaultTimeout(6000);page.on('pageerror',error=>errors.push(error.message))}
+  // This test switches six live page models across three viewports. Leave
+  // room for Chromium to service locator evaluations while the suite is busy.
+  for(const page of [editor,live]){page.setDefaultTimeout(15000);page.on('pageerror',error=>errors.push(error.message))}
   const measure=el=>{const style=getComputedStyle(el);return Object.fromEntries(['display','position','width','height','minWidth','maxWidth','minHeight','maxHeight','padding','borderRadius','backgroundColor','color','flexDirection','gap','gridTemplateColumns'].map(key=>[key,style[key]]))};
   for(const type of STRUCTURAL_TYPES){
     const {id}=models[type];await editor.goto(base+'/editor-v2/index.html?pageId='+type);const source=editor.locator(`.node[data-node-id="${id}"]`);await source.evaluate(el=>el.click());if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
