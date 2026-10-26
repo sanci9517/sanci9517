@@ -273,7 +273,7 @@
     "targeted_lifecycle": "PASS 9/9 combined real-Chromium suites: Card 2 viewport runs, Creator Embed 2, Social Links 2, Code 2, Structured content 1 (covers six structures and Basic badge/quote/icon); plus legacy media 1/1.",
     "remote_d1_preflight": "PASS; No migrations to apply (read-only)",
     "wrangler_dry_run": "PASS; Wrangler 4.130.0, 159 assets, 287.10 KiB, no upload",
-    "release_state": "Runtime commit pushed and deployed; Editor Core CI is still running. See production_release_followup for the exact commit, deployment and live hashes.",
+    "release_state": "Runtime commit 99282f98 pushed and production-verified; all five GitHub workflows PASS. The later documentation-only push also passed all five workflows and did not change runtime asset hashes.",
     "targeted_lifecycle_result": "PASS: 10 browser test cases total across the new route/lifecycle coverage (combined batch 9/9 plus legacy media 1/1).",
     "plan_and_traceability": "PASS canonical plan checker; PASS active point audit (77.44.7.A OPEN); PASS 396-source traceability check; PASS git diff --check."
   },
@@ -315,6 +315,27 @@
       "public/editor-v2/ui/social-links-inspector.js": "6fc37fc7a3de570f421a7f5e356566ea81d3d9b867dfe4e0e42c0eb6f0dee33e",
       "public/editor-v2/ui/structured-inspector.js": "95eda1ba7ab8858cae2e3e1214e4f002c55931058f840956f7c5b3730ce88643"
     },
+    "d1_migrations_applied": false,
+    "production_data_writes": false,
+    "r2_changes": false
+  },
+  "documentation_only_auto_deployment": {
+    "triggering_commit": "22afd2d0712923acd9f9135acdc57cbc34f6e87e",
+    "change_scope": "Documentation and evidence only; no runtime source changes.",
+    "github_ci": {
+      "result": "PASS 5/5 workflows",
+      "editor_core_run": 40313205321,
+      "f0_run": 40313205370,
+      "twitch_run": 40313205455,
+      "canonical_active_point_audit_run": 40313205427,
+      "canonical_plan_run": 40313205458
+    },
+    "automatic_deployment_id": "785a3229-6564-45bc-ba57-5ad03b837f76",
+    "automatic_version_id": "6c320ded-ceb7-4b7b-b51b-e305995a6f0f",
+    "traffic_percent": 100,
+    "script_etag_unchanged": "0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0",
+    "production_smoke": "200 for /api/health, /api/db-health (D1 connected) and /editor-v2/.",
+    "asset_hashes": "index.html, app.js and all seven modified Inspector modules remained byte-identical to commit 99282f98.",
     "d1_migrations_applied": false,
     "production_data_writes": false,
     "r2_changes": false
