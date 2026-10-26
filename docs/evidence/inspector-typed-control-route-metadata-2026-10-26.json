@@ -22,6 +22,18 @@
       "hover background color and gradient → states.set / registered keys"
     ]
   },
+  "geometry_lifecycle_followup": {
+    "file": "tests/browser/editor-inspector-lifecycle.test.js",
+    "targeted_chromium": "PASS 1/1, 188.9 seconds",
+    "routes_asserted": [
+      "size.width → responsive.set / width",
+      "size.height → responsive.set / height",
+      "position.x → responsive.set / x",
+      "position.y → responsive.set / y",
+      "position.position → responsive.set / position"
+    ],
+    "lifecycle": "Each route is asserted inside the existing real Inspector → Canvas → Undo/Redo → draft Save/reload → separate Publish → public CSS parity flow."
+  },
   "local_checks": {
     "editor_unit": "PASS 132/132",
     "typecheck": "PASS",
@@ -62,5 +74,5 @@
     "production_data_writes": false,
     "r2_changes": false
   },
-  "acceptance": "This closes the rendered typed-control route metadata gap for the asserted base-style and hover-state controls. Full 79-type/68-property lifecycle acceptance remains OPEN."
+  "acceptance": "Rendered route metadata is verified for the asserted base-style, hover-state, and five geometry controls; the geometry controls also pass the full targeted lifecycle. Full 79-type/68-property lifecycle acceptance remains OPEN."
 }

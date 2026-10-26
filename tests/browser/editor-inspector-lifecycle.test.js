@@ -555,7 +555,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   // Exercise the remaining primary typography controls through the identical
   // real Inspector → Canvas → draft → public boundary, rather than relying on
   // the initial style snapshot alone.
-  const verifyInspectorFieldLifecycle=async({propertyId,cssProperty,label,groupName='Tipográfia',nodeId=itemId,publicMatches=(canvasValue,publicValue)=>canvasValue===publicValue,edit})=>{
+  const verifyInspectorFieldLifecycle=async({propertyId,cssProperty,label,groupName='Tipográfia',nodeId=itemId,publicMatches=(canvasValue,publicValue)=>canvasValue===publicValue,expectedCommand,expectedKey,edit})=>{
     const openGroup=async()=>{
       await editor.locator('.inspector-tabs button').first().click();
       const group=editor.locator('.inspector-group-title').filter({hasText:groupName});
@@ -571,6 +571,8 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
     const previousPublic=await publicValue();
     const inspectorField=field(propertyId);
     assert.equal(await inspectorField.count(),1,`${label}: Inspector exposes the expected field`);
+    if(expectedCommand)assert.equal(await inspectorField.getAttribute('data-property-command'),expectedCommand,`${label}: Inspector exposes the actual command route`);
+    if(expectedKey)assert.equal(await inspectorField.getAttribute('data-property-key'),expectedKey,`${label}: Inspector exposes the actual property key`);
     await edit(inspectorField);
     const next=await canvasValue();
     assert.notEqual(next,previous,`${label}: Inspector edit changes Canvas CSS`);
@@ -803,6 +805,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   });
   await verifyInspectorFieldLifecycle({
     propertyId:'size.width',cssProperty:'width',label:'geometry width',groupName:'Geometria',
+    expectedCommand:'responsive.set',expectedKey:'width',
     edit:async control=>{
       await control.locator('select:not(.property-token-picker)').selectOption('px');
       const input=control.locator('input[type="number"]');await input.fill('333');await input.press('Tab');
@@ -810,6 +813,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   });
   await verifyInspectorFieldLifecycle({
     propertyId:'size.height',cssProperty:'height',label:'geometry height',groupName:'Geometria',
+    expectedCommand:'responsive.set',expectedKey:'height',
     edit:async control=>{
       await control.locator('select:not(.property-token-picker)').selectOption('px');
       const input=control.locator('input[type="number"]');await input.fill('177');await input.press('Tab');
@@ -817,6 +821,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   });
   await verifyInspectorFieldLifecycle({
     propertyId:'position.x',cssProperty:'left',label:'geometry X position',groupName:'Geometria',
+    expectedCommand:'responsive.set',expectedKey:'x',
     edit:async control=>{
       await control.locator('select:not(.property-token-picker)').selectOption('px');
       const input=control.locator('input[type="number"]');await input.fill('42');await input.press('Tab');
@@ -824,6 +829,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   });
   await verifyInspectorFieldLifecycle({
     propertyId:'position.y',cssProperty:'top',label:'geometry Y position',groupName:'Geometria',
+    expectedCommand:'responsive.set',expectedKey:'y',
     edit:async control=>{
       await control.locator('select:not(.property-token-picker)').selectOption('px');
       const input=control.locator('input[type="number"]');await input.fill('27');await input.press('Tab');
@@ -831,6 +837,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   });
   await verifyInspectorFieldLifecycle({
     propertyId:'position.position',cssProperty:'position',label:'position mode',groupName:'Geometria',
+    expectedCommand:'responsive.set',expectedKey:'position',
     edit:control=>control.locator('select:not(.property-token-picker)').selectOption('absolute')
   });
   await verifyInspectorFieldLifecycle({
