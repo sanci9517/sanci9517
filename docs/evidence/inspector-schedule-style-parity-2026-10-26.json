@@ -15,6 +15,7 @@
     "schedule_unit": "PASS 9/9",
     "typecheck": "PASS",
     "editor_browser_suite": "86/87 in one four-worker run; the sole failure was a 9-second page.goto(load) timeout in the legacy-media test under parallel load. Isolated rerun PASS 1/1 in 35.1 seconds.",
+    "legacy_media_navigation_stability": "Raised only that test's navigation timeout from 9 to 15 seconds; isolated Chromium rerun PASS 1/1 in 24.7 seconds.",
     "canonical_plan": "PASS",
     "active_plan_cursor": "77.44 / WEB-011 → 77.44.7.A; acceptance NOT_CERTIFIED",
     "traceability": "PASS 396/396 source mappings"
@@ -31,5 +32,5 @@
     "worker_script_etag": "0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0",
     "live_index_and_app": "HTTP 200; production editor index contains the new cache key; app.js SHA-256 byte-matches the local source (1658ae72f45851a7cae827b39e3b54bdd2dca65e7eabf8d68440831a5267044b)."
   },
-  "scope": "Runtime Inspector fix deployed. The later lifecycle-test edit is test-only. No D1 migration or production data write, no R2 deletion. Full 77.44.7.A and user acceptance remain open."
+  "scope": "Runtime Inspector fix deployed. The later lifecycle and navigation timeout updates are test-only. No D1 migration or production data write, no R2 deletion. Full 77.44.7.A and user acceptance remain open."
 }

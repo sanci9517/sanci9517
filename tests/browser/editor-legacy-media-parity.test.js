@@ -80,6 +80,7 @@ test('legacy image video audio share guarded media URLs in Inspector Canvas and 
   const viewer=await browser.newPage({viewport:{width:1440,height:900}});
   for(const [name,page] of [['editor',editor],['public',viewer]]){
     page.setDefaultTimeout(9000);
+    page.setDefaultNavigationTimeout(15000);
     page.on('pageerror',error=>errors.push(name+': '+error.message));
     page.on('request',request=>{if(request.url().includes('untrusted.invalid'))externalRequests.push(request.url())});
   }
