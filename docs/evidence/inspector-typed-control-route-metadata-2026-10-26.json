@@ -80,5 +80,22 @@
     "production_data_writes": false,
     "r2_changes": false
   },
-  "acceptance": "Rendered route metadata is verified for the asserted base-style, hover-state, and five geometry controls; the geometry controls also pass the full targeted lifecycle. Full 79-type/68-property lifecycle acceptance remains OPEN."
+  "test_only_followup_release": {
+    "commit": "e08c90eee79443224bda7208e77e08caa4a3e3ad",
+    "github_ci": "PASS 5/5 workflows; Editor Core includes full Editor browser layout and WEB-013 Admin mobile regressions",
+    "production_deployment_id": "5e46efa3-89a9-47ab-bb6b-bc91ed5ea7a1",
+    "production_version_id": "6ff0a8ae-4634-42ad-babe-8e2b627b4da0",
+    "traffic_percent": 100,
+    "script_etag": "0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0",
+    "health": {"api_health": 200, "db_health": 200},
+    "live_sha256_match": {
+      "public/editor-v2/index.html": "dc316bdc8b7f9ce3e41cb26858a926be8c2af25add3c20d6bdd4034f8a9b1e90",
+      "public/editor-v2/app.js": "3e172ced781ed390a0397521102f99f7fef131bd797a5d4aca998444bce6ca9f",
+      "public/editor-v2/ui/property-controls.js": "eaa2bd9b85ad4604ac65040d5f056e3aa6def7bb5b81a7c9f7e17ebe382eee15"
+    },
+    "runtime_code_changed": false,
+    "database_migrations_or_writes": false,
+    "r2_changes": false
+  },
+  "acceptance": "Rendered route metadata is verified for the asserted base-style, hover-state, five geometry controls, and spacer height; geometry and spacer flows pass their targeted lifecycle checks. Full 79-type/68-property lifecycle acceptance remains OPEN."
 }
