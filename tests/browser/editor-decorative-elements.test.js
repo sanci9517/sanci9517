@@ -77,6 +77,11 @@ test('partial palette types and Divider/Spacer Inspector edits become public onl
   if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
   await editor.locator('.inspector-tabs button').nth(1).click();
  };
+ const selectStyle=async id=>{
+  await canvasNode(id).evaluate(el=>el.click());
+  if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click();
+  await editor.locator('.inspector-tabs button').first().click();
+ };
  const tooltipId=paletteAddedNodeIds.tooltip;
  await select(tooltipId);
  const tooltipDescription=editor.locator('.content-schema-field[data-content-key="description"]');
@@ -88,6 +93,22 @@ test('partial palette types and Divider/Spacer Inspector edits become public onl
  const tooltipDescriptionText=tooltipDescription.locator('textarea');
  await tooltipDescriptionText.fill('További információ erről az elemről.');
  assert.equal(await canvasNode(tooltipId).locator('.creator-tooltip [role="tooltip"]').textContent(),'További információ erről az elemről.','tooltip description Inspector edit reaches Canvas');
+ const paletteColors={divider:'#3b82f6',panel:'#ef4444',overlay:'#10b981',absolute:'#f59e0b',sticky:'#8b5cf6',badge:'#ec4899',quote:'#14b8a6',tooltip:'#f97316'};
+ const asRgb=hex=>{const value=hex.slice(1);return `rgb(${parseInt(value.slice(0,2),16)}, ${parseInt(value.slice(2,4),16)}, ${parseInt(value.slice(4,6),16)})`};
+ for(const [type,nodeId] of Object.entries(paletteAddedNodeIds)){
+  await selectStyle(nodeId);
+  const background=editor.locator('.typed-inspector-field[data-property-id="background.color"]');
+  assert.equal(await background.getAttribute('data-property-command'),'responsive.set',`${type}: shared background field exposes its command route`);
+  assert.equal(await background.getAttribute('data-property-key'),'backgroundColor',`${type}: shared background field exposes its Page Model key`);
+  const input=background.locator('input[type="color"]'),previous=await canvasNode(nodeId).evaluate(el=>getComputedStyle(el).backgroundColor);
+  await input.evaluate((el,value)=>{el.value=value;el.dispatchEvent(new Event('change',{bubbles:true}))},paletteColors[type]);
+  const next=await canvasNode(nodeId).evaluate(el=>getComputedStyle(el).backgroundColor);
+  assert.equal(next,asRgb(paletteColors[type]),`${type}: Inspector background color reaches Canvas`);
+  await editor.locator('#undo').click();
+  assert.equal(await canvasNode(nodeId).evaluate(el=>getComputedStyle(el).backgroundColor),previous,`${type}: background edit is undoable`);
+  await editor.locator('#redo').click();
+  assert.equal(await canvasNode(nodeId).evaluate(el=>getComputedStyle(el).backgroundColor),next,`${type}: background edit is redoable`);
+ }
  await select(dividerId);
  const controls=editor.locator('.decorative-inspector');
  assert.equal(await controls.locator('h3').textContent(),'Elválasztóvonal');
@@ -127,6 +148,7 @@ test('partial palette types and Divider/Spacer Inspector edits become public onl
  assert.equal(posts.at(-1).publish,false);
  for(const [type,nodeId] of Object.entries(paletteAddedNodeIds)){
   assert.equal(draft.pages[pageId].nodes[nodeId].type,type,`Save persists the palette-created ${type} Page Model node`);
+  assert.equal(draft.pages[pageId].nodes[nodeId].responsive.desktop.backgroundColor,paletteColors[type],`Save persists the ${type} Inspector background edit`);
   assert.equal(published.pages[pageId].nodes[nodeId],undefined,`draft Save leaves palette-created ${type} unpublished`);
  }
  await viewer.reload();
@@ -139,7 +161,10 @@ test('partial palette types and Divider/Spacer Inspector edits become public onl
  assert.equal(posts.at(-1).publish,true);
  for(const [type,nodeId] of Object.entries(paletteAddedNodeIds))assert.equal(published.pages[pageId].nodes[nodeId].type,type,`explicit Publish copies palette-created ${type} to the live snapshot`);
  await viewer.reload();
- for(const [type,nodeId] of Object.entries(paletteAddedNodeIds))assert.equal(await publicNode(nodeId).count(),1,`palette-created ${type} appears publicly only after Publish`);
+ for(const [type,nodeId] of Object.entries(paletteAddedNodeIds)){
+  assert.equal(await publicNode(nodeId).count(),1,`palette-created ${type} appears publicly only after Publish`);
+  assert.equal(await publicNode(nodeId).evaluate(el=>getComputedStyle(el).backgroundColor),asRgb(paletteColors[type]),`published ${type} preserves Inspector background color`);
+ }
  assert.equal(await publicNode(dividerId).evaluate(el=>getComputedStyle(el).borderTopWidth),'6px');
  assert.equal(await publicNode(dividerId).evaluate(el=>getComputedStyle(el).borderTopStyle),'dashed');
  assert.equal(await publicNode(dividerId).evaluate(el=>getComputedStyle(el).borderTopColor),'rgb(34, 170, 102)');

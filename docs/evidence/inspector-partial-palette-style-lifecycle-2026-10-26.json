@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-26",
+  "plan_cursor": "77.44.7.A/C/D — partial palette element Inspector style lifecycle",
+  "test": {
+    "file": "tests/browser/editor-decorative-elements.test.js",
+    "result": "PASS 1/1, 12.6 seconds",
+    "elements": [
+      "divider",
+      "panel",
+      "overlay",
+      "absolute",
+      "sticky",
+      "badge",
+      "quote",
+      "tooltip"
+    ],
+    "property_route": {
+      "id": "background.color",
+      "command": "responsive.set",
+      "page_model_key": "backgroundColor"
+    },
+    "lifecycle": [
+      "Each palette-created element is edited through the actual Inspector field using its own background color.",
+      "Each route is compared to the shared property registry; Canvas CSS updates and Undo/Redo restores each value.",
+      "One draft Save persists all eight Page Model values while every public node remains absent and the published snapshot is unchanged.",
+      "Separate Publish exposes all eight nodes with the exact matching public CSS color."
+    ],
+    "additional_coverage": "Tooltip's required description publish gate and content.properties.set / props.description route, plus Divider and Spacer dedicated Inspector routes, remain covered in the same test."
+  },
+  "supporting_checks": {
+    "editor_unit": "PASS 134/134",
+    "typecheck": "PASS",
+    "canonical_plan": "PASS",
+    "active_plan_point": "77.44 / WEB-011 → 77.44.7.A; functional acceptance remains NOT_CERTIFIED",
+    "source_traceability": "PASS 396/396 mappings; acceptance NOT certified",
+    "javascript_syntax": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "scope": "Browser test and documentation only; no runtime source, production data, database migration, or R2 change. This proves a shared Inspector style route across these partial types, not full per-type acceptance. Full 77.44.7.A remains open."
+}
