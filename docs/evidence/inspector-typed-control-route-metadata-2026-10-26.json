@@ -32,9 +32,32 @@
     "worker_dry_run": "PASS: 159 public assets, 287.10 KiB; no upload"
   },
   "release": {
-    "commit": "pending",
-    "github_ci": "pending",
-    "production_deployment": "pending verification",
+    "commit": "68df577e2a6f1dc5b7b0c62ff636a9caf47623b9",
+    "branch": "v2/foundation",
+    "github_ci": {
+      "result": "PASS 5/5 workflows",
+      "editor_core_run": 40282176234,
+      "f0_run": 40282176243,
+      "twitch_run": 40282176279,
+      "canonical_active_point_audit_run": 40282176364,
+      "canonical_plan_run": 40282176205
+    },
+    "production_deployment": {
+      "deployment_id": "1101fed1-3eb3-466e-9217-6f214e84cecf",
+      "version_id": "bdd1dba5-0bc9-42cf-a70c-4d6051dc172d",
+      "traffic_percent": 100,
+      "script_etag": "0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0"
+    },
+    "health": {
+      "api_health": 200,
+      "db_health": 200,
+      "d1_connected": true
+    },
+    "live_sha256_match": {
+      "public/editor-v2/index.html": "dc316bdc8b7f9ce3e41cb26858a926be8c2af25add3c20d6bdd4034f8a9b1e90",
+      "public/editor-v2/app.js": "3e172ced781ed390a0397521102f99f7fef131bd797a5d4aca998444bce6ca9f",
+      "public/editor-v2/ui/property-controls.js": "eaa2bd9b85ad4604ac65040d5f056e3aa6def7bb5b81a7c9f7e17ebe382eee15"
+    },
     "d1_migrations_applied": false,
     "production_data_writes": false,
     "r2_changes": false
