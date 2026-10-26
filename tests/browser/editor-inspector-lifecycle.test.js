@@ -269,6 +269,30 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   await saveContentProperty(true);await publicPage.reload();
   assert.equal(await publicText(),'Registry-alapú szöveg','Publish sends registry-backed text to the public renderer');
 
+  const exerciseContentTextType=async(nodeId,updatedText)=>{
+    await select(nodeId);await editor.locator('.inspector-tabs button').nth(1).click();
+    const textControl=editor.locator(`.plain-text-content[data-property-id="content.text"] textarea[data-text-node-id="${nodeId}"]`);
+    assert.equal(await textControl.locator('xpath=..').getAttribute('data-property-command'),'element.content.set');
+    assert.equal(await textControl.locator('xpath=..').getAttribute('data-property-key'),'text');
+    const publicNode=()=>publicPage.locator(`[data-node-id="${nodeId}"]`);
+    const originalText=await publicNode().innerText();
+    await textControl.fill(updatedText);
+    assert.equal(await editor.locator(`.node[data-node-id="${nodeId}"] > .node-content`).innerText(),updatedText);
+    await editor.locator('#undo').click();
+    await editor.waitForFunction(id=>document.querySelector(`.plain-text-content[data-property-id="content.text"] textarea[data-text-node-id="${id}"]`)?.value!==undefined,nodeId);
+    assert.notEqual(await textControl.inputValue(),updatedText,'Undo restores the previous text for each applicable node type');
+    await editor.locator('#redo').click();assert.equal(await textControl.inputValue(),updatedText);
+    await saveContentProperty(false);
+    assert.equal(posts.at(-1).document.pages[pageId].nodes[nodeId].props.text,updatedText);
+    await editor.reload();await select(nodeId);await editor.locator('.inspector-tabs button').nth(1).click();
+    assert.equal(await editor.locator(`.plain-text-content[data-property-id="content.text"] textarea[data-text-node-id="${nodeId}"]`).inputValue(),updatedText);
+    await publicPage.reload();assert.equal(await publicNode().innerText(),originalText,'draft content.text remains unpublished');
+    await saveContentProperty(true);await publicPage.reload();
+    assert.equal(await publicNode().innerText(),updatedText,'Publish exposes content.text for every registered node type');
+  };
+  await exerciseContentTextType(buttonId,'Gomb registry-szöveg');
+  await exerciseContentTextType(linkId,'Link registry-szöveg');
+
   await select(buttonId);await editor.locator('.inspector-tabs button').nth(1).click();
   const hrefContract=editor.locator('.content-schema-field[data-property-id="content.href"]');
   assert.equal(await hrefContract.getAttribute('data-property-command'),'content.properties.set');

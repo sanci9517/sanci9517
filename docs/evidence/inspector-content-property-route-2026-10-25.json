@@ -31,10 +31,11 @@
     "Editor dispatches the registered command for plain text and authored href fields",
     "Registry imports and Editor entrypoint use a fresh content-property route cache key",
     "Browser lifecycle verifies Undo/Redo, Save without Publish, Editor reload, unchanged public state, and separate Publish for text and href",
-    "Extended content.href lifecycle coverage to plain link nodes as well as buttons"
+    "Extended content.href lifecycle coverage to plain link nodes as well as buttons",
+    "Extended content.text lifecycle coverage across plain text, button and link node types"
   ],
   "checks": {
-    "editor_inspector_lifecycle_chromium": "PASS 1/1, 168.7 seconds; covers content.text fallback, content.href on button and link, and background.image",
+    "editor_inspector_lifecycle_chromium": "PASS 1/1, 163.3 seconds; content.text on text/button/link, content.href on button/link, background.image, Undo/Redo, Save/reload and separate Publish",
     "general_fields_and_richtext_chromium": "PASS 4/4 across 390px and 1366px",
     "editor_unit": "PASS 132/132",
     "typecheck": "PASS",
@@ -45,7 +46,8 @@
     "worker_dry_run": "PASS: 159 public assets, 287.10 KiB total; dry-run exited without upload",
     "editor_core_ci": "PASS on follow-up commit 721c552c3cdb8eb539d05483e9cf80c8dc163ffe; Editor browser layout and WEB-013 Admin mobile browser regressions passed",
     "link_node_lifecycle_local": "PASS in the extended 1/1 Chromium lifecycle run; follow-up CI pending for the added link-node assertions",
-    "link_node_lifecycle_ci": "Included in Editor browser layout regression; PASS on follow-up commit 721c552c3cdb8eb539d05483e9cf80c8dc163ffe"
+    "link_node_lifecycle_ci": "Included in Editor browser layout regression; PASS on follow-up commit 721c552c3cdb8eb539d05483e9cf80c8dc163ffe",
+    "content_text_type_coverage": "PASS: plain text, button and link Inspector controls expose the registry ID/command/key and match Canvas, draft Save/reload and explicit Publish"
   },
   "production_scope": {
     "runtime_changed": true,
