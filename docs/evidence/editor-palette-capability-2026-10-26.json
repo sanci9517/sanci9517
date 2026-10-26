@@ -49,7 +49,7 @@
       "public/editor-v2/index.html": "dfa59b4705dec61e3f3136d609e5b1283154cc8f52a76aaf87b60e5b4e448035"
     },
     "test_source_asset": "Confirmed 404 after cleanup deployment; no longer published.",
-    "end_to_end_test_followup": "The browser assertion was extended to follow the same palette-created node through Save and Publish. Local PASS; test/docs-only commit and CI are in progress. Runtime sources and production deployment are unchanged by this follow-up.",
+    "end_to_end_test_followup": "The browser assertion follows the same palette-created node through Save and Publish. Local PASS 1/1; commit f3f2a91a is pushed and all five GitHub checks PASS. Runtime sources and production deployment are unchanged by this test-only follow-up.",
     "production_d1_or_r2_mutation": false
   },
   "acceptance_boundary": "This improves palette discoverability and tests the Divider palette-to-Canvas route. Full 77.44 Inspector/type/media/device acceptance remains OPEN/NOT_CERTIFIED."
