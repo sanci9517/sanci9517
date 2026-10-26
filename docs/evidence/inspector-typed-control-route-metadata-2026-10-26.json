@@ -40,6 +40,17 @@
     "route_asserted": "spacer size.height → responsive.set / height",
     "lifecycle": "The existing decorative Inspector flow verifies responsive height, Undo/Redo, draft Save, separate Publish and public/mobile rendering parity."
   },
+  "conditional_layout_route_followup": {
+    "file": "tests/browser/editor-responsive-layout.test.js",
+    "targeted_chromium": "PASS 1/1, 28.6 seconds",
+    "routes_asserted": [
+      "layout.display → responsive.set / display",
+      "grid.columns → responsive.set / gridTemplateColumns",
+      "grid.column → responsive.set / gridColumn",
+      "flex.gap → responsive.set / gap"
+    ],
+    "lifecycle": "Assertions run in the existing responsive layout test, which covers Canvas, Undo/Redo, draft Save, separate Publish, public geometry parity and all device breakpoints."
+  },
   "local_checks": {
     "editor_unit": "PASS 132/132",
     "typecheck": "PASS",
@@ -97,5 +108,5 @@
     "database_migrations_or_writes": false,
     "r2_changes": false
   },
-  "acceptance": "Rendered route metadata is verified for the asserted base-style, hover-state, five geometry controls, and spacer height; geometry and spacer flows pass their targeted lifecycle checks. Full 79-type/68-property lifecycle acceptance remains OPEN."
+  "acceptance": "Rendered route metadata is verified for the asserted base-style, hover-state, five geometry controls, spacer height, and conditional Flex/Grid layout controls; geometry, spacer and responsive layout flows pass their targeted lifecycle checks. Full 79-type/68-property lifecycle acceptance remains OPEN."
 }

@@ -55,6 +55,10 @@ test('responsive layout recipes preserve draft/public isolation and match real F
   const select=async id=>{await canvasNode(id).evaluate(el=>el.click());if(await editor.locator('#rightDock').evaluate(el=>el.classList.contains('closed')))await editor.locator('#openInspector').click()};
   const openGroup=async name=>{const title=editor.locator('.inspector-group-title').filter({has:editor.getByText(name,{exact:true})});if(await title.getAttribute('aria-expanded')==='false')await title.click()};
   const save=async publish=>{await editor.locator(publish?'#publish':'#save').click();await editor.waitForFunction(p=>document.querySelector('#saveStatus').textContent.startsWith(p?'Publikálva':'Mentve'),publish)};
+  const assertPropertyRoute=async(field,key)=>{
+    assert.equal(await field.getAttribute('data-property-command'),'responsive.set',`${key}: Inspector exposes the responsive command route`);
+    assert.equal(await field.getAttribute('data-property-key'),key,`${key}: Inspector exposes the Page Model key`);
+  };
   const metrics=el=>{const css=getComputedStyle(el);return Object.fromEntries(['display','flexDirection','justifyContent','alignItems','flexWrap','gap','rowGap','columnGap','gridTemplateColumns','gridTemplateRows','padding','width','height'].map(key=>[key,css[key]]))};
   const geometry=el=>{const box=el.getBoundingClientRect(),parent=el.parentElement.getBoundingClientRect();return {width:box.width,left:box.left-parent.left,top:box.top-parent.top}};
   await editor.goto(base+'/editor-v2/index.html');await select(layoutId);
@@ -85,13 +89,16 @@ test('responsive layout recipes preserve draft/public isolation and match real F
   }
   // Switching display on a generic container also switches the relevant fields.
   await editor.locator('.canvas-device-btn[data-device="desktop"]').click();
-  await openGroup('Elrendezés');await editor.locator('[data-property-id="layout.display"] select').selectOption('grid');
+  await openGroup('Elrendezés');
+  const display=editor.locator('[data-property-id="layout.display"]');await assertPropertyRoute(display,'display');
+  await display.locator('select').selectOption('grid');
   assert.equal(await editor.locator('[data-property-id="grid.columns"]').count(),1);
   assert.equal(await editor.locator('[data-property-id="flex.direction"]').count(),0);
   await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
   await editor.getByRole('button',{name:'Két egyenlő oszlop elrendezésminta',exact:true}).click();
   await openGroup('Grid');
   const columns=editor.locator('[data-property-id="grid.columns"]');
+  await assertPropertyRoute(columns,'gridTemplateColumns');
   await columns.locator('select').selectOption('repeat(3, minmax(0, 1fr))');
   assert.equal((await canvasNode(layoutId).evaluate(el=>getComputedStyle(el).gridTemplateColumns)).split(' ').length,3);
   await columns.locator('xpath=following-sibling::button[1]').click();
@@ -102,7 +109,8 @@ test('responsive layout recipes preserve draft/public isolation and match real F
   await editor.getByRole('button',{name:'Két egyenlő oszlop elrendezésminta',exact:true}).click();
   await select(children[0]);await openGroup('Grid-gyermek');
   assert.equal(await editor.locator('[data-property-id="flex.grow"]').count(),0);
-  await editor.locator('[data-property-id="grid.column"] select').selectOption('2');
+  const childColumn=editor.locator('[data-property-id="grid.column"]');await assertPropertyRoute(childColumn,'gridColumn');
+  await childColumn.locator('select').selectOption('2');
   await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
   await openGroup('Szülő és elhelyezés');assert.equal(await editor.locator('.layout-warning').isVisible(),true);
   await editor.getByRole('button',{name:/Szülő: Bemutatkozó/}).click();
@@ -112,7 +120,7 @@ test('responsive layout recipes preserve draft/public isolation and match real F
   await editor.locator('#redo').click();assert.equal(await canvasNode(children[0]).evaluate(el=>getComputedStyle(el).gridColumnStart),'auto');
   await editor.locator('.canvas-device-btn[data-device="desktop"]').click();assert.equal(await canvasNode(children[0]).evaluate(el=>getComputedStyle(el).gridColumnStart),'2');
   await editor.getByRole('button',{name:'Tördelődő gombsor elrendezésminta',exact:true}).click();await openGroup('Flex');
-  const gap=editor.locator('[data-property-id="flex.gap"]');await gap.locator('input[type="number"]').fill('32');await gap.locator('input').press('Tab');
+  const gap=editor.locator('[data-property-id="flex.gap"]');await assertPropertyRoute(gap,'gap');await gap.locator('input[type="number"]').fill('32');await gap.locator('input').press('Tab');
   assert.deepEqual(await canvasNode(layoutId).evaluate(el=>{const css=getComputedStyle(el);return [css.rowGap,css.columnGap]}),['32px','32px'],'gap remains editable after choosing a recipe');
   await editor.screenshot({path:'/tmp/creator-ux-p0-layout-desktop.png'});
   await editor.setViewportSize({width:390,height:800});await editor.locator('.canvas-device-btn[data-device="mobile"]').evaluate(el=>el.click());await select(layoutId);await openGroup('Elrendezési minták');
