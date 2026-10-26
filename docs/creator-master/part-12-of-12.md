@@ -1493,3 +1493,9 @@ A célzott mezőcsoportok ellenőrzése után a lifecycle teszt által használt
 A szélesség és magasság gyorspresetjei külön renderelőágban jelennek meg, így a typed mezők 63 útvonal-ellenőrzése nem fedte le a gombok DOM route-metaadatait. A breakpoint lifecycle teszt most minden kirenderelt gombnál ellenőrzi a registryparancsot és kulcsot: szélesség `responsive.set / width`, magasság `responsive.set / height`. Ez route-kontraktus assertion; a gomb meglévő callbackje és a responsive setter nem változott.
 
 **Ellenőrzés:** valós Chromium tablet/mobil/desktop breakpoint lifecycle **1/1 PASS (25.1 s)**. A teszt és dokumentáció módosult; runtime, D1, éles adat és R2 változatlan. A teljes 77.44.7.A **OPEN / NOT ACCEPTED**. [Evidence](../evidence/inspector-geometry-preset-routes-2026-10-26.json).
+
+### 77.44.7.A/C — Többszörös kijelölés Inspector → Save → külön Publish → public CSS (2026-10-26, helyi)
+
+A többszörös kijelölés eddigi Chromium-tesztje a hibás bemenet elutasítását és az elküldött draft modellt vizsgálta, de nem tartott külön publikált snapshotot. A két node-ra írt új fixture külön tárolja a draftot és a publikált Page Modelt, valamint a tényleges publikus oldal rendererét használja. Érvénytelen szélességnél nincs POST és mindkét gomb tiltva marad; `120px` mentése mindkét kiválasztott node-ba bekerül, de a publikus oldal változatlan. Csak explicit Publish után jelenik meg `120px` mindkét publikus node-on. A teszt megőrzi a 390/1366 px viewportokat és a hosszú draft/published slug fixture-t.
+
+**Ellenőrzés:** valós Chromium **2/2 PASS (10.5 s)**; Editor unit 134/134, TypeScript, tervkapu, 396 soros traceability és diff-check PASS. Teszt- és dokumentációmódosítás; runtime kód, production adat, D1 és R2 változatlan. A teljes 77.44.7.A továbbra is **OPEN / NOT ACCEPTED**. [Gépi evidence](../evidence/inspector-multi-selection-publish-2026-10-26.json).

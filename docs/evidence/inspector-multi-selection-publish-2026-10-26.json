@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-26",
+  "plan_cursor": "77.44.7.A/C / multi-selection Inspector to public output",
+  "test": {
+    "file": "tests/browser/editor-multi-validation.test.js",
+    "result": "PASS 2/2, 10.5 seconds",
+    "viewports": [390, 1366],
+    "lifecycle": [
+      "Two selected elements expose the shared responsive width field and route metadata.",
+      "Invalid width is rejected and blocks Save and Publish without changing the saved model.",
+      "Valid width is saved to both Page Model nodes as a draft.",
+      "Public CSS stays unchanged after draft Save.",
+      "Explicit Publish updates both selected elements to 120px on the public page."
+    ]
+  },
+  "scope": "Browser test and documentation only; no runtime source, production data, migration, or R2 change. Full 77.44.7.A remains open."
+}
