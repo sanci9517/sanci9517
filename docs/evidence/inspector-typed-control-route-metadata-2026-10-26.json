@@ -126,5 +126,22 @@
     "database_migrations_or_writes": false,
     "r2_changes": false
   },
+  "divider_profile_runtime_release": {
+    "commit": "641387503f89d7dda14243ac5101a28c3de0ad47",
+    "github_ci": "PASS 5/5 workflows, including Editor Core browser layout and WEB-013 Admin mobile regressions",
+    "production_deployment_id": "dfc9e1cf-6f95-4d2e-b33c-a6b94eedfdae",
+    "production_version_id": "af9c88b7-c536-440d-94a6-55adafa125f3",
+    "traffic_percent": 100,
+    "script_etag": "0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0",
+    "live_sha256_match": {
+      "public/editor-v2/index.html": "e02fb4a00417068196700344b655abbfc0945e0eb8f6a8e92eb5dc801c776ea7",
+      "public/editor-v2/app.js": "90d26e56aba239a288b6225adef2d80874c4aa4a0a9d86e21eed09251da0f178",
+      "public/editor-v2/ui/property-controls.js": "eaa2bd9b85ad4604ac65040d5f056e3aa6def7bb5b81a7c9f7e17ebe382eee15"
+    },
+    "health": {"api_health": 200, "db_health": 200},
+    "d1_migrations_applied": false,
+    "production_data_writes": false,
+    "r2_changes": false
+  },
   "acceptance": "Rendered route metadata is verified for the asserted base-style, hover-state, five geometry controls, spacer height, conditional Flex/Grid layout controls, all 14 multi-selection controls, and three nested Divider profile controls; the corresponding real lifecycle checks pass. Full 79-type/68-property lifecycle acceptance remains OPEN."
 }
