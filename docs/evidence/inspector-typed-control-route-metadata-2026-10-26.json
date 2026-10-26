@@ -273,7 +273,7 @@
     "targeted_lifecycle": "PASS 9/9 combined real-Chromium suites: Card 2 viewport runs, Creator Embed 2, Social Links 2, Code 2, Structured content 1 (covers six structures and Basic badge/quote/icon); plus legacy media 1/1.",
     "remote_d1_preflight": "PASS; No migrations to apply (read-only)",
     "wrangler_dry_run": "PASS; Wrangler 4.130.0, 159 assets, 287.10 KiB, no upload",
-    "release_state": "Runtime commit 99282f98 pushed and production-verified; all five GitHub workflows PASS. The later documentation-only push also passed all five workflows and did not change runtime asset hashes.",
+    "release_state": "The 99282f98 content-profile route commit and 3d1c2959 accessibility route commit are released; each runtime commit passed all five GitHub workflows. Exact production versions and hashes are recorded under their release followups.",
     "targeted_lifecycle_result": "PASS: 10 browser test cases total across the new route/lifecycle coverage (combined batch 9/9 plus legacy media 1/1).",
     "plan_and_traceability": "PASS canonical plan checker; PASS active point audit (77.44.7.A OPEN); PASS 396-source traceability check; PASS git diff --check."
   },
@@ -358,6 +358,38 @@
       "element.visibility.set / visibility.mobile"
     ],
     "lifecycle": "Assertions run inside the existing accessibility field IME/validation flow through Canvas attributes, Undo/Redo, draft Save, separate Publish and public DOM. Existing invalid candidate retention, alias normalization, lock and root ID protection checks remain active.",
-    "production_release": "D1 preflight PASS: No migrations to apply (read-only). Wrangler 4.130.0 deploy --dry-run PASS: 159 assets, 287.10 KiB, no upload. Ready for fast-forward release."
+    "production_release": {
+      "commit": "3d1c2959794ee652eb1ebb1dcb8c8a172b2f2bb8",
+      "branch": "v2/foundation",
+      "push": "PASS; fast-forward from bc4708780bf045075915303031f226aa7772c3da",
+      "github_ci": {
+        "result": "PASS 5/5 workflows",
+        "editor_core_run": 40315769703,
+        "f0_run": 40315769655,
+        "twitch_run": 40315769779,
+        "canonical_active_point_audit_run": 40315769827,
+        "canonical_plan_run": 40315769705
+      },
+      "deployment_id": "3abb8001-26e7-4729-9beb-3ae7baf7d89b",
+      "version_id": "87cb49d0-14bf-4cb1-b075-182dc9de08fb",
+      "traffic_percent": 100,
+      "script_etag": "0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0",
+      "smoke": {
+        "api_health": 200,
+        "db_health": {
+          "status": 200,
+          "connected": true
+        },
+        "editor_entry": 200
+      },
+      "live_sha256_match": {
+        "public/editor-v2/index.html": "6b3b7a943eb0078549ac3c3a7ed14c71af6fb9339b9e9d5d0da857f598fb1f6c",
+        "public/editor-v2/app.js": "92c86d884f0c8076bf0f3b77ff7d1424c7202fd46b75d15727add55b72dcaaa1",
+        "public/editor-v2/ui/accessibility-fields.js": "59c0333e12847085dfcfac9c1b355a7e05e715e8b4708543054fee552072f985"
+      },
+      "d1_migrations_applied": false,
+      "production_data_writes": false,
+      "r2_changes": false
+    }
   }
 }
