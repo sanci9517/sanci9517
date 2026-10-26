@@ -1,0 +1,53 @@
+{
+  "date": "2026-10-26",
+  "plan_cursor": "77.44.7.A / Inspector action-route contract",
+  "commit": "c602bafd94f23bc0410f51bf48519912149706a2",
+  "implementation": {
+    "root_appearance_enable": "root.appearance.enable exposes metadata.editorRootVersion.",
+    "appearance_paste": "style.snapshot.apply exposes the style and all three responsive appearance keys from STYLE_SNAPSHOT_PROPERTIES; root nodes also include metadata.rootStyleVersion. Geometry keys are excluded.",
+    "lock": "element.lock.set exposes the locked key.",
+    "delete": "element.delete exposes every deleted nodes.<id> path plus the removed node's parent nodes.<parentId>.children route and the command target id.",
+    "save_publish": "Actions still modify only the editor draft; explicit Save and Publish semantics are unchanged."
+  },
+  "tests": {
+    "tests/browser/editor-root-style.test.js": "PASS 1/1; command/key route checked in the real responsive root Inspector lifecycle.",
+    "tests/browser/editor-style-copy.test.js": "PASS 1/1; snapshot command and precise appearance keys checked through Canvas, Undo, Save, reload, Publish and public parity.",
+    "tests/browser/editor-inspector-lifecycle.test.js": "PASS 1/1; lock command/key, delete target/subtree/parent routes checked in the full real Inspector lifecycle.",
+    "editor_unit": "PASS 132/132.",
+    "typecheck": "PASS.",
+    "canonical_plan_and_traceability": "PASS: 13 master files, 396 mappings; functional acceptance remains NOT_CERTIFIED.",
+    "wrangler_dry_run": "PASS; 159 assets and 287.10 KiB estimate. Wrangler emitted a non-fatal EROFS message while trying to write its local log outside the workspace, but exited 0 and completed the dry-run."
+  },
+  "production": {
+    "branch": "v2/foundation",
+    "deployment_id": "cdd2782f-b369-40ed-a759-752c88c27ae9",
+    "worker_version": "b81b9cc8-e3d6-4473-ae66-3998eda5ae01",
+    "traffic": "100%",
+    "health": "/api/health 200; /api/db-health 200, D1 connected; /editor-v2/ 200.",
+    "asset_sha256": {
+      "public/editor-v2/app.js": "afd6141b0421038ff078c61bcb1956846c20641428658cf2cef60e198b911be6",
+      "public/editor-v2/index.html": "dfa59b4705dec61e3f3136d609e5b1283154cc8f52a76aaf87b60e5b4e448035"
+    }
+  },
+  "database_safety": {
+    "preflight": "Read-only SELECT of the D1 migration ledger; all configured local migration names were present in the remote ledger.",
+    "changed_db": false,
+    "rows_written": 0,
+    "migration_applied": false,
+    "r2_or_data_mutation": false
+  },
+  "github_workflows": {
+    "completed_success": [
+      40335276340,
+      40335276526,
+      40335276449,
+      40335276437
+    ],
+    "editor_core_test": {
+      "run_id": 40335276539,
+      "status": "in_progress",
+      "current_step": "Run Editor browser layout regression"
+    }
+  },
+  "acceptance_boundary": "The action routes and deployment are verified. Full 77.44.7.A feature capability and user acceptance remain OPEN/NOT_CERTIFIED."
+}
