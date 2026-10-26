@@ -28,21 +28,28 @@
     "chromium": "PASS 1/1; Divider palette insertion rendered a new Canvas node, then existing decorative Inspector/Save/Publish/public regression completed.",
     "typecheck": "PASS",
     "syntax_and_diff_check": "PASS",
-    "wrangler_dry_run": "PASS; 160 public assets, 287.10 KiB estimated upload. Wrangler emitted a non-fatal EROFS message for its log outside the workspace; command exit 0.",
-    "remote_d1_preflight": "Read-only SELECT from the production migration ledger. All 28 local migration filenames exist remotely; four additional remote ledger rows have no matching migration file in this checkout.",
+    "wrangler_dry_run": "PASS; final deployment dry-run read 159 public assets, 287.10 KiB estimated upload. Wrangler emitted a non-fatal EROFS message for its log outside the workspace; command exit 0.",
+    "remote_d1_preflight": "Read-only SELECT from the production migration ledger. All 28 local migration filenames exist remotely; the 34-row remote ledger also has two legacy and four 0025-0028 migration rows with no matching filename in this checkout.",
     "d1_changed_db": false,
     "d1_rows_written": 0,
     "migration_applied": false,
     "r2_or_production_data_mutation": false
   },
   "release": {
-    "local_head": "1af091feddc10d19ce418813f881ead911e3ffe2",
-    "remote_v2_foundation_head_at_check": "1af091feddc10d19ce418813f881ead911e3ffe2",
-    "github_ci": "PENDING",
-    "push": "PENDING",
-    "cloudflare_deployment": "PENDING",
-    "production_asset_hash_and_health": "PENDING",
-    "reason": "The shell proxy could not connect to its configured proxy port; no runtime release or production state is claimed."
+    "runtime_commit": "6a528474a506d8a92309f1485d44418d5e1890be",
+    "followup_asset_cleanup_commit": "e4f8d5cdebc841e7968e9447f0144b40804d9314",
+    "worker_source_commit_at_deploy": "e4f8d5cdebc841e7968e9447f0144b40804d9314",
+    "github_ci": "PASS 5/5 on both commits",
+    "cloudflare_deployment_id": "35e0e444-34c3-4812-ad73-cd964c354726",
+    "cloudflare_worker_version": "80415aa6-3179-4f97-bc6e-e97d806a8004",
+    "traffic": "100%",
+    "health": "/api/health 200; /api/db-health 200, D1 connected",
+    "asset_sha256": {
+      "public/editor-v2/app.js": "bea543d15be07d7ae85012c5ff15568bbe606a79667594c541c0650dc42c68ae",
+      "public/editor-v2/index.html": "dfa59b4705dec61e3f3136d609e5b1283154cc8f52a76aaf87b60e5b4e448035"
+    },
+    "test_source_asset": "Confirmed 404 after cleanup deployment; no longer published.",
+    "production_d1_or_r2_mutation": false
   },
   "acceptance_boundary": "This improves palette discoverability and tests the Divider palette-to-Canvas route. Full 77.44 Inspector/type/media/device acceptance remains OPEN/NOT_CERTIFIED."
 }
