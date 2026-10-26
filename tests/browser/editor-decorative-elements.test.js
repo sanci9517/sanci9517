@@ -43,6 +43,14 @@ test('Divider and Spacer Inspector changes become public only after Publish, wit
  editor.setDefaultTimeout(7000);viewer.setDefaultTimeout(7000);
  const errors=[];editor.on('pageerror',e=>errors.push('editor: '+e.message));viewer.on('pageerror',e=>errors.push('public: '+e.message));
  await editor.goto(base+'/editor-v2/index.html');await viewer.goto(base+'/p/test');
+ await editor.locator('.rail-btn[data-tab="elements"]').click();
+ const paletteLayout=editor.locator('.element-group').filter({has:editor.locator('.element-group-title').filter({hasText:'Layout'})});
+ await paletteLayout.locator('.element-group-title').click();
+ const dividerEntry=paletteLayout.locator('button.element').filter({hasText:'Divider'});
+ assert.equal(await dividerEntry.count(),1,'implemented Divider is available in the Layout palette');
+ const canvasCountBeforePaletteAdd=await editor.locator('.node[data-node-id]').count();
+ await dividerEntry.click();
+ assert.equal(await editor.locator('.node[data-node-id]').count(),canvasCountBeforePaletteAdd+1,'palette selection creates a Canvas node');
  const canvasNode=id=>editor.locator('.node[data-node-id="'+id+'"]');
  const publicNode=id=>viewer.locator('.visual-editor-node[data-node-id="'+id+'"]');
  const select=async id=>{

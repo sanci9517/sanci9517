@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-26",
+  "plan_cursor": "77.44.7.A/C/D — Inspector type parity and honest palette capability",
+  "implementation": {
+    "newly_discoverable_partial_types": [
+      "divider",
+      "badge",
+      "quote",
+      "panel",
+      "overlay",
+      "absolute",
+      "sticky",
+      "tooltip"
+    ],
+    "still_hidden_unverified_schema_placeholders": [
+      "shorts",
+      "sponsor",
+      "business",
+      "about",
+      "sanci-button"
+    ],
+    "root": "Remains excluded from the insertion palette.",
+    "save_publish": "Unchanged; palette actions edit only the draft."
+  },
+  "local_verification": {
+    "palette_capability": "PASS 2/2",
+    "editor_core": "PASS 134/134",
+    "chromium": "PASS 1/1; Divider palette insertion rendered a new Canvas node, then existing decorative Inspector/Save/Publish/public regression completed.",
+    "typecheck": "PASS",
+    "syntax_and_diff_check": "PASS",
+    "wrangler_dry_run": "PASS; 160 public assets, 287.10 KiB estimated upload. Wrangler emitted a non-fatal EROFS message for its log outside the workspace; command exit 0.",
+    "remote_d1_preflight": "Read-only SELECT from the production migration ledger. All 28 local migration filenames exist remotely; four additional remote ledger rows have no matching migration file in this checkout.",
+    "d1_changed_db": false,
+    "d1_rows_written": 0,
+    "migration_applied": false,
+    "r2_or_production_data_mutation": false
+  },
+  "release": {
+    "local_head": "1af091feddc10d19ce418813f881ead911e3ffe2",
+    "remote_v2_foundation_head_at_check": "1af091feddc10d19ce418813f881ead911e3ffe2",
+    "github_ci": "PENDING",
+    "push": "PENDING",
+    "cloudflare_deployment": "PENDING",
+    "production_asset_hash_and_health": "PENDING",
+    "reason": "The shell proxy could not connect to its configured proxy port; no runtime release or production state is claimed."
+  },
+  "acceptance_boundary": "This improves palette discoverability and tests the Divider palette-to-Canvas route. Full 77.44 Inspector/type/media/device acceptance remains OPEN/NOT_CERTIFIED."
+}
