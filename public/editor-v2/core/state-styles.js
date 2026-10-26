@@ -17,15 +17,25 @@ export function validateStateStyles(node){
   if(node.metadata?.stateVersion!==1)return;
   for(const state of ['hover','focus-visible'])for(const device of ['desktop','tablet','mobile'])normalizeStatePatch(node,state,device,node.states?.[state]?.[device]||{});
 }
+function stateDeclarations(responsive,device){
+  let declarations='';
+  for(const id of STATE_PROPERTY_IDS){const property=getProperty(id);if(!property)continue;const value=resolveResponsiveValue(responsive,property.key,device).value;if(value===undefined)continue;
+    try{const normalized=normalizeInspectorValue(property,value);const key=property.key.replace(/[A-Z]/g,char=>'-'+char.toLowerCase());declarations+=`${key}:${normalized}!important;`}catch{}
+  }
+  return declarations;
+}
+export function hasStateStyles(node,state,device='desktop'){
+  if(!['hover','focus-visible'].includes(state)||!['desktop','tablet','mobile'].includes(device))return false;
+  if(state==='focus-visible'&&typeof node?.states?.focus?.outlineColor==='string'&&/^#(?:[a-f0-9]{3}|[a-f0-9]{6})$/i.test(node.states.focus.outlineColor))return true;
+  if(node?.metadata?.stateVersion!==1)return false;
+  return stateDeclarations(node.states?.[state],device)!=='';
+}
 export function buildStateStyles(page,device='desktop'){
   let css='';
   for(const node of Object.values(page?.nodes||{})){
     if(node.metadata?.stateVersion!==1||!/^[-\w]+$/.test(node.id))continue;
     for(const state of ['hover','focus-visible']){
-      let declarations='';const responsive=node.states?.[state];
-      for(const id of STATE_PROPERTY_IDS){const property=getProperty(id);if(!property)continue;const value=resolveResponsiveValue(responsive,property.key,device).value;if(value===undefined)continue;
-        try{const normalized=normalizeInspectorValue(property,value);const key=property.key.replace(/[A-Z]/g,char=>'-'+char.toLowerCase());declarations+=`${key}:${normalized}!important;`}catch{}
-      }
+      const declarations=stateDeclarations(node.states?.[state],device);
       if(declarations){const selector=`.creator-state-enabled[data-node-id="${node.id}"]`;css+=`${selector}:${state},${selector}[data-editor-state="${state}"]{${declarations}}`;}
     }
   }

@@ -14,7 +14,7 @@ import {renderCodeSnippet,activateCodeBlocks} from "../editor-v2/core/code-snipp
 import {isAuthoredContent,contentTag,contentAttributes,authoredNodeHtml,initContentInteractions} from "../editor-v2/core/authored-content.js";
 import {defaultTokens,applyTokenVariables} from "../editor-v2/core/design-tokens.js";
 import {isVisibleOnDevice,collectVisibleDescendants} from "../editor-v2/core/visibility.js";
-import {applyStateStyles} from "../editor-v2/core/state-styles.js";
+import {applyStateStyles,hasStateStyles} from "../editor-v2/core/state-styles.js";
 import {backgroundImageValue,MEDIA_ASSET_ID} from "../editor-v2/core/background-asset.js";
 (()=>{
  const esc=v=>String(v??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -125,6 +125,11 @@ if(n.type==='card'&&n.metadata?.cardContentVersion===1){
   let html=renderNodeHtml(page,id,managed);if(!html)return html;
   html=html.replace(/^<([a-z0-9]+)(?=[ >])/,`<$1 data-node-id="${esc(id)}"`);
   if(node.metadata?.stateVersion===1)html=html.replace('class="','class="creator-state-enabled ');
+  const opening=html.match(/^<([a-z0-9]+)\b([^>]*)>/i),tag=opening?.[1]?.toLowerCase(),attrs=opening?.[2]||'';
+  if(hasStateStyles(node,'focus-visible',currentDevice)&&!/\baria-hidden\s*=\s*["']?true\b/i.test(attrs)){
+   const alreadyFocusable=/\btabindex\s*=|\bcontenteditable\s*=\s*["']?true\b/i.test(attrs)||['button','input','select','textarea','summary','iframe','object','embed'].includes(tag)||(['audio','video'].includes(tag)&&/\bcontrols(?:\s|=|$)/i.test(attrs))||(['a','area'].includes(tag)&&/\bhref\s*=/i.test(attrs));
+   if(!alreadyFocusable)html=html.replace(/^<([a-z0-9]+)(?=\s|>)/i,'<$1 tabindex="0"');
+  }
   // Root attributes for legacy elements use the same mapping as Editor canvas.
   // Authored elements already receive these attributes in renderNodeHtml.
   if(!isAuthoredContent(node)){

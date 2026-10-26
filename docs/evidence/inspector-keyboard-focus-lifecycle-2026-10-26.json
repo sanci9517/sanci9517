@@ -1,0 +1,49 @@
+{
+  "date": "2026-10-26",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Make Inspector-authored focus-visible styles keyboard reachable in the published renderer",
+  "runtime_files": [
+    "public/editor-v2/core/state-styles.js",
+    "public/assets/page-renderer.js"
+  ],
+  "test_file": "tests/browser/editor-inspector-partial-types.test.js",
+  "test_result": {
+    "command": "node --test tests/browser/editor-inspector-partial-types.test.js",
+    "tests": 1,
+    "passed": 1,
+    "failed": 0,
+    "duration_ms": 64645.9,
+    "scenario_duration_ms": 63390.8
+  },
+  "coverage": {
+    "partial_non_root_types": 44,
+    "inspector_route": "states.set / backgroundColor with focus-visible state",
+    "assertions": [
+      "responsive valid focus style detection follows inherited active-device values",
+      "focus preview reaches Canvas for each PARTIAL type",
+      "draft Save preserves the published focus appearance",
+      "separate Publish updates public focus styles for each type",
+      "non-native public nodes with focus styling become reachable by keyboard",
+      "native focusable elements receive no redundant tabindex",
+      "hover-only styling does not add keyboard tab stops",
+      "aria-hidden elements remain outside the keyboard order"
+    ]
+  },
+  "additional_checks": {
+    "editor_unit": "135/135 PASS",
+    "typecheck": "PASS",
+    "canonical_plan": "PASS",
+    "active_plan_point": "PASS",
+    "traceability_mappings": 396,
+    "traceability": "PASS",
+    "git_diff_check": "PASS",
+    "remote_d1_migration_preflight": "No migrations to apply",
+    "wrangler_version": "4.130.0",
+    "worker_dry_run": "PASS; 159 assets, 287.10 KiB, no upload"
+  },
+  "production_data_changed": false,
+  "database_migration_run": false,
+  "r2_changed": false,
+  "deployment_status": "pending commit release workflow verification",
+  "acceptance_status": "77.44.7.A and WEB-011 remain OPEN; this covers keyboard reachability for one shared focus state route, not complete Editor acceptance"
+}

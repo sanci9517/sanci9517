@@ -17,7 +17,7 @@ const publicDir=resolve(import.meta.dirname,'../../public');
 const primaryGroups=new Set(['layout','size','spacing','flex','grid','position','typography','background','border','radius','shadow','opacity','transform','filter','animation']);
 const duplicatePrimaryIds=new Set(['content.text','content.href','advanced.nodeName']);
 
-test('every PARTIAL type renders Inspector routes and preserves Save versus Publish for responsive, visibility, and hover state',async t=>{
+test('every PARTIAL type renders Inspector routes and preserves Save versus Publish for responsive, visibility, hover, and keyboard focus state',async t=>{
   const model=createEditorState(createDocument());
   const page=activePage(model),pageId=page.id,rootId=page.rootId;
   const nodes=[{type:NODE_TYPES.ROOT,id:rootId}];
@@ -174,7 +174,9 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
   await editor.locator('.canvas-device-btn[data-device="desktop"]').click();
   await viewer.setViewportSize({width:1366,height:900});
   await viewer.reload();
-  const prepareHoverTargets=()=>viewer.evaluate(()=>{
+  const prepareHoverTargets=async()=>{
+    await viewer.waitForFunction(expected=>document.querySelectorAll('.visual-editor-node[data-node-id]').length>=expected,editableNodes.length);
+    await viewer.evaluate(()=>{
     for(const element of document.querySelectorAll('.visual-editor-node[data-node-id]')){
       const rect=element.getBoundingClientRect();
       if(rect.width===0||rect.height===0){
@@ -183,12 +185,13 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
         element.style.setProperty('height','24px','important');
       }
     }
-  });
+    });
+  };
   await prepareHoverTargets();
   const publicHoverBaseline={};
   for(const {id} of editableNodes){
     await publicNode(id).hover();
-    publicHoverBaseline[id]=await publicNode(id).evaluate(el=>getComputedStyle(el).backgroundColor);
+    publicHoverBaseline[id]=await publicNode(id).evaluate(el=>({background:getComputedStyle(el).backgroundColor,tabindex:el.getAttribute('tabindex')}));
   }
   const hoverColors=editableNodes.map((_,index)=>'#'+((0x804020+index*0x020307)&0xffffff).toString(16).padStart(6,'0'));
   for(const [index,{type,id}] of editableNodes.entries()){
@@ -220,7 +223,9 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
   await prepareHoverTargets();
   for(const {id} of editableNodes){
     await publicNode(id).hover();
-    assert.equal(await publicNode(id).evaluate(el=>getComputedStyle(el).backgroundColor),publicHoverBaseline[id],'draft Save preserves published hover appearance');
+    const appearance=await publicNode(id).evaluate(el=>({background:getComputedStyle(el).backgroundColor,tabindex:el.getAttribute('tabindex')}));
+    assert.equal(appearance.background,publicHoverBaseline[id].background,'draft Save preserves published hover appearance');
+    assert.equal(appearance.tabindex,publicHoverBaseline[id].tabindex,'hover-only style does not add a keyboard stop');
   }
   await editor.locator('#publish').click();
   await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
@@ -229,7 +234,67 @@ test('every PARTIAL type renders Inspector routes and preserves Save versus Publ
   for(const [index,{type,id}] of editableNodes.entries()){
     await publicNode(id).hover();
     assert.equal(published.pages[pageId].nodes[id].states.hover.desktop.backgroundColor,hoverColors[index],`${type}: Publish stores hover style`);
-    assert.equal(await publicNode(id).evaluate(el=>getComputedStyle(el).backgroundColor),asRgb(hoverColors[index]),`${type}: published hover style reaches public output`);
+    const appearance=await publicNode(id).evaluate(el=>({background:getComputedStyle(el).backgroundColor,tabindex:el.getAttribute('tabindex')}));
+    assert.equal(appearance.background,asRgb(hoverColors[index]),`${type}: published hover style reaches public output`);
+    assert.equal(appearance.tabindex,publicHoverBaseline[id].tabindex,`${type}: hover-only style adds no keyboard stop`);
+  }
+
+  // Keyboard focus styles must make a non-interactive rendered node reachable
+  // by keyboard, while native controls must not gain a redundant tab stop.
+  const focusColors=editableNodes.map((_,index)=>'#'+((0x306090+index*0x030509)&0xffffff).toString(16).padStart(6,'0'));
+  for(const [index,{type,id}] of editableNodes.entries()){
+    const canvasNode=editor.locator(`.node[data-node-id="${id}"]`);
+    await canvasNode.evaluate(el=>el.click());
+    await editor.locator('.inspector-tabs button').nth(2).click();
+    let stateGroup=inspector.locator('.inspector-group').filter({hasText:'Rámutatás és fókusz'});
+    let stateTitle=stateGroup.locator(':scope > .inspector-group-title');
+    if(await stateTitle.getAttribute('aria-expanded')==='false')await stateTitle.click();
+    await editor.getByLabel('Állapot előnézete',{exact:true}).selectOption('focus-visible');
+    stateGroup=inspector.locator('.inspector-group').filter({hasText:'Rámutatás és fókusz'});
+    stateTitle=stateGroup.locator(':scope > .inspector-group-title');
+    if(await stateTitle.getAttribute('aria-expanded')==='false')await stateTitle.click();
+    const stateColor=stateGroup.locator('[data-state-property="backgroundColor"]');
+    assert.equal(await stateColor.getAttribute('data-property-command'),'states.set',`${type}: focus command`);
+    assert.equal(await stateColor.getAttribute('data-property-key'),'backgroundColor',`${type}: focus Page Model key`);
+    const input=stateColor.locator('input[type="text"]');
+    await input.fill(focusColors[index]);
+    await input.press('Tab');
+    assert.equal(await canvasNode.getAttribute('data-editor-state'),'focus-visible',`${type}: focus preview is active on Canvas`);
+    assert.equal(await canvasNode.evaluate(el=>getComputedStyle(el).backgroundColor),asRgb(focusColors[index]),`${type}: focus preview reaches Canvas`);
+  }
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  for(const [index,{type,id}] of editableNodes.entries()){
+    assert.equal(draft.pages[pageId].nodes[id].states['focus-visible'].desktop.backgroundColor,focusColors[index],`${type}: Save stores focus style in the draft`);
+    assert.equal(published.pages[pageId].nodes[id].states?.['focus-visible']?.desktop?.backgroundColor,undefined,`${type}: Save leaves published focus state unchanged`);
+  }
+  await viewer.reload();
+  await viewer.keyboard.press('Tab');
+  for(const [index,{type,id}] of editableNodes.entries()){
+    const element=publicNode(id);
+    const baseline=await element.evaluate(el=>{el.focus();return{background:getComputedStyle(el).backgroundColor}});
+    assert.equal(baseline.background,publicHoverBaseline[id].background,`${type}: draft Save preserves published focus appearance`);
+  }
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  await viewer.reload();
+  await viewer.keyboard.press('Tab');
+  for(const [index,{type,id}] of editableNodes.entries()){
+    const element=publicNode(id);
+    const focus=await element.evaluate(el=>{el.focus();return{background:getComputedStyle(el).backgroundColor,focusVisible:el.matches(':focus-visible'),tabIndex:el.tabIndex,tag:el.tagName.toLowerCase(),href:el.hasAttribute('href'),ariaHidden:el.getAttribute('aria-hidden')==='true'}});
+    assert.equal(published.pages[pageId].nodes[id].states['focus-visible'].desktop.backgroundColor,focusColors[index],`${type}: Publish stores focus style`);
+    if(focus.ariaHidden){
+      assert.equal(focus.tabIndex,-1,`${type}: aria-hidden public output stays outside the keyboard order`);
+      assert.equal(await element.getAttribute('tabindex'),null,`${type}: aria-hidden output receives no tabindex`);
+      assert.equal(focus.focusVisible,false,`${type}: aria-hidden output cannot receive keyboard focus`);
+      continue;
+    }
+    assert.equal(focus.background,asRgb(focusColors[index]),`${type}: published keyboard focus style reaches public output`);
+    assert.equal(focus.focusVisible,true,`${type}: public node matches keyboard focus-visible`);
+    const nativeFocusable=['button','input','select','textarea','summary','iframe','object','embed'].includes(focus.tag)||(['a','area'].includes(focus.tag)&&focus.href);
+    assert.equal(focus.tabIndex,0,`${type}: public node is keyboard reachable`);
+    if(nativeFocusable)assert.equal(await element.getAttribute('tabindex'),null,`${type}: no redundant tabindex on native control`);
+    else assert.equal(await element.getAttribute('tabindex'),'0',`${type}: Inspector focus style adds a keyboard tab stop`);
   }
   assert.deepEqual(editorErrors,[],'opening every partial type must not throw');
 });
