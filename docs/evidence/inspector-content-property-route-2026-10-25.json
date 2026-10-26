@@ -32,10 +32,11 @@
     "Registry imports and Editor entrypoint use a fresh content-property route cache key",
     "Browser lifecycle verifies Undo/Redo, Save without Publish, Editor reload, unchanged public state, and separate Publish for text and href",
     "Extended content.href lifecycle coverage to plain link nodes as well as buttons",
-    "Extended content.text lifecycle coverage across plain text, button and link node types"
+    "Extended content.text lifecycle coverage across plain text, button and link node types",
+    "Lifecycle-tested registry content.text command and Save/Publish separation across text, button and link element types"
   ],
   "checks": {
-    "editor_inspector_lifecycle_chromium": "PASS 1/1, 163.3 seconds; content.text on text/button/link, content.href on button/link, background.image, Undo/Redo, Save/reload and separate Publish",
+    "editor_inspector_lifecycle_chromium": "PASS 1/1, 163.3 seconds; content.text on text/button/link; content.href on button/link; Undo/Redo, Save/reload, unchanged public draft, explicit Publish; background.image retained",
     "general_fields_and_richtext_chromium": "PASS 4/4 across 390px and 1366px",
     "editor_unit": "PASS 132/132",
     "typecheck": "PASS",
@@ -44,10 +45,10 @@
     "wrangler_version": "4.130.0",
     "remote_d1_preflight": "PASS: No migrations to apply",
     "worker_dry_run": "PASS: 159 public assets, 287.10 KiB total; dry-run exited without upload",
-    "editor_core_ci": "PASS on follow-up commit 721c552c3cdb8eb539d05483e9cf80c8dc163ffe; Editor browser layout and WEB-013 Admin mobile browser regressions passed",
+    "editor_core_ci": "PASS on commit 1a461a285c71b30d3c18cbacea89a46c032be4cb; Editor browser layout and WEB-013 mobile regressions passed",
     "link_node_lifecycle_local": "PASS in the extended 1/1 Chromium lifecycle run; follow-up CI pending for the added link-node assertions",
-    "link_node_lifecycle_ci": "Included in Editor browser layout regression; PASS on follow-up commit 721c552c3cdb8eb539d05483e9cf80c8dc163ffe",
-    "content_text_type_coverage": "PASS: plain text, button and link Inspector controls expose the registry ID/command/key and match Canvas, draft Save/reload and explicit Publish"
+    "link_node_lifecycle_ci": "PASS on commit 1a461a285c71b30d3c18cbacea89a46c032be4cb",
+    "content_text_type_coverage": "PASS: text/button/link property ID, command, key, Canvas, Undo/Redo, draft Save/reload and separate Publish"
   },
   "production_scope": {
     "runtime_changed": true,
@@ -74,17 +75,18 @@
       "public/editor-v2/core/state-styles.js": "8afe587e87f786ac4a1cddbfd68b46be65f0763486b5796addbb857f6c65ed2f",
       "public/editor-v2/ui/geometry-presets.js": "e4c9be7c872254d3830b7e127918d88793527edab3ef004db2d4559002828032"
     },
-    "editor_core_ci": "PASS for source commit 0341b5821ad422310a9de57e1485e8b2f740af02; extended link-node lifecycle test awaits follow-up CI",
+    "editor_core_ci": "PASS on 1a461a285c71b30d3c18cbacea89a46c032be4cb",
     "d1_migrations_applied": false,
     "production_data_writes": false,
     "production_r2_changes": false
   },
-  "acceptance": "These two registry-specialized field routes now match the commands used by the Editor and pass browser lifecycle tests. This is not full 79-type/68-property acceptance, nor production asset or physical-device acceptance.",
+  "acceptance": "The registry command drift is fixed; content.text is lifecycle-tested on text/button/link and content.href on button/link. This remains a targeted route slice, not full 79-type/68-property acceptance; physical device acceptance remains OPEN.",
   "github_workflows": {
-    "editor_core": 40229794772,
-    "f0_baseline": 40229794769,
-    "twitch_integration": 40229794800,
-    "canonical_active_point_audit": 40229794802,
-    "canonical_creator_platform_plan": 40229794796
-  }
+    "editor_core": 40279728027,
+    "f0_baseline": 40279728097,
+    "twitch_integration": 40279727956,
+    "canonical_active_point_audit": 40279728084,
+    "canonical_creator_platform_plan": 40279727992
+  },
+  "ci_verified_commit": "1a461a285c71b30d3c18cbacea89a46c032be4cb"
 }
