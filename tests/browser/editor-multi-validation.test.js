@@ -38,6 +38,7 @@ for(const width of [390,1366])test(`multi-selection validates, saves and publish
  await page.locator(`.canvas-device-btn[data-device="${device}"]`).click();
  await viewer.goto(`http://127.0.0.1:${server.address().port}/p/${publishedSlug}`);
  const liveWidth=nodeId=>viewer.locator(`[data-node-id="${nodeId}"]`).evaluate(el=>getComputedStyle(el).width);
+ const liveBackground=nodeId=>viewer.locator(`[data-node-id="${nodeId}"]`).evaluate(el=>getComputedStyle(el).backgroundColor);
  const previousWidths=await Promise.all(ids.map(nodeId=>liveWidth(nodeId)));
  await page.locator(`.node[data-node-id="${ids[0]}"]`).waitFor();
  await page.locator(`.node[data-node-id="${ids[0]}"]`).evaluate(el=>el.dispatchEvent(new MouseEvent('click',{bubbles:true})));
@@ -55,5 +56,15 @@ for(const width of [390,1366])test(`multi-selection validates, saves and publish
  await viewer.reload();for(let i=0;i<ids.length;i++)assert.equal(await liveWidth(ids[i]),previousWidths[i],'draft Save leaves the published snapshot unchanged');
  await page.locator('#publish').click();await page.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');assert.equal(posts.at(-1).publish,true);
  await viewer.reload();for(const nodeId of ids)assert.equal(await liveWidth(nodeId),'120px','explicit Publish updates both selected nodes in the public renderer');
+ const priorBackgrounds=await Promise.all(ids.map(nodeId=>liveBackground(nodeId)));
+ const background=page.locator('.multi-inspector-field[data-property-id="backgroundColor"]');
+ assert.equal(await background.getAttribute('data-property-command'),'responsive.set');assert.equal(await background.getAttribute('data-property-key'),'backgroundColor');
+ await background.locator('input[type="color"]').evaluate(input=>{input.value='#dc2626';input.dispatchEvent(new Event('change',{bubbles:true}))});
+ for(const nodeId of ids)assert.equal(await page.locator(`.node[data-node-id="${nodeId}"]`).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(220, 38, 38)','multi color command reaches each selected Canvas node');
+ await page.locator('#save').click();await page.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));assert.equal(posts.at(-1).publish,false);
+ for(const nodeId of ids)assert.equal(draft.pages[id].nodes[nodeId].responsive[device].backgroundColor,'#dc2626','multi-color draft is written to every selected node at the active breakpoint');
+ await viewer.reload();for(let i=0;i<ids.length;i++)assert.equal(await liveBackground(ids[i]),priorBackgrounds[i],'background color remains draft-only');
+ await page.locator('#publish').click();await page.waitForFunction(()=>document.querySelector('#saveStatus').textContent==='Publikálva');assert.equal(posts.at(-1).publish,true);
+ await viewer.reload();for(const nodeId of ids)assert.equal(await liveBackground(nodeId),'rgb(220, 38, 38)','explicit Publish updates both selected nodes background');
  assert.deepEqual(errors,[]);
 });
