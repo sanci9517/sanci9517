@@ -128,5 +128,42 @@ test('every PARTIAL type renders declared Inspector routes and publishes respons
     assert.equal(published.pages[pageId].nodes[id].responsive.desktop.backgroundColor,colors[index],`${type}: explicit Publish copies Inspector color to public snapshot`);
     assert.equal(await publicNode(id).evaluate(el=>getComputedStyle(el).backgroundColor),asRgb(colors[index]),`${type}: published style matches the Inspector edit`);
   }
+
+  // The shared responsive visibility controls are also part of each type's
+  // Inspector contract. Exercise the mobile route for every partial type and
+  // keep Save isolated from the published page until the explicit Publish.
+  await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
+  await viewer.setViewportSize({width:390,height:900});
+  await viewer.reload();
+  for(const {type,id} of editableNodes){
+    const canvasNode=editor.locator(`.node[data-node-id="${id}"]`);
+    await canvasNode.evaluate(el=>el.click());
+    await editor.locator('.inspector-tabs button').nth(2).click();
+    const visibilityGroup=inspector.locator('.inspector-group').filter({hasText:'Akadálymentesség és láthatóság'});
+    const title=visibilityGroup.locator(':scope > .inspector-group-title');
+    if(await title.getAttribute('aria-expanded')==='false')await title.click();
+    const toggle=visibilityGroup.locator('[data-inspector-key="visibility.mobile"]');
+    assert.equal(await toggle.getAttribute('data-inspector-command'),'element.visibility.set',`${type}: mobile visibility command`);
+    assert.equal(await toggle.getAttribute('data-inspector-key'),'visibility.mobile',`${type}: mobile visibility Page Model key`);
+    const checkbox=toggle.locator('input[type="checkbox"]');
+    assert.equal(await checkbox.isChecked(),true,`${type}: mobile visibility starts enabled`);
+    await checkbox.uncheck();
+    assert.equal(await canvasNode.getAttribute('data-visibility'),'hidden',`${type}: mobile visibility updates the Canvas`);
+  }
+  await editor.locator('#save').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
+  for(const {type,id} of editableNodes){
+    assert.equal(draft.pages[pageId].nodes[id].visibility.mobile,false,`${type}: Save stores mobile visibility in draft`);
+    assert.equal(published.pages[pageId].nodes[id].visibility.mobile,true,`${type}: Save does not change published visibility`);
+  }
+  await viewer.reload();
+  for(const {type,id} of editableNodes)assert.equal(await publicNode(id).count(),1,`${type}: Save preserves mobile public visibility`);
+  await editor.locator('#publish').click();
+  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
+  await viewer.reload();
+  for(const {type,id} of editableNodes){
+    assert.equal(published.pages[pageId].nodes[id].visibility.mobile,false,`${type}: Publish stores hidden mobile visibility`);
+    assert.equal(await publicNode(id).count(),0,`${type}: published mobile output hides the node`);
+  }
   assert.deepEqual(editorErrors,[],'opening every partial type must not throw');
 });
