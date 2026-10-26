@@ -463,6 +463,90 @@
       "production_data_writes": false,
       "r2_changes": false
     },
-    "overall_scope": "This verifies authored-content Inspector route metadata and its lifecycle, not full 77.44.7.A acceptance."
+    "overall_scope": "This verifies authored-content Inspector route metadata and its lifecycle, not full 77.44.7.A acceptance.",
+    "documentation_followup": {
+      "commit": "8161b44f4aee9ccd071694b7551060787e2dacb8",
+      "github_ci": "PASS 5/5 workflows; Editor Core run 40321660841",
+      "automatic_cloudflare_version": {
+        "deployment_id": "1935d254-26de-499a-a6ba-430962328449",
+        "version_id": "2d3f5de6-6f34-4d99-a4e1-101c5644feb4",
+        "traffic_percent": 100,
+        "script_etag_unchanged": "0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0"
+      },
+      "production_runtime_hashes": "index.html, app.js and element-content-controls.js remained identical to the 58dd2f73 runtime release."
+    }
+  },
+  "responsive_reset_route_followup": {
+    "plan_cursor": "77.44.7.A — responsive style/state reset actions",
+    "implementation": {
+      "single_responsive_reset": "Property and geometry reset buttons expose data-property-command=responsive.set and data-property-key=<Page Model key>.",
+      "group_responsive_reset": "Bulk group/geometry reset buttons expose the same command and either one property key or a JSON data-property-keys list for all changed keys.",
+      "outside_artboard_reset": "Offset recovery action exposes responsive.set / [x,y].",
+      "state_reset": "Hover/focus inheritance reset exposes states.set / <registered state property key>.",
+      "cache_bust": "20261026-responsive-reset-route-contract on the Editor entry module URL.",
+      "behavior": "Route metadata only; reset payloads, Undo grouping, viewport scope, Save and Publish behavior remain unchanged."
+    },
+    "files": [
+      "public/editor-v2/app.js",
+      "public/editor-v2/index.html",
+      "tests/browser/editor-inspector-breakpoint-lifecycle.test.js",
+      "tests/browser/editor-content-system.test.js"
+    ],
+    "browser_tests": {
+      "responsive_breakpoint_lifecycle": "PASS 1/1, 12.1 seconds; checks single backgroundColor reset, bulk backgroundColor+backgroundImage route list, outside-artboard x/y route, Canvas inheritance, Undo/Redo and separate Save/Publish.",
+      "authored_content_state_reset": "PASS 1/1, 90.3 seconds; checks states.set/backgroundColor reset route inside existing authored Canvas/Undo/Redo/Save/Publish/public lifecycle."
+    },
+    "local_checks": {
+      "editor_unit": "PASS 132/132",
+      "typecheck": "PASS",
+      "canonical_plan": "PASS; 13 master files and one active cursor; functional acceptance remains NOT_CERTIFIED",
+      "active_point_audit": "PASS; 77.44.7.A remains open",
+      "traceability": "PASS 396 mappings with current source fingerprints",
+      "wrangler_dry_run": "PASS Wrangler 4.130.0; 159 assets, 287.10 KiB; no upload",
+      "full_local_inspector_lifecycle_note": "Two sandbox runs timed out at unrelated pre-existing node/public render selectors; targeted route lifecycles passed, and the GitHub Editor Core browser layout regression passed."
+    },
+    "d1_read_only_preflight": {
+      "method": "Cloudflare authenticated D1 API SELECT name FROM d1_migrations ORDER BY name",
+      "configured_local_migrations": 24,
+      "configured_migrations_present_remotely": 24,
+      "remote_ledger_rows": 34,
+      "changed_db": false,
+      "rows_written": 0,
+      "wrangler_cli_note": "The Wrangler remote migration-list command could not connect through this sandbox; the authenticated read-only D1 API verified the configured ledger."
+    },
+    "production_release": {
+      "commit": "b34f4531da66ee6f5332b7be5fed08f2b3a417d1",
+      "branch": "v2/foundation",
+      "push": "PASS; fast-forward from 8161b44f4aee9ccd071694b7551060787e2dacb8",
+      "github_ci": {
+        "result": "PASS 5/5 workflows",
+        "editor_core_run": 40325549252,
+        "f0_run": 40325549218,
+        "twitch_run": 40325549248,
+        "canonical_active_point_audit_run": 40325549200,
+        "canonical_plan_run": 40325549298
+      },
+      "deployment_id": "d3803319-1775-4fb7-a884-e25b4b5a9aac",
+      "version_id": "e2c1035c-ebab-4549-8bc8-f8be54281fa2",
+      "traffic_percent": 100,
+      "script_etag": "0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0",
+      "production_smoke": {
+        "api_health": 200,
+        "db_health": {
+          "status": 200,
+          "connected": true
+        },
+        "editor_entry": 200
+      },
+      "live_sha256_match": {
+        "public/editor-v2/index.html": "65768c3e0bdcc1eaf1c2c0ea984144a53c32e24e61cd7a772d0ad508e1caf72a",
+        "public/editor-v2/app.js": "79e973c8df3959d411d0172a09adbe7620b002583dd8456aa89a10fa1100f2e8",
+        "public/editor-v2/ui/element-content-controls.js": "0eac999e7d3d0f36a623d31a7e81744de2b5041aeb51343a77f9bedf7f5e5684"
+      },
+      "d1_migrations_applied": false,
+      "production_data_writes": false,
+      "r2_changes": false
+    },
+    "overall_scope": "Verifies responsive reset route metadata and lifecycle; complete 77.44.7.A acceptance remains open."
   }
 }
