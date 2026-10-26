@@ -5,12 +5,16 @@ import {TOKEN_SPECS,compatibleTokens,parseTokenReference,tokenReference,tokenVal
 import {mediaAssetPicker} from './element-content-controls.js';
 
 /** One property input. All changes go through the central command callback. */
-export function renderPropertyInput(property, label, current, onChange, {tokens=defaultTokens()}={}) {
+export function renderPropertyInput(property, label, current, onChange, {
+  tokens=defaultTokens(), command=property.command, key=property.key
+}={}) {
   const binding=parseTokenReference(current),availableTokens=compatibleTokens(property);
   if(binding)current=tokenValue(tokens,binding);
   const wrap = document.createElement('div');
   wrap.className = 'field typed-inspector-field';
   wrap.dataset.propertyId = property.id;
+  if(command)wrap.dataset.propertyCommand=command;
+  if(key)wrap.dataset.propertyKey=key;
   const heading = document.createElement('div');
   heading.className = 'property-heading';
   const title = document.createElement('label');

@@ -12,7 +12,7 @@ import {plainTextToRichText,renderRichTextEditor,richTextEditorToDocument,restor
 import {renderSchedulePreview} from './core/schedule-preview.js';
 import {normalizeScheduleConfig,SCHEDULE_MODES,SCHEDULE_ORDERS,SCHEDULE_STATUSES,SCHEDULE_EMPTY_TEXT_MAX} from './core/schedule-schema.js';
 import {listPropertyGroups,listProperties,getProperty} from './core/property-registry.js?v=20261025-content-property-route-contract';
-import {renderPropertyInput} from './ui/property-controls.js';
+import {renderPropertyInput} from './ui/property-controls.js?v=20261026-inspector-command-key-contract';
 import {describeResponsiveOrigin} from './ui/responsive-origin.js';
 import {responsiveGroupResetActions} from './ui/responsive-group-reset.js';
 import {getRichTextBlockSelection,getRichTextFormattingSelection,getRichTextBlockTransformSelection,getRichTextActiveBlockIndex,restoreRichTextBlockSelection,restoreRichTextFormattingSelection,updateRichTextInlineLink,updateRichTextInlineMark,updateRichTextInlineStyle,updateRichTextBlockAlignment} from './core/richtext-links.js';
@@ -52,7 +52,9 @@ import {captureCanvasInteractionState,restoreCanvasInteractionState} from './cor
 import {renderElementContentControls,pageLinkPicker} from './ui/element-content-controls.js';
 
 let editorTokens=defaultTokens();
-function propertyInput(...args){return renderPropertyInput(...args,{tokens:editorTokens})}
+function propertyInput(property,label,current,onChange,options={}){
+  return renderPropertyInput(property,label,current,onChange,{tokens:editorTokens,...options});
+}
 async function loadEditorTokens(){try{const response=await fetch('/api/public/presentation?preview=1',{cache:'no-store',credentials:'same-origin'});const result=await response.json();if(response.ok&&result?.data?.tokens){editorTokens=result.data.tokens;const target=canvas.querySelector('.page-canvas');if(target)applyTokenVariables(target,editorTokens)}}catch{} }
 let statePreview='none';
 let inspectorCategory='all';let richTextSelectionCleanup=null;let richTextToolTab='character';
@@ -758,7 +760,7 @@ function renderStatesInspector(node){
   const note=document.createElement('p');note.className='content-field-help';note.textContent='Az előnézeti állapot nem kerül mentésre. A beállított színek és hatások az aktuális eszköznézethez tartoznak, és a valódi rámutatáskor vagy billentyűzetes fókusznál lépnek életbe.';section.append(note);
   if(statePreview==='none')return section;
   for(const id of STATE_PROPERTY_IDS){const property=getProperty(id);const value=resolveResponsiveValue(node.states?.[statePreview],property.key,state.viewport.device).value;
-    const control=propertyInput(property,property.label,value??'',value=>command('states.set',{nodeId:node.id,state:statePreview,device:state.viewport.device,patch:{[property.key]:value}}));control.dataset.stateProperty=property.key;
+    const control=propertyInput(property,property.label,value??'',value=>command('states.set',{nodeId:node.id,state:statePreview,device:state.viewport.device,patch:{[property.key]:value}}),{command:'states.set'});control.dataset.stateProperty=property.key;
     if(node.locked)for(const input of control.querySelectorAll('input,select,button'))input.disabled=true;
     section.append(control);
     if(hasResponsiveOverride(node.states?.[statePreview],property.key,state.viewport.device)){const reset=document.createElement('button');reset.type='button';reset.className='property-reset';reset.textContent='Állapotérték öröklésének visszaállítása';reset.disabled=Boolean(node.locked);reset.onclick=()=>command('states.set',{nodeId:node.id,state:statePreview,device:state.viewport.device,patch:{[property.key]:undefined}});section.append(reset)}

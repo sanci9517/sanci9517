@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-26",
+  "plan_cursor": "77.44.7.A / 77.44.1-2 Inspector property route contract",
+  "finding": {
+    "before": "Typed responsive Inspector controls exposed data-property-id but not their registry command or Page Model key; state preview reused those controls while dispatching states.set.",
+    "impact": "A DOM/source audit could identify the property but could not verify which command/key the rendered control actually used.",
+    "scope": "Shared typed property controls and hover/focus state controls; no value semantics or save behavior changed."
+  },
+  "implementation": {
+    "typed_controls": "Expose data-property-id, data-property-command and data-property-key from the registry property.",
+    "state_controls": "Pass the actual states.set route explicitly while retaining the registry property key.",
+    "cache_bust": "20261026-inspector-command-key-contract on the app entry and property-controls import."
+  },
+  "test": {
+    "file": "tests/browser/editor-content-system.test.js",
+    "targeted_chromium": "PASS 1/1, 24.4 seconds",
+    "routes_asserted": [
+      "animation.transition → responsive.set / transition",
+      "transform.rotate → responsive.set / rotate",
+      "background.gradient → responsive.set / backgroundImage",
+      "background.image → responsive.set / backgroundAssetId",
+      "hover background color and gradient → states.set / registered keys"
+    ]
+  },
+  "local_checks": {
+    "editor_unit": "PASS 132/132",
+    "typecheck": "PASS",
+    "plan_contract": "PASS 13/13",
+    "traceability": "PASS 396 mappings; acceptance NOT CERTIFIED",
+    "wrangler": "4.130.0",
+    "remote_d1_preflight": "PASS: No migrations to apply",
+    "worker_dry_run": "PASS: 159 public assets, 287.10 KiB; no upload"
+  },
+  "release": {
+    "commit": "pending",
+    "github_ci": "pending",
+    "production_deployment": "pending verification",
+    "d1_migrations_applied": false,
+    "production_data_writes": false,
+    "r2_changes": false
+  },
+  "acceptance": "This closes the rendered typed-control route metadata gap for the asserted base-style and hover-state controls. Full 79-type/68-property lifecycle acceptance remains OPEN."
+}
