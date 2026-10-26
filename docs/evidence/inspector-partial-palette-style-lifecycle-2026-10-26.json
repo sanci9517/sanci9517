@@ -36,5 +36,15 @@
     "javascript_syntax": "PASS",
     "git_diff_check": "PASS"
   },
+  "release": {
+    "commit": "630a6de4b09226ea4f9cdc5a32e09fffd6bfc36f",
+    "branch": "v2/foundation",
+    "github_workflow_runs": "No workflow runs or commit statuses were returned at verification time.",
+    "latest_cloudflare_deployment": "f18dc462-ea73-4161-bfa4-7e367a8370af",
+    "worker_version": "d4e55024-b557-483f-8ac8-33a1f2aa165b",
+    "traffic": "100%",
+    "script_etag": "0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0",
+    "boundary": "Worker ETag is unchanged. The latest observed deployment predates this test/documentation commit; no runtime files changed, so no production bundle parity claim is needed."
+  },
   "scope": "Browser test and documentation only; no runtime source, production data, database migration, or R2 change. This proves a shared Inspector style route across these partial types, not full per-type acceptance. Full 77.44.7.A remains open."
 }
