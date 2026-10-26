@@ -169,5 +169,34 @@
       "emptyText"
     ],
     "lifecycle": "Real Inspector edits mode, order, limit, statuses and showTitle; Save persists to the draft while the public snapshot remains unchanged; separate Publish updates public authored empty text. Existing composition, invalid-input, lock, Canvas, undo and public snapshot assertions remain active."
+  },
+  "schedule_profile_runtime_release": {
+    "commit": "d2ae2d3e129ee163673e49992b38c02a08fd9145",
+    "branch": "v2/foundation",
+    "github_ci": {
+      "result": "PASS 5/5 workflows",
+      "editor_core_run": 40302762321,
+      "f0_run": 40302762380,
+      "twitch_run": 40302762376,
+      "canonical_active_point_audit_run": 40302762466,
+      "canonical_plan_run": 40302762278
+    },
+    "production_deployment_id": "56c222cd-dec7-4e7f-9836-35cab15def39",
+    "production_version_id": "2de32fe1-4c28-4925-99ee-594a678a9bd2",
+    "traffic_percent": 100,
+    "script_etag": "0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0",
+    "production_smoke": {
+      "worker_origin": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev",
+      "/api/health": 200,
+      "/api/db-health": "200; D1 connected",
+      "/editor-v2/": 200
+    },
+    "live_sha256_match": {
+      "public/editor-v2/index.html": "96fd16331f853d5253a09f6225e84ba5d308c216b83895b031fa3b85613079d1",
+      "public/editor-v2/app.js": "7cb7917a37e7de7ebf4355da228e231502adb21ec9972e61182db4b9455dc96e"
+    },
+    "d1_migrations_applied": false,
+    "production_data_writes": false,
+    "r2_changes": false
   }
 }
