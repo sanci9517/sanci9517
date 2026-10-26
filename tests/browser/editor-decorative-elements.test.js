@@ -48,9 +48,11 @@ test('Divider and Spacer Inspector changes become public only after Publish, wit
  await paletteLayout.locator('.element-group-title').click();
  const dividerEntry=paletteLayout.locator('button.element').filter({hasText:'Divider'});
  assert.equal(await dividerEntry.count(),1,'implemented Divider is available in the Layout palette');
- const canvasCountBeforePaletteAdd=await editor.locator('.node[data-node-id]').count();
+ const nodeIdsBeforePaletteAdd=await editor.locator('.node[data-node-id]').evaluateAll(nodes=>nodes.map(node=>node.dataset.nodeId));
  await dividerEntry.click();
- assert.equal(await editor.locator('.node[data-node-id]').count(),canvasCountBeforePaletteAdd+1,'palette selection creates a Canvas node');
+ const paletteAddedNodeId=await editor.locator('.node[data-node-id]').evaluateAll((nodes,before)=>nodes.map(node=>node.dataset.nodeId).find(id=>!before.includes(id)),nodeIdsBeforePaletteAdd);
+ assert.ok(paletteAddedNodeId,'palette selection creates a Canvas node');
+ assert.equal(await editor.locator(`.node[data-node-id="${paletteAddedNodeId}"]`).count(),1,'the newly created node is visible on Canvas');
  const canvasNode=id=>editor.locator('.node[data-node-id="'+id+'"]');
  const publicNode=id=>viewer.locator('.visual-editor-node[data-node-id="'+id+'"]');
  const select=async id=>{
@@ -95,13 +97,18 @@ test('Divider and Spacer Inspector changes become public only after Publish, wit
  await editor.locator('#save').click();
  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
  assert.equal(posts.at(-1).publish,false);
+ assert.equal(draft.pages[pageId].nodes[paletteAddedNodeId].type,'divider','Save persists the palette-created Page Model node');
+ assert.equal(published.pages[pageId].nodes[paletteAddedNodeId],undefined,'Save leaves the published snapshot unchanged');
  await viewer.reload();
+ assert.equal(await publicNode(paletteAddedNodeId).count(),0,'the palette-created divider is not public after Save');
  assert.equal(await publicNode(dividerId).evaluate(el=>getComputedStyle(el).borderTopWidth),'2px','Save does not change live divider');
  assert.equal(await publicNode(spacerId).evaluate(el=>getComputedStyle(el).height),'64px','Save does not change live spacer');
  await editor.locator('#publish').click();
  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
  assert.equal(posts.at(-1).publish,true);
+ assert.equal(published.pages[pageId].nodes[paletteAddedNodeId].type,'divider','explicit Publish copies the palette-created node to the live snapshot');
  await viewer.reload();
+ assert.equal(await publicNode(paletteAddedNodeId).count(),1,'the palette-created divider appears on the published page after Publish');
  assert.equal(await publicNode(dividerId).evaluate(el=>getComputedStyle(el).borderTopWidth),'6px');
  assert.equal(await publicNode(dividerId).evaluate(el=>getComputedStyle(el).borderTopStyle),'dashed');
  assert.equal(await publicNode(dividerId).evaluate(el=>getComputedStyle(el).borderTopColor),'rgb(34, 170, 102)');
