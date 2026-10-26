@@ -537,6 +537,13 @@ function normalizeDimension(value,{allowAuto=false}={}){const raw=String(value??
 function resolvedGeometry(node,device){return getNodeGeometry(node,device)}
 function responsiveDisplay(node,property,device,fallback){const result=resolveResponsiveValue(node?.responsive,property,device);return result.value??fallback}
 function setGeometry(node,device,property,value){const normalized=normalizeDimension(value,{allowAuto:property==='width'||property==='height'});if(normalized===undefined)return;command('responsive.set',{nodeId:node.id,device,patch:{[property]:normalized}})}
+function markResponsiveActionRoute(control,keys){
+  const list=[...new Set((Array.isArray(keys)?keys:[keys]).filter(Boolean))];
+  control.dataset.propertyCommand='responsive.set';
+  if(list.length===1)control.dataset.propertyKey=list[0];
+  else control.dataset.propertyKeys=JSON.stringify(list);
+  return control;
+}
 function renderGeometryInspector(node){
   const device=state.viewport.device, geometry=resolvedGeometry(node,device);
   const values={x:geometry.x,y:geometry.y,width:geometry.width,height:geometry.height,
@@ -564,6 +571,7 @@ function renderGeometryInspector(node){
     if(id==='size.width'||id==='size.height')section.append(renderGeometryPresets(id,values[key],apply));
     if(hasResponsiveOverride(node.responsive,key,device)){
       const reset=document.createElement('button');reset.type='button';reset.className='property-reset';
+      markResponsiveActionRoute(reset,key);
       reset.textContent='Visszaállítás az örökölt értékre';
       reset.disabled=Boolean(node.locked);
       reset.onclick=()=>{if(!node.locked)command('responsive.set',{nodeId:node.id,device,patch:{[key]:undefined}})};
@@ -580,6 +588,7 @@ function renderGeometryInspector(node){
     resetAll.type='button';
     resetAll.className='group-responsive-reset';
     resetAll.textContent='Geometria saját értékeinek visszaállítása ('+geometryResets.length+')';
+    markResponsiveActionRoute(resetAll,geometryResets.map(action=>Object.keys(action.payload.patch)[0]));
     resetAll.title='Csak az aktuális nézet X/Y pozíciója, szélessége, magassága és pozicionálási módja tér vissza az örökölt értékhez. Egyetlen Undo lépés.';
     resetAll.setAttribute('aria-label',resetAll.textContent);
     resetAll.disabled=Boolean(node.locked);
@@ -677,6 +686,7 @@ function renderRegistryInspector(node,mode='primary'){
     const text=document.createElement('p');text.className='content-field-help';
     text.textContent='Az elem részben a fehér vásznon kívül van. A munkaterület ezt szándékosan megengedi, de a publikált oldalon túlcsordulást vagy levágást okozhat.';
     const reset=document.createElement('button');reset.type='button';reset.className='property-reset';reset.textContent='Eltolás visszaállítása ebben a nézetben';
+    markResponsiveActionRoute(reset,['x','y']);
     reset.title='Az aktuális nézet X és Y eltolását 0-ra állítja; más nézetek beállításai megmaradnak.';
     reset.disabled=Boolean(node.locked);reset.onclick=()=>command('responsive.set',{nodeId:node.id,device,patch:{x:'0px',y:'0px'}});
     warning.append(text,reset);root.append(warning);
@@ -724,6 +734,7 @@ function renderRegistryInspector(node,mode='primary'){
       section.append(control);
       if(property.responsive&&hasResponsiveOverride(node.responsive,key,device)){
         const reset=document.createElement('button');reset.type='button';reset.className='property-reset';
+        markResponsiveActionRoute(reset,key);
         reset.textContent='Öröklés visszaállítása';
         reset.title=device+' nézet saját értékének törlése, a szélesebb nézet értékének öröklése';
         reset.onclick=()=>command('responsive.set',{nodeId:node.id,device,patch:{[key]:undefined}});
@@ -736,6 +747,7 @@ function renderRegistryInspector(node,mode='primary'){
       resetAll.type='button';
       resetAll.className='group-responsive-reset';
       resetAll.textContent='Saját értékek visszaállítása ('+groupResets.length+')';
+      markResponsiveActionRoute(resetAll,groupResets.map(action=>Object.keys(action.payload.patch)[0]));
       resetAll.title='Csak a(z) '+device+' nézet aktuális csoportjának saját értékeit törli. Az örökölt és másik nézet értékei változatlanok. A művelet egy lépésben visszavonható.';
       resetAll.setAttribute('aria-label',group.label+': '+resetAll.textContent);
       resetAll.disabled=Boolean(node.locked);
@@ -764,7 +776,7 @@ function renderStatesInspector(node){
     const control=propertyInput(property,property.label,value??'',value=>command('states.set',{nodeId:node.id,state:statePreview,device:state.viewport.device,patch:{[property.key]:value}}),{command:'states.set'});control.dataset.stateProperty=property.key;
     if(node.locked)for(const input of control.querySelectorAll('input,select,button'))input.disabled=true;
     section.append(control);
-    if(hasResponsiveOverride(node.states?.[statePreview],property.key,state.viewport.device)){const reset=document.createElement('button');reset.type='button';reset.className='property-reset';reset.textContent='Állapotérték öröklésének visszaállítása';reset.disabled=Boolean(node.locked);reset.onclick=()=>command('states.set',{nodeId:node.id,state:statePreview,device:state.viewport.device,patch:{[property.key]:undefined}});section.append(reset)}
+    if(hasResponsiveOverride(node.states?.[statePreview],property.key,state.viewport.device)){const reset=document.createElement('button');reset.type='button';reset.className='property-reset';reset.dataset.propertyCommand='states.set';reset.dataset.propertyKey=property.key;reset.textContent='Állapotérték öröklésének visszaállítása';reset.disabled=Boolean(node.locked);reset.onclick=()=>command('states.set',{nodeId:node.id,state:statePreview,device:state.viewport.device,patch:{[property.key]:undefined}});section.append(reset)}
   }
   return section;
 }

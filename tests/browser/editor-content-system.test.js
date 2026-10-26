@@ -124,6 +124,12 @@ test('typed authored elements survive Inspector edits, reload and separate Publi
   await editor.getByLabel('Állapot előnézete',{exact:true}).selectOption('hover');
   const hoverColor=editor.locator('[data-state-property="backgroundColor"]');assert.equal(await hoverColor.getAttribute('data-property-command'),'states.set');assert.equal(await hoverColor.getAttribute('data-property-key'),'backgroundColor');
   await hoverColor.locator('input[type=text]').fill('#dc143c');await hoverColor.locator('input[type=text]').press('Tab');
+  const resetHoverColor=editor.getByRole('button',{name:'Állapotérték öröklésének visszaállítása'});
+  assert.equal(await resetHoverColor.getAttribute('data-property-command'),'states.set');
+  assert.equal(await resetHoverColor.getAttribute('data-property-key'),'backgroundColor');
+  await resetHoverColor.click();
+  await editor.locator('[data-state-property="backgroundColor"] input[type=text]').fill('#dc143c');
+  await editor.locator('[data-state-property="backgroundColor"] input[type=text]').press('Tab');
   const hoverGradient=editor.locator('[data-state-property="backgroundImage"]');assert.equal(await hoverGradient.getAttribute('data-property-command'),'states.set');assert.equal(await hoverGradient.getAttribute('data-property-key'),'backgroundImage');await hoverGradient.locator('select').selectOption('none');
   assert.equal(await node(editor,'button').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(220, 20, 60)');
   await editor.getByLabel('Állapot előnézete',{exact:true}).selectOption('focus-visible');

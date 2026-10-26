@@ -74,7 +74,10 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   }
   await activate('mobile',390);await editor.locator('.inspector-tabs button').first().click();
   const resetHeading=editor.locator('.inspector-group-title').filter({hasText:'Háttér'});if(await resetHeading.getAttribute('aria-expanded')==='false')await resetHeading.click();
-  await editor.locator('.property-reset[title^="mobile nézet"]').filter({hasText:'Öröklés visszaállítása'}).click();
+  const inheritedReset=editor.locator('.property-reset[title^="mobile nézet"]').filter({hasText:'Öröklés visszaállítása'});
+  assert.equal(await inheritedReset.getAttribute('data-property-command'),'responsive.set');
+  assert.equal(await inheritedReset.getAttribute('data-property-key'),'backgroundColor');
+  await inheritedReset.click();
   assert.equal(await color(canvas),'rgb(22, 163, 74)','mobile reset inherits tablet value');
   await editor.locator('#undo').click();assert.equal(await color(canvas),'rgb(147, 51, 234)','Undo restores mobile override');
   await editor.locator('#redo').click();assert.equal(await color(canvas),'rgb(22, 163, 74)','Redo restores tablet inheritance');
@@ -83,5 +86,23 @@ test('Inspector color keeps independent desktop/tablet/mobile values through dra
   assert.equal(await color(live),'rgb(22, 163, 74)','published mobile reset inherits tablet color');
   await activate('tablet',768);await publicPage.reload();assert.equal(await color(live),'rgb(22, 163, 74)','tablet override remains intact after mobile reset');
   await activate('desktop',1366);await publicPage.reload();assert.equal(await color(live),'rgb(220, 38, 38)','desktop override remains intact after mobile reset');
+  await activate('mobile',390);await editor.locator('.inspector-tabs button').first().click();
+  const backgroundGroup=editor.locator('.inspector-group').filter({has:editor.locator('[data-property-id="background.color"]')});
+  const backgroundHeading=backgroundGroup.locator('.inspector-group-title');if(await backgroundHeading.getAttribute('aria-expanded')==='false')await backgroundHeading.click();
+  await setColor('#f97316');
+  await editor.locator('[data-property-id="background.gradient"] select').selectOption('linear-gradient(135deg, #7047eb 0%, #17b8a6 100%)');
+  const bulkBackgroundReset=backgroundGroup.locator('.group-responsive-reset');
+  assert.equal(await bulkBackgroundReset.getAttribute('data-property-command'),'responsive.set');
+  assert.deepEqual(JSON.parse(await bulkBackgroundReset.getAttribute('data-property-keys')).sort(),['backgroundColor','backgroundImage']);
+  await bulkBackgroundReset.click();
+  assert.equal(await color(canvas),'rgb(22, 163, 74)','multi-key reset restores the inherited mobile background');
+  const geometryHeading=editor.locator('.inspector-group-title').filter({hasText:'Geometria'});if(await geometryHeading.getAttribute('aria-expanded')==='false')await geometryHeading.click();
+  const offsetX=editor.locator('.typed-inspector-field[data-property-id="position.x"] input[type="number"]');
+  await offsetX.fill('-96');await offsetX.press('Tab');
+  assert.equal(await canvas().evaluate(el=>el.classList.contains('outside-artboard')),true);
+  const resetOffset=editor.getByRole('button',{name:'Eltolás visszaállítása ebben a nézetben'});
+  assert.equal(await resetOffset.getAttribute('data-property-command'),'responsive.set');
+  assert.deepEqual(JSON.parse(await resetOffset.getAttribute('data-property-keys')),['x','y']);
+  await resetOffset.click();assert.equal(await canvas().evaluate(el=>el.classList.contains('outside-artboard')),false);
   assert.deepEqual(errors,[]);
 });
