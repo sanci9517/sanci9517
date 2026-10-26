@@ -40,7 +40,9 @@ test('copy appearance between text elements preserves content and geometry throu
   t.after(async()=>{await browser.close();await new Promise(done=>server.close(done))});
 
   const tab=await browser.newPage({viewport:{width:1366,height:900}});
-  tab.setDefaultTimeout(7000);
+  // This lifecycle also opens several Inspector groups and applies a multi-field
+  // style snapshot. Keep enough room for the browser runner under suite load.
+  tab.setDefaultTimeout(15000);
   const errors=[];tab.on('pageerror',error=>errors.push(error.message));
   await tab.goto(`http://127.0.0.1:${server.address().port}/editor-v2/index.html`);
   await tab.locator('.rail-btn[data-tab="elements"]').click();
