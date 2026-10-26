@@ -391,5 +391,78 @@
       "production_data_writes": false,
       "r2_changes": false
     }
+  },
+  "authored_content_route_followup": {
+    "plan_cursor": "77.44.7.A — authored content Inspector fields, nested repeaters and table",
+    "implementation": {
+      "command": "content.properties.set",
+      "top_level_fields": "Every visible authored-content field exposes its actual Page Model route as data-inspector-command and data-inspector-key (props.<field>).",
+      "repeaters": "Repeater section and add/move/remove controls expose props.<collection>; nested values expose props.<collection>[].<field>.",
+      "table": "Cell editor exposes props.rows[][] for the two-dimensional Page Model value.",
+      "cache_bust": "20261026-authored-content-route-contract on the element-content-controls module import.",
+      "behavior": "Metadata only; existing Save and Publish commands and draft/public isolation are unchanged."
+    },
+    "files": [
+      "public/editor-v2/app.js",
+      "public/editor-v2/ui/element-content-controls.js",
+      "tests/browser/editor-content-system.test.js"
+    ],
+    "browser_test": {
+      "file": "tests/browser/editor-content-system.test.js",
+      "result": "PASS 1/1, 57.4 seconds",
+      "coverage": "All 18 authored types; each rendered field route; nested repeater child, structural add/move/remove and table cell paths; existing Canvas edit, draft Save, reload and separate Publish lifecycle."
+    },
+    "local_checks": {
+      "editor_unit": "PASS 132/132",
+      "typecheck": "PASS",
+      "canonical_plan": "PASS; 13 master files and one active cursor; functional acceptance remains NOT_CERTIFIED",
+      "active_point_audit": "PASS; 77.44.7.A remains the next open point",
+      "traceability": "PASS 396 mappings; implementation source fingerprints regenerated",
+      "wrangler_dry_run": "PASS Wrangler 4.130.0; 159 assets, 287.10 KiB; no upload"
+    },
+    "d1_read_only_preflight": {
+      "method": "Cloudflare authenticated D1 API SELECT name FROM d1_migrations ORDER BY name",
+      "configured_local_migrations": 24,
+      "configured_migrations_present_remotely": 24,
+      "remote_ledger_rows": 34,
+      "changed_db": false,
+      "rows_written": 0,
+      "wrangler_cli_note": "The Wrangler remote migration-list command could not connect through this sandbox; the authenticated read-only D1 API result was used to verify the local configured ledger."
+    },
+    "production_release": {
+      "commit": "58dd2f73c53ccaa22ef3b8a2b3acf29c6e9042c0",
+      "branch": "v2/foundation",
+      "push": "PASS; fast-forward from ada3d4273eeb594a607bb6400e9a4473ab659da8",
+      "github_ci": {
+        "result": "PASS 5/5 workflows",
+        "editor_core_run": 40320213364,
+        "f0_run": 40320213312,
+        "twitch_run": 40320213465,
+        "canonical_active_point_audit_run": 40320213258,
+        "canonical_plan_run": 40320213377
+      },
+      "deployment_id": "e4a20aee-a424-4ebe-b7b7-f1457ae26b04",
+      "version_id": "42058e7f-0695-4092-9e89-b83a4cad804d",
+      "version_number": 3546,
+      "traffic_percent": 100,
+      "script_etag": "0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0",
+      "production_smoke": {
+        "worker_origin": "https://sanci9517-streamer-brand.sandor-bogadi95.workers.dev",
+        "api_health": 200,
+        "db_health": {
+          "status": 200,
+          "connected": true
+        },
+        "editor_entry": 200
+      },
+      "live_sha256_match": {
+        "public/editor-v2/app.js": "7835bd5d5bc160aa275e6a940012a75cc5b047cdf7fe89898bb0bd61e645a3c8",
+        "public/editor-v2/ui/element-content-controls.js": "0eac999e7d3d0f36a623d31a7e81744de2b5041aeb51343a77f9bedf7f5e5684"
+      },
+      "d1_migrations_applied": false,
+      "production_data_writes": false,
+      "r2_changes": false
+    },
+    "overall_scope": "This verifies authored-content Inspector route metadata and its lifecycle, not full 77.44.7.A acceptance."
   }
 }
