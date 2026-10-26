@@ -41,12 +41,13 @@
       40335276340,
       40335276526,
       40335276449,
-      40335276437
+      40335276437,
+      40335276539
     ],
     "editor_core_test": {
       "run_id": 40335276539,
-      "status": "in_progress",
-      "current_step": "Run Editor browser layout regression"
+      "status": "completed",
+      "conclusion": "success"
     }
   },
   "acceptance_boundary": "The action routes and deployment are verified. Full 77.44.7.A feature capability and user acceptance remain OPEN/NOT_CERTIFIED."
