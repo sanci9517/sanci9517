@@ -5,32 +5,36 @@
   "change": {
     "runtime": "Schedule Design now renders both type-specific configuration and common primary registry fields.",
     "cache_busting": "Updated the editor app module query version.",
-    "partial_type_coverage": "Real Chromium compares Inspector controls and command/key routes for all 45 PARTIAL node types, including root, contextual Flex/Grid and advanced node name.",
+    "partial_type_coverage": "Real Chromium compares rendered Inspector controls and command/key routes for all 45 PARTIAL node types, including root, contextual Flex/Grid and advanced node name. An additional full lifecycle edits responsive background colors on all 44 non-root types.",
     "schedule_style_lifecycle": "The real Schedule background-color field is edited through the Inspector, verified on Canvas and in the saved responsive Page Model; Save leaves the public snapshot unchanged, and separate Publish exposes the color publicly."
   },
   "local_checks": {
-    "partial_type_chromium": "PASS 1/1; 45/45 node types matched their applicable registry fields and routes",
+    "partial_type_chromium": "PASS 1/1; 45/45 node types matched applicable registry fields/routes; all 44 non-root types successfully applied unique background colors in Inspector, reflected them on Canvas, saved them without changing the public snapshot, and exposed them publicly only after explicit Publish.",
     "schedule_style_lifecycle": "PASS 2/2 at 390px and 1366px",
     "editor_unit": "PASS 134/134",
     "schedule_unit": "PASS 9/9",
     "typecheck": "PASS",
-    "editor_browser_suite": "86/87 in one four-worker run; the sole failure was a 9-second page.goto(load) timeout in the legacy-media test under parallel load. Isolated rerun PASS 1/1 in 35.1 seconds.",
+    "editor_browser_suite": "Initial local four-worker run 86/87 due the 9-second legacy-media navigation timeout; after raising only that test navigation timeout to 15 seconds, isolated local rerun PASS 1/1 in 24.7 seconds. GitHub Editor Core full suite on the updated test head PASS 87/87.",
     "legacy_media_navigation_stability": "Raised only that test's navigation timeout from 9 to 15 seconds; isolated Chromium rerun PASS 1/1 in 24.7 seconds.",
     "canonical_plan": "PASS",
     "active_plan_cursor": "77.44 / WEB-011 → 77.44.7.A; acceptance NOT_CERTIFIED",
-    "traceability": "PASS 396/396 source mappings"
+    "traceability": "PASS 396/396 source mappings",
+    "root_note": "Root is excluded from this 44-node lifecycle because root appearance has a separate explicit opt-in contract and existing dedicated root style/publish coverage."
   },
   "github": {
-    "commit": "6db98a43ebeb8126e1d9a0be0e73f9b823605dff",
+    "runtime_commit": "6db98a43ebeb8126e1d9a0be0e73f9b823605dff",
+    "latest_verified_head": "b70463e8dea60e06fb5ebe2bb551dffe29ca9863",
     "branch": "v2/foundation",
-    "checks": "Five checks PASS (source-audit, verify, canonical-plan, twitch-integration, Workers Builds); editor-core browser job was still in progress at verification."
+    "checks": "6/6 PASS: Workers Builds, source-audit, twitch-integration, verify, editor-core, canonical-plan.",
+    "editor_core": "PASS; editor unit 134/134, Editor browser layout 87/87, schedule 9/9, TypeScript and remaining job steps successful."
   },
   "production": {
-    "deployment_id": "ed92f4f0-7e6f-4aab-acba-ad9e73ccb3d3",
-    "worker_version_id": "c8638958-2b53-441a-ba6d-67d357794773",
+    "deployment_id": "baebff05-b160-4b91-804c-5acb3a3455fe",
+    "worker_version_id": "74e8907d-54e7-4f40-b8c8-c68e50f8aeb7",
     "traffic_percent": 100,
     "worker_script_etag": "0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0",
-    "live_index_and_app": "HTTP 200; production editor index contains the new cache key; app.js SHA-256 byte-matches the local source (1658ae72f45851a7cae827b39e3b54bdd2dca65e7eabf8d68440831a5267044b)."
+    "live_index_and_app": "HTTP 200; production editor index contains new cache key; app.js SHA-256 byte-matches local source (1658ae72f45851a7cae827b39e3b54bdd2dca65e7eabf8d68440831a5267044b).",
+    "health": "/api/health and /api/db-health both HTTP 200; D1 read-only health reports connected."
   },
-  "scope": "Runtime Inspector fix deployed. The later lifecycle and navigation timeout updates are test-only. No D1 migration or production data write, no R2 deletion. Full 77.44.7.A and user acceptance remain open."
+  "scope": "Runtime Inspector fix deployed. The later partial-type, lifecycle and navigation timeout updates are test-only. No D1 migration or production data write, no R2 deletion. Full 77.44.7.A and user acceptance remain open."
 }
