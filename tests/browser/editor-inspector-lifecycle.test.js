@@ -195,6 +195,7 @@ test('real Inspector layout survives selection, undo, save/reload and separate p
   assert.equal(await editor.locator('.inspector-actions .danger-action').getAttribute('data-inspector-command'),'element.delete');
   assert.equal(await editor.locator('.inspector-actions .danger-action').getAttribute('data-inspector-node-id'),itemId);
   assert.ok(JSON.parse(await editor.locator('.inspector-actions .danger-action').getAttribute('data-inspector-keys')).includes(`nodes.${itemId}`));
+  assert.ok(JSON.parse(await editor.locator('.inspector-actions .danger-action').getAttribute('data-inspector-keys')).includes(`nodes.${gridId}.children`));
   assert.equal(await editor.locator('.inspector-lock-toggle').getAttribute('data-inspector-command'),'element.lock.set');
   assert.equal(await editor.locator('.inspector-lock-toggle').getAttribute('data-inspector-key'),'locked');
   await editor.locator('.inspector-lock-toggle').check();
