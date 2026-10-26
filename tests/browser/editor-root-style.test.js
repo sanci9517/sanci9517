@@ -52,8 +52,22 @@ test('root Inspector appearance matches published canvas only after Publish at d
  assert.equal(await enableRoot.getAttribute('data-inspector-key'),'metadata.editorRootVersion');
  const group=async name=>{
   const title=editor.locator('.inspector-group-title').filter({hasText:name});
-  await title.waitFor();if(await title.getAttribute('aria-expanded')==='false')await title.click();
+  await title.waitFor();
+  if(!await title.locator('..').evaluate(el=>el.classList.contains('is-open')))await title.click();
  };
+ await group('Szülő és elhelyezés');
+ await enableRoot.click();
+ await editor.locator('.inspector-tabs button').nth(2).click();
+ const stateGroup=editor.locator('.inspector-group').filter({hasText:'Rámutatás és fókusz'});
+ const stateTitle=stateGroup.locator(':scope > .inspector-group-title');
+ if(await stateTitle.getAttribute('aria-expanded')==='false')await stateTitle.click();
+ await editor.getByLabel('Állapot előnézete',{exact:true}).selectOption('focus-visible');
+ const focusColor=stateGroup.locator('[data-state-property="backgroundColor"] input[type="text"]');
+ await focusColor.fill('#5b22aa');await focusColor.press('Tab');
+ assert.equal(await rootNode.getAttribute('data-editor-state'),'focus-visible');
+ assert.equal(await rootNode.evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(91, 34, 170)','root state preview is active on Canvas');
+ await editor.getByLabel('Állapot előnézete',{exact:true}).selectOption('none');
+ await editor.locator('.inspector-tabs button').nth(0).click();
  const changeColor=async value=>{
   await group('Háttér');
   const input=editor.locator('[data-property-id="background.color"] input[type="text"]');
@@ -71,6 +85,8 @@ test('root Inspector appearance matches published canvas only after Publish at d
  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Mentve'));
  assert.equal(posts.at(-1).publish,false);
  assert.equal(draft.pages[pageId].nodes[rootId].metadata.rootStyleVersion,1);
+ assert.equal(draft.pages[pageId].nodes[rootId].states['focus-visible'].desktop.backgroundColor,'#5b22aa');
+ assert.equal(published.pages[pageId].nodes[rootId].states?.['focus-visible'],undefined,'root focus state remains draft-only after Save');
  await viewer.reload();
  assert.equal(await canvas.evaluate(el=>getComputedStyle(el).backgroundColor),legacyColor,'Save does not alter published root');
  await editor.locator('.canvas-device-btn[data-device="mobile"]').click();
@@ -83,9 +99,17 @@ test('root Inspector appearance matches published canvas only after Publish at d
  await editor.locator('#publish').click();
  await editor.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Publikálva'));
  assert.equal(posts.at(-1).publish,true);
+ assert.equal(published.pages[pageId].nodes[rootId].states['focus-visible'].desktop.backgroundColor,'#5b22aa');
  await viewer.reload();
  assert.equal(await canvas.evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(18, 52, 86)','desktop root appearance is published');
  assert.equal(await canvas.evaluate(el=>getComputedStyle(el).paddingTop),'24px','root padding passes to public renderer');
+ assert.equal(await canvas.getAttribute('tabindex'),'-1','root keeps its skip-link-only focus behavior');
+ await viewer.keyboard.press('Tab');
+ assert.equal(await viewer.locator('.public-skip-link').evaluate(el=>el.matches(':focus-visible')),true,'skip link receives keyboard focus');
+ await viewer.keyboard.press('Enter');
+ await viewer.waitForFunction(()=>document.getElementById('content-canvas').matches(':focus-visible'));
+ assert.equal(await canvas.evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(91, 34, 170)','root focus state applies after keyboard skip-link navigation');
+ assert.equal(await canvas.getAttribute('class'),'content-canvas visual-editor-canvas visual-root-authored creator-state-enabled');
  await viewer.setViewportSize({width:390,height:800});await viewer.reload();
  assert.equal(await canvas.evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(170, 68, 0)','mobile root override is published');
  assert.equal(await canvas.evaluate(el=>getComputedStyle(el).paddingTop),'24px','mobile inherits root padding');

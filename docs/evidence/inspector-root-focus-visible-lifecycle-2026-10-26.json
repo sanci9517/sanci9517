@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-26",
+  "plan_cursor": "77.44.7.A",
+  "scope": "Apply Inspector-authored focus-visible state styles to the published root canvas without adding an independent tab stop",
+  "runtime_file": "public/assets/page-renderer.js",
+  "test_file": "tests/browser/editor-root-style.test.js",
+  "test_result": {
+    "command": "node --test tests/browser/editor-root-style.test.js",
+    "tests": 1,
+    "passed": 1,
+    "failed": 0,
+    "duration_ms": 7078.4,
+    "scenario_duration_ms": 6509.6
+  },
+  "coverage": [
+    "root Inspector focus-visible preview reaches the Canvas",
+    "Save keeps root focus style draft-only",
+    "separate Publish writes the root focus state to the published Page Model",
+    "keyboard skip-link navigation activates the published root focus style",
+    "root retains tabindex=-1 and does not add a separate Tab stop",
+    "legacy/template root does not retain the authored state selector or node ID",
+    "desktop and mobile root visual styles preserve their existing lifecycle"
+  ],
+  "additional_checks": {
+    "editor_unit": "135/135 PASS",
+    "typecheck": "PASS",
+    "canonical_plan": "PASS",
+    "active_plan_point": "PASS",
+    "traceability_mappings": 396,
+    "traceability": "PASS",
+    "git_diff_check": "PASS",
+    "wrangler_version": "4.130.0",
+    "remote_d1_migration_preflight": "No migrations to apply",
+    "worker_dry_run": "PASS; 159 assets, 287.10 KiB, no upload"
+  },
+  "production_data_changed": false,
+  "database_migration_run": false,
+  "r2_changed": false,
+  "deployment_status": "pending commit release workflow verification",
+  "acceptance_status": "77.44.7.A and WEB-011 remain OPEN; this proves the root focus-state route, not complete Editor acceptance"
+}
