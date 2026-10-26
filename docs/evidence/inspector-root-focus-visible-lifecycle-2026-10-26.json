@@ -36,6 +36,36 @@
   "production_data_changed": false,
   "database_migration_run": false,
   "r2_changed": false,
-  "deployment_status": "pending commit release workflow verification",
+  "release": {
+    "commit": "31600c92a0054db840ce73d2e3ecbab830925a2c",
+    "branch": "v2/foundation",
+    "deployment_id": "ca8b9ff8-353b-4ca4-8c5d-360f38a191f1",
+    "worker_version_id": "3340be93-5ae2-45c7-b26d-6ec86f7ec429",
+    "traffic_percent": 100,
+    "worker_etag": "0afd1da0c52bcc5e558e12adeb9888aea6d7df03d5e070c2184b4920dd825bc0",
+    "production_smoke": {
+      "/api/health": 200,
+      "/api/db-health": 200,
+      "/editor-v2/": 200
+    },
+    "deployed_page_renderer_sha256": "59cee3defb212c8feead20d2d5cf246f32ac79d736133fadc6475660dba96697",
+    "source_page_renderer_sha256": "59cee3defb212c8feead20d2d5cf246f32ac79d736133fadc6475660dba96697"
+  },
+  "github_ci": {
+    "commit": "31600c92a0054db840ce73d2e3ecbab830925a2c",
+    "run_ids": {
+      "f0_baseline": 40418694241,
+      "twitch_integration": 40418694298,
+      "active_plan_point": 40418694317,
+      "canonical_plan": 40418694202,
+      "editor_core": 40418694312
+    },
+    "f0_baseline": "PASS",
+    "twitch_integration": "PASS",
+    "active_plan_point": "PASS",
+    "canonical_plan": "PASS",
+    "editor_core": "PASS",
+    "all_workflows": "PASS"
+  },
   "acceptance_status": "77.44.7.A and WEB-011 remain OPEN; this proves the root focus-state route, not complete Editor acceptance"
 }
